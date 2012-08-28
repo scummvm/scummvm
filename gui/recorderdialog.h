@@ -35,6 +35,7 @@ class StaticTextWidget;
 
 class RecorderDialog : public GUI::Dialog {
 private:
+	bool _firstScreenshotUpdate;
 	Common::PlaybackFile _playbackFile;
 	Common::String _target;
 	Common::String _filename;
@@ -45,13 +46,13 @@ private:
 	GUI::ContainerWidget *_container;
 	GUI::GraphicsWidget *_gfxWidget;
 	GUI::StaticTextWidget *_currentScreenshotText;
+	GUI::StaticTextWidget *_authorText;
+	GUI::StaticTextWidget *_notesText;
 	void updateList();
 	void updateScreenShotsText();
 	void updateSelection(bool redraw);
 	void updateScreenshot();
 	int calculateScreenshotsCount();
-	bool isFileNameExists(Common::String &filename);
-	Common::String generateRecordFileName();
 public:
 	Common::String _author;
 	Common::String _name;

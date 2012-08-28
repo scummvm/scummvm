@@ -69,7 +69,7 @@ public:
 		kRecorderPlaybackPause = 3
 	};
 	void init();
-	void init(Common::String gameid, RecordMode mode);
+	void init(Common::String recordFileName, RecordMode mode);
 	void init(const ADGameDescription *desc, RecordMode mode);
 	void deinit();
 	bool processDelayMillis();
@@ -92,6 +92,7 @@ public:
 		return initialized;
 	}
 	void RegisterEventSource();
+	Common::String generateRecordFileName(const String &target);
 private:	
 	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 	bool initialized;

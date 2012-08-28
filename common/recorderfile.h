@@ -46,7 +46,8 @@ class PlaybackFile {
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> RandomSeedsDictionary;
 	enum fileMode {
 		kRead = 0,
-		kWrite = 1
+		kWrite = 1,
+		kClosed = 2
 	};
 	enum PlaybackFileState {
 		kFileStateCheckFormat,

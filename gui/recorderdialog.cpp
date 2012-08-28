@@ -30,6 +30,7 @@
 #include "graphics/thumbnail.h"
 #include "common/translation.h"
 #include "gui/widgets/list.h"
+#include "gui/editrecorddialog.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
 #include "common/system.h"
@@ -65,6 +66,8 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentS
 	new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", "<", 0, kPrevScreenshotCmd);
 	new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", 0, kNextScreenshotCmd);	
 	_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", "0/0");
+	_authorText = new StaticTextWidget(this, 0, 0, 10, 10, _("Author: "), Graphics::kTextAlignLeft);;
+	_notesText = new StaticTextWidget(this, 0, 0, 10, 10, _("Notes: "), Graphics::kTextAlignLeft);;
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
 }
@@ -102,14 +105,20 @@ void RecorderDialog::reflowLayout() {
 void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kEditRecordCmd: {
-		EditRecordDialog editDlg(_playbackFile.getHeader().author, _playbackFile.getHeader().name, _playbackFile.getHeader().notes);
-		if (editDlg.runModal() != kOKCmd) {
-			return;
+		if (_list->getSelected() >= 0) {
+			EditRecordDialog editDlg(_fileHeaders[_list->getSelected()].author, _fileHeaders[_list->getSelected()].name, _fileHeaders[_list->getSelected()].notes);
+			if (editDlg.runModal() != kOKCmd) {
+				return;
+			}
+			_playbackFile.openRead(_fileHeaders[_list->getSelected()].fileName);
+			_playbackFile.getHeader().author = editDlg.getAuthor();
+			_playbackFile.getHeader().name = editDlg.getName();
+			_playbackFile.getHeader().notes = editDlg.getNotes();
+			_playbackFile.updateHeader();
+			_fileHeaders[_list->getSelected()] = _playbackFile.getHeader();
+			updateSelection(true);
+			_playbackFile.close();
 		}
-		_playbackFile.getHeader().author = editDlg.getAuthor();
-		_playbackFile.getHeader().name = editDlg.getName();
-		_playbackFile.getHeader().notes = editDlg.getNotes();
-		_playbackFile.updateHeader();
 	}
 		break;
 	case kNextScreenshotCmd:
@@ -136,9 +145,9 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		updateSelection(true);
 		break;
 	case kRecordCmd: {
-		const EnginePlugin *plugin = 0;
 		TimeDate t;
 		Common::String gameId = ConfMan.get("gameid", _target);
+		const EnginePlugin *plugin = 0;
 		GameDescriptor desc = EngineMan.findGame(gameId, &plugin);
 		g_system->getTimeAndDate(t);
 		EditRecordDialog editDlg("Unknown Author", Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description(), "");
@@ -148,7 +157,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_author = editDlg.getAuthor();
 		_name = editDlg.getName();
 		_notes = editDlg.getNotes();
-		_filename = generateRecordFileName();
+		_filename = g_eventRec.generateRecordFileName(_target);
 		setResult(kRecordDialogRecord);
 		close();
 		}
@@ -200,37 +209,22 @@ void RecorderDialog::updateSelection(bool redraw) {
 	_currentScreenshot = 0;
 	updateScreenShotsText();
 	if (_list->getSelected() >= 0) {
-		_playbackFile.openRead(_fileHeaders[_list->getSelected()].fileName);
-		_screenShotsCount = _playbackFile.getScreensCount();
+		_authorText->setLabel("Author: " + _fileHeaders[_list->getSelected()].author);
+		_notesText->setLabel("Notes: " + _fileHeaders[_list->getSelected()].notes);
 		if ((_screenShotsCount) > 0) {
 			_currentScreenshot = 1;
 		}
 		updateScreenshot();
+		_firstScreenshotUpdate = true;
+	} else {
+		_authorText->setLabel("Author: ");
+		_notesText->setLabel("Notes: ");
+		_screenShotsCount = 0;
+		_currentScreenshot = 0;
+		_gfxWidget->setGfx(-1, -1, 0, 0, 0);
+		_gfxWidget->draw();
+		updateScreenShotsText();
 	}
-}
-
-
-bool RecorderDialog::isFileNameExists(Common::String &filename) {
-	for (Common::Array<Common::PlaybackFile::PlaybackFileHeader>::iterator ii = _fileHeaders.begin(); ii != _fileHeaders.end(); ++ii) {
-		if (ii->fileName == filename) {
-			return true;
-		}
-	}
-	return false;
-}
-
-
-Common::String RecorderDialog::generateRecordFileName() {
-	ConfMan.getActiveDomainName();
-	GUI::ListWidget::StringArray recordsList = _list->getList();
-	for (int i = 0; i < MAX_RECORDS_NAMES; ++i) {
-		Common::String recordName = Common::String::format("%s.r%02x", _target.c_str(), i);
-		if (isFileNameExists(recordName)) {
-			continue;
-		}
-		return recordName;
-	}
-	return "";
 }
 
 void RecorderDialog::updateScreenshot() {
@@ -242,6 +236,11 @@ void RecorderDialog::updateScreenshot() {
 	}
 	if (_currentScreenshot > _screenShotsCount) {
 		_currentScreenshot = 1;
+	}
+	if (_firstScreenshotUpdate) {
+		_playbackFile.openRead(_fileHeaders[_list->getSelected()].fileName);
+		_screenShotsCount = _playbackFile.getScreensCount();
+		_firstScreenshotUpdate = false;
 	}
 	Graphics::Surface *srcsf = _playbackFile.getScreenShot(_currentScreenshot);
 	if (srcsf != NULL) {

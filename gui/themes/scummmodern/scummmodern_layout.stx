@@ -883,7 +883,7 @@
 				<layout type = 'vertical' padding = '0, 0, 0, 0'>
 					<widget name = 'Thumbnail'
 							width = '180'
-							height = '150'
+							height = '170'
 					/>
 					<layout type = 'horizontal' padding = '0, 0, 0, 0'>	
 						<widget name = 'NextScreenShotButton'
