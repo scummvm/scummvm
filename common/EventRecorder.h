@@ -92,7 +92,6 @@ public:
 		return initialized;
 	}
 	void RegisterEventSource();
-	void updateSubsystems();
 private:	
 	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 	bool initialized;
