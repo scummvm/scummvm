@@ -28,6 +28,8 @@
 #include "common/singleton.h"
 #include "common/mutex.h"
 #include "common/array.h"
+#include "backends/mixer/sdl/sdl-mixer.h"
+#include "backends/mixer/nullmixer/nullsdl-mixer.h"
 
 #define g_eventRec (Common::EventRecorder::instance())
 
@@ -55,14 +57,19 @@ public:
 	void init();
 	void deinit();
 	/** Register random source so it can be serialized in game test purposes */
+	void RegisterEventSource();
 	void registerRandomSource(RandomSource &rnd, const String &name);
 	bool processDelayMillis();
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
-	MutexRef _recorderMutex;
-
+	SdlMixerManager *getMixerManager();
+	void registerMixerManager(SdlMixerManager* mixerManager);
 	uint32 getTimer() {return _fakeTimer;}
 private:
+	MutexRef _recorderMutex;
+	SdlMixerManager* _realMixerManager;
+	NullSdlMixerManager* _fakeMixerManager;
+	void switchMixer();
 	void switchFastMode();
 	bool notifyEvent(const Event &ev);
 	bool pollEvent(Event &ev);

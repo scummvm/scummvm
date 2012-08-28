@@ -22,7 +22,7 @@
 
 #include "common/EventRecorder.h"
 #include "backends/timer/sdl/sdl-timer.h"
-
+#include "backends/mixer/sdl/sdl-mixer.h"
 #include "common/bufferedstream.h"
 #include "common/config-manager.h"
 #include "common/random.h"
@@ -134,16 +134,8 @@ void EventRecorder::writeEvent(const RecorderEvent &event) {
 
 
 EventRecorder::EventRecorder() {
-	_recordFile = NULL;
-	_playbackFile = NULL;
 	_timeMutex = g_system->createMutex();
 	_recorderMutex = g_system->createMutex();
-
-	_eventCount = 1;
-	_lastEventCount = 0;
-	_lastMillis = 0;
-	_lastEventMillis = 0;
-
 	_recordMode = kPassthrough;
 }
 
@@ -175,7 +167,13 @@ void EventRecorder::init() {
 		_recordFileName = "record.bin";
 	}
 
+	switchMixer();
+	_fakeTimer = 0;
 	_recordCount = 0;
+	_lastMillis = 0;
+	_eventCount = 1;
+	_lastEventCount = 0;
+	_lastEventMillis = 0;
 	// recorder stuff
 	if (_recordMode == kRecorderRecord) {
 		_recordFile = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving(_recordFileName), 128 * 1024);
@@ -207,8 +205,6 @@ void EventRecorder::init() {
 		getNextEvent();
 	}
 
-	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
 }
 
 void EventRecorder::deinit() {
@@ -256,7 +252,7 @@ void EventRecorder::processMillis(uint32 &millis) {
 	if (_recordMode == kPassthrough) {
 		return;
 	}
-	g_system->lockMutex(_timeMutex);
+	_fakeMixerManager->update();
 	if (_recordMode == kRecorderRecord) {
 		uint32 _millisDelay;
 		_millisDelay = millis - _lastMillis;
@@ -353,6 +349,33 @@ void EventRecorder::togglePause() {
 	case kRecorderPlaybackPause:
 		_recordMode = kRecorderPlayback;
 		break;
+	}
+}
+
+void EventRecorder::RegisterEventSource() {
+	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
+}
+
+void EventRecorder::registerMixerManager(SdlMixerManager* mixerManager) {
+	_realMixerManager = mixerManager;
+}
+
+void EventRecorder::switchMixer() {
+	if (_recordMode == kPassthrough) {
+		_fakeMixerManager->suspendAudio();
+		_realMixerManager->resumeAudio();
+	} else {
+		_realMixerManager->suspendAudio();
+		_fakeMixerManager->resumeAudio();
+	}
+}
+
+SdlMixerManager* EventRecorder::getMixerManager() {
+	if (_recordMode == kPassthrough) {
+		return _realMixerManager;
+	} else {
+		return _fakeMixerManager;
 	}
 }
 

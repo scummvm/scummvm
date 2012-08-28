@@ -428,6 +428,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// our event recorder, we might do this at another place. Or even change
 	// the whole API for that ;-).
 	g_eventRec.init();
+	g_eventRec.RegisterEventSource();
 
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
