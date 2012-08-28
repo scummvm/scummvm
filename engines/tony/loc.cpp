@@ -42,52 +42,29 @@ using namespace ::Tony::MPAL;
 *       RMPalette Methods
 \****************************************************************************/
 
-/**
- * Operator for reading palette information from a data stream.
- *
- * @param ds                Data stream
- * @param pal               Destination palette
- *
- * @returns     Reference to the data stream
- */
-RMDataStream &operator>>(RMDataStream &ds, RMPalette &pal) {
-	ds.read(pal._data, 1024);
-	return ds;
+void RMPalette::readFromStream(Common::ReadStream &ds) {
+	ds.read(_data, 1024);
 }
 
 /****************************************************************************\
 *       RMSlot Methods
 \****************************************************************************/
 
-/**
- * Operator for reading slot information from a data stream.
- *
- * @param ds                Data stream
- * @param slot              Destination slot
- *
- * @returns     Reference to the data stream
- */
-RMDataStream &operator>>(RMDataStream &ds, RMPattern::RMSlot &slot) {
-	slot.readFromStream(ds);
-	return ds;
-}
-
-
-void RMPattern::RMSlot::readFromStream(RMDataStream &ds, bool bLOX) {
+void RMPattern::RMSlot::readFromStream(Common::ReadStream &ds, bool bLOX) {
 	byte type;
 
 	// Type
-	ds >> type;
+	type = ds.readByte();
 	_type = (RMPattern::RMSlotType)type;
 
 	// Dati
-	ds >> _data;
+	_data = ds.readSint32LE();
 
 	// Posizione
-	ds >> _pos;
+	_pos.readFromStream(ds);
 
 	// Flag generica
-	ds >> _flag;
+	_flag = ds.readByte();
 }
 
 
@@ -95,42 +72,29 @@ void RMPattern::RMSlot::readFromStream(RMDataStream &ds, bool bLOX) {
 *       Metodi di RMPattern
 \****************************************************************************/
 
-/**
- * Operator for reading pattern information from a data stream
- *
- * @param ds                Data stream
- * @param pat               Destination pattern
- *
- * @returns     Reference to the data stream
- */
-RMDataStream &operator>>(RMDataStream &ds, RMPattern &pat) {
-	pat.readFromStream(ds);
-	return ds;
-}
-
-void RMPattern::readFromStream(RMDataStream &ds, bool bLOX) {
+void RMPattern::readFromStream(Common::ReadStream &ds, bool bLOX) {
 	int i;
 
 	// Pattern name
 	if (!bLOX)
-		ds >> _name;
+		_name = readString(ds);
 
 	// Velocity
-	ds >> _speed;
+	_speed = ds.readSint32LE();
 
 	// Position
-	ds >> _pos;
+	_pos.readFromStream(ds);
 
 	// Flag for pattern looping
-	ds >> _bLoop;
+	_bLoop = ds.readSint32LE();
 
 	// Number of slots
-	ds >> _nSlots;
+	_nSlots = ds.readSint32LE();
 
 	// Create and read the slots
 	_slots = new RMSlot[_nSlots];
 
-	for (i = 0; i < _nSlots && !ds.isError(); i++) {
+	for (i = 0; i < _nSlots && !ds.err(); i++) {
 		if (bLOX)
 			_slots[i].readFromStream(ds, true);
 		else
@@ -302,56 +266,46 @@ RMPattern::~RMPattern() {
 *       RMSprite Methods
 \****************************************************************************/
 
-/**
- * Operator for reading sprite information from a data stream.
- *
- * @param ds                Data stream
- * @param sprite            Destination slot
- *
- * @returns     Reference to the data stream
- */
-RMDataStream &operator>>(RMDataStream &ds, RMSprite &sprite) {
-	sprite.readFromStream(ds);
-	return ds;
-}
-
 void RMSprite::init(RMGfxSourceBuffer *buf) {
 	_buf = buf;
 }
 
-void RMSprite::LOXGetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy) {
-	int pos = ds.pos();
+void RMSprite::LOXGetSizeFromStream(Common::SeekableReadStream &ds, int *dimx, int *dimy) {
+	uint32 pos = ds.pos();
 
-	ds >> *dimx >> *dimy;
+	*dimx = ds.readSint32LE();
+	*dimy = ds.readSint32LE();
 
-	ds.seek(pos, ds.START);
+	ds.seek(pos);
 }
 
-void RMSprite::getSizeFromStream(RMDataStream &ds, int *dimx, int *dimy) {
-	int pos = ds.pos();
+void RMSprite::getSizeFromStream(Common::SeekableReadStream &ds, int *dimx, int *dimy) {
+	uint32 pos = ds.pos();
 
-	ds >> _name;
-	ds >> *dimx >> *dimy;
+	_name = readString(ds);
+	*dimx = ds.readSint32LE();
+	*dimy = ds.readSint32LE();
 
-	ds.seek(pos, ds.START);
+	ds.seek(pos);
 }
 
-void RMSprite::readFromStream(RMDataStream &ds, bool bLOX) {
+void RMSprite::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 	int dimx, dimy;
 
 	// Sprite name
 	if (!bLOX)
-		ds >> _name;
+		_name = readString(ds);
 
 	// Dimensions
-	ds >> dimx >> dimy;
+	dimx = ds.readSint32LE();
+	dimy = ds.readSint32LE();
 
 	// Bounding box
-	ds >> _rcBox;
+	_rcBox.readFromStream(ds);
 
 	// Unused space
 	if (!bLOX)
-		ds += 32;
+		ds.skip(32);
 
 	// Create buffer and read
 	_buf->init(ds, dimx, dimy);
@@ -381,26 +335,13 @@ RMSprite::~RMSprite() {
 *       RMSfx Methods
 \****************************************************************************/
 
-/**
- * Operator for reading SFX information from a data stream.
- *
- * @param ds                Data stream
- * @param sfx               Destination SFX
- *
- * @returns     Reference to the data stream
- */
-RMDataStream &operator>>(RMDataStream &ds, RMSfx &sfx) {
-	sfx.readFromStream(ds);
-	return ds;
-}
-
-void RMSfx::readFromStream(RMDataStream &ds, bool bLOX) {
+void RMSfx::readFromStream(Common::ReadStream &ds, bool bLOX) {
 	int size;
 
 	// sfx name
-	ds >> _name;
+	_name = readString(ds);
 
-	ds >> size;
+	size = ds.readSint32LE();
 
 	// Read the entire buffer into a MemoryReadStream
 	byte *buffer = (byte *)malloc(size);
@@ -459,20 +400,6 @@ void RMSfx::stop() {
 *       RMItem Methods
 \****************************************************************************/
 
-/**
- * Operator for reading item information from a data stream.
- *
- * @param ds                Data stream
- * @param tem               Destination item
- *
- * @returns     Reference to the data stream
- */
-RMDataStream &operator>>(RMDataStream &ds, RMItem &item) {
-	item.readFromStream(ds);
-	return ds;
-}
-
-
 RMGfxSourceBuffer *RMItem::newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE) {
 	if (_cm == CM_256) {
 		RMGfxSourceBuffer8RLE *spr;
@@ -524,53 +451,55 @@ bool RMItem::isIn(const RMPoint &pt, int *size)  {
 	return rc.ptInRect(pt + _curScroll);
 }
 
-void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
+void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 	int i, dimx, dimy;
 	byte cm;
 
 	// MPAL code
-	ds >> _mpalCode;
+	_mpalCode = ds.readSint32LE();
 
 	// Object name
-	ds >> _name;
+	_name = readString(ds);
 
 	// Z (signed)
-	ds >> _z;
+	_z = ds.readSint32LE();
 
 	// Parent position
-	ds >> _pos;
+	_pos.readFromStream(ds);
 
 	// Hotspot
-	ds >> _hot;
+	_hot.readFromStream(ds);
 
 	// Bounding box
-	ds >> _rcBox;
+	_rcBox.readFromStream(ds);
 
 	// Number of sprites, sound effects, and patterns
-	ds >> _nSprites >> _nSfx >> _nPatterns;
+	_nSprites = ds.readSint32LE();
+	_nSfx = ds.readSint32LE();
+	_nPatterns = ds.readSint32LE();
 
 	// Color mode
-	ds >> cm;
+	cm = ds.readByte();
 	_cm = (RMColorMode)cm;
 
 	// Flag for the presence of custom palette differences
-	ds >> _bPal;
+	_bPal = ds.readByte();
 
 	if (_cm == CM_256) {
 		//  If there is a palette, read it in
 		if (_bPal)
-			ds >> _pal;
+			_pal.readFromStream(ds);
 	}
 
 	// MPAL data
 	if (!bLOX)
-		ds += 20;
+		ds.skip(20);
 
-	ds >> _FX;
-	ds >> _FXparm;
+	_FX = ds.readByte();
+	_FXparm = ds.readByte();
 
 	if (!bLOX)
-		ds += 106;
+		ds.skip(106);
 
 	// Create sub-classes
 	if (_nSprites > 0)
@@ -580,8 +509,8 @@ void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
 	_patterns = new RMPattern[_nPatterns + 1];
 
 	// Read in class data
-	if (!ds.isError())
-		for (i = 0; i < _nSprites && !ds.isError(); i++) {
+	if (!ds.err())
+		for (i = 0; i < _nSprites && !ds.err(); i++) {
 			// Download the sprites
 			if (bLOX) {
 				_sprites[i].LOXGetSizeFromStream(ds, &dimx, &dimy);
@@ -597,8 +526,8 @@ void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
 				_sprites[i].setPalette(_pal._data);
 		}
 
-	if (!ds.isError())
-		for (i = 0; i < _nSfx && !ds.isError(); i++) {
+	if (!ds.err())
+		for (i = 0; i < _nSfx && !ds.err(); i++) {
 			if (bLOX)
 				_sfx[i].readFromStream(ds, true);
 			else
@@ -606,8 +535,8 @@ void RMItem::readFromStream(RMDataStream &ds, bool bLOX) {
 		}
 
 	// Read the pattern from pattern 1
-	if (!ds.isError())
-		for (i = 1; i <= _nPatterns && !ds.isError(); i++) {
+	if (!ds.err())
+		for (i = 1; i <= _nPatterns && !ds.err(); i++) {
 			if (bLOX)
 				_patterns[i].readFromStream(ds, true);
 			else
@@ -899,11 +828,9 @@ void RMWipe::initFade(int type) {
 	_bMustRegister = true;
 
 	RMRes res(RES_W_CIRCLE);
-	RMDataStream ds;
-
-	ds.openBuffer(res);
-	ds >> _wip0r;
-	ds.close();
+	Common::SeekableReadStream *ds = res.getReadStream();
+	_wip0r.readFromStream(*ds);
+	delete ds;
 
 	_wip0r.setPattern(1);
 
@@ -1706,48 +1633,43 @@ void RMCharacter::linkToBoxes(RMGameBoxes *boxes) {
 *       RMBox Methods
 \****************************************************************************/
 
-void RMBox::readFromStream(RMDataStream &ds) {
+void RMBox::readFromStream(Common::ReadStream &ds) {
 	uint16 w;
 	int i;
 	byte b;
 
 	// Bbox
-	ds >> _left;
-	ds >> _top;
-	ds >> _right;
-	ds >> _bottom;
+	_left = ds.readSint32LE();
+	_top = ds.readSint32LE();
+	_right = ds.readSint32LE();
+	_bottom = ds.readSint32LE();
 
 	// Adjacency
 	for (i = 0; i < MAXBOXES; i++) {
-		ds >> _adj[i];
+		_adj[i] = ds.readSint32LE();
 	}
 
 	// Misc
-	ds >> _numHotspot;
-	ds >> _destZ;
-	ds >> b;
+	_numHotspot = ds.readSint32LE();
+	_destZ = ds.readByte();
+	b = ds.readByte();
 	_bActive = b;
-	ds >> b;
+	b = ds.readByte();
 	_bReversed = b;
 
 	// Reversed expansion space
-	ds += 30;
+	for (i = 0; i < 30; i++)
+		ds.readByte();
 
 	// Hotspots
 	for (i = 0; i < _numHotspot; i++) {
-		ds >> w;
+		w = ds.readUint16LE();
 		_hotspot[i]._hotx = w;
-		ds >> w;
+		w = ds.readUint16LE();
 		_hotspot[i]._hoty = w;
-		ds >> w;
+		w = ds.readUint16LE();
 		_hotspot[i]._destination = w;
 	}
-}
-
-RMDataStream &operator>>(RMDataStream &ds, RMBox &box) {
-	box.readFromStream(ds);
-
-	return ds;
 }
 
 /****************************************************************************\
@@ -1763,25 +1685,27 @@ RMBoxLoc::~RMBoxLoc() {
 	delete[] _boxes;
 }
 
-void RMBoxLoc::readFromStream(RMDataStream &ds) {
+void RMBoxLoc::readFromStream(Common::ReadStream &ds) {
 	int i;
 	char buf[2];
 	byte ver;
 
 	// ID and version
-	ds >> buf[0] >> buf[1] >> ver;
+	buf[0] = ds.readByte();
+	buf[1] = ds.readByte();
+	ver = ds.readByte();
 	assert(buf[0] == 'B' && buf[1] == 'X');
 	assert(ver == 3);
 
 	// Number of boxes
-	ds >> _numbBox;
+	_numbBox = ds.readSint32LE();
 
 	// Allocate memory for the boxes
 	_boxes = new RMBox[_numbBox];
 
 	// Read in boxes
 	for (i = 0; i < _numbBox; i++)
-		ds >> _boxes[i];
+		_boxes[i].readFromStream(ds);
 }
 
 void RMBoxLoc::recalcAllAdj() {
@@ -1794,12 +1718,6 @@ void RMBoxLoc::recalcAllAdj() {
 			if (_boxes[_boxes[i]._hotspot[j]._destination]._bActive)
 				_boxes[i]._adj[_boxes[i]._hotspot[j]._destination] = 1;
 	}
-}
-
-RMDataStream &operator>>(RMDataStream &ds, RMBoxLoc &bl) {
-	bl.readFromStream(ds);
-
-	return ds;
 }
 
 /****************************************************************************\
@@ -1818,21 +1736,20 @@ RMGameBoxes::~RMGameBoxes() {
 
 void RMGameBoxes::init() {
 	int i;
-	RMDataStream ds;
 
 	// Load boxes from disk
 	_nLocBoxes = 130;
 	for (i = 1; i <= _nLocBoxes; i++) {
 		RMRes res(10000 + i);
 
-		ds.openBuffer(res);
+		Common::SeekableReadStream *ds = res.getReadStream();
 
 		_allBoxes[i] = new RMBoxLoc();
-		ds >> *_allBoxes[i];
+		_allBoxes[i]->readFromStream(*ds);
 
 		_allBoxes[i]->recalcAllAdj();
 
-		ds.close();
+		delete ds;
 	}
 }
 
@@ -1946,70 +1863,13 @@ RMLocation::RMLocation() {
 	_cmode = CM_256;
 }
 
-
-/**
- * Load a location (.LOC) from a file that is provided.
- *
- * @param lpszFileName          Name of the file
- */
-bool RMLocation::load(const char *lpszFileName) {
-	Common::File f;
-	bool bRet;
-
-	// Open the file for reading
-	if (!f.open(lpszFileName))
-		return false;
-
-	// Passes to the method variation for loading from the opened file
-	bRet = load(f);
-
-	// Close the file
-	f.close();
-
-	return bRet;
-}
-
-
-/**
- * Load a location (.LOC) from a given open file
- *
- * @param hFile                 File reference
- *
- * @returns     True if succeeded OK, false in case of error.
- */
-bool RMLocation::load(Common::File &file) {
-	bool bRet;
-
-	file.seek(0);
-
-	RMFileStreamSlow fs;
-
-	fs.openFile(file);
-	bRet = load(fs);
-	fs.close();
-
-	return bRet;
-}
-
-
-bool RMLocation::load(const byte *buf) {
-	RMDataStream ds;
-	bool bRet;
-
-	ds.openBuffer(buf);
-	bRet = load(ds);
-	ds.close();
-	return bRet;
-}
-
-
 /**
  * Load a location (.LOC) from a given data stream
  *
  * @param ds                        Data stream
  * @returns     True if succeeded OK, false in case of error.
  */
-bool RMLocation::load(RMDataStream &ds) {
+bool RMLocation::load(Common::SeekableReadStream &ds) {
 	char id[3];
 	int dimx, dimy;
 	byte ver;
@@ -2021,7 +1881,7 @@ bool RMLocation::load(RMDataStream &ds) {
 	_prevFixedScroll.set(-1, -1);
 
 	// Check the ID
-	ds >> id[0] >> id[1] >> id[2];
+	ds.read(id, 3);
 
 	// Check if we are in a LOX
 	if (id[0] == 'L' && id[1] == 'O' && id[2] == 'X')
@@ -2032,26 +1892,28 @@ bool RMLocation::load(RMDataStream &ds) {
 		return false;
 
 	// Version
-	ds >> ver;
+	ver = ds.readByte();
 	assert(ver == 6);
 
 	// Location name
-	ds >> _name;
+	_name = readString(ds);
 
 	// Skip the MPAL bailouts (64 bytes)
-	ds >> TEMPNumLoc;
-	ds >> TEMPTonyStart._x >> TEMPTonyStart._y;
-	ds += 64 - 4 * 3;
+	TEMPNumLoc = ds.readSint32LE();
+	TEMPTonyStart._x = ds.readSint32LE();
+	TEMPTonyStart._y = ds.readSint32LE();
+	ds.skip(64 - 4 * 3);
 
 	// Skip flag associated with the background (?)
-	ds += 1;
+	ds.skip(1);
 
 	// Location dimensions
-	ds >> dimx >> dimy;
+	dimx = ds.readSint32LE();
+	dimy = ds.readSint32LE();
 	_curScroll.set(0, 0);
 
 	// Read the color mode
-	ds >> cm;
+	cm = ds.readByte();
 	_cmode = (RMColorMode)cm;
 
 	// Initialize the source buffer and read the location
@@ -2076,7 +1938,7 @@ bool RMLocation::load(RMDataStream &ds) {
 //	assert(dimy!=512);
 
 	// Number of objects
-	ds >> _nItems;
+	_nItems = ds.readSint32LE();
 
 	// Create and read in the objects
 	if (_nItems > 0)
@@ -2084,32 +1946,34 @@ bool RMLocation::load(RMDataStream &ds) {
 
 
 	g_vm->freezeTime();
-	for (i = 0; i < _nItems && !ds.isError(); i++)
-		ds >> _items[i];
+	for (i = 0; i < _nItems && !ds.err(); i++)
+		_items[i].readFromStream(ds);
 	g_vm->unfreezeTime();
 
-	return ds.isError();
+	return ds.err();
 }
 
 
-bool RMLocation::loadLOX(RMDataStream &ds) {
+bool RMLocation::loadLOX(Common::SeekableReadStream &ds) {
 	int dimx, dimy;
 	byte ver;
 	int i;
 
 	// Version
-	ds >> ver;
+	ver = ds.readByte();
 	assert(ver == 1);
 
 	// Location name
-	ds >> _name;
+	_name = readString(ds);
 
 	// Location number
-	ds >> TEMPNumLoc;
-	ds >> TEMPTonyStart._x >> TEMPTonyStart._y;
+	TEMPNumLoc = ds.readSint32LE();
+	TEMPTonyStart._x = ds.readSint32LE();
+	TEMPTonyStart._y = ds.readSint32LE();
 
 	// Dimensions
-	ds >> dimx >> dimy;
+	dimx = ds.readSint32LE();
+	dimy = ds.readSint32LE();
 	_curScroll.set(0, 0);
 
 	// It's always 65K (16-bit) mode
@@ -2120,16 +1984,16 @@ bool RMLocation::loadLOX(RMDataStream &ds) {
 	_buf->init(ds, dimx, dimy, true);
 
 	// Number of items
-	ds >> _nItems;
+	_nItems = ds.readSint32LE();
 
 	// Create and read objects
 	if (_nItems > 0)
 		_items = new RMItem[_nItems];
 
-	for (i = 0; i < _nItems && !ds.isError(); i++)
+	for (i = 0; i < _nItems && !ds.err(); i++)
 		_items[i].readFromStream(ds, true);
 
-	return ds.isError();
+	return ds.err();
 }
 
 

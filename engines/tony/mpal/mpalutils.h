@@ -27,6 +27,10 @@
 #include "common/scummsys.h"
 #include "tony/mpal/memory.h"
 
+namespace Common {
+	class SeekableReadStream;
+}
+
 namespace Tony {
 
 namespace MPAL {
@@ -47,6 +51,8 @@ public:
 
     // Casting for access to data
     operator const byte*();
+
+	Common::SeekableReadStream *getReadStream();
 };
 
 class RMResRaw : public RMRes {

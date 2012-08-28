@@ -125,7 +125,7 @@ int RMGfxSourceBuffer::init(const byte *buf, int dimx, int dimy, bool bLoadPalet
 	return dimx * dimy * getBpp() / 8;
 }
 
-void RMGfxSourceBuffer::init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
+void RMGfxSourceBuffer::init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	create(dimx, dimy, getBpp());
 	ds.read(_buf, dimx * dimy * getBpp() / 8);
 
@@ -489,7 +489,7 @@ int RMGfxSourceBufferPal::init(const byte *buf, int dimx, int dimy, bool bLoadPa
 	return read;
 }
 
-void RMGfxSourceBufferPal::init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
+void RMGfxSourceBufferPal::init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	// Load the RAW image
 	RMGfxSourceBuffer::init(ds, dimx, dimy);
 
@@ -749,13 +749,13 @@ int RMGfxSourceBuffer8RLE::init(const byte *buf, int dimx, int dimy, bool bLoadP
 	return RMGfxSourceBufferPal::init(buf, dimx, dimy, bLoadPalette);
 }
 
-void RMGfxSourceBuffer8RLE::init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
+void RMGfxSourceBuffer8RLE::init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	if (_bNeedRLECompress) {
 		RMGfxSourceBufferPal::init(ds, dimx, dimy, bLoadPalette);
 	} else {
 		int size;
 
-		ds >> size;
+		size = ds.readSint32LE();
 		_buf = new byte[size];
 		ds.read(_buf, size);
 
@@ -1826,7 +1826,7 @@ int RMGfxSourceBuffer8RLEByteAA::init(const byte *buf, int dimx, int dimy, bool 
 	return RMGfxSourceBuffer8RLE::init(buf, dimx, dimy, bLoadPalette);
 }
 
-void RMGfxSourceBuffer8RLEByteAA::init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
+void RMGfxSourceBuffer8RLEByteAA::init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	RMGfxSourceBuffer8RLE::init(ds, dimx, dimy, bLoadPalette);
 
 	if (!_bNeedRLECompress) {
@@ -1862,7 +1862,7 @@ int RMGfxSourceBuffer8RLEWordAA::init(byte *buf, int dimx, int dimy, bool bLoadP
 	return RMGfxSourceBuffer8RLE::init(buf, dimx, dimy, bLoadPalette);
 }
 
-void RMGfxSourceBuffer8RLEWordAA::init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette) {
+void RMGfxSourceBuffer8RLEWordAA::init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette) {
 	RMGfxSourceBuffer8RLE::init(ds, dimx, dimy, bLoadPalette);
 
 	if (!_bNeedRLECompress) {

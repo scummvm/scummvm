@@ -35,360 +35,21 @@ namespace Tony {
 /**
  * Extracts a string from a data stream
  * @param df                data stream
- * @param var               String
  */
-RMDataStream &operator>>(RMDataStream &df, Common::String &var) {
+Common::String readString(Common::ReadStream &df) {
+	Common::String var;
 	uint8 len;
 	int i;
 
-	df >> len;
+	len = df.readByte();
 
 	for (i = 0; i < len; i++) {
 		char c;
-		df >> c;
+		c = df.readByte();
 		var += c;
 	}
 
-	return df;
-}
-
-/****************************************************************************\
-*       RMFileStreamSlow Methods
-\****************************************************************************/
-
-RMFileStreamSlow::RMFileStreamSlow() : RMDataStream() {
-	_stream = NULL;
-}
-
-RMFileStreamSlow::~RMFileStreamSlow() {
-	close();
-}
-
-void RMFileStreamSlow::close() {
-	delete _stream;
-}
-
-bool RMFileStreamSlow::openFile(Common::File &file) {
-	_stream = file.readStream(file.size());
-
-	_length = _stream->pos();
-
-	return true;
-}
-
-bool RMFileStreamSlow::openFile(const char *lpFN) {
-	// Open file for reading
-	Common::File f;
-	if (!f.open(lpFN))
-		return false;
-
-	_length = f.size();
-	_stream = f.readStream(f.size());
-
-	return true;
-}
-
-RMDataStream &RMFileStreamSlow::operator+=(int nBytes) {
-	seek(nBytes);
-	return *this;
-}
-
-int RMFileStreamSlow::pos() {
-	return _stream->pos();
-}
-
-bool RMFileStreamSlow::isEOF() {
-	return (pos() >= _length);
-}
-
-int RMFileStreamSlow::seek(int nBytes, RMDSPos where) {
-	switch (where) {
-	case START:
-		return _stream->seek(nBytes);
-
-	case END:
-		return _stream->seek(nBytes, SEEK_END);
-
-	case CUR:
-		return _stream->seek(nBytes, SEEK_CUR);
-
-	default:
-		return 0;
-	}
-}
-
-bool RMFileStreamSlow::read(void *buf, int size) {
-	uint32 dwRead;
-
-	dwRead = _stream->read(buf, size);
-	return ((int)dwRead == size);
-}
-
-RMFileStreamSlow &operator>>(RMFileStreamSlow &df, char &var) {
-	df.read(&var, 1);
-	return df;
-}
-
-RMFileStreamSlow &operator>>(RMFileStreamSlow &df, byte &var) {
-	df.read(&var, 1);
-	return df;
-}
-
-RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint16 &var) {
-	uint16 v;
-	df.read(&v, 2);
-	v = FROM_LE_16(v);
-	return df;
-}
-
-RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int16 &var) {
-	uint16 v;
-	df.read(&v, 2);
-	var = (int16)FROM_LE_16(v);
-	return df;
-}
-
-RMFileStreamSlow &operator>>(RMFileStreamSlow &df, int &var) {
-	int v;
-	df.read(&v, 4);
-	var = FROM_LE_32(v);
-	return df;
-}
-
-RMFileStreamSlow &operator>>(RMFileStreamSlow &df, uint32 &var) {
-	uint32 v;
-	df.read(&v, 4);
-	var = FROM_LE_32(v);
-	return df;
-}
-
-/****************************************************************************\
-*       RMDataStream methods
-\****************************************************************************/
-
-/**
- * Constructor
- */
-RMDataStream::RMDataStream() {
-	_length = 0;
-	_pos = 0;
-	_bError = false;
-
-	_buf = NULL;
-	_ecode = 0;
-}
-
-/**
- * Destructor
- */
-RMDataStream::~RMDataStream() {
-	close();
-}
-
-/**
- * Close a stream
- */
-void RMDataStream::close() {
-	_length = 0;
-	_pos = 0;
-}
-
-/**
- * Takes the address of the buffer from which will be read the data.
- * @param lpBuf         Data buffer
- * @param size          Size of the buffer
- * @remarks             If the length of the buffer is not known, and cannot be
- *                      specified, then EOF() and Seek() to end won't work.
- */
-void RMDataStream::openBuffer(const byte *lpBuf, int size) {
-	_length = size;
-	_buf = lpBuf;
-	_bError = false;
-	_pos = 0;
-}
-
-/**
- * Returns the length of the stream
- * @returns             Stream length
- */
-int RMDataStream::length() {
-	return _length;
-}
-
-/**
- * Determines if the end of the stream has been reached
- * @returns             true if end of stream reached, false if not
- */
-bool RMDataStream::isEOF() {
-	return (_pos >= _length);
-}
-
-/**
- * Extracts data from the stream
- * @param df                Stream
- * @param var               Variable of a supported type
- * @returns                 Value read from the stream
- */
-RMDataStream &operator>>(RMDataStream &df, char &var) {
-	df.read(&var, 1);
-	return df;
-}
-
-/**
- * Extracts data from the stream
- * @param df                Stream
- * @param var               Variable of a supported type
- * @returns                 Value read from the stream
- */
-RMDataStream &operator>>(RMDataStream &df, uint8 &var) {
-	df.read(&var, 1);
-	return df;
-}
-
-/**
- * Extracts data from the stream
- * @param df                Stream
- * @param var               Variable of a supported type
- * @returns                 Value read from the stream
- */
-RMDataStream &operator>>(RMDataStream &df, uint16 &var) {
-	uint16 v;
-	df.read(&v, 2);
-
-	var = FROM_LE_16(v);
-	return df;
-}
-
-/**
- * Extracts data from the stream
- * @param df                Stream
- * @param var               Variable of a supported type
- * @returns                 Value read from the stream
- */
-RMDataStream &operator>>(RMDataStream &df, int16 &var) {
-	uint16 v;
-	df.read(&v, 2);
-
-	var = (int16)FROM_LE_16(v);
-	return df;
-}
-
-/**
- * Extracts data from the stream
- * @param df                Stream
- * @param var               Variable of a supported type
- * @returns                 Value read from the stream
- */
-RMDataStream &operator>>(RMDataStream &df, int &var) {
-	uint32 v;
-	df.read(&v, 4);
-
-	var = (int)FROM_LE_32(v);
-	return df;
-}
-
-/**
- * Extracts data from the stream
- * @param df                Stream
- * @param var               Variable of a supported type
- * @returns                 Value read from the stream
- */
-RMDataStream &operator>>(RMDataStream &df, uint32 &var) {
-	uint32 v;
-	df.read(&v, 4);
-
-	var = FROM_LE_32(v);
-	return df;
-}
-
-/**
- * Reads a series of data from the stream in a buffer
- * @param lpBuf             Data buffer
- * @param size              Size of the buffer
- * @returns                 true if we have reached the end, false if not
- */
-bool RMDataStream::read(void *lpBuf, int size) {
-	byte *dest = (byte *)lpBuf;
-
-	if ((_pos + size) > _length) {
-		Common::copy(_buf + _pos, _buf + _pos + (_length - _pos), dest);
-
-		return true;
-	} else {
-		Common::copy(_buf + _pos, _buf + _pos + size, dest);
-
-		_pos += size;
-		return false;
-	}
-}
-
-/**
- * Skips a number of bytes in the stream
- * @param nBytres           Number of bytes to skip
- * @returns                 The stream
- */
-RMDataStream &RMDataStream::operator+=(int nBytes) {
-	_pos += nBytes;
-	return *this;
-}
-
-/**
- * Seeks to a position within the stream
- * @param nBytes            Number of bytes from specified origin
- * @param origin            Origin to do offset from
- * @returns                 The absolute current position in bytes
- */
-int RMDataStream::seek(int nBytes, RMDSPos origin) {
-	switch (origin) {
-	case CUR:
-		break;
-
-	case START:
-		_pos = 0;
-		break;
-
-	case END:
-		if (_length == SIZENOTKNOWN)
-			return _pos;
-		_pos = _length;
-		break;
-	}
-
-	_pos += nBytes;
-	return _pos;
-}
-
-/**
- * Returns the current position of the stream
- * @returns                 The current position
- */
-int RMDataStream::pos() {
-	return _pos;
-}
-
-/**
- * Check if an error occurred during reading the stream
- * @returns                 true if there was an error, false otherwise
- */
-bool RMDataStream::isError() {
-	return _bError;
-}
-
-/**
- * Sets an error code for the stream
- * @param code              Error code
- */
-void RMDataStream::setError(int code) {
-	_bError = true;
-	_ecode = code;
-}
-
-/**
- * Returns the error code for the stream
- * @returns                 Error code
- */
-int RMDataStream::getError() {
-	return _ecode;
+	return var;
 }
 
 /****************************************************************************\
@@ -507,9 +168,9 @@ bool RMPoint::operator!=(RMPoint p) {
 /**
  * Reads a point from a stream
  */
-RMDataStream &operator>>(RMDataStream &ds, RMPoint &p) {
-	ds >> p._x >> p._y;
-	return ds;
+void RMPoint::readFromStream(Common::ReadStream &ds) {
+	_x = ds.readSint32LE();
+	_y = ds.readSint32LE();
 }
 
 /****************************************************************************\
@@ -663,9 +324,11 @@ void RMRect::normalizeRect() {
 	setRect(MIN(_x1, _x2), MIN(_y1, _y2), MAX(_x1, _x2), MAX(_y1, _y2));
 }
 
-RMDataStream &operator>>(RMDataStream &ds, RMRect &rc) {
-	ds >> rc._x1 >> rc._y1 >> rc._x2 >> rc._y2;
-	return ds;
+void RMRect::readFromStream(Common::ReadStream &ds) {
+	_x1 = ds.readSint32LE();
+	_y1 = ds.readSint32LE();
+	_x2 = ds.readSint32LE();
+	_y2 = ds.readSint32LE();
 }
 
 /****************************************************************************\

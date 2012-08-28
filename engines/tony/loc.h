@@ -62,7 +62,7 @@ public:
 	byte _data[1024];
 
 public:
-	friend RMDataStream &operator>>(RMDataStream &ds, RMPalette &pal);
+	void readFromStream(Common::ReadStream &ds);
 };
 
 
@@ -79,14 +79,12 @@ public:
 	RMSfx();
 	virtual ~RMSfx();
 
-	friend RMDataStream &operator>>(RMDataStream &ds, RMSfx &sfx);
-
 	void play(bool bLoop = false);
 	void setVolume(int vol);
 	void pause(bool bPause);
 	void stop();
 
-	void readFromStream(RMDataStream &ds, bool bLOX = false);
+	void readFromStream(Common::ReadStream &ds, bool bLOX = false);
 };
 
 
@@ -116,13 +114,11 @@ public:
 		byte _flag;
 
 	public:
-		friend RMDataStream &operator>>(RMDataStream &ds, RMSlot &slot);
-
 		RMPoint pos() {
 			return _pos;
 		}
 
-		void readFromStream(RMDataStream &ds, bool bLOX = false);
+		void readFromStream(Common::ReadStream &ds, bool bLOX = false);
 	};
 
 public:
@@ -145,8 +141,6 @@ public:
 	RMPattern();
 	virtual ~RMPattern();
 
-	friend RMDataStream &operator>>(RMDataStream &ds, RMPattern &pat);
-
 	// A warning that the pattern now and the current
 	int init(RMSfx *sfx, bool bPlayP0 = false, byte *bFlag = NULL);
 
@@ -162,7 +156,7 @@ public:
 		return _curPos;
 	}
 
-	void readFromStream(RMDataStream &ds, bool bLOX = false);
+	void readFromStream(Common::ReadStream &ds, bool bLOX = false);
 
 private:
 	void updateCoord();
@@ -185,13 +179,12 @@ public:
 	virtual ~RMSprite();
 
 	void init(RMGfxSourceBuffer *buf);
-	friend RMDataStream &operator>>(RMDataStream &ds, RMSprite &sprite);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void setPalette(byte *lpBuf);
-	void getSizeFromStream(RMDataStream &ds, int *dimx, int *dimy);
-	void LOXGetSizeFromStream(RMDataStream &ds, int *dimx, int *dimy);
+	void getSizeFromStream(Common::SeekableReadStream &ds, int *dimx, int *dimy);
+	void LOXGetSizeFromStream(Common::SeekableReadStream &ds, int *dimx, int *dimy);
 
-	void readFromStream(RMDataStream &ds, bool bLOX = false);
+	void readFromStream(Common::SeekableReadStream &ds, bool bLOX = false);
 };
 
 
@@ -240,8 +233,6 @@ public:
 public:
 	RMItem();
 	virtual ~RMItem();
-
-	friend RMDataStream &operator>>(RMDataStream &ds, RMItem &item);
 
 	// Process to make the object move on any animations.
 	// Returns TRUE if it should be redrawn on the next frame
@@ -296,7 +287,7 @@ public:
 
 	void playSfx(int nSfx);
 
-	void readFromStream(RMDataStream &ds, bool bLOX = false);
+	void readFromStream(Common::SeekableReadStream &ds, bool bLOX = false);
 
 	void pauseSound(bool bPause);
 
@@ -329,11 +320,7 @@ public:
 	bool _bActive;
 	bool _bReversed;
 
-private:
-	void readFromStream(RMDataStream &ds);
-
-public:
-	friend RMDataStream &operator>>(RMDataStream &ds, RMBox &box);
+	void readFromStream(Common::ReadStream &ds);
 };
 
 
@@ -342,14 +329,12 @@ public:
 	int _numbBox;
 	RMBox *_boxes;
 
-private:
-	void readFromStream(RMDataStream &ds);
+	void readFromStream(Common::ReadStream &ds);
 
 public:
 	RMBoxLoc();
 	virtual ~RMBoxLoc();
 
-	friend RMDataStream &operator >>(RMDataStream &ds, RMBoxLoc &bl);
 	void recalcAllAdj();
 };
 
@@ -559,11 +544,8 @@ public:
 	virtual ~RMLocation();
 
 	// Load variations
-	bool load(const char *lpszFileName);
-	bool load(Common::File &file);
-	bool load(const byte *buf);
-	bool load(RMDataStream &ds);
-	bool loadLOX(RMDataStream &ds);
+	bool load(Common::SeekableReadStream &ds);
+	bool loadLOX(Common::SeekableReadStream &ds);
 
 	// Unload
 	void unload();

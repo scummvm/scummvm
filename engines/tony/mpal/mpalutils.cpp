@@ -23,6 +23,7 @@
 
 #include "tony/mpal/mpalutils.h"
 #include "tony/tony.h"
+#include "common/memstream.h"
 
 namespace Tony {
 
@@ -73,6 +74,10 @@ RMRes::operator const byte *() {
  */
 unsigned int RMRes::size() {
 	return globalSize(_h);
+}
+
+Common::SeekableReadStream *RMRes::getReadStream() {
+	return new Common::MemoryReadStream(_buf, size());
 }
 
 /****************************************************************************\

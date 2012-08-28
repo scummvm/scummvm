@@ -416,7 +416,10 @@ uint32 RMGfxEngine::loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 		if (!res.isValid())
 			continue;
 
-		_loc.load(res);
+		Common::SeekableReadStream *ds = res.getReadStream();
+		_loc.load(*ds);
+		delete ds;
+
 		initForNewLocation(nLoc, ptTonyStart, start);
 		bLoaded = true;
 		break;

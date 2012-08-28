@@ -1492,11 +1492,10 @@ void RMPointer::init() {
 
 	for (i = 0; i < 5; i++) {
 		RMRes res(RES_P_PAP1 + i);
-		RMDataStream ds;
-
-		ds.openBuffer(res);
+		Common::SeekableReadStream *ds = res.getReadStream();
 		_specialPointer[i] = new RMItem;
-		ds >> *_specialPointer[i];
+		_specialPointer[i]->readFromStream(*ds);
+		delete ds;
 	}
 
 	//m_hotspot[0].set(19,5);

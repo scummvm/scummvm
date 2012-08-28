@@ -87,7 +87,6 @@ RMGfxSourceBuffer *RMTony::newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 void RMTony::init() {
 	RMRes tony(0);
 	RMRes body(9999);
-	RMDataStream ds;
 
 	// Tony is shown by default
 	_bShow = _bShowShadow = true;
@@ -101,18 +100,18 @@ void RMTony::init() {
 	_bIsStaticTalk = false;
 
 	// Opens the buffer
-	ds.openBuffer(tony);
+	Common::SeekableReadStream *ds = tony.getReadStream();
 
 	// Reads his details from the stream
-	readFromStream(ds, true);
+	readFromStream(*ds, true);
 
 	// Closes the buffer
-	ds.close();
+	delete ds;
 
 	// Reads Tony's body
-	ds.openBuffer(body);
-	_body.readFromStream(ds, true);
-	ds.close();
+	ds = body.getReadStream();
+	_body.readFromStream(*ds, true);
+	delete ds;
 	_body.setPattern(0);
 
 	_nTimeLastStep = g_vm->getTime();

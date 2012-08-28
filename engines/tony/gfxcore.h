@@ -290,7 +290,7 @@ public:
 	// Load the data for the surface
 	virtual int init(uint32 resID, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
-	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 
 	virtual ~RMGfxSourceBuffer();
 
@@ -343,7 +343,7 @@ public:
 	virtual ~RMGfxSourceBufferPal();
 
 	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
-	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 
 	int loadPaletteWA(uint32 resID, bool bSwapped = false);
 	int loadPaletteWA(const byte *buf, bool bSwapped = false);
@@ -418,7 +418,7 @@ public:
 	virtual ~RMGfxSourceBuffer8RLE();
 
 	// Overload of the initialization method
-	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	// Draw image with RLE decompression
@@ -501,7 +501,7 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded initialization methods
-	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	virtual ~RMGfxSourceBuffer8RLEByteAA();
@@ -515,7 +515,7 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded initialization methods
-	virtual void init(RMDataStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
 	virtual int init(byte *buf, int dimx, int dimy, bool bLoadPalette = false);
 
 	virtual ~RMGfxSourceBuffer8RLEWordAA();

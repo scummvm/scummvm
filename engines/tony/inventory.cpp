@@ -95,15 +95,13 @@ void RMInventory::init() {
 	for (i = 0; i <= _nItems; i++) {
 		// Load the items from the resource
 		RMRes res(curres);
-		RMDataStream ds;
-
 		assert(res.isValid());
+		Common::SeekableReadStream *ds = res.getReadStream();
 
 		// Initialize the MPAL inventory item by reading it in.
 		_items[i]._icon.setInitCurPattern(false);
-		ds.openBuffer(res);
-		ds >> _items[i]._icon;
-		ds.close();
+		_items[i]._icon.readFromStream(*ds);
+		delete ds;
 
 		// Puts in the default pattern 1
 		_items[i]._pointer = NULL;
@@ -131,13 +129,12 @@ void RMInventory::init() {
 	_items[29]._icon.setPattern(1);
 
 	// Download interface
-	RMDataStream ds;
 	RMRes res(RES_I_MINIINTER);
 	assert(res.isValid());
-	ds.openBuffer(res);
-	ds >> _miniInterface;
+	Common::SeekableReadStream *ds = res.getReadStream();
+	_miniInterface.readFromStream(*ds);
 	_miniInterface.setPattern(1);
-	ds.close();
+	delete ds;
 
 	// Create the text for hints on the mini interface
 	_hints[0].setAlignType(RMText::HCENTER, RMText::VTOP);
