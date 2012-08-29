@@ -145,7 +145,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	lpmdDialog->nObj = READ_LE_UINT32(lpBuf);
 	lpBuf += 4;
 
-	/* Periods */
+	// Periods
 	uint32 num = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
@@ -166,7 +166,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	lpmdDialog->_periodNums[i] = 0;
 	lpmdDialog->_periods[i] = NULL;
 
-	/* Groups */
+	// Groups
 	num = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 	uint32 curCmd = 0;
@@ -255,7 +255,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	if (curCmd >= MAX_COMMANDS_PER_DIALOG)
 		error("Too much commands in dialog #%d",lpmdDialog->nObj);
 
-	/* Choices */
+	// Choices
 	num = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
@@ -344,7 +344,7 @@ static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	lpmiItem->nActions=*lpBuf;
 	lpBuf++;
 
-	/* Allocation action */
+	// Allocation action
 	if (lpmiItem->nActions > 0)
 		lpmiItem->Action = (ItemAction *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(struct ItemAction) * (int)lpmiItem->nActions);
 
@@ -519,7 +519,7 @@ static const byte *ParseLocation(const byte *lpBuf, LPMPALLOCATION lpmlLocation)
 bool ParseMpc(const byte *lpBuf) {
 	byte *lpTemp;
 
-	/* 1. Variables */
+	// 1. Variables
 	if (lpBuf[0] != 'V' || lpBuf[1] != 'A' || lpBuf[2] != 'R' || lpBuf[3] != 'S')
 		return false;
 
@@ -547,7 +547,7 @@ bool ParseMpc(const byte *lpBuf) {
 
 	globalUnlock(GLOBALS._hVars);
 
-	/* 2. Messages */
+	// 2. Messages
 	if (lpBuf[0] != 'M' || lpBuf[1] != 'S' || lpBuf[2] != 'G' || lpBuf[3] != 'S')
 		return false;
 
@@ -596,7 +596,7 @@ bool ParseMpc(const byte *lpBuf) {
 	globalUnlock(GLOBALS._hMsgs);
 #endif
 
-	/* 3. Objects */
+	// 3. Objects
 	if (lpBuf[0] != 'O' || lpBuf[1] != 'B' || lpBuf[2] != 'J' || lpBuf[3] != 'S')
 		return false;
 

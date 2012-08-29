@@ -206,7 +206,7 @@ void RMFontDialog::init() {
 
 	load(RES_F_PARL, nchars, 20, 20);
 
-	// Initialize the f**king table
+	// Initialize the font table
 	_lDefault = 13;
 	_hDefault = 18;
 	Common::fill(&_l2Table[0][0], &_l2Table[0][0] + (256 * 256), '\0');
@@ -281,7 +281,7 @@ void RMFontCredits::init() {
 
 
 /***************************************************************************\
-*       Metodi di RMFontObj
+*       RMFontObj Methods
 \****************************************************************************/
 
 #define TOUPPER(a)  ((a) >= 'a' && (a) <= 'z' ? (a) + 'A' - 'a' : (a))
@@ -310,7 +310,7 @@ void RMFontObj::init() {
 
 	load(RES_F_OBJ, nchars, 25, 30);
 
-	// Initialize the f**king table
+	// Initialize the font table
 	_lDefault = 26;
 	_hDefault = 30;
 	Common::fill(&_l2Table[0][0], &_l2Table[0][0] + (256 * 256), '\0');
@@ -320,7 +320,7 @@ void RMFontObj::init() {
 		_lTable[i] = g_vm->_lTableObj[i];
 	}
 
-	/* Casi particolari */
+	// Special case
 	setBothCase('C', 'C', 2);
 	setBothCase('A', 'T', -2);
 	setBothCase('R', 'S', 2);

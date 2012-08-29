@@ -95,7 +95,7 @@ namespace MPAL {
 *       Macro definitions and structures
 \****************************************************************************/
 
-/* OK value for the error codes */
+// OK value for the error codes
 #define OK      0
 
 #define MAXFRAMES  400        // frame animation of an object
@@ -119,31 +119,31 @@ enum QueryCoordinates {
  * that can do at the library
  */
 enum QueryTypes {
-  /* General Query */
+  // General Query
   MPQ_VERSION=10,
 
   MPQ_GLOBAL_VAR=50,
   MPQ_RESOURCE,
   MPQ_MESSAGE,
 
-  /* Query on leases */
+  // Query on leases
   MPQ_LOCATION_IMAGE=100,
   MPQ_LOCATION_SIZE,
 
-  /* Queries about items */
+  // Queries about items
   MPQ_ITEM_LIST=200,
   MPQ_ITEM_DATA,
   MPQ_ITEM_PATTERN,
   MPQ_ITEM_NAME,
 	MPQ_ITEM_IS_ACTIVE,
 
-  /* Query dialog */
+  // Query dialog
   MPQ_DIALOG_PERIOD=300,
   MPQ_DIALOG_WAITFORCHOICE,
   MPQ_DIALOG_SELECTLIST,
   MPQ_DIALOG_SELECTION,
 
-  /* Query execution */
+  // Query execution
   MPQ_DO_ACTION=400,
   MPQ_DO_DIALOG
 };

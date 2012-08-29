@@ -330,10 +330,10 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
 
 	for (int j = 0; dialog->_periods[j] != NULL; j++) {
 		if (dialog->_periodNums[j] == nPeriod) {
-			/* Found the phrase, it should be duplicated */
+			// Found the phrase, it should be duplicated
 			origmsg = (const char *)globalLock(dialog->_periods[j]);
 
-			/* Calculate the length and allocate memory */
+			// Calculate the length and allocate memory
 			int i = 0;
 			while (origmsg[i] != '\0')
 				i++;
@@ -408,14 +408,14 @@ static uint32 *getSelectList(uint32 i) {
 	uint32 *sl;
 	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 
-	/* Count how many are active selects */
+	// Count how many are active selects
 	int num = 0;
 	for (int j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
 		if (dialog->_choice[i]._select[j].curActive)
 			num++;
 	}
 
-	/* If there are 0, it's a mistake */
+	// If there are 0, it's a mistake
 	if (num == 0)
 		return NULL;
 
@@ -423,7 +423,7 @@ static uint32 *getSelectList(uint32 i) {
 	if (sl == NULL)
 		return NULL;
 
-	/* Copy all the data inside the active select list */
+	// Copy all the data inside the active select list
 	int k = 0;
 	for (int j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
 		if (dialog->_choice[i]._select[j].curActive)
@@ -821,18 +821,18 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	/* Initialize data pointers */
+	// Initialize data pointers
 	_ctx->MyActions = NULL;
 	_ctx->MyThreads = NULL;
 
-	/* To begin with, we need to request the item list from the location */
+	// To begin with, we need to request the item list from the location
 	_ctx->il = mpalQueryItemList(GLOBALS._nPollingLocations[id]);
 
-	/* Count the items */
+	// Count the items
 	for (_ctx->numitems = 0; _ctx->il[_ctx->numitems] != 0; _ctx->numitems++)
 		;
 
-	/* We look for items without idle actions, and eliminate them from the list */
+	// We look for items without idle actions, and eliminate them from the list
 	lockItems();
 	_ctx->nIdleActions = 0;
 	_ctx->nRealItems = 0;
@@ -853,14 +853,14 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		_ctx->nIdleActions += _ctx->k;
 
 		if (_ctx->k == 0)
-			/* We can remove this item from the list */
+			// We can remove this item from the list
 			_ctx->il[_ctx->i] = (uint32)NULL;
 		else
 			_ctx->nRealItems++;
 	}
 	unlockItems();
 
-	/* If there is nothing left, we can exit */
+	// If there is nothing left, we can exit
 	if (_ctx->nRealItems == 0) {
 		globalDestroy(_ctx->il);
 		CORO_KILL_SELF();
@@ -875,8 +875,8 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	}
 
 
-	/* We have established that there is at least one item that contains idle actions.
-	   Now we created the mirrored copies of the idle actions. */
+	// We have established that there is at least one item that contains idle actions.
+	// Now we created the mirrored copies of the idle actions.
 	_ctx->MyActions = (MYACTION *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nIdleActions * sizeof(MYACTION));
 	if (_ctx->MyActions == NULL) {
 		globalDestroy(_ctx->MyThreads);
@@ -914,11 +914,11 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	unlockItems();
 
-	/* We don't need the item list anymore */
+	// We don't need the item list anymore
 	globalDestroy(_ctx->il);
 
 
-	/* Here's the main loop */
+	// Here's the main loop
 	while (1) {
 		// Searching for idle actions requiring time to execute
 		_ctx->curTime = g_vm->getTime();
@@ -932,7 +932,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 				_ctx->dwSleepTime = MIN(_ctx->dwSleepTime, _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime - _ctx->curTime);
 		}
 
-		/* We fall alseep, but always checking that the event is set when prompted for closure */
+		// We fall alseep, but always checking that the event is set when prompted for closure
 		CORO_INVOKE_3(CoroScheduler.waitForSingleObject, GLOBALS._hEndPollingLocations[id], _ctx->dwSleepTime, &_ctx->expired);
 
 		//if (_ctx->k == WAIT_OBJECT_0)
@@ -951,19 +951,19 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		_ctx->curTime = g_vm->getTime();
 
-		/* Loop through all the necessary idle actions */
+		// Loop through all the necessary idle actions
 		for (_ctx->k = 0; _ctx->k < _ctx->nIdleActions; _ctx->k++) {
 			if (_ctx->curTime >= _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime) {
 				_ctx->MyActions[_ctx->k].dwLastTime += _ctx->MyActions[_ctx->k].wTime;
 
-			   /* It's time to check to see if fortune is on the side of the idle action */
+			   // It's time to check to see if fortune is on the side of the idle action
 				byte randomVal = (byte)g_vm->_randomSource.getRandomNumber(99);
 				if (randomVal < _ctx->MyActions[_ctx->k].perc) {
-					/* Check if there is an action running on the item */
+					// Check if there is an action running on the item
 					if ((GLOBALS._bExecutingAction) && (GLOBALS._nExecutingAction == _ctx->MyActions[_ctx->k].nItem))
 						continue;
 
-					/* Check to see if there already another idle funning running on the item */
+					// Check to see if there already another idle funning running on the item
 					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
 						if (_ctx->MyThreads[_ctx->i].nItem == _ctx->MyActions[_ctx->k].nItem)
 							break;
@@ -972,11 +972,11 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					if (_ctx->i < _ctx->nRealItems)
 						continue;
 
-					/* Ok, we are the only ones :) */
+					// Ok, we are the only ones :)
 					lockItems();
 					_ctx->curItem = GLOBALS._lpmiItems + itemGetOrderFromNum(_ctx->MyActions[_ctx->k].nItem);
 
-					/* Check if there is a WhenExecute expression */
+					// Check if there is a WhenExecute expression
 					_ctx->j=_ctx->MyActions[_ctx->k].nAction;
 					if (_ctx->curItem->Action[_ctx->j].when != NULL) {
 						if (!evaluateExpression(_ctx->curItem->Action[_ctx->j].when)) {
@@ -985,7 +985,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 						}
 					}
 
-					/* Ok, we can perform the action. For convenience, we do it in a new process */
+					// Ok, we can perform the action. For convenience, we do it in a new process
 					_ctx->newItem = (LPMPALITEM)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
 					if (_ctx->newItem == false) {
 						globalDestroy(_ctx->MyThreads);
@@ -998,12 +998,12 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 					memcpy(_ctx->newItem,_ctx->curItem, sizeof(MPALITEM));
 					unlockItems();
 
-					/* We copy the action in #0 */
-//					_ctx->newItem->Action[0].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
-//					memcpy(_ctx->newItem->Action[0].CmdNum,_ctx->curItem->Action[_ctx->j].CmdNum,_ctx->newItem->Action[0].nCmds*sizeof(_ctx->newItem->Action[0].CmdNum[0]));
+					// We copy the action in #0
+					//_ctx->newItem->Action[0].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
+					//memcpy(_ctx->newItem->Action[0].CmdNum,_ctx->curItem->Action[_ctx->j].CmdNum,_ctx->newItem->Action[0].nCmds*sizeof(_ctx->newItem->Action[0].CmdNum[0]));
 					_ctx->newItem->dwRes=_ctx->j;
 
-					/* We will create an action, and will provide the necessary details */
+					// We will create an action, and will provide the necessary details
 					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
 						if (_ctx->MyThreads[_ctx->i].nItem == 0)
 							break;
@@ -1022,7 +1022,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 						return;
 					}
 
-					/* Skip all idle actions of the same item */
+					// Skip all idle actions of the same item
 				}
 			}
 		}
@@ -1036,11 +1036,10 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		if (_ctx->MyThreads[_ctx->i].nItem != 0) {
 			CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 5000, &_ctx->delayExpired);
 
-/*
 			//if (result != WAIT_OBJECT_0)
-			if (_ctx->delayExpired)
-				TerminateThread(_ctx->MyThreads[_ctx->i].hThread, 0);
-*/
+			//if (_ctx->delayExpired)
+			//	TerminateThread(_ctx->MyThreads[_ctx->i].hThread, 0);
+
 			CoroScheduler.killMatchingProcess(_ctx->MyThreads[_ctx->i].hThread);
 		}
 	}
@@ -1142,15 +1141,15 @@ void GroupThread(CORO_PARAM, const void *param) {
 				}
 			}
 
-			/* The gruop is finished, so we can return to the calling function.
-			 * If the group was the first called, then the process will automatically
-			 * end. Otherwise it returns to the caller method
-			 */
+			// The gruop is finished, so we can return to the calling function.
+			// If the group was the first called, then the process will automatically
+			// end. Otherwise it returns to the caller method
+
 			return;
 		}
 	}
 
-	/* If we are here, it means that we have not found the requested group */
+	// If we are here, it means that we have not found the requested group
 	GLOBALS._mpalError = 1;
 	unlockDialogs();
 
@@ -1174,21 +1173,21 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	/* Lock the dialogs */
+	// Lock the dialogs
 	lockDialogs();
 
-	/* Get a pointer to the current dialog */
+	// Get a pointer to the current dialog
 	_ctx->dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 
-	/* Search the choice between those required in the dialog */
+	// Search the choice between those required in the dialog
 	for (_ctx->i = 0; _ctx->dialog->_choice[_ctx->i].nChoice != 0; _ctx->i++) {
 		if (_ctx->dialog->_choice[_ctx->i].nChoice == nChoice)
 			break;
 	}
 
-	/* If nothing has been found, exit with an error */
+	// If nothing has been found, exit with an error
 	if (_ctx->dialog->_choice[_ctx->i].nChoice == 0) {
-		/* If we're here, we did not find the required choice */
+		// If we're here, we did not find the required choice
 		GLOBALS._mpalError = 1;
 		unlockDialogs();
 
@@ -1196,14 +1195,14 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 		return;
 	}
 
-	/* We've found the requested choice. Remember what in global variables */
+	// We've found the requested choice. Remember what in global variables
 	GLOBALS._nExecutingChoice = _ctx->i;
 
 	while (1) {
 		GLOBALS._nExecutingChoice = _ctx->i;
 
 		_ctx->k = 0;
-		/* Calculate the expression of each selection, to see if they're active or inactive */
+		// Calculate the expression of each selection, to see if they're active or inactive
 		for (_ctx->j = 0; _ctx->dialog->_choice[_ctx->i]._select[_ctx->j].dwData != 0; _ctx->j++) {
 			if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].when == NULL) {
 				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].curActive = 1;
@@ -1215,41 +1214,40 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].curActive = 0;
 		}
 
-		/* If there are no choices activated, then the dialog is finished. */
+		// If there are no choices activated, then the dialog is finished.
 		if (_ctx->k == 0) {
 			unlockDialogs();
 			break;
 		}
 
-		/* There are choices available to the user, so wait for them to make one */
+		// There are choices available to the user, so wait for them to make one
 		CoroScheduler.resetEvent(GLOBALS._hDoneChoice);
 		CoroScheduler.setEvent(GLOBALS._hAskChoice);
 		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, GLOBALS._hDoneChoice, CORO_INFINITE);
 
-		/* Now that the choice has been made, we can run the groups associated with the choice tbontbtitq
-		*/
+		// Now that the choice has been made, we can run the groups associated with the choice tbontbtitq
 		_ctx->j = GLOBALS._nSelectedChoice;
 		for (_ctx->k = 0; _ctx->dialog->_choice[_ctx->i]._select[_ctx->j].wPlayGroup[_ctx->k] != 0; _ctx->k++) {
 			_ctx->nGroup = _ctx->dialog->_choice[_ctx->i]._select[_ctx->j].wPlayGroup[_ctx->k];
 			CORO_INVOKE_1(GroupThread, &_ctx->nGroup);
 		}
 
-		/* Control attribute */
+		// Control attribute
 		if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].attr & (1 << 0)) {
-			/* Bit 0 set: the end of the choice */
+			// Bit 0 set: the end of the choice
 			unlockDialogs();
 			break;
 		}
 
 		if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].attr & (1 << 1)) {
-			/* Bit 1 set: the end of the dialog */
+			// Bit 1 set: the end of the dialog
 			unlockDialogs();
 
 			CORO_KILL_SELF();
 			return;
 		}
 
-		/* End of choic ewithout attributes. We must do it again */
+		// End of choic ewithout attributes. We must do it again
 	}
 
 	// If we're here, we found an end choice. Return to the caller group
@@ -1300,9 +1298,10 @@ static uint32 doAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 
 		// In the new version number of the action in writing dwRes
 		Common::copy((byte *)item, (byte *)item + sizeof(MPALITEM), (byte *)newitem);
-/*   newitem->Action[0].nCmds=item->Action[i].nCmds;
-   memcpy(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
-*/
+
+		//newitem->Action[0].nCmds=item->Action[i].nCmds;
+		//memcpy(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
+
 		newitem->dwRes = i;
 
 		// And finally we can laucnh the process that will execute the action,
@@ -1412,15 +1411,15 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	uint32 dwSizeDecomp, dwSizeComp;
 	byte *cmpbuf;
 
-	/* Save the array of custom functions */
+	// Save the array of custom functions
 	GLOBALS._lplpFunctions = lplpcfArray;
 	GLOBALS._lplpFunctionStrings = lpcfStrings;
 
-	/* OPen the MPC file for reading */
+	// OPen the MPC file for reading
 	if (!hMpc.open(lpszMpcFileName))
 		return false;
 
-	/* Read and check the header */
+	// Read and check the header
 	nBytesRead = hMpc.read(buf, 5);
 	if (nBytesRead != 5)
 		return false;
@@ -1430,7 +1429,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 	bCompress = buf[4];
 
-	/* Reads the size of the uncompressed file, and allocate memory */
+	// Reads the size of the uncompressed file, and allocate memory
 	dwSizeDecomp = hMpc.readUint32LE();
 	if (hMpc.err())
 		return false;
@@ -1440,7 +1439,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		return false;
 
 	if (bCompress) {
-		/* Get the compressed size and read the data in */
+		// Get the compressed size and read the data in
 		dwSizeComp = hMpc.readUint32LE();
 		if (hMpc.err())
 			return false;
@@ -1453,33 +1452,33 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		if (nBytesRead != dwSizeComp)
 			return false;
 
-		/* Decompress the data */
+		// Decompress the data
 		lzo1x_decompress(cmpbuf, dwSizeComp, lpMpcImage, &nBytesRead);
 		if (nBytesRead != dwSizeDecomp)
 			return false;
 
 		globalDestroy(cmpbuf);
 	} else {
-		/* If the file is not compressed, we directly read in the data */
+		// If the file is not compressed, we directly read in the data
 		nBytesRead = hMpc.read(lpMpcImage, dwSizeDecomp);
 		if (nBytesRead != dwSizeDecomp)
 			return false;
 	}
 
-	/* Close the file */
+	// Close the file
 	hMpc.close();
 
-	/* Process the data */
+	// Process the data
 	if (ParseMpc(lpMpcImage) == false)
 		return false;
 
 	globalDestroy(lpMpcImage);
 
-	/* Open the MPR file */
+	// Open the MPR file
 	if (!GLOBALS._hMpr.open(lpszMprFileName))
 		return false;
 
-	/* Seek to the end of the file to read overall information */
+	// Seek to the end of the file to read overall information
 	GLOBALS._hMpr.seek(-12, SEEK_END);
 
 	dwSizeComp = GLOBALS._hMpr.readUint32LE();
@@ -1497,7 +1496,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	if (buf[0] !='E' || buf[1] != 'N' || buf[2] != 'D' || buf[3] != '0')
 		return false;
 
-	/* Move to the start of the resources header */
+	// Move to the start of the resources header
 	GLOBALS._hMpr.seek(-(12 + (int)dwSizeComp), SEEK_END);
 
 	GLOBALS._lpResources = (uint32 *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, GLOBALS._nResources * 8);
@@ -1518,17 +1517,17 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 	globalDestroy(cmpbuf);
 
-	/* Reset back to the start of the file, leaving it open */
+	// Reset back to the start of the file, leaving it open
 	GLOBALS._hMpr.seek(0, SEEK_SET);
 
-	/* There is no action or dialog running by default */
+	// There is no action or dialog running by default
 	GLOBALS._bExecutingAction = false;
 	GLOBALS._bExecutingDialog = false;
 
-	/* There's no polling location */
+	// There's no polling location
 	Common::fill(GLOBALS._nPollingLocations, GLOBALS._nPollingLocations + MAXPOLLINGLOCATIONS, 0);
 
-	/* Create the event that will be used to co-ordinate making choices and choices finishing */
+	// Create the event that will be used to co-ordinate making choices and choices finishing
 	GLOBALS._hAskChoice = CoroScheduler.createEvent(true, false);
 	GLOBALS._hDoneChoice = CoroScheduler.createEvent(true, false);
 

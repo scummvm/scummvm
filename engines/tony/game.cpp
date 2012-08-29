@@ -43,10 +43,7 @@ namespace Tony {
 
 using namespace MPAL;
 
-/****************************************/
-/*  Global functions                    */
-/****************************************/
-
+//  Global functions
 void mainEnableGUI() {
 	g_vm->getEngine()->_bGUIInterface = true;
 	g_vm->getEngine()->_bGUIInventory = true;
@@ -1045,7 +1042,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 #define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
 		_editName[strlen(_editName) + 1] = '\0'; _editName[strlen(_editName)] = c; _ctx->bRefresh = true; }
 
-	/**************** State Buttons **************/
+	// State Buttons
 	if (_bEditSaveName) {
 		if (KEYPRESS(Common::KEYCODE_BACKSPACE)) {
 			if (_editName[0] != '\0') {

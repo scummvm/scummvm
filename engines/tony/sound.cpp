@@ -532,7 +532,7 @@ bool FPStream::unloadFile() {
 
 	assert(!g_system->getMixer()->isSoundHandleActive(_handle));
 
-	/* Closes the file handle stream */
+	// Closes the file handle stream
 	delete _loopStream;
 	delete _rewindableStream;
 	_loopStream = NULL;

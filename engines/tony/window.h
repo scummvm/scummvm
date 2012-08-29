@@ -72,7 +72,7 @@ public:
 	/**
 	 * Initialization
 	 */
-	void init(/*HINSTANCE hInst*/);
+	void init();
 	void close();
 
 	/**

@@ -31,10 +31,6 @@
 #include "tony/mpal/mpaldll.h"
 #include "tony/tony.h"
 
-/*
-#include "lzo1x.h"
-*/
-
 namespace Tony {
 
 namespace MPAL {

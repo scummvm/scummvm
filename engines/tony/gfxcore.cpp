@@ -1610,7 +1610,7 @@ void RMGfxSourceBuffer8AA::calculateAA() {
 	int x, y;
 	byte *src, *srcaa;
 
-	/* First pass: fill the edges */
+	// First pass: fill the edges
 	Common::fill(_megaAABuf, _megaAABuf + _dimx * _dimy, 0);
 
 	src = _buf;
@@ -1715,11 +1715,9 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	// Loop
 	buf += bigBuf.getDimx(); // Skip the first line
 	for (y = 1; y < height - 1; y++) {
-		/*
-		        if (prim->IsFlipped())
-		            mybuf=&buf[x1+m_dimx-1];
-		        else
-		*/
+		// if (prim->IsFlipped())
+		//	mybuf=&buf[x1+m_dimx-1];
+		// else
 		mybuf = &buf[x1];
 
 		for (x = 0; x < width; x++, mybuf += step) {
@@ -1748,18 +1746,16 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 		buf += bigBuf.getDimx();
 	}
 
-// Position into the destination buffer
+	// Position into the destination buffer
 	buf = bigBuf;
 	buf += y1 * bigBuf.getDimx();
 
 	// Looppone
 	buf += bigBuf.getDimx();
 	for (y = 1; y < height - 1; y++) {
-		/*
-		        if (prim->IsFlipped())
-		            mybuf=&buf[x1+m_dimx-1];
-		        else
-		*/
+		// if (prim->IsFlipped())
+		// 	mybuf=&buf[x1+m_dimx-1];
+		// else
 		mybuf = &buf[x1];
 
 		for (x = 0; x < width; x++, mybuf += step) {
