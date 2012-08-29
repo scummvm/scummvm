@@ -637,7 +637,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 				_ctx->p->_arg3 = s->_command[_ctx->k]._arg3;
 				_ctx->p->_arg4 = s->_command[_ctx->k]._arg4;
 
-					 // !!! New process management
+				// !!! New process management
 				if ((cfHandles[_ctx->numHandles++] = CoroScheduler.createProcess(CustomThread, &_ctx->p, sizeof(LPCFCALL))) == 0) {
 					GLOBALS._mpalError = 1;
 
@@ -1413,10 +1413,6 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	uint32 dwSizeDecomp, dwSizeComp;
 	byte *cmpbuf;
 
- //printf("Item: %lu\n", sizeof(MPALITEM));
- //printf("Script: %lu\n", sizeof(MPALSCRIPT));
- //printf("Dialog: %lu\n", sizeof(MPALDIALOG));
-
 	/* Save the array of custom functions */
 	GLOBALS._lplpFunctions = lplpcfArray;
 	GLOBALS._lplpFunctionStrings = lpcfStrings;
@@ -1479,21 +1475,6 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		return false;
 
 	globalDestroy(lpMpcImage);
-
-	/* Calculate memory usage */
-	/*
- {
-	 char errbuf[256];
-	 wsprintf(errbuf,"Utilizzo in RAM: VAR %lu, MSG %lu, DLG %lu, ITM %lu, LOC %lu, SCR %lu",
-	   GLOBALS.nVars*sizeof(MPALVAR),
-		 GLOBALS.nMsgs*sizeof(MPALMSG),
-		 GLOBALS.nDialogs*sizeof(MPALDIALOG),
-		 GLOBALS.nItems*sizeof(MPALITEM),
-		 GLOBALS.nLocations*sizeof(MPALLOCATION),
-		 GLOBALS.nScripts*sizeof(MPALSCRIPT));
-	 MessageBox(NULL,errbuf,"Dump",MB_OK);
- }
-*/
 
 	/* Open the MPR file */
 	if (!GLOBALS._hMpr.open(lpszMprFileName))
