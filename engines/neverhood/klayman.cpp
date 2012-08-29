@@ -650,8 +650,7 @@ void Klayman::startWalkToX(int16 x, bool flag) {
 		_destX = x;
 	} else if (flag) {
 		_destX = x;
-		error("// TODO AnimatedSprite_GotoState(&Klayman::sub421550));");
-		// TODO AnimatedSprite_GotoState(&Klayman::sub421550);
+		GotoState(&Klayman::sub421550);
 	} else {
 		_destX = x;
 		GotoState(&Klayman::stStartWalking);
@@ -1237,6 +1236,104 @@ void Klayman::sub421880() {
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::handleMessage41EE00);
 	SetSpriteUpdate(&Klayman::spriteUpdate41F230);
+}
+
+void Klayman::sub420F60() {
+	if (!stStartAction(AnimationCallback(&Klayman::sub420F60))) {
+		_status2 = 2;
+		_acceptInput = false;
+		startAnimation(0x3F28E094, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&Klayman::handleMessage41E6C0);
+		SetSpriteUpdate(NULL);
+		NextState(&Klayman::sub420FB0);
+	}
+}
+
+void Klayman::sub420FB0() {
+	_acceptInput = false;
+	startAnimation(0x3A28C094, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41E6C0);
+	SetSpriteUpdate(NULL);
+}
+
+uint32 Klayman::handleMessage41E6C0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4AB28209) {
+			sendMessage(_attachedSprite, 0x482A, 0);
+			sendMessage(_attachedSprite, 0x480F, 0);
+		} else if (param.asInteger() == 0x88001184) {
+			sendMessage(_attachedSprite, 0x482B, 0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void Klayman::sub421110() {
+	if (!stStartAction(AnimationCallback(&Klayman::sub421110))) {
+		_status2 = 1;
+		_acceptInput = false;
+		startAnimation(0x1A38A814, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&Klayman::handleMessage41E750);
+		SetSpriteUpdate(NULL);
+	}
+}
+
+uint32 Klayman::handleMessage41E750(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x02B20220)
+			_soundResource1.play(0xC5408620);
+		else if (param.asInteger() == 0x0A720138)
+			_soundResource1.play(0xD4C08010);
+		else if (param.asInteger() == 0x03020231)
+			_soundResource1.play(0xD4C08010);
+		else if (param.asInteger() == 0xB613A180)
+			_soundResource1.play(0x44051000);
+		else if (param.asInteger() == 0x67221A03)
+			_soundResource1.play(0x44051000);
+		else if (param.asInteger() == 0x038A010B)
+			_soundResource1.play(0x00018040);
+		else if (param.asInteger() == 0x422B0280)
+			_soundResource1.play(0x166FC6E0);
+		else if (param.asInteger() == 0x925A0C1E)
+			_soundResource1.play(0x40E5884D);
+		break;
+	}
+	return messageResult;
+}
+
+void Klayman::sub4215E0() {
+	_status2 = 0;
+	_isWalking = true;
+	_acceptInput = true;
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EB70);
+	SetSpriteUpdate(&Klayman::spriteUpdate41F300);
+	NextState(&Klayman::stUpdateWalking);
+	FinalizeState(&Klayman::stStartWalkingDone);
+	startAnimation(0x5A2CBC00, 0, -1);
+}
+
+void Klayman::sub421550() {
+	if (!stStartActionFromIdle(AnimationCallback(&Klayman::sub421550))) {
+		_status2 = 0;
+		_isWalking = true;
+		_acceptInput = true;
+		setDoDeltaX(_destX < _x ? 1 : 0);
+		startAnimation(0x272C1199, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&Klayman::hmStartWalking);
+		SetSpriteUpdate(&Klayman::suWalkingTestExit);
+		FinalizeState(&Klayman::stStartWalkingDone);	
+		NextState(&Klayman::sub4215E0);
+	}
 }
 
 void Klayman::sub41CC40(int16 x1, int16 x2) {
@@ -5252,6 +5349,169 @@ void KmScene2805::sub4048D0() {
 	SetSpriteUpdate(NULL);
 	SetMessageHandler(&KmScene2805::handleMessage404800);
 	startAnimation(0xD82A4094, 0, -1);
+}
+
+KmScene2806::KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+	bool flag, NRect *clipRects, uint clipRectsCount)
+	: Klayman(vm, parentScene, x, y, 1000, 1000),
+	_soundRes1(vm), _soundRes2(vm), _soundRes3(vm), _soundRes4(vm), _soundRes5(vm) {
+	// Empty
+
+	if (flag) {
+		// TODO Maybe? Don't know. Set Klayman clip rects
+		_soundRes1.load(0x58E0C341);
+		_soundRes2.load(0x40A00342);
+		_soundRes3.load(0xD0A1C348);
+		_soundRes4.load(0x166FC6E0);
+		_soundRes5.load(0x00018040);
+	}
+	
+	_dataResource.load(0x98182003);
+
+}
+
+uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4804:
+		startWalkToX(440, true);
+		break;
+	case 0x480D:
+		GotoState(&Klayman::sub420F60);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 0) {
+			GotoState(&Klayman::stPressButtonSide); 
+		}
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x4831:
+		GotoState(&KmScene2806::sub40F780);
+		break;
+	case 0x4832:
+		if (param.asInteger() == 1) {
+			GotoState(&KmScene2806::sub40F7C0);
+		} else {
+			GotoState(&Klayman::sub421110);
+		}
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene2806::handleMessage40F1F0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1008:
+		if (_flag1) {
+			startAnimationByHash(0x1C388C04, 0x004A2148, 0);
+			messageResult = 0;
+		} else
+			_flag2 = true;
+		break;
+	case 0x100D:
+		if (param.asInteger() == 0x0002418E)
+			sendMessage(_parentScene, 0x2000, 0);
+		else if (param.asInteger() == 0x924090C2) {
+			_flag1 = true;
+			if (_flag2) {
+				startAnimationByHash(0x1C388C04, 0x004A2148, 0);
+				messageResult = 0;
+			}
+		} else if (param.asInteger() == 0x004A2148)
+			_flag1 = false;
+		else if (param.asInteger() == 0x02B20220)
+			_soundResource1.play(0xC5408620);
+		else if (param.asInteger() == 0x0A720138)
+			_soundResource1.play(0xD4C08010);
+		else if (param.asInteger() == 0x03020231)
+			_soundResource1.play(0xD4C08010);
+		else if (param.asInteger() == 0xB613A180)
+			_soundResource1.play(0x44051000);
+		else if (param.asInteger() == 0x67221A03)
+			_soundResource1.play(0x44051000);
+		else if (param.asInteger() == 0x038A010B)
+			_soundResource1.play(0x00018040);
+		else if (param.asInteger() == 0x422B0280)
+			_soundResource1.play(0x166FC6E0);
+		else if (param.asInteger() == 0x925A0C1E)
+			_soundResource1.play(0x40E5884D);
+		else if (param.asInteger() == 0x00020814)
+			_soundResource1.play(0x786CC6D0);
+		else if (param.asInteger() == 0x06020500)
+			_soundResource1.play(0x1069C0E1);
+		else if (param.asInteger() == 0x02128C00)
+			_soundResource1.play(0x5068C4C3);
+		else if (param.asInteger() == 0x82022030)
+			_soundResource1.play(0x5C48C0E8);
+		break;
+	}
+	return messageResult;
+}
+
+uint32 KmScene2806::handleMessage40F570(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x32180101)
+			_soundResource1.play(0x405002D8);
+		else if (param.asInteger() == 0x0A2A9098)
+			_soundResource1.play(0x0460E2FA);
+		else if (param.asInteger() == 0xD00A0C0C)
+			_soundRes1.play();
+		else if (param.asInteger() == 0x04121920)
+			_soundRes2.play();
+		else if (param.asInteger() == 0x030B4480)
+			_soundRes3.play();
+		else if (param.asInteger() == 0x422B0280)
+			_soundRes4.play();
+		else if (param.asInteger() == 0x038A010B)
+			_soundRes5.play();
+		else if (param.asInteger() == 0x67221A03)
+			_soundResource1.play(0x44051000);
+		else if (param.asInteger() == 0x02B20220)
+			_soundResource1.play(0xC5408620);
+		else if (param.asInteger() == 0x925A0C1E)
+			_soundResource1.play(0x40E5884D);
+		else if (param.asInteger() == 0x03020231)
+			_soundResource1.play(0xD4C08010);
+		else if (param.asInteger() == 0x08040840)
+			setDoDeltaX(2);
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2806::sub40F780() {
+	_status2 = 0;
+	_acceptInput = false;
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	SetMessageHandler(&KmScene2806::handleMessage40F570);
+	startAnimation(0x2838C010, 0, -1);
+}
+
+void KmScene2806::sub40F7C0() {
+	_status2 = 1;
+	_acceptInput = false;
+	_flag1 = false;
+	_flag2 = false;
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	SetMessageHandler(&KmScene2806::handleMessage40F1F0);
+	startAnimation(0x1C388C04, 0, -1);
 }
 
 } // End of namespace Neverhood

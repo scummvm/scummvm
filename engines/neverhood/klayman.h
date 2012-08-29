@@ -30,7 +30,8 @@
 
 namespace Neverhood {
 
-// TODO: This code is horrible and weird and a lot of stuff needs renaming once a better name is found
+// TODO This code is horrible and weird and a lot of stuff needs renaming once a better name is found
+// TODO Also the methods should probably rearranged and be grouped together more consistently
 
 class Klayman;
 
@@ -150,6 +151,13 @@ public:
 	void sub421900();
 	void sub4218C0();
 	void sub421880();
+	void sub420F60();
+	void sub420FB0();
+	uint32 handleMessage41E6C0(int messageNum, const MessageParam &param, Entity *sender);
+	void sub421110();
+	uint32 handleMessage41E750(int messageNum, const MessageParam &param, Entity *sender);
+	void sub4215E0();
+	void sub421550();
 
 protected:
 	Entity *_parentScene;
@@ -583,6 +591,25 @@ protected:
 	uint32 handleMessage404800(int messageNum, const MessageParam &param, Entity *sender);
 	void sub404890();
 	void sub4048D0();
+};
+
+class KmScene2806 : public Klayman {
+public:
+	KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+		bool flag, NRect *clipRects, uint clipRectsCount);
+protected:
+	SoundResource _soundRes1;
+	SoundResource _soundRes2;
+	SoundResource _soundRes3;
+	SoundResource _soundRes4;
+	SoundResource _soundRes5;
+	bool _flag1;
+	bool _flag2;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 handleMessage40F1F0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage40F570(int messageNum, const MessageParam &param, Entity *sender);
+	void sub40F780();
+	void sub40F7C0();
 };
 
 } // End of namespace Neverhood

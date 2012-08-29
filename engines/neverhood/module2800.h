@@ -87,6 +87,24 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class Scene2806 : public Scene {
+public:
+	Scene2806(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	NPointArray *_pointList;
+	int _pointIndex;
+	NRect _clipRects[4];
+	bool _fieldEC;
+	Sprite *_sprite1;
+	Sprite *_sprite2;
+	Sprite *_sprite3;
+	Sprite *_sprite4;
+	// TODO class469
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void update();
+	void findClosestPoint();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE2800_H */

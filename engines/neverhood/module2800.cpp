@@ -86,6 +86,10 @@ void Module2800::createScene(int sceneNum, int which) {
 		// TODO Music18hList_stop(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2805(_vm, this, which);
 		break;
+	case 5:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Scene2806(_vm, this, which);
+		break;
 	case 25:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		if (getGlobalVar(0x190A1D18))
@@ -143,6 +147,13 @@ void Module2800::updateScene() {
 				leaveModule(1);
 			} else {
 				createScene(11, 1);
+			}
+			break;
+		case 5:
+			if (_moduleResult == 1) {
+				createScene(27, 0);
+			} else {
+				createScene(2, 2);
 			}
 			break;
 		case 25:
@@ -593,6 +604,128 @@ uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return 0;
+}
+
+Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+
+	Sprite *tempSprite;
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2806::handleMessage);
+	SetUpdateHandler(&Scene2806::update);
+	
+	loadDataResource(0x98182003);
+	loadHitRectList();
+	
+	_pointList = _dataResource.getPointArray(0x3606A422);
+
+	insertMouse433(0x22114C13);	
+	setBackground(0xC1B22110);
+	setPalette(0xC1B22110);
+	
+	_sprite1 = insertStaticSprite(0xA21F82CB, 1100);
+	_clipRects[0].x1 = _sprite1->getDrawRect().x;
+	_clipRects[0].y1 = _sprite1->getDrawRect().y;
+	_clipRects[0].x2 = _sprite1->getDrawRect().x2();
+	_clipRects[0].y2 = _sprite1->getDrawRect().y2();
+
+	_sprite2 = insertStaticSprite(0x92035301, 1100);
+	_clipRects[1].y2 = _sprite2->getDrawRect().y2();
+
+	_sprite3 = insertStaticSprite(0x3182220E, 1100);
+
+	_sprite4 = insertStaticSprite(0x72090342, 1100);
+	_clipRects[1].x1 = _sprite4->getDrawRect().x;
+	_clipRects[1].y1 = _sprite4->getDrawRect().y;
+	
+	_fieldEC = true;
+
+	tempSprite = insertStaticSprite(0xD2012C02, 1100);
+	_clipRects[2].x1 = tempSprite->getDrawRect().x;
+	_clipRects[2].y2 = tempSprite->getDrawRect().y2();
+	_clipRects[3].y1 = tempSprite->getDrawRect().y2();
+	_clipRects[1].x2 = tempSprite->getDrawRect().x2();
+
+	tempSprite = insertStaticSprite(0x72875F42, 1100);
+	_clipRects[3].x1 = tempSprite->getDrawRect().x;
+
+	insertStaticSprite(0x0201410A, 1100);
+	insertStaticSprite(0x72875F42, 1100);
+
+	// TODO _class469 = insertSprite<Class469>();
+
+	_clipRects[2].y1 = 0;
+	_clipRects[3].y2 = 480;
+	_clipRects[2].x2 = 640;
+	_clipRects[3].x2 = 640;
+
+	if (which < 0) {
+		insertKlayman<KmScene2806>(441, 423, false, _clipRects, 4);
+		setMessageList(0x004AF098);
+	} else if (which == 1) {
+		insertKlayman<KmScene2806>(378, 423, false, _clipRects, 4);
+		setMessageList(0x004AF098);
+	} else if (which == 2) {
+		insertKlayman<KmScene2806>(378, 423, false, _clipRects, 4);
+		setMessageList(0x004AF0C8);
+	} else if (which == 3) {
+		insertKlayman<KmScene2806>(378, 423, true, _clipRects, 4);
+		setMessageList(0x004AF0A0);
+		setGlobalVar(0x1860C990, 0);
+	} else {
+		insertKlayman<KmScene2806>(670, 423, false, _clipRects, 4);
+		setMessageList(0x004AF090);
+	}
+
+	_pointIndex = -1;
+	findClosestPoint();
+
+}
+
+uint32 Scene2806::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x44262B12) {
+			setMessageList(0x004AF0E0);
+		}
+		break;
+	case 0x2000:
+		// TODO sendMessage(_class469, 0x2000, 0);
+		break;
+	}
+	return 0;
+}
+
+void Scene2806::update() {
+	Scene::update();
+	findClosestPoint();
+}
+
+void Scene2806::findClosestPoint() {
+
+	static const uint32 kScene2806PaletteFileHashes[] = {
+		0x48052508,
+		0x01139404,
+		0x01138C04,
+		0x01138004,
+		0x01138604,
+		0x086B8890
+	};
+
+	int16 x = MIN<int16>(_klayman->getX(), 639);
+	int index = 1;
+	
+	while (index < (int)_pointList->size() && (*_pointList)[index].x < x)
+		++index;
+	--index;
+
+	if (_pointIndex != index) {
+		_pointIndex = index;
+		_palette->addPalette(kScene2806PaletteFileHashes[index], 0, 64, 0);
+	}
+	
 }
 
 } // End of namespace Neverhood
