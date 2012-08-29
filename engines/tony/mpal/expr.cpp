@@ -222,7 +222,7 @@ static int evaluateAndFreeExpression(byte *expr) {
 	int num = *expr;
 	one = (LPEXPRESSION)(expr + 1);
 
-	// 1) Sostituzioni delle variabili
+	// 1) Substitutions of variables
 	cur = one;
 	for (int i = 0; i < num; i++, cur++) {
 		if (cur->type == ELT_VAR) {
@@ -231,7 +231,7 @@ static int evaluateAndFreeExpression(byte *expr) {
 		}
 	}
 
-	// 2) Sostituzioni delle parentesi (tramite ricorsione)
+	// 2) Replacement of brackets (using recursive calls)
 	cur = one;
 	for (int i = 0; i < num; i++, cur++) {
 		if (cur->type == ELT_PARENTH2) {
@@ -240,7 +240,7 @@ static int evaluateAndFreeExpression(byte *expr) {
 		}
 	}
 
-	// 3) Risoluzione algebrica
+	// 3) algebraic resolution
 	solve(one, num);
 	int val = one->val.num;
 	globalDestroy(expr);
