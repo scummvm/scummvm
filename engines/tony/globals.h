@@ -180,7 +180,6 @@ public:
 	int _nextSync;
 	int _curChannel;
 	int _flipflop;
-	// OSystem::MutexRef csMusic;
 	CharacterStruct _character[16];
 	MCharacterStruct _mCharacter[10];
 	ChangedHotspotStruct _changedHotspot[256];

@@ -333,7 +333,7 @@ public:
 	 * @returns             True is everything is OK, False otherwise
 	 */
 
-	bool stop(bool bSync = false);
+	bool stop();
 	void waitForSync(FPStream *toplay);
 
 	/**

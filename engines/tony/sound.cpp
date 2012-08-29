@@ -583,7 +583,7 @@ bool FPStream::play() {
  *
  */
 
-bool FPStream::stop(bool bSync) {
+bool FPStream::stop() {
 	if (!_bSoundSupported)
 		return true;
 
@@ -593,15 +593,9 @@ bool FPStream::stop(bool bSync) {
 	if (!g_system->getMixer()->isSoundHandleActive(_handle))
 		return false;
 
-	if (bSync) {
-		// The caller intends to call waitForSync.
-		// FIXME: Why call this in that case?! Looks like old code. Remove that parameter.
-		return true;
-	} else {
-		g_system->getMixer()->stopHandle(_handle);
+	g_system->getMixer()->stopHandle(_handle);
 
-		_bPaused = false;
-	}
+	_bPaused = false;
 
 	return true;
 }

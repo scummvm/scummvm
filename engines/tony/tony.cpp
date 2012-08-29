@@ -364,7 +364,6 @@ void TonyEngine::doNextMusic(CORO_PARAM, const void *param) {
 	streams[GLOBALS._nextChannel]->setLoop(GLOBALS._nextLoop);
 	//streams[GLOBALS._nextChannel]->prefetch();
 
-	streams[GLOBALS._curChannel]->stop(true);
 	streams[GLOBALS._curChannel]->waitForSync(streams[GLOBALS._nextChannel]);
 
 	streams[GLOBALS._curChannel]->unloadFile();
@@ -392,14 +391,10 @@ void TonyEngine::playSFX(int nChannel, int nFX) {
 }
 
 void TonyEngine::stopMusic(int nChannel) {
-//	g_system->lockMutex(csMusic);
-
 	if (nChannel < 4)
 		_stream[nChannel + GLOBALS._flipflop]->stop();
 	else
 		_stream[nChannel]->stop();
-
-//	g_system->unlockMutex(csMusic);
 }
 
 void TonyEngine::stopSFX(int nChannel) {
@@ -484,7 +479,7 @@ void TonyEngine::unloadAllUtilSFX() {
 void TonyEngine::initMusic() {
 	int i;
 
-	_theSound.init(/*_window*/);
+	_theSound.init();
 	_theSound.setMasterVolume(63);
 
 	for (i = 0; i < 6; i++)
@@ -493,9 +488,6 @@ void TonyEngine::initMusic() {
 	for (i = 0; i < MAX_SFX_CHANNELS; i++) {
 		_sfx[i] = _utilSfx[i] = NULL;
 	}
-
-	// Create the mutex for controlling music access
-//	csMusic = g_system->createMutex();
 
 	// Preload sound effects
 	preloadUtilSFX(0, "U01.ADP"); // Reversed!!
@@ -511,8 +503,6 @@ void TonyEngine::closeMusic() {
 		_stream[i]->unloadFile();
 		_stream[i]->release();
 	}
-
-//	g_system->deleteMutex(csMusic);
 
 	unloadAllSFX();
 	unloadAllUtilSFX();
