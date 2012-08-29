@@ -200,7 +200,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 /**
  * Gets the numerical value of a global variable
  *
- * @param lpszVarName		Nome della variabile (ASCIIZ)
+ * @param lpszVarName		Variable name (ASCIIZ)
  * @returns		Global variable value
  * @remarks		This query was implemented for debugging. The program,
  *				if well designed, should not need to access variables from

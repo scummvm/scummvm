@@ -26,9 +26,6 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-/*
-#include "lzo1x.h"
-*/
 #include "mpal.h"
 #include "mpaldll.h"
 #include "memory.h"
@@ -148,7 +145,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	lpmdDialog->nObj = READ_LE_UINT32(lpBuf);
 	lpBuf += 4;
 
-	/* Periodi */
+	/* Periods */
 	uint32 num = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
@@ -169,7 +166,7 @@ static const byte *parseDialog(const byte *lpBuf, LPMPALDIALOG lpmdDialog) {
 	lpmdDialog->_periodNums[i] = 0;
 	lpmdDialog->_periods[i] = NULL;
 
-	/* Gruppi */
+	/* Groups */
 	num = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 	uint32 curCmd = 0;
@@ -347,7 +344,7 @@ static const byte *parseItem(const byte *lpBuf, LPMPALITEM lpmiItem) {
 	lpmiItem->nActions=*lpBuf;
 	lpBuf++;
 
-	/* Alloca le azioni */
+	/* Allocation action */
 	if (lpmiItem->nActions > 0)
 		lpmiItem->Action = (ItemAction *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(struct ItemAction) * (int)lpmiItem->nActions);
 
@@ -544,7 +541,7 @@ bool ParseMpc(const byte *lpBuf) {
 		GLOBALS._lpmvVars->dwVal = READ_LE_UINT32(lpBuf);
 		lpBuf += 4;
 
-		lpBuf++;             // Salta 'ext'
+		lpBuf++;             // Skip 'ext'
 		GLOBALS._lpmvVars++;
 	}
 
@@ -688,7 +685,7 @@ bool ParseMpc(const byte *lpBuf) {
 
 		for (uint16 i = 0; i < GLOBALS._nScripts; i++) {
 			if ((lpBuf = ParseScript(lpBuf + 7, &GLOBALS._lpmsScripts[i])) == NULL)
-			return false;
+				return false;
 
 			// Sort the various moments of the script
 			//qsort(

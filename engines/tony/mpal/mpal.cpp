@@ -920,8 +920,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	/* Here's the main loop */
 	while (1) {
-		/* Cerchiamo tra tutte le idle actions quella a cui manca meno tempo per
-			l'esecuzione */
+		// Searching for idle actions requiring time to execute
 		_ctx->curTime = g_vm->getTime();
 		_ctx->dwSleepTime = (uint32)-1L;
 

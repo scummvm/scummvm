@@ -57,19 +57,19 @@ void RMPattern::RMSlot::readFromStream(Common::ReadStream &ds, bool bLOX) {
 	type = ds.readByte();
 	_type = (RMPattern::RMSlotType)type;
 
-	// Dati
+	// Data
 	_data = ds.readSint32LE();
 
-	// Posizione
+	// Position
 	_pos.readFromStream(ds);
 
-	// Flag generica
+	// Generic flag
 	_flag = ds.readByte();
 }
 
 
 /****************************************************************************\
-*       Metodi di RMPattern
+*       RMPattern Methods
 \****************************************************************************/
 
 void RMPattern::readFromStream(Common::ReadStream &ds, bool bLOX) {
@@ -547,7 +547,7 @@ void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 	if (_bInitCurPattern)
 		setPattern(mpalQueryItemPattern(_mpalCode));
 
-	// Initailise the current activation state
+	// Initialize the current activation state
 	_bIsActive = mpalQueryItemIsActive(_mpalCode);
 }
 
@@ -883,7 +883,7 @@ short RMCharacter::findPath(short source, short destination) {
 	static RMBox BOX[MAXBOXES];         // Matrix of adjacent boxes
 	static short COSTO[MAXBOXES];       // Cost per node
 	static short VALIDO[MAXBOXES];      // 0:Invalid 1:Valid 2:Saturated
-	static short NEXT[MAXBOXES];        // Prossimo Nodo
+	static short NEXT[MAXBOXES];        // Next node
 	short i, j, k, costominimo, fine, errore = 0;
 	RMBoxLoc *cur;
 
