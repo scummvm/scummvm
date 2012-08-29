@@ -974,7 +974,7 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	Common::MemoryReadStream *data = desc->getData();
 
 	uint32 magic = data->readUint32LE();
-	if (magic != 0x2E544558)
+	if (magic != MKTAG('.', 'T', 'E', 'X'))
 		error("Wrong texture format %d", id);
 
 	data->readUint32LE(); // unk 1
@@ -984,23 +984,13 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	data->readUint32LE(); // unk 3
 
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	s->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0));
 
 	data->read(s->pixels, height * s->pitch);
 	delete data;
 
 	// ARGB => RGBA
-	uint32 *p = (uint32 *)s->pixels;
-	for (uint i = 0; i < width * height; i++) {
-		uint8 a = (*p >> 0) & 0xFF;
-		uint8 r = (*p >> 24) & 0xFF;
-		uint8 g = (*p >> 16) & 0xFF;
-		uint8 b = (*p >>  8) & 0xFF;
-
-		*p = (a << 24) | (r << 16) | (g << 8) | b;
-
-		p++;
-	}
+	s->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	return s;
 }
