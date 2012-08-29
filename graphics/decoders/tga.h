@@ -57,9 +57,7 @@ public:
 	TGADecoder();
 	virtual ~TGADecoder();
 	virtual void destroy();
-	virtual const Surface *getSurface() const {
-		return &_surface;
-	}
+	virtual const Surface *getSurface() const { return &_surface; }
 	virtual const byte *getPalette() const { return _colorMap; }
 	virtual uint16 getPaletteColorCount() const { return _colorMapLength; }
 	virtual bool loadStream(Common::SeekableReadStream &stream);
