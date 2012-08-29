@@ -151,7 +151,7 @@ void Module2800::updateScene() {
 			break;
 		case 5:
 			if (_moduleResult == 1) {
-				createScene(27, 0);
+				createScene(7, 0);
 			} else {
 				createScene(2, 2);
 			}
@@ -606,6 +606,34 @@ uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 
+Class469::Class469(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1200), _soundResource(vm) {
+	
+	createSurface1(0x04211490, 1200);
+	_x = 378;
+	_y = 423;
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&Class469::handleMessage);
+	setDoDeltaX(1);
+	setVisible(false);
+}
+
+uint32 Class469::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		_soundResource.play(0x48640244);
+		startAnimation(0x04211490, 0, -1);
+		setVisible(true);
+		break;
+	case 0x3002:
+		stopAnimation();
+		setVisible(false);
+		break;
+	}
+	return messageResult;
+}
+	
 Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
@@ -653,7 +681,7 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x0201410A, 1100);
 	insertStaticSprite(0x72875F42, 1100);
 
-	// TODO _class469 = insertSprite<Class469>();
+	_class469 = insertSprite<Class469>();
 
 	_clipRects[2].y1 = 0;
 	_clipRects[3].y2 = 480;
@@ -692,7 +720,7 @@ uint32 Scene2806::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2000:
-		// TODO sendMessage(_class469, 0x2000, 0);
+		sendMessage(_class469, 0x2000, 0);
 		break;
 	}
 	return 0;

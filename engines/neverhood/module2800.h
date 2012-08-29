@@ -87,6 +87,14 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class Class469 : public AnimatedSprite {
+public:
+	Class469(NeverhoodEngine *vm);
+protected:
+	SoundResource _soundResource;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 class Scene2806 : public Scene {
 public:
 	Scene2806(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -99,7 +107,7 @@ protected:
 	Sprite *_sprite2;
 	Sprite *_sprite3;
 	Sprite *_sprite4;
-	// TODO class469
+	Sprite *_class469;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void update();
 	void findClosestPoint();
