@@ -191,6 +191,9 @@ bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, b
 			PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 15);
 			uint16 color = tga.readUint16LE();
 			format.colorToARGB(color, a, r, g, b);
+		} else {
+			warning("Unsupported image type: %d", imageType);
+			r = g = b = a = 0;
 		}
 #ifdef SCUMM_LITTLE_ENDIAN
 		_colorMap[i] = r;
