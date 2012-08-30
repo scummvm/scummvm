@@ -77,7 +77,7 @@ public:
 	void deinit();
 	bool processDelayMillis();
 	uint32 getRandomSeed(const String &name);
-	void processMillis(uint32 &millis);
+	void processMillis(uint32 &millis, bool skipRecord);
 	bool processAudio(uint32 &samples, bool paused);
 	void processGameDescription(const ADGameDescription *desc);
 	SeekableReadStream *processSaveStream(const String & fileName);

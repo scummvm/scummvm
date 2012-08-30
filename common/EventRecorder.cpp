@@ -101,8 +101,12 @@ void EventRecorder::deinit() {
 }
 
 
-void EventRecorder::processMillis(uint32 &millis) {
-	if (!_initialized) {
+void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
+	if (!_initialized)) {
+		return;
+	}
+	if (skipRecord) {
+		millis = _fakeTimer;
 		return;
 	}
 	if (_recordMode == kRecorderPlaybackPause) {
