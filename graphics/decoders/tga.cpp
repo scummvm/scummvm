@@ -178,8 +178,9 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth) {
 	_colorMap = new byte[3 * _colorMapLength];
 	for (int i = 0; i < _colorMapLength * 3; i += 3) {
-		byte r, g, b, a;
+		byte r, g, b;
 		if (_colorMapEntryLength == 32) {
+			byte a;
 			PixelFormat format(4, 8, 8, 8, 0, 16, 8, 0, 24);
 			uint32 color = tga.readUint32LE();
 			format.colorToARGB(color, a, r, g, b);
@@ -188,12 +189,13 @@ bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, b
 			g = tga.readByte();
 			b = tga.readByte();
 		} else if (_colorMapEntryLength == 16) {
+			byte a;
 			PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 15);
 			uint16 color = tga.readUint16LE();
 			format.colorToARGB(color, a, r, g, b);
 		} else {
 			warning("Unsupported image type: %d", imageType);
-			r = g = b = a = 0;
+			r = g = b = 0;
 		}
 #ifdef SCUMM_LITTLE_ENDIAN
 		_colorMap[i] = r;
