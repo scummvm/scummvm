@@ -880,11 +880,11 @@ void RMWipe::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 /****************************************************************************/
 
 short RMCharacter::findPath(short source, short destination) {
-	static RMBox BOX[MAXBOXES];         // Matrix of adjacent boxes
-	static short COSTO[MAXBOXES];       // Cost per node
-	static short VALIDO[MAXBOXES];      // 0:Invalid 1:Valid 2:Saturated
-	static short NEXT[MAXBOXES];        // Next node
-	short i, j, k, costominimo, fine, errore = 0;
+	static RMBox box[MAXBOXES];         // Matrix of adjacent boxes
+	static short nodeCost[MAXBOXES];    // Cost per node
+	static short valid[MAXBOXES];       // 0:Invalid 1:Valid 2:Saturated
+	static short nextNode[MAXBOXES];    // Next node
+	short minCost, error = 0;
 	RMBoxLoc *cur;
 
 	g_system->lockMutex(_csMove);
@@ -898,67 +898,67 @@ short RMCharacter::findPath(short source, short destination) {
 	cur = _theBoxes->getBoxes(_curLocation);
 
 	// Make a backup copy to work on
-	for (i = 0; i < cur->_numbBox; i++)
-		memcpy(&BOX[i], &cur->_boxes[i], sizeof(RMBox));
+	for (int i = 0; i < cur->_numbBox; i++)
+		memcpy(&box[i], &cur->_boxes[i], sizeof(RMBox));
 
 	// Invalidate all nodes
-	for (i = 0; i < cur->_numbBox; i++)
-		VALIDO[i] = 0;
+	for (int i = 0; i < cur->_numbBox; i++)
+		valid[i] = 0;
 
 	// Prepare source and variables for the procedure
-	COSTO[source] = 0;
-	VALIDO[source] = 1;
-	fine = 0;
+	nodeCost[source] = 0;
+	valid[source] = 1;
+	bool finish = false;
 
 	// Find the shortest path
-	while (!fine) {
-		costominimo = 32000;                // Reset the minimum cost
-		errore = 1;                         // Possible error
+	while (!finish) {
+		minCost = 32000;                // Reset the minimum cost
+		error = 1;                         // Possible error
 
 		// 1st cycle: explore possible new nodes
-		for (i = 0; i < cur->_numbBox; i++)
-			if (VALIDO[i] == 1) {
-				errore = 0;                 // Failure de-bunked
-				j = 0;
-				while (((BOX[i]._adj[j]) != 1) && (j < cur->_numbBox))
+		for (int i = 0; i < cur->_numbBox; i++)
+			if (valid[i] == 1) {
+				error = 0;                 // Failure de-bunked
+				int j = 0;
+				while (((box[i]._adj[j]) != 1) && (j < cur->_numbBox))
 					j++;
 
 				if (j >= cur->_numbBox)
-					VALIDO[i] = 2;                     // nodo saturated?
+					valid[i] = 2;                     // nodo saturated?
 				else {
-					NEXT[i] = j;
-					if (COSTO[i] + 1 < costominimo)
-						costominimo = COSTO[i] + 1;
+					nextNode[i] = j;
+					if (nodeCost[i] + 1 < minCost)
+						minCost = nodeCost[i] + 1;
 				}
 			}
 
-		if (errore)
-			fine = 1;                                 // All nodes saturated
+		if (error)
+			finish = true;                                 // All nodes saturated
 
 		// 2nd cycle: adding new nodes that were found, saturate old nodes
-		for (i = 0; i < cur->_numbBox; i++)
-			if ((VALIDO[i] == 1) && ((COSTO[i] + 1) == costominimo)) {
-				BOX[i]._adj[NEXT[i]] = 2;
-				COSTO[NEXT[i]] = costominimo;
-				VALIDO[NEXT[i]] = 1;
-				for (j = 0; j < cur->_numbBox; j++)
-					if (BOX[j]._adj[NEXT[i]] == 1)
-						BOX[j]._adj[NEXT[i]] = 0;
+		for (int i = 0; i < cur->_numbBox; i++)
+			if ((valid[i] == 1) && ((nodeCost[i] + 1) == minCost)) {
+				box[i]._adj[nextNode[i]] = 2;
+				nodeCost[nextNode[i]] = minCost;
+				valid[nextNode[i]] = 1;
+				for (int j = 0; j < cur->_numbBox; j++)
+					if (box[j]._adj[nextNode[i]] == 1)
+						box[j]._adj[nextNode[i]] = 0;
 
-				if (NEXT[i] == destination)
-					fine = 1;
+				if (nextNode[i] == destination)
+					finish = true;
 			}
 	}
 
 	// Remove the path from the adjacent modified matrixes
-	if (!errore) {
-		_pathLength = COSTO[destination];
-		k = _pathLength;
+	if (!error) {
+		_pathLength = nodeCost[destination];
+		short k = _pathLength;
 		_path[k] = destination;
 
 		while (_path[k] != source) {
-			i = 0;
-			while (BOX[i]._adj[_path[k]] != 2)
+			int i = 0;
+			while (box[i]._adj[_path[k]] != 2)
 				i++;
 			k--;
 			_path[k] = i;
@@ -969,7 +969,7 @@ short RMCharacter::findPath(short source, short destination) {
 
 	g_system->unlockMutex(_csMove);
 
-	return !errore;
+	return !error;
 }
 
 
