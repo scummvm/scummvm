@@ -36,7 +36,7 @@ add_engine sci32 "SCI32 games" no
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword" yes
 add_engine sword2 "Broken Sword II" yes
-add_engine sword25 "Broken Sword 2.5" no
+add_engine sword25 "Broken Sword 2.5" no "" "png"
 add_engine teenagent "Teen Agent" yes
 add_engine testbed "TestBed: the Testing framework" no
 add_engine tinsel "Tinsel" yes
