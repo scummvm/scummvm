@@ -103,7 +103,7 @@ _ClassicProc3RendererShadowARM:
 	LDRB	r1, [r1,#30]		@ r1 = repcolor
 	STR	r8, [r13,#v1_shr]
 	STR	r9, [r13,#v1_destptr]
-        STR	r10,[r13,#v1_mask_ptr]
+	STR	r10,[r13,#v1_mask_ptr]
 	STR	r11,[r13,#v1_scaleXstep]
 
 	LDR	r12,[r13,#_height]
@@ -123,10 +123,10 @@ _ClassicProc3RendererShadowARM:
 	@ r12= _height
 	@ r14= v1.replen
 
-       	MOV	r8,#0x80
+	MOV	r8,#0x80
 	AND	r11,r3,#7		@ r11= v1.x & 7
 	MOV	r8,r8,LSR r11		@ r8 = maskbit = revBitMask(v1.x & 7)
-       	ADD	r10,r10,r3,ASR #3	@ r10= mask = v1.mask_ptr + (v1.x>>3)
+	ADD	r10,r10,r3,ASR #3	@ r10= mask = v1.mask_ptr + (v1.x>>3)
 
 	@ r0 = _scaleY
 	@ r1 = color = v1.repcolor
@@ -152,7 +152,7 @@ _ClassicProc3RendererShadowARM:
 	SUB	r14,r14,r5
 	STR	r12,[r13,#height]
 	STR	r14,[r13,#len]
-        LDR	r12,[r13,#pitch]
+	LDR	r12,[r13,#pitch]
 	LDR	r11,[r13,#_numStrips]
 	B	startpos
 
@@ -174,13 +174,13 @@ outerloop:
 
 	LDR	r11,[r13,#src]
 	LDR	r5,[r13,#v1_shr]
-       	@ stall
+	@ stall
 	LDRB	r14,[r11],#1		@ r14= len = *src++
 	@ stall
 	@ stall
 	MOV	r1, r14,LSR r5		@ r1 = color = len>>v1.shr
-       	BICS	r14,r14,r1,LSL r5	@ r14= len
-       	LDREQB	r14,[r11],#1		@ if (!len)  r14 = len = *src++
+	BICS	r14,r14,r1,LSL r5	@ r14= len
+	LDREQB	r14,[r11],#1		@ if (!len)  r14 = len = *src++
 	STR	r11,[r13,#src]
 	CMP	r14,#0
 middleloop:
@@ -232,7 +232,7 @@ innerloop:
 	CMPLE	r0,r14			@ || _scaleY >= r14
 	BLE	startpos
 
-        ADDS	r4,r4,#1		@ y >= 0 (equiv to y>-1,y+1>0)
+	ADDS	r4,r4,#1		@ y >= 0 (equiv to y>-1,y+1>0)
 	CMPGT   r1,#0			@ && color > 0
 	CMPGT	r6,r4			@ && _out.h+1 > y+1
 	CMNGT	r3,#1			@ && x >= 0 (equiv to x>-1,x+1>0)
@@ -248,12 +248,12 @@ innerloop:
 	@ stall
 	@ stall
 	CMP	r14,#13			@ if (pcolor == 13)
-        LDREQ	r12,[r13,#_shadow_table]
+	LDREQ	r12,[r13,#_shadow_table]
 	LDREQB	r14,[r9]		@ 	r14 = *dst
 	@ stallEQ
 	@ stallEQ
 	LDREQB	r14,[r12,r14]		@	r14 = pcolor=_shadow_tab[r14]
-        LDREQ	r12,[r13,#pitch]
+	LDREQ	r12,[r13,#pitch]
 	@ stallEQ
 	STRB	r14,[r9]		@ *dst = pcolor
 masked:
@@ -282,7 +282,7 @@ startpos:
 	BLE	noXstep
 
 	SUB	r11,r7,#1
-       	ADDS	r3,r3,r12			@ v1.x += v1.scaleXstep
+	ADDS	r3,r3,r12			@ v1.x += v1.scaleXstep
 				@ if v1.x < 0 ||
 	CMPGE	r11,r3		@ _out.w-1 < v1.x
 	BLT	end
@@ -297,7 +297,7 @@ noXstep:
 	LDR	r12,[r13,#_height]		@ r12= height = _height
 	LDR	r4,[r13,#v1_y]			@ r4 = y = v1.y
 	LDR	r2,[r13,#scaleIdxYPtr]		@ r2 = v1.scaletable[sclIdxY]
-       	ADD	r10,r10,r3,ASR #3		@ mask=v1.mask_ptr+(v1.x>>3)
+	ADD	r10,r10,r3,ASR #3		@ mask=v1.mask_ptr+(v1.x>>3)
 notheight:
 	CMP	r14,#0			@ while (len > 0)
 	BGT	middleloop
@@ -305,5 +305,5 @@ notheight:
 end:
 	LDR	r0,[r13,#v1_scaletable]
 	SUB	r0,r2,r0
-        ADD	r13,r13,#space
+	ADD	r13,r13,#space
 	LDMFD	r13!,{r3-r11,PC}
