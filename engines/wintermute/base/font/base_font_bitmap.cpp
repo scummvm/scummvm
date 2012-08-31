@@ -69,7 +69,7 @@ BaseFontBitmap::~BaseFontBitmap() {
 
 
 //////////////////////////////////////////////////////////////////////
-void BaseFontBitmap::drawText(byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
+void BaseFontBitmap::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 	textHeightDraw(text, x, y, width, align, true, maxHeight, maxLength);
 }
 
@@ -106,7 +106,7 @@ int BaseFontBitmap::getTextWidth(byte *text, int maxLength) {
 
 
 //////////////////////////////////////////////////////////////////////
-int BaseFontBitmap::textHeightDraw(byte *text, int x, int y, int width, TTextAlign align, bool draw, int maxHeight, int maxLength) {
+int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TTextAlign align, bool draw, int maxHeight, int maxLength) {
 	if (maxLength == 0) {
 		return 0;
 	}

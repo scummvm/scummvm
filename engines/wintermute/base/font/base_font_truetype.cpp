@@ -152,7 +152,7 @@ int BaseFontTT::getTextHeight(byte *text, int width) {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseFontTT::drawText(byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
+void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 	if (text == NULL || strcmp((char *)text, "") == 0) {
 		return;
 	}

@@ -92,7 +92,7 @@ bool BaseDynamicBuffer::init(uint32 initSize) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseDynamicBuffer::putBytes(byte *buffer, uint32 size) {
+bool BaseDynamicBuffer::putBytes(const byte *buffer, uint32 size) {
 	if (!_initialized) {
 		init();
 	}
@@ -152,7 +152,7 @@ void BaseDynamicBuffer::putString(const char *val) {
 		putString("(null)");
 	} else {
 		putDWORD(strlen(val) + 1);
-		putBytes((byte *)val, strlen(val) + 1);
+		putBytes((const byte *)val, strlen(val) + 1);
 	}
 }
 

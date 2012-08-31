@@ -342,7 +342,7 @@ void VideoTheoraPlayer::writeAlpha() {
 	if (_alphaImage && _surface.w == _alphaImage->getSurface()->w && _surface.h == _alphaImage->getSurface()->h) {
 		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
 		assert(_surface.format.bytesPerPixel == 4);
-		const byte *alphaData = (byte *)_alphaImage->getSurface()->getBasePtr(0, 0);
+		const byte *alphaData = (const byte *)_alphaImage->getSurface()->getBasePtr(0, 0);
 #ifdef SCUMM_LITTLE_ENDIAN
 		int alphaPlace = (_alphaImage->getSurface()->format.aShift / 8);
 #else

@@ -52,7 +52,7 @@ BaseFont::~BaseFont() {
 
 
 //////////////////////////////////////////////////////////////////////
-void BaseFont::drawText(byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
+void BaseFont::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 }
 
 

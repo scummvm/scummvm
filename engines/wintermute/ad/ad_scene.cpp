@@ -1200,8 +1200,8 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 
 //////////////////////////////////////////////////////////////////////////
 int AdScene::compareObjs(const void *obj1, const void *obj2) {
-	AdObject *object1 = *(AdObject **)obj1;
-	AdObject *object2 = *(AdObject **)obj2;
+	const AdObject *object1 = *(AdObject **)obj1;
+	const AdObject *object2 = *(AdObject **)obj2;
 
 	if (object1->_posY < object2->_posY) {
 		return -1;

@@ -44,7 +44,7 @@ public:
 	char *getString();
 	void putString(const char *val);
 	bool getBytes(byte *buffer, uint32 size);
-	bool putBytes(byte *buffer, uint32 size);
+	bool putBytes(const byte *buffer, uint32 size);
 	uint32 getSize();
 	bool init(uint32 initSize = 0);
 	void cleanup();

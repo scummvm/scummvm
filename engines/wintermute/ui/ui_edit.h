@@ -39,7 +39,7 @@ class UIEdit : public UIObject {
 public:
 	DECLARE_PERSISTENT(UIEdit, UIObject)
 	int _maxLength;
-	int insertChars(int pos, byte *chars, int num);
+	int insertChars(int pos, const byte *chars, int num);
 	int deleteChars(int start, int end);
 	bool _cursorVisible;
 	uint32 _lastBlinkTime;

@@ -403,7 +403,7 @@ TransparentSurface *TransparentSurface::scale(const Common::Rect &srcRect, const
 
 	for (int y = 0; y < dstH; y++) {
 		for (int x = 0; x < dstW; x++) {
-			uint32 color = READ_UINT32((byte *)getBasePtr(x * srcW / dstW + srcRect.left,
+			uint32 color = READ_UINT32((const byte *)getBasePtr(x * srcW / dstW + srcRect.left,
 														  y * srcH / dstH + srcRect.top));
 			WRITE_UINT32((byte *)target->getBasePtr(x + dstRect.left, y + dstRect.top), color);
 		}

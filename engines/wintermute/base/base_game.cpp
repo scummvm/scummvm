@@ -4356,7 +4356,7 @@ bool BaseGame::displayDebugInfo() {
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
 
 		if (_activeObject != NULL) {
-			_systemFont->drawText((byte *)_activeObject->getName(), 0, 150, _renderer->_width, TAL_RIGHT);
+			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->_width, TAL_RIGHT);
 		}
 
 		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));

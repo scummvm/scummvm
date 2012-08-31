@@ -853,7 +853,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 		//WideString wstr = StringUtil::Utf8ToWide(event->kbd.ascii);
 		WideString wstr;
 		wstr += (char)event->kbd.ascii;
-		_selEnd += insertChars(_selEnd, (byte *)StringUtil::wideToAnsi(wstr).c_str(), 1);
+		_selEnd += insertChars(_selEnd, (const byte *)StringUtil::wideToAnsi(wstr).c_str(), 1);
 
 		if (_gameRef->_textRTL) {
 			_selEnd = _selStart;
@@ -897,7 +897,7 @@ int UIEdit::deleteChars(int start, int end) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int UIEdit::insertChars(int pos, byte *chars, int num) {
+int UIEdit::insertChars(int pos, const byte *chars, int num) {
 	if ((int)strlen(_text) + num > _maxLength) {
 		num -= (strlen(_text) + num - _maxLength);
 	}
