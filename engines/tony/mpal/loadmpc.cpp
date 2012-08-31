@@ -253,14 +253,14 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 	}
 
 	if (curCmd >= MAX_COMMANDS_PER_DIALOG)
-		error("Too much commands in dialog #%d",lpmdDialog->_nObj);
+		error("Too much commands in dialog #%d", lpmdDialog->_nObj);
 
 	// Choices
 	num = READ_LE_UINT16(lpBuf);
 	lpBuf += 2;
 
 	if (num >= MAX_CHOICES_PER_DIALOG)
-		error("Too much choices in dialog #%d",lpmdDialog->_nObj);
+		error("Too much choices in dialog #%d", lpmdDialog->_nObj);
 
 	for (i = 0; i < num; i++) {
 		lpmdDialog->_choice[i]._nChoice = READ_LE_UINT16(lpBuf);
@@ -380,7 +380,7 @@ static const byte *parseItem(const byte *lpBuf, LpMpalItem lpmiItem) {
 		lpBuf++;
 
 		if (lpmiItem->_action[i]._nCmds >= MAX_COMMANDS_PER_ACTION)
-			error("Too much commands in action #%d in item #%d",lpmiItem->_action[i]._num, lpmiItem->_nObj);
+			error("Too much commands in action #%d in item #%d", lpmiItem->_action[i]._num, lpmiItem->_nObj);
 
 		for (uint32 j = 0; j < lpmiItem->_action[i]._nCmds; j++) {
 			lpmiItem->_command[curCmd]._type = *lpBuf;

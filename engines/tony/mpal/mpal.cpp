@@ -360,8 +360,8 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
  * @param dwId				ID of the resource to load
  * @returns		Handle to the loaded resource
  */
-HGLOBAL resLoad(uint32 dwId) {
-	HGLOBAL h;
+MpalHandle resLoad(uint32 dwId) {
+	MpalHandle h;
 	char head[4];
 	uint32 nBytesRead;
 	uint32 nSizeComp, nSizeDecomp;
@@ -461,15 +461,15 @@ static uint32 *GetItemList(uint32 nLoc) {
 	return il;
 }
 
-static LPITEM getItemData(uint32 nOrdItem) {
+static LpItem getItemData(uint32 nOrdItem) {
 	LpMpalItem curitem = GLOBALS._lpmiItems + nOrdItem;
-	LPITEM ret;
-	HGLOBAL hDat;
+	LpItem ret;
+	MpalHandle hDat;
 	char *dat;
 	char *patlength;
 
 	// Zeroing out the allocated memory is required!!!
-	ret = (LPITEM)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(ITEM));
+	ret = (LpItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(Item));
 	if (ret == NULL)
 		return NULL;
 	ret->_speed = 150;
@@ -536,7 +536,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
 	for (int i = 1; i < ret->_numframe; i++) {
 		uint32 dim = (uint32)(ret->_frameslocations[i].right - ret->_frameslocations[i].left) *
 			(uint32)(ret->_frameslocations[i].bottom - ret->_frameslocations[i].top);
-		ret->_frames[i] = (char *)globalAlloc(GMEM_FIXED,dim);
+		ret->_frames[i] = (char *)globalAlloc(GMEM_FIXED, dim);
 
 		if (ret->_frames[i] == NULL)
 			return NULL;
@@ -565,12 +565,12 @@ static LPITEM getItemData(uint32 nOrdItem) {
  */
 void CustomThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
-		LPCFCALL p;
+		LpCfCall p;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->p = *(LPCFCALL *)param;
+	_ctx->p = *(LpCfCall *)param;
 
 	CORO_INVOKE_4(GLOBALS._lplpFunctions[_ctx->p->_nCf], _ctx->p->_arg1, _ctx->p->_arg2, _ctx->p->_arg3, _ctx->p->_arg4);
 
@@ -593,7 +593,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 		uint32 dwCurTime;
 		uint32 dwId;
 		int numHandles;
-		LPCFCALL p;
+		LpCfCall p;
 	CORO_END_CONTEXT(_ctx);
 
 	static uint32 cfHandles[MAX_COMMANDS_PER_MOMENT];
@@ -604,7 +604,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 	_ctx->dwStartTime = g_vm->getTime();
 	_ctx->numHandles = 0;
 
-// debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Moments: %u\n",s->nMoments);
+// debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Moments: %u\n", s->_nMoments);
 	for (_ctx->i = 0; _ctx->i < s->_nMoments; _ctx->i++) {
 		// Sleep for the required time
 		if (s->_moment[_ctx->i]._dwTime == -1) {
@@ -613,8 +613,8 @@ void ScriptThread(CORO_PARAM, const void *param) {
 		} else {
 			_ctx->dwCurTime = g_vm->getTime();
 			if (_ctx->dwCurTime < _ctx->dwStartTime + (s->_moment[_ctx->i]._dwTime * 100)) {
-  //     debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Sleeping %lums\n",_ctx->dwStartTime+(s->Moment[_ctx->i].dwTime*100)-_ctx->dwCurTime);
-				CORO_INVOKE_1(CoroScheduler.sleep, _ctx->dwStartTime+(s->_moment[_ctx->i]._dwTime * 100) - _ctx->dwCurTime);
+  //     debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Sleeping %lums\n",_ctx->dwStartTime + (s->_moment[_ctx->i]._dwTime*100) - _ctx->dwCurTime);
+				CORO_INVOKE_1(CoroScheduler.sleep, _ctx->dwStartTime + (s->_moment[_ctx->i]._dwTime * 100) - _ctx->dwCurTime);
 			}
 		}
 
@@ -623,7 +623,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 			_ctx->k = s->_moment[_ctx->i]._cmdNum[_ctx->j];
 
 			if (s->_command[_ctx->k]._type == 1) {
-				_ctx->p = (LPCFCALL)globalAlloc(GMEM_FIXED, sizeof(CFCALL));
+				_ctx->p = (LpCfCall)globalAlloc(GMEM_FIXED, sizeof(CfCall));
 				if (_ctx->p == NULL) {
 					GLOBALS._mpalError = 1;
 
@@ -638,7 +638,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 				_ctx->p->_arg4 = s->_command[_ctx->k]._arg4;
 
 				// !!! New process management
-				if ((cfHandles[_ctx->numHandles++] = CoroScheduler.createProcess(CustomThread, &_ctx->p, sizeof(LPCFCALL))) == 0) {
+				if ((cfHandles[_ctx->numHandles++] = CoroScheduler.createProcess(CustomThread, &_ctx->p, sizeof(LpCfCall))) == 0) {
 					GLOBALS._mpalError = 1;
 
 					CORO_KILL_SELF();
@@ -775,14 +775,14 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
  */
 void LocationPollThread(CORO_PARAM, const void *param) {
 	typedef struct {
-		uint32  _nItem, _nAction;
+		uint32     _nItem, _nAction;
 
-		uint16  _wTime;
-		byte    _perc;
-		HGLOBAL _when;
-		byte    _nCmds;
-		uint16  _cmdNum[MAX_COMMANDS_PER_ACTION];
-		uint32  _dwLastTime;
+		uint16     _wTime;
+		byte       _perc;
+		MpalHandle _when;
+		byte       _nCmds;
+		uint16     _cmdNum[MAX_COMMANDS_PER_ACTION];
+		uint32     _dwLastTime;
 	} MYACTION;
 
 	typedef struct {
@@ -795,7 +795,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		int i, j, k;
 		int numitems;
 		int nRealItems;
-		LpMpalItem curItem,newItem;
+		LpMpalItem curItem, newItem;
 		int nIdleActions;
 		uint32 curTime;
 		uint32 dwSleepTime;
@@ -1012,7 +1012,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 					// Create the process
 					if ((_ctx->myThreads[_ctx->i]._hThread = CoroScheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LpMpalItem))) == CORO_INVALID_PID_VALUE) {
-					//if ((_ctx->myThreads[_ctx->i]._hThread = (void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem)) == (void*)-1)
+					//if ((_ctx->myThreads[_ctx->i]._hThread = (void*)_beginthread(ActionThread, 10240, (void *)_ctx->newItem)) == (void*)-1)
 						globalDestroy(_ctx->newItem);
 						globalDestroy(_ctx->myThreads);
 						globalDestroy(_ctx->myActions);
@@ -1298,8 +1298,8 @@ static uint32 doAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
 		// In the new version number of the action in writing dwRes
 		Common::copy((byte *)item, (byte *)item + sizeof(MpalItem), (byte *)newitem);
 
-		//newitem->Action[0].nCmds=item->Action[i].nCmds;
-		//memcpy(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
+		//newitem->_action[0]._nCmds=item->_action[i]._nCmds;
+		//memcpy(newitem->_action[0]._cmdNum, item->_action[i]._cmdNum, newitem->Action[0].nCmds * sizeof(newitem->_action[0]._cmdNum[0]));
 
 		newitem->_dwRes = i;
 
@@ -1630,7 +1630,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 
 	} else if (wQueryType == MPQ_ITEM_DATA) {
 		/*
-		 *  LPITEM mpalQuery(MPQ_ITEM_DATA, uint32 nItem);
+		 *  LpItem mpalQuery(MPQ_ITEM_DATA, uint32 nItem);
 		 */
 		error("mpalQuery(MPQ_ITEM_DATA, uint32 nItem) used incorrect variant");
 
@@ -1747,7 +1747,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
  * @remarks		This is the specialised version of the original single mpalQuery
  * method that returns a pointer or handle.
  */
-HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
+MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
 	char *n;
 	Common::String buf;
 	va_list v;
@@ -1813,7 +1813,7 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 
 	} else if (wQueryType == MPQ_ITEM_DATA) {
 		/*
-		 *  LPITEM mpalQuery(MPQ_ITEM_DATA, uint32 nItem);
+		 *  LpItem mpalQuery(MPQ_ITEM_DATA, uint32 nItem);
 		 */
 		lockItems();
 		hRet = getItemData(itemGetOrderFromNum(GETARG(uint32)));
@@ -2008,7 +2008,7 @@ bool mpalStartIdlePoll(int nLoc) {
 			GLOBALS._hEndPollingLocations[i] = CoroScheduler.createEvent(true, false);
 // !!! New process management
 			if ((GLOBALS._pollingThreads[i] = CoroScheduler.createProcess(LocationPollThread, &i, sizeof(uint32))) == CORO_INVALID_PID_VALUE)
-//			 if ((GLOBALS.hEndPollingLocations[i] = (void*)_beginthread(LocationPollThread, 10240,(void *)i))= = (void*)-1)
+//			 if ((GLOBALS.hEndPollingLocations[i] = (void*)_beginthread(LocationPollThread, 10240, (void *)i))= = (void*)-1)
 				return false;
 
 			return true;

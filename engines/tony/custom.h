@@ -36,10 +36,7 @@ namespace Tony {
 
 using namespace MPAL;
 
-typedef uint32 HWND;
-
 #define INIT_CUSTOM_FUNCTION            MapCustomFunctions
-#define INIT_CUSTOM_FUNCTION_STRING     "MapCustomFunctions"
 
 #define DECLARE_CUSTOM_FUNCTION(x)      void x
 

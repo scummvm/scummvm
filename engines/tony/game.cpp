@@ -1039,7 +1039,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 	}
 
 #define KEYPRESS(c)     (g_vm->getEngine()->getInput().getAsyncKeyState(c))
-#define PROCESS_CHAR(cod,c)  if (KEYPRESS(cod)) { \
+#define PROCESS_CHAR(cod, c)  if (KEYPRESS(cod)) { \
 		_editName[strlen(_editName) + 1] = '\0'; _editName[strlen(_editName)] = c; _ctx->bRefresh = true; }
 
 	// State Buttons

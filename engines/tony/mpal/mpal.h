@@ -100,10 +100,7 @@ namespace MPAL {
 
 #define MAXFRAMES  400        // frame animation of an object
 #define MAXPATTERN 40         // pattern of animation of an object
-
 #define MAXPOLLINGLOCATIONS   64
-
-#define LPSTR char *
 
 /**
  * Macro for use with queries that may refer to X and Y co-ordinates
@@ -112,7 +109,6 @@ enum QueryCoordinates {
   MPQ_X,
   MPQ_Y
 };
-
 
 /**
  * Query can be used with mpalQuery methods. In practice corresponds all claims
@@ -164,8 +160,8 @@ typedef struct {
   short _destX, _destY;
   signed char _destZ;
   short _objectID;
-} ITEM;
-typedef ITEM *LPITEM;
+} Item;
+typedef Item *LpItem;
 
 
 /**
@@ -228,7 +224,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *				after use. The message will be in ASCIIZ format.
 */
 #define mpalQueryMessage(nMsg)                          \
-        (LPSTR)mpalQueryHANDLE(MPQ_MESSAGE, (uint32)(nMsg))
+        (char *)mpalQueryHANDLE(MPQ_MESSAGE, (uint32)(nMsg))
 
 
 /**
@@ -246,7 +242,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @param dwCoord           MPQ_X or MPQ_Y coordinate to retrieve
  * @returns		Size
  */
-#define mpalQueryLocationSize(nLoc,dwCoord)             \
+#define mpalQueryLocationSize(nLoc, dwCoord)             \
         mpalQueryDWORD(MPQ_LOCATION_SIZE, (uint32)(nLoc), (uint32)(dwCoord))
 
 
@@ -268,7 +264,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		Structure filled with requested information
  */
 #define mpalQueryItemData(nItem)                          \
-        (LPITEM)mpalQueryHANDLE(MPQ_ITEM_DATA, (uint32)(nItem))
+        (LpItem)mpalQueryHANDLE(MPQ_ITEM_DATA, (uint32)(nItem))
 
 
 /**
@@ -302,7 +298,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  *				is less than or equal to 0), the string will be empty.
  */
 #define mpalQueryItemName(nItem, lpszName)             \
-        mpalQueryHANDLE(MPQ_ITEM_NAME, (uint32)(nItem), (LPSTR)(lpszName))
+        mpalQueryHANDLE(MPQ_ITEM_NAME, (uint32)(nItem), (char *)(lpszName))
 
 
 /**
@@ -316,7 +312,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * string terminated with 0.
  */
 #define mpalQueryDialogPeriod(nPeriod)                  \
-        (LPSTR)mpalQueryHANDLE(MPQ_DIALOG_PERIOD, (uint32)(nPeriod))
+        (char *)mpalQueryHANDLE(MPQ_DIALOG_PERIOD, (uint32)(nPeriod))
 
 
 /**
@@ -379,8 +375,8 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		Handle to the thread that is running the box, or
  * CORO_INVALID_PID_VALUE if the dialogue does not exist.
  */
-#define mpalQueryDoDialog(nDialog,nGroup)               \
-        mpalQueryDWORD(MPQ_DO_DIALOG, (uint32)(nDialog),(uint32)(nGroup))
+#define mpalQueryDoDialog(nDialog, nGroup)               \
+        mpalQueryDWORD(MPQ_DO_DIALOG, (uint32)(nDialog), (uint32)(nGroup))
 
 /**
  * @defgroup Functions exported to the main game
@@ -422,7 +418,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...);
  * @remarks		This is the specialised version of the original single mpalQuery
  * method that returns a pointer or handle.
  */
-HANDLE mpalQueryHANDLE(uint16 wQueryType, ...);
+MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...);
 
 /**
  * This is a general function to communicate with the library, to request information

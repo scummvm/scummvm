@@ -47,7 +47,7 @@ namespace MPAL {
  * will point to the area of memory containing the parsed expression
  * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
  */
-const byte *parseExpression(const byte *lpBuf, HGLOBAL *h);
+const byte *parseExpression(const byte *lpBuf, MpalHandle *h);
 
 /**
  * Calculate the value of a mathamatical expression
@@ -55,7 +55,7 @@ const byte *parseExpression(const byte *lpBuf, HGLOBAL *h);
  * @param h					Handle to the expression
  * @returns		Numeric value
  */
-int evaluateExpression(HGLOBAL h);
+int evaluateExpression(MpalHandle h);
 
 /**
  * Compare two mathematical expressions together
@@ -63,14 +63,14 @@ int evaluateExpression(HGLOBAL h);
  * @param h1				Expression to be compared
  * @param h2				Expression to be compared
  */
-bool compareExpressions(HGLOBAL h1, HGLOBAL h2);
+bool compareExpressions(MpalHandle h1, MpalHandle h2);
 
 /**
  * Frees an expression that was previously parsed
  *
  * @param h					Handle for the expression
  */
-void freeExpression(HGLOBAL h);
+void freeExpression(MpalHandle h);
 
 } // end of namespace MPAL
 

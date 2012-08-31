@@ -37,7 +37,7 @@ namespace MPAL {
 
 class RMRes {
 protected:
-	HGLOBAL _h;
+	MpalHandle _h;
     byte *_buf;
 
 public:

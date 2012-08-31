@@ -1749,7 +1749,7 @@ int g_curDialog;
 
 DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
-	LPSTR string;
+	char *string;
 	RMTextDialog *text;
 	int parm;
 	uint32 h;

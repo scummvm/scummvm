@@ -81,20 +81,20 @@ enum ExprListTypes {
  * Mathamatical framework to manage operations
  */
 typedef struct {
-	byte type;						// Tipo di oggetto (vedi enum ExprListTypes)
-	byte unary;						// Unary operatore (NON SUPPORTATO)
+	byte _type;                     // Tipo di oggetto (vedi enum ExprListTypes)
+	byte _unary;                    // Unary operatore (NON SUPPORTATO)
 
 	union {
-		int num;                    // Numero (se type==ELT_NUMBER)
-		char *name;                 // Nome variabile (se type==ELT_VAR)
-		HGLOBAL son;                // Handle a espressione (type==ELT_PARENTH)
-		byte *pson;					// Handle lockato (type==ELT_PARENTH2)
-	} val;
+		int _num;                   // Numero (se type==ELT_NUMBER)
+		char *_name;                // Nome variabile (se type==ELT_VAR)
+		MpalHandle _son;            // Handle a espressione (type==ELT_PARENTH)
+		byte *_pson;                // Handle lockato (type==ELT_PARENTH2)
+	} _val;
 
-	byte symbol;					// Simbolo matematico (vedi #define OP_*)
+	byte _symbol;                   // Simbolo matematico (vedi #define OP_*)
 
-} EXPRESSION;
-typedef EXPRESSION *LPEXPRESSION;
+} Expression;
+typedef Expression *LpExpression;
 
 //@}
 
@@ -104,24 +104,24 @@ typedef EXPRESSION *LPEXPRESSION;
  * @param h				Handle to the original expression
  * @retruns		Pointer to the cloned expression
  */
-static byte *duplicateExpression(HGLOBAL h) {
+static byte *duplicateExpression(MpalHandle h) {
 	byte *orig, *clone;
-	LPEXPRESSION one, two;
+	LpExpression one, two;
 
 	orig = (byte *)globalLock(h);
 
 	int num = *(byte *)orig;
-	one = (LPEXPRESSION)(orig+1);
+	one = (LpExpression)(orig+1);
 
-	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(EXPRESSION) * num + 1);
-	two = (LPEXPRESSION)(clone + 1);
+	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(Expression) * num + 1);
+	two = (LpExpression)(clone + 1);
 
-	memcpy(clone, orig, sizeof(EXPRESSION) * num + 1);
+	memcpy(clone, orig, sizeof(Expression) * num + 1);
 
 	for (int i = 0; i < num; i++) {
-		if (one->type == ELT_PARENTH) {
-			two->type = ELT_PARENTH2;
-			two->val.pson = duplicateExpression(two->val.son);
+		if (one->_type == ELT_PARENTH) {
+			two->_type = ELT_PARENTH2;
+			two->_val._pson = duplicateExpression(two->_val._son);
 		}
 
 		++one;
@@ -178,27 +178,27 @@ static int Compute(int a, int b, byte symbol) {
 	return 0;
 }
 
-static void solve(LPEXPRESSION one, int num) {
-	LPEXPRESSION two, three;
+static void solve(LpExpression one, int num) {
+	LpExpression two, three;
 	int j;
 
 	while (num > 1) {
 		two = one + 1;
-		if ((two->symbol == 0) || (one->symbol & 0xF0) <= (two->symbol & 0xF0)) {
-			two->val.num = Compute(one->val.num, two->val.num, one->symbol);
-			memmove(one, two, (num - 1) * sizeof(EXPRESSION));
+		if ((two->_symbol == 0) || (one->_symbol & 0xF0) <= (two->_symbol & 0xF0)) {
+			two->_val._num = Compute(one->_val._num, two->_val._num, one->_symbol);
+			memmove(one, two, (num - 1) * sizeof(Expression));
 			--num;
 		} else {
 			j = 1;
 			three = two + 1;
-			while ((three->symbol != 0) && (two->symbol & 0xF0) > (three->symbol & 0xF0)) {
+			while ((three->_symbol != 0) && (two->_symbol & 0xF0) > (three->_symbol & 0xF0)) {
 				++two;
 				++three;
 				++j;
 			}
 
-			three->val.num = Compute(two->val.num, three->val.num, two->symbol);
-			memmove(two, three, (num - j - 1) * sizeof(EXPRESSION));
+			three->_val._num = Compute(two->_val._num, three->_val._num, two->_symbol);
+			memmove(two, three, (num - j - 1) * sizeof(Expression));
 			--num;
 		}
 	}
@@ -213,32 +213,32 @@ static void solve(LPEXPRESSION one, int num) {
  * @returns		Value
  */
 static int evaluateAndFreeExpression(byte *expr) {
-	LPEXPRESSION one, cur;
+	LpExpression one, cur;
 
 	int num = *expr;
-	one = (LPEXPRESSION)(expr + 1);
+	one = (LpExpression)(expr + 1);
 
 	// 1) Substitutions of variables
 	cur = one;
 	for (int i = 0; i < num; i++, cur++) {
-		if (cur->type == ELT_VAR) {
-			cur->type = ELT_NUMBER;
-			cur->val.num = varGetValue(cur->val.name);
+		if (cur->_type == ELT_VAR) {
+			cur->_type = ELT_NUMBER;
+			cur->_val._num = varGetValue(cur->_val._name);
 		}
 	}
 
 	// 2) Replacement of brackets (using recursive calls)
 	cur = one;
 	for (int i = 0; i < num; i++, cur++) {
-		if (cur->type == ELT_PARENTH2) {
-			cur->type = ELT_NUMBER;
-			cur->val.num = evaluateAndFreeExpression(cur->val.pson);
+		if (cur->_type == ELT_PARENTH2) {
+			cur->_type = ELT_NUMBER;
+			cur->_val._num = evaluateAndFreeExpression(cur->_val._pson);
 		}
 	}
 
 	// 3) algebraic resolution
 	solve(one, num);
-	int val = one->val.num;
+	int val = one->_val._num;
 	globalDestroy(expr);
 
 	return val;
@@ -253,8 +253,8 @@ static int evaluateAndFreeExpression(byte *expr) {
  * will point to the area of memory containing the parsed expression
  * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
  */
-const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
-	LPEXPRESSION cur;
+const byte *parseExpression(const byte *lpBuf, MpalHandle *h) {
+	LpExpression cur;
 	byte *start;
 
 	uint32 num = *lpBuf;
@@ -263,35 +263,35 @@ const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
 	if (num == 0)
 		return NULL;
 
-	*h = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(EXPRESSION) + 1);
+	*h = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(Expression) + 1);
 	if (*h == NULL)
 		return NULL;
 
 	start = (byte *)globalLock(*h);
 	*start = (byte)num;
 
-	cur = (LPEXPRESSION)(start + 1);
+	cur = (LpExpression)(start + 1);
 
 	for (uint32 i = 0;i < num; i++) {
-		cur->type = *(lpBuf);
-		cur->unary = *(lpBuf + 1);
+		cur->_type = *(lpBuf);
+		cur->_unary = *(lpBuf + 1);
 		lpBuf += 2;
-		switch (cur->type) {
+		switch (cur->_type) {
 		case ELT_NUMBER:
-			cur->val.num = (int32)READ_LE_UINT32(lpBuf);
+			cur->_val._num = (int32)READ_LE_UINT32(lpBuf);
 			lpBuf += 4;
 			break;
 
 		case ELT_VAR:
-			cur->val.name = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, (*lpBuf) + 1);
-			if (cur->val.name == NULL)
+			cur->_val._name = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, (*lpBuf) + 1);
+			if (cur->_val._name == NULL)
 				return NULL;
-			memcpy(cur->val.name, lpBuf + 1, *lpBuf);
+			memcpy(cur->_val._name, lpBuf + 1, *lpBuf);
 			lpBuf += *lpBuf + 1;
 			break;
 
 		case ELT_PARENTH:
-			lpBuf = parseExpression(lpBuf, &cur->val.son);
+			lpBuf = parseExpression(lpBuf, &cur->_val._son);
 			if (lpBuf == NULL)
 				return NULL;
 			break;
@@ -300,7 +300,7 @@ const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
 			return NULL;
 		}
 
-		cur->symbol = *lpBuf;
+		cur->_symbol = *lpBuf;
 		lpBuf++;
 
 		cur++;
@@ -321,7 +321,7 @@ const byte *parseExpression(const byte *lpBuf, HGLOBAL *h) {
  * @param h					Handle to the expression
  * @returns		Numeric value
  */
-int evaluateExpression(HGLOBAL h) {
+int evaluateExpression(MpalHandle h) {
 	int ret;
 
 	lockVar();
@@ -337,9 +337,9 @@ int evaluateExpression(HGLOBAL h) {
  * @param h1				Expression to be compared
  * @param h2				Expression to be compared
  */
-bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
+bool compareExpressions(MpalHandle h1, MpalHandle h2) {
 	byte *e1, *e2;
-	LPEXPRESSION one, two;
+	LpExpression one, two;
 
 	e1 = (byte *)globalLock(h1);
 	e2 = (byte *)globalLock(h2);
@@ -353,19 +353,19 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 		return false;
 	}
 
-	one = (LPEXPRESSION)(e1 + 1);
-	two = (LPEXPRESSION)(e2 + 1);
+	one = (LpExpression)(e1 + 1);
+	two = (LpExpression)(e2 + 1);
 
 	for (int i = 0; i < num1; i++) {
-		if (one->type != two->type || (i != num1 - 1 && one->symbol != two->symbol)) {
+		if (one->_type != two->_type || (i != num1 - 1 && one->_symbol != two->_symbol)) {
 			globalUnlock(h1);
 			globalUnlock(h2);
 			return false;
 		}
 
-		switch (one->type) {
+		switch (one->_type) {
 		case ELT_NUMBER:
-			if (one->val.num != two->val.num) {
+			if (one->_val._num != two->_val._num) {
 				globalUnlock(h1);
 				globalUnlock(h2);
 				return false;
@@ -373,7 +373,7 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 			break;
 
 		case ELT_VAR:
-			if (strcmp(one->val.name, two->val.name) != 0) {
+			if (strcmp(one->_val._name, two->_val._name) != 0) {
 				globalUnlock(h1);
 				globalUnlock(h2);
 				return false;
@@ -381,7 +381,7 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
 			break;
 
 		case ELT_PARENTH:
-			if (!compareExpressions(one->val.son, two->val.son)) {
+			if (!compareExpressions(one->_val._son, two->_val._son)) {
 				globalUnlock(h1);
 				globalUnlock(h2);
 				return false;
@@ -404,19 +404,19 @@ bool compareExpressions(HGLOBAL h1, HGLOBAL h2) {
  *
  * @param h					Handle for the expression
  */
-void freeExpression(HGLOBAL h) {
+void freeExpression(MpalHandle h) {
 	byte *data = (byte *)globalLock(h);
 	int num = *data;
-	LPEXPRESSION cur = (LPEXPRESSION)(data + 1);
+	LpExpression cur = (LpExpression)(data + 1);
 
 	for (int i = 0; i < num; ++i, ++cur) {
-		switch (cur->type) {
+		switch (cur->_type) {
 		case ELT_VAR:
-			globalDestroy(cur->val.name);
+			globalDestroy(cur->_val._name);
 			break;
 
 		case ELT_PARENTH:
-			freeExpression(cur->val.son);
+			freeExpression(cur->_val._son);
 			break;
 
 		default:

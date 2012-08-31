@@ -424,7 +424,7 @@ uint32 RMGfxEngine::loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
 	_bLocationLoaded = true;
 
 	// On entering the location
-	return CORO_INVALID_PID_VALUE; //mpalQueryDoAction(0,m_nCurLoc,0);
+	return CORO_INVALID_PID_VALUE; //mpalQueryDoAction(0, m_nCurLoc, 0);
 }
 
 void RMGfxEngine::unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {

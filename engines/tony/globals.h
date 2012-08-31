@@ -150,9 +150,9 @@ typedef struct {
 	int _nCf;
 
 	int _arg1, _arg2, _arg3, _arg4;
-} CFCALL;
-typedef CFCALL         *LPCFCALL;
-typedef LPCFCALL       *LPLPCFCALL;
+} CfCall;
+typedef CfCall         *LpCfCall;
+typedef LpCfCall       *LPLPCFCALL;
 
 
 struct CoroutineMutex {
@@ -176,20 +176,20 @@ public:
 
 	Common::String _nextMusic;
 	bool _nextLoop;
-	int _nextChannel;
-	int _nextSync;
-	int _curChannel;
-	int _flipflop;
+	int  _nextChannel;
+	int  _nextSync;
+	int  _curChannel;
+	int  _flipflop;
 	CharacterStruct _character[16];
 	MCharacterStruct _mCharacter[10];
 	ChangedHotspotStruct _changedHotspot[256];
 	bool _isMChar[16];
 	bool _bAlwaysDisplay;
 	RMPoint _saveTonyPos;
-	int _saveTonyLoc;
+	int  _saveTonyLoc;
 	RMTextDialog *_curBackText;
 	bool _bTonyIsSpeaking;
-	int _curChangedHotspot;
+	int  _curChangedHotspot;
 	bool _bCfgInvLocked;
 	bool _bCfgInvNoScroll;
 	bool _bCfgTimerizedText;
@@ -210,8 +210,8 @@ public:
 	bool _bSkipSfxNoLoop;
 	bool _bIdleExited;
 	bool _bNoBullsEye;
-	int _curDialog;
-	int _curSoundEffect;
+	int  _curDialog;
+	int  _curSoundEffect;
 	bool _bFadeOutStop;
 
 	RMTony *_tony;
@@ -251,22 +251,22 @@ public:
 	Common::String     *_lplpFunctionStrings;
 	uint16              _nObjs;
 	uint16              _nVars;
-	HGLOBAL             _hVars;
+	MpalHandle          _hVars;
 	LpMpalVar           _lpmvVars;
 	uint16              _nMsgs;
-	HGLOBAL             _hMsgs;
+	MpalHandle          _hMsgs;
 	LpMpalMsg           _lpmmMsgs;
 	uint16              _nDialogs;
-	HGLOBAL             _hDialogs;
+	MpalHandle          _hDialogs;
 	LpMpalDialog        _lpmdDialogs;
 	uint16              _nItems;
-	HGLOBAL             _hItems;
+	MpalHandle          _hItems;
 	LpMpalItem          _lpmiItems;
 	uint16              _nLocations;
-	HGLOBAL             _hLocations;
+	MpalHandle          _hLocations;
 	LpMpalLocation      _lpmlLocations;
 	uint16              _nScripts;
-	HGLOBAL             _hScripts;
+	MpalHandle          _hScripts;
 	LpMpalScript        _lpmsScripts;
 	Common::File        _hMpr;
 	uint16              _nResources;

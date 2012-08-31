@@ -173,7 +173,7 @@ public:
 	~RMResUpdate();
 
 	void init(const Common::String &fileName);
-	HGLOBAL queryResource(uint32 dwRes);
+	MpalHandle queryResource(uint32 dwRes);
 };
 
 } // End of namespace Tony

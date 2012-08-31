@@ -69,10 +69,10 @@ namespace Tony {
 
 namespace MPAL {
 
-#define pd(a,b)             ((uint32) ((a)-(b)))
+#define pd(a, b)            ((uint32) ((a) - (b)))
 
 #define TEST_IP             (ip < ip_end)
-#define TEST_OP               1
+#define TEST_OP              1
 #define NEED_IP(x)          ((void) 0)
 #define NEED_OP(x)          ((void) 0)
 #define TEST_LB(m_pos)      ((void) 0)
@@ -83,7 +83,7 @@ namespace MPAL {
 /**
  * Decompresses an LZO compressed resource
  */
-int lzo1x_decompress(const byte *in , uint32 in_len, byte *out, uint32 *out_len) {
+int lzo1x_decompress(const byte *in, uint32 in_len, byte *out, uint32 *out_len) {
     register byte *op;
     register const byte *ip;
     register uint32 t = 0;
@@ -155,12 +155,12 @@ int lzo1x_decompress(const byte *in , uint32 in_len, byte *out, uint32 *out_len)
         t += 3;
         if (t >= 8) do
         {
-            UA_COPY64(op,ip);
+            UA_COPY64(op, ip);
             op += 8; ip += 8; t -= 8;
         } while (t >= 8);
         if (t >= 4)
         {
-            UA_COPY32(op,ip);
+            UA_COPY32(op, ip);
             op += 4; ip += 4; t -= 4;
         }
         if (t > 0)
@@ -170,17 +170,17 @@ int lzo1x_decompress(const byte *in , uint32 in_len, byte *out, uint32 *out_len)
         }
 #elif defined(LZO_UNALIGNED_OK_4) || defined(LZO_ALIGNED_OK_4)
 #if !defined(LZO_UNALIGNED_OK_4)
-        if (PTR_ALIGNED2_4(op,ip))
+        if (PTR_ALIGNED2_4(op, ip))
         {
 #endif
-        UA_COPY32(op,ip);
+        UA_COPY32(op, ip);
         op += 4; ip += 4;
         if (--t > 0)
         {
             if (t >= 4)
             {
                 do {
-                    UA_COPY32(op,ip);
+                    UA_COPY32(op, ip);
                     op += 4; ip += 4; t -= 4;
                 } while (t >= 4);
                 if (t > 0) do *op++ = *ip++; while (--t > 0);
@@ -213,7 +213,7 @@ first_literal_run:
         m_off = (1 + M2_MAX_OFFSET) + (t >> 2) + (*ip++ << 2);
 #endif
         NEED_OP(3);
-        t = 3; COPY_DICT(t,m_off)
+        t = 3; COPY_DICT(t, m_off)
 #else
 #if defined(LZO1Z)
         t = (1 + M2_MAX_OFFSET) + (t << 6) + (*ip++ >> 2);
@@ -382,7 +382,7 @@ match:
                 m_off = 1 + (t >> 2) + (*ip++ << 2);
 #endif
                 NEED_OP(2);
-                t = 2; COPY_DICT(t,m_off)
+                t = 2; COPY_DICT(t, m_off)
 #else
 #if defined(LZO1Z)
                 t = 1 + (t << 6) + (*ip++ >> 2);
@@ -402,7 +402,7 @@ match:
 #if defined(COPY_DICT)
 
             NEED_OP(t+3-1);
-            t += 3-1; COPY_DICT(t,m_off)
+            t += 3-1; COPY_DICT(t, m_off)
 
 #else
 
@@ -413,12 +413,12 @@ match:
                 t += (3 - 1);
                 if (t >= 8) do
                 {
-                    UA_COPY64(op,m_pos);
+                    UA_COPY64(op, m_pos);
                     op += 8; m_pos += 8; t -= 8;
                 } while (t >= 8);
                 if (t >= 4)
                 {
-                    UA_COPY32(op,m_pos);
+                    UA_COPY32(op, m_pos);
                     op += 4; m_pos += 4; t -= 4;
                 }
                 if (t > 0)
@@ -430,17 +430,17 @@ match:
             else
 #elif defined(LZO_UNALIGNED_OK_4) || defined(LZO_ALIGNED_OK_4)
 #if !defined(LZO_UNALIGNED_OK_4)
-            if (t >= 2 * 4 - (3 - 1) && PTR_ALIGNED2_4(op,m_pos))
+            if (t >= 2 * 4 - (3 - 1) && PTR_ALIGNED2_4(op, m_pos))
             {
                 assert((op - m_pos) >= 4);
 #else
             if (t >= 2 * 4 - (3 - 1) && (op - m_pos) >= 4)
             {
 #endif
-                UA_COPY32(op,m_pos);
+                UA_COPY32(op, m_pos);
                 op += 4; m_pos += 4; t -= 4 - (3 - 1);
                 do {
-                    UA_COPY32(op,m_pos);
+                    UA_COPY32(op, m_pos);
                     op += 4; m_pos += 4; t -= 4;
                 } while (t >= 4);
                 if (t > 0) do *op++ = *m_pos++; while (--t > 0);

@@ -82,8 +82,8 @@ typedef MpalVar *LpMpalVar;
  * MPAL Messages
  */
 struct MpalMsg {
-  HGLOBAL _hText;       // Handle to the message text
-  uint16 _wNum;         // Message number
+  MpalHandle _hText;       // Handle to the message text
+  uint16 _wNum;            // Message number
 } PACKED_STRUCT;
 typedef MpalMsg *LpMpalMsg;
 
@@ -110,7 +110,7 @@ struct Command {
    *   #3 -> Making a choice			(DIALOG)
    *
    */
-	byte  _type;                   // Type of control
+	byte  _type;                     // Type of control
 
 	union {
 		int32 _nCf;                  // Custom function call      [#1]
@@ -120,10 +120,10 @@ struct Command {
 
 	union {
 		int32 _arg1;                 // Argument for custom function        [#1]
-		HGLOBAL _expr;               // Expression to assign to a variable  [#2]
+		MpalHandle _expr;            // Expression to assign to a variable  [#2]
 	};
 
-	int32 _arg2, _arg3, _arg4;     // Arguments for custom function       [#1]
+	int32 _arg2, _arg3, _arg4;       // Arguments for custom function       [#1]
 } PACKED_STRUCT;
 
 
@@ -148,7 +148,7 @@ struct MpalDialog {
 
 		// The select number (we're pretty stingy with RAM). The last select has dwData == 0
 		struct {
-			HGLOBAL _when;
+			MpalHandle _when;
 			uint32 _dwData;
 			uint16 _wPlayGroup[MAX_PLAYGROUPS_PER_SELECT];
 
@@ -163,7 +163,7 @@ struct MpalDialog {
 	} _choice[MAX_CHOICES_PER_DIALOG];
 
 	uint16 _periodNums[MAX_PERIODS_PER_DIALOG];
-	HGLOBAL _periods[MAX_PERIODS_PER_DIALOG];
+	MpalHandle _periods[MAX_PERIODS_PER_DIALOG];
 
 } PACKED_STRUCT;
 typedef MpalDialog *LpMpalDialog;
@@ -175,20 +175,20 @@ struct ItemAction {
 	byte	_num;                // Action number
 	uint16	_wTime;              // If idle, the time which must pass
     byte	_perc;               // Percentage of the idle run
-    HGLOBAL	_when;               // Expression to compute. If != 0, then
-								// action can be done
+    MpalHandle	_when;           // Expression to compute. If != 0, then
+								 // action can be done
     uint16	_wParm;              // Parameter for action
 
-    byte	_nCmds;				// Number of commands to be executed
+    byte	_nCmds;				 // Number of commands to be executed
     uint32	_cmdNum[MAX_COMMANDS_PER_ACTION]; // Commands to execute
 } PACKED_STRUCT;
 
 struct MpalItem {
-	uint32 _nObj;				// Item number
+	uint32 _nObj;				 // Item number
 
 	byte _lpszDescribe[MAX_DESCRIBE_SIZE]; // Name
-	byte _nActions;				// Number of managed actions
-	uint32 _dwRes;				// Resource that contains frames and patterns
+	byte _nActions;				 // Number of managed actions
+	uint32 _dwRes;				 // Resource that contains frames and patterns
 
 	struct Command _command[MAX_COMMANDS_PER_ITEM];
 

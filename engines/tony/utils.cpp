@@ -370,7 +370,7 @@ void RMResUpdate::init(const Common::String &fileName) {
 	}
 }
 
-HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
+MpalHandle RMResUpdate::queryResource(uint32 dwRes) {
 	// If there isn't an update file, return NULL
 	if (!_hFile.isOpen())
 		return NULL;
@@ -400,7 +400,7 @@ HGLOBAL RMResUpdate::queryResource(uint32 dwRes) {
 	}
 
 	// Allocate space for the output resource
-	HGLOBAL destBuf = globalAllocate(0, info._size);
+	MpalHandle destBuf = globalAllocate(0, info._size);
 	byte *lpDestBuf = (byte *)globalLock(destBuf);
 	uint32 dwSize;
 

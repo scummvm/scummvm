@@ -42,7 +42,7 @@ namespace Tony {
 	assert(raw->isValid());                                \
 	assert((buf16) == NULL);                               \
 	(buf16) = new RMGfxSourceBuffer16(false);              \
-	(buf16)->init(*raw,raw->width(),raw->height());        \
+	(buf16)->init(*raw, raw->width(), raw->height());      \
 	delete raw;
 
 #define INIT_GFX8_FROMRAW(raw, dwRes, buf8)              \

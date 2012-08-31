@@ -31,8 +31,7 @@ namespace Tony {
 
 namespace MPAL {
 
-typedef void *HANDLE;
-typedef HANDLE HGLOBAL;
+typedef void *MpalHandle;
 
 struct MemoryItem {
 	uint32 _id;
@@ -46,15 +45,15 @@ struct MemoryItem {
 
 class MemoryManager {
 private:
-	static MemoryItem *getItem(HGLOBAL handle);
+	static MemoryItem *getItem(MpalHandle handle);
 public:
-	static HANDLE allocate(uint32 size, uint flags);
+	static MpalHandle allocate(uint32 size, uint flags);
 	static void *alloc(uint32 size, uint flags);
-	static void freeBlock(HANDLE handle);
-	static void destroyItem(HANDLE handle);
-	static uint32 getSize(HANDLE handle);
-	static byte *lockItem(HANDLE handle);
-	static void unlockItem(HANDLE handle);
+	static void freeBlock(MpalHandle handle);
+	static void destroyItem(MpalHandle handle);
+	static uint32 getSize(MpalHandle handle);
+	static byte *lockItem(MpalHandle handle);
+	static void unlockItem(MpalHandle handle);
 };
 
 // defines
