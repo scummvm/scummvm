@@ -41,10 +41,10 @@ class BaseImage;
 class VideoTheoraPlayer : public BaseClass {
 private:
 	enum {
-	    THEORA_STATE_NONE = 0,
-	    THEORA_STATE_PLAYING = 1,
-	    THEORA_STATE_PAUSED = 2,
-	    THEORA_STATE_FINISHED = 3
+		THEORA_STATE_NONE = 0,
+		THEORA_STATE_PLAYING = 1,
+		THEORA_STATE_PAUSED = 2,
+		THEORA_STATE_FINISHED = 3
 	};
 	Video::VideoDecoder *_theoraDecoder;
 	Graphics::Surface _surface;

@@ -34,11 +34,11 @@ class BaseGame;
 class SystemClassRegistry;
 // our engine debug channels
 enum {
-    kWintermuteDebugLog = 1 << 0, // The debug-logs from the original engine
-    kWintermuteDebugSaveGame = 1 << 1,
-    kWintermuteDebugFont = 1 << 2, // next new channel must be 1 << 2 (4)
-    kWintermuteDebugFileAccess = 1 << 3, // the current limitation is 32 debug channels (1 << 31 is the last one)
-    kWintermuteDebugAudio = 1 << 4,
+	kWintermuteDebugLog = 1 << 0, // The debug-logs from the original engine
+	kWintermuteDebugSaveGame = 1 << 1,
+	kWintermuteDebugFont = 1 << 2, // next new channel must be 1 << 2 (4)
+	kWintermuteDebugFileAccess = 1 << 3, // the current limitation is 32 debug channels (1 << 31 is the last one)
+	kWintermuteDebugAudio = 1 << 4,
 	kWintermuteDebugGeneral = 1 << 5
 };
 

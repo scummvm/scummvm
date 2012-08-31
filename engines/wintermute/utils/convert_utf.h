@@ -106,15 +106,15 @@ typedef uint8   Boolean; /* 0 or 1 */
 #define UNI_MAX_LEGAL_UTF32 (UTF32)0x0010FFFF
 
 typedef enum {
-    conversionOK,       /* conversion successful */
-    sourceExhausted,    /* partial character in source, but hit end */
-    targetExhausted,    /* insuff. room in target for conversion */
-    sourceIllegal       /* source sequence is illegal/malformed */
+	conversionOK,       /* conversion successful */
+	sourceExhausted,    /* partial character in source, but hit end */
+	targetExhausted,    /* insuff. room in target for conversion */
+	sourceIllegal       /* source sequence is illegal/malformed */
 } ConversionResult;
 
 typedef enum {
-    strictConversion = 0,
-    lenientConversion
+	strictConversion = 0,
+	lenientConversion
 } ConversionFlags;
 
 ConversionResult ConvertUTF8toUTF16(

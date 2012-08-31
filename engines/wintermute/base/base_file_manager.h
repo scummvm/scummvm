@@ -52,8 +52,8 @@ public:
 	static BaseFileManager *getEngineInstance();
 private:
 	typedef enum {
-	    PATH_PACKAGE,
-	    PATH_SINGLE
+		PATH_PACKAGE,
+		PATH_SINGLE
 	} TPathType;
 	bool reloadPaths();
 	bool initPaths();
