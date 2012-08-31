@@ -189,6 +189,8 @@ void CineEngine::initialize() {
 	g_cine->_messageTable.clear();
 	resetObjectTable();
 
+	disableSystemMenu = 1;
+
 	var8 = 0;
 
 	var2 = var3 = var4 = var5 = 0;

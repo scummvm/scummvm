@@ -204,8 +204,7 @@ BigHuffmanTree::BigHuffmanTree(Common::BitStream &bs, int allocSize)
 	delete _hiBytes;
 }
 
-BigHuffmanTree::~BigHuffmanTree()
-{
+BigHuffmanTree::~BigHuffmanTree() {
 	delete[] _tree;
 }
 
@@ -278,22 +277,15 @@ uint32 BigHuffmanTree::getCode(Common::BitStream &bs) {
 	return v;
 }
 
-SmackerDecoder::SmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType)
-	: _audioStarted(false), _audioStream(0), _mixer(mixer), _soundType(soundType) {
-	_surface = 0;
+SmackerDecoder::SmackerDecoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
 	_fileStream = 0;
-	_dirtyPalette = false;
+	_firstFrameStart = 0;
+	_frameTypes = 0;
+	_frameSizes = 0;
 }
 
 SmackerDecoder::~SmackerDecoder() {
 	close();
-}
-
-uint32 SmackerDecoder::getTime() const {
-	if (_audioStream && _audioStarted)
-		return _mixer->getSoundElapsedTime(_audioHandle);
-
-	return FixedRateVideoDecoder::getTime();
 }
 
 bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
@@ -309,16 +301,17 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	uint32 width = _fileStream->readUint32LE();
 	uint32 height = _fileStream->readUint32LE();
-	_frameCount = _fileStream->readUint32LE();
-	int32 frameRate = _fileStream->readSint32LE();
+	uint32 frameCount = _fileStream->readUint32LE();
+	int32 frameDelay = _fileStream->readSint32LE();
 
-	// framerate contains 2 digits after the comma, so 1497 is actually 14.97 fps
-	if (frameRate > 0)
-		_frameRate = Common::Rational(1000, frameRate);
-	else if (frameRate < 0)
-		_frameRate = Common::Rational(100000, -frameRate);
+	// frame rate contains 2 digits after the comma, so 1497 is actually 14.97 fps
+	Common::Rational frameRate;
+	if (frameDelay > 0)
+		frameRate = Common::Rational(1000, frameDelay);
+	else if (frameDelay < 0)
+		frameRate = Common::Rational(100000, -frameDelay);
 	else
-		_frameRate = 1000;
+		frameRate = 1000;
 
 	// Flags are determined by which bit is set, which can be one of the following:
 	// 0 - set to 1 if file contains a ring frame.
@@ -327,6 +320,9 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// If bits 1 or 2 are set, the frame should be scaled to twice its height
     // before it is displayed.
 	_header.flags = _fileStream->readUint32LE();
+
+	SmackerVideoTrack *videoTrack = createVideoTrack(width, height, frameCount, frameRate, _header.flags, _header.signature);
+	addTrack(videoTrack);
 
 	// TODO: should we do any extra processing for Smacker files with ring frames?
 
@@ -374,92 +370,77 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 				warning("Unhandled Smacker v2 audio compression");
 
 			if (i == 0)
-				_audioStream = Audio::makeQueuingAudioStream(_header.audioInfo[0].sampleRate, _header.audioInfo[0].isStereo);
+				addTrack(new SmackerAudioTrack(_header.audioInfo[i], _soundType));
 		}
 	}
 
 	_header.dummy = _fileStream->readUint32LE();
 
-	_frameSizes = new uint32[_frameCount];
-	for (i = 0; i < _frameCount; ++i)
+	_frameSizes = new uint32[frameCount];
+	for (i = 0; i < frameCount; ++i)
 		_frameSizes[i] = _fileStream->readUint32LE();
 
-	_frameTypes = new byte[_frameCount];
-	for (i = 0; i < _frameCount; ++i)
+	_frameTypes = new byte[frameCount];
+	for (i = 0; i < frameCount; ++i)
 		_frameTypes[i] = _fileStream->readByte();
 
 	byte *huffmanTrees = (byte *) malloc(_header.treesSize);
 	_fileStream->read(huffmanTrees, _header.treesSize);
 
 	Common::BitStream8LSB bs(new Common::MemoryReadStream(huffmanTrees, _header.treesSize, DisposeAfterUse::YES), true);
+	videoTrack->readTrees(bs, _header.mMapSize, _header.mClrSize, _header.fullSize, _header.typeSize);
 
-	_MMapTree = new BigHuffmanTree(bs, _header.mMapSize);
-	_MClrTree = new BigHuffmanTree(bs, _header.mClrSize);
-	_FullTree = new BigHuffmanTree(bs, _header.fullSize);
-	_TypeTree = new BigHuffmanTree(bs, _header.typeSize);
+	_firstFrameStart = _fileStream->pos();
 
-	_surface = new Graphics::Surface();
-
-	// Height needs to be doubled if we have flags (Y-interlaced or Y-doubled)
-	_surface->create(width, height * (_header.flags ? 2 : 1), Graphics::PixelFormat::createFormatCLUT8());
-
-	memset(_palette, 0, 3 * 256);
 	return true;
 }
 
 void SmackerDecoder::close() {
-	if (!_fileStream)
-		return;
-
-	if (_audioStream) {
-		if (_audioStarted) {
-			// The mixer will delete the stream.
-			_mixer->stopHandle(_audioHandle);
-			_audioStarted = false;
-		} else {
-			delete _audioStream;
-		}
-		_audioStream = 0;
-	}
+	VideoDecoder::close();
 
 	delete _fileStream;
 	_fileStream = 0;
 
-	_surface->free();
-	delete _surface;
-	_surface = 0;
-
-	delete _MMapTree;
-	delete _MClrTree;
-	delete _FullTree;
-	delete _TypeTree;
+	delete[] _frameTypes;
+	_frameTypes = 0;
 
 	delete[] _frameSizes;
-	delete[] _frameTypes;
-
-	reset();
+	_frameSizes = 0;
 }
 
-const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
+bool SmackerDecoder::rewind() {
+	// Call the parent method to rewind the tracks first
+	if (!VideoDecoder::rewind())
+		return false;
+
+	// And seek back to where the first frame begins
+	_fileStream->seek(_firstFrameStart);
+	return true;
+}
+
+void SmackerDecoder::readNextPacket() {
+	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
+
+	if (videoTrack->endOfTrack())
+		return;
+
+	videoTrack->increaseCurFrame();
+
 	uint i;
 	uint32 chunkSize = 0;
 	uint32 dataSizeUnpacked = 0;
 
 	uint32 startPos = _fileStream->pos();
 
-	_curFrame++;
-
 	// Check if we got a frame with palette data, and
 	// call back the virtual setPalette function to set
 	// the current palette
-	if (_frameTypes[_curFrame] & 1) {
-		unpackPalette();
-		_dirtyPalette = true;
-	}
+	if (_frameTypes[videoTrack->getCurFrame()] & 1)
+		videoTrack->unpackPalette(_fileStream);
 
 	// Load audio tracks
 	for (i = 0; i < 7; ++i) {
-		if (!(_frameTypes[_curFrame] & (2 << i)))
+		if (!(_frameTypes[videoTrack->getCurFrame()] & (2 << i)))
 			continue;
 
 		chunkSize = _fileStream->readUint32LE();
@@ -475,29 +456,109 @@ const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 		handleAudioTrack(i, chunkSize, dataSizeUnpacked);
 	}
 
-	uint32 frameSize = _frameSizes[_curFrame] & ~3;
-//	uint32 remainder =  _frameSizes[_curFrame] & 3;
+	uint32 frameSize = _frameSizes[videoTrack->getCurFrame()] & ~3;
+//	uint32 remainder =  _frameSizes[videoTrack->getCurFrame()] & 3;
 
 	if (_fileStream->pos() - startPos > frameSize)
 		error("Smacker actual frame size exceeds recorded frame size");
 
 	uint32 frameDataSize = frameSize - (_fileStream->pos() - startPos);
 
-	_frameData = (byte *)malloc(frameDataSize + 1);
+	byte *frameData = (byte *)malloc(frameDataSize + 1);
 	// Padding to keep the BigHuffmanTrees from reading past the data end
-	_frameData[frameDataSize] = 0x00;
+	frameData[frameDataSize] = 0x00;
 
-	_fileStream->read(_frameData, frameDataSize);
+	_fileStream->read(frameData, frameDataSize);
 
-	Common::BitStream8LSB bs(new Common::MemoryReadStream(_frameData, frameDataSize + 1, DisposeAfterUse::YES), true);
+	Common::BitStream8LSB bs(new Common::MemoryReadStream(frameData, frameDataSize + 1, DisposeAfterUse::YES), true);
+	videoTrack->decodeFrame(bs);
 
+	_fileStream->seek(startPos + frameSize);
+}
+
+void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) {
+	if (_header.audioInfo[track].hasAudio && chunkSize > 0 && track == 0) {
+		// Get the audio track, which start at offset 1 (first track is video)
+		SmackerAudioTrack *audioTrack = (SmackerAudioTrack *)getTrack(track + 1);
+
+		// If it's track 0, play the audio data
+		byte *soundBuffer = (byte *)malloc(chunkSize + 1);
+		// Padding to keep the SmallHuffmanTrees from reading past the data end
+		soundBuffer[chunkSize] = 0x00;
+
+		_fileStream->read(soundBuffer, chunkSize);
+
+		if (_header.audioInfo[track].compression == kCompressionRDFT || _header.audioInfo[track].compression == kCompressionDCT) {
+			// TODO: Compressed audio (Bink RDFT/DCT encoded)
+			free(soundBuffer);
+			return;
+		} else if (_header.audioInfo[track].compression == kCompressionDPCM) {
+			// Compressed audio (Huffman DPCM encoded)
+			audioTrack->queueCompressedBuffer(soundBuffer, chunkSize + 1, unpackedSize);
+			free(soundBuffer);
+		} else {
+			// Uncompressed audio (PCM)
+			audioTrack->queuePCM(soundBuffer, chunkSize);
+		}
+	} else {
+		// Ignore the rest of the audio tracks, if they exist
+		// TODO: Are there any Smacker videos with more than one audio stream?
+		// If yes, we should play the rest of the audio streams as well
+		if (chunkSize > 0)
+			_fileStream->skip(chunkSize);
+	}
+}
+
+SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) {
+	_surface = new Graphics::Surface();
+	_surface->create(width, height * (flags ? 2 : 1), Graphics::PixelFormat::createFormatCLUT8());
+	_frameCount = frameCount;
+	_frameRate = frameRate;
+	_flags = flags;
+	_signature = signature;
+	_curFrame = -1;
+	_dirtyPalette = false;
+	_MMapTree = _MClrTree = _FullTree = _TypeTree = 0;
+	memset(_palette, 0, 3 * 256);
+}
+
+SmackerDecoder::SmackerVideoTrack::~SmackerVideoTrack() {
+	_surface->free();
+	delete _surface;
+
+	delete _MMapTree;
+	delete _MClrTree;
+	delete _FullTree;
+	delete _TypeTree;
+}
+
+uint16 SmackerDecoder::SmackerVideoTrack::getWidth() const {
+	return _surface->w;
+}
+
+uint16 SmackerDecoder::SmackerVideoTrack::getHeight() const {
+	return _surface->h;
+}
+
+Graphics::PixelFormat SmackerDecoder::SmackerVideoTrack::getPixelFormat() const {
+	return _surface->format;
+}
+
+void SmackerDecoder::SmackerVideoTrack::readTrees(Common::BitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize) {
+	_MMapTree = new BigHuffmanTree(bs, mMapSize);
+	_MClrTree = new BigHuffmanTree(bs, mClrSize);
+	_FullTree = new BigHuffmanTree(bs, fullSize);
+	_TypeTree = new BigHuffmanTree(bs, typeSize);
+}
+
+void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStream &bs) {
 	_MMapTree->reset();
 	_MClrTree->reset();
 	_FullTree->reset();
 	_TypeTree->reset();
 
 	// Height needs to be doubled if we have flags (Y-interlaced or Y-doubled)
-	uint doubleY = _header.flags ? 2 : 1;
+	uint doubleY = _flags ? 2 : 1;
 
 	uint bw = getWidth() / 4;
 	uint bh = getHeight() / doubleY / 4;
@@ -508,6 +569,7 @@ const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 	uint type, run, j, mode;
 	uint32 p1, p2, clr, map;
 	byte hi, lo;
+	uint i;
 
 	while (block < blocks) {
 		type = _TypeTree->getCode(bs);
@@ -536,7 +598,7 @@ const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 			break;
 		case SMK_BLOCK_FULL:
 			// Smacker v2 has one mode, Smacker v4 has three
-			if (_header.signature == MKTAG('S','M','K','2')) {
+			if (_signature == MKTAG('S','M','K','2')) {
 				mode = 0;
 			} else {
 				// 00 - mode 0
@@ -628,60 +690,81 @@ const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 			break;
 		}
 	}
-
-	_fileStream->seek(startPos + frameSize);
-
-	if (_curFrame == 0)
-		_startTime = g_system->getMillis();
-
-	return _surface;
 }
 
-void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) {
-	if (_header.audioInfo[track].hasAudio && chunkSize > 0 && track == 0) {
-		// If it's track 0, play the audio data
-		byte *soundBuffer = (byte *)malloc(chunkSize + 1);
-		// Padding to keep the SmallHuffmanTrees from reading past the data end
-		soundBuffer[chunkSize] = 0x00;
+void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream *stream) {
+	uint startPos = stream->pos();
+	uint32 len = 4 * stream->readByte();
 
-		_fileStream->read(soundBuffer, chunkSize);
+	byte *chunk = (byte *)malloc(len);
+	stream->read(chunk, len);
+	byte *p = chunk;
 
-		if (_header.audioInfo[track].compression == kCompressionRDFT || _header.audioInfo[track].compression == kCompressionDCT) {
-			// TODO: Compressed audio (Bink RDFT/DCT encoded)
-			free(soundBuffer);
-			return;
-		} else if (_header.audioInfo[track].compression == kCompressionDPCM) {
-			// Compressed audio (Huffman DPCM encoded)
-			queueCompressedBuffer(soundBuffer, chunkSize + 1, unpackedSize, track);
-			free(soundBuffer);
-		} else {
-			// Uncompressed audio (PCM)
-			byte flags = 0;
-			if (_header.audioInfo[track].is16Bits)
-				flags = flags | Audio::FLAG_16BITS;
-			if (_header.audioInfo[track].isStereo)
-				flags = flags | Audio::FLAG_STEREO;
+	byte oldPalette[3 * 256];
+	memcpy(oldPalette, _palette, 3 * 256);
 
-			_audioStream->queueBuffer(soundBuffer, chunkSize, DisposeAfterUse::YES, flags);
-			// The sound buffer will be deleted by QueuingAudioStream
+	byte *pal = _palette;
+
+	int sz = 0;
+	byte b0;
+	while (sz < 256) {
+		b0 = *p++;
+		if (b0 & 0x80) {               // if top bit is 1 (0x80 = 10000000)
+			sz += (b0 & 0x7f) + 1;     // get lower 7 bits + 1 (0x7f = 01111111)
+			pal += 3 * ((b0 & 0x7f) + 1);
+		} else if (b0 & 0x40) {        // if top 2 bits are 01 (0x40 = 01000000)
+			byte c = (b0 & 0x3f) + 1;  // get lower 6 bits + 1 (0x3f = 00111111)
+			uint s = 3 * *p++;
+			sz += c;
+
+			while (c--) {
+				*pal++ = oldPalette[s + 0];
+				*pal++ = oldPalette[s + 1];
+				*pal++ = oldPalette[s + 2];
+				s += 3;
+			}
+		} else {                       // top 2 bits are 00
+			sz++;
+			// get the lower 6 bits for each component (0x3f = 00111111)
+			byte b = b0 & 0x3f;
+			byte g = (*p++) & 0x3f;
+			byte r = (*p++) & 0x3f;
+
+			assert(g < 0xc0 && b < 0xc0);
+
+			// upscale to full 8-bit color values by multiplying by 4
+			*pal++ = b * 4;
+			*pal++ = g * 4;
+			*pal++ = r * 4;
 		}
-
-		if (!_audioStarted) {
-			_mixer->playStream(_soundType, &_audioHandle, _audioStream, -1, getVolume(), getBalance());
-			_audioStarted = true;
-		}
-	} else {
-		// Ignore the rest of the audio tracks, if they exist
-		// TODO: Are there any Smacker videos with more than one audio stream?
-		// If yes, we should play the rest of the audio streams as well
-		if (chunkSize > 0)
-			_fileStream->skip(chunkSize);
 	}
+
+	stream->seek(startPos + len);
+	free(chunk);
+
+	_dirtyPalette = true;
 }
 
-void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
-		uint32 unpackedSize, int streamNum) {
+SmackerDecoder::SmackerAudioTrack::SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType) :
+		_audioInfo(audioInfo), _soundType(soundType) {
+	_audioStream = Audio::makeQueuingAudioStream(_audioInfo.sampleRate, _audioInfo.isStereo);
+}
 
+SmackerDecoder::SmackerAudioTrack::~SmackerAudioTrack() {
+	delete _audioStream;
+}
+
+bool SmackerDecoder::SmackerAudioTrack::rewind() {
+	delete _audioStream;
+	_audioStream = Audio::makeQueuingAudioStream(_audioInfo.sampleRate, _audioInfo.isStereo);
+	return true;
+}
+
+Audio::AudioStream *SmackerDecoder::SmackerAudioTrack::getAudioStream() const {
+	return _audioStream;
+}
+
+void SmackerDecoder::SmackerAudioTrack::queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize) {
 	Common::BitStream8LSB audioBS(new Common::MemoryReadStream(buffer, bufferSize), true);
 	bool dataPresent = audioBS.getBit();
 
@@ -689,9 +772,9 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 		return;
 
 	bool isStereo = audioBS.getBit();
-	assert(isStereo == _header.audioInfo[streamNum].isStereo);
+	assert(isStereo == _audioInfo.isStereo);
 	bool is16Bits = audioBS.getBit();
-	assert(is16Bits == _header.audioInfo[streamNum].is16Bits);
+	assert(is16Bits == _audioInfo.is16Bits);
 
 	int numBytes = 1 * (isStereo ? 2 : 1) * (is16Bits ? 2 : 1);
 
@@ -759,74 +842,21 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 	for (int k = 0; k < numBytes; k++)
 		delete audioTrees[k];
 
+	queuePCM(unpackedBuffer, unpackedSize);
+}
+
+void SmackerDecoder::SmackerAudioTrack::queuePCM(byte *buffer, uint32 bufferSize) {
 	byte flags = 0;
-	if (_header.audioInfo[0].is16Bits)
-		flags = flags | Audio::FLAG_16BITS;
-	if (_header.audioInfo[0].isStereo)
-		flags = flags | Audio::FLAG_STEREO;
-	_audioStream->queueBuffer(unpackedBuffer, unpackedSize, DisposeAfterUse::YES, flags);
-	// unpackedBuffer will be deleted by QueuingAudioStream
+	if (_audioInfo.is16Bits)
+		flags |= Audio::FLAG_16BITS;
+	if (_audioInfo.isStereo)
+		flags |= Audio::FLAG_STEREO;
+
+	_audioStream->queueBuffer(buffer, bufferSize, DisposeAfterUse::YES, flags);
 }
 
-void SmackerDecoder::unpackPalette() {
-	uint startPos = _fileStream->pos();
-	uint32 len = 4 * _fileStream->readByte();
-
-	byte *chunk = (byte *)malloc(len);
-	_fileStream->read(chunk, len);
-	byte *p = chunk;
-
-	byte oldPalette[3*256];
-	memcpy(oldPalette, _palette, 3 * 256);
-
-	byte *pal = _palette;
-
-	int sz = 0;
-	byte b0;
-	while (sz < 256) {
-		b0 = *p++;
-		if (b0 & 0x80) {               // if top bit is 1 (0x80 = 10000000)
-			sz += (b0 & 0x7f) + 1;     // get lower 7 bits + 1 (0x7f = 01111111)
-			pal += 3 * ((b0 & 0x7f) + 1);
-		} else if (b0 & 0x40) {        // if top 2 bits are 01 (0x40 = 01000000)
-			byte c = (b0 & 0x3f) + 1;  // get lower 6 bits + 1 (0x3f = 00111111)
-			uint s = 3 * *p++;
-			sz += c;
-
-			while (c--) {
-				*pal++ = oldPalette[s + 0];
-				*pal++ = oldPalette[s + 1];
-				*pal++ = oldPalette[s + 2];
-				s += 3;
-			}
-		} else {                       // top 2 bits are 00
-			sz++;
-			// get the lower 6 bits for each component (0x3f = 00111111)
-			byte b = b0 & 0x3f;
-			byte g = (*p++) & 0x3f;
-			byte r = (*p++) & 0x3f;
-
-			assert(g < 0xc0 && b < 0xc0);
-
-			// upscale to full 8-bit color values by multiplying by 4
-			*pal++ = b * 4;
-			*pal++ = g * 4;
-			*pal++ = r * 4;
-		}
-	}
-
-	_fileStream->seek(startPos + len);
-	free(chunk);
-}
-
-void SmackerDecoder::updateVolume() {
-	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
-		g_system->getMixer()->setChannelVolume(_audioHandle, getVolume());
-}
-
-void SmackerDecoder::updateBalance() {
-	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
-		g_system->getMixer()->setChannelBalance(_audioHandle, getBalance());
+SmackerDecoder::SmackerVideoTrack *SmackerDecoder::createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const {
+	return new SmackerVideoTrack(width, height, frameCount, frameRate, flags, signature);
 }
 
 } // End of namespace Video

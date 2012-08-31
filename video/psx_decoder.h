@@ -71,59 +71,85 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
-	bool isVideoLoaded() const { return _stream != 0; }
-	uint16 getWidth() const { return _surface->w; }
-	uint16 getHeight() const { return _surface->h; }
-	uint32 getFrameCount() const { return _frameCount; }
-	uint32 getTime() const;
-	uint32 getTimeToNextFrame() const;
-	const Graphics::Surface *decodeNextFrame();
-	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
-	bool endOfVideo() const { return _stream->pos() >= _stream->size(); }
-
 protected:
-	// VideoDecoder API
-	void updateVolume();
-	void updateBalance();
+	void readNextPacket();
+	bool useAudioSync() const;
 
 private:
-	void initCommon();
-	Common::SeekableReadStream *_stream;
-	Graphics::Surface *_surface;
+	class PSXVideoTrack : public VideoTrack {
+	public:
+		PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount);
+		~PSXVideoTrack();
 
-	uint32 _frameCount;
-	Audio::Timestamp _nextFrameStartTime;
+		uint16 getWidth() const { return _surface->w; }
+		uint16 getHeight() const { return _surface->h; }
+		Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
+		bool endOfTrack() const { return _endOfTrack; }
+		int getCurFrame() const { return _curFrame; }
+		int getFrameCount() const { return _frameCount; }
+		uint32 getNextFrameStartTime() const;
+		const Graphics::Surface *decodeNextFrame();
 
-	Audio::SoundHandle _audHandle;
-	Audio::QueuingAudioStream *_audStream;
-	void queueAudioFromSector(Common::SeekableReadStream *sector);
+		void setEndOfTrack() { _endOfTrack = true; }
+		void decodeFrame(Common::SeekableReadStream *frame, uint sectorCount);
 
-	enum PlaneType {
-		kPlaneY = 0,
-		kPlaneU = 1,
-		kPlaneV = 2
+	private:
+		Graphics::Surface *_surface;
+		uint32 _frameCount;
+		Audio::Timestamp _nextFrameStartTime;
+		bool _endOfTrack;
+		int _curFrame;
+
+		enum PlaneType {
+			kPlaneY = 0,
+			kPlaneU = 1,
+			kPlaneV = 2
+		};
+
+		uint16 _macroBlocksW, _macroBlocksH;
+		byte *_yBuffer, *_cbBuffer, *_crBuffer;
+		void decodeMacroBlock(Common::BitStream *bits, int mbX, int mbY, uint16 scale, uint16 version);
+		void decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane);
+
+		void readAC(Common::BitStream *bits, int *block);
+		Common::Huffman *_acHuffman;
+
+		int readDC(Common::BitStream *bits, uint16 version, PlaneType plane);
+		Common::Huffman *_dcHuffmanLuma, *_dcHuffmanChroma;
+		int _lastDC[3];
+
+		void dequantizeBlock(int *coefficients, float *block, uint16 scale);
+		void idct(float *dequantData, float *result);
+		int readSignedCoefficient(Common::BitStream *bits);
 	};
 
-	uint16 _macroBlocksW, _macroBlocksH;
-	byte *_yBuffer, *_cbBuffer, *_crBuffer;
-	void decodeFrame(Common::SeekableReadStream *frame);
-	void decodeMacroBlock(Common::BitStream *bits, int mbX, int mbY, uint16 scale, uint16 version);
-	void decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane);
+	class PSXAudioTrack : public AudioTrack {
+	public:
+		PSXAudioTrack(Common::SeekableReadStream *sector);
+		~PSXAudioTrack();
 
-	void readAC(Common::BitStream *bits, int *block);
-	Common::Huffman *_acHuffman;
+		bool endOfTrack() const;
 
-	int readDC(Common::BitStream *bits, uint16 version, PlaneType plane);
-	Common::Huffman *_dcHuffmanLuma, *_dcHuffmanChroma;
-	int _lastDC[3];
+		void setEndOfTrack() { _endOfTrack = true; }
+		void queueAudioFromSector(Common::SeekableReadStream *sector);
 
-	void dequantizeBlock(int *coefficients, float *block, uint16 scale);
-	void idct(float *dequantData, float *result);
-	int readSignedCoefficient(Common::BitStream *bits);
+	private:
+		Audio::AudioStream *getAudioStream() const;
 
-	struct ADPCMStatus {
-		int16 sample[2];
-	} _adpcmStatus[2];
+		Audio::QueuingAudioStream *_audStream;
+
+		struct ADPCMStatus {
+			int16 sample[2];
+		} _adpcmStatus[2];
+
+		bool _endOfTrack;
+	};
+
+	CDSpeed _speed;
+	uint32 _frameCount;
+	Common::SeekableReadStream *_stream;
+	PSXVideoTrack *_videoTrack;
+	PSXAudioTrack *_audioTrack;	
 
 	Common::SeekableReadStream *readSector();
 };

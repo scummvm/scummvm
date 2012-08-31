@@ -210,10 +210,10 @@ void SubtitleManager::setTime(uint16 time) {
 	_currentIndex = -1;
 
 	// Find the appropriate line to show
-	for (int16 i = 0; i < (int16)_subtitles.size(); i++) {
+	for (uint i = 0; i < _subtitles.size(); i++) {
 		if ((time >= _subtitles[i]->getTimeStart()) && (time <= _subtitles[i]->getTimeStop())) {
 			// Keep the index of the line to show
-			_currentIndex = i;
+			_currentIndex = (int16)i;
 			return;
 		}
 	}
@@ -237,7 +237,7 @@ Common::Rect SubtitleManager::draw(Graphics::Surface *surface) {
 
 	// Draw the current line
 	assert(_currentIndex >= 0 && _currentIndex < (int16)_subtitles.size());
-	return _subtitles[_currentIndex]->draw(surface, _font);
+	return _subtitles[(uint16)_currentIndex]->draw(surface, _font);
 }
 
 } // End of namespace LastExpress

@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "video/qt_decoder.h"
@@ -43,13 +44,12 @@ void VideoEntry::clear() {
 	loop = false;
 	enabled = false;
 	start = Audio::Timestamp(0, 1);
-	end = Audio::Timestamp(0xFFFFFFFF, 1); // Largest possible, there is an endOfVideo() check anyway
 	filename.clear();
 	id = -1;
 }
 
 bool VideoEntry::endOfVideo() {
-	return !video || video->endOfVideo() || video->getTime() >= (uint)end.msecs();
+	return !video || video->endOfVideo();
 }
 
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
@@ -207,7 +207,7 @@ bool VideoManager::updateMovies() {
 		// Remove any videos that are over
 		if (_videoStreams[i].endOfVideo()) {
 			if (_videoStreams[i].loop) {
-				_videoStreams[i]->seekToTime(_videoStreams[i].start);
+				_videoStreams[i]->seek(_videoStreams[i].start);
 			} else {
 				// Check the video time one last time before deleting it
 				_vm->doVideoTimer(i, true);
@@ -239,7 +239,7 @@ bool VideoManager::updateMovies() {
 					frame = convertedFrame;
 				} else if (pixelFormat.bytesPerPixel == 1 && _videoStreams[i]->hasDirtyPalette()) {
 					// Set the palette when running in 8bpp mode only
-					_videoStreams[i]->setSystemPalette();
+					_vm->_system->getPaletteManager()->setPalette(_videoStreams[i]->getPalette(), 0, 256);
 				}
 
 				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
@@ -394,6 +394,8 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	entry.loop = loop;
 	entry.enabled = true;
 
+	entry->start();
+
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (!_videoStreams[i].video) {
@@ -430,6 +432,7 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 
 	entry->loadStream(file);
 	entry->setVolume(volume);
+	entry->start();
 
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
@@ -492,7 +495,7 @@ uint32 VideoManager::getTime(VideoHandle handle) {
 
 uint32 VideoManager::getDuration(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
-	return _videoStreams[handle]->getDuration();
+	return _videoStreams[handle]->getDuration().msecs();
 }
 
 bool VideoManager::endOfVideo(VideoHandle handle) {
@@ -511,14 +514,13 @@ bool VideoManager::isVideoPlaying() {
 void VideoManager::setVideoBounds(VideoHandle handle, Audio::Timestamp start, Audio::Timestamp end) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle].start = start;
-	_videoStreams[handle].end = end;
-	_videoStreams[handle]->seekToTime(start);
+	_videoStreams[handle]->setEndTime(end);
+	_videoStreams[handle]->seek(start);
 }
 
 void VideoManager::drawVideoFrame(VideoHandle handle, Audio::Timestamp time) {
 	assert(handle != NULL_VID_HANDLE);
-	_videoStreams[handle].end = Audio::Timestamp(0xffffffff, 1);
-	_videoStreams[handle]->seekToTime(time);
+	_videoStreams[handle]->seek(time);
 	updateMovies();
 	delete _videoStreams[handle].video;
 	_videoStreams[handle].clear();
@@ -526,7 +528,7 @@ void VideoManager::drawVideoFrame(VideoHandle handle, Audio::Timestamp time) {
 
 void VideoManager::seekToTime(VideoHandle handle, Audio::Timestamp time) {
 	assert(handle != NULL_VID_HANDLE);
-	_videoStreams[handle]->seekToTime(time);
+	_videoStreams[handle]->seek(time);
 }
 
 void VideoManager::setVideoLooping(VideoHandle handle, bool loop) {

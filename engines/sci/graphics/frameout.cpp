@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/engine.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
@@ -488,7 +489,7 @@ void GfxFrameout::showVideo() {
 	uint16 y = videoDecoder->getPos().y;
 
 	if (videoDecoder->hasDirtyPalette())
-		videoDecoder->setSystemPalette();
+		g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
 
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
@@ -497,7 +498,7 @@ void GfxFrameout::showVideo() {
 				g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
 				if (videoDecoder->hasDirtyPalette())
-					videoDecoder->setSystemPalette();
+					g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
 
 				g_system->updateScreen();
 			}
@@ -728,7 +729,9 @@ void GfxFrameout::kernelFrameout() {
 					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
-				// FIXME: When does this happen, and why?
+				// Don't attempt to draw sprites that are outside the visible
+				// screen area. An example is the random people walking in
+				// Jackson Square in GK1.
 				if (itemEntry->celRect.bottom < 0 || itemEntry->celRect.top  >= _screen->getDisplayHeight() ||
 				    itemEntry->celRect.right  < 0 || itemEntry->celRect.left >= _screen->getDisplayWidth())
 					continue;

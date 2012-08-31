@@ -48,7 +48,6 @@
 
 #include "lastexpress/sound/queue.h"
 
-#include "lastexpress/graphics.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 

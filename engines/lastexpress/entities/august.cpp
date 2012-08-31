@@ -3530,7 +3530,7 @@ IMPLEMENT_FUNCTION(69, August, unhookCars)
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 85, 1);
 			getSavePoints()->pushAll(kEntityAugust, kActionProceedChapter5);
 
-			RESET_ENTITY_STATE(kEntityVerges, Verges, setup_function42)
+			RESET_ENTITY_STATE(kEntityVerges, Verges, setup_end)
 		}
 		break;
 	}

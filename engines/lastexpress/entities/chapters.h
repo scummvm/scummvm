@@ -157,7 +157,7 @@ private:
 	bool timeCheckExitStation(TimeValue timeValue, uint &parameter, byte callback, const char *sequence);
 	void enterExitStation(const SavePoint &savepoint, bool isEnteringStation);
 	void enterExitHelper(bool isEnteringStation);
-	void playSteam();
+	void playSteam() const;
 };
 
 } // End of namespace LastExpress

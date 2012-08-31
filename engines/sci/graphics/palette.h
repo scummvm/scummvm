@@ -61,6 +61,7 @@ public:
 
 	void resetRemapping();
 	void setRemappingPercent(byte color, byte percent);
+	void setRemappingPercentGray(byte color, byte percent);
 	void setRemappingRange(byte color, byte from, byte to, byte base);
 	bool isRemapped(byte color) const {
 		return _remapOn && (_remappingType[color] != kRemappingNone);

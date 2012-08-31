@@ -96,7 +96,7 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 		if (_useDigitalSFX || !newSound->soundRes) {
 			int sampleLen;
 			newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
-			newSound->soundType = Audio::Mixer::kSpeechSoundType;
+			newSound->soundType = Audio::Mixer::kSFXSoundType;
 		}
 	}
 
@@ -367,28 +367,35 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	case 4: // SCI01+
 	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
-		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
-		// Check if the song is already at the requested volume. If it is, don't
-		// perform any fading. Happens for example during the intro of Longbow.
-		if (musicSlot->fadeTo == musicSlot->volume)
-			return acc;
-
-		// sometimes we get objects in that position, fix it up (ffs. workarounds)
-		if (!argv[1].getSegment())
-			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
-		else
-			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
-		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
-		musicSlot->fadeTicker = 0;
-
 		if (argc == 5) {
 			// TODO: We currently treat this argument as a boolean, but may
 			// have to handle different non-zero values differently. (e.g.,
-			// some KQ6 scripts pass 3 here)
-			musicSlot->stopAfterFading = (argv[4].toUint16() != 0);
+			// some KQ6 scripts pass 3 here).
+			// There is a script bug in KQ6, room 460 (the room with the flying
+			// books). An object is passed here, which should not be treated as
+			// a true flag. Fixes bugs #3555404 and #3291115.
+			musicSlot->stopAfterFading = (argv[4].isNumber() && argv[4].toUint16() != 0);
 		} else {
 			musicSlot->stopAfterFading = false;
 		}
+
+		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
+		// Check if the song is already at the requested volume. If it is, don't
+		// perform any fading. Happens for example during the intro of Longbow.
+		if (musicSlot->fadeTo != musicSlot->volume) {
+			// sometimes we get objects in that position, fix it up (ffs. workarounds)
+			if (!argv[1].getSegment())
+				musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
+			else
+				musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
+			musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
+		} else {
+			// Stop the music, if requested. Fixes bug #3555404.
+			if (musicSlot->stopAfterFading)
+				processStopSound(obj, false);
+		}
+
+		musicSlot->fadeTicker = 0;
 
 		// WORKAROUND/HACK: In the labyrinth in KQ6, when falling in the pit and
 		// lighting the lantern, the game scripts perform a fade in of the game

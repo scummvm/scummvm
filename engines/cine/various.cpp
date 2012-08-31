@@ -36,7 +36,7 @@
 
 namespace Cine {
 
-bool disableSystemMenu = false;
+int16 disableSystemMenu = 0;
 bool inMenu;
 
 int16 commandVar3[4];
@@ -341,7 +341,7 @@ void CineEngine::makeSystemMenu() {
 	int16 mouseX, mouseY, mouseButton;
 	int16 selectedSave;
 
-	if (!disableSystemMenu) {
+	if (disableSystemMenu != 1) {
 		inMenu = true;
 
 		do {
@@ -544,14 +544,16 @@ int16 buildObjectListCommand(int16 param) {
 
 int16 selectSubObject(int16 x, int16 y, int16 param) {
 	int16 listSize = buildObjectListCommand(param);
-	int16 selectedObject;
+	int16 selectedObject = -1;
 	bool osExtras = g_cine->getGameType() == Cine::GType_OS;
 
 	if (!listSize) {
 		return -2;
 	}
 
-	selectedObject = makeMenuChoice(objectListCommand, listSize, x, y, 140, osExtras);
+	if (disableSystemMenu == 0) {
+		selectedObject = makeMenuChoice(objectListCommand, listSize, x, y, 140, osExtras);
+	}
 
 	if (selectedObject == -1)
 		return -1;
@@ -691,9 +693,6 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 	int16 var_4;
 	SelectionMenu *menu;
 
-	if (disableSystemMenu)
-		return -1;
-
 	paramY = (height * 9) + 10;
 
 	if (X + width > 319) {
@@ -810,14 +809,18 @@ void makeActionMenu() {
 	getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
-		playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70, true);
+		if(disableSystemMenu == 0) {
+			playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70, true);
+		}
 
 		if (playerCommand >= 8000) {
 			playerCommand -= 8000;
 			canUseOnObject = canUseOnItemTable[playerCommand];
 		}
 	} else {
-		playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
+		if(disableSystemMenu == 0) {
+			playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
+		}
 	}
 
 	inMenu = false;

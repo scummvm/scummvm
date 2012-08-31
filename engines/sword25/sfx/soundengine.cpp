@@ -239,16 +239,20 @@ void SoundEngine::setSoundVolume(uint handle, float volume) {
 	debugC(1, kDebugSound, "SoundEngine::setSoundVolume(%d, %f)", handle, volume);
 
 	SndHandle* sndHandle = findHandle(handle);
-	if (sndHandle != NULL)
+	if (sndHandle != NULL) {
+		sndHandle->volume = volume;
 		_mixer->setChannelVolume(sndHandle->handle, (byte)(volume * 255));
+	}
 }
 
 void SoundEngine::setSoundPanning(uint handle, float pan) {
 	debugC(1, kDebugSound, "SoundEngine::setSoundPanning(%d, %f)", handle, pan);
 
 	SndHandle* sndHandle = findHandle(handle);
-	if (sndHandle != NULL)
+	if (sndHandle != NULL) {
+		sndHandle->pan = pan;
 		_mixer->setChannelBalance(sndHandle->handle, (int8)(pan * 127));
+	}
 }
 
 void SoundEngine::pauseSound(uint handle) {
@@ -324,12 +328,15 @@ bool SoundEngine::canLoadResource(const Common::String &fileName) {
 	return fname.hasSuffix(".ogg");
 }
 
-
-	bool SoundEngine::persist(OutputPersistenceBlock &writer) {
+bool SoundEngine::persist(OutputPersistenceBlock &writer) {
 	writer.write(_maxHandleId);
 
 	for (uint i = 0; i < SOUND_HANDLES; i++) {
 		writer.write(_handles[i].id);
+
+		// Don't restart sounds which already finished playing.
+		if (_handles[i].type != kFreeHandle && !_mixer->isSoundHandleActive(_handles[i].handle))
+			_handles[i].type = kFreeHandle;
 
 		writer.writeString(_handles[i].fileName);
 		writer.write((int)_handles[i].sndType);
@@ -374,7 +381,8 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 		reader.read(layer);
 
 		if (reader.isGood()) {
-			playSoundEx(fileName, (SOUND_TYPES)sndType, volume, pan, loop, loopStart, loopEnd, layer, i);
+			if (sndType != kFreeHandle)
+				playSoundEx(fileName, (SOUND_TYPES)sndType, volume, pan, loop, loopStart, loopEnd, layer, i);
 		} else
 			return false;
 	}

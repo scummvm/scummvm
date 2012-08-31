@@ -153,8 +153,8 @@ public:
 	uint32 init(GameId id, bool resetHeaders);
 
 	// Save & Load
-	void loadGame(GameId id);
-	void loadGame(GameId id, uint32 index);
+	void loadLastGame();
+	void loadGame(uint32 index);
 	void saveGame(SavegameType type, EntityIndex entity, uint32 value);
 
 	void loadVolumeBrightness();

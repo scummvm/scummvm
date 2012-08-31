@@ -1851,7 +1851,7 @@ void Chapters::enterExitHelper(bool isEnteringStation) {
 	callbackAction();
 }
 
-void Chapters::playSteam() {
+void Chapters::playSteam() const {
 	getSoundQueue()->resetState();
 	getSound()->playSteam((CityIndex)ENTITY_PARAM(0, 4));
 	ENTITY_PARAM(0, 2) = 0;

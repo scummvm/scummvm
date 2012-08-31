@@ -45,19 +45,19 @@ struct MLSTRecord {
 
 struct VideoEntry {
 	// Playback variables
-	Video::SeekableVideoDecoder *video;
+	Video::VideoDecoder *video;
 	uint16 x;
 	uint16 y;
 	bool loop;
 	bool enabled;
-	Audio::Timestamp start, end;
+	Audio::Timestamp start;
 
 	// Identification
 	Common::String filename; // External video files
 	int id;                  // Internal Mohawk files
 
 	// Helper functions
-	Video::SeekableVideoDecoder *operator->() const { assert(video); return video; } // TODO: Remove this eventually
+	Video::VideoDecoder *operator->() const { assert(video); return video; } // TODO: Remove this eventually
 	void clear();
 	bool endOfVideo();
 };

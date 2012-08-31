@@ -771,20 +771,23 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	case 3:	{ // remap to gray
-		// Example call: QFG4 room 490 (Baba Yaga's hut) - params are color 253, 75% and 0
+		// Example call: QFG4 room 490 (Baba Yaga's hut) - params are color 253, 75% and 0.
+		// In this room, it's used for the cloud before Baba Yaga appears.
 		int16 color = argv[1].toSint16();
 		int16 percent = argv[2].toSint16(); // 0 - 100
-		uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
-		warning("kRemapColors: RemapToGray color %d by %d percent (unk3 = %d)", color, percent, unk3);
-		// TODO
+		if (argc >= 4)
+			warning("RemapToGray called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
 		}
 		break;
 	case 4:	{ // remap to percent gray
-		//int16 unk1 = argv[1].toSint16();
-		//uint16 unk2 = argv[2].toUint16();
-		//uint16 unk3 = argv[3].toUint16();
-		//uint16 unk4 = (argc >= 5) ? argv[4].toUint16() : 0;
-		kStub(s, argc, argv);
+		// Example call: QFG4 rooms 530/535 (swamp) - params are 253, 100%, 200
+		int16 color = argv[1].toSint16();
+		int16 percent = argv[2].toSint16(); // 0 - 100
+		// argv[3] is unknown (a number, e.g. 200) - start color, perhaps?
+		if (argc >= 5)
+			warning("RemapToGrayPercent called with 5 parameters, unknown parameter is %d", argv[4].toUint16());
+		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
 		}
 		break;
 	case 5:	{ // don't map to range

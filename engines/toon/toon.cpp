@@ -51,7 +51,7 @@ void ToonEngine::init() {
 	_currentScriptRegion = 0;
 	_resources = new Resources(this);
 	_animationManager = new AnimationManager(this);
-	_moviePlayer = new Movie(this, new ToonstruckSmackerDecoder(_mixer));
+	_moviePlayer = new Movie(this, new ToonstruckSmackerDecoder());
 	_hotspots = new Hotspots(this);
 
 	_mainSurface = new Graphics::Surface();
