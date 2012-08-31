@@ -120,31 +120,31 @@ enum QueryCoordinates {
  */
 enum QueryTypes {
   // General Query
-  MPQ_VERSION=10,
+  MPQ_VERSION = 10,
 
-  MPQ_GLOBAL_VAR=50,
+  MPQ_GLOBAL_VAR = 50,
   MPQ_RESOURCE,
   MPQ_MESSAGE,
 
   // Query on leases
-  MPQ_LOCATION_IMAGE=100,
+  MPQ_LOCATION_IMAGE = 100,
   MPQ_LOCATION_SIZE,
 
   // Queries about items
-  MPQ_ITEM_LIST=200,
+  MPQ_ITEM_LIST = 200,
   MPQ_ITEM_DATA,
   MPQ_ITEM_PATTERN,
   MPQ_ITEM_NAME,
 	MPQ_ITEM_IS_ACTIVE,
 
   // Query dialog
-  MPQ_DIALOG_PERIOD=300,
+  MPQ_DIALOG_PERIOD = 300,
   MPQ_DIALOG_WAITFORCHOICE,
   MPQ_DIALOG_SELECTLIST,
   MPQ_DIALOG_SELECTION,
 
   // Query execution
-  MPQ_DO_ACTION=400,
+  MPQ_DO_ACTION = 400,
   MPQ_DO_DIALOG
 };
 
@@ -164,7 +164,6 @@ typedef struct {
   short _destX, _destY;
   signed char _destZ;
   short _objectID;
-//  char TAG;
 } ITEM;
 typedef ITEM *LPITEM;
 

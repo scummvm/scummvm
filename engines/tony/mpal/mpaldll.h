@@ -42,31 +42,26 @@ namespace MPAL {
 *       Defines
 \****************************************************************************/
 
-#define HEX_VERSION             0x0170
+#define HEX_VERSION               0x0170
 
+#define MAX_ACTIONS_PER_ITEM      40
+#define MAX_COMMANDS_PER_ITEM     128
+#define MAX_COMMANDS_PER_ACTION   128
+#define MAX_DESCRIBE_SIZE         64
 
-#define MAX_ACTIONS_PER_ITEM    40
-#define MAX_COMMANDS_PER_ITEM   128
-#define MAX_COMMANDS_PER_ACTION 128
-#define MAX_DESCRIBE_SIZE		64
+#define MAX_MOMENTS_PER_SCRIPT    256
+#define MAX_COMMANDS_PER_SCRIPT   256
+#define MAX_COMMANDS_PER_MOMENT   32
 
-
-#define MAX_MOMENTS_PER_SCRIPT  256
-#define MAX_COMMANDS_PER_SCRIPT 256
-#define MAX_COMMANDS_PER_MOMENT 32
-
-
-#define MAX_GROUPS_PER_DIALOG   128
-#define MAX_COMMANDS_PER_DIALOG 480
-#define MAX_COMMANDS_PER_GROUP  64
-#define MAX_CHOICES_PER_DIALOG  64
-#define MAX_SELECTS_PER_CHOICE  64
+#define MAX_GROUPS_PER_DIALOG     128
+#define MAX_COMMANDS_PER_DIALOG   480
+#define MAX_COMMANDS_PER_GROUP    64
+#define MAX_CHOICES_PER_DIALOG    64
+#define MAX_SELECTS_PER_CHOICE    64
 #define MAX_PLAYGROUPS_PER_SELECT 9
-#define MAX_PERIODS_PER_DIALOG  400
-
+#define MAX_PERIODS_PER_DIALOG    400
 
 #define NEED_LOCK_MSGS
-
 
 /****************************************************************************\
 *       Structures
@@ -77,42 +72,36 @@ namespace MPAL {
 /**
  * MPAL global variables
  */
-struct MPALVAR {
-	uint32 dwVal;				// Variable value
-	char lpszVarName[33];		// Variable name
+struct MpalVar {
+	uint32 _dwVal;         // Variable value
+	char _lpszVarName[33]; // Variable name
 } PACKED_STRUCT;
-typedef MPALVAR *LPMPALVAR;
-typedef LPMPALVAR *LPLPMPALVAR;
-
+typedef MpalVar *LpMpalVar;
 
 /**
  * MPAL Messages
  */
-struct MPALMSG {
-  HGLOBAL _hText;				// Handle to the message text
-  uint16 _wNum;					// Message number
+struct MpalMsg {
+  HGLOBAL _hText;       // Handle to the message text
+  uint16 _wNum;         // Message number
 } PACKED_STRUCT;
-typedef MPALMSG *LPMPALMSG;
-typedef LPMPALMSG *LPLPMPALMSG;
-
+typedef MpalMsg *LpMpalMsg;
 
 /**
  * MPAL Locations
  */
-struct MPALLOCATION {
-	uint32 nObj;				// Location number
-	uint32 dwXlen, dwYlen;		// Dimensions
-	uint32 dwPicRes;			// Resource that contains the image
+struct MpalLocation {
+	uint32 _nObj;              // Location number
+	uint32 _dwXlen, _dwYlen;   // Dimensions
+	uint32 _dwPicRes;          // Resource that contains the image
 } PACKED_STRUCT;
-typedef MPALLOCATION *LPMPALLOCATION;
-typedef LPMPALLOCATION *LPLPMPALLOCATION;
-
+typedef MpalLocation *LpMpalLocation;
 
 /**
  * All the data for a command, ie. tags used by OnAction in the item, the time
  * in the script, and in the group dialog.
  */
-struct command {
+struct Command {
   /*
    * Types of commands that are recognized
    *
@@ -121,55 +110,54 @@ struct command {
    *   #3 -> Making a choice			(DIALOG)
    *
    */
-	byte  type;						// Type of control
+	byte  _type;                   // Type of control
 
 	union {
-		int32 _nCf;                 // Custom function call			[#1]
-		char *lpszVarName;			// Variable name				[#2]
-		int32 nChoice;              // Number of choice you make	[#3]
+		int32 _nCf;                  // Custom function call      [#1]
+		char *_lpszVarName;          // Variable name             [#2]
+		int32 _nChoice;              // Number of choice you make [#3]
 	};
 
 	union {
-		int32 _arg1;                // Argument for custom function			[#1]
-		HGLOBAL expr;				// Expression to assign to a variable	[#2]
+		int32 _arg1;                 // Argument for custom function        [#1]
+		HGLOBAL _expr;               // Expression to assign to a variable  [#2]
 	};
 
-	int32 _arg2, _arg3, _arg4;		// Arguments for custom function		[#1]
+	int32 _arg2, _arg3, _arg4;     // Arguments for custom function       [#1]
 } PACKED_STRUCT;
 
 
 /**
  * MPAL dialog
  */
-struct MPALDIALOG {
-	uint32 nObj;                    // Dialog number
+struct MpalDialog {
+	uint32 _nObj;                    // Dialog number
 
-	struct command _command[MAX_COMMANDS_PER_DIALOG];
+	struct Command _command[MAX_COMMANDS_PER_DIALOG];
 
 	struct {
-		uint16 num;
-
-		byte nCmds;
-		uint16 CmdNum[MAX_COMMANDS_PER_GROUP];
+		uint16 _num;
+		byte   _nCmds;
+		uint16 _cmdNum[MAX_COMMANDS_PER_GROUP];
 
 	} _group[MAX_GROUPS_PER_DIALOG];
 
 	struct {
 		// The last choice has nChoice == 0
-		uint16 nChoice;
+		uint16 _nChoice;
 
 		// The select number (we're pretty stingy with RAM). The last select has dwData == 0
 		struct {
-			HGLOBAL when;
-			uint32 dwData;
-			uint16 wPlayGroup[MAX_PLAYGROUPS_PER_SELECT];
+			HGLOBAL _when;
+			uint32 _dwData;
+			uint16 _wPlayGroup[MAX_PLAYGROUPS_PER_SELECT];
 
 			// Bit 0=endchoice   Bit 1=enddialog
-			byte attr;
+			byte _attr;
 
 			// Modified at run-time: 0 if the select is currently disabled,
 			// and 1 if currently active
-			byte curActive;
+			byte _curActive;
 		} _select[MAX_SELECTS_PER_CHOICE];
 
 	} _choice[MAX_CHOICES_PER_DIALOG];
@@ -178,67 +166,59 @@ struct MPALDIALOG {
 	HGLOBAL _periods[MAX_PERIODS_PER_DIALOG];
 
 } PACKED_STRUCT;
-typedef MPALDIALOG *LPMPALDIALOG;
-typedef LPMPALDIALOG *LPLPMPALDIALOG;
-
+typedef MpalDialog *LpMpalDialog;
 
 /**
  * MPAL Item
  */
 struct ItemAction {
-	byte	num;                // Action number
-	uint16	wTime;              // If idle, the time which must pass
-    byte	perc;               // Percentage of the idle run
-    HGLOBAL	when;               // Expression to compute. If != 0, then
+	byte	_num;                // Action number
+	uint16	_wTime;              // If idle, the time which must pass
+    byte	_perc;               // Percentage of the idle run
+    HGLOBAL	_when;               // Expression to compute. If != 0, then
 								// action can be done
-    uint16	wParm;              // Parameter for action
+    uint16	_wParm;              // Parameter for action
 
-    byte	nCmds;				// Number of commands to be executed
-    uint32	CmdNum[MAX_COMMANDS_PER_ACTION]; // Commands to execute
+    byte	_nCmds;				// Number of commands to be executed
+    uint32	_cmdNum[MAX_COMMANDS_PER_ACTION]; // Commands to execute
 } PACKED_STRUCT;
 
-struct MPALITEM {
-	uint32 nObj;				// Item number
+struct MpalItem {
+	uint32 _nObj;				// Item number
 
-	byte lpszDescribe[MAX_DESCRIBE_SIZE]; // Name
-	byte nActions;				// Number of managed actions
-	uint32 dwRes;				// Resource that contains frames and patterns
+	byte _lpszDescribe[MAX_DESCRIBE_SIZE]; // Name
+	byte _nActions;				// Number of managed actions
+	uint32 _dwRes;				// Resource that contains frames and patterns
 
-	struct command _command[MAX_COMMANDS_PER_ITEM];
+	struct Command _command[MAX_COMMANDS_PER_ITEM];
 
 	// Pointer to array of structures containing various managed activities. In practice, of
 	// every action we know what commands to run, including those defined in structures above
-	struct ItemAction *Action;
+	struct ItemAction *_action;
 
 } PACKED_STRUCT;
-typedef MPALITEM *LPMPALITEM;
-typedef LPMPALITEM *LPLPMPALITEM;
-
+typedef MpalItem *LpMpalItem;
 
 /**
  * MPAL Script
  */
-struct MPALSCRIPT {
-	uint32 nObj;
+struct MpalScript {
+	uint32 _nObj;
+	uint32 _nMoments;
 
-	uint32 nMoments;
-
-	struct command _command[MAX_COMMANDS_PER_SCRIPT];
+	struct Command _command[MAX_COMMANDS_PER_SCRIPT];
 
 	struct {
-		int32 dwTime;
+		int32  _dwTime;
+		byte   _nCmds;
+		uint32 _cmdNum[MAX_COMMANDS_PER_MOMENT];
 
-		byte nCmds;
-		uint32 CmdNum[MAX_COMMANDS_PER_MOMENT];
-
-	} Moment[MAX_MOMENTS_PER_SCRIPT];
+	} _moment[MAX_MOMENTS_PER_SCRIPT];
 
 } PACKED_STRUCT;
-typedef MPALSCRIPT   *LPMPALSCRIPT;
-typedef LPMPALSCRIPT *LPLPMPALSCRIPT;
+typedef MpalScript   *LpMpalScript;
 
 #include "common/pack-end.h"
-
 
 /****************************************************************************\
 *       Function prototypes

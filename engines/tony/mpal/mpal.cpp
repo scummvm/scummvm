@@ -60,7 +60,7 @@ const char *mpalCopyright =
  * Locks the variables for access
  */
 void lockVar() {
-	GLOBALS._lpmvVars = (LPMPALVAR)globalLock(GLOBALS._hVars);
+	GLOBALS._lpmvVars = (LpMpalVar)globalLock(GLOBALS._hVars);
 }
 
 /**
@@ -75,7 +75,7 @@ void unlockVar() {
  */
 static void LockMsg() {
 #ifdef NEED_LOCK_MSGS
-	GLOBALS._lpmmMsgs = (LPMPALMSG)globalLock(GLOBALS._hMsgs);
+	GLOBALS._lpmmMsgs = (LpMpalMsg)globalLock(GLOBALS._hMsgs);
 #endif
 }
 
@@ -92,7 +92,7 @@ static void UnlockMsg() {
  * Locks the dialogs for access
  */
 static void lockDialogs() {
-	GLOBALS._lpmdDialogs = (LPMPALDIALOG)globalLock(GLOBALS._hDialogs);
+	GLOBALS._lpmdDialogs = (LpMpalDialog)globalLock(GLOBALS._hDialogs);
 }
 
 /**
@@ -106,7 +106,7 @@ static void unlockDialogs() {
  * Locks the location data structures for access
  */
 static void lockLocations() {
-	GLOBALS._lpmlLocations = (LPMPALLOCATION)globalLock(GLOBALS._hLocations);
+	GLOBALS._lpmlLocations = (LpMpalLocation)globalLock(GLOBALS._hLocations);
 }
 
 /**
@@ -120,7 +120,7 @@ static void unlockLocations() {
  * Locks the items structures for use
  */
 static void lockItems() {
-	GLOBALS._lpmiItems = (LPMPALITEM)globalLock(GLOBALS._hItems);
+	GLOBALS._lpmiItems = (LpMpalItem)globalLock(GLOBALS._hItems);
 }
 
 /**
@@ -134,7 +134,7 @@ static void unlockItems() {
  * Locks the script data structures for use
  */
 static void LockScripts() {
-	GLOBALS._lpmsScripts = (LPMPALSCRIPT)globalLock(GLOBALS._hScripts);
+	GLOBALS._lpmsScripts = (LpMpalScript)globalLock(GLOBALS._hScripts);
 }
 
 /**
@@ -154,11 +154,11 @@ static void unlockScripts() {
  * need to remember to call UnlockVar()
  */
 int32 varGetValue(const char *lpszVarName) {
-	LPMPALVAR v = GLOBALS._lpmvVars;
+	LpMpalVar v = GLOBALS._lpmvVars;
 
 	for (int i = 0; i < GLOBALS._nVars; v++, i++)
-		if (strcmp(lpszVarName, v->lpszVarName) == 0)
-			return v->dwVal;
+		if (strcmp(lpszVarName, v->_lpszVarName) == 0)
+			return v->_dwVal;
 
 	GLOBALS._mpalError = 1;
 	return 0;
@@ -170,18 +170,18 @@ int32 varGetValue(const char *lpszVarName) {
  * @param val				Value to set
  */
 void varSetValue(const char *lpszVarName, int32 val) {
-	LPMPALVAR v = GLOBALS._lpmvVars;
+	LpMpalVar v = GLOBALS._lpmvVars;
 
 	for (uint i = 0; i < GLOBALS._nVars; v++, i++)
-		if (strcmp(lpszVarName, v->lpszVarName) == 0) {
-			v->dwVal = val;
-			if (GLOBALS._lpiifCustom != NULL && strncmp(v->lpszVarName, "Pattern.", 8) == 0) {
+		if (strcmp(lpszVarName, v->_lpszVarName) == 0) {
+			v->_dwVal = val;
+			if (GLOBALS._lpiifCustom != NULL && strncmp(v->_lpszVarName, "Pattern.", 8) == 0) {
 				i = 0;
-				sscanf(v->lpszVarName, "Pattern.%u", &i);
+				sscanf(v->_lpszVarName, "Pattern.%u", &i);
 				GLOBALS._lpiifCustom(i, val, -1);
-			} else if (GLOBALS._lpiifCustom != NULL && strncmp(v->lpszVarName, "Status.", 7) == 0) {
+			} else if (GLOBALS._lpiifCustom != NULL && strncmp(v->_lpszVarName, "Status.", 7) == 0) {
 				i = 0;
-				sscanf(v->lpszVarName,"Status.%u", &i);
+				sscanf(v->_lpszVarName,"Status.%u", &i);
 				GLOBALS._lpiifCustom(i, -1, val);
 			}
 			return;
@@ -200,10 +200,10 @@ void varSetValue(const char *lpszVarName, int32 val) {
  * first been locked with a call to LockLoc().
  */
 static int locGetOrderFromNum(uint32 nLoc) {
-	LPMPALLOCATION loc = GLOBALS._lpmlLocations;
+	LpMpalLocation loc = GLOBALS._lpmlLocations;
 
 	for (int i = 0; i < GLOBALS._nLocations; i++, loc++)
-		if (loc->nObj == nLoc)
+		if (loc->_nObj == nLoc)
 			return i;
 
 	return -1;
@@ -218,7 +218,7 @@ static int locGetOrderFromNum(uint32 nLoc) {
  * first been locked with a call to LockMsg()
  */
 static int msgGetOrderFromNum(uint32 nMsg) {
-	LPMPALMSG msg = GLOBALS._lpmmMsgs;
+	LpMpalMsg msg = GLOBALS._lpmmMsgs;
 
 	for (int i = 0; i < GLOBALS._nMsgs; i++, msg++) {
 		if (msg->_wNum == nMsg)
@@ -236,10 +236,10 @@ static int msgGetOrderFromNum(uint32 nMsg) {
  * first been locked with a call to LockItems()
  */
 static int itemGetOrderFromNum(uint32 nItem) {
-	LPMPALITEM item = GLOBALS._lpmiItems;
+	LpMpalItem item = GLOBALS._lpmiItems;
 
 	for (int i = 0; i < GLOBALS._nItems; i++, item++) {
-		if (item->nObj == nItem)
+		if (item->_nObj == nItem)
 			return i;
 	}
 
@@ -255,10 +255,10 @@ static int itemGetOrderFromNum(uint32 nItem) {
  * first been locked with a call to LockScripts()
  */
 static int scriptGetOrderFromNum(uint32 nScript) {
-	LPMPALSCRIPT script = GLOBALS._lpmsScripts;
+	LpMpalScript script = GLOBALS._lpmsScripts;
 
 	for (int i = 0; i < GLOBALS._nScripts; i++, script++) {
-		if (script->nObj == nScript)
+		if (script->_nObj == nScript)
 			return i;
 	}
 
@@ -274,10 +274,10 @@ static int scriptGetOrderFromNum(uint32 nScript) {
  * first been locked with a call to LockDialogs()
  */
 static int dialogGetOrderFromNum(uint32 nDialog) {
-	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs;
+	LpMpalDialog dialog = GLOBALS._lpmdDialogs;
 
 	for (int i = 0; i < GLOBALS._nDialogs; i++, dialog++) {
-		if (dialog->nObj == nDialog)
+		if (dialog->_nObj == nDialog)
 			return i;
 	}
 
@@ -326,7 +326,7 @@ static char *DuplicateMessage(uint32 nMsgOrd) {
 static char *duplicateDialogPeriod(uint32 nPeriod) {
 	const char *origmsg;
 	char *clonemsg;
-	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
+	LpMpalDialog dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 
 	for (int j = 0; dialog->_periods[j] != NULL; j++) {
 		if (dialog->_periodNums[j] == nPeriod) {
@@ -386,7 +386,7 @@ HGLOBAL resLoad(uint32 dwId) {
 
 			h = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, nSizeDecomp + (nSizeDecomp / 1024) * 16);
 			buf = (byte *)globalLock(h);
-			temp = (byte *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT,nSizeComp);
+			temp = (byte *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, nSizeComp);
 
 			nBytesRead = GLOBALS._hMpr.read(temp, nSizeComp);
 			if (nBytesRead != nSizeComp)
@@ -406,12 +406,12 @@ HGLOBAL resLoad(uint32 dwId) {
 
 static uint32 *getSelectList(uint32 i) {
 	uint32 *sl;
-	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
+	LpMpalDialog dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 
 	// Count how many are active selects
 	int num = 0;
-	for (int j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
-		if (dialog->_choice[i]._select[j].curActive)
+	for (int j = 0; dialog->_choice[i]._select[j]._dwData != 0; j++) {
+		if (dialog->_choice[i]._select[j]._curActive)
 			num++;
 	}
 
@@ -425,9 +425,9 @@ static uint32 *getSelectList(uint32 i) {
 
 	// Copy all the data inside the active select list
 	int k = 0;
-	for (int j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
-		if (dialog->_choice[i]._select[j].curActive)
-			sl[k++] = dialog->_choice[i]._select[j].dwData;
+	for (int j = 0; dialog->_choice[i]._select[j]._dwData != 0; j++) {
+		if (dialog->_choice[i]._select[j]._curActive)
+			sl[k++] = dialog->_choice[i]._select[j]._dwData;
 	}
 
 	sl[k] = (uint32)NULL;
@@ -436,11 +436,11 @@ static uint32 *getSelectList(uint32 i) {
 
 static uint32 *GetItemList(uint32 nLoc) {
 	uint32 *il;
-	LPMPALVAR v = GLOBALS._lpmvVars;
+	LpMpalVar v = GLOBALS._lpmvVars;
 
 	uint32 num = 0;
 	for (uint32 i = 0; i < GLOBALS._nVars; i++, v++) {
-		if (strncmp(v->lpszVarName,"Location",8) == 0 && v->dwVal == nLoc)
+		if (strncmp(v->_lpszVarName, "Location", 8) == 0 && v->_dwVal == nLoc)
 			num++;
 	}
 
@@ -451,8 +451,8 @@ static uint32 *GetItemList(uint32 nLoc) {
 	v = GLOBALS._lpmvVars;
 	uint32 j = 0;
 	for (uint32 i = 0; i < GLOBALS._nVars; i++, v++) {
-		if (strncmp(v->lpszVarName, "Location", 8) == 0 && v->dwVal == nLoc) {
-			sscanf(v->lpszVarName, "Location.%u", &il[j]);
+		if (strncmp(v->_lpszVarName, "Location", 8) == 0 && v->_dwVal == nLoc) {
+			sscanf(v->_lpszVarName, "Location.%u", &il[j]);
 			j++;
 		}
 	}
@@ -462,7 +462,7 @@ static uint32 *GetItemList(uint32 nLoc) {
 }
 
 static LPITEM getItemData(uint32 nOrdItem) {
-	LPMPALITEM curitem = GLOBALS._lpmiItems + nOrdItem;
+	LpMpalItem curitem = GLOBALS._lpmiItems + nOrdItem;
 	LPITEM ret;
 	HGLOBAL hDat;
 	char *dat;
@@ -474,7 +474,7 @@ static LPITEM getItemData(uint32 nOrdItem) {
 		return NULL;
 	ret->_speed = 150;
 
-	hDat = resLoad(curitem->dwRes);
+	hDat = resLoad(curitem->_dwRes);
 	dat = (char *)globalLock(hDat);
 
 	if (dat[0] == 'D' && dat[1] == 'A' && dat[2] == 'T') {
@@ -597,7 +597,7 @@ void ScriptThread(CORO_PARAM, const void *param) {
 	CORO_END_CONTEXT(_ctx);
 
 	static uint32 cfHandles[MAX_COMMANDS_PER_MOMENT];
-	LPMPALSCRIPT s = *(const LPMPALSCRIPT *)param;
+	LpMpalScript s = *(const LpMpalScript *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -605,24 +605,24 @@ void ScriptThread(CORO_PARAM, const void *param) {
 	_ctx->numHandles = 0;
 
 // debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Moments: %u\n",s->nMoments);
-	for (_ctx->i = 0; _ctx->i < s->nMoments; _ctx->i++) {
+	for (_ctx->i = 0; _ctx->i < s->_nMoments; _ctx->i++) {
 		// Sleep for the required time
-		if (s->Moment[_ctx->i].dwTime == -1) {
+		if (s->_moment[_ctx->i]._dwTime == -1) {
 			CORO_INVOKE_4(CoroScheduler.waitForMultipleObjects, _ctx->numHandles, cfHandles, true, CORO_INFINITE);
 			_ctx->dwStartTime = g_vm->getTime();
 		} else {
 			_ctx->dwCurTime = g_vm->getTime();
-			if (_ctx->dwCurTime < _ctx->dwStartTime + (s->Moment[_ctx->i].dwTime * 100)) {
+			if (_ctx->dwCurTime < _ctx->dwStartTime + (s->_moment[_ctx->i]._dwTime * 100)) {
   //     debugC(DEBUG_BASIC, kTonyDebugMPAL, "PlayScript(): Sleeping %lums\n",_ctx->dwStartTime+(s->Moment[_ctx->i].dwTime*100)-_ctx->dwCurTime);
-				CORO_INVOKE_1(CoroScheduler.sleep, _ctx->dwStartTime+(s->Moment[_ctx->i].dwTime * 100) - _ctx->dwCurTime);
+				CORO_INVOKE_1(CoroScheduler.sleep, _ctx->dwStartTime+(s->_moment[_ctx->i]._dwTime * 100) - _ctx->dwCurTime);
 			}
 		}
 
 		_ctx->numHandles = 0;
-		for (_ctx->j = 0; _ctx->j < s->Moment[_ctx->i].nCmds; _ctx->j++) {
-			_ctx->k = s->Moment[_ctx->i].CmdNum[_ctx->j];
+		for (_ctx->j = 0; _ctx->j < s->_moment[_ctx->i]._nCmds; _ctx->j++) {
+			_ctx->k = s->_moment[_ctx->i]._cmdNum[_ctx->j];
 
-			if (s->_command[_ctx->k].type == 1) {
+			if (s->_command[_ctx->k]._type == 1) {
 				_ctx->p = (LPCFCALL)globalAlloc(GMEM_FIXED, sizeof(CFCALL));
 				if (_ctx->p == NULL) {
 					GLOBALS._mpalError = 1;
@@ -644,11 +644,11 @@ void ScriptThread(CORO_PARAM, const void *param) {
 					CORO_KILL_SELF();
 					return;
 				}
-			} else if (s->_command[_ctx->k].type == 2) {
+			} else if (s->_command[_ctx->k]._type == 2) {
 				lockVar();
 				varSetValue(
-					s->_command[_ctx->k].lpszVarName,
-					evaluateExpression(s->_command[_ctx->k].expr)
+					s->_command[_ctx->k]._lpszVarName,
+					evaluateExpression(s->_command[_ctx->k]._expr)
 				);
 				unlockVar();
 
@@ -681,7 +681,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 		int j, k;
-		LPMPALITEM item;
+		LpMpalItem item;
 
 		~CoroContextTag() {
 			if (item)
@@ -693,13 +693,13 @@ void ActionThread(CORO_PARAM, const void *param) {
 
 	// The ActionThread owns the data block pointed to, so we need to make sure it's
 	// freed when the process exits
-	_ctx->item = *(LPMPALITEM *)param;
+	_ctx->item = *(LpMpalItem *)param;
 
 	GLOBALS._mpalError = 0;
-	for (_ctx->j = 0; _ctx->j < _ctx->item->Action[_ctx->item->dwRes].nCmds; _ctx->j++) {
-		_ctx->k = _ctx->item->Action[_ctx->item->dwRes].CmdNum[_ctx->j];
+	for (_ctx->j = 0; _ctx->j < _ctx->item->_action[_ctx->item->_dwRes]._nCmds; _ctx->j++) {
+		_ctx->k = _ctx->item->_action[_ctx->item->_dwRes]._cmdNum[_ctx->j];
 
-		if (_ctx->item->_command[_ctx->k].type == 1) {
+		if (_ctx->item->_command[_ctx->k]._type == 1) {
 			// Custom function
 			debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d Call=%s params=%d,%d,%d,%d",
 				CoroScheduler.getCurrentPID(), GLOBALS._lplpFunctionStrings[_ctx->item->_command[_ctx->k]._nCf].c_str(),
@@ -714,13 +714,13 @@ void ActionThread(CORO_PARAM, const void *param) {
 				_ctx->item->_command[_ctx->k]._arg4
 
 			);
-		} else if (_ctx->item->_command[_ctx->k].type == 2) {
+		} else if (_ctx->item->_command[_ctx->k]._type == 2) {
 			// Variable assign
 			debugC(DEBUG_DETAILED, kTonyDebugActions, "Action Process %d Variable=%s",
-				CoroScheduler.getCurrentPID(), _ctx->item->_command[_ctx->k].lpszVarName);
+				CoroScheduler.getCurrentPID(), _ctx->item->_command[_ctx->k]._lpszVarName);
 
 			lockVar();
-			varSetValue(_ctx->item->_command[_ctx->k].lpszVarName, evaluateExpression(_ctx->item->_command[_ctx->k].expr));
+			varSetValue(_ctx->item->_command[_ctx->k]._lpszVarName, evaluateExpression(_ctx->item->_command[_ctx->k]._expr));
 			unlockVar();
 
 		} else {
@@ -775,20 +775,19 @@ void ShutUpActionThread(CORO_PARAM, const void *param) {
  */
 void LocationPollThread(CORO_PARAM, const void *param) {
 	typedef struct {
-		uint32 nItem, nAction;
+		uint32  _nItem, _nAction;
 
-		uint16 wTime;
-		byte perc;
-		HGLOBAL when;
-		byte nCmds;
-		uint16 CmdNum[MAX_COMMANDS_PER_ACTION];
-
-		uint32 dwLastTime;
+		uint16  _wTime;
+		byte    _perc;
+		HGLOBAL _when;
+		byte    _nCmds;
+		uint16  _cmdNum[MAX_COMMANDS_PER_ACTION];
+		uint32  _dwLastTime;
 	} MYACTION;
 
 	typedef struct {
-		uint32 nItem;
-		uint32 hThread;
+		uint32 _nItem;
+		uint32 _hThread;
 	} MYTHREAD;
 
 	CORO_BEGIN_CONTEXT;
@@ -796,7 +795,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		int i, j, k;
 		int numitems;
 		int nRealItems;
-		LPMPALITEM curItem,newItem;
+		LpMpalItem curItem,newItem;
 		int nIdleActions;
 		uint32 curTime;
 		uint32 dwSleepTime;
@@ -805,15 +804,15 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		bool delayExpired;
 		bool expired;
 
-		MYACTION *MyActions;
-		MYTHREAD *MyThreads;
+		MYACTION *myActions;
+		MYTHREAD *myThreads;
 
 		~CoroContextTag() {
 			// Free data blocks
-			if (MyThreads)
-				globalDestroy(MyThreads);
-			if (MyActions)
-				globalDestroy(MyActions);
+			if (myThreads)
+				globalDestroy(myThreads);
+			if (myActions)
+				globalDestroy(myActions);
 		}
 	CORO_END_CONTEXT(_ctx);
 
@@ -822,8 +821,8 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// Initialize data pointers
-	_ctx->MyActions = NULL;
-	_ctx->MyThreads = NULL;
+	_ctx->myActions = NULL;
+	_ctx->myThreads = NULL;
 
 	// To begin with, we need to request the item list from the location
 	_ctx->il = mpalQueryItemList(GLOBALS._nPollingLocations[id]);
@@ -845,8 +844,8 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		_ctx->curItem = GLOBALS._lpmiItems + _ctx->ord;
 
 		_ctx->k = 0;
-		for (_ctx->j = 0; _ctx->j < _ctx->curItem->nActions; _ctx->j++) {
-			if (_ctx->curItem->Action[_ctx->j].num == 0xFF)
+		for (_ctx->j = 0; _ctx->j < _ctx->curItem->_nActions; _ctx->j++) {
+			if (_ctx->curItem->_action[_ctx->j]._num == 0xFF)
 				_ctx->k++;
 		}
 
@@ -867,8 +866,8 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		return;
 	}
 
-	_ctx->MyThreads = (MYTHREAD *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nRealItems * sizeof(MYTHREAD));
-	if (_ctx->MyThreads == NULL) {
+	_ctx->myThreads = (MYTHREAD *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nRealItems * sizeof(MYTHREAD));
+	if (_ctx->myThreads == NULL) {
 		globalDestroy(_ctx->il);
 		CORO_KILL_SELF();
 		return;
@@ -877,9 +876,9 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 	// We have established that there is at least one item that contains idle actions.
 	// Now we created the mirrored copies of the idle actions.
-	_ctx->MyActions = (MYACTION *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nIdleActions * sizeof(MYACTION));
-	if (_ctx->MyActions == NULL) {
-		globalDestroy(_ctx->MyThreads);
+	_ctx->myActions = (MYACTION *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, _ctx->nIdleActions * sizeof(MYACTION));
+	if (_ctx->myActions == NULL) {
+		globalDestroy(_ctx->myThreads);
 		globalDestroy(_ctx->il);
 		CORO_KILL_SELF();
 		return;
@@ -894,19 +893,19 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		_ctx->curItem = GLOBALS._lpmiItems + itemGetOrderFromNum(_ctx->il[_ctx->i]);
 
-		for (_ctx->j = 0; _ctx->j < _ctx->curItem->nActions; _ctx->j++) {
-			if (_ctx->curItem->Action[_ctx->j].num == 0xFF) {
-				_ctx->MyActions[_ctx->k].nItem = _ctx->il[_ctx->i];
-				_ctx->MyActions[_ctx->k].nAction = _ctx->j;
+		for (_ctx->j = 0; _ctx->j < _ctx->curItem->_nActions; _ctx->j++) {
+			if (_ctx->curItem->_action[_ctx->j]._num == 0xFF) {
+				_ctx->myActions[_ctx->k]._nItem = _ctx->il[_ctx->i];
+				_ctx->myActions[_ctx->k]._nAction = _ctx->j;
 
-				_ctx->MyActions[_ctx->k].wTime = _ctx->curItem->Action[_ctx->j].wTime;
-				_ctx->MyActions[_ctx->k].perc = _ctx->curItem->Action[_ctx->j].perc;
-				_ctx->MyActions[_ctx->k].when = _ctx->curItem->Action[_ctx->j].when;
-				_ctx->MyActions[_ctx->k].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
-				memcpy(_ctx->MyActions[_ctx->k].CmdNum, _ctx->curItem->Action[_ctx->j].CmdNum,
+				_ctx->myActions[_ctx->k]._wTime = _ctx->curItem->_action[_ctx->j]._wTime;
+				_ctx->myActions[_ctx->k]._perc = _ctx->curItem->_action[_ctx->j]._perc;
+				_ctx->myActions[_ctx->k]._when = _ctx->curItem->_action[_ctx->j]._when;
+				_ctx->myActions[_ctx->k]._nCmds = _ctx->curItem->_action[_ctx->j]._nCmds;
+				memcpy(_ctx->myActions[_ctx->k]._cmdNum, _ctx->curItem->_action[_ctx->j]._cmdNum,
 				MAX_COMMANDS_PER_ACTION * sizeof(uint16));
 
-				_ctx->MyActions[_ctx->k].dwLastTime = g_vm->getTime();
+				_ctx->myActions[_ctx->k]._dwLastTime = g_vm->getTime();
 				_ctx->k++;
 			}
 		}
@@ -925,11 +924,11 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		_ctx->dwSleepTime = (uint32)-1L;
 
 		for (_ctx->k = 0;_ctx->k<_ctx->nIdleActions;_ctx->k++) {
-			if (_ctx->curTime >= _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime) {
+			if (_ctx->curTime >= _ctx->myActions[_ctx->k]._dwLastTime + _ctx->myActions[_ctx->k]._wTime) {
 				_ctx->dwSleepTime = 0;
 				break;
 			} else
-				_ctx->dwSleepTime = MIN(_ctx->dwSleepTime, _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime - _ctx->curTime);
+				_ctx->dwSleepTime = MIN(_ctx->dwSleepTime, _ctx->myActions[_ctx->k]._dwLastTime + _ctx->myActions[_ctx->k]._wTime - _ctx->curTime);
 		}
 
 		// We fall alseep, but always checking that the event is set when prompted for closure
@@ -940,12 +939,12 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 			break;
 
 		for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
-			if (_ctx->MyThreads[_ctx->i].nItem != 0) {
-				CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 0, &_ctx->delayExpired);
+			if (_ctx->myThreads[_ctx->i]._nItem != 0) {
+				CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->myThreads[_ctx->i]._hThread, 0, &_ctx->delayExpired);
 
 				// if result == WAIT_OBJECT_0)
 				if (!_ctx->delayExpired)
-					_ctx->MyThreads[_ctx->i].nItem = 0;
+					_ctx->myThreads[_ctx->i]._nItem = 0;
 			}
 		}
 
@@ -953,19 +952,19 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		// Loop through all the necessary idle actions
 		for (_ctx->k = 0; _ctx->k < _ctx->nIdleActions; _ctx->k++) {
-			if (_ctx->curTime >= _ctx->MyActions[_ctx->k].dwLastTime + _ctx->MyActions[_ctx->k].wTime) {
-				_ctx->MyActions[_ctx->k].dwLastTime += _ctx->MyActions[_ctx->k].wTime;
+			if (_ctx->curTime >= _ctx->myActions[_ctx->k]._dwLastTime + _ctx->myActions[_ctx->k]._wTime) {
+				_ctx->myActions[_ctx->k]._dwLastTime += _ctx->myActions[_ctx->k]._wTime;
 
 			   // It's time to check to see if fortune is on the side of the idle action
 				byte randomVal = (byte)g_vm->_randomSource.getRandomNumber(99);
-				if (randomVal < _ctx->MyActions[_ctx->k].perc) {
+				if (randomVal < _ctx->myActions[_ctx->k]._perc) {
 					// Check if there is an action running on the item
-					if ((GLOBALS._bExecutingAction) && (GLOBALS._nExecutingAction == _ctx->MyActions[_ctx->k].nItem))
+					if ((GLOBALS._bExecutingAction) && (GLOBALS._nExecutingAction == _ctx->myActions[_ctx->k]._nItem))
 						continue;
 
 					// Check to see if there already another idle funning running on the item
 					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
-						if (_ctx->MyThreads[_ctx->i].nItem == _ctx->MyActions[_ctx->k].nItem)
+						if (_ctx->myThreads[_ctx->i]._nItem == _ctx->myActions[_ctx->k]._nItem)
 							break;
 					}
 
@@ -974,49 +973,49 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 					// Ok, we are the only ones :)
 					lockItems();
-					_ctx->curItem = GLOBALS._lpmiItems + itemGetOrderFromNum(_ctx->MyActions[_ctx->k].nItem);
+					_ctx->curItem = GLOBALS._lpmiItems + itemGetOrderFromNum(_ctx->myActions[_ctx->k]._nItem);
 
 					// Check if there is a WhenExecute expression
-					_ctx->j=_ctx->MyActions[_ctx->k].nAction;
-					if (_ctx->curItem->Action[_ctx->j].when != NULL) {
-						if (!evaluateExpression(_ctx->curItem->Action[_ctx->j].when)) {
+					_ctx->j=_ctx->myActions[_ctx->k]._nAction;
+					if (_ctx->curItem->_action[_ctx->j]._when != NULL) {
+						if (!evaluateExpression(_ctx->curItem->_action[_ctx->j]._when)) {
 							unlockItems();
 							continue;
 						}
 					}
 
 					// Ok, we can perform the action. For convenience, we do it in a new process
-					_ctx->newItem = (LPMPALITEM)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
+					_ctx->newItem = (LpMpalItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalItem));
 					if (_ctx->newItem == false) {
-						globalDestroy(_ctx->MyThreads);
-						globalDestroy(_ctx->MyActions);
+						globalDestroy(_ctx->myThreads);
+						globalDestroy(_ctx->myActions);
 
 						CORO_KILL_SELF();
 						return;
 					}
 
-					memcpy(_ctx->newItem,_ctx->curItem, sizeof(MPALITEM));
+					memcpy(_ctx->newItem,_ctx->curItem, sizeof(MpalItem));
 					unlockItems();
 
 					// We copy the action in #0
 					//_ctx->newItem->Action[0].nCmds = _ctx->curItem->Action[_ctx->j].nCmds;
 					//memcpy(_ctx->newItem->Action[0].CmdNum,_ctx->curItem->Action[_ctx->j].CmdNum,_ctx->newItem->Action[0].nCmds*sizeof(_ctx->newItem->Action[0].CmdNum[0]));
-					_ctx->newItem->dwRes=_ctx->j;
+					_ctx->newItem->_dwRes = _ctx->j;
 
 					// We will create an action, and will provide the necessary details
 					for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
-						if (_ctx->MyThreads[_ctx->i].nItem == 0)
+						if (_ctx->myThreads[_ctx->i]._nItem == 0)
 							break;
 					}
 
-					_ctx->MyThreads[_ctx->i].nItem = _ctx->MyActions[_ctx->k].nItem;
+					_ctx->myThreads[_ctx->i]._nItem = _ctx->myActions[_ctx->k]._nItem;
 
 					// Create the process
-					if ((_ctx->MyThreads[_ctx->i].hThread = CoroScheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LPMPALITEM))) == CORO_INVALID_PID_VALUE) {
-					//if ((_ctx->MyThreads[_ctx->i].hThread = (void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem))= = (void*)-1)
+					if ((_ctx->myThreads[_ctx->i]._hThread = CoroScheduler.createProcess(ActionThread, &_ctx->newItem, sizeof(LpMpalItem))) == CORO_INVALID_PID_VALUE) {
+					//if ((_ctx->myThreads[_ctx->i]._hThread = (void*)_beginthread(ActionThread, 10240,(void *)_ctx->newItem)) == (void*)-1)
 						globalDestroy(_ctx->newItem);
-						globalDestroy(_ctx->MyThreads);
-						globalDestroy(_ctx->MyActions);
+						globalDestroy(_ctx->myThreads);
+						globalDestroy(_ctx->myActions);
 
 						CORO_KILL_SELF();
 						return;
@@ -1033,14 +1032,14 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 	CORO_INVOKE_4(GLOBALS._lplpFunctions[200], 0, 0, 0, 0);
 
 	for (_ctx->i = 0; _ctx->i < _ctx->nRealItems; _ctx->i++) {
-		if (_ctx->MyThreads[_ctx->i].nItem != 0) {
-			CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->MyThreads[_ctx->i].hThread, 5000, &_ctx->delayExpired);
+		if (_ctx->myThreads[_ctx->i]._nItem != 0) {
+			CORO_INVOKE_3(CoroScheduler.waitForSingleObject, _ctx->myThreads[_ctx->i]._hThread, 5000, &_ctx->delayExpired);
 
 			//if (result != WAIT_OBJECT_0)
 			//if (_ctx->delayExpired)
 			//	TerminateThread(_ctx->MyThreads[_ctx->i].hThread, 0);
 
-			CoroScheduler.killMatchingProcess(_ctx->MyThreads[_ctx->i].hThread);
+			CoroScheduler.killMatchingProcess(_ctx->myThreads[_ctx->i]._hThread);
 		}
 	}
 
@@ -1090,7 +1089,7 @@ void doChoice(CORO_PARAM, uint32 nChoice);
  */
 void GroupThread(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
-		LPMPALDIALOG dialog;
+		LpMpalDialog dialog;
 		int i, j, k;
 		int type;
 	CORO_END_CONTEXT(_ctx);
@@ -1106,13 +1105,13 @@ void GroupThread(CORO_PARAM, const void *param) {
 	_ctx->dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 
 	// Search inside the group requesting the _ctx->dialog
-	for (_ctx->i = 0; _ctx->dialog->_group[_ctx->i].num != 0; _ctx->i++) {
-		if (_ctx->dialog->_group[_ctx->i].num == nGroup) {
+	for (_ctx->i = 0; _ctx->dialog->_group[_ctx->i]._num != 0; _ctx->i++) {
+		if (_ctx->dialog->_group[_ctx->i]._num == nGroup) {
 			// Cycle through executing the commands of the group
-			for (_ctx->j = 0; _ctx->j < _ctx->dialog->_group[_ctx->i].nCmds; _ctx->j++) {
-				_ctx->k = _ctx->dialog->_group[_ctx->i].CmdNum[_ctx->j];
+			for (_ctx->j = 0; _ctx->j < _ctx->dialog->_group[_ctx->i]._nCmds; _ctx->j++) {
+				_ctx->k = _ctx->dialog->_group[_ctx->i]._cmdNum[_ctx->j];
 
-				_ctx->type = _ctx->dialog->_command[_ctx->k].type;
+				_ctx->type = _ctx->dialog->_command[_ctx->k]._type;
 				if (_ctx->type == 1) {
 					// Call custom function
 					CORO_INVOKE_4(GLOBALS._lplpFunctions[_ctx->dialog->_command[_ctx->k]._nCf],
@@ -1125,12 +1124,12 @@ void GroupThread(CORO_PARAM, const void *param) {
 				} else if (_ctx->type == 2) {
 					// Set a variable
 					lockVar();
-					varSetValue(_ctx->dialog->_command[_ctx->k].lpszVarName, evaluateExpression(_ctx->dialog->_command[_ctx->k].expr));
+					varSetValue(_ctx->dialog->_command[_ctx->k]._lpszVarName, evaluateExpression(_ctx->dialog->_command[_ctx->k]._expr));
 					unlockVar();
 
 				} else if (_ctx->type == 3) {
 					// DoChoice: call the chosen function
-					CORO_INVOKE_1(doChoice, (uint32)_ctx->dialog->_command[_ctx->k].nChoice);
+					CORO_INVOKE_1(doChoice, (uint32)_ctx->dialog->_command[_ctx->k]._nChoice);
 
 				} else {
 					GLOBALS._mpalError = 1;
@@ -1166,7 +1165,7 @@ void GroupThread(CORO_PARAM, const void *param) {
  */
 void doChoice(CORO_PARAM, uint32 nChoice) {
 	CORO_BEGIN_CONTEXT;
-		LPMPALDIALOG dialog;
+		LpMpalDialog dialog;
 		int i, j, k;
 		uint32 nGroup;
 	CORO_END_CONTEXT(_ctx);
@@ -1180,13 +1179,13 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 	_ctx->dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 
 	// Search the choice between those required in the dialog
-	for (_ctx->i = 0; _ctx->dialog->_choice[_ctx->i].nChoice != 0; _ctx->i++) {
-		if (_ctx->dialog->_choice[_ctx->i].nChoice == nChoice)
+	for (_ctx->i = 0; _ctx->dialog->_choice[_ctx->i]._nChoice != 0; _ctx->i++) {
+		if (_ctx->dialog->_choice[_ctx->i]._nChoice == nChoice)
 			break;
 	}
 
 	// If nothing has been found, exit with an error
-	if (_ctx->dialog->_choice[_ctx->i].nChoice == 0) {
+	if (_ctx->dialog->_choice[_ctx->i]._nChoice == 0) {
 		// If we're here, we did not find the required choice
 		GLOBALS._mpalError = 1;
 		unlockDialogs();
@@ -1203,15 +1202,15 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 
 		_ctx->k = 0;
 		// Calculate the expression of each selection, to see if they're active or inactive
-		for (_ctx->j = 0; _ctx->dialog->_choice[_ctx->i]._select[_ctx->j].dwData != 0; _ctx->j++) {
-			if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].when == NULL) {
-				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].curActive = 1;
+		for (_ctx->j = 0; _ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._dwData != 0; _ctx->j++) {
+			if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._when == NULL) {
+				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._curActive = 1;
 				_ctx->k++;
-			} else if (evaluateExpression(_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].when)) {
-				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].curActive = 1;
+			} else if (evaluateExpression(_ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._when)) {
+				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._curActive = 1;
 				_ctx->k++;
 			} else
-				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].curActive = 0;
+				_ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._curActive = 0;
 		}
 
 		// If there are no choices activated, then the dialog is finished.
@@ -1227,19 +1226,19 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
 
 		// Now that the choice has been made, we can run the groups associated with the choice tbontbtitq
 		_ctx->j = GLOBALS._nSelectedChoice;
-		for (_ctx->k = 0; _ctx->dialog->_choice[_ctx->i]._select[_ctx->j].wPlayGroup[_ctx->k] != 0; _ctx->k++) {
-			_ctx->nGroup = _ctx->dialog->_choice[_ctx->i]._select[_ctx->j].wPlayGroup[_ctx->k];
+		for (_ctx->k = 0; _ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._wPlayGroup[_ctx->k] != 0; _ctx->k++) {
+			_ctx->nGroup = _ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._wPlayGroup[_ctx->k];
 			CORO_INVOKE_1(GroupThread, &_ctx->nGroup);
 		}
 
 		// Control attribute
-		if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].attr & (1 << 0)) {
+		if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._attr & (1 << 0)) {
 			// Bit 0 set: the end of the choice
 			unlockDialogs();
 			break;
 		}
 
-		if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j].attr & (1 << 1)) {
+		if (_ctx->dialog->_choice[_ctx->i]._select[_ctx->j]._attr & (1 << 1)) {
 			// Bit 1 set: the end of the dialog
 			unlockDialogs();
 
@@ -1270,52 +1269,52 @@ void doChoice(CORO_PARAM, uint32 nChoice) {
  * by calling LockItem().
  */
 static uint32 doAction(uint32 nAction, uint32 ordItem, uint32 dwParam) {
-	LPMPALITEM item = GLOBALS._lpmiItems;
-	LPMPALITEM newitem;
+	LpMpalItem item = GLOBALS._lpmiItems;
+	LpMpalItem newitem;
 
 	item+=ordItem;
-	Common::String buf = Common::String::format("Status.%u", item->nObj);
+	Common::String buf = Common::String::format("Status.%u", item->_nObj);
 	if (varGetValue(buf.c_str()) <= 0)
 		return CORO_INVALID_PID_VALUE;
 
-	for (int i = 0; i < item->nActions; i++) {
-		if (item->Action[i].num != nAction)
+	for (int i = 0; i < item->_nActions; i++) {
+		if (item->_action[i]._num != nAction)
 			continue;
 
-		if (item->Action[i].wParm != dwParam)
+		if (item->_action[i]._wParm != dwParam)
 			continue;
 
-		if (item->Action[i].when != NULL) {
-			if (!evaluateExpression(item->Action[i].when))
+		if (item->_action[i]._when != NULL) {
+			if (!evaluateExpression(item->_action[i]._when))
 				continue;
 		}
 
 		// Now we find the right action to be performed
 		// Duplicate the item and copy the current action in #i into #0
-		newitem = (LPMPALITEM)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALITEM));
+		newitem = (LpMpalItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalItem));
 		if (newitem == NULL)
 			return CORO_INVALID_PID_VALUE;
 
 		// In the new version number of the action in writing dwRes
-		Common::copy((byte *)item, (byte *)item + sizeof(MPALITEM), (byte *)newitem);
+		Common::copy((byte *)item, (byte *)item + sizeof(MpalItem), (byte *)newitem);
 
 		//newitem->Action[0].nCmds=item->Action[i].nCmds;
 		//memcpy(newitem->Action[0].CmdNum,item->Action[i].CmdNum,newitem->Action[0].nCmds*sizeof(newitem->Action[0].CmdNum[0]));
 
-		newitem->dwRes = i;
+		newitem->_dwRes = i;
 
 		// And finally we can laucnh the process that will execute the action,
 		// and a second process to free up the memory when the action is finished.
 
 		// !!! New process management
 		uint32 h;
-		if ((h = CoroScheduler.createProcess(ActionThread, &newitem, sizeof(LPMPALITEM))) == CORO_INVALID_PID_VALUE)
+		if ((h = CoroScheduler.createProcess(ActionThread, &newitem, sizeof(LpMpalItem))) == CORO_INVALID_PID_VALUE)
 			return CORO_INVALID_PID_VALUE;
 
 		if (CoroScheduler.createProcess(ShutUpActionThread, &h, sizeof(uint32)) == CORO_INVALID_PID_VALUE)
 			return CORO_INVALID_PID_VALUE;
 
-		GLOBALS._nExecutingAction = item->nObj;
+		GLOBALS._nExecutingAction = item->_nObj;
 		GLOBALS._bExecutingAction = true;
 
 		return h;
@@ -1372,15 +1371,15 @@ static uint32 doDialog(uint32 nDlgOrd, uint32 nGroup) {
  * @returns		True if everything is OK, false on failure
  */
 bool doSelection(uint32 i, uint32 dwData) {
-	LPMPALDIALOG dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
+	LpMpalDialog dialog = GLOBALS._lpmdDialogs + GLOBALS._nExecutingDialog;
 	int j;
 
-	for (j = 0; dialog->_choice[i]._select[j].dwData != 0; j++) {
-		if (dialog->_choice[i]._select[j].dwData == dwData && dialog->_choice[i]._select[j].curActive != 0)
+	for (j = 0; dialog->_choice[i]._select[j]._dwData != 0; j++) {
+		if (dialog->_choice[i]._select[j]._dwData == dwData && dialog->_choice[i]._select[j]._curActive != 0)
 			break;
 	}
 
-	if (dialog->_choice[i]._select[j].dwData == 0)
+	if (dialog->_choice[i]._select[j]._dwData == 0)
 		return false;
 
 	GLOBALS._nSelectedChoice = j;
@@ -1469,7 +1468,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	hMpc.close();
 
 	// Process the data
-	if (ParseMpc(lpMpcImage) == false)
+	if (parseMpc(lpMpcImage) == false)
 		return false;
 
 	globalDestroy(lpMpcImage);
@@ -1601,9 +1600,9 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		int y = GETARG(uint32);
 		if (x != -1) {
 			if (y == MPQ_X)
-				dwRet = GLOBALS._lpmlLocations[x].dwXlen;
+				dwRet = GLOBALS._lpmlLocations[x]._dwXlen;
 			else if (y == MPQ_Y)
-				dwRet = GLOBALS._lpmlLocations[x].dwYlen;
+				dwRet = GLOBALS._lpmlLocations[x]._dwYlen;
 			else
 				GLOBALS._mpalError = 1;
 		} else
@@ -1662,7 +1661,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		else {
 			lockItems();
 			int y = itemGetOrderFromNum(x);
-			memcpy(n, (char *)(GLOBALS._lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
+			memcpy(n, (char *)(GLOBALS._lpmiItems + y)->_lpszDescribe, MAX_DESCRIBE_SIZE);
 			unlockItems();
 		}
 
@@ -1795,7 +1794,7 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 		 */
 		lockLocations();
 		int x = locGetOrderFromNum(GETARG(uint32));
-		hRet = resLoad(GLOBALS._lpmlLocations[x].dwPicRes);
+		hRet = resLoad(GLOBALS._lpmlLocations[x]._dwPicRes);
 		unlockLocations();
 
 	} else if (wQueryType == MPQ_RESOURCE) {
@@ -1839,7 +1838,7 @@ HANDLE mpalQueryHANDLE(uint16 wQueryType, ...) {
 		else {
 			lockItems();
 			int y = itemGetOrderFromNum(x);
-			memcpy(n, (char *)(GLOBALS._lpmiItems + y)->lpszDescribe, MAX_DESCRIBE_SIZE);
+			memcpy(n, (char *)(GLOBALS._lpmiItems + y)->_lpszDescribe, MAX_DESCRIBE_SIZE);
 			unlockItems();
 		}
 
@@ -1959,24 +1958,23 @@ uint32 mpalGetError() {
  * @returns		TRUE if the script 'was launched, FALSE on failure
  */
 bool mpalExecuteScript(int nScript) {
-	LPMPALSCRIPT s;
+	LpMpalScript s;
 
 	LockScripts();
 	int n = scriptGetOrderFromNum(nScript);
-	s = (LPMPALSCRIPT)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALSCRIPT));
+	s = (LpMpalScript)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalScript));
 	if (s == NULL)
 		return false;
 
-	memcpy(s, GLOBALS._lpmsScripts + n, sizeof(MPALSCRIPT));
+	memcpy(s, GLOBALS._lpmsScripts + n, sizeof(MpalScript));
 	unlockScripts();
 
 	// !!! New process management
-	if (CoroScheduler.createProcess(ScriptThread, &s, sizeof(LPMPALSCRIPT)) == CORO_INVALID_PID_VALUE)
+	if (CoroScheduler.createProcess(ScriptThread, &s, sizeof(LpMpalScript)) == CORO_INVALID_PID_VALUE)
  		return false;
 
 	return true;
 }
-
 
 /**
  * Install a custom routine That will be called by MPAL every time the pattern
@@ -1987,7 +1985,6 @@ bool mpalExecuteScript(int nScript) {
 void mpalInstallItemIrq(LPITEMIRQFUNCTION lpiifCus) {
 	GLOBALS._lpiifCustom = lpiifCus;
 }
-
 
 /**
  * Process the idle actions of the items on one location.
@@ -2063,7 +2060,7 @@ void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result) {
  * @returns		Length in bytes
  */
 int mpalGetSaveStateSize() {
-	return GLOBALS._nVars * sizeof(MPALVAR) + 4;
+	return GLOBALS._nVars * sizeof(MpalVar) + 4;
 }
 
 /**
@@ -2075,7 +2072,7 @@ int mpalGetSaveStateSize() {
 void mpalSaveState(byte *buf) {
 	lockVar();
 	WRITE_LE_UINT32(buf, GLOBALS._nVars);
-	memcpy(buf + 4, (byte *)GLOBALS._lpmvVars, GLOBALS._nVars * sizeof(MPALVAR));
+	memcpy(buf + 4, (byte *)GLOBALS._lpmvVars, GLOBALS._nVars * sizeof(MpalVar));
 	unlockVar();
 }
 
@@ -2092,12 +2089,12 @@ int mpalLoadState(byte *buf) {
 
 	GLOBALS._nVars = READ_LE_UINT32(buf);
 
-	GLOBALS._hVars = globalAllocate(GMEM_ZEROINIT | GMEM_MOVEABLE, GLOBALS._nVars * sizeof(MPALVAR));
+	GLOBALS._hVars = globalAllocate(GMEM_ZEROINIT | GMEM_MOVEABLE, GLOBALS._nVars * sizeof(MpalVar));
 	lockVar();
-	memcpy((byte *)GLOBALS._lpmvVars, buf + 4, GLOBALS._nVars * sizeof(MPALVAR));
+	memcpy((byte *)GLOBALS._lpmvVars, buf + 4, GLOBALS._nVars * sizeof(MpalVar));
 	unlockVar();
 
-	return GLOBALS._nVars * sizeof(MPALVAR) + 4;
+	return GLOBALS._nVars * sizeof(MpalVar) + 4;
 }
 
 } // end of namespace MPAL

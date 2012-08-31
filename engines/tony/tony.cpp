@@ -312,7 +312,7 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 		uint32 hThread = CoroScheduler.createProcess(doNextMusic, NULL, 0);
 		assert(hThread != CORO_INVALID_PID_VALUE);
 
-	} else if (nFX == 44) { // Cambia canale e lascia finire il primo
+	} else if (nFX == 44) { // Change the channel and let the first finish
 		if (GLOBALS._flipflop)
 			GLOBALS._nextChannel = nChannel - 1;
 		else
@@ -704,7 +704,7 @@ void TonyEngine::close() {
 	_theEngine.close();
 	_window.close();
 	mpalFree();
-	FreeMpc();
+	freeMpc();
 	delete[] _curThumbnail;
 }
 
