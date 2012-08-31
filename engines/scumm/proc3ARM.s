@@ -25,37 +25,40 @@
 	.global	_ClassicProc3RendererShadowARM
 
 
-.set	_scaleIndexY	,	112
-.set	_numStrips	,	108
-.set	_palette	,	104
-.set	_shadow_table	,	100
-.set	_scaleIndexX	,	96
-.set	_scaleX		,	92
-.set	_height		,	88
-.set	store_r14	,	84
-.set	store_r11	,	80
-.set	store_r10	,	76
-.set	store_r9	,	72
-.set	store_r8	,	68
-.set	store_r7	,	64
-.set	store_r6	,	60
-.set	store_r5	,	56
-.set	store_r4	,	52
-.set	src		,	48
-.set	height		,	44
-.set	len		,	40
-.set	v1_shr		,	36
-.set	v1_skip_width	,	32
-.set	v1_destptr	,	28
-.set	v1_scaleXstep	,	24
-.set	v1_mask_ptr	,	20
-.set	v1_y		,	16
-.set	v1_scaletable	,	12
-.set	pitch		,	8
-.set	scaleIdxXPtr	,	4
-.set	scaleIdxYPtr	,	0
 
-.set	space		,	48
+.set	space,			48
+
+.set	_scaleIndexY,	store_r14 + 28
+.set	_numStrips,		store_r14 + 24
+.set	_palette,		store_r14 + 20
+.set	_shadow_table,	store_r14 + 16
+.set	_scaleIndexX,	store_r14 + 12
+.set	_scaleX,		store_r14 + 8
+.set	_height,		store_r14 + 4
+
+.set	store_r14,		space + 36
+.set	store_r11,		space + 32
+.set	store_r10,		space + 28
+.set	store_r9,		space + 24
+.set	store_r8,		space + 20
+.set	store_r7,		space + 16
+.set	store_r6,		space + 12
+.set	store_r5,		space + 8
+.set	store_r4,		space + 4
+
+.set	src,			48
+.set	height,			44
+.set	len,			40
+.set	v1_shr,			36
+.set	v1_skip_width,	32
+.set	v1_destptr,		28
+.set	v1_scaleXstep,	24
+.set	v1_mask_ptr,	20
+.set	v1_y,			16
+.set	v1_scaletable,	12
+.set	pitch,			8
+.set	scaleIdxXPtr,	4
+.set	scaleIdxYPtr,	0
 
 	@ r0 = _scaleY
 	@ r1 = v1
