@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BDYNBUFFER_H
-#define WINTERMUTE_BDYNBUFFER_H
+#ifndef WINTERMUTE_BASE_DYNBUFFER_H
+#define WINTERMUTE_BASE_DYNBUFFER_H
 
 
 #include "engines/wintermute/base/base.h"

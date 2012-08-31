@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BRESOURCES_H
-#define WINTERMUTE_BRESOURCES_H
+#ifndef WINTERMUTE_BASE_RESOURCES_H
+#define WINTERMUTE_BASE_RESOURCES_H
 
 #include "common/stream.h"
 #include "common/str.h"

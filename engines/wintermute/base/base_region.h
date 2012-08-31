@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BREGION_H
-#define WINTERMUTE_BREGION_H
+#ifndef WINTERMUTE_BASE_REGION_H
+#define WINTERMUTE_BASE_REGION_H
 
 #include "engines/wintermute/base/base_point.h"
 #include "engines/wintermute/base/base_object.h"

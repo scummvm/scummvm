@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BFILEENTRY_H
-#define WINTERMUTE_BFILEENTRY_H
+#ifndef WINTERMUTE_BASE_FILEENTRY_H
+#define WINTERMUTE_BASE_FILEENTRY_H
 
 #include "common/archive.h"
 #include "common/str.h"

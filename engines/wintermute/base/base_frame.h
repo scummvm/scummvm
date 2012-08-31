@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BFRAME_H
-#define WINTERMUTE_BFRAME_H
+#ifndef WINTERMUTE_BASE_FRAME_H
+#define WINTERMUTE_BASE_FRAME_H
 
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/coll_templ.h"

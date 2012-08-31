@@ -86,4 +86,4 @@ namespace Wintermute {
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_PERSISTENT_H
+#endif

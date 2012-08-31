@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BBASE_H
-#define WINTERMUTE_BBASE_H
+#ifndef WINTERMUTE_BASE_BASE_H
+#define WINTERMUTE_BASE_BASE_H
 
 #include "engines/wintermute/wintypes.h"
 #include "engines/wintermute/dctypes.h"

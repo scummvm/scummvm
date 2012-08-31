@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BIMAGE_H
-#define WINTERMUTE_BIMAGE_H
+#ifndef WINTERMUTE_BASE_IMAGE_H
+#define WINTERMUTE_BASE_IMAGE_H
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"

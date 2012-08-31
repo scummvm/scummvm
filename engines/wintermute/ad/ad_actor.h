@@ -105,4 +105,4 @@ private:
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_ADACTOR_H
+#endif

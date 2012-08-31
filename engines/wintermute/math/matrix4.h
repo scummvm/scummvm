@@ -56,4 +56,4 @@ public:
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_MATRIX4_H
+#endif

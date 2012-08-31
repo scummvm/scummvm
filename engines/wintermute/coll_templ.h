@@ -83,4 +83,4 @@ public:
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_COLL_TEMPL_H
+#endif

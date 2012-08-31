@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BFILE_H
-#define WINTERMUTE_BFILE_H
+#ifndef WINTERMUTE_BASE_FILE_H
+#define WINTERMUTE_BASE_FILE_H
 
 
 #include "engines/wintermute/base/base.h"

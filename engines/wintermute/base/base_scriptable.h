@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSCRIPTABLE_H
-#define WINTERMUTE_BSCRIPTABLE_H
+#ifndef WINTERMUTE_BASE_SCRIPTABLE_H
+#define WINTERMUTE_BASE_SCRIPTABLE_H
 
 
 #include "engines/wintermute/base/base_named_object.h"

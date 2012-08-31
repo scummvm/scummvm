@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSTRINGTABLE_H
-#define WINTERMUTE_BSTRINGTABLE_H
+#ifndef WINTERMUTE_BASE_STRINGTABLE_H
+#define WINTERMUTE_BASE_STRINGTABLE_H
 
 
 #include "common/hashmap.h"

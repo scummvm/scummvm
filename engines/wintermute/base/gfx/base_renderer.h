@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BRENDERER_H
-#define WINTERMUTE_BRENDERER_H
+#ifndef WINTERMUTE_BASE_RENDERER_H
+#define WINTERMUTE_BASE_RENDERER_H
 
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"

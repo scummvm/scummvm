@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BFADER_H
-#define WINTERMUTE_BFADER_H
+#ifndef WINTERMUTE_BASE_FADER_H
+#define WINTERMUTE_BASE_FADER_H
 
 
 #include "engines/wintermute/base/base_object.h"

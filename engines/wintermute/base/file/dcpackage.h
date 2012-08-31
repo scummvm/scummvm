@@ -77,4 +77,4 @@ v2:    uint32 TimeDate1
 
 } // end of namespace Wintermute
 
-#endif // _DCPACKAGE_H_
+#endif

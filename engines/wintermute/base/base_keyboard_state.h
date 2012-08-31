@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BKEYBOARD_STATE_H
-#define WINTERMUTE_BKEYBOARD_STATE_H
+#ifndef WINTERMUTE_BASE_KEYBOARD_STATE_H
+#define WINTERMUTE_BASE_KEYBOARD_STATE_H
 
 
 #include "engines/wintermute/base/base.h"

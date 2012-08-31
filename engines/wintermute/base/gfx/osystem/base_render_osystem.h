@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BRENDERER_SDL_H
-#define WINTERMUTE_BRENDERER_SDL_H
+#ifndef WINTERMUTE_BASE_RENDERER_SDL_H
+#define WINTERMUTE_BASE_RENDERER_SDL_H
 
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "common/rect.h"
@@ -128,4 +128,4 @@ private:
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_BRENDERER_SDL_H
+#endif

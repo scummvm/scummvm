@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BQUICKMSG_H
-#define WINTERMUTE_BQUICKMSG_H
+#ifndef WINTERMUTE_BASE_QUICKMSG_H
+#define WINTERMUTE_BASE_QUICKMSG_H
 
 #include "engines/wintermute/base/base.h"
 

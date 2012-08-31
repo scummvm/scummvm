@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSCRIPTHOLDER_H
-#define WINTERMUTE_BSCRIPTHOLDER_H
+#ifndef WINTERMUTE_BASE_SCRIPTHOLDER_H
+#define WINTERMUTE_BASE_SCRIPTHOLDER_H
 
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/persistent.h"

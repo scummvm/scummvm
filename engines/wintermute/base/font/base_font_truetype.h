@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BFONTTT_H
-#define WINTERMUTE_BFONTTT_H
+#ifndef WINTERMUTE_BASE_FONTTT_H
+#define WINTERMUTE_BASE_FONTTT_H
 
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/font/base_font.h"

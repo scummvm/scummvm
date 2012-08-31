@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BPERSISTMGR_H
-#define WINTERMUTE_BPERSISTMGR_H
+#ifndef WINTERMUTE_BASE_PERSISTMGR_H
+#define WINTERMUTE_BASE_PERSISTMGR_H
 
 
 #include "engines/wintermute/dctypes.h"

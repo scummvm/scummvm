@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BFONTBITMAP_H
-#define WINTERMUTE_BFONTBITMAP_H
+#ifndef WINTERMUTE_BASE_FONTBITMAP_H
+#define WINTERMUTE_BASE_FONTBITMAP_H
 
 
 #include "engines/wintermute/base/font/base_font.h"

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BFILEMANAGER_H
-#define WINTERMUTE_BFILEMANAGER_H
+#ifndef WINTERMUTE_BASE_FILEMANAGER_H
+#define WINTERMUTE_BASE_FILEMANAGER_H
 
 #include "common/archive.h"
 #include "common/str.h"

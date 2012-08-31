@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSOUNDBUFFER_H
-#define WINTERMUTE_BSOUNDBUFFER_H
+#ifndef WINTERMUTE_BASE_SOUNDBUFFER_H
+#define WINTERMUTE_BASE_SOUNDBUFFER_H
 
 
 #include "engines/wintermute/base/base.h"

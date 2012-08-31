@@ -39,4 +39,4 @@ public:
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_MATHUTIL_H
+#endif

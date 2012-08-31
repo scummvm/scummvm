@@ -53,4 +53,4 @@ public:
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_STRINGUTIL_H
+#endif

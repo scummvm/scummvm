@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSOUNDMGR_H
-#define WINTERMUTE_BSOUNDMGR_H
+#ifndef WINTERMUTE_BASE_SOUNDMGR_H
+#define WINTERMUTE_BASE_SOUNDMGR_H
 
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base.h"

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSAVETHUMBFILE_H
-#define WINTERMUTE_BSAVETHUMBFILE_H
+#ifndef WINTERMUTE_BASE_SAVETHUMBFILE_H
+#define WINTERMUTE_BASE_SAVETHUMBFILE_H
 
 
 #include "engines/wintermute/base/file/base_file.h"

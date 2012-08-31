@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BTRANSITIONMGR_H
-#define WINTERMUTE_BTRANSITIONMGR_H
+#ifndef WINTERMUTE_BASE_TRANSITIONMGR_H
+#define WINTERMUTE_BASE_TRANSITIONMGR_H
 
 #include "engines/wintermute/base/base.h"
 

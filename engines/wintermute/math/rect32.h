@@ -91,4 +91,4 @@ struct Rect32 {
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_RECT32_H
+#endif

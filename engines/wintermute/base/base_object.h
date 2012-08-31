@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BOBJECT_H
-#define WINTERMUTE_BOBJECT_H
+#ifndef WINTERMUTE_BASE_OBJECT_H
+#define WINTERMUTE_BASE_OBJECT_H
 
 
 #include "engines/wintermute/base/base_script_holder.h"

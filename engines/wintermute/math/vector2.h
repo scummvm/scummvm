@@ -72,4 +72,4 @@ public:
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_VECTOR2_H
+#endif

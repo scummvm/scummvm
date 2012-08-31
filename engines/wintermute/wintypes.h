@@ -50,4 +50,4 @@ namespace Wintermute {
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_WINTYPES_H
+#endif

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSPRITE_H
-#define WINTERMUTE_BSPRITE_H
+#ifndef WINTERMUTE_BASE_SPRITE_H
+#define WINTERMUTE_BASE_SPRITE_H
 
 
 #include "engines/wintermute/coll_templ.h"

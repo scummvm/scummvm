@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BPARSER_H
-#define WINTERMUTE_BPARSER_H
+#ifndef WINTERMUTE_BASE_PARSER_H
+#define WINTERMUTE_BASE_PARSER_H
 
 
 #define TOKEN_DEF_START         \

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BPACKAGE_H
-#define WINTERMUTE_BPACKAGE_H
+#ifndef WINTERMUTE_BASE_PACKAGE_H
+#define WINTERMUTE_BASE_PACKAGE_H
 
 #include "common/archive.h"
 #include "common/stream.h"

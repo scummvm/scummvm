@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BDISKFILE_H
-#define WINTERMUTE_BDISKFILE_H
+#ifndef WINTERMUTE_BASE_DISKFILE_H
+#define WINTERMUTE_BASE_DISKFILE_H
 
 #include "common/stream.h"
 

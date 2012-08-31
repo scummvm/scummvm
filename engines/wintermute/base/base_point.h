@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BPOINT_H
-#define WINTERMUTE_BPOINT_H
+#ifndef WINTERMUTE_BASE_POINT_H
+#define WINTERMUTE_BASE_POINT_H
 
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"

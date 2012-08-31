@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSOUND_H
-#define WINTERMUTE_BSOUND_H
+#ifndef WINTERMUTE_BASE_SOUND_H
+#define WINTERMUTE_BASE_SOUND_H
 
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSURFACESTORAGE_H
-#define WINTERMUTE_BSURFACESTORAGE_H
+#ifndef WINTERMUTE_BASE_SURFACESTORAGE_H
+#define WINTERMUTE_BASE_SURFACESTORAGE_H
 
 #include "engines/wintermute/base/base.h"
 #include "common/array.h"

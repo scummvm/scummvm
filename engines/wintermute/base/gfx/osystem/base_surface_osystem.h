@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BSURFACESDL_H
-#define WINTERMUTE_BSURFACESDL_H
+#ifndef WINTERMUTE_BASE_SURFACESDL_H
+#define WINTERMUTE_BASE_SURFACESDL_H
 
 #include "graphics/surface.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
@@ -96,4 +96,4 @@ private:
 
 } // end of namespace Wintermute
 
-#endif // WINTERMUTE_BSURFACESDL_H
+#endif
