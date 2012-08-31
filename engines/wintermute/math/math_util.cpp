@@ -27,14 +27,14 @@
  */
 
 #include "engines/wintermute/math/math_util.h"
-#include <cmath>
+#include <math.h>
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 float MathUtil::round(float val) {
 	float result = floor(val);
-	if (val - result >= 0.5) {
+	if (val - result >= 0.5f) {
 		result += 1.0;
 	}
 	return result;
