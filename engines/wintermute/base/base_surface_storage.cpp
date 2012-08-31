@@ -169,7 +169,7 @@ bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::sortSurfaces() {
-	qsort(&_surfaces[0], _surfaces.size(), sizeof(BaseSurface *), surfaceSortCB);
+	Common::sort(_surfaces.begin(), _surfaces.end(), surfaceSortCB);
 	return STATUS_OK;
 }
 

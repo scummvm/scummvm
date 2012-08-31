@@ -83,9 +83,6 @@ public:
 	void copy(const BaseArray<T2> &src) {
 		Common::Array<TYPE>::insert_at(0, src);
 	}
-	void *getData() { // Ugly, should perhaps add a sort-function instead.
-		return Common::Array<TYPE>::_storage;
-	}
 };
 
 } // end of namespace Wintermute
