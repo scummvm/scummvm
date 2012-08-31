@@ -836,4 +836,27 @@ bool RMGfxEngine::canLoadSave() {
 	return _bInput && !_tony.inAction() && !g_vm->getIsDemo();
 }
 
+RMGfxEngine::operator RMGfxTargetBuffer &() {
+	return _bigBuf;
+}
+
+RMInput &RMGfxEngine::getInput() {
+	return _input;
+}
+
+RMPointer &RMGfxEngine::getPointer() {
+	return _point;
+}
+
+/**
+ * Link to graphic task
+ */
+void RMGfxEngine::linkGraphicTask(RMGfxTask *task) {
+	_bigBuf.addPrim(new RMGfxPrimitive(task));
+}
+
+void RMGfxEngine::setPerorate(bool bpal) {
+	_inter.setPerorate(bpal);
+}
+
 } // End of namespace Tony

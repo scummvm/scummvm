@@ -49,11 +49,9 @@ enum SoundCodecs {
 	FPCODEC_ADPCM
 };
 
-//****************************************************************************
-//* class FPSound
-//* -------------
-//* Description: Sound driver For Tony Tough
-//****************************************************************************
+/**
+ * Sound driver For Tony Tough
+ */
 
 class FPSound {
 private:

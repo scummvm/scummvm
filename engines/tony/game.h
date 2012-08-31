@@ -53,8 +53,18 @@ namespace Tony {
 	(buf8)->init(*raw, raw->width(), raw->height(), true); \
 	delete raw;
 
-
 class RMPointer {
+public:
+	enum PointerType {
+		PTR_NONE = 0,
+		PTR_ARROWUP,
+		PTR_ARROWDOWN,
+		PTR_ARROWLEFT,
+		PTR_ARROWRIGHT,
+		PTR_ARROWMAP,
+		PTR_CUSTOM
+	};
+
 private:
 	RMGfxSourceBuffer8 *_pointer[16];
 	RMPoint _hotspot[16];
@@ -66,17 +76,6 @@ private:
 	int _nCurSpecialPointer;
 
 	RMGfxSourceBuffer8 *_nCurCustomPointer;
-
-public:
-	enum PointerType {
-		PTR_NONE = 0,
-		PTR_ARROWUP,
-		PTR_ARROWDOWN,
-		PTR_ARROWLEFT,
-		PTR_ARROWRIGHT,
-		PTR_ARROWMAP,
-		PTR_CUSTOM
-	};
 
 public:
 	/**
@@ -108,32 +107,19 @@ public:
 	/**
 	 * Sets a new action as current
 	 */
-	void setAction(RMTonyAction action) {
-		_nCurPointer = action;
-		updateCursor();
-	}
+	void setAction(RMTonyAction action);
 
 	/**
 	 * Sets a new pointer
 	 */
-	void setSpecialPointer(PointerType ptr) {
-		_nCurSpecialPointer = ptr;
-		if (_nCurSpecialPointer && _nCurSpecialPointer != PTR_CUSTOM)
-			_specialPointer[ptr - 1]->setPattern(1);
+	void setSpecialPointer(PointerType ptr);
 
-		updateCursor();
-	}
-	PointerType getSpecialPointer() {
-		return (PointerType)_nCurSpecialPointer;
-	}
+	PointerType getSpecialPointer();
 
 	/**
 	 * Set the new custom pointer
 	 */
-	void setCustomPointer(RMGfxSourceBuffer8 *ptr) {
-		_nCurCustomPointer = ptr;
-		updateCursor();
-	}
+	void setCustomPointer(RMGfxSourceBuffer8 *ptr);
 
 	/**
 	 * Return the current action to be applied according to the pointer

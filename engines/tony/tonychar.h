@@ -416,37 +416,27 @@ public:
 	/**
 	 * Waits until the end of a pattern
 	 */
-	void waitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE) {
-		RMCharacter::waitForEndPattern(coroParam, hCustomSkip);
-	}
+	void waitForEndPattern(CORO_PARAM, uint32 hCustomSkip = CORO_INVALID_PID_VALUE);
 
 	/**
 	 * Check if currently in an action
 	 */
-	bool inAction() {
-		return (_bActionPending && _action != 0) | _bAction;
-	}
+	bool inAction();
 
 	/**
 	 * Check if there needs to be an update for scrolling movement
 	 */
-	bool mustUpdateScrolling() {
-		return ((!inAction()) || (isMoving()));
-	}
+	bool mustUpdateScrolling();
 
 	/**
 	 * Returns Tony's position
 	 */
-	RMPoint position() {
-		return _pos;
-	}
+	RMPoint position();
 
 	/**
 	 * Set the scrolling position
 	 */
-	void setScrollPosition(const RMPoint &pt) {
-		RMCharacter::setScrollPosition(pt);
-	}
+	void setScrollPosition(const RMPoint &pt);
 
 	/**
 	 * Set the take animation
@@ -475,21 +465,16 @@ public:
 	/**
 	 * Tony disguises himself!
 	 */
-	void setShepherdess(bool bIsPast) {
-		_bShepherdess = bIsPast;
-	}
-	int getShepherdess() {
-		return _bShepherdess;
-	}
+	void setShepherdess(bool bIsPast);
+
+	int getShepherdess();
 
 	/**
 	 * Perform an action
 	 */
 	void executeAction(int nAction, int nActionItem, int nParm);
 
-	void playSfx(int nSfx) {
-		RMItem::playSfx(nSfx);
-	}
+	void playSfx(int nSfx);
 };
 
 } // End of namespace Tony

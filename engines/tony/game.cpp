@@ -1571,4 +1571,35 @@ void RMPointer::updateCursor() {
 	CursorMan.replaceCursor(cursorData, 64, 64, _cursorHotspot._x, _cursorHotspot._y, 0, 1, &pixelFormat);
 }
 
+/**
+ * Sets a new action as current
+ */
+void RMPointer::setAction(RMTonyAction action) {
+	_nCurPointer = action;
+	updateCursor();
+}
+
+/**
+ * Sets a new pointer
+ */
+void RMPointer::setSpecialPointer(PointerType ptr) {
+	_nCurSpecialPointer = ptr;
+	if (_nCurSpecialPointer && _nCurSpecialPointer != PTR_CUSTOM)
+		_specialPointer[ptr - 1]->setPattern(1);
+
+	updateCursor();
+}
+
+RMPointer::PointerType RMPointer::getSpecialPointer() {
+	return (PointerType)_nCurSpecialPointer;
+}
+
+/**
+ * Set the new custom pointer
+ */
+void RMPointer::setCustomPointer(RMGfxSourceBuffer8 *ptr) {
+	_nCurCustomPointer = ptr;
+	updateCursor();
+}
+
 } // End of namespace Tony

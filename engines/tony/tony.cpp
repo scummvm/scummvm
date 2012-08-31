@@ -615,6 +615,14 @@ void TonyEngine::grabThumbnail() {
 	_window.grabThumbnail(_curThumbnail);
 }
 
+uint16 *TonyEngine::getThumbnail() {
+	return _curThumbnail;
+}
+
+void TonyEngine::quitGame() {
+	_bQuitNow = true;
+}
+
 void TonyEngine::openInitLoadMenu(CORO_PARAM) {
 	_theEngine.openOptionScreen(coroParam, 1);
 }
@@ -774,6 +782,14 @@ void TonyEngine::saveSoundSettings() {
 
 	ConfMan.setBool("subtitles", GLOBALS._bShowSubtitles);
 	ConfMan.setInt("talkspeed", GLOBALS._nCfgTextSpeed * 256 / 10);
+}
+
+void TonyEngine::showLocation() {
+	_bDrawLocation = true;
+}
+
+void TonyEngine::hideLocation() {
+	_bDrawLocation = false;
 }
 
 } // End of namespace Tony

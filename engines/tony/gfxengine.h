@@ -102,23 +102,15 @@ public:
 	void enableMouse();
 	void disableMouse();
 
-	operator RMGfxTargetBuffer &() {
-		return _bigBuf;
-	}
-	RMInput &getInput() {
-		return _input;
-	}
-	RMPointer &getPointer() {
-		return _point;
-	}
+	operator RMGfxTargetBuffer &();
+	RMInput &getInput();
+	RMPointer &getPointer();
 
 	// Link to the custom function list
 	void initCustomDll();
 
 	// Link to graphic task
-	void linkGraphicTask(RMGfxTask *task) {
-		_bigBuf.addPrim(new RMGfxPrimitive(task));
-	};
+	void linkGraphicTask(RMGfxTask *task);
 
 	// Manage a location
 	uint32 loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
@@ -137,9 +129,8 @@ public:
 	void closeWipe();
 	void waitWipeEnd(CORO_PARAM);
 
-	void setPerorate(bool bpal) {
-		_inter.setPerorate(bpal);
-	}
+	void setPerorate(bool bpal);
+
 	bool canLoadSave();
 };
 

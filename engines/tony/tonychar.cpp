@@ -1892,4 +1892,54 @@ void RMTony::endStatic(CORO_PARAM, CharacterTalkType nTalk) {
 	CORO_END_CODE;
 }
 
+/**
+ * Waits until the end of a pattern
+ */
+void RMTony::waitForEndPattern(CORO_PARAM, uint32 hCustomSkip) {
+	RMCharacter::waitForEndPattern(coroParam, hCustomSkip);
+}
+
+/**
+ * Check if currently in an action
+ */
+bool RMTony::inAction() {
+	return (_bActionPending && _action != 0) | _bAction;
+}
+
+/**
+ * Check if there needs to be an update for scrolling movement
+ */
+bool RMTony::mustUpdateScrolling() {
+	return ((!inAction()) || (isMoving()));
+}
+
+/**
+ * Returns Tony's position
+ */
+RMPoint RMTony::position() {
+	return _pos;
+}
+
+/**
+ * Set the scrolling position
+ */
+void RMTony::setScrollPosition(const RMPoint &pt) {
+	RMCharacter::setScrollPosition(pt);
+}
+
+/**
+ * Tony disguises himself!
+ */
+void RMTony::setShepherdess(bool bIsPast) {
+	_bShepherdess = bIsPast;
+}
+
+int RMTony::getShepherdess() {
+	return _bShepherdess;
+}
+
+void RMTony::playSfx(int nSfx) {
+	RMItem::playSfx(nSfx);
+}
+
 } // End of namespace Tony

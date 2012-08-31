@@ -173,12 +173,8 @@ public:
 
 	void getDataDirectory(DataDir dir, char *path);
 
-	void showLocation() {
-		_bDrawLocation = true;
-	}
-	void hideLocation() {
-		_bDrawLocation = false;
-	}
+	void showLocation();
+	void hideLocation();
 
 	/**
 	 * Reads the time
@@ -226,13 +222,9 @@ public:
 	 * Get a thumbnail
 	 */
 	void grabThumbnail();
-	uint16 *getThumbnail() {
-		return _curThumbnail;
-	}
+	uint16 *getThumbnail();
 
-	void quitGame() {
-		_bQuitNow = true;
-	}
+	void quitGame();
 
 	void openInitLoadMenu(CORO_PARAM);
 	void openInitOptions(CORO_PARAM);

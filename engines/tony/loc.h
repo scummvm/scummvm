@@ -529,6 +529,7 @@ private:
 
 public:
 	// @@@@@@@@@@@@@@@@@@@@@@@
+
 	RMPoint TEMPTonyStart;
 	RMPoint TEMPGetTonyStart() {
 		return TEMPTonyStart;
