@@ -27,7 +27,7 @@
  */
 
 #ifndef WINTERMUTE_BASE_ACTIVERECT_H
-#define WINTERMUTE_BASE_BACTIVERECT_H
+#define WINTERMUTE_BASE_ACTIVERECT_H
 
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"
