@@ -41,8 +41,10 @@
 
 #include "engines/wintermute/utils/convert_utf.h"
 #ifdef CVTUTF_DEBUG
-#include <stdio.h>
+#include "common/textconsole.h"
 #endif
+
+namespace Wintermute {
 
 static const int halfShift  = 10; /* used for shifting by 10 bits */
 
@@ -158,8 +160,7 @@ ConversionResult ConvertUTF16toUTF32(
 	*targetStart = target;
 #ifdef CVTUTF_DEBUG
 	if (result == sourceIllegal) {
-		fprintf(stderr, "ConvertUTF16toUTF32 illegal seq 0x%04x,%04x\n", ch, ch2);
-		fflush(stderr);
+		warning("ConvertUTF16toUTF32 illegal seq 0x%04x,%04x\n", ch, ch2);
 	}
 #endif
 	return result;
@@ -610,3 +611,5 @@ ConversionResult ConvertUTF8toUTF32(
     similarly unrolled loops.
 
    --------------------------------------------------------------------- */
+
+} // End of namespace Wintermute
