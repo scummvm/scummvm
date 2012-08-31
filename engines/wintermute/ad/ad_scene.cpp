@@ -2214,6 +2214,9 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::sortScaleLevels() {
+	if (_scaleLevels.size() == 0) {
+		return STATUS_OK;
+	}
 	bool changed;
 	do {
 		changed = false;
@@ -2235,6 +2238,9 @@ bool AdScene::sortScaleLevels() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::sortRotLevels() {
+	if (_rotLevels.size() == 0) {
+		return STATUS_OK;
+	}
 	bool changed;
 	do {
 		changed = false;
