@@ -348,33 +348,38 @@ bool PlaybackFile::isEventsBufferEmpty() {
 }
 
 void PlaybackFile::readEvent(RecorderEvent& event) {
-	event.type = (EventType)_tmpPlaybackFile.readUint32LE();
-	switch (event.type) {
-	case EVENT_TIMER:
+	event.recordedtype = (RecorderEventType)_tmpPlaybackFile.readByte();
+	switch (event.recordedtype) {
+	case kRecorderEventTypeTimer:
 		event.time = _tmpPlaybackFile.readUint32LE();
 		break;
-	case EVENT_KEYDOWN:
-	case EVENT_KEYUP:
-		event.time = _tmpPlaybackFile.readUint32LE();
-		event.kbd.keycode = (KeyCode)_tmpPlaybackFile.readSint32LE();
-		event.kbd.ascii = _tmpPlaybackFile.readUint16LE();
-		event.kbd.flags = _tmpPlaybackFile.readByte();
-		break;
-	case EVENT_MOUSEMOVE:
-	case EVENT_LBUTTONDOWN:
-	case EVENT_LBUTTONUP:
-	case EVENT_RBUTTONDOWN:
-	case EVENT_RBUTTONUP:
-	case EVENT_WHEELUP:
-	case EVENT_WHEELDOWN:
-	case EVENT_MBUTTONDOWN:
-	case EVENT_MBUTTONUP:
-		event.time = _tmpPlaybackFile.readUint32LE();
-		event.mouse.x = _tmpPlaybackFile.readSint16LE();
-		event.mouse.y = _tmpPlaybackFile.readSint16LE();
-		break;
-	default:
-		event.time = _tmpPlaybackFile.readUint32LE();
+	case kRecorderEventTypeNormal:
+		event.type = (EventType)_tmpPlaybackFile.readUint32LE();
+		switch (event.type) {
+		case EVENT_KEYDOWN:
+		case EVENT_KEYUP:
+			event.time = _tmpPlaybackFile.readUint32LE();
+			event.kbd.keycode = (KeyCode)_tmpPlaybackFile.readSint32LE();
+			event.kbd.ascii = _tmpPlaybackFile.readUint16LE();
+			event.kbd.flags = _tmpPlaybackFile.readByte();
+			break;
+		case EVENT_MOUSEMOVE:
+		case EVENT_LBUTTONDOWN:
+		case EVENT_LBUTTONUP:
+		case EVENT_RBUTTONDOWN:
+		case EVENT_RBUTTONUP:
+		case EVENT_WHEELUP:
+		case EVENT_WHEELDOWN:
+		case EVENT_MBUTTONDOWN:
+		case EVENT_MBUTTONUP:
+			event.time = _tmpPlaybackFile.readUint32LE();
+			event.mouse.x = _tmpPlaybackFile.readSint16LE();
+			event.mouse.y = _tmpPlaybackFile.readSint16LE();
+			break;
+		default:
+			event.time = _tmpPlaybackFile.readUint32LE();
+			break;
+		}
 		break;
 	}
 	event.synthetic = true;
@@ -496,33 +501,38 @@ void PlaybackFile::writeRandomRecords() {
 void PlaybackFile::writeEvent(const RecorderEvent &event) {
 	assert(_mode == kWrite);
 	_recordCount++;
-	_tmpRecordFile.writeUint32LE((uint32)event.type);
-	switch (event.type) {
-	case EVENT_TIMER:
+	_tmpRecordFile.writeByte(event.recordedtype);
+	switch (event.recordedtype) {
+	case kRecorderEventTypeTimer:
 		_tmpRecordFile.writeUint32LE(event.time);
 		break;
-	case EVENT_KEYDOWN:
-	case EVENT_KEYUP:
-		_tmpRecordFile.writeUint32LE(event.time);
-		_tmpRecordFile.writeSint32LE(event.kbd.keycode);
-		_tmpRecordFile.writeUint16LE(event.kbd.ascii);
-		_tmpRecordFile.writeByte(event.kbd.flags);
-		break;
-	case EVENT_MOUSEMOVE:
-	case EVENT_LBUTTONDOWN:
-	case EVENT_LBUTTONUP:
-	case EVENT_RBUTTONDOWN:
-	case EVENT_RBUTTONUP:
-	case EVENT_WHEELUP:
-	case EVENT_WHEELDOWN:
-	case EVENT_MBUTTONDOWN:
-	case EVENT_MBUTTONUP:
-		_tmpRecordFile.writeUint32LE(event.time);
-		_tmpRecordFile.writeSint16LE(event.mouse.x);
-		_tmpRecordFile.writeSint16LE(event.mouse.y);
-		break;
-	default:
-		_tmpRecordFile.writeUint32LE(event.time);
+	case kRecorderEventTypeNormal:
+		_tmpRecordFile.writeUint32LE((uint32)event.type);
+		switch(event.type) {
+		case EVENT_KEYDOWN:
+		case EVENT_KEYUP:
+			_tmpRecordFile.writeUint32LE(event.time);
+			_tmpRecordFile.writeSint32LE(event.kbd.keycode);
+			_tmpRecordFile.writeUint16LE(event.kbd.ascii);
+			_tmpRecordFile.writeByte(event.kbd.flags);
+			break;
+		case EVENT_MOUSEMOVE:
+		case EVENT_LBUTTONDOWN:
+		case EVENT_LBUTTONUP:
+		case EVENT_RBUTTONDOWN:
+		case EVENT_RBUTTONUP:
+		case EVENT_WHEELUP:
+		case EVENT_WHEELDOWN:
+		case EVENT_MBUTTONDOWN:
+		case EVENT_MBUTTONUP:
+			_tmpRecordFile.writeUint32LE(event.time);
+			_tmpRecordFile.writeSint16LE(event.mouse.x);
+			_tmpRecordFile.writeSint16LE(event.mouse.y);
+			break;
+		default:
+			_tmpRecordFile.writeUint32LE(event.time);
+			break;
+		}
 		break;
 	}
 	if (_recordCount == kMaxBufferedRecords) {

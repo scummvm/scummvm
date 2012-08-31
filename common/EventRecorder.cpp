@@ -111,7 +111,7 @@ void EventRecorder::deinit() {
 
 void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 #ifdef SDL_BACKEND
-	if (!_initialized)) {
+	if (!_initialized) {
 		return;
 	}
 	if (skipRecord) {
@@ -130,7 +130,7 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 		_lastMillis = millis;
 		_fakeTimer += millisDelay;
 		controlPanel->setReplayedTime(_fakeTimer);
-		timerEvent.type = EVENT_TIMER;
+		timerEvent.recordedtype = kRecorderEventTypeTimer;
 		timerEvent.time = _fakeTimer;
 		_playbackFile->writeEvent(timerEvent);
 		takeScreenshot();
@@ -138,7 +138,7 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 		break;
 	case kRecorderPlayback:
 		updateSubsystems();
-		if (_nextEvent.type == EVENT_TIMER) {
+		if (_nextEvent.recordedtype == kRecorderEventTypeTimer) {
 			_fakeTimer = _nextEvent.time;
 			_nextEvent = _playbackFile->getNextEvent();
 			_timerManager->handler();
@@ -182,7 +182,7 @@ bool EventRecorder::pollEvent(Event &ev) {
 	if ((_recordMode != kRecorderPlayback) || !_initialized)
 		return false;
 	
-	if ((_nextEvent.type ==  EVENT_INVALID) || (_nextEvent.type == EVENT_TIMER)) {
+	if ((_nextEvent.recordedtype == kRecorderEventTypeTimer) || (_nextEvent.type ==  EVENT_INVALID)) {
 		return false;
 	}
 
@@ -482,6 +482,7 @@ List<Event> EventRecorder::mapEvent(const Event &ev, EventSource *source) {
 		} else {
 			RecorderEvent e;
 			memcpy(&e, &ev, sizeof(ev));
+			e.recordedtype = kRecorderEventTypeNormal;
 			e.time = _fakeTimer;
 			_playbackFile->writeEvent(e);
 			return DefaultEventMapper::mapEvent(ev, source);

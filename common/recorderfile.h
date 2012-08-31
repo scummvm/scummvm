@@ -36,9 +36,14 @@
 
 namespace Common {
 
+enum RecorderEventType {
+	kRecorderEventTypeNormal = 0,
+	kRecorderEventTypeTimer = 1
+};
+
 struct RecorderEvent : Event {
+	RecorderEventType recordedtype;
 	uint32 time;
-	uint32 count;
 };
 
 
