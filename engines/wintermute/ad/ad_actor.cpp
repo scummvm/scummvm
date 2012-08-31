@@ -1036,7 +1036,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *animName = stack->pop()->getString();
 
 		bool found = false;
-		for (int i = 0; i < _anims.size(); i++) {
+		for (uint32 i = 0; i < _anims.size(); i++) {
 			if (scumm_stricmp(_anims[i]->getName(), animName) == 0) {
 				// invalidate sprites in use
 				if (_anims[i]->containsSprite(_tempSprite2)) {
@@ -1255,7 +1255,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	// not - get a random talk
 	if (!ret) {
 		BaseArray<AdSpriteSet *> talkAnims;
-		for (int i = 0; i < _anims.size(); i++) {
+		for (uint32 i = 0; i < _anims.size(); i++) {
 			if (_talkAnimName.compareToIgnoreCase(_anims[i]->getName()) == 0) {
 				talkAnims.add(_anims[i]);
 			}
@@ -1284,7 +1284,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 
 	if (stance != NULL) {
 		// search special stances
-		for (int i = 0; i < _talkSpritesEx.size(); i++) {
+		for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 			if (scumm_stricmp(_talkSpritesEx[i]->getName(), stance) == 0) {
 				ret = _talkSpritesEx[i]->getSprite(_dir);
 				break;
@@ -1292,7 +1292,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 		}
 		if (ret == NULL) {
 			// search generic stances
-			for (int i = 0; i < _talkSprites.size(); i++) {
+			for (uint32 i = 0; i < _talkSprites.size(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->getName(), stance) == 0) {
 					ret = _talkSprites[i]->getSprite(_dir);
 					break;
@@ -1395,7 +1395,7 @@ int AdActor::getHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
-	for (int i = 0; i < _anims.size(); i++) {
+	for (uint32 i = 0; i < _anims.size(); i++) {
 		if (animName.compareToIgnoreCase(_anims[i]->getName()) == 0) {
 			return _anims[i];
 		}

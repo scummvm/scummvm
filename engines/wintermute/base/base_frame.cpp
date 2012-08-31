@@ -349,7 +349,7 @@ bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float 
 
 	Rect32 subRect;
 
-	for (int i = 0; i < _subframes.size(); i++) {
+	for (uint32 i = 0; i < _subframes.size(); i++) {
 		_subframes[i]->getBoundingRect(&subRect, x, y, scaleX, scaleY);
 		BasePlatform::unionRect(rect, rect, &subRect);
 	}
@@ -469,7 +469,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= _subframes.size()) {
+		if (index < 0 || index >= (int32)_subframes.size()) {
 			script->runtimeError("Frame.GetSubframe: Subframe index %d is out of range.", index);
 			stack->pushNULL();
 		} else {
@@ -487,7 +487,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		ScValue *val = stack->pop();
 		if (val->isInt()) {
 			int index = val->getInt(-1);
-			if (index < 0 || index >= _subframes.size()) {
+			if (index < 0 || index >= (int32)_subframes.size()) {
 				script->runtimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", index);
 			}
 		} else {
@@ -563,7 +563,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	else if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= _applyEvent.size()) {
+		if (index < 0 || index >= (int32)_applyEvent.size()) {
 			script->runtimeError("Frame.GetEvent: Event index %d is out of range.", index);
 			stack->pushNULL();
 		} else {

@@ -176,8 +176,8 @@ bool BaseSurfaceStorage::sortSurfaces() {
 
 //////////////////////////////////////////////////////////////////////////
 int BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
-	const BaseSurface *s1 = *((BaseSurface **)arg1);
-	const BaseSurface *s2 = *((BaseSurface **)arg2);
+	const BaseSurface *s1 = *((const BaseSurface *const *)arg1);
+	const BaseSurface *s2 = *((const BaseSurface *const *)arg2);
 
 	// sort by life time
 	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0) {

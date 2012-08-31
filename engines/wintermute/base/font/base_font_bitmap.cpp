@@ -118,10 +118,10 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 	AnsiString str;
 
 	if (_gameRef->_textEncoding == TEXT_UTF8) {
-		WideString wstr = StringUtil::utf8ToWide(Utf8String((char *)text));
+		WideString wstr = StringUtil::utf8ToWide(Utf8String((const char *)text));
 		str = StringUtil::wideToAnsi(wstr);
 	} else {
-		str = AnsiString((char *)text);
+		str = AnsiString((const char *)text);
 	}
 	if (str.empty()) {
 		return 0;

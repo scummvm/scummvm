@@ -153,11 +153,11 @@ int BaseFontTT::getTextHeight(byte *text, int width) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
-	if (text == NULL || strcmp((char *)text, "") == 0) {
+	if (text == NULL || strcmp((const char *)text, "") == 0) {
 		return;
 	}
 
-	WideString textStr = (char *)text;
+	WideString textStr = (const char *)text;
 
 	// TODO: Why do we still insist on Widestrings everywhere?
 	/*  if (_gameRef->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
