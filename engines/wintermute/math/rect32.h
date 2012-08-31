@@ -37,8 +37,8 @@ struct Rect32 {
 	int32 bottom, right;    ///< The point at the bottom right of the rectangle (not part of the rect).
 
 	Rect32() : top(0), left(0), bottom(0), right(0) {}
-	Rect32(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
-	Rect32(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
+	Rect32(int32 w, int32 h) : top(0), left(0), bottom(h), right(w) {}
+	Rect32(int32 x1, int32 y1, int32 x2, int32 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
 	bool operator==(const Rect32 &rhs) const {
@@ -48,18 +48,18 @@ struct Rect32 {
 		return !equals(rhs);
 	}
 
-	int16 width() const {
+	int32 width() const {
 		return right - left;
 	}
-	int16 height() const {
+	int32 height() const {
 		return bottom - top;
 	}
 
-	void setWidth(int16 aWidth) {
+	void setWidth(int32 aWidth) {
 		right = left + aWidth;
 	}
 
-	void setHeight(int16 aHeight) {
+	void setHeight(int32 aHeight) {
 		bottom = top + aHeight;
 	}
 
