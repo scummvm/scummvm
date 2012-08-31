@@ -54,7 +54,7 @@ public:
 	int _drawOffsetX;
 	int _drawOffsetY;
 
-	virtual void dumpData(const char *filename) {};
+	virtual void dumpData(const char *filename) {}
 	/**
 	 * Take a screenshot of the current screenstate
 	 *

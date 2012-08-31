@@ -43,8 +43,8 @@ public:
 	virtual void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
 	virtual int getLetterHeight();
 
-	virtual void initLoop() {};
-	virtual void afterLoad() {};
+	virtual void initLoop() {}
+	virtual void afterLoad() {}
 	BaseFont(BaseGame *inGame);
 	virtual ~BaseFont();
 

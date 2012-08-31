@@ -267,7 +267,7 @@ void AdScene::pfAddWaypointGroup(AdWaypointGroup *wpt, BaseObject *requester) {
 		return;
 	}
 
-	for (uint32  i = 0; i < wpt->_points.size(); i++) {
+	for (uint32 i = 0; i < wpt->_points.size(); i++) {
 		if (isBlockedAt(wpt->_points[i]->x, wpt->_points[i]->y, true, requester)) {
 			continue;
 		}

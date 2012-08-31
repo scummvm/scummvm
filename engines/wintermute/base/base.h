@@ -45,7 +45,7 @@ public:
 	bool _persistable;
 	bool setEditorProp(const Common::String &propName, const Common::String &propValue);
 	Common::String getEditorProp(const Common::String &propName, const Common::String &initVal = NULL);
-	BaseClass(TDynamicConstructor, TDynamicConstructor) {};
+	BaseClass(TDynamicConstructor, TDynamicConstructor) {}
 	bool parseEditorProperty(byte *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
 	BaseClass();
@@ -55,8 +55,6 @@ public:
 protected:
 	Common::HashMap<Common::String, Common::String> _editorProps;
 	Common::HashMap<Common::String, Common::String>::iterator _editorPropsIter;
-	/*  std::map<std::string, std::string> _editorProps;
-	    std::map<std::string, std::string>::iterator _editorPropsIter;*/
 };
 
 } // end of namespace Wintermute
