@@ -56,7 +56,7 @@ AdWaypointGroup::~AdWaypointGroup() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdWaypointGroup::cleanup() {
-	for (int i = 0; i < _points.getSize(); i++) {
+	for (uint32 i = 0; i < _points.size(); i++) {
 		delete _points[i];
 	}
 	_points.clear();
@@ -179,7 +179,7 @@ bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	}
 	BaseClass::saveAsText(buffer, indent + 2);
 
-	for (int i = 0; i < _points.getSize(); i++) {
+	for (uint32 i = 0; i < _points.size(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
@@ -253,7 +253,7 @@ bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int arg
 
 	cleanup();
 
-	for (int i = 0; i < wpt->_points.getSize(); i++) {
+	for (uint32 i = 0; i < wpt->_points.size(); i++) {
 		int x = (int)((float)wpt->_points[i]->x * scale / 100.0f);
 		int y = (int)((float)wpt->_points[i]->y * scale / 100.0f);
 

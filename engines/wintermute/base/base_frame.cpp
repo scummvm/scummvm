@@ -61,12 +61,12 @@ BaseFrame::~BaseFrame() {
 	delete _sound;
 	_sound = NULL;
 
-	for (int i = 0; i < _subframes.getSize(); i++) {
+	for (uint32 i = 0; i < _subframes.size(); i++) {
 		delete _subframes[i];
 	}
 	_subframes.clear();
 
-	for (int i = 0; i < _applyEvent.getSize(); i++) {
+	for (uint32 i = 0; i < _applyEvent.size(); i++) {
 		delete[] _applyEvent[i];
 		_applyEvent[i] = NULL;
 	}
@@ -78,7 +78,7 @@ BaseFrame::~BaseFrame() {
 bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
 	bool res;
 
-	for (int i = 0; i < _subframes.getSize(); i++) {
+	for (uint32 i = 0; i < _subframes.size(); i++) {
 		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
 		if (DID_FAIL(res)) {
 			return res;
@@ -102,7 +102,7 @@ bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 		*/
 	}
 	if (owner) {
-		for (int i = 0; i < _applyEvent.getSize(); i++) {
+		for (uint32 i = 0; i < _applyEvent.size(); i++) {
 			owner->applyEvent(_applyEvent[i]);
 		}
 	}
@@ -349,7 +349,7 @@ bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float 
 
 	Rect32 subRect;
 
-	for (int i = 0; i < _subframes.getSize(); i++) {
+	for (int i = 0; i < _subframes.size(); i++) {
 		_subframes[i]->getBoundingRect(&subRect, x, y, scaleX, scaleY);
 		BasePlatform::unionRect(rect, rect, &subRect);
 	}
@@ -381,15 +381,15 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
 	}
 
-	if (_subframes.getSize() > 0) {
+	if (_subframes.size() > 0) {
 		_subframes[0]->saveAsText(buffer, indent, false);
 	}
 
-	for (int i = 1; i < _subframes.getSize(); i++) {
+	for (uint32 i = 1; i < _subframes.size(); i++) {
 		_subframes[i]->saveAsText(buffer, indent + 2);
 	}
 
-	for (int i = 0; i < _applyEvent.getSize(); i++) {
+	for (uint32 i = 0; i < _applyEvent.size(); i++) {
 		buffer->putTextIndent(indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
@@ -469,7 +469,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= _subframes.getSize()) {
+		if (index < 0 || index >= _subframes.size()) {
 			script->runtimeError("Frame.GetSubframe: Subframe index %d is out of range.", index);
 			stack->pushNULL();
 		} else {
@@ -487,12 +487,12 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		ScValue *val = stack->pop();
 		if (val->isInt()) {
 			int index = val->getInt(-1);
-			if (index < 0 || index >= _subframes.getSize()) {
+			if (index < 0 || index >= _subframes.size()) {
 				script->runtimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", index);
 			}
 		} else {
 			BaseSubFrame *sub = (BaseSubFrame *)val->getNative();
-			for (int i = 0; i < _subframes.getSize(); i++) {
+			for (uint32 i = 0; i < _subframes.size(); i++) {
 				if (_subframes[i] == sub) {
 					delete _subframes[i];
 					_subframes.remove_at(i);
@@ -547,7 +547,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 			sub->setSurface(filename);
 		}
 
-		if (index >= _subframes.getSize()) {
+		if (index >= (int32)_subframes.size()) {
 			_subframes.add(sub);
 		} else {
 			_subframes.insert_at(index, sub);
@@ -563,7 +563,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	else if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= _applyEvent.getSize()) {
+		if (index < 0 || index >= _applyEvent.size()) {
 			script->runtimeError("Frame.GetEvent: Event index %d is out of range.", index);
 			stack->pushNULL();
 		} else {
@@ -578,7 +578,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	else if (strcmp(name, "AddEvent") == 0) {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
-		for (int i = 0; i < _applyEvent.getSize(); i++) {
+		for (uint32 i = 0; i < _applyEvent.size(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				stack->pushNULL();
 				return STATUS_OK;
@@ -595,7 +595,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	else if (strcmp(name, "DeleteEvent") == 0) {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
-		for (int i = 0; i < _applyEvent.getSize(); i++) {
+		for (uint32 i = 0; i < _applyEvent.size(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				delete[] _applyEvent[i];
 				_applyEvent.remove_at(i);
@@ -608,7 +608,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.getSize() == 1) {
+		if (_subframes.size() == 1) {
 			return _subframes[0]->scCallMethod(script, stack, thisStack, name);
 		} else {
 			return BaseScriptable::scCallMethod(script, stack, thisStack, name);
@@ -676,7 +676,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	// NumSubframes (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumSubframes") == 0) {
-		_scValue->setInt(_subframes.getSize());
+		_scValue->setInt(_subframes.size());
 		return _scValue;
 	}
 
@@ -684,13 +684,13 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	// NumEvents (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumEvents") == 0) {
-		_scValue->setInt(_applyEvent.getSize());
+		_scValue->setInt(_applyEvent.size());
 		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.getSize() == 1) {
+		if (_subframes.size() == 1) {
 			return _subframes[0]->scGetProperty(name);
 		} else {
 			return BaseScriptable::scGetProperty(name);
@@ -743,7 +743,7 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.getSize() == 1) {
+		if (_subframes.size() == 1) {
 			return _subframes[0]->scSetProperty(name, value);
 		} else {
 			return BaseScriptable::scSetProperty(name, value);

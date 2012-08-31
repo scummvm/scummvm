@@ -993,9 +993,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "WALK_TO_DIR=%d\n", (int)_walkToDir);
 	}
 
-	int i;
-
-	for (i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 

@@ -88,7 +88,7 @@ void BaseSprite::setDefaults() {
 void BaseSprite::cleanup() {
 	BaseScriptHolder::cleanup();
 
-	for (int i = 0; i < _frames.getSize(); i++) {
+	for (uint32 i = 0; i < _frames.size(); i++) {
 		delete _frames[i];
 	}
 	_frames.clear();
@@ -103,7 +103,7 @@ void BaseSprite::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
 	getCurrentFrame(zoomX, zoomY);
-	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) {
+	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
 		return STATUS_OK;
 	}
 
@@ -334,7 +334,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 //////////////////////////////////////////////////////////////////////
 void BaseSprite::reset() {
-	if (_frames.getSize() > 0) {
+	if (_frames.size() > 0) {
 		_currentFrame = 0;
 	} else {
 		_currentFrame = -1;
@@ -367,10 +367,10 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 
 	// get current frame
 	if (!_paused && !_finished && timer >= _lastFrameTime + _frames[_currentFrame]->_delay && _lastFrameTime != 0) {
-		if (_currentFrame < _frames.getSize() - 1) {
+		if (_currentFrame < (int32)_frames.size() - 1) {
 			_currentFrame++;
 			if (_continuous) {
-				_canBreak = (_currentFrame == _frames.getSize() - 1);
+				_canBreak = (_currentFrame == (int32)_frames.size() - 1);
 			}
 		} else {
 			if (_looping) {
@@ -385,13 +385,13 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 		_lastFrameTime = timer;
 	}
 
-	_changed = (lastFrame != _currentFrame || (_looping && _frames.getSize() == 1));
+	_changed = (lastFrame != _currentFrame || (_looping && (int32)_frames.size() == 1));
 
 	if (_lastFrameTime == 0) {
 		_lastFrameTime = timer;
 		_changed = true;
 		if (_continuous) {
-			_canBreak = (_currentFrame == _frames.getSize() - 1);
+			_canBreak = (_currentFrame == (int32)_frames.size() - 1);
 		}
 	}
 
@@ -411,7 +411,7 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
-	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) {
+	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
 		return STATUS_OK;
 	}
 
@@ -432,11 +432,11 @@ bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, flo
 //////////////////////////////////////////////////////////////////////////
 BaseSurface *BaseSprite::getSurface() {
 	// only used for animated textures for 3D models
-	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) {
+	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
 		return NULL;
 	}
 	BaseFrame *frame = _frames[_currentFrame];
-	if (frame && frame->_subframes.getSize() > 0) {
+	if (frame && frame->_subframes.size() > 0) {
 		BaseSubFrame *subframe = frame->_subframes[0];
 		if (subframe) {
 			return subframe->_surface;
@@ -455,7 +455,7 @@ bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 	}
 
 	BasePlatform::setRectEmpty(rect);
-	for (int i = 0; i < _frames.getSize(); i++) {
+	for (uint32 i = 0; i < _frames.size(); i++) {
 		Rect32 frame;
 		Rect32 temp;
 		BasePlatform::copyRect(&temp, rect);
@@ -493,15 +493,12 @@ bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	BaseScriptHolder::saveAsText(buffer, indent + 2);
 
-	int i;
-
 	// scripts
-	for (i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-
-	for (i = 0; i < _frames.getSize(); i++) {
+	for (uint32 i = 0; i < _frames.size(); i++) {
 		_frames[i]->saveAsText(buffer, indent + 2);
 	}
 
@@ -554,7 +551,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	if (strcmp(name, "GetFrame") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= _frames.getSize()) {
+		if (index < 0 || index >= (int32)_frames.size()) {
 			script->runtimeError("Sprite.GetFrame: Frame index %d is out of range.", index);
 			stack->pushNULL();
 		} else {
@@ -571,14 +568,14 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *val = stack->pop();
 		if (val->isInt()) {
 			int index = val->getInt(-1);
-			if (index < 0 || index >= _frames.getSize()) {
+			if (index < 0 || index >= (int32)_frames.size()) {
 				script->runtimeError("Sprite.DeleteFrame: Frame index %d is out of range.", index);
 			}
 		} else {
 			BaseFrame *frame = (BaseFrame *)val->getNative();
-			for (int i = 0; i < _frames.getSize(); i++) {
+			for (uint32 i = 0; i < _frames.size(); i++) {
 				if (_frames[i] == frame) {
-					if (i == _currentFrame) {
+					if (i == (uint32)_currentFrame) {
 						_lastFrameTime = 0;
 					}
 					delete _frames[i];
@@ -654,7 +651,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			}
 		}
 
-		if (index >= _frames.getSize()) {
+		if (index >= (int32)_frames.size()) {
 			_frames.add(frame);
 		} else {
 			_frames.insert_at(index, frame);
@@ -704,7 +701,7 @@ ScValue *BaseSprite::scGetProperty(const char *name) {
 	// NumFrames (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumFrames") == 0) {
-		_scValue->setInt(_frames.getSize());
+		_scValue->setInt(_frames.size());
 		return _scValue;
 	}
 
@@ -771,7 +768,7 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "CurrentFrame") == 0) {
 		_currentFrame = value->getInt(0);
-		if (_currentFrame >= _frames.getSize() || _currentFrame < 0) {
+		if (_currentFrame >= (int32)_frames.size() || _currentFrame < 0) {
 			_currentFrame = -1;
 		}
 		_lastFrameTime = 0;
@@ -806,7 +803,7 @@ const char *BaseSprite::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::killAllSounds() {
-	for (int i = 0; i < _frames.getSize(); i++) {
+	for (uint32 i = 0; i < _frames.size(); i++) {
 		if (_frames[i]->_sound) {
 			_frames[i]->_sound->stop();
 		}

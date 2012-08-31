@@ -110,7 +110,7 @@ void UIWindow::cleanup() {
 		delete _imageInactive;
 	}
 
-	for (int i = 0; i < _widgets.getSize(); i++) {
+	for (uint32 i = 0; i < _widgets.size(); i++) {
 		delete _widgets[i];
 	}
 	_widgets.clear();
@@ -220,7 +220,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 	}
 
-	for (int i = 0; i < _widgets.getSize(); i++) {
+	for (uint32 i = 0; i < _widgets.size(); i++) {
 		_widgets[i]->display(_posX + offsetX, _posY + offsetY);
 	}
 
@@ -713,7 +713,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// scripts
-	for (int i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -723,7 +723,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	BaseClass::saveAsText(buffer, indent + 2);
 
 	// controls
-	for (int i = 0; i < _widgets.getSize(); i++) {
+	for (uint32 i = 0; i < _widgets.size(); i++) {
 		_widgets[i]->saveAsText(buffer, indent + 2);
 	}
 
@@ -734,7 +734,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::enableWidget(const char *name, bool enable) {
-	for (int i = 0; i < _widgets.getSize(); i++) {
+	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
 			_widgets[i]->_disable = !enable;
 		}
@@ -745,7 +745,7 @@ bool UIWindow::enableWidget(const char *name, bool enable) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::showWidget(const char *name, bool visible) {
-	for (int i = 0; i < _widgets.getSize(); i++) {
+	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
 			_widgets[i]->_visible = visible;
 		}
@@ -766,13 +766,13 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 		if (val->getType() == VAL_INT) {
 			int widget = val->getInt();
-			if (widget < 0 || widget >= _widgets.getSize()) {
+			if (widget < 0 || widget >= (int32)_widgets.size()) {
 				stack->pushNULL();
 			} else {
 				stack->pushNative(_widgets[widget], true);
 			}
 		} else {
-			for (int i = 0; i < _widgets.getSize(); i++) {
+			for (uint32 i = 0; i < _widgets.size(); i++) {
 				if (scumm_stricmp(_widgets[i]->getName(), val->getString()) == 0) {
 					stack->pushNative(_widgets[i], true);
 					return STATUS_OK;
@@ -991,7 +991,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 		UIObject *obj = (UIObject *)val->getNative();
 
-		for (int i = 0; i < _widgets.getSize(); i++) {
+		for (uint32 i = 0; i < _widgets.size(); i++) {
 			if (_widgets[i] == obj) {
 				delete _widgets[i];
 				_widgets.remove_at(i);
@@ -1028,7 +1028,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	// NumWidgets / NumControls (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumWidgets") == 0 || strcmp(name, "NumControls") == 0) {
-		_scValue->setInt(_widgets.getSize());
+		_scValue->setInt(_widgets.size());
 		return _scValue;
 	}
 
@@ -1286,7 +1286,7 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 bool UIWindow::moveFocus(bool forward) {
 	int i;
 	bool found = false;
-	for (i = 0; i < _widgets.getSize(); i++) {
+	for (i = 0; i < (int32)_widgets.size(); i++) {
 		if (_widgets[i] == _focusedWidget) {
 			found = true;
 			break;
@@ -1297,7 +1297,7 @@ bool UIWindow::moveFocus(bool forward) {
 	}
 
 	if (!_focusedWidget) {
-		if (_widgets.getSize() > 0) {
+		if (_widgets.size() > 0) {
 			i = 0;
 		} else {
 			return STATUS_OK;
@@ -1307,7 +1307,7 @@ bool UIWindow::moveFocus(bool forward) {
 	int numTries = 0;
 	bool done = false;
 
-	while (numTries <= _widgets.getSize()) {
+	while (numTries <= (int32)_widgets.size()) {
 		if (_widgets[i] != _focusedWidget && _widgets[i]->_canFocus && _widgets[i]->_visible && !_widgets[i]->_disable) {
 			_focusedWidget = _widgets[i];
 			done = true;
@@ -1316,13 +1316,13 @@ bool UIWindow::moveFocus(bool forward) {
 
 		if (forward) {
 			i++;
-			if (i >= _widgets.getSize()) {
+			if (i >= (int32)_widgets.size()) {
 				i = 0;
 			}
 		} else {
 			i--;
 			if (i < 0) {
-				i = _widgets.getSize() - 1;
+				i = _widgets.size() - 1;
 			}
 		}
 		numTries++;
@@ -1406,7 +1406,7 @@ bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 
 //////////////////////////////////////////////////////////////////////////
 void UIWindow::makeFreezable(bool freezable) {
-	for (int i = 0; i < _widgets.getSize(); i++) {
+	for (uint32 i = 0; i < _widgets.size(); i++) {
 		_widgets[i]->makeFreezable(freezable);
 	}
 
@@ -1416,7 +1416,7 @@ void UIWindow::makeFreezable(bool freezable) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
-	for (int i = 0; i < _widgets.getSize(); i++) {
+	for (uint32 i = 0; i < _widgets.size(); i++) {
 		UIObject *control = _widgets[i];
 		if (control->_disable && interactiveOnly) {
 			continue;

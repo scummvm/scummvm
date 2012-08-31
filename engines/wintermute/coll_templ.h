@@ -60,13 +60,9 @@ public:
 		}
 		return true;
 	}
-	// TODO: Just here for convenience while verifying that this works.
-	int getSize() const {
-		return Common::Array<TYPE>::size();
-	}
 	int add(TYPE newElement) {
 		Common::Array<TYPE>::push_back(newElement);
-		return getSize() - 1;
+		return Common::Array<TYPE>::size() - 1;
 	}
 	void remove_at(uint32 idx) {
 		Common::Array<TYPE>::remove_at(idx);

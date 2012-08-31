@@ -94,18 +94,18 @@ PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject
 
 //////////////////////////////////////////////////////////////////////////
 PartEmitter::~PartEmitter(void) {
-	for (int i = 0; i < _particles.getSize(); i++) {
+	for (uint32 i = 0; i < _particles.size(); i++) {
 		delete _particles[i];
 	}
 	_particles.clear();
 
-	for (int i = 0; i < _forces.getSize(); i++) {
+	for (uint32 i = 0; i < _forces.size(); i++) {
 		delete _forces[i];
 	}
 	_forces.clear();
 
 
-	for (int i = 0; i < _sprites.getSize(); i++) {
+	for (uint32 i = 0; i < _sprites.size(); i++) {
 		delete[] _sprites[i];
 	}
 	_sprites.clear();
@@ -121,7 +121,7 @@ bool PartEmitter::addSprite(const char *filename) {
 	}
 
 	// do we already have the file?
-	for (int i = 0; i < _sprites.getSize(); i++) {
+	for (uint32 i = 0; i < _sprites.size(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			return STATUS_OK;
 		}
@@ -145,7 +145,7 @@ bool PartEmitter::addSprite(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::removeSprite(const char *filename) {
-	for (int i = 0; i < _sprites.getSize(); i++) {
+	for (uint32 i = 0; i < _sprites.size(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			delete[] _sprites[i];
 			_sprites.remove_at(i);
@@ -160,7 +160,7 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	if (!particle) {
 		return STATUS_FAILED;
 	}
-	if (_sprites.getSize() == 0) {
+	if (_sprites.size() == 0) {
 		return STATUS_FAILED;
 	}
 
@@ -190,7 +190,7 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	}
 
 	float angle = BaseUtils::randomAngle(_angle1, _angle2);
-	int spriteIndex = BaseUtils::randomInt(0, _sprites.getSize() - 1);
+	int spriteIndex = BaseUtils::randomInt(0, _sprites.size() - 1);
 
 	float rotation = BaseUtils::randomAngle(_rotation1, _rotation2);
 	float angVelocity = BaseUtils::randomFloat(_angVelocity1, _angVelocity2);
@@ -259,7 +259,7 @@ bool PartEmitter::update() {
 bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	int numLive = 0;
 
-	for (int i = 0; i < _particles.getSize(); i++) {
+	for (uint32 i = 0; i < _particles.size(); i++) {
 		_particles[i]->update(this, currentTime, timerDelta);
 
 		if (!_particles[i]->_isDead) {
@@ -282,7 +282,7 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 			int toGen = MIN(_genAmount, _maxParticles - numLive);
 			while (toGen > 0) {
 				int firstDeadIndex = -1;
-				for (int i = 0; i < _particles.getSize(); i++) {
+				for (uint32 i = 0; i < _particles.size(); i++) {
 					if (_particles[i]->_isDead) {
 						firstDeadIndex = i;
 						break;
@@ -319,11 +319,11 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::display(BaseRegion *region) {
-	if (_sprites.getSize() <= 1) {
+	if (_sprites.size() <= 1) {
 		_gameRef->_renderer->startSpriteBatch();
 	}
 
-	for (int i = 0; i < _particles.getSize(); i++) {
+	for (uint32 i = 0; i < _particles.size(); i++) {
 		if (region != NULL && _useRegion) {
 			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) {
 				continue;
@@ -333,7 +333,7 @@ bool PartEmitter::display(BaseRegion *region) {
 		_particles[i]->display(this);
 	}
 
-	if (_sprites.getSize() <= 1) {
+	if (_sprites.size() <= 1) {
 		_gameRef->_renderer->endSpriteBatch();
 	}
 
@@ -342,7 +342,7 @@ bool PartEmitter::display(BaseRegion *region) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::start() {
-	for (int i = 0; i < _particles.getSize(); i++) {
+	for (uint32 i = 0; i < _particles.size(); i++) {
 		_particles[i]->_isDead = true;
 	}
 	_running = true;
@@ -406,7 +406,7 @@ bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int 
 PartForce *PartEmitter::addForceByName(const Common::String &name) {
 	PartForce *force = NULL;
 
-	for (int i = 0; i < _forces.getSize(); i++) {
+	for (uint32 i = 0; i < _forces.size(); i++) {
 		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
 			force = _forces[i];
 			break;
@@ -443,7 +443,7 @@ bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType typ
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::removeForce(const Common::String &name) {
-	for (int i = 0; i < _forces.getSize(); i++) {
+	for (uint32 i = 0; i < _forces.size(); i++) {
 		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
 			delete _forces[i];
 			_forces.remove_at(i);
@@ -524,7 +524,7 @@ bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	else if (strcmp(name, "Stop") == 0) {
 		stack->correctParams(0);
 
-		for (int i = 0; i < _particles.getSize(); i++) {
+		for (uint32 i = 0; i < _particles.size(); i++) {
 			delete _particles[i];
 		}
 		_particles.clear();
@@ -787,7 +787,7 @@ ScValue *PartEmitter::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "NumLiveParticles") == 0) {
 		int numAlive = 0;
-		for (int i = 0; i < _particles.getSize(); i++) {
+		for (uint32 i = 0; i < _particles.size(); i++) {
 			if (_particles[i] && !_particles[i]->_isDead) {
 				numAlive++;
 			}
@@ -1218,32 +1218,32 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 
 	_sprites.persist(persistMgr);
 
-	int numForces;
+	uint32 numForces;
 	if (persistMgr->getIsSaving()) {
-		numForces = _forces.getSize();
+		numForces = _forces.size();
 		persistMgr->transfer(TMEMBER(numForces));
-		for (int i = 0; i < _forces.getSize(); i++) {
+		for (uint32 i = 0; i < _forces.size(); i++) {
 			_forces[i]->persist(persistMgr);
 		}
 	} else {
 		persistMgr->transfer(TMEMBER(numForces));
-		for (int i = 0; i < numForces; i++) {
+		for (uint32 i = 0; i < numForces; i++) {
 			PartForce *force = new PartForce(_gameRef);
 			force->persist(persistMgr);
 			_forces.add(force);
 		}
 	}
 
-	int numParticles;
+	uint32 numParticles;
 	if (persistMgr->getIsSaving()) {
-		numParticles = _particles.getSize();
+		numParticles = _particles.size();
 		persistMgr->transfer(TMEMBER(numParticles));
-		for (int i = 0; i < _particles.getSize(); i++) {
+		for (uint32 i = 0; i < _particles.size(); i++) {
 			_particles[i]->persist(persistMgr);
 		}
 	} else {
 		persistMgr->transfer(TMEMBER(numParticles));
-		for (int i = 0; i < numParticles; i++) {
+		for (uint32 i = 0; i < numParticles; i++) {
 			PartParticle *particle = new PartParticle(_gameRef);
 			particle->persist(persistMgr);
 			_particles.add(particle);

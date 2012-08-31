@@ -251,13 +251,13 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
 
-			int i;
+			uint32 i;
 			bool found = false;
 			ScValue *val = stack->pop();
 			// find directly
 			if (val->isNative()) {
 				UIObject *widget = (UIObject *)val->getNative();
-				for (i = 0; i < win->_widgets.getSize(); i++) {
+				for (i = 0; i < win->_widgets.size(); i++) {
 					if (win->_widgets[i] == widget) {
 						found = true;
 						break;
@@ -267,7 +267,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			// find by name
 			else {
 				const char *findName = val->getString();
-				for (i = 0; i < win->_widgets.getSize(); i++) {
+				for (i = 0; i < win->_widgets.size(); i++) {
 					if (scumm_stricmp(win->_widgets[i]->getName(), findName) == 0) {
 						found = true;
 						break;
@@ -277,7 +277,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 			if (found) {
 				bool done = false;
-				for (int j = 0; j < win->_widgets.getSize(); j++) {
+				for (uint32 j = 0; j < win->_widgets.size(); j++) {
 					if (win->_widgets[j] == this) {
 						if (strcmp(name, "MoveAfter") == 0) {
 							i++;
@@ -316,7 +316,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (int i = 0; i < win->_widgets.getSize(); i++) {
+			for (uint32 i = 0; i < win->_widgets.size(); i++) {
 				if (win->_widgets[i] == this) {
 					win->_widgets.remove_at(i);
 					win->_widgets.insert_at(0, this);
@@ -339,7 +339,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (int i = 0; i < win->_widgets.getSize(); i++) {
+			for (uint32 i = 0; i < win->_widgets.size(); i++) {
 				if (win->_widgets[i] == this) {
 					win->_widgets.remove_at(i);
 					win->_widgets.add(this);
@@ -441,10 +441,10 @@ ScValue *UIObject::scGetProperty(const char *name) {
 		_scValue->setNULL();
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (int i = 0; i < win->_widgets.getSize(); i++) {
+			for (uint32 i = 0; i < win->_widgets.size(); i++) {
 				if (win->_widgets[i] == this) {
 					if (strcmp(name, "NextSibling") == 0) {
-						if (i < win->_widgets.getSize() - 1) {
+						if (i < win->_widgets.size() - 1) {
 							_scValue->setNative(win->_widgets[i + 1], true);
 						}
 					} else {

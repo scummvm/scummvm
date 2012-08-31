@@ -328,7 +328,7 @@ bool BaseGame::cleanup() {
 	unregisterObject(_fader);
 	_fader = NULL;
 
-	for (int i = 0; i < _regObjects.getSize(); i++) {
+	for (uint32 i = 0; i < _regObjects.size(); i++) {
 		delete _regObjects[i];
 		_regObjects[i] = NULL;
 	}
@@ -349,7 +349,7 @@ bool BaseGame::cleanup() {
 	_scValue = NULL;
 	_sFX = NULL;
 
-	for (int i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		_scripts[i]->_owner = NULL;
 		_scripts[i]->finish();
 	}
@@ -361,7 +361,7 @@ bool BaseGame::cleanup() {
 	_fontStorage->removeFont(_videoFont);
 	_videoFont = NULL;
 
-	for (int i = 0; i < _quickMessages.getSize(); i++) {
+	for (uint32 i = 0; i < _quickMessages.size(); i++) {
 		delete _quickMessages[i];
 	}
 	_quickMessages.clear();
@@ -587,7 +587,7 @@ bool BaseGame::initLoop() {
 	getMousePos(&_mousePos);
 
 	_focusedWindow = NULL;
-	for (int i = _windows.getSize() - 1; i >= 0; i--) {
+	for (int i = _windows.size() - 1; i >= 0; i--) {
 		if (_windows[i]->_visible) {
 			_focusedWindow = _windows[i];
 			break;
@@ -1922,7 +1922,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "DeleteWindow") == 0) {
 		stack->correctParams(1);
 		BaseObject *obj = (BaseObject *)stack->pop()->getNative();
-		for (int i = 0; i < _windows.getSize(); i++) {
+		for (uint32 i = 0; i < _windows.size(); i++) {
 			if (_windows[i] == obj) {
 				unregisterObject(_windows[i]);
 				stack->pushBool(true);
@@ -2849,12 +2849,12 @@ const char *BaseGame::scToString() {
 #define QUICK_MSG_DURATION 3000
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayQuickMsg() {
-	if (_quickMessages.getSize() == 0 || !_systemFont) {
+	if (_quickMessages.size() == 0 || !_systemFont) {
 		return STATUS_OK;
 	}
 
 	// update
-	for (int i = 0; i < _quickMessages.getSize(); i++) {
+	for (uint32 i = 0; i < _quickMessages.size(); i++) {
 		if (_currentTime - _quickMessages[i]->_startTime >= QUICK_MSG_DURATION) {
 			delete _quickMessages[i];
 			_quickMessages.remove_at(i);
@@ -2865,7 +2865,7 @@ bool BaseGame::displayQuickMsg() {
 	int posY = 20;
 
 	// display
-	for (int i = 0; i < _quickMessages.getSize(); i++) {
+	for (uint32 i = 0; i < _quickMessages.size(); i++) {
 		_systemFont->drawText((byte *)_quickMessages[i]->getText(), 0, posY, _renderer->_width);
 		posY += _systemFont->getTextHeight((byte *)_quickMessages[i]->getText(), _renderer->_width);
 	}
@@ -2876,7 +2876,7 @@ bool BaseGame::displayQuickMsg() {
 #define MAX_QUICK_MSG 5
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::quickMessage(const char *text) {
-	if (_quickMessages.getSize() >= MAX_QUICK_MSG) {
+	if (_quickMessages.size() >= MAX_QUICK_MSG) {
 		delete _quickMessages[0];
 		_quickMessages.remove_at(0);
 	}
@@ -2911,7 +2911,7 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	}
 
 	// is it a window?
-	for (int i = 0; i < _windows.getSize(); i++) {
+	for (uint32 i = 0; i < _windows.size(); i++) {
 		if ((BaseObject *)_windows[i] == object) {
 			_windows.remove_at(i);
 
@@ -2935,7 +2935,7 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	}
 
 	// destroy object
-	for (int i = 0; i < _regObjects.getSize(); i++) {
+	for (uint32 i = 0; i < _regObjects.size(); i++) {
 		if (_regObjects[i] == object) {
 			_regObjects.remove_at(i);
 			if (!_loadInProgress) {
@@ -2973,7 +2973,7 @@ bool BaseGame::validObject(BaseObject *object) {
 		return true;
 	}
 
-	for (int i = 0; i < _regObjects.getSize(); i++) {
+	for (uint32 i = 0; i < _regObjects.size(); i++) {
 		if (_regObjects[i] == object) {
 			return true;
 		}
@@ -3322,7 +3322,7 @@ bool BaseGame::displayWindows(bool inGame) {
 	// did we lose focus? focus topmost window
 	if (_focusedWindow == NULL || !_focusedWindow->_visible || _focusedWindow->_disable) {
 		_focusedWindow = NULL;
-		for (int i = _windows.getSize() - 1; i >= 0; i--) {
+		for (int i = _windows.size() - 1; i >= 0; i--) {
 			if (_windows[i]->_visible && !_windows[i]->_disable) {
 				_focusedWindow = _windows[i];
 				break;
@@ -3331,7 +3331,7 @@ bool BaseGame::displayWindows(bool inGame) {
 	}
 
 	// display all windows
-	for (int i = 0; i < _windows.getSize(); i++) {
+	for (uint32 i = 0; i < _windows.size(); i++) {
 		if (_windows[i]->_visible && _windows[i]->_inGame == inGame) {
 
 			res = _windows[i]->display();
@@ -3656,9 +3656,9 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 bool BaseGame::focusWindow(UIWindow *window) {
 	UIWindow *prev = _focusedWindow;
 
-	for (int i = 0; i < _windows.getSize(); i++) {
+	for (uint32 i = 0; i < _windows.size(); i++) {
 		if (_windows[i] == window) {
-			if (i < _windows.getSize() - 1) {
+			if (i < _windows.size() - 1) {
 				_windows.remove_at(i);
 				_windows.add(window);
 
@@ -3854,7 +3854,7 @@ bool BaseGame::setActiveObject(BaseObject *obj) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::pushViewport(BaseViewport *viewport) {
 	_viewportSP++;
-	if (_viewportSP >= _viewportStack.getSize()) {
+	if (_viewportSP >= (int32)_viewportStack.size()) {
 		_viewportStack.add(viewport);
 	} else {
 		_viewportStack[_viewportSP] = viewport;
@@ -3873,7 +3873,7 @@ bool BaseGame::popViewport() {
 		_gameRef->LOG(0, "Fatal: Viewport stack underflow!");
 	}
 
-	if (_viewportSP >= 0 && _viewportSP < _viewportStack.getSize()) {
+	if (_viewportSP >= 0 && _viewportSP < (int32)_viewportStack.size()) {
 		_renderer->setViewport(_viewportStack[_viewportSP]->getRect());
 	} else _renderer->setViewport(_renderer->_drawOffsetX,
 		                              _renderer->_drawOffsetY,
@@ -4065,7 +4065,7 @@ void BaseGame::DEBUG_DumpClassRegistry() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::invalidateDeviceObjects() {
-	for (int i = 0; i < _regObjects.getSize(); i++) {
+	for (uint32 i = 0; i < _regObjects.size(); i++) {
 		_regObjects[i]->invalidateDeviceObjects();
 	}
 	return STATUS_OK;
@@ -4074,7 +4074,7 @@ bool BaseGame::invalidateDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::restoreDeviceObjects() {
-	for (int i = 0; i < _regObjects.getSize(); i++) {
+	for (uint32 i = 0; i < _regObjects.size(); i++) {
 		_regObjects[i]->restoreDeviceObjects();
 	}
 	return STATUS_OK;

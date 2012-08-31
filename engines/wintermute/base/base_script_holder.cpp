@@ -58,9 +58,7 @@ bool BaseScriptHolder::cleanup() {
 	delete[] _filename;
 	_filename = NULL;
 
-	int i;
-
-	for (i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		_scripts[i]->finish(true);
 		_scripts[i]->_owner = NULL;
 	}
@@ -90,7 +88,7 @@ bool BaseScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 	int numHandlers = 0;
 
 	bool ret = STATUS_FAILED;
-	for (int i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread) {
 			ScScript *handler = _scripts[i]->invokeEventHandler(eventName, unbreakable);
 			if (handler) {
@@ -186,7 +184,7 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		const char *filename = stack->pop()->getString();
 		bool killThreads = stack->pop()->getBool(false);
 		bool ret = false;
-		for (int i = 0; i < _scripts.getSize(); i++) {
+		for (uint32 i = 0; i < _scripts.size(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 				_scripts[i]->finish(killThreads);
 				ret = true;
@@ -205,7 +203,7 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 		bool ret = false;
-		for (int i = 0; i < _scripts.getSize(); i++) {
+		for (uint32 i = 0; i < _scripts.size(); i++) {
 			if (scumm_stricmp(_scripts[i]->_filename, filename) == 0 && _scripts[i]->_state != SCRIPT_FINISHED && _scripts[i]->_state != SCRIPT_ERROR) {
 				ret = true;
 				break;
@@ -300,7 +298,7 @@ bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::addScript(const char *filename) {
-	for (int i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
 				_gameRef->LOG(0, "BaseScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, getName());
@@ -334,7 +332,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::removeScript(ScScript *script) {
-	for (int i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (_scripts[i] == script) {
 			_scripts.remove_at(i);
 			break;
@@ -345,7 +343,7 @@ bool BaseScriptHolder::removeScript(ScScript *script) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::canHandleEvent(const char *EventName) {
-	for (int i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) {
 			return true;
 		}
@@ -356,7 +354,7 @@ bool BaseScriptHolder::canHandleEvent(const char *EventName) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::canHandleMethod(const char *MethodName) {
-	for (int i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) {
 			return true;
 		}
@@ -452,7 +450,7 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::makeFreezable(bool freezable) {
 	_freezable = freezable;
-	for (int i = 0; i < _scripts.getSize(); i++) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
 		_scripts[i]->_freezable = freezable;
 	}
 
@@ -461,7 +459,7 @@ void BaseScriptHolder::makeFreezable(bool freezable) {
 
 //////////////////////////////////////////////////////////////////////////
 ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
-	for (int i = _scripts.getSize() - 1; i >= 0; i--) {
+	for (int i = _scripts.size() - 1; i >= 0; i--) {
 		if (_scripts[i]->canHandleMethod(methodName)) {
 
 			ScScript *thread = new ScScript(_gameRef,  _scripts[i]->_engine);

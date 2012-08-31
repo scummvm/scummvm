@@ -47,7 +47,7 @@ AdSceneState::~AdSceneState() {
 	delete[] _filename;
 	_filename = NULL;
 
-	for (int i = 0; i < _nodeStates.getSize(); i++) {
+	for (uint32 i = 0; i < _nodeStates.size(); i++) {
 		delete _nodeStates[i];
 	}
 	_nodeStates.clear();
@@ -75,7 +75,7 @@ void AdSceneState::setFilename(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
-	for (int i = 0; i < _nodeStates.getSize(); i++) {
+	for (uint32 i = 0; i < _nodeStates.size(); i++) {
 		if (scumm_stricmp(_nodeStates[i]->getName(), name) == 0) {
 			return _nodeStates[i];
 		}

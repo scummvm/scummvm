@@ -52,12 +52,12 @@ AdTalkHolder::~AdTalkHolder() {
 	delete _sprite;
 	_sprite = NULL;
 
-	for (int i = 0; i < _talkSprites.getSize(); i++) {
+	for (uint32 i = 0; i < _talkSprites.size(); i++) {
 		delete _talkSprites[i];
 	}
 	_talkSprites.clear();
 
-	for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
+	for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 		delete _talkSpritesEx[i];
 	}
 	_talkSpritesEx.clear();
@@ -88,7 +88,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 
 	if (stance != NULL) {
 		// search special talk stances
-		for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
+		for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 			if (scumm_stricmp(_talkSpritesEx[i]->getName(), stance) == 0) {
 				ret = _talkSpritesEx[i];
 				break;
@@ -96,7 +96,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 		}
 		if (ret == NULL) {
 			// serach generic talk stances
-			for (int i = 0; i < _talkSprites.getSize(); i++) {
+			for (uint32 i = 0; i < _talkSprites.size(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->getName(), stance) == 0) {
 					ret = _talkSprites[i];
 					break;
@@ -107,11 +107,11 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 
 	// not a valid stance? get a random one
 	if (ret == NULL) {
-		if (_talkSprites.getSize() < 1) {
+		if (_talkSprites.size() < 1) {
 			ret = _sprite;
 		} else {
 			// TODO: remember last
-			int rnd = BaseEngine::instance().randInt(0, _talkSprites.getSize() - 1);
+			int rnd = BaseEngine::instance().randInt(0, _talkSprites.size() - 1);
 			ret = _talkSprites[rnd];
 		}
 	}
@@ -228,7 +228,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		bool setTemp2 = false;
 
 		if (ex) {
-			for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
+			for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 				if (scumm_stricmp(_talkSpritesEx[i]->getFilename(), filename) == 0) {
 					if (_currentSprite == _talkSpritesEx[i]) {
 						setCurrent = true;
@@ -242,7 +242,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 				}
 			}
 		} else {
-			for (int i = 0; i < _talkSprites.getSize(); i++) {
+			for (uint32 i = 0; i < _talkSprites.size(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->getFilename(), filename) == 0) {
 					if (_currentSprite == _talkSprites[i]) {
 						setCurrent = true;
@@ -288,7 +288,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 			// delete current
 			if (ex) {
-				for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
+				for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 					if (_talkSpritesEx[i] == _currentSprite) {
 						setCurrent = true;
 					}
@@ -299,7 +299,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 				}
 				_talkSpritesEx.clear();
 			} else {
-				for (int i = 0; i < _talkSprites.getSize(); i++) {
+				for (uint32 i = 0; i < _talkSprites.size(); i++) {
 					if (_talkSprites[i] == _currentSprite) {
 						setCurrent = true;
 					}
@@ -372,13 +372,13 @@ const char *AdTalkHolder::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
-	for (int i = 0; i < _talkSprites.getSize(); i++) {
+	for (uint32 i = 0; i < _talkSprites.size(); i++) {
 		if (_talkSprites[i]->getFilename()) {
 			buffer->putTextIndent(indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->getFilename());
 		}
 	}
 
-	for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
+	for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 		if (_talkSpritesEx[i]->getFilename()) {
 			buffer->putTextIndent(indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->getFilename());
 		}

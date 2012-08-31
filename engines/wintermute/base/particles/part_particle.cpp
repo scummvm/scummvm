@@ -148,7 +148,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 		// update position
 		float elapsedTime = (float)timerDelta / 1000.f;
 
-		for (int i = 0; i < emitter->_forces.getSize(); i++) {
+		for (uint32 i = 0; i < emitter->_forces.size(); i++) {
 			PartForce *force = emitter->_forces[i];
 			switch (force->_type) {
 			case PartForce::FORCE_GLOBAL:

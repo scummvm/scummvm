@@ -98,17 +98,17 @@ AdActor::~AdActor() {
 
 	_animSprite2 = NULL; // ref only
 
-	for (int i = 0; i < _talkSprites.getSize(); i++) {
+	for (uint32 i = 0; i < _talkSprites.size(); i++) {
 		delete _talkSprites[i];
 	}
 	_talkSprites.clear();
 
-	for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
+	for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 		delete _talkSpritesEx[i];
 	}
 	_talkSpritesEx.clear();
 
-	for (int i = 0; i < _anims.getSize(); i++) {
+	for (uint32 i = 0; i < _anims.size(); i++) {
 		delete _anims[i];
 		_anims[i] = NULL;
 	}
@@ -1036,7 +1036,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *animName = stack->pop()->getString();
 
 		bool found = false;
-		for (int i = 0; i < _anims.getSize(); i++) {
+		for (int i = 0; i < _anims.size(); i++) {
 			if (scumm_stricmp(_anims[i]->getName(), animName) == 0) {
 				// invalidate sprites in use
 				if (_anims[i]->containsSprite(_tempSprite2)) {
@@ -1239,7 +1239,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	}
 
 	// old way
-	if (_talkSprites.getSize() > 0 || _talkSpritesEx.getSize() > 0) {
+	if (_talkSprites.size() > 0 || _talkSpritesEx.size() > 0) {
 		return getTalkStanceOld(stance);
 	}
 
@@ -1255,14 +1255,14 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	// not - get a random talk
 	if (!ret) {
 		BaseArray<AdSpriteSet *> talkAnims;
-		for (int i = 0; i < _anims.getSize(); i++) {
+		for (int i = 0; i < _anims.size(); i++) {
 			if (_talkAnimName.compareToIgnoreCase(_anims[i]->getName()) == 0) {
 				talkAnims.add(_anims[i]);
 			}
 		}
 
-		if (talkAnims.getSize() > 0) {
-			int rnd = BaseEngine::instance().randInt(0, talkAnims.getSize() - 1);
+		if (talkAnims.size() > 0) {
+			int rnd = BaseEngine::instance().randInt(0, talkAnims.size() - 1);
 			ret = talkAnims[rnd]->getSprite(_dir);
 		} else {
 			if (_standSprite) {
@@ -1284,7 +1284,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 
 	if (stance != NULL) {
 		// search special stances
-		for (int i = 0; i < _talkSpritesEx.getSize(); i++) {
+		for (int i = 0; i < _talkSpritesEx.size(); i++) {
 			if (scumm_stricmp(_talkSpritesEx[i]->getName(), stance) == 0) {
 				ret = _talkSpritesEx[i]->getSprite(_dir);
 				break;
@@ -1292,7 +1292,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 		}
 		if (ret == NULL) {
 			// search generic stances
-			for (int i = 0; i < _talkSprites.getSize(); i++) {
+			for (int i = 0; i < _talkSprites.size(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->getName(), stance) == 0) {
 					ret = _talkSprites[i]->getSprite(_dir);
 					break;
@@ -1303,11 +1303,11 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 
 	// not a valid stance? get a random one
 	if (ret == NULL) {
-		if (_talkSprites.getSize() < 1) {
+		if (_talkSprites.size() < 1) {
 			ret = _standSprite->getSprite(_dir);
 		} else {
 			// TODO: remember last
-			int rnd = BaseEngine::instance().randInt(0, _talkSprites.getSize() - 1);
+			int rnd = BaseEngine::instance().randInt(0, _talkSprites.size() - 1);
 			ret = _talkSprites[rnd]->getSprite(_dir);
 		}
 	}
@@ -1395,7 +1395,7 @@ int AdActor::getHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
-	for (int i = 0; i < _anims.getSize(); i++) {
+	for (int i = 0; i < _anims.size(); i++) {
 		if (animName.compareToIgnoreCase(_anims[i]->getName()) == 0) {
 			return _anims[i];
 		}
