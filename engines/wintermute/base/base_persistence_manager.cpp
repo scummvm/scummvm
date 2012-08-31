@@ -169,7 +169,7 @@ uint32 BasePersistenceManager::getMaxUsedSlot() {
 	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles(saveMask);
 	Common::StringArray::iterator it = saves.begin();
 	int ret = -1;
-	for (; it != saves.end(); it++) {
+	for (; it != saves.end(); ++it) {
 		int num = -1;
 		sscanf(it->c_str(), "save%d", &num);
 		ret = MAX(ret, num);

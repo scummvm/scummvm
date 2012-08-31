@@ -45,7 +45,7 @@ public:
 			j = Common::Array<TYPE>::size();
 			persistMgr->transfer("ArraySize", &j);
 			typename Common::Array<TYPE>::const_iterator it = Common::Array<TYPE>::begin();
-			for (; it != Common::Array<TYPE>::end(); it++) {
+			for (; it != Common::Array<TYPE>::end(); ++it) {
 				TYPE obj = *it;
 				persistMgr->transfer("", &obj);
 			}

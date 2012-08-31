@@ -228,7 +228,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 }
 
 PackageSet::~PackageSet() {
-	for (Common::Array<BasePackage *>::iterator it = _packages.begin(); it != _packages.end(); it++) {
+	for (Common::Array<BasePackage *>::iterator it = _packages.begin(); it != _packages.end(); ++it) {
 		delete *it;
 	}
 	_packages.clear();

@@ -165,7 +165,7 @@ bool BaseFileManager::initPaths() {
 }
 
 bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
-	for (Common::FSList::const_iterator it = fslist.begin(); it != fslist.end(); it++) {
+	for (Common::FSList::const_iterator it = fslist.begin(); it != fslist.end(); ++it) {
 		debugC(kWintermuteDebugFileAccess, "Adding %s", (*it).getName().c_str());
 		if ((*it).getName().contains(".dcp")) {
 			if (registerPackage((*it))) {
@@ -183,10 +183,10 @@ bool BaseFileManager::registerPackages() {
 	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
 	// and that has to be like that to support the detection-scheme.
 	Common::FSList files;
-	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); it++) {
+	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); ++it) {
 		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
 		(*it).getChildren(files, Common::FSNode::kListFilesOnly);
-		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
 			if (!fileIt->getName().hasSuffix(".dcp")) {
 				continue;
 			}

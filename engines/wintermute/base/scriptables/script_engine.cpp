@@ -591,7 +591,7 @@ void ScEngine::dumpStats() {
 	    TimeVector times;
 
 	    ScriptTimes::iterator it;
-	    for (it = _scriptTimes.begin(); it != _scriptTimes.end(); it++) {
+	    for (it = _scriptTimes.begin(); it != _scriptTimes.end(); ++it) {
 	        times.push_back(std::pair<uint32, std::string> (it->_value, it->_key));
 	    }
 	    std::sort(times.begin(), times.end());
@@ -602,7 +602,7 @@ void ScEngine::dumpStats() {
 	    _gameRef->LOG(0, "***** Script profiling information: *****");
 	    _gameRef->LOG(0, "  %-40s %fs", "Total execution time", (float)totalTime / 1000);
 
-	    for (tit = times.rbegin(); tit != times.rend(); tit++) {
+	    for (tit = times.rbegin(); tit != times.rend(); ++tit) {
 	        _gameRef->LOG(0, "  %-40s %fs (%f%%)", tit->second.c_str(), (float)tit->first / 1000, (float)tit->first / (float)totalTime * 100);
 	    }*/
 }

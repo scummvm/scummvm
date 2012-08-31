@@ -275,7 +275,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	uint32 useColor = 0xffffffff;
 	Common::Array<Common::String>::iterator it;
 	int heightOffset = 0;
-	for (it = lines.begin(); it != lines.end(); it++) {
+	for (it = lines.begin(); it != lines.end(); ++it) {
 		_font->drawString(surface, *it, 0, heightOffset, width, useColor, alignment);
 		heightOffset += (int)_lineHeight;
 	}
@@ -581,7 +581,7 @@ void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight
 		_font->wordWrapText(text, maxWidth, lines);
 		Common::Array<Common::String>::iterator it;
 		textWidth = 0;
-		for (it = lines.begin(); it != lines.end(); it++) {
+		for (it = lines.begin(); it != lines.end(); ++it) {
 			textWidth = MAX(textWidth, _font->getStringWidth(*it));
 		}
 

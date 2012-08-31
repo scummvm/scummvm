@@ -94,7 +94,7 @@ bool diskFileExists(const Common::String &filename) {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, filename);
 
-	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
+	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
 		if ((*it)->getName() == filename) {
 			return true;
 		}
@@ -124,7 +124,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, fixedFilename);
 
-	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); it++) {
+	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
 		if ((*it)->getName() == filename) {
 			file = (*it)->createReadStream();
 			break;

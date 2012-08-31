@@ -210,7 +210,7 @@ bool BaseRenderOSystem::flip() {
 				delete ticket;
 			} else {
 				(*it)->_wantsDraw = false;
-				it++;
+				++it;
 			}
 		}
 	}
@@ -316,7 +316,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
 		compare._colorMod = _colorMod;
 		RenderQueueIterator it;
-		for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
+		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 			if ((*it)->_owner == owner && *(*it) == compare && (*it)->_isValid) {
 				(*it)->_colorMod = _colorMod;
 				if (_disableDirtyRects) {
@@ -347,7 +347,7 @@ void BaseRenderOSystem::invalidateTicket(RenderTicket *renderTicket) {
 
 void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
 	RenderQueueIterator it;
-	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
+	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 		if ((*it)->_owner == surf) {
 			invalidateTicket(*it);
 		}
@@ -375,7 +375,7 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 			Common::List<RenderTicket *>::iterator it;
 			renderTicket->_drawNum = _drawNum++;
 			// Increment the following tickets, so they still are in line
-			for (it = pos; it != _renderQueue.end(); it++) {
+			for (it = pos; it != _renderQueue.end(); ++it) {
 				(*it)->_drawNum++;
 				(*it)->_wantsDraw = false;
 			}
@@ -393,12 +393,12 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 					it = _renderQueue.erase(it);
 					break;
 				} else {
-					it++;
+					++it;
 				}
 			}
 			if (it != _renderQueue.end()) {
 				// Decreement the following tickets.
-				for (; it != _renderQueue.end(); it++) {
+				for (; it != _renderQueue.end(); ++it) {
 					(*it)->_drawNum--;
 				}
 			}
@@ -431,7 +431,7 @@ void BaseRenderOSystem::drawTickets() {
 			decrement++;
 		} else {
 			(*it)->_drawNum -= decrement;
-			it++;
+			++it;
 		}
 	}
 	if (!_dirtyRect || _dirtyRect->width() == 0 || _dirtyRect->height() == 0) {
@@ -444,7 +444,7 @@ void BaseRenderOSystem::drawTickets() {
 	// Apply the clear-color to the dirty rect.
 	_renderSurface->fillRect(*_dirtyRect, _clearColor);
 	_drawNum = 1;
-	for (it = _renderQueue.begin(); it != _renderQueue.end(); it++) {
+	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 		RenderTicket *ticket = *it;
 		assert(ticket->_drawNum == _drawNum++);
 		if (ticket->_isValid && ticket->_dstRect.intersects(*_dirtyRect)) {
