@@ -83,6 +83,7 @@ public:
 	void drawFromTicket(RenderTicket *renderTicket);
 
 	bool setViewport(int left, int top, int right, int bottom);
+	bool setViewport(Rect32 *rect) { return BaseRenderer::setViewport(rect); }
 	Rect32 getViewPort();
 	void modTargetRect(Common::Rect *rect);
 	void pointFromScreen(Point32 *point);

@@ -45,7 +45,6 @@ public:
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();
 private:
-	char *_string;
 	TimeDate _tm;
 	Common::String _strRep;
 };

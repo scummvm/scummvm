@@ -137,7 +137,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		file = NULL;
 	}
 
-	bool ret;
+	bool ret = STATUS_FAILED;
 
 	AnsiString filePrefix = filename;
 	AnsiString ext = PathUtil::getExtension(filename);
@@ -164,6 +164,8 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
 				_gameRef->LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
+			} else {
+				ret = STATUS_OK;
 			}
 			delete[] buffer;
 		}

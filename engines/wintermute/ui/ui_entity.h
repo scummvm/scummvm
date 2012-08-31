@@ -42,7 +42,8 @@ public:
 	bool loadBuffer(byte *buffer, bool complete);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
-	virtual bool display(int offsetX = 0, int offsetY = 0);
+	virtual bool display() { return display(0, 0); }
+	virtual bool display(int offsetX, int offsetY);
 	AdEntity *_entity;
 	bool setEntity(const char *filename);
 

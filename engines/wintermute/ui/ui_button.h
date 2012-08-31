@@ -44,7 +44,8 @@ public:
 	uint32 _oneTimePressTime;
 	DECLARE_PERSISTENT(UIButton, UIObject)
 	void press();
-	virtual bool display(int offsetX = 0, int offsetY = 0);
+	virtual bool display() { return display(0, 0); }
+	virtual bool display(int offsetX, int offsetY);
 	bool _press;
 	bool _hover;
 	void correctSize();

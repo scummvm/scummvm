@@ -196,7 +196,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	bool hasTransparency = false;
 	for (int y = 0; y < surface->h; y++) {
 		for (int x = 0; x < surface->w; x++) {
-			uint32 pixel = getPixel(surface, x, y);
+			uint32 pixel = getPixelAt(surface, x, y);
 
 			uint8 r, g, b, a;
 			surface->format.colorToARGB(pixel, a, r, g, b);
@@ -220,7 +220,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseSurfaceOSystem::getPixel(Graphics::Surface *surface, int x, int y) {
+uint32 BaseSurfaceOSystem::getPixelAt(Graphics::Surface *surface, int x, int y) {
 	warning("BaseSurfaceOSystem::GetPixel - Not ported yet");
 	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */

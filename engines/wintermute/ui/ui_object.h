@@ -49,7 +49,8 @@ public:
 	DECLARE_PERSISTENT(UIObject, BaseObject)
 	UIObject *_parent;
 	virtual bool display() { return display(0, 0); }
-	virtual bool display(int offsetX = 0, int offsetY = 0);
+	virtual bool display(int offsetX) { return display(offsetX, 0); }
+	virtual bool display(int offsetX, int offsetY);
 	virtual void correctSize();
 	bool _sharedFonts;
 	bool _sharedImages;
