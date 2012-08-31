@@ -35,7 +35,7 @@
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/video/decoders/theora_decoder.h"
+#include "video/theora_decoder.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/system.h"
 
@@ -126,7 +126,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 	}
 
 #if defined (USE_THEORADEC)
-	_theoraDecoder = new TheoraDecoder();
+	_theoraDecoder = new Video::TheoraDecoder();
 #else
 	return STATUS_FAILED;
 #endif
@@ -225,6 +225,8 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		_posY = (int)((_gameRef->_renderer->_height - height) / 2);
 		break;
 	}
+	_theoraDecoder->start();
+
 	return STATUS_OK;
 #if 0 // Stubbed for now as theora isn't seekable
 	if (StartTime) SeekToTime(StartTime);
@@ -274,11 +276,14 @@ bool VideoTheoraPlayer::update() {
 			}
 		}
 		if (_state == THEORA_STATE_PLAYING) {
-			if (_theoraDecoder->getTimeToNextFrame() == 0) {
-				_surface.free();
-				_surface.copyFrom(*_theoraDecoder->decodeNextFrame());
-				if (_texture) {
-					writeVideo();
+			if (!_theoraDecoder->endOfVideo() && _theoraDecoder->getTimeToNextFrame() == 0) {
+				const Graphics::Surface *decodedFrame = _theoraDecoder->decodeNextFrame();
+				if (decodedFrame) {
+					_surface.free();
+					_surface.copyFrom(*decodedFrame);
+					if (_texture) {
+						writeVideo();
+					}
 				}
 			}
 			return STATUS_OK;
@@ -333,7 +338,7 @@ bool VideoTheoraPlayer::writeVideo() {
 	return STATUS_OK;
 }
 
-void VideoTheoraPlayer::writeAlpha() { // TODO: Endian-fix.
+void VideoTheoraPlayer::writeAlpha() {
 	if (_alphaImage && _surface.w == _alphaImage->getSurface()->w && _surface.h == _alphaImage->getSurface()->h) {
 		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
 		assert(_surface.format.bytesPerPixel == 4);

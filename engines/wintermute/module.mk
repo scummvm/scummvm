@@ -87,7 +87,6 @@ MODULE_OBJS := \
 	base/saveload.o \
 	detection.o \
 	graphics/transparent_surface.o \
-	graphics/tga.o \
 	math/math_util.o \
 	math/matrix4.o \
 	math/vector2.o \
@@ -109,7 +108,6 @@ MODULE_OBJS := \
 	utils/utils.o \
 	video/video_player.o \
 	video/video_theora_player.o \
-	video/decoders/theora_decoder.o \
 	wintermute.o \
 	persistent.o
  

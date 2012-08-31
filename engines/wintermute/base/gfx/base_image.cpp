@@ -32,8 +32,8 @@
 #include "graphics/decoders/png.h"
 #include "graphics/decoders/jpeg.h"
 #include "graphics/decoders/bmp.h"
+#include "graphics/decoders/tga.h"
 #include "graphics/surface.h"
-#include "engines/wintermute/graphics/tga.h"
 #include "common/textconsole.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -69,7 +69,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	} else if (_filename.hasSuffix(".bmp")) {
 		_decoder = new Graphics::BitmapDecoder();
 	} else if (_filename.hasSuffix(".tga")) {
-		_decoder = new Wintermute::TGA();
+		_decoder = new Graphics::TGADecoder();
 	} else if (_filename.hasSuffix(".jpg")) {
 		_decoder = new Graphics::JPEGDecoder();
 	} else {
