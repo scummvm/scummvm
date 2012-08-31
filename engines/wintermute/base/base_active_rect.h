@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BASE_ACTIVERECT_H
-#define WINTERMUTE_BASE_ACTIVERECT_H
+#ifndef WINTERMUTE_BASE_ACTIVE_RECT_H
+#define WINTERMUTE_BASE_ACTIVE_RECT_H
 
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"

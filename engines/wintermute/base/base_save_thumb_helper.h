@@ -25,8 +25,8 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-#ifndef WINTERMUTE_BASE_SAVETHUMBHELPER_H
-#define WINTERMUTE_BASE_SAVETHUMBHELPER_H
+#ifndef WINTERMUTE_BASE_SAVE_THUMB_HELPER_H
+#define WINTERMUTE_BASE_SAVE_THUMB_HELPER_H
 
 
 #include "engines/wintermute/base/base.h"

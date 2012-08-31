@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BASE_NAMEDOBJECT_H
-#define WINTERMUTE_BASE_NAMEDOBJECT_H
+#ifndef WINTERMUTE_BASE_NAMED_OBJECT_H
+#define WINTERMUTE_BASE_NAMED_OBJECT_H
 
 
 #include "engines/wintermute/base/base.h"
