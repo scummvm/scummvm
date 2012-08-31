@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifdef SDL_BACKEND
 
 #include "onscreendialog.h"
 #include "gui/gui-manager.h"
@@ -191,3 +192,4 @@ bool OnScreenDialog::isEditDlgVisible() {
 }
 
 }
+#endif

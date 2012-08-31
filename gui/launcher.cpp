@@ -38,7 +38,9 @@
 #include "gui/message.h"
 #include "gui/gui-manager.h"
 #include "gui/options.h"
+#ifdef SDL_BACKEND
 #include "gui/recorderdialog.h"
+#endif
 #include "gui/saveload.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
@@ -977,6 +979,7 @@ void LauncherDialog::editGame(int item) {
 }
 
 void LauncherDialog::loadGameButtonPressed(int item) {
+#ifdef SDL_BACKEND
 	const bool shiftPressed = checkModifier(Common::KBD_SHIFT);
 	if (shiftPressed) {
 		recordGame(item);
@@ -984,8 +987,12 @@ void LauncherDialog::loadGameButtonPressed(int item) {
 		loadGame(item);
 	}
 	updateButtons();
+#else
+	loadGame(item);
+#endif
 }
 
+#ifdef SDL_BACKEND
 void LauncherDialog::recordGame(int item) {
 	RecorderDialog recorderDialog;
 	MessageDialog alert(_("Do you want to load savegame?"),
@@ -1012,6 +1019,7 @@ void LauncherDialog::recordGame(int item) {
 		break;
 	}
 }
+#endif
 
 void LauncherDialog::loadGame(int item) {
 	String gameId = ConfMan.get("gameid", _domains[item]);
@@ -1148,7 +1156,9 @@ void LauncherDialog::updateButtons() {
 		_loadButton->draw();
 	}
 	switchButtonsText(_addButton, "~A~dd Game...", "Mass Add...");
+#ifdef SDL_BACKEND
 	switchButtonsText(_loadButton, "~L~oad...", "Record...");
+#endif
 }
 
 // Update the label of the button depending on whether shift is pressed or not

@@ -6,17 +6,14 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
-	editrecorddialog.o \
 	error.o \
 	gui-manager.o \
 	launcher.o \
 	massadd.o \
 	message.o \
 	object.o \
-	onscreendialog.o \
 	options.o \
 	predictivedialog.o \
-	recorderdialog.o \
 	saveload.o \
 	saveload-dialog.o \
 	themebrowser.o \
@@ -39,6 +36,13 @@ MODULE_OBJS += \
 else
 MODULE_OBJS += \
 	browser.o
+endif
+
+ifdef SDL_BACKEND
+MODULE_OBJS += \
+	editrecorddialog.o \
+	onscreendialog.cpp \
+	recorderdialog.o
 endif
 
 # Include common rules

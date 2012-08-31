@@ -44,7 +44,9 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/fs.h"
+#ifdef SDL_BACKEND
 #include "common/recorderfile.h"
+#endif
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
@@ -450,9 +452,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// to save memory
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
 
+#ifdef SDL_BACKEND
 			Common::String recordMode = ConfMan.get("record_mode");
 			Common::String recordFileName = ConfMan.get("record_file_name");
-
 
 			if (recordMode == "record") {
 				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()), Common::EventRecorder::kRecorderRecord);
@@ -464,12 +466,15 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				debug("info:author=%s name=%s description=%s", record.getHeader().author.c_str(), record.getHeader().name.c_str(), record.getHeader().description.c_str());
 				break;
 			}
+#endif
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
 
+#ifdef SDL_BACKEND
 			// Flush Event recorder file. The recorder does not get reinitialized for next game
 			// which is intentional. Only single game per session is allowed.
 			g_eventRec.deinit();
+#endif
 
 		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can

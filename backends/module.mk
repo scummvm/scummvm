@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
-	saves/recorder/recorder-saves.o \
 	timer/default/default-timer.o
 
 
@@ -67,7 +66,6 @@ MODULE_OBJS += \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
-	mixer/nullmixer/nullsdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
@@ -214,6 +212,12 @@ MODULE_OBJS += \
 	fs/wii/wii-fs.o \
 	fs/wii/wii-fs-factory.o \
 	plugins/wii/wii-provider.o
+endif
+
+ifdef SDL_BACKEND
+MODULE_OBJS += \
+	mixer/nullmixer/nullsdl-mixer.o \
+	saves/recorder/recorder-saves.o
 endif
 
 # Include common rules

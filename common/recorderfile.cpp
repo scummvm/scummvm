@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "common/EventRecorder.h"
 #include "common/md5.h"
 #include "common/recorderfile.h"
@@ -681,7 +682,7 @@ void PlaybackFile::checkRecordedMD5() {
 	if (!g_eventRec.grabScreenAndComputeMD5(screen, currentMD5)) {
 		return;
 	}
-	uint32 seconds = g_eventRec.getTimer() / 1000;
+	uint32 seconds = g_system->getMillis(true) / 1000;
 	String screenTime = String::format("%.2d:%.2d:%.2d", seconds / 3600 % 24, seconds / 60 % 60, seconds % 60);
 	if (memcmp(savedMD5, currentMD5, 16) != 0) {
 		debugC(1, kDebugLevelEventRec, "playback:action=\"Check screenshot\" time=%s result = fail", screenTime.c_str());

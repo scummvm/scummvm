@@ -26,7 +26,6 @@ MODULE_OBJS := \
 	quicktime.o \
 	random.o \
 	rational.o \
-	recorderfile.o \
 	rendermode.o \
 	str.o \
 	stream.o \
@@ -50,6 +49,11 @@ MODULE_OBJS += \
 	huffman.o \
 	rdft.o \
 	sinetables.o
+
+ifdef SDL_BACKEND
+MODULE_OBJS += \
+	recorderfile.o
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk
