@@ -1839,7 +1839,9 @@ case $_host_cpu in
 		define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
 		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
-		define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+		# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
+		# (on Pandora and iPhone at least)
+		#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
 
 		DEFINES="$DEFINES -DARM_TARGET"
 		;;
