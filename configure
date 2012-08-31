@@ -3342,11 +3342,6 @@ fi
 define_in_config_if_yes "$_zlib" 'USE_ZLIB'
 echo "$_zlib"
 
-if test `get_engine_build sword25` = yes && test ! "$_zlib" = yes ; then
-	echo "...disabling Broken Sword 2.5 engine. ZLib is required"
-	engine_disable sword25
-fi
-
 #
 # Check for Sparkle if updates support is enabled
 #
