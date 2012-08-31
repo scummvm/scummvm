@@ -48,4 +48,4 @@
 
 #define COMPRESSED_FILE_MAGIC 0x504D435A // ZCMP
 
-#endif // _DCGF_H_
+#endif // WINTERMUTE_DCGF_H
