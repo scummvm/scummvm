@@ -25,6 +25,7 @@
  * Macintosh resource fork manager used in engines:
  * - groovie
  * - mohawk
+ * - pegasus
  * - sci
  * - scumm
  */
