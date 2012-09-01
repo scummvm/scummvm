@@ -43,7 +43,7 @@ void SoundTrack::setSoundName(Common::String name) {
 	
 bool SoundTrack::play() {
 	if (_stream) {
-		g_system->getMixer()->playStream(_soundType, _handle, _stream);
+		g_system->getMixer()->playStream(_soundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		return true;
 	}
 	return false;

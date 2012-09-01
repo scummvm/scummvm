@@ -131,10 +131,10 @@ bool LoopingAudioStream::endOfData() const {
 }
 
 AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops) {
-	if (loops != 1)
-		return new LoopingAudioStream(stream, loops);
-	else
+	if (!stream || loops == 1)
 		return stream;
+	else
+		return new LoopingAudioStream(stream, loops);
 }
 
 AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start, Timestamp end, uint loops) {

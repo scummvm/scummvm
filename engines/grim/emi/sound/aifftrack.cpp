@@ -43,10 +43,12 @@ AIFFTrack::~AIFFTrack() {
 bool AIFFTrack::openSound(Common::String soundName, Common::SeekableReadStream *file) {
 	if (!file) {
 		warning("Stream for %s not open", soundName.c_str());
-		//return false;
+		return false;
 	}
 	_soundName = soundName;
 	_stream = Audio::makeAIFFStream(file, DisposeAfterUse::NO);
+	if (!_stream)
+		return false;
 	_handle = new Audio::SoundHandle();
 	return true;
 }
