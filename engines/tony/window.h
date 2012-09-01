@@ -31,7 +31,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
-#include "tony/adv.h"
+#include "tony/game.h"
 
 namespace Tony {
 

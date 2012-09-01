@@ -24,7 +24,6 @@
 #define TONY_GLOBALS
 
 #include "common/savefile.h"
-#include "tony/adv.h"
 #include "tony/gfxengine.h"
 #include "tony/input.h"
 #include "tony/inventory.h"

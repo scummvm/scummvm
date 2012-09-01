@@ -29,7 +29,6 @@
 #ifndef TONY_GAME_H
 #define TONY_GAME_H
 
-#include "tony/adv.h"
 #include "tony/gfxcore.h"
 #include "tony/input.h"
 #include "tony/loc.h"
@@ -53,6 +52,38 @@ namespace Tony {
 	(buf8)->init(*raw, raw->width(), raw->height(), true); \
 	delete raw;
 
+// X & Y dimensions of the adventure
+#define RM_SX       640
+#define RM_SY       480
+
+// X & Y dimensions of bigbuf
+#define RM_BBX      (RM_SX)
+#define RM_BBY      (RM_SY)
+
+// Skipping X & Y
+#define RM_SKIPY    ((RM_BBY - RM_SY) / 2)
+#define RM_SKIPX    0
+
+// Tony's actions
+enum RMTonyAction {
+	TA_GOTO = 0,
+	TA_TAKE,
+	TA_USE,
+	TA_EXAMINE,
+	TA_TALK,
+	TA_PERORATE,
+
+	TA_COMBINE = 10,
+	TA_RECEIVECOMBINE,
+	TA_COMBINEGIVE,
+	TA_RECEIVECOMBINEGIVE
+};
+
+// Global Functions
+void mainEnableGUI();
+void mainDisableGUI();
+
+// Classes
 class RMPointer {
 public:
 	enum PointerType {

@@ -29,7 +29,7 @@
 #include "common/memstream.h"
 #include "common/scummsys.h"
 #include "tony/mpal/mpalutils.h"
-#include "tony/adv.h"
+#include "tony/game.h"
 #include "tony/loc.h"
 #include "tony/tony.h"
 

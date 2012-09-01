@@ -31,7 +31,6 @@
 #include "common/savefile.h"
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/memory.h"
-#include "tony/adv.h"
 #include "tony/custom.h"
 #include "tony/font.h"
 #include "tony/game.h"
