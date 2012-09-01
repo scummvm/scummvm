@@ -777,6 +777,7 @@ private:
 	void stopAudio();
 	void startAudio();
 	void startAudioLimit(const Audio::Timestamp &limit);
+	bool hasFramesLeft() const;
 
 	int32 _startTime;
 	uint32 _pauseLevel;
