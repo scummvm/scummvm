@@ -176,7 +176,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	warning("BaseSurfaceOSystem::GenAlphaMask - Not ported yet");
 	return;
-
+	// TODO: Reimplement this
 	delete[] _alphaMask;
 	_alphaMask = NULL;
 	if (!surface) {
@@ -190,7 +190,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	        hasColorKey = true;
 	        SDL_GetRGB(colorKey, surface->format, &ckRed, &ckGreen, &ckBlue);
 	    } else hasColorKey = false;
-	*/ //TODO
+	*/
 	_alphaMask = new byte[surface->w * surface->h];
 
 	bool hasTransparency = false;

@@ -296,6 +296,7 @@ bool BaseRenderer::setViewport(Rect32 *rect) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::clipCursor() {
+	// TODO: Reimplement this. (Currently aspect-indpendence isn't quite finished)
 	/*
 	if (!_windowed) {
 	    Rect32 rc;

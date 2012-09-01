@@ -2370,13 +2370,6 @@ bool AdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *tar
 	yLength = abs(y2 - y1);
 
 	if (xLength > yLength) {
-		/*
-		if (X1 > X2)
-		{
-		    Swap(&X1, &X2);
-		    Swap(&Y1, &Y2);
-		}
-		*/
 
 		yStep = fabs((double)(y2 - y1) / (double)(x2 - x1));
 		y = y1;
@@ -2390,12 +2383,6 @@ bool AdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *tar
 			y += yStep;
 		}
 	} else {
-		/*
-		if (Y1 > Y2) {
-		    Swap(&X1, &X2);
-		    Swap(&Y1, &Y2);
-		}
-		*/
 
 		xStep = fabs((double)(x2 - x1) / (double)(y2 - y1));
 		x = x1;

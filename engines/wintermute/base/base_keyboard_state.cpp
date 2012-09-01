@@ -92,9 +92,6 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 			vKey = val->getInt();
 		}
 
-		warning("BKeyboardState doesnt yet have state-support %d", vKey); //TODO;
-//		Uint8 *state = SDL_GetKeyboardState(NULL);
-//		SDL_Scancode scanCode = SDL_GetScancodeFromKey(VKeyToKeyCode(vKey));
 		bool isDown = _keyStates[vKeyToKeyCode(vKey)];
 
 		stack->pushBool(isDown);

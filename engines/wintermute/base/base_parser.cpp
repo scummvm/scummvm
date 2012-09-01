@@ -79,7 +79,7 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 	}
 
 	// find the token.
-	// for now just use brute force.  Improve later.
+	// TODO: for now just use brute force.  Improve later.
 	while (tokens->id != 0) {
 		if (!scumm_strnicmp(tokens->token, *buf, strlen(tokens->token))) {
 			// here we could be matching PART of a string
