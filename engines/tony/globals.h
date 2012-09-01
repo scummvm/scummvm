@@ -148,12 +148,10 @@ struct ChangedHotspotStruct {
  */
 typedef struct {
 	int _nCf;
-
 	int _arg1, _arg2, _arg3, _arg4;
 } CfCall;
-typedef CfCall         *LpCfCall;
-typedef LpCfCall       *LPLPCFCALL;
 
+typedef CfCall         *LpCfCall;
 
 struct CoroutineMutex {
 	CoroutineMutex() : _eventId(0), _ownerPid(0), _lockCount(0) { }

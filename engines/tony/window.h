@@ -90,7 +90,7 @@ public:
 	 */
 	void grabThumbnail(uint16 *buf);
 
-	void showDirtyRects(bool v) { _showDirtyRects = v; }
+	void showDirtyRects(bool v);
 };
 
 } // End of namespace Tony

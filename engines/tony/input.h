@@ -59,9 +59,7 @@ public:
 	/**
 	 * Reading of the mouse
 	 */
-	RMPoint mousePos() {
-		return _mousePos;
-	}
+	RMPoint mousePos();
 
 	/**
 	 * Current status of the mouse buttons
@@ -72,24 +70,12 @@ public:
 	/**
 	 * Events of mouse clicks
 	 */
-	bool mouseLeftClicked() {
-		return _leftClickMouse;
-	}
-	bool mouseRightClicked() {
-		return _rightClickMouse;
-	}
-	bool mouseBothClicked() {
-		return _leftClickMouse && _rightClickMouse;
-	}
-	bool mouseLeftReleased() {
-		return _leftReleaseMouse;
-	}
-	bool mouseRightReleased() {
-		return _rightReleaseMouse;
-	}
-	bool mouseBothReleased() {
-		return _leftReleaseMouse && _rightReleaseMouse;
-	}
+	bool mouseLeftClicked();
+	bool mouseRightClicked();
+	bool mouseBothClicked();
+	bool mouseLeftReleased();
+	bool mouseRightReleased();
+	bool mouseBothReleased();
 
 	/**
 	 * Returns true if the given key is pressed

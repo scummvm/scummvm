@@ -120,4 +120,38 @@ bool RMInput::getAsyncKeyState(Common::KeyCode kc) {
 	return result;
 }
 
+/**
+ * Reading of the mouse
+ */
+RMPoint RMInput::mousePos() {
+	return _mousePos;
+}
+
+/**
+ * Events of mouse clicks
+ */
+bool RMInput::mouseLeftClicked() {
+	return _leftClickMouse;
+}
+
+bool RMInput::mouseRightClicked() {
+	return _rightClickMouse;
+}
+
+bool RMInput::mouseBothClicked() {
+	return _leftClickMouse && _rightClickMouse;
+}
+
+bool RMInput::mouseLeftReleased() {
+	return _leftReleaseMouse;
+}
+
+bool RMInput::mouseRightReleased() {
+	return _rightReleaseMouse;
+}
+
+bool RMInput::mouseBothReleased() {
+	return _leftReleaseMouse && _rightReleaseMouse;
+}
+
 } // End of namespace Tony

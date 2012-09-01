@@ -111,6 +111,15 @@ RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp) {
 	create(dimx, dimy, nBpp);
 }
 
+int RMGfxBuffer::getDimx() {
+	return _dimx;
+}
+
+int RMGfxBuffer::getDimy() {
+	return _dimy;
+}
+
+
 /****************************************************************************\
 *       RMGfxSourceBuffer Methods
 \****************************************************************************/
@@ -2029,6 +2038,133 @@ void RMGfxClearTask::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 void RMGfxClearTask::removeThis(CORO_PARAM, bool &result) {
 	// The task is fine to be removed
 	result = true;
+}
+
+/****************************************************************************\
+*       RMGfxPrimitive Methods
+\****************************************************************************/
+
+RMGfxPrimitive::RMGfxPrimitive() {
+	_bFlag = 0;
+	_task = NULL;
+	_src.setEmpty();
+	_dst.setEmpty();
+	_bStretch = false;
+}
+
+RMGfxPrimitive::RMGfxPrimitive(RMGfxTask *task) {
+	_task = task;
+	_bFlag = 0;
+	_bStretch = false;
+}
+
+RMGfxPrimitive::RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMRect &dst) {
+	_task = task;
+	_src = src;
+	_dst = dst;
+	_bFlag = 0;
+	_bStretch = (src.width() != dst.width() || src.height() != dst.height());
+}
+
+RMGfxPrimitive::RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMRect &dst) {
+	_task = task;
+	_src.topLeft() = src;
+	_dst = dst;
+	_bFlag = 0;
+	_bStretch = false;
+}
+
+RMGfxPrimitive::RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMPoint &dst) {
+	_task = task;
+	_src.topLeft() = src;
+	_dst.topLeft() = dst;
+	_bFlag = 0;
+	_bStretch = false;
+}
+
+RMGfxPrimitive::RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMPoint &dst) {
+	_task = task;
+	_src = src;
+	_dst.topLeft() = dst;
+	_bFlag = 0;
+	_bStretch = false;
+}
+
+RMGfxPrimitive::RMGfxPrimitive(RMGfxTask *task, const RMRect &dst) {
+	_task = task;
+	_dst = dst;
+	_src.setEmpty();
+	_bFlag = 0;
+	_bStretch = false;
+}
+
+RMGfxPrimitive::RMGfxPrimitive(RMGfxTask *task, const RMPoint &dst) {
+	_task = task;
+	_dst.topLeft() = dst;
+	_src.setEmpty();
+	_bFlag = 0;
+	_bStretch = false;
+}
+
+RMGfxPrimitive::~RMGfxPrimitive() {
+}
+
+void RMGfxPrimitive::setFlag(byte bFlag) {
+	_bFlag = bFlag;
+}
+
+void RMGfxPrimitive::setTask(RMGfxTask *task) {
+	_task = task;
+}
+
+void RMGfxPrimitive::setSrc(const RMRect &src) {
+	_src = src;
+}
+
+void RMGfxPrimitive::setSrc(const RMPoint &src) {
+	_src.topLeft() = src;
+}
+
+void RMGfxPrimitive::setDst(const RMRect &dst) {
+	_dst = dst;
+}
+
+void RMGfxPrimitive::setDst(const RMPoint &dst) {
+	_dst.topLeft() = dst;
+}
+
+void RMGfxPrimitive::setStretch(bool bStretch) {
+	_bStretch = bStretch;
+}
+
+bool RMGfxPrimitive::haveDst() {
+	return !_dst.isEmpty();
+}
+
+RMRect &RMGfxPrimitive::getDst() {
+	return _dst;
+}
+
+bool RMGfxPrimitive::haveSrc() {
+	return !_src.isEmpty();
+}
+
+RMRect &RMGfxPrimitive::getSrc() {
+	return _src;
+}
+
+/**
+ * Flags
+ */
+bool RMGfxPrimitive::isFlipped() {
+	return _bFlag & 1;
+}
+
+/**
+ * Duplicate
+ */
+RMGfxPrimitive *RMGfxPrimitive::duplicate() {
+	return new RMGfxPrimitive(*this);
 }
 
 } // End of namespace Tony

@@ -80,6 +80,10 @@ Common::SeekableReadStream *RMRes::getReadStream() {
 	return new Common::MemoryReadStream(_buf, size());
 }
 
+bool RMRes::isValid() {
+	return _h != NULL; 
+}
+
 /****************************************************************************\
 *       RMResRaw methods
 \****************************************************************************/

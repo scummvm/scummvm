@@ -47,7 +47,7 @@ public:
     // Attributes
 	unsigned int size();
     const byte *dataPointer();
-	bool isValid() { return _h != NULL; }
+	bool isValid();
 
     // Casting for access to data
     operator const byte*();
@@ -63,8 +63,8 @@ public:
 	const byte *dataPointer();
 	operator const byte*();
 
-		int width();
-		int height();
+	int width();
+	int height();
 };
 
 } // end of namespace MPAL

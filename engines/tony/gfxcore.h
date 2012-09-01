@@ -68,12 +68,8 @@ public:
 	virtual ~RMGfxBuffer();
 
 	// Attributes
-	int getDimx() {
-		return _dimx;
-	}
-	int getDimy() {
-		return _dimy;
-	}
+	int getDimx();
+	int getDimy();
 
 	// Creation
 	virtual void create(int dimx, int dimy, int nBpp);
@@ -102,116 +98,32 @@ protected:
 	byte _bFlag;
 
 public:
-	RMGfxPrimitive() {
-		_bFlag = 0;
-		_task = NULL;
-		_src.setEmpty();
-		_dst.setEmpty();
-		_bStretch = false;
-	}
-
-	RMGfxPrimitive(RMGfxTask *task) {
-		_task = task;
-		_bFlag = 0;
-		_bStretch = false;
-	}
-
-	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMRect &dst) {
-		_task = task;
-		_src = src;
-		_dst = dst;
-		_bFlag = 0;
-		_bStretch = (src.width() != dst.width() || src.height() != dst.height());
-	}
-
-	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMRect &dst) {
-		_task = task;
-		_src.topLeft() = src;
-		_dst = dst;
-		_bFlag = 0;
-		_bStretch = false;
-	}
-
-	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMPoint &dst) {
-		_task = task;
-		_src.topLeft() = src;
-		_dst.topLeft() = dst;
-		_bFlag = 0;
-		_bStretch = false;
-	}
-
-	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMPoint &dst) {
-		_task = task;
-		_src = src;
-		_dst.topLeft() = dst;
-		_bFlag = 0;
-		_bStretch = false;
-	}
-
-	RMGfxPrimitive(RMGfxTask *task, const RMRect &dst) {
-		_task = task;
-		_dst = dst;
-		_src.setEmpty();
-		_bFlag = 0;
-		_bStretch = false;
-	}
-
-	RMGfxPrimitive(RMGfxTask *task, const RMPoint &dst) {
-		_task = task;
-		_dst.topLeft() = dst;
-		_src.setEmpty();
-		_bFlag = 0;
-		_bStretch = false;
-	}
-
-	virtual ~RMGfxPrimitive() { }
-
-	void setFlag(byte bFlag)        {
-		_bFlag = bFlag;
-	}
-	void setTask(RMGfxTask *task)   {
-		_task = task;
-	}
-	void setSrc(const RMRect &src)        {
-		_src = src;
-	}
-	void setSrc(const RMPoint &src)       {
-		_src.topLeft() = src;
-	}
-	void setDst(const RMRect &dst)        {
-		_dst = dst;
-	}
-	void setDst(const RMPoint &dst)       {
-		_dst.topLeft() = dst;
-	}
-	void setStretch(bool bStretch)  {
-		_bStretch = bStretch;
-	}
-
-	bool haveDst()                  {
-		return !_dst.isEmpty();
-	}
-
-	RMRect &getDst()                {
-		return _dst;
-	}
-
-	bool haveSrc()                  {
-		return !_src.isEmpty();
-	}
-	RMRect &getSrc()                {
-		return _src;
-	}
+	RMGfxPrimitive();
+	RMGfxPrimitive(RMGfxTask *task);
+	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMRect &dst);
+	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMRect &dst);
+	RMGfxPrimitive(RMGfxTask *task, const RMPoint &src, RMPoint &dst);
+	RMGfxPrimitive(RMGfxTask *task, const RMRect &src, RMPoint &dst);
+	RMGfxPrimitive(RMGfxTask *task, const RMRect &dst);
+	RMGfxPrimitive(RMGfxTask *task, const RMPoint &dst);
+	virtual ~RMGfxPrimitive();
+	void setFlag(byte bFlag);
+	void setTask(RMGfxTask *task);
+	void setSrc(const RMRect &src);
+	void setSrc(const RMPoint &src);
+	void setDst(const RMRect &dst);
+	void setDst(const RMPoint &dst);
+	void setStretch(bool bStretch);
+	bool haveDst();
+	RMRect &getDst();
+	bool haveSrc();
+	RMRect &getSrc();
 
 	// Flags
-	bool isFlipped()                {
-		return _bFlag & 1;
-	}
+	bool isFlipped();
 
 	// Duplicate
-	virtual RMGfxPrimitive *duplicate() {
-		return new RMGfxPrimitive(*this);
-	}
+	virtual RMGfxPrimitive *duplicate();
 };
 
 

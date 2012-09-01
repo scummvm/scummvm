@@ -57,13 +57,13 @@ public:
 };
 
 // defines
-#define globalAlloc(flags, size)	MemoryManager::alloc(size, flags)
-#define globalAllocate(flags, size)	MemoryManager::allocate(size, flags)
-#define globalFree(handle)			MemoryManager::freeBlock(handle)
-#define globalDestroy(handle)		MemoryManager::destroyItem(handle)
-#define globalLock(handle)			MemoryManager::lockItem(handle)
-#define globalUnlock(handle)		MemoryManager::unlockItem(handle)
-#define globalSize(handle)			MemoryManager::getSize(handle)
+#define globalAlloc(flags, size)    MemoryManager::alloc(size, flags)
+#define globalAllocate(flags, size) MemoryManager::allocate(size, flags)
+#define globalFree(handle)          MemoryManager::freeBlock(handle)
+#define globalDestroy(handle)       MemoryManager::destroyItem(handle)
+#define globalLock(handle)          MemoryManager::lockItem(handle)
+#define globalUnlock(handle)        MemoryManager::unlockItem(handle)
+#define globalSize(handle)          MemoryManager::getSize(handle)
 
 #define GMEM_FIXED 1
 #define GMEM_MOVEABLE 2
