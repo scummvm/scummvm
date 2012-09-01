@@ -168,7 +168,11 @@ void find_script() {
 		if (g_grim->getGameType() == GType_GRIM) {
 			lua_error("Bad argument to find_script");
 		} else {
-			warning("find_script with no paramiters");
+			ttype(lua_state->stack.top) = LUA_T_TASK;
+			nvalue(lua_state->stack.top) = lua_state->id;
+			incr_top;
+			lua_pushnumber(1.0f);
+			return;
 		}
 	}
 
