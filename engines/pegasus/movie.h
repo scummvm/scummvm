@@ -62,6 +62,8 @@ public:
 
 	virtual void moveMovieBoxTo(const CoordType, const CoordType);
 
+	virtual void setStop(const TimeValue, const TimeScale = 0);
+
 	virtual TimeValue getDuration(const TimeScale = 0) const;
 
 	// *** HACK ALERT

@@ -2087,15 +2087,14 @@ void PegasusEngine::playEndMessage() {
 }
 
 void PegasusEngine::doSubChase() {
-	static const uint32 endTime = 133200 * 1000 / 600;
-
 	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
 	if (!video->loadFile("Images/Norad Alpha/Sub Chase Movie"))
 		error("Failed to load sub chase");
 
+	video->setEndTime(Audio::Timestamp(0, 133200, 600));
 	video->start();
 
-	while (!shouldQuit() && !video->endOfVideo() && video->getTime() < endTime) {
+	while (!shouldQuit() && !video->endOfVideo()) {
 		if (video->needsUpdate()) {
 			const Graphics::Surface *frame = video->decodeNextFrame();
 

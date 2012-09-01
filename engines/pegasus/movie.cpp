@@ -81,7 +81,7 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 		allocateSurface(bounds);
 
 	setStart(0, getScale());
-	setStop(_video->getDuration().convertToFramerate(getScale()).totalNumberOfFrames(), getScale());
+	TimeBase::setStop(_video->getDuration().convertToFramerate(getScale()).totalNumberOfFrames(), getScale());
 }
 
 void Movie::redrawMovieWorld() {
@@ -130,6 +130,13 @@ void Movie::draw(const Common::Rect &r) {
 
 void Movie::moveMovieBoxTo(const CoordType h, const CoordType v) {
 	_movieBox.moveTo(h, v);
+}
+
+void Movie::setStop(const TimeValue stopTime, const TimeScale scale) {
+	TimeBase::setStop(stopTime, scale);
+
+	if (_video)
+		_video->setEndTime(Audio::Timestamp(0, _stopTime, _stopScale));
 }
 
 void Movie::setVolume(uint16 volume) {
@@ -205,12 +212,18 @@ TimeValue Movie::getDuration(const TimeScale scale) const {
 void Movie::updateTime() {
 	// The reason why we overrode TimeBase's updateTime():
 	// Again, avoiding timers and handling it here
-	if (_video && !_video->isPaused()) {
+	if (_video && _video->isPlaying() && !_video->isPaused()) {
 		redrawMovieWorld();
 
 		uint32 startTime = _startTime * getScale() / _startScale;
 		uint32 stopTime = _stopTime * getScale() / _stopScale;
 		uint32 actualTime = CLIP<int>(_video->getTime() * getScale() / 1000, startTime, stopTime);
+
+		// HACK: Due to the inaccuracy of the time, we won't actually allow us to hit
+		// the stop time unless we've actually reached the end of the segment.
+		if (actualTime == stopTime && !_video->endOfVideo())
+			actualTime--;
+
 		_time = Common::Rational(actualTime, getScale());
 	}
 }
