@@ -916,13 +916,13 @@ void Menu::startGame() {
 	if (_lastIndex == _index) {
 		setGlobalTimer(0);
 		if (_index) {
-			getSaveLoad()->loadGame(_gameId);
+			getSaveLoad()->loadLastGame();
 		} else {
 			getLogic()->resetState();
 			getEntities()->setup(true, kEntityPlayer);
 		}
 	} else {
-		getSaveLoad()->loadGame(_gameId, _index);
+		getSaveLoad()->loadGame(_index);
 	}
 }
 

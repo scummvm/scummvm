@@ -72,6 +72,7 @@ add_engine() {
 	set_var _engine_${1}_build "${3}"
 	set_var _engine_${1}_build_default "${3}"
 	set_var _engine_${1}_subengines "${4}"
+	set_var _engine_${1}_deps "${5}"
 	for sub in ${4}; do
 		set_var _engine_${sub}_sub "yes"
 	done
@@ -464,6 +465,11 @@ get_engine_subengines() {
 	get_var _engine_$1_subengines
 }
 
+# Get the dependencies
+get_engine_dependencies() {
+	get_var _engine_$1_deps
+}
+
 # Ask if this is a subengine
 get_engine_sub() {
 	sub=`get_var _engine_$1_sub`
@@ -529,6 +535,28 @@ engine_disable() {
 		set_var _engine_${engine}_build "no"
 	else
 		engine_option_error ${engine}
+	fi
+}
+
+# Check whether the engine's dependencies are met
+# If that is not the case disable the engine
+check_engine_deps() {
+	unmet_deps=""
+
+	# Check whether the engine is enabled
+	if test `get_engine_build $1` = yes ; then
+		# Collect unmet dependencies
+		for dep in `get_engine_dependencies $1`; do
+			if test `get_var _${dep}` = no ; then
+				unmet_deps="${unmet_deps}${dep} "
+			fi
+		done
+
+		# Check whether there is any unmet dependency
+		if test -n "$unmet_deps"; then
+			echo "WARNING: Disabling engine "`get_engine_name $1`" because the following dependencies are unmet: "$unmet_deps
+			engine_disable $1
+		fi
 	fi
 }
 
@@ -1839,7 +1867,9 @@ case $_host_cpu in
 		define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
 		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
-		define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+		# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
+		# (on Pandora and iPhone at least)
+		#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
 
 		DEFINES="$DEFINES -DARM_TARGET"
 		;;
@@ -3202,11 +3232,6 @@ fi
 define_in_config_if_yes "$_png" 'USE_PNG'
 echo "$_png"
 
-if test `get_engine_build sword25` = yes && test ! "$_png" = yes ; then
-	echo "...disabling Broken Sword 2.5 engine. PNG is required"
-	engine_disable sword25
-fi
-
 #
 # Check for Theora Decoder
 #
@@ -3316,11 +3341,6 @@ if test "$_zlib" = yes ; then
 fi
 define_in_config_if_yes "$_zlib" 'USE_ZLIB'
 echo "$_zlib"
-
-if test `get_engine_build sword25` = yes && test ! "$_zlib" = yes ; then
-	echo "...disabling Broken Sword 2.5 engine. ZLib is required"
-	engine_disable sword25
-fi
 
 #
 # Check for Sparkle if updates support is enabled
@@ -3868,6 +3888,9 @@ sh -c "
 	fi" 2>/dev/null &
 
 for engine in $_engines; do
+	# Check whether all dependencies are available
+	check_engine_deps $engine
+
 	if test "`get_engine_sub $engine`" = "no" ; then
 		# It's a main engine
 		if test `get_engine_build $engine` = no ; then

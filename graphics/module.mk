@@ -26,7 +26,8 @@ MODULE_OBJS := \
 	decoders/bmp.o \
 	decoders/jpeg.o \
 	decoders/pict.o \
-	decoders/png.o
+	decoders/png.o \
+	decoders/tga.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

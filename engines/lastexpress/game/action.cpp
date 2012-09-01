@@ -394,7 +394,7 @@ Action::Action(LastExpressEngine *engine) : _engine(engine) {
 }
 
 Action::~Action() {
-	for (int i = 0; i < (int)_actions.size(); i++)
+	for (uint i = 0; i < _actions.size(); i++)
 		SAFE_DELETE(_actions[i]);
 
 	_actions.clear();
@@ -421,8 +421,6 @@ SceneIndex Action::processHotspot(const SceneHotspot &hotspot) {
 // Action 0
 IMPLEMENT_ACTION(dummy)
 	error("[Action::action_dummy] Dummy action function called (hotspot action: %d)", hotspot.action);
-
-	return kSceneInvalid;
 }
 
 //////////////////////////////////////////////////////////////////////////

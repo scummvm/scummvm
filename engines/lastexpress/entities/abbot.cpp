@@ -58,10 +58,10 @@ Abbot::Abbot(LastExpressEngine *engine) : Entity(engine, kEntityAbbot) {
 	ADD_CALLBACK_FUNCTION(Abbot, chapter2);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter3);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter3Handler);
-	ADD_CALLBACK_FUNCTION(Abbot, function19);
-	ADD_CALLBACK_FUNCTION(Abbot, function20);
-	ADD_CALLBACK_FUNCTION(Abbot, function21);
-	ADD_CALLBACK_FUNCTION(Abbot, function22);
+	ADD_CALLBACK_FUNCTION(Abbot, conversationWithBoutarel);
+	ADD_CALLBACK_FUNCTION(Abbot, readPaper);
+	ADD_CALLBACK_FUNCTION(Abbot, goToLunch);
+	ADD_CALLBACK_FUNCTION(Abbot, haveLunch);
 	ADD_CALLBACK_FUNCTION(Abbot, function23);
 	ADD_CALLBACK_FUNCTION(Abbot, function24);
 	ADD_CALLBACK_FUNCTION(Abbot, function25);
@@ -259,7 +259,7 @@ IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
 			getData()->entityPosition = kPosition_6470;
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function19();
+			setup_conversationWithBoutarel();
 			break;
 		}
 		break;
@@ -272,7 +272,7 @@ IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(19, Abbot, function19)
+IMPLEMENT_FUNCTION(19, Abbot, conversationWithBoutarel)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -311,21 +311,21 @@ IMPLEMENT_FUNCTION(19, Abbot, function19)
 
 		case 3:
 			getSavePoints()->push(kEntityAbbot, kEntityBoutarel, kAction122288808);
-			setup_function20();
+			setup_readPaper();
 			break;
 		}
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(20, Abbot, function20)
+IMPLEMENT_FUNCTION(20, Abbot, readPaper)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionNone:
 		if (getState()->time > kTime1966500 && getEntities()->isInRestaurant(kEntityBoutarel))
-			setup_function21();
+			setup_goToLunch();
 		break;
 
 	case kActionDefault:
@@ -335,7 +335,7 @@ IMPLEMENT_FUNCTION(20, Abbot, function20)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(21, Abbot, function21)
+IMPLEMENT_FUNCTION(21, Abbot, goToLunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -393,7 +393,7 @@ IMPLEMENT_FUNCTION(21, Abbot, function21)
 			break;
 
 		case 7:
-			setup_function22();
+			setup_haveLunch();
 			break;
 		}
 		break;
@@ -409,7 +409,7 @@ IMPLEMENT_FUNCTION(21, Abbot, function21)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(22, Abbot, function22)
+IMPLEMENT_FUNCTION(22, Abbot, haveLunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1547,7 +1547,7 @@ IMPLEMENT_FUNCTION(45, Abbot, function45)
 		getData()->car = kCarRedSleeping;
 		getData()->location = kLocationOutsideCompartment;
 
-		RESET_ENTITY_STATE(kEntityVerges, Verges, setup_function38);
+		RESET_ENTITY_STATE(kEntityVerges, Verges, setup_resetState);
 
 		getEntities()->drawSequenceLeft(kEntityAbbot, "617Ec");
 		getEntities()->enterCompartment(kEntityAbbot, kObjectCompartmentC, true);

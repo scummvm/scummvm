@@ -78,7 +78,7 @@ uint32 SavegameStream::read(void *dataPtr, uint32 dataSize) {
 
 uint32 SavegameStream::readUncompressed(void *dataPtr, uint32 dataSize) {
 	if ((int32)dataSize > size() - pos()) {
-		dataSize = size() - pos();
+		dataSize = (uint32)(size() - pos());
 		_eos = true;
 	}
 	memcpy(dataPtr, getData() + pos(), dataSize);
@@ -230,7 +230,7 @@ uint32 SavegameStream::writeCompressed(const void *dataPtr, uint32 dataSize) {
 			if (*data != _previousValue || _repeatCount >= 255) {
 				if (_previousValue) {
 					writeBuffer(0xFF, true);
-					writeBuffer(_repeatCount, true);
+					writeBuffer((uint8)_repeatCount, true);
 					writeBuffer(_previousValue, true);
 
 					_previousValue = *data++;
@@ -255,7 +255,7 @@ uint32 SavegameStream::writeCompressed(const void *dataPtr, uint32 dataSize) {
 				}
 
 				writeBuffer(0xFD, true);
-				writeBuffer(_repeatCount, true);
+				writeBuffer((uint8)_repeatCount, true);
 
 				_previousValue = *data++;
 				_valueCount = 1;
@@ -348,11 +348,12 @@ uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
 // Constructors
 //////////////////////////////////////////////////////////////////////////
 
-SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(NULL), _gameTicksLastSavegame(0) {
+SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(NULL), _gameTicksLastSavegame(0), _entity(kEntityPlayer) {
 }
 
 SaveLoad::~SaveLoad() {
 	clear(true);
+	_savegame = NULL;
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -481,10 +482,10 @@ void SaveLoad::clear(bool clearStream) {
 // Save & Load
 //////////////////////////////////////////////////////////////////////////
 
-// Load game
-void SaveLoad::loadGame(GameId id) {
+// Load last saved game
+void SaveLoad::loadLastGame() {
 	if (!_savegame)
-		error("[SaveLoad::loadGame] No savegame stream present");
+		error("[SaveLoad::loadLastGame] No savegame stream present");
 
 	// Rewind current savegame
 	_savegame->seek(0);
@@ -521,7 +522,29 @@ void SaveLoad::loadGame(GameId id) {
 }
 
 // Load a specific game entry
-void SaveLoad::loadGame(GameId id, uint32 index) {
+void SaveLoad::loadGame(uint32 index) {
+	if (!_savegame)
+		error("[SaveLoad::loadLastGame] No savegame stream present");
+
+	// Rewind current savegame
+	_savegame->seek(0);
+
+	// Write main header (with selected index)
+	SavegameMainHeader header;
+	header.count = index;
+	header.brightness = getState()->brightness;
+	header.volume = getState()->volume;
+
+	Common::Serializer ser(NULL, _savegame);
+	header.saveLoadWithSerializer(ser);
+
+	// TODO
+	// Go to the entry
+	// Load the entry
+	// Get offset (main and entry)
+	// Write main header again with correct entry offset
+	// Setup game and start
+
 	error("[SaveLoad::loadGame] Not implemented! (only loading the last entry is working for now)");
 }
 
@@ -550,7 +573,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 		entry.saveLoadWithSerializer(ser);
 
 		if (!entry.isValid()) {
-			error("[SaveLoad::saveGame] Invalid entry. This savegame might be corrupted");
+			warning("[SaveLoad::saveGame] Invalid entry. This savegame might be corrupted");
 			_savegame->seek(header.offset);
 		} else if (getState()->time < entry.time || (type == kSavegameTypeTickInterval && getState()->time == entry.time)) {
 			// Not ready to save a game, skipping!
@@ -634,6 +657,9 @@ bool SaveLoad::loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *he
 // Entries
 //////////////////////////////////////////////////////////////////////////
 uint32 SaveLoad::writeValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size) {
+	if (!_savegame)
+		error("[SaveLoad::writeValue] Stream not initialized properly");
+
 	debugC(kLastExpressDebugSavegame, "Savegame: Writing %s: %u bytes", name, size);
 
 	uint32 prevPosition = (uint32)_savegame->pos();
@@ -652,6 +678,9 @@ uint32 SaveLoad::writeValue(Common::Serializer &ser, const char *name, Common::F
 }
 
 uint32 SaveLoad::readValue(Common::Serializer &ser, const char *name, Common::Functor1<Common::Serializer &, void> *function, uint size) {
+	if (!_savegame)
+		error("[SaveLoad::readValue] Stream not initialized properly");
+
 	debugC(kLastExpressDebugSavegame, "Savegame: Reading %s: %u bytes", name, size);
 
 	uint32 prevPosition = (uint32)_savegame->pos();

@@ -87,7 +87,7 @@ bool VideoDecoder::loadFile(const Common::String &filename) {
 }
 
 bool VideoDecoder::needsUpdate() const {
-	return !endOfVideo() && getTimeToNextFrame() == 0;
+	return hasFramesLeft() && getTimeToNextFrame() == 0;
 }
 
 void VideoDecoder::pauseVideo(bool pause) {
@@ -249,18 +249,8 @@ uint32 VideoDecoder::getTimeToNextFrame() const {
 }
 
 bool VideoDecoder::endOfVideo() const {
-	if (!isVideoLoaded())
-		return true;
-
-	if (_endTimeSet) {
-		const VideoTrack *track = findNextVideoTrack();
-
-		if (track && track->getNextFrameStartTime() >= (uint)_endTime.msecs())
-			return true;
-	}
-
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		if (!(*it)->endOfTrack())
+		if (!(*it)->endOfTrack() && ((*it)->getTrackType() != Track::kTrackTypeVideo || !_endTimeSet || ((VideoTrack *)*it)->getNextFrameStartTime() < (uint)_endTime.msecs()))
 			return false;
 
 	return true;
@@ -677,6 +667,17 @@ void VideoDecoder::startAudioLimit(const Audio::Timestamp &limit) {
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 			((AudioTrack *)*it)->start(limit);
+}
+
+bool VideoDecoder::hasFramesLeft() const {
+	// This is similar to endOfVideo(), except it doesn't take Audio into account (and returns true if not the end of the video)
+	// This is only used for needsUpdate() atm so that setEndTime() works properly
+	// And unlike endOfVideoTracks(), this takes into account _endTime
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack() && (!_endTimeSet || ((VideoTrack *)*it)->getNextFrameStartTime() < (uint)_endTime.msecs()))
+			return true;
+
+	return false;
 }
 
 } // End of namespace Video
