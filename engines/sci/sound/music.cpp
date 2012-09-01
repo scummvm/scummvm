@@ -125,7 +125,10 @@ void SciMusic::init() {
 		_pMidiDrv->setTimerCallback(this, &miditimerCallback);
 		_dwTempo = _pMidiDrv->getBaseTempo();
 	} else {
-		error("Failed to initialize sound driver");
+		// Happens in the Fun Seeker's Guide demo, which doesn't have any sound
+		// anyway (nor works if anything other than PC Spearker is set), so this
+		// shouldn't be fatal
+		warning("Failed to initialize sound driver");
 	}
 
 	// Find out what the first possible channel is (used, when doing channel
