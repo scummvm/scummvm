@@ -146,18 +146,9 @@ public:
 	 * Add an item to the inventory
 	 */
 	void addItem(int code);
-	RMInventory &operator+=(RMItem *item) {
-		addItem(item->mpalCode());
-		return *this;
-	}
-	RMInventory &operator+=(RMItem &item) {
-		addItem(item.mpalCode());
-		return *this;
-	}
-	RMInventory &operator+=(int code) {
-		addItem(code);
-		return *this;
-	}
+	RMInventory &operator+=(RMItem *item);
+	RMInventory &operator+=(RMItem &item);
+	RMInventory &operator+=(int code);
 
 	/**
 	 * Removes an item

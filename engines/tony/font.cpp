@@ -189,6 +189,17 @@ void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 }
 
 /***************************************************************************\
+*       RMFontWithTables Methods
+\****************************************************************************/
+int RMFontWithTables::convertToLetter(byte nChar) {
+	return _cTable[nChar];
+}
+
+int RMFontWithTables::letterLength(int nChar, int nNext) {
+	return (nChar != -1 ? _lTable[(byte)nChar] + _l2Table[(byte)nChar][(byte)nNext] : _lDefault);
+}
+
+/***************************************************************************\
 *       RMFontDialog Methods
 \****************************************************************************/
 
@@ -359,7 +370,6 @@ RMText::RMText() {
 }
 
 RMText::~RMText() {
-
 }
 
 void RMText::unload() {
@@ -571,6 +581,23 @@ void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_END_CODE;
 }
 
+/**
+ * Set the alignment type
+ */
+void RMText::setAlignType(HorAlign aHor, VerAlign aVer) {
+	_aHorType = aHor;
+	_aVerType = aVer;
+}
+
+/**
+ * Set the base color
+ */
+void RMText::setColor(byte r, byte g, byte b) {
+	_textR = r;
+	_textG = g;
+	_textB = b;
+}
+
 /****************************************************************************\
 *       RMTextDialog Methods
 \****************************************************************************/
@@ -751,6 +778,13 @@ void RMTextDialog::setInput(RMInput *input) {
 	_input = input;
 }
 
+/**
+ * Set the position
+ */
+void RMTextDialog::setPosition(const RMPoint &pt) {
+	_dst = pt;
+}
+
 /****************************************************************************\
 *       RMTextDialogScrolling Methods
 \****************************************************************************/
@@ -801,7 +835,6 @@ RMTextItemName::RMTextItemName() : RMText() {
 }
 
 RMTextItemName::~RMTextItemName() {
-
 }
 
 void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv) {
@@ -886,6 +919,13 @@ bool RMTextItemName::isItemSelected() {
 	return _item != NULL;
 }
 
+void RMTextItemName::setMouseCoord(const RMPoint &m) {
+	_mpos = m;
+}
+
+void RMTextItemName::removeThis(CORO_PARAM, bool &result) {
+	result = true;
+}
 
 /****************************************************************************\
 *       RMDialogChoice Methods

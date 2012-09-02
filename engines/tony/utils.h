@@ -58,10 +58,7 @@ public:
 	RMPoint &operator=(RMPoint p);
 
 	// Set
-	void set(int x1, int y1) {
-		_x = x1;
-		_y = y1;
-	}
+	void set(int x1, int y1);
 
 	// Offset
 	void offset(int xOff, int yOff);
@@ -88,10 +85,10 @@ public:
 	int &_x;
 	int &_y;
 
-	RMPointReference(int &x, int &y): _x(x), _y(y) {}
+	RMPointReference(int &x, int &y);
 	RMPointReference &operator=(const RMPoint &p);
 	RMPointReference &operator-=(const RMPoint &p);
-	operator RMPoint() const { return RMPoint(_x, _y); }
+	operator RMPoint() const;
 };
 
 class RMRect {
@@ -108,8 +105,8 @@ public:
 	RMRect(const RMRect &rc);
 
 	// Attributes
-	RMPointReference &topLeft() { return _topLeft; }
-	RMPointReference &bottomRight() { return _bottomRight; }
+	RMPointReference &topLeft();
+	RMPointReference &bottomRight();
 	RMPoint center();
 	int width() const;
 	int height() const;
@@ -145,9 +142,7 @@ public:
 	void normalizeRect();
 
 	// Point in rect
-	bool ptInRect(const RMPoint &pt) {
-		return (pt._x >= _x1 && pt._x <= _x2 && pt._y >= _y1 && pt._y <= _y2);
-	}
+	bool ptInRect(const RMPoint &pt);
 
 	// Extract from data stream
 	void readFromStream(Common::ReadStream &ds);

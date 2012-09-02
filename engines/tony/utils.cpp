@@ -87,6 +87,14 @@ RMPoint &RMPoint::operator=(RMPoint p) {
 }
 
 /**
+ * Set a point
+ */
+void RMPoint::set(int x1, int y1) {
+	_x = x1;
+	_y = y1;
+}
+
+/**
  * Offsets the point by another point
  */
 void RMPoint::offset(const RMPoint &p) {
@@ -174,6 +182,9 @@ void RMPoint::readFromStream(Common::ReadStream &ds) {
 *       RMPointReference methods
 \****************************************************************************/
 
+RMPointReference::RMPointReference(int &x, int &y): _x(x), _y(y) {
+}
+
 RMPointReference &RMPointReference::operator=(const RMPoint &p) {
 	_x = p._x; _y = p._y;
 	return *this;
@@ -182,6 +193,10 @@ RMPointReference &RMPointReference::operator=(const RMPoint &p) {
 RMPointReference &RMPointReference::operator-=(const RMPoint &p) {
 	_x -= p._x; _y -= p._y;
 	return *this;
+}
+
+RMPointReference::operator RMPoint() const {
+	return RMPoint(_x, _y);
 }
 
 /****************************************************************************\
@@ -231,6 +246,14 @@ void RMRect::copyRect(const RMRect &rc) {
 	_y1 = rc._y1;
 	_x2 = rc._x2;
 	_y2 = rc._y2;
+}
+
+RMPointReference &RMRect::topLeft() {
+	return _topLeft;
+}
+
+RMPointReference &RMRect::bottomRight() {
+	return _bottomRight;
 }
 
 RMPoint RMRect::center() {
@@ -326,6 +349,13 @@ void RMRect::readFromStream(Common::ReadStream &ds) {
 	_y1 = ds.readSint32LE();
 	_x2 = ds.readSint32LE();
 	_y2 = ds.readSint32LE();
+}
+
+/**
+ * Check if RMPoint is in RMRect
+ */
+bool RMRect::ptInRect(const RMPoint &pt) {
+	return (pt._x >= _x1 && pt._x <= _x2 && pt._y >= _y1 && pt._y <= _y2);
 }
 
 /****************************************************************************\

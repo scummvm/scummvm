@@ -255,6 +255,13 @@ RMPattern::RMPattern() {
 	_slots = NULL;
 }
 
+/**
+ * Reads the position of the pattern
+ */
+RMPoint RMPattern::pos() {
+	return _curPos;
+}
+
 RMPattern::~RMPattern() {
 	if (_slots != NULL) {
 		delete[] _slots;
@@ -399,6 +406,10 @@ void RMSfx::stop() {
 /****************************************************************************\
 *       RMItem Methods
 \****************************************************************************/
+
+int RMItem::getCurPattern() {
+	return _nCurPattern;
+}
 
 RMGfxSourceBuffer *RMItem::newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE) {
 	if (_cm == CM_256) {
@@ -627,6 +638,19 @@ void RMItem::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_END_CODE;
 }
 
+/**
+ * Overloaded priority: it's based on Z ordering
+ */
+int RMItem::priority() {
+	return _z;
+}
+
+/**
+ * Pattern number
+ */
+int RMItem::numPattern() {
+	return _nPatterns;
+}
 
 void RMItem::removeThis(CORO_PARAM, bool &result) {
 	// Remove from the OT list if the current frame is -1 (pattern over)
@@ -636,6 +660,14 @@ void RMItem::removeThis(CORO_PARAM, bool &result) {
 
 void RMItem::setStatus(int nStatus) {
 	_bIsActive = (nStatus > 0);
+}
+
+RMPoint RMItem::hotspot() {
+	return _hot;
+}
+
+int RMItem::mpalCode() {
+	return _mpalCode;
 }
 
 void RMItem::setPattern(int nPattern, bool bPlayP0) {
@@ -745,6 +777,10 @@ void RMItem::waitForEndPattern(CORO_PARAM, uint32 hCustomSkip) {
 
 void RMItem::changeHotspot(const RMPoint &pt) {
 	_hot = pt;
+}
+
+void RMItem::setInitCurPattern(bool status) {
+	_bInitCurPattern = status;
 }
 
 void RMItem::playSfx(int nSfx) {
@@ -1429,6 +1465,10 @@ void RMCharacter::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc) {
 	CORO_END_CODE;
 }
 
+bool RMCharacter::endOfPath() {
+	return _bEndOfPath;
+}
+
 void RMCharacter::stop(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -1469,6 +1509,13 @@ void RMCharacter::stop(CORO_PARAM) {
 	}
 
 	CORO_END_CODE;
+}
+
+/**
+ * Check if the character is moving
+ */
+bool RMCharacter::isMoving() {
+	return _bMoving;
 }
 
 inline int RMCharacter::inWhichBox(const RMPoint &pt) {
@@ -1580,6 +1627,14 @@ void RMCharacter::waitForEndMovement(CORO_PARAM) {
 		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _hEndOfPath, CORO_INFINITE);
 
 	CORO_END_CODE;
+}
+
+void RMCharacter::setFixedScroll(const RMPoint &fix) {
+	_fixedScroll = fix;
+}
+
+void RMCharacter::setSpeed(int speed) {
+	_curSpeed = speed;
 }
 
 void RMCharacter::removeThis(CORO_PARAM, bool &result) {
@@ -1764,6 +1819,10 @@ RMBoxLoc *RMGameBoxes::getBoxes(int nLoc) {
 	return _allBoxes[nLoc];
 }
 
+int RMGameBoxes::getLocBoxesCount() const {
+	return _nLocBoxes;
+}
+
 bool RMGameBoxes::isInBox(int nLoc, int nBox, const RMPoint &pt) {
 	RMBoxLoc *cur = getBoxes(nLoc);
 
@@ -1867,6 +1926,14 @@ RMLocation::RMLocation() {
 	_buf = NULL;
 	TEMPNumLoc = 0;
 	_cmode = CM_256;
+}
+
+RMPoint RMLocation::TEMPGetTonyStart() {
+	return TEMPTonyStart;
+}
+
+int RMLocation::TEMPGetNumLoc() {
+	return TEMPNumLoc;
 }
 
 /**
@@ -2178,6 +2245,12 @@ void RMLocation::pauseSound(bool bPause) {
 		_items[i].pauseSound(bPause);
 }
 
+/**
+ * Read the current scroll position
+ */
+RMPoint RMLocation::scrollPosition() {
+	return _curScroll;
+}
 
 /****************************************************************************\
 *       RMMessage Methods
@@ -2228,6 +2301,22 @@ void RMMessage::parseMessage() {
 		// Otherwise there is another line, and remember it's start
 		_lpPeriods[_nPeriods++] = p;
 	}
+}
+
+bool RMMessage::isValid() {
+	return _lpMessage != NULL;
+}
+
+int RMMessage::numPeriods() {
+	return _nPeriods;
+}
+
+char *RMMessage::period(int num) {
+	return _lpPeriods[num];
+}
+
+char *RMMessage::operator[](int num) {
+	return _lpPeriods[num];
 }
 
 } // End of namespace Tony

@@ -145,13 +145,8 @@ public:
 	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Registration
-	virtual void Register() {
-		_nInList++;
-	}
-	virtual void Unregister() {
-		_nInList--;
-		assert(_nInList >= 0);
-	}
+	virtual void Register();
+	virtual void Unregister();
 };
 
 
@@ -209,9 +204,7 @@ public:
 protected:
 	virtual void prepareImage();
 	bool clip2D(int &x1, int &y1, int &u, int &v, int &width, int &height, bool bUseSrc, RMGfxTargetBuffer *buf);
-	void offsetY(int nLines) {
-		RMGfxBuffer::offsetY(nLines, getBpp());
-	}
+	void offsetY(int nLines);
 
 public:
 	virtual int getBpp() = 0;
@@ -490,32 +483,19 @@ public:
 	void drawOT(CORO_PARAM);
 	void addPrim(RMGfxPrimitive *prim); // The pointer must be delted
 
-	operator byte *() {
-		return _buf;
-	}
-	operator void *() {
-		return (void *)_buf;
-	}
-	operator uint16 *() {
-		// FIXME: This may not be endian safe
-		return (uint16 *)_buf;
-	}
+	operator byte *();
+	operator void *();
+	operator uint16 *();
 
 	// Offseting buffer
-	void offsetY(int nLines) {
-		RMGfxBuffer::offsetY(nLines, 16);
-	}
+	void offsetY(int nLines);
 
 	// Dirty rect methods
 	void addDirtyRect(const Common::Rect &r);
 	Common::List<Common::Rect> &getDirtyRects();
 	void clearDirtyRects();
-	void setTrackDirtyRects(bool v) {
-		_trackDirtyRects = v;
-	}
-	bool getTrackDirtyRects() const {
-		return _trackDirtyRects;
-	}
+	void setTrackDirtyRects(bool v);
+	bool getTrackDirtyRects() const;
 };
 
 

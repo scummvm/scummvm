@@ -152,9 +152,7 @@ public:
 	void stopSfx(RMSfx *sfx);
 
 	// Reads the position of the pattern
-	RMPoint pos() {
-		return _curPos;
-	}
+	RMPoint pos();
 
 	void readFromStream(Common::ReadStream &ds, bool bLOX = false);
 
@@ -197,16 +195,14 @@ public:
 
 protected:
 	int _z;
-	RMPoint _pos;  // Coordinate nonno
+	RMPoint _pos;  // Coordinate ancestor
 	RMColorMode _cm;
 	RMPoint _curScroll;
 
 	byte _FX;
 	byte _FXparm;
 
-	virtual int getCurPattern() {
-		return _nCurPattern;
-	}
+	virtual int getCurPattern();
 
 private:
 	int _nCurPattern;
@@ -248,14 +244,10 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Overloaded priority: it's based on Z ordering
-	virtual int priority() {
-		return _z;
-	}
+	virtual int priority();
 
 	// Pattern number
-	int numPattern() {
-		return _nPatterns;
-	}
+	int numPattern();
 
 	// Set anew animation pattern, changing abruptly from the current
 	virtual void setPattern(int nPattern, bool bPlayP0 = false);
@@ -264,13 +256,9 @@ public:
 	void setStatus(int nStatus);
 
 	bool isIn(const RMPoint &pt, int *size = NULL);
-	RMPoint hotspot() {
-		return _hot;
-	}
+	RMPoint hotspot();
 	bool getName(Common::String &name);
-	int mpalCode() {
-		return _mpalCode;
-	}
+	int mpalCode();
 
 	// Unload
 	void unload();
@@ -281,9 +269,7 @@ public:
 	// Sets a new hotspot fro the object
 	void changeHotspot(const RMPoint &pt);
 
-	void setInitCurPattern(bool status) {
-		_bInitCurPattern = status;
-	}
+	void setInitCurPattern(bool status);
 
 	void playSfx(int nSfx);
 
@@ -354,7 +340,7 @@ public:
 
 	// Get binding boxes for a given location
 	RMBoxLoc *getBoxes(int nLoc);
-	int getLocBoxesCount() const { return _nLocBoxes; }
+	int getLocBoxesCount() const;
 
 	// Return the box which contains a given point
 	int whichBox(int nLoc, const RMPoint &pt);
@@ -431,7 +417,6 @@ protected:
 	bool _bMoving;
 	bool _bDrawNow;
 	bool _bNeedToStop;
-//		virtual RMGfxPrimitive *NewItemPrimitive();
 
 public:
 	RMCharacter();
@@ -448,17 +433,13 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// TRUE if you just stopped
-	bool endOfPath() {
-		return _bEndOfPath;
-	}
+	bool endOfPath();
 
 	// Change the pattern of a character to STOP
 	virtual void stop(CORO_PARAM);
 
 	// Check if the character is moving
-	bool isMoving() {
-		return _bMoving;
-	}
+	bool isMoving();
 
 	// Move the character to a certain position
 	void move(CORO_PARAM, RMPoint pt, bool *result = NULL);
@@ -469,12 +450,8 @@ public:
 	// Wait for the end of movement
 	void waitForEndMovement(CORO_PARAM);
 
-	void setFixedScroll(const RMPoint &fix) {
-		_fixedScroll = fix;
-	}
-	void setSpeed(int speed) {
-		_curSpeed = speed;
-	}
+	void setFixedScroll(const RMPoint &fix);
+	void setSpeed(int speed);
 };
 
 
@@ -531,14 +508,10 @@ public:
 	// @@@@@@@@@@@@@@@@@@@@@@@
 
 	RMPoint TEMPTonyStart;
-	RMPoint TEMPGetTonyStart() {
-		return TEMPTonyStart;
-	}
+	RMPoint TEMPGetTonyStart();
 
 	int TEMPNumLoc;
-	int TEMPGetNumLoc() {
-		return TEMPNumLoc;
-	}
+	int TEMPGetNumLoc();
 
 public:
 	RMLocation();
@@ -573,9 +546,7 @@ public:
 	void updateScrolling(const RMPoint &ptShowThis);
 
 	// Read the current scroll position
-	RMPoint scrollPosition() {
-		return _curScroll;
-	}
+	RMPoint scrollPosition();
 
 	// Pause sound
 	void pauseSound(bool bPause);
@@ -600,18 +571,10 @@ public:
 	virtual ~RMMessage();
 
 	void load(uint32 dwId);
-	bool isValid() {
-		return _lpMessage != NULL;
-	}
-	int numPeriods() {
-		return _nPeriods;
-	}
-	char *period(int num) {
-		return _lpPeriods[num];
-	}
-	char *operator[](int num) {
-		return _lpPeriods[num];
-	}
+	bool isValid();
+	int numPeriods();
+	char *period(int num);
+	char *operator[](int num);
 };
 
 } // End of namespace Tony

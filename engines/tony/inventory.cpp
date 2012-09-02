@@ -736,6 +736,21 @@ int RMInventory::loadState(byte *state) {
 	return getSaveStateSize();
 }
 
+RMInventory &RMInventory::operator+=(RMItem *item) {
+	addItem(item->mpalCode());
+	return *this;
+}
+
+RMInventory &RMInventory::operator+=(RMItem &item) {
+	addItem(item.mpalCode());
+	return *this;
+}
+
+RMInventory &RMInventory::operator+=(int code) {
+	addItem(code);
+	return *this;
+}
+
 /****************************************************************************\
 *           RMInterface methods
 \****************************************************************************/

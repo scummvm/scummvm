@@ -126,12 +126,8 @@ protected:
 
 protected:
 	// Overloaded methods
-	int convertToLetter(byte nChar) {
-		return _cTable[nChar];
-	}
-	int letterLength(int nChar, int nNext = 0) {
-		return (nChar != -1 ? _lTable[(byte)nChar] + _l2Table[(byte)nChar][(byte)nNext] : _lDefault);
-	}
+	int convertToLetter(byte nChar);
+	int letterLength(int nChar, int nNext = 0);
 
 public:
 	int letterHeight() {
@@ -206,10 +202,7 @@ public:
 	static void unload();
 
 	// Set the alignment type
-	void setAlignType(HorAlign aHor, VerAlign aVer) {
-		_aHorType = aHor;
-		_aVerType = aVer;
-	}
+	void setAlignType(HorAlign aHor, VerAlign aVer);
 
 	// Sets the maximum length of a line in pixels (used to format the text)
 	void setMaxLineLength(int max);
@@ -225,11 +218,7 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Set the base color
-	void setColor(byte r, byte g, byte b) {
-		_textR = r;
-		_textG = g;
-		_textB = b;
-	}
+	void setColor(byte r, byte g, byte b);
 };
 
 /**
@@ -269,9 +258,7 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 	// Set the position
-	void setPosition(const RMPoint &pt) {
-		_dst = pt;
-	}
+	void setPosition(const RMPoint &pt);
 
 	// Waiting
 	void waitForEndDisplay(CORO_PARAM);
@@ -320,9 +307,7 @@ public:
 	RMTextItemName();
 	virtual ~RMTextItemName();
 
-	void setMouseCoord(const RMPoint &m) {
-		_mpos = m;
-	}
+	void setMouseCoord(const RMPoint &m);
 
 	void doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &loc, RMPointer &ptr, RMInventory &inv);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -331,9 +316,7 @@ public:
 	RMItem *getSelectedItem();
 	bool isItemSelected();
 
-	virtual void removeThis(CORO_PARAM, bool &result) {
-		result = true;
-	}
+	virtual void removeThis(CORO_PARAM, bool &result);
 };
 
 

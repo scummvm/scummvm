@@ -189,12 +189,8 @@ public:
 	bool doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void addToList(RMGfxTargetBuffer &bigBuf);
-	bool isActive() {
-		return _bActive;
-	}
-	void setActiveState(bool bState) {
-		_bActive = bState;
-	}
+	bool isActive();
+	void setActiveState(bool bState);
 };
 
 class RMOptionSlide : public RMGfxTaskSetPrior {
@@ -219,9 +215,7 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	void addToList(RMGfxTargetBuffer &bigBuf);
 
-	int getValue() {
-		return _nValue;
-	}
+	int getValue();
 };
 
 class RMOptionScreen : public RMGfxWoodyBuffer {

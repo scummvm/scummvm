@@ -128,6 +128,14 @@ void RMOptionButton::addToList(RMGfxTargetBuffer &bigBuf) {
 		bigBuf.addPrim(new RMGfxPrimitive(this, _rect));
 }
 
+bool RMOptionButton::isActive() {
+	return _bActive;
+}
+
+void RMOptionButton::setActiveState(bool bState) {
+	_bActive = bState;
+}
+
 /****************************************************************************\
 *       RMOptionSlide Methods
 \****************************************************************************/
@@ -251,6 +259,10 @@ void RMOptionSlide::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *
 
 void RMOptionSlide::addToList(RMGfxTargetBuffer &bigBuf) {
 	bigBuf.addPrim(new RMGfxPrimitive(this));
+}
+
+int RMOptionSlide::getValue() {
+	return _nValue;
 }
 
 /****************************************************************************\

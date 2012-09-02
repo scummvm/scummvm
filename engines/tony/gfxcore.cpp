@@ -49,6 +49,17 @@ void RMGfxTask::removeThis(CORO_PARAM, bool &result) {
 	result = true;
 }
 
+/**
+ * Registration
+ */
+void RMGfxTask::Register() {
+	_nInList++;
+}
+
+void RMGfxTask::Unregister() {
+	_nInList--;
+	assert(_nInList >= 0);
+}
 
 /****************************************************************************\
 *       RMGfxTaskSetPrior Methods
@@ -192,7 +203,6 @@ bool RMGfxSourceBuffer::clip2D(int &x1, int &y1, int &u, int &v, int &width, int
 	return (width > 1 && height > 1);
 }
 
-
 /**
  * Initializes a surface by resource Id
  *
@@ -202,6 +212,10 @@ bool RMGfxSourceBuffer::clip2D(int &x1, int &y1, int &u, int &v, int &width, int
  */
 int RMGfxSourceBuffer::init(uint32 resID, int dimx, int dimy, bool bLoadPalette) {
 	return init(RMRes(resID), dimx, dimy, bLoadPalette);
+}
+
+void RMGfxSourceBuffer::offsetY(int nLines) {
+	RMGfxBuffer::offsetY(nLines, getBpp());
 }
 
 /****************************************************************************\
@@ -438,6 +452,34 @@ void RMGfxTargetBuffer::createBWPrecalcTable() {
 void RMGfxTargetBuffer::freeBWPrecalcTable() {
 	delete[] _precalcTable;
 	_precalcTable = NULL;
+}
+
+RMGfxTargetBuffer::operator byte *() {
+	return _buf;
+}
+
+RMGfxTargetBuffer::operator void *() {
+	return (void *)_buf;
+}
+
+RMGfxTargetBuffer::operator uint16 *() {
+	// FIXME: This may not be endian safe
+	return (uint16 *)_buf;
+}
+
+/**
+ * Offseting buffer
+ */
+void RMGfxTargetBuffer::offsetY(int nLines) {
+	RMGfxBuffer::offsetY(nLines, 16);
+}
+
+void RMGfxTargetBuffer::setTrackDirtyRects(bool v) {
+	_trackDirtyRects = v;
+}
+
+bool RMGfxTargetBuffer::getTrackDirtyRects() const {
+	return _trackDirtyRects;
 }
 
 /****************************************************************************\
