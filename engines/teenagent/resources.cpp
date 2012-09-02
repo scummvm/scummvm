@@ -119,7 +119,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	}
 #endif
 
-	cseg.read(dat, CSEG_SIZE);
+	dat->skip(CSEG_SIZE);
 	dseg.read(dat, DSEG_SIZE);
 	eseg.read(dat, ESEG_SIZE);
 	delete dat;

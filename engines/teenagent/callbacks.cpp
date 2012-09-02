@@ -4926,43 +4926,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	default:
-		warning("unknown callback %04x called", addr);
-
-		// try decoding trivial callbacks by cseg if not in switch
-		byte *code = res->cseg.ptr(addr);
-		if (code[0] == 0xbb && code[3] == 0xe8 && code[6] == 0xc3) {
-			// call display_message, r
-			uint16 msg = READ_LE_UINT16(code + 1);
-			uint16 func = 6 + addr + READ_LE_UINT16(code + 4);
-			warning("call %04x and return (csAddr_displayMsg = 0x%04x) msg:0x%04x", func, csAddr_displayMsg, msg);
-			if (func == csAddr_displayMsg) {
-				warning("trivial callback, showing message \"%s\"", (const char *)res->dseg.ptr(msg));
-				displayMessage(msg);
-				return true;
-			}
-		}
-
-		if (code[0] == 0xe8 && code[3] == 0xc3) {
-			uint func = 3 + addr + READ_LE_UINT16(code + 1);
-			warning("call %04x and return (csAddr_rejectMsg = 0x%04x)", func, csAddr_rejectMsg);
-			if (func == csAddr_rejectMsg) {
-				rejectMessage();
-				return true;
-			}
-		}
-
-		if (code[0] == 0xc7 && code[1] == 0x06 && code[2] == 0xf3 && code[3] == 0xb4 &&
-		        code[6] == 0xb8 && code[9] == 0xbb && code[12] == 0xbf &&
-		        code[22] == 0xe8 && code[25] == 0xc3) {
-			warning("callback -> loadScene(%d, Common::Point(%d, %d)); scene->setOrientation(%d)", code[4], 
-			              (READ_LE_UINT16(code + 7) + READ_LE_UINT16(code + 13) + 1) / 2,
-			               READ_LE_UINT16(code + 10), code[21]);
-			loadScene(code[4], Common::Point(
-			              (READ_LE_UINT16(code + 7) + READ_LE_UINT16(code + 13) + 1) / 2 ,
-			              READ_LE_UINT16(code + 10)));
-			scene->setOrientation(code[21]);
-			return true;
-		}
+		error("unknown callback 0x%04x called", addr);
 		break;
 	}
 

@@ -1164,7 +1164,7 @@ public:
 	FilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam, mmm, voices;
 #endif
 
-	Segment cseg, dseg;
+	Segment dseg;
 	Font font7, font8;
 
 	//const byte *getDialog(uint16 dialogNum) { return eseg.ptr(dialogOffsets[dialogNum]); }
