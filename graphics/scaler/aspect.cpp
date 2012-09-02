@@ -56,7 +56,7 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 #if ASPECT_MODE == kVeryFastAndGoodAspectMode
 
 template<typename ColorMask, int scale>
-static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
+static void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	if (scale == 1) {
 		while (width--) {
 			*dst++ = interpolate16_7_1<ColorMask>(*srcB++, *srcA++);
