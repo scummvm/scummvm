@@ -290,6 +290,75 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 	return messageResult;
 }
 
+Class488::Class488(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _fileHash1(fileHash1), _fileHash2(fileHash2),
+	_flag1(false), _flag2(false), _soundResource(vm) {
+
+	createSurface(1010, 640, 480); // TODO Use correct size	from the two hashes
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	_x = x;
+	_y = y;
+	sub4343C0();
+}
+
+uint32 Class488::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (!_flag2 && param.asInteger() == calcHash("ClickSwitch")) {
+			sendMessage(_parentScene, 0x480F, 0);
+			_soundResource.play(0x4E1CA4A0);
+		}
+		break;
+	case 0x480F:
+		sub434380();
+		break;
+	case 0x482A:
+		sendMessage(_parentScene, 0x1022, 990);
+		break;
+	case 0x482B:
+		sendMessage(_parentScene, 0x1022, 1010);
+		break;
+	}
+	return messageResult;
+}
+
+uint32 Class488::handleMessage434340(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		gotoNextState();
+		break;
+	}
+	return messageResult;
+}
+
+void Class488::sub434380() {
+	_flag2 = false;
+	_flag1 = true;
+	startAnimation(_fileHash2, 0, -1);
+	SetMessageHandler(&Class488::handleMessage434340);
+	NextState(&Class488::sub4343C0);
+}
+
+void Class488::sub4343C0() {
+	_flag1 = false;
+	startAnimation(_fileHash1, 0, -1);
+	SetMessageHandler(&Class488::handleMessage);
+}
+
+void Class488::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
+	_fileHash1 = fileHash1;
+	_fileHash2 = fileHash2;
+	if (_flag1) {
+		startAnimation(_fileHash2, _currFrameIndex, -1);
+		_flag2 = true;
+	} else {
+		startAnimation(_fileHash1, 0, -1);
+	}
+}
+
 Scene2803b::Scene2803b(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _palStatus(0) {
 
@@ -307,7 +376,7 @@ Scene2803b::Scene2803b(NeverhoodEngine *vm, Module *parentModule, int which)
 	loadDataResource(0x81120132);
 	insertMouse433(0x00A05290);
 
-	// TODO insertSprite<Class488>(this, 0xAFAD591A, 0x276E321D, 578, 200);
+	insertSprite<Class488>(this, 0xAFAD591A, 0x276E321D, 578, 200);
 
 	if (getGlobalVar(0x190A1D18)) {
 		setBackground(0x412A423E);

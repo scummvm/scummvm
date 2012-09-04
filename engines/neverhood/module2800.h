@@ -54,6 +54,21 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class Class488 : public AnimatedSprite {
+public:
+	Class488(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y);
+	void sub434380();
+	void sub4343C0();
+	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	uint32 _fileHash1, _fileHash2;
+	bool _flag1, _flag2;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage434340(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 class Scene2803b : public Scene {
 public:
 	Scene2803b(NeverhoodEngine *vm, Module *parentModule, int which);
