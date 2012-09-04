@@ -138,7 +138,7 @@ private:
 	byte *_buffer;
 public:
 	Common::SeekableReadStream *_scriptStream;
-	ScScript(BaseGame *inGame, ScEngine *Engine);
+	ScScript(BaseGame *inGame, ScEngine *engine);
 	virtual ~ScScript();
 	char *_filename;
 	bool _thread;

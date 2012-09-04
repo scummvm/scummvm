@@ -38,7 +38,7 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(ScScript, false)
 
 //////////////////////////////////////////////////////////////////////////
-ScScript::ScScript(BaseGame *inGame, ScEngine *Engine) : BaseClass(inGame) {
+ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_buffer = NULL;
 	_bufferSize = _iP = 0;
 	_scriptStream = NULL;
@@ -48,7 +48,7 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *Engine) : BaseClass(inGame) {
 	_symbols = NULL;
 	_numSymbols = 0;
 
-	_engine = Engine;
+	_engine = engine;
 
 	_globals = NULL;
 
