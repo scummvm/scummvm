@@ -277,7 +277,7 @@ enum VKeyCodes {
 	kVkUp    = 38,
 	kVkRight = 39,
 	kVkDown  = 40
-}
+};
 
 //////////////////////////////////////////////////////////////////////////
 Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
