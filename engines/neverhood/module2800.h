@@ -102,9 +102,9 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Class469 : public AnimatedSprite {
+class AsScene2806Spew : public AnimatedSprite {
 public:
-	Class469(NeverhoodEngine *vm);
+	AsScene2806Spew(NeverhoodEngine *vm);
 protected:
 	SoundResource _soundResource;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -122,7 +122,7 @@ protected:
 	Sprite *_sprite2;
 	Sprite *_sprite3;
 	Sprite *_sprite4;
-	Sprite *_class469;
+	Sprite *_asSpew;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void update();
 	void findClosestPoint();
@@ -211,6 +211,31 @@ protected:
 	void update();
 	bool isMixtureGood();
 	bool isAnyTestTubeFilled();
+};
+
+class AsScene2809Spew : public AnimatedSprite {
+public:
+	AsScene2809Spew(NeverhoodEngine *vm);
+protected:
+	SoundResource _soundResource;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2809 : public Scene {
+public:
+	Scene2809(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	NPointArray *_pointList;
+	int _pointIndex;
+	NRect _clipRects[4];
+	Sprite *_sprite1;
+	Sprite *_sprite2;
+	Sprite *_sprite3;
+	Sprite *_sprite4;
+	Sprite *_asSpew;
+	void update();	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void findClosestPoint();
 };
 
 } // End of namespace Neverhood

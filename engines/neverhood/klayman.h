@@ -612,6 +612,25 @@ protected:
 	void sub40F7C0();
 };
 
+class KmScene2809 : public Klayman {
+public:
+	KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+		bool flag, NRect *clipRects, uint clipRectsCount);
+protected:
+	SoundResource _soundRes1;
+	SoundResource _soundRes2;
+	SoundResource _soundRes3;
+	SoundResource _soundRes4;
+	SoundResource _soundRes5;
+	bool _flag1;
+	bool _flag2;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 handleMessage457FC0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage458340(int messageNum, const MessageParam &param, Entity *sender);
+	void sub458550();
+	void sub458590();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_KLAYMAN_H */

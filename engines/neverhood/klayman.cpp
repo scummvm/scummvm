@@ -5514,4 +5514,168 @@ void KmScene2806::sub40F7C0() {
 	startAnimation(0x1C388C04, 0, -1);
 }
 
+KmScene2809::KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+	bool flag, NRect *clipRects, uint clipRectsCount)
+	: Klayman(vm, parentScene, x, y, 1000, 1000),
+	_soundRes1(vm), _soundRes2(vm), _soundRes3(vm), _soundRes4(vm), _soundRes5(vm) {
+
+	if (flag) {
+    	// TODO Maybe? Don't know. Set Klayman clip rects
+		_soundRes1.load(0x58E0C341);
+		_soundRes2.load(0x40A00342);
+		_soundRes3.load(0xD0A1C348);
+		_soundRes4.load(0x166FC6E0);
+		_soundRes5.load(0x00018040);
+	}
+
+	_dataResource.load(0x1830009A);
+	
+}
+
+uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4804:
+		startWalkToX(226, true);
+		break;
+	case 0x480D:
+		GotoState(&Klayman::sub420F60);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 0) {
+			GotoState(&Klayman::stPressButtonSide); 
+		}
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x4831:
+		GotoState(&KmScene2809::sub458550);
+		break;
+	case 0x4832:
+		if (param.asInteger() == 1) {
+			GotoState(&KmScene2809::sub458590);
+		} else {
+			GotoState(&Klayman::sub421110);
+		}
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene2809::handleMessage457FC0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1008:
+		if (_flag1) {
+			startAnimationByHash(0x1C388C04, 0x004A2148, 0);
+			messageResult = 0;
+		} else
+			_flag2 = true;
+		break;
+	case 0x100D:
+		if (param.asInteger() == 0x0002418E)
+			sendMessage(_parentScene, 0x2000, 0);
+		else if (param.asInteger() == 0x924090C2) {
+			_flag1 = true;
+			if (_flag2) {
+				startAnimationByHash(0x1C388C04, 0x004A2148, 0);
+				messageResult = 0;
+			}
+		} else if (param.asInteger() == 0x004A2148)
+			_flag1 = false;
+		else if (param.asInteger() == 0x02B20220)
+			_soundResource1.play(0xC5408620);
+		else if (param.asInteger() == 0x0A720138)
+			_soundResource1.play(0xD4C08010);
+		else if (param.asInteger() == 0x03020231)
+			_soundResource1.play(0xD4C08010);
+		else if (param.asInteger() == 0xB613A180)
+			_soundResource1.play(0x44051000);
+		else if (param.asInteger() == 0x67221A03)
+			_soundResource1.play(0x44051000);
+		else if (param.asInteger() == 0x038A010B)
+			_soundResource1.play(0x00018040);
+		else if (param.asInteger() == 0x422B0280)
+			_soundResource1.play(0x166FC6E0);
+		else if (param.asInteger() == 0x925A0C1E)
+			_soundResource1.play(0x40E5884D);
+		else if (param.asInteger() == 0x000F0082)
+			_soundResource1.play(0x546CDCC1);
+		else if (param.asInteger() == 0x00020814)
+			_soundResource1.play(0x786CC6D0);
+		else if (param.asInteger() == 0x06020500)
+			_soundResource1.play(0x1069C0E1);
+		else if (param.asInteger() == 0x02128C00)
+			_soundResource1.play(0x5068C4C3);
+		else if (param.asInteger() == 0x82022030)
+			_soundResource1.play(0x5C48C0E8);
+		break;
+	}
+	return messageResult;
+}
+
+uint32 KmScene2809::handleMessage458340(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x32180101)
+			_soundResource1.play(0x405002D8);
+		else if (param.asInteger() == 0x0A2A9098)
+			_soundResource1.play(0x0460E2FA);
+		else if (param.asInteger() == 0xD00A0C0C)
+			_soundRes1.play();
+		else if (param.asInteger() == 0x04121920)
+			_soundRes2.play();
+		else if (param.asInteger() == 0x030B4480)
+			_soundRes3.play();
+		else if (param.asInteger() == 0x422B0280)
+			_soundRes4.play();
+		else if (param.asInteger() == 0x038A010B)
+			_soundRes5.play();
+		else if (param.asInteger() == 0x67221A03)
+			_soundResource1.play(0x44051000);
+		else if (param.asInteger() == 0x02B20220)
+			_soundResource1.play(0xC5408620);
+		else if (param.asInteger() == 0x925A0C1E)
+			_soundResource1.play(0x40E5884D);
+		else if (param.asInteger() == 0x03020231)
+			_soundResource1.play(0xD4C08010);
+		else if (param.asInteger() == 0x08040840)
+			setDoDeltaX(2);
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2809::sub458550() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(0x2838C010, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&KmScene2809::handleMessage458340);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+}
+
+void KmScene2809::sub458590() {
+	_status2 = 1;
+	_acceptInput = false;
+	_flag1 = false;
+	_flag2 = false;
+	startAnimation(0x1C388C04, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&KmScene2809::handleMessage457FC0);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+}
+
 } // End of namespace Neverhood
