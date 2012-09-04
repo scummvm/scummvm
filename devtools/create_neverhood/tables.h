@@ -417,6 +417,12 @@ static const uint32 messageListOffsets[] = {
 	5, 0x004AF0A0,
 	1, 0x004AF090,
 	2, 0x004AF0E0,
+	// Scene2809
+	1, 0x004B5B90,
+	3, 0x004B5BD0,
+	5, 0x004B5BA8,
+	1, 0x004B5B88,
+	2, 0x004B5B98,
 	0, 0
 };
 
