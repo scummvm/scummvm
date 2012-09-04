@@ -45,3 +45,4 @@ add_engine toon "Toonstruck" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tsage "TsAGE" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
+add_engine wintermute "Wintermute" no
