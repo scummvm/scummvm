@@ -62,7 +62,7 @@ get_var() {
 	eval echo \$${1}
 }
 
-# Add an engine: id name build subengines
+# Add an engine: id name build subengines dependencies
 add_engine() {
 	_engines="${_engines} ${1}"
 	if test "${3}" = "no" ; then
