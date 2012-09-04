@@ -113,6 +113,91 @@ protected:
 	void findClosestPoint();
 };
 
+class AsScene2808Dispenser : public StaticSprite {
+public:
+	AsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex);
+	void startCountdown(int index);
+protected:
+	Scene *_parentScene;
+	int _countdown;
+	int _testTubeSetNum, _testTubeIndex;
+	void update();	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2808TestTube : public AnimatedSprite {
+public:
+	AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, AsScene2808Dispenser *dispenser);
+	void fill();
+	void flush();
+	uint32 getFillLevel() const { return _fillLevel; }
+protected:
+	AsScene2808Dispenser *_dispenser;
+	int _testTubeSetNum;
+	uint32 _fillLevel;
+	int _testTubeIndex;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	SoundResource _soundResource4;
+	SoundResource _soundResource5;
+	SoundResource _soundResource6;
+	SoundResource _soundResource7;
+	SoundResource _soundResource8;
+	SoundResource _soundResource9;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2808Handle : public AnimatedSprite {
+public:
+	AsScene2808Handle(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum);
+	void activate();
+	void stActivated();
+protected:
+	Scene *_parentScene;
+	int _testTubeSetNum;
+	bool _isActivated;
+	SoundResource _soundResource;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmActivating(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2808Flow : public AnimatedSprite {
+public:
+	AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum);
+	void start();
+	void stKeepFlowing();
+protected:
+	Scene *_parentScene;
+	int _testTubeSetNum;
+	SoundResource _soundResource;
+	uint32 hmFlowing(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2808LightEffect : public AnimatedSprite {
+public:
+	AsScene2808LightEffect(NeverhoodEngine *vm, int which);
+protected:
+	int _countdown;
+	void update();
+};
+
+class Scene2808 : public Scene {
+public:
+	Scene2808(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	int _countdown;
+	int _testTubeSetNum;
+	AsScene2808Flow *_asFlow;
+	int _leaveResult;
+	bool _isFlowing;
+	AsScene2808TestTube *_asTestTubes[3];
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void update();
+	bool isMixtureGood();
+	bool isAnyTestTubeFilled();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE2800_H */

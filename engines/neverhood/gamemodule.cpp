@@ -220,6 +220,31 @@ void GameModule::initScene1405Vars() {
 	
 }
 
+void GameModule::initScene2808Vars1() {
+
+	// Exit if it's already initialized
+	if (getSubVar(0x40050052, 0x20479010))
+		return;
+
+	for (uint i = 0; i < 3; i++)
+		setSubVar(0x0C601058, i, _vm->_rnd->getRandomNumber(3 - 1) + 1);
+
+	setSubVar(0x40050052, 0x20479010, 1);
+
+}
+
+void GameModule::initScene2808Vars2() {
+
+	// Exit if it's already initialized
+	if (getSubVar(0x40050052, 0x66059818))
+		return;
+
+	for (uint i = 0; i < 3; i++)
+		setSubVar(0x40005834, i, _vm->_rnd->getRandomNumber(6 - 1) + 1);
+
+	setSubVar(0x40050052, 0x66059818, 1);
+}
+
 void GameModule::initScene3009Vars() {
 	if (!getSubVar(0x40050052, 0x8C9819C2)) {
 		for (int i = 0; i < 3; i++) {
@@ -303,7 +328,7 @@ void GameModule::startup() {
 	createModule(2700, -1);
 #endif
 #if 1
-	_vm->gameState().sceneNum = 5;
+	_vm->gameState().sceneNum = 7;
 	createModule(2800, -1);
 #endif
 }

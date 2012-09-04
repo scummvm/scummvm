@@ -39,6 +39,8 @@ public:
 	void handleMouseDown(int16 x, int16 y);
 	void initScene1307Vars();
 	void initScene1405Vars();
+	void initScene2808Vars1();
+	void initScene2808Vars2();
 	void initScene3009Vars();
 protected:
 	Entity *_prevChildObject;

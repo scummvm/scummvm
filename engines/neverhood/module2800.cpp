@@ -90,6 +90,10 @@ void Module2800::createScene(int sceneNum, int which) {
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		_childObject = new Scene2806(_vm, this, which);
 		break;
+	case 7:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Scene2808(_vm, this, 0);
+		break;
 	case 25:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		if (getGlobalVar(0x190A1D18))
@@ -155,6 +159,9 @@ void Module2800::updateScene() {
 			} else {
 				createScene(2, 2);
 			}
+			break;
+		case 7:
+			createScene(5, _moduleResult);
 			break;
 		case 25:
 			createScene(2, 5);
@@ -755,5 +762,450 @@ void Scene2806::findClosestPoint() {
 	}
 	
 }
+
+static const uint32 kScene2808FileHashes1[] = {
+	0x90B0392,
+	0x90B0192
+};
+
+static const uint32 kScene2808FileHashes2[] = {
+	0xB0396098,
+	0xB0196098
+};
+
+static const uint32 kClass428FileHashes[] = {
+	0x140022CA,
+	0x4C30A602,
+	0xB1633402,
+	0x12982135,
+	0x0540B728,
+	0x002A81E3,
+	0x08982841,
+	0x10982841,
+	0x20982841,
+	0x40982841,
+	0x80982841,
+	0x40800711
+};
+
+static const int kClass428Countdowns1[] = {
+	18, 16, 10, 0
+};
+
+static const int kClass428Countdowns2[] = {
+	9, 9, 8, 8, 5, 5, 0, 0
+};
+
+static const uint32 kClass490FileHashes[] = {
+	0x08100071,
+	0x24084215,
+	0x18980A10
+};
+
+static const int16 kClass490FrameIndices1[] = {
+	0, 8, 15, 19
+};
+
+static const int16 kClass490FrameIndices2[] = {
+	0, 4, 8, 11, 15, 17, 19, 0
+};
+
+AsScene2808Dispenser::AsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex)
+	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _testTubeSetNum(testTubeSetNum),
+	_testTubeIndex(testTubeIndex) {
+	
+	_spriteResource.load2(kClass428FileHashes[testTubeSetNum * 3 + testTubeIndex]);
+	createSurface(1500, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	
+	_surface->getDrawRect().x = 0;
+	_surface->getDrawRect().y = 0;
+	_surface->getDrawRect().width = _spriteResource.getDimensions().width;
+	_surface->getDrawRect().height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	_deltaRect = _drawRect;
+	processDelta();
+
+	SetUpdateHandler(&AsScene2808Dispenser::update);
+	SetMessageHandler(&AsScene2808Dispenser::handleMessage);
+
+	setVisible(false);
+	_needRefresh = true;
+	StaticSprite::update();
+	
+}
+
+void AsScene2808Dispenser::update() {
+	StaticSprite::update();
+	if (_countdown != 0 && (--_countdown) == 0) {
+		setVisible(false);
+	}
+}
+	
+uint32 AsScene2808Dispenser::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		sendMessage(_parentScene, 0x2000, _testTubeIndex);
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2808Dispenser::startCountdown(int index) {
+	setVisible(true);
+	StaticSprite::update();
+	if (_testTubeSetNum == 0) {
+		_countdown = kClass428Countdowns1[index];
+	} else {
+		_countdown = kClass428Countdowns2[index];
+	}
+}
+
+AsScene2808TestTube::AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, AsScene2808Dispenser *dispenser)
+	: AnimatedSprite(vm, 1100), _testTubeSetNum(testTubeSetNum), _testTubeIndex(testTubeIndex), _dispenser(dispenser),
+	_soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
+	_soundResource4(vm), _soundResource5(vm), _soundResource6(vm),
+	_soundResource7(vm), _soundResource8(vm), _soundResource9(vm), _fillLevel(0) {
+
+	if (testTubeSetNum == 0) {
+		_x = 504;
+		_y = 278;
+	} else {
+		setDoDeltaX(1);
+		_x = 136;
+		_y = 278;
+	}
+
+	createSurface1(kClass490FileHashes[testTubeIndex], 1100);
+
+	if (testTubeSetNum == 0) {
+		_soundResource1.load(0x30809E2D);
+		_soundResource2.load(0x72811E2D);
+		_soundResource3.load(0x78B01625);
+	} else {
+		_soundResource4.load(0x70A41E0C);
+		_soundResource5.load(0x50205E2D);
+		_soundResource6.load(0xF8621E2D);
+		_soundResource7.load(0xF1A03C2D);
+		_soundResource8.load(0x70A43D2D);
+		_soundResource9.load(0xF0601E2D);
+	}
+	
+	startAnimation(kClass490FileHashes[testTubeIndex], 0, -1);
+	_newStickFrameIndex = 0;
+	
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2808TestTube::handleMessage);
+	
+	if (_fillLevel == 0)
+		setVisible(false);
+	
+}
+
+uint32 AsScene2808TestTube::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		fill();
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2808TestTube::fill() {
+
+
+	if ((int)_fillLevel >= _testTubeSetNum * 3 + 3)
+		return;
+		
+	if (_testTubeSetNum == 0) {
+		switch (_fillLevel) {
+		case 0:
+			_soundResource1.play();
+			break;
+		case 1:
+			_soundResource2.play();
+			break;
+		case 2:
+			_soundResource3.play();
+			break;
+		}
+		setVisible(true);
+		startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices1[_fillLevel], kClass490FrameIndices1[_fillLevel + 1]);
+		_newStickFrameIndex = kClass490FrameIndices1[_fillLevel + 1];
+	} else {
+		switch (_fillLevel) {
+		case 0:
+			_soundResource4.play();
+			break;
+		case 1:
+			_soundResource5.play();
+			break;
+		case 2:
+			_soundResource6.play();
+			break;
+		case 3:
+			_soundResource7.play();
+			break;
+		case 4:
+			_soundResource8.play();
+			break;
+		case 5:
+			_soundResource9.play();
+			break;
+		}
+		setVisible(true);
+		startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices2[_fillLevel], kClass490FrameIndices2[_fillLevel + 1]);
+		_newStickFrameIndex = kClass490FrameIndices2[_fillLevel + 1];
+	}
+	_dispenser->startCountdown(_fillLevel);
+	_fillLevel++;
+}
+
+void AsScene2808TestTube::flush() {
+	if (_fillLevel != 0) {
+		if (_testTubeSetNum == 0) {
+			startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices1[_fillLevel], -1);
+		} else {
+			startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices2[_fillLevel], -1);
+		}
+		_newStickFrameIndex = 0;
+		_playBackwards = true;
+		setVisible(true);
+	}
+}
+
+AsScene2808Handle::AsScene2808Handle(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
+	: AnimatedSprite(vm, 1300), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum), _isActivated(false),
+	_soundResource(vm) {
+	
+	_soundResource.load(0xE18D1F30);
+	_x = 320;
+	_y = 240;
+	if (_testTubeSetNum == 1)
+		setDoDeltaX(1);
+	createSurface1(0x040900D0, 1300);
+	startAnimation(0x040900D0, 0, -1);
+	_needRefresh = true;
+	_newStickFrameIndex = 0;
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2808Handle::handleMessage);
+	AnimatedSprite::updatePosition();
+}
+
+uint32 AsScene2808Handle::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (!_isActivated) {
+			sendMessage(_parentScene, 0x2001, 0);
+			_soundResource.play();
+			activate();
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+uint32 AsScene2808Handle::hmActivating(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		gotoNextState();
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2808Handle::activate() {
+	startAnimation(0x040900D0, 0, -1);
+	SetMessageHandler(&AsScene2808Handle::hmActivating);
+	NextState(&AsScene2808Handle::stActivated);
+	_isActivated = true;
+	_newStickFrameIndex = -1;
+}
+
+void AsScene2808Handle::stActivated() {
+	stopAnimation();
+	sendMessage(_parentScene, 0x2002, 0);
+}
+
+AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum),
+	_soundResource(vm) {
+
+	if (testTubeSetNum == 0) {
+		_x = 312;
+		_y = 444;
+	} else {
+		_x = 328;
+		_y = 444;
+	}
+	createSurface1(0xB8414818, 1200);
+	startAnimation(0xB8414818, 0, -1);
+	setVisible(false);
+	_newStickFrameIndex = 0;
+	_needRefresh = true;
+	_soundResource.load(0x6389B652);
+	SetUpdateHandler(&AnimatedSprite::update);
+	AnimatedSprite::updatePosition();
+}
+	
+uint32 AsScene2808Flow::hmFlowing(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		gotoNextState();
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2808Flow::start() {
+	startAnimation(0xB8414818, 0, -1);
+	setVisible(true);
+	SetMessageHandler(&AsScene2808Flow::hmFlowing);
+	NextState(&AsScene2808Flow::stKeepFlowing);
+	_soundResource.play();
+}
+
+void AsScene2808Flow::stKeepFlowing() {
+	startAnimation(0xB8414818, 1, -1);
+	NextState(&AsScene2808Flow::stKeepFlowing);
+}
+
+AsScene2808LightEffect::AsScene2808LightEffect(NeverhoodEngine *vm, int testTubeSetNum)
+	: AnimatedSprite(vm, 800), _countdown(1) {
+	
+	_x = 320;
+	_y = 240;
+	if (testTubeSetNum == 1)
+		setDoDeltaX(1);
+	createSurface1(0x804C2404, 800);
+	SetUpdateHandler(&AsScene2808LightEffect::update);
+	_needRefresh = true;
+	AnimatedSprite::updatePosition();
+}
+
+void AsScene2808LightEffect::update() {
+	if (_countdown != 0 && (--_countdown) == 0) {
+		int16 frameIndex = _vm->_rnd->getRandomNumber(3 - 1);
+		startAnimation(0x804C2404, frameIndex, frameIndex);
+		updateAnim();
+		updatePosition();
+		_countdown = _vm->_rnd->getRandomNumber(3 - 1) + 1;
+	}
+}
+
+Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _countdown(0), _testTubeSetNum(which), _leaveResult(0), _isFlowing(false) {
+
+	Sprite *tempSprite;
+
+	if (which == 0) {
+		_vm->gameModule()->initScene2808Vars1();
+	} else {
+		_vm->gameModule()->initScene2808Vars2();
+	}
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2808::handleMessage);
+	SetUpdateHandler(&Scene2808::update);
+
+	setBackground(kScene2808FileHashes1[which]);
+	setPalette(kScene2808FileHashes1[which]);
+
+	tempSprite = insertSprite<AsScene2808Handle>(this, which);
+	_vm->_collisionMan->addSprite(tempSprite);
+
+	_asFlow = insertSprite<AsScene2808Flow>(this, which);
+	insertSprite<AsScene2808LightEffect>(which);
+
+	for (int testTubeIndex = 0; testTubeIndex < 3; testTubeIndex++) {
+		AsScene2808Dispenser *dispenser = insertSprite<AsScene2808Dispenser>(this, which, testTubeIndex);
+		_vm->_collisionMan->addSprite(dispenser);
+		_asTestTubes[testTubeIndex] = insertSprite<AsScene2808TestTube>(which, testTubeIndex, dispenser);
+		_vm->_collisionMan->addSprite(_asTestTubes[testTubeIndex]);
+	}
+	
+	insertMouse433(kScene2808FileHashes2[which]);
+
+}
+
+uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		// TODO DEBUG Stuff
+		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !isAnyTestTubeFilled()) {
+			leaveScene(1);
+		}
+		break;
+	case 0x000D:
+		// TODO DEBUG Stuff
+		break;
+	case 0x2000:
+		if (!_isFlowing)
+			_asTestTubes[param.asInteger()]->fill();
+		break;
+	case 0x2001:
+		_isFlowing = true;
+		break;
+	case 0x2002:
+		if (isAnyTestTubeFilled()) {
+			_leaveResult = 3;
+			if (!isMixtureGood())
+				_leaveResult = 2;
+			_asFlow->start();
+			for (int i = 0; i < 3; i++)
+				_asTestTubes[i]->flush();
+			_mouseCursor->setVisible(false);
+			_countdown = 16;
+		} else {
+			leaveScene(1);
+		}
+		break;
+	}
+	return 0;
+}
+
+void Scene2808::update() {
+
+	// DEBUG: Show correct values
+	debug("---------------");
+	debug("%03d %03d %03d", getSubVar(0x0C601058, 0), getSubVar(0x0C601058, 1), getSubVar(0x0C601058, 2));
+	debug("%03d %03d %03d", _asTestTubes[0]->getFillLevel(), _asTestTubes[1]->getFillLevel(), _asTestTubes[2]->getFillLevel());
+	
+	Scene::update();
+	if (_countdown != 0 && (--_countdown) == 0) {
+		leaveScene(_leaveResult);
+	}
+}
+
+bool Scene2808::isMixtureGood() {
+	if (_testTubeSetNum == 0) {
+		return
+			_asTestTubes[0]->getFillLevel() == getSubVar(0x0C601058, 0) &&
+			_asTestTubes[1]->getFillLevel() == getSubVar(0x0C601058, 1) &&
+			_asTestTubes[2]->getFillLevel() == getSubVar(0x0C601058, 2);
+	} else {
+		return
+			_asTestTubes[0]->getFillLevel() == getSubVar(0x40005834, 0) &&
+			_asTestTubes[1]->getFillLevel() == getSubVar(0x40005834, 1) &&
+			_asTestTubes[2]->getFillLevel() == getSubVar(0x40005834, 2);
+	}
+}
+
+bool Scene2808::isAnyTestTubeFilled() {
+	return
+		_asTestTubes[0]->getFillLevel() > 0 ||
+		_asTestTubes[1]->getFillLevel() > 0 ||
+		_asTestTubes[2]->getFillLevel() > 0;
+}
+
 
 } // End of namespace Neverhood
