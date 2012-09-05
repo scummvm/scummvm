@@ -207,7 +207,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 		readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
 
 	} else {
-		// Open up the savgame file
+		// Open up the savegame file
 		Common::String slotName = generateSaveName(slotNumber);
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
 
@@ -316,8 +316,8 @@ Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 	// Reload the scene
 	sceneUp();
 
-	_hero->_x = x;
-	_hero->_y = y;
+	// Restore player position
+	_hero->gotoxy(x, y);
 	_hero->_z = z;
 
 	return Common::kNoError;
