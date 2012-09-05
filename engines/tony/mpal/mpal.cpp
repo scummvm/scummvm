@@ -39,19 +39,6 @@ namespace Tony {
 
 namespace MPAL {
 
-#define GETARG(type)   va_arg(v, type)
-
-/****************************************************************************\
-*       Copyright
-\****************************************************************************/
-
-const char *mpalCopyright =
-	"\n\nMPAL - MultiPurpose Adventure Language for Windows 95\n"
-	"Copyright 1997-98 Giovanni Bajo and Luca Giusti\n"
-	"ALL RIGHTS RESERVED\n"
-	"\n"
-	"\n";
-
 /****************************************************************************\
 *       Internal functions
 \****************************************************************************/
@@ -363,24 +350,22 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
 MpalHandle resLoad(uint32 dwId) {
 	MpalHandle h;
 	char head[4];
-	uint32 nBytesRead;
-	uint32 nSizeComp, nSizeDecomp;
 	byte *temp, *buf;
 
 	for (int i = 0; i < GLOBALS._nResources; i++)
 		if (GLOBALS._lpResources[i * 2] == dwId) {
 			GLOBALS._hMpr.seek(GLOBALS._lpResources[i * 2 + 1]);
-			nBytesRead = GLOBALS._hMpr.read(head, 4);
+			uint32 nBytesRead = GLOBALS._hMpr.read(head, 4);
 			if (nBytesRead != 4)
 				return NULL;
 			if (head[0] != 'R' || head[1] != 'E' || head[2] != 'S' || head[3] != 'D')
 				return NULL;
 
-			nSizeDecomp = GLOBALS._hMpr.readUint32LE();
+			uint32 nSizeDecomp = GLOBALS._hMpr.readUint32LE();
 			if (GLOBALS._hMpr.err())
 				return NULL;
 
-			nSizeComp = GLOBALS._hMpr.readUint32LE();
+			uint32 nSizeComp = GLOBALS._hMpr.readUint32LE();
 			if (GLOBALS._hMpr.err())
 				return NULL;
 
@@ -463,18 +448,16 @@ static uint32 *GetItemList(uint32 nLoc) {
 
 static LpItem getItemData(uint32 nOrdItem) {
 	LpMpalItem curitem = GLOBALS._lpmiItems + nOrdItem;
-	LpItem ret;
-	MpalHandle hDat;
 	char *dat;
 	char *patlength;
 
 	// Zeroing out the allocated memory is required!!!
-	ret = (LpItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(Item));
+	LpItem ret = (LpItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(Item));
 	if (ret == NULL)
 		return NULL;
 	ret->_speed = 150;
 
-	hDat = resLoad(curitem->_dwRes);
+	MpalHandle hDat = resLoad(curitem->_dwRes);
 	dat = (char *)globalLock(hDat);
 
 	if (dat[0] == 'D' && dat[1] == 'A' && dat[2] == 'T') {

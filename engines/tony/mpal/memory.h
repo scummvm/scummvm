@@ -69,6 +69,8 @@ public:
 #define GMEM_MOVEABLE 2
 #define GMEM_ZEROINIT 4
 
+const uint32 BLOCK_ID = 0x12345678;
+
 } // end of namespace MPAL
 
 } // end of namespace Tony

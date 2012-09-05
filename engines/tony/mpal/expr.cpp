@@ -35,68 +35,6 @@ namespace Tony {
 
 namespace MPAL {
 
-/**
- * @defgroup Mathamatical operations
- */
-//@{
-
-#define OP_MUL     ((1  << 4) | 0)
-#define OP_DIV     ((1  << 4) | 1)
-#define OP_MODULE  ((1  << 4) | 2)
-#define OP_ADD     ((2  << 4) | 0)
-#define OP_SUB     ((2  << 4) | 1)
-#define OP_SHL     ((3  << 4) | 0)
-#define OP_SHR     ((3  << 4) | 1)
-#define OP_MINOR   ((4  << 4) | 0)
-#define OP_MAJOR   ((4  << 4) | 1)
-#define OP_MINEQ   ((4  << 4) | 2)
-#define OP_MAJEQ   ((4  << 4) | 3)
-#define OP_EQUAL   ((5  << 4) | 0)
-#define OP_NOEQUAL ((5  << 4) | 1)
-#define OP_BITAND  ((6  << 4) | 0)
-#define OP_BITXOR  ((7  << 4) | 0)
-#define OP_BITOR   ((8  << 4) | 0)
-#define OP_AND     ((9  << 4) | 0)
-#define OP_OR      ((10 << 4) | 0)
-
-
-/**
- * Object types that can be contained in an EXPRESSION structure
- */
-enum ExprListTypes {
-	ELT_NUMBER   = 1,
-	ELT_VAR      = 2,
-	ELT_PARENTH  = 3,
-	ELT_PARENTH2 = 4
-};
-
-//@}
-
-/**
- * @defgroup Structures
- */
-//@{
-
-/**
- * Mathamatical framework to manage operations
- */
-typedef struct {
-	byte _type;                     // Tipo di oggetto (vedi enum ExprListTypes)
-	byte _unary;                    // Unary operatore (NON SUPPORTATO)
-
-	union {
-		int _num;                   // Numero (se type==ELT_NUMBER)
-		char *_name;                // Nome variabile (se type==ELT_VAR)
-		MpalHandle _son;            // Handle a espressione (type==ELT_PARENTH)
-		byte *_pson;                // Handle lockato (type==ELT_PARENTH2)
-	} _val;
-
-	byte _symbol;                   // Simbolo matematico (vedi #define OP_*)
-
-} Expression;
-typedef Expression *LpExpression;
-
-//@}
 
 /**
  * Duplicate a mathematical expression.
@@ -106,15 +44,14 @@ typedef Expression *LpExpression;
  */
 static byte *duplicateExpression(MpalHandle h) {
 	byte *orig, *clone;
-	LpExpression one, two;
 
 	orig = (byte *)globalLock(h);
 
 	int num = *(byte *)orig;
-	one = (LpExpression)(orig+1);
+	LpExpression one = (LpExpression)(orig+1);
 
 	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(Expression) * num + 1);
-	two = (LpExpression)(clone + 1);
+	LpExpression two = (LpExpression)(clone + 1);
 
 	memcpy(clone, orig, sizeof(Expression) * num + 1);
 
@@ -180,7 +117,6 @@ static int Compute(int a, int b, byte symbol) {
 
 static void solve(LpExpression one, int num) {
 	LpExpression two, three;
-	int j;
 
 	while (num > 1) {
 		two = one + 1;
@@ -189,7 +125,7 @@ static void solve(LpExpression one, int num) {
 			memmove(one, two, (num - 1) * sizeof(Expression));
 			--num;
 		} else {
-			j = 1;
+			int j = 1;
 			three = two + 1;
 			while ((three->_symbol != 0) && (two->_symbol & 0xF0) > (three->_symbol & 0xF0)) {
 				++two;
@@ -213,13 +149,11 @@ static void solve(LpExpression one, int num) {
  * @returns		Value
  */
 static int evaluateAndFreeExpression(byte *expr) {
-	LpExpression one, cur;
-
 	int num = *expr;
-	one = (LpExpression)(expr + 1);
+	LpExpression one = (LpExpression)(expr + 1);
 
 	// 1) Substitutions of variables
-	cur = one;
+	LpExpression cur = one;
 	for (int i = 0; i < num; i++, cur++) {
 		if (cur->_type == ELT_VAR) {
 			cur->_type = ELT_NUMBER;
@@ -254,7 +188,6 @@ static int evaluateAndFreeExpression(byte *expr) {
  * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
  */
 const byte *parseExpression(const byte *lpBuf, MpalHandle *h) {
-	LpExpression cur;
 	byte *start;
 
 	uint32 num = *lpBuf;
@@ -270,12 +203,14 @@ const byte *parseExpression(const byte *lpBuf, MpalHandle *h) {
 	start = (byte *)globalLock(*h);
 	*start = (byte)num;
 
-	cur = (LpExpression)(start + 1);
+	LpExpression cur = (LpExpression)(start + 1);
 
 	for (uint32 i = 0;i < num; i++) {
 		cur->_type = *(lpBuf);
-		cur->_unary = *(lpBuf + 1);
+
+		// *(lpBuf + 1) contains the unary operator, unused => skipped
 		lpBuf += 2;
+
 		switch (cur->_type) {
 		case ELT_NUMBER:
 			cur->_val._num = (int32)READ_LE_UINT32(lpBuf);
@@ -322,10 +257,8 @@ const byte *parseExpression(const byte *lpBuf, MpalHandle *h) {
  * @returns		Numeric value
  */
 int evaluateExpression(MpalHandle h) {
-	int ret;
-
 	lockVar();
-	ret = evaluateAndFreeExpression(duplicateExpression(h));
+	int ret = evaluateAndFreeExpression(duplicateExpression(h));
 	unlockVar();
 
 	return ret;
@@ -339,7 +272,6 @@ int evaluateExpression(MpalHandle h) {
  */
 bool compareExpressions(MpalHandle h1, MpalHandle h2) {
 	byte *e1, *e2;
-	LpExpression one, two;
 
 	e1 = (byte *)globalLock(h1);
 	e2 = (byte *)globalLock(h2);
@@ -353,8 +285,8 @@ bool compareExpressions(MpalHandle h1, MpalHandle h2) {
 		return false;
 	}
 
-	one = (LpExpression)(e1 + 1);
-	two = (LpExpression)(e2 + 1);
+	LpExpression one = (LpExpression)(e1 + 1);
+	LpExpression two = (LpExpression)(e2 + 1);
 
 	for (int i = 0; i < num1; i++) {
 		if (one->_type != two->_type || (i != num1 - 1 && one->_symbol != two->_symbol)) {

@@ -383,7 +383,7 @@ void RMResUpdate::init(const Common::String &fileName) {
 		// It doesn't exist, so exit immediately
 		return;
 
-	uint8 version = _hFile.readByte();
+	_hFile.readByte(); // Version, unused
 
 	_numUpd = _hFile.readUint32LE();
 
