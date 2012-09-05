@@ -18,24 +18,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ *
+ */
+/*
+ * This code is based on original Tony Tough source code
+ *
+ * Copyright (c) 1997-2003 Nayma Software
  */
 
-#include "common/archive.h"
-#include "common/str.h"
+#ifndef __LOADMPC_H
+#define __LOADMPC_H
 
-#ifndef AGOS_INSTALLSHIELD_CAB_H
-#define AGOS_INSTALLSHIELD_CAB_H
+namespace Tony {
 
-namespace AGOS {
+namespace MPAL {
+
+/****************************************************************************\
+*       Function prototypes
+\****************************************************************************/
 
 /**
- * This factory method creates an Archive instance corresponding to the content
- * of the InstallShield compressed file with the given name.
+ * Reads and interprets the MPC file, and create structures for various directives
+ * in the global variables
  *
- * May return 0 in case of a failure.
+ * @param lpBuf				Buffer containing the MPC file data, excluding the header.
+ * @returns		True if succeeded OK, false if failure.
  */
-Common::Archive *makeInstallShieldArchive(const Common::String &name);
+bool parseMpc(const byte *lpBuf);
 
-} // End of namespace AGOS
+/**
+ * Frees any data allocated from the parsing of the MPC file
+ */
+void freeMpc();
+
+} // end of namespace MPAL
+
+} // end of namespace Tony
 
 #endif
+
