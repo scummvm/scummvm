@@ -93,6 +93,10 @@ void Module2800::createScene(int sceneNum, int which) {
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		_childObject = new Scene2806(_vm, this, which);
 		break;
+	case 6:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Scene2807(_vm, this, which);
+		break;
 	case 7:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		_childObject = new Scene2808(_vm, this, 0);
@@ -173,6 +177,9 @@ void Module2800::updateScene() {
 			} else {
 				createScene(2, 2);
 			}
+			break;
+		case 6:
+			createScene(2, 3);
 			break;
 		case 7:
 			createScene(5, _moduleResult);
@@ -1449,6 +1456,55 @@ void Scene2806::findClosestPoint() {
 		_palette->addPalette(kScene2806PaletteFileHashes[index], 0, 64, 0);
 	}
 	
+}
+
+Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2807::handleMessage);
+
+	if (getSubVar(0x0C601058, 0) == 1) {
+		insertStaticSprite(0x103021E2, 300);
+	} else if (getSubVar(0x0C601058, 0) == 2) {
+		insertStaticSprite(0x103022E2, 300);
+	} else if (getSubVar(0x0C601058, 0) == 3) {
+		insertStaticSprite(0x103024E2, 300);
+	}
+
+	if (getSubVar(0x0C601058, 1) == 1) {
+		insertStaticSprite(0x4800A52A, 200);
+	} else if (getSubVar(0x0C601058, 1) == 2) {
+		insertStaticSprite(0x4800A62A, 200);
+	} else if (getSubVar(0x0C601058, 1) == 3) {
+		insertStaticSprite(0x4800A02A, 200);
+	}
+
+	if (getSubVar(0x0C601058, 2) == 1) {
+		insertStaticSprite(0x31203430, 100);
+	} else if (getSubVar(0x0C601058, 2) == 2) {
+		insertStaticSprite(0x31203400, 100);
+	} else if (getSubVar(0x0C601058, 2) == 3) {
+		insertStaticSprite(0x31203460, 100);
+	}
+
+	_surfaceFlag = true;
+	setBackground(0x3E049A95);
+	setPalette(0x3E049A95);
+	insertMouse435(0x49A913E8, 20, 620);
+
+}
+
+uint32 Scene2807::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			leaveScene(0);
+		}
+		break;
+	}
+	return 0;
 }
 
 static const uint32 kScene2808FileHashes1[] = {

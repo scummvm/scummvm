@@ -251,6 +251,13 @@ protected:
 	void findClosestPoint();
 };
 
+class Scene2807 : public Scene {
+public:
+	Scene2807(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 class SsScene2808Dispenser : public StaticSprite {
 public:
 	SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex);
