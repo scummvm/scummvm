@@ -202,6 +202,11 @@ DEFINES += -DENABLE_TOLTECS=$(ENABLE_TOLTECS)
 MODULES += engines/toltecs
 endif
 
+ifdef ENABLE_TONY
+DEFINES += -DENABLE_TONY=$(ENABLE_TONY)
+MODULES += engines/tony
+endif
+
 ifdef ENABLE_TOON
 DEFINES += -DENABLE_TOON=$(ENABLE_TOON)
 MODULES += engines/toon
@@ -220,4 +225,9 @@ endif
 ifdef ENABLE_TUCKER
 DEFINES += -DENABLE_TUCKER=$(ENABLE_TUCKER)
 MODULES += engines/tucker
+endif
+
+ifdef ENABLE_WINTERMUTE
+DEFINES += -DENABLE_WINTERMUTE=$(ENABLE_WINTERMUTE)
+MODULES += engines/wintermute
 endif

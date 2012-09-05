@@ -216,7 +216,7 @@ void QuickTimeDecoder::init() {
 		addTrack(new AudioTrackHandler(this, _audioTracks[i]));
 
 	// Initialize all the video tracks
-	Common::Array<Common::QuickTimeParser::Track *> &tracks = Common::QuickTimeParser::_tracks;
+	const Common::Array<Common::QuickTimeParser::Track *> &tracks = Common::QuickTimeParser::_tracks;
 	for (uint32 i = 0; i < tracks.size(); i++) {
 		if (tracks[i]->codecType == CODEC_TYPE_VIDEO) {
 			for (uint32 j = 0; j < tracks[i]->sampleDescs.size(); j++)

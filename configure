@@ -62,7 +62,7 @@ get_var() {
 	eval echo \$${1}
 }
 
-# Add an engine: id name build subengines
+# Add an engine: id name build subengines dependencies
 add_engine() {
 	_engines="${_engines} ${1}"
 	if test "${3}" = "no" ; then
@@ -76,6 +76,14 @@ add_engine() {
 	for sub in ${4}; do
 		set_var _engine_${sub}_sub "yes"
 	done
+}
+
+# Add a feature: id name settings-list
+add_feature() {
+	set_var _feature_${1}_name "${2}"
+	# This is a list of settings, where one must be "yes" for the feature to
+	# be enabled
+	set_var _feature_${1}_settings "${3}"
 }
 
 _srcdir=`dirname $0`
@@ -162,6 +170,17 @@ _posix=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
+
+# Add (virtual) features
+add_feature 16bit "16bit color" "_16bit"
+add_feature faad "libfaad" "_faad"
+add_feature flac "FLAC" "_flac"
+add_feature freetype2 "FreeType2" "_freetype2"
+add_feature mad "MAD" "_mad"
+add_feature png "PNG" "_png"
+add_feature theoradec "libtheoradec" "_theoradec"
+add_feature vorbis "Vorbis file support" "_vorbis _tremor"
+add_feature zlib "zlib" "_zlib"
 
 
 
@@ -440,6 +459,26 @@ Try \`$0 --help' for more information." >&2
 }
 
 
+#
+# Feature handling functions
+#
+
+# Get the name of the feature
+get_feature_name() {
+	get_var _feature_$1_name
+}
+
+# Check whether the feature is enabled
+get_feature_state() {
+	for i in `get_var _feature_$1_settings`; do
+		if test `get_var $i` = "yes"; then
+			echo "yes"
+			return
+		fi
+	done
+	echo "no"
+}
+
 
 #
 # Engine handling functions
@@ -547,8 +586,9 @@ check_engine_deps() {
 	if test `get_engine_build $1` = yes ; then
 		# Collect unmet dependencies
 		for dep in `get_engine_dependencies $1`; do
-			if test `get_var _${dep}` = no ; then
-				unmet_deps="${unmet_deps}${dep} "
+			if test `get_feature_state $dep` = "no"; then
+				feature_name=`get_feature_name $dep`
+				unmet_deps="${unmet_deps}${feature_name} "
 			fi
 		done
 

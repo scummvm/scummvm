@@ -180,6 +180,9 @@ public:
 	/**
 	 * Set the time for this video to end at. At this time in the video,
 	 * all audio will stop and endOfVideo() will return true.
+	 *
+	 * While the setting is stored even if a video is not playing,
+	 * endOfVideo() is only affected when the video is playing.
 	 */
 	void setEndTime(const Audio::Timestamp &endTime);
 

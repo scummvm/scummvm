@@ -592,7 +592,7 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 	} while (1);
 }
 
-void PCESetCostumeData(byte block[16][16], int index, byte value) {
+static void PCESetCostumeData(byte block[16][16], int index, byte value) {
 	int row = (index % 16);
 	int plane = (index / 16) % 4;
 	int colOffset = (index < 64) ? 8 : 0;

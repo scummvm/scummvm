@@ -23,6 +23,8 @@
 // Resource file routines for Simon1/Simon2
 
 
+#include "common/archive.h"
+#include "common/installshield_cab.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
@@ -31,7 +33,6 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/sound.h"
-#include "agos/installshield_cab.h"
 
 #include "common/zlib.h"
 
@@ -43,7 +44,10 @@ ArchiveMan::ArchiveMan() {
 
 #ifdef ENABLE_AGOS2
 void ArchiveMan::registerArchive(const Common::String &filename, int priority) {
-	add(filename, makeInstallShieldArchive(filename), priority);
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(filename);
+
+	if (stream)
+		add(filename, makeInstallShieldArchive(stream, DisposeAfterUse::YES), priority);
 }
 #endif
 

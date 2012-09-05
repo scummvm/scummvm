@@ -20,22 +20,38 @@
  *
  */
 
-#include "common/archive.h"
-#include "common/str.h"
-
-#ifndef AGOS_INSTALLSHIELD_CAB_H
-#define AGOS_INSTALLSHIELD_CAB_H
-
-namespace AGOS {
-
-/**
- * This factory method creates an Archive instance corresponding to the content
- * of the InstallShield compressed file with the given name.
- *
- * May return 0 in case of a failure.
+/*
+ * This file is based on WME Lite.
+ * http://dead-code.org/redir.php?target=wmelite
+ * Copyright (c) 2011 Jan Nedoma
  */
-Common::Archive *makeInstallShieldArchive(const Common::String &name);
 
-} // End of namespace AGOS
+#include "engines/wintermute/base/base_quick_msg.h"
+#include "engines/wintermute/base/base_game.h"
 
-#endif
+namespace Wintermute {
+
+//////////////////////////////////////////////////////////////////////////
+BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text) : BaseClass(inGame) {
+	_text = new char [strlen(text) + 1];
+	if (_text) {
+		strcpy(_text, text);
+	}
+	_startTime = _gameRef->_currentTime;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+BaseQuickMsg::~BaseQuickMsg() {
+	if (_text) {
+		delete[] _text;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+char *BaseQuickMsg::getText() {
+	return _text;
+}
+
+} // end of namespace Wintermute
