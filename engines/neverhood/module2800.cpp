@@ -694,7 +694,7 @@ uint32 SsScene2804RedButton::handleMessage(int messageNum, const MessageParam &p
 	return messageResult;
 }
 
-SsScene2808LightCoil::SsScene2808LightCoil(NeverhoodEngine *vm)
+SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
 	
 	_spriteResource.load2(0x8889B008);
@@ -708,10 +708,10 @@ SsScene2808LightCoil::SsScene2808LightCoil(NeverhoodEngine *vm)
 	setVisible(false);
 	_needRefresh = true;
 	StaticSprite::update();
-	SetMessageHandler(&SsScene2808LightCoil::handleMessage);
+	SetMessageHandler(&SsScene2804LightCoil::handleMessage);
 }
 
-uint32 SsScene2808LightCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 SsScene2804LightCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2002:
@@ -728,7 +728,7 @@ uint32 SsScene2808LightCoil::handleMessage(int messageNum, const MessageParam &p
 	return messageResult;
 }
 
-SsScene2808LightTarget::SsScene2808LightTarget(NeverhoodEngine *vm)
+SsScene2804LightTarget::SsScene2804LightTarget(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
 	
 	_spriteResource.load2(0x06092132);
@@ -742,10 +742,10 @@ SsScene2808LightTarget::SsScene2808LightTarget(NeverhoodEngine *vm)
 	setVisible(false);
 	_needRefresh = true;
 	StaticSprite::update();
-	SetMessageHandler(&SsScene2808LightTarget::handleMessage);
+	SetMessageHandler(&SsScene2804LightTarget::handleMessage);
 }
 
-uint32 SsScene2808LightTarget::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2004:
@@ -762,7 +762,7 @@ uint32 SsScene2808LightTarget::handleMessage(int messageNum, const MessageParam 
 	return messageResult;
 }
 
-SsScene2808Flash::SsScene2808Flash(NeverhoodEngine *vm)
+SsScene2804Flash::SsScene2804Flash(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900), _soundResource(vm) {
 	
 	_spriteResource.load2(0x211003A0);
@@ -779,13 +779,13 @@ SsScene2808Flash::SsScene2808Flash(NeverhoodEngine *vm)
 	_soundResource.load(0xCB36BA54);
 }
 
-void SsScene2808Flash::show() {
+void SsScene2804Flash::show() {
 	setVisible(true);
 	StaticSprite::update();
 	_soundResource.play();
 }
 
-SsScene2808BeamCoilBody::SsScene2808BeamCoilBody(NeverhoodEngine *vm)
+SsScene2804BeamCoilBody::SsScene2804BeamCoilBody(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
 	
 	_spriteResource.load2(0x9A816000);
@@ -979,7 +979,7 @@ uint32 SsScene2804CrystalButton::handleMessage(int messageNum, const MessagePara
 	return messageResult;
 }
 
-AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2808BeamCoilBody *ssBeamCoilBody)
+AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody)
 	: AnimatedSprite(vm, 1400), _parentScene(parentScene), _ssBeamCoilBody(ssBeamCoilBody),
 	_countdown(0), _soundResource(vm) {
 	
@@ -1101,18 +1101,18 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 		setPalette(0xA1D03005);
 		addEntity(_palette);
 		insertMouse435(0x03001A15, 20, 620);
-		_asCoil = insertSprite<SsScene2808LightCoil>();
-		_asTarget = insertSprite<SsScene2808LightTarget>();
+		_asCoil = insertSprite<SsScene2804LightCoil>();
+		_asTarget = insertSprite<SsScene2804LightTarget>();
 	} else {
-		SsScene2808BeamCoilBody *ssBeamCoilBody;
+		SsScene2804BeamCoilBody *ssBeamCoilBody;
 		setBackground(0x01C01414);
 		setPalette(0x01C01414);
 		addEntity(_palette);
 		insertMouse435(0x01410014, 20, 620);
-		ssBeamCoilBody = insertSprite<SsScene2808BeamCoilBody>();
+		ssBeamCoilBody = insertSprite<SsScene2804BeamCoilBody>();
 		_asCoil = insertSprite<AsScene2804BeamCoil>(this, ssBeamCoilBody);
 		_asTarget = insertSprite<AsScene2804BeamTarget>();
-		_ssFlash = insertSprite<SsScene2808Flash>();
+		_ssFlash = insertSprite<SsScene2804Flash>();
 	}
 	
 	_ssRedButton = insertSprite<SsScene2804RedButton>(this);

@@ -106,28 +106,28 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class SsScene2808LightCoil : public StaticSprite {
+class SsScene2804LightCoil : public StaticSprite {
 public:
-	SsScene2808LightCoil(NeverhoodEngine *vm);
+	SsScene2804LightCoil(NeverhoodEngine *vm);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class SsScene2808BeamCoilBody : public StaticSprite {
+class SsScene2804BeamCoilBody : public StaticSprite {
 public:
-	SsScene2808BeamCoilBody(NeverhoodEngine *vm);
+	SsScene2804BeamCoilBody(NeverhoodEngine *vm);
 };
 
-class SsScene2808LightTarget : public StaticSprite {
+class SsScene2804LightTarget : public StaticSprite {
 public:
-	SsScene2808LightTarget(NeverhoodEngine *vm);
+	SsScene2804LightTarget(NeverhoodEngine *vm);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class SsScene2808Flash : public StaticSprite {
+class SsScene2804Flash : public StaticSprite {
 public:
-	SsScene2808Flash(NeverhoodEngine *vm);
+	SsScene2804Flash(NeverhoodEngine *vm);
 	void show();
 protected:
 	SoundResource _soundResource;
@@ -173,11 +173,11 @@ protected:
 
 class AsScene2804BeamCoil : public AnimatedSprite {
 public:
-	AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2808BeamCoilBody *ssBeamCoilBody);
+	AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody);
 protected:
 	SoundResource _soundResource;
 	Scene *_parentScene;
-	SsScene2808BeamCoilBody *_ssBeamCoilBody;
+	SsScene2804BeamCoilBody *_ssBeamCoilBody;
 	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -208,7 +208,7 @@ protected:
 	Sprite *_ssRedButton;
 	Sprite *_asCoil;
 	Sprite *_asTarget;
-	SsScene2808Flash *_ssFlash;
+	SsScene2804Flash *_ssFlash;
 	AsScene2804Crystal *_asCrystals[5];
 	Sprite *_ssCrystalButtons[5];
 	void update();
