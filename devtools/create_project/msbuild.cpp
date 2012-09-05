@@ -241,9 +241,11 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 
 	// Check for project-specific warnings:
 	std::map<std::string, StringList>::iterator warningsIterator = _projectWarnings.find(name);
+	bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
+	bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
 
 	// Nothing to add here, move along!
-	if (!setup.devTools && name != setup.projectName && name != "sword25" && name != "scummvm" && name != "grim" && warningsIterator == _projectWarnings.end())
+	if (!setup.devTools && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
 		return;
 
 	std::string warnings = "";
@@ -254,16 +256,17 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << configuration << "|" << (isWin32 ? "Win32" : "x64") << "'\">\n"
 	           "\t\t<ClCompile>\n";
 
-	// Compile configuration
-	if (setup.devTools || name == setup.projectName || name == "sword25" || name == "grim") {
+	// Language Extensions
+	if (setup.devTools || name == setup.projectName || enableLanguageExtensions)
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 
-		if (name == setup.projectName && !isRelease)
-			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
-	} else {
-				if (warningsIterator != _projectWarnings.end())
-			project << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
-	}
+	// Edit and Continue
+	if ((name == setup.projectName || disableEditAndContinue) && !isRelease)
+		project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
+
+	// Warnings
+	if (warningsIterator != _projectWarnings.end())
+		project << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
 
 	project << "\t\t</ClCompile>\n";
 
