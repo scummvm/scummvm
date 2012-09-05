@@ -49,6 +49,7 @@ public:
 	void startFadeToBlack(int counter);
 	void startFadeToWhite(int counter);
 	void startFadeToPalette(int counter);
+	void fillBaseWhite(int index, int count);
 protected:
 	int _status;
 	byte *_palette;

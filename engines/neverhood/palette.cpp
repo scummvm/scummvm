@@ -139,6 +139,17 @@ void Palette::startFadeToPalette(int counter) {
 	_status = 2;			
 }
 
+void Palette::fillBaseWhite(int index, int count) {
+	if (index + count > 256)
+		count = 256 - index;
+	for (int i = 0; i < count; i++) {
+		_basePalette[(i + index) * 4 + 0] = 0xFF;
+		_basePalette[(i + index) * 4 + 1] = 0xFF;
+		_basePalette[(i + index) * 4 + 2] = 0xFF;
+		_basePalette[(i + index) * 4 + 3] = 0;
+	}
+}
+
 void Palette::update() {
 	debug(2, "Palette::update() _status = %d", _status);
 	if (_status == 1) {

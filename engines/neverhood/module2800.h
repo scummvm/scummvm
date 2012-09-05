@@ -93,6 +93,129 @@ protected:
 	void sub4601F0(bool flag);
 };
 
+class Scene2804;
+
+class SsScene2804RedButton : public StaticSprite {
+public:
+	SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene);
+protected:
+	SoundResource _soundResource;
+	Scene2804 *_parentScene;
+	int _countdown;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class SsScene2808LightCoil : public StaticSprite {
+public:
+	SsScene2808LightCoil(NeverhoodEngine *vm);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class SsScene2808BeamCoilBody : public StaticSprite {
+public:
+	SsScene2808BeamCoilBody(NeverhoodEngine *vm);
+};
+
+class SsScene2808LightTarget : public StaticSprite {
+public:
+	SsScene2808LightTarget(NeverhoodEngine *vm);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class SsScene2808Flash : public StaticSprite {
+public:
+	SsScene2808Flash(NeverhoodEngine *vm);
+	void show();
+protected:
+	SoundResource _soundResource;
+};
+
+class AsScene2804CrystalWaves : public AnimatedSprite {
+public:
+	AsScene2804CrystalWaves(NeverhoodEngine *vm, uint crystalIndex);
+	void show();
+	void hide();
+protected:
+	uint _crystalIndex;
+};
+
+class AsScene2804Crystal : public AnimatedSprite {
+public:
+	AsScene2804Crystal(NeverhoodEngine *vm, AsScene2804CrystalWaves *asCrystalWaves, uint crystalIndex);
+	void show();
+	void hide();
+	void activate();
+	int16 getColorNum() const { return _colorNum; }
+protected:
+	AsScene2804CrystalWaves *_asCrystalWaves;
+	uint _crystalIndex;
+	int16 _colorNum;
+	bool _isLightOn;
+	bool _isShowing;
+	SoundResource _soundResource;
+};
+
+class SsScene2804CrystalButton : public StaticSprite {
+public:
+	SsScene2804CrystalButton(NeverhoodEngine *vm, Scene2804 *parentScene, AsScene2804Crystal *asCrystal, uint crystalIndex);
+protected:
+	SoundResource _soundResource;
+	Scene2804 *_parentScene;
+	AsScene2804Crystal *_asCrystal;
+	uint _crystalIndex;
+	int _countdown;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2804BeamCoil : public AnimatedSprite {
+public:
+	AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2808BeamCoilBody *ssBeamCoilBody);
+protected:
+	SoundResource _soundResource;
+	Scene *_parentScene;
+	SsScene2808BeamCoilBody *_ssBeamCoilBody;
+	int _countdown;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void show();
+	void hide();
+	void stBeaming();
+	uint32 hmBeaming(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2804BeamTarget : public AnimatedSprite {
+public:
+	AsScene2804BeamTarget(NeverhoodEngine *vm);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2804 : public Scene {
+public:
+	Scene2804(NeverhoodEngine *vm, Module *parentModule, int which);
+	bool isWorking() const { return _isWorking; }
+protected:
+	int _countdown1;
+	int _countdown2;
+	int _countdown3;
+	int _beamStatus;
+	bool _isSolved;
+	bool _isWorking;
+	Sprite *_ssRedButton;
+	Sprite *_asCoil;
+	Sprite *_asTarget;
+	SsScene2808Flash *_ssFlash;
+	AsScene2804Crystal *_asCrystals[5];
+	Sprite *_ssCrystalButtons[5];
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void initCrystalColors();
+};
+
 class Scene2805 : public Scene {
 public:
 	Scene2805(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -128,9 +251,9 @@ protected:
 	void findClosestPoint();
 };
 
-class AsScene2808Dispenser : public StaticSprite {
+class SsScene2808Dispenser : public StaticSprite {
 public:
-	AsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex);
+	SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex);
 	void startCountdown(int index);
 protected:
 	Scene *_parentScene;
@@ -142,12 +265,12 @@ protected:
 
 class AsScene2808TestTube : public AnimatedSprite {
 public:
-	AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, AsScene2808Dispenser *dispenser);
+	AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, SsScene2808Dispenser *ssDispenser);
 	void fill();
 	void flush();
 	uint32 getFillLevel() const { return _fillLevel; }
 protected:
-	AsScene2808Dispenser *_dispenser;
+	SsScene2808Dispenser *_ssDispenser;
 	int _testTubeSetNum;
 	uint32 _fillLevel;
 	int _testTubeIndex;

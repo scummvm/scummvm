@@ -82,6 +82,9 @@ void Module2800::createScene(int sceneNum, int which) {
 			// TODO _childObject = new Scene2803(_vm, this, which);
 		}
 		break;
+	case 3:
+		_childObject = new Scene2804(_vm, this, which);
+		break;
 	case 4:
 		// TODO Music18hList_stop(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2805(_vm, this, which);
@@ -153,6 +156,9 @@ void Module2800::updateScene() {
 				createScene(25, 0);
 			else 
 				createScene(0, 1);
+			break;
+		case 3:
+			createScene(2, 1);
 			break;
 		case 4:
 			if (_moduleResult == 1) {
@@ -641,6 +647,601 @@ void Scene2803b::sub4601F0(bool flag) {
 	}
 }
 
+SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene)
+	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene),
+	_soundResource(vm) {
+	
+	if (getGlobalVar(0x190A1D18))
+		_spriteResource.load2(0x51A10202);
+	else
+		_spriteResource.load2(0x11814A21);
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	_deltaRect = _drawRect;
+	processDelta();
+	setVisible(false);
+	_needRefresh = true;
+	SetUpdateHandler(&SsScene2804RedButton::update);
+	SetMessageHandler(&SsScene2804RedButton::handleMessage);
+	_soundResource.load(0x44241240);
+}
+
+void SsScene2804RedButton::update() {
+	StaticSprite::update();
+	if (_countdown != 0 && (--_countdown) == 0) {
+		setVisible(false);
+	}
+}
+
+uint32 SsScene2804RedButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_countdown == 0 && !_parentScene->isWorking()) {
+			_soundResource.play();
+			setVisible(true);
+			_countdown = 4;
+			sendMessage(_parentScene, 0x2000, 0);
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+SsScene2808LightCoil::SsScene2808LightCoil(NeverhoodEngine *vm)
+	: StaticSprite(vm, 900) {
+	
+	_spriteResource.load2(0x8889B008);
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	setVisible(false);
+	_needRefresh = true;
+	StaticSprite::update();
+	SetMessageHandler(&SsScene2808LightCoil::handleMessage);
+}
+
+uint32 SsScene2808LightCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2002:
+		setVisible(true);
+		StaticSprite::update();
+		messageResult = 1;
+		break;
+	case 0x2003:
+		setVisible(false);
+		StaticSprite::update();
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+SsScene2808LightTarget::SsScene2808LightTarget(NeverhoodEngine *vm)
+	: StaticSprite(vm, 900) {
+	
+	_spriteResource.load2(0x06092132);
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	setVisible(false);
+	_needRefresh = true;
+	StaticSprite::update();
+	SetMessageHandler(&SsScene2808LightTarget::handleMessage);
+}
+
+uint32 SsScene2808LightTarget::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2004:
+		setVisible(true);
+		StaticSprite::update();
+		messageResult = 1;
+		break;
+	case 0x2005:
+		setVisible(false);
+		StaticSprite::update();
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+SsScene2808Flash::SsScene2808Flash(NeverhoodEngine *vm)
+	: StaticSprite(vm, 900), _soundResource(vm) {
+	
+	_spriteResource.load2(0x211003A0);
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	setVisible(false);
+	_needRefresh = true;
+	StaticSprite::update();
+	_soundResource.load(0xCB36BA54);
+}
+
+void SsScene2808Flash::show() {
+	setVisible(true);
+	StaticSprite::update();
+	_soundResource.play();
+}
+
+SsScene2808BeamCoilBody::SsScene2808BeamCoilBody(NeverhoodEngine *vm)
+	: StaticSprite(vm, 900) {
+	
+	_spriteResource.load2(0x9A816000);
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	setVisible(false);
+	_needRefresh = true;
+	StaticSprite::update();
+}
+
+AsScene2804CrystalWaves::AsScene2804CrystalWaves(NeverhoodEngine *vm, uint crystalIndex)
+	: AnimatedSprite(vm, 1100), _crystalIndex(crystalIndex) {
+
+	static const NPoint kAsScene2804CrystalWavesPoints[] = {
+		{323, 245},
+		{387, 76},
+		{454, 260},
+		{527, 70}
+	};
+
+	_x = kAsScene2804CrystalWavesPoints[crystalIndex].x;
+	_y = kAsScene2804CrystalWavesPoints[crystalIndex].y;
+	createSurface1(0x840C41F0, 1200);
+	if (crystalIndex & 1)
+		setDoDeltaX(1);
+	setVisible(false);
+	_needRefresh = true;
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&Sprite::handleMessage);
+}
+
+void AsScene2804CrystalWaves::show() {
+	setVisible(true);
+	startAnimation(0x840C41F0, 0, -1);
+}
+
+void AsScene2804CrystalWaves::hide() {
+	setVisible(false);
+	stopAnimation();
+}
+
+static const int16 kAsScene2804CrystalFrameNums[] = {
+	0, 6, 2, 8, 1, 10, 0, 0
+};
+
+static const uint32 kAsScene2804CrystalFileHashes[] = {
+	0x000540B0,
+	0x001280D0,
+	0x003D0010,
+	0x00620190,
+	0x00DC0290
+};
+
+AsScene2804Crystal::AsScene2804Crystal(NeverhoodEngine *vm, AsScene2804CrystalWaves *asCrystalWaves, uint crystalIndex)
+	: AnimatedSprite(vm, 1100), _asCrystalWaves(asCrystalWaves), _crystalIndex(crystalIndex),
+	_isShowing(false), _soundResource(vm) {
+
+	static const NPoint kAsScene2804CrystalPoints[] = {
+		{204, 196},
+		{272, 316},
+		{334, 206},
+		{410, 334},
+		{470, 180}
+	};
+
+	_colorNum = (int16)getSubVar(0xE11A1929, crystalIndex);
+	_isLightOn = getGlobalVar(0x190A1D18) != 0;
+	if (_isLightOn) {
+		_x = kAsScene2804CrystalPoints[crystalIndex].x;
+		_y = kAsScene2804CrystalPoints[crystalIndex].y;
+		createSurface1(0x108DFB12, 1200);
+		startAnimation(0x108DFB12, kAsScene2804CrystalFrameNums[_colorNum], -1);
+		_needRefresh = true;
+		_newStickFrameIndex = kAsScene2804CrystalFrameNums[_colorNum];
+	} else {
+		_x = 320;
+		_y = 240;
+		createSurface1(kAsScene2804CrystalFileHashes[crystalIndex], 1200);
+		startAnimation(kAsScene2804CrystalFileHashes[crystalIndex], _colorNum, -1);
+		setVisible(false);
+		_needRefresh = true;
+		_newStickFrameIndex = _colorNum;
+	}
+	_soundResource.load(0x725294D4);
+	SetUpdateHandler(&AnimatedSprite::update);
+}
+
+void AsScene2804Crystal::show() {
+	if (!_isLightOn) {
+		setVisible(true);
+		_isShowing = true;
+		if (_asCrystalWaves)
+			_asCrystalWaves->show();
+		_soundResource.play();
+	}
+}
+
+void AsScene2804Crystal::hide() {
+	if (!_isLightOn) {
+		setVisible(false);
+		_isShowing = false;
+		if (_asCrystalWaves)
+			_asCrystalWaves->hide();
+	}
+}
+
+void AsScene2804Crystal::activate() {
+	if (!_isShowing) {
+		int16 frameNum = kAsScene2804CrystalFrameNums[_colorNum];
+		_colorNum++;
+		if (_colorNum >= 6)
+			_colorNum = 0;
+		if (_isLightOn) {
+			startAnimation(0x108DFB12, frameNum, kAsScene2804CrystalFrameNums[_colorNum]);
+			_playBackwards = kAsScene2804CrystalFrameNums[_colorNum] < _colorNum;
+			_newStickFrameIndex = kAsScene2804CrystalFrameNums[_colorNum];
+		} else {
+			startAnimation(kAsScene2804CrystalFileHashes[_crystalIndex], _colorNum, -1);
+			_newStickFrameIndex = _colorNum;
+		}
+		setSubVar(0xE11A1929, _crystalIndex, _colorNum);
+	}
+}
+
+SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene2804 *parentScene, AsScene2804Crystal *asCrystal, uint crystalIndex)
+	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene), _asCrystal(asCrystal),
+	_crystalIndex(crystalIndex), _soundResource(vm) {
+
+	static const uint32 kSsScene2804CrystalButtonFileHashes1[] = {
+		0x911101B0,
+		0x22226001,
+		0x4444A362,
+		0x888925A4,
+		0x11122829
+	};
+
+	static const uint32 kSsScene2804CrystalButtonFileHashes2[] = {
+		0xB500A1A0,
+		0x6A012021,
+		0xD4022322,
+		0xA8042525,
+		0x5008292B
+	};
+	
+	if (getGlobalVar(0x190A1D18))
+		_spriteResource.load2(kSsScene2804CrystalButtonFileHashes1[crystalIndex]);
+	else
+		_spriteResource.load2(kSsScene2804CrystalButtonFileHashes2[crystalIndex]);
+
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	_deltaRect = _drawRect;
+	processDelta();
+	setVisible(false);
+	_soundResource.load(0x44045140);
+	_needRefresh = true;
+	SetUpdateHandler(&SsScene2804CrystalButton::update);
+	SetMessageHandler(&SsScene2804CrystalButton::handleMessage);
+}
+
+void SsScene2804CrystalButton::update() {
+	StaticSprite::update();
+	if (_countdown != 0 && (--_countdown) == 0) {
+		setVisible(false);
+	}
+}
+
+uint32 SsScene2804CrystalButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_countdown == 0 && !_parentScene->isWorking()) {
+			_soundResource.play();
+			setVisible(true);
+			_countdown = 4;
+			_asCrystal->activate();
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2808BeamCoilBody *ssBeamCoilBody)
+	: AnimatedSprite(vm, 1400), _parentScene(parentScene), _ssBeamCoilBody(ssBeamCoilBody),
+	_countdown(0), _soundResource(vm) {
+	
+	createSurface1(0x00494891, 1000);
+	_x = 125;
+	_y = 184;
+	setVisible(false);
+	_needRefresh = true;
+	AnimatedSprite::updatePosition();
+	_soundResource.load(0x6352F051);
+	// TODO Sound1ChList_addSoundResource(0xC5EA0B28, 0xEF56B094, true);
+	SetUpdateHandler(&AsScene2804BeamCoil::update);
+	SetMessageHandler(&AsScene2804BeamCoil::handleMessage);
+}
+
+void AsScene2804BeamCoil::update() {
+	updateAnim();
+	updatePosition();
+	if (_countdown != 0 && (--_countdown) == 0) {
+		sendMessage(_parentScene, 0x2001, 0);
+	}
+}
+
+uint32 AsScene2804BeamCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2002:
+		show();
+		_countdown = 92;
+		messageResult = 1;
+		break;
+	case 0x2003:
+		hide();
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+	
+void AsScene2804BeamCoil::show() {
+	_ssBeamCoilBody->setVisible(true);
+	// TODO _ssBeamCoilBody->update(); -> show()
+	setVisible(true);
+	startAnimation(0x00494891, 0, -1);
+	_soundResource.play();
+	SetMessageHandler(&AsScene2804BeamCoil::hmBeaming);
+	NextState(&AsScene2804BeamCoil::stBeaming);
+}
+
+void AsScene2804BeamCoil::hide() {
+	stopAnimation();
+	SetMessageHandler(&AsScene2804BeamCoil::handleMessage);
+	setVisible(false);
+	_ssBeamCoilBody->setVisible(false);
+	// TODO _ssBeamCoilBody->update(); -> hide()
+	// TODO Sound1ChList_stop(0xEF56B094);
+}
+
+void AsScene2804BeamCoil::stBeaming() {
+	startAnimation(0x00494891, 93, -1);
+	NextState(&AsScene2804BeamCoil::stBeaming);
+	// TODO Sound1ChList_playLooping(0xEF56B094);
+}
+
+uint32 AsScene2804BeamCoil::hmBeaming(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		gotoNextState();
+		break;
+	}
+	return messageResult;
+}
+
+AsScene2804BeamTarget::AsScene2804BeamTarget(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1400) {
+	
+	createSurface1(0x03842000, 1000);
+	_x = 475;
+	_y = 278;
+	setVisible(false);
+	_needRefresh = true;
+	updatePosition();
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2804BeamTarget::handleMessage);
+}
+
+uint32 AsScene2804BeamTarget::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2004:
+		setVisible(true);
+		startAnimation(0x03842000, 0, -1);
+		messageResult = 1;
+		break;
+	case 0x2005:
+		setVisible(false);
+		stopAnimation();
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _countdown1(0), _countdown2(0), _countdown3(0),
+	_beamStatus(0), _isSolved(false), _isWorking(false) {
+
+	initCrystalColors();
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2804::handleMessage);
+	SetUpdateHandler(&Scene2804::update);
+
+	//setGlobalVar(0x190A1D18, 1); // DEBUG Set lights on
+
+	if (getGlobalVar(0x190A1D18)) {
+		setBackground(0xA1D03005);
+		setPalette(0xA1D03005);
+		addEntity(_palette);
+		insertMouse435(0x03001A15, 20, 620);
+		_asCoil = insertSprite<SsScene2808LightCoil>();
+		_asTarget = insertSprite<SsScene2808LightTarget>();
+	} else {
+		SsScene2808BeamCoilBody *ssBeamCoilBody;
+		setBackground(0x01C01414);
+		setPalette(0x01C01414);
+		addEntity(_palette);
+		insertMouse435(0x01410014, 20, 620);
+		ssBeamCoilBody = insertSprite<SsScene2808BeamCoilBody>();
+		_asCoil = insertSprite<AsScene2804BeamCoil>(this, ssBeamCoilBody);
+		_asTarget = insertSprite<AsScene2804BeamTarget>();
+		_ssFlash = insertSprite<SsScene2808Flash>();
+	}
+	
+	_ssRedButton = insertSprite<SsScene2804RedButton>(this);
+	_vm->_collisionMan->addSprite(_ssRedButton);
+
+	for (uint crystalIndex = 0; crystalIndex < 5; crystalIndex++) {
+		AsScene2804CrystalWaves *asCrystalWaves = NULL;
+		if (crystalIndex < 4 && getGlobalVar(0x190A1D18) == 0)
+			asCrystalWaves = insertSprite<AsScene2804CrystalWaves>(crystalIndex);
+		_asCrystals[crystalIndex] = insertSprite<AsScene2804Crystal>(asCrystalWaves, crystalIndex);
+		_ssCrystalButtons[crystalIndex] = insertSprite<SsScene2804CrystalButton>(this, _asCrystals[crystalIndex], crystalIndex);
+		_vm->_collisionMan->addSprite(_ssCrystalButtons[crystalIndex]);
+	}
+
+}
+
+uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		// TODO DEBUG
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			leaveScene(0);
+		}
+		break;
+	case 0x000D:
+		// TODO DEBUG
+		break;
+	case 0x2000:
+		_isWorking = true;
+		sendMessage(_asCoil, 0x2002, 0);
+		if (getGlobalVar(0x190A1D18)) {
+			sendMessage(_asTarget, 0x2004, 0);
+			_countdown2 = 48;
+		}
+		break;
+	case 0x2001:
+		_countdown3 = 2;
+		_isSolved = true;
+		_beamStatus = 0;
+		for (uint index = 0; index < 5; index++)
+			if (_asCrystals[index]->getColorNum() != (int16)getSubVar(0xD4B2089C, index))
+				_isSolved = false;
+		_countdown2 = 48;
+		break;
+	}
+	return 0;
+}
+
+void Scene2804::update() {
+
+	Scene::update();
+	
+	if (_countdown1 != 0 && (--_countdown1) == 0) {
+		leaveScene(0);
+	}
+
+	if (_countdown2 != 0 && (--_countdown2) == 0) {
+		_isWorking = false;
+		sendMessage(_asCoil, 0x2003, 0);
+		sendMessage(_asTarget, 0x2005, 0);
+		for (uint index = 0; index < 5; index++)
+			_asCrystals[index]->hide();
+	}
+
+	if (_countdown3 != 0 && (--_countdown3) == 0) {
+		if (_beamStatus == 5) {
+			sendMessage(_asTarget, 0x2004, 0);
+			if (_isSolved) {
+				_palette->fillBaseWhite(0, 256);
+				_palette->startFadeToPalette(18);
+				setGlobalVar(0x1860C990, 1);
+				_countdown1 = 48;
+			}
+		} else if (_beamStatus == 6) {
+			if (_isSolved)
+				_ssFlash->show();
+		} else {
+			_asCrystals[_beamStatus]->show();
+		}
+		_beamStatus++;
+		if (_beamStatus < 6)
+			_countdown3 = 2;
+		else if (_beamStatus < 7)
+			_countdown3 = 4;
+	}
+
+}
+
+void Scene2804::initCrystalColors() {
+	// TODO Maybe move this into the GameModule so all puzzle init code is together
+	if (getGlobalVar(0xDE2EC914) == 0) {
+		TextResource textResource(_vm);
+		const char *textStart, *textEnd;
+		textResource.load(0x46691611);
+		textStart = textResource.getString(0, textEnd);
+		for (uint index = 0; index < 5; index++) {
+			char colorLetter = (byte)textStart[index];
+			byte correctColorNum = 0, misalignedColorNum;
+			switch (colorLetter) {
+			case 'B':
+				correctColorNum = 4;
+				break;
+			case 'G':
+				correctColorNum = 3;
+				break;
+			case 'O':
+				correctColorNum = 1;
+				break;
+			case 'R':
+				correctColorNum = 0;
+				break;
+			case 'V':
+				correctColorNum = 5;
+				break;
+			case 'Y':
+				correctColorNum = 2;
+				break;
+			}
+			do {
+				misalignedColorNum = _vm->_rnd->getRandomNumber(6 - 1);
+			} while (misalignedColorNum == correctColorNum);
+			setSubVar(0xD4B2089C, index, correctColorNum);
+			setSubVar(0xE11A1929, index, misalignedColorNum);
+		}
+		setGlobalVar(0xDE2EC914, 1);
+	}
+}
+
 Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
@@ -897,39 +1498,35 @@ static const int16 kClass490FrameIndices2[] = {
 	0, 4, 8, 11, 15, 17, 19, 0
 };
 
-AsScene2808Dispenser::AsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex)
+SsScene2808Dispenser::SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _testTubeSetNum(testTubeSetNum),
 	_testTubeIndex(testTubeIndex) {
 	
 	_spriteResource.load2(kClass428FileHashes[testTubeSetNum * 3 + testTubeIndex]);
 	createSurface(1500, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	
-	_surface->getDrawRect().x = 0;
-	_surface->getDrawRect().y = 0;
-	_surface->getDrawRect().width = _spriteResource.getDimensions().width;
-	_surface->getDrawRect().height = _spriteResource.getDimensions().height;
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	_deltaRect = _drawRect;
 	processDelta();
-
-	SetUpdateHandler(&AsScene2808Dispenser::update);
-	SetMessageHandler(&AsScene2808Dispenser::handleMessage);
-
+	SetUpdateHandler(&SsScene2808Dispenser::update);
+	SetMessageHandler(&SsScene2808Dispenser::handleMessage);
 	setVisible(false);
 	_needRefresh = true;
 	StaticSprite::update();
-	
 }
 
-void AsScene2808Dispenser::update() {
+void SsScene2808Dispenser::update() {
 	StaticSprite::update();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		setVisible(false);
 	}
 }
 	
-uint32 AsScene2808Dispenser::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 SsScene2808Dispenser::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
@@ -940,7 +1537,7 @@ uint32 AsScene2808Dispenser::handleMessage(int messageNum, const MessageParam &p
 	return messageResult;
 }
 
-void AsScene2808Dispenser::startCountdown(int index) {
+void SsScene2808Dispenser::startCountdown(int index) {
 	setVisible(true);
 	StaticSprite::update();
 	if (_testTubeSetNum == 0) {
@@ -950,8 +1547,8 @@ void AsScene2808Dispenser::startCountdown(int index) {
 	}
 }
 
-AsScene2808TestTube::AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, AsScene2808Dispenser *dispenser)
-	: AnimatedSprite(vm, 1100), _testTubeSetNum(testTubeSetNum), _testTubeIndex(testTubeIndex), _dispenser(dispenser),
+AsScene2808TestTube::AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, SsScene2808Dispenser *ssDispenser)
+	: AnimatedSprite(vm, 1100), _testTubeSetNum(testTubeSetNum), _testTubeIndex(testTubeIndex), _ssDispenser(ssDispenser),
 	_soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
 	_soundResource4(vm), _soundResource5(vm), _soundResource6(vm),
 	_soundResource7(vm), _soundResource8(vm), _soundResource9(vm), _fillLevel(0) {
@@ -1048,7 +1645,7 @@ void AsScene2808TestTube::fill() {
 		startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices2[_fillLevel], kClass490FrameIndices2[_fillLevel + 1]);
 		_newStickFrameIndex = kClass490FrameIndices2[_fillLevel + 1];
 	}
-	_dispenser->startCountdown(_fillLevel);
+	_ssDispenser->startCountdown(_fillLevel);
 	_fillLevel++;
 }
 
@@ -1213,9 +1810,9 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertSprite<AsScene2808LightEffect>(which);
 
 	for (int testTubeIndex = 0; testTubeIndex < 3; testTubeIndex++) {
-		AsScene2808Dispenser *dispenser = insertSprite<AsScene2808Dispenser>(this, which, testTubeIndex);
-		_vm->_collisionMan->addSprite(dispenser);
-		_asTestTubes[testTubeIndex] = insertSprite<AsScene2808TestTube>(which, testTubeIndex, dispenser);
+		SsScene2808Dispenser *ssDispenser = insertSprite<SsScene2808Dispenser>(this, which, testTubeIndex);
+		_vm->_collisionMan->addSprite(ssDispenser);
+		_asTestTubes[testTubeIndex] = insertSprite<AsScene2808TestTube>(which, testTubeIndex, ssDispenser);
 		_vm->_collisionMan->addSprite(_asTestTubes[testTubeIndex]);
 	}
 	
