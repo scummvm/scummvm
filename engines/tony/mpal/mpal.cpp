@@ -570,7 +570,7 @@ void CustomThread(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	_ctx->p = *(LpCfCall *)param;
+	_ctx->p = *(const LpCfCall *)param;
 
 	CORO_INVOKE_4(GLOBALS._lplpFunctions[_ctx->p->_nCf], _ctx->p->_arg1, _ctx->p->_arg2, _ctx->p->_arg3, _ctx->p->_arg4);
 
@@ -693,7 +693,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 
 	// The ActionThread owns the data block pointed to, so we need to make sure it's
 	// freed when the process exits
-	_ctx->item = *(LpMpalItem *)param;
+	_ctx->item = *(const LpMpalItem *)param;
 
 	GLOBALS._mpalError = 0;
 	for (_ctx->j = 0; _ctx->j < _ctx->item->_action[_ctx->item->_dwRes]._nCmds; _ctx->j++) {
