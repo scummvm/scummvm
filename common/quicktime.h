@@ -120,7 +120,8 @@ protected:
 	enum CodecType {
 		CODEC_TYPE_MOV_OTHER,
 		CODEC_TYPE_VIDEO,
-		CODEC_TYPE_AUDIO
+		CODEC_TYPE_AUDIO,
+		CODEC_TYPE_MIDI
 	};
 
 	struct Track {
