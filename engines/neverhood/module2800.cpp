@@ -25,6 +25,7 @@
 #include "neverhood/module1000.h"
 #include "neverhood/module1200.h"
 #include "neverhood/module1700.h"
+#include "neverhood/diskplayerscene.h"
 
 namespace Neverhood {
 
@@ -35,9 +36,6 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO music stuff
 	// TODO Music18hList_add(0x64210814, 0xD2FA4D14);
 	setGlobalVar(0x28D8C940, 1);
-	
-	createScene(9, 5);
-	return;
 	
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, which);
@@ -116,12 +114,68 @@ void Module2800::createScene(int sceneNum, int which) {
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		_childObject = new Scene2808(_vm, this, 1);
 		break;
+	case 12:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x0000A245, 0x0A241008);
+		break;
+	case 13:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x81C60635, 0x60631814);
+		break;
+	case 14:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0xCA811204, 0x11200CA0);
+		break;
+	case 15:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x2D438A00, 0x38A042DC);
+		break;
+	case 16:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x0A806204, 0x062000A0);
+		break;
+	case 17:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x010F9284, 0xF9280018);
+		break;
+	case 18:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x0100022B, 0x0022F018);
+		break;
+	case 19:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x10866205, 0x66201100);
+		break;
+	case 20:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x01C58000, 0x58004014);
+		break;
+	case 21:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Scene2822(_vm, this, which);
+		break;
+	case 22:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x9408121E, 0x8121A948);
+		break;
+	case 23:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x048C0600, 0xC0604040);
+		break;
+	case 24:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Class152(_vm, this, 0x04270A94, 0x70A9004A);
+		break;
 	case 25:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		if (getGlobalVar(0x190A1D18))
 			_childObject = new Class152(_vm, this, 0x01600204, 0x0020001E);
 		else
 			_childObject = new Class152(_vm, this, 0x08611204, 0x1120008E);
+		break;
+	case 26:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new DiskplayerScene(_vm, this, 4);
 		break;
 	//		
 	case 1001:
@@ -239,8 +293,50 @@ void Module2800::updateScene() {
 		case 10:
 			createScene(8, _moduleResult);
 			break;
+		case 12:
+			createScene(9, 11);
+			break;
+		case 13:
+			createScene(9, 12);
+			break;
+		case 14:
+			createScene(9, 13);
+			break;
+		case 15:
+			createScene(9, 14);
+			break;
+		case 16:
+			createScene(9, 15);
+			break;
+		case 17:
+			createScene(9, 16);
+			break;
+		case 18:
+			createScene(9, 17);
+			break;
+		case 19:
+			createScene(9, 18);
+			break;
+		case 20:
+			createScene(9, 19);
+			break;
+		case 21:
+			createScene(9, 20);
+			break;
+		case 22:
+			createScene(9, 21);
+			break;
+		case 23:
+			createScene(9, 22);
+			break;
+		case 24:
+			createScene(9, 3);
+			break;
 		case 25:
 			createScene(2, 5);
+			break;
+		case 26:
+			createScene(11, 2);
 			break;
 		//		
 		case 1001:
@@ -2310,6 +2406,12 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 
 }
 
+Scene2810::~Scene2810() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(0x00D30138, _klayman->getX());
+	// TODO Sound1ChList_sub_407AF0(0x84400112);
+}
+
 void Scene2810::sub406650() {
 	Sprite *tempSprite;
 
@@ -2378,6 +2480,80 @@ uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _asTape && getGlobalVar(0x1860C990) == 0 && !_flag1) {
 			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004AE750);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _countdown(0), _scrollIndex(0),
+	_soundResource1(vm), _soundResource2(vm), _soundResource3(vm) {
+
+	SetMessageHandler(&Scene2822::handleMessage);
+	SetUpdateHandler(&Scene2822::update);
+	_background = new Background(_vm, 0xD542022E, 0, 0);
+	addBackground(_background);
+	_background->getSurface()->getDrawRect().y = -10;
+	setPalette(0xD542022E);
+	insertMouse435(0x0028D089, 20, 620);
+	_ssButton = insertStaticSprite(0x1A4D4120, 1100);
+	_ssButton->setVisible(false);
+	_soundResource3.load(0x19044E72);
+}
+
+void Scene2822::update() {
+
+	static const int16 kScene2822BackgroundYPositions[] = {
+		0, -20, -5, -15, -8, -12, -9, -11, -10, 0
+	};
+
+	Scene::update();
+
+	if (_countdown != 0) {
+		if ((--_countdown) == 0) {
+			if (_countdownStatus == 0) {
+				_ssButton->setVisible(false);
+				_countdownStatus = 1;
+				_countdown = 48;
+			} else if (_countdownStatus == 1) {
+				_soundResource1.play(0x1384CB60);
+				_countdownStatus = 2;
+				_countdown = 12;
+			} else if (_countdownStatus == 2 && getGlobalVar(0x00188211)) {
+				leaveScene(0);
+			}
+		} else if (_countdownStatus == 2 && getGlobalVar(0x00188211)) {
+			if (_scrollIndex < 9) {
+				_background->getSurface()->getDrawRect().y = kScene2822BackgroundYPositions[_scrollIndex];
+				_scrollIndex++;
+			} else {
+				_background->getSurface()->getDrawRect().y = -10;
+			}
+		}
+	}
+
+}
+
+uint32 Scene2822::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			leaveScene(0);
+		} else if (param.asPoint().x >= 257 && param.asPoint().y >= 235 &&
+			param.asPoint().x <= 293 && param.asPoint().y <= 273) {
+			_ssButton->setVisible(true);
+			_countdownStatus = 0;
+			_countdown = 12;
+			_soundResource2.play(0x44061000);
+			if (getGlobalVar(0x0018CA22) == 0) {
+				setGlobalVar(0x0018CA22, 1);
+				setGlobalVar(0x00188211, 1);
+				SetMessageHandler(NULL);
+				_soundResource3.play();
+				_mouseCursor->setVisible(false);
+			}
 		}
 		break;
 	}

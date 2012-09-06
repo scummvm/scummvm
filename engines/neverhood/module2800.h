@@ -379,6 +379,7 @@ protected:
 class Scene2810 : public Scene {
 public:
 	Scene2810(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene2810();
 protected:
 	Sprite *_sprite1;
 	Sprite *_sprite2;
@@ -392,6 +393,21 @@ protected:
 	NRect _clipRects[2];
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void sub406650();
+};
+
+class Scene2822 : public Scene {
+public:
+	Scene2822(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_ssButton;
+	int _scrollIndex;
+	int _countdown;
+	int _countdownStatus;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood

@@ -328,8 +328,7 @@ void GameModule::startup() {
 	createModule(2700, -1);
 #endif
 #if 1
-	_vm->gameState().which = 11;
-	_vm->gameState().sceneNum = 9;
+	_vm->gameState().sceneNum = 21;
 	createModule(2800, -1);
 #endif
 }
