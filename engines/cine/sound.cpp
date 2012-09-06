@@ -153,7 +153,7 @@ const int AdLibSoundDriver::_freqTable[] = {
 const int AdLibSoundDriver::_freqTableCount = ARRAYSIZE(_freqTable);
 
 const int AdLibSoundDriver::_operatorsTable[] = {
-	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13,	16, 17, 18, 19, 20, 21
+	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21
 };
 
 const int AdLibSoundDriver::_operatorsTableCount = ARRAYSIZE(_operatorsTable);
@@ -614,7 +614,7 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 }
 
 MidiSoundDriverH32::MidiSoundDriverH32(MidiDriver *output)
-    : _output(output), _callback(0), _mutex() {
+	: _output(output), _callback(0), _mutex() {
 }
 
 MidiSoundDriverH32::~MidiSoundDriverH32() {
@@ -731,13 +731,13 @@ void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timb
 		0x00, 0x00, 0x00,       // offset
 		0x00, // Timbre group   _ timbreGroup * 64 + timbreNumber should be the
 		0x00, // Timbre number /  MT-32 instrument in case timbreGroup is 0 or 1.
-		0x18, // Key shift (= 0) 
+		0x18, // Key shift (= 0)
 		0x32, // Fine tune (= 0)
 		0x0C, // Bender Range
 		0x03, // Assign Mode
 		0x01, // Reverb Switch (= enabled)
 		0x00, // dummy
-		0x00, // Output level 
+		0x00, // Output level
 		0x07, // Panpot (= balanced)
 		0x00, // dummy
 		0x00, // dummy

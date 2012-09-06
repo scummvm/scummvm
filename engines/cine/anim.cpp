@@ -202,13 +202,13 @@ AnimData::AnimData(const AnimData &src) : _width(src._width),
 	if (src._data) {
 		_data = new byte[_size];
 		assert(_data);
-		memcpy(_data, src._data, _size*sizeof(byte));
+		memcpy(_data, src._data, _size * sizeof(byte));
 	}
 
 	if (src._mask) {
 		_mask = new byte[_size];
 		assert(_mask);
-		memcpy(_mask, src._mask, _size*sizeof(byte));
+		memcpy(_mask, src._mask, _size * sizeof(byte));
 	}
 
 	memset(_name, 0, sizeof(_name));
@@ -272,8 +272,7 @@ byte AnimData::getColor(int x, int y) {
  * @param transparent Transparent color (for ANIM_MASKSPRITE)
  */
 void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
-	int16 frame, const char *n, byte transparent) {
-
+                    int16 frame, const char *n, byte transparent) {
 	assert(d);
 
 	if (_data) {
@@ -299,7 +298,7 @@ void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
 		_size = w * h;
 		_data = new byte[_size];
 		assert(_data);
-		memcpy(_data, d, _size*sizeof(byte));
+		memcpy(_data, d, _size * sizeof(byte));
 		break;
 
 	case ANIM_MASK:
@@ -669,13 +668,13 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
 					*(source + k) <<= 1;
 					if (k > 0 + m)
 						color <<= 1;
-				}	// end k
+				} // end k
 				*(dest++) = color;
-			}	// end i
-		}	// end m
+			} // end i
+		} // end m
 
 		source += 0x10;
-	}	// end j
+	} // end j
 }
 
 /**
@@ -685,7 +684,7 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
  * @param frameIndex frame of animation to load (-1 for all frames)
  * @return The number of the animDataTable entry after the loaded image set (-1 if error)
  */
-int loadSet(const char *resourceName, int16 idx, int16 frameIndex =-1 ) {
+int loadSet(const char *resourceName, int16 idx, int16 frameIndex = -1) {
 	AnimHeader2Struct header2;
 	uint16 numSpriteInAnim;
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -712,10 +711,9 @@ int loadSet(const char *resourceName, int16 idx, int16 frameIndex =-1 ) {
 	int16 startFrame = 0;
 	int16 endFrame = numSpriteInAnim;
 
-	if(frameIndex>=0)
-	{
+	if (frameIndex >= 0) {
 		startFrame = frameIndex;
-		endFrame = frameIndex+1;
+		endFrame = frameIndex + 1;
 		ptr += 0x10 * frameIndex;
 	}
 
@@ -766,7 +764,7 @@ int loadSeq(const char *resourceName, int16 idx) {
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	int entry = idx < 0 ? emptyAnimSpace() : idx;
 
-	g_cine->_animDataTable[entry].load(dataPtr+0x16, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize-0x16, 1, foundFileIdx, 0, currentPartName);
+	g_cine->_animDataTable[entry].load(dataPtr + 0x16, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize - 0x16, 1, foundFileIdx, 0, currentPartName);
 	free(dataPtr);
 	return entry + 1;
 }
