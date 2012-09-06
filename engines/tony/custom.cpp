@@ -41,73 +41,8 @@
 
 namespace Tony {
 
-const char *ambianceFile[] =  {
-	"None",
-	"1.ADP",    // Grilli.WAV
-	"2.ADP",    // Grilli-Ovattati.WAV
-	"3.ADP",    // Grilli-Vento.WAV
-	"3.ADP",    // Grilli-Vento1.WAV
-	"5.ADP",    // Vento1.WAV
-	"4.ADP",    // Mare1.WAV
-	"6.ADP"     // Mare1.WAV half volume
-};
-
-struct MusicFileEntry {
-	const char *name;
-	int sync;
-};
-
-const MusicFileEntry musicFiles[] =  {
-	{"00.ADP", 0},    {"01.ADP", 0},
-	{"02.ADP", 0},    {"03.ADP", 0},
-	{"04.ADP", 0},    {"05.ADP", 0},
-	{"06.ADP", 0},    {"07.ADP", 0},
-	{"08.ADP", 2450}, {"09.ADP", 0},
-	{"10.ADP", 0},    {"11.ADP", 0},
-	{"12.ADP", 0},    {"13.ADP", 0},
-	{"14.ADP", 0},    {"15.ADP", 0},
-	{"16.ADP", 0},    {"17.ADP", 0},
-	{"18.ADP", 0},    {"19.ADP", 0},
-	{"20.ADP", 0},    {"21.ADP", 0},
-	{"22.ADP", 0},    {"23.ADP", 0},
-	{"24.ADP", 0},    {"25.ADP", 0},
-	{"26.ADP", 0},    {"27.ADP", 0},
-	{"28.ADP", 1670}, {"29.ADP", 0},
-	{"30.ADP", 0},    {"31.ADP", 0},
-	{"32.ADP", 2900}, {"33.ADP", 0},
-	{"34.ADP", 0},    {"35.ADP", 0},
-	{"36.ADP", 0},    {"37.ADP", 0},
-	{"38.ADP", 0},    {"39.ADP", 0},
-	{"40.ADP", 0},    {"41.ADP", 1920},
-	{"42.ADP", 1560}, {"43.ADP", 1920},
-	{"44.ADP", 1920}, {"45.ADP", 1920},
-	{"46.ADP", 1920}, {"47.ADP", 1920},
-	{"48.ADP", 1920}, {"49.ADP", 1920},
-	{"50.ADP", 1920}, {"51.ADP", 1920},
-	{"52.ADP", 1920}, {"53.ADP", 0},
-	{"54.ADP", 0},    {"55.ADP", 0},
-	{"56.ADP", 0},    {"57.ADP", 0},
-	{"58.ADP", 0},    {"59.ADP", 0}
-};
-
-
-const char *jingleFileNames[] = {
-	"S00.ADP", "S01.ADP",
-	"S02.ADP", "S03.ADP",
-	"S04.ADP", "S05.ADP",
-	"S06.ADP", "S07.ADP",
-	"S08.ADP", "S09.ADP",
-	"S10.ADP", "S11.ADP",
-	"S12.ADP", "S13.ADP",
-	"S14.ADP", "S15.ADP",
-	"S16.ADP", "S17.ADP",
-	"S18.ADP"
-};
-
-
 void ReapplyChangedHotspot() {
-	int i;
-	for (i = 0; i < GLOBALS._curChangedHotspot; i++)
+	for (int i = 0; i < GLOBALS._curChangedHotspot; i++)
 		GLOBALS._loc->getItemFromCode(GLOBALS._changedHotspot[i]._dwCode)->changeHotspot(RMPoint(GLOBALS._changedHotspot[i]._nX, GLOBALS._changedHotspot[i]._nY));
 }
 
@@ -543,7 +478,7 @@ DECLARE_CUSTOM_FUNCTION(ChangeLocation)(CORO_PARAM, uint32 nLoc, uint32 tX, uint
 	if (GLOBALS._lastTappeto != GLOBALS._ambiance[nLoc]) {
 		GLOBALS._lastTappeto = GLOBALS._ambiance[nLoc];
 		if (GLOBALS._lastTappeto != 0)
-			g_vm->playMusic(4, ambianceFile[GLOBALS._lastTappeto], 0, true, 2000);
+			g_vm->playMusic(4, kAmbianceFile[GLOBALS._lastTappeto], 0, true, 2000);
 	}
 
 	if (!GLOBALS._bNoBullsEye) {
@@ -607,8 +542,6 @@ DECLARE_CUSTOM_FUNCTION(CustEnableGUI)(CORO_PARAM, uint32, uint32, uint32, uint3
 DECLARE_CUSTOM_FUNCTION(CustDisableGUI)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS.DisableGUI();
 }
-
-
 
 void TonyGenericTake1(CORO_PARAM, uint32 nDirection) {
 	CORO_BEGIN_CONTEXT;
@@ -699,12 +632,9 @@ DECLARE_CUSTOM_FUNCTION(TonyTakeDown2)(CORO_PARAM, uint32, uint32, uint32, uint3
 	TonyGenericTake2(coroParam, 2);
 }
 
-
-
 DECLARE_CUSTOM_FUNCTION(TonyPutUp1)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut1(coroParam, 0);
 }
-
 
 DECLARE_CUSTOM_FUNCTION(TonyPutMid1)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut1(coroParam, 1);
@@ -717,7 +647,6 @@ DECLARE_CUSTOM_FUNCTION(TonyPutDown1)(CORO_PARAM, uint32, uint32, uint32, uint32
 DECLARE_CUSTOM_FUNCTION(TonyPutUp2)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut2(coroParam, 0);
 }
-
 
 DECLARE_CUSTOM_FUNCTION(TonyPutMid2)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	TonyGenericPut2(coroParam, 1);
@@ -770,7 +699,6 @@ DECLARE_CUSTOM_FUNCTION(TonyWhistle)(CORO_PARAM, uint32, uint32, uint32, uint32)
 
 	CORO_END_CODE;
 }
-
 
 void TonySetNumTexts(uint32 dwText) {
 	GLOBALS._dwTonyNumTexts = dwText;
@@ -1580,7 +1508,6 @@ DECLARE_CUSTOM_FUNCTION(MCharSetPosition)(CORO_PARAM, uint32 nChar, uint32 nX, u
 	GLOBALS._mCharacter[nChar]._y = nY;
 }
 
-
 DECLARE_CUSTOM_FUNCTION(MCharSetColor)(CORO_PARAM, uint32 nChar, uint32 r, uint32 g, uint32 b) {
 	assert(nChar < 10);
 	GLOBALS._mCharacter[nChar]._r = r;
@@ -1588,14 +1515,12 @@ DECLARE_CUSTOM_FUNCTION(MCharSetColor)(CORO_PARAM, uint32 nChar, uint32 r, uint3
 	GLOBALS._mCharacter[nChar]._b = b;
 }
 
-
 DECLARE_CUSTOM_FUNCTION(MCharSetNumTalksInGroup)(CORO_PARAM, uint32 nChar, uint32 nGroup, uint32 nTalks, uint32) {
 	assert(nChar < 10);
 	assert(nGroup < 10);
 
 	GLOBALS._mCharacter[nChar]._numTalks[nGroup] = nTalks;
 }
-
 
 DECLARE_CUSTOM_FUNCTION(MCharSetCurrentGroup)(CORO_PARAM, uint32 nChar, uint32 nGroup, uint32, uint32) {
 	assert(nChar < 10);
@@ -1616,7 +1541,6 @@ DECLARE_CUSTOM_FUNCTION(MCharSetAlwaysBack)(CORO_PARAM, uint32 nChar, uint32 bAl
 
 	GLOBALS._mCharacter[nChar]._bAlwaysBack = bAlwaysBack;
 }
-
 
 DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMessage, uint32 bIsBack, uint32 nFont) {
 	CORO_BEGIN_CONTEXT;
@@ -1662,7 +1586,6 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
 	_ctx->voice = NULL;
 	if (_ctx->curVoc) {
 		// Position within the database of entries, beginning at the first
-		// fseek(g_vm->m_vdbFP, curVoc->offset, SEEK_SET);
 		g_vm->_vdbFP.seek(_ctx->curVoc->_offset);
 		_ctx->curOffset = _ctx->curVoc->_offset;
 	}
@@ -1744,8 +1667,6 @@ DECLARE_CUSTOM_FUNCTION(MCharSendMessage)(CORO_PARAM, uint32 nChar, uint32 dwMes
  *  Dialogs
  */
 
-int g_curDialog;
-
 DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
 	char *string;
@@ -1766,7 +1687,7 @@ DECLARE_CUSTOM_FUNCTION(SendDialogMessage)(CORO_PARAM, uint32 nPers, uint32 nMsg
 	if (nPers != 0 && GLOBALS._isMChar[nPers] && GLOBALS._mCharacter[nPers]._bAlwaysBack)
 		_ctx->bIsBack = true;
 
-	_ctx->curVoc = SearchVoiceHeader(g_curDialog, nMsg);
+	_ctx->curVoc = SearchVoiceHeader(GLOBALS._curDialog, nMsg);
 	_ctx->voice = NULL;
 
 	if (_ctx->curVoc) {
@@ -1939,7 +1860,7 @@ DECLARE_CUSTOM_FUNCTION(StartDialog)(CORO_PARAM, uint32 nDialog, uint32 nStartGr
 
 	CORO_BEGIN_CODE(_ctx);
 
-	g_curDialog = nDialog;
+	GLOBALS._curDialog = nDialog;
 
 	// Call MPAL to start the dialog
 	mpalQueryDoDialog(nDialog, nStartGroup);
@@ -2174,11 +2095,11 @@ DECLARE_CUSTOM_FUNCTION(PlaySoundEffect)(CORO_PARAM, uint32 nMusic, uint32 nFX, 
 	}
 
 	GLOBALS._lastMusic = nMusic;
-	CustPlayMusic(GLOBALS._curSoundEffect, musicFiles[nMusic].name, nFX, bNoLoop ? false : true, musicFiles[nMusic].sync);
+	CustPlayMusic(GLOBALS._curSoundEffect, kMusicFiles[nMusic]._name, nFX, bNoLoop ? false : true, kMusicFiles[nMusic]._sync);
 }
 
 DECLARE_CUSTOM_FUNCTION(PlayJingle)(CORO_PARAM, uint32 nMusic, uint32 nFX, uint32 bLoop, uint32) {
-	CustPlayMusic(2, jingleFileNames[nMusic], nFX, bLoop);
+	CustPlayMusic(2, kJingleFileNames[nMusic], nFX, bLoop);
 }
 
 DECLARE_CUSTOM_FUNCTION(PlayItemSfx)(CORO_PARAM, uint32 nItem, uint32 nSFX, uint32, uint32) {
@@ -2201,7 +2122,7 @@ void RestoreMusic(CORO_PARAM) {
 	CORO_INVOKE_4(PlaySoundEffect, GLOBALS._lastMusic, 0, 0, 0);
 
 	if (GLOBALS._lastTappeto != 0)
-		CustPlayMusic(4, ambianceFile[GLOBALS._lastTappeto], 0, true);
+		CustPlayMusic(4, kAmbianceFile[GLOBALS._lastTappeto], 0, true);
 
 	CORO_END_CODE;
 }
@@ -2215,7 +2136,6 @@ void LoadMusic(Common::InSaveFile *f) {
 	GLOBALS._lastMusic = f->readByte();
 	GLOBALS._lastTappeto = f->readByte();
 }
-
 
 DECLARE_CUSTOM_FUNCTION(JingleFadeStart)(CORO_PARAM, uint32 nJingle, uint32 bLoop, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
@@ -2242,9 +2162,6 @@ DECLARE_CUSTOM_FUNCTION(JingleFadeEnd)(CORO_PARAM, uint32 nJingle, uint32 bLoop,
 
 	CORO_END_CODE;
 }
-
-
-
 
 DECLARE_CUSTOM_FUNCTION(MustSkipIdleStart)(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS._bSkipIdle = true;
@@ -2281,7 +2198,6 @@ DECLARE_CUSTOM_FUNCTION(OpenInitOptions)(CORO_PARAM, uint32, uint32, uint32, uin
 
 	CORO_END_CODE;
 }
-
 
 DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
@@ -2354,8 +2270,6 @@ DECLARE_CUSTOM_FUNCTION(DoCredits)(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint3
 
 	CORO_END_CODE;
 }
-
-
 
 BEGIN_CUSTOM_FUNCTION_MAP()
 
@@ -2507,7 +2421,7 @@ ASSIGN(201, MustSkipIdleEnd);
 END_CUSTOM_FUNCTION_MAP()
 
 void processKilledCallback(Common::PROCESS *p) {
-	for (uint i = 0; i < 10; i++)
+	for (uint i = 0; i < 10; i++) {
 		if (GLOBALS._mut[i]._ownerPid == p->pid) {
 			// Handle scripts which don't call ReleaseOwnership, such as
 			// the one in loc37's vEnter when Tony is chasing the mouse.
@@ -2517,6 +2431,7 @@ void processKilledCallback(Common::PROCESS *p) {
 			GLOBALS._mut[i]._lockCount = 0;
 			CoroScheduler.setEvent(GLOBALS._mut[i]._eventId);
 		}
+	}
 }
 
 void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation *loc, RMInventory *inv, RMInput *input) {
@@ -2531,13 +2446,12 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	GLOBALS.EnableGUI = mainEnableGUI;
 
 	GLOBALS._bAlwaysDisplay = false;
-	int i;
 
 	CoroScheduler.setResourceCallback(processKilledCallback);
-	for (i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 		GLOBALS._mut[i]._eventId = CoroScheduler.createEvent(false, true);
 
-	for (i = 0; i < 200; i++)
+	for (int i = 0; i < 200; i++)
 		GLOBALS._ambiance[i] = 0;
 
 	GLOBALS._ambiance[6] =  AMBIANCE_CRICKETS;

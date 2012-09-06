@@ -1386,11 +1386,7 @@ bool doSelection(uint32 i, uint32 dwData) {
  */
 bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 			  LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings) {
-	Common::File hMpc;
 	byte buf[5];
-	uint32 nBytesRead;
-	bool bCompress;
-	uint32 dwSizeDecomp, dwSizeComp;
 	byte *cmpbuf;
 
 	// Save the array of custom functions
@@ -1398,21 +1394,22 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	GLOBALS._lplpFunctionStrings = lpcfStrings;
 
 	// OPen the MPC file for reading
+	Common::File hMpc;
 	if (!hMpc.open(lpszMpcFileName))
 		return false;
 
 	// Read and check the header
-	nBytesRead = hMpc.read(buf, 5);
+	uint32 nBytesRead = hMpc.read(buf, 5);
 	if (nBytesRead != 5)
 		return false;
 
 	if (buf[0] != 'M' || buf[1] != 'P' || buf[2] != 'C' || buf[3] != 0x20)
 		return false;
 
-	bCompress = buf[4];
+	bool bCompress = buf[4];
 
 	// Reads the size of the uncompressed file, and allocate memory
-	dwSizeDecomp = hMpc.readUint32LE();
+	uint32 dwSizeDecomp = hMpc.readUint32LE();
 	if (hMpc.err())
 		return false;
 
@@ -1422,7 +1419,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 	if (bCompress) {
 		// Get the compressed size and read the data in
-		dwSizeComp = hMpc.readUint32LE();
+		uint32 dwSizeComp = hMpc.readUint32LE();
 		if (hMpc.err())
 			return false;
 
@@ -1463,7 +1460,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	// Seek to the end of the file to read overall information
 	GLOBALS._hMpr.seek(-12, SEEK_END);
 
-	dwSizeComp = GLOBALS._hMpr.readUint32LE();
+	uint32 dwSizeComp = GLOBALS._hMpr.readUint32LE();
 	if (GLOBALS._hMpr.err())
 		return false;
 
@@ -1941,11 +1938,9 @@ uint32 mpalGetError() {
  * @returns		TRUE if the script 'was launched, FALSE on failure
  */
 bool mpalExecuteScript(int nScript) {
-	LpMpalScript s;
-
 	LockScripts();
 	int n = scriptGetOrderFromNum(nScript);
-	s = (LpMpalScript)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalScript));
+	LpMpalScript s = (LpMpalScript)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalScript));
 	if (s == NULL)
 		return false;
 
