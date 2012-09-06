@@ -720,9 +720,9 @@ static const char *credits[] = {
 "C0""",
 "C0""Neil Dodwell and David Dew from Creative Reality for providing the source of Dreamweb and for their tremendous support.",
 "C0""",
-"C0""Janusz Wisniewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon for providing full source code for Soltys and letting us to redistribute the game.",
+"C0""Janusz Wisniewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon for providing full source code for Soltys and letting us redistribute the game.",
 "C0""",
-"C0""Jan Nedoma for providing the sources to the Wintermute-engine, and for providing support while porting the engine to ScummVM",
+"C0""Jan Nedoma for providing the sources to the Wintermute-engine, and for his support while porting the engine to ScummVM.",
 "C0""",
 "",
 };

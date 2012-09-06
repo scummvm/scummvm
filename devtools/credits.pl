@@ -1145,11 +1145,11 @@ begin_credits("Credits");
 
 	add_paragraph(
     "Janusz Wi&#347;niewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon ".
-    "for providing full source code for So&#322;tys and letting us to redistribute the game.");
+    "for providing full source code for So&#322;tys and letting us redistribute the game.");
 
 	add_paragraph(
-    "Jan Nedoma for providing the sources to the Wintermute-engine, and for providing ".
-    "support while porting the engine to ScummVM");
+    "Jan Nedoma for providing the sources to the Wintermute-engine, and for his ".
+    "support while porting the engine to ScummVM.");
 
 	end_section();
 
