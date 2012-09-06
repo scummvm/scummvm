@@ -48,7 +48,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 21; # The maximal width of a name.
+	$max_name_width = 23; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -1074,7 +1074,7 @@ begin_credits("Credits");
 
 
 	# HACK!
-	$max_name_width = 16;
+	$max_name_width = 17;
 
 	begin_section("Special thanks to");
 		begin_persons();
