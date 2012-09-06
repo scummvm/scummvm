@@ -473,6 +473,9 @@ int FWRenderer::drawChar(char character, int x, int y) {
 
 /**
  * Clears the character glyph to black
+ * This function is called "undrawChar", because the original only applies
+ * this drawing after the original glyph has been drawn.
+ * Possible TODO: Find a better name.
  * @param character Character to undraw
  * @param x Character coordinate
  * @param y Character coordinate
