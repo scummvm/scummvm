@@ -561,6 +561,7 @@ Special thanks to
                       repository, planet and doxygen sites as well as tons of
                       HD space
    DOSBox Team      - For their awesome OPL2 and OPL3 emulator
+   Yusuke Kamiyaman - For contributing some GUI icons 
    Till Kresslein   - For design of modern ScummVM GUI
    Jezar            - For his freeverb filter implementation
    Jim Leiterman    - Various info on his FM-TOWNS/Marty SCUMM ports
@@ -569,8 +570,6 @@ Special thanks to
    Jimmi Thogersen  - For ScummRev, and much obscure code/documentation
    Tristan          - For additional work on the original MT-32 emulator
    James Woodcock   - Soundtrack enhancements
-
-   Some icons by Yusuke Kamiyamane
 
    Tony Warriner and everyone at Revolution Software Ltd. for sharing with us
    the source of some of their brilliant games, allowing us to release
