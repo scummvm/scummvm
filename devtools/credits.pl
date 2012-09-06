@@ -359,6 +359,9 @@ sub add_person {
 		my $min_name_width = length $desc > 0 ? $max_name_width : 0;
 		$name = $nick if $name eq "";
 		$name = html_entities_to_ascii($name);
+		if (length $name > $max_name_width) {
+			print STDERR "Warning: max_name_width is too small (" . $max_name_width . " < " . (length $name) . " for \"" . $name. "\")\n";
+		}
 		$desc = html_entities_to_ascii($desc);
 
 		$tab = " " x ($section_level * 2 + 1);
