@@ -54,50 +54,27 @@ private:
 		ToneDescription tone;
 	};
 
+	typedef Common::Array<NoteRequest> NoteRequestList;
+
 	class MIDISampleDesc : public SampleDesc {
 	public:
 		MIDISampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
 		~MIDISampleDesc() {}
 
-		Common::Array<NoteRequest> _noteRequests;
+		NoteRequestList _noteRequests;
 	};
 
 	Common::String readString31();
 	Common::Rational readFixed();
+	NoteRequestList readNoteRequestList();
 };
 
 Common::QuickTimeParser::SampleDesc *MidiParser_QT::readSampleDesc(Track *track, uint32 format) {
 	if (track->codecType == CODEC_TYPE_MIDI) {
 		debug(0, "MIDI Codec FourCC '%s'", tag2str(format));
 
-		/* uint32 flags = */ _fd->readUint32BE(); // always 0
-
 		MIDISampleDesc *entry = new MIDISampleDesc(track, format);
-
-		for (;;) {
-			uint32 event = _fd->readUint32BE();
-
-			if ((event & 0xF000FFFF) != 0xF0000017) // note request event
-				break;
-
-			NoteRequest request;
-			request.part = (event >> 16) & 0xFFF;
-			request.info.flags = _fd->readByte();
-			request.info.reserved = _fd->readByte();
-			request.info.polyphony = _fd->readUint16BE();
-			request.info.typicalPolyphony = readFixed();
-			request.tone.synthesizerType = _fd->readUint32BE();
-			request.tone.synthesizerName = readString31();
-			request.tone.instrumentName = readString31();
-			request.tone.instrumentNumber = _fd->readUint32BE();
-			request.tone.gmNumber = _fd->readUint32BE();
-
-			if (_fd->readUint32BE() != 0xC0010017) // general event note request
-				error("Invalid instrument end event");
-
-			entry->_noteRequests.push_back(request);
-		}
-
+		entry->_noteRequests = readNoteRequestList();
 		return entry;
 	}
 
@@ -124,4 +101,38 @@ Common::Rational MidiParser_QT::readFixed() {
 	int16 integerPart = _fd->readSint16BE();
 	uint16 fractionalPart = _fd->readUint16BE();
 	return integerPart + Common::Rational(fractionalPart, 0x10000);
+}
+
+MidiParser_QT::NoteRequestList MidiParser_QT::readNoteRequestList() {
+	NoteRequestList requests;
+
+	/* uint32 flags = */ _fd->readUint32BE(); // always 0
+
+	for (;;) {
+		uint32 event = _fd->readUint32BE();
+
+		if (event == 0x60000000) // marker event
+			break;
+		else if ((event & 0xF000FFFF) != 0xF0000017) // note request event
+			error("Invalid note request event");
+
+		NoteRequest request;
+		request.part = (event >> 16) & 0xFFF;
+		request.info.flags = _fd->readByte();
+		request.info.reserved = _fd->readByte();
+		request.info.polyphony = _fd->readUint16BE();
+		request.info.typicalPolyphony = readFixed();
+		request.tone.synthesizerType = _fd->readUint32BE();
+		request.tone.synthesizerName = readString31();
+		request.tone.instrumentName = readString31();
+		request.tone.instrumentNumber = _fd->readUint32BE();
+		request.tone.gmNumber = _fd->readUint32BE();
+
+		if (_fd->readUint32BE() != 0xC0010017) // general event note request
+			error("Invalid instrument end event");
+
+		requests.push_back(request);
+	}
+
+	return requests;
 }
