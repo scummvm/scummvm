@@ -2200,6 +2200,72 @@ void Klayman::walkAlongPathPoints() {
 	}
 }
 
+void Klayman::sub4204C0() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimationByHash(0x00AB8C10, 0x01084280, 0);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(&Klayman::spriteUpdate41F920);
+	SetMessageHandler(&Klayman::handleMessage41E5F0);
+}
+
+void Klayman::spriteUpdate41F920() {
+	updateDeltaXY();
+	if (_y >= _destY) {
+		_y = _destY;
+		processDelta();
+		gotoNextStateExt();
+	}
+}
+
+uint32 Klayman::handleMessage41E5F0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x168050A0)
+			sendMessage(_attachedSprite, 0x4806, 0);
+		else if (param.asInteger() == 0x320AC306)
+			startAnimationByHash(0x00AB8C10, 0x01084280, 0);
+		else if (param.asInteger() == 0x4AB28209)
+			sendMessage(_attachedSprite, 0x482A, 0);
+		else if (param.asInteger() == 0x88001184)
+			sendMessage(_attachedSprite, 0x482B, 0);
+		break;
+	}
+	return messageResult;
+}
+
+void Klayman::sub421230() {
+	_status2 = 2;
+	_acceptInput = false;
+	startAnimationByHash(0x38445000, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(NULL);
+	SetMessageHandler(&Klayman::handleMessage41F1D0);
+}
+
+uint32 Klayman::handleMessage41F1D0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x040C4C01)
+			_soundResource1.play(0x01E11140);
+		break;
+	}
+	return messageResult;
+}
+
+void Klayman::sub421270() {
+	if (!stStartAction(AnimationCallback(&Klayman::sub421270))) {
+		_status2 = 2;
+		_acceptInput = false;
+		startAnimation(0x1B3D8216, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&Klayman::hmTurnToUse);
+		SetSpriteUpdate(&Klayman::spriteUpdate41F230);
+	}
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -5676,6 +5742,153 @@ void KmScene2809::sub458590() {
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&KmScene2809::handleMessage457FC0);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+}
+
+
+KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y) 
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+
+uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41CDE0(param.asPoint().x);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::sub421640);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x4818:
+		sub41CDE0(_dataResource.getPoint(param.asInteger()).x);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1)
+			GotoState(&Klayman::sub421740);
+		else if (param.asInteger() == 0)
+			GotoState(&Klayman::sub421780);
+		else
+			GotoState(&Klayman::sub421700);
+		break;
+	case 0x482E:	 
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::sub421840);
+		} else {
+			GotoState(&Klayman::sub4217C0);
+		}
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::sub421900);
+		} else {
+			GotoState(&Klayman::sub421880);
+		}
+		break;
+	case 0x4837:
+		sub41CE70();
+		break;
+	}
+	return 0;
+}
+
+KmScene2810::KmScene2810(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+		NRect *clipRects, uint clipRectsCount)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+
+	// TODO ClipRects stuff
+	
+}
+		
+uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4803:
+		_destY = param.asInteger();
+		GotoState(&Klayman::sub4204C0);
+		break;
+	case 0x4804:
+		if (param.asInteger() == 3)
+			GotoState(&Klayman::sub421230);
+		break;
+	case 0x4812:
+		GotoState(&Klayman::stPickUpGeneric);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0) {
+			GotoState(&Klayman::stWonderAboutHalf);
+		} else if (param.asInteger() == 1) {
+			GotoState(&Klayman::stWonderAboutAfter);
+		} else if (param.asInteger() == 3) {
+			GotoState(&Klayman::stTurnToUseHalf);
+		} else if (param.asInteger() == 4) {
+			GotoState(&Klayman::stTurnAwayFromUse);
+		} else if (param.asInteger() == 5) {
+			GotoState(&Klayman::sub421270);
+		} else {
+			GotoState(&Klayman::stWonderAbout);
+		}
+		break;
+	case 0x4820:  
+		sendMessage(_parentScene, 0x2000, 0);
+		GotoState(&Klayman::stContinueClimbLadderUp);	 
+		break;
+	case 0x4821:	
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderDown);	 
+		break;
+	case 0x4822:  
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderUp);	 
+		break;
+	case 0x4823:
+		sendMessage(_parentScene, 0x2001, 0);
+		GotoState(&Klayman::stClimbLadderHalf);	 
+		break;
+	case 0x4824:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = _dataResource.getPoint(param.asInteger()).y;
+		GotoState(&Klayman::stStartClimbLadderDown);
+		break;
+	case 0x4825:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = _dataResource.getPoint(param.asInteger()).y;
+		GotoState(&Klayman::stStartClimbLadderUp);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x4837:
+		sub41CE70();
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

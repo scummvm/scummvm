@@ -368,6 +368,32 @@ protected:
 	void findClosestPoint();
 };
 
+class AsScene2810Rope : public AnimatedSprite {
+public:
+	AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x);
+protected:
+	Scene *_parentScene;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2810 : public Scene {
+public:
+	Scene2810(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_sprite1;
+	Sprite *_sprite2;
+	Sprite *_sprite3;
+	Sprite *_asRope;
+	Sprite *_sprite4;
+	Sprite *_asTape;
+	Sprite *_sprite5;
+	Sprite *_sprite6;
+	bool _flag1;
+	NRect _clipRects[2];
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void sub406650();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE2800_H */

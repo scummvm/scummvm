@@ -36,6 +36,9 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO Music18hList_add(0x64210814, 0xD2FA4D14);
 	setGlobalVar(0x28D8C940, 1);
 	
+	createScene(9, 5);
+	return;
+	
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, which);
 	} else if (which == 2) {
@@ -104,6 +107,10 @@ void Module2800::createScene(int sceneNum, int which) {
 	case 8:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		_childObject = new Scene2809(_vm, this, which);
+		break;
+	case 9:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Scene2810(_vm, this, which);
 		break;
 	case 10:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
@@ -185,11 +192,49 @@ void Module2800::updateScene() {
 			createScene(5, _moduleResult);
 			break;
 		case 8:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createScene(10, 0);
-			} else {
+			else
 				createScene(9, 4);
-			}
+			break;
+		case 9:
+			debug("scene 9 _moduleResult = %d", _moduleResult);
+			if (_moduleResult == 1)
+				createScene(11, 0);
+			else if (_moduleResult == 2)
+				createScene(2, 0);
+			else if (_moduleResult == 3)
+				createScene(24, 0);
+			else if (_moduleResult == 4)
+				createScene(8, 0);
+			else if (_moduleResult == 6)
+				createScene(2, 6);
+			else if (_moduleResult == 11)
+				createScene(12, 0);
+			else if (_moduleResult == 12)
+				createScene(13, 0);
+			else if (_moduleResult == 13)
+				createScene(14, 0);
+			else if (_moduleResult == 14)
+				createScene(15, 0);
+			else if (_moduleResult == 15)
+				createScene(16, 0);
+			else if (_moduleResult == 16)
+				createScene(17, 0);
+			else if (_moduleResult == 17)
+				createScene(18, 0);
+			else if (_moduleResult == 18)
+				createScene(19, 0);
+			else if (_moduleResult == 19)
+				createScene(20, 0);
+			else if (_moduleResult == 20)
+				createScene(21, 0);
+			else if (_moduleResult == 21)
+				createScene(22, 0);
+			else if (_moduleResult == 22)
+				createScene(23, 0);
+			else 
+				createScene(2, 4);
 			break;
 		case 10:
 			createScene(8, _moduleResult);
@@ -2093,6 +2138,250 @@ void Scene2809::findClosestPoint() {
 		_palette->addPalette(kScene2809PaletteFileHashes[index], 0, 64, 0);
 	}
 	
+}
+
+AsScene2810Rope::AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x)
+	: AnimatedSprite(vm, 1100) {
+
+	createSurface(990, 68, 476);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2810Rope::handleMessage);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	_x = x;
+	_y = -276;
+	startAnimation(0x9D098C23, 35, 53);
+}
+
+uint32 AsScene2810Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		startAnimation(0x9D098C23, 35, 53);
+		break;
+	case 0x482A:
+		sendMessage(_parentScene, 0x1022, 990);
+		break;
+	case 0x482B:
+		sendMessage(_parentScene, 0x1022, 1010);
+		break;
+	}
+	return messageResult;
+}
+
+Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+
+	Sprite *tempSprite;
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2810::handleMessage);
+	
+	setBackground(0x26508804);
+	setPalette(0x26508804);
+	insertMouse433(0x0880026D);
+
+	_sprite6 = insertStaticSprite(0x03615227, 1100);
+	_sprite5 = insertStaticSprite(0xE059A224, 1100);
+
+	_clipRects[0].x1 = 0;
+	_clipRects[0].y1 = 0;
+	_clipRects[0].x2 = 640;
+	_clipRects[0].y2 = 400;
+	_clipRects[1].x1 = _sprite5->getDrawRect().x;
+	_clipRects[1].y1 = 400;
+	_clipRects[1].x2 = _sprite6->getDrawRect().x2();
+	_clipRects[1].y2 = 480;
+
+	if (getGlobalVar(0x1860C990)) {
+		_asTape = insertSprite<AsScene1201Tape>(this, 0, 900, 245, 429, 0x9148A011);
+		_vm->_collisionMan->addSprite(_asTape);
+	} else {
+		_asTape = insertSprite<AsScene1201Tape>(this, 0, 1100, 245, 429, 0x9148A011);
+		_vm->_collisionMan->addSprite(_asTape);
+	}
+
+	_sprite1 = insertStaticSprite(0x430001C4, 1200);
+
+	if (getGlobalVar(0x0018CA22)) {
+		setGlobalVar(0xCB45DE03, 1);
+		if (getGlobalVar(0x1860C990)) {
+			_sprite4 = insertStaticSprite(0x82653808, 100);
+		} else {
+			_sprite4 = insertStaticSprite(0x82653808, 1100);
+		}
+		_sprite4->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
+	}
+	
+	if (which < 0) {
+		if (getGlobalVar(0x1860C990)) {
+			insertKlayman<KmScene2810Small>(240, 448);
+			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
+			setMessageList(0x004AE438);
+			setRectList(0x004AE810);
+			_flag1 = false;
+			_vm->_collisionMan->removeSprite(_asTape);
+		} else {
+			insertKlayman<KmScene2810>(300, 424, _clipRects, 2);
+			setMessageList(0x004AE438);
+			if (getGlobalVar(0x0018CA22))
+				loadDataResource(0x84130112);
+			else
+				loadDataResource(0x84500132);
+			tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+			tempSprite->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
+			_clipRects[0].y1 = _sprite1->getDrawRect().y;
+			_flag1 = false;
+		}
+	} else if (which == 1) {
+		insertKlayman<KmScene2810>(186, 64, _clipRects, 2);
+		setMessageList(0x004AE440);
+		loadDataResource(0x84130112);
+		tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+		tempSprite->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
+		_flag1 = true;
+		_clipRects[0].y1 = _sprite1->getDrawRect().y;
+	} else if (which == 5) {
+		insertStaticSprite(0xC3007EA0, 100);
+		_sprite2 = insertStaticSprite(0x02780936, 1100);
+		_sprite3 = insertStaticSprite(0x1CA02160, 1100);
+		_asRope = insertSprite<AsScene2810Rope>(this, 384);
+		insertKlayman<KmScene2810>(384, 0, _clipRects, 0);
+		sendEntityMessage(_klayman, 0x1014, _asRope);
+		setMessageList(0x004AE738);
+		_klayman->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
+		_asRope->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
+		// TODO Sound1ChList_addSoundResource(0x84400112, 0xC874EE6C, true);
+		// TODO Sound1ChList_playLooping(0xC874EE6C);
+		// TODO Sound1ChList_setVolume(0xC874EE6C, 50);
+		_flag1 = false;
+	} else if ((which >= 11 && which <= 14) || (which >= 19 && which <= 22) || which == 3) {
+		if (getGlobalVar(0x1860C990)) {
+			insertKlayman<KmScene2810Small>((int16)getGlobalVar(0x00D30138), 448);
+			if (getGlobalVar(0xC0418A02))
+				_klayman->setDoDeltaX(1);
+			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
+			setMessageList(0x004AE6D8);
+			setRectList(0x004AE810);
+			_flag1 = false;
+			_vm->_collisionMan->removeSprite(_asTape);
+		} else {
+			sub406650();
+			if (getGlobalVar(0x00188211)) {
+				setMessageList(0x004AE6E8);
+				setGlobalVar(0x00188211, 0);
+				_flag1 = false;
+			} else {
+				setMessageList(0x004AE6D8);
+				_flag1 = false;
+			}
+		}
+	} else if (which >= 15 && which <= 18) {
+		sub406650();
+		setMessageList(0x004AE6E0);
+		_flag1 = false;
+	} else if (which == 4) {
+		if (getGlobalVar(0x1860C990)) {
+			insertKlayman<KmScene2810Small>(473, 448);
+			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
+			setMessageList(0x004AE428);
+			setRectList(0x004AE810);
+			_flag1 = false;
+			_vm->_collisionMan->removeSprite(_asTape);
+		} else {
+			insertKlayman<KmScene2810>(450, 424, _clipRects, 2);
+			setMessageList(0x004AE418);
+			if (getGlobalVar(0x0018CA22))
+				loadDataResource(0x84130112);
+			else
+				loadDataResource(0x84500132);
+			tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+			tempSprite->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
+			_clipRects[0].y1 = _sprite1->getDrawRect().y;
+			_flag1 = false;
+		}
+	} else {
+		insertKlayman<KmScene2810Small>(120, 448);
+		_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
+		setMessageList(0x004AE410);
+		setRectList(0x004AE810);
+		_flag1 = false;
+		_vm->_collisionMan->removeSprite(_asTape);
+	}
+
+}
+
+void Scene2810::sub406650() {
+	Sprite *tempSprite;
+
+	if (getGlobalVar(0x00188211)) {
+		insertKlayman<KmScene2810>(430, 424, _clipRects, 2);
+		_klayman->setDoDeltaX(1);
+	} else {
+		insertKlayman<KmScene2810>((int16)getGlobalVar(0x00D30138), 424, _clipRects, 2);
+		if (getGlobalVar(0xC0418A02))
+			_klayman->setDoDeltaX(1);
+	}
+	if (getGlobalVar(0x0018CA22))
+		loadDataResource(0x84130112);
+	else
+		loadDataResource(0x84500132);
+	tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+	tempSprite->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
+	_clipRects[0].y1 = _sprite1->getDrawRect().y;
+}
+
+uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0xE574F14C)
+			setMessageList(0x004AE458);
+		else if (param.asInteger() == 0x7214A05C || param.asInteger() == 0x2905E574)
+			setMessageList(0x004AE4A8);
+		else if (param.asInteger() == 0x7274E24C || param.asInteger() == 0x2D24E572)
+			setMessageList(0x004AE4D0);
+		else if (param.asInteger() == 0x4A07A040 || param.asInteger() == 0x190426F5)
+			setMessageList(0x004AE4F8);
+		else if (param.asInteger() == 0x6604200C || param.asInteger() == 0x2100E435)
+			setMessageList(0x004AE520);
+		else if (param.asInteger() == 0xE216A05C || param.asInteger() == 0x0905EC74)
+			setMessageList(0x004AE548);
+		else if (param.asInteger() == 0x721DA05C || param.asInteger() == 0xB905E574)
+			setMessageList(0x004AE570);
+		else if (param.asInteger() == 0x6214E09C || param.asInteger() == 0x2D09E474)
+			setMessageList(0x004AE598);
+		else if (param.asInteger() == 0x6276A04C || param.asInteger() == 0x0904E472)
+			setMessageList(0x004AE5C0);
+		else if (param.asInteger() == 0x6E14A00C || param.asInteger() == 0x2900E4B4)
+			setMessageList(0x004AE5E8);
+		else if (param.asInteger() == 0x6014A04D || param.asInteger() == 0x2904F454)
+			setMessageList(0x004AE610);
+		else if (param.asInteger() == 0x6215A3C4 || param.asInteger() == 0x393C6474)
+			setMessageList(0x004AE638);
+		else if (param.asInteger() == 0x6A54E24D || param.asInteger() == 0x2D24F4F0)
+			setMessageList(0x004AE660);
+		else if (param.asInteger() == 0x2064294C || param.asInteger() == 0x2194E053)
+			setMessageList(0x004AE688);
+		break;
+	case 0x2000:
+		setRectList(0x004AE800);
+		_flag1 = true;
+		break;
+	case 0x2001:
+		if (getGlobalVar(0x0018CA22))
+			loadDataResource(0x84130112);
+		else
+			loadDataResource(0x84500132);
+		_flag1 = false;
+		break;
+	case 0x4826:
+		if (sender == _asTape && getGlobalVar(0x1860C990) == 0 && !_flag1) {
+			sendEntityMessage(_klayman, 0x1014, _asTape);
+			setMessageList(0x004AE750);
+		}
+		break;
+	}
+	return messageResult;
 }
 
 } // End of namespace Neverhood
