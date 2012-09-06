@@ -697,6 +697,10 @@ begin_credits("Credits");
 				add_person("Gregory Montoir", "cyx", "(retired)");
 			end_section();
 
+			begin_section("Wintermute");
+				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
+			end_section();
+
 		end_section();
 
 
