@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	audiostream.o \
 	fmopl.o \
 	mididrv.o \
+	midiparser_qt.o \
 	midiparser_smf.o \
 	midiparser_xmidi.o \
 	midiparser.o \
