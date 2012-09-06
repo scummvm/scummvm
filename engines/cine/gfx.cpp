@@ -113,7 +113,7 @@ FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 	assert(_backBuffer);
 
 	memset(_backBuffer, 0, _screenSize);
-	memset(_bgName, 0, sizeof (_bgName));
+	memset(_bgName, 0, sizeof(_bgName));
 }
 
 
@@ -249,7 +249,7 @@ void FWRenderer::drawCommand() {
 	unsigned int i;
 	int x = 10, y = _cmdY;
 
-	if(disableSystemMenu == 0) {
+	if (disableSystemMenu == 0) {
 		drawPlainBox(x, y, 301, 11, 0);
 		drawBorder(x - 1, y - 1, 302, 12, 2);
 
@@ -307,7 +307,7 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 				i++;
 			line = fitLine(str + i, tw, words, cw);
 
-			if ( str[i + line] != '\0' && str[i + line] != 0x7C && words) {
+			if (str[i + line] != '\0' && str[i + line] != 0x7C && words) {
 				space = (tw - cw) / words;
 				extraSpace = (tw - cw) % words;
 			} else {
@@ -1288,6 +1288,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 		drawSprite(&(*it), sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, g_cine->_objectTable[it->objIdx].x, g_cine->_objectTable[it->objIdx].y, g_cine->_objectTable[it->objIdx].part, sprite->_bpp);
 		break;
+
 	// game message
 	case 2:
 		if (it->objIdx >= g_cine->_messageTable.size()) {
@@ -1344,7 +1345,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		height = obj->costume;
 		drawPlainBox(obj->x, obj->y, width, height, color);
 		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
-			it->type, obj->x, obj->y, width, height, color);
+			  it->type, obj->x, obj->y, width, height, color);
 		break;
 
 	// something else
@@ -1468,7 +1469,7 @@ void OSRenderer::selectBg(unsigned int idx) {
 
 	if (_bgTable[idx].bg) {
 		assert(_bgTable[idx].pal.isValid() && !(_bgTable[idx].pal.empty()));
-	_currentBg = idx;
+		_currentBg = idx;
 	} else
 		warning("OSRenderer::selectBg(%d) - attempt to select null background", idx);
 	reloadPalette();
@@ -1794,23 +1795,23 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 
 	// draw the mask based on next objects in the list
 	Common::List<overlay>::iterator it;
-	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it)	{
-		if(&(*it) == overlayPtr) {
+	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ++it) {
+		if (&(*it) == overlayPtr) {
 			break;
 		}
 	}
 
-	while(it != g_cine->_overlayList.end())	{
+	while (it != g_cine->_overlayList.end()) {
 		overlay *pCurrentOverlay = &(*it);
 		if ((pCurrentOverlay->type == 5) || ((pCurrentOverlay->type == 21) && (pCurrentOverlay->x == overlayPtr->objIdx))) {
 			AnimData *sprite = &g_cine->_animDataTable[g_cine->_objectTable[it->objIdx].frame];
 
 			if (pMask == NULL) {
-				pMask = new byte[width*height];
+				pMask = new byte[width * height];
 
 				for (int i = 0; i < height; i++) {
 					for (int j = 0; j < width; j++) {
-						byte spriteColor= spritePtr[width * i + j];
+						byte spriteColor = spritePtr[width * i + j];
 						pMask[width * i + j] = spriteColor;
 					}
 				}
@@ -1821,7 +1822,7 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 					int inMaskX = (g_cine->_objectTable[it->objIdx].x + i) - x;
 					int inMaskY = (g_cine->_objectTable[it->objIdx].y + j) - y;
 
-					if (inMaskX >=0 && inMaskX < width) {
+					if (inMaskX >= 0 && inMaskX < width) {
 						if (inMaskY >= 0 && inMaskY < height) {
 							if (sprite->_bpp == 1) {
 								if (!sprite->getColor(i, j)) {
@@ -1837,7 +1838,7 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 	}
 
 	// now, draw with the mask we created
-	if(pMask) {
+	if (pMask) {
 		spritePtr = pMask;
 	}
 
@@ -1852,7 +1853,7 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 			destPtr += i * 320;
 
 			for (int j = 0; j < width; j++) {
-				byte color= *(spritePtr++);
+				byte color = *(spritePtr++);
 				if ((transparentColor != color) && x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200) {
 					*(destPtr++) = color;
 				} else {
