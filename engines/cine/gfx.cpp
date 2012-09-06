@@ -1001,11 +1001,19 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 		charX = x + 4;
 
 		if (i == _selection) {
+			int color;
+
 			if (isAmiga) {
-				r.drawPlainBox(charX, lineY, _width - 8, FONT_HEIGHT, top ? 2 : 18);
+				if (top) {
+					color = 2;
+				} else {
+					color = 18;
+				}
 			} else {
-				r.drawPlainBox(charX, lineY, _width - 8, 9, 0);
+				color = 0;
 			}
+
+			r.drawPlainBox(x + 2, lineY - 1, _width - 3, 9, color);
 		}
 
 		const int size = _elements[i].size();
