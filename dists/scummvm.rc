@@ -44,6 +44,9 @@ teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
 #if ENABLE_TOON      == STATIC_PLUGIN
 toon.dat               FILE    "dists/engine-data/toon.dat"
 #endif
+#if ENABLE_TONY      == STATIC_PLUGIN
+tony.dat               FILE    "dists/engine-data/tony.dat"
+#endif
 #if ENABLE_AGI       == STATIC_PLUGIN
 pred.dic               FILE    "dists/pred.dic"
 #endif
