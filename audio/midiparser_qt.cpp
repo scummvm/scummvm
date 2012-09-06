@@ -193,7 +193,10 @@ void MidiParser_QT::initCommon() {
 	// Now we have all our info needed in _trackInfo from whatever container
 	// form, we can fill in the MidiParser tracks.
 
-	// TODO
+	_num_tracks = _trackInfo.size();
+
+	for (uint32 i = 0; i < _trackInfo.size(); i++)
+		MidiParser::_tracks[i] = _trackInfo[i].data;
 }
 
 byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track) {
