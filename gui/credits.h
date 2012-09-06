@@ -722,5 +722,7 @@ static const char *credits[] = {
 "C0""",
 "C0""Janusz Wisniewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon for providing full source code for Soltys and letting us to redistribute the game.",
 "C0""",
+"C0""Jan Nedoma for providing the sources to the Wintermute-engine, and for providing support while porting the engine to ScummVM",
+"C0""",
 "",
 };
