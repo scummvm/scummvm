@@ -471,6 +471,38 @@ int FWRenderer::drawChar(char character, int x, int y) {
 	return x;
 }
 
+/**
+ * Clears the character glyph to black
+ * @param character Character to undraw
+ * @param x Character coordinate
+ * @param y Character coordinate
+ */
+int FWRenderer::undrawChar(char character, int x, int y) {
+	int width, idx;
+
+	if (character == ' ') {
+		x += 5;
+	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
+		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
+		const byte *sprite = g_cine->_textHandler.textTable[idx][FONT_DATA];
+		for (uint i = 0; i < FONT_HEIGHT; ++i) {
+			byte *dst = _backBuffer + (y + i) * 320 + x;
+			for (uint j = 0; j < FONT_WIDTH; ++j, ++dst) {
+				// The original does this based on whether bit 1 of the pixel
+				// is set. Since that's the only bit ever set in (FW) this
+				// check should be fine.
+				// TODO: Check how Operation Stealth Amiga works
+				if (*sprite++) {
+					*dst = 0;
+				}
+			}
+		}
+		x += width + 1;
+	}
+
+	return x;
+}
+
 int FWRenderer::getStringWidth(const char *str) {
 	const char *p = str;
 	int width = 0;
@@ -970,19 +1002,20 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 
 		if (i == _selection) {
 			if (isAmiga) {
-				// The original Amiga version is using a different highlight color here,
-				// but with our current code it is not possible to change the text color,
-				// thus we can not use the Amiga's color, since otherwise the text
-				// wouldn't be visible anymore.
-				r.drawPlainBox(charX, lineY, _width - 8, FONT_HEIGHT, top ? r._messageBg/*2*/ : 18);
+				r.drawPlainBox(charX, lineY, _width - 8, FONT_HEIGHT, top ? 2 : 18);
 			} else {
 				r.drawPlainBox(charX, lineY, _width - 8, 9, 0);
 			}
 		}
 
 		const int size = _elements[i].size();
-		for (int j = 0; j < size; ++j)
-			charX = r.drawChar(_elements[i][j], charX, lineY);
+		for (int j = 0; j < size; ++j) {
+			if (isAmiga && i == _selection) {
+				charX = r.undrawChar(_elements[i][j], charX, lineY);
+			} else {
+				charX = r.drawChar(_elements[i][j], charX, lineY);
+			}
+		}
 	}
 }
 

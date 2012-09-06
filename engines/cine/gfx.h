@@ -152,6 +152,7 @@ protected:
 	void drawBorder(int x, int y, int width, int height, byte color);
 	void drawDoubleBorder(int x, int y, int width, int height, byte color);
 	virtual int drawChar(char character, int x, int y);
+	virtual int undrawChar(char character, int x, int y);
 	void drawLine(int x, int y, int width, int height, byte color);
 	void remaskSprite(byte *mask, Common::List<overlay>::iterator it);
 	virtual void drawBackground();
