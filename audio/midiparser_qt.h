@@ -72,6 +72,11 @@ private:
 
 	typedef Common::Array<NoteRequest> NoteRequestList;
 
+	struct MIDITrackInfo {
+		NoteRequestList noteRequests;
+		byte *data;
+	};
+
 	class MIDISampleDesc : public SampleDesc {
 	public:
 		MIDISampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
@@ -84,7 +89,12 @@ private:
 	Common::Rational readFixed(Common::SeekableReadStream *stream);
 	NoteRequestList readNoteRequestList(Common::SeekableReadStream *stream);
 
+	byte *readWholeTrack(Common::QuickTimeParser::Track *track);
+
+	Common::Array<MIDITrackInfo> _trackInfo;
+
 	void initFromContainerTracks();
+	void initCommon();
 };
 
 #endif

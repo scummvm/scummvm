@@ -39,7 +39,12 @@ bool MidiParser_QT::loadMusic(byte *data, uint32 size) {
 void MidiParser_QT::unloadMusic() {
 	MidiParser::unloadMusic();
 	close();
-	// TODO
+
+	// Unlike those lesser formats, we *do* hold track data
+	for (uint i = 0; i < _trackInfo.size(); i++)
+		free(_trackInfo[i].data);
+
+	_trackInfo.clear();
 }
 
 bool MidiParser_QT::loadFromTune(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
@@ -55,8 +60,18 @@ bool MidiParser_QT::loadFromTune(Common::SeekableReadStream *stream, DisposeAfte
 	stream->readUint16BE(); // reserved
 	stream->readUint16BE(); // index
 
-	// TODO
-	readNoteRequestList(stream);
+	MIDITrackInfo trackInfo;
+	trackInfo.noteRequests = readNoteRequestList(stream);
+
+	uint32 trackSize = stream->size() - stream->pos();
+	assert(trackSize > 0);
+
+	trackInfo.data = (byte *)malloc(trackSize);
+	stream->read(trackInfo.data, trackSize);
+
+	_trackInfo.push_back(trackInfo);
+
+	initCommon();
 	return true;
 }
 
@@ -153,7 +168,60 @@ MidiParser_QT::NoteRequestList MidiParser_QT::readNoteRequestList(Common::Seekab
 }
 
 void MidiParser_QT::initFromContainerTracks() {
+	const Common::Array<Common::QuickTimeParser::Track *> &tracks = Common::QuickTimeParser::_tracks;
+
+	for (uint32 i = 0; i < tracks.size(); i++) {
+		if (tracks[i]->codecType == CODEC_TYPE_MIDI) {
+			assert(tracks[i]->sampleDescs.size() == 1);
+
+			if (tracks[i]->editCount != 1)
+				warning("Unhandled QuickTime MIDI edit lists, things may go awry");
+
+			MIDISampleDesc *entry = (MIDISampleDesc *)tracks[i]->sampleDescs[0];
+
+			MIDITrackInfo trackInfo;
+			trackInfo.noteRequests = entry->_noteRequests;
+			trackInfo.data = readWholeTrack(tracks[i]);
+			_trackInfo.push_back(trackInfo);
+		}
+	}
+
+	initCommon();
+}
+
+void MidiParser_QT::initCommon() {
+	// Now we have all our info needed in _trackInfo from whatever container
+	// form, we can fill in the MidiParser tracks.
+
 	// TODO
+}
+
+byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track) {
+	// This just goes through all chunks and 
+
+	Common::MemoryWriteStreamDynamic output;
+	uint32 curSample = 0;
+
+	for (uint i = 0; i < track->chunkCount; i++) {
+		_fd->seek(track->chunkOffsets[i]);
+
+		uint32 sampleCount = 0;
+
+		for (uint32 j = 0; j < track->sampleToChunkCount; j++)
+			if (i >= track->sampleToChunk[j].first)
+				sampleCount = track->sampleToChunk[j].count;
+
+		for (uint32 j = 0; j < sampleCount; j++, curSample++) {
+			uint32 size = (track->sampleSize != 0) ? track->sampleSize : track->sampleSizes[curSample];
+
+			byte *data = new byte[size];
+			_fd->read(data, size);
+			output.write(data, size);
+			delete[] data;
+		}
+	}
+
+	return output.getData();
 }
 
 MidiParser *MidiParser::createParser_QT() {
