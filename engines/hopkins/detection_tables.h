@@ -24,17 +24,33 @@ namespace Hopkins {
 
 static const HopkinsGameDescription gameDescriptions[] = {
 	{
-		// Hopkins FBI Demo
+		// Hopkins FBI Linux Demo 1.00
 		{
 			"hopkins",
 			0,
 			{
-				{"vendor.txt", 0, "ce82907242166bfb594d97bdb68f96d2", 546},
+				{"Hopkins-PDemo.bin", 0, "88b4d6e14b9b1407083cb3d1213c0fa7", 272027},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			Common::kPlatformLinux,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
+	{
+		// Hopkins FBI Linux Demo 1.02
+		{
+			"hopkins",
+			0,
+			{
+				{"Hopkins-PDemo.bin", 0, "f82f4e698f3a189419351be0de2b2f8e", 273760},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformLinux,
+			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
 	},

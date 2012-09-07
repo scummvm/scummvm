@@ -53,7 +53,7 @@ bool HopkinsEngine::getIsDemo() const {
 
 } // End of namespace Hopkins
 
-static const PlainGameDescriptor tonyGames[] = {
+static const PlainGameDescriptor hopkinsGames[] = {
 	{"hopkins", "Hopkins FBI"},
 	{0, 0}
 };
@@ -62,7 +62,7 @@ static const PlainGameDescriptor tonyGames[] = {
 
 class HopkinsMetaEngine : public AdvancedMetaEngine {
 public:
-	HopkinsMetaEngine() : AdvancedMetaEngine(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), tonyGames) {
+	HopkinsMetaEngine() : AdvancedMetaEngine(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames) {
 	}
 
 	virtual const char *getName() const {
