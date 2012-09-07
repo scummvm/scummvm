@@ -38,7 +38,7 @@ namespace Asylum {
 
 VideoPlayer::VideoPlayer(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine),
 	_currentMovie(0), _subtitleIndex(0), _subtitleCounter(0), _previousFont(kResourceNone), _done(false) {
-	_smkDecoder = new Video::SmackerDecoder(mixer);
+	_smkDecoder = new Video::SmackerDecoder();
 }
 
 VideoPlayer::~VideoPlayer() {
