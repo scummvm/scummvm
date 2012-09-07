@@ -40,7 +40,7 @@ namespace Tony {
 *       RMGfxEngine Methods
 \****************************************************************************/
 
-void ExitAllIdles(CORO_PARAM, const void *param) {
+void exitAllIdles(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -129,7 +129,7 @@ void RMGfxEngine::openOptionScreen(CORO_PARAM, int type) {
 
 			GLOBALS._bIdleExited = false;
 
-			CoroScheduler.createProcess(ExitAllIdles, &_nCurLoc, sizeof(int));
+			CoroScheduler.createProcess(exitAllIdles, &_nCurLoc, sizeof(int));
 		}
 	}
 
@@ -532,17 +532,6 @@ void RMGfxEngine::disableMouse() {
 	_bAlwaysDrawMouse = false;
 }
 
-void CharsSaveAll(Common::OutSaveFile *f);
-void CharsLoadAll(Common::InSaveFile *f);
-void MCharResetCodes();
-void SaveChangedHotspot(Common::OutSaveFile *f);
-void LoadChangedHotspot(Common::InSaveFile *f);
-void ReapplyChangedHotspot();
-
-void RestoreMusic(CORO_PARAM);
-void SaveMusic(Common::OutSaveFile *f);
-void LoadMusic(Common::InSaveFile *f);
-
 #define TONY_SAVEGAME_VERSION 8
 
 void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Common::String &name) {
@@ -617,7 +606,7 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	f->writeByte(bStat);
 
 	// Save the chars
-	CharsSaveAll(f);
+	charsSaveAll(f);
 
 	// Save the options
 	f->writeByte(GLOBALS._bCfgInvLocked);
@@ -639,10 +628,10 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	f->writeByte(GLOBALS._nCfgSFXVolume);
 
 	// Save the hotspots
-	SaveChangedHotspot(f);
+	saveChangedHotspot(f);
 
 	// Save the music
-	SaveMusic(f);
+	saveMusic(f);
 
 	f->finalize();
 	delete f;
@@ -751,7 +740,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		bStat = _ctx->f->readByte();
 		_inter.setPerorate(bStat);
 
-		CharsLoadAll(_ctx->f);
+		charsLoadAll(_ctx->f);
 	}
 
 	if (_ctx->ver >= 6) {
@@ -775,11 +764,11 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		GLOBALS._nCfgSFXVolume = _ctx->f->readByte();
 
 		// Load hotspots
-		LoadChangedHotspot(_ctx->f);
+		loadChangedHotspot(_ctx->f);
 	}
 
 	if (_ctx->ver >= 7) {
-		LoadMusic(_ctx->f);
+		loadMusic(_ctx->f);
 	}
 
 	delete _ctx->f;
@@ -793,13 +782,13 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 		mpalQueryDoAction(0, _ctx->loc, 0);
 	else {
 		// In the new ones, we just reset the mcode
-		MCharResetCodes();
+		mCharResetCodes();
 	}
 
 	if (_ctx->ver >= 6)
-		ReapplyChangedHotspot();
+		reapplyChangedHotspot();
 
-	CORO_INVOKE_0(RestoreMusic);
+	CORO_INVOKE_0(restoreMusic);
 
 	_bGUIInterface = true;
 	_bGUIInventory = true;

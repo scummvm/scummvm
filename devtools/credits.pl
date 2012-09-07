@@ -48,7 +48,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 21; # The maximal width of a name.
+	$max_name_width = 23; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -359,6 +359,9 @@ sub add_person {
 		my $min_name_width = length $desc > 0 ? $max_name_width : 0;
 		$name = $nick if $name eq "";
 		$name = html_entities_to_ascii($name);
+		if (length $name > $max_name_width) {
+			print STDERR "Warning: max_name_width is too small (" . $max_name_width . " < " . (length $name) . " for \"" . $name. "\")\n";
+		}
 		$desc = html_entities_to_ascii($desc);
 
 		$tab = " " x ($section_level * 2 + 1);
@@ -695,6 +698,10 @@ begin_credits("Credits");
 
 			begin_section("Tucker");
 				add_person("Gregory Montoir", "cyx", "(retired)");
+			end_section();
+
+			begin_section("Wintermute");
+				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 			end_section();
 
 		end_section();
@@ -1067,7 +1074,7 @@ begin_credits("Credits");
 
 
 	# HACK!
-	$max_name_width = 16;
+	$max_name_width = 17;
 
 	begin_section("Special thanks to");
 		begin_persons();
@@ -1080,6 +1087,7 @@ begin_credits("Credits");
 			add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
 			add_person("Henrik Engqvist", "qvist", "For generously providing hosting for our buildbot, SVN repository, planet and doxygen sites as well as tons of HD space");
 			add_person("DOSBox Team", "", "For their awesome OPL2 and OPL3 emulator");
+			add_person("Yusuke Kamiyamane", "", "For contributing some GUI icons ");
 			add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
 			add_person("", "Jezar", "For his freeverb filter implementation");
 			add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
@@ -1089,8 +1097,6 @@ begin_credits("Credits");
 			add_person("", "Tristan", "For additional work on the original MT-32 emulator");
 			add_person("James Woodcock", "", "Soundtrack enhancements");
 		end_persons();
-
-	add_paragraph("Some icons by Yusuke Kamiyamane");
 
 	add_paragraph(
     "Tony Warriner and everyone at Revolution Software Ltd. for sharing ".
@@ -1141,7 +1147,11 @@ begin_credits("Credits");
 
 	add_paragraph(
     "Janusz Wi&#347;niewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon ".
-    "for providing full source code for So&#322;tys and letting us to redistribute the game.");
+    "for providing full source code for So&#322;tys and letting us redistribute the game.");
+
+	add_paragraph(
+    "Jan Nedoma for providing the sources to the Wintermute-engine, and for his ".
+    "support while porting the engine to ScummVM.");
 
 	end_section();
 

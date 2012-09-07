@@ -110,17 +110,17 @@ void MidiParser_QT::resetTracking() {
 }
 
 void MidiParser_QT::parseNextEvent(EventInfo &info) {
-	if (_position._play_pos >= _trackInfo[_active_track].data + _trackInfo[_active_track].size) {
+	if (_position._playPos >= _trackInfo[_activeTrack].data + _trackInfo[_activeTrack].size) {
 		// Manually insert end of track when we reach the end
 		info.event = 0xFF;
 		info.ext.type = 0x2F;
 		return;
 	}
 
-	if (_loadedInstruments < _trackInfo[_active_track].noteRequests.size()) {
+	if (_loadedInstruments < _trackInfo[_activeTrack].noteRequests.size()) {
 		// Load instruments first
 		info.event = 0xC0 | _loadedInstruments;
-		info.basic.param1 = _trackInfo[_active_track].noteRequests[_loadedInstruments].tone.gmNumber;
+		info.basic.param1 = _trackInfo[_activeTrack].noteRequests[_loadedInstruments].tone.gmNumber;
 		_loadedInstruments++;
 		return;
 	}
@@ -290,8 +290,8 @@ void MidiParser_QT::initCommon() {
 	// Now we have all our info needed in _trackInfo from whatever container
 	// form, we can fill in the MidiParser tracks.
 
-	_num_tracks = _trackInfo.size();
-	assert(_num_tracks > 0);
+	_numTracks = _trackInfo.size();
+	assert(_numTracks > 0);
 
 	for (uint32 i = 0; i < _trackInfo.size(); i++)
 		MidiParser::_tracks[i] = _trackInfo[i].data;
@@ -332,8 +332,8 @@ byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track, uint3
 }
 
 uint32 MidiParser_QT::readUint32() {
-	uint32 value = READ_BE_UINT32(_position._play_pos);
-	_position._play_pos += 4;
+	uint32 value = READ_BE_UINT32(_position._playPos);
+	_position._playPos += 4;
 	return value;
 }
 

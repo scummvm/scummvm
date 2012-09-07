@@ -49,33 +49,33 @@ class MidiDriver_BASE;
  * each Tracker location.
  */
 struct Tracker {
-	byte * _play_pos;        ///< A pointer to the next event to be parsed
-	uint32 _play_time;       ///< Current time in microseconds; may be in between event times
-	uint32 _play_tick;       ///< Current MIDI tick; may be in between event ticks
-	uint32 _last_event_time; ///< The time, in microseconds, of the last event that was parsed
-	uint32 _last_event_tick; ///< The tick at which the last parsed event occurs
-	byte   _running_status;  ///< Cached MIDI command, for MIDI streams that rely on implied event codes
+	byte * _playPos;        ///< A pointer to the next event to be parsed
+	uint32 _playTime;       ///< Current time in microseconds; may be in between event times
+	uint32 _playTick;       ///< Current MIDI tick; may be in between event ticks
+	uint32 _lastEventTime; ///< The time, in microseconds, of the last event that was parsed
+	uint32 _lastEventTick; ///< The tick at which the last parsed event occurs
+	byte   _runningStatus;  ///< Cached MIDI command, for MIDI streams that rely on implied event codes
 
 	Tracker() { clear(); }
 
 	/// Copy constructor for each duplication of Tracker information.
 	Tracker(const Tracker &copy) :
-	_play_pos(copy._play_pos),
-	_play_time(copy._play_time),
-	_play_tick(copy._play_tick),
-	_last_event_time(copy._last_event_time),
-	_last_event_tick(copy._last_event_tick),
-	_running_status(copy._running_status)
+	_playPos(copy._playPos),
+	_playTime(copy._playTime),
+	_playTick(copy._playTick),
+	_lastEventTime(copy._lastEventTime),
+	_lastEventTick(copy._lastEventTick),
+	_runningStatus(copy._runningStatus)
 	{ }
 
 	/// Clears all data; used by the constructor for initialization.
 	void clear() {
-		_play_pos = 0;
-		_play_time = 0;
-		_play_tick = 0;
-		_last_event_time = 0;
-		_last_event_tick = 0;
-		_running_status = 0;
+		_playPos = 0;
+		_playTime = 0;
+		_playTick = 0;
+		_lastEventTime = 0;
+		_lastEventTick = 0;
+		_runningStatus = 0;
 	}
 };
 
@@ -119,8 +119,8 @@ struct EventInfo {
 struct NoteTimer {
 	byte channel;     ///< The MIDI channel on which the note was played
 	byte note;        ///< The note number for the active note
-	uint32 time_left; ///< The time, in microseconds, remaining before the note should be turned off
-	NoteTimer() : channel(0), note(0), time_left(0) {}
+	uint32 timeLeft; ///< The time, in microseconds, remaining before the note should be turned off
+	NoteTimer() : channel(0), note(0), timeLeft(0) {}
 };
 
 
@@ -264,29 +264,29 @@ struct NoteTimer {
  */
 class MidiParser {
 protected:
-	uint16    _active_notes[128];   ///< Each uint16 is a bit mask for channels that have that note on.
-	NoteTimer _hanging_notes[32];   ///< Maintains expiration info for up to 32 notes.
+	uint16    _activeNotes[128];   ///< Each uint16 is a bit mask for channels that have that note on.
+	NoteTimer _hangingNotes[32];   ///< Maintains expiration info for up to 32 notes.
 	                                ///< Used for "Smart Jump" and MIDI formats that do not include explicit Note Off events.
-	byte      _hanging_notes_count; ///< Count of hanging notes, used to optimize expiration.
+	byte      _hangingNotesCount; ///< Count of hanging notes, used to optimize expiration.
 
 	MidiDriver_BASE *_driver;    ///< The device to which all events will be transmitted.
-	uint32 _timer_rate;     ///< The time in microseconds between onTimer() calls. Obtained from the MidiDriver.
+	uint32 _timerRate;     ///< The time in microseconds between onTimer() calls. Obtained from the MidiDriver.
 	uint32 _ppqn;           ///< Pulses Per Quarter Note. (We refer to "pulses" as "ticks".)
 	uint32 _tempo;          ///< Microseconds per quarter note.
-	uint32 _psec_per_tick;  ///< Microseconds per tick (_tempo / _ppqn).
+	uint32 _psecPerTick;  ///< Microseconds per tick (_tempo / _ppqn).
 	bool   _autoLoop;       ///< For lightweight clients that don't provide their own flow control.
 	bool   _smartJump;      ///< Support smart expiration of hanging notes when jumping
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
 	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
 	byte  *_tracks[120];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
-	byte   _num_tracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
-	byte   _active_track;   ///< Keeps track of the currently active track, in multi-track formats.
+	byte   _numTracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
+	byte   _activeTrack;   ///< Keeps track of the currently active track, in multi-track formats.
 
 	Tracker _position;      ///< The current time/position in the active track.
-	EventInfo _next_event;  ///< The next event to transmit. Events are preparsed
+	EventInfo _nextEvent;  ///< The next event to transmit. Events are preparsed
 	                        ///< so each event is parsed only once; this permits
 	                        ///< simulated events in certain formats.
-	bool   _abort_parse;    ///< If a jump or other operation interrupts parsing, flag to abort.
+	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
 
 protected:
 	static uint32 readVLQ(byte * &data);
@@ -295,7 +295,7 @@ protected:
 	virtual void parseNextEvent(EventInfo &info) = 0;
 
 	void activeNote(byte channel, byte note, bool active);
-	void hangingNote(byte channel, byte note, uint32 ticks_left, bool recycle = true);
+	void hangingNote(byte channel, byte note, uint32 ticksLeft, bool recycle = true);
 	void hangAllActiveNotes();
 
 	virtual void sendToDriver(uint32 b);
@@ -377,18 +377,18 @@ public:
 	virtual void property(int prop, int value);
 
 	void setMidiDriver(MidiDriver_BASE *driver) { _driver = driver; }
-	void setTimerRate(uint32 rate) { _timer_rate = rate; }
+	void setTimerRate(uint32 rate) { _timerRate = rate; }
 	void setTempo(uint32 tempo);
 	void onTimer();
 
-	bool isPlaying() const { return (_position._play_pos != 0); }
+	bool isPlaying() const { return (_position._playPos != 0); }
 	void stopPlaying();
 
 	bool setTrack(int track);
 	bool jumpToTick(uint32 tick, bool fireEvents = false, bool stopNotes = true, bool dontSendNoteOn = false);
 
 	uint32 getPPQN() { return _ppqn; }
-	virtual uint32 getTick() { return _position._play_tick; }
+	virtual uint32 getTick() { return _position._playTick; }
 
 	static void defaultXMidiCallback(byte eventData, void *refCon);
 

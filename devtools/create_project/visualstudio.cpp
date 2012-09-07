@@ -103,6 +103,9 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		outputConfiguration(project, setup, libraries, "Release", "x64", "64", false);
 
 	} else {
+		bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
+		bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
+
 		std::string warnings = "";
 		if (warningsIterator != _projectWarnings.end())
 			for (StringList::const_iterator i = warningsIterator->second.begin(); i != warningsIterator->second.end(); ++i)
@@ -110,9 +113,8 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 		std::string toolConfig;
 		toolConfig  = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
-		toolConfig += (name == setup.projectName ? "DebugInformationFormat=\"3\" " : "");
-		toolConfig += (name == "sword25" ? "DisableLanguageExtensions=\"false\" " : "");
-		toolConfig += (name == "grim" ? "DisableLanguageExtensions=\"false\" " : "");
+		toolConfig += (disableEditAndContinue   ? "DebugInformationFormat=\"3\" " : "");
+		toolConfig += (enableLanguageExtensions ? "DisableLanguageExtensions=\"false\" " : "");
 
 		// Win32
 		outputConfiguration(setup, project, toolConfig, "Debug", "Win32", "");
