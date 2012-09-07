@@ -24,7 +24,6 @@
 #define HOPKINS_GLOBALS_H
 
 #include "common/scummsys.h"
-#include "common/hash-str.h"
 
 namespace Hopkins {
 
@@ -33,14 +32,13 @@ namespace Hopkins {
  */
 class Globals {
 public:
-  int FADESPD;
-  int FR;
-  int SVGA;
-  int MANU_SCROLL;
-  int SPEED_SCROLL;
-  int internet;
-  int PUBEXIT;
-  Common::StringMap _iniParams;
+	int FADESPD;
+	int FR;
+	int SVGA;
+	int MANU_SCROLL;
+	int SPEED_SCROLL;
+	int internet;
+	int PUBEXIT;
 
   Globals();
 };

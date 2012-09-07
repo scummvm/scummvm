@@ -46,6 +46,10 @@ Common::Error HopkinsEngine::run() {
 
 	FileManager::initSaves();
 
+	Common::StringMap iniParams;
+	FileManager::Chage_Inifile(iniParams);
+	processIniParams(iniParams);
+
   /*
   Chage_Inifile();
   LOAD_CONFIG();
@@ -523,6 +527,10 @@ LABEL_128:
 
 int HopkinsEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
+}
+
+void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
+
 }
 
 } // End of namespace Hopkins

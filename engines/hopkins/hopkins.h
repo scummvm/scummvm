@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/hash-str.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "hopkins/globals.h"
@@ -60,6 +61,7 @@ private:
 	const HopkinsGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
+	void processIniParams(Common::StringMap &iniParams);
 protected:
 	// Engine APIs
 	virtual Common::Error run();
