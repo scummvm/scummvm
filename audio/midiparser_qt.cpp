@@ -289,7 +289,7 @@ void MidiParser_QT::initCommon() {
 
 	_ppqn = _trackInfo[0].timeScale;
 	resetTracking();
-	setTempo(500000);
+	setTempo(1000000);
 	setTrack(0);
 }
 
