@@ -25,10 +25,19 @@
 #include "common/memstream.h"
 
 bool MidiParser_QT::loadMusic(byte *data, uint32 size) {
-	// Assume that this is a Tune and not a QuickTime container
+	if (size < 8)
+		return false;
+
 	Common::SeekableReadStream *stream = new Common::MemoryReadStream(data, size, DisposeAfterUse::NO);
 
-	if (!loadFromTune(stream)) {
+	// Attempt to detect what format we have
+	bool result;
+	if (READ_BE_UINT32(data + 4) == MKTAG('m', 'u', 's', 'i'))
+		result = loadFromTune(stream);
+	else
+		result = loadFromContainerStream(stream);
+
+	if (!result) {
 		delete stream;
 		return false;
 	}
