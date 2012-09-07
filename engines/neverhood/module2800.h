@@ -395,6 +395,55 @@ protected:
 	void sub406650();
 };
 
+class AsScene2812Winch : public AnimatedSprite {
+public:
+	AsScene2812Winch(NeverhoodEngine *vm);
+	virtual ~AsScene2812Winch();
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2812Rope : public AnimatedSprite {
+public:
+	AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene);
+protected:
+	Scene *_parentScene;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage413DC0(int messageNum, const MessageParam &param, Entity *sender);
+	void sub413E00();
+};
+
+class AsScene2812TrapDoor : public AnimatedSprite {
+public:
+	AsScene2812TrapDoor(NeverhoodEngine *vm);
+protected:
+	SoundResource _soundResource;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2812 : public Scene {
+public:
+	Scene2812(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_asWinch;
+	Sprite *_asTrapDoor;
+	Sprite *_asRope;
+	Sprite *_sprite3;
+	Sprite *_sprite2;
+	Sprite *_sprite4;
+	Sprite *_class606;
+	Sprite *_class545;
+	Sprite *_sprite1;
+	bool _flag1;
+	int _palStatus;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void setPalStatus0(int fadeTime);
+	void setPalStatus1(int fadeTime);
+	void setPalStatus2(int fadeTime);
+	void setPalStatus(int fadeTime);
+};
+
 class Scene2822 : public Scene {
 public:
 	Scene2822(NeverhoodEngine *vm, Module *parentModule, int which);

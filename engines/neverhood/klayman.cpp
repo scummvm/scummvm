@@ -2266,6 +2266,18 @@ void Klayman::sub421270() {
 	}
 }
 
+void Klayman::sub420460() {
+	if (!stStartAction(AnimationCallback(&Klayman::sub420460))) {
+		_status2 = 0;
+		_acceptInput = false;
+		startAnimation(0x00AB8C10, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&Klayman::handleMessage41E5F0);
+		SetSpriteUpdate(&Klayman::spriteUpdate41F920);
+		sendMessage(_attachedSprite, 0x482B, 0);
+	}
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -5886,6 +5898,98 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4837:
 		sub41CE70();
+		break;
+	}
+	return 0;
+}
+
+KmScene2812::KmScene2812(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+
+uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4805:
+		_destY = param.asInteger();
+		debug("_destY = %d", _destY);
+		GotoState(&Klayman::sub420460);
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2)
+			GotoState(&Klayman::stPickUpNeedle);
+		else if (param.asInteger() == 1)
+			GotoState(&Klayman::sub41FFF0);
+		else
+			GotoState(&Klayman::stPickUpGeneric);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481A:
+		GotoState(&Klayman::stInsertDisk);		
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		else
+			sub41CCE0(param.asPoint().x);
+		break;
+	case 0x481D:
+		GotoState(&Klayman::stTurnToUse);
+		break;
+	case 0x481E:
+		GotoState(&Klayman::stReturnFromUse);
+		break;
+	case 0x4820:  
+		sendMessage(_parentScene, 0x2001, 0);
+		GotoState(&Klayman::stContinueClimbLadderUp);	 
+		break;
+	case 0x4821:	
+		sendMessage(_parentScene, 0x2001, 0);
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderDown);	 
+		break;
+	case 0x4822:  
+		sendMessage(_parentScene, 0x2001, 0);
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderUp);	 
+		break;
+	case 0x4823:
+		sendMessage(_parentScene, 0x2002, 0);
+		GotoState(&Klayman::stClimbLadderHalf);	 
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x482E:	 
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stWalkToFrontNoStep);
+		} else {
+			GotoState(&Klayman::stWalkToFront);
+		}
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stTurnToFront);
+		} else {
+			GotoState(&Klayman::stTurnToBack);
+		}
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840: 
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;

@@ -25,6 +25,7 @@
 #include "neverhood/module1000.h"
 #include "neverhood/module1200.h"
 #include "neverhood/module1700.h"
+#include "neverhood/module2200.h"
 #include "neverhood/diskplayerscene.h"
 
 namespace Neverhood {
@@ -113,6 +114,10 @@ void Module2800::createScene(int sceneNum, int which) {
 	case 10:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
 		_childObject = new Scene2808(_vm, this, 1);
+		break;
+	case 11:
+		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
+		_childObject = new Scene2812(_vm, this, which);
 		break;
 	case 12:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
@@ -292,6 +297,16 @@ void Module2800::updateScene() {
 			break;
 		case 10:
 			createScene(8, _moduleResult);
+			break;
+		case 11:
+			if (_moduleResult == 1)
+				createScene(4, 0);
+			else if (_moduleResult == 2)
+				createScene(26, 0);
+			else if (_moduleResult == 3)
+				createScene(9, 5);
+			else 
+				createScene(9, 1);
 			break;
 		case 12:
 			createScene(9, 11);
@@ -2484,6 +2499,260 @@ uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
+}
+
+AsScene2812Winch::AsScene2812Winch(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1100) {
+	
+	createSurface1(0x20DA08A0, 1200);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2812Winch::handleMessage);
+	setVisible(false);
+	_x = 280;
+	_y = 184;
+}
+
+AsScene2812Winch::~AsScene2812Winch() {
+	// TODO Sound1ChList_sub_407AF0(0x00B000E2);
+}
+
+uint32 AsScene2812Winch::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		startAnimation(0x20DA08A0, 0, -1);
+		setVisible(true);
+		// TODO Sound1ChList_addSoundResource(0x00B000E2, 0xC874EE6C, true);
+		// TODO Sound1ChList_playLooping(0xC874EE6C);
+		break;
+	case 0x3002:
+		startAnimation(0x20DA08A0, 7, -1);
+		break;
+	}
+	return messageResult;
+}
+
+AsScene2812Rope::AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+	
+	createSurface(990, 68, 476);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2812Rope::handleMessage);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	startAnimation(0xAE080551, 0, -1);
+	_x = 334;
+	_y = 201;
+}
+
+uint32 AsScene2812Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x4806:
+		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
+		sub413E00();
+		break;
+	case 0x482A:
+		sendMessage(_parentScene, 0x1022, 990);
+		break;
+	case 0x482B:
+		sendMessage(_parentScene, 0x1022, 1010);
+		break;
+	}
+	return messageResult;
+}
+
+uint32 AsScene2812Rope::handleMessage413DC0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		gotoNextState();
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2812Rope::sub413E00() {
+	sendMessage(_parentScene, 0x4806, 0);
+	startAnimation(0x9D098C23, 0, -1);
+	SetMessageHandler(&AsScene2812Rope::handleMessage413DC0);
+}
+
+AsScene2812TrapDoor::AsScene2812TrapDoor(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 0x805D0029, 100, 320, 240), _soundResource(vm) {
+	
+	SetMessageHandler(&AsScene2812TrapDoor::handleMessage);
+	_newStickFrameIndex = 0;
+}
+
+uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		startAnimation(0x805D0029, 0, -1);
+		_soundResource.play(0xEA005F40);
+		_newStickFrameIndex = -2;
+		break;
+	}
+	return messageResult;
+}
+
+Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _palStatus(0) {
+	
+	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
+		setGlobalVar(0x13382860, 3);
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2812::handleMessage);
+	SetUpdateHandler(&Scene2812::update);
+	
+	setRectList(0x004AF700);
+	
+	setBackground(0x03600606);
+	setPalette(0x03600606);
+	addEntity(_palette);
+	_palette->addBasePalette(0x03600606, 0, 256, 0);
+
+	_sprite1 = insertStaticSprite(0x0C06C860, 1100);
+	insertMouse433(0x0060203E);
+
+	if (getGlobalVar(0x13382860) == 3) {
+		_class545 = insertSprite<Class545>(this, 2, 1100, 474, 437);
+		_vm->_collisionMan->addSprite(_class545);
+	}
+
+	_class606 = insertSprite<Class606>(this, 6, 1100, 513, 437, 0xA1361863);
+	_vm->_collisionMan->addSprite(_class606);
+	
+	_asWinch = insertSprite<AsScene2812Winch>();
+	_asTrapDoor = insertSprite<AsScene2812TrapDoor>();
+	_asRope = insertSprite<AsScene2812Rope>(this);
+
+	_sprite2 = insertStaticSprite(0x08478078, 1100);
+	_sprite3 = insertStaticSprite(0x2203B821, 1100);
+	_sprite4 = insertStaticSprite(0x08592134, 1100);
+
+	if (which < 0) {
+		_flag1 = false;
+		insertKlayman<KmScene2812>(272, 432);
+		setMessageList(0x004AF560);
+		_sprite1->setVisible(false);
+		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+	} else if (which == 1) {
+		_flag1 = false;
+		insertKlayman<KmScene2812>(338, 398);
+		setMessageList(0x004AF588);
+		setPalStatus1(1);
+		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite1->getDrawRect().x2(), _sprite3->getDrawRect().y2());
+	} else if (which == 2) {
+		_flag1 = false;
+		if (getGlobalVar(0xC0418A02)) {
+			insertKlayman<KmScene2812>(554, 432);
+			_klayman->setDoDeltaX(1);
+		} else {
+			insertKlayman<KmScene2812>(394, 432);
+		}
+		setMessageList(0x004AF5F0);
+		_sprite1->setVisible(false);
+		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+	} else {
+		_flag1 = true;
+		insertKlayman<KmScene2812>(150, 582);
+		setMessageList(0x004AF568);
+		setPalStatus2(1);
+		_sprite1->setVisible(false);
+		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+	}
+	
+	_asRope->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
+	
+}
+
+void Scene2812::update() {
+	if (_klayman->getX() < 220)
+		setPalStatus2(0);
+	else if (_klayman->getX() < 240)
+		setPalStatus0(0);
+	Scene::update();
+}
+
+uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x0004269B)
+			sendEntityMessage(_klayman, 0x1014, _asRope);
+		break;
+	case 0x2001:
+		_flag1 = true;
+		setRectList(0x004AF710);
+		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite4->getDrawRect().y2());
+		break;
+	case 0x2002:
+		_flag1 = false;
+		setRectList(0x004AF700);
+		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+		break;
+	case 0x4806:
+		sendMessage(_asWinch, 0x2000, 0);
+		sendMessage(_asTrapDoor, 0x2000, 0);
+		break;
+	case 0x4826:
+		if (sender == _class606 && !_flag1) {
+			sendEntityMessage(_klayman, 0x1014, _class606);
+			setMessageList(0x004AF658);
+		} else if (sender == _class545 && !_flag1) {
+			sendEntityMessage(_klayman, 0x1014, _class545);
+			setMessageList(0x004AF668);
+		}
+		break;
+	case 0x482A:
+		setPalStatus1(0);
+		_sprite1->setVisible(true);
+		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite1->getDrawRect().x2(), _sprite3->getDrawRect().y2());
+		break;
+	case 0x482B:
+		setPalStatus0(false);
+		_sprite1->setVisible(false);
+		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+		break;
+	}
+	return messageResult;
+}
+
+void Scene2812::setPalStatus0(int fadeTime) {
+	if (_palStatus != 0) {
+		_palStatus = 0;
+		setPalStatus(fadeTime);
+	}
+}
+
+void Scene2812::setPalStatus1(int fadeTime) {
+	if (_palStatus != 1) {
+		_palStatus = 1;
+		setPalStatus(fadeTime);
+	}
+}
+
+void Scene2812::setPalStatus2(int fadeTime) {
+	if (_palStatus != 2) {
+		_palStatus = 2;
+		setPalStatus(fadeTime);
+	}
+}
+
+void Scene2812::setPalStatus(int fadeTime) {
+	if (_palStatus == 0)
+		_palette->addBasePalette(0x05D30F11, 0, 64, 0);
+	else if (_palStatus == 1)
+		_palette->addBasePalette(0x92CA2C9B, 0, 64, 0);
+	else if (_palStatus == 2)
+		_palette->addBasePalette(0x381F92C5, 0, 64, 0);
+	if (fadeTime > 0) {
+		_palette->startFadeToPalette(0);
+	} else {
+		_palette->startFadeToPalette(12);
+	}
 }
 
 Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
