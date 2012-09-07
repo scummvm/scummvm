@@ -32,9 +32,6 @@
  */
 class MidiParser_XMIDI : public MidiParser {
 protected:
-	NoteTimer _notes_cache[32];
-	uint32 _inserted_delta; // Track simulated deltas for note-off events
-
 	struct Loop {
 		byte *pos;
 		byte repeat;
@@ -48,11 +45,10 @@ protected:
 
 protected:
 	uint32 readVLQ2(byte * &data);
-	void resetTracking();
 	void parseNextEvent(EventInfo &info);
 
 public:
-	MidiParser_XMIDI(XMidiCallbackProc proc, void *data) : _inserted_delta(0), _callbackProc(proc), _callbackData(data) {}
+	MidiParser_XMIDI(XMidiCallbackProc proc, void *data) : _callbackProc(proc), _callbackData(data) {}
 	~MidiParser_XMIDI() { }
 
 	bool loadMusic(byte *data, uint32 size);
@@ -70,10 +66,9 @@ uint32 MidiParser_XMIDI::readVLQ2(byte * &pos) {
 
 void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	info.start = _position._play_pos;
-	info.delta = readVLQ2(_position._play_pos) - _inserted_delta;
+	info.delta = readVLQ2(_position._play_pos);
 
 	// Process the next event.
-	_inserted_delta = 0;
 	info.event = *(_position._play_pos++);
 	switch (info.event >> 4) {
 	case 0x9: // Note On
@@ -349,17 +344,11 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 		_ppqn = 60;
 		resetTracking();
 		setTempo(500000);
-		_inserted_delta = 0;
 		setTrack(0);
 		return true;
 	}
 
 	return false;
-}
-
-void MidiParser_XMIDI::resetTracking() {
-	MidiParser::resetTracking();
-	_inserted_delta = 0;
 }
 
 void MidiParser::defaultXMidiCallback(byte eventData, void *data) {
