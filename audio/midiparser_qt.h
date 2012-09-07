@@ -27,6 +27,9 @@
 #include "common/array.h"
 #include "common/quicktime.h"
 
+/**
+ * The QuickTime MIDI version of MidiParser.
+ */
 class MidiParser_QT : public MidiParser, public Common::QuickTimeParser {
 public:
 	MidiParser_QT() {}
@@ -36,9 +39,19 @@ public:
 	bool loadMusic(byte *data, uint32 size);
 	void unloadMusic();
 
-	// Custom
+	/**
+	 * Load the MIDI from a 'Tune' resource
+	 */
 	bool loadFromTune(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+	/**
+	 * Load the MIDI from a QuickTime stream
+	 */
 	bool loadFromContainerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+	/**
+	 * Load the MIDI from a QuickTime file
+	 */
 	bool loadFromContainerFile(const Common::String &fileName);
 
 protected:
