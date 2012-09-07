@@ -63,11 +63,11 @@ bool MidiParser_QT::loadFromTune(Common::SeekableReadStream *stream, DisposeAfte
 	MIDITrackInfo trackInfo;
 	trackInfo.noteRequests = readNoteRequestList(stream);
 
-	uint32 trackSize = stream->size() - stream->pos();
-	assert(trackSize > 0);
+	trackInfo.size = stream->size() - stream->pos();
+	assert(trackInfo.size > 0);
 
-	trackInfo.data = (byte *)malloc(trackSize);
-	stream->read(trackInfo.data, trackSize);
+	trackInfo.data = (byte *)malloc(trackInfo.size);
+	stream->read(trackInfo.data, trackInfo.size);
 
 	trackInfo.timeScale = 600; // the default
 	_trackInfo.push_back(trackInfo);
@@ -101,6 +101,13 @@ void MidiParser_QT::resetTracking() {
 }
 
 void MidiParser_QT::parseNextEvent(EventInfo &info) {
+	if (_position._play_pos >= _trackInfo[_active_track].data + _trackInfo[_active_track].size) {
+		// Manually insert end of track when we reach the end
+		info.event = 0xFF;
+		info.ext.type = 0x2F;
+		return;
+	}
+
 	if (_loadedInstruments < _trackInfo[_active_track].noteRequests.size()) {
 		// Load instruments first
 		info.event = 0xC0 | _loadedInstruments;
@@ -140,23 +147,7 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 	case 0x6:
 	case 0x7:
 		// Marker
-		switch ((control >> 16) & 0xFF) {
-		case 0:
-			// End
-			info.event = 0xFF;
-			info.ext.type = 0x2F;
-			break;
-		case 1:
-			// Beat
-			warning("Encountered beat marker");
-			break;
-		case 2:
-			// Tempo
-			warning("Encountered tempo marker");
-			break;
-		default:
-			warning("Unknown marker");
-		}
+		// Used for editing only, so we don't need to care about this
 		break;
 	case 0x9: {
 		// Extended note event
@@ -277,7 +268,7 @@ void MidiParser_QT::initFromContainerTracks() {
 
 			MIDITrackInfo trackInfo;
 			trackInfo.noteRequests = entry->_noteRequests;
-			trackInfo.data = readWholeTrack(tracks[i]);
+			trackInfo.data = readWholeTrack(tracks[i], trackInfo.size);
 			trackInfo.timeScale = tracks[i]->timeScale;
 			_trackInfo.push_back(trackInfo);
 		}
@@ -302,7 +293,7 @@ void MidiParser_QT::initCommon() {
 	setTrack(0);
 }
 
-byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track) {
+byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track, uint32 &trackSize) {
 	// This just goes through all chunks and 
 
 	Common::MemoryWriteStreamDynamic output;
@@ -327,6 +318,7 @@ byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track) {
 		}
 	}
 
+	trackSize = output.size();
 	return output.getData();
 }
 

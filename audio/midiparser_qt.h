@@ -76,6 +76,7 @@ private:
 	struct MIDITrackInfo {
 		NoteRequestList noteRequests;
 		byte *data;
+		uint32 size;
 		uint32 timeScale;
 	};
 
@@ -93,7 +94,7 @@ private:
 	Common::Rational readFixed(Common::SeekableReadStream *stream);
 	NoteRequestList readNoteRequestList(Common::SeekableReadStream *stream);
 
-	byte *readWholeTrack(Common::QuickTimeParser::Track *track);
+	byte *readWholeTrack(Common::QuickTimeParser::Track *track, uint32 &trackSize);
 
 	Common::Array<MIDITrackInfo> _trackInfo;
 	uint32 _loadedInstruments;
