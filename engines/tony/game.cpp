@@ -287,9 +287,7 @@ RMOptionScreen::RMOptionScreen() {
 	_buttonSave_ArrowRight = NULL;
 	_bEditSaveName = false;
 
-	int i;
-
-	for (i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		_curThumb[i] = NULL;
 		_buttonSave_States[i] = NULL;
 	}
@@ -500,9 +498,7 @@ void RMOptionScreen::refreshAll(CORO_PARAM) {
 }
 
 void RMOptionScreen::refreshThumbnails() {
-	int i;
-
-	for (i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		if (_curThumb[i])
 			delete _curThumb[i];
 
@@ -690,9 +686,7 @@ void RMOptionScreen::closeState() {
 	_buttonExit = NULL;
 
 	if (_nState == MENULOAD || _nState == MENUSAVE) {
-		int i;
-
-		for (i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++) {
 			if (_curThumb[i] != NULL) {
 				delete _curThumb[i];
 				_curThumb[i] = NULL;
@@ -1342,9 +1336,7 @@ void RMOptionScreen::removeThis(CORO_PARAM, bool &result) {
 
 
 bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, Common::String &name, byte &diff) {
-	Common::String buf;
 	char namebuf[256];
-	int i;
 	Common::InSaveFile *f;
 	char id[4];
 
@@ -1354,7 +1346,7 @@ bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, Com
 	diff = 10;
 
 	// Get the savegame filename for the given slot
-	buf = g_vm->getSaveStateFileName(nState);
+	Common::String buf = g_vm->getSaveStateFileName(nState);
 
 	// Try and open the savegame
 	f = g_system->getSavefileManager()->openForLoading(buf);
@@ -1409,9 +1401,9 @@ bool RMOptionScreen::loadThumbnailFromSaveState(int nState, byte *lpDestBuf, Com
 		return true;
 	}
 
-	i = f->readByte();
-	f->read(namebuf, i);
-	namebuf[i] = '\0';
+	int bufSize = f->readByte();
+	f->read(namebuf, bufSize);
+	namebuf[bufSize] = '\0';
 	name = namebuf;
 
 	delete f;
@@ -1435,9 +1427,7 @@ RMPointer::~RMPointer() {
 }
 
 void RMPointer::init() {
-	int i;
-
-	for (i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		RMResRaw res(RES_P_GO + i);
 
 		_pointer[i] = new RMGfxSourceBuffer8RLEByteAA;
@@ -1445,7 +1435,7 @@ void RMPointer::init() {
 		_pointer[i]->loadPaletteWA(RES_P_PAL);
 	}
 
-	for (i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		RMRes res(RES_P_PAP1 + i);
 		Common::SeekableReadStream *ds = res.getReadStream();
 		_specialPointer[i] = new RMItem;
@@ -1466,9 +1456,7 @@ void RMPointer::init() {
 }
 
 void RMPointer::close() {
-	int i;
-
-	for (i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		if (_pointer[i] != NULL) {
 			delete _pointer[i];
 			_pointer[i] = NULL;

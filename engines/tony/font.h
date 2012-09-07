@@ -252,7 +252,7 @@ public:
 	virtual void removeThis(CORO_PARAM, bool &result);
 
 	// Overloaded de-registration
-	virtual void Unregister();
+	virtual void unregister();
 
 	// Overloading of the Draw to center the text, if necessary
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -344,7 +344,7 @@ protected:
 public:
 	virtual void removeThis(CORO_PARAM, bool &result);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	void Unregister();
+	void unregister();
 
 public:
 	// Initialization

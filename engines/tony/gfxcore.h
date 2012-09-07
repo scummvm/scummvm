@@ -146,7 +146,7 @@ public:
 
 	// Registration
 	virtual void Register();
-	virtual void Unregister();
+	virtual void unregister();
 };
 
 
@@ -303,12 +303,12 @@ protected:
 protected:
 	static byte _megaRLEBuf[];
 
-	virtual void RLEWriteTrasp(byte *&cur, int rep) = 0;
-	virtual void RLEWriteData(byte *&cur, int rep, byte *src) = 0;
-	virtual void RLEWriteEOL(byte *&cur) = 0;
-	virtual void RLEWriteAlphaBlend(byte *&cur, int rep) = 0;
-	virtual void RLEDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) = 0;
-	virtual void RLEDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) = 0;
+	virtual void rleWriteTrasp(byte *&cur, int rep) = 0;
+	virtual void rleWriteData(byte *&cur, int rep, byte *src) = 0;
+	virtual void rleWriteEOL(byte *&cur) = 0;
+	virtual void rleWriteAlphaBlend(byte *&cur, int rep) = 0;
+	virtual void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) = 0;
+	virtual void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) = 0;
 
 	// Perform image compression in RLE
 	void compressRLE();
@@ -338,12 +338,12 @@ public:
 
 class RMGfxSourceBuffer8RLEByte : public RMGfxSourceBuffer8RLE {
 protected:
-	void RLEWriteTrasp(byte *  &cur, int rep);
-	void RLEWriteAlphaBlend(byte *  &cur, int rep);
-	void RLEWriteData(byte *  &cur, int rep, byte *src);
-	void RLEWriteEOL(byte *  &cur);
-	void RLEDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
-	void RLEDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength);
+	void rleWriteTrasp(byte *  &cur, int rep);
+	void rleWriteAlphaBlend(byte *  &cur, int rep);
+	void rleWriteData(byte *  &cur, int rep, byte *src);
+	void rleWriteEOL(byte *  &cur);
+	void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
+	void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength);
 
 public:
 	virtual ~RMGfxSourceBuffer8RLEByte();
@@ -351,12 +351,12 @@ public:
 
 class RMGfxSourceBuffer8RLEWord : public RMGfxSourceBuffer8RLE {
 protected:
-	void RLEWriteTrasp(byte *  &cur, int rep);
-	void RLEWriteAlphaBlend(byte *  &cur, int rep);
-	void RLEWriteData(byte *  &cur, int rep, byte *src);
-	void RLEWriteEOL(byte *  &cur);
-	virtual void RLEDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
-	virtual void RLEDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength);
+	void rleWriteTrasp(byte *  &cur, int rep);
+	void rleWriteAlphaBlend(byte *  &cur, int rep);
+	void rleWriteData(byte *  &cur, int rep, byte *src);
+	void rleWriteEOL(byte *  &cur);
+	virtual void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
+	virtual void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength);
 
 public:
 	virtual ~RMGfxSourceBuffer8RLEWord();
@@ -364,7 +364,7 @@ public:
 
 class RMGfxSourceBuffer8RLEWordAB : public RMGfxSourceBuffer8RLEWord {
 protected:
-	virtual void RLEDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
+	virtual void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
 
 public:
 	virtual ~RMGfxSourceBuffer8RLEWordAB();

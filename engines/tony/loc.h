@@ -403,12 +403,12 @@ private:
 	int inWhichBox(const RMPoint &pt);
 
 	short findPath(short source, short destination);
-	RMPoint searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint punto);
+	RMPoint searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint point);
 	RMPoint nearestPoint(const RMPoint &punto);
 
 	void goTo(CORO_PARAM, RMPoint destcoord, bool bReversed = false);
-	short scanLine(const RMPoint &punto);
-	RMPoint invScanLine(const RMPoint &punto);
+	short scanLine(const RMPoint &point);
+	RMPoint invScanLine(const RMPoint &point);
 	RMPoint nearestHotSpot(int sourcebox, int destbox);
 
 	void newBoxEntered(int nBox);
@@ -478,7 +478,7 @@ public:
 	void closeFade();
 	void waitForFadeEnd(CORO_PARAM);
 
-	virtual void Unregister();
+	virtual void unregister();
 	virtual void removeThis(CORO_PARAM, bool &result);
 	virtual int priority();
 };

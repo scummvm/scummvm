@@ -394,13 +394,10 @@ void RMGfxEngine::initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint star
 }
 
 uint32 RMGfxEngine::loadLocation(int nLoc, RMPoint ptTonyStart, RMPoint start) {
-	bool bLoaded;
-	int i;
-
 	_nCurLoc = nLoc;
 
-	bLoaded = false;
-	for (i = 0; i < 5; i++) {
+	bool bLoaded = false;
+	for (int i = 0; i < 5; i++) {
 		// Try the loading of the location
 		RMRes res(_nCurLoc);
 		if (!res.isValid())
@@ -537,20 +534,17 @@ void RMGfxEngine::disableMouse() {
 void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Common::String &name) {
 	Common::OutSaveFile *f;
 	byte *state;
-	uint thumbsize;
-	uint size;
-	int i;
 	char buf[4];
 	RMPoint tp = _tony.position();
 
 	// Saving: MPAL variables, current location, and Tony inventory position
 
 	// For now, we only save the MPAL state
-	size = mpalGetSaveStateSize();
+	uint size = mpalGetSaveStateSize();
 	state = new byte[size];
 	mpalSaveState(state);
 
-	thumbsize = 160 * 120 * 2;
+	uint thumbsize = 160 * 120 * 2;
 
 	buf[0] = 'R';
 	buf[1] = 'M';
@@ -566,7 +560,7 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	f->write(curThumb, thumbsize);
 
 	// Difficulty level
-	i = mpalQueryGlobalVar("VERSIONEFACILE");
+	int i = mpalQueryGlobalVar("VERSIONEFACILE");
 	f->writeByte(i);
 
 	i = strlen(name.c_str());
@@ -597,10 +591,8 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	delete[] state;
 
 	// New Ver5
-	bool bStat;
-
 	// Saves the state of the shepherdess and show yourself
-	bStat = _tony.getShepherdess();
+	bool bStat = _tony.getShepherdess();
 	f->writeByte(bStat);
 	bStat = _inter.getPerorate();
 	f->writeByte(bStat);
@@ -723,7 +715,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 	_inv.loadState(_ctx->state);
 	delete[] _ctx->state;
 
-	if (_ctx->ver >= 0x2) {   // Versione 2: box please
+	if (_ctx->ver >= 0x2) {   // Version 2: box please
 		_ctx->size = _ctx->f->readUint32LE();
 		_ctx->state = new byte[_ctx->size];
 		_ctx->f->read(_ctx->state, _ctx->size);
@@ -732,7 +724,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 	}
 
 	if (_ctx->ver >= 5) {
-		// Versione 5
+		// Version 5
 		bool bStat = false;
 
 		bStat = _ctx->f->readByte();

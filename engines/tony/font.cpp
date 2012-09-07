@@ -718,8 +718,8 @@ void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
 	CORO_END_CODE;
 }
 
-void RMTextDialog::Unregister() {
-	RMGfxTask::Unregister();
+void RMTextDialog::unregister() {
+	RMGfxTask::unregister();
 	assert(_nInList == 0);
 	CoroScheduler.setEvent(_hEndDisplay);
 }
@@ -934,8 +934,8 @@ RMDialogChoice::~RMDialogChoice() {
 	CoroScheduler.closeEvent(_hUnreg);
 }
 
-void RMDialogChoice::Unregister() {
-	RMGfxWoodyBuffer::Unregister();
+void RMDialogChoice::unregister() {
+	RMGfxWoodyBuffer::unregister();
 	assert(!_nInList);
 	CoroScheduler.pulseEvent(_hUnreg);
 

@@ -56,7 +56,7 @@ void RMGfxTask::Register() {
 	_nInList++;
 }
 
-void RMGfxTask::Unregister() {
+void RMGfxTask::unregister() {
 	_nInList--;
 	assert(_nInList >= 0);
 }
@@ -269,7 +269,7 @@ void RMGfxTargetBuffer::clearOT() {
 	cur = _otlist;
 
 	while (cur != NULL) {
-		cur->_prim->_task->Unregister();
+		cur->_prim->_task->unregister();
 		delete cur->_prim;
 		n = cur->_next;
 		delete cur;
@@ -303,7 +303,7 @@ void RMGfxTargetBuffer::drawOT(CORO_PARAM) {
 		CORO_INVOKE_1(_ctx->cur->_prim->_task->removeThis, _ctx->result);
 		if (_ctx->result) {
 			// De-register the task
-			_ctx->cur->_prim->_task->Unregister();
+			_ctx->cur->_prim->_task->unregister();
 
 			// Delete task, freeing the memory
 			delete _ctx->cur->_prim;
@@ -507,9 +507,7 @@ int RMGfxSourceBufferPal::loadPaletteWA(const byte *buf, bool bSwapped) {
 }
 
 int RMGfxSourceBufferPal::loadPalette(const byte *buf) {
-	int i;
-
-	for (i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++)
 		memcpy(_pal + i * 3, buf + i * 4, 3);
 
 	preparePalette();
@@ -518,9 +516,7 @@ int RMGfxSourceBufferPal::loadPalette(const byte *buf) {
 }
 
 void RMGfxSourceBufferPal::preparePalette() {
-	int i;
-
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		_palFinal[i] = (((int)_pal[i * 3 + 0] >> 3) <<  10) |
 		                (((int)_pal[i * 3 + 1] >> 3) <<  5) |
 		                (((int)_pal[i * 3 + 2] >> 3) <<  0);
@@ -528,10 +524,8 @@ void RMGfxSourceBufferPal::preparePalette() {
 }
 
 int RMGfxSourceBufferPal::init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
-	int read;
-
 	// Load the RAW image
-	read = RMGfxSourceBuffer::init(buf, dimx, dimy);
+	int read = RMGfxSourceBuffer::init(buf, dimx, dimy);
 
 	// Load the palette if necessary
 	if (bLoadPalette)
@@ -596,7 +590,7 @@ RMGfxSourceBuffer8::~RMGfxSourceBuffer8() {
 }
 
 void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int x, y, width, height, u, v;
+	int width, height, u, v;
 	int bufx = bigBuf.getDimx();
 	uint16 *buf = bigBuf;
 	byte *raw = _buf;
@@ -623,10 +617,10 @@ void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 
 	// Normal step
 	if (_bTrasp0) {
-		for (y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++) {
 			raw = _buf + (y + v) * _dimx + u;
 
-			for (x = 0; x < width; x++) {
+			for (int x = 0; x < width; x++) {
 				if (*raw)
 					*buf = _palFinal[*raw];
 				buf++;
@@ -636,10 +630,10 @@ void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 			buf += bufx - width;
 		}
 	} else {
-		for (y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++) {
 			raw = _buf + (y + v) * _dimx + u;
 
-			for (x = 0; x < width; x += 2) {
+			for (int x = 0; x < width; x += 2) {
 				buf[0] = _palFinal[raw[0]];
 				buf[1] = _palFinal[raw[1]];
 
@@ -693,11 +687,9 @@ RMGfxSourceBuffer8AB::~RMGfxSourceBuffer8AB() {
 }
 
 int RMGfxSourceBuffer8AB::calcTrasp(int fore, int back) {
-	int r, g, b;
-
-	r = (GETRED(fore) >> 2) + (GETRED(back) >> 1);
-	g = (GETGREEN(fore) >> 2) + (GETGREEN(back) >> 1);
-	b = (GETBLUE(fore) >> 2) + (GETBLUE(back) >> 1);
+	int r = (GETRED(fore) >> 2) + (GETRED(back) >> 1);
+	int g = (GETGREEN(fore) >> 2) + (GETGREEN(back) >> 1);
+	int b = (GETBLUE(fore) >> 2) + (GETBLUE(back) >> 1);
 
 	if (r > 0x1F)
 		r = 0x1F;
@@ -713,7 +705,7 @@ int RMGfxSourceBuffer8AB::calcTrasp(int fore, int back) {
 
 
 void RMGfxSourceBuffer8AB::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int x, y, width, height, u, v;
+	int width, height, u, v;
 	int bufx = bigBuf.getDimx();
 	uint16 *buf = bigBuf;
 	byte *raw = _buf;
@@ -740,10 +732,10 @@ void RMGfxSourceBuffer8AB::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 
 	// Passaggio normale
 	if (_bTrasp0) {
-		for (y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++) {
 			raw = _buf + (y + v) * _dimx + u;
 
-			for (x = 0; x < width; x++) {
+			for (int x = 0; x < width; x++) {
 				if (*raw)
 					*buf = calcTrasp(_palFinal[*raw], *buf);
 
@@ -754,10 +746,10 @@ void RMGfxSourceBuffer8AB::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrim
 			buf += bufx - width;
 		}
 	} else {
-		for (y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++) {
 			raw = _buf + (y + v) * _dimx + u;
 
-			for (x = 0; x < width; x += 2) {
+			for (int x = 0; x < width; x += 2) {
 				buf[0] = calcTrasp(_palFinal[raw[0]], buf[0]);
 				buf[1] = calcTrasp(_palFinal[raw[1]], buf[1]);
 
@@ -809,9 +801,7 @@ void RMGfxSourceBuffer8RLE::init(Common::ReadStream &ds, int dimx, int dimy, boo
 	if (_bNeedRLECompress) {
 		RMGfxSourceBufferPal::init(ds, dimx, dimy, bLoadPalette);
 	} else {
-		int size;
-
-		size = ds.readSint32LE();
+		int size = ds.readSint32LE();
 		_buf = new byte[size];
 		ds.read(_buf, size);
 
@@ -845,7 +835,6 @@ void RMGfxSourceBuffer8RLE::setAlreadyCompressed() {
 }
 
 void RMGfxSourceBuffer8RLE::compressRLE() {
-	int x, y;
 	byte *startline;
 	byte *cur;
 	byte curdata;
@@ -856,7 +845,7 @@ void RMGfxSourceBuffer8RLE::compressRLE() {
 	// Perform RLE compression for lines
 	cur = _megaRLEBuf;
 	src = _buf;
-	for (y = 0; y < _dimy; y++) {
+	for (int y = 0; y < _dimy; y++) {
 		// Save the beginning of the line
 		startline = cur;
 
@@ -867,7 +856,7 @@ void RMGfxSourceBuffer8RLE::compressRLE() {
 		curdata = 0;
 		rep = 0;
 		startsrc = src;
-		for (x = 0; x < _dimx;) {
+		for (int x = 0; x < _dimx;) {
 			if ((curdata == 0 && *src == 0) || (curdata == 1 && *src == _alphaBlendColor)
 			        || (curdata == 2 && (*src != _alphaBlendColor && *src != 0))) {
 				src++;
@@ -875,13 +864,13 @@ void RMGfxSourceBuffer8RLE::compressRLE() {
 				x++;
 			} else {
 				if (curdata == 0) {
-					RLEWriteTrasp(cur, rep);
+					rleWriteTrasp(cur, rep);
 					curdata++;
 				} else if (curdata == 1) {
-					RLEWriteAlphaBlend(cur, rep);
+					rleWriteAlphaBlend(cur, rep);
 					curdata++;
 				} else {
-					RLEWriteData(cur, rep, startsrc);
+					rleWriteData(cur, rep, startsrc);
 					curdata = 0;
 				}
 
@@ -892,16 +881,16 @@ void RMGfxSourceBuffer8RLE::compressRLE() {
 
 		// Pending data?
 		if (curdata == 1) {
-			RLEWriteAlphaBlend(cur, rep);
-			RLEWriteData(cur, 0, NULL);
+			rleWriteAlphaBlend(cur, rep);
+			rleWriteData(cur, 0, NULL);
 		}
 
 		if (curdata == 2) {
-			RLEWriteData(cur, rep, startsrc);
+			rleWriteData(cur, rep, startsrc);
 		}
 
 		// End of line
-		RLEWriteEOL(cur);
+		rleWriteEOL(cur);
 
 		// Write the length of the line
 		WRITE_LE_UINT16(startline, (uint16)(cur - startline));
@@ -911,26 +900,25 @@ void RMGfxSourceBuffer8RLE::compressRLE() {
 	delete[] _buf;
 
 	// Copy the compressed image
-	x = cur - _megaRLEBuf;
-	_buf = new byte[x];
-	Common::copy(_megaRLEBuf, _megaRLEBuf + x, _buf);
+	int bufSize = cur - _megaRLEBuf;
+	_buf = new byte[bufSize];
+	Common::copy(_megaRLEBuf, _megaRLEBuf + bufSize, _buf);
 }
 
 void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int y;
 	byte *src;
 	uint16 *buf = bigBuf;
-	int x1, y1, u, v, width, height;
+	int u, v, width, height;
 
 	// Clipping
-	x1 = prim->getDst()._x1;
-	y1 = prim->getDst()._y1;
+	int x1 = prim->getDst()._x1;
+	int y1 = prim->getDst()._y1;
 	if (!clip2D(x1, y1, u, v, width, height, false, &bigBuf))
 		return;
 
 	// Go forward through the RLE lines
 	src = _buf;
-	for (y = 0; y < v; y++)
+	for (int y = 0; y < v; y++)
 		src += READ_LE_UINT16(src);
 
 	// Calculate the position in the destination buffer
@@ -952,9 +940,9 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 		// Specify the drawn area
 		bigBuf.addDirtyRect(Common::Rect(x1 - width, y1, x1 + 1, y1 + height));
 
-		for (y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++) {
 			// Decompression
-			RLEDecompressLineFlipped(buf + x1, src + 2, u, width);
+			rleDecompressLineFlipped(buf + x1, src + 2, u, width);
 
 			// Next line
 			src += READ_LE_UINT16(src);
@@ -966,9 +954,9 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 		// Specify the drawn area
 		bigBuf.addDirtyRect(Common::Rect(x1, y1, x1 + width, y1 + height));
 
-		for (y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++) {
 			// Decompression
-			RLEDecompressLine(buf + x1, src + 2, u, width);
+			rleDecompressLine(buf + x1, src + 2, u, width);
 
 			// Next line
 			src += READ_LE_UINT16(src);
@@ -985,20 +973,19 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 \****************************************************************************/
 
 RMGfxSourceBuffer8RLEByte::~RMGfxSourceBuffer8RLEByte() {
-
 }
 
-void RMGfxSourceBuffer8RLEByte::RLEWriteTrasp(byte *&cur, int rep) {
+void RMGfxSourceBuffer8RLEByte::rleWriteTrasp(byte *&cur, int rep) {
 	assert(rep < 255);
 	*cur ++ = rep;
 }
 
-void RMGfxSourceBuffer8RLEByte::RLEWriteAlphaBlend(byte *&cur, int rep) {
+void RMGfxSourceBuffer8RLEByte::rleWriteAlphaBlend(byte *&cur, int rep) {
 	assert(rep < 255);
 	*cur ++ = rep;
 }
 
-void RMGfxSourceBuffer8RLEByte::RLEWriteData(byte *&cur, int rep, byte *src) {
+void RMGfxSourceBuffer8RLEByte::rleWriteData(byte *&cur, int rep, byte *src) {
 	assert(rep < 256);
 
 	*cur ++ = rep;
@@ -1011,13 +998,12 @@ void RMGfxSourceBuffer8RLEByte::RLEWriteData(byte *&cur, int rep, byte *src) {
 	return;
 }
 
-void RMGfxSourceBuffer8RLEByte::RLEWriteEOL(byte *&cur) {
+void RMGfxSourceBuffer8RLEByte::rleWriteEOL(byte *&cur) {
 	*cur ++ = 0xFF;
 }
 
-void RMGfxSourceBuffer8RLEByte::RLEDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
-	int i, n;
-	int r, g, b;
+void RMGfxSourceBuffer8RLEByte::rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
+	int n;
 
 	if (nStartSkip == 0)
 		goto RLEByteDoTrasp;
@@ -1086,10 +1072,10 @@ RLEByteDoAlpha:
 RLEByteDoAlpha2:
 		if (n > nLength)
 			n = nLength;
-		for (i = 0; i < n; i++) {
-			r = (*dst >> 10) & 0x1F;
-			g = (*dst >> 5) & 0x1F;
-			b = *dst & 0x1F;
+		for (int i = 0; i < n; i++) {
+			int r = (*dst >> 10) & 0x1F;
+			int g = (*dst >> 5) & 0x1F;
+			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
@@ -1111,7 +1097,7 @@ RLEByteDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++)
+		for (int i = 0; i < n; i++)
 			*dst ++ = _palFinal[*src++];
 
 		nLength -= n;
@@ -1121,9 +1107,8 @@ RLEByteDoCopy2:
 	}
 }
 
-void RMGfxSourceBuffer8RLEByte::RLEDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) {
-	int i, n;
-	int r, g, b;
+void RMGfxSourceBuffer8RLEByte::rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) {
+	int n;
 
 	if (nStartSkip == 0)
 		goto RLEByteFlippedDoTrasp;
@@ -1192,10 +1177,10 @@ RLEByteFlippedDoAlpha:
 RLEByteFlippedDoAlpha2:
 		if (n > nLength)
 			n = nLength;
-		for (i = 0; i < n; i++) {
-			r = (*dst >> 10) & 0x1F;
-			g = (*dst >> 5) & 0x1F;
-			b = *dst & 0x1F;
+		for (int i = 0; i < n; i++) {
+			int r = (*dst >> 10) & 0x1F;
+			int g = (*dst >> 5) & 0x1F;
+			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
@@ -1217,7 +1202,7 @@ RLEByteFlippedDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++)
+		for (int i = 0; i < n; i++)
 			*dst-- = _palFinal[*src++];
 
 		nLength -= n;
@@ -1236,17 +1221,17 @@ RMGfxSourceBuffer8RLEWord::~RMGfxSourceBuffer8RLEWord() {
 
 }
 
-void RMGfxSourceBuffer8RLEWord::RLEWriteTrasp(byte *&cur, int rep) {
+void RMGfxSourceBuffer8RLEWord::rleWriteTrasp(byte *&cur, int rep) {
 	WRITE_LE_UINT16(cur, rep);
 	cur += 2;
 }
 
-void RMGfxSourceBuffer8RLEWord::RLEWriteAlphaBlend(byte *&cur, int rep) {
+void RMGfxSourceBuffer8RLEWord::rleWriteAlphaBlend(byte *&cur, int rep) {
 	WRITE_LE_UINT16(cur, rep);
 	cur += 2;
 }
 
-void RMGfxSourceBuffer8RLEWord::RLEWriteData(byte *&cur, int rep, byte *src) {
+void RMGfxSourceBuffer8RLEWord::rleWriteData(byte *&cur, int rep, byte *src) {
 	WRITE_LE_UINT16(cur, rep);
 	cur += 2;
 
@@ -1257,14 +1242,13 @@ void RMGfxSourceBuffer8RLEWord::RLEWriteData(byte *&cur, int rep, byte *src) {
 	}
 }
 
-void RMGfxSourceBuffer8RLEWord::RLEWriteEOL(byte *&cur) {
+void RMGfxSourceBuffer8RLEWord::rleWriteEOL(byte *&cur) {
 	*cur ++ = 0xFF;
 	*cur ++ = 0xFF;
 }
 
-void RMGfxSourceBuffer8RLEWord::RLEDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
-	int i, n;
-	int r, g, b;
+void RMGfxSourceBuffer8RLEWord::rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
+	int n;
 
 	if (nStartSkip == 0)
 		goto RLEWordDoTrasp;
@@ -1341,10 +1325,10 @@ RLEWordDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++) {
-			r = (*dst >> 10) & 0x1F;
-			g = (*dst >> 5) & 0x1F;
-			b = *dst & 0x1F;
+		for (int i = 0; i < n; i++) {
+			int r = (*dst >> 10) & 0x1F;
+			int g = (*dst >> 5) & 0x1F;
+			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
@@ -1368,7 +1352,7 @@ RLEWordDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++)
+		for (int i = 0; i < n; i++)
 			*dst++ = _palFinal[*src++];
 
 		nLength -= n;
@@ -1380,9 +1364,8 @@ RLEWordDoCopy2:
 	}
 }
 
-void RMGfxSourceBuffer8RLEWord::RLEDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) {
-	int i, n;
-	int r, g, b;
+void RMGfxSourceBuffer8RLEWord::rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) {
+	int n;
 
 	if (nStartSkip == 0)
 		goto RLEWordFlippedDoTrasp;
@@ -1459,10 +1442,10 @@ RLEWordFlippedDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++) {
-			r = (*dst >> 10) & 0x1F;
-			g = (*dst >> 5) & 0x1F;
-			b = *dst & 0x1F;
+		for (int i = 0; i < n; i++) {
+			int r = (*dst >> 10) & 0x1F;
+			int g = (*dst >> 5) & 0x1F;
+			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
@@ -1486,7 +1469,7 @@ RLEWordFlippedDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++)
+		for (int i = 0; i < n; i++)
 			*dst-- = _palFinal[*src++];
 
 		nLength -= n;
@@ -1505,12 +1488,11 @@ RMGfxSourceBuffer8RLEWordAB::~RMGfxSourceBuffer8RLEWordAB() {
 
 }
 
-void RMGfxSourceBuffer8RLEWordAB::RLEDecompressLine(uint16 *dst, byte *src,  int nStartSkip, int nLength) {
-	int i, n;
-	int r, g, b, r2, g2, b2;
+void RMGfxSourceBuffer8RLEWordAB::rleDecompressLine(uint16 *dst, byte *src,  int nStartSkip, int nLength) {
+	int n;
 
 	if (!GLOBALS._bCfgTransparence) {
-		RMGfxSourceBuffer8RLEWord::RLEDecompressLine(dst, src, nStartSkip, nLength);
+		RMGfxSourceBuffer8RLEWord::rleDecompressLine(dst, src, nStartSkip, nLength);
 		return;
 	}
 
@@ -1590,10 +1572,10 @@ RLEWordDoAlpha2:
 			n = nLength;
 
 		// @@@ SHOULD NOT BE THERE !!!!!
-		for (i = 0; i < n; i++) {
-			r = (*dst >> 10) & 0x1F;
-			g = (*dst >> 5) & 0x1F;
-			b = *dst & 0x1F;
+		for (int i = 0; i < n; i++) {
+			int r = (*dst >> 10) & 0x1F;
+			int g = (*dst >> 5) & 0x1F;
+			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
@@ -1617,14 +1599,14 @@ RLEWordDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
-		for (i = 0; i < n; i++) {
-			r = (*dst >> 10) & 0x1F;
-			g = (*dst >> 5) & 0x1F;
-			b = *dst & 0x1F;
+		for (int i = 0; i < n; i++) {
+			int r = (*dst >> 10) & 0x1F;
+			int g = (*dst >> 5) & 0x1F;
+			int b = *dst & 0x1F;
 
-			r2 = (_palFinal[*src] >> 10) & 0x1F;
-			g2 = (_palFinal[*src] >> 5) & 0x1F;
-			b2 = _palFinal[*src] & 0x1F;
+			int r2 = (_palFinal[*src] >> 10) & 0x1F;
+			int g2 = (_palFinal[*src] >> 5) & 0x1F;
+			int b2 = _palFinal[*src] & 0x1F;
 
 			r = (r >> 1) + (r2 >> 1);
 			g = (g >> 1) + (g2 >> 1);
@@ -1658,7 +1640,6 @@ void RMGfxSourceBuffer8AA::prepareImage() {
 }
 
 void RMGfxSourceBuffer8AA::calculateAA() {
-	int x, y;
 	byte *src, *srcaa;
 
 	// First pass: fill the edges
@@ -1666,8 +1647,8 @@ void RMGfxSourceBuffer8AA::calculateAA() {
 
 	src = _buf;
 	srcaa = _megaAABuf;
-	for (y = 0; y < _dimy; y++) {
-		for (x = 0; x < _dimx; x++) {
+	for (int y = 0; y < _dimy; y++) {
+		for (int x = 0; x < _dimx; x++) {
 			if (*src == 0) {
 				if ((y > 0 && src[-_dimx] != 0) ||
 				        (y < _dimy - 1 && src[_dimx] != 0) ||
@@ -1683,8 +1664,8 @@ void RMGfxSourceBuffer8AA::calculateAA() {
 
 	src = _buf;
 	srcaa = _megaAABuf;
-	for (y = 0; y < _dimy; y++) {
-		for (x = 0; x < _dimx; x++) {
+	for (int y = 0; y < _dimy; y++) {
+		for (int x = 0; x < _dimx; x++) {
 			if (*src != 0) {
 				if ((y > 0 && srcaa[-_dimx] == 1) ||
 				        (y < _dimy - 1 && srcaa[_dimx] == 1) ||
@@ -1715,23 +1696,20 @@ RMGfxSourceBuffer8AA::~RMGfxSourceBuffer8AA() {
 }
 
 void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int x, y;
 	byte *src;
 	uint16 *mybuf;
 	uint16 *buf;
-	int x1, y1, u, v, width, height;
-	int r, g, b;
-	int step;
+	int u, v, width, height;
 
 	// Clip the sprite
-	x1 = prim->getDst()._x1;
-	y1 = prim->getDst()._y1;
+	int x1 = prim->getDst()._x1;
+	int y1 = prim->getDst()._y1;
 	if (!clip2D(x1, y1, u, v, width, height, false, &bigBuf))
 		return;
 
 	// Go forward through the RLE lines
 	src = _buf;
-	for (y = 0; y < v; y++)
+	for (int y = 0; y < v; y++)
 		src += READ_LE_UINT16(src);
 
 	// Eliminate horizontal clipping
@@ -1758,6 +1736,7 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	buf = bigBuf;
 	buf += y1 * bigBuf.getDimx();
 
+	int step;
 	if (prim->isFlipped())
 		step = -1;
 	else
@@ -1765,17 +1744,17 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 	// Loop
 	buf += bigBuf.getDimx(); // Skip the first line
-	for (y = 1; y < height - 1; y++) {
+	for (int y = 1; y < height - 1; y++) {
 		// if (prim->IsFlipped())
 		//	mybuf=&buf[x1+m_dimx-1];
 		// else
 		mybuf = &buf[x1];
 
-		for (x = 0; x < width; x++, mybuf += step) {
+		for (int x = 0; x < width; x++, mybuf += step) {
 			if (_aabuf[(y + v) * _dimx + x + u] == 2 && x != 0 && x != width - 1) {
-				r = GETRED(mybuf[1]) + GETRED(mybuf[-1]) + GETRED(mybuf[-bigBuf.getDimx()]) + GETRED(mybuf[bigBuf.getDimx()]);
-				g = GETGREEN(mybuf[1]) + GETGREEN(mybuf[-1]) + GETGREEN(mybuf[-bigBuf.getDimx()]) + GETGREEN(mybuf[bigBuf.getDimx()]);
-				b = GETBLUE(mybuf[1]) + GETBLUE(mybuf[-1]) + GETBLUE(mybuf[-bigBuf.getDimx()]) + GETBLUE(mybuf[bigBuf.getDimx()]);
+				int r = GETRED(mybuf[1]) + GETRED(mybuf[-1]) + GETRED(mybuf[-bigBuf.getDimx()]) + GETRED(mybuf[bigBuf.getDimx()]);
+				int g = GETGREEN(mybuf[1]) + GETGREEN(mybuf[-1]) + GETGREEN(mybuf[-bigBuf.getDimx()]) + GETGREEN(mybuf[bigBuf.getDimx()]);
+				int b = GETBLUE(mybuf[1]) + GETBLUE(mybuf[-1]) + GETBLUE(mybuf[-bigBuf.getDimx()]) + GETBLUE(mybuf[bigBuf.getDimx()]);
 
 				r += GETRED(mybuf[0]);
 				g += GETGREEN(mybuf[0]);
@@ -1785,9 +1764,12 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				g /= 5;
 				b /= 5;
 
-				if (r > 31) r = 31;
-				if (g > 31) g = 31;
-				if (b > 31) b = 31;
+				if (r > 31)
+					r = 31;
+				if (g > 31)
+					g = 31;
+				if (b > 31)
+					b = 31;
 
 				mybuf[0] = (r << 10) | (g << 5) | b;
 			}
@@ -1803,17 +1785,17 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 
 	// Looppone
 	buf += bigBuf.getDimx();
-	for (y = 1; y < height - 1; y++) {
+	for (int y = 1; y < height - 1; y++) {
 		// if (prim->IsFlipped())
 		// 	mybuf=&buf[x1+m_dimx-1];
 		// else
 		mybuf = &buf[x1];
 
-		for (x = 0; x < width; x++, mybuf += step) {
+		for (int x = 0; x < width; x++, mybuf += step) {
 			if (_aabuf[(y + v) * _dimx + x + u] == 1 && x != 0 && x != width - 1) {
-				r = GETRED(mybuf[1]) + GETRED(mybuf[-1]) + GETRED(mybuf[-bigBuf.getDimx()]) + GETRED(mybuf[bigBuf.getDimx()]);
-				g = GETGREEN(mybuf[1]) + GETGREEN(mybuf[-1]) + GETGREEN(mybuf[-bigBuf.getDimx()]) + GETGREEN(mybuf[bigBuf.getDimx()]);
-				b = GETBLUE(mybuf[1]) + GETBLUE(mybuf[-1]) + GETBLUE(mybuf[-bigBuf.getDimx()]) + GETBLUE(mybuf[bigBuf.getDimx()]);
+				int r = GETRED(mybuf[1]) + GETRED(mybuf[-1]) + GETRED(mybuf[-bigBuf.getDimx()]) + GETRED(mybuf[bigBuf.getDimx()]);
+				int g = GETGREEN(mybuf[1]) + GETGREEN(mybuf[-1]) + GETGREEN(mybuf[-bigBuf.getDimx()]) + GETGREEN(mybuf[bigBuf.getDimx()]);
+				int b = GETBLUE(mybuf[1]) + GETBLUE(mybuf[-1]) + GETBLUE(mybuf[-bigBuf.getDimx()]) + GETBLUE(mybuf[bigBuf.getDimx()]);
 
 				r += GETRED(mybuf[0]) * 2;
 				g += GETGREEN(mybuf[0]) * 2;
@@ -1823,9 +1805,12 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				g /= 6;
 				b /= 6;
 
-				if (r > 31) r = 31;
-				if (g > 31) g = 31;
-				if (b > 31) b = 31;
+				if (r > 31)
+					r = 31;
+				if (g > 31)
+					g = 31;
+				if (b > 31)
+					b = 31;
 
 				mybuf[0] = (r << 10) | (g << 5) | b;
 			}
@@ -1941,16 +1926,13 @@ RMGfxSourceBuffer16::~RMGfxSourceBuffer16() {
 void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	uint16 *buf = bigBuf;
 	uint16 *raw = (uint16 *)_buf;
-	int dimx, dimy;
-	int u, v;
-	int x1, y1;
 
-	dimx = _dimx;
-	dimy = _dimy;
-	u = 0;
-	v = 0;
-	x1 = 0;
-	y1 = 0;
+	int dimx = _dimx;
+	int dimy = _dimy;
+	int u = 0;
+	int v = 0;
+	int x1 = 0;
+	int y1 = 0;
 
 	if (prim->haveSrc()) {
 		u = prim->getSrc()._x1;
@@ -1999,10 +1981,9 @@ void RMGfxSourceBuffer16::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimi
 
 void RMGfxSourceBuffer16::prepareImage() {
 	// Color space conversion if necessary!
-	int i;
 	uint16 *buf = (uint16 *)_buf;
 
-	for (i = 0; i < _dimx * _dimy; i++)
+	for (int i = 0; i < _dimx * _dimy; i++)
 		WRITE_LE_UINT16(&buf[i], FROM_LE_16(buf[i]) & 0x7FFF);
 }
 
@@ -2041,7 +2022,6 @@ void RMGfxBox::setColor(byte r, byte g, byte b) {
 }
 
 void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int i, j;
 	uint16 *buf = bigBuf;
 	RMRect rcDst;
 
@@ -2050,8 +2030,8 @@ void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim)
 	buf += rcDst._y1 * bigBuf.getDimx() + rcDst._x1;
 
 	// Loop through the pixels
-	for (j = 0; j < rcDst.height(); j++) {
-		for (i = 0; i < rcDst.width(); i++)
+	for (int j = 0; j < rcDst.height(); j++) {
+		for (int i = 0; i < rcDst.width(); i++)
 			*buf++ = _wFillColor;
 
 		buf += bigBuf.getDimx() - rcDst.width();
