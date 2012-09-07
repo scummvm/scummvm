@@ -69,6 +69,7 @@ bool MidiParser_QT::loadFromTune(Common::SeekableReadStream *stream, DisposeAfte
 	trackInfo.data = (byte *)malloc(trackSize);
 	stream->read(trackInfo.data, trackSize);
 
+	trackInfo.timeScale = 600; // the default
 	_trackInfo.push_back(trackInfo);
 
 	initCommon();
@@ -182,6 +183,7 @@ void MidiParser_QT::initFromContainerTracks() {
 			MIDITrackInfo trackInfo;
 			trackInfo.noteRequests = entry->_noteRequests;
 			trackInfo.data = readWholeTrack(tracks[i]);
+			trackInfo.timeScale = tracks[i]->timeScale;
 			_trackInfo.push_back(trackInfo);
 		}
 	}

@@ -75,6 +75,7 @@ private:
 	struct MIDITrackInfo {
 		NoteRequestList noteRequests;
 		byte *data;
+		uint32 timeScale;
 	};
 
 	class MIDISampleDesc : public SampleDesc {
