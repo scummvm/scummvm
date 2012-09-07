@@ -998,11 +998,18 @@ void PCSound::stopSound(int channel) {
 }
 
 PaulaSound::PaulaSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm) {
+	: Sound(mixer, vm), _sfxTimer(0) {
 	_moduleStream = 0;
+	// The original is using the following timer frequency:
+	// 0.709379Mhz / 8000 = 88.672375Hz
+	// 1000000 / 88.672375Hz = 11277.46944863us
+	g_system->getTimerManager()->installTimerProc(&PaulaSound::sfxTimerProc, 11277, this, "PaulaSound::sfxTimerProc");
 }
 
 PaulaSound::~PaulaSound() {
+	Common::StackLock lock(_mutex);
+
+	g_system->getTimerManager()->removeTimerProc(&PaulaSound::sfxTimerProc);
 	for (int i = 0; i < NUM_CHANNELS; ++i) {
 		stopSound(i);
 	}
@@ -1011,6 +1018,10 @@ PaulaSound::~PaulaSound() {
 
 void PaulaSound::loadMusic(const char *name) {
 	debugC(5, kCineDebugSound, "PaulaSound::loadMusic('%s')", name);
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		stopSound(i);
+	}
+
 	if (_vm->getGameType() == GType_FW) {
 		// look for separate files
 		Common::File f;
@@ -1049,21 +1060,38 @@ void PaulaSound::fadeOutMusic() {
 }
 
 void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
-	// TODO: handle volume slides and repeat
 	debugC(5, kCineDebugSound, "PaulaSound::playSound() channel %d size %d", channel, size);
+	Common::StackLock lock(_mutex);
+	assert(frequency > 0);
+
 	stopSound(channel);
 	if (size > 0) {
 		byte *sound = (byte *)malloc(size);
 		if (sound) {
+			// Create the audio stream
 			memcpy(sound, data, size);
-			playSoundChannel(channel, frequency, sound, size, volume);
+
+			// Clear the first and last 16 bits like in the original.
+			sound[0] = sound[1] = sound[size - 2] = sound[size - 1] = 0;
+
+			Audio::SeekableAudioStream *stream = Audio::makeRawStream(sound, size, PAULA_FREQ / frequency, 0);
+
+			// Initialize the volume control
+			_channelsTable[channel].initialize(volume, volumeStep, stepCount);
+
+			// Start the sfx
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel].handle,
+			                   Audio::makeLoopingAudioStream(stream, repeat ? 0 : 1),
+			                   -1, volume * Audio::Mixer::kMaxChannelVolume / 63);
 		}
 	}
 }
 
 void PaulaSound::stopSound(int channel) {
 	debugC(5, kCineDebugSound, "PaulaSound::stopSound() channel %d", channel);
-	_mixer->stopHandle(_channelsTable[channel]);
+	Common::StackLock lock(_mutex);
+
+	_mixer->stopHandle(_channelsTable[channel].handle);
 }
 
 void PaulaSound::update() {
@@ -1071,12 +1099,42 @@ void PaulaSound::update() {
 	// TODO
 }
 
-void PaulaSound::playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume) {
-	assert(frequency > 0);
-	frequency = PAULA_FREQ / frequency;
-	Audio::AudioStream *stream = Audio::makeRawStream(data, size, frequency, 0);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], stream);
-	_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
+void PaulaSound::sfxTimerProc(void *param) {
+	PaulaSound *sound = (PaulaSound *)param;
+	sound->sfxTimerCallback();
+}
+
+void PaulaSound::sfxTimerCallback() {
+	Common::StackLock lock(_mutex);
+
+	if (_sfxTimer < 6) {
+		++_sfxTimer;
+
+		for (int i = 0; i < NUM_CHANNELS; ++i) {
+			// Only process active channels
+			if (!_mixer->isSoundHandleActive(_channelsTable[i].handle)) {
+				continue;
+			}
+
+			if (_channelsTable[i].curStep) {
+				--_channelsTable[i].curStep;
+			} else {
+				_channelsTable[i].curStep = _channelsTable[i].stepCount;
+				const int volume = CLIP(_channelsTable[i].volume + _channelsTable[i].volumeStep, 0, 63);
+				_channelsTable[i].volume = volume;
+				// Unlike the original we stop silent sounds
+				if (volume) {
+					_mixer->setChannelVolume(_channelsTable[i].handle, volume * Audio::Mixer::kMaxChannelVolume / 63);
+				} else {
+					_mixer->stopHandle(_channelsTable[i].handle);
+				}
+			}
+		}
+	} else {
+		_sfxTimer = 0;
+		// Possible TODO: The original only ever started sounds here. This
+		// should not be noticable though. So we do not do it for now.
+	}
 }
 
 } // End of namespace Cine

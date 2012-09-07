@@ -24,6 +24,7 @@
 #define CINE_SOUND_H_
 
 #include "common/util.h"
+#include "common/mutex.h"
 #include "audio/mixer.h"
 
 namespace Audio {
@@ -99,10 +100,26 @@ public:
 	};
 
 protected:
+	Common::Mutex _mutex;
 
-	void playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume);
+	struct SfxChannel {
+		Audio::SoundHandle handle;
+		int volume;
+		int volumeStep;
+		int curStep;
+		int stepCount;
 
-	Audio::SoundHandle _channelsTable[NUM_CHANNELS];
+		void initialize(int vol, int volStep, int stepCnt) {
+			volume     = vol;
+			volumeStep = volStep;
+			curStep    = stepCount = stepCnt;
+		}
+	};
+	SfxChannel _channelsTable[NUM_CHANNELS];
+	int _sfxTimer;
+	static void sfxTimerProc(void *param);
+	void sfxTimerCallback();
+
 	Audio::SoundHandle _moduleHandle;
 	Audio::AudioStream *_moduleStream;
 };
