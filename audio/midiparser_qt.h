@@ -43,6 +43,7 @@ public:
 
 protected:
 	// MidiParser
+	void resetTracking();
 	void parseNextEvent(EventInfo &info);
 
 	// QuickTimeParser
@@ -86,6 +87,8 @@ private:
 		NoteRequestList _noteRequests;
 	};
 
+	uint32 readNextEvent(EventInfo &info);
+
 	Common::String readString31(Common::SeekableReadStream *stream);
 	Common::Rational readFixed(Common::SeekableReadStream *stream);
 	NoteRequestList readNoteRequestList(Common::SeekableReadStream *stream);
@@ -93,9 +96,11 @@ private:
 	byte *readWholeTrack(Common::QuickTimeParser::Track *track);
 
 	Common::Array<MIDITrackInfo> _trackInfo;
+	uint32 _loadedInstruments;
 
 	void initFromContainerTracks();
 	void initCommon();
+	uint32 readUint32();
 };
 
 #endif

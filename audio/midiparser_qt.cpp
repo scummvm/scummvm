@@ -96,8 +96,103 @@ bool MidiParser_QT::loadFromContainerFile(const Common::String &fileName) {
 	return true;
 }
 
+void MidiParser_QT::resetTracking() {
+	_loadedInstruments = 0;
+}
+
 void MidiParser_QT::parseNextEvent(EventInfo &info) {
-	// TODO
+	if (_loadedInstruments < _trackInfo[_active_track].noteRequests.size()) {
+		// Load instruments first
+		info.event = 0xC0 | _loadedInstruments;
+		info.basic.param1 = _trackInfo[_active_track].noteRequests[_loadedInstruments].tone.gmNumber;
+		_loadedInstruments++;
+		return;
+	}
+
+	info.delta = readNextEvent(info);
+}
+
+uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
+	uint32 control = readUint32();
+
+	switch (control >> 28) {
+	case 0x0:
+	case 0x1:
+		// Rest
+		// We handle this by recursively adding up all the rests into the
+		// next event's delta
+		return readNextEvent(info) + (control & 0xFFFFFF);
+	case 0x2:
+	case 0x3:
+		// Note event
+		info.event = 0x90 | ((control >> 24) & 0x1F);
+		info.basic.param1 = ((control >> 18) & 0x3F) + 32;
+		info.basic.param2 = (control >> 11) & 0x7F;
+		info.length = (info.basic.param2 == 0) ? 0 : (control & 0x7FF);
+		break;
+	case 0x4:
+	case 0x5:
+		// Controller
+		info.event = 0xB0 | ((control >> 24) & 0x1F);
+		info.basic.param1 = (control >> 16) & 0xFF;
+		info.basic.param2 = (control >> 8) & 0xFF;
+		break;
+	case 0x6:
+	case 0x7:
+		// Marker
+		switch ((control >> 16) & 0xFF) {
+		case 0:
+			// End
+			info.event = 0xFF;
+			info.ext.type = 0x2F;
+			break;
+		case 1:
+			// Beat
+			warning("Encountered beat marker");
+			break;
+		case 2:
+			// Tempo
+			warning("Encountered tempo marker");
+			break;
+		default:
+			warning("Unknown marker");
+		}
+		break;
+	case 0x9: {
+		// Extended note event
+		uint32 extra = readUint32();
+		info.event = 0x90 | ((control >> 16) & 0xFFF);
+		info.basic.param1 = (control >> 8) & 0xFF;
+		info.basic.param2 = (extra >> 22) & 0x7F;
+		info.length = (info.basic.param2 == 0) ? 0 : (extra & 0x3FFFFF);
+		break;
+	}
+	case 0xA: {
+		// Extended controller
+		uint32 extra = readUint32();
+		info.event = 0xB0 | ((control >> 16) & 0xFFF);
+		info.basic.param1 = (extra >> 16) & 0x3FFF;
+		info.basic.param2 = (extra >> 8) & 0xFF; // ???
+		break;
+	}
+	case 0xB:
+		// Knob
+		error("Encountered knob event in QuickTime MIDI");
+		break;
+	case 0x8:
+	case 0xC:
+	case 0xD:
+	case 0xE:
+		// Reserved
+		readUint32();
+		break;
+	case 0xF:
+		// General
+		error("Encountered general event in QuickTime MIDI");
+		break;
+	}
+
+	return 0;
 }
 
 Common::QuickTimeParser::SampleDesc *MidiParser_QT::readSampleDesc(Track *track, uint32 format) {
@@ -196,9 +291,15 @@ void MidiParser_QT::initCommon() {
 	// form, we can fill in the MidiParser tracks.
 
 	_num_tracks = _trackInfo.size();
+	assert(_num_tracks > 0);
 
 	for (uint32 i = 0; i < _trackInfo.size(); i++)
 		MidiParser::_tracks[i] = _trackInfo[i].data;
+
+	_ppqn = _trackInfo[0].timeScale;
+	resetTracking();
+	setTempo(500000);
+	setTrack(0);
 }
 
 byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track) {
@@ -227,6 +328,12 @@ byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track) {
 	}
 
 	return output.getData();
+}
+
+uint32 MidiParser_QT::readUint32() {
+	uint32 value = READ_BE_UINT32(_position._play_pos);
+	_position._play_pos += 4;
+	return value;
 }
 
 MidiParser *MidiParser::createParser_QT() {
