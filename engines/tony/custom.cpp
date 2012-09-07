@@ -41,7 +41,7 @@
 
 namespace Tony {
 
-static const char *kAmbianceFile[] =  {
+static const char *const kAmbianceFile[] =  {
 	"None",
 	"1.ADP",    // Grilli.WAV
 	"2.ADP",    // Grilli-Ovattati.WAV
@@ -71,7 +71,7 @@ static const MusicFileEntry kMusicFiles[] =  {
 };
 
 
-static const char *kJingleFileNames[] = {
+static const char *const kJingleFileNames[] = {
 	"S00.ADP", "S01.ADP", "S02.ADP", "S03.ADP", "S04.ADP", 
 	"S05.ADP", "S06.ADP", "S07.ADP", "S08.ADP", "S09.ADP", 
 	"S10.ADP", "S11.ADP", "S12.ADP", "S13.ADP", "S14.ADP", 
