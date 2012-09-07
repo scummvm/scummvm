@@ -95,7 +95,7 @@ public:
 	virtual void update();
 
 	enum {
-		PAULA_FREQ = 7093789,
+		PAULA_FREQ = 3579545,
 		NUM_CHANNELS = 4
 	};
 
