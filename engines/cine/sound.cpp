@@ -1094,11 +1094,6 @@ void PaulaSound::stopSound(int channel) {
 	_mixer->stopHandle(_channelsTable[channel].handle);
 }
 
-void PaulaSound::update() {
-	// process volume slides and start sound playback
-	// TODO
-}
-
 void PaulaSound::sfxTimerProc(void *param) {
 	PaulaSound *sound = (PaulaSound *)param;
 	sound->sfxTimerCallback();

@@ -217,7 +217,6 @@ void manageEvents() {
 		g_system->delayMillis(20);
 	} while (g_system->getMillis() < nextFrame);
 
-	g_sound->update();
 	mouseData.left = mouseLeft;
 	mouseData.right = mouseRight;
 }

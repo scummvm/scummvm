@@ -48,7 +48,6 @@ public:
 
 	virtual void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) = 0;
 	virtual void stopSound(int channel) = 0;
-	virtual void update() {}
 
 protected:
 
@@ -92,7 +91,6 @@ public:
 
 	virtual void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat);
 	virtual void stopSound(int channel);
-	virtual void update();
 
 	enum {
 		PAULA_FREQ = 3579545,
