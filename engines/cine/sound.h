@@ -95,8 +95,7 @@ public:
 
 	enum {
 		PAULA_FREQ = 7093789,
-		NUM_CHANNELS = 4,
-		SPL_HDR_SIZE = 22
+		NUM_CHANNELS = 4
 	};
 
 protected:

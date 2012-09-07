@@ -1052,12 +1052,10 @@ void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int si
 	// TODO: handle volume slides and repeat
 	debugC(5, kCineDebugSound, "PaulaSound::playSound() channel %d size %d", channel, size);
 	stopSound(channel);
-	size = MIN<int>(size - SPL_HDR_SIZE, READ_BE_UINT16(data + 4));
-	// TODO: consider skipping the header in loadSpl directly
 	if (size > 0) {
 		byte *sound = (byte *)malloc(size);
 		if (sound) {
-			memcpy(sound, data + SPL_HDR_SIZE, size);
+			memcpy(sound, data, size);
 			playSoundChannel(channel, frequency, sound, size, volume);
 		}
 	}

@@ -1818,6 +1818,9 @@ int FWScript::o1_playSample() {
 	if (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) {
 		if (size == 0xFFFF) {
 			size = g_cine->_animDataTable[anim]._width * g_cine->_animDataTable[anim]._height;
+		} else if (size > g_cine->_animDataTable[anim]._width * g_cine->_animDataTable[anim]._height) {
+			warning("o1_playSample: Got invalid sample size %d for sample %d", size, anim);
+			size = g_cine->_animDataTable[anim]._width * g_cine->_animDataTable[anim]._height;
 		}
 		if (channel < 10) { // || _currentOpcode == 0x78
 			int channel1, channel2;
