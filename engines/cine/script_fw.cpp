@@ -196,7 +196,7 @@ void FWScript::setupTable() {
 		{ 0, 0 },
 		{ &FWScript::o1_playSample, "bbwbww" },
 		/* 78 */
-		{ &FWScript::o1_playSample, "bbwbww" },
+		{ &FWScript::o1_playSampleSwapped, "bbwbww" },
 		{ &FWScript::o1_disableSystemMenu, "b" },
 		{ &FWScript::o1_loadMask5, "b" },
 		{ &FWScript::o1_unloadMask5, "b" }
@@ -1828,8 +1828,8 @@ int FWScript::o1_playSample() {
 				channel1 = 0;
 				channel2 = 1;
 			} else {
-				channel1 = 2;
-				channel2 = 3;
+				channel1 = 3;
+				channel2 = 2;
 			}
 			g_sound->playSound(channel1, freq, data, size, -1, volume, 63, repeat);
 			g_sound->playSound(channel2, freq, data, size,  1, volume,  0, repeat);
@@ -1860,6 +1860,53 @@ int FWScript::o1_playSample() {
 			g_sound->stopSound(channel);
 		}
 	}
+	return 0;
+}
+
+int FWScript::o1_playSampleSwapped() {
+	// TODO: The DOS version probably does not have any stereo support here
+	// since the only stereo output it supports should be the Roland MT-32.
+	// So it probably does the same as o1_playSample here. Checking this will
+	// be a good idea never the less.
+	if (g_cine->getPlatform() == Common::kPlatformPC) {
+		return o1_playSample();
+	}
+
+	debugC(5, kCineDebugScript, "Line: %d: playSampleInversed()", _line);
+
+	byte anim = getNextByte();
+	byte channel = getNextByte();
+
+	uint16 freq = getNextWord();
+	byte repeat = getNextByte();
+
+	int16 volume = getNextWord();
+	uint16 size = getNextWord();
+
+	const byte *data = g_cine->_animDataTable[anim].data();
+
+	if (!data) {
+		return 0;
+	}
+
+	if (size == 0xFFFF) {
+		size = g_cine->_animDataTable[anim]._width * g_cine->_animDataTable[anim]._height;
+	} else if (size > g_cine->_animDataTable[anim]._width * g_cine->_animDataTable[anim]._height) {
+		warning("o1_playSampleSwapped: Got invalid sample size %d for sample %d", size, anim);
+		size = g_cine->_animDataTable[anim]._width * g_cine->_animDataTable[anim]._height;
+	}
+
+	int channel1, channel2;
+	if (channel == 0) {
+		channel1 = 1;
+		channel2 = 0;
+	} else {
+		channel1 = 2;
+		channel2 = 3;
+	}
+
+	g_sound->playSound(channel1, freq, data, size, -1, volume, 63, repeat);
+	g_sound->playSound(channel2, freq, data, size,  1, volume,  0, repeat);
 	return 0;
 }
 
@@ -2747,7 +2794,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			if (opcode - 1 == 0x77) {
 				sprintf(lineBuffer, "playSample(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
 			} else if (opcode - 1 == 0x78) {
-				sprintf(lineBuffer, "OP_78(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
+				sprintf(lineBuffer, "playSampleSwapped(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
 			}
 
 			break;
