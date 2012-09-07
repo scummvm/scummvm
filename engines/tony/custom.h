@@ -43,8 +43,6 @@ struct MusicFileEntry {
 
 #define INIT_CUSTOM_FUNCTION            MapCustomFunctions
 
-#define DECLARE_CUSTOM_FUNCTION(x)      void x
-
 #define BEGIN_CUSTOM_FUNCTION_MAP()                                            \
 	static void AssignError(int num) {                                           \
 		error("Custom function %u has been already assigned!", num);               \
@@ -67,6 +65,17 @@ class RMGameBoxes;
 class RMLocation;
 class RMInventory;
 class RMInput;
+
+void charsSaveAll(Common::OutSaveFile *f);
+void charsLoadAll(Common::InSaveFile *f);
+void mCharResetCodes();
+void saveChangedHotspot(Common::OutSaveFile *f);
+void loadChangedHotspot(Common::InSaveFile *f);
+void reapplyChangedHotspot();
+
+void restoreMusic(CORO_PARAM);
+void saveMusic(Common::OutSaveFile *f);
+void loadMusic(Common::InSaveFile *f);
 
 void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap, Common::String *lpStrMap);
 void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation *loc, RMInventory *inv, RMInput *input);
