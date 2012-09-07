@@ -1082,7 +1082,8 @@ void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int si
 			// Start the sfx
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel].handle,
 			                   Audio::makeLoopingAudioStream(stream, repeat ? 0 : 1),
-			                   -1, volume * Audio::Mixer::kMaxChannelVolume / 63);
+			                   -1, volume * Audio::Mixer::kMaxChannelVolume / 63,
+			                   _channelBalance[channel]);
 		}
 	}
 }
@@ -1131,5 +1132,15 @@ void PaulaSound::sfxTimerCallback() {
 		// should not be noticable though. So we do not do it for now.
 	}
 }
+
+const int PaulaSound::_channelBalance[NUM_CHANNELS] = {
+	// L/R/R/L This is according to the Hardware Reference Manual.
+	// TODO: It seems the order is swapped for some Amiga models:
+	// http://www.amiga.org/forums/archive/index.php/t-7862.html
+	// Maybe we should consider using R/L/L/R to match Amiga 500?
+	// This also is a bit more drastic to what WineUAE defaults,
+	// which is only 70% of full panning.
+	-127, 127, 127, -127
+};
 
 } // End of namespace Cine

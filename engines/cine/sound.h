@@ -114,6 +114,7 @@ protected:
 		}
 	};
 	SfxChannel _channelsTable[NUM_CHANNELS];
+	static const int _channelBalance[NUM_CHANNELS];
 	int _sfxTimer;
 	static void sfxTimerProc(void *param);
 	void sfxTimerCallback();
