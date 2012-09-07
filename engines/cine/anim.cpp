@@ -545,9 +545,10 @@ int loadSpl(const char *resourceName, int16 idx) {
  * Load 1bpp mask
  * @param resourceName Mask filename
  * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @param frameIndex frame of animation to load (-1 for all frames)
  * @return The number of the animDataTable entry after the loaded mask (-1 if error)
  */
-int loadMsk(const char *resourceName, int16 idx) {
+int loadMsk(const char *resourceName, int16 idx, int16 frameIndex) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
 	if (foundFileIdx < 0) {
 		return -1;
@@ -562,9 +563,18 @@ int loadMsk(const char *resourceName, int16 idx) {
 	loadAnimHeader(animHeader, readS);
 	ptr = dataPtr + 0x16;
 
+	int16 startFrame = 0;
+	int16 endFrame = animHeader.numFrames;
+
+	if (frameIndex >= 0) {
+		startFrame = frameIndex;
+		endFrame = frameIndex + 1;
+		ptr += frameIndex * animHeader.frameWidth * animHeader.frameHeight;
+	}
+
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
-	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
+	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		g_cine->_animDataTable[entry].load(ptr, ANIM_MASK, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
 	}
@@ -577,9 +587,10 @@ int loadMsk(const char *resourceName, int16 idx) {
  * Load animation
  * @param resourceName Animation filename
  * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @param frameIndex frame of animation to load (-1 for all frames)
  * @return The number of the animDataTable entry after the loaded animation (-1 if error)
  */
-int loadAni(const char *resourceName, int16 idx) {
+int loadAni(const char *resourceName, int16 idx, int16 frameIndex) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
 	if (foundFileIdx < 0) {
 		return -1;
@@ -595,6 +606,15 @@ int loadAni(const char *resourceName, int16 idx) {
 	loadAnimHeader(animHeader, readS);
 	ptr = dataPtr + 0x16;
 
+	int16 startFrame = 0;
+	int16 endFrame = animHeader.numFrames;
+
+	if (frameIndex >= 0) {
+		startFrame = frameIndex;
+		endFrame = frameIndex + 1;
+		ptr += frameIndex * animHeader.frameWidth * animHeader.frameHeight;
+	}
+
 	transparentColor = getAnimTransparentColor(resourceName);
 
 	// TODO: Merge this special case hack into getAnimTransparentColor somehow.
@@ -608,7 +628,7 @@ int loadAni(const char *resourceName, int16 idx) {
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
 
-	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
+	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		// special case transparency handling
 		if (!strcmp(resourceName, "L2202.ANI")) {
 			transparentColor = i < 2 ? 0 : 7;
@@ -781,11 +801,11 @@ int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 	if (strstr(resourceName, ".SPL")) {
 		result = loadSpl(resourceName, idx);
 	} else if (strstr(resourceName, ".MSK")) {
-		result = loadMsk(resourceName, idx);
+		result = loadMsk(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".ANI")) {
-		result = loadAni(resourceName, idx);
+		result = loadAni(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".ANM")) {
-		result = loadAni(resourceName, idx);
+		result = loadAni(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".SET")) {
 		result = loadSet(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".SEQ")) {
