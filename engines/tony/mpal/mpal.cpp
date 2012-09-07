@@ -642,6 +642,9 @@ void ScriptThread(CORO_PARAM, const void *param) {
 				CORO_KILL_SELF();
 				return;
 			}
+
+			// WORKAROUND: Wait for events to pulse.
+			CORO_SLEEP(1);
 		}
 	}
 
@@ -710,6 +713,9 @@ void ActionThread(CORO_PARAM, const void *param) {
 			GLOBALS._mpalError = 1;
 			break;
 		}
+
+		// WORKAROUND: Wait for events to pulse.
+		CORO_SLEEP(1);
 	}
 
 	globalDestroy(_ctx->item);
@@ -1121,6 +1127,9 @@ void GroupThread(CORO_PARAM, const void *param) {
 					CORO_KILL_SELF();
 					return;
 				}
+
+				// WORKAROUND: Wait for events to pulse.
+				CORO_SLEEP(1);
 			}
 
 			// The gruop is finished, so we can return to the calling function.
