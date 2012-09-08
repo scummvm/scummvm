@@ -149,9 +149,31 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 	case 0x4:
 	case 0x5:
 		// Controller
-		info.event = 0xB0 | ((control >> 24) & 0x1F);
-		info.basic.param1 = (control >> 16) & 0xFF;
-		info.basic.param2 = (control >> 8) & 0xFF;
+		if (((control >> 16) & 0xFF) == 32) {
+			// Pitch bend
+			info.event = 0xE0 | ((control >> 24) & 0x1F);
+
+			// Actually an 8.8 fixed point number
+			int16 value = (int16)(control & 0xFFFF);
+
+			if (value < -0x200 || value > 0x1FF) {
+				warning("QuickTime MIDI pitch bend value (%d) out of range, clipping", value);
+				value = CLIP<int16>(value, -0x200, 0x1FF);
+			}
+
+			// Now convert the value to 'normal' MIDI values
+			value += 0x200;
+			value *= 16;
+
+			// param1 holds the low 7 bits, param2 holds the high 7 bits
+			info.basic.param1 = value & 0x7F;
+			info.basic.param2 = value >> 7;
+		} else {
+			// Regular controller
+			info.event = 0xB0 | ((control >> 24) & 0x1F);
+			info.basic.param1 = (control >> 16) & 0xFF;
+			info.basic.param2 = (control >> 8) & 0xFF;
+		}
 		break;
 	case 0x6:
 	case 0x7:
