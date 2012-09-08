@@ -25,7 +25,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "engines/util.h"
+#include "hopkins/graphics.h"
 #include "hopkins/hopkins.h"
 #include "hopkins/files.h"
 #include "hopkins/sound.h"
@@ -60,12 +60,13 @@ Common::Error HopkinsEngine::run() {
 	SoundManager::WSOUND_INIT();
 
 	GLOBALS.CHARGE_OBJET();
+	ObjectManager::CHANGE_OBJET(14);
+	ObjectManager::AJOUTE_OBJET(14);
+
+	GLOBALS.HELICO = 0;
+	_mouse.hideCursor();
 
   /*
-  CHANGE_OBJET(14);
-  AJOUTE_OBJET(14);
-  HELICO = 0;
-  SDL_ShowCursor(0);
   DD_Lock();
   Cls_Video();
   DD_Unlock();
@@ -499,7 +500,8 @@ void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
 }
 
 void HopkinsEngine::INIT_SYSTEM() {
-	initGraphics(640, 480, true);
+	// Set graphics mode
+	_graphicsManager.SET_MODE(640, 480);
 	
 	// TODO: init surfaces
 	//VESA_SCREEN = dos_malloc2(0x96000u);

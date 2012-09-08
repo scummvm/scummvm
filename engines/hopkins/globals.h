@@ -180,6 +180,7 @@ public:
 	byte *essai1;
 	byte *essai2;
 	byte *Bufferobjet;
+	int INVENTAIRE[36];
 	byte *inventaire2;
 	byte *GESTE;
 	int OBJET_EN_COURS;
@@ -200,6 +201,7 @@ public:
 	bool redraw;
 	int OBJL, OBJH;
 	int Nouv_objet;
+	int HELICO;
 
 	Globals();
 	~Globals();
@@ -210,13 +212,9 @@ public:
 	void INIT_ANIM();
 	void INIT_VBOB();
 	void CHARGE_OBJET();
-	byte *CHANGE_OBJET(int objIndex);
-	byte *CAPTURE_OBJET(int objIndex, int mode);
+	byte *dos_malloc2(int count);
 };
 
-// TODO: The original pointed PTRNUL to a specially allocated memory block. If this proves
-// to be necsesary, all malloc calls will need to be replaced with a stub that sets the
-// result to PTRNUL if the memory block can't be allocated
 #define PTRNUL (byte *)NULL
 
 } // End of namespace Hopkins

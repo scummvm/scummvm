@@ -29,8 +29,17 @@
 
 namespace Hopkins {
 
+struct RGB8 {
+	byte r;
+	byte g;
+	byte b;
+};
+
 class ObjectManager {
 public:
+	static byte *CHANGE_OBJET(int objIndex);
+	static byte *CAPTURE_OBJET(int objIndex, int mode);
+
 	static int Get_Largeur(const byte *objectData, int objIndex);
 	static int Get_Hauteur(const byte *objectData, int objIndex);
 	static int sprite_alone(const byte *objectData, byte *sprite, int objIndex);
@@ -38,6 +47,26 @@ public:
 
 	static byte *CHARGE_SPRITE(const Common::String &file);
 	static int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
+	static int AJOUTE_OBJET(int objIndex);
+};
+
+class GraphicsManager {
+public:
+	bool SDL_MODEYES;
+	int SDL_ECHELLE;
+	int XSCREEN;
+	int YSCREEN;
+	int WinScan;
+	int Winbpp;
+	byte SD_PIXELS[514];
+	byte *PAL_PIXELS;
+	int nbrligne;
+	RGB8 cmap[256];
+	bool Linear;
+public:
+	GraphicsManager();
+
+	void SET_MODE(int width, int height);
 };
 
 } // End of namespace Hopkins

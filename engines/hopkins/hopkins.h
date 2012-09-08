@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 #include "hopkins/events.h"
 #include "hopkins/globals.h"
+#include "hopkins/graphics.h"
 
 /**
  * This is the namespace of the Hopkins engine.
@@ -65,6 +66,7 @@ private:
 	Graphics::Surface VESA_SCREEN;
 	Graphics::Surface VESA_BUFFER;
 	Mouse _mouse;
+	GraphicsManager _graphicsManager;
 
 	/**
 	 * Processes the loaded list of ini file parameters

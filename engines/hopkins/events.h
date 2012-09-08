@@ -46,6 +46,9 @@ public:
 	void souris_on();
 	void souris_xy(int xp, int yp);
 	void souris_max();
+
+	void hideCursor();
+	void showCursor();
 };
 
 } // End of namespace Hopkins

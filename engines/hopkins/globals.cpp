@@ -203,9 +203,9 @@ void Globals::clearAll() {
 
 	texte_long = 0;
 	texte_tmp = PTRNUL;
-	BUFFERTAPE = (byte *)malloc(85000);
+	BUFFERTAPE = dos_malloc2(85000);
 
-	SAUVEGARDE = (byte *)malloc(2050);
+	SAUVEGARDE = dos_malloc2(2050);
 	memset(SAUVEGARDE, 0, 1999);
 
 	essai0 = BUFFERTAPE;
@@ -215,14 +215,14 @@ void Globals::clearAll() {
 	largeur_boite = 240;
 	TEXTE_FORMATE = 300;
 
-	Bufferobjet = (byte *)malloc(2500);
-	INVENTAIRE_OBJET = (byte *)malloc(2500);
+	Bufferobjet = dos_malloc2(2500);
+	INVENTAIRE_OBJET = dos_malloc2(2500);
 
 	ADR_FICHIER_OBJ = PTRNUL;
 	FORETSPR = PTRNUL;
 	FORET = 0;
 
-	cache_souris = (byte *)malloc(2500);
+	cache_souris = dos_malloc2(2500);
 	GESTE = PTRNUL;
 	GESTE_FLAG = false;
 }
@@ -651,63 +651,10 @@ void Globals::CHARGE_OBJET() {
 	free(data);
 }
 
-byte *Globals::CHANGE_OBJET(int objIndex) {
-	byte *result = CAPTURE_OBJET(objIndex, 1);
-	Bufferobjet = result;
-	Nouv_objet = 1;
-	OBJET_EN_COURS = objIndex;
-	return result;
-}
-
-byte *Globals::CAPTURE_OBJET(int objIndex, int mode) {
-	byte *result = NULL;
-	byte *dataP;
-
-	dataP = 0;
-	int v2 = ObjetW[objIndex].field0;
-	int v3 = ObjetW[objIndex].field1;
-
-	if (mode == 1)
-	    ++v3;
-	if (v2 != NUM_FICHIER_OBJ) {
-		if (ADR_FICHIER_OBJ != PTRNUL)
-			ObjectManager::DEL_FICHIER_OBJ();
-		if (v2 == 1) {
-			FileManager::CONSTRUIT_SYSTEM("OBJET1.SPR");
-			ADR_FICHIER_OBJ = ObjectManager::CHARGE_SPRITE(NFICHIER);
-		}
-		NUM_FICHIER_OBJ = v2;
-	}
-
-	int width = ObjectManager::Get_Largeur(ADR_FICHIER_OBJ, v3);
-	int height = ObjectManager::Get_Hauteur(ADR_FICHIER_OBJ, v3);
-	OBJL = width;
-	OBJH = height;
-
-	switch (mode) {
-	case 0:
-		dataP = (byte *)malloc(height * width);
-		if (dataP == PTRNUL)
-			error("CAPTURE_OBJET");
-			
-		ObjectManager::capture_mem_sprite(ADR_FICHIER_OBJ, dataP, v3);
-		break;
-
-	case 1:
-		ObjectManager::sprite_alone(ADR_FICHIER_OBJ, Bufferobjet, v3);
-		result = Bufferobjet;
-		break;
-
-	case 3:
-		ObjectManager::capture_mem_sprite(ADR_FICHIER_OBJ, INVENTAIRE_OBJET, v3);
-		result = INVENTAIRE_OBJET;
-		break;
-
-	default:
-		result = dataP;
-		break;
-	}
-
+byte *Globals::dos_malloc2(int count) {
+	byte *result = (byte *)malloc(count);
+	if (!result)
+		result = PTRNUL;
 	return result;
 }
 

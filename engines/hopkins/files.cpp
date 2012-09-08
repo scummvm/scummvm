@@ -107,7 +107,7 @@ byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
 
 	// Allocate space for the file contents
 	size_t filesize = f.size();
-	byte *data = (byte *)malloc(filesize);
+	byte *data = GLOBALS.dos_malloc2(filesize);
 	if (!data)
 		error("Error allocating space for file being loaded - %s", file.c_str());
 

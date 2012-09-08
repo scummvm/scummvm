@@ -30,8 +30,6 @@ void Mouse::INSTALL_SOURIS() {
 }
 
 void Mouse::souris_on() {
-	bool result; // eax@5
-
 	souris_flag = true;
 
 	if (mouse_linux) {
@@ -57,6 +55,12 @@ void Mouse::souris_xy(int xp, int yp) {
 
 void Mouse::souris_max() {
 	// No implementation in original
+}
+
+void Mouse::hideCursor() {
+}
+
+void Mouse::showCursor() {
 }
 
 } // End of namespace Hopkins
