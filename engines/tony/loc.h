@@ -256,7 +256,7 @@ public:
 	void setStatus(int nStatus);
 
 	bool isIn(const RMPoint &pt, int *size = NULL);
-	RMPoint hotspot();
+	RMPoint getHotspot();
 	bool getName(Common::String &name);
 	int mpalCode();
 

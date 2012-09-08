@@ -889,7 +889,7 @@ RMPoint RMTextItemName::getHotspot() {
 	if (_item == NULL)
 		return _mpos + _curscroll;
 	else
-		return _item->hotspot();
+		return _item->getHotspot();
 }
 
 RMItem *RMTextItemName::getSelectedItem() {

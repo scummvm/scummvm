@@ -380,7 +380,7 @@ void RMSfx::setVolume(int vol) {
 
 void RMSfx::pause(bool bPause) {
 	if (_fx) {
-		_fx->pause(bPause);
+		_fx->setPause(bPause);
 	}
 }
 
@@ -653,7 +653,7 @@ void RMItem::setStatus(int nStatus) {
 	_bIsActive = (nStatus > 0);
 }
 
-RMPoint RMItem::hotspot() {
+RMPoint RMItem::getHotspot() {
 	return _hot;
 }
 
