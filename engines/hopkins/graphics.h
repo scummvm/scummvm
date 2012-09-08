@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/str.h"
+#include "graphics/surface.h"
 
 namespace Hopkins {
 
@@ -63,10 +64,15 @@ public:
 	int nbrligne;
 	RGB8 cmap[256];
 	bool Linear;
+	Graphics::Surface *VideoPtr;
 public:
 	GraphicsManager();
+	~GraphicsManager();
 
 	void SET_MODE(int width, int height);
+	void DD_Lock();
+	void DD_Unlock();
+	void Cls_Video();
 };
 
 } // End of namespace Hopkins

@@ -66,10 +66,10 @@ Common::Error HopkinsEngine::run() {
 	GLOBALS.HELICO = 0;
 	_mouse.hideCursor();
 
-  /*
-  DD_Lock();
-  Cls_Video();
-  DD_Unlock();
+	_graphicsManager.DD_Lock();
+	_graphicsManager.Cls_Video();
+	_graphicsManager.DD_Unlock();
+	/*
   LOAD_IMAGE("LINUX");
   FADE_INW();
   SDL_Delay(1500);

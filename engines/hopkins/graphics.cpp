@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/rect.h"
 #include "engines/util.h"
 #include "hopkins/files.h"
 #include "hopkins/globals.h"
@@ -161,9 +162,15 @@ int ObjectManager::AJOUTE_OBJET(int objIndex) {
 	return arrIndex;
 }
 
+/*------------------------------------------------------------------------*/
+
 GraphicsManager::GraphicsManager() {
 	SDL_MODEYES = false;
 }
+
+GraphicsManager::~GraphicsManager() {
+}
+
 
 void GraphicsManager::SET_MODE(int width, int height) {
 	if (!SDL_MODEYES) {
@@ -192,13 +199,14 @@ void GraphicsManager::SET_MODE(int width, int height) {
 			//height = Reel_Zoom(a2, SDL_ECHELLE);
 		}
 
-		if (bpp == 8)
+		if (bpp == 8) {
 			initGraphics(width, height, true);
-		else {
+		} else {
 			Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 			initGraphics(width, height, true, &pixelFormat);
 		}
 
+		VideoPtr = NULL;
 		XSCREEN = width;
 		YSCREEN = height;
 
@@ -217,6 +225,20 @@ void GraphicsManager::SET_MODE(int width, int height) {
 	} else {
 		error("Called SET_MODE multiple times");
 	}
+}
+
+void GraphicsManager::DD_Lock() {
+	VideoPtr = g_system->lockScreen();
+}
+
+void GraphicsManager::DD_Unlock() {
+	g_system->unlockScreen();
+}
+
+void GraphicsManager::Cls_Video() {
+	assert(VideoPtr);
+
+	VideoPtr->fillRect(Common::Rect(0, 0, XSCREEN, YSCREEN), 0);
 }
 
 } // End of namespace Hopkins
