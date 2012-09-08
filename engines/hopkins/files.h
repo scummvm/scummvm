@@ -20,53 +20,27 @@
  *
  */
 
-#include "hopkins/globals.h"
+#ifndef HOPKINS_FILES_H
+#define HOPKINS_FILES_H
+
+#include "common/scummsys.h"
+#include "common/hash-str.h"
+#include "common/str.h"
+#include "common/stream.h"
 
 namespace Hopkins {
 
-Globals::Globals() {
-	FR = 0;
-	SVGA = 2;
-	MANU_SCROLL = 1;
-	SPEED_SCROLL = 16;
-	internet = 1;
-	PUBEXIT = 0;
-	FADESPD = 15;
-	vitesse = 1;
-	INSTALL_TYPE = 1;
-	MUSICVOL = 6;
-	SOUNDVOL = 6;
-	VOICEVOL = 6;
-	MUSICOFF = false;
-	SOUNDOFF = false;
-	VOICEOFF = false;
-}
-
-void Globals::setConfig() {
-	HOPIMAGE = "BUFFER";
-	HOPANIM = "ANIM";
-	HOPLINK = "LINK";
-	HOPSAVE = "SAVE";
-	HOPSOUND = "SOUND";
-	HOPMUSIC = "MUSIC";
-	HOPVOICE = "VOICE";
-	HOPANM = "ANM";
-	HOPSEQ = "SEQ";
-
-	switch (FR) {
-	case 0:
-		FICH_ZONE = "ZONEAN.TXT";
-		FICH_TEXTE = "TEXTEAN.TXT";
-		break;
-	case 1:
-		FICH_ZONE = "ZONE01.TXT";
-		FICH_TEXTE = "TEXTE01.TXT";
-		break;
-	case 2:
-		FICH_ZONE = "ZONEES.TXT";
-		FICH_TEXTE = "TEXTEES.TXT";
-		break;
-	}
-}
+class FileManager {
+public:
+	static void initSaves();
+	static bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
+	static bool bsave(const Common::String &file, const void *buf, size_t n);
+	static void Chage_Inifile(Common::StringMap &iniParams);
+	static void *CHARGE_FICHIER(const Common::String &file);
+	static void DMESS1();
+	static int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
+};
 
 } // End of namespace Hopkins
+
+#endif /* HOPKINS_GLOBALS_H */

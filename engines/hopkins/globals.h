@@ -24,6 +24,7 @@
 #define HOPKINS_GLOBALS_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Hopkins {
 
@@ -39,8 +40,34 @@ public:
 	int SPEED_SCROLL;
 	int internet;
 	int PUBEXIT;
+	bool XFULLSCREEN;
+	int XSETMODE;
+	int XZOOM;
+	bool XFORCE16;
+	bool XFORCE8;
+	bool CARD_SB;
+	int vitesse;
+	int INSTALL_TYPE;
+	Common::String HOPIMAGE;
+	Common::String HOPANIM;
+	Common::String HOPLINK;
+	Common::String HOPSAVE;
+	Common::String HOPSOUND;
+	Common::String HOPMUSIC;
+	Common::String HOPVOICE;
+	Common::String HOPANM;
+	Common::String HOPSEQ;
+	Common::String FICH_ZONE;
+	Common::String FICH_TEXTE;
+	int SOUNDVOL;
+	int MUSICVOL;
+	int VOICEVOL;
+	bool SOUNDOFF;
+	bool MUSICOFF;
+	bool VOICEOFF;
 
-  Globals();
+	Globals();
+	void setConfig();
 };
 
 } // End of namespace Hopkins

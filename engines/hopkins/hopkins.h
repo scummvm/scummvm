@@ -61,6 +61,9 @@ private:
 	const HopkinsGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
+	/**
+	 * Processes the loaded list of ini file parameters
+	 */
 	void processIniParams(Common::StringMap &iniParams);
 protected:
 	// Engine APIs

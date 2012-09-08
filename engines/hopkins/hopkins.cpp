@@ -51,17 +51,6 @@ Common::Error HopkinsEngine::run() {
 	processIniParams(iniParams);
 
   /*
-  Chage_Inifile();
-  LOAD_CONFIG();
-  *(_DWORD *)HOPIMAGE = dword_807B6D0;
-  *(_WORD *)&HOPIMAGE[4] = word_807B6D4;
-  HOPIMAGE[6] = byte_807B6D6;
-  *(_DWORD *)HOPANIM = dword_807B6D7;
-  HOPANIM[4] = byte_807B6DB;
-  *(_DWORD *)HOPLINK = dword_807B6DC;
-  HOPLINK[4] = byte_807B6E0;
-  *(_DWORD *)HOPSAVE = dword_807B6E1;
-  HOPSAVE[4] = byte_807B6E5;
   if ( FR == 1 )
   {
     *(_DWORD *)FICH_ZONE = dword_807B6E6;
@@ -530,7 +519,23 @@ int HopkinsEngine::getRandomNumber(int maxNumber) {
 }
 
 void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
+	GLOBALS.XFULLSCREEN = iniParams["FULLSCREEN"] == "YES";
 
+	GLOBALS.XSETMODE = 1;
+	if (iniParams.contains("SETMODE")) {
+		int setMode = atoi(iniParams["SETMODE"].c_str());
+		GLOBALS.XSETMODE = CLIP(setMode, 1, 5);
+	}
+
+	GLOBALS.XZOOM = 0;
+	if (GLOBALS.XSETMODE == 5 && iniParams.contains("ZOOM")) {
+		int zoom = atoi(iniParams["ZOOM"].c_str());
+		GLOBALS.XZOOM = CLIP(zoom, 25, 100);
+	}
+
+	GLOBALS.XFORCE16 = iniParams["FORCE16BITS"] == "YES";
+	GLOBALS.XFORCE8 = iniParams["FORCE8BITS"] == "YES";
+	GLOBALS.CARD_SB = iniParams["SOUND"] == "YES";
 }
 
 } // End of namespace Hopkins
