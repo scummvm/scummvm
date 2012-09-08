@@ -28,6 +28,70 @@
 
 namespace Hopkins {
 
+struct TxtItem {
+	int field0;
+	int field12;
+	int field3FC;
+	int field3FE;
+	int field400;
+	int field404;
+	int field406;
+	int field408;
+};
+
+struct ListeTxtItem {
+	int field0;
+};
+
+struct ZonePItem {
+	int field0;
+	int field2;
+	int field4;
+};
+
+struct LigneItem {
+	int field0;
+	int field2;
+	int field4;
+	int field6;
+	int field8;
+	byte *field12;
+};
+
+struct LigneZoneItem {
+	int field0;
+	int field2;
+	byte *field4;
+};
+
+struct CarreZoneItem {
+	int field0;
+};
+
+struct BgeAnimItem {
+	byte *field0;
+	int field4;
+};
+
+struct BankItem {
+	byte *field0;
+	int8 field4;
+	int8 field5;
+	int8 field19;
+	uint32 field1C;
+};
+
+struct VBobItem {
+	byte *field0;
+	int field4;
+	int field6;
+	int field8;
+	int fieldA;
+	int fieldC;
+	byte *field10;
+	byte *field1C;
+};
+
 /**
  * Engine Globals
  */
@@ -46,6 +110,7 @@ public:
 	bool XFORCE16;
 	bool XFORCE8;
 	bool CARD_SB;
+	int PERSO_TYPE;
 	int vitesse;
 	int INSTALL_TYPE;
 	Common::String HOPIMAGE;
@@ -59,16 +124,79 @@ public:
 	Common::String HOPSEQ;
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
+	Common::String NFICHIER;
 	int SOUNDVOL;
 	int MUSICVOL;
 	int VOICEVOL;
 	bool SOUNDOFF;
 	bool MUSICOFF;
 	bool VOICEOFF;
+	bool CENSURE;
+	int min_x;
+	int min_y;
+	int max_x;
+	int max_y;
+	int lItCounter;
+	int lOldItCounter;
+	int g_old_anim;
+	int g_old_sens;
+	int HopkinsArr[140];
+	void *police;
+	int police_l;
+	int police_h;
+	byte *TETE;
+	byte *ICONE;
+	byte *BUF_ZONE;
+	byte *CACHE_BANQUE[6];
+	TxtItem Txt[11];
+	ListeTxtItem ListeTxt[11];
+	ZonePItem ZoneP[105];
+	LigneItem Ligne[400];
+	LigneZoneItem LigneZone[400];
+	CarreZoneItem CarreZone[100];
+	BgeAnimItem Bge_Anim[35];
+	BankItem Bank[8];
+	VBobItem VBob[35];
+	byte *Winventaire;
+	byte *texte_tmp;
+	int texte_long;
+	int TEXTE_FORMATE;
+	byte *SPRITE_ECRAN;
+	byte *SAUVEGARDE;
+	byte *BUFFERTAPE;
+	byte *essai0;
+	byte *essai1;
+	byte *essai2;
+	byte *Bufferobjet;
+	byte *inventaire2;
+	byte *GESTE;
+	int OBJET_EN_COURS;
+	int NUM_FICHIER_OBJ;
+	int nbrligne;
+	int largeur_boite;
+	byte *INVENTAIRE_OBJET;
+	int hauteur_boite;
+	bool GESTE_FLAG;
+	byte *FORETSPR;
+	int FORET;
+	byte *COUCOU;
+	byte *chemin;
+	byte *cache_souris;
+	byte *BufLig;
+	byte *Bufferdecor;
+	byte *ADR_FICHIER_OBJ;
 
 	Globals();
+	~Globals();
+
 	void setConfig();
+	void clearAll();
+	void HOPKINS_DATA();
+	void INIT_ANIM();
+	void INIT_VBOB();
 };
+
+#define PTRNUL (byte *)NULL
 
 } // End of namespace Hopkins
 

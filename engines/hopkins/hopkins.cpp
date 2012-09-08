@@ -25,6 +25,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "engines/util.h"
 #include "hopkins/hopkins.h"
 #include "hopkins/files.h"
 
@@ -50,53 +51,11 @@ Common::Error HopkinsEngine::run() {
 	FileManager::Chage_Inifile(iniParams);
 	processIniParams(iniParams);
 
+	GLOBALS.setConfig();
+	FileManager::F_Censure();
+	INIT_SYSTEM();
+
   /*
-  if ( FR == 1 )
-  {
-    *(_DWORD *)FICH_ZONE = dword_807B6E6;
-    *(_DWORD *)&FICH_ZONE[4] = dword_807B6EA;
-    *(_WORD *)&FICH_ZONE[8] = word_807B6EE;
-    FICH_ZONE[10] = byte_807B6F0;
-    *(_DWORD *)FICH_TEXTE = dword_807B6F1;
-    *(_DWORD *)&FICH_TEXTE[4] = dword_807B6F5;
-    *(_DWORD *)&FICH_TEXTE[8] = dword_807B6F9;
-  }
-  if ( !FR )
-  {
-    *(_DWORD *)FICH_ZONE = dword_807B6FD;
-    *(_DWORD *)&FICH_ZONE[4] = dword_807B701;
-    *(_WORD *)&FICH_ZONE[8] = word_807B705;
-    FICH_ZONE[10] = byte_807B707;
-    *(_DWORD *)FICH_TEXTE = dword_807B708;
-    *(_DWORD *)&FICH_TEXTE[4] = dword_807B70C;
-    *(_DWORD *)&FICH_TEXTE[8] = dword_807B710;
-  }
-  if ( FR == 2 )
-  {
-    *(_DWORD *)FICH_ZONE = dword_807B714;
-    *(_DWORD *)&FICH_ZONE[4] = dword_807B718;
-    *(_WORD *)&FICH_ZONE[8] = word_807B71C;
-    FICH_ZONE[10] = byte_807B71E;
-    *(_DWORD *)FICH_TEXTE = dword_807B71F;
-    *(_DWORD *)&FICH_TEXTE[4] = dword_807B723;
-    *(_DWORD *)&FICH_TEXTE[8] = dword_807B727;
-  }
-  *(_DWORD *)HOPSOUND = dword_807B72B;
-  *(_WORD *)&HOPSOUND[4] = word_807B72F;
-  *(_DWORD *)HOPMUSIC = dword_807B731;
-  *(_WORD *)&HOPMUSIC[4] = word_807B735;
-  *(_DWORD *)HOPVOICE = dword_807B737;
-  *(_WORD *)&HOPVOICE[4] = word_807B73B;
-  *(_DWORD *)HOPANM = dword_807B73D;
-  *(_DWORD *)HOPSEQ = dword_807B741;
-  MUSICVOL = 6;
-  SOUNDVOL = 6;
-  VOICEVOL = 6;
-  MUSICOFF = 0;
-  SOUNDOFF = 0;
-  VOICEOFF = 0;
-  F_Censure();
-  INIT_SYSTEM();
   REDRAW = 0;
   SDL_WM_SetCaption("Hopkins FBI for Linux ", "LINUX");
   Init_Interrupt();
@@ -126,7 +85,7 @@ Common::Error HopkinsEngine::run() {
     INTRORUN(a1);
   iRegul = 0;
   CONSTRUIT_SYSTEM("PERSO.SPR");
-  PERSO = CHARGE_FICHIER(NFICHIER);
+  PERSO = CHARGE_FICHIER(GLOBALS.NFICHIER);
   PERSO_TYPE = 0;
   PLANX = 0;
   PLANY = 0;
@@ -536,6 +495,82 @@ void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
 	GLOBALS.XFORCE16 = iniParams["FORCE16BITS"] == "YES";
 	GLOBALS.XFORCE8 = iniParams["FORCE8BITS"] == "YES";
 	GLOBALS.CARD_SB = iniParams["SOUND"] == "YES";
+}
+
+void HopkinsEngine::INIT_SYSTEM() {
+	initGraphics(640, 480, true);
+	
+	// TODO: init surfaces
+	//VESA_SCREEN = dos_malloc2(0x96000u);
+	//VESA_BUFFER = dos_malloc2(0x96000u);
+	_mouse.mouse_linux = true;
+  
+	switch (GLOBALS.FR) {
+	case 0:
+		if (!_mouse.mouse_linux)
+			FileManager::CONSTRUIT_SYSTEM("SOUAN.SPR");
+		if (!GLOBALS.FR && _mouse.mouse_linux)
+			FileManager::CONSTRUIT_SYSTEM("LSOUAN.SPR");
+		break;
+	case 1:
+		FileManager::CONSTRUIT_SYSTEM("LSOUFR.SPR");
+		break;
+	case 2:
+		FileManager::CONSTRUIT_SYSTEM("SOUES.SPR");
+		break;
+	}
+  
+	if (_mouse.mouse_linux) {
+		_mouse.souris_sizex = 52;
+		_mouse.souris_sizey = 32;
+	} else {
+		_mouse.souris_sizex = 34;
+		_mouse.souris_sizey = 20;
+	}
+	_mouse.pointeur_souris = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+
+	GLOBALS.clearAll();
+
+	FileManager::CONSTRUIT_SYSTEM("FONTE3.SPR");
+	GLOBALS.police = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+	GLOBALS.police_l = 12;
+	GLOBALS.police_h = 21;
+	FileManager::CONSTRUIT_SYSTEM("ICONE.SPR");
+	GLOBALS.ICONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+	FileManager::CONSTRUIT_SYSTEM("TETE.SPR");
+	GLOBALS.TETE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+	
+	switch (GLOBALS.FR) {
+	case 0:
+		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "ZONEAN.TXT");
+		GLOBALS.BUF_ZONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+		break;
+	case 1:
+		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "ZONE01.TXT");
+		GLOBALS.BUF_ZONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+		break;
+	case 2:
+		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "ZONEES.TXT");
+		GLOBALS.BUF_ZONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+		break;
+	}
+
+	GLOBALS.min_x = 0;
+	GLOBALS.min_y = 20;
+	GLOBALS.max_x = 1280;
+	GLOBALS.max_y = 460;
+	
+	_mouse.INSTALL_SOURIS();
+	_mouse.souris_on();
+	_mouse.souris_flag = false;
+	_mouse.souris_max();
+
+	GLOBALS.HOPKINS_DATA();
+
+	_mouse.ofset_souris_x = 0;
+	_mouse.ofset_souris_y = 0;
+	GLOBALS.lItCounter = 0;
+	GLOBALS.lOldItCounter = 0;
 }
 
 } // End of namespace Hopkins

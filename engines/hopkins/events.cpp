@@ -20,30 +20,43 @@
  *
  */
 
-#ifndef HOPKINS_FILES_H
-#define HOPKINS_FILES_H
-
-#include "common/scummsys.h"
-#include "common/hash-str.h"
-#include "common/str.h"
-#include "common/stream.h"
+#include "common/system.h"
+#include "hopkins/events.h"
 
 namespace Hopkins {
 
-class FileManager {
-public:
-	static void initSaves();
-	static bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
-	static bool bsave(const Common::String &file, const void *buf, size_t n);
-	static void Chage_Inifile(Common::StringMap &iniParams);
-	static byte *CHARGE_FICHIER(const Common::String &file);
-	static void DMESS1();
-	static int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
-	static void F_Censure();
-	static int CONSTRUIT_SYSTEM(const Common::String &file);
-	static void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
-};
+void Mouse::INSTALL_SOURIS() {
+	// No implementation in original
+}
+
+void Mouse::souris_on() {
+	bool result; // eax@5
+
+	souris_flag = true;
+
+	if (mouse_linux) {
+		souris_sizex = 52;
+		souris_sizey = 32;
+	} else {
+		souris_sizex = 34;
+		souris_sizey = 20;
+	}
+
+	ofset_souris_x = 0;
+	ofset_souris_y = 0;
+
+	if (!CASSE)
+		souris_xy(300, 200);
+	else
+		souris_xy(150, 100);
+}
+
+void Mouse::souris_xy(int xp, int yp) {
+	g_system->warpMouse(xp, yp);
+}
+
+void Mouse::souris_max() {
+	// No implementation in original
+}
 
 } // End of namespace Hopkins
-
-#endif /* HOPKINS_GLOBALS_H */

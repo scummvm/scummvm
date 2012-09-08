@@ -30,6 +30,8 @@
 #include "common/hash-str.h"
 #include "common/util.h"
 #include "engines/engine.h"
+#include "graphics/surface.h"
+#include "hopkins/events.h"
 #include "hopkins/globals.h"
 
 /**
@@ -60,11 +62,16 @@ class HopkinsEngine : public Engine {
 private:
 	const HopkinsGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	Graphics::Surface VESA_SCREEN;
+	Graphics::Surface VESA_BUFFER;
+	Mouse _mouse;
 
 	/**
 	 * Processes the loaded list of ini file parameters
 	 */
 	void processIniParams(Common::StringMap &iniParams);
+
+	void INIT_SYSTEM();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

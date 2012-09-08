@@ -2,6 +2,7 @@ MODULE := engines/hopkins
 
 MODULE_OBJS := \
 	detection.o \
+	events.o \
 	files.o \
 	globals.o \
 	hopkins.o 

@@ -98,7 +98,7 @@ void FileManager::Chage_Inifile(Common::StringMap &iniParams) {
 	free(iniData);
 }
 
-void *FileManager::CHARGE_FICHIER(const Common::String &file) {
+byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
 	DMESS1();
 
 	Common::File f;
@@ -107,7 +107,7 @@ void *FileManager::CHARGE_FICHIER(const Common::String &file) {
 
 	// Allocate space for the file contents
 	size_t filesize = f.size();
-	void *data = malloc(filesize);
+	byte *data = (byte *)malloc(filesize);
 	if (!data)
 		error("Error allocating space for file being loaded - %s", file.c_str());
 
@@ -122,6 +122,40 @@ void FileManager::DMESS1() {
 
 int FileManager::bload_it(Common::ReadStream &stream, void *buf, size_t nbytes) {
 	return stream.read(buf, nbytes);
+}
+
+void FileManager::F_Censure() {
+	GLOBALS.CENSURE = false;
+
+	CONSTRUIT_SYSTEM("BLOOD.DAT");
+	char *data = (char *)CHARGE_FICHIER(GLOBALS.NFICHIER);
+  
+	if (*(data + 6) == 'f' && *(data + 7) == 'r')
+		GLOBALS.CENSURE = false;
+	if (*(data + 6) == 'F' && *(data + 7) == 'R')
+		GLOBALS.CENSURE = false;
+	if (*(data + 6) == 'u' && *(data + 7) == 'k')
+		GLOBALS.CENSURE = true;
+	if (*(data + 6) == 'U' && *(data + 7) == 'K')
+		GLOBALS.CENSURE = true;
+
+	free(data);
+}
+
+int FileManager::CONSTRUIT_SYSTEM(const Common::String &file) {
+	GLOBALS.NFICHIER = Common::String::format("system/%s", file.c_str());
+	return GLOBALS.NFICHIER.size();
+}
+
+void FileManager::CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file) {
+	// At this point, the original program did a big switch statement to determine
+	// whether to preprend the CD or installed directory path into REPJEU
+
+	if (hop[0] == 'A' && hop[1] == 'N' && hop[2] == 'N') {
+		error("TODO: CONSTRUIT_FICHIER");
+	}
+
+	GLOBALS.NFICHIER = Common::String::format("%s/%s", hop.c_str(), file.c_str());
 }
 
 } // End of namespace Hopkins
