@@ -62,7 +62,7 @@ get_var() {
 	eval echo \$${1}
 }
 
-# Add an engine: id name build subengines
+# Add an engine: id name build subengines dependencies
 add_engine() {
 	_engines="${_engines} ${1}"
 	if test "${3}" = "no" ; then
@@ -72,9 +72,18 @@ add_engine() {
 	set_var _engine_${1}_build "${3}"
 	set_var _engine_${1}_build_default "${3}"
 	set_var _engine_${1}_subengines "${4}"
+	set_var _engine_${1}_deps "${5}"
 	for sub in ${4}; do
 		set_var _engine_${sub}_sub "yes"
 	done
+}
+
+# Add a feature: id name settings-list
+add_feature() {
+	set_var _feature_${1}_name "${2}"
+	# This is a list of settings, where one must be "yes" for the feature to
+	# be enabled
+	set_var _feature_${1}_settings "${3}"
 }
 
 _srcdir=`dirname $0`
@@ -165,6 +174,17 @@ _posix=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
+
+# Add (virtual) features
+add_feature 16bit "16bit color" "_16bit"
+add_feature faad "libfaad" "_faad"
+add_feature flac "FLAC" "_flac"
+add_feature freetype2 "FreeType2" "_freetype2"
+add_feature mad "MAD" "_mad"
+add_feature png "PNG" "_png"
+add_feature theoradec "libtheoradec" "_theoradec"
+add_feature vorbis "Vorbis file support" "_vorbis _tremor"
+add_feature zlib "zlib" "_zlib"
 
 
 
@@ -443,6 +463,26 @@ Try \`$0 --help' for more information." >&2
 }
 
 
+#
+# Feature handling functions
+#
+
+# Get the name of the feature
+get_feature_name() {
+	get_var _feature_$1_name
+}
+
+# Check whether the feature is enabled
+get_feature_state() {
+	for i in `get_var _feature_$1_settings`; do
+		if test `get_var $i` = "yes"; then
+			echo "yes"
+			return
+		fi
+	done
+	echo "no"
+}
+
 
 #
 # Engine handling functions
@@ -466,6 +506,11 @@ get_engine_build_default() {
 # Get the subengines
 get_engine_subengines() {
 	get_var _engine_$1_subengines
+}
+
+# Get the dependencies
+get_engine_dependencies() {
+	get_var _engine_$1_deps
 }
 
 # Ask if this is a subengine
@@ -533,6 +578,29 @@ engine_disable() {
 		set_var _engine_${engine}_build "no"
 	else
 		engine_option_error ${engine}
+	fi
+}
+
+# Check whether the engine's dependencies are met
+# If that is not the case disable the engine
+check_engine_deps() {
+	unmet_deps=""
+
+	# Check whether the engine is enabled
+	if test `get_engine_build $1` = yes ; then
+		# Collect unmet dependencies
+		for dep in `get_engine_dependencies $1`; do
+			if test `get_feature_state $dep` = "no"; then
+				feature_name=`get_feature_name $dep`
+				unmet_deps="${unmet_deps}${feature_name} "
+			fi
+		done
+
+		# Check whether there is any unmet dependency
+		if test -n "$unmet_deps"; then
+			echo "WARNING: Disabling engine "`get_engine_name $1`" because the following dependencies are unmet: "$unmet_deps
+			engine_disable $1
+		fi
 	fi
 }
 
@@ -1821,7 +1889,9 @@ case $_host_cpu in
 		define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
 		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
-		define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+		# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
+		# (on Pandora and iPhone at least)
+		#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
 
 		DEFINES="$DEFINES -DARM_TARGET"
 		;;
@@ -2063,8 +2133,9 @@ case $_host_os in
 		DEFINES="$DEFINES -D__PLAYSTATION2__"
 		;;
 	ps3)
-		# Force use of SDL from the ps3 toolchain
+		# Force use of SDL and freetype from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
+		_freetypepath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		DEFINES="$DEFINES -DPLAYSTATION3"
 		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
@@ -3908,6 +3979,9 @@ sh -c "
 	fi" 2>/dev/null &
 
 for engine in $_engines; do
+	# Check whether all dependencies are available
+	check_engine_deps $engine
+
 	if test "`get_engine_sub $engine`" = "no" ; then
 		# It's a main engine
 		if test `get_engine_build $engine` = no ; then
