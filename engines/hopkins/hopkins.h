@@ -72,6 +72,7 @@ private:
 	void processIniParams(Common::StringMap &iniParams);
 
 	void INIT_SYSTEM();
+	void Init_Interrupt();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

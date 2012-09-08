@@ -92,6 +92,17 @@ struct VBobItem {
 	byte *field1C;
 };
 
+struct ObjetWItem {
+	byte field0;
+	byte field1;
+	byte field2;
+	byte field3;
+	byte field4;
+	byte field5;
+	byte field6;
+	byte field7;
+};
+
 /**
  * Engine Globals
  */
@@ -157,6 +168,7 @@ public:
 	BgeAnimItem Bge_Anim[35];
 	BankItem Bank[8];
 	VBobItem VBob[35];
+	ObjetWItem ObjetW[300];
 	byte *Winventaire;
 	byte *texte_tmp;
 	int texte_long;
@@ -185,6 +197,9 @@ public:
 	byte *BufLig;
 	byte *Bufferdecor;
 	byte *ADR_FICHIER_OBJ;
+	bool redraw;
+	int OBJL, OBJH;
+	int Nouv_objet;
 
 	Globals();
 	~Globals();
@@ -194,8 +209,14 @@ public:
 	void HOPKINS_DATA();
 	void INIT_ANIM();
 	void INIT_VBOB();
+	void CHARGE_OBJET();
+	byte *CHANGE_OBJET(int objIndex);
+	byte *CAPTURE_OBJET(int objIndex, int mode);
 };
 
+// TODO: The original pointed PTRNUL to a specially allocated memory block. If this proves
+// to be necsesary, all malloc calls will need to be replaced with a stub that sets the
+// result to PTRNUL if the memory block can't be allocated
 #define PTRNUL (byte *)NULL
 
 } // End of namespace Hopkins

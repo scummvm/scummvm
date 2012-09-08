@@ -158,4 +158,9 @@ void FileManager::CONSTRUIT_FICHIER(const Common::String &hop, const Common::Str
 	GLOBALS.NFICHIER = Common::String::format("%s/%s", hop.c_str(), file.c_str());
 }
 
+byte *FileManager::LIBERE_FICHIER(byte *ptr) {
+	free(ptr);
+	return PTRNUL;
+}
+
 } // End of namespace Hopkins

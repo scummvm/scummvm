@@ -28,6 +28,7 @@
 #include "engines/util.h"
 #include "hopkins/hopkins.h"
 #include "hopkins/files.h"
+#include "hopkins/sound.h"
 
 namespace Hopkins {
 
@@ -54,13 +55,13 @@ Common::Error HopkinsEngine::run() {
 	GLOBALS.setConfig();
 	FileManager::F_Censure();
 	INIT_SYSTEM();
+	Init_Interrupt();
+
+	SoundManager::WSOUND_INIT();
+
+	GLOBALS.CHARGE_OBJET();
 
   /*
-  REDRAW = 0;
-  SDL_WM_SetCaption("Hopkins FBI for Linux ", "LINUX");
-  Init_Interrupt();
-  WSOUND_INIT();
-  CHARGE_OBJET();
   CHANGE_OBJET(14);
   AJOUTE_OBJET(14);
   HELICO = 0;
@@ -571,6 +572,10 @@ void HopkinsEngine::INIT_SYSTEM() {
 	_mouse.ofset_souris_y = 0;
 	GLOBALS.lItCounter = 0;
 	GLOBALS.lOldItCounter = 0;
+}
+
+void HopkinsEngine::Init_Interrupt() {
+	// TODO: Determine whether the timer is needed
 }
 
 } // End of namespace Hopkins

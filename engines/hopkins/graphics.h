@@ -20,31 +20,26 @@
  *
  */
 
-#ifndef HOPKINS_FILES_H
-#define HOPKINS_FILES_H
+#ifndef HOPKINS_GRAPHICS_H
+#define HOPKINS_GRAPHICS_H
 
 #include "common/scummsys.h"
-#include "common/hash-str.h"
+#include "common/endian.h"
 #include "common/str.h"
-#include "common/stream.h"
 
 namespace Hopkins {
 
-class FileManager {
+class ObjectManager {
 public:
-	static void initSaves();
-	static bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
-	static bool bsave(const Common::String &file, const void *buf, size_t n);
-	static void Chage_Inifile(Common::StringMap &iniParams);
-	static byte *CHARGE_FICHIER(const Common::String &file);
-	static void DMESS1();
-	static int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
-	static void F_Censure();
-	static int CONSTRUIT_SYSTEM(const Common::String &file);
-	static void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
-	static byte *LIBERE_FICHIER(byte *ptr);
+	static int Get_Largeur(const byte *objectData, int objIndex);
+	static int Get_Hauteur(const byte *objectData, int objIndex);
+	static int sprite_alone(const byte *objectData, byte *sprite, int objIndex);
+	static byte *DEL_FICHIER_OBJ();
+
+	static byte *CHARGE_SPRITE(const Common::String &file);
+	static int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
 };
 
 } // End of namespace Hopkins
 
-#endif /* HOPKINS_GLOBALS_H */
+#endif /* HOPKINS_GRAPHICS_H */

@@ -22,6 +22,8 @@
 
 #include "common/textconsole.h"
 #include "hopkins/globals.h"
+#include "hopkins/graphics.h"
+#include "hopkins/files.h"
 
 namespace Hopkins {
 
@@ -65,6 +67,18 @@ Globals::Globals() {
 	BufLig = NULL;
 	Bufferdecor = NULL;
 	ADR_FICHIER_OBJ = NULL;
+
+	// Reset flags
+	XFULLSCREEN = false;
+	XFORCE16 = false;
+	XFORCE8 = false;
+	CARD_SB = false;
+	SOUNDOFF = false;
+	MUSICOFF = false;
+	VOICEOFF = false;
+	CENSURE = false;
+	GESTE_FLAG = false;
+	redraw = false;
 }
 
 Globals::~Globals() {
@@ -616,6 +630,85 @@ void Globals::INIT_VBOB() {
 		VBob[idx].field0 = PTRNUL;
 		VBob[idx].field1C = PTRNUL;
 	}
+}
+
+void Globals::CHARGE_OBJET() {
+	FileManager::CONSTRUIT_SYSTEM("OBJET.DAT");
+	byte *data = FileManager::CHARGE_FICHIER(NFICHIER);
+	byte *srcP = data;
+
+	for (int idx = 0; idx < 300; ++idx) {
+		ObjetW[idx].field0 = *srcP++;
+		ObjetW[idx].field1 = *srcP++;
+		ObjetW[idx].field2 = *srcP++;
+		ObjetW[idx].field3 = *srcP++;
+		ObjetW[idx].field4 = *srcP++;
+		ObjetW[idx].field5 = *srcP++;
+		ObjetW[idx].field6 = *srcP++;
+		ObjetW[idx].field7 = *srcP++;
+	}
+
+	free(data);
+}
+
+byte *Globals::CHANGE_OBJET(int objIndex) {
+	byte *result = CAPTURE_OBJET(objIndex, 1);
+	Bufferobjet = result;
+	Nouv_objet = 1;
+	OBJET_EN_COURS = objIndex;
+	return result;
+}
+
+byte *Globals::CAPTURE_OBJET(int objIndex, int mode) {
+	byte *result = NULL;
+	byte *dataP;
+
+	dataP = 0;
+	int v2 = ObjetW[objIndex].field0;
+	int v3 = ObjetW[objIndex].field1;
+
+	if (mode == 1)
+	    ++v3;
+	if (v2 != NUM_FICHIER_OBJ) {
+		if (ADR_FICHIER_OBJ != PTRNUL)
+			ObjectManager::DEL_FICHIER_OBJ();
+		if (v2 == 1) {
+			FileManager::CONSTRUIT_SYSTEM("OBJET1.SPR");
+			ADR_FICHIER_OBJ = ObjectManager::CHARGE_SPRITE(NFICHIER);
+		}
+		NUM_FICHIER_OBJ = v2;
+	}
+
+	int width = ObjectManager::Get_Largeur(ADR_FICHIER_OBJ, v3);
+	int height = ObjectManager::Get_Hauteur(ADR_FICHIER_OBJ, v3);
+	OBJL = width;
+	OBJH = height;
+
+	switch (mode) {
+	case 0:
+		dataP = (byte *)malloc(height * width);
+		if (dataP == PTRNUL)
+			error("CAPTURE_OBJET");
+			
+		ObjectManager::capture_mem_sprite(ADR_FICHIER_OBJ, dataP, v3);
+		break;
+
+	case 1:
+		ObjectManager::sprite_alone(ADR_FICHIER_OBJ, Bufferobjet, v3);
+		result = Bufferobjet;
+		break;
+
+	case 3:
+		ObjectManager::capture_mem_sprite(ADR_FICHIER_OBJ, INVENTAIRE_OBJET, v3);
+		result = INVENTAIRE_OBJET;
+		break;
+
+	default:
+		result = dataP;
+		break;
+	}
+
+	return result;
 }
 
 } // End of namespace Hopkins
