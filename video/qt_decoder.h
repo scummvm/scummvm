@@ -69,7 +69,7 @@ public:
 	Audio::Timestamp getDuration() const { return Audio::Timestamp(0, _duration, _timeScale); }
 
 protected:
-	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format);
+	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
 
 private:
 	void init();

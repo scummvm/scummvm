@@ -60,7 +60,7 @@ protected:
 	void parseNextEvent(EventInfo &info);
 
 	// QuickTimeParser
-	SampleDesc *readSampleDesc(Track *track, uint32 format);
+	SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize);
 
 private:
 	struct NoteRequestInfo {

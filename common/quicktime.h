@@ -162,7 +162,7 @@ protected:
 		byte objectTypeMP4;
 	};
 
-	virtual SampleDesc *readSampleDesc(Track *track, uint32 format) = 0;
+	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
 
 	uint32 _timeScale;
 	uint32 _duration;

@@ -544,7 +544,7 @@ int QuickTimeParser::readSTSD(Atom atom) {
 		_fd->readUint16BE(); // reserved
 		_fd->readUint16BE(); // index
 
-		track->sampleDescs[i] = readSampleDesc(track, format);
+		track->sampleDescs[i] = readSampleDesc(track, format, size - 16);
 
 		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), track->codecType);
 
