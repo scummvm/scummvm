@@ -3824,18 +3824,17 @@ fi
 #
 # Check whether to activate engines (ResidualVM specific)
 #
-if test `get_engine_build grim` = yes && test ! "$_zlib" = yes ; then
-	echo "...disabling Grim. zlib is required"
-	engine_disable grim
-	engine_disable monkey4
-fi
-
 if test `get_engine_build monkey4` = yes && test ! "$_mpeg2" = yes ; then
 	echo "...disabling support for video cutscenes in PS2 version of Escape from Monkey Island. mpeg2dec is required"
 fi
 
 if test `get_engine_build monkey4` = yes && test ! "$_bink" = yes ; then
 	echo "...disabling Escape from Monkey Island. bink is required"
+	engine_disable monkey4
+fi
+
+if test `get_engine_build myst3` = yes && test ! "$_bink" = yes ; then
+	echo "...disabling Myst 3 engine. bink is required"
 	engine_disable monkey4
 fi
 
