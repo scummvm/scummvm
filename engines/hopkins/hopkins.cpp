@@ -470,6 +470,13 @@ LABEL_128:
   }
 */
 
+	// Stub event loop
+	Common::Event evt;
+	while (!g_system->getEventManager()->shouldQuit()) {
+		while (g_system->getEventManager()->pollEvent(evt))
+			;
+	}
+
 	return Common::kNoError;
 }
 
