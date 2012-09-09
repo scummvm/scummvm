@@ -48,7 +48,7 @@ protected:
 	DisposeAfterUse::Flag _disposeAfterPlaying;
 public:
 	SoundTrack();
-	virtual ~SoundTrack() { };
+	virtual ~SoundTrack();
 	virtual bool openSound(Common::String voiceName, Common::SeekableReadStream *file) = 0;
 	virtual bool isPlaying() = 0;
 	virtual bool play();
