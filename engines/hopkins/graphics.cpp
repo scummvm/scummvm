@@ -33,8 +33,23 @@ namespace Hopkins {
 
 GraphicsManager::GraphicsManager() {
 	SDL_MODEYES = false;
+	SDL_ECHELLE = 0;
+	XSCREEN = YSCREEN = 0;
+	WinScan = 0;
+	Winbpp = 0;
+	PAL_PIXELS = NULL;
+	nbrligne = 0;
+	Linear = false;
+	VideoPtr = NULL;
+	start_x = 0;
+	ofscroll = 0;
+	SCROLL = 0;
+	PCX_L = PCX_H = 0;
+	DOUBLE_ECRAN = false;
+	OLD_SCROLL = 0;
 	MANU_SCROLL = 1;
 	SPEED_SCROLL = 16;
+	nbrligne2 = 0;
 	Agr_x = Agr_y = 0;
 	Agr_Flag_x = Agr_Flag_y = 0;
 }
@@ -107,6 +122,7 @@ void GraphicsManager::DD_Lock() {
 }
 
 void GraphicsManager::DD_Unlock() {
+	assert(VideoPtr);
 	g_system->unlockScreen();
 }
 

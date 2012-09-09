@@ -38,9 +38,30 @@ Globals::Globals() {
 	MUSICVOL = 6;
 	SOUNDVOL = 6;
 	VOICEVOL = 6;
-	MUSICOFF = false;
-	SOUNDOFF = false;
-	VOICEOFF = false;
+	XSETMODE = 0;
+	XZOOM = 0;
+	min_x = min_y = 0;
+	max_x = max_y = 0;
+	lItCounter = 0;
+	lOldItCounter = 0;
+	g_old_anim = 0;
+	g_old_sens = 0;
+	police_l = police_h = 0;
+	TETE = NULL;
+	texte_long = 0;
+	TEXTE_FORMATE = 0;
+	OBJET_EN_COURS = 0;
+	NUM_FICHIER_OBJ = 0;
+	nbrligne = 0;
+	largeur_boite = 0;
+	hauteur_boite = 0;
+	FORET = 0;
+	OBJL = OBJH = 0;
+	HELICO = 0;
+	CAT_POSI = 0;
+	CAT_TAILLE = 0;
+	Nouv_objet = 0;
+
 
 	// Initialise pointers
 	ICONE = NULL;
@@ -65,8 +86,12 @@ Globals::Globals() {
 	BufLig = NULL;
 	Bufferdecor = NULL;
 	ADR_FICHIER_OBJ = NULL;
+	police = NULL;
 
 	// Reset flags
+	MUSICOFF = false;
+	SOUNDOFF = false;
+	VOICEOFF = false;
 	XFULLSCREEN = false;
 	XFORCE16 = false;
 	XFORCE8 = false;
