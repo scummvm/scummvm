@@ -104,7 +104,12 @@ PegasusEngine::~PegasusEngine() {
 	delete _rnd;
 	delete _introTimer;
 	delete _aiSaveStream;
+
+	for (ItemIterator it = _allItems.begin(); it != _allItems.end(); it++)
+		delete *it;
+
 	InputDeviceManager::destroy();
+	GameStateManager::destroy();
 
 	// NOTE: This must be deleted last!
 	delete _gfx;
