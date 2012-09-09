@@ -163,7 +163,7 @@ Common::Error GroovieEngine::run() {
 			// TODO: The 11th Hour Mac uses QuickTime MIDI files
 			// Right now, since the XMIDI are present and it is still detected as
 			// the DOS version, we don't have to do anything here.
-			_musicPlayer = new MusicPlayerMac(this);
+			_musicPlayer = new MusicPlayerMac_t7g(this);
 			break;
 		case Common::kPlatformIOS:
 			_musicPlayer = new MusicPlayerIOS(this);

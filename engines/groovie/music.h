@@ -150,9 +150,9 @@ private:
 	void setTimbreMT(byte channel, const Timbre &timbre);
 };
 
-class MusicPlayerMac : public MusicPlayerMidi {
+class MusicPlayerMac_t7g : public MusicPlayerMidi {
 public:
-	MusicPlayerMac(GroovieEngine *vm);
+	MusicPlayerMac_t7g(GroovieEngine *vm);
 
 protected:
 	bool load(uint32 fileref, bool loop);

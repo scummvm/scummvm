@@ -678,9 +678,9 @@ void MusicPlayerXMI::setTimbreMT(byte channel, const Timbre &timbre) {
 }
 
 
-// MusicPlayerMac
+// MusicPlayerMac_t7g
 
-MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
+MusicPlayerMac_t7g::MusicPlayerMac_t7g(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	// Create the parser
 	_midiParser = MidiParser::createParser_SMF();
 
@@ -701,7 +701,7 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	assert(_vm->_macResFork);
 }
 
-bool MusicPlayerMac::load(uint32 fileref, bool loop) {
+bool MusicPlayerMac_t7g::load(uint32 fileref, bool loop) {
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
 
 	// First try for compressed MIDI
@@ -722,7 +722,7 @@ bool MusicPlayerMac::load(uint32 fileref, bool loop) {
 	return loadParser(file, loop);
 }
 
-Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadStream *stream) {
+Common::SeekableReadStream *MusicPlayerMac_t7g::decompressMidi(Common::SeekableReadStream *stream) {
 	// Initialize an output buffer of the given size
 	uint32 size = stream->readUint32BE();
 	byte *output = (byte *)malloc(size);
