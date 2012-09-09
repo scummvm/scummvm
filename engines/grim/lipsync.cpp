@@ -43,18 +43,13 @@ LipSync::LipSync(const Common::String &filename, Common::SeekableReadStream *dat
 	if (data->readUint32BE() != MKTAG('L','I','P','!')) {
 		error("Invalid file format in %s", _fname.c_str());
 	} else {
-		if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGameFlags() != ADGF_DEMO) {
-			_numEntries = data->readUint16LE();
-			/*uint16 unknown = */ data->readUint16LE();
-		} else {
-			_numEntries = (data->size() - 8) / 4;
-			data->readUint32LE();
-		}
+		_numEntries = (data->size() - 8) / 4;
 
 		// There are cases where the lipsync file has no entries
 		if (_numEntries == 0) {
 			_entries = NULL;
 		} else {
+			data->readUint32LE();
 #ifdef DEBUG_VERBOSE
 			printf("Reading LipSync %s, %d entries\n", filename, _numEntries);
 #endif
