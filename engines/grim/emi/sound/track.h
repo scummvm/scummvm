@@ -45,6 +45,7 @@ protected:
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle *_handle;
 	Audio::Mixer::SoundType _soundType;
+	DisposeAfterUse::Flag _disposeAfterPlaying;
 public:
 	SoundTrack();
 	virtual ~SoundTrack() { };

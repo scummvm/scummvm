@@ -30,9 +30,10 @@
 
 namespace Grim {
 
-AIFFTrack::AIFFTrack(Audio::Mixer::SoundType soundType) {
+AIFFTrack::AIFFTrack(Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeOfStream) {
 	_soundType = soundType;
 	_looping = false;
+	_disposeAfterPlaying = disposeOfStream;
 }
 
 AIFFTrack::~AIFFTrack() {

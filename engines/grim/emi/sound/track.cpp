@@ -31,6 +31,7 @@ namespace Grim {
 SoundTrack::SoundTrack() {
 	_stream = NULL;
 	_handle = NULL;
+	_disposeAfterPlaying = DisposeAfterUse::YES;
 }
 	
 Common::String SoundTrack::getSoundName() {
@@ -43,7 +44,7 @@ void SoundTrack::setSoundName(Common::String name) {
 	
 bool SoundTrack::play() {
 	if (_stream) {
-		g_system->getMixer()->playStream(_soundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		g_system->getMixer()->playStream(_soundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, _disposeAfterPlaying);
 		return true;
 	}
 	return false;

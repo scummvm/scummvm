@@ -182,7 +182,7 @@ public:
 };
 
 PoolSound::PoolSound(const Common::String &filename) {
-	track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
+	track = new AIFFTrack(Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
 	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
 	if (!stream)
 		return;
