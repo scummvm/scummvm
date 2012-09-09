@@ -630,7 +630,7 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface, bool isLE) {
 // Myst Bitmap Decoder
 //////////////////////////////////////////
 
-MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
+MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	uint32 uncompressedSize = stream->readUint32LE();
 	Common::SeekableReadStream *bmpStream = decompressLZ(stream, uncompressedSize);
 	delete stream;
