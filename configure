@@ -94,7 +94,7 @@ _srcdir=`dirname $0`
 #
 # Default settings
 #
-# Default lib behaviour yes/no/auto
+# Default lib behavior yes/no/auto
 _vorbis=auto
 _tremor=auto
 _tremolo=no
@@ -117,7 +117,7 @@ _freetype2=auto
 _taskbar=yes
 _updates=no
 _libunity=auto
-# Default option behaviour yes/no
+# Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
