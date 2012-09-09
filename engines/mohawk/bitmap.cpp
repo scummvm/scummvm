@@ -652,10 +652,10 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	}
 
 	// Copy the palette to one of our own
-	const byte *palette = bitmapDecoder.getPalette();
 	byte *newPal = 0;
 
-	if (palette) {
+	if (bitmapDecoder.hasPalette()) {
+		const byte *palette = bitmapDecoder.getPalette();
 		newPal = (byte *)malloc(256 * 3);
 		memcpy(newPal, palette, 256 * 3);
 	}
