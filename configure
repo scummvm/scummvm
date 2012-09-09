@@ -3835,7 +3835,7 @@ fi
 
 if test `get_engine_build myst3` = yes && test ! "$_bink" = yes ; then
 	echo "...disabling Myst 3 engine. bink is required"
-	engine_disable monkey4
+	engine_disable myst3
 fi
 
 if test `get_engine_build myst3` = yes && test ! "$_opengl" = yes ; then
