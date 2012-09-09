@@ -163,36 +163,37 @@ void Slide::drawSlideElement(const Common::Rect &drawRect, const Common::Rect &o
 
 void Push::adjustSlideRects(Common::Rect &oldBounds, Common::Rect &newBounds) {
 	switch (_direction & kSlideHorizMask) {
-		case kSlideLeftMask:
-			newBounds.left = oldBounds.right = _bounds.right - pegasusRound(getFaderValue() * _boundsWidth, kTransitionRange);
-			newBounds.right = newBounds.left + _boundsWidth;
-			oldBounds.left = oldBounds.right - _boundsWidth;
-			break;
-		case kSlideRightMask:
-			oldBounds.left = newBounds.right = _bounds.left + pegasusRound(getFaderValue() * _boundsWidth, kTransitionRange);
-			oldBounds.right = oldBounds.left + _boundsWidth;
-			newBounds.left = newBounds.right - _boundsWidth;
-			break;
-		default:
-			newBounds.left = oldBounds.left = _bounds.left;
-			newBounds.right = oldBounds.right = _bounds.right;
-			break;
+	case kSlideLeftMask:
+		newBounds.left = oldBounds.right = _bounds.right - pegasusRound(getFaderValue() * _boundsWidth, kTransitionRange);
+		newBounds.right = newBounds.left + _boundsWidth;
+		oldBounds.left = oldBounds.right - _boundsWidth;
+		break;
+	case kSlideRightMask:
+		oldBounds.left = newBounds.right = _bounds.left + pegasusRound(getFaderValue() * _boundsWidth, kTransitionRange);
+		oldBounds.right = oldBounds.left + _boundsWidth;
+		newBounds.left = newBounds.right - _boundsWidth;
+		break;
+	default:
+		newBounds.left = oldBounds.left = _bounds.left;
+		newBounds.right = oldBounds.right = _bounds.right;
+		break;
 	}
+
 	switch (_direction & kSlideVertMask) {
-		case kSlideDownMask:
-			oldBounds.top = newBounds.bottom = _bounds.top + pegasusRound(getFaderValue() * _boundsHeight, kTransitionRange);
-			oldBounds.bottom = oldBounds.top + _boundsHeight;
-			newBounds.top = newBounds.bottom - _boundsHeight;
-			break;
-		case kSlideUpMask:
-			newBounds.top = oldBounds.bottom = _bounds.bottom - pegasusRound(getFaderValue() * _boundsHeight, kTransitionRange);
-			newBounds.bottom = newBounds.top + _boundsHeight;
-			oldBounds.top = oldBounds.bottom - _boundsHeight;
-			break;
-		default:
-			newBounds.top = oldBounds.top = _bounds.top;
-			newBounds.bottom = oldBounds.bottom = _bounds.bottom;
-			break;
+	case kSlideDownMask:
+		oldBounds.top = newBounds.bottom = _bounds.top + pegasusRound(getFaderValue() * _boundsHeight, kTransitionRange);
+		oldBounds.bottom = oldBounds.top + _boundsHeight;
+		newBounds.top = newBounds.bottom - _boundsHeight;
+		break;
+	case kSlideUpMask:
+		newBounds.top = oldBounds.bottom = _bounds.bottom - pegasusRound(getFaderValue() * _boundsHeight, kTransitionRange);
+		newBounds.bottom = newBounds.top + _boundsHeight;
+		oldBounds.top = oldBounds.bottom - _boundsHeight;
+		break;
+	default:
+		newBounds.top = oldBounds.top = _bounds.top;
+		newBounds.bottom = oldBounds.bottom = _bounds.bottom;
+		break;
 	}
 }
 

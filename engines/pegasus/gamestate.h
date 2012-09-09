@@ -313,7 +313,7 @@ public:
 	RoomViewID getCurrentRoomAndView();
 	
 	void getNextLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction);
-	void	setNextLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
+	void setNextLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
 
 	NeighborhoodID getNextNeighborhood();
 	void setNextNeighborhood(const NeighborhoodID neighborhood);
