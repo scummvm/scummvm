@@ -400,9 +400,13 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 
 	stream = openNewStreamFile(fname.c_str(), true);
 	if(!stream) {
-		const Common::String replacement("fx/candle.sprb");
-		warning("Could not find material %s, using %s instead", filename.c_str(), replacement.c_str());
-		return loadMaterial(replacement, NULL);
+		// FIXME: EMI demo references files that aren't included. Return a known material.
+		// This should be fixed in the data files instead.
+		if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGameFlags() & ADGF_DEMO) {
+			const Common::String replacement("fx/candle.sprb");
+			warning("Could not find material %s, using %s instead", filename.c_str(), replacement.c_str());
+			return loadMaterial(replacement, NULL);
+		}
 	}
 
 	Material *result = new Material(fname, stream, c);
