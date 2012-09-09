@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	roq.o \
 	saveload.o \
 	script.o \
+	stuffit.o \
 	vdx.o
 
 # This module can be built as a plugin
