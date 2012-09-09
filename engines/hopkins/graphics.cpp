@@ -55,8 +55,9 @@ GraphicsManager::GraphicsManager() {
 }
 
 GraphicsManager::~GraphicsManager() {
+	VESA_SCREEN.free();
+	VESA_BUFFER.free();
 }
-
 
 void GraphicsManager::SET_MODE(int width, int height) {
 	if (!SDL_MODEYES) {
@@ -85,16 +86,17 @@ void GraphicsManager::SET_MODE(int width, int height) {
 			//height = Reel_Zoom(height, SDL_ECHELLE);
 		}
 
+		Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 0, 10, 5, 0, 0);
+
 		if (bpp == 8) {
 			initGraphics(width, height, true);
 		} else {
-			Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-			initGraphics(width, height, true, &pixelFormat);
+			initGraphics(width, height, true, &pixelFormat16);
 		}
 
 		// Init surfaces
-		//VESA_SCREEN = dos_malloc2(0x96000u);
-		//VESA_BUFFER = dos_malloc2(0x96000u);
+		VESA_SCREEN.create(SCREEN_WIDTH, SCREEN_HEIGHT, pixelFormat16);
+		VESA_BUFFER.create(SCREEN_WIDTH, SCREEN_HEIGHT, pixelFormat16);
 
 		VideoPtr = NULL;
 		XSCREEN = width;
@@ -133,7 +135,7 @@ void GraphicsManager::Cls_Video() {
 }
 
 void GraphicsManager::LOAD_IMAGE(const Common::String &file) {
-	Common::String filename	= Common::String::format("%s.PCX", file);
+	Common::String filename	= Common::String::format("%s.PCX", file.c_str());
 	CHARGE_ECRAN(filename);
 	GraphicsManager::INIT_TABLE(165, 170, Palette);
 }
