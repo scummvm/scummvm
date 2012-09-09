@@ -163,4 +163,165 @@ byte *FileManager::LIBERE_FICHIER(byte *ptr) {
 	return PTRNUL;
 }
 
+bool FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
+	byte *ptr; // [sp+1Ch] [bp-40h]@0
+	Common::File f;
+
+	switch (a2) {
+	case 1:
+		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_INI.CAT");
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+		
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_INI.RES");
+		break;
+
+	case 2:
+		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_REP.CAT");
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_REP.RES");
+		break;
+
+	case 3:
+		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_LIN.CAT");
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_LIN.RES");
+		break;
+
+	case 4:
+		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_ANI.CAT");
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_ANI.RES");
+		break;
+
+	case 5:
+		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_PER.CAT");
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_PER.RES");
+		break;
+
+	case 6:
+		CONSTRUIT_FICHIER(GLOBALS.HOPIMAGE, "PIC.CAT");
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		break;
+
+	case 7:
+		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_SAN.CAT");
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		break;
+
+	case 8:
+		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_SLI.CAT");
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		break;
+
+	case 9:
+		switch (GLOBALS.FR) {
+		case 0:
+			CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_VAN.CAT");
+			break;
+		case 1:
+			CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_VFR.CAT");
+			break;
+		case 2:
+			CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_VES.CAT");
+			break;
+		}
+
+		if (!f.exists(GLOBALS.NFICHIER))
+			return PTRNUL;
+
+		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		break;
+		// Deliberate fall-through to
+	default:
+		break;
+	}
+
+	// Scan for an entry in the catalogue
+	const byte *startP = ptr;
+	int result; // eax@50
+	void *v22; // ebx@53
+	bool matchFlag = false;
+	int offsetVal = 0;
+	
+	do {
+		Common::String name = (const char *)startP;
+    
+		if (file == name) {
+			// Found entry for file, so get it's details from the catalogue entry
+			const byte *pData = startP + offsetVal;
+			startP += offsetVal + 15;
+			GLOBALS.CAT_POSI = READ_LE_UINT32(pData + 15);
+			GLOBALS.CAT_TAILLE = READ_LE_UINT32(pData + 19);
+			matchFlag = true;
+		}
+
+		const char *finishString = "FINIS";
+		const char *nameP = name.c_str();
+		int finishRemainingChars = 6;
+		int v19 = 0;
+	    bool finishMatch = true;
+
+		do {
+			if (!finishRemainingChars)
+				break;
+			finishMatch = *finishString++ == *nameP++;
+			--finishRemainingChars;
+		} while (finishMatch);
+
+		if (!finishMatch)
+			v19 = *(byte *)(finishString - 1) - *(byte *)(nameP - 1);
+		if (!v19) {
+			GLOBALS.dos_free2(ptr);
+			return PTRNUL;
+		}
+    
+		offsetVal += 23;
+	} while (!matchFlag);
+	GLOBALS.dos_free2(ptr);
+
+	// TODO: Double check whether this really should be an unsigned int comparison
+	if ((uint16)(a2 - 6) > 1 && (uint16)(a2 - 8) > 1) {
+		if (!f.open(GLOBALS.NFICHIER))
+			error("CHARGE_FICHIER");
+
+		f.seek(GLOBALS.CAT_POSI);
+
+		byte *catData = GLOBALS.dos_malloc2(GLOBALS.CAT_TAILLE);
+		if (catData == PTRNUL)
+			error("CHARGE_FICHIER");
+
+		bload_it(f, catData, GLOBALS.CAT_TAILLE);
+		f.close();
+		result = true;
+	} else {
+		result = false;
+	}
+
+	return result;
+}
+
 } // End of namespace Hopkins

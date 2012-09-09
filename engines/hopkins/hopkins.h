@@ -57,14 +57,15 @@ enum {
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
 
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+
 struct HopkinsGameDescription;
 
 class HopkinsEngine : public Engine {
 private:
 	const HopkinsGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	Graphics::Surface VESA_SCREEN;
-	Graphics::Surface VESA_BUFFER;
 	Mouse _mouse;
 	GraphicsManager _graphicsManager;
 

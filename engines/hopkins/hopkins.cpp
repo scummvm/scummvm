@@ -43,9 +43,6 @@ HopkinsEngine::~HopkinsEngine() {
 }
 
 Common::Error HopkinsEngine::run() {
-//  char v1; // al@93
-//  char v2; // al@114
-
 	FileManager::initSaves();
 
 	Common::StringMap iniParams;
@@ -69,8 +66,9 @@ Common::Error HopkinsEngine::run() {
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
 	_graphicsManager.DD_Unlock();
+
+	_graphicsManager.LOAD_IMAGE("LINUX");
 	/*
-  LOAD_IMAGE("LINUX");
   FADE_INW();
   SDL_Delay(1500);
   FADE_OUTW();
@@ -503,9 +501,6 @@ void HopkinsEngine::INIT_SYSTEM() {
 	// Set graphics mode
 	_graphicsManager.SET_MODE(640, 480);
 	
-	// TODO: init surfaces
-	//VESA_SCREEN = dos_malloc2(0x96000u);
-	//VESA_BUFFER = dos_malloc2(0x96000u);
 	_mouse.mouse_linux = true;
   
 	switch (GLOBALS.FR) {

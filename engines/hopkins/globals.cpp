@@ -30,8 +30,6 @@ namespace Hopkins {
 Globals::Globals() {
 	FR = 0;
 	SVGA = 2;
-	MANU_SCROLL = 1;
-	SPEED_SCROLL = 16;
 	internet = 1;
 	PUBEXIT = 0;
 	FADESPD = 15;
@@ -656,6 +654,11 @@ byte *Globals::dos_malloc2(int count) {
 	if (!result)
 		result = PTRNUL;
 	return result;
+}
+
+byte *Globals::dos_free2(byte *p) {
+	free(p);
+	return PTRNUL;
 }
 
 } // End of namespace Hopkins

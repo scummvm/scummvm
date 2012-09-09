@@ -30,10 +30,68 @@
 
 namespace Hopkins {
 
+#define PALETTE_SIZE 256
+
 struct RGB8 {
 	byte r;
 	byte g;
 	byte b;
+};
+
+class GraphicsManager {
+private:
+	void CHARGE_ECRAN(const Common::String &file);
+public:
+	bool SDL_MODEYES;
+	int SDL_ECHELLE;
+	int XSCREEN;
+	int YSCREEN;
+	int WinScan;
+	int Winbpp;
+	byte SD_PIXELS[514];
+	byte *PAL_PIXELS;
+	int nbrligne;
+	byte TABLE_COUL[256];
+	RGB8 cmap[256];
+	byte Palette[PALETTE_SIZE * 3];
+	bool Linear;
+	Graphics::Surface *VideoPtr;
+	Graphics::Surface VESA_SCREEN;
+	Graphics::Surface VESA_BUFFER;
+	int start_x;
+	int ofscroll;
+	int SCROLL;
+	byte HEADER_PCX[128];
+	int PCX_L, PCX_H;
+	bool DOUBLE_ECRAN;
+	int OLD_SCROLL;
+	int MANU_SCROLL;
+	int SPEED_SCROLL;
+	int nbrligne2;
+	int Agr_x, Agr_y;
+	int Agr_Flag_x, Agr_Flag_y;
+
+public:
+	GraphicsManager();
+	~GraphicsManager();
+
+	void SET_MODE(int width, int height);
+	void DD_Lock();
+	void DD_Unlock();
+	void Cls_Video();
+	void LOAD_IMAGE(const Common::String &file);
+	void INIT_TABLE(int a1, int a2, byte *a3);
+	int SCROLL_ECRAN(int amount);
+	void Trans_bloc(byte *destP, byte *srcP, int count, int param1, int param2);
+	void A_PCXSCREEN_WIDTH_SCREEN_HEIGHT(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
+	void Cls_Pal();
+	void souris_max();
+	void SCANLINE(int width);
+	void m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void m_scroll2(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void m_scroll2A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 };
 
 class ObjectManager {
@@ -49,30 +107,6 @@ public:
 	static byte *CHARGE_SPRITE(const Common::String &file);
 	static int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
 	static int AJOUTE_OBJET(int objIndex);
-};
-
-class GraphicsManager {
-public:
-	bool SDL_MODEYES;
-	int SDL_ECHELLE;
-	int XSCREEN;
-	int YSCREEN;
-	int WinScan;
-	int Winbpp;
-	byte SD_PIXELS[514];
-	byte *PAL_PIXELS;
-	int nbrligne;
-	RGB8 cmap[256];
-	bool Linear;
-	Graphics::Surface *VideoPtr;
-public:
-	GraphicsManager();
-	~GraphicsManager();
-
-	void SET_MODE(int width, int height);
-	void DD_Lock();
-	void DD_Unlock();
-	void Cls_Video();
 };
 
 } // End of namespace Hopkins

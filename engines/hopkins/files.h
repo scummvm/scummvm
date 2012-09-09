@@ -43,6 +43,7 @@ public:
 	static int CONSTRUIT_SYSTEM(const Common::String &file);
 	static void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
 	static byte *LIBERE_FICHIER(byte *ptr);
+	static bool RECHERCHE_CAT(const Common::String &file, int a2);
 };
 
 } // End of namespace Hopkins

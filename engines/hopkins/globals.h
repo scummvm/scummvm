@@ -111,8 +111,6 @@ public:
 	int FADESPD;
 	int FR;
 	int SVGA;
-	int MANU_SCROLL;
-	int SPEED_SCROLL;
 	int internet;
 	int PUBEXIT;
 	bool XFULLSCREEN;
@@ -202,6 +200,8 @@ public:
 	int OBJL, OBJH;
 	int Nouv_objet;
 	int HELICO;
+	uint32 CAT_POSI;
+	uint32 CAT_TAILLE;
 
 	Globals();
 	~Globals();
@@ -213,6 +213,7 @@ public:
 	void INIT_VBOB();
 	void CHARGE_OBJET();
 	byte *dos_malloc2(int count);
+	byte *dos_free2(byte *p);
 };
 
 #define PTRNUL (byte *)NULL
