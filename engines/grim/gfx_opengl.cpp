@@ -1125,7 +1125,7 @@ void GfxOpenGL::selectMaterial(const Texture *material) {
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
-	if (material->_hasAlpha) {
+	if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_BLEND);
 		glDepthMask(false);
 	}
