@@ -24,6 +24,7 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "audio/mixer.h"
+#include "audio/audiostream.h"
 #include "engines/grim/emi/sound/track.h"
 
 namespace Grim {
@@ -31,6 +32,12 @@ namespace Grim {
 SoundTrack::SoundTrack() {
 	_stream = NULL;
 	_handle = NULL;
+	_disposeAfterPlaying = DisposeAfterUse::YES;
+}
+
+SoundTrack::~SoundTrack() {
+	if (_stream && (_disposeAfterPlaying == DisposeAfterUse::NO || !_handle))
+		delete _stream;
 }
 	
 Common::String SoundTrack::getSoundName() {
@@ -43,7 +50,8 @@ void SoundTrack::setSoundName(Common::String name) {
 	
 bool SoundTrack::play() {
 	if (_stream) {
-		g_system->getMixer()->playStream(_soundType, _handle, _stream);
+		// If _disposeAfterPlaying is NO, the destructor will take care of the stream.
+		g_system->getMixer()->playStream(_soundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, _disposeAfterPlaying);
 		return true;
 	}
 	return false;

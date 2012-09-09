@@ -63,7 +63,7 @@ bool MP3Track::openSound(Common::String soundName, Common::SeekableReadStream *f
 #else
 	if (!file) {
 		warning("Stream for %s not open", soundName.c_str());
-		//return false;
+		return false;
 	}
 	_soundName = soundName;
 	parseRIFFHeader(file);

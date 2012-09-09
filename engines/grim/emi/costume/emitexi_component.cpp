@@ -36,8 +36,6 @@ namespace Grim {
 	}
 
 	EMITexiComponent::~EMITexiComponent() {
-		if (_mat)
-			_mat->dereference();
 	}
 
 	void EMITexiComponent::init() {

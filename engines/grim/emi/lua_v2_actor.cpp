@@ -307,7 +307,7 @@ void Lua_V2::ActorActivateShadow() {
 	if (lua_isstring(planeObj))
 		plane = lua_getstring(planeObj);
 	warning("Lua_V2::ActorActivateShadow, actor: %s, aquality: %d, plane: %s", actor->getName().c_str(), quality, plane);
-	// FIXME: implement missing rest part of code
+	actor->activateShadow(quality);
 }
 
 void Lua_V2::ActorStopMoving() {

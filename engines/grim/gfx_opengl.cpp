@@ -547,6 +547,8 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_LIGHTING);
+	glDisable(GL_BLEND);
+	glDepthMask(true);
 	glColor3f(1.0f,1.0f,1.0f);
 }
 
@@ -1122,6 +1124,11 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 void GfxOpenGL::selectMaterial(const Texture *material) {
 	GLuint *textures = (GLuint *)material->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+	if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
+		glEnable(GL_BLEND);
+		glDepthMask(false);
+	}
 
 	// Grim has inverted tex-coords, EMI doesn't
 	if (g_grim->getGameType() != GType_MONKEY4) {

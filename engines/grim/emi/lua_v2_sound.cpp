@@ -177,16 +177,22 @@ void Lua_V2::ImFlushStack() {
 class PoolSound : public PoolObject<PoolSound>{
 public:
 	PoolSound(const Common::String &filename);
+	~PoolSound();
 	static int32 getStaticTag() { return MKTAG('A', 'I', 'F', 'F'); }
 	AIFFTrack *track;
 };
 
 PoolSound::PoolSound(const Common::String &filename) {
-	track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
+	track = new AIFFTrack(Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
 	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
 	if (!stream)
 		return;
 	track->openSound(filename, stream);
+}
+
+// Called when the engine restarts or Lua code calls FreeSound
+PoolSound::~PoolSound() {
+	delete track;
 }
 
 void Lua_V2::LoadSound() {
