@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "engines/util.h"
@@ -109,10 +110,7 @@ void GraphicsManager::SET_MODE(int width, int height) {
 		PAL_PIXELS = SD_PIXELS;
 		nbrligne = width;
 
-		for (int idx = 0; idx < 256; ++idx) {
-			cmap[idx].r = cmap[idx].g = cmap[idx].b = 0;
-		}
-
+		Common::fill(&cmap[0], &cmap[256 * 3], 0);
 		SDL_MODEYES = true;
 	} else {
 		error("Called SET_MODE multiple times");
@@ -126,6 +124,7 @@ void GraphicsManager::DD_Lock() {
 void GraphicsManager::DD_Unlock() {
 	assert(VideoPtr);
 	g_system->unlockScreen();
+	VideoPtr = NULL;
 }
 
 void GraphicsManager::Cls_Video() {
@@ -141,14 +140,12 @@ void GraphicsManager::LOAD_IMAGE(const Common::String &file) {
 }
 
 void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
-	int v1;
-	byte *v4;
-	byte *v5;
+	bool flag;
 	Common::File f;
 
 	FileManager::DMESS1();
 
-	v1 = 1;
+	flag = true;
 	if (FileManager::RECHERCHE_CAT(file, 6)) {
 		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPIMAGE, file);
 		if (!f.open(GLOBALS.NFICHIER))
@@ -156,11 +153,11 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 
 		f.seek(0, SEEK_END);
 		f.close();
-		v1 = 0;
+		flag = false;
 	}
 
 	SCROLL_ECRAN(0);
-	A_PCXSCREEN_WIDTH_SCREEN_HEIGHT((byte *)VESA_SCREEN.pixels, file, Palette, v1);
+	A_PCXSCREEN_WIDTH_SCREEN_HEIGHT((byte *)VESA_SCREEN.pixels, file, Palette, flag);
 
 	SCROLL = 0;
 	OLD_SCROLL = 0;
@@ -183,6 +180,8 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 			else 
 				m_scroll2A((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		}
+
+		DD_Unlock();
 	} else {
 		SCANLINE(0x500u);
 		GLOBALS.max_x = SCREEN_WIDTH * 2;
@@ -209,14 +208,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 		}
 	}
 
-	v4 = (byte *)VESA_BUFFER.pixels;
-	v5 = (byte *)VESA_SCREEN.pixels;
-	memcpy(v4, v5, 614396);
-
-	v5 = (byte *)v5 + 614396;
-	v4 = (byte *)v4 + 614396;
-	WRITE_LE_UINT16(v4, READ_LE_UINT16(v5));
-	*((byte *)v4 + 2) = *((byte *)v5 + 2);
+	memcpy((byte *)VESA_BUFFER.pixels, (byte *)VESA_SCREEN.pixels, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 }
 
 void GraphicsManager::INIT_TABLE(int a1, int a2, byte *a3) {
@@ -447,10 +439,17 @@ void GraphicsManager::A_PCXSCREEN_WIDTH_SCREEN_HEIGHT(byte *surface, const Commo
 }
 
 void GraphicsManager::Cls_Pal() {
-	warning("TODO");
+	if (Winbpp == 2) {
+		Common::fill(&cmap[0], &cmap[PALETTE_SIZE * 3], 0);
+
+		// TODO: Figure out what this is for
+		//SD_PIXELS[2 * v0] = SDL_MapRGB(*(_DWORD *)(LinuxScr + 4), 0, 0, 0);
+		g_system->getPaletteManager()->setPalette(cmap, 0, 256);
+	}
 }
+
 void GraphicsManager::souris_max() {
-	warning("TODO");
+	// Original has no implementatoin
 }
 
 void GraphicsManager::SCANLINE(int width) {

@@ -469,12 +469,17 @@ LABEL_128:
     }
   }
 */
+	// Copy vesa surface to screen
+	_graphicsManager.DD_Lock();
+	memcpy((byte *)_graphicsManager.VideoPtr->pixels, (byte *)_graphicsManager.VESA_SCREEN.pixels, 
+		SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	_graphicsManager.DD_Unlock();
 
 	// Stub event loop
 	Common::Event evt;
 	while (!g_system->getEventManager()->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(evt))
-			;
+			g_system->updateScreen();
 	}
 
 	return Common::kNoError;

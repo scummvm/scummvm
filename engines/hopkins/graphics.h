@@ -48,11 +48,11 @@ public:
 	int YSCREEN;
 	int WinScan;
 	int Winbpp;
-	byte SD_PIXELS[514];
+	byte SD_PIXELS[257 * 2];
 	byte *PAL_PIXELS;
 	int nbrligne;
 	byte TABLE_COUL[256];
-	RGB8 cmap[256];
+	byte cmap[PALETTE_SIZE * 3];
 	byte Palette[PALETTE_SIZE * 3];
 	bool Linear;
 	Graphics::Surface *VideoPtr;
