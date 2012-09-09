@@ -56,38 +56,13 @@ public:
 
 protected:
 	// MidiParser
-	void resetTracking();
 	void parseNextEvent(EventInfo &info);
 
 	// QuickTimeParser
 	SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize);
 
 private:
-	struct NoteRequestInfo {
-		byte flags;
-		byte reserved;
-		uint16 polyphony;
-		Common::Rational typicalPolyphony;
-	};
-
-	struct ToneDescription {
-		uint32 synthesizerType;
-		Common::String synthesizerName;
-		Common::String instrumentName;
-		uint32 instrumentNumber;
-		uint32 gmNumber;
-	};
-
-	struct NoteRequest {
-		uint16 part;
-		NoteRequestInfo info;
-		ToneDescription tone;
-	};
-
-	typedef Common::Array<NoteRequest> NoteRequestList;
-
 	struct MIDITrackInfo {
-		NoteRequestList noteRequests;
 		byte *data;
 		uint32 size;
 		uint32 timeScale;
@@ -98,19 +73,16 @@ private:
 		MIDISampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
 		~MIDISampleDesc() {}
 
-		NoteRequestList _noteRequests;
+		byte *_requestData;
+		uint32 _requestSize;
 	};
 
 	uint32 readNextEvent(EventInfo &info);
-
-	Common::String readString31(Common::SeekableReadStream *stream);
-	Common::Rational readFixed(Common::SeekableReadStream *stream);
-	NoteRequestList readNoteRequestList(Common::SeekableReadStream *stream);
+	void handleGeneralEvent(EventInfo &info, uint32 control);
 
 	byte *readWholeTrack(Common::QuickTimeParser::Track *track, uint32 &trackSize);
 
 	Common::Array<MIDITrackInfo> _trackInfo;
-	uint32 _loadedInstruments;
 
 	void initFromContainerTracks();
 	void initCommon();
