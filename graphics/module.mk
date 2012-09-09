@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	yuva_to_rgba.o \
 	decoders/bmp.o \
 	decoders/jpeg.o \
+	decoders/tga.o \
 	pixelbuffer.o \
 	tinygl/api.o \
 	tinygl/arrays.o \
