@@ -79,11 +79,11 @@ static bool isNum(char c) {
 	return (c >= '0' && c <= '9');
 }
 
-static char *parse_character_class(const char *code, bool *isNegated) {
-	char * chars = new char[strlen(code)];
+static char *parseCharacterClass(const char *code, bool *isNegated) {
+	char *chars = new char[strlen(code)];
 	*isNegated = code[1] == '^';
-	unsigned int j = 0;
-	unsigned int k = (*isNegated ? 2 : 1);
+	uint32 j = 0;
+	uint32 k = (*isNegated ? 2 : 1);
 
 	for (; k < strlen(code) && code[k] != ']'; ++k) {
 		assert(code[k] != '[' && code[k] != '-');
@@ -158,7 +158,7 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 				}
 			} else if (code[0] == '[') {
 				bool isNegated;
-				char *allowed = parse_character_class(code, &isNegated);
+				char *allowed = parseCharacterClass(code, &isNegated);
 
 				while (src != end) {
 					bool inSet = strchr(allowed, src[0]) != NULL;
@@ -171,11 +171,11 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 
 				delete allowed;
 			} else {
-				char nextchar = format[i];
+				char nextChar = format[i];
 				while (src[0] == ' ') { //skip initial whitespace
 					++src;
 				}
-				while (src != end && src[0] != nextchar && !isSeparator(src[0])) {
+				while (src != end && src[0] != nextChar && !isSeparator(src[0])) {
 					s[j++] = src[0];
 					++src;
 				}
