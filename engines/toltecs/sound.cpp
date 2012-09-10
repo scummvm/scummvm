@@ -34,12 +34,18 @@ namespace Toltecs {
 
 Sound::Sound(ToltecsEngine *vm) : _vm(vm) {
 	for (int i = 0; i < kMaxChannels; i++) {
-		channels[i].type = kChannelTypeEmpty;
-		channels[i].resIndex = -1;
+		clearChannel(i);
 	}
 }
 
 Sound::~Sound() {
+}
+
+void Sound::clearChannel(int channel) {
+	channels[channel].type = kChannelTypeEmpty;
+	channels[channel].resIndex = -1;
+	channels[channel].volume = 0;
+	channels[channel].panning = 0;
 }
 
 void Sound::playSpeech(int16 resIndex) {
@@ -86,16 +92,14 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		_vm->_mixer->stopAll();
 		_vm->_screen->keepTalkTextItemsAlive();
 		for (int i = 0; i < kMaxChannels; i++) {
-			channels[i].type = kChannelTypeEmpty;
-			channels[i].resIndex = -1;
+			clearChannel(i);
 		}
 	} else if (type == -2) {
 		// Stop sounds with specified resIndex
 		for (int i = 0; i < kMaxChannels; i++) {
 			if (channels[i].resIndex == resIndex) {
 				_vm->_mixer->stopHandle(channels[i].handle);
-				channels[i].type = kChannelTypeEmpty;
-				channels[i].resIndex = -1;
+				clearChannel(i);
 			}
 		}
 	} else {
@@ -126,6 +130,8 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 
 			channels[freeChannel].type = type;
 			channels[freeChannel].resIndex = resIndex;
+			channels[freeChannel].volume = volume;
+			channels[freeChannel].panning = panning;
 
 			Audio::Mixer::SoundType soundType = getScummVMSoundType((SoundChannelType)type);
 
@@ -151,8 +157,7 @@ void Sound::stopSpeech() {
 		if (channels[i].type == kChannelTypeSpeech) {
 			_vm->_mixer->stopHandle(channels[i].handle);
 			_vm->_screen->keepTalkTextItemsAlive();
-			channels[i].type = kChannelTypeEmpty;
-			channels[i].resIndex = -1;
+			clearChannel(i);
 		}
 	}
 }
@@ -161,8 +166,7 @@ void Sound::stopAll() {
 	for (int i = 0; i < kMaxChannels; i++) {
 		_vm->_mixer->stopHandle(channels[i].handle);
 		_vm->_screen->keepTalkTextItemsAlive();
-		channels[i].type = kChannelTypeEmpty;
-		channels[i].resIndex = -1;
+		clearChannel(i);
 	}
 }
 
@@ -170,13 +174,22 @@ void Sound::saveState(Common::WriteStream *out) {
 	for (int i = 0; i < kMaxChannels; i++) {
 		out->writeSint16LE(channels[i].type);
 		out->writeSint16LE(channels[i].resIndex);
+		out->writeSint16LE(channels[i].volume);
+		out->writeSint16LE(channels[i].panning);
 	}
 }
 
-void Sound::loadState(Common::ReadStream *in) {
+void Sound::loadState(Common::ReadStream *in, int version) {
 	for (int i = 0; i < kMaxChannels; i++) {
 		channels[i].type = in->readSint16LE();
 		channels[i].resIndex = in->readSint16LE();
+		if (version < 4) {
+			channels[i].volume = (channels[i].type == kChannelTypeBackground) ? 50 : 100;
+			channels[i].panning = 0;
+		} else {
+			channels[i].volume = in->readSint16LE();
+			channels[i].panning = in->readSint16LE();
+		}
 
 		if (channels[i].type != kChannelTypeEmpty) {
 			Resource *soundResource = _vm->_res->load(channels[i].resIndex);
@@ -189,11 +202,8 @@ void Sound::loadState(Common::ReadStream *in) {
 
 			Audio::Mixer::SoundType soundType = getScummVMSoundType((SoundChannelType)channels[i].type);
 
-			// TODO: Volume and panning
-			int16 volume = (channels[i].type == kChannelTypeBackground) ? 50 : 100;
-
 			_vm->_mixer->playStream(soundType, &channels[i].handle,
-				stream, -1, volume, /*panning*/0);
+				stream, -1, channels[i].volume, channels[i].panning);
 		}
 	}
 }
