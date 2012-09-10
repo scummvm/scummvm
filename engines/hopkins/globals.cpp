@@ -32,7 +32,6 @@ Globals::Globals() {
 	SVGA = 2;
 	internet = 1;
 	PUBEXIT = 0;
-	FADESPD = 15;
 	vitesse = 1;
 	INSTALL_TYPE = 1;
 	MUSICVOL = 6;

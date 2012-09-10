@@ -53,6 +53,7 @@ GraphicsManager::GraphicsManager() {
 	nbrligne2 = 0;
 	Agr_x = Agr_y = 0;
 	Agr_Flag_x = Agr_Flag_y = 0;
+	FADESPD = 15;
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -431,7 +432,7 @@ void GraphicsManager::A_PCXSCREEN_WIDTH_SCREEN_HEIGHT(byte *surface, const Commo
 		f.seek(filesize - 768);
 	}
 
-	if (f.read(palette, PALETTE_SIZE * 3) != (PALETTE_SIZE * 3))
+	if (f.read(palette, PALETTE_BLOCK_SIZE) != (PALETTE_BLOCK_SIZE))
 		error("A_PCXSCREEN_WIDTH_SCREEN_HEIGHT");
   
 	f.close();
@@ -440,7 +441,7 @@ void GraphicsManager::A_PCXSCREEN_WIDTH_SCREEN_HEIGHT(byte *surface, const Commo
 
 void GraphicsManager::Cls_Pal() {
 	if (Winbpp == 2) {
-		Common::fill(&cmap[0], &cmap[PALETTE_SIZE * 3], 0);
+		Common::fill(&cmap[0], &cmap[PALETTE_BLOCK_SIZE], 0);
 
 		// TODO: Figure out what this is for
 		//SD_PIXELS[2 * v0] = SDL_MapRGB(*(_DWORD *)(LinuxScr + 4), 0, 0, 0);
@@ -653,6 +654,236 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 		v9 = v13 - 1;
 	} while (v13 != 1);
 }
+
+void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface) {
+	__int16 v3; 
+	int v4; 
+	__int16 v5;
+	__int16 v6;
+	char *v7; 
+	__int16 v8;
+	char *v9;
+	__int16 v10;
+	signed __int16 v12; 
+	unsigned __int16 v13;
+	byte palData[PALETTE_BLOCK_SIZE];
+	byte v15[3];
+	__int16 v16;
+	char v17[2];
+	char v18[1532]; 
+
+	v13 = FADESPD;
+	v3 = 0;
+	do {
+		v4 = v3;
+		*(&v16 + v4) = 0;
+		palData[v4] = 0;
+		++v3;
+	} while (v3 < (PALETTE_BLOCK_SIZE));
+  
+	setpal_vga256(palData);
+	v12 = 0;
+  
+	if ((signed __int16)v13 > 0) {
+		do {
+			v5 = 0;
+			do {
+				if ((unsigned __int8)palData[v5] < *(byte *)(v5 + palette)) {
+					v6 = *(&v16 + v5) + ((unsigned int)*(byte *)(v5 + palette) << 8) / (signed __int16)v13;
+					*(&v16 + v5) = v6;
+					palData[v5] = (v6 >> 8) & 0xff;
+				}
+
+				if (v15[v5] < *(byte *)(palette + v5 + 1)) {
+					v7 = &v17[2 * v5];
+					v8 = *(uint16 *)v7 + ((unsigned int)*(byte *)(palette + v5 + 1) << 8) / (signed __int16)v13;
+					*(uint16 *)v7 = v8;
+					v15[v5] = (v8 >> 8) & 0xff;
+				}
+
+				if (v15[v5 + 1] < *(byte *)(palette + v5 + 2)) {
+					v9 = &v18[2 * v5];
+					v10 = *(uint16 *)v9 + ((unsigned int)*(byte *)(palette + v5 + 2) << 8) / (signed __int16)v13;
+					*(uint16 *)v9 = v10;
+					v15[v5 + 1] = (v10 >> 8) & 0xff;
+				}
+
+				v5 += 3;
+			} while (v5 < (PALETTE_BLOCK_SIZE));
+      
+			setpal_vga256(palData);
+			if (Winbpp == 2) {
+				if (SDL_ECHELLE)
+					m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+				else
+					m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+				DD_VBL();
+			}
+
+			++v12;
+		} while (v12 < (signed __int16)v13);
+	}
+
+	setpal_vga256(palette);
+	if (Winbpp == 2) {
+		if (SDL_ECHELLE)
+			m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+		else
+			m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+		DD_VBL();
+	}
+}
+
+void GraphicsManager::fade_out(const byte *palette, int step, const byte *surface) {
+	__int16 v3;
+	__int16 v4;
+	int v5; 
+	signed __int16 v6;
+	__int16 v7;
+	int v8;
+	__int16 v9;
+	__int16 v10;
+	__int16 v12;
+	unsigned __int16 v13;
+	byte palData[PALETTE_BLOCK_SIZE];
+	__int16 v15[PALETTE_BLOCK_SIZE];
+
+	v13 = v3 = FADESPD;
+	if (palette) {
+		v4 = 0;
+		do {
+			v5 = v4;
+			v3 = *(byte *)(v4 + palette);
+			v3 <<= 8;
+			v15[v5] = v3;
+			palData[v5] = *(byte *)(v4++ + palette);
+		} while (v4 < PALETTE_BLOCK_SIZE);
+    
+		setpal_vga256(palData);
+		if (Winbpp == 2) {
+			if (SDL_ECHELLE)
+				m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+			else
+				m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+			DD_VBL();
+		}
+	
+		v6 = 0;
+		if ((signed __int16)v13 > 0) {
+			do {
+				v7 = 0;
+				do {
+					v8 = v7;
+					v9 = v15[v7] - ((unsigned int)*(byte *)(v7 + palette) << 8) / (signed __int16)v13;
+					v15[v8] = v9;
+					palData[v8] = (v9 >> 8) & 0xff;
+					++v7;
+				} while (v7 < (PALETTE_BLOCK_SIZE));
+				
+				setpal_vga256(palData);
+				if (Winbpp == 2) {
+					if (SDL_ECHELLE)
+						m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+					else
+						m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+			
+					DD_VBL();
+				}
+				++v6;
+			} while ((signed __int16)v13 > v6);
+		}
+
+		v10 = 0;
+		do {
+			palData[v10++] = 0;
+		} while (v10 < (PALETTE_BLOCK_SIZE));
+
+		setpal_vga256(palData);
+    
+		if (Winbpp == 2) {
+			if (!SDL_ECHELLE) {
+				m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+				return DD_VBL();
+			}
+			goto LABEL_28;
+		}
+	} else {
+		v12 = 0;
+		do {
+			palData[v12++] = 0;
+		} while (v12 < (PALETTE_BLOCK_SIZE));
+
+		setpal_vga256(palData);
+		if (Winbpp == 2) {
+			if (!SDL_ECHELLE) {
+				m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+				return DD_VBL();
+			}
+
+LABEL_28:
+			m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+			return DD_VBL();
+		}
+	}
+}
+
+void GraphicsManager::FADE_INS() {
+	FADESPD = 1;
+	fade_in(Palette, 1, (const byte *)VESA_BUFFER.pixels);
+}
+
+void GraphicsManager::FADE_OUTS() {
+  FADESPD = 1;
+  fade_out(Palette, 1, (const byte *)VESA_BUFFER.pixels);
+}
+
+void GraphicsManager::FADE_INW() {
+	FADESPD = 15;
+	fade_in(Palette, 20, (const byte *)VESA_BUFFER.pixels);
+}
+
+void GraphicsManager::FADE_OUTW() {
+	FADESPD = 15;
+	fade_out(Palette, 20, (const byte *)VESA_BUFFER.pixels);
+}
+
+void GraphicsManager::setpal_vga256(const byte *palette) {
+	CHANGE_PALETTE(palette);
+}
+
+void GraphicsManager::CHANGE_PALETTE(const byte *palette) {
+	signed int v1;
+	signed int v2;
+	int v3;
+	const byte *v4;
+
+	v1 = 0;
+	do {
+		PALPCX[v1] = *(byte *)(palette + v1);
+		++v1;
+	} while (v1 < PALETTE_BLOCK_SIZE);
+  
+	v2 = 0;
+	do {
+		v3 = 3 * v2;
+		cmap[v3] = *(byte *)(palette + 3 * v2);
+		v4 = palette + 3 * v2;
+		cmap[v3 + 1] = *(byte *)(v4 + 1);
+		cmap[v3 + 2] = *(byte *)(v4 + 2);
+
+		// TODO: Validate pixel encoding is correct
+		*(uint16 *)&SD_PIXELS[2 * v2++] = 
+			*(byte *)v4 | (*(byte *)(v4 + 1) << 5) | (*(byte *)(v4 + 2) << 10);
+	} while (v2 < PALETTE_SIZE);
+
+	g_system->getPaletteManager()->setPalette(cmap, 0, PALETTE_SIZE);
+}
+
+void GraphicsManager::DD_VBL() {
+	// TODO: Is this okay here?
+	g_system->updateScreen();
+}
+
 
 /*------------------------------------------------------------------------*/
 

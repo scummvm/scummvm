@@ -31,6 +31,7 @@
 namespace Hopkins {
 
 #define PALETTE_SIZE 256
+#define PALETTE_BLOCK_SIZE (PALETTE_SIZE * 3)
 
 struct RGB8 {
 	byte r;
@@ -52,8 +53,8 @@ public:
 	byte *PAL_PIXELS;
 	int nbrligne;
 	byte TABLE_COUL[256];
-	byte cmap[PALETTE_SIZE * 3];
-	byte Palette[PALETTE_SIZE * 3];
+	byte cmap[PALETTE_BLOCK_SIZE];
+	byte Palette[PALETTE_BLOCK_SIZE];
 	bool Linear;
 	Graphics::Surface *VideoPtr;
 	Graphics::Surface VESA_SCREEN;
@@ -70,7 +71,8 @@ public:
 	int nbrligne2;
 	int Agr_x, Agr_y;
 	int Agr_Flag_x, Agr_Flag_y;
-
+	int FADESPD;
+	byte PALPCX[800];
 public:
 	GraphicsManager();
 	~GraphicsManager();
@@ -92,6 +94,15 @@ public:
 	void m_scroll2A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void fade_in(const byte *palette, int step, const byte *surface);
+	void fade_out(const byte *palette, int step, const byte *surface);
+	void FADE_INS();
+	void FADE_OUTS();
+	void FADE_INW();
+	void FADE_OUTW();
+	void setpal_vga256(const byte *palette);
+	void CHANGE_PALETTE(const byte *palette);
+	void DD_VBL();
 };
 
 class ObjectManager {

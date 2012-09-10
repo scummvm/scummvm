@@ -95,6 +95,7 @@ public:
 	bool getIsDemo() const;
 
 	int getRandomNumber(int maxNumber);
+	void delay(int delay);
 };
 
 // Global reference to the HopkinsEngine object

@@ -68,8 +68,11 @@ Common::Error HopkinsEngine::run() {
 	_graphicsManager.DD_Unlock();
 
 	_graphicsManager.LOAD_IMAGE("LINUX");
-	/*
-  FADE_INW();
+
+#ifdef HOPKINS_DEBUG
+	_graphicsManager.FADE_INW();
+	delay(1500);
+/*
   SDL_Delay(1500);
   FADE_OUTW();
   if ( !internet )
@@ -469,6 +472,7 @@ LABEL_128:
     }
   }
 */
+#else
 	// Copy vesa surface to screen
 	_graphicsManager.DD_Lock();
 	memcpy((byte *)_graphicsManager.VideoPtr->pixels, (byte *)_graphicsManager.VESA_SCREEN.pixels, 
@@ -481,7 +485,7 @@ LABEL_128:
 		while (g_system->getEventManager()->pollEvent(evt))
 			g_system->updateScreen();
 	}
-
+#endif
 	return Common::kNoError;
 }
 
@@ -585,6 +589,14 @@ void HopkinsEngine::INIT_SYSTEM() {
 
 void HopkinsEngine::Init_Interrupt() {
 	// TODO: Determine whether the timer is needed
+}
+
+void HopkinsEngine::delay(int delay) {
+	uint32 delayEnd = g_system->getMillis() + delay;
+
+	while (!g_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
+		g_system->delayMillis(10);
+	}	
 }
 
 } // End of namespace Hopkins

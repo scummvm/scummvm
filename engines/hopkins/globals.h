@@ -108,7 +108,6 @@ struct ObjetWItem {
  */
 class Globals {
 public:
-	int FADESPD;
 	int FR;
 	int SVGA;
 	int internet;
