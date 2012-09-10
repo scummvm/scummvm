@@ -139,6 +139,39 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+	{
+		// Tony Tough German "Gamestar" provided in bug #3566035
+		{
+			"tony",
+			0,
+			{
+				{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
+				{"roasted.mpc", 0, "187de6f88f4083808cb66342ab55a7fd", 389904},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+	{
+		// Tony Tough Czech provided in bug #3565765
+		{
+			"tony",
+			0,
+			{
+				// {"data1.cab", 0, "c6d5dd8f0c1241a6e3f7861b7f27bf7b", 4350},
+				{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
+				{"roasted.mpc", 0, "a8283a101878f3ca105f1f83f07e2c40", 386491},
+				AD_LISTEND
+			},
+			Common::CZ_CZE,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
 	{ AD_TABLE_END_MARKER }
 };
 
