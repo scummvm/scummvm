@@ -133,7 +133,7 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 	case 0x2:
 	case 0x3:
 		// Note event
-		info.event = 0x90 | ((control >> 24) & 0x1F);
+		info.event = 0x90 | getChannel((control >> 24) & 0x1F);
 		info.basic.param1 = ((control >> 18) & 0x3F) + 32;
 		info.basic.param2 = (control >> 11) & 0x7F;
 		info.length = (info.basic.param2 == 0) ? 0 : (control & 0x7FF);
@@ -143,7 +143,7 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 		// Controller
 		if (((control >> 16) & 0xFF) == 32) {
 			// Pitch bend
-			info.event = 0xE0 | ((control >> 24) & 0x1F);
+			info.event = 0xE0 | getChannel((control >> 24) & 0x1F);
 
 			// Actually an 8.8 fixed point number
 			int16 value = (int16)(control & 0xFFFF);
@@ -162,7 +162,7 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 			info.basic.param2 = value >> 7;
 		} else {
 			// Regular controller
-			info.event = 0xB0 | ((control >> 24) & 0x1F);
+			info.event = 0xB0 | getChannel((control >> 24) & 0x1F);
 			info.basic.param1 = (control >> 16) & 0xFF;
 			info.basic.param2 = (control >> 8) & 0xFF;
 		}
@@ -175,7 +175,7 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 	case 0x9: {
 		// Extended note event
 		uint32 extra = readUint32();
-		info.event = 0x90 | ((control >> 16) & 0xFFF);
+		info.event = 0x90 | getChannel((control >> 16) & 0xFFF);
 		info.basic.param1 = (control >> 8) & 0xFF;
 		info.basic.param2 = (extra >> 22) & 0x7F;
 		info.length = (info.basic.param2 == 0) ? 0 : (extra & 0x3FFFFF);
@@ -184,7 +184,7 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 	case 0xA: {
 		// Extended controller
 		uint32 extra = readUint32();
-		info.event = 0xB0 | ((control >> 16) & 0xFFF);
+		info.event = 0xB0 | getChannel((control >> 16) & 0xFFF);
 		info.basic.param1 = (extra >> 16) & 0x3FFF;
 		info.basic.param2 = (extra >> 8) & 0xFF; // ???
 		break;
@@ -219,7 +219,12 @@ void MidiParser_QT::handleGeneralEvent(EventInfo &info, uint32 control) {
 		// Note Request
 		// Currently we're only using the GM number from the request
 		assert(dataSize == 84);
-		info.event = 0xC0 | part;
+
+		// We have to remap channels because GM needs percussion to be on the
+		// percussion channel but QuickTime can have that anywhere.
+		allocateChannel(part, READ_BE_UINT32(_position._playPos + 80));
+
+		info.event = 0xC0 | getChannel(part);
 		info.basic.param1 = READ_BE_UINT32(_position._playPos + 80);
 		break;
 	case 5: // Tune Difference
@@ -233,6 +238,44 @@ void MidiParser_QT::handleGeneralEvent(EventInfo &info, uint32 control) {
 	}
 
 	_position._playPos += dataSize + 4;
+}
+
+void MidiParser_QT::allocateChannel(uint32 part, uint32 instrument) {
+	if (instrument == 0x4001) {
+		// Drum Kit -> Percussion Channel
+		if (isChannelAllocated(9))
+			warning("Multiple QuickTime MIDI percussion channels");
+
+		_channelMap[part] = 9;
+	} else {
+		// Normal Instrument -> First Free Channel
+		for (uint32 i = 0; i < 16; i++) {
+			// 9 is reserved for Percussion
+			if (i == 9 || isChannelAllocated(i))
+				continue;
+
+			_channelMap[part] = i;
+			return;
+		}
+
+		error("Failed to allocate channel for QuickTime MIDI");
+	}
+}
+
+byte MidiParser_QT::getChannel(uint32 part) const {
+	return _channelMap[part];
+}
+
+bool MidiParser_QT::isChannelAllocated(byte channel) const {
+	for (ChannelMap::const_iterator it = _channelMap.begin(); it != _channelMap.end(); it++)
+		if (it->_value == channel)
+			return true;
+
+	return false;
+}
+
+void MidiParser_QT::resetTracking() {
+	_channelMap.clear();
 }
 
 Common::QuickTimeParser::SampleDesc *MidiParser_QT::readSampleDesc(Track *track, uint32 format, uint32 descSize) {

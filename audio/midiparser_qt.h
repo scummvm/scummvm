@@ -25,6 +25,7 @@
 
 #include "audio/midiparser.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/quicktime.h"
 
 /**
@@ -57,6 +58,7 @@ public:
 protected:
 	// MidiParser
 	void parseNextEvent(EventInfo &info);
+	void resetTracking();
 
 	// QuickTimeParser
 	SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize);
@@ -80,9 +82,16 @@ private:
 	uint32 readNextEvent(EventInfo &info);
 	void handleGeneralEvent(EventInfo &info, uint32 control);
 
+	void allocateChannel(uint32 part, uint32 instrument);
+	byte getChannel(uint32 part) const;
+	bool isChannelAllocated(byte channel) const;
+
 	byte *readWholeTrack(Common::QuickTimeParser::Track *track, uint32 &trackSize);
 
 	Common::Array<MIDITrackInfo> _trackInfo;
+
+	typedef Common::HashMap<uint, uint> ChannelMap;
+	ChannelMap _channelMap;
 
 	void initFromContainerTracks();
 	void initCommon();
