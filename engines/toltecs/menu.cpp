@@ -40,7 +40,7 @@ MenuSystem::MenuSystem(ToltecsEngine *vm) : _vm(vm) {
 MenuSystem::~MenuSystem() {
 }
 
-int MenuSystem::run() {
+int MenuSystem::run(MenuID menuId) {
 
 	//debug("MenuSystem::run()");
 
@@ -53,7 +53,7 @@ int MenuSystem::run() {
 	memcpy(backgroundOrig.getBasePtr(0,0), _vm->_screen->_frontScreen, 640 * 400);
 
 	_currMenuID = kMenuIdNone;
-	_newMenuID = kMenuIdMain;
+	_newMenuID = menuId;
 	_currItemID = kItemIdNone;
 	_editingDescription = false;
 

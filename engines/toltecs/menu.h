@@ -29,14 +29,6 @@
 
 namespace Toltecs {
 
-enum MenuID {
-	kMenuIdNone,
-	kMenuIdMain,
-	kMenuIdSave,
-	kMenuIdLoad,
-	kMenuIdVolumes
-};
-
 enum ItemID {
 	kItemIdNone,
 	// Main menu
@@ -85,7 +77,7 @@ public:
 	MenuSystem(ToltecsEngine *vm);
 	~MenuSystem();
 
-	int run();
+	int run(MenuID menuId);
 	void update();
 	void handleEvents();
 	

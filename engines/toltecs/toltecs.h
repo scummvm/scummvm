@@ -81,6 +81,14 @@ enum SysString {
 	kSysStrCount
 };
 
+enum MenuID {
+	kMenuIdNone,
+	kMenuIdMain,
+	kMenuIdSave,
+	kMenuIdLoad,
+	kMenuIdVolumes
+};
+
 class ToltecsEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
@@ -120,7 +128,9 @@ public:
 	void scrollCameraLeft(int16 delta);
 	void scrollCameraRight(int16 delta);
 	void updateCamera();
-	
+
+	void showMenu(MenuID menuId);
+
 	void talk(int16 slotIndex, int16 slotOffset);
 
 	void walk(byte *walkData);

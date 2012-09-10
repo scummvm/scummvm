@@ -327,13 +327,13 @@ void ToltecsEngine::updateInput() {
 			//debug("key: flags = %02X; keycode = %d", _keyState.flags, _keyState.keycode);
 
 			switch (event.kbd.keycode) {
+			case Common::KEYCODE_F5:
+				showMenu(kMenuIdSave);
+				break;
 			case Common::KEYCODE_F7:
-				savegame("toltecs.001", "Quicksave");
+				showMenu(kMenuIdLoad);
 				break;
-			case Common::KEYCODE_F9:
-				loadgame("toltecs.001");
-				break;
-			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_SPACE:
 				// Skip current dialog line, if a dialog is active
 				if (_screen->getTalkTextDuration() > 0) {
 					_sound->stopSpeech();
@@ -639,7 +639,18 @@ int16 ToltecsEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 ind
 	}
 	
 	return -1;
+}
 
+void ToltecsEngine::showMenu(MenuID menuId) {
+	_screen->loadMouseCursor(12);
+	_palette->loadAddPalette(9, 224);
+	_palette->setDeltaPalette(_palette->getMainPalette(), 7, 0, 31, 224);
+	_screen->finishTalkTextItems();
+	_screen->clearSprites();
+	CursorMan.showMouse(true);
+	_menuSystem->run(menuId);
+	_keyState.reset();
+	_script->setSwitchLocalDataNear(true);
 }
 
 void ToltecsEngine::syncSoundSettings() {
