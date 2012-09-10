@@ -169,7 +169,7 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 					++src;
 				}
 
-				delete allowed;
+				delete[] allowed;
 			} else {
 				char nextChar = format[i];
 				while (src[0] == ' ') { //skip initial whitespace
