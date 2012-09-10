@@ -796,7 +796,6 @@ TokenList tokenize(const std::string &input, char separator) {
 
 	return result;
 }
-} // End of anonymous namespace
 
 namespace {
 const Feature s_features[] = {
