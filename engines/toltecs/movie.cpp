@@ -153,10 +153,10 @@ void MoviePlayer::playMovie(uint resIndex) {
 			// Already processed
 			break;
 		case kChunkShowSubtitle:
-			// TODO: Check if the text is a subtitle (last character == 0xFE).
-			//	   If so, don't show it if text display is disabled.
-			memcpy(_vm->_script->getSlotData(subtitleSlot), chunkBuffer, chunkSize);
-			_vm->_screen->updateTalkText(subtitleSlot, 0);
+			if (_vm->_cfgText) {
+				memcpy(_vm->_script->getSlotData(subtitleSlot), chunkBuffer, chunkSize);
+				_vm->_screen->updateTalkText(subtitleSlot, 0);
+			}
 			break;
 		case kChunkShakeScreen: // start/stop shakescreen effect
 			if (chunkBuffer[0] == 0xFF)
