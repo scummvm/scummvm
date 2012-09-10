@@ -77,12 +77,11 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		// TODO Music18hList_play(0xD2FA4D14, 0, 2, 1);
-		setGlobalVar(0x1860C990,1);//DEBUG
+		//setGlobalVar(0x1860C990,1);//DEBUG
 		if (getGlobalVar(0x1860C990))
 			_childObject = new Scene2803b(_vm, this, which);
-		else {
-			// TODO _childObject = new Scene2803(_vm, this, which);
-		}
+		else
+			_childObject = new Scene2803(_vm, this, which);
 		break;
 	case 3:
 		_childObject = new Scene2804(_vm, this, which);
@@ -477,7 +476,7 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 	return messageResult;
 }
 
-Class488::Class488(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y)
+AsScene2803LightCord::AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _fileHash1(fileHash1), _fileHash2(fileHash2),
 	_flag1(false), _flag2(false), _soundResource(vm) {
 
@@ -489,7 +488,7 @@ Class488::Class488(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, ui
 	sub4343C0();
 }
 
-uint32 Class488::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -511,7 +510,7 @@ uint32 Class488::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-uint32 Class488::handleMessage434340(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene2803LightCord::handleMessage434340(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -521,21 +520,21 @@ uint32 Class488::handleMessage434340(int messageNum, const MessageParam &param, 
 	return messageResult;
 }
 
-void Class488::sub434380() {
+void AsScene2803LightCord::sub434380() {
 	_flag2 = false;
 	_flag1 = true;
 	startAnimation(_fileHash2, 0, -1);
-	SetMessageHandler(&Class488::handleMessage434340);
-	NextState(&Class488::sub4343C0);
+	SetMessageHandler(&AsScene2803LightCord::handleMessage434340);
+	NextState(&AsScene2803LightCord::sub4343C0);
 }
 
-void Class488::sub4343C0() {
+void AsScene2803LightCord::sub4343C0() {
 	_flag1 = false;
 	startAnimation(_fileHash1, 0, -1);
-	SetMessageHandler(&Class488::handleMessage);
+	SetMessageHandler(&AsScene2803LightCord::handleMessage);
 }
 
-void Class488::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
+void AsScene2803LightCord::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 	_fileHash1 = fileHash1;
 	_fileHash2 = fileHash2;
 	if (_flag1) {
@@ -544,6 +543,381 @@ void Class488::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 	} else {
 		startAnimation(_fileHash1, 0, -1);
 	}
+}
+
+AsScene2803TestTubeOne::AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileHash1, uint32 fileHash2)
+	: AnimatedSprite(vm, 1200), _fileHash1(fileHash1), _fileHash2(fileHash2) {
+	
+	createSurface1(fileHash1, 100);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2803TestTubeOne::handleMessage);
+	_x = 529;
+	_y = 326;
+}
+
+uint32 AsScene2803TestTubeOne::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		if (param.asInteger())
+			startAnimation(_fileHash2, 0, -1);
+		else
+			startAnimation(_fileHash1, 0, -1);
+		break;
+	}
+	return messageResult;
+}
+
+AsScene2803Rope::AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+	
+	createSurface(990, 68, 476);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	SetMessageHandler(&AsScene2803Rope::handleMessage);
+	startAnimation(0x9D098C23, 35, 53);
+	NextState(&AsScene2803Rope::sub476A70);
+	_x = x;
+	_y = -276;
+}
+
+uint32 AsScene2803Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		startAnimation(0x9D098C23, 50, -1);
+		SetMessageHandler(&AsScene2803Rope::handleMessage4769E0);
+		break;
+	case 0x482A:
+		sendMessage(_parentScene, 0x1022, 990);
+		break;
+	case 0x482B:
+		sendMessage(_parentScene, 0x1022, 1010);
+		break;
+	}
+	return messageResult;
+}
+
+uint32 AsScene2803Rope::handleMessage4769E0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		gotoNextState();
+		break;
+	case 0x482A:
+		sendMessage(_parentScene, 0x1022, 990);
+		break;
+	case 0x482B:
+		sendMessage(_parentScene, 0x1022, 1010);
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2803Rope::sub476A70() {
+	startAnimation(0x8258A030, 0, 1);
+	NextState(&AsScene2803Rope::stHide);
+}
+
+void AsScene2803Rope::stHide() {
+	stopAnimation();
+	setVisible(false);
+}
+
+Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _field134(0) {
+	
+	static const uint32 kScene2803FileHashes1[] = {
+		0,
+		0x081000F1,
+		0x08100171,
+		0x08100271
+	};
+
+	static const uint32 kScene2803FileHashes2[] = {
+		0,
+		0x286800D4,
+		0x286806D4,
+		0x28680AD4
+	};
+
+	setGlobalVar(0x1C1B8A9A, 1);
+	_vm->gameModule()->initScene2808Vars1();
+	
+	SetMessageHandler(&Scene2803::handleMessage);
+	
+	loadDataResource(0x00900849);
+	
+	_surfaceFlag = true;
+	
+	_background = new DirtyBackground(_vm, 0);
+	_background->createSurface(0, 640, 480);
+	addBackground(_background);
+	
+	setPalette(0x412A423E);
+	addEntity(_palette);
+	
+	insertMouse433(0xA423A41A);
+	
+	if (getSubVar(0x0C601058, 0) == 0) {
+		_asTestTubeOne = (StaticSprite*)insertStaticSprite(0x66121222, 100);
+	} else {
+		_asTestTubeOne = (StaticSprite*)insertSprite<AsScene2803TestTubeOne>(
+			kScene2803FileHashes1[getSubVar(0x0C601058, 0)],
+			kScene2803FileHashes2[getSubVar(0x0C601058, 0)]);
+	}
+	
+	if (getSubVar(0x0C601058, 1) == 3)
+		_asTestTubeTwo = (StaticSprite*)insertStaticSprite(0x64330236, 100);
+
+	if (getSubVar(0x0C601058, 2) == 3)
+		_asTestTubeThree = (StaticSprite*)insertStaticSprite(0x2E4A22A2, 100);
+	
+	_asLightCord = insertSprite<AsScene2803LightCord>(this, 0x8FAD5932, 0x276E1A3D, 578, 200);
+	_sprite3 = (StaticSprite*)insertStaticSprite(0xA40EF2FB, 1100);
+	_sprite4 = (StaticSprite*)insertStaticSprite(0x0C03AA23, 1100);
+	_sprite5 = (StaticSprite*)insertStaticSprite(0x2A822E2E, 1100);
+	_sprite6 = (StaticSprite*)insertStaticSprite(0x2603A202, 1100);
+	_sprite7 = (StaticSprite*)insertStaticSprite(0x24320220, 1100);
+	_sprite8 = (StaticSprite*)insertStaticSprite(0x3C42022F, 1100);
+	_sprite9 = (StaticSprite*)insertStaticSprite(0x341A0237, 1100);
+	_sprite10 = insertStaticSprite(0x855820A3, 1200);
+
+	_clipRects1[0].x1 = 0;
+	_clipRects1[0].y1 = 0;
+	_clipRects1[0].x2 = 640;
+	_clipRects1[0].y2 = _sprite8->getDrawRect().y2();
+	
+	_clipRects1[1].x1 = _sprite8->getDrawRect().x2();
+	_clipRects1[1].y1 = _sprite8->getDrawRect().y2();
+	_clipRects1[1].x2 = 640;
+	_clipRects1[1].y2 = 480;
+
+	_clipRects2[0].x1 = _sprite5->getDrawRect().x;
+	_clipRects2[0].y1 = 0;
+	_clipRects2[0].x2 = _sprite5->getDrawRect().x2();
+	_clipRects2[0].y2 = _sprite5->getDrawRect().y2();
+	
+	_clipRects2[1].x1 = _sprite6->getDrawRect().x;
+	_clipRects2[1].y1 = 0;
+	_clipRects2[1].x2 = _sprite3->getDrawRect().x;
+	_clipRects2[1].y2 = _sprite6->getDrawRect().y2();
+	
+	_clipRects2[2].x1 = _sprite3->getDrawRect().x;
+	_clipRects2[2].y1 = 0;
+	_clipRects2[2].x2 = _sprite4->getDrawRect().x2();
+	_clipRects2[2].y2 = 480;
+
+	if (which < 0) {
+		insertKlayman<KmScene2803>(302, 445, _clipRects1, 2);
+		setMessageList(0x004B79F0);
+		sub476090();
+	} else if (which == 1) {
+		insertKlayman<KmScene2803>(200, 445, _clipRects1, 2);
+		setMessageList(0x004B79C8);
+		sub476090();
+	} else if (which == 3) {
+		NPoint pt = _dataResource.getPoint(0xC2A08694);
+		insertKlayman<KmScene2803>(pt.x, pt.y, _clipRects2, 3);
+		setMessageList(0x004B7A00);
+		sub475FF0();
+	} else if (which == 5) {
+		insertKlayman<KmScene2803>(253, 298, _clipRects2, 3);
+		setMessageList(0x004B7A00);
+		sub475FF0();
+	} else if (which == 6) {
+		_asRope = insertSprite<AsScene2803Rope>(this, 384);
+		_asRope->setClipRect(0, 25, 640, 480);
+		insertKlayman<KmScene2803>(384, 0, _clipRects1, 2);
+		sendEntityMessage(_klayman, 0x1014, _asRope);
+		_klayman->setClipRect(0, 25, 640, 480);
+		setMessageList(0x004B7A78);
+		sub476090();
+	} else if (which == 2) {
+		insertKlayman<KmScene2803>(400, 445, _clipRects1, 2);
+		setMessageList(0x004B79F8);
+		sub476090();
+	} else {
+		insertKlayman<KmScene2803>(50, 231, _clipRects2, 3);
+		setMessageList(0x004B79C0);
+		sub475FF0();
+	}
+
+	sub476180();
+
+}
+
+void Scene2803::update475E40() {
+	if (_klayman->getX() < 350) {
+		sub4765D0();
+	} else {
+		sub4765F0();
+	}
+	Scene::update();
+}
+
+uint32 Scene2803::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x480F:
+		sub476130();
+		// NOTE Intentional fall-through
+	case 0x100D:
+		if (param.asInteger() == 0x84251F82)
+			setMessageList(0x004B7A50);
+		else if (param.asInteger() == 0x4254A2D2)
+			setMessageList(0x004B7A58);
+		else if (param.asInteger() == 0xE90A40A0)
+			setMessageList(0x004B7A08);
+		else if (param.asInteger() == 0x482D1210)
+			setMessageList(0x004B7A30);
+		else if (param.asInteger() == 0x802402B2) {
+			sendEntityMessage(_klayman, 0x1014, _asLightCord);
+			setMessageList(0x004B7A68);
+		} else if (param.asInteger() == 0x9626F390)
+			setMessageList(0x004B7A88);
+		break;
+	case 0x482A:
+		sub475FF0();
+		sub4765F0();
+		break;
+	case 0x482B:
+		sub476090();
+		sub4765D0();
+		break;
+	}
+	return messageResult;
+}
+
+void Scene2803::sub475FF0() {
+	SetUpdateHandler(&Scene2803::update475E40);
+	// TODO _klayman->setClipRects(_clipRects2, 3);
+	sendMessage(_klayman, 0x482C, 0xE5A48297);
+	_sprite3->setVisible(true);
+	_sprite4->setVisible(true);
+	_sprite5->setVisible(true);
+	_sprite6->setVisible(true);
+	_sprite7->setVisible(true);
+	_sprite8->setVisible(false);
+	_sprite9->setVisible(false);
+}
+
+void Scene2803::sub476090() {
+	SetUpdateHandler(&Scene::update);
+	// TODO _klayman->setClipRects(_clipRects1, 2);
+	sendMessage(_klayman, 0x482C, 0);
+	_sprite3->setVisible(false);
+	_sprite4->setVisible(false);
+	_sprite5->setVisible(false);
+	_sprite6->setVisible(false);
+	_sprite7->setVisible(false);
+	_sprite8->setVisible(true);
+	_sprite9->setVisible(true);
+}
+
+void Scene2803::sub476130() {
+	setGlobalVar(0x190A1D18, getGlobalVar(0x190A1D18) ? 0 : 1);
+	sub476180();
+}
+
+void Scene2803::sub476180() {
+	// TODO? g_screen->resetDirtyRects();
+	if (getGlobalVar(0x190A1D18)) {
+		_asLightCord->setFileHashes(0x8FAD5932, 0x276E1A3D);
+		_background->load(0x412A423E);
+		_palette->addPalette(0x412A423E, 0, 256, 0);
+		_palette->addBasePalette(0x412A423E, 0, 256, 0);
+		_sprite3->load(0xA40EF2FB, false, false);
+		_sprite3->update();
+		_sprite4->load(0x0C03AA23, false, false);
+		_sprite4->update();
+		_sprite5->load(0x2A822E2E, false, false);
+		_sprite5->update();
+		_sprite6->load(0x2603A202, false, false);
+		_sprite6->update();
+		_sprite7->load(0x24320220, false, false);
+		_sprite7->update();
+		_mouseCursor->load(0xA423A41A);
+		_mouseCursor->updateCursor();
+		_sprite8->load(0x3C42022F, false, false);
+		_sprite8->update();
+		_sprite9->load(0x341A0237, false, false);
+		_sprite9->update();
+		if (getSubVar(0x0C601058, 0) == 0) {
+			_asTestTubeOne->load(0x66121222, false, false);
+			_asTestTubeOne->update();
+		} else
+			sendMessage(_asTestTubeOne, 0x2000, 0);
+		if (getSubVar(0x0C601058, 1) == 3) {
+			_asTestTubeTwo->load(0x64330236, false, false);
+			_asTestTubeTwo->update();
+		}
+		if (getSubVar(0x0C601058, 2) == 3) {
+			_asTestTubeThree->load(0x2E4A22A2, false, false);
+			_asTestTubeThree->update();
+		}
+		_sprite10->setVisible(true);
+	} else {
+		_asLightCord->setFileHashes(0xAFAD591A, 0x276E321D);
+		_background->load(0x29800A01);
+		_palette->addPalette(0x29800A01, 0, 256, 0);
+		_palette->addBasePalette(0x29800A01, 0, 256, 0);
+		_sprite3->load(0x234340A0, false, false);
+		_sprite3->update();
+		_sprite4->load(0x16202200, false, false);
+		_sprite4->update();
+		_sprite5->load(0x1030169A, false, false);
+		_sprite5->update();
+		_sprite6->load(0x1600A6A8, false, false);
+		_sprite6->update();
+		_sprite7->load(0xD0802EA0, false, false);
+		_sprite7->update();
+		_mouseCursor->load(0x00A05290);
+		_mouseCursor->updateCursor();
+		_sprite8->load(0x108012C1, false, false);
+		_sprite8->update();
+		_sprite9->load(0x708072E0, false, false);
+		_sprite9->update();
+		if (getSubVar(0x0C601058, 0) == 0) {
+			_asTestTubeOne->load(0x50C027A8, false, false);
+			_asTestTubeOne->update();
+		} else
+			sendMessage(_asTestTubeOne, 0x2000, 1);
+		if (getSubVar(0x0C601058, 1) == 3) {
+			_asTestTubeTwo->load(0xD48077A0, false, false);
+			_asTestTubeTwo->update();
+		}
+		if (getSubVar(0x0C601058, 2) == 3) {
+			_asTestTubeThree->load(0x30022689, false, false);
+			_asTestTubeThree->update();
+		}
+		_sprite10->setVisible(false);
+	}
+	sub476610();
+}
+
+void Scene2803::sub4765D0() {
+	if (_field134) {
+		_field134 = 0;
+		sub476610();
+	}
+}
+
+void Scene2803::sub4765F0() {
+	if (!_field134) {
+		_field134 = 1;
+		sub476610();
+	}
+}
+
+void Scene2803::sub476610() {
+	uint32 fadePaletteHash;
+	if (getGlobalVar(0x190A1D18))
+		fadePaletteHash = _field134 ? 0xB103B604 : 0x412A423E;
+	else
+		fadePaletteHash = _field134 ? 0x0263D144 : 0x29800A01;
+	_palette->addBasePalette(fadePaletteHash, 0, 64, 0);
+	_palette->startFadeToPalette(12);
 }
 
 Scene2803b::Scene2803b(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -563,7 +937,7 @@ Scene2803b::Scene2803b(NeverhoodEngine *vm, Module *parentModule, int which)
 	loadDataResource(0x81120132);
 	insertMouse433(0x00A05290);
 
-	insertSprite<Class488>(this, 0xAFAD591A, 0x276E321D, 578, 200);
+	insertSprite<AsScene2803LightCord>(this, 0xAFAD591A, 0x276E321D, 578, 200);
 
 	if (getGlobalVar(0x190A1D18)) {
 		setBackground(0x412A423E);

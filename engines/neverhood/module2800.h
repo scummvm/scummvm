@@ -54,9 +54,9 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Class488 : public AnimatedSprite {
+class AsScene2803LightCord : public AnimatedSprite {
 public:
-	Class488(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y);
+	AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y);
 	void sub434380();
 	void sub4343C0();
 	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
@@ -67,6 +67,56 @@ protected:
 	bool _flag1, _flag2;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage434340(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2803TestTubeOne : public AnimatedSprite {
+public:
+	AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileHash1, uint32 fileHash2);
+protected:
+	uint32 _fileHash1, _fileHash2;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2803Rope : public AnimatedSprite {
+public:
+	AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x);
+protected:
+	Scene *_parentScene;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage4769E0(int messageNum, const MessageParam &param, Entity *sender);
+	void sub476A70();
+	void stHide();
+};
+
+class Scene2803 : public Scene {
+public:
+	Scene2803(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	StaticSprite *_asTestTubeOne;
+	StaticSprite *_asTestTubeTwo;
+	StaticSprite *_asTestTubeThree;
+	Sprite *_asRope;
+	AsScene2803LightCord *_asLightCord;
+	StaticSprite *_sprite3;
+	StaticSprite *_sprite4;
+	StaticSprite *_sprite5;
+	StaticSprite *_sprite6;
+	StaticSprite *_sprite7;
+	StaticSprite *_sprite8;
+	StaticSprite *_sprite9;
+	Sprite *_sprite10;
+	NRect _clipRects1[2];
+	NRect _clipRects2[3];
+	bool _field134;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void update475E40();
+	void sub475FF0();
+	void sub476090();
+	void sub476130();
+	void sub476180();
+	void sub4765D0();
+	void sub4765F0();
+	void sub476610();
 };
 
 class Scene2803b : public Scene {

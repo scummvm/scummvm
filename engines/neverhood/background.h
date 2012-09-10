@@ -46,6 +46,7 @@ protected:
 
 class DirtyBackground : public Background {
 public:
+	DirtyBackground(NeverhoodEngine *vm, int objectPriority);
 	DirtyBackground(NeverhoodEngine *vm, const char *fileName, int objectPriority, int surfacePriority);
 	DirtyBackground(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority);
 	void createSurface(int surfacePriority, int16 width, int16 height);

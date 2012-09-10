@@ -2278,6 +2278,27 @@ void Klayman::sub420460() {
 	}
 }
 
+void Klayman::sub420500() {
+	_status2 = 1;
+	_acceptInput = false;
+	startAnimationByHash(0x00AB8C10, 0x320AC306, 0);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(NULL);
+	SetMessageHandler(&Klayman::handleMessage41F0E0);
+	NextState(&Klayman::stReleaseRing);
+}
+
+uint32 Klayman::handleMessage41F0E0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x320AC306)
+			_soundResource1.play(0x5860C640);
+		break;
+	}
+	return messageResult;
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -5266,6 +5287,69 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
+KmScene2803::KmScene2803(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	
+	// TODO ClipRects stuff
+	_dataResource.load(0x00900849);
+}
+
+uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4803:
+		_destY = param.asInteger();
+		GotoState(&Klayman::sub4204C0);
+		break;
+	case 0x4804:
+		if (param.asInteger() == 3)
+			GotoState(&Klayman::sub421230);
+		break;
+	case 0x480D:
+		GotoState(&Klayman::sub420F60);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x481D:
+		GotoState(&Klayman::stTurnToUse);
+		break;
+	case 0x481E:
+		GotoState(&Klayman::stReturnFromUse);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stWonderAboutAfter);
+		} else {
+			GotoState(&Klayman::stWonderAboutHalf);
+		}
+		break;
+	case 0x482E:	 
+		GotoState(&Klayman::stWalkToFront);
+		break;
+	case 0x482F:
+		GotoState(&Klayman::stTurnToBack);
+		break;
+	case 0x4834:
+		GotoState(&Klayman::stStepOver);
+		break;
+	case 0x4838:
+		GotoState(&Klayman::sub420500);
+		break;
+	}
+	return 0;
+}
+
 KmScene2803b::KmScene2803b(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000), _soundResource(vm) {
 	
@@ -5807,8 +5891,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 	return 0;
 }
 
-KmScene2810::KmScene2810(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
-		NRect *clipRects, uint clipRectsCount)
+KmScene2810::KmScene2810(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, uint clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	// TODO ClipRects stuff

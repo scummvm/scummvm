@@ -59,6 +59,11 @@ void Background::load(uint32 fileHash) {
 
 // DirtyBackground
 
+DirtyBackground::DirtyBackground(NeverhoodEngine *vm, int objectPriority)
+	: Background(vm, objectPriority) {
+	// Empty
+}
+
 DirtyBackground::DirtyBackground(NeverhoodEngine *vm, const char *fileName, int objectPriority, int surfacePriority)
 	: Background(vm, objectPriority) {
 	
