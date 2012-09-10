@@ -97,12 +97,12 @@ void MoviePlayer::playMovie(uint resIndex) {
 	fetchAudioChunks();
 
 	uint32 lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
+	byte *chunkBuffer = NULL;
+	uint32 prevChunkSize = 0;
 
 	while (_chunkCount--) {
-
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
-		byte *chunkBuffer = NULL;
 
 		debug(0, "chunkType = %d; chunkSize = %d", chunkType, chunkSize);
 		
@@ -111,7 +111,13 @@ void MoviePlayer::playMovie(uint resIndex) {
 		if (chunkType == kChunkAudio) {
 			_vm->_arc->skip(chunkSize);
 		} else {
-			chunkBuffer = new byte[chunkSize];
+			// Only reallocate the chunk buffer if it's smaller than the previous frame
+			if (chunkSize > prevChunkSize) {
+				delete[] chunkBuffer;
+				chunkBuffer = new byte[chunkSize];
+			}
+
+			prevChunkSize = chunkSize;
 			_vm->_arc->read(chunkBuffer, chunkSize);
 		}
 
@@ -172,13 +178,12 @@ void MoviePlayer::playMovie(uint resIndex) {
 		default:
 			error("MoviePlayer::playMovie(%04X) Unknown chunk type %d at %08X", resIndex, chunkType, _vm->_arc->pos() - 5 - chunkSize);
 		}
-
-		delete[] chunkBuffer;
-	
+		
 		if (!handleInput())
 			break;
-
 	}
+
+	delete[] chunkBuffer;
 
 	_audioStream->finish();
 	_vm->_mixer->stopHandle(_audioStreamHandle);
