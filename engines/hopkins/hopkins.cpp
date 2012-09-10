@@ -475,8 +475,17 @@ LABEL_128:
 #else
 	// Copy vesa surface to screen
 	_graphicsManager.DD_Lock();
-	memcpy((byte *)_graphicsManager.VideoPtr->pixels, (byte *)_graphicsManager.VESA_SCREEN.pixels, 
-		SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+
+	const byte *srcP = (const byte *)_graphicsManager.VESA_SCREEN.pixels;
+	uint16 *destP = (uint16 *)_graphicsManager.VideoPtr->pixels;
+	for (int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); ++i, ++srcP, ++destP) {
+		byte r = _graphicsManager.Palette[*srcP * 3];
+		byte g = _graphicsManager.Palette[*srcP * 3 + 1];
+		byte b = _graphicsManager.Palette[*srcP * 3 + 2];
+
+		*destP = (b >> 2) | ((g >> 2) << 5) | ((r >> 2) << 10);
+	}
+
 	_graphicsManager.DD_Unlock();
 
 	// Stub event loop
