@@ -68,7 +68,7 @@ protected:
 	SoundChannel channels[kMaxChannels];
 
 	void internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning);
-
+	Audio::Mixer::SoundType getScummVMSoundType(SoundChannelType type) const;
 };
 
 

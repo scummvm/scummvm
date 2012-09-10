@@ -44,39 +44,23 @@ Sound::~Sound() {
 
 void Sound::playSpeech(int16 resIndex) {
 	debug(0, "playSpeech(%d)", resIndex);
-	internalPlaySound(resIndex, kChannelTypeSpeech, 50 /*TODO*/, 0);
+
+	if (_vm->_cfgVoices)
+		internalPlaySound(resIndex, kChannelTypeSpeech, 50 /*TODO*/, 0);
 }
 
 void Sound::playSound(int16 resIndex, int16 type, int16 volume) {
-
-	// TODO: Use the right volumes
-
 	debug(0, "playSound(%d, %d, %d)", resIndex, type, volume);
 	
-	if (volume == -1 || type == -2) {
-		if (type == kChannelTypeBackground) {
-			internalPlaySound(resIndex, type, 50 /*TODO*/, 0);
-		} else {
-			internalPlaySound(resIndex, type, 100 /*TODO*/, 0);
-		}
-	} else {
-		internalPlaySound(resIndex, type, 100 /*TODO*/, 0);
-	}
-
+	internalPlaySound(resIndex, type, volume, 0);
 }
 
 void Sound::playSoundAtPos(int16 resIndex, int16 x, int16 y) {
-
 	debug(0, "playSoundAtPos(%d, %d, %d)", resIndex, x, y);
 
-	int16 volume, panning = 0, deltaX = 0;
-	int8 scaling = _vm->_segmap->getScalingAtPoint(x, y);
-
-	if (scaling >= 0)
-		volume = 50 + ABS(scaling) / 2;
-	else
-		volume = 50 - ABS(scaling) / 2;
-
+	int16 volume = 50 + ABS(_vm->_segmap->getScalingAtPoint(x, y)) / 2;
+	int16 panning = 0, deltaX = 0;
+	
 	if (_vm->_cameraX > x)
 		deltaX = _vm->_cameraX - x;
 	else if (_vm->_cameraX + 640 < x)
@@ -91,11 +75,12 @@ void Sound::playSoundAtPos(int16 resIndex, int16 x, int16 y) {
 	}
 
 	internalPlaySound(resIndex, 1, volume, panning);
-
 }
 
 void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning) {
-
+	// Change the game's sound volume (0 - 100) to Scummvm's scale (0 - 255)
+	volume = (volume == -1) ? 255 : volume * 255 / 100;
+	
 	if (resIndex == -1) {
 		// Stop all sounds
 		_vm->_mixer->stopAll();
@@ -142,14 +127,10 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			channels[freeChannel].type = type;
 			channels[freeChannel].resIndex = resIndex;
 
-			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
-			/*
-			switch (type) {
-			}
-			*/
+			Audio::Mixer::SoundType soundType = getScummVMSoundType((SoundChannelType)type);
 
 			_vm->_mixer->playStream(soundType, &channels[freeChannel].handle,
-				stream, -1, volume, panning);
+			                        stream, -1, volume, panning);
 		}
 
 	}
@@ -206,11 +187,7 @@ void Sound::loadState(Common::ReadStream *in) {
 								DisposeAfterUse::NO),
 								channels[i].type == kChannelTypeBackground ? 0 : 1);
 
-			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
-			/*
-			switch (type) {
-			}
-			*/
+			Audio::Mixer::SoundType soundType = getScummVMSoundType((SoundChannelType)channels[i].type);
 
 			// TODO: Volume and panning
 			int16 volume = (channels[i].type == kChannelTypeBackground) ? 50 : 100;
@@ -218,6 +195,20 @@ void Sound::loadState(Common::ReadStream *in) {
 			_vm->_mixer->playStream(soundType, &channels[i].handle,
 				stream, -1, volume, /*panning*/0);
 		}
+	}
+}
+
+Audio::Mixer::SoundType Sound::getScummVMSoundType(SoundChannelType type) const {
+	switch (type) {
+	case kChannelTypeBackground:
+	case kChannelTypeSfx:
+		return Audio::Mixer::kSFXSoundType;
+	case kChannelTypeSpeech:
+		return Audio::Mixer::kSpeechSoundType;
+		break;
+	default:
+		return Audio::Mixer::kSFXSoundType;
+		break;
 	}
 }
 

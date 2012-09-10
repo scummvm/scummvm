@@ -99,6 +99,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	const Common::String& getTargetName() const { return _targetName; }
+	void syncSoundSettings();
 
 	void setupSysStrings();
 	void requestSavegame(int slotNum, Common::String &description);
@@ -127,6 +128,8 @@ public:
 	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize, 
 		byte *rectDataEnd);
 
+	int _cfgVoicesVolume, _cfgMusicVolume, _cfgSoundFXVolume;
+	bool _cfgText, _cfgVoices;
 public:
 
 	AnimationPlayer *_anim;

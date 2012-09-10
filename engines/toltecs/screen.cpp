@@ -469,7 +469,6 @@ void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 
 }
 
 void Screen::addTalkTextItemsToRenderQueue() {
-
 	for (int16 i = 0; i <= _talkTextItemNum; i++) {
 		TalkTextItem *item = &_talkTextItems[i];
 		byte *text = _vm->_script->getSlotData(item->slotIndex) + item->slotOffset;
@@ -482,14 +481,15 @@ void Screen::addTalkTextItemsToRenderQueue() {
 		if (item->duration < 0)
 			item->duration = 0;
 
+		if (!_vm->_cfgText)
+			return;
+
 		for (byte j = 0; j < item->lineCount; j++) {
-			_renderQueue->addText(item->lines[j].x, item->lines[j].y, item->color, _fontResIndexArray[item->fontNum],
-				text, item->lines[j].length);
+			_renderQueue->addText(item->lines[j].x, item->lines[j].y, item->color,
+					_fontResIndexArray[item->fontNum], text, item->lines[j].length);
 			text += item->lines[j].length;
 		}
-		
 	}
-
 }
 
 int16 Screen::getTalkTextDuration() {
