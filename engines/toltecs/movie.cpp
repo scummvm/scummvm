@@ -103,7 +103,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
 		byte *chunkBuffer = NULL;
-		uint32 movieOffset;
 
 		debug(0, "chunkType = %d; chunkSize = %d", chunkType, chunkSize);
 		
@@ -115,8 +114,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 			chunkBuffer = new byte[chunkSize];
 			_vm->_arc->read(chunkBuffer, chunkSize);
 		}
-
-		movieOffset = _vm->_arc->pos();
 
 		switch (chunkType) {
 		case kChunkFirstImage:
@@ -177,9 +174,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		}
 
 		delete[] chunkBuffer;
-
-		_vm->_arc->seek(movieOffset, SEEK_SET);
-		
+	
 		if (!handleInput())
 			break;
 
