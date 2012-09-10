@@ -78,7 +78,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_arc->readUint32LE();
 	_vm->_arc->readUint32LE();
 	_framesPerSoundChunk = _vm->_arc->readUint32LE();
-	_vm->_arc->readUint32LE();
+	int rate = _vm->_arc->readUint32LE();
 
 	_vm->_sceneWidth = 640;
 	_vm->_sceneHeight = 400;
@@ -87,7 +87,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_cameraY = 0;
 	_vm->_guiHeight = 0;
 
-	_audioStream = Audio::makeQueuingAudioStream(22050, false);
+	_audioStream = Audio::makeQueuingAudioStream(rate, false);
 
 	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
 
