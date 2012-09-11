@@ -112,6 +112,8 @@ static const uint32 rectListOffsets[] = {
 	// Scene2247
 	1, 0x004B5588,
 	1, 0x004B55C8,
+	// Scene2501
+	1, 0x004B2608,
 	// Scene2801
 	1, 0x004B6CE0,
 	1, 0x004B6CD0,
@@ -390,6 +392,9 @@ static const uint32 messageListOffsets[] = {
 	4, 0x004B54C0,
 	5, 0x004B54E0,
 	5, 0x004B5508,
+	// Scene 2501
+	7, 0x004B2538,
+	6, 0x004B2570,
 	// Scene2801
 	1, 0x004B6BB8,
 	1, 0x004B6BC0,
@@ -641,5 +646,9 @@ static const uint32 sceneInfo2700Offsets[] = {
 	0x004B5FD8,
 	0x004B5FFC,
 	0x004B6020,
+	// Scene2501
+	0x004B2628,
+	0x004B264C,
+	0x004B2670,
 	0
 };
