@@ -75,6 +75,7 @@ add_engine() {
 	set_var _engine_${1}_deps "${5}"
 	for sub in ${4}; do
 		set_var _engine_${sub}_sub "yes"
+		set_var _engine_${sub}_parent "${1}"
 	done
 }
 
@@ -518,6 +519,11 @@ get_engine_sub() {
 	echo $sub
 }
 
+# Get a subengine's parent (undefined for non-subengines)
+get_subengine_parent() {
+	get_var _engine_$1_parent
+}
+
 # Enable *all* engines
 engine_enable_all() {
 	for engine in $_engines; do
@@ -545,9 +551,15 @@ engine_enable() {
 	engine=`echo $eng | sed 's/-/_/g'`
 
 	# Filter the parameter for the subengines
-	if test "`get_engine_sub ${engine}`" != "no" -a "$opt" != "yes" ; then
-		subengine_option_error ${engine}
-		return
+	if test "`get_engine_sub ${engine}`" != "no" ; then
+		if test "$opt" != "yes" ; then
+			subengine_option_error ${engine}
+			return
+		fi
+		parent=`get_subengine_parent ${engine}`
+		if test `get_engine_build ${parent}` = "no" ; then
+			set_var _engine_${parent}_build "yes"
+		fi		
 	fi
 
 	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
