@@ -16,7 +16,7 @@ add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes "groovie2"
 add_engine groovie2 "Groovie 2 games" no
 add_engine hugo "Hugo Trilogy" yes
-add_engine kyra "Legend of Kyrandia" yes "lol eob"
+add_engine kyra "Kyra" yes "lol eob"
 add_engine lol "Lands of Lore" yes
 add_engine eob "Eye of the Beholder" no
 add_engine lastexpress "The Last Express" no

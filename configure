@@ -750,6 +750,7 @@ get_subengines_build_string() {
 }
 
 # Engine specific build strings
+# TODO: Clean this up (and specify these base strings in configure.engines?)
 get_scumm_build_string() {
 	if test `get_engine_build $1` != no ; then
 		if test $2 != no -a "$3" != wip ; then
@@ -767,6 +768,52 @@ get_saga_build_string() {
 		get_subengines_build_string $1 $2 "$base" $3
 	fi
 }
+
+get_agos_build_string() {
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no -a "$3" != wip; then
+			base="[AGOS 1 games]"
+		fi
+		get_subengines_build_string $1 $2 "$base" $3
+	fi
+}
+
+get_groovie_build_string() {
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no -a "$3" != wip; then
+			base="[7th Guest]"
+		fi
+		get_subengines_build_string $1 $2 "$base" $3
+	fi
+}
+
+get_kyra_build_string() {
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no -a "$3" != wip; then
+			base="[Legend of Kyrandia 1-3]"
+		fi
+		get_subengines_build_string $1 $2 "$base" $3
+	fi
+}
+
+get_sci_build_string() {
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no -a "$3" != wip; then
+			base="[SCI 0-1.1 games]"
+		fi
+		get_subengines_build_string $1 $2 "$base" $3
+	fi
+}
+
+get_mohawk_build_string() {
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no -a "$3" != wip; then
+			base="[Living Books]"
+		fi
+		get_subengines_build_string $1 $2 "$base" $3
+	fi
+}
+
 
 #
 # Greet user
