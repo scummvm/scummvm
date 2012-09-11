@@ -692,7 +692,7 @@ get_engine_build_string() {
 		engine_string="`get_engine_name $1` $engine_string"
 	fi
 
-	echo $engine_string
+	echo "$engine_string"
 }
 
 # Get the string about building subengines
@@ -729,7 +729,7 @@ get_subengines_build_string() {
 		fi
 	fi
 
-	echo $subengine_string
+	echo "$subengine_string"
 }
 
 # Engine specific build strings
