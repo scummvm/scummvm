@@ -26,18 +26,18 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/ad/ad_game.h"
+#include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_talk_def.h"
 #include "engines/wintermute/ad/ad_talk_node.h"
-#include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/sound/base_sound.h"
-#include "engines/wintermute/ad/ad_scene.h"
-#include "engines/wintermute/base/font/base_font.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/sound/base_sound.h"
 
 namespace Wintermute {
 

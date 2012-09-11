@@ -28,9 +28,9 @@
 
 #include "engines/wintermute/ad/ad_scale_level.h"
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_dynamic_buffer.h"
 
 namespace Wintermute {
 

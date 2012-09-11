@@ -28,13 +28,13 @@
 
 #include "engines/wintermute/ad/ad_talk_holder.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "common/str.h"
 
 namespace Wintermute {
