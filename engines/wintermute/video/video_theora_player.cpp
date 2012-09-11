@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "video/theora_decoder.h"
 #include "engines/wintermute/wintermute.h"

@@ -29,7 +29,6 @@
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
 namespace Wintermute {

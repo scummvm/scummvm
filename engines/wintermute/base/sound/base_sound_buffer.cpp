@@ -30,7 +30,6 @@
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
