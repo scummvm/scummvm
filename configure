@@ -583,7 +583,7 @@ check_engine_deps() {
 	unmet_deps=""
 
 	# Check whether the engine is enabled
-	if test `get_engine_build $1` = yes ; then
+	if test `get_engine_build $1` != "no" ; then
 		# Collect unmet dependencies
 		for dep in `get_engine_dependencies $1`; do
 			if test `get_feature_state $dep` = "no"; then
