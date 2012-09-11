@@ -72,7 +72,8 @@ add_engine() {
 	set_var _engine_${1}_build "${3}"
 	set_var _engine_${1}_build_default "${3}"
 	set_var _engine_${1}_subengines "${4}"
-	set_var _engine_${1}_deps "${5}"
+	set_var _engine_${1}_base "${5}"
+	set_var _engine_${1}_deps "${6}"
 	for sub in ${4}; do
 		set_var _engine_${sub}_sub "yes"
 		set_var _engine_${sub}_parent "${1}"
@@ -510,6 +511,11 @@ get_engine_dependencies() {
 	get_var _engine_$1_deps
 }
 
+# Get the base engine game support description
+get_engine_base() {
+	get_var _engine_$1_base
+}
+
 # Ask if this is a subengine
 get_engine_sub() {
 	sub=`get_var _engine_$1_sub`
@@ -694,13 +700,7 @@ get_engine_build_string() {
 
 	# The engine should be shown, build the string
 	if test $show = yes ; then
-		build_string_func=get_${1}_build_string
-		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
-			engine_string=`$build_string_func $1 $engine_build $2`
-		else
-			engine_string=`get_subengines_build_string $1 $engine_build "" $2`
-		fi
-
+		engine_string=`get_subengines_build_string $1 $engine_build $2`
 		engine_string="`get_engine_name $1` $engine_string"
 	fi
 
@@ -710,10 +710,16 @@ get_engine_build_string() {
 # Get the string about building subengines
 get_subengines_build_string() {
 	parent_engine=$1
-	subengine_string=$3
-	parent_status=$4
+	parent_status=$3
 	parent_engine_build_default=`get_engine_build_default $parent_engine`
+	subengine_string=""
 	all=yes
+
+	# If the base engine isn't built at all, no need to list subengines
+	# in any of the possible categories.
+	if test `get_engine_build $parent_engine` = no; then
+		return
+	fi
 
 	# If the base engine is built by default, we can never return "[all games]"
 	# as work-in-progress.
@@ -721,6 +727,11 @@ get_subengines_build_string() {
 		if test $parent_engine_build_default = yes ; then
 			all=no
 		fi
+	fi
+
+	# In the static/dynamic categories, also display the engine's base games.
+	if test -n "`get_engine_subengines $parent_engine`" -a $request_status != no -a $request_status != wip; then
+		subengine_string="[`get_engine_base $parent_engine`]"
 	fi
 
 	for subeng in `get_engine_subengines $parent_engine` ; do
@@ -748,72 +759,6 @@ get_subengines_build_string() {
 
 	echo "$subengine_string"
 }
-
-# Engine specific build strings
-# TODO: Clean this up (and specify these base strings in configure.engines?)
-get_scumm_build_string() {
-	if test `get_engine_build $1` != no ; then
-		if test $2 != no -a "$3" != wip ; then
-			base="[v0-v6 games]"
-		fi
-		get_subengines_build_string $1 $2 "$base" $3
-	fi
-}
-
-get_saga_build_string() {
-	if test `get_engine_build $1` != no ; then
-		if test $2 != no -a "$3" != wip; then
-			base="[ITE]"
-		fi
-		get_subengines_build_string $1 $2 "$base" $3
-	fi
-}
-
-get_agos_build_string() {
-	if test `get_engine_build $1` != no ; then
-		if test $2 != no -a "$3" != wip; then
-			base="[AGOS 1 games]"
-		fi
-		get_subengines_build_string $1 $2 "$base" $3
-	fi
-}
-
-get_groovie_build_string() {
-	if test `get_engine_build $1` != no ; then
-		if test $2 != no -a "$3" != wip; then
-			base="[7th Guest]"
-		fi
-		get_subengines_build_string $1 $2 "$base" $3
-	fi
-}
-
-get_kyra_build_string() {
-	if test `get_engine_build $1` != no ; then
-		if test $2 != no -a "$3" != wip; then
-			base="[Legend of Kyrandia 1-3]"
-		fi
-		get_subengines_build_string $1 $2 "$base" $3
-	fi
-}
-
-get_sci_build_string() {
-	if test `get_engine_build $1` != no ; then
-		if test $2 != no -a "$3" != wip; then
-			base="[SCI 0-1.1 games]"
-		fi
-		get_subengines_build_string $1 $2 "$base" $3
-	fi
-}
-
-get_mohawk_build_string() {
-	if test `get_engine_build $1` != no ; then
-		if test $2 != no -a "$3" != wip; then
-			base="[Living Books]"
-		fi
-		get_subengines_build_string $1 $2 "$base" $3
-	fi
-}
-
 
 #
 # Greet user
