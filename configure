@@ -660,27 +660,37 @@ prepare_engine_build_strings() {
 
 # Get the string about building an engine
 get_engine_build_string() {
+	engine=$1
+	request_status=$2
 	engine_string=""
 	engine_build=`get_engine_build $1`
-	engine_build_default=`get_engine_build_default $1`
+	engine_build_default=`get_engine_build_default $engine`
 	show=no
 
+	# Convert static/dynamic to yes to ease the check of subengines
+	if test $engine_build = no; then
+		subengine_filter=no
+	else
+		subengine_filter=yes
+	fi
+
 	# Check if the current engine should be shown for the current status
-	if test $engine_build = $2 ; then
+	if test $engine_build = $request_status ; then
 		show=yes
 	else
 		# Test for disabled sub-engines
-		if test $2 = no ; then
-			for subeng in `get_engine_subengines $1` ; do
+		if test $request_status = no ; then
+			for subeng in `get_engine_subengines $engine` ; do
 				if test `get_engine_build $subeng` = no ; then
-					engine_build=no
+					# In this case we to display _disabled_ subengines
+					subengine_filter=no
 					show=yes
 				fi
 			done
 		fi
 		# Test for enabled wip sub-engines
-		if test $2 = wip ; then
-			for subeng in `get_engine_subengines $1` ; do
+		if test $request_status = wip ; then
+			for subeng in `get_engine_subengines $engine` ; do
 				if test `get_engine_build $subeng` != no -a `get_engine_build_default $subeng` = no ; then
 					show=yes
 				fi
@@ -688,20 +698,16 @@ get_engine_build_string() {
 		fi
 	fi
 
-	# Convert static/dynamic to yes to ease the check of subengines
-	if test $engine_build != no ; then
-		engine_build=yes
-	fi
 
 	# Check if it is a wip engine
-	if test "$2" = "wip" -a "$engine_build" != "no" -a  "$engine_build_default" = no; then
+	if test "$request_status" = "wip" -a "$engine_build" != "no" -a  "$engine_build_default" = no; then
 		show=yes
 	fi
 
 	# The engine should be shown, build the string
 	if test $show = yes ; then
-		engine_string=`get_subengines_build_string $1 $engine_build $2`
-		engine_string="`get_engine_name $1` $engine_string"
+		engine_string=`get_subengines_build_string $engine $subengine_filter $request_status`
+		engine_string="`get_engine_name $engine` $engine_string"
 	fi
 
 	echo "$engine_string"
@@ -710,7 +716,8 @@ get_engine_build_string() {
 # Get the string about building subengines
 get_subengines_build_string() {
 	parent_engine=$1
-	parent_status=$3
+	subengine_filter=$2
+	request_status=$3
 	parent_engine_build_default=`get_engine_build_default $parent_engine`
 	subengine_string=""
 	all=yes
@@ -723,7 +730,7 @@ get_subengines_build_string() {
 
 	# If the base engine is built by default, we can never return "[all games]"
 	# as work-in-progress.
-	if test "$parent_status" = wip ; then
+	if test "$request_status" = wip ; then
 		if test $parent_engine_build_default = yes ; then
 			all=no
 		fi
@@ -737,7 +744,10 @@ get_subengines_build_string() {
 	for subeng in `get_engine_subengines $parent_engine` ; do
 		subengine_build=`get_engine_build $subeng`
 		subengine_build_default=`get_engine_build_default $subeng`
-		if test \( $subengine_build = $2 -a "$parent_status" != wip \) -o \( "$parent_status" = wip -a $subengine_build != no -a "$subengine_build_default" = no \) ; then
+
+		# Display this subengine if it matches the filter, unless it is
+		# a stable subengine in the WIP request.
+		if test $subengine_build = $subengine_filter -a \! \( "$request_status" = wip -a "$subengine_build_default" = yes \) ; then
 			s="[`get_engine_name $subeng`]"
 			if test -n "$subengine_string"; then
 				subengine_string="$subengine_string $s"
@@ -749,7 +759,7 @@ get_subengines_build_string() {
 		fi
 	done
 
-	if test $2 != no ; then
+	if test $subengine_filter != no ; then
 		if test -n "$subengine_string" ; then
 			if test $all = yes ; then
 				subengine_string="[all games]"
