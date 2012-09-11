@@ -697,11 +697,19 @@ get_engine_build_string() {
 
 # Get the string about building subengines
 get_subengines_build_string() {
-	all=yes
 	parent_engine=$1
 	subengine_string=$3
 	parent_status=$4
 	parent_engine_build_default=`get_engine_build_default $parent_engine`
+	all=yes
+
+	# If the base engine is built by default, we can never return "[all games]"
+	# as work-in-progress.
+	if test "$parent_status" = wip ; then
+		if test $parent_engine_build_default = yes ; then
+			all=no
+		fi
+	fi
 
 	for subeng in `get_engine_subengines $parent_engine` ; do
 		subengine_build=`get_engine_build $subeng`
@@ -716,14 +724,6 @@ get_subengines_build_string() {
 		else
 			all=no
 		fi
-
-		# handle engines that are on by default and have a single subengine that is off by default
-		if test "$parent_status" = wip ; then
-			if test $parent_engine_build_default = yes -a subengine ; then
-				all=no
-			fi
-		fi
-
 	done
 
 	if test $2 != no ; then
