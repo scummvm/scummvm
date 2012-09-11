@@ -37,6 +37,7 @@
 #include "neverhood/module2100.h"
 #include "neverhood/module2200.h"
 #include "neverhood/module2300.h"
+#include "neverhood/module2500.h"
 #include "neverhood/module2600.h"
 #include "neverhood/module2700.h"
 #include "neverhood/module2800.h"
@@ -327,9 +328,14 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 1;
 	createModule(2700, -1);
 #endif
-#if 1
+#if 0
 	_vm->gameState().sceneNum = 11;
 	createModule(2800, -1);
+#endif
+#if 1
+	_vm->gameState().which = 2;
+	_vm->gameState().sceneNum = 0;
+	createModule(2500, -1);
 #endif
 }
 
@@ -393,6 +399,10 @@ void GameModule::createModule(int moduleNum, int which) {
 	case 2300:
 		setGlobalVar(0x91080831, 0x1A214010);
 		_childObject = new Module2300(_vm, this, which);
+		break;
+	case 2500:
+		setGlobalVar(0x91080831, 0x29220120);
+		_childObject = new Module2500(_vm, this, which);
 		break;
 	case 2600:
 		setGlobalVar(0x91080831, 0x40271018);
@@ -512,6 +522,9 @@ void GameModule::updateModule() {
 			} else {
 				createModule(1000, 1);
 			}
+			break;
+		case 2500:
+			createModule(2600, 1);
 			break;
 		case 2600:
 			if (_moduleResult == 1) {

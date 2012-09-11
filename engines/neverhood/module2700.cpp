@@ -90,7 +90,6 @@ Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO Music18hList_play(0x04020210, 24, 2, 1);
 	SetMessageHandler(&Module2700::handleMessage);
 
-
 	if (which < 0) {
 		which = _vm->gameState().which;
 		if (_vm->gameState().sceneNum == 0 || _vm->gameState().sceneNum == 30 || _vm->gameState().sceneNum == 31)

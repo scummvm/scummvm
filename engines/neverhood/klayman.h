@@ -578,6 +578,14 @@ protected:
 	void sub453520();
 };
 
+class KmScene2501 : public Klayman {
+public:
+	KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	bool _isSittingInTeleporter;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
 class KmScene2801 : public Klayman {
 public:
 	KmScene2801(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);

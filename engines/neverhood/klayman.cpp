@@ -5215,6 +5215,57 @@ void KmScene2247::sub453520() {
 	FinalizeState(&Klayman::stStartWalkingDone);
 }
 
+KmScene2501::KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	// Empty
+}
+	
+uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case 0x2000:
+		_isSittingInTeleporter = param.asInteger() != 0;
+		messageResult = 1;
+		break;
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (_isSittingInTeleporter)
+			GotoState(&Klayman::sub421350);
+		else
+			GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x481D:
+		if (_isSittingInTeleporter)
+			GotoState(&Klayman::stTurnToUseInTeleporter);
+		break;
+	case 0x481E:
+		if (_isSittingInTeleporter)
+			GotoState(&Klayman::stReturnFromUseInTeleporter);
+		break;
+	case 0x4834:
+		GotoState(&Klayman::stStepOver);
+		break;
+	case 0x4835:
+		sendMessage(_parentScene, 0x2000, 1);
+		_isSittingInTeleporter = true;
+		GotoState(&Klayman::stSitInTeleporter);
+		break;																		
+	case 0x4836:
+		sendMessage(_parentScene, 0x2000, 0);
+		_isSittingInTeleporter = false;
+		GotoState(&Klayman::stGetUpFromTeleporter);
+		break;
+	}
+	return messageResult;
+}
+
 KmScene2801::KmScene2801(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty

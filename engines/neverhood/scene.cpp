@@ -158,6 +158,11 @@ Sprite *Scene::addSprite(Sprite *sprite) {
 	return sprite;
 }
 
+void Scene::removeSprite(Sprite *sprite) {
+	removeSurface(sprite->getSurface());
+	removeEntity(sprite);
+}
+
 void Scene::setSurfacePriority(BaseSurface *surface, int priority) {
 	surface->setPriority(priority);
 	if (removeSurface(surface))
