@@ -102,16 +102,14 @@ public:
 	/**
 	 * Begin playback of the video.
 	 *
-	 * @note This has no effect is the video is already playing.
+	 * @note This has no effect if the video is already playing.
 	 */
 	void start();
 
 	/**
 	 * Stop playback of the video.
 	 *
-	 * @note This will close() the video if it is not rewindable.
-	 * @note If the video is rewindable, the video will be rewound on the
-	 * next start() call unless rewind() or seek() is called before then.
+	 * @note This has no effect if the video is not playing.
 	 */
 	void stop();
 
@@ -765,7 +763,7 @@ private:
 	TrackList _tracks;
 
 	// Current playback status
-	bool _isPlaying, _needsRewind, _needsUpdate;
+	bool _isPlaying, _needsUpdate;
 	Audio::Timestamp _lastTimeChange, _endTime;
 	bool _endTimeSet;
 
