@@ -162,6 +162,7 @@ void NoradAlphaFillingStation::setStaticState(TimeValue time, int16 state) {
 	_rightSideMovie.stop();
 	_rightSideMovie.setSegment(0, _rightSideMovie.getDuration());
 	_rightSideMovie.setTime(time);
+	_rightSideMovie.redrawMovieWorld();
 	_state = state;
 	allowInput(true);
 }
