@@ -32,6 +32,7 @@
 #include "engines/wintermute/ui/ui_tiled_image.h"
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/font/base_font_storage.h"

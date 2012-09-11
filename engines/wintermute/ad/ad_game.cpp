@@ -50,6 +50,7 @@
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/saveload.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"

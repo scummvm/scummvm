@@ -35,6 +35,7 @@
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
 

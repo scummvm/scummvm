@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/base_save_thumb_helper.h"
 #include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_game.h"
 
 namespace Wintermute {

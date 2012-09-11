@@ -35,6 +35,7 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "common/savefile.h"

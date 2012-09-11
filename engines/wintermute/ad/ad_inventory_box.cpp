@@ -35,6 +35,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/platform_osystem.h"

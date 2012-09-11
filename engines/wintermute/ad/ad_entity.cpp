@@ -45,6 +45,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"

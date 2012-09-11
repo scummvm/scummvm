@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_viewport.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
 

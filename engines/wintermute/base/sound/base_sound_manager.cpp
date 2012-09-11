@@ -32,6 +32,7 @@
 #include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/config-manager.h"

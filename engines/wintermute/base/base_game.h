@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BASE_GAME_H
 #define WINTERMUTE_BASE_GAME_H
 
-#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
