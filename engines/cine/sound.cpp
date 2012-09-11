@@ -998,21 +998,27 @@ void PCSound::stopSound(int channel) {
 }
 
 PaulaSound::PaulaSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm), _sfxTimer(0) {
+	: Sound(mixer, vm), _sfxTimer(0), _musicTimer(0), _musicFadeTimer(0) {
 	_moduleStream = 0;
 	// The original is using the following timer frequency:
 	// 0.709379Mhz / 8000 = 88.672375Hz
 	// 1000000 / 88.672375Hz = 11277.46944863us
 	g_system->getTimerManager()->installTimerProc(&PaulaSound::sfxTimerProc, 11277, this, "PaulaSound::sfxTimerProc");
+	// The original is using the following timer frequency:
+	// 0.709379Mhz / 14565 = 48.704359Hz
+	// 1000000 / 48.704359Hz = 20532.04313806us
+	g_system->getTimerManager()->installTimerProc(&PaulaSound::musicTimerProc, 20532, this, "PaulaSound::musicTimerProc");
 }
 
 PaulaSound::~PaulaSound() {
-	Common::StackLock lock(_mutex);
-
+	Common::StackLock sfxLock(_sfxMutex);
 	g_system->getTimerManager()->removeTimerProc(&PaulaSound::sfxTimerProc);
 	for (int i = 0; i < NUM_CHANNELS; ++i) {
 		stopSound(i);
 	}
+
+	Common::StackLock musicLock(_musicMutex);
+	g_system->getTimerManager()->removeTimerProc(&PaulaSound::musicTimerProc);
 	stopMusic();
 }
 
@@ -1021,6 +1027,25 @@ void PaulaSound::loadMusic(const char *name) {
 	for (int i = 0; i < NUM_CHANNELS; ++i) {
 		stopSound(i);
 	}
+
+	// Fade music out when there is music playing.
+	_musicMutex.lock();
+	if (_mixer->isSoundHandleActive(_moduleHandle)) {
+		// Only start fade out when it is not in progress.
+		if (!_musicFadeTimer) {
+			_musicFadeTimer = 1;
+		}
+
+		_musicMutex.unlock();
+		while (_musicFadeTimer != 64) {
+			g_system->delayMillis(50);
+		}
+	} else {
+		_musicMutex.unlock();
+	}
+
+	Common::StackLock lock(_musicMutex);
+	assert(!_mixer->isSoundHandleActive(_moduleHandle));
 
 	if (_vm->getGameType() == GType_FW) {
 		// look for separate files
@@ -1042,26 +1067,32 @@ void PaulaSound::loadMusic(const char *name) {
 
 void PaulaSound::playMusic() {
 	debugC(5, kCineDebugSound, "PaulaSound::playMusic()");
+	Common::StackLock lock(_musicMutex);
+
 	_mixer->stopHandle(_moduleHandle);
 	if (_moduleStream) {
+		_musicFadeTimer = 0;
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream);
 	}
 }
 
 void PaulaSound::stopMusic() {
 	debugC(5, kCineDebugSound, "PaulaSound::stopMusic()");
+	Common::StackLock lock(_musicMutex);
+
 	_mixer->stopHandle(_moduleHandle);
 }
 
 void PaulaSound::fadeOutMusic() {
 	debugC(5, kCineDebugSound, "PaulaSound::fadeOutMusic()");
-	// TODO
-	stopMusic();
+	Common::StackLock lock(_musicMutex);
+
+	_musicFadeTimer = 1;
 }
 
 void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
 	debugC(5, kCineDebugSound, "PaulaSound::playSound() channel %d size %d", channel, size);
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(_sfxMutex);
 	assert(frequency > 0);
 
 	stopSound(channel);
@@ -1090,7 +1121,7 @@ void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int si
 
 void PaulaSound::stopSound(int channel) {
 	debugC(5, kCineDebugSound, "PaulaSound::stopSound() channel %d", channel);
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(_sfxMutex);
 
 	_mixer->stopHandle(_channelsTable[channel].handle);
 }
@@ -1101,7 +1132,7 @@ void PaulaSound::sfxTimerProc(void *param) {
 }
 
 void PaulaSound::sfxTimerCallback() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(_sfxMutex);
 
 	if (_sfxTimer < 6) {
 		++_sfxTimer;
@@ -1130,6 +1161,30 @@ void PaulaSound::sfxTimerCallback() {
 		_sfxTimer = 0;
 		// Possible TODO: The original only ever started sounds here. This
 		// should not be noticable though. So we do not do it for now.
+	}
+}
+
+void PaulaSound::musicTimerProc(void *param) {
+	PaulaSound *sound = (PaulaSound *)param;
+	sound->musicTimerCallback();
+}
+
+void PaulaSound::musicTimerCallback() {
+	Common::StackLock lock(_musicMutex);
+
+	++_musicTimer;
+	if (_musicTimer == 6) {
+		_musicTimer = 0;
+		if (_musicFadeTimer) {
+			++_musicFadeTimer;
+			if (_musicFadeTimer == 64) {
+				stopMusic();
+			} else {
+				if (_mixer->isSoundHandleActive(_moduleHandle)) {
+					_mixer->setChannelVolume(_moduleHandle, (64 - _musicFadeTimer) * Audio::Mixer::kMaxChannelVolume / 64);
+				}
+			}
+		}
 	}
 }
 

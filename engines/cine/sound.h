@@ -98,7 +98,6 @@ public:
 	};
 
 protected:
-	Common::Mutex _mutex;
 
 	struct SfxChannel {
 		Audio::SoundHandle handle;
@@ -115,10 +114,16 @@ protected:
 	};
 	SfxChannel _channelsTable[NUM_CHANNELS];
 	static const int _channelBalance[NUM_CHANNELS];
+	Common::Mutex _sfxMutex;
 	int _sfxTimer;
 	static void sfxTimerProc(void *param);
 	void sfxTimerCallback();
 
+	Common::Mutex _musicMutex;
+	int _musicTimer;
+	int _musicFadeTimer;
+	static void musicTimerProc(void *param);
+	void musicTimerCallback();
 	Audio::SoundHandle _moduleHandle;
 	Audio::AudioStream *_moduleStream;
 };
