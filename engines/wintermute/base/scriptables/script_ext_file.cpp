@@ -33,7 +33,6 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/file/base_file.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/script_ext_file.h"
