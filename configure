@@ -720,7 +720,6 @@ get_subengines_build_string() {
 	request_status=$3
 	parent_engine_build_default=`get_engine_build_default $parent_engine`
 	subengine_string=""
-	all=yes
 
 	# If the base engine isn't built at all, no need to list subengines
 	# in any of the possible categories.
@@ -728,13 +727,23 @@ get_subengines_build_string() {
 		return
 	fi
 
-	# If the base engine is built by default, we can never return "[all games]"
-	# as work-in-progress.
-	if test "$request_status" = wip ; then
-		if test $parent_engine_build_default = yes ; then
+	all=yes
+	# If there are no subengines, never display "[all games]" (for brevity).
+	if test -z "`get_engine_subengines $parent_engine`"; then
+		all=no
+	fi
+	# If the base engine does not fit the category we're displaying here
+	# (WIP or Skipped), we should never show "[all games]"
+	if test "$request_status" = wip; then
+		if test $parent_engine_build_default = yes; then
 			all=no
 		fi
 	fi
+	if test "$request_status" = no; then
+		# If we're here, the parent engine is built, so no need to check that.
+		all=no
+	fi
+
 
 	# In the static/dynamic categories, also display the engine's base games.
 	if test -n "`get_engine_subengines $parent_engine`" -a $request_status != no -a $request_status != wip; then
@@ -759,12 +768,9 @@ get_subengines_build_string() {
 		fi
 	done
 
-	if test $subengine_filter != no ; then
-		if test -n "$subengine_string" ; then
-			if test $all = yes ; then
-				subengine_string="[all games]"
-			fi
-		fi
+	# Summarize the full list, where applicable
+	if test $all = yes ; then
+		subengine_string="[all games]"
 	fi
 
 	echo "$subengine_string"
