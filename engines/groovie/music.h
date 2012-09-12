@@ -161,6 +161,14 @@ private:
 	Common::SeekableReadStream *decompressMidi(Common::SeekableReadStream *stream);
 };
 
+class MusicPlayerMac_v2 : public MusicPlayerMidi {
+public:
+	MusicPlayerMac_v2(GroovieEngine *vm);
+
+protected:
+	bool load(uint32 fileref, bool loop);
+};
+
 class MusicPlayerIOS : public MusicPlayer {
 public:
 	MusicPlayerIOS(GroovieEngine *vm);

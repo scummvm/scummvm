@@ -768,6 +768,52 @@ Common::SeekableReadStream *MusicPlayerMac_t7g::decompressMidi(Common::SeekableR
 	return new Common::MemoryReadStream(output, size, DisposeAfterUse::YES);
 }
 
+// MusicPlayerMac_v2
+
+MusicPlayerMac_v2::MusicPlayerMac_v2(GroovieEngine *vm) : MusicPlayerMidi(vm) {
+	// Create the parser
+	_midiParser = MidiParser::createParser_QT();
+
+	// Create the driver
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+
+	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
+
+	// Set the parser's driver
+	_midiParser->setMidiDriver(this);
+
+	// Set the timer rate
+	_midiParser->setTimerRate(_driver->getBaseTempo());
+}
+
+bool MusicPlayerMac_v2::load(uint32 fileref, bool loop) {
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
+
+	// Find correct filename
+	ResInfo info;
+	_vm->_resMan->getResInfo(fileref, info);
+	uint len = info.filename.size();
+	if (len < 4)
+		return false;	// This shouldn't actually occur
+
+	// Remove the extension and add ".mov"
+	info.filename.deleteLastChar();
+	info.filename.deleteLastChar();
+	info.filename.deleteLastChar();
+	info.filename += "mov";
+
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(info.filename);
+
+	if (!file) {
+		warning("Could not find file '%s'", info.filename.c_str());
+		return false;
+	}
+
+	return loadParser(file, loop);
+}
+
 MusicPlayerIOS::MusicPlayerIOS(GroovieEngine *vm) : MusicPlayer(vm) {
 	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this, "groovieMusic");
 }

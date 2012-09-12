@@ -56,6 +56,7 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "groovie");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "media");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "system");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MIDI");
 
 	_modeSpeed = kGroovieSpeedNormal;
 	if (ConfMan.hasKey("t7g_speed")) {
@@ -160,10 +161,10 @@ Common::Error GroovieEngine::run() {
 		// Create the music player
 		switch (getPlatform()) {
 		case Common::kPlatformMacintosh:
-			// TODO: The 11th Hour Mac uses QuickTime MIDI files
-			// Right now, since the XMIDI are present and it is still detected as
-			// the DOS version, we don't have to do anything here.
-			_musicPlayer = new MusicPlayerMac_t7g(this);
+			if (_gameDescription->version == kGroovieT7G)
+				_musicPlayer = new MusicPlayerMac_t7g(this);
+			else
+				_musicPlayer = new MusicPlayerMac_v2(this);
 			break;
 		case Common::kPlatformIOS:
 			_musicPlayer = new MusicPlayerIOS(this);
