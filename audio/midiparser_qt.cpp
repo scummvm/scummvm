@@ -106,21 +106,25 @@ bool MidiParser_QT::loadFromContainerFile(const Common::String &fileName) {
 }
 
 void MidiParser_QT::parseNextEvent(EventInfo &info) {
-	info.event = 0;
+	uint32 delta = 0;
 
-	while (info.event == 0) {
-		if (_position._playPos >= _trackInfo[_activeTrack].data + _trackInfo[_activeTrack].size) {
-			// Manually insert end of track when we reach the end
-			info.event = 0xFF;
-			info.ext.type = 0x2F;
-			return;
-		}
+	while (_queuedEvents.empty())
+		delta = readNextEvent();
 
-		info.delta = readNextEvent(info);
-	}
+	info = _queuedEvents.pop();
+	info.delta = delta;
 }
 
-uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
+uint32 MidiParser_QT::readNextEvent() {
+	if (_position._playPos >= _trackInfo[_activeTrack].data + _trackInfo[_activeTrack].size) {
+		// Manually insert end of track when we reach the end
+		EventInfo info;
+		info.event = 0xFF;
+		info.ext.type = 0x2F;
+		_queuedEvents.push(info);
+		return 0;
+	}
+
 	uint32 control = readUint32();
 
 	switch (control >> 28) {
@@ -129,43 +133,16 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 		// Rest
 		// We handle this by recursively adding up all the rests into the
 		// next event's delta
-		return readNextEvent(info) + (control & 0xFFFFFF);
+		return readNextEvent() + (control & 0xFFFFFF);
 	case 0x2:
 	case 0x3:
 		// Note event
-		info.event = 0x90 | getChannel((control >> 24) & 0x1F);
-		info.basic.param1 = ((control >> 18) & 0x3F) + 32;
-		info.basic.param2 = (control >> 11) & 0x7F;
-		info.length = (info.basic.param2 == 0) ? 0 : (control & 0x7FF);
+		handleNoteEvent((control >> 24) & 0x1F, ((control >> 18) & 0x3F) + 32, (control >> 11) & 0x7F, control & 0x7FF);
 		break;
 	case 0x4:
 	case 0x5:
 		// Controller
-		if (((control >> 16) & 0xFF) == 32) {
-			// Pitch bend
-			info.event = 0xE0 | getChannel((control >> 24) & 0x1F);
-
-			// Actually an 8.8 fixed point number
-			int16 value = (int16)(control & 0xFFFF);
-
-			if (value < -0x200 || value > 0x1FF) {
-				warning("QuickTime MIDI pitch bend value (%d) out of range, clipping", value);
-				value = CLIP<int16>(value, -0x200, 0x1FF);
-			}
-
-			// Now convert the value to 'normal' MIDI values
-			value += 0x200;
-			value *= 16;
-
-			// param1 holds the low 7 bits, param2 holds the high 7 bits
-			info.basic.param1 = value & 0x7F;
-			info.basic.param2 = value >> 7;
-		} else {
-			// Regular controller
-			info.event = 0xB0 | getChannel((control >> 24) & 0x1F);
-			info.basic.param1 = (control >> 16) & 0xFF;
-			info.basic.param2 = (control >> 8) & 0xFF;
-		}
+		handleControllerEvent((control >> 16) & 0xFF, (control >> 24) & 0x1F, (control >> 8) & 0xFF, control & 0xFF);
 		break;
 	case 0x6:
 	case 0x7:
@@ -175,18 +152,13 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 	case 0x9: {
 		// Extended note event
 		uint32 extra = readUint32();
-		info.event = 0x90 | getChannel((control >> 16) & 0xFFF);
-		info.basic.param1 = (control >> 8) & 0xFF;
-		info.basic.param2 = (extra >> 22) & 0x7F;
-		info.length = (info.basic.param2 == 0) ? 0 : (extra & 0x3FFFFF);
+		handleNoteEvent((control >> 16) & 0xFFF, (control >> 8) & 0xFF, (extra >> 22) & 0x7F, extra & 0x3FFFFF);
 		break;
 	}
 	case 0xA: {
 		// Extended controller
 		uint32 extra = readUint32();
-		info.event = 0xB0 | getChannel((control >> 16) & 0xFFF);
-		info.basic.param1 = (extra >> 16) & 0x3FFF;
-		info.basic.param2 = (extra >> 8) & 0xFF; // ???
+		handleControllerEvent((extra >> 16) & 0x3FFF, (control >> 16) & 0xFFF, (extra >> 8) & 0xFF, extra & 0xFF);
 		break;
 	}
 	case 0xB:
@@ -202,14 +174,70 @@ uint32 MidiParser_QT::readNextEvent(EventInfo &info) {
 		break;
 	case 0xF:
 		// General
-		handleGeneralEvent(info, control);
+		handleGeneralEvent(control);
 		break;
 	}
 
 	return 0;
 }
 
-void MidiParser_QT::handleGeneralEvent(EventInfo &info, uint32 control) {
+void MidiParser_QT::handleNoteEvent(uint32 part, byte pitch, byte velocity, uint32 length) {
+	byte channel = getChannel(part);
+
+	EventInfo info;
+	info.event = 0x90 | channel;
+	info.basic.param1 = pitch;
+	info.basic.param2 = velocity;
+	info.length = (velocity == 0) ? 0 : length;
+	_queuedEvents.push(info);
+}
+
+void MidiParser_QT::handleControllerEvent(uint32 control, uint32 part, byte intPart, byte fracPart) {
+	byte channel = getChannel(part);
+	EventInfo info;
+
+	if (control == 32) {
+		// Pitch bend
+		info.event = 0xE0 | channel;
+
+		// Actually an 8.8 fixed point number
+		int16 value = (int16)((intPart << 8) | fracPart);
+
+		if (value < -0x200 || value > 0x1FF) {
+			warning("QuickTime MIDI pitch bend value (%d) out of range, clipping", value);
+			value = CLIP<int16>(value, -0x200, 0x1FF);
+		}
+
+		// Now convert the value to 'normal' MIDI values
+		value += 0x200;
+		value *= 16;
+
+		// param1 holds the low 7 bits, param2 holds the high 7 bits
+		info.basic.param1 = value & 0x7F;
+		info.basic.param2 = value >> 7;
+
+		_partMap[part].pitchBend = value;
+	} else {
+		// Regular controller
+		info.event = 0xB0 | channel;
+		info.basic.param1 = control;
+		info.basic.param2 = intPart;
+
+		// TODO: Parse more controls to hold their status
+		switch (control) {
+		case 7:
+			_partMap[part].volume = intPart;
+			break;
+		case 10:
+			_partMap[part].pan = intPart;
+			break;
+		}
+	}
+
+	_queuedEvents.push(info);
+}
+
+void MidiParser_QT::handleGeneralEvent(uint32 control) {
 	uint32 part = (control >> 16) & 0xFFF;
 	uint32 dataSize = ((control & 0xFFFF) - 2) * 4;
 	byte subType = READ_BE_UINT16(_position._playPos + dataSize) & 0x3FFF;
@@ -222,10 +250,7 @@ void MidiParser_QT::handleGeneralEvent(EventInfo &info, uint32 control) {
 
 		// We have to remap channels because GM needs percussion to be on the
 		// percussion channel but QuickTime can have that anywhere.
-		allocateChannel(part, READ_BE_UINT32(_position._playPos + 80));
-
-		info.event = 0xC0 | getChannel(part);
-		info.basic.param1 = READ_BE_UINT32(_position._playPos + 80);
+		definePart(part, READ_BE_UINT32(_position._playPos + 80));
 		break;
 	case 5: // Tune Difference
 	case 8: // MIDI Channel
@@ -240,30 +265,67 @@ void MidiParser_QT::handleGeneralEvent(EventInfo &info, uint32 control) {
 	_position._playPos += dataSize + 4;
 }
 
-void MidiParser_QT::allocateChannel(uint32 part, uint32 instrument) {
-	if (instrument == 0x4001) {
-		// Drum Kit -> Percussion Channel
-		if (isChannelAllocated(9))
-			warning("Multiple QuickTime MIDI percussion channels");
+void MidiParser_QT::definePart(uint32 part, uint32 instrument) {
+	if (_partMap.contains(part))
+		warning("QuickTime MIDI part %d being redefined", part);
 
-		_channelMap[part] = 9;
-	} else {
-		// Normal Instrument -> First Free Channel
-		for (uint32 i = 0; i < 16; i++) {
-			// 9 is reserved for Percussion
-			if (i == 9 || isChannelAllocated(i))
-				continue;
-
-			_channelMap[part] = i;
-			return;
-		}
-
-		error("Failed to allocate channel for QuickTime MIDI");
-	}
+	PartStatus partStatus;
+	partStatus.instrument = instrument;
+	partStatus.volume = 127;
+	partStatus.pan = 64;
+	partStatus.pitchBend = 0x2000;
+	_partMap[part] = partStatus;
 }
 
-byte MidiParser_QT::getChannel(uint32 part) const {
+byte MidiParser_QT::getChannel(uint32 part) {
+	// If we already mapped it, just go with it
+	if (!_channelMap.contains(part)) {
+		byte newChannel = findFreeChannel(part);
+		_channelMap[part] = newChannel;
+		setupPart(part);
+	}
+
 	return _channelMap[part];
+}
+
+byte MidiParser_QT::findFreeChannel(uint32 part) {
+	if (_partMap[part].instrument != 0x4001) {
+		// Normal Instrument -> First Free Channel
+		if (allChannelsAllocated())
+			deallocateFreeChannel();
+
+		for (int i = 0; i < 16; i++)
+			if (i != 9 && !isChannelAllocated(i)) // 9 is reserved for Percussion
+				return i;
+
+		// Can't actually get here
+	}
+
+	// Drum Kit -> Percussion Channel
+	deallocateChannel(9);
+	return 9;
+}
+
+void MidiParser_QT::deallocateFreeChannel() {
+	for (int i = 0; i < 16; i++) {
+		if (i != 9 && !_activeNotes[i]) {
+			// TODO: Improve this by looking for the channel with the longest
+			// time since the last note.
+			deallocateChannel(i);
+			return;
+		}
+	}
+
+	error("Exceeded QuickTime MIDI channel polyphony");
+}
+
+void MidiParser_QT::deallocateChannel(byte channel) {
+	for (ChannelMap::iterator it = _channelMap.begin(); it != _channelMap.end(); it++) {
+		if (it->_value == channel) {
+			_channelMap.erase(it);
+			return;
+		}
+	}
 }
 
 bool MidiParser_QT::isChannelAllocated(byte channel) const {
@@ -274,8 +336,57 @@ bool MidiParser_QT::isChannelAllocated(byte channel) const {
 	return false;
 }
 
+bool MidiParser_QT::allChannelsAllocated() const {
+	// Less than 16? Have room
+	if (_channelMap.size() < 15)
+		return false;
+
+	// 16? See if one of those 
+	if (_channelMap.size() == 15)
+		for (ChannelMap::const_iterator it = _channelMap.begin(); it != _channelMap.end(); it++)
+			if (it->_value == 9)
+				return false;
+
+	return true;
+}
+
+void MidiParser_QT::setupPart(uint32 part) {
+	PartStatus &status = _partMap[part];
+	byte channel = _channelMap[part];
+	EventInfo info;
+
+	// First, the program change
+	if (channel != 9) {
+		// 9 is always percussion
+		info.event = 0xC0 | channel;
+		info.basic.param1 = status.instrument;
+		_queuedEvents.push(info);
+	}
+
+	// Volume
+	info.event = 0xB0 | channel;
+	info.basic.param1 = 7;
+	info.basic.param2 = status.volume;
+	_queuedEvents.push(info);
+
+	// Pan
+	info.event = 0xB0 | channel;
+	info.basic.param1 = 10;
+	info.basic.param2 = status.pan;
+	_queuedEvents.push(info);
+
+	// Pitch Bend
+	info.event = 0xE0 | channel;
+	info.basic.param1 = status.pitchBend & 0x7F;
+	info.basic.param2 = status.pitchBend >> 7;
+	_queuedEvents.push(info);
+}
+
 void MidiParser_QT::resetTracking() {
+	MidiParser::resetTracking();
 	_channelMap.clear();
+	_queuedEvents.clear();
+	_partMap.clear();
 }
 
 Common::QuickTimeParser::SampleDesc *MidiParser_QT::readSampleDesc(Track *track, uint32 format, uint32 descSize) {

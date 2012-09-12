@@ -26,6 +26,7 @@
 #include "audio/midiparser.h"
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/queue.h"
 #include "common/quicktime.h"
 
 /**
@@ -70,6 +71,13 @@ private:
 		uint32 timeScale;
 	};
 
+	struct PartStatus {
+		uint32 instrument;
+		byte volume;
+		byte pan;
+		uint16 pitchBend;
+	};
+
 	class MIDISampleDesc : public SampleDesc {
 	public:
 		MIDISampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
@@ -79,18 +87,30 @@ private:
 		uint32 _requestSize;
 	};
 
-	uint32 readNextEvent(EventInfo &info);
-	void handleGeneralEvent(EventInfo &info, uint32 control);
+	uint32 readNextEvent();
+	void handleGeneralEvent(uint32 control);
+	void handleControllerEvent(uint32 control, uint32 part, byte intPart, byte fracPart);
+	void handleNoteEvent(uint32 part, byte pitch, byte velocity, uint32 length);
 
-	void allocateChannel(uint32 part, uint32 instrument);
-	byte getChannel(uint32 part) const;
+	void definePart(uint32 part, uint32 instrument);
+	void setupPart(uint32 part);
+
+	byte getChannel(uint32 part);
 	bool isChannelAllocated(byte channel) const;
+	byte findFreeChannel(uint32 part);
+	void deallocateFreeChannel();
+	void deallocateChannel(byte channel);
+	bool allChannelsAllocated() const;
 
 	byte *readWholeTrack(Common::QuickTimeParser::Track *track, uint32 &trackSize);
 
 	Common::Array<MIDITrackInfo> _trackInfo;
+	Common::Queue<EventInfo> _queuedEvents;
 
-	typedef Common::HashMap<uint, uint> ChannelMap;
+	typedef Common::HashMap<uint, PartStatus> PartMap;
+	PartMap _partMap;
+
+	typedef Common::HashMap<uint, byte> ChannelMap;
 	ChannelMap _channelMap;
 
 	void initFromContainerTracks();
