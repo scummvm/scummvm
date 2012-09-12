@@ -94,6 +94,8 @@ const uint16 csAddr_noAnchorTimeout = 0x9a1d;
 const uint16 csAddr_getOutOfLake = 0x9a7a;
 // Dig Under Mansion Wall function : 0x9aca
 const uint16 csAddr_digMansionWall = 0x9aca;
+// Too Dark Here function : 0x9c66
+const uint16 csAddr_tooDarkHere = 0x9c66;
 // Examine Banknote function : 0x9c6d
 const uint16 csAddr_examineBanknote = 0x9c6d;
 // Use Time Pills function : 0x9c79
@@ -439,11 +441,8 @@ const uint16 dsAddr_branchNotPaddleMsg = 0x48d6; // "This branch is not a paddle
 const uint16 dsAddr_trySomewhereElseMsg = 0x4913; // "I'd better try somewhere else - I suppose this side is heavily guarded"
 // Sharpen Not Pulverize Message : 0x495c to 0x4983
 const uint16 dsAddr_sharpenNotPulverizeMsg = 0x495c; // "I needed to sharpen it, not pulverize"
-
-// FIXME - Can't find where this is used. Cellar?
 // Can't Do Anything Too Dark Message : 0x4984 to 0x49ad
 const uint16 dsAddr_cantDoTooDarkMsg = 0x4984; // "I can't do anything here, it's too dark"
-
 // Bribe Message : 0x49ae to 0x49d0
 const uint16 dsAddr_BribeMsg = 0x49ae; // "Here, let's make your pocket fat."
 // Bank Note Message : 0x49d1 to 0x4a28
@@ -864,7 +863,7 @@ const uint16 dsAddr_objCallbackTablePtr = 0xbb72;
 // invItemToolboxHalfEmpty = csAddr_openHalfEmptyToolbox
 // invItemDiveEquipment = csAddr_useDivingEquipment
 // invItemShovelAct2 = csAddr_digMansionWall
-// 0xff = 0x9c66 // TODO: Disabled? - callback function implementation missing.
+// 0xff = csAddr_tooDarkHere // TODO: No object has id 0xff - Callback Disabled?
 // invItemBanknote = csAddr_examineBanknote
 // invItemTimePills = csAddr_useTimePills
 

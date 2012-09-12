@@ -4852,6 +4852,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_notThinkRightPlaceMsg); // "I don't think this is the right place"
 		break;
 
+	case csAddr_tooDarkHere:
+		displayMessage(dsAddr_cantDoTooDarkMsg); // "I can't do anything here, it's too dark"
+		break;
+
 	case csAddr_examineBanknote:
 		displayMessage(dsAddr_bankNoteMsg); // "It's a note from some bank..."
 		SET_FLAG(dsAddr_examinedBanknoteFlag, 1);
