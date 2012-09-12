@@ -137,6 +137,36 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieV2, 1
 	},
 
+	// The 11th Hour Macintosh English
+	{
+		{
+			"11h", "",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 1
+	},
+
+	// The 11th Hour Macintosh English (Installed)
+	{
+		{
+			"11h", "Installed",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 1
+	},
+
 	// The 11th Hour DOS Demo English
 	{
 		{
@@ -159,6 +189,36 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieV2, 2
 	},
 
+	// The Making of The 11th Hour Macintosh English
+	{
+		{
+			"11h", "Making Of",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 2
+	},
+
+	// The Making of The 11th Hour Macintosh English (Installed)
+	{
+		{
+			"11h", "Making Of (Installed)",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 2
+	},
+
 	// Clandestiny Trailer DOS English
 	{
 		{
@@ -166,6 +226,36 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
+		},
+		kGroovieV2, 3
+	},
+
+	// Clandestiny Trailer Macintosh English
+	{
+		{
+			"clandestiny", "Trailer",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 3
+	},
+
+	// Clandestiny Trailer Macintosh English (Installed)
+	{
+		{
+			"clandestiny", "Trailer (Installed)",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieV2, 3
 	},
@@ -207,6 +297,11 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
 };
 
+static const char *directoryGlobs[] = {
+	"MIDI",
+	0
+};
+
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
 	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
@@ -222,6 +317,10 @@ public:
 		// replaced with an according explanation.
 		_flags = kADFlagUseExtraAsHint;
 		_guioptions = GUIO3(GUIO_NOSUBTITLES, GUIO_NOSFX, GUIO_NOASPECT);
+
+		// Need MIDI directory to detect 11H Mac Installed
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	const char *getName() const {
