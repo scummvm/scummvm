@@ -80,12 +80,24 @@ const uint16 csAddr_mouseOutOfHoleTimeout = 0x8d79;
 const uint16 csAddr_robotSafeAlreadyUnlockedCheck = 0x9166;
 // Robot Safe (Mike) Unlock Check function : 0x9175
 const uint16 csAddr_robotSafeUnlockCheck = 0x9175;
+// Open Full Toolbox function : 0x98fa
+const uint16 csAddr_openFullToolbox = 0x98fa;
+// Open Half Empty Toolbox function : 0x9910
+const uint16 csAddr_openHalfEmptyToolbox = 0x9910;
+// Use Diving Equipment function : 0x9921
+const uint16 csAddr_useDivingEquipment = 0x9921;
 // Successfully Got Anchor function : 0x99e0
 const uint16 csAddr_gotAnchor = 0x99e0;
 // No Anchor Timeout function : 0x9a1d
 const uint16 csAddr_noAnchorTimeout = 0x9a1d;
 // Get Out of Lake function : 0x9a7a
 const uint16 csAddr_getOutOfLake = 0x9a7a;
+// Dig Under Mansion Wall function : 0x9aca
+const uint16 csAddr_digMansionWall = 0x9aca;
+// Examine Banknote function : 0x9c6d
+const uint16 csAddr_examineBanknote = 0x9c6d;
+// Use Time Pills function : 0x9c79
+const uint16 csAddr_useTimePills = 0x9c79;
 // Mansion Intrusion Attempt function : 0x9d45
 const uint16 csAddr_mansionIntrusionAttempt = 0x9d45;
 // Second Mansion Intrusion function : 0x9d90
@@ -848,6 +860,13 @@ const uint16 dsAddr_objUseCallbackTablePtr = 0xb89c;
 
 // Inventory Object Callback Table (3 byte (id, callbackAddr) * 7) : 0xbb72 to 0xbb86
 const uint16 dsAddr_objCallbackTablePtr = 0xbb72;
+// invItemToolboxFull = csAddr_openFullToolbox
+// invItemToolboxHalfEmpty = csAddr_openHalfEmptyToolbox
+// invItemDiveEquipment = csAddr_useDivingEquipment
+// invItemShovelAct2 = csAddr_digMansionWall
+// 0xff = 0x9c66 // TODO: Disabled? - callback function implementation missing.
+// invItemBanknote = csAddr_examineBanknote
+// invItemTimePills = csAddr_useTimePills
 
 // Scene Hotspots Table (2 byte LE address * ??) : 0xbb87 to 0x????
 const uint16 dsAddr_sceneHotspotsPtr = 0xbb87;

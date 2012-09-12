@@ -3878,7 +3878,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(dsAddr_MansionPutBurningPaperInFridgeFlag, 1);
 		break;
 
-	case 0x98fa: // Right click to open toolbox
+	case csAddr_openFullToolbox: // Right click to open toolbox
 		inventory->remove(invItemToolboxFull);
 		inventory->add(invItemToolboxHalfEmpty);
 		inventory->add(invItemCarJack);
@@ -3887,7 +3887,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_carJackMsg); // "Wow! There's a car jack inside! Great!"
 		break;
 
-	case 0x9910:
+	case csAddr_openHalfEmptyToolbox:
 		inventory->remove(invItemToolboxHalfEmpty);
 		inventory->add(invItemSpanner);
 		inventory->activate(false);
@@ -4744,7 +4744,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		scene->push(SceneEvent(SceneEvent::kQuit));
 		break;
 
-	case 0x9921: // using diving eq
+	case csAddr_useDivingEquipment: // using diving eq
 		// FIXME - Some code is missing here as displayMessage(dsAddr_cantTalkUnderwaterMsg),
 		//         displayMessage(dsAddr_notSwimmingThereMsg), displayMessage(dsAddr_tooLittleAirMsg)
 		//         displayMessage(dsAddr_fishDontWorryMsg) are never called.
@@ -4810,7 +4810,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		fnGetOutOfLake();
 		break;
 
-	case 0x9aca:
+	case csAddr_digMansionWall:
 		if (scene->getId() == 13) {
 			moveTo(172, 181, 1);
 			playSound(26, 19);
@@ -4852,13 +4852,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_notThinkRightPlaceMsg); // "I don't think this is the right place"
 		break;
 
-	case 0x9c6d:
+	case csAddr_examineBanknote:
 		displayMessage(dsAddr_bankNoteMsg); // "It's a note from some bank..."
 		SET_FLAG(dsAddr_examinedBanknoteFlag, 1);
 		retVal = false;
 		break;
 
-	case 0x9c79: // use pills
+	case csAddr_useTimePills: // use pills
 		if (scene->getId() != 36) {
 			displayMessage(dsAddr_notTryNowMsg); // "There's no need to try them now"
 		} else if (CHECK_FLAG(dsAddr_mansionAlreadyUsedTimePillsFlag, 1)) {
