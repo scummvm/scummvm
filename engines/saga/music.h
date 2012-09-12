@@ -46,6 +46,7 @@ public:
 	MusicDriver();
 
 	void play(SagaEngine *vm, ByteArray *buffer, bool loop);
+	void playQuickTime(const Common::String &musicName, bool loop);
 	virtual void pause();
 	virtual void resume();
 
