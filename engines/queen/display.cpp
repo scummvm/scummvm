@@ -23,9 +23,13 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
+#include "graphics/decoders/pcx.h"
 
 #include "queen/display.h"
 #include "queen/input.h"
@@ -806,28 +810,22 @@ void Display::fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w,
 }
 
 void Display::decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd) {
-	*w = READ_LE_UINT16(src + 12);
-	*h = READ_LE_UINT16(src + 14);
+	Common::MemoryReadStream str(src, srcSize);
+
+	::Graphics::PCXDecoder pcx;
+	if (!pcx.loadStream(str))
+		error("Error while reading PCX image");
+
+	const ::Graphics::Surface *pcxSurface = pcx.getSurface();
+	if (pcxSurface->format.bytesPerPixel != 1)
+		error("Invalid bytes per pixel in PCX surface (%d)", pcxSurface->format.bytesPerPixel);
+	*w = pcxSurface->w;
+	*h = pcxSurface->h;
 
 	assert(palStart <= palEnd && palEnd <= 256);
-	const uint8 *palData = src + srcSize - 768;
-	memcpy(pal, palData + palStart * 3, (palEnd - palStart) * 3);
-
-	src += 128;
-	for (int y = 0; y < *h; ++y) {
-		uint8 *p = dst;
-		while (p < dst + *w) {
-			uint8 col = *src++;
-			if ((col & 0xC0) == 0xC0) {
-				uint8 len = col & 0x3F;
-				memset(p, *src++, len);
-				p += len;
-			} else {
-				*p++ = col;
-			}
-		}
-		dst += dstPitch;
-	}
+	memcpy(pal, pcx.getPalette() + palStart * 3, (palEnd - palStart) * 3);
+	for (uint16 y = 0; y < pcxSurface->h; y++)
+		memcpy(dst + y * dstPitch, pcxSurface->getBasePtr(0, y), pcxSurface->w);
 }
 
 void Display::decodeLBM(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase) {
