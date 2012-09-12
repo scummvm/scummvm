@@ -30,6 +30,7 @@
 #include "groovie/music.h"
 #include "groovie/resource.h"
 #include "groovie/roq.h"
+#include "groovie/stuffit.h"
 #include "groovie/vdx.h"
 
 #include "common/config-manager.h"
@@ -94,6 +95,15 @@ GroovieEngine::~GroovieEngine() {
 }
 
 Common::Error GroovieEngine::run() {
+	if (_gameDescription->version == kGroovieV2 && getPlatform() == Common::kPlatformMacintosh) {
+		// Load the Mac installer with the lowest priority (in case the user has installed
+		// the game and has the MIDI folder present; faster to just load them)
+		Common::Archive *archive = createStuffItArchive("The 11th Hour Installer");
+
+		if (archive)
+			SearchMan.add("The 11th Hour Installer", archive);
+	}
+
 	_script = new Script(this, _gameDescription->version);
 
 	// Initialize the graphics
