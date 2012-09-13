@@ -77,6 +77,7 @@ Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2500::~Module2500() {
+	// TODO Music18hList_deleteGroup(0x29220120);
 }
 
 void Module2500::createScene(int sceneNum, int which) {
