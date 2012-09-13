@@ -69,7 +69,6 @@ Common::Error HopkinsEngine::run() {
 
 	_graphicsManager.LOAD_IMAGE("LINUX");
 
-#ifdef HOPKINS_DEBUG
 	_graphicsManager.FADE_INW();
 	delay(1500);
 /*
@@ -472,7 +471,7 @@ LABEL_128:
     }
   }
 */
-#else
+#if 0
 	// Copy vesa surface to screen
 	_graphicsManager.DD_Lock();
 
@@ -487,6 +486,7 @@ LABEL_128:
 	}
 
 	_graphicsManager.DD_Unlock();
+#endif
 
 	// Stub event loop
 	Common::Event evt;
@@ -494,7 +494,7 @@ LABEL_128:
 		while (g_system->getEventManager()->pollEvent(evt))
 			g_system->updateScreen();
 	}
-#endif
+
 	return Common::kNoError;
 }
 

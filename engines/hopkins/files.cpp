@@ -164,7 +164,7 @@ byte *FileManager::LIBERE_FICHIER(byte *ptr) {
 }
 
 bool FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
-	byte *ptr; // [sp+1Ch] [bp-40h]@0
+	byte *ptr = NULL;
 	Common::File f;
 
 	switch (a2) {
@@ -262,8 +262,7 @@ bool FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 
 	// Scan for an entry in the catalogue
 	const byte *startP = ptr;
-	int result; // eax@50
-	void *v22; // ebx@53
+	int result;
 	bool matchFlag = false;
 	int offsetVal = 0;
 	

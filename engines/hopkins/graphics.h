@@ -43,16 +43,17 @@ class GraphicsManager {
 private:
 	void CHARGE_ECRAN(const Common::String &file);
 public:
+	int _lockCtr;
 	bool SDL_MODEYES;
 	int SDL_ECHELLE;
 	int XSCREEN;
 	int YSCREEN;
 	int WinScan;
 	int Winbpp;
-	byte SD_PIXELS[257 * 2];
+	byte SD_PIXELS[PALETTE_SIZE * 2];
 	byte *PAL_PIXELS;
 	int nbrligne;
-	byte TABLE_COUL[256];
+	byte TABLE_COUL[PALETTE_SIZE];
 	byte cmap[PALETTE_BLOCK_SIZE];
 	byte Palette[PALETTE_BLOCK_SIZE];
 	bool Linear;
@@ -85,10 +86,10 @@ public:
 	void INIT_TABLE(int a1, int a2, byte *a3);
 	int SCROLL_ECRAN(int amount);
 	void Trans_bloc(byte *destP, byte *srcP, int count, int param1, int param2);
-	void A_PCXSCREEN_WIDTH_SCREEN_HEIGHT(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
+	void A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
 	void Cls_Pal();
 	void souris_max();
-	void SCANLINE(int width);
+	void SCANLINE(int pitch);
 	void m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll2(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll2A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
@@ -102,6 +103,7 @@ public:
 	void FADE_OUTW();
 	void setpal_vga256(const byte *palette);
 	void CHANGE_PALETTE(const byte *palette);
+	uint16 MapRGB(byte r, byte g, byte b);
 	void DD_VBL();
 };
 

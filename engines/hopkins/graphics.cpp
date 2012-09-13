@@ -33,6 +33,7 @@
 namespace Hopkins {
 
 GraphicsManager::GraphicsManager() {
+	_lockCtr = 0;
 	SDL_MODEYES = false;
 	SDL_ECHELLE = 0;
 	XSCREEN = YSCREEN = 0;
@@ -54,6 +55,11 @@ GraphicsManager::GraphicsManager() {
 	Agr_x = Agr_y = 0;
 	Agr_Flag_x = Agr_Flag_y = 0;
 	FADESPD = 15;
+
+	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
+	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_SIZE], 0);
+	Common::fill(&cmap[0], &cmap[PALETTE_BLOCK_SIZE], 0);
+	Common::fill(&Palette[0], &Palette[PALETTE_BLOCK_SIZE], 0);
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -88,7 +94,8 @@ void GraphicsManager::SET_MODE(int width, int height) {
 			//height = Reel_Zoom(height, SDL_ECHELLE);
 		}
 
-		Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 0, 10, 5, 0, 0);
+		//Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 0, 10, 5, 0, 0);
+		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 		if (bpp == 8) {
 			initGraphics(width, height, true);
@@ -105,8 +112,8 @@ void GraphicsManager::SET_MODE(int width, int height) {
 		YSCREEN = height;
 
 		Linear = true;
-		Winbpp = bpp;
-		WinScan = width;
+		Winbpp = bpp / 8;
+		WinScan = width * Winbpp;
 
 		PAL_PIXELS = SD_PIXELS;
 		nbrligne = width;
@@ -119,13 +126,16 @@ void GraphicsManager::SET_MODE(int width, int height) {
 }
 
 void GraphicsManager::DD_Lock() {
-	VideoPtr = g_system->lockScreen();
+	if (_lockCtr++ == 0)
+		VideoPtr = g_system->lockScreen();
 }
 
 void GraphicsManager::DD_Unlock() {
 	assert(VideoPtr);
-	g_system->unlockScreen();
-	VideoPtr = NULL;
+	if (--_lockCtr == 0) {
+		g_system->unlockScreen();
+		VideoPtr = NULL;
+	}
 }
 
 void GraphicsManager::Cls_Video() {
@@ -158,7 +168,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	}
 
 	SCROLL_ECRAN(0);
-	A_PCXSCREEN_WIDTH_SCREEN_HEIGHT((byte *)VESA_SCREEN.pixels, file, Palette, flag);
+	A_PCX640_480((byte *)VESA_SCREEN.pixels, file, Palette, flag);
 
 	SCROLL = 0;
 	OLD_SCROLL = 0;
@@ -184,7 +194,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 
 		DD_Unlock();
 	} else {
-		SCANLINE(0x500u);
+		SCANLINE(SCREEN_WIDTH * 2);
 		GLOBALS.max_x = SCREEN_WIDTH * 2;
 		DD_Lock();
 		Cls_Video();
@@ -212,11 +222,11 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	memcpy((byte *)VESA_BUFFER.pixels, (byte *)VESA_SCREEN.pixels, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 }
 
-void GraphicsManager::INIT_TABLE(int a1, int a2, byte *a3) {
+void GraphicsManager::INIT_TABLE(int a1, int a2, byte *palette) {
 	for (int idx = 0; idx < 256; ++idx)
 		TABLE_COUL[idx] = idx;
   
-	Trans_bloc(TABLE_COUL, a3, 256, a1, a2);
+	Trans_bloc(TABLE_COUL, palette, 256, a1, a2);
 
 	for (int idx = 0; idx < 256; ++idx) {
 		byte v = TABLE_COUL[idx];
@@ -295,7 +305,7 @@ void GraphicsManager::Trans_bloc(byte *destP, byte *srcP, int count, int param1,
 }
 
 // TODO: See if it's feasible and/or desirable to change this to use the Common PCX decoder
-void GraphicsManager::A_PCXSCREEN_WIDTH_SCREEN_HEIGHT(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
+void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
 	int filesize; 
 	signed __int16 v6;
 	int v7;
@@ -433,28 +443,27 @@ void GraphicsManager::A_PCXSCREEN_WIDTH_SCREEN_HEIGHT(byte *surface, const Commo
 	}
 
 	if (f.read(palette, PALETTE_BLOCK_SIZE) != (PALETTE_BLOCK_SIZE))
-		error("A_PCXSCREEN_WIDTH_SCREEN_HEIGHT");
+		error("A_PCX640_480");
   
 	f.close();
 	GLOBALS.dos_free2(ptr);
 }
 
 void GraphicsManager::Cls_Pal() {
-	if (Winbpp == 2) {
-		Common::fill(&cmap[0], &cmap[PALETTE_BLOCK_SIZE], 0);
+	Common::fill(&cmap[0], &cmap[PALETTE_BLOCK_SIZE], 0);
+	SD_PIXELS[0] = 0;
 
-		// TODO: Figure out what this is for
-		//SD_PIXELS[2 * v0] = SDL_MapRGB(*(_DWORD *)(LinuxScr + 4), 0, 0, 0);
+	if (Winbpp == 1) {
 		g_system->getPaletteManager()->setPalette(cmap, 0, 256);
 	}
 }
 
 void GraphicsManager::souris_max() {
-	// Original has no implementatoin
+	// Original has no implementation
 }
 
-void GraphicsManager::SCANLINE(int width) {
-	// Original has no implementatoin
+void GraphicsManager::SCANLINE(int pitch) {
+	nbrligne = nbrligne2 = pitch;
 }
 
 void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
@@ -557,38 +566,30 @@ void GraphicsManager::m_scroll2A(const byte *surface, int xs, int ys, int width,
 	} while (v9);
 }
 
+/**
+ * Copies data from a 8-bit palette surface into the 16-bit screen
+ */
 void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
-	const byte *v7;
-	const byte *v8;
-	int v9;
-	int v10;
-	const byte *v11;
-	int v12;
-	const byte *v13;
-	const byte *v14;
+	DD_Lock();
 
 	assert(VideoPtr);
-	v7 = xs + nbrligne2 * ys + surface;
-	v8 = destX + destX + WinScan * destY + (byte *)VideoPtr->pixels;
-	v9 = height;
+	const byte *srcP = xs + nbrligne2 * ys + surface;
+	uint16 *destP = (uint16 *)((byte *)VideoPtr->pixels + destX * 2 + WinScan * destY);
 
-	do {
-		v14 = v8;
-		v13 = v7;
-		v10 = width;
-		v12 = v9;
-		v11 = PAL_PIXELS;
-    
-		do {
-			*(uint16 *)v8 = *(uint16 *)(v11 + 2 * *(byte *)v7++);
-			v8 += 2;
-			--v10;
-		} while (v10);
-    
-		v7 = nbrligne2 + v13;
-		v8 = WinScan + v14;
-		v9 = v12 - 1;
-	} while (v12 != 1);
+	for (int yp = 0; yp < height; ++yp) {
+		// Copy over the line, using the source pixels as lookups into the pixels palette
+		const byte *lineSrcP = srcP;
+		uint16 *lineDestP = destP;
+
+		for (int xp = 0; xp < width; ++xp)
+			*lineDestP++ = PAL_PIXELS[*lineSrcP++];
+
+		// Move to the start of the next line
+		srcP += nbrligne2;
+		destP += WinScan / 2;
+	}
+
+	DD_Unlock();
 }
 
 void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
@@ -656,80 +657,62 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 }
 
 void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface) {
-	__int16 v3; 
-	int v4; 
-	__int16 v5;
-	__int16 v6;
-	char *v7; 
-	__int16 v8;
-	char *v9;
-	__int16 v10;
-	signed __int16 v12; 
-	unsigned __int16 v13;
-	byte palData[PALETTE_BLOCK_SIZE];
-	byte v15[3];
-	__int16 v16;
-	char v17[2];
-	char v18[1532]; 
+	uint16 palData1[PALETTE_BLOCK_SIZE * 2];
+	byte palData2[PALETTE_BLOCK_SIZE];
 
-	v13 = FADESPD;
-	v3 = 0;
-	do {
-		v4 = v3;
-		*(&v16 + v4) = 0;
-		palData[v4] = 0;
-		++v3;
-	} while (v3 < (PALETTE_BLOCK_SIZE));
+	// Initialise temporary palettes
+	Common::fill(&palData1[0], &palData1[PALETTE_BLOCK_SIZE], 0);
+	Common::fill(&palData2[0], &palData2[PALETTE_BLOCK_SIZE], 0);
+
+	// Set current palette to black
+	setpal_vga256(palData2);
   
-	setpal_vga256(palData);
-	v12 = 0;
-  
-	if ((signed __int16)v13 > 0) {
-		do {
-			v5 = 0;
-			do {
-				if ((unsigned __int8)palData[v5] < *(byte *)(v5 + palette)) {
-					v6 = *(&v16 + v5) + ((unsigned int)*(byte *)(v5 + palette) << 8) / (signed __int16)v13;
-					*(&v16 + v5) = v6;
-					palData[v5] = (v6 >> 8) & 0xff;
-				}
+	// Loop through fading in the palette
+	uint16 *pTemp1 = &palData1[2];
+	for (int fadeIndex = 0; fadeIndex < FADESPD; ++fadeIndex) {
+		uint16 *pTemp2 = &palData1[4];
 
-				if (v15[v5] < *(byte *)(palette + v5 + 1)) {
-					v7 = &v17[2 * v5];
-					v8 = *(uint16 *)v7 + ((unsigned int)*(byte *)(palette + v5 + 1) << 8) / (signed __int16)v13;
-					*(uint16 *)v7 = v8;
-					v15[v5] = (v8 >> 8) & 0xff;
-				}
-
-				if (v15[v5 + 1] < *(byte *)(palette + v5 + 2)) {
-					v9 = &v18[2 * v5];
-					v10 = *(uint16 *)v9 + ((unsigned int)*(byte *)(palette + v5 + 2) << 8) / (signed __int16)v13;
-					*(uint16 *)v9 = v10;
-					v15[v5 + 1] = (v10 >> 8) & 0xff;
-				}
-
-				v5 += 3;
-			} while (v5 < (PALETTE_BLOCK_SIZE));
-      
-			setpal_vga256(palData);
-			if (Winbpp == 2) {
-				if (SDL_ECHELLE)
-					m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
-				else
-					m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
-				DD_VBL();
+		for (int palOffset = 0; palOffset < PALETTE_BLOCK_SIZE; palOffset += 3) {
+			if (palData2[palOffset] < palette[palOffset]) {
+				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD;
+				palData1[palOffset] = v;
+				palData2[palOffset] = (v >> 8) & 0xff;
 			}
 
-			++v12;
-		} while (v12 < (signed __int16)v13);
+			if (palData2[palOffset + 1] < palette[palOffset + 1]) {
+				uint16 *pDest = &pTemp1[palOffset];
+				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest; 
+				*pDest = v;
+				palData2[palOffset + 1] = (v >> 8) & 0xff;
+			}
+
+			if (palData2[palOffset + 1] < palette[palOffset + 1]) {
+				uint16 *pDest = &pTemp2[palOffset];
+				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest; 
+				*pDest = v;
+				palData2[palOffset + 1] = (v >> 8) & 0xff;
+			}
+		}
+
+		setpal_vga256(palData2);
+		if (Winbpp == 2) {
+			if (SDL_ECHELLE)
+				m_scroll16A(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			else
+				m_scroll16(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			DD_VBL();
+		}
 	}
 
+	// Set the final palette
 	setpal_vga256(palette);
+
+	// Refresh the screen
 	if (Winbpp == 2) {
 		if (SDL_ECHELLE)
-			m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+			m_scroll16A(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
-			m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+			m_scroll16(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_VBL();
 	}
 }
@@ -762,9 +745,9 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 		setpal_vga256(palData);
 		if (Winbpp == 2) {
 			if (SDL_ECHELLE)
-				m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+				m_scroll16A(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else
-				m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+				m_scroll16(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			DD_VBL();
 		}
 	
@@ -783,9 +766,9 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 				setpal_vga256(palData);
 				if (Winbpp == 2) {
 					if (SDL_ECHELLE)
-						m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+						m_scroll16A(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					else
-						m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+						m_scroll16(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			
 					DD_VBL();
 				}
@@ -802,7 +785,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
     
 		if (Winbpp == 2) {
 			if (!SDL_ECHELLE) {
-				m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+				m_scroll16(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				return DD_VBL();
 			}
 			goto LABEL_28;
@@ -816,12 +799,12 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 		setpal_vga256(palData);
 		if (Winbpp == 2) {
 			if (!SDL_ECHELLE) {
-				m_scroll16(surface, start_x, 0, 640, 480, 0, 0);
+				m_scroll16(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				return DD_VBL();
 			}
 
 LABEL_28:
-			m_scroll16A(surface, start_x, 0, 640, 480, 0, 0);
+			m_scroll16A(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			return DD_VBL();
 		}
 	}
@@ -852,31 +835,33 @@ void GraphicsManager::setpal_vga256(const byte *palette) {
 }
 
 void GraphicsManager::CHANGE_PALETTE(const byte *palette) {
-	signed int v1;
-	signed int v2;
-	int v3;
-	const byte *v4;
+	// Copy the palette into the PALPCX block
+// TODO: Likely either one or both of the destination arrays can be removed,
+// since PALPCX is only used in SAVE_IMAGE, and cmap in the original was a RGBA
+// array specifically intended just for passing to the SDL palette setter
+	Common::copy(&palette[0], &palette[PALETTE_BLOCK_SIZE], &PALPCX[0]);
+	Common::copy(&palette[0], &palette[PALETTE_BLOCK_SIZE], &cmap[0]);
 
-	v1 = 0;
-	do {
-		PALPCX[v1] = *(byte *)(palette + v1);
-		++v1;
-	} while (v1 < PALETTE_BLOCK_SIZE);
-  
-	v2 = 0;
-	do {
-		v3 = 3 * v2;
-		cmap[v3] = *(byte *)(palette + 3 * v2);
-		v4 = palette + 3 * v2;
-		cmap[v3 + 1] = *(byte *)(v4 + 1);
-		cmap[v3 + 2] = *(byte *)(v4 + 2);
-
+	const byte *srcP = &palette[0];
+	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
 		// TODO: Validate pixel encoding is correct
-		*(uint16 *)&SD_PIXELS[2 * v2++] = 
-			*(byte *)v4 | (*(byte *)(v4 + 1) << 5) | (*(byte *)(v4 + 2) << 10);
-	} while (v2 < PALETTE_SIZE);
+		*(uint16 *)&SD_PIXELS[2 * idx] = MapRGB(*srcP, *(srcP + 1), *(srcP + 2));
+	}
 
-	g_system->getPaletteManager()->setPalette(cmap, 0, PALETTE_SIZE);
+	if (Winbpp == 1)
+		g_system->getPaletteManager()->setPalette(cmap, 0, PALETTE_SIZE);
+}
+
+uint16 GraphicsManager::MapRGB(byte r, byte g, byte b) {
+	if (Winbpp == 1) {
+		error("TODO: Support in 8-bit graphics mode");
+	} else {
+		Graphics::PixelFormat format = g_system->getScreenFormat();
+
+		return (r >> format.rLoss) << format.rShift
+				| (g >> format.gLoss) << format.gShift
+				| (b >> format.bLoss) << format.bShift;
+	}
 }
 
 void GraphicsManager::DD_VBL() {
