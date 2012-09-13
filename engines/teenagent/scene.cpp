@@ -405,7 +405,7 @@ void Scene::init(int id, const Common::Point &pos) {
 			sub_hack = 2;
 		}
 	}
-	on.load(*stream, SurfaceList::kTypeOn, sub_hack);
+	on.load(*stream, sub_hack);
 
 	loadOns();
 	loadLans();
