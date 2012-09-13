@@ -46,7 +46,7 @@ struct CharacterEntry {
 };
 
 struct TextHandler {
-	byte textTable[NUM_FONT_CHARS][2][FONT_WIDTH * FONT_HEIGHT];
+	byte textTable[NUM_FONT_CHARS][2][FONT_WIDTH *FONT_HEIGHT];
 	CharacterEntry fontParamTable[NUM_FONT_CHARS];
 };
 

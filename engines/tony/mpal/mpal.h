@@ -102,6 +102,8 @@ namespace MPAL {
 #define MAXPATTERN 40         // pattern of animation of an object
 #define MAXPOLLINGLOCATIONS   64
 
+#define GETARG(type)   va_arg(v, type)
+
 /**
  * Macro for use with queries that may refer to X and Y co-ordinates
  */

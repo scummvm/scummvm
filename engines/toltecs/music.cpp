@@ -20,14 +20,12 @@
  *
  */
 
-// FIXME: This code is taken from SAGA and needs more work (e.g. setVolume).
+#include "audio/midiparser.h"
+#include "common/textconsole.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/music.h"
 #include "toltecs/resource.h"
-
-#include "audio/midiparser.h"
-#include "common/textconsole.h"
 
 namespace Toltecs {
 
@@ -77,23 +75,13 @@ void MusicPlayer::playMIDI(const byte *data, uint32 size, bool loop) {
 
 		_parser = parser;
 
-		setVolume(127);
+		syncVolume();
 
 		_isLooping = loop;
 		_isPlaying = true;
 	} else {
 		delete parser;
 	}
-}
-
-void MusicPlayer::pause() {
-	setVolume(-1);
-	_isPlaying = false;
-}
-
-void MusicPlayer::resume() {
-	setVolume(127);
-	_isPlaying = true;
 }
 
 void MusicPlayer::stopAndClear() {

@@ -28,8 +28,8 @@
 
 #include "engines/wintermute/ad/ad_response.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {

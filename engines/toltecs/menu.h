@@ -29,14 +29,6 @@
 
 namespace Toltecs {
 
-enum MenuID {
-	kMenuIdNone,
-	kMenuIdMain,
-	kMenuIdSave,
-	kMenuIdLoad,
-	kMenuIdVolumes
-};
-
 enum ItemID {
 	kItemIdNone,
 	// Main menu
@@ -85,7 +77,7 @@ public:
 	MenuSystem(ToltecsEngine *vm);
 	~MenuSystem();
 
-	int run();
+	int run(MenuID menuId);
 	void update();
 	void handleEvents();
 	
@@ -125,9 +117,6 @@ protected:
 	Common::Array<Item> _items;
 	Common::Array<SavegameItem> _savegames;
 	
-	bool _cfgText, _cfgVoices;
-	int _cfgMasterVolume, _cfgVoicesVolume, _cfgMusicVolume, _cfgSoundFXVolume,	_cfgBackgroundVolume;
-
 	void addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const char *caption, byte defaultColor, byte activeColor);
 
 	void drawItem(ItemID itemID, bool active);

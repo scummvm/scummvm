@@ -78,7 +78,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_arc->readUint32LE();
 	_vm->_arc->readUint32LE();
 	_framesPerSoundChunk = _vm->_arc->readUint32LE();
-	_vm->_arc->readUint32LE();
+	int rate = _vm->_arc->readUint32LE();
 
 	_vm->_sceneWidth = 640;
 	_vm->_sceneHeight = 400;
@@ -87,7 +87,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_cameraY = 0;
 	_vm->_guiHeight = 0;
 
-	_audioStream = Audio::makeQueuingAudioStream(22050, false);
+	_audioStream = Audio::makeQueuingAudioStream(rate, false);
 
 	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
 
@@ -97,13 +97,12 @@ void MoviePlayer::playMovie(uint resIndex) {
 	fetchAudioChunks();
 
 	uint32 lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
+	byte *chunkBuffer = NULL;
+	uint32 prevChunkSize = 0;
 
 	while (_chunkCount--) {
-
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
-		byte *chunkBuffer = NULL;
-		uint32 movieOffset;
 
 		debug(0, "chunkType = %d; chunkSize = %d", chunkType, chunkSize);
 		
@@ -112,11 +111,15 @@ void MoviePlayer::playMovie(uint resIndex) {
 		if (chunkType == kChunkAudio) {
 			_vm->_arc->skip(chunkSize);
 		} else {
-			chunkBuffer = new byte[chunkSize];
+			// Only reallocate the chunk buffer if it's smaller than the previous frame
+			if (chunkSize > prevChunkSize) {
+				delete[] chunkBuffer;
+				chunkBuffer = new byte[chunkSize];
+			}
+
+			prevChunkSize = chunkSize;
 			_vm->_arc->read(chunkBuffer, chunkSize);
 		}
-
-		movieOffset = _vm->_arc->pos();
 
 		switch (chunkType) {
 		case kChunkFirstImage:
@@ -150,10 +153,10 @@ void MoviePlayer::playMovie(uint resIndex) {
 			// Already processed
 			break;
 		case kChunkShowSubtitle:
-			// TODO: Check if the text is a subtitle (last character == 0xFE).
-			//	   If so, don't show it if text display is disabled.
-			memcpy(_vm->_script->getSlotData(subtitleSlot), chunkBuffer, chunkSize);
-			_vm->_screen->updateTalkText(subtitleSlot, 0);
+			if (_vm->_cfgText) {
+				memcpy(_vm->_script->getSlotData(subtitleSlot), chunkBuffer, chunkSize);
+				_vm->_screen->updateTalkText(subtitleSlot, 0);
+			}
 			break;
 		case kChunkShakeScreen: // start/stop shakescreen effect
 			if (chunkBuffer[0] == 0xFF)
@@ -175,15 +178,12 @@ void MoviePlayer::playMovie(uint resIndex) {
 		default:
 			error("MoviePlayer::playMovie(%04X) Unknown chunk type %d at %08X", resIndex, chunkType, _vm->_arc->pos() - 5 - chunkSize);
 		}
-
-		delete[] chunkBuffer;
-
-		_vm->_arc->seek(movieOffset, SEEK_SET);
 		
 		if (!handleInput())
 			break;
-
 	}
+
+	delete[] chunkBuffer;
 
 	_audioStream->finish();
 	_vm->_mixer->stopHandle(_audioStreamHandle);

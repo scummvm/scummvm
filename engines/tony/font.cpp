@@ -84,10 +84,9 @@ void RMFont::unload() {
 
 RMGfxPrimitive *RMFont::makeLetterPrimitive(byte bChar, int &nLength) {
 	RMFontPrimitive *prim;
-	int nLett;
 
 	// Convert from character to glyph index
-	nLett = convertToLetter(bChar);
+	int nLett = convertToLetter(bChar);
 	assert(nLett < _nLetters);
 
 	// Create primitive font
@@ -120,12 +119,11 @@ void RMFont::close() {
 }
 
 int RMFont::stringLen(const Common::String &text) {
-	uint len, i;
-
 	if (text.empty())
 		return letterLength('\0');
 
-	len = 0;
+	uint len = 0;
+	uint i;
 	for (i = 0; i < text.size() - 1; i++)
 		len += letterLength(text[i], text[i + 1]);
 	len += letterLength(text[i]);
@@ -157,7 +155,6 @@ void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 	int gstep = g / 14;
 	int bstep = b / 14;
 
-	int i;
 	byte pal[768 * 3];
 
 	// Check if we are already on the right color
@@ -169,7 +166,7 @@ void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 	_fontB = b1;
 
 	// Constructs a new palette for the font
-	for (i = 1; i < 16; i++) {
+	for (int i = 1; i < 16; i++) {
 		pal[i * 3 + 0] = r >> 16;
 		pal[i * 3 + 1] = g >> 16;
 		pal[i * 3 + 2] = b >> 16;
@@ -184,7 +181,7 @@ void RMFontColor::setBaseColor(byte r1, byte g1, byte b1) {
 	pal[15 * 3 + 2] += 8;
 
 	// Puts in all the letters
-	for (i = 0; i < _nLetters; i++)
+	for (int i = 0; i < _nLetters; i++)
 		_letter[i].loadPaletteWA(pal);
 }
 
@@ -204,8 +201,6 @@ int RMFontWithTables::letterLength(int nChar, int nNext) {
 \****************************************************************************/
 
 void RMFontDialog::init() {
-	int i;
-
 	// bernie: Number of characters in the font
 	int nchars =
 	    112    // base
@@ -222,7 +217,7 @@ void RMFontDialog::init() {
 	_hDefault = 18;
 	Common::fill(&_l2Table[0][0], &_l2Table[0][0] + (256 * 256), '\0');
 
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		_cTable[i] = g_vm->_cTableDialog[i];
 		_lTable[i] = g_vm->_lTableDialog[i];
 	}
@@ -234,8 +229,6 @@ void RMFontDialog::init() {
 \****************************************************************************/
 
 void RMFontMacc::init() {
-	int i;
-
 	// bernie: Number of characters in the font
 	int nchars =
 	    102    // base
@@ -245,7 +238,6 @@ void RMFontMacc::init() {
 	    +  8    // francais
 	    +  5;   // deutsch
 
-
 	load(RES_F_MACC, nchars, 11, 16);
 
 	// Default
@@ -253,7 +245,7 @@ void RMFontMacc::init() {
 	_hDefault = 17;
 	Common::fill(&_l2Table[0][0], &_l2Table[0][0] + (256 * 256), '\0');
 
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		_cTable[i] = g_vm->_cTableMacc[i];
 		_lTable[i] = g_vm->_lTableMacc[i];
 	}
@@ -264,8 +256,6 @@ void RMFontMacc::init() {
 \****************************************************************************/
 
 void RMFontCredits::init() {
-	int i;
-
 	// bernie: Number of characters in the font
 	int nchars =
 	    112    // base
@@ -275,7 +265,6 @@ void RMFontCredits::init() {
 	    +  8    // french
 	    +  2;   // deutsch
 
-
 	load(RES_F_CREDITS, nchars, 27, 28, RES_F_CPAL);
 
 	// Default
@@ -283,7 +272,7 @@ void RMFontCredits::init() {
 	_hDefault = 28;
 	Common::fill(&_l2Table[0][0], &_l2Table[0][0] + (256 * 256), '\0');
 
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		_cTable[i] = g_vm->_cTableCred[i];
 		_lTable[i] = g_vm->_lTableCred[i];
 	}
@@ -305,10 +294,7 @@ void RMFontObj::setBothCase(int nChar, int nNext, signed char spiazz) {
 	_l2Table[TOLOWER(nChar)][TOLOWER(nNext)] = spiazz;
 }
 
-
 void RMFontObj::init() {
-	int i;
-
 	//bernie: Number of characters in the font (solo maiuscolo)
 	int nchars =
 	    85    // base
@@ -318,7 +304,6 @@ void RMFontObj::init() {
 	    +  0    // francais (no uppercase chars)
 	    +  1;   // deutsch
 
-
 	load(RES_F_OBJ, nchars, 25, 30);
 
 	// Initialize the font table
@@ -326,7 +311,7 @@ void RMFontObj::init() {
 	_hDefault = 30;
 	Common::fill(&_l2Table[0][0], &_l2Table[0][0] + (256 * 256), '\0');
 
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		_cTable[i] = g_vm->_cTableObj[i];
 		_lTable[i] = g_vm->_lTableObj[i];
 	}
@@ -344,7 +329,6 @@ void RMFontObj::init() {
 	setBothCase('R', 'R', 1);
 	setBothCase('R', 'U', 3);
 }
-
 
 /****************************************************************************\
 *       RMText Methods
@@ -409,11 +393,6 @@ void RMText::writeText(const Common::String &text, int nFont, int *time) {
 
 void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 	RMGfxPrimitive *prim;
-	uint p, old_p;
-	int j, x, y;
-	int len;
-	int numchar;
-	int width, height;
 
 	// Set the base color
 	font->setBaseColor(_textR, _textG, _textB);
@@ -428,8 +407,9 @@ void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 	// Divide the words into lines. In this cycle, X contains the maximum length reached by a line,
 	// and the number of lines
 	Common::Array<Common::String> lines;
-	p = 0;
-	j = x = 0;
+	uint p = 0;
+	int j = 0;
+	int x = 0;
 	while (p < text.size()) {
 		j += font->stringLen(text[p]);
 		if (j > (((_aHorType == HLEFTPAR) && (lines.size() > 0)) ? _maxLineLength - 25 : _maxLineLength)) {
@@ -443,7 +423,7 @@ void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 			// width of a line caused discontinuation of the whole sentence.
 			// This workaround has the partial word broken up so it will still display
 			//
-			old_p = p;
+			uint old_p = p;
 			while (text[p] != ' ' && text[p] != '-' && p > 0)
 				p--;
 
@@ -475,8 +455,8 @@ void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 	x += 8;
 
 	// Starting position for the surface: X1, Y
-	width = x;
-	height = (lines.size() - 1) * font->letterHeight() + font->_fontDimy;
+	int width = x;
+	int height = (lines.size() - 1) * font->letterHeight() + font->_fontDimy;
 
 	// Create the surface
 	create(width, height);
@@ -484,8 +464,8 @@ void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 
 	p = 0;
 
-	y = 0;
-	numchar = 0;
+	int y = 0;
+	int numchar = 0;
 	for (uint i = 0; i < lines.size(); ++i) {
 		const Common::String &line = lines[i];
 
@@ -522,6 +502,7 @@ void RMText::writeText(Common::String text, RMFontColor *font, int *time) {
 				continue;
 			}
 
+			int len;
 			prim = font->makeLetterPrimitive(line[p], len);
 			prim->getDst()._x1 = x;
 			prim->getDst()._y1 = y;
@@ -737,8 +718,8 @@ void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
 	CORO_END_CODE;
 }
 
-void RMTextDialog::Unregister() {
-	RMGfxTask::Unregister();
+void RMTextDialog::unregister() {
+	RMGfxTask::unregister();
 	assert(_nInList == 0);
 	CoroScheduler.setEvent(_hEndDisplay);
 }
@@ -908,7 +889,7 @@ RMPoint RMTextItemName::getHotspot() {
 	if (_item == NULL)
 		return _mpos + _curscroll;
 	else
-		return _item->hotspot();
+		return _item->getHotspot();
 }
 
 RMItem *RMTextItemName::getSelectedItem() {
@@ -953,8 +934,8 @@ RMDialogChoice::~RMDialogChoice() {
 	CoroScheduler.closeEvent(_hUnreg);
 }
 
-void RMDialogChoice::Unregister() {
-	RMGfxWoodyBuffer::Unregister();
+void RMDialogChoice::unregister() {
+	RMGfxWoodyBuffer::unregister();
 	assert(!_nInList);
 	CoroScheduler.pulseEvent(_hUnreg);
 
@@ -987,8 +968,6 @@ void RMDialogChoice::close() {
 }
 
 void RMDialogChoice::setNumChoices(int num) {
-	int i;
-
 	_numChoices = num;
 	_curAdded = 0;
 
@@ -997,7 +976,7 @@ void RMDialogChoice::setNumChoices(int num) {
 	_ptDrawStrings = new RMPoint[num];
 
 	// Initialization
-	for (i = 0; i < _numChoices; i++) {
+	for (int i = 0; i < _numChoices; i++) {
 		_drawedStrings[i].setColor(0, 255, 0);
 		_drawedStrings[i].setAlignType(RMText::HLEFTPAR, RMText::VTOP);
 		_drawedStrings[i].setMaxLineLength(600);

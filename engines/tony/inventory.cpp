@@ -73,9 +73,6 @@ bool RMInventory::checkPointInside(const RMPoint &pt) {
 
 
 void RMInventory::init() {
-	int i, j;
-	int curres;
-
 	// Create the main buffer
 	create(RM_SX, 68);
 	setPriority(185);
@@ -89,10 +86,10 @@ void RMInventory::init() {
 	_nItems = 78;  // @@@ Number of takeable items
 	_items = new RMInventoryItem[_nItems + 1];
 
-	curres = 10500;
+	int curres = 10500;
 
 	// Loop through the items
-	for (i = 0; i <= _nItems; i++) {
+	for (int i = 0; i <= _nItems; i++) {
 		// Load the items from the resource
 		RMRes res(curres);
 		assert(res.isValid());
@@ -115,7 +112,7 @@ void RMInventory::init() {
 
 		_items[i]._pointer = new RMGfxSourceBuffer8RLEByteAA[_items[i]._icon.numPattern()];
 
-		for (j = 0; j < _items[i]._icon.numPattern(); j++) {
+		for (int j = 0; j < _items[i]._icon.numPattern(); j++) {
 			RMResRaw raw(curres);
 
 			assert(raw.isValid());
@@ -232,9 +229,7 @@ void RMInventory::removeThis(CORO_PARAM, bool &result) {
 }
 
 void RMInventory::removeItem(int code) {
-	int i;
-
-	for (i = 0; i < _nInv; i++)
+	for (int i = 0; i < _nInv; i++) {
 		if (_inv[i] == code - 10000) {
 			g_system->lockMutex(_csModifyInterface);
 
@@ -247,6 +242,7 @@ void RMInventory::removeItem(int code) {
 			g_system->unlockMutex(_csModifyInterface);
 			return;
 		}
+	}
 }
 
 void RMInventory::addItem(int code) {
@@ -286,9 +282,7 @@ void RMInventory::changeItemStatus(uint32 code, uint32 dwStatus) {
 
 
 void RMInventory::prepare() {
-	int i;
-
-	for (i = 1; i < RM_SX / 64 - 1; i++) {
+	for (int i = 1; i < RM_SX / 64 - 1; i++) {
 		if (i - 1 + _curPos < _nInv)
 			addPrim(new RMGfxPrimitive(&_items[_inv[i - 1 + _curPos]]._icon, RMPoint(i * 64, 0)));
 		else
@@ -325,10 +319,8 @@ void RMInventory::endCombine() {
 }
 
 bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
-	int n;
-
 	// The left click picks an item from your inventory to use it with the background
-	n = mpos._x / 64;
+	int n = mpos._x / 64;
 
 	if (_state == OPENED) {
 		if (n > 0 && n < RM_SX / 64 - 1 && _inv[n - 1 + _curPos] != 0) {
@@ -679,18 +671,17 @@ RMItem *RMInventory::whichItemIsIn(const RMPoint &mpt) {
 
 int RMInventory::getSaveStateSize() {
 	//     m_inv   pattern   m_nInv
-	return 256 * 4 + 256 * 4   +  4     ;
+	return 256 * 4 + 256 * 4   +  4;
 }
 
 void RMInventory::saveState(byte *state) {
-	int i, x;
-
 	WRITE_LE_UINT32(state, _nInv);
 	state += 4;
 	Common::copy(_inv, _inv + 256, (uint32 *)state);
 	state += 256 * 4;
 
-	for (i = 0; i < 256; i++) {
+	int x;
+	for (int i = 0; i < 256; i++) {
 		if (i < _nItems)
 			x = _items[i]._status;
 		else
@@ -702,14 +693,13 @@ void RMInventory::saveState(byte *state) {
 }
 
 int RMInventory::loadState(byte *state) {
-	int i, x;
-
 	_nInv = READ_LE_UINT32(state);
 	state += 4;
 	Common::copy((uint32 *)state, (uint32 *)state + 256, _inv);
 	state += 256 * 4;
 
-	for (i = 0; i < 256; i++) {
+	int x;
+	for (int i = 0; i < 256; i++) {
 		x = READ_LE_UINT32(state);
 		state += 4;
 
@@ -768,17 +758,15 @@ bool RMInterface::active() {
 }
 
 int RMInterface::onWhichBox(RMPoint pt) {
-	int max, i;
-
 	pt -= _openStart;
 
 	// Check how many verbs you have to consider
-	max = 4;
+	int max = 4;
 	if (_bPerorate)
 		max = 5;
 
 	// Find the verb
-	for (i = 0; i < max; i++) {
+	for (int i = 0; i < max; i++) {
 		if (_hotbbox[i].ptInRect(pt))
 			return i;
 	}
@@ -895,7 +883,6 @@ bool RMInterface::getPerorate() {
 }
 
 void RMInterface::init() {
-	int i;
 	RMResRaw inter(RES_I_INTERFACE);
 	RMRes pal(RES_I_INTERPPAL);
 
@@ -904,7 +891,7 @@ void RMInterface::init() {
 	RMGfxSourceBuffer::init(inter, inter.width(), inter.height());
 	loadPaletteWA(RES_I_INTERPAL);
 
-	for (i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		RMResRaw part(RES_I_INTERP1 + i);
 
 		_hotzone[i].init(part, part.width(), part.height());
@@ -942,11 +929,9 @@ void RMInterface::init() {
 }
 
 void RMInterface::close() {
-	int i;
-
 	destroy();
 
-	for (i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		_hotzone[i].destroy();
 }
 

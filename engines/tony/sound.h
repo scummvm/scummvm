@@ -55,7 +55,7 @@ enum SoundCodecs {
 
 class FPSound {
 private:
-	bool _bSoundSupported;
+	bool _soundSupported;
 
 public:
 	/**
@@ -83,49 +83,49 @@ public:
 	/**
 	 * Allocates an object of type FPStream, and return its pointer
 	 *
-	 * @param lplpStream    Will contain a pointer to the object you just created.
+	 * @param streamPtr     Will contain a pointer to the object you just created.
 	 *
 	 * @returns             True is everything is OK, False otherwise
 	 */
 
-	bool createStream(FPStream **lplpStream);
+	bool createStream(FPStream **streamPtr);
 
 	/**
 	 * Allocates an object of type FpSfx, and return its pointer
 	 *
-	 * @param lplpSfx       Will contain a pointer to the object you just created.
+	 * @param sfxPtr        Will contain a pointer to the object you just created.
 	 *
 	 * @returns             True is everything is OK, False otherwise
 	 */
 
-	bool createSfx(FPSfx **lplpSfx);
+	bool createSfx(FPSfx **sfxPtr);
 
 	/**
 	 * Set the general volume
 	 *
-	 * @param dwVolume      Volume to set (0-63)
+	 * @param volume        Volume to set (0-63)
 	 */
 
-	void setMasterVolume(int dwVolume);
+	void setMasterVolume(int volume);
 
 	/**
 	 * Get the general volume
 	 *
-	 * @param lpdwVolume    Variable that will contain the volume (0-63)
+	 * @param volume        Variable that will contain the volume (0-63)
 	 */
 
-	void getMasterVolume(int *lpdwVolume);
+	void getMasterVolume(int *volume);
 };
 
 class FPSfx {
 private:
-	bool _bSoundSupported;                 // True if the sound is active
-	bool _bFileLoaded;                     // True is a file is opened
-	bool _bLoop;                           // True is sound effect should loop
+	bool _soundSupported;                  // True if the sound is active
+	bool _fileLoaded;                      // True is a file is opened
+	bool _loop;                            // True is sound effect should loop
 	int  _lastVolume;
 
-	bool _bIsVoice;
-	bool _bPaused;
+	bool _isVoice;
+	bool _paused;
 
 	Audio::AudioStream *_loopStream;
 	Audio::RewindableAudioStream *_rewindableStream;
@@ -147,7 +147,7 @@ public:
 	 *
 	 */
 
-	FPSfx(bool bSoundOn);
+	FPSfx(bool soundOn);
 
 	/**
 	 * Default Destructor.
@@ -173,13 +173,13 @@ public:
 	/**
 	 * Opens a file and loads a sound effect.
 	 *
-	 * @param lpszFileName  Sfx filename
-	 * @param dwCodec       CODEC used to uncompress the samples
+	 * @param fileName      Sfx filename
+	 * @param codec         CODEC used to uncompress the samples
 	 *
 	 * @returns             True is everything is OK, False otherwise
 	 */
 
-	bool loadFile(const char *lpszFileName, uint32 dwCodec = FPCODEC_RAW);
+	bool loadFile(const char *fileName, uint32 codec = FPCODEC_RAW);
 	bool loadWave(Common::SeekableReadStream *stream);
 	bool loadVoiceFromVDB(Common::File &vdbFP);
 
@@ -204,37 +204,37 @@ public:
 	 *
 	 */
 
-	void pause(bool bPause);
+	void setPause(bool pause);
 
 	/**
 	 * Enables or disables the Sfx loop.
 	 *
-	 * @param bLoop         True to enable the loop, False to disable
+	 * @param loop         True to enable the loop, False to disable
 	 *
 	 * @remarks             The loop must be activated BEFORE the sfx starts
 	 *                      playing. Any changes made during the play will have
 	 *                      no effect until the sfx is stopped then played again.
 	 */
 
-	void setLoop(bool bLoop);
+	void setLoop(bool loop);
 
 	/**
 	 * Change the volume of Sfx
 	 *
-	 * @param dwVolume      Volume to be set (0-63)
+	 * @param volume        Volume to be set (0-63)
 	 *
 	 */
 
-	void setVolume(int dwVolume);
+	void setVolume(int volume);
 
 	/**
 	 * Gets the Sfx volume
 	 *
-	 * @param lpdwVolume    Will contain the current Sfx volume
+	 * @param volumePtr     Will contain the current Sfx volume
 	 *
 	 */
 
-	void getVolume(int *lpdwVolume);
+	void getVolume(int *volumePtr);
 
 	/**
 	 * Returns true if the underlying sound has ended
@@ -244,18 +244,18 @@ public:
 
 class FPStream {
 private:
-	uint32 _dwBufferSize;                  // Buffer size (bytes)
-	uint32 _dwSize;                        // Stream size (bytes)
-	uint32 _dwCodec;                       // CODEC used
+	uint32 _bufferSize;                  // Buffer size (bytes)
+	uint32 _size;                        // Stream size (bytes)
+	uint32 _codec;                       // CODEC used
 
-	Common::File _file;                    // File handle used for the stream
+	Common::File _file;                  // File handle used for the stream
 
-	bool _bSoundSupported;                 // True if the sound is active
-	bool _bFileLoaded;                     // True if the file is open
-	bool _bLoop;                           // True if the stream should loop
-	bool _bDoFadeOut;                      // True if fade out is required
-	bool _bSyncExit;
-	bool _bPaused;
+	bool _soundSupported;                // True if the sound is active
+	bool _fileLoaded;                    // True if the file is open
+	bool _loop;                          // True if the stream should loop
+	bool _doFadeOut;                     // True if fade out is required
+	bool _syncExit;
+	bool _paused;
 	int  _lastVolume;
 	FPStream *_syncToPlay;
 
@@ -272,7 +272,7 @@ public:
 	 *                      create it using FPSound::CreateStream()
 	 */
 
-	FPStream(bool bSoundOn);
+	FPStream(bool soundOn);
 
 	/**
 	 * Default destructor.
@@ -297,12 +297,12 @@ public:
 	 * Opens a file stream
 	 *
 	 * @param fileName      Filename to be opened
-	 * @param dwCodec       CODEC to be used to uncompress samples
+	 * @param codec         CODEC to be used to uncompress samples
 	 *
 	 * @returns             True is everything is OK, False otherwise
 	 */
 
-	bool loadFile(const Common::String &fileName, uint32 dwCodec = FPCODEC_RAW, int nSync = 2000);
+	bool loadFile(const Common::String &fileName, uint32 codec = FPCODEC_RAW, int sync = 2000);
 
 	/**
 	 * Closes a file stream (opened or not).
@@ -332,44 +332,44 @@ public:
 	 */
 
 	bool stop();
-	void waitForSync(FPStream *toplay);
+	void waitForSync(FPStream *toPlay);
 
 	/**
 	 * Pause sound effect
 	 *
-	 * @param bPause        True enables pause, False disables it
+	 * @param pause         True enables pause, False disables it
 	 */
 
-	void pause(bool bPause);
+	void setPause(bool pause);
 
 	/**
 	 * Unables or disables stream loop.
 	 *
-	 * @param bLoop         True enable loop, False disables it
+	 * @param loop          True enable loop, False disables it
 	 *
 	 * @remarks             The loop must be activated BEFORE the stream starts
 	 *                      playing. Any changes made during the play will have no
 	 *                      effect until the stream is stopped then played again.
 	 */
 
-	void setLoop(bool bLoop);
+	void setLoop(bool loop);
 
 	/**
 	 * Change the volume of the stream
 	 *
-	 * @param dwVolume      Volume to be set (0-63)
+	 * @param volume        Volume to be set (0-63)
 	 */
 
-	void setVolume(int dwVolume);
+	void setVolume(int volume);
 
 	/**
 	 * Gets the volume of the stream
 	 *
-	 * @param lpdwVolume    Variable that will contain the current volume
+	 * @param volumePtr     Variable that will contain the current volume
 	 *
 	 */
 
-	void getVolume(int *lpdwVolume);
+	void getVolume(int *volumePtr);
 };
 
 } // End of namespace Tony

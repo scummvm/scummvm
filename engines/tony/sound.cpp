@@ -45,7 +45,7 @@ namespace Tony {
  *
  */
 FPSound::FPSound() {
-	_bSoundSupported = false;
+	_soundSupported = false;
 }
 
 /**
@@ -54,8 +54,8 @@ FPSound::FPSound() {
  * @returns     True is everything is OK, False otherwise
  */
 bool FPSound::init() {
-	_bSoundSupported = g_system->getMixer()->isReady();
-	return _bSoundSupported;
+	_soundSupported = g_system->getMixer()->isReady();
+	return _soundSupported;
 }
 
 /**
@@ -69,55 +69,55 @@ FPSound::~FPSound() {
 /**
  * Allocates an object of type FPStream, and return its pointer
  *
- * @param lplpStream   Will contain a pointer to the object you just created.
+ * @param streamPtr    Will contain a pointer to the object you just created.
  *
  * @returns     True is everything is OK, False otherwise
  */
 
-bool FPSound::createStream(FPStream **lplpStream) {
-	(*lplpStream) = new FPStream(_bSoundSupported);
+bool FPSound::createStream(FPStream **streamPtr) {
+	(*streamPtr) = new FPStream(_soundSupported);
 
-	return (*lplpStream != NULL);
+	return (*streamPtr != NULL);
 }
 
 /**
  * Allocates an object of type FpSfx, and return its pointer
  *
- * @param lplpSfx         Will contain a pointer to the object you just created.
+ * @param soundPtr        Will contain a pointer to the object you just created.
  *
  * @returns     True is everything is OK, False otherwise
  */
 
-bool FPSound::createSfx(FPSfx **lplpSfx) {
-	(*lplpSfx) = new FPSfx(_bSoundSupported);
+bool FPSound::createSfx(FPSfx **sfxPtr) {
+	(*sfxPtr) = new FPSfx(_soundSupported);
 
-	return (*lplpSfx != NULL);
+	return (*sfxPtr != NULL);
 }
 
 /**
  * Set the general volume
  *
- * @param dwVolume          Volume to set (0-63)
+ * @param volume            Volume to set (0-63)
  */
 
-void FPSound::setMasterVolume(int dwVolume) {
-	if (!_bSoundSupported)
+void FPSound::setMasterVolume(int volume) {
+	if (!_soundSupported)
 		return;
 
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, CLIP<int>(dwVolume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, CLIP<int>(volume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
 /**
  * Get the general volume
  *
- * @param lpdwVolume          Variable that will contain the volume (0-63)
+ * @param volumePtr           Variable that will contain the volume (0-63)
  */
 
-void FPSound::getMasterVolume(int *lpdwVolume) {
-	if (!_bSoundSupported)
+void FPSound::getMasterVolume(int *volumePtr) {
+	if (!_soundSupported)
 		return;
 
-	*lpdwVolume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 63 / Audio::Mixer::kMaxChannelVolume;
+	*volumePtr = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 63 / Audio::Mixer::kMaxChannelVolume;
 }
 
 /**
@@ -128,15 +128,15 @@ void FPSound::getMasterVolume(int *lpdwVolume) {
  *
  */
 
-FPSfx::FPSfx(bool bSoundOn) {
-	_bSoundSupported = bSoundOn;
-	_bFileLoaded = false;
+FPSfx::FPSfx(bool soundOn) {
+	_soundSupported = soundOn;
+	_fileLoaded = false;
 	_lastVolume = 63;
 	_hEndOfBuffer = CoroScheduler.createEvent(true, false);
-	_bIsVoice = false;
+	_isVoice = false;
 	_loopStream = 0;
 	_rewindableStream = 0;
-	_bPaused = false;
+	_paused = false;
 
 	g_vm->_activeSfx.push_back(this);
 }
@@ -150,7 +150,7 @@ FPSfx::FPSfx(bool bSoundOn) {
  */
 
 FPSfx::~FPSfx() {
-	if (!_bSoundSupported)
+	if (!_soundSupported)
 		return;
 
 	g_system->getMixer()->stopHandle(_handle);
@@ -187,22 +187,22 @@ bool FPSfx::loadWave(Common::SeekableReadStream *stream) {
 	if (!_rewindableStream)
 		return false;
 
-	_bFileLoaded = true;
+	_fileLoaded = true;
 	setVolume(_lastVolume);
 	return true;
 }
 
 bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
-	if (!_bSoundSupported)
+	if (!_soundSupported)
 		return true;
 
 	uint32 size = vdbFP.readUint32LE();
 	uint32 rate = vdbFP.readUint32LE();
-	_bIsVoice = true;
+	_isVoice = true;
 
 	_rewindableStream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
 
-	_bFileLoaded = true;
+	_fileLoaded = true;
 	setVolume(62);
 	return true;
 }
@@ -210,18 +210,18 @@ bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
 /**
  * Opens a file and loads a sound effect.
  *
- * @param lpszFileName     Sfx filename
- * @param dwCodec          CODEC used to uncompress the samples
+ * @param fileName         Sfx filename
+ * @param codec            CODEC used to uncompress the samples
  *
  * @returns                True is everything is OK, False otherwise
  */
 
-bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
-	if (!_bSoundSupported)
+bool FPSfx::loadFile(const char *fileName, uint32 codec) {
+	if (!_soundSupported)
 		return true;
 
 	Common::File file;
-	if (!file.open(lpszFileName)) {
+	if (!file.open(fileName)) {
 		warning("FPSfx::LoadFile(): Cannot open sfx file!");
 		return false;
 	}
@@ -236,7 +236,7 @@ bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
 
 	Common::SeekableReadStream *buffer = file.readStream(file.size() - file.pos());
 
-	if (dwCodec == FPCODEC_ADPCM) {
+	if (codec == FPCODEC_ADPCM) {
 		_rewindableStream = Audio::makeADPCMStream(buffer, DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, channels);
 	} else {
 		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
@@ -247,7 +247,7 @@ bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
 		_rewindableStream = Audio::makeRawStream(buffer, rate, flags, DisposeAfterUse::YES);
 	}
 
-	_bFileLoaded = true;
+	_fileLoaded = true;
 	return true;
 }
 
@@ -260,14 +260,14 @@ bool FPSfx::loadFile(const char *lpszFileName, uint32 dwCodec) {
 bool FPSfx::play() {
 	stop(); // sanity check
 
-	if (_bFileLoaded) {
+	if (_fileLoaded) {
 		CoroScheduler.resetEvent(_hEndOfBuffer);
 
 		_rewindableStream->rewind();
 
 		Audio::AudioStream *stream = _rewindableStream;
 
-		if (_bLoop) {
+		if (_loop) {
 			if (!_loopStream)
 				_loopStream = Audio::makeLoopingAudioStream(_rewindableStream, 0);
 
@@ -279,7 +279,7 @@ bool FPSfx::play() {
 
 		setVolume(_lastVolume);
 
-		if (_bPaused)
+		if (_paused)
 			g_system->getMixer()->pauseHandle(_handle, true);
 	}
 
@@ -293,9 +293,9 @@ bool FPSfx::play() {
  */
 
 bool FPSfx::stop() {
-	if (_bFileLoaded) {
+	if (_fileLoaded) {
 		g_system->getMixer()->stopHandle(_handle);
-		_bPaused = false;
+		_paused = false;
 	}
 
 	return true;
@@ -304,15 +304,15 @@ bool FPSfx::stop() {
 /**
  * Enables or disables the Sfx loop.
  *
- * @param _bLoop         True to enable the loop, False to disable
+ * @param loop          True to enable the loop, False to disable
  *
  * @remarks             The loop must be activated BEFORE the sfx starts
  *                      playing. Any changes made during the play will have
  *                      no effect until the sfx is stopped then played again.
  */
 
-void FPSfx::setLoop(bool bLop) {
-	_bLoop = bLop;
+void FPSfx::setLoop(bool loop) {
+	_loop = loop;
 }
 
 /**
@@ -320,65 +320,65 @@ void FPSfx::setLoop(bool bLop) {
  *
  */
 
-void FPSfx::pause(bool bPause) {
-	if (_bFileLoaded) {
-		if (g_system->getMixer()->isSoundHandleActive(_handle) && (bPause ^ _bPaused))
-			g_system->getMixer()->pauseHandle(_handle, bPause);
+void FPSfx::setPause(bool pause) {
+	if (_fileLoaded) {
+		if (g_system->getMixer()->isSoundHandleActive(_handle) && (pause ^ _paused))
+			g_system->getMixer()->pauseHandle(_handle, pause);
 
-		_bPaused = bPause;
+		_paused = pause;
 	}
 }
 
 /**
  * Change the volume of Sfx
  *
- * @param dwVolume      Volume to be set (0-63)
+ * @param volume        Volume to be set (0-63)
  *
  */
 
-void FPSfx::setVolume(int dwVolume) {
-	if (dwVolume > 63)
-		dwVolume = 63;
+void FPSfx::setVolume(int volume) {
+	if (volume > 63)
+		volume = 63;
 
-	if (dwVolume < 0)
-		dwVolume = 0;
+	if (volume < 0)
+		volume = 0;
 
-	_lastVolume = dwVolume;
+	_lastVolume = volume;
 
-	if (_bIsVoice) {
+	if (_isVoice) {
 		if (!GLOBALS._bCfgDubbing)
-			dwVolume = 0;
+			volume = 0;
 		else {
-			dwVolume -= (10 - GLOBALS._nCfgDubbingVolume) * 2;
-			if (dwVolume < 0)
-				dwVolume = 0;
+			volume -= (10 - GLOBALS._nCfgDubbingVolume) * 2;
+			if (volume < 0)
+				volume = 0;
 		}
 	} else {
 		if (!GLOBALS._bCfgSFX)
-			dwVolume = 0;
+			volume = 0;
 		else {
-			dwVolume -= (10 - GLOBALS._nCfgSFXVolume) * 2;
-			if (dwVolume < 0)
-				dwVolume = 0;
+			volume -= (10 - GLOBALS._nCfgSFXVolume) * 2;
+			if (volume < 0)
+				volume = 0;
 		}
 	}
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		g_system->getMixer()->setChannelVolume(_handle, dwVolume * Audio::Mixer::kMaxChannelVolume / 63);
+		g_system->getMixer()->setChannelVolume(_handle, volume * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
 /**
  * Gets the Sfx volume
  *
- * @param lpdwVolume    Will contain the current Sfx volume
+ * @param volumePtr     Will contain the current Sfx volume
  *
  */
 
-void FPSfx::getVolume(int *lpdwVolume) {
+void FPSfx::getVolume(int *volumePtr) {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		*lpdwVolume = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
+		*volumePtr = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
 	else
-		*lpdwVolume = 0;
+		*volumePtr = 0;
 }
 
 /**
@@ -421,14 +421,14 @@ void FPSfx::soundCheckProcess(CORO_PARAM, const void *param) {
  * @remarks             Do *NOT* declare an object directly, but rather
  *                      create it using FPSound::CreateStream()
  */
-FPStream::FPStream(bool bSoundOn) {
-	_bSoundSupported = bSoundOn;
-	_bFileLoaded = false;
-	_bPaused = false;
-	_bLoop = false;
-	_bDoFadeOut = false;
-	_bSyncExit = false;
-	_dwBufferSize = _dwSize = 0;
+FPStream::FPStream(bool soundOn) {
+	_soundSupported = soundOn;
+	_fileLoaded = false;
+	_paused = false;
+	_loop = false;
+	_doFadeOut = false;
+	_syncExit = false;
+	_bufferSize = _size = 0;
 	_lastVolume = 0;
 	_syncToPlay = NULL;
 	_loopStream = NULL;
@@ -442,13 +442,13 @@ FPStream::FPStream(bool bSoundOn) {
  */
 
 FPStream::~FPStream() {
-	if (!_bSoundSupported)
+	if (!_soundSupported)
 		return;
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
 		stop();
 
-	if (_bFileLoaded)
+	if (_fileLoaded)
 		unloadFile();
 
 	_syncToPlay = NULL;
@@ -470,19 +470,19 @@ void FPStream::release() {
  * Opens a file stream
  *
  * @param fileName      Filename to be opened
- * @param dwCodec       CODEC to be used to uncompress samples
+ * @param codec         CODEC to be used to uncompress samples
  *
  * @returns             True is everything is OK, False otherwise
  */
-bool FPStream::loadFile(const Common::String &fileName, uint32 dwCodType, int nBufSize) {
-	if (!_bSoundSupported)
+bool FPStream::loadFile(const Common::String &fileName, uint32 codec, int bufSize) {
+	if (!_soundSupported)
 		return true;
 
-	if (_bFileLoaded)
+	if (_fileLoaded)
 		unloadFile();
 
 	// Save the codec type
-	_dwCodec = dwCodType;
+	_codec = codec;
 
 	// Open the file stream for reading
 	if (!_file.open(fileName)) {
@@ -492,9 +492,9 @@ bool FPStream::loadFile(const Common::String &fileName, uint32 dwCodType, int nB
 	}
 
 	// Save the size of the stream
-	_dwSize = _file.size();
+	_size = _file.size();
 
-	switch (_dwCodec) {
+	switch (_codec) {
 	case FPCODEC_RAW:
 		_rewindableStream = Audio::makeRawStream(&_file, 44100, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO, DisposeAfterUse::NO);
 		break;
@@ -509,8 +509,8 @@ bool FPStream::loadFile(const Common::String &fileName, uint32 dwCodType, int nB
 	}
 
 	// All done
-	_bFileLoaded = true;
-	_bPaused = false;
+	_fileLoaded = true;
+	_paused = false;
 
 	setVolume(63);
 
@@ -527,7 +527,7 @@ bool FPStream::loadFile(const Common::String &fileName, uint32 dwCodType, int nB
  *                      memory used by the stream.
  */
 bool FPStream::unloadFile() {
-	if (!_bSoundSupported || !_bFileLoaded)
+	if (!_soundSupported || !_fileLoaded)
 		return true;
 
 	assert(!g_system->getMixer()->isSoundHandleActive(_handle));
@@ -540,7 +540,7 @@ bool FPStream::unloadFile() {
 	_file.close();
 
 	// Flag that the file is no longer in memory
-	_bFileLoaded = false;
+	_fileLoaded = false;
 
 	return true;
 }
@@ -552,7 +552,7 @@ bool FPStream::unloadFile() {
  */
 
 bool FPStream::play() {
-	if (!_bSoundSupported || !_bFileLoaded)
+	if (!_soundSupported || !_fileLoaded)
 		return false;
 
 	stop();
@@ -561,7 +561,7 @@ bool FPStream::play() {
 
 	Audio::AudioStream *stream = _rewindableStream;
 
-	if (_bLoop) {
+	if (_loop) {
 		if (!_loopStream)
 			_loopStream = new Audio::LoopingAudioStream(_rewindableStream, 0, DisposeAfterUse::NO);
 
@@ -571,7 +571,7 @@ bool FPStream::play() {
 	// FIXME: Should this be kMusicSoundType or KPlainSoundType?
 	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	setVolume(_lastVolume);
-	_bPaused = false;
+	_paused = false;
 
 	return true;
 }
@@ -584,10 +584,10 @@ bool FPStream::play() {
  */
 
 bool FPStream::stop() {
-	if (!_bSoundSupported)
+	if (!_soundSupported)
 		return true;
 
-	if (!_bFileLoaded)
+	if (!_fileLoaded)
 		return false;
 
 	if (!g_system->getMixer()->isSoundHandleActive(_handle))
@@ -595,49 +595,49 @@ bool FPStream::stop() {
 
 	g_system->getMixer()->stopHandle(_handle);
 
-	_bPaused = false;
+	_paused = false;
 
 	return true;
 }
 
-void FPStream::waitForSync(FPStream *toplay) {
+void FPStream::waitForSync(FPStream *toPlay) {
 	// FIXME: The idea here is that you wait for this stream to reach
 	// a buffer which is a multiple of nBufSize/nSync, and then the
 	// thread stops it and immediately starts the 'toplay' stream.
 
 	stop();
-	toplay->play();
+	toPlay->play();
 }
 
 /**
  * Unables or disables stream loop.
  *
- * @param _bLoop         True enable loop, False disables it
+ * @param loop          True enable loop, False disables it
  *
  * @remarks             The loop must be activated BEFORE the stream starts
  *                      playing. Any changes made during the play will have no
  *                      effect until the stream is stopped then played again.
  */
 void FPStream::setLoop(bool loop) {
-	_bLoop = loop;
+	_loop = loop;
 }
 
 /**
  * Pause sound effect
  *
- * @param bPause        True enables pause, False disables it
+ * @param pause         True enables pause, False disables it
  */
-void FPStream::pause(bool bPause) {
-	if (!_bFileLoaded)
+void FPStream::setPause(bool pause) {
+	if (!_fileLoaded)
 		return;
 
-	if (bPause == _bPaused)
+	if (pause == _paused)
 		return;
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		g_system->getMixer()->pauseHandle(_handle, bPause);
+		g_system->getMixer()->pauseHandle(_handle, pause);
 
-	_bPaused = bPause;
+	_paused = pause;
 
 	// Trick to reset the volume after a possible new sound configuration
 	setVolume(_lastVolume);
@@ -646,43 +646,43 @@ void FPStream::pause(bool bPause) {
 /**
  * Change the volume of the stream
  *
- * @param dwVolume      Volume to be set (0-63)
+ * @param volume        Volume to be set (0-63)
  *
  */
 
-void FPStream::setVolume(int dwVolume) {
-	if (dwVolume > 63)
-		dwVolume = 63;
+void FPStream::setVolume(int volume) {
+	if (volume > 63)
+		volume = 63;
 
-	if (dwVolume < 0)
-		dwVolume = 0;
+	if (volume < 0)
+		volume = 0;
 
-	_lastVolume = dwVolume;
+	_lastVolume = volume;
 
 	if (!GLOBALS._bCfgMusic)
-		dwVolume = 0;
+		volume = 0;
 	else {
-		dwVolume -= (10 - GLOBALS._nCfgMusicVolume) * 2;
-		if (dwVolume < 0)
-			dwVolume = 0;
+		volume -= (10 - GLOBALS._nCfgMusicVolume) * 2;
+		if (volume < 0)
+			volume = 0;
 	}
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		g_system->getMixer()->setChannelVolume(_handle, dwVolume * Audio::Mixer::kMaxChannelVolume / 63);
+		g_system->getMixer()->setChannelVolume(_handle, volume * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
 /**
  * Gets the volume of the stream
  *
- * @param lpdwVolume    Variable that will contain the current volume
+ * @param volumePtr     Variable that will contain the current volume
  *
  */
 
-void FPStream::getVolume(int *lpdwVolume) {
+void FPStream::getVolume(int *volumePtr) {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		*lpdwVolume = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
+		*volumePtr = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
 	else
-		*lpdwVolume = 0;
+		*volumePtr = 0;
 }
 
 } // End of namespace Tony

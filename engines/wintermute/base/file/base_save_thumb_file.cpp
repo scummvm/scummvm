@@ -28,7 +28,6 @@
 
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
-#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 

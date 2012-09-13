@@ -1060,15 +1060,7 @@ void ScriptInterpreter::sfHandleInput() {
 }
 
 void ScriptInterpreter::sfRunOptionsScreen() {
-	_vm->_screen->loadMouseCursor(12);
-	_vm->_palette->loadAddPalette(9, 224);
-	_vm->_palette->setDeltaPalette(_vm->_palette->getMainPalette(), 7, 0, 31, 224);
-	_vm->_screen->finishTalkTextItems();
-	_vm->_screen->clearSprites();
-	CursorMan.showMouse(true);
-	_vm->_menuSystem->run();
-	_vm->_keyState.reset();
-	_switchLocalDataNear = true;
+	_vm->showMenu(kMenuIdMain);
 }
 
 /* NOTE: The opcodes sfPrecacheSprites, sfPrecacheSounds1, sfPrecacheSounds2 and

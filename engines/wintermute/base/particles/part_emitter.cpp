@@ -35,6 +35,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"

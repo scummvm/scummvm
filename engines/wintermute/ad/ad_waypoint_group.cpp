@@ -27,12 +27,12 @@
  */
 
 #include "engines/wintermute/ad/ad_waypoint_group.h"
-#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_region.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include <limits.h>
 
 namespace Wintermute {

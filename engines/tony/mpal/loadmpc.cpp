@@ -139,7 +139,6 @@ static void FreeScript(LpMpalScript lpmsScript) {
  * @returns		Pointer to the buffer after the item, or NULL on failure.
  */
 static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
-	uint32 num2, num3;
 	byte *lpLock;
 
 	lpmdDialog->_nObj = READ_LE_UINT32(lpBuf);
@@ -266,7 +265,7 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 		lpmdDialog->_choice[i]._nChoice = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
 
-		num2 = *lpBuf++;
+		uint32 num2 = *lpBuf++;
 
 		if (num2 >= MAX_SELECTS_PER_CHOICE)
 			error("Too much selects in choice #%d in dialog #%d", lpmdDialog->_choice[i]._nChoice, lpmdDialog->_nObj);
@@ -296,7 +295,7 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 			lpBuf += 4;
 
 			// PlayGroup
-			num3 = *lpBuf++;
+			uint32 num3 = *lpBuf++;
 
 			if (num3 >= MAX_PLAYGROUPS_PER_SELECT)
 				error("Too much playgroups in select #%d in choice #%d in dialog #%d", j, lpmdDialog->_choice[i]._nChoice, lpmdDialog->_nObj);
@@ -364,7 +363,6 @@ static const byte *parseItem(const byte *lpBuf, LpMpalItem lpmiItem) {
 			lpmiItem->_action[i]._perc = *lpBuf;
 			lpBuf++;
 		}
-
 
 		if (*lpBuf == 0) {
 			lpBuf++;

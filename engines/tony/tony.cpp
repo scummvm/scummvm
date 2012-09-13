@@ -513,13 +513,13 @@ void TonyEngine::pauseSound(bool bPause) {
 
 	for (uint i = 0; i < 6; i++)
 		if (_stream[i])
-			_stream[i]->pause(bPause);
+			_stream[i]->setPause(bPause);
 
 	for (uint i = 0; i < MAX_SFX_CHANNELS; i++) {
 		if (_sfx[i])
-			_sfx[i]->pause(bPause);
+			_sfx[i]->setPause(bPause);
 		if (_utilSfx[i])
-			_utilSfx[i]->pause(bPause);
+			_utilSfx[i]->setPause(bPause);
 	}
 }
 

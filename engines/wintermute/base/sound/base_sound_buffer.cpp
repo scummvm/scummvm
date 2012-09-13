@@ -26,12 +26,10 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/file/base_file.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"

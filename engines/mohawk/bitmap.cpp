@@ -630,7 +630,7 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface, bool isLE) {
 // Myst Bitmap Decoder
 //////////////////////////////////////////
 
-MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
+MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	uint32 uncompressedSize = stream->readUint32LE();
 	Common::SeekableReadStream *bmpStream = decompressLZ(stream, uncompressedSize);
 	delete stream;
@@ -652,10 +652,10 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	}
 
 	// Copy the palette to one of our own
-	const byte *palette = bitmapDecoder.getPalette();
 	byte *newPal = 0;
 
-	if (palette) {
+	if (bitmapDecoder.hasPalette()) {
+		const byte *palette = bitmapDecoder.getPalette();
 		newPal = (byte *)malloc(256 * 3);
 		memcpy(newPal, palette, 256 * 3);
 	}

@@ -31,6 +31,30 @@
 
 typedef std::list<std::string> StringList;
 
+typedef StringList TokenList;
+
+/**
+ * Takes a given input line and creates a list of tokens out of it.
+ *
+ * A token in this context is separated by whitespaces. A special case
+ * are quotation marks though. A string inside quotation marks is treated
+ * as single token, even when it contains whitespaces.
+ *
+ * Thus for example the input:
+ * foo bar "1 2 3 4" ScummVM
+ * will create a list with the following entries:
+ * "foo", "bar", "1 2 3 4", "ScummVM"
+ * As you can see the quotation marks will get *removed* too.
+ *
+ * You can also use this with non-whitespace by passing another separator
+ * character (e.g. ',').
+ *
+ * @param input The text to be tokenized.
+ * @param separator The token separator.
+ * @return A list of tokens.
+ */
+TokenList tokenize(const std::string &input, char separator = ' ');
+
 /**
  * Structure to describe a game engine to be built into ScummVM.
  *

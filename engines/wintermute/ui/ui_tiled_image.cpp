@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {

@@ -152,6 +152,7 @@ protected:
 	void drawBorder(int x, int y, int width, int height, byte color);
 	void drawDoubleBorder(int x, int y, int width, int height, byte color);
 	virtual int drawChar(char character, int x, int y);
+	virtual int undrawChar(char character, int x, int y);
 	void drawLine(int x, int y, int width, int height, byte color);
 	void remaskSprite(byte *mask, Common::List<overlay>::iterator it);
 	virtual void drawBackground();
@@ -287,7 +288,7 @@ byte gfxGetColor(int16 x, int16 y, const byte *ptr, int16 width);
 
 void gfxResetRawPage(byte *pageRaw);
 void gfxConvertSpriteToRaw(byte *dst, const byte *src, uint16 w, uint16 h);
-void gfxCopyRawPage(byte *source, byte * dest);
+void gfxCopyRawPage(byte *source, byte *dest);
 void gfxFlipRawPage(byte *frontBuffer);
 void drawSpriteRaw(const byte *spritePtr, const byte *maskPtr, int16 width, int16 height, byte *page, int16 x, int16 y);
 void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);

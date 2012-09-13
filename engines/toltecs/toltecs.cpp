@@ -62,11 +62,6 @@ struct GameSettings {
 };
 
 ToltecsEngine::ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
 	_rnd = new Common::RandomSource("toltecs");
 }
 
@@ -129,14 +124,24 @@ Common::Error ToltecsEngine::run() {
 	
 	_sound = new Sound(this);
 
+	_cfgText = ConfMan.getBool("subtitles");
+	_cfgVoices = !ConfMan.getBool("speech_mute");
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,  mute ? 0 : ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,    mute ? 0 : ConfMan.getInt("sfx_volume"));
 	syncSoundSettings();
 
 	CursorMan.showMouse(true);
 
 	setupSysStrings();
 
-//#define TEST_MENU
-#ifdef TEST_MENU
+#if 0
+	// Menu test
 	_screen->registerFont(0, 0x0D);
 	_screen->registerFont(1, 0x0E);
 	_screen->loadMouseCursor(12);
@@ -321,15 +326,14 @@ void ToltecsEngine::updateInput() {
 
 			//debug("key: flags = %02X; keycode = %d", _keyState.flags, _keyState.keycode);
 
-			// FIXME: This is just for debugging
 			switch (event.kbd.keycode) {
+			case Common::KEYCODE_F5:
+				showMenu(kMenuIdSave);
+				break;
 			case Common::KEYCODE_F7:
-				savegame("toltecs.001", "Quicksave");
+				showMenu(kMenuIdLoad);
 				break;
-			case Common::KEYCODE_F9:
-				loadgame("toltecs.001");
-				break;
-			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_SPACE:
 				// Skip current dialog line, if a dialog is active
 				if (_screen->getTalkTextDuration() > 0) {
 					_sound->stopSpeech();
@@ -635,7 +639,30 @@ int16 ToltecsEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 ind
 	}
 	
 	return -1;
+}
 
+void ToltecsEngine::showMenu(MenuID menuId) {
+	_screen->loadMouseCursor(12);
+	_palette->loadAddPalette(9, 224);
+	_palette->setDeltaPalette(_palette->getMainPalette(), 7, 0, 31, 224);
+	_screen->finishTalkTextItems();
+	_screen->clearSprites();
+	CursorMan.showMouse(true);
+	_menuSystem->run(menuId);
+	_keyState.reset();
+	_script->setSwitchLocalDataNear(true);
+}
+
+void ToltecsEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_cfgVoicesVolume  = (mute ? 0 : ConfMan.getInt("speech_volume")) * 20 / Audio::Mixer::kMaxChannelVolume;
+	_cfgMusicVolume   = (mute ? 0 : ConfMan.getInt("music_volume"))  * 20 / Audio::Mixer::kMaxChannelVolume;
+	_cfgSoundFXVolume = (mute ? 0 : ConfMan.getInt("sfx_volume"))    * 20 / Audio::Mixer::kMaxChannelVolume;
 }
 
 } // End of namespace Toltecs

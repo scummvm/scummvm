@@ -1002,7 +1002,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 	const int entrySize = ((saveGameFormat == ANIMSIZE_23) ? 23 : 30);
 	const int fileStartPos = fHandle.pos();
 
-	for(int resourceIndex=0; resourceIndex<NUM_MAX_ANIMDATA; resourceIndex++) {
+	for (int resourceIndex = 0; resourceIndex < NUM_MAX_ANIMDATA; resourceIndex++) {
 		// Seek to the start of the current animation's entry
 		fHandle.seek(fileStartPos + resourceIndex * entrySize);
 		// Read in the current animation entry

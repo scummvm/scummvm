@@ -56,6 +56,8 @@ public:
 	void saveState(Common::WriteStream *out);
 	void loadState(Common::ReadStream *in);
 
+	void setSwitchLocalDataNear(bool newValue) { _switchLocalDataNear = newValue; }
+
 protected:
 
 	struct ScriptRegs {

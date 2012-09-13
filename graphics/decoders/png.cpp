@@ -191,6 +191,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// After the transformations have been registered, the image data is read again.
+	png_set_interlace_handling(pngPtr);
 	png_read_update_info(pngPtr, infoPtr);
 	png_get_IHDR(pngPtr, infoPtr, &w, &h, &bitDepth, &colorType, NULL, NULL, NULL);
 	width = w;
