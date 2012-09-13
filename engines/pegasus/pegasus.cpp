@@ -616,7 +616,7 @@ Common::Error PegasusEngine::loadGameState(int slot) {
 
 Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::String output = Common::String::format("pegasus-%s.sav", desc.c_str());
-	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(output);
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(output, false);
 	if (!saveFile)
 		return Common::kUnknownError;
 
