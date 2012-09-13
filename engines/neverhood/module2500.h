@@ -26,6 +26,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
+#include "neverhood/module1000.h"
 #include "neverhood/module1600.h"
 #include "neverhood/module2700.h"
 
@@ -46,6 +47,7 @@ protected:
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 };
 
 class Class541 : public AnimatedSprite {
@@ -89,6 +91,27 @@ protected:
 	void findClosestTrack(NPoint &pt);
 	void changeTrack();
 	void updateKlaymanCliprect();
+};
+
+class Class450 : public StaticSprite {
+public:
+	Class450(NeverhoodEngine *vm);
+protected:
+	int _countdown;
+	bool _flag1;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	SoundResource _soundResource4;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2504 : public Scene {
+public:
+	Scene2504(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood

@@ -24,6 +24,37 @@
 
 namespace Neverhood {
 
+// TODO Maybe move these to the DAT
+
+static const uint32 kScene2505StaticSprites[] = {
+	0x4000A226,
+	0
+};
+
+static const NRect kScene2505ClipRect = NRect(0, 0, 564, 480);
+
+static const uint32 kScene2506StaticSprites[] = {
+	0x4027AF02,
+	0
+};
+
+static const NRect kScene2506ClipRect = NRect(0, 0, 640, 441);
+
+static const uint32 kScene2508StaticSprites1[] = {
+	0x2F08E610,
+	0xD844E6A0,
+	0
+};
+
+static const NRect kScene2508ClipRect1 = NRect(0, 0, 594, 448);
+
+static const uint32 kScene2508StaticSprites2[] = {
+	0x2F08E610,
+	0
+};
+
+static const NRect kScene2508ClipRect2 = NRect(0, 0, 594, 448);
+
 Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundResource1(vm), _soundResource2(vm),
 	_soundResource3(vm), _soundResource4(vm), _soundIndex(0) {
@@ -55,6 +86,50 @@ void Module2500::createScene(int sceneNum, int which) {
 	case 0:
 		_childObject = new Scene2501(_vm, this, which);
 		break;
+	case 1:
+		_vm->gameState().which = which;
+		createScene2704(which, 0x004B01B8, 220);
+		break;
+	case 2:
+		setGlobalVar(0x98109F12, 1);// TODO DEBUG! Join the tracks.
+		_vm->gameState().which = which;
+		if (getGlobalVar(0x98109F12))
+			createScene2704(which, 0x004B01E0, 150);
+		else
+			createScene2704(which, 0x004B0208, 150);
+		break;
+	case 3:
+		_childObject = new Scene2504(_vm, this, which);
+		break;
+	case 4:
+		_vm->gameState().which = which;
+		createScene2704(which, 0x004B0230, 150, kScene2505StaticSprites, &kScene2505ClipRect);
+		break;
+	case 5:
+		setGlobalVar(0x21E60190, 1);
+		_vm->gameState().which = which;
+		createScene2704(which, 0x004B0268, 150, kScene2506StaticSprites, &kScene2506ClipRect);
+		break;
+	case 6:
+		_vm->gameState().which = which;
+		createScene2704(which, 0x004B02A0, 150);
+		break;
+	case 7:
+		_vm->gameState().which = which;
+		if (getGlobalVar(0xD0A14D10))
+			createScene2704(which, 0x004B02C8, 150, kScene2508StaticSprites1, &kScene2508ClipRect1);
+		else
+			createScene2704(which, 0x004B02C8, 150, kScene2508StaticSprites2, &kScene2508ClipRect2);
+		break;
+	case 8:
+		_childObject = new Scene1608(_vm, this, which);
+		break;
+	case 9:
+		if (getGlobalVar(0xD0A14D10))
+			_childObject = new Class152(_vm, this, 0xC62A0645, 0xA0641C6A);
+		else
+			_childObject = new Class152(_vm, this, 0x7A343546, 0x435427AB);
+		break;
 	}
 	SetUpdateHandler(&Module2500::updateScene);
 	_childObject->handleUpdate();
@@ -70,6 +145,54 @@ void Module2500::updateScene() {
 				createScene(1, 0);
 			else
 				leaveModule(0);
+			break;
+		case 1:
+			if (_moduleResult == 1)
+				createScene(3, -1);
+			else
+				createScene(0, 2);
+			break;
+		case 2:
+			if (_moduleResult == 1)
+				createScene(4, 0);
+			else
+				createScene(0, 1);
+			break;
+		case 3:
+			createScene(1, 1);
+			break;
+		case 4:
+			if (_moduleResult == 1)
+				createScene(5, 0);
+			else
+				createScene(2, 1);
+			break;
+		case 5:
+			if (_moduleResult == 1)
+				createScene(6, 0);
+			else
+				createScene(4, 1);
+			break;
+		case 6:
+			if (_moduleResult == 1)
+				createScene(7, 0);
+			else
+				createScene(5, 1);
+			break;
+		case 7:
+			if (_moduleResult == 1)
+				createScene(8, 1);
+			else
+				createScene(6, 1);
+			break;
+		case 8:
+			if (_moduleResult == 2)
+				createScene(9, -1);
+			else
+				createScene(7, 1);
+			break;
+		case 9:
+			createScene(8, 2);
 			break;
 		}
 	}
@@ -101,6 +224,10 @@ uint32 Module2500::handleMessage(int messageNum, const MessageParam &param, Enti
 	return messageResult;
 }
 			
+void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
+	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
+}
+
 Class541::Class541(NeverhoodEngine *vm, int16 x, int16 y)
 	: AnimatedSprite(vm, 0x1209E09F, 1100, x, y) {
 	
@@ -382,6 +509,93 @@ void Scene2501::updateKlaymanCliprect() {
 		_kmScene2501->setClipRect(0, 0, 640, 480);
 	else
 		_kmScene2501->setClipRect(0, 0, 640, 388);
+}
+
+Class450::Class450(NeverhoodEngine *vm)
+	: StaticSprite(vm, 1400), _countdown(0), _flag1(false), _soundResource1(vm),
+	_soundResource2(vm), _soundResource3(vm), _soundResource4(vm) {
+	
+	_spriteResource.load2(0x070220D9);
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	_deltaRect = _drawRect;
+	processDelta();
+	_needRefresh = true;
+	setVisible(false);
+	_soundResource3.load(0x44043000);
+	_soundResource4.load(0x44045000);
+	_soundResource1.load(0x4600204C);
+	_soundResource2.load(0x408C0034);
+	SetMessageHandler(&Class450::handleMessage);
+	SetUpdateHandler(&Class450::update);
+}
+
+void Class450::update() {
+	StaticSprite::update();
+	if (_flag1 && !_soundResource1.isPlaying() && !_soundResource2.isPlaying()) {
+		_soundResource4.play();
+		setVisible(false);
+		_flag1 = false;
+	}
+	if (_countdown != 0 && (--_countdown) == 0) {
+		if (getSubVar(0x14800353, 0x01180951)) {
+			_soundResource1.play();
+		} else {
+			_soundResource2.play();
+		}
+		_flag1 = true;
+	}
+}
+
+uint32 Class450::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_countdown == 0 && !_flag1) {
+			setVisible(true);
+			_countdown = 2;
+			if (getSubVar(0x14800353, 0x01180951)) {
+				setSubVar(0x14800353, 0x01180951, 0);
+			} else {
+				setSubVar(0x14800353, 0x01180951, 1);
+			}
+			_soundResource3.play();
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+	
+	Sprite *class450;
+	
+	_surfaceFlag = true;
+	setBackground(0x90791B80);
+	setPalette(0x90791B80);
+	class450 = insertSprite<Class450>();
+	_vm->_collisionMan->addSprite(class450);
+	insertMouse435(0x91B8490F, 20, 620);
+	SetMessageHandler(&Scene2504::handleMessage);
+	SetUpdateHandler(&Scene::update);
+}
+
+uint32 Scene2504::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
+			leaveScene(0);
+		break;
+	}
+	return messageResult;
 }
 
 } // End of namespace Neverhood
