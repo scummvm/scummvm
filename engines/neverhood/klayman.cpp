@@ -5215,6 +5215,150 @@ void KmScene2247::sub453520() {
 	FinalizeState(&Klayman::stStartWalkingDone);
 }
 
+KmScene2401::KmScene2401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _readyToSpit(false) {
+	// Empty
+}
+	
+uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stTurnPressButton);
+		} else if (param.asInteger() == 2) {
+			GotoState(&Klayman::stStampFloorButton);
+		} else {
+			GotoState(&Klayman::stPressButtonSide);
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stTurnAwayFromUse);
+		} else if (param.asInteger() == 0) {
+			GotoState(&Klayman::stTurnToUseHalf);
+		} else {
+			GotoState(&Klayman::stWonderAbout);
+		}
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x482E:	 
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stWalkToFrontNoStep);
+		} else {
+			GotoState(&Klayman::stWalkToFront);
+		}
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stTurnToFront);
+		} else {
+			GotoState(&Klayman::stTurnToBack);
+		}
+		break;
+	case 0x4832:
+		GotoState(&Klayman::sub421110);
+		break;
+	case 0x4833:
+		if (param.asInteger() == 1)
+			GotoState(&Klayman::stWonderAboutHalf);
+		else {
+			_spitPipeIndex = sendMessage(_parentScene, 0x2000, 0);
+			GotoState(&KmScene2401::stTrySpitIntoPipe);
+		}
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;		
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return messageResult;
+}
+
+uint32 KmScene2401::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Klayman::handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x16401CA6) {
+			_canSpit = true;
+			if (_contSpit)
+				spitIntoPipe();
+		} else if (param.asInteger() == 0xC11C0008) {
+			_canSpit = false;
+			_acceptInput = false;
+			_readyToSpit = false;
+		} else if (param.asInteger() == 0x018A0001) {
+			sendMessage(_parentScene, 0x2001, _spitDestPipeIndex);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2401::stTrySpitIntoPipe() {
+	if (_readyToSpit) {
+		_contSpit = true;
+		_spitContDestPipeIndex = _spitPipeIndex;
+		if (_canSpit)
+			spitIntoPipe();
+	} else if (!stStartAction(AnimationCallback(&KmScene2401::stTrySpitIntoPipe))) {
+		_status2 = 2;
+		_acceptInput = true;
+		_spitDestPipeIndex = _spitPipeIndex;
+		_readyToSpit = true;
+		_canSpit = false;
+		_contSpit = false;
+		startAnimation(0x1808B150, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&KmScene2401::handleMessage);
+		SetSpriteUpdate(NULL);
+	}
+}
+
+void KmScene2401::spitIntoPipe() {
+	_contSpit = false;
+	_spitDestPipeIndex = _spitContDestPipeIndex;
+	_canSpit = false;
+	_acceptInput = false;
+	startAnimation(0x1B08B553, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&KmScene2401::handleMessage);
+	SetSpriteUpdate(NULL);
+	NextState(&KmScene2401::stContSpitIntoPipe);
+}
+
+void KmScene2401::stContSpitIntoPipe() {
+	_canSpit = true;
+	_acceptInput = true;
+	startAnimationByHash(0x1808B150, 0x16401CA6, 0);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&KmScene2401::handleMessage);
+	SetSpriteUpdate(NULL);
+}
+
 KmScene2501::KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
 	// Empty

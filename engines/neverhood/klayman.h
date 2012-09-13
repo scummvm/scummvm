@@ -578,6 +578,23 @@ protected:
 	void sub453520();
 };
 
+class KmScene2401 : public Klayman {
+public:
+	KmScene2401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	bool _canSpit;
+	bool _contSpit;
+	bool _readyToSpit;
+	uint32 _spitPipeIndex;
+	uint32 _spitDestPipeIndex;
+	uint32 _spitContDestPipeIndex;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void stTrySpitIntoPipe();
+	void spitIntoPipe();
+	void stContSpitIntoPipe();
+};
+
 class KmScene2501 : public Klayman {
 public:
 	KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
