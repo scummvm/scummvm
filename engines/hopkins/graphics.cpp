@@ -582,7 +582,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 		uint16 *lineDestP = destP;
 
 		for (int xp = 0; xp < width; ++xp)
-			*lineDestP++ = PAL_PIXELS[*lineSrcP++];
+			*lineDestP++ = *(uint16 *)&PAL_PIXELS[*lineSrcP++ * 2];
 
 		// Move to the start of the next line
 		srcP += nbrligne2;
