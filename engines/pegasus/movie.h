@@ -62,8 +62,6 @@ public:
 
 	virtual void moveMovieBoxTo(const CoordType, const CoordType);
 
-	virtual void setStart(const TimeValue, const TimeScale = 0);
-
 	virtual void setStop(const TimeValue, const TimeScale = 0);
 
 	virtual TimeValue getDuration(const TimeScale = 0) const;

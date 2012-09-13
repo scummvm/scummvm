@@ -80,7 +80,7 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 	if (!isSurfaceValid())
 		allocateSurface(bounds);
 
-	TimeBase::setStart(0, getScale());
+	setStart(0, getScale());
 	TimeBase::setStop(_video->getDuration().convertToFramerate(getScale()).totalNumberOfFrames(), getScale());
 }
 
@@ -130,13 +130,6 @@ void Movie::draw(const Common::Rect &r) {
 
 void Movie::moveMovieBoxTo(const CoordType h, const CoordType v) {
 	_movieBox.moveTo(h, v);
-}
-
-void Movie::setStart(const TimeValue startTime, const TimeScale scale) {
-	TimeBase::setStart(startTime, scale);
-
-	if (_video)
-		_video->seek(Audio::Timestamp(0, _startTime, _startScale));
 }
 
 void Movie::setStop(const TimeValue stopTime, const TimeScale scale) {
