@@ -98,7 +98,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 	uint32 lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
 	byte *chunkBuffer = NULL;
-	uint32 prevChunkSize = 0;
+	uint32 chunkBufferSize = 0;
 
 	while (_chunkCount--) {
 		byte chunkType = _vm->_arc->readByte();
@@ -111,13 +111,13 @@ void MoviePlayer::playMovie(uint resIndex) {
 		if (chunkType == kChunkAudio) {
 			_vm->_arc->skip(chunkSize);
 		} else {
-			// Only reallocate the chunk buffer if it's smaller than the previous frame
-			if (chunkSize > prevChunkSize) {
+			// Only reallocate the chunk buffer if the new chunk is bigger
+			if (chunkSize > chunkBufferSize) {
 				delete[] chunkBuffer;
 				chunkBuffer = new byte[chunkSize];
+				chunkBufferSize = chunkSize;
 			}
 
-			prevChunkSize = chunkSize;
 			_vm->_arc->read(chunkBuffer, chunkSize);
 		}
 
