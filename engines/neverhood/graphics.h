@@ -116,6 +116,14 @@ protected:
 	bool _transparent;
 };
 
+class ShadowSurface : public BaseSurface {
+public:
+	ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, BaseSurface *shadowSurface);
+	virtual void draw();
+protected:
+	BaseSurface *_shadowSurface;
+};
+
 class FontSurface : public BaseSurface {
 public:
 	FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);

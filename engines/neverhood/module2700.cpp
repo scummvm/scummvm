@@ -512,6 +512,19 @@ void Module2700::createScene2704(int which, uint32 sceneInfoId, int16 value, con
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
 }
 
+static const NPoint kClass517Points[] = {
+	{-63,  3},
+	{-48, 40},
+	{-33, 58},
+	{  0, 65},
+	{ 40, 53},
+	{ 56, 27},
+	{ 63,  0},
+	{-30, 26},
+	{  0, 30},
+	{ 26, 25}
+};
+
 Class437::Class437(NeverhoodEngine *vm, uint32 fileHash)
 	: StaticSprite(vm, 0) {
 	
@@ -522,6 +535,70 @@ Class437::Class437(NeverhoodEngine *vm, uint32 fileHash)
 	_drawRect.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_needRefresh = true;
 	StaticSprite::update();
+}
+
+Class517::Class517(NeverhoodEngine *vm, AnimatedSprite *class521, BaseSurface *shadowSurface, uint index)
+	: AnimatedSprite(vm, 1100), _class521(class521), _index(index), _animFileHash(0) {
+
+	SetUpdateHandler(&Class517::update);
+	createShadowSurface(shadowSurface, 320, 240, 100); // TODO Use actual dimensions from resource
+	updateShadow();
+} 
+
+void Class517::update() {
+	updateShadow();
+	AnimatedSprite::update();
+}
+
+void Class517::updateShadow() {
+	if (_class521->getFrameIndex() != _currFrameIndex || _class521->getCurrAnimFileHash() != _animFileHash) {
+		uint32 fileHash = _class521->getCurrAnimFileHash();
+		if (fileHash == 0x35698F78 || fileHash == 0x192ADD30 || fileHash == 0x9C220DA4 ||
+			fileHash == 0x9966B138 || fileHash == 0xB579A77C || fileHash == 0xA86A9538 ||
+			fileHash == 0xD4220027 || fileHash == 0xD00A1364 || fileHash == 0xD4AA03A4 ||
+			fileHash == 0xF46A0324) {
+			startAnimation(fileHash, _class521->getFrameIndex(), -1);
+			_newStickFrameIndex = _class521->getFrameIndex();
+		}
+		_animFileHash = fileHash;
+	}
+	_x = _class521->getX() + kClass517Points[_index].x;
+	_y = _class521->getY() + kClass517Points[_index].y;
+	if (!_class521->getVisible()) {
+		startAnimation(0x1209E09F, 0, -1);
+		_newStickFrameIndex = 0;
+	}
+	setDoDeltaX(_class521->isDoDeltaX() ? 1 : 0);
+}
+
+Class519::Class519(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSurface, uint index)
+	: AnimatedSprite(vm, 1100), _class521(class521), _index(index) {
+
+	SetUpdateHandler(&Class519::update);
+	createShadowSurface1(shadowSurface, 0x60281C10, 150);
+	startAnimation(0x60281C10, -1, -1);
+	_newStickFrameIndex = -2;	
+} 
+
+void Class519::update() {
+	_x = _class521->getX() + kClass517Points[_index].x;
+	_y = _class521->getY() + kClass517Points[_index].y;
+	AnimatedSprite::update();
+}
+
+Class520::Class520(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSurface, int16 frameIndex)
+	: AnimatedSprite(vm, 1100), _class521(class521) {
+
+	SetUpdateHandler(&Class520::update);
+	createShadowSurface1(shadowSurface, 0x0759129C, 100);
+	startAnimation(0x0759129C, frameIndex, -1);
+	_newStickFrameIndex = frameIndex;
+} 
+
+void Class520::update() {
+	_x = _class521->getX();
+	_y = _class521->getY();
+	AnimatedSprite::update();
 }
 
 Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -546,17 +623,20 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	clipRect.set(0, 0, 640, _sprite1->getDrawRect().x2());
 
 	if (sceneInfo->class437Filename) {
-		_class437 = insertSprite<Class437>(sceneInfo->class437Filename);
+
+		_class437 = createSprite<Class437>(sceneInfo->class437Filename);
+		addEntity(_class437);
+
 		_class521 = insertSprite<Class521>(this, 320, 240);
-//TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-//TODO		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-//TODO		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
 	} else {
 		_class437 = NULL;
 		_class521 = insertSprite<Class521>(this, 320, 240);
 	}
 
-//TODO	_class518 = insertSprite<Class518>(_class521);
+	_class518 = insertSprite<Class518>(_class521);
 	
 	_which1 = sceneInfo->which1;
 	_which2 = sceneInfo->which2;
@@ -578,7 +658,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	
 	_class521->setClipRect(clipRect);
-	// TODO _class518->setClipRect(clipRect);
+	_class518->setClipRect(clipRect);
 
 	if (which == 1) {
 		SetMessageHandler(&Scene2701::handleMessage42F500);
@@ -654,12 +734,14 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertMouse433(0x08B04180);
 
-	_class437 = insertSprite<Class437>(0x12002035);
+	_class437 = createSprite<Class437>(0x12002035);
+	addEntity(_class437);
+	
 	_class521 = insertSprite<Class521>(this, 320, 240);
-	//TODO	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-	//TODO	insertSprite<Class518>(_class521);
-	//TODO	_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-	//TODO	_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+	insertSprite<Class518>(_class521);
+	_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+	_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
 
 	_dataResource.load(0x04310014);
 	
@@ -828,18 +910,21 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	insertMouse433(sceneInfo->mouseCursorFilename);
 	
 	if (sceneInfo->class437Filename) {
-		_class437 = insertSprite<Class437>(sceneInfo->class437Filename);
+
+		_class437 = createSprite<Class437>(sceneInfo->class437Filename);
+		addEntity(_class437);
+
 		_class521 = insertSprite<Class521>(this, 320, 240);
-//TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-//TODO		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-//TODO		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
 	} else {
 		_class437 = NULL;
-//TODO		_class517 = NULL;
+		_class517 = NULL;
 		_class521 = insertSprite<Class521>(this, 320, 240);
 	}
 
-//TODO	_class518 = insertSprite<Class518>(_class521);
+	_class518 = insertSprite<Class518>(_class521);
 	
 	_which1 = sceneInfo->which1;
 	_which2 = sceneInfo->which2;
@@ -871,7 +956,6 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	
 	if (clipRect) {
 		_class521->getClipRect() = *clipRect;
-#if 0		
 		if (_class517)
 			_class517->getClipRect() = *clipRect; 
 		if (_class520)
@@ -880,7 +964,6 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 			_class519->getClipRect() = *clipRect; 
 		if (_class518)
 			_class518->getClipRect() = *clipRect;
-#endif			 
 	}
 
 }
@@ -932,12 +1015,14 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertMouse433(0x08B8C180);
 
-	_class437 = insertSprite<Class437>(0x18808B88);
+	_class437 = createSprite<Class437>(0x18808B88);
+	addEntity(_class437);
+	
 	_class521 = insertSprite<Class521>(this, 320, 240);
-//TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-//TODO		_class518 = insertSprite<Class518>(_class521);
-//TODO		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-//TODO		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+	_class518 = insertSprite<Class518>(_class521);
+	_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+	_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
 
 	_dataResource.load(0x06000162);
 	

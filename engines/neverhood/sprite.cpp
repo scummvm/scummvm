@@ -28,7 +28,7 @@ namespace Neverhood {
 
 Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
 	: Entity(vm, objectPriority), _x(0), _y(0), _spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),   
-	_dataResource(vm), _doDeltaX(false), _doDeltaY(false), _needRefresh(false), _flags(0) {
+	_dataResource(vm), _doDeltaX(false), _doDeltaY(false), _needRefresh(false), _flags(0), _surface(NULL) {
 
 	_name = "Sprite"; 
 	SetMessageHandler(&Sprite::handleMessage);
@@ -438,6 +438,15 @@ void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
 	_surface = new BaseSurface(_vm, surfacePriority, dimensions.width, dimensions.height);
 }
 
+void AnimatedSprite::createShadowSurface1(BaseSurface *shadowSurface, uint32 fileHash, int surfacePriority) {
+	NDimensions dimensions = _animResource.loadSpriteDimensions(fileHash);
+	_surface = new ShadowSurface(_vm, surfacePriority, dimensions.width, dimensions.height, shadowSurface);
+}
+
+void AnimatedSprite::createShadowSurface(BaseSurface *shadowSurface, int16 width, int16 height, int surfacePriority) {
+	_surface = new ShadowSurface(_vm, surfacePriority, width, height, shadowSurface);
+}
+
 void AnimatedSprite::startAnimation(uint32 fileHash, int16 plFirstFrameIndex, int16 plLastFrameIndex) {
 	debug(2, "AnimatedSprite::startAnimation(%08X, %d, %d)", fileHash, plFirstFrameIndex, plLastFrameIndex);
 	_newAnimFileHash = fileHash;
@@ -506,7 +515,7 @@ void AnimatedSprite::gotoNextState() {
 	if (_nextStateCb) {
 		_currStateCb = _nextStateCb;
 		_nextStateCb = NULL;
-		debug("Fire _nextStateCb '%s'", _nextStateCbName.c_str());
+		//debug("Fire _nextStateCb '%s'", _nextStateCbName.c_str());
 		(this->*_currStateCb)();
 #if 0 // TODO		
 	} else if (_callbackList) {

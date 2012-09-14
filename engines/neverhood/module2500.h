@@ -67,9 +67,9 @@ public:
 protected:
 	Class521 *_class521;
 	Sprite *_class437;
-	// TODO Sprite *_class517;
-	// TODO Sprite *_class519;
-	// TODO Sprite *_class520;
+	Sprite *_class517;
+	Sprite *_class519;
+	Sprite *_class520;
 	Sprite *_class541;
 	Sprite *_class542;
 	Klayman *_kmScene2501;

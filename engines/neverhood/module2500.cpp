@@ -303,9 +303,9 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		_currTrackIndex = 0;
 	}
 
-	// TODO _class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-	// TODO _class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-	// TODO _class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+	_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+	_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
 	insertSprite<Class518>(_class521);
 	
 	_pointListsCount = 3;

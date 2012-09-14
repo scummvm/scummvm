@@ -58,6 +58,7 @@ public:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void loadDataResource(uint32 fileHash);
 	int16 defFilterY(int16 y);
+	bool getVisible() const { return _surface->getVisible(); }
 	void setVisible(bool value) { _surface->setVisible(value); }
 	NDrawRect& getDrawRect() { return _surface->getDrawRect(); }
 	// Some shortcuts to set the clipRect
@@ -157,6 +158,8 @@ protected:
 	void updateFrameIndex();
 	void updateFrameInfo();
 	void createSurface1(uint32 fileHash, int surfacePriority);
+	void createShadowSurface1(BaseSurface *shadowSurface, uint32 fileHash, int surfacePriority);
+	void createShadowSurface(BaseSurface *shadowSurface, int16 width, int16 height, int surfacePriority);
 	void stopAnimation();
 	void startAnimationByHash(uint32 fileHash, uint32 plFirstFrameHash, uint32 plLastFrameHash);
 	void nextAnimationByHash(uint32 fileHash2, uint32 plFirstFrameHash, uint32 plLastFrameHash);

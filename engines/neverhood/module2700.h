@@ -58,6 +58,34 @@ public:
 	Class437(NeverhoodEngine *vm, uint32 fileHash);
 };
 
+class Class517 : public AnimatedSprite {
+public:
+	Class517(NeverhoodEngine *vm, AnimatedSprite *class521, BaseSurface *shadowSurface, uint index);
+protected:
+	uint _index;
+	AnimatedSprite *_class521;
+	uint32 _animFileHash;
+	void update();
+	void updateShadow();
+};
+
+class Class519 : public AnimatedSprite {
+public:
+	Class519(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSurface, uint index);
+protected:
+	uint _index;
+	Sprite *_class521;
+	void update();
+};
+
+class Class520 : public AnimatedSprite {
+public:
+	Class520(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSurface, int16 frameIndex);
+protected:
+	Sprite *_class521;
+	void update();
+};
+
 class Scene2701 : public Scene {
 public:
 	Scene2701(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -104,6 +132,10 @@ public:
 protected:
 	Class521 *_class521;
 	Sprite *_class437;
+	Sprite *_class517;
+	Sprite *_class518;
+	Sprite *_class520;
+	Sprite *_class519;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
 	NRectArray *_rectList;

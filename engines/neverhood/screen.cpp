@@ -36,6 +36,7 @@ Screen::Screen(NeverhoodEngine *vm)
 }
 
 Screen::~Screen() {
+	_backScreen->free();
 	delete _backScreen;
 }
 
@@ -94,16 +95,17 @@ void Screen::clear() {
 	memset(_backScreen->pixels, 0, _backScreen->pitch * _backScreen->h);
 }
 
-void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent) {
+void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent,
+	const Graphics::Surface *shadowSurface) {
 
 	int16 destX, destY;
 	NRect ddRect;
-	
+
 	if (drawRect.x + drawRect.width >= clipRect.x2)
 		ddRect.x2 = clipRect.x2 - drawRect.x;
 	else
 		ddRect.x2 = drawRect.width;
-		
+
 	if (drawRect.x < clipRect.x1) {
 		destX = clipRect.x1;
 		ddRect.x1 = clipRect.x1 - drawRect.x;
@@ -127,7 +129,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 	
 	//debug(2, "draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
 
-	blit(surface, destX, destY, ddRect, transparent);
+	blit(surface, destX, destY, ddRect, transparent, shadowSurface);
 
 	// Useful for debugging	
 	//_backScreen->frameRect(Common::Rect(clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2), 250); 
@@ -171,7 +173,8 @@ void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, ND
 
 }
 
-void Screen::blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent) {
+void Screen::blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent,
+	const Graphics::Surface *shadowSurface) {
 
 	const byte *source = (const byte*)surface->getBasePtr(ddRect.x1, ddRect.y1);
 	byte *dest = (byte*)_backScreen->getBasePtr(destX, destY);
@@ -181,7 +184,17 @@ void Screen::blit(const Graphics::Surface *surface, int16 destX, int16 destY, NR
 	if (width <= 0 || height <= 0)
 		return;
 	
-	if (!transparent) {
+	if (shadowSurface) {
+		const byte *shadowSource = (const byte*)shadowSurface->getBasePtr(destX, destY);
+		while (height--) {
+			for (int xc = 0; xc < width; xc++)
+				if (source[xc] != 0)
+					dest[xc] = shadowSource[xc];
+			source += surface->pitch;
+			shadowSource += shadowSurface->pitch;
+			dest += _backScreen->pitch;
+		}
+	} else if (!transparent) {
 		while (height--) {
 			memcpy(dest, source, width);
 			source += surface->pitch;

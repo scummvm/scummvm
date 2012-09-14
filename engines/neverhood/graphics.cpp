@@ -131,6 +131,19 @@ void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, N
 	}
 }
 
+// ShadowSurface
+
+ShadowSurface::ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, BaseSurface *shadowSurface)
+	: BaseSurface(vm, priority, width, height), _shadowSurface(shadowSurface) {
+	// Empty
+}
+
+void ShadowSurface::draw() {
+	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
+		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent, _shadowSurface->getSurface());
+	}
+}
+
 // FontSurface
 
 FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)

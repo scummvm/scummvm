@@ -42,9 +42,12 @@ public:
 	void testPalette(byte *paletteData);
 	void updatePalette();
 	void clear();
-	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent);
+	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent,
+		const Graphics::Surface *shadowSurface = NULL);
 	void drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent);
-	void blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent);
+	void drawShadowSurface(const Graphics::Surface *surface, const Graphics::Surface *shadowSurface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect);
+	void blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent,
+		const Graphics::Surface *shadowSurface = NULL);
 	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
 	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent);
 protected:
