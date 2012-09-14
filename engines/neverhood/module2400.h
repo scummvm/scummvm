@@ -31,6 +31,7 @@
 #include "neverhood/module1100.h"
 #include "neverhood/module1200.h"
 #include "neverhood/module2100.h"
+#include "neverhood/module2200.h"
 
 namespace Neverhood {
 
@@ -157,6 +158,18 @@ protected:
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void playPipeSound(uint32 fileHash);
+};
+
+class Scene2406 : public Scene {
+public:
+	Scene2406(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_sprite1;
+	Sprite *_asTape;
+	Sprite *_class545;
+	NRect _clipRects[2];
+	bool _flag1;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood
