@@ -29,6 +29,7 @@
 #include "neverhood/gamemodule.h"
 #include "neverhood/module1000.h"
 #include "neverhood/module1100.h"
+#include "neverhood/module1200.h"
 #include "neverhood/module2100.h"
 
 namespace Neverhood {
@@ -103,6 +104,54 @@ protected:
 	int _countdown2;
 	int _pipeStatus;
 	int _asWaterSpitIndex;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void playPipeSound(uint32 fileHash);
+};
+
+class AsScene2402Door : public AnimatedSprite {
+public:
+	AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool isOpen);
+protected:
+	Scene *_parentScene;
+	int _countdown;
+	bool _isOpen;
+	SoundResource _soundResource;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void stDoorClosingFinished();
+};
+
+class AsScene2402TV : public AnimatedSprite {
+public:
+	AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman);
+	virtual ~AsScene2402TV();
+protected:
+	Klayman *_klayman;
+	int _countdown1;
+	int _countdown2;
+	SoundResource _soundResource;
+	void upWait();
+	void upFocusKlayman();
+	void stJokeFinished();
+	uint32 hmJoke(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2402 : public Scene {
+public:
+	Scene2402(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene2402();
+protected:
+	Sprite *_sprite1;
+	Sprite *_asDoor;
+	Sprite *_ssButton;
+	Sprite *_asTape;
+	StaticSprite *_ssDoorFrame;
+	int _pipeStatus;
+	int _countdown;
+	bool _soundToggle;
 	SoundResource _soundResource1;
 	SoundResource _soundResource2;
 	void update();

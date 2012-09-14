@@ -595,6 +595,14 @@ protected:
 	void stContSpitIntoPipe();
 };
 
+class KmScene2402 : public Klayman {
+public:
+	KmScene2402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	void sub415840();
+};
+
 class KmScene2501 : public Klayman {
 public:
 	KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);

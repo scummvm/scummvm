@@ -5282,7 +5282,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4833:
 		if (param.asInteger() == 1)
-			GotoState(&Klayman::stWonderAboutHalf);
+			GotoState(&Klayman::stWonderAbout);
 		else {
 			_spitPipeIndex = sendMessage(_parentScene, 0x2000, 0);
 			GotoState(&KmScene2401::stTrySpitIntoPipe);
@@ -5356,6 +5356,90 @@ void KmScene2401::stContSpitIntoPipe() {
 	startAnimationByHash(0x1808B150, 0x16401CA6, 0);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&KmScene2401::handleMessage);
+	SetSpriteUpdate(NULL);
+}
+
+KmScene2402::KmScene2402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+
+uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (!getGlobalVar(0x92603A79))
+			GotoState(&KmScene2402::sub415840);
+		else
+			GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_destX = param.asInteger();
+			GotoState(&Klayman::stWalking);
+		} else {
+			GotoState(&Klayman::stPeekWall);
+		}
+		break;
+	case 0x4812:
+		GotoState(&Klayman::stPickUpGeneric);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stTurnPressButton);
+		} else if (param.asInteger() == 2) {
+			GotoState(&Klayman::stStampFloorButton);
+		} else {
+			GotoState(&Klayman::stPressButtonSide);
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0) {
+			GotoState(&Klayman::stWonderAboutHalf);
+		} else if (param.asInteger() == 1) {
+			GotoState(&Klayman::stWonderAboutAfter);
+		} else if (param.asInteger() == 3) {
+			GotoState(&Klayman::stTurnToUseHalf);
+		} else if (param.asInteger() == 4) {
+			GotoState(&Klayman::stTurnAwayFromUse);
+		} else {
+			GotoState(&Klayman::stWonderAbout);
+		}
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2402::sub415840() {
+	if (_x > 260)
+		setDoDeltaX(1);
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0xD820A114, 0, -1);
+	_newStickFrameIndex = 10;
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D360);
 	SetSpriteUpdate(NULL);
 }
 

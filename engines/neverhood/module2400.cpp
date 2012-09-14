@@ -49,6 +49,10 @@ void Module2400::createScene(int sceneNum, int which) {
 		// TODO Music18hList_stop(0xB110382D, 0, 0);
 		_childObject = new Scene2401(_vm, this, which);
 		break;
+	case 1:
+		// TODO Music18hList_play(0xB110382D, 0, 2, 1);
+		_childObject = new Scene2402(_vm, this, which);
+		break;
 	}
 	SetUpdateHandler(&Module2400::updateScene);
 	_childObject->handleUpdate();
@@ -62,6 +66,14 @@ void Module2400::updateScene() {
 				createScene(1, 0);
 			else
 				leaveModule(0);
+			break;
+		case 1:
+			if (_moduleResult == 1)
+				createScene(5, 0);
+			else if (_moduleResult == 2)
+				createScene(7, -1);
+			else
+				createScene(0, 1);
 			break;
 		}
 	}
@@ -497,5 +509,259 @@ void Scene2401::playPipeSound(uint32 fileHash) {
 		_soundResource2.play(fileHash);
 	_soundToggle = !_soundToggle;
 }
+
+static const uint32 kScene2402FileHashes[] = {
+	0xD0910020,
+	0xD0910038,
+	0xD0910008,
+	0xD0910068,
+	0xD09100A8
+};
+
+AsScene2402Door::AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool isOpen)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isOpen(isOpen), _soundResource(vm) {
+
+	SetUpdateHandler(&AsScene2402Door::update);
+	SetMessageHandler(&AsScene2402Door::handleMessage);
+	createSurface1(0x80495831, 100);
+	_x = 320;
+	_y = 240;
+	_newStickFrameIndex = -2;
+	if (_isOpen) {
+		startAnimation(0x80495831, -1, -1);
+		_countdown = 48;
+	} else {
+		stopAnimation();
+		setVisible(false);
+	}	
+}
+
+void AsScene2402Door::update() {
+	if (_isOpen && _countdown != 0 && (--_countdown) == 0) {
+		_isOpen = false;
+		setVisible(true);
+		startAnimation(0x80495831, -1, -1);
+		_playBackwards = true;
+		_soundResource.play(calcHash("fxDoorClose38"));
+		NextState(&AsScene2402Door::stDoorClosingFinished);
+	}
+	AnimatedSprite::update();
+}
+
+uint32 AsScene2402Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		if (_isOpen)
+			_countdown = 144;
+		messageResult = _isOpen ? 1 : 0;
+		break;
+	case 0x3002:
+		gotoNextState();
+		break;
+	case 0x4808:
+		_countdown = 144;
+		_isOpen = true;
+		setVisible(true);
+		startAnimation(0x80495831, 0, -1);
+		_newStickFrameIndex = -2;
+		_soundResource.play(calcHash("fxDoorOpen38"));
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2402Door::stDoorClosingFinished() {
+	sendMessage(_parentScene, 0x2001, 0);
+	setVisible(false);
+}
+
+AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman)
+	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown1(0), _countdown2(0),
+	_soundResource(vm) {
+
+	createSurface(100, 640, 480); // TODO Use correct size	from the two hashes
+	SetMessageHandler(&Sprite::handleMessage);
+	_x = 260;
+	_y = 210;
+	setDoDeltaX(1);
+
+	if (!getGlobalVar(0x92603A79)) {
+		_soundResource.load(0x58208810);
+		_countdown1 = 48;
+		startAnimation(0x4919397A, 0, -1);
+		_newStickFrameIndex = 0;
+		SetUpdateHandler(&AsScene2402TV::upWait);
+	} else {
+		int16 frameIndex;
+		if (_klayman->getX() > 320)
+			_currFrameIndex = 29;
+		frameIndex = CLIP<int16>((_klayman->getX() - _x + 150) / 10, 0, 29);
+		startAnimation(0x050A0103, frameIndex, -1);
+		_newStickFrameIndex = frameIndex;
+		_countdown1 = 0;
+		SetUpdateHandler(&AsScene2402TV::upFocusKlayman);
+	}
+
+}
+
+AsScene2402TV::~AsScene2402TV() {
+	// TODO Sound1ChList_sub_407AF0(0x01520123);
+}
+
+void AsScene2402TV::upWait() {
+	if (_countdown1 != 0 && (--_countdown1) == 0) {
+		startAnimation(0x4919397A, 0, -1);
+		SetMessageHandler(&AsScene2402TV::hmJoke);
+		NextState(&AsScene2402TV::stJokeFinished);
+	}
+	AnimatedSprite::update();
+}
+
+void AsScene2402TV::upFocusKlayman() {
+	int16 frameIndex = CLIP<int16>((_klayman->getX() - _x + 150) / 10, 0, 29);
+	if (frameIndex != _currFrameIndex) {
+		if (frameIndex > _currFrameIndex) {
+			_currFrameIndex++;
+		} else if (frameIndex < _currFrameIndex) {
+			_currFrameIndex--;
+		}
+		startAnimation(0x050A0103, _currFrameIndex, -1);
+		_newStickFrameIndex = _currFrameIndex;
+		if (_countdown2 == 0) {
+			// TODO Sound1ChList_addSoundResource(0x01520123, 0xC42D4528, true);
+			// TODO Sound1ChList_playLooping(0xC42D4528); 
+		}
+		_countdown2 = 5;
+	} else if (_countdown2 != 0 && (--_countdown2 == 0)) {
+		// TODO Sound1ChList_deleteSoundByHash(0xC42D4528);
+	}
+	AnimatedSprite::update();
+}
+
+void AsScene2402TV::stJokeFinished() {
+	setGlobalVar(0x92603A79, 1);
+	startAnimation(0x050A0103, 0, -1);
+	_newStickFrameIndex = 0;
+	SetUpdateHandler(&AsScene2402TV::upFocusKlayman);
+}
+
+uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x431EA0B0) {
+			_soundResource.play();
+		}
+		break;
+	case 0x3002:
+		gotoNextState();
+		break;
+	}
+	return messageResult;
+}
+
+Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _countdown(0), _soundToggle(false),
+	_soundResource1(vm), _soundResource2(vm) {
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2402::handleMessage);
+	SetUpdateHandler(&Scene2402::update);
+
+	setRectList(0x004AF900);
+	setBackground(0x81660220);
+	setPalette(0x81660220);
+	insertMouse433(0x6022481E);
+	_asTape = insertSprite<AsScene1201Tape>(this, 9, 1100, 286, 409, 0x9148A011);
+	_vm->_collisionMan->addSprite(_asTape);
+	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x15288120, 100, 0);
+	
+	if (which < 0) {
+		insertKlayman<KmScene2402>(198, 404);
+		setMessageList(0x004AF7C8);
+	} else if (which == 1) {
+		insertKlayman<KmScene2402>(660, 404);
+		setMessageList(0x004AF7D8);
+	} else if (which == 2) {
+		insertKlayman<KmScene2402>(409, 404);
+		_klayman->setDoDeltaX(getGlobalVar(0xC0418A02) ? 1 : 0);
+		setMessageList(0x004AF888);
+	} else {
+		insertKlayman<KmScene2402>(0, 404);
+		setMessageList(0x004AF7D0);
+	}
+
+	_sprite1 = insertStaticSprite(0x081A60A8, 1100);
+	_ssDoorFrame = (StaticSprite*)insertStaticSprite(0x406C0AE0, 1100);
+	_klayman->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 639, _sprite1->getDrawRect().y2());
+	_asDoor = insertSprite<AsScene2402Door>(this, which == 1/*CHECKME or != ?*/);
+	insertSprite<AsScene2402TV>(_klayman);
+	insertStaticSprite(0x3A01A020, 200);
+
+}
+
+Scene2402::~Scene2402() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+}
+
+void Scene2402::update() {
+	if (_countdown != 0 && (--_countdown) == 0) {
+		if (_pipeStatus >= 10) {
+			sendMessage(_asDoor, 0x4808, 0);
+			_ssDoorFrame->load(0x00B415E0, true, true);
+			_ssDoorFrame->update();
+		} else if (_pipeStatus >= 5) {
+			_countdown = 8;
+			playPipeSound(kScene2402FileHashes[getSubVar(0x0800547C, _pipeStatus - 5)]);
+		} else {
+			_countdown = _pipeStatus == 4 ? 16 : 8;
+			playPipeSound(kScene2402FileHashes[getSubVar(0x90405038, _pipeStatus)]);
+		}
+		_pipeStatus++;
+	}
+	Scene::update();
+}
+
+uint32 Scene2402::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x402064D8) {
+			sendEntityMessage(_klayman, 0x1014, _ssButton);
+		} else if (param.asInteger() == 0x01C66840) {
+			if (sendMessage(_asDoor, 0x2000, 0))
+				setMessageList(0x004AF800);
+			else
+				setMessageList(0x004AF818);
+		}
+		break;
+	case 0x2001:
+		_ssDoorFrame->load(0x406C0AE0, true, true);
+		_ssDoorFrame->update();
+		break;
+	case 0x480B:
+		if (sender == _ssButton) {
+			_pipeStatus = 0;
+			_countdown = 8;
+		}
+		break;
+	case 0x4826:
+		if (sender == _asTape) {
+			sendEntityMessage(_klayman, 0x1014, _asTape);
+			setMessageList(0x004AF890);
+		}
+		break;
+	}
+	return messageResult;
+}
 		
+void Scene2402::playPipeSound(uint32 fileHash) {
+	if (_soundToggle)
+		_soundResource1.play(fileHash);
+	else
+		_soundResource2.play(fileHash);
+	_soundToggle = !_soundToggle;
+}
+
 } // End of namespace Neverhood
