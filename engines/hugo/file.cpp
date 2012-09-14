@@ -128,7 +128,7 @@ Seq *FileManager::readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imag
 
 	seqPtr->_imagePtr = imagePtr;
 	for (uint16 y = 0; y < pcxSurface->h; y++)
-		memcpy(imagePtr + y * pcxSurface->pitch, pcxSurface->getBasePtr(0, y), pcxSurface->w);
+		memcpy(imagePtr + y * pcxSurface->w, pcxSurface->getBasePtr(0, y), pcxSurface->w);
 
 	return seqPtr;
 }
