@@ -5443,6 +5443,92 @@ void KmScene2402::sub415840() {
 	SetSpriteUpdate(NULL);
 }
 
+KmScene2403::KmScene2403(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+
+uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x480D:
+		GotoState(&Klayman::sub420F60);
+		break;
+	case 0x4812:
+		GotoState(&Klayman::stPickUpGeneric);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stTurnPressButton);
+		} else if (param.asInteger() == 2) {
+			GotoState(&Klayman::stStampFloorButton);
+		} else {
+			GotoState(&Klayman::stPressButtonSide);
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0) {
+			GotoState(&Klayman::stWonderAboutHalf);
+		} else if (param.asInteger() == 1) {
+			GotoState(&Klayman::stWonderAboutAfter);
+		} else if (param.asInteger() == 3) {
+			GotoState(&Klayman::stTurnToUseHalf);
+		} else if (param.asInteger() == 4) {
+			GotoState(&Klayman::stTurnAwayFromUse);
+		} else {
+			GotoState(&Klayman::stWonderAbout);
+		}
+		break;
+	case 0x4820:  
+		sendMessage(_parentScene, 0x2000, 0);
+		GotoState(&Klayman::stContinueClimbLadderUp);	 
+		break;
+	case 0x4821:	
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderDown);	 
+		break;
+	case 0x4822:  
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderUp);	 
+		break;
+	case 0x4823:
+		sendMessage(_parentScene, 0x2001, 0);
+		GotoState(&Klayman::stClimbLadderHalf);	 
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840: 
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return messageResult;
+}
+	
 KmScene2406::KmScene2406(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// TODO Cliprects

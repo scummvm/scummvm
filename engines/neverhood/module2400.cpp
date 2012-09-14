@@ -53,6 +53,10 @@ void Module2400::createScene(int sceneNum, int which) {
 		// TODO Music18hList_play(0xB110382D, 0, 2, 1);
 		_childObject = new Scene2402(_vm, this, which);
 		break;
+	case 2:
+		// TODO Music18hList_play(0xB110382D, 0, 0, 1);
+		_childObject = new Scene2403(_vm, this, which);
+		break;
 	case 5:
 		// TODO Music18hList_play(0xB110382D, 0, 2, 1);
 		_childObject = new Scene2406(_vm, this, which);
@@ -78,6 +82,14 @@ void Module2400::updateScene() {
 				createScene(7, -1);
 			else
 				createScene(0, 1);
+			break;
+		case 2:
+			if (_moduleResult == 1)
+				createScene(9, -1);
+			else if (_moduleResult == 2)
+				createScene(6, -1);
+			else
+				createScene(5, 1);
 			break;
 		case 5:
 			if (_moduleResult == 1)
@@ -776,6 +788,100 @@ void Scene2402::playPipeSound(uint32 fileHash) {
 	else
 		_soundResource2.play(fileHash);
 	_soundToggle = !_soundToggle;
+}
+
+Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm) {
+	
+	Sprite *tempSprite;
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2403::handleMessage);
+	setBackground(0x0C05060C);
+	setPalette(0x0C05060C);
+	_palette->addPalette(0x414364B0, 0, 65, 0);
+	insertMouse433(0x506080C8);
+	_asTape = insertSprite<AsScene1201Tape>(this, 2, 1100, 480, 454, 0x9148A011);
+	_vm->_collisionMan->addSprite(_asTape);
+	_asLightCord = insertSprite<AsScene2803LightCord>(this, 0xA1095A10, 0x836D3813, 368, 200);
+	_asLightCord->setClipRect(0, 25, 640, 480);
+	
+	if (which < 0) {
+		_flag1 = false;
+		insertKlayman<KmScene2403>(220, 449);
+		setMessageList(0x004B5C98);
+		setRectList(0x004B5E18);
+	} else if (which == 1) {
+		_flag1 = false;
+		insertKlayman<KmScene2403>(433, 449);
+		setMessageList(0x004B5D70);
+		setRectList(0x004B5E18);
+	} else if (which == 2) {
+		_flag1 = false;
+		insertKlayman<KmScene2403>(440, 449);
+		_klayman->setDoDeltaX(1);
+		setMessageList(0x004B5C98);
+		setRectList(0x004B5E18);
+	} else {
+		_flag1 = true;
+		insertKlayman<KmScene2403>(122, 599);
+		setMessageList(0x004B5CA0);
+		setRectList(0x004B5E28);
+	}
+
+	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x3130B0EB, 100, 0);
+	_sprite1 = insertStaticSprite(0x20C24220, 1100);	
+	_sprite2 = insertStaticSprite(0x03080900, 1300);
+	tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+	tempSprite->setClipRect(_sprite1->getDrawRect().x, 0, 640, _sprite2->getDrawRect().y2());
+	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, _sprite2->getDrawRect().y2());	
+
+	_soundResource2.load(calcHash("fxFogHornSoft"));
+
+}
+
+uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x040424D0) {
+			sendEntityMessage(_klayman, 0x1014, _ssButton);
+		} else if (param.asInteger() == 0x180CE614) {
+			sendEntityMessage(_klayman, 0x1014, _asLightCord);
+		}
+		break;
+	case 0x2000:
+		_flag1 = true;
+		setRectList(0x004B5E28);
+		break;
+	case 0x2001:
+		_flag1 = false;
+		setRectList(0x004B5E18);
+		break;
+	case 0x480B:
+		if (sender == _ssButton) {
+			if (getSubVar(0x14800353, 0x304008D2)) {
+				setSubVar(0x14800353, 0x304008D2, 0);
+				_soundResource1.play(calcHash("fx3LocksDisable"));
+			} else {
+				setSubVar(0x14800353, 0x304008D2, 1);
+				_soundResource2.play();
+			}
+		}
+		break;
+	case 0x480F:
+		if (sender == _asLightCord) {
+			leaveScene(2);
+		}
+		break;
+	case 0x4826:
+		if (sender == _asTape && !_flag1) {
+			sendEntityMessage(_klayman, 0x1014, _asTape);
+			setMessageList(0x004B5D98);
+		}
+		break;
+	}
+	return messageResult;
 }
 
 Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
