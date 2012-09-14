@@ -57,9 +57,26 @@ void Module2400::createScene(int sceneNum, int which) {
 		// TODO Music18hList_play(0xB110382D, 0, 0, 1);
 		_childObject = new Scene2403(_vm, this, which);
 		break;
+	case 4:
+		// TODO Music18hList_stop(0xB110382D, 0, 2);
+		_childObject = new DiskplayerScene(_vm, this, 0);
+		break;
 	case 5:
 		// TODO Music18hList_play(0xB110382D, 0, 2, 1);
 		_childObject = new Scene2406(_vm, this, which);
+		break;
+	case 6:
+		// TODO Music18hList_stop(0xB110382D, 0, 2);
+		createSmackerScene(0x20D80001, true, true, false);
+		break;
+	case 7:
+		_childObject = new Class152(_vm, this, 0x81523218, 0x2321C81D);
+		break;
+	case 8:
+		_childObject = new Class152(_vm, this, 0x08100210, 0x00214089);
+		break;
+	case 9:
+		_childObject = new Class152(_vm, this, 0x8C020505, 0x205018C8);
 		break;
 	}
 	SetUpdateHandler(&Module2400::updateScene);
@@ -91,6 +108,9 @@ void Module2400::updateScene() {
 			else
 				createScene(5, 1);
 			break;
+		case 4:
+			createScene(5, 2);
+			break;
 		case 5:
 			if (_moduleResult == 1)
 				createScene(2, 0);
@@ -100,6 +120,18 @@ void Module2400::updateScene() {
 				createScene(8, -1);
 			else
 				createScene(1, 1);
+			break;
+		case 6:
+			createScene(2, 2);
+			break;
+		case 7:
+			createScene(1, 2);
+			break;
+		case 8:
+			createScene(5, 3);
+			break;
+		case 9:
+			createScene(2, 1);
 			break;
 		}
 	}
