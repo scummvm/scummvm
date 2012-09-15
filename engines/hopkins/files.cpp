@@ -261,45 +261,29 @@ bool FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	}
 
 	// Scan for an entry in the catalogue
-	const byte *startP = ptr;
 	int result;
 	bool matchFlag = false;
 	int offsetVal = 0;
 	
 	do {
-		Common::String name = (const char *)startP;
+		Common::String name = (const char *)ptr + offsetVal;
     
-		if (file == name) {
+		if (name == file) {
 			// Found entry for file, so get it's details from the catalogue entry
-			const byte *pData = startP + offsetVal;
-			startP += offsetVal + 15;
+			const byte *pData = ptr + offsetVal;
 			GLOBALS.CAT_POSI = READ_LE_UINT32(pData + 15);
 			GLOBALS.CAT_TAILLE = READ_LE_UINT32(pData + 19);
 			matchFlag = true;
 		}
 
-		const char *finishString = "FINIS";
-		const char *nameP = name.c_str();
-		int finishRemainingChars = 6;
-		int v19 = 0;
-	    bool finishMatch = true;
-
-		do {
-			if (!finishRemainingChars)
-				break;
-			finishMatch = *finishString++ == *nameP++;
-			--finishRemainingChars;
-		} while (finishMatch);
-
-		if (!finishMatch)
-			v19 = *(byte *)(finishString - 1) - *(byte *)(nameP - 1);
-		if (!v19) {
+		if (name == "FINIS") {
 			GLOBALS.dos_free2(ptr);
-			return PTRNUL;
+			return false;
 		}
     
 		offsetVal += 23;
 	} while (!matchFlag);
+
 	GLOBALS.dos_free2(ptr);
 
 	// TODO: Double check whether this really should be an unsigned int comparison
