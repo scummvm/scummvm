@@ -28,9 +28,18 @@
 
 namespace Hopkins {
 
+class HopkinsEngine;
+
 class SoundManager {
 public:
-	static void WSOUND_INIT();
+	HopkinsEngine *_vm;
+public:
+	void setParent(HopkinsEngine *vm);
+
+	void WSOUND_INIT();
+	void VERIF_SOUND();
+	void LOAD_ANM_SOUND();
+	void PLAY_ANM_SOUND(int soundNumber);
 };
 
 } // End of namespace Hopkins

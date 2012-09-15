@@ -55,6 +55,8 @@ GraphicsManager::GraphicsManager() {
 	Agr_x = Agr_y = 0;
 	Agr_Flag_x = Agr_Flag_y = 0;
 	FADESPD = 15;
+	FADE_LINUX = 0;
+	NOLOCK = false;
 
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
 	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_SIZE], 0);
@@ -63,8 +65,8 @@ GraphicsManager::GraphicsManager() {
 }
 
 GraphicsManager::~GraphicsManager() {
-	VESA_SCREEN.free();
-	VESA_BUFFER.free();
+	GLOBALS.dos_free2(VESA_SCREEN);
+	GLOBALS.dos_free2(VESA_BUFFER);
 }
 
 void GraphicsManager::SET_MODE(int width, int height) {
@@ -104,8 +106,8 @@ void GraphicsManager::SET_MODE(int width, int height) {
 		}
 
 		// Init surfaces
-		VESA_SCREEN.create(SCREEN_WIDTH, SCREEN_HEIGHT, pixelFormat16);
-		VESA_BUFFER.create(SCREEN_WIDTH, SCREEN_HEIGHT, pixelFormat16);
+		VESA_SCREEN = GLOBALS.dos_malloc2(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		VESA_BUFFER = GLOBALS.dos_malloc2(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 		VideoPtr = NULL;
 		XSCREEN = width;
@@ -126,8 +128,10 @@ void GraphicsManager::SET_MODE(int width, int height) {
 }
 
 void GraphicsManager::DD_Lock() {
-	if (_lockCtr++ == 0)
-		VideoPtr = g_system->lockScreen();
+	if (!NOLOCK) {
+		if (_lockCtr++ == 0)
+			VideoPtr = g_system->lockScreen();
+	}
 }
 
 void GraphicsManager::DD_Unlock() {
@@ -168,7 +172,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	}
 
 	SCROLL_ECRAN(0);
-	A_PCX640_480((byte *)VESA_SCREEN.pixels, file, Palette, flag);
+	A_PCX640_480((byte *)VESA_SCREEN, file, Palette, flag);
 
 	SCROLL = 0;
 	OLD_SCROLL = 0;
@@ -182,14 +186,14 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 		Cls_Video();
 		if (Winbpp == 2) {
 			if (SDL_ECHELLE)
-				m_scroll16A((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				m_scroll16A((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else
-				m_scroll16((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				m_scroll16((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		} else if (Winbpp == 1) {
 			if (!SDL_ECHELLE)
-				m_scroll2((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				m_scroll2((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else 
-				m_scroll2A((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				m_scroll2A((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		}
 
 		DD_Unlock();
@@ -204,22 +208,22 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 			DD_Lock();
 			if (Winbpp == 2) {
 				if (SDL_ECHELLE)
-					m_scroll16A((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					m_scroll16A((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
-					m_scroll16((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					m_scroll16((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 			if (Winbpp == 1) {
 				if (!SDL_ECHELLE)
-					m_scroll2((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					m_scroll2((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
-					m_scroll2A((byte *)VESA_SCREEN.pixels, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					m_scroll2A((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 
 			DD_Unlock();
 		}
 	}
 
-	memcpy((byte *)VESA_BUFFER.pixels, (byte *)VESA_SCREEN.pixels, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memcpy((byte *)VESA_BUFFER, (byte *)VESA_SCREEN, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 }
 
 void GraphicsManager::INIT_TABLE(int a1, int a2, byte *palette) {
@@ -812,22 +816,22 @@ LABEL_28:
 
 void GraphicsManager::FADE_INS() {
 	FADESPD = 1;
-	fade_in(Palette, 1, (const byte *)VESA_BUFFER.pixels);
+	fade_in(Palette, 1, (const byte *)VESA_BUFFER);
 }
 
 void GraphicsManager::FADE_OUTS() {
   FADESPD = 1;
-  fade_out(Palette, 1, (const byte *)VESA_BUFFER.pixels);
+  fade_out(Palette, 1, (const byte *)VESA_BUFFER);
 }
 
 void GraphicsManager::FADE_INW() {
 	FADESPD = 15;
-	fade_in(Palette, 20, (const byte *)VESA_BUFFER.pixels);
+	fade_in(Palette, 20, (const byte *)VESA_BUFFER);
 }
 
 void GraphicsManager::FADE_OUTW() {
 	FADESPD = 15;
-	fade_out(Palette, 20, (const byte *)VESA_BUFFER.pixels);
+	fade_out(Palette, 20, (const byte *)VESA_BUFFER);
 }
 
 void GraphicsManager::setpal_vga256(const byte *palette) {
@@ -869,6 +873,21 @@ void GraphicsManager::DD_VBL() {
 	g_system->updateScreen();
 }
 
+void GraphicsManager::FADE_OUTW_LINUX(const byte *surface) {
+	warning("TODO: FADE_OUTW_LINUX");
+}
+
+void GraphicsManager::Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface) {
+	warning("TODO: Copy_WinScan_Vbe3");
+}
+
+void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
+	warning("TODO: Copy_Video_Vbe3");
+}
+
+void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
+	warning("TODO: Copy_Video_Vbe3");
+}
 
 /*------------------------------------------------------------------------*/
 

@@ -21,15 +21,31 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 #include "hopkins/events.h"
 
 namespace Hopkins {
 
-void Mouse::INSTALL_SOURIS() {
+EventsManager::EventsManager() {
+	souris_flag = false;
+	mouse_linux = false;
+	souris_sizex = souris_sizey = 0;
+	ofset_souris_x = ofset_souris_y = 0;
+	CASSE = false;
+	souris_n = 0;
+	souris_bb = 0;
+	souris_b = 0;
+	pointeur_souris = NULL;
+	lItCounter = 0;
+	ESC_KEY = false;
+	_priorFrameTime = 0;
+}
+
+void EventsManager::INSTALL_SOURIS() {
 	// No implementation in original
 }
 
-void Mouse::souris_on() {
+void EventsManager::souris_on() {
 	souris_flag = true;
 
 	if (mouse_linux) {
@@ -49,18 +65,53 @@ void Mouse::souris_on() {
 		souris_xy(150, 100);
 }
 
-void Mouse::souris_xy(int xp, int yp) {
+void EventsManager::souris_xy(int xp, int yp) {
 	g_system->warpMouse(xp, yp);
 }
 
-void Mouse::souris_max() {
+void EventsManager::souris_max() {
 	// No implementation in original
 }
 
-void Mouse::hideCursor() {
+void EventsManager::hideCursor() {
 }
 
-void Mouse::showCursor() {
+void EventsManager::showCursor() {
+}
+
+void EventsManager::CONTROLE_MES() {
+	pollEvents();
+}
+
+void EventsManager::pollEvents() {
+	uint32 milli = g_system->getMillis();
+	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
+		_priorFrameTime = milli;
+		++lItCounter;
+	}
+
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		// Handle keypress
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			return;
+
+		case Common::EVENT_KEYDOWN:
+			ESC_KEY = event.kbd.keycode == Common::KEYCODE_ESCAPE;
+			return;
+
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONUP:
+			return;
+
+		default:
+ 			break;
+		}
+	}
 }
 
 } // End of namespace Hopkins

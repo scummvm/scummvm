@@ -55,11 +55,11 @@ public:
 	int nbrligne;
 	byte TABLE_COUL[PALETTE_SIZE];
 	byte cmap[PALETTE_BLOCK_SIZE];
-	byte Palette[PALETTE_BLOCK_SIZE];
+	byte Palette[800];
 	bool Linear;
 	Graphics::Surface *VideoPtr;
-	Graphics::Surface VESA_SCREEN;
-	Graphics::Surface VESA_BUFFER;
+	byte *VESA_SCREEN;
+	byte *VESA_BUFFER;
 	int start_x;
 	int ofscroll;
 	int SCROLL;
@@ -74,6 +74,8 @@ public:
 	int Agr_Flag_x, Agr_Flag_y;
 	int FADESPD;
 	byte PALPCX[800];
+	int FADE_LINUX;
+	bool NOLOCK;
 public:
 	GraphicsManager();
 	~GraphicsManager();
@@ -105,6 +107,10 @@ public:
 	void CHANGE_PALETTE(const byte *palette);
 	uint16 MapRGB(byte r, byte g, byte b);
 	void DD_VBL();
+	void FADE_OUTW_LINUX(const byte *surface);
+	void Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface);
+	void Copy_Video_Vbe3(const byte *surface);
+	void Copy_Video_Vbe16(const byte *surface);
 };
 
 class ObjectManager {

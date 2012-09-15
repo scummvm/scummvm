@@ -201,6 +201,7 @@ public:
 	int HELICO;
 	uint32 CAT_POSI;
 	uint32 CAT_TAILLE;
+	int iRegul;
 
 	Globals();
 	~Globals();

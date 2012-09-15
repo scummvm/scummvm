@@ -1,6 +1,7 @@
 MODULE := engines/hopkins
 
 MODULE_OBJS := \
+	anim.o \
 	detection.o \
 	events.o \
 	files.o \

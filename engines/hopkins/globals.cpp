@@ -60,7 +60,7 @@ Globals::Globals() {
 	CAT_POSI = 0;
 	CAT_TAILLE = 0;
 	Nouv_objet = 0;
-
+	iRegul = 0;
 
 	// Initialise pointers
 	ICONE = NULL;

@@ -35,8 +35,10 @@ namespace Hopkins {
 HopkinsEngine *g_vm;
 
 HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("Hopkins") {
+		_gameDescription(gameDesc), _randomSource("Hopkins"), _animationManager() {
 	g_vm = this;
+	_animationManager.setParent(this);
+	_soundManager.setParent(this);
 }
 
 HopkinsEngine::~HopkinsEngine() {
@@ -54,14 +56,14 @@ Common::Error HopkinsEngine::run() {
 	INIT_SYSTEM();
 	Init_Interrupt();
 
-	SoundManager::WSOUND_INIT();
+	_soundManager.WSOUND_INIT();
 
 	GLOBALS.CHARGE_OBJET();
 	ObjectManager::CHANGE_OBJET(14);
 	ObjectManager::AJOUTE_OBJET(14);
 
 	GLOBALS.HELICO = 0;
-	_mouse.hideCursor();
+	_eventsManager.hideCursor();
 
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
@@ -71,14 +73,13 @@ Common::Error HopkinsEngine::run() {
 
 	_graphicsManager.FADE_INW();
 	delay(1500);
-/*
-  SDL_Delay(1500);
-  FADE_OUTW();
-  if ( !internet )
-  {
-    FADE_LINUX = 2;
-    PLAY_ANM("MP.ANM", 10, 16, 200);
-  }
+	_graphicsManager.FADE_OUTW();
+
+	if (!GLOBALS.internet) {
+		_graphicsManager.FADE_LINUX = 2;
+		_animationManager.PLAY_ANM("MP.ANM", 10, 16, 200);
+	}
+	/*
   LOAD_IMAGE("H2");
   FADE_INW();
   SDL_Delay(500);
@@ -475,7 +476,7 @@ LABEL_128:
 	// Copy vesa surface to screen
 	_graphicsManager.DD_Lock();
 
-	const byte *srcP = (const byte *)_graphicsManager.VESA_SCREEN.pixels;
+	const byte *srcP = (const byte *)_graphicsManager.VESA_SCREEN;
 	uint16 *destP = (uint16 *)_graphicsManager.VideoPtr->pixels;
 	for (int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); ++i, ++srcP, ++destP) {
 		byte r = _graphicsManager.Palette[*srcP * 3];
@@ -526,13 +527,13 @@ void HopkinsEngine::INIT_SYSTEM() {
 	// Set graphics mode
 	_graphicsManager.SET_MODE(640, 480);
 	
-	_mouse.mouse_linux = true;
+	_eventsManager.mouse_linux = true;
   
 	switch (GLOBALS.FR) {
 	case 0:
-		if (!_mouse.mouse_linux)
+		if (!_eventsManager.mouse_linux)
 			FileManager::CONSTRUIT_SYSTEM("SOUAN.SPR");
-		if (!GLOBALS.FR && _mouse.mouse_linux)
+		if (!GLOBALS.FR && _eventsManager.mouse_linux)
 			FileManager::CONSTRUIT_SYSTEM("LSOUAN.SPR");
 		break;
 	case 1:
@@ -543,14 +544,14 @@ void HopkinsEngine::INIT_SYSTEM() {
 		break;
 	}
   
-	if (_mouse.mouse_linux) {
-		_mouse.souris_sizex = 52;
-		_mouse.souris_sizey = 32;
+	if (_eventsManager.mouse_linux) {
+		_eventsManager.souris_sizex = 52;
+		_eventsManager.souris_sizey = 32;
 	} else {
-		_mouse.souris_sizex = 34;
-		_mouse.souris_sizey = 20;
+		_eventsManager.souris_sizex = 34;
+		_eventsManager.souris_sizey = 20;
 	}
-	_mouse.pointeur_souris = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+	_eventsManager.pointeur_souris = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
 
 	GLOBALS.clearAll();
 
@@ -583,15 +584,15 @@ void HopkinsEngine::INIT_SYSTEM() {
 	GLOBALS.max_x = 1280;
 	GLOBALS.max_y = 460;
 	
-	_mouse.INSTALL_SOURIS();
-	_mouse.souris_on();
-	_mouse.souris_flag = false;
-	_mouse.souris_max();
+	_eventsManager.INSTALL_SOURIS();
+	_eventsManager.souris_on();
+	_eventsManager.souris_flag = false;
+	_eventsManager.souris_max();
 
 	GLOBALS.HOPKINS_DATA();
 
-	_mouse.ofset_souris_x = 0;
-	_mouse.ofset_souris_y = 0;
+	_eventsManager.ofset_souris_x = 0;
+	_eventsManager.ofset_souris_y = 0;
 	GLOBALS.lItCounter = 0;
 	GLOBALS.lOldItCounter = 0;
 }

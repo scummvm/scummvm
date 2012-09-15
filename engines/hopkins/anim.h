@@ -20,29 +20,31 @@
  *
  */
 
-#include "common/system.h"
-#include "hopkins/sound.h"
+#ifndef HOPKINS_ANIM_H
+#define HOPKINS_ANIM_H
+
+#include "common/scummsys.h"
+#include "common/endian.h"
+#include "common/str.h"
+#include "graphics/surface.h"
 
 namespace Hopkins {
 
-void SoundManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
-}
+class HopkinsEngine;
 
-void SoundManager::WSOUND_INIT() {
-	// TODO: WSOUND_INIT
-}
+class AnimationManager {
+public:
+	HopkinsEngine *_vm;
+	bool CLS_ANM;
+	bool NO_SEQ;
+public:
+	AnimationManager();
+	void setParent(HopkinsEngine *vm) { _vm = vm; }
 
-void SoundManager::VERIF_SOUND() {
-
-}
-
-void SoundManager::LOAD_ANM_SOUND() {
-
-}
-
-void SoundManager::PLAY_ANM_SOUND(int soundNumber) {
-
-}
+	void PLAY_ANM(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
+	bool REDRAW_ANIM();
+};
 
 } // End of namespace Hopkins
+
+#endif /* HOPKINS_ANIM_H */

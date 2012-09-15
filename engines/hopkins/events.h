@@ -28,7 +28,12 @@
 
 namespace Hopkins {
 
-class Mouse {
+#define GAME_FRAME_RATE 50
+#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
+
+class EventsManager {
+private:
+	void pollEvents();
 public:
 	bool souris_flag;
 	bool mouse_linux;
@@ -41,14 +46,20 @@ public:
 	int souris_bb;
 	int souris_b;
 	void *pointeur_souris;
+	uint32 lItCounter;
+	uint32 _priorFrameTime;
+	bool ESC_KEY;
 public:
+	EventsManager();
+
 	void INSTALL_SOURIS();
 	void souris_on();
 	void souris_xy(int xp, int yp);
 	void souris_max();
-
 	void hideCursor();
 	void showCursor();
+
+	void CONTROLE_MES();
 };
 
 } // End of namespace Hopkins

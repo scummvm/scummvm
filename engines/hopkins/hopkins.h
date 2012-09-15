@@ -31,9 +31,11 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "hopkins/anim.h"
 #include "hopkins/events.h"
 #include "hopkins/globals.h"
 #include "hopkins/graphics.h"
+#include "hopkins/sound.h"
 
 /**
  * This is the namespace of the Hopkins engine.
@@ -66,8 +68,6 @@ class HopkinsEngine : public Engine {
 private:
 	const HopkinsGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	Mouse _mouse;
-	GraphicsManager _graphicsManager;
 
 	/**
 	 * Processes the loaded list of ini file parameters
@@ -83,7 +83,10 @@ protected:
 
 public:
 	Globals _globals;
-
+	EventsManager _eventsManager;
+	GraphicsManager _graphicsManager;
+	AnimationManager _animationManager;
+	SoundManager _soundManager;
 public:
 	HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc);
 	virtual ~HopkinsEngine();
