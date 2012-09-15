@@ -148,7 +148,7 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 			// HACK: According to the spec, attributeBits should determine the amount
 			// of alpha-bits, however, as the game files that use this decoder seems
 			// to ignore that fact, we force the amount to 8 for 32bpp files for now.
-			_format = PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+			_format = PixelFormat(4, 8, 8, 8, /* attributeBits */ 8, 16, 8, 0, 24);
 		} else if (pixelDepth == 16 && imageType == TYPE_TRUECOLOR) {
 			// 16bpp TGA is ARGB1555
 			_format = PixelFormat(2, 5, 5, 5, attributeBits, 10, 5, 0, 15);
