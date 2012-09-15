@@ -72,18 +72,19 @@ Common::Error HopkinsEngine::run() {
 	_graphicsManager.LOAD_IMAGE("LINUX");
 
 	_graphicsManager.FADE_INW();
-	delay(1500);
+	_eventsManager.delay(1500);
 	_graphicsManager.FADE_OUTW();
 
 	if (!GLOBALS.internet) {
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.PLAY_ANM("MP.ANM", 10, 16, 200);
 	}
-	/*
-  LOAD_IMAGE("H2");
-  FADE_INW();
-  SDL_Delay(500);
-  FADE_OUTW();
+
+	_graphicsManager.LOAD_IMAGE("H2");
+	_graphicsManager.FADE_INW();
+	_eventsManager.delay(500);
+	_graphicsManager.FADE_OUTW();
+/*
   if ( !ESC_KEY )
     INTRORUN(a1);
   iRegul = 0;
@@ -599,14 +600,6 @@ void HopkinsEngine::INIT_SYSTEM() {
 
 void HopkinsEngine::Init_Interrupt() {
 	// TODO: Determine whether the timer is needed
-}
-
-void HopkinsEngine::delay(int delay) {
-	uint32 delayEnd = g_system->getMillis() + delay;
-
-	while (!g_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
-		g_system->delayMillis(10);
-	}	
 }
 
 } // End of namespace Hopkins

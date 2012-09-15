@@ -51,10 +51,7 @@ void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, ui
 	doneFlag = 0;
 	for (;;) {
 MAIN_LOOP:
-		v15 = 0;
-		v14 = 0;
-		v17 = 0;
-		v16 = 0;
+		v14 = v15 = v16 = v17 = 0;
 		v18 = 1;
 		screenP = _vm->_graphicsManager.VESA_SCREEN;
 

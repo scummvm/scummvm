@@ -83,13 +83,25 @@ void EventsManager::CONTROLE_MES() {
 	pollEvents();
 }
 
-void EventsManager::pollEvents() {
+void EventsManager::checkForNextFrameCounter() {
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		_priorFrameTime = milli;
 		++lItCounter;
-	}
 
+		g_system->updateScreen();
+	}
+}
+
+void EventsManager::delay(int delay) {
+	uint32 delayEnd = g_system->getMillis() + delay;
+
+	while (!g_system->getEventManager()->shouldQuit() && g_system->getMillis() < delayEnd) {
+		g_system->delayMillis(10);
+	}	
+}
+
+void EventsManager::pollEvents() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		// Handle keypress
@@ -111,6 +123,8 @@ void EventsManager::pollEvents() {
 		default:
  			break;
 		}
+
+		checkForNextFrameCounter();
 	}
 }
 

@@ -34,6 +34,7 @@ namespace Hopkins {
 class EventsManager {
 private:
 	void pollEvents();
+	void checkForNextFrameCounter();
 public:
 	bool souris_flag;
 	bool mouse_linux;
@@ -60,6 +61,7 @@ public:
 	void showCursor();
 
 	void CONTROLE_MES();
+	void delay(int delay);
 };
 
 } // End of namespace Hopkins
