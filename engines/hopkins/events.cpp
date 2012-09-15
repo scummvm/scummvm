@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/textconsole.h"
 #include "hopkins/events.h"
 
 namespace Hopkins {
@@ -31,6 +32,7 @@ EventsManager::EventsManager() {
 	mouse_linux = false;
 	souris_sizex = souris_sizey = 0;
 	ofset_souris_x = ofset_souris_y = 0;
+	start_x = start_y = 0;
 	CASSE = false;
 	souris_n = 0;
 	souris_bb = 0;
@@ -71,6 +73,20 @@ void EventsManager::souris_xy(int xp, int yp) {
 
 void EventsManager::souris_max() {
 	// No implementation in original
+}
+
+int EventsManager::XMOUSE() {
+	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
+	souris_y = g_system->getEventManager()->getMousePos().y;
+
+	return souris_x + ofset_souris_x;
+}
+
+int EventsManager::YMOUSE() {
+	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
+	souris_y = g_system->getEventManager()->getMousePos().y;
+
+	return souris_x + ofset_souris_x;
 }
 
 void EventsManager::hideCursor() {
@@ -126,6 +142,10 @@ void EventsManager::pollEvents() {
 
 		checkForNextFrameCounter();
 	}
+}
+
+void EventsManager::VBL() {
+	warning("TODO: VBL");
 }
 
 } // End of namespace Hopkins

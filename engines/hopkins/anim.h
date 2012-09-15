@@ -43,6 +43,9 @@ public:
 
 	void PLAY_ANM(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
 	bool REDRAW_ANIM();
+	void BOBANIM_ON(int a1);
+	void BOBANIM_OFF(int a1);
+	void CHARGE_ANIM(const Common::String &filename);
 };
 
 } // End of namespace Hopkins

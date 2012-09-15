@@ -101,6 +101,7 @@ Globals::Globals() {
 	CENSURE = false;
 	GESTE_FLAG = false;
 	redraw = false;
+	BPP_NOAFF = false;
 }
 
 Globals::~Globals() {

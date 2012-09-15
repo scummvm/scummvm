@@ -279,4 +279,16 @@ bool AnimationManager::REDRAW_ANIM() {
 	return false;
 }
 
+void AnimationManager::BOBANIM_ON(int a1) {
+	warning("TODO: BOBANIM_ON");
+}
+
+void AnimationManager::BOBANIM_OFF(int a1) {
+	warning("TODO: BOBANIM_OFF");
+}
+
+void AnimationManager::CHARGE_ANIM(const Common::String &filename) {
+	warning("TODO: CHARGE_ANIM");
+}
+
 } // End of namespace Hopkins

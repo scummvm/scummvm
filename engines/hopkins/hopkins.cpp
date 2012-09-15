@@ -54,7 +54,6 @@ Common::Error HopkinsEngine::run() {
 	GLOBALS.setConfig();
 	FileManager::F_Censure();
 	INIT_SYSTEM();
-	Init_Interrupt();
 
 	_soundManager.WSOUND_INIT();
 
@@ -84,10 +83,11 @@ Common::Error HopkinsEngine::run() {
 	_graphicsManager.FADE_INW();
 	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
-/*
-  if ( !ESC_KEY )
-    INTRORUN(a1);
-  iRegul = 0;
+
+	if (!_eventsManager.ESC_KEY)
+		INTRORUN();
+  /*
+  _globals.iRegul = 0;
   CONSTRUIT_SYSTEM("PERSO.SPR");
   PERSO = CHARGE_FICHIER(GLOBALS.NFICHIER);
   PERSO_TYPE = 0;
@@ -150,7 +150,7 @@ LABEL_13:
                   break;
                 if ( !*((_BYTE *)SAUVEGARDE + 170) )
                 {
-                  WSOUND(3);
+                  _soundManager.WSOUND(3);
                   if ( FR == 1 )
                     LOAD_IMAGE("fondfr");
                   if ( !FR )
@@ -160,8 +160,8 @@ LABEL_13:
                   FADE_INW();
                   SDL_Delay(500);
                   FADE_OUTW();
-                  iRegul = 1;
-                  SPECIAL_SOUND = 2;
+                  _globals.iRegul = 1;
+                  _soundManager.SPECIAL_SOUND = 2;
                   DD_Lock();
                   Cls_Video();
                   DD_Unlock();
@@ -171,7 +171,7 @@ LABEL_13:
                     PLAY_ANM("BANQUE.ANM", 200, 28, 200);
                   if ( CENSURE == 1 )
                     PLAY_ANM("BANKUK.ANM", 200, 28, 200);
-                  SPECIAL_SOUND = 0;
+                  _soundManager.SPECIAL_SOUND = 0;
                   DEL_SAMPLE(1);
                   DEL_SAMPLE(2);
                   DEL_SAMPLE(3);
@@ -425,41 +425,41 @@ LABEL_128:
                   {
                     if ( SORTIE == 151 )
                     {
-                      WSOUND(16);
-                      iRegul = 1;
+                      _soundManager.WSOUND(16);
+                      _globals.iRegul = 1;
                       DD_Lock();
                       Cls_Video();
                       DD_Unlock();
                       Cls_Pal();
                       FADE_LINUX = 2;
                       PLAY_ANM("JOUR3A.anm", 12, 12, 2000);
-                      iRegul = 0;
+                      _globals.iRegul = 0;
                       SORTIE = 300;
                     }
                     if ( SORTIE == 150 )
                     {
-                      WSOUND(16);
-                      iRegul = 1;
+                      _soundManager.WSOUND(16);
+                      _globals.iRegul = 1;
                       DD_Lock();
                       Cls_Video();
                       DD_Unlock();
                       Cls_Pal();
                       FADE_LINUX = 2;
                       PLAY_ANM("JOUR1A.anm", 12, 12, 2000);
-                      iRegul = 0;
+                      _globals.iRegul = 0;
                       SORTIE = 300;
                     }
                     if ( SORTIE == 152 )
                     {
-                      WSOUND(16);
-                      iRegul = 1;
+                      _soundManager.WSOUND(16);
+                      _globals.iRegul = 1;
                       DD_Lock();
                       Cls_Video();
                       DD_Unlock();
                       Cls_Pal();
                       FADE_LINUX = 2;
                       PLAY_ANM("JOUR4A.anm", 12, 12, 2000);
-                      iRegul = 0;
+                      _globals.iRegul = 0;
                       SORTIE = 300;
                     }
                     goto LABEL_12;
@@ -598,8 +598,264 @@ void HopkinsEngine::INIT_SYSTEM() {
 	GLOBALS.lOldItCounter = 0;
 }
 
-void HopkinsEngine::Init_Interrupt() {
-	// TODO: Determine whether the timer is needed
+void HopkinsEngine::INTRORUN() {
+	signed int v2;
+	signed int v3;
+	unsigned __int16 v4;
+	signed int v5;
+	int i; 
+	int v7; 
+	signed int v8;
+	signed int v9;
+	signed int v11;
+	int v12;
+	signed int v13;
+	signed int v14;
+	int j;
+	int k;
+	int l;
+	int m; 
+	__int16 v21;
+	char v22; 
+	char v23; 
+	byte paletteData[800];
+	byte paletteData2[800];
+
+	memset(&paletteData, 0, 800);
+	_eventsManager.VBL();
+	_eventsManager.souris_flag = 0;
+	_globals.iRegul = 1;
+	_eventsManager.VBL();
+	_soundManager.WSOUND(16);
+	_animationManager.CLS_ANM = 1;
+	_animationManager.PLAY_ANM("J1.anm", 12, 12, 50);
+	if (!_eventsManager.ESC_KEY) {
+		_soundManager.VOICE_MIX(1, 3);
+		_animationManager.PLAY_ANM("J2.anm", 12, 12, 50);
+
+		if (!_eventsManager.ESC_KEY) {
+			_soundManager.VOICE_MIX(2, 3);
+			_animationManager.PLAY_ANM("J3.anm", 12, 12, 50);
+
+			if (!_eventsManager.ESC_KEY) {
+				_soundManager.VOICE_MIX(3, 3);
+				_graphicsManager.DD_LOCK();
+				_graphicsManager.Cls_Video();
+				_graphicsManager.DD_UNLOCK();
+				_graphicsManager.Cls_Pal();
+				_graphicsManager.DD_VBL();
+				_soundManager.WSOUND(11);
+				_graphicsManager.LOAD_IMAGE("intro1");
+				_graphicsManager.SCROLL_ECRAN(0);
+				_graphicsManager.ofscroll = 0;
+				_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+				_globals.BPP_NOAFF = 1;
+				v2 = 0;
+				do {
+					_eventsManager.VBL();
+					++v2;
+				} while (v2 <= 4);
+
+				_globals.BPP_NOAFF = 0;
+				_globals.iRegul = 1;
+				_graphicsManager.FADE_INW();
+				if (_graphicsManager.DOUBLE_ECRAN == 1) {
+					_graphicsManager.no_scroll = 2;
+					v3 = 0;
+					_graphicsManager.SCROLL = 0;
+          
+					do {
+						_graphicsManager.SCROLL += 2;
+						if (_graphicsManager.SCROLL > (SCREEN_WIDTH - 2)) {
+							_graphicsManager.SCROLL = SCREEN_WIDTH;
+							v3 = 1;
+						}
+            
+						if (_eventsManager.XMOUSE() < _graphicsManager.SCROLL + 10) {
+							v4 = _eventsManager.YMOUSE();
+							_eventsManager.souris_xy(_eventsManager.souris_x + 4, v4);
+						}
+						_eventsManager.VBL();
+					} while (v3 != 1 && _graphicsManager.SCROLL != SCREEN_WIDTH);
+          
+					_eventsManager.VBL();
+					_graphicsManager.no_scroll = 0;
+				}
+        
+				_soundManager.VOICE_MIX(4, 3);
+				_graphicsManager.FADE_OUTW();
+				_graphicsManager.no_scroll = 0;
+				_graphicsManager.LOAD_IMAGE("intro2");
+				_graphicsManager.SCROLL_ECRAN(0);
+				_animationManager.CHARGE_ANIM("INTRO2");
+				_graphicsManager.VISU_ALL();
+				_soundManager.WSOUND(23);
+				_animationManager.BOBANIM_OFF(3);
+				_animationManager.BOBANIM_OFF(5);
+				_graphicsManager.ofscroll = 0;
+				_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+				_globals.BPP_NOAFF = 1;
+				v5 = 0;
+        
+				do {
+					_eventsManager.VBL();
+					++v5;
+				} while (v5 <= 4);
+        
+				_globals.BPP_NOAFF = 0;
+				_globals.iRegul = 1;
+				_graphicsManager.FADE_INW();
+				for (i = 0; i < 200 / _globals.vitesse; ++i)
+					_eventsManager.VBL();
+        
+				_animationManager.BOBANIM_ON(3);
+				_soundManager.VOICE_MIX(5, 3);
+				_animationManager.BOBANIM_OFF(3);
+				_eventsManager.VBL();
+				memcpy(&paletteData2, _graphicsManager.Palette, 796);
+				v21 = *(uint16 *)&_graphicsManager.Palette[796];
+				v22 = _graphicsManager.Palette[798];
+				v7 = (int)&v23;
+				_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
+				_graphicsManager.FIN_VISU();
+				_soundManager.SPECIAL_SOUND = 5;
+				_graphicsManager.FADE_LINUX = 2;
+				_animationManager.PLAY_ANM("ELEC.ANM", 10, 26, 200);
+				_soundManager.SPECIAL_SOUND = 0;
+        
+				if (!_eventsManager.ESC_KEY) {
+					_graphicsManager.LOAD_IMAGE("intro2");
+					_graphicsManager.SCROLL_ECRAN(0);
+					_animationManager.CHARGE_ANIM("INTRO2");
+					_graphicsManager.VISU_ALL();
+					_soundManager.WSOUND(23);
+					_animationManager.BOBANIM_OFF(3);
+					_animationManager.BOBANIM_OFF(5);
+					_animationManager.BOBANIM_OFF(1);
+					_graphicsManager.ofscroll = 0;
+					_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+					_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+					_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+					_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+					_globals.BPP_NOAFF = 1;
+					v8 = 0;
+          
+					do {
+						_eventsManager.VBL();
+						++v8;
+					} while (v8 <= 3);
+          
+					_globals.BPP_NOAFF = 0;
+					_globals.iRegul = 1;
+					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
+					v9 = 0;
+          
+					while (!_eventsManager.ESC_KEY) {
+						if (v9 == 12) {
+							_animationManager.BOBANIM_ON(3);
+							_eventsManager.VBL();
+							_soundManager.VOICE_MIX(6, 3);
+							_eventsManager.VBL();
+							_animationManager.BOBANIM_OFF(3);
+						}
+            
+						Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
+						
+						v11 = 1;
+						v12 = 4 * v9;
+						do {
+							if (_graphicsManager.Palette[v11] > v12)
+								_graphicsManager.Palette[v11] -= v12;
+							++v11;
+						} while ( v11 <= PALETTE_BLOCK_SIZE);
+            
+						_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
+						v13 = 1;
+            
+						if (2 * v9 > 1) {
+							v7 = 2 * v9;
+              
+							do {
+								_eventsManager.VBL();
+								++v13;
+							} while (v13 < v7);
+						} 
+						
+						_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
+						v14 = 1;
+						if (20 - v9 > 1) {
+							v7 = 20 - v9;
+              
+							do {
+								_eventsManager.VBL();
+								++v14;
+							} while (v14 < v7);
+						}
+            
+						v9 += 2;
+						if (v9 > 15) {
+							_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
+							for (j = 1; j < 100 / _globals.vitesse; ++j)
+								_eventsManager.VBL();
+              
+							_animationManager.BOBANIM_ON(3);
+							_soundManager.VOICE_MIX(7, 3);
+							_animationManager.BOBANIM_OFF(3);
+							
+							for (k = 1; k < 60 / _globals.vitesse; ++k)
+								_eventsManager.VBL();
+							_animationManager.BOBANIM_ON(5);
+							for (l = 0; l < 20 / _globals.vitesse; ++l)
+								_eventsManager.VBL();
+
+							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
+							_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
+              
+							for (m = 0; m < 50 / _globals.vitesse; ++m) {
+								if (m == 30 / _globals.vitesse) {
+									_animationManager.BOBANIM_ON(3);
+									_soundManager.VOICE_MIX(8, 3);
+									_animationManager.BOBANIM_OFF(3);
+								}
+                
+								_eventsManager.VBL();
+							}
+
+							_graphicsManager.FADE_OUTW();
+							_graphicsManager.FIN_VISU();
+							_animationManager.CLS_ANM = 1;
+							_soundManager.WSOUND(3);
+							_soundManager.SPECIAL_SOUND = 1;
+							_animationManager.PLAY_ANM("INTRO1.anm", 10, 24, 18);
+							_soundManager.SPECIAL_SOUND = 0;
+
+							if (!_eventsManager.ESC_KEY) {
+								_animationManager.PLAY_ANM("INTRO2.anm", 10, 24, 18);
+                
+								if (!_eventsManager.ESC_KEY) {
+									_animationManager.PLAY_ANM("INTRO3.anm", 10, 24, 200);
+									if (!_eventsManager.ESC_KEY) {
+										_animationManager.CLS_ANM = 0;
+										_graphicsManager.FADE_LINUX = 2;
+										_animationManager.PLAY_ANM("J4.anm", 12, 12, 1000);
+									}
+								}
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+  
+	_eventsManager.ESC_KEY = false;
 }
 
 } // End of namespace Hopkins

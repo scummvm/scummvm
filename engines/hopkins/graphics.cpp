@@ -57,6 +57,7 @@ GraphicsManager::GraphicsManager() {
 	FADESPD = 15;
 	FADE_LINUX = 0;
 	NOLOCK = false;
+	no_scroll = 0;
 
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
 	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_SIZE], 0);
@@ -838,6 +839,17 @@ void GraphicsManager::setpal_vga256(const byte *palette) {
 	CHANGE_PALETTE(palette);
 }
 
+void GraphicsManager::setpal_vga256_linux(const byte *palette, const byte *surface) {
+	warning("TODO: setpal_vga256_linux");
+}
+
+void GraphicsManager::SETCOLOR3(int palIndex, int r, int g, int b) {
+  int offset = palIndex * 3;
+  Palette[offset] = 255 * r / 100;
+  Palette[offset + 1] = 255 * g / 100;
+  Palette[offset + 2] = 255 * b / 100;
+}
+
 void GraphicsManager::CHANGE_PALETTE(const byte *palette) {
 	// Copy the palette into the PALPCX block
 // TODO: Likely either one or both of the destination arrays can be removed,
@@ -887,6 +899,14 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
 
 void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
 	warning("TODO: Copy_Video_Vbe3");
+}
+
+void GraphicsManager::FIN_VISU() {
+	warning("TODO: FIN_VISU");
+}
+
+void GraphicsManager::VISU_ALL() {
+	warning("TODO: VISU_ALL");
 }
 
 /*------------------------------------------------------------------------*/

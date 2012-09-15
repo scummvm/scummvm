@@ -76,6 +76,7 @@ public:
 	byte PALPCX[800];
 	int FADE_LINUX;
 	bool NOLOCK;
+	int no_scroll;
 public:
 	GraphicsManager();
 	~GraphicsManager();
@@ -83,6 +84,8 @@ public:
 	void SET_MODE(int width, int height);
 	void DD_Lock();
 	void DD_Unlock();
+	void DD_LOCK() { DD_Lock(); }
+	void DD_UNLOCK() { DD_Unlock(); }
 	void Cls_Video();
 	void LOAD_IMAGE(const Common::String &file);
 	void INIT_TABLE(int a1, int a2, byte *a3);
@@ -104,6 +107,8 @@ public:
 	void FADE_INW();
 	void FADE_OUTW();
 	void setpal_vga256(const byte *palette);
+	void setpal_vga256_linux(const byte *palette, const byte *surface);
+	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void CHANGE_PALETTE(const byte *palette);
 	uint16 MapRGB(byte r, byte g, byte b);
 	void DD_VBL();
@@ -111,6 +116,8 @@ public:
 	void Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface);
 	void Copy_Video_Vbe3(const byte *surface);
 	void Copy_Video_Vbe16(const byte *surface);
+	void FIN_VISU();
+	void VISU_ALL();
 };
 
 class ObjectManager {

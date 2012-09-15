@@ -202,6 +202,7 @@ public:
 	uint32 CAT_POSI;
 	uint32 CAT_TAILLE;
 	int iRegul;
+	bool BPP_NOAFF;
 
 	Globals();
 	~Globals();

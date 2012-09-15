@@ -33,6 +33,8 @@ class HopkinsEngine;
 class SoundManager {
 public:
 	HopkinsEngine *_vm;
+
+	int SPECIAL_SOUND;
 public:
 	void setParent(HopkinsEngine *vm);
 
@@ -40,6 +42,8 @@ public:
 	void VERIF_SOUND();
 	void LOAD_ANM_SOUND();
 	void PLAY_ANM_SOUND(int soundNumber);
+	void WSOUND(int soundNumber);
+	void VOICE_MIX(int a1, int a2);
 };
 
 } // End of namespace Hopkins

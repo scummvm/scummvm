@@ -75,7 +75,11 @@ private:
 	void processIniParams(Common::StringMap &iniParams);
 
 	void INIT_SYSTEM();
-	void Init_Interrupt();
+
+	/**
+	 * Run the introduction sequence
+	 */
+	void INTRORUN();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

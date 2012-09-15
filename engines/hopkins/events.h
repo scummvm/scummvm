@@ -38,10 +38,10 @@ private:
 public:
 	bool souris_flag;
 	bool mouse_linux;
-	int souris_sizex;
-	int souris_sizey;
-	int ofset_souris_x;
-	int ofset_souris_y;
+	int souris_sizex, souris_sizey;
+	int ofset_souris_x, ofset_souris_y;
+	int start_x, start_y;
+	int souris_x, souris_y;
 	bool CASSE;
 	int souris_n;
 	int souris_bb;
@@ -57,8 +57,11 @@ public:
 	void souris_on();
 	void souris_xy(int xp, int yp);
 	void souris_max();
+	int XMOUSE();
+	int YMOUSE();
 	void hideCursor();
 	void showCursor();
+	void VBL();
 
 	void CONTROLE_MES();
 	void delay(int delay);
