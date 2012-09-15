@@ -618,10 +618,10 @@ void HopkinsEngine::INTRORUN() {
 	__int16 v21;
 	char v22; 
 	char v23; 
-	byte paletteData[800];
-	byte paletteData2[800];
+	byte paletteData[PALETTE_EXT_BLOCK_SIZE];
+	byte paletteData2[PALETTE_EXT_BLOCK_SIZE];
 
-	memset(&paletteData, 0, 800);
+	memset(&paletteData, 0, PALETTE_EXT_BLOCK_SIZE);
 	_eventsManager.VBL();
 	_eventsManager.souris_flag = 0;
 	_globals.iRegul = 1;

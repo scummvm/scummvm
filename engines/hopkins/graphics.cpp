@@ -898,7 +898,63 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
 }
 
 void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
-	warning("TODO: Copy_Video_Vbe3");
+	const byte *srcP = surface;
+	int destOffset = 0;
+	assert(VideoPtr);
+
+	for (;;) {
+		byte srcByte = *srcP;
+		if (srcByte >= 222) {
+			if (srcByte == 252)
+				return;
+			if (srcByte < 251) {
+				destOffset += srcByte - 221;
+				srcByte = *++srcP;
+			} else if (srcByte == 253) {
+				destOffset += *(const byte *)(srcP + 1);
+				srcByte = *(const byte *)(srcP + 2);
+				srcP += 2;
+			} else if (srcByte == 254) {
+				destOffset += READ_LE_UINT16(srcP + 1);
+				srcByte = *(const byte *)(srcP + 3);
+				srcP += 3;
+			} else {
+				destOffset += READ_LE_UINT32(srcP + 1);
+				srcByte = *(const byte *)(srcP + 5);
+				srcP += 5;
+			}
+		}
+
+		if (srcByte > 210) {
+			if (srcByte == 211) {
+				int pixelCount = *(srcP + 1);
+				int pixelIndex = *(srcP + 2);
+				uint16 *destP = (uint16 *)((byte *)VideoPtr->pixels + destOffset * 2);
+				uint16 pixelValue = *(uint16 *)(PAL_PIXELS + 2 * pixelIndex);
+				destOffset += pixelCount;
+
+				while (pixelCount--)
+					*destP++ = pixelValue;
+
+				srcP += 3;
+			} else {
+				int pixelCount = srcByte - 211;
+				int pixelIndex = *(srcP + 1);
+				uint16 *destP = (uint16 *)((byte *)VideoPtr->pixels + destOffset * 2);
+				uint16 pixelValue = *(uint16 *)(PAL_PIXELS + 2 * pixelIndex);
+				destOffset += pixelCount;
+
+				while (pixelCount--)
+					*destP++ = pixelValue;
+
+				srcP += 2;
+			}
+		} else {
+			*((uint16 *)VideoPtr->pixels + destOffset) = *(uint16 *)(PAL_PIXELS + 2 * srcByte);
+			++srcP;
+			++destOffset;
+		}
+	}
 }
 
 void GraphicsManager::FIN_VISU() {

@@ -50,7 +50,7 @@ void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, ui
 
 	doneFlag = 0;
 	for (;;) {
-MAIN_LOOP:
+//MAIN_LOOP:
 		v14 = v15 = v16 = v17 = 0;
 		v18 = 1;
 		screenP = _vm->_graphicsManager.VESA_SCREEN;
@@ -60,12 +60,15 @@ MAIN_LOOP:
 		if (!f.open(GLOBALS.NFICHIER))
 			error("Not Found file %s", GLOBALS.NFICHIER.c_str());
 
-		f.skip(6);
 		// TODO: Original above read seems to overlap the doneFlag
-		//doneFlag = f.readUint16LE() != 0;
-		f.read(_vm->_graphicsManager.Palette, 800);
+		f.skip(6);
+		//buf = read(4); doneFlag = f.readUint16LE() != 0;
+		f.read(_vm->_graphicsManager.Palette, PALETTE_EXT_BLOCK_SIZE);
 		f.skip(4);
 		nbytes = f.readUint32LE();
+
+		// TODO: Original never seems to do anything with these. Or are these part of 
+		// a bigger structure needed for sub-methods?
 		v19 = f.readUint32LE();
 		v18 = f.readUint16LE();
 		v17 = f.readUint16LE();
@@ -119,9 +122,11 @@ MAIN_LOOP:
 				if (_vm->_eventsManager.ESC_KEY)
 					goto FINISH;
 
+// TODO: Original REDRAW_ANIM always returns false, so this isn't needed?
+#if 0
 				if (REDRAW_ANIM())
 					goto REDRAW_ANIM;
-
+#endif
 				_vm->_eventsManager.CONTROLE_MES();
 			} while (_vm->_eventsManager.lItCounter < rate1);
 		}
@@ -131,14 +136,13 @@ MAIN_LOOP:
 		idx = 0;
 		do {
 			_vm->_soundManager.PLAY_ANM_SOUND(idx);
-			f.skip(6);
 
 			// Get in string
 			Common::fill(&strBuffer[0], &strBuffer[20], 0);
 			if (f.read(strBuffer, 16) != 16)
 				doneFlag = true;
 
-			if (strncmp(strBuffer, "IMAGE=", 7) != 0)
+			if (strncmp(strBuffer, "IMAGE=", 6) != 0)
 				doneFlag = true;
 
 			if (!doneFlag) {
@@ -149,6 +153,8 @@ MAIN_LOOP:
 						if (_vm->_eventsManager.ESC_KEY)
 							goto FINISH;
 
+// TODO: Original REDRAW_ANIM always returns false, so this isn't needed?
+#if 0
 						if (REDRAW_ANIM()) {
 							if (_vm->_graphicsManager.NOLOCK == 1)
 								goto FINISH;
@@ -160,6 +166,7 @@ MAIN_LOOP:
 							screenCopy = GLOBALS.dos_free2(screenCopy);
 							goto MAIN_LOOP;
 						}
+#endif
 
 						_vm->_eventsManager.CONTROLE_MES();
 						_vm->_soundManager.VERIF_SOUND();
@@ -200,6 +207,8 @@ MAIN_LOOP:
 			if (_vm->_eventsManager.ESC_KEY)
 				goto FINISH;
 
+// TODO: Original REDRAW_ANIM always returns false, so this isn't needed?
+#if 0
 			if (REDRAW_ANIM()) {
 REDRAW_ANIM:
 				if (_vm->_graphicsManager.NOLOCK == 1)
@@ -212,6 +221,7 @@ REDRAW_ANIM:
 				screenCopy = GLOBALS.dos_free2(screenCopy);
 				goto MAIN_LOOP;
 			}
+#endif
 
 			_vm->_eventsManager.CONTROLE_MES();
 			_vm->_soundManager.VERIF_SOUND();
@@ -227,7 +237,7 @@ FINISH:
 		screenCopy = GLOBALS.dos_malloc2(SCREEN_WIDTH * SCREEN_HEIGHT);
 
 		f.skip(6);
-		f.read(_vm->_graphicsManager.Palette, 800);
+		f.read(_vm->_graphicsManager.Palette, PALETTE_EXT_BLOCK_SIZE);
 		f.skip(4);
 		nbytes = f.readUint32LE();
 		v19 = f.readUint32LE();

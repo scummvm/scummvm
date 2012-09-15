@@ -118,6 +118,8 @@ void EventsManager::delay(int delay) {
 }
 
 void EventsManager::pollEvents() {
+	checkForNextFrameCounter();
+
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		// Handle keypress
@@ -139,8 +141,6 @@ void EventsManager::pollEvents() {
 		default:
  			break;
 		}
-
-		checkForNextFrameCounter();
 	}
 }
 

@@ -32,6 +32,7 @@ namespace Hopkins {
 
 #define PALETTE_SIZE 256
 #define PALETTE_BLOCK_SIZE (PALETTE_SIZE * 3)
+#define PALETTE_EXT_BLOCK_SIZE 800
 
 struct RGB8 {
 	byte r;
@@ -55,7 +56,7 @@ public:
 	int nbrligne;
 	byte TABLE_COUL[PALETTE_SIZE];
 	byte cmap[PALETTE_BLOCK_SIZE];
-	byte Palette[800];
+	byte Palette[PALETTE_EXT_BLOCK_SIZE];
 	bool Linear;
 	Graphics::Surface *VideoPtr;
 	byte *VESA_SCREEN;
@@ -73,7 +74,7 @@ public:
 	int Agr_x, Agr_y;
 	int Agr_Flag_x, Agr_Flag_y;
 	int FADESPD;
-	byte PALPCX[800];
+	byte PALPCX[PALETTE_EXT_BLOCK_SIZE];
 	int FADE_LINUX;
 	bool NOLOCK;
 	int no_scroll;
