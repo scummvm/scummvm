@@ -139,6 +139,20 @@ void Lua_V2::GetActorWalkRate() {
 	lua_pushnumber(actor->getWalkRate() * 0.3048780560493469);
 }
 
+void Lua_V2::LockChoreSet() {
+	lua_Object choreObj = lua_getparam(1);
+
+	const char *choreName = lua_getstring(choreObj);
+	warning("Lua_V2::LockChoreSet: chore: %s", choreName);
+}
+
+void Lua_V2::UnlockChoreSet() {
+	lua_Object choreObj = lua_getparam(1);
+
+	const char *choreName = lua_getstring(choreObj);
+	warning("Lua_V2::UnlockChoreSet: chore: %s", choreName);
+}
+
 void Lua_V2::LockChore() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object filenameObj = lua_getparam(2);
