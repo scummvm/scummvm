@@ -33,6 +33,8 @@ namespace Hopkins {
 class HopkinsEngine;
 
 class AnimationManager {
+private:
+	int CHARGE_BANK_SPRITE1(int idx, const Common::String &filename);
 public:
 	HopkinsEngine *_vm;
 	bool CLS_ANM;
@@ -45,7 +47,12 @@ public:
 	bool REDRAW_ANIM();
 	void BOBANIM_ON(int a1);
 	void BOBANIM_OFF(int a1);
-	void CHARGE_ANIM(const Common::String &filename);
+	void CHARGE_ANIM(const Common::String &animName);
+	void CLEAR_ANIM();
+	void set_offsetxy(byte *data, int idx, int xp, __int16 yp, bool isSize);
+	void RECHERCHE_ANIM(const byte *data, int idx, int nbytes);
+	int Get_Largeur(const byte *data, int idx);
+	int Get_Hauteur(const byte *data, int idx);
 };
 
 } // End of namespace Hopkins

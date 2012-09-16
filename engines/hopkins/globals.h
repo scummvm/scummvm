@@ -68,17 +68,19 @@ struct CarreZoneItem {
 	int field0;
 };
 
-struct BgeAnimItem {
-	byte *field0;
+struct BqeAnimItem {
+	byte *data;
 	int field4;
 };
 
 struct BankItem {
-	byte *field0;
+	byte *data;
 	int8 field4;
-	int8 field5;
-	int8 field19;
+	Common::String filename1;
+	int fileHeader;
+	int field1A;
 	uint32 field1C;
+	Common::String filename2;
 };
 
 struct VBobItem {
@@ -133,6 +135,7 @@ public:
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
 	Common::String NFICHIER;
+	Common::String REP_SPR;
 	int SOUNDVOL;
 	int MUSICVOL;
 	int VOICEVOL;
@@ -162,7 +165,7 @@ public:
 	LigneItem Ligne[400];
 	LigneZoneItem LigneZone[400];
 	CarreZoneItem CarreZone[100];
-	BgeAnimItem Bge_Anim[35];
+	BqeAnimItem Bqe_Anim[35];
 	BankItem Bank[8];
 	VBobItem VBob[35];
 	ObjetWItem ObjetW[300];

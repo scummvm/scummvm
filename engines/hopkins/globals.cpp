@@ -629,16 +629,17 @@ void Globals::HOPKINS_DATA() {
 
 void Globals::INIT_ANIM() {
 	for (int idx = 0; idx < 35; ++idx) {
-		Bge_Anim[idx].field0 = PTRNUL;
-		Bge_Anim[idx].field4 = 0;
+		Bqe_Anim[idx].data = PTRNUL;
+		Bqe_Anim[idx].field4 = 0;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		Bank[idx].field0 = PTRNUL;
+		Bank[idx].data = PTRNUL;
 		Bank[idx].field4 = 0;
-		Bank[idx].field5 = 0;
-		Bank[idx].field19 = 0;
+		Bank[idx].filename1 = "";
+		Bank[idx].fileHeader = 0;
 		Bank[idx].field1C = 0;
+		Bank[idx].filename2 = "";
 	}
 }
 

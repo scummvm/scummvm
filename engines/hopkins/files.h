@@ -44,6 +44,11 @@ public:
 	static void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
 	static byte *LIBERE_FICHIER(byte *ptr);
 	static bool RECHERCHE_CAT(const Common::String &file, int a2);
+
+	/**
+	 * Returns the size of a file. Throws an error if the file can't be found
+	 */
+	static uint32 FLONG(const Common::String &filename);
 };
 
 } // End of namespace Hopkins

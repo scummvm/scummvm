@@ -307,4 +307,17 @@ bool FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	return result;
 }
 
+uint32 FileManager::FLONG(const Common::String &filename) {
+	Common::File f;
+	uint32 size;
+
+	if (!f.open(filename))
+		error("Could not find file %s", filename.c_str());
+
+	size = f.size();
+	f.close();
+	
+	return size;
+}
+
 } // End of namespace Hopkins

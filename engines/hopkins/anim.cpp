@@ -297,8 +297,314 @@ void AnimationManager::BOBANIM_OFF(int a1) {
 	warning("TODO: BOBANIM_OFF");
 }
 
-void AnimationManager::CHARGE_ANIM(const Common::String &filename) {
-	warning("TODO: CHARGE_ANIM");
+void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
+	byte v20[15];
+	char header[10];
+	char filename1[15];
+	char filename2[15];
+	char filename3[15];
+	char filename4[15];
+	char filename5[15];
+	char filename6[15];
+
+	CLEAR_ANIM();
+
+	Common::String filename = animName + ".ANI";
+	FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPANIM, filename);
+	
+	Common::File f;
+	if (!f.open(GLOBALS.NFICHIER))
+		error("Failed to open %s", GLOBALS.NFICHIER);
+	
+	int filesize = f.size();
+	int nbytes = filesize - 115;
+	f.read(header, 10);
+	f.read(v20, 15);
+	f.read(filename1, 15);
+	f.read(filename2, 15);
+	f.read(filename3, 15);
+	f.read(filename4, 15);
+	f.read(filename5, 15);
+	f.read(filename6, 15);
+
+	if (header[0] != 'A' || header[1] != 'N' || header[2] != 'I' || header[3] != 'S')
+		error("File incompatible with this soft.");
+
+	const char *files[6] = { &filename1[0], &filename2[0], &filename3[0], &filename4[0],
+			&filename5[0], &filename6[0] };
+
+	for (int idx = 1; idx <= 6; ++idx) {
+		if (files[idx - 1][0]) {
+			FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPANIM, files[idx - 1]);
+			
+			if (!f.exists(GLOBALS.NFICHIER))
+				error("File not found");
+			if (CHARGE_BANK_SPRITE1(idx, files[idx - 1]))
+				error("File not compatible with this soft.");
+		}
+	}
+
+	byte *data = GLOBALS.dos_malloc2(nbytes + 1);
+	f.read(data, nbytes);
+	f.close();
+
+	for (int idx = 1; idx <= 20; ++idx) {
+		RECHERCHE_ANIM(data, idx, nbytes);
+	}
+
+	GLOBALS.dos_free2(data);
+}
+
+void AnimationManager::CLEAR_ANIM() {
+	for (int idx = 0; idx < 35; ++idx) {
+		if (GLOBALS.Bqe_Anim[idx].data != PTRNUL)
+			GLOBALS.Bqe_Anim[idx].data = GLOBALS.dos_free2(GLOBALS.Bqe_Anim[idx].data);
+		GLOBALS.Bqe_Anim[idx].field4 = 0;
+	}
+
+	for (int idx = 0; idx < 8; ++idx) {
+		if (GLOBALS.Bank[idx].data != PTRNUL)
+			GLOBALS.Bank[idx].data = GLOBALS.dos_free2(GLOBALS.Bank[idx].data);
+		GLOBALS.Bank[idx].field4 = 0;
+		GLOBALS.Bank[idx].filename1 = "";
+		GLOBALS.Bank[idx].fileHeader = 0;
+		GLOBALS.Bank[idx].field1C = 0;
+	}
+}
+
+int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filename) {
+	byte *v3;
+	byte *v4; 
+	int v7; 
+	int v8; 
+	int width; 
+	int height; 
+	byte *v13;
+	__int16 v16;
+	__int16 v17;
+	byte *ptr; 
+	byte *v19;
+	__int16 v20; 
+	__int16 v21; 
+	int result = 0;
+	FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPANIM, filename);
+	GLOBALS.Bank[idx].field1C = FileManager::FLONG(GLOBALS.NFICHIER);
+	GLOBALS.Bank[idx].field4 = 1;
+	GLOBALS.Bank[idx].filename1 = filename;
+	GLOBALS.Bank[idx].filename2 = GLOBALS.REP_SPR;
+
+	v3 = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+	v4 = v3;
+
+	GLOBALS.Bank[idx].fileHeader = 0;
+	if (*(v3 + 1) == 'L' && *(v3 + 2) == 'E')
+	    GLOBALS.Bank[idx].fileHeader = 1;
+	if (*(v3 + 1) == 'O' && *(v3 + 2) == 'R')
+		GLOBALS.Bank[184].fileHeader = 2;
+	
+	if (GLOBALS.Bank[idx].fileHeader) {
+		GLOBALS.Bank[idx].data = v3;
+
+		v7 = 0;
+		v8 = 0;
+		do {
+			ptr = v4;
+			width = Get_Largeur(v4, v8);
+			height = Get_Hauteur(ptr, v8);
+			v4 = ptr;
+			if (!width && !height)
+				v7 = 1;
+			if (!v7)
+				++v8;
+			if (v8 > 249)
+				v7 = 1;
+		} while (v7 != 1);
+    
+		if (v8 <= 249) {
+			GLOBALS.Bank[idx].field1A = v8;
+			
+			Common::String ofsFilename = GLOBALS.Bank[idx].filename1;
+			while (ofsFilename.lastChar() != '.')
+				ofsFilename.deleteLastChar();
+			ofsFilename += ".OFS";
+			
+			FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPANIM, ofsFilename);
+			Common::File f;
+			if (!f.exists(GLOBALS.NFICHIER)) {
+				v19 = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+				v13 = v19;
+				
+				if (GLOBALS.Bank[idx].field1A > 0) {
+					for (int v14 = 0; v14 < GLOBALS.Bank[idx].field1A; ++v14) {
+						v16 = READ_LE_UINT16(v13);
+						v17 = READ_LE_UINT16(v13 + 2);
+						v21 = READ_LE_UINT16(v13 + 4);
+						v20 = READ_LE_UINT16(v13 + 6);
+						v13 += 8;
+
+						set_offsetxy(GLOBALS.Bank[idx].data, v14, v16, v17, 0);
+						if (GLOBALS.Bank[idx].fileHeader == 2)
+							set_offsetxy(GLOBALS.Bank[idx].data, v14, v21, v20, 1);
+					}
+				}
+			
+				GLOBALS.dos_free2(v19);
+			}
+      
+			result = 0;
+		} else {
+			GLOBALS.dos_free2(ptr);
+			GLOBALS.Bank[idx].field4 = 0;
+			result = -2;
+		}
+	} else {
+		GLOBALS.dos_free2(v3);
+		GLOBALS.Bank[idx].field4 = 0;
+		result = -1;
+	}
+
+	return result;
+}
+
+void AnimationManager::set_offsetxy(byte *data, int idx, int xp, __int16 yp, bool isSize) {
+	byte *startP = data + 3;
+	for (int i = idx; i; --i)
+		startP += READ_LE_UINT32(startP) + 16;
+	
+	byte *rectP = startP + 8;
+	if (isSize == 1) {
+		// Set size
+		byte *pointP = rectP + 4;
+		WRITE_LE_UINT16(pointP, xp);
+		WRITE_LE_UINT16(pointP + 2, yp);
+	} else {
+		// Set position
+		WRITE_LE_UINT16(rectP, xp);
+		WRITE_LE_UINT16(rectP + 2, yp);
+	}
+}
+
+void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
+	int v4; 
+	const byte *v5; 
+	int v6; 
+	int v7; 
+	byte *v9; 
+	__int16 v10;
+	__int16 v11;
+	__int16 v12;
+	char v13;
+	signed int v14;
+	__int16 v15;
+	__int16 v16;
+	char v17;
+	int v19; 
+	char v20;
+	int v21; 
+	__int16 v22;
+	const byte *v23;
+	int v24;
+
+	bool doneFlag = false;
+	bool breakFlag;
+
+	v21 = 0;
+	v4 = 8 * idx;
+	v19 = 8 * idx;
+  
+	do {
+		v20 = *(v21 + data);
+		if (*(data + v20) == 'A' && *(data + v20 + 1) == 'N' && *(data + v20 + 2) == 'I'
+				&& *(data + v20 + 3) == 'M') {
+            v4 = *(data + v21 + 4);
+            if (idx == v4) {
+				v5 = v21 + data + 5;
+				v6 = v21 + 5;
+				v7 = 0;
+				breakFlag = false;
+              
+				do {
+					if (*v5 == 'A' && *(v5 + 1) == 'N' && *(v5 + 2) == 'I' && *(v5 + 3) == 'M')
+						breakFlag = true;
+                
+					if (*v5 == 'F' && *(v5 + 1) == 'I' && *(v5 + 2) == 'N')
+						breakFlag = true;
+
+					if (nbytes < v6) {
+						GLOBALS.Bqe_Anim[idx].field4 = 0;
+						GLOBALS.Bqe_Anim[idx].data = PTRNUL;
+					}
+                
+					++v6;
+					++v7;
+					++v5;
+				} while (!breakFlag);
+
+				GLOBALS.Bqe_Anim[idx].data = GLOBALS.dos_malloc2(v7 + 50);
+				GLOBALS.Bqe_Anim[idx].field4 = 1;
+				memcpy(GLOBALS.Bqe_Anim[idx].data, v21 + data + 5, 20);
+				
+				byte *dataP = GLOBALS.Bqe_Anim[idx].data;
+
+				v9 = dataP + 20;
+				v23 = v21 + data + 25;
+				v10 = READ_LE_UINT16(v21 + data + 25);
+				v11 = READ_LE_UINT16(v21 + data + 27);
+				v22 = READ_LE_UINT16(v21 + data + 29);
+				v12 = READ_LE_UINT16(v21 + data + 31);
+				v13 = READ_LE_UINT16(v21 + data + 33);
+				*(dataP + 29) = *(v21 + data + 34);
+				WRITE_LE_UINT16(dataP + 20, v10);
+				WRITE_LE_UINT16(dataP + 22, v11);
+				WRITE_LE_UINT16(dataP + 24, v22);
+				WRITE_LE_UINT16(dataP + 26, v12);
+				WRITE_LE_UINT16(dataP + 28, v13);
+				v14 = 1;
+              
+				do {
+					v9 += 10;
+					v23 += 10;
+					if (!v22)
+						break;
+                
+					v24 = READ_LE_UINT16(v23);
+					v15 = READ_LE_UINT16(v23 + 2);
+					v22 = READ_LE_UINT16(v23 + 4);
+					v16 = READ_LE_UINT16(v23 + 6);
+					v17 = READ_LE_UINT16(v23 + 8);
+					*(v9 + 9) = *(v23 + 9);
+					WRITE_LE_UINT16(v9, v24);
+					WRITE_LE_UINT16(v9 + 2, v15);
+					WRITE_LE_UINT16(v9 + 4, v22);
+	                WRITE_LE_UINT16(v9 + 6, v16);
+					WRITE_LE_UINT16(v9 + 8, v17);
+					++v14;
+				} while (v14 <= 4999);
+              
+				doneFlag = 1;
+			}
+		}
+    
+		if (*(data + v20) == 'F' && *(data + v21 + 1) == 'I' && *(data + v21 + 2) == 'N')
+			doneFlag = 1;
+		++v21;
+	} while (v21 <= nbytes && !doneFlag);
+}
+
+int AnimationManager::Get_Largeur(const byte *data, int idx) {
+	const byte *rectP = data + 3;
+	for (int i = idx; i; --i)
+		rectP += READ_LE_UINT32(rectP) + 16;
+	
+	return (int16)READ_LE_UINT16(rectP + 4);
+}
+
+int AnimationManager::Get_Hauteur(const byte *data, int idx) {
+	const byte *rectP = data + 3;
+	for (int i = idx; i; --i)
+		rectP += READ_LE_UINT32(rectP) + 16;
+	
+	return (int16)READ_LE_UINT16(rectP + 6);
 }
 
 } // End of namespace Hopkins
