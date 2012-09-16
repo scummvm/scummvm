@@ -245,6 +245,24 @@ void Lua_V2::SetChoreLooping() {
 	lua_pushnil();
 }
 
+void Lua_V2::PlayChore() {
+	lua_Object choreObj = lua_getparam(1);
+
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
+		return;
+	int chore = lua_getuserdata(choreObj);
+	warning("Lua_V2::PlayChore: stub, chore: %d", chore);
+}
+
+void Lua_V2::PauseChore() {
+	lua_Object choreObj = lua_getparam(1);
+
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
+		return;
+	int chore = lua_getuserdata(choreObj);
+	warning("Lua_V2::PauseChore: stub, chore: %d", chore);
+}
+
 void Lua_V2::StopChore() {
 	lua_Object choreObj = lua_getparam(1);
 	lua_Object timeObj = lua_getparam(2);
