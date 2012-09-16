@@ -45,11 +45,11 @@ public:
 
 	void PLAY_ANM(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
 	bool REDRAW_ANIM();
-	void BOBANIM_ON(int a1);
-	void BOBANIM_OFF(int a1);
+	void BOBANIM_ON(int idx);
+	void BOBANIM_OFF(int idx);
 	void CHARGE_ANIM(const Common::String &animName);
 	void CLEAR_ANIM();
-	void set_offsetxy(byte *data, int idx, int xp, __int16 yp, bool isSize);
+	void set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize);
 	void RECHERCHE_ANIM(const byte *data, int idx, int nbytes);
 	int Get_Largeur(const byte *data, int idx);
 	int Get_Hauteur(const byte *data, int idx);

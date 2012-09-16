@@ -83,6 +83,19 @@ struct BankItem {
 	Common::String filename2;
 };
 
+struct BobItem {
+	int fieldC;
+	int field10;
+	int field12;
+	int field14;
+	int field16;
+};
+
+struct BlAnimItem {
+	uint32 v1;
+	uint32 v2;
+};
+
 struct VBobItem {
 	byte *field0;
 	int field4;
@@ -167,6 +180,8 @@ public:
 	CarreZoneItem CarreZone[100];
 	BqeAnimItem Bqe_Anim[35];
 	BankItem Bank[8];
+	BobItem Bob[36];
+	BlAnimItem BL_ANIM[30];
 	VBobItem VBob[35];
 	ObjetWItem ObjetW[300];
 	byte *Winventaire;

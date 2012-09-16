@@ -289,12 +289,19 @@ bool AnimationManager::REDRAW_ANIM() {
 	return false;
 }
 
-void AnimationManager::BOBANIM_ON(int a1) {
-	warning("TODO: BOBANIM_ON");
+void AnimationManager::BOBANIM_ON(int idx) {
+	if (GLOBALS.Bob[idx].field16) {
+		GLOBALS.Bob[idx].field16 = 0;
+		GLOBALS.Bob[idx].field10 = 5;
+		GLOBALS.Bob[idx].fieldC = 250;
+		GLOBALS.Bob[idx].field12 = 0;
+		GLOBALS.Bob[idx].field14 = 0;
+	}
 }
 
-void AnimationManager::BOBANIM_OFF(int a1) {
-	warning("TODO: BOBANIM_OFF");
+void AnimationManager::BOBANIM_OFF(int idx) {
+	GLOBALS.Bob[idx].field16 = 1;
+
 }
 
 void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
@@ -466,7 +473,7 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	return result;
 }
 
-void AnimationManager::set_offsetxy(byte *data, int idx, int xp, __int16 yp, bool isSize) {
+void AnimationManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize) {
 	byte *startP = data + 3;
 	for (int i = idx; i; --i)
 		startP += READ_LE_UINT32(startP) + 16;
