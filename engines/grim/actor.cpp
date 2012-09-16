@@ -998,7 +998,10 @@ void Actor::pushCostume(const char *n) {
 	Costume *newCost = g_resourceloader->loadCostume(n, getCurrentCostume());
 
 	newCost->setColormap(NULL);
-	_costumeStack.push_back(newCost);
+	if (Common::String("fx/dumbshadow.cos").equals(n))
+		_costumeStack.push_front(newCost);
+	else
+		_costumeStack.push_back(newCost);
 }
 
 void Actor::setColormap(const char *map) {
@@ -1313,7 +1316,7 @@ void Actor::draw() {
 		}
 
 		bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
-		if (!isShadowCostume || _shadowActive) {
+		if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
 			// normal draw actor
 			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
 			costume->draw();
