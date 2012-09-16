@@ -1699,18 +1699,16 @@ Math::Vector3d Actor::getWorldPos() const {
 	if (! isAttached())
 		return getPos();
 
-	EMICostume * cost = static_cast<EMICostume *>(_attachedActor->getCurrentCostume());
-	assert(cost != NULL);
-
 	Math::Matrix4 attachedToWorld;
 	attachedToWorld.setPosition(_attachedActor->getPos());
 	attachedToWorld.buildFromPitchYawRoll(_attachedActor->getPitch(), _attachedActor->getYaw(), _attachedActor->getRoll());
 
 	// If we were attached to a joint, factor in the joint's position & rotation,
 	// relative to its actor.
-	if (cost->_emiSkel && cost->_emiSkel->_obj) {
-		Joint * j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
-		const Math::Matrix4 & jointToAttached = j->_finalMatrix;
+	EMICostume *cost = static_cast<EMICostume *>(_attachedActor->getCurrentCostume());
+	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
+		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+		const Math::Matrix4 &jointToAttached = j->_finalMatrix;
 		attachedToWorld = attachedToWorld * jointToAttached;
 	}
 
@@ -1726,14 +1724,13 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 	if (_attachedActor != NULL)
 		detach();
 
-	EMICostume * cost = static_cast<EMICostume *>(other->getCurrentCostume());
-	assert(cost != NULL);
-
 	Common::String jointStr = joint ? joint : "";
+
+	EMICostume *cost = static_cast<EMICostume *>(other->getCurrentCostume());
 	// If 'other' has a skeleton, check if it has the joint.
 	// Some models (pile o' boulders) don't have a skeleton,
 	// so we don't make the check in that case.
-	if (cost->_emiSkel && cost->_emiSkel->_obj)
+	if (cost && cost->_emiSkel && cost->_emiSkel->_obj)
 		assert(cost->_emiSkel->_obj->hasJoint(jointStr));
 
 	_attachedActor = other;
