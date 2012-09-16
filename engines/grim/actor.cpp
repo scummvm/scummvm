@@ -1738,8 +1738,6 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 
 	_attachedActor = other;
 	_attachedJoint = jointStr;
-	setPos(Math::Vector3d(0,0,0));
-	setRot(0,0,0);
 }
 
 void Actor::detach() {
