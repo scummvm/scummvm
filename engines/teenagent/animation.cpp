@@ -27,11 +27,15 @@
 
 namespace TeenAgent {
 
-Animation::Animation() : id(0), x(0), y(0), loop(true), paused(false), ignore(false), data(0), data_size(0), frames_count(0), frames(0), index(0) {
+Animation::Animation() : id(0), x(0), y(0), loop(true), paused(false), ignore(false), data(0), dataSize(0), framesCount(0), frames(0), index(0) {
+}
+
+Animation::~Animation() {
+	free();
 }
 
 Surface *Animation::firstFrame() {
-	if (frames == NULL || frames_count == 0)
+	if (frames == NULL || framesCount == 0)
 		return NULL;
 
 	Surface *r = frames;
@@ -47,28 +51,28 @@ Surface *Animation::currentFrame(int dt) {
 	if (paused)
 		return firstFrame();
 
-	if (frames == NULL || frames_count == 0)
+	if (frames == NULL || framesCount == 0)
 		return NULL;
 
 	Surface *r;
 
 	if (data != NULL) {
 		uint32 frame = 3 * index;
-		debugC(2, kDebugAnimation, "%u/%u", index, data_size / 3);
+		debugC(2, kDebugAnimation, "%u/%u", index, dataSize / 3);
 		index += dt;
 
-		if (!loop && index >= data_size / 3) {
+		if (!loop && index >= dataSize / 3) {
 			return NULL;
 		}
 
-		if (data[frame] - 1 >= frames_count) {
-			warning("invalid frame %u(0x%x) (max %u) index %u, mod %u", frame, frame, frames_count, index - 1, data_size / 3);
+		if (data[frame] - 1 >= framesCount) {
+			warning("invalid frame %u(0x%x) (max %u) index %u, mod %u", frame, frame, framesCount, index - 1, dataSize / 3);
 			return NULL;
 		}
 
 		r = frames + data[frame] - 1;
 		uint16 pos = READ_LE_UINT16(data + frame + 1);
-		index %= (data_size / 3);
+		index %= (dataSize / 3);
 
 		if (pos != 0) {
 			x = r->x = pos % screenWidth;
@@ -78,7 +82,7 @@ Surface *Animation::currentFrame(int dt) {
 		debugC(2, kDebugAnimation, "index %u", index);
 		r = frames + index;
 		index += dt;
-		index %= frames_count;
+		index %= framesCount;
 	}
 
 	return r;
@@ -99,9 +103,9 @@ void Animation::free() {
 
 	delete[] data;
 	data = NULL;
-	data_size = 0;
+	dataSize = 0;
 
-	frames_count = 0;
+	framesCount = 0;
 	delete[] frames;
 	frames = NULL;
 
@@ -121,30 +125,30 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 	int off = 0;
 	switch (type) {
 	case kTypeLan:
-		data_size = s.readUint16LE();
+		dataSize = s.readUint16LE();
 		if (s.eos()) {
 			debugC(1, kDebugAnimation, "empty animation");
 			return;
 		}
 
-		data_size -= 2;
-		data = new byte[data_size];
-		data_size = s.read(data, data_size);
-		for (int i = 0; i < data_size; ++i)
+		dataSize -= 2;
+		data = new byte[dataSize];
+		dataSize = s.read(data, dataSize);
+		for (int i = 0; i < dataSize; ++i)
 			debugC(2, kDebugAnimation, "%02x ", data[i]);
-		debugC(2, kDebugAnimation, ", %u frames", data_size / 3);
-		frames_count = s.readByte();
-		debugC(1, kDebugAnimation, "%u physical frames", frames_count);
-		if (frames_count == 0)
+		debugC(2, kDebugAnimation, ", %u frames", dataSize / 3);
+		framesCount = s.readByte();
+		debugC(1, kDebugAnimation, "%u physical frames", framesCount);
+		if (framesCount == 0)
 			return;
 
-		frames = new Surface[frames_count];
+		frames = new Surface[framesCount];
 
-		s.skip(frames_count * 2 - 2); //sizes
+		s.skip(framesCount * 2 - 2); //sizes
 		pos = s.readUint16LE();
 		debugC(3, kDebugAnimation, "pos?: 0x%04x", pos);
 
-		for (uint16 i = 0; i < frames_count; ++i) {
+		for (uint16 i = 0; i < framesCount; ++i) {
 			frames[i].load(s, Surface::kTypeLan);
 			frames[i].x = 0;
 			frames[i].y = 0;
@@ -152,42 +156,42 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		break;
 
 	case kTypeInventory: {
-		data_size = 3 * s.readByte();
-		data = new byte[data_size];
+		dataSize = 3 * s.readByte();
+		data = new byte[dataSize];
 
-		frames_count = 0;
-		for (byte i = 0; i < data_size / 3; ++i) {
+		framesCount = 0;
+		for (byte i = 0; i < dataSize / 3; ++i) {
 			int idx = i * 3;
 			byte unk = s.readByte();
 			debugC(3, kDebugAnimation, "unk?: 0x%02x", unk);
 			data[idx] = s.readByte();
 			if (data[idx] == 0)
 				data[idx] = 1; //fixme: investigate
-			if (data[idx] > frames_count)
-				frames_count = data[idx];
+			if (data[idx] > framesCount)
+				framesCount = data[idx];
 			data[idx + 1] = 0;
 			data[idx + 2] = 0;
 			debugC(2, kDebugAnimation, "frame #%u", data[idx]);
 		}
 
-		frames = new Surface[frames_count];
+		frames = new Surface[framesCount];
 
-		for (uint16 i = 0; i < frames_count; ++i) {
+		for (uint16 i = 0; i < framesCount; ++i) {
 			frames[i].load(s, Surface::kTypeOns);
 		}
 	}
 	break;
 
 	case kTypeVaria:
-		frames_count = s.readByte();
-		debugC(1, kDebugAnimation, "loading varia resource, %u physical frames", frames_count);
+		framesCount = s.readByte();
+		debugC(1, kDebugAnimation, "loading varia resource, %u physical frames", framesCount);
 		uint16 offset[255];
-		for (byte i = 0; i < frames_count; ++i) {
+		for (byte i = 0; i < framesCount; ++i) {
 			offset[i] = s.readUint16LE();
 			debugC(0, kDebugAnimation, "%u: %04x", i, offset[i]);
 		}
-		frames = new Surface[frames_count];
-		for (uint16 i = 0; i < frames_count; ++i) {
+		frames = new Surface[framesCount];
+		for (uint16 i = 0; i < framesCount; ++i) {
 			debugC(0, kDebugAnimation, "%04x", offset[i]);
 			s.seek(offset[i] + off);
 			frames[i].load(s, Surface::kTypeOns);
@@ -196,11 +200,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		break;
 	}
 
-	debugC(2, kDebugAnimation, "%u frames", data_size / 3);
-}
-
-Animation::~Animation() {
-	free();
+	debugC(2, kDebugAnimation, "%u frames", dataSize / 3);
 }
 
 } // End of namespace TeenAgent
