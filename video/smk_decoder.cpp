@@ -318,7 +318,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// 1 - set to 1 if file is Y-interlaced
 	// 2 - set to 1 if file is Y-doubled
 	// If bits 1 or 2 are set, the frame should be scaled to twice its height
-    // before it is displayed.
+	// before it is displayed.
 	_header.flags = _fileStream->readUint32LE();
 
 	SmackerVideoTrack *videoTrack = createVideoTrack(width, height, frameCount, frameRate, _header.flags, _header.signature);
