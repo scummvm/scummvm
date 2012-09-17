@@ -100,10 +100,10 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
 
-	if (_paletteColorCount == 0)
-		_paletteColorCount = 256;
-
 	if (bitsPerPixel == 8) {
+		if (_paletteColorCount == 0)
+			_paletteColorCount = 256;
+
 		// Read the palette
 		_palette = new byte[_paletteColorCount * 3];
 		for (uint16 i = 0; i < _paletteColorCount; i++) {
