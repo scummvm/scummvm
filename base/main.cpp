@@ -511,6 +511,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #ifdef USE_FREETYPE2
 	Graphics::shutdownTTF();
 #endif
+	EngineManager::destroy();
 
 	return 0;
 }
