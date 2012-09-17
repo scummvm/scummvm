@@ -692,7 +692,7 @@ void LilliputEngine::moveCharacters() {
 
 	_numCharactersToDisplay = 0;
 	byte index = _numCharacters - 1;
-	Common::Point _pos16213 = Common::Point(_scriptHandler->_viewportPos.x << 3, _scriptHandler->_viewportPos.y << 3);
+	Common::Point pos16213 = Common::Point(_scriptHandler->_viewportPos.x << 3, _scriptHandler->_viewportPos.y << 3);
 
 	for (int i = index; i >= 0; i--) {
 		if (_rulesBuffer2_5[i] != -1) {
@@ -734,8 +734,8 @@ void LilliputEngine::moveCharacters() {
 		if ((tmpVal2 >= 0) && (tmpVal2 <= 7) && (tmpVal3 >= 0) && (tmpVal3 <= 7)) {
 			_characterRelativePositionX[i] = tmpVal2;
 			_characterRelativePositionY[i] = tmpVal3;
-			tmpVal2 = _characterPositionX[i] - _pos16213.x;
-			tmpVal3 = _characterPositionY[i] - _pos16213.y;
+			tmpVal2 = _characterPositionX[i] - pos16213.x;
+			tmpVal3 = _characterPositionY[i] - pos16213.y;
 			int tmpVal4 = _characterPositionAltitude[i];
 			_characterDisplayX[i] = ((60 + tmpVal2 - tmpVal3) * 2) & 0xFF;
 			_characterDisplayY[i] = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
@@ -1887,8 +1887,8 @@ void LilliputEngine::sub12F37() {
 	}
 }
 
-void LilliputEngine::sub13156(bool &forceReturnFl) {
-	debugC(2, kDebugEngine, "sub13156()");
+void LilliputEngine::keyboard_handleInterfaceShortcuts(bool &forceReturnFl) {
+	debugC(2, kDebugEngine, "keyboard_handleInterfaceShortcuts()");
 
 	forceReturnFl = false;
 
@@ -1977,7 +1977,7 @@ void LilliputEngine::handleGameMouseClick() {
 	checkNumericCode();
 
 	bool forceReturnFl = false;
-	sub13156(forceReturnFl);
+	keyboard_handleInterfaceShortcuts(forceReturnFl);
 	if (forceReturnFl)
 		return;
 

@@ -279,7 +279,7 @@ public:
 	void renderCharacters(byte *buf, Common::Point pos);
 
 	void checkNumericCode();
-	void sub13156(bool &forceReturnFl);
+	void keyboard_handleInterfaceShortcuts(bool &forceReturnFl);
 	byte sub16799(int index, Common::Point param1);
 	byte getDirection(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
