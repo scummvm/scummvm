@@ -89,10 +89,21 @@ int EventsManager::YMOUSE() {
 	return souris_x + ofset_souris_x;
 }
 
-void EventsManager::hideCursor() {
+bool EventsManager::BMOUSE() {
+	CONTROLE_MES();
+	return souris_bb;
 }
 
-void EventsManager::showCursor() {
+void EventsManager::MOUSE_OFF() {
+	warning("TODO: MOUSE_OFF");
+}
+
+void EventsManager::MOUSE_ON() {
+	warning("TODO: MOUSE_ON");
+}
+
+void EventsManager::CHANGE_MOUSE(int id) {
+	warning("TODO: CHANGE_MOUSE");
 }
 
 void EventsManager::CONTROLE_MES() {

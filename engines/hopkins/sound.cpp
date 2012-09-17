@@ -55,4 +55,8 @@ void SoundManager::VOICE_MIX(int a1, int a2) {
 	warning("TODO: VOICE_MIX");
 }
 
+void SoundManager::DEL_SAMPLE(int soundNumber) {
+	warning("TODO: DEL_SAMPLE");
+}
+
 } // End of namespace Hopkins

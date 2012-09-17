@@ -4,9 +4,9 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
- * This program is free software; you can redistribute it and/or
+ * This program is _globals.FRee software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
+ * as published by the _globals.FRee Software Foundation; either version 2
  * of the License, or (at your option) any later version.
 
  * This program is distributed in the hope that it will be useful,
@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * along with this program; if not, write to the _globals.FRee Software
+ * Foundation, Inc., 51 _globals.FRanklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
@@ -62,7 +62,7 @@ Common::Error HopkinsEngine::run() {
 	ObjectManager::AJOUTE_OBJET(14);
 
 	GLOBALS.HELICO = 0;
-	_eventsManager.hideCursor();
+	_eventsManager.MOUSE_OFF();
 
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
@@ -86,409 +86,372 @@ Common::Error HopkinsEngine::run() {
 
 	if (!_eventsManager.ESC_KEY)
 		INTRORUN();
-  /*
-  _globals.iRegul = 0;
-  CONSTRUIT_SYSTEM("PERSO.SPR");
-  PERSO = CHARGE_FICHIER(GLOBALS.NFICHIER);
-  PERSO_TYPE = 0;
-  PLANX = 0;
-  PLANY = 0;
-  memset(SAUVEGARDE, 0, 0x7CFu);
-  SORTIE = 0;
-  PASSWORD = 1;
+  
+	_globals.iRegul = 0;
+	FileManager::CONSTRUIT_SYSTEM("PERSO.SPR");
+	GLOBALS.PERSO = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+	GLOBALS.PERSO_TYPE = 0;
+	GLOBALS.PLANX = GLOBALS.PLANY = 0;
+	memset(GLOBALS.SAUVEGARDE, 0, 2000);
+	GLOBALS.SORTIE = 0;
+	GLOBALS.PASSWORD = 1;
+
 LABEL_12:
-  if ( SORTIE == 300 )
+	if (GLOBALS.SORTIE == 300)
 LABEL_13:
-    SORTIE = 0;
-  if ( !SORTIE )
-  {
-    SORTIE = MENU();
-    if ( SORTIE == -1 )
-    {
-      PUBQUIT();
-      PERSO = (void *)dos_free2(PERSO);
-      REST_SYSTEM();
-    }
-  }
-  while ( 1 )
-  {
-    while ( 1 )
-    {
-      while ( 1 )
-      {
-        while ( 1 )
-        {
-          while ( 1 )
-          {
-            while ( 1 )
-            {
-              while ( 1 )
-              {
-                while ( 1 )
-                {
-                  if ( SORTIE == 300 )
-                    goto LABEL_13;
-                  if ( SORTIE == 18 )
-                    PASS();
-                  if ( SORTIE == 23 )
-                    PASS();
-                  if ( SORTIE == 22 )
-                    PASS();
-                  if ( SORTIE == 19 )
-                    PASS();
-                  if ( SORTIE == 20 )
-                    PASS();
-                  if ( SORTIE != 1 )
-                    break;
-                  Max_Propre = 50;
-                  Max_Ligne_Long = 40;
-                  Max_Propre_Gen = 20;
-                  Max_Perso_Y = 435;
-                  PERSONAGE2((int)"IM01", (int)"IM01", (int)"ANIM01", (int)"IM01", 1);
-                }
-                if ( SORTIE != 3 )
-                  break;
-                if ( !*((_BYTE *)SAUVEGARDE + 170) )
-                {
-                  _soundManager.WSOUND(3);
-                  if ( FR == 1 )
-                    LOAD_IMAGE("fondfr");
-                  if ( !FR )
-                    LOAD_IMAGE("fondan");
-                  if ( FR == 2 )
-                    LOAD_IMAGE("fondes");
-                  FADE_INW();
-                  SDL_Delay(500);
-                  FADE_OUTW();
-                  _globals.iRegul = 1;
-                  _soundManager.SPECIAL_SOUND = 2;
-                  DD_Lock();
-                  Cls_Video();
-                  DD_Unlock();
-                  Cls_Pal();
-                  FADE_LINUX = 2;
-                  if ( !CENSURE )
-                    PLAY_ANM("BANQUE.ANM", 200, 28, 200);
-                  if ( CENSURE == 1 )
-                    PLAY_ANM("BANKUK.ANM", 200, 28, 200);
-                  _soundManager.SPECIAL_SOUND = 0;
-                  DEL_SAMPLE(1);
-                  DEL_SAMPLE(2);
-                  DEL_SAMPLE(3);
-                  DEL_SAMPLE(4);
-                  *((_BYTE *)SAUVEGARDE + 170) = 1;
-                }
-                Max_Propre = 5;
-                Max_Ligne_Long = 5;
-                Max_Propre_Gen = 5;
-                Max_Perso_Y = 450;
-                NOSPRECRAN = 1;
-                PERSONAGE2((int)"IM03", (int)"IM03", (int)"ANIM03", (int)"IM03", 2);
-              }
-              if ( SORTIE != 4 )
-                break;
-              DESACTIVE_INVENT = 1;
-              PLAN_BETA(a1);
-              DESACTIVE_INVENT = 0;
-            }
-            if ( SORTIE != 5 )
-              break;
-            Max_Propre = 5;
-            Max_Ligne_Long = 5;
-            Max_Propre_Gen = 5;
-            Max_Perso_Y = 455;
-            NOSPRECRAN = 1;
-            v1 = *((_BYTE *)SAUVEGARDE + 80);
-            if ( v1 )
-            {
-              if ( v1 == 1 )
-                PERSONAGE2((int)"IM05", (int)"IM05A", (int)"ANIM05B", (int)"IM05", 3);
-            }
-            else
-            {
-              PERSONAGE2((int)"IM05", (int)"IM05", (int)"ANIM05", (int)"IM05", 3);
-            }
-            NOSPRECRAN = 0;
-          }
-          if ( SORTIE != 8 )
-            break;
-          Max_Propre = 15;
-          Max_Ligne_Long = 15;
-          Max_Propre_Gen = 10;
-          Max_Perso_Y = 450;
-          PERSONAGE2((int)"IM08", (int)"IM08", (int)"ANIM08", (int)"IM08", 2);
-        }
-        if ( SORTIE != 6 )
-          break;
-        Max_Propre = 15;
-        Max_Ligne_Long = 20;
-        Max_Propre_Gen = 10;
-        Max_Perso_Y = 460;
-        PERSONAGE2((int)"IM06", (int)"IM06", (int)"ANIM06", (int)"IM06", 2);
-      }
-      if ( SORTIE != 7 )
-        break;
-      if ( *((_BYTE *)SAUVEGARDE + 220) )
-        PERSONAGE((int)"BOMBEB", (int)"BOMBE", (int)"BOMBE", (int)"BOMBE", 2);
-      else
-        PERSONAGE((int)"BOMBEA", (int)"BOMBE", (int)"BOMBE", (int)"BOMBE", 2);
-    }
-    if ( SORTIE == 9 )
-    {
-      Max_Propre = 15;
-      Max_Ligne_Long = 20;
-      Max_Propre_Gen = 10;
-      Max_Perso_Y = 440;
-      if ( !*((_BYTE *)SAUVEGARDE + 225) )
-        goto LABEL_109;
-      PERSONAGE2((int)"IM09", (int)"IM09", (int)"ANIM09", (int)"IM09", 10);
-    }
-    else
-    {
-      if ( SORTIE == 10 )
-      {
-        NOSPRECRAN = 1;
-        PERSONAGE((int)"IM10", (int)"IM10", (int)"ANIM10", (int)"IM10", 9);
-        goto LABEL_124;
-      }
-      if ( SORTIE == 11 )
-      {
-        NOSPRECRAN = 1;
-        Max_Propre = 15;
-        Max_Ligne_Long = 20;
-        Max_Propre_Gen = 10;
-        Max_Perso_Y = 450;
-        PERSONAGE2((int)"IM11", (int)"IM11", (int)"ANIM11", (int)"IM11", 2);
-        goto LABEL_124;
-      }
-      switch ( SORTIE )
-      {
-        case 12:
-          Max_Propre = 15;
-          Max_Ligne_Long = 20;
-          Max_Propre_Gen = 10;
-          Max_Perso_Y = 450;
-          if ( *((_BYTE *)SAUVEGARDE + 225) )
-          {
-            NOSPRECRAN = 1;
-            PERSONAGE2((int)"IM12", (int)"IM12", (int)"ANIM12", (int)"IM12", 1);
-          }
-          else
-          {
-LABEL_109:
-            BOOM(a1);
-          }
-          break;
-        case 13:
-          Max_Propre = 50;
-          Max_Ligne_Long = 40;
-          Max_Propre_Gen = 20;
-          Max_Perso_Y = 440;
-          PERSONAGE2((int)"IM13", (int)"IM13", (int)"ANIM13", (int)"IM13", 1);
-          break;
-        case 14:
-          Max_Propre = 50;
-          Max_Ligne_Long = 40;
-          Max_Propre_Gen = 20;
-          Max_Perso_Y = 440;
-          PERSONAGE2((int)"IM14", (int)"IM14", (int)"ANIM14", (int)"IM14", 1);
-          break;
-        default:
-          if ( SORTIE == 15 )
-          {
-            NOSPRECRAN = 1;
-            PERSONAGE((int)"IM15", (int)"IM15", (int)"ANIM15", (int)"IM15", 29);
-            goto LABEL_124;
-          }
-          if ( SORTIE == 16 )
-          {
-            Max_Propre = 5;
-            Max_Ligne_Long = 5;
-            Max_Propre_Gen = 5;
-            Max_Perso_Y = 450;
-            v2 = *((_BYTE *)SAUVEGARDE + 113);
-            if ( v2 == 1 )
-            {
-              PERSONAGE2((int)"IM16", (int)"IM16A", (int)"ANIM16", (int)"IM16", 7);
-            }
-            else if ( !v2 )
-            {
-              PERSONAGE2((int)"IM16", (int)"IM16", (int)"ANIM16", (int)"IM16", 7);
-            }
-          }
-          else
-          {
-            if ( SORTIE == 17 )
-              PASS();
-            if ( SORTIE == 24 )
-              PASS();
-            if ( SORTIE == 25 )
-            {
-              Max_Propre = 15;
-              Max_Ligne_Long = 20;
-              Max_Propre_Gen = 10;
-              Max_Perso_Y = 445;
-              PERSONAGE2((int)"IM25", (int)"IM25", (int)"ANIM25", (int)"IM25", 30);
-            }
-            else
-            {
-              if ( SORTIE == 33 )
-              {
-                NOSPRECRAN = 1;
-                PERSONAGE((int)"IM33", (int)"IM33", (int)"ANIM33", (int)"IM33", 8);
-                goto LABEL_124;
-              }
-              if ( SORTIE == 26 )
-              {
-                Max_Propre = 50;
-                Max_Ligne_Long = 40;
-                Max_Propre_Gen = 20;
-                Max_Perso_Y = 435;
-                PERSONAGE2((int)"IM26", (int)"IM26", (int)"ANIM26", (int)"IM26", 30);
-              }
-              else
-              {
-                if ( SORTIE == 27 )
-                  PASS();
-                if ( SORTIE == 28 )
-                  PASS();
-                if ( SORTIE == 29 )
-                  PASS();
-                if ( SORTIE == 30 )
-                  PASS();
-                if ( SORTIE == 31 )
-                  PASS();
-                if ( SORTIE == 35 )
-                  ENDEMO();
-                if ( SORTIE == 32 )
-                  PASS();
-                if ( SORTIE == 34 )
-                  PASS();
-                if ( (unsigned __int16)(SORTIE - 51) <= 0x26u )
-                  PASS();
-                if ( SORTIE == 111 )
-                {
-                  NOSPRECRAN = 1;
-                  PERSONAGE((int)"IM111", (int)"IM111", (int)"ANIM111", (int)"IM111", 10);
-                  goto LABEL_124;
-                }
-                if ( SORTIE == 112 )
-                {
-                  NOSPRECRAN = 1;
-                  PERSONAGE((int)"IM112", (int)"IM112", (int)"ANIM112", (int)"IM112", 10);
-LABEL_124:
-                  NOSPRECRAN = 0;
-                }
-                else if ( SORTIE == 113 )
-                {
-                  SORTIE = 0;
-                  OLD_ECRAN = ECRAN;
-                  *((_BYTE *)SAUVEGARDE + 6) = ECRAN;
-                  ECRAN = 113;
-                  *((_BYTE *)SAUVEGARDE + 5) = 113;
-                  COMPUT_HOPKINS(a1, 1);
-                  DD_LOCK();
-                  Cls_Video();
-                  DD_UNLOCK();
-                  DD_VBL();
-                  memset(VESA_BUFFER, 0, 0x4B000u);
-                  memset(VESA_SCREEN, 0, 0x4B000u);
-                  Cls_Pal();
-                  RESET_SEGMENT_VESA();
-                }
-                else
-                {
-                  if ( SORTIE == 114 )
-                  {
-                    SORTIE = 0;
-                    OLD_ECRAN = ECRAN;
-                    *((_BYTE *)SAUVEGARDE + 6) = ECRAN;
-                    ECRAN = 114;
-                    *((_BYTE *)SAUVEGARDE + 5) = 114;
-                    COMPUT_HOPKINS(a1, 2);
-                    goto LABEL_128;
-                  }
-                  if ( SORTIE == 115 )
-                  {
-                    SORTIE = 0;
-                    OLD_ECRAN = ECRAN;
-                    *((_BYTE *)SAUVEGARDE + 6) = ECRAN;
-                    ECRAN = 115;
-                    *((_BYTE *)SAUVEGARDE + 5) = 115;
-                    COMPUT_HOPKINS(a1, 3);
-LABEL_128:
-                    DD_LOCK();
-                    Cls_Video();
-                    DD_UNLOCK();
-                  }
-                  else if ( (unsigned __int16)(SORTIE - 194) > 5u )
-                  {
-                    if ( SORTIE == 151 )
-                    {
-                      _soundManager.WSOUND(16);
-                      _globals.iRegul = 1;
-                      DD_Lock();
-                      Cls_Video();
-                      DD_Unlock();
-                      Cls_Pal();
-                      FADE_LINUX = 2;
-                      PLAY_ANM("JOUR3A.anm", 12, 12, 2000);
-                      _globals.iRegul = 0;
-                      SORTIE = 300;
-                    }
-                    if ( SORTIE == 150 )
-                    {
-                      _soundManager.WSOUND(16);
-                      _globals.iRegul = 1;
-                      DD_Lock();
-                      Cls_Video();
-                      DD_Unlock();
-                      Cls_Pal();
-                      FADE_LINUX = 2;
-                      PLAY_ANM("JOUR1A.anm", 12, 12, 2000);
-                      _globals.iRegul = 0;
-                      SORTIE = 300;
-                    }
-                    if ( SORTIE == 152 )
-                    {
-                      _soundManager.WSOUND(16);
-                      _globals.iRegul = 1;
-                      DD_Lock();
-                      Cls_Video();
-                      DD_Unlock();
-                      Cls_Pal();
-                      FADE_LINUX = 2;
-                      PLAY_ANM("JOUR4A.anm", 12, 12, 2000);
-                      _globals.iRegul = 0;
-                      SORTIE = 300;
-                    }
-                    goto LABEL_12;
-                  }
-                }
-              }
-            }
-          }
-          break;
-      }
-    }
-  }
-*/
-#if 0
-	// Copy vesa surface to screen
-	_graphicsManager.DD_Lock();
+		GLOBALS.SORTIE = 0;
 
-	const byte *srcP = (const byte *)_graphicsManager.VESA_SCREEN;
-	uint16 *destP = (uint16 *)_graphicsManager.VideoPtr->pixels;
-	for (int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); ++i, ++srcP, ++destP) {
-		byte r = _graphicsManager.Palette[*srcP * 3];
-		byte g = _graphicsManager.Palette[*srcP * 3 + 1];
-		byte b = _graphicsManager.Palette[*srcP * 3 + 2];
-
-		*destP = (b >> 2) | ((g >> 2) << 5) | ((r >> 2) << 10);
+	if (!GLOBALS.SORTIE) {
+		GLOBALS.SORTIE = MENU();
+		if (GLOBALS.SORTIE == -1) {
+			PUBQUIT();
+			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+			REST_SYSTEM();
+		}
 	}
 
-	_graphicsManager.DD_Unlock();
-#endif
+	for (;;) {
+		for (;;) {
+			for (;;) {
+				for (;;) {
+					for (;;) {
+						for (;;) {
+							for (;;) {
+								for (;;) {
+									if (GLOBALS.SORTIE == 300)
+										goto LABEL_13;
+									if (GLOBALS.SORTIE == 18)
+										PASS();
+									if (GLOBALS.SORTIE == 23)
+										PASS();
+									if (GLOBALS.SORTIE == 22)
+										PASS();
+									if (GLOBALS.SORTIE == 19)
+										PASS();
+									if (GLOBALS.SORTIE == 20)
+										PASS();
+									if (GLOBALS.SORTIE != 1)
+										break;
+
+									_globals.Max_Propre = 50;
+									_globals.Max_Ligne_Long = 40;
+									_globals.Max_Propre_Gen = 20;
+									_globals.Max_Perso_Y = 435;
+									PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
+								}
+                
+								if (GLOBALS.SORTIE != 3)
+									break;
+								
+								if (!*((byte *)GLOBALS.SAUVEGARDE + 170)) {
+									_soundManager.WSOUND(3);
+									if (_globals.FR == 1)
+										_graphicsManager.LOAD_IMAGE("fond_globals.FR");
+									if (!_globals.FR)
+										_graphicsManager.LOAD_IMAGE("fondan");
+									if (_globals.FR == 2)
+										_graphicsManager.LOAD_IMAGE("fondes");
+									_graphicsManager.FADE_INW();
+									_eventsManager.delay(500);
+									_graphicsManager.FADE_OUTW();
+									_globals.iRegul = 1;
+									_soundManager.SPECIAL_SOUND = 2;
+
+									_graphicsManager.DD_Lock();
+									_graphicsManager.Cls_Video();
+									_graphicsManager.DD_Unlock();
+									_graphicsManager.Cls_Pal();
+									_graphicsManager.FADE_LINUX = 2;
+					
+									if (!GLOBALS.CENSURE)
+										_animationManager.PLAY_ANM("BANQUE.ANM", 200, 28, 200);
+									if (GLOBALS.CENSURE == 1)
+										_animationManager.PLAY_ANM("BANKUK.ANM", 200, 28, 200);
+									_soundManager.SPECIAL_SOUND = 0;
+									_soundManager.DEL_SAMPLE(1);
+									_soundManager.DEL_SAMPLE(2);
+									_soundManager.DEL_SAMPLE(3);
+									_soundManager.DEL_SAMPLE(4);
+									*((byte *)GLOBALS.SAUVEGARDE + 170) = 1;
+								}
+                
+								_globals.Max_Propre = 5;
+								_globals.Max_Ligne_Long = 5;
+								_globals.Max_Propre_Gen = 5;
+								_globals.Max_Perso_Y = 450;
+								GLOBALS.NOSPRECRAN = 1;
+								PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+							}
+              
+							if (GLOBALS.SORTIE != 4)
+								break;
+							_globals.DESACTIVE_INVENT = true;
+							PLAN_BETA();
+							_globals.DESACTIVE_INVENT = false;
+						}
+
+						if (GLOBALS.SORTIE != 5)
+							break;
+						_globals.Max_Propre = 5;
+						_globals.Max_Ligne_Long = 5;
+						_globals.Max_Propre_Gen = 5;
+						_globals.Max_Perso_Y = 455;
+						GLOBALS.NOSPRECRAN = 1;
+						byte v1 = *((byte *)GLOBALS.SAUVEGARDE + 80);
+						if (v1) {
+							if (v1 == 1)
+								PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
+						} else {
+							PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
+						}
+            
+						GLOBALS.NOSPRECRAN = 0;
+					}
+          
+					if (GLOBALS.SORTIE != 8)
+						break;
+					
+					_globals.Max_Propre = 15;
+					_globals.Max_Ligne_Long = 15;
+					_globals.Max_Propre_Gen = 10;
+					_globals.Max_Perso_Y = 450;
+					PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+				}
+
+				if (GLOBALS.SORTIE != 6)
+					break;
+				_globals.Max_Propre = 15;
+				_globals.Max_Ligne_Long = 20;
+				_globals.Max_Propre_Gen = 10;
+				_globals.Max_Perso_Y = 460;
+				PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+			}
+
+			if (GLOBALS.SORTIE != 7)
+				break;
+			if (*((byte *)GLOBALS.SAUVEGARDE + 220))
+				PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+			else
+				PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+		}
+
+		if (GLOBALS.SORTIE == 9) {
+			_globals.Max_Propre = 15;
+			_globals.Max_Ligne_Long = 20;
+			_globals.Max_Propre_Gen = 10;
+			_globals.Max_Perso_Y = 440;
+			
+			if (!*((byte *)GLOBALS.SAUVEGARDE + 225))
+				goto LABEL_109;
+			PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+		} else {
+			if (GLOBALS.SORTIE == 10) {
+				GLOBALS.NOSPRECRAN = 1;
+				PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
+				goto LABEL_124;
+			}
+      
+			if (GLOBALS.SORTIE == 11) {
+				GLOBALS.NOSPRECRAN = 1;
+				_globals.Max_Propre = 15;
+				_globals.Max_Ligne_Long = 20;
+				_globals.Max_Propre_Gen = 10;
+				_globals.Max_Perso_Y = 450;
+				PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
+				goto LABEL_124;
+			}
+
+			switch (GLOBALS.SORTIE) {
+			case 12:
+				_globals.Max_Propre = 15;
+				_globals.Max_Ligne_Long = 20;
+				_globals.Max_Propre_Gen = 10;
+				_globals.Max_Perso_Y = 450;
+				if (*((byte *)GLOBALS.SAUVEGARDE + 225)) {
+					GLOBALS.NOSPRECRAN = 1;
+					PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
+				} else {
+LABEL_109:
+					BOOM();
+				}
+				break;
+			case 13:
+				_globals.Max_Propre = 50;
+				_globals.Max_Ligne_Long = 40;
+				_globals.Max_Propre_Gen = 20;
+				_globals.Max_Perso_Y = 440;
+				PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1);
+				break;
+			case 14:
+				_globals.Max_Propre = 50;
+				_globals.Max_Ligne_Long = 40;
+				_globals.Max_Propre_Gen = 20;
+				_globals.Max_Perso_Y = 440;
+				PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
+				break;
+			default:
+				if (GLOBALS.SORTIE == 15) {
+					GLOBALS.NOSPRECRAN = 1;
+					PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29);
+					goto LABEL_124;
+				}
+				if (GLOBALS.SORTIE == 16) {
+					_globals.Max_Propre = 5;
+					_globals.Max_Ligne_Long = 5;
+					_globals.Max_Propre_Gen = 5;
+					_globals.Max_Perso_Y = 450;
+
+					byte v2 = *((byte *)GLOBALS.SAUVEGARDE + 113);
+					if (v2 == 1) {
+						PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
+					} else if (!v2) {
+						PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
+					}
+				} else {
+					if (GLOBALS.SORTIE == 17)
+						PASS();
+					if (GLOBALS.SORTIE == 24)
+						PASS();
+					if (GLOBALS.SORTIE == 25) {
+						_globals.Max_Propre = 15;
+						_globals.Max_Ligne_Long = 20;
+						_globals.Max_Propre_Gen = 10;
+						_globals.Max_Perso_Y = 445;
+						PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30);
+					} else {
+						if (GLOBALS.SORTIE == 33) {
+							GLOBALS.NOSPRECRAN = 1;
+							PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
+							goto LABEL_124;
+						}
+              
+						if (GLOBALS.SORTIE == 26) {
+							_globals.Max_Propre = 50;
+							_globals.Max_Ligne_Long = 40;
+							_globals.Max_Propre_Gen = 20;
+							_globals.Max_Perso_Y = 435;
+							PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30);
+						} else {
+							if (GLOBALS.SORTIE == 27)
+								PASS();
+							if (GLOBALS.SORTIE == 28)
+								PASS();
+							if (GLOBALS.SORTIE == 29)
+								PASS();
+							if (GLOBALS.SORTIE == 30)
+								PASS();
+							if (GLOBALS.SORTIE == 31)
+								PASS();
+							if (GLOBALS.SORTIE == 35)
+								ENDEMO();
+							if (GLOBALS.SORTIE == 32)
+								PASS();
+							if (GLOBALS.SORTIE == 34)
+								PASS();
+                
+							if ((uint16)(GLOBALS.SORTIE - 51) <= 38)
+								PASS();
+							if (GLOBALS.SORTIE == 111) {
+								GLOBALS.NOSPRECRAN = 1;
+								PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
+								goto LABEL_124;
+							}
+                
+							if (GLOBALS.SORTIE == 112) {
+								GLOBALS.NOSPRECRAN = 1;
+								PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
+LABEL_124:
+								GLOBALS.NOSPRECRAN = 0;
+							} else if (GLOBALS.SORTIE == 113) {
+								GLOBALS.SORTIE = 0;
+								_globals.OLD_ECRAN = _globals.ECRAN;
+								*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
+								_globals.ECRAN = 113;
+								*((byte *)GLOBALS.SAUVEGARDE + 5) = 113;
+								COMPUT_HOPKINS(1);
+                  
+								_graphicsManager.DD_Lock();
+								_graphicsManager.Cls_Video();
+								_graphicsManager.DD_Unlock();
+								_graphicsManager.DD_VBL();
+								memset(_graphicsManager.VESA_BUFFER, 0, 0x4B000u);
+								memset(_graphicsManager.VESA_SCREEN, 0, 0x4B000u);
+								_graphicsManager.Cls_Pal();
+								_graphicsManager.RESET_SEGMENT_VESA();
+							} else {
+								if (GLOBALS.SORTIE == 114) {
+									GLOBALS.SORTIE = 0;
+									_globals.OLD_ECRAN = _globals.ECRAN;
+									*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
+									_globals.ECRAN = 114;
+									*((byte *)GLOBALS.SAUVEGARDE + 5) = 114;
+									COMPUT_HOPKINS(2);
+									goto LABEL_128;
+								}
+								if (GLOBALS.SORTIE == 115) {
+									GLOBALS.SORTIE = 0;
+									_globals.OLD_ECRAN = _globals.ECRAN;
+									*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
+									_globals.ECRAN = 115;
+									*((byte *)GLOBALS.SAUVEGARDE + 5) = 115;
+									COMPUT_HOPKINS(3);
+
+LABEL_128:
+									_graphicsManager.DD_Lock();
+									_graphicsManager.Cls_Video();
+									_graphicsManager.DD_Unlock();
+								} else if ((uint16)(GLOBALS.SORTIE - 194) > 5) {
+									if (GLOBALS.SORTIE == 151) {
+										_soundManager.WSOUND(16);
+										_globals.iRegul = 1;
+                      
+										_graphicsManager.DD_Lock();
+										_graphicsManager.Cls_Video();
+										_graphicsManager.DD_Unlock();
+										_graphicsManager.Cls_Pal();
+										_graphicsManager.FADE_LINUX = 2;
+										_animationManager.PLAY_ANM("JOUR3A.anm", 12, 12, 2000);
+										_globals.iRegul = 0;
+										GLOBALS.SORTIE = 300;
+									}
+                    
+									if (GLOBALS.SORTIE == 150) {
+										_soundManager.WSOUND(16);
+										_globals.iRegul = 1;
+										
+										_graphicsManager.DD_Lock();
+										_graphicsManager.Cls_Video();
+										_graphicsManager.DD_Unlock();
+										_graphicsManager.Cls_Pal();
+										_graphicsManager.FADE_LINUX = 2;
+										_animationManager.PLAY_ANM("JOUR1A.anm", 12, 12, 2000);
+										_globals.iRegul = 0;
+										GLOBALS.SORTIE = 300;
+									}
+                    
+									if (GLOBALS.SORTIE == 152) {
+										_soundManager.WSOUND(16);
+										_globals.iRegul = 1;
+                      
+										_graphicsManager.DD_Lock();
+										_graphicsManager.Cls_Video();
+										_graphicsManager.DD_Unlock();
+										_graphicsManager.Cls_Pal();
+										_graphicsManager.FADE_LINUX = 2;
+										_animationManager.PLAY_ANM("JOUR4A.anm", 12, 12, 2000);
+										_globals.iRegul = 0;
+										GLOBALS.SORTIE = 300;
+									}
+									goto LABEL_12;
+								}
+							}
+						}
+					}
+				}
+				break;
+			}
+		}
+	}
 
 	// Stub event loop
 	Common::Event evt;
@@ -530,15 +493,15 @@ void HopkinsEngine::INIT_SYSTEM() {
 	
 	_eventsManager.mouse_linux = true;
   
-	switch (GLOBALS.FR) {
+	switch (_globals.FR) {
 	case 0:
 		if (!_eventsManager.mouse_linux)
 			FileManager::CONSTRUIT_SYSTEM("SOUAN.SPR");
-		if (!GLOBALS.FR && _eventsManager.mouse_linux)
+		if (!_globals.FR && _eventsManager.mouse_linux)
 			FileManager::CONSTRUIT_SYSTEM("LSOUAN.SPR");
 		break;
 	case 1:
-		FileManager::CONSTRUIT_SYSTEM("LSOUFR.SPR");
+		FileManager::CONSTRUIT_SYSTEM("LSOU_globals.FR.SPR");
 		break;
 	case 2:
 		FileManager::CONSTRUIT_SYSTEM("SOUES.SPR");
@@ -565,7 +528,7 @@ void HopkinsEngine::INIT_SYSTEM() {
 	FileManager::CONSTRUIT_SYSTEM("TETE.SPR");
 	GLOBALS.TETE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
 	
-	switch (GLOBALS.FR) {
+	switch (_globals.FR) {
 	case 0:
 		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "ZONEAN.TXT");
 		GLOBALS.BUF_ZONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
@@ -639,9 +602,9 @@ void HopkinsEngine::INTRORUN() {
 
 			if (!_eventsManager.ESC_KEY) {
 				_soundManager.VOICE_MIX(3, 3);
-				_graphicsManager.DD_LOCK();
+				_graphicsManager.DD_Lock();
 				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_UNLOCK();
+				_graphicsManager.DD_Unlock();
 				_graphicsManager.Cls_Pal();
 				_graphicsManager.DD_VBL();
 				_soundManager.WSOUND(11);
@@ -856,6 +819,85 @@ void HopkinsEngine::INTRORUN() {
 	}
   
 	_eventsManager.ESC_KEY = false;
+}
+
+void HopkinsEngine::PASS() {
+	warning("TODO: PASS");
+}
+
+void HopkinsEngine::PERSONAGE(const Common::String &s1, const Common::String &s2, const Common::String &s3,
+							   const Common::String &s4, int v) {
+	warning("TODO: PERSONAGE2");
+}
+
+void HopkinsEngine::PERSONAGE2(const Common::String &s1, const Common::String &s2, const Common::String &s3,
+							   const Common::String &s4, int v) {
+	warning("TODO: PERSONAGE2");
+}
+
+void HopkinsEngine::REST_SYSTEM() {
+	warning("REST_SYSTEM");
+}
+
+void HopkinsEngine::PLAN_BETA() {
+	warning("PLAN_BETA");
+}
+
+void HopkinsEngine::PUBQUIT() {
+	_globals.PUBEXIT = 1;
+	_graphicsManager.RESET_SEGMENT_VESA();
+	_globals.FORET = 0;
+	_eventsManager.CASSE = 0;
+	_globals.DESACTIVE_INVENT = true;
+	_globals.FLAG_VISIBLE = false;
+	_graphicsManager.LOAD_IMAGE("BOX");
+	_soundManager.WSOUND(28);
+	_graphicsManager.FADE_INW();
+	_eventsManager.MOUSE_ON();
+	_eventsManager.CHANGE_MOUSE(0);
+	_globals.btsouris = 0;
+	_eventsManager.souris_n = 0;
+	_globals.netscape = true;
+
+	bool mouseClicked = false;
+	int xp, yp;
+	do {
+		xp = _eventsManager.XMOUSE();
+		yp = _eventsManager.YMOUSE();
+		_eventsManager.VBL();
+		
+		if (_eventsManager.BMOUSE() == 1)
+			mouseClicked = true;
+	} while (!mouseClicked && g_system->getEventManager()->shouldQuit());
+  
+	if ((unsigned int)(xp - 167) <= 302 && (unsigned int)(yp - 47) <= 387) {
+		warning("Try to Connect...");
+		_eventsManager.delay(25000);
+//		open_URL((int)"http://www.hopkinsfbi.com");
+		
+		while (1) {
+			_globals.iRegul = 10;
+			_eventsManager.VBL();
+		}
+	}
+	return _graphicsManager.FADE_OUTW();
+}
+
+void HopkinsEngine::COMPUT_HOPKINS(int a1) {
+	warning("TODO: COMPUT_HOPKINS");
+}
+
+int HopkinsEngine::MENU() {
+	warning("TODO: MENU");
+	return 0;
+}
+
+void HopkinsEngine::ENDEMO() {
+	warning("TODO: ENDEMO");
+}
+
+void HopkinsEngine::BOOM() {
+	warning("TODO: BOOM");
 }
 
 } // End of namespace Hopkins

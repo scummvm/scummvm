@@ -44,6 +44,7 @@ public:
 	void PLAY_ANM_SOUND(int soundNumber);
 	void WSOUND(int soundNumber);
 	void VOICE_MIX(int a1, int a2);
+	void DEL_SAMPLE(int soundNumber);
 };
 
 } // End of namespace Hopkins

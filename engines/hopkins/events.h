@@ -59,8 +59,10 @@ public:
 	void souris_max();
 	int XMOUSE();
 	int YMOUSE();
-	void hideCursor();
-	void showCursor();
+	bool BMOUSE();
+	void MOUSE_ON();
+	void MOUSE_OFF();
+	void CHANGE_MOUSE(int id);
 	void VBL();
 
 	void CONTROLE_MES();

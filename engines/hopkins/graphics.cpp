@@ -965,6 +965,10 @@ void GraphicsManager::VISU_ALL() {
 	warning("TODO: VISU_ALL");
 }
 
+void GraphicsManager::RESET_SEGMENT_VESA() {
+	warning("TODO: RESET_SEGMENT_VESA");
+}
+
 /*------------------------------------------------------------------------*/
 
 byte *ObjectManager::CHANGE_OBJET(int objIndex) {

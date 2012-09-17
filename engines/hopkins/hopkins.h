@@ -80,6 +80,19 @@ private:
 	 * Run the introduction sequence
 	 */
 	void INTRORUN();
+
+	void PASS();
+	void REST_SYSTEM();
+	void PLAN_BETA();
+	void PERSONAGE(const Common::String &s1, const Common::String &s2, const Common::String &s3,
+			const Common::String &s4, int v);
+	void PERSONAGE2(const Common::String &s1, const Common::String &s2, const Common::String &s3,
+			const Common::String &s4, int v);
+	void PUBQUIT();
+	void COMPUT_HOPKINS(int a1);
+	int MENU();
+	void ENDEMO();
+	void BOOM();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

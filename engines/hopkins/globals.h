@@ -213,6 +213,7 @@ public:
 	byte *BufLig;
 	byte *Bufferdecor;
 	byte *ADR_FICHIER_OBJ;
+	byte *PERSO;
 	bool redraw;
 	int OBJL, OBJH;
 	int Nouv_objet;
@@ -221,6 +222,20 @@ public:
 	uint32 CAT_TAILLE;
 	int iRegul;
 	bool BPP_NOAFF;
+	int SORTIE;
+	int PLANX, PLANY;
+	int PASSWORD;
+	int NOSPRECRAN;
+	int ECRAN;
+	int OLD_ECRAN;
+	int Max_Propre;
+	int Max_Propre_Gen;
+	int Max_Ligne_Long;
+	int Max_Perso_Y;
+	bool DESACTIVE_INVENT;
+	bool FLAG_VISIBLE;
+	bool netscape;
+	int btsouris;
 
 	Globals();
 	~Globals();

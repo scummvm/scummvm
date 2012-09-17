@@ -119,6 +119,7 @@ public:
 	void Copy_Video_Vbe16(const byte *surface);
 	void FIN_VISU();
 	void VISU_ALL();
+	void RESET_SEGMENT_VESA();
 };
 
 class ObjectManager {

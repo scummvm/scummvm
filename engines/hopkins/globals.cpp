@@ -61,6 +61,18 @@ Globals::Globals() {
 	CAT_TAILLE = 0;
 	Nouv_objet = 0;
 	iRegul = 0;
+	SORTIE = 0;
+	PLANX = PLANY = 0;
+	PERSO = 0;
+	PASSWORD = 0;
+	ECRAN = 0;
+	NOSPRECRAN = 0;
+	OLD_ECRAN = 0;
+	Max_Propre_Gen = 0;
+	Max_Ligne_Long = 0;
+	Max_Perso_Y = 0;
+	Max_Propre = 0;
+	btsouris = 0;
 
 	// Initialise pointers
 	ICONE = NULL;
@@ -86,6 +98,7 @@ Globals::Globals() {
 	Bufferdecor = NULL;
 	ADR_FICHIER_OBJ = NULL;
 	police = NULL;
+	PERSO = NULL;
 
 	// Reset flags
 	MUSICOFF = false;
@@ -102,6 +115,9 @@ Globals::Globals() {
 	GESTE_FLAG = false;
 	redraw = false;
 	BPP_NOAFF = false;
+	DESACTIVE_INVENT = false;
+	FLAG_VISIBLE = false;
+	netscape = false;
 }
 
 Globals::~Globals() {
@@ -123,6 +139,7 @@ Globals::~Globals() {
 	free(cache_souris);
 	free(Bufferdecor);
 	free(ADR_FICHIER_OBJ);
+	free(PERSO);
 }
 
 void Globals::setConfig() {
