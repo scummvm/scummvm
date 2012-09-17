@@ -348,7 +348,7 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	// The width used here is the surface-width, and not the video-width
 	// to allow for odd-sized videos.
 	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
-	Graphics::convertYUV420ToRGB(&_surface, _curPlanes[0], _curPlanes[1], _curPlanes[2],
+	YUVToRGBMan.convert420(&_surface, _curPlanes[0], _curPlanes[1], _curPlanes[2],
 			_surfaceWidth, _surfaceHeight, _surfaceWidth, _surfaceWidth >> 1);
 
 	// And swap the planes with the reference planes

@@ -256,7 +256,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 		_surface->h = _height;
 	}
 
-	convertYUV410ToRGB(_surface, current[0], current[1], current[2], yWidth, yHeight, yWidth, uvWidth);
+	YUVToRGBMan.convert410(_surface, current[0], current[1], current[2], yWidth, yHeight, yWidth, uvWidth);
 
 	// Store the current surfaces for later and free the old ones
 	for (int i = 0; i < 3; i++) {
