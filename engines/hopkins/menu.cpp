@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/events.h"
 #include "hopkins/menu.h"
 #include "hopkins/files.h"
 #include "hopkins/hopkins.h"
@@ -36,8 +37,7 @@ void MenuManager::setParent(HopkinsEngine *vm) {
 }
 
 int MenuManager::MENU() {
-	signed int v0;
-	byte *v1; 
+	byte *v1 = NULL; 
 	signed int v2;
 	int v3; 
 	int v4; 
@@ -50,7 +50,7 @@ int MenuManager::MENU() {
 	signed int v12;
 
 	v6 = 0;
-	for (;;) {
+	while (!g_system->getEventManager()->shouldQuit()) {
 		_vm->_globals.FORET = 0;
 		_vm->_eventsManager.CASSE = 0;
 		_vm->_globals.DESACTIVE_INVENT = 1;
@@ -96,6 +96,9 @@ int MenuManager::MENU() {
 				v12 = 0;
 
 				do {
+					if (g_system->getEventManager()->shouldQuit())
+						return -1;
+
 					v2 = 0;
 					v3 = _vm->_eventsManager.XMOUSE();
 					v4 = _vm->_eventsManager.YMOUSE();
@@ -209,6 +212,13 @@ int MenuManager::MENU() {
 			_vm->_eventsManager.delay(200);
 			_vm->INTRORUN();
 			continue;
+		}
+
+		if ( v2 == 5 ) {
+			AFFICHE_SPEED(v1, 230, 386, 14);
+			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.delay(200);
+			v6 = -1;
 		}
 		break;
 	}

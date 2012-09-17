@@ -38,6 +38,8 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 		_gameDescription(gameDesc), _randomSource("Hopkins"), _animationManager() {
 	g_vm = this;
 	_animationManager.setParent(this);
+	_menuManager.setParent(this);
+	_objectsManager.setParent(this);
 	_soundManager.setParent(this);
 }
 
@@ -104,7 +106,8 @@ LABEL_13:
 	if (!GLOBALS.SORTIE) {
 		GLOBALS.SORTIE = _menuManager.MENU();
 		if (GLOBALS.SORTIE == -1) {
-			PUBQUIT();
+			if (!g_system->getEventManager()->shouldQuit())
+				PUBQUIT();
 			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
 			REST_SYSTEM();
 		}
@@ -118,6 +121,9 @@ LABEL_13:
 						for (;;) {
 							for (;;) {
 								for (;;) {
+									if (g_system->getEventManager()->shouldQuit())
+										return Common::kNoError;
+
 									if (GLOBALS.SORTIE == 300)
 										goto LABEL_13;
 									if (GLOBALS.SORTIE == 18)
@@ -868,7 +874,7 @@ void HopkinsEngine::PUBQUIT() {
 		
 		if (_eventsManager.BMOUSE() == 1)
 			mouseClicked = true;
-	} while (!mouseClicked && g_system->getEventManager()->shouldQuit());
+	} while (!mouseClicked && !g_system->getEventManager()->shouldQuit());
   
 	if ((unsigned int)(xp - 167) <= 302 && (unsigned int)(yp - 47) <= 387) {
 		warning("Try to Connect...");

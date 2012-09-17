@@ -31,6 +31,10 @@
 
 namespace Hopkins {
 
+void ObjectsManager::setParent(HopkinsEngine *vm) {
+	_vm = vm;
+}
+
 byte *ObjectsManager::CHANGE_OBJET(int objIndex) {
 	byte *result = ObjectsManager::CAPTURE_OBJET(objIndex, 1);
 	GLOBALS.Bufferobjet = result;

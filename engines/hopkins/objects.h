@@ -29,8 +29,14 @@
 
 namespace Hopkins {
 
+class HopkinsEngine;
+
 class ObjectsManager {
+private:
+	HopkinsEngine *_vm;
 public:
+	void setParent(HopkinsEngine *vm);
+
 	byte *CHANGE_OBJET(int objIndex);
 	byte *CAPTURE_OBJET(int objIndex, int mode);
 
