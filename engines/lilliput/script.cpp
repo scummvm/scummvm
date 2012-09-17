@@ -1230,9 +1230,9 @@ void LilliputScript::listAllTexts() {
 		int variantCount = 0;
 		while (_vm->_packedStrings[index + variantCount] == 0x5B)
 			++variantCount ;
-		int it = 0;
-	
-		/*if (variantCount != 0) {
+		/*
+		int it = 0;	
+		if (variantCount != 0) {
 			for (int j = 0; j < variantCount; j++) {
 				decodePackedText(&_vm->_packedStrings[index + variantCount + it]);
 				warning("Text 0x%x variant %d : %s", i, j, _vm->_displayStringBuf);
