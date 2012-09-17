@@ -35,6 +35,8 @@
 #include "hopkins/events.h"
 #include "hopkins/globals.h"
 #include "hopkins/graphics.h"
+#include "hopkins/menu.h"
+#include "hopkins/objects.h"
 #include "hopkins/sound.h"
 
 /**
@@ -76,11 +78,6 @@ private:
 
 	void INIT_SYSTEM();
 
-	/**
-	 * Run the introduction sequence
-	 */
-	void INTRORUN();
-
 	void PASS();
 	void REST_SYSTEM();
 	void PLAN_BETA();
@@ -90,7 +87,6 @@ private:
 			const Common::String &s4, int v);
 	void PUBQUIT();
 	void COMPUT_HOPKINS(int a1);
-	int MENU();
 	void ENDEMO();
 	void BOOM();
 protected:
@@ -99,10 +95,12 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 
 public:
-	Globals _globals;
-	EventsManager _eventsManager;
-	GraphicsManager _graphicsManager;
 	AnimationManager _animationManager;
+	EventsManager _eventsManager;
+	Globals _globals;
+	GraphicsManager _graphicsManager;
+	MenuManager _menuManager;
+	ObjectsManager _objectsManager;
 	SoundManager _soundManager;
 public:
 	HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc);
@@ -115,6 +113,11 @@ public:
 	bool getIsDemo() const;
 
 	int getRandomNumber(int maxNumber);
+
+	/**
+	 * Run the introduction sequence
+	 */
+	void INTRORUN();
 };
 
 // Global reference to the HopkinsEngine object

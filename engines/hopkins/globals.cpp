@@ -704,4 +704,9 @@ byte *Globals::dos_free2(byte *p) {
 	return PTRNUL;
 }
 
+byte *Globals::LIBERE_FICHIER(byte *p) {
+	dos_free2(p);
+	return PTRNUL;
+}
+
 } // End of namespace Hopkins

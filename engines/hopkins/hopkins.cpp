@@ -58,8 +58,8 @@ Common::Error HopkinsEngine::run() {
 	_soundManager.WSOUND_INIT();
 
 	GLOBALS.CHARGE_OBJET();
-	ObjectManager::CHANGE_OBJET(14);
-	ObjectManager::AJOUTE_OBJET(14);
+	_objectsManager.CHANGE_OBJET(14);
+	_objectsManager.AJOUTE_OBJET(14);
 
 	GLOBALS.HELICO = 0;
 	_eventsManager.MOUSE_OFF();
@@ -102,7 +102,7 @@ LABEL_13:
 		GLOBALS.SORTIE = 0;
 
 	if (!GLOBALS.SORTIE) {
-		GLOBALS.SORTIE = MENU();
+		GLOBALS.SORTIE = _menuManager.MENU();
 		if (GLOBALS.SORTIE == -1) {
 			PUBQUIT();
 			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
@@ -885,11 +885,6 @@ void HopkinsEngine::PUBQUIT() {
 
 void HopkinsEngine::COMPUT_HOPKINS(int a1) {
 	warning("TODO: COMPUT_HOPKINS");
-}
-
-int HopkinsEngine::MENU() {
-	warning("TODO: MENU");
-	return 0;
 }
 
 void HopkinsEngine::ENDEMO() {

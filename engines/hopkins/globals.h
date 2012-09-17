@@ -248,6 +248,7 @@ public:
 	void CHARGE_OBJET();
 	byte *dos_malloc2(int count);
 	byte *dos_free2(byte *p);
+	byte *LIBERE_FICHIER(byte *p);
 };
 
 #define PTRNUL (byte *)NULL

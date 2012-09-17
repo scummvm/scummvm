@@ -122,21 +122,6 @@ public:
 	void RESET_SEGMENT_VESA();
 };
 
-class ObjectManager {
-public:
-	static byte *CHANGE_OBJET(int objIndex);
-	static byte *CAPTURE_OBJET(int objIndex, int mode);
-
-	static int Get_Largeur(const byte *objectData, int objIndex);
-	static int Get_Hauteur(const byte *objectData, int objIndex);
-	static int sprite_alone(const byte *objectData, byte *sprite, int objIndex);
-	static byte *DEL_FICHIER_OBJ();
-
-	static byte *CHARGE_SPRITE(const Common::String &file);
-	static int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
-	static int AJOUTE_OBJET(int objIndex);
-};
-
 } // End of namespace Hopkins
 
 #endif /* HOPKINS_GRAPHICS_H */

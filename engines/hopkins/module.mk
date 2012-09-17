@@ -8,6 +8,8 @@ MODULE_OBJS := \
 	graphics.o \
 	globals.o \
 	hopkins.o \
+	menu.o \
+	objects.o \
 	sound.o
 
 # This module can be built as a plugin
