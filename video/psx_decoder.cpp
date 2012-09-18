@@ -483,7 +483,7 @@ void PSXStreamDecoder::PSXVideoTrack::decodeFrame(Common::SeekableReadStream *fr
 			decodeMacroBlock(&bits, mbX, mbY, scale, version);
 
 	// Output data onto the frame
-	YUVToRGBMan.convert420(_surface, _yBuffer, _cbBuffer, _crBuffer, _surface->w, _surface->h, _macroBlocksW * 16, _macroBlocksW * 8);
+	YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleFull, _yBuffer, _cbBuffer, _crBuffer, _surface->w, _surface->h, _macroBlocksW * 16, _macroBlocksW * 8);
 
 	_curFrame++;
 

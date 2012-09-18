@@ -81,7 +81,7 @@ const Surface *JPEGDecoder::getSurface() const {
 	const Graphics::Surface *uComponent = getComponent(2);
 	const Graphics::Surface *vComponent = getComponent(3);
 
-	YUVToRGBMan.convert444(_rgbSurface, (byte *)yComponent->pixels, (byte *)uComponent->pixels, (byte *)vComponent->pixels, yComponent->w, yComponent->h, yComponent->pitch, uComponent->pitch);
+	YUVToRGBMan.convert444(_rgbSurface, Graphics::YUVToRGBManager::kScaleFull, (byte *)yComponent->pixels, (byte *)uComponent->pixels, (byte *)vComponent->pixels, yComponent->w, yComponent->h, yComponent->pitch, uComponent->pitch);
 
 	return _rgbSurface;
 }

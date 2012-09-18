@@ -94,40 +94,67 @@ namespace Graphics {
 
 class YUVToRGBLookup {
 public:
-	YUVToRGBLookup(Graphics::PixelFormat format);
-	~YUVToRGBLookup();
+	YUVToRGBLookup(Graphics::PixelFormat format, YUVToRGBManager::LuminanceScale scale);
 
-	uint32 *_rgbToPix;
+	Graphics::PixelFormat getFormat() const { return _format; }
+	YUVToRGBManager::LuminanceScale getScale() const { return _scale; }
+	const uint32 *getRGBToPix() const { return _rgbToPix; }
+
+private:
+	Graphics::PixelFormat _format;
+	YUVToRGBManager::LuminanceScale _scale;
+	uint32 _rgbToPix[3 * 768]; // 9216 bytes
 };
 
-YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format) {
-	_rgbToPix = new uint32[3 * 768]; // 9216 bytes
+YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format, YUVToRGBManager::LuminanceScale scale) {
+	_format = format;
+	_scale = scale;
 
 	uint32 *r_2_pix_alloc = &_rgbToPix[0 * 768];
 	uint32 *g_2_pix_alloc = &_rgbToPix[1 * 768];
 	uint32 *b_2_pix_alloc = &_rgbToPix[2 * 768];
 
-	// Set up entries 0-255 in rgb-to-pixel value tables.
-	for (int i = 0; i < 256; i++) {
-		r_2_pix_alloc[i + 256] = format.RGBToColor(i, 0, 0);
-		g_2_pix_alloc[i + 256] = format.RGBToColor(0, i, 0);
-		b_2_pix_alloc[i + 256] = format.RGBToColor(0, 0, i);
-	}
+	if (scale == YUVToRGBManager::kScaleFull) {
+		// Set up entries 0-255 in rgb-to-pixel value tables.
+		for (int i = 0; i < 256; i++) {
+			r_2_pix_alloc[i + 256] = format.RGBToColor(i, 0, 0);
+			g_2_pix_alloc[i + 256] = format.RGBToColor(0, i, 0);
+			b_2_pix_alloc[i + 256] = format.RGBToColor(0, 0, i);
+		}
 
-	// Spread out the values we have to the rest of the array so that we do
-	// not need to check for overflow.
-	for (int i = 0; i < 256; i++) {
-		r_2_pix_alloc[i] = r_2_pix_alloc[256];
-		r_2_pix_alloc[i + 512] = r_2_pix_alloc[511];
-		g_2_pix_alloc[i] = g_2_pix_alloc[256];
-		g_2_pix_alloc[i + 512] = g_2_pix_alloc[511];
-		b_2_pix_alloc[i] = b_2_pix_alloc[256];
-		b_2_pix_alloc[i + 512] = b_2_pix_alloc[511];
-	}
-}
+		// Spread out the values we have to the rest of the array so that we do
+		// not need to check for overflow.
+		for (int i = 0; i < 256; i++) {
+			r_2_pix_alloc[i] = r_2_pix_alloc[256];
+			r_2_pix_alloc[i + 512] = r_2_pix_alloc[511];
+			g_2_pix_alloc[i] = g_2_pix_alloc[256];
+			g_2_pix_alloc[i + 512] = g_2_pix_alloc[511];
+			b_2_pix_alloc[i] = b_2_pix_alloc[256];
+			b_2_pix_alloc[i + 512] = b_2_pix_alloc[511];
+		}
+	} else {
+		// Set up entries 16-235 in rgb-to-pixel value tables
+		for (int i = 16; i < 236; i++) {
+			int scaledValue = (i - 16) * 255 / 219;
+			r_2_pix_alloc[i + 256] = format.RGBToColor(scaledValue, 0, 0);
+			g_2_pix_alloc[i + 256] = format.RGBToColor(0, scaledValue, 0);
+			b_2_pix_alloc[i + 256] = format.RGBToColor(0, 0, scaledValue);
+		}
 
-YUVToRGBLookup::~YUVToRGBLookup() {
-	delete[] _rgbToPix;
+		// Spread out the values we have to the rest of the array so that we do
+		// not need to check for overflow. We have to do it here in two steps.
+		for (int i = 0; i < 256 + 16; i++) {
+			r_2_pix_alloc[i] = r_2_pix_alloc[256 + 16];
+			g_2_pix_alloc[i] = g_2_pix_alloc[256 + 16];
+			b_2_pix_alloc[i] = b_2_pix_alloc[256 + 16];
+		}
+
+		for (int i = 256 + 236; i < 768; i++) {
+			r_2_pix_alloc[i] = r_2_pix_alloc[256 + 236 - 1];
+			g_2_pix_alloc[i] = g_2_pix_alloc[256 + 236 - 1];
+			b_2_pix_alloc[i] = b_2_pix_alloc[256 + 236 - 1];
+		}
+	}
 }
 
 YUVToRGBManager::YUVToRGBManager() {
@@ -156,13 +183,12 @@ YUVToRGBManager::~YUVToRGBManager() {
 	delete _lookup;
 }
 
-const YUVToRGBLookup *YUVToRGBManager::getLookup(Graphics::PixelFormat format) {
-	if (_lastFormat == format)
+const YUVToRGBLookup *YUVToRGBManager::getLookup(Graphics::PixelFormat format, YUVToRGBManager::LuminanceScale scale) {
+	if (_lookup && _lookup->getFormat() == format && _lookup->getScale() == scale)
 		return _lookup;
 
 	delete _lookup;
-	_lookup = new YUVToRGBLookup(format);
-	_lastFormat = format;
+	_lookup = new YUVToRGBLookup(format, scale);
 	return _lookup;
 }
 
@@ -177,7 +203,7 @@ void convertYUV444ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->_rgbToPix;
+	const uint32 *rgbToPix = lookup->getRGBToPix();
 
 	for (int h = 0; h < yHeight; h++) {
 		for (int w = 0; w < yWidth; w++) {
@@ -201,13 +227,13 @@ void convertYUV444ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	}
 }
 
-void YUVToRGBManager::convert444(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+void YUVToRGBManager::convert444(Graphics::Surface *dst, YUVToRGBManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
 	assert(dst && dst->pixels);
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 	assert(ySrc && uSrc && vSrc);
 
-	const YUVToRGBLookup *lookup = getLookup(dst->format);
+	const YUVToRGBLookup *lookup = getLookup(dst->format, scale);
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)
@@ -226,7 +252,7 @@ void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->_rgbToPix;
+	const uint32 *rgbToPix = lookup->getRGBToPix();
 
 	for (int h = 0; h < halfHeight; h++) {
 		for (int w = 0; w < halfWidth; w++) {
@@ -255,7 +281,7 @@ void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	}
 }
 
-void YUVToRGBManager::convert420(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+void YUVToRGBManager::convert420(Graphics::Surface *dst, YUVToRGBManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
 	assert(dst && dst->pixels);
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
@@ -263,7 +289,7 @@ void YUVToRGBManager::convert420(Graphics::Surface *dst, const byte *ySrc, const
 	assert((yWidth & 1) == 0);
 	assert((yHeight & 1) == 0);
 
-	const YUVToRGBLookup *lookup = getLookup(dst->format);
+	const YUVToRGBLookup *lookup = getLookup(dst->format, scale);
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)
@@ -303,7 +329,7 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->_rgbToPix;
+	const uint32 *rgbToPix = lookup->getRGBToPix();
 
 	int quarterWidth = yWidth >> 2;
 
@@ -340,7 +366,7 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 #undef DO_INTERPOLATION
 #undef DO_YUV410_PIXEL
 
-void YUVToRGBManager::convert410(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+void YUVToRGBManager::convert410(Graphics::Surface *dst, YUVToRGBManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
 	assert(dst && dst->pixels);
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
@@ -348,7 +374,7 @@ void YUVToRGBManager::convert410(Graphics::Surface *dst, const byte *ySrc, const
 	assert((yWidth & 3) == 0);
 	assert((yHeight & 3) == 0);
 
-	const YUVToRGBLookup *lookup = getLookup(dst->format);
+	const YUVToRGBLookup *lookup = getLookup(dst->format, scale);
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)

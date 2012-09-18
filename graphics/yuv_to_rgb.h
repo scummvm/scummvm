@@ -41,10 +41,17 @@ class YUVToRGBLookup;
 
 class YUVToRGBManager : public Common::Singleton<YUVToRGBManager> {
 public:
+	/** The scale of the luminance values */
+	enum LuminanceScale {
+		kScaleFull, /** Luminance values range from [0, 255] */
+		kScaleITU   /** Luminance values range from [16, 235], the range from ITU-R BT.601 */
+	};
+
 	/**
 	 * Convert a YUV444 image to an RGB surface
 	 *
 	 * @param dst     the destination surface
+	 * @param scale   the scale of the luminance values
 	 * @param ySrc    the source of the y component
 	 * @param uSrc    the source of the u component
 	 * @param vSrc    the source of the v component
@@ -53,12 +60,13 @@ public:
 	 * @param yPitch  the pitch of the y surface
 	 * @param uvPitch the pitch of the u and v surfaces
 	 */
-	void convert444(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+	void convert444(Graphics::Surface *dst, LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
 
 	/**
 	 * Convert a YUV420 image to an RGB surface
 	 *
 	 * @param dst     the destination surface
+	 * @param scale   the scale of the luminance values
 	 * @param ySrc    the source of the y component
 	 * @param uSrc    the source of the u component
 	 * @param vSrc    the source of the v component
@@ -67,7 +75,7 @@ public:
 	 * @param yPitch  the pitch of the y surface
 	 * @param uvPitch the pitch of the u and v surfaces
 	 */
-	void convert420(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+	void convert420(Graphics::Surface *dst, LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
 
 	/**
 	 * Convert a YUV410 image to an RGB surface	
@@ -78,6 +86,7 @@ public:
 	 * image (filled with 0x80). This is required in order to speed up this function.
 	 *
 	 * @param dst     the destination surface
+	 * @param scale   the scale of the luminance values
 	 * @param ySrc    the source of the y component
 	 * @param uSrc    the source of the u component
 	 * @param vSrc    the source of the v component
@@ -86,16 +95,15 @@ public:
 	 * @param yPitch  the pitch of the y surface
 	 * @param uvPitch the pitch of the u and v surfaces
 	 */
-	void convert410(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+	void convert410(Graphics::Surface *dst, LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	YUVToRGBManager();
 	~YUVToRGBManager();
 
-	const YUVToRGBLookup *getLookup(Graphics::PixelFormat format);
+	const YUVToRGBLookup *getLookup(Graphics::PixelFormat format, LuminanceScale scale);
 
-	Graphics::PixelFormat _lastFormat;
 	YUVToRGBLookup *_lookup;
 	int16 _colorTab[4 * 256]; // 2048 bytes
 };
