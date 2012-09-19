@@ -78,6 +78,7 @@ Player::Player() :
 	_speed(128),
 	_isMT32(false),
 	_isMIDI(false),
+	_supportsPercussion(false),
 	_se(0),
 	_vol_chan(0) {
 }
@@ -103,6 +104,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 
 	_isMT32 = _se->isMT32(sound);
 	_isMIDI = _se->isMIDI(sound);
+	_supportsPercussion = _se->supportsPercussion(sound);
 
 	_parts = NULL;
 	_active = true;
@@ -1011,6 +1013,7 @@ void Player::fixAfterLoad() {
 			_parser->jumpToTick(_music_tick); // start_seq_sound already switched tracks
 		_isMT32 = _se->isMT32(_id);
 		_isMIDI = _se->isMIDI(_id);
+		_supportsPercussion = _se->supportsPercussion(_id);
 	}
 }
 

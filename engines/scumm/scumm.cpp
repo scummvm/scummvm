@@ -73,6 +73,7 @@
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 #include "scumm/imuse/pcspk.h"
+#include "scumm/imuse/mac_m68k.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -1841,7 +1842,11 @@ void ScummEngine::setupMusic(int midi) {
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
-		if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
+		if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY2) {
+			adlibMidiDriver = new MacM68kDriver(_mixer);
+			// The Mac driver is never MT-32.
+			_native_mt32 = false;
+		} else if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
 			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		} else if (_sound->_musicType == MDT_PCSPK) {
