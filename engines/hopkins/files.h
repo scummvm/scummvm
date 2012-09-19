@@ -37,6 +37,7 @@ public:
 	static bool bsave(const Common::String &file, const void *buf, size_t n);
 	static void Chage_Inifile(Common::StringMap &iniParams);
 	static byte *CHARGE_FICHIER(const Common::String &file);
+	static void DMESS();
 	static void DMESS1();
 	static int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
 	static void F_Censure();

@@ -416,8 +416,8 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 		v8 = 0;
 		do {
 			ptr = v4;
-			width = Get_Largeur(v4, v8);
-			height = Get_Hauteur(ptr, v8);
+			width = _vm->_objectsManager.Get_Largeur(v4, v8);
+			height = _vm->_objectsManager.Get_Hauteur(ptr, v8);
 			v4 = ptr;
 			if (!width && !height)
 				v7 = 1;
@@ -449,9 +449,9 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 						v20 = READ_LE_UINT16(v13 + 6);
 						v13 += 8;
 
-						set_offsetxy(GLOBALS.Bank[idx].data, v14, v16, v17, 0);
+						_vm->_objectsManager.set_offsetxy(GLOBALS.Bank[idx].data, v14, v16, v17, 0);
 						if (GLOBALS.Bank[idx].fileHeader == 2)
-							set_offsetxy(GLOBALS.Bank[idx].data, v14, v21, v20, 1);
+							_vm->_objectsManager.set_offsetxy(GLOBALS.Bank[idx].data, v14, v21, v20, 1);
 					}
 				}
 			
@@ -471,24 +471,6 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	}
 
 	return result;
-}
-
-void AnimationManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize) {
-	byte *startP = data + 3;
-	for (int i = idx; i; --i)
-		startP += READ_LE_UINT32(startP) + 16;
-	
-	byte *rectP = startP + 8;
-	if (isSize == 1) {
-		// Set size
-		byte *pointP = rectP + 4;
-		WRITE_LE_UINT16(pointP, xp);
-		WRITE_LE_UINT16(pointP + 2, yp);
-	} else {
-		// Set position
-		WRITE_LE_UINT16(rectP, xp);
-		WRITE_LE_UINT16(rectP + 2, yp);
-	}
 }
 
 void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
@@ -596,22 +578,6 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
 			doneFlag = 1;
 		++v21;
 	} while (v21 <= nbytes && !doneFlag);
-}
-
-int AnimationManager::Get_Largeur(const byte *data, int idx) {
-	const byte *rectP = data + 3;
-	for (int i = idx; i; --i)
-		rectP += READ_LE_UINT32(rectP) + 16;
-	
-	return (int16)READ_LE_UINT16(rectP + 4);
-}
-
-int AnimationManager::Get_Hauteur(const byte *data, int idx) {
-	const byte *rectP = data + 3;
-	for (int i = idx; i; --i)
-		rectP += READ_LE_UINT32(rectP) + 16;
-	
-	return (int16)READ_LE_UINT16(rectP + 6);
 }
 
 } // End of namespace Hopkins

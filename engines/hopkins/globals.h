@@ -118,6 +118,10 @@ struct ObjetWItem {
 	byte field7;
 };
 
+struct BlocItem {
+	uint16 field0;
+};
+
 /**
  * Engine Globals
  */
@@ -156,10 +160,6 @@ public:
 	bool MUSICOFF;
 	bool VOICEOFF;
 	bool CENSURE;
-	int min_x;
-	int min_y;
-	int max_x;
-	int max_y;
 	int lItCounter;
 	int lOldItCounter;
 	int g_old_anim;
@@ -184,6 +184,7 @@ public:
 	BlAnimItem BL_ANIM[30];
 	VBobItem VBob[35];
 	ObjetWItem ObjetW[300];
+	BlocItem BLOC[250];
 	byte *Winventaire;
 	byte *texte_tmp;
 	int texte_long;
@@ -235,7 +236,8 @@ public:
 	bool DESACTIVE_INVENT;
 	bool FLAG_VISIBLE;
 	bool netscape;
-	int btsouris;
+	bool NOMARCHE;
+	int NBBLOC;
 
 	Globals();
 	~Globals();

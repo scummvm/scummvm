@@ -20,38 +20,27 @@
  *
  */
 
-#ifndef HOPKINS_ANIM_H
-#define HOPKINS_ANIM_H
+#ifndef HOPKINS_FONT_H
+#define HOPKINS_FONT_H
 
 #include "common/scummsys.h"
-#include "common/endian.h"
 #include "common/str.h"
-#include "graphics/surface.h"
 
 namespace Hopkins {
 
 class HopkinsEngine;
 
-class AnimationManager {
-private:
-	int CHARGE_BANK_SPRITE1(int idx, const Common::String &filename);
+class FontManager {
 public:
 	HopkinsEngine *_vm;
-	bool CLS_ANM;
-	bool NO_SEQ;
-public:
-	AnimationManager();
-	void setParent(HopkinsEngine *vm) { _vm = vm; }
 
-	void PLAY_ANM(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
-	bool REDRAW_ANIM();
-	void BOBANIM_ON(int idx);
-	void BOBANIM_OFF(int idx);
-	void CHARGE_ANIM(const Common::String &animName);
-	void CLEAR_ANIM();
-	void RECHERCHE_ANIM(const byte *data, int idx, int nbytes);
+	
+public:
+	void setParent(HopkinsEngine *vm);
+
+	void TEXTE_OFF(int idx);
 };
 
 } // End of namespace Hopkins
 
-#endif /* HOPKINS_ANIM_H */
+#endif /* HOPKINS_FONT_H */

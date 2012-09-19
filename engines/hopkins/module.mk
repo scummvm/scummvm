@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	files.o \
+	font.o \
 	graphics.o \
 	globals.o \
 	hopkins.o \

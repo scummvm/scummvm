@@ -31,27 +31,36 @@ namespace Hopkins {
 #define GAME_FRAME_RATE 50
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
+class HopkinsEngine;
+
 class EventsManager {
 private:
+	HopkinsEngine *_vm;
+
 	void pollEvents();
 	void checkForNextFrameCounter();
 public:
 	bool souris_flag;
 	bool mouse_linux;
+	int min_x, min_y;
+	int max_x, max_y;
 	int souris_sizex, souris_sizey;
 	int ofset_souris_x, ofset_souris_y;
 	int start_x, start_y;
 	int souris_x, souris_y;
 	bool CASSE;
+	int OLD_ICONE;
 	int souris_n;
 	int souris_bb;
 	int souris_b;
-	void *pointeur_souris;
+	byte *pointeur_souris;
 	uint32 lItCounter;
 	uint32 _priorFrameTime;
 	bool ESC_KEY;
+	int btsouris;
 public:
 	EventsManager();
+	void setParent(HopkinsEngine *vm);
 
 	void INSTALL_SOURIS();
 	void souris_on();

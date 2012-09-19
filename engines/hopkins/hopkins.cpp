@@ -38,6 +38,8 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 		_gameDescription(gameDesc), _randomSource("Hopkins"), _animationManager() {
 	g_vm = this;
 	_animationManager.setParent(this);
+	_eventsManager.setParent(this);
+	_fontManager.setParent(this);
 	_menuManager.setParent(this);
 	_objectsManager.setParent(this);
 	_soundManager.setParent(this);
@@ -549,11 +551,6 @@ void HopkinsEngine::INIT_SYSTEM() {
 		break;
 	}
 
-	GLOBALS.min_x = 0;
-	GLOBALS.min_y = 20;
-	GLOBALS.max_x = 1280;
-	GLOBALS.max_y = 460;
-	
 	_eventsManager.INSTALL_SOURIS();
 	_eventsManager.souris_on();
 	_eventsManager.souris_flag = false;
@@ -861,7 +858,7 @@ void HopkinsEngine::PUBQUIT() {
 	_graphicsManager.FADE_INW();
 	_eventsManager.MOUSE_ON();
 	_eventsManager.CHANGE_MOUSE(0);
-	_globals.btsouris = 0;
+	_eventsManager.btsouris = 0;
 	_eventsManager.souris_n = 0;
 	_globals.netscape = true;
 

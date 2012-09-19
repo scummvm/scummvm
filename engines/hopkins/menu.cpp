@@ -87,7 +87,7 @@ int MenuManager::MENU() {
 		v1 = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 		_vm->_eventsManager.MOUSE_ON();
 		_vm->_eventsManager.CHANGE_MOUSE(0);
-		_vm->_globals.btsouris = 0;
+		_vm->_eventsManager.btsouris = 0;
 		_vm->_eventsManager.souris_n = 0;
     
 		for (;;) {

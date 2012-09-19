@@ -95,20 +95,38 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 	return result;
 }
 
-int ObjectsManager::Get_Largeur(const byte *objectData, int objIndex) {
-	const byte *objP = objectData + 3;
-	for (int i = objIndex; i; --i)
-		objP += READ_LE_UINT32(objP) + 16;
-
-	return READ_LE_UINT16(objP + 4);
+void ObjectsManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize) {
+	byte *startP = data + 3;
+	for (int i = idx; i; --i)
+		startP += READ_LE_UINT32(startP) + 16;
+	
+	byte *rectP = startP + 8;
+	if (isSize == 1) {
+		// Set size
+		byte *pointP = rectP + 4;
+		WRITE_LE_UINT16(pointP, xp);
+		WRITE_LE_UINT16(pointP + 2, yp);
+	} else {
+		// Set position
+		WRITE_LE_UINT16(rectP, xp);
+		WRITE_LE_UINT16(rectP + 2, yp);
+	}
 }
 
-int ObjectsManager::Get_Hauteur(const byte *objectData, int objIndex) {
-	const byte *objP = objectData + 3;
-	for (int i = objIndex; i; --i)
-		objP += READ_LE_UINT32(objP) + 16;
+int ObjectsManager::Get_Largeur(const byte *objectData, int idx) {
+	const byte *rectP = objectData + 3;
+	for (int i = idx; i; --i)
+		rectP += READ_LE_UINT32(rectP) + 16;
+	
+	return (int16)READ_LE_UINT16(rectP + 4);
+}
 
-	return READ_LE_UINT16(objP + 6);
+int ObjectsManager::Get_Hauteur(const byte *objectData, int idx) {
+	const byte *rectP = objectData + 3;
+	for (int i = idx; i; --i)
+		rectP += READ_LE_UINT32(rectP) + 16;
+	
+	return (int16)READ_LE_UINT16(rectP + 6);
 }
 
 int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIndex) {

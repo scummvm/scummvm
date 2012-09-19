@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "graphics/surface.h"
 
@@ -40,8 +41,12 @@ struct RGB8 {
 	byte b;
 };
 
+class HopkinsEngine;
+
 class GraphicsManager {
 private:
+	HopkinsEngine *_vm;
+
 	void CHARGE_ECRAN(const Common::String &file);
 public:
 	int _lockCtr;
@@ -78,9 +83,12 @@ public:
 	int FADE_LINUX;
 	bool NOLOCK;
 	int no_scroll;
+	Common::Rect dstrect[50];
+	int REDRAW;
 public:
 	GraphicsManager();
 	~GraphicsManager();
+	void setParent(HopkinsEngine *vm);
 
 	void SET_MODE(int width, int height);
 	void DD_Lock();
@@ -117,9 +125,19 @@ public:
 	void Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface);
 	void Copy_Video_Vbe3(const byte *surface);
 	void Copy_Video_Vbe16(const byte *surface);
+	void Capture_Mem(byte *a1, void *a2, int a3, int a4, unsigned int a5, int a6);
+	void Sprite_Vesa(byte *a1, byte *a2, int a3, int a4, int a5);
 	void FIN_VISU();
 	void VISU_ALL();
 	void RESET_SEGMENT_VESA();
+	void Ajoute_Segment_Vesa(int a1, int a2, int a3, int a4);
+	int Magic_Number(int v);
+	void Affiche_Segment_Vesa();
+	void CopyAsm(const byte *surface);
+	void Restore_Mem(const byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6);
+	int Reel_Zoom(int a1, int a2);
+	void AFF_SPRITES();
+	void Affiche_Perfect(const byte *a1, const byte *a2, int a3, int a4, int a5, int a6, int a7, int a8);
 };
 
 } // End of namespace Hopkins

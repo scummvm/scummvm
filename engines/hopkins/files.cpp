@@ -117,7 +117,12 @@ byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
 	return data;
 }
 
+void FileManager::DMESS() {
+	// No implementation in original
+}
+
 void FileManager::DMESS1() {
+	// No implementation in original
 }
 
 int FileManager::bload_it(Common::ReadStream &stream, void *buf, size_t nbytes) {

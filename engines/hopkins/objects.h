@@ -40,12 +40,14 @@ public:
 	byte *CHANGE_OBJET(int objIndex);
 	byte *CAPTURE_OBJET(int objIndex, int mode);
 
-	int Get_Largeur(const byte *objectData, int objIndex);
-	int Get_Hauteur(const byte *objectData, int objIndex);
+	int Get_Largeur(const byte *objectData, int idx);
+	int Get_Hauteur(const byte *objectData, int idx);
 	int sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	byte *DEL_FICHIER_OBJ();
 
 	byte *CHARGE_SPRITE(const Common::String &file);
+	void set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize);
+
 	int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
 	int AJOUTE_OBJET(int objIndex);
 };

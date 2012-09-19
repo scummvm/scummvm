@@ -58,6 +58,7 @@ GraphicsManager::GraphicsManager() {
 	FADE_LINUX = 0;
 	NOLOCK = false;
 	no_scroll = 0;
+	REDRAW = false;
 
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
 	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_SIZE], 0);
@@ -68,6 +69,10 @@ GraphicsManager::GraphicsManager() {
 GraphicsManager::~GraphicsManager() {
 	GLOBALS.dos_free2(VESA_SCREEN);
 	GLOBALS.dos_free2(VESA_BUFFER);
+}
+
+void GraphicsManager::setParent(HopkinsEngine *vm) {
+	_vm = vm;
 }
 
 void GraphicsManager::SET_MODE(int width, int height) {
@@ -182,7 +187,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	if (!DOUBLE_ECRAN) {
 		souris_max();
 		SCANLINE(SCREEN_WIDTH);
-		GLOBALS.max_x = SCREEN_WIDTH;
+		_vm->_eventsManager.max_x = SCREEN_WIDTH;
 		DD_Lock();
 		Cls_Video();
 		if (Winbpp == 2) {
@@ -200,7 +205,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 		DD_Unlock();
 	} else {
 		SCANLINE(SCREEN_WIDTH * 2);
-		GLOBALS.max_x = SCREEN_WIDTH * 2;
+		_vm->_eventsManager.max_x = SCREEN_WIDTH * 2;
 		DD_Lock();
 		Cls_Video();
 		DD_Unlock();
@@ -957,6 +962,14 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
 	}
 }
 
+void GraphicsManager::Capture_Mem(byte *a1, void *a2, int a3, int a4, unsigned int a5, int a6) {
+	warning("TODO: Capture_Mem");
+}
+
+void GraphicsManager::Sprite_Vesa(byte *a1, byte *a2, int a3, int a4, int a5) {
+	warning("TODO: Sprite_Vesa");
+}
+
 void GraphicsManager::FIN_VISU() {
 	warning("TODO: FIN_VISU");
 }
@@ -967,6 +980,48 @@ void GraphicsManager::VISU_ALL() {
 
 void GraphicsManager::RESET_SEGMENT_VESA() {
 	warning("TODO: RESET_SEGMENT_VESA");
+}
+
+void GraphicsManager::Ajoute_Segment_Vesa(int a1, int a2, int a3, int a4) {
+	warning("TODO: Ajoute_Segment_Vesa");
+}
+
+int GraphicsManager::Magic_Number(signed int v) {
+	int result = v;
+
+	if (!v)
+		result = 4;
+	if (result & 1)
+		++result;
+	if (result & 2)
+		result += 2;
+  
+	return result;
+}
+
+void GraphicsManager::Affiche_Segment_Vesa() {
+	warning("TODO: Affiche_Segment_Vesa");
+}
+
+void GraphicsManager::CopyAsm(const byte *surface) {
+	warning("TODO: CopyAsm");
+}
+
+void GraphicsManager::Restore_Mem(const byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6) {
+	warning("TODO: Restore_Mem");
+}
+
+int GraphicsManager::Reel_Zoom(int a1, int a2) {
+	warning("TODO: Reel_Zoom");
+	return 0;
+}
+
+void GraphicsManager::AFF_SPRITES() {
+	warning("TODO: AFF_SPRITES");
+}
+
+void GraphicsManager::Affiche_Perfect(const byte *a1, const byte *a2, int a3, int a4, int a5, int a6, int a7, int a8) {
+	warning("TODO: Affice_Perfect");
 }
 
 } // End of namespace Hopkins

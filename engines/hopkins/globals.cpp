@@ -39,8 +39,6 @@ Globals::Globals() {
 	VOICEVOL = 6;
 	XSETMODE = 0;
 	XZOOM = 0;
-	min_x = min_y = 0;
-	max_x = max_y = 0;
 	lItCounter = 0;
 	lOldItCounter = 0;
 	g_old_anim = 0;
@@ -72,7 +70,7 @@ Globals::Globals() {
 	Max_Ligne_Long = 0;
 	Max_Perso_Y = 0;
 	Max_Propre = 0;
-	btsouris = 0;
+	NBBLOC = 0;
 
 	// Initialise pointers
 	ICONE = NULL;
@@ -100,6 +98,8 @@ Globals::Globals() {
 	police = NULL;
 	PERSO = NULL;
 
+	
+
 	// Reset flags
 	MUSICOFF = false;
 	SOUNDOFF = false;
@@ -118,6 +118,7 @@ Globals::Globals() {
 	DESACTIVE_INVENT = false;
 	FLAG_VISIBLE = false;
 	netscape = false;
+	NOMARCHE = false;
 }
 
 Globals::~Globals() {
