@@ -74,7 +74,8 @@ private:
 
 	enum {
 		kDefaultInstrument = 0x3E7,
-		kProgramChangeBase = 0x3E8
+		kProgramChangeBase = 0x3E8,
+		kSysExBase         = 0x7D0
 	};
 
 	Instrument getInstrument(int idx) const;

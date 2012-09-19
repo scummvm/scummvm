@@ -111,6 +111,7 @@ void MacM68kDriver::send(uint32 d) {
 }
 
 void MacM68kDriver::sysEx_customInstrument(byte channel, uint32 type, const byte *instr) {
+	assert(false);
 }
 
 MidiChannel *MacM68kDriver::allocateChannel() {
@@ -416,6 +417,10 @@ void MacM68kDriver::MidiChannel_MacM68k::priority(byte value) {
 }
 
 void MacM68kDriver::MidiChannel_MacM68k::sysEx_customInstrument(uint32 type, const byte *instr) {
+	assert(instr);
+	if (type == 'MAC ') {
+		_instrument = _owner->getInstrument(*instr + kSysExBase);
+	}
 }
 
 void MacM68kDriver::MidiChannel_MacM68k::init(MacM68kDriver *owner, byte channel) {
