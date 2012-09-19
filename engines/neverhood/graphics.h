@@ -137,6 +137,22 @@ protected:
 	uint16 _charHeight;
 };
 
+class TextSurface : public BaseSurface {
+public:
+	TextSurface(NeverhoodEngine *vm, uint32 fileHash, uint16 numRows, uint charCount,
+		byte firstChar, uint16 charWidth, uint16 charHeight);
+	void drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr);
+	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen);
+	int16 getStringWidth(const byte *string, int stringLen);
+protected:
+	uint16 _numRows;
+	byte _firstChar;
+	uint16 _charWidth;
+	uint16 _charHeight;
+	uint32 _fileHash;
+	uint _charCount;
+};
+
 // Misc
 
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels);

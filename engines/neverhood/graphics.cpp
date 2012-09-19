@@ -168,6 +168,40 @@ void FontSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const b
 	}	
 }
 
+// TextSurface
+
+TextSurface::TextSurface(NeverhoodEngine *vm, uint32 fileHash, uint16 numRows, uint charCount,
+		byte firstChar, uint16 charWidth, uint16 charHeight)
+		: BaseSurface(vm, 0, charWidth * charCount, charHeight * numRows),
+		_numRows(numRows), _firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight),
+		_fileHash(fileHash), _charCount(charCount) {
+		
+		SpriteResource spriteResource(_vm);
+		spriteResource.load2(_fileHash);
+		drawSpriteResourceEx(spriteResource, false, false, 0, 0);
+}
+
+void TextSurface::drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr) {
+	NDrawRect sourceRect;
+	chr -= _firstChar;
+	sourceRect.x = (chr % 16) * _charWidth;
+	sourceRect.y = (chr / 16) * _charHeight;
+	sourceRect.width = _charWidth;
+	sourceRect.height = _charHeight;
+	destSurface->copyFrom(_surface, x, y, sourceRect, true);
+}
+
+void TextSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen) {
+	for (; stringLen > 0; stringLen--, string++) {
+		drawChar(destSurface, x, y, *string);
+		x += _charWidth;
+	}	
+}
+
+int16 TextSurface::getStringWidth(const byte *string, int stringLen) {
+	return string ? stringLen * _charWidth : 0;
+}
+
 // Misc
 
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels) {
