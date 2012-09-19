@@ -342,19 +342,23 @@ void VideoDecoder::stop() {
 	if (!isPlaying())
 		return;
 
+	// Stop audio here so we don't have it affect getTime()
+	stopAudio();
+
+	// Keep the time marked down in case we start up again
+	// We do this before _isPlaying is set so we don't get
+	// _lastTimeChange returned, but before _pauseLevel is
+	// reset.
+	_lastTimeChange = getTime();
+
 	_isPlaying = false;
 	_startTime = 0;
 	_palette = 0;
 	_dirtyPalette = false;
 	_needsUpdate = false;
 
-	stopAudio();
-
 	// Also reset the pause state.
 	_pauseLevel = 0;
-
-	// Keep the time marked down in case we start up again
-	_lastTimeChange = getTime();
 }
 
 Audio::Timestamp VideoDecoder::getDuration() const {
