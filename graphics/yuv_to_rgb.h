@@ -82,8 +82,9 @@ public:
 	 *
 	 * Since the chroma has a very low resolution in 410, we perform bilinear scaling
 	 * on the two chroma planes to produce the image. The chroma planes must have
-	 * at least one extra row that can be read from in order to produce a proper
-	 * image (filled with 0x80). This is required in order to speed up this function.
+	 * at least one extra row and one extra column that can be read from in order to
+	 * produce a proper image. It is suggested that you fill these in with the previous
+	 * row and column's data. This is required in order to speed up this function.
 	 *
 	 * @param dst     the destination surface
 	 * @param scale   the scale of the luminance values
