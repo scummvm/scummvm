@@ -113,6 +113,12 @@ void PegasusChip::setUpPegasusChipRude() {
 void PegasusChip::activatePegasusHotspots() {
 	switch (GameState.getCurrentNeighborhood()) {
 	case kPrehistoricID:
+		// WORKAROUND: Don't allow the player to recall if they don't have
+		// the historical log. Otherwise, gameplay is broken when returning
+		// to the TSA.
+		if (!((PegasusEngine *)g_engine)->playerHasItemID(kHistoricalLog))
+			return;
+		// fall through
 	case kMarsID:
 	case kWSCID:
 	case kNoradAlphaID:
