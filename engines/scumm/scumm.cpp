@@ -1836,21 +1836,31 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
-
-		if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK)
-			nativeMidiDriver = MidiDriver::createMidi(dev);
-		if (nativeMidiDriver != NULL && _native_mt32)
-			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
+		bool useOnlyNative = false;
+
 		if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY2) {
-			adlibMidiDriver = new MacM68kDriver(_mixer);
+			// We setup this driver as native MIDI driver to avoid playback
+			// of the Mac music via a selected MIDI device.
+			nativeMidiDriver = new MacM68kDriver(_mixer);
 			// The Mac driver is never MT-32.
 			_native_mt32 = false;
-		} else if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
-			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
-			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
-		} else if (_sound->_musicType == MDT_PCSPK) {
-			adlibMidiDriver = new PcSpkDriver(_mixer);
+			// Ignore non-native drivers. This also ignores the multi MIDI setting.
+			useOnlyNative = true;
+		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
+			nativeMidiDriver = MidiDriver::createMidi(dev);
+		}
+
+		if (nativeMidiDriver != NULL && _native_mt32)
+			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+		if (!useOnlyNative) {
+			if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
+				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
+				adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
+			} else if (_sound->_musicType == MDT_PCSPK) {
+				adlibMidiDriver = new PcSpkDriver(_mixer);
+			}
 		}
 
 		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
