@@ -46,13 +46,13 @@
 #include "backends/saves/default/default-saves.h"
 
 
-#define g_eventRec (Common::EventRecorder::instance())
+#define g_eventRec (GUI::EventRecorder::instance())
 
 namespace GUI {
 	class OnScreenDialog;
 }
 
-namespace Common {
+namespace GUI {
 class RandomSource;
 class SeekableReadStream;
 class WriteStream;
@@ -63,7 +63,7 @@ class WriteStream;
  *
  * TODO: Add more documentation.
  */
-class EventRecorder : private EventSource, public Singleton<EventRecorder>, private DefaultEventMapper {
+class EventRecorder : private Common::EventSource, public Common::Singleton<EventRecorder>, private Common::DefaultEventMapper {
 	friend class Singleton<SingletonBaseType>;
 	EventRecorder();
 	~EventRecorder();
@@ -75,35 +75,35 @@ public:
 		kRecorderPlaybackPause = 3
 	};
 
-	void init(String recordFileName, RecordMode mode);
+	void init(Common::String recordFileName, RecordMode mode);
 	void deinit();
 	bool processDelayMillis();
-	uint32 getRandomSeed(const String &name);
+	uint32 getRandomSeed(const Common::String &name);
 	void processMillis(uint32 &millis, bool skipRecord);
 	bool processAudio(uint32 &samples, bool paused);
 	void processGameDescription(const ADGameDescription *desc);
-	SeekableReadStream *processSaveStream(const String & fileName);
+	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
 
 	void preDrawOverlayGui();
 	void postDrawOverlayGui();
 
 #ifdef SDL_BACKEND
-	void setAuthor(const String &author) {
+	void setAuthor(const Common::String &author) {
 		_author = author;
 	}
-	void setNotes(const String &desc){
+	void setNotes(const Common::String &desc){
 		_desc = desc;
 	}
-	void setName(const String &name) {
+	void setName(const Common::String &name) {
 		_name = name;
 	}
-	const String getAuthor() {
+	const Common::String getAuthor() {
 		return _author;
 	}
-	const String getNotes() {
+	const Common::String getNotes() {
 		return _desc;
 	}
-	const String getName() {
+	const Common::String getName() {
 		return _name;
 	}
 	void setRedraw(bool redraw) {
@@ -117,7 +117,7 @@ public:
 	SdlMixerManager *getMixerManager();
 	DefaultTimerManager *getTimerManager();
 
-	void deleteRecord(const String& fileName);
+	void deleteRecord(const Common::String& fileName);
 	bool checkForContinueGame();
 
 	void suspendRecording() {
@@ -133,10 +133,10 @@ public:
 #endif
 	}
 
-	StringArray listSaveFiles(const String &pattern);
-	String generateRecordFileName(const String &target);
+	Common::StringArray listSaveFiles(const Common::String &pattern);
+	Common::String generateRecordFileName(const Common::String &target);
 
-	SaveFileManager *getSaveManager(SaveFileManager *realSaveManager);
+	Common::SaveFileManager *getSaveManager(Common::SaveFileManager *realSaveManager);
 	SDL_Surface *getSurface(int width, int height);
 	void RegisterEventSource();
 
@@ -148,33 +148,33 @@ public:
 	void switchFastMode();
 #endif
 private:
-	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
+	virtual Common::List<Common::Event> mapEvent(const Common::Event &ev, Common::EventSource *source);
 	bool notifyPoll();
-	bool pollEvent(Event &ev);
+	bool pollEvent(Common::Event &ev);
 #ifdef SDL_BACKEND
 	bool _initialized;
 	volatile uint32 _fakeTimer;
 	bool _savedState;
 	bool _needcontinueGame;
 	int _temporarySlot;
-	String _author;
-	String _desc;
-	String _name;
+	Common::String _author;
+	Common::String _desc;
+	Common::String _name;
 #endif
-	SaveFileManager *_realSaveManager;
+	Common::SaveFileManager *_realSaveManager;
 	SdlMixerManager *_realMixerManager;
 	DefaultTimerManager *_timerManager;
 #ifdef SDL_BACKEND
 	RecorderSaveFileManager _fakeSaveManager;
 	NullSdlMixerManager *_fakeMixerManager;
 	GUI::OnScreenDialog *controlPanel;
-	RecorderEvent _nextEvent;
+	Common::RecorderEvent _nextEvent;
 
 	void setFileHeader();
 	void setGameMd5(const ADGameDescription *gameDesc);
 	void getConfig();
-	void getConfigFromDomain(ConfigManager::Domain *domain);
-	void removeDifferentEntriesInDomain(ConfigManager::Domain *domain);
+	void getConfigFromDomain(Common::ConfigManager::Domain *domain);
+	void removeDifferentEntriesInDomain(Common::ConfigManager::Domain *domain);
 	void applyPlaybackSettings();
 
 	void switchMixer();
@@ -184,23 +184,23 @@ private:
 
 	void takeScreenshot();
 
-	bool openRecordFile(const String &fileName);
+	bool openRecordFile(const Common::String &fileName);
 
 	bool checkGameHash(const ADGameDescription *desc);
 
-	void checkForKeyCode(const Event &event);
+	void checkForKeyCode(const Common::Event &event);
 	bool allowMapping() const { return false; }
 
 	volatile uint32 _lastMillis;
 	uint32 _lastScreenshotTime;
 	uint32 _screenshotPeriod;
-	PlaybackFile *_playbackFile;
+	Common::PlaybackFile *_playbackFile;
 
 	void saveScreenShot();
 	void checkRecordedMD5();
 	void deleteTemporarySave();
 	volatile RecordMode _recordMode;
-	String _recordFileName;
+	Common::String _recordFileName;
 	bool _fastPlayback;
 	bool _needRedraw;
 #endif

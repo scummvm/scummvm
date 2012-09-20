@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	error.o \
 	EventDispatcher.o \
 	EventMapper.o \
-	EventRecorder.o \
 	file.o \
 	fs.o \
 	gui_options.o \

@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/EventRecorder.h"
+#include "gui/EventRecorder.h"
 
 #include "backends/keymapper/keymapper.h"
 

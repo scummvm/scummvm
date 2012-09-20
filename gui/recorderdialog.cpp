@@ -21,7 +21,6 @@
 
 #include "common/algorithm.h"
 #include "common/bufferedstream.h"
-#include "common/EventRecorder.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "graphics/colormasks.h"
@@ -31,6 +30,7 @@
 #include "common/translation.h"
 #include "gui/widgets/list.h"
 #include "gui/editrecorddialog.h"
+#include "gui/EventRecorder.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
 #include "common/system.h"

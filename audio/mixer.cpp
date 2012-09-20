@@ -20,7 +20,8 @@
  *
  */
 
-#include "common/EventRecorder.h"
+#include "gui/EventRecorder.h"
+
 #include "common/util.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -602,7 +603,6 @@ int Channel::mix(int16 *data, uint len) {
 	assert(_stream);
 
 	int res = 0;
-
 	if (_stream->endOfData()) {
 		// TODO: call drain method
 	} else {

@@ -23,7 +23,6 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/fs.h"
 #include "common/gui_options.h"
 #include "common/util.h"
@@ -31,8 +30,10 @@
 #include "common/translation.h"
 
 #include "gui/about.h"
+#include "gui/onscreendialog.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
+#include "gui/EventRecorder.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
@@ -600,7 +601,6 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 LauncherDialog::LauncherDialog()
 	: Dialog(0, 0, 320, 200) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
-
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 

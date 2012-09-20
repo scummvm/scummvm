@@ -42,7 +42,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
-#include "common/EventRecorder.h"
+#include "gui/EventRecorder.h"
 #include "common/fs.h"
 #ifdef SDL_BACKEND
 #include "common/recorderfile.h"
@@ -457,9 +457,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			Common::String recordFileName = ConfMan.get("record_file_name");
 
 			if (recordMode == "record") {
-				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()), Common::EventRecorder::kRecorderRecord);
+				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()), GUI::EventRecorder::kRecorderRecord);
 			} else if (recordMode == "playback") {
-				g_eventRec.init(recordFileName, Common::EventRecorder::kRecorderPlayback);
+				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderPlayback);
 			} else if ((recordMode == "info") && (!recordFileName.empty())) {
 				Common::PlaybackFile record;
 				record.openRead(recordFileName);
@@ -525,7 +525,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::DebugManager::destroy();
-	Common::EventRecorder::destroy();
+	GUI::EventRecorder::destroy();
 	Common::SearchManager::destroy();
 #ifdef USE_TRANSLATION
 	Common::TranslationManager::destroy();

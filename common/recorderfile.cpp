@@ -21,7 +21,7 @@
  */
 
 #include "common/system.h"
-#include "common/EventRecorder.h"
+#include "gui/EventRecorder.h"
 #include "common/md5.h"
 #include "common/recorderfile.h"
 #include "common/savefile.h"

@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	debugger.o \
 	dialog.o \
 	error.o \
+	EventRecorder.o \
 	gui-manager.o \
 	launcher.o \
 	massadd.o \
@@ -41,7 +42,7 @@ endif
 ifdef SDL_BACKEND
 MODULE_OBJS += \
 	editrecorddialog.o \
-	onscreendialog.cpp \
+	onscreendialog.o \
 	recorderdialog.o
 endif
 
