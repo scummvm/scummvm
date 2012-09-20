@@ -91,7 +91,7 @@ public:
 	int clip_x, clip_y;
 	int clip_x1, clip_y1;
 	bool clip_flag;
-
+	int SDL_NBLOCS;
 public:
 	GraphicsManager();
 	~GraphicsManager();
@@ -116,6 +116,8 @@ public:
 	void m_scroll2A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void Copy_Vga(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
+	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
 	void fade_in(const byte *palette, int step, const byte *surface);
 	void fade_out(const byte *palette, int step, const byte *surface);
 	void FADE_INS();
