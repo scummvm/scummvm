@@ -34,12 +34,6 @@ namespace Hopkins {
 EventsManager::EventsManager() {
 	souris_flag = false;
 	mouse_linux = false;
-	min_x = 0;
-	min_y = 20;
-	max_x = 1280;
-	max_y = 460;
-	min_x = min_y = 0;
-	max_x = max_y = 0;
 	souris_sizex = souris_sizey = 0;
 	ofset_souris_x = ofset_souris_y = 0;
 	start_x = start_y = 0;
@@ -234,29 +228,29 @@ void EventsManager::VBL() {
 		}
 
 		if (CASSE) {
-			if (v15 < min_x)
-				v15 = min_x;
-			if (souris_y < min_y)
-				a1 = min_y;
+			if (v15 < _vm->_graphicsManager.min_x)
+				v15 = _vm->_graphicsManager.min_x;
+			if (souris_y < _vm->_graphicsManager.min_y)
+				a1 = _vm->_graphicsManager.min_y;
 			
-			if (souris_sizex + v15 >= max_x)
-				v14 = souris_sizex - (souris_sizex + v15 - max_x);
-			if (a1 + souris_sizey < max_y)
+			if (souris_sizex + v15 >= _vm->_graphicsManager.max_x)
+				v14 = souris_sizex - (souris_sizex + v15 - _vm->_graphicsManager.max_x);
+			if (a1 + souris_sizey < _vm->_graphicsManager.max_y)
 				goto LABEL_34;
 			
-			v3 = a1 + souris_sizey - max_y;
+			v3 = a1 + souris_sizey - _vm->_graphicsManager.max_y;
 		} else {
-			if (v15 < min_x)
-				v15 = min_x - v1;
+			if (v15 < _vm->_graphicsManager.min_x)
+				v15 = _vm->_graphicsManager.min_x - v1;
 			v2 = (signed __int16)v2;
-			if (souris_y < min_y - (signed __int16)v2)
-				a1 = min_y - (signed __int16)v2;
-			if (souris_sizex + v15 >= max_x)
-				v14 = souris_sizex - (souris_sizex + v15 - max_x - v1);
-			if (a1 + souris_sizey < v2 + max_y)
+			if (souris_y < _vm->_graphicsManager.min_y - (signed __int16)v2)
+				a1 = _vm->_graphicsManager.min_y - (signed __int16)v2;
+			if (souris_sizex + v15 >= _vm->_graphicsManager.max_x)
+				v14 = souris_sizex - (souris_sizex + v15 - _vm->_graphicsManager.max_x - v1);
+			if (a1 + souris_sizey < v2 + _vm->_graphicsManager.max_y)
 				goto LABEL_34;
   
-			v3 = v2 + a1 + souris_sizey - max_y;
+			v3 = v2 + a1 + souris_sizey - _vm->_graphicsManager.max_y;
 		}
 
 		v13 = souris_sizey - v3;
@@ -273,16 +267,16 @@ LABEL_35:
 	if (btsouris == 23)
 		goto LABEL_45;
 
-	if (a1 >= max_y || v15 >= max_x || (signed int)v14 <= 1 || v13 <= 1) {
+	if (a1 >= _vm->_graphicsManager.max_y || v15 >= _vm->_graphicsManager.max_x || (signed int)v14 <= 1 || v13 <= 1) {
 		if (btsouris != 23)
 			goto LABEL_54;
 
 LABEL_45:
-		if (a1 < max_y && v15 < max_x) {
-			if ((signed int)(v14 + v15) > max_x)
-				v14 -= v14 + v15 - max_x;
-			if (a1 + v13 > max_y)
-				v13 -= a1 + v13 - max_y;
+		if (a1 < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x) {
+			if ((signed int)(v14 + v15) > _vm->_graphicsManager.max_x)
+				v14 -= v14 + v15 - _vm->_graphicsManager.max_x;
+			if (a1 + v13 > _vm->_graphicsManager.max_y)
+				v13 -= a1 + v13 - _vm->_graphicsManager.max_y;
   
 			if ((signed int)v14 > 1 && v13 > 1) {
 				_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, a1, v14, v13);
@@ -328,10 +322,10 @@ LABEL_65:
 		_vm->_graphicsManager.Affiche_Segment_Vesa();
 	} else {
 		if (_vm->_graphicsManager.no_scroll != 2) {
-			if ((signed __int16)XMOUSE() > _vm->_graphicsManager.SCROLL + 620)
+			if (XMOUSE() > _vm->_graphicsManager.SCROLL + 620)
 				_vm->_graphicsManager.SCROLL += _vm->_graphicsManager.SPEED_SCROLL;
   
-			if ((signed __int16)XMOUSE() < _vm->_graphicsManager.SCROLL + 10)
+			if (XMOUSE() < _vm->_graphicsManager.SCROLL + 10)
 				_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager.SPEED_SCROLL;
 		}
 
@@ -405,7 +399,7 @@ LABEL_65:
 	souris_b = 0;
 	if (souris_flag == 1) {
 		if (btsouris != 23) {
-			if (a1 < max_y && v15 < max_x && (signed int)v14 > 1 && v13 > 1) {
+			if (a1 < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
 				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, a1, v14, v13);
 				_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, a1, v12, v11);
 				goto LABEL_113;
@@ -415,7 +409,7 @@ LABEL_65:
 				goto LABEL_113;
 		}
 	    
-		if (a1 < max_y && v15 < max_x && (signed int)v14 > 1 && v13 > 1) {
+		if (a1 < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, a1, v14, v13);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, a1, v14 + v15, a1 + v13);
 		}

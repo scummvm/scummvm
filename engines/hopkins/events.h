@@ -42,8 +42,6 @@ private:
 public:
 	bool souris_flag;
 	bool mouse_linux;
-	int min_x, min_y;
-	int max_x, max_y;
 	int souris_sizex, souris_sizey;
 	int ofset_souris_x, ofset_souris_y;
 	int start_x, start_y;

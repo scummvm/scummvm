@@ -48,6 +48,7 @@ private:
 	HopkinsEngine *_vm;
 
 	void CHARGE_ECRAN(const Common::String &file);
+	int Asm_Zoom(int v, int percentage);
 public:
 	int _lockCtr;
 	bool SDL_MODEYES;
@@ -85,6 +86,12 @@ public:
 	int no_scroll;
 	Common::Rect dstrect[50];
 	int REDRAW;
+	int min_x, min_y;
+	int max_x, max_y;
+	int clip_x, clip_y;
+	int clip_x1, clip_y1;
+	bool clip_flag;
+
 public:
 	GraphicsManager();
 	~GraphicsManager();
@@ -115,17 +122,18 @@ public:
 	void FADE_OUTS();
 	void FADE_INW();
 	void FADE_OUTW();
+	void FADE_OUTW_LINUX(const byte *surface);
+	void FADE_INW_LINUX(const byte *surface);
 	void setpal_vga256(const byte *palette);
 	void setpal_vga256_linux(const byte *palette, const byte *surface);
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void CHANGE_PALETTE(const byte *palette);
 	uint16 MapRGB(byte r, byte g, byte b);
 	void DD_VBL();
-	void FADE_OUTW_LINUX(const byte *surface);
 	void Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface);
 	void Copy_Video_Vbe3(const byte *surface);
 	void Copy_Video_Vbe16(const byte *surface);
-	void Capture_Mem(byte *a1, void *a2, int a3, int a4, unsigned int a5, int a6);
+	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height);
 	void Sprite_Vesa(byte *a1, byte *a2, int a3, int a4, int a5);
 	void FIN_VISU();
 	void VISU_ALL();
@@ -134,7 +142,7 @@ public:
 	int Magic_Number(int v);
 	void Affiche_Segment_Vesa();
 	void CopyAsm(const byte *surface);
-	void Restore_Mem(const byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6);
+	void Restore_Mem(byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6);
 	int Reel_Zoom(int a1, int a2);
 	void AFF_SPRITES();
 	void Affiche_Perfect(const byte *a1, const byte *a2, int a3, int a4, int a5, int a6, int a7, int a8);

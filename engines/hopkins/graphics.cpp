@@ -59,6 +59,13 @@ GraphicsManager::GraphicsManager() {
 	NOLOCK = false;
 	no_scroll = 0;
 	REDRAW = false;
+	min_x = 0;
+	min_y = 20;
+	max_x = SCREEN_WIDTH * 2;
+	max_y = SCREEN_HEIGHT - 20 * 2;
+	clip_x = clip_y = 0;
+	clip_x1 = clip_y1 = 0;
+	clip_flag = false;
 
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
 	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_SIZE], 0);
@@ -97,9 +104,8 @@ void GraphicsManager::SET_MODE(int width, int height) {
 			bpp = 16;
 
 		if (SDL_ECHELLE) {
-			error("TODO: Implement zooming support"); 
-			//width = Reel_Zoom(width, SDL_ECHELLE);
-			//height = Reel_Zoom(height, SDL_ECHELLE);
+			width = Reel_Zoom(width, SDL_ECHELLE);
+			height = Reel_Zoom(height, SDL_ECHELLE);
 		}
 
 		//Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 0, 10, 5, 0, 0);
@@ -187,25 +193,25 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	if (!DOUBLE_ECRAN) {
 		souris_max();
 		SCANLINE(SCREEN_WIDTH);
-		_vm->_eventsManager.max_x = SCREEN_WIDTH;
+		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 		DD_Lock();
 		Cls_Video();
 		if (Winbpp == 2) {
 			if (SDL_ECHELLE)
-				m_scroll16A((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				m_scroll16A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else
-				m_scroll16((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		} else if (Winbpp == 1) {
 			if (!SDL_ECHELLE)
-				m_scroll2((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				m_scroll2(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else 
-				m_scroll2A((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				m_scroll2A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		}
 
 		DD_Unlock();
 	} else {
 		SCANLINE(SCREEN_WIDTH * 2);
-		_vm->_eventsManager.max_x = SCREEN_WIDTH * 2;
+		_vm->_graphicsManager.max_x = SCREEN_WIDTH * 2;
 		DD_Lock();
 		Cls_Video();
 		DD_Unlock();
@@ -214,22 +220,22 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 			DD_Lock();
 			if (Winbpp == 2) {
 				if (SDL_ECHELLE)
-					m_scroll16A((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					m_scroll16A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
-					m_scroll16((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 			if (Winbpp == 1) {
 				if (!SDL_ECHELLE)
-					m_scroll2((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					m_scroll2(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
-					m_scroll2A((byte *)VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					m_scroll2A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 
 			DD_Unlock();
 		}
 	}
 
-	memcpy((byte *)VESA_BUFFER, (byte *)VESA_SCREEN, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memcpy(VESA_BUFFER, VESA_SCREEN, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 }
 
 void GraphicsManager::INIT_TABLE(int a1, int a2, byte *palette) {
@@ -737,7 +743,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 	__int16 v9;
 	__int16 v10;
 	__int16 v12;
-	unsigned __int16 v13;
+	uint16 v13;
 	byte palData[PALETTE_BLOCK_SIZE];
 	__int16 v15[PALETTE_BLOCK_SIZE];
 
@@ -845,7 +851,16 @@ void GraphicsManager::setpal_vga256(const byte *palette) {
 }
 
 void GraphicsManager::setpal_vga256_linux(const byte *palette, const byte *surface) {
-	warning("TODO: setpal_vga256_linux");
+	CHANGE_PALETTE(palette);
+  
+	if (Winbpp == 2) {
+		if (SDL_ECHELLE)
+			m_scroll16A(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		else
+			m_scroll16(surface, start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		
+		DD_VBL();
+	}
 }
 
 void GraphicsManager::SETCOLOR3(int palIndex, int r, int g, int b) {
@@ -865,7 +880,6 @@ void GraphicsManager::CHANGE_PALETTE(const byte *palette) {
 
 	const byte *srcP = &palette[0];
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
-		// TODO: Validate pixel encoding is correct
 		*(uint16 *)&SD_PIXELS[2 * idx] = MapRGB(*srcP, *(srcP + 1), *(srcP + 2));
 	}
 
@@ -891,15 +905,152 @@ void GraphicsManager::DD_VBL() {
 }
 
 void GraphicsManager::FADE_OUTW_LINUX(const byte *surface) {
-	warning("TODO: FADE_OUTW_LINUX");
+	fade_out(Palette, FADESPD, surface);
+}
+
+void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
+	return fade_in(Palette, FADESPD, surface);
 }
 
 void GraphicsManager::Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface) {
-	warning("TODO: Copy_WinScan_Vbe3");
+	int result;
+	int v3;
+	int v4;
+	const byte *v5;
+	uint8 v6;
+	int v7;
+	unsigned int v8;
+	byte *v9;
+	int v10; 
+	unsigned int v11;
+	byte *v12;
+
+	result = 0;
+	v3 = 0;
+	v4 = 0;
+	v5 = sourceSurface;
+	for (;;) {
+		v6 = *v5;
+		if (*(byte *)v5 < 222)
+			goto Video_Cont3_wVbe;
+		
+		if (v6 == 252)
+			return;
+    
+		if (v6 < 251) {
+			v3 += (unsigned __int8)(*(byte *)v5 + 35);
+			v6 = *(v5++ + 1);
+		} else if (v6 == 253) {
+			v3 += *(v5 + 1);
+			v6 = *(v5 + 2);
+			v5 += 2;
+		} else if (v6 == 254) {
+			v3 += READ_LE_UINT16(v5 + 1);
+			v6 = *(v5 + 3);
+			v5 += 3;
+		} else {
+			v3 += READ_LE_UINT32(v5 + 1);
+			v6 = *(v5 + 5);
+			v5 += 5;
+		}
+
+Video_Cont3_wVbe:
+		if (v6 > 210) {
+			if (v6 == 211) {
+				v7 = v4;
+				v8 = *(v5 + 1);
+				result = *(v5 + 2);
+				v9 = v3 + destSurface;
+				v3 += v8;
+				memset(v9, result, v8);
+				v5 += 3;
+				v4 = v7;
+			} else {
+				v10 = v4;
+				v11 = *v5 + 45;
+				result = *(v5 + 1);
+				v12 = v3 + destSurface;
+				v3 += v11;
+				memset(v12, result, v11);
+				v5 += 2;
+				v4 = v10;
+			}
+		} else {
+			*(v3 + destSurface) = v6;
+			++v5;
+			++v3;
+		}
+	}
 }
 
 void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
-	warning("TODO: Copy_Video_Vbe3");
+	int result; // eax@1
+	int v2; // ebx@1
+	int v3; // ecx@1
+	const byte *v4; // esi@1
+	uint8 v5; // dl@2
+	int v6; // ST00_4@9
+	unsigned int v7; // ecx@9
+	byte *v8; // edi@9
+	int v9; // ST00_4@10
+	unsigned int v10; // ecx@10
+	byte *v11; // edi@10
+
+	assert(VideoPtr);
+	result = 0;
+	v2 = 0;
+	v3 = 0;
+	v4 = surface;
+	for (;;) {
+		v5 = *v4;
+		if (*v4 < 222)
+			goto Video_Cont3_Vbe;
+    
+		if (v5 == 252)
+			return;
+		if (v5 < 251) {
+			v2 += (unsigned __int8)(*v4 + 35);
+			v5 = *(v4++ + 1);
+		} else if (v5 == -3) {
+			v2 += *(v4 + 1);
+			v5 = *(v4 + 2);
+			v4 += 2;
+		} else if (v5 == -2) {
+			v2 += READ_LE_UINT16(v4 + 1);
+			v5 = *(v4 + 3);
+			v4 += 3;
+		} else {
+			v2 += READ_LE_UINT32(v4 + 1);
+			v5 = *(v4 + 5);
+			v4 += 5;
+		}
+Video_Cont3_Vbe:
+		if (v5 > 210) {
+			if (v5 == 211) {
+				v6 = v3;
+				v7 = *(v4 + 1);
+				result = *(v4 + 2);
+				v8 = v2 + (byte *)VideoPtr->pixels;
+				v2 += v7;
+				memset(v8, result, v7);
+				v4 += 3;
+				v3 = v6;
+			} else {
+				v9 = v3;
+				v10 = (unsigned __int8)(*v4 + 45);
+				result = *(v4 + 1);
+				v11 = (byte *)(v2 + (byte *)VideoPtr->pixels);
+				v2 += v10;
+				memset(v11, result, v10);
+				v4 += 2;
+				v3 = v9;
+			}
+		} else {
+			*(v2 + (byte *)VideoPtr->pixels) = v5;
+			++v4;
+			++v2;
+		}
+	}
 }
 
 void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
@@ -962,12 +1113,187 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
 	}
 }
 
-void GraphicsManager::Capture_Mem(byte *a1, void *a2, int a3, int a4, unsigned int a5, int a6) {
-	warning("TODO: Capture_Mem");
+void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height) {
+	const byte *srcP;
+	byte *destP;
+	int yCtr; 
+	unsigned int i;
+	int yTemp; 
+
+	srcP = srcSurface + xs + nbrligne2 * ys;
+	destP = destSurface;
+
+	yCtr = height;
+	do {
+		yTemp = yCtr;
+		if (width & 1) {
+			memcpy(destP, srcP, width);
+			srcP += width;
+			destP += width;
+		} else if (width & 2) {
+			for (i = width >> 1; i; --i) {
+				*(uint16 *)destP = *(uint16 *)srcP;
+				srcP += 2;
+				destP = (byte *)destP + 2;
+			}
+		} else {
+			memcpy(destP, srcP, 4 * (width >> 2));
+			srcP += 4 * (width >> 2);
+			destP = (byte *)destP + 4 * (width >> 2);
+		}
+		srcP = nbrligne2 + srcP - width;
+		yCtr = yTemp - 1;
+	} while (yTemp != 1);
 }
 
 void GraphicsManager::Sprite_Vesa(byte *a1, byte *a2, int a3, int a4, int a5) {
-	warning("TODO: Sprite_Vesa");
+	byte *v5;
+	int i; 
+	byte *v7;
+	uint16 v8;
+	byte *v9;
+	int v10;
+	uint16 v11;
+	uint16 v12;
+	uint16 v13;
+	uint16 v14;
+	byte *v15; 
+	byte *v16; 
+	const byte *v17; 
+	byte *v18; 
+	int v19; 
+	byte *v20; 
+	byte *v21; 
+	int v22; 
+	unsigned int v23;
+	byte *v24;
+	const byte *v25;
+	byte *v26;
+	byte *v27;
+	byte *v28;
+	byte *v29;
+	int v30;
+	int v31;
+
+	v5 = a2 + 3;
+	for (i = a5; i; --i)
+		v5 += READ_LE_UINT32(v5) + 16;
+	v10 = 0;
+	v7 = v5 + 4;
+	v8 = READ_LE_UINT16(v7);
+	v9 = v7 + 2;
+	v10 = READ_LE_UINT16(v9);
+	clip_x = 0;
+	clip_y = 0;
+	clip_flag = false;
+	clip_x1 = v8;
+	if ((uint16)(v8 + a3) > v8) {
+		if ((uint16)a3 < (uint16)(min_x + 300)) {
+			clip_x = min_x + 300 - a3;
+			clip_flag = true;
+		}
+		if ((uint16)(v10 + (uint16)a4) > (uint16)v10) {
+			if ((uint16)a4 < (uint16)(min_y + 300)) {
+				clip_y = min_y + 300 - a4;
+				clip_flag = true;
+			}
+			v11 = max_x + 300;
+			if ((uint16)a3 < (uint16)(max_x + 300)) {
+				if ((uint16)(v8 + a3) > v11) {
+					v12 = v8 + 10 - (v8 + a3 - v11);
+					if (v12 <= 10)
+						return;
+					clip_x1 = v12 - 10;
+					clip_flag = true;
+				}
+				v13 = max_y + 300;
+				if ((uint16)a4 < (uint16)(max_y + 300)) {
+					if ((uint16)(v10 + (uint16)a4) > v13) {
+						v14 = v10 + 10 - (v10 + (uint16)a4 - v13);
+						if (v14 <= 10)
+							return;
+						v10 -= 10;
+						clip_y1 = v10;
+						clip_flag = true;
+					}
+					v15 = v9 + 6;
+					v16 = v15 + 4;
+					v17 = READ_LE_UINT32(v15) + v15 + 4;
+					v18 = a3 + nbrligne2 * (a4 - 300) - 300 + a1;
+					v19 = 0;
+					if (clip_flag) {
+						do {
+							v31 = v10;
+							v29 = v18;
+							v19 = 0;
+							while (*v16 != -3) {
+								if (*v16 == -2) {
+									v27 = v16 + 1;
+									v10 = READ_LE_UINT16(v27);
+
+									do {
+										if (!clip_y && (uint16)v19 >= clip_x && (uint16)v19 < clip_x1)
+											*v18 = *v17;
+										++v17;
+										++v18;
+										++v19;
+										--v10;
+									} while (v10);
+
+									v16 = v27 + 2;
+								} else {
+									v26 = v16 + 1;
+									v10 = *(uint16 *)v26;
+									v18 += v10;
+									v19 += v10;
+									v16 = v26 + 2;
+								}
+							}
+              
+							if (clip_y)
+								--clip_y;
+							v16 += 3;
+							v18 = nbrligne2 + v29;
+							v10 = v31 - 1;
+						} while (v31 != 1);
+					} else {
+						do {
+							v30 = v10;
+							v28 = v18;
+							while (*v16 != -3) {
+								if (*v16 == -2) {
+									v21 = v16 + 1;
+									v10 = READ_LE_UINT16(v21);
+                  
+									v22 = v10;
+									v23 = (unsigned int)v10 >> 2;
+									memcpy(v18, v17, 4 * v23);
+									v25 = (v17 + 4 * v23);
+									v24 = (v18 + 4 * v23);
+									v10 = v22 - 4 * v23;
+									memcpy(v24, v25, v10);
+									
+									v17 = v25 + v10;
+									v18 = v24 + v10;
+									v10 = 0;
+									v16 = v21 + 2;
+								} else {
+									v20 = v16 + 1;
+									v10 = READ_LE_UINT16(v20);
+									v18 += v10;
+									v16 = v20 + 2;
+								}
+							}
+              
+							v16 += 3;
+							v18 = nbrligne2 + v28;
+							v10 = v30 - 1;
+						} while (v30 != 1);
+					}
+				}
+			}
+		}
+	}
 }
 
 void GraphicsManager::FIN_VISU() {
@@ -1004,16 +1330,88 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 }
 
 void GraphicsManager::CopyAsm(const byte *surface) {
-	warning("TODO: CopyAsm");
+	const byte *v1;
+	byte srcByte;
+	byte *v3; 
+	signed int v4;
+	signed int v5;
+	byte *v6; 
+	byte *v7; 
+	byte *v8; 
+	byte *v9; 
+	const byte *v10;
+
+	assert(VideoPtr);
+	v1 = surface;
+	srcByte = 30 * WinScan;
+	v3 = (byte *)VideoPtr->pixels + 30 * WinScan;
+	v4 = 200;
+	do {
+		v10 = v1;
+		v9 = v3;
+		v5 = 320;
+    
+		do {
+			srcByte = *(byte *)v1;
+			*(byte *)v3 = *(byte *)v1;
+			v6 = WinScan + v3;
+			*(byte *)v6 = srcByte;
+			v7 = v6 - WinScan + 1;
+			*(byte *)v7 = srcByte;
+			v8 = WinScan + v7;
+			*(byte *)v8 = srcByte;
+			v3 = v8 - WinScan + 1;
+			++v1;
+			--v5;
+		} while (v5);
+		
+		v1 = v10 + 320;
+		v3 = WinScan + WinScan + v9;
+		--v4;
+	} while (v4);
 }
 
-void GraphicsManager::Restore_Mem(const byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6) {
-	warning("TODO: Restore_Mem");
+void GraphicsManager::Restore_Mem(byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6) {
+	byte *v6;
+	int v7;
+	const byte *v8;
+	unsigned int i;
+	int v10;
+
+	v6 = a3 + nbrligne2 * a4 + a1;
+	v7 = a6;
+	v8 = a2;
+	do {
+		v10 = v7;
+		if (a5 & 1) {
+			memcpy(v6, v8, a5);
+			v8 += a5;
+			v6 += a5;
+		} else if (a5 & 2) {
+			for (i = a5 >> 1; i; --i) {
+				*(uint16 *)v6 = *(uint16 *)v8;
+				v8 += 2;
+				v6 += 2;
+			}
+		} else {
+			memcpy(v6, v8, 4 * (a5 >> 2));
+			v8 += 4 * (a5 >> 2);
+			v6 += 4 * (a5 >> 2);
+		}
+		v6 = nbrligne2 + v6 - a5;
+		v7 = v10 - 1;
+	} while (v10 != 1);
 }
 
-int GraphicsManager::Reel_Zoom(int a1, int a2) {
-	warning("TODO: Reel_Zoom");
-	return 0;
+int GraphicsManager::Reel_Zoom(int v, int percentage) {
+	return Asm_Zoom(v, percentage);
+}
+
+int GraphicsManager::Asm_Zoom(int v, int percentage) {
+	if (v)
+		v += percentage * (long int)v / 100;
+  
+	return v;
 }
 
 void GraphicsManager::AFF_SPRITES() {
