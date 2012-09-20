@@ -41,6 +41,7 @@ MODULE_OBJS = \
 	screen.o \
 	smackerscene.o \
 	smackerplayer.o \
+	sound.o \
 	sprite.o \
 	staticdata.o
 

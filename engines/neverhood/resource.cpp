@@ -654,10 +654,16 @@ bool SoundResource::isPlaying() {
 void SoundResource::load(uint32 fileHash) {
 }
 
+void SoundResource::unload() {
+}
+
 void SoundResource::play(uint32 fileHash, bool looping) {
 }
 
 void SoundResource::play() {
+}
+
+void SoundResource::setVolume(int volume) {
 }
 
 uint32 calcHash(const char *value) {

@@ -198,9 +198,11 @@ public:
 	SoundResource(NeverhoodEngine *vm);
 	bool isPlaying();
 	void load(uint32 fileHash);
+	void unload();
 	void play(uint32 fileHash, bool looping = false);
 	void play();
 	void stop() { /*DUMMY*/ }
+	void setVolume(int volume);
 protected:
 	NeverhoodEngine *_vm;	
 };

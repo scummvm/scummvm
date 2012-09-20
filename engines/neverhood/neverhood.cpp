@@ -35,6 +35,7 @@
 #include "neverhood/resourceman.h"
 #include "neverhood/resource.h"
 #include "neverhood/screen.h"
+#include "neverhood/sound.h"
 #include "neverhood/staticdata.h"
 
 namespace Neverhood {
@@ -98,6 +99,8 @@ Common::Error NeverhoodEngine::run() {
 
 #if 1
 
+	_soundMan = new SoundMan(this);
+	
 	_collisionMan = new CollisionMan(this);
 	_gameModule = new GameModule(this);
 	
@@ -145,6 +148,7 @@ Common::Error NeverhoodEngine::run() {
 	
 	delete _gameModule;
 	delete _collisionMan;
+	delete _soundMan;
 #endif
 
 
