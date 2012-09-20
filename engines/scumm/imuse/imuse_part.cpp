@@ -372,7 +372,7 @@ void Part::set_instrument(uint b) {
 	// We emulate this by introducing a special instrument, which sets
 	// the instrument via sysEx_customInstrument. This seems to be
 	// exclusively used for special sound effects like the "spit" sound.
-	if (g_scumm->_game.id == GID_MONKEY2 && g_scumm->_game.platform == Common::kPlatformMacintosh) {
+	if (g_scumm->isMacM68kV5()) {
 		_instrument.macSfx(b);
 	} else {
 		_instrument.program((byte)b, _player->isMT32());

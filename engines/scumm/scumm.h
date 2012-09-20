@@ -150,7 +150,13 @@ enum GameFeatures {
 	GF_HE_985             = 1 << 14,
 
 	/** HE games with 16 bit color */
-	GF_16BIT_COLOR         = 1 << 15
+	GF_16BIT_COLOR         = 1 << 15,
+
+	/**
+	 * SCUMM v5-v7 Mac games stored in a container file
+	 * Used to differentiate between m68k and PPC versions of Indy4
+	 */
+	GF_MAC_CONTAINER       = 1 << 16
 };
 
 /* SCUMM Debug Channels */
@@ -712,6 +718,9 @@ public:
 	Common::String _containerFile;
 
 	bool openFile(BaseScummFile &file, const Common::String &filename, bool resourceFile = false);
+
+	/** Is this game a Mac m68k v5 game? */
+	bool isMacM68kV5() const;
 
 protected:
 	int _resourceHeaderSize;
