@@ -1839,7 +1839,7 @@ void ScummEngine::setupMusic(int midi) {
 		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
 		bool useOnlyNative = false;
 
-		if (isMacM68kV5()) {
+		if (isMacM68kIMuse()) {
 			// We setup this driver as native MIDI driver to avoid playback
 			// of the Mac music via a selected MIDI device.
 			nativeMidiDriver = new MacM68kDriver(_mixer);

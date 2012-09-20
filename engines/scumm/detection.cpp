@@ -242,8 +242,8 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 	return result;
 }
 
-bool ScummEngine::isMacM68kV5() const {
-	return _game.platform == Common::kPlatformMacintosh && _game.version == 5 && !(_game.features & GF_MAC_CONTAINER);
+bool ScummEngine::isMacM68kIMuse() const {
+	return _game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && !(_game.features & GF_MAC_CONTAINER);
 }
 
 struct DetectorDesc {
