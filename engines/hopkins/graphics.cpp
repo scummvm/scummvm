@@ -1297,11 +1297,33 @@ void GraphicsManager::Sprite_Vesa(byte *a1, byte *a2, int a3, int a4, int a5) {
 }
 
 void GraphicsManager::FIN_VISU() {
-	warning("TODO: FIN_VISU");
+	for (int idx = 1; idx <= 20; ++idx) {
+		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+			_vm->_objectsManager.BOB_OFF(idx);
+	}
+
+	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.VBL();
+
+	for (int idx = 1; idx <= 20; ++idx) {
+		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+			_vm->_objectsManager.BOB_ZERO(idx);
+	}
+
+	for (int idx = 1; idx <= 29; ++idx) {
+		_vm->_globals.BL_ANIM[idx].v1 = 0;
+	}
+
+	for (int idx = 1; idx <= 20; ++idx) {
+		_vm->_globals.Bqe_Anim[idx].field4 = 0;
+	}
 }
 
 void GraphicsManager::VISU_ALL() {
-	warning("TODO: VISU_ALL");
+	for (int idx = 1; idx <= 20; ++idx) {
+		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+			_vm->_objectsManager.BOB_VISU(idx);
+	}
 }
 
 void GraphicsManager::RESET_SEGMENT_VESA() {

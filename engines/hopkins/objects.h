@@ -34,7 +34,10 @@ class HopkinsEngine;
 class ObjectsManager {
 private:
 	HopkinsEngine *_vm;
+
+	int PRIORITY;
 public:
+	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
 
 	byte *CHANGE_OBJET(int objIndex);
@@ -50,6 +53,11 @@ public:
 
 	int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
 	int AJOUTE_OBJET(int objIndex);
+
+	void INIT_BOB();
+	void BOB_ZERO(int idx);
+	void BOB_VISU(int idx);
+	void BOB_OFF(int idx);
 };
 
 } // End of namespace Hopkins

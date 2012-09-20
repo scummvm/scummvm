@@ -84,11 +84,41 @@ struct BankItem {
 };
 
 struct BobItem {
+	int field0;
+	byte *field4;
+	int field8;
+	int fieldA;
 	int fieldC;
+	int fieldE;
 	int field10;
 	int field12;
 	int field14;
 	int field16;
+	byte *field18;
+	int field1A;
+	int field1C;
+	int field1E;
+	int field20;
+	int field22;
+	int field24;
+	int field26;
+	int field28;
+	int field2A;
+	int field2C;
+	byte *field30;
+	int field34;
+	int field36;
+	int field38;
+	int field3A;
+	int field46;
+};
+
+struct Liste2Item {
+	int field0;
+	int field2;
+	int field4;
+	int field6;
+	int field8;
 };
 
 struct BlAnimItem {
@@ -181,6 +211,7 @@ public:
 	BqeAnimItem Bqe_Anim[35];
 	BankItem Bank[8];
 	BobItem Bob[36];
+	Liste2Item Liste2[35];
 	BlAnimItem BL_ANIM[30];
 	VBobItem VBob[35];
 	ObjetWItem ObjetW[300];

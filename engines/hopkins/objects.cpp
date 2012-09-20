@@ -31,6 +31,10 @@
 
 namespace Hopkins {
 
+ObjectsManager::ObjectsManager() {
+	PRIORITY = 0;
+}
+
 void ObjectsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
@@ -183,6 +187,106 @@ int ObjectsManager::AJOUTE_OBJET(int objIndex) {
   
 	GLOBALS.INVENTAIRE[arrIndex] = objIndex;
 	return arrIndex;
+}
+
+void ObjectsManager::INIT_BOB() {
+	for (int idx = 0; idx < 35; ++idx) {
+		BOB_ZERO(idx);
+	}
+}
+
+void ObjectsManager::BOB_ZERO(int idx) {
+	BobItem &bob = _vm->_globals.Bob[idx];
+	Liste2Item &item = _vm->_globals.Liste2[idx];
+
+	bob.field0 = 0;
+	bob.field4 = PTRNUL;
+	bob.field8 = 0;
+	bob.fieldA = 0;
+	bob.fieldC = 0;
+	bob.fieldE = 0;
+	bob.field10 = 0;
+	bob.field12 = 0;
+	bob.field14 = 0;
+	bob.field16 = 0;
+	bob.field18 = PTRNUL;
+	bob.field1A = 0;
+	bob.field1C = 0;
+	bob.field1E = 0;
+	bob.field20 = 0;
+	bob.field22 = 0;
+	bob.field24 = 0;
+	bob.field26 = 0;
+	bob.field28 = 0;
+	bob.field2A = 0;
+	bob.field2C = 0;
+	bob.field30 = PTRNUL;
+	bob.field34 = 0;
+	bob.field36 = 0;
+	bob.field38 = 0;
+	bob.field46 = 0;
+
+	item.field0 = 0;
+	item.field2 = 0;
+	item.field4 = 0;
+	item.field6 = 0;
+	item.field8 = 0;
+}
+
+void ObjectsManager::BOB_VISU(int idx) {
+	int v1;
+	const byte *data;
+	int16 v6;
+	int16 v7;
+	int16 v8;
+	int16 v9;
+
+	PRIORITY = 1;
+
+	if (!_vm->_globals.Bob[idx].field0) {
+		BOB_ZERO(idx);
+
+		data = _vm->_globals.Bqe_Anim[idx].data;
+		v1 = READ_LE_UINT16(data);
+		v9 = READ_LE_UINT16(data + 2);
+		v8 = READ_LE_UINT16(data + 4);
+		v7 = READ_LE_UINT16(data + 6);
+		v6 = READ_LE_UINT16(data + 8);
+		if (READ_LE_UINT16(data)) {
+			if (_vm->_globals.Bank[idx].field4) {
+				if (!v9)
+					v9 = 1;
+				if (!v6)
+					v6 = -1;
+			
+				if (READ_LE_UINT16(data + 24)) {
+					_vm->_globals.Bob[idx].field3A = 0;
+          
+					if (_vm->_globals.Bank[idx].fileHeader == 1) {
+						_vm->_globals.Bob[idx].field3A = 1;
+						_vm->_globals.Bob[idx].field36 = 0;
+						_vm->_globals.Bob[idx].field38 = 0;
+					}
+
+					_vm->_globals.Bob[idx].field18 = _vm->_globals.Bqe_Anim[idx].data;
+					_vm->_globals.Bob[idx].field0 = 10;
+					_vm->_globals.Bob[idx].field4 = _vm->_globals.Bank[idx].data;
+
+					_vm->_globals.Bob[idx].field1E = v9;
+					_vm->_globals.Bob[idx].field20 = v6;
+					_vm->_globals.Bob[idx].field22 = v8;
+					_vm->_globals.Bob[idx].field24 = v7;
+				}
+			}
+		}
+	}
+}
+
+void ObjectsManager::BOB_OFF(int idx) {
+	if (_vm->_globals.Bob[idx].field0 == 3)
+		_vm->_globals.Bob[idx].field0 = 4;
+	else if (_vm->_globals.Bob[idx].field0 == 10)
+		_vm->_globals.Bob[idx].field0 = 11;
 }
 
 } // End of namespace Hopkins
