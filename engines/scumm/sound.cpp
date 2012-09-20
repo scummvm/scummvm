@@ -248,7 +248,10 @@ void Sound::playSound(int soundID) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
-	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKTAG('S','B','L',' ')) {
+	else if (_vm->_game.platform != Common::kPlatformFMTowns
+	         // The Macintosh version of MI2 just ignores SBL effects.
+	         && (_vm->_game.platform != Common::kPlatformMacintosh && _vm->_game.id != GID_MONKEY2)
+	         && READ_BE_UINT32(ptr) == MKTAG('S','B','L',' ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
 
 		// SBL resources essentially contain VOC sound data.
