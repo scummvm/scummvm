@@ -29,18 +29,18 @@ namespace Neverhood {
 Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundVolume(0) {
 	
-	// TODO Sound1ChList_addSoundResources(0x81293110, dword_4B7FC8, true);
-	// TODO Sound1ChList_setSoundValuesMulti(dword_4B7FC8, 1, 50, 600, 5, 150);
-	// TODO Sound1ChList_setSoundValues(0x90F0D1C3, false, 20000, 30000, 20000, 30000);
-	// TODO Sound1ChList_sub_407C70(0x81293110, 0x48498E46, 0x50399F64, 0);
-	// TODO Sound1ChList_sub_407C70(0x81293110, 0x40030A51, 0xC862CA15, 0);
-	// TODO Sound1ChList_sub_407C70(0x81293110, 0x41861371, 0x43A2507F, 0);
+	// TODO SoundMan_addSoundList(0x81293110, dword_4B7FC8, true);
+	// TODO SoundMan_setSoundListParams(dword_4B7FC8, true, 50, 600, 5, 150);
+	// TODO SoundMan_setSoundParams(0x90F0D1C3, false, 20000, 30000, 20000, 30000);
+	// TODO SoundMan_playTwoSounds(0x81293110, 0x48498E46, 0x50399F64, 0);
+	// TODO SoundMan_playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
+	// TODO SoundMan_playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
 
 	_flag = getGlobalVar(0x10938830) != 0;
 
 	if (_flag) {
-		// TODO Sound1ChList_setVolume(0x90F0D1C3, 0);
-		// TODO Sound1ChList_playLooping(0x90F0D1C3);
+		// TODO SoundMan_setSoundVolume(0x90F0D1C3, 0);
+		// TODO SoundMan_playSoundLooping(0x90F0D1C3);
 	}
 
 	if (which < 0) {
@@ -58,7 +58,7 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module3000::~Module3000() {
-	// TODO Sound1ChList_sub_407A50(0x81293110);
+	// TODO SoundMan_deleteGroup(0x81293110);
 }
 
 void Module3000::createScene(int sceneNum, int which) {
@@ -77,10 +77,10 @@ void Module3000::createScene(int sceneNum, int which) {
 		}
 		break;
 	case 2:
-		// TODO Sound1ChList_sub_407C70(0x81293110, 0x40030A51, 0xC862CA15, 0);
+		// TODO SoundMan_playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 		if (_flag) {
 			_soundVolume = 90;
-			// TODO Sound1ChList_setVolume(0x90F0D1C3, 90);
+			// TODO SoundMan_setSoundVolume(0x90F0D1C3, 90);
 		}
 		if (getGlobalVar(0x10938830)) {
 			createNavigationScene(0x004B7D58, which);
@@ -109,7 +109,7 @@ void Module3000::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004B7FB0, which, kNavigationTypes06);
 		break;
 	case 7:
-		// TODO Sound1ChList_setSoundValuesMulti(dword_4B7FC8, 0, 0, 0, 0, 0);
+		// TODO SoundMan_setSoundListParams(dword_4B7FC8, false, 0, 0, 0, 0);
 		if (!getSubVar(0x40050052, 0x089809C2)) {
 			setSubVar(0x40050052, 0x089809C2, 1);
 			createSmackerScene(0x90022001, true, true, false);
@@ -126,7 +126,7 @@ void Module3000::createScene(int sceneNum, int which) {
 		_childObject = new Scene3011(_vm, this, 0);
 		break;
 	case 11:
-		// TODO Sound1ChList_setSoundValuesMulti(dword_4B7FC8, 0, 0, 0, 0, 0);
+		// TODO SoundMan_setSoundListParams(dword_4B7FC8, false, 0, 0, 0, 0);
 		if (!getSubVar(0x40050052, 0x10130993)) {
 			setSubVar(0x40050052, 0x10130993, 1);
 			createSmackerScene(0x31093019, true, true, false);
@@ -181,10 +181,10 @@ void Module3000::updateScene() {
 			}
 			break;
 		case 2:
-			// TODO Sound1ChList_sub_407C70(0x81293110, 0x41861371, 0x43A2507F, 0);
+			// TODO SoundMan_playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
 			if (_flag) {
 				_soundVolume = 0;
-				// TODO Sound1ChList_setVolume(0x90F0D1C3, 0);
+				// TODO SoundMan_setSoundVolume(0x90F0D1C3, 0);
 			}
 			if (_moduleResult == 0) {
 				createScene(3, 0);
@@ -229,12 +229,12 @@ void Module3000::updateScene() {
 		case 8:
 			_flag = getGlobalVar(0x10938830); // CHECKME
 			if (_moduleResult != 1) {
-				// TODO: Sound1ChList_setSoundValuesMulti(dword_4B7FC8, true, 0, 0, 0, 0):
+				// TODO: SoundMan_setSoundListParams(dword_4B7FC8, true, 0, 0, 0, 0):
 				createScene(4, 1);
 			} else if (getGlobalVar(0xF0402B0A)) {
 				createScene(1008, -1);
 			} else {
-				// TODO: Sound1ChList_setSoundValuesMulti(dword_4B7FC8, true, 0, 0, 0, 0);
+				// TODO: SoundMan_setSoundListParams(dword_4B7FC8, true, 0, 0, 0, 0);
 				createScene(4, 1);
 			}
 			break;
@@ -275,26 +275,26 @@ void Module3000::updateScene() {
 				int navigationIndex = navigationScene()->getIndex();
 				if (navigationIndex == 1) {
 					if (frameNumber == 0) {
-						// TODO Sound1ChList_sub_407C70(0x81293110, 0x48498E46, 0x50399F64, 0);
-						// TODO Sound1ChList_setVolume(0x48498E46, 70);
-						// TODO Sound1ChList_setVolume(0x50399F64, 70);
+						// TODO SoundMan_playTwoSounds(0x81293110, 0x48498E46, 0x50399F64, 0);
+						// TODO SoundMan_setSoundVolume(0x48498E46, 70);
+						// TODO SoundMan_setSoundVolume(0x50399F64, 70);
 					} else if (frameNumber == 100) {
-						// TODO Sound1ChList_sub_407C70(0x81293110, 0x41861371, 0x43A2507F, 0);
+						// TODO SoundMan_playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
 					}
 				} else if (navigationIndex == 0) {
 					if (frameNumber == 0) {
-						// TODO Sound1ChList_sub_407C70(0x81293110, 0x48498E46, 0x50399F64, 0);
-						// TODO Sound1ChList_setVolume(0x48498E46, 70);
-						// TODO Sound1ChList_setVolume(0x50399F64, 70);
+						// TODO SoundMan_playTwoSounds(0x81293110, 0x48498E46, 0x50399F64, 0);
+						// TODO SoundMan_setSoundVolume(0x48498E46, 70);
+						// TODO SoundMan_setSoundVolume(0x50399F64, 70);
 					} else if (frameNumber == 10) {
-						// TODO Sound1ChList_sub_407C70(0x81293110, 0x40030A51, 0xC862CA15, 0);
+						// TODO SoundMan_playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
 					if (_flag && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
 							_soundVolume++;
-						// TODO Sound1ChList_setVolume(0x90F0D1C3, _soundVolume);
+						// TODO SoundMan_setSoundVolume(0x90F0D1C3, _soundVolume);
 					}
 				}
 			}
@@ -307,17 +307,17 @@ void Module3000::updateScene() {
 				int navigationIndex = navigationScene()->getIndex();
 				if (_flag && _soundVolume > 1 && frameNumber % 2) {
 					_soundVolume--;
-					// TODO Sound1ChList_setVolume(0x90F0D1C3, _soundVolume);
+					// TODO SoundMan_setSoundVolume(0x90F0D1C3, _soundVolume);
 				}
 				if (navigationIndex == 0) {
 					if (frameNumber == 35) {
-						// TODO Sound1ChList_sub_407C70(0x81293110, 0x41861371, 0x43A2507F, 0);
+						// TODO SoundMan_playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
 					}
 				} else if (navigationIndex == 1) {
 					if (frameNumber == 55) {
-						// TODO Sound1ChList_sub_407C70(0x81293110, 0x48498E46, 0x50399F64, 0);
-						// TODO Sound1ChList_setVolume(0x48498E46, 70);
-						// TODO Sound1ChList_setVolume(0x50399F64, 70);
+						// TODO SoundMan_playTwoSounds(0x81293110, 0x48498E46, 0x50399F64, 0);
+						// TODO SoundMan_setSoundVolume(0x48498E46, 70);
+						// TODO SoundMan_setSoundVolume(0x50399F64, 70);
 					}
 				}
 			}
@@ -330,14 +330,14 @@ void Module3000::updateScene() {
 				int navigationIndex = navigationScene()->getIndex();
 				if (navigationIndex == 2) {
 					if (frameNumber == 40) {
-						// TODO Sound1ChList_sub_407C70(0x81293110, 0x40030A51, 0xC862CA15, 0);
+						// TODO SoundMan_playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
 					if (_flag && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
 							_soundVolume++;
-						// TODO Sound1ChList_setVolume(0x90F0D1C3, _soundVolume);
+						// TODO SoundMan_setSoundVolume(0x90F0D1C3, _soundVolume);
 					}
 				}
 			}
@@ -346,7 +346,7 @@ void Module3000::updateScene() {
 		case 5:
 #if 0 // ALL TODO
 			if (navigationScene()->getSoundFlag1() && navigationScene()->getIndex() == 0) {
-				// TODO Sound1ChList_sub_4080B0(false);
+				// TODO SoundMan_setTwoSoundsPlayFlag(false);
 			}
 #endif
 			break;

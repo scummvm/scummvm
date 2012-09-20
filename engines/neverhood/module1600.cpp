@@ -44,14 +44,14 @@ Module1600::Module1600(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 0);
 	}
 
-	// TODO Sound1ChList_addSoundResources(0x1A008D8, dword_4B3BB0, true);
-	// TODO Sound1ChList_setSoundValuesMulti(dword_4B3BB0, true, 50, 600, 5, 150);
-	// TODO Sound1ChList_sub_407C70(0x1A008D8, 0x41861371, 0x43A2507F, 0);
+	// TODO SoundMan_addSoundList(0x1A008D8, dword_4B3BB0, true);
+	// TODO SoundMan_setSoundListParams(dword_4B3BB0, true, 50, 600, 5, 150);
+	// TODO SoundMan_playTwoSounds(0x1A008D8, 0x41861371, 0x43A2507F, 0);
 
 }
 
 Module1600::~Module1600() {
-	// TODO Sound1ChList_sub_407A50(0x1A008D8);
+	// TODO SoundMan_deleteGroup(0x1A008D8);
 }
 
 void Module1600::createScene(int sceneNum, int which) {

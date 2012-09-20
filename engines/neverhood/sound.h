@@ -50,6 +50,8 @@ struct MusicItem {
 	int16 _fadeVolumeStep;
 	int16 _countdown;
 	MusicResource *_musicResource;
+	MusicItem();
+	~MusicItem();
 };
 
 struct SoundItem {
@@ -63,6 +65,11 @@ struct SoundItem {
 	bool _playLooping;
 	int16 _currCountdown;
 	SoundResource *_soundResource;
+
+	SoundItem(NeverhoodEngine *vm, uint32 nameHash, uint32 soundFileHash,
+		bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
+		bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown);
+	~SoundItem();
 };
 
 class SoundMan {
@@ -113,7 +120,9 @@ protected:
 	Common::Array<MusicItem*> _musicItems;
 	Common::Array<SoundItem*> _soundItems;
 	
+	MusicItem *getMusicItemByHash(uint32 musicFileHash);
 	SoundItem *getSoundItemByHash(uint32 soundFileHash);
+	void deleteSoundByIndex(int index);
 	
 };
 

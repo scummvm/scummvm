@@ -32,8 +32,8 @@ namespace Neverhood {
 Module1400::Module1400(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	// TODO Music18hList_add(0x00AD0012, 0x06333232);
-	// TODO Music18hList_add(0x00AD0012, 0x624A220E);
+	// TODO SoundMan_addMusic(0x00AD0012, 0x06333232);
+	// TODO SoundMan_addMusic(0x00AD0012, 0x624A220E);
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -44,7 +44,7 @@ Module1400::Module1400(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module1400::~Module1400() {
-	// TODO Music18hList_deleteGroup(0x00AD0012);
+	// TODO SoundMan_deleteMusicGroup(0x00AD0012);
 }
 
 void Module1400::createScene(int sceneNum, int which) {
@@ -52,33 +52,33 @@ void Module1400::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 0:
-		// TODO Music18hList_play(0x06333232, 0, 2, 1);
+		// TODO SoundMan_startMusic(0x06333232, 0, 2, 1);
 		_childObject = new Scene1401(_vm, this, which);
 		break;
 	case 1:
-		// TODO Music18hList_stop(0x06333232, 0, 2);
-		// TODO Music18hList_stop(0x624A220E, 0, 2);
+		// TODO SoundMan_stopMusic(0x06333232, 0, 2);
+		// TODO SoundMan_stopMusic(0x624A220E, 0, 2);
 		_childObject = new Scene1402(_vm, this, which);
 		break;
 	case 2:
-		// TODO Music18hList_stop(0x06333232, 0, 2);
-		// TODO Music18hList_play(0x624A220E, 0, 2, 1);
+		// TODO SoundMan_stopMusic(0x06333232, 0, 2);
+		// TODO SoundMan_startMusic(0x624A220E, 0, 2, 1);
 		_childObject = new Scene1403(_vm, this, which);
 		break;
 	case 3:
-		// TODO Music18hList_play(0x06333232, 0, 2, 1);
+		// TODO SoundMan_startMusic(0x06333232, 0, 2, 1);
 		_childObject = new Scene1404(_vm, this, which);
 		break;
 	case 4:
-		// TODO Music18hList_play(0x06333232, 0, 2, 1);
+		// TODO SoundMan_startMusic(0x06333232, 0, 2, 1);
 		_childObject = new Scene1405(_vm, this, which);
 		break;
 	case 5:
-		// TODO Music18hList_stop(0x06333232, 0, 2);
+		// TODO SoundMan_stopMusic(0x06333232, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 2);
 		break;
 	case 6:
-		// TODO Music18hList_stop(0x06333232, 0, 2);
+		// TODO SoundMan_stopMusic(0x06333232, 0, 2);
 		_childObject = new Scene1407(_vm, this, which);
 		break;
 	}
@@ -148,7 +148,7 @@ Class525::Class525(NeverhoodEngine *vm)
 }
 
 Class525::~Class525() {
-	// TODO Sound1ChList_sub_407AF0(0x01104C08);
+	// TODO SoundMan_deleteSoundGroup(0x01104C08);
 }
 
 void Class525::update4662A0() {
@@ -157,8 +157,8 @@ void Class525::update4662A0() {
 		sub466460();
 	}
 	if (_countdown2 != 0 && (--_countdown2 == 0)) {
-		// TODO Sound1ChList_addSoundResource(0x01104C08, 0x4A116437, true);
-		// TODO Sound1ChList_playLooping(0x4A116437);
+		// TODO SoundMan_addSound(0x01104C08, 0x4A116437, true);
+		// TODO SoundMan_playSoundLooping(0x4A116437);
 	}
 }
 
@@ -211,7 +211,7 @@ void Class525::sub466420() {
 }
 
 void Class525::sub466460() {
-	// TODO Sound1ChList_deleteSoundByHash(0x4A116437);
+	// TODO SoundMan_deleteSound(0x4A116437);
 	_soundResource1.play(0x4A120435);
 	startAnimation(0x4C210500, 0, -1);
 }
@@ -406,7 +406,7 @@ Class489::Class489(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Spr
 }
 
 Class489::~Class489() {
-	// TODO Sound1ChList_sub_407AF0(0x05331081);
+	// TODO SoundMan_deleteSoundGroup(0x05331081);
 }
 
 uint32 Class489::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -616,8 +616,8 @@ void Class489::sub434EC0() {
 	NextState(&Class489::sub434F40);
 	setGlobalVar(0x12A10DB3, 1);
 	_soundResource1.play(0xCC4A8456);
-	// TODO Sound1ChList_addSoundResource(0x05331081, 0xCE428854, true);
-	// TODO Sound1ChList_playLooping(0xCE428854);
+	// TODO SoundMan_addSound(0x05331081, 0xCE428854, true);
+	// TODO SoundMan_playSoundLooping(0xCE428854);
 }
 
 void Class489::sub434F40() {
@@ -634,7 +634,7 @@ void Class489::sub434F80() {
 	NextState(&Class489::sub434E90);
 	setGlobalVar(0x12A10DB3, 0);
 	_soundResource1.play(0xCC4A8456);
-	// TODO Sound1ChList_deleteSoundByHash(0xCE428854);
+	// TODO SoundMan_deleteSound(0xCE428854);
 }
 
 void Class489::sub434FF0() {

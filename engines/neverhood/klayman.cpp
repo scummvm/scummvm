@@ -4733,11 +4733,11 @@ void KmScene2205::sub423980() {
 KmScene2206::KmScene2206(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
-	// TODO Sound1ChList_addSoundResource(0x80101800, 0xD3B02847);
+	// TODO SoundMan_addSound(0x80101800, 0xD3B02847);
 }
 
 KmScene2206::~KmScene2206() {
-	// TODO Sound1ChList_sub_407AF0(0x80101800);
+	// TODO SoundMan_deleteSoundGroup(0x80101800);
 }
 
 void KmScene2206::xUpdate() {
@@ -4852,7 +4852,7 @@ void KmScene2206::sub482490() {
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::handleMessage41D360);
 		SetSpriteUpdate(&KmScene2206::spriteUpdate482450);
-		// TODO Sound1ChList_playLooping(0xD3B02847);
+		// TODO SoundMan_playSoundLooping(0xD3B02847);
 	}
 }
 

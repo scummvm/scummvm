@@ -35,14 +35,14 @@ Module2600::Module2600(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 1);
 	}
 
-	// TODO Sound1ChList_addSoundResources(0x40271018, dword_4B87E8, true);
-	// TODO Sound1ChList_setSoundValuesMulti(dword_4B87E8, true, 50, 600, 5, 150);
-	// TODO Sound1ChList_sub_407C70(0x40271018, 0x41861371, 0x43A2507F);
+	// TODO SoundMan_addSoundList(0x40271018, dword_4B87E8, true);
+	// TODO SoundMan_setSoundListParams(dword_4B87E8, true, 50, 600, 5, 150);
+	// TODO SoundMan_playTwoSounds(0x40271018, 0x41861371, 0x43A2507F);
 
 }
 
 Module2600::~Module2600() {
-	// TODO Sound1ChList_sub_407A50(0x40271018);
+	// TODO SoundMan_deleteGroup(0x40271018);
 }
 
 void Module2600::createScene(int sceneNum, int which) {
@@ -72,7 +72,7 @@ void Module2600::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004B8698, which);
 		break;
 	case 7:
-		// TODO Sound1ChList_sub_407A50(0x40271018);
+		// TODO SoundMan_deleteGroup(0x40271018);
 		createSmackerScene(0x30090001, true, true, false);
 		break;
 	case 8:
@@ -268,7 +268,7 @@ AsScene2609Water::AsScene2609Water(NeverhoodEngine *vm)
 	setDoDeltaX(1);
 	createSurface1(0x9C210C90, 1200);
 	setClipRect(260, 260, 400, 368);
-	// TODO Sound1ChList_addSoundResource(0xDC2769B0, true);
+	// TODO SoundMan_addSound(0xDC2769B0, true);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2609Water::handleMessage);
 	if (getGlobalVar(0x4E0BE910))
@@ -281,12 +281,12 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 	case 0x2001:
 		stopAnimation();
 		setVisible(false);
-		// TODO Sound1ChList_stop(0xDC2769B0);
+		// TODO SoundMan_stopSound(0xDC2769B0);
 		break;
 	case 0x2002:
 		startAnimation(0x9C210C90, 0, -1);
 		setVisible(true);
-		// TODO Sound1ChList_playLooping(0xDC2769B0);
+		// TODO SoundMan_playSoundLooping(0xDC2769B0);
 		break;
 	}
 	return messageResult;

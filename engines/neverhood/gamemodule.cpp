@@ -51,17 +51,17 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	
 	// Other initializations moved to actual engine class
 	// TODO
-	// TODO Sound1ChList_sub_407F70(0x2D0031, 0x8861079);
+	// TODO SoundMan_playSoundThree(0x2D0031, 0x8861079);
 	SetMessageHandler(&GameModule::handleMessage);
 }
 
 GameModule::~GameModule() {
 
-	// TODO Sound1ChList_sub_407AF0(0x2D0031);
+	// TODO SoundMan_deleteSoundGroup(0x2D0031);
 	delete _childObject;
 	_childObject = NULL;
 	// TODO: Set palette to black but probably not neccessary
-	// TODO Sound1ChList_sub_408480();
+	// TODO SoundMan_deinit();
 	// TODO Set debug vars (maybe)
 }
 

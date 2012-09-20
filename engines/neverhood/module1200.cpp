@@ -39,12 +39,12 @@ Module1200::Module1200(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 0);
 	}
 
-	// TODO Music18hList_add(0x00478311, 0x62222CAE);
-	// TODO Music18hList_play(0x62222CAE, 0, 0, 1);
+	// TODO SoundMan_addMusic(0x00478311, 0x62222CAE);
+	// TODO SoundMan_startMusic(0x62222CAE, 0, 0, 1);
 }
 
 Module1200::~Module1200() {
-	// TODO Music18hList_deleteGroup(0x00478311);
+	// TODO SoundMan_deleteMusicGroup(0x00478311);
 }
 
 void Module1200::createScene(int sceneNum, int which) {
@@ -58,7 +58,7 @@ void Module1200::createScene(int sceneNum, int which) {
 		_childObject = new Scene1202(_vm, this, which);
 		break;
 	case 2:
-		// TODO Music18hList_stop(0x62222CAE, 0, 0);
+		// TODO SoundMan_stopMusic(0x62222CAE, 0, 0);
 		createSmackerScene(0x31890001, true, true, false);
 		setGlobalVar(0x2A02C07B, 1);
 		break;
@@ -87,7 +87,7 @@ void Module1200::updateScene() {
 			createScene(0, 1);
 			break;
 		case 2:
-			// TODO Music18hList_play(0x62222CAE, 0, 0, 1);
+			// TODO SoundMan_startMusic(0x62222CAE, 0, 0, 1);
 			createScene(0, 3);
 			break;
 		}
@@ -371,7 +371,7 @@ AsScene1201TntMan::AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sp
 }
 
 AsScene1201TntMan::~AsScene1201TntMan() {
-	// TODO Sound1ChList_sub_407AF0(0x01D00560);
+	// TODO SoundMan_deleteSoundGroup(0x01D00560);
 }	 
 
 uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -426,8 +426,8 @@ void AsScene1201TntMan::sub40CD60() {
 }
 
 void AsScene1201TntMan::sub40CD90() {
-	// TODO Sound1ChList_addSoundResource(0x01D00560, 0x4B044624, true);
-	// TODO Sound1ChList_playLooping(0x4B044624);
+	// TODO SoundMan_addSound(0x01D00560, 0x4B044624, true);
+	// TODO SoundMan_playSoundLooping(0x4B044624);
 	_flag = true;
 	startAnimation(0x85084190, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
@@ -447,7 +447,7 @@ Class465::Class465(NeverhoodEngine *vm, Sprite *asTntMan)
 }
 
 Class465::~Class465() {
-	// TODO Sound1ChList_sub_407AF0(0x041080A4);
+	// TODO SoundMan_deleteSoundGroup(0x041080A4);
 }
 
 void Class465::update() {
@@ -455,8 +455,8 @@ void Class465::update() {
 	if (getGlobalVar(0x20A0C516)) {
 		setVisible(true);
 		SetUpdateHandler(&AnimatedSprite::update);
-		// TODO Sound1ChList_addSoundResource(0x041080A4, 0x460A1050, true);
-		// TODO Sound1ChList_playLooping(0x460A1050);
+		// TODO SoundMan_addSound(0x041080A4, 0x460A1050, true);
+		// TODO SoundMan_playSoundLooping(0x460A1050);
 	}
 }
 

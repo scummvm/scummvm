@@ -36,13 +36,13 @@ Module1900::Module1900(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 0);
 	}
 
-	// TODO Sound1ChList_addSoundResources(0x04E1C09C, dword_4B8800, true);
-	// TODO Sound1ChList_setSoundValuesMulti(dword_4B8800, true, 50, 600, 5, 150);
+	// TODO SoundMan_addSoundList(0x04E1C09C, dword_4B8800, true);
+	// TODO SoundMan_setSoundListParams(dword_4B8800, true, 50, 600, 5, 150);
 
 }
 
 Module1900::~Module1900() {
-	// TODO Sound1ChList_sub_407A50(0x04E1C09C);
+	// TODO SoundMan_deleteGroup(0x04E1C09C);
 }
 
 void Module1900::createScene(int sceneNum, int which) {

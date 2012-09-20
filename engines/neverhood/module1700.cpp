@@ -27,10 +27,10 @@ namespace Neverhood {
 Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundResource(vm) {
 	
-	// TODO Music18hList_add(0x04212331);
-	// TODO Sound1ChList_addSoundResources(0x04212331, dword_4AE930, true);
-	// TODO Sound1ChList_setSoundValuesMulti(dword_4AE930, 1, 50, 600, 5, 150);
-	// TODO Sound1ChList_sub_407C70(0x04212331, 0x41861371, 0x43A2507F, 0);
+	// TODO SoundMan_addMusic(0x04212331);
+	// TODO SoundMan_addSoundList(0x04212331, dword_4AE930, true);
+	// TODO SoundMan_setSoundListParams(dword_4AE930, true, 50, 600, 5, 150);
+	// TODO SoundMan_playTwoSounds(0x04212331, 0x41861371, 0x43A2507F, 0);
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -45,7 +45,7 @@ Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module1700::~Module1700() {
-	// TODO Sound1ChList_sub_407A50(0x04212331);
+	// TODO SoundMan_deleteGroup(0x04212331);
 }
 
 void Module1700::createScene(int sceneNum, int which) {
@@ -53,7 +53,7 @@ void Module1700::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 0:
-		// TODO Sound1ChList_setSoundValuesMulti(dword_4AE930, 0, 0, 0, 0, 0);
+		// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0, 0);
 		createSmackerScene(0x3028A005, true, true, false);
 		break;
 	case 1:
@@ -63,12 +63,12 @@ void Module1700::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004AE8E8, which);
 		break;
 	case 3:
-		// TODO Sound1ChList_setSoundValuesMulti(dword_4AE930, 0, 0, 0, 0, 0);
+		// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0, 0);
 		createSmackerScene(0x01190041, true, true, false);
 		break;
 	case 4:
-		// TODO Sound1ChList_setSoundValuesMulti(dword_4AE930, 0, 0, 0, 0, 0);
-		// TODO Music18hList_play(0x31114225, 0, 2, 1);
+		// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0, 0);
+		// TODO SoundMan_startMusic(0x31114225, 0, 2, 1);
 		_childObject = new Scene1705(_vm, this, which);
 		break;
 	}
@@ -80,7 +80,7 @@ void Module1700::updateScene() {
 	if (!updateChild()) {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-			// TODO Sound1ChList_setSoundValuesMulti(dword_4AE930, 1, 0, 0, 0);
+			// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0);
 			createScene(1, 0);
 			break;
 		case 1:

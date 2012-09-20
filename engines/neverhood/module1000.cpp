@@ -31,8 +31,8 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_musicFileHash = getGlobalVar(0xD0A14D10) ? 0x81106480 : 0x00103144;		
 
-	// TODO Music18hList_add(0x03294419, 0x061880C6);
-	// TODO Music18hList_add(0x03294419, _musicFileHash);
+	// TODO SoundMan_addMusic(0x03294419, 0x061880C6);
+	// TODO SoundMan_addMusic(0x03294419, _musicFileHash);
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -45,7 +45,7 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module1000::~Module1000() {
-	// TODO Music18hList_deleteGroup(0x03294419);
+	// TODO SoundMan_deleteMusicGroup(0x03294419);
 }
 
 void Module1000::createScene(int sceneNum, int which) {
@@ -53,24 +53,24 @@ void Module1000::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 0:
-		// TODO Music18hList_play(0x061880C6, 0, 0, 1);
+		// TODO SoundMan_startMusic(0x061880C6, 0, 0, 1);
 		_childObject = new Scene1001(_vm, this, which);
 		break;
 	case 1:
-		// TODO Music18hList_play(0x061880C6, 0, 0, 1);
+		// TODO SoundMan_startMusic(0x061880C6, 0, 0, 1);
 		_childObject = new Scene1002(_vm, this, which);
 		break;
 	case 2:
-		// TODO Music18hList_play(0x061880C6, 0, 0);
+		// TODO SoundMan_startMusic(0x061880C6, 0, 0);
 		_childObject = new Class152(_vm, this, 0xC084110C, 0x41108C00);
 		break;
 	case 3:
-		// TODO Music18hList_stop(0x061880C6, 0, 2);
+		// TODO SoundMan_stopMusic(0x061880C6, 0, 2);
 		_childObject = new Scene1004(_vm, this, which);
 		break;
 	case 4:
-		// TODO Music18hList_stop(0x061880C6, 0, 0);
-		// TODO Music18hList_play(_musicFileHash, 0, 0, 1);
+		// TODO SoundMan_stopMusic(0x061880C6, 0, 0);
+		// TODO SoundMan_startMusic(_musicFileHash, 0, 0, 1);
 		_childObject = new Scene1005(_vm, this, which);
 		break;
 	}
@@ -105,7 +105,7 @@ void Module1000::updateScene() {
 				createScene(1, 2);
 			break;
 		case 4:
-			// TODO Music18hList_stop(_musicFileHash, 0, 1);
+			// TODO SoundMan_stopMusic(_musicFileHash, 0, 1);
 			createScene(3, 1);
 			break;
 		}

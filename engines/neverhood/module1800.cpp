@@ -28,9 +28,9 @@ namespace Neverhood {
 Module1800::Module1800(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	// TODO Sound1ChList_addSoundResources(0x04A14718, dword_4AFE70);
-	// TODO Sound1ChList_setSoundValuesMulti(dword_4AFE70, 1, 50, 600, 10, 150);
-	// TODO Sound1ChList_sub_407C70(0x04A14718, 0x8A382B55, 0x0C242F1D, 0);
+	// TODO SoundMan_addSoundList(0x04A14718, dword_4AFE70);
+	// TODO SoundMan_setSoundListParams(dword_4AFE70, true, 50, 600, 10, 150);
+	// TODO SoundMan_playTwoSounds(0x04A14718, 0x8A382B55, 0x0C242F1D, 0);
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -45,7 +45,7 @@ Module1800::Module1800(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module1800::~Module1800() {
-	// TODO Sound1ChList_sub_407A50(0x04A14718);
+	// TODO SoundMan_deleteGroup(0x04A14718);
 }
 
 void Module1800::createScene(int sceneNum, int which) {
@@ -73,11 +73,11 @@ void Module1800::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004AFE40, which);
 		break;
 	case 6:
-		// TODO Sound1ChList_sub_407A50(0x04A14718);
+		// TODO SoundMan_deleteGroup(0x04A14718);
 		createSmackerScene(0x08D84010, true, true, false);
 		break;
 	case 7:
-		// TODO Sound1ChList_setSoundValuesMulti(dword_4AFE70, 0, 0, 0, 0, 0);
+		// TODO SoundMan_setSoundListParams(dword_4AFE70, false, 0, 0, 0, 0);
 		createSmackerScene(0x0168B121, true, true, false);
 		break;
 	case 8:
@@ -159,7 +159,7 @@ void Module1800::updateScene() {
 #if 0 // TODO
 			NavigationScene *navigationScene = (NavigationScene*)_childObject;
 			if (navigationScene->soundFlag1 && navigationScene->index == 2) {
-				// TODO Sound1ChList_sub_4080B0(false);
+				// TODO SoundMan_setTwoSoundsPlayFlag(false);
 			}
 #endif	
 			break;
