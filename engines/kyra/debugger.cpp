@@ -82,10 +82,10 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 			return true;
 		}
 
-		_vm->screen()->copyRegionToBuffer(5, 0, 0, 320, 200, buffer);
+		_vm->screen()->copyRegionToBuffer(5, 320, 0, 0, 320, 200, buffer);
 		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);
 		palette.copy(_vm->screen()->getCPagePtr(5), 0, 256);
-		_vm->screen()->copyBlockToPage(5, 0, 0, 320, 200, buffer);
+		_vm->screen()->copyBlockToPage(5, 320, 0, 0, 320, 200, buffer);
 
 		delete[] buffer;
 	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {

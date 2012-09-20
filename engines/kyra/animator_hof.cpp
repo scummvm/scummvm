@@ -28,7 +28,7 @@
 namespace Kyra {
 
 void KyraEngine_HoF::restorePage3() {
-	screen()->copyBlockToPage(2, 0, 0, 320, 144, _gamePlayBuffer);
+	screen()->copyBlockToPage(2, 320, 0, 0, 320, 144, _gamePlayBuffer);
 }
 
 void KyraEngine_HoF::clearAnimObjects() {

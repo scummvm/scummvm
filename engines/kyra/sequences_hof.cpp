@@ -2833,7 +2833,7 @@ void KyraEngine_HoF::seq_makeBookOrCauldronAppear(int type) {
 	else if (type == 2)
 		loadInvWsa("CAULDRON.WSA", 1, 6, 0, -2, -2, 1);
 
-	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _screenBuffer);
+	_screen->copyRegionToBuffer(2, 320, 0, 0, 320, 200, _screenBuffer);
 	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
 
 	static const uint8 bookCauldronRects[] = {
@@ -2848,7 +2848,7 @@ void KyraEngine_HoF::seq_makeBookOrCauldronAppear(int type) {
 	int h = bookCauldronRects[type*4+3];
 	_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
 
-	_screen->copyBlockToPage(2, 0, 0, 320, 200, _screenBuffer);
+	_screen->copyBlockToPage(2, 320, 0, 0, 320, 200, _screenBuffer);
 
 	if (type == 2) {
 		int32 countdown = _rnd.getRandomNumberRng(45, 80);
@@ -2870,7 +2870,7 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 	uint8 *rect = new uint8[_screen->getRectSize(_invWsa.w, _invWsa.h)];
 	assert(rect);
 
-	_screen->copyRegionToBuffer(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
+	_screen->copyRegionToBuffer(_invWsa.page, _invWsa.w, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
 
 	_invWsa.running = false;
 	snd_playSoundEffect(0xAF);
@@ -2878,7 +2878,7 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 	while (true) {
 		_invWsa.timer = _system->getMillis() + _invWsa.delay * _tickLength;
 
-		_screen->copyBlockToPage(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
+		_screen->copyBlockToPage(_invWsa.page, _invWsa.w, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
 
 		_invWsa.wsa->displayFrame(_invWsa.curFrame, _invWsa.page, 0, 0, 0x4000, 0, 0);
 

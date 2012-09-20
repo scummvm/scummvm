@@ -422,8 +422,7 @@ public:
 	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);
 	void copyPage(uint8 srcPage, uint8 dstPage);
 
-	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
-	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
+	void copyRegionToBuffer(int pageNum, int pitch, int x, int y, int w, int h, uint8 *dest);
 	void copyBlockToPage(int pageNum, int pitch, int x, int y, int w, int h, const uint8 *src);
 
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);

@@ -279,7 +279,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	char *text = getTableEntry(textId);
 
 	if (_textDisplayed) {
-		_screen->copyBlockToPage(0, 0, 160, 320, 40, _textAreaBuffer);
+		_screen->copyBlockToPage(0, 320, 0, 160, 320, 40, _textAreaBuffer);
 		_textDisplayed = false;
 	}
 
@@ -316,7 +316,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	}
 
 	_screen->_charOffset = -4;
-	_screen->copyRegionToBuffer(0, 0, 160, 320, 40, _textAreaBuffer);
+	_screen->copyRegionToBuffer(0, 320, 0, 160, 320, 40, _textAreaBuffer);
 	_textDisplayed = true;
 
 	char backupChar = 0;
@@ -372,7 +372,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 	char *text = getTableEntry(textId & 0x7FFF);
 
 	if (flags > 0)
-		_screen->copyBlockToPage(0, 0, 0, 320, 40, _textAreaBuffer);
+		_screen->copyBlockToPage(0, 320, 0, 0, 320, 40, _textAreaBuffer);
 
 	if (flags == 255)
 		return;
@@ -386,7 +386,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 		_screen->_charOffset = -4;
 
 	if (!flags)
-		_screen->copyRegionToBuffer(0, 0, 0, 320, 40, _textAreaBuffer);
+		_screen->copyRegionToBuffer(0, 320, 0, 0, 320, 40, _textAreaBuffer);
 
 	char backupChar = 0;
 	char *str = text;

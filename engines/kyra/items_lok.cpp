@@ -884,22 +884,22 @@ void KyraEngine_LoK::redrawInventory(int page) {
 
 void KyraEngine_LoK::backUpItemRect0(int xpos, int ypos) {
 	_screen->rectClip(xpos, ypos, 3 << 3, 24);
-	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 3 << 3, 24, _itemBkgBackUp[0]);
+	_screen->copyRegionToBuffer(_screen->_curPage, 3 << 3, xpos, ypos, 3 << 3, 24, _itemBkgBackUp[0]);
 }
 
 void KyraEngine_LoK::restoreItemRect0(int xpos, int ypos) {
 	_screen->rectClip(xpos, ypos, 3 << 3, 24);
-	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 3 << 3, 24, _itemBkgBackUp[0]);
+	_screen->copyBlockToPage(_screen->_curPage, 3 << 3, xpos, ypos, 3 << 3, 24, _itemBkgBackUp[0]);
 }
 
 void KyraEngine_LoK::backUpItemRect1(int xpos, int ypos) {
 	_screen->rectClip(xpos, ypos, 4 << 3, 32);
-	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 4 << 3, 32, _itemBkgBackUp[1]);
+	_screen->copyRegionToBuffer(_screen->_curPage, 4 << 3, xpos, ypos, 4 << 3, 32, _itemBkgBackUp[1]);
 }
 
 void KyraEngine_LoK::restoreItemRect1(int xpos, int ypos) {
 	_screen->rectClip(xpos, ypos, 4 << 3, 32);
-	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4 << 3, 32, _itemBkgBackUp[1]);
+	_screen->copyBlockToPage(_screen->_curPage, 4 << 3, xpos, ypos, 4 << 3, 32, _itemBkgBackUp[1]);
 }
 
 int KyraEngine_LoK::getItemListIndex(Item item) {

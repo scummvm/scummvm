@@ -29,7 +29,7 @@
 namespace Kyra {
 
 void KyraEngine_MR::restorePage3() {
-	screen()->copyBlockToPage(2, 0, 0, 320, 200, _gamePlayBuffer);
+	screen()->copyBlockToPage(2, 320, 0, 0, 320, 200, _gamePlayBuffer);
 }
 
 void KyraEngine_MR::clearAnimObjects() {

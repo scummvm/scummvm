@@ -270,7 +270,7 @@ void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, uint16
 
 				dst = _buffer;
 			} else {
-				_screen->copyBlockToPage(_drawPage, _x, _y, _width, _height, _buffer);
+				_screen->copyBlockToPage(_drawPage, _width, _x, _y, _width, _height, _buffer);
 			}
 		}
 		_currentFrame = 0;

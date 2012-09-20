@@ -185,7 +185,7 @@ void SeqPlayer::s1_copyWaitTicks() {
 void SeqPlayer::s1_shuffleScreen() {
 	_screen->shuffleScreen(0, 16, 320, 128, 2, 0, 0, false);
 	if (_specialBuffer)
-		_screen->copyRegionToBuffer(2, 0, 16, 320, 128, _specialBuffer);
+		_screen->copyRegionToBuffer(2, 320, 0, 16, 320, 128, _specialBuffer);
 	_screen->_curPage = 0;
 }
 
@@ -437,7 +437,7 @@ void SeqPlayer::s1_allocTempBuffer() {
 		if (!_specialBuffer && !_copyViewOffs) {
 			_specialBuffer = new uint8[40960];
 			assert(_specialBuffer);
-			_screen->copyRegionToBuffer(2, 0, 16, 320, 128, _specialBuffer);
+			_screen->copyRegionToBuffer(2, 320, 0, 16, 320, 128, _specialBuffer);
 		}
 	}
 }

@@ -1225,11 +1225,11 @@ int KyraEngine_MR::getScale(int x, int y) {
 #pragma mark -
 
 void KyraEngine_MR::backUpGfxRect32x32(int x, int y) {
-	_screen->copyRegionToBuffer(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
+	_screen->copyRegionToBuffer(_screen->_curPage, 32, x, y, 32, 32, _gfxBackUpRect);
 }
 
 void KyraEngine_MR::restoreGfxRect32x32(int x, int y) {
-	_screen->copyBlockToPage(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
+	_screen->copyBlockToPage(_screen->_curPage, 32, x, y, 32, 32, _gfxBackUpRect);
 }
 
 #pragma mark -

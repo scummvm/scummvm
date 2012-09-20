@@ -421,11 +421,11 @@ void GUI_v2::renewHighlight(Menu &menu) {
 }
 
 void GUI_v2::backUpPage1(uint8 *buffer) {
-	_screen->copyRegionToBuffer(1, 0, 0, 320, 200, buffer);
+	_screen->copyRegionToBuffer(1, 320, 0, 0, 320, 200, buffer);
 }
 
 void GUI_v2::restorePage1(const uint8 *buffer) {
-	_screen->copyBlockToPage(1, 0, 0, 320, 200, buffer);
+	_screen->copyBlockToPage(1, 320, 0, 0, 320, 200, buffer);
 }
 
 void GUI_v2::setupSavegameNames(Menu &menu, int num) {
