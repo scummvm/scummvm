@@ -141,6 +141,9 @@ ScummVM Team
     Parallaction:
        peres
 
+    Pegasus:
+       Matthew Hoops
+
     Queen:
        David Eriksson          - (retired)
        Gregory Montoir         - (retired)
@@ -620,4 +623,7 @@ Special thanks to
 
    Jan Nedoma for providing the sources to the Wintermute-engine, and for his
    support while porting the engine to ScummVM.
+
+   Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing
+   the source code of The Journeyman Project: Pegasus Prime.
 

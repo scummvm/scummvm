@@ -2286,8 +2286,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			lineP.depth = bitDepth;
 
 			if (params->processFlags & kWPFParams) {
-				assert (params->params2 == 1); // Catch untested usage
-				Graphics::drawThickLine(x1, y1, x2, y2, params->params1, color, drawProc, &lineP);
+				Graphics::drawThickLine(x1, y1, x2, y2, params->params1, params->params2, color, drawProc, &lineP);
 			} else {
 				Graphics::drawLine(x1, y1, x2, y2, color, drawProc, &lineP);
 			}

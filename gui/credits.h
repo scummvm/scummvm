@@ -159,6 +159,9 @@ static const char *credits[] = {
 "C1""Parallaction",
 "C0""peres",
 "",
+"C1""Pegasus",
+"C0""Matthew Hoops",
+"",
 "C1""Queen",
 "C0""David Eriksson",
 "C2""(retired)",
@@ -723,6 +726,8 @@ static const char *credits[] = {
 "C0""Janusz Wisniewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon for providing full source code for Soltys and letting us redistribute the game.",
 "C0""",
 "C0""Jan Nedoma for providing the sources to the Wintermute-engine, and for his support while porting the engine to ScummVM.",
+"C0""",
+"C0""Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing the source code of The Journeyman Project: Pegasus Prime.",
 "C0""",
 "",
 };
