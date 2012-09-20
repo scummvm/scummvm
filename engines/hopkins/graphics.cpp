@@ -984,17 +984,17 @@ Video_Cont3_wVbe:
 }
 
 void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
-	int result; // eax@1
-	int v2; // ebx@1
-	int v3; // ecx@1
-	const byte *v4; // esi@1
-	uint8 v5; // dl@2
-	int v6; // ST00_4@9
-	unsigned int v7; // ecx@9
-	byte *v8; // edi@9
-	int v9; // ST00_4@10
-	unsigned int v10; // ecx@10
-	byte *v11; // edi@10
+	int result;
+	int v2;
+	int v3;
+	const byte *v4;
+	uint8 v5;
+	int v6;
+	unsigned int v7;
+	byte *v8;
+	int v9;
+	unsigned int v10;
+	byte *v11;
 
 	assert(VideoPtr);
 	result = 0;
@@ -1327,11 +1327,62 @@ void GraphicsManager::VISU_ALL() {
 }
 
 void GraphicsManager::RESET_SEGMENT_VESA() {
-	warning("TODO: RESET_SEGMENT_VESA");
+	int v1;
+	int v2;
+
+	if (_vm->_globals.NBBLOC > 0) {
+		v1 = 0;
+		v2 = _vm->_globals.NBBLOC;
+		do {
+			_vm->_globals.BLOC[v1++].field0 = 0;
+		} while (v1 != v2);
+    
+		_vm->_globals.NBBLOC = 0;
+	}
 }
 
-void GraphicsManager::Ajoute_Segment_Vesa(int a1, int a2, int a3, int a4) {
-	warning("TODO: Ajoute_Segment_Vesa");
+void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
+	int v4;
+	int v5;
+	int16 v6;
+	int16 v10;
+
+	v4 = x1;
+	v10 = 1;
+	if (x2 > max_x)
+		x2 = max_x;
+	if (y2 > max_y)
+		y2 = max_y;
+	if (x1 < min_x)
+		v4 = min_x;
+	if (y1 < min_y)
+		y1 = min_y;
+
+	v5 = _vm->_globals.NBBLOC;
+	if (_vm->_globals.NBBLOC > 1) {
+
+		v6 = 0;
+		do {
+			BlocItem &bloc = _vm->_globals.BLOC[v6];
+
+			if (bloc.field0 == 1 
+					&& v4 >= bloc.x1 && x2 <= bloc.x2
+					&& y1 >= bloc.y1 && y2 <= bloc.y2)
+				v10 = 0;
+			++v6;
+			v5 = v6;
+		} while (_vm->_globals.NBBLOC + 1 != v6);
+	}
+	
+	if (v10 == 1) {
+		BlocItem &bloc = _vm->_globals.BLOC[++_vm->_globals.NBBLOC];
+
+		bloc.field0 = 1;
+		bloc.x1 = v4;
+		bloc.x2 = x2;
+		bloc.y1 = y1;
+		bloc.y2 = y2;
+	}
 }
 
 int GraphicsManager::Magic_Number(signed int v) {
