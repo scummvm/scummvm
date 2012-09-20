@@ -10,6 +10,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Rewrote VideoDecoder subsystem.
    - Added Galician translation.
 
+  Cine:
+   - Improved audio support for Amiga and AtariST versions of Future Wars.
+     Now music fades out slowly instead of stopping immediately. Sound
+     effects are now properly panned, when requested by the game.
+
 1.5.0 (2012-07-27)
  New Games:
    - Added support for Backyard Baseball 2003.
