@@ -153,8 +153,24 @@ struct Surface {
 	 * @param x1 The x coordinate of the end point.
 	 * @param y1 The y coordinate of the end point.
 	 * @param color The color of the line.
+	 * @note This is just a wrapper around Graphics::drawLine
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
+
+	/**
+	 * Draw a thick line.
+	 *
+	 * @param x0 The x coordinate of the start point.
+	 * @param y0 The y coordiante of the start point.
+	 * @param x1 The x coordinate of the end point.
+	 * @param y1 The y coordinate of the end point.
+	 * @param penX The width of the pen (thickness in the x direction)
+	 * @param penY The height of the pen (thickness in the y direction)
+	 * @param color The color of the line.
+	 * @note This is just a wrapper around Graphics::drawThickLine
+	 * @note The x/y coordinates of the start and end points are the upper-left most part of the pen
+	 */
+	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color);
 
 	/**
 	 * Draw a horizontal line.

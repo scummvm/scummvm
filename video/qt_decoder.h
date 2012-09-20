@@ -53,6 +53,7 @@ class Codec;
  *
  * Video decoder used in engines:
  *  - mohawk
+ *  - pegasus
  *  - sci
  */
 class QuickTimeDecoder : public VideoDecoder, public Audio::QuickTimeAudioDecoder {

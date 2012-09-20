@@ -49,6 +49,17 @@ void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 		error("Surface::drawLine: bytesPerPixel must be 1, 2, or 4");
 }
 
+void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
+	if (format.bytesPerPixel == 1)
+		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<byte>, this);
+	else if (format.bytesPerPixel == 2)
+		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint16>, this);
+	else if (format.bytesPerPixel == 4)
+		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint32>, this);
+	else
+		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4");
+}
+
 void Surface::create(uint16 width, uint16 height, const PixelFormat &f) {
 	free();
 

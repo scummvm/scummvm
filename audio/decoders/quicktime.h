@@ -25,6 +25,7 @@
  * Sound decoder used in engines:
  *  - groovie
  *  - mohawk
+ *  - pegasus
  *  - sci
  */
 
