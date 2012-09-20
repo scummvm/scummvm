@@ -134,7 +134,6 @@ void OnScreenDialog::handleMouseMoved(int x, int y, int button) {
 	}
 	Dialog::handleMouseMoved(x, y, button);
 	if (isMouseOver(x, y)) {
-		g_system->updateScreen();
 		if (_mouseOver == false) {
 			g_gui.theme()->showCursor();
 			CursorMan.lock(true);
