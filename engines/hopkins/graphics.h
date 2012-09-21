@@ -142,7 +142,7 @@ public:
 	void Copy_Video_Vbe3(const byte *surface);
 	void Copy_Video_Vbe16(const byte *surface);
 	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height);
-	void Sprite_Vesa(byte *a1, byte *a2, int a3, int a4, int a5);
+	void Sprite_Vesa(byte *surface, const byte *spriteData, int a3, int a4, int spriteIndex);
 	void FIN_VISU();
 	void VISU_ALL();
 	void RESET_SEGMENT_VESA();

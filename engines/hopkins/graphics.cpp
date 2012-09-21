@@ -199,7 +199,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	if (!DOUBLE_ECRAN) {
 		souris_max();
 		SCANLINE(SCREEN_WIDTH);
-		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
+		max_x = SCREEN_WIDTH;
 		DD_Lock();
 		Cls_Video();
 		if (Winbpp == 2) {
@@ -217,7 +217,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 		DD_Unlock();
 	} else {
 		SCANLINE(SCREEN_WIDTH * 2);
-		_vm->_graphicsManager.max_x = SCREEN_WIDTH * 2;
+		max_x = SCREEN_WIDTH * 2;
 		DD_Lock();
 		Cls_Video();
 		DD_Unlock();
@@ -1245,37 +1245,37 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 	} while (yTemp != 1);
 }
 
-void GraphicsManager::Sprite_Vesa(byte *a1, byte *a2, int a3, int a4, int a5) {
-	byte *v5;
+void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int a3, int a4, int spriteIndex) {
+	const byte *v5;
 	int i; 
-	byte *v7;
+	const byte *v7;
 	uint16 v8;
-	byte *v9;
+	const byte *v9;
 	int v10;
 	uint16 v11;
 	uint16 v12;
 	uint16 v13;
 	uint16 v14;
-	byte *v15; 
-	byte *v16; 
+	const byte *v15; 
+	const byte *v16; 
 	const byte *v17; 
 	byte *v18; 
 	int v19; 
-	byte *v20; 
-	byte *v21; 
+	const byte *v20; 
+	const byte *v21; 
 	int v22; 
 	unsigned int v23;
 	byte *v24;
 	const byte *v25;
-	byte *v26;
-	byte *v27;
+	const byte *v26;
+	const byte *v27;
 	byte *v28;
 	byte *v29;
 	int v30;
 	int v31;
 
-	v5 = a2 + 3;
-	for (i = a5; i; --i)
+	v5 = spriteData + 3;
+	for (i = spriteIndex; i; --i)
 		v5 += READ_LE_UINT32(v5) + 16;
 	v10 = 0;
 	v7 = v5 + 4;
@@ -1318,7 +1318,7 @@ void GraphicsManager::Sprite_Vesa(byte *a1, byte *a2, int a3, int a4, int a5) {
 					v15 = v9 + 6;
 					v16 = v15 + 4;
 					v17 = READ_LE_UINT32(v15) + v15 + 4;
-					v18 = a3 + nbrligne2 * (a4 - 300) - 300 + a1;
+					v18 = a3 + nbrligne2 * (a4 - 300) - 300 + surface;
 					v19 = 0;
 					if (clip_flag) {
 						do {
@@ -1401,8 +1401,8 @@ void GraphicsManager::FIN_VISU() {
 			_vm->_objectsManager.BOB_OFF(idx);
 	}
 
-	_vm->_graphicsManager.VBL();
-	_vm->_graphicsManager.VBL();
+	VBL();
+	VBL();
 
 	for (int idx = 1; idx <= 20; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
@@ -1501,7 +1501,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 	if (_vm->_globals.NBBLOC == 0)
 		return;
 
-	_vm->_graphicsManager.SDL_NBLOCS = _vm->_globals.NBBLOC;
+	SDL_NBLOCS = _vm->_globals.NBBLOC;
 
 	for (int idx = 1; idx <= _vm->_globals.NBBLOC; ++idx) {
 		BlocItem &bloc = _vm->_globals.BLOC[idx];
