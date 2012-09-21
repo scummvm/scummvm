@@ -582,19 +582,20 @@ void MenuSystem::changeVolumeBar(ItemID itemID, int delta) {
 	switch (itemID) {
 	case kItemIdVoices:
 		_vm->_cfgVoicesVolume = CLIP(_vm->_cfgVoicesVolume + delta, 0, 20);
-		newVolume = ceil((double)_vm->_cfgVoicesVolume * Audio::Mixer::kMaxChannelVolume / 20);
+		// Always round volume up instead of down.
+		newVolume = (_vm->_cfgVoicesVolume * Audio::Mixer::kMaxChannelVolume + 19) / 20;
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, newVolume);
 		ConfMan.setInt("speech_volume", newVolume);
 		break;
 	case kItemIdMusic:
 		_vm->_cfgMusicVolume = CLIP(_vm->_cfgMusicVolume + delta, 0, 20);
-		newVolume = ceil((double)_vm->_cfgMusicVolume * Audio::Mixer::kMaxChannelVolume / 20);
+		newVolume = (_vm->_cfgMusicVolume * Audio::Mixer::kMaxChannelVolume + 19) / 20;
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, newVolume);
 		ConfMan.setInt("music_volume", newVolume);
 		break;
 	case kItemIdSoundFX:
 		_vm->_cfgSoundFXVolume = CLIP(_vm->_cfgSoundFXVolume + delta, 0, 20);
-		newVolume = ceil((double)_vm->_cfgSoundFXVolume * Audio::Mixer::kMaxChannelVolume / 20);
+		newVolume = (_vm->_cfgSoundFXVolume * Audio::Mixer::kMaxChannelVolume + 19) / 20;
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, newVolume);
 		ConfMan.setInt("sfx_volume", newVolume);
 		break;
