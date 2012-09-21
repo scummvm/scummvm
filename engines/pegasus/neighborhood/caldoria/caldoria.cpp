@@ -150,14 +150,6 @@ static const TimeValue k5To3Time = 41280;
 
 const NotificationFlags kSinclairLoopDoneFlag = kLastNeighborhoodNotificationFlag << 1;
 
-void doorBombTimerExpiredFunction(FunctionPtr *, void *caldoria) {
-	((Caldoria *)caldoria)->doorBombTimerExpired();
-}
-
-void sinclairTimerExpiredFunction(FunctionPtr *, void *caldoria) {
-	((Caldoria *)caldoria)->sinclairTimerExpired();
-}
-
 SinclairCallBack::SinclairCallBack(Caldoria *caldoria) {
 	_caldoria = caldoria;
 }
@@ -941,7 +933,7 @@ void Caldoria::setUpRoofTop() {
 			} else if (GameState.getCaldoriaDoorBombed()) {
 				// Long enough for AI hints...?
 				_utilityFuse.primeFuse(kCardBombCountDownTime);
-				_utilityFuse.setFunctionPtr(&doorBombTimerExpiredFunction, (void *)this);
+				_utilityFuse.setFunctor(new Common::Functor0Mem<void, Caldoria>(this, &Caldoria::doorBombTimerExpired));
 				_utilityFuse.lightFuse();
 
 				loopCroppedMovie("Images/Caldoria/A48 Bomb Loop", kCaldoria48CardBombLoopLeft, kCaldoria48CardBombLoopTop);
@@ -965,7 +957,7 @@ void Caldoria::setUpRoofTop() {
 		if (!GameState.getCaldoriaSinclairShot()) {
 			if (GameState.getCaldoriaSawVoiceAnalysis() && !_utilityFuse.isFuseLit()) {
 				_utilityFuse.primeFuse(GameState.getCaldoriaFuseTimeLimit());
-				_utilityFuse.setFunctionPtr(&sinclairTimerExpiredFunction, (void *)this);
+				_utilityFuse.setFunctor(new Common::Functor0Mem<void, Caldoria>(this, &Caldoria::sinclairTimerExpired));
 				_utilityFuse.lightFuse();
 			}
 		} else {
@@ -1198,7 +1190,7 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 			break;
 		case kCa49NorthVoiceAnalysis:
 			_utilityFuse.primeFuse(kSinclairShootsTimeLimit);
-			_utilityFuse.setFunctionPtr(&sinclairTimerExpiredFunction, (void*) this);
+			_utilityFuse.setFunctor(new Common::Functor0Mem<void, Caldoria>(this, &Caldoria::sinclairTimerExpired));
 			_utilityFuse.lightFuse();
 			GameState.setCaldoriaSawVoiceAnalysis(true);
 			break;
@@ -1614,7 +1606,7 @@ void Caldoria::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
 		Neighborhood::dropItemIntoRoom(item, dropSpot);
 		// Long enough for AI hints...?
 		_utilityFuse.primeFuse(kCardBombCountDownTime);
-		_utilityFuse.setFunctionPtr(&doorBombTimerExpiredFunction, (void *)this);
+		_utilityFuse.setFunctor(new Common::Functor0Mem<void, Caldoria>(this, &Caldoria::doorBombTimerExpired));
 		_utilityFuse.lightFuse();
 		GameState.setCaldoriaFuseTimeLimit(kCardBombCountDownTime);
 		loopCroppedMovie("Images/Caldoria/A48 Bomb Loop", kCaldoria48CardBombLoopLeft, kCaldoria48CardBombLoopTop);

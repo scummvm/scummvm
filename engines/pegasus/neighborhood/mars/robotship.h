@@ -34,8 +34,6 @@ static const CoordType kShuttleMovieWidth = 114;
 static const CoordType kShuttleMovieHeight = 42;
 
 class RobotShip : IdlerTimeBase {
-friend void timeToDropJunkFunction(FunctionPtr *, void *);
-
 public:
 	RobotShip();
 	virtual ~RobotShip();

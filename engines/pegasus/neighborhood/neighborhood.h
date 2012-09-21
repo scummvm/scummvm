@@ -110,7 +110,6 @@ typedef Common::Queue<QueueRequest> NeighborhoodActionQueue;
 
 class Neighborhood : public IDObject, public NotificationReceiver, public InputHandler, public Idler {
 friend class StriderCallBack;
-friend void timerFunction(FunctionPtr *, void *);
 
 public:
 	Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id);
@@ -335,6 +334,7 @@ protected:
 	virtual void timerExpired(const uint32) {}
 	bool isEventTimerRunning() { return _eventTimer.isFuseLit(); }
 	uint32 getTimerEvent() { return _timerEvent; }
+	void timerFunction();
 
 	void pauseTimer();
 	void resumeTimer();

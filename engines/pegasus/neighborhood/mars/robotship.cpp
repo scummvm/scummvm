@@ -55,10 +55,6 @@ static const CoordType kRovingHeight = kShuttleWindowMidV - kRovingTop;
 
 RobotShip* g_robotShip = 0;
 
-void timeToDropJunkFunction(FunctionPtr *, void *robotShip) {
-	((RobotShip *)robotShip)->timeToDropJunk();
-}
-
 RobotShip::RobotShip() : _spritesMovie(kNoDisplayElement) {
 	g_robotShip = this;
 	_shipRange = Common::Rect(kShuttleWindowLeft, kShuttleWindowTop, kShuttleWindowLeft + kShuttleWindowWidth,
@@ -67,7 +63,7 @@ RobotShip::RobotShip() : _spritesMovie(kNoDisplayElement) {
 	_currentLocation.x = 0;
 	_currentLocation.y = 0;
 	_snaring = false;
-	_dropJunkFuse.setFunctionPtr(&timeToDropJunkFunction, (void *)this);
+	_dropJunkFuse.setFunctor(new Common::Functor0Mem<void, RobotShip>(this, &RobotShip::timeToDropJunk));
 }
 
 RobotShip::~RobotShip() {

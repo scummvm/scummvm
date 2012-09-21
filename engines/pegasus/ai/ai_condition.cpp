@@ -102,7 +102,7 @@ bool AIOrCondition::fireCondition() {
 
 AITimerCondition::AITimerCondition(const TimeValue time, const TimeScale scale, const bool shouldStartTimer) {
 	_timerFuse.primeFuse(time, scale);
-	_timerFuse.setFunctionPtr((tFunctionPtr)&AITimerFunction, (void *)this);
+	_timerFuse.setFunctor(new Common::Functor0Mem<void, AITimerCondition>(this, &AITimerCondition::fire));
 	_fired = false;
 
 	if (shouldStartTimer)
@@ -138,12 +138,12 @@ void AITimerCondition::readAICondition(Common::ReadStream *stream) {
 		_timerFuse.lightFuse();
 }
 
-void AITimerCondition::AITimerFunction(FunctionPtr *, AITimerCondition *condition) {
-	condition->_fired = true;
-}
-
 bool AITimerCondition::fireCondition() {
 	return _fired;
+}
+
+void AITimerCondition::fire() {
+	_fired = true;
 }
 
 AILocationCondition::AILocationCondition(uint32 maxLocations) {

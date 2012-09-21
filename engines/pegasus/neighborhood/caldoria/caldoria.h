@@ -401,8 +401,6 @@ protected:
 
 class Caldoria : public Neighborhood {
 friend class SinclairCallBack;
-friend void doorBombTimerExpiredFunction(FunctionPtr *, void *);
-friend void sinclairTimerExpiredFunction(FunctionPtr *, void *);
 
 public:
 	Caldoria(InputHandler *, PegasusEngine *);

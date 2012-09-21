@@ -115,10 +115,6 @@ PegasusEngine::~PegasusEngine() {
 	delete _gfx;
 }
 
-void introTimerExpiredFunction(FunctionPtr *, void *) {
-	((PegasusEngine *)g_engine)->introTimerExpired();
-}
-
 Common::Error PegasusEngine::run() {
 	_console = new PegasusConsole(this);
 	_gfx = new GraphicsManager(this);
@@ -186,7 +182,7 @@ Common::Error PegasusEngine::run() {
 
 	if (!isDemo()) {
 		_introTimer = new FuseFunction();
-		_introTimer->setFunctionPtr(&introTimerExpiredFunction, 0);
+		_introTimer->setFunctor(new Common::Functor0Mem<void, PegasusEngine>(this, &PegasusEngine::introTimerExpired));
 	}
 
 	while (!shouldQuit()) {

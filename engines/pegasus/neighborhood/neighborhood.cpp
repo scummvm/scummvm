@@ -1740,15 +1740,15 @@ void Neighborhood::useIdleTime() {
 	}
 }
 
-void timerFunction(FunctionPtr *, void *neighborhood) {
-	((Neighborhood *)neighborhood)->timerExpired(((Neighborhood *)neighborhood)->getTimerEvent());
+void Neighborhood::timerFunction() {
+	timerExpired(getTimerEvent());
 }
 
 void Neighborhood::scheduleEvent(const TimeValue time, const TimeScale scale, const uint32 eventType) {
 	_eventTimer.stopFuse();
 	_eventTimer.primeFuse(time, scale);
 	_timerEvent = eventType;
-	_eventTimer.setFunctionPtr(&timerFunction, this);
+	_eventTimer.setFunctor(new Common::Functor0Mem<void, Neighborhood>(this, &Neighborhood::timerFunction));
 	_eventTimer.lightFuse();
 }
 

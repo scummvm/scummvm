@@ -36,7 +36,7 @@ AirMask *g_airMask = 0;
 //	Based on full == 100, which is scale used by GetAirLeft().
 static const TimeValue kOxygenLowThreshold = 25;
 
-void AirMask::airMaskTimerExpired(FunctionPtr *, void *) {
+void AirMask::airMaskTimerExpired() {
 	if (g_neighborhood)
 		g_neighborhood->checkAirMask();
 }
@@ -49,7 +49,7 @@ AirMask::AirMask(const ItemID id, const NeighborhoodID neighborhood, const RoomI
 	g_allHotspots.push_back(&_toggleSpot);
 	setItemState(kAirMaskEmptyOff);
 	_oxygenTimer.primeFuse(0);
-	_oxygenTimer.setFunctionPtr(&airMaskTimerExpired, 0);
+	_oxygenTimer.setFunctor(new Common::Functor0Mem<void, AirMask>(this, &AirMask::airMaskTimerExpired));
 }
 
 AirMask::~AirMask() {

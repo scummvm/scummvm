@@ -28,6 +28,7 @@
 
 #include "common/list.h"
 #include "common/rational.h"
+#include "common/func.h"
 
 #include "pegasus/constants.h"
 #include "pegasus/notification.h"
@@ -242,13 +243,16 @@ protected:
 	Notification _fuseNotification;
 };
 
-class FuseFunction : public Fuse, public FunctionPtr {
+class FuseFunction : public Fuse {
 public:
-	FuseFunction() {}
-	virtual ~FuseFunction() {}
+	FuseFunction() : _functor(0) {}
+	virtual ~FuseFunction() { delete _functor; }
 
+	void setFunctor(Common::Functor0<void> *functor) { delete _functor; _functor = functor; }
 protected:
-	virtual void invokeAction() { callFunction(); }
+	virtual void invokeAction() { if (_functor && _functor->isValid()) (*_functor)(); }
+
+	Common::Functor0<void> *_functor;
 };
 
 } // End of namespace Pegasus

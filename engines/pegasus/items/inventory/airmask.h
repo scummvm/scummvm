@@ -59,7 +59,7 @@ public:
 	void clickInAirMaskHotspot();
 
 protected:
-	static void airMaskTimerExpired(FunctionPtr *, void *);
+	void airMaskTimerExpired();
 
 	virtual void removedFromInventory();
 	virtual void addedToInventory();

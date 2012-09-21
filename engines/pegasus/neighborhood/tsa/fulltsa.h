@@ -54,8 +54,6 @@ static const RoomID kTSA22Red = 28;
 static const RoomID kTSA37 = 42;
 
 class FullTSA : public Neighborhood {
-friend void uncreatedInTSAFunction(FunctionPtr *, void *tsa);
-
 public:
 	FullTSA(InputHandler *, PegasusEngine *);
 	virtual ~FullTSA() {}
@@ -152,6 +150,8 @@ protected:
 
 	Common::String getNavMovieName();
 	Common::String getSoundSpotsName();
+
+	void dieUncreatedInTSA();
 };
 
 } // End of namespace Pegasus

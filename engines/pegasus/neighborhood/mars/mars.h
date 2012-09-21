@@ -52,6 +52,8 @@ enum MarsTimerCode {
 struct MarsTimerEvent {
 	Mars *mars;
 	MarsTimerCode event;
+
+	void fire();
 };
 
 enum ShuttleWeaponSelection {
@@ -62,13 +64,7 @@ enum ShuttleWeaponSelection {
 };
 
 class Mars : public Neighborhood {
-friend void robotTimerExpiredFunction(FunctionPtr *, void *);
-friend void lockThawTimerExpiredFunction(FunctionPtr *, void *);
-friend void bombTimerExpiredFunction(FunctionPtr *, void *);
-friend void bombTimerExpiredInGameFunction(FunctionPtr *, void *);
-friend void airStageExpiredFunction(FunctionPtr *, void *);
-friend void marsTimerFunction(FunctionPtr *, void *);
-
+friend class MarsTimerEvent;
 public:
 	Mars(InputHandler *, PegasusEngine *);
 	virtual ~Mars();

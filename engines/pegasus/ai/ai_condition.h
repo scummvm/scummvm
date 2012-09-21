@@ -136,7 +136,7 @@ public:
 	virtual void readAICondition(Common::ReadStream *);
 
 protected:
-	static void AITimerFunction(FunctionPtr *, AITimerCondition *);
+	void fire();
 
 	FuseFunction _timerFuse;
 	bool _fired;

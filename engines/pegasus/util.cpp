@@ -50,24 +50,6 @@ int operator!=(const IDObject &arg1, const IDObject &arg2) {
 	return arg1.getObjectID() != arg2.getObjectID();
 }
 
-FunctionPtr::FunctionPtr() {
-	_function = 0;
-	_functionArg = 0;
-}
-
-FunctionPtr::~FunctionPtr() {
-}
-
-void FunctionPtr::setFunctionPtr(tFunctionPtr function, void *functionArg) {
-	_function = function;
-	_functionArg = functionArg;
-}
-
-void FunctionPtr::callFunction() {
-	if (_function != 0)
-		(*_function)(this, _functionArg);
-}
-
 int32 pegasusRound(const int32 a, const int32 b) {
 	if (b < 0)
 		if (a < 0)

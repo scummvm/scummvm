@@ -47,24 +47,6 @@ private:
 	int32 _objectID;
 };
 
-class FunctionPtr;
-
-typedef void (*tFunctionPtr)(FunctionPtr *theFunction, void *functionArg);
-
-class FunctionPtr {
-public:
-	FunctionPtr();
-	virtual ~FunctionPtr();
-	
-	void setFunctionPtr(tFunctionPtr function, void *functionArg);
-
-protected:
-	void callFunction();
-	
-	tFunctionPtr _function;
-	void *_functionArg;
-};
-
 #define NUM_FLAGS (sizeof(Unit) * 8)
 #define BIT_INDEX_SHIFT (sizeof(Unit) + 2 - (sizeof(Unit)) / 3)
 #define BIT_INDEX_MASK (NUM_FLAGS - 1)

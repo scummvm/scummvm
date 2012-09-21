@@ -663,8 +663,8 @@ void FullTSA::init() {
 	entry->hotspotItem = kPegasusBiochip;
 }
 
-void uncreatedInTSAFunction(FunctionPtr *, void *tsa) {
-	((FullTSA *)tsa)->die(kDeathUncreatedInTSA);
+void FullTSA::dieUncreatedInTSA() {
+	die(kDeathUncreatedInTSA);
 }
 
 void FullTSA::start() {
@@ -672,7 +672,7 @@ void FullTSA::start() {
 
 	if (!GameState.getScoringEnterTSA()) {
 		_utilityFuse.primeFuse(GameState.getTSAFuseTimeLimit());
-		_utilityFuse.setFunctionPtr(&uncreatedInTSAFunction, (void *)this);
+		_utilityFuse.setFunctor(new Common::Functor0Mem<void, FullTSA>(this, &FullTSA::dieUncreatedInTSA));
 		_utilityFuse.lightFuse();
 	} else if (GameState.getTSAState() == kTSAPlayerDetectedRip || GameState.getTSAState() == kTSAPlayerNeedsHistoricalLog) {
 		_ripTimer.initImage();

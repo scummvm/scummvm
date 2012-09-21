@@ -85,28 +85,8 @@ enum {
 #define kShuttleTractorBounds Common::Rect(24, 103, 24 + 112, 103 + 30)
 #define kShuttleTransportBounds Common::Rect(484, 353, 89 + 484, 79 + 353)
 
-void robotTimerExpiredFunction(FunctionPtr *, void *mars) {
-	((Mars *)mars)->robotTiredOfWaiting();
-}
-
-void lockThawTimerExpiredFunction(FunctionPtr *, void *mars) {
-	((Mars *)mars)->lockThawed();
-}
-
-void bombTimerExpiredFunction(FunctionPtr *, void *mars) {
-	((Mars *)mars)->didntFindBomb();
-}
-
-void bombTimerExpiredInGameFunction(FunctionPtr *, void *mars) {
-	((Mars *)mars)->bombExplodesInGame();
-}
-
-void airStageExpiredFunction(FunctionPtr *, void *mars) {
-	((Mars *)mars)->airStageExpired();
-}
-
-void marsTimerFunction(FunctionPtr *, void *event) {
-	((MarsTimerEvent *)event)->mars->marsTimerExpired(*(MarsTimerEvent *)event);
+void MarsTimerEvent::fire() {
+	mars->marsTimerExpired(*this);
 }
 
 Mars::Mars(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "Mars", kMarsID),
@@ -120,7 +100,7 @@ Mars::Mars(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextH
 		_planetMovie(kNoDisplayElement), _junk(kNoDisplayElement), _energyChoiceSpot(kShuttleEnergySpotID),
 		_gravitonChoiceSpot(kShuttleGravitonSpotID), _tractorChoiceSpot(kShuttleTractorSpotID),
 		_shuttleViewSpot(kShuttleViewSpotID), _shuttleTransportSpot(kShuttleTransportSpotID) {
-	_noAirFuse.setFunctionPtr(&airStageExpiredFunction, this);
+	_noAirFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::airStageExpired));
 	setIsItemTaken(kMarsCard);
 	setIsItemTaken(kAirMask);
 	setIsItemTaken(kCrowbar);
@@ -1341,7 +1321,7 @@ void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 			loadLoopSound2("Sounds/Mars/Robot Loop.aiff", 0x100, 0, 0);
 			loopExtraSequence(kMars48RobotLoops);
 			_utilityFuse.primeFuse(kMarsRobotPatienceLimit);
-			_utilityFuse.setFunctionPtr(&robotTimerExpiredFunction, (void *)this);
+			_utilityFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::robotTiredOfWaiting));
 			_utilityFuse.lightFuse();
 		}
 		break;
@@ -1349,7 +1329,7 @@ void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 		if (GameState.getMarsSeenRobotAtReactor() && !GameState.getMarsAvoidedReactorRobot()) {
 			loadLoopSound2("Sounds/Mars/Robot Loop.aiff", 0x100, 0, 0);
 			_utilityFuse.primeFuse(kMarsRobotPatienceLimit);
-			_utilityFuse.setFunctionPtr(&robotTimerExpiredFunction, (void *)this);
+			_utilityFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::robotTiredOfWaiting));
 			_utilityFuse.lightFuse();
 		}
 		break;
@@ -1402,7 +1382,7 @@ void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 			setCurrentActivation(kActivateReactorReadyForCrowBar);
 			_privateFlags.setFlag(kMarsPrivatePlatformZoomedInFlag, true);
 			_utilityFuse.primeFuse(kLockFreezeTimeLmit);
-			_utilityFuse.setFunctionPtr(&lockThawTimerExpiredFunction, (void *)this);
+			_utilityFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::lockThawed));
 			_utilityFuse.lightFuse();
 		} else {
 			setCurrentActivation(kActivateReactorPlatformOut);
@@ -2184,7 +2164,7 @@ void Mars::receiveNotification(Notification *notification, const NotificationFla
 			GameState.setMarsSeenRobotAtReactor(true);
 			loopExtraSequence(kMars48RobotLoops);
 			_utilityFuse.primeFuse(kMarsRobotPatienceLimit);
-			_utilityFuse.setFunctionPtr(&robotTimerExpiredFunction, (void *)this);
+			_utilityFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::robotTiredOfWaiting));
 			_utilityFuse.lightFuse();
 			break;
 		case kMars48RobotDefends:
@@ -2267,7 +2247,7 @@ void Mars::receiveNotification(Notification *notification, const NotificationFla
 			GameState.setMarsLockFrozen(true);
 			showExtraView(kMars57LockFrozenView);
 			_utilityFuse.primeFuse(kLockFreezeTimeLmit);
-			_utilityFuse.setFunctionPtr(&lockThawTimerExpiredFunction, (void *)this);
+			_utilityFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::lockThawed));
 			_utilityFuse.lightFuse();
 			break;
 		case kMars57BreakLock:
@@ -2800,7 +2780,7 @@ void Mars::startMarsTimer(TimeValue time, TimeScale scale, MarsTimerCode code) {
 	_utilityFuse.primeFuse(time, scale);
 	_marsEvent.mars = this;
 	_marsEvent.event = code;
-	_utilityFuse.setFunctionPtr(&marsTimerFunction, (void *)&_marsEvent);
+	_utilityFuse.setFunctor(new Common::Functor0Mem<void, MarsTimerEvent>(&_marsEvent, &MarsTimerEvent::fire));
 	_utilityFuse.lightFuse();
 }
 
@@ -3398,7 +3378,7 @@ void Mars::setUpReactorLevel1() {
 	_choiceHighlight.initReactorChoiceHighlight();
 	setCurrentActivation(kActivateReactorInGame);
 	_bombFuse.primeFuse(kColorMatchingTimeLimit);
-	_bombFuse.setFunctionPtr(&bombTimerExpiredInGameFunction, (void *)this);
+	_bombFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::bombExplodesInGame));
 	_bombFuse.lightFuse();
 }
 
