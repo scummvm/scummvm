@@ -70,7 +70,6 @@ public:
 	void MOUSE_ON();
 	void MOUSE_OFF();
 	void CHANGE_MOUSE(int id);
-	void VBL();
 
 	void CONTROLE_MES();
 	void delay(int delay);

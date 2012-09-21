@@ -155,6 +155,7 @@ public:
 	int Reel_Reduc(int v, int percentage);
 	void AFF_SPRITES();
 	void Affiche_Perfect(byte *destSurface, const byte *srcData, int a3, int a4, int a5, int a6, int a7, int a8);
+	void VBL();
 };
 
 } // End of namespace Hopkins

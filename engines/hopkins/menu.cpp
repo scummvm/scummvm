@@ -168,7 +168,7 @@ int MenuManager::MENU() {
 					AFFICHE_SPEED(v1, 230, 322, v9 + 4);
 					AFFICHE_SPEED(v1, 230, 354, v8 + 6);
 					AFFICHE_SPEED(v1, 230, 386, v7 + 8);
-					_vm->_eventsManager.VBL();
+					_vm->_graphicsManager.VBL();
           
 					if (_vm->_eventsManager.BMOUSE() == 1 && v2 > 0)
 						v12 = 1;
@@ -176,7 +176,7 @@ int MenuManager::MENU() {
         
 				if (v2 == 1) {
 					AFFICHE_SPEED(v1, 230, 259, 10);
-					_vm->_eventsManager.VBL();
+					_vm->_graphicsManager.VBL();
 					_vm->_eventsManager.delay(200);
 					v6 = 1;
 				}
@@ -184,7 +184,7 @@ int MenuManager::MENU() {
 					break;
 
 				AFFICHE_SPEED(v1, 230, 291, 11);
-				_vm->_eventsManager.VBL();
+				_vm->_graphicsManager.VBL();
 				_vm->_eventsManager.delay(200);
         
 				_vm->_globals.SORTIE = -1;
@@ -201,14 +201,14 @@ int MenuManager::MENU() {
 				break;
       
 			AFFICHE_SPEED(v1, 230, 322, 12);
-			_vm->_eventsManager.VBL();
+			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
       
 			CHOICE_OPTION();
 		}
 		if (v2 == 4) {
 			AFFICHE_SPEED(v1, 230, 354, 13);
-			_vm->_eventsManager.VBL();
+			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
 			_vm->INTRORUN();
 			continue;
@@ -216,7 +216,7 @@ int MenuManager::MENU() {
 
 		if ( v2 == 5 ) {
 			AFFICHE_SPEED(v1, 230, 386, 14);
-			_vm->_eventsManager.VBL();
+			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
 			v6 = -1;
 		}
