@@ -204,7 +204,7 @@ public:
 	 * Returns the current frame number of the video.
 	 * @return the last frame decoded by the video
 	 */
-	int32 getCurFrame() const;
+	int getCurFrame() const;
 
 	/**
 	 * Returns the number of frames in the video.

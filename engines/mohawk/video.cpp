@@ -478,7 +478,7 @@ VideoHandle VideoManager::findVideoHandle(const Common::String &filename) {
 	return NULL_VID_HANDLE;
 }
 
-int32 VideoManager::getCurFrame(VideoHandle handle) {
+int VideoManager::getCurFrame(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
 	return _videoStreams[handle]->getCurFrame();
 }

@@ -98,7 +98,7 @@ public:
 	// Handle functions
 	VideoHandle findVideoHandle(uint16 id);
 	VideoHandle findVideoHandle(const Common::String &filename);
-	int32 getCurFrame(VideoHandle handle);
+	int getCurFrame(VideoHandle handle);
 	uint32 getFrameCount(VideoHandle handle);
 	uint32 getTime(VideoHandle handle);
 	uint32 getDuration(VideoHandle videoHandle);
