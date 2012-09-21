@@ -1910,6 +1910,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 					372 + kNavAreaLeft, 149 + kNavAreaTop));
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
+			GameState.setScoringStoppedWSCRobot();
 
 			// Video is not present
 			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
@@ -1919,6 +1920,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			_vm->addItemToInventory((InventoryItem *)item);
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
+			GameState.setScoringStoppedWSCRobot();
 
 			// Video is not present
 			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
