@@ -142,7 +142,17 @@ public:
 	void Copy_Video_Vbe3(const byte *surface);
 	void Copy_Video_Vbe16(const byte *surface);
 	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height);
-	void Sprite_Vesa(byte *surface, const byte *spriteData, int a3, int a4, int spriteIndex);
+	
+	/**
+	 * Draws a sprite onto the screen
+	 * @param surface		Destination surface
+	 * @param spriteData	The raw data for a sprite set
+	 * @param xp			X co-ordinate. For some reason, starts from 300 = first column
+	 * @param yp			Y co-ordinate. FOr some reason, starts from 300 = top row
+	 * @param spriteIndex	Index of the sprite to draw
+	 */
+	void Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
+
 	void FIN_VISU();
 	void VISU_ALL();
 	void RESET_SEGMENT_VESA();

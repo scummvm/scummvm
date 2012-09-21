@@ -169,7 +169,7 @@ void GraphicsManager::Cls_Video() {
 void GraphicsManager::LOAD_IMAGE(const Common::String &file) {
 	Common::String filename	= Common::String::format("%s.PCX", file.c_str());
 	CHARGE_ECRAN(filename);
-	GraphicsManager::INIT_TABLE(165, 170, Palette);
+	INIT_TABLE(165, 170, Palette);
 }
 
 void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
@@ -1245,152 +1245,137 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 	} while (yTemp != 1);
 }
 
-void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int a3, int a4, int spriteIndex) {
-	const byte *v5;
-	int i; 
-	const byte *v7;
-	uint16 v8;
-	const byte *v9;
-	int v10;
-	uint16 v11;
-	uint16 v12;
-	uint16 v13;
-	uint16 v14;
-	const byte *v15; 
-	const byte *v16; 
-	const byte *v17; 
-	byte *v18; 
-	int v19; 
-	const byte *v20; 
-	const byte *v21; 
-	int v22; 
-	unsigned int v23;
-	byte *v24;
-	const byte *v25;
-	const byte *v26;
-	const byte *v27;
-	byte *v28;
-	byte *v29;
-	int v30;
-	int v31;
+void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex) {
+	// Get a pointer to the start of the desired sprite
+	const byte *spriteP = spriteData + 3;
+	for (int i = spriteIndex; i; --i)
+		spriteP += READ_LE_UINT32(spriteP) + 16;
 
-	v5 = spriteData + 3;
-	for (i = spriteIndex; i; --i)
-		v5 += READ_LE_UINT32(v5) + 16;
-	v10 = 0;
-	v7 = v5 + 4;
-	v8 = READ_LE_UINT16(v7);
-	v9 = v7 + 2;
-	v10 = READ_LE_UINT16(v9);
 	clip_x = 0;
 	clip_y = 0;
 	clip_flag = false;
-	clip_x1 = v8;
-	if ((uint16)(v8 + a3) > v8) {
-		if ((uint16)a3 < (uint16)(min_x + 300)) {
-			clip_x = min_x + 300 - a3;
-			clip_flag = true;
+
+	spriteP += 4;
+	int width = READ_LE_UINT16(spriteP);
+	spriteP += 2;
+	int height = READ_LE_UINT16(spriteP);
+	
+	// Clip X
+	clip_x1 = width;
+	if ((xp + width) <= (min_x + 300))
+		return;
+	if (xp < (min_x + 300)) {
+		clip_x = min_x + 300 - xp;
+		clip_flag = true;
+	}
+
+	// Clip Y
+	// TODO: This is weird, but it's that way in the original. Original game bug?
+	if ((yp + height) <= height)
+		return;
+	if (yp < (min_y + 300)) {
+		clip_y = min_y + 300 - yp;
+		clip_flag = true;
+	}
+
+	// Clip X1
+	if (xp >= (max_x + 300))
+		return;
+	if ((xp + width) > (max_x + 300)) {
+		int xAmount = width + 10 - (xp + width - (max_x + 300));
+		if (xAmount <= 10)
+			return;
+
+		clip_x1 = xAmount - 10;
+		clip_flag = true;
+	}
+
+	// Clip Y1
+	if (yp >= (max_y + 300))
+		return;
+	if ((yp + height) > (max_y + 300)) {
+		int yAmount = height + 10 - (yp + height - (max_y + 300));
+		if (yAmount <= 10)
+			return;
+
+		clip_y1 = yAmount - 10;
+		clip_flag = true;
+	}
+
+	// Sprite display
+
+	// Set up source
+	spriteP += 6;
+	int srcOffset = READ_LE_UINT16(spriteP);
+	spriteP += 4;
+	const byte *srcP = spriteP;
+	spriteP += srcOffset;
+
+	// Set up surface destination
+	byte *destP = surface + (yp - 300) * nbrligne2 + (xp - 300);
+	
+	// Handling for clipped versus non-clipped
+	if (clip_flag) {
+		// Clipped version
+		for (int yc = 0; yc < height; ++yc, destP += nbrligne2) {
+			byte *tempDestP = destP;
+			byte byteVal;
+			int xc = 0;
+
+			// Loop through sequences of bytes to skip or output
+			while ((byteVal = *srcP) != 253) {
+				++srcP;
+				int width = READ_LE_UINT16(srcP);
+
+				if (byteVal != 254) {
+					// Skip over output bytes
+					tempDestP += width;
+					xc += width;
+				} else {
+					// Output byte range
+					while (width-- > 0) {
+						// Get the next byte
+						byteVal = *spriteP;
+						if (clip_y == 0 && xc >= clip_x && xc < clip_x1)
+							// Not clipped, so display it
+							*tempDestP = byteVal;
+
+						// Move to next pixel
+						xc++;
+						++srcP;
+						++tempDestP;
+					}
+				}
+
+				srcP += 2;
+			}
+
+			if (clip_y > 0)
+				--clip_y;
+			srcP += 3;
 		}
-		if ((uint16)(v10 + (uint16)a4) > (uint16)v10) {
-			if ((uint16)a4 < (uint16)(min_y + 300)) {
-				clip_y = min_y + 300 - a4;
-				clip_flag = true;
-			}
-			v11 = max_x + 300;
-			if ((uint16)a3 < (uint16)(max_x + 300)) {
-				if ((uint16)(v8 + a3) > v11) {
-					v12 = v8 + 10 - (v8 + a3 - v11);
-					if (v12 <= 10)
-						return;
-					clip_x1 = v12 - 10;
-					clip_flag = true;
-				}
-				v13 = max_y + 300;
-				if ((uint16)a4 < (uint16)(max_y + 300)) {
-					if ((uint16)(v10 + (uint16)a4) > v13) {
-						v14 = v10 + 10 - (v10 + (uint16)a4 - v13);
-						if (v14 <= 10)
-							return;
-						v10 -= 10;
-						clip_y1 = v10;
-						clip_flag = true;
-					}
-					v15 = v9 + 6;
-					v16 = v15 + 4;
-					v17 = READ_LE_UINT32(v15) + v15 + 4;
-					v18 = a3 + nbrligne2 * (a4 - 300) - 300 + surface;
-					v19 = 0;
-					if (clip_flag) {
-						do {
-							v31 = v10;
-							v29 = v18;
-							v19 = 0;
-							while (*v16 != -3) {
-								if (*v16 == -2) {
-									v27 = v16 + 1;
-									v10 = READ_LE_UINT16(v27);
+	} else {
+		// Non-clipped
+		for (int yc = 0; yc < height; ++yc, destP += nbrligne2) {
+			byte *tempDestP = destP;
+			byte byteVal;
 
-									do {
-										if (!clip_y && (uint16)v19 >= clip_x && (uint16)v19 < clip_x1)
-											*v18 = *v17;
-										++v17;
-										++v18;
-										++v19;
-										--v10;
-									} while (v10);
+			while ((byteVal = *srcP) != 253) {
+				++srcP;
+				int width = READ_LE_UINT16(srcP);
+				srcP += 2;
 
-									v16 = v27 + 2;
-								} else {
-									v26 = v16 + 1;
-									v10 = *(uint16 *)v26;
-									v18 += v10;
-									v19 += v10;
-									v16 = v26 + 2;
-								}
-							}
-              
-							if (clip_y)
-								--clip_y;
-							v16 += 3;
-							v18 = nbrligne2 + v29;
-							v10 = v31 - 1;
-						} while (v31 != 1);
-					} else {
-						do {
-							v30 = v10;
-							v28 = v18;
-							while (*v16 != -3) {
-								if (*v16 == -2) {
-									v21 = v16 + 1;
-									v10 = READ_LE_UINT16(v21);
-                  
-									v22 = v10;
-									v23 = (unsigned int)v10 >> 2;
-									memcpy(v18, v17, 4 * v23);
-									v25 = (v17 + 4 * v23);
-									v24 = (v18 + 4 * v23);
-									v10 = v22 - 4 * v23;
-									memcpy(v24, v25, v10);
-									
-									v17 = v25 + v10;
-									v18 = v24 + v10;
-									v10 = 0;
-									v16 = v21 + 2;
-								} else {
-									v20 = v16 + 1;
-									v10 = READ_LE_UINT16(v20);
-									v18 += v10;
-									v16 = v20 + 2;
-								}
-							}
-              
-							v16 += 3;
-							v18 = nbrligne2 + v28;
-							v10 = v30 - 1;
-						} while (v30 != 1);
-					}
+				if (byteVal == 254) {
+					// Copy pixel range
+					Common::copy(spriteP, spriteP + width, tempDestP);
+					spriteP += width;
 				}
+				
+				tempDestP += width;
 			}
+
+			// Skip over control byte and width
+			srcP += 3;
 		}
 	}
 }
