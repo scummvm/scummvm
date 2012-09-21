@@ -105,11 +105,13 @@ bool EventsManager::BMOUSE() {
 
 void EventsManager::MOUSE_OFF() {
 	souris_flag = false;
+	g_system->showMouse(false);
 }
 
 void EventsManager::MOUSE_ON() {
 	souris_on();
 	souris_flag = true;
+	g_system->showMouse(true);
 }
 
 void EventsManager::CHANGE_MOUSE(int id) {
@@ -124,6 +126,53 @@ void EventsManager::CHANGE_MOUSE(int id) {
 		if (OLD_ICONE != cursorId || !cursorId) {
 			OLD_ICONE = cursorId;
 			souris_n = cursorId;
+
+			// Backup the current sprite clipping bounds and reset them
+			Common::Rect clipBounds(_vm->_graphicsManager.min_x, _vm->_graphicsManager.min_y,
+				_vm->_graphicsManager.max_x, _vm->_graphicsManager.max_y);
+			_vm->_graphicsManager.min_x = _vm->_graphicsManager.min_y = 0;
+			_vm->_graphicsManager.max_x = _vm->_globals.OBJL;
+			_vm->_graphicsManager.max_y = _vm->_globals.OBJH;
+			int pitch = _vm->_graphicsManager.nbrligne2;
+			_vm->_graphicsManager.nbrligne2 = _vm->_globals.OBJL;
+
+			// Draw the cursor onto a temporary surface
+			byte *cursorSurface = new byte[_vm->_globals.OBJH * _vm->_globals.OBJL];
+			Common::fill(cursorSurface, cursorSurface + _vm->_globals.OBJH * _vm->_globals.OBJL, 0);
+			_vm->_graphicsManager.Sprite_Vesa(cursorSurface, pointeur_souris, 300, 300, cursorId);
+
+			// Reset the clipping bounds
+			_vm->_graphicsManager.min_x = clipBounds.left;
+			_vm->_graphicsManager.min_y = clipBounds.top;
+			_vm->_graphicsManager.max_x = clipBounds.right;
+			_vm->_graphicsManager.max_y = clipBounds.bottom;
+			_vm->_graphicsManager.nbrligne2 = pitch;
+			
+			// Convert the cursor to the pixel format. At the moment, it's hardcoded
+			// to expect the game to be in 16-bit mode
+			uint16 *cursorPixels = new uint16[_vm->_globals.OBJH * _vm->_globals.OBJL];
+			const byte *srcP = cursorSurface;
+			uint16 *destP = cursorPixels;
+
+			for (int yp = 0; yp < _vm->_globals.OBJH; ++yp) {
+				const byte *lineSrcP = srcP;
+				uint16 *lineDestP = destP;
+
+				for (int xp = 0; xp < _vm->_globals.OBJL; ++xp)
+					*lineDestP++ = *(uint16 *)&_vm->_graphicsManager.PAL_PIXELS[*lineSrcP++ * 2];
+
+				srcP += _vm->_globals.OBJL;
+				destP += _vm->_globals.OBJL;
+			}
+
+			// Set the ScummVM cursor from the surface
+			Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
+			g_system->setMouseCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
+				0, 0, 0, true, &pixelFormat);
+
+			// Delete the cursor surface 
+			delete[] cursorPixels;
+			delete[] cursorSurface;
 		}
 	}
 }

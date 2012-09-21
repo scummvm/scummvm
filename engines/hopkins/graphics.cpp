@@ -114,7 +114,6 @@ void GraphicsManager::SET_MODE(int width, int height) {
 			height = Reel_Zoom(height, SDL_ECHELLE);
 		}
 
-		//Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 0, 10, 5, 0, 0);
 		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 		if (bpp == 8) {
@@ -2131,6 +2130,8 @@ Aff_Zoom_Larg_Cont1:
 }
 
 void GraphicsManager::VBL() {
+	// Bulk of method currently disabled
+/*
 	int a1 = 0;
 	signed __int16 v1;
 	int v2;
@@ -2249,6 +2250,10 @@ LABEL_54:
 
 	do {
 		for (;;) {
+			// TODO: Figure out the purpose of this loop waiting on lItCounter..
+			// maybe it's for cursor animatoin?
+			_vm->_eventsManager.delay(10);
+
 			while (_vm->_eventsManager.CASSE || _vm->_globals.iRegul != 1) {
 				if (_vm->_eventsManager.CASSE != 1)
 					goto LABEL_63;
@@ -2365,7 +2370,7 @@ LABEL_65:
 	}
 		
 LABEL_113:
- 
+ */
 	_vm->_soundManager.VERIF_SOUND();
 	return _vm->_eventsManager.CONTROLE_MES();
 }	
