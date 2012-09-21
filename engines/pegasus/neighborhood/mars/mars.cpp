@@ -1339,7 +1339,7 @@ void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 			playSpotSoundSync(kMarsPodDepartedLowerPlatformIn, kMarsPodDepartedLowerPlatformOut);
 			GameState.setMarsAvoidedReactorRobot(true);
 			GameState.setMarsPodAtUpperPlatform(true);
-			GameState.getScoringAvoidedRobot();
+			GameState.setScoringAvoidedRobot();
 		}
 
 		if (GameState.isTakenItemID(kAirMask))
