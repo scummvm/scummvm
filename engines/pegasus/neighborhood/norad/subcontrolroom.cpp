@@ -541,8 +541,6 @@ void SubControlRoom::initInteraction() {
 
 	_subControlMovie.redrawMovieWorld();
 	_clawMonitorMovie.redrawMovieWorld();
-
-	GameState.setScoringPlayedWithClaw(true);
 }									
 
 void SubControlRoom::closeInteraction() {
@@ -833,6 +831,8 @@ void SubControlRoom::clickInHotspot(const Input &input, const Hotspot *spot) {
 }
 
 void SubControlRoom::dispatchClawAction(const int newAction) {
+	GameState.setScoringPlayedWithClaw(true);
+
 	Neighborhood *owner = getOwner();
 
 	if (newAction == kNoActionIndex) {
