@@ -30,11 +30,25 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-class FontManager {
-public:
-	HopkinsEngine *_vm;
+struct TxtItem {
+	int field0;
+	int field2;
+	int field4;
+	int field8;
+	int fieldA;
+	int fieldC;
+	int fieldE;
+	int field10;
+	int field3FC;
+	int field3FE;
+	int field40A;
+};
 
-	
+class FontManager {
+private:
+	HopkinsEngine *_vm;
+public:
+	TxtItem Txt[12];
 public:
 	void setParent(HopkinsEngine *vm);
 
