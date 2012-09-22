@@ -191,22 +191,6 @@ protected:
 	DataResource::DRDirectoryItem *findDRDirectoryItem(uint32 nameHash, uint16 type); 
 };
 
-// TODO: Dummy class atm
-
-class SoundResource {
-public:
-	SoundResource(NeverhoodEngine *vm);
-	bool isPlaying();
-	void load(uint32 fileHash);
-	void unload();
-	void play(uint32 fileHash, bool looping = false);
-	void play();
-	void stop() { /*DUMMY*/ }
-	void setVolume(int volume);
-protected:
-	NeverhoodEngine *_vm;	
-};
-
 uint32 calcHash(const char *value);
 
 } // End of namespace Neverhood

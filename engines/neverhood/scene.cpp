@@ -375,7 +375,7 @@ uint32 Scene::smackerHandleMessage(int messageNum, const MessageParam &param, En
 }
 
 bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
-	debug("Scene::queryPositionSprite(%d, %d)", mouseX, mouseY);
+	//debug("Scene::queryPositionSprite(%d, %d)", mouseX, mouseY);
 	for (uint i = 0; i < _vm->_collisionMan->getSpriteCount(); i++) {
 		Sprite *sprite = _vm->_collisionMan->getSprite(i);
 		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) && 
@@ -397,7 +397,7 @@ bool Scene::queryPositionRectList(int16 mouseX, int16 mouseY) {
 				for (uint j = 0; j < rectList[i].subRects.size(); j++) {
 					debug(2, "  (%d, %d) ? (%d, %d, %d, %d)", mouseX, mouseY, rectList[i].subRects[j].rect.x1, rectList[i].subRects[j].rect.y1, rectList[i].subRects[j].rect.x2, rectList[i].subRects[j].rect.y2);
 					if (rectList[i].subRects[j].rect.contains(mouseX, mouseY)) {
-						debug("Scene::queryPositionRectList() -> %08X", rectList[i].subRects[j].messageListId);
+						//debug("Scene::queryPositionRectList() -> %08X", rectList[i].subRects[j].messageListId);
 						return setMessageList2(rectList[i].subRects[j].messageListId);
 					}
 				}
@@ -416,7 +416,7 @@ void Scene::setMessageList(uint32 id, bool messageListFlag, bool systemCallbackF
 }
 
 void Scene::setMessageList(MessageList *messageList, bool messageListFlag, bool systemCallbackFlag) {
-	debug("Scene::setMessageList(%p)", (void*)messageList);
+	//debug("Scene::setMessageList(%p)", (void*)messageList);
 	_messageList = messageList;
 	_messageListCount = _messageList ? _messageList->size() : 0;
 	_messageListIndex = 0;
@@ -426,11 +426,13 @@ void Scene::setMessageList(MessageList *messageList, bool messageListFlag, bool 
 	_messageListStatus = 1;
 	sendMessage(_klayman, 0x101C, 0);
 	
+#if 0
 	// DEBUG: Show message list
 	for (uint i = 0; i < messageList->size(); i++) {
 		debug("A: %02d: %04X, %08X", i, (*messageList)[i].messageNum, (*messageList)[i].messageValue);
 	}
 	debug("A: ================================================================");
+#endif	
 	
 }
 
@@ -441,13 +443,15 @@ bool Scene::setMessageList2(uint32 id, bool messageListFlag, bool systemCallback
 bool Scene::setMessageList2(MessageList *messageList, bool messageListFlag, bool systemCallbackFlag) {
 	bool result = false;
 	
-	debug("Scene::setMessageList2(%p)", (void*)messageList);
+	//debug("Scene::setMessageList2(%p)", (void*)messageList);
 
+#if 0
 	// DEBUG: Show message list
 	for (uint i = 0; i < messageList->size(); i++) {
 		debug("B: %02d: %04X, %08X", i, (*messageList)[i].messageNum, (*messageList)[i].messageValue);
 	}
 	debug("B: ================================================================");
+#endif
 	
 	if (_messageListStatus == 1) {
 		if (messageList != _messageList2) {
@@ -500,7 +504,7 @@ void Scene::runMessageList() {
 			uint32 messageNum = (*_messageList)[_messageListIndex].messageNum;
 			uint32 messageParam = (*_messageList)[_messageListIndex].messageValue;
 			
-			debug("Scene::runMessageList() %04X, %08X", messageNum, messageParam);
+			//debug("Scene::runMessageList() %04X, %08X", messageNum, messageParam);
 			
 			_messageListIndex++;
 			if (_messageListIndex == _messageListCount) {
@@ -573,7 +577,7 @@ void Scene::clearRectList() {
 
 void Scene::loadHitRectList() {
 	HitRectList *hitRectList = _dataResource.getHitRectList();
-	debug("Scene::loadHitRectList() hitRectList = %p", (void*)hitRectList);
+	//debug("Scene::loadHitRectList() hitRectList = %p", (void*)hitRectList);
 	if (hitRectList) {
 		_hitRectList = *hitRectList;
 		_vm->_collisionMan->setHitRects(&_hitRectList);

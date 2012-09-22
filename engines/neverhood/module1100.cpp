@@ -22,6 +22,7 @@
 
 #include "neverhood/module1100.h"
 #include "neverhood/gamemodule.h"
+#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 
@@ -36,16 +37,16 @@ Module1100::Module1100(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(9, 3);
 	}
 
-	// TODO SoundMan_addSoundList(0x2C818, dword_4B85B0, true);
+	// TODO SoundMan_addSoundList(0x0002C818, dword_4B85B0, true);
 	// TODO SoundMan_setSoundListParams(dword_4B85B0, true, 50, 600, 20, 250);
-	// TODO SoundMan_setSoundParams(0x74E01054, false, 100, 200, 10, 20);
-	// TODO SoundMan_setSoundVolume(0x74E01054, 60);
-	// TODO SoundMan_playTwoSounds(0x2C818, 0x41861371, 0x43A2507F);
+	_vm->_soundMan->setSoundParams(0x74E01054, false, 100, 200, 10, 20);
+	_vm->_soundMan->setSoundVolume(0x74E01054, 60);
+	_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
 
 }
 
 Module1100::~Module1100() {
-	// TODO SoundMan_deleteGroup(0x2C818);
+	_vm->_soundMan->deleteGroup(0x0002C818);
 }
 
 void Module1100::createScene(int sceneNum, int which) {
@@ -86,11 +87,11 @@ void Module1100::createScene(int sceneNum, int which) {
 			createSmackerScene(0x04180007, true, false, false);
 		break;
 	case 6:
-		// TODO SoundMan_deleteSoundGroup(0x2C818);
+		_vm->_soundMan->deleteSoundGroup(0x0002C818);
 		createSmackerScene(kSmackerFileHashList06, true, true, false);
 		break;
 	case 7:
-		// TODO SoundMan_setSoundParams(0x74E01054, false, 0, 0, 0, 0);
+		_vm->_soundMan->setSoundParams(0x74E01054, false, 0, 0, 0, 0);
 		createSmackerScene(kSmackerFileHashList07, true, true, false);
 		break;
 	case 8:
@@ -98,7 +99,7 @@ void Module1100::createScene(int sceneNum, int which) {
 		break;
 	case 1002:
 		_countdown = 40;
-		// TODO SoundMan_setTwoSoundsPlayFlag(true);
+		_vm->_soundMan->setTwoSoundsPlayFlag(true);
 		createSmackerScene(0x00012211, true, true, false);
 		break;
 	}
@@ -111,9 +112,9 @@ void Module1100::updateScene() {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
 			_countdown = 0;
-			// TODO SoundMan_playTwoSounds(0x2C818, 0x48498E46, 0x50399F64);
-			// TODO SoundMan_setSoundVolume(0x48498E46, 65);
-			// TODO SoundMan_setSoundVolume(0x50399F64, 65);
+			_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
+			_vm->_soundMan->setSoundVolume(0x48498E46, 65);
+			_vm->_soundMan->setSoundVolume(0x50399F64, 65);
 			if (_moduleResult == 0) {
 				createScene(1, 0);
 			} else if (_moduleResult == 1) {
@@ -121,7 +122,7 @@ void Module1100::updateScene() {
 			}
 			break;
 		case 1:
-			// TODO SoundMan_playTwoSounds(0x2C818, 0x41861371, 0x43A2507F);
+			_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
 			if (getGlobalVar(0x0C0288F4)) {
 				if (_moduleResult == 0) {
 					createScene(6, -1);
@@ -137,7 +138,7 @@ void Module1100::updateScene() {
 			}
 			break;
 		case 2:
-			// TODO SoundMan_setSoundParams(0x74E01054, false, 0, 0, 0, 0);
+			_vm->_soundMan->setSoundParams(0x74E01054, false, 0, 0, 0, 0);
 			if (_navigationAreaType == 3) {
 				createScene(7, -1);
 			} else if (_moduleResult == 1) {
@@ -161,6 +162,7 @@ void Module1100::updateScene() {
 			}
 			break;
 		case 5:
+			_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			if (getGlobalVar(0x610210B7)) {
 				createScene(3, 0);
 			} else {
@@ -168,9 +170,11 @@ void Module1100::updateScene() {
 			}
 			break;
 		case 6:
+			_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			leaveModule(1);
 			break;
 		case 7:
+			_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			createScene(2, 2);
 			break;
 		case 8:
@@ -181,8 +185,9 @@ void Module1100::updateScene() {
 			}
 			break;
 		case 1002:
+			_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			_countdown = 0;
-			// TODO SoundMan_playTwoSounds(0x2C818, 0x48498E46, 0x50399F64, 0);
+			_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
 			createScene(1, 1);
 			break;
 		}
@@ -191,7 +196,7 @@ void Module1100::updateScene() {
 		case 0:
 #if 0 // TODO		
 			if (navigationScene()->soundFlag1 && _countdown != 0 && (--_countdown == 0)) {
-				SoundMan_playTwoSounds(0x2C818, 0x48498E46, 0x50399F64);
+				SoundMan_playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64);
 				SoundMan_setSoundVolume(0x48498E46, 65);
 				SoundMan_setSoundVolume(0x50399F64, 65);
 			}
@@ -200,21 +205,21 @@ void Module1100::updateScene() {
 		case 1:
 #if 0 // TODO		
 			if (navigationScene()->soundFlag1 && _countdown != 0 && (--_countdown == 0)) {
-				SoundMan_playTwoSounds(0x2C818, 0x41861371, 0x43A2507F);
+				SoundMan_playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F);
 			}
 #endif			
 			break;
 		case 2:
-			// TODO SoundMan_setSoundParams(0x74E01054, !navigationScene()->soundFlag1, 0, 0, 0, 0);
+			_vm->_soundMan->setSoundParams(0x74E01054, !navigationScene()->getSoundFlag1(), 0, 0, 0, 0);
 			break;
 		case 5:
 		case 6:
 		case 7:
 		case 1002:
 			if (_countdown != 0 && (--_countdown == 0)) {
-				// TODO SoundMan_playTwoSounds(0x2C818, 0x48498E46, 0x50399F64);
-				// TODO SoundMan_setSoundVolume(0x48498E46, 65);
-				// TODO SoundMan_setSoundVolume(0x50399F64, 65);
+				_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
+				_vm->_soundMan->setSoundVolume(0x48498E46, 65);
+				_vm->_soundMan->setSoundVolume(0x50399F64, 65);
 			}
 			break;
 		}

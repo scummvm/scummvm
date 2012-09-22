@@ -27,6 +27,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/gamevars.h"
 #include "neverhood/graphics.h"
+#include "neverhood/sound.h"
 
 namespace Neverhood {
 

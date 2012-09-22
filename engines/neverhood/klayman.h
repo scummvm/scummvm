@@ -185,7 +185,7 @@ protected:
 	int16 _counter, _counterMax;
 	int16 _counter3, _counter3Max;
 	int16 _counter1;
-	int16 _counter2;
+	int16 _tapesToInsert;
 	bool _flagF6;
 	bool _isLeverDown;
 	bool _isWalkingOpenDoorNotified;

@@ -640,44 +640,20 @@ DataResource::DRDirectoryItem *DataResource::findDRDirectoryItem(uint32 nameHash
 	return NULL;
 }
 
-// SoundResource
-// ALL TODO
-
-SoundResource::SoundResource(NeverhoodEngine *vm)
-	: _vm(vm) {
-}
-
-bool SoundResource::isPlaying() { 
-	return false; 
-}
-
-void SoundResource::load(uint32 fileHash) {
-}
-
-void SoundResource::unload() {
-}
-
-void SoundResource::play(uint32 fileHash, bool looping) {
-}
-
-void SoundResource::play() {
-}
-
-void SoundResource::setVolume(int volume) {
-}
-
 uint32 calcHash(const char *value) {
 	uint32 hash = 0, shiftValue = 0;
 	while (*value != 0) {
 		char ch = *value++;
-		if (ch >= 'a' && ch <= 'z')
-			ch -= 32;
-		else if (ch >= '0' && ch <= '9')
-			ch += 22;
-		shiftValue += ch - 64;
-		if (shiftValue >= 32)
-			shiftValue -= 32;
-		hash ^= 1 << shiftValue;
+		if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9')) {
+			if (ch >= 'a' && ch <= 'z')
+				ch -= 32;
+			else if (ch >= '0' && ch <= '9')
+				ch += 22;
+			shiftValue += ch - 64;
+			if (shiftValue >= 32)
+				shiftValue -= 32;
+			hash ^= 1 << shiftValue;
+		}
 	}
 	return hash;
 }

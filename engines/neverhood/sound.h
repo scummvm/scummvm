@@ -23,12 +23,36 @@
 #ifndef NEVERHOOD_SOUND_H
 #define NEVERHOOD_SOUND_H
 
+#include "audio/audiostream.h"
 #include "common/array.h"
 #include "graphics/surface.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/resource.h"
 
 namespace Neverhood {
+
+// Convert volume from percent to 0..255
+#define VOLUME(volume) (Audio::Mixer::kMaxChannelVolume / 100 * (volume))
+
+// Convert panning from percent (50% equals center) to -127..0..+127
+#define PANNING(panning) (254 / 100 * (panning) - 127)
+
+class SoundResource {
+public:
+	SoundResource(NeverhoodEngine *vm);
+	~SoundResource();
+	bool isPlaying();
+	void load(uint32 fileHash);
+	void unload();
+	void play(uint32 fileHash);
+	void play();
+	void stop();
+	void setVolume(int16 volume);
+	void setPan(int16 pan);
+protected:
+	NeverhoodEngine *_vm;
+	int16 _soundIndex;	
+};
 
 class MusicResource {
 public:
@@ -38,8 +62,10 @@ public:
 	void unload();
 	void play(int16 fadeVolumeStep);
 	void stop(int16 fadeVolumeStep);
+	void setVolume(int16 volume);
 protected:
 	NeverhoodEngine *_vm;
+	int16 _musicIndex;	
 };
 
 struct MusicItem {
@@ -71,6 +97,8 @@ struct SoundItem {
 		bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown);
 	~SoundItem();
 };
+
+// TODO Give this a better name
 
 class SoundMan {
 public:
@@ -122,8 +150,100 @@ protected:
 	
 	MusicItem *getMusicItemByHash(uint32 musicFileHash);
 	SoundItem *getSoundItemByHash(uint32 soundFileHash);
+	int16 addMusicItem(MusicItem *musicItem);
+	int16 addSoundItem(SoundItem *soundItem);
 	void deleteSoundByIndex(int index);
 	
+};
+
+class NeverhoodAudioStream : public Audio::AudioStream {
+public:
+	NeverhoodAudioStream(int rate, byte shiftValue, bool isLooping, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
+	~NeverhoodAudioStream();
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const  { return _isStereo; }
+	bool endOfData() const { return _endOfData; }
+	int getRate() const { return _rate; }
+private:
+	const int _rate;
+	const bool _isLooping;
+	const bool _isStereo;
+	const byte _shiftValue;
+	const bool _isCompressed;
+	int16 _prevValue;
+	Common::DisposablePtr<Common::SeekableReadStream> _stream;
+	bool _endOfData;
+	byte *_buffer;
+	enum {
+		kSampleBufferLength = 2048
+	};
+	int fillBuffer(int maxSamples);
+};
+
+// TODO Rename these
+
+struct AudioResourceManSoundItem {
+	uint32 _fileHash;
+	int _resourceHandle;
+	byte *_data;
+	bool _isLoaded;
+	bool _isPlaying;
+	int16 _volume;
+	int16 _panning;
+	Audio::SoundHandle _soundHandle;
+};
+
+struct AudioResourceManMusicItem {
+	uint32 _fileHash;
+	// streamIndex dw
+	// needCreate db
+	bool _isPlaying;
+	bool _remove;
+	int16 _volume;
+	int16 _panning;
+	bool _start;
+	bool _isFadingIn;
+	bool _isFadingOut;
+	int16 _fadeVolume;
+	int16 _fadeVolumeStep;
+	Audio::SoundHandle _soundHandle;
+	// status dw
+	// updateCounter dd
+};
+
+class AudioResourceMan {
+public:
+	AudioResourceMan(NeverhoodEngine *vm);
+	~AudioResourceMan();
+	
+	int16 addSound(uint32 fileHash);
+	void removeSound(int16 soundIndex);
+	void loadSound(int16 soundIndex);
+	void unloadSound(int16 soundIndex);
+	void setSoundVolume(int16 soundIndex, int16 volume);
+	void setSoundPan(int16 soundIndex, int16 pan);
+	void playSound(int16 soundIndex, bool looping);
+	void stopSound(int16 soundIndex);
+	bool isSoundPlaying(int16 soundIndex);
+	
+	int16 loadMusic(uint32 fileHash);
+	void unloadMusic(int16 musicIndex);
+	void setMusicVolume(int16 musicIndex, int16 volume);
+	void playMusic(int16 musicIndex, int16 fadeVolumeStep);
+	void stopMusic(int16 musicIndex, int16 fadeVolumeStep);
+	bool isMusicPlaying(int16 musicIndex);
+	void updateMusicItem(int16 musicIndex);
+	
+	void update();
+	
+protected:
+	NeverhoodEngine *_vm;
+
+	Common::Array<AudioResourceManMusicItem*> _musicItems;
+	Common::Array<AudioResourceManSoundItem*> _soundItems;
+
+	int16 addSoundItem(AudioResourceManSoundItem *soundItem);
+
 };
 
 } // End of namespace Neverhood

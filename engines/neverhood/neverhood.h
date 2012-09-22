@@ -46,6 +46,7 @@ class GameVars;
 class ResourceMan;
 class Screen;
 class SoundMan;
+class AudioResourceMan;
 class StaticData;
 struct NPoint;
 
@@ -87,6 +88,7 @@ public:
 	CollisionMan *_collisionMan;
 	
 	SoundMan *_soundMan;
+	AudioResourceMan *_audioResourceMan;
 
 public:
 	

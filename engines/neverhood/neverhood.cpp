@@ -100,6 +100,7 @@ Common::Error NeverhoodEngine::run() {
 #if 1
 
 	_soundMan = new SoundMan(this);
+	_audioResourceMan = new AudioResourceMan(this);
 	
 	_collisionMan = new CollisionMan(this);
 	_gameModule = new GameModule(this);
@@ -139,6 +140,8 @@ Common::Error NeverhoodEngine::run() {
 		//debug("millis %d", _system->getMillis());		
 		_gameModule->handleUpdate();
 		_gameModule->draw();
+		_soundMan->update();
+		_audioResourceMan->update();
 		_screen->wait();
 		_screen->update();
 		
@@ -149,6 +152,7 @@ Common::Error NeverhoodEngine::run() {
 	delete _gameModule;
 	delete _collisionMan;
 	delete _soundMan;
+	delete _audioResourceMan;
 #endif
 
 

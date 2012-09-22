@@ -35,7 +35,7 @@ void ResourceMan::addArchive(const Common::String &filename) {
 	uint archiveIndex = _archives.size();
 	archive->open(filename);
 	_archives.push_back(archive);
-	debug("ResourceMan::addArchive(%s) %d files", filename.c_str(), archive->getCount());
+	debug(3, "ResourceMan::addArchive(%s) %d files", filename.c_str(), archive->getCount());
 	_entries.reserve(_entries.size() + archive->getCount());
 	for (uint archiveEntryIndex = 0; archiveEntryIndex < archive->getCount(); archiveEntryIndex++) {
 		BlbArchiveEntry *archiveEntry = archive->getEntry(archiveEntryIndex);

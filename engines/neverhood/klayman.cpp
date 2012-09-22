@@ -60,7 +60,7 @@ static const KlaymanIdleTableItem klaymanTable4[] = {
 Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
 	: AnimatedSprite(vm, objectPriority), _soundResource1(vm), _soundResource2(vm),
 	_counterMax(0), _counter(0), _isMoveObjectRequested(false), _counter3Max(0), _isWalkingOpenDoorNotified(false), _counter1(0),
-	_counter2(0), /*_field118(0), */_status2(0), _acceptInput(true), _attachedSprite(NULL), _isWalking(false),
+	_tapesToInsert(0), /*_field118(0), */_status2(0), _acceptInput(true), _attachedSprite(NULL), _isWalking(false),
 	_status3(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false), _flagF6(false), _isLeverDown(false),
 	_flagFA(false), _ladderStatus(0), _pathPoints(NULL), _resourceHandle(-1), _soundFlag(false) {
 	
@@ -2119,16 +2119,16 @@ void Klayman::cbLeverReleasedEvent() {
 void Klayman::stInsertDisk() {
 	if (!stStartActionFromIdle(AnimationCallback(&Klayman::stInsertDisk))) {
 		_status2 = 2;
-		_counter2 = 0;
+		_tapesToInsert = 0;
 		for (uint32 i = 0; i < 20; i++) {
 			if (getSubVar(0x02038314, i)) {
 				setSubVar(0x02720344, i, 1);
 				setSubVar(0x02038314, i, 0);
-				_counter2++;
+				_tapesToInsert++;
 			}
 		}
-		if (_counter2 == 0) {
-			gotoState(NULL);
+		if (_tapesToInsert == 0) {
+			GotoState(NULL);
 			gotoNextStateExt();
 		} else {
 			startAnimation(0xD8C8D100, 0, -1);
@@ -2136,7 +2136,7 @@ void Klayman::stInsertDisk() {
 			SetSpriteUpdate(&Klayman::spriteUpdate41F250);
 			SetMessageHandler(&Klayman::hmInsertDisk);
 			_acceptInput = false;
-			_counter2--;
+			_tapesToInsert--;
 		}
 	}
 }
@@ -2145,12 +2145,12 @@ uint32 Klayman::hmInsertDisk(int messageNum, const MessageParam &param, Entity *
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x06040580) {
-			if (_counter2 == 0) {
-				// TODO: Calc calcHash value somewhere else 
+			if (_tapesToInsert == 0) {
+				// TODO: Calc calcHash value somewhere else
 				nextAnimationByHash(0xD8C8D100, calcHash("GoToStartLoop/Finish"), 0);
 			}
-		} else if (_counter2 != 0 && param.asInteger() == calcHash("GoToStartLoop/Finish")) {
-			_counter2--;
+		} else if (_tapesToInsert != 0 && param.asInteger() == calcHash("GoToStartLoop/Finish")) {
+			_tapesToInsert--;
 			startAnimationByHash(0xD8C8D100, 0x01084280, 0);
 		} else if (param.asInteger() == 0x062A1510) {
 			_soundResource1.play(0x41688704);

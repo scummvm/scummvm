@@ -35,12 +35,12 @@ namespace Neverhood {
 Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	// TODO SoundMan_addMusic(0x61C090, 0x203197);
+	_vm->_soundMan->addMusic(0x61C090, 0x203197);
 	// TODO SoundMan_addSoundList(0x61C090, dword_4B2868, true);
 	// TODO SoundMan_setSoundListParams(dword_4B2868, false, 50, 600, 20, 150);
-	// TODO SoundMan_playTwoSounds(0x61C090, 0x48498E46, 0x50399F64, 0);
-	// TODO SoundMan_setSoundVolume(0x48498E46, 70);
-	// TODO SoundMan_setSoundVolume(0x50399F64, 70);
+	_vm->_soundMan->playTwoSounds(0x61C090, 0x48498E46, 0x50399F64, 0);
+	_vm->_soundMan->setSoundVolume(0x48498E46, 70);
+	_vm->_soundMan->setSoundVolume(0x50399F64, 70);
 
 	if (which < 0) {
 		if (_vm->gameState().sceneNum >= 1 && _vm->gameState().sceneNum <= 17)
@@ -94,7 +94,7 @@ Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module1300::~Module1300() {
-	// TODO SoundMan_deleteGroup(0x61C090);
+	_vm->_soundMan->deleteGroup(0x61C090);
 }
 
 void Module1300::createScene(int sceneNum, int which) {
@@ -103,82 +103,82 @@ void Module1300::createScene(int sceneNum, int which) {
 	switch (_vm->gameState().sceneNum) {
 	case 1:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_startMusic(0x203197, 0, 2, 1);
+		_vm->_soundMan->startMusic(0x203197, 0, 2);
 		_childObject = new Scene1302(_vm, this, which);
 		break;
 	case 2:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		_childObject = new Scene1303(_vm, this, which);
 		break;
 	case 3:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		_childObject = new Scene1304(_vm, this, which);
 		break;
 	case 4:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_startMusic(0x203197, 0, 2, 1);
+		_vm->_soundMan->startMusic(0x203197, 0, 2);
 		_childObject = new Scene1305(_vm, this, which);
 		break;
 	case 5:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_startMusic(0x203197, 0, 2, 1);
+		_vm->_soundMan->startMusic(0x203197, 0, 2);
 		_childObject = new Scene1306(_vm, this, which);
 		break;
 	case 6:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_startMusic(0x203197, 0, 2, 1);
+		_vm->_soundMan->startMusic(0x203197, 0, 2);
 		_childObject = new Scene1307(_vm, this, which);
 		break;
 	case 7:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_startMusic(0x203197, 0, 2, 1);
+		_vm->_soundMan->startMusic(0x203197, 0, 2);
 		_childObject = new Scene1308(_vm, this, which);
 		break;
 	case 8:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 1);
 		break;
 	case 9:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		createSmackerScene(0x20082818, true, true, false);
 		break;
 	case 10:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		createSmackerScene(0x20082828, true, true, false);
 		break;
 	case 11:
 		// TODO SoundMan_setSoundListParams(0xdword_4B2868, true, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		createNavigationScene(0x004B27A8, which);
 		break;
 	case 12:
 		// TODO SoundMan_setSoundListParams(0xdword_4B2868, true, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		createNavigationScene(0x004B2718, which);
 		break;
 	case 13:
 		// TODO SoundMan_setSoundListParams(0xdword_4B2868, true, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		createNavigationScene(0x004B27D8, which);
 		break;
 	case 14:
 		// TODO SoundMan_setSoundListParams(0xdword_4B2868, true, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		createNavigationScene(0x004B2808, which);
 		break;
 	case 15:
 		// TODO SoundMan_setSoundListParams(0xdword_4B2868, true, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		createNavigationScene(0x004B2838, which);
 		break;
 	case 16:
 		// TODO SoundMan_setSoundListParams(dword_4B2868, false, 0, 0, 0, 0);
-		// TODO SoundMan_stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x203197, 0, 2);
 		_childObject = new Scene1317(_vm, this, which);
 		break;
 	case 17:
