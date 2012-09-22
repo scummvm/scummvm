@@ -1313,9 +1313,9 @@ void PegasusEngine::throwAwayEverything() {
 		_currentItemID = kNoItemID;
 
 	if (_biochips.getNumItems() != 0 && g_interface)
-		_currentItemID = g_interface->getCurrentBiochip()->getObjectID();
+		_currentBiochipID = g_interface->getCurrentBiochip()->getObjectID();
 	else
-		_currentItemID = kNoItemID;
+		_currentBiochipID = kNoItemID;
 
 	useMenu(0);
 	useNeighborhood(0);
