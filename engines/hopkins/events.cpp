@@ -95,7 +95,7 @@ int EventsManager::YMOUSE() {
 	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
 	souris_y = g_system->getEventManager()->getMousePos().y;
 
-	return souris_x + ofset_souris_x;
+	return souris_y + ofset_souris_y;
 }
 
 bool EventsManager::BMOUSE() {
@@ -215,10 +215,12 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
+			souris_bb = true;
+			break;
+		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-
+			souris_bb = false;
 			return;
 
 		default:

@@ -841,7 +841,8 @@ void HopkinsEngine::PERSONAGE2(const Common::String &s1, const Common::String &s
 }
 
 void HopkinsEngine::REST_SYSTEM() {
-	warning("REST_SYSTEM");
+	quitGame();
+	_eventsManager.CONTROLE_MES();
 }
 
 void HopkinsEngine::PLAN_BETA() {
@@ -874,18 +875,11 @@ void HopkinsEngine::PUBQUIT() {
 		if (_eventsManager.BMOUSE() == 1)
 			mouseClicked = true;
 	} while (!mouseClicked && !g_system->getEventManager()->shouldQuit());
-  
-	if ((unsigned int)(xp - 167) <= 302 && (unsigned int)(yp - 47) <= 387) {
-		warning("Try to Connect...");
-		_eventsManager.delay(25000);
-//		open_URL((int)"http://www.hopkinsfbi.com");
-		
-		while (1) {
-			_globals.iRegul = 10;
-			_graphicsManager.VBL();
-		}
-	}
-	return _graphicsManager.FADE_OUTW();
+
+	// Original tried to open a web browser link here. Since ScummVM doesn't support
+	// that, it's being skipped in favour of simply exitting
+
+	_graphicsManager.FADE_OUTW();
 }
 
 void HopkinsEngine::COMPUT_HOPKINS(int a1) {

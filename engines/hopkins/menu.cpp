@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "common/util.h"
 #include "hopkins/menu.h"
 #include "hopkins/files.h"
 #include "hopkins/hopkins.h"
@@ -36,18 +37,18 @@ void MenuManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
+enum MenuSelection { MENU_NONE = 0, PLAY_GAME = 1, LOAD_GAME = 2, OPTIONS = 3, INTRODUCTION = 4, QUIT = 5 };
+
 int MenuManager::MENU() {
 	byte *spriteData = NULL; 
-	signed int menuIndex;
-	int v3; 
-	int v4; 
+	MenuSelection menuIndex;
+	Common::Point mousePos;
 	signed int v6;
 	signed __int16 v7;
 	signed __int16 v8;
 	signed __int16 v9;
 	signed __int16 v10;
 	__int16 v11;
-	signed int v12;
 
 	v6 = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
@@ -93,74 +94,72 @@ int MenuManager::MENU() {
 		for (;;) {
 			for (;;) {
 				_vm->_soundManager.WSOUND(28);
-				v12 = 0;
 
+				// Loop to make menu selection
+				bool selectionMade = false;
 				do {
 					if (g_system->getEventManager()->shouldQuit())
 						return -1;
 
-					menuIndex = 0;
-					v3 = _vm->_eventsManager.XMOUSE();
-					v4 = _vm->_eventsManager.YMOUSE();
+					menuIndex = MENU_NONE;
+					mousePos = Common::Point(_vm->_eventsManager.XMOUSE(), _vm->_eventsManager.YMOUSE());
           
-					if ((unsigned int)(v3 - 232) <= 176) {
-						if ((unsigned int)(v4 - 261) <= 23)
-							menuIndex = 1;
-						if ((unsigned int)(v4 - 293) <= 23)
-							menuIndex = 2;
-						if ((unsigned int)(v4 - 325) <= 22)
-							menuIndex = 3;
-						if ((unsigned int)(v4 - 356) <= 23)
-							menuIndex = 4;
+					if (ABS(mousePos.x - 232) <= 176) {
+						if (ABS(mousePos.y - 261) <= 23)
+							menuIndex = PLAY_GAME;
+						if (ABS(mousePos.y - 293) <= 23)
+							menuIndex = LOAD_GAME;
+						if (ABS(mousePos.y - 325) <= 22)
+							menuIndex = OPTIONS;
+						if (ABS(mousePos.y - 356) <= 23)
+							menuIndex = INTRODUCTION;
             
-						if ((unsigned int)(v4 - 388) <= 23)
-							menuIndex = 5;
+						if (ABS(mousePos.y - 388) <= 23)
+							menuIndex = QUIT;
 					}
           
 					switch (menuIndex) {
-					case 0:
+					case MENU_NONE:
 						v11 = 0;
 						v10 = 0;
 						v9 = 0;
 						v8 = 0;
 						v7 = 0;
 						break;
-					case 1:
+					case PLAY_GAME:
 						v11 = 1;
 						v10 = 0;
 						v9 = 0;
 						v8 = 0;
 						v7 = 0;
 						break;
-					case 2:
+					case LOAD_GAME:
 						v11 = 0;
 						v10 = 1;
 						v9 = 0;
 						v8 = 0;
 						v7 = 0;
 						break;
-					case 3:
+					case OPTIONS:
 						v11 = 0;
 						v10 = 0;
 						v9 = 1;
 						v8 = 0;
 						v7 = 0;
 						break;
-					case 4:
+					case INTRODUCTION:
 						v11 = 0;
 						v10 = 0;
 						v9 = 0;
 						v8 = 1;
 						v7 = 0;
 						break;
-					case 5:
+					case QUIT:
 						v11 = 0;
 						v10 = 0;
 						v9 = 0;
 						v8 = 0;
 						v7 = 1;
-					default:
-						break;
 					}
           
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, v11);
@@ -170,17 +169,17 @@ int MenuManager::MENU() {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, v7 + 8);
 					_vm->_graphicsManager.VBL();
           
-					if (_vm->_eventsManager.BMOUSE() == 1 && menuIndex > 0)
-						v12 = 1;
-				} while (v12 != 1);
+					if (_vm->_eventsManager.BMOUSE() == 1 && menuIndex != MENU_NONE)
+						selectionMade = 1;
+				} while (!selectionMade);
         
-				if (menuIndex == 1) {
+				if (menuIndex == PLAY_GAME) {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, 10);
 					_vm->_graphicsManager.VBL();
 					_vm->_eventsManager.delay(200);
 					v6 = 1;
 				}
-				if (menuIndex != 2)
+				if (menuIndex != LOAD_GAME)
 					break;
 
 				_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, 11);
@@ -206,7 +205,7 @@ int MenuManager::MENU() {
       
 			CHOICE_OPTION();
 		}
-		if (menuIndex == 4) {
+		if (menuIndex == INTRODUCTION) {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, 13);
 			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
@@ -214,7 +213,7 @@ int MenuManager::MENU() {
 			continue;
 		}
 
-		if ( menuIndex == 5 ) {
+		if ( menuIndex == QUIT) {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, 14);
 			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
