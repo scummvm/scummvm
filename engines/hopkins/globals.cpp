@@ -119,6 +119,7 @@ Globals::Globals() {
 	FLAG_VISIBLE = false;
 	netscape = false;
 	NOMARCHE = false;
+	NO_VISU = false;
 }
 
 Globals::~Globals() {

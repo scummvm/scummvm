@@ -40,7 +40,6 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	int MENU();
-	void AFFICHE_SPEED(byte *a1, int a2, int a3, int a4);
 	void CHARGE_PARTIE();
 };
 

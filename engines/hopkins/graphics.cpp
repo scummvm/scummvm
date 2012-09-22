@@ -2375,4 +2375,20 @@ LABEL_113:
 	return _vm->_eventsManager.CONTROLE_MES();
 }	
 
+void GraphicsManager::AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex) {
+	int width, height;
+
+	width = _vm->_objectsManager.Get_Largeur(spriteData, spriteIndex);
+	height = _vm->_objectsManager.Get_Hauteur(spriteData, spriteIndex);
+	if (*spriteData == 78) {
+		Affiche_Perfect(VESA_SCREEN, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
+		Affiche_Perfect(VESA_BUFFER, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
+	} else {
+		Sprite_Vesa(VESA_BUFFER, spriteData, xp + 300, yp + 300, spriteIndex);
+		Sprite_Vesa(VESA_SCREEN, spriteData, xp + 300, yp + 300, spriteIndex);
+	}
+	if (!_vm->_globals.NO_VISU)
+		Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
+}
+
 } // End of namespace Hopkins

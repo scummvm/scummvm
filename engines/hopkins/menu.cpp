@@ -37,7 +37,7 @@ void MenuManager::setParent(HopkinsEngine *vm) {
 }
 
 int MenuManager::MENU() {
-	byte *v1 = NULL; 
+	byte *spriteData = NULL; 
 	signed int v2;
 	int v3; 
 	int v4; 
@@ -84,7 +84,7 @@ int MenuManager::MENU() {
 		if (_vm->_globals.FR == 2)
 			FileManager::CONSTRUIT_SYSTEM("MENUES.SPR");
     
-		v1 = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+		spriteData = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 		_vm->_eventsManager.MOUSE_ON();
 		_vm->_eventsManager.CHANGE_MOUSE(0);
 		_vm->_eventsManager.btsouris = 0;
@@ -163,11 +163,11 @@ int MenuManager::MENU() {
 						break;
 					}
           
-					AFFICHE_SPEED(v1, 230, 259, v11);
-					AFFICHE_SPEED(v1, 230, 291, v10 + 2);
-					AFFICHE_SPEED(v1, 230, 322, v9 + 4);
-					AFFICHE_SPEED(v1, 230, 354, v8 + 6);
-					AFFICHE_SPEED(v1, 230, 386, v7 + 8);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, v11);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, v10 + 2);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, v9 + 4);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, v8 + 6);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, v7 + 8);
 					_vm->_graphicsManager.VBL();
           
 					if (_vm->_eventsManager.BMOUSE() == 1 && v2 > 0)
@@ -175,7 +175,7 @@ int MenuManager::MENU() {
 				} while (v12 != 1);
         
 				if (v2 == 1) {
-					AFFICHE_SPEED(v1, 230, 259, 10);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, 10);
 					_vm->_graphicsManager.VBL();
 					_vm->_eventsManager.delay(200);
 					v6 = 1;
@@ -183,7 +183,7 @@ int MenuManager::MENU() {
 				if (v2 != 2)
 					break;
 
-				AFFICHE_SPEED(v1, 230, 291, 11);
+				_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, 11);
 				_vm->_graphicsManager.VBL();
 				_vm->_eventsManager.delay(200);
         
@@ -200,14 +200,14 @@ int MenuManager::MENU() {
 			if (v2 != 3)
 				break;
       
-			AFFICHE_SPEED(v1, 230, 322, 12);
+			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, 12);
 			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
       
 			CHOICE_OPTION();
 		}
 		if (v2 == 4) {
-			AFFICHE_SPEED(v1, 230, 354, 13);
+			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, 13);
 			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
 			_vm->INTRORUN();
@@ -215,7 +215,7 @@ int MenuManager::MENU() {
 		}
 
 		if ( v2 == 5 ) {
-			AFFICHE_SPEED(v1, 230, 386, 14);
+			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, 14);
 			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
 			v6 = -1;
@@ -223,15 +223,11 @@ int MenuManager::MENU() {
 		break;
 	}
   
-	_vm->_globals.LIBERE_FICHIER(v1);
+	_vm->_globals.LIBERE_FICHIER(spriteData);
 	_vm->_globals.DESACTIVE_INVENT = 0;
 	_vm->_globals.FLAG_VISIBLE = 0;
 	_vm->_graphicsManager.FADE_OUTW();
 	return v6;
-}
-
-void MenuManager::AFFICHE_SPEED(byte *a1, int a2, int a3, int a4) {
-	warning("AFFICHE_SPEED");
 }
 
 void MenuManager::CHOICE_OPTION() {

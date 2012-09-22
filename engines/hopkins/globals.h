@@ -273,6 +273,7 @@ public:
 	bool netscape;
 	bool NOMARCHE;
 	int NBBLOC;
+	bool NO_VISU;
 
 	Globals();
 	~Globals();
