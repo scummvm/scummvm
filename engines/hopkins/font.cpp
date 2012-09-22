@@ -30,6 +30,21 @@ void FontManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
+void FontManager::clearAll() {
+	for (int idx = 0; idx < 11; ++idx) {
+		Txt[idx].field0 = 0;
+		Txt[idx].field12 = 0;
+		Txt[idx].field3FC = 0;
+		Txt[idx].field3FE = 0;
+		Txt[idx].field400 = 0;
+		Txt[idx].field404 = 0;
+		Txt[idx].field406 = 0;
+		Txt[idx].field408 = 0;
+
+		ListeTxt[idx].field0 = 0;
+	}
+}
+
 void FontManager::TEXTE_OFF(int idx) {
 	warning("TODO: TEXTE_OFF");
 }

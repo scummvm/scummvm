@@ -38,7 +38,7 @@ void MenuManager::setParent(HopkinsEngine *vm) {
 
 int MenuManager::MENU() {
 	byte *spriteData = NULL; 
-	signed int v2;
+	signed int menuIndex;
 	int v3; 
 	int v4; 
 	signed int v6;
@@ -99,25 +99,25 @@ int MenuManager::MENU() {
 					if (g_system->getEventManager()->shouldQuit())
 						return -1;
 
-					v2 = 0;
+					menuIndex = 0;
 					v3 = _vm->_eventsManager.XMOUSE();
 					v4 = _vm->_eventsManager.YMOUSE();
           
-					if ((unsigned int)(v3 - 232) <= 0xB0) {
+					if ((unsigned int)(v3 - 232) <= 176) {
 						if ((unsigned int)(v4 - 261) <= 23)
-							v2 = 1;
+							menuIndex = 1;
 						if ((unsigned int)(v4 - 293) <= 23)
-							v2 = 2;
+							menuIndex = 2;
 						if ((unsigned int)(v4 - 325) <= 22)
-							v2 = 3;
+							menuIndex = 3;
 						if ((unsigned int)(v4 - 356) <= 23)
-							v2 = 4;
+							menuIndex = 4;
             
 						if ((unsigned int)(v4 - 388) <= 23)
-							v2 = 5;
+							menuIndex = 5;
 					}
           
-					switch (v2) {
+					switch (menuIndex) {
 					case 0:
 						v11 = 0;
 						v10 = 0;
@@ -170,17 +170,17 @@ int MenuManager::MENU() {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, v7 + 8);
 					_vm->_graphicsManager.VBL();
           
-					if (_vm->_eventsManager.BMOUSE() == 1 && v2 > 0)
+					if (_vm->_eventsManager.BMOUSE() == 1 && menuIndex > 0)
 						v12 = 1;
 				} while (v12 != 1);
         
-				if (v2 == 1) {
+				if (menuIndex == 1) {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, 10);
 					_vm->_graphicsManager.VBL();
 					_vm->_eventsManager.delay(200);
 					v6 = 1;
 				}
-				if (v2 != 2)
+				if (menuIndex != 2)
 					break;
 
 				_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, 11);
@@ -197,7 +197,7 @@ int MenuManager::MENU() {
 				_vm->_globals.SORTIE = 0;
 			}
       
-			if (v2 != 3)
+			if (menuIndex != 3)
 				break;
       
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, 12);
@@ -206,7 +206,7 @@ int MenuManager::MENU() {
       
 			CHOICE_OPTION();
 		}
-		if (v2 == 4) {
+		if (menuIndex == 4) {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, 13);
 			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);
@@ -214,7 +214,7 @@ int MenuManager::MENU() {
 			continue;
 		}
 
-		if ( v2 == 5 ) {
+		if ( menuIndex == 5 ) {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, 14);
 			_vm->_graphicsManager.VBL();
 			_vm->_eventsManager.delay(200);

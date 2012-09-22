@@ -28,21 +28,6 @@
 
 namespace Hopkins {
 
-struct TxtItem {
-	int field0;
-	int field12;
-	int field3FC;
-	int field3FE;
-	int field400;
-	int field404;
-	int field406;
-	int field408;
-};
-
-struct ListeTxtItem {
-	int field0;
-};
-
 struct ZonePItem {
 	int field0;
 	int field2;
@@ -156,10 +141,14 @@ struct BlocItem {
 	int y2;
 };
 
+class HopkinsEngine;
+
 /**
  * Engine Globals
  */
 class Globals {
+private:
+	HopkinsEngine *_vm;
 public:
 	int FR;
 	int SVGA;
@@ -206,8 +195,6 @@ public:
 	byte *ICONE;
 	byte *BUF_ZONE;
 	byte *CACHE_BANQUE[6];
-	TxtItem Txt[11];
-	ListeTxtItem ListeTxt[11];
 	ZonePItem ZoneP[105];
 	LigneItem Ligne[400];
 	LigneZoneItem LigneZone[400];
@@ -277,6 +264,7 @@ public:
 
 	Globals();
 	~Globals();
+	void setParent(HopkinsEngine *vm);
 
 	void setConfig();
 	void clearAll();

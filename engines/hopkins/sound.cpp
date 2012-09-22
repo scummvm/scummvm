@@ -36,7 +36,7 @@ void SoundManager::WSOUND_INIT() {
 }
 
 void SoundManager::VERIF_SOUND() {
-	warning("TODO: VERIF_SOUND");
+//	warning("TODO: VERIF_SOUND");
 }
 
 void SoundManager::LOAD_ANM_SOUND() {

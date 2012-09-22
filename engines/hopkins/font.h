@@ -39,18 +39,30 @@ struct TxtItem {
 	int fieldC;
 	int fieldE;
 	int field10;
+	int field12;
 	int field3FC;
 	int field3FE;
+	int field400;
+	int field404;
+	int field406;
+	int field408;
 	int field40A;
 };
+
+struct ListeTxtItem {
+	int field0;
+};
+
 
 class FontManager {
 private:
 	HopkinsEngine *_vm;
 public:
 	TxtItem Txt[12];
+	ListeTxtItem ListeTxt[11];
 public:
 	void setParent(HopkinsEngine *vm);
+	void clearAll();
 
 	void TEXTE_OFF(int idx);
 };

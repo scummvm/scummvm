@@ -218,6 +218,7 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
+
 			return;
 
 		default:

@@ -22,8 +22,10 @@
 
 #include "common/textconsole.h"
 #include "hopkins/globals.h"
-#include "hopkins/graphics.h"
 #include "hopkins/files.h"
+#include "hopkins/font.h"
+#include "hopkins/graphics.h"
+#include "hopkins/hopkins.h"
 
 namespace Hopkins {
 
@@ -144,6 +146,10 @@ Globals::~Globals() {
 	free(PERSO);
 }
 
+void Globals::setParent(HopkinsEngine *vm) {
+	_vm = vm;
+}
+
 void Globals::setConfig() {
 	HOPIMAGE = "BUFFER";
 	HOPANIM = "ANIM";
@@ -189,18 +195,7 @@ void Globals::clearAll() {
 	hauteur_boite = 0;
 	largeur_boite = 0;
 	
-	for (int idx = 0; idx < 11; ++idx) {
-		Txt[idx].field0 = 0;
-		Txt[idx].field12 = 0;
-		Txt[idx].field3FC = 0;
-		Txt[idx].field3FE = 0;
-		Txt[idx].field400 = 0;
-		Txt[idx].field404 = 0;
-		Txt[idx].field406 = 0;
-		Txt[idx].field408 = 0;
-
-		ListeTxt[idx].field0 = 0;
-	}
+	_vm->_fontManager.clearAll();
 
 	INIT_VBOB();
 	ADR_FICHIER_OBJ = PTRNUL;
