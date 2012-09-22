@@ -335,9 +335,9 @@ void KyraEngine_MR::loadSceneMsc() {
 
 	// HACK
 	uint8 *data = new uint8[320*200];
-	_screen->copyRegionToBuffer(5, 320, 0, 0, 320, 200, data);
+	_screen->copyRegionToBuffer(5, 0, 0, 320, 200, data);
 	_screen->clearPage(5);
-	_screen->copyBlockToPage(5, 320, 0, _maskPageMinY, 320, height, data);
+	_screen->copyBlockToPage(5, 0, _maskPageMinY, 320, height, data);
 	delete[] data;
 
 }
@@ -417,7 +417,7 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	while (_emc->isValid(&_sceneScriptState))
 		_emc->run(&_sceneScriptState);
 
-	_screen->copyRegionToBuffer(3, 320, 0, 0, 320, 200, _gamePlayBuffer);
+	_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _gamePlayBuffer);
 
 	for (int i = 0; i < 10; ++i) {
 		_emc->init(&_sceneSpecialScripts[i], &_sceneScriptData);
@@ -551,7 +551,7 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 }
 
 void KyraEngine_MR::initSceneScreen(int unk1) {
-	_screen->copyBlockToPage(2, 320, 0, 188, 320, 12, _interfaceCommandLine);
+	_screen->copyBlockToPage(2, 0, 188, 320, 12, _interfaceCommandLine);
 
 	if (_unkSceneScreenFlag1) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);

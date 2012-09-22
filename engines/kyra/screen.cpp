@@ -944,14 +944,14 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	}
 }
 
-void Screen::copyRegionToBuffer(int pageNum, int pitch, int x, int y, int w, int h, uint8 *dest) {
+void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest) {
 	x *= _pageScaleFactor[pageNum];
 	y *= _pageScaleFactor[pageNum];
 	w *= _pageScaleFactor[pageNum];
 	h *= _pageScaleFactor[pageNum];
 
 	if (y < 0) {
-		dest += (-y) * pitch;
+		dest += (-y) * w;
 		h += y;
 		y = 0;
 	} else if (y + h > SCREEN_H) {
@@ -972,7 +972,7 @@ void Screen::copyRegionToBuffer(int pageNum, int pitch, int x, int y, int w, int
 	uint8 *pagePtr = getPagePtr(pageNum);
 
 	for (int i = y; i < y + h; ++i)
-		memcpy(dest + (i - y) * pitch, pagePtr + i * SCREEN_W * _pageScaleFactor[pageNum] + x, w);
+		memcpy(dest + (i - y) * w, pagePtr + i * SCREEN_W * _pageScaleFactor[pageNum] + x, w);
 }
 
 void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
@@ -989,9 +989,13 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 		_forceFullUpdate = true;
 }
 
+void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
+	copyBlockToPage(pageNum, w, x, y, w, h, src);
+}
+
 void Screen::copyBlockToPage(int pageNum, int pitch, int x, int y, int w, int h, const uint8 *src) {
 	if (y < 0) {
-		src += (-y) * pitch;
+		src += (-y) * w;
 		h += y;
 		y = 0;
 	} else if (y + h > SCREEN_H) {
@@ -2925,7 +2929,7 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	}
 
 	CursorMan.showMouse(false);
-	copyRegionToBuffer(8, mouseWidth, xOffset, 0, mouseWidth, mouseHeight, cursor);
+	copyRegionToBuffer(8, xOffset, 0, mouseWidth, mouseHeight, cursor);
 	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, _cursorColorKey);
 	if (isMouseVisible())
 		CursorMan.showMouse(true);

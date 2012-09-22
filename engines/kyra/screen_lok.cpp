@@ -136,7 +136,7 @@ void Screen_LoK::loadPageFromDisk(const char *file, int page) {
 		return;
 	}
 
-	copyBlockToPage(page, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page / 2]);
+	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page / 2]);
 	delete[] _saveLoadPage[page / 2];
 	_saveLoadPage[page / 2] = 0;
 
@@ -190,18 +190,18 @@ void Screen_LoK::copyBackgroundBlock(int x, int page, int flag) {
 	_curPage = page;
 
 	int curX = x;
-	copyRegionToBuffer(_curPage, 8, 8, 8, 8, height, ptr2);
+	copyRegionToBuffer(_curPage, 8, 8, 8, height, ptr2);
 	for (int i = 0; i < 19; ++i) {
 		int tempX = curX + 1;
-		copyRegionToBuffer(_curPage, 8, tempX << 3, 8, 8, height, ptr1);
-		copyBlockToPage(_curPage, 8, tempX << 3, 8, 8, height, ptr2);
+		copyRegionToBuffer(_curPage, tempX << 3, 8, 8, height, ptr1);
+		copyBlockToPage(_curPage, tempX << 3, 8, 8, height, ptr2);
 		int newXPos = curX + x;
 		if (newXPos > 37)
 			newXPos = newXPos % 38;
 
 		tempX = newXPos + 1;
-		copyRegionToBuffer(_curPage, 8, tempX << 3, 8, 8, height, ptr2);
-		copyBlockToPage(_curPage, 8, tempX << 3, 8, 8, height, ptr1);
+		copyRegionToBuffer(_curPage, tempX << 3, 8, 8, height, ptr2);
+		copyBlockToPage(_curPage, tempX << 3, 8, 8, height, ptr1);
 		curX += x * 2;
 		if (curX > 37) {
 			curX = curX % 38;

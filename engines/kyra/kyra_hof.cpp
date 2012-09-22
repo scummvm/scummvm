@@ -1115,7 +1115,7 @@ void KyraEngine_HoF::backUpPage0() {
 void KyraEngine_HoF::restorePage0() {
 	restorePage3();
 	if (_screenBuffer)
-		_screen->copyBlockToPage(0, 320, 0, 0, 320, 200, _screenBuffer);
+		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
 }
 
 void KyraEngine_HoF::updateCharPal(int unk1) {
@@ -1419,19 +1419,19 @@ void KyraEngine_HoF::runIdleScript(int script) {
 #pragma mark -
 
 void KyraEngine_HoF::backUpGfxRect24x24(int x, int y) {
-	_screen->copyRegionToBuffer(_screen->_curPage, 24, x, y, 24, 24, _gfxBackUpRect);
+	_screen->copyRegionToBuffer(_screen->_curPage, x, y, 24, 24, _gfxBackUpRect);
 }
 
 void KyraEngine_HoF::restoreGfxRect24x24(int x, int y) {
-	_screen->copyBlockToPage(_screen->_curPage, 24, x, y, 24, 24, _gfxBackUpRect);
+	_screen->copyBlockToPage(_screen->_curPage, x, y, 24, 24, _gfxBackUpRect);
 }
 
 void KyraEngine_HoF::backUpGfxRect32x32(int x, int y) {
-	_screen->copyRegionToBuffer(_screen->_curPage, 32, x, y, 32, 32, _gfxBackUpRect);
+	_screen->copyRegionToBuffer(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
 }
 
 void KyraEngine_HoF::restoreGfxRect32x32(int x, int y) {
-	_screen->copyBlockToPage(_screen->_curPage, 32, x, y, 32, 32, _gfxBackUpRect);
+	_screen->copyBlockToPage(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
 }
 
 #pragma mark -

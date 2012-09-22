@@ -285,7 +285,7 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 		delayUntil(endTime);
 	}
 
-	_screen->copyBlockToPage(2, 320, 0, 0, 320, 200, _screenBuffer);
+	_screen->copyBlockToPage(2, 0, 0, 320, 200, _screenBuffer);
 	movie.close();
 }
 
@@ -359,7 +359,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 	restorePage3();
 
 	if (_screenBuffer) {
-		_screen->copyBlockToPage(0, 320, 0, 0, 320, 200, _screenBuffer);
+		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
 	}
 
 	setHandItem(_itemInHand);

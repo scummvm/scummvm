@@ -197,9 +197,9 @@ void Animator_LoK::preserveOrRestoreBackground(AnimObject *obj, bool restore) {
 		y = 136 - height;
 
 	if (restore)
-		_screen->copyBlockToPage(_screen->_curPage, width << 3, x << 3, y, width << 3, height, obj->background);
+		_screen->copyBlockToPage(_screen->_curPage, x << 3, y, width << 3, height, obj->background);
 	else
-		_screen->copyRegionToBuffer(_screen->_curPage, width << 3, x << 3, y, width << 3, height, obj->background);
+		_screen->copyRegionToBuffer(_screen->_curPage, x << 3, y, width << 3, height, obj->background);
 }
 
 void Animator_LoK::prepDrawAllObjects() {

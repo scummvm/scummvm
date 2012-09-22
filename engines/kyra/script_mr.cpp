@@ -335,7 +335,7 @@ int KyraEngine_MR::o3_drawSceneShape(EMCState *script) {
 
 	_screen->drawShape(2, _sceneShapes[shape], x, y, 2, flag);
 
-	_screen->copyRegionToBuffer(3, 320, 0, 0, 320, 200, _gamePlayBuffer);
+	_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _gamePlayBuffer);
 
 	_screen->drawShape(0, _sceneShapes[shape], x, y, 2, flag);
 
@@ -727,7 +727,7 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	int selection = 1;
 
 	_screen->hideMouse();
-	_screen->copyRegionToBuffer(1, 320, 0, 0, 320, 200, _screenBuffer);
+	_screen->copyRegionToBuffer(1, 0, 0, 320, 200, _screenBuffer);
 	int curPageBackUp = _screen->_curPage;
 	_screen->_curPage = 2;
 
@@ -793,7 +793,7 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	}
 
 	restorePage3();
-	_screen->copyBlockToPage(1, 320, 0, 0, 320, 200, _screenBuffer);
+	_screen->copyBlockToPage(1, 0, 0, 320, 200, _screenBuffer);
 	return selection;
 }
 

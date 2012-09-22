@@ -156,13 +156,13 @@ int KyraEngine_HoF::o2_meanWhileScene(EMCState *script) {
 
 int KyraEngine_HoF::o2_backUpScreen(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_backUpScreen(%p) (%d)", (const void *)script, stackPos(0));
-	_screen->copyRegionToBuffer(stackPos(0), 320, 0, 0, 320, 144, _screenBuffer);
+	_screen->copyRegionToBuffer(stackPos(0), 0, 0, 320, 144, _screenBuffer);
 	return 0;
 }
 
 int KyraEngine_HoF::o2_restoreScreen(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_restoreScreen(%p) (%d)", (const void *)script, stackPos(0));
-	_screen->copyBlockToPage(stackPos(0), 320, 0, 0, 320, 144, _screenBuffer);
+	_screen->copyBlockToPage(stackPos(0), 0, 0, 320, 144, _screenBuffer);
 	return 0;
 }
 
@@ -563,7 +563,7 @@ int KyraEngine_HoF::o2_restoreBackBuffer(EMCState *script) {
 
 int KyraEngine_HoF::o2_backUpInventoryGfx(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_backUpInventoryGfx(%p) ()", (const void *)script);
-	_screen->copyRegionToBuffer(1, 320, 0, 144, 320, 56, _screenBuffer);
+	_screen->copyRegionToBuffer(1, 0, 144, 320, 56, _screenBuffer);
 	_inventorySaved = true;
 	return 0;
 }
@@ -582,7 +582,7 @@ int KyraEngine_HoF::o2_enableSceneAnim(EMCState *script) {
 
 int KyraEngine_HoF::o2_restoreInventoryGfx(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_restoreInventoryGfx(%p) ()", (const void *)script);
-	_screen->copyBlockToPage(1, 320, 0, 144, 320, 56, _screenBuffer);
+	_screen->copyBlockToPage(1, 0, 144, 320, 56, _screenBuffer);
 	_inventorySaved = false;
 	return 0;
 }

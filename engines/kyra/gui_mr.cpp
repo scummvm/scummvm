@@ -149,7 +149,7 @@ void KyraEngine_MR::updateCommandLine() {
 
 void KyraEngine_MR::restoreCommandLine() {
 	int y = _inventoryState ? 144 : 188;
-	_screen->copyBlockToPage(0, 320, 0, y, 320, 12, _interfaceCommandLine);
+	_screen->copyBlockToPage(0, 0, y, 320, 12, _interfaceCommandLine);
 }
 
 void KyraEngine_MR::updateCLState() {
@@ -165,7 +165,7 @@ void KyraEngine_MR::showInventory() {
 	if (queryGameFlag(3))
 		return;
 
-	_screen->copyBlockToPage(3, 320, 0, 0, 320, 56, _interface);
+	_screen->copyBlockToPage(3, 0, 0, 320, 56, _interface);
 	drawMalcolmsMoodText();
 
 	_inventoryState = true;
@@ -245,7 +245,7 @@ void KyraEngine_MR::hideInventory() {
 	updateCLState();
 	initMainButtonList(true);
 
-	_screen->copyBlockToPage(3, 320, 0, 0, 320, 56, _interface);
+	_screen->copyBlockToPage(3, 0, 0, 320, 56, _interface);
 	_screen->hideMouse();
 
 	restorePage3();
@@ -650,8 +650,8 @@ void KyraEngine_MR::showAlbum() {
 	assert(_album.backUpPage);
 	_album.nextPage = _album.curPage;
 
-	_screen->copyRegionToBuffer(0, 320, 0, 0, 320, 200, _screenBuffer);
-	_screen->copyRegionToBuffer(4, 320, 0, 0, 320, 200, _album.backUpPage);
+	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenBuffer);
+	_screen->copyRegionToBuffer(4, 0, 0, 320, 200, _album.backUpPage);
 
 	_screen->copyPalette(1, 0);
 	_screen->fadeToBlack(9);
@@ -683,8 +683,8 @@ void KyraEngine_MR::showAlbum() {
 	updateMouse();
 
 	restorePage3();
-	_screen->copyBlockToPage(0, 320, 0, 0, 320, 200, _screenBuffer);
-	_screen->copyBlockToPage(4, 320, 0, 0, 320, 200, _album.backUpPage);
+	_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
+	_screen->copyBlockToPage(4, 0, 0, 320, 200, _album.backUpPage);
 
 	_screen->copyPalette(0, 1);
 	_screen->fadePalette(_screen->getPalette(0), 9);
@@ -938,11 +938,11 @@ void KyraEngine_MR::albumAnim2() {
 }
 
 void KyraEngine_MR::albumBackUpRect() {
-	_screen->copyRegionToBuffer(2, 62, 0, 146, 62, 50, _album.backUpRect);
+	_screen->copyRegionToBuffer(2, 0, 146, 62, 50, _album.backUpRect);
 }
 
 void KyraEngine_MR::albumRestoreRect() {
-	_screen->copyBlockToPage(2, 62, 0, 146, 62, 50, _album.backUpRect);
+	_screen->copyBlockToPage(2, 0, 146, 62, 50, _album.backUpRect);
 }
 
 void KyraEngine_MR::albumUpdateRect() {
