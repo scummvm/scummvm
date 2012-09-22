@@ -423,12 +423,12 @@ void EoBCoreEngine::sparkEffectOffensive() {
 	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 2, Screen::CR_NO_P_CHECK);
 
 	for (int i = 0; i < 16; i++)
-		_screen->copyRegionToBuffer(0, 16, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << 8]);
+		_screen->copyRegionToBuffer(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << 8]);
 	_screen->updateScreen();
 
 	for (int i = 0; i < 11; i++) {
 		for (int ii = 0; ii < 16; ii++)
-			_screen->copyBlockToPage(2, 16, _sparkEffectOfX[ii], _sparkEffectOfY[ii], 16, 16, &_spellAnimBuffer[ii << 8]);
+			_screen->copyBlockToPage(2, _sparkEffectOfX[ii], _sparkEffectOfY[ii], 16, 16, &_spellAnimBuffer[ii << 8]);
 
 		for (int ii = 0; ii < 16; ii++) {
 			int shpIndex = (_sparkEffectOfFlags1[i] & _sparkEffectOfFlags2[ii]) >> _sparkEffectOfShift[ii];
@@ -441,7 +441,7 @@ void EoBCoreEngine::sparkEffectOffensive() {
 	}
 
 	for (int i = 0; i < 16; i++)
-		_screen->copyBlockToPage(0, 16, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << 8]);
+		_screen->copyBlockToPage(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << 8]);
 
 	_screen->updateScreen();
 	enableSysTimer(2);

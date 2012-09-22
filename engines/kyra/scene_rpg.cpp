@@ -481,7 +481,7 @@ void KyraRpgEngine::drawVcnBlocks() {
 		d += (pitch * (_vcnBlockHeight - 1));
 	}
 
-	screen()->copyBlockToPage(_sceneDrawPage1, 176, _sceneXoffset, 0, 176, 120, _sceneWindowBuffer);
+	screen()->copyBlockToPage(_sceneDrawPage1, _sceneXoffset, 0, 176, 120, _sceneWindowBuffer);
 }
 
 uint16 KyraRpgEngine::calcNewBlockPosition(uint16 curBlock, uint16 direction) {

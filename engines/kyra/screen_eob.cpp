@@ -148,10 +148,10 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	// We use memset and copyBlockToPage instead of fillRect to make sure that the
 	// color key 0xFF doesn't get converted into EGA color
 	memset(cursor, colorKey, mouseW * _pageScaleFactor[6] * mouseH * _pageScaleFactor[6]);
-	copyBlockToPage(6, mouseW, 0, 0, mouseW, mouseH, cursor);
+	copyBlockToPage(6, 0, 0, mouseW, mouseH, cursor);
 	drawShape(6, shape, 0, 0, 0, 2, ovl);
 	CursorMan.showMouse(false);
-	copyRegionToBuffer(6, mouseW, 0, 0, mouseW, mouseH, cursor);
+	copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
 	// Mouse cursor post processing for CGA mode. Unlike the original (which uses drawShape for the mouse cursor)
 	// the cursor manager cannot know whether a pixel value of 0 is supposed to be black or transparent. Thus, we

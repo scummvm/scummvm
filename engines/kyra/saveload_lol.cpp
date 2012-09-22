@@ -521,7 +521,7 @@ Graphics::Surface *LoLEngine::generateSaveThumbnail() const {
 	Graphics::Surface *dst = new Graphics::Surface();
 	assert(dst);
 
-	_screen->copyRegionToBuffer(0, 320, 0, 0, 320, 200, screenBuf);
+	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, screenBuf);
 	Screen_LoL::convertPC98Gfx(screenBuf, Screen::SCREEN_W, Screen::SCREEN_H, Screen::SCREEN_W);
 	::createThumbnail(dst, screenBuf, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 

@@ -62,15 +62,15 @@ void TextDisplayer_LoL::setupField(bool mode) {
 		}
 
 		if (mode) {
-			_screen->copyRegionToBuffer(3, 320, 0, 0, 320, 40, _vm->_pageBuffer1);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer1);
 			_screen->copyRegion(80, y, 0, 0, 240, h, 0, 3, Screen::CR_NO_P_CHECK);
-			_screen->copyRegionToBuffer(3, 320, 0, 0, 320, 40, _vm->_pageBuffer2);
-			_screen->copyBlockToPage(3, 320, 0, 0, 320, 40, _vm->_pageBuffer1);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer2);
+			_screen->copyBlockToPage(3, 0, 0, 320, 40, _vm->_pageBuffer1);
 		} else {
 			_screen->setScreenDim(clearDim(4));
 			int cp = _screen->setCurPage(2);
-			_screen->copyRegionToBuffer(3, 320, 0, 0, 320, 40, _vm->_pageBuffer1);
-			_screen->copyBlockToPage(3, 320, 0, 0, 320, 40, _vm->_pageBuffer2);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer1);
+			_screen->copyBlockToPage(3, 0, 0, 320, 40, _vm->_pageBuffer2);
 			_screen->copyRegion(0, 0, 80, y, 240, h, 3, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
 			for (int i = 177; i > 141; i--) {
@@ -82,7 +82,7 @@ void TextDisplayer_LoL::setupField(bool mode) {
 				_vm->delayUntil(endTime);
 			}
 
-			_screen->copyBlockToPage(3, 320, 0, 0, 320, 200, _vm->_pageBuffer1);
+			_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer1);
 			_screen->setCurPage(cp);
 
 			_vm->_updateFlags &= 0xfffd;
@@ -102,7 +102,7 @@ void TextDisplayer_LoL::expandField() {
 		_vm->_textColorFlag = 0;
 		_vm->_timer->disable(11);
 		_screen->setScreenDim(clearDim(3));
-		_screen->copyRegionToBuffer(3, 320, 0, 0, 320, 10, tmp);
+		_screen->copyRegionToBuffer(3, 0, 0, 320, 10, tmp);
 
 		int y = 140;
 		int h = 3;
@@ -124,7 +124,7 @@ void TextDisplayer_LoL::expandField() {
 			_vm->delayUntil(endTime);
 		}
 
-		_screen->copyBlockToPage(3, 320, 0, 0, 320, 10, tmp);
+		_screen->copyBlockToPage(3, 0, 0, 320, 10, tmp);
 		_vm->_updateFlags |= 2;
 
 	} else {

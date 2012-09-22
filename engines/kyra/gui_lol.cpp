@@ -1140,9 +1140,9 @@ int LoLEngine::clickedPortraitLeft(Button *button) {
 	disableSysTimer(2);
 
 	if (!_weaponsDisabled) {
-		_screen->copyRegionToBuffer(2, 320, 0, 0, 320, 200, _pageBuffer2);
+		_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _pageBuffer2);
 		_screen->copyPage(0, 2);
-		_screen->copyRegionToBuffer(2, 320, 0, 0, 320, 200, _pageBuffer1);
+		_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _pageBuffer1);
 		_updateFlags |= 0x0C;
 		gui_disableControls(1);
 	}
@@ -1244,7 +1244,7 @@ int LoLEngine::clickedExitCharInventory(Button *button) {
 			_characters[i].flags &= 0xf1ff;
 	}
 
-	_screen->copyBlockToPage(2, 320, 0, 0, 320, 200, _pageBuffer1);
+	_screen->copyBlockToPage(2, 0, 0, 320, 200, _pageBuffer1);
 
 	int cp = _screen->setCurPage(2);
 	gui_drawAllCharPortraitsWithStats();
@@ -1254,7 +1254,7 @@ int LoLEngine::clickedExitCharInventory(Button *button) {
 	_screen->copyPage(2, 0);
 	_screen->updateScreen();
 	gui_enableControls();
-	_screen->copyBlockToPage(2, 320, 0, 0, 320, 200, _pageBuffer2);
+	_screen->copyBlockToPage(2, 0, 0, 320, 200, _pageBuffer2);
 
 	_lastCharInventory = -1;
 	updateDrawPage2();
@@ -2463,7 +2463,7 @@ void GUI_LoL::createScreenThumbnail(Graphics::Surface &dst) {
 		uint8 *screen = new uint8[Screen::SCREEN_W * Screen::SCREEN_H];
 		assert(screen);
 
-		_screen->copyRegionToBuffer(7, 320, 0, 0, 320, 200, screen);
+		_screen->copyRegionToBuffer(7, 0, 0, 320, 200, screen);
 		Screen_LoL::convertPC98Gfx(screen, Screen::SCREEN_W, Screen::SCREEN_H, Screen::SCREEN_W);
 		::createThumbnail(&dst, screen, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 		delete[] screen;
