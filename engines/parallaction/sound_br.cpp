@@ -146,6 +146,7 @@ void MidiParser_MSC::parseNextEvent(EventInfo &info) {
 		return;
 	}
 
+	info.length = 0;
 	info.delta = readVLQ(_position._playPos);
 	info.event = read1(_position._playPos);
 
@@ -224,7 +225,12 @@ MidiPlayer_MSC::MidiPlayer_MSC()
 	: _paused(false) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
+	const MusicType musicType = MidiDriver::getMusicType(dev);
+	if (musicType == MT_ADLIB) {
+		_driver = createAdLibDriver();
+	} else {
+		_driver = MidiDriver::createMidi(dev);
+	}
 	assert(_driver);
 
 	int ret = _driver->open();
