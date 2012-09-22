@@ -38,6 +38,7 @@
 #include "common/system.h"
 #include "common/events.h"
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Kyra {
@@ -596,16 +597,11 @@ VqaMovie::VqaMovie(KyraEngine_v1 *vm, OSystem *system) {
 	_vm = vm;
 	_screen = _vm->screen();
 	_decoder = new VqaDecoder();
-	_drawPage = -1;
 }
 
 VqaMovie::~VqaMovie() {
 	close();
 	delete _decoder;
-}
-
-void VqaMovie::setDrawPage(int page) {
-	_drawPage = page;
 }
 
 bool VqaMovie::open(const char *filename) {
@@ -654,14 +650,18 @@ void VqaMovie::play() {
 			if (_decoder->needsUpdate()) {
 				const Graphics::Surface *surface = _decoder->decodeNextFrame();
 				if (_decoder->hasDirtyPalette()) {
-					memcpy(_screen->getPalette(0).getData(), _decoder->getPalette(), 3 * 256);
-					_screen->setScreenPalette(_screen->getPalette(0));
+					const byte *decoderPalette = _decoder->getPalette();
+					byte systemPalette[256 * 3];
+					for (int i = 0; i < ARRAYSIZE(systemPalette); i++) {
+						systemPalette[i] = (decoderPalette[i] * 0xFF) / 0x3F;
+					}
+					_system->getPaletteManager()->setPalette(systemPalette, 0, 256);
 				}
 
-				_screen->copyBlockToPage(_drawPage, surface->pitch, x, y, width, height, (const byte *)surface->getBasePtr(0, 0));
+				_system->copyRectToScreen((const byte *)surface->getBasePtr(0, 0), surface->pitch, x, y, width, height);
 			}
 
-			_screen->updateScreen();
+			_system->updateScreen();
 			_system->delayMillis(10);
 		}
 	}

@@ -380,7 +380,6 @@ void KyraEngine_MR::playVQA(const char *name) {
 		_screen->fadeToBlack(60);
 		_screen->clearPage(0);
 
-		vqa.setDrawPage(0);
 		vqa.play();
 		vqa.close();
 

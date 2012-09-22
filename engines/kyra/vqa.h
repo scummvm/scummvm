@@ -139,8 +139,6 @@ public:
 	VqaMovie(KyraEngine_v1 *vm, OSystem *system);
 	~VqaMovie();
 
-	void setDrawPage(int page);
-
 	bool open(const char *filename);
 	void close();
 	void play();
@@ -150,8 +148,6 @@ private:
 	Screen *_screen;
 	VqaDecoder *_decoder;
 	Common::File _file;
-
-	int _drawPage;
 };
 
 } // End of namespace Kyra
