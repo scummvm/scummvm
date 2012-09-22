@@ -185,17 +185,22 @@ void Movie::stop() {
 }
 
 void Movie::resume() {
-	if (_video)
-		_video->pauseVideo(false);
+	if (_paused) {
+		if (_video)
+			_video->pauseVideo(false);
 
-	TimeBase::resume();
+		_paused = false;
+	}
 }
 
 void Movie::pause() {
-	if (_video)
-		_video->pauseVideo(true);
+	if (isRunning() && !_paused) {
+		if (_video)
+			_video->pauseVideo(true);
 
-	TimeBase::pause();
+		_paused = true;
+		_pauseStart = g_system->getMillis();
+	}
 }
 
 TimeValue Movie::getDuration(const TimeScale scale) const {
