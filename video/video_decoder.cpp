@@ -386,6 +386,11 @@ bool VideoDecoder::Track::rewind() {
 	return seek(Audio::Timestamp(0, 1000));
 }
 
+void VideoDecoder::Track::pause(bool shouldPause) {
+	_paused = shouldPause;
+	pauseIntern(shouldPause);
+}
+
 Audio::Timestamp VideoDecoder::Track::getDuration() const {
 	return Audio::Timestamp(0, 1000);
 }

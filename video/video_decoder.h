@@ -433,7 +433,7 @@ protected:
 		/**
 		 * Set the pause status of the track.
 		 */
-		void pause(bool shouldPause) {}
+		void pause(bool shouldPause);
 
 		/**
 		 * Return if the track is paused.
@@ -451,7 +451,7 @@ protected:
 		/**
 		 * Function called by pause() for subclasses to implement.
 		 */
-		void pauseIntern(bool pause);
+		virtual void pauseIntern(bool shouldPause) {}
 
 	private:
 		bool _paused;
@@ -597,7 +597,7 @@ protected:
 		virtual Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kPlainSoundType; }
 
 	protected:
-		void pauseIntern(bool pause);
+		void pauseIntern(bool shouldPause);
 
 		/**
 		 * Get the AudioStream that is the representation of this AudioTrack
