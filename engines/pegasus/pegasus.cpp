@@ -193,6 +193,14 @@ Common::Error PegasusEngine::run() {
 	return Common::kNoError;
 }
 
+bool PegasusEngine::canLoadGameStateCurrently() {
+	return _loadAllowed && !isDemo();
+}
+
+bool PegasusEngine::canSaveGameStateCurrently() {
+	return _saveAllowed && !isDemo() && g_neighborhood;
+}
+
 bool PegasusEngine::detectOpeningClosingDirectory() {
 	// We need to detect what our Opening/Closing directory is listed as
 	// On the original disc, it was 'Opening/Closing' but only HFS(+) supports the slash
@@ -1442,6 +1450,7 @@ void PegasusEngine::performJump(NeighborhoodID neighborhoodID) {
 	// Sub chase is special
 	if (neighborhoodID == kNoradSubChaseID) {
 		throwAwayEverything();
+		_loadAllowed = false;
 		doSubChase();
 
 		if (shouldQuit())
@@ -1450,6 +1459,7 @@ void PegasusEngine::performJump(NeighborhoodID neighborhoodID) {
 		neighborhoodID = kNoradDeltaID;
 		GameState.setNextRoom(kNorad41);
 		GameState.setNextDirection(kEast);
+		_loadAllowed = true;
 	}
 
 	Neighborhood *neighborhood;
