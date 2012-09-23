@@ -217,7 +217,7 @@ void Globals::clearAll() {
 	inventaire2 = PTRNUL;
 	COUCOU = PTRNUL;
 	SPRITE_ECRAN = PTRNUL;
-	SAUVEGARDE = PTRNUL;
+	SAUVEGARDE = (Sauvegarde *)PTRNUL;
 	OBJET_EN_COURS = 0;
   
 	for (int idx = 0; idx < 105; ++idx) {
@@ -253,8 +253,8 @@ void Globals::clearAll() {
 	texte_tmp = PTRNUL;
 	BUFFERTAPE = dos_malloc2(85000);
 
-	SAUVEGARDE = dos_malloc2(2050);
-	memset(SAUVEGARDE, 0, 1999);
+	SAUVEGARDE = (Sauvegarde *)malloc(sizeof(Sauvegarde));
+	memset(SAUVEGARDE, 0, sizeof(Sauvegarde));
 
 	essai0 = BUFFERTAPE;
 	essai1 = BUFFERTAPE + 25000;

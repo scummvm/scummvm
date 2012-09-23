@@ -103,7 +103,13 @@ struct BobItem {
 	int field36;
 	int field38;
 	int field3A;
+	int field3E;
+	int field40;
+	int field42;
+	int field44;
 	int field46;
+	int field48;
+	int field4A;
 };
 
 struct Liste2Item {
@@ -154,6 +160,26 @@ struct TriItem {
 	int field2;
 	int field4;
 	int field6;
+};
+
+struct CacheItem {
+	int field0;
+	int field2;
+	int field4;
+	int field6;
+	int field8;
+	int fieldA;
+	int field10;
+	int field14;
+};
+
+// Note: Fields decimal based for now
+struct Sauvegarde {
+	int field353;
+	int field354;
+	int field355;
+	int field356;
+	int field357;
 };
 
 class HopkinsEngine;
@@ -223,12 +249,13 @@ public:
 	ObjetWItem ObjetW[300];
 	BlocItem BLOC[250];
 	ListeItem Liste[7];
+	CacheItem Cache[25];
 	byte *Winventaire;
 	byte *texte_tmp;
 	int texte_long;
 	int TEXTE_FORMATE;
 	byte *SPRITE_ECRAN;
-	byte *SAUVEGARDE;
+	Sauvegarde *SAUVEGARDE;
 	byte *BUFFERTAPE;
 	byte *essai0;
 	byte *essai1;

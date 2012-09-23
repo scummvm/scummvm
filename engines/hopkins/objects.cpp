@@ -33,6 +33,21 @@ namespace Hopkins {
 
 ObjectsManager::ObjectsManager() {
 	PRIORITY = 0;
+	inventairex = inventairey = 0;
+	inventairel = inventaireh = 0;
+	old_cadx = old_cady = old_cadi = 0;
+	cadx = cady = cadi = 0;
+	SL_X = SL_Y = 0;
+	I_old_x = I_old_y = 0;
+	FLAG_VISIBLE_EFFACE = 0;
+	Winventaire = PTRNUL;
+	inventaire2 = PTRNUL;
+	SL_SPR = PTRNUL;
+	SL_SPR2 = PTRNUL;
+	PERSO_ON = false;
+	SL_FLAG = false;
+	FLAG_VISIBLE = false;
+	DESACTIVE_INVENT = false;
 }
 
 void ObjectsManager::setParent(HopkinsEngine *vm) {
@@ -507,7 +522,74 @@ void ObjectsManager::BOB_ZERO(int idx) {
 }
 
 void ObjectsManager::DEF_BOB(int idx) {
-	warning("TODO: DEF_BOB");
+	int v2;
+	int v3;
+	int v4;
+	__int16 v5;
+	__int16 v6;
+	__int16 v7;
+	__int16 v8;
+	__int16 v9;
+	__int16 v10;
+	int v11; 
+	__int16 v12;
+	__int16 v13;
+
+	v2 = idx;
+	if (_vm->_globals.Bob[v2].field40) {
+		v12 = _vm->_globals.Bob[v2].field42;
+		v13 = _vm->_globals.Bob[v2].field44;
+		if (_vm->_globals.Bob[v2].field3E)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bob[v2].field4, 
+				v12 + 300, v13 + 300, _vm->_globals.Bob[v2].fieldC);
+		else
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, 
+				_vm->_globals.Bob[v2].field4, v12 + 300, 
+				_vm->_globals.Bob[v2].field44 + 300, _vm->_globals.Bob[v2].fieldC,
+				_vm->_globals.Bob[v2].field4A, _vm->_globals.Bob[v2].field48,
+				_vm->_globals.Bob[v2].field38);
+    
+		v3 = idx;
+		_vm->_globals.Liste2[v3].field0 = 1;
+		_vm->_globals.Liste2[v3].field2 = v12;
+		_vm->_globals.Liste2[v3].field4 = v13;
+		
+		v4 = idx;
+		_vm->_globals.Liste2[v3].field6 = _vm->_globals.Bob[v4].field46;
+		_vm->_globals.Liste2[v3].field8 = _vm->_globals.Bob[v4].field48;
+		v5 = _vm->_globals.Liste2[v3].field2;
+    
+		v6 = _vm->_graphicsManager.min_x;
+		if (v5 < _vm->_graphicsManager.min_x) {
+			_vm->_globals.Liste2[v3].field6 -= _vm->_graphicsManager.min_x - v5;
+			_vm->_globals.Liste2[v3].field2 = v6;
+		}
+    
+		v7 = _vm->_globals.Liste2[v3].field4;
+		v8 = _vm->_graphicsManager.min_y;
+		if (v7 < _vm->_graphicsManager.min_y) {
+			_vm->_globals.Liste2[v3].field8 -= _vm->_graphicsManager.min_y - v7;
+			_vm->_globals.Liste2[v3].field4 = v8;
+		}
+    
+		v9 = _vm->_globals.Liste2[v3].field2;
+		if (_vm->_globals.Liste2[v3].field6 + v9 > _vm->_graphicsManager.max_x)
+			_vm->_globals.Liste2[v3].field6 = _vm->_graphicsManager.max_x - v9;
+		v10 = _vm->_globals.Liste2[v3].field4;
+		if (_vm->_globals.Liste2[v3].field8 + v10 > _vm->_graphicsManager.max_y)
+			_vm->_globals.Liste2[v3].field8 = _vm->_graphicsManager.max_y - v10;
+    
+		if (_vm->_globals.Liste2[v3].field6 <= 0 || _vm->_globals.Liste2[v3].field8 <= 0)
+		_vm->_globals.Liste2[v3].field0 = 0;
+
+		v11 = idx;
+		if (_vm->_globals.Liste2[v11].field0 == 1)
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(
+                 _vm->_globals.Liste2[v11].field2,
+                 _vm->_globals.Liste2[v11].field4,
+                 _vm->_globals.Liste2[v11].field2 + _vm->_globals.Liste2[v11].field6,
+                 _vm->_globals.Liste2[v11].field4 + _vm->_globals.Liste2[v11].field8);
+	}
 }
 
 void ObjectsManager::BOB_VISU(int idx) {
@@ -566,20 +648,273 @@ void ObjectsManager::BOB_OFF(int idx) {
 		_vm->_globals.Bob[idx].field0 = 11;
 }
 
+void ObjectsManager::SCBOB(int idx) {
+	int v1;
+	signed __int16 v2;
+	signed __int16 v3;
+	signed __int16 v4;
+	signed __int16 v6;
+	signed __int16 v7;
+	__int16 v8; 
+	signed __int16 v9; 
+
+	v1 = idx;
+	if (_vm->_globals.Cache[idx].fieldA > 0) {
+		v8 = 0;
+		do {
+			v1 = v8;
+			if (_vm->_globals.Bob[v1].field0) {
+				if (!_vm->_globals.Bob[v8].field16) {
+					if (!_vm->_globals.Bob[v8].field34) {
+						if ( _vm->_globals.Bob[v8].fieldC != 250) {
+							v2 = _vm->_globals.Bob[v8].field42;;
+							v9 = _vm->_globals.Bob[v8].field46 + _vm->_globals.Bob[v8].field42;
+							v6 = _vm->_globals.Bob[v8].field48 + _vm->_globals.Bob[v8].field44;
+							v3 =_vm->_globals.Cache[idx].field0;
+							v4 =_vm->_globals.Cache[idx].field4;;
+							v7 =_vm->_globals.Cache[idx].field6 + v3;
+							v1 =_vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx].field8 + v4;
+              
+							if (v6 > v4) {
+								if (v6 < (signed __int16)v1) {
+									v1 = 0;
+									if (v9 >= v3 && v9 <= (signed __int16)(_vm->_globals.Cache[idx].field6 + v3)) {
+										++_vm->_globals.Cache[idx].fieldA;
+										v1 = 1;
+									}
+                  
+									if (!(uint16)v1) {
+										if (v2 >= v3 && v7 >= v2) {
+											++_vm->_globals.Cache[idx].fieldA;
+											v1 = 1;
+										}
+										if (!(uint16)v1) {
+											if ( v7 >= v2 && v2 >= v3 ) {
+												++_vm->_globals.Cache[idx].fieldA;
+												v1 = 1;
+											}
+											if (!(uint16)v1) {
+												if (v2 >= v3 && v9 <= v7) {
+													++_vm->_globals.Cache[idx].fieldA;
+													v1 = 1;
+												}
+												if (!(uint16)v1 && v2 <= v3 && v9 >= v7)
+													++_vm->_globals.Cache[idx].fieldA;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			++v8;
+		} while (v8 <= 20);
+	}
+}
+
 void ObjectsManager::VERIFCACHE() {
-	warning("TODO: VERIFCACHE");
+	__int16 v1;
+	signed __int16 v2;
+	signed __int16 v3;
+	signed __int16 v4;
+	__int16 v5; 
+	__int16 v6; 
+	__int16 v7; 
+	__int16 v8; 
+	__int16 v9; 
+	__int16 v10;
+	__int16 v11;
+
+	v8 = 0;
+	do {
+		if (_vm->_globals.Cache[v8].fieldA > 0) {
+			v7 = _vm->_globals.Cache[v8].fieldA;
+			v10 = 0;
+			do {
+				if (_vm->_objectsManager.Sprite[v10].field0 == 1) {
+					if (_vm->_objectsManager.Sprite[v10].field10 != 250) {
+						v1 = _vm->_objectsManager.Sprite[v10].field2C;
+						v11 = _vm->_objectsManager.Sprite[v10].field30 + v1;
+						v2 = _vm->_objectsManager.Sprite[v10].field32 + _vm->_objectsManager.Sprite[v10].field2E;
+						v6 = _vm->_globals.Cache[v8].field0;
+						v3 = _vm->_globals.Cache[v8].field4;
+						v9 = _vm->_globals.Cache[v8].field6 + v6;
+            
+						if (v2 > v3) {
+							if (v2 < (_vm->_globals.Cache[v8].field14 + _vm->_globals.Cache[v8].field8 + v3)) {
+								v4 = 0;
+								if (v11 >= v6 && v11 <= v9) {
+									++_vm->_globals.Cache[v8].fieldA;
+									v4 = 1;
+								}
+								if (!v4) {
+									if (v6 <= v1 && v9 >= v1) {
+										++_vm->_globals.Cache[v8].fieldA;
+										v4 = 1;
+									}
+									if (!v4) {
+										if (v9 >= v1 && v6 <= v1) {
+											++_vm->_globals.Cache[v8].fieldA;
+											v4 = 1;
+										}
+										if (!v4) {
+											if (v6 <= v1 && v11 <= v9) {
+												++_vm->_globals.Cache[v8].fieldA;
+												v4 = 1;
+											}
+											if (!v4 && v6 >= v1 && v11 >= v9)
+												++_vm->_globals.Cache[v8].fieldA;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			
+				++v10;
+			} while (v10 <= 4);
+      
+			SCBOB(v8);
+			if (_vm->_globals.Cache[v8].fieldA == v7) {
+				if (_vm->_globals.Cache[v8].field10 == 1) {
+					_vm->_globals.Cache[v8].field10 = 0;
+					_vm->_globals.Cache[v8].fieldA = 1;
+				}
+			} else {
+				v5 = _vm->_globals.Cache[v8].field14 + _vm->_globals.Cache[v8].field8 + 
+					_vm->_globals.Cache[v8].field4;
+				if (v5 > 440)
+					v5 = 500;
+				
+				AvantTri(3, v8, v5);
+				_vm->_globals.Cache[v8].fieldA = 1;
+				_vm->_globals.Cache[v8].field10 = 1;
+			}
+		}
+		++v8;
+	} while (v8 <= 19);
 }
 
 void ObjectsManager::INVENT_ANIM() {
-	warning("TODO: INVENT_ANIM");
+	__int16 v0; 
+	signed int v1;
+
+	if (!DESACTIVE_INVENT) {
+		if (FLAG_VISIBLE_EFFACE && !FLAG_VISIBLE) {
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, I_old_x, 27, 48, 38, 
+				_vm->_graphicsManager.VESA_BUFFER, I_old_x, 27);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(I_old_x, 27, I_old_x + 48, 65);
+			--FLAG_VISIBLE_EFFACE;
+		}
+    
+		if (FLAG_VISIBLE) {
+			if (I_old_x <= 1)
+				I_old_x = 2;
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, I_old_x, 27, 48, 38, 
+				_vm->_graphicsManager.VESA_BUFFER, I_old_x, 27);
+      
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(I_old_x, 27, I_old_x + 48, 65);
+			v0 = _vm->_graphicsManager.ofscroll + 2;
+			v1 = _vm->_graphicsManager.ofscroll + 2;
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.ICONE, v1 + 300, 327, 0);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(v1, 27, v1 + 45, 62);
+			I_old_x = v0;
+		}
+    
+		if (_vm->_globals.SAUVEGARDE->field357 == 1) {
+			if (_vm->_globals.SAUVEGARDE->field353 == 1)
+				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+			if (_vm->_globals.SAUVEGARDE->field355 == 1)
+				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 866, 325, 1, 0, 0, 0);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(566, 25, 594, 60);
+		}
+		if (_vm->_globals.SAUVEGARDE->field356 == 1) {
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
+		}
+
+		if (_vm->_globals.SAUVEGARDE->field354 == 1) {
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
+		}
+	}
 }
 
 void ObjectsManager::DEF_SPRITE(int idx) {
-	warning("TODO: DEF_SPRITE");
+	int v2; 
+	__int16 v3;
+	__int16 v4;
+	int v5; 
+	int v6; 
+	__int16 v7; 
+	__int16 v8; 
+	__int16 v9; 
+	__int16 v10;
+	__int16 v11;
+	__int16 v12;
+	int v13; 
+
+	v2 = idx;
+	if (Sprite[v2].field2A) {
+		v3 = Sprite[v2].field2C;
+		v4 = Sprite[v2].field2E;
+		if (Sprite[v2].field28)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData, 
+				v3 + 300, v4 + 300, Sprite[v2].field10);
+		else
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData, 
+				v3 + 300, v4 + 300,  Sprite[v2].field10, Sprite[v2].field36, Sprite[v2].field34, Sprite[v2].fieldE);
+
+		v5 = idx;
+		v6 = idx;
+		_vm->_globals.Liste[v5].x2 = Sprite[v6].field30;
+		_vm->_globals.Liste[v5].y2 = Sprite[v6].field32;
+		v7 = _vm->_globals.Liste[v5].field2;
+		v8 = _vm->_graphicsManager.min_x;
+		
+		if (v7 < _vm->_graphicsManager.min_x) {
+			_vm->_globals.Liste[v5].x2 -= _vm->_graphicsManager.min_x - v7;
+			_vm->_globals.Liste[v5].field2 = v8;
+		}
+
+		v9 = _vm->_globals.Liste[v5].field4;
+		v10 = _vm->_graphicsManager.min_y;
+		if (v9 < _vm->_graphicsManager.min_y) {
+			_vm->_globals.Liste[v5].y2 -= _vm->_graphicsManager.min_y - v9;
+			_vm->_globals.Liste[v5].field4 = v10;
+		}
+		v11 = _vm->_globals.Liste[v5].field2;
+		if (_vm->_globals.Liste[v5].x2 + v11 > _vm->_graphicsManager.max_x)
+			_vm->_globals.Liste[v5].x2 = _vm->_graphicsManager.max_x - v11;
+		v12 = _vm->_globals.Liste[v5].field4;
+		if ( _vm->_globals.Liste[v5].y2 + v12 > _vm->_graphicsManager.max_y)
+			_vm->_globals.Liste[v5].y2 = _vm->_graphicsManager.max_y - v12;
+		if ( _vm->_globals.Liste[v5].x2 <= 0 || _vm->_globals.Liste[v5].y2 <= 0)
+			_vm->_globals.Liste[v5].field0 = 0;
+
+		v13 = idx;
+		if (_vm->_globals.Liste[v13].field0 == 1)
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(
+			_vm->_globals.Liste[v13].field2,
+				_vm->_globals.Liste[v13].field4,
+				_vm->_globals.Liste[v13].field2 + _vm->_globals.Liste[v13].x2,
+				_vm->_globals.Liste[v13].field4 + _vm->_globals.Liste[v13].y2);
+	}
 }
 
-void ObjectsManager::DEF_CACHE(int a1) {
-	warning("TODO: DEF_CACHE");
+void ObjectsManager::DEF_CACHE(int idx) {
+	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.CACHE_BANQUE[1],
+		_vm->_globals.Cache[idx].field0 + 300, _vm->_globals.Cache[idx].field4 + 300,
+		_vm->_globals.Cache[idx].field2);
+  
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.Cache[idx].field0, 
+			_vm->_globals.Cache[idx].field4, 
+			_vm->_globals.Cache[idx].field0 + _vm->_globals.Cache[idx].field6,
+           _vm->_globals.Cache[idx].field4 + _vm->_globals.Cache[idx].field8);
 }
 
 void ObjectsManager::CALCUL_SPRITE(int idx) {

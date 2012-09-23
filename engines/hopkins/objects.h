@@ -31,9 +31,17 @@ namespace Hopkins {
 
 struct SpriteItem {
 	int field0;
+	byte *spriteData;
+	int fieldE;
+	int field10;
+	int field28;
 	int field2A;
+	int field2C;
 	int field2E;
+	int field30;
 	int field32;
+	int field34;
+	int field36;
 };
 
 class HopkinsEngine;
@@ -49,13 +57,17 @@ public:
 	int old_cadx, old_cady, old_cadi;
 	int cadx, cady, cadi;
 	int SL_X, SL_Y;
+	int I_old_x, I_old_y;
+	int FLAG_VISIBLE_EFFACE;
 	byte *Winventaire;
 	byte *inventaire2;
 	byte *SL_SPR;
 	byte *SL_SPR2;
-	SpriteItem Sprite[6];
 	bool PERSO_ON;
 	bool SL_FLAG;
+	bool FLAG_VISIBLE;
+	bool DESACTIVE_INVENT;
+	SpriteItem Sprite[6];
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -80,6 +92,7 @@ public:
 	void DEF_BOB(int idx);
 	void BOB_VISU(int idx);
 	void BOB_OFF(int idx);
+	void SCBOB(int idx);
 
 	void VERIFCACHE();
 	void INVENT_ANIM();
