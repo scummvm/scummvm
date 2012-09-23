@@ -194,6 +194,10 @@ void MacM68kDriver::generateSamples(int16 *buf, int len) {
 void MacM68kDriver::loadAllInstruments() {
 	Common::MacResManager resource;
 	if (resource.open("iMUSE Setups")) {
+		if (!resource.hasResFork()) {
+			error("MacM68kDriver::loadAllInstruments: \"iMUSE Setups\" loaded, but no resource fork present");
+		}
+
 		for (int i = 0x3E7; i < 0x468; ++i) {
 			Common::SeekableReadStream *stream = resource.getResource(MKTAG('s', 'n', 'd', ' '), i);
 			if (stream) {
