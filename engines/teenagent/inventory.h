@@ -172,9 +172,9 @@ private:
 
 		Item() : _hovered(false) {}
 		void free();
-		void load(Inventory *inventory, uint item_id);
+		void load(Inventory *inventory, uint itemId);
 		void backgroundEffect(Graphics::Surface *s);
-		void render(Inventory *inventory, uint item_id, Graphics::Surface *surface, int delta);
+		void render(Inventory *inventory, uint itemId, Graphics::Surface *surface, int delta);
 	};
 
 	Item _graphics[inventorySize];

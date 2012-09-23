@@ -44,26 +44,26 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	debugC(0, kDebugInventory, "loading inventory background...");
 	_background.load(*s, Surface::kTypeOns);
 
-	uint32 items_size = varia.getSize(4);
-	if (items_size == 0)
+	uint32 itemsSize = varia.getSize(4);
+	if (itemsSize == 0)
 		error("invalid inventory items size");
-	debugC(0, kDebugInventory, "loading items, size: %u", items_size);
-	_items = new byte[items_size];
-	varia.read(4, _items, items_size);
+	debugC(0, kDebugInventory, "loading items, size: %u", itemsSize);
+	_items = new byte[itemsSize];
+	varia.read(4, _items, itemsSize);
 
 	byte offsets = _items[0];
 	assert(offsets == numInventoryItems);
 	for (byte i = 0; i < offsets; ++i) {
 		_offset[i] = READ_LE_UINT16(_items + i * 2 + 1);
 	}
-	_offset[numInventoryItems] = items_size;
+	_offset[numInventoryItems] = itemsSize;
 
-	InventoryObject io_blank;
-	_objects.push_back(io_blank);
+	InventoryObject ioBlank;
+	_objects.push_back(ioBlank);
 	for (byte i = 0; i < numInventoryItems; ++i) {
 		InventoryObject io;
-		uint16 obj_addr = vm->res->dseg.get_word(dsAddr_inventoryItemDataPtrTable + i * 2);
-		io.load(vm->res->dseg.ptr(obj_addr));
+		uint16 objAddr = vm->res->dseg.get_word(dsAddr_inventoryItemDataPtrTable + i * 2);
+		io.load(vm->res->dseg.ptr(objAddr));
 		_objects.push_back(io);
 	}
 
@@ -215,12 +215,12 @@ bool Inventory::processEvent(const Common::Event &event) {
 		byte *table = _vm->res->dseg.ptr(dsAddr_objCombiningTablePtr);
 		while (table[0] != 0 && table[1] != 0) {
 			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
-				byte new_obj = table[2];
-				if (new_obj != 0) {
+				byte newObj = table[2];
+				if (newObj != 0) {
 					remove(id1);
 					remove(id2);
-					debugC(0, kDebugInventory, "adding object %u", new_obj);
-					add(new_obj);
+					debugC(0, kDebugInventory, "adding object %u", newObj);
+					add(newObj);
 					_vm->playSoundNow(69);
 				}
 				uint16 msg = READ_LE_UINT16(table + 3);
@@ -289,8 +289,8 @@ void Inventory::Item::backgroundEffect(Graphics::Surface *s) {
 	}
 }
 
-void Inventory::Item::load(Inventory *inventory, uint item_id) {
-	InventoryObject *obj = &inventory->_objects[item_id];
+void Inventory::Item::load(Inventory *inventory, uint itemId) {
+	InventoryObject *obj = &inventory->_objects[itemId];
 	if (obj->animated) {
 		if (_animation.empty()) {
 			debugC(0, kDebugInventory, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
@@ -306,12 +306,12 @@ void Inventory::Item::load(Inventory *inventory, uint item_id) {
 	}
 }
 
-void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surface *dst, int delta) {
-	InventoryObject *obj = &inventory->_objects[item_id];
+void Inventory::Item::render(Inventory *inventory, uint itemId, Graphics::Surface *dst, int delta) {
+	InventoryObject *obj = &inventory->_objects[itemId];
 
 	backgroundEffect(dst);
 	_rect.render(dst, _hovered ? 233 : 234);
-	load(inventory, item_id);
+	load(inventory, itemId);
 	if (obj->animated) {
 		if (_hovered) {
 			Surface *s = _animation.currentFrame(delta);
