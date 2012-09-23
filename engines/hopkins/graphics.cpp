@@ -1321,32 +1321,22 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 			byte byteVal;
 			int xc = 0;
 
-			// Loop through sequences of bytes to skip or output
 			while ((byteVal = *srcP) != 253) {
 				++srcP;
 				int width = READ_LE_UINT16(srcP);
+				srcP += 2;
 
-				if (byteVal != 254) {
-					// Skip over output bytes
+				if (byteVal == 254) {
+					// Copy pixel range
+					for (int xv = 0; xv < width; ++xv, ++xc, ++spriteP, ++tempDestP) {
+						if (clip_y == 0 && xc >= clip_x && xc < clip_x1)
+							*tempDestP = *spriteP;
+					}
+				} else {
+					// Skip over bytes
 					tempDestP += width;
 					xc += width;
-				} else {
-					// Output byte range
-					while (width-- > 0) {
-						// Get the next byte
-						byteVal = *spriteP;
-						if (clip_y == 0 && xc >= clip_x && xc < clip_x1)
-							// Not clipped, so display it
-							*tempDestP = byteVal;
-
-						// Move to next pixel
-						xc++;
-						++srcP;
-						++tempDestP;
-					}
 				}
-
-				srcP += 2;
 			}
 
 			if (clip_y > 0)
