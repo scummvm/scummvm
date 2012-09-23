@@ -3525,12 +3525,10 @@ EdgePlugin::EdgePlugin() : SourceScaler() {
 }
 
 void EdgePlugin::initialize(const Graphics::PixelFormat &format) {
-	_format = format;
+	SourceScaler::initialize(format);
 	initTables(0, 0, 0, 0);
 }
 
-void EdgePlugin::deinitialize() {
-}
 #if 0
 void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
                        uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {

@@ -35,7 +35,7 @@ public:
 	 * Precomputed data should be generated here.
 	 * @param format The pixel format to scale.
 	 */
-	virtual void initialize(const Graphics::PixelFormat &format) = 0;
+	virtual void initialize(const Graphics::PixelFormat &format);
 
 	/**
 	 * This is called when the plugin is not needed. It should clean
@@ -43,9 +43,20 @@ public:
 	 */
 	virtual void deinitialize() {}
 
-	virtual void scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
-	                   uint32 dstPitch, int width, int height, int x, int y) = 0;
-
+	/**
+	 * Scale a rect.
+	 *
+	 * @param srcPtr   Pointer to the source buffer.
+	 * @param srcPitch The number of bytes in a scanline of the source.
+	 * @param dstPtr   Pointer to the destination buffer.
+	 * @param dstPitch The number of bytes in a scanline of the destination.
+	 * @param width    The width of the source rect to scale.
+	 * @param height   The height of the source rect to scale.
+	 * @param x        The x position of the source rect.
+	 * @param y        The y position of the source rect.
+	 */
+	void scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	           uint32 dstPitch, int width, int height, int x, int y);
 
 	/**
 	 * Increase the factor of scaling.
@@ -127,6 +138,12 @@ public:
 	}
 
 protected:
+	/**
+	 * @see scale
+	 */
+	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                         uint32 dstPitch, int width, int height, int x, int y) = 0;
+
 	uint _factor;
 	Common::Array<uint> _factors;
 	Graphics::PixelFormat _format;
@@ -143,14 +160,14 @@ public:
 	SourceScaler();
 	virtual ~SourceScaler();
 
-	virtual void scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
-	                   uint32 dstPitch, int width, int height, int x, int y);
-
 	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding);
 
 	virtual void enableSource(bool enable) { _enable = enable; }
 
 protected:
+
+	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                         uint32 dstPitch, int width, int height, int x, int y);
 
 	/**
 	 * Scalers must implement this function. It will be called by oldSrcScale.

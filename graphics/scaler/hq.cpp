@@ -4991,6 +4991,8 @@ HQPlugin::HQPlugin() {
 }
 
 void HQPlugin::initialize(const Graphics::PixelFormat &format) {
+	ScalerPluginObject::initialize(format);
+
 	if (format.bytesPerPixel == 2) {
 		InitLUT(format);
 	} else {
@@ -5000,7 +5002,6 @@ void HQPlugin::initialize(const Graphics::PixelFormat &format) {
 		                               11, 5, 0, 0);
 		InitLUT(format16);
 	}
-	_format = format;
 }
 
 void HQPlugin::deinitialize() {
@@ -5008,7 +5009,7 @@ void HQPlugin::deinitialize() {
 	RGBtoYUV = 0;
 }
 
-void HQPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void HQPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		switch (_factor) {

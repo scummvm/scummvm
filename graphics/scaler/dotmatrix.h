@@ -28,8 +28,6 @@ class DotMatrixPlugin : public ScalerPluginObject {
 public:
 	DotMatrixPlugin();
 	virtual void initialize(const Graphics::PixelFormat &format);
-	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
 	virtual uint getFactor() const { return _factor; }
@@ -37,6 +35,9 @@ public:
 	virtual uint extraPixels() const { return 0; }
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
+protected:
+	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
 private:
 	// Allocate enough for 32bpp formats
 	uint32 lookup[16];

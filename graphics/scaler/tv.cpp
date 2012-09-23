@@ -28,11 +28,7 @@ TVPlugin::TVPlugin() {
 	_factors.push_back(2);
 }
 
-void TVPlugin::initialize(const Graphics::PixelFormat &format) {
-	_format = format;
-}
-
-void TVPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)

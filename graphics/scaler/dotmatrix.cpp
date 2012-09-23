@@ -28,6 +28,8 @@ DotMatrixPlugin::DotMatrixPlugin() {
 }
 
 void DotMatrixPlugin::initialize(const Graphics::PixelFormat &format) {
+	ScalerPluginObject::initialize(format);
+
 	if (format.bytesPerPixel == 2) {
 		uint16 *lookup16 = (uint16 *)lookup;
 		lookup16[0] = lookup16[10] = format.RGBToColor(0, 63, 0);
@@ -49,10 +51,9 @@ void DotMatrixPlugin::initialize(const Graphics::PixelFormat &format) {
 			lookup32[9] = lookup32[13] =
 			lookup32[15] = lookup32[16] = format.ARGBToColor(0, 0, 0, 0);
 	}
-	_format = format;
 }
 
-void DotMatrixPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void DotMatrixPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		scaleIntern<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);

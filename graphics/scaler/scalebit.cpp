@@ -359,14 +359,7 @@ AdvMamePlugin::AdvMamePlugin() {
 	_factors.push_back(4);
 }
 
-void AdvMamePlugin::initialize(const Graphics::PixelFormat &format) {
-	_format = format;
-}
-
-void AdvMamePlugin::deinitialize() {
-}
-
-void AdvMamePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void AdvMamePlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_factor != 4)
 		::scale(_factor, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, _format.bytesPerPixel, width, height);

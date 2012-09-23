@@ -27,9 +27,6 @@
 class TVPlugin : public ScalerPluginObject {
 public:
 	TVPlugin();
-	virtual void initialize(const Graphics::PixelFormat &format);
-	virtual void scale(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
 	virtual uint getFactor() const { return _factor; }
@@ -38,6 +35,8 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
 private:
+	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
 	template<typename ColorMask, typename Pixel>
 	void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 			uint32 dstPitch, int width, int height);

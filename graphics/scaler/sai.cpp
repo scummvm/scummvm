@@ -391,14 +391,7 @@ SAIPlugin::SAIPlugin() {
 	_factors.push_back(2);
 }
 
-void SAIPlugin::initialize(const Graphics::PixelFormat &format) {
-	_format = format;
-}
-
-void SAIPlugin::deinitialize() {
-}
-
-void SAIPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void SAIPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
@@ -438,14 +431,8 @@ SuperSAIPlugin::SuperSAIPlugin() {
 	_factors.push_back(2);
 }
 
-void SuperSAIPlugin::initialize(const Graphics::PixelFormat &format) {
-	_format = format;
-}
 
-void SuperSAIPlugin::deinitialize() {
-}
-
-void SuperSAIPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void SuperSAIPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
@@ -485,14 +472,7 @@ SuperEaglePlugin::SuperEaglePlugin() {
 	_factors.push_back(2);
 }
 
-void SuperEaglePlugin::initialize(const Graphics::PixelFormat &format) {
-	_format = format;
-}
-
-void SuperEaglePlugin::deinitialize() {
-}
-
-void SuperEaglePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void SuperEaglePlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
