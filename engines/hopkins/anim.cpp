@@ -170,7 +170,7 @@ void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, ui
 
 						_vm->_eventsManager.CONTROLE_MES();
 						_vm->_soundManager.VERIF_SOUND();
-					} while (_vm->_eventsManager.lItCounter < rate2);
+					} while (_vm->_eventsManager.lItCounter < rate2 && !_vm->shouldQuit());
 				}
 
 				_vm->_eventsManager.lItCounter = 0;
@@ -196,7 +196,7 @@ void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, ui
 				_vm->_graphicsManager.DD_VBL();
 				_vm->_soundManager.VERIF_SOUND();
 			}
-		} while (!doneFlag);
+		} while (!doneFlag && !_vm->shouldQuit());
 
 		if (_vm->_globals.iRegul != 1) {
 			_vm->_eventsManager.lItCounter = 0;
@@ -225,7 +225,7 @@ REDRAW_ANIM:
 
 			_vm->_eventsManager.CONTROLE_MES();
 			_vm->_soundManager.VERIF_SOUND();
-		} while (_vm->_eventsManager.lItCounter < rate3);
+		} while (_vm->_eventsManager.lItCounter < rate3 && !_vm->shouldQuit());
 
 		_vm->_eventsManager.lItCounter = 0;
 		_vm->_soundManager.VERIF_SOUND();

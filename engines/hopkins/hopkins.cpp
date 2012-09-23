@@ -473,6 +473,10 @@ LABEL_128:
 	return Common::kNoError;
 }
 
+bool HopkinsEngine::shouldQuit() const {
+	return g_system->getEventManager()->shouldQuit();
+}
+
 int HopkinsEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
