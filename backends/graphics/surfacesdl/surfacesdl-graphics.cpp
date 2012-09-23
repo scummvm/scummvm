@@ -2233,13 +2233,12 @@ void SurfaceSdlGraphicsManager::blitCursor() {
                     _mouseCurState.w, _mouseCurState.h, 0, 0);
 #ifdef USE_SCALERS
 		} else {
-			int tmpFactor = _normalPlugin->getFactor();
-			_normalPlugin->setFactor(_videoMode.scaleFactor);
+			int oldFactor = _normalPlugin->setFactor(_videoMode.scaleFactor);
 			_normalPlugin->scale(
 				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
 				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 				_mouseCurState.w, _mouseCurState.h, 0, 0);
-			_normalPlugin->setFactor(tmpFactor);
+			_normalPlugin->setFactor(oldFactor);
 		}
 	} else {
         blitSurface(

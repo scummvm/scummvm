@@ -68,9 +68,13 @@ public:
 	 * Intended to be used with GUI to set a known valid factor.
 	 * Plugins should override if they require additional state changes.
 	 * @param factor A valid scaling factor for the plugin
-	 * @return The factor set
+	 * @return The old factor.
 	 */
-	virtual uint setFactor(uint factor) { return _factor = factor; }
+	virtual uint setFactor(uint factor) {
+		uint oldFactor = _factor;
+		_factor = factor;
+		return oldFactor;
+	}
 
 	/**
 	 * Indicates how far outside the scaling region this scaler "looks"
