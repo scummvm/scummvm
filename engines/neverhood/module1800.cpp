@@ -30,7 +30,7 @@ Module1800::Module1800(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	// TODO SoundMan_addSoundList(0x04A14718, dword_4AFE70);
 	// TODO SoundMan_setSoundListParams(dword_4AFE70, true, 50, 600, 10, 150);
-	// TODO SoundMan_playTwoSounds(0x04A14718, 0x8A382B55, 0x0C242F1D, 0);
+	_vm->_soundMan->playTwoSounds(0x04A14718, 0x8A382B55, 0x0C242F1D, 0);
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -45,7 +45,7 @@ Module1800::Module1800(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module1800::~Module1800() {
-	// TODO SoundMan_deleteGroup(0x04A14718);
+	_vm->_soundMan->deleteGroup(0x04A14718);
 }
 
 void Module1800::createScene(int sceneNum, int which) {
@@ -73,7 +73,7 @@ void Module1800::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004AFE40, which);
 		break;
 	case 6:
-		// TODO SoundMan_deleteGroup(0x04A14718);
+		_vm->_soundMan->deleteGroup(0x04A14718);
 		createSmackerScene(0x08D84010, true, true, false);
 		break;
 	case 7:
@@ -156,12 +156,9 @@ void Module1800::updateScene() {
 	} else {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-#if 0 // TODO
-			NavigationScene *navigationScene = (NavigationScene*)_childObject;
-			if (navigationScene->soundFlag1 && navigationScene->index == 2) {
-				// TODO SoundMan_setTwoSoundsPlayFlag(false);
+			if (navigationScene()->getSoundFlag1() && navigationScene()->getNavigationIndex() == 2) {
+				_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			}
-#endif	
 			break;
 		}
 	}

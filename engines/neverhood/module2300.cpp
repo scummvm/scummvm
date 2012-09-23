@@ -33,14 +33,14 @@ Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
 	_flag = getGlobalVar(0x10938830) == 0;
 	
 	if (_flag) {
-		// TODO SoundMan_setSoundVolume(0x90F0D1C3, 0);
-		// TODO SoundMan_playSoundLooping(0x90F0D1C3);
+		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
+		_vm->_soundMan->playSoundLooping(0x90F0D1C3);
 	} else {
-		// TODO SoundMan_setSoundParams(0x90F0D1C3, false, 0, 0, 0, 0);
+		_vm->_soundMan->setSoundParams(0x90F0D1C3, false, 0, 0, 0, 0);
 	}
 
-	// TODO SoundMan_playTwoSounds(0x1A214010, 0x48498E46, 0x50399F64, 0);
-	// TODO SoundMan_playTwoSounds(0x1A214010, 0x41861371, 0x43A2507F, 0);
+	_vm->_soundMan->playTwoSounds(0x1A214010, 0x48498E46, 0x50399F64, 0);
+	_vm->_soundMan->playTwoSounds(0x1A214010, 0x41861371, 0x43A2507F, 0);
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -59,7 +59,7 @@ Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2300::~Module2300() {
-	// TODO SoundMan_deleteGroup(0x1A214010);
+	_vm->_soundMan->deleteGroup(0x1A214010);
 }
 
 void Module2300::createScene(int sceneNum, int which) {
@@ -73,7 +73,7 @@ void Module2300::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004B67E8, which);
 		if (_flag) {
 			_volume = 15;
-			// TODO SoundMan_setSoundVolume(0x90F0D1C3, 15);
+			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 15);
 		}
 		break;
 	case 2:
@@ -83,16 +83,16 @@ void Module2300::createScene(int sceneNum, int which) {
 		if (getGlobalVar(0x10938830)) {
 			createNavigationScene(0x004B68F0, which);
 		} else {
-			// TODO SoundMan_setSoundVolume(0x90F0D1C3, _volume);
+			_vm->_soundMan->setSoundVolume(0x90F0D1C3, _volume);
 			createNavigationScene(0x004B68A8, which);
 			if (_flag) {
 				_volume = 87;
-				// TODO SoundMan_setSoundVolume(0x90F0D1C3, 87);
+				_vm->_soundMan->setSoundVolume(0x90F0D1C3, 87);
 			}
 		}
 		break;
 	case 4:
-		// TODO SoundMan_setTwoSoundsPlayFlag(true);
+		_vm->_soundMan->setTwoSoundsPlayFlag(true);
 		createSmackerScene(0x20080A0B, true, true, false);
 		break;
 	}
@@ -140,7 +140,7 @@ void Module2300::updateScene() {
 			}
 			break;
 		case 4:
-			// TODO SoundMan_setTwoSoundsPlayFlag(false);
+			_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			createScene(1, 2);
 			break;
 		}

@@ -35,7 +35,7 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_fileHash = 0;
 	// TODO music stuff
-	// TODO SoundMan_addMusic(0x64210814, 0xD2FA4D14);
+	_vm->_soundMan->addMusic(0x64210814, 0xD2FA4D14);
 	setGlobalVar(0x28D8C940, 1);
 	
 	if (which < 0) {
@@ -52,8 +52,7 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 
 Module2800::~Module2800() {
 	// TODO music stuff
-	// TODO SoundMan_deleteGroup(0x64210814);
-	// TODO Module2800_sub471DF0();
+	_vm->_soundMan->deleteGroup(0x64210814);
 }
 
 void Module2800::createScene(int sceneNum, int which) {
@@ -61,11 +60,11 @@ void Module2800::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 0:
-		// TODO SoundMan_stopMusic(0xD2FA4D14, 0, 0);
+		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		_childObject = new Scene2801(_vm, this, which);
 		break;
 	case 1:
-		// TODO SoundMan_stopMusic(0xD2FA4D14, 0, 0);
+		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 #if 0		
 		_flag = true; // DEBUG!
 		if (_flag) {
@@ -76,7 +75,7 @@ void Module2800::createScene(int sceneNum, int which) {
 #endif		
 		break;
 	case 2:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		//setGlobalVar(0x1860C990,1);//DEBUG
 		if (getGlobalVar(0x1860C990))
 			_childObject = new Scene2803b(_vm, this, which);
@@ -87,98 +86,98 @@ void Module2800::createScene(int sceneNum, int which) {
 		_childObject = new Scene2804(_vm, this, which);
 		break;
 	case 4:
-		// TODO SoundMan_stopMusic(0xD2FA4D14, 0, 2);
+		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2805(_vm, this, which);
 		break;
 	case 5:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2806(_vm, this, which);
 		break;
 	case 6:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2807(_vm, this, which);
 		break;
 	case 7:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2808(_vm, this, 0);
 		break;
 	case 8:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2809(_vm, this, which);
 		break;
 	case 9:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2810(_vm, this, which);
 		break;
 	case 10:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2808(_vm, this, 1);
 		break;
 	case 11:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2812(_vm, this, which);
 		break;
 	case 12:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x0000A245, 0x0A241008);
 		break;
 	case 13:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x81C60635, 0x60631814);
 		break;
 	case 14:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0xCA811204, 0x11200CA0);
 		break;
 	case 15:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x2D438A00, 0x38A042DC);
 		break;
 	case 16:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x0A806204, 0x062000A0);
 		break;
 	case 17:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x010F9284, 0xF9280018);
 		break;
 	case 18:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x0100022B, 0x0022F018);
 		break;
 	case 19:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x10866205, 0x66201100);
 		break;
 	case 20:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x01C58000, 0x58004014);
 		break;
 	case 21:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2822(_vm, this, which);
 		break;
 	case 22:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x9408121E, 0x8121A948);
 		break;
 	case 23:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x048C0600, 0xC0604040);
 		break;
 	case 24:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Class152(_vm, this, 0x04270A94, 0x70A9004A);
 		break;
 	case 25:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		if (getGlobalVar(0x190A1D18))
 			_childObject = new Class152(_vm, this, 0x01600204, 0x0020001E);
 		else
 			_childObject = new Class152(_vm, this, 0x08611204, 0x1120008E);
 		break;
 	case 26:
-		// TODO SoundMan_startMusic(0xD2FA4D14, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 4);
 		break;
 	//		
@@ -359,10 +358,10 @@ void Module2800::updateScene() {
 	} else {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-			// TODO Module2800_sub4731E0(true);
+			// TODO Module2800_updateMusic(true);
 			break;
 		case 1:
-			// TODO Module2800_sub4731E0(false);
+			// TODO Module2800_updateMusic(false);
 			break;
 		}
 	}
@@ -1527,7 +1526,7 @@ AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene
 	_needRefresh = true;
 	AnimatedSprite::updatePosition();
 	_soundResource.load(0x6352F051);
-	// TODO SoundMan_addSound(0xC5EA0B28, 0xEF56B094, true);
+	_vm->_soundMan->addSound(0xC5EA0B28, 0xEF56B094);
 	SetUpdateHandler(&AsScene2804BeamCoil::update);
 	SetMessageHandler(&AsScene2804BeamCoil::handleMessage);
 }
@@ -1572,13 +1571,13 @@ void AsScene2804BeamCoil::hide() {
 	setVisible(false);
 	_ssBeamCoilBody->setVisible(false);
 	// TODO _ssBeamCoilBody->update(); -> hide()
-	// TODO SoundMan_stopSound(0xEF56B094);
+	_vm->_soundMan->stopSound(0xEF56B094);
 }
 
 void AsScene2804BeamCoil::stBeaming() {
 	startAnimation(0x00494891, 93, -1);
 	NextState(&AsScene2804BeamCoil::stBeaming);
-	// TODO SoundMan_playSoundLooping(0xEF56B094);
+	_vm->_soundMan->playSoundLooping(0xEF56B094);
 }
 
 uint32 AsScene2804BeamCoil::hmBeaming(int messageNum, const MessageParam &param, Entity *sender) {
@@ -2735,9 +2734,9 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004AE738);
 		_klayman->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
 		_asRope->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
-		// TODO SoundMan_addSound(0x84400112, 0xC874EE6C, true);
-		// TODO SoundMan_playSoundLooping(0xC874EE6C);
-		// TODO SoundMan_setSoundVolume(0xC874EE6C, 50);
+		_vm->_soundMan->addSound(0x84400112, 0xC874EE6C);
+		_vm->_soundMan->playSoundLooping(0xC874EE6C);
+		_vm->_soundMan->setSoundVolume(0xC874EE6C, 50);
 		_flag1 = false;
 	} else if ((which >= 11 && which <= 14) || (which >= 19 && which <= 22) || which == 3) {
 		if (getGlobalVar(0x1860C990)) {
@@ -2798,7 +2797,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 Scene2810::~Scene2810() {
 	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
 	setGlobalVar(0x00D30138, _klayman->getX());
-	// TODO SoundMan_deleteSoundGroup(0x84400112);
+	_vm->_soundMan->deleteSoundGroup(0x84400112);
 }
 
 void Scene2810::sub406650() {
@@ -2887,7 +2886,7 @@ AsScene2812Winch::AsScene2812Winch(NeverhoodEngine *vm)
 }
 
 AsScene2812Winch::~AsScene2812Winch() {
-	// TODO SoundMan_deleteSoundGroup(0x00B000E2);
+	_vm->_soundMan->deleteSoundGroup(0x00B000E2);
 }
 
 uint32 AsScene2812Winch::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -2896,8 +2895,8 @@ uint32 AsScene2812Winch::handleMessage(int messageNum, const MessageParam &param
 	case 0x2000:
 		startAnimation(0x20DA08A0, 0, -1);
 		setVisible(true);
-		// TODO SoundMan_addSound(0x00B000E2, 0xC874EE6C, true);
-		// TODO SoundMan_playSoundLooping(0xC874EE6C);
+		_vm->_soundMan->addSound(0x00B000E2, 0xC874EE6C);
+		_vm->_soundMan->playSoundLooping(0xC874EE6C);
 		break;
 	case 0x3002:
 		startAnimation(0x20DA08A0, 7, -1);

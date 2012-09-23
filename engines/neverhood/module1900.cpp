@@ -42,7 +42,7 @@ Module1900::Module1900(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module1900::~Module1900() {
-	// TODO SoundMan_deleteGroup(0x04E1C09C);
+	_vm->_soundMan->deleteGroup(0x04E1C09C);
 }
 
 void Module1900::createScene(int sceneNum, int which) {

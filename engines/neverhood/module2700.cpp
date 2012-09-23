@@ -86,8 +86,8 @@ Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundResource1(vm), _soundResource2(vm),
 	_soundResource3(vm), _soundResource4(vm), _soundIndex(0), _flag1(false) {
 	
-	// TODO SoundMan_addMusic(0x42212411, 0x04020210);
-	// TODO SoundMan_startMusic(0x04020210, 24, 2, 1);
+	_vm->_soundMan->addMusic(0x42212411, 0x04020210);
+	_vm->_soundMan->startMusic(0x04020210, 24, 2);
 	SetMessageHandler(&Module2700::handleMessage);
 
 	if (which < 0) {
@@ -107,7 +107,7 @@ Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2700::~Module2700() {
-	// TODO SoundMan_deleteGroup(0x42212411);
+	_vm->_soundMan->deleteGroup(0x42212411);
 }
 
 void Module2700::createScene(int sceneNum, int which) {
@@ -414,9 +414,9 @@ void Module2700::updateScene() {
 		case 21:
 			// TODO? GameState_sub_469C50(&field_52, 0);
 			// TODO MusicMan_stopAll (if field_52 above = 1)
-			// TODO SoundMan_deleteMusic(_musicFileHash);
-			// TODO SoundMan_startMusic(0x04020210, 0, 2, 1);
-			// TODO SoundMan_deleteSoundGroup(0x42212411);
+			_vm->_soundMan->deleteMusic(_musicFileHash);
+			_vm->_soundMan->startMusic(0x04020210, 0, 2);
+			_vm->_soundMan->deleteSoundGroup(0x42212411);
 			createScene(20, 3);
 			break;
 		case 22:
@@ -458,15 +458,15 @@ void Module2700::updateScene() {
 		switch (_vm->gameState().sceneNum) {
 		case 21:
 			if (!_flag1) {
-				// TODO SoundMan_stopMusic(0x04020210, 0, 1);
+				_vm->_soundMan->stopMusic(0x04020210, 0, 1);
 				// TODO _vm->gameModule()->initScene2801Vars();
 				_musicFileHash = getGlobalVar(0x89A82A15);
 				// TODO? GameState_sub_469C50(&field_52, 0);
 				// TODO MusicMan_create(); // Why?
-				// TODO SoundMan_addMusic(0x42212411, _musicFileHash);
-				// TODO SoundMan_startMusic(_musicFileHash, 0, /*TODO */???, 1);
-				// TODO SoundMan_addSound(0x42212411, 0x44014282, true);
-				// TODO SoundMan_setSoundParams(0x44014282, true, 120, 360, 72, 0);
+				_vm->_soundMan->addMusic(0x42212411, _musicFileHash);
+				_vm->_soundMan->startMusic(_musicFileHash, 0, 2/*TODO ??? */);
+				_vm->_soundMan->addSound(0x42212411, 0x44014282);
+				_vm->_soundMan->setSoundParams(0x44014282, true, 120, 360, 72, 0);
 				_flag1 = true;
 			}
 			break;

@@ -40,7 +40,7 @@ Module2000::Module2000(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2000::~Module2000() {
-	// TODO SoundMan_deleteGroup(0x81293110);
+	_vm->_soundMan->deleteGroup(0x81293110);
 }
 
 void Module2000::createScene(int sceneNum, int which) {

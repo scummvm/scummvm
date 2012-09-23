@@ -33,7 +33,7 @@ Module2200::Module2200(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	debug("Create Module2200(%d)", which);
 
-	// TODO: SoundMan_addMusic(0x11391412, 0x601C908C); 
+	_vm->_soundMan->addMusic(0x11391412, 0x601C908C); 
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -44,7 +44,7 @@ Module2200::Module2200(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2200::~Module2200() {
-	// TODO SoundMan_deleteGroup(0x11391412);
+	_vm->_soundMan->deleteGroup(0x11391412);
 }
 
 void Module2200::createScene(int sceneNum, int which) {
@@ -57,23 +57,23 @@ void Module2200::createScene(int sceneNum, int which) {
 		_childObject = new Scene2201(_vm, this, which);
 		break;
 	case 1:
-		// TODO SoundMan_startMusic(0x601C908C, 0, 2, 1);
+		_vm->_soundMan->startMusic(0x601C908C, 0, 2);
 		_childObject = new Scene2202(_vm, this, which);
 		break;
 	case 2:
-		// TODO SoundMan_startMusic(0x601C908C, 0, 2, 1);
+		_vm->_soundMan->startMusic(0x601C908C, 0, 2);
 		_childObject = new Scene2203(_vm, this, which);
 		break;
 	case 3:
-		// TODO SoundMan_stopMusic(0x601C908C, 0, 2);
+		_vm->_soundMan->stopMusic(0x601C908C, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 3);
 		break;
 	case 4:
-		// TODO SoundMan_stopMusic(0x601C908C, 0, 2);
+		_vm->_soundMan->stopMusic(0x601C908C, 0, 2);
 		_childObject = new Scene2205(_vm, this, which);
 		break;
 	case 5:
-		// TODO SoundMan_stopMusic(0x601C908C, 0, 2);
+		_vm->_soundMan->stopMusic(0x601C908C, 0, 2);
 		_childObject = new Scene2206(_vm, this, which);
 		break;
 	case 6:
@@ -576,19 +576,19 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertSprite<AsScene2201CeilingFan>();
 
-	// TODO SoundMan_addSound(0x04106220, 0x81212040, true);
+	_vm->_soundMan->addSound(0x04106220, 0x81212040);
 
 }
 
 Scene2201::~Scene2201() {
 	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
-	// TODO SoundMan_deleteSoundGroup(0x04106220);
+	_vm->_soundMan->deleteSoundGroup(0x04106220);
 }
 
 void Scene2201::update() {
 	Scene::update();
 	if (!_soundFlag) {
-		// TODO SoundMan_playSoundLooping(0x81212040);
+		_vm->_soundMan->playSoundLooping(0x81212040);
 		_soundFlag = true;
 	}
 }
@@ -918,13 +918,13 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	_soundResource1.load(0x68E25540);
 	_soundResource2.load(0x40400457);
 
-	// TODO SoundMan_addSound(0x60400854, 0x8101A241, true);
-	// TODO SoundMan_playSoundLooping(0x8101A241);
+	_vm->_soundMan->addSound(0x60400854, 0x8101A241);
+	_vm->_soundMan->playSoundLooping(0x8101A241);
 
 }
 
 Scene2202::~Scene2202() {
-	// TODO SoundMan_deleteSoundGroup(0x60400854);
+	_vm->_soundMan->deleteSoundGroup(0x60400854);
 }
 
 void Scene2202::update() {
@@ -1714,7 +1714,7 @@ AsScene2207Elevator::AsScene2207Elevator(NeverhoodEngine *vm, Scene *parentScene
 }
 
 AsScene2207Elevator::~AsScene2207Elevator() {
-	// TODO SoundMan_deleteSoundGroup(0x02700413);
+	_vm->_soundMan->deleteSoundGroup(0x02700413);
 }
 
 void AsScene2207Elevator::update() {
@@ -1727,7 +1727,7 @@ void AsScene2207Elevator::update() {
 			if (_destPointIndexDelta != 0) {
 				_destPointIndexDelta = 0;
 			} else {
-				// TODO SoundMan_deleteSound(0xD3B02847);
+				_vm->_soundMan->deleteSound(0xD3B02847);
 				_soundResource.play(0x53B8284A);
 			}
 		}
@@ -1743,7 +1743,7 @@ void AsScene2207Elevator::update() {
 			if (_destPointIndexDelta != 0) {
 				_destPointIndexDelta = 0;
 			} else {
-				// TODO SoundMan_deleteSound(0xD3B02847);
+				_vm->_soundMan->deleteSound(0xD3B02847);
 				_soundResource.play(0x53B8284A);
 			}
 		}
@@ -1802,8 +1802,8 @@ void AsScene2207Elevator::moveToY(int16 y) {
 		} else {
 			_destPointIndexDelta = 2;
 		}
-		// TODO SoundMan_addSound(0x02700413, 0xD3B02847, true);
-		// TODO SoundMan_playSoundLooping(0xD3B02847);
+		_vm->_soundMan->addSound(0x02700413, 0xD3B02847);
+		_vm->_soundMan->playSoundLooping(0xD3B02847);
 	}
 
 	_isMoving = true;
@@ -1888,7 +1888,7 @@ AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm
 }
 
 AsScene2207WallRobotAnimation::~AsScene2207WallRobotAnimation() {
-	// TODO SoundMan_deleteSoundGroup(0x80D00820);
+	_vm->_soundMan->deleteSoundGroup(0x80D00820);
 }
 
 uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1897,14 +1897,14 @@ uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const Messag
 	case 0x100D:
 		if (!_idle) {
 			if (param.asInteger() == 0x3423093) {
-				// TODO SoundMan_addSound(0x80D00820, 0x12121943, true);
-				// TODO SoundMan_playSoundLooping(0x12121943);
+				_vm->_soundMan->addSound(0x80D00820, 0x12121943);
+				_vm->_soundMan->playSoundLooping(0x12121943);
 			} else if (param.asInteger() == 0x834AB011) {
 				_soundResource1.stop();
 				_soundResource2.stop();
 				_soundResource3.stop();
 				_soundResource4.stop();
-				// TODO SoundMan_deleteSound(0x12121943);
+				_vm->_soundMan->deleteSound(0x12121943);
 			} else if (param.asInteger() == 0x3A980501) {
 				_soundResource2.play();
 			} else if (param.asInteger() == 0x2A2AD498) {
@@ -1949,7 +1949,7 @@ void AsScene2207WallRobotAnimation::cbStopAnimation() {
 	_soundResource2.stop();
 	_soundResource3.stop();
 	_soundResource4.stop();
-	// TODO SoundMan_deleteSound(0x12121943);
+	_vm->_soundMan->deleteSound(0x12121943);
 	_idle = true;
 	setVisible(false);
 }

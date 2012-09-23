@@ -27,10 +27,10 @@ namespace Neverhood {
 Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundResource(vm) {
 	
-	// TODO SoundMan_addMusic(0x04212331);
+	_vm->_soundMan->addMusic(0x04212331, 0x31114225);
 	// TODO SoundMan_addSoundList(0x04212331, dword_4AE930, true);
 	// TODO SoundMan_setSoundListParams(dword_4AE930, true, 50, 600, 5, 150);
-	// TODO SoundMan_playTwoSounds(0x04212331, 0x41861371, 0x43A2507F, 0);
+	_vm->_soundMan->playTwoSounds(0x04212331, 0x41861371, 0x43A2507F, 0);
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -45,7 +45,7 @@ Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module1700::~Module1700() {
-	// TODO SoundMan_deleteGroup(0x04212331);
+	_vm->_soundMan->deleteGroup(0x04212331);
 }
 
 void Module1700::createScene(int sceneNum, int which) {
@@ -68,7 +68,7 @@ void Module1700::createScene(int sceneNum, int which) {
 		break;
 	case 4:
 		// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0, 0);
-		// TODO SoundMan_startMusic(0x31114225, 0, 2, 1);
+		_vm->_soundMan->startMusic(0x31114225, 0, 2);
 		_childObject = new Scene1705(_vm, this, which);
 		break;
 	}
@@ -97,7 +97,7 @@ void Module1700::updateScene() {
 				createScene(1, 1);
 			} else if (_moduleResult == 2) {
 				if (!_soundResource.isPlaying()) {
-					// TODO _soundResource.setVolume(60);
+					_soundResource.setVolume(60);
 					_soundResource.play(0x58B45E58);
 				}
 				createScene(2, 2);

@@ -34,6 +34,7 @@ public:
 	NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint32 navigationListId, int navigationIndex, const byte *itemsTypes);
 	virtual ~NavigationScene();
 	int getNavigationAreaType();
+	int getNavigationIndex() const { return _navigationIndex; }
 	bool getSoundFlag1() const { return _soundFlag1; }
 	bool getSoundFlag2() const { return _soundFlag2; }
 protected:

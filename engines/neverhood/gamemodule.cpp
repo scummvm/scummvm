@@ -51,13 +51,13 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	
 	// Other initializations moved to actual engine class
 	// TODO
-	// TODO SoundMan_playSoundThree(0x2D0031, 0x8861079);
+	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
 	SetMessageHandler(&GameModule::handleMessage);
 }
 
 GameModule::~GameModule() {
 
-	// TODO SoundMan_deleteSoundGroup(0x2D0031);
+	_vm->_soundMan->deleteSoundGroup(0x002D0031);
 	delete _childObject;
 	_childObject = NULL;
 	// TODO: Set palette to black but probably not neccessary
@@ -300,7 +300,7 @@ void GameModule::startup() {
 //	createModule(1500, 0); // Logos and intro video //Real
 #if 1
 	_vm->gameState().sceneNum = 0;
-	createModule(1400, -1);
+	createModule(1200, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

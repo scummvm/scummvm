@@ -60,8 +60,8 @@ NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint
 }
 
 NavigationScene::~NavigationScene() {
-	// TODO SoundMan_setTwoSoundsPlayFlag(false);
-	// TODO SoundMan_setSoundThreePlayFlag(false);
+	_vm->_soundMan->setTwoSoundsPlayFlag(false);
+	_vm->_soundMan->setSoundThreePlayFlag(false);
 }
 
 int NavigationScene::getNavigationAreaType() {
@@ -88,8 +88,8 @@ void NavigationScene::update() {
 			_soundFlag2 = false;
 			_soundFlag1 = false;
 			_interactive = true;
-			// TODO SoundMan_setTwoSoundsPlayFlag(false);
-			// TODO SoundMan_setSoundThreePlayFlag(false);
+			_vm->_soundMan->setTwoSoundsPlayFlag(false);
+			_vm->_soundMan->setSoundThreePlayFlag(false);
 			_smackerDone = false;
 			_smackerPlayer->open(navigationItem.fileHash, true);
 			_vm->_screen->clear();
@@ -205,11 +205,11 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 	}
 	
 	if (oldSoundFlag2 != _soundFlag2) {
-		// TODO SoundMan_setSoundThreePlayFlag(_soundFlag2);
+		_vm->_soundMan->setSoundThreePlayFlag(_soundFlag2);
 	}
 
 	if (oldSoundFlag1 != _soundFlag1) {
-		// TODO SoundMan_setTwoSoundsPlayFlag(_soundFlag1);
+		_vm->_soundMan->setTwoSoundsPlayFlag(_soundFlag1);
 	}
 
 }

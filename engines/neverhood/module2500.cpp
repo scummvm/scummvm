@@ -59,8 +59,8 @@ Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundResource1(vm), _soundResource2(vm),
 	_soundResource3(vm), _soundResource4(vm), _soundIndex(0) {
 	
-	// TODO SoundMan_addMusic(0x29220120, 0x05343184);
-	// TODO SoundMan_startMusic(0x05343184, 0, 0, 1);
+	_vm->_soundMan->addMusic(0x29220120, 0x05343184);
+	_vm->_soundMan->startMusic(0x05343184, 0, 0);
 	SetMessageHandler(&Module2500::handleMessage);
 
 	if (which < 0) {
@@ -77,7 +77,7 @@ Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2500::~Module2500() {
-	// TODO SoundMan_deleteMusicGroup(0x29220120);
+	_vm->_soundMan->deleteMusicGroup(0x29220120);
 }
 
 void Module2500::createScene(int sceneNum, int which) {

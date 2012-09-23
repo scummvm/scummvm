@@ -29,7 +29,7 @@ namespace Neverhood {
 Module2100::Module2100(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 
-	// TODO SoundMan_addMusic(0x10A10C14, 0x11482B95);
+	_vm->_soundMan->addMusic(0x10A10C14, 0x11482B95);
 	
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -44,7 +44,7 @@ Module2100::Module2100(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2100::~Module2100() {
-	// TODO SoundMan_deleteMusicGroup(0x10A10C14);
+	_vm->_soundMan->deleteMusicGroup(0x10A10C14);
 }
 
 void Module2100::createScene(int sceneNum, int which) {
@@ -52,7 +52,7 @@ void Module2100::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 0:
-		// TODO SoundMan_startMusic(0x11482B95, 0, 1, 1);
+		_vm->_soundMan->startMusic(0x11482B95, 0, 1);
 		_childObject = new Scene2101(_vm, this, which);
 		break;
 	}

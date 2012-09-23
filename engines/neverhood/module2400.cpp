@@ -27,7 +27,7 @@ namespace Neverhood {
 Module2400::Module2400(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	// TODO SoundMan_addMusic(0x202D1010, 0xB110382D);
+	_vm->_soundMan->addMusic(0x202D1010, 0xB110382D);
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, _vm->gameState().which);
@@ -38,7 +38,7 @@ Module2400::Module2400(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2400::~Module2400() {
-	// TODO SoundMan_deleteMusicGroup(0x202D1010);
+	_vm->_soundMan->deleteMusicGroup(0x202D1010);
 }
 
 void Module2400::createScene(int sceneNum, int which) {
@@ -46,27 +46,27 @@ void Module2400::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 0:
-		// TODO SoundMan_stopMusic(0xB110382D, 0, 0);
+		_vm->_soundMan->stopMusic(0xB110382D, 0, 0);
 		_childObject = new Scene2401(_vm, this, which);
 		break;
 	case 1:
-		// TODO SoundMan_startMusic(0xB110382D, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xB110382D, 0, 2);
 		_childObject = new Scene2402(_vm, this, which);
 		break;
 	case 2:
-		// TODO SoundMan_startMusic(0xB110382D, 0, 0, 1);
+		_vm->_soundMan->startMusic(0xB110382D, 0, 0);
 		_childObject = new Scene2403(_vm, this, which);
 		break;
 	case 4:
-		// TODO SoundMan_stopMusic(0xB110382D, 0, 2);
+		_vm->_soundMan->stopMusic(0xB110382D, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 0);
 		break;
 	case 5:
-		// TODO SoundMan_startMusic(0xB110382D, 0, 2, 1);
+		_vm->_soundMan->startMusic(0xB110382D, 0, 2);
 		_childObject = new Scene2406(_vm, this, which);
 		break;
 	case 6:
-		// TODO SoundMan_stopMusic(0xB110382D, 0, 2);
+		_vm->_soundMan->stopMusic(0xB110382D, 0, 2);
 		createSmackerScene(0x20D80001, true, true, false);
 		break;
 	case 7:
@@ -247,7 +247,7 @@ AsScene2401FlowingWater::AsScene2401FlowingWater(NeverhoodEngine *vm)
 }
 
 AsScene2401FlowingWater::~AsScene2401FlowingWater() {
-	// TODO SoundMan_deleteSoundGroup(0x40F11C09);
+	_vm->_soundMan->deleteSoundGroup(0x40F11C09);
 }
 
 uint32 AsScene2401FlowingWater::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -260,15 +260,15 @@ uint32 AsScene2401FlowingWater::handleMessage(int messageNum, const MessageParam
 		break;
 	case 0x2002:
 		if (!_isWaterFlowing) {
-			// TODO SoundMan_addSound(0x40F11C09, 0x980C1420, true);
-			// TODO SoundMan_playSoundLooping(0x980C1420);
+			_vm->_soundMan->addSound(0x40F11C09, 0x980C1420);
+			_vm->_soundMan->playSoundLooping(0x980C1420);
 			startAnimation(0x10203116, 0, -1);
 			setVisible(true);
 			_isWaterFlowing = true;
 		}
 		break;
 	case 0x2003:
-		// TODO SoundMan_deleteSound(0x980C1420);
+		_vm->_soundMan->deleteSound(0x980C1420);
 		_isWaterFlowing = false;
 		break;
 	case 0x3002:
@@ -664,7 +664,7 @@ AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman)
 }
 
 AsScene2402TV::~AsScene2402TV() {
-	// TODO SoundMan_deleteSoundGroup(0x01520123);
+	_vm->_soundMan->deleteSoundGroup(0x01520123);
 }
 
 void AsScene2402TV::upWait() {
@@ -687,12 +687,12 @@ void AsScene2402TV::upFocusKlayman() {
 		startAnimation(0x050A0103, _currFrameIndex, -1);
 		_newStickFrameIndex = _currFrameIndex;
 		if (_countdown2 == 0) {
-			// TODO SoundMan_addSound(0x01520123, 0xC42D4528, true);
-			// TODO SoundMan_playSoundLooping(0xC42D4528); 
+			_vm->_soundMan->addSound(0x01520123, 0xC42D4528);
+			_vm->_soundMan->playSoundLooping(0xC42D4528); 
 		}
 		_countdown2 = 5;
 	} else if (_countdown2 != 0 && (--_countdown2 == 0)) {
-		// TODO SoundMan_deleteSound(0xC42D4528);
+		_vm->_soundMan->deleteSound(0xC42D4528);
 	}
 	AnimatedSprite::update();
 }
