@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HOPKINS_MENU_H
-#define HOPKINS_MENU_H
+#ifndef HOPKINS_DIALOGS_H
+#define HOPKINS_DIALOGS_H
 
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -31,14 +31,12 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-class MenuManager {
-private:
-	HopkinsEngine *_vm;
+/**
+ * Class for showing the options dialog
+ */
+class OptionsDialog {
 public:
-	void setParent(HopkinsEngine *vm);
-
-	int MENU();
-	void CHARGE_PARTIE();
+	static void show(HopkinsEngine *vm);
 };
 
 } // End of namespace Hopkins

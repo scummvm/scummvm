@@ -68,6 +68,14 @@ struct BankItem {
 	Common::String filename2;
 };
 
+struct ListeItem {
+	int field0;
+	int field2;
+	int field4;
+	int x2;
+	int y2;
+};
+
 struct BobItem {
 	int field0;
 	byte *field4;
@@ -141,6 +149,13 @@ struct BlocItem {
 	int y2;
 };
 
+struct TriItem {
+	int field0;
+	int field2;
+	int field4;
+	int field6;
+};
+
 class HopkinsEngine;
 
 /**
@@ -207,6 +222,7 @@ public:
 	VBobItem VBob[35];
 	ObjetWItem ObjetW[300];
 	BlocItem BLOC[250];
+	ListeItem Liste[7];
 	byte *Winventaire;
 	byte *texte_tmp;
 	int texte_long;
@@ -219,6 +235,7 @@ public:
 	byte *essai2;
 	byte *Bufferobjet;
 	int INVENTAIRE[36];
+	TriItem Tri[51];
 	byte *inventaire2;
 	byte *GESTE;
 	int OBJET_EN_COURS;
@@ -261,6 +278,19 @@ public:
 	bool NOMARCHE;
 	int NBBLOC;
 	bool NO_VISU;
+	byte *OPTION_SPR;
+	bool OPTION_FLAG;
+	int opt_anm;
+	int opt_vitesse;
+	int opt_scrtype;
+	int opt_scrspeed;
+	int opt_sound;
+	int opt_voice;
+	int opt_music;
+	int opt_txt;
+	int NBTRI;
+	bool CACHEFLAG;
+	int AFFINVEN;
 
 	Globals();
 	~Globals();

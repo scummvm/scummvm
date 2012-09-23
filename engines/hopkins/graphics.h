@@ -156,17 +156,17 @@ public:
 	void FIN_VISU();
 	void VISU_ALL();
 	void RESET_SEGMENT_VESA();
-	void Ajoute_Segment_Vesa(int a1, int a2, int a3, int a4);
+	void Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2);
 	int Magic_Number(int v);
 	void Affiche_Segment_Vesa();
 	void CopyAsm(const byte *surface);
 	void Restore_Mem(byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6);
 	int Reel_Zoom(int v, int percentage);
 	int Reel_Reduc(int v, int percentage);
-	void AFF_SPRITES();
 	void Affiche_Perfect(byte *destSurface, const byte *srcData, int a3, int a4, int a5, int a6, int a7, int a8);
-	void VBL();
 	void AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex);
+	void SCOPY(const byte *surface, int x1, int y1, int x2, int y2, byte *destSurface, int destX, int destY);
+	void Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY);
 };
 
 } // End of namespace Hopkins

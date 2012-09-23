@@ -189,6 +189,279 @@ int ObjectsManager::AJOUTE_OBJET(int objIndex) {
 	return arrIndex;
 }
 
+void ObjectsManager::AFF_SPRITES() {
+	int v0; 
+	__int16 v1;
+	__int16 v2;
+	__int16 destX;
+	__int16 destY;
+	int v5; 
+	__int16 v6;
+	__int16 v7;
+	__int16 v8;
+	__int16 v9;
+	int v10; 
+	__int16 v11;
+	uint16 *v12;
+	int v13; 
+	int v14; 
+	int v15; 
+	int v16; 
+	int v17; 
+	int v18; 
+	int v19; 
+	__int16 v20;
+	__int16 v21;
+	__int16 v23;
+	__int16 v24;
+	__int16 v25;
+	__int16 v26;
+	__int16 v27;
+	__int16 v28;
+	__int16 v29;
+	__int16 v30;
+	__int16 v31;
+	__int16 v32;
+	__int16 v33;
+	signed __int16 v34;
+	signed __int16 v35;
+	signed __int16 v36;
+	__int16 v37; 
+	__int16 v38; 
+	uint16 arr[50];
+
+	_vm->_globals.NBTRI = 0;
+	v30 = 0;
+	do {
+		v0 = v30;
+		if (_vm->_fontManager.ListeTxt[v0].field0 && _vm->_fontManager.Txt[v30].field3FC != 2) {
+			v1 = _vm->_fontManager.ListeTxt[v30].x1;
+			v28 = v1 - 2;
+      
+			if ((int16)(v1 - 2) < _vm->_graphicsManager.min_x)
+				v28 = _vm->_graphicsManager.min_x;
+			v2 = _vm->_fontManager.ListeTxt[v30].y1;
+			v23 = v2 - 2;
+      
+			if ((int16)(v2 - 2) < _vm->_graphicsManager.min_y)
+				v23 = _vm->_graphicsManager.min_y;
+			destX = v1 - 2;
+			if (destX < _vm->_graphicsManager.min_x)
+				destX = _vm->_graphicsManager.min_x;
+			destY = v2 - 2;
+			if (destY < _vm->_graphicsManager.min_y)
+				destY = _vm->_graphicsManager.min_y;
+			
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v28, v23,
+				_vm->_fontManager.ListeTxt[v30].x2 + 4, _vm->_fontManager.ListeTxt[destX].y2 + 4,
+				_vm->_graphicsManager.VESA_BUFFER,
+				destX, destY);
+			_vm->_fontManager.ListeTxt[v0].field0 = 0;
+		}
+		++v30;
+	} while (v30 <= 10);
+
+	if (!PERSO_ON) {
+		v31 = 0;
+		do {
+			v5 = v31;
+			if (_vm->_globals.Liste[v5].field0) {
+				v6 = _vm->_globals.Liste[v5].field2;
+				v29 = v6 - 2;
+				if ((int16)(v6 - 2) < _vm->_graphicsManager.min_x)
+					v29 = _vm->_graphicsManager.min_x;
+				v7 = _vm->_globals.Liste[v31].field4;
+				v24 = v7 - 2;
+				if ((int16)(v7 - 2) < _vm->_graphicsManager.min_y)
+					v24 = _vm->_graphicsManager.min_y;
+				v8 = v6 - 2;
+				if (v8 < _vm->_graphicsManager.min_x)
+					v8 = _vm->_graphicsManager.min_x;
+				v9 = v7 - 2;
+				if (v9 < _vm->_graphicsManager.min_y)
+					v9 = _vm->_graphicsManager.min_y;
+	        
+				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v29, v24, _vm->_globals.Liste[v31].x2 + 4, 
+					_vm->_globals.Liste[v31].y2 + 4, _vm->_graphicsManager.VESA_BUFFER, v8, v9);
+				_vm->_globals.Liste[v5].field0 = 0;
+			}
+			++v31;
+		} while (v31 <= 4);
+	}
+  
+	AFF_BOB_ANIM();
+	AFF_VBOB();
+	if (!PERSO_ON) {
+		v32 = 0;
+		do {
+			_vm->_globals.Liste[v32].field0 = 0;
+			v10 = v32;
+			if (Sprite[v10].field0 == 1) {
+				CALCUL_SPRITE(v32);
+				if (Sprite[v10].field2A == 1)
+					AvantTri(2, v32, Sprite[v10].field32 + Sprite[v10].field2E);
+			}
+			++v32;
+		} while (v32 <= 4);
+    
+		if (_vm->_globals.CACHEFLAG)
+			VERIFCACHE();
+	}
+  
+	if (PRIORITY == 1 && _vm->_globals.NBTRI) {
+		v33 = 1;
+		do {
+			arr[v33] = v33;
+			++v33;
+		} while (v33 <= 48);
+    
+		v25 = _vm->_globals.NBTRI;
+		do {
+			v27 = 0;
+			v34 = 1;
+			if (v25 > 1) {
+				v26 = _vm->_globals.NBTRI;
+
+				do {
+					v11 = arr[v34];
+					v12 = &arr[v34 + 1];
+					if (_vm->_globals.Tri[arr[v34]].field4 > _vm->_globals.Tri[*v12].field4) {
+						arr[v34] = *v12;
+						*v12 = v11;
+						++v27;
+					}
+					++v34;
+				} while (v34 < v26);
+			}
+		} while (v27);
+    
+		v35 = 1;
+		if (_vm->_globals.NBTRI + 1 > 1) {
+			do {
+				v13 = arr[v35];
+				if (_vm->_globals.Tri[v13].field0 == 1)
+					DEF_BOB(_vm->_globals.Tri[v13].field2);
+				if (_vm->_globals.Tri[v13].field0 == 2)
+					DEF_SPRITE(_vm->_globals.Tri[v13].field2);
+				if (_vm->_globals.Tri[v13].field0 == 3)
+					DEF_CACHE(_vm->_globals.Tri[v13].field2);
+				_vm->_globals.Tri[v13].field0 = 0;
+				++v35;
+			} while (v35 < _vm->_globals.NBTRI + 1);
+		}
+	} else {
+		v36 = 1;
+		if (_vm->_globals.NBTRI + 1 > 1) {
+			do {
+				v14 = v36;
+				if (_vm->_globals.Tri[v14].field0 == 1)
+					DEF_BOB(_vm->_globals.Tri[v14].field2);
+				if (_vm->_globals.Tri[v14].field0 == 2)
+					DEF_SPRITE(_vm->_globals.Tri[v14].field2);
+				if (_vm->_globals.Tri[v14].field0 == 3)
+					DEF_CACHE(_vm->_globals.Tri[v14].field2);
+				_vm->_globals.Tri[v14].field0 = 0;
+				++v36;
+			} while (v36 < _vm->_globals.NBTRI + 1);
+		}
+	}
+
+	v37 = 0;
+	do {
+		v15 = v37;
+		_vm->_globals.Tri[v15].field0 = 0;
+		_vm->_globals.Tri[v15].field4 = 0;
+		_vm->_globals.Tri[v15].field2 = 0;
+		_vm->_globals.Tri[v15].field6 = 0;
+		++v37;
+	} while (v37 <= 49);
+  
+	_vm->_globals.NBTRI = 0;
+	if (_vm->_globals.AFFINVEN == 1) {
+		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, Winventaire, inventairex, inventairey, inventairel, inventaireh);
+		if (old_cadx && old_cady)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, inventaire2, old_cadx + 300, old_cady + 300, old_cadi + 1);
+		if (cadx && cady)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, inventaire2, cadx + 300, cady + 300, cadi);
+		_vm->_graphicsManager.Ajoute_Segment_Vesa(inventairex, inventairey, inventairex + inventairel, inventairey + inventaireh);
+	}
+  
+	if (SL_FLAG == 1) {
+		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, SL_SPR, _vm->_eventsManager.start_x + 183, 60, 0x112u, 353);
+		if (SL_X && SL_Y)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, SL_SPR2, SL_X + _vm->_eventsManager.start_x + 300, SL_Y + 300, 0);
+    
+		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 183, 60, _vm->_eventsManager.start_x + 457, 413);
+	}
+  
+	if (_vm->_globals.OPTION_FLAG) {
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+			_vm->_eventsManager.start_x + 464, 407, 0);
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+			_vm->_eventsManager.start_x + 657, 556, _vm->_globals.opt_vitesse);
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+			_vm->_eventsManager.start_x + 731, 495, _vm->_globals.opt_txt);
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+			_vm->_eventsManager.start_x + 731, 468, _vm->_globals.opt_voice);
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+			_vm->_eventsManager.start_x + 731, 441, _vm->_globals.opt_sound);
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+			_vm->_eventsManager.start_x + 731, 414, _vm->_globals.opt_music);
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+			_vm->_eventsManager.start_x + 600, 522, _vm->_globals.opt_anm);
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+			_vm->_eventsManager.start_x + 611, 502, _vm->_globals.opt_scrspeed);
+		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 164, 107, _vm->_eventsManager.start_x + 498, 320);
+	}
+
+	v38 = 0;
+	do {
+		v16 = v38;
+		if (_vm->_fontManager.Txt[v16].field0 == 1) {
+			if ((uint16)(_vm->_fontManager.Txt[v16].field3FC - 2) > 1)
+				BOITE(v38,
+					_vm->_fontManager.Txt[v16].fieldC, _vm->_fontManager.Txt[v16].field4,
+					_vm->_eventsManager.start_x + _vm->_fontManager.Txt[v16].field8, _vm->_fontManager.Txt[v16].fieldA);
+			else
+				BOITE(
+				  v38,
+				  _vm->_fontManager.Txt[v16].fieldC,
+				  _vm->_fontManager.Txt[v16].field4,
+				  _vm->_fontManager.Txt[v16].field8,
+				  _vm->_fontManager.Txt[v16].fieldA);
+			_vm->_fontManager.ListeTxt[v38].field0 = 1;
+			
+			v17 = v38;
+			if ((uint16)(_vm->_fontManager.Txt[v17].field3FC - 2) > 1)
+				_vm->_fontManager.ListeTxt[v38].x1 = _vm->_eventsManager.start_x + _vm->_fontManager.Txt[v17].field8;
+			else
+				_vm->_fontManager.ListeTxt[v38].x1 = _vm->_fontManager.Txt[v17].field8;
+      
+			v18 = v38;
+			v19 = v38;
+			_vm->_fontManager.ListeTxt[v18].y1 = _vm->_fontManager.Txt[v19].fieldA;
+			_vm->_fontManager.ListeTxt[v18].x2 = _vm->_fontManager.Txt[v19].field404;
+			_vm->_fontManager.ListeTxt[v18].y2 = _vm->_fontManager.Txt[v19].field406;
+
+			if (_vm->_fontManager.ListeTxt[v38].x1 < _vm->_graphicsManager.min_x)
+				_vm->_fontManager.ListeTxt[v38].x1 = _vm->_graphicsManager.min_x - 1;
+			if (_vm->_fontManager.ListeTxt[v38].y1 < _vm->_graphicsManager.min_y)
+				_vm->_fontManager.ListeTxt[v38].y1 = _vm->_graphicsManager.min_y - 1;
+			v20 = _vm->_fontManager.ListeTxt[v38].x1;
+			if (_vm->_fontManager.ListeTxt[v38].x2 + v20 > _vm->_graphicsManager.max_x)
+				_vm->_fontManager.ListeTxt[v38].x2 = _vm->_graphicsManager.max_x - v20;
+			v21 = _vm->_fontManager.ListeTxt[v38].y1;
+			if (_vm->_fontManager.ListeTxt[v38].y2 + v21 > _vm->_graphicsManager.max_y)
+				_vm->_fontManager.ListeTxt[v38].y2 = _vm->_graphicsManager.max_y - v21;
+			if (_vm->_fontManager.ListeTxt[v38].x2 <= 0 || _vm->_fontManager.ListeTxt[v38].y2 <= 0)
+				_vm->_fontManager.ListeTxt[v18].field0 = 0;
+		}
+		++v38;
+	} while (v38 <= 10);
+  
+	INVENT_ANIM();
+}
+
 void ObjectsManager::INIT_BOB() {
 	for (int idx = 0; idx < 35; ++idx) {
 		BOB_ZERO(idx);
@@ -231,6 +504,10 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	item.field4 = 0;
 	item.field6 = 0;
 	item.field8 = 0;
+}
+
+void ObjectsManager::DEF_BOB(int idx) {
+	warning("TODO: DEF_BOB");
 }
 
 void ObjectsManager::BOB_VISU(int idx) {
@@ -287,6 +564,42 @@ void ObjectsManager::BOB_OFF(int idx) {
 		_vm->_globals.Bob[idx].field0 = 4;
 	else if (_vm->_globals.Bob[idx].field0 == 10)
 		_vm->_globals.Bob[idx].field0 = 11;
+}
+
+void ObjectsManager::VERIFCACHE() {
+	warning("TODO: VERIFCACHE");
+}
+
+void ObjectsManager::INVENT_ANIM() {
+	warning("TODO: INVENT_ANIM");
+}
+
+void ObjectsManager::DEF_SPRITE(int idx) {
+	warning("TODO: DEF_SPRITE");
+}
+
+void ObjectsManager::DEF_CACHE(int a1) {
+	warning("TODO: DEF_CACHE");
+}
+
+void ObjectsManager::CALCUL_SPRITE(int idx) {
+	warning("TODO: CALCUL_SPRITE");
+}
+
+void ObjectsManager::AvantTri(int a1, int a2, int a3) {
+	warning("TODO: AvantTri");
+}
+
+void ObjectsManager::AFF_BOB_ANIM() {
+	warning("TODO: AFF_BOB_ANIM");
+}
+
+void ObjectsManager::AFF_VBOB() {
+	warning("TODO: AFF_VBOB");
+}
+
+void ObjectsManager::BOITE(int a1, int a2, int a3, int a4, int a5) {
+	warning("TODO: BOITE");
 }
 
 } // End of namespace Hopkins

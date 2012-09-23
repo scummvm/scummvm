@@ -73,6 +73,16 @@ Globals::Globals() {
 	Max_Perso_Y = 0;
 	Max_Propre = 0;
 	NBBLOC = 0;
+	opt_scrtype = 0;
+	opt_scrspeed = 0;
+	opt_vitesse = 0;
+	opt_sound = 0;
+	opt_voice = 0;
+	opt_music = 0;
+	opt_txt = 0;
+	opt_anm = 0;
+	NBTRI = 0;
+	AFFINVEN = 0;
 
 	// Initialise pointers
 	ICONE = NULL;
@@ -99,8 +109,7 @@ Globals::Globals() {
 	ADR_FICHIER_OBJ = NULL;
 	police = NULL;
 	PERSO = NULL;
-
-	
+	OPTION_SPR = NULL;
 
 	// Reset flags
 	MUSICOFF = false;
@@ -122,6 +131,8 @@ Globals::Globals() {
 	netscape = false;
 	NOMARCHE = false;
 	NO_VISU = false;
+	OPTION_FLAG = false;
+	CACHEFLAG = false;
 }
 
 Globals::~Globals() {

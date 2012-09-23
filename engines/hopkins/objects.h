@@ -29,13 +29,33 @@
 
 namespace Hopkins {
 
+struct SpriteItem {
+	int field0;
+	int field2A;
+	int field2E;
+	int field32;
+};
+
 class HopkinsEngine;
 
 class ObjectsManager {
 private:
 	HopkinsEngine *_vm;
 
+public:
 	int PRIORITY;
+	int inventairex, inventairey;
+	int inventairel, inventaireh;
+	int old_cadx, old_cady, old_cadi;
+	int cadx, cady, cadi;
+	int SL_X, SL_Y;
+	byte *Winventaire;
+	byte *inventaire2;
+	byte *SL_SPR;
+	byte *SL_SPR2;
+	SpriteItem Sprite[6];
+	bool PERSO_ON;
+	bool SL_FLAG;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -50,14 +70,27 @@ public:
 
 	byte *CHARGE_SPRITE(const Common::String &file);
 	void set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize);
+	void AFF_SPRITES();
 
 	int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
 	int AJOUTE_OBJET(int objIndex);
 
 	void INIT_BOB();
 	void BOB_ZERO(int idx);
+	void DEF_BOB(int idx);
 	void BOB_VISU(int idx);
 	void BOB_OFF(int idx);
+
+	void VERIFCACHE();
+	void INVENT_ANIM();
+	void DEF_SPRITE(int idx);
+	void DEF_CACHE(int idx);
+	void CALCUL_SPRITE(int idx);
+	void AvantTri(int a1, int a2, int a3);
+	void AFF_BOB_ANIM();
+	void AFF_VBOB();
+
+	void BOITE(int a1, int a2, int a3, int a4, int a5);
 };
 
 } // End of namespace Hopkins

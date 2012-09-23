@@ -3,6 +3,7 @@ MODULE := engines/hopkins
 MODULE_OBJS := \
 	anim.o \
 	detection.o \
+	dialogs.o \
 	events.o \
 	files.o \
 	font.o \

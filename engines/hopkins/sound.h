@@ -35,6 +35,16 @@ public:
 	HopkinsEngine *_vm;
 
 	int SPECIAL_SOUND;
+	int SOUNDVOL;
+	int VOICEVOL;
+	int MUSICVOL;
+	int OLD_SOUNDVOL;
+	int OLD_MUSICVOL;
+	int OLD_VOICEVOL;
+	bool SOUNDOFF;
+	bool MUSICOFF;
+	bool VOICEOFF;
+	bool TEXTOFF;
 public:
 	void setParent(HopkinsEngine *vm);
 
@@ -45,6 +55,10 @@ public:
 	void WSOUND(int soundNumber);
 	void VOICE_MIX(int a1, int a2);
 	void DEL_SAMPLE(int soundNumber);
+	void PLAY_SOUND(const Common::String &file);
+	void MODSetSampleVolume();
+	void MODSetVoiceVolume();
+	void MODSetMusicVolume(int volume);
 };
 
 } // End of namespace Hopkins

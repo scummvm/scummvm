@@ -1385,8 +1385,8 @@ void GraphicsManager::FIN_VISU() {
 			_vm->_objectsManager.BOB_OFF(idx);
 	}
 
-	VBL();
-	VBL();
+	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.VBL();
 
 	for (int idx = 1; idx <= 20; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
@@ -1651,10 +1651,6 @@ int GraphicsManager::Asm_Reduc(int v, int percentage) {
 		v -= percentage * (long int)v / 100;
   
 	return v;
-}
-
-void GraphicsManager::AFF_SPRITES() {
-	warning("TODO: AFF_SPRITES");
 }
 
 void GraphicsManager::Affiche_Perfect(byte *destSurface, const byte *srcData, int a3, int a4, int a5, int a6, int a7, int a8) {
@@ -2129,252 +2125,6 @@ Aff_Zoom_Larg_Cont1:
 	}
 }
 
-void GraphicsManager::VBL() {
-	// Bulk of method currently disabled
-/*
-	int a1 = 0;
-	signed __int16 v1;
-	int v2;
-	int v3;
-	int v4;
-	int v5;
-	int v6;
-	signed __int16 v7;
-	int v10;
-	signed int v11 = 0;
-	signed int v12 = 0;
-	int v13 = 0; 
-	unsigned int v14 = 0;
-	int v15 = 0;
-
-	if (REDRAW) {
-		DD_Lock();
-		if (_vm->_eventsManager.CASSE) {
-			CopyAsm(VESA_BUFFER);
-			REDRAW = 0;
-		} else {
-			if (_vm->_globals.iRegul == 3)
-				m_scroll(VESA_BUFFER, ofscroll, 50, SCREEN_WIDTH, 340, 0, 50);
-			else
-				m_scroll(VESA_BUFFER, ofscroll, 20, SCREEN_WIDTH, 440, 0, 20);
-			FileManager::DMESS();
-			--REDRAW;
-		}
-		DD_Unlock();
-	}
-
-	if (_vm->_eventsManager.souris_flag) {
-		v1 = 20;
-		if (!_vm->_eventsManager.mouse_linux)
-			v1 = 10;
-		v2 = 20;
-		if (!_vm->_eventsManager.mouse_linux)
-			v2 = 15;
-
-		v15 = _vm->_eventsManager.souris_x - v1;
-		a1 = _vm->_eventsManager.souris_y;
-		v14 = _vm->_eventsManager.souris_sizex;
-		v13 = _vm->_eventsManager.souris_sizey;
-		if (_vm->_eventsManager.btsouris == 23) {
-			v14 = _vm->_globals.OBJL;
-			v13 = _vm->_globals.OBJH;
-			goto LABEL_35;
-		}
-
-		if (_vm->_eventsManager.CASSE) {
-			if (v15 < min_x)
-				v15 = min_x;
-			if (_vm->_eventsManager.souris_y < min_y)
-				a1 = min_y;
-			
-			if (_vm->_eventsManager.souris_sizex + v15 >= max_x)
-				v14 = _vm->_eventsManager.souris_sizex - (_vm->_eventsManager.souris_sizex + v15 - max_x);
-			if (a1 + _vm->_eventsManager.souris_sizey < max_y)
-				goto LABEL_34;
-			
-			v3 = a1 + _vm->_eventsManager.souris_sizey - max_y;
-		} else {
-			if (v15 < min_x)
-				v15 = min_x - v1;
-			v2 = (signed __int16)v2;
-			if (_vm->_eventsManager.souris_y < min_y - (signed __int16)v2)
-				a1 = min_y - (signed __int16)v2;
-			if (_vm->_eventsManager.souris_sizex + v15 >= max_x)
-				v14 = _vm->_eventsManager.souris_sizex - (_vm->_eventsManager.souris_sizex + v15 - max_x - v1);
-			if (a1 + _vm->_eventsManager.souris_sizey < v2 + max_y)
-				goto LABEL_34;
-  
-			v3 = v2 + a1 + _vm->_eventsManager.souris_sizey - max_y;
-		}
-
-		v13 = _vm->_eventsManager.souris_sizey - v3;
-LABEL_34:
-		v12 = v14 + v15;
-		v11 = a1 + v13;
-	}
-LABEL_35:
-
-	if (!_vm->_globals.PUBEXIT)
-		AFF_SPRITES();
-	if (_vm->_eventsManager.souris_flag != 1)
-		goto LABEL_54;
-	if (_vm->_eventsManager.btsouris == 23)
-		goto LABEL_45;
-
-	if (a1 >= max_y || v15 >= max_x || (signed int)v14 <= 1 || v13 <= 1) {
-		if (_vm->_eventsManager.btsouris != 23)
-			goto LABEL_54;
-
-LABEL_45:
-		if (a1 < max_y && v15 < max_x) {
-			if ((signed int)(v14 + v15) > max_x)
-				v14 -= v14 + v15 - max_x;
-			if (a1 + v13 > max_y)
-				v13 -= a1 + v13 - max_y;
-  
-			if ((signed int)v14 > 1 && v13 > 1) {
-				Capture_Mem(VESA_BUFFER, _vm->_globals.cache_souris, v15, a1, v14, v13);
-				Affiche_Perfect(VESA_BUFFER, _vm->_globals.Bufferobjet, v15 + 300, a1 + 300, 0, 0, 0, 0);
-				Ajoute_Segment_Vesa(v15, a1, v14 + v15, a1 + v13);
-			}
-		}
-		goto LABEL_54;
-	}
-
-	Capture_Mem(VESA_BUFFER, _vm->_globals.cache_souris, v15, a1, v14, v13);
-	Sprite_Vesa(VESA_BUFFER, _vm->_eventsManager.pointeur_souris, v15 + 300, a1 + 300, _vm->_eventsManager.souris_n);
-	Ajoute_Segment_Vesa(v15, a1, v12, v11);
-
-LABEL_54:
-	_vm->_globals.vitesse = 2;
-
-	do {
-		for (;;) {
-			// TODO: Figure out the purpose of this loop waiting on lItCounter..
-			// maybe it's for cursor animatoin?
-			_vm->_eventsManager.delay(10);
-
-			while (_vm->_eventsManager.CASSE || _vm->_globals.iRegul != 1) {
-				if (_vm->_eventsManager.CASSE != 1)
-					goto LABEL_63;
-    
-				if (_vm->_eventsManager.lItCounter > 1)
-					goto LABEL_65;
-			}
-  
-			if (_vm->_globals.vitesse != 2)
-				break;
-  
-			if (_vm->_eventsManager.lItCounter > 9)
-				goto LABEL_65;
-		}
-LABEL_63:
-		;
-	} while (_vm->_globals.iRegul == 3 && _vm->_eventsManager.lItCounter <= 15);
-
-LABEL_65:
-	_vm->_globals.vitesse = 2;
-	_vm->_eventsManager.lItCounter = 0;
-
-	if (DOUBLE_ECRAN != 1 || no_scroll == 1) {
-		Affiche_Segment_Vesa();
-	} else {
-		if (no_scroll != 2) {
-			if (_vm->_eventsManager.XMOUSE() > SCROLL + 620)
-				SCROLL += SPEED_SCROLL;
-  
-			if (_vm->_eventsManager.XMOUSE() < SCROLL + 10)
-				SCROLL -= SPEED_SCROLL;
-		}
-
-		SCROLL = CLIP(SCROLL, 0, SCREEN_WIDTH);
-
-		if (SDL_ECHELLE)
-			v4 = Magic_Number(SCROLL);
-		else
-			v4 = SCROLL;
-	
-		if (OLD_SCROLL == v4) {
-			Affiche_Segment_Vesa();
-		} else {
-			_vm->_fontManager.TEXTE_OFF(9);
-			DD_Lock();
-			if (SDL_ECHELLE) {
-				if (Winbpp == 2) {
-					v5 = Reel_Zoom(20, SDL_ECHELLE);
-					m_scroll16A(VESA_BUFFER, v4, 20, 640, 440, 0, v5);
-				} else {
-					v6 = Reel_Zoom(20, SDL_ECHELLE);
-					m_scroll2A(VESA_BUFFER, v4, 20, 640, 440, 0, v6);
-				}
-			
-				DD_Unlock();
-				dstrect[0].left = Reel_Zoom(0, SDL_ECHELLE);
-				dstrect[0].top = Reel_Zoom(20, SDL_ECHELLE);
-				dstrect[0].setWidth(Reel_Zoom(SCREEN_WIDTH, SDL_ECHELLE));
-				dstrect[0].setHeight(Reel_Zoom(440, SDL_ECHELLE));
-			} else {
-				if (Winbpp == 2)
-					m_scroll16(VESA_BUFFER, v4, 20, 640, 440, 0, 20);
-				else
-					m_scroll2(VESA_BUFFER, v4, 20, 640, 440, 0, 20);
-				
-				DD_Unlock();
-				dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40);
-			}
-  
-			if (!_vm->_globals.BPP_NOAFF) {
-				// TODO: Useful for future dirty rect processing?
-//				SDL_UpdateRects(LinuxScr, 1, dstrect);
-			}
-			if (_vm->_globals.NBBLOC) {
-				v7 = 1;
-				v10 = _vm->_globals.NBBLOC + 1;
-    
-				do {
-					if (_vm->_globals.BLOC[v7].field0 == 1)
-						_vm->_globals.BLOC[v7].field0 = 0;
-					++v7;
-				} while (v10 != v7);
-			}
-		
-			_vm->_globals.NBBLOC = 0;
-			start_x = v4;
-			ofscroll = v4;
-			SCROLL = v4;
-		}
-	
-		OLD_SCROLL = v4;
-		start_x = v4;
-		ofscroll = v4;
-	}
-  
-	_vm->_eventsManager.souris_bb = _vm->_eventsManager.souris_b;
-	_vm->_eventsManager.souris_b = 0;
-	if (_vm->_eventsManager.souris_flag == 1) {
-		if (_vm->_eventsManager.btsouris != 23) {
-			if (a1 < max_y && v15 < max_x && v14 > 1 && v13 > 1) {
-				Restore_Mem(VESA_BUFFER, _vm->_globals.cache_souris, v15, a1, v14, v13);
-				Ajoute_Segment_Vesa(v15, a1, v12, v11);
-				goto LABEL_113;
-			}
-  
-			if (_vm->_eventsManager.btsouris != 23)
-				goto LABEL_113;
-		}
-	    
-		if (a1 < max_y && v15 < max_x && v14 > 1 && v13 > 1) {
-			Restore_Mem(VESA_BUFFER, _vm->_globals.cache_souris, v15, a1, v14, v13);
-			Ajoute_Segment_Vesa(v15, a1, v14 + v15, a1 + v13);
-		}
-	}
-		
-LABEL_113:
- */
-	_vm->_soundManager.VERIF_SOUND();
-	return _vm->_eventsManager.CONTROLE_MES();
-}	
-
 void GraphicsManager::AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex) {
 	int width, height;
 
@@ -2389,6 +2139,67 @@ void GraphicsManager::AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int 
 	}
 	if (!_vm->_globals.NO_VISU)
 		Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
+}
+
+void GraphicsManager::SCOPY(const byte *surface, int x1, int y1, int x2, int y2, byte *destSurface, int destX, int destY) {
+	int top; 
+	int width; 
+	int height;
+	int v11; 
+	int height2; 
+	int top2; 
+	int left;
+
+	left = x1;
+	top = y1;
+	width = x2;
+	height = y2;
+  
+	if (x1 < min_x) {
+		width = x2 - (min_x - x1);
+		left = min_x;
+	}
+	if (y1 < min_y) {
+		height = y2 - (min_y - y1);
+		top = min_y;
+	}
+	top2 = top;
+	if (top + height > max_y)
+		height = max_y - top;
+	v11 = left + width;
+	if (v11 > max_x)
+		width = max_x - left;
+
+	if (width > 0 && height > 0) {
+		height2 = height;
+		Copy_Mem(surface, left, top2, width, height, destSurface, destX, destY);
+		Ajoute_Segment_Vesa(left, top2, left + width, top2 + height2);
+	}
+}
+
+void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY) {
+	const byte *srcP; 
+	byte *destP; 
+	int yp;
+	int yCurrent;
+	byte *dest2P;
+	const byte *src2P;
+	unsigned int pitch; 
+
+	srcP = x1 + nbrligne2 * y1 + srcSurface;
+	destP = destX + nbrligne2 * destY + destSurface;
+	yp = height;
+	do {
+		yCurrent = yp;
+		memcpy(destP, srcP, 4 * (width >> 2));
+		src2P = (srcP + 4 * (width >> 2));
+		dest2P = (destP + 4 * (width >> 2));
+		pitch = width - 4 * (width >> 2);
+		memcpy(dest2P, src2P, pitch);
+		destP = (dest2P + pitch + nbrligne2 - width);
+		srcP = (src2P + pitch + nbrligne2 - width);
+		yp = yCurrent - 1;
+	} while (yCurrent != 1);
 }
 
 } // End of namespace Hopkins

@@ -73,6 +73,7 @@ public:
 
 	void CONTROLE_MES();
 	void delay(int delay);
+	void VBL();
 };
 
 } // End of namespace Hopkins

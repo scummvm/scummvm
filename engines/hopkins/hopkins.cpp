@@ -590,10 +590,10 @@ void HopkinsEngine::INTRORUN() {
 	byte paletteData2[PALETTE_EXT_BLOCK_SIZE];
 
 	memset(&paletteData, 0, PALETTE_EXT_BLOCK_SIZE);
-	_graphicsManager.VBL();
+	_eventsManager.VBL();
 	_eventsManager.souris_flag = 0;
 	_globals.iRegul = 1;
-	_graphicsManager.VBL();
+	_eventsManager.VBL();
 	_soundManager.WSOUND(16);
 	_animationManager.CLS_ANM = 1;
 	_animationManager.PLAY_ANM("J1.anm", 12, 12, 50);
@@ -623,7 +623,7 @@ void HopkinsEngine::INTRORUN() {
 				_globals.BPP_NOAFF = 1;
 				v2 = 0;
 				do {
-					_graphicsManager.VBL();
+					_eventsManager.VBL();
 					++v2;
 				} while (v2 <= 4);
 
@@ -646,10 +646,10 @@ void HopkinsEngine::INTRORUN() {
 							v4 = _eventsManager.YMOUSE();
 							_eventsManager.souris_xy(_eventsManager.souris_x + 4, v4);
 						}
-						_graphicsManager.VBL();
+						_eventsManager.VBL();
 					} while (v3 != 1 && _graphicsManager.SCROLL != SCREEN_WIDTH);
           
-					_graphicsManager.VBL();
+					_eventsManager.VBL();
 					_graphicsManager.no_scroll = 0;
 				}
         
@@ -672,7 +672,7 @@ void HopkinsEngine::INTRORUN() {
 				v5 = 0;
         
 				do {
-					_graphicsManager.VBL();
+					_eventsManager.VBL();
 					++v5;
 				} while (v5 <= 4);
         
@@ -680,12 +680,12 @@ void HopkinsEngine::INTRORUN() {
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
 				for (i = 0; i < 200 / _globals.vitesse; ++i)
-					_graphicsManager.VBL();
+					_eventsManager.VBL();
         
 				_animationManager.BOBANIM_ON(3);
 				_soundManager.VOICE_MIX(5, 3);
 				_animationManager.BOBANIM_OFF(3);
-				_graphicsManager.VBL();
+				_eventsManager.VBL();
 				memcpy(&paletteData2, _graphicsManager.Palette, 796);
 				v21 = *(uint16 *)&_graphicsManager.Palette[796];
 				v22 = _graphicsManager.Palette[798];
@@ -715,7 +715,7 @@ void HopkinsEngine::INTRORUN() {
 					v8 = 0;
           
 					do {
-						_graphicsManager.VBL();
+						_eventsManager.VBL();
 						++v8;
 					} while (v8 <= 3);
           
@@ -727,9 +727,9 @@ void HopkinsEngine::INTRORUN() {
 					while (!_eventsManager.ESC_KEY) {
 						if (v9 == 12) {
 							_animationManager.BOBANIM_ON(3);
-							_graphicsManager.VBL();
+							_eventsManager.VBL();
 							_soundManager.VOICE_MIX(6, 3);
-							_graphicsManager.VBL();
+							_eventsManager.VBL();
 							_animationManager.BOBANIM_OFF(3);
 						}
             
@@ -750,7 +750,7 @@ void HopkinsEngine::INTRORUN() {
 							v7 = 2 * v9;
               
 							do {
-								_graphicsManager.VBL();
+								_eventsManager.VBL();
 								++v13;
 							} while (v13 < v7);
 						} 
@@ -761,7 +761,7 @@ void HopkinsEngine::INTRORUN() {
 							v7 = 20 - v9;
               
 							do {
-								_graphicsManager.VBL();
+								_eventsManager.VBL();
 								++v14;
 							} while (v14 < v7);
 						}
@@ -770,17 +770,17 @@ void HopkinsEngine::INTRORUN() {
 						if (v9 > 15) {
 							_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
 							for (j = 1; j < 100 / _globals.vitesse; ++j)
-								_graphicsManager.VBL();
+								_eventsManager.VBL();
               
 							_animationManager.BOBANIM_ON(3);
 							_soundManager.VOICE_MIX(7, 3);
 							_animationManager.BOBANIM_OFF(3);
 							
 							for (k = 1; k < 60 / _globals.vitesse; ++k)
-								_graphicsManager.VBL();
+								_eventsManager.VBL();
 							_animationManager.BOBANIM_ON(5);
 							for (l = 0; l < 20 / _globals.vitesse; ++l)
-								_graphicsManager.VBL();
+								_eventsManager.VBL();
 
 							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
 							_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
@@ -792,7 +792,7 @@ void HopkinsEngine::INTRORUN() {
 									_animationManager.BOBANIM_OFF(3);
 								}
                 
-								_graphicsManager.VBL();
+								_eventsManager.VBL();
 							}
 
 							_graphicsManager.FADE_OUTW();
@@ -870,7 +870,7 @@ void HopkinsEngine::PUBQUIT() {
 	do {
 		xp = _eventsManager.XMOUSE();
 		yp = _eventsManager.YMOUSE();
-		_graphicsManager.VBL();
+		_eventsManager.VBL();
 		
 		if (_eventsManager.BMOUSE() == 1)
 			mouseClicked = true;

@@ -59,4 +59,21 @@ void SoundManager::DEL_SAMPLE(int soundNumber) {
 	warning("TODO: DEL_SAMPLE");
 }
 
+void SoundManager::PLAY_SOUND(const Common::String &file) {
+	warning("TODO: PLAY_SOUND");
+}
+
+void SoundManager::MODSetSampleVolume() {
+	warning("TODO MODSetSampleVolume");
+}
+
+void SoundManager::MODSetVoiceVolume() {
+	warning("TODO MODSetVoiceVolume");
+}
+
+void SoundManager::MODSetMusicVolume(int volume) {
+	warning("TODO MODSetMusicVolume");
+}
+
+
 } // End of namespace Hopkins

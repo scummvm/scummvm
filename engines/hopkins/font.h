@@ -51,6 +51,10 @@ struct TxtItem {
 
 struct ListeTxtItem {
 	int field0;
+	int x1;
+	int y1;
+	int x2;
+	int y2;
 };
 
 
@@ -59,7 +63,7 @@ private:
 	HopkinsEngine *_vm;
 public:
 	TxtItem Txt[12];
-	ListeTxtItem ListeTxt[11];
+	ListeTxtItem ListeTxt[12];
 public:
 	void setParent(HopkinsEngine *vm);
 	void clearAll();

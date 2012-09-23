@@ -24,6 +24,7 @@
 #include "common/events.h"
 #include "common/util.h"
 #include "hopkins/menu.h"
+#include "hopkins/dialogs.h"
 #include "hopkins/files.h"
 #include "hopkins/hopkins.h"
 #include "hopkins/globals.h"
@@ -104,17 +105,17 @@ int MenuManager::MENU() {
 					menuIndex = MENU_NONE;
 					mousePos = Common::Point(_vm->_eventsManager.XMOUSE(), _vm->_eventsManager.YMOUSE());
           
-					if (ABS(mousePos.x - 232) <= 176) {
-						if (ABS(mousePos.y - 261) <= 23)
+					if ((uint16)(mousePos.x - 232) <= 176) {
+						if ((uint16)(mousePos.y - 261) <= 23)
 							menuIndex = PLAY_GAME;
-						if (ABS(mousePos.y - 293) <= 23)
+						if ((uint16)(mousePos.y - 293) <= 23)
 							menuIndex = LOAD_GAME;
-						if (ABS(mousePos.y - 325) <= 22)
+						if ((uint16)(mousePos.y - 325) <= 22)
 							menuIndex = OPTIONS;
-						if (ABS(mousePos.y - 356) <= 23)
+						if ((uint16)(mousePos.y - 356) <= 23)
 							menuIndex = INTRODUCTION;
             
-						if (ABS(mousePos.y - 388) <= 23)
+						if ((uint16)(mousePos.y - 388) <= 23)
 							menuIndex = QUIT;
 					}
           
@@ -167,7 +168,7 @@ int MenuManager::MENU() {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, v9 + 4);
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, v8 + 6);
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, v7 + 8);
-					_vm->_graphicsManager.VBL();
+					_vm->_eventsManager.VBL();
           
 					if (_vm->_eventsManager.BMOUSE() == 1 && menuIndex != MENU_NONE)
 						selectionMade = 1;
@@ -175,7 +176,7 @@ int MenuManager::MENU() {
         
 				if (menuIndex == PLAY_GAME) {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, 10);
-					_vm->_graphicsManager.VBL();
+					_vm->_eventsManager.VBL();
 					_vm->_eventsManager.delay(200);
 					v6 = 1;
 				}
@@ -183,7 +184,7 @@ int MenuManager::MENU() {
 					break;
 
 				_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, 11);
-				_vm->_graphicsManager.VBL();
+				_vm->_eventsManager.VBL();
 				_vm->_eventsManager.delay(200);
         
 				_vm->_globals.SORTIE = -1;
@@ -196,18 +197,20 @@ int MenuManager::MENU() {
 				_vm->_globals.SORTIE = 0;
 			}
       
-			if (menuIndex != 3)
+			if (menuIndex != OPTIONS)
 				break;
       
+			// Options menu item selected
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, 12);
-			_vm->_graphicsManager.VBL();
+			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.delay(200);
-      
-			CHOICE_OPTION();
+
+			// Show the options dialog
+			OptionsDialog::show(_vm);
 		}
 		if (menuIndex == INTRODUCTION) {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, 13);
-			_vm->_graphicsManager.VBL();
+			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.delay(200);
 			_vm->INTRORUN();
 			continue;
@@ -215,7 +218,7 @@ int MenuManager::MENU() {
 
 		if ( menuIndex == QUIT) {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, 14);
-			_vm->_graphicsManager.VBL();
+			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.delay(200);
 			v6 = -1;
 		}
@@ -227,10 +230,6 @@ int MenuManager::MENU() {
 	_vm->_globals.FLAG_VISIBLE = 0;
 	_vm->_graphicsManager.FADE_OUTW();
 	return v6;
-}
-
-void MenuManager::CHOICE_OPTION() {
-	warning("CHOICE_OPTION");
 }
 
 void MenuManager::CHARGE_PARTIE() {
