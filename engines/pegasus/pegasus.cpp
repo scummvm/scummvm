@@ -527,6 +527,20 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 }
 
 bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
+	// WORKAROUND: If we don't have the interface, we can't actually save.
+	// However, we should still have a continue point, so we will just dump that
+	// out. This is needed for saving a game while in the space chase.
+	if (!g_interface) {
+		// Saving a continue stream from a continue stream should
+		// never happen. In addition, we do need to have a continue
+		// stream for this to work.
+		if (saveType != kNormalSave || !_continuePoint)
+			return false;
+
+		writeContinueStream(stream);
+		return true;
+	}
+
 	if (g_neighborhood)
 		g_neighborhood->flushGameState();
 
@@ -602,8 +616,25 @@ void PegasusEngine::loadFromContinuePoint() {
 	if (!_continuePoint)
 		error("Attempting to load from non-existant continue point");
 
+	_continuePoint->seek(0);
+
 	if (!loadFromStream(_continuePoint))
 		error("Failed loading continue point");
+}
+
+void PegasusEngine::writeContinueStream(Common::WriteStream *stream) {
+	// We're going to pretty much copy the stream, except for the save type
+	_continuePoint->seek(0);
+	stream->writeUint32BE(_continuePoint->readUint32BE());
+	_continuePoint->readUint32BE(); // skip the continue type
+	stream->writeUint32BE(kPegasusPrimeDisk1GameType + _currentCD - 1);
+
+	// Now just copy over the rest
+	uint32 size = _continuePoint->size() - _continuePoint->pos();
+	byte *data = new byte[size];
+	_continuePoint->read(data, size);
+	stream->write(data, size);
+	delete[] data;
 }
 
 Common::Error PegasusEngine::loadGameState(int slot) {

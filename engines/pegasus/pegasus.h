@@ -246,7 +246,8 @@ private:
 	bool loadFromStream(Common::ReadStream *stream);
 	bool writeToStream(Common::WriteStream *stream, int saveType);
 	void loadFromContinuePoint();
-	Common::ReadStream *_continuePoint;
+	void writeContinueStream(Common::WriteStream *stream);
+	Common::SeekableReadStream *_continuePoint;
 	bool _saveAllowed, _loadAllowed; // It's so nice that this was in the original code already :P
 	Common::Error showLoadDialog();
 	Common::Error showSaveDialog();
