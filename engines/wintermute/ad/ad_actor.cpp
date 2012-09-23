@@ -830,7 +830,7 @@ void AdActor::followPath() {
 
 	// are there points to follow?
 	if (_path->getCurrent() != NULL) {
-		_state = STATE_FOLLOWING_PATH;;
+		_state = STATE_FOLLOWING_PATH;
 		initLine(BasePoint(_posX, _posY), *_path->getCurrent());
 	} else {
 		if (_afterWalkDir != DI_NONE) {
@@ -1351,7 +1351,7 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 TDirection AdActor::angleToDirection(int angle) {
-	TDirection ret = DI_DOWN;;
+	TDirection ret = DI_DOWN;
 
 	if (angle > -112 && angle <= -67) {
 		ret = DI_UP;
