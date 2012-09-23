@@ -32,7 +32,11 @@
 
 namespace TeenAgent {
 
-Font::Font() : grid_color(0xd0), shadow_color(0), height(0), width_pack(0), data(0) {
+Font::Font() : gridColor(0xd0), shadowColor(0), height(0), widthPack(0), data(0) {
+}
+
+Font::~Font() {
+	delete[] data;
 }
 
 void Font::load(const Pack &pack, int id) {
@@ -59,7 +63,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 
 	int h = glyph[0], w = glyph[1];
 	if (surface == NULL || surface->pixels == NULL || y + h <= 0 || y >= screenHeight || x + w <= 0 || x >= screenWidth)
-		return w - width_pack;
+		return w - widthPack;
 
 	int i0 = 0, j0 = 0;
 	if (x < 0) {
@@ -82,7 +86,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 			case 0:
 				break;
 			case 1:
-				dst[j] = shadow_color;
+				dst[j] = shadowColor;
 				break;
 			case 2:
 				dst[j] = color;
@@ -93,29 +97,29 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 		}
 		dst += surface->pitch;
 	}
-	return w - width_pack;
+	return w - widthPack;
 }
 
-static uint find_in_str(const Common::String &str, char c, uint pos = 0) {
+static uint findInStr(const Common::String &str, char c, uint pos = 0) {
 	while (pos < str.size() && str[pos] != c) ++pos;
 	return pos;
 }
 
-uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool show_grid) {
+uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool showGrid) {
 	if (surface != NULL) {
-		uint max_w = render(NULL, 0, 0, str, false);
-		if (show_grid)
-			grid(surface, x - 4, y - 2, max_w + 8, 8 + 6, grid_color);
+		uint maxW = render(NULL, 0, 0, str, false);
+		if (showGrid)
+			grid(surface, x - 4, y - 2, maxW + 8, 8 + 6, gridColor);
 
 		uint i = 0, j;
 		do {
-			j = find_in_str(str, '\n', i);
+			j = findInStr(str, '\n', i);
 			Common::String line(str.c_str() + i, j - i);
 			debugC(0, kDebugFont, "line: %s", line.c_str());
 
 			if (y + (int)height >= 0) {
 				uint w = render(NULL, 0, 0, line, false);
-				int xp = x + (max_w - w) / 2;
+				int xp = x + (maxW - w) / 2;
 				for (uint k = 0; k < line.size(); ++k) {
 					xp += render(surface, xp, y, line[k], color);
 				}
@@ -125,25 +129,25 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 			y += height;
 			i = j + 1;
 		} while (i < str.size());
-		return max_w;
+		return maxW;
 	} else {
-		//surface == NULL;
-		uint w = 0, max_w = 0;
+		// surface == NULL;
+		uint w = 0, maxW = 0;
 		for (uint i = 0; i < str.size(); ++i) {
 			char c = str[i];
 			if (c == '\n') {
 				y += height;
-				if (w > max_w)
-					max_w = w;
+				if (w > maxW)
+					maxW = w;
 				w = 0;
 				continue;
 			}
 			w += render(NULL, 0, 0, c, color);
 		}
-		if (w > max_w)
-			max_w = w;
+		if (w > maxW)
+			maxW = w;
 
-		return max_w;
+		return maxW;
 	}
 }
 
@@ -156,10 +160,6 @@ void Font::grid(Graphics::Surface *surface, int x, int y, int w, int h, byte col
 		}
 		dst += surface->pitch;
 	}
-}
-
-Font::~Font() {
-	delete[] data;
 }
 
 } // End of namespace TeenAgent

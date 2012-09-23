@@ -129,7 +129,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	FilePack varia;
 	varia.open("varia.res");
 	font7.load(varia, 7);
-	font7.width_pack = 1;
+	font7.widthPack = 1;
 	font7.height = 11;
 	font8.load(varia, 8);
 	font8.height = 31;

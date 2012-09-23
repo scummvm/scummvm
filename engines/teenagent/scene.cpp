@@ -633,7 +633,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			_vm->_system->fillScreen(0);
 			Graphics::Surface *surface = _vm->_system->lockScreen();
 			if (current_event.lan == 8) {
-				_vm->res->font8.shadow_color = current_event.orientation;
+				_vm->res->font8.shadowColor = current_event.orientation;
 				_vm->res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
 			} else {
 				_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, textColorCredits);
