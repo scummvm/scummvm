@@ -29,11 +29,6 @@ public:
 
 	EdgePlugin();
 	virtual void initialize(const Graphics::PixelFormat &format);
-	virtual void deinitialize();
-	virtual void internScale(const uint8 *srcPtr, uint32 srcPitch,
-						   uint8 *dstPtr, uint32 dstPitch,
-						   const uint8 *oldSrcPtr, uint32 oldSrcPitch,
-						   int width, int height);
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
 	virtual uint getFactor() const { return _factor; }
@@ -42,6 +37,13 @@ public:
 	virtual uint extraPixels() const { return 1; }
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
+
+protected:
+
+	virtual void internScale(const uint8 *srcPtr, uint32 srcPitch,
+						   uint8 *dstPtr, uint32 dstPitch,
+						   const uint8 *oldSrcPtr, uint32 oldSrcPitch,
+						   int width, int height);
 
 private:
 

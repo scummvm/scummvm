@@ -31,30 +31,6 @@ NormalPlugin::NormalPlugin() {
 #endif
 }
 
-void NormalPlugin::initialize(const Graphics::PixelFormat &format) {
-	_format = format;
-}
-
-/**
- * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
- * source to the destination.
- */
-template<typename Pixel>
-void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height) {
-	// Spot the case when it can all be done in 1 hit
-	int BytesPerPixel = sizeof(Pixel);
-	if ((srcPitch == BytesPerPixel * (uint)width) && (dstPitch == BytesPerPixel * (uint)width)) {
-		memcpy(dstPtr, srcPtr, BytesPerPixel * width * height);
-		return;
-	}
-	while (height--) {
-		memcpy(dstPtr, srcPtr, BytesPerPixel * width);
-		srcPtr += srcPitch;
-		dstPtr += dstPitch;
-	}
-}
-
 #ifdef USE_SCALERS
 
 /**
@@ -190,14 +166,11 @@ void Normal4x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 }
 #endif
 
-void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
+void NormalPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 #ifdef USE_SCALERS
 	if (_format.bytesPerPixel == 2) {
 		switch (_factor) {
-		case 1:
-			Normal1x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-			break;
 		case 2:
 #ifdef USE_ARM_SCALER_ASM
 			Normal2xARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
@@ -215,9 +188,6 @@ void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 	} else {
 		assert(_format.bytesPerPixel == 4);
 		switch (_factor) {
-		case 1:
-			Normal1x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-			break;
 		case 2:
 			Normal2x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 			break;
@@ -228,12 +198,6 @@ void NormalPlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 			Normal4x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 			break;
 		}
-	}
-#else
-	if (_format.bytesPerPixel == 2) {
-		Normal1x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	} else {
-		Normal1x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	}
 #endif
 }

@@ -21,6 +21,45 @@
 
 #include "graphics/scalerplugin.h"
 
+void ScalerPluginObject::initialize(const Graphics::PixelFormat &format) {
+	_format = format;
+}
+
+namespace {
+/**
+ * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
+ * source to the destination.
+ */
+template<typename Pixel>
+void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+							int width, int height) {
+	// Spot the case when it can all be done in 1 hit
+	int BytesPerPixel = sizeof(Pixel);
+	if ((srcPitch == BytesPerPixel * (uint)width) && (dstPitch == BytesPerPixel * (uint)width)) {
+		memcpy(dstPtr, srcPtr, BytesPerPixel * width * height);
+		return;
+	}
+	while (height--) {
+		memcpy(dstPtr, srcPtr, BytesPerPixel * width);
+		srcPtr += srcPitch;
+		dstPtr += dstPitch;
+	}
+}
+} // End of anonymous namespace
+
+void ScalerPluginObject::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+	                           uint32 dstPitch, int width, int height, int x, int y) {
+	if (_factor == 1) {
+		if (_format.bytesPerPixel == 2) {
+			Normal1x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		} else {
+			Normal1x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		}
+	} else {
+		scaleIntern(srcPtr, srcPitch, dstPtr, dstPitch, width, height, x, y);
+	}
+}
+
 SourceScaler::SourceScaler() : _oldSrc(NULL), _enable(false) {
 }
 
@@ -40,7 +79,7 @@ void SourceScaler::setSource(const byte *src, uint pitch, int width, int height,
 	memset(_oldSrc, 0, size);
 }
 
-void SourceScaler::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+void SourceScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
                          uint32 dstPitch, int width, int height, int x, int y) {
 	if (!_enable) {
 		// Do not pass _oldSrc, do not update _oldSrc
