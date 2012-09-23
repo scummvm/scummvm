@@ -178,10 +178,8 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 			}
 
 			delete[] compBuffer;
-
-			return new Common::MemoryReadStream(data, uncompSize, DisposeAfterUse::YES);
 			delete file;
-			file = NULL;
+			return new Common::MemoryReadStream(data, uncompSize, DisposeAfterUse::YES);
 		} else {
 			file->seek(0, SEEK_SET);
 			return file;
