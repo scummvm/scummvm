@@ -214,7 +214,9 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
+#ifdef USE_ASPECT
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
+#endif
 		(f == OSystem::kFeatureFilteringMode) ||
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
@@ -229,9 +231,11 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 	case OSystem::kFeatureFullscreenMode:
 		setFullscreenMode(enable);
 		break;
+#ifdef USE_ASPECT
 	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
+#endif
 	case OSystem::kFeatureFilteringMode:
 		setFilteringMode(enable);
 		break;
