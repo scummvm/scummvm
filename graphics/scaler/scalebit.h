@@ -48,7 +48,6 @@ public:
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
-	virtual uint getFactor() const { return _factor; }
 	virtual bool canDrawCursor() const { return true; }
 	virtual uint extraPixels() const { return 2; }
 	virtual const char *getName() const;
