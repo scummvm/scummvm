@@ -24,6 +24,7 @@
 
 #include "base/plugins.h"
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 class ScalerPluginObject : public PluginObject {
 public:
@@ -160,6 +161,8 @@ public:
 	SourceScaler();
 	virtual ~SourceScaler();
 
+	virtual void deinitialize();
+
 	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding);
 
 	virtual void enableSource(bool enable) { _enable = enable; }
@@ -179,14 +182,14 @@ protected:
 	virtual void internScale(const uint8 *srcPtr, uint32 srcPitch,
 	                         uint8 *dstPtr, uint32 dstPitch,
 	                         const uint8 *oldSrcPtr, uint32 oldSrcPitch,
-	                         int width, int height) = 0;
-
+	                         int width, int height, const uint8 *buffer, uint32 bufferPitch) = 0;
 
 private:
 
 	int _padding;
 	bool _enable;
 	byte *_oldSrc;
+	Graphics::Surface _bufferedOutput;
 };
 
 /**

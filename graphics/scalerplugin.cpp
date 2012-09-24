@@ -68,6 +68,11 @@ SourceScaler::~SourceScaler() {
 		delete[] _oldSrc;
 }
 
+void SourceScaler::deinitialize() {
+	_bufferedOutput.free();
+	ScalerPluginObject::deinitialize();
+}
+
 void SourceScaler::setSource(const byte *src, uint pitch, int width, int height, int padding) {
 	if (_oldSrc != NULL)
 		delete[] _oldSrc;
@@ -77,6 +82,8 @@ void SourceScaler::setSource(const byte *src, uint pitch, int width, int height,
 	int size = (height + padding * 2) * pitch;
 	_oldSrc = new byte[size];
 	memset(_oldSrc, 0, size);
+
+	_bufferedOutput.create(width * _factor, height * _factor, _format);
 }
 
 void SourceScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
@@ -86,7 +93,8 @@ void SourceScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstP
 		internScale(srcPtr, srcPitch,
 		            dstPtr, dstPitch,
 		            NULL, 0,
-		            width, height);
+		            width, height,
+		            NULL, 0);
 		return;
 	}
 	int offset = (_padding + x) * _format.bytesPerPixel + (_padding + y) * srcPitch;
@@ -94,7 +102,17 @@ void SourceScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstP
 	internScale(srcPtr, srcPitch,
 	            dstPtr, dstPitch,
 	            _oldSrc + offset, srcPitch,
-	            width, height);
+	            width, height,
+	            (uint8 *)_bufferedOutput.getBasePtr(x * _factor, y * _factor), _bufferedOutput.pitch);
+
+	// Update the destination buffer
+	byte *buffer = (byte *)_bufferedOutput.getBasePtr(x * _factor, y * _factor);
+	for (uint i = 0; i < height * _factor; ++i) {
+		memcpy(buffer, dstPtr, width * _factor * _format.bytesPerPixel);
+		buffer += _bufferedOutput.pitch;
+		dstPtr += dstPitch;
+	}
+
 	// Update old src
 	byte *oldSrc = _oldSrc + offset;
 	while (height--) {
