@@ -132,6 +132,32 @@ void ObjectsManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSi
 	}
 }
 
+int ObjectsManager::get_offsetx(const byte *spriteData, int spriteIndex, bool isSize) {
+	const byte *v3 = spriteData + 3;
+	for (int i = spriteIndex; i; --i)
+		v3 += READ_LE_UINT16(v3) + 16;
+  
+	const byte *v5 = v3 + 8;
+	int result = READ_LE_UINT16(v5);
+	if (isSize)
+		result = READ_LE_UINT16(v5 + 4);
+
+	return result;
+}
+
+int ObjectsManager::get_offsety(const byte *spriteData, int spriteIndex, bool isSize) {
+	const byte *v3 = spriteData + 3;
+	for (int i = spriteIndex; i; --i)
+		v3 += READ_LE_UINT16(v3) + 16;
+  
+	const byte *v5 = v3 + 10;
+	int result = READ_LE_UINT16(v5);
+	if (isSize)
+		result = READ_LE_UINT16(v5 + 4);
+
+	return result;
+}
+
 int ObjectsManager::Get_Largeur(const byte *objectData, int idx) {
 	const byte *rectP = objectData + 3;
 	for (int i = idx; i; --i)
@@ -918,7 +944,126 @@ void ObjectsManager::DEF_CACHE(int idx) {
 }
 
 void ObjectsManager::CALCUL_SPRITE(int idx) {
-	warning("TODO: CALCUL_SPRITE");
+	int width, height;
+	__int16 v3;
+	__int16 v4;
+	__int16 v5;
+	__int16 v6;
+	__int16 v7;
+	__int16 v8;
+	int v9; 
+	int v10; 
+	int v11; 
+	int v12; 
+	int v13; 
+	__int16 v15;
+	__int16 v16;
+	int v17; 
+	__int16 v22;
+
+	Sprite[idx + 42].field2A = 0;
+	int v0 = Sprite[idx].field10;
+	if (v0 != 250) {
+		if (Sprite[idx].fieldE) {
+			v5 = get_offsetx(Sprite[idx].spriteData, v0, 1);
+			v22 = Sprite[idx].field12 + v5;
+			v4 = Sprite[idx].field12 + v5;
+			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].field10, 1);
+		} else {
+			v3 = get_offsetx(Sprite[idx].spriteData, v0, 0);
+			v22 = Sprite[idx].field12 + v3;
+			v4 = Sprite[idx].field12 + v3;
+			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].field10, 0);
+		}
+    
+		v9 = Sprite[idx].field14 + v6;
+		v7 = v9;
+		v8 = v9;
+		int zoomPercent = 0;
+		int reducePercent = 0;
+    
+		v9 = Sprite[idx].fieldC;
+		if ((signed __int16)v9 < 0) {
+			v9 = (signed __int16)v9;
+			if ((signed __int16)v9 < 0)
+				v9 = -v9;
+			reducePercent = v9;
+			if ((signed __int16)v9 > 95)
+				reducePercent = 95;
+		}
+		if (Sprite[idx].fieldC > 0)
+			zoomPercent = Sprite[idx].fieldC;
+    
+		if (zoomPercent) {
+			if (v4 >= 0) {
+				v22 = _vm->_graphicsManager.Reel_Zoom(v4, zoomPercent);
+			} else {
+				v10 = v4;
+        
+				if (v4 < 0)
+					v10 = -v4;
+				v4 = v10;
+				v22 = -_vm->_graphicsManager.Reel_Zoom((signed __int16)v10, zoomPercent);
+			}
+      
+			if (v8 >= 0) {
+				v7 = _vm->_graphicsManager.Reel_Zoom(v8, zoomPercent);
+			} else {
+				v11 = v4;
+				if (v4 < 0)
+					v11 = -v4;
+				v8 = v11;
+				v7 = -_vm->_graphicsManager.Reel_Zoom((signed __int16)v11, zoomPercent);
+			}
+		}
+		if (reducePercent) {
+			if (v4 >= 0) {
+				v22 = _vm->_graphicsManager.Reel_Reduc(v4, reducePercent);
+			} else {
+				v12 = v4;
+				if (v4 < 0)
+					v12 = -v4;
+				v4 = v12;
+				v22 = -_vm->_graphicsManager.Reel_Reduc((signed __int16)v12, reducePercent);
+			}
+			if (v8 >= 0) {
+				v7 = _vm->_graphicsManager.Reel_Reduc(v8, reducePercent);
+			} else {
+				v13 = v4;
+				if (v4 < 0)
+					v13 = -v4;
+				v7 = -_vm->_graphicsManager.Reel_Reduc((signed __int16)v13, reducePercent);
+			}
+		}
+    
+		v15 = Sprite[idx].field8 - v22;
+		v16 = Sprite[idx].fieldA - v7;
+		Sprite[idx].field2C = v15;
+		Sprite[idx].field2E = v16;
+		Sprite[idx].field2A = 1;
+		Sprite[idx].field34 = zoomPercent;
+		Sprite[idx].field36 = reducePercent;
+	
+		v17 = idx;
+		_vm->_globals.Liste[v17].field0 = 1;
+		_vm->_globals.Liste[v17].field2 = v15;
+		_vm->_globals.Liste[v17].field4 = v16;
+		width = Get_Largeur(Sprite[idx].spriteData, Sprite[idx].field10);
+		height = Get_Hauteur(Sprite[idx].spriteData, Sprite[idx].field10);
+
+		if (zoomPercent) {
+			width = _vm->_graphicsManager.Reel_Zoom(width, zoomPercent);
+			height = _vm->_graphicsManager.Reel_Zoom(height, zoomPercent);
+		}
+    
+		if (reducePercent) {
+			height = _vm->_graphicsManager.Reel_Reduc(height, reducePercent);
+			width = _vm->_graphicsManager.Reel_Reduc(width, reducePercent);
+		}
+    
+		Sprite[idx].field30 = width;
+		Sprite[idx].field32 = height;
+	}
 }
 
 void ObjectsManager::AvantTri(int a1, int a2, int a3) {
@@ -930,7 +1075,117 @@ void ObjectsManager::AFF_BOB_ANIM() {
 }
 
 void ObjectsManager::AFF_VBOB() {
-	warning("TODO: AFF_VBOB");
+	int width, height; 
+
+	int idx = 0;
+	do {
+		if (_vm->_globals.VBob[idx].field4 == 4) {
+			width = Get_Largeur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
+			height = Get_Hauteur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
+			
+			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN,
+				_vm->_globals.VBob[idx].field10, _vm->_globals.VBob[idx].field6,
+				_vm->_globals.VBob[idx].field8,
+				width, height);
+      
+			_vm->_graphicsManager.Restore_Mem(
+				_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.VBob[idx].field10,
+				_vm->_globals.VBob[idx].field6, _vm->_globals.VBob[idx].field8,
+				width, height);
+
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(
+				_vm->_globals.VBob[idx].field6, _vm->_globals.VBob[idx].field8,
+				_vm->_globals.VBob[idx].field6 + width,
+				height + _vm->_globals.VBob[idx].field8);
+      
+			if (PTRNUL != _vm->_globals.VBob[idx].field10)
+				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
+      
+			_vm->_globals.VBob[idx].field4 = 0;
+			_vm->_globals.VBob[idx].field10 = PTRNUL;
+			_vm->_globals.VBob[idx].field0 = PTRNUL;
+			_vm->_globals.VBob[idx].field6 = 0;
+			_vm->_globals.VBob[idx].field8 = 0;
+			_vm->_globals.VBob[idx].field14 = 0;
+			_vm->_globals.VBob[idx].field16 = 0;
+			_vm->_globals.VBob[idx].fieldA = 0;
+			_vm->_globals.VBob[idx].field18 = 0;
+			_vm->_globals.VBob[idx].field1C = PTRNUL;
+		}
+
+		if (_vm->_globals.VBob[idx].field4 == 3) {
+			width = Get_Largeur(_vm->_globals.VBob[idx].field1C, _vm->_globals.VBob[idx].field18);
+			height = Get_Hauteur(_vm->_globals.VBob[idx].field1C, _vm->_globals.VBob[idx].field18);
+      
+			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN,
+				_vm->_globals.VBob[idx].field10, _vm->_globals.VBob[idx].field14,
+				_vm->_globals.VBob[idx].field16,
+				width, height);
+      
+			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER,
+				_vm->_globals.VBob[idx].field10, _vm->_globals.VBob[idx].field14,
+				_vm->_globals.VBob[idx].field16,
+				width, height);
+      
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.VBob[idx].field14,
+				_vm->_globals.VBob[idx].field16, _vm->_globals.VBob[idx].field14 + width,
+				_vm->_globals.VBob[idx].field16 + height);
+      
+			_vm->_globals.VBob[idx].field4 = 1;
+			_vm->_globals.VBob[idx].field1C = _vm->_globals.VBob[idx].field0;
+      
+			if (PTRNUL != _vm->_globals.VBob[idx].field10)
+				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
+      
+			_vm->_globals.VBob[idx].field10 = PTRNUL;
+			_vm->_globals.VBob[idx].field14 = _vm->_globals.VBob[idx].field6;
+			_vm->_globals.VBob[idx].field16 = _vm->_globals.VBob[idx].field8;
+			_vm->_globals.VBob[idx].field18 = _vm->_globals.VBob[idx].fieldA;
+		}
+
+		if (_vm->_globals.VBob[idx].field4 == 1) {
+			width = Get_Largeur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
+			height = Get_Hauteur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
+      
+			if (PTRNUL != _vm->_globals.VBob[idx].field10)
+				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
+      
+			byte *surface = _vm->_globals.dos_malloc2(height * width);
+			_vm->_globals.VBob[idx].field10 = surface;
+      
+			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_SCREEN, surface, 
+				_vm->_globals.VBob[idx].field6, _vm->_globals.VBob[idx].field8, width, height);
+      
+			byte *v10 = _vm->_globals.VBob[idx].field0;
+			if (*v10 == 78) {
+				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_SCREEN, v10, 
+					_vm->_globals.VBob[idx].field6 + 300,
+					_vm->_globals.VBob[idx].field8 + 300,
+					_vm->_globals.VBob[idx].fieldA,
+					0, 0, 0);
+        
+				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER,
+					_vm->_globals.VBob[idx].field0,
+					_vm->_globals.VBob[idx].field6 + 300, _vm->_globals.VBob[idx].field8 + 300,
+					_vm->_globals.VBob[idx].fieldA,
+					0, 0, 0);
+			} else {
+				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER,
+					v10, _vm->_globals.VBob[idx].field6 + 300, _vm->_globals.VBob[idx].field8 + 300,
+					_vm->_globals.VBob[idx].fieldA);
+        
+				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_SCREEN, _vm->_globals.VBob[idx].field0,
+					_vm->_globals.VBob[idx].field6 + 300, _vm->_globals.VBob[idx].field8 + 300,
+					_vm->_globals.VBob[idx].fieldA);
+			}
+      
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.VBob[idx].field6,
+				_vm->_globals.VBob[idx].field8, _vm->_globals.VBob[idx].field6 + width,
+				_vm->_globals.VBob[idx].field8 + height);
+			_vm->_globals.VBob[idx].field4 = 2;
+		}
+		++idx;
+	} while ( idx <= 29 );
 }
 
 void ObjectsManager::BOITE(int a1, int a2, int a3, int a4, int a5) {

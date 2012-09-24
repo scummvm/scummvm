@@ -32,8 +32,13 @@ namespace Hopkins {
 struct SpriteItem {
 	int field0;
 	byte *spriteData;
+	int field8;
+	int fieldA;
+	int fieldC;
 	int fieldE;
 	int field10;
+	int field12;
+	int field14;
 	int field28;
 	int field2A;
 	int field2C;
@@ -82,6 +87,8 @@ public:
 
 	byte *CHARGE_SPRITE(const Common::String &file);
 	void set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize);
+	int get_offsetx(const byte *spriteData, int spriteIndex, bool isSize);
+	int get_offsety(const byte *spriteData, int spriteIndex, bool isSize);
 	void AFF_SPRITES();
 
 	int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);

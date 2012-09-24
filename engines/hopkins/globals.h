@@ -132,7 +132,11 @@ struct VBobItem {
 	int field8;
 	int fieldA;
 	int fieldC;
+	int fieldE;
 	byte *field10;
+	int field14;
+	int field16;
+	int field18;
 	byte *field1C;
 };
 
