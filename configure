@@ -3981,9 +3981,6 @@ for engine in $_engines; do
 				isbuilt=STATIC_PLUGIN
 			fi
 		fi
-
-		# Prepare the information to be shown
-		prepare_engine_build_strings $engine
 	else
 		# It's a subengine, just say yes or no
 		if test "`get_engine_build $engine`" = "no" ; then
@@ -3999,6 +3996,14 @@ for engine in $_engines; do
 		add_line_to_config_mk "# $defname"
 	else
 		add_line_to_config_mk "$defname = $isbuilt"
+	fi
+done
+
+# Prepare the information to be shown
+for engine in $_engines; do
+	if test "`get_engine_sub $engine`" = "no" ; then
+		# It's a main engine
+		prepare_engine_build_strings $engine
 	fi
 done
 
