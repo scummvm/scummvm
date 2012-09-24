@@ -169,8 +169,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 
 #endif
-	// HACK: just pick first scaler plugin
-	_normalPlugin = &_scalerPlugins.front()->get<ScalerPluginObject>();
+	_normalPlugin = &ScalerMan.findScalerPlugin("normal")->get<ScalerPluginObject>();
+	assert(_normalPlugin);
 	_scalerPlugin = NULL;
 	_scalerIndex = 0;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
