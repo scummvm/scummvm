@@ -277,11 +277,15 @@ AsScene2609Water::AsScene2609Water(NeverhoodEngine *vm)
 	setDoDeltaX(1);
 	createSurface1(0x9C210C90, 1200);
 	setClipRect(260, 260, 400, 368);
-	_vm->_soundMan->addSound(0xDC2769B0, true);
+	_vm->_soundMan->addSound(0x08526C36, 0xDC2769B0);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2609Water::handleMessage);
 	if (getGlobalVar(0x4E0BE910))
 		sendMessage(this, 0x2002, 0);
+}
+
+AsScene2609Water::~AsScene2609Water() {
+	_vm->_soundMan->deleteSoundGroup(0x08526C36);
 }
 
 uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
