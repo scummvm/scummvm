@@ -359,6 +359,10 @@ void VideoDecoder::stop() {
 
 	// Also reset the pause state.
 	_pauseLevel = 0;
+
+	// Reset the pause state of the tracks too
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		(*it)->pause(false);
 }
 
 Audio::Timestamp VideoDecoder::getDuration() const {
