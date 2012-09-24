@@ -42,7 +42,7 @@ protected:
 	virtual void internScale(const uint8 *srcPtr, uint32 srcPitch,
 						   uint8 *dstPtr, uint32 dstPitch,
 						   const uint8 *oldSrcPtr, uint32 oldSrcPitch,
-						   int width, int height);
+						   int width, int height, const uint8 *buffer, uint32 bufferPitch);
 
 private:
 
@@ -153,7 +153,8 @@ private:
 		int srcPitch, int dstPitch,
 		int interpolate_2x,
 		bool haveOldSrc,
-		const uint8 *oldSrc, int oldSrcPitch);
+		const uint8 *oldSrc, int oldSrcPitch,
+		const uint8 *buffer, int bufferPitch);
 
 	/**
 	 * Perform edge detection, draw the new 3x pixels
@@ -163,7 +164,8 @@ private:
 		int w, int h, int w_new, int h_new,
 		int srcPitch, int dstPitch,
 		bool haveOldSrc,
-		const uint8* oldSrc, int oldPitch);
+		const uint8* oldSrc, int oldPitch,
+		const uint8 *buffer, int bufferPitch);
 
 	int16 _rgbTable[65536][3];       ///< table lookup for RGB
 	int16 _greyscaleTable[3][65536]; ///< greyscale tables

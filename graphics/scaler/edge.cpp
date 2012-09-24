@@ -3258,26 +3258,25 @@ int checkUnchangedPixels(const Pixel *old_src_ptr, const Pixel *pixels, int w) {
 /* Draw unchanged pixel grid, 3x */
 /* old_dptr starts in top left of grid, dptr in center */
 template<typename Pixel>
-void draw_unchanged_grid_3x(Pixel *dptr, int dstPitch,
-                            Pixel *old_dptr, int old_dst_inc) {
-	Pixel *sp;
+void drawUnchangedGrid3x(byte *dptr, int dstPitch,
+                         const byte *old_dptr, int old_dst_inc) {
+	const Pixel *sp;
 	Pixel *dp;
-	uint8 *dptr8 = (uint8 *) dptr;
 
-	sp = old_dptr;
-	dp = (Pixel *)(dptr8 - dstPitch) - 1;
+	sp = (const Pixel *)old_dptr;
+	dp = (Pixel *)(dptr - dstPitch) - 1;
 	*dp++ = *sp++;
 	*dp++ = *sp++;
 	*dp = *sp;
 
-	sp = old_dptr + old_dst_inc;
-	dp = dptr - 1;
+	sp = (const Pixel *)(old_dptr + old_dst_inc);
+	dp = (Pixel *)dptr - 1;
 	*dp++ = *sp++;
 	*dp++ = *sp++;
 	*dp = *sp;
 
-	sp = old_dptr + old_dst_inc + old_dst_inc;
-	dp = (Pixel *)(dptr8 + dstPitch) - 1;
+	sp = (const Pixel *)(old_dptr + old_dst_inc + old_dst_inc);
+	dp = (Pixel *)(dptr + dstPitch) - 1;
 	*dp++ = *sp++;
 	*dp++ = *sp++;
 	*dp = *sp;
@@ -3287,19 +3286,18 @@ void draw_unchanged_grid_3x(Pixel *dptr, int dstPitch,
 
 /* Draw unchanged pixel grid, 2x */
 template<typename Pixel>
-void draw_unchanged_grid_2x(Pixel *dptr, int dstPitch,
-                            Pixel *old_dptr, int old_dst_inc) {
-	Pixel *sp;
+void drawUnchangedGrid2x(byte *dptr, int dstPitch,
+                         const byte *old_dptr, int old_dst_inc) {
+	const Pixel *sp;
 	Pixel *dp;
-	uint8 *dptr8 = (uint8 *) dptr;
 
-	sp = old_dptr;
-	dp = dptr;
+	sp = (const Pixel *)old_dptr;
+	dp = (Pixel *)dptr;
 	*dp++ = *sp++;
 	*dp = *sp;
 
-	sp = old_dptr + old_dst_inc;
-	dp = (Pixel *)(dptr8 + dstPitch);
+	sp = (const Pixel *)(old_dptr + old_dst_inc);
+	dp = (Pixel *)(dptr + dstPitch);
 	*dp++ = *sp++;
 	*dp = *sp;
 }
@@ -3310,12 +3308,14 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
                                  int w, int h, int w_new, int h_new,
                                  int srcPitch, int dstPitch,
                                  bool haveOldSrc,
-								 const uint8* oldSrc, int oldPitch) {
+                                 const uint8* oldSrc, int oldPitch,
+                                 const uint8 *buffer, int bufferPitch) {
 	int x, y;
 	const uint8 *sptr8 = src;
 	uint8 *dptr8 = dst + dstPitch + sizeof(Pixel);
 	const Pixel *sptr16;
 	const Pixel *oldSptr;
+	const Pixel *oldDptr;
 	Pixel *dptr16;
 	int16 *bplane;
 	int8 sim[8];
@@ -3323,13 +3323,15 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 	int32 angle;
 	int16 *diffs;
 	int dstPitch3 = dstPitch * 3;
+	int bufferPitch3 = bufferPitch * 3;
 
-	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch3, oldSrc += oldPitch) {
+	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch3, oldSrc += oldPitch, buffer += bufferPitch3) {
 		for (x = 0,
 		        sptr16 = (const Pixel *) sptr8,
 		        oldSptr = (const Pixel *) oldSrc,
+		        oldDptr = (const Pixel *) buffer,
 		        dptr16 = (Pixel *) dptr8;
-		        x < w; x++, sptr16++, dptr16 += 3, oldSptr++) {
+		        x < w; x++, sptr16++, dptr16 += 3, oldDptr += 3, oldSptr++) {
 			const Pixel *sptr2, *addr3;
 			Pixel pixels[9];
 			char edge_type;
@@ -3349,8 +3351,7 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 						x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
 #endif
 						checkUnchangedPixels(oldSptr, pixels, oldPitch / sizeof(Pixel))) {
-					//draw_unchanged_grid_3x(dptr16, dstPitch, old_dptr16,
-					//					   old_dst_inc);
+					drawUnchangedGrid3x<Pixel>((byte *)dptr16, dstPitch, (const byte *)oldDptr, bufferPitch);
 
 #if DEBUG_REFRESH_RANDOM_XOR
 					*(dptr16 + 1) = 0;
@@ -3390,12 +3391,14 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
                                  int srcPitch, int dstPitch,
                                  int interpolate_2x,
                                  bool haveOldSrc,
-								 const uint8 *oldSrc, int oldSrcPitch) {
+                                 const uint8 *oldSrc, int oldSrcPitch,
+                                 const uint8 *buffer, int bufferPitch) {
 	int x, y;
 	const uint8 *sptr8 = src;
 	uint8 *dptr8 = dst;
 	const Pixel *sptr16;
 	const Pixel *oldSptr;
+	const Pixel *oldDptr;
 	Pixel *dptr16;
 	int16 *bplane;
 	int8 sim[8];
@@ -3403,13 +3406,15 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 	int32 angle;
 	int16 *diffs;
 	int dstPitch2 = dstPitch << 1;
+	int bufferPitch2 = bufferPitch * 2;
 
-	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch2, oldSrc += oldSrcPitch) {
+	for (y = 0; y < h; y++, sptr8 += srcPitch, dptr8 += dstPitch2, oldSrc += oldSrcPitch, buffer += bufferPitch2) {
 		for (x = 0,
 		        sptr16 = (const Pixel *) sptr8,
 		        dptr16 = (Pixel *) dptr8,
-				oldSptr = (const Pixel *) oldSrc;
-		        x < w; x++, sptr16++, dptr16 += 2, oldSptr++) {
+				oldSptr = (const Pixel *) oldSrc,
+				oldDptr = (const Pixel *) buffer;
+		        x < w; x++, sptr16++, dptr16 += 2, oldDptr += 2, oldSptr++) {
 			const Pixel *sptr2, *addr3;
 			Pixel pixels[9];
 			char edge_type;
@@ -3429,8 +3434,7 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 						x > 0 && x < w - 1 && y > 0 && y < h - 1 &&
 #endif
 						checkUnchangedPixels<Pixel>(oldSptr, pixels, oldSrcPitch / sizeof(Pixel))) {
-					//draw_unchanged_grid_2x(dptr16, dstPitch, old_dptr16,
-					//					   old_dst_inc);
+					drawUnchangedGrid2x<Pixel>((byte *)dptr16, dstPitch, (const byte *)oldDptr, bufferPitch);
 
 #if DEBUG_REFRESH_RANDOM_XOR
 					*(dptr16 + 1) = 0;
@@ -3561,31 +3565,31 @@ void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 #endif
 
 void EdgePlugin::internScale(const uint8 *srcPtr, uint32 srcPitch,
-                       uint8 *dstPtr, uint32 dstPitch, const uint8 *oldSrcPtr, uint32 oldSrcPitch, int width, int height) {
+                       uint8 *dstPtr, uint32 dstPitch, const uint8 *oldSrcPtr, uint32 oldSrcPitch, int width, int height, const uint8 *buffer, uint32 bufferPitch) {
 	bool enable = oldSrcPtr != NULL;
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {
 			if (_format.gLoss == 2)
-				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch);
+				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch);
+				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		} else {
 			if (_format.gLoss == 2)
-				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch);
+				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch);
+				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		}
 	} else {
 		if (_factor == 2) {
 			if (_format.aLoss == 0)
-				antiAliasPass2x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch);
+				antiAliasPass2x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch);
+				antiAliasPass2x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		} else {
 			if (_format.aLoss == 0)
-				antiAliasPass3x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch);
+				antiAliasPass3x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch);
+				antiAliasPass3x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		}
 	}
 }

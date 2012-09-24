@@ -123,7 +123,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	_originalBitsPerPixel(0),
 #endif
-	_screen(0), _tmpscreen(0), _destbuffer(0),
+	_screen(0), _tmpscreen(0),
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_useOldSrc(false),
@@ -731,17 +731,6 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 			_scalerPlugin->enableSource(true);
 			_scalerPlugin->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
 										_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
-			if (!_destbuffer) {
-				_destbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth * _videoMode.scaleFactor,
-									_videoMode.screenHeight * _videoMode.scaleFactor,
-									16,
-									_hwScreen->format->Rmask,
-									_hwScreen->format->Gmask,
-									_hwScreen->format->Bmask,
-									_hwScreen->format->Amask);
-				if (_destbuffer == NULL)
-					error("allocating _destbuffer failed");
-			}
 		}
 	}
 
@@ -1029,17 +1018,6 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		// Create surface containing previous frame's data to pass to scaler
 		_scalerPlugin->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
 									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
-
-		// Create surface containing the raw output from the scaler
-		_destbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth * _videoMode.scaleFactor,
-							_videoMode.screenHeight * _videoMode.scaleFactor,
-							16,
-							_hwScreen->format->Rmask,
-							_hwScreen->format->Gmask,
-							_hwScreen->format->Bmask,
-							_hwScreen->format->Amask);
-		if (_destbuffer == NULL)
-			error("allocating _destbuffer failed");
 	}
 
 	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth, _videoMode.overlayHeight,
@@ -1086,11 +1064,6 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 	if (_tmpscreen) {
 		SDL_FreeSurface(_tmpscreen);
 		_tmpscreen = NULL;
-	}
-
-	if (_destbuffer) {
-		SDL_FreeSurface(_destbuffer);
-		_destbuffer = NULL;
 	}
 
 	if (_tmpscreen2) {
@@ -1143,10 +1116,6 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 	if (_tmpscreen) {
 		SDL_FreeSurface(_tmpscreen);
 		_tmpscreen = NULL;
-	}
-	if (_destbuffer) {
-		SDL_FreeSurface(_destbuffer);
-        _destbuffer = NULL;
 	}
 	if (_tmpscreen2) {
 		SDL_FreeSurface(_tmpscreen2);
@@ -1300,9 +1269,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 		SDL_LockSurface(srcSurf);
 		SDL_LockSurface(_hwScreen);
-		if (_useOldSrc && !_overlayVisible) {
-			SDL_LockSurface(_destbuffer);
-		}
 
 		srcPitch = srcSurf->pitch;
 		dstPitch = _hwScreen->pitch;
@@ -1334,36 +1300,14 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
-				if (_useOldSrc && !_overlayVisible) {
-					// scale into _destbuffer instead of _hwScreen to avoid AR problems
-					_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-						(byte *)_destbuffer->pixels + dst_x * 2 + orig_dst_y * scale1 * _destbuffer->pitch, _destbuffer->pitch, r->w, dst_h, r->x, r->y);
-				} else {
-					_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-						(byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
-				}
+				_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+					(byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
 			}
 
 			r->x = dst_x;
 			r->y = dst_y;
 			r->w = dst_w * scale1;
 			r->h = dst_h * scale1;
-
-#ifdef USE_SCALERS
-			if (_useOldSrc && !_overlayVisible) {
-				// Copy _destbuffer back into _hwScreen to be AR corrected
-				int y = orig_dst_y * scale1;
-				int h = r->h;
-				int w = r->w;
-				byte *dest = (byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch;
-				byte *src = (byte *)_destbuffer->pixels + dst_x * 2 + y * _destbuffer->pitch;
-				while (h--) {
-					memcpy(dest, src, w*2);
-					dest += dstPitch;
-					src += _destbuffer->pitch;
-				}
-			}
-#endif
 
 #ifdef USE_ASPECT
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible) {
@@ -1376,10 +1320,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		}
 		SDL_UnlockSurface(srcSurf);
 		SDL_UnlockSurface(_hwScreen);
-
-		if (_useOldSrc && !_overlayVisible) {
-			SDL_UnlockSurface(_destbuffer);
-		}
 
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
@@ -1839,15 +1779,8 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
 
-	// The plugin won't write anything if _useOldSrc
-	if (_useOldSrc)
-		_scalerPlugin->enableSource(false);
-
 	_scalerPlugin->scale((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
-
-	if (_useOldSrc)
-		_scalerPlugin->enableSource(true);
 
 #ifdef USE_ASPECT
 	if (_videoMode.aspectRatioCorrection)
