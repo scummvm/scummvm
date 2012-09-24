@@ -83,11 +83,11 @@ struct SceneEvent {
 	byte lan;
 	union {
 		byte music;
-		byte first_frame;
+		byte firstFrame;
 	};
 	union {
 		byte sound;
-		byte last_frame;
+		byte lastFrame;
 	};
 	byte object;
 
@@ -131,7 +131,7 @@ public:
 	bool intro;
 
 	void init(int id, const Common::Point &pos);
-	bool render(bool tick_game, bool tick_mark, uint32 message_delta);
+	bool render(bool tickGame, bool tickMark, uint32 messageDelta);
 	int getId() const { return _id; }
 
 	void warp(const Common::Point &point, byte orientation = 0);
@@ -152,15 +152,15 @@ public:
 	byte *getOns(int id);
 	byte *getLans(int id);
 
-	bool eventRunning() const { return !current_event.empty(); }
+	bool eventRunning() const { return !currentEvent.empty(); }
 
 	Walkbox *getWalkbox(byte id) { return &walkboxes[_id - 1][id]; }
-	Object *getObject(int id, int scene_id = 0);
+	Object *getObject(int id, int sceneId = 0);
 	Object *findObject(const Common::Point &point);
 
 	void loadObjectData();
 	Animation *getAnimation(byte slot);
-	inline Animation *getActorAnimation() { return &actor_animation; }
+	inline Animation *getActorAnimation() { return &actorAnimation; }
 	inline const Common::String &getMessage() const { return message; }
 	void setPalette(unsigned mul);
 	int lookupZoom(uint y) const;
@@ -176,12 +176,12 @@ private:
 	void paletteEffect(byte step);
 	byte findFade() const;
 
-	Common::Point messagePosition(const Common::String &str, Common::Point position);
+	Common::Point messagePosition(const Common::String &str, Common::Point pos);
 	uint messageDuration(const Common::String &str);
 
 	bool processEventQueue();
 	inline bool nextEvent() {
-		current_event.clear();
+		currentEvent.clear();
 		return processEventQueue();
 	}
 	void clearMessage();
@@ -191,19 +191,19 @@ private:
 	int _id;
 	Graphics::Surface background;
 	SurfaceList on;
-	bool on_enabled;
+	bool onEnabled;
 	Surface *ons;
-	uint32 ons_count;
-	Animation actor_animation, animation[4], custom_animation[4];
-	Common::Rect actor_animation_position, animation_position[4];
+	uint32 onsCount;
+	Animation actorAnimation, animation[4], customAnimation[4];
+	Common::Rect actorAnimationPosition, animationPosition[4];
 
-	Actor teenagent, teenagent_idle;
+	Actor teenagent, teenagentIdle;
 	Common::Point position;
 
 	typedef Common::List<Common::Point> Path;
 	Path path;
 	uint8 orientation;
-	bool actor_talking;
+	bool actorTalking;
 
 	bool findPath(Path &p, const Common::Point &src, const Common::Point &dst) const;
 
@@ -212,24 +212,24 @@ private:
 	Common::Array<Common::Array<FadeType> > fades;
 
 	Common::String message;
-	Common::Point message_pos;
-	byte message_color;
-	uint message_timer;
-	byte message_first_frame;
-	byte message_last_frame;
-	Animation *message_animation;
+	Common::Point messagePos;
+	byte messageColor;
+	uint messageTimer;
+	byte messageFirstFrame;
+	byte messageLastFrame;
+	Animation *messageAnimation;
 
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;
-	SceneEvent current_event;
-	bool hide_actor;
+	SceneEvent currentEvent;
+	bool hideActor;
 
-	uint16 callback, callback_timer;
+	uint16 callback, callbackTimer;
 
-	int _fade_timer;
+	int _fadeTimer;
 	byte _fadeOld;
 
-	uint _idle_timer;
+	uint _idleTimer;
 
 	struct Sound {
 		byte id, delay;
@@ -254,7 +254,7 @@ private:
 				feature[i] = true;
 			}
 		}
-	} debug_features;
+	} debugFeatures;
 };
 
 } // End of namespace TeenAgent

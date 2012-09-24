@@ -755,8 +755,8 @@ void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint1
 	event.color = color;
 	event.dst.x = x;
 	event.dst.y = y;
-	event.first_frame = firstFrame;
-	event.last_frame = lastFrame;
+	event.firstFrame = firstFrame;
+	event.lastFrame = lastFrame;
 
 	scene->push(event);
 }
@@ -766,8 +766,8 @@ void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 f
 	event.message = parseMessage(addr);
 	event.slot = slot + 1;
 	event.color = color;
-	event.first_frame = firstFrame;
-	event.last_frame = lastFrame;
+	event.firstFrame = firstFrame;
+	event.lastFrame = lastFrame;
 
 	scene->push(event);
 }
