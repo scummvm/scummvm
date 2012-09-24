@@ -149,7 +149,7 @@ private:
 	 */
 	template<typename ColorMask, typename Pixel>
 	void antiAliasPass2x(const uint8 *src, uint8 *dst,
-		int w, int h, int w_new, int h_new,
+		int w, int h,
 		int srcPitch, int dstPitch,
 		int interpolate_2x,
 		bool haveOldSrc,
@@ -161,7 +161,7 @@ private:
 	 */
 	template<typename ColorMask, typename Pixel>
 	void antiAliasPass3x(const uint8 *src, uint8 *dst,
-		int w, int h, int w_new, int h_new,
+		int w, int h,
 		int srcPitch, int dstPitch,
 		bool haveOldSrc,
 		const uint8* oldSrc, int oldPitch,

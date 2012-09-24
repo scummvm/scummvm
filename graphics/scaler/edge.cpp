@@ -3305,7 +3305,7 @@ void drawUnchangedGrid2x(byte *dptr, int dstPitch,
 
 template<typename ColorMask, typename Pixel>
 void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
-                                 int w, int h, int w_new, int h_new,
+                                 int w, int h,
                                  int srcPitch, int dstPitch,
                                  bool haveOldSrc,
                                  const uint8* oldSrc, int oldPitch,
@@ -3387,7 +3387,7 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 
 template<typename ColorMask, typename Pixel>
 void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
-                                 int w, int h, int w_new, int h_new,
+                                 int w, int h,
                                  int srcPitch, int dstPitch,
                                  int interpolate_2x,
                                  bool haveOldSrc,
@@ -3570,26 +3570,26 @@ void EdgePlugin::internScale(const uint8 *srcPtr, uint32 srcPitch,
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {
 			if (_format.gLoss == 2)
-				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		} else {
 			if (_format.gLoss == 2)
-				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		}
 	} else {
 		if (_factor == 2) {
 			if (_format.aLoss == 0)
-				antiAliasPass2x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass2x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 2 * width, 2 * height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass2x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		} else {
 			if (_format.aLoss == 0)
-				antiAliasPass3x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass3x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, 3 * width, 3 * height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass3x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		}
 	}
 }
