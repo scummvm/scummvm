@@ -42,12 +42,10 @@ static const KlaymanIdleTableItem klaymanTable2[] = {
 	{1, &Klayman::sub41FEB0}
 }; 
 
-#if 0
 static const KlaymanIdleTableItem klaymanTable3[] = {
 	{1, &Klayman::sub421430},
 	{1, &Klayman::sub421480}
 }; 
-#endif
 
 static const KlaymanIdleTableItem klaymanTable4[] = {
 	{1, &Klayman::sub41FDA0},
@@ -59,10 +57,10 @@ static const KlaymanIdleTableItem klaymanTable4[] = {
 
 Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
 	: AnimatedSprite(vm, objectPriority), _soundResource1(vm), _soundResource2(vm),
-	_counterMax(0), _counter(0), _isMoveObjectRequested(false), _counter3Max(0), _isWalkingOpenDoorNotified(false), _counter1(0),
+	_idleCounterMax(0), _idleCounter(0), _isMoveObjectRequested(false), _blinkCounterMax(0), _isWalkingOpenDoorNotified(false), _countdown1(0),
 	_tapesToInsert(0), /*_field118(0), */_status2(0), _acceptInput(true), _attachedSprite(NULL), _isWalking(false),
 	_status3(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false), _flagF6(false), _isLeverDown(false),
-	_flagFA(false), _ladderStatus(0), _pathPoints(NULL), _resourceHandle(-1), _soundFlag(false) {
+	_flagFA(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false) {
 	
 	// TODO DirtySurface
 	createSurface(surfacePriority, 320, 200);
@@ -105,9 +103,8 @@ void Klayman::setKlaymanIdleTable(const KlaymanIdleTableItem *table, int tableCo
 	_idleTable = table;
 	_idleTableCount = tableCount;
 	_idleTableMaxValue = 0;
-	for (int i = 0; i < tableCount; i++) {
+	for (int i = 0; i < tableCount; i++)
 		_idleTableMaxValue += table[i].value;
-	}
 }
 
 void Klayman::setKlaymanIdleTable1() {
@@ -119,7 +116,7 @@ void Klayman::setKlaymanIdleTable2() {
 }
 
 void Klayman::setKlaymanIdleTable3() {
-	// TODO setKlaymanIdleTable(klaymanTable3, ARRAYSIZE(klaymanTable3));
+	setKlaymanIdleTable(klaymanTable3, ARRAYSIZE(klaymanTable3));
 }
 
 void Klayman::stDoIdlePickEar() {
@@ -276,38 +273,35 @@ void Klayman::sub421350() {
 	_status2 = 0;
 	_acceptInput = true;
 	startAnimation(0x582EC138, 0, -1);
-	_counter = 0;
+	_idleCounter = 0;
 	SetSpriteUpdate(NULL);
 	SetUpdateHandler(&Klayman::update41D1C0);
 	SetMessageHandler(&Klayman::handleMessage41D360);
-	_counter3 = 0;
-	_counterMax = 8;
-	_counter3Max = _vm->_rnd->getRandomNumber(64 - 1) + 24;
+	_blinkCounter = 0;
+	_idleCounterMax = 8;
+	_blinkCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
 
 void Klayman::update41D1C0() {
 	update();
-	_counter++;
-	if (_counter >= _counterMax) {
-		_counter = 0;
+	_idleCounter++;
+	if (_idleCounter >= _idleCounterMax) {
+		_idleCounter = 0;
 		if (_idleTable) {
 			int randomValue = _vm->_rnd->getRandomNumber(_idleTableMaxValue);
 			for (int i = 0; i < _idleTableCount; i++) {
-				if (randomValue < _idleTable[_idleTableCount].value) {
-					(this->*(_idleTable[_idleTableCount].callback))();
-					_counterMax = _vm->_rnd->getRandomNumber(128) + 24;
+				if (randomValue < _idleTable[i].value) {
+					(this->*(_idleTable[i].callback))();
+					_idleCounterMax = _vm->_rnd->getRandomNumber(128 - 1) + 24;
 					break;
 				}
-				randomValue -= _idleTable[_idleTableCount].value;
+				randomValue -= _idleTable[i].value;
 			}
 		}
-	} else {
-		_counter3++;
-		if (_counter3 >= _counter3Max) {
-			_counter3 = 0;
-			_counter3Max = _vm->_rnd->getRandomNumber(64) + 24;
-			stIdleSitBlink();
-		}
+	} else if (++_blinkCounter >= _blinkCounterMax) {
+		_blinkCounter = 0;
+		_blinkCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
+		stIdleSitBlink();
 	}
 }
 
@@ -449,24 +443,13 @@ void Klayman::sub41CE70() {
 }
 
 void Klayman::startIdleAnimation(uint32 fileHash, AnimationCb callback) {
-	_resourceHandle = _vm->_res->useResource(fileHash);
-	if (_resourceHandle != -1) {
-		// TODO _vm->_res->moveToFront(_resourceHandle);
-		NextState(callback);
-		SetUpdateHandler(&Klayman::upIdleAnimation);
-	}
+	debug("startIdleAnimation(%08X)", fileHash);
+	NextState(callback);
+	SetUpdateHandler(&Klayman::upIdleAnimation);
 }
 
 void Klayman::upIdleAnimation() {
-	// TODO Check if this odd stuff is needed or just some cache optimization
-	if (_vm->_res->isResourceDataValid(_resourceHandle)) {
-		gotoNextStateExt();
-		// TODO _vm->_res->moveToBack(_resourceHandle);
-		_vm->_res->unuseResource(_resourceHandle);
-		_resourceHandle = -1;
-	} else {
-		// TODO _vm->_res->moveToFront(_resourceHandle);
-	}
+	gotoNextStateExt();
 	update();
 }
 
@@ -518,9 +501,9 @@ void Klayman::stTryStandIdle() {
 		_status2 = 1;
 		_acceptInput = true;
 		startAnimation(0x5420E254, 0, -1);
-		_counter = 0;
-		_counter3 = 0;
-		_counter3Max = _vm->_rnd->getRandomNumber(64) + 24;
+		_idleCounter = 0;
+		_blinkCounter = 0;
+		_blinkCounterMax = _vm->_rnd->getRandomNumber(64) + 24;
 		SetUpdateHandler(&Klayman::update41D0F0);
 		SetMessageHandler(&Klayman::handleMessage41D360);
 		SetSpriteUpdate(NULL);
@@ -529,22 +512,22 @@ void Klayman::stTryStandIdle() {
 
 void Klayman::update41D0F0() {
 	update();
-	if (++_counter >= 720) {
-		_counter = 0;
+	if (++_idleCounter >= 720) {
+		_idleCounter = 0;
 		if (_idleTable) {
-			int randomValue = _vm->_rnd->getRandomNumber(_idleTableMaxValue);
+			int randomValue = _vm->_rnd->getRandomNumber(_idleTableMaxValue - 1);
 			for (int i = 0; i < _idleTableCount; i++) {
-				if (randomValue < _idleTable[_idleTableCount].value) {
-					(this->*(_idleTable[_idleTableCount].callback))();
+				if (randomValue < _idleTable[i].value) {
+					(this->*(_idleTable[i].callback))();
 					break;
 				}
-				randomValue -= _idleTable[_idleTableCount].value;
+				randomValue -= _idleTable[i].value;
 			}
 		}
-	} else if (++_counter3 >= _counter3Max) {
-		_counter3 = 0;
-		_counter3Max = _vm->_rnd->getRandomNumber(64) + 24;
-		stStand();
+	} else if (++_blinkCounter >= _blinkCounterMax) {
+		_blinkCounter = 0;
+		_blinkCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
+		stIdleBlink();
 	}
 }
 
@@ -583,7 +566,7 @@ uint32 Klayman::handleMessage41D360(int messageNum, const MessageParam &param, E
 	return messageResult;
 }
 
-void Klayman::stStand() {
+void Klayman::stIdleBlink() {
 	_status2 = 1;
 	_acceptInput = true;
 	startAnimation(0x5900C41E, 0, -1);
@@ -2299,6 +2282,34 @@ uint32 Klayman::handleMessage41F0E0(int messageNum, const MessageParam &param, E
 	return messageResult;
 }
 
+void Klayman::sub421430() {
+	startIdleAnimation(0x90EF8D38, AnimationCallback(&Klayman::sub421440));
+}
+
+void Klayman::sub421440() {
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0x90EF8D38, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetSpriteUpdate(NULL);
+	NextState(&Klayman::stIdleSitBlinkSecond);
+}
+
+void Klayman::sub421480() {
+	startIdleAnimation(0x900F0930, AnimationCallback(&Klayman::sub421440));
+}
+
+void Klayman::sub421490() {
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0x900F0930, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetSpriteUpdate(NULL);
+	NextState(&Klayman::stIdleSitBlinkSecond);
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -2528,7 +2539,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 
 void KmScene1002::update4497D0() {
 	Klayman::update();
-	if (_counter1 != 0 && (--_counter1 == 0)) {
+	if (_countdown1 != 0 && (--_countdown1 == 0)) {
 		_surface->setVisible(true);
 		SetUpdateHandler(&Klayman::update);
 	}
@@ -2719,7 +2730,7 @@ void KmScene1002::sub449E90() {
 }
 
 void KmScene1002::sub449EF0() {
-	_counter1 = 1;
+	_countdown1 = 1;
 	_status2 = 0;
 	_acceptInput = false;
 	startAnimation(0x000BAB02, 0, -1);
@@ -2752,7 +2763,7 @@ void KmScene1002::sub449F70() {
 }
 
 void KmScene1002::stSpitOutFall() {
-	_counter1 = 1;
+	_countdown1 = 1;
 	_status2 = 0;
 	_acceptInput = false;
 	startAnimation(0x9308C132, 0, -1);
@@ -2765,7 +2776,7 @@ void KmScene1002::stSpitOutFall() {
 }
 
 void KmScene1002::sub44A0D0() {
-	_counter1 = 1;
+	_countdown1 = 1;
 	_status2 = 0;
 	_acceptInput = false;
 	startAnimation(0x0013A206, 0, -1);
@@ -3309,9 +3320,9 @@ uint32 KmScene1303::hmPeekWallReturn(int messageNum, const MessageParam &param, 
 
 void KmScene1303::update4161A0() {
 	Klayman::update();
-	_counter3++;
-	if (_counter3 >= _counter3Max)
-		stPeekWall3();
+	_blinkCounter++;
+	if (_blinkCounter >= _blinkCounterMax)
+		stPeekWallBlink();
 }
 
 void KmScene1303::stPeekWall1() {
@@ -3321,7 +3332,7 @@ void KmScene1303::stPeekWall1() {
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Klayman::handleMessage41D480);
-	NextState(&KmScene1303::stPeekWall3);
+	NextState(&KmScene1303::stPeekWallBlink);
 }
 
 void KmScene1303::stPeekWall2() {
@@ -3333,11 +3344,11 @@ void KmScene1303::stPeekWall2() {
 	SetMessageHandler(&Klayman::handleMessage41D480);
 }
 
-void KmScene1303::stPeekWall3() {
-	_counter3 = 0;
+void KmScene1303::stPeekWallBlink() {
+	_blinkCounter = 0;
 	_status2 = 0;
 	_acceptInput = true;
-	_counter3Max = _vm->_rnd->getRandomNumber(64) + 24;
+	_blinkCounterMax = _vm->_rnd->getRandomNumber(64) + 24;
 	startAnimation(0xAC20C012, 38, 42);
 	SetUpdateHandler(&KmScene1303::update4161A0);
 	SetSpriteUpdate(NULL);

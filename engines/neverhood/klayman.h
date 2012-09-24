@@ -171,6 +171,12 @@ public:
 	
 	void sub420500();
 	uint32 handleMessage41F0E0(int messageNum, const MessageParam &param, Entity *sender);
+	
+	void sub421430();
+	void sub421440();
+	
+	void sub421480();
+	void sub421490();
 
 protected:
 	Entity *_parentScene;
@@ -182,9 +188,9 @@ protected:
 	bool _isMoveObjectRequested;
 	bool _acceptInput;
 	int16 _destX, _destY;
-	int16 _counter, _counterMax;
-	int16 _counter3, _counter3Max;
-	int16 _counter1;
+	int16 _idleCounter, _idleCounterMax;
+	int16 _blinkCounter, _blinkCounterMax;
+	int16 _countdown1;
 	int16 _tapesToInsert;
 	bool _flagF6;
 	bool _isLeverDown;
@@ -199,7 +205,6 @@ protected:
 	int _idleTableMaxValue;
 	NPointArray *_pathPoints;
 	bool _soundFlag;
-	int _resourceHandle;
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
@@ -230,7 +235,7 @@ protected:
 	
 	void update41D0F0();
 
-	void stStand();
+	void stIdleBlink();
 	void stStandAround();
 	
 	uint32 hmStartAction(int messageNum, const MessageParam &param, Entity *sender);
@@ -381,7 +386,7 @@ protected:
 	void update4161A0();
 	void stPeekWall1();
 	void stPeekWall2();
-	void stPeekWall3();
+	void stPeekWallBlink();
 	void stPeekWallReturn();
 };
 
