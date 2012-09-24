@@ -633,7 +633,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			_vm->_system->fillScreen(0);
 			Graphics::Surface *surface = _vm->_system->lockScreen();
 			if (current_event.lan == 8) {
-				_vm->res->font8.shadowColor = current_event.orientation;
+				_vm->res->font8.setShadowColor(current_event.orientation);
 				_vm->res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
 			} else {
 				_vm->res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, textColorCredits);
@@ -1196,7 +1196,7 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point me
 			++lines;
 
 	uint w = _vm->res->font7.render(NULL, 0, 0, str, 0);
-	uint h = _vm->res->font7.height * lines + 3;
+	uint h = _vm->res->font7.getHeight() * lines + 3;
 
 	message_position.x -= w / 2;
 	message_position.y -= h;

@@ -34,15 +34,18 @@ public:
 	Font();
 	~Font();
 
-	void load(const Pack &pack, int id);
+	void load(const Pack &pack, int id, byte height, byte widthPack);
 	uint render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool showGrid = false);
 	uint render(Graphics::Surface *surface, int x, int y, char c, byte color);
 	static void grid(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
 
-	byte gridColor, shadowColor;
-	byte height, widthPack;
+	byte getHeight() { return _height; }
+	void setShadowColor(byte color) { _shadowColor = color; }
 private:
-	byte *data;
+	byte *_data;
+
+	byte _gridColor, _shadowColor;
+	byte _height, _widthPack;
 };
 
 } // End of namespace TeenAgent

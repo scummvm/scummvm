@@ -32,24 +32,27 @@
 
 namespace TeenAgent {
 
-Font::Font() : gridColor(0xd0), shadowColor(0), height(0), widthPack(0), data(0) {
+Font::Font() : _gridColor(0xd0), _shadowColor(0), _height(0), _widthPack(0), _data(0) {
 }
 
 Font::~Font() {
-	delete[] data;
+	delete[] _data;
 }
 
-void Font::load(const Pack &pack, int id) {
-	delete[] data;
-	data = NULL;
+void Font::load(const Pack &pack, int id, byte height, byte widthPack) {
+	delete[] _data;
+	_data = NULL;
 
 	Common::ScopedPtr<Common::SeekableReadStream> s(pack.getStream(id));
 	if (!s)
 		error("loading font %d failed", id);
 
-	data = new byte[s->size()];
-	s->read(data, s->size());
+	_data = new byte[s->size()];
+	s->read(_data, s->size());
 	debugC(0, kDebugFont, "font size: %d", s->size());
+
+	_height = height;
+	_widthPack = widthPack;
 }
 
 uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) {
@@ -59,11 +62,11 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 		return 0;
 	}
 	idx -= 0x20;
-	byte *glyph = data + READ_LE_UINT16(data + idx * 2);
+	byte *glyph = _data + READ_LE_UINT16(_data + idx * 2);
 
 	int h = glyph[0], w = glyph[1];
 	if (surface == NULL || surface->pixels == NULL || y + h <= 0 || y >= screenHeight || x + w <= 0 || x >= screenWidth)
-		return w - widthPack;
+		return w - _widthPack;
 
 	int i0 = 0, j0 = 0;
 	if (x < 0) {
@@ -86,7 +89,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 			case 0:
 				break;
 			case 1:
-				dst[j] = shadowColor;
+				dst[j] = _shadowColor;
 				break;
 			case 2:
 				dst[j] = color;
@@ -97,7 +100,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 		}
 		dst += surface->pitch;
 	}
-	return w - widthPack;
+	return w - _widthPack;
 }
 
 static uint findInStr(const Common::String &str, char c, uint pos = 0) {
@@ -109,7 +112,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 	if (surface != NULL) {
 		uint maxW = render(NULL, 0, 0, str, false);
 		if (showGrid)
-			grid(surface, x - 4, y - 2, maxW + 8, 8 + 6, gridColor);
+			grid(surface, x - 4, y - 2, maxW + 8, 8 + 6, _gridColor);
 
 		uint i = 0, j;
 		do {
@@ -117,7 +120,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 			Common::String line(str.c_str() + i, j - i);
 			debugC(0, kDebugFont, "line: %s", line.c_str());
 
-			if (y + (int)height >= 0) {
+			if (y + (int)_height >= 0) {
 				uint w = render(NULL, 0, 0, line, false);
 				int xp = x + (maxW - w) / 2;
 				for (uint k = 0; k < line.size(); ++k) {
@@ -126,7 +129,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 			} else if (y >= screenHeight)
 				break;
 
-			y += height;
+			y += _height;
 			i = j + 1;
 		} while (i < str.size());
 		return maxW;
@@ -136,7 +139,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 		for (uint i = 0; i < str.size(); ++i) {
 			char c = str[i];
 			if (c == '\n') {
-				y += height;
+				y += _height;
 				if (w > maxW)
 					maxW = w;
 				w = 0;
