@@ -772,9 +772,9 @@ void TonyEngine::syncSoundSettings() {
 }
 
 void TonyEngine::saveSoundSettings() {
-	ConfMan.setBool("speech_mute", GLOBALS._bCfgDubbing);
-	ConfMan.setBool("sfx_mute", GLOBALS._bCfgSFX);
-	ConfMan.setBool("music_mute", GLOBALS._bCfgMusic);
+	ConfMan.setBool("speech_mute", !GLOBALS._bCfgDubbing);
+	ConfMan.setBool("sfx_mute", !GLOBALS._bCfgSFX);
+	ConfMan.setBool("music_mute", !GLOBALS._bCfgMusic);
 
 	ConfMan.setInt("speech_volume", GLOBALS._nCfgDubbingVolume * 256 / 10);
 	ConfMan.setInt("sfx_volume", GLOBALS._nCfgSFXVolume * 256 / 10);
