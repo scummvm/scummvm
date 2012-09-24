@@ -29,7 +29,6 @@ public:
 	NormalPlugin();
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
-	virtual uint getFactor() const { return _factor; }
 	virtual bool canDrawCursor() const { return true; }
 	virtual uint extraPixels() const { return 0; }
 	virtual const char *getName() const;

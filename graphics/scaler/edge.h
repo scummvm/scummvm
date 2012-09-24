@@ -31,7 +31,6 @@ public:
 	virtual void initialize(const Graphics::PixelFormat &format);
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
-	virtual uint getFactor() const { return _factor; }
 	virtual bool canDrawCursor() const { return false; }
 	virtual bool useOldSource() const { return true; }
 	virtual uint extraPixels() const { return 1; }

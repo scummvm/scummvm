@@ -31,7 +31,6 @@ public:
 	virtual void deinitialize();
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
-	virtual uint getFactor() const { return _factor; }
 	virtual bool canDrawCursor() const { return false; }
 	virtual uint extraPixels() const { return 1; }
 	virtual const char *getName() const;

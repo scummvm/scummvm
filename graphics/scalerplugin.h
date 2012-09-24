@@ -70,7 +70,7 @@ public:
 	 */
 	virtual uint decreaseFactor() = 0;
 
-	virtual uint getFactor() const = 0;
+	virtual uint getFactor() const { return _factor; }
 
 	virtual const Common::Array<uint> &getFactors() const { return _factors; }
 
