@@ -206,7 +206,7 @@ void SoundMan::addSound(uint32 nameHash, uint32 soundFileHash) {
 	_soundItems.push_back(soundItem);
 }
 
-void SoundMan::addSoundList(uint32 nameHash, uint32 *soundFileHashList) {
+void SoundMan::addSoundList(uint32 nameHash, const uint32 *soundFileHashList) {
 	while (*soundFileHashList)
 		addSound(nameHash, *soundFileHashList++);
 }
@@ -242,7 +242,7 @@ void SoundMan::setSoundParams(uint32 soundFileHash, bool playOnceAfterRandomCoun
 	}
 }
 
-void SoundMan::setSoundListParams(uint32 *soundFileHashList, bool playOnceAfterRandomCountdown,
+void SoundMan::setSoundListParams(const uint32 *soundFileHashList, bool playOnceAfterRandomCountdown,
 	int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown) {
 
 	while (*soundFileHashList)

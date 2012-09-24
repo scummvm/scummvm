@@ -113,11 +113,11 @@ public:
 	
 	// Sound
 	void addSound(uint32 nameHash, uint32 soundFileHash);
-	void addSoundList(uint32 nameHash, uint32 *soundFileHashList);
+	void addSoundList(uint32 nameHash, const uint32 *soundFileHashList);
 	void deleteSound(uint32 soundFileHash);
 	void setSoundParams(uint32 soundFileHash, bool playOnceAfterRandomCountdown,
 		int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown);
-	void setSoundListParams(uint32 *soundFileHashList, bool playOnceAfterRandomCountdown,
+	void setSoundListParams(const uint32 *soundFileHashList, bool playOnceAfterRandomCountdown,
 		int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown);
 	void playSoundLooping(uint32 soundFileHash);
 	void stopSound(uint32 soundFileHash);

@@ -26,11 +26,22 @@
 
 namespace Neverhood {
 
+static const uint32 kModule3000SoundList[] = {
+	0x92025040,
+	0x90035066,
+	0x90815450,
+	0x99801500,
+	0x90E14440,
+	0x16805048,
+	0x90F0D1C3,
+	0
+};
+
 Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundVolume(0) {
 	
-	// TODO SoundMan_addSoundList(0x81293110, dword_4B7FC8, true);
-	// TODO SoundMan_setSoundListParams(dword_4B7FC8, true, 50, 600, 5, 150);
+	_vm->_soundMan->addSoundList(0x81293110, kModule3000SoundList);
+	_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 50, 600, 5, 150);
 	_vm->_soundMan->setSoundParams(0x90F0D1C3, false, 20000, 30000, 20000, 30000);
 	_vm->_soundMan->playTwoSounds(0x81293110, 0x48498E46, 0x50399F64, 0);
 	_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
@@ -109,7 +120,7 @@ void Module3000::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004B7FB0, which, kNavigationTypes06);
 		break;
 	case 7:
-		// TODO SoundMan_setSoundListParams(dword_4B7FC8, false, 0, 0, 0, 0);
+		_vm->_soundMan->setSoundListParams(kModule3000SoundList, false, 0, 0, 0, 0);
 		if (!getSubVar(0x40050052, 0x089809C2)) {
 			setSubVar(0x40050052, 0x089809C2, 1);
 			createSmackerScene(0x90022001, true, true, false);
@@ -126,7 +137,7 @@ void Module3000::createScene(int sceneNum, int which) {
 		_childObject = new Scene3011(_vm, this, 0);
 		break;
 	case 11:
-		// TODO SoundMan_setSoundListParams(dword_4B7FC8, false, 0, 0, 0, 0);
+		_vm->_soundMan->setSoundListParams(kModule3000SoundList, false, 0, 0, 0, 0);
 		if (!getSubVar(0x40050052, 0x10130993)) {
 			setSubVar(0x40050052, 0x10130993, 1);
 			createSmackerScene(0x31093019, true, true, false);
@@ -229,12 +240,12 @@ void Module3000::updateScene() {
 		case 8:
 			_flag = getGlobalVar(0x10938830); // CHECKME
 			if (_moduleResult != 1) {
-				// TODO: SoundMan_setSoundListParams(dword_4B7FC8, true, 0, 0, 0, 0):
+				// TODO: SoundMan_setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0):
 				createScene(4, 1);
 			} else if (getGlobalVar(0xF0402B0A)) {
 				createScene(1008, -1);
 			} else {
-				// TODO: SoundMan_setSoundListParams(dword_4B7FC8, true, 0, 0, 0, 0);
+				// TODO: SoundMan_setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0);
 				createScene(4, 1);
 			}
 			break;

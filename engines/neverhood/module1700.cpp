@@ -24,12 +24,21 @@
 
 namespace Neverhood {
 
+static const uint32 kModule1700SoundList[] = {
+	0xB288D450,
+	0x90804450,
+	0x99801500,
+	0xB288D455,
+	0x93825040,
+	0
+};
+
 Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundResource(vm) {
 	
 	_vm->_soundMan->addMusic(0x04212331, 0x31114225);
-	// TODO SoundMan_addSoundList(0x04212331, dword_4AE930, true);
-	// TODO SoundMan_setSoundListParams(dword_4AE930, true, 50, 600, 5, 150);
+	_vm->_soundMan->addSoundList(0x04212331, kModule1700SoundList);
+	_vm->_soundMan->setSoundListParams(kModule1700SoundList, true, 50, 600, 5, 150);
 	_vm->_soundMan->playTwoSounds(0x04212331, 0x41861371, 0x43A2507F, 0);
 
 	if (which < 0) {
@@ -53,7 +62,7 @@ void Module1700::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 0:
-		// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0, 0);
+		_vm->_soundMan->setSoundListParams(kModule1700SoundList, false, 0, 0, 0, 0);
 		createSmackerScene(0x3028A005, true, true, false);
 		break;
 	case 1:
@@ -63,11 +72,11 @@ void Module1700::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004AE8E8, which);
 		break;
 	case 3:
-		// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0, 0);
+		_vm->_soundMan->setSoundListParams(kModule1700SoundList, false, 0, 0, 0, 0);
 		createSmackerScene(0x01190041, true, true, false);
 		break;
 	case 4:
-		// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0, 0);
+		_vm->_soundMan->setSoundListParams(kModule1700SoundList, false, 0, 0, 0, 0);
 		_vm->_soundMan->startMusic(0x31114225, 0, 2);
 		_childObject = new Scene1705(_vm, this, which);
 		break;
@@ -80,7 +89,7 @@ void Module1700::updateScene() {
 	if (!updateChild()) {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-			// TODO SoundMan_setSoundListParams(dword_4AE930, false, 0, 0, 0);
+			_vm->_soundMan->setSoundListParams(kModule1700SoundList, true, 0, 0, 0, 0);
 			createScene(1, 0);
 			break;
 		case 1:

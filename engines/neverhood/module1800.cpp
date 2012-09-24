@@ -25,11 +25,21 @@
 
 namespace Neverhood {
 
+static const uint32 kModule1800SoundList[] = {
+	0x16805548,
+	0x16805048,
+	0xD0E14441,
+	0x90E090C2,
+	0x90E1D0C2,
+	0x90E2D0C2,
+	0
+};
+
 Module1800::Module1800(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	// TODO SoundMan_addSoundList(0x04A14718, dword_4AFE70);
-	// TODO SoundMan_setSoundListParams(dword_4AFE70, true, 50, 600, 10, 150);
+	_vm->_soundMan->addSoundList(0x04A14718, kModule1800SoundList);
+	_vm->_soundMan->setSoundListParams(kModule1800SoundList, true, 50, 600, 10, 150);
 	_vm->_soundMan->playTwoSounds(0x04A14718, 0x8A382B55, 0x0C242F1D, 0);
 
 	if (which < 0) {
@@ -77,7 +87,7 @@ void Module1800::createScene(int sceneNum, int which) {
 		createSmackerScene(0x08D84010, true, true, false);
 		break;
 	case 7:
-		// TODO SoundMan_setSoundListParams(dword_4AFE70, false, 0, 0, 0, 0);
+		_vm->_soundMan->setSoundListParams(kModule1800SoundList, false, 0, 0, 0, 0);
 		createSmackerScene(0x0168B121, true, true, false);
 		break;
 	case 8:

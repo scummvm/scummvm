@@ -24,6 +24,15 @@
 
 namespace Neverhood {
 
+static const uint32 kModule2600SoundList[] = {
+	0xB288D450,
+	0x90804450,
+	0x99801500,
+	0xB288D455,
+	0x93825040,
+	0
+};
+
 Module2600::Module2600(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
@@ -35,8 +44,8 @@ Module2600::Module2600(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 1);
 	}
 
-	// TODO SoundMan_addSoundList(0x40271018, dword_4B87E8, true);
-	// TODO SoundMan_setSoundListParams(dword_4B87E8, true, 50, 600, 5, 150);
+	_vm->_soundMan->addSoundList(0x40271018, kModule2600SoundList);
+	_vm->_soundMan->setSoundListParams(kModule2600SoundList, true, 50, 600, 5, 150);
 	_vm->_soundMan->playTwoSounds(0x40271018, 0x41861371, 0x43A2507F, 0);
 
 }
