@@ -1531,6 +1531,10 @@ AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene
 	SetMessageHandler(&AsScene2804BeamCoil::handleMessage);
 }
 
+AsScene2804BeamCoil::~AsScene2804BeamCoil() {
+	_vm->_soundMan->deleteSoundGroup(0xC5EA0B28);
+}
+
 void AsScene2804BeamCoil::update() {
 	updateAnim();
 	updatePosition();

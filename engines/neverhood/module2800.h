@@ -224,6 +224,7 @@ protected:
 class AsScene2804BeamCoil : public AnimatedSprite {
 public:
 	AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody);
+	virtual ~AsScene2804BeamCoil();
 protected:
 	SoundResource _soundResource;
 	Scene *_parentScene;
