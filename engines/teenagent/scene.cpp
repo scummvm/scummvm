@@ -127,10 +127,10 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 			debugC(1, kDebugScene, "%u: intersection mask 0x%04x, searching hints", *wi, mask);
 			int dx = p2.x - p1.x, dy = p2.y - p1.y;
 			if (dx >= 0) {
-				if ((mask & 8) != 0 && w.side_hint[3] != 0) {
-					debugC(1, kDebugScene, "hint left: %u", w.side_hint[3]);
+				if ((mask & 8) != 0 && w.sideHint[3] != 0) {
+					debugC(1, kDebugScene, "hint left: %u", w.sideHint[3]);
 					Common::Point w1, w2;
-					w.rect.side(w1, w2, w.side_hint[3], p1);
+					w.rect.side(w1, w2, w.sideHint[3], p1);
 					debugC(1, kDebugScene, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					if (mask & 2)
@@ -139,10 +139,10 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					break;
 				}
 			} else {
-				if ((mask & 2) != 0 && w.side_hint[1] != 0) {
-					debugC(1, kDebugScene, "hint right: %u", w.side_hint[1]);
+				if ((mask & 2) != 0 && w.sideHint[1] != 0) {
+					debugC(1, kDebugScene, "hint right: %u", w.sideHint[1]);
 					Common::Point w1, w2;
-					w.rect.side(w1, w2, w.side_hint[1], p1);
+					w.rect.side(w1, w2, w.sideHint[1], p1);
 					debugC(1, kDebugScene, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					if (mask & 8)
@@ -153,10 +153,10 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 			}
 
 			if (dy >= 0) {
-				if ((mask & 1) != 0 && w.side_hint[0] != 0) {
-					debugC(1, kDebugScene, "hint top: %u", w.side_hint[0]);
+				if ((mask & 1) != 0 && w.sideHint[0] != 0) {
+					debugC(1, kDebugScene, "hint top: %u", w.sideHint[0]);
 					Common::Point w1, w2;
-					w.rect.side(w1, w2, w.side_hint[0], p1);
+					w.rect.side(w1, w2, w.sideHint[0], p1);
 					debugC(1, kDebugScene, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					if (mask & 4)
@@ -165,10 +165,10 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					break;
 				}
 			} else {
-				if ((mask & 4) != 0 && w.side_hint[2] != 0) {
-					debugC(1, kDebugScene, "hint bottom: %u", w.side_hint[2]);
+				if ((mask & 4) != 0 && w.sideHint[2] != 0) {
+					debugC(1, kDebugScene, "hint bottom: %u", w.sideHint[2]);
 					Common::Point w1, w2;
-					w.rect.side(w1, w2, w.side_hint[2], p1);
+					w.rect.side(w1, w2, w.sideHint[2], p1);
 					debugC(1, kDebugScene, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					if (mask & 1)
@@ -265,11 +265,11 @@ void Scene::loadObjectData() {
 		for (byte j = 0; j < walkboxes_n; ++j) {
 			Walkbox w;
 			w.load(walkboxes_base + 14 * j);
-			if ((w.side_hint[0] | w.side_hint[1] | w.side_hint[2] | w.side_hint[3]) == 0) {
-				w.side_hint[0] = 2;
-				w.side_hint[1] = 3;
-				w.side_hint[2] = 4;
-				w.side_hint[3] = 1;
+			if ((w.sideHint[0] | w.sideHint[1] | w.sideHint[2] | w.sideHint[3]) == 0) {
+				w.sideHint[0] = 2;
+				w.sideHint[1] = 3;
+				w.sideHint[2] = 4;
+				w.sideHint[3] = 1;
 			}
 			//walkbox[i]->dump();
 			scene_walkboxes.push_back(w);

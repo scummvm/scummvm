@@ -110,11 +110,11 @@ bool TeenAgentEngine::trySelectedObject() {
 	const Common::Array<UseHotspot> &hotspots = _useHotspots[scene->getId() - 1];
 	for (uint i = 0; i < hotspots.size(); ++i) {
 		const UseHotspot &spot = hotspots[i];
-		if (spot.inventory_id == inv->id && _dstObject->id == spot.object_id) {
+		if (spot.inventoryId == inv->id && _dstObject->id == spot.objectId) {
 			debugC(0, kDebugObject, "use object on hotspot!");
 			spot.dump();
-			if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
-				moveTo(spot.actor_x, spot.actor_y, spot.orientation);
+			if (spot.actorX != 0xffff && spot.actorY != 0xffff)
+				moveTo(spot.actorX, spot.actorY, spot.orientation);
 			if (!processCallback(spot.callback))
 				debugC(0, kDebugObject, "FIXME: display proper description");
 			inventory->resetSelectedObject();
@@ -169,13 +169,13 @@ void TeenAgentEngine::use(Object *object) {
 
 	_dstObject = object;
 	object->rect.dump();
-	object->actor_rect.dump();
+	object->actorRect.dump();
 
 	_action = kActionUse;
-	if (object->actor_rect.valid())
-		scene->moveTo(Common::Point(object->actor_rect.right, object->actor_rect.bottom), object->actor_orientation);
-	else if (object->actor_orientation > 0)
-		scene->setOrientation(object->actor_orientation);
+	if (object->actorRect.valid())
+		scene->moveTo(Common::Point(object->actorRect.right, object->actorRect.bottom), object->actorOrientation);
+	else if (object->actorOrientation > 0)
+		scene->setOrientation(object->actorOrientation);
 }
 
 void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
@@ -183,11 +183,11 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 		return;
 
 	if (object != NULL) {
-		Common::Point dst = object->actor_rect.center();
+		Common::Point dst = object->actorRect.center();
 		debugC(0, kDebugObject, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
 		_action = kActionExamine;
-		if (object->actor_rect.valid())
-			scene->moveTo(dst, object->actor_orientation, true); // validate examine message. Original engine does not let you into walkboxes
+		if (object->actorRect.valid())
+			scene->moveTo(dst, object->actorOrientation, true); // validate examine message. Original engine does not let you into walkboxes
 		_dstObject = object;
 	} else if (!_sceneBusy) {
 		// do not reset anything while scene is busy, but allow interrupts while walking.
@@ -827,7 +827,7 @@ void TeenAgentEngine::moveTo(const Common::Point &dst, byte o, bool warp) {
 }
 
 void TeenAgentEngine::moveTo(Object *obj) {
-	moveTo(obj->actor_rect.right, obj->actor_rect.bottom, obj->actor_orientation);
+	moveTo(obj->actorRect.right, obj->actorRect.bottom, obj->actorOrientation);
 }
 
 void TeenAgentEngine::moveTo(uint16 x, uint16 y, byte o, bool warp) {

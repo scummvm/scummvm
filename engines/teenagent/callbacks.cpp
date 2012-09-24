@@ -3517,15 +3517,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(dsAddr_byeMsg); // "Bye."
 			{
 				Object *obj = scene->getObject(7);
-				obj->actor_rect.left = obj->actor_rect.right = 228;
-				obj->actor_rect.top = obj->actor_rect.bottom = 171;
-				obj->actor_rect.save();
+				obj->actorRect.left = obj->actorRect.right = 228;
+				obj->actorRect.top = obj->actorRect.bottom = 171;
+				obj->actorRect.save();
 			}
 			{
 				Object *obj = scene->getObject(8);
-				obj->actor_rect.left = obj->actor_rect.right = 290;
-				obj->actor_rect.top = obj->actor_rect.bottom = 171;
-				obj->actor_rect.save();
+				obj->actorRect.left = obj->actorRect.right = 290;
+				obj->actorRect.top = obj->actorRect.bottom = 171;
+				obj->actorRect.save();
 			}
 		}
 		break;
@@ -3675,16 +3675,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(dsAddr_dogHasBoneFlag, 1);
 		{
 			Object *o = scene->getObject(7);
-			o->actor_rect.left = o->actor_rect.right = 297;
-			o->actor_rect.top = o->actor_rect.bottom = 181;
-			o->actor_orientation = 1;
+			o->actorRect.left = o->actorRect.right = 297;
+			o->actorRect.top = o->actorRect.bottom = 181;
+			o->actorOrientation = 1;
 			o->save();
 		}
 		{
 			Object *o = scene->getObject(9);
-			o->actor_rect.left = o->actor_rect.right = 297;
-			o->actor_rect.top = o->actor_rect.bottom = 181;
-			o->actor_orientation = 1;
+			o->actorRect.left = o->actorRect.right = 297;
+			o->actorRect.top = o->actorRect.bottom = 181;
+			o->actorOrientation = 1;
 			o->save();
 		}
 		{
@@ -3729,7 +3729,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(dsAddr_caveThornsCutDownFlag, 1);
 		inventory->remove(invItemSickleSharp);
 		disableObject(2);
-		scene->getObject(3)->actor_rect.right = 156;
+		scene->getObject(3)->actorRect.right = 156;
 		scene->getObject(3)->save();
 		break;
 
@@ -4494,23 +4494,23 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		disableObject(1);
 		{
 			Object *obj = scene->getObject(2);
-			obj->actor_rect.left = obj->actor_rect.right = 81;
-			obj->actor_rect.top = obj->actor_rect.bottom = 160;
-			obj->actor_orientation = 4;
+			obj->actorRect.left = obj->actorRect.right = 81;
+			obj->actorRect.top = obj->actorRect.bottom = 160;
+			obj->actorOrientation = 4;
 			obj->save();
 		}
 		{
 			Object *obj = scene->getObject(3);
-			obj->actor_rect.left = obj->actor_rect.right = 64;
-			obj->actor_rect.top = obj->actor_rect.bottom = 168;
-			obj->actor_orientation = 4;
+			obj->actorRect.left = obj->actorRect.right = 64;
+			obj->actorRect.top = obj->actorRect.bottom = 168;
+			obj->actorOrientation = 4;
 			obj->save();
 		}
 		{
 			Object *obj = scene->getObject(10);
-			obj->actor_rect.left = obj->actor_rect.right = 105;
-			obj->actor_rect.top = obj->actor_rect.bottom = 160;
-			obj->actor_orientation = 1;
+			obj->actorRect.left = obj->actorRect.right = 105;
+			obj->actorRect.top = obj->actorRect.bottom = 160;
+			obj->actorOrientation = 1;
 			obj->save();
 		}
 		SET_FLAG(dsAddr_MansionCookGoneFlag, 1);
@@ -4890,15 +4890,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			dialog->showMark(130, scene);
 
 			Object *obj = scene->getObject(1);
-			obj->actor_rect.left = obj->actor_rect.right = 270;
-			obj->actor_rect.top = obj->actor_rect.bottom = 193;
-			obj->actor_orientation = 2;
+			obj->actorRect.left = obj->actorRect.right = 270;
+			obj->actorRect.top = obj->actorRect.bottom = 193;
+			obj->actorOrientation = 2;
 			obj->save();
 
 			obj = scene->getObject(3);
-			obj->actor_rect.left = obj->actor_rect.right = 254;
-			obj->actor_rect.top = obj->actor_rect.bottom = 193;
-			obj->actor_orientation = 1;
+			obj->actorRect.left = obj->actorRect.right = 254;
+			obj->actorRect.top = obj->actorRect.bottom = 193;
+			obj->actorOrientation = 1;
 			obj->save();
 
 			SET_FLAG(dsAddr_MansionThruFanByTimePillFlag, 1);
