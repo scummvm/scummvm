@@ -72,6 +72,7 @@ public:
 	bool SL_FLAG;
 	bool FLAG_VISIBLE;
 	bool DESACTIVE_INVENT;
+	bool BOBTOUS;
 	SpriteItem Sprite[6];
 public:
 	ObjectsManager();
@@ -100,13 +101,14 @@ public:
 	void BOB_VISU(int idx);
 	void BOB_OFF(int idx);
 	void SCBOB(int idx);
+	void CALCUL_BOB(int idx);
 
 	void VERIFCACHE();
 	void INVENT_ANIM();
 	void DEF_SPRITE(int idx);
 	void DEF_CACHE(int idx);
 	void CALCUL_SPRITE(int idx);
-	void AvantTri(int a1, int a2, int a3);
+	int AvantTri(int a1, int a2, int a3);
 	void AFF_BOB_ANIM();
 	void AFF_VBOB();
 

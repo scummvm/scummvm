@@ -103,6 +103,7 @@ struct BobItem {
 	int field36;
 	int field38;
 	int field3A;
+	int field3C;
 	int field3E;
 	int field40;
 	int field42;

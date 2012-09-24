@@ -48,6 +48,7 @@ ObjectsManager::ObjectsManager() {
 	SL_FLAG = false;
 	FLAG_VISIBLE = false;
 	DESACTIVE_INVENT = false;
+	BOBTOUS = false;
 }
 
 void ObjectsManager::setParent(HopkinsEngine *vm) {
@@ -740,6 +741,134 @@ void ObjectsManager::SCBOB(int idx) {
 	}
 }
 
+void ObjectsManager::CALCUL_BOB(int idx) {
+	__int16 result;
+	__int16 v3;
+	__int16 v4;
+	__int16 v5;
+	__int16 v6;
+	int v7; 
+	int v8; 
+	int v9; 
+	int v10; 
+	int v11; 
+	__int16 v13;
+	__int16 v14;
+	__int16 v15;
+	__int16 v17;
+	signed __int16 v20;
+	__int16 v21;
+	__int16 v22;
+
+	_vm->_globals.Bob[idx].field3C = 0;
+	if (_vm->_globals.Bob[idx].field3A == 1) {
+		_vm->_globals.Bob[idx].field38 = 0;
+		_vm->_globals.Bob[idx].field36 = 0;
+	}
+  
+	result = _vm->_globals.Bob[idx].fieldC;
+	if (result != 250) {
+		if (_vm->_globals.Bob[idx].field38) {
+			v4 = get_offsetx(_vm->_globals.Bob[idx].field4, result, 1);
+			v22 = v4;
+			v15 = v4;
+			v5 = get_offsety(_vm->_globals.Bob[idx].field4, _vm->_globals.Bob[idx].fieldC, 1);
+		} else {
+			v3 = get_offsetx(_vm->_globals.Bob[idx].field4, result, 0);
+			v22 = v3;
+			v15 = v3;
+			v5 = get_offsety(_vm->_globals.Bob[idx].field4, _vm->_globals.Bob[idx].fieldC, 0);
+		}
+    
+		v17 = v5;
+		v6 = v5;
+		v21 = 0;
+		v20 = 0;
+		v7 = _vm->_globals.Bob[idx].field36;
+		
+		if ((signed __int16)v7 < 0) {
+			v7 = (signed __int16)v7;
+			if ((signed __int16)v7 < 0)
+				v7 = -v7;
+			v20 = v7;
+			if ((signed __int16)v7 > 95)
+				v20 = 95;
+		}
+		if (_vm->_globals.Bob[idx].field36 > 0)
+			v21 = _vm->_globals.Bob[idx].field36;
+		if (v21) {
+			if (v15 >= 0) {
+				v22 = _vm->_graphicsManager.Reel_Zoom(v15, v21);
+			} else {
+				v8 = v15;
+				if (v15 < 0)
+					v8 = -v15;
+				v15 = v8;
+				v22 = -(signed __int16)_vm->_graphicsManager.Reel_Zoom((signed __int16)v8, v21);
+			}
+			if (v6 >= 0) {
+				v17 = _vm->_graphicsManager.Reel_Zoom(v6, v21);
+			} else {
+				v9 = v15;
+				if (v15 < 0)
+					v9 = -v15;
+				v6 = v9;
+				v17 = -(signed __int16)_vm->_graphicsManager.Reel_Zoom((signed __int16)v9, v21);
+			}
+		}
+    
+		if (v20) {
+			if (v15 >= 0) {
+				v22 = _vm->_graphicsManager.Reel_Reduc(v15, v20);
+			} else {
+				v10 = v15;
+				if (v15 < 0)
+					v10 = -v15;
+				v15 = v10;
+				v22 = -(signed __int16)_vm->_graphicsManager.Reel_Reduc((signed __int16)v10, v20);
+			}
+			if (v6 >= 0) {
+				v17 = _vm->_graphicsManager.Reel_Reduc(v6, v20);
+			} else {
+				v11 = v15;
+				if (v15 < 0)
+					v11 = -v15;
+				v17 = -(signed __int16)_vm->_graphicsManager.Reel_Reduc((signed __int16)v11, v20);
+			}
+		}
+    
+		idx = idx;
+		v13 = _vm->_globals.Bob[idx].field8 - v22;
+		v14 = _vm->_globals.Bob[idx].fieldA - v17;
+		_vm->_globals.Bob[idx].field3C = 1;
+		_vm->_globals.Bob[idx].field3E = v13;
+		_vm->_globals.Bob[idx].field40 = v14;
+		_vm->_globals.Bob[idx].field48 = v21;
+		_vm->_globals.Bob[idx].field4A = v20;
+
+		_vm->_globals.Liste2[idx].field0 = 1;
+		_vm->_globals.Liste2[idx].field2 = v13;
+		_vm->_globals.Liste2[idx].field4 = v14;
+
+		int width = Get_Largeur(_vm->_globals.Bob[idx].field4, _vm->_globals.Bob[idx].fieldC);
+		int height = Get_Hauteur(_vm->_globals.Bob[idx].field4, _vm->_globals.Bob[idx].fieldC);
+
+		if (v21) {
+			width = _vm->_graphicsManager.Reel_Zoom(width, v21);
+			height = _vm->_graphicsManager.Reel_Zoom(height, v21);
+		}
+		if (v20) {
+			height = _vm->_graphicsManager.Reel_Reduc(height, v20);
+			width = _vm->_graphicsManager.Reel_Reduc(width, v20);
+		}
+		
+		_vm->_globals.Liste2[idx].field6 = width;
+		_vm->_globals.Liste2[idx].field8 = height;
+		_vm->_globals.Bob[idx].field42 = width;
+		_vm->_globals.Bob[idx].field44 = height;
+	}
+}
+
 void ObjectsManager::VERIFCACHE() {
 	__int16 v1;
 	signed __int16 v2;
@@ -1066,12 +1195,207 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 	}
 }
 
-void ObjectsManager::AvantTri(int a1, int a2, int a3) {
-	warning("TODO: AvantTri");
+int ObjectsManager::AvantTri(int a1, int a2, int a3) {
+	int result;
+
+	++_vm->_globals.NBTRI;
+	if (_vm->_globals.NBTRI > 48)
+		error("NBTRI TROP GRAND");
+  
+	result = _vm->_globals.NBTRI;
+	_vm->_globals.Tri[result].field0 = a1;
+	_vm->_globals.Tri[result].field2 = a2;
+	_vm->_globals.Tri[result].field4 = a3;
+  
+	return result;
 }
 
 void ObjectsManager::AFF_BOB_ANIM() {
-	warning("TODO: AFF_BOB_ANIM");
+	signed int v1;
+	__int16 v2;
+	signed __int16 v5;
+	__int16 v6;
+	__int16 v7;
+	__int16 v8;
+	signed __int16 v10;
+	__int16 v11;
+	int v12; 
+	int v13; 
+	__int16 v14;
+	int v18;
+	int v19;
+	byte *v20; 
+	byte *v21; 
+	int v22; 
+	__int16 v24;
+	__int16 v26;
+	__int16 v27;
+	__int16 v28;
+
+	int idx = 0;
+	do {
+		++idx;
+		if (idx <= 20 && PERSO_ON == 1) {
+			_vm->_globals.Bob[idx].field1C = 0;
+			continue;
+		}
+    
+		if (_vm->_globals.Bob[idx].field0 == 10) {
+			_vm->_globals.Bob[idx].field1C = 0;
+			v1 = _vm->_globals.Bob[idx].field20;
+			if (v1 == -1)
+				v1 = 50;
+			if (_vm->_globals.Bob[idx].field18 == PTRNUL || _vm->_globals.Bob[idx].field16 || v1 <= 0)
+				goto LABEL_38;
+      
+			v2 = _vm->_globals.Bob[idx].field14;
+			if (_vm->_globals.Bob[idx].field12 == v2) {
+				_vm->_globals.Bob[idx].field1C = 1;
+			} else {
+				_vm->_globals.Bob[idx].field14 = v2 + 1;
+				_vm->_globals.Bob[idx].field1C = 0;
+			}
+      
+			if (_vm->_globals.Bob[idx].field1C != 1)
+				goto LABEL_38;
+      
+			v20 = _vm->_globals.Bob[idx].field18 + 20;
+			v24 = _vm->_globals.Bob[idx].field10;
+			_vm->_globals.Bob[idx].field8 = READ_LE_UINT16(v20 + 2 * v24);
+			if (_vm->_globals.BL_ANIM[idx].v1 == 1)
+				_vm->_globals.Bob[idx].field8 = _vm->_globals.BL_ANIM[idx].v2;
+			if ( PERSO_ON == 1 && idx > 20 )
+				_vm->_globals.Bob[idx].field8 += _vm->_graphicsManager.start_x;
+      
+			_vm->_globals.Bob[idx].fieldA = READ_LE_UINT16(v20 + 2 * v24 + 2);
+			_vm->_globals.Bob[idx].field12 = READ_LE_UINT16(v20 + 2 * v24 + 4);
+			_vm->_globals.Bob[idx].field36 = READ_LE_UINT16(v20 + 2 * v24 + 6);
+			_vm->_globals.Bob[idx].fieldC = *(v20 + 2 * v24 + 8);
+			_vm->_globals.Bob[idx].field38 = *(v20 + 2 * v24 + 9);
+			_vm->_globals.Bob[idx].field10 += 5;
+			v5 = _vm->_globals.Bob[idx].field12;
+			
+			if (v5 > 0) {
+				v6 = v5 / _vm->_globals.vitesse;
+				_vm->_globals.Bob[idx].field12 = v5 / _vm->_globals.vitesse;
+				if (v6 > 0) {
+LABEL_37:
+					_vm->_globals.Bob[idx].field14 = 1;
+LABEL_38:
+					v12 = idx;
+          
+					if ((unsigned __int16)(_vm->_globals.Bob[v12].field1E - 1) <= 1u)
+						_vm->_globals.Bob[v12].field1C = 1;
+					continue;
+				}
+        
+				_vm->_globals.Bob[idx].field12 = 1;
+			}
+			if (!_vm->_globals.Bob[idx].field12) {
+				v7 = _vm->_globals.Bob[idx].field20;
+				if (v7 > 0)
+					_vm->_globals.Bob[idx].field20 = v7 - 1;
+				v8 = _vm->_globals.Bob[idx].field20;
+				if (v8 != -1 && v8 <= 0) {
+					_vm->_globals.Bob[idx].field0 = 11;
+				} else {
+					_vm->_globals.Bob[idx].field10 = 0;
+					v21 = _vm->_globals.Bob[idx].field18 + 20;
+					_vm->_globals.Bob[idx].field8 = READ_LE_UINT16(v21);
+					
+					if (_vm->_globals.BL_ANIM[idx].v1 == 1)
+						_vm->_globals.Bob[idx].field8 = _vm->_globals.BL_ANIM[idx].v2;
+					if (PERSO_ON == 1 && idx > 20)
+						_vm->_globals.Bob[idx].field8 += _vm->_graphicsManager.start_x;
+
+					_vm->_globals.Bob[idx].fieldA = READ_LE_UINT16(v21 + 2);
+					_vm->_globals.Bob[idx].field12 = READ_LE_UINT16(v21 + 4);
+					_vm->_globals.Bob[idx].field36 = READ_LE_UINT16(v21 + 6);
+					_vm->_globals.Bob[idx].fieldC = *(v21 + 8);
+					_vm->_globals.Bob[idx].field38 = *(v21 + 9);
+					_vm->_globals.Bob[idx].field10 += 5;
+					v10 = _vm->_globals.Bob[idx].field12;
+			
+					if (v10 > 0) {
+						v11 = v10 / _vm->_globals.vitesse;
+						_vm->_globals.Bob[idx].field12 = v10 / _vm->_globals.vitesse;
+						if (v11 <= 0)
+							_vm->_globals.Bob[idx].field12 = 1;
+					}
+				}
+			}
+			
+			goto LABEL_37;
+		}
+	} while (idx != 35);
+
+	if (!PERSO_ON && BOBTOUS == 1) {
+		v26 = 0;
+		do {
+			v13 = v26;
+			if (_vm->_globals.Bob[v13].field0 == 10 && !_vm->_globals.Bob[v13].field16)
+				_vm->_globals.Bob[v13].field1C = 1;
+			++v26;
+		} while (v26 != 35);
+	}
+  
+	BOBTOUS = 0;
+	v27 = 0;
+  
+	do {
+		++v27;
+		if (v27 > 20 || PERSO_ON != 1) {
+			if (_vm->_globals.Bob[v27].field0 == 10) {
+				if (_vm->_globals.Bob[v27].field1C == 1) {
+					v14 = _vm->_globals.Bob[v27].field1E;
+          
+					if (v14 != 2) {
+						if (v14 != 4) {
+							if (_vm->_globals.Liste2[v27].field0) {
+								_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN,
+									_vm->_globals.Liste2[v27].field2, _vm->_globals.Liste2[v27].field4,
+									_vm->_globals.Liste2[v27].field6, _vm->_globals.Liste2[v27].field8,
+									_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Liste2[v27].field2,
+									_vm->_globals.Liste2[v27].field4);
+								_vm->_globals.Liste2[v27].field0 = 0;
+							}
+						}
+					}
+				}
+			}
+      
+			v22 = v27;
+			if (_vm->_globals.Bob[v22].field0 == 11) {
+				if (_vm->_globals.Liste2[v27].field0) {
+					_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN,
+						_vm->_globals.Liste2[v27].field2, _vm->_globals.Liste2[v27].field4,
+						_vm->_globals.Liste2[v27].field6, _vm->_globals.Liste2[v27].field8,
+						_vm->_graphicsManager.VESA_BUFFER,
+						_vm->_globals.Liste2[v27].field2, _vm->_globals.Liste2[v27].field4);
+					_vm->_globals.Liste2[v27].field0 = 0;
+				}
+        
+				_vm->_globals.Bob[v22].field0 = 0;
+			}
+		}
+	} while (v27 != 35);
+  
+	v28 = 0;
+	do {
+		++v28;
+		v18 = v28;
+		_vm->_globals.Bob[v18].field40 = 0;
+		if (_vm->_globals.Bob[v18].field0 == 10 && !_vm->_globals.Bob[v18].field16 && _vm->_globals.Bob[v18].field1C == 1) {
+			CALCUL_BOB(v28);
+			int v = _vm->_globals.Bob[v18].field44 + _vm->_globals.Bob[v18].field40;
+			v19 = _vm->_globals.Bob[v18].field46 + v;
+		
+			if (v19 > 450)
+				v19 = 600;
+			if (_vm->_globals.Bob[v18].field3C == 1)
+			AvantTri(1, v28, v19);
+		}
+	} while (v28 != 35);
 }
 
 void ObjectsManager::AFF_VBOB() {
