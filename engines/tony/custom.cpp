@@ -1310,7 +1310,7 @@ void autoSave(CORO_PARAM, uint32, uint32, uint32, uint32) {
 }
 
 void abortGame(CORO_PARAM, uint32, uint32, uint32, uint32) {
-	g_vm->abortGame();
+	error("script called abortGame");
 }
 
 void shakeScreen(CORO_PARAM, uint32 nScosse, uint32, uint32, uint32) {

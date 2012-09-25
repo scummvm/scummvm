@@ -323,7 +323,7 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 
 		if (!getIsDemo()) {
 			if (!_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
-				g_vm->abortGame();
+				error("failed to open music file '%s'", fname.c_str());
 		} else {
 			_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
 		}
@@ -335,7 +335,7 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 	} else {
 		if (!getIsDemo()) {
 			if (!_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
-				g_vm->abortGame();
+				error("failed to open music file '%s'", fname.c_str());
 		} else {
 			_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
 		}
@@ -356,7 +356,7 @@ void TonyEngine::doNextMusic(CORO_PARAM, const void *param) {
 
 	if (!g_vm->getIsDemo()) {
 		if (!streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync))
-			g_vm->abortGame();
+			error("failed to open next music file '%s'", GLOBALS._nextMusic.c_str());
 	} else {
 		streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync);
 	}
@@ -629,10 +629,6 @@ void TonyEngine::openInitLoadMenu(CORO_PARAM) {
 
 void TonyEngine::openInitOptions(CORO_PARAM) {
 	_theEngine.openOptionScreen(coroParam, 2);
-}
-
-void TonyEngine::abortGame() {
-	_bQuitNow = true;
 }
 
 /**

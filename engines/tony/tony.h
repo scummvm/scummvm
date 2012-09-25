@@ -169,7 +169,6 @@ public:
 
 	void play();
 	void close();
-	void abortGame();
 
 	void getDataDirectory(DataDir dir, char *path);
 
