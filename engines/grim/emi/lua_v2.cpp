@@ -220,6 +220,16 @@ void Lua_V2::GetFontDimensions() {
 	}
 }
 
+void Lua_V2::GetTextCharPosition() {
+	lua_Object textObj = lua_getparam(1);
+	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
+		TextObject *textObject = gettextobject(textObj);
+		int pos = (int)lua_getnumber(lua_getparam(2));
+		float textpos = textObject->getTextCharPosition(pos);
+		lua_pushnumber( textpos / 320.f);
+	}
+}
+
 void Lua_V2::GetTextObjectDimensions() {
 	lua_Object textObj = lua_getparam(1);
 
