@@ -687,6 +687,12 @@ begin_credits("Credits");
 				add_person("Joost Peters", "joostp", "");
 			end_section();
 
+			begin_section("Tony");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Alyssa Milburn", "fuzzie", "");
+			end_section();
+
 			begin_section("Toon");
 				add_person("Sylvain Dupont", "SylvainTV", "");
 			end_section();
