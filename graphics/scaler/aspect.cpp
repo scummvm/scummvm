@@ -66,36 +66,36 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 
 template<typename ColorMask>
 static void interpolate5LineNeon(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width, int k1, int k2) {
-	  uint16x4_t kRedBlueMask_4 = vdup_n_u16(ColorMask::kRedBlueMask);
-	  uint16x4_t kGreenMask_4 = vdup_n_u16(ColorMask::kGreenMask);
-	  uint16x4_t k1_4 = vdup_n_u16(k1);
-	  uint16x4_t k2_4 = vdup_n_u16(k2);
-	  while (width >= 4) {
-		  uint16x4_t srcA_4 = vld1_u16(srcA);
-		  uint16x4_t srcB_4 = vld1_u16(srcB);
-		  uint16x4_t p1_4 = srcB_4;
-		  uint16x4_t p2_4 = srcA_4;
+	uint16x4_t kRedBlueMask_4 = vdup_n_u16(ColorMask::kRedBlueMask);
+	uint16x4_t kGreenMask_4 = vdup_n_u16(ColorMask::kGreenMask);
+	uint16x4_t k1_4 = vdup_n_u16(k1);
+	uint16x4_t k2_4 = vdup_n_u16(k2);
+	while (width >= 4) {
+		uint16x4_t srcA_4 = vld1_u16(srcA);
+		uint16x4_t srcB_4 = vld1_u16(srcB);
+		uint16x4_t p1_4 = srcB_4;
+		uint16x4_t p2_4 = srcA_4;
 
-		  uint16x4_t p1_rb_4 = vand_u16(p1_4, kRedBlueMask_4);
-		  uint16x4_t p1_g_4  = vand_u16(p1_4, kGreenMask_4);
-		  uint16x4_t p2_rb_4 = vand_u16(p2_4, kRedBlueMask_4);
-		  uint16x4_t p2_g_4  = vand_u16(p2_4, kGreenMask_4);
+		uint16x4_t p1_rb_4 = vand_u16(p1_4, kRedBlueMask_4);
+		uint16x4_t p1_g_4  = vand_u16(p1_4, kGreenMask_4);
+		uint16x4_t p2_rb_4 = vand_u16(p2_4, kRedBlueMask_4);
+		uint16x4_t p2_g_4  = vand_u16(p2_4, kGreenMask_4);
 
-		  uint32x4_t tmp_rb_4 = vshrq_n_u32(vmlal_u16(vmull_u16(p2_rb_4, k2_4), p1_rb_4, k1_4), 3);
-		  uint32x4_t tmp_g_4  = vshrq_n_u32(vmlal_u16(vmull_u16(p2_g_4, k2_4), p1_g_4, k1_4), 3);
-		  uint16x4_t p_rb_4 = vmovn_u32(tmp_rb_4);
-		  p_rb_4 = vand_u16(p_rb_4, kRedBlueMask_4);
-		  uint16x4_t p_g_4 = vmovn_u32(tmp_g_4);
-		  p_g_4 = vand_u16(p_g_4, kGreenMask_4);
+		uint32x4_t tmp_rb_4 = vshrq_n_u32(vmlal_u16(vmull_u16(p2_rb_4, k2_4), p1_rb_4, k1_4), 3);
+		uint32x4_t tmp_g_4  = vshrq_n_u32(vmlal_u16(vmull_u16(p2_g_4, k2_4), p1_g_4, k1_4), 3);
+		uint16x4_t p_rb_4 = vmovn_u32(tmp_rb_4);
+		p_rb_4 = vand_u16(p_rb_4, kRedBlueMask_4);
+		uint16x4_t p_g_4 = vmovn_u32(tmp_g_4);
+		p_g_4 = vand_u16(p_g_4, kGreenMask_4);
 
-		  uint16x4_t result_4 = p_rb_4 | p_g_4;
-		  vst1_u16(dst, result_4);
+		uint16x4_t result_4 = p_rb_4 | p_g_4;
+		vst1_u16(dst, result_4);
 
-		  dst += 4;
-		  srcA += 4;
-		  srcB += 4;
-		  width -= 4;
-	  }
+		dst += 4;
+		srcA += 4;
+		srcB += 4;
+		width -= 4;
+	}
 }
 #endif
 
@@ -114,7 +114,7 @@ static void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB
 			*dst++ = interpolate16_7_1<ColorMask>(*srcB++, *srcA++);
 		}
 	} else {
- #ifdef NEON_ASPECT_CORRECTOR
+#ifdef NEON_ASPECT_CORRECTOR
 		int width4 = width & ~3;
 		interpolate5LineNeon<ColorMask>(dst, srcA, srcB, width4, 5, 3);
 		srcA += width4;
