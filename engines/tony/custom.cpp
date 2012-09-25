@@ -1989,8 +1989,10 @@ void releaseOwnership(CORO_PARAM, uint32 num, uint32, uint32, uint32) {
 		return;
 	}
 
-	if (GLOBALS._mut[num]._ownerPid != (uint32)CoroScheduler.getCurrentPID())
-		error("ReleaseOwnership tried to release mutex %d, which is held by a different process", num);
+	if (GLOBALS._mut[num]._ownerPid != (uint32)CoroScheduler.getCurrentPID()) {
+		warning("ReleaseOwnership tried to release mutex %d, which is held by a different process", num);
+		return;
+	}
 
 	GLOBALS._mut[num]._lockCount--;
 	if (!GLOBALS._mut[num]._lockCount) {
