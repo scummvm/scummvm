@@ -1040,7 +1040,9 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 		int y = text->getLineY(j);
 		for (uint i = 0; i < line.size(); ++i) {
 			uint8 character = line[i];
-			float w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
+			float w = y + font->getCharStartingLine(character);
+			if (g_grim->getGameType() == GType_GRIM)
+				w += font->getBaseOffsetY();
 			float z = x + font->getCharStartingCol(character);
 			z *= _scaleW;
 			w *= _scaleH;
