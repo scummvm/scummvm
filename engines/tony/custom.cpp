@@ -2024,7 +2024,7 @@ void threadFadeInMusic(CORO_PARAM, const void *nMusic) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	debug("Start FadeIn Music");
+	debugC(DEBUG_INTERMEDIATE, kTonyDebugSound, "Start FadeIn Music");
 
 	for (_ctx->i = 0; _ctx->i < 16; _ctx->i++) {
 		g_vm->setMusicVolume(nChannel, _ctx->i * 4);
@@ -2033,7 +2033,7 @@ void threadFadeInMusic(CORO_PARAM, const void *nMusic) {
 	}
 	g_vm->setMusicVolume(nChannel, 64);
 
-	debug("End FadeIn Music");
+	debugC(DEBUG_INTERMEDIATE, kTonyDebugSound, "End FadeIn Music");
 
 	CORO_KILL_SELF();
 
