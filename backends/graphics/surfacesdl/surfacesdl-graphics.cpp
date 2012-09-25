@@ -1770,7 +1770,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	// Clear the overlay by making the game screen "look through" everywhere.
 	SDL_Rect src, dst;
 	src.x = src.y = 0;
-	dst.x = dst.y = 1;
+	dst.x = dst.y = _maxExtraPixels;
 	src.w = dst.w = _videoMode.screenWidth;
 	src.h = dst.h = _videoMode.screenHeight;
 	if (SDL_BlitSurface(_screen, &src, _tmpscreen, &dst) != 0)
@@ -1779,7 +1779,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
 
-	_scalerPlugin->scale((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
+	_scalerPlugin->scale((byte *)(_tmpscreen->pixels) + _maxExtraPixels * _tmpscreen->pitch + _maxExtraPixels * 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
 
 #ifdef USE_ASPECT
