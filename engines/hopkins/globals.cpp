@@ -133,6 +133,7 @@ Globals::Globals() {
 	NO_VISU = false;
 	OPTION_FLAG = false;
 	CACHEFLAG = false;
+	NOPARLE = false;
 }
 
 Globals::~Globals() {

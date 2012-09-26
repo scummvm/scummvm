@@ -168,7 +168,7 @@ byte *FileManager::LIBERE_FICHIER(byte *ptr) {
 	return PTRNUL;
 }
 
-bool FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
+byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	byte *ptr = NULL;
 	Common::File f;
 
@@ -266,7 +266,7 @@ bool FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	}
 
 	// Scan for an entry in the catalogue
-	int result;
+	byte *result;
 	bool matchFlag = false;
 	int offsetVal = 0;
 	
@@ -304,9 +304,9 @@ bool FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 
 		bload_it(f, catData, GLOBALS.CAT_TAILLE);
 		f.close();
-		result = true;
+		result = catData;
 	} else {
-		result = false;
+		result = NULL;
 	}
 
 	return result;

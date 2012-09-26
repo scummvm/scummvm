@@ -72,6 +72,7 @@ public:
 	bool SL_FLAG;
 	bool FLAG_VISIBLE;
 	bool DESACTIVE_INVENT;
+	int DESACTIVE_CURSOR;
 	bool BOBTOUS;
 	SpriteItem Sprite[6];
 public:

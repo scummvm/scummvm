@@ -180,6 +180,7 @@ struct CacheItem {
 
 // Note: Fields decimal based for now
 struct Sauvegarde {
+	int field4;
 	int field353;
 	int field354;
 	int field355;
@@ -323,6 +324,7 @@ public:
 	int NBTRI;
 	bool CACHEFLAG;
 	int AFFINVEN;
+	bool NOPARLE;
 
 	Globals();
 	~Globals();

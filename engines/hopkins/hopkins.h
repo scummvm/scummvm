@@ -39,6 +39,7 @@
 #include "hopkins/menu.h"
 #include "hopkins/objects.h"
 #include "hopkins/sound.h"
+#include "hopkins/talk.h"
 
 /**
  * This is the namespace of the Hopkins engine.
@@ -104,6 +105,7 @@ public:
 	MenuManager _menuManager;
 	ObjectsManager _objectsManager;
 	SoundManager _soundManager;
+	TalkManager _talkManager;
 public:
 	HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc);
 	virtual ~HopkinsEngine();

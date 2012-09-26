@@ -29,6 +29,7 @@
 #include "hopkins/hopkins.h"
 #include "hopkins/files.h"
 #include "hopkins/sound.h"
+#include "hopkins/talk.h"
 
 namespace Hopkins {
 
@@ -831,7 +832,82 @@ void HopkinsEngine::INTRORUN() {
 }
 
 void HopkinsEngine::PASS() {
-	warning("TODO: PASS");
+	if (_globals.FR == 1)
+		_graphicsManager.LOAD_IMAGE("ndfr");
+	else
+		_graphicsManager.LOAD_IMAGE("nduk");
+  
+	_graphicsManager.FADE_INW();
+	if (_soundManager.VOICEOFF)
+	    _eventsManager.delay(500);
+	else
+		_soundManager.VOICE_MIX(628, 4);
+	
+	_graphicsManager.FADE_OUTW();
+	_globals.SORTIE = 4;	
+}
+
+void HopkinsEngine::ENDEMO() {
+	_soundManager.WSOUND(28);
+	if (_globals.FR == 1)
+		_graphicsManager.LOAD_IMAGE("endfr");
+	else
+	    _graphicsManager.LOAD_IMAGE("enduk");
+  
+	_graphicsManager.FADE_INW();
+	_eventsManager.delay(1500);
+	_graphicsManager.FADE_OUTW();
+	_globals.SORTIE = 0;
+}
+
+void HopkinsEngine::BOOM() {
+	_graphicsManager.nbrligne = 640;
+	_graphicsManager.SCANLINE(640);
+	_graphicsManager.DD_Lock();
+	_graphicsManager.Cls_Video();
+	_graphicsManager.DD_Unlock();
+	_graphicsManager.Cls_Pal();
+	
+	_globals.iRegul = 1;
+	_soundManager.SPECIAL_SOUND = 199;
+	_graphicsManager.FADE_LINUX = 2;
+	if (_globals.SVGA == 1)
+		_animationManager.PLAY_ANM("BOMBE2.ANM", 50, 14, 500);
+	if (_globals.SVGA == 2)
+		_animationManager.PLAY_ANM("BOMBE2A.ANM", 50, 14, 500);
+	
+	_soundManager.SPECIAL_SOUND = 0;
+	_graphicsManager.LOAD_IMAGE("IM15");
+	_animationManager.CHARGE_ANIM("ANIM15");
+	_graphicsManager.VISU_ALL();
+	_animationManager.BOBANIM_OFF(7);
+	_globals.BPP_NOAFF = 1;
+
+	for (int idx = 0; idx < 5; ++idx) {
+		_eventsManager.VBL();
+	}
+  
+	_globals.BPP_NOAFF = 0;
+	_graphicsManager.FADE_INW();
+	_eventsManager.MOUSE_OFF();
+	
+	for (int idx = 0; idx < 20; ++idx) {
+		_eventsManager.VBL();
+	}
+  
+	_globals.NOPARLE = true;
+	_talkManager.PARLER_PERSO2("vire.pe2");
+	_globals.NOPARLE = false;
+	_animationManager.BOBANIM_ON(7);
+
+	for (int idx = 0; idx < 100; ++idx) {
+		_eventsManager.VBL();
+	}
+
+	_graphicsManager.FADE_OUTW();
+	_graphicsManager.FIN_VISU();
+	_globals.iRegul = 0;
+	_globals.SORTIE = 151;
 }
 
 void HopkinsEngine::PERSONAGE(const Common::String &s1, const Common::String &s2, const Common::String &s3,
@@ -888,14 +964,6 @@ void HopkinsEngine::PUBQUIT() {
 
 void HopkinsEngine::COMPUT_HOPKINS(int a1) {
 	warning("TODO: COMPUT_HOPKINS");
-}
-
-void HopkinsEngine::ENDEMO() {
-	warning("TODO: ENDEMO");
-}
-
-void HopkinsEngine::BOOM() {
-	warning("TODO: BOOM");
 }
 
 } // End of namespace Hopkins

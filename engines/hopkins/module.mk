@@ -12,7 +12,8 @@ MODULE_OBJS := \
 	hopkins.o \
 	menu.o \
 	objects.o \
-	sound.o
+	sound.o \
+	talk.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HOPKINS), DYNAMIC_PLUGIN)

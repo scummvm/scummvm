@@ -20,38 +20,38 @@
  *
  */
 
-#ifndef HOPKINS_FILES_H
-#define HOPKINS_FILES_H
+#ifndef HOPKINS_TALK_H
+#define HOPKINS_TALK_H
 
 #include "common/scummsys.h"
-#include "common/hash-str.h"
 #include "common/str.h"
-#include "common/stream.h"
 
 namespace Hopkins {
 
-class FileManager {
-public:
-	static void initSaves();
-	static bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
-	static bool bsave(const Common::String &file, const void *buf, size_t n);
-	static void Chage_Inifile(Common::StringMap &iniParams);
-	static byte *CHARGE_FICHIER(const Common::String &file);
-	static void DMESS();
-	static void DMESS1();
-	static int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
-	static void F_Censure();
-	static int CONSTRUIT_SYSTEM(const Common::String &file);
-	static void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
-	static byte *LIBERE_FICHIER(byte *ptr);
-	static byte *RECHERCHE_CAT(const Common::String &file, int a2);
+class HopkinsEngine;
 
-	/**
-	 * Returns the size of a file. Throws an error if the file can't be found
-	 */
-	static uint32 FLONG(const Common::String &filename);
+class TalkManager {
+private:
+	HopkinsEngine *_vm;
+public:
+	Common::String FQUEST;
+	Common::String FREPON;
+	byte *BUFFERPERSO;
+	size_t TAILLEPERSO;
+	int STATI;
+	int PLIGNE1, PLIGNE2;
+	int PLIGNE3, PLIGNE4;
+	int PCHERCHE;
+public:
+	void setParent(HopkinsEngine *vm);
+
+	void PARLER_PERSO2(const Common::String &filename);
+	void RENVOIE_FICHIER(int srcStart, Common::String &dest, const char *srcData);
+	int DIALOGUE_REP(int idx);
+	int DIALOGUE();
+	void CHERCHE_PAL(int a1, int a2);
 };
 
 } // End of namespace Hopkins
 
-#endif /* HOPKINS_GLOBALS_H */
+#endif /* HOPKINS_TALK_H */
