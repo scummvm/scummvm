@@ -2192,4 +2192,53 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned 
 	} while (yCurrent != 1);
 }
 
+void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, 
+									int characterIndex, int transColour) {
+	const byte *v6;
+	int i; 
+	const byte *v8; 
+	int v9; 
+	int v10;
+	const byte *v11;
+	byte *destP;
+	int v13; 
+	byte v14;
+	byte *destLineP;
+	int v16;
+
+	v6 = spriteData + 3;
+	for (i = characterIndex; i; --i)
+		v6 += READ_LE_UINT32(v6) + 16;
+
+	v9 = 0;
+	v10 = 0;
+	v8 = v6 + 4;
+	v9 = READ_LE_UINT16(v8);
+	v8 += 2;
+	v10 = READ_LE_UINT16(v8);
+	v11 = v8 + 10;
+	destP = surface + xp + nbrligne2 * yp;
+	Largeur = v9;
+
+	do {
+		v16 = v10;
+		destLineP = destP;
+		v13 = v9;
+		do {
+			v14 = *v11;
+			if (*v11) {
+				if (v14 == (byte)-4)
+					v14 = transColour;
+				*destP = v14;
+			}
+	      
+			++destP;
+			++v11;
+			--v13;
+		} while (v13);
+		destP = nbrligne2 + destLineP;
+		v10 = v16 - 1;
+	} while (v16 != 1);
+}
+
 } // End of namespace Hopkins

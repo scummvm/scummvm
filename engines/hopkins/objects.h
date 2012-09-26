@@ -111,8 +111,6 @@ public:
 	int AvantTri(int a1, int a2, int a3);
 	void AFF_BOB_ANIM();
 	void AFF_VBOB();
-
-	void BOITE(int a1, int a2, int a3, int a4, int a5);
 };
 
 } // End of namespace Hopkins

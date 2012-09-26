@@ -461,11 +461,11 @@ void ObjectsManager::AFF_SPRITES() {
 		v16 = v38;
 		if (_vm->_fontManager.Txt[v16].field0 == 1) {
 			if ((uint16)(_vm->_fontManager.Txt[v16].field3FC - 2) > 1)
-				BOITE(v38,
+				_vm->_fontManager.BOITE(v38,
 					_vm->_fontManager.Txt[v16].fieldC, _vm->_fontManager.Txt[v16].field4,
 					_vm->_eventsManager.start_x + _vm->_fontManager.Txt[v16].field8, _vm->_fontManager.Txt[v16].fieldA);
 			else
-				BOITE(
+				_vm->_fontManager.BOITE(
 				  v38,
 				  _vm->_fontManager.Txt[v16].fieldC,
 				  _vm->_fontManager.Txt[v16].field4,
@@ -1510,10 +1510,6 @@ void ObjectsManager::AFF_VBOB() {
 		}
 		++idx;
 	} while ( idx <= 29 );
-}
-
-void ObjectsManager::BOITE(int a1, int a2, int a3, int a4, int a5) {
-	warning("TODO: BOITE");
 }
 
 } // End of namespace Hopkins

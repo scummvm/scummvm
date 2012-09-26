@@ -200,7 +200,7 @@ void Globals::clearAll() {
   
 	texte_tmp = PTRNUL;
 	texte_long = 0;
-	police = (void *)PTRNUL;
+	police = PTRNUL;
 	police_h = 0;
 	police_l = 0;
 	hauteur_boite = 0;

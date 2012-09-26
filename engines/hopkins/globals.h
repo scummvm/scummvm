@@ -234,7 +234,7 @@ public:
 	int g_old_anim;
 	int g_old_sens;
 	int HopkinsArr[140];
-	void *police;
+	byte *police;
 	int police_l;
 	int police_h;
 	byte *TETE;

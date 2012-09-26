@@ -167,6 +167,7 @@ public:
 	void AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex);
 	void SCOPY(const byte *surface, int x1, int y1, int x2, int y2, byte *destSurface, int destX, int destY);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY);
+	void Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int transColour);
 };
 
 } // End of namespace Hopkins
