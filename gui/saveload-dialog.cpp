@@ -618,13 +618,21 @@ void SaveLoadChooserGrid::open() {
 	assert(_entriesPerPage != 0);
 	const uint lastPos = ConfMan.getInt("gui_saveload_last_pos");
 	const uint listSize = _saveList.size();
-	if (lastPos < listSize) {
-		_curPage = lastPos / _entriesPerPage;
-	} else if (listSize) {
-		_curPage = (_saveList.size() - 1) / _entriesPerPage;
-	} else {
-		_curPage = 0;
+	uint bestMatch = 0;
+	uint diff = 0xFFFFFFFF;
+
+	// We look for the nearest available slot, since a slot might be missing
+	// due to the user deleting it via the list based chooser, by deleting
+	// it by hand, etc.
+	for (uint i = 0; i < listSize; ++i) {
+		uint curDiff = ABS(_saveList[i].getSaveSlot() - (int)lastPos);
+		if (curDiff < diff) {
+			diff = curDiff;
+			bestMatch = i;
+		}
 	}
+
+	_curPage = bestMatch / _entriesPerPage;
 
 	// Determine the next free save slot for save mode
 	if (_saveMode) {
@@ -765,7 +773,7 @@ void SaveLoadChooserGrid::close() {
 		// Similar things happen on resolution changes.
 		// TODO: Should we ignore this here? Is the user likely to be
 		// interested in having this page restored when he canceled?
-		ConfMan.setInt("gui_saveload_last_pos", _curPage * _entriesPerPage);
+		ConfMan.setInt("gui_saveload_last_pos", !_saveList.empty() ? _saveList[_curPage * _entriesPerPage].getSaveSlot() : 0);
 	}
 
 	SaveLoadChooserDialog::close();
