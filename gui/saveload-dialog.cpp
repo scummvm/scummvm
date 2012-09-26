@@ -422,7 +422,28 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 	}
 }
 
+void SaveLoadChooserSimple::open() {
+	SaveLoadChooserDialog::open();
+
+	// Scroll the list to the last used entry.
+	_list->scrollTo(ConfMan.getInt("gui_saveload_last_pos"));
+}
+
 void SaveLoadChooserSimple::close() {
+	// Save the current scroll position/used entry.
+	const int result = getResult();
+	if (result >= 0) {
+		ConfMan.setInt("gui_saveload_last_pos", result);
+	} else {
+		// Use the current scroll position here.
+		// TODO: This means we canceled the dialog (or switch to the grid). Do
+		// we want to save this position here? Does the user want that?
+		// TODO: Do we want to save the current scroll position or the
+		// currently selected item here? The scroll position is what the user
+		// currently sees and seems to make more sense.
+		ConfMan.setInt("gui_saveload_last_pos", _list->getCurrentScrollPos());
+	}
+
 	_metaEngine = 0;
 	_target.clear();
 	_saveList.clear();
