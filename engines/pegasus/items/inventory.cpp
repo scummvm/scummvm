@@ -83,7 +83,7 @@ InventoryResult Inventory::removeItem(Item *item) {
 
 InventoryResult Inventory::removeItem(ItemID id) {
 	Item *item = findItemByID(id);
-	
+
 	if (item) {
 		_inventoryList.remove(item);
 		item->setItemOwner(kNoActorID);

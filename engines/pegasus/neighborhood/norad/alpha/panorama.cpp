@@ -86,7 +86,7 @@ void Panorama::setMask(Surface *mask) {
 
 // If the panorama is not open, do nothing and return.
 // Otherwise, set up the view bounds.
-void Panorama::setViewBounds(const Common::Rect &newView) {	
+void Panorama::setViewBounds(const Common::Rect &newView) {
 	if (!isPanoramaOpen())
 		return;
 
@@ -159,7 +159,7 @@ void Panorama::drawPanorama(const Common::Rect &destRect) {
 //      _panoramaHeight, _stripWidth is correct.
 //      _panoramaMovie is allocated.
 void Panorama::makeNewSurface(const Common::Rect& view) {
-	CoordType stripLeft, stripRight;	
+	CoordType stripLeft, stripRight;
 	calcStripRange(view, stripLeft, stripRight);
 
 	Common::Rect r(0, 0, (stripRight - stripLeft + 1) * _stripWidth, _panoramaHeight);
@@ -179,7 +179,7 @@ void Panorama::calcStripRange(const Common::Rect &view, CoordType &stripLeft, Co
 // Assumptions:
 //      Surface is allocated and is big enough for maximum range of
 //          stripLeft and stripRight
-void Panorama::loadStrips(CoordType stripLeft, CoordType stripRight) {	
+void Panorama::loadStrips(CoordType stripLeft, CoordType stripRight) {
 	if (_stripLeft == -1) {
 		// Surface has just been allocated.
 		// Load in all strips.

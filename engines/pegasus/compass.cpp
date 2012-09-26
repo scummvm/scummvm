@@ -62,7 +62,7 @@ void Compass::setFaderValue(const int32 angle) {
 	FaderAnimation::setFaderValue(a);
 }
 
-void Compass::draw(const Common::Rect &r1) {	
+void Compass::draw(const Common::Rect &r1) {
 	if (_compassImage.isSurfaceValid()) {
 		Common::Rect bounds;
 		getBounds(bounds);

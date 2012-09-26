@@ -531,20 +531,20 @@ enum {
 	kMonitorMarsComparison = 5,
 	kMonitorCaldoriaComparison = 6,
 	kMonitorWSCComparison = 7,
-	
+
 	kRawModeMask = 0x0F,
 	kPlayingTBPMask = 0x10,
 	kPlayingLeftComparisonMask = 0x20,
 	kPlayingRightComparisonMask = 0x40,
-	
+
 	kPlayingAnyMask = kPlayingTBPMask |
 						kPlayingLeftComparisonMask |
 						kPlayingRightComparisonMask,
-	
+
 	kMonitorPlayingTheory = kMonitorTheory | kPlayingTBPMask,
 	kMonitorPlayingProcedure = kMonitorProcedure | kPlayingTBPMask,
 	kMonitorPlayingBackground = kMonitorBackground | kPlayingTBPMask,
-	
+
 	kMonitorPlayingLeftNoradComparison = kMonitorNoradComparison |
 											kPlayingLeftComparisonMask,
 	kMonitorPlayingRightNoradComparison = kMonitorNoradComparison |
@@ -594,7 +594,7 @@ static const int kRedirectionNewTargetSprite = 1;
 
 void RipTimer::initImage() {
 	_middle = -1;
-	
+
 	_timerImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kLeftRipPICTID);
 
 	Common::Rect r;
@@ -643,7 +643,7 @@ FullTSA::FullTSA(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood
 	setIsItemTaken(kMapBiochip);
 }
 
-void FullTSA::init() {	
+void FullTSA::init() {
 	Neighborhood::init();
 	_ripTimer.setDisplayOrder(kRipTimerOrder);
 	_ripTimer.startDisplaying();
@@ -657,7 +657,7 @@ void FullTSA::init() {
 	_sprite2.startDisplaying();
 	_sprite3.setDisplayOrder(kMonitorLayer);
 	_sprite3.startDisplaying();
-	
+
 	// Fix a mistake in the world builder tables.
 	HotspotInfoTable::Entry *entry = findHotspotEntry(kTSA23WestChipsSpotID);
 	entry->hotspotItem = kPegasusBiochip;
@@ -690,7 +690,7 @@ void FullTSA::flushGameState() {
 	GameState.setTSAFuseTimeLimit(_utilityFuse.getTimeRemaining());
 }
 
-Common::String FullTSA::getBriefingMovie() {	
+Common::String FullTSA::getBriefingMovie() {
 	Common::String movieName = Neighborhood::getBriefingMovie();
 
 	if (movieName.empty()) {
@@ -762,7 +762,7 @@ Common::String FullTSA::getEnvScanMovie() {
 			if (GameState.getCurrentRoom() == kTSA37) {
 				g_AIChip->showEnvScanClicked();
 				startExtraSequenceSync(kTSA37EnvironmentalScan, kHintInterruption);
-	
+
 				switch (getCurrentActivation()) {
 				case kActivationJumpToPrehistoric:
 					startExtraSequenceSync(kTSA37AI2ToPrehistoric, kFilterNoInput);
@@ -819,7 +819,7 @@ Common::String FullTSA::getHintMovie(uint hintNum) {
 
 	if (movieName.empty())
 		movieName = Common::String::format("Images/AI/TSA/XT20NH%d", hintNum);
-		
+
 	return movieName;
 }
 
@@ -965,7 +965,7 @@ void FullTSA::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpe
 
 void FullTSA::getExtraCompassMove(const ExtraTable::Entry &extraEntry, FaderMoveSpec &compassMove) {
 	int16 angle;
-	
+
 	switch (extraEntry.extra) {
 	case kTSA0BEastTurnLeft:
 	case kTSA0BNorthTurnLeft:
@@ -1007,7 +1007,7 @@ uint16 FullTSA::getDateResID() const {
 
 TimeValue FullTSA::getViewTime(const RoomID room, const DirectionConstant direction) {
 	ExtraID extraID = 0xffffffff;
-	
+
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kTSA0B, kEast):
 		if (GameState.getTSA0BZoomedIn())
@@ -1102,7 +1102,7 @@ void FullTSA::getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry) {
 
 void FullTSA::pickedUpItem(Item *item) {
 	BiochipItem *biochip;
-	
+
 	switch (item->getObjectID()) {
 	case kJourneymanKey:
 		GameState.setScoringGotJourneymanKey(true);
@@ -1363,7 +1363,7 @@ void FullTSA::activateHotspots() {
 	}
 }
 
-void FullTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {	
+void FullTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 	switch (clickedSpot->getObjectID()) {
 	case kTSAGTOtherSpotID:
 		showExtraView(kTSAGTOtherChoice);
@@ -1417,7 +1417,7 @@ void FullTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 	case kTSA0BEastRightPlaySpotID:
 		playRightComparison();
 		break;
-		
+
 	// Command center
 	case kTSA0BWestTheorySpotID:
 		initializeTBPMonitor(kMonitorTheory, kTSA0BTBPTheoryHighlight);
@@ -1555,7 +1555,7 @@ void FullTSA::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 		_sprite2.setCurrentFrameIndex(1);
 		_vm->delayShell(1, 2);
 		releaseSprites();
-		break;			
+		break;
 	case kTSA37NorthJumpToNoradSpotID:
 		GameState.setTSAState(kPlayerOnWayToNorad);
 		requestExtraSequence(kTSA37JumpToNorad, 0, kFilterNoInput);
@@ -1620,7 +1620,7 @@ void FullTSA::showMainJumpMenu() {
 
 void FullTSA::playTBPMonitor() {
 	InputDevice.waitInput(kFilterAllButtons);
-	
+
 	if ((GameState.getT0BMonitorMode() & kPlayingTBPMask) == 0) {
 		ExtraID extra;
 
@@ -1706,7 +1706,7 @@ void FullTSA::startUpComparisonMonitor() {
 
 	_sprite1.setCurrentFrameIndex(0);
 	_sprite1.moveElementTo(kComparisonHiliteSpriteLeft, kComparisonHiliteSpriteTop);
-	
+
 	_sprite2.addPICTResourceFrame(kComparisonChancesNoradPICTID, false,
 			kComparisonChancesNoradLeft - kComparisonChancesSpriteLeft,
 			kComparisonChancesNoradTop - kComparisonChancesSpriteTop);
@@ -1823,9 +1823,9 @@ void FullTSA::playLeftComparison() {
 	}
 }
 
-void FullTSA::playRightComparison() {	
+void FullTSA::playRightComparison() {
 	InputDevice.waitInput(kFilterAllButtons);
-	
+
 	if ((GameState.getT0BMonitorMode() & kPlayingRightComparisonMask) == 0) {
 		ExtraID extra;
 
@@ -2348,7 +2348,7 @@ void FullTSA::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	}
 }
 
-void FullTSA::receiveNotification(Notification *notification, const NotificationFlags flags) {	
+void FullTSA::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	ExtraID lastExtra = _lastExtra;
 
 	if ((flags & kExtraCompletedFlag) != 0) {
@@ -2417,7 +2417,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 		case kTSA05WhiteZoomIn:
 			GameState.setScoringSawBust6(true);
 			break;
-			
+
 		// Command center
 		// Historical comparison...
 		case kTSA0BEastZoomIn:
@@ -2468,7 +2468,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 		case kTSA0BWSCUnaltered:
 			initializeComparisonMonitor(kMonitorNeutral, 0);
 			break;
-			
+
 		// Center monitor.
 		case kTSA0BNorthZoomIn:
 			GameState.setTSA0BZoomedIn(true);
@@ -2528,7 +2528,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 			_sprite2.setCurrentFrameIndex(kRedirectionSecuredSprite);
 			_sprite2.show();
 			break;
-			
+
 		// TBP monitor.
 		case kTSA0BWestZoomIn:
 			GameState.setTSA0BZoomedIn(true);
@@ -2562,7 +2562,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 		case kTSA0BTBPProcedure:
 			initializeTBPMonitor(kMonitorNeutral, 0);
 			break;
-			
+
 		// Ready room
 		case kTSA22RedEastZoomInSequence:
 			_privateFlags.setFlag(kTSAPrivateKeyVaultOpenFlag, true);
@@ -2846,7 +2846,7 @@ void FullTSA::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
 
 uint FullTSA::getHistoricalLogIndex() {
 	uint index;
-	
+
 	if (GameState.getTSASeenNoradNormal() && GameState.getTSASeenNoradAltered())
 		index = 8;
 	else

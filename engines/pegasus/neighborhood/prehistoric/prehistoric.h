@@ -104,10 +104,10 @@ class Prehistoric : public Neighborhood {
 public:
 	Prehistoric(InputHandler *, PegasusEngine *);
 	virtual ~Prehistoric() {}
-	
+
 	virtual uint16 getDateResID() const;
 	virtual void init();
-	
+
 	virtual void arriveAt(const RoomID, const DirectionConstant);
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
@@ -146,7 +146,7 @@ protected:
 	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
 
 	void loadAmbientLoops();
-	
+
 	FlagsArray<byte, kNumPrehistoricPrivateFlags> _privateFlags;
 
 	Common::String getNavMovieName();

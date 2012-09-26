@@ -129,7 +129,7 @@ NoradAlphaFillingStation::NoradAlphaFillingStation(Neighborhood *owner) : GameIn
 	_state = kNoState;
 }
 
-void NoradAlphaFillingStation::openInteraction() {	
+void NoradAlphaFillingStation::openInteraction() {
 	_rightSideMovie.initFromMovieFile("Images/Norad Alpha/N01W Right Side");
 	_rightSideMovie.moveElementTo(kNoradAlpha01RightSideLeft, kNoradAlpha01RightSideTop);
 	_rightSideMovie.setDisplayOrder(kN01RightSideOrder);
@@ -167,7 +167,7 @@ void NoradAlphaFillingStation::setStaticState(TimeValue time, int16 state) {
 	allowInput(true);
 }
 
-void NoradAlphaFillingStation::setSegmentState(TimeValue start, TimeValue stop, NotificationFlags flag, int16 state) {	
+void NoradAlphaFillingStation::setSegmentState(TimeValue start, TimeValue stop, NotificationFlags flag, int16 state) {
 	_rightSideMovie.stop();
 	_rightSideMovie.setSegment(start, stop);
 	_rightSideMovie.setTime(start);
@@ -194,7 +194,7 @@ void NoradAlphaFillingStation::intakeWarningFinished() {
 	setStaticState(kFSMainMenu, kMainMenu);
 }
 
-void NoradAlphaFillingStation::showIntakeInProgress(uint16 numSeconds) {	
+void NoradAlphaFillingStation::showIntakeInProgress(uint16 numSeconds) {
 	if (numSeconds == 0) {
 		setSegmentState(kFSIntakeInProgressStart, kFSIntakeInProgressStop, kFSIntakeWarningFinishedFlag, kNoState);
 		Item *item = ((NoradAlpha *)getOwner())->getFillingItem();
@@ -210,7 +210,7 @@ void NoradAlphaFillingStation::showIntakeInProgress(uint16 numSeconds) {
 	}
 }
 
-void NoradAlphaFillingStation::intakeHighlightFinished() {	
+void NoradAlphaFillingStation::intakeHighlightFinished() {
 	_rightSideMovie.stop();
 
 	if (GameState.getNoradGassed()) {
@@ -228,7 +228,7 @@ void NoradAlphaFillingStation::dispenseHighlightFinished() {
 	setStaticState(kFSDispenseMenu, kDispenseMenu);
 }
 
-void NoradAlphaFillingStation::dispenseGas() {	
+void NoradAlphaFillingStation::dispenseGas() {
 	Item *item = ((NoradAlpha *)getOwner())->getFillingItem();
 
 	if (item) {

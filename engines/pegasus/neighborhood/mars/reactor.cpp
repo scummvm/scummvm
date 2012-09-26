@@ -66,7 +66,7 @@ void ReactorGuess::setGuess(int32 a, int32 b, int32 c) {
 	triggerRedraw();
 }
 
-void ReactorGuess::draw(const Common::Rect &) {	
+void ReactorGuess::draw(const Common::Rect &) {
 	if (_colors.isSurfaceValid()) {
 		Common::Rect r1(0, 0, kOneGuessWidth, kOneGuessHeight);
 		Common::Rect r2 = r1;
@@ -115,7 +115,7 @@ void ReactorChoiceHighlight::disposeReactorChoiceHighlight() {
 	_colors.deallocateSurface();
 }
 
-void ReactorChoiceHighlight::draw(const Common::Rect &) {	
+void ReactorChoiceHighlight::draw(const Common::Rect &) {
 	if (_colors.isSurfaceValid()) {
 		for (int i = 0; i < 5; ++i) {
 			if (_choices.getFlag(i)) {
@@ -232,7 +232,7 @@ void ReactorHistory::showAnswer() {
 	triggerRedraw();
 }
 
-bool ReactorHistory::isSolved() {	
+bool ReactorHistory::isSolved() {
 	for (int i = 0; i < _numGuesses; i++)
 		if (_history[i][0] == _answer[0] && _history[i][1] == _answer[1] && _history[i][2] == _answer[2])
 			return true;
@@ -284,7 +284,7 @@ void ReactorHistory::draw(const Common::Rect &) {
 	}
 }
 
-int32 ReactorHistory::getCurrentNumCorrect() {	
+int32 ReactorHistory::getCurrentNumCorrect() {
 	int correct = 0;
 
 	for (int i = 0; i < 3; i++)

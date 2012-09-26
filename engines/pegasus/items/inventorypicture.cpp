@@ -76,7 +76,7 @@ void InventoryPicture::getItemXY(uint32 index, CoordType &x, CoordType &y) {
 	y = (index / _itemsPerRow) * _itemHeight + _itemY;
 }
 
-void InventoryPicture::drawItemHighlight(const Common::Rect &r) {	
+void InventoryPicture::drawItemHighlight(const Common::Rect &r) {
 	if (_highlightImage.isSurfaceValid()) {
 		Common::Rect r2 = _highlightBounds;
 		Common::Rect bounds;
@@ -145,7 +145,7 @@ InventoryResult InventoryPicture::addInventoryItem(Item *item) {
 	return result;
 }
 
-InventoryResult InventoryPicture::removeInventoryItem(Item *item) {	
+InventoryResult InventoryPicture::removeInventoryItem(Item *item) {
 	InventoryResult result = _inventory->removeItem(item);
 
 	if (result == kInventoryOK)

@@ -97,7 +97,7 @@ void TractorBeam::draw(const Common::Rect &) {
 		byte *pTopRight = rowPtrTop + (kHalfWidth * 2 - 1) * screen->format.bytesPerPixel;
 		byte *pBottomLeft = rowPtrBottom;
 		byte *pBottomRight = rowPtrBottom + (kHalfWidth * 2 - 1) * screen->format.bytesPerPixel;
-		
+
 		for (int x = kHalfWidth; x > 0; x--) {
 			byte r, g, b;
 			uint32 color;
@@ -106,12 +106,12 @@ void TractorBeam::draw(const Common::Rect &) {
 			DO_BLEND(pTopRight);
 			DO_BLEND(pBottomLeft);
 			DO_BLEND(pBottomRight);
-			
+
 			pTopLeft += screen->format.bytesPerPixel;
 			pBottomLeft += screen->format.bytesPerPixel;
 			pTopRight -= screen->format.bytesPerPixel;
 			pBottomRight -= screen->format.bytesPerPixel;
-			
+
 			while (dHoriz > kW3Div2Horiz) {
 				blendHoriz++;
 				dHoriz -= kW3Horiz;
@@ -121,10 +121,10 @@ void TractorBeam::draw(const Common::Rect &) {
 			d1Horiz += d2Horiz;
 			d2Horiz += d3Horiz;
 		}
-		
+
 		rowPtrTop += screen->pitch;
 		rowPtrBottom -= screen->pitch;
-		
+
 		while (dVert > kW3Div2Vert) {
 			blendVert++;
 			dVert -= kW3Vert;

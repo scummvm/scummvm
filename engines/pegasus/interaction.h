@@ -79,10 +79,10 @@ public:
 	virtual long getNumHints() { return 0; }
 	virtual Common::String getHintMovie(uint) { return ""; }
 	virtual bool canSolve() { return false; }
-	
+
 	virtual void setSoundFXLevel(const uint16) {}
 	virtual void setAmbienceLevel(const uint16) {}
-	
+
 	virtual void doSolve() {}
 
 protected:
@@ -96,10 +96,10 @@ protected:
 	virtual void initInteraction() {}
 	virtual void closeInteraction() {}
 	virtual void resetInteraction() {}
-	
+
 	InputHandler *_savedHandler;
 	Neighborhood *_owner;
-	
+
 private:
 	// Private so that only StartInteraction and StopInteraction can touch it.
 	bool _isInteracting;

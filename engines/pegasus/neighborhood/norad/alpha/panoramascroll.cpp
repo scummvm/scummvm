@@ -32,7 +32,7 @@ PanoramaScroll::PanoramaScroll(const DisplayElementID id) : IdlerAnimation(id) {
 	_totalWidth = 0;
 }
 
-void PanoramaScroll::initFromMovieFile(const Common::String &fileName) {	
+void PanoramaScroll::initFromMovieFile(const Common::String &fileName) {
 	_panorama.initFromMovieFile(fileName);
 
 	Common::Rect r;
@@ -40,7 +40,7 @@ void PanoramaScroll::initFromMovieFile(const Common::String &fileName) {
 	_totalWidth = r.width();
 }
 
-void PanoramaScroll::initMaskFromPICTFile(const Common::String &fileName) {	
+void PanoramaScroll::initMaskFromPICTFile(const Common::String &fileName) {
 	if (!_panorama.isPanoramaOpen())
 		return;
 
@@ -71,7 +71,7 @@ void PanoramaScroll::draw(const Common::Rect &) {
 	_panorama.drawPanorama(_bounds);
 }
 
-void PanoramaScroll::timeChanged(const TimeValue newTime) {	
+void PanoramaScroll::timeChanged(const TimeValue newTime) {
 	CoordType leftPixel = (_totalWidth - _boundsWidth) * newTime / getDuration();
 
 	Common::Rect r;

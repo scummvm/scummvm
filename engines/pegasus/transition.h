@@ -38,7 +38,7 @@ class ScreenFader : public Fader {
 public:
 	ScreenFader();
 	virtual ~ScreenFader();
-	
+
 	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 	void doFadeInSync(const TimeValue = kHalfSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 
@@ -62,9 +62,9 @@ class Transition : public FaderAnimation {
 public:
 	Transition(const DisplayElementID id);
 	virtual ~Transition() {}
-	
+
 	virtual void setBounds(const Common::Rect &);
-	
+
 	virtual void setInAndOutElements(DisplayElement *, DisplayElement *);
 	DisplayElement *getInElement() { return _inPicture; }
 	DisplayElement *getOutElement() { return _outPicture; }

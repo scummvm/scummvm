@@ -282,7 +282,7 @@ void TinyTSA::arriveAt(const RoomID room, const DirectionConstant direction) {
 
 void TinyTSA::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	ExtraID lastExtra = _lastExtra;
-	
+
 	Neighborhood::receiveNotification(notification, flags);
 
 	if ((flags & kExtraCompletedFlag) != 0) {

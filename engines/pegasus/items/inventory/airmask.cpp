@@ -62,7 +62,7 @@ void AirMask::writeToStream(Common::WriteStream *stream) {
 	stream->writeUint32BE(_oxygenTimer.getTimeRemaining());
 }
 
-void AirMask::readFromStream(Common::ReadStream *stream) {	
+void AirMask::readFromStream(Common::ReadStream *stream) {
 	_oxygenTimer.stopFuse();
 	InventoryItem::readFromStream(stream);
 	_oxygenTimer.primeFuse(stream->readUint32BE());
@@ -98,7 +98,7 @@ void AirMask::putMaskOn() {
 		setItemState(newState);
 }
 
-void AirMask::takeMaskOff() {	
+void AirMask::takeMaskOff() {
 	uint airLevel = getAirLeft();
 	ItemState newState = getItemState();
 	ItemState oldState = newState;

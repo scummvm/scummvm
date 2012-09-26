@@ -85,7 +85,7 @@ uint16 Prehistoric::getDateResID() const {
 
 void Prehistoric::init() {
 	Neighborhood::init();
-	
+
 	// Forces a stop so the flashlight can turn off...
 	forceStridingStop(kPrehistoric12, kSouth, kNoAlternateID);
 }
@@ -105,7 +105,7 @@ class FinishPrehistoricAction : public AIPlayMessageAction {
 public:
 	FinishPrehistoricAction() : AIPlayMessageAction("Images/AI/Prehistoric/XP25W", false) {}
 	~FinishPrehistoricAction() {}
-	
+
 	void performAIAction(AIRule *);
 
 };
@@ -130,36 +130,36 @@ void Prehistoric::setUpAIRules() {
 			locCondition->addLocation(MakeRoomView(kPrehistoric16, kNorth));
 			AIRule *rule = new AIRule(locCondition, messageAction);
 			g_AIArea->addAIRule(rule);
-		
+
 			messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP2SB", false);
 			locCondition = new AILocationCondition(1);
 			locCondition->addLocation(MakeRoomView(kPrehistoric01, kSouth));
 			rule = new AIRule(locCondition, messageAction);
 			g_AIArea->addAIRule(rule);
-		
+
 			messageAction = new  AIPlayMessageAction("Images/AI/Prehistoric/XP2SB", false);
 			locCondition = new AILocationCondition(1);
 			locCondition->addLocation(MakeRoomView(kPrehistoric08, kEast));
 			rule = new AIRule(locCondition, messageAction);
 			g_AIArea->addAIRule(rule);
-		
+
 			messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP2SB", false);
 			locCondition = new AILocationCondition(1);
 			locCondition->addLocation(MakeRoomView(kPrehistoric25, kWest));
 			rule = new AIRule(locCondition, messageAction);
 			g_AIArea->addAIRule(rule);
-		
+
 			messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP16NB", false);
 			locCondition = new AILocationCondition(1);
 			locCondition->addLocation(MakeRoomView(kPrehistoric23, kNorth));
 			rule = new AIRule(locCondition, messageAction);
 			g_AIArea->addAIRule(rule);
-		
+
 			messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP18NB", false);
 			AITimerCondition *timerCondition = new AITimerCondition(kPrehistoricWarningTimeLimit, 1, true);
 			rule = new AIRule(timerCondition, messageAction);
 			g_AIArea->addAIRule(rule);
-		
+
 			messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP25W", false);
 			AIHasItemCondition *hasLogCondition = new AIHasItemCondition(kHistoricalLog);
 			rule = new AIRule(hasLogCondition, messageAction);
@@ -191,7 +191,7 @@ TimeValue Prehistoric::getViewTime(const RoomID room, const DirectionConstant di
 
 	if (extraID == 0xffffffff)
 		return Neighborhood::getViewTime(room, direction);
-	
+
 	getExtraEntry(extraID, extra);
 	return extra.movieEnd - 1;
 }
@@ -322,7 +322,7 @@ void Prehistoric::checkContinuePoint(const RoomID room, const DirectionConstant 
 
 void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction) {
 	Item *keyCard;
-	
+
 	if (MakeRoomView(room, direction) == MakeRoomView(kPrehistoric25, kEast) &&
 			_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag)) {
 		_navMovie.stop();
@@ -398,7 +398,7 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 
 void Prehistoric::loadAmbientLoops() {
 	RoomID room = GameState.getCurrentRoom();
-	
+
 	switch (room) {
 	case kPrehistoric02:
 		// 1/4 volume.
@@ -592,7 +592,7 @@ Common::String Prehistoric::getEnvScanMovie() {
 
 uint Prehistoric::getNumHints() {
 	uint numHints = Neighborhood::getNumHints();
-	
+
 	if (numHints == 0) {
 		switch (GameState.getCurrentRoomAndView()) {
 		case MakeRoomView(kPrehistoric18, kEast):

@@ -81,7 +81,7 @@ void SubPlatform::openInteraction() {
 	_platformMovie.startDisplaying();
 	_platformCallBack.setNotification(&_platformNotification);
 	_platformCallBack.initCallBack(&_platformMovie, kCallBackAtExtremes);
-	
+
 	_platformNotification.notifyMe(this, kPlatformNotificationFlags, kPlatformNotificationFlags);
 }
 
@@ -135,12 +135,12 @@ void SubPlatform::receiveNotification(Notification *notification, const Notifica
 			_platformMovie.stopDisplaying();
 
 			owner->getExtraEntry(kNorad19ExitToSub, entry);
-				
+
 			loop1Spec.makeTwoKnotFaderSpec(kNoradAlphaMovieScale, 0, kNoradWarningVolume,
 					entry.movieEnd - entry.movieStart, 0);
 			loop1Spec.insertFaderKnot(4560, kNoradWarningVolume);
 			loop1Spec.insertFaderKnot(5080, 0);
-				
+
 			loop2Spec.makeTwoKnotFaderSpec(kNoradAlphaMovieScale, 0, kNoradSuckWindVolume,
 					entry.movieEnd - entry.movieStart, 0);
 			loop1Spec.insertFaderKnot(4560, kNoradSuckWindVolume);
@@ -176,7 +176,7 @@ void SubPlatform::activateHotspots() {
 	GameInteraction::activateHotspots();
 }
 
-void SubPlatform::clickInHotspot(const Input &input, const Hotspot *spot) {	
+void SubPlatform::clickInHotspot(const Input &input, const Hotspot *spot) {
 	if (spot->getObjectID() == kNorad19ActivateMonitorSpotID) {
 		if (GameState.getNoradSubPrepState() == kSubDamaged) {
 			_platformMovie.setSegment(kDamagedStart * _platformScale, kDamagedStop * _platformScale);
@@ -195,7 +195,7 @@ void SubPlatform::clickInHotspot(const Input &input, const Hotspot *spot) {
 		_platformMovie.redrawMovieWorld();
 
 		_stateBits &= ~kWaitingForPlayerBit;
-		
+
 		allowInput(false);
 	} else {
 		GameInteraction::clickInHotspot(input, spot);

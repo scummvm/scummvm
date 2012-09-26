@@ -46,7 +46,7 @@ protected:
 	void openInteraction();
 	void initInteraction();
 	void closeInteraction();
-	
+
 	void handleInput(const Input &, const Hotspot *);
 	void activateHotspots();
 	void clickInHotspot(const Input &, const Hotspot *);
@@ -59,10 +59,10 @@ protected:
 	void makeDesertChoice();
 	void makeRhythmsChoice();
 	void makeAcousticChoice();
-	
+
 	void useIdleTime();
 	void loopExtra(const ExtraID);
-	
+
 	Movie _4DSpritesMovie;
 	TimeScale _4DSpritesScale;
 	uint _whichMenu;

@@ -42,7 +42,7 @@ public:
 
 protected:
 	void timeChanged(const TimeValue);
-	
+
 	CoordType _middle;
 	Surface _timerImage;
 };

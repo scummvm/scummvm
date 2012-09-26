@@ -41,16 +41,16 @@ class InventoryPicture : public InputHandler, public Picture {
 public:
 	InventoryPicture(const DisplayElementID, InputHandler *, Inventory *);
 	virtual ~InventoryPicture() {}
-	
+
 	void initInventoryImage(Transition *);
 	void throwAwayInventoryImage();
-	
+
 	void panelUp();
 	void activateInventoryPicture();
 	void deactivateInventoryPicture();
 	void handleInput(const Input &, const Hotspot *);
 	bool wantsCursor() { return false; }
-	
+
 	InventoryResult addInventoryItem(Item *);
 	InventoryResult removeInventoryItem(Item *);
 	void removeAllItems();
@@ -68,7 +68,7 @@ protected:
 	virtual void highlightCurrentItem();
 	virtual void unhighlightCurrentItem() {}
 	virtual TimeValue getItemPanelTime(Item *) = 0;
-	
+
 	Inventory *_inventory;
 	uint32 _lastReferenceCount;
 	Frame _highlightImage;
@@ -114,7 +114,7 @@ class BiochipPicture : public InventoryPicture {
 public:
 	BiochipPicture(const DisplayElementID, InputHandler *, Inventory *);
 	virtual ~BiochipPicture() {}
-	
+
 protected:
 	virtual void unhighlightCurrentItem();
 	virtual TimeValue getItemPanelTime(Item *);

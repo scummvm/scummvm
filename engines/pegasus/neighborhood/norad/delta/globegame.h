@@ -101,7 +101,7 @@ public:
 	void handleInput(const Input &, const Hotspot *);
 	void clickInHotspot(const Input &, const Hotspot *);
 	void activateHotspots();
-	
+
 	bool canSolve();
 	void doSolve();
 

@@ -62,7 +62,7 @@ Common::Error GameStateManager::writeGameState(Common::WriteStream *stream) {
 
 	if (stream->err())
 		return Common::kWritingFailed;
-	
+
 	return Common::kNoError;
 }
 
@@ -77,12 +77,12 @@ Common::Error GameStateManager::readGameState(Common::ReadStream *stream) {
 	_lastRoom = stream->readUint16BE();
 	_lastDirection = stream->readByte();
 	_openDoorRoom = stream->readUint16BE();
-	_openDoorDirection = stream->readByte();	
+	_openDoorDirection = stream->readByte();
 
 	_globalFlags.readFromStream(stream);
 	_scoringFlags.readFromStream(stream);
 	_itemTakenFlags.readFromStream(stream);
-	
+
 	readCaldoriaState(stream);
 	readTSAState(stream);
 	readPrehistoricState(stream);
@@ -92,7 +92,7 @@ Common::Error GameStateManager::readGameState(Common::ReadStream *stream) {
 
 	if (stream->err())
 		return Common::kReadingFailed;
-	
+
 	return Common::kNoError;
 }
 
@@ -531,7 +531,7 @@ GameScoreType GameStateManager::getTotalScore() {
 /////////////////////////////////////////////
 //
 // Caldoria data
-	
+
 void GameStateManager::writeCaldoriaState(Common::WriteStream *stream) {
 	_caldoriaFlags.writeToStream(stream);
 	stream->writeUint32BE(_caldoriaFuseTimeLimit);
@@ -2163,7 +2163,7 @@ void GameStateManager::setMarsHitRobotWithCannon(bool flag) {
 bool GameStateManager::getMarsHitRobotWithCannon() {
 	return _marsFlags.getFlag(kMarsHitRobotWithCannonFlag);
 }
-	
+
 void GameStateManager::setMarsReadyForShuttleTransport(bool value) {
 	_marsFlags.setFlag(kMarsReadyForShuttleTransportFlag, value);
 }
@@ -2179,7 +2179,7 @@ void GameStateManager::setMarsFinishedCanyonChase(bool flag) {
 bool GameStateManager::getMarsFinishedCanyonChase() {
 	return _marsFlags.getFlag(kMarsFinishedCanyonChaseFlag);
 }
-	
+
 void GameStateManager::setMarsThreadedMaze(bool flag) {
 	_marsFlags.setFlag(kMarsThreadedMazeFlag, flag);
 }

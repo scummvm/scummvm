@@ -94,12 +94,12 @@ enum {
 	kScoringShieldedCardBombFlag,
 	kScoringStunnedSinclairFlag,
 	kScoringDisarmedNukeFlag,
-	
+
 	kScoringThrewBreakerFlag,
 	kScoringExtendedBridgeFlag,
 	kScoringGotHistoricalLogFlag,
 	kScoringFinishedPrehistoricFlag,
-	
+
 	kScoringThrownByRobotFlag,
 	kScoringGotMarsCardFlag,
 	kScoringSawMarsKioskFlag,
@@ -121,7 +121,7 @@ enum {
 	kScoringStoppedRobotsShuttleFlag,
 	kScoringGotMarsOpMemChipFlag,
 	kScoringFinishedMarsFlag,
-	
+
 	kScoringSawSecurityMonitorFlag,
 	kScoringFilledOxygenCanisterFlag,
 	kScoringFilledArgonCanisterFlag,
@@ -137,7 +137,7 @@ enum {
 	kScoringStoppedNoradRobotFlag,
 	kScoringGotNoradOpMemChipFlag,
 	kScoringFinishedNoradFlag,
-	
+
 	kScoringRemovedDartFlag,
 	kScoringAnalyzedDartFlag,
 	kScoringBuiltAntidoteFlag,
@@ -158,11 +158,11 @@ enum {
 	kScoringStoppedWSCRobotFlag,
 	kScoringGotWSCOpMemChipFlag,
 	kScoringFinishedWSCFlag,
-	
+
 	kScoringMarsGandhiFlag,
 	kScoringNoradGandhiFlag,
 	kScoringWSCGandhiFlag,
-	
+
 	kNumScoringFlags
 };
 
@@ -297,21 +297,21 @@ public:
 	// Base game state
 	Common::Error writeGameState(Common::WriteStream *stream);
 	Common::Error readGameState(Common::ReadStream *stream);
-	
+
 	void resetGameState();
-	
+
 	void getCurrentLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction);
 	void setCurrentLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
-	
+
 	NeighborhoodID getCurrentNeighborhood();
 	void setCurrentNeighborhood(const NeighborhoodID neighborhood);
 	RoomID getCurrentRoom();
 	void setCurrentRoom(const RoomID room);
 	DirectionConstant getCurrentDirection();
 	void setCurrentDirection(const DirectionConstant direction);
-	
+
 	RoomViewID getCurrentRoomAndView();
-	
+
 	void getNextLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction);
 	void setNextLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
 
@@ -321,32 +321,32 @@ public:
 	void setNextRoom(const RoomID room);
 	DirectionConstant getNextDirection();
 	void setNextDirection(const DirectionConstant direction);
-	
+
 	void getLastLocation(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction);
 	void setLastLocation(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
-	
+
 	NeighborhoodID getLastNeighborhood();
 	void setLastNeighborhood(const NeighborhoodID neighborhood);
 	RoomID getLastRoom();
 	void setLastRoom(const RoomID room);
 	DirectionConstant getLastDirection();
 	void setLastDirection(const DirectionConstant direction);
-	
+
 	RoomViewID getLastRoomAndView();
-	
+
 	void getOpenDoorLocation(RoomID &room, DirectionConstant &direction);
 	void setOpenDoorLocation(const RoomID room, const DirectionConstant direction);
 	RoomID getOpenDoorRoom();
 	void setOpenDoorRoom(const RoomID room);
 	DirectionConstant getOpenDoorDirection();
 	void setOpenDoorDirection(const DirectionConstant direction);
-	
+
 	RoomViewID getDoorOpenRoomAndView();
-	
+
 	bool isCurrentDoorOpen();
 
 	// Pegasus Prime
-	
+
 	// Scoring...
 	// Scoring "Set" functions.
 	// Caldoria/TSA scoring
@@ -460,7 +460,7 @@ public:
 	void setScoringMarsGandhi(const bool = true);
 	void setScoringNoradGandhi(const bool = true);
 	void setScoringWSCGandhi(const bool = true);
-	
+
 	// Scoring "Get" functions.
 	bool getScoringSawINN();
 	bool getScoringTookShower();
@@ -574,27 +574,27 @@ public:
 	void writeCaldoriaState(Common::WriteStream *stream);
 	void readCaldoriaState(Common::ReadStream *stream);
 	void resetCaldoriaState();
-	
+
 	void writeTSAState(Common::WriteStream *stream);
 	void readTSAState(Common::ReadStream *stream);
 	void resetTSAState();
-	
+
 	void writePrehistoricState(Common::WriteStream *stream);
 	void readPrehistoricState(Common::ReadStream *stream);
 	void resetPrehistoricState();
-	
+
 	void writeNoradState(Common::WriteStream *stream);
 	void readNoradState(Common::ReadStream *stream);
 	void resetNoradState();
-	
+
 	void writeMarsState(Common::WriteStream *stream);
 	void readMarsState(Common::ReadStream *stream);
 	void resetMarsState();
-	
+
 	void writeWSCState(Common::WriteStream *stream);
 	void readWSCState(Common::ReadStream *stream);
 	void resetWSCState();
-	
+
 	// Globals.
 	void setWalkthroughMode(bool);
 	bool getWalkthroughMode();
@@ -619,7 +619,7 @@ public:
 	bool isTakenItemID(ItemID);
 	void setTakenItem(Item *, bool);
 	bool isTakenItem(Item *);
-	
+
 	// Caldoria
 	void setCaldoriaFuseTimeLimit(const TimeValue);
 	TimeValue getCaldoriaFuseTimeLimit();
@@ -653,7 +653,7 @@ public:
 	bool getCaldoriaDoorBombed();
 	void setCaldoriaGunAimed(bool);
 	bool getCaldoriaGunAimed();
-	
+
 	// TSA
 	void setRipTimerTime(TimeValue);
 	TimeValue getRipTimerTime();
@@ -703,7 +703,7 @@ public:
 	bool getTSASeenWSCAltered();
 	void setTSABiosuitOn(bool);
 	bool getTSABiosuitOn();
-	
+
 	// Prehistoric
 	void setPrehistoricTriedToExtendBridge(bool);
 	bool getPrehistoricTriedToExtendBridge();
@@ -717,7 +717,7 @@ public:
 	bool getPrehistoricSeenBridgeZoom();
 	void setPrehistoricBreakerThrown(bool);
 	bool getPrehistoricBreakerThrown();
-	
+
 	// Norad
 	void setNoradSeenTimeStream(bool);
 	bool getNoradSeenTimeStream();
@@ -743,10 +743,10 @@ public:
 	NoradSubPrepState getNoradSubPrepState();
 	void setNoradArrivedFromSub(bool);
 	bool getNoradArrivedFromSub();
-	
+
 	// Mars
 	void setMarsSeenTimeStream(bool);
-	bool getMarsSeenTimeStream();	
+	bool getMarsSeenTimeStream();
 	void setMarsHeardUpperPodMessage(bool);
 	bool getMarsHeardUpperPodMessage();
 	void setMarsRobotThrownPlayer(bool);
@@ -857,25 +857,25 @@ private:
 	FlagsArray<byte, kNumGlobalFlags> _globalFlags;
 	FlagsArray<byte, kNumScoringFlags> _scoringFlags;
 	FlagsArray<uint32, kNumItems> _itemTakenFlags;
-	
+
 	FlagsArray<byte, kNumCaldoriaFlags> _caldoriaFlags;
 	TimeValue _caldoriaFuseTimeLimit;
-	
+
 	TimeValue _TSARipTimerTime;
 	TimeValue _TSAFuseTimeLimit;
 	byte _TSAState;
 	byte _T0BMonitorMode;
 	TimeValue _T0BMonitorStart;
 	FlagsArray<byte, kNumTSAFlags> _TSAFlags;
-	
+
 	FlagsArray<byte, kNumPrehistoricFlags> _prehistoricFlags;
-	
+
 	FlagsArray<byte, kNumNoradFlags> _noradFlags;
 	uint16 _noradSubRoomPressure;
 	NoradSubPrepState _noradSubPrepState;
-	
+
 	FlagsArray<byte, kNumMarsFlags> _marsFlags;
-	
+
 	FlagsArray<byte, kNumWSCFlags> _WSCFlags;
 };
 

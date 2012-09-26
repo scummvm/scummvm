@@ -39,7 +39,7 @@ void Fader::setFaderValue(const int32 newValue) {
 	_currentValue = newValue;
 }
 
-bool Fader::initFaderMove(const FaderMoveSpec &spec) {	
+bool Fader::initFaderMove(const FaderMoveSpec &spec) {
 	bool faderMoves = false;
 	int32 value = 0;
 
@@ -86,7 +86,7 @@ void Fader::startFader(const FaderMoveSpec &spec) {
 }
 
 void Fader::startFaderSync(const FaderMoveSpec &spec) {
-	if (initFaderMove(spec)) {	
+	if (initFaderMove(spec)) {
 		setFlags(0);
 		setScale(spec._faderScale);
 		setSegment(spec._knots[0].knotTime, spec._knots[spec._numKnots - 1].knotTime);
@@ -128,7 +128,7 @@ void Fader::continueFader() {
 		start();
 }
 
-void Fader::timeChanged(const TimeValue newTime) {	
+void Fader::timeChanged(const TimeValue newTime) {
 	if (_currentFaderMove._numKnots != 0) {
 		uint32 i;
 		for (i = 0; i < _currentFaderMove._numKnots; i++)
@@ -163,7 +163,7 @@ void FaderMoveSpec::makeTwoKnotFaderSpec(const TimeScale faderScale, const TimeV
 	_knots[1].knotValue = value2;
 }
 
-void FaderMoveSpec::insertFaderKnot(const TimeValue knotTime, const int32 knotValue) {	
+void FaderMoveSpec::insertFaderKnot(const TimeValue knotTime, const int32 knotValue) {
 	if (_numKnots != kMaxFaderKnots) {
 		uint32 index;
 		for (index = 0; index < _numKnots; index++) {
@@ -203,7 +203,7 @@ void SoundFader::attachSound(Sound *sound) {
 	_sound = sound;
 }
 
-void SoundFader::setFaderValue(const int32 newVolume) {	
+void SoundFader::setFaderValue(const int32 newVolume) {
 	if (_sound)
 		_sound->setVolume((newVolume * _masterVolume) >> 8);
 

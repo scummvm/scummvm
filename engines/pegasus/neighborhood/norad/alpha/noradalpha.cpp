@@ -99,32 +99,32 @@ NoradAlpha::NoradAlpha(InputHandler *nextHandler, PegasusEngine *owner) : Norad(
 
 void NoradAlpha::init() {
 	Norad::init();
-	
+
 	Hotspot *hotspot = _vm->getAllHotspots().findHotspotByID(kN01GasCanisterSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpItemSpotFlag, kPickUpItemSpotFlag);
 	HotspotInfoTable::Entry *hotspotEntry = findHotspotEntry(kN01GasCanisterSpotID);
 	hotspotEntry->hotspotItem = kGasCanister;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kN01ArgonCanisterSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpItemSpotFlag, kPickUpItemSpotFlag);
 	hotspotEntry = findHotspotEntry(kN01ArgonCanisterSpotID);
 	hotspotEntry->hotspotItem = kArgonCanister;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kN01NitrogenCanisterSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpItemSpotFlag, kPickUpItemSpotFlag);
 	hotspotEntry = findHotspotEntry(kN01NitrogenCanisterSpotID);
 	hotspotEntry->hotspotItem = kNitrogenCanister;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kN01AirMaskSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpItemSpotFlag, kPickUpItemSpotFlag);
 	hotspotEntry = findHotspotEntry(kN01AirMaskSpotID);
 	hotspotEntry->hotspotItem = kAirMask;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kN01GasOutletSpotID);
 	hotspot->setMaskedHotspotFlags(kDropItemSpotFlag, kDropItemSpotFlag);
 }
 
-void NoradAlpha::start() {	
+void NoradAlpha::start() {
 	if (g_energyMonitor) {
 		g_energyMonitor->stopEnergyDraining();
 		g_energyMonitor->restoreLastEnergyValue();
@@ -171,7 +171,7 @@ void NoradAlpha::start() {
 	Norad::start();
 }
 
-void NoradAlpha::setUpAIRules() {	
+void NoradAlpha::setUpAIRules() {
 	Neighborhood::setUpAIRules();
 
 	if (g_AIArea) {
@@ -228,7 +228,7 @@ void NoradAlpha::loadAmbientLoops() {
 
 /*
 	Logic:
-	
+
 	loop sound 1:
 		if gassed,
 			play warning loop of some sort
@@ -285,7 +285,7 @@ void NoradAlpha::loadAmbientLoops() {
 			loadLoopSound2("");
 		}
 	}
-	
+
 }
 
 void NoradAlpha::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
@@ -430,7 +430,7 @@ void NoradAlpha::getZoomEntry(const HotSpotID spotID, ZoomTable::Entry &entry) {
 
 TimeValue NoradAlpha::getViewTime(const RoomID room, const DirectionConstant direction) {
 	ExtraTable::Entry entry;
-	
+
 	if (room == kNorad01 && direction == kSouth && !GameState.getNoradSeenTimeStream()) {
 		getExtraEntry(kNoradArriveFromTSA, entry);
 		return entry.movieStart;
@@ -556,7 +556,7 @@ void NoradAlpha::activateHotspots() {
 	}
 }
 
-void NoradAlpha::clickInHotspot(const Input &input, const Hotspot *cursorSpot) {	
+void NoradAlpha::clickInHotspot(const Input &input, const Hotspot *cursorSpot) {
 	Norad::clickInHotspot(input, cursorSpot);
 
 	if (_vm->getDragType() == kDragInventoryUse) {

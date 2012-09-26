@@ -53,7 +53,7 @@ bool ShuttleWeapon::canFireWeapon() {
 	return !isRunning();
 }
 
-void ShuttleWeapon::fireWeapon(const CoordType hStop, const CoordType vStop) {	
+void ShuttleWeapon::fireWeapon(const CoordType hStop, const CoordType vStop) {
 	if (!isRunning()) {
 		stop();
 		setTime(0);

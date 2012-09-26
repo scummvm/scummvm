@@ -72,7 +72,7 @@ public:
 protected:
 	void markCursorAsDirty();
 
-private:		
+private:
 	PegasusEngine *_vm;
 
 	bool _modifiedScreen, _erase;

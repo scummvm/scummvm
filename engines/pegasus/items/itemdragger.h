@@ -46,16 +46,16 @@ public:
 
 	void setDragConstraints(const Common::Rect &, const Common::Rect &);
 	void getDragConstraints(Common::Rect &, Common::Rect &) const;
-	
+
 	void startTracking(const Input &);
 	void continueTracking(const Input&);
-	
+
 	Hotspot *getLastHotspot() const { return _lastHotspot; }
 
 protected:
 	virtual void enterHotspot(Hotspot *) {}
 	virtual void exitHotspot(Hotspot *) {}
-	
+
 	Sprite *_draggingSprite;
 	Common::Point _startPoint, _lastPoint, _dragOffset;
 	Common::Point _startRawPoint, _lastRawPoint;
@@ -83,7 +83,7 @@ public:
 protected:
 	virtual void enterHotspot(Hotspot *);
 	virtual void exitHotspot(Hotspot *);
-	
+
 	PegasusEngine *_owner;
 	DropHighlight _inventoryHighlight;
 	Hotspot _inventoryDropSpot;

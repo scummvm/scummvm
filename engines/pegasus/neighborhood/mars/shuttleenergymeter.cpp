@@ -83,7 +83,7 @@ void ShuttleEnergyMeter::setEnergyValue(const int32 value) {
 	startFader(moveSpec);
 }
 
-void ShuttleEnergyMeter::drainForTractorBeam() {	
+void ShuttleEnergyMeter::drainForTractorBeam() {
 	stopFader();
 	TimeValue startTime = 0, stopTime;
 	int32 startValue = getFaderValue(), stopValue;

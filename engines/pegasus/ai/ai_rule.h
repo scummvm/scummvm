@@ -48,7 +48,7 @@ public:
 		_ruleAction = rule;
 		_ruleActive = true;
 	}
-	
+
 	~AIRule() {
 		if (_ruleCondition)
 			delete _ruleCondition;

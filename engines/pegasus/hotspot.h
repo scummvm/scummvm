@@ -36,10 +36,10 @@
 /*
 
 	Hot spots combine a pixel area, an ID value and an active flag.
-	
+
 	A point is considered in a hot spot if the point is in the hot spot's pixel area and
 	the active flag is set.
-	
+
 	In addition, hot spots have a 32 bit word of bit flags for filtering use.
 
 */
@@ -95,18 +95,18 @@ public:
 	void getArea(Region &) const;
 	void getCenter(Common::Point&) const;
 	void getCenter(CoordType&, CoordType&) const;
-	
+
 	void moveSpotTo(const CoordType, const CoordType);
 	void moveSpotTo(const Common::Point);
 	void moveSpot(const CoordType, const CoordType);
 	void moveSpot(const Common::Point);
-	
+
 	bool pointInSpot(const Common::Point) const;
-	
+
 	void setActive();
 	void setInactive();
 	bool isSpotActive() const;
-	
+
 	HotSpotFlags getHotspotFlags() const;
 	void setHotspotFlags(const HotSpotFlags);
 	void setMaskedHotspotFlags(const HotSpotFlags flags, const HotSpotFlags mask);
@@ -135,7 +135,7 @@ public:
 
 	void activateOneHotspot(const HotSpotID);
 	void deactivateOneHotspot(const HotSpotID);
-	
+
 	void removeOneHotspot(const HotSpotID);
 	void removeMaskedHotspots(const HotSpotFlags = kNoHotSpotFlags);
 

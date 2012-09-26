@@ -92,7 +92,7 @@ void Surface::getImageFromPICTResource(Common::MacResManager *resFork, uint16 id
 	Common::SeekableReadStream *res = resFork->getResource(MKTAG('P', 'I', 'C', 'T'), id);
 	if (!res)
 		error("Could not open PICT resource %d from '%s'", id, resFork->getBaseFileName().c_str());
-	
+
 	getImageFromPICTStream(res);
 	delete res;
 }

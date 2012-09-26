@@ -43,11 +43,11 @@ class Inventory {
 public:
 	Inventory();
 	virtual ~Inventory();
-	
+
 	WeightType getWeightLimit();
 	void setWeightLimit(WeightType limit);
 	WeightType getWeight();
-	
+
 	virtual InventoryResult addItem(Item *item);
 	virtual InventoryResult removeItem(Item *item);
 	virtual InventoryResult removeItem(ItemID id);
@@ -60,10 +60,10 @@ public:
 	virtual int32 findIndexOf(ItemID id);
 	int32 getNumItems();
 	virtual void removeAllItems();
-	
+
 	void setOwnerID(const ActorID id);
 	ActorID getOwnerID() const;
-	
+
 	uint32 getReferenceCount() { return _referenceCount; }
 
 protected:

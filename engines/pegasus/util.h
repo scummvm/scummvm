@@ -40,7 +40,7 @@ class IDObject {
 public:
 	IDObject(const int32 id);
 	~IDObject();
-	
+
 	int32 getObjectID() const;
 
 private:

@@ -54,7 +54,7 @@ void CaldoriaMessages::closeInteraction() {
 	_neighborhoodNotification->cancelNotification(this);
 }
 
-void CaldoriaMessages::receiveNotification(Notification *notification, const NotificationFlags) {	
+void CaldoriaMessages::receiveNotification(Notification *notification, const NotificationFlags) {
 	if (notification == _neighborhoodNotification) {
 		switch (GameInteraction::_owner->getLastExtra()) {
 		case kCaBedroomVidPhone:
@@ -91,7 +91,7 @@ void CaldoriaMessages::clickInHotspot(const Input &input, const Hotspot *spot) {
 	}
 }
 
-void CaldoriaMessages::play1Message(uint messageNumber) {	
+void CaldoriaMessages::play1Message(uint messageNumber) {
 	if (messageNumber == 1) {
 		_messageMovie.initFromMovieFile("Images/Caldoria/A12NVA.movie");
 		_messageNumber = 2;

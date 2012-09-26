@@ -188,7 +188,7 @@ void PegasusChip::clickInPegasusHotspot() {
 
 	if (g_energyMonitor)
 		g_energyMonitor->stopEnergyDraining();
-	
+
 	if (GameState.getTSAState() == kPlayerWentToPrehistoric || GameState.allTimeZonesFinished())
 		vm->jumpToNewEnvironment(kFullTSAID, kTSA37, kNorth);
 	else

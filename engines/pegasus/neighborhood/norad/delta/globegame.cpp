@@ -217,7 +217,7 @@ static const int kGlobeCountdownHeight = 12;
 static const int kGlobeCountdownOffset1 = 12;
 static const int kGlobeCountdownOffset2 = 20;
 
-GlobeCountdown::GlobeCountdown(const DisplayElementID id) : IdlerAnimation(id) {	
+GlobeCountdown::GlobeCountdown(const DisplayElementID id) : IdlerAnimation(id) {
 	_digits.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kGlobeCountdownDigitsID);
 
 	Common::Rect r;
@@ -271,11 +271,11 @@ void GlobeCountdown::draw(const Common::Rect &) {
 		r2.moveTo(bounds.left, bounds.top);
 		r1.moveTo(9 * _digitOffset, 0);
 		_digits.copyToCurrentPort(r1, r2);
-		
+
 		r2.moveTo(bounds.left + kGlobeCountdownOffset1, bounds.top);
 		r1.moveTo(5 * _digitOffset, 0);
 		_digits.copyToCurrentPort(r1, r2);
-		
+
 		r2.moveTo(bounds.left + kGlobeCountdownOffset2, bounds.top);
 		r1.moveTo(9 * _digitOffset, 0);
 		_digits.copyToCurrentPort(r1, r2);
@@ -283,12 +283,12 @@ void GlobeCountdown::draw(const Common::Rect &) {
 		r2.moveTo(bounds.left, bounds.top);
 		r1.moveTo((time / 60) * _digitOffset, 0);
 		_digits.copyToCurrentPort(r1, r2);
-		
+
 		time %= 60;
 		r2.moveTo(bounds.left + kGlobeCountdownOffset1, bounds.top);
 		r1.moveTo((time / 10) * _digitOffset, 0);
 		_digits.copyToCurrentPort(r1, r2);
-		
+
 		r2.moveTo(bounds.left + kGlobeCountdownOffset2, bounds.top);
 		r1.moveTo((time % 10) * _digitOffset, 0);
 		_digits.copyToCurrentPort(r1, r2);
@@ -452,7 +452,7 @@ void GlobeGame::openInteraction() {
 	_monitorMovie.startDisplaying();
 	_monitorMovie.setSegment(0, kSplash1End * _monitorMovie.getScale());
 	_monitorMovie.show();
-	
+
 	_monitorCallBack.setNotification(&_globeNotification);
 	_monitorCallBack.initCallBack(&_monitorMovie, kCallBackAtExtremes);
 	_monitorCallBack.setCallBackFlag(kGlobeSplash1Finished);
@@ -863,7 +863,7 @@ void GlobeGame::spinGlobe(const Input &input, const Hotspot *spot, GlobeTrackDir
 	_globeTracker.startTracking(input);
 }
 
-void GlobeGame::clickGlobe(const Input &input) {	
+void GlobeGame::clickGlobe(const Input &input) {
 	int16 newSilo = findClickedSilo(input);
 
 	if (newSilo != -1) {
@@ -968,9 +968,9 @@ void GlobeGame::globeMovieFrameToOrigin(int16 frameNum, int16 &latOrigin, int16 
 }
 
 void GlobeGame::globePointToLatLong(const GlobeGame::Point3D &pt, int16 latOrigin, int16 longOrigin,
-		int16 &latitude, int16 &longitude) {	
+		int16 &latitude, int16 &longitude) {
 	Point3D scratch = pt;
-	
+
 	// Translate globe center to origin.
 	scratch.x -= kGlobeCenter.x;
 	scratch.y -= kGlobeCenter.y;
@@ -984,7 +984,7 @@ void GlobeGame::globePointToLatLong(const GlobeGame::Point3D &pt, int16 latOrigi
 	float y = scratch.y * c + scratch.x * s;
 	scratch.x = x;
 	scratch.y = y;
-	
+
 	// Calculate latitude
 	latitude = (int16)radiansToDegrees(asin(scratch.y / kGlobeRadius));
 
@@ -996,7 +996,7 @@ void GlobeGame::globePointToLatLong(const GlobeGame::Point3D &pt, int16 latOrigi
 	float z = scratch.z * c + scratch.x * s;
 	scratch.x = x;
 	scratch.z = z;
-	
+
 	// Calculate longitude
 	longitude = (int16)radiansToDegrees(acos(scratch.x / sqrt(scratch.x * scratch.x + scratch.z * scratch.z)));
 
@@ -1014,7 +1014,7 @@ void GlobeGame::screenPointTo3DPoint(int16 h, int16 v, GlobeGame::Point3D &pt) {
 
 // Fundamentals of Three-Dimensional Graphics, by Alan Watt
 // pp. 163-164
-bool GlobeGame::lineHitsGlobe(const GlobeGame::Line3D &line, GlobeGame::Point3D &pt) {	
+bool GlobeGame::lineHitsGlobe(const GlobeGame::Line3D &line, GlobeGame::Point3D &pt) {
 	float i = line.pt2.x - line.pt1.x;
 	float j = line.pt2.y - line.pt1.y;
 	float k = line.pt2.z - line.pt1.z;

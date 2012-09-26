@@ -63,7 +63,7 @@ protected:
 		TimeValue knotTime;
 		int32 knotValue;
 	};
-	
+
 	TimeScale _faderScale;
 	uint32 _numKnots;
 
@@ -92,7 +92,7 @@ public:
 protected:
 	bool initFaderMove(const FaderMoveSpec &);
 	virtual void timeChanged(const TimeValue);
-	
+
 	int32 _currentValue;
 	FaderMoveSpec _currentFaderMove;
 };

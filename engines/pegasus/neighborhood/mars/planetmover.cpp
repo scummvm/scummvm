@@ -57,7 +57,7 @@ void PlanetMover::stopMoving() {
 	stop();
 }
 
-void PlanetMover::dropPlanetOutOfSight() {	
+void PlanetMover::dropPlanetOutOfSight() {
 	stop();
 	CoordType currentLoc = hermite(_p1, _p4, _r1, _r4, _lastTime, _duration);
 	CoordType currentV = dHermite(_p1, _p4, _r1, _r4, _lastTime, _duration);

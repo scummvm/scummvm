@@ -67,7 +67,7 @@ void AITwoChildrenCondition::writeAICondition(Common::WriteStream *stream) {
 	if (_leftChild)
 		_leftChild->writeAICondition(stream);
 
-	if (_rightChild) 
+	if (_rightChild)
 		_rightChild->writeAICondition(stream);
 }
 
@@ -81,14 +81,14 @@ void AITwoChildrenCondition::readAICondition(Common::ReadStream *stream) {
 
 AINotCondition::AINotCondition(AICondition* child) : AIOneChildCondition(child) {
 }
-	
+
 bool AINotCondition::fireCondition() {
 	return _child && !_child->fireCondition();
 }
 
 AIAndCondition::AIAndCondition(AICondition *leftChild, AICondition *rightChild) : AITwoChildrenCondition(leftChild, rightChild) {
 }
-	
+
 bool AIAndCondition::fireCondition() {
 	return _leftChild && _leftChild->fireCondition() && _rightChild && _rightChild->fireCondition();
 }
@@ -229,7 +229,7 @@ bool AIDoesntHaveItemCondition::fireCondition() {
 AICurrentItemCondition::AICurrentItemCondition(const ItemID item) {
 	_item = item;
 }
-	
+
 bool AICurrentItemCondition::fireCondition() {
 	InventoryItem *item = ((PegasusEngine *)g_engine)->getCurrentInventoryItem();
 
@@ -245,7 +245,7 @@ AICurrentBiochipCondition::AICurrentBiochipCondition(const ItemID biochip)  {
 
 bool AICurrentBiochipCondition::fireCondition() {
 	BiochipItem *biochip = ((PegasusEngine *)g_engine)->getCurrentBiochip();
-	
+
 	if (_biochip == kNoItemID)
 		return biochip == 0;
 
@@ -281,7 +281,7 @@ bool AILastExtraCondition::fireCondition() {
 AICondition *makeLocationAndDoesntHaveItemCondition(const RoomID room, const DirectionConstant direction, const ItemID item) {
 	AILocationCondition *location = new AILocationCondition(1);
 	location->addLocation(MakeRoomView(room, direction));
-	
+
 	AIDoesntHaveItemCondition *doesntHaveItem = new AIDoesntHaveItemCondition(item);
 
 	return new AIAndCondition(location, doesntHaveItem);

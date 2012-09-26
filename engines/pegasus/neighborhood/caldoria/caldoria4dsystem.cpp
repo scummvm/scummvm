@@ -120,7 +120,7 @@ void Caldoria4DSystem::openInteraction() {
 	_4DSpritesMovie.setDisplayOrder(k4DSpritesOrder);
 	_4DSpritesMovie.startDisplaying();
 	_4DSpritesMovie.show();
-	
+
 	_4DSpritesScale = _4DSpritesMovie.getScale();
 
 	_neighborhoodNotification = _owner->getNeighborhoodNotification();
@@ -131,7 +131,7 @@ void Caldoria4DSystem::openInteraction() {
 
 void Caldoria4DSystem::loopExtra(const ExtraID extraID) {
 	ExtraTable::Entry extraEntry;
-	
+
 	_owner->getExtraEntry(extraID, extraEntry);
 	_loopStart = extraEntry.movieStart;
 	_owner->loopExtraSequence(extraID);
@@ -209,7 +209,7 @@ void Caldoria4DSystem::useIdleTime() {
 
 void Caldoria4DSystem::initInteraction() {
 	setSpritesMovie();
-	
+
 	_owner->loadLoopSound1("Sounds/Caldoria/Rock.aiff");
 	loopExtra(k4DIslandLoop);
 }

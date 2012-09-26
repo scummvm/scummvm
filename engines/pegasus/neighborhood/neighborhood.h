@@ -147,7 +147,7 @@ public:
 	virtual void zoomTo(const Hotspot *);
 
 	virtual void updateViewFrame();
-	
+
 	void requestExtraSequence(const ExtraID, const NotificationFlags, const InputBits interruptionFilter);
 	void requestSpotSound(const TimeValue, const TimeValue, const InputBits interruptionFilter, const NotificationFlags);
 	void playSpotSoundSync(const TimeValue in, const TimeValue out);
@@ -165,35 +165,35 @@ public:
 	virtual void loopExtraSequence(const uint32, NotificationFlags = 0);
 	int32 getLastExtra() const { return _lastExtra; }
 	virtual void scheduleNavCallBack(NotificationFlags);
-	
+
 	Movie *getNavMovie() { return &_navMovie; }
 	bool navMoviePlaying();
-	
+
 	void setCurrentAlternate(const AlternateID alt) { _currentAlternate = alt; }
 	AlternateID getCurrentAlternate() const { return _currentAlternate; }
-	
+
 	void setCurrentActivation(const HotSpotActivationID a) { _currentActivation = a; }
 	HotSpotActivationID getCurrentActivation() { return _currentActivation; }
-	
+
 	virtual void playDeathExtra(ExtraID, DeathReason);
 	virtual void die(const DeathReason);
 
 	virtual void setSoundFXLevel(const uint16);
 	virtual void setAmbienceLevel(const uint16);
-	
+
 	void forceStridingStop(const RoomID, const DirectionConstant, const AlternateID);
 	void restoreStriding(const RoomID, const DirectionConstant, const AlternateID);
-	
+
 	HotspotInfoTable::Entry *findHotspotEntry(const HotSpotID);
-	
+
 	Push *getTurnPush() { return &_turnPush; }
 	Picture *getTurnPushPicture() { return &_pushIn; }
-	
+
 	void hideNav();
 	void showNav();
-	
+
 	virtual void loadAmbientLoops() {}
-	
+
 	virtual void flushGameState() {}
 
 	virtual Common::String getBriefingMovie();
@@ -235,7 +235,7 @@ public:
 
 	virtual void showExtraView(uint32);
 	virtual void startExtraLongSequence(const uint32, const uint32, NotificationFlags, const InputBits interruptionFilter);
-	
+
 	void openCroppedMovie(const Common::String &, CoordType, CoordType);
 	void loopCroppedMovie(const Common::String &, CoordType, CoordType);
 	void closeCroppedMovie();
@@ -245,14 +245,14 @@ public:
 
 	virtual void recallToTSASuccess();
 	virtual void recallToTSAFailure();
-	
+
 	virtual void pickedUpItem(Item *) {}
 
 	virtual void handleInput(const Input &, const Hotspot *);
 protected:
 	PegasusEngine *_vm;
 	Common::String _resName;
-	
+
 	virtual Common::String getSoundSpotsName() = 0;
 	virtual Common::String getNavMovieName() = 0;
 
@@ -278,20 +278,20 @@ protected:
 	virtual void startDoorOpenMovie(const TimeValue, const TimeValue);
 	virtual void startTurnPush(const TurnDirection, const TimeValue, const DirectionConstant);
 	virtual void playExtraMovie(const ExtraTable::Entry &, const NotificationFlags, const InputBits interruptionFilter);
-	
+
 	virtual void activateCurrentView(const RoomID, const DirectionConstant, SpotFlags);
-	
+
 	virtual void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *);
-	
+
 	virtual void startSpotOnceOnly(TimeValue, TimeValue);
-	
+
 	virtual void startMovieSequence(const TimeValue, const TimeValue, NotificationFlags,
   			bool loopSequence, const InputBits interruptionFilter, const TimeValue strideStop = 0xffffffff);
-	
+
 	virtual void createNeighborhoodSpots();
-	
+
 	void resetLastExtra() { _lastExtra = -1; }
-	
+
 	virtual void throwAwayInterface();
 
 	// Action queue stuff
@@ -301,7 +301,7 @@ protected:
 
 	virtual bool prepareExtraSync(const ExtraID);
 	virtual bool waitMovieFinish(Movie *, const InputBits);
-	
+
 	virtual InputBits getInputFilter();
 
 	// Misc.
@@ -351,7 +351,7 @@ protected:
 	ZoomTable _zoomTable;
 	AlternateID _currentAlternate;
 	HotSpotActivationID _currentActivation;
-	
+
 	int32 _lastExtra;
 	DeathReason _extraDeathReason;
 
@@ -387,11 +387,11 @@ protected:
 	GameInteraction *_currentInteraction;
 	bool _doneWithInteraction;
 	Movie _croppedMovie;
-	
+
 	Sound _soundLoop1;
 	Common::String _loop1SoundString;
 	SoundFader _loop1Fader;
-	
+
 	Sound _soundLoop2;
 	Common::String _loop2SoundString;
 	SoundFader _loop2Fader;

@@ -405,13 +405,13 @@ friend class SinclairCallBack;
 public:
 	Caldoria(InputHandler *, PegasusEngine *);
 	virtual ~Caldoria();
-	
+
 	virtual uint16 getDateResID() const;
-	
+
 	void pickedUpItem(Item *);
-	
+
 	virtual GameInteraction *makeInteraction(const InteractionID);
-	
+
 	virtual Common::String getBriefingMovie();
 	virtual Common::String getEnvScanMovie();
 	virtual uint getNumHints();
@@ -442,10 +442,10 @@ protected:
 		kCaldoriaPrivateSeen41WestCarFlag,
 		kNumCaldoriaPrivateFlags
 	};
-	
+
 	void init();
 	void start();
-	
+
 	void setUpRoofTop();
 
 	void setUpAIRules();
@@ -478,9 +478,9 @@ protected:
 	void activateHotspots();
 	void clickInHotspot(const Input &, const Hotspot *);
 	void newInteraction(const InteractionID);
-	
+
 	void clickOnDoorbell(const HotSpotID);
-	
+
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
 	void dropItemIntoRoom(Item *, Hotspot *);
 	void takeElevator(uint, uint);
@@ -495,16 +495,16 @@ protected:
 	void zoomToSinclair();
 	void playEndMessage();
 	void checkInterruptSinclair();
-	
+
 	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
 	void doorOpened();
-	
+
 	void updateCursor(const Common::Point, const Hotspot *);
 
 	FlagsArray<uint16, kNumCaldoriaPrivateFlags> _privateFlags;
 
 	const Hotspot *_zoomOutSpot;
-	
+
 	FuseFunction _utilityFuse;
 
 	long _sinclairLoopCount;

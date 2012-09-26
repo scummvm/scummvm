@@ -132,7 +132,7 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	input.setInputLocation(g_system->getEventManager()->getMousePos());
 
 	// Set the outgoing bits
-	InputBits filteredBits = currentBits & filter;	
+	InputBits filteredBits = currentBits & filter;
 	input.setInputBits((filteredBits & kAllButtonDownBits) | (filteredBits & _lastRawBits & kAllAutoBits));
 
 	// Update the last bits
@@ -246,7 +246,7 @@ void InputHandler::pollForInput() {
 
 void InputHandler::getInput(Input &input, Hotspot *&cursorSpot) {
 	Cursor *cursor = ((PegasusEngine *)g_engine)->_cursor;
-	
+
 	if (_inputHandler)
 		_lastFilter = _inputHandler->getInputFilter();
 	else

@@ -78,7 +78,7 @@ void Notification::setNotificationFlags(NotificationFlags flags, NotificationFla
 	_currentFlags = (_currentFlags & ~mask) | flags;
 }
 
-void Notification::checkReceivers() {	
+void Notification::checkReceivers() {
 	NotificationFlags currentFlags = _currentFlags;
 	_currentFlags = kNoNotificationFlags;
 

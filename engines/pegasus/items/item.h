@@ -287,32 +287,32 @@ class Item : public IDObject {
 public:
 	Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
 	virtual ~Item();
-	
+
 	// WriteToStream writes everything EXCEPT the item's ID.
 	// It is assumed that the calling function will write and read the ID.
 	virtual void writeToStream(Common::WriteStream *stream);
 	virtual void readFromStream(Common::ReadStream *stream);
-	
+
 	virtual ActorID getItemOwner() const;
 	virtual void setItemOwner(const ActorID owner);
-	
+
 	void getItemRoom(NeighborhoodID &neighborhood, RoomID &room, DirectionConstant &direction) const;
 	void setItemRoom(const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction);
 	NeighborhoodID getItemNeighborhood() const;
-	
+
 	virtual WeightType getItemWeight();
-	
+
 	virtual void setItemState(const ItemState state);
 	virtual ItemState getItemState() const;
 
 	virtual ItemType getItemType() = 0;
-	
+
 	TimeValue getInfoLeftTime() const;
 	void getInfoRightTimes(TimeValue &, TimeValue &) const;
 	TimeValue getSharedAreaTime() const;
 
 	Sprite *getDragSprite(const DisplayElementID) const;
-	
+
 	/*
 		select		--	called when this item becomes current. Also called when the inventory
 						panel holding this item is raised and this is the current item.
@@ -324,7 +324,7 @@ public:
 	virtual void select();
 	virtual void deselect();
 	virtual bool isSelected() { return _isSelected; }
-	
+
 	virtual void activate() { _isActive = true; }
 	virtual bool isActive() { return _isActive; }
 	virtual void pickedUp() {}
@@ -336,7 +336,7 @@ public:
 	// selected.
 	virtual void giveUpSharedArea() {}
 	virtual void takeSharedArea() {}
-	
+
 	void findItemExtra(const uint32 extraID, ItemExtraEntry &entry);
 
 protected:

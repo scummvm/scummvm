@@ -138,7 +138,7 @@ void PressureDoor::openInteraction() {
 	_levelsMovie.setTime(kLevelsSplashStart * _levelsScale);
 	_levelsMovie.redrawMovieWorld();
 	_levelsMovie.show();
-	
+
 	_pressureCallBack.setNotification(&_pressureNotification);
 	_pressureCallBack.initCallBack(&_levelsMovie, kCallBackAtExtremes);
 	_pressureCallBack.setCallBackFlag(kSplashFinished);
@@ -226,11 +226,11 @@ void PressureDoor::openInteraction() {
 	else
 		_neighborhoodNotification->notifyMe(this, kDelayCompletedFlag | kSpotSoundCompletedFlag,
 				kDelayCompletedFlag | kSpotSoundCompletedFlag);
-	
+
 	_gameState = kPlayingSplash;
 }
 
-void PressureDoor::initInteraction() {	
+void PressureDoor::initInteraction() {
 	_levelsMovie.start();
 
 	if (_playingAgainstRobot) {
@@ -249,7 +249,7 @@ void PressureDoor::initInteraction() {
 	_levelsMovie.redrawMovieWorld();
 }
 
-void PressureDoor::closeInteraction() {	
+void PressureDoor::closeInteraction() {
 	_pressureNotification.cancelNotification(this);
 	_pressureCallBack.releaseCallBack();
 	_utilityNotification.cancelNotification(this);
@@ -526,7 +526,7 @@ bool PressureDoor::canSolve() {
 	return GameState.getNoradSubRoomPressure() != kNormalSubRoomPressure;
 }
 
-void PressureDoor::doSolve() {	
+void PressureDoor::doSolve() {
 	if (_playingAgainstRobot) {
 		GameState.setNoradSubRoomPressure(11);
 		_levelsMovie.setTime((11 + kPressureBase) * _levelsScale);

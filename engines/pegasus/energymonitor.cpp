@@ -245,7 +245,7 @@ void EnergyMonitor::draw(const Common::Rect &r) {
 
 void EnergyMonitor::calibrateEnergyBar() {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
-	
+
 	_calibrating = true;
 
 	vm->setEnergyDeathReason(-1);

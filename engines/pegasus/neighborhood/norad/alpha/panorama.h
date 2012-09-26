@@ -34,24 +34,24 @@ namespace Pegasus {
 
 	Panorama implements a wide image using a specially constructed movie file.
 	The movie holds the image as a series of vertical strips, say 16 or 32 pixels wide.
-	
+
 	The panorama bounds defines the entire panorama. The view bounds represents the
 	area on the panorama that is kept in memory.
-	
+
 	The panorama bounds is also stored in the movie file; it cannot be changed. The
 	view bounds must always be a subset of the panorama bounds.
-	
+
 	In actuality, the area kept in memory is at least as wide as the view bounds (but
 	may be wider to coincide with the width of the movies slices), and is as tall as
 	the panorama bounds. The view bounds is used by the drawPanorama function to draw
 	a piece of the panorama to the current screen.
-	
+
 	The panorama movie is built at a time scale of 1, with each strip lasting for one
 	second, so that strip number corresponds exactly with the time value at which the
 	strip is stored.
-	
+
 	TO USE:
-	
+
 	Call one initFromMovieFile to open the movie. Then set up a view rect by
 	calling setViewBounds. Once these two functions have been called, drawPanorama
 	will draw the panorama.
@@ -82,7 +82,7 @@ protected:
 	void calcStripRange(const Common::Rect &, CoordType &, CoordType &);
 	void loadStrips(CoordType, CoordType);
 	void loadOneStrip(CoordType, CoordType);
-	
+
 	Movie _panoramaMovie;
 	Surface _panoramaWorld, *_mask;
 	Common::Rect _viewBounds;

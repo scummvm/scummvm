@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
- 
+
 #ifndef PEGASUS_ITEMS_INVENTORY_INVENTORYITEM_H
 #define PEGASUS_ITEMS_INVENTORY_INVENTORYITEM_H
 
@@ -41,17 +41,17 @@ class InventoryItem : public Item {
 public:
 	InventoryItem(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~InventoryItem();
-	
+
 	virtual ItemType getItemType();
-	
+
 	void getPanelTimes(TimeValue &, TimeValue &) const;
 	TimeValue getLeftAreaTime() const;
-	
+
 	void setAnimationTime(const TimeValue);
 	TimeValue getAnimationTime() const;
-	
+
 	virtual void toggleItemState() {}
-	
+
 	// Must affect images in left area.
 	virtual void select();
 	virtual void deselect();

@@ -170,7 +170,7 @@ void Interface::throwAwayAIArea() {
 	delete g_AIArea;
 }
 
-void Interface::validateInventoryPanel() {	
+void Interface::validateInventoryPanel() {
 	if (!_inventoryPanel.isSurfaceValid()) {
 		_inventoryPanel.initInventoryImage(&_inventoryPush);
 		_inventoryPanel.moveElementTo(kInventoryPushLeft, kInventoryPushTop);
@@ -215,7 +215,7 @@ void Interface::throwAwayInventoryPanel() {
 	_inventoryRaised = false;
 }
 
-void Interface::validateBiochipPanel() {	
+void Interface::validateBiochipPanel() {
 	if (!_biochipPanel.isSurfaceValid()) {
 		_biochipPanel.initInventoryImage(&_biochipPush);
 		_biochipPanel.moveElementTo(kBiochipPushLeft, kBiochipPushTop);
@@ -243,7 +243,7 @@ void Interface::validateBiochipPanel() {
 	}
 }
 
-void Interface::throwAwayBiochipPanel() {	
+void Interface::throwAwayBiochipPanel() {
 	_biochipPanel.stopDisplaying();
 	_biochipPanel.throwAwayInventoryImage();
 	_biochipPush.stopDisplaying();
@@ -251,11 +251,11 @@ void Interface::throwAwayBiochipPanel() {
 	_biochipLid.closeFrameSequence();
 	_biochipPushCallBack.releaseCallBack();
 	_biochipLidCallBack.releaseCallBack();
-	
+
 	Item *item = getCurrentBiochip();
 	if (item)
 		item->deselect();
-	
+
 	_biochipUp = false;
 	_biochipRaised = false;
 }
@@ -369,7 +369,7 @@ void Interface::receiveNotification(Notification *notification, const Notificati
 	}
 }
 
-void Interface::raiseInventoryDrawer(const bool doCallBacks) {	
+void Interface::raiseInventoryDrawer(const bool doCallBacks) {
 	if (!_biochipUp)
 		_previousHandler = InputHandler::getCurrentHandler();
 
@@ -431,7 +431,7 @@ bool Interface::isInventoryDown() {
 	return !_inventoryUp;
 }
 
-void Interface::lowerInventoryDrawer(const bool doCallBacks) {	
+void Interface::lowerInventoryDrawer(const bool doCallBacks) {
 	if (_inventoryRaised) {
 		_inventoryRaised = false;
 
@@ -471,7 +471,7 @@ void Interface::inventoryLidClosed() {
 	_inventoryUp = false;
 }
 
-void Interface::raiseBiochipDrawer(const bool doCallBacks) {	
+void Interface::raiseBiochipDrawer(const bool doCallBacks) {
 	if (!_inventoryUp)
 		_previousHandler = InputHandler::getCurrentHandler();
 
@@ -508,7 +508,7 @@ void Interface::biochipDrawerUp() {
 	_biochipRaised = true;
 }
 
-void Interface::lowerBiochipDrawer(const bool doCallBacks) {	
+void Interface::lowerBiochipDrawer(const bool doCallBacks) {
 	if (_biochipRaised) {
 		_biochipRaised = false;
 		_biochipPanel.deactivateInventoryPicture();
@@ -650,7 +650,7 @@ void Interface::lowerBiochipDrawerSync() {
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
-	
+
 	vm->refreshDisplay();
 	biochipDrawerDown(false);
 

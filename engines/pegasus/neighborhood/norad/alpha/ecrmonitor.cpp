@@ -72,7 +72,7 @@ void NoradAlphaECRMonitor::receiveNotification(Notification *, const Notificatio
 		ecrSection2Finished();
 }
 
-int NoradAlphaECRMonitor::findCurrentInterestingTime() {	
+int NoradAlphaECRMonitor::findCurrentInterestingTime() {
 	TimeValue time = _ecrMovie.getTime();
 	TimeScale scale = _ecrMovie.getScale();
 
@@ -155,7 +155,7 @@ void NoradAlphaECRMonitor::ecrSection1Finished() {
 	_ecrPan.start();
 }
 
-void NoradAlphaECRMonitor::ecrPanFinished() {	
+void NoradAlphaECRMonitor::ecrPanFinished() {
 	_ecrPan.stop();
 	_ecrPan.stopDisplaying();
 	_ecrMovieCallBack.setCallBackFlag(kECRSection2FinishedFlag);
@@ -196,7 +196,7 @@ void NoradAlphaECRMonitor::openInteraction() {
 	_ecrMovie.show();
 	_ecrMovie.redrawMovieWorld();
 
-	TimeScale scale = _ecrMovie.getScale();	
+	TimeScale scale = _ecrMovie.getScale();
 	_ecrMovie.setSegment(kSection1Start * scale, kSection1Stop * scale + 1);
 
 	_ecrMovie.start();

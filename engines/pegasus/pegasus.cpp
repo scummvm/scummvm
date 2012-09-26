@@ -121,7 +121,7 @@ Common::Error PegasusEngine::run() {
 	_resFork = new Common::MacResManager();
 	_cursor = new Cursor();
 	_rnd = new Common::RandomSource("Pegasus");
-	
+
 	if (!_resFork->open("JMP PP Resources") || !_resFork->hasResFork())
 		error("Could not load JMP PP Resources");
 
@@ -276,7 +276,7 @@ void PegasusEngine::createItem(ItemID itemID, NeighborhoodID neighborhoodID, Roo
 		break;
 	case kShieldBiochip:
 		new ShieldChip(itemID, neighborhoodID, roomID, direction);
-		break;		
+		break;
 	case kAirMask:
 		new AirMask(itemID, neighborhoodID, roomID, direction);
 		break;
@@ -1387,7 +1387,7 @@ void PegasusEngine::setGameMode(const GameMode newMode) {
 void PegasusEngine::switchGameMode(const GameMode newMode, const GameMode oldMode) {
 	// Start raising panels before lowering panels, to give the activating panel time
 	// to set itself up without cutting into the lowering panel's animation time.
-	
+
 	if (_switchModesSync) {
 		if (newMode == kModeInventoryPick)
 			raiseInventoryDrawerSync();
@@ -1395,7 +1395,7 @@ void PegasusEngine::switchGameMode(const GameMode newMode, const GameMode oldMod
 			raiseBiochipDrawerSync();
 		else if (newMode == kModeInfoScreen)
 			showInfoScreen();
-		
+
 		if (oldMode == kModeInventoryPick)
 			lowerInventoryDrawerSync();
 		else if (oldMode == kModeBiochipPick)
@@ -1409,7 +1409,7 @@ void PegasusEngine::switchGameMode(const GameMode newMode, const GameMode oldMod
 			raiseBiochipDrawer();
 		else if (newMode == kModeInfoScreen)
 			showInfoScreen();
-		
+
 		if (oldMode == kModeInventoryPick)
 			lowerInventoryDrawer();
 		else if (oldMode == kModeBiochipPick)
@@ -1431,7 +1431,7 @@ bool PegasusEngine::itemInLocation(const ItemID itemID, const NeighborhoodID nei
 	NeighborhoodID itemNeighborhood;
 	RoomID itemRoom;
 	DirectionConstant itemDirection;
-	
+
 	Item *item = _allItems.findItemByID(itemID);
 	item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
 
@@ -1440,7 +1440,7 @@ bool PegasusEngine::itemInLocation(const ItemID itemID, const NeighborhoodID nei
 
 InventoryResult PegasusEngine::addItemToInventory(InventoryItem *item) {
 	InventoryResult result;
-	
+
 	do {
 		if (g_interface)
 			result = g_interface->addInventoryItem(item);
@@ -1504,12 +1504,12 @@ void PegasusEngine::performJump(NeighborhoodID neighborhoodID) {
 void PegasusEngine::startNeighborhood() {
 	if (g_interface && _currentItemID != kNoItemID)
 		g_interface->setCurrentInventoryItemID(_currentItemID);
-	
+
 	if (g_interface && _currentBiochipID != kNoItemID)
 		g_interface->setCurrentBiochipID(_currentBiochipID);
-	
+
 	setGameMode(kModeNavigation);
-	
+
 	if (_neighborhood)
 		_neighborhood->start();
 }
@@ -1566,9 +1566,9 @@ void PegasusEngine::startNewGame() {
 
 	// Clear jump notification flags and just perform the jump...
 	_shellNotification.setNotificationFlags(0, kNeedNewJumpFlag);
-	
+
 	performJump(GameState.getNextNeighborhood());
-	
+
 	startNeighborhood();
 }
 
@@ -1610,7 +1610,7 @@ bool PegasusEngine::wantsCursor() {
 	return _gameMenu == 0;
 }
 
-void PegasusEngine::updateCursor(const Common::Point, const Hotspot *cursorSpot) {	
+void PegasusEngine::updateCursor(const Common::Point, const Hotspot *cursorSpot) {
 	if (_itemDragger.isTracking()) {
 		_cursor->setCurrentFrameIndex(5);
 	} else {
@@ -1658,14 +1658,14 @@ void PegasusEngine::toggleBiochipDisplay() {
 		setGameMode(kModeBiochipPick);
 }
 
-void PegasusEngine::showInfoScreen() {	
+void PegasusEngine::showInfoScreen() {
 	if (g_neighborhood) {
 		// Break the input handler chain...
 		_savedHandler = InputHandler::getCurrentHandler();
 		InputHandler::setInputHandler(this);
-		
+
 		Picture *pushPicture = ((Neighborhood *)g_neighborhood)->getTurnPushPicture();
-		
+
 		_bigInfoMovie.shareSurface(pushPicture);
 		_smallInfoMovie.shareSurface(pushPicture);
 
@@ -1805,7 +1805,7 @@ void PegasusEngine::dragTerminated(const Input &) {
 }
 
 
-void PegasusEngine::dragItem(const Input &input, Item *item, DragType type) {	
+void PegasusEngine::dragItem(const Input &input, Item *item, DragType type) {
 	_draggingItem = item;
 	_dragType = type;
 
@@ -1918,7 +1918,7 @@ void PegasusEngine::clickInHotspot(const Input &input, const Hotspot *clickedSpo
 
 InventoryResult PegasusEngine::removeItemFromInventory(InventoryItem *item) {
 	InventoryResult result;
-	
+
 	if (g_interface)
 		result = g_interface->removeInventoryItem(item);
 	else
@@ -2006,7 +2006,7 @@ void PegasusEngine::pauseMenu(bool menuUp) {
 	}
 }
 
-void PegasusEngine::autoDragItemIntoRoom(Item *item, Sprite *draggingSprite) {	
+void PegasusEngine::autoDragItemIntoRoom(Item *item, Sprite *draggingSprite) {
 	if (g_AIArea)
 		g_AIArea->lockAIOut();
 
@@ -2048,7 +2048,7 @@ void PegasusEngine::autoDragItemIntoRoom(Item *item, Sprite *draggingSprite) {
 		g_AIArea->unlockAI();
 }
 
-void PegasusEngine::autoDragItemIntoInventory(Item *, Sprite *draggingSprite) {	
+void PegasusEngine::autoDragItemIntoInventory(Item *, Sprite *draggingSprite) {
 	if (g_AIArea)
 		g_AIArea->lockAIOut();
 
@@ -2108,7 +2108,7 @@ uint PegasusEngine::getRandomNumber(uint max) {
 	return _rnd->getRandomNumber(max);
 }
 
-void PegasusEngine::shuffleArray(int32 *arr, int32 count) {	
+void PegasusEngine::shuffleArray(int32 *arr, int32 count) {
 	if (count > 1) {
 		for (int32 i = 1; i < count; ++i) {
 			int32 j = _rnd->getRandomNumber(i);
@@ -2248,7 +2248,7 @@ void PegasusEngine::destroyInventoryItem(const ItemID itemID) {
 ItemID PegasusEngine::pickItemToDestroy() {
 /*
 	Must pick an item to destroy
-	
+
 	Part I: Polite -- try to find an item that's been used
 	Part II: Desperate -- return the first available item.
 */

@@ -139,7 +139,7 @@ void Transition::setInAndOutElements(DisplayElement *inElement, DisplayElement *
 
 void Slide::draw(const Common::Rect &r) {
 	Common::Rect oldBounds, newBounds;
-	
+
 	adjustSlideRects(oldBounds, newBounds);
 	drawElements(r, oldBounds, newBounds);
 }

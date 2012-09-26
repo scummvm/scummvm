@@ -63,15 +63,15 @@ enum {
 	kButtonDownBit = 0,
 	kAutoButtonBit = 1,
 	kBitsPerButton = 2,
-	
+
 	kButtonDownMask = 1 << kButtonDownBit,
 	kAutoButtonMask = 1 << kAutoButtonBit,
-	
+
 	kButtonStateBits = kButtonDownMask | kAutoButtonMask,
-	
+
 	kRawButtonUp = 0,
 	kRawButtonDown = kButtonDownMask | kAutoButtonMask,
-	
+
 	kButtonUp = 0,
 	kButtonDown = kButtonDownMask,
 	kButtonAutoUp = kAutoButtonMask,
@@ -151,7 +151,7 @@ enum {
 					(kAutoButtonMask << kMod1ButtonShift) |
 					(kAutoButtonMask << kMod2ButtonShift) |
 					(kAutoButtonMask << kMod3ButtonShift),
-	
+
 	kFilterUpButton =			kButtonDownMask << kUpButtonShift,
 	kFilterUpAuto =				kAutoButtonMask << kUpButtonShift,
 	kFilterUpButtonAny =		kFilterUpButton | kFilterUpAuto,
@@ -191,7 +191,7 @@ enum {
 	kFilterMod3Button =			kButtonDownMask << kMod3ButtonShift,
 	kFilterMod3Auto =			kAutoButtonMask << kMod3ButtonShift,
 	kFilterMod3ButtonAny =		kFilterMod3Button | kFilterMod3Auto,
-	
+
 	kFilterNoInput =			0,
 	kFilterAllInput =			kFilterUpButton |
 								kFilterUpAuto |
@@ -219,7 +219,7 @@ enum {
 								kFilterMod2Auto |
 								kFilterMod3Button |
 								kFilterMod3Auto,
-	
+
 	kFilterAllDirections =		kFilterUpButton |
 								kFilterUpAuto |
 								kFilterLeftButton |
@@ -228,7 +228,7 @@ enum {
 								kFilterDownAuto |
 								kFilterRightButton |
 								kFilterRightAuto,
-	
+
 	kFilterButtons =			kFilterOneButton |
 								kFilterOneAuto |
 								kFilterTwoButton |
@@ -237,12 +237,12 @@ enum {
 								kFilterThreeAuto |
 								kFilterFourButton |
 								kFilterFourAuto,
-	
+
 	kFilterFireButtons =		kFilterLeftFireButton |
 								kFilterLeftFireAuto |
 								kFilterRightFireButton |
 								kFilterRightFireAuto,
-	
+
 	kFilterAllButtons =			kFilterLeftFireButton |
 								kFilterLeftFireAuto |
 								kFilterRightFireButton |
@@ -261,7 +261,7 @@ enum {
 								kFilterMod2Auto |
 								kFilterMod3Button |
 								kFilterMod3Auto,
-	
+
 	kFilterAllInputNoAuto =		kFilterUpButton |
 								kFilterLeftButton |
 								kFilterDownButton |
@@ -288,15 +288,15 @@ static const InputBits kOpticalInterruption = kFilterAllInputNoAuto;
 		fireLeft, fireRight:		fire buttons.
 		mod1, mod2, mod3:			modifier buttons, similar to shift, control, etc.
 		a, b, c, d:					general purpose buttons.
-	
+
 	button state is held as bits in a long word, two bits per button.
-	
+
 	Filter bits:
 		for each button, two bits are assigned for filtering. If bit 0 is set, the
 		corresponding button is available for "button down" input. If bit 1 is set,
 		the corresponding button is available for "auto down" input. Note that bit
 		1 is meaningful only if bit 0 is set.
-	
+
 */
 
 class Input {
@@ -310,27 +310,27 @@ public:
 	bool upButtonDown() const { return (_inputState & (kButtonStateBits << kUpButtonShift)) == (kButtonDown << kUpButtonShift); }
 	bool upButtonAutoDown() const { return (_inputState & (kButtonStateBits << kUpButtonShift)) == (kButtonAutoDown << kUpButtonShift); }
 	bool upButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kUpButtonShift)) != 0; }
-	
+
 	bool leftButtonDown() const { return (_inputState & (kButtonStateBits << kLeftButtonShift)) == (kButtonDown << kLeftButtonShift); }
 	bool leftButtonAutoDown() const { return (_inputState & (kButtonStateBits << kLeftButtonShift)) == (kButtonAutoDown << kLeftButtonShift); }
 	bool leftButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kLeftButtonShift)) != 0; }
-	
+
 	bool downButtonDown() const { return (_inputState & (kButtonStateBits << kDownButtonShift)) == (kButtonDown << kDownButtonShift); }
 	bool downButtonAutoDown() const { return (_inputState & (kButtonStateBits << kDownButtonShift)) == (kButtonAutoDown << kDownButtonShift); }
 	bool downButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kDownButtonShift)) != 0; }
-	
+
 	bool rightButtonDown() const { return (_inputState & (kButtonStateBits << kRightButtonShift)) == (kButtonDown << kRightButtonShift); }
 	bool rightButtonAutoDown() const { return (_inputState & (kButtonStateBits << kRightButtonShift)) == (kButtonAutoDown << kRightButtonShift); }
 	bool rightButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kRightButtonShift)) != 0; }
-	
+
 	bool leftFireButtonDown() const { return (_inputState & (kButtonStateBits << kLeftFireButtonShift)) == (kButtonDown << kLeftFireButtonShift); }
 	bool leftFireButtonAutoDown() const { return (_inputState & (kButtonStateBits << kLeftFireButtonShift)) == (kButtonAutoDown << kLeftFireButtonShift); }
 	bool leftFireButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kLeftFireButtonShift)) != 0; }
-	
+
 	bool rightFireButtonDown() const { return (_inputState & (kButtonStateBits << kRightFireButtonShift)) == (kButtonDown << kRightFireButtonShift); }
 	bool rightFireButtonAutoDown() const { return (_inputState & (kButtonStateBits << kRightFireButtonShift)) == (kButtonAutoDown << kRightFireButtonShift); }
 	bool rightFireButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kRightFireButtonShift)) != 0; }
-	
+
 	bool oneButtonDown() const { return	(_inputState & (kButtonStateBits << kOneButtonShift)) == (kButtonDown << kOneButtonShift); }
 	bool oneButtonAutoDown() const { return (_inputState & (kButtonStateBits << kOneButtonShift)) == (kButtonAutoDown << kOneButtonShift); }
 	bool oneButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kOneButtonShift)) != 0; }
@@ -338,34 +338,34 @@ public:
 	bool twoButtonDown() const { return (_inputState & (kButtonStateBits << kTwoButtonShift)) == (kButtonDown << kTwoButtonShift); }
 	bool twoButtonAutoDown() const { return (_inputState & (kButtonStateBits << kTwoButtonShift)) == (kButtonAutoDown << kTwoButtonShift); }
 	bool twoButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kTwoButtonShift)) != 0; }
-	
+
 	bool threeButtonDown() const { return (_inputState & (kButtonStateBits << kThreeButtonShift)) == (kButtonDown << kThreeButtonShift); }
 	bool threeButtonAutoDown() const { return (_inputState & (kButtonStateBits << kThreeButtonShift)) == (kButtonAutoDown << kThreeButtonShift); }
 	bool threeButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kThreeButtonShift)) != 0; }
-	
+
 	bool fourButtonDown() const { return (_inputState & (kButtonStateBits << kFourButtonShift)) == (kButtonDown << kFourButtonShift); }
 	bool fourButtonAutoDown() const { return (_inputState & (kButtonStateBits << kFourButtonShift)) == (kButtonAutoDown << kFourButtonShift); }
 	bool fourButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kFourButtonShift)) != 0; }
-	
+
 	bool mod1ButtonDown() const { return (_inputState & (kButtonStateBits << kMod1ButtonShift)) == (kButtonDown << kMod1ButtonShift); }
 	bool mod1ButtonAutoDown() const { return (_inputState & (kButtonStateBits << kMod1ButtonShift)) == (kButtonAutoDown << kMod1ButtonShift); }
 	bool mod1ButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kMod1ButtonShift)) != 0; }
-	
+
 	bool mod2ButtonDown() const { return (_inputState & (kButtonStateBits << kMod2ButtonShift)) == (kButtonDown << kMod2ButtonShift); }
 	bool mod2ButtonAutoDown() const { return (_inputState & (kButtonStateBits << kMod2ButtonShift)) == (kButtonAutoDown << kMod2ButtonShift); }
 	bool mod2ButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kMod2ButtonShift)) != 0; }
-	
+
 	bool mod3ButtonDown() const { return (_inputState & (kButtonStateBits << kMod3ButtonShift)) == (kButtonDown << kMod3ButtonShift); }
 	bool mod3ButtonAutoDown() const { return (_inputState & (kButtonStateBits << kMod3ButtonShift)) == (kButtonAutoDown << kMod3ButtonShift); }
 	bool mod3ButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kMod3ButtonShift)) != 0; }
-	
+
 	bool allAutoInput() const { return (_inputState & kAllAutoBits) != 0; }
 	bool anyDirectionInput() const { return (_inputState & kDirectionBits) != 0; }
 	bool anyButtonInput() const { return (_inputState & kButtonBits) != 0; }
 	bool anyInput() const { return _inputState != 0; }
-	
+
 	void getInputLocation(Common::Point &where) const { where = _inputLocation; }
-	
+
 	bool anyInputBitSet(const InputBits bits) const { return (_inputState & bits) != 0; }
 
 	bool isAltDown() const { return _altDown; }
@@ -384,7 +384,7 @@ protected:
 	void setInputLocation(const Common::Point &where) { _inputLocation = where; }
 	void setConsoleRequested(bool consoleRequested) { _consoleRequested = consoleRequested; }
 	void setAltDown(bool altDown) { _altDown = altDown; }
-	
+
 	InputBits _inputState;
 	Common::Point _inputLocation;
 	bool _consoleRequested;
@@ -400,24 +400,24 @@ public:
 	static void readInputDevice(Input&);
 	static void invalHotspots() { _invalHotspots = true; }
 	static InputBits getCurrentFilter() { return _lastFilter; }
-		
+
 	InputHandler(InputHandler*);
 	virtual ~InputHandler();
-	
+
 	virtual void setNextHandler(InputHandler *nextHandler) { _nextHandler = nextHandler; }
 	virtual InputHandler *getNextHandler() { return _nextHandler; }
-	
+
 	virtual void handleInput(const Input &, const Hotspot *);
 	virtual void clickInHotspot(const Input &, const Hotspot *);
-	
+
 	virtual void activateHotspots();
 	virtual void updateCursor(const Common::Point, const Hotspot *);
 	virtual bool isClickInput(const Input &, const Hotspot *);
 	virtual bool wantsCursor();
-	
+
 	virtual bool releaseInputFocus() { return true; }
 	virtual void grabInputFocus() {}
-	
+
 	// This returns bits set for what kinds of input to accept.
 	virtual InputBits getInputFilter();
 
@@ -430,7 +430,7 @@ protected:
 	static InputHandler *_inputHandler;
 	static bool _invalHotspots;
 	static InputBits _lastFilter;
-	
+
 	InputHandler *_nextHandler;
 	bool _allowInput;
 };
@@ -489,7 +489,7 @@ public:
 
 	// Hmmmmm....
 	static bool isEasterEggModifierInput(const Input &input) { return input.isAltDown(); }
-	
+
 	static bool isTogglePauseInput(const Input &input) { return input.mod3ButtonDown(); }
 };
 

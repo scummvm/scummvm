@@ -43,15 +43,15 @@ namespace Common {
 	1)	the inventory/AI help area
 	2)	the middle area
 	3)	the biochip display area
-	
+
 	Area 1 is used for displaying the current inventory item. When the player changes the
 	current item, either by selecting a new one in the inventory list or by picking
 	up a new item, area 1 updates to show the new item.
-	
+
 	If the AI decides to give a message, the AI's head temporarily takes over area 1
 	for the duration of the message, then goes away, returning the area to the current
 	inventory item.
-	
+
 	Area 2 is used to display the current inventory item's state, the current biochip's
 	state, and any extra information from the AI. The contention for this area is
 	resolved as follows:
@@ -70,7 +70,7 @@ namespace Common {
 	at arbitrary times. The map biochip is one example which causes drawing when the
 	player takes a step. Another example is the poison gas canister, which flashes in
 	this area to indicate a dangerous compound.
-	
+
 	Area 3 is used to display the current biochip. When the player changes the current
 	biochip, either by selecting a new one from the biochip list or by picking up a
 	new one, area 3 updates to show the new item. In addition, some biochips can play
@@ -92,13 +92,13 @@ public:
 
 	void saveAIState();
 	void restoreAIState();
-	
+
 	void handleInput(const Input &, const Hotspot *);
 	void activateHotspots();
 	void clickInHotspot(const Input &, const Hotspot *);
-	
+
 	void setAIVolume(const uint16);
-	
+
 	// There are only so many legal combinations of client/area.
 	// Here is the list of supported pairs:
 	//      kInventorySignature     kLeftAreaSignature
@@ -109,7 +109,7 @@ public:
 	// Further, the kAISignature never sets a static frame time in the left area,
 	// but only plays a sequence from the AI movie.
 	void setAIAreaToTime(const LowerClientSignature, const LowerAreaSignature, const TimeValue);
-	
+
 	// The "Play" functions play the requested sequence synchronously.
 	void playAIAreaSequence(const LowerClientSignature, const LowerAreaSignature, const TimeValue, const TimeValue);
 
@@ -139,7 +139,7 @@ public:
 	TimeValue getBigInfoTime();
 	void getSmallInfoSegment(TimeValue &, TimeValue &);
 
-protected:	
+protected:
 	void useIdleTime();
 
 	void setLeftMovieTime(const TimeValue);

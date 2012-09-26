@@ -30,7 +30,7 @@
 #include "pegasus/surface.h"
 
 namespace Pegasus {
- 
+
 // Compass is defined with 0 as north, 90 east, 180 south, 270 west.
 // Clockwise rotation increases the angle, counterclockwise rotation decreases the angle.
 
@@ -38,11 +38,11 @@ class Compass : public FaderAnimation {
 public:
 	Compass();
 	virtual ~Compass();
-	
+
 	void initCompass();
 	void deallocateCompass();
 	bool isCompassValid() const { return _compassImage.isSurfaceValid(); }
-	
+
 	void setFaderValue(const int32);
 
 protected:

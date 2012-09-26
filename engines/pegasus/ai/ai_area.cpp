@@ -53,7 +53,7 @@ AIArea::AIArea(InputHandler *nextHandler) : InputHandler(nextHandler), _leftArea
 	startIdling();
 }
 
-AIArea::~AIArea() {	
+AIArea::~AIArea() {
 	if (_middleAreaOwner == kBiochipSignature) {
 		BiochipItem *currentBiochip = ((PegasusEngine *)g_engine)->getCurrentBiochip();
 		if (currentBiochip && currentBiochip->isSelected())
@@ -83,7 +83,7 @@ void AIArea::saveAIState() {
 
 	vm->_aiSaveStream = new Common::MemoryReadStream(out.getData(), out.size(), DisposeAfterUse::YES);
 }
-	
+
 void AIArea::restoreAIState() {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
@@ -101,14 +101,14 @@ void AIArea::readAIRules(Common::ReadStream *stream) {
 
 void AIArea::initAIArea() {
 	allocateSurface(Common::Rect(0, 0, 384, 96));
-	
+
 	_leftAreaMovie.shareSurface(this);
 	_leftAreaMovie.initFromMovieFile("Images/Items/Left Area Movie");
 	_leftAreaMovie.moveElementTo(kAILeftAreaLeft, kAILeftAreaTop);
 	_leftAreaMovie.setDisplayOrder(kAILeftAreaOrder);
 	_leftAreaMovie.startDisplaying();
 	_leftAreaMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
-	
+
 	_middleAreaMovie.shareSurface(this);
 	_middleAreaMovie.initFromMovieFile("Images/Items/Middle Area Movie");
 	_middleAreaMovie.moveElementTo(kAIMiddleAreaLeft, kAIMiddleAreaTop);
@@ -116,7 +116,7 @@ void AIArea::initAIArea() {
 	_middleAreaMovie.setDisplayOrder(kAIMiddleAreaOrder);
 	_middleAreaMovie.startDisplaying();
 	_middleAreaMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
-	
+
 	_rightAreaMovie.shareSurface(this);
 	_rightAreaMovie.initFromMovieFile("Images/Items/Right Area Movie");
 	_rightAreaMovie.moveElementTo(kAIRightAreaLeft, kAIRightAreaTop);
@@ -124,7 +124,7 @@ void AIArea::initAIArea() {
 	_rightAreaMovie.setDisplayOrder(kAIRightAreaOrder);
 	_rightAreaMovie.startDisplaying();
 	_rightAreaMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
-	
+
 	_AIMovie.setDisplayOrder(kAIMovieOrder);
 }
 
@@ -274,7 +274,7 @@ void AIArea::playAIAreaSequence(const LowerClientSignature, const LowerAreaSigna
 
 bool AIArea::playAIMovie(const LowerAreaSignature area, const Common::String &movieName, bool keepLastFrame, const InputBits interruptFilter) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
-	
+
 	lockAIOut();
 
 	InputDevice.waitInput(interruptFilter);
@@ -373,7 +373,7 @@ void AIArea::setLeftMovieTime(const TimeValue time) {
 	_leftInventoryTime = time;
 }
 
-void AIArea::setMiddleMovieTime(const LowerClientSignature client, const TimeValue time) {	
+void AIArea::setMiddleMovieTime(const LowerClientSignature client, const TimeValue time) {
 	if (client == kInventorySignature) {
 		_middleInventoryTime = time;
 		if (_middleAreaOwner == kBiochipSignature) {
@@ -419,7 +419,7 @@ void AIArea::handleInput(const Input &input, const Hotspot *cursorSpot) {
 		InputHandler::handleInput(input, cursorSpot);
 }
 
-void AIArea::toggleMiddleAreaOwner() {	
+void AIArea::toggleMiddleAreaOwner() {
 	if (_middleAreaOwner == kInventorySignature) {
 		BiochipItem *currentBiochip = ((PegasusEngine *)g_engine)->getCurrentBiochip();
 		if (currentBiochip) {
@@ -437,7 +437,7 @@ void AIArea::toggleMiddleAreaOwner() {
 
 void AIArea::activateHotspots() {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
-	
+
 	if (_middleAreaOwner == kBiochipSignature) {
 		BiochipItem *currentBiochip = ((PegasusEngine *)g_engine)->getCurrentBiochip();
 		if (currentBiochip)
@@ -593,7 +593,7 @@ TimeValue AIArea::getBigInfoTime() {
 	return 0xffffffff;
 }
 
-void AIArea::getSmallInfoSegment(TimeValue &start, TimeValue &stop) {	
+void AIArea::getSmallInfoSegment(TimeValue &start, TimeValue &stop) {
 	if (_middleAreaOwner == kInventorySignature) {
 		InventoryItem *currentItem = ((PegasusEngine *)g_engine)->getCurrentInventoryItem();
 		currentItem->getInfoRightTimes(start, stop);

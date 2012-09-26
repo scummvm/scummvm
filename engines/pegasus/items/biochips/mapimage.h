@@ -50,9 +50,9 @@ public:
 	void loadMazeIfNecessary();
 	void unloadImage();
 	void moveToMapLocation(const NeighborhoodID, const RoomID, const DirectionConstant);
-	
+
 	void draw(const Common::Rect &);
-	
+
 	bool anyFlagSet() { return _mappedRooms.anyFlagSet(); }
 
 	static const uint32 kNumMappingRooms = (kMars39 - kMars35 + 1) + (kMars60 - kMars60 + 1) +

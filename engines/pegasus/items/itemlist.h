@@ -43,10 +43,10 @@ class ItemList : public Common::List<Item *> {
 public:
 	ItemList();
 	virtual ~ItemList();
-	
+
 	virtual void writeToStream(Common::WriteStream *stream);
 	virtual void readFromStream(Common::ReadStream *stream);
-	
+
 	Item *findItemByID(const ItemID id);
 };
 

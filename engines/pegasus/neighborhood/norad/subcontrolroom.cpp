@@ -224,13 +224,13 @@ enum {
 
 /*
 	_currentAction and _nextAction:
-	
+
 	At any time, _currentAction contains an action index (defined above). The current
 	action index is what the claw is doing right now. If the player presses a button
 	before the current action completes, _nextAction saves the new action and input
 	is disabled. This has the effect of implementing a queue of commands for the claw
 	that can save at most one extra command.
-	
+
 	The general strategy for using _currentAction and _nextAction are:
 	--	If the player presses a claw button and _currentAction is kNoActionIndex,
 		do the command immediately and set _currentAction accordingly.
@@ -248,7 +248,7 @@ enum {
 		Leave _nextAction alone. When the animation, completes, check to see if the
 		claw is in its original position or not. If so, complete the player rising
 		sequence by playing the rising animation. If not, repeat this whole step.
-	
+
 	Using this general strategy allows the use of a single function,
 	DispatchClawAction, which can both cause the claw to perform a command and saving
 	the next command in _nextAction.
@@ -434,7 +434,7 @@ void SubControlRoom::playAgainstRobot() {
 	_playingAgainstRobot = true;
 }
 
-void SubControlRoom::openInteraction() {	
+void SubControlRoom::openInteraction() {
 	_currentAction = kNoActionIndex;
 	_nextAction = kNoActionIndex;
 
@@ -526,7 +526,7 @@ void SubControlRoom::openInteraction() {
 
 	_subControlMovie.show();
 	_clawMonitorMovie.show();
-}									
+}
 
 void SubControlRoom::initInteraction() {
 	if (GameState.getNoradSubPrepState() == kSubDamaged) {
@@ -541,7 +541,7 @@ void SubControlRoom::initInteraction() {
 
 	_subControlMovie.redrawMovieWorld();
 	_clawMonitorMovie.redrawMovieWorld();
-}									
+}
 
 void SubControlRoom::closeInteraction() {
 	_subControlNotification.cancelNotification(this);
@@ -555,7 +555,7 @@ void SubControlRoom::setSoundFXLevel(const uint16 fxLevel) {
 	_subControlMovie.setVolume(fxLevel);
 }
 
-void SubControlRoom::receiveNotification(Notification *notification, const NotificationFlags flags) {	
+void SubControlRoom::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	Norad *owner = (Norad *)getOwner();
 
 	if (notification == &_subControlNotification) {
@@ -703,7 +703,7 @@ void SubControlRoom::hideEverything() {
 	_greenBall.hide();
 }
 
-void SubControlRoom::robotKillsPlayer(const uint32 extraID, Neighborhood *owner) {	
+void SubControlRoom::robotKillsPlayer(const uint32 extraID, Neighborhood *owner) {
 	_robotState = kRobotWon;
 	owner->startExtraSequence(extraID, kExtraCompletedFlag, kFilterAllInput);
 	_greenBallTimer.stop();
@@ -713,7 +713,7 @@ void SubControlRoom::robotKillsPlayer(const uint32 extraID, Neighborhood *owner)
 	_greenBallTimer.start();
 }
 
-void SubControlRoom::activateHotspots() {	
+void SubControlRoom::activateHotspots() {
 	if (_robotState == kRobotWon || _robotState == kPlayerWon)
 		return;
 
@@ -744,7 +744,7 @@ void SubControlRoom::activateHotspots() {
 	}
 }
 
-void SubControlRoom::showButtons() {	
+void SubControlRoom::showButtons() {
 	if (_playingAgainstRobot && _robotState == kRobotApproaching) {
 		for (int i = 0; i < kNumClawButtons; i++) {
 			_buttons[i]->show();
@@ -772,12 +772,12 @@ void SubControlRoom::showButtons() {
 	}
 }
 
-void SubControlRoom::hideButtons() {	
+void SubControlRoom::hideButtons() {
 	for (int i = 0; i < kNumClawButtons; i++)
 		_buttons[i]->hide();
 }
 
-int SubControlRoom::findActionIndex(HotSpotID id) {	
+int SubControlRoom::findActionIndex(HotSpotID id) {
 	for (int i = 0; i < kNumClawButtons; i++)
 		if (id == _clawButtonSpotIDs[i])
 			return i;
@@ -935,7 +935,7 @@ void SubControlRoom::setControlMonitorToTime(const TimeValue newTime, const int 
 }
 
 void SubControlRoom::playControlMonitorSection(const TimeValue in, const TimeValue out, const NotificationFlags flags,
-		const int newState, const bool shouldAllowInput) {	
+		const int newState, const bool shouldAllowInput) {
 	_subControlMovie.stop();
 	_subControlMovie.setSegment(in, out);
 	_subControlMovie.setTime(in);
@@ -975,7 +975,7 @@ void SubControlRoom::setClawMonitorToTime(const TimeValue newTime) {
 }
 
 void SubControlRoom::playClawMonitorSection(const TimeValue in, const TimeValue out, const NotificationFlags flags,
-		const int newState, const bool shouldAllowInput) {	
+		const int newState, const bool shouldAllowInput) {
 	_clawMonitorMovie.stop();
 	_clawMonitorMovie.setSegment(in, out);
 	_clawMonitorMovie.setTime(in);

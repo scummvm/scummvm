@@ -128,7 +128,7 @@ void ShuttleHUD::hideTargetGrid() {
 	unlockOnTarget();
 }
 
-void ShuttleHUD::useIdleTime() {	
+void ShuttleHUD::useIdleTime() {
 	if (isVisible()) {
 		Common::Rect r;
 		g_robotShip->getShuttleBounds(r);

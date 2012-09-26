@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
- 
+
 #ifndef PEGASUS_TIMERS_H
 #define PEGASUS_TIMERS_H
 
@@ -42,11 +42,11 @@ friend class PegasusEngine;
 public:
 	Idler();
 	virtual ~Idler();
-	
+
 	virtual void startIdling();
 	virtual void stopIdling();
 	bool isIdling() const { return _isIdling; }
-	
+
 protected:
 	virtual void useIdleTime() {}
 
@@ -67,40 +67,40 @@ friend class TimeBaseCallBack;
 public:
 	TimeBase(const TimeScale = kDefaultTimeScale);
 	virtual ~TimeBase();
-	
+
 	virtual void setTime(const TimeValue, const TimeScale = 0);
 	virtual TimeValue getTime(const TimeScale = 0);
-	
+
 	virtual void setScale(const TimeScale scale) { _preferredScale = scale; }
 	virtual TimeScale getScale() const { return _preferredScale; }
-	
+
 	virtual void setRate(const Common::Rational);
 	virtual Common::Rational getRate() const { return _rate; }
-	
+
 	virtual void start();
 	virtual void stop();
 	virtual bool isRunning();
-	
+
 	virtual void pause();
 	virtual void resume();
 	bool isPaused() const { return _paused; }
-	
+
 	virtual void setFlags(const uint32 flags) { _flags = flags; }
 	virtual uint32 getFlags() const { return _flags; }
-	
+
 	virtual void setStart(const TimeValue, const TimeScale = 0);
 	virtual TimeValue getStart(const TimeScale = 0) const;
-	
+
 	virtual void setStop(const TimeValue, const TimeScale = 0);
 	virtual TimeValue getStop(const TimeScale = 0) const;
-	
+
 	virtual void setSegment(const TimeValue, const TimeValue, const TimeScale = 0);
 	virtual void getSegment(TimeValue&, TimeValue&, const TimeScale = 0) const;
-	
+
 	virtual TimeValue getDuration(const TimeScale = 0) const;
 
 	virtual void setMasterTimeBase(TimeBase *timeBase);
-		
+
 	void disposeAllCallBacks();
 
 	// ScummVM's API additions (to replace the need for actual timers)
@@ -166,7 +166,7 @@ protected:
 	virtual void callBack() = 0;
 
 	TimeBase *_timeBase;
-	
+
 	// Owned and operated by TimeBase;
 	TimeBaseCallBack *_nextCallBack;
 
@@ -190,7 +190,7 @@ public:
 protected:
 	virtual void useIdleTime();
 	virtual void timeChanged(const TimeValue) {}
-	
+
 	TimeValue _lastTime;
 
 };
@@ -199,15 +199,15 @@ class NotificationCallBack : public TimeBaseCallBack {
 public:
 	NotificationCallBack();
 	virtual ~NotificationCallBack() {}
-	
+
 	void setNotification(Notification *notifier) { _notifier = notifier; }
 
 	void setCallBackFlag(const NotificationFlags flag) { _callBackFlag = flag; }
 	NotificationFlags getCallBackFlag() const { return _callBackFlag; }
-	
+
 protected:
 	void callBack();
-	
+
 	Notification *_notifier;
 	NotificationFlags _callBackFlag;
 };

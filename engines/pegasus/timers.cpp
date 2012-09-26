@@ -68,7 +68,7 @@ TimeBase::TimeBase(const TimeScale preferredScale) {
 	_master = 0;
 	_pausedRate = 0;
 	_pauseStart = 0;
-	
+
 	((PegasusEngine *)g_engine)->addTimeBase(this);
 }
 
@@ -286,12 +286,12 @@ void TimeBase::addCallBack(TimeBaseCallBack *callBack) {
 	_callBackList = callBack;
 }
 
-void TimeBase::removeCallBack(TimeBaseCallBack *callBack) {	
+void TimeBase::removeCallBack(TimeBaseCallBack *callBack) {
 	if (_callBackList == callBack) {
 		_callBackList = callBack->_nextCallBack;
 	} else {
 		TimeBaseCallBack *runner, *prevRunner;
-	
+
 		for (runner = _callBackList->_nextCallBack, prevRunner = _callBackList; runner != callBack; prevRunner = runner, runner = runner->_nextCallBack)
 			;
 
@@ -303,7 +303,7 @@ void TimeBase::removeCallBack(TimeBaseCallBack *callBack) {
 
 void TimeBase::disposeAllCallBacks() {
 	TimeBaseCallBack *nextRunner;
-	
+
 	for (TimeBaseCallBack *runner = _callBackList; runner != 0; runner = nextRunner) {
 		nextRunner = runner->_nextCallBack;
 		runner->disposeCallBack();
@@ -361,7 +361,7 @@ IdlerTimeBase::IdlerTimeBase() {
 	startIdling();
 }
 
-void IdlerTimeBase::useIdleTime() {	
+void IdlerTimeBase::useIdleTime() {
 	uint32 currentTime = getTime();
 	if (currentTime != _lastTime) {
 		_lastTime = currentTime;

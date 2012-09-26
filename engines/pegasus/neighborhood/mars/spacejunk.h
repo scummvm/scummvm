@@ -46,9 +46,9 @@ public:
 	void setScaleSize(const CoordType);
 
 	void useIdleTime();
-	
+
 	void launchJunk(int16, CoordType, CoordType);
-	
+
 	void getJunkPosition(Point3D &);
 	bool isJunkFlying();
 

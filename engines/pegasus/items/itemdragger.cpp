@@ -89,14 +89,14 @@ void SpriteDragger::startTracking(const Input &input) {
 	}
 }
 
-void SpriteDragger::continueTracking(const Input &input) {	
+void SpriteDragger::continueTracking(const Input &input) {
 	if (_draggingSprite) {
 		Common::Point rawPoint;
 		input.getInputLocation(rawPoint);
 
 		if (!_slopRect.contains(rawPoint))
 			rawPoint = _startRawPoint;
-	
+
 		if (rawPoint != _lastRawPoint) {
 			Common::Point newPoint = rawPoint;
 			pinPointInRect(_limitRect, newPoint);
@@ -127,14 +127,14 @@ void SpriteDragger::pinPointInRect(const Common::Rect &r, Common::Point &pt) {
 }
 
 ItemDragger::ItemDragger(PegasusEngine *owner) : _inventoryDropSpot(kInventoryDropSpotID), _biochipDropSpot(kBiochipDropSpotID),
-		_inventoryHighlight(kInventoryDropHighlightID), _biochipHighlight(kBiochipDropHighlightID) {	
+		_inventoryHighlight(kInventoryDropHighlightID), _biochipHighlight(kBiochipDropHighlightID) {
 	_owner = owner;
 
 	Common::Rect r(kInventoryDropLeft, kInventoryDropTop, kInventoryDropRight, kInventoryDropBottom);
 	_inventoryDropSpot.setArea(r);
 	_inventoryDropSpot.setHotspotFlags(kDropItemSpotFlag);
 	g_allHotspots.push_back(&_inventoryDropSpot);
-	
+
 	r = Common::Rect(kBiochipDropLeft, kBiochipDropTop, kBiochipDropRight, kBiochipDropBottom);
 	_biochipDropSpot.setArea(r);
 	_biochipDropSpot.setHotspotFlags(kDropBiochipSpotFlag);
@@ -144,10 +144,10 @@ ItemDragger::ItemDragger(PegasusEngine *owner) : _inventoryDropSpot(kInventoryDr
 void ItemDragger::startTracking(const Input &input) {
 	_inventoryHighlight.setDisplayOrder(kInventoryHiliteOrder);
 	_inventoryHighlight.startDisplaying();
-	
+
 	_biochipHighlight.setDisplayOrder(kBiochipHiliteOrder);
 	_biochipHighlight.startDisplaying();
-	
+
 	SpriteDragger::startTracking(input);
 }
 

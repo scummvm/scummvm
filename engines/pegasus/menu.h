@@ -40,10 +40,10 @@ class GameMenu : public IDObject, public InputHandler {
 public:
 	GameMenu(const uint32);
 	virtual ~GameMenu() {}
-	
+
 	virtual void becomeCurrentHandler();
 	virtual void restorePreviousHandler();
-	
+
 	GameMenuCommand getLastCommand() { return _lastCommand; }
 	void clearLastCommand() { _lastCommand = kMenuCmdNoCommand; }
 
@@ -98,13 +98,13 @@ class CreditsMenu : public GameMenu {
 public:
 	CreditsMenu();
 	virtual ~CreditsMenu() {}
-	
+
 	virtual void handleInput(const Input &input, const Hotspot *);
 
 protected:
 	void newMenuSelection(const int);
 	void newMovieTime(const TimeValue);
-	
+
 	int _menuSelection;
 	Picture _menuBackground;
 	Movie _creditsMovie;

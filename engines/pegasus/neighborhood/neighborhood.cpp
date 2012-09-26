@@ -309,7 +309,7 @@ void Neighborhood::getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry)
 
 CanMoveForwardReason Neighborhood::canMoveForward(ExitTable::Entry &entry) {
 	DoorTable::Entry door;
-	
+
 	getExitEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), entry);
 	getDoorEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), door);
 
@@ -388,7 +388,7 @@ void Neighborhood::createNeighborhoodSpots() {
 	delete hotspotList;
 }
 
-void Neighborhood::popActionQueue() {	
+void Neighborhood::popActionQueue() {
 	if (!_actionQueue.empty()) {
 		QueueRequest topRequest = _actionQueue.pop();
 
@@ -445,7 +445,7 @@ void Neighborhood::requestAction(const QueueRequestType requestType, const Extra
 		const InputBits interruptionFilter, const NotificationFlags flags) {
 
 	QueueRequest request;
-	
+
 	request.requestType = requestType;
 	request.extra = extra;
 	request.start = in;
@@ -600,7 +600,7 @@ int16 Neighborhood::getStaticCompassAngle(const RoomID, const DirectionConstant 
 	return compassAngles[dir];
 }
 
-void Neighborhood::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpec &compassMove) {	
+void Neighborhood::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpec &compassMove) {
 	int32 startAngle = getStaticCompassAngle(exitEntry.room, exitEntry.direction);
 	int32 stopAngle = getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection);
 
@@ -624,7 +624,7 @@ void Neighborhood::scheduleNavCallBack(NotificationFlags flags) {
 	}
 }
 
-void Neighborhood::scheduleStridingCallBack(const TimeValue strideStop, NotificationFlags flags) {	
+void Neighborhood::scheduleStridingCallBack(const TimeValue strideStop, NotificationFlags flags) {
 	_stridingCallBack.cancelCallBack();
 
 	if (flags != 0)
@@ -647,7 +647,7 @@ void Neighborhood::moveNavTo(const CoordType h, const CoordType v) {
 				(*it)->moveSpot(offH, offV);
 }
 
-void Neighborhood::activateHotspots() {	
+void Neighborhood::activateHotspots() {
 	InputHandler::activateHotspots();
 
 	for (HotspotInfoTable::iterator it = _hotspotInfoTable.begin(); it != _hotspotInfoTable.end(); it++) {
@@ -662,7 +662,7 @@ void Neighborhood::activateHotspots() {
 	}
 }
 
-void Neighborhood::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {	
+void Neighborhood::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 	HotSpotFlags flags = clickedSpot->getHotspotFlags();
 
 	if ((flags & (kPickUpItemSpotFlag | kPickUpBiochipSpotFlag)) != 0) {
@@ -730,11 +730,11 @@ void Neighborhood::turnTo(const DirectionConstant direction) {
 	_vm->_gfx->setCurSurface(_navMovie.getSurface());
 	_pushIn.copyToCurrentPort();
 	_vm->_gfx->setCurSurface(_vm->_gfx->getWorkArea());
-	
+
 	// Added 2/10/97. Shouldn't this be here? Shouldn't we set the current activation to
 	// always when turning to a new view?
 	_currentActivation = kActivateHotSpotAlways;
-	
+
 	_interruptionFilter = kFilterAllInput;
 
 	if (direction != GameState.getCurrentDirection()) {
@@ -764,7 +764,7 @@ void Neighborhood::spotCompleted() {
 	showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 }
 
-void Neighborhood::doorOpened() {	
+void Neighborhood::doorOpened() {
 	_interruptionFilter = kFilterAllInput;
 
 	// 2/23/97
@@ -805,7 +805,7 @@ void Neighborhood::moveForward() {
 }
 
 void Neighborhood::turn(const TurnDirection turnDirection) {
-	DirectionConstant nextDir;	
+	DirectionConstant nextDir;
 	CanTurnReason turnReason = canTurn(turnDirection, nextDir);
 
 	if (turnReason == kCanTurn)
@@ -831,7 +831,7 @@ void Neighborhood::turnDown() {
 }
 
 void Neighborhood::openDoor() {
-	DoorTable::Entry door;	
+	DoorTable::Entry door;
 	CanOpenDoorReason doorReason = canOpenDoor(door);
 
 	if (doorReason == kCanOpenDoor)
@@ -856,7 +856,7 @@ void Neighborhood::startSpotLoop(TimeValue startTime, TimeValue stopTime, Notifi
 	startMovieSequence(startTime, stopTime, flags, true, kFilterAllInput);
 }
 
-void Neighborhood::showViewFrame(TimeValue viewTime) {	
+void Neighborhood::showViewFrame(TimeValue viewTime) {
 	if ((int32)viewTime >= 0) {
 		_turnPush.hide();
 		_navMovie.stop();
@@ -889,7 +889,7 @@ bool Neighborhood::startExtraSequenceSync(const ExtraID extraID, const InputBits
 void Neighborhood::loopExtraSequence(const uint32 extraID, NotificationFlags flags) {
 	ExtraTable::Entry entry;
 	getExtraEntry(extraID, entry);
-	
+
 	if (entry.movieStart != 0xffffffff) {
 		_lastExtra = extraID;
 		startSpotLoop(entry.movieStart, entry.movieEnd, flags);
@@ -996,7 +996,7 @@ void Neighborhood::showNav() {
 
 void Neighborhood::startExitMovie(const ExitTable::Entry &exitEntry) {
 	FaderMoveSpec compassMove;
-	
+
 	if (g_compass)
 		getExitCompassMove(exitEntry, compassMove);
 
@@ -1014,7 +1014,7 @@ void Neighborhood::startExitMovie(const ExitTable::Entry &exitEntry) {
 
 void Neighborhood::startZoomMovie(const ZoomTable::Entry &zoomEntry) {
 	FaderMoveSpec compassMove;
-	
+
 	if (g_compass)
 		getZoomCompassMove(zoomEntry, compassMove);
 
@@ -1193,7 +1193,7 @@ void Neighborhood::startMovieSequence(const TimeValue startTime, const TimeValue
 		const InputBits interruptionInput, const TimeValue strideStop) {
 	if (!loopSequence && g_AIArea)
 		g_AIArea->lockAIOut();
-	
+
 	_interruptionFilter = interruptionInput;
 
 	// Stop the movie before doing anything else
@@ -1272,7 +1272,7 @@ void Neighborhood::throwAwayInterface() {
 bool Neighborhood::prepareExtraSync(const ExtraID extraID) {
 	ExtraTable::Entry extraEntry;
 	FaderMoveSpec compassMove;
-	
+
 	if (g_compass) {
 		getExtraEntry(extraID, extraEntry);
 		getExtraCompassMove(extraEntry, compassMove);
@@ -1338,7 +1338,7 @@ InputBits Neighborhood::getInputFilter() {
 	return _interruptionFilter & InputHandler::getInputFilter();
 }
 
-void Neighborhood::getZoomCompassMove(const ZoomTable::Entry &zoomEntry, FaderMoveSpec &compassMove) {	
+void Neighborhood::getZoomCompassMove(const ZoomTable::Entry &zoomEntry, FaderMoveSpec &compassMove) {
 	int32 startAngle = getStaticCompassAngle(GameState.getCurrentRoom(), GameState.getCurrentDirection());
 	int32 stopAngle = getStaticCompassAngle(zoomEntry.room, zoomEntry.direction);
 
@@ -1453,7 +1453,7 @@ void Neighborhood::zoomUpOrBump() {
 
 void Neighborhood::loadLoopSound1(const Common::String &soundName, uint16 volume, TimeValue fadeOut, TimeValue fadeIn, TimeScale fadeScale) {
 	FaderMoveSpec faderMove;
-	
+
 	if (!loop1Loaded(soundName)) {
 		_loop1SoundString = soundName;
 
@@ -1480,7 +1480,7 @@ void Neighborhood::loadLoopSound1(const Common::String &soundName, uint16 volume
 
 void Neighborhood::loadLoopSound2(const Common::String &soundName, uint16 volume, TimeValue fadeOut, TimeValue fadeIn, TimeScale fadeScale) {
 	FaderMoveSpec faderMove;
-	
+
 	if (!loop2Loaded(soundName)) {
 		_loop2SoundString = soundName;
 
@@ -1575,7 +1575,7 @@ void Neighborhood::closeCroppedMovie() {
 	_croppedMovie.releaseMovie();
 }
 
-void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, CoordType left, CoordType top, const InputBits interruptionFilter) {	
+void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, CoordType left, CoordType top, const InputBits interruptionFilter) {
 	openCroppedMovie(movieName, left, top);
 	_croppedMovie.redrawMovieWorld();
 	_croppedMovie.start();
@@ -1610,7 +1610,7 @@ void Neighborhood::playMovieSegment(Movie *movie, TimeValue startTime, TimeValue
 
 	if (stopTime == 0xffffffff)
 		stopTime = movie->getDuration();
-	
+
 	movie->setSegment(startTime, stopTime);
 	movie->setTime(startTime);
 	movie->start();

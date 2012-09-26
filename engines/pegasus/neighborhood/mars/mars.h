@@ -115,7 +115,7 @@ protected:
 		kMarsPrivateGotShieldChipFlag,
 		kNumMarsPrivateFlags
 	};
-	
+
 	void init();
 	void start();
 	void setUpAIRules();
@@ -126,7 +126,7 @@ protected:
 	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *);
 	void clickInHotspot(const Input &, const Hotspot *);
 	InputBits getInputFilter();
-	
+
 	TimeValue getViewTime(const RoomID, const DirectionConstant);
 	void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
 	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
@@ -143,7 +143,7 @@ protected:
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
 	void lockThawed();
 	void robotTiredOfWaiting();
-	
+
 	void setUpReactorLevel1();
 	void setUpNextReactorLevel();
 	void makeColorSequence();
@@ -184,7 +184,7 @@ protected:
 
 	Common::String getSoundSpotsName();
 	Common::String getNavMovieName();
-	
+
 	InventoryItem *_attackingItem;
 	FuseFunction _bombFuse;
 	FuseFunction _noAirFuse;

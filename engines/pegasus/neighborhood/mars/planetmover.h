@@ -45,7 +45,7 @@ public:
 protected:
 	void newDestination();
 	virtual void timeChanged(const TimeValue);
-	
+
 	Movie *_planetMovie;
 	CoordType _p1, _p4, _r1, _r4;
 	TimeValue _duration;

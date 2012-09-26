@@ -34,12 +34,12 @@ namespace Pegasus {
 
 /*
 	Edge list is arranged as follows:
-	
+
 	all values in the edge list are bytes.
-	
+
 	all vertices are numbers between 0 and 24. x coordinate of vertex is vertex % 5,
 	and y coordinate is vertex / 5.
-	
+
 	an edge is
 		a direction code
 		a number of vertices in the edge
@@ -48,13 +48,13 @@ namespace Pegasus {
 		an array of bools (bytes) indicating that a portion of the edge is
 			traversed (and should be drawn). the number of bools is one less than
 			the number of vertices.
-	
+
 	an edge list is
 		an array of 25 bools indicating which vertex is clickable.
 		an array of 25 bools indicating which vertex is used (drawn).
 		a number of edges
 		an array of edges.
-	
+
 	a hot vertex list is
 		a number of vertices
 		an array of 25 vertices
@@ -137,7 +137,7 @@ protected:
 	void handleInput(const Input &, const Hotspot *);
 	InputBits getInputFilter();
 	void startBombAmbient(Common::String);
-	
+
 	Notification *_neighborhoodNotification;
 	BombGrid _grid;
 	BombTimer _timer;

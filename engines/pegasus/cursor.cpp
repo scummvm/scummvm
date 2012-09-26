@@ -142,10 +142,10 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 
 	if (!cicnStream)
 		error("Failed to find color icon %d", cursorInfo.tag);
-	
+
 	// PixMap section
 	Graphics::PICTDecoder::PixMap pixMap = Graphics::PICTDecoder::readPixMap(*cicnStream);
-	
+
 	// Mask section
 	cicnStream->readUint32BE(); // mask baseAddr
 	uint16 maskRowBytes = cicnStream->readUint16BE(); // mask rowBytes
@@ -159,17 +159,17 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	cicnStream->readUint16BE(); // left
 	uint16 height = cicnStream->readUint16BE(); // bottom
 	cicnStream->readUint16BE(); // right
-	
+
 	// Data section
 	cicnStream->readUint32BE(); // icon handle
 	cicnStream->skip(maskRowBytes * height); // FIXME: maskHeight doesn't work here, though the specs say it should
 	cicnStream->skip(rowBytes * height);
-	
+
 	// Palette section
 	cicnStream->readUint32BE(); // always 0
 	cicnStream->readUint16BE(); // always 0
 	cursorInfo.colorCount = cicnStream->readUint16BE() + 1;
-	
+
 	cursorInfo.palette = new byte[cursorInfo.colorCount * 3];
 	for (uint16 i = 0; i < cursorInfo.colorCount; i++) {
 		cicnStream->readUint16BE();
@@ -177,7 +177,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 		cursorInfo.palette[i * 3 + 1] = cicnStream->readUint16BE() >> 8;
 		cursorInfo.palette[i * 3 + 2] = cicnStream->readUint16BE() >> 8;
 	}
-	
+
 	// PixMap data
 	if (pixMap.pixelSize == 8) {
 		cursorInfo.surface->create(pixMap.rowBytes, pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());

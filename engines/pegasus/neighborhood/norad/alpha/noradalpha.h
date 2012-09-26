@@ -88,12 +88,12 @@ protected:
 	virtual void arriveAtNorad01West();
 	virtual void arriveAtNorad04();
 	virtual void arriveAtNorad22();
-	
+
 	virtual void arriveAt(const RoomID, const DirectionConstant);
-	
+
 	virtual void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
 	virtual TimeValue getViewTime(const RoomID, const DirectionConstant);
-	
+
 	virtual void receiveNotification(Notification *, const NotificationFlags);
 
 	virtual void activateHotspots();

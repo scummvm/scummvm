@@ -47,23 +47,23 @@ NoradElevator::NoradElevator(Neighborhood *handler, const RoomID upRoom, const R
 	_downHotspot = downHotspot;
 }
 
-void NoradElevator::openInteraction() {	
+void NoradElevator::openInteraction() {
 	SpriteFrame *frame = new SpriteFrame();
 	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kElevatorLabelID, true);
 	_elevatorControls.addFrame(frame, 0, 0);
-	
+
 	frame = new SpriteFrame();
 	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kElevatorButtonsID, true);
 	_elevatorControls.addFrame(frame, 0, 0);
-	
+
 	frame = new SpriteFrame();
 	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kElevatorDownOnID, true);
 	_elevatorControls.addFrame(frame, 0, 0);
-	
+
 	frame = new SpriteFrame();
 	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kElevatorUpOnID, true);
 	_elevatorControls.addFrame(frame, 0, 0);
-	
+
 	_elevatorControls.setCurrentFrameIndex(0);
 	_elevatorControls.setDisplayOrder(kElevatorControlsOrder);
 
@@ -76,7 +76,7 @@ void NoradElevator::openInteraction() {
 	_elevatorControls.show();
 }
 
-void NoradElevator::initInteraction() {	
+void NoradElevator::initInteraction() {
 	_elevatorTimer.setScale(2);
 	_elevatorTimer.setSegment(0, 1);
 	_elevatorCallBack.initCallBack(&_elevatorTimer, kCallBackAtExtremes);

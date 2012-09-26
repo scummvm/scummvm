@@ -183,7 +183,7 @@ void Caldoria::init() {
 	forceStridingStop(kCaldoria50, kNorth, kAltCaldoriaSinclairDown);
 }
 
-void Caldoria::start() {	
+void Caldoria::start() {
 	g_energyMonitor->stopEnergyDraining();
 
 	if (!GameState.getCaldoriaSeenPullback()) {
@@ -320,12 +320,12 @@ void Caldoria::setUpAIRules() {
 			locCondition->addLocation(MakeRoomView(kCaldoria01, kSouth));
 			rule = new AIRule(locCondition, messageAction);
 			g_AIArea->addAIRule(rule);
-			
+
 			messageAction = new AIPlayMessageAction("Images/AI/Caldoria/X42WH1", false);
 			AICondition *condition = makeLocationAndDoesntHaveItemCondition(kCaldoria44, kEast, kKeyCard);
 			rule = new AIRule(condition, messageAction);
 			g_AIArea->addAIRule(rule);
-			
+
 			AIActivateRuleAction *ruleAction = new AIActivateRuleAction(rule);
 			locCondition = new AILocationCondition(1);
 			locCondition->addLocation(MakeRoomView(kCaldoria42, kEast));
@@ -340,7 +340,7 @@ uint16 Caldoria::getDateResID() const {
 }
 
 TimeValue Caldoria::getViewTime(const RoomID room, const DirectionConstant direction) {
-	ExtraTable::Entry extra;	
+	ExtraTable::Entry extra;
 	uint32 extraID = 0xffffffff;
 
 	switch (room) {
@@ -442,7 +442,7 @@ void Caldoria::startSpotOnceOnly(TimeValue startTime, TimeValue stopTime) {
 	}
 }
 
-void Caldoria::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &entry) {	
+void Caldoria::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &entry) {
 	Neighborhood::findSpotEntry(room, direction, flags, entry);
 
 	switch (room) {
@@ -1093,7 +1093,7 @@ void Caldoria::setUpSinclairLoops() {
 	_navMovie.start();
 }
 
-void Caldoria::zoomToSinclair() {	
+void Caldoria::zoomToSinclair() {
 	_utilityFuse.stopFuse();
 	_privateFlags.setFlag(kCaldoriaPrivateReadyToShootFlag, true);
 	setCurrentActivation(kActivateZoomedOnSinclair);
@@ -1104,7 +1104,7 @@ void Caldoria::zoomToSinclair() {
 	startExtraSequence(kCa53EastZoomToSinclair, kExtraCompletedFlag, kFilterAllInput);
 }
 
-void Caldoria::receiveNotification(Notification *notification, const NotificationFlags flags) {	
+void Caldoria::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	Neighborhood::receiveNotification(notification, flags);
 
 	if ((flags & kExtraCompletedFlag) != 0) {
@@ -1554,7 +1554,7 @@ void Caldoria::newInteraction(const InteractionID interactionID) {
 // dropping it into the inventory).
 Hotspot *Caldoria::getItemScreenSpot(Item *item, DisplayElement *element) {
 	HotSpotID destSpotID = kNoHotSpotID;
-	
+
 	switch (item->getObjectID()) {
 	case kKeyCard:
 		destSpotID = kCaldoriaKeyCardSpotID;
@@ -1586,7 +1586,7 @@ void Caldoria::pickedUpItem(Item *item) {
 	}
 }
 
-void Caldoria::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {	
+void Caldoria::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
 	switch (item->getObjectID()) {
 	case kKeyCard:
 		Neighborhood::dropItemIntoRoom(item, dropSpot);
@@ -1744,7 +1744,7 @@ void Caldoria::updateElevatorMovie() {
 		_croppedMovie.setTime(time);
 		_croppedMovie.redrawMovieWorld();
 		_croppedMovie.show();
-		
+
 		// *** Why do I need this?
 		// clone2727: "don't ask me!"
 		_navMovie.redrawMovieWorld();
@@ -1850,7 +1850,7 @@ Common::String Caldoria::getBriefingMovie() {
 	return movieName;
 }
 
-Common::String Caldoria::getEnvScanMovie() {	
+Common::String Caldoria::getEnvScanMovie() {
 	Common::String movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
@@ -1900,7 +1900,7 @@ uint Caldoria::getNumHints() {
 			break;
 		}
 	}
-	
+
 	return numHints;
 }
 
@@ -1922,7 +1922,7 @@ Common::String Caldoria::getHintMovie(uint hintNum) {
 
 				// *** Doesn't work yet, need global movies.
 				break;
-			} 
+			}
 
 			return "Images/AI/Globals/XGLOB1A";
 		case MakeRoomView(kCaldoria49, kEast):

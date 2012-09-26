@@ -52,7 +52,7 @@ class Surface {
 public:
 	Surface();
 	virtual ~Surface();
-	
+
 	virtual void allocateSurface(const Common::Rect &);
 	virtual void deallocateSurface();
 	virtual void shareSurface(Surface *surface);
@@ -99,7 +99,7 @@ public:
 
 protected:
 	virtual void setTransparent(bool transparent) { _transparent = transparent; }
-	
+
 	bool _transparent;
 };
 

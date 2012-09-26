@@ -127,7 +127,7 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 		Common::String desc = filenames[i].c_str() + 8;
 		for (int j = 0; j < 4; j++)
 			desc.deleteLastChar();
-		
+
 		saveList.push_back(SaveStateDescriptor(i, desc));
 	}
 

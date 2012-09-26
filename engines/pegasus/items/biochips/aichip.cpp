@@ -64,36 +64,36 @@ AIChip::AIChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID 
 	_briefingSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 10, kAIMiddleAreaTop + 27, kAIMiddleAreaLeft + 10 + 81, kAIMiddleAreaTop + 27 + 31));
 	_briefingSpot.setHotspotFlags(kAIBiochipSpotFlag);
 	g_allHotspots.push_back(&_briefingSpot);
-	
+
 	_scanSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 100, kAIMiddleAreaTop + 27, kAIMiddleAreaLeft + 100 + 81, kAIMiddleAreaTop + 27 + 31));
 	_scanSpot.setHotspotFlags(kAIBiochipSpotFlag);
 	g_allHotspots.push_back(&_scanSpot);
-	
+
 	_hint1Spot.setArea(Common::Rect(kAIMiddleAreaLeft + 70, kAIMiddleAreaTop + 67, kAIMiddleAreaLeft + 70 + 21, kAIMiddleAreaTop + 67 + 21));
 	_hint1Spot.setHotspotFlags(kAIBiochipSpotFlag);
 	g_allHotspots.push_back(&_hint1Spot);
-	
+
 	_hint2Spot.setArea(Common::Rect(kAIMiddleAreaLeft + 91, kAIMiddleAreaTop + 67, kAIMiddleAreaLeft + 91 + 20, kAIMiddleAreaTop + 67 + 21));
 	_hint2Spot.setHotspotFlags(kAIBiochipSpotFlag);
 	g_allHotspots.push_back(&_hint2Spot);
-	
+
 	_hint3Spot.setArea(Common::Rect(kAIMiddleAreaLeft + 111, kAIMiddleAreaTop + 67, kAIMiddleAreaLeft + 111 + 20, kAIMiddleAreaTop + 67 + 21));
 	_hint3Spot.setHotspotFlags(kAIBiochipSpotFlag);
 	g_allHotspots.push_back(&_hint3Spot);
-	
+
 	_solveSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 131, kAIMiddleAreaTop + 67, kAIMiddleAreaLeft + 131 + 50, kAIMiddleAreaTop + 67 + 21));
 	_solveSpot.setHotspotFlags(kAIBiochipSpotFlag);
 	g_allHotspots.push_back(&_solveSpot);
-	
+
 	_playingMovie = false;
 	setItemState(kAI000);
-	
+
 	g_AIChip = this;
 }
 
 AIChip::~AIChip() {
 	g_AIChip = NULL;
-	
+
 	g_allHotspots.removeOneHotspot(kAIBriefingSpotID);
 	g_allHotspots.removeOneHotspot(kAIScanSpotID);
 	g_allHotspots.removeOneHotspot(kAIHint1SpotID);
@@ -111,7 +111,7 @@ void AIChip::takeSharedArea() {
 	setUpAIChip();
 }
 
-void AIChip::setUpAIChip() {	
+void AIChip::setUpAIChip() {
 	if (!_playingMovie) {
 		PegasusEngine *vm = (PegasusEngine *)g_engine;
 
@@ -130,7 +130,7 @@ void AIChip::setUpAIChip() {
 }
 
 // Only does something when there are hints or solves available.
-void AIChip::setUpAIChipRude() {	
+void AIChip::setUpAIChipRude() {
 	if (!_playingMovie) {
 		PegasusEngine *vm = (PegasusEngine *)g_engine;
 

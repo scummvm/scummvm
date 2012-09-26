@@ -241,7 +241,7 @@ void Item::deselect() {
 	}
 }
 
-void Item::getItemStateEntry(ItemStateInfo info, uint32 index, ItemState &state, TimeValue &time) {	
+void Item::getItemStateEntry(ItemStateInfo info, uint32 index, ItemState &state, TimeValue &time) {
 	if (index < info.numEntries) {
 		state = info.entries[index].itemState;
 		time = info.entries[index].itemTime;

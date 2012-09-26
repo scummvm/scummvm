@@ -115,7 +115,7 @@ void Movie::redrawMovieWorld() {
 	}
 }
 
-void Movie::draw(const Common::Rect &r) {	
+void Movie::draw(const Common::Rect &r) {
 	Common::Rect worldBounds = _movieBox;
 	Common::Rect elementBounds;
 	getBounds(elementBounds);

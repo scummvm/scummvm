@@ -50,7 +50,7 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	_updatesEnabled = true;
 	_screenFader = new ScreenFader();
 }
-	
+
 GraphicsManager::~GraphicsManager() {
 	_workArea.free();
 	delete _screenFader;
@@ -270,7 +270,7 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 
 	// Convert to millis
 	duration = duration * 1000 / scale;
-	
+
 	uint32 startTime = g_system->getMillis();
 
 	while (g_system->getMillis() < startTime + duration) {

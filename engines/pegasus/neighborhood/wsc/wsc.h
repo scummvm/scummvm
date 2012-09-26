@@ -51,12 +51,12 @@ public:
 	bool okayToJump();
 
 	void checkContinuePoint(const RoomID, const DirectionConstant);
-	
+
 	bool inSynthesizerGame();
-	
+
 	bool canSolve();
 	void doSolve();
-	
+
 	virtual void prepareForAIHint(const Common::String &);
 	virtual void cleanUpAfterAIHint(const Common::String &);
 
@@ -66,7 +66,7 @@ public:
 protected:
 	enum {
 		kWSCDraggingAntidoteFlag,
-		
+
 		kWSCPrivateLabMessagesOpenFlag,
 		kWSCPrivateInterruptedMorphFlag,
 		kWSCPrivateInMoleculeGameFlag,
@@ -75,7 +75,7 @@ protected:
 		kWSCPrivate58SouthOpenFlag,
 		kWSCPrivateClickedCatwalkCableFlag,
 		kWSCPrivateRobotHeadOpenFlag,
-		
+
 		kWSCPrivateSeenPeopleAt17WestFlag,
 		kWSCPrivateSeenPeopleAt19NorthFlag,
 		kWSCPrivateSeenPeopleAt21SouthFlag,
@@ -86,7 +86,7 @@ protected:
 		kWSCPrivateSeenPeopleAt46SouthFlag,
 		kWSCPrivateSeenPeopleAt49NorthFlag,
 		kWSCPrivateSeenPeopleAt73WestFlag,
-		
+
 		kWSCPrivateNeedPeopleAt17WestFlag,
 		kWSCPrivateNeedPeopleAt21SouthFlag,
 		kWSCPrivateNeedPeopleAt24SouthFlag,
@@ -96,11 +96,11 @@ protected:
 		kWSCPrivateNeedPeopleAt46SouthFlag,
 		kWSCPrivateNeedPeopleAt49NorthFlag,
 		kWSCPrivateNeedPeopleAt73WestFlag,
-		
+
 		kWSCPrivateGotRetScanChipFlag,
 		kWSCPrivateGotMapChipFlag,
 		kWSCPrivateGotOpticalChipFlag,
-		
+
 		kNumWSCPrivateFlags
 	};
 

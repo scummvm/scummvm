@@ -55,9 +55,9 @@ protected:
 		kOpticalPoseidonExposed,
 		kNumOpticalChipFlags
 	};
-	
+
 	void setUpOpticalChip();
-	
+
 	FlagsArray<byte, kNumOpticalChipFlags> _opticalFlags;
 	Hotspot _ariesHotspot;
 	Hotspot _mercuryHotspot;

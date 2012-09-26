@@ -49,7 +49,7 @@ SpaceJunk::~SpaceJunk() {
 	g_spaceJunk = 0;
 }
 
-void SpaceJunk::launchJunk(int16 whichJunk, CoordType xOrigin, CoordType yOrigin) {	
+void SpaceJunk::launchJunk(int16 whichJunk, CoordType xOrigin, CoordType yOrigin) {
 	_bouncing = false;
 	TimeValue startTime = whichJunk * 16 * 40;
 	TimeValue stopTime = startTime + 16 * 40;
@@ -93,7 +93,7 @@ void SpaceJunk::setScaleSize(const CoordType size) {
 	setBounds(r);
 }
 
-void SpaceJunk::useIdleTime() {	
+void SpaceJunk::useIdleTime() {
 	if (_bouncing) {
 		TimeValue time = _timer.getTime();
 		Common::Point pt;
@@ -116,7 +116,7 @@ void SpaceJunk::useIdleTime() {
 		Common::Point pt2D;
 		project3DTo2D(_junkPosition, pt2D);
 		setCenter(pt2D.x, pt2D.y);
-		setScaleSize((int)(convertSpaceYToScreenV(_junkPosition.y - kJunkSize / 2, _junkPosition.z) - 
+		setScaleSize((int)(convertSpaceYToScreenV(_junkPosition.y - kJunkSize / 2, _junkPosition.z) -
 				convertSpaceYToScreenV(_junkPosition.y + kJunkSize / 2, _junkPosition.z)));
 
 		if (t == 1.0) {
@@ -188,7 +188,7 @@ void SpaceJunk::hitByEnergyBeam(Common::Point) {
 	setGlowing(false);
 }
 
-void SpaceJunk::hitByGravitonCannon(Common::Point impactPoint) {	
+void SpaceJunk::hitByGravitonCannon(Common::Point impactPoint) {
 	stop();
 	stopIdling();
 	hide();

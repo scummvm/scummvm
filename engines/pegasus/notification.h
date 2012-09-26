@@ -67,15 +67,15 @@ public:
 
 	void notifyMe(NotificationReceiver*, NotificationFlags flags, NotificationFlags mask);
 	void cancelNotification(NotificationReceiver *receiver);
-	
+
 	void setNotificationFlags(NotificationFlags flags,	NotificationFlags mask);
 	NotificationFlags getNotificationFlags() { return _currentFlags; }
-	
+
 	void clearNotificationFlags() { setNotificationFlags(0, ~(NotificationFlags)0); }
 
 protected:
 	void checkReceivers();
-	
+
 	NotificationManager *_owner;
 	ReceiverList _receivers;
 	NotificationFlags _currentFlags;
@@ -87,11 +87,11 @@ friend class Notification;
 public:
 	NotificationReceiver();
 	virtual ~NotificationReceiver();
-	
+
 protected:
 	// receiveNotification is called automatically whenever a notification that this
 	// receiver depends on has its flags set
-	
+
 	virtual void receiveNotification(Notification *, const NotificationFlags);
 	virtual void newNotification(Notification *notification);
 
@@ -107,14 +107,14 @@ friend class Notification;
 public:
 	NotificationManager();
 	virtual ~NotificationManager();
-	
+
 	void checkNotifications();
 
 protected:
 	void addNotification(Notification *notification);
 	void removeNotification(Notification *notification);
 	void detachNotifications();
-	
+
 	NotificationList _notifications;
 };
 

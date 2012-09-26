@@ -62,7 +62,7 @@ class AIOneChildCondition : public AICondition {
 public:
 	AIOneChildCondition(AICondition *);
 	virtual ~AIOneChildCondition();
-	
+
 	virtual void writeAICondition(Common::WriteStream *);
 	virtual void readAICondition(Common::ReadStream *);
 
@@ -78,7 +78,7 @@ class AITwoChildrenCondition : public AICondition {
 public:
 	AITwoChildrenCondition(AICondition *, AICondition *);
 	virtual ~AITwoChildrenCondition();
-	
+
 	virtual void writeAICondition(Common::WriteStream *);
 	virtual void readAICondition(Common::ReadStream *);
 
@@ -131,7 +131,7 @@ public:
 	void stopTimer();
 
 	virtual bool fireCondition();
-	
+
 	virtual void writeAICondition(Common::WriteStream *);
 	virtual void readAICondition(Common::ReadStream *);
 

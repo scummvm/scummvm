@@ -79,7 +79,7 @@ protected:
 	TimeValue _equalizeSoundIn;
 	TimeValue _equalizeSoundOut;
 	bool _isUpperDoor;
-	
+
 	bool _playingAgainstRobot, _typePunched;
 	int _robotState, _punchCount;
 	TimeBase _utilityTimer;

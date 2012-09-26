@@ -38,11 +38,11 @@ class TinyTSA : public Neighborhood {
 public:
 	TinyTSA(InputHandler *, PegasusEngine *);
 	virtual ~TinyTSA() {}
-	
+
 	virtual uint16 getDateResID() const;
-	
+
 	void start();
-	
+
 	void checkContinuePoint(const RoomID, const DirectionConstant);
 
 protected:
@@ -50,13 +50,13 @@ protected:
 	Common::String getEnvScanMovie();
 	void loadAmbientLoops();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
-	
+
 	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
-	
+
 	void arriveFromNorad();
 	void arriveFromMars();
 	void arriveFromWSC();
-	
+
 	InputBits getInputFilter();
 	void arriveAt(const RoomID, const DirectionConstant);
 	void showMainJumpMenu();

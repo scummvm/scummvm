@@ -242,7 +242,7 @@ void MainMenu::startMainMenuLoop() {
 
 void MainMenu::stopMainMenuLoop() {
 	FaderMoveSpec spec;
-	
+
 	spec.makeTwoKnotFaderSpec(30, 0, 255, 30, 0);
 	_menuFader.startFaderSync(spec);
 	_menuLoop.stopSound();
@@ -409,7 +409,7 @@ enum {
 	kCreditsMenuTalent,
 	kCreditsMenuOtherTitles,
 	kCreditsMenuMainMenu,
-	
+
 	kCreditsFirstSelection = kCreditsMenuCoreTeam,
 	kCreditsLastSelection = kCreditsMenuMainMenu
 };
@@ -476,9 +476,9 @@ CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _cred
 	_smallSelect.setDisplayOrder(2);
 	_smallSelect.show();
 	_smallSelect.startDisplaying();
-	
+
 	_menuSelection = -1;
-	
+
 	newMenuSelection(kCreditsMenuCoreTeam);
 }
 
@@ -610,14 +610,14 @@ enum {
 	kDeathScreenContinueDemo = 0,
 	kDeathScreenMainMenuDemo,
 	kDeathScreenQuitDemo,
-	
+
 	kFirstDeathSelectionDemo = kDeathScreenContinueDemo,
 	kLastDeathSelectionDemo = kDeathScreenQuitDemo,
 
 	kDeathScreenContinue = 0,
 	kDeathScreenRestore,
 	kDeathScreenMainMenu,
-	
+
 	kFirstDeathSelection = kDeathScreenContinue,
 	kLastDeathSelection = kDeathScreenMainMenu
 };
@@ -922,7 +922,7 @@ enum {
 	kPauseMenuAmbience,
 	kPauseMenuWalkthru,
 	kPauseMenuQuitToMainMenu,
-	
+
 	kFirstPauseSelection = kPauseMenuSave,
 	kLastPauseSelection = kPauseMenuQuitToMainMenu
 };

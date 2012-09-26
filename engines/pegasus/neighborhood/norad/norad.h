@@ -100,18 +100,18 @@ protected:
 	HotSpotID _upperPressureDoorUpSpotID;
 	HotSpotID _upperPressureDoorDownSpotID;
 	HotSpotID _upperPressureDoorAbortSpotID;
-	
+
 	HotSpotID _lowerPressureDoorUpSpotID;
 	HotSpotID _lowerPressureDoorDownSpotID;
 	HotSpotID _lowerPressureDoorAbortSpotID;
-	
+
 	TimeValue _pressureSoundIn;
 	TimeValue _pressureSoundOut;
 	TimeValue _equalizeSoundIn;
 	TimeValue _equalizeSoundOut;
 	TimeValue _accessDeniedIn;
 	TimeValue _accessDeniedOut;
-	
+
 	RoomID	 _platformRoom;
 	RoomID _subControlRoom;
 };

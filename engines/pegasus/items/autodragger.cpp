@@ -69,7 +69,7 @@ bool AutoDragger::isDragging() {
 	return isIdling();
 }
 
-void AutoDragger::useIdleTime() {	
+void AutoDragger::useIdleTime() {
 	TimeValue thisTime = getTime();
 
 	if (thisTime != _lastTime) {

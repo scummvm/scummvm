@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
- 
+
 #ifndef PEGASUS_TYPES_H
 #define PEGASUS_TYPES_H
 
@@ -53,7 +53,7 @@ enum SlideDirection {
 	kSlideRightMask = kSlideLeftMask << 1,
 	kSlideUpMask = kSlideRightMask << 1 << 1,
 	kSlideDownMask = kSlideUpMask << 1,
-	
+
 	kSlideHorizMask = kSlideLeftMask | kSlideRightMask,
 	kSlideVertMask = kSlideUpMask | kSlideDownMask,
 

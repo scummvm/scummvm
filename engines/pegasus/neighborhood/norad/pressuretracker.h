@@ -47,7 +47,7 @@ class PressureTracker : public Tracker {
 public:
 	PressureTracker(PressureDoor *);
 	virtual ~PressureTracker() {}
-	
+
 	void setTrackParameters(const Hotspot *, Sprite *);
 	void continueTracking(const Input &);
 	void startTracking(const Input &);

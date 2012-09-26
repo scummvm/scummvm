@@ -265,7 +265,7 @@ void MapImage::readFromStream(Common::ReadStream *stream) {
 	_mappedRooms.readFromStream(stream);
 }
 
-void MapImage::loadGearRoomIfNecessary() {	
+void MapImage::loadGearRoomIfNecessary() {
 	if (_whichArea != kMapGearRoom) {
 		_mapImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kMapOfGearRoomPICTID);
 
@@ -288,7 +288,7 @@ void MapImage::loadGearRoomIfNecessary() {
 	}
 }
 
-void MapImage::loadMazeIfNecessary() {	
+void MapImage::loadMazeIfNecessary() {
 	if (_whichArea != kMapMaze) {
 		_mapImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kMapOfMazePICTID);
 
@@ -345,7 +345,7 @@ void MapImage::addFlagToMask(const int flag) {
 
 // This function can even be sensitive to open doors.
 // clone2727 notices that it's not, though
-void MapImage::getRevealedRects(const uint32 flag, Common::Rect &r1) {	
+void MapImage::getRevealedRects(const uint32 flag, Common::Rect &r1) {
 	CoordType gridX, gridY;
 
 	switch (_whichArea) {

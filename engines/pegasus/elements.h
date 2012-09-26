@@ -46,25 +46,25 @@ friend class GraphicsManager;
 public:
 	DisplayElement(const DisplayElementID);
 	virtual ~DisplayElement();
-	
+
 	void setDisplayOrder(const DisplayOrder);
 	DisplayOrder getDisplayOrder() const { return _elementOrder; }
-	
+
 	bool validToDraw(DisplayOrder, DisplayOrder);
-	
+
 	virtual void draw(const Common::Rect&) {}
 	bool isDisplaying() { return _elementIsDisplaying; }
 	virtual void startDisplaying();
 	virtual void stopDisplaying();
-	
+
 	virtual void show();
 	virtual void hide();
 	bool isVisible() { return _elementIsVisible; }
-	
+
 	// triggerRedraw only triggers a draw if the element is displaying and visible.
 	void triggerRedraw();
 	void setTriggeredElement(DisplayElement *);
-	
+
 	virtual void setBounds(const CoordType, const CoordType, const CoordType, const CoordType);
 	virtual void setBounds(const Common::Rect &);
 	virtual void getBounds(Common::Rect &) const;
@@ -94,7 +94,7 @@ public:
 	virtual ~DropHighlight() {}
 
 	void setHighlightColor(const uint32 &highlight) { _highlightColor = highlight; }
-	void getHighlightColor(uint32 &highlight) const { highlight = _highlightColor; } 
+	void getHighlightColor(uint32 &highlight) const { highlight = _highlightColor; }
 
 	void setHighlightThickness(const uint16 thickness) { _thickness = thickness; }
 	uint16 getHighlightThickness() const { return _thickness; }
@@ -118,16 +118,16 @@ public:
 class IdlerAnimation : public Animation, public Idler {
 public:
 	IdlerAnimation(const DisplayElementID);
-	
+
 	virtual void startDisplaying();
 	virtual void stopDisplaying();
-	
+
 	TimeValue getLastTime() const { return _lastTime; }
 
 protected:
 	virtual void useIdleTime();
 	virtual void timeChanged(const TimeValue);
-	
+
 	TimeValue _lastTime;
 };
 
@@ -146,12 +146,12 @@ public:
 	virtual void openFrameSequence();
 	virtual void closeFrameSequence();
 	bool isSequenceOpen() const;
-	
+
 	uint16 getNumFrames() const { return _numFrames; }
 	virtual uint16 getFrameNum() const { return _currentFrameNum; }
 	virtual void setFrameNum(const int16);
 
-protected:		
+protected:
 	virtual void timeChanged(const TimeValue);
 	virtual void newFrame(const uint16) {}
 
@@ -176,18 +176,18 @@ public:
 	virtual uint32 addFrame(SpriteFrame *, const CoordType, const CoordType);
 	virtual void removeFrame(const uint32);
 	virtual void discardFrames();
-	
+
 	// Setting the current frame.
 	// If the index is negative, sets the current frame to NULL and hides the sprite.
 	// If the index is larger than the number of frames in the sprite, the number
 	// is treated modulo the number of frames.
 	virtual void setCurrentFrameIndex(const int32);
 	virtual uint32 getCurrentFrameIndex() const { return _currentFrameNum; }
-	
+
 	virtual SpriteFrame *getFrame(const int32);
-	
+
 	virtual void draw(const Common::Rect &);
-	
+
 	uint32 getNumFrames() const { return _numFrames; }
 
 protected:
@@ -236,13 +236,13 @@ class SoundLevel : public DisplayElement {
 public:
 	SoundLevel(const DisplayElementID);
 	virtual ~SoundLevel() {}
-	
+
 	void incrementLevel();
 	void decrementLevel();
-	
+
 	uint16 getSoundLevel();
 	void setSoundLevel(uint16);
-	
+
 	void draw(const Common::Rect &);
 
 protected:

@@ -62,8 +62,8 @@ const uint32 NoradDelta::_noradDeltaClawExtras[22] = {
 	kN60ClawDCounterclockwise,
 	kN60ClawDClockwise
 };
-	
-NoradDelta::NoradDelta(InputHandler *nextHandler, PegasusEngine *owner) : Norad(nextHandler, owner, "Norad Delta", kNoradDeltaID) {	
+
+NoradDelta::NoradDelta(InputHandler *nextHandler, PegasusEngine *owner) : Norad(nextHandler, owner, "Norad Delta", kNoradDeltaID) {
 	_elevatorUpRoomID = kNorad49South;
 	_elevatorDownRoomID = kNorad48South;
 	_elevatorUpSpotID = kNorad48ElevatorUpSpotID;
@@ -98,41 +98,41 @@ NoradDelta::NoradDelta(InputHandler *nextHandler, PegasusEngine *owner) : Norad(
 	_subControlRoom = kNorad60West;
 }
 
-void NoradDelta::init() {	
+void NoradDelta::init() {
 	Norad::init();
 
 	// Little fix for the retinal scan zoom in spot...
 	Hotspot *hotspot = _vm->getAllHotspots().findHotspotByID(kNorad68WestSpotID);
 	hotspot->setMaskedHotspotFlags(kZoomInSpotFlag, kZoomInSpotFlag | kZoomOutSpotFlag);
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kNorad79WestSpotID);
 	hotspot->setMaskedHotspotFlags(kZoomInSpotFlag, kZoomInSpotFlag | kZoomOutSpotFlag);
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta59RobotShieldBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	HotspotInfoTable::Entry *hotspotEntry = findHotspotEntry(kDelta59RobotShieldBiochipSpotID);
 	hotspotEntry->hotspotItem = kShieldBiochip;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta59RobotOpMemBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta59RobotOpMemBiochipSpotID);
 	hotspotEntry->hotspotItem = kOpticalBiochip;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta59RobotRetinalBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta59RobotRetinalBiochipSpotID);
 	hotspotEntry->hotspotItem = kRetinalScanBiochip;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta60RobotShieldBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta60RobotShieldBiochipSpotID);
 	hotspotEntry->hotspotItem = kShieldBiochip;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta60RobotOpMemBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta60RobotOpMemBiochipSpotID);
 	hotspotEntry->hotspotItem = kOpticalBiochip;
-	
+
 	hotspot = _vm->getAllHotspots().findHotspotByID(kDelta60RobotRetinalBiochipSpotID);
 	hotspot->setMaskedHotspotFlags(kPickUpBiochipSpotFlag, kPickUpBiochipSpotFlag);
 	hotspotEntry = findHotspotEntry(kDelta60RobotRetinalBiochipSpotID);
@@ -150,7 +150,7 @@ void NoradDelta::start() {
 	Norad::start();
 }
 
-void NoradDelta::setUpAIRules() {	
+void NoradDelta::setUpAIRules() {
 	Neighborhood::setUpAIRules();
 
 	if (g_AIArea) {
@@ -228,10 +228,10 @@ void NoradDelta::getZoomEntry(const HotSpotID id, ZoomTable::Entry &zoomEntry) {
 	}
 }
 
-void NoradDelta::loadAmbientLoops() {	
+void NoradDelta::loadAmbientLoops() {
 /*
 	Logic:
-	
+
 	loop sound 1:
 		if room == kNorad79West
 			if player globe game
@@ -261,7 +261,7 @@ void NoradDelta::loadAmbientLoops() {
 			else
 				play nothing
 */
-	
+
 	if (GameState.getNoradArrivedFromSub()) {
 		RoomID room = GameState.getCurrentRoom();
 
@@ -391,7 +391,7 @@ void NoradDelta::arriveAtNorad68West() {
 	}
 }
 
-void NoradDelta::arriveAtNorad79West() {	
+void NoradDelta::arriveAtNorad79West() {
 	if (!GameState.getNoradPlayedGlobeGame())
 		newInteraction(kNoradGlobeGameInteractionID);
 }
@@ -464,7 +464,7 @@ void NoradDelta::playerBeatRobotWithClaw() {
 
 TimeValue NoradDelta::getViewTime(const RoomID room, const DirectionConstant direction) {
 	ExtraTable::Entry entry;
-	
+
 	if (room == kNorad41 && direction == kSouth && !GameState.getNoradArrivedFromSub()) {
 		getExtraEntry(kArriveFromSubChase, entry);
 		return entry.movieStart;
@@ -505,7 +505,7 @@ TimeValue NoradDelta::getViewTime(const RoomID room, const DirectionConstant dir
 	return Norad::getViewTime(room, direction);
 }
 
-void NoradDelta::openDoor() {	
+void NoradDelta::openDoor() {
 	if (GameState.getCurrentRoom() == kNorad59 && GameState.getCurrentDirection() == kWest && GameState.getNoradPlayedGlobeGame()) {
 		Input scratch;
 		InputHandler::_inputHandler->clickInHotspot(scratch, _vm->getAllHotspots().findHotspotByID(kNorad59WestSpotID));
@@ -582,7 +582,7 @@ void NoradDelta::clickInHotspot(const Input &input, const Hotspot *clickedSpot) 
 	}
 }
 
-void NoradDelta::receiveNotification(Notification *notification, const NotificationFlags flags) {	
+void NoradDelta::receiveNotification(Notification *notification, const NotificationFlags flags) {
 	Norad::receiveNotification(notification, flags);
 
 	if ((flags & kExtraCompletedFlag) != 0) {
@@ -703,7 +703,7 @@ void NoradDelta::dropItemIntoRoom(Item *item, Hotspot *hotspot) {
 
 Hotspot *NoradDelta::getItemScreenSpot(Item *item, DisplayElement *element) {
 	HotSpotID id = kNoHotSpotID;
-	
+
 	switch (item->getObjectID()) {
 	case kShieldBiochip:
 		if (GameState.getNoradBeatRobotWithDoor())
@@ -735,7 +735,7 @@ Common::String NoradDelta::getEnvScanMovie() {
 	return "Images/AI/Norad/XNE2";
 }
 
-uint NoradDelta::getNumHints() {	
+uint NoradDelta::getNumHints() {
 	uint numHints = Neighborhood::getNumHints();
 
 	if (numHints == 0) {

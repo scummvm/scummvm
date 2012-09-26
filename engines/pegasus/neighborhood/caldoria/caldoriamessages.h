@@ -48,7 +48,7 @@ protected:
 	void receiveNotification(Notification *, const NotificationFlags);
 	void clickInHotspot(const Input &, const Hotspot *);
 	void play1Message(uint);
-	
+
 	Movie _messageMovie;
 	NotificationCallBack _messageCallBack;
 	Notification *_neighborhoodNotification;

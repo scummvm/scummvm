@@ -34,12 +34,12 @@ class BiochipItem : public Item {
 public:
 	BiochipItem(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~BiochipItem();
-	
+
 	virtual ItemType getItemType();
-	
+
 	TimeValue getPanelTime() const { return _biochipInfoPanelTime; }
 	TimeValue getRightAreaTime() const;
-	
+
 	// Must affect images in right area.
 	virtual void select();
 	virtual void deselect();

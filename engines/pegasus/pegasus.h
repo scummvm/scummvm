@@ -119,7 +119,7 @@ public:
 	int32 getSavedEnergyValue() { return _savedEnergyValue; }
 
 	// Death
-	void setEnergyDeathReason(const DeathReason reason) { _deathReason = reason; } 
+	void setEnergyDeathReason(const DeathReason reason) { _deathReason = reason; }
 	DeathReason getEnergyDeathReason() { return _deathReason; }
 	void resetEnergyDeathReason();
 	void die(const DeathReason);

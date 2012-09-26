@@ -65,7 +65,7 @@ void GravitonCannon::cleanUpShuttleWeapon() {
 	ShuttleWeapon::cleanUpShuttleWeapon();
 }
 
-void GravitonCannon::draw(const Common::Rect &) {	
+void GravitonCannon::draw(const Common::Rect &) {
 	// Left graviton...
 	Point3D pt3D = _weaponLocation;
 	pt3D.translate(-kGravitonWidth / 2, kGravitonHeight / 2, 0);
@@ -74,21 +74,21 @@ void GravitonCannon::draw(const Common::Rect &) {
 	Common::Rect gravitonRect;
 	gravitonRect.left = pt2D.x;
 	gravitonRect.top = pt2D.y;
-	
+
 	pt3D.translate(kGravitonWidth, -kGravitonHeight, 0);
 	project3DTo2D(pt3D, pt2D);
 	gravitonRect.right = pt2D.x;
 	gravitonRect.bottom = pt2D.y;
 
 	_gravitonImage.scaleTransparentCopy(_gravitonBounds, gravitonRect);
-	
+
 	// Right graviton...
 	pt3D = _rightLocation;
 	pt3D.translate(-kGravitonWidth / 2, kGravitonHeight / 2, 0);
 	project3DTo2D(pt3D, pt2D);
 	gravitonRect.left = pt2D.x;
 	gravitonRect.top = pt2D.y;
-	
+
 	pt3D.translate(kGravitonWidth, -kGravitonHeight, 0);
 	project3DTo2D(pt3D, pt2D);
 	gravitonRect.right = pt2D.x;
@@ -103,7 +103,7 @@ void GravitonCannon::updateWeaponPosition() {
 		linearInterp(_rightOrigin, _weaponTarget, _weaponTime, _rightLocation);
 }
 
-bool GravitonCannon::collisionWithJunk(Common::Point &impactPoint) {	
+bool GravitonCannon::collisionWithJunk(Common::Point &impactPoint) {
 	if (getDisplayOrder() == kShuttleWeaponFrontOrder) {
 		Point3D junkPosition;
 		g_spaceJunk->getJunkPosition(junkPosition);

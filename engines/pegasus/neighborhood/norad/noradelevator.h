@@ -45,12 +45,12 @@ protected:
 	virtual void initInteraction();
 	virtual void closeInteraction();
 	virtual void resetInteraction();
-	
+
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
-	
+
 	virtual void receiveNotification(Notification *, const NotificationFlags);
-	
+
 	RoomID _upRoom;
 	RoomID _downRoom;
 	HotSpotID _upHotspot;

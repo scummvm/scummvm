@@ -34,7 +34,7 @@ class KeyCard : public InventoryItem {
 public:
 	KeyCard(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~KeyCard() {}
-	
+
 	virtual void toggleItemState();
 	virtual void setItemState(const ItemState);
 	bool isFlashlightOn();
