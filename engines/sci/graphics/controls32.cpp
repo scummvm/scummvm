@@ -68,7 +68,7 @@ void GfxControls32::kernelTexteditChange(reg_t controlObject) {
 
 	while (captureEvents) {
 		curEvent = g_sci->getEventManager()->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
-	
+
 		if (curEvent.type == SCI_EVENT_NONE) {
 			eventMan->getSciEvent(SCI_EVENT_KEYBOARD);	// consume the event
 		} else {
@@ -170,11 +170,11 @@ void GfxControls32::kernelTexteditChange(reg_t controlObject) {
 				// Note: the following checkAltInput call might make the text
 				// too wide to fit, but SSCI fails to check that too.
 			}
-			
+
 			reg_t hunkId = readSelector(_segMan, controlObject, SELECTOR(bitmap));
 			Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(controlObject);
 			//texteditCursorErase();	// TODO: Cursor
-			
+
 			// Write back string
 			_segMan->strcpy(textReference, text.c_str());
 			// Modify the buffer and show it

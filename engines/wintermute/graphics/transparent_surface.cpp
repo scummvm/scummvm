@@ -52,13 +52,13 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 
 void doBlitOpaque(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
-	
+
 #ifdef SCUMM_LITTLE_ENDIAN
 	const int aIndex = 3;
 #else
 	const int aIndex = 0;
 #endif
-	
+
 	for (uint32 i = 0; i < height; i++) {
 		out = outo;
 		in = ino;
@@ -121,7 +121,7 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32
 			int a = (pix >> aShift) & 0xff;
 			int outb, outg, outr, outa;
 			in += inStep;
-			
+
 			switch (a) {
 				case 0: // Full transparency
 					out += 4;

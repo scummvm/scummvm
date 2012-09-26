@@ -275,7 +275,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			// Signal the engine scripts that the video is done
 			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
 		} else {
-			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);	
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
 		}
 		break;
 	default:

@@ -75,7 +75,7 @@ public:
 	void addMask(SegmapMaskRect &mask);
 	void update();
 	void clear();
-	
+
 protected:
 	typedef Common::List<RenderQueueItem> RenderQueueArray;
 
@@ -87,7 +87,7 @@ protected:
     RenderQueueItem *findItemInQueue(RenderQueueArray *queue, const RenderQueueItem &item);
     bool hasItemChanged(const RenderQueueItem &item1, const RenderQueueItem &item2);
     void invalidateItemsByRect(const Common::Rect &rect, const RenderQueueItem *item);
-    
+
     void addDirtyRect(const Common::Rect &rect);
     void restoreDirtyBackground();
     void updateDirtyRects();

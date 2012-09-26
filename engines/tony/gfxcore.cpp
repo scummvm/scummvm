@@ -361,7 +361,7 @@ void RMGfxTargetBuffer::addPrim(RMGfxPrimitive *prim) {
 void RMGfxTargetBuffer::addDirtyRect(const Common::Rect &r) {
 	assert(r.isValidRect());
 	if (_trackDirtyRects && r.width() > 0 && r.height() > 0)
-		_currentDirtyRects.push_back(r);	
+		_currentDirtyRects.push_back(r);
 }
 
 Common::List<Common::Rect> &RMGfxTargetBuffer::getDirtyRects() {

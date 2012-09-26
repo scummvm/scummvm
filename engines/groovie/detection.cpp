@@ -142,7 +142,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"11h", "Demo",
 			AD_ENTRY1s("disk.1", "aacb32ce07e0df2894bd83a3dee40c12", 70),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO | ADGF_UNSTABLE, 
+			Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieV2, 1

@@ -205,7 +205,7 @@ void Globals::dispatchSounds() {
 
 void TsAGE2Globals::reset() {
 	Globals::reset();
-	
+
 	// Reset the inventory
 	T2_GLOBALS._uiElements.updateInventory();
 	T2_GLOBALS._uiElements._scoreValue = 0;
@@ -277,7 +277,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 void BlueForceGlobals::reset() {
 	TsAGE2Globals::reset();
 	_scenePalette.clearListeners();
-	
+
 	_scrollFollower = &_player;
 	_bookmark = bNone;
 
@@ -368,7 +368,7 @@ namespace Ringworld2 {
 
 void Ringworld2Globals::reset() {
 	Globals::reset();
-	
+
 	// Reset the inventory
 	R2_INVENTORY.reset();
 	T2_GLOBALS._uiElements.updateInventory();
@@ -526,7 +526,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 
 	for (i = 0; i < MAX_CHARACTERS; ++i)
 		s.syncAsByte(_v565F1[i]);
-	
+
 	s.syncAsByte(_v565AE);
 	s.syncAsByte(_v566A4);
 	s.syncAsByte(_v566A5);

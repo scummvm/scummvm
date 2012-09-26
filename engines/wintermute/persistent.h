@@ -52,7 +52,7 @@ namespace Wintermute {
 	virtual bool persist(BasePersistenceManager* PersistMgr);\
 	void* operator new (size_t size);\
 	void operator delete(void* p);\
-	 
+
 
 #define IMPLEMENT_PERSISTENT(class_name, persistent_class)\
 	const char class_name::_className[] = #class_name;\
@@ -80,7 +80,7 @@ namespace Wintermute {
 		SystemClassRegistry::getInstance()->unregisterInstance(#class_name, p);\
 		::operator delete(p);\
 	}\
-	 
+
 #define TMEMBER(member_name) #member_name, &member_name
 #define TMEMBER_INT(member_name) #member_name, (int*)&member_name
 

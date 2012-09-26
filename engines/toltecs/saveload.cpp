@@ -92,7 +92,7 @@ void ToltecsEngine::savegame(const char *filename, const char *description) {
 	byte descriptionLen = strlen(description);
 	out->writeByte(descriptionLen);
 	out->write(description, descriptionLen);
-	
+
 	Graphics::saveThumbnail(*out);
 
 	// Not used yet, reserved for future usage
@@ -149,13 +149,13 @@ void ToltecsEngine::loadgame(const char *filename) {
 	SaveHeader header;
 
 	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
-	
+
 	if (errorCode != kRSHENoError) {
 		warning("Error loading savegame '%s'", filename);
 		delete in;
 		return;
 	}
-	
+
 	_sound->stopAll();
 	_music->stopSequence();
 	g_engine->setTotalPlayTime(header.playTime * 1000);
@@ -181,7 +181,7 @@ void ToltecsEngine::loadgame(const char *filename) {
 	_mouseX = in->readUint16LE();
 	_mouseY = in->readUint16LE();
 	_mouseDisabled = in->readUint16LE();
-	
+
 	_system->warpMouse(_mouseX, _mouseY);
  	_system->showMouse(_mouseDisabled == 0);
 

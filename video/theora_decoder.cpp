@@ -302,7 +302,7 @@ bool TheoraDecoder::TheoraVideoTrack::decodePacket(ogg_packet &oggPacket) {
 			_nextFrameStartTime += _frameRate.getInverse().toDouble();
 		else
 			_nextFrameStartTime = time;
-	
+
 		return true;
 	}
 

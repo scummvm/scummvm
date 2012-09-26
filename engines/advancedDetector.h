@@ -194,7 +194,7 @@ protected:
 
 	/**
 	 * A map containing all the extra game GUI options the engine supports.
-	 */ 
+	 */
 	const ADExtraGuiOptionsMap * const _extraGuiOptions;
 
 	/**
@@ -212,7 +212,7 @@ protected:
 	 *
 	 * Used to override gameid.
 	 * This is a recommended setting to prevent global gameid pollution.
-	 * With this option set, the gameid effectively turns into engineid. 
+	 * With this option set, the gameid effectively turns into engineid.
 	 *
 	 * FIXME: This field actually removes a feature (gameid) in order to
 	 * address a more generic problem. We should find a better way to

@@ -73,7 +73,7 @@ Screen::~Screen() {
 
 	delete[] _frontScreen;
 	delete[] _backScreen;
-	
+
 	delete _renderQueue;
 
 }
@@ -129,7 +129,7 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 	byte *dest = _frontScreen + x + (y + _vm->_cameraHeight) * 640;
 
 	//debug(0, "Screen::drawGuiImage() x = %d; y = %d; w = %d; h = %d; resIndex = %d", x, y, width, height, resIndex);
-	
+
 	while (workHeight > 0) {
 		int count = 1;
 		byte pixel = *imageData++;
@@ -247,7 +247,7 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 		} else {
 			loopNum |= 0x8000;
 		}
-		
+
 		WRITE_LE_UINT16(spriteItem + 0, loopNum);
 		WRITE_LE_UINT16(spriteItem + 4, frameNum);
 
@@ -308,9 +308,9 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	wrapState.len2 = 0;
 
 	y = _verbLineY;
-	
+
 	memset(wrapState.textBuffer, 0, sizeof(wrapState.textBuffer));
-	
+
 	for (int16 i = 0; i <= _verbLineNum; i++) {
 		wrapState.sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
 		len = wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
@@ -331,19 +331,19 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 			wrapState.sourceString++;
 			wrapState.len1 -= len;
 			wrapState.len2 = len + 1;
-			
+
 			drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 			wrapState.destString = wrapState.textBuffer;
 			wrapState.width = 0;
 			len = wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
 			wrapState.len1 += len;
-			
+
 			y += 9;
 		}
 		y += 9;
 	}
-	
+
 	wrapState.len1 -= len;
 	wrapState.len2 = len;
 
@@ -463,7 +463,7 @@ void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 
 		textRect->x = CLIP<int16>(x - width / 2, 0, 640);
 		item->lineCount++;
 	}
-	
+
 	y += font.getHeight() - 1;
 
 }
@@ -559,7 +559,7 @@ int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wra
 
 	Font font(_vm->_res->load(fontResIndex)->data);
 	int16 len = 0;
-	
+
 	while (*wrapState.sourceString >= 0x20 && *wrapState.sourceString < 0xF0) {
 		byte ch = *wrapState.sourceString;
 		byte charWidth;
@@ -573,9 +573,9 @@ int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wra
 		wrapState.width += charWidth;
 		*wrapState.destString++ = *wrapState.sourceString++;
 	}
-	
+
 	return len;
-	
+
 }
 
 void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState) {
@@ -765,7 +765,7 @@ void Screen::loadState(Common::ReadStream *in) {
 		_verbLineItems[i].slotIndex = in->readUint16LE();
 		_verbLineItems[i].slotOffset = in->readUint16LE();
 	}
-	
+
 	// Load talk text items
 	_talkTextX = in->readUint16LE();
 	_talkTextY = in->readUint16LE();
@@ -786,7 +786,7 @@ void Screen::loadState(Common::ReadStream *in) {
 			_talkTextItems[i].lines[j].length = in->readUint16LE();
 		}
 	}
-	
+
 	// Load GUI bitmap
 	{
 		byte *gui = _frontScreen + _vm->_cameraHeight * 640;

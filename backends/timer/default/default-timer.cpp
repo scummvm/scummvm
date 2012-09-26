@@ -156,7 +156,7 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 	}
 
 	// We need to remove all names referencing the timer proc here.
-	// 
+	//
 	// Else we run into troubles, when the client code removes and readds timer
 	// callbacks.
 	//

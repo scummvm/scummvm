@@ -516,7 +516,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	case Common::IT_ITA:
 		switch(c) {
 		case 133:
-			return 'Z' + 1;	
+			return 'Z' + 1;
 		case 130:
 			return 'Z' + 2;
 		case 138:
@@ -548,10 +548,10 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 		return c;
 	}
 }
-	
+
 Common::String DreamWebEngine::modifyFileName(const char *name) {
 	Common::String fileName(name);
-	
+
 	// Sanity check
 	if (!fileName.hasPrefix("DREAMWEB."))
 		return fileName;

@@ -334,9 +334,9 @@ void DreamWebEngine::zoom() {
 		for (size_t j = 0; j < 23; ++j) {
 			uint8 v = src[j];
 			dst[2*j+0] = v;
-			dst[2*j+1] = v; 
+			dst[2*j+1] = v;
 			dst[2*j+320] = v;
-			dst[2*j+321] = v; 
+			dst[2*j+321] = v;
 		}
 		src += 320;
 		dst += 320*2;

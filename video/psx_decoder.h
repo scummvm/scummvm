@@ -149,7 +149,7 @@ private:
 	uint32 _frameCount;
 	Common::SeekableReadStream *_stream;
 	PSXVideoTrack *_videoTrack;
-	PSXAudioTrack *_audioTrack;	
+	PSXAudioTrack *_audioTrack;
 
 	Common::SeekableReadStream *readSector();
 };

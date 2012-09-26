@@ -98,7 +98,7 @@ uint16 ResourceManager::XCrypt(void *buf, uint16 length) {
 
 	for (uint16 i = 0; i < length; i++)
 		*b++ ^= kCryptSeed;
-	
+
 	return kCryptSeed;
 }
 

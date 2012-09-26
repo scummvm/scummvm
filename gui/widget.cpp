@@ -366,7 +366,7 @@ void ButtonWidget::startAnimatePressedState() {
 }
 
 void ButtonWidget::wantTickle(bool tickled) {
-	if (tickled) 
+	if (tickled)
 		((GUI::Dialog *)_boss)->setTickleWidget(this);
 	else
 		((GUI::Dialog *)_boss)->unSetTickleWidget();

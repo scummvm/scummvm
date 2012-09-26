@@ -1097,7 +1097,7 @@ void ScummEngine_v5::o5_getDist() {
 	int r;
 
 	getResultPos();
-	
+
 	o1 = getVarOrDirectWord(PARAM_1);
 	o2 = getVarOrDirectWord(PARAM_2);
 

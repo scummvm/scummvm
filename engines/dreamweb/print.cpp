@@ -212,7 +212,7 @@ const char *DreamWebEngine::monPrint(const char *string) {
 	while (!done) {
 
 		uint16 count = getNumber(_monitorCharset, (const uint8 *)iterator, 166, false, &x);
-		do {	
+		do {
 			char c = *iterator++;
 			if (c == ':')
 				break;

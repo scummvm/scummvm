@@ -154,15 +154,15 @@ public:
 	~Screen();
 
 	void unpackRle(byte *source, byte *dest, uint16 width, uint16 height);
-	
+
 	void loadMouseCursor(uint resIndex);
-	
+
 	void drawGuiImage(int16 x, int16 y, uint resIndex);
-	
+
 	void startShakeScreen(int16 shakeCounter);
 	void stopShakeScreen();
 	void updateShakeScreen();
-	
+
 	// Sprite list
 	void addStaticSprite(byte *spriteItem);
 	void addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, int16 *spriteArray, bool loop, int mode);
@@ -175,7 +175,7 @@ public:
 
 	// Verb line
 	void updateVerbLine(int16 slotIndex, int16 slotOffset);
-	
+
 	// Talk text
 	void updateTalkText(int16 slotIndex, int16 slotOffset);
 	void addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item);
@@ -207,7 +207,7 @@ public:
 		int16 slotIndex;
 		int16 slotOffset;
 	};
-	
+
 	struct Rect {
 		int16 x, y, width, height;
 	};
@@ -215,7 +215,7 @@ public:
 	ToltecsEngine *_vm;
 
 	byte *_frontScreen, *_backScreen;
-	
+
 	uint _fontResIndexArray[10];
 	byte _fontColor1, _fontColor2;
 
@@ -229,7 +229,7 @@ public:
 	VerbLineItem _verbLineItems[8];
 	int16 _verbLineX, _verbLineY, _verbLineWidth;
 	int16 _verbLineCount;
-	
+
 	// Talk text
 	int16 _talkTextX, _talkTextY;
 	int16 _talkTextMaxWidth;

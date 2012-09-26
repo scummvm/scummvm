@@ -379,7 +379,7 @@ void AVIDecoder::readNextPacket() {
 	}
 }
 
-AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader) 
+AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader)
 		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader) {
 	memset(_palette, 0, sizeof(_palette));
 	_videoCodec = createCodec();

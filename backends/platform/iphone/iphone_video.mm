@@ -476,7 +476,7 @@ const char *iPhone_getDocumentsDir() {
 		else if (_videoContext.screenWidth == 640 && _videoContext.screenHeight == 400)
 			adjustedHeight = 480;
 	}
-	
+
 	float overlayPortraitRatio;
 
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {

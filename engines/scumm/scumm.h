@@ -1372,7 +1372,7 @@ public:
 public:
 	bool towns_isRectInStringBox(int x1, int y1, int x2, int y2);
 	byte _townsPaletteFlags;
-	byte _townsCharsetColorMap[16];	
+	byte _townsCharsetColorMap[16];
 
 protected:
 	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);

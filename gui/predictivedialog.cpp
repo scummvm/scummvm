@@ -71,7 +71,7 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 
 	_btns = (ButtonWidget **)calloc(1, sizeof(ButtonWidget *) * 16);
 
-	_btns[kCancelAct] = new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , 0, kCancelCmd); 
+	_btns[kCancelAct] = new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , 0, kCancelCmd);
 	_btns[kOkAct] = 	new ButtonWidget(this, "Predictive.OK",      _("Ok")       , 0, kOkCmd);
 	_btns[kBtn1Act] = 	new ButtonWidget(this, "Predictive.Button1", "1  `-.&" , 0, kBut1Cmd);
 	_btns[kBtn2Act] = 	new ButtonWidget(this, "Predictive.Button2", "2  abc"     , 0, kBut2Cmd);
@@ -84,10 +84,10 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_btns[kBtn9Act] = 	new ButtonWidget(this, "Predictive.Button9", "9  wxyz"    , 0, kBut9Cmd);
 	_btns[kBtn0Act] = 	new ButtonWidget(this, "Predictive.Button0", "0"        , 0, kBut0Cmd);
   	// I18N: You must leave "#" as is, only word 'next' is translatable
-	_btns[kNextAct] = 	new ButtonWidget(this, "Predictive.Next",    _("#  next") , 0, kNextCmd); 
+	_btns[kNextAct] = 	new ButtonWidget(this, "Predictive.Next",    _("#  next") , 0, kNextCmd);
 	_btns[kAddAct] = 	new ButtonWidget(this, "Predictive.Add",     _("add") , 0, kAddCmd);
 	_btns[kAddAct]->setEnabled(false);
-  
+
   #ifndef DISABLE_FANCY_THEMES
 	_btns[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
 	((PicButtonWidget *)_btns[kDelAct])->useThemeTransparency(true);
@@ -214,7 +214,7 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 		_navigationwithkeys = true;
 		if (_lastbutton == kBtn1Act || _lastbutton == kBtn4Act || _lastbutton == kBtn7Act)
 			_currBtn = ButtonId(_lastbutton + 2);
-		else if (_lastbutton == kDelAct) 
+		else if (_lastbutton == kDelAct)
 			_currBtn = kBtn1Act;
 		else if (_lastbutton == kModeAct)
 			_currBtn = kNextAct;
@@ -227,7 +227,7 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 		else
 			_currBtn = ButtonId(_lastbutton - 1);
 
-		
+
 		if (_mode != kModeAbc && _lastbutton == kCancelAct)
 			_currBtn = kOkAct;
 
@@ -237,7 +237,7 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 		_navigationwithkeys = true;
 		if (_lastbutton == kBtn3Act || _lastbutton == kBtn6Act || _lastbutton == kBtn9Act || _lastbutton == kOkAct)
 			_currBtn = ButtonId(_lastbutton - 2);
-		else if (_lastbutton == kDelAct) 
+		else if (_lastbutton == kDelAct)
 			_currBtn = kBtn3Act;
 		else if (_lastbutton == kBtn0Act)
 			_currBtn = kNextAct;
@@ -249,7 +249,7 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 			_currBtn = kAddAct;
 		else
 			_currBtn = ButtonId(_lastbutton + 1);
-		
+
 		if (_mode != kModeAbc && _lastbutton == kOkAct)
 			_currBtn = kCancelAct;
 		_needRefresh = true;
@@ -260,7 +260,7 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 			_currBtn = kDelAct;
 		else if (_lastbutton == kDelAct)
 			_currBtn = kOkAct;
-		else if (_lastbutton == kModeAct) 
+		else if (_lastbutton == kModeAct)
 			_currBtn = kBtn7Act;
 		else if (_lastbutton == kBtn0Act)
 			_currBtn = kBtn8Act;
@@ -286,7 +286,7 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 			_currBtn = kBtn0Act;
 		else if (_lastbutton == kBtn9Act)
 			_currBtn = kNextAct;
-		else if (_lastbutton == kModeAct) 
+		else if (_lastbutton == kModeAct)
 			_currBtn = kAddAct;
 		else if (_lastbutton == kBtn0Act)
 			_currBtn = kCancelAct;

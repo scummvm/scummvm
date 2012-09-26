@@ -668,7 +668,7 @@ void RMItem::setPattern(int nPattern, bool bPlayP0) {
 		if (_nCurPattern > 0)
 			_patterns[_nCurPattern].stopSfx(_sfx);
 	}
-	
+
 	// Remember the current pattern
 	_nCurPattern = nPattern;
 
@@ -1661,7 +1661,7 @@ RMCharacter::RMCharacter() {
 	_bMovingWithoutMinpath = false;
 	_bDrawNow = false;
 	_bNeedToStop = false;
-	
+
 	memset(_path, 0, sizeof(_path));
 
 	_pos.set(0, 0);

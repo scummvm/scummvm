@@ -735,7 +735,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 			if (!_saveMode) {
 				buttonCmd += 1;
 			}
-	
+
 			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, 0, buttonCmd);
 			dstY += buttonHeight;
 
@@ -788,7 +788,7 @@ int SaveLoadChooserGrid::runIntern() {
 	} while (_saveMode && slot >= 0 && !selectDescription());
 
 	// Special case for new save games. We need to handle this here, since
-	// we cannot handle it in close() without problems. 
+	// we cannot handle it in close() without problems.
 	if (slot == _nextFreeSaveSlot) {
 		ConfMan.setInt("gui_saveload_last_pos", slot);
 	}

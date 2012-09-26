@@ -244,16 +244,16 @@ bool TonyEngine::loadTonyDat() {
 		expectedLangVariant = 0;
 		break;
 	}
-	
+
 	int numVariant = in.readUint16BE();
 	if (expectedLangVariant > numVariant) {
 		msg = Common::String::format("Font variant not present in 'tony.dat'. Get it from the ScummVM website");
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
-		
+
 		return false;
 	}
-	
+
 	in.seek(in.pos() + (2 * 256 * 8 * expectedLangVariant));
 	for (int i = 0; i < 256; i++) {
 		_cTableDialog[i] = in.readSint16BE();

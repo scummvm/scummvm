@@ -168,7 +168,7 @@ protected:
 	Rational _scaleFactorX;
 	Rational _scaleFactorY;
 	Array<Track *> _tracks;
-	
+
 	void init();
 
 private:

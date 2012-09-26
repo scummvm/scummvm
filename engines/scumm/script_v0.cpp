@@ -602,7 +602,7 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 	x = r.x;
 	y = r.y;
 	a->putActor(x, y, _currentRoom);
-	
+
 	camera._dest.x = camera._cur.x = a->getPos().x;
 	setCameraAt(a->getPos().x, a->getPos().y);
 	setCameraFollows(a);
@@ -635,18 +635,18 @@ void ScummEngine_v0::setMode(byte mode) {
 	case kModeCutscene:
 		_redrawSentenceLine = false;
 		// Note: do not change freeze state here
-		state = USERSTATE_SET_IFACE | 
+		state = USERSTATE_SET_IFACE |
 			USERSTATE_SET_CURSOR;
 		break;
 	case kModeKeypad:
 		_redrawSentenceLine = false;
-		state = USERSTATE_SET_IFACE | 
+		state = USERSTATE_SET_IFACE |
 			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
 			USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON;
 		break;
 	case kModeNormal:
 	case kModeNoNewKid:
-		state = USERSTATE_SET_IFACE | USERSTATE_IFACE_ALL | 
+		state = USERSTATE_SET_IFACE | USERSTATE_IFACE_ALL |
 			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
 			USERSTATE_SET_FREEZE;
 		break;
@@ -688,7 +688,7 @@ void ScummEngine_v0::o_animateActor() {
 	Actor_v0 *a = (Actor_v0*) derefActor(act, "o_animateActor");
 
 	a->_animFrameRepeat = repeat;
-	
+
 	switch (anim) {
 
 		case 0xFE:
@@ -700,7 +700,7 @@ void ScummEngine_v0::o_animateActor() {
 			// 0x69A3
 			a->_speaking = 0x00;
 			return;
-	
+
 		case 0xFF:
 			a->stopActorMoving();
 			return;

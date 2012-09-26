@@ -61,7 +61,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	int16 savedCameraY = _vm->_cameraY;
 	int16 savedGuiHeight = _vm->_guiHeight;
 	byte moviePalette[768];
-	
+
 	_vm->_isSaveAllowed = false;
 
 	memset(moviePalette, 0, sizeof(moviePalette));
@@ -105,7 +105,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		uint32 chunkSize = _vm->_arc->readUint32LE();
 
 		debug(0, "chunkType = %d; chunkSize = %d", chunkType, chunkSize);
-		
+
 		// Skip audio chunks - we've already queued them in
 		// fetchAudioChunks() above
 		if (chunkType == kChunkAudio) {
@@ -178,7 +178,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		default:
 			error("MoviePlayer::playMovie(%04X) Unknown chunk type %d at %08X", resIndex, chunkType, _vm->_arc->pos() - 5 - chunkSize);
 		}
-		
+
 		if (!handleInput())
 			break;
 	}
@@ -189,7 +189,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_mixer->stopHandle(_audioStreamHandle);
 
 	_vm->_arc->closeResource();
-	
+
 	debug(0, "playMovie() done");
 
 	_vm->_sceneWidth = savedSceneWidth;

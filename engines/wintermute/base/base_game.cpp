@@ -740,7 +740,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(LOCAL_SAVE_DIR)
 	TOKEN_TABLE(COMPAT_KILL_METHOD_THREADS)
 	TOKEN_TABLE_END
-	
+
 	// Declare a few variables necessary for moving data from these settings over to the renderer:
 	// The values are the same as the defaults set in BaseRenderer.
 	int loadImageX = 0;
@@ -3624,7 +3624,7 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel1));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel2));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeSwap));
-	
+
 	_renderer->persistSaveLoadImages(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_textEncoding));

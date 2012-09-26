@@ -197,7 +197,7 @@ void ScriptInterpreter::runScript() {
 				_vm->saveGameState(_vm->_saveLoadSlot, _vm->_saveLoadDescription);
 			_vm->_saveLoadRequested = 0;
 		}
-			
+
 		if (_switchLocalDataNear) {
 			_switchLocalDataNear = false;
 			_localData = getSlotData(_regs.reg4);
@@ -214,7 +214,7 @@ void ScriptInterpreter::runScript() {
 			_localData = _stack + 2;
 			_switchLocalDataNear = true;
 		}
-		
+
 		byte opcode = readByte();
 		execOpcode(opcode);
 
@@ -547,7 +547,7 @@ const char *getVarName(uint variable) {
 
 int16 ScriptInterpreter::getGameVar(uint variable) {
 	debug(0, "ScriptInterpreter::getGameVar(%d{%s})", variable, getVarName(variable));
-	
+
 	switch (variable) {
 	case  0: return _vm->_mouseDisabled;
 	case  1: return _vm->_mouseY;
@@ -579,7 +579,7 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 
 void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 	debug(0, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, getVarName(variable), value);
-	
+
 	switch (variable) {
 	case 0:
 		_vm->_mouseDisabled = value;
@@ -718,7 +718,7 @@ void ScriptInterpreter::saveState(Common::WriteStream *out) {
 	// Save stack
 	out->write(_stack, kScriptStackSize);
 	out->writeUint16LE(_savedSp);
-	
+
 	// Save IP
 	out->writeUint16LE((int16)(_code - getSlotData(_regs.reg4)));
 
@@ -1046,14 +1046,14 @@ void ScriptInterpreter::sfHandleInput() {
 			Only scancodes known to be used (so far) are converted
 		*/
 		switch (_vm->_keyState.keycode) {
-		case Common::KEYCODE_ESCAPE: 
+		case Common::KEYCODE_ESCAPE:
 			keyCode = 1;
 			break;
 		case Common::KEYCODE_F10:
 			keyCode = 68;
 			break;
 		default:
-			break;			
+			break;
 		}
 	}
 	localWrite16(varOfs, keyCode);
@@ -1068,7 +1068,7 @@ void ScriptInterpreter::sfRunOptionsScreen() {
 	of data so the game doesn't stall while playing (due to the slow speed of
 	CD-Drives back then). This is not needed in ScummVM since all supported
 	systems are fast enough to load data in-game. */
-		
+
 void ScriptInterpreter::sfPrecacheSprites() {
 	// See note above
 }

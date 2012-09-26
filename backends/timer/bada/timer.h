@@ -51,7 +51,7 @@ public:
 	BadaTimerManager();
 	~BadaTimerManager();
 
-	bool installTimerProc(TimerProc proc, int32 interval, void *refCon, 
+	bool installTimerProc(TimerProc proc, int32 interval, void *refCon,
 												const Common::String &id);
 	void removeTimerProc(TimerProc proc);
 

@@ -71,7 +71,7 @@ bool Picture::loadPicture(const Common::String &file) {
 		_data = new uint8[decSize + 100];
 		_paletteEntries = READ_LE_UINT16(fileData + 14) / 3;
 		_useFullPalette = (_paletteEntries == 256);
-		
+
 		if (_paletteEntries) {
 			_palette = new uint8[_paletteEntries * 3];
 			memcpy(_palette, fileData + 16, _paletteEntries * 3);

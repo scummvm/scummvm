@@ -234,7 +234,7 @@ void PSXStreamDecoder::readNextPacket() {
 					Common::SeekableReadStream *frame = new Common::MemoryReadStream(partialFrame, frameSize, DisposeAfterUse::YES);
 
 					_videoTrack->decodeFrame(frame, sectorsRead);
-					
+
 					delete frame;
 					delete sector;
 					return;
@@ -297,7 +297,7 @@ Common::SeekableReadStream *PSXStreamDecoder::readSector() {
 
 // Ha! It's palindromic!
 #define AUDIO_DATA_CHUNK_SIZE   2304
-#define AUDIO_DATA_SAMPLE_COUNT 4032 
+#define AUDIO_DATA_SAMPLE_COUNT 4032
 
 static const int s_xaTable[5][2] = {
    {   0,   0 },

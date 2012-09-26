@@ -75,7 +75,7 @@ int MenuSystem::run(MenuID menuId) {
 		update();
 		_vm->_system->updateScreen();
 	}
-	
+
 	// Restore original background
 	memcpy(_vm->_screen->_frontScreen, backgroundOrig.getBasePtr(0,0), 640 * 400);
 	_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
@@ -86,7 +86,7 @@ int MenuSystem::run(MenuID menuId) {
 	_background->free();
 	delete _background;
 
-	return 0;	
+	return 0;
 }
 
 void MenuSystem::update() {
@@ -539,7 +539,7 @@ void MenuSystem::setCfgVoices(bool value, bool active) {
 void MenuSystem::drawVolumeBar(ItemID itemID) {
 	int w = 440, y, volume;
 	char text[21];
-	
+
 	switch (itemID) {
 	case kItemIdMaster:	// unused in ScummVM, always 20
 		y = 130 + 25 * 0;
@@ -567,13 +567,13 @@ void MenuSystem::drawVolumeBar(ItemID itemID) {
 
 	Font font(_vm->_res->load(_vm->_screen->getFontResIndex(1))->data);
 	restoreRect(390, y - font.getHeight(), 100, 25);
-	
+
 	for (int i = 0; i < volume; i++)
 		text[i] = '|';
 	text[volume] = 0;
-	
+
 	drawString(0, y, w, 0, 246, text);
-	
+
 }
 
 void MenuSystem::changeVolumeBar(ItemID itemID, int delta) {

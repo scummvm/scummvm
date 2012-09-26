@@ -610,7 +610,7 @@ void NamedHotspot::doAction(int action) {
 	case CURSOR_USE:
 		if (_useLineNum == -1)
 			break;
-		
+
 		SceneItem::display(_resNum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		return;
 	case CURSOR_TALK:

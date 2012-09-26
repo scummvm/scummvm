@@ -57,7 +57,7 @@ void Sound::playSpeech(int16 resIndex) {
 
 void Sound::playSound(int16 resIndex, int16 type, int16 volume) {
 	debug(0, "playSound(%d, %d, %d)", resIndex, type, volume);
-	
+
 	internalPlaySound(resIndex, type, volume, 0);
 }
 
@@ -66,7 +66,7 @@ void Sound::playSoundAtPos(int16 resIndex, int16 x, int16 y) {
 
 	int16 volume = 50 + ABS(_vm->_segmap->getScalingAtPoint(x, y)) / 2;
 	int16 panning = 0, deltaX = 0;
-	
+
 	if (_vm->_cameraX > x)
 		deltaX = _vm->_cameraX - x;
 	else if (_vm->_cameraX + 640 < x)
@@ -75,7 +75,7 @@ void Sound::playSoundAtPos(int16 resIndex, int16 x, int16 y) {
 		deltaX = 600;
 
 	volume = ((100 - deltaX / 6) * volume) / 100;
-	
+
 	if (_vm->_cameraX + 320 != x) {
 		panning = CLIP(x - (_vm->_cameraX + 320), -381, 381) / 3;
 	}
@@ -86,7 +86,7 @@ void Sound::playSoundAtPos(int16 resIndex, int16 x, int16 y) {
 void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning) {
 	// Change the game's sound volume (0 - 100) to Scummvm's scale (0 - 255)
 	volume = (volume == -1) ? 255 : volume * 255 / 100;
-	
+
 	if (resIndex == -1) {
 		// Stop all sounds
 		_vm->_mixer->stopAll();
@@ -108,7 +108,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			// Stop speech and play new sound
 			stopSpeech();
 		}
-	
+
 		// Play new sound in empty channel
 		int freeChannel = -1;
 		for (int i = 0; i < kMaxChannels; i++) {
@@ -117,7 +117,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 				break;
 			}
 		}
-		
+
 		// If all channels are in use no new sound will be played
 		if (freeChannel >= 0) {
 			Resource *soundResource = _vm->_res->load(resIndex);
@@ -140,7 +140,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		}
 
 	}
-	
+
 }
 
 void Sound::updateSpeech() {

@@ -80,7 +80,7 @@ Common::Error ToltecsEngine::run() {
 	_flag01 = 0;
 
 	_saveLoadRequested = 0;
-		
+
 	_cameraX = 0;
 	_cameraY = 0;
 	_newCameraX = 0;
@@ -91,7 +91,7 @@ Common::Error ToltecsEngine::run() {
 
 	_sceneWidth = 0;
 	_sceneHeight = 0;
-	
+
 	_doSpeech = true;
 	_doText = true;
 
@@ -121,7 +121,7 @@ Common::Error ToltecsEngine::run() {
 	_moviePlayer = new MoviePlayer(this);
 	_music = new Music(_arc);
 	_menuSystem = new MenuSystem(this);
-	
+
 	_sound = new Sound(this);
 
 	_cfgText = ConfMan.getBool("subtitles");
@@ -186,7 +186,7 @@ Common::Error ToltecsEngine::run() {
 	delete _music;
 	delete _moviePlayer;
 	delete _menuSystem;
-	
+
 	delete _sound;
 
 	return Common::kNoError;
@@ -250,7 +250,7 @@ void ToltecsEngine::loadScene(uint resIndex) {
 
 	_screen->_fullRefresh = true;
 	_screen->_renderQueue->clear();
-	
+
 }
 
 void ToltecsEngine::updateScreen() {
@@ -426,7 +426,7 @@ void ToltecsEngine::setCamera(int16 x, int16 y) {
 	_screen->finishTalkTextItems();
 
 	_screen->clearSprites();
-	
+
 	_cameraX = x;
 	_newCameraX = x;
 
@@ -495,9 +495,9 @@ void ToltecsEngine::updateCamera() {
 }
 
 void ToltecsEngine::talk(int16 slotIndex, int16 slotOffset) {
-	
+
 	byte *scanData = _script->getSlotData(slotIndex) + slotOffset;
-	
+
 	while (*scanData < 0xF0) {
 		if (*scanData == 0x19) {
 			scanData++;
@@ -510,7 +510,7 @@ void ToltecsEngine::talk(int16 slotIndex, int16 slotOffset) {
 		}
 		scanData++;
 	}
-	
+
 	if (*scanData == 0xFE) {
 		if (_doSpeech) {
 			int16 resIndex = READ_LE_UINT16(scanData + 1);
@@ -544,7 +544,7 @@ void ToltecsEngine::walk(byte *walkData) {
 	walkInfo.xerror = READ_LE_UINT16(walkData + 14);
 	walkInfo.mulValue = READ_LE_UINT16(walkData + 16);
 	walkInfo.scaling = READ_LE_UINT16(walkData + 18);
-	
+
 	walkInfo.scaling = -_segmap->getScalingAtPoint(walkInfo.x, walkInfo.y);
 
 	if (walkInfo.y1 < walkInfo.y2)
@@ -552,7 +552,7 @@ void ToltecsEngine::walk(byte *walkData) {
 	else
 		ystep = 1;
 	ydelta = ABS(walkInfo.y1 - walkInfo.y2) * _walkSpeedY;
-	
+
 	if (walkInfo.x1 < walkInfo.x2)
 		xstep = -1;
 	else
@@ -615,11 +615,11 @@ void ToltecsEngine::walk(byte *walkData) {
 
 }
 
-int16 ToltecsEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize, 
+int16 ToltecsEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize,
 	byte *rectDataEnd) {
 
 	rectData += index * itemSize;
-	
+
 	while (rectData < rectDataEnd) {
 		int16 rectY = READ_LE_UINT16(rectData);
 		if (rectY == -10)
@@ -637,7 +637,7 @@ int16 ToltecsEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 ind
 		index++;
 		rectData += itemSize;
 	}
-	
+
 	return -1;
 }
 

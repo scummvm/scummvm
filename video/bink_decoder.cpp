@@ -236,7 +236,7 @@ BinkDecoder::AudioInfo::~AudioInfo() {
 
 BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const Graphics::PixelFormat &format, uint32 frameCount, const Common::Rational &frameRate, bool swapPlanes, bool hasAlpha, uint32 id) :
 		_frameCount(frameCount), _frameRate(frameRate), _swapPlanes(swapPlanes), _hasAlpha(hasAlpha), _id(id) {
-	_curFrame = -1;	
+	_curFrame = -1;
 
 	for (int i = 0; i < 16; i++)
 		_huffman[i] = 0;

@@ -90,13 +90,13 @@ protected:
 	bool _cmpBitTest;
 
 	ScriptSlot _slots[kMaxScriptSlots];
-	
+
 	ScriptRegs _regs;
 	int16 _savedSp;
 
 	byte readByte();
 	int16 readInt16();
-	
+
 	void execOpcode(byte opcode);
 
 	void setupScriptFunctions();

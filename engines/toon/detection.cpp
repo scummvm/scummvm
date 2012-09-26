@@ -84,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "d4aff126ee27be3c3d25e2996369d7cb", 2324368},
 		},
 		Common::RU_RUS, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO0()
-	},		
+	},
 	{
 		"toon", "",
 		{

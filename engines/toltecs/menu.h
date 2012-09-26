@@ -80,7 +80,7 @@ public:
 	int run(MenuID menuId);
 	void update();
 	void handleEvents();
-	
+
 protected:
 
 	struct Item {
@@ -91,7 +91,7 @@ protected:
 		int x, y, w;
 		uint fontNum;
 	};
-	
+
 	struct SavegameItem {
 		int _slotNum;
 		Common::String _description;
@@ -116,20 +116,20 @@ protected:
 
 	Common::Array<Item> _items;
 	Common::Array<SavegameItem> _savegames;
-	
+
 	void addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const char *caption, byte defaultColor, byte activeColor);
 
 	void drawItem(ItemID itemID, bool active);
 	void handleMouseMove(int x, int y);
 	void handleMouseClick(int x, int y);
 	void handleKeyDown(const Common::KeyState& kbd);
-	
+
 	ItemID findItemAt(int x, int y);
 	Item *getItem(ItemID id);
 	void setItemCaption(Item *item, const char *caption);
 
 	void initMenu(MenuID menuID);
-	
+
 	void enterItem(ItemID id);
 	void leaveItem(ItemID id);
 	void clickItem(ItemID id);

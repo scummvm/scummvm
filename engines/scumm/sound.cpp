@@ -957,7 +957,7 @@ void Sound::setupSfxFile() {
 
 		if (file.open(tmp))
 			_sfxFilename = tmp;
-	
+
 		if (_vm->_game.heversion <= 74)
 			_sfxFileEncByte = 0x69;
 
@@ -1182,7 +1182,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 			// its sound resources, and Amiga games, which feature only ROL
 			// resources, since we are a doing Midi -> AdLib conversion for
 			// these.
-			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 16 
+			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 16
 				&& pri != 15 && pri != 10 && pri != 2 && _game.platform != Common::kPlatformAmiga)
 				pri = -1;
 

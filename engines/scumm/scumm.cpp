@@ -1986,11 +1986,11 @@ Common::Error ScummEngine::go() {
 		if (delta < 1)	// Ensure we don't get into an endless loop
 			delta = 1;  // by not decreasing sleepers.
 
-		// WORKAROUND: walking speed in the original v0/v1 interpreter 
+		// WORKAROUND: walking speed in the original v0/v1 interpreter
 		// is sometimes slower (e.g. during scrolling) than in ScummVM.
 		// This is important for the door-closing action in the dungeon,
-		// otherwise (delta < 6) a single kid is able to escape. 
-		if ((_game.version == 0 && isScriptRunning(132)) || 
+		// otherwise (delta < 6) a single kid is able to escape.
+		if ((_game.version == 0 && isScriptRunning(132)) ||
 			(_game.version == 1 && isScriptRunning(137)))
 			delta = 6;
 

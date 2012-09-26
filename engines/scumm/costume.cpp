@@ -1188,7 +1188,7 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 		_draw_top = 200;
 		_draw_bottom = 0;
 	}
-	
+
 	// Invalid current position?
 	if (a->_cost.curpos[limb] == 0xFFFF)
 		return 0;
@@ -1377,7 +1377,7 @@ byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
 			// Reset the comstume command
 			a0->_costCommandNew = 0xFF;
 			a0->_costCommand = 0xFF;
-			
+
 			// Set the frame/start to invalid
 			a0->_cost.frame[limb] = 0xFFFF;
 			a0->_cost.start[limb] = 0xFFFF;

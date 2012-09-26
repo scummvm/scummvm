@@ -502,7 +502,7 @@ static bool DoRestore() {
 		delete f;	// Invalid header, or savegame too new -> skip it
 		return false;
 	}
-	
+
 	// Load in the data. For older savegame versions, we potentially need to load the data twice, once
 	// for pre 1.5 savegames, and if that fails, a second time for 1.5 savegames
 	int numInterpreters = hdr.numInterpreters;

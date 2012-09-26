@@ -52,7 +52,7 @@ void DreamWebEngine::printASprite(const Sprite *sprite) {
 	} else {
 		x = sprite->x + _mapAdX;
 	}
-	
+
 	uint8 c;
 	if (sprite->walkFrame != 0)
 		c = 8;
@@ -97,7 +97,7 @@ void DreamWebEngine::spriteUpdate() {
 		else {
 			backObject(&sprite);
 		}
-	
+
 		if (_nowInNewRoom == 1)
 			break;
 	}
@@ -373,7 +373,7 @@ void DreamWebEngine::lockedDoorway(Sprite *sprite, SetObject *objData) {
 
 		if (sprite->animFrame != 0)
 			--sprite->animFrame;
-	
+
 		_vars._throughDoor = 0;
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 
@@ -407,7 +407,7 @@ void DreamWebEngine::liftSprite(Sprite *sprite, SetObject *objData) {
 		}
 		sprite->animFrame = 12;
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
-	}	
+	}
 	else if (liftFlag == 3) { //openlift
 		if (sprite->animFrame == 12) {
 			_vars._liftFlag = 1;
@@ -672,7 +672,7 @@ static const ReelSound g_roomSound6[] = {
 	{ 255,0 }
 };
 static const ReelSound g_roomSound8[] = {
-	
+
 	{ 12, 51 },
 	{ 13, 53 },
 	{ 14, 14 },
@@ -691,7 +691,7 @@ static const ReelSound g_roomSound10[] = {
 	{ 13, 16 },
 	{ 255,0 }
 };
-	
+
 static const ReelSound g_roomSound11[] = {
 	{ 13, 20 },
 	{ 255,0 }
@@ -779,7 +779,7 @@ static const ReelSound g_roomSound26[] = {
 	{ 15, 102 }, // was 90, should be mine cart
 	{ 255,0 }
 };
-	
+
 static const ReelSound g_roomSound27[] = {
 	{ 22, 36 },
 	{ 13, 125 },

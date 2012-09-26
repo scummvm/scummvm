@@ -543,7 +543,7 @@ void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) 
 
 	// Skip the matte and mask
 	stream.skip(matteSize + maskSize);
-	
+
 	// Now we've reached the image descriptor, so read the relevant data from that
 	uint32 idStart = stream.pos();
 	uint32 idSize = stream.readUint32BE();

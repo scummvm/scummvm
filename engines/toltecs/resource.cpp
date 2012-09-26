@@ -66,7 +66,7 @@ void ArchiveReader::dump(uint resIndex, const char *prefix) {
 	byte *data = new byte[resourceSize];
 
 	Common::String fn;
-	
+
 	if (prefix)
 		fn = Common::String::format("%s_%04X.0", prefix, resIndex);
 	else
@@ -117,11 +117,11 @@ Resource *ResourceCache::load(uint resIndex) {
 		resItem->data = new byte[resItem->size];
 		_vm->_arc->read(resItem->data, resItem->size);
 		_vm->_arc->closeResource();
-		
+
 		_cache[resIndex] = resItem;
-		
+
 		return resItem;
-		
+
 	}
 }
 

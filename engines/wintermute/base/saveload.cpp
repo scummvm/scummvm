@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -45,11 +45,11 @@ namespace Wintermute {
 
 bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 	gameRef->LOG(0, "Loading game '%s'...", filename.c_str());
-	
+
 	bool ret;
-	
+
 	gameRef->_renderer->initSaveLoad(false);
-	
+
 	gameRef->_loadInProgress = true;
 	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (DID_SUCCEED(ret = pm->initLoad(filename))) {
@@ -61,20 +61,20 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 
 				// data initialization after load
 				SaveLoad::initAfterLoad();
-				
+
 				gameRef->applyEvent("AfterLoad", true);
-				
+
 				gameRef->displayContent(true, false);
 				//_renderer->flip();
 			}
 		}
 	}
-	
+
 	delete pm;
 	gameRef->_loadInProgress = false;
-	
+
 	gameRef->_renderer->endSaveLoad();
-	
+
 	//_gameRef->LOG(0, "Load end %d", BaseUtils::GetUsedMemMB());
 	// AdGame:
 	if (DID_SUCCEED(ret)) {
@@ -85,13 +85,13 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 
 bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *gameRef) {
 	Common::String filename = SaveLoad::getSaveSlotFilename(slot);
-	
+
 	gameRef->LOG(0, "Saving game '%s'...", filename.c_str());
-	
+
 	gameRef->applyEvent("BeforeSave", true);
-	
+
 	bool ret;
-	
+
 	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (DID_SUCCEED(ret = pm->initSave(desc))) {
 		gameRef->_renderer->initSaveLoad(true, quickSave); // TODO: The original code inited the indicator before the conditionals
@@ -104,11 +104,11 @@ bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *ga
 			}
 		}
 	}
-	
+
 	delete pm;
-	
+
 	gameRef->_renderer->endSaveLoad();
-	
+
 	return ret;
 }
 
@@ -166,21 +166,21 @@ Common::String SaveLoad::getSaveSlotFilename(int slot) {
 
 bool SaveLoad::getSaveSlotDescription(int slot, char *buffer) {
 	buffer[0] = '\0';
-	
+
 	Common::String filename = getSaveSlotFilename(slot);
 	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (!pm) {
 		return false;
 	}
-	
+
 	if (!(pm->initLoad(filename))) {
 		delete pm;
 		return false;
 	}
-	
+
 	strcpy(buffer, pm->_savedDescription);
 	delete pm;
-	
+
 	return true;
 }
 
@@ -199,6 +199,6 @@ bool SaveLoad::emptySaveSlot(int slot) {
 	delete pm;
 	return true;
 }
-	
-	
+
+
 } // end of namespace Wintermute

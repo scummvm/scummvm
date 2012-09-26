@@ -180,7 +180,7 @@ void ScummEngine_v70he::setDefaultCursor() {
 								   0xff, 0xff, 0xff,
 								   0,    0,    0,    };
 
-	
+
 	memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
 
 	_cursor.hotspotX = _cursor.hotspotY = 2;

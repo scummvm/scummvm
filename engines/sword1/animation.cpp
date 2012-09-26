@@ -69,7 +69,7 @@ static const char *const sequenceList[20] = {
 };
 
 // This is the list of the names of the PlayStation videos
-// TODO: fight.str, flashy.str, 
+// TODO: fight.str, flashy.str,
 static const char *const sequenceListPSX[20] = {
 	"e_ferr1",
 	"ladder1",
@@ -152,14 +152,14 @@ bool MoviePlayer::load(uint32 id) {
 					warning("%s:%d startFrame (%d) <= lastEnd (%d)", filename.c_str(), lineNo, startFrame, lastEnd);
 					continue;
 				}
-				
+
 				int color = 0;
 				if (*ptr == '@') {
 					++ptr;
 					color = strtoul(ptr, const_cast<char **>(&ptr), 10);
 					while (*ptr && Common::isSpace(*ptr))
 						ptr++;
-				} 
+				}
 
 				_movieTexts.push_back(MovieText(startFrame, endFrame, ptr, color));
 				lastEnd = endFrame;

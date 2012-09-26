@@ -114,7 +114,7 @@ bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcL
  * returned).
  *
  * @param toBeWrapped	the stream to be wrapped (if it is in gzip-format)
- * @param knownSize		a supplied length of the compressed data (if not available directly) 
+ * @param knownSize		a supplied length of the compressed data (if not available directly)
  */
 SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize = 0);
 

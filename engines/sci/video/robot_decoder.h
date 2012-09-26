@@ -45,13 +45,13 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 	bool load(GuiResourceId id);
 	void close();
-	
+
 	void setPos(uint16 x, uint16 y) { _pos = Common::Point(x, y); }
 	Common::Point getPos() const { return _pos; }
 
 protected:
 	void readNextPacket();
-	
+
 private:
 	class RobotVideoTrack : public FixedRateVideoTrack {
 	public:

@@ -925,7 +925,7 @@ RMDialogChoice::RMDialogChoice() {
 
 	_hUnreg = CoroScheduler.createEvent(false, false);
 	_bRemoveFromOT = false;
-	
+
 	_curAdded = 0;
 	_bShow = false;
 }

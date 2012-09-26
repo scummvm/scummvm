@@ -711,7 +711,7 @@ int RMInventory::loadState(byte *state) {
 
 	_curPos = 0;
 	_bCombining = false;
-	
+
 	_items[29]._icon.setPattern(1);
 
 	if (_nInv > 8)

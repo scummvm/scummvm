@@ -524,7 +524,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 
 	// SCI2 Empty functions
-	
+
 	// Debug function used to track resources
 	{ MAP_EMPTY(ResourceTrack),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
 	// Future TODO: This call is used in the floppy version of QFG4 to add

@@ -228,7 +228,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	uint32 exportAddr = scr->validateExportFunc(pubfunct, false);
 	if (!exportAddr)
 		return NULL;
-	
+
 	// Check if a breakpoint is set on this method
 	g_sci->checkExportBreakpoint(script, pubfunct);
 

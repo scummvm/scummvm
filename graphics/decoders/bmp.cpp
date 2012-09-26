@@ -155,7 +155,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	} else { // 32 bpp
 		byte *dst = (byte *)_surface->pixels + (height - 1) * _surface->pitch;
-		
+
 		for (int32 i = 0; i < height; i++) {
 			for (uint32 j = 0; j < width; j++) {
 				byte b = stream.readByte();
@@ -166,11 +166,11 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 				// ref: http://msdn.microsoft.com/en-us/library/windows/desktop/dd183376%28v=vs.85%29.aspx
 				stream.readByte();
 				uint32 color = format.RGBToColor(r, g, b);
-				
+
 				*((uint32 *)dst) = color;
 				dst += format.bytesPerPixel;
 			}
-			
+
 			stream.skip(extraDataLength);
 			dst -= _surface->pitch * 2;
 		}

@@ -452,7 +452,7 @@ bool JPEGDecoder::readSOS() {
 					_bitsNumber = 0;
 
 					for (byte i = 0; i < _numScanComp; i++)
-						_scanComp[i]->DCpredictor = 0;					
+						_scanComp[i]->DCpredictor = 0;
 				}
 			}
 		}

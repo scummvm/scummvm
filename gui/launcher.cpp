@@ -166,7 +166,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	} else {
 		warning("Plugin for target \"%s\" not found! Game specific settings might be missing", domain.c_str());
 	}
-	
+
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
 	String extraPath(ConfMan.get("extrapath", _domain));
