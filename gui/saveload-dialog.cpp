@@ -590,9 +590,20 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 void SaveLoadChooserGrid::open() {
 	SaveLoadChooserDialog::open();
 
-	_curPage = 0;
 	_saveList = _metaEngine->listSaves(_target.c_str());
 	_resultString.clear();
+
+	// Load information to restore the last page the user had open.
+	assert(_entriesPerPage != 0);
+	const uint lastPos = ConfMan.getInt("gui_saveload_last_pos");
+	const uint listSize = _saveList.size();
+	if (lastPos < listSize) {
+		_curPage = lastPos / _entriesPerPage;
+	} else if (listSize) {
+		_curPage = (_saveList.size() - 1) / _entriesPerPage;
+	} else {
+		_curPage = 0;
+	}
 
 	// Determine the next free save slot for save mode
 	if (_saveMode) {
@@ -718,6 +729,24 @@ void SaveLoadChooserGrid::reflowLayout() {
 }
 
 void SaveLoadChooserGrid::close() {
+	// Save the current page.
+	const int result = getResult();
+	if (result >= 0 && result != _nextFreeSaveSlot) {
+		// If the user selected a slot we use that one. We ignore new slots
+		// here, since otherwise the dialog would reset to page 0 when the
+		// user cancels the savename dialog.
+		ConfMan.setInt("gui_saveload_last_pos", result);
+	} else {
+		// Otherwise save the first entry on the current page.
+		// This is less precise than the solution above, since the number of
+		// entries shown differs between save and load version of the dialog,
+		// thus it might wrap to a different page than expected.
+		// Similar things happen on resolution changes.
+		// TODO: Should we ignore this here? Is the user likely to be
+		// interested in having this page restored when he canceled?
+		ConfMan.setInt("gui_saveload_last_pos", _curPage * _entriesPerPage);
+	}
+
 	SaveLoadChooserDialog::close();
 	hideButtons();
 }
@@ -736,6 +765,12 @@ int SaveLoadChooserGrid::runIntern() {
 
 		slot = runModal();
 	} while (_saveMode && slot >= 0 && !selectDescription());
+
+	// Special case for new save games. We need to handle this here, since
+	// we cannot handle it in close() without problems. 
+	if (slot == _nextFreeSaveSlot) {
+		ConfMan.setInt("gui_saveload_last_pos", slot);
+	}
 
 	return slot;
 }
