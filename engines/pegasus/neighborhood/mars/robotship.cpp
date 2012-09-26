@@ -64,6 +64,7 @@ RobotShip::RobotShip() : _spritesMovie(kNoDisplayElement) {
 	_currentLocation.y = 0;
 	_snaring = false;
 	_dropJunkFuse.setFunctor(new Common::Functor0Mem<void, RobotShip>(this, &RobotShip::timeToDropJunk));
+	_duration = 0xFFFFFFFF;
 }
 
 RobotShip::~RobotShip() {
