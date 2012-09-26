@@ -53,7 +53,7 @@ static const CoordType kRovingTop = kShuttleWindowTop + 20;
 static const CoordType kRovingWidth = kShuttleWindowMidH - kRovingLeft;
 static const CoordType kRovingHeight = kShuttleWindowMidV - kRovingTop;
 
-RobotShip* g_robotShip = 0;
+RobotShip *g_robotShip = 0;
 
 RobotShip::RobotShip() : _spritesMovie(kNoDisplayElement) {
 	g_robotShip = this;
