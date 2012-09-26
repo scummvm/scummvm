@@ -435,17 +435,17 @@ bool TeenAgentEngine::showMetropolis() {
 
 	const uint varia6Size = 21760;
 	const uint varia9Size = 18302;
-	byte *varia_6 = (byte *)malloc(varia6Size);
-	byte *varia_9 = (byte *)malloc(varia9Size);
-	if (!varia_6 || !varia_9) {
-		free(varia_6);
-		free(varia_9);
+	byte *varia6Data = (byte *)malloc(varia6Size);
+	byte *varia9Data = (byte *)malloc(varia9Size);
+	if (!varia6Data || !varia9Data) {
+		free(varia6Data);
+		free(varia9Data);
 
 		error("[TeenAgentEngine::showMetropolis] Cannot allocate buffer");
 	}
 
-	varia.read(6, varia_6, varia6Size);
-	varia.read(9, varia_9, varia9Size);
+	varia.read(6, varia6Data, varia6Size);
+	varia.read(9, varia9Data, varia9Size);
 
 	const uint colorsSize = 56 * 160 * 2;
 	byte *colors = (byte *)malloc(colorsSize);
@@ -459,8 +459,8 @@ bool TeenAgentEngine::showMetropolis() {
 		{
 			int r = skipEvents();
 			if (r != 0) {
-				free(varia_6);
-				free(varia_9);
+				free(varia6Data);
+				free(varia9Data);
 				free(colors);
 				return r > 0 ? true : false;
 			}
@@ -495,7 +495,7 @@ bool TeenAgentEngine::showMetropolis() {
 		}
 
 		byte *dst = (byte *)surface->getBasePtr(0, 131);
-		byte *src = varia_6;
+		byte *src = varia6Data;
 		for (uint y = 0; y < 68; ++y) {
 			for (uint x = 0; x < 320; ++x) {
 				if (*src++ == 1) {
@@ -507,7 +507,7 @@ bool TeenAgentEngine::showMetropolis() {
 		_system->unlockScreen();
 
 		_system->copyRectToScreen(
-		    varia_9 + (logo_y < 0 ? -logo_y * 320 : 0), 320,
+		    varia9Data + (logo_y < 0 ? -logo_y * 320 : 0), 320,
 		    0, logo_y >= 0 ? logo_y : 0,
 		    320, logo_y >= 0 ? 57 : 57 + logo_y);
 
@@ -519,8 +519,8 @@ bool TeenAgentEngine::showMetropolis() {
 		_system->delayMillis(100);
 	}
 
-	free(varia_6);
-	free(varia_9);
+	free(varia6Data);
+	free(varia9Data);
 	free(colors);
 
 	return true;
@@ -547,9 +547,9 @@ Common::Error TeenAgentEngine::run() {
 	setMusic(1);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 
-	int load_slot = ConfMan.getInt("save_slot");
-	if (load_slot >= 0) {
-		loadGameState(load_slot);
+	int loadSlot = ConfMan.getInt("save_slot");
+	if (loadSlot >= 0) {
+		loadGameState(loadSlot);
 	} else {
 		if (!showCDLogo())
 			return Common::kNoError;
@@ -564,15 +564,15 @@ Common::Error TeenAgentEngine::run() {
 
 	CursorMan.showMouse(true);
 
-	uint32 game_timer = 0;
-	uint32 mark_timer = 0;
+	uint32 gameTimer = 0;
+	uint32 markTimer = 0;
 
 	Common::Event event;
 	Common::Point mouse;
 	uint32 timer = _system->getMillis();
 
 	do {
-		Object *current_object = scene->findObject(mouse);
+		Object *currentObject = scene->findObject(mouse);
 
 		while (_event->pollEvent(event)) {
 			if (event.type == Common::EVENT_RTL)
@@ -597,26 +597,26 @@ Common::Error TeenAgentEngine::run() {
 			case Common::EVENT_LBUTTONDOWN:
 				if (scene->getId() < 0)
 					break;
-				examine(event.mouse, current_object);
+				examine(event.mouse, currentObject);
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				if (current_object)
-					debugC(0, kDebugObject, "%d, %s", current_object->id, current_object->name.c_str());
+				if (currentObject)
+					debugC(0, kDebugObject, "%d, %s", currentObject->id, currentObject->name.c_str());
 				if (scene->getId() < 0)
 					break;
 
-				if (current_object == NULL)
+				if (currentObject == NULL)
 					break;
 
-				if (res->dseg.get_byte(dsAddr_timedCallbackState) == 3 && current_object->id == 1) {
+				if (res->dseg.get_byte(dsAddr_timedCallbackState) == 3 && currentObject->id == 1) {
 					fnGuardDrinking();
 					break;
 				}
-				if (res->dseg.get_byte(dsAddr_timedCallbackState) == 4 && current_object->id == 5) {
+				if (res->dseg.get_byte(dsAddr_timedCallbackState) == 4 && currentObject->id == 5) {
 					fnGotAnchor();
 					break;
 				}
-				use(current_object);
+				use(currentObject);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				mouse = event.mouse;
@@ -629,24 +629,24 @@ Common::Error TeenAgentEngine::run() {
 		//game delays: slow 16, normal 11, fast 5, crazy 1
 		//mark delays: 4 * (3 - hero_speed), normal == 1
 		//game delays in 1/100th of seconds
-		uint32 new_timer = _system->getMillis();
-		uint32 delta = new_timer - timer;
-		timer = new_timer;
+		uint32 newTimer = _system->getMillis();
+		uint32 delta = newTimer - timer;
+		timer = newTimer;
 
-		bool tick_game = game_timer <= delta;
-		if (tick_game)
-			game_timer = _gameDelay - ((delta - game_timer) % _gameDelay);
+		bool tickGame = gameTimer <= delta;
+		if (tickGame)
+			gameTimer = _gameDelay - ((delta - gameTimer) % _gameDelay);
 		else
-			game_timer -= delta;
+			gameTimer -= delta;
 
-		bool tick_mark = mark_timer <= delta;
-		if (tick_mark)
-			mark_timer = _markDelay - ((delta - mark_timer) % _markDelay);
+		bool tickMark = markTimer <= delta;
+		if (tickMark)
+			markTimer = _markDelay - ((delta - markTimer) % _markDelay);
 		else
-			mark_timer -= delta;
+			markTimer -= delta;
 
-		if (tick_game || tick_mark) {
-			bool b = scene->render(tick_game, tick_mark, delta);
+		if (tickGame || tickMark) {
+			bool b = scene->render(tickGame, tickMark, delta);
 			if (!inventory->active() && !b && _action != kActionNone) {
 				processObject();
 				_action = kActionNone;
@@ -661,28 +661,28 @@ Common::Error TeenAgentEngine::run() {
 		Graphics::Surface *surface = _system->lockScreen();
 
 		if (!busy) {
-			InventoryObject *selected_object = inventory->selectedObject();
-			if (current_object || selected_object) {
+			InventoryObject *selectedObject = inventory->selectedObject();
+			if (currentObject || selectedObject) {
 				Common::String name;
-				if (selected_object) {
-					name += selected_object->name;
+				if (selectedObject) {
+					name += selectedObject->name;
 					name += " & ";
 				}
-				if (current_object)
-					name += current_object->name;
+				if (currentObject)
+					name += currentObject->name;
 
 				uint w = res->font7.render(NULL, 0, 0, name, textColorMark);
 				res->font7.render(surface, (screenWidth - w) / 2, 180, name, textColorMark, true);
 #if 0
-				if (current_object) {
-					current_object->rect.render(surface, 0x80);
-					current_object->actor_rect.render(surface, 0x81);
+				if (currentObject) {
+					currentObject->rect.render(surface, 0x80);
+					currentObject->actorRect.render(surface, 0x81);
 				}
 #endif
 			}
 		}
 
-		inventory->render(surface, tick_game ? 1 : 0);
+		inventory->render(surface, tickGame ? 1 : 0);
 
 		_system->unlockScreen();
 
@@ -690,9 +690,9 @@ Common::Error TeenAgentEngine::run() {
 
 		console->onFrame();
 
-		uint32 next_tick = MIN(game_timer, mark_timer);
-		if (next_tick > 0) {
-			_system->delayMillis(next_tick > 40 ? 40 : next_tick);
+		uint32 nextTick = MIN(gameTimer, markTimer);
+		if (nextTick > 0) {
+			_system->delayMillis(nextTick > 40 ? 40 : nextTick);
 		}
 	} while (!shouldQuit());
 
