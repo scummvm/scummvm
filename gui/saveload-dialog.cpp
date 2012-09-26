@@ -882,7 +882,7 @@ void SaveLoadChooserGrid::updateSaves() {
 		}
 	}
 
-	const uint numPages = (_entriesPerPage != 0) ? (_saveList.size() / _entriesPerPage + 1) : 1;
+	const uint numPages = (_entriesPerPage != 0 && !_saveList.empty()) ? ((_saveList.size() + _entriesPerPage - 1) / _entriesPerPage) : 1;
 	_pageDisplay->setLabel(Common::String::format("%u/%u", _curPage + 1, numPages));
 
 	if (_curPage > 0)
