@@ -48,14 +48,21 @@ void EMISpriteComponent::init() {
 	uint32 texnamelength = stream->readUint32LE();
 	char *texname = new char[texnamelength];
 	stream->read(texname, texnamelength);
+	/* unknown = */ stream->readUint32LE();
+	float width, height;
+	char data[8];
+	stream->read(data, sizeof(data));
+	width = get_float(data);
+	height = get_float(data+4);
+
 
 	_sprite = new Sprite();
 	_sprite->_material = g_resourceloader->loadMaterial(texname, 0);
-	_sprite->_height = 0.5;
-	_sprite->_width = 0.5;
-	_sprite->_next = 0;
+	_sprite->_width = width;
+	_sprite->_height = height;
+	_sprite->_next = NULL;
 	_sprite->_visible = true;
-	_sprite->_pos.set(0.5, 0.5, 0.5);
+	_sprite->_pos.set(0,0,0);
 
 	delete[] texname;
 	delete stream;
