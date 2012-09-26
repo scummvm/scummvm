@@ -53,10 +53,10 @@ public:
 	void update();
 
 	void stDoIdlePickEar();
-	void sub41FDA0();
-	void sub41FDF0();
+	void stDoIdleSpinHead();
+	void stDoIdleArms();
 	void stDoIdleChest();
-	void sub41FEB0();
+	void stDoIdleHeadOff();
 	void stTryStandIdle();
 	void stWakeUp();
 	void stSleeping();
@@ -73,7 +73,7 @@ public:
 	void stPeekWall();
 	void stJumpToRing1();
 	void setupJumpToRing();
-	void sub420340();
+	void stHangOnRing();
 	void stJumpToRing2();
 	void stJumpToRing3();
 	void stHoldRing();
@@ -93,18 +93,18 @@ public:
 	void stTurnToUse();
 	void stReturnFromUse();
 	void stWalkingOpenDoor();
-	void sub421350();
+	void stSitIdleTeleporter();
 	void stIdleSitBlink();
 	void stIdleSitBlinkSecond();
 	void stPickUpNeedle();
-	void sub41FFF0();
+	void stPickUpTube();
 	void stTurnToUseInTeleporter();
 	void stReturnFromUseInTeleporter();
 	void stStepOver();
 	void stSitInTeleporter();
 	void stGetUpFromTeleporter();
 	void stMoveObjectSkipTurnFaceObject();
-	void sub420660();
+	void evMoveObjectTurnDone();
 	void stMoveObjectSkipTurn();
 	void stMoveObjectFaceObject();
 	void stUseLever();
@@ -119,19 +119,19 @@ public:
 	void stUpdateWalking();
 	void stStartWalkingDone();
 
-	void sub41CE70();
+	void stopWalking();
 	
 	void spriteUpdate41F250();
 	void suWalking();
 	void suLargeStep();
-	void spriteUpdate41F230();
+	void suUpdateDestX();
 	void suWalkingOpenDoor();
 	void spriteUpdate41F300();
 	void suWalkingTestExit();
 
 	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage41EB70(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmWalking(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41E210(int messageNum, const MessageParam &param, Entity *sender);
 
 	void setKlaymanIdleTable(const KlaymanIdleTableItem *table, int tableCount);
@@ -141,42 +141,42 @@ public:
 	
 	void setSoundFlag(bool value) { _soundFlag = value; }
 
-	void sub421640();
-	void sub421740();
-	void sub421780();
-	void sub421700();
-	void sub421840();
-	void sub421800();
-	void sub4217C0();
-	void sub421900();
-	void sub4218C0();
-	void sub421880();
-	void sub420F60();
-	void sub420FB0();
-	uint32 handleMessage41E6C0(int messageNum, const MessageParam &param, Entity *sender);
-	void sub421110();
-	uint32 handleMessage41E750(int messageNum, const MessageParam &param, Entity *sender);
-	void sub4215E0();
-	void sub421550();
+	void stStandIdleSmall();
+	void stWonderAboutAfterSmall();
+	void stWonderAboutHalfSmall();
+	void stWonderAboutSmall();
+	void stWalkToFrontNoStepSmall();
+	void stWalkToFront2Small();
+	void stWalkToFrontSmall();
+	void stTurnToBackHalfSmall();
+	void stTurnToBackWalkSmall();
+	void stTurnToBackSmall();
+	void stPullCord();
+	void stReleaseCord();
+	uint32 hmPullCord(int messageNum, const MessageParam &param, Entity *sender);
+	void stUseTube();
+	uint32 hmUseTube(int messageNum, const MessageParam &param, Entity *sender);
+	void stWalkingExt();
+	void stStartWalkingExt();
 	
-	void sub4204C0();
-	void spriteUpdate41F920();
-	uint32 handleMessage41E5F0(int messageNum, const MessageParam &param, Entity *sender);
+	void stJumpToGrab();
+	void suJumpToGrab();
+	uint32 hmJumpToGrab(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void sub421230();
+	void sub421230();//stGrow??
 	uint32 handleMessage41F1D0(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void sub421270();
-	void sub420460();
+	void stTurnToUseExt();
+	void stJumpToGrabFall();
 	
-	void sub420500();
-	uint32 handleMessage41F0E0(int messageNum, const MessageParam &param, Entity *sender);
+	void stJumpToGrabRelease();
+	uint32 hmJumpToGrabRelease(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void sub421430();
-	void sub421440();
+	void stDoIdleTeleporterHands();
+	void stIdleTeleporterHands();
 	
-	void sub421480();
-	void sub421490();
+	void stDoIdleTeleporterHands2();
+	void stIdleTeleporterHands2();
 
 protected:
 	Entity *_parentScene;
@@ -212,18 +212,18 @@ protected:
 	void evIdlePickEarDone();
 	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
 
-	void sub41FDB0();
-	uint32 handleMessage41E980(int messageNum, const MessageParam &param, Entity *sender);
+	void stIdleSpinHead();
+	uint32 hmIdleSpinHead(int messageNum, const MessageParam &param, Entity *sender);
 
-	void sub41FE00();
-	void sub41FE50();
-	uint32 handleMessage41E9E0(int messageNum, const MessageParam &param, Entity *sender);
+	void stIdleArms();
+	void evIdleArmsDone();
+	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void stIdleChest();
 	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void sub41FEC0();
-	uint32 handleMessage41EFE0(int messageNum, const MessageParam &param, Entity *sender);
+	void stIdleHeadOff();
+	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
 
 	void startIdleAnimation(uint32 fileHash, AnimationCb callback);
 	void upIdleAnimation();
@@ -233,7 +233,7 @@ protected:
 	void sub41C770();
 	void sub41C790();
 	
-	void update41D0F0();
+	void upIdle();
 
 	void stIdleBlink();
 	void stStandAround();
@@ -248,7 +248,7 @@ protected:
 	
 	void stSneak();
 	void stWalkingDone();
-	uint32 hmWalking(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmSneaking(int messageNum, const MessageParam &param, Entity *sender);
 	void startSpecialWalkLeft(int16 x);
 	void stStartWalking();
 	uint32 hmStartWalking(int messageNum, const MessageParam &param, Entity *sender);
@@ -259,7 +259,7 @@ protected:
 	
 	void startSpecialWalkRight(int16 x);
 	void sub41CC40(int16 x1, int16 x2);
-	void sub41CAC0(int16 x);
+	void startWalkToXExt(int16 x);
 	void sub41CCE0(int16 x);
 	void stLargeStepDone();
 	
@@ -279,14 +279,14 @@ protected:
 	uint32 hmMoveObjectTurn(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void update41D1C0();
+	void upSitIdleTeleporter();
 	
 	uint32 hmInsertDisk(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void sub41CDE0(int16 x);
-	void sub421680();
-	uint32 handleMessage41ED70(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage41EE00(int messageNum, const MessageParam &param, Entity *sender);
+	void startWalkToXSmall(int16 x);
+	void stStartWalkingSmall();
+	uint32 hmWalkingSmall(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmWalkFrontBackSmall(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void walkAlongPathPoints();
 	
@@ -297,8 +297,8 @@ public:
 	KmScene1001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:	
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void sub44FA50();
-	uint32 handleMessage44FA00(int messageNum, const MessageParam &param, Entity *sender);
+	void stPullLever();
+	uint32 hmPullLever(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class KmScene1002 : public Klayman {
@@ -312,16 +312,16 @@ protected:
 	void xUpdate();	
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	void update4497D0();
-	uint32 handleMessage449800(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage4498E0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage449C90(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage449D60(int messageNum, const MessageParam &param, Entity *sender);
 	void suFallDown();
-	void sub449E20();
-	void sub449E90();
+	void stJumpToRingVenusFlyTrap();
+	void stStandIdleSpecial();
 	void sub449EF0();
 	void sub449F70();
 	void stSpitOutFall();
@@ -353,9 +353,9 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage461EA0(int messageNum, const MessageParam &param, Entity *sender);
-	void sub461F30();
-	void sub461F70();
+	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+	void stTeleporterAppear();
+	void stTeleporterDisappear();
 };
 
 class KmScene1201 : public Klayman {
@@ -365,7 +365,7 @@ protected:
 	Entity *_class464;
 	int _countdown;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void update40DBE0();
+	void upMoveObject();
 	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
 	void stFetchMatch();
 	void stLightMatch();
@@ -374,7 +374,7 @@ protected:
 	void stMoveObject();
 	void stMoveObjectSkipTurn();
 	void stTumbleHeadless();
-	void sub40E040();
+	void stCloseEyes();
 };
 
 class KmScene1303 : public Klayman {
@@ -383,7 +383,7 @@ public:
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	uint32 hmPeekWallReturn(int messageNum, const MessageParam &param, Entity *sender);
-	void update4161A0();
+	void upPeekWallBlink();
 	void stPeekWall1();
 	void stPeekWall2();
 	void stPeekWallBlink();
@@ -412,9 +412,9 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage417CB0(int messageNum, const MessageParam &param, Entity *sender);
-	void sub417D40();
-	void sub417D80();
+	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+	void stTeleporterAppear();
+	void stTeleporterDisappear();
 };
 
 class KmScene1308 : public Klayman {
@@ -423,8 +423,8 @@ public:
 protected:
 	bool _flag1;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub456150();
+	uint32 hmInsertDiskSide(int messageNum, const MessageParam &param, Entity *sender);
+	void stInsertDiskSide();
 };
 
 class KmScene1401 : public Klayman {
@@ -469,11 +469,11 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage4689A0(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate468A30();
+	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+	void suFallSkipJump();
 	void stFallSkipJump();
-	void sub468AD0();
-	void sub468B10();
+	void stTeleporterAppear();
+	void stTeleporterDisappear();
 };
 
 class KmScene1901 : public Klayman {
@@ -489,9 +489,9 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage4401A0(int messageNum, const MessageParam &param, Entity *sender);
-	void sub440230();
-	void stDoTeleport();
+	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+	void stTeleporterAppear();
+	void stTeleporterDisappear();
 };
 
 class KmScene2101 : public Klayman {
@@ -500,11 +500,11 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage486160(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage486230(int messageNum, const MessageParam &param, Entity *sender);
-	void sub4862C0();
-	void sub486320();
-	void sub486360();
+	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+	void stHitByDoor();
+	void stTeleporterAppear();
+	void stTeleporterDisappear();
 };
 
 class KmScene2201 : public Klayman {
@@ -524,7 +524,7 @@ protected:
 class KmScene2205 : public Klayman {
 public:
 	KmScene2205(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
-	void sub423980();
+	void stStartWalkingResume();
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -538,9 +538,9 @@ protected:
 	int16 _yDelta;
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void spriteUpdate482450();
-	void sub482490();
-	void sub482530();
+	void suRidePlatformDown();
+	void stRidePlatformDown();
+	void stStartWalkingResume();
 };
 
 class KmScene2207 : public Klayman {
@@ -548,12 +548,12 @@ public:
 	KmScene2207(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void spriteUpdate442430();
-	void sub442460();
-	void sub4424B0();
-	void sub442520();
-	void sub442560();
-	void sub4425A0();
+	void suRidePlatform();
+	void stRidePlatform();
+	void stInteractLever();
+	void stPullLever();
+	void stLookLeverDown();
+	void stWaitLeverDown();
 };
 
 class KmScene2242 : public Klayman {
