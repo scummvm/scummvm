@@ -37,6 +37,8 @@ public:
 	Common::String FQUEST;
 	Common::String FREPON;
 	byte *BUFFERPERSO;
+	byte *PALPERSO;
+	byte *PERSOSPR;
 	size_t TAILLEPERSO;
 	int STATI;
 	int PLIGNE1, PLIGNE2;
@@ -47,9 +49,15 @@ public:
 
 	void PARLER_PERSO2(const Common::String &filename);
 	void RENVOIE_FICHIER(int srcStart, Common::String &dest, const char *srcData);
-	int DIALOGUE_REP(int idx);
 	int DIALOGUE();
+	int DIALOGUE_REP(int idx);
 	void CHERCHE_PAL(int a1, int a2);
+	void VISU_WAIT();
+	void FIN_VISU_WAIT();
+	void FIN_VISU_PARLE(int a1);
+	int VERIF_BOITE(__int16 a1, const Common::String &a2, __int16 a3);
+	void VISU_PARLE();
+	void BOB_VISU_PARLE(int idx);
 };
 
 } // End of namespace Hopkins

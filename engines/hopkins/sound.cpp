@@ -51,8 +51,9 @@ void SoundManager::WSOUND(int soundNumber) {
 	warning("TODO: WSOUND");
 }
 
-void SoundManager::VOICE_MIX(int a1, int a2) {
+bool SoundManager::VOICE_MIX(int a1, int a2) {
 	warning("TODO: VOICE_MIX");
+	return false;
 }
 
 void SoundManager::DEL_SAMPLE(int soundNumber) {
