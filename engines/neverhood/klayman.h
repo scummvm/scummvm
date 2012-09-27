@@ -311,23 +311,21 @@ protected:
 	int _status;
 	void xUpdate();	
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void update4497D0();
+	void upSpitOutFall();
 	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage449C90(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage449D60(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
 	void suFallDown();
 	void stJumpToRingVenusFlyTrap();
 	void stStandIdleSpecial();
-	void sub449EF0();
-	void sub449F70();
-	void stSpitOutFall();
-	void sub44A0D0();
-	void sub44A150();
-	void sub44A230();
+	void stSpitOutFall0();
+	void stFalling();
+	void stSpitOutFall2();
+	void stFallTouchdown();
 	void stJumpAndFall();
 	void stDropFromRing();
 	void stPressDoorButton();
@@ -650,8 +648,8 @@ public:
 protected:
 	SoundResource _soundResource;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage460600(int messageNum, const MessageParam &param, Entity *sender);
-	void sub460670();
+	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
+	void stShrink();
 };
 
 class KmScene2805 : public Klayman {
@@ -660,9 +658,9 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage404800(int messageNum, const MessageParam &param, Entity *sender);
-	void sub404890();
-	void sub4048D0();
+	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+	void stTeleporterAppear();
+	void stTeleporterDisappear();
 };
 
 class KmScene2806 : public Klayman {
@@ -697,10 +695,10 @@ protected:
 	bool _flag1;
 	bool _flag2;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage457FC0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage458340(int messageNum, const MessageParam &param, Entity *sender);
-	void sub458550();
-	void sub458590();
+	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
+	void stGrow();
+	void stDrinkPotion();
 };
 
 class KmScene2810Small : public Klayman {

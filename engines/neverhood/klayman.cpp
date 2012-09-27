@@ -2537,7 +2537,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-void KmScene1002::update4497D0() {
+void KmScene1002::upSpitOutFall() {
 	Klayman::update();
 	if (_countdown1 != 0 && (--_countdown1 == 0)) {
 		_surface->setVisible(true);
@@ -2583,11 +2583,12 @@ uint32 KmScene1002::hmStandIdleSpecial(int messageNum, const MessageParam &param
 		}
 		_y = ((Sprite*)sender)->getY() - 200;
 		if (param.asInteger() == 0) {
-			sub449EF0();
+			stSpitOutFall0();
 		} else if (param.asInteger() == 1) {
-			sub44A0D0();
+			// NOTE This is never used and the code was removed
+			// Also the animations used here in the original don't exist...
 		} else if (param.asInteger() == 2) {
-			stSpitOutFall();
+			stSpitOutFall2();
 		}
 		break;
 	}
@@ -2659,7 +2660,7 @@ uint32 KmScene1002::hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &
 	return messageResult;
 }
 
-uint32 KmScene1002::handleMessage449C90(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene1002::hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender) {
 	int16 speedUpFrameIndex;
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
@@ -2682,7 +2683,7 @@ uint32 KmScene1002::handleMessage449C90(int messageNum, const MessageParam &para
 	return messageResult;
 }
 
-uint32 KmScene1002::handleMessage449D60(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene1002::hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -2729,22 +2730,20 @@ void KmScene1002::stStandIdleSpecial() {
 	SetMessageHandler(&KmScene1002::hmStandIdleSpecial);
 }
 
-void KmScene1002::sub449EF0() {
+void KmScene1002::stSpitOutFall0() {
 	_countdown1 = 1;
 	_status2 = 0;
 	_acceptInput = false;
 	startAnimation(0x000BAB02, 0, -1);
-	SetUpdateHandler(&KmScene1002::update4497D0);
-	// Weird stuff happening
+	SetUpdateHandler(&KmScene1002::upSpitOutFall);
 	SetMessageHandler(&Klayman::handleMessage41D360);
-	//SetMessageHandler(&Klayman::handleMessage41D480);
 	SetSpriteUpdate(&KmScene1002::suFallDown);
-	NextState(&KmScene1002::sub449F70);
+	NextState(&KmScene1002::stFalling);
 	sendMessage(_class599, 0x482A, 0);
 	sendMessage(_ssLadderArch, 0x482A, 0);
 }
 
-void KmScene1002::sub449F70() {
+void KmScene1002::stFalling() {
 	sendMessage(_parentScene, 0x1024, 1);
 	_soundResource1.play(0x41648271);
 	_status2 = 1;
@@ -2754,7 +2753,7 @@ void KmScene1002::sub449F70() {
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(NULL);
 	SetMessageHandler(&KmScene1002::handleMessage41D480);
-	NextState(&KmScene1002::sub44A230);
+	NextState(&KmScene1002::stFallTouchdown);
 	sendMessage(_parentScene, 0x2002, 0);
 	// TODO _callbackList = NULL;
 	_attachedSprite = NULL;
@@ -2762,51 +2761,20 @@ void KmScene1002::sub449F70() {
 	sendMessage(_ssLadderArch, 0x482B, 0);
 }
 
-void KmScene1002::stSpitOutFall() {
+void KmScene1002::stSpitOutFall2() {
 	_countdown1 = 1;
 	_status2 = 0;
 	_acceptInput = false;
 	startAnimation(0x9308C132, 0, -1);
-	SetUpdateHandler(&KmScene1002::update4497D0);
-	SetSpriteUpdate(&KmScene1002::suFallDown);
+	SetUpdateHandler(&KmScene1002::upSpitOutFall);
 	SetMessageHandler(&Klayman::handleMessage41D480);
-	NextState(&KmScene1002::sub449F70);
-	sendMessage(_class599, 0x482A, 0);
-	sendMessage(_ssLadderArch, 0x482A, 0);
-}
-
-void KmScene1002::sub44A0D0() {
-	_countdown1 = 1;
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0x0013A206, 0, -1);
-	SetUpdateHandler(&KmScene1002::update4497D0);
-	SetMessageHandler(&Klayman::handleMessage41D360);
 	SetSpriteUpdate(&KmScene1002::suFallDown);
-	NextState(&KmScene1002::sub44A150);
+	NextState(&KmScene1002::stFalling);
 	sendMessage(_class599, 0x482A, 0);
 	sendMessage(_ssLadderArch, 0x482A, 0);
 }
 
-void KmScene1002::sub44A150() {
-	sendMessage(_parentScene, 0x1024, 1);
-	_soundResource1.play(0x41648271);
-	_status2 = 1;
-	_acceptInput = false;
-	_isWalking = false;
-	startAnimationByHash(0x0013A206, 0x88003000, 0);
-	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&KmScene1002::handleMessage41D480);
-	SetSpriteUpdate(NULL);
-	NextState(&KmScene1002::sub44A230);
-	sendMessage(_parentScene, 0x2002, 0);
-	// TODO _callbackList = NULL;
-	_attachedSprite = NULL;
-	sendMessage(_class599, 0x482B, 0);
-	sendMessage(_ssLadderArch, 0x482B, 0);
-}
-
-void KmScene1002::sub44A230() {
+void KmScene1002::stFallTouchdown() {
 	setDoDeltaX(2);
 	stTryStandIdle();
 }
@@ -2818,7 +2786,7 @@ void KmScene1002::stJumpAndFall() {
 		_acceptInput = false;
 		startAnimation(0xB93AB151, 0, -1);
 		SetUpdateHandler(&Klayman::update);
-		SetMessageHandler(&KmScene1002::handleMessage449D60);
+		SetMessageHandler(&KmScene1002::hmJumpAndFall);
 		SetSpriteUpdate(&KmScene1002::suFallDown);
 		NextState(&Klayman::stLandOnFeet);
 	}
@@ -2854,7 +2822,7 @@ void KmScene1002::stHitByBoxingGlove() {
 	_acceptInput = false;
 	startAnimation(0x35AA8059, 0, -1);
 	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&KmScene1002::handleMessage449C90);
+	SetMessageHandler(&KmScene1002::hmHitByBoxingGlove);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	FinalizeState(&KmScene1002::stHitByBoxingGloveDone);
 }
@@ -5865,13 +5833,13 @@ uint32 KmScene2803b::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klayman::stTurnToBackSmall);
 		break;
 	case 0x4830:
-		GotoState(&KmScene2803b::sub460670);
+		GotoState(&KmScene2803b::stShrink);
 		break;
 	}
 	return 0;
 }
 
-uint32 KmScene2803b::handleMessage460600(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene2803b::hmShrink(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -5884,14 +5852,14 @@ uint32 KmScene2803b::handleMessage460600(int messageNum, const MessageParam &par
 	return messageResult;
 }
 
-void KmScene2803b::sub460670() {
+void KmScene2803b::stShrink() {
 	_status2 = 0;
 	_acceptInput = false;
 	startAnimation(0x1AE88904, 0, -1);
 	_soundResource1.play(0x4C69EA53);
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	SetMessageHandler(&KmScene2803b::handleMessage460600);
+	SetMessageHandler(&KmScene2803b::hmShrink);
 }
 
 KmScene2805::KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
@@ -5940,16 +5908,16 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stGetUpFromTeleporter);
 		break;
 	case 0x483D:
-		sub404890();
+		stTeleporterAppear();
 		break;
 	case 0x483E:
-		sub4048D0();
+		stTeleporterDisappear();
 		break;
 	}
 	return 0;
 }
 
-uint32 KmScene2805::handleMessage404800(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene2805::hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -5962,21 +5930,21 @@ uint32 KmScene2805::handleMessage404800(int messageNum, const MessageParam &para
 	return messageResult;
 }
 
-void KmScene2805::sub404890() {
+void KmScene2805::stTeleporterAppear() {
 	_status2 = 0;
 	_acceptInput = false;
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene2805::handleMessage404800);
+	SetMessageHandler(&KmScene2805::hmTeleporterAppearDisappear);
 	startAnimation(0xDE284B74, 0, -1);
 }
 
-void KmScene2805::sub4048D0() {
+void KmScene2805::stTeleporterDisappear() {
 	_status2 = 0;
 	_acceptInput = false;
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene2805::handleMessage404800);
+	SetMessageHandler(&KmScene2805::hmTeleporterAppearDisappear);
 	startAnimation(0xD82A4094, 0, -1);
 }
 
@@ -6126,10 +6094,10 @@ uint32 KmScene2806::hmGrow(int messageNum, const MessageParam &param, Entity *se
 void KmScene2806::stGrow() {
 	_status2 = 0;
 	_acceptInput = false;
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	SetMessageHandler(&KmScene2806::hmGrow);
 	startAnimation(0x2838C010, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&KmScene2806::hmGrow);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
 
 void KmScene2806::stDrinkPotion() {
@@ -6137,10 +6105,10 @@ void KmScene2806::stDrinkPotion() {
 	_acceptInput = false;
 	_flag1 = false;
 	_flag2 = false;
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	SetMessageHandler(&KmScene2806::hmDrinkPotion);
 	startAnimation(0x1C388C04, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&KmScene2806::hmDrinkPotion);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
 
 KmScene2809::KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
@@ -6189,11 +6157,11 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x4831:
-		GotoState(&KmScene2809::sub458550);
+		GotoState(&KmScene2809::stGrow);
 		break;
 	case 0x4832:
 		if (param.asInteger() == 1) {
-			GotoState(&KmScene2809::sub458590);
+			GotoState(&KmScene2809::stDrinkPotion);
 		} else {
 			GotoState(&Klayman::stUseTube);
 		}
@@ -6202,7 +6170,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-uint32 KmScene2809::handleMessage457FC0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene2809::hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1008:
@@ -6254,7 +6222,7 @@ uint32 KmScene2809::handleMessage457FC0(int messageNum, const MessageParam &para
 	return messageResult;
 }
 
-uint32 KmScene2809::handleMessage458340(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene2809::hmGrow(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -6287,23 +6255,23 @@ uint32 KmScene2809::handleMessage458340(int messageNum, const MessageParam &para
 	return messageResult;
 }
 
-void KmScene2809::sub458550() {
+void KmScene2809::stGrow() {
 	_status2 = 0;
 	_acceptInput = false;
 	startAnimation(0x2838C010, 0, -1);
 	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&KmScene2809::handleMessage458340);
+	SetMessageHandler(&KmScene2809::hmGrow);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
 
-void KmScene2809::sub458590() {
+void KmScene2809::stDrinkPotion() {
 	_status2 = 1;
 	_acceptInput = false;
 	_flag1 = false;
 	_flag2 = false;
 	startAnimation(0x1C388C04, 0, -1);
 	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&KmScene2809::handleMessage457FC0);
+	SetMessageHandler(&KmScene2809::hmDrinkPotion);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
 
