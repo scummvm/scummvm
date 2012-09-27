@@ -412,6 +412,11 @@ void Parallaction_ns::changeLocation() {
 
 	if (!_intro) {
 		_input->setMouseState(oldMouseState);
+		// WORKAROUND: Fix a script bug in the Multilingual DOS version of
+		// Nippon Safes: the mouse cursor is incorrectly hidden outside the
+		// cave at the end of the game. Fix it here.
+		if (!strcmp(_location._name, "ingressocav"))
+			_input->setMouseState(MOUSE_ENABLED_SHOW);
 	}
 
 	debugC(1, kDebugExec, "changeLocation() done");
