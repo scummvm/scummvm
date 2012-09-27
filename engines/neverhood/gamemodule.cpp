@@ -310,7 +310,7 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 0;
 	createModule(2000, -1);
 #endif
-#if 1
+#if 0
 	_vm->gameState().sceneNum = 5;
 	createModule(2200, -1);
 #endif
@@ -344,8 +344,9 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 1;
 	createModule(2700, -1);
 #endif
-#if 0
-	_vm->gameState().sceneNum = 11;
+#if 1
+	setGlobalVar(0x1860C990, 1); // DEBUG Make Klayman small
+	_vm->gameState().sceneNum = 2;
 	createModule(2800, -1);
 #endif
 #if 0
@@ -354,7 +355,7 @@ void GameModule::startup() {
 	createModule(2500, -1);
 #endif
 #if 0
-	_vm->gameState().sceneNum = 2;
+	_vm->gameState().sceneNum = 1;
 	createModule(2400, -1);
 #endif
 }

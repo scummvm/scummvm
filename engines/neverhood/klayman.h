@@ -562,7 +562,7 @@ public:
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void sub444D20();
+	void stStartWalkingResume();
 };
 
 class KmHallOfRecords : public Klayman {
@@ -571,7 +571,7 @@ public:
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void sub43B130();
+	void stStartWalkingResume();
 };
 
 class KmScene2247 : public Klayman {
@@ -580,7 +580,7 @@ public:
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void sub453520();
+	void stStartWalkingResume();
 };
 
 class KmScene2401 : public Klayman {
@@ -605,7 +605,7 @@ public:
 	KmScene2402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void sub415840();
+	void stStandWonderAbout();
 };
 
 class KmScene2403 : public Klayman {
@@ -678,10 +678,10 @@ protected:
 	bool _flag1;
 	bool _flag2;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage40F1F0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage40F570(int messageNum, const MessageParam &param, Entity *sender);
-	void sub40F780();
-	void sub40F7C0();
+	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
+	void stGrow();
+	void stDrinkPotion();
 };
 
 class KmScene2809 : public Klayman {

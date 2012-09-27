@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/file.h"
+#include "common/mutex.h"
 #include "common/stream.h"
 #include "common/substream.h"
 #include "neverhood/neverhood.h"
@@ -63,6 +64,7 @@ public:
 	Common::SeekableReadStream *createStream(uint index);
 private:
 	Common::File _fd;
+	Common::Mutex _mutex;
 	Common::Array<BlbArchiveEntry> _entries;
 	byte *_extData;
 };

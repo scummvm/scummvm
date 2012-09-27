@@ -306,11 +306,11 @@ void SoundMan::update() {
 			if (musicItem->_countdown) {
 				--musicItem->_countdown;
 			} else if (musicItem->_play && !musicItem->_musicResource->isPlaying()) {
-				debug("SoundMan: play music %08X (fade %d)", musicItem->_musicFileHash, musicItem->_fadeVolumeStep);
+				debug(1, "SoundMan: play music %08X (fade %d)", musicItem->_musicFileHash, musicItem->_fadeVolumeStep);
 				musicItem->_musicResource->play(musicItem->_fadeVolumeStep);
 				musicItem->_fadeVolumeStep = 0;
 			} else if (musicItem->_stop) {
-				debug("SoundMan: stop music %08X (fade %d)", musicItem->_musicFileHash, musicItem->_fadeVolumeStep);
+				debug(1, "SoundMan: stop music %08X (fade %d)", musicItem->_musicFileHash, musicItem->_fadeVolumeStep);
 				musicItem->_musicResource->stop(musicItem->_fadeVolumeStep);
 				musicItem->_fadeVolumeStep = 0;
 				musicItem->_stop = false;
@@ -529,13 +529,11 @@ int16 AudioResourceMan::addSound(uint32 fileHash) {
 	soundItem->_isPlaying = false;
 	soundItem->_volume = 100;
 	soundItem->_panning = 50;
-
 	for (uint i = 0; i < _soundItems.size(); ++i)
 		if (!_soundItems[i]) {
 			_soundItems[i] = soundItem;
 			return i;
 		}
-
 	int16 soundIndex = (int16)_soundItems.size();
 	_soundItems.push_back(soundItem);
 	return soundIndex;
@@ -591,6 +589,9 @@ void AudioResourceMan::playSound(int16 soundIndex, bool looping) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
 	if (!soundItem->_data)
 		loadSound(soundIndex);
+
+	if (!soundItem->_data)
+		return;
 		
 	uint32 soundSize = _vm->_res->getResourceSize(soundItem->_resourceHandle);
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundItem->_data, soundSize, DisposeAfterUse::NO);
@@ -600,7 +601,7 @@ void AudioResourceMan::playSound(int16 soundIndex, bool looping) {
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundItem->_soundHandle,
 		audioStream, -1, VOLUME(soundItem->_volume), PANNING(soundItem->_panning));
 		
-	debug("playing sound %08X", soundItem->_fileHash);
+	debug(1, "playing sound %08X", soundItem->_fileHash);
 	
 	soundItem->_isPlaying = true;
 	

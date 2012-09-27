@@ -25,6 +25,29 @@
 
 namespace Neverhood {
 
+/**
+ * A special variant of SafeSeekableSubReadStream which locks a mutex during each read.
+ * This is neccessary because the music is streamed from disk and it could happen
+ * that a sound effect or another music track is played from the same read stream
+ * while the first music track is updated/read.
+ */
+
+class SafeMutexedSeekableSubReadStream : public Common::SafeSeekableSubReadStream {
+public:
+	SafeMutexedSeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream,
+		Common::Mutex &mutex)
+		: SafeSeekableSubReadStream(parentStream, begin, end, disposeParentStream), _mutex(mutex) {
+	}
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+protected:
+	Common::Mutex &_mutex;
+};
+
+uint32 SafeMutexedSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
+	Common::StackLock lock(_mutex);
+	return Common::SafeSeekableSubReadStream::read(dataPtr, dataSize);
+}
+
 BlbArchive::BlbArchive() : _extData(NULL) {
 }
 
@@ -84,6 +107,8 @@ void BlbArchive::open(const Common::String &filename) {
 }
 
 void BlbArchive::load(uint index, byte *buffer, uint32 size) {
+	Common::StackLock lock(_mutex);
+	
 	BlbArchiveEntry &entry = _entries[index];
 	
 	_fd.seek(entry.offset);
@@ -95,7 +120,11 @@ void BlbArchive::load(uint index, byte *buffer, uint32 size) {
 		_fd.read(buffer, size);
 		break;
 	case 3: // DCL-compressed
-		Common::decompressDCL(&_fd, buffer, entry.diskSize, entry.size);
+		if (!Common::decompressDCL(&_fd, buffer, entry.diskSize, entry.size)) {
+			debug("decompressDCL(diskSize: %d; size: %d)", entry.diskSize, entry.size);
+			debug("-> fileHash: %08X; type: %d; offset: %08X; endOffset: %08X", entry.fileHash, entry.type, entry.offset, entry.offset + entry.diskSize);
+			debug("-> fd.pos() = %08X", _fd.pos());
+		}
 		break;
 	default:
 		error("BlbArchive::load() Unknown compression type %d", entry.comprType);
@@ -110,7 +139,8 @@ byte *BlbArchive::getEntryExtData(uint index) {
 
 Common::SeekableReadStream *BlbArchive::createStream(uint index) {
 	const BlbArchiveEntry &entry = _entries[index];
-	return new Common::SafeSeekableSubReadStream(&_fd, entry.offset, entry.offset + entry.diskSize);
+	return new SafeMutexedSeekableSubReadStream(&_fd, entry.offset, entry.offset + entry.diskSize,
+		DisposeAfterUse::NO,_mutex);
 }
 
 } // End of namespace Neverhood

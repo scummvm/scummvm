@@ -5024,7 +5024,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4804:
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
-			GotoState(&KmScene2242::sub444D20);
+			GotoState(&KmScene2242::stStartWalkingResume);
 		} else {
 			GotoState(&Klayman::stPeekWall);
 		}
@@ -5073,8 +5073,8 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-void KmScene2242::sub444D20() {
-	int16 frameIndex = (int16)getGlobalVar(0x18288913);
+void KmScene2242::stStartWalkingResume() {
+	int16 frameIndex = getGlobalVar(0x18288913);
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
@@ -5109,7 +5109,7 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 	case 0x4804:
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
-			GotoState(&KmHallOfRecords::sub43B130);
+			GotoState(&KmHallOfRecords::stStartWalkingResume);
 		} else {
 			GotoState(&Klayman::stPeekWall);
 		}
@@ -5142,8 +5142,8 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 	return 0;
 }
 
-void KmHallOfRecords::sub43B130() {
-	int16 frameIndex = (int16)getGlobalVar(0x18288913);
+void KmHallOfRecords::stStartWalkingResume() {
+	int16 frameIndex = getGlobalVar(0x18288913);
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
@@ -5178,7 +5178,7 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4804:
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
-			GotoState(&KmScene2247::sub453520);
+			GotoState(&KmScene2247::stStartWalkingResume);
 		} else {
 			GotoState(&Klayman::stPeekWall);
 		}
@@ -5211,8 +5211,8 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
   
-void KmScene2247::sub453520() {
-	int16 frameIndex = (int16)getGlobalVar(0x18288913);
+void KmScene2247::stStartWalkingResume() {
+	int16 frameIndex = getGlobalVar(0x18288913);
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
@@ -5384,7 +5384,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4004:
 		if (!getGlobalVar(0x92603A79))
-			GotoState(&KmScene2402::sub415840);
+			GotoState(&KmScene2402::stStandWonderAbout);
 		else
 			GotoState(&Klayman::stTryStandIdle);
 		break;
@@ -5442,7 +5442,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-void KmScene2402::sub415840() {
+void KmScene2402::stStandWonderAbout() {
 	if (_x > 260)
 		setDoDeltaX(1);
 	_status2 = 0;
@@ -6027,11 +6027,11 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x4831:
-		GotoState(&KmScene2806::sub40F780);
+		GotoState(&KmScene2806::stGrow);
 		break;
 	case 0x4832:
 		if (param.asInteger() == 1) {
-			GotoState(&KmScene2806::sub40F7C0);
+			GotoState(&KmScene2806::stDrinkPotion);
 		} else {
 			GotoState(&Klayman::stUseTube);
 		}
@@ -6040,7 +6040,7 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-uint32 KmScene2806::handleMessage40F1F0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene2806::hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1008:
@@ -6090,7 +6090,7 @@ uint32 KmScene2806::handleMessage40F1F0(int messageNum, const MessageParam &para
 	return messageResult;
 }
 
-uint32 KmScene2806::handleMessage40F570(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene2806::hmGrow(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -6123,23 +6123,23 @@ uint32 KmScene2806::handleMessage40F570(int messageNum, const MessageParam &para
 	return messageResult;
 }
 
-void KmScene2806::sub40F780() {
+void KmScene2806::stGrow() {
 	_status2 = 0;
 	_acceptInput = false;
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	SetMessageHandler(&KmScene2806::handleMessage40F570);
+	SetMessageHandler(&KmScene2806::hmGrow);
 	startAnimation(0x2838C010, 0, -1);
 }
 
-void KmScene2806::sub40F7C0() {
+void KmScene2806::stDrinkPotion() {
 	_status2 = 1;
 	_acceptInput = false;
 	_flag1 = false;
 	_flag2 = false;
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	SetMessageHandler(&KmScene2806::handleMessage40F1F0);
+	SetMessageHandler(&KmScene2806::hmDrinkPotion);
 	startAnimation(0x1C388C04, 0, -1);
 }
 

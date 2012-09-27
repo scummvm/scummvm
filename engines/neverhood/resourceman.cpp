@@ -77,6 +77,8 @@ BlbArchiveEntry *ResourceMan::getArchiveEntry(ResourceFileEntry *entry) const {
 
 int ResourceMan::useResource(uint32 fileHash) {
 	ResourceFileEntry *entry = findEntry(fileHash);
+	if (!entry)
+		return -1;
 	if (entry->resourceHandle != -1) {
 		_resources[entry->resourceHandle]->useRefCount++;
 	} else {
@@ -94,6 +96,8 @@ int ResourceMan::useResource(uint32 fileHash) {
 }
 
 void ResourceMan::unuseResource(int resourceHandle) {
+	if (resourceHandle < 0)
+		return;
 	Resource *resource = _resources[resourceHandle];
 	if (resource->useRefCount > 0)
 		resource->useRefCount--;
@@ -111,15 +115,21 @@ int ResourceMan::getResourceHandleByHash(uint32 fileHash) {
 }
 
 bool ResourceMan::isResourceDataValid(int resourceHandle) const {
+	if (resourceHandle < 0)
+		return false;
 	return _resources[resourceHandle]->data != NULL;
 }
 
 uint32 ResourceMan::getResourceSize(int resourceHandle) const {
+	if (resourceHandle < 0)
+		return 0;
 	Resource *resource = _resources[resourceHandle];
 	return _archives[resource->archiveIndex]->getEntry(resource->entryIndex)->size;
 }
 
 byte ResourceMan::getResourceType(int resourceHandle) {
+	if (resourceHandle < 0)
+		return 0;
 	Resource *resource = _resources[resourceHandle];
 	return _archives[resource->archiveIndex]->getEntry(resource->entryIndex)->type;
 }
@@ -130,6 +140,8 @@ byte ResourceMan::getResourceTypeByHash(uint32 fileHash) {
 }
 
 byte *ResourceMan::getResourceExtData(int resourceHandle) {
+	if (resourceHandle < 0)
+		return NULL;
 	Resource *resource = _resources[resourceHandle];
 	return _archives[resource->archiveIndex]->getEntryExtData(resource->entryIndex);
 }
@@ -140,6 +152,8 @@ byte *ResourceMan::getResourceExtDataByHash(uint32 fileHash) {
 }
 
 byte *ResourceMan::loadResource(int resourceHandle, bool moveToFront) {
+	if (resourceHandle < 0)
+		return NULL;
 	Resource *resource = _resources[resourceHandle];
 	if (resource->data != NULL) {
 		resource->dataRefCount++;
@@ -154,6 +168,8 @@ byte *ResourceMan::loadResource(int resourceHandle, bool moveToFront) {
 }
 
 void ResourceMan::unloadResource(int resourceHandle) {
+	if (resourceHandle < 0)
+		return;
 	Resource *resource = _resources[resourceHandle];
 	if (resource->dataRefCount > 0)
 		resource->dataRefCount--;
