@@ -310,6 +310,7 @@ void Parallaction_ns::changeBackground(const char* background, const char* mask,
 		_system->delayMillis(20);
 		_gfx->setPalette(pal);
 		_gfx->updateScreen();
+		return;
 	}
 
 	if (path == 0) {
