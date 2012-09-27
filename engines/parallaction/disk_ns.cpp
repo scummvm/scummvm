@@ -328,7 +328,7 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 	}
 
 	char v20[30];
-	if (_engineFlags & kEngineTransformedDonna) {
+	if (g_engineFlags & kEngineTransformedDonna) {
 		sprintf(v20, "%stta.cnv", name);
 	} else {
 		sprintf(v20, "%stal.cnv", name);

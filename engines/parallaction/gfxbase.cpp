@@ -152,22 +152,22 @@ void Gfx::freeCharacterObjects() {
 	freeDialogueObjects();
 }
 
-void BackgroundInfo::loadGfxObjMask(const char *name, GfxObj *obj) {
+void BackgroundInfo::loadGfxObjMask(Parallaction *vm, const char *name, GfxObj *obj) {
 	debugC(1, kDebugGraphics, "BackgroundInfo::loadGfxObjMask(\"%s\")", name);
 	Common::Rect rect;
 	obj->getRect(0, rect);
 
-	MaskBuffer *buf = _vm->_disk->loadMask(name, rect.width(), rect.height());
+	MaskBuffer *buf = vm->_disk->loadMask(name, rect.width(), rect.height());
 
 	obj->_maskId = addMaskPatch(buf);
 	obj->_hasMask = true;
 }
 
-void BackgroundInfo::loadGfxObjPath(const char *name, GfxObj *obj) {
+void BackgroundInfo::loadGfxObjPath(Parallaction *vm, const char *name, GfxObj *obj) {
 	Common::Rect rect;
 	obj->getRect(0, rect);
 
-	PathBuffer *buf = _vm->_disk->loadPath(name, rect.width(), rect.height());
+	PathBuffer *buf = vm->_disk->loadPath(name, rect.width(), rect.height());
 
 	obj->_pathId = addPathPatch(buf);
 	obj->_hasPath = true;

@@ -55,27 +55,27 @@ WalkFrames _char24WalkFrames_NS = {
 };
 
 static int getPathWidth() {
-	if (!_vm->_gfx->_backgroundInfo->_path) {
+	if (!g_vm->_gfx->_backgroundInfo->_path) {
 		warning("getPathWidth() _path is NULL!");
 		return 0;
 	} else
-		return _vm->_gfx->_backgroundInfo->_path->w;
+		return g_vm->_gfx->_backgroundInfo->_path->w;
 }
 
 static int getPathHeight() {
-	if (!_vm->_gfx->_backgroundInfo->_path) {
+	if (!g_vm->_gfx->_backgroundInfo->_path) {
 		warning("getPathHeight() _path is NULL!");
 		return 0;
 	} else
-		return _vm->_gfx->_backgroundInfo->_path->h;
+		return g_vm->_gfx->_backgroundInfo->_path->h;
 }
 
 static bool isPathClear(uint16 x, uint16 y) {
-	if (!_vm->_gfx->_backgroundInfo->_path) {
+	if (!g_vm->_gfx->_backgroundInfo->_path) {
 		warning("isPathClear() _path is NULL!");
 		return false;
 	} else
-		return (_vm->_gfx->_backgroundInfo->_path->getValue(x, y) ? true : false);
+		return (g_vm->_gfx->_backgroundInfo->_path->getValue(x, y) ? true : false);
 }
 
 // adjusts position towards nearest walkable point
@@ -306,7 +306,7 @@ void PathWalker_NS::checkDoor(const Common::Point &foot) {
 }
 
 void PathWalker_NS::finalizeWalk() {
-	_engineFlags &= ~kEngineWalking;
+	g_engineFlags &= ~kEngineWalking;
 
 	Common::Point foot;
 	_a->getFoot(foot);
@@ -316,7 +316,7 @@ void PathWalker_NS::finalizeWalk() {
 }
 
 void PathWalker_NS::walk() {
-	if ((_engineFlags & kEngineWalking) == 0) {
+	if ((g_engineFlags & kEngineWalking) == 0) {
 		return;
 	}
 
@@ -382,7 +382,7 @@ void PathWalker_NS::updateDirection(const Common::Point& pos, const Common::Poin
 	_a->setF(frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction]);
 }
 
-PathWalker_NS::PathWalker_NS() : _direction(WALK_DOWN), _step(0) {
+PathWalker_NS::PathWalker_NS(Parallaction *vm) : _direction(WALK_DOWN), _step(0), _vm(vm) {
 }
 
 bool PathWalker_BR::directPathExists(const Common::Point &from, const Common::Point &to) {
@@ -481,7 +481,7 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 }
 
 void PathWalker_BR::finalizeWalk(State &s) {
-	_engineFlags &= ~kEngineWalking;
+	g_engineFlags &= ~kEngineWalking;
 
 	Common::Point foot;
 	_character._a->getFoot(foot);
@@ -508,8 +508,8 @@ void PathWalker_BR::finalizeWalk(State &s) {
 
 #if 0
 	// TODO: Input::walkTo must be extended to support destination frame in addition to coordinates
-	if (_engineFlags & FINAL_WALK_FRAME) {	// this flag is set in readInput()
-		_engineFlags &= ~FINAL_WALK_FRAME;
+	if (g_engineFlags & FINAL_WALK_FRAME) {	// this flag is set in readInput()
+		g_engineFlags &= ~FINAL_WALK_FRAME;
 		_ch._a->_frame = _moveToF;	// from readInput()...
 	} else {
 		_ch._a->_frame = _dirFrame;	// from walk()
@@ -523,7 +523,7 @@ void PathWalker_BR::finalizeWalk(State &s) {
 }
 
 void PathWalker_BR::walk() {
-	if ((_engineFlags & kEngineWalking) == 0) {
+	if ((g_engineFlags & kEngineWalking) == 0) {
 		return;
 	}
 
@@ -714,7 +714,7 @@ void PathWalker_BR::doWalk(State &s) {
 	}
 }
 
-PathWalker_BR::PathWalker_BR() {
+PathWalker_BR::PathWalker_BR(Parallaction *vm) : _vm(vm) {
 	_character._active = false;
 	_character._step = 0;
 	_follower._active = false;
