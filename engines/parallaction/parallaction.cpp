@@ -129,10 +129,6 @@ GUI::Debugger *Parallaction::getDebugger() {
 	return _debugger;
 }
 
-bool canScroll() {
-	return (_vm->_gfx->_backgroundInfo->width > _vm->_screenWidth);
-}
-
 void Parallaction::updateView() {
 
 	if ((_engineFlags & kEnginePauseJobs) && (_input->_inputMode != Input::kInputModeInventory)) {
