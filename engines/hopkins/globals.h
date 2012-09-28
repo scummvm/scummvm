@@ -32,6 +32,18 @@ struct ZonePItem {
 	int field0;
 	int field2;
 	int field4;
+	int field6;
+	int field7;
+	int field8;
+	int field9;
+	int fieldA;
+	int fieldB;
+	int fieldC;
+	int fieldD;
+	int fieldE;
+	int fieldF;
+	int field12;
+	int field16;
 };
 
 struct LigneItem {
@@ -183,7 +195,11 @@ struct CacheItem {
 
 // Note: Fields decimal based for now
 struct Sauvegarde {
+	int field1;
+	int field2;
+	int field3;
 	int field4;
+	int field13;
 	int field80;
 	int field170;
 	int field171;
@@ -240,7 +256,7 @@ public:
 	int lItCounter;
 	int lOldItCounter;
 	int g_old_anim;
-	int g_old_sens;
+	int g_old_sens, g_old_sens2;
 	int HopkinsArr[140];
 	byte *police;
 	int police_l;
@@ -249,7 +265,7 @@ public:
 	byte *ICONE;
 	byte *BUF_ZONE;
 	byte *CACHE_BANQUE[6];
-	ZonePItem ZoneP[105];
+	ZonePItem ZONEP[106];
 	LigneItem Ligne[400];
 	LigneZoneItem LigneZone[400];
 	CarreZoneItem CarreZone[100];
@@ -263,6 +279,8 @@ public:
 	ObjetWItem ObjetW[300];
 	BlocItem BLOC[250];
 	CacheItem Cache[25];
+	int BOBZONE[105];
+	bool BOBZONE_FLAG[105];
 	byte *Winventaire;
 	byte *texte_tmp;
 	int texte_long;
@@ -340,6 +358,14 @@ public:
 	bool PLAN_FLAG;
 	int GOACTION;
 	int NECESSAIRE;
+	int Compteur;
+	int ACTION_SENS;
+
+	int force_to_data_0;
+	int old_zone_68;
+	int old_x_69, old_y_70;
+	int compteur_71;
+	int zozo_73;
 
 	Globals();
 	~Globals();
@@ -350,6 +376,7 @@ public:
 	void HOPKINS_DATA();
 	void INIT_ANIM();
 	void INIT_VBOB();
+	void CLEAR_VBOB();
 	void CHARGE_OBJET();
 	byte *dos_malloc2(int count);
 	byte *dos_free2(byte *p);

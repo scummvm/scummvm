@@ -965,11 +965,44 @@ void GraphicsManager::setpal_vga256_linux(const byte *palette, const byte *surfa
 	}
 }
 
+void GraphicsManager::SETCOLOR(int palIndex, int r, int g, int b) {
+	_vm->_graphicsManager.Palette[palIndex * 3] = 255 * r / 100;
+	_vm->_graphicsManager.Palette[palIndex * 3 + 1] = 255 * g / 100;
+	_vm->_graphicsManager.Palette[palIndex * 3 + 2] = 255 * b / 100;
+	
+	setpal_vga256(Palette);
+}
+
+void GraphicsManager::SETCOLOR2(int palIndex, int r, int g, int b) {
+	return SETCOLOR(palIndex, r, g, b);
+}
+
 void GraphicsManager::SETCOLOR3(int palIndex, int r, int g, int b) {
-  int offset = palIndex * 3;
-  Palette[offset] = 255 * r / 100;
-  Palette[offset + 1] = 255 * g / 100;
-  Palette[offset + 2] = 255 * b / 100;
+	Palette[palIndex * 3] = 255 * r / 100;
+	Palette[palIndex * 3 + 1] = 255 * g / 100;
+	Palette[palIndex * 3 + 2] = 255 * b / 100;
+}
+
+void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
+	int rv, gv, bv;
+	int palOffset; 
+	int v8; 
+
+	rv = 255 * r / 100;
+	gv = 255 * g / 100;
+	bv = 255 * b / 100;
+	palOffset = 3 * palIndex;
+	Palette[palOffset] = 255 * r / 100;
+	Palette[palOffset + 1] = gv;
+	Palette[palOffset + 2] = bv;
+
+	v8 = 4 * palIndex;
+	cmap[v8] = rv;
+	cmap[v8 + 1] = gv;
+	cmap[v8 + 2] = bv;
+	
+	WRITE_LE_UINT16(&SD_PIXELS[2 * palIndex], MapRGB(rv, gv, bv));
+	g_system->getPaletteManager()->setPalette(cmap, palIndex, 1);
 }
 
 void GraphicsManager::CHANGE_PALETTE(const byte *palette) {

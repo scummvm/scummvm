@@ -135,7 +135,10 @@ public:
 	void FADE_INW_LINUX(const byte *surface);
 	void setpal_vga256(const byte *palette);
 	void setpal_vga256_linux(const byte *palette, const byte *surface);
+	void SETCOLOR(int palIndex, int r, int g, int b);
+	void SETCOLOR2(int palIndex, int r, int g, int b);
 	void SETCOLOR3(int palIndex, int r, int g, int b);
+	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void CHANGE_PALETTE(const byte *palette);
 	uint16 MapRGB(byte r, byte g, byte b);
 	void DD_VBL();

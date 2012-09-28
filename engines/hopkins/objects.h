@@ -68,6 +68,7 @@ public:
 	int cadx, cady, cadi;
 	int SL_X, SL_Y;
 	int I_old_x, I_old_y;
+	int g_old_x, g_old_y;
 	int FLAG_VISIBLE_EFFACE;
 	byte *Winventaire;
 	byte *inventaire2;
@@ -84,6 +85,28 @@ public:
 	bool INVENTFLAG;
 	int KEY_INVENT;
 	int my_anim;
+	int GOACTION;
+	int NUMZONE;
+	int ARRET_PERSO_FLAG;
+	int ARRET_PERSO_NUM;
+	int FORCEZONE;
+	int CHANGEVERBE;
+	int verbe;
+	int Vold_taille;
+	int TOTAL_LIGNES;
+	bool SPEED_FLAG;
+	int SPEED_X, SPEED_Y;
+	int SPEED_IMAGE;
+	byte *SPEED_PTR;
+	int DERLIGNE;
+	int g_old_sens;
+	int A_ANIM;
+	int MA_ANIM;
+	int MA_ANIM1;
+	int A_DEPA;
+	int MAX_DEPA;
+	int MAX_DEPA1;
+
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -151,6 +174,18 @@ public:
 	void BTGAUCHE();
 	void PARADISE();
 	void CLEAR_ECRAN();
+	
+	void INVENT();
+	void CHANGE_TETE(int a1, int a2);
+	byte *PARCOURS2(int a1, int a2, int a3, int a4);
+	void VERIFTAILLE();
+	void PACOURS_PROPRE(byte *a1);
+	byte *PARC_VOITURE(int a1, int a2, int a3, int a4);
+	void VERBEPLUS();
+	void BTDROITE();
+	int MZONE();
+	void CLEAR_ZONE();
+	void RESET_OBSTACLE();
 };
 
 } // End of namespace Hopkins

@@ -933,4 +933,13 @@ bool TalkManager::RECHERCHE_ANIM_PERSO(int a1, const byte *bufPerso, int a3, int
 	return result;
 }
 
+void TalkManager::REPONSE(int a1, int a2) {
+	warning("TODO: RESPONSE");
+}
+
+void TalkManager::REPONSE2(int a1, int a2) {
+	warning("TODO: RESPONSE2");
+}
+
+
 } // End of namespace Hopkins

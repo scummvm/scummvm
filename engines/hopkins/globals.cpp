@@ -223,9 +223,9 @@ void Globals::clearAll() {
 	OBJET_EN_COURS = 0;
   
 	for (int idx = 0; idx < 105; ++idx) {
-		ZoneP[idx].field0 = 0;
-		ZoneP[idx].field2 = 0;
-		ZoneP[idx].field4 = 0;
+		ZONEP[idx].field0 = 0;
+		ZONEP[idx].field2 = 0;
+		ZONEP[idx].field4 = 0;
 	}
 
 	essai0 = PTRNUL;
@@ -683,6 +683,19 @@ void Globals::INIT_VBOB() {
 	}
 }
 
+void Globals::CLEAR_VBOB() {
+	for (int idx = 0; idx < 30; ++idx) {
+		VBob[idx].field4 = 0;
+		VBob[idx].field6 = 0;
+		VBob[idx].field8 = 0;
+		VBob[idx].fieldA = 0;
+		VBob[idx].fieldC = 0;
+		VBob[idx].field10 = PTRNUL;
+		VBob[idx].field0 = PTRNUL;
+		VBob[idx].field1C = PTRNUL;
+	} 
+}
+
 void Globals::CHARGE_OBJET() {
 	FileManager::CONSTRUIT_SYSTEM("OBJET.DAT");
 	byte *data = FileManager::CHARGE_FICHIER(NFICHIER);
@@ -762,7 +775,7 @@ void Globals::CACHE_ADD(int idx) {
 }
 
 void Globals::CHARGE_CACHE(const Common::String &file) {
-	byte *v2;
+	byte *v2 = PTRNUL;
 	int v4;
 	int v5;
 	int v6; 
