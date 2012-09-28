@@ -71,7 +71,7 @@ struct TonyGameDescription;
 
 #define MAX_SFX_CHANNELS    32
 #define TONY_DAT_VER_MAJ 0
-#define TONY_DAT_VER_MIN 2
+#define TONY_DAT_VER_MIN 3
 
 struct VoiceHeader {
 	int _offset;
