@@ -178,9 +178,14 @@ public:
 	void stDoIdleTeleporterHands2();
 	void stIdleTeleporterHands2();
 
-    void teleporterAppear(uint32 fileHash);
-    void teleporterDisappear(uint32 fileHash);
+	void teleporterAppear(uint32 fileHash);
+	void teleporterDisappear(uint32 fileHash);
 	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+
+	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
+	void stShrink();
+
+	void stStandWonderAbout();
 
 protected:
 	Entity *_parentScene;
@@ -203,12 +208,16 @@ protected:
 	bool _flagFA;
 	SoundResource _soundResource1;
 	SoundResource _soundResource2;
+	SoundResource _soundResource3;
 	int _status3;
 	const KlaymanIdleTableItem *_idleTable;
 	int _idleTableCount;
 	int _idleTableMaxValue;
 	NPointArray *_pathPoints;
 	bool _soundFlag;
+	
+	bool _isSittingInTeleporter;
+
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
@@ -353,10 +362,7 @@ class KmScene1109 : public Klayman {
 public:
 	KmScene1109(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stTeleporterAppear();
-	void stTeleporterDisappear();
 };
 
 class KmScene1201 : public Klayman {
@@ -411,10 +417,7 @@ class KmScene1306 : public Klayman {
 public:
 	KmScene1306(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stTeleporterAppear();
-	void stTeleporterDisappear();
 };
 
 class KmScene1308 : public Klayman {
@@ -459,7 +462,6 @@ class KmScene1608 : public Klayman {
 public:
 	KmScene1608(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
@@ -467,12 +469,9 @@ class KmScene1705 : public Klayman {
 public:
 	KmScene1705(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	void suFallSkipJump();
 	void stFallSkipJump();
-	void stTeleporterAppear();
-	void stTeleporterDisappear();
 };
 
 class KmScene1901 : public Klayman {
@@ -486,22 +485,16 @@ class KmScene2001 : public Klayman {
 public:
 	KmScene2001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stTeleporterAppear();
-	void stTeleporterDisappear();
 };
 
 class KmScene2101 : public Klayman {
 public:
 	KmScene2101(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
 	void stHitByDoor();
-	void stTeleporterAppear();
-	void stTeleporterDisappear();
 };
 
 class KmScene2201 : public Klayman {
@@ -584,8 +577,8 @@ class KmScene2401 : public Klayman {
 public:
 	KmScene2401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _canSpit;
-	bool _contSpit;
+	bool _canSpitPipe;
+	bool _contSpitPipe;
 	bool _readyToSpit;
 	uint32 _spitPipeIndex;
 	uint32 _spitDestPipeIndex;
@@ -602,7 +595,6 @@ public:
 	KmScene2402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stStandWonderAbout();
 };
 
 class KmScene2403 : public Klayman {
@@ -623,7 +615,6 @@ class KmScene2501 : public Klayman {
 public:
 	KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
@@ -645,20 +636,14 @@ class KmScene2803b : public Klayman {
 public:
 	KmScene2803b(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	SoundResource _soundResource;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
-	void stShrink();
 };
 
 class KmScene2805 : public Klayman {
 public:
 	KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stTeleporterAppear();
-	void stTeleporterDisappear();
 };
 
 class KmScene2806 : public Klayman {
@@ -671,8 +656,8 @@ protected:
 	SoundResource _soundRes3;
 	SoundResource _soundRes4;
 	SoundResource _soundRes5;
-	bool _flag1;
-	bool _flag2;
+	bool _potionFlag1;
+	bool _potionFlag2;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
@@ -690,8 +675,8 @@ protected:
 	SoundResource _soundRes3;
 	SoundResource _soundRes4;
 	SoundResource _soundRes5;
-	bool _flag1;
-	bool _flag2;
+	bool _potionFlag1;
+	bool _potionFlag2;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);

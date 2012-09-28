@@ -56,11 +56,11 @@ static const KlaymanIdleTableItem klaymanTable4[] = {
 // Klayman
 
 Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
-	: AnimatedSprite(vm, objectPriority), _soundResource1(vm), _soundResource2(vm),
+	: AnimatedSprite(vm, objectPriority), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
 	_idleCounterMax(0), _idleCounter(0), _isMoveObjectRequested(false), _blinkCounterMax(0), _isWalkingOpenDoorNotified(false), _countdown1(0),
 	_tapesToInsert(0), /*_field118(0), */_status2(0), _acceptInput(true), _attachedSprite(NULL), _isWalking(false),
 	_status3(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false), _flagF6(false), _isLeverDown(false),
-	_flagFA(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false) {
+	_isSittingInTeleporter(false), _flagFA(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false) {
 	
 	// TODO DirtySurface
 	createSurface(surfacePriority, 320, 200);
@@ -2342,6 +2342,41 @@ uint32 Klayman::hmTeleporterAppearDisappear(int messageNum, const MessageParam &
 	return messageResult;
 }
 
+uint32 Klayman::hmShrink(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x80C110B5)
+			sendMessage(_parentScene, 0x482A, 0);
+		else if (param.asInteger() == 0x33288344)
+			_soundResource3.play(0x10688664);
+		break;
+	}
+	return messageResult;
+}
+
+void Klayman::stShrink() {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(0x1AE88904, 0, -1);
+	_soundResource1.play(0x4C69EA53);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	SetMessageHandler(&Klayman::hmShrink);
+}
+
+void Klayman::stStandWonderAbout() {
+	if (_x > 260)
+		setDoDeltaX(1);
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0xD820A114, 0, -1);
+	_newStickFrameIndex = 10;
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D360);
+	SetSpriteUpdate(NULL);
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -2982,7 +3017,7 @@ void KmScene1004::stReadNote() {
 }
 
 KmScene1109::KmScene1109(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	// Empty
 }
@@ -3019,7 +3054,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klayman::stTurnToUseInTeleporter);
 		break;
 	case 0x481E:
-		if (_isSittingInTeleporter)//CHECKME
+		if (_isSittingInTeleporter)
 			GotoState(&Klayman::stReturnFromUseInTeleporter);
 		break;
 	case 0x4834:
@@ -3432,7 +3467,6 @@ void KmScene1305::cbCrashDownEvent() {
 KmScene1306::KmScene1306(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
-	_isSittingInTeleporter = false;	
 }
 
 uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -3951,7 +3985,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1608::KmScene1608(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 }
 
 uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4040,7 +4074,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1705
 
 KmScene1705::KmScene1705(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	// Empty	
 }
@@ -4192,7 +4226,7 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2001::KmScene2001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	// Empty	
 }
@@ -4256,7 +4290,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2101::KmScene2101(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	// Empty
 }
@@ -5155,11 +5189,11 @@ uint32 KmScene2401::hmSpit(int messageNum, const MessageParam &param, Entity *se
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x16401CA6) {
-			_canSpit = true;
-			if (_contSpit)
+			_canSpitPipe = true;
+			if (_contSpitPipe)
 				spitIntoPipe();
 		} else if (param.asInteger() == 0xC11C0008) {
-			_canSpit = false;
+			_canSpitPipe = false;
 			_acceptInput = false;
 			_readyToSpit = false;
 		} else if (param.asInteger() == 0x018A0001) {
@@ -5172,17 +5206,17 @@ uint32 KmScene2401::hmSpit(int messageNum, const MessageParam &param, Entity *se
 
 void KmScene2401::stTrySpitIntoPipe() {
 	if (_readyToSpit) {
-		_contSpit = true;
+		_contSpitPipe = true;
 		_spitContDestPipeIndex = _spitPipeIndex;
-		if (_canSpit)
+		if (_canSpitPipe)
 			spitIntoPipe();
 	} else if (!stStartAction(AnimationCallback(&KmScene2401::stTrySpitIntoPipe))) {
 		_status2 = 2;
 		_acceptInput = true;
 		_spitDestPipeIndex = _spitPipeIndex;
 		_readyToSpit = true;
-		_canSpit = false;
-		_contSpit = false;
+		_canSpitPipe = false;
+		_contSpitPipe = false;
 		startAnimation(0x1808B150, 0, -1);
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&KmScene2401::hmSpit);
@@ -5191,9 +5225,9 @@ void KmScene2401::stTrySpitIntoPipe() {
 }
 
 void KmScene2401::spitIntoPipe() {
-	_contSpit = false;
+	_contSpitPipe = false;
 	_spitDestPipeIndex = _spitContDestPipeIndex;
-	_canSpit = false;
+	_canSpitPipe = false;
 	_acceptInput = false;
 	startAnimation(0x1B08B553, 0, -1);
 	SetUpdateHandler(&Klayman::update);
@@ -5203,7 +5237,7 @@ void KmScene2401::spitIntoPipe() {
 }
 
 void KmScene2401::stContSpitIntoPipe() {
-	_canSpit = true;
+	_canSpitPipe = true;
 	_acceptInput = true;
 	startAnimationByHash(0x1808B150, 0x16401CA6, 0);
 	SetUpdateHandler(&Klayman::update);
@@ -5225,7 +5259,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4004:
 		if (!getGlobalVar(0x92603A79))
-			GotoState(&KmScene2402::stStandWonderAbout);
+			GotoState(&Klayman::stStandWonderAbout);
 		else
 			GotoState(&Klayman::stTryStandIdle);
 		break;
@@ -5281,18 +5315,6 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return messageResult;
-}
-
-void KmScene2402::stStandWonderAbout() {
-	if (_x > 260)
-		setDoDeltaX(1);
-	_status2 = 0;
-	_acceptInput = true;
-	startAnimation(0xD820A114, 0, -1);
-	_newStickFrameIndex = 10;
-	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&Klayman::handleMessage41D360);
-	SetSpriteUpdate(NULL);
 }
 
 KmScene2403::KmScene2403(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
@@ -5473,7 +5495,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 	
 KmScene2501::KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
 	
@@ -5659,10 +5681,9 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2803b::KmScene2803b(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _soundResource(vm) {
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	_dataResource.load(0x81120132);
-	_soundResource.load(0x10688664);
 }
 
 uint32 KmScene2803b::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -5706,37 +5727,14 @@ uint32 KmScene2803b::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klayman::stTurnToBackSmall);
 		break;
 	case 0x4830:
-		GotoState(&KmScene2803b::stShrink);
+		GotoState(&Klayman::stShrink);
 		break;
 	}
 	return 0;
 }
 
-uint32 KmScene2803b::hmShrink(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x80C110B5)
-			sendMessage(_parentScene, 0x482A, 0);
-		else if (param.asInteger() == 0x33288344)
-			_soundResource.play();
-		break;
-	}
-	return messageResult;
-}
-
-void KmScene2803b::stShrink() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0x1AE88904, 0, -1);
-	_soundResource1.play(0x4C69EA53);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	SetMessageHandler(&KmScene2803b::hmShrink);
-}
-
 KmScene2805::KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _isSittingInTeleporter(false) {
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
 
@@ -5854,23 +5852,23 @@ uint32 KmScene2806::hmDrinkPotion(int messageNum, const MessageParam &param, Ent
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1008:
-		if (_flag1) {
+		if (_potionFlag1) {
 			startAnimationByHash(0x1C388C04, 0x004A2148, 0);
 			messageResult = 0;
 		} else
-			_flag2 = true;
+			_potionFlag2 = true;
 		break;
 	case 0x100D:
 		if (param.asInteger() == 0x0002418E)
 			sendMessage(_parentScene, 0x2000, 0);
 		else if (param.asInteger() == 0x924090C2) {
-			_flag1 = true;
-			if (_flag2) {
+			_potionFlag1 = true;
+			if (_potionFlag2) {
 				startAnimationByHash(0x1C388C04, 0x004A2148, 0);
 				messageResult = 0;
 			}
 		} else if (param.asInteger() == 0x004A2148)
-			_flag1 = false;
+			_potionFlag1 = false;
 		else if (param.asInteger() == 0x02B20220)
 			_soundResource1.play(0xC5408620);
 		else if (param.asInteger() == 0x0A720138)
@@ -5945,8 +5943,8 @@ void KmScene2806::stGrow() {
 void KmScene2806::stDrinkPotion() {
 	_status2 = 1;
 	_acceptInput = false;
-	_flag1 = false;
-	_flag2 = false;
+	_potionFlag1 = false;
+	_potionFlag2 = false;
 	startAnimation(0x1C388C04, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&KmScene2806::hmDrinkPotion);
@@ -6016,23 +6014,23 @@ uint32 KmScene2809::hmDrinkPotion(int messageNum, const MessageParam &param, Ent
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1008:
-		if (_flag1) {
+		if (_potionFlag1) {
 			startAnimationByHash(0x1C388C04, 0x004A2148, 0);
 			messageResult = 0;
 		} else
-			_flag2 = true;
+			_potionFlag2 = true;
 		break;
 	case 0x100D:
 		if (param.asInteger() == 0x0002418E)
 			sendMessage(_parentScene, 0x2000, 0);
 		else if (param.asInteger() == 0x924090C2) {
-			_flag1 = true;
-			if (_flag2) {
+			_potionFlag1 = true;
+			if (_potionFlag2) {
 				startAnimationByHash(0x1C388C04, 0x004A2148, 0);
 				messageResult = 0;
 			}
 		} else if (param.asInteger() == 0x004A2148)
-			_flag1 = false;
+			_potionFlag1 = false;
 		else if (param.asInteger() == 0x02B20220)
 			_soundResource1.play(0xC5408620);
 		else if (param.asInteger() == 0x0A720138)
@@ -6109,14 +6107,13 @@ void KmScene2809::stGrow() {
 void KmScene2809::stDrinkPotion() {
 	_status2 = 1;
 	_acceptInput = false;
-	_flag1 = false;
-	_flag2 = false;
+	_potionFlag1 = false;
+	_potionFlag2 = false;
 	startAnimation(0x1C388C04, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&KmScene2809::hmDrinkPotion);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
-
 
 KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y) 
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
