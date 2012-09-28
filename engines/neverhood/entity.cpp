@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/entity.h"
+#include "neverhood/sound.h"
 
 namespace Neverhood {
 
@@ -51,10 +52,12 @@ Entity *MessageParam::asEntity() const {
 #define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler); debug(2, "SetMessageHandler(" #handler ")"); _messageHandlerCbName = #handler
 
 Entity::Entity(NeverhoodEngine *vm, int priority)
-	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _name("Entity") {
+	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _soundResources(NULL),
+	_name("Entity") {
 }
 
 Entity::~Entity() {
+	deleteSoundResources();
 }
 
 void Entity::draw() {
@@ -110,6 +113,37 @@ void Entity::incGlobalVar(uint32 nameHash, int incrValue) {
 
 void Entity::incSubVar(uint32 nameHash, uint32 subNameHash, int incrValue) {
 	setSubVar(nameHash, subNameHash, getSubVar(nameHash, subNameHash) + incrValue);
+}
+
+SoundResource *Entity::getSoundResource(uint index) {
+	assert(index < kMaxSoundResources);
+	if (!_soundResources) {
+		_soundResources = new SoundResource*[kMaxSoundResources];
+		for (uint i = 0; i < kMaxSoundResources; ++i)
+			_soundResources[i] = NULL;
+	}
+	if (!_soundResources[index])
+		_soundResources[index] = new SoundResource(_vm);
+	return _soundResources[index];
+}
+
+void Entity::loadSound(uint index, uint32 fileHash) {
+	getSoundResource(index)->load(fileHash);
+}
+
+void Entity::playSound(uint index, uint32 fileHash) {
+	if (fileHash)
+		getSoundResource(index)->play(fileHash);
+	else
+		getSoundResource(index)->play();
+}
+
+void Entity::deleteSoundResources() {
+	if (_soundResources) {
+		for (uint i = 0; i < kMaxSoundResources; ++i)
+			delete _soundResources[i];
+		delete[] _soundResources;
+	}
 }
 
 } // End of namespace Neverhood

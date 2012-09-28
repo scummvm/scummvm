@@ -47,8 +47,6 @@ class AsScene1001Door : public AnimatedSprite {
 public:
 	AsScene1001Door(NeverhoodEngine *vm);
 protected:
-	SoundResource _soundResource1;	
-	SoundResource _soundResource2;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void hammerHitsDoor();
 	void stShowIdleDoor();
@@ -61,7 +59,6 @@ public:
 	AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor);
 protected:
 	Sprite *_asDoor;
-	SoundResource _soundResource;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -69,7 +66,6 @@ class AsScene1001Window : public AnimatedSprite {
 public:
 	AsScene1001Window(NeverhoodEngine *vm);
 protected:
-	SoundResource _soundResource;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -78,7 +74,6 @@ public:
 	AsScene1001Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -87,7 +82,6 @@ public:
 	SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, int surfacePriority, uint32 soundFileHash);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	uint32 _soundFileHash;
 	int16 _countdown;
 	void update();	
@@ -140,7 +134,6 @@ public:
 protected:
 	Scene *_parentScene;
 	bool _flag1;
-	SoundResource _soundResource;
 	void update();
 	uint32 hmRingIdle(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmRingPulled1(int messageNum, const MessageParam &param, Entity *sender);
@@ -173,7 +166,6 @@ protected:
 	Scene *_parentScene;
 	Sprite *_asDoor;
 	Sprite *_asBoxingGloveHitEffect;
-	SoundResource _soundResource;
 	NRect _clipRect;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmDoorSpyAnimation(int messageNum, const MessageParam &param, Entity *sender);
@@ -191,7 +183,6 @@ protected:
 	int _countdown;
 	uint32 _fileHashes[2];
 	int _status;
-	SoundResource _soundResource;
 	uint32 _soundFileHash;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -204,7 +195,6 @@ protected:
 	Scene *_parentScene;
 	Sprite *_klayman;
 	int _countdown;
-	SoundResource _soundResource;
 	bool _flag;
 	void update();
 	void upIdle();
@@ -279,9 +269,6 @@ protected:
 	Sprite *_asKlaymanPeekHand;
 	Sprite *_asOutsideDoorBackground;
 	Sprite *_class426;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	bool _flag1B4;
 	bool _flag1BE;
 	bool _flag;
@@ -295,7 +282,6 @@ class AsScene1004TrashCan : public AnimatedSprite {
 public:
 	AsScene1004TrashCan(NeverhoodEngine *vm);
 protected:
-	SoundResource _soundResource;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

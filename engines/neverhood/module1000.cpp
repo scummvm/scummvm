@@ -115,13 +115,13 @@ void Module1000::updateScene() {
 // Scene1001			
 
 AsScene1001Door::AsScene1001Door(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm) {
+	: AnimatedSprite(vm, 1100) {
 	
 	createSurface(800, 137, 242);
 	_x = 726;
 	_y = 440;
 	stShowIdleDoor();
-	_soundResource2.load(0xED403E03);
+	loadSound(1, 0xED403E03);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1001Door::handleMessage);
 }
@@ -143,12 +143,12 @@ void AsScene1001Door::hammerHitsDoor() {
 	switch (getGlobalVar(0x52371C95)) {
 	case 0:
 	case 1:
-		_soundResource1.play(0x65482F03);
+		playSound(0, 0x65482F03);
 		startAnimation(0x624C0498, 1, 3);
 		NextState(&AsScene1001Door::stShowIdleDoor);		
 		break;
 	case 2:
-		_soundResource2.play();
+		playSound(1);
 		startAnimation(0x624C0498, 6, 6);
 		NextState(&AsScene1001Door::stBustedDoorMove);		
 		break;
@@ -188,13 +188,13 @@ void AsScene1001Door::stBustedDoorMove() {
 }
 
 void AsScene1001Door::stBustedDoorGone() {
-	_soundResource1.play();
+	playSound(0);
 	stopAnimation();
 	setVisible(false);	
 }
 	
 AsScene1001Hammer::AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _asDoor(asDoor) {
+	: AnimatedSprite(vm, 1100), _asDoor(asDoor) {
 
 	_x = 547;
 	_y = 206;
@@ -212,12 +212,12 @@ uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &para
 		if (param.asInteger() == 0x00352100) {
 			sendMessage(_asDoor, 0x2000, 0);
 		} else if (param.asInteger() == 0x0A1A0109) {
-			_soundResource.play(0x66410886);
+			playSound(0, 0x66410886);
 		}
 		break;
 	case 0x2000:
 		startAnimation(0x022C90D4, 1, -1);
-		_soundResource.play(0xE741020A);
+		playSound(0, 0xE741020A);
 		_newStickFrameIndex = -2;
 		break;
 	}
@@ -225,7 +225,7 @@ uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &para
 }
 
 AsScene1001Window::AsScene1001Window(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _soundResource(vm) {
+	: AnimatedSprite(vm, 1200) {
 
 	_x = 320;
 	_y = 240;
@@ -241,7 +241,7 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x0E0A1410) {
-			_soundResource.play(0x60803F10);
+			playSound(0, 0x60803F10);
 		}
 		break;
 	case 0x2001:
@@ -257,7 +257,7 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 }
 
 AsScene1001Lever::AsScene1001Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 	
 	createSurface(1010, 71, 73);
 	setDoDeltaX(deltaXType);
@@ -276,7 +276,7 @@ uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param
 		if (param.asInteger() == 0x00C0C444) {
 			sendMessage(_parentScene, 0x480F, 0);
 		} else if (param.asInteger() == 0xC41A02C0) {
-			_soundResource.play(0x40581882);
+			playSound(0, 0x40581882);
 		}
 		break;
 	case 0x1011:
@@ -301,7 +301,7 @@ uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param
 }
 	
 SsCommonButtonSprite::SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, int surfacePriority, uint32 soundFileHash)
-	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene), _soundResource(vm), _countdown(0) {
+	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene), _countdown(0) {
 
 	_priority = 1100;
 	_soundFileHash = soundFileHash ? soundFileHash : 0x44141000; 
@@ -323,7 +323,7 @@ uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &p
 		sendMessage(_parentScene, 0x480B, 0);
 		setVisible(true);
 		_countdown = 8;
-		_soundResource.play(_soundFileHash);
+		playSound(0, _soundFileHash);
 		break;
 	}
 	return messageResult;
@@ -497,7 +497,7 @@ uint32 Class599::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool flag1, int16 x, int16 y, int16 clipY1, bool flag2)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene), _flag1(flag1) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _flag1(flag1) {
 
 	SetUpdateHandler(&AsScene1002Ring::update);
 	
@@ -628,7 +628,7 @@ uint32 AsScene1002Ring::hmRingReleased(int messageNum, const MessageParam &param
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x05410F72) {
-			_soundResource.play(0x21EE40A9);
+			playSound(0, 0x21EE40A9);
 		}
 		break;
 	case 0x3002:
@@ -742,8 +742,7 @@ uint32 AsScene1002BoxingGloveHitEffect::handleMessage(int messageNum, const Mess
 }
 
 AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *asScene1002BoxingGloveHitEffect)
-	: AnimatedSprite(vm, 1300), _clipRect(clipRect), _parentScene(parentScene), _asDoor(asDoor), _asBoxingGloveHitEffect(asScene1002BoxingGloveHitEffect),
-	_soundResource(vm) {
+	: AnimatedSprite(vm, 1300), _clipRect(clipRect), _parentScene(parentScene), _asDoor(asDoor), _asBoxingGloveHitEffect(asScene1002BoxingGloveHitEffect) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1002DoorSpy::handleMessage);
@@ -751,7 +750,7 @@ AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Sce
 	createSurface(800, 136, 147);
 	setClipRect(clipRect);
 	suDoorSpy();
-	_soundResource.load(0xC0C40298);
+	loadSound(0, 0xC0C40298);
 	startAnimation(0x586C1D48, 0, 0);
 }
 
@@ -762,7 +761,7 @@ uint32 AsScene1002DoorSpy::handleMessage(int messageNum, const MessageParam &par
 		if (param.asInteger() == 0xA61CA1C2) {
 			sendMessage(_asBoxingGloveHitEffect, 0x2004, 0);
 		} else if (param.asInteger() == 0x14CE0620) {
-			_soundResource.play();
+			playSound(0);
 		}
 		break;
 	case 0x2003:
@@ -803,7 +802,7 @@ void AsScene1002DoorSpy::stDoorSpyBoxingGlove() {
 }
 
 Class426::Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash) 
-	: StaticSprite(vm, 1100), _parentScene(parentScene), _soundResource(vm), _status(0) {
+	: StaticSprite(vm, 1100), _parentScene(parentScene), _status(0) {
 
 	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000;
 
@@ -895,15 +894,14 @@ uint32 Class426::handleMessage(int messageNum, const MessageParam &param, Entity
 		_status = 1;
 		_countdown = 4;
 		setVisible(true);
-		_soundResource.play(_soundFileHash);
+		playSound(0, _soundFileHash);
 		break;
 	}
 	return messageResult;
 }
 
 AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, bool flag)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene), _klayman(klayman),
-	_flag(flag), _countdown(0) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _flag(flag), _countdown(0) {
 
 	createSurface(995, 175, 195);
 
@@ -956,9 +954,9 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x000890C4) {
-			_soundResource.play(0xC21190D8);
+			playSound(0, 0xC21190D8);
 		} else if (param.asInteger() == 0x522200A0) {
-			_soundResource.play(0x931080C8);
+			playSound(0, 0x931080C8);
 		}
 		break;
 	case 0x1011:
@@ -1036,7 +1034,7 @@ uint32 AsScene1002VenusFlyTrap::hmAnimationExt(int messageNum, const MessagePara
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x000890C4) {
-			_soundResource.play(0xC21190D8);
+			playSound(0, 0xC21190D8);
 		} else if (param.asInteger() == 0x41881801) {
 			if (_flag) {
 				if (_x > 330) {
@@ -1052,7 +1050,7 @@ uint32 AsScene1002VenusFlyTrap::hmAnimationExt(int messageNum, const MessagePara
 				sendMessage(_klayman, 0x4811, 0);
 			}
 		} else if (param.asInteger() == 0x522200A0) {
-			_soundResource.play(0x931080C8);
+			playSound(0, 0x931080C8);
 		}
 		break;
 	case 0x3002:
@@ -1309,8 +1307,7 @@ uint32 AsScene1002KlaymanPeekHand::handleMessage(int messageNum, const MessagePa
 }
 
 Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
-	_flag1B4(false), _flag1BE(false) {
+	: Scene(vm, parentModule, true), _flag1B4(false), _flag1BE(false) {
 
 	NRect tempClipRect;
 	Sprite *tempSprite;
@@ -1404,8 +1401,8 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 								  
 	setRectList(0x004B43A0);
 
-	_soundResource2.load(0x60755842);
-	_soundResource3.load(0x616D5821);
+	loadSound(1, 0x60755842);
+	loadSound(2, 0x616D5821);
 
 }
 
@@ -1517,26 +1514,26 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		_flag1BE = true;
 		if (sender == _asRing1) {
 			setGlobalVar(0x4DE80AC0, 0);
-			_soundResource1.play(0x665198C0);
+			playSound(0, 0x665198C0);
 		} else if (sender == _asRing2) {
 			setGlobalVar(0x4DE80AC0, 0);
-			_soundResource1.play(0xE2D389C0);
+			playSound(0, 0xE2D389C0);
 		} else if (sender == _asRing3) {
 			setGlobalVar(0x4DE80AC0, 0);
-			_soundResource2.play();
+			playSound(1);
 			sendMessage(_asDoor, 0x4808, 0);
 			sendMessage(_asOutsideDoorBackground, 0x4808, 0);
 		} else if (sender == _asRing4) {
 			setGlobalVar(0x4DE80AC0, 0);
-			_soundResource1.play(0xE0558848);
+			playSound(0, 0xE0558848);
 		} else if (sender == _asRing5) {
 			setGlobalVar(0x4DE80AC0, 1);
-			_soundResource1.play(0x44014282);
+			playSound(0, 0x44014282);
 		}
 		break;
 	case 0x4807:
 		if (sender == _asRing3) {
-			_soundResource3.play();
+			playSound(2);
 			sendMessage(_asDoor, 0x4809, 0);
 			sendMessage(_asOutsideDoorBackground, 0x4809, 0);
 		} else if (sender == _asVenusFlyTrap) {
@@ -1550,7 +1547,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;				
 	case 0x480F:
 		setGlobalVar(0x4DE80AC0, 0);
-		_soundResource2.play();
+		playSound(1);
 		sendMessage(_asDoor, 0x4808, 0);
 		sendMessage(_asOutsideDoorBackground, 0x4808, 0);
 		break;				
@@ -1586,7 +1583,7 @@ uint32 Class152::handleMessage(int messageNum, const MessageParam &param, Entity
 // Scene1004
 
 AsScene1004TrashCan::AsScene1004TrashCan(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100), _soundResource(vm) {
+	: AnimatedSprite(vm, 1100) {
 
 	_x = 330;
 	_y = 327;
@@ -1601,7 +1598,7 @@ uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &pa
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x225A8587) {
-			_soundResource.play(0x109AFC4C);
+			playSound(0, 0x109AFC4C);
 		}
 		break;
 	case 0x2002:

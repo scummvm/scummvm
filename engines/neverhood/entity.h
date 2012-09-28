@@ -32,6 +32,7 @@
 namespace Neverhood {
 
 class Entity;
+class SoundResource;
 
 enum MessageParamType {
 	mptInteger,
@@ -70,6 +71,8 @@ protected:
 	debug(2, "SetMessageHandler(" #handler ")");								\
 	_messageHandlerCbName = #handler
 
+const uint kMaxSoundResources = 16;
+
 class Entity {
 public:
 	Common::String _name; // Entity name for debugging purposes
@@ -100,6 +103,12 @@ protected:
 	uint32 (Entity::*_messageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);
 	NeverhoodEngine *_vm;
 	int _priority;
+	SoundResource **_soundResources;
+	SoundResource *getSoundResource(uint index);
+	// TODO Add other sound stuff
+	void loadSound(uint index, uint32 fileHash);
+	void playSound(uint index, uint32 fileHash = 0);
+	void deleteSoundResources();
 };
 
 } // End of namespace Neverhood
