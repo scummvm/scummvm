@@ -36,7 +36,7 @@ EventsManager::EventsManager() {
 	mouse_linux = false;
 	souris_sizex = souris_sizey = 0;
 	ofset_souris_x = ofset_souris_y = 0;
-	start_x = start_y = 0;
+	_vm->_eventsManager.start_x = start_y = 0;
 	CASSE = false;
 	souris_n = 0;
 	souris_bb = 0;
@@ -85,14 +85,14 @@ void EventsManager::souris_max() {
 }
 
 int EventsManager::XMOUSE() {
-	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
+	souris_x = _vm->_eventsManager.start_x + g_system->getEventManager()->getMousePos().x;
 	souris_y = g_system->getEventManager()->getMousePos().y;
 
 	return souris_x + ofset_souris_x;
 }
 
 int EventsManager::YMOUSE() {
-	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
+	souris_x = _vm->_eventsManager.start_x + g_system->getEventManager()->getMousePos().x;
 	souris_y = g_system->getEventManager()->getMousePos().y;
 
 	return souris_y + ofset_souris_y;
@@ -446,13 +446,13 @@ LABEL_65:
 			}
 		
 			_vm->_globals.NBBLOC = 0;
-			start_x = v4;
+			_vm->_eventsManager.start_x = v4;
 			ofscroll = v4;
 			SCROLL = v4;
 		}
 	
 		OLD_SCROLL = v4;
-		start_x = v4;
+		_vm->_eventsManager.start_x = v4;
 		ofscroll = v4;
 	}
   

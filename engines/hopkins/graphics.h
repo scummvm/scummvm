@@ -68,7 +68,6 @@ public:
 	Graphics::Surface *VideoPtr;
 	byte *VESA_SCREEN;
 	byte *VESA_BUFFER;
-	int start_x;
 	int ofscroll;
 	int SCROLL;
 	byte HEADER_PCX[128];
@@ -98,6 +97,7 @@ public:
 	int Largeur;
 	int Compteur_y;
 	int spec_largeur;
+	bool NOFADE;
 public:
 	GraphicsManager();
 	~GraphicsManager();
@@ -113,6 +113,7 @@ public:
 	void INIT_TABLE(int a1, int a2, byte *a3);
 	int SCROLL_ECRAN(int amount);
 	void Trans_bloc(byte *destP, byte *srcP, int count, int param1, int param2);
+	void Trans_bloc2(byte *surface, byte *col, int size);
 	void A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
 	void Cls_Pal();
 	void souris_max();
@@ -165,9 +166,12 @@ public:
 	int Reel_Reduc(int v, int percentage);
 	void Affiche_Perfect(byte *destSurface, const byte *srcData, int a3, int a4, int a5, int a6, int a7, int a8);
 	void AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex);
-	void SCOPY(const byte *surface, int x1, int y1, int x2, int y2, byte *destSurface, int destX, int destY);
+	void SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY);
 	void Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int transColour);
+	void INI_ECRAN(const Common::String &file);
+	void INI_ECRAN2(const Common::String &file);
+	void NB_SCREEN();
 };
 
 } // End of namespace Hopkins

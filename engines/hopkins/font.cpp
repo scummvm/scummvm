@@ -330,7 +330,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 			if (v17 < 0)
 				v17 = -v17;
 			*Txt[idx].field8 = 320 - v17;
-			v73 = start_x + 320 - v17;
+			v73 = _vm->_eventsManager.start_x + 320 - v17;
 			v58 = 1;
 			v18 = 0;
 		
@@ -432,10 +432,10 @@ LABEL_57:
 			} while (v68 <= 19);
       
 			if ((unsigned __int16)(Txt[idx].field3FC - 2) > 1u) {
-				for (i = xp - start_x; largeur_boite + i > 638 && i > -2 && Txt[idx].field3FC]; i -= 2)
+				for (i = xp - _vm->_eventsManager.start_x; largeur_boite + i > 638 && i > -2 && Txt[idx].field3FC]; i -= 2)
 					;
 				Txt[idx].field8 = i;
-				v73 = start_x + i;
+				v73 = _vm->_eventsManager.start_x + i;
 			} else {
 				if (nbrligne == 639) {
 					while (largeur_boite + v73 > 638 && v73 > -2)
@@ -462,8 +462,8 @@ LABEL_57:
 				v27 = -v27;
       
 			Txt[v26].field8 = 315 - v27;
-			v28 = start_x + 315 - v27;
-			v73 = start_x + 315 - v27;
+			v28 = _vm->_eventsManager.start_x + 315 - v27;
+			v73 = _vm->_eventsManager.start_x + 315 - v27;
 			Txt[v26].fieldA = 50;
 			v70 = 50;
 			v55 = 50;

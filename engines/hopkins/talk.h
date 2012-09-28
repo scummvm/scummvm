@@ -48,6 +48,7 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	void PARLER_PERSO2(const Common::String &filename);
+	void PARLER_PERSO(const Common::String &filename);
 	void RENVOIE_FICHIER(int srcStart, Common::String &dest, const char *srcData);
 	int DIALOGUE();
 	int DIALOGUE_REP(int idx);
@@ -58,6 +59,9 @@ public:
 	int VERIF_BOITE(__int16 a1, const Common::String &a2, __int16 a3);
 	void VISU_PARLE();
 	void BOB_VISU_PARLE(int idx);
+	void CHERCHE_ANIM0(int a1, int a2);
+	void ANIM_PERSO_INIT();
+	void CLEAR_ANIM_PERSO();
 };
 
 } // End of namespace Hopkins

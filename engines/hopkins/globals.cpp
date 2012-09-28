@@ -21,6 +21,7 @@
  */
 
 #include "common/textconsole.h"
+#include "common/file.h"
 #include "hopkins/globals.h"
 #include "hopkins/files.h"
 #include "hopkins/font.h"
@@ -717,5 +718,111 @@ byte *Globals::LIBERE_FICHIER(byte *p) {
 	dos_free2(p);
 	return PTRNUL;
 }
+
+void Globals::RESET_CACHE() {
+	byte *dataP;
+
+	for (int idx = 1; idx <= 5; ++idx) {
+		dataP = CACHE_BANQUE[idx];
+		if (dataP != PTRNUL && dataP)
+			CACHE_BANQUE[idx] = dos_free2(CACHE_BANQUE[idx]);
+		CACHE_BANQUE[idx] = PTRNUL;
+	}
+
+	for (int idx = 0; idx <= 20; ++idx) {
+		Cache[idx].fieldC = PTRNUL;
+		Cache[idx].field0 = 0;
+		Cache[idx].field4 = 0;
+		Cache[idx].field2 = 0;
+		Cache[idx].fieldA = 0;
+		Cache[idx].field6 = 0;
+		Cache[idx].field8 = 0;
+		Cache[idx].field10 = 0;
+		Cache[idx].field12 = 0;
+		Cache[idx].field14 = 0;
+	}
+
+	CACHEFLAG = 0;
+}
+
+void Globals::CACHE_ON() {
+	CACHEFLAG = 1;
+}
+
+void Globals::CACHE_OFF() {
+	CACHEFLAG = 0;
+}
+
+void Globals::CACHE_SUB(int idx) {
+	Cache[idx].fieldA = 0;
+}
+
+void Globals::CACHE_ADD(int idx) {
+	Cache[idx].fieldA = 1;
+}
+
+void Globals::CHARGE_CACHE(const Common::String &file) {
+	byte *v2;
+	int v4;
+	int v5;
+	int v6; 
+	int v8; 
+	int v9; 
+	int v11;
+	byte *spriteData; 
+	byte *ptr; 
+	int v14; 
+	int v15;
+	Common::String v16;
+	Common::File f;
+
+	RESET_CACHE();
+	FileManager::CONSTRUIT_FICHIER(HOPLINK, file);
+	ptr = FileManager::CHARGE_FICHIER(NFICHIER);
+	v16 = Common::String((const char *)ptr);
+
+	FileManager::CONSTRUIT_FICHIER(HOPLINK, v16);
+	
+	if (!f.exists(NFICHIER)) {
+		spriteData = FileManager::CHARGE_FICHIER(NFICHIER);
+		CACHE_BANQUE[1] = spriteData;
+		v15 = 60;
+		v14 = 0;
+		do {
+			v11 = READ_LE_UINT16((uint16 *)ptr + v15);
+			v4 = READ_LE_UINT16((uint16 *)ptr + v15 + 1);
+			v5 = READ_LE_UINT16((uint16 *)ptr + v15 + 2);
+			v6 = v14;
+			Cache[v6].field14 = READ_LE_UINT16((uint16 *)ptr + v15 + 4);
+			Cache[v6].field2 = v11;
+			Cache[v6].field0 = v4;
+			Cache[v6].field4 = v5;
+			Cache[v6].field12 = 1;
+			if (spriteData == PTRNUL) {
+				Cache[v14].fieldA = 0;
+			} else {
+				v8 = _vm->_objectsManager.Get_Largeur(spriteData, v11);
+				v9 = _vm->_objectsManager.Get_Hauteur(spriteData, v11);
+				Cache[v14].fieldC = spriteData;
+				Cache[v14].field6 = v8;
+				Cache[v14].field8 = v9;
+				Cache[v14].fieldA = 1;
+			}
+      
+			if ( !Cache[v14].field0 && !Cache[v14].field4 && !Cache[v14].field2)
+				Cache[v14].fieldA = 0;
+			v15 += 5;
+			++v14;
+		} while (v14 <= 21);
+		CACHE_ON();
+		v2 = ptr;
+	}
+	dos_free2(v2);
+}
+
+void Globals::B_CACHE_OFF(int idx) {
+	Bob[idx].field34 = 1;
+}
+
 
 } // End of namespace Hopkins

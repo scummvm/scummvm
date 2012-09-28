@@ -37,6 +37,145 @@ void TalkManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
+void TalkManager::PARLER_PERSO(const Common::String &filename) {
+	int v2; 
+	int v3; 
+	int v4; 
+	int v5;
+	int v6;
+	int v7;
+	byte *v8; 
+	byte *v9; 
+	byte *v10;
+	int v11;
+	byte v13; 
+	int v14;
+	int v15;
+	Common::String v16; 
+
+	v15 = 0;
+	_vm->_fontManager.TEXTE_OFF(5);
+	_vm->_fontManager.TEXTE_OFF(9);
+	_vm->_eventsManager.VBL();
+	_vm->_graphicsManager.no_scroll = 1;
+	v13 = _vm->_globals.DESACTIVE_INVENT;
+	_vm->_globals.DESACTIVE_INVENT = 1;
+	BUFFERPERSO = FileManager::RECHERCHE_CAT(filename, 5);
+	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
+	if (BUFFERPERSO == PTRNUL) {
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, filename);
+		BUFFERPERSO = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		TAILLEPERSO = FileManager::FLONG(_vm->_globals.NFICHIER);
+	}
+	_vm->_globals.SAUVEGARDE->field4 = 0;
+	RENVOIE_FICHIER(40, v16, (const char *)BUFFERPERSO);
+	RENVOIE_FICHIER(0, FQUEST, (const char *)BUFFERPERSO);
+	RENVOIE_FICHIER(20, FREPON, (const char *)BUFFERPERSO);
+	if (_vm->_globals.FR == 1) {
+		FREPON = FQUEST = "RUE.TXT";
+	} else if (!_vm->_globals.FR) {
+		FREPON = FQUEST = "RUEAN.TXT";
+	} else if (_vm->_globals.FR == 2) {
+		FREPON = FQUEST = "RUEES.TXT";
+	}
+	v2 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 40);
+	v3 = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	PCHERCHE = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	PERSOSPR = FileManager::RECHERCHE_CAT(v16, 7);
+	if (PERSOSPR) {
+		_vm->_globals.CAT_FLAG = 0;
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, v16);
+	} else {
+		_vm->_globals.CAT_FLAG = 1;
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_SAN.RES");
+	}
+	PERSOSPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+	_vm->_globals.CAT_FLAG = 0;
+	FileManager::CONSTRUIT_LINUX("TEMP.SCR");
+	if (_vm->_graphicsManager.nbrligne == 640)
+		FileManager::SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+	if (_vm->_graphicsManager.nbrligne == 1280)
+		FileManager::SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
+	if (!_vm->_graphicsManager.nbrligne)
+		_vm->_graphicsManager.ofscroll = 0;
+	_vm->_graphicsManager.NB_SCREEN();
+	_vm->_objectsManager.PERSO_ON = 1;
+	CHERCHE_PAL(v3, 0);
+	CHERCHE_ANIM0(v3, 0);
+	ANIM_PERSO_INIT();
+	PLIGNE1 = v2;
+	PLIGNE2 = v2 + 1;
+	PLIGNE3 = v2 + 2;	
+	PLIGNE4 = v2 + 3;
+	v14 = _vm->_eventsManager.btsouris;
+	_vm->_eventsManager.btsouris = 4;
+	_vm->_eventsManager.CHANGE_MOUSE(0);
+	if (!_vm->_globals.NOPARLE) {
+		v4 = v2 + 3;
+		do {
+			v5 = DIALOGUE();
+			if ((signed __int16)v5 != v4)
+				v15 = DIALOGUE_REP(v5);
+			if (v15 == -1)
+				v5 = v2 + 3;
+			_vm->_eventsManager.VBL();
+		} while ((signed __int16)v5 != v4);
+	}
+	if (_vm->_globals.NOPARLE == 1) {
+		v6 = 1;
+		do
+			v7 = DIALOGUE_REP(v6++);
+		while (v7 != -1);
+	}
+	CLEAR_ANIM_PERSO();
+	_vm->_globals.NOPARLE = 0;
+	_vm->_globals.NECESSAIRE = 1;
+	BUFFERPERSO = FileManager::LIBERE_FICHIER(BUFFERPERSO);
+	PERSOSPR = FileManager::LIBERE_FICHIER(PERSOSPR);
+	_vm->_graphicsManager.NB_SCREEN();
+	_vm->_globals.NECESSAIRE = 0;
+	FileManager::CONSTRUIT_LINUX("TEMP.SCR");
+	FileManager::bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+	_vm->_objectsManager.PERSO_ON = 0;
+	_vm->_eventsManager.btsouris = v14;
+	
+	_vm->_eventsManager.CHANGE_MOUSE(v14);
+	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.DD_LOCK();
+	if (_vm->_graphicsManager.Winbpp == 2) {
+		if (_vm->_graphicsManager.SDL_ECHELLE)
+			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+		else
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+	}
+	if (_vm->_graphicsManager.Winbpp == 1) {
+		if (_vm->_graphicsManager.SDL_ECHELLE)
+			_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+		else
+			_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+	}
+	_vm->_graphicsManager.DD_UNLOCK();
+	v8 = _vm->_graphicsManager.VESA_BUFFER;
+	v9 = _vm->_graphicsManager.VESA_SCREEN;
+	memcpy(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.VESA_SCREEN, 0x95FFCu);
+	v9 = v9 + 614396;
+	v8 = v8 + 614396;
+	*v8 = *v9;
+	v8 = v8 + 2;
+	*v8 = *(v9 + 2);
+	v10 = v8 + 1;
+	_vm->_globals.DESACTIVE_INVENT = v13;
+	_vm->_graphicsManager.DD_VBL();
+	v11 = 0;
+	do {
+		_vm->_eventsManager.VBL();
+		++v11;
+	} while (v11 <= 4);
+	_vm->_graphicsManager.no_scroll = 0;
+}
+
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	int v1;
 	int v2; 
@@ -596,6 +735,18 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 			_vm->_globals.Bob[idx].field24 = 0;
 		}
 	}
+}
+
+void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
+	warning("TODO: CHERCHE_ANIM0");
+}
+
+void TalkManager::ANIM_PERSO_INIT() {
+	warning("TODO: ANIM_PERSO_INIT");
+}
+
+void TalkManager::CLEAR_ANIM_PERSO() {
+	warning("TODO: CLEAR_ANIM_PERSO");
 }
 
 } // End of namespace Hopkins

@@ -31,7 +31,7 @@ namespace Hopkins {
 
 struct SpriteItem {
 	int field0;
-	byte *spriteData;
+	const byte *spriteData;
 	int field8;
 	int fieldA;
 	int fieldC;
@@ -39,6 +39,11 @@ struct SpriteItem {
 	int field10;
 	int field12;
 	int field14;
+	byte *field1C;
+	int field20;
+	int field22;
+	int field24;
+	int field26;
 	int field28;
 	int field2A;
 	int field2C;
@@ -68,6 +73,7 @@ public:
 	byte *inventaire2;
 	byte *SL_SPR;
 	byte *SL_SPR2;
+	byte *sprite_ptr;
 	bool PERSO_ON;
 	bool SL_FLAG;
 	bool FLAG_VISIBLE;
@@ -75,6 +81,9 @@ public:
 	int DESACTIVE_CURSOR;
 	bool BOBTOUS;
 	SpriteItem Sprite[6];
+	bool INVENTFLAG;
+	int KEY_INVENT;
+	int my_anim;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -112,6 +121,36 @@ public:
 	int AvantTri(int a1, int a2, int a3);
 	void AFF_BOB_ANIM();
 	void AFF_VBOB();
+
+	int XSPR(int idx);
+	int YSPR(int idx);
+	void SPRITE_NOW(const byte *spriteData, int a2, int a3, int a4, int a5, int a6, int a7, int a8);
+
+	void CLEAR_SPR();
+	void SPRITE_ON(int idx);
+	void SPRITE(const byte *spriteData, int a2, int a3, int idx, int a5, int a6, int a7, int a8, int a9);
+	void SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, int a5);
+	void SPRITE_OFF(int idx);
+	void SPRITE_GEL(int idx);
+	int SXSPR(int idx);
+	int SYSPR(int idx);
+	int POSISPR(int idx);
+	void SETPOSISPR(int idx, int a2);
+	void SETXSPR(int idx, int xp);
+	void SETANISPR(int idx, int a2);
+	void SETYSPR(int idx, int yp);
+	void SETTAILLESPR(int idx, int a2);
+	void SETFLIPSPR(int idx, int a2);
+
+	void VERIFZONE();
+	void GOHOME2();
+	void CHARGE_OBSTACLE(const Common::String &file);
+	void CHARGE_CACHE(const Common::String &file);
+	void CHARGE_ZONE(const Common::String &file);
+	void PLAN_BETA();
+	void BTGAUCHE();
+	void PARADISE();
+	void CLEAR_ECRAN();
 };
 
 } // End of namespace Hopkins

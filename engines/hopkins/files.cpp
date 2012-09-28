@@ -125,6 +125,15 @@ void FileManager::DMESS1() {
 	// No implementation in original
 }
 
+void FileManager::bload(const Common::String &file, byte *buf) {
+	Common::File f;
+	if (!f.open(file))
+		error("Error openinig file - %s", file.c_str());
+	int32 filesize = f.size();
+	FileManager::bload_it(f, buf, filesize);
+	f.close();
+}
+
 int FileManager::bload_it(Common::ReadStream &stream, void *buf, size_t nbytes) {
 	return stream.read(buf, nbytes);
 }
@@ -323,6 +332,10 @@ uint32 FileManager::FLONG(const Common::String &filename) {
 	f.close();
 	
 	return size;
+}
+
+void FileManager::CONSTRUIT_LINUX(const Common::String &file) {
+	warning("TODO: CONSTRUIT_LINUX");
 }
 
 } // End of namespace Hopkins

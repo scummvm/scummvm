@@ -72,8 +72,17 @@ struct ListeItem {
 	int field0;
 	int field2;
 	int field4;
-	int x2;
-	int y2;
+	int width;
+	int height;
+	int fieldA;
+};
+
+struct Liste2Item {
+	int field0;
+	int field2;
+	int field4;
+	int width;
+	int height;
 };
 
 struct BobItem {
@@ -111,14 +120,6 @@ struct BobItem {
 	int field46;
 	int field48;
 	int field4A;
-};
-
-struct Liste2Item {
-	int field0;
-	int field2;
-	int field4;
-	int field6;
-	int field8;
 };
 
 struct BlAnimItem {
@@ -174,13 +175,19 @@ struct CacheItem {
 	int field6;
 	int field8;
 	int fieldA;
+	byte *fieldC;
 	int field10;
+	int field12;
 	int field14;
 };
 
 // Note: Fields decimal based for now
 struct Sauvegarde {
 	int field4;
+	int field80;
+	int field170;
+	int field171;
+	int field172;
 	int field353;
 	int field354;
 	int field355;
@@ -249,12 +256,12 @@ public:
 	BqeAnimItem Bqe_Anim[35];
 	BankItem Bank[8];
 	BobItem Bob[36];
+	ListeItem Liste[6];
 	Liste2Item Liste2[35];
 	BlAnimItem BL_ANIM[30];
 	VBobItem VBob[35];
 	ObjetWItem ObjetW[300];
 	BlocItem BLOC[250];
-	ListeItem Liste[7];
 	CacheItem Cache[25];
 	byte *Winventaire;
 	byte *texte_tmp;
@@ -293,10 +300,12 @@ public:
 	int HELICO;
 	uint32 CAT_POSI;
 	uint32 CAT_TAILLE;
+	bool CAT_FLAG;
 	int iRegul;
 	bool BPP_NOAFF;
 	int SORTIE;
 	int PLANX, PLANY;
+	int PLANI;
 	int PASSWORD;
 	int NOSPRECRAN;
 	int ECRAN;
@@ -322,9 +331,15 @@ public:
 	int opt_music;
 	int opt_txt;
 	int NBTRI;
+	int AFFLI;
+	int AFFIVBL;
+	int NOT_VERIF;
 	bool CACHEFLAG;
 	int AFFINVEN;
 	bool NOPARLE;
+	bool PLAN_FLAG;
+	int GOACTION;
+	int NECESSAIRE;
 
 	Globals();
 	~Globals();
@@ -339,6 +354,14 @@ public:
 	byte *dos_malloc2(int count);
 	byte *dos_free2(byte *p);
 	byte *LIBERE_FICHIER(byte *p);
+
+	void RESET_CACHE();
+	void CACHE_ON(); 
+	void CACHE_OFF();
+	void CACHE_SUB(int idx); 
+	void CACHE_ADD(int idx);
+	void CHARGE_CACHE(const Common::String &file);
+	void B_CACHE_OFF(int idx);
 };
 
 #define PTRNUL (byte *)NULL

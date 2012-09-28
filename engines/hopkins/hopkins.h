@@ -82,7 +82,6 @@ private:
 
 	void PASS();
 	void REST_SYSTEM();
-	void PLAN_BETA();
 	void PERSONAGE(const Common::String &s1, const Common::String &s2, const Common::String &s3,
 			const Common::String &s4, int v);
 	void PERSONAGE2(const Common::String &s1, const Common::String &s2, const Common::String &s3,

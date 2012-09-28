@@ -197,7 +197,7 @@ LABEL_13:
 							if (GLOBALS.SORTIE != 4)
 								break;
 							_globals.DESACTIVE_INVENT = true;
-							PLAN_BETA();
+							_objectsManager.PLAN_BETA();
 							_globals.DESACTIVE_INVENT = false;
 						}
 
@@ -923,10 +923,6 @@ void HopkinsEngine::PERSONAGE2(const Common::String &s1, const Common::String &s
 void HopkinsEngine::REST_SYSTEM() {
 	quitGame();
 	_eventsManager.CONTROLE_MES();
-}
-
-void HopkinsEngine::PLAN_BETA() {
-	warning("PLAN_BETA");
 }
 
 void HopkinsEngine::PUBQUIT() {
