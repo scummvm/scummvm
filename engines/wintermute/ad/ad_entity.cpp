@@ -829,13 +829,13 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdEntity::scGetProperty(const char *name) {
+ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("entity");
 		return _scValue;
 	}
@@ -843,7 +843,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Item") == 0) {
+	else if (name == "Item") {
 		if (_item) {
 			_scValue->setString(_item);
 		} else {
@@ -856,7 +856,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Subtype (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Subtype") == 0) {
+	else if (name == "Subtype") {
 		if (_subtype == ENTITY_SOUND) {
 			_scValue->setString("sound");
 		} else {
@@ -869,7 +869,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToX") == 0) {
+	else if (name == "WalkToX") {
 		_scValue->setInt(_walkToX);
 		return _scValue;
 	}
@@ -877,7 +877,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToY") == 0) {
+	else if (name == "WalkToY") {
 		_scValue->setInt(_walkToY);
 		return _scValue;
 	}
@@ -885,7 +885,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToDirection") == 0) {
+	else if (name == "WalkToDirection") {
 		_scValue->setInt((int)_walkToDir);
 		return _scValue;
 	}
@@ -893,7 +893,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Region (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Region") == 0) {
+	else if (name == "Region") {
 		if (_region) {
 			_scValue->setNative(_region, true);
 		} else {

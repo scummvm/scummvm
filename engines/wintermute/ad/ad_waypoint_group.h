@@ -49,7 +49,7 @@ public:
 	virtual ~AdWaypointGroup();
 	BaseArray<BasePoint *> _points;
 	int _editorSelectedPoint;
-	virtual ScValue *scGetProperty(const char *name);
+	virtual ScValue *scGetProperty(const Common::String &name);
 	virtual bool scSetProperty(const char *name, ScValue *value);
 };
 

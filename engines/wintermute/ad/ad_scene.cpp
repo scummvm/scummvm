@@ -1809,13 +1809,13 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdScene::scGetProperty(const char *name) {
+ScValue *AdScene::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("scene");
 		return _scValue;
 	}
@@ -1823,7 +1823,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumLayers (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumLayers") == 0) {
+	else if (name == "NumLayers") {
 		_scValue->setInt(_layers.size());
 		return _scValue;
 	}
@@ -1831,7 +1831,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumWaypointGroups (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumWaypointGroups") == 0) {
+	else if (name == "NumWaypointGroups") {
 		_scValue->setInt(_waypointGroups.size());
 		return _scValue;
 	}
@@ -1839,7 +1839,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MainLayer (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MainLayer") == 0) {
+	else if (name == "MainLayer") {
 		if (_mainLayer) {
 			_scValue->setNative(_mainLayer, true);
 		} else {
@@ -1852,7 +1852,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumFreeNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumFreeNodes") == 0) {
+	else if (name == "NumFreeNodes") {
 		_scValue->setInt(_objects.size());
 		return _scValue;
 	}
@@ -1860,7 +1860,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MouseX (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MouseX") == 0) {
+	else if (name == "MouseX") {
 		int viewportX;
 		getViewportOffset(&viewportX);
 
@@ -1871,7 +1871,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MouseY (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MouseY") == 0) {
+	else if (name == "MouseY") {
 		int viewportY;
 		getViewportOffset(NULL, &viewportY);
 
@@ -1882,7 +1882,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AutoScroll
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AutoScroll") == 0) {
+	else if (name == "AutoScroll") {
 		_scValue->setBool(_autoScroll);
 		return _scValue;
 	}
@@ -1890,7 +1890,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentState
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PersistentState") == 0) {
+	else if (name == "PersistentState") {
 		_scValue->setBool(_persistentState);
 		return _scValue;
 	}
@@ -1898,7 +1898,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentStateSprites
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PersistentStateSprites") == 0) {
+	else if (name == "PersistentStateSprites") {
 		_scValue->setBool(_persistentStateSprites);
 		return _scValue;
 	}
@@ -1906,7 +1906,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollPixelsX") == 0) {
+	else if (name == "ScrollPixelsX") {
 		_scValue->setInt(_scrollPixelsH);
 		return _scValue;
 	}
@@ -1914,7 +1914,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollPixelsY") == 0) {
+	else if (name == "ScrollPixelsY") {
 		_scValue->setInt(_scrollPixelsV);
 		return _scValue;
 	}
@@ -1923,7 +1923,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollSpeedX") == 0) {
+	else if (name == "ScrollSpeedX") {
 		_scValue->setInt(_scrollTimeH);
 		return _scValue;
 	}
@@ -1931,7 +1931,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollSpeedY") == 0) {
+	else if (name == "ScrollSpeedY") {
 		_scValue->setInt(_scrollTimeV);
 		return _scValue;
 	}
@@ -1939,7 +1939,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "OffsetX") == 0) {
+	else if (name == "OffsetX") {
 		_scValue->setInt(_offsetLeft);
 		return _scValue;
 	}
@@ -1947,7 +1947,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "OffsetY") == 0) {
+	else if (name == "OffsetY") {
 		_scValue->setInt(_offsetTop);
 		return _scValue;
 	}
@@ -1955,7 +1955,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Width") == 0) {
+	else if (name == "Width") {
 		if (_mainLayer) {
 			_scValue->setInt(_mainLayer->_width);
 		} else {
@@ -1967,7 +1967,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Height") == 0) {
+	else if (name == "Height") {
 		if (_mainLayer) {
 			_scValue->setInt(_mainLayer->_height);
 		} else {

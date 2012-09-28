@@ -140,13 +140,13 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXArray::scGetProperty(const char *name) {
+ScValue *SXArray::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("array");
 		return _scValue;
 	}
@@ -154,7 +154,7 @@ ScValue *SXArray::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Length") == 0) {
+	else if (name == "Length") {
 		_scValue->setInt(_length);
 		return _scValue;
 	}
@@ -164,7 +164,7 @@ ScValue *SXArray::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else {
 		char paramName[20];
-		if (validNumber(name, paramName)) {
+		if (validNumber(name.c_str(), paramName)) { // TODO: Change to Common::String
 			return _values->getProp(paramName);
 		} else {
 			return _scValue;

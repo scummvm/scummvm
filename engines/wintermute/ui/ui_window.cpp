@@ -1014,13 +1014,13 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIWindow::scGetProperty(const char *name) {
+ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("window");
 		return _scValue;
 	}
@@ -1028,7 +1028,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumWidgets / NumControls (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumWidgets") == 0 || strcmp(name, "NumControls") == 0) {
+	else if (name == "NumWidgets" || name == "NumControls") {
 		_scValue->setInt(_widgets.size());
 		return _scValue;
 	}
@@ -1036,7 +1036,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Exclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Exclusive") == 0) {
+	else if (name == "Exclusive") {
 		_scValue->setBool(_mode == WINDOW_EXCLUSIVE);
 		return _scValue;
 	}
@@ -1044,7 +1044,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SystemExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SystemExclusive") == 0) {
+	else if (name == "SystemExclusive") {
 		_scValue->setBool(_mode == WINDOW_SYSTEM_EXCLUSIVE);
 		return _scValue;
 	}
@@ -1052,7 +1052,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Menu") == 0) {
+	else if (name == "Menu") {
 		_scValue->setBool(_isMenu);
 		return _scValue;
 	}
@@ -1060,7 +1060,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// InGame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InGame") == 0) {
+	else if (name == "InGame") {
 		_scValue->setBool(_inGame);
 		return _scValue;
 	}
@@ -1068,7 +1068,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PauseMusic
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PauseMusic") == 0) {
+	else if (name == "PauseMusic") {
 		_scValue->setBool(_pauseMusic);
 		return _scValue;
 	}
@@ -1076,7 +1076,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ClipContents
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ClipContents") == 0) {
+	else if (name == "ClipContents") {
 		_scValue->setBool(_clipContents);
 		return _scValue;
 	}
@@ -1084,7 +1084,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Transparent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Transparent") == 0) {
+	else if (name == "Transparent") {
 		_scValue->setBool(_transparent);
 		return _scValue;
 	}
@@ -1092,7 +1092,7 @@ ScValue *UIWindow::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// FadeColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "FadeColor") == 0) {
+	else if (name == "FadeColor") {
 		_scValue->setInt((int)_fadeColor);
 		return _scValue;
 	} else {

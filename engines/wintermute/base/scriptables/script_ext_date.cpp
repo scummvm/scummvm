@@ -203,13 +203,13 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXDate::scGetProperty(const char *name) {
+ScValue *SXDate::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("date");
 		return _scValue;
 	} else {
@@ -224,7 +224,7 @@ bool SXDate::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name")==0){
+	if (name == "Name")==0){
 	    setName(value->getString());
 	    return STATUS_OK;
 	}

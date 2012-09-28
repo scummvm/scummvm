@@ -624,7 +624,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseFrame::scGetProperty(const char *name) {
+ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
 		_scValue = new ScValue(_gameRef);
 	}
@@ -633,7 +633,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("frame");
 		return _scValue;
 	}
@@ -641,7 +641,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Delay") == 0) {
+	else if (name == "Delay") {
 		_scValue->setInt(_delay);
 		return _scValue;
 	}
@@ -649,7 +649,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Keyframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Keyframe") == 0) {
+	else if (name == "Keyframe") {
 		_scValue->setBool(_keyframe);
 		return _scValue;
 	}
@@ -657,7 +657,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// KillSounds
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "KillSounds") == 0) {
+	else if (name == "KillSounds") {
 		_scValue->setBool(_killSound);
 		return _scValue;
 	}
@@ -665,7 +665,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MoveX") == 0) {
+	else if (name == "MoveX") {
 		_scValue->setInt(_moveX);
 		return _scValue;
 	}
@@ -673,7 +673,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MoveY") == 0) {
+	else if (name == "MoveY") {
 		_scValue->setInt(_moveY);
 		return _scValue;
 	}
@@ -681,7 +681,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumSubframes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumSubframes") == 0) {
+	else if (name == "NumSubframes") {
 		_scValue->setInt(_subframes.size());
 		return _scValue;
 	}
@@ -689,7 +689,7 @@ ScValue *BaseFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumEvents (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumEvents") == 0) {
+	else if (name == "NumEvents") {
 		_scValue->setInt(_applyEvent.size());
 		return _scValue;
 	}

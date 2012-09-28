@@ -398,13 +398,13 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIEdit::scGetProperty(const char *name) {
+ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("editor");
 		return _scValue;
 	}
@@ -412,7 +412,7 @@ ScValue *UIEdit::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SelStart") == 0) {
+	else if (name == "SelStart") {
 		_scValue->setInt(_selStart);
 		return _scValue;
 	}
@@ -420,7 +420,7 @@ ScValue *UIEdit::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SelEnd") == 0) {
+	else if (name == "SelEnd") {
 		_scValue->setInt(_selEnd);
 		return _scValue;
 	}
@@ -428,7 +428,7 @@ ScValue *UIEdit::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CursorBlinkRate") == 0) {
+	else if (name == "CursorBlinkRate") {
 		_scValue->setInt(_cursorBlinkRate);
 		return _scValue;
 	}
@@ -436,7 +436,7 @@ ScValue *UIEdit::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CursorChar") == 0) {
+	else if (name == "CursorChar") {
 		_scValue->setString(_cursorChar);
 		return _scValue;
 	}
@@ -444,7 +444,7 @@ ScValue *UIEdit::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "FrameWidth") == 0) {
+	else if (name == "FrameWidth") {
 		_scValue->setInt(_frameWidth);
 		return _scValue;
 	}
@@ -452,7 +452,7 @@ ScValue *UIEdit::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MaxLength") == 0) {
+	else if (name == "MaxLength") {
 		_scValue->setInt(_maxLength);
 		return _scValue;
 	}
@@ -460,7 +460,7 @@ ScValue *UIEdit::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Text") == 0) {
+	else if (name == "Text") {
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::ansiToWide(_text);
 			_scValue->setString(StringUtil::wideToUtf8(wstr).c_str());

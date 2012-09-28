@@ -1075,27 +1075,27 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdActor::scGetProperty(const char *name) {
+ScValue *AdActor::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Direction") == 0) {
+	if (name == "Direction") {
 		_scValue->setInt(_dir);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Type") == 0) {
+	else if (name == "Type") {
 		_scValue->setString("actor");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TalkAnimName") == 0) {
+	else if (name == "TalkAnimName") {
 		_scValue->setString(_talkAnimName);
 		return _scValue;
 	}
@@ -1103,7 +1103,7 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkAnimName") == 0) {
+	else if (name == "WalkAnimName") {
 		_scValue->setString(_walkAnimName);
 		return _scValue;
 	}
@@ -1111,7 +1111,7 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IdleAnimName") == 0) {
+	else if (name == "IdleAnimName") {
 		_scValue->setString(_idleAnimName);
 		return _scValue;
 	}
@@ -1119,7 +1119,7 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TurnLeftAnimName") == 0) {
+	else if (name == "TurnLeftAnimName") {
 		_scValue->setString(_turnLeftAnimName);
 		return _scValue;
 	}
@@ -1127,7 +1127,7 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TurnRightAnimName") == 0) {
+	else if (name == "TurnRightAnimName") {
 		_scValue->setString(_turnRightAnimName);
 		return _scValue;
 	} else {
