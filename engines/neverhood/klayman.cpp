@@ -2310,6 +2310,38 @@ void Klayman::stIdleTeleporterHands2() {
 	NextState(&Klayman::stIdleSitBlinkSecond);
 }
 
+void Klayman::teleporterAppear(uint32 fileHash) {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(fileHash, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::hmTeleporterAppearDisappear);
+	SetSpriteUpdate(NULL);
+}
+
+void Klayman::teleporterDisappear(uint32 fileHash) {
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(fileHash, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::hmTeleporterAppearDisappear);
+	SetSpriteUpdate(NULL);
+}
+
+uint32 Klayman::hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4E0A2C24) {
+			_soundResource1.play(0x85B10BB8);
+		} else if (param.asInteger() == 0x4E6A0CA0) {
+			_soundResource1.play(0xC5B709B0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -3004,45 +3036,13 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stGetUpFromTeleporter);
 		break;
 	case 0x483D:
-		stTeleporterAppear();
+		teleporterAppear(0x2C2A4A1C);
 		break;
 	case 0x483E:
-		stTeleporterDisappear();
+		teleporterDisappear(0x3C2E4245);
 		break;
 	}
 	return 0;
-}
-
-uint32 KmScene1109::hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Klayman::handleMessage41D480(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4E0A2C24) {
-			_soundResource1.play(0x85B10BB8);
-		} else if (param.asInteger() == 0x4E6A0CA0) {
-			_soundResource1.play(0xC5B709B0);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-void KmScene1109::stTeleporterAppear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0x2C2A4A1C, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene1109::hmTeleporterAppearDisappear);
-}
-
-void KmScene1109::stTeleporterDisappear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0x3C2E4245, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene1109::hmTeleporterAppearDisappear);
 }
 
 // KmScene1201
@@ -3540,10 +3540,10 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stGetUpFromTeleporter);
 		break;
 	case 0x483D:
-		stTeleporterAppear();
+		teleporterAppear(0xEE084A04);
 		break;																				
 	case 0x483E:
-		stTeleporterDisappear();
+		teleporterDisappear(0xB86A4274);
 		break;																				
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
@@ -3551,37 +3551,6 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
-	}
-	return messageResult;
-}
-
-void KmScene1306::stTeleporterAppear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0xEE084A04, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene1306::hmTeleporterAppearDisappear);
-}
-
-void KmScene1306::stTeleporterDisappear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0xB86A4274, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene1306::hmTeleporterAppearDisappear);
-}
-
-uint32 KmScene1306::hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4E0A2C24) {
-			_soundResource1.play(0x85B10BB8);
-		} else if (param.asInteger() == 0x4E6A0CA0) {
-			_soundResource1.play(0xC5B709B0);
-		}
 	}
 	return messageResult;
 }
@@ -4154,25 +4123,11 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stGetUpFromTeleporter);
 		break;
 	case 0x483D:
-		stTeleporterAppear();
+		teleporterAppear(0x5E0A4905);
 		break;																				
 	case 0x483E:
-		stTeleporterDisappear();
+		teleporterDisappear(0xD86E4477);
 		break;																				
-	}
-	return messageResult;
-}
-
-uint32 KmScene1705::hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4E0A2C24) {
-			_soundResource1.play(0x85B10BB8);
-		} else if (param.asInteger() == 0x4E6A0CA0) {
-			_soundResource1.play(0xC5B709B0);
-		}
-		break;
 	}
 	return messageResult;
 }
@@ -4195,24 +4150,6 @@ void KmScene1705::stFallSkipJump() {
 	SetSpriteUpdate(&KmScene1705::suFallSkipJump);
 	SetMessageHandler(&Klayman::handleMessage41D360);
 	NextState(&Klayman::stLandOnFeet);
-}
-
-void KmScene1705::stTeleporterAppear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0x5E0A4905, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene1705::hmTeleporterAppearDisappear);
-}
-
-void KmScene1705::stTeleporterDisappear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0xD86E4477, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene1705::hmTeleporterAppearDisappear);
 }
 
 KmScene1901::KmScene1901(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
@@ -4309,45 +4246,13 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stGetUpFromTeleporter);
 		break;
 	case 0x483D:
-		stTeleporterAppear();
+		teleporterAppear(0xBE68CC54);
 		break;
 	case 0x483E:
-		stTeleporterDisappear();
+		teleporterDisappear(0x18AB4ED4);
 		break;
 	}
 	return 0;
-}
-
-uint32 KmScene2001::hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4E0A2C24) {
-			_soundResource1.play(0x85B10BB8);
-		} if (param.asInteger() == 0x4E6A0CA0) {
-			_soundResource1.play(0xC5B709B0);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-void KmScene2001::stTeleporterAppear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0xBE68CC54, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene2001::hmTeleporterAppearDisappear);
-}
-
-void KmScene2001::stTeleporterDisappear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0x18AB4ED4, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene2001::hmTeleporterAppearDisappear);
 }
 
 KmScene2101::KmScene2101(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
@@ -4427,10 +4332,10 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stGetUpFromTeleporter);
 		break;
 	case 0x483D:
-		stTeleporterAppear();
+		teleporterAppear(0xFF290E30);
 		break;
 	case 0x483E:
-		stTeleporterDisappear();
+		teleporterDisappear(0x9A28CA1C);
 		break;
 	}
 	return messageResult;	
@@ -4459,20 +4364,6 @@ uint32 KmScene2101::hmHitByDoor(int messageNum, const MessageParam &param, Entit
 	return messageResult;
 }
 
-uint32 KmScene2101::hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4E0A2C24) {
-			_soundResource1.play(0x85B10BB8);
-		} else if (param.asInteger() == 0x4E6A0CA0) {
-			_soundResource1.play(0xC5B709B0);
-		}
-		break;
-	}
-	return messageResult;
-}
-
 void KmScene2101::stHitByDoor() {
 	_status2 = 1;
 	_acceptInput = false;
@@ -4481,24 +4372,6 @@ void KmScene2101::stHitByDoor() {
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	SetMessageHandler(&KmScene2101::hmHitByDoor);
 	_soundResource1.play(0x402E82D4);
-}
-
-void KmScene2101::stTeleporterAppear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0xFF290E30, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene2101::hmTeleporterAppearDisappear);
-}
-
-void KmScene2101::stTeleporterDisappear() {
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0x9A28CA1C, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene2101::hmTeleporterAppearDisappear);
 }
 
 KmScene2201::KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
@@ -5277,7 +5150,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-uint32 KmScene2401::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene2401::hmSpit(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Klayman::handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -5312,7 +5185,7 @@ void KmScene2401::stTrySpitIntoPipe() {
 		_contSpit = false;
 		startAnimation(0x1808B150, 0, -1);
 		SetUpdateHandler(&Klayman::update);
-		SetMessageHandler(&KmScene2401::handleMessage);
+		SetMessageHandler(&KmScene2401::hmSpit);
 		SetSpriteUpdate(NULL);
 	}
 }
@@ -5324,7 +5197,7 @@ void KmScene2401::spitIntoPipe() {
 	_acceptInput = false;
 	startAnimation(0x1B08B553, 0, -1);
 	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&KmScene2401::handleMessage);
+	SetMessageHandler(&KmScene2401::hmSpit);
 	SetSpriteUpdate(NULL);
 	NextState(&KmScene2401::stContSpitIntoPipe);
 }
@@ -5334,7 +5207,7 @@ void KmScene2401::stContSpitIntoPipe() {
 	_acceptInput = true;
 	startAnimationByHash(0x1808B150, 0x16401CA6, 0);
 	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&KmScene2401::handleMessage);
+	SetMessageHandler(&KmScene2401::hmSpit);
 	SetSpriteUpdate(NULL);
 }
 
@@ -5908,44 +5781,13 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stGetUpFromTeleporter);
 		break;
 	case 0x483D:
-		stTeleporterAppear();
+		teleporterAppear(0xDE284B74);
 		break;
 	case 0x483E:
-		stTeleporterDisappear();
+		teleporterDisappear(0xD82A4094);
 		break;
 	}
 	return 0;
-}
-
-uint32 KmScene2805::hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4E0A2C24)
-			_soundResource1.play(0x85B10BB8);
-		else if (param.asInteger() == 0x4E6A0CA0)
-			_soundResource1.play(0xC5B709B0);
-		break;
-	}
-	return messageResult;
-}
-
-void KmScene2805::stTeleporterAppear() {
-	_status2 = 0;
-	_acceptInput = false;
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene2805::hmTeleporterAppearDisappear);
-	startAnimation(0xDE284B74, 0, -1);
-}
-
-void KmScene2805::stTeleporterDisappear() {
-	_status2 = 0;
-	_acceptInput = false;
-	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&KmScene2805::hmTeleporterAppearDisappear);
-	startAnimation(0xD82A4094, 0, -1);
 }
 
 KmScene2806::KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,

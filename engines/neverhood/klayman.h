@@ -178,6 +178,10 @@ public:
 	void stDoIdleTeleporterHands2();
 	void stIdleTeleporterHands2();
 
+    void teleporterAppear(uint32 fileHash);
+    void teleporterDisappear(uint32 fileHash);
+	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+
 protected:
 	Entity *_parentScene;
 	Sprite *_attachedSprite;
@@ -351,7 +355,6 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
 	void stTeleporterAppear();
 	void stTeleporterDisappear();
 };
@@ -410,7 +413,6 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
 	void stTeleporterAppear();
 	void stTeleporterDisappear();
 };
@@ -467,7 +469,6 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
 	void suFallSkipJump();
 	void stFallSkipJump();
 	void stTeleporterAppear();
@@ -487,7 +488,6 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
 	void stTeleporterAppear();
 	void stTeleporterDisappear();
 };
@@ -499,7 +499,6 @@ protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
 	void stHitByDoor();
 	void stTeleporterAppear();
 	void stTeleporterDisappear();
@@ -592,7 +591,7 @@ protected:
 	uint32 _spitDestPipeIndex;
 	uint32 _spitContDestPipeIndex;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
 	void stTrySpitIntoPipe();
 	void spitIntoPipe();
 	void stContSpitIntoPipe();
@@ -658,7 +657,6 @@ public:
 protected:
 	bool _isSittingInTeleporter;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
 	void stTeleporterAppear();
 	void stTeleporterDisappear();
 };
