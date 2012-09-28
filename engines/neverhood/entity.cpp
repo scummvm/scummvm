@@ -1,0 +1,115 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "neverhood/entity.h"
+
+namespace Neverhood {
+
+uint32 MessageParam::asInteger() const { 
+	assert(_type == mptInteger); 
+	return _integer; 
+}
+
+NPoint MessageParam::asPoint() const { 
+	assert(_type == mptInteger || _type == mptPoint);
+	if (_type == mptInteger) {
+		NPoint pt;
+		pt.x = _integer & 0xFFFF;
+		pt.y = (_integer >> 16) & 0xFFFF; 
+		return pt;
+	} 
+	return _point; 
+}
+
+Entity *MessageParam::asEntity() const {
+	assert(_type == mptEntity); 
+	return _entity; 
+}
+
+// TODO: Disable heavy debug stuff in release mode
+
+#define SetUpdateHandler(handler) _updateHandlerCb = static_cast <void (Entity::*)(void)> (handler); debug(2, "SetUpdateHandler(" #handler ")"); _updateHandlerCbName = #handler
+#define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler); debug(2, "SetMessageHandler(" #handler ")"); _messageHandlerCbName = #handler
+
+Entity::Entity(NeverhoodEngine *vm, int priority)
+	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _name("Entity") {
+}
+
+Entity::~Entity() {
+}
+
+void Entity::draw() {
+}
+
+void Entity::handleUpdate() {
+	//debug("Entity(%s).handleUpdate", _name.c_str());
+	debug(2, "handleUpdate() -> [%s]", _updateHandlerCbName.c_str());
+	if (_updateHandlerCb)
+		(this->*_updateHandlerCb)();
+}
+
+uint32 Entity::receiveMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	debug(2, "receiveMessage(%04X) -> [%s]", messageNum, _messageHandlerCbName.c_str());
+	return _messageHandlerCb ? (this->*_messageHandlerCb)(messageNum, param, sender) : 0;
+}
+
+uint32 Entity::sendMessage(Entity *receiver, int messageNum, const MessageParam &param) {
+	return receiver ? receiver->receiveMessage(messageNum, param, this) : 0;
+}
+
+uint32 Entity::sendMessage(Entity *receiver, int messageNum, uint32 param) {
+	return sendMessage(receiver, messageNum, MessageParam(param));
+}
+
+uint32 Entity::sendPointMessage(Entity *receiver, int messageNum, const NPoint &param) {
+	return sendMessage(receiver, messageNum, MessageParam(param));
+}
+
+uint32 Entity::sendEntityMessage(Entity *receiver, int messageNum, Entity *param) {
+	return sendMessage(receiver, messageNum, MessageParam((Entity*)param));
+}
+
+uint32 Entity::getGlobalVar(uint32 nameHash) {
+	return _vm->_gameVars->getGlobalVar(nameHash);
+}
+
+void Entity::setGlobalVar(uint32 nameHash, uint32 value) {
+	_vm->_gameVars->setGlobalVar(nameHash, value);
+}
+
+uint32 Entity::getSubVar(uint32 nameHash, uint32 subNameHash) {
+	return _vm->_gameVars->getSubVar(nameHash, subNameHash);
+}
+
+void Entity::setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value) {
+	_vm->_gameVars->setSubVar(nameHash, subNameHash, value);
+}
+
+void Entity::incGlobalVar(uint32 nameHash, int incrValue) {
+	setGlobalVar(nameHash, getGlobalVar(nameHash) + incrValue);
+}
+
+void Entity::incSubVar(uint32 nameHash, uint32 subNameHash, int incrValue) {
+	setSubVar(nameHash, subNameHash, getSubVar(nameHash, subNameHash) + incrValue);
+}
+
+} // End of namespace Neverhood

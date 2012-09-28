@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	collisionman.o \
 	detection.o \
 	diskplayerscene.o \
+	entity.o \
 	gamemodule.o \
 	gamevars.o \
 	graphics.o \
