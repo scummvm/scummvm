@@ -39,6 +39,7 @@ public:
 	byte *BUFFERPERSO;
 	byte *PALPERSO;
 	byte *PERSOSPR;
+	byte *ADR_ANIM;
 	size_t TAILLEPERSO;
 	int STATI;
 	int PLIGNE1, PLIGNE2;
@@ -56,12 +57,13 @@ public:
 	void VISU_WAIT();
 	void FIN_VISU_WAIT();
 	void FIN_VISU_PARLE(int a1);
-	int VERIF_BOITE(__int16 a1, const Common::String &a2, __int16 a3);
+	int VERIF_BOITE(int a1, const Common::String &a2, int a3);
 	void VISU_PARLE();
 	void BOB_VISU_PARLE(int idx);
 	void CHERCHE_ANIM0(int a1, int a2);
 	void ANIM_PERSO_INIT();
 	void CLEAR_ANIM_PERSO();
+	bool RECHERCHE_ANIM_PERSO(int a1, const byte *a2, int a3, int a4);
 };
 
 } // End of namespace Hopkins

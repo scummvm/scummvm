@@ -114,12 +114,12 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		v4 = v2 + 3;
 		do {
 			v5 = DIALOGUE();
-			if ((signed __int16)v5 != v4)
+			if (v5 != v4)
 				v15 = DIALOGUE_REP(v5);
 			if (v15 == -1)
 				v5 = v2 + 3;
 			_vm->_eventsManager.VBL();
-		} while ((signed __int16)v5 != v4);
+		} while (v5 != v4);
 	}
 	if (_vm->_globals.NOPARLE == 1) {
 		v6 = 1;
@@ -179,7 +179,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	int v1;
 	int v2; 
-	uint v3;
+	int v3;
 	int v4;
 	int v5;
 	byte v7;
@@ -233,12 +233,12 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		v2 = v1 + 3;
 		do {
 			v3 = DIALOGUE();
-			if ((signed __int16)v3 != v2)
+			if (v3 != v2)
 				v9 = DIALOGUE_REP(v3);
 			
 			if (v9 == -1)
 				v3 = v1 + 3;
-		} while ((signed __int16)v3 != v2);
+		} while (v3 != v2);
 	}
 
 	if (_vm->_globals.NOPARLE) {
@@ -323,7 +323,7 @@ int TalkManager::DIALOGUE() {
 	v6 = 0;
   	do {
 		v7 = _vm->_eventsManager.YMOUSE();
-		if ((signed __int16)(v4 - 20 * v19) < v7 && (signed __int16)(v4 - 1) > v7) {
+		if ((v4 - 20 * v19) < v7 && (v4 - 1) > v7) {
 			v8 = v7;
 			_vm->_fontManager.OPTI_COUL_TXT(6, 7, 8, 5);
 			v5 = PLIGNE1;
@@ -335,7 +335,7 @@ int TalkManager::DIALOGUE() {
 			v5 = PLIGNE2;
 			v7 = v9;
 		}
-		if (v21 < v7 && (signed __int16)(v20 - 1) > v7) {
+		if (v21 < v7 && (v20 - 1) > v7) {
 			v10 = v7;
 			_vm->_fontManager.OPTI_COUL_TXT(5, 6, 8, 7);
 			v5 = PLIGNE3;
@@ -506,11 +506,11 @@ int TalkManager::DIALOGUE_REP(int idx) {
 }
 
 void TalkManager::CHERCHE_PAL(int a1, int a2) {
-	__int16 v2;
+	int v2;
 	size_t v4; 
-	unsigned __int16 v5;
+	unsigned int v5;
 	byte *palette; 
-	signed __int16 v8; 
+	signed int v8; 
 
 	v2 = 0;
 	v8 = 0;
@@ -599,7 +599,7 @@ void TalkManager::FIN_VISU_PARLE(int a1) {
 	}
 }
 
-int TalkManager::VERIF_BOITE(__int16 idx, const Common::String &file, __int16 a3) {
+int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	int v6;
 	int v7;
 	char v8; 
@@ -671,7 +671,7 @@ int TalkManager::VERIF_BOITE(__int16 idx, const Common::String &file, __int16 a3
 	} while ((unsigned int)v7 < 0x800);
 
 	v9 = 0;
-	v15 = (signed __int16)(11 * a3) - 4;
+	v15 = (11 * a3) - 4;
 	do {
 		v10 = 0;
 		for (;;) {
@@ -738,15 +738,199 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 }
 
 void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
-	warning("TODO: CHERCHE_ANIM0");
+	size_t v2;
+	signed int v3; 
+	size_t v4;
+	unsigned int v5;
+	unsigned int v6;
+	int v7;
+	byte *v8; 
+	byte *v9; 
+
+	v2 = 0;
+	v3 = 0;
+	v4 = a1;
+	while (1) {
+		if (*(BUFFERPERSO + v4) == 'A'
+		        && *(BUFFERPERSO + v4 + 1) == 'N'
+		        && *(BUFFERPERSO + v4 + 2) == 'I'
+		        && *(BUFFERPERSO + v4 + 3) == 'M'
+		        && *(BUFFERPERSO + v4 + 4) == 1) {
+			v3 = 1;
+			v2 = v4;
+		}
+		++v4;
+		if (v3 == 1)
+			break;
+		if (TAILLEPERSO == v4)
+			return;
+	}
+	v5 = v2 + 25;
+	v9 = BUFFERPERSO + v5;
+	v8 = BUFFERPERSO + v5;
+	ADR_ANIM = BUFFERPERSO + v5;
+	if (!a2) {
+		v6 = 0;
+		do {
+			v7 = READ_LE_UINT16(&v8[2 * v6 + 4]);
+			if (v7 && _vm->_globals.vitesse != 501)
+				_vm->_graphicsManager.AFFICHE_SPEED(PERSOSPR, _vm->_eventsManager.start_x + READ_LE_UINT16(&v8[2 * v6]),
+				    READ_LE_UINT16(&v8[2 * v6 + 2]), (unsigned __int8)v9[2 * v6 + 8]);
+			v6 += 5;
+		} while (_vm->_globals.vitesse != 501 && v7);
+	}
 }
 
 void TalkManager::ANIM_PERSO_INIT() {
-	warning("TODO: ANIM_PERSO_INIT");
+	byte *v0;
+	byte *v1; 
+	int v2;
+	int v4; 
+	int v5; 
+	int v6; 
+	int v7; 
+	int v8; 
+	int v9; 
+	int v10;
+	int v11;
+	int v12;
+
+	v0 = BUFFERPERSO;
+	v1 = BUFFERPERSO + 110;
+	v2 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
+	if (v2)
+		RECHERCHE_ANIM_PERSO(21, (BUFFERPERSO + 110), v2, TAILLEPERSO);
+	v4 = READ_LE_UINT16((uint16 *)v0 + 44);
+	if (v4)
+		RECHERCHE_ANIM_PERSO(22, v1, v4, TAILLEPERSO);
+	v5 = READ_LE_UINT16((uint16 *)v0 + 45);
+	if (v5)
+		RECHERCHE_ANIM_PERSO(23, v1, v5, TAILLEPERSO);
+	v6 = READ_LE_UINT16((uint16 *)v0 + 46);
+	if (v6)
+		RECHERCHE_ANIM_PERSO(24, v1, v6, TAILLEPERSO);
+	v7 = READ_LE_UINT16((uint16 *)v0 + 47);
+	if (v7)
+		RECHERCHE_ANIM_PERSO(25, v1, v7, TAILLEPERSO);
+	v8 = READ_LE_UINT16((uint16 *)v0 + 48);
+	if (v8)
+		RECHERCHE_ANIM_PERSO(26, v1, v8, TAILLEPERSO);
+	v9 = READ_LE_UINT16((uint16 *)v0 + 49);
+	if (v9)
+		RECHERCHE_ANIM_PERSO(27, v1, v9, TAILLEPERSO);
+	v10 = READ_LE_UINT16((uint16 *)v0 + 50);
+	if (v10)
+		RECHERCHE_ANIM_PERSO(28, v1, v10, TAILLEPERSO);
+	v11 = READ_LE_UINT16((uint16 *)v0 + 51);
+	if (v11)
+		RECHERCHE_ANIM_PERSO(29, v1, v11, TAILLEPERSO);
+	v12 = READ_LE_UINT16((uint16 *)v0 + 52);
+	if (v12)
+		RECHERCHE_ANIM_PERSO(30, v1, v12, TAILLEPERSO);
 }
 
 void TalkManager::CLEAR_ANIM_PERSO() {
-	warning("TODO: CLEAR_ANIM_PERSO");
+	for (int idx = 21; idx <= 34; ++idx) {
+		if (_vm->_globals.Bqe_Anim[idx].data != PTRNUL)
+			_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.dos_free2(_vm->_globals.Bqe_Anim[idx].data);
+
+		_vm->_globals.Bqe_Anim[idx].data = PTRNUL;
+		_vm->_globals.Bqe_Anim[idx].field4 = 0;
+	}
+}
+
+bool TalkManager::RECHERCHE_ANIM_PERSO(int a1, const byte *bufPerso, int a3, int a4) {
+	bool result; 
+	const byte *v5; 
+	int v6; 
+	signed int v7;
+	byte *v8; 
+	byte *v9; 
+	__int16 v10;
+	__int16 v11;
+	__int16 v12;
+	char v13; 
+	__int16 v14;
+	__int16 v15;
+	__int16 v16;
+	char v17; 
+	int v18; 
+	signed int v19;
+	int v20; 
+	int v22; 
+	__int16 v23;
+	const byte *v24; 
+
+	v22 = 0;
+	result = false;
+
+	v20 = a1;
+	do {
+		if (*(v22 + bufPerso) == 'A' && *(bufPerso + v22 + 1) == 'N' && *(bufPerso + v22 + 2) == 'I' && *(bufPerso + v22 + 3) == 'M'
+		        && *(bufPerso + v22 + 4) == a3) {
+			v5 = v22 + bufPerso + 5;
+			v18 = v22 + 5;
+			v6 = 0;
+			v7 = 0;
+			do {
+				if (*v5 == 'A' && *(v5 + 1) == 'N' && *(v5 + 2) == 'I' && *(v5 + 3) == 'M')
+					v7 = 1;
+				if (*v5 == 'F' && *(v5 + 1) == 'I' && *(v5 + 2) == 'N')
+					v7 = 1;
+				if (v18 > a4) {
+					_vm->_globals.Bqe_Anim[a1].field4 = 0;
+					result = PTRNUL;
+					_vm->_globals.Bqe_Anim[v20].data = PTRNUL;
+				}
+				++v18;
+				++v6;
+				++v5;
+			} while (v7 != 1);
+			_vm->_globals.Bqe_Anim[v20].data = _vm->_globals.dos_malloc2(v6 + 50);
+			_vm->_globals.Bqe_Anim[a1].field4 = 1;
+			memcpy(_vm->_globals.Bqe_Anim[v20].data, (const byte *)(v22 + bufPerso + 5), 20);
+			v8 = _vm->_globals.Bqe_Anim[v20].data;
+
+			v9 = v8 + 20;
+			v24 = v22 + bufPerso + 25;
+			v10 = READ_LE_UINT16(v22 + bufPerso + 25);
+			v11 = READ_LE_UINT16(v22 + bufPerso + 27);
+			v23 = READ_LE_UINT16(v22 + bufPerso + 29);
+			v12 = READ_LE_UINT16(v22 + bufPerso + 31);
+			v13 = *(v22 + bufPerso + 33);
+			*(v8 + 29) = *(v22 + bufPerso + 34);
+			WRITE_LE_UINT16(v8 + 20, v10);
+			WRITE_LE_UINT16(v8 + 22, v11);
+			WRITE_LE_UINT16(v8 + 24, v23);
+			WRITE_LE_UINT16(v8 + 26, v12);
+			*(v8 + 28) = v13;
+			v19 = 1;
+			do {
+				v9 += 10;
+				v24 += 10;
+				if (!v23)
+					break;
+				v14 = READ_LE_UINT16(v24);
+				v15 = READ_LE_UINT16(v24 + 2);
+				v23 = READ_LE_UINT16(v24 + 4);
+				v16 = READ_LE_UINT16(v24 + 6);
+				v17 = *(v24 + 8);
+				*(v9 + 9) = *(v24 + 9);
+				WRITE_LE_UINT16(v9, v14);
+				WRITE_LE_UINT16(v9 + 2, v15);
+				WRITE_LE_UINT16(v9 + 4, v23);
+				WRITE_LE_UINT16(v9 + 6, v16);
+				*(v9 + 8) = v17;
+				++v19;
+			} while (v19 <= 4999);
+			result = 1;
+		}
+		if (*(bufPerso + v22) == 'F' && *(bufPerso + v22 + 1) == 'I' && *(bufPerso + v22 + 2) == 'N')
+			result = true;
+		++v22;
+	} while (v22 <= a4 && result != 1);
+
+	return result;
 }
 
 } // End of namespace Hopkins
