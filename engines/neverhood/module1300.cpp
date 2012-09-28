@@ -298,7 +298,7 @@ void Module1300::updateScene() {
 }
 
 AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm), _parentScene(parentScene) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	_x = 320;
 	_y = 240;
@@ -312,8 +312,8 @@ AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
 		startAnimation(0x88148150, -1, -1);
 		_newStickFrameIndex = -2;
 	}
-	_soundResource1.load(0x68895082);
-	_soundResource2.load(0x689BD0C1);
+	loadSound(0, 0x68895082);
+	loadSound(1, 0x689BD0C1);
 }
 
 uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -335,14 +335,14 @@ uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &para
 void AsScene1302Bridge::stLowerBridge() {
 	startAnimation(0x88148150, 0, -1);
 	NextState(&AsScene1302Bridge::cbLowerBridgeEvent);
-	_soundResource2.play();
+	playSound(1);
 }
 
 void AsScene1302Bridge::stRaiseBridge() {
 	startAnimation(0x88148150, 7, -1);
 	_playBackwards = true;
 	_newStickFrameIndex = 0;
-	_soundResource1.play();
+	playSound(0);
 }
 
 void AsScene1302Bridge::cbLowerBridgeEvent() {
@@ -352,7 +352,7 @@ void AsScene1302Bridge::cbLowerBridgeEvent() {
 }
 
 SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
-	: StaticSprite(vm, 0x11122122, 200), _soundResource1(vm), _soundResource2(vm) {
+	: StaticSprite(vm, 0x11122122, 200) {
 	
 	SetUpdateHandler(&SsScene1302Fence::update);
 	SetMessageHandler(&SsScene1302Fence::handleMessage);
@@ -360,8 +360,8 @@ SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
 	_firstY = _y;
 	if (getGlobalVar(0x80101B1E))
 		_y += 152;
-	_soundResource1.load(0x7A00400C);
-	_soundResource2.load(0x78184098);
+	loadSound(0, 0x7A00400C);
+	loadSound(1, 0x78184098);
 }
 
 void SsScene1302Fence::update() {
@@ -373,12 +373,12 @@ uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x4808:
-		_soundResource1.play();
+		playSound(0);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveDown);
 		SetMessageHandler(NULL);
 		break;
 	case 0x4809:
-		_soundResource2.play();
+		playSound(1);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveUp);
 		SetMessageHandler(NULL);
 		break;
@@ -424,7 +424,7 @@ uint32 Class595::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource(vm) {
+	: Scene(vm, parentModule, true) {
 
 	SetMessageHandler(&Scene1302::handleMessage);
 	setHitRects(0x004B0858);
@@ -541,17 +541,17 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x4806:
 		sendMessage(_parentModule, 0x1024, 2);
 		if (sender == _asRing1) {
-			_soundResource.play(0x665198C0);
+			playSound(0, 0x665198C0);
 		} else if (sender == _asRing2) {
 			sendMessage(_asBridge, 0x4808, 0);
 			setGlobalVar(0x13206309, 1);
 		} else if (sender == _asRing3) {
-			_soundResource.play(0xE2D389C0);
+			playSound(0, 0xE2D389C0);
 		} else if (sender == _asRing4) {
 			sendMessage(_ssFence, 0x4808, 0);
 			setGlobalVar(0x80101B1E, 1);
 		} else if (sender == _asRing5) {
-			_soundResource.play(0x40428A09);
+			playSound(0, 0x40428A09);
 		}
 		break;
 	case 0x4807:
@@ -572,11 +572,11 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480F:
 		if (sender == _asRing2) {
-			_soundResource.play(0x60755842);
+			playSound(0, 0x60755842);
 			sendMessage(_asBridge, 0x4808, 0);
 			setGlobalVar(0x13206309, 1);
 		} else if (sender == _asRing4) {
-			_soundResource.play(0x60755842);
+			playSound(0, 0x60755842);
 			sendMessage(_ssFence, 0x4808, 0);
 			setGlobalVar(0x80101B1E, 1);
 		}
@@ -592,7 +592,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 AsScene1303Balloon::AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 	
 	// TODO createSurface3(200, dword_4AF9F8);
 	createSurface(200, 640, 480); //TODO: Remeove once the line above is done
@@ -623,11 +623,11 @@ uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x020B0003) {
-			_soundResource.play(0x742B0055);
+			playSound(0, 0x742B0055);
 		} 
 		break;
 	case 0x3002:
-		_soundResource.play(0x470007EE);
+		playSound(0, 0x470007EE);
 		stopAnimation();
 		SetMessageHandler(NULL);
 		setVisible(false);
@@ -802,8 +802,7 @@ uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 AsScene1306Elevator::AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene, AnimatedSprite *asElevatorDoor)
-	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm), 
-	_parentScene(parentScene), _asElevatorDoor(asElevatorDoor), _isUp(false), _isDown(true),
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _asElevatorDoor(asElevatorDoor), _isUp(false), _isDown(true),
 	_countdown(0) {
 
 	_x = 320;
@@ -812,9 +811,9 @@ AsScene1306Elevator::AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene
 	startAnimation(0x043B0270, 0, -1);
 	_newStickFrameIndex = 0;
 	SetMessageHandler(&AsScene1306Elevator::handleMessage);
-	_soundResource1.load(0x1C100E83);
-	_soundResource2.load(0x1C08CEC5);
-	_soundResource3.load(0x5D011E87);
+	loadSound(0, 0x1C100E83);
+	loadSound(1, 0x1C08CEC5);
+	loadSound(2, 0x5D011E87);
 }
 
 void AsScene1306Elevator::update() {
@@ -823,7 +822,7 @@ void AsScene1306Elevator::update() {
 	}
 	AnimatedSprite::update();
 	if (_currFrameIndex == 7) {
-		_soundResource3.play();
+		playSound(1);
 		_asElevatorDoor->setVisible(false);
 	}
 }
@@ -860,7 +859,7 @@ void AsScene1306Elevator::stGoingUp() {
 	SetUpdateHandler(&AsScene1306Elevator::update);
 	startAnimation(0x043B0270, 0, -1);
 	NextState(&AsScene1306Elevator::cbGoingUpEvent);
-	_soundResource1.play();
+	playSound(0);
 }
 
 void AsScene1306Elevator::cbGoingUpEvent() {
@@ -879,7 +878,7 @@ void AsScene1306Elevator::stGoingDown() {
 	startAnimation(0x043B0270, -1, -1);
 	_playBackwards = true;
 	NextState(&AsScene1306Elevator::cbGoingDownEvent);
-	_soundResource2.play();
+	playSound(1);
 }
 
 void AsScene1306Elevator::cbGoingDownEvent() {
@@ -1124,8 +1123,7 @@ const int16 kAsScene1307KeyXDelta = 70;
 const int16 kAsScene1307KeyYDelta = -12;
 
 AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint index, NRect *clipRects)
-	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
-	_soundResource4(vm), _parentScene(parentScene), _index(index), _clipRects(clipRects),
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _index(index), _clipRects(clipRects),
 	_isClickable(true) {
 	
 	NPoint pt;
@@ -1146,10 +1144,10 @@ AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint ind
 	
 	startAnimation(fileHashes[0], 0, -1);
 	
-	_soundResource1.load(0xDC4A1280);
-	_soundResource2.load(0xCC021233);
-	_soundResource3.load(0xC4C23844);
-	_soundResource3.load(0xC4523208);
+	loadSound(0, 0xDC4A1280);
+	loadSound(1, 0xCC021233);
+	loadSound(2, 0xC4C23844);
+	loadSound(3, 0xC4523208);
 
 }
 
@@ -1171,11 +1169,11 @@ uint32 AsScene1307Key::handleMessage(int messageNum, const MessageParam &param, 
 		stMoveKey();
 		break;
 	case 0x2003:
-		_soundResource4.play();
+		playSound(3);
 		stUnlock();
 		break;
 	case 0x2004:
-		_soundResource3.play();
+		playSound(2);
 		stInsert();
 		break;
 	}
@@ -1200,7 +1198,7 @@ void AsScene1307Key::suInsertKey() {
 		processDelta();
 		_pointIndex++;
 		if (_pointIndex == 7)
-			_soundResource1.play();
+			playSound(0);
 	} else {
 		SetSpriteUpdate(NULL);
 		sendMessage(_parentScene, 0x2002, 0);
@@ -1209,9 +1207,9 @@ void AsScene1307Key::suInsertKey() {
 
 void AsScene1307Key::suMoveKey() {
 	if (_pointIndex < kAsScene1307KeyFrameIndicesCount) {
-		_currFrameIndex += kAsScene1307KeyFrameIndices[_pointIndex];
-		_x = _prevX + (_deltaX * _currFrameIndex) / kAsScene1307KeyDivValue;
-		_y = _prevY + (_deltaY * _currFrameIndex) / kAsScene1307KeyDivValue;
+		_frameIndex += kAsScene1307KeyFrameIndices[_pointIndex];
+		_x = _prevX + (_deltaX * _frameIndex) / kAsScene1307KeyDivValue;
+		_y = _prevY + (_deltaY * _frameIndex) / kAsScene1307KeyDivValue;
 		processDelta();
 		_pointIndex++;
 	} else {
@@ -1227,7 +1225,7 @@ void AsScene1307Key::stRemoveKey() {
 	_pointIndex = 0;
 	SetSpriteUpdate(&AsScene1307Key::suRemoveKey);
 	startAnimation(fileHashes[0], 0, -1);
-	_soundResource2.play();
+	playSound(1);
 }
 
 void AsScene1307Key::stInsertKey() {
@@ -1251,7 +1249,7 @@ void AsScene1307Key::stMoveKey() {
 	} else {
 		const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
 		_pointIndex = 0;
-		_currFrameIndex = 0;
+		_frameIndex = 0;
 		_deltaX = newX - _x;
 		_deltaY = newY - _y;
 		SetSpriteUpdate(&AsScene1307Key::suMoveKey);
@@ -1272,8 +1270,8 @@ void AsScene1307Key::stInsert() {
 }
 
 Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource(vm), _countdown(0),
-	_asCurrKey(NULL), _isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
+	: Scene(vm, parentModule, true), _countdown(0), _asCurrKey(NULL),
+	_isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
 
 	//DEBUG
 	setSubVar(0x08D0AB11, 0, 1);
@@ -1325,7 +1323,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 	}
 
-	_soundResource.load(0x68E25540);
+	loadSound(0, 0x68E25540);
 
 }
 
@@ -1336,7 +1334,7 @@ void Scene1307::update() {
 	} else if (_countdown == 20) {
 		_palette->startFadeToWhite(40);
 	}
-	if (_doLeaveScene && !_soundResource.isPlaying()) {
+	if (_doLeaveScene && !isSoundPlaying(0)) {
 		leaveScene(1);
 		setGlobalVar(0x80455A41, 1);
 	} 
@@ -1392,7 +1390,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 				if (_asKeys[keyIndex])
 					sendMessage(_asKeys[keyIndex], 0x2003, 1);
 			}
-			_soundResource.play();
+			playSound(0);
 			_isPuzzleSolved = true;
 			_countdown = 47;
 		} else {
@@ -1438,8 +1436,7 @@ static const uint32 kScene1308FileHashes[] = {
 };
 
 Class549::Class549(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0xBA0AE050, 1100, 320, 240), _soundResource(vm), 
-	_parentScene(parentScene) {
+	: AnimatedSprite(vm, 0xBA0AE050, 1100, 320, 240), _parentScene(parentScene) {
 	
 	SetMessageHandler(&Class549::handleMessage);
 	setVisible(false);
@@ -1466,7 +1463,7 @@ void Class549::sub455470() {
 	startAnimation(0xBA0AE050, 0, -1);
 	setVisible(true);
 	NextState(&Class549::hide);
-	_soundResource.play(calcHash("fxDoorOpen38"));
+	playSound(0, calcHash("fxDoorOpen38"));
 }
 
 void Class549::hide() {
@@ -1480,7 +1477,7 @@ void Class549::sub4554F0() {
 	_playBackwards = true;
 	setVisible(true);
 	NextState(&Class549::sub455550);
-	_soundResource.play(calcHash("fxDoorClose38"));
+	playSound(0, calcHash("fxDoorClose38"));
 }
 
 void Class549::sub455550() {
@@ -1489,12 +1486,11 @@ void Class549::sub455550() {
 }
 
 Class592::Class592(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0xA08A0851, 1100, 320, 240), _soundResource(vm), 
-	_parentScene(parentScene) {
+	: AnimatedSprite(vm, 0xA08A0851, 1100, 320, 240), _parentScene(parentScene) {
 	
 	SetMessageHandler(&Class592::handleMessage);
 	NextState(&Class592::sub455710);
-	_soundResource.play(0x51456049);
+	playSound(0, 0x51456049);
 }
  
 uint32 Class592::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1571,7 +1567,7 @@ Class601::Class601(NeverhoodEngine *vm, uint32 fileHash, int index)
 }
 
 Class513::Class513(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100), _soundResource(vm) {
+	: AnimatedSprite(vm, 1100) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Class513::handleMessage);
@@ -1586,11 +1582,11 @@ uint32 Class513::handleMessage(int messageNum, const MessageParam &param, Entity
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x66382026) {
-			_soundResource.play(0x0CD84468);
+			playSound(0, 0x0CD84468);
 		} else if (param.asInteger() == 0x6E28061C) {
-			_soundResource.play(0x78C8402C);
+			playSound(0, 0x78C8402C);
 		} else if (param.asInteger() == 0x462F0410) {
-			_soundResource.play(0x60984E28);
+			playSound(0, 0x60984E28);
 		}
 		break;
 	}

@@ -47,8 +47,6 @@ public:
 	AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stLowerBridge();
 	void stRaiseBridge();
@@ -59,8 +57,6 @@ class SsScene1302Fence : public StaticSprite {
 public:
 	SsScene1302Fence(NeverhoodEngine *vm);
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	int16 _firstY;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -80,7 +76,6 @@ class Scene1302 : public Scene {
 public:
 	Scene1302(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	SoundResource _soundResource;
 	Sprite *_asVenusFlyTrap;
 	Sprite *_asBridge;
 	Sprite *_ssFence;
@@ -101,7 +96,6 @@ public:
 	AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmBalloonPopped(int messageNum, const MessageParam &param, Entity *sender);
 	void stPopBalloon();
@@ -147,9 +141,6 @@ public:
 protected:
 	Scene *_parentScene;
 	AnimatedSprite *_asElevatorDoor;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	bool _isUp;
 	bool _isDown;
 	int _countdown;
@@ -182,10 +173,6 @@ public:
 	AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint index, NRect *clipRects);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
-	SoundResource _soundResource4;
 	NPointArray *_pointList;
 	uint _pointIndex;
 	int _frameIndex;
@@ -209,7 +196,6 @@ class Scene1307 : public Scene {
 public:
 	Scene1307(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	SoundResource _soundResource;
 	NPointArray *_keyHolePoints;
 	NRect _keyHoleRects[16];
 	NRect _clipRects[4];
@@ -228,7 +214,6 @@ public:
 	Class549(NeverhoodEngine *vm, Scene *parentScene);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void sub455470();
 	void hide();
@@ -241,7 +226,6 @@ public:
 	Class592(NeverhoodEngine *vm, Scene *parentScene);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void sub455710();
 	void sub455740();
@@ -267,7 +251,6 @@ class Class513 : public AnimatedSprite {
 public:
 	Class513(NeverhoodEngine *vm);
 protected:
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
