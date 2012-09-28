@@ -87,6 +87,12 @@ bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float
 	return STATUS_OK;
 }
 
+void BaseFrame::stopSound() {
+	if (_sound) {
+		_sound->stop();
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {

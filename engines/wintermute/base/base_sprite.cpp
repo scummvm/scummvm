@@ -121,6 +121,13 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 	return display(x, y, registerOwner, zoomX, zoomY, alpha);
 }
 
+bool BaseSprite::isChanged() {
+	return _changed;
+}
+
+bool BaseSprite::isFinished() {
+	return _finished;
+}
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
@@ -804,9 +811,7 @@ const char *BaseSprite::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::killAllSounds() {
 	for (uint32 i = 0; i < _frames.size(); i++) {
-		if (_frames[i]->_sound) {
-			_frames[i]->_sound->stop();
-		}
+		_frames[i]->stopSound();
 	}
 	return STATUS_OK;
 }

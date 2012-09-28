@@ -264,9 +264,9 @@ bool AdTalkNode::loadSprite() {
 bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 	if (time >= _startTime) {
 		if (_playToEnd) {
-			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->_finished == false)) {
+			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->isFinished() == false)) {
 				return true;
-			} else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->_finished == false)) {
+			} else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->isFinished() == false)) {
 				return true;
 			} else {
 				return false;
