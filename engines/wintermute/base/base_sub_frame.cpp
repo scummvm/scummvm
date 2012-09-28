@@ -226,6 +226,9 @@ void BaseSubFrame::setRect(Rect32 rect) {
 	_rect = rect;
 }
 
+const char* BaseSubFrame::getSurfaceFilename() {
+	return _surfaceFilename;
+}
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {

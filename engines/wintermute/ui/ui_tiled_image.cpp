@@ -334,8 +334,8 @@ bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TILED_IMAGE\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	if (_image && _image->_surfaceFilename) {
-		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
+	if (_image && _image->getSurfaceFilename()) {
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getSurfaceFilename());
 	}
 
 	int h1, h2, h3;
