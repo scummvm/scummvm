@@ -272,8 +272,7 @@ static const uint32 kSsScene1105SymbolDieFileHashes[] = {
 };
 
 SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &rect)
-	: StaticSprite(vm, fileHash, 200), _soundResource(vm), _parentScene(parentScene),
-	_countdown(0) {
+	: StaticSprite(vm, fileHash, 200), _parentScene(parentScene), _countdown(0) {
 	
 	_rect = rect;
 	SetMessageHandler(&SsScene1105Button::handleMessage);
@@ -300,7 +299,7 @@ uint32 SsScene1105Button::handleMessage(int messageNum, const MessageParam &para
 	case 0x480B:
 		_countdown = 8;
 		setVisible(true);
-		_soundResource.play(0x44141000);
+		playSound(0, 0x44141000);
 		break;
 	}
 	return messageResult;
@@ -356,8 +355,7 @@ void SsScene1105SymbolDie::hide() {
 }
 
 AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm),
-	_parentScene(parentScene) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 	
 	// TODO createSurface3(100, dword_4AF4C0);
 	createSurface(100, 640, 480); //TODO: Remeove once the line above is done
@@ -370,8 +368,8 @@ AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentSce
 	setVisible(false);
 	_needRefresh = true;
 	updatePosition();
-	_soundResource1.load(0xCE840261);
-	_soundResource2.load(0xCCA41A62);
+	loadSound(0, 0xCE840261);
+	loadSound(1, 0xCCA41A62);
 }
 
 uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -380,10 +378,10 @@ uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &p
 	case 0x2002:
 		if (getGlobalVar(0x610210B7)) {
 			startAnimation(0x6B0C0432, 0, -1);
-			_soundResource1.play();
+			playSound(0);
 		} else {
 			startAnimation(0x65084002, 0, -1);
-			_soundResource2.play();
+			playSound(1);
 		}
 		break;
 	case 0x3002:
@@ -407,8 +405,7 @@ void AsScene1105TeddyBear::hide() {
 }
 
 SsScene1105OpenButton::SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene)
-	: StaticSprite(vm, 900), _soundResource(vm), _parentScene(parentScene),
-	_countdown(0), _flag1(false) {
+	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _flag1(false) {
 	
 	_spriteResource.load2(0x8228A46C);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -422,7 +419,7 @@ SsScene1105OpenButton::SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentS
 	_needRefresh = true;
 	processDelta();
 	setVisible(false);
-	_soundResource.load(0x44045140);
+	loadSound(0, 0x44045140);
 	SetUpdateHandler(&SsScene1105OpenButton::update);
 	SetMessageHandler(&SsScene1105OpenButton::handleMessage);
 }
@@ -441,7 +438,7 @@ uint32 SsScene1105OpenButton::handleMessage(int messageNum, const MessageParam &
 	switch (messageNum) {
 	case 0x1011:
 		if (_countdown == 0 && !_flag1) {
-			_soundResource.play();
+			playSound(0);
 			setVisible(true);
 			_flag1 = true;
 			_countdown = 4;
@@ -453,8 +450,7 @@ uint32 SsScene1105OpenButton::handleMessage(int messageNum, const MessageParam &
 }
 
 Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm),
-	_soundResource3(vm), _countdown(0), _flag1(false), _flag2(false), _flag3(false),
+	: Scene(vm, parentModule, true), _countdown(0), _flag1(false), _flag2(false), _flag3(false),
 	_flag4(false), _flag5(false), _backgroundIndex(0) {
 	
 	Sprite *ssOpenButton;
@@ -473,9 +469,9 @@ Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_collisionMan->addSprite(ssOpenButton);
 	insertMouse435(0x10006208, 20, 620);
 	
-	_soundResource1.load(0x48442057);
-	_soundResource2.load(0xC025014F);
-	_soundResource3.load(0x68E25540);
+	loadSound(0, 0x48442057);
+	loadSound(1, 0xC025014F);
+	loadSound(2, 0x68E25540);
 	
 }
 
@@ -514,7 +510,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 				getSubVar(0x7500993A, 1) == getSubVar(0x61084036, 1) &&
 				getSubVar(0x7500993A, 2) == getSubVar(0x61084036, 2)) {
 				setGlobalVar(0x610210B7, 1);
-				_soundResource3.play();
+				playSound(2);
 				_flag3 = true;
 			} else {
 				sendMessage(_asTeddyBear, 0x2002, 0);
@@ -617,7 +613,7 @@ void Scene1105::upOpenPanel() {
 			_palette->addPalette(backgroundFileHash, 0, 256, 0);
 		}
 		if (_backgroundIndex == 10) {
-			_soundResource1.play();
+			playSound(0);
 		}
 		if (_backgroundIndex == 0) {
 			SetUpdateHandler(&Scene1105::update);
@@ -642,7 +638,7 @@ void Scene1105::upClosePanel() {
 		if (_backgroundIndex < 6 && _backgroundIndex % 2 == 0) {
 			uint32 backgroundFileHash = kScene1105BackgroundFileHashes[3 - _backgroundIndex / 2]; // CHECKME
 			if (_backgroundIndex == 4) {
-				_soundResource2.play();
+				playSound(1);
 				_asTeddyBear->hide();
 			}
 			changeBackground(backgroundFileHash);
@@ -667,10 +663,10 @@ void Scene1105::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
 		createObjects();
 	}
-	if (_flag4 && !_soundResource2.isPlaying()) {
+	if (_flag4 && !isSoundPlaying(1)) {
 		leaveScene(_flag5);
 	}
-	if (_flag3 && !_soundResource3.isPlaying()) {
+	if (_flag3 && !isSoundPlaying(2)) {
 		sendMessage(_asTeddyBear, 0x2002, 0);
 		_flag3 = false;
 	}

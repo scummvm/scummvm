@@ -46,7 +46,6 @@ public:
 	SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &rect);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -75,8 +74,6 @@ public:
 	void hide();
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -85,7 +82,6 @@ public:
 	SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	int _countdown;
 	bool _flag1;
 	void update();
@@ -96,9 +92,6 @@ class Scene1105 : public Scene {
 public:
 	Scene1105(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	int _countdown;
 	int _backgroundIndex;
 	bool _flag1;
