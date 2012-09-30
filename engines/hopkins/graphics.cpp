@@ -521,8 +521,8 @@ void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, i
 		v11 = (byte *)(v8 + 4 * (width >> 2));
 		v13 = width - 4 * (width >> 2);
 		memcpy(v11, v12, v13);
-		v8 = ((byte *)v11 + v13 + WinScan - width);
-		v7 = ((byte *)v12 + v13 + nbrligne2 - width);
+		v8 = v11 + v13 + WinScan - width;
+		v7 = v12 + v13 + nbrligne2 - width;
 		v9 = v10 - 1;
 	} while (v10 != 1);
 }
@@ -535,28 +535,28 @@ void GraphicsManager::m_scroll2(const byte *surface, int xs, int ys, int width, 
 	int v11;
 
 	assert(VideoPtr);
-	v7 = (const byte *)(xs + nbrligne2 * ys + surface);
-	v8 = (byte *)(destX + WinScan * destY + (byte *)VideoPtr->pixels);
+	v7 = xs + nbrligne2 * ys + surface;
+	v8 = destX + WinScan * destY + (byte *)VideoPtr->pixels;
 	v9 = WinScan - SCREEN_WIDTH;
 	v10 = nbrligne2 - SCREEN_WIDTH;
 	v11 = height;
 
 	do {
 		memcpy(v8, v7, SCREEN_WIDTH);
-		v8 = (byte *)v8 + v9 + SCREEN_WIDTH;
-		v7 = (const byte *)v7 + v10 + SCREEN_WIDTH;
+		v8 = v8 + v9 + SCREEN_WIDTH;
+		v7 = v7 + v10 + SCREEN_WIDTH;
 		--v11;
 	} while (v11);
 }
 
 void GraphicsManager::m_scroll2A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
 	const byte *v7;
-	const byte *v8;
+	byte *v8;
 	int v9;
 	int v10;
 	byte v11;
 	const byte *v12;
-	const byte *v13;
+	byte *v13;
 
 	assert(VideoPtr);
 	v7 = xs + nbrligne2 * ys + surface;
@@ -572,12 +572,12 @@ void GraphicsManager::m_scroll2A(const byte *surface, int xs, int ys, int width,
 			v10 = width;
 			Agr_x = 0;
 			do {
-				v11 = *(byte *)v7;
-				*(byte *)v8++ = *(byte *)v7++;
+				v11 = *v7;
+				*v8++ = *v7++;
 				Agr_x += SDL_ECHELLE;
 				if ((unsigned int)Agr_x >= 100) {
 					Agr_x -= 100;
-					*(byte *)v8++ = v11;
+					*v8++ = v11;
 				}
 				--v10;
 			} while ( v10 );
@@ -864,10 +864,10 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 		v4 = 0;
 		do {
 			v5 = v4;
-			v3 = *(byte *)(v4 + palette);
+			v3 = *(v4 + palette);
 			v3 <<= 8;
 			v15[v5] = v3;
-			palData[v5] = *(byte *)(v4++ + palette);
+			palData[v5] = *(v4++ + palette);
 		} while (v4 < PALETTE_BLOCK_SIZE);
     
 		setpal_vga256(palData);
@@ -885,7 +885,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 				v7 = 0;
 				do {
 					v8 = v7;
-					v9 = v15[v7] - ((unsigned int)*(byte *)(v7 + palette) << 8) / (int)v13;
+					v9 = v15[v7] - (*(v7 + palette) << 8) / v13;
 					v15[v8] = v9;
 					palData[v8] = (v9 >> 8) & 0xff;
 					++v7;
@@ -1076,14 +1076,14 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSur
 	v5 = sourceSurface;
 	for (;;) {
 		v6 = *v5;
-		if (*(byte *)v5 < 222)
+		if (*v5 < 222)
 			goto Video_Cont3_wVbe;
 		
 		if (v6 == 252)
 			return;
     
 		if (v6 < 251) {
-			v3 += (byte)(*(byte *)v5 + 35);
+			v3 += *v5 + 35;
 			v6 = *(v5++ + 1);
 		} else if (v6 == 253) {
 			v3 += *(v5 + 1);
@@ -1154,7 +1154,7 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
 		if (v5 == 252)
 			return;
 		if (v5 < 251) {
-			v2 += (byte)(*v4 + 35);
+			v2 += *v4 + 35;
 			v5 = *(v4++ + 1);
 		} else if (v5 == -3) {
 			v2 += *(v4 + 1);
@@ -1370,7 +1370,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 			while ((byteVal = *srcP) != 253) {
 				++srcP;
-				int width = READ_LE_UINT16(srcP);
+				width = READ_LE_UINT16(srcP);
 				srcP += 2;
 
 				if (byteVal == 254) {
@@ -1398,7 +1398,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 			while ((byteVal = *srcP) != 253) {
 				++srcP;
-				int width = READ_LE_UINT16(srcP);
+				width = READ_LE_UINT16(srcP);
 				srcP += 2;
 
 				if (byteVal == 254) {
@@ -1617,14 +1617,14 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 		v5 = 320;
     
 		do {
-			srcByte = *(byte *)v1;
-			*(byte *)v3 = *(byte *)v1;
+			srcByte = *v1;
+			*v3 = *v1;
 			v6 = WinScan + v3;
-			*(byte *)v6 = srcByte;
+			*v6 = srcByte;
 			v7 = v6 - WinScan + 1;
-			*(byte *)v7 = srcByte;
+			*v7 = srcByte;
 			v8 = WinScan + v7;
-			*(byte *)v8 = srcByte;
+			*v8 = srcByte;
 			v3 = v8 - WinScan + 1;
 			++v1;
 			--v5;

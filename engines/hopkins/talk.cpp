@@ -647,9 +647,9 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	v6 = 0;
 	do {
 		v13 = *v19;
-		if ((unsigned __int8)(*v19 + 46) > 0x1Bu) {
-			if ((unsigned __int8)(v13 + 80) > 0x1Bu) {
-				if ((unsigned __int8)(v13 - 65) <= 0x19u || (unsigned __int8)(v13 - 97) <= 0x19u)
+		if ((byte)(*v19 + 46) > 0x1Bu) {
+			if ((byte)(v13 + 80) > 0x1Bu) {
+				if ((byte)(v13 - 65) <= 0x19u || (byte)(v13 - 97) <= 0x19u)
 					v13 = 32;
 			} else {
 				v13 -= 79;
@@ -660,7 +660,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 		*v19 = v13;
 		v19 = v19 + 1;
 		++v6;
-	} while ( (unsigned int)v6 < 0x800 );
+	} while ((unsigned int)v6 < 0x800);
   
 	v7 = 0;
 	do {
@@ -940,6 +940,5 @@ void TalkManager::REPONSE(int a1, int a2) {
 void TalkManager::REPONSE2(int a1, int a2) {
 	warning("TODO: RESPONSE2");
 }
-
 
 } // End of namespace Hopkins

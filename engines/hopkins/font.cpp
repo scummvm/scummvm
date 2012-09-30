@@ -231,7 +231,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 			oldname = fname;
 			nom_indexoldname = fname;
 
-			//*(int *)((char *)&dword_80AE4DC + strlen(nom_index) + 1) = dword_807C98D;
+			// *(int *)((char *)&dword_80AE4DC + strlen(nom_index) + 1) = dword_807C98D;
 			Common::File f;
 			if (!f.open(nom_index))
 				error("error opening file - %s", nom_index.c_str());
