@@ -293,9 +293,9 @@ void ObjectsManager::AFF_SPRITES() {
 	int v31;
 	int v32;
 	int v33;
-	signed int v34;
-	signed int v35;
-	signed int v36;
+	int v34;
+	int v35;
+	int v36;
 	int v37; 
 	int v38; 
 	uint16 arr[50];
@@ -718,13 +718,13 @@ void ObjectsManager::BOB_OFFSETY(int idx, int v) {
 
 void ObjectsManager::SCBOB(int idx) {
 	int v1;
-	signed int v2;
-	signed int v3;
-	signed int v4;
-	signed int v6;
-	signed int v7;
+	int v2;
+	int v3;
+	int v4;
+	int v6;
+	int v7;
 	int v8; 
-	signed int v9; 
+	int v9; 
 
 	v1 = idx;
 	if (_vm->_globals.Cache[idx].fieldA > 0) {
@@ -744,9 +744,9 @@ void ObjectsManager::SCBOB(int idx) {
 							v1 =_vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx].field8 + v4;
               
 							if (v6 > v4) {
-								if (v6 < (signed int)v1) {
+								if (v6 < v1) {
 									v1 = 0;
-									if (v9 >= v3 && v9 <= (signed int)(_vm->_globals.Cache[idx].field6 + v3)) {
+									if (v9 >= v3 && v9 <= (_vm->_globals.Cache[idx].field6 + v3)) {
 										++_vm->_globals.Cache[idx].fieldA;
 										v1 = 1;
 									}
@@ -797,7 +797,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	int v14;
 	int v15;
 	int v17;
-	signed int v20;
+	int v20;
 	int v21;
 	int v22;
 
@@ -827,12 +827,12 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		v20 = 0;
 		v7 = _vm->_globals.Bob[idx].field36;
 		
-		if ((signed int)v7 < 0) {
-			v7 = (signed int)v7;
-			if ((signed int)v7 < 0)
+		if (v7 < 0) {
+			v7 = v7;
+			if (v7 < 0)
 				v7 = -v7;
 			v20 = v7;
-			if ((signed int)v7 > 95)
+			if (v7 > 95)
 				v20 = 95;
 		}
 		if (_vm->_globals.Bob[idx].field36 > 0)
@@ -845,7 +845,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 				if (v15 < 0)
 					v8 = -v15;
 				v15 = v8;
-				v22 = -(signed int)_vm->_graphicsManager.Reel_Zoom((signed int)v8, v21);
+				v22 = -_vm->_graphicsManager.Reel_Zoom(v8, v21);
 			}
 			if (v6 >= 0) {
 				v17 = _vm->_graphicsManager.Reel_Zoom(v6, v21);
@@ -854,7 +854,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 				if (v15 < 0)
 					v9 = -v15;
 				v6 = v9;
-				v17 = -(signed int)_vm->_graphicsManager.Reel_Zoom((signed int)v9, v21);
+				v17 = -_vm->_graphicsManager.Reel_Zoom(v9, v21);
 			}
 		}
     
@@ -866,7 +866,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 				if (v15 < 0)
 					v10 = -v15;
 				v15 = v10;
-				v22 = -(signed int)_vm->_graphicsManager.Reel_Reduc((signed int)v10, v20);
+				v22 = -_vm->_graphicsManager.Reel_Reduc(v10, v20);
 			}
 			if (v6 >= 0) {
 				v17 = _vm->_graphicsManager.Reel_Reduc(v6, v20);
@@ -874,7 +874,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 				v11 = v15;
 				if (v15 < 0)
 					v11 = -v15;
-				v17 = -(signed int)_vm->_graphicsManager.Reel_Reduc((signed int)v11, v20);
+				v17 = -_vm->_graphicsManager.Reel_Reduc(v11, v20);
 			}
 		}
     
@@ -912,9 +912,9 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 
 void ObjectsManager::VERIFCACHE() {
 	int v1;
-	signed int v2;
-	signed int v3;
-	signed int v4;
+	int v2;
+	int v3;
+	int v4;
 	int v5; 
 	int v6; 
 	int v7; 
@@ -996,7 +996,7 @@ void ObjectsManager::VERIFCACHE() {
 
 void ObjectsManager::INVENT_ANIM() {
 	int v0; 
-	signed int v1;
+	int v1;
 
 	if (!DESACTIVE_INVENT) {
 		if (FLAG_VISIBLE_EFFACE && !FLAG_VISIBLE) {
@@ -1153,12 +1153,12 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 		int reducePercent = 0;
     
 		v9 = Sprite[idx].fieldC;
-		if ((signed int)v9 < 0) {
-			v9 = (signed int)v9;
-			if ((signed int)v9 < 0)
+		if (v9 < 0) {
+			v9 = v9;
+			if (v9 < 0)
 				v9 = -v9;
 			reducePercent = v9;
-			if ((signed int)v9 > 95)
+			if (v9 > 95)
 				reducePercent = 95;
 		}
 		if (Sprite[idx].fieldC > 0)
@@ -1173,7 +1173,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 				if (v4 < 0)
 					v10 = -v4;
 				v4 = v10;
-				v22 = -_vm->_graphicsManager.Reel_Zoom((signed int)v10, zoomPercent);
+				v22 = -_vm->_graphicsManager.Reel_Zoom(v10, zoomPercent);
 			}
       
 			if (v8 >= 0) {
@@ -1183,7 +1183,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 				if (v4 < 0)
 					v11 = -v4;
 				v8 = v11;
-				v7 = -_vm->_graphicsManager.Reel_Zoom((signed int)v11, zoomPercent);
+				v7 = -_vm->_graphicsManager.Reel_Zoom(v11, zoomPercent);
 			}
 		}
 		if (reducePercent) {
@@ -1194,7 +1194,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 				if (v4 < 0)
 					v12 = -v4;
 				v4 = v12;
-				v22 = -_vm->_graphicsManager.Reel_Reduc((signed int)v12, reducePercent);
+				v22 = -_vm->_graphicsManager.Reel_Reduc(v12, reducePercent);
 			}
 			if (v8 >= 0) {
 				v7 = _vm->_graphicsManager.Reel_Reduc(v8, reducePercent);
@@ -1202,7 +1202,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 				v13 = v4;
 				if (v4 < 0)
 					v13 = -v4;
-				v7 = -_vm->_graphicsManager.Reel_Reduc((signed int)v13, reducePercent);
+				v7 = -_vm->_graphicsManager.Reel_Reduc(v13, reducePercent);
 			}
 		}
     
@@ -1252,13 +1252,13 @@ int ObjectsManager::AvantTri(int a1, int a2, int a3) {
 }
 
 void ObjectsManager::AFF_BOB_ANIM() {
-	signed int v1;
+	int v1;
 	int v2;
-	signed int v5;
+	int v5;
 	int v6;
 	int v7;
 	int v8;
-	signed int v10;
+	int v10;
 	int v11;
 	int v12; 
 	int v13; 
@@ -1715,11 +1715,11 @@ void ObjectsManager::SETFLIPSPR(int idx, int a2) {
 }
 
 void ObjectsManager::VERIFZONE() {
-	__int16 v0;
+	int v0;
 	int v1; 
-	__int16 v2;
-	unsigned __int16 v3;
-	__int16 v4;
+	int v2;
+	uint16 v3;
+	int v4;
 
 	v0 = _vm->_eventsManager.XMOUSE();
 	v1 = _vm->_eventsManager.YMOUSE();
@@ -1727,7 +1727,7 @@ void ObjectsManager::VERIFZONE() {
 	if (_vm->_globals.PLAN_FLAG
 	        || _vm->_eventsManager.start_x >= v0
 	        || (v1 = _vm->_graphicsManager.ofscroll + 54, v0 >= v1)
-	        || (v1 = v2 - 1, (unsigned __int16)(v2 - 1) > 0x3Bu)) {
+	        || (v1 = v2 - 1, (uint16)(v2 - 1) > 0x3Bu)) {
 		if (FLAG_VISIBLE == 1)
 			FLAG_VISIBLE_EFFACE = 4;
 		FLAG_VISIBLE = 0;
@@ -1807,7 +1807,7 @@ LABEL_54:
 			if (_vm->_globals.NOMARCHE == 1) {
 				if (_vm->_eventsManager.btsouris == 4) {
 					v1 = v4 + 1;
-					if ((unsigned __int16)(v4 + 1) > 1u)
+					if ((uint16)(v4 + 1) > 1u)
 						BTDROITE();
 				}
 			}
@@ -1964,25 +1964,25 @@ void ObjectsManager::PLAN_BETA() {
 
 void ObjectsManager::BTGAUCHE() {
 	int v0;
-	__int16 v1;
-	__int16 v2;
+	int v1;
+	int v2;
 	byte *v3; 
 	byte *v4; 
 	byte *v5; 
 	int v6; 
-	__int16 v7;
-	__int16 v8;
+	int v7;
+	int v8;
 	byte *v9; 
-	__int16 v10;
-	__int16 v11;
-	__int16 v12;
+	int v10;
+	int v11;
+	int v12;
 	byte *v13; 
-	__int16 v14;
-	__int16 v15;
+	int v14;
+	int v15;
 	byte *v16; 
-	__int16 v17;
-	__int16 v18;
-	__int16 v19;
+	int v17;
+	int v18;
+	int v19;
 
 	_vm->_fontManager.TEXTE_OFF(9);
 	v19 = _vm->_eventsManager.XMOUSE();
@@ -2074,7 +2074,7 @@ LABEL_38:
 	v9 = _vm->_globals.chemin;
 	_vm->_globals.chemin = PTRNUL;
 	if (_vm->_globals.FORET && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
-		if ((signed __int16)YSPR(0) <= 374 || (signed __int16)YSPR(0) > 410) {
+		if (YSPR(0) <= 374 || YSPR(0) > 410) {
 			v10 = XSPR(0);
 			v11 = YSPR(0);
 			v12 = XSPR(0);
@@ -2151,12 +2151,12 @@ LABEL_65:
 }
 
 void ObjectsManager::PARADISE() {
-	signed int v1; // esi@1
-	char result; // al@1
-	int v3; // eax@11
-	unsigned __int16 v4; // ax@19
-	int v5; // eax@24
-	unsigned __int16 v6; // ax@33
+	int v1;
+	char result;
+	int v3; 
+	uint16 v4;
+	int v5; 
+	uint16 v6;
 
 	v1 = 0;
 	ARRET_PERSO_FLAG = 0;
@@ -2164,18 +2164,18 @@ void ObjectsManager::PARADISE() {
 	result = _vm->_globals.SAUVEGARDE->data[svField1];
 	if (result && _vm->_globals.SAUVEGARDE->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.TEXTE_OFF(5);
-		if (_vm->_globals.FORET != 1 || (unsigned __int16)(NUMZONE - 20) > 1u && (unsigned __int16)(NUMZONE - 22) > 1u) {
+		if (_vm->_globals.FORET != 1 || (uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u) {
 			if (_vm->_graphicsManager.DOUBLE_ECRAN == 1) {
 				_vm->_graphicsManager.no_scroll = 2;
-				if (_vm->_eventsManager.start_x >= (signed __int16)XSPR(0) - 320)
+				if (_vm->_eventsManager.start_x >= XSPR(0) - 320)
 					goto LABEL_64;
-				v3 = _vm->_eventsManager.start_x + 320 - (signed __int16)XSPR(0);
+				v3 = _vm->_eventsManager.start_x + 320 - XSPR(0);
 				if (v3 < 0)
 					v3 = -v3;
 				if (v3 <= 160) {
 LABEL_64:
-					if (_vm->_eventsManager.start_x > (signed __int16)XSPR(0) - 320) {
-						v5 = _vm->_eventsManager.start_x + 320 - (signed __int16)XSPR(0);
+					if (_vm->_eventsManager.start_x > XSPR(0) - 320) {
+						v5 = _vm->_eventsManager.start_x + 320 - XSPR(0);
 						if (v5 < 0)
 							v5 = -v5;
 						if (v5 > 160) {
@@ -2190,12 +2190,12 @@ LABEL_64:
 									_vm->_graphicsManager.SCROLL = 640;
 									v1 = 1;
 								}
-								if ((signed __int16)_vm->_eventsManager.XMOUSE() > _vm->_graphicsManager.SCROLL + 620) {
+								if (_vm->_eventsManager.XMOUSE() > _vm->_graphicsManager.SCROLL + 620) {
 									v6 = _vm->_eventsManager.YMOUSE();
 									_vm->_eventsManager.souris_xy(_vm->_eventsManager.souris_x - 4, v6);
 								}
 								_vm->_eventsManager.VBL();
-							} while (v1 != 1 && _vm->_eventsManager.start_x > (signed __int16)XSPR(0) - 320);
+							} while (v1 != 1 && _vm->_eventsManager.start_x > XSPR(0) - 320);
 						}
 					}
 				} else {
@@ -2209,16 +2209,16 @@ LABEL_64:
 							_vm->_graphicsManager.SCROLL = 640;
 							v1 = 1;
 						}
-						if ((signed __int16)_vm->_eventsManager.XMOUSE() < _vm->_graphicsManager.SCROLL + 10) {
+						if (_vm->_eventsManager.XMOUSE() < _vm->_graphicsManager.SCROLL + 10) {
 							v4 = _vm->_eventsManager.YMOUSE();
 							_vm->_eventsManager.souris_xy(_vm->_eventsManager.souris_x + 4, v4);
 						}
 						_vm->_eventsManager.VBL();
-					} while (v1 != 1 && _vm->_eventsManager.start_x < (signed __int16)XSPR(0) - 320);
+					} while (v1 != 1 && _vm->_eventsManager.start_x < XSPR(0) - 320);
 				}
-				if ((signed __int16)_vm->_eventsManager.XMOUSE() > _vm->_graphicsManager.SCROLL + 620)
+				if (_vm->_eventsManager.XMOUSE() > _vm->_graphicsManager.SCROLL + 620)
 					_vm->_eventsManager.souris_xy(_vm->_graphicsManager.SCROLL + 610, 0);
-				if ((signed __int16)_vm->_eventsManager.XMOUSE() < _vm->_graphicsManager.SCROLL + 10)
+				if (_vm->_eventsManager.XMOUSE() < _vm->_graphicsManager.SCROLL + 10)
 					_vm->_eventsManager.souris_xy(_vm->_graphicsManager.SCROLL + 10, 0);
 				_vm->_eventsManager.VBL();
 				_vm->_graphicsManager.no_scroll = 0;
@@ -2228,11 +2228,11 @@ LABEL_64:
 			_vm->_talkManager.REPONSE2(_vm->_globals.SAUVEGARDE->data[svField2], _vm->_globals.SAUVEGARDE->data[svField1]);
 		}
 		_vm->_eventsManager.CHANGE_MOUSE(4);
-		if ((unsigned __int16)(NUMZONE + 1) > 1u && !_vm->_globals.ZONEP[NUMZONE].field16) {
+		if ((uint16)(NUMZONE + 1) > 1u && !_vm->_globals.ZONEP[NUMZONE].field16) {
 			NUMZONE = -1;
 			FORCEZONE = 1;
 		}
-		if (NUMZONE != _vm->_globals.SAUVEGARDE->data[svField2] || (unsigned __int16)(NUMZONE + 1) <= 1u) {
+		if (NUMZONE != _vm->_globals.SAUVEGARDE->data[svField2] || (uint16)(NUMZONE + 1) <= 1u) {
 			_vm->_eventsManager.btsouris = 4;
 			CHANGEVERBE = 0;
 		} else {
@@ -2257,7 +2257,7 @@ LABEL_64:
 	if (_vm->_globals.NOMARCHE == 1) {
 		if (_vm->_eventsManager.btsouris == 4) {
 			result = NUMZONE + 1;
-			if ((unsigned __int16)(NUMZONE + 1) > 1u)
+			if ((uint16)(NUMZONE + 1) > 1u)
 				BTDROITE();
 		}
 	}
@@ -2265,7 +2265,7 @@ LABEL_64:
 }
 
 void ObjectsManager::CLEAR_ECRAN() {
-	__int16 v1;
+	int v1;
 	int v2;
 
 	CLEAR_SPR();
@@ -2324,25 +2324,25 @@ void ObjectsManager::CLEAR_ECRAN() {
 }
 
 void ObjectsManager::INVENT() {
-	__int16 v1; 
+	int v1; 
 	size_t filesize; 
-	__int16 v4;
-	signed __int16 v5; 
-	__int16 v6; 
+	int v4;
+	int v5; 
+	int v6; 
 	byte *v7; 
-	__int16 v8; 
-	signed int v9; 
-	__int16 v10; 
-	__int16 v11; 
-	__int16 v12; 
-	__int16 v13; 
-	signed __int16 v14; 
-	__int16 v15; 
-	__int16 v16;
-	__int16 v17;
-	__int16 v18;
-	__int16 v19;
-	signed __int16 v20; 
+	int v8; 
+	int v9; 
+	int v10; 
+	int v11; 
+	int v12; 
+	int v13; 
+	int v14; 
+	int v15; 
+	int v16;
+	int v17;
+	int v18;
+	int v19;
+	int v20; 
 	Common::File f;
 
 	v13 = 0;
@@ -2423,7 +2423,7 @@ LABEL_7:
 			if (v11 != v10)
 				PARAMCADRE(v11);
 			if (_vm->_eventsManager.btsouris != 16) {
-				if ((unsigned __int16)(_vm->_eventsManager.btsouris - 1) > 1u) {
+				if ((uint16)(_vm->_eventsManager.btsouris - 1) > 1u) {
 					if (_vm->_eventsManager.btsouris != 3) {
 						if (v12 == 2) {
 							OBJETPLUS(v13);
@@ -2434,7 +2434,7 @@ LABEL_7:
 				}
 			}
 			if (v12 == 1) {
-				if (_vm->_eventsManager.btsouris == 1 || _vm->_eventsManager.btsouris == 16 || !_vm->_eventsManager.btsouris || (unsigned __int16)(_vm->_eventsManager.btsouris - 2) <= 1u)
+				if (_vm->_eventsManager.btsouris == 1 || _vm->_eventsManager.btsouris == 16 || !_vm->_eventsManager.btsouris || (uint16)(_vm->_eventsManager.btsouris - 2) <= 1u)
 					break;
 				v9 = v13;
 				VALID_OBJET(_vm->_globals.INVENTAIRE[v13]);
@@ -2473,7 +2473,7 @@ LABEL_7:
 			if (v20 == 1)
 				break;
 			_vm->_eventsManager.VBL();
-			if ((unsigned __int16)(_vm->_globals.ECRAN - 35) <= 5u)
+			if ((uint16)(_vm->_globals.ECRAN - 35) <= 5u)
 				SPECIAL_JEU(v9);
 		}
 		_vm->_fontManager.TEXTE_OFF(9);
@@ -3126,7 +3126,7 @@ LABEL_201:
 					v56 = 0;
 					if (v111 > 0) {
 						do {
-							if ((unsigned __int16)_vm->_graphicsManager.colision2_ligne(a1, a2 - v56, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1, a2 - v56, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v58 = GENIAL(v124, v125, a1, a2 - v56, a1, a2 - v111, v112, _vm->_globals.super_parcours, 4);
@@ -3150,7 +3150,7 @@ LABEL_201:
 					v60 = 0;
 					if (v111 > 0) {
 						do {
-							if ((unsigned __int16)_vm->_graphicsManager.colision2_ligne(a1, v60 + a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1, v60 + a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v61 = GENIAL(v124, v125, a1, v60 + a2, a1, v111 + a2, v112, _vm->_globals.super_parcours, 4);
@@ -3174,7 +3174,7 @@ LABEL_201:
 					v63 = 0;
 					if (v111 > 0) {
 						do {
-							if ((unsigned __int16)_vm->_graphicsManager.colision2_ligne(a1 - v63, a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1 - v63, a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v64 = GENIAL(v124, v125, a1 - v63, a2, a1 - v111, a2, v112, _vm->_globals.super_parcours, 4);
@@ -3198,7 +3198,7 @@ LABEL_201:
 					v66 = 0;
 					if (v111 > 0) {
 						do {
-							if ((unsigned __int16)_vm->_graphicsManager.colision2_ligne(v66 + a1, a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if ((uint16)_vm->_graphicsManager.colision2_ligne(v66 + a1, a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v67 = GENIAL(v124, v125, v66 + a1, a2, v111 + a1, a2, v112, _vm->_globals.super_parcours, 4);
@@ -3233,7 +3233,7 @@ LABEL_234:
 					v112 += 4;
 				}
 				v116 = v115 + 1;
-				if ((signed __int16)(v115 + 1) < v121) {
+				if ((v115 + 1) < v121) {
 					do {
 						v72 = 0;
 						v110 = v116;
@@ -3301,7 +3301,7 @@ LABEL_200:
 					} while (v80 > 0);
 				}
 				v117 = v115 - 1;
-				if ((signed __int16)(v115 - 1) > v121) {
+				if ((v115 - 1) > v121) {
 					do {
 						v83 = _vm->_globals.Ligne[v117].field0 - 1;
 						if (v83 > -1) {
@@ -3463,81 +3463,81 @@ void ObjectsManager::SPECIAL_JEU(int a1) {
 }
 
 int ObjectsManager::Traduction(byte *a1) {
-	signed int v1; 
-	__int16 v2; 
-	signed __int16 v3; 
-	signed __int16 v4; 
-	__int16 v5; 
-	__int16 v6; 
-	__int16 v7; 
-	__int16 v8; 
-	__int16 v9; 
-	__int16 v10; 
-	__int16 v11; 
-	__int16 v12; 
-	__int16 v13; 
-	__int16 v14; 
-	signed __int16 v15; 
-	__int16 v16; 
-	__int16 v17; 
-	signed __int16 v18; 
-	signed __int16 v19; 
-	signed __int16 v20; 
-	signed __int16 v21; 
-	__int16 v22; 
-	__int16 v23; 
-	signed __int16 v24;
-	signed __int16 v25;
-	signed __int16 v26; 
-	__int16 v27; 
-	__int16 v28;
-	__int16 v29;
-	__int16 v30; 
-	__int16 v31;
-	__int16 v32; 
-	signed __int16 v33; 
-	signed __int16 v34; 
-	signed __int16 v35; 
-	signed __int16 v36;
-	__int16 v37; 
-	__int16 v38; 
-	__int16 v39; 
-	__int16 v40; 
-	signed __int16 v41; 
-	signed __int16 v42; 
-	__int16 v43; 
-	__int16 v44; 
-	signed __int16 v45; 
-	signed __int16 v46; 
+	int v1; 
+	int v2; 
+	int v3; 
+	int v4; 
+	int v5; 
+	int v6; 
+	int v7; 
+	int v8; 
+	int v9; 
+	int v10; 
+	int v11; 
+	int v12; 
+	int v13; 
+	int v14; 
+	int v15; 
+	int v16; 
+	int v17; 
+	int v18; 
+	int v19; 
+	int v20; 
+	int v21; 
+	int v22; 
+	int v23; 
+	int v24;
+	int v25;
+	int v26; 
+	int v27; 
+	int v28;
+	int v29;
+	int v30; 
+	int v31;
+	int v32; 
+	int v33; 
+	int v34; 
+	int v35; 
+	int v36;
+	int v37; 
+	int v38; 
+	int v39; 
+	int v40; 
+	int v41; 
+	int v42; 
+	int v43; 
+	int v44; 
+	int v45; 
+	int v46; 
 	char v47; 
 	char v48; 
 	char v49;
-	signed __int16 v50; 
+	int v50; 
 	Sauvegarde1 *v51; 
-	signed __int16 v52; 
+	int v52; 
 	Sauvegarde1 *v53; 
 	int v54; 
-	__int16 v55; 
-	__int16 v56; 
-	__int16 v57; 
-	__int16 v58; 
-	__int16 v59; 
-	__int16 v60; 
-	signed __int16 v61;
-	__int16 v62; 
+	int v55; 
+	int v56; 
+	int v57; 
+	int v58; 
+	int v59; 
+	int v60; 
+	int v61;
+	int v62; 
 	int v63; 
-	__int16 v65;
-	__int16 v66; 
-	__int16 v67; 
-	__int16 v68; 
-	__int16 v69; 
-	__int16 v70;
-	__int16 v71; 
-	__int16 v72; 
-	signed __int16 v73;
-	signed __int16 v74;
-	__int16 v75; 
-	__int16 v76; 
+	int v65;
+	int v66; 
+	int v67; 
+	int v68; 
+	int v69; 
+	int v70;
+	int v71; 
+	int v72; 
+	int v73;
+	int v74;
+	int v75; 
+	int v76; 
 	char v77[12]; 
 	Common::String s; 
 	char v79; 
@@ -3588,7 +3588,7 @@ int ObjectsManager::Traduction(byte *a1) {
 					v3 = 636;
 				if (v3 == 612)
 					v3 = 636;
-				if ((unsigned __int16)(v3 - 613) <= 1u || v3 == 134)
+				if ((uint16)(v3 - 613) <= 1u || v3 == 134)
 					v3 = 636;
 				if (v3 == 615)
 					v3 = 635;
@@ -4214,7 +4214,7 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(3) != 100);
+			while ((uint16)BOBPOSI(3) != 100);
 			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_graphicsManager.FIN_VISU();
 			if (!_vm->_globals.CENSURE) {
@@ -4316,50 +4316,50 @@ LABEL_1141:
 			OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
 			v15 = 0;
 			do {
-				if ((unsigned __int16)BOBPOSI(9) == 4 && !v15) {
+				if ((uint16)BOBPOSI(9) == 4 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v15 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(9) == 5)
+				if ((uint16)BOBPOSI(9) == 5)
 					v15 = 0;
-				if ((unsigned __int16)BOBPOSI(9) == 16 && !v15) {
+				if ((uint16)BOBPOSI(9) == 16 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v15 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(9) == 17)
+				if ((uint16)BOBPOSI(9) == 17)
 					v15 = 0;
-				if ((unsigned __int16)BOBPOSI(9) == 28 && !v15) {
+				if ((uint16)BOBPOSI(9) == 28 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v15 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(9) == 29)
+				if ((uint16)BOBPOSI(9) == 29)
 					v15 = 0;
-				if ((unsigned __int16)BOBPOSI(10) == 10 && !v15) {
+				if ((uint16)BOBPOSI(10) == 10 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
 					v15 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(10) == 11)
+				if ((uint16)BOBPOSI(10) == 11)
 					v15 = 0;
-				if ((unsigned __int16)BOBPOSI(10) == 22 && !v15) {
+				if ((uint16)BOBPOSI(10) == 22 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
 					v15 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(10) == 23)
+				if ((uint16)BOBPOSI(10) == 23)
 					v15 = 0;
-				if ((unsigned __int16)BOBPOSI(10) == 33 && !v15) {
+				if ((uint16)BOBPOSI(10) == 33 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
 					v15 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(10) == 34)
+				if ((uint16)BOBPOSI(10) == 34)
 					v15 = 0;
-				if ((unsigned __int16)BOBPOSI(10) == 12)
+				if ((uint16)BOBPOSI(10) == 12)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 1);
-				if ((unsigned __int16)BOBPOSI(10) == 23)
+				if ((uint16)BOBPOSI(10) == 23)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 2);
-				if ((unsigned __int16)BOBPOSI(10) == 34)
+				if ((uint16)BOBPOSI(10) == 34)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 3);
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(9) != 36);
+			} while ((uint16)BOBPOSI(9) != 36);
 			SPRITE_ON(0);
 			_vm->_animationManager.BOBANIM_OFF(9);
 			_vm->_animationManager.BOBANIM_OFF(10);
@@ -4386,22 +4386,22 @@ LABEL_1141:
 			v18 = 0;
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 			do {
-				if ((unsigned __int16)BOBPOSI(7) == 10 && !v18) {
+				if ((uint16)BOBPOSI(7) == 10 && !v18) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v18 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(7) == 11)
+				if ((uint16)BOBPOSI(7) == 11)
 					v18 = 0;
-				if ((unsigned __int16)BOBPOSI(7) == 18 && !v18) {
+				if ((uint16)BOBPOSI(7) == 18 && !v18) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v18 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(7) == 19)
+				if ((uint16)BOBPOSI(7) == 19)
 					v18 = 0;
-				if ((unsigned __int16)BOBPOSI(7) == 19)
+				if ((uint16)BOBPOSI(7) == 19)
 					_vm->_animationManager.BOBANIM_ON(3);
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(3) != 48);
+			} while ((uint16)BOBPOSI(3) != 48);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			SETANISPR(0, 62);
 			SPRITE_ON(0);
@@ -4422,26 +4422,26 @@ LABEL_1141:
 				v19 = 41;
 			v20 = 0;
 			do {
-				if ((unsigned __int16)BOBPOSI(9) == 4 && !v20) {
+				if ((uint16)BOBPOSI(9) == 4 && !v20) {
 					_vm->_soundManager.PLAY_SOUND2("SOUND44.WAV");
 					v20 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(9) == 5)
+				if ((uint16)BOBPOSI(9) == 5)
 					v20 = 0;
-				if ((unsigned __int16)BOBPOSI(9) == 18 && !v20) {
+				if ((uint16)BOBPOSI(9) == 18 && !v20) {
 					_vm->_soundManager.PLAY_SOUND2("SOUND46.WAV");
 					v20 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(9) == 19)
+				if ((uint16)BOBPOSI(9) == 19)
 					v20 = 0;
-				if ((unsigned __int16)BOBPOSI(10) == 11 && !v20) {
+				if ((uint16)BOBPOSI(10) == 11 && !v20) {
 					_vm->_soundManager.PLAY_SOUND2("SOUND45.WAV");
 					v20 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(10) == 12)
+				if ((uint16)BOBPOSI(10) == 12)
 					v20 = 0;
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(9) != v19);
+			} while ((uint16)BOBPOSI(9) != v19);
 			if (v19 == 12) {
 				SPRITE_ON(0);
 				_vm->_animationManager.BOBANIM_OFF(9);
@@ -4458,19 +4458,19 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND44.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND71.WAV", 2);
 			do {
-				if ((unsigned __int16)BOBPOSI(12) == 4 && !v21) {
+				if ((uint16)BOBPOSI(12) == 4 && !v21) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 					v21 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(12) == 5)
+				if ((uint16)BOBPOSI(12) == 5)
 					v21 = 0;
-				if ((unsigned __int16)BOBPOSI(4) == 5 && !v21) {
+				if ((uint16)BOBPOSI(4) == 5 && !v21) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
 					v21 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(4) == 6)
+				if ((uint16)BOBPOSI(4) == 6)
 					v21 = 0;
-				if ((unsigned __int16)BOBPOSI(13) == 8) {
+				if ((uint16)BOBPOSI(13) == 8) {
 					_vm->_animationManager.BOBANIM_OFF(13);
 					_vm->_animationManager.BOBANIM_OFF(3);
 					_vm->_animationManager.BOBANIM_ON(4);
@@ -4478,7 +4478,7 @@ LABEL_1141:
 					SET_BOBPOSI(13, 0);
 				}
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(4) != 16);
+			} while ((uint16)BOBPOSI(4) != 16);
 			_vm->_animationManager.BOBANIM_OFF(12);
 			_vm->_animationManager.BOBANIM_OFF(4);
 			SPRITE_ON(0);
@@ -4510,20 +4510,20 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND49.WAV", 3);
 			v24 = 0;
 			do {
-				if ((unsigned __int16)BOBPOSI(11) == 4 && !v24) {
+				if ((uint16)BOBPOSI(11) == 4 && !v24) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 					v24 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(11) == 5)
+				if ((uint16)BOBPOSI(11) == 5)
 					v24 = 0;
-				if ((unsigned __int16)BOBPOSI(8) == 11 && !v24) {
+				if ((uint16)BOBPOSI(8) == 11 && !v24) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
 					v24 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(8) == 12)
+				if ((uint16)BOBPOSI(8) == 12)
 					v24 = 0;
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(8) != 32);
+			} while ((uint16)BOBPOSI(8) != 32);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
 			SPRITE_ON(0);
 			_vm->_animationManager.BOBANIM_OFF(11);
@@ -4535,7 +4535,7 @@ LABEL_1141:
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(5) != 74);
+			while ((uint16)BOBPOSI(5) != 74);
 			_vm->_animationManager.BOBANIM_OFF(5);
 			_vm->_animationManager.BOBANIM_OFF(6);
 			_vm->_animationManager.BOBANIM_ON(9);
@@ -4551,13 +4551,13 @@ LABEL_1141:
 			SPRITE_OFF(0);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(9) != 15);
+			while ((uint16)BOBPOSI(9) != 15);
 			_vm->_animationManager.BOBANIM_OFF(9);
 			SPRITE_ON(0);
 			_vm->_soundManager.PLAY_SOUND("SOUND50.WAV");
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(12) != 117);
+			while ((uint16)BOBPOSI(12) != 117);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
 			_vm->_animationManager.BOBANIM_OFF(12);
 			_vm->_animationManager.BOBANIM_OFF(10);
@@ -4569,7 +4569,7 @@ LABEL_1141:
 			SET_BOBPOSI(5, 0);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(5) != 6);
+			while ((uint16)BOBPOSI(5) != 6);
 			_vm->_animationManager.BOBANIM_OFF(5);
 			_vm->_animationManager.BOBANIM_ON(6);
 			OBSSEUL = 1;
@@ -4585,32 +4585,32 @@ LABEL_1141:
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				v25 = 0;
 				do {
-					if ((unsigned __int16)BOBPOSI(1) == 1 && !v25) {
+					if ((uint16)BOBPOSI(1) == 1 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(1) == 2)
+					if ((uint16)BOBPOSI(1) == 2)
 						v25 = 0;
-					if ((unsigned __int16)BOBPOSI(1) == 3 && !v25) {
+					if ((uint16)BOBPOSI(1) == 3 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(1) == 4)
+					if ((uint16)BOBPOSI(1) == 4)
 						v25 = 0;
-					if ((unsigned __int16)BOBPOSI(1) == 5 && !v25) {
+					if ((uint16)BOBPOSI(1) == 5 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(1) == 6)
+					if ((uint16)BOBPOSI(1) == 6)
 						v25 = 0;
-					if ((unsigned __int16)BOBPOSI(1) == 7 && !v25) {
+					if ((uint16)BOBPOSI(1) == 7 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(1) == 8)
+					if ((uint16)BOBPOSI(1) == 8)
 						v25 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((unsigned __int16)BOBPOSI(1) != 9);
+				} while ((uint16)BOBPOSI(1) != 9);
 				_vm->_animationManager.BOBANIM_OFF(1);
 				_vm->_animationManager.BOBANIM_OFF(2);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
@@ -4624,32 +4624,32 @@ LABEL_1141:
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				v26 = 0;
 				do {
-					if ((unsigned __int16)BOBPOSI(1) == 1 && !v26) {
+					if ((uint16)BOBPOSI(1) == 1 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(1) == 2)
+					if ((uint16)BOBPOSI(1) == 2)
 						v26 = 0;
-					if ((unsigned __int16)BOBPOSI(1) == 3 && !v26) {
+					if ((uint16)BOBPOSI(1) == 3 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(1) == 4)
+					if ((uint16)BOBPOSI(1) == 4)
 						v26 = 0;
-					if ((unsigned __int16)BOBPOSI(1) == 5 && !v26) {
+					if ((uint16)BOBPOSI(1) == 5 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(1) == 6)
+					if ((uint16)BOBPOSI(1) == 6)
 						v26 = 0;
-					if ((unsigned __int16)BOBPOSI(1) == 7 && !v26) {
+					if ((uint16)BOBPOSI(1) == 7 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(1) == 8)
+					if ((uint16)BOBPOSI(1) == 8)
 						v26 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((unsigned __int16)BOBPOSI(1) != 9);
+				} while ((uint16)BOBPOSI(1) != 9);
 				_vm->_animationManager.BOBANIM_OFF(1);
 				_vm->_animationManager.BOBANIM_OFF(3);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
@@ -4741,78 +4741,78 @@ LABEL_1141:
 				_vm->_animationManager.BOBANIM_ON(4);
 				v33 = 0;
 				do {
-					if ((unsigned __int16)BOBPOSI(4) == 9 && !v33) {
+					if ((uint16)BOBPOSI(4) == 9 && !v33) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v33 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(4) == 10)
+					if ((uint16)BOBPOSI(4) == 10)
 						v33 = 0;
-					if ((unsigned __int16)BOBPOSI(4) == 32 && !v33) {
+					if ((uint16)BOBPOSI(4) == 32 && !v33) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v33 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(4) == 33)
+					if ((uint16)BOBPOSI(4) == 33)
 						v33 = 0;
-					if ((unsigned __int16)BOBPOSI(4) == 55 && !v33) {
+					if ((uint16)BOBPOSI(4) == 55 && !v33) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v33 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(4) == 56)
+					if ((uint16)BOBPOSI(4) == 56)
 						v33 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((unsigned __int16)BOBPOSI(4) != 72);
+				} while ((uint16)BOBPOSI(4) != 72);
 				_vm->_animationManager.BOBANIM_OFF(4);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
 				_vm->_animationManager.BOBANIM_ON(6);
 				v34 = 0;
 				do {
-					if ((unsigned __int16)BOBPOSI(6) == 9 && !v34) {
+					if ((uint16)BOBPOSI(6) == 9 && !v34) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v34 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(6) == 10)
+					if ((uint16)BOBPOSI(6) == 10)
 						v34 = 0;
-					if ((unsigned __int16)BOBPOSI(6) == 32 && !v34) {
+					if ((uint16)BOBPOSI(6) == 32 && !v34) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v34 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(6) == 33)
+					if ((uint16)BOBPOSI(6) == 33)
 						v34 = 0;
-					if ((unsigned __int16)BOBPOSI(6) == 55 && !v34) {
+					if ((uint16)BOBPOSI(6) == 55 && !v34) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v34 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(6) == 56)
+					if ((uint16)BOBPOSI(6) == 56)
 						v34 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((unsigned __int16)BOBPOSI(6) != 72);
+				} while ((uint16)BOBPOSI(6) != 72);
 				_vm->_animationManager.BOBANIM_OFF(6);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 2) {
 				_vm->_animationManager.BOBANIM_ON(5);
 				v35 = 0;
 				do {
-					if ((unsigned __int16)BOBPOSI(5) == 9 && !v35) {
+					if ((uint16)BOBPOSI(5) == 9 && !v35) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v35 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(5) == 10)
+					if ((uint16)BOBPOSI(5) == 10)
 						v35 = 0;
-					if ((unsigned __int16)BOBPOSI(5) == 32 && !v35) {
+					if ((uint16)BOBPOSI(5) == 32 && !v35) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v35 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(5) == 33)
+					if ((uint16)BOBPOSI(5) == 33)
 						v35 = 0;
-					if ((unsigned __int16)BOBPOSI(5) == 55 && !v35) {
+					if ((uint16)BOBPOSI(5) == 55 && !v35) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v35 = 1;
 					}
-					if ((unsigned __int16)BOBPOSI(5) == 56)
+					if ((uint16)BOBPOSI(5) == 56)
 						v35 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((unsigned __int16)BOBPOSI(5) != 72);
+				} while ((uint16)BOBPOSI(5) != 72);
 				_vm->_animationManager.BOBANIM_OFF(5);
 			}
 			SPRITE_ON(0);
@@ -4828,19 +4828,19 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(4) != 10);
+			while ((uint16)BOBPOSI(4) != 10);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(4) != 18);
+			while ((uint16)BOBPOSI(4) != 18);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(4) != 62);
+			while ((uint16)BOBPOSI(4) != 62);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(4) != 77);
+			while ((uint16)BOBPOSI(4) != 77);
 			_vm->_animationManager.BOBANIM_OFF(4);
 			SPRITE_ON(0);
 		}
@@ -4853,19 +4853,19 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(5) != 10);
+			while ((uint16)BOBPOSI(5) != 10);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(5) != 18);
+			while ((uint16)BOBPOSI(5) != 18);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(5) != 38);
+			while ((uint16)BOBPOSI(5) != 38);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(5) != 53);
+			while ((uint16)BOBPOSI(5) != 53);
 			_vm->_animationManager.BOBANIM_OFF(5);
 			SPRITE_ON(0);
 		}
@@ -4943,7 +4943,7 @@ LABEL_1141:
 			_vm->_animationManager.BOBANIM_ON(1);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(1) != 9);
+			while ((uint16)BOBPOSI(1) != 9);
 			_vm->_animationManager.BOBANIM_OFF(1);
 			_vm->_globals.NO_VISU = 1;
 			_vm->_globals.chemin = PTRNUL;
@@ -4962,7 +4962,7 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(2) != 10);
+			while ((uint16)BOBPOSI(2) != 10);
 			_vm->_animationManager.BOBANIM_OFF(2);
 			_vm->_animationManager.BOBANIM_ON(4);
 		}
@@ -4970,7 +4970,7 @@ LABEL_1141:
 			_vm->_animationManager.BOBANIM_ON(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(3) != 18);
+			while ((uint16)BOBPOSI(3) != 18);
 			_vm->_animationManager.BOBANIM_OFF(3);
 			_vm->_animationManager.BOBANIM_ON(4);
 		}
@@ -4980,9 +4980,9 @@ LABEL_1141:
 			_vm->_animationManager.BOBANIM_ON(4);
 			do {
 				_vm->_eventsManager.VBL();
-				if ((unsigned __int16)BOBPOSI(4) == 18)
+				if ((uint16)BOBPOSI(4) == 18)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
-			} while ((unsigned __int16)BOBPOSI(4) != 26);
+			} while ((uint16)BOBPOSI(4) != 26);
 			_vm->_animationManager.BOBANIM_OFF(4);
 			_vm->_globals.NO_VISU = 0;
 			SPRITE_ON(0);
@@ -4993,14 +4993,14 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND67.WAV", 1);
 			v41 = 0;
 			do {
-				if ((unsigned __int16)BOBPOSI(3) == 10 && !v41) {
+				if ((uint16)BOBPOSI(3) == 10 && !v41) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 					v41 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(3) == 11)
+				if ((uint16)BOBPOSI(3) == 11)
 					v41 = 0;
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(3) != 50);
+			} while ((uint16)BOBPOSI(3) != 50);
 			_vm->_animationManager.BOBANIM_OFF(3);
 			SPRITE_ON(0);
 		}
@@ -5010,14 +5010,14 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND69.WAV", 1);
 			v42 = 0;
 			do {
-				if ((unsigned __int16)BOBPOSI(4) == 10 && !v42) {
+				if ((uint16)BOBPOSI(4) == 10 && !v42) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v42 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(4) == 11)
+				if ((uint16)BOBPOSI(4) == 11)
 					v42 = 0;
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(4) != 24);
+			} while ((uint16)BOBPOSI(4) != 24);
 			_vm->_animationManager.BOBANIM_OFF(4);
 			SPRITE_ON(0);
 		}
@@ -5030,24 +5030,24 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND44.WAV");
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(10) != 7);
+			while ((uint16)BOBPOSI(10) != 7);
 			_vm->_animationManager.BOBANIM_ON(6);
 			_vm->_animationManager.BOBANIM_OFF(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(6) != 10);
+			while ((uint16)BOBPOSI(6) != 10);
 			_vm->_soundManager.PLAY_SOUND("SOUND71.WAV");
 			_vm->_animationManager.BOBANIM_ON(7);
 			_vm->_animationManager.BOBANIM_OFF(4);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(7) != 15);
+			while ((uint16)BOBPOSI(7) != 15);
 			_vm->_animationManager.BOBANIM_OFF(5);
 			_vm->_animationManager.BOBANIM_ON(8);
 			_vm->_soundManager.PLAY_SOUND("SOUND70.WAV");
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(8) != 76);
+			while ((uint16)BOBPOSI(8) != 76);
 			_vm->_animationManager.BOBANIM_OFF(6);
 			_vm->_animationManager.BOBANIM_OFF(7);
 			_vm->_animationManager.BOBANIM_OFF(8);
@@ -5084,12 +5084,12 @@ LABEL_1141:
 			v45 = 0;
 			_vm->_animationManager.BOBANIM_ON(7);
 			do {
-				if ((unsigned __int16)BOBPOSI(7) == 9 && !v45) {
+				if ((uint16)BOBPOSI(7) == 9 && !v45) {
 					v45 = 1;
 					_vm->_soundManager.PLAY_SOUND("SOUND81.WAV");
 				}
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(7) != 15);
+			} while ((uint16)BOBPOSI(7) != 15);
 			_vm->_animationManager.BOBANIM_OFF(7);
 			SETXSPR(0, 476);
 			SETYSPR(0, 278);
@@ -5106,13 +5106,13 @@ LABEL_1141:
 			_vm->_animationManager.BOBANIM_ON(12);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(12) != 6);
+			while ((uint16)BOBPOSI(12) != 6);
 			_vm->_globals.NOPARLE = 1;
 			_vm->_talkManager.PARLER_PERSO("PRMORT.pe2");
 			_vm->_globals.NOPARLE = 0;
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(12) != 12);
+			while ((uint16)BOBPOSI(12) != 12);
 			SPRITE_ON(0);
 			_vm->_animationManager.BOBANIM_OFF(12);
 			_vm->_globals.CACHE_ON();
@@ -5124,15 +5124,15 @@ LABEL_1141:
 			v46 = 0;
 			do {
 				_vm->_eventsManager.VBL();
-				if ((unsigned __int16)BOBPOSI(11) == 10 && !v46)
+				if ((uint16)BOBPOSI(11) == 10 && !v46)
 					v46 = 1;
-			} while ((unsigned __int16)BOBPOSI(11) != 13);
+			} while ((uint16)BOBPOSI(11) != 13);
 			_vm->_animationManager.BOBANIM_OFF(11);
 			_vm->_globals.CACHE_ON();
 			_vm->_animationManager.BOBANIM_ON(13);
 			do
 				_vm->_eventsManager.VBL();
-			while ((unsigned __int16)BOBPOSI(13) != 48);
+			while ((uint16)BOBPOSI(13) != 48);
 			_vm->_globals.NOPARLE = 1;
 			_vm->_talkManager.PARLER_PERSO("HRADIO.PE2");
 			_vm->_globals.NOPARLE = 0;
@@ -5246,19 +5246,19 @@ LABEL_1141:
 			v50 = 0;
 			do {
 				_vm->_eventsManager.VBL();
-				if ((unsigned __int16)BOBPOSI(1) == 12 && !v50) {
+				if ((uint16)BOBPOSI(1) == 12 && !v50) {
 					_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND86.WAV");
 					v50 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(1) == 13)
+				if ((uint16)BOBPOSI(1) == 13)
 					v50 = 0;
-				if ((unsigned __int16)BOBPOSI(1) == 25 && !v50) {
+				if ((uint16)BOBPOSI(1) == 25 && !v50) {
 					_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND85.WAV");
 					v50 = 1;
 				}
-				if ((unsigned __int16)BOBPOSI(1) == 25)
+				if ((uint16)BOBPOSI(1) == 25)
 					v50 = 0;
-			} while ((unsigned __int16)BOBPOSI(1) != 32);
+			} while ((uint16)BOBPOSI(1) != 32);
 			_vm->_animationManager.BOBANIM_OFF(1);
 			_vm->_animationManager.BOBANIM_ON(2);
 			_vm->_fontManager.TEXTE_OFF(9);
@@ -5337,12 +5337,12 @@ LABEL_1141:
 			v52 = 0;
 			_vm->_soundManager.LOAD_WAV("SOUND46.WAV", 1);
 			do {
-				if ((unsigned __int16)BOBPOSI(12) == 5 && !v52) {
+				if ((uint16)BOBPOSI(12) == 5 && !v52) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v52 = 1;
 				}
 				_vm->_eventsManager.VBL();
-			} while ((unsigned __int16)BOBPOSI(12) != 34);
+			} while ((uint16)BOBPOSI(12) != 34);
 			_vm->_animationManager.BOBANIM_OFF(2);
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_graphicsManager.NOFADE = 1;
@@ -5507,7 +5507,7 @@ LABEL_1141:
 			v54 = _vm->_globals.STAILLE[790 / 2];
 			if (_vm->_globals.STAILLE[790 / 2] < 0)
 				v54 = -_vm->_globals.STAILLE[790 / 2];
-			v76 = -(signed __int16)(100 * (67 - (signed __int16)(100 - v54)) / 67);
+			v76 = -(100 * (67 - (100 - v54)) / 67);
 			v53->field4 = v76;
 			_vm->_globals.SAUVEGARDE->data[svField357] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField354] = 0;

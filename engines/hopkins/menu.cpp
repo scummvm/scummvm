@@ -45,11 +45,11 @@ int MenuManager::MENU() {
 	MenuSelection menuIndex;
 	Common::Point mousePos;
 	signed int v6;
-	signed __int16 v7;
-	signed __int16 v8;
-	signed __int16 v9;
-	signed __int16 v10;
-	__int16 v11;
+	int v7;
+	int v8;
+	int v9;
+	int v10;
+	int v11;
 
 	v6 = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {

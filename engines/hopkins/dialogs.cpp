@@ -195,7 +195,7 @@ void OptionsDialog::show(HopkinsEngine *vm) {
 				vm->_globals.vitesse = 2;
 			if (mousePos.x >= vm->_graphicsManager.ofscroll + 300 && mousePos.y > 221 && mousePos.x <= vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 246)
 				vm->_globals.SVGA = 2;
-			if (mousePos.x < vm->_graphicsManager.ofscroll + 165 || mousePos.x > vm->_graphicsManager.ofscroll + 496 || (unsigned __int16)(mousePos.y - 107) > 0xD3u)
+			if (mousePos.x < vm->_graphicsManager.ofscroll + 165 || mousePos.x > vm->_graphicsManager.ofscroll + 496 || (uint)(mousePos.y - 107) > 0xD3u)
 				doneFlag = true;
 		}
 

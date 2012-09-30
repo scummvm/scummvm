@@ -510,7 +510,7 @@ void TalkManager::CHERCHE_PAL(int a1, int a2) {
 	size_t v4; 
 	unsigned int v5;
 	byte *palette; 
-	signed int v8; 
+	int v8; 
 
 	v2 = 0;
 	v8 = 0;
@@ -608,7 +608,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	char v11; 
 	char v13; 
 	char v14; 
-	signed int v15;
+	int v15;
 	byte *ptr; 
 	int v17;
 	int v18;
@@ -739,7 +739,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 
 void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 	size_t v2;
-	signed int v3; 
+	int v3; 
 	size_t v4;
 	unsigned int v5;
 	unsigned int v6;
@@ -843,22 +843,22 @@ bool TalkManager::RECHERCHE_ANIM_PERSO(int a1, const byte *bufPerso, int a3, int
 	bool result; 
 	const byte *v5; 
 	int v6; 
-	signed int v7;
+	int v7;
 	byte *v8; 
 	byte *v9; 
-	__int16 v10;
-	__int16 v11;
-	__int16 v12;
+	int v10;
+	int v11;
+	int v12;
 	char v13; 
-	__int16 v14;
-	__int16 v15;
-	__int16 v16;
+	int v14;
+	int v15;
+	int v16;
 	char v17; 
 	int v18; 
-	signed int v19;
+	int v19;
 	int v20; 
 	int v22; 
-	__int16 v23;
+	int v23;
 	const byte *v24; 
 
 	v22 = 0;

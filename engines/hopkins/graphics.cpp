@@ -342,13 +342,13 @@ void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
 // TODO: See if it's feasible and/or desirable to change this to use the Common PCX decoder
 void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
 	int filesize; 
-	signed __int16 v6;
+	int v6;
 	int v7;
-	__int16 v8;
+	int v8;
 	int v9; 
 	int v10;
 	int v11;
-	unsigned __int8 v12; 
+	byte v12; 
 	int v13;
 	int v14;
 	char v15; 
@@ -846,18 +846,18 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 }
 
 void GraphicsManager::fade_out(const byte *palette, int step, const byte *surface) {
-	__int16 v3;
-	__int16 v4;
+	int v3;
+	int v4;
 	int v5; 
-	signed __int16 v6;
-	__int16 v7;
+	int v6;
+	int v7;
 	int v8;
-	__int16 v9;
-	__int16 v10;
-	__int16 v12;
+	int v9;
+	int v10;
+	int v12;
 	uint16 v13;
 	byte palData[PALETTE_BLOCK_SIZE];
-	__int16 v15[PALETTE_BLOCK_SIZE];
+	int v15[PALETTE_BLOCK_SIZE];
 
 	v13 = v3 = FADESPD;
 	if (palette) {
@@ -880,12 +880,12 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 		}
 	
 		v6 = 0;
-		if ((signed __int16)v13 > 0) {
+		if ((int)v13 > 0) {
 			do {
 				v7 = 0;
 				do {
 					v8 = v7;
-					v9 = v15[v7] - ((unsigned int)*(byte *)(v7 + palette) << 8) / (signed __int16)v13;
+					v9 = v15[v7] - ((unsigned int)*(byte *)(v7 + palette) << 8) / (int)v13;
 					v15[v8] = v9;
 					palData[v8] = (v9 >> 8) & 0xff;
 					++v7;
@@ -901,7 +901,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 					DD_VBL();
 				}
 				++v6;
-			} while ((signed __int16)v13 > v6);
+			} while ((int)v13 > v6);
 		}
 
 		v10 = 0;
@@ -1083,7 +1083,7 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSur
 			return;
     
 		if (v6 < 251) {
-			v3 += (unsigned __int8)(*(byte *)v5 + 35);
+			v3 += (byte)(*(byte *)v5 + 35);
 			v6 = *(v5++ + 1);
 		} else if (v6 == 253) {
 			v3 += *(v5 + 1);
@@ -1154,7 +1154,7 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
 		if (v5 == 252)
 			return;
 		if (v5 < 251) {
-			v2 += (unsigned __int8)(*v4 + 35);
+			v2 += (byte)(*v4 + 35);
 			v5 = *(v4++ + 1);
 		} else if (v5 == -3) {
 			v2 += *(v4 + 1);
@@ -1182,7 +1182,7 @@ Video_Cont3_Vbe:
 				v3 = v6;
 			} else {
 				v9 = v3;
-				v10 = (unsigned __int8)(*v4 + 45);
+				v10 = (byte)(*v4 + 45);
 				result = *(v4 + 1);
 				v11 = (byte *)(v2 + (byte *)VideoPtr->pixels);
 				v2 += v10;
@@ -1764,15 +1764,15 @@ void GraphicsManager::Affiche_Perfect(byte *destSurface, const byte *srcData, in
 	clip_x = clip_y = 0;
 	clip_x1 = clip_y1 = 0;
 
-	if ((unsigned __int16)a3 > min_x) {
-		if ((unsigned __int16)a3 < (unsigned __int16)(min_x + 300))
+	if (a3 > min_x) {
+		if ((uint)a3 < (uint)(min_x + 300))
 			clip_x = min_x + 300 - a3;
-		if ((unsigned __int16)a4 > min_y) {
-			if ((unsigned __int16)a4 < (unsigned __int16)(min_y + 300))
+		if (a4 > min_y) {
+			if ((uint)a4 < (uint)(min_y + 300))
 				clip_y = min_y + 300 - a4;
-			if ((unsigned __int16)a3 < (unsigned __int16)(max_x + 300)) {
+			if ((uint)a3 < (uint)(max_x + 300)) {
 				clip_x1 = max_x + 300 - a3;
-			if ((unsigned __int16)a4 < (unsigned __int16)(max_y + 300)) {
+			if ((uint)a4 < (uint)(max_y + 300)) {
 				clip_y1 = max_y + 300 - a4;
 				v14 = a3 + nbrligne2 * (a4 - 300) - 300 + destSurface;
 				
@@ -1789,31 +1789,31 @@ void GraphicsManager::Affiche_Perfect(byte *destSurface, const byte *srcData, in
 					if (a8) {
 						v29 = v20 + v14;
 						if (clip_y) {
-							if ((unsigned __int16)clip_y >= v22)
+							if (clip_y >= v22)
 								return;
 							v61 = v22;
 							v52 = v20;
 							v30 = 0;
-							v31 = (unsigned __int16)clip_y;
+							v31 = (uint)clip_y;
 							
 							while (Asm_Zoom(v30 + 1, a7) < v31)
 								;
 							v20 = v52;
 							v13 += Largeur * v30;
-							v29 += nbrligne2 * (unsigned __int16)clip_y;
-							v22 = v61 - (unsigned __int16)clip_y;
+							v29 += nbrligne2 * (uint)clip_y;
+							v22 = v61 - (uint)clip_y;
 						}
               
-						if (v22 > (unsigned __int16)clip_y1)
-							v22 = (unsigned __int16)clip_y1;
+						if (v22 > clip_y1)
+							v22 = clip_y1;
 						if (clip_x) {
-							if ((unsigned __int16)clip_x >= v20)
+							if (clip_x >= v20)
 								return;
-							v20 -= (unsigned __int16)clip_x;
+							v20 -= (uint)clip_x;
 						}
               
-						if (v20 > (unsigned __int16)clip_x1) {
-							v32 = v20 - (unsigned __int16)clip_x1;
+						if (v20 > clip_x1) {
+							v32 = v20 - clip_x1;
 							v29 -= v32;
 							v62 = v22;
 							v33 = 0;
@@ -1823,7 +1823,7 @@ void GraphicsManager::Affiche_Perfect(byte *destSurface, const byte *srcData, in
 							v34 = v33;
 							v22 = v62;
 							v13 += v34;
-							v20 = (unsigned __int16)clip_x1;
+							v20 = (uint)clip_x1;
 						}
 					
 						do {
@@ -1844,7 +1844,7 @@ void GraphicsManager::Affiche_Perfect(byte *destSurface, const byte *srcData, in
 										if (!Agr_Flag_x)
 											Agr_x = a7 + Agr_x;
                       
-										if ((unsigned __int16)Agr_x < 100)
+										if ((uint)Agr_x < 100)
 											break;
 										
 										Agr_x = Agr_x - 100;
@@ -1866,7 +1866,7 @@ R_Aff_Zoom_Larg_Cont1:
 								if (!(uint16)Agr_Flag_y)
 									Agr_y = a7 + Agr_y;
 								
-								if ((unsigned __int16)Agr_y < 100)
+								if ((uint)Agr_y < 100)
 									break;
 					
 								Agr_y = Agr_y - 100;
@@ -1882,30 +1882,30 @@ R_Aff_Zoom_Larg_Cont1:
 						} while (v63 != 1);
 					} else {
 						if (clip_y) {
-							if ((unsigned __int16)clip_y >= v22)
+							if (clip_y >= v22)
 								return;
 							v58 = v22;
 							v49 = v20;
 							v23 = 0;
-							v24 = (unsigned __int16)clip_y;
+							v24 = (uint)clip_y;
 
 							while (Asm_Zoom(v23 + 1, a7) < v24)
 								;
 							v20 = v49;
 							v13 += Largeur * v23;
-							v14 += nbrligne2 * (unsigned __int16)clip_y;
-							v22 = v58 - (unsigned __int16)clip_y;
+							v14 += nbrligne2 * (uint)clip_y;
+							v22 = v58 - (uint)clip_y;
 						}
               
-						if (v22 > (unsigned __int16)clip_y1)
-							v22 = (unsigned __int16)clip_y1;
+						if (v22 > clip_y1)
+							v22 = clip_y1;
               
 						if (clip_x) {
-							if ((unsigned __int16)clip_x >= v20)
+							if (clip_x >= v20)
 								return;
 							v59 = v22;
 							v50 = v20;
-							v25 = (unsigned __int16)clip_x;
+							v25 = (uint)clip_x;
 							v26 = 0;
 							
 							while (Asm_Zoom(v26 + 1, a7) < v25)
@@ -1913,12 +1913,12 @@ R_Aff_Zoom_Larg_Cont1:
 							v27 = v26;
 							v22 = v59;
 							v13 += v27;
-							v14 += (unsigned __int16)clip_x;
-							v20 = v50 - (unsigned __int16)clip_x;
+							v14 += (uint)clip_x;
+							v20 = v50 - (uint)clip_x;
 						}
 
-						if (v20 > (unsigned __int16)clip_x1)
-							v20 = (unsigned __int16)clip_x1;
+						if (v20 > clip_x1)
+							v20 = clip_x1;
 				
 						do {
 							for (;;) {
@@ -1938,7 +1938,7 @@ R_Aff_Zoom_Larg_Cont1:
 										
 										if (!Agr_Flag_x)
 											Agr_x = a7 + Agr_x;
-										if ((unsigned __int16)Agr_x < 100)
+										if ((uint)Agr_x < 100)
 											break;
                       
 										Agr_x = Agr_x - 100;
@@ -1961,7 +1961,7 @@ Aff_Zoom_Larg_Cont1:
 								if (!(uint16)Agr_Flag_y)
 									Agr_y = a7 + Agr_y;
                   
-								if ((unsigned __int16)Agr_y < 100)
+								if ((uint)Agr_y < 100)
 									break;
                   
 								Agr_y = Agr_y - 100;
@@ -1984,7 +1984,7 @@ Aff_Zoom_Larg_Cont1:
 					Largeur = v11;
 					Red = a6;
 					
-					if ((unsigned __int16)a6 < 100) {
+					if ((uint)a6 < 100) {
 						v37 = Asm_Reduc(v11, Red);
 						if (a8) {
 							v40 = v37 + v14;
@@ -1994,7 +1994,7 @@ Aff_Zoom_Larg_Cont1:
 								v55 = v40;
 								Red_y = Red + Red_y;
 								
-								if ((unsigned __int16)Red_y < 100) {
+								if ((uint)Red_y < 100) {
 									Red_x = 0;
 									v41 = Largeur;
 									v42 = v37;
@@ -2029,14 +2029,14 @@ Aff_Zoom_Larg_Cont1:
 								v54 = v14;
 								Red_y = Red + Red_y;
 
-								if ((unsigned __int16)Red_y < 100) {
+								if ((uint)Red_y < 100) {
 									Red_x = 0;
 									v38 = Largeur;
 									v39 = 0;
                     
 									do {
 										Red_x = Red + Red_x;
-										if ((unsigned __int16)Red_x < 100) {
+										if ((uint)Red_x < 100) {
 											if (v39 >= clip_x && v39 < clip_x1 && *v13)
 												*v14 = *v13;
 											++v14;
@@ -2068,14 +2068,14 @@ Aff_Zoom_Larg_Cont1:
 						v16 = v11 + v14;
 						spec_largeur = v11;
 						if (clip_y) {
-							if ((unsigned __int16)clip_y >= (unsigned int)v12)
+							if ((uint)clip_y >= (unsigned int)v12)
 								return;
-							v13 += v11 * (unsigned __int16)clip_y;
-							v16 += nbrligne2 * (unsigned __int16)clip_y;
-							v12 -= (unsigned __int16)clip_y;
+							v13 += v11 * (uint)clip_y;
+							v16 += nbrligne2 * (uint)clip_y;
+							v12 -= (uint)clip_y;
 						}
 
-						v17 = (unsigned __int16)clip_y1;
+						v17 = (uint)clip_y1;
 						if (v12 > clip_y1)
 							v12 = clip_y1;
               
@@ -2086,11 +2086,11 @@ Aff_Zoom_Larg_Cont1:
 							v11 -= v17;
 						}
               
-						if (v11 > (unsigned __int16)clip_x1) {
-							v18 = v11 - (unsigned __int16)clip_x1;
+						if (v11 > clip_x1) {
+							v18 = v11 - clip_x1;
 							v13 += v18;
 							v16 -= v18;
-							v11 = (unsigned __int16)clip_x1;
+							v11 = (uint)clip_x1;
 						}
               
 						do {
@@ -2114,27 +2114,27 @@ Aff_Zoom_Larg_Cont1:
 					} else {
 						spec_largeur = v11;
 						if (clip_y) {
-							if ((unsigned __int16)clip_y >= (unsigned int)v12)
+							if ((uint)clip_y >= (unsigned int)v12)
 								return;
 					
-							v13 += v11 * (unsigned __int16)clip_y;
-							v14 += nbrligne2 * (unsigned __int16)clip_y;
-							v12 -= (unsigned __int16)clip_y;
+							v13 += v11 * (uint)clip_y;
+							v14 += nbrligne2 * (uint)clip_y;
+							v12 -= (uint)clip_y;
 						}
               
 						if (v12 > clip_y1)
 							v12 = clip_y1;
 						if (clip_x) {
-							if ((unsigned __int16)clip_x >= v11)
+							if (clip_x >= v11)
 								return;
 					
-							v13 += (unsigned __int16)clip_x;
-							v14 += (unsigned __int16)clip_x;
-							v11 -= (unsigned __int16)clip_x;
+							v13 += (uint)clip_x;
+							v14 += (uint)clip_x;
+							v11 -= (uint)clip_x;
 						}
               
-						if (v11 > (unsigned __int16)clip_x1)
-							v11 = (unsigned __int16)clip_x1;
+						if (v11 > clip_x1)
+							v11 = clip_x1;
               
 						do {
 							v56 = v12;

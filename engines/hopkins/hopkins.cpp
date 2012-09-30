@@ -574,7 +574,7 @@ void HopkinsEngine::INIT_SYSTEM() {
 void HopkinsEngine::INTRORUN() {
 	signed int v2;
 	signed int v3;
-	unsigned __int16 v4;
+	uint16 v4;
 	signed int v5;
 	int i; 
 	int v7; 
@@ -588,7 +588,7 @@ void HopkinsEngine::INTRORUN() {
 	int k;
 	int l;
 	int m; 
-	__int16 v21;
+	int v21;
 	char v22; 
 	char v23; 
 	byte paletteData[PALETTE_EXT_BLOCK_SIZE];

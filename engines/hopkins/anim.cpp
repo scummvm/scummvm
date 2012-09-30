@@ -325,7 +325,7 @@ void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 	
 	Common::File f;
 	if (!f.open(GLOBALS.NFICHIER))
-		error("Failed to open %s", GLOBALS.NFICHIER);
+		error("Failed to open %s", GLOBALS.NFICHIER.c_str());
 	
 	int filesize = f.size();
 	int nbytes = filesize - 115;
@@ -391,12 +391,12 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	int width; 
 	int height; 
 	byte *v13;
-	__int16 v16;
-	__int16 v17;
+	int v16;
+	int v17;
 	byte *ptr; 
 	byte *v19;
-	__int16 v20; 
-	__int16 v21; 
+	int v20; 
+	int v21; 
 	int result = 0;
 	FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPANIM, filename);
 	GLOBALS.Bank[idx].field1C = FileManager::FLONG(GLOBALS.NFICHIER);
@@ -483,18 +483,18 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
 	int v6; 
 	int v7; 
 	byte *v9; 
-	__int16 v10;
-	__int16 v11;
-	__int16 v12;
+	int v10;
+	int v11;
+	int v12;
 	char v13;
 	signed int v14;
-	__int16 v15;
-	__int16 v16;
+	int v15;
+	int v16;
 	char v17;
 	int v19; 
 	char v20;
 	int v21; 
-	__int16 v22;
+	int v22;
 	const byte *v23;
 	int v24;
 

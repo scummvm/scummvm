@@ -240,13 +240,13 @@ void EventsManager::VBL() {
 		_vm->_objectsManager.AFF_SPRITES();
 /*
 	int a1 = 0;
-	signed __int16 v1;
+	signed int v1;
 	int v2;
 	int v3;
 	int v4;
 	int v5;
 	int v6;
-	signed __int16 v7;
+	signed int v7;
 	int v10;
 	signed int v11 = 0;
 	signed int v12 = 0;
@@ -303,9 +303,9 @@ void EventsManager::VBL() {
 		} else {
 			if (v15 < min_x)
 				v15 = min_x - v1;
-			v2 = (signed __int16)v2;
-			if (_vm->_eventsManager.souris_y < min_y - (signed __int16)v2)
-				a1 = min_y - (signed __int16)v2;
+			//v2 = v2;
+			if (_vm->_eventsManager.souris_y < min_y - v2)
+				a1 = min_y - v2;
 			if (_vm->_eventsManager.souris_sizex + v15 >= max_x)
 				v14 = _vm->_eventsManager.souris_sizex - (_vm->_eventsManager.souris_sizex + v15 - max_x - v1);
 			if (a1 + _vm->_eventsManager.souris_sizey < v2 + max_y)

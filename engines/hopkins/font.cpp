@@ -51,7 +51,7 @@ void FontManager::clearAll() {
 }
 
 void FontManager::TEXTE_ON(int idx) {
-	if ((signed __int16)(idx - 5) > 11)
+	if ((idx - 5) > 11)
 		error("Attempted to display text > MAX_TEXT.");
   
 	TxtItem &txt = Txt[idx - 5];
@@ -66,7 +66,7 @@ void FontManager::TEXTE_ON(int idx) {
 
 
 void FontManager::TEXTE_OFF(int idx) {
-	if ((signed __int16)(idx - 5) > 11)
+	if ((idx - 5) > 11)
 			error("Attempted to display text > MAX_TEXT.");
   
 	TxtItem &txt = Txt[idx - 5];
@@ -422,7 +422,7 @@ LABEL_57:
 						TRIER_TEXT[v67] = 0;
 				} while (v25 != v67);
 				++v67;
-			} while ((signed __int16)v67 <= 19);
+			} while (v67 <= 19);
       
 			v68 = 0;
 			do {
@@ -431,7 +431,7 @@ LABEL_57:
 				++v68;
 			} while (v68 <= 19);
       
-			if ((unsigned __int16)(Txt[idx].field3FC - 2) > 1u) {
+			if ((Txt[idx].field3FC - 2) > 1u) {
 				for (i = xp - _vm->_eventsManager.start_x; largeur_boite + i > 638 && i > -2 && Txt[idx].field3FC]; i -= 2)
 					;
 				Txt[idx].field8 = i;
@@ -471,7 +471,7 @@ LABEL_57:
 		}
     
 		v29 = Txt[idx].field3FC;
-		if (v29 == 1 || v29 == 3 || (unsigned __int16)(v29 - 5) <= 1u) {
+		if (v29 == 1 || v29 == 3 || (uint16)(v29 - 5) <= 1u) {
 			v49 = v51 * v53;
 			ptrd = _vm->_globals.dos_malloc2(v51 * v53);
 			
@@ -485,9 +485,9 @@ LABEL_57:
 		_vm->_globals.dos_free2(ptrd);
       
 		_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, v55, v53, -2);
-		_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, (signed __int16)(v51 + v55), v53, -2);
+		_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, (v51 + v55), v53, -2);
 		_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v56, v70, v51, -2);
-		_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, (signed __int16)(v53 + v56), v70, v51, -2);
+		_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, (v53 + v56), v70, v51, -2);
     }
 
 	Txt[idx].field12 = v58;
