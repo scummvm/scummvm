@@ -656,7 +656,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			Agr_x = 0;
 
 			do {
-				v12 = *(uint16 *)(v11 + 2 * *(byte *)v7);
+				v12 = *(uint16 *)(v11 + 2 * *v7);
 				*(uint16 *)v8 = v12;
 				++v7;
 				v8 += 2;
@@ -1156,11 +1156,11 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
 		if (v5 < 251) {
 			v2 += *v4 + 35;
 			v5 = *(v4++ + 1);
-		} else if (v5 == -3) {
+		} else if (v5 == (byte)-3) {
 			v2 += *(v4 + 1);
 			v5 = *(v4 + 2);
 			v4 += 2;
-		} else if (v5 == -2) {
+		} else if (v5 == (byte)-2) {
 			v2 += READ_LE_UINT16(v4 + 1);
 			v5 = *(v4 + 3);
 			v4 += 3;
