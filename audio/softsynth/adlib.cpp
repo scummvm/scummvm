@@ -79,7 +79,7 @@ protected:
 	AdLibVoice *_voice;
 	int16 _pitchBend;
 	byte _pitchBendFactor;
-	int8 _transposeEff;
+	//int8 _transposeEff;
 	byte _volEff;
 	int8 _detuneEff;
 	byte _modWheel;
@@ -101,7 +101,7 @@ public:
 		_voice = 0;
 		_pitchBend = 0;
 		_pitchBendFactor = 2;
-		_transposeEff = 0;
+		//_transposeEff = 0;
 		_volEff = 0;
 		_detuneEff = 0;
 		_modWheel = 0;
@@ -693,7 +693,7 @@ void AdLibPart::pitchBend(int16 bend) {
 
 	_pitchBend = bend;
 	for (voice = _voice; voice; voice = voice->_next) {
-		_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff,
+		_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
 							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 	}
 }
@@ -778,7 +778,7 @@ void AdLibPart::pitchBendFactor(byte value) {
 
 	_pitchBendFactor = value;
 	for (voice = _voice; voice; voice = voice->_next) {
-		_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff,
+		_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
 							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 	}
 }
@@ -788,7 +788,7 @@ void AdLibPart::detune(byte value) {
 
 	_detuneEff = value;
 	for (voice = _voice; voice; voice = voice->_next) {
-		_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff,
+		_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
 							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 	}
 }
@@ -1045,7 +1045,7 @@ void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
 
 	part->_pitchBendFactor = range;
 	for (voice = part->_voice; voice; voice = voice->_next) {
-		adlibNoteOn(voice->_channel, voice->_note + part->_transposeEff,
+		adlibNoteOn(voice->_channel, voice->_note/* + part->_transposeEff*/,
 					  (part->_pitchBend * part->_pitchBendFactor >> 6) + part->_detuneEff);
 	}
 }
@@ -1461,7 +1461,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, AdLibInstrument *instr, byte n
 	}
 
 	adlibSetupChannel(voice->_channel, instr, vol1, vol2);
-	adlibNoteOnEx(voice->_channel, part->_transposeEff + note, part->_detuneEff + (part->_pitchBend * part->_pitchBendFactor >> 6));
+	adlibNoteOnEx(voice->_channel, /*part->_transposeEff + */note, part->_detuneEff + (part->_pitchBend * part->_pitchBendFactor >> 6));
 
 	if (instr->flagsA & 0x80) {
 		mcInitStuff(voice, &voice->_s10a, &voice->_s11a, instr->flagsA, &instr->extraA);
