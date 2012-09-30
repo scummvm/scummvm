@@ -1600,8 +1600,8 @@ void ObjectsManager::SPRITE_ON(int idx) {
 }
 
 void ObjectsManager::SPRITE(const byte *spriteData, int a2, int a3, int idx, int a5, int a6, int a7, int a8, int a9) {
-	if (idx > 5 )
-		(8, (int)"Tentative d'affichage d'un sprite > MAX_SPRITE.");
+	if (idx > 5)
+		error("Tentative d'affichage d'un sprite > MAX_SPRITE.");
 	Sprite[idx].spriteData = spriteData;
 	Sprite[idx].field8 = a2;
 	Sprite[idx].fieldA = a3;
@@ -1811,7 +1811,7 @@ LABEL_54:
 						BTDROITE();
 				}
 			}
-			if (_vm->_globals.PLAN_FLAG == 1 && v4 == -1 || !v4) {
+			if ((_vm->_globals.PLAN_FLAG == 1 && v4 == -1) || !v4) {
 				verbe = 0;
 				_vm->_eventsManager.btsouris = 0;
 				_vm->_eventsManager.CHANGE_MOUSE(0);
@@ -2164,7 +2164,7 @@ void ObjectsManager::PARADISE() {
 	result = _vm->_globals.SAUVEGARDE->data[svField1];
 	if (result && _vm->_globals.SAUVEGARDE->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.TEXTE_OFF(5);
-		if (_vm->_globals.FORET != 1 || (uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u) {
+		if (_vm->_globals.FORET != 1 || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
 			if (_vm->_graphicsManager.DOUBLE_ECRAN == 1) {
 				_vm->_graphicsManager.no_scroll = 2;
 				if (_vm->_eventsManager.start_x >= XSPR(0) - 320)
@@ -2528,7 +2528,7 @@ void ObjectsManager::CHANGE_TETE(int a1, int a2) {
 				v3->field1 = YSPR(0);
 				v3->field2 = 64;
 				v3->field3 = _vm->_globals.ECRAN;
-				v3->field4 = Sprite[12].field0;	// TODO: Double-check this
+				v3->field4 = Sprite[0].field0;
 				SPRITE_OFF(1);
 				SPRITE(_vm->_globals.TETE, v3->field0, v3->field1, 1, 3, v3->field4, 0, 20, 127);
 				SPRITE_ON(1);
@@ -2556,7 +2556,7 @@ LABEL_9:
 			v5->field1 = YSPR(0);
 			v5->field2 = 64;
 			v5->field3 = _vm->_globals.ECRAN;
-			v5->field4 = Sprite[12].field0;
+			v5->field4 = Sprite[0].fieldC;
 			SPRITE_OFF(1);
 			SPRITE(_vm->_globals.TETE, v5->field0, v5->field1, 1, 2, v5->field4, 0, 34, 190);
 			SPRITE_ON(1);
@@ -2576,7 +2576,7 @@ LABEL_9:
 		v7->field1 = YSPR(0);
 		v7->field2 = 64;
 		v7->field3 = _vm->_globals.ECRAN;
-		v7->field4 = Sprite[12].field0;
+		v7->field4 = Sprite[0].fieldC;
 	}
 	if (a1 == 1) {
 		v8 = &_vm->_globals.SAUVEGARDE->field360;
@@ -2584,7 +2584,7 @@ LABEL_9:
 		v8->field1 = YSPR(0);
 		v8->field2 = 64;
 		v8->field3 = _vm->_globals.ECRAN;
-		v8->field4 = Sprite[12].field0;
+		v8->field4 = Sprite[0].fieldC;
 	}
 	if (a1 == 2) {
 		v9 = &_vm->_globals.SAUVEGARDE->field380;
@@ -2592,7 +2592,7 @@ LABEL_9:
 		v9->field1 = YSPR(0);
 		v9->field2 = 64;
 		v9->field3 = _vm->_globals.ECRAN;
-		v9->field4 = Sprite[12].field0;
+		v9->field4 = Sprite[0].fieldC;
 	}
 	if (!a2) {
 		_vm->_globals.SAUVEGARDE->data[svField121] = 0;
@@ -3547,10 +3547,10 @@ int ObjectsManager::Traduction(byte *a1) {
 
 	v1 = 0;
 	v70 = 0;
-	if (*a1 != 70 || *(a1 + 1) != 67)
+	if (*a1 != 'F' || *(a1 + 1) != 'C')
 		return 0;
 	// TODO: Change to chars
-	if (*(a1 + 2) == 84 && *(a1 + 3) == 88 && *(a1 + 4) == 84) {
+	if (*(a1 + 2) == 'T' && *(a1 + 3) == 'X' && *(a1 + 4) == 'T') {
 		v70 = *(a1 + 6);
 		v2 = *(a1 + 7);
 		v69 = *(a1 + 8);
@@ -3671,7 +3671,7 @@ LABEL_98:
 	}
 LABEL_104:
 	// TODO
-	if (*(a1 + 2) == 66 && *(a1 + 3) == 79 && *(a1 + 4) == 66) {
+	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'B') {
 		if (DESACTIVE != 1) {
 			v72 = *(a1 + 5);
 			v70 = *(a1 + 6);
@@ -3701,8 +3701,8 @@ LABEL_1141:
 		}
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 83) {
-		if (*(a1 + 3) == 84 && *(a1 + 4) == 80) {
+	if (*(a1 + 2) == 'S') {
+		if (*(a1 + 3) == 'T' && *(a1 + 4) == 'P') {
 			if (DESACTIVE != 1) {
 				DEUXPERSO = 0;
 				v5 = *(a1 + 5);
@@ -3773,7 +3773,7 @@ LABEL_1141:
 			v1 = 1;
 			_vm->_objectsManager.CH_TETE = 0;
 		}
-		if (*(a1 + 2) == 83 && *(a1 + 3) == 84 && *(a1 + 4) == 69) {
+		if (*(a1 + 2) == 'S' && *(a1 + 3) == 'T' && *(a1 + 4) == 'E') {
 			if (DESACTIVE != 1) {
 				v7 = *(a1 + 5);
 				v70 = *(a1 + 6);
@@ -3791,12 +3791,12 @@ LABEL_1141:
 			v1 = 1;
 		}
 	}
-	if (*(a1 + 2) == 66 && *(a1 + 3) == 79 && *(a1 + 4) == 70) {
+	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
 		if (DESACTIVE != 1)
 			VBOB_OFF(READ_LE_UINT16(a1 + 5));
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 80 && *(a1 + 3) == 69 && *(a1 + 4) == 82) {
+	if (*(a1 + 2) == 'P' && *(a1 + 3) == 'E' && *(a1 + 4) == 'R') {
 		v73 = READ_LE_UINT16(a1 + 5);
 		if (!_vm->_globals.SAUVEGARDE->data[svField122] && !_vm->_globals.SAUVEGARDE->data[svField356]) {
 			v70 = 0;
@@ -3979,9 +3979,9 @@ LABEL_1141:
 		}
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 77 && *(a1 + 3) == 85 && *(a1 + 4) == 83)
+	if (*(a1 + 2) == 'M' && *(a1 + 3) == 'U' && *(a1 + 4) == 'S')
 		v1 = 1;
-	if (*(a1 + 2) == 87 && *(a1 + 3) == 65 && *(a1 + 4) == 73) {
+	if (*(a1 + 2) == 'W' && *(a1 + 3) == 'A' && *(a1 + 4) == 'I') {
 		v74 = READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
 		if (!v74)
 			v74 = 1;
@@ -3994,39 +3994,39 @@ LABEL_1141:
 		}
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 79) {
-		if (*(a1 + 3) == 66 && *(a1 + 4) == 80) {
+	if (*(a1 + 2) == 'O') {
+		if (*(a1 + 3) == 'B' && *(a1 + 4) == 'P') {
 			v1 = 1;
 			AJOUTE_OBJET(READ_LE_UINT16(a1 + 5));
 		}
-		if (*(a1 + 2) == 79 && *(a1 + 3) == 66 && *(a1 + 4) == 77) {
+		if (*(a1 + 2) == 'O' && *(a1 + 3) == 'B' && *(a1 + 4) == 'M') {
 			v1 = 1;
 			DELETE_OBJET(READ_LE_UINT16(a1 + 5));
 		}
 	}
-	if (*(a1 + 2) == 71 && *(a1 + 3) == 79 && *(a1 + 4) == 84)
+	if (*(a1 + 2) == 'G' && *(a1 + 3) == 'O' && *(a1 + 4) == 'T')
 		v1 = 2;
-	if (*(a1 + 2) == 90) {
-		if (*(a1 + 3) == 79 && *(a1 + 4) == 78) {
+	if (*(a1 + 2) == 'Z') {
+		if (*(a1 + 3) == 'O' && *(a1 + 4) == 'N') {
 			ZONE_ON(READ_LE_UINT16(a1 + 5));
 			v1 = 1;
 		}
-		if (*(a1 + 2) == 90 && *(a1 + 3) == 79 && *(a1 + 4) == 70) {
+		if (*(a1 + 2) == 'Z' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
 			ZONE_OFF(READ_LE_UINT16(a1 + 5));
 			v1 = 1;
 		}
 	}
-	if (*(a1 + 2) == 69 && *(a1 + 3) == 88 && *(a1 + 4) == 73)
+	if (*(a1 + 2) == 'E' && *(a1 + 3) == 'X' && *(a1 + 4) == 'I')
 		v1 = 5;
-	if (*(a1 + 2) == 83 && *(a1 + 3) == 79 && *(a1 + 4) == 82) {
+	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'R') {
 		_vm->_globals.SORTIE = READ_LE_UINT16(a1 + 5);
 		v1 = 5;
 	}
-	if (*(a1 + 2) == 66 && *(a1 + 3) == 67 && *(a1 + 4) == 65) {
+	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'C' && *(a1 + 4) == 'A') {
 		_vm->_globals.CACHE_OFF(READ_LE_UINT16(a1 + 5));
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 65 && *(a1 + 3) == 78 && *(a1 + 4) == 73) {
+	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'N' && *(a1 + 4) == 'I') {
 		v75 = READ_LE_UINT16(a1 + 5);
 		if (v75 <= 100)
 			_vm->_animationManager.BOBANIM_ON(v75);
@@ -4034,7 +4034,7 @@ LABEL_1141:
 			_vm->_animationManager.BOBANIM_OFF(v75 - 100);
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 83 && *(a1 + 3) == 80 && *(a1 + 4) == 69) {
+	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'P' && *(a1 + 4) == 'E') {
 		v76 = READ_LE_UINT16(a1 + 5);
 		if (v76 == 7)
 			_vm->_talkManager.PARLER_PERSO("rueh1.pe2");
@@ -5521,8 +5521,7 @@ LABEL_1141:
 		if (v76 == 245) {
 			_vm->_soundManager.PLAY_SOUND("SOUND89.WAV");
 			OPTI_ONE(5, 0, 6, 0);
-			// TODO: is 98 correct?
-			_vm->_globals.ZONEP[98].field0 = 276;
+			_vm->_globals.ZONEP[4].field0 = 276;
 			VERBE_ON(4, 19);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
 			_vm->_globals.SAUVEGARDE->data[svField399] = 1;

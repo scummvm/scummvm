@@ -2308,17 +2308,15 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 	v2 = 1;
 	v3 = 0;
 	v9 = 0;
-	// TODO: Set extension as text
-	v13 = file + ".XXX"; // +  #105#110#105;
 	
+	v13 = file + ".ini";
 	ptr = FileManager::RECHERCHE_CAT(v13, 1);
 	if (PTRNUL == ptr) {
 		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
 		ptr = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (!a2) {
-		// 5ODO: Set extension as text
-		v13 = file + ".XXX"; //#115#112#114;
+		v13 = file + ".spr";
 		if (PTRNUL != _vm->_globals.SPRITE_ECRAN)
 			_vm->_globals.SPRITE_ECRAN = FileManager::LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
 		if (!_vm->_globals.NOSPRECRAN) {
@@ -2334,8 +2332,8 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 			_vm->_globals.CAT_FLAG = 0;
 		}
 	}
-	if (*ptr != 73 || *(ptr + 1) != 78 || *(ptr + 2) != 73) {
-		error("Erreur, fichier non INI");
+	if (*ptr != 'I' || *(ptr + 1) != 'N' || *(ptr + 2) != 'I') {
+		error("Error, file not ini");
 	} else {
 		v11 = 0;
 		do {
@@ -2345,7 +2343,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 			if (v6 == 3)
 				v2 = _vm->_objectsManager.Control_If(ptr, v2);
 			if (v2 == -1)
-				error("fonction IFF d‚fectueuse");
+				error("Error, defective IFF");
 			if (v6 == 1 || v6 == 4)
 				++v2;
 			if (!v6 || v6 == 5)
@@ -2357,7 +2355,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 		if (PTRNUL != _vm->_globals.COUCOU)
 			_vm->_globals.COUCOU = _vm->_globals.dos_free2(_vm->_globals.COUCOU);
 		
-		v13 = file + ".XXX"; // #114#101#112
+		v13 = file + ".rep";
 		byte *dataP = FileManager::RECHERCHE_CAT(v13, 2);
 		_vm->_globals.COUCOU = dataP;
 		if (PTRNUL == dataP) {
