@@ -117,6 +117,19 @@ byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
 	return data;
 }
 
+void FileManager::CHARGE_FICHIER2(const Common::String &file, byte *buf) {
+	Common::File f;
+	size_t filesize;
+
+	DMESS1();
+	if (!f.open(file))
+		error("Error opening file - %s", file.c_str());
+
+	filesize = f.size();
+	FileManager::bload_it(f, buf, filesize);
+	f.close();
+}
+
 void FileManager::DMESS() {
 	// No implementation in original
 }
@@ -334,8 +347,8 @@ uint32 FileManager::FLONG(const Common::String &filename) {
 	return size;
 }
 
-void FileManager::CONSTRUIT_LINUX(const Common::String &file) {
-	warning("TODO: CONSTRUIT_LINUX");
+Common::String FileManager::CONSTRUIT_LINUX(const Common::String &file) {
+	return file;
 }
 
 } // End of namespace Hopkins

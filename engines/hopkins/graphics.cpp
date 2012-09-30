@@ -326,7 +326,17 @@ void GraphicsManager::Trans_bloc(byte *destP, byte *srcP, int count, int param1,
 }
 
 void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
-	warning("TODO: Trans_bloc2");
+	byte *dataP; 
+	int count; 
+	byte dataVal; 
+
+	dataP = surface;
+	count = size - 1;
+	do {
+		dataVal = *dataP++;
+		*(dataP - 1) = *(dataVal + col);
+		--count;
+	} while (count);
 }
 
 // TODO: See if it's feasible and/or desirable to change this to use the Common PCX decoder
@@ -2279,11 +2289,85 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 }
 
 void GraphicsManager::INI_ECRAN(const Common::String &file) {
-	warning("TODO: INI_ECRAN");
+	OPTI_INI(file, 0);
 }
 
 void GraphicsManager::INI_ECRAN2(const Common::String &file) {
-	warning("TODO: INI_ECRAN2");
+	OPTI_INI(file, 2);
+}
+
+void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
+	int v2; 
+	unsigned int v3; 
+	int v6; 
+	unsigned int v9; 
+	signed int v11; 
+	byte *ptr; 
+	Common::String v13; 
+
+	v2 = 1;
+	v3 = 0;
+	v9 = 0;
+	// TODO: Set extension as text
+	v13 = file + ".XXX"; // +  #105#110#105;
+	
+	ptr = FileManager::RECHERCHE_CAT(v13, 1);
+	if (PTRNUL == ptr) {
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
+		ptr = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	}
+	if (!a2) {
+		// 5ODO: Set extension as text
+		v13 = file + ".XXX"; //#115#112#114;
+		if (PTRNUL != _vm->_globals.SPRITE_ECRAN)
+			_vm->_globals.SPRITE_ECRAN = FileManager::LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
+		if (!_vm->_globals.NOSPRECRAN) {
+			_vm->_globals.SPRITE_ECRAN = FileManager::RECHERCHE_CAT(v13, 8);
+			if (_vm->_globals.SPRITE_ECRAN) {
+				_vm->_globals.CAT_FLAG = 0;
+				FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
+			} else {
+				_vm->_globals.CAT_FLAG = 1;
+				FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
+			}
+			_vm->_globals.SPRITE_ECRAN = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			_vm->_globals.CAT_FLAG = 0;
+		}
+	}
+	if (*ptr != 73 || *(ptr + 1) != 78 || *(ptr + 2) != 73) {
+		error("Erreur, fichier non INI");
+	} else {
+		v11 = 0;
+		do {
+			v6 = _vm->_objectsManager.Traduction(ptr + 20 * v2);
+			if (v6 == 2)
+				v2 = _vm->_objectsManager.Control_Goto((ptr + 20 * v2));
+			if (v6 == 3)
+				v2 = _vm->_objectsManager.Control_If(ptr, v2);
+			if (v2 == -1)
+				error("fonction IFF d‚fectueuse");
+			if (v6 == 1 || v6 == 4)
+				++v2;
+			if (!v6 || v6 == 5)
+				v11 = 1;
+		} while (v11 != 1);
+	}
+	_vm->_globals.dos_free2(ptr);
+	if (a2 != 1) {
+		if (PTRNUL != _vm->_globals.COUCOU)
+			_vm->_globals.COUCOU = _vm->_globals.dos_free2(_vm->_globals.COUCOU);
+		
+		v13 = file + ".XXX"; // #114#101#112
+		byte *dataP = FileManager::RECHERCHE_CAT(v13, 2);
+		_vm->_globals.COUCOU = dataP;
+		if (PTRNUL == dataP) {
+			FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
+			dataP = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			_vm->_globals.COUCOU = dataP;
+		}
+	}
+	_vm->_objectsManager.FORCEZONE = 1;
+	_vm->_objectsManager.CHANGEVERBE = 0;
 }
 
 void GraphicsManager::NB_SCREEN() {
@@ -2320,5 +2404,10 @@ void GraphicsManager::NB_SCREEN() {
 	*(v0 + 2) = *(v1 + 2);
 	DD_VBL();
 }
-
+/*
+int GraphicsManager::colision2_ligne(int a1, int a2, int a3, int a4, int a5, int a6) {
+	warning("TODO: colision2_ligne");
+	return 0;
+}
+*/
 } // End of namespace Hopkins

@@ -87,12 +87,12 @@ void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, ui
 		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
 			doneFlag = 1;
 			screenCopy = GLOBALS.dos_malloc2(SCREEN_WIDTH * SCREEN_HEIGHT);
-			memcpy((void *)screenCopy, screenP, SCREEN_WIDTH * SCREEN_HEIGHT);
+			memcpy(screenCopy, screenP, SCREEN_WIDTH * SCREEN_HEIGHT);
 		}
 
 		if (NO_SEQ) {
 			if (doneFlag == 1)
-				memcpy((void *)screenCopy, _vm->_graphicsManager.VESA_BUFFER, SCREEN_WIDTH * SCREEN_HEIGHT);
+				memcpy(screenCopy, _vm->_graphicsManager.VESA_BUFFER, SCREEN_WIDTH * SCREEN_HEIGHT);
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 		} else {
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
@@ -283,6 +283,10 @@ FINISH:
 	f.close();
 	GLOBALS.dos_free2(screenCopy);
 	_vm->_graphicsManager.NOLOCK = false;
+}
+
+void AnimationManager::PLAY_ANM2(const Common::String &filename, int a2, int a3, int a4) {
+	warning("TODO: PLAY_ANM2");
 }
 
 bool AnimationManager::REDRAW_ANIM() {

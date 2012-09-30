@@ -236,4 +236,8 @@ void MenuManager::CHARGE_PARTIE() {
 	warning("CHARGE_PARTIE");
 }
 
+void MenuManager::SAUVE_PARTIE() {
+	warning("SAUVE_PARTIE");
+}
+
 } // End of namespace Hopkins

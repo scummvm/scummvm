@@ -37,6 +37,7 @@ public:
 	static bool bsave(const Common::String &file, const void *buf, size_t n);
 	static void Chage_Inifile(Common::StringMap &iniParams);
 	static byte *CHARGE_FICHIER(const Common::String &file);
+	static void CHARGE_FICHIER2(const Common::String &file, byte *a2);
 	static void DMESS();
 	static void DMESS1();
 	static void bload(const Common::String &file, byte *buf);
@@ -46,7 +47,7 @@ public:
 	static void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
 	static byte *LIBERE_FICHIER(byte *ptr);
 	static byte *RECHERCHE_CAT(const Common::String &file, int a2);
-	static void CONSTRUIT_LINUX(const Common::String &file);
+	static Common::String CONSTRUIT_LINUX(const Common::String &file);
 
 	/**
 	 * Returns the size of a file. Throws an error if the file can't be found

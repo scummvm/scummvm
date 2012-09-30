@@ -67,7 +67,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		BUFFERPERSO = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		TAILLEPERSO = FileManager::FLONG(_vm->_globals.NFICHIER);
 	}
-	_vm->_globals.SAUVEGARDE->field4 = 0;
+	_vm->_globals.SAUVEGARDE->data[svField4] = 0;
 	RENVOIE_FICHIER(40, v16, (const char *)BUFFERPERSO);
 	RENVOIE_FICHIER(0, FQUEST, (const char *)BUFFERPERSO);
 	RENVOIE_FICHIER(20, FREPON, (const char *)BUFFERPERSO);
@@ -199,7 +199,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		TAILLEPERSO = FileManager::FLONG(_vm->_globals.NFICHIER);
 	}
 
-	_vm->_globals.SAUVEGARDE->field4 = 0;
+	_vm->_globals.SAUVEGARDE->data[svField4] = 0;
 	RENVOIE_FICHIER(0, FQUEST, (const char *)BUFFERPERSO);
 	RENVOIE_FICHIER(20, FREPON, (const char *)BUFFERPERSO);
 
@@ -436,7 +436,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	v7 = READ_LE_UINT16((uint16 *)v3 + 9);
   
 	if (v7)
-		_vm->_globals.SAUVEGARDE->field4 = v7;
+		_vm->_globals.SAUVEGARDE->data[svField4] = v7;
 
 	if (!v6)
 		v6 = 10;

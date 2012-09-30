@@ -761,8 +761,8 @@ void Globals::RESET_CACHE() {
 void Globals::CACHE_ON() {
 	CACHEFLAG = 1;
 }
-
-void Globals::CACHE_OFF() {
+// TODO: Find why some calls have a parameter value
+void Globals::CACHE_OFF(int v1) {
 	CACHEFLAG = 0;
 }
 

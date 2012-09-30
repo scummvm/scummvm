@@ -106,13 +106,34 @@ public:
 	int A_DEPA;
 	int MAX_DEPA;
 	int MAX_DEPA1;
-
+	int VIRE_INVENT;
+	int AFFINVEN;
+	int TRAVAILOBJET;
+	int CH_TETE;
+	int T_RECTIF;
+	int DESACTIVE;
+	int DEUXPERSO;
+	int PERX, PERY;
+	int PERI;
+	int RECALL;
+	int PTAILLE;
+	int PEROFX;
+	int PEROFY;
+	int OBSSEUL;
+	int NVVERBE;
+	int NVZONE;
+	int NV_LIGNEDEP;
+	int NV_LIGNEOFS;
+	int NV_POSI;
+	int NVPX;
+	int NVPY;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
 
 	byte *CHANGE_OBJET(int objIndex);
 	byte *CAPTURE_OBJET(int objIndex, int mode);
+	void DELETE_OBJET(int objIndex);
 
 	int Get_Largeur(const byte *objectData, int idx);
 	int Get_Hauteur(const byte *objectData, int idx);
@@ -133,6 +154,9 @@ public:
 	void DEF_BOB(int idx);
 	void BOB_VISU(int idx);
 	void BOB_OFF(int idx);
+	void BOB_OFFSET(int idx, int v);
+	void BOB_ADJUST(int idx, int v);
+	void BOB_OFFSETY(int idx, int v);
 	void SCBOB(int idx);
 	void CALCUL_BOB(int idx);
 
@@ -166,6 +190,7 @@ public:
 	void SETFLIPSPR(int idx, int a2);
 
 	void VERIFZONE();
+	void GOHOME();
 	void GOHOME2();
 	void CHARGE_OBSTACLE(const Common::String &file);
 	void CHARGE_CACHE(const Common::String &file);
@@ -186,6 +211,39 @@ public:
 	int MZONE();
 	void CLEAR_ZONE();
 	void RESET_OBSTACLE();
+	int ZONE_OBJET(int a1, int a2);
+	void PARAMCADRE(int a1);
+	void OBJETPLUS(int a1);
+	void VALID_OBJET(int a1);
+	void OPTI_OBJET();
+	void SPECIAL_JEU(int a1);
+	int Traduction(byte *a1);
+	void BOB_VIVANT(int a1);
+	void VBOB(byte *a1, int a2, int a3, int a4, int a5);
+	void VBOB_OFF(int idx);
+	void ACTION_DOS(int idx);
+	void ACTION_DROITE(int idx);
+	void Q_DROITE(int idx);
+	void ACTION_FACE(int idx);
+	void Q_GAUCHE(int idx);
+	void ACTION_GAUCHE(int idx);
+
+	void ZONE_ON(int idx);
+	void ZONE_OFF(int idx);
+	void OPTI_ONE(int a1, int a2, int a3, int a4);
+	int BOBPOSI(int a1);
+	void AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img);
+	void SET_BOBPOSI(int a1, int a2);
+	void INILINK(const Common::String &file);
+	void OBJET_VIVANT(const Common::String &a2);
+	void OPTI_BOBON(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
+	void SCI_OPTI_ONE(int a1, int a2, int a3, int a4);
+	int Control_Goto(const byte *dataP);
+	int Control_If(const byte *dataP, int a2);
+	void VERBE_OFF(int a1, int a2);
+	void VERBE_ON(int a1, int a2);
+	int PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
+	int MIRACLE(int a1, int a2, int a3, int a4, int a5);
 };
 
 } // End of namespace Hopkins

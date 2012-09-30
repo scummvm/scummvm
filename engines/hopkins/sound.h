@@ -45,20 +45,28 @@ public:
 	bool MUSICOFF;
 	bool VOICEOFF;
 	bool TEXTOFF;
+	bool SOUND_FLAG;
 public:
 	void setParent(HopkinsEngine *vm);
 
 	void WSOUND_INIT();
 	void VERIF_SOUND();
 	void LOAD_ANM_SOUND();
+	void LOAD_WAV(const Common::String &file, int a2);
 	void PLAY_ANM_SOUND(int soundNumber);
 	void WSOUND(int soundNumber);
 	bool VOICE_MIX(int a1, int a2);
 	void DEL_SAMPLE(int soundNumber);
 	void PLAY_SOUND(const Common::String &file);
+	void PLAY_SOUND2(const Common::String &file2);
 	void MODSetSampleVolume();
 	void MODSetVoiceVolume();
 	void MODSetMusicVolume(int volume);
+	void CHARGE_SAMPLE(int a1, const Common::String &file);
+	void PLAY_SAMPLE2(int idx);
+	void PLAY_SEQ(int a1, const Common::String &a2, int a3, int a4, int a5);
+	void PLAY_SEQ2(const Common::String &a1, int a2, int a3, int a4);
+	void PLAY_WAV(int a1);
 };
 
 } // End of namespace Hopkins

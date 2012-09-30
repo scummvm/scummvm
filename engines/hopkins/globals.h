@@ -52,6 +52,7 @@ struct LigneItem {
 	int field4;
 	int field6;
 	int field8;
+	byte *fieldC;
 	byte *field12;
 };
 
@@ -193,22 +194,73 @@ struct CacheItem {
 	int field14;
 };
 
-// Note: Fields decimal based for now
-struct Sauvegarde {
+struct Sauvegarde1 {
+	int field0;
 	int field1;
 	int field2;
 	int field3;
 	int field4;
-	int field13;
-	int field80;
-	int field170;
-	int field171;
-	int field172;
-	int field353;
-	int field354;
-	int field355;
-	int field356;
-	int field357;
+};
+
+enum SauvegardeOffset {
+	svField1
+	, svField2
+	, svField3
+	, svField4
+	, svField5
+	, svField6
+	, svField8
+	, svField9
+	, svField13
+	, svField80
+	, svField94
+	, svField95
+	, svField121
+	, svField122
+	, svField133
+	, svField170
+	, svField171
+	, svField172
+	, svField176
+	, svField180
+	, svField181
+	, svField182
+	, svField183
+	, svField184
+	, svField185
+	, svField186
+	, svField187
+	, svField188
+	, svField189
+	, svField190
+	, svField191
+	, svField192
+	, svField193
+	, svField194
+	, svField228
+	, svField253
+	, svField231
+	, svField270
+	, svField338
+	, svField339
+	, svField340
+	, svField341
+	, svField349
+	, svField352
+	, svField353
+	, svField354
+	, svField355
+	, svField356
+	, svField357
+	, svField399
+	, svField401
+};
+
+struct Sauvegarde {
+	byte data[999]; // TODO: GET CORRECT SIZE
+	Sauvegarde1 field360;
+	Sauvegarde1 field370;
+	Sauvegarde1 field380;
 };
 
 class HopkinsEngine;
@@ -281,6 +333,9 @@ public:
 	CacheItem Cache[25];
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];
+	int STAILLE[500];
+	int super_parcours[32002];
+	int Param[2100];
 	byte *Winventaire;
 	byte *texte_tmp;
 	int texte_long;
@@ -360,12 +415,18 @@ public:
 	int NECESSAIRE;
 	int Compteur;
 	int ACTION_SENS;
+	int STOP_BUG;
 
 	int force_to_data_0;
+	int old_x1_65;
+	int old_y1_66;
+	int old_x2_67;
 	int old_zone_68;
 	int old_x_69, old_y_70;
 	int compteur_71;
 	int zozo_73;
+	int old_y2_68;
+	int old_z_69;
 
 	Globals();
 	~Globals();
@@ -384,7 +445,7 @@ public:
 
 	void RESET_CACHE();
 	void CACHE_ON(); 
-	void CACHE_OFF();
+	void CACHE_OFF(int v1 = 0);
 	void CACHE_SUB(int idx); 
 	void CACHE_ADD(int idx);
 	void CHARGE_CACHE(const Common::String &file);

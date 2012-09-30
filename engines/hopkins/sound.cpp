@@ -43,6 +43,10 @@ void SoundManager::LOAD_ANM_SOUND() {
 	warning("TODO: LOAD_ANIM_SOUND");
 }
 
+void SoundManager::LOAD_WAV(const Common::String &file, int a2) {
+	warning("TODO: LOAD_WAV");
+}
+
 void SoundManager::PLAY_ANM_SOUND(int soundNumber) {
 	warning("TODO: PLAAY_ANIM_SOUND");
 }
@@ -64,6 +68,10 @@ void SoundManager::PLAY_SOUND(const Common::String &file) {
 	warning("TODO: PLAY_SOUND");
 }
 
+void SoundManager::PLAY_SOUND2(const Common::String &file) {
+	warning("TODO: PLAY_SOUND2");
+}
+
 void SoundManager::MODSetSampleVolume() {
 	warning("TODO MODSetSampleVolume");
 }
@@ -76,5 +84,24 @@ void SoundManager::MODSetMusicVolume(int volume) {
 	warning("TODO MODSetMusicVolume");
 }
 
+void SoundManager::CHARGE_SAMPLE(int a1, const Common::String &file) {
+	warning("TODO: CHARGE_SAMPLE");
+}
+
+void SoundManager::PLAY_SAMPLE2(int idx) {
+	warning("PLAY_SAMPLE2");
+}
+
+void SoundManager::PLAY_SEQ(int a1, const Common::String &a2, int a3, int a4, int a5) {
+	warning("PLAY_SEQ");
+}
+
+void SoundManager::PLAY_SEQ2(const Common::String &a1, int a2, int a3, int a4) {
+	warning("PLAY_SEQ2");
+}
+
+void SoundManager::PLAY_WAV(int a1) {
+	warning("PLAY_WAV");
+}
 
 } // End of namespace Hopkins

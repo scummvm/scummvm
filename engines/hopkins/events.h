@@ -55,6 +55,7 @@ public:
 	uint32 lItCounter;
 	uint32 _priorFrameTime;
 	bool ESC_KEY;
+	bool NOESC;
 	int btsouris;
 public:
 	EventsManager();

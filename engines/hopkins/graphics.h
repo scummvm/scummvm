@@ -64,6 +64,7 @@ public:
 	byte TABLE_COUL[PALETTE_SIZE];
 	byte cmap[PALETTE_BLOCK_SIZE];
 	byte Palette[PALETTE_EXT_BLOCK_SIZE];
+	byte OLD_PAL[PALETTE_EXT_BLOCK_SIZE];
 	bool Linear;
 	Graphics::Surface *VideoPtr;
 	byte *VESA_SCREEN;
@@ -174,7 +175,9 @@ public:
 	void Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int transColour);
 	void INI_ECRAN(const Common::String &file);
 	void INI_ECRAN2(const Common::String &file);
+	void OPTI_INI(const Common::String &file, int a2);
 	void NB_SCREEN();
+	int colision2_ligne(int a1, int a2, int a3, int a4, int a5, int a6);
 };
 
 } // End of namespace Hopkins
