@@ -334,7 +334,7 @@ public:
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];
 	int STAILLE[500];
-	int super_parcours[32002];
+	int16 super_parcours[32002];
 	int Param[2100];
 	byte *Winventaire;
 	byte *texte_tmp;

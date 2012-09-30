@@ -2618,9 +2618,9 @@ LABEL_9:
 	}
 }
 
+// TODO: method casting int arrays as byte pointers. Double-check later whether
+// we can convert the return to a uint16 *
 byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
-	return NULL; //_vm->_globals.STOP_BUG == 0 ? NULL : NULL;
-	/*
 	int v4; 
 	int v5; 
 	int v6; 
@@ -2734,8 +2734,8 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 	int v115; 
 	int v116;
 	int v117; 
-	int v118; 
-	int v119; 
+	int v118 = 0; 
+	int v119 = 0; 
 	int v120; 
 	int v121; 
 	int v122;
@@ -2743,25 +2743,25 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 	int v124; 
 	int v125;
 	int v126; 
-	int v127;
-	int v128; 
-	int v129; 
-	int v130; 
+	int v127 = 0;
+	int v128 = 0; 
+	int v129 = 0; 
+	int v130 = 0; 
 	int v131; 
 	int v132; 
 	int v133; 
 	int v134; 
 	int v135;
 	int v136; 
-	int v137; 
-	int v138;
-	int v139;
-	int v140;
+	int v137 = 0; 
+	int v138 = 0;
+	int v139 = 0;
+	int v140 = 0;
 	int v141; 
-	int v142;
-	int v143; 
-	int v144; 
-	int v145; 
+	int v142 = 0;
+	int v143 = 0; 
+	int v144 = 0; 
+	int v145 = 0; 
 
 	v123 = a3;
 	v122 = a4;
@@ -2849,7 +2849,7 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			v16 = 5;
 			do {
 				v101 = v16;
-				v17 = _vm->_graphicsManager.colision2_ligne(v123, v15, (int)&v139, (int)&v144, 0, _vm->_objectsManager.DERLIGNE);
+				v17 = _vm->_graphicsManager.colision2_ligne(v123, v15, &v139, &v144, 0, _vm->_objectsManager.DERLIGNE);
 				v16 = v101;
 				if (v17 == 1 && *(&v141 + v101) <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -2866,7 +2866,7 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			v20 = 1;
 			do {
 				v102 = v20;
-				v21 = _vm->_graphicsManager.colision2_ligne(v123, v19, (int)&v137, (int)&v142, 0, _vm->_objectsManager.DERLIGNE);
+				v21 = _vm->_graphicsManager.colision2_ligne(v123, v19, &v137, &v142, 0, _vm->_objectsManager.DERLIGNE);
 				v20 = v102;
 				if (v21 == 1 && *(&v141 + v102) <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -2887,7 +2887,7 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			v24 = 3;
 			do {
 				v103 = v24;
-				v25 = _vm->_graphicsManager.colision2_ligne(v23, v122, (int)&v138, (int)&v143, 0, _vm->_objectsManager.DERLIGNE);
+				v25 = _vm->_graphicsManager.colision2_ligne(v23, v122, &v138, &v143, 0, _vm->_objectsManager.DERLIGNE);
 				v24 = v103;
 				if (v25 == 1 && *(&v141 + v103) <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -2982,7 +2982,7 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			v36 = 5;
 			do {
 				v105 = v36;
-				v37 = _vm->_graphicsManager.colision2_ligne(a1, v35, (int)&v139, (int)&v144, 0, _vm->_objectsManager.DERLIGNE);
+				v37 = _vm->_graphicsManager.colision2_ligne(a1, v35, &v139, &v144, 0, _vm->_objectsManager.DERLIGNE);
 				v36 = v105;
 				if (v37 == 1 && *(&v141 + v105) <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -2999,7 +2999,7 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			v40 = 1;
 			do {
 				v106 = v40;
-				v41 = _vm->_graphicsManager.colision2_ligne(a1, v39, (int)&v137, (int)&v142, 0, _vm->_objectsManager.DERLIGNE);
+				v41 = _vm->_graphicsManager.colision2_ligne(a1, v39, &v137, &v142, 0, _vm->_objectsManager.DERLIGNE);
 				v40 = v106;
 				if (v41 == 1 && *(&v141 + v106) <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -3020,7 +3020,7 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			v44 = 3;
 			do {
 				v107 = v44;
-				v45 = _vm->_graphicsManager.colision2_ligne(v43, a2, (int)&v138, (int)&v143, 0, _vm->_objectsManager.DERLIGNE);
+				v45 = _vm->_graphicsManager.colision2_ligne(v43, a2, &v138, &v143, 0, _vm->_objectsManager.DERLIGNE);
 				v44 = v107;
 				if (v45 == 1 && *(&v141 + v107) <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -3041,7 +3041,7 @@ byte *ObjectsManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			v48 = 7;
 			do {
 				v108 = v48;
-				v49 = _vm->_graphicsManager.colision2_ligne(v47, a2, (int)&v140, (int)&v145, 0, _vm->_objectsManager.DERLIGNE);
+				v49 = _vm->_graphicsManager.colision2_ligne(v47, a2, &v140, &v145, 0, _vm->_objectsManager.DERLIGNE);
 				v48 = v108;
 				if (v49 == 1 && *(&v141 + v108) <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -3126,7 +3126,7 @@ LABEL_201:
 					v56 = 0;
 					if (v111 > 0) {
 						do {
-							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1, a2 - v56, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1, a2 - v56, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v58 = GENIAL(v124, v125, a1, a2 - v56, a1, a2 - v111, v112, _vm->_globals.super_parcours, 4);
@@ -3150,7 +3150,7 @@ LABEL_201:
 					v60 = 0;
 					if (v111 > 0) {
 						do {
-							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1, v60 + a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1, v60 + a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v61 = GENIAL(v124, v125, a1, v60 + a2, a1, v111 + a2, v112, _vm->_globals.super_parcours, 4);
@@ -3174,7 +3174,7 @@ LABEL_201:
 					v63 = 0;
 					if (v111 > 0) {
 						do {
-							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1 - v63, a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if ((uint16)_vm->_graphicsManager.colision2_ligne(a1 - v63, a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v64 = GENIAL(v124, v125, a1 - v63, a2, a1 - v111, a2, v112, _vm->_globals.super_parcours, 4);
@@ -3198,7 +3198,7 @@ LABEL_201:
 					v66 = 0;
 					if (v111 > 0) {
 						do {
-							if ((uint16)_vm->_graphicsManager.colision2_ligne(v66 + a1, a2, (int)&v125, (int)&v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if ((uint16)_vm->_graphicsManager.colision2_ligne(v66 + a1, a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v67 = GENIAL(v124, v125, v66 + a1, a2, v111 + a1, a2, v112, _vm->_globals.super_parcours, 4);
@@ -3255,7 +3255,7 @@ LABEL_234:
 								if (v72 == v77) {
 									v78 = PARC_PERS(v119, v118, v123, v122, v110, v121, v112);
 									if (v78 == 1)
-										return &_vm->_globals.super_parcours[0];
+										return (byte *)&_vm->_globals.super_parcours[0];
 									if (v78 == 2)
 										goto LABEL_200;
 									if (MIRACLE(v119, v118, v110, v121, v112) == 1)
@@ -3267,7 +3267,7 @@ LABEL_234:
 						}
 						v79 = PARC_PERS(v119, v118, v123, v122, v116, v121, v112);
 						if (v79 == 1)
-							return &_vm->_globals.super_parcours[0];
+							return (byte *)&_vm->_globals.super_parcours[0];
 						if (v79 == 2) {
 LABEL_200:
 							v115 = NV_LIGNEDEP;
@@ -3324,7 +3324,7 @@ LABEL_200:
 									if (v83 == v87) {
 										v88 = PARC_PERS(v119, v118, v123, v122, v117, v121, v112);
 										if (v88 == 1)
-											return &_vm->_globals.super_parcours[0];
+											return (byte *)&_vm->_globals.super_parcours[0];
 										if (v88 == 2)
 											goto LABEL_200;
 										if (MIRACLE(v119, v118, v117, v121, v112) == 1)
@@ -3336,7 +3336,7 @@ LABEL_200:
 						}
 						v89 = PARC_PERS(v119, v118, v123, v122, v117, v121, v112);
 						if (v89 == 1)
-							return &_vm->_globals.super_parcours[0];
+							return (byte *)&_vm->_globals.super_parcours[0];
 						if (v89 == 2)
 							goto LABEL_200;
 						if (MIRACLE(v119, v118, v117, v121, v112) == 1)
@@ -3395,11 +3395,10 @@ LABEL_282:
 				_vm->_globals.super_parcours[v57 + 2] = -1;
 				_vm->_globals.super_parcours[v57 + 3] = -1;
 			}
-			return &_vm->_globals.super_parcours[0];
+			return (byte *)&_vm->_globals.super_parcours[0];
 		}
 	}
-	return &_vm->_globals.super_parcours[0];
-	*/
+	return (byte *)&_vm->_globals.super_parcours[0];
 }
 
 void ObjectsManager::VERIFTAILLE() {
@@ -5761,7 +5760,7 @@ void ObjectsManager::VERBE_OFF(int a1, int a2) {
 void ObjectsManager::VERBE_ON(int a1, int a2) {
 	warning("TODO: VERBE_ON");
 }
-/*
+
 int ObjectsManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
 	warning("TODO: PARC_PERS");
 	return 0;
@@ -5771,6 +5770,10 @@ int ObjectsManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 	warning("TODO: MIRACLE");
 	return 0;
 }
-*/
+
+int ObjectsManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9) {
+	warning("TODO: GENIAL");
+	return 0;
+}
 
 } // End of namespace Hopkins

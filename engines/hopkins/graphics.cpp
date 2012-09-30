@@ -2402,10 +2402,10 @@ void GraphicsManager::NB_SCREEN() {
 	*(v0 + 2) = *(v1 + 2);
 	DD_VBL();
 }
-/*
-int GraphicsManager::colision2_ligne(int a1, int a2, int a3, int a4, int a5, int a6) {
+
+int GraphicsManager::colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
 	warning("TODO: colision2_ligne");
 	return 0;
 }
-*/
+
 } // End of namespace Hopkins
