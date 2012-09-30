@@ -194,7 +194,9 @@ public:
 	enum {
 //		PROP_TIMEDIV = 1,
 		PROP_OLD_ADLIB = 2,
-		PROP_CHANNEL_MASK = 3
+		PROP_CHANNEL_MASK = 3,
+		// HACK: Not so nice, but our SCUMM AdLib code is in audio/
+		PROP_SCUMM_OPL3 = 4
 	};
 
 	/**
