@@ -593,7 +593,7 @@ public:
 private:
 	bool _scummSmallHeader; // FIXME: This flag controls a special mode for SCUMM V3 games
 
-	FM_OPL *_opl;
+	OPL::OPL *_opl;
 	byte *_regCache;
 
 	int _timerCounter;
@@ -941,7 +941,8 @@ int MidiDriver_ADLIB::open() {
 
 	_regCache = (byte *)calloc(256, 1);
 
-	_opl = makeAdLibOPL(getRate());
+	_opl = OPL::Config::create();
+	_opl->init(getRate());
 
 	adlibWrite(1, 0x20);
 	adlibWrite(8, 0x40);
@@ -967,8 +968,7 @@ void MidiDriver_ADLIB::close() {
 	}
 
 	// Turn off the OPL emulation
-	OPLDestroy(_opl);
-//	YM3812Shutdown();
+	delete _opl;
 
 	free(_regCache);
 }
@@ -1076,12 +1076,15 @@ void MidiDriver_ADLIB::adlibWrite(byte reg, byte value) {
 #endif
 	_regCache[reg] = value;
 
-	OPLWriteReg(_opl, reg, value);
+	_opl->writeReg(reg, value);
 }
 
 void MidiDriver_ADLIB::generateSamples(int16 *data, int len) {
-	memset(data, 0, sizeof(int16) * len);
-	YM3812UpdateOne(_opl, data, len);
+	if (_opl->isStereo()) {
+		len *= 2;
+	}
+
+	_opl->readBuffer(data, len);
 }
 
 void MidiDriver_ADLIB::onTimer() {
