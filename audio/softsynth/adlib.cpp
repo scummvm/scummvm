@@ -839,18 +839,16 @@ void AdLibPercussionChannel::init(MidiDriver_ADLIB *owner, byte channel) {
 }
 
 void AdLibPercussionChannel::noteOff(byte note) {
-	// Jamieson630: Unless I run into a specific instrument that
-	// may require a key off, I'm going to ignore this message.
-	// The rationale is that a percussion instrument should
-	// fade out of its own accord, and the AdLib instrument
-	// definitions used should follow this rule. Since
-	// percussion voices are allocated at the lowest priority
-	// anyway, we know that "hanging" percussion sounds will
-	// not prevent later musical instruments (or even other
-	// percussion sounds) from playing.
-	/*
+	if (_customInstruments[note]) {
+		note = _notes[note];
+	}
+
+	// This used to ignore note off events, since the builtin percussion
+	// instrument data has a duration value, which causes the percussion notes
+	// to stop automatically. This is not the case for (Groovie's) custom
+	// percussion instruments though. Also the OPL3 driver of Sam&Max actually
+	// does not handle the duration value, so we need it there too.
 	 _owner->partKeyOff(this, note);
-	*/
 }
 
 void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
