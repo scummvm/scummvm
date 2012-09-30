@@ -32,7 +32,7 @@
 #include "common/translation.h"
 
 #ifdef DEBUG_ADLIB
-static int tick;
+static int g_tick;
 #endif
 
 class MidiDriver_ADLIB;
@@ -227,19 +227,19 @@ struct AdLibSetParams {
 	byte a, b, c, d;
 };
 
-static const byte channel_mappings[9] = {
+static const byte g_operator1Offsets[9] = {
 	0, 1, 2, 8,
 	9, 10, 16, 17,
 	18
 };
 
-static const byte channel_mappings_2[9] = {
+static const byte g_operator2Offsets[9] = {
 	3, 4, 5, 11,
 	12, 13, 19, 20,
 	21
 };
 
-static const AdLibSetParams adlib_setparam_table[] = {
+static const AdLibSetParams g_setParamTable[] = {
 	{0x40, 0, 63, 63},  // level
 	{0xE0, 2, 0, 0},    // unused
 	{0x40, 6, 192, 0},  // level key scaling
@@ -257,21 +257,21 @@ static const AdLibSetParams adlib_setparam_table[] = {
 	{0xC0, 1, 14, 0}    // feedback
 };
 
-static const byte param_table_1[16] = {
+static const byte g_paramTable1[16] = {
 	29, 28, 27, 0,
 	3, 4, 7, 8,
 	13, 16, 17, 20,
 	21, 30, 31, 0
 };
 
-static const uint16 maxval_table[16] = {
+static const uint16 g_maxValTable[16] = {
 	0x2FF, 0x1F, 0x7, 0x3F,
 	0x0F, 0x0F, 0x0F, 0x3,
 	0x3F, 0x0F, 0x0F, 0x0F,
 	0x3, 0x3E, 0x1F, 0
 };
 
-static const uint16 num_steps_table[] = {
+static const uint16 g_numStepsTable[] = {
 	1, 2, 4, 5,
 	6, 7, 8, 9,
 	10, 12, 14, 16,
@@ -282,7 +282,7 @@ static const uint16 num_steps_table[] = {
 	600, 860, 1200, 1600
 };
 
-static const byte note_to_f_num[] = {
+static const byte g_noteFrequencies[] = {
 	90, 91, 92, 92, 93, 94, 94, 95,
 	96, 96, 97, 98, 98, 99, 100, 101,
 	101, 102, 103, 104, 104, 105, 106, 107,
@@ -303,7 +303,7 @@ static const byte note_to_f_num[] = {
 	242, 243, 245, 247, 249, 251, 252, 254
 };
 
-static const AdLibInstrument map_gm_to_fm[128] = {
+static const AdLibInstrument g_gmInstruments[128] = {
 	// 0x00
 { 0xC2, 0xC5, 0x2B, 0x99, 0x58, 0xC2, 0x1F, 0x1E, 0xC8, 0x7C, 0x0A, 0, { 0,0,0,0,0,0,0,0 }, 0, { 0,0,0,0,0,0,0,0 }, 0x23 },
 { 0x22, 0x53, 0x0E, 0x8A, 0x30, 0x14, 0x06, 0x1D, 0x7A, 0x5C, 0x06, 0, { 0,0,0,0,0,0,0,0 }, 0, { 0,0,0,0,0,0,0,0 }, 0x00 },
@@ -442,7 +442,7 @@ static const AdLibInstrument map_gm_to_fm[128] = {
 { 0x00, 0x3F, 0x4C, 0xFB, 0x00, 0x00, 0x3F, 0x0A, 0xE9, 0x7C, 0x0E, 0, { 0,0,0,0,0,0,0,0 }, 0, { 0,0,0,0,0,0,0,0 }, 0x05 }
 };
 
-static AdLibInstrument gm_percussion_to_fm[39] = {
+static AdLibInstrument g_gmPercussionInstruments[39] = {
 { 0x1A, 0x3F, 0x15, 0x05, 0x7C, 0x02, 0x21, 0x2B, 0xE4, 0x7C, 0x0E, 0, { 0,0,0,0,0,0,0,0 }, 0, { 0,0,0,0,0,0,0,0 }, 0x06 },
 { 0x11, 0x12, 0x04, 0x07, 0x7C, 0x02, 0x23, 0x0B, 0xE5, 0x7C, 0x0E, 0, { 0,0,0,0,0,0,0,0 }, 0, { 0,0,0,0,0,0,0,0 }, 0x05 },
 { 0x0A, 0x3F, 0x0B, 0x01, 0x7C, 0x1F, 0x1C, 0x46, 0xD0, 0x7C, 0x0E, 0, { 0,0,0,0,0,0,0,0 }, 0, { 0,0,0,0,0,0,0,0 }, 0x01 },
@@ -484,7 +484,7 @@ static AdLibInstrument gm_percussion_to_fm[39] = {
 { 0x0A, 0x0E, 0x7F, 0x00, 0x7D, 0x13, 0x20, 0x28, 0x03, 0x7C, 0x06, 0, { 0,0,0,0,0,0,0,0 }, 0, { 0,0,0,0,0,0,0,0 }, 0x00 }
 };
 
-static const byte gm_percussion_lookup[128] = {
+static const byte g_gmPercussionInstrumentMap[128] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	0xFF, 0xFF, 0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,
@@ -495,9 +495,9 @@ static const byte gm_percussion_lookup[128] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
 };
 
-static byte lookup_table[64][32];
+static byte g_volumeLookupTable[64][32];
 
-static const byte volume_table[] = {
+static const byte g_volumeTable[] = {
 	0, 4, 7, 11,
 	13, 16, 18, 20,
 	22, 24, 26, 27,
@@ -529,15 +529,15 @@ static int lookup_volume(int a, int b) {
 
 	if (b < 0) {
 		if (a < 0) {
-			return lookup_table[-a][-b];
+			return g_volumeLookupTable[-a][-b];
 		} else {
-			return -lookup_table[a][-b];
+			return -g_volumeLookupTable[a][-b];
 		}
 	} else {
 		if (a < 0) {
-			return -lookup_table[-a][b];
+			return -g_volumeLookupTable[-a][b];
 		} else {
-			return lookup_table[a][b];
+			return g_volumeLookupTable[a][b];
 		}
 	}
 }
@@ -549,12 +549,12 @@ static void create_lookup_table() {
 	for (i = 0; i < 64; i++) {
 		sum = i;
 		for (j = 0; j < 32; j++) {
-			lookup_table[i][j] = sum >> 5;
+			g_volumeLookupTable[i][j] = sum >> 5;
 			sum += i;
 		}
 	}
 	for (i = 0; i < 64; i++)
-		lookup_table[i][0] = 0;
+		g_volumeLookupTable[i][0] = 0;
 }
 
 ////////////////////////////////////////
@@ -657,14 +657,14 @@ void AdLibPart::send(uint32 b) {
 
 void AdLibPart::noteOff(byte note) {
 #ifdef DEBUG_ADLIB
-	debug(6, "%10d: noteOff(%d)", tick, note);
+	debug(6, "%10d: noteOff(%d)", g_tick, note);
 #endif
 	_owner->part_key_off(this, note);
 }
 
 void AdLibPart::noteOn(byte note, byte velocity) {
 #ifdef DEBUG_ADLIB
-	debug(6, "%10d: noteOn(%d,%d)", tick, note, velocity);
+	debug(6, "%10d: noteOn(%d,%d)", g_tick, note, velocity);
 #endif
 	_owner->part_key_on(this, &_part_instr, note, velocity);
 }
@@ -676,13 +676,13 @@ void AdLibPart::programChange(byte program) {
 /*
 	uint i;
 	uint count = 0;
-	for (i = 0; i < ARRAYSIZE(map_gm_to_fm[0]); ++i)
-		count += map_gm_to_fm[program][i];
+	for (i = 0; i < ARRAYSIZE(g_gmInstruments[0]); ++i)
+		count += g_gmInstruments[program][i];
 	if (!count)
 		warning("No AdLib instrument defined for GM program %d", (int)program);
 */
 	_program = program;
-	memcpy(&_part_instr, &map_gm_to_fm[program], sizeof(AdLibInstrument));
+	memcpy(&_part_instr, &g_gmInstruments[program], sizeof(AdLibInstrument));
 }
 
 void AdLibPart::pitchBend(int16 bend) {
@@ -739,9 +739,9 @@ void AdLibPart::volume(byte value) {
 
 	_vol_eff = value;
 	for (voice = _voice; voice; voice = voice->_next) {
-		_owner->adlib_set_param(voice->_channel, 0, volume_table[lookup_table[voice->_vol_2][_vol_eff >> 2]]);
+		_owner->adlib_set_param(voice->_channel, 0, g_volumeTable[g_volumeLookupTable[voice->_vol_2][_vol_eff >> 2]]);
 		if (voice->_twochan) {
-			_owner->adlib_set_param(voice->_channel, 13, volume_table[lookup_table[voice->_vol_1][_vol_eff >> 2]]);
+			_owner->adlib_set_param(voice->_channel, 13, g_volumeTable[g_volumeLookupTable[voice->_vol_1][_vol_eff >> 2]]);
 		}
 	}
 }
@@ -835,10 +835,10 @@ void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
 		note = _notes[note];
 
 	if (!inst) {
-		// Use the default GM to FM mapping as a fallback as a fallback
-		byte key = gm_percussion_lookup[note];
+		// Use the default GM to FM mapping as a fallback
+		byte key = g_gmPercussionInstrumentMap[note];
 		if (key != 0xFF)
-			inst = &gm_percussion_to_fm[key];
+			inst = &g_gmPercussionInstruments[key];
 	}
 
 	if (!inst) {
@@ -1047,7 +1047,7 @@ void MidiDriver_ADLIB::adlib_write(byte reg, byte value) {
 	if (_adlib_reg_cache[reg] == value)
 		return;
 #ifdef DEBUG_ADLIB
-	debug(6, "%10d: adlib_write[%x] = %x", tick, reg, value);
+	debug(6, "%10d: adlib_write[%x] = %x", g_tick, reg, value);
 #endif
 	_adlib_reg_cache[reg] = value;
 
@@ -1067,7 +1067,7 @@ void MidiDriver_ADLIB::onTimer() {
 	while (_adlib_timer_counter >= _timer_q) {
 		_adlib_timer_counter -= _timer_q;
 #ifdef DEBUG_ADLIB
-		tick++;
+		g_tick++;
 #endif
 		voice = _voices;
 		for (i = 0; i != ARRAYSIZE(_voices); i++, voice++) {
@@ -1115,7 +1115,7 @@ void MidiDriver_ADLIB::mc_inc_stuff(AdLibVoice *voice, Struct10 *s10, Struct11 *
 			voice->_vol_2 = s10->start_value + s11->modify_val;
 			if (!_scummSmallHeader) {
 				adlib_set_param(voice->_channel, 0,
-												volume_table[lookup_table[voice->_vol_2]
+												g_volumeTable[g_volumeLookupTable[voice->_vol_2]
 																		 [part->_vol_eff >> 2]]);
 			} else {
 				adlib_set_param(voice->_channel, 0, voice->_vol_2);
@@ -1125,7 +1125,7 @@ void MidiDriver_ADLIB::mc_inc_stuff(AdLibVoice *voice, Struct10 *s10, Struct11 *
 			voice->_vol_1 = s10->start_value + s11->modify_val;
 			if (voice->_twochan && !_scummSmallHeader) {
 				adlib_set_param(voice->_channel, 13,
-												volume_table[lookup_table[voice->_vol_1]
+												g_volumeTable[g_volumeLookupTable[voice->_vol_1]
 												[part->_vol_eff >> 2]]);
 			} else {
 				adlib_set_param(voice->_channel, 13, voice->_vol_1);
@@ -1203,10 +1203,10 @@ void MidiDriver_ADLIB::adlib_set_param(int channel, byte param, int value) {
 	assert(channel >= 0 && channel < 9);
 
 	if (param <= 12) {
-		reg = channel_mappings_2[channel];
+		reg = g_operator2Offsets[channel];
 	} else if (param <= 25) {
 		param -= 13;
-		reg = channel_mappings[channel];
+		reg = g_operator1Offsets[channel];
 	} else if (param <= 27) {
 		param -= 13;
 		reg = channel;
@@ -1223,7 +1223,7 @@ void MidiDriver_ADLIB::adlib_set_param(int channel, byte param, int value) {
 		return;
 	}
 
-	as = &adlib_setparam_table[param];
+	as = &g_setParamTable[param];
 	if (as->d)
 		value = as->d - value;
 	reg += as->a;
@@ -1248,7 +1248,7 @@ void MidiDriver_ADLIB::struct10_setup(Struct10 *s10) {
 	f = s10->active - 1;
 
 	t = s10->table_a[f];
-	e = num_steps_table[lookup_table[t & 0x7F][b]];
+	e = g_numStepsTable[g_volumeLookupTable[t & 0x7F][b]];
 	if (t & 0x80) {
 		e = random_nr(e);
 	}
@@ -1321,7 +1321,7 @@ void MidiDriver_ADLIB::adlib_playnote(int channel, int note) {
 	}
 
 	i = (notex << 3) + ((note >> 4) & 0x7);
-	adlib_write(channel + 0xA0, note_to_f_num[i]);
+	adlib_write(channel + 0xA0, g_noteFrequencies[i]);
 	adlib_write(channel + 0xB0, oct | 0x20);
 }
 
@@ -1410,7 +1410,7 @@ void MidiDriver_ADLIB::mc_key_on(AdLibVoice *voice, AdLibInstrument *instr, byte
 		voice->_duration *= 63;
 
 	if (!_scummSmallHeader)
-		vol_1 = (instr->mod_scalingOutputLevel & 0x3F) + lookup_table[velocity >> 1][instr->mod_waveformSelect >> 2];
+		vol_1 = (instr->mod_scalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->mod_waveformSelect >> 2];
 	else
 		vol_1 = 0x3f - (instr->mod_scalingOutputLevel & 0x3F);
 	if (vol_1 > 0x3F)
@@ -1418,7 +1418,7 @@ void MidiDriver_ADLIB::mc_key_on(AdLibVoice *voice, AdLibInstrument *instr, byte
 	voice->_vol_1 = vol_1;
 
 	if (!_scummSmallHeader)
-		vol_2 = (instr->car_scalingOutputLevel & 0x3F) + lookup_table[velocity >> 1][instr->car_waveformSelect >> 2];
+		vol_2 = (instr->car_scalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->car_waveformSelect >> 2];
 	else
 		vol_2 = 0x3f - (instr->car_scalingOutputLevel & 0x3F);
 	if (vol_2 > 0x3F)
@@ -1428,9 +1428,9 @@ void MidiDriver_ADLIB::mc_key_on(AdLibVoice *voice, AdLibInstrument *instr, byte
 	c = part->_vol_eff >> 2;
 
 	if (!_scummSmallHeader) {
-		vol_2 = volume_table[lookup_table[vol_2][c]];
+		vol_2 = g_volumeTable[g_volumeLookupTable[vol_2][c]];
 		if (voice->_twochan)
-			vol_1 = volume_table[lookup_table[vol_1][c]];
+			vol_1 = g_volumeTable[g_volumeLookupTable[vol_1][c]];
 	}
 
 	adlib_setup_channel(voice->_channel, instr, vol_1, vol_2);
@@ -1454,14 +1454,14 @@ void MidiDriver_ADLIB::adlib_setup_channel(int chan, AdLibInstrument *instr, byt
 
 	assert(chan >= 0 && chan < 9);
 
-	channel = channel_mappings[chan];
+	channel = g_operator1Offsets[chan];
 	adlib_write(channel + 0x20, instr->mod_characteristic);
 	adlib_write(channel + 0x40, (instr->mod_scalingOutputLevel | 0x3F) - vol_1 );
 	adlib_write(channel + 0x60, 0xff & (~instr->mod_attackDecay));
 	adlib_write(channel + 0x80, 0xff & (~instr->mod_sustainRelease));
 	adlib_write(channel + 0xE0, instr->mod_waveformSelect);
 
-	channel = channel_mappings_2[chan];
+	channel = g_operator2Offsets[chan];
 	adlib_write(channel + 0x20, instr->car_characteristic);
 	adlib_write(channel + 0x40, (instr->car_scalingOutputLevel | 0x3F) - vol_2 );
 	adlib_write(channel + 0x60, 0xff & (~instr->car_attackDecay));
@@ -1487,8 +1487,8 @@ void MidiDriver_ADLIB::mc_init_stuff(AdLibVoice *voice, Struct10 *s10,
 	s11->flag0x40 = flags & 0x40;
 	s10->loop = flags & 0x20;
 	s11->flag0x10 = flags & 0x10;
-	s11->param = param_table_1[flags & 0xF];
-	s10->max_value = maxval_table[flags & 0xF];
+	s11->param = g_paramTable1[flags & 0xF];
+	s10->max_value = g_maxValTable[flags & 0xF];
 	s10->unk3 = 31;
 	if (s11->flag0x40) {
 		s10->modwheel = part->_modwheel >> 2;
@@ -1551,10 +1551,10 @@ int MidiDriver_ADLIB::adlib_get_reg_value_param(int chan, byte param) {
 	assert(chan >= 0 && chan < 9);
 
 	if (param <= 12) {
-		channel = channel_mappings_2[chan];
+		channel = g_operator2Offsets[chan];
 	} else if (param <= 25) {
 		param -= 13;
-		channel = channel_mappings[chan];
+		channel = g_operator1Offsets[chan];
 	} else if (param <= 27) {
 		param -= 13;
 		channel = chan;
@@ -1566,7 +1566,7 @@ int MidiDriver_ADLIB::adlib_get_reg_value_param(int chan, byte param) {
 		return 0;
 	}
 
-	as = &adlib_setparam_table[param];
+	as = &g_setParamTable[param];
 	val = adlib_get_reg_value(channel + as->a);
 	val &= as->c;
 	val >>= as->b;
@@ -1581,7 +1581,7 @@ void MidiDriver_ADLIB::adlib_note_on(int chan, byte note, int mod) {
 	assert(chan >= 0 && chan < 9);
 	code = (note << 7) + mod;
 	curnote_table[chan] = code;
-	adlib_playnote(chan, (int16) channel_table_2[chan] + code);
+	adlib_playnote(chan, (int16)channel_table_2[chan] + code);
 }
 
 
