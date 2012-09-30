@@ -224,7 +224,10 @@ struct AdLibVoice {
 };
 
 struct AdLibSetParams {
-	byte a, b, c, d;
+	byte registerBase;
+	byte shift;
+	byte mask;
+	byte inversion;
 };
 
 static const byte g_operator1Offsets[9] = {
@@ -1248,10 +1251,10 @@ void MidiDriver_ADLIB::adlibSetParam(int channel, byte param, int value) {
 	}
 
 	as = &g_setParamTable[param];
-	if (as->d)
-		value = as->d - value;
-	reg += as->a;
-	adlibWrite(reg, (adlibGetRegValue(reg) & ~as->c) | (((byte)value) << as->b));
+	if (as->inversion)
+		value = as->inversion - value;
+	reg += as->registerBase;
+	adlibWrite(reg, (adlibGetRegValue(reg) & ~as->mask) | (((byte)value) << as->shift));
 }
 
 void MidiDriver_ADLIB::adlibKeyOnOff(int channel) {
@@ -1591,11 +1594,11 @@ int MidiDriver_ADLIB::adlibGetRegValueParam(int chan, byte param) {
 	}
 
 	as = &g_setParamTable[param];
-	val = adlibGetRegValue(channel + as->a);
-	val &= as->c;
-	val >>= as->b;
-	if (as->d)
-		val = as->d - val;
+	val = adlibGetRegValue(channel + as->registerBase);
+	val &= as->mask;
+	val >>= as->shift;
+	if (as->inversion)
+		val = as->inversion - val;
 
 	return val;
 }
