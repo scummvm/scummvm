@@ -142,6 +142,10 @@ bool Entity::isSoundPlaying(uint index) {
 	return getSoundResource(index)->isPlaying();
 }
 
+void Entity::setSoundVolume(uint index, int volume) {
+	getSoundResource(index)->setVolume(volume);
+}
+
 void Entity::deleteSoundResources() {
 	if (_soundResources) {
 		for (uint i = 0; i < kMaxSoundResources; ++i)

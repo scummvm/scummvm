@@ -34,7 +34,7 @@ static const uint32 kModule1700SoundList[] = {
 };
 
 Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundResource(vm) {
+	: Module(vm, parentModule) {
 	
 	_vm->_soundMan->addMusic(0x04212331, 0x31114225);
 	_vm->_soundMan->addSoundList(0x04212331, kModule1700SoundList);
@@ -105,9 +105,9 @@ void Module1700::updateScene() {
 			} else if (_moduleResult == 1) {
 				createScene(1, 1);
 			} else if (_moduleResult == 2) {
-				if (!_soundResource.isPlaying()) {
-					_soundResource.setVolume(60);
-					_soundResource.play(0x58B45E58);
+				if (!isSoundPlaying(0)) {
+					setSoundVolume(0, 60);
+					playSound(0, 0x58B45E58);
 				}
 				createScene(2, 2);
 			}

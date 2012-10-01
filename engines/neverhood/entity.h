@@ -109,6 +109,7 @@ protected:
 	void loadSound(uint index, uint32 fileHash);
 	void playSound(uint index, uint32 fileHash = 0);
 	bool isSoundPlaying(uint index);
+	void setSoundVolume(uint index, int volume);
 	void deleteSoundResources();
 };
 
