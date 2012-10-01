@@ -1445,7 +1445,7 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (!_flag6) {
 			if (_flag5)
 				_asSymbols[_index3]->change(_index1 + 12, false);
-			_asSymbols[_index3]->stopSound();
+			_asSymbols[_index3]->stopSymbolSound();
 			_index3++;
 			if (_index3 >= 12) {
 				if (testVars()) {

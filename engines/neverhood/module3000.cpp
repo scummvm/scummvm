@@ -1498,12 +1498,11 @@ void AsScene3011Symbol::hide() {
 	setVisible(false);
 }
 
-void AsScene3011Symbol::stopSound() {
+void AsScene3011Symbol::stopSymbolSound() {
 	if (_flag2) {
-		Entity::stopSound(1);
+		stopSound(1);
 	} else {
-	// CHECKME this is wrong
-		//_soundResource2.stop();
+		stopSound(0);
 	}
 }
 

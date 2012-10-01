@@ -224,7 +224,7 @@ public:
 	AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag);
 	void show(bool flag);
 	void hide();
-	void stopSound();
+	void stopSymbolSound();
 	void change(int index, bool flag);
 	bool getFlag1() { return _flag1; }
 	int getIndex() { return _index; }
