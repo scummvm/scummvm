@@ -76,7 +76,6 @@ class AsScene2201Door : public AnimatedSprite {
 public:
 	AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *doorLightSprite, bool flag1);
 protected:
-	SoundResource _soundResource;
 	Klayman *_klayman;
 	Sprite *_doorLightSprite;
 	bool _doorOpen;
@@ -124,8 +123,6 @@ protected:
 	int16 _xFlagPos;
 	bool _counterDirection;
 	bool _isMoving;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void suMoveTileX();
@@ -139,8 +136,6 @@ public:
 	Scene2202(NeverhoodEngine *vm, Module *parentModule, int which);
 	~Scene2202();
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	Sprite *_movingTileSprite;
 	Sprite *_doneMovingTileSprite;
 	bool _isTileMoving;
@@ -168,7 +163,6 @@ public:
 	AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint index);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	Sprite *_otherDoor;
 	uint _index;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -216,7 +210,6 @@ public:
 	Class603(NeverhoodEngine *vm, uint32 fileHash);
 protected:
 	int _index;
-	SoundResource _soundResource;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void spriteUpdate481E60();
@@ -253,7 +246,6 @@ protected:
 	Sprite *_sprite5;
 	Sprite *_class604;
 	Sprite *_class607;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void sub481950();
 	void sub4819D0();
@@ -266,7 +258,6 @@ public:
 	~AsScene2207Elevator();
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	NPointArray *_pointArray;
 	int16 _pointIndex;
 	int16 _destPointIndex, _destPointIndexDelta;
@@ -282,7 +273,6 @@ public:
 	AsScene2207Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int doDeltaX);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stLeverDown();
 	void stLeverDownEvent();
@@ -295,10 +285,6 @@ public:
 	AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene);
 	~AsScene2207WallRobotAnimation();
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
-	SoundResource _soundResource4;
 	bool _idle;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stStartAnimation();
@@ -326,8 +312,6 @@ class Scene2207 : public Scene {
 public:
 	Scene2207(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	Sprite *_asElevator;
 	Sprite *_ssMaskPart1;
 	Sprite *_ssMaskPart2;

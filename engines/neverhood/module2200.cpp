@@ -412,8 +412,7 @@ AsScene2201CeilingFan::AsScene2201CeilingFan(NeverhoodEngine *vm)
 }
 
 AsScene2201Door::AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *doorLightSprite, bool flag1)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _klayman(klayman), _doorLightSprite(doorLightSprite), 
-	_countdown(0), _doorOpen(flag1) {
+	: AnimatedSprite(vm, 1100), _klayman(klayman), _doorLightSprite(doorLightSprite), _countdown(0), _doorOpen(flag1) {
 
 	_x = 408;
 	_y = 290;	
@@ -471,7 +470,7 @@ void AsScene2201Door::stOpenDoor() {
 	_doorOpen = true;
 	startAnimation(0xE2CB0412, 0, -1);
 	_newStickFrameIndex = -2;
-	_soundResource.play(calcHash("fxDoorOpen33"));
+	playSound(0, calcHash("fxDoorOpen33"));
 }
 
 void AsScene2201Door::stCloseDoor() {
@@ -479,7 +478,7 @@ void AsScene2201Door::stCloseDoor() {
 	startAnimation(0xE2CB0412, -1, -1);
 	_playBackwards = true;
 	_newStickFrameIndex = 0;
-	_soundResource.play(calcHash("fxDoorClose33"));
+	playSound(0, calcHash("fxDoorClose33"));
 }
 
 Class444::Class444(NeverhoodEngine *vm, int pointIndex, int spriteIndex)
@@ -671,8 +670,7 @@ static const uint32 kSsScene2202PuzzleTileFileHashes2[] = {
 };
 
 SsScene2202PuzzleTile::SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentScene, int16 tileIndex, int16 value)
-	: StaticSprite(vm, 900), _soundResource1(vm), _soundResource2(vm), _parentScene(parentScene),
-	_value(value), _tileIndex(tileIndex), _isMoving(false) {
+	: StaticSprite(vm, 900), _parentScene(parentScene), _value(value), _tileIndex(tileIndex), _isMoving(false) {
 	
 	SetUpdateHandler(&SsScene2202PuzzleTile::update);
 	SetMessageHandler(&SsScene2202PuzzleTile::handleMessage);
@@ -694,8 +692,8 @@ SsScene2202PuzzleTile::SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentS
 	processDelta();
 	_needRefresh = true;
 	StaticSprite::update();
-	_soundResource1.load(0x40958621);
-	_soundResource2.load(0x51108241);
+	loadSound(0, 0x40958621);
+	loadSound(1, 0x51108241);
 }
 
 void SsScene2202PuzzleTile::update() {
@@ -853,7 +851,7 @@ void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 			else
 				_xFlagPos = _x / 2 + _newX;
 		}
-		_soundResource1.play();
+		playSound(0);
 	} else {
 		SetSpriteUpdate(&SsScene2202PuzzleTile::suMoveTileY);
 		if (_yIncr > 0) {
@@ -867,7 +865,7 @@ void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 			else
 				_xFlagPos = _y / 2 + _newY;
 		}
-		_soundResource2.play();
+		playSound(1);
 	}
 	
 }
@@ -885,8 +883,8 @@ void SsScene2202PuzzleTile::stopMoving() {
 }
 
 Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm),
-	_isSolved(false), _leaveScene(false), _isTileMoving(false), _movingTileSprite(NULL), _doneMovingTileSprite(NULL) {
+	: Scene(vm, parentModule, true), _isSolved(false), _leaveScene(false), _isTileMoving(false),
+	_movingTileSprite(NULL), _doneMovingTileSprite(NULL) {
 
 	// TODO initScene2201Vars();
 	SetMessageHandler(&Scene2202::handleMessage);
@@ -915,8 +913,8 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x85500158, 400);
 	insertStaticSprite(0x25547028, 600);
 
-	_soundResource1.load(0x68E25540);
-	_soundResource2.load(0x40400457);
+	loadSound(0, 0x68E25540);
+	loadSound(1, 0x40400457);
 
 	_vm->_soundMan->addSound(0x60400854, 0x8101A241);
 	_vm->_soundMan->playSoundLooping(0x8101A241);
@@ -930,12 +928,12 @@ Scene2202::~Scene2202() {
 void Scene2202::update() {
 	Scene::update();
 
-	if (_leaveScene && !_soundResource2.isPlaying()) {
+	if (_leaveScene && !isSoundPlaying(1)) {
 		leaveScene(0);
 	}
 
-	if (_isSolved && !_soundResource1.isPlaying()) {
-		_soundResource2.play();
+	if (_isSolved && !isSoundPlaying(0)) {
+		playSound(1);
 		_isSolved = false;
 		_leaveScene = true;
 	}
@@ -954,7 +952,7 @@ void Scene2202::update() {
 		setSurfacePriority(_doneMovingTileSprite->getSurface(), _surfacePriority);
 		_doneMovingTileSprite = NULL;
 		if (testIsSolved()) {
-			_soundResource1.play();
+			playSound(0);
 			setGlobalVar(0x404290D5, 1);
 			_isSolved = true;
 		}
@@ -1055,8 +1053,7 @@ static const uint32 kAsScene2203DoorFileHashes[] = {
 };
 
 AsScene2203Door::AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint index)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene),
-	_index(index) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _index(index) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2203Door::handleMessage);
@@ -1104,7 +1101,7 @@ uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param,
 }
 
 void AsScene2203Door::openDoor() {
-	_soundResource.play(0x341014C4);
+	playSound(0, 0x341014C4);
 	startAnimation(kAsScene2203DoorFileHashes[_index], 1, -1);
 }
 
@@ -1407,7 +1404,7 @@ static const int16 kClass603XDeltas2[] = {
 };
 
 Class603::Class603(NeverhoodEngine *vm, uint32 fileHash)
-	: StaticSprite(vm, fileHash, 200), _soundResource(vm) {
+	: StaticSprite(vm, fileHash, 200) {
 	
 	if (getGlobalVar(0x18890C91))
 		_x -= 63;
@@ -1428,13 +1425,13 @@ uint32 Class603::handleMessage(int messageNum, const MessageParam &param, Entity
 		_index = 0;
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&Class603::spriteUpdate481E60);
-		_soundResource.play(0x032746E0);
+		playSound(0, 0x032746E0);
 		break;
 	case 0x4809:
 		_index = 0;
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&Class603::spriteUpdate481E90);
-		_soundResource.play(0x002642C0);
+		playSound(0, 0x002642C0);
 		break;
 	}
 	return messageResult;
@@ -1520,7 +1517,7 @@ uint32 Class607::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource(vm) {
+	: Scene(vm, parentModule, true) {
 
 	uint32 fileHash;
 	
@@ -1580,7 +1577,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B88C8);
 		_palette->addPalette(getGlobalVar(0x4D080E54) ? 0xB103B604 : 0x0263D144, 0, 65, 0);
 		sub4819D0();
-		_soundResource.play(0x53B8284A);
+		playSound(0, 0x53B8284A);
 	} else if (which == 3) {
 		insertKlayman<KmScene2206>(kScene2206XPositions[getGlobalVar(0x48A68852)], 430);
 		if (getGlobalVar(0xC0418A02))
@@ -1695,8 +1692,7 @@ static const uint32 kScene2207FileHashes[] = {
 };
 
 AsScene2207Elevator::AsScene2207Elevator(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 900), _parentScene(parentScene), _soundResource(vm),
-	_pointIndex(0), _destPointIndex(0), _destPointIndexDelta(0) {
+	: AnimatedSprite(vm, 900), _parentScene(parentScene), _pointIndex(0), _destPointIndex(0), _destPointIndexDelta(0) {
 
 	NPoint pt;
 
@@ -1728,7 +1724,7 @@ void AsScene2207Elevator::update() {
 				_destPointIndexDelta = 0;
 			} else {
 				_vm->_soundMan->deleteSound(0xD3B02847);
-				_soundResource.play(0x53B8284A);
+				playSound(0, 0x53B8284A);
 			}
 		}
 	}
@@ -1744,7 +1740,7 @@ void AsScene2207Elevator::update() {
 				_destPointIndexDelta = 0;
 			} else {
 				_vm->_soundMan->deleteSound(0xD3B02847);
-				_soundResource.play(0x53B8284A);
+				playSound(0, 0x53B8284A);
 			}
 		}
 	}
@@ -1811,7 +1807,7 @@ void AsScene2207Elevator::moveToY(int16 y) {
 }
 
 AsScene2207Lever::AsScene2207Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int doDeltaX)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 	
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2207Lever::handleMessage);
@@ -1853,7 +1849,7 @@ uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param
 void AsScene2207Lever::stLeverDown() {
 	startAnimation(0x80880090, 1, -1);
 	FinalizeState(&AsScene2207Lever::stLeverDownEvent);
-	_soundResource.play(0x40581882);
+	playSound(0, 0x40581882);
 }
 
 void AsScene2207Lever::stLeverDownEvent() {
@@ -1864,7 +1860,7 @@ void AsScene2207Lever::stLeverUp() {
 	startAnimation(0x80880090, 6, -1);
 	FinalizeState(&AsScene2207Lever::stLeverUpEvent);
 	_playBackwards = true;
-	_soundResource.play(0x40581882);
+	playSound(0, 0x40581882);
 }
 
 void AsScene2207Lever::stLeverUpEvent() {
@@ -1872,8 +1868,7 @@ void AsScene2207Lever::stLeverUpEvent() {
 }
 
 AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1200), _soundResource1(vm), _soundResource2(vm),
-	_soundResource3(vm), _soundResource4(vm), _idle(true) {
+	: AnimatedSprite(vm, 1200), _idle(true) {
 	
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2207WallRobotAnimation::handleMessage);
@@ -1882,9 +1877,9 @@ AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm
 	_y = 320;
 	startAnimation(0xCCFD6090, 0, -1);
 	_newStickFrameIndex = 0;
-	_soundResource2.load(0x40330872);
-	_soundResource3.load(0x72A2914A);
-	_soundResource4.load(0xD4226080);
+	loadSound(1, 0x40330872);
+	loadSound(2, 0x72A2914A);
+	loadSound(3, 0xD4226080);
 }
 
 AsScene2207WallRobotAnimation::~AsScene2207WallRobotAnimation() {
@@ -1900,19 +1895,19 @@ uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const Messag
 				_vm->_soundMan->addSound(0x80D00820, 0x12121943);
 				_vm->_soundMan->playSoundLooping(0x12121943);
 			} else if (param.asInteger() == 0x834AB011) {
-				_soundResource1.stop();
-				_soundResource2.stop();
-				_soundResource3.stop();
-				_soundResource4.stop();
+				stopSound(0);
+				stopSound(1);
+				stopSound(2);
+				stopSound(3);
 				_vm->_soundMan->deleteSound(0x12121943);
 			} else if (param.asInteger() == 0x3A980501) {
-				_soundResource2.play();
+				playSound(1);
 			} else if (param.asInteger() == 0x2A2AD498) {
-				_soundResource3.play();
+				playSound(2);
 			} else if (param.asInteger() == 0xC4980008) {
-				_soundResource4.play();
+				playSound(3);
 			} else if (param.asInteger() == 0x06B84228) {
-				_soundResource1.play(0xE0702146);
+				playSound(0, 0xE0702146);
 			}
 		}
 		break;
@@ -1945,10 +1940,10 @@ void AsScene2207WallRobotAnimation::stStopAnimation() {
 
 void AsScene2207WallRobotAnimation::cbStopAnimation() {
 	stopAnimation();
-	_soundResource1.stop();
-	_soundResource2.stop();
-	_soundResource3.stop();
-	_soundResource4.stop();
+	stopSound(0);
+	stopSound(1);
+	stopSound(2);
+	stopSound(3);
 	_vm->_soundMan->deleteSound(0x12121943);
 	_idle = true;
 	setVisible(false);
@@ -2011,8 +2006,7 @@ SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int i
 }
 
 Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm),
-	_klaymanAtElevator(true), _elevatorSurfacePriority(0) {
+	: Scene(vm, parentModule, true), _klaymanAtElevator(true), _elevatorSurfacePriority(0) {
 
 	//DEBUG
 	setGlobalVar(0x4D080E54, 1);
@@ -2094,7 +2088,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 	sendMessage(_klayman, 0x2001, 0);
 	sendMessage(_asElevator, 0x2000, 480);
 
-	_soundResource2.load(calcHash("fxFogHornSoft"));
+	loadSound(1, calcHash("fxFogHornSoft"));
 
 }
 
@@ -2166,10 +2160,10 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _ssButton) {
 			if (getSubVar(0x14800353, 0x40119852)) {
 				setSubVar(0x14800353, 0x40119852, 0);
-				_soundResource1.play(calcHash("fx3LocksDisable"));
+				playSound(0, calcHash("fx3LocksDisable"));
 			} else {
 				setSubVar(0x14800353, 0x40119852, 1);
-				_soundResource2.play();
+				playSound(1);
 			}
 		}
 		break;

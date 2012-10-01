@@ -108,6 +108,7 @@ protected:
 	// TODO Add other sound stuff
 	void loadSound(uint index, uint32 fileHash);
 	void playSound(uint index, uint32 fileHash = 0);
+	void stopSound(uint index);
 	bool isSoundPlaying(uint index);
 	void setSoundVolume(uint index, int volume);
 	void deleteSoundResources();

@@ -138,6 +138,10 @@ void Entity::playSound(uint index, uint32 fileHash) {
 		getSoundResource(index)->play();
 }
 
+void Entity::stopSound(uint index) {
+	getSoundResource(index)->stop();
+}
+
 bool Entity::isSoundPlaying(uint index) {
 	return getSoundResource(index)->isPlaying();
 }
