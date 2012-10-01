@@ -201,7 +201,7 @@ static const uint32 kAsScene2401WaterSpitFileHashes1[] = {
 };
 
 AsScene2401WaterSpit::AsScene2401WaterSpit(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _soundResource(vm) {
+	: AnimatedSprite(vm, 1200) {
 	
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2401WaterSpit::handleMessage);
@@ -217,13 +217,13 @@ uint32 AsScene2401WaterSpit::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x120A0013)
-			_soundResource.play(kAsScene2401WaterSpitFileHashes1[_soundIndex]);
+			playSound(0, kAsScene2401WaterSpitFileHashes1[_soundIndex]);
 		break;
 	case 0x2000:
 		_x = 240;
 		_y = 447;
 		_soundIndex = getSubVar(0x0800547C, param.asInteger());
-		_soundResource.play(0x48640244);
+		playSound(0, 0x48640244);
 		startAnimation(kAsScene2401WaterSpitFileHashes2[param.asInteger()], 0, -1);
 		setVisible(true);
 		break;
@@ -323,7 +323,7 @@ uint32 AsScene2401WaterFlushing::handleMessage(int messageNum, const MessagePara
 }
 
 AsScene2401Door::AsScene2401Door(NeverhoodEngine *vm, bool isOpen)
-	: AnimatedSprite(vm, 1100), _countdown(0), _isOpen(isOpen), _soundResource(vm) {
+	: AnimatedSprite(vm, 1100), _countdown(0), _isOpen(isOpen) {
 	
 	createSurface1(0x44687810, 100);
 	_x = 320;
@@ -348,7 +348,7 @@ void AsScene2401Door::update() {
 		startAnimation(0x44687810, -1, -1);
 		_newStickFrameIndex = 0;
 		_playBackwards = true;
-		_soundResource.play(calcHash("fxDoorClose38"));
+		playSound(0, calcHash("fxDoorClose38"));
 	}
 	AnimatedSprite::update();
 }
@@ -370,7 +370,7 @@ uint32 AsScene2401Door::handleMessage(int messageNum, const MessageParam &param,
 			_isOpen = true;
 			setVisible(true);
 			startAnimation(0x44687810, 0, -1);
-			_soundResource.play(calcHash("fxDoorOpen38"));
+			playSound(0, calcHash("fxDoorOpen38"));
 			NextState(&AsScene2401Door::stDoorOpenFinished);
 		}
 		break;
@@ -385,7 +385,7 @@ void AsScene2401Door::stDoorOpenFinished() {
 
 Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _countdown1(0), _countdown2(0), _flag(false),
-	_soundToggle(false), _asWaterSpitIndex(0), _soundResource1(vm), _soundResource2(vm) {
+	_soundToggle(false), _asWaterSpitIndex(0) {
 
 	_vm->gameModule()->initScene2401Vars();
 
@@ -545,7 +545,7 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (sender == _ssFloorButton && getGlobalVar(0x4E0BE910)) {
 			_countdown2 = 144;
 			sendMessage(_asFlowingWater, 0x2002, 0);
-			_soundResource1.play(0xE1130324);
+			playSound(0, 0xE1130324);
 		}
 		break;
 	case 0x482A:
@@ -562,9 +562,9 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 
 void Scene2401::playPipeSound(uint32 fileHash) {
 	if (_soundToggle)
-		_soundResource1.play(fileHash);
+		playSound(0, fileHash);
 	else
-		_soundResource2.play(fileHash);
+		playSound(1, fileHash);
 	_soundToggle = !_soundToggle;
 }
 
@@ -577,7 +577,7 @@ static const uint32 kScene2402FileHashes[] = {
 };
 
 AsScene2402Door::AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool isOpen)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isOpen(isOpen), _soundResource(vm) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isOpen(isOpen) {
 
 	SetUpdateHandler(&AsScene2402Door::update);
 	SetMessageHandler(&AsScene2402Door::handleMessage);
@@ -600,7 +600,7 @@ void AsScene2402Door::update() {
 		setVisible(true);
 		startAnimation(0x80495831, -1, -1);
 		_playBackwards = true;
-		_soundResource.play(calcHash("fxDoorClose38"));
+		playSound(0, calcHash("fxDoorClose38"));
 		NextState(&AsScene2402Door::stDoorClosingFinished);
 	}
 	AnimatedSprite::update();
@@ -623,7 +623,7 @@ uint32 AsScene2402Door::handleMessage(int messageNum, const MessageParam &param,
 		setVisible(true);
 		startAnimation(0x80495831, 0, -1);
 		_newStickFrameIndex = -2;
-		_soundResource.play(calcHash("fxDoorOpen38"));
+		playSound(0, calcHash("fxDoorOpen38"));
 		break;
 	}
 	return messageResult;
@@ -635,8 +635,7 @@ void AsScene2402Door::stDoorClosingFinished() {
 }
 
 AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman)
-	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown1(0), _countdown2(0),
-	_soundResource(vm) {
+	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown1(0), _countdown2(0) {
 
 	createSurface(100, 640, 480); // TODO Use correct size	from the two hashes
 	SetMessageHandler(&Sprite::handleMessage);
@@ -645,7 +644,7 @@ AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman)
 	setDoDeltaX(1);
 
 	if (!getGlobalVar(0x92603A79)) {
-		_soundResource.load(0x58208810);
+		loadSound(0, 0x58208810);
 		_countdown1 = 48;
 		startAnimation(0x4919397A, 0, -1);
 		_newStickFrameIndex = 0;
@@ -709,7 +708,7 @@ uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x431EA0B0) {
-			_soundResource.play();
+			playSound(0);
 		}
 		break;
 	case 0x3002:
@@ -720,8 +719,7 @@ uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *
 }
 
 Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown(0), _soundToggle(false),
-	_soundResource1(vm), _soundResource2(vm) {
+	: Scene(vm, parentModule, true), _countdown(0), _soundToggle(false) {
 	
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2402::handleMessage);
@@ -816,14 +814,14 @@ uint32 Scene2402::handleMessage(int messageNum, const MessageParam &param, Entit
 		
 void Scene2402::playPipeSound(uint32 fileHash) {
 	if (_soundToggle)
-		_soundResource1.play(fileHash);
+		playSound(0, fileHash);
 	else
-		_soundResource2.play(fileHash);
+		playSound(1, fileHash);
 	_soundToggle = !_soundToggle;
 }
 
 Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm) {
+	: Scene(vm, parentModule, true) {
 	
 	Sprite *tempSprite;
 
@@ -868,7 +866,7 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite->setClipRect(_sprite1->getDrawRect().x, 0, 640, _sprite2->getDrawRect().y2());
 	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, _sprite2->getDrawRect().y2());	
 
-	_soundResource2.load(calcHash("fxFogHornSoft"));
+	loadSound(1, calcHash("fxFogHornSoft"));
 
 }
 
@@ -894,10 +892,10 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _ssButton) {
 			if (getSubVar(0x14800353, 0x304008D2)) {
 				setSubVar(0x14800353, 0x304008D2, 0);
-				_soundResource1.play(calcHash("fx3LocksDisable"));
+				playSound(0, calcHash("fx3LocksDisable"));
 			} else {
 				setSubVar(0x14800353, 0x304008D2, 1);
-				_soundResource2.play();
+				playSound(1);
 			}
 		}
 		break;

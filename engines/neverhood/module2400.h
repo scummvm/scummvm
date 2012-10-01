@@ -54,7 +54,6 @@ public:
 	AsScene2401WaterSpit(NeverhoodEngine *vm);
 protected:
 	int _soundIndex;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -83,7 +82,6 @@ public:
 protected:
 	int _countdown;
 	bool _isOpen;
-	SoundResource _soundResource;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stDoorOpenFinished();
@@ -107,8 +105,6 @@ protected:
 	int _countdown2;
 	int _pipeStatus;
 	int _asWaterSpitIndex;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void playPipeSound(uint32 fileHash);
@@ -121,7 +117,6 @@ protected:
 	Scene *_parentScene;
 	int _countdown;
 	bool _isOpen;
-	SoundResource _soundResource;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stDoorClosingFinished();
@@ -135,7 +130,6 @@ protected:
 	Klayman *_klayman;
 	int _countdown1;
 	int _countdown2;
-	SoundResource _soundResource;
 	void upWait();
 	void upFocusKlayman();
 	void stJokeFinished();
@@ -155,8 +149,6 @@ protected:
 	int _pipeStatus;
 	int _countdown;
 	bool _soundToggle;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void playPipeSound(uint32 fileHash);
@@ -173,8 +165,6 @@ protected:
 	Sprite *_class545;
 	Sprite *_asLightCord;
 	bool _flag1;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
