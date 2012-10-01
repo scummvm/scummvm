@@ -206,9 +206,7 @@ void Module2600::updateScene() {
 }
 			
 SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
-	: StaticSprite(vm, 1400), _soundResource1(vm), _soundResource2(vm),
-	_soundResource3(vm), _soundResource4(vm), _parentScene(parentScene),
-	_countdown(0) {
+	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
 	
 	_spriteResource.load2(0x825A6923);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -222,10 +220,10 @@ SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
 	processDelta();
 	_needRefresh = true;
 
-	_soundResource1.load(0x10267160);
-	_soundResource2.load(0x7027FD64);
-	_soundResource3.load(0x44043000);
-	_soundResource4.load(0x44045000);
+	loadSound(0, 0x10267160);
+	loadSound(1, 0x7027FD64);
+	loadSound(2, 0x44043000);
+	loadSound(3, 0x44045000);
 
 	SetUpdateHandler(&SsScene2609Button::update);
 	SetMessageHandler(&SsScene2609Button::handleMessage);
@@ -253,13 +251,13 @@ uint32 SsScene2609Button::handleMessage(int messageNum, const MessageParam &para
 			sendMessage(_parentScene, 0x2000, 0);
 			if (getGlobalVar(0x4E0BE910)) {
 				setVisible(false);
-				_soundResource4.play();
-				_soundResource2.play();
+				playSound(3);
+				playSound(1);
 				_countdown = 12;
 			} else {
 				setVisible(true);
-				_soundResource3.play();
-				_soundResource1.play();
+				playSound(2);
+				playSound(0);
 				_countdown = 96;
 			}
 		}

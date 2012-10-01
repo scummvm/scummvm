@@ -45,10 +45,6 @@ public:
 	SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
-	SoundResource _soundResource4;
 	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
