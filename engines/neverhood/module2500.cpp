@@ -56,8 +56,7 @@ static const uint32 kScene2508StaticSprites2[] = {
 static const NRect kScene2508ClipRect2 = NRect(0, 0, 594, 448);
 
 Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundResource1(vm), _soundResource2(vm),
-	_soundResource3(vm), _soundResource4(vm), _soundIndex(0) {
+	: Module(vm, parentModule), _soundIndex(0) {
 	
 	_vm->_soundMan->addMusic(0x29220120, 0x05343184);
 	_vm->_soundMan->startMusic(0x05343184, 0, 0);
@@ -69,10 +68,10 @@ Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 0);
 	}
 
-	_soundResource1.load(0x00880CCC);
-	_soundResource2.load(0x00880CC0);
-	_soundResource3.load(0x00880CCC);
-	_soundResource4.load(0x00880CC0);
+	loadSound(0, 0x00880CCC);
+	loadSound(1, 0x00880CC0);
+	loadSound(2, 0x00880CCC);
+	loadSound(3, 0x00880CC0);
 
 }
 
@@ -203,20 +202,7 @@ uint32 Module2500::handleMessage(int messageNum, const MessageParam &param, Enti
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x200D:
-		switch (_soundIndex) {
-		case 0:
-			_soundResource1.play();
-			break;
-		case 1:
-			_soundResource2.play();
-			break;
-		case 2:
-			_soundResource3.play();
-			break;
-		case 3:
-			_soundResource4.play();
-			break;
-		}
+		playSound(_soundIndex);
 		_soundIndex++;
 		if (_soundIndex >= 4)
 			_soundIndex = 0;
@@ -513,8 +499,7 @@ void Scene2501::updateKlaymanCliprect() {
 }
 
 Class450::Class450(NeverhoodEngine *vm)
-	: StaticSprite(vm, 1400), _countdown(0), _flag1(false), _soundResource1(vm),
-	_soundResource2(vm), _soundResource3(vm), _soundResource4(vm) {
+	: StaticSprite(vm, 1400), _countdown(0), _flag1(false) {
 	
 	_spriteResource.load2(0x070220D9);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -528,26 +513,26 @@ Class450::Class450(NeverhoodEngine *vm)
 	processDelta();
 	_needRefresh = true;
 	setVisible(false);
-	_soundResource3.load(0x44043000);
-	_soundResource4.load(0x44045000);
-	_soundResource1.load(0x4600204C);
-	_soundResource2.load(0x408C0034);
+	loadSound(0, 0x4600204C);
+	loadSound(1, 0x408C0034);
+	loadSound(2, 0x44043000);
+	loadSound(3, 0x44045000);
 	SetMessageHandler(&Class450::handleMessage);
 	SetUpdateHandler(&Class450::update);
 }
 
 void Class450::update() {
 	StaticSprite::update();
-	if (_flag1 && !_soundResource1.isPlaying() && !_soundResource2.isPlaying()) {
-		_soundResource4.play();
+	if (_flag1 && !isSoundPlaying(0) && !isSoundPlaying(1)) {
+		playSound(3);
 		setVisible(false);
 		_flag1 = false;
 	}
 	if (_countdown != 0 && (--_countdown) == 0) {
 		if (getSubVar(0x14800353, 0x01180951)) {
-			_soundResource1.play();
+			playSound(0);
 		} else {
-			_soundResource2.play();
+			playSound(1);
 		}
 		_flag1 = true;
 	}
@@ -565,7 +550,7 @@ uint32 Class450::handleMessage(int messageNum, const MessageParam &param, Entity
 			} else {
 				setSubVar(0x14800353, 0x01180951, 1);
 			}
-			_soundResource3.play();
+			playSound(2);
 		}
 		messageResult = 1;
 		break;

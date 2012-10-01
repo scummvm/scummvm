@@ -39,10 +39,6 @@ public:
 	Module2500(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2500();
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
-	SoundResource _soundResource4;
 	int _soundIndex;
 	void createScene(int sceneNum, int which);
 	void updateScene();
@@ -99,10 +95,6 @@ public:
 protected:
 	int _countdown;
 	bool _flag1;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
-	SoundResource _soundResource4;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
