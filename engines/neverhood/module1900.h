@@ -60,9 +60,6 @@ public:
 	bool isPluggedIn() { return _isPluggedIn; }
 	bool isMoving() { return _isMoving; }
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	Scene1907 *_parentScene;
 	int _elementIndex;
 	int _currPositionIndex;
@@ -111,7 +108,6 @@ public:
 	void setToUpPosition();
 	void setToDownPosition();
 protected:
-	SoundResource _soundResource;
 	Scene1907 *_parentScene;
 	AsScene1907Symbol *_asScene1907Symbol;
 	int _countdown1;
@@ -126,10 +122,6 @@ public:
 	void setPositionFree(int index, bool value) { _positionFree[index] = value; }
 	int getNextPosition() { return _pluggedInCount++; }
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
-	SoundResource _soundResource4;
 	AsScene1907Symbol *_asSymbols[9];
 	SsScene1907UpDownButton *_ssUpDownButton;
 	AsScene1907WaterHint *_asWaterHint;

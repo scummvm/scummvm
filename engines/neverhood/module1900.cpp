@@ -190,8 +190,7 @@ int AsScene1907Symbol::_symbolFlag1 = 0;
 int AsScene1907Symbol::_symbolFlag2 = 0;
 
 AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene, int elementIndex, int positionIndex)
-	: AnimatedSprite(vm, 1000 - positionIndex), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
-	_parentScene(parentScene), _elementIndex(elementIndex), _isMoving(false) {
+	: AnimatedSprite(vm, 1000 - positionIndex), _parentScene(parentScene), _elementIndex(elementIndex), _isMoving(false) {
 
 	_symbolFlag1 = 0;
 	_symbolFlag2 = 0;
@@ -212,9 +211,9 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 	} else {
 		_isPluggedIn = false;
 		_currPositionIndex = positionIndex;
-		_soundResource1.load(0x74231924);
-		_soundResource2.load(0x36691914);
-		_soundResource3.load(0x5421D806);
+		loadSound(0, 0x74231924);
+		loadSound(1, 0x36691914);
+		loadSound(2, 0x5421D806);
 		_parentScene->setPositionFree(_currPositionIndex, false);
 		_x = kAsScene1907SymbolGroundPositions[_currPositionIndex].x;
 		_y = kAsScene1907SymbolGroundPositions[_currPositionIndex].y;
@@ -389,7 +388,7 @@ void AsScene1907Symbol::fallOff(int newPositionIndex, int fallOffDelay) {
 }
 
 void AsScene1907Symbol::stFallOffHitGround() {
-	_soundResource2.play();
+	playSound(1);
 	sendMessage(_parentScene, 0x1022, 1000 + _newPositionIndex);
 	// TODO: Meh...
 	Entity::_priority = 1000 - _newPositionIndex;
@@ -418,11 +417,11 @@ void AsScene1907Symbol::cbFallOffHitGroundEvent() {
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteUpdate(NULL);
 	processDelta();
-	_soundResource3.play();
+	playSound(2);
 }
 
 void AsScene1907Symbol::stPlugIn() {
-	_soundResource1.play();
+	playSound(0);
 	_currPositionIndex = _newPositionIndex;
 	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
@@ -456,7 +455,7 @@ void AsScene1907Symbol::moveDown() {
 }
 
 SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *asScene1907Symbol)
-	: StaticSprite(vm, 1400), _soundResource(vm), _parentScene(parentScene), _asScene1907Symbol(asScene1907Symbol),
+	: StaticSprite(vm, 1400), _parentScene(parentScene), _asScene1907Symbol(asScene1907Symbol),
 	_countdown1(0) {
 	
 	_spriteResource.load2(0x64516424);
@@ -468,7 +467,7 @@ SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 
 	_y = _spriteResource.getPosition().y;
 	processDelta();
 	_needRefresh = true;
-	_soundResource.load(0x44061000);
+	loadSound(0, 0x44061000);
 	SetUpdateHandler(&SsScene1907UpDownButton::update);
 	SetMessageHandler(&SsScene1907UpDownButton::handleMessage);
 	if (getGlobalVar(0xA9035F60)) {
@@ -495,7 +494,7 @@ uint32 SsScene1907UpDownButton::handleMessage(int messageNum, const MessageParam
 			setVisible(true);
 			_countdown1 = 4;
 			StaticSprite::update();
-			_soundResource.play();
+			playSound(0);
 		}
 		messageResult = 1;
 	}
@@ -558,8 +557,7 @@ void AsScene1907WaterHint::hide() {
 }
 
 Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule, int which)	
-	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm),
-	_soundResource3(vm), _soundResource4(vm), _currMovingSymbolIndex(0), _pluggedInCount(0), 
+	: Scene(vm, parentModule, true), _currMovingSymbolIndex(0), _pluggedInCount(0), 
 	_moveDownCountdown(0), _moveUpCountdown(0), _countdown3(0), _hasPlugInFailed(false) {
 	
 	_surfaceFlag = true;
@@ -590,10 +588,10 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(0xA9035F60))
 		_pluggedInCount = 9;
 		
-	_soundResource1.load(0x72004A10);
-	_soundResource2.load(0x22082A12);
-	_soundResource3.load(0x21100A10);
-	_soundResource4.load(0x68E25540);
+	loadSound(0, 0x72004A10);
+	loadSound(1, 0x22082A12);
+	loadSound(2, 0x21100A10);
+	loadSound(3, 0x68E25540);
 
 }
 
@@ -646,17 +644,17 @@ uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entit
 	// TODO Debug stuff
 	case 0x2000:
 		if (getGlobalVar(0x09221A62)) {
-			_soundResource1.play();
+			playSound(0);
 			for (int i = 0; i < 9; i++)
 				_asSymbols[i]->moveUp();
 			_ssUpDownButton->setToUpPosition();
 			setGlobalVar(0x09221A62, 0);
 		} else {
 			if (!getGlobalVar(0x10938830)) {
-				_soundResource3.play();
+				playSound(2);
 				_countdown3 = 5;
 			} else {
-				_soundResource2.play();
+				playSound(1);
 				_ssUpDownButton->setToDownPosition();
 				setGlobalVar(0x09221A62, 1);
 			}
@@ -665,7 +663,7 @@ uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2001:
-		_soundResource4.play();
+		playSound(3);
 		setGlobalVar(0xA9035F60, 1);
 		break;
 	}	
