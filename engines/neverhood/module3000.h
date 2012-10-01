@@ -50,7 +50,6 @@ public:
 	SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene);
 protected:
 	Scene3009 *_parentScene;
-	SoundResource _soundResource;
 	bool _flag1;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -80,7 +79,6 @@ public:
 	SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSymbol, int index);
 	void hide();
 protected:
-	SoundResource _soundResource;
 	Sprite *_asSymbol;
 	int _index;
 	int _incrDecr;
@@ -162,9 +160,6 @@ public:
 	void setCountdown(int count);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	int _buttonIndex;
 	bool _buttonEnabled;
 	bool _buttonLocked;
@@ -184,9 +179,6 @@ public:
 	void unlock(bool skipAnim);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	int _boltIndex;
 	int _countdown;
 	bool _soundToggle;
@@ -204,7 +196,6 @@ class Scene3010 : public Scene {
 public:
 	Scene3010(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	SoundResource _soundResource;
 	int _countdown;
 	bool _doorUnlocked;
 	bool _checkUnlocked;
@@ -223,7 +214,6 @@ public:
 	SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -239,8 +229,6 @@ public:
 	bool getFlag1() { return _flag1; }
 	int getIndex() { return _index; }
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	bool _flag1;
 	bool _flag2;
 	int _index;

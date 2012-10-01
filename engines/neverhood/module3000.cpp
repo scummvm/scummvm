@@ -456,8 +456,7 @@ static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
 };
 
 SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene)
-	: StaticSprite(vm, 1400), _soundResource(vm), _parentScene(parentScene),
-	_flag1(false) {
+	: StaticSprite(vm, 1400), _parentScene(parentScene), _flag1(false) {
 	
 	_spriteResource.load2(0x120B24B0);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -476,12 +475,12 @@ SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Sc
 	_needRefresh = true;
 	SetUpdateHandler(&SsScene3009FireCannonButton::update);
 	SetMessageHandler(&SsScene3009FireCannonButton::handleMessage);
-	_soundResource.load(0x3901B44F);
+	loadSound(0, 0x3901B44F);
 }
 
 void SsScene3009FireCannonButton::update() {
 	StaticSprite::update();
-	if (_flag1 && !_soundResource.isPlaying()) {
+	if (_flag1 && !isSoundPlaying(0)) {
 		sendMessage(_parentScene, 0x2000, 0);
 		setVisible(false);
 	}
@@ -494,7 +493,7 @@ uint32 SsScene3009FireCannonButton::handleMessage(int messageNum, const MessageP
 		if (!_flag1 && !_parentScene->sub462E90()) {
 			_flag1 = true;
 			setVisible(true);
-			_soundResource.play();
+			playSound(0);
 		}
 		messageResult = 1;
 		break;
@@ -575,8 +574,7 @@ void SsScene3009TargetLine::show() {
 }
 
 SsScene3009SymbolArrow::SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSymbol, int index)
-	: StaticSprite(vm, 1400), _soundResource(vm), _asSymbol(asSymbol), 
-	_index(index), _enabled(true), _countdown(0) {
+	: StaticSprite(vm, 1400), _asSymbol(asSymbol), _index(index), _enabled(true), _countdown(0) {
 
 	_incrDecr = _index % 2;
 
@@ -593,7 +591,7 @@ SsScene3009SymbolArrow::SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSy
 	_needRefresh = true;
 	SetUpdateHandler(&SsScene3009SymbolArrow::update);
 	SetMessageHandler(&SsScene3009SymbolArrow::handleMessage);
-	_soundResource.load(0x2C852206);
+	loadSound(0, 0x2C852206);
 }
 
 void SsScene3009SymbolArrow::hide() {
@@ -625,7 +623,7 @@ uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam 
 			_drawRect.y = 0;
 			_drawRect.width = _spriteResource.getDimensions().width;
 			_drawRect.height = _spriteResource.getDimensions().height;
-			_soundResource.play();
+			playSound(0);
 			sendMessage(_asSymbol, 0x2005, _incrDecr);
 		}
 		messageResult = 1;
@@ -1072,9 +1070,7 @@ static const uint32 kAsScene3010DeadBoltFileHashes1[] = {
 };
 
 SsScene3010DeadBoltButton::SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene *parentScene, int buttonIndex, int initCountdown, bool initDisabled)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _soundResource1(vm),
-	_soundResource2(vm), _soundResource3(vm), _buttonLocked(false), _countdown1(0), 
-	_countdown2(0), _buttonIndex(buttonIndex) {
+	: StaticSprite(vm, 900), _parentScene(parentScene), _buttonLocked(false), _countdown1(0), _countdown2(0), _buttonIndex(buttonIndex) {
 
 	NDimensions dimensions1, dimensions2;
 	 
@@ -1092,9 +1088,9 @@ SsScene3010DeadBoltButton::SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene 
 	} else if (_buttonEnabled) {
 		_countdown1 = initCountdown * 12 + 1;
 	}
-	_soundResource1.load(0xF4217243);
-	_soundResource2.load(0x44049000);
-	_soundResource3.load(0x6408107E);
+	loadSound(0, 0xF4217243);
+	loadSound(1, 0x44049000);
+	loadSound(2, 0x6408107E);
 	SetUpdateHandler(&SsScene3010DeadBoltButton::update);
 	SetMessageHandler(&SsScene3010DeadBoltButton::handleMessage);
 }
@@ -1102,7 +1098,7 @@ SsScene3010DeadBoltButton::SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene 
 void SsScene3010DeadBoltButton::update() {
 
 	if (_countdown1 != 0 && (--_countdown1 == 0)) {
-		_soundResource1.play();
+		playSound(0);
 		setVisible(false);
 		setSprite(kScene3010DeadBoltButtonFileHashes1[_buttonIndex]);
 	}
@@ -1120,8 +1116,8 @@ uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessagePar
 	case 0x1011:
 		if (!_buttonLocked && _countdown1 == 0) {
 			if (_buttonEnabled) {
-				_soundResource2.play();
-				_soundResource3.play();
+				playSound(1);
+				playSound(2);
 				setVisible(true);
 				_buttonLocked = true;
 				sendMessage(_parentScene, 0x2000, _buttonIndex);
@@ -1162,9 +1158,8 @@ void SsScene3010DeadBoltButton::setCountdown(int count) {
 }
 
 AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene, int boltIndex, bool initUnlocked)
-	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
-	_parentScene(parentScene), _boltIndex(boltIndex), _soundToggle(true), _unlocked(false), _locked(false),
-	_countdown(0) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _boltIndex(boltIndex), _soundToggle(true),
+	_unlocked(false), _locked(false), _countdown(0) {
 
 	_x = kAsScene3010DeadBoltPoints[_boltIndex].x;
 	_y = kAsScene3010DeadBoltPoints[_boltIndex].y;
@@ -1172,12 +1167,12 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 	if (getSubVar(0x14800353, kScene3010ButtonNameHashes[_boltIndex])) {
 		createSurface1(kAsScene3010DeadBoltFileHashes1[_boltIndex], 1200);
 		startAnimation(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
-		_soundResource1.load(0x46005BC4);
+		loadSound(0, 0x46005BC4);
 	} else {
 		createSurface1(kAsScene3010DeadBoltFileHashes2[_boltIndex], 1200);
 		startAnimation(kAsScene3010DeadBoltFileHashes2[_boltIndex], 0, -1);
-		_soundResource1.load(0x420073DC);
-		_soundResource2.load(0x420073DC);
+		loadSound(0, 0x420073DC);
+		loadSound(1, 0x420073DC);
 	}
 	
 	setVisible(false);
@@ -1226,10 +1221,10 @@ void AsScene3010DeadBolt::unlock(bool skipAnim) {
 			SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
 			FinalizeState(&AsScene3010DeadBolt::stIdleMessage);
 			NextState(&AsScene3010DeadBolt::stIdle);
-			_soundResource1.play();
+			playSound(0);
 		}
 		_unlocked = true;
-		_soundResource3.load(0x4010C345);
+		loadSound(2, 0x4010C345);
 	}
 }
 
@@ -1248,9 +1243,9 @@ void AsScene3010DeadBolt::lock() {
 		FinalizeState(&AsScene3010DeadBolt::stDisabledMessage);
 		NextState(&AsScene3010DeadBolt::stIdle);
 		if (_soundToggle) {
-			_soundResource1.play();
+			playSound(0);
 		} else {
-			_soundResource2.play();
+			playSound(1);
 		}
 		_soundToggle = !_soundToggle;
 	}
@@ -1267,7 +1262,7 @@ void AsScene3010DeadBolt::stDisabled() {
 	FinalizeState(&AsScene3010DeadBolt::stDisabledMessage);
 	NextState(&AsScene3010DeadBolt::stIdle);
 	_playBackwards = true;
-	_soundResource3.play();
+	playSound(2);
 }
 
 void AsScene3010DeadBolt::stDisabledMessage() {
@@ -1276,8 +1271,7 @@ void AsScene3010DeadBolt::stDisabledMessage() {
 }
 
 Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource(vm), _countdown(0),
-	_doorUnlocked(false), _checkUnlocked(false) {
+	: Scene(vm, parentModule, true), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
 	
 	int initCountdown = 0;
 
@@ -1305,7 +1299,7 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertMouse435(0x02622800, 20, 620);
 	}
 
-	_soundResource.load(0x68E25540);
+	loadSound(0, 0x68E25540);
 
 	SetMessageHandler(&Scene3010::handleMessage);
 	SetUpdateHandler(&Scene3010::update);
@@ -1369,7 +1363,7 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (_boltUnlocked[0] && _boltUnlocked[1] && _boltUnlocked[2]) {
 			if (!getGlobalVar(0x00040153)) {
 				setGlobalVar(0x00040153, 1);
-				_soundResource.play();
+				playSound(0);
 				_countdown = 60;
 			} else {
 				_countdown = 48;
@@ -1419,15 +1413,14 @@ static const uint32 kAsScene3011SymbolFileHashes[] = {
 };
 
 SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag)
-	: StaticSprite(vm, 1400), _parentScene(parentScene), _soundResource(vm),
-	_countdown(0) {
+	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
 	
 	if (flag) {
 		_spriteResource.load2(0x11282020);
 	} else {
 		_spriteResource.load2(0x994D0433);
 	}
-	_soundResource.load(0x44061000);
+	loadSound(0, 0x44061000);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
@@ -1459,7 +1452,7 @@ uint32 SsScene3011Button::handleMessage(int messageNum, const MessageParam &para
 			setVisible(true);
 			_countdown = 4;
 			sendMessage(_parentScene, 0x2000, 0);
-			_soundResource.play();
+			playSound(0);
 		}
 		messageResult = 1;
 		break;
@@ -1468,22 +1461,21 @@ uint32 SsScene3011Button::handleMessage(int messageNum, const MessageParam &para
 }
 
 AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag)
-	: AnimatedSprite(vm, 1000), _soundResource1(vm), _soundResource2(vm),
-	_index(index), _flag1(flag), _flag2(false) {
+	: AnimatedSprite(vm, 1000), _index(index), _flag1(flag), _flag2(false) {
 
 	if (flag) {
 		_x = 310;
 		_y = 200;
 		createSurface1(kAsScene3011SymbolFileHashes[_index], 1200);
-		_soundResource1.load(0x6052C60F);
-		_soundResource2.load(0x6890433B);
+		loadSound(0, 0x6052C60F);
+		loadSound(1, 0x6890433B);
 	} else {
 		_index = 12;
 		_x = index * 39 + 96;
 		_y = 225;
 		createSurface(1200, 41, 48);
-		_soundResource1.load(0x64428609);
-		_soundResource2.load(0x7080023B);
+		loadSound(0, 0x64428609);
+		loadSound(1, 0x7080023B);
 	}
 	setVisible(false);
 	_needRefresh = true;
@@ -1495,9 +1487,9 @@ void AsScene3011Symbol::show(bool flag) {
 	startAnimation(kAsScene3011SymbolFileHashes[_index], 0, -1);
 	setVisible(true);
 	if (flag) {
-		_soundResource2.play();
+		playSound(1);
 	} else {
-		_soundResource1.play();
+		playSound(0);
 	}
 }
 
@@ -1508,9 +1500,10 @@ void AsScene3011Symbol::hide() {
 
 void AsScene3011Symbol::stopSound() {
 	if (_flag2) {
-		_soundResource2.stop();
+		Entity::stopSound(1);
 	} else {
-		_soundResource2.stop();
+	// CHECKME this is wrong
+		//_soundResource2.stop();
 	}
 }
 
@@ -1520,9 +1513,9 @@ void AsScene3011Symbol::change(int index, bool flag) {
 	startAnimation(kAsScene3011SymbolFileHashes[_index], 0, -1);
 	setVisible(true);
 	if (flag) {
-		_soundResource2.play();
+		playSound(1);
 	} else {
-		_soundResource1.play();
+		playSound(0);
 	}
 }
 
