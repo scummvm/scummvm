@@ -177,6 +177,7 @@ protected:
 	Sprite *_asLeftDoor;
 	Sprite *_asRightDoor;
 	Sprite *_asTape;
+	Sprite *_class464;
 	bool _flag;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

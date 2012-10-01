@@ -1336,28 +1336,28 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		if (_vm->_gameState.field2 == 0) {
-			insertKlayman<KmScene1002>(90, 226, _class599, _ssLadderArch);
+			insertKlayman<KmScene1002>(90, 226);
 			_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 			setMessageList(0x004B4270);
 			_klayman->setClipRect(31, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart3->getDrawRect().y2());
 			_asKlaymanLadderHands->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 			_klayman->setRepl(64, 0);
 		} else {
-			insertKlayman<KmScene1002>(379, 435, _class599, _ssLadderArch);
+			insertKlayman<KmScene1002>(379, 435);
 			_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 			setMessageList(0x004B4270);
 			_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 			_asKlaymanLadderHands->setClipRect(_klayman->getClipRect());
 		}
 	} else if (which == 1) {
-		insertKlayman<KmScene1002>(650, 435, _class599, _ssLadderArch);
+		insertKlayman<KmScene1002>(650, 435);
 		_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 		setMessageList(0x004B4478);
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 		_asKlaymanLadderHands->setClipRect(_klayman->getClipRect());
 		_vm->_gameState.field2 = 1;
 	} else if (which == 2) {
-		insertKlayman<KmScene1002>(68, 645, _class599, _ssLadderArch);
+		insertKlayman<KmScene1002>(68, 645);
 		_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 		setMessageList(0x004B4298);
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
@@ -1365,7 +1365,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_gameState.field2 = 1;
 		sendMessage(_klayman, 0x4820, 0);
 	} else {
-		insertKlayman<KmScene1002>(90, 226, _class599, _ssLadderArch);
+		insertKlayman<KmScene1002>(90, 226);
 		_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 		setMessageList(0x004B4470);
 		_klayman->setClipRect(31, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart3->getDrawRect().y2());
@@ -1550,7 +1550,15 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		playSound(1);
 		sendMessage(_asDoor, 0x4808, 0);
 		sendMessage(_asOutsideDoorBackground, 0x4808, 0);
-		break;				
+		break;
+	case 0x8000:
+		sendMessage(_class599, 0x482A, 0);
+		sendMessage(_ssLadderArch, 0x482A, 0);
+		break;
+	case 0x8001:
+		sendMessage(_class599, 0x482B, 0);
+		sendMessage(_ssLadderArch, 0x482B, 0);
+		break;
 	}	
 	return messageResult;
 }

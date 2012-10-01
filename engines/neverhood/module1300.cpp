@@ -451,10 +451,10 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssFence->setClipRect(0, 0, 640, _sprite1->getDrawRect().y2());
 
 	if (which < 0) {
-		insertKlayman<KmScene1002>(380, 364, _class595, (Sprite*)NULL);
+		insertKlayman<KmScene1002>(380, 364);
 		setMessageList(0x004B0868);
 	} else {
-		insertKlayman<KmScene1002>(293, 330, _class595, (Sprite*)NULL);
+		insertKlayman<KmScene1002>(293, 330);
 		setMessageList(0x004B0870);
 	}
 
@@ -586,6 +586,12 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x482B:
 		sendMessage(_asVenusFlyTrap, 0x482A, 0);
+		break;
+	case 0x8000:
+		sendMessage(_class595, 0x482A, 0);
+		break;
+	case 0x8001:
+		sendMessage(_class595, 0x482B, 0);
 		break;
 	}
 	return messageResult;

@@ -195,6 +195,27 @@ public:
 	uint32 hmInsertKey(int messageNum, const MessageParam &param, Entity *sender);
 	void stInsertKey();
 
+	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
+	void stReadNote();
+
+	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
+	void stHitByDoor();
+
+	uint32 hmPeekWallReturn(int messageNum, const MessageParam &param, Entity *sender);
+	void upPeekWallBlink();
+	void stPeekWall1();
+	void stPeekWall2();
+	void stPeekWallBlink();
+	void stPeekWallReturn();
+
+	void stPullHammerLever();
+	uint32 hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender);
+
+	void suRidePlatformDown();
+	void stRidePlatformDown();
+
+	void startWalkingResume(int16 frameIncr);
+
 protected:
 	Entity *_parentScene;
 	Sprite *_attachedSprite;
@@ -225,6 +246,8 @@ protected:
 
 	bool _potionFlag1;
 	bool _potionFlag2;
+
+	int16 _platformDeltaY;
 
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -318,18 +341,14 @@ public:
 	KmScene1001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:	
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stPullLever();
-	uint32 hmPullLever(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class KmScene1002 : public Klayman {
 public:
-	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, Sprite *class599, Sprite *ssLadderArch);
+	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	Sprite *_class599;
-	Sprite *_ssLadderArch;
 	Sprite *_otherSprite;
-	int _status;
+	int _idleTableNum;
 	void xUpdate();	
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	void upSpitOutFall();
@@ -362,8 +381,6 @@ public:
 	KmScene1004(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
-	void stReadNote();
 };
 
 class KmScene1109 : public Klayman {
@@ -375,9 +392,8 @@ protected:
 
 class KmScene1201 : public Klayman {
 public:
-	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, Entity *class464);
+	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	Entity *_class464;
 	int _countdown;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	void upMoveObject();
@@ -397,12 +413,6 @@ public:
 	KmScene1303(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmPeekWallReturn(int messageNum, const MessageParam &param, Entity *sender);
-	void upPeekWallBlink();
-	void stPeekWall1();
-	void stPeekWall2();
-	void stPeekWallBlink();
-	void stPeekWallReturn();
 };
 
 class KmScene1304 : public Klayman {
@@ -498,8 +508,6 @@ public:
 	KmScene2101(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
-	void stHitByDoor();
 };
 
 class KmScene2201 : public Klayman {
@@ -530,11 +538,8 @@ public:
 	KmScene2206(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 	~KmScene2206();
 protected:
-	int16 _yDelta;
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void suRidePlatformDown();
-	void stRidePlatformDown();
 	void stStartWalkingResume();
 };
 

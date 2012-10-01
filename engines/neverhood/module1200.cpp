@@ -747,7 +747,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	int16 topY1, topY2, topY3, topY4;
 	int16 x1, x2;
-	Sprite *tempSprite, *class464;
+	Sprite *tempSprite;
 
 	SetUpdateHandler(&Scene1201::update);
 	SetMessageHandler(&Scene1201::handleMessage);
@@ -791,34 +791,34 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0xA29223FA, 1200);
 	x2 = tempSprite->getX() + tempSprite->getDrawRect().width;
 
-	class464 = insertSprite<Class464>();
+	_class464 = insertSprite<Class464>();
 
 	debug("Scene1201: which = %d", which);
 
 	if (which < 0) {
-		insertKlayman<KmScene1201>(364, 333, class464);
+		insertKlayman<KmScene1201>(364, 333);
 		setMessageList(0x004AEC08);
 	} else if (which == 3) {
-		insertKlayman<KmScene1201>(400, 329, class464);
+		insertKlayman<KmScene1201>(400, 329);
 		setMessageList(0x004AEC08);
 	} else if (which == 2) {
 		if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
-			insertKlayman<KmScene1201>(374, 333, class464);
+			insertKlayman<KmScene1201>(374, 333);
 			setMessageList(0x004AEC08);
 		} else {
-			insertKlayman<KmScene1201>(640, 329, class464);
+			insertKlayman<KmScene1201>(640, 329);
 			setMessageList(0x004AEC20);
 		}
 	} else if (which == 1) {
 		if (getGlobalVar(0xC0418A02)) {
-			insertKlayman<KmScene1201>(364, 333, class464);
+			insertKlayman<KmScene1201>(364, 333);
 			_klayman->setDoDeltaX(1);
 		} else {
-			insertKlayman<KmScene1201>(246, 333, class464);
+			insertKlayman<KmScene1201>(246, 333);
 		}
 		setMessageList(0x004AEC30);
 	} else {
-		insertKlayman<KmScene1201>(0, 336, class464);
+		insertKlayman<KmScene1201>(0, 336);
 		setMessageList(0x004AEC10);
 	}
 
@@ -989,6 +989,9 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4829:
 		sendMessage(_asRightDoor, 0x4829, 0);
+		break;
+	case 0x8000:
+		sendMessage(_class464, 0x2006, 0);
 		break;		
 	}
 	return messageResult;
