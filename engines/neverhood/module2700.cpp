@@ -83,8 +83,7 @@ static const uint32 kScene2725StaticSprites[] = {
 };
 
 Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundResource1(vm), _soundResource2(vm),
-	_soundResource3(vm), _soundResource4(vm), _soundIndex(0), _flag1(false) {
+	: Module(vm, parentModule), _soundIndex(0), _flag1(false) {
 	
 	_vm->_soundMan->addMusic(0x42212411, 0x04020210);
 	_vm->_soundMan->startMusic(0x04020210, 24, 2);
@@ -99,10 +98,10 @@ Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 0);
 	}
 
-	_soundResource1.load(0x00880CCC);
-	_soundResource2.load(0x00880CC0);
-	_soundResource3.load(0x00880CCC);
-	_soundResource4.load(0x00880CC0);
+	loadSound(0, 0x00880CCC);
+	loadSound(1, 0x00880CC0);
+	loadSound(2, 0x00880CCC);
+	loadSound(3, 0x00880CC0);
 
 }
 
@@ -482,20 +481,7 @@ uint32 Module2700::handleMessage(int messageNum, const MessageParam &param, Enti
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x200D:
-		switch (_soundIndex) {
-		case 0:
-			_soundResource1.play();
-			break;
-		case 1:
-			_soundResource2.play();
-			break;
-		case 2:
-			_soundResource3.play();
-			break;
-		case 3:
-			_soundResource4.play();
-			break;
-		}
+		playSound(_soundIndex);
 		_soundIndex++;
 		if (_soundIndex >= 4)
 			_soundIndex = 0;

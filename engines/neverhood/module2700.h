@@ -37,10 +37,6 @@ public:
 	Module2700(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2700();
 protected:
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
-	SoundResource _soundResource4;
 	int _soundIndex;
 	bool _flag1;
 	uint32 _scene2711StaticSprites[6];
