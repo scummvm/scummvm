@@ -477,7 +477,7 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 
 AsScene2803LightCord::AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _fileHash1(fileHash1), _fileHash2(fileHash2),
-	_flag1(false), _flag2(false), _soundResource(vm) {
+	_flag1(false), _flag2(false) {
 
 	createSurface(1010, 640, 480); // TODO Use correct size	from the two hashes
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -493,7 +493,7 @@ uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &p
 	case 0x100D:
 		if (!_flag2 && param.asInteger() == calcHash("ClickSwitch")) {
 			sendMessage(_parentScene, 0x480F, 0);
-			_soundResource.play(0x4E1CA4A0);
+			playSound(0, 0x4E1CA4A0);
 		}
 		break;
 	case 0x480F:
@@ -1184,8 +1184,7 @@ void Scene2803b::sub4601F0(bool flag) {
 }
 
 SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene)
-	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene),
-	_soundResource(vm) {
+	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene) {
 	
 	if (getGlobalVar(0x190A1D18))
 		_spriteResource.load2(0x51A10202);
@@ -1204,7 +1203,7 @@ SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *paren
 	_needRefresh = true;
 	SetUpdateHandler(&SsScene2804RedButton::update);
 	SetMessageHandler(&SsScene2804RedButton::handleMessage);
-	_soundResource.load(0x44241240);
+	loadSound(0, 0x44241240);
 }
 
 void SsScene2804RedButton::update() {
@@ -1219,7 +1218,7 @@ uint32 SsScene2804RedButton::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case 0x1011:
 		if (_countdown == 0 && !_parentScene->isWorking()) {
-			_soundResource.play();
+			playSound(0);
 			setVisible(true);
 			_countdown = 4;
 			sendMessage(_parentScene, 0x2000, 0);
@@ -1299,7 +1298,7 @@ uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam 
 }
 
 SsScene2804Flash::SsScene2804Flash(NeverhoodEngine *vm)
-	: StaticSprite(vm, 900), _soundResource(vm) {
+	: StaticSprite(vm, 900) {
 	
 	_spriteResource.load2(0x211003A0);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -1312,13 +1311,13 @@ SsScene2804Flash::SsScene2804Flash(NeverhoodEngine *vm)
 	setVisible(false);
 	_needRefresh = true;
 	StaticSprite::update();
-	_soundResource.load(0xCB36BA54);
+	loadSound(0, 0xCB36BA54);
 }
 
 void SsScene2804Flash::show() {
 	setVisible(true);
 	StaticSprite::update();
-	_soundResource.play();
+	playSound(0);
 }
 
 SsScene2804BeamCoilBody::SsScene2804BeamCoilBody(NeverhoodEngine *vm)
@@ -1381,8 +1380,7 @@ static const uint32 kAsScene2804CrystalFileHashes[] = {
 };
 
 AsScene2804Crystal::AsScene2804Crystal(NeverhoodEngine *vm, AsScene2804CrystalWaves *asCrystalWaves, uint crystalIndex)
-	: AnimatedSprite(vm, 1100), _asCrystalWaves(asCrystalWaves), _crystalIndex(crystalIndex),
-	_isShowing(false), _soundResource(vm) {
+	: AnimatedSprite(vm, 1100), _asCrystalWaves(asCrystalWaves), _crystalIndex(crystalIndex), _isShowing(false) {
 
 	static const NPoint kAsScene2804CrystalPoints[] = {
 		{204, 196},
@@ -1410,7 +1408,7 @@ AsScene2804Crystal::AsScene2804Crystal(NeverhoodEngine *vm, AsScene2804CrystalWa
 		_needRefresh = true;
 		_newStickFrameIndex = _colorNum;
 	}
-	_soundResource.load(0x725294D4);
+	loadSound(0, 0x725294D4);
 	SetUpdateHandler(&AnimatedSprite::update);
 }
 
@@ -1420,7 +1418,7 @@ void AsScene2804Crystal::show() {
 		_isShowing = true;
 		if (_asCrystalWaves)
 			_asCrystalWaves->show();
-		_soundResource.play();
+		playSound(0);
 	}
 }
 
@@ -1452,8 +1450,7 @@ void AsScene2804Crystal::activate() {
 }
 
 SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene2804 *parentScene, AsScene2804Crystal *asCrystal, uint crystalIndex)
-	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene), _asCrystal(asCrystal),
-	_crystalIndex(crystalIndex), _soundResource(vm) {
+	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene), _asCrystal(asCrystal), _crystalIndex(crystalIndex) {
 
 	static const uint32 kSsScene2804CrystalButtonFileHashes1[] = {
 		0x911101B0,
@@ -1486,7 +1483,7 @@ SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene280
 	_deltaRect = _drawRect;
 	processDelta();
 	setVisible(false);
-	_soundResource.load(0x44045140);
+	loadSound(0, 0x44045140);
 	_needRefresh = true;
 	SetUpdateHandler(&SsScene2804CrystalButton::update);
 	SetMessageHandler(&SsScene2804CrystalButton::handleMessage);
@@ -1504,7 +1501,7 @@ uint32 SsScene2804CrystalButton::handleMessage(int messageNum, const MessagePara
 	switch (messageNum) {
 	case 0x1011:
 		if (_countdown == 0 && !_parentScene->isWorking()) {
-			_soundResource.play();
+			playSound(0);
 			setVisible(true);
 			_countdown = 4;
 			_asCrystal->activate();
@@ -1516,8 +1513,7 @@ uint32 SsScene2804CrystalButton::handleMessage(int messageNum, const MessagePara
 }
 
 AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody)
-	: AnimatedSprite(vm, 1400), _parentScene(parentScene), _ssBeamCoilBody(ssBeamCoilBody),
-	_countdown(0), _soundResource(vm) {
+	: AnimatedSprite(vm, 1400), _parentScene(parentScene), _ssBeamCoilBody(ssBeamCoilBody), _countdown(0) {
 	
 	createSurface1(0x00494891, 1000);
 	_x = 125;
@@ -1525,7 +1521,7 @@ AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene
 	setVisible(false);
 	_needRefresh = true;
 	AnimatedSprite::updatePosition();
-	_soundResource.load(0x6352F051);
+	loadSound(0, 0x6352F051);
 	_vm->_soundMan->addSound(0xC5EA0B28, 0xEF56B094);
 	SetUpdateHandler(&AsScene2804BeamCoil::update);
 	SetMessageHandler(&AsScene2804BeamCoil::handleMessage);
@@ -1564,7 +1560,7 @@ void AsScene2804BeamCoil::show() {
 	// TODO _ssBeamCoilBody->update(); -> show()
 	setVisible(true);
 	startAnimation(0x00494891, 0, -1);
-	_soundResource.play();
+	playSound(0);
 	SetMessageHandler(&AsScene2804BeamCoil::hmBeaming);
 	NextState(&AsScene2804BeamCoil::stBeaming);
 }
@@ -1842,7 +1838,7 @@ uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 AsScene2806Spew::AsScene2806Spew(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _soundResource(vm) {
+	: AnimatedSprite(vm, 1200) {
 	
 	createSurface1(0x04211490, 1200);
 	_x = 378;
@@ -1857,7 +1853,7 @@ uint32 AsScene2806Spew::handleMessage(int messageNum, const MessageParam &param,
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2000:
-		_soundResource.play(0x48640244);
+		playSound(0, 0x48640244);
 		startAnimation(0x04211490, 0, -1);
 		setVisible(true);
 		break;
@@ -2137,10 +2133,7 @@ void SsScene2808Dispenser::startCountdown(int index) {
 }
 
 AsScene2808TestTube::AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, SsScene2808Dispenser *ssDispenser)
-	: AnimatedSprite(vm, 1100), _testTubeSetNum(testTubeSetNum), _testTubeIndex(testTubeIndex), _ssDispenser(ssDispenser),
-	_soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
-	_soundResource4(vm), _soundResource5(vm), _soundResource6(vm),
-	_soundResource7(vm), _soundResource8(vm), _soundResource9(vm), _fillLevel(0) {
+	: AnimatedSprite(vm, 1100), _testTubeSetNum(testTubeSetNum), _testTubeIndex(testTubeIndex), _ssDispenser(ssDispenser), _fillLevel(0) {
 
 	if (testTubeSetNum == 0) {
 		_x = 504;
@@ -2154,16 +2147,16 @@ AsScene2808TestTube::AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum
 	createSurface1(kClass490FileHashes[testTubeIndex], 1100);
 
 	if (testTubeSetNum == 0) {
-		_soundResource1.load(0x30809E2D);
-		_soundResource2.load(0x72811E2D);
-		_soundResource3.load(0x78B01625);
+		loadSound(0, 0x30809E2D);
+		loadSound(1, 0x72811E2D);
+		loadSound(2, 0x78B01625);
 	} else {
-		_soundResource4.load(0x70A41E0C);
-		_soundResource5.load(0x50205E2D);
-		_soundResource6.load(0xF8621E2D);
-		_soundResource7.load(0xF1A03C2D);
-		_soundResource8.load(0x70A43D2D);
-		_soundResource9.load(0xF0601E2D);
+		loadSound(3, 0x70A41E0C);
+		loadSound(4, 0x50205E2D);
+		loadSound(5, 0xF8621E2D);
+		loadSound(6, 0xF1A03C2D);
+		loadSound(7, 0x70A43D2D);
+		loadSound(8, 0xF0601E2D);
 	}
 	
 	startAnimation(kClass490FileHashes[testTubeIndex], 0, -1);
@@ -2194,16 +2187,18 @@ void AsScene2808TestTube::fill() {
 	if ((int)_fillLevel >= _testTubeSetNum * 3 + 3)
 		return;
 		
+	// TODO Remove the two switches
+
 	if (_testTubeSetNum == 0) {
 		switch (_fillLevel) {
 		case 0:
-			_soundResource1.play();
+			playSound(0);
 			break;
 		case 1:
-			_soundResource2.play();
+			playSound(1);
 			break;
 		case 2:
-			_soundResource3.play();
+			playSound(2);
 			break;
 		}
 		setVisible(true);
@@ -2212,22 +2207,22 @@ void AsScene2808TestTube::fill() {
 	} else {
 		switch (_fillLevel) {
 		case 0:
-			_soundResource4.play();
+			playSound(3);
 			break;
 		case 1:
-			_soundResource5.play();
+			playSound(4);
 			break;
 		case 2:
-			_soundResource6.play();
+			playSound(5);
 			break;
 		case 3:
-			_soundResource7.play();
+			playSound(6);
 			break;
 		case 4:
-			_soundResource8.play();
+			playSound(7);
 			break;
 		case 5:
-			_soundResource9.play();
+			playSound(8);
 			break;
 		}
 		setVisible(true);
@@ -2252,10 +2247,9 @@ void AsScene2808TestTube::flush() {
 }
 
 AsScene2808Handle::AsScene2808Handle(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
-	: AnimatedSprite(vm, 1300), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum), _isActivated(false),
-	_soundResource(vm) {
+	: AnimatedSprite(vm, 1300), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum), _isActivated(false) {
 	
-	_soundResource.load(0xE18D1F30);
+	loadSound(0, 0xE18D1F30);
 	_x = 320;
 	_y = 240;
 	if (_testTubeSetNum == 1)
@@ -2275,7 +2269,7 @@ uint32 AsScene2808Handle::handleMessage(int messageNum, const MessageParam &para
 	case 0x1011:
 		if (!_isActivated) {
 			sendMessage(_parentScene, 0x2001, 0);
-			_soundResource.play();
+			playSound(0);
 			activate();
 		}
 		messageResult = 1;
@@ -2308,8 +2302,7 @@ void AsScene2808Handle::stActivated() {
 }
 
 AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum),
-	_soundResource(vm) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum) {
 
 	if (testTubeSetNum == 0) {
 		_x = 312;
@@ -2323,7 +2316,7 @@ AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int te
 	setVisible(false);
 	_newStickFrameIndex = 0;
 	_needRefresh = true;
-	_soundResource.load(0x6389B652);
+	loadSound(0, 0x6389B652);
 	SetUpdateHandler(&AnimatedSprite::update);
 	AnimatedSprite::updatePosition();
 }
@@ -2343,7 +2336,7 @@ void AsScene2808Flow::start() {
 	setVisible(true);
 	SetMessageHandler(&AsScene2808Flow::hmFlowing);
 	NextState(&AsScene2808Flow::stKeepFlowing);
-	_soundResource.play();
+	playSound(0);
 }
 
 void AsScene2808Flow::stKeepFlowing() {
@@ -2481,7 +2474,7 @@ bool Scene2808::isAnyTestTubeFilled() {
 }
 
 AsScene2809Spew::AsScene2809Spew(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _soundResource(vm) {
+	: AnimatedSprite(vm, 1200) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2809Spew::handleMessage);
@@ -2496,7 +2489,7 @@ uint32 AsScene2809Spew::handleMessage(int messageNum, const MessageParam &param,
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2000:
-		_soundResource.play(0x48640244);
+		playSound(0, 0x48640244);
 		startAnimation(0x04211490, 0, -1);
 		setVisible(true);
 		break;
@@ -2955,7 +2948,7 @@ void AsScene2812Rope::sub413E00() {
 }
 
 AsScene2812TrapDoor::AsScene2812TrapDoor(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 0x805D0029, 100, 320, 240), _soundResource(vm) {
+	: AnimatedSprite(vm, 0x805D0029, 100, 320, 240) {
 	
 	SetMessageHandler(&AsScene2812TrapDoor::handleMessage);
 	_newStickFrameIndex = 0;
@@ -2966,7 +2959,7 @@ uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &pa
 	switch (messageNum) {
 	case 0x2000:
 		startAnimation(0x805D0029, 0, -1);
-		_soundResource.play(0xEA005F40);
+		playSound(0, 0xEA005F40);
 		_newStickFrameIndex = -2;
 		break;
 	}
@@ -3133,8 +3126,7 @@ void Scene2812::setPalStatus(int fadeTime) {
 }
 
 Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown(0), _scrollIndex(0),
-	_soundResource1(vm), _soundResource2(vm), _soundResource3(vm) {
+	: Scene(vm, parentModule, true), _countdown(0), _scrollIndex(0) {
 
 	SetMessageHandler(&Scene2822::handleMessage);
 	SetUpdateHandler(&Scene2822::update);
@@ -3145,7 +3137,7 @@ Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse435(0x0028D089, 20, 620);
 	_ssButton = insertStaticSprite(0x1A4D4120, 1100);
 	_ssButton->setVisible(false);
-	_soundResource3.load(0x19044E72);
+	loadSound(2, 0x19044E72);
 }
 
 void Scene2822::update() {
@@ -3163,7 +3155,7 @@ void Scene2822::update() {
 				_countdownStatus = 1;
 				_countdown = 48;
 			} else if (_countdownStatus == 1) {
-				_soundResource1.play(0x1384CB60);
+				playSound(0, 0x1384CB60);
 				_countdownStatus = 2;
 				_countdown = 12;
 			} else if (_countdownStatus == 2 && getGlobalVar(0x00188211)) {
@@ -3192,12 +3184,12 @@ uint32 Scene2822::handleMessage(int messageNum, const MessageParam &param, Entit
 			_ssButton->setVisible(true);
 			_countdownStatus = 0;
 			_countdown = 12;
-			_soundResource2.play(0x44061000);
+			playSound(1, 0x44061000);
 			if (getGlobalVar(0x0018CA22) == 0) {
 				setGlobalVar(0x0018CA22, 1);
 				setGlobalVar(0x00188211, 1);
 				SetMessageHandler(NULL);
-				_soundResource3.play();
+				playSound(2);
 				_mouseCursor->setVisible(false);
 			}
 		}

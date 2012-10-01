@@ -62,7 +62,6 @@ public:
 	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	uint32 _fileHash1, _fileHash2;
 	bool _flag1, _flag2;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -149,7 +148,6 @@ class SsScene2804RedButton : public StaticSprite {
 public:
 	SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene);
 protected:
-	SoundResource _soundResource;
 	Scene2804 *_parentScene;
 	int _countdown;
 	void update();
@@ -179,8 +177,6 @@ class SsScene2804Flash : public StaticSprite {
 public:
 	SsScene2804Flash(NeverhoodEngine *vm);
 	void show();
-protected:
-	SoundResource _soundResource;
 };
 
 class AsScene2804CrystalWaves : public AnimatedSprite {
@@ -205,14 +201,12 @@ protected:
 	int16 _colorNum;
 	bool _isLightOn;
 	bool _isShowing;
-	SoundResource _soundResource;
 };
 
 class SsScene2804CrystalButton : public StaticSprite {
 public:
 	SsScene2804CrystalButton(NeverhoodEngine *vm, Scene2804 *parentScene, AsScene2804Crystal *asCrystal, uint crystalIndex);
 protected:
-	SoundResource _soundResource;
 	Scene2804 *_parentScene;
 	AsScene2804Crystal *_asCrystal;
 	uint _crystalIndex;
@@ -226,7 +220,6 @@ public:
 	AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody);
 	virtual ~AsScene2804BeamCoil();
 protected:
-	SoundResource _soundResource;
 	Scene *_parentScene;
 	SsScene2804BeamCoilBody *_ssBeamCoilBody;
 	int _countdown;
@@ -280,7 +273,6 @@ class AsScene2806Spew : public AnimatedSprite {
 public:
 	AsScene2806Spew(NeverhoodEngine *vm);
 protected:
-	SoundResource _soundResource;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -332,15 +324,6 @@ protected:
 	int _testTubeSetNum;
 	uint32 _fillLevel;
 	int _testTubeIndex;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
-	SoundResource _soundResource4;
-	SoundResource _soundResource5;
-	SoundResource _soundResource6;
-	SoundResource _soundResource7;
-	SoundResource _soundResource8;
-	SoundResource _soundResource9;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -353,7 +336,6 @@ protected:
 	Scene *_parentScene;
 	int _testTubeSetNum;
 	bool _isActivated;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmActivating(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -366,7 +348,6 @@ public:
 protected:
 	Scene *_parentScene;
 	int _testTubeSetNum;
-	SoundResource _soundResource;
 	uint32 hmFlowing(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -398,7 +379,6 @@ class AsScene2809Spew : public AnimatedSprite {
 public:
 	AsScene2809Spew(NeverhoodEngine *vm);
 protected:
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -468,7 +448,6 @@ class AsScene2812TrapDoor : public AnimatedSprite {
 public:
 	AsScene2812TrapDoor(NeverhoodEngine *vm);
 protected:
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -503,9 +482,6 @@ protected:
 	int _scrollIndex;
 	int _countdown;
 	int _countdownStatus;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
