@@ -64,7 +64,7 @@ enum ShuttleWeaponSelection {
 };
 
 class Mars : public Neighborhood {
-friend class MarsTimerEvent;
+friend struct MarsTimerEvent;
 public:
 	Mars(InputHandler *, PegasusEngine *);
 	virtual ~Mars();
