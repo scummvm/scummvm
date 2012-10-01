@@ -983,8 +983,7 @@ void Class521::sub45E0A0() {
 }
 
 Class546::Class546(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0x08C80144, 900, 320, 240), _soundResource(vm),
-	_parentScene(parentScene) {
+	: AnimatedSprite(vm, 0x08C80144, 900, 320, 240), _parentScene(parentScene) {
 
 	setVisible(false);
 	SetMessageHandler(&Class546::handleMessage);
@@ -1011,7 +1010,7 @@ void Class546::sub44D710() {
 	startAnimation(0x08C80144, 0, -1);
 	setVisible(true);
 	NextState(&Class546::sub44D760);
-	_soundResource.play(calcHash("fxDoorOpen23"));
+	playSound(0, calcHash("fxDoorOpen23"));
 }
 
 void Class546::sub44D760() {
@@ -1024,7 +1023,7 @@ void Class546::sub44D790() {
 	startAnimation(0x08C80144, -1, -1);
 	setVisible(true);
 	NextState(&Class546::sub44D7F0);
-	_soundResource.play(calcHash("fxDoorClose23"));
+	playSound(0, calcHash("fxDoorClose23"));
 }
 
 void Class546::sub44D7F0() {
@@ -1388,8 +1387,7 @@ uint32 Scene1608::handleMessage44D510(int messageNum, const MessageParam &param,
 }
 	
 Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource(vm), _countdown1(1),
-	_index1(0), _index3(0), _flag5(true), _flag6(false) {
+	: Scene(vm, parentModule, true), _countdown1(1), _index1(0), _index3(0), _flag5(true), _flag6(false) {
 
 	// TODO _vm->gameModule()->initScene3011Vars();
 	_index2 = getGlobalVar(0x2414C2F2);
@@ -1409,7 +1407,7 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertMouse435(0x24A10929, 20, 620);
 
-	_soundResource.load(0x68E25540);
+	loadSound(0, 0x68E25540);
 
 }
 
@@ -1428,7 +1426,7 @@ void Scene1609::update() {
 			_countdown1 = 12;
 		}
 	}
-	if (_flag6 && !_soundResource.isPlaying()) {
+	if (_flag6 && !isSoundPlaying(0)) {
 		leaveScene(1);
 	}
 	Scene::update();
@@ -1451,7 +1449,7 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 			_index3++;
 			if (_index3 >= 12) {
 				if (testVars()) {
-					_soundResource.play();
+					playSound(0);
 					setGlobalVar(0x2C531AF8, 1);
 					_flag6 = true;
 				} else {

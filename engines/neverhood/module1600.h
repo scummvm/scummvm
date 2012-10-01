@@ -110,7 +110,6 @@ public:
 	Class546(NeverhoodEngine *vm, Scene *parentScene);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void sub44D710();
 	void sub44D760();
@@ -175,7 +174,6 @@ class Scene1609 : public Scene {
 public:
 	Scene1609(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	SoundResource _soundResource;
 	Sprite *_ssButton;
 	AsScene3011Symbol *_asSymbols[12];
 	int _index1;
