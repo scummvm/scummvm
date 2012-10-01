@@ -42,6 +42,7 @@ struct ZonePItem {
 	int fieldD;
 	int fieldE;
 	int fieldF;
+	int field10;
 	int field12;
 	int field16;
 };
@@ -64,6 +65,13 @@ struct LigneZoneItem {
 
 struct CarreZoneItem {
 	int field0;
+	int field2;
+	int field4;
+	int field6;
+	int field8;
+	int fieldA;
+	int fieldC;
+	int fieldE;
 };
 
 struct BqeAnimItem {
@@ -194,6 +202,12 @@ struct CacheItem {
 	int field14;
 };
 
+struct SegmentItem {
+	int field0;
+	int field2;
+	int field4;
+};
+
 struct Sauvegarde1 {
 	int field0;
 	int field1;
@@ -319,8 +333,8 @@ public:
 	byte *CACHE_BANQUE[6];
 	ZonePItem ZONEP[106];
 	LigneItem Ligne[400];
-	LigneZoneItem LigneZone[400];
-	CarreZoneItem CarreZone[100];
+	LigneZoneItem LigneZone[401];
+	CarreZoneItem CarreZone[101];
 	BqeAnimItem Bqe_Anim[35];
 	BankItem Bank[8];
 	BobItem Bob[36];
@@ -331,6 +345,7 @@ public:
 	ObjetWItem ObjetW[300];
 	BlocItem BLOC[250];
 	CacheItem Cache[25];
+	SegmentItem Segment[101];
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];
 	int STAILLE[500];
@@ -416,8 +431,10 @@ public:
 	int Compteur;
 	int ACTION_SENS;
 	int STOP_BUG;
+	int SegmentEnCours;
 
 	int force_to_data_0;
+	int oldzone_46;
 	int old_x1_65;
 	int old_y1_66;
 	int old_x2_67;

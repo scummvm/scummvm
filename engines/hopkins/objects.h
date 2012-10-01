@@ -246,7 +246,8 @@ public:
 	int MIRACLE(int a1, int a2, int a3, int a4, int a5);
 	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9);
 	int CALC_PROPRE(int idx);
-	int PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6);
+	int PLAN_TEST(byte *a1, int a2, int a3, int a4, int a5, int a6);
+	int colision(int a1, int a2);
 };
 
 } // End of namespace Hopkins

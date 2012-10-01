@@ -3781,7 +3781,7 @@ LABEL_90:
 			}
 			for (j = v69 + 1; j < v73; ++j) {
 				if (PLAN_TEST(
-						READ_LE_UINT16(_vm->_globals.Ligne[j].fieldC),
+						_vm->_globals.Ligne[j].fieldC,
 						READ_LE_UINT16(_vm->_globals.Ligne[j].fieldC + 2),
 				        v67,
 				        j,
@@ -3827,8 +3827,8 @@ LABEL_88:
 			for (l = v69 - 1; l > v73; --l) {
 				v48 = l;
 				if (PLAN_TEST(
-						READ_LE_UINT32(_vm->_globals.Ligne[l].fieldC) + 4 * _vm->_globals.Ligne[v48].field0 - 4,
-						READ_LE_UINT32(_vm->_globals.Ligne[l].fieldC) + 4 * _vm->_globals.Ligne[v48].field0 - 2,
+						_vm->_globals.Ligne[l].fieldC + 4 * _vm->_globals.Ligne[v48].field0 - 4,
+						READ_LE_UINT16(_vm->_globals.Ligne[l].fieldC + 4 * _vm->_globals.Ligne[v48].field0 - 2),
 				        v67,
 				        l,
 				        v73,
@@ -3899,16 +3899,350 @@ LABEL_88:
 }
 
 void ObjectsManager::VERBEPLUS() {
-	warning("TODO: VERBEPLUS");
+	int v;
+
+	v = _vm->_eventsManager.btsouris + 1;
+	_vm->_eventsManager.btsouris = v;
+	if (v == 4)
+		goto LABEL_24;
+	if (v == 5)
+		goto LABEL_28;
+	if (v == 6)
+		goto LABEL_29;
+	if (v == 7)
+		goto LABEL_31;
+	if (v == 8)
+		goto LABEL_33;
+	if (v == 9)
+		goto LABEL_35;
+	if (v == 10)
+		goto LABEL_37;
+	if (v == 11)
+		goto LABEL_39;
+	if (v == 12)
+		goto LABEL_41;
+	if (v == 13)
+		goto LABEL_43;
+	if (v == 14)
+		goto LABEL_45;
+	if (v == 15)
+		goto LABEL_47;
+	if (v == 16)
+		goto LABEL_49;
+	if (v == 17)
+		goto LABEL_51;
+	if (v == 18)
+		goto LABEL_53;
+	if (v == 19)
+		goto LABEL_55;
+	if (v == 20)
+		goto LABEL_57;
+	if (v == 21)
+		goto LABEL_59;
+	if (v == 22)
+		goto LABEL_61;
+	if (v == 23)
+		goto LABEL_63;
+	if (v == 24)
+		goto LABEL_65;
+	if (v == 25)
+		goto LABEL_67;
+	do {
+		do {
+			_vm->_eventsManager.btsouris = 4;
+LABEL_24:
+			if (_vm->_globals.NOMARCHE != 1 || (v = _vm->_objectsManager.NUMZONE + 1, (uint16)(_vm->_objectsManager.NUMZONE + 1) <= 1u)) {
+				if (_vm->_eventsManager.btsouris == 4)
+					return;
+			} else {
+				_vm->_eventsManager.btsouris = 5;
+			}
+LABEL_28:
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 6) {
+LABEL_29:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field6 == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 7) {
+LABEL_31:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field7 == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 8) {
+LABEL_33:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field8 == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 9) {
+LABEL_35:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field9 == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 10) {
+LABEL_37:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldA == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 11) {
+LABEL_39:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldB == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 12) {
+LABEL_41:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldC == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 13) {
+LABEL_43:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldD == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 14) {
+LABEL_45:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldE == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 15) {
+LABEL_47:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldF == 1)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 16) {
+LABEL_49:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field6 == 2)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 17) {
+LABEL_51:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field9 == 2)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 18) {
+LABEL_53:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldA == 2)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 19) {
+LABEL_55:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldB == 2)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 20) {
+LABEL_57:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldC == 2)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 21) {
+LABEL_59:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldF == 2)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 22) {
+LABEL_61:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldD == 2)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 23) {
+LABEL_63:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field8 == 2)
+					return;
+			}
+			++_vm->_eventsManager.btsouris;
+			if (_vm->_eventsManager.btsouris == 24) {
+LABEL_65:
+				v = 5 * _vm->_objectsManager.NUMZONE;
+				if (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field9 == 3)
+					return;
+			}
+			v = _vm->_eventsManager.btsouris + 1;
+			_vm->_eventsManager.btsouris = v;
+		} while (v != 25);
+LABEL_67:
+		v = 5 * _vm->_objectsManager.NUMZONE;
+	} while (_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].fieldE != 2);
 }
 
 void ObjectsManager::BTDROITE() {
-	warning("TODO: BTDROITE");
+	if ((uint16)(_vm->_objectsManager.NUMZONE + 1) > 1u) {
+		VERBEPLUS();
+		if (_vm->_eventsManager.btsouris != 23)
+			_vm->_eventsManager.CHANGE_MOUSE(_vm->_eventsManager.btsouris);
+		_vm->_objectsManager.verbe = _vm->_eventsManager.btsouris;
+	}
 }
 
 int ObjectsManager::MZONE() {
-	warning("TODO: MZONE");
-	return 0;
+	signed int result;
+	__int16 v1;
+	__int16 v2;
+	int v3; 
+	__int16 v4;
+	__int16 v5;
+	int v6; 
+	__int16 v7;
+	int v8; 
+	int v9; 
+	__int16 i;
+	__int16 v11;
+	__int16 j; 
+	__int16 k; 
+	__int16 l; 
+	int v15; 
+	__int16 v16;
+	__int16 v17;
+	__int16 v18;
+	__int16 v19;
+	__int16 v20;
+	__int16 v21;
+
+	v19 = 0;
+	v18 = 0;
+	v17 = 0;
+	v16 = 0;
+	v21 = _vm->_eventsManager.souris_x + _vm->_eventsManager.ofset_souris_x;
+	v20 = _vm->_eventsManager.souris_y + _vm->_eventsManager.ofset_souris_y;
+	if ((_vm->_eventsManager.souris_y + _vm->_eventsManager.ofset_souris_y) > 19) {
+		v1 = 0;
+		do {
+			v2 = _vm->_globals.BOBZONE[v1];
+			if (v2) {
+				if (_vm->_globals.BOBZONE_FLAG[v1] == 1) {
+					v3 = v2;
+					v15 = v3;
+					if (_vm->_globals.Bob[v3].field0) {
+						if (_vm->_globals.Bob[v3].fieldC != 250) {
+							if (!_vm->_globals.Bob[v3].field16) {
+								v4 = _vm->_globals.Bob[v3].field3E;
+								if (v21 > v4) {
+									if (v21 < _vm->_globals.Bob[v3].field42 + v4) {
+										v5 = _vm->_globals.Bob[v3].field40;
+										if (v20 > v5) {
+											if (v20 < _vm->_globals.Bob[v3].field44 + v5) {
+												v6 = v1;
+												if (_vm->_globals.ZONEP[v1].field4 == -1) {
+													_vm->_globals.ZONEP[v6].field0 = 0;
+													_vm->_globals.ZONEP[v1].field2 = 0;
+												}
+												if (!_vm->_globals.ZONEP[v6].field0) {
+													if (!_vm->_globals.ZONEP[v1].field2) {
+														_vm->_globals.ZONEP[v6].field0 = _vm->_globals.Bob[v15].field42 + _vm->_globals.Bob[v15].field3E;
+														_vm->_globals.ZONEP[v1].field2 = _vm->_globals.Bob[v15].field44 + _vm->_globals.Bob[v15].field40 + 6;
+														_vm->_globals.ZONEP[v1].field4 = -1;
+													}
+												}
+												return v1;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			++v1;
+		} while (v1 <= 48);
+		_vm->_globals.SegmentEnCours = 0;
+		v7 = 0;
+		do {
+			if (_vm->_globals.ZONEP[v7].field10 == 1) {
+				v8 = v7;
+				if (_vm->_globals.CarreZone[v8].field0 == 1) {
+					if (_vm->_globals.CarreZone[v7].field2 <= v21
+					        && _vm->_globals.CarreZone[v7].field4 >= v21
+					        && _vm->_globals.CarreZone[v7].field6 <= v20
+					        && _vm->_globals.CarreZone[v7].field8 >= v20) {
+								if (_vm->_globals.CarreZone[v7].fieldE == 1) {
+									_vm->_globals.oldzone_46 = _vm->_globals.LigneZone[_vm->_globals.CarreZone[v7].fieldA].field2;
+							return _vm->_globals.oldzone_46;
+						}
+						v9 = _vm->_globals.SegmentEnCours;
+						_vm->_globals.Segment[v9].field2 = _vm->_globals.CarreZone[v7].fieldA;
+						_vm->_globals.Segment[v9].field4 = _vm->_globals.CarreZone[v7].fieldC;
+						++_vm->_globals.SegmentEnCours;
+					}
+				}
+			}
+			++v7;
+		} while (v7 <= 99);
+		if (!_vm->_globals.SegmentEnCours)
+			goto LABEL_58;
+		for (i = v20; i >= 0; --i) {
+			v11 = colision(v21, i);
+			v19 = v11;
+			if (v11 != -1 && _vm->_globals.ZONEP[v11].field10 == 1)
+				break;
+		}
+		if (v19 == -1)
+			goto LABEL_58;
+		for (j = v20; _vm->_graphicsManager.max_y > j; ++j) {
+			v18 = colision(v21, j);
+			if (v18 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
+				break;
+		}
+		if (v18 == -1)
+			goto LABEL_58;
+		for (k = v21; k >= 0; --k) {
+			v16 = colision(k, v20);
+			if (v16 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
+				break;
+		}
+		if (v16 == -1)
+			goto LABEL_58;
+		for (l = v21; _vm->_graphicsManager.max_x > l; ++l) {
+			v17 = colision(l, v20);
+			if (v17 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
+				break;
+		}
+		if (v19 == v18 && v19 == v16 && v19 == v17) {
+			_vm->_globals.oldzone_46 = v19;
+			result = v19;
+		} else {
+LABEL_58:
+			_vm->_globals.oldzone_46 = -1;
+			result = -1;
+		}
+	} else {
+		result = 0;
+	}
+	return result;
 }
 
 void ObjectsManager::CLEAR_ZONE() {
@@ -6288,9 +6622,66 @@ int ObjectsManager::CALC_PROPRE(int idx) {
 	return v1;
 }
 
-int ObjectsManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
+int ObjectsManager::PLAN_TEST(byte *a1, int a2, int a3, int a4, int a5, int a6) {
 	warning("TODO: PLAN_TEST");
 	return 0;
+}
+
+int ObjectsManager::colision(int a1, int a2) {
+	if (_vm->_globals.SegmentEnCours <= 0)
+		return -1;
+
+	int v2 = a1;
+	int v3 = v2;
+	int v4 = v2 + 4;
+	int v5 = v2 - 4;
+
+	for (int idx = 0; idx <= _vm->_globals.SegmentEnCours; ++idx) {
+		int v8 = _vm->_globals.Segment[idx].field2;
+		if (v8 < _vm->_globals.Segment[idx].field4)
+			continue;
+		
+		int v6 = a2 + 4;
+		int v7 = a2 - 4;
+		int v9 = v3 + 1;
+
+		do {
+			byte *srcP = _vm->_globals.LigneZone[v8].field4;
+			if (srcP != PTRNUL) {
+				bool flag = true;
+				int v11 = READ_LE_UINT16(srcP + _vm->_globals.LigneZone[v8].field0 * 2);
+				int dataV2 = READ_LE_UINT16(srcP + _vm->_globals.LigneZone[v8].field0 * 2 + 2);
+				int v12 = READ_LE_UINT16(srcP + _vm->_globals.LigneZone[v8].field0 * 4 - 4);
+				int v13 = READ_LE_UINT16(srcP + _vm->_globals.LigneZone[v8].field0 * 4 - 2);
+				int v10 = v13;
+
+				if (v11 < v12 && v4 >= v11 && v5 > v13)
+					flag = false;
+				if (v11 >= v12 && v5 <= v13 && v4 < v13)
+					flag = false;
+				if (dataV2 < v10 && v6 >= dataV2 && v7 > v10)
+					flag = false;
+				if (dataV2 >= v10 && v7 <= dataV2 && v6 < v10)
+					flag = false;
+
+
+				if (!flag) {
+					if (v11 < _vm->_globals.LigneZone[v8].field0) {
+						for (; v11 < _vm->_globals.LigneZone[v8].field0; ++idx) {
+							int v11 = READ_LE_UINT16(srcP);
+							int v12 = READ_LE_UINT16(srcP + 2);
+							srcP += 4;
+							
+							if ((v2 == v11 || v9 == v11) && a2 == v12)
+								return _vm->_globals.LigneZone[v8].field2;
+						}
+					}
+				}
+			}
+		} while (++v8 < _vm->_globals.Segment[idx].field0);
+	}
+
+	return -1;
 }
 
 } // End of namespace Hopkins
