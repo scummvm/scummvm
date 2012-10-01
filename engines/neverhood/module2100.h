@@ -45,7 +45,6 @@ class Class538 : public AnimatedSprite {
 public:
 	Class538(NeverhoodEngine *vm, bool flag);
 protected:
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void openDoor();
 	void closeDoor();
@@ -65,7 +64,6 @@ public:
 	Class427(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource;
 	uint32 _soundFileHash;
 	uint32 _fileHash1, _fileHash2;
 	int16 _countdown;

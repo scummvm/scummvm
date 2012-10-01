@@ -78,7 +78,7 @@ void Module2100::updateScene() {
 // Scene2101
 
 Class538::Class538(NeverhoodEngine *vm, bool flag)
-	: AnimatedSprite(vm, 1100), _soundResource(vm) {
+	: AnimatedSprite(vm, 1100) {
 
 	// TODO createSurface3(100, dword_4B9018);
 	createSurface(100, 640, 480); //TODO: Remove once the line above is done
@@ -114,7 +114,7 @@ void Class538::openDoor() {
 	startAnimation(0x0C202B9C, 0, -1);
 	_newStickFrameIndex = -2;
 	setVisible(true);
-	_soundResource.play(calcHash("fxDoorOpen32"));
+	playSound(0, calcHash("fxDoorOpen32"));
 }
 
 void Class538::closeDoor() {
@@ -122,7 +122,7 @@ void Class538::closeDoor() {
 	_newStickFrameIndex = -2;
 	setVisible(true);
 	NextState(&Class538::hide);
-	_soundResource.play(calcHash("fxDoorClose32"));
+	playSound(0, calcHash("fxDoorClose32"));
 }
 
 void Class538::hide() {
@@ -157,7 +157,7 @@ uint32 Class539::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 Class427::Class427(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash)
-	: StaticSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene), _countdown(0),
+	: StaticSprite(vm, 1100), _parentScene(parentScene), _countdown(0),
 	_fileHash1(fileHash1), _fileHash2(fileHash2), _soundFileHash(soundFileHash) {
 
 	SetUpdateHandler(&Class427::update);
@@ -193,7 +193,7 @@ uint32 Class427::handleMessage(int messageNum, const MessageParam &param, Entity
 		load(_fileHash2, true, true);
 		StaticSprite::update();
 		_countdown = 16;
-		_soundResource.play(_soundFileHash);
+		playSound(0, _soundFileHash);
 		break;
 	}
 	return messageResult;
