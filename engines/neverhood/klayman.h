@@ -318,7 +318,7 @@ protected:
 	uint32 hmWalkToFront(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmLandOnFeet(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmTurnToBackToUse(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage41D640(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPickUpTube(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmSitInTeleporter(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmMoveObjectTurn(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender);

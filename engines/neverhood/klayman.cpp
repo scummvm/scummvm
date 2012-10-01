@@ -342,12 +342,12 @@ void Klayman::stPickUpTube() {
 		_acceptInput = false;
 		startAnimation(0x0018C032, 0, -1);
 		SetUpdateHandler(&Klayman::update);
-		SetMessageHandler(&Klayman::handleMessage41D640);
+		SetMessageHandler(&Klayman::hmPickUpTube);
 		SetSpriteUpdate(NULL);
 	}
 }
 
-uint32 Klayman::handleMessage41D640(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Klayman::hmPickUpTube(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
