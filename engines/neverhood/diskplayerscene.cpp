@@ -194,8 +194,7 @@ void Class494::sub43BE20() {
 }
 
 DiskplayerPlayButton::DiskplayerPlayButton(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene)
-	: StaticSprite(vm, 1400), _soundResource1(vm), _soundResource2(vm),
-	_diskplayerScene(diskplayerScene), _isPlaying(false) {
+	: StaticSprite(vm, 1400), _diskplayerScene(diskplayerScene), _isPlaying(false) {
 	
 	_spriteResource.load2(0x24A4A664);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -213,8 +212,8 @@ DiskplayerPlayButton::DiskplayerPlayButton(NeverhoodEngine *vm, DiskplayerScene 
 	processDelta();
 	_needRefresh = true;
 	StaticSprite::update();
-	_soundResource1.load(0x44043000);
-	_soundResource2.load(0x44045000);
+	loadSound(0, 0x44043000);
+	loadSound(1, 0x44045000);
 	SetMessageHandler(&DiskplayerPlayButton::handleMessage);
 }
 
@@ -243,7 +242,7 @@ void DiskplayerPlayButton::press() {
 	if (!_isPlaying) {
 		_surface->setVisible(true);
 		StaticSprite::update();
-		_soundResource1.play();
+		playSound(0);
 		_isPlaying = true;
 	}
 }
@@ -252,24 +251,23 @@ void DiskplayerPlayButton::release() {
 	if (_isPlaying) {
 		_surface->setVisible(false);
 		StaticSprite::update();
-		_soundResource2.play();
+		playSound(1);
 		_isPlaying = false;
 	}
 }
 
 DiskplayerSlot::DiskplayerSlot(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene, int elementIndex, int value)
-	: Entity(vm, 0), _diskplayerScene(diskplayerScene), _soundResource(vm), _elementIndex(elementIndex),
-	_value(value), _flag2(false), _flag(false), _countdown(0), _initialCountdown(2),
-	_inactiveSlot(NULL), _appearSlot(NULL), _activeSlot(NULL) {
+	: Entity(vm, 0), _diskplayerScene(diskplayerScene), _elementIndex(elementIndex), _value(value),
+	_flag2(false), _flag(false), _countdown(0), _initialCountdown(2), _inactiveSlot(NULL), _appearSlot(NULL), _activeSlot(NULL) {
 
 	if (value != 0 && elementIndex < 20) {
 		_inactiveSlot = _diskplayerScene->addSprite(new StaticSprite(_vm, kDiskplayerSlotFileHashes1[_elementIndex], 1100));
 		_appearSlot = _diskplayerScene->addSprite(new StaticSprite(_vm, kDiskplayerSlotFileHashes2[_elementIndex], 1000));
 		_activeSlot = _diskplayerScene->addSprite(new StaticSprite(_vm, kDiskplayerSlotFileHashes3[_elementIndex], 1100));
-		_inactiveSlot->getSurface()->setVisible(false);
-		_appearSlot->getSurface()->setVisible(false);
-		_activeSlot->getSurface()->setVisible(false);
-		_soundResource.load(0x46210074);
+		_inactiveSlot->setVisible(false);
+		_appearSlot->setVisible(false);
+		_activeSlot->setVisible(false);
+		loadSound(0, 0x46210074);
 		// TODO sound panning stuff
 	} else if (elementIndex != 20) {
 		_activeSlot = _diskplayerScene->addSprite(new StaticSprite(_vm, kDiskplayerSlotFileHashes4[_elementIndex], 1100));
@@ -281,20 +279,16 @@ DiskplayerSlot::DiskplayerSlot(NeverhoodEngine *vm, DiskplayerScene *diskplayerS
 void DiskplayerSlot::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
 		if (_flag) {
-			if (_inactiveSlot) {
+			if (_inactiveSlot)
 				_inactiveSlot->getSurface()->setVisible(true);
-			}
-			if (_activeSlot) {
+			if (_activeSlot)
 				_activeSlot->getSurface()->setVisible(false);
-			}
 			_countdown = _initialCountdown / 2;
 		} else {
-			if (_inactiveSlot) {
+			if (_inactiveSlot)
 				_inactiveSlot->getSurface()->setVisible(false);
-			}
-			if (_activeSlot) {
+			if (_activeSlot)
 				_activeSlot->getSurface()->setVisible(true);
-			}
 			_countdown = _initialCountdown;
 		}
 		_flag = !_flag;
@@ -302,44 +296,36 @@ void DiskplayerSlot::update() {
 }
 
 void DiskplayerSlot::appear() {
-	if (_inactiveSlot) {
+	if (_inactiveSlot)
 		_inactiveSlot->getSurface()->setVisible(true);
-	}
-	if (_appearSlot) {
+	if (_appearSlot)
 		_appearSlot->getSurface()->setVisible(true);
-	}
-	if (_inactiveSlot) {
-		_soundResource.play();
-	}
+	if (_inactiveSlot)
+		playSound(0);
 }
 
 void DiskplayerSlot::play() {
 	if (!_flag2) {
-		if (_inactiveSlot) {
+		if (_inactiveSlot)
 			_inactiveSlot->getSurface()->setVisible(false);
-		}
-		if (_activeSlot) {
+		if (_activeSlot)
 			_activeSlot->getSurface()->setVisible(true);
-		}
 		_flag = true;
 		_countdown = 0;
 	}
 }
 
 void DiskplayerSlot::activate() {
-	if (!_flag2) {
+	if (!_flag2)
 		_countdown = _initialCountdown;
-	}
 }
 
 void DiskplayerSlot::stop() {
 	if (!_flag2) {
-		if (_inactiveSlot) {
+		if (_inactiveSlot)
 			_inactiveSlot->getSurface()->setVisible(true);
-		}
-		if (_activeSlot) {
+		if (_activeSlot)
 			_activeSlot->getSurface()->setVisible(false);
-		}
 		_flag = false;
 		_countdown = 0;
 	}

@@ -48,8 +48,6 @@ public:
 	void release();
 protected:
 	DiskplayerScene *_diskplayerScene;	
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	bool _isPlaying;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -64,7 +62,6 @@ public:
 	void setFlag2(bool value) { _flag2 = value; }
 protected:
 	DiskplayerScene *_diskplayerScene;
-	SoundResource _soundResource;
 	Sprite *_inactiveSlot;
 	Sprite *_appearSlot;
 	Sprite *_activeSlot;
