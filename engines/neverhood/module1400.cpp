@@ -135,8 +135,7 @@ void Module1400::updateScene() {
 // Scene1401
 
 Class525::Class525(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm),
-	_countdown1(0), _countdown2(0) {
+	: AnimatedSprite(vm, 1100), _countdown1(0), _countdown2(0) {
 	
 	// TODO createSurface3(900, dword_4B6768);
 	createSurface(900, 640, 480); //TODO: Remeove once the line above is done
@@ -174,7 +173,7 @@ uint32 Class525::handleMessage466320(int messageNum, const MessageParam &param, 
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x0A8A1490) {
-			_soundResource2.play(0x6AB6666F);
+			playSound(1, 0x6AB6666F);
 		}
 		break;
 	case 0x2000:
@@ -207,12 +206,12 @@ uint32 Class525::handleMessage4663C0(int messageNum, const MessageParam &param, 
 
 void Class525::sub466420() {
 	startAnimation(0x4C240100, 0, -1);
-	_soundResource1.play(0x4A30063F);
+	playSound(0, 0x4A30063F);
 }
 
 void Class525::sub466460() {
 	_vm->_soundMan->deleteSound(0x4A116437);
-	_soundResource1.play(0x4A120435);
+	playSound(0, 0x4A120435);
 	startAnimation(0x4C210500, 0, -1);
 }
 
@@ -223,7 +222,7 @@ void Class525::sub4664B0() {
 }
 
 Class526::Class526(NeverhoodEngine *vm, Sprite *class525)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _class525(class525) {
+	: AnimatedSprite(vm, 1100), _class525(class525) {
 	
 	// TODO createSurface3(100, dword_4B6778);
 	createSurface(100, 640, 480); //TODO: Remeove once the line above is done
@@ -239,11 +238,11 @@ uint32 Class526::handleMessage(int messageNum, const MessageParam &param, Entity
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x66382026) {
-			_soundResource.play(0x0CD84468);
+			playSound(0, 0x0CD84468);
 		} else if (param.asInteger() == 0x6E28061C) {
-			_soundResource.play(0x78C8402C);
+			playSound(0, 0x78C8402C);
 		} else if (param.asInteger() == 0x462F0410) {
-			_soundResource.play(0x60984E28);
+			playSound(0, 0x60984E28);
 		}
 		break;
 	case 0x4839:
@@ -256,7 +255,7 @@ uint32 Class526::handleMessage(int messageNum, const MessageParam &param, Entity
 void Class526::spriteUpdate466720() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
-		_soundResource.play(0x0E32247F);
+		playSound(0, 0x0E32247F);
 		stopAnimation();
 		SetSpriteUpdate(NULL);
 		SetMessageHandler(NULL);
@@ -270,7 +269,7 @@ void Class526::sub466770() {
 }
 
 Class527::Class527(NeverhoodEngine *vm, Sprite *class526)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _class526(class526) {
+	: AnimatedSprite(vm, 1100), _class526(class526) {
 
 	// TODO createSurface3(200, dword_4B6768);
 	createSurface(200, 640, 480); //TODO: Remeove once the line above is done
@@ -294,7 +293,7 @@ uint32 Class527::handleMessage(int messageNum, const MessageParam &param, Entity
 void Class527::spriteUpdate466920() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
-		_soundResource.play(0x18020439);
+		playSound(0, 0x18020439);
 		stopAnimation();
 		SetSpriteUpdate(NULL);
 		SetMessageHandler(NULL);
@@ -308,7 +307,7 @@ void Class527::sub466970() {
 }
 
 Class528::Class528(NeverhoodEngine *vm, Sprite *klayman, bool flag)
-	: AnimatedSprite(vm, 1100), _soundResource(vm), _klayman(klayman), _countdown(0) {
+	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown(0) {
 
 	_x = 320;
 	_y = 240;
@@ -360,14 +359,14 @@ void Class528::sub466BF0() {
 	setVisible(true);
 	startAnimation(0x04551900, 0, -1);
 	_newStickFrameIndex = -2;
-	_soundResource.play(calcHash("fxDoorOpen24"));
+	playSound(0, calcHash("fxDoorOpen24"));
 }
 
 void Class528::sub466C50() {
 	_flag = false;
 	setVisible(true);
 	startAnimation(0x04551900, -1, -1);
-	_soundResource.play(calcHash("fxDoorClose24"));
+	playSound(0, calcHash("fxDoorClose24"));
 	_playBackwards = true;
 	NextState(&Class528::sub466CB0);
 }
@@ -386,8 +385,7 @@ static const Class489Item kClass489Items[] = {
 };
 
 Class489::Class489(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Sprite *class525)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _class525(class525),
-	_soundResource1(vm), _soundResource2(vm), _soundResource3(vm) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _class525(class525) {
 
 	_class489Item = &kClass489Items[getGlobalVar(0x04A105B3)];
 	// TODO createSurface3(990, dword_4B26D8);
@@ -402,7 +400,7 @@ Class489::Class489(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Spr
 	if ((int8)getGlobalVar(0x04A10F33) == _class489Item->varIndex2) {
 		sub434E90();
 	}
-	_soundResource3.load(0xC8C2507C);
+	loadSound(2, 0xC8C2507C);
 }
 
 Class489::~Class489() {
@@ -565,7 +563,7 @@ void Class489::sub434C80() {
 			_flag = false;
 		}
 	} else if (soundFlag) {
-		_soundResource2.play(0x5440E474);
+		playSound(1, 0x5440E474);
 		_flag = true;
 	}
 	
@@ -593,7 +591,7 @@ void Class489::sub434DF0() {
 	startAnimation(0x14A10137, 0, -1);
 	SetSpriteUpdate(&Class489::spriteUpdate434B60);
 	SetMessageHandler(&Class489::handleMessage);
-	_soundResource2.play(0xEC008474);
+	playSound(1, 0xEC008474);
 }
 
 void Class489::sub434E60() {
@@ -615,7 +613,7 @@ void Class489::sub434EC0() {
 	SetSpriteUpdate(NULL);
 	NextState(&Class489::sub434F40);
 	setGlobalVar(0x12A10DB3, 1);
-	_soundResource1.play(0xCC4A8456);
+	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->addSound(0x05331081, 0xCE428854);
 	_vm->_soundMan->playSoundLooping(0xCE428854);
 }
@@ -633,7 +631,7 @@ void Class489::sub434F80() {
 	SetMessageHandler(&Class489::handleMessage434B20);
 	NextState(&Class489::sub434E90);
 	setGlobalVar(0x12A10DB3, 0);
-	_soundResource1.play(0xCC4A8456);
+	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->deleteSound(0xCE428854);
 }
 
@@ -651,7 +649,7 @@ void Class489::sub435040() {
 	SetSpriteUpdate(&Class489::sub434D80);
 	SetMessageHandler(&Sprite::handleMessage);
 	startAnimation(0x708D4712, 0, -1);
-	_soundResource3.play();
+	playSound(2);
 }
 
 Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -813,8 +811,7 @@ Class454::Class454(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority)
 }
 
 Class482::Class482(NeverhoodEngine *vm, Scene *parentScene, int which)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _soundResource1(vm),
-	_soundResource2(vm) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	// TODO createSurface3(900, dword_4B6768);
 	createSurface(900, 640, 480); //TODO: Remeove once the line above is done
@@ -826,14 +823,14 @@ Class482::Class482(NeverhoodEngine *vm, Scene *parentScene, int which)
 	_y = 270;
 	if (which == 2) {
 		startAnimation(0x20060259, 0, -1);
-		_soundResource1.play(0x419014AC);
-		_soundResource2.load(0x61901C29);
+		playSound(0, 0x419014AC);
+		loadSound(1, 0x61901C29);
 	} else if (which == 1) {
 		startAnimation(0x210A0213, 0, -1);
-		_soundResource1.play(0x41809C6C);
+		playSound(0, 0x41809C6C);
 	} else {
 		startAnimation(0x20060259, 0, -1);
-		_soundResource2.load(0x61901C29);
+		loadSound(1, 0x61901C29);
 		_newStickFrameIndex = -2;
 	}
 }
@@ -842,7 +839,7 @@ uint32 Class482::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2002:
-		_soundResource2.play();
+		playSound(1);
 		startAnimation(0x20060259, -1, -1);
 		_playBackwards = true;
 		NextState(&Class482::sub428530);
@@ -1257,8 +1254,7 @@ void AsScene1407Mouse::stArriveAtHole() {
 }
 
 Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource(vm), _puzzleSolvedCountdown(0),
-	_resetButtonCountdown(0) {
+	: Scene(vm, parentModule, true), _puzzleSolvedCountdown(0),	_resetButtonCountdown(0) {
 
 	_surfaceFlag = true;
 
@@ -1298,7 +1294,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 				// The reset button was clicked
 				sendMessage(_asMouse, 0x2001, 0);
 				_ssResetButton->setVisible(true);
-				_soundResource.play(0x44045000);
+				playSound(0, 0x44045000);
 				_resetButtonCountdown = 12;
 			} else {
 				// Handle the mouse
@@ -1312,7 +1308,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		// The mouse got the cheese (nomnom)
 		setGlobalVar(0x70A1189C, 1);
-		_soundResource.play(0x68E25540);
+		playSound(0, 0x68E25540);
 		showMouse(false);
 		_puzzleSolvedCountdown = 72;
 		break;
@@ -1587,10 +1583,9 @@ static const NPoint kAsScene1405TileItemPositions[] = {
 };
 
 AsScene1405Tile::AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, uint32 index)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _soundResource(vm),
-	_index(index), _countdown(0), _flag(false) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _index(index), _countdown(0), _flag(false) {
 
-	_soundResource.load(0x05308101);
+	loadSound(0, 0x05308101);
 	// TODO _soundResource.setPan
 	_x = kAsScene1405TileItemPositions[_index].x;
 	_y = kAsScene1405TileItemPositions[_index].y;
@@ -1632,7 +1627,7 @@ uint32 AsScene1405Tile::handleMessage(int messageNum, const MessageParam &param,
 void AsScene1405Tile::show() {
 	if (!_flag) {
 		_flag = true;
-		_soundResource.play();
+		playSound(0);
 		setVisible(true);
 	}
 }
@@ -1640,14 +1635,13 @@ void AsScene1405Tile::show() {
 void AsScene1405Tile::hide() {
 	if (_flag) {
 		_flag = false;
-		_soundResource.play();
+		playSound(0);
 		setVisible(false);
 	}
 }
 
 Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _soundResource(vm), _selectFirstTile(true),
-	_tilesLeft(48), _countdown(0) {
+	: Scene(vm, parentModule, true), _selectFirstTile(true), _tilesLeft(48), _countdown(0) {
 
 	_vm->gameModule()->initScene1405Vars();
 	_surfaceFlag = true;
@@ -1675,7 +1669,7 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 			_tilesLeft--;
 	}
 	
-	_soundResource.load(0x68E25540);
+	loadSound(0, 0x68E25540);
 	
 	SetMessageHandler(&Scene1405::handleMessage);
 	SetUpdateHandler(&Scene1405::update);
@@ -1722,7 +1716,7 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 					setSubVar(0xCCE0280F, _secondTileIndex, 1);
 					_tilesLeft -= 2;
 					if (_tilesLeft == 0) {
-						_soundResource.play();
+						playSound(0);
 					}
 				} else {
 					_countdown = 10;

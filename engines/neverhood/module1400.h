@@ -48,8 +48,6 @@ public:
 protected:
 	int _countdown1;
 	int _countdown2;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	void update4662A0();
 	void update466300();
 	uint32 handleMessage466320(int messageNum, const MessageParam &param, Entity *sender);
@@ -64,7 +62,6 @@ public:
 	Class526(NeverhoodEngine *vm, Sprite *class525);
 protected:
 	Sprite *_class525;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void spriteUpdate466720();
 	void sub466770();
@@ -75,7 +72,6 @@ public:
 	Class527(NeverhoodEngine *vm, Sprite *class526);
 protected:
 	Sprite *_class526;
-	SoundResource _soundResource;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void spriteUpdate466920();
 	void sub466970();
@@ -86,7 +82,6 @@ public:
 	Class528(NeverhoodEngine *vm, Sprite *klayman, bool flag);
 protected:
 	Sprite *_klayman;
-	SoundResource _soundResource;
 	int _countdown;
 	bool _flag;
 	void update();
@@ -115,9 +110,6 @@ protected:
 	Sprite *_klayman;
 	Sprite *_class525;
 	const Class489Item *_class489Item;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	int16 _remX;
 	bool _flag;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -168,8 +160,6 @@ public:
 	Class482(NeverhoodEngine *vm, Scene *parentScene, int which);
 protected:
 	Scene *_parentScene;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void sub428500();
 	void sub428530();
@@ -217,7 +207,6 @@ class Scene1407 : public Scene {
 public:
 	Scene1407(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	SoundResource _soundResource;
 	Sprite *_asMouse;
 	Sprite *_ssResetButton;
 	int _puzzleSolvedCountdown;
@@ -267,7 +256,6 @@ public:
 	void hide();
 protected:
 	Scene1405 *_parentScene;
-	SoundResource _soundResource;
 	bool _flag;
 	uint32 _index;
 	int _countdown;
@@ -280,7 +268,6 @@ public:
 	Scene1405(NeverhoodEngine *vm, Module *parentModule, int which);
 	int getCountdown() const { return _countdown; }
 protected:
-	SoundResource _soundResource;
 	bool _selectFirstTile;
 	int _firstTileIndex;
 	int _secondTileIndex;
