@@ -83,8 +83,7 @@ void Module1500::updateScene() {
 // Scene1501
 
 Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3)
-	: Scene(vm, parentModule, true), _soundResource(vm), 
-	_countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _flag(false) {
+	: Scene(vm, parentModule, true), _countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _flag(false) {
 
 	SetUpdateHandler(&Scene1501::update);
 	SetMessageHandler(&Scene1501::handleMessage);
@@ -98,13 +97,8 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 	_palette->addBasePalette(backgroundFileHash, 0, 256, 0);
 	_palette->startFadeToPalette(12);
 
-	/*	
-	if (soundFileHash != 0) {
-		_soundResource.set(soundFileHash);
-		_soundResource.load();
-		_soundResource.play();
-	}
-	*/
+	if (soundFileHash != 0)
+		playSound(0, soundFileHash);
 
 }
 
@@ -121,7 +115,7 @@ void Scene1501::update() {
 			_vm->_screen->clear();
 			leaveScene(0);
 		}
-	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) /*|| !_soundResource.isPlaying()*/) {
+	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) || !isSoundPlaying(0)) {
 		_countdown1 = 12;
 		_palette->startFadeToBlack(11);
 	}

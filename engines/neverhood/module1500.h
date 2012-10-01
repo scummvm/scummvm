@@ -45,7 +45,6 @@ class Scene1501 : public Scene {
 public:
 	Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3);
 protected:
-	SoundResource _soundResource;
 	int _countdown1;
 	int _countdown2;
 	int _countdown3;
