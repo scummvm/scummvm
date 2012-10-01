@@ -187,6 +187,14 @@ public:
 
 	void stStandWonderAbout();
 
+	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
+	void stGrow();
+	void stDrinkPotion();
+
+	uint32 hmInsertKey(int messageNum, const MessageParam &param, Entity *sender);
+	void stInsertKey();
+
 protected:
 	Entity *_parentScene;
 	Sprite *_attachedSprite;
@@ -200,15 +208,12 @@ protected:
 	int16 _idleCounter, _idleCounterMax;
 	int16 _blinkCounter, _blinkCounterMax;
 	int16 _countdown1;
-	int16 _tapesToInsert;
+	int16 _tapesToInsert, _keysToInsert;
 	bool _flagF6;
 	bool _isLeverDown;
 	bool _isWalkingOpenDoorNotified;
 	int _status2;
 	bool _flagFA;
-	SoundResource _soundResource1;
-	SoundResource _soundResource2;
-	SoundResource _soundResource3;
 	int _status3;
 	const KlaymanIdleTableItem *_idleTable;
 	int _idleTableCount;
@@ -217,6 +222,9 @@ protected:
 	bool _soundFlag;
 	
 	bool _isSittingInTeleporter;
+
+	bool _potionFlag1;
+	bool _potionFlag2;
 
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -410,7 +418,7 @@ public:
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	void stCrashDown();
-	void cbCrashDownEvent();
+	void stCrashDownFinished();
 };
 
 class KmScene1306 : public Klayman {
@@ -424,10 +432,7 @@ class KmScene1308 : public Klayman {
 public:
 	KmScene1308(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _flag1;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmInsertDiskSide(int messageNum, const MessageParam &param, Entity *sender);
-	void stInsertDiskSide();
 };
 
 class KmScene1401 : public Klayman {
@@ -651,18 +656,7 @@ public:
 	KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
 		bool flag, NRect *clipRects, uint clipRectsCount);
 protected:
-	SoundResource _soundRes1;
-	SoundResource _soundRes2;
-	SoundResource _soundRes3;
-	SoundResource _soundRes4;
-	SoundResource _soundRes5;
-	bool _potionFlag1;
-	bool _potionFlag2;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
-	void stGrow();
-	void stDrinkPotion();
 };
 
 class KmScene2809 : public Klayman {
@@ -670,18 +664,7 @@ public:
 	KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
 		bool flag, NRect *clipRects, uint clipRectsCount);
 protected:
-	SoundResource _soundRes1;
-	SoundResource _soundRes2;
-	SoundResource _soundRes3;
-	SoundResource _soundRes4;
-	SoundResource _soundRes5;
-	bool _potionFlag1;
-	bool _potionFlag2;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
-	void stGrow();
-	void stDrinkPotion();
 };
 
 class KmScene2810Small : public Klayman {
