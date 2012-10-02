@@ -502,13 +502,13 @@ void Klayman::stTryStandIdle() {
 		_idleCounter = 0;
 		_blinkCounter = 0;
 		_blinkCounterMax = _vm->_rnd->getRandomNumber(64) + 24;
-		SetUpdateHandler(&Klayman::upIdle);
+		SetUpdateHandler(&Klayman::upStandIdle);
 		SetMessageHandler(&Klayman::hmLowLevel);
 		SetSpriteUpdate(NULL);
 	}
 }
 
-void Klayman::upIdle() {
+void Klayman::upStandIdle() {
 	update();
 	if (++_idleCounter >= 720) {
 		_idleCounter = 0;
@@ -588,7 +588,7 @@ void Klayman::stStandAround() {
 	_status2 = 1;
 	_acceptInput = true;
 	startAnimation(0x5420E254, 0, -1);
-	SetUpdateHandler(&Klayman::upIdle);
+	SetUpdateHandler(&Klayman::upStandIdle);
 	SetMessageHandler(&Klayman::hmLowLevel);
 	SetSpriteUpdate(NULL);
 }

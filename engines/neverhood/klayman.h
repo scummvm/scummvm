@@ -318,6 +318,19 @@ protected:
 	// TODO Check if this can be turned into a void result
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
+	void startWalkToX(int16 x, bool flag);
+	void startWalkToXExt(int16 x);
+	void startWalkToXSmall(int16 x);
+	void startSpecialWalkLeft(int16 x);
+	void startSpecialWalkRight(int16 x);
+	void sub41CC40(int16 x1, int16 x2);
+	void sub41CCE0(int16 x);
+
+	bool stStartActionFromIdle(AnimationCb callback);
+	void gotoNextStateExt();
+	void sub41C770();
+	void sub41C790();
+	
 	void stIdlePickEar();
 	void evIdlePickEarDone();
 	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
@@ -338,19 +351,12 @@ protected:
 	void startIdleAnimation(uint32 fileHash, AnimationCb callback);
 	void upIdleAnimation();
 
-	bool stStartActionFromIdle(AnimationCb callback);
-	void gotoNextStateExt();
-	void sub41C770();
-	void sub41C790();
-	
-	void upIdle();
+	void upStandIdle();
 
 	void stIdleBlink();
 	void stStandAround();
 	
 	uint32 hmStartAction(int messageNum, const MessageParam &param, Entity *sender);
-
-	void startWalkToX(int16 x, bool flag);
 
 	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
 	
@@ -359,7 +365,6 @@ protected:
 	void stSneak();
 	void stWalkingDone();
 	uint32 hmSneaking(int messageNum, const MessageParam &param, Entity *sender);
-	void startSpecialWalkLeft(int16 x);
 	void stStartWalking();
 	uint32 hmStartWalking(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -367,10 +372,6 @@ protected:
 	
 	uint32 hmPressButton(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void startSpecialWalkRight(int16 x);
-	void sub41CC40(int16 x1, int16 x2);
-	void startWalkToXExt(int16 x);
-	void sub41CCE0(int16 x);
 	void stLargeStepDone();
 	
 	uint32 hmLargeStep(int messageNum, const MessageParam &param, Entity *sender);
@@ -393,7 +394,6 @@ protected:
 	
 	uint32 hmInsertDisk(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void startWalkToXSmall(int16 x);
 	void stStartWalkingSmall();
 	uint32 hmWalkingSmall(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmWalkFrontBackSmall(int messageNum, const MessageParam &param, Entity *sender);
