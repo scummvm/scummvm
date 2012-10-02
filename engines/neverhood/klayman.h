@@ -129,10 +129,10 @@ public:
 	void spriteUpdate41F300();
 	void suWalkingTestExit();
 
-	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmLowLevel(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmLowLevelAnimation(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmWalking(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage41E210(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmLever(int messageNum, const MessageParam &param, Entity *sender);
 
 	void setKlaymanIdleTable(const KlaymanIdleTableItem *table, int tableCount);
 	void setKlaymanIdleTable1();
@@ -214,6 +214,59 @@ public:
 	void suRidePlatformDown();
 	void stRidePlatformDown();
 
+	void stCrashDown();
+	void stCrashDownFinished();
+
+	void upSpitOutFall();
+	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
+	void suFallDown();
+	void stJumpToRingVenusFlyTrap();
+	void stStandIdleSpecial();
+	void stSpitOutFall0();
+	void stFalling();
+	void stSpitOutFall2();
+	void stFallTouchdown();
+	void stJumpAndFall();
+	void stDropFromRing();
+	void stPressDoorButton();
+	void stHitByBoxingGlove();
+	void stHitByBoxingGloveDone();
+	void stMoveVenusFlyTrap();
+	void stContinueMovingVenusFlyTrap();
+	void stMoveVenusFlyTrapDone();
+
+	void suFallSkipJump();
+	void stFallSkipJump();
+
+	void upMoveObject();
+	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
+	void stFetchMatch();
+	void stLightMatch();
+	uint32 hmMoveObject(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
+	void stMoveObject();
+	void stContinueMoveObject();
+	void stTumbleHeadless();
+	void stCloseEyes();
+
+	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
+	void stTrySpitIntoPipe();
+	void spitIntoPipe();
+	void stContSpitIntoPipe();
+
+	void suRidePlatform();
+	void stRidePlatform();
+	void stInteractLever();
+	void stPullLever();
+	void stLookLeverDown();
+	void stWaitLeverDown();
+
 	void startWalkingResume(int16 frameIncr);
 
 protected:
@@ -249,7 +302,20 @@ protected:
 
 	int16 _platformDeltaY;
 
+	Sprite *_otherSprite;
+	int _idleTableNum;
+
+	int _moveObjectCountdown;
+
+	bool _canSpitPipe;
+	bool _contSpitPipe;
+	bool _readyToSpit;
+	uint32 _spitPipeIndex;
+	uint32 _spitDestPipeIndex;
+	uint32 _spitContDestPipeIndex;
+
 	virtual void xUpdate();
+	// TODO Check if this can be turned into a void result
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
 	void stIdlePickEar();
@@ -347,33 +413,8 @@ class KmScene1002 : public Klayman {
 public:
 	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	Sprite *_otherSprite;
-	int _idleTableNum;
 	void xUpdate();	
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void upSpitOutFall();
-	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
-	void suFallDown();
-	void stJumpToRingVenusFlyTrap();
-	void stStandIdleSpecial();
-	void stSpitOutFall0();
-	void stFalling();
-	void stSpitOutFall2();
-	void stFallTouchdown();
-	void stJumpAndFall();
-	void stDropFromRing();
-	void stPressDoorButton();
-	void stHitByBoxingGlove();
-	void stHitByBoxingGloveDone();
-	void stMoveVenusFlyTrap();
-	void stContinueMovingVenusFlyTrap();
-	void stMoveVenusFlyTrapDone();
 };
 
 class KmScene1004 : public Klayman {
@@ -394,18 +435,7 @@ class KmScene1201 : public Klayman {
 public:
 	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	int _countdown;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void upMoveObject();
-	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
-	void stFetchMatch();
-	void stLightMatch();
-	uint32 hmMoveObject(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
-	void stMoveObject();
-	void stMoveObjectSkipTurn();
-	void stTumbleHeadless();
-	void stCloseEyes();
 };
 
 class KmScene1303 : public Klayman {
@@ -427,8 +457,6 @@ public:
 	KmScene1305(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stCrashDown();
-	void stCrashDownFinished();
 };
 
 class KmScene1306 : public Klayman {
@@ -485,8 +513,6 @@ public:
 	KmScene1705(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void suFallSkipJump();
-	void stFallSkipJump();
 };
 
 class KmScene1901 : public Klayman {
@@ -548,12 +574,6 @@ public:
 	KmScene2207(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void suRidePlatform();
-	void stRidePlatform();
-	void stInteractLever();
-	void stPullLever();
-	void stLookLeverDown();
-	void stWaitLeverDown();
 };
 
 class KmScene2242 : public Klayman {
@@ -587,17 +607,7 @@ class KmScene2401 : public Klayman {
 public:
 	KmScene2401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
-	bool _canSpitPipe;
-	bool _contSpitPipe;
-	bool _readyToSpit;
-	uint32 _spitPipeIndex;
-	uint32 _spitDestPipeIndex;
-	uint32 _spitContDestPipeIndex;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
-	void stTrySpitIntoPipe();
-	void spitIntoPipe();
-	void stContSpitIntoPipe();
 };
 
 class KmScene2402 : public Klayman {
