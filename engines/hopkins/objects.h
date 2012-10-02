@@ -93,7 +93,6 @@ public:
 	int CHANGEVERBE;
 	int verbe;
 	int Vold_taille;
-	int TOTAL_LIGNES;
 	bool SPEED_FLAG;
 	int SPEED_X, SPEED_Y;
 	int SPEED_IMAGE;
@@ -122,11 +121,6 @@ public:
 	int OBSSEUL;
 	int NVVERBE;
 	int NVZONE;
-	int NV_LIGNEDEP;
-	int NV_LIGNEOFS;
-	int NV_POSI;
-	int NVPX;
-	int NVPY;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -202,14 +196,12 @@ public:
 	
 	void INVENT();
 	void CHANGE_TETE(int a1, int a2);
-	byte *PARCOURS2(int a1, int a2, int a3, int a4);
 	void VERIFTAILLE();
 	void PACOURS_PROPRE(byte *a1);
 	byte *PARC_VOITURE(int a1, int a2, int a3, int a4);
 	void VERBEPLUS();
 	void BTDROITE();
 	int MZONE();
-	void CLEAR_ZONE();
 	void RESET_OBSTACLE();
 	int ZONE_OBJET(int a1, int a2);
 	void PARAMCADRE(int a1);
@@ -242,8 +234,6 @@ public:
 	int Control_If(const byte *dataP, int a2);
 	void VERBE_OFF(int a1, int a2);
 	void VERBE_ON(int a1, int a2);
-	int PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
-	int MIRACLE(int a1, int a2, int a3, int a4, int a5);
 	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9);
 	int CALC_PROPRE(int idx);
 	int PLAN_TEST(byte *a1, int a2, int a3, int a4, int a5, int a6);

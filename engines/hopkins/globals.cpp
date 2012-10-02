@@ -235,16 +235,16 @@ void Globals::clearAll() {
 	chemin = PTRNUL;
 
 	for (int idx = 0; idx < 400; ++idx) {
-		Ligne[idx].field0 = 0;
-		Ligne[idx].field2 = 0;
-		Ligne[idx].field4 = 0;
-		Ligne[idx].field6 = 0;
-		Ligne[idx].field8 = 0;
-		Ligne[idx].field12 = PTRNUL;
+		_vm->_linesManager.Ligne[idx].field0 = 0;
+		_vm->_linesManager.Ligne[idx].field2 = 0;
+		_vm->_linesManager.Ligne[idx].field4 = 0;
+		_vm->_linesManager.Ligne[idx].field6 = 0;
+		_vm->_linesManager.Ligne[idx].field8 = 0;
+		_vm->_linesManager.Ligne[idx].field12 = PTRNUL;
 
-		LigneZone[idx].field0 = 0;
-		LigneZone[idx].field2 = 0;
-		LigneZone[idx].field4 = PTRNUL;
+		_vm->_linesManager.LigneZone[idx].field0 = 0;
+		_vm->_linesManager.LigneZone[idx].field2 = 0;
+		_vm->_linesManager.LigneZone[idx].field4 = PTRNUL;
 	}
 
 	for (int idx = 0; idx < 100; ++idx) {

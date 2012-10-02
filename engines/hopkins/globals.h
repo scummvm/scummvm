@@ -47,22 +47,6 @@ struct ZonePItem {
 	int field16;
 };
 
-struct LigneItem {
-	int field0;
-	int field2;
-	int field4;
-	int field6;
-	int field8;
-	byte *fieldC;
-	byte *field12;
-};
-
-struct LigneZoneItem {
-	int field0;
-	int field2;
-	byte *field4;
-};
-
 struct CarreZoneItem {
 	int field0;
 	int field2;
@@ -332,8 +316,6 @@ public:
 	byte *BUF_ZONE;
 	byte *CACHE_BANQUE[6];
 	ZonePItem ZONEP[106];
-	LigneItem Ligne[400];
-	LigneZoneItem LigneZone[401];
 	CarreZoneItem CarreZone[101];
 	BqeAnimItem Bqe_Anim[35];
 	BankItem Bank[8];
@@ -432,6 +414,8 @@ public:
 	int ACTION_SENS;
 	int STOP_BUG;
 	int SegmentEnCours;
+	int NVPX;
+	int NVPY;
 
 	int force_to_data_0;
 	int oldzone_46;

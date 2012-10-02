@@ -36,6 +36,7 @@
 #include "hopkins/font.h"
 #include "hopkins/globals.h"
 #include "hopkins/graphics.h"
+#include "hopkins/lines.h"
 #include "hopkins/menu.h"
 #include "hopkins/objects.h"
 #include "hopkins/sound.h"
@@ -101,6 +102,7 @@ public:
 	FontManager _fontManager;
 	Globals _globals;
 	GraphicsManager _graphicsManager;
+	LinesManager _linesManager;
 	MenuManager _menuManager;
 	ObjectsManager _objectsManager;
 	SoundManager _soundManager;

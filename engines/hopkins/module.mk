@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	graphics.o \
 	globals.o \
 	hopkins.o \
+	lines.o \
 	menu.o \
 	objects.o \
 	sound.o \

@@ -177,7 +177,6 @@ public:
 	void INI_ECRAN2(const Common::String &file);
 	void OPTI_INI(const Common::String &file, int a2);
 	void NB_SCREEN();
-	int colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6);
 };
 
 } // End of namespace Hopkins
