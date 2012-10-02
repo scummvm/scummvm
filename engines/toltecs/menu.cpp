@@ -58,7 +58,12 @@ int MenuSystem::run(MenuID menuId) {
 	_editingDescription = false;
 
 	_running = true;
+
+	// TODO: It seems the Y coordinate of the entire GUI should be offset
+	// by this much to be drawn correctly. At least, that appears to be the
+	// case for the main menu at the start of the game.
 	_top = 30 - _vm->_guiHeight / 2;
+
 	_needRedraw = false;
 
 	// TODO: buildColorTransTable2
