@@ -1045,8 +1045,8 @@ int LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 							if (v23 == -1)
 								return 0;
 							v7 = v23;
-							if (_vm->_globals.NVPY != -1)
-								v22 = _vm->_globals.NVPY - v40;
+							if (NVPY != -1)
+								v22 = NVPY - v40;
 						}
 						v24 = v7;
 						_vm->_globals.super_parcours[v24] = v41;
@@ -1073,8 +1073,8 @@ LABEL_186:
 							if (v26 == -1)
 								return 0;
 							v7 = v26;
-							if (_vm->_globals.NVPY != -1)
-								v25 = v40 - _vm->_globals.NVPY;
+							if (NVPY != -1)
+								v25 = v40 - NVPY;
 						}
 						v27 = v7;
 						_vm->_globals.super_parcours[v27] = v41;
@@ -1097,8 +1097,8 @@ LABEL_186:
 							if (v29 == -1)
 								return 0;
 							v7 = v29;
-							if (_vm->_globals.NVPX != -1)
-								v28 = v41 - _vm->_globals.NVPX;
+							if (NVPX != -1)
+								v28 = v41 - NVPX;
 						}
 						v30 = v7;
 						_vm->_globals.super_parcours[v30] = v41 - v28;
@@ -1121,8 +1121,8 @@ LABEL_186:
 							if (v32 == -1)
 								return 0;
 							v7 = v32;
-							if (_vm->_globals.NVPX != -1)
-								v31 = _vm->_globals.NVPX - v41;
+							if (NVPX != -1)
+								v31 = NVPX - v41;
 						}
 						v33 = v7;
 						_vm->_globals.super_parcours[v33] = v31 + v41;
@@ -1457,8 +1457,8 @@ LABEL_17:
 		}
 	}
 	if (v78 < a3 - 1 || v78 > a3 + 1 || v79 < a4 - 1 || v79 > a4 + 1) {
-		_vm->_globals.NVPX = v78;
-		_vm->_globals.NVPY = v79;
+		NVPX = v78;
+		NVPY = v79;
 		if (a1 < v80) {
 			v40 = v80 - a1;
 			if (v80 - a1 < 0)
@@ -1534,38 +1534,38 @@ LABEL_17:
 		if (a1 == v80)
 			v99 = CONTOURNE(a1, a2, v99, a1, v77, a8, a9);
 		do {
-			v64 = colision2_ligne(_vm->_globals.NVPX, _vm->_globals.NVPY, &v101, &v100, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES);
+			v64 = colision2_ligne(NVPX, NVPY, &v101, &v100, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES);
 			if (v64 == 1) {
 				v50 = 16 * v100;
 				if (*(uint16 *)&Ligne[v50 + 4] == 1)
-					--_vm->_globals.NVPY;
+					--NVPY;
 				if (*(uint16 *)&Ligne[v50 + 4] == 2) {
-					--_vm->_globals.NVPY;
-					++_vm->_globals.NVPX;
+					--NVPY;
+					++NVPX;
 				}
 				if (*(uint16 *)&Ligne[v50 + 4] == 3)
-					++_vm->_globals.NVPX;
+					++NVPX;
 				if (*(uint16 *)&Ligne[v50 + 4] == 4) {
-					++_vm->_globals.NVPY;
-					++_vm->_globals.NVPX;
+					++NVPY;
+					++NVPX;
 				}
 				if (*(uint16 *)&Ligne[v50 + 4] == 5)
-					++_vm->_globals.NVPY;
+					++NVPY;
 				if (*(uint16 *)&Ligne[v50 + 4] == 6) {
-					++_vm->_globals.NVPY;
-					--_vm->_globals.NVPX;
+					++NVPY;
+					--NVPX;
 				}
 				if (*(uint16 *)&Ligne[v50 + 4] == 7)
-					--_vm->_globals.NVPX;
+					--NVPX;
 				if (*(uint16 *)&Ligne[v50 + 4] == 8) {
-					--_vm->_globals.NVPY;
-					--_vm->_globals.NVPX;
+					--NVPY;
+					--NVPX;
 				}
 			}
 		} while (v64);
 	} else {
-		_vm->_globals.NVPX = -1;
-		_vm->_globals.NVPY = -1;
+		NVPX = -1;
+		NVPY = -1;
 	}
 	return v99;
 }
@@ -2086,8 +2086,8 @@ LABEL_201:
 								if (v58 == -1)
 									goto LABEL_282;
 								v112 = v58;
-								if (_vm->_globals.NVPY != -1)
-									v56 = a2 - _vm->_globals.NVPY;
+								if (NVPY != -1)
+									v56 = a2 - NVPY;
 							}
 							v59 = v112;
 							_vm->_globals.super_parcours[v59] = a1;
@@ -2110,8 +2110,8 @@ LABEL_201:
 								if (v61 == -1)
 									goto LABEL_282;
 								v112 = v61;
-								if (_vm->_globals.NVPY != -1)
-									v60 = _vm->_globals.NVPY - a2;
+								if (NVPY != -1)
+									v60 = NVPY - a2;
 							}
 							v62 = v112;
 							_vm->_globals.super_parcours[v62] = a1;
@@ -2134,8 +2134,8 @@ LABEL_201:
 								if (v64 == -1)
 									goto LABEL_282;
 								v112 = v64;
-								if (_vm->_globals.NVPX != -1)
-									v63 = a1 - _vm->_globals.NVPX;
+								if (NVPX != -1)
+									v63 = a1 - NVPX;
 							}
 							v65 = v112;
 							_vm->_globals.super_parcours[v65] = a1 - v63;
@@ -2158,8 +2158,8 @@ LABEL_201:
 								if (v67 == -1)
 									goto LABEL_282;
 								v112 = v67;
-								if (_vm->_globals.NVPX != -1)
-									v66 = _vm->_globals.NVPX - a1;
+								if (NVPX != -1)
+									v66 = NVPX - a1;
 							}
 							v68 = v112;
 							_vm->_globals.super_parcours[v68] = v66 + a1;
@@ -2355,9 +2355,1153 @@ LABEL_282:
 }
 
 int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
-	warning("TODO: PARC_PERS");
+	int v7;
+	int v8; 
+	int v9; 
+	int v10;
+	int v11;
+	int v12;
+	int v13;
+	int v14;
+	int v15;
+	int v16;
+	byte *v17;
+	int v18;
+	int v19;
+	int v20;
+	int v21;
+	int v22;
+	int v23;
+	int v24;
+	int v25;
+	byte *v26;
+	int v27;
+	byte *v28;
+	byte *v29;
+	int v30;
+	int v31;
+	byte *v32;
+	int v33;
+	int v34;
+	byte *v35;
+	int v36;
+	int v37;
+	byte *v38;
+	int v39;
+	int v40;
+	int v41;
+	byte *v42;
+	int v43;
+	int v44;
+	int v45;
+	int v46;
+	byte *v47;
+	int v48;
+	byte *v49;
+	byte *v50;
+	int v51;
+	int v52;
+	byte *v53;
+	int v54;
+	int v55;
+	int v56;
+	byte *v57;
+	int v58;
+	int v59;
+	byte *v60;
+	int v61;
+	int v62;
+	int v63;
+	byte *v64;
+	int v65;
+	int v66;
+	int v67;
+	int v68;
+	byte *v69;
+	int v70;
+	byte *v71;
+	byte *v72;
+	int v73;
+	int v74;
+	int v76;
+	byte *v77; 
+	byte *v78; 
+	int v79; 
+	byte *v80; 
+	int v81; 
+	byte *v82; 
+	int v83; 
+	byte *v84; 
+	int v85; 
+	byte *v86; 
+	int v87; 
+	byte *v88; 
+	int v89; 
+	int v90; 
+	int v91; 
+	int v92; 
+	int v93; 
+	int v94; 
+	int v95; 
+	int v96; 
+	int v97; 
+	int v98; 
+	int v99; 
+	int v100;
+	int v101;
+	int v102;
+	int v103;
+	int v104;
+	int v105;
+	int v106;
+	int v107;
+	int v108;
+	int v109;
+	int v110;
+	int v111;
+	int v112;
+	int v113;
+	int v114;
+	int v115;
+	int v116;
+	int v117;
+	int v118;
+	int v119;
+	int v120;
+	int v121;
+	int v122;
+	int v123;
+	int v124;
+	int v125;
+	int v126;
+	int v127;
+	int v128;
+	int v129;
+	int v130;
+	int v131;
+	int v132;
+	int v133;
+	int v134;
+	int v135;
+	int v136;
+	int v137;
+	int v138;
+	int v139;
+	int v140; 
+	int v141; 
+	int v142; 
+	int v143; 
+	int v144; 
+	int v145;
+	int colResult;
+
+	v7 = a1;
+	v90 = a2;
+	v137 = a7;
+	v136 = 0;
+	if (a5 == -1 && a6 == -1)
+		v136 = 1;
+	v144 = a5;
+	if (colision2_ligne(a1, a2, &v145, &v144, 0, TOTAL_LIGNES) == 1) {
+		v8 = Ligne[v144].field4;
+		if (v8 == 1)
+			v90 = a2 - 2;
+		if (v8 == 2) {
+			v90 -= 2;
+			v7 = a1 + 2;
+		}
+		if (v8 == 3)
+			v7 += 2;
+		if (v8 == 4) {
+			v90 += 2;
+			v7 += 2;
+		}
+		if (v8 == 5)
+			v90 += 2;
+		if (v8 == 6) {
+			v90 += 2;
+			v7 -= 2;
+		}
+		if (v8 == 7)
+			v7 -= 2;
+		if (v8 == 8) {
+			v90 -= 2;
+			v7 -= 2;
+		}
+	}
+	v98 = v7;
+	v97 = v90;
+	v115 = 0;
+	v142 = -1;
+	v140 = -1;
+	v138 = -1;
+	while (1) {
+		v111 = v7;
+		v109 = v90;
+		if (a3 >= v7 - 2 && a3 <= v7 + 2 && a4 >= v90 - 2 && a4 <= v90 + 2) {
+LABEL_149:
+			v27 = v115;
+			v28 = _vm->_globals.essai0;
+			WRITE_LE_UINT16(_vm->_globals.essai0 + 2 * v27, (uint16)-1);
+			WRITE_LE_UINT16(v28 + 2 * v27 + 2, (uint16)-1);
+			WRITE_LE_UINT16(v28 + 2 * v27 + 4, (uint16)-1);
+LABEL_150:
+			if (v115) {
+				v127 = 0;
+				v116 = 0;
+				v29 = _vm->_globals.essai0;
+				do {
+					v30 = v137;
+					_vm->_globals.super_parcours[v30] = READ_LE_UINT16(v29 + 2 * v116);
+					_vm->_globals.super_parcours[v30 + 1] = READ_LE_UINT16(v29 + 2 * v116 + 2);
+					_vm->_globals.super_parcours[v30 + 2] = READ_LE_UINT16(v29 + 2 * v116 + 4);
+					_vm->_globals.super_parcours[v30 + 3] = 0;
+					v116 += 3;
+					v137 += 4;
+					if (READ_LE_UINT16(v29 + 2 * v116) == -1) {
+						if (READ_LE_UINT16(v29 + 2 * v116 + 2) == -1)
+							v127 = 1;
+					}
+				} while (v127 != 1);
+			}
+			goto LABEL_248;
+		}
+		v9 = v7 - a3;
+		if (v7 - a3 < 0)
+			v9 = -v9;
+		v10 = v9 + 1;
+		v11 = v90 - a4;
+		if (v90 - a4 < 0)
+			v11 = -v11;
+		v107 = v11 + 1;
+		if (v10 > (signed __int16)(v11 + 1))
+			v107 = v10;
+		v12 = v107 - 1;
+		v101 = 1000 * v10 / v12;
+		v99 = 1000 * (signed __int16)(v11 + 1) / v12;
+		if (a3 < v7)
+			v101 = -v101;
+		if (a4 < v90)
+			v99 = -v99;
+		v13 = (signed __int16)v101 / 1000;
+		v94 = (signed __int16)v99 / 1000;
+		v91 = -1;
+		if ((signed __int16)v99 / 1000 == -1 && (unsigned int)v101 <= 0x96)
+			v91 = 1;
+		if (v13 == 1) {
+			if ((unsigned int)(v99 + 1) <= 0x97)
+				v91 = 3;
+			if ((unsigned int)v99 <= 0x96)
+				v91 = 3;
+		}
+		if (v94 == 1) {
+			if ((unsigned int)v101 <= 0x96)
+				v91 = 5;
+			if ((unsigned int)(v101 + 150) <= 0x96)
+				v91 = 5;
+		}
+		if (v13 == -1) {
+			if ((unsigned int)v99 <= 0x96)
+				v91 = 7;
+			if ((unsigned int)(v99 + 150) <= 0x96)
+				v91 = 7;
+		}
+		if (v94 == -1 && (unsigned int)(v101 + 150) <= 0x96)
+			v91 = 1;
+		if (v91 == -1 && !VERIF_SMOOTH(v7, v109, a3, a4) && SMOOTH_MOVE(0, a3, v7, v109, a3, a4) != -1)
+			break;
+LABEL_72:
+		v19 = v111 - a3;
+		if (v111 - a3 < 0)
+			v19 = -v19;
+		v20 = v19 + 1;
+		v95 = v109 - a4;
+		if (v95 < 0)
+			v95 = -(v109 - a4);
+		v108 = v95 + 1;
+		if (v20 > (signed __int16)(v95 + 1))
+			v108 = v20;
+		if (v108 <= 10)
+			goto LABEL_149;
+		v21 = v108 - 1;
+		v102 = 1000 * v20 / v21;
+		v100 = 1000 * (signed __int16)(v95 + 1) / v21;
+		if (a3 < v111)
+			v102 = -v102;
+		if (a4 < v109)
+			v100 = -v100;
+		v22 = (signed __int16)v102 / 1000;
+		v96 = (signed __int16)v100 / 1000;
+		v106 = 1000 * v111;
+		v105 = 1000 * v109;
+		v104 = 1000 * v111 / 1000;
+		v103 = v105 / 1000;
+		if (!((signed __int16)v102 / 1000) && v96 == -1)
+			v91 = 1;
+		if (v22 == 1) {
+			if (v96 == -1)
+				v91 = 2;
+			if (!v96)
+				v91 = 3;
+			if (v96 == 1)
+				v91 = 4;
+		}
+		if (!v22 && v96 == 1)
+			v91 = 5;
+		if (v22 != -1)
+			goto LABEL_103;
+		if (v96 == 1)
+			v91 = 6;
+		if (!v96)
+			v91 = 7;
+		if (v96 == -1) {
+			v91 = 8;
+LABEL_103:
+			if (v96 == -1) {
+				if ((unsigned int)v102 <= 0x1FE)
+					v91 = 1;
+				if ((unsigned int)(v102 - 510) <= 0x1EA)
+					v91 = 2;
+			}
+		}
+		if (v22 == 1) {
+			if ((unsigned int)(v100 + 1) <= 0x1FF)
+				v91 = 2;
+			if ((unsigned int)(v100 + 510) <= 0x1FE)
+				v91 = 3;
+			if ((unsigned int)v100 <= 0x1FE)
+				v91 = 3;
+			if ((unsigned int)(v100 - 510) <= 0x1EA)
+				v91 = 4;
+		}
+		if (v96 == 1) {
+			if ((unsigned int)(v102 - 510) <= 0x1EA)
+				v91 = 4;
+			if ((unsigned int)v102 <= 0x1FE)
+				v91 = 5;
+			if (v102 >= -1 && v102 <= -510)
+				v91 = 6;
+			if ((unsigned int)(v102 + 510) <= 0x1FE)
+				v91 = 5;
+		}
+		if (v22 == -1) {
+			if ((unsigned int)(v100 - 510) <= 0x1EA)
+				v91 = 6;
+			if ((unsigned int)v100 <= 0x1FE)
+				v91 = 7;
+			if ((unsigned int)(v100 + 1000) <= 0x1EA)
+				v91 = 8;
+			if ((unsigned int)(v100 + 510) <= 0x1FE)
+				v91 = 7;
+		}
+		if (v96 == -1) {
+			if ((unsigned int)(v102 + 1000) <= 0x1EA)
+				v91 = 8;
+			if ((unsigned int)(v102 + 510) <= 0x1FE)
+				v91 = 1;
+		}
+		v23 = 0;
+		if (v108 + 1 <= 0)
+			goto LABEL_149;
+		while (colision2_ligne(v104, v103, &v143, &v142, 0, TOTAL_LIGNES) != 1) {
+			v25 = v115;
+			v26 = _vm->_globals.essai0;
+			WRITE_LE_UINT16(_vm->_globals.essai0 + 2 * v25, v104);
+			WRITE_LE_UINT16(v26 + 2 * v25 + 2, v103);
+			WRITE_LE_UINT16(v26 + 2 * v25 + 4, v91);
+			v106 += v102;
+			v105 += v100;
+			v104 = v106 / 1000;
+			v103 = v105 / 1000;
+			v115 += 3;
+			++v23;
+			if (v23 >= v108 + 1)
+				goto LABEL_149;
+		}
+		if (_vm->_objectsManager.DERLIGNE >= v142)
+			goto LABEL_157;
+		v24 = GENIAL(v142, v143, v104, v103, a3, a4, v115, _vm->_globals.essai0, 3);
+		if (v24 == -1)
+			goto LABEL_150;
+		v115 = v24;
+		if (NVPX != -1 || NVPY != -1) {
+LABEL_67:
+			v142 = -1;
+			goto LABEL_157;
+		}
+		v7 = -1;
+		v90 = -1;
+	}
+	v91 = SMOOTH_SENS;
+	v14 = 0;
+	while (1) {
+		v15 = SMOOTH[v14].field0;
+		v112 = v15;
+		v110 = SMOOTH[v14].field2;
+		if (v15 == -1 || SMOOTH[v14].field2 == -1) {
+			v126 = 1;
+			goto LABEL_70;
+		}
+		if (colision2_ligne(v15, v110, &v143, &v142, 0, TOTAL_LIGNES) == 1)
+			break;
+		v16 = v115;
+		v17 = _vm->_globals.essai0;
+		WRITE_LE_UINT16(_vm->_globals.essai0 + 2 * v16, v112);
+		WRITE_LE_UINT16(v17 + 2 * v16 + 2, v110);
+		WRITE_LE_UINT16(v17 + 2 * v16 + 4, v91);
+		v115 += 3;
+		++v14;
+LABEL_70:
+		if (v126 == 1) {
+			v18 = v14 - 1;
+			v111 = SMOOTH[v18].field0;
+			v109 = SMOOTH[v18].field2;
+			goto LABEL_72;
+		}
+	}
+	if (v142 > _vm->_objectsManager.DERLIGNE)
+		goto LABEL_67;
+LABEL_157:
+	v31 = v115;
+	v32 = _vm->_globals.essai0;
+	WRITE_LE_UINT16(_vm->_globals.essai0 + 2 * v31, (uint16)-1);
+	WRITE_LE_UINT16(v32 + 2 * v31 + 2, (uint16)-1);
+	WRITE_LE_UINT16(v32 + 2 * v31 + 4, (uint16)-1);
+	v117 = 0;
+	v33 = v98;
+	v92 = v97;
+LABEL_158:
+	v113 = v33;
+	if (a3 >= v33 - 2 && a3 <= v33 + 2 && a4 >= v92 - 2 && a4 <= v92 + 2)
+		goto LABEL_194;
+	if (v33 >= a3) {
+LABEL_165:
+		if (v113 > a3) {
+			v36 = v113;
+			while (colision2_ligne(v36, v92, &v141, &v140, 0, TOTAL_LIGNES) != 1) {
+				v37 = v117;
+				v38 = _vm->_globals.essai1;
+				WRITE_LE_UINT16(_vm->_globals.essai1 + 2 * v37, v36);
+				WRITE_LE_UINT16(v38 + 2 * v37 + 2, v92);
+				WRITE_LE_UINT16(v38 + 2 * v37 + 4, 7);
+				v117 += 3;
+				--v36;
+				if (a3 >= v36)
+					goto LABEL_171;
+			}
+			goto LABEL_168;
+		}
+LABEL_171:
+		if (v92 >= a4) {
+LABEL_181:
+			if (v92 > a4) {
+				v43 = v92;
+				do {
+					if (colision2_ligne(a3, v43, &v141, &v140, 0, TOTAL_LIGNES) == 1) {
+						if (_vm->_objectsManager.DERLIGNE < v140) {
+							v44 = GENIAL(v140, v141, a3, v43, a3, a4, v117, _vm->_globals.essai1, 3);
+							if (v44 == -1)
+								goto LABEL_195;
+							v117 = v44;
+							if (NVPX != -1) {
+								if (NVPY != -1) {
+									v33 = NVPX;
+									v92 = NVPY;
+									v45 = colision2_ligne(NVPX, NVPY, &v141, &v140, 0, _vm->_objectsManager.DERLIGNE);
+									goto LABEL_189;
+								}
+							}
+						}
+						if (v140 <= _vm->_objectsManager.DERLIGNE)
+							goto LABEL_202;
+					}
+					v46 = v117;
+					v47 = _vm->_globals.essai1;
+					WRITE_LE_UINT16(_vm->_globals.essai1 + 2 * v46, a3);
+					WRITE_LE_UINT16(v47 + 2 * v46 + 2, v43);
+					WRITE_LE_UINT16(v47 + 2 * v46 + 4, 1);
+					v117 += 3;
+					--v43;
+				} while (a4 < v43);
+			}
+LABEL_194:
+			v48 = v117;
+			v49 = _vm->_globals.essai1;
+			WRITE_LE_UINT16(_vm->_globals.essai1 + 2 * v48, (uint16)-1);
+			WRITE_LE_UINT16(v49 + 2 * v48 + 2, (uint16)-1);
+			WRITE_LE_UINT16(v49 + 2 * v48 + 4, (uint16)-1);
+LABEL_195:
+			if (v117) {
+				v128 = 0;
+				v118 = 0;
+				v50 = _vm->_globals.essai1;
+				do {
+					v51 = v137;
+					_vm->_globals.super_parcours[v51] = READ_LE_UINT16(v50 + 2 * v118);
+					_vm->_globals.super_parcours[v51 + 1] = READ_LE_UINT16(v50 + 2 * v118 + 2);
+					_vm->_globals.super_parcours[v51 + 2] = READ_LE_UINT16(v50 + 2 * v118 + 4);
+					_vm->_globals.super_parcours[v51 + 3] = 0;
+					v118 += 3;
+					v137 += 4;
+					if (READ_LE_UINT16(v50 + 2 * v118) == -1 && READ_LE_UINT16(v50 + 2 * v118 + 2) == -1)
+						v128 = 1;
+				} while (v128 != 1);
+			}
+			goto LABEL_248;
+		}
+		v39 = v92;
+		while (1) {
+			if (colision2_ligne(a3, v39, &v141, &v140, 0, TOTAL_LIGNES) == 1) {
+				if (_vm->_objectsManager.DERLIGNE < v140) {
+					v40 = GENIAL(v140, v141, a3, v39, a3, a4, v117, _vm->_globals.essai1, 3);
+					if (v40 == -1)
+						goto LABEL_195;
+					v117 = v40;
+					if (NVPX != -1) {
+						if (NVPY != -1) {
+							v33 = NVPX;
+							v92 = NVPY;
+							v45 = colision2_ligne(NVPX, NVPY, &v141, &v140, 0, _vm->_objectsManager.DERLIGNE);
+LABEL_189:
+							if (v45 == 1 && v140 <= _vm->_objectsManager.DERLIGNE)
+								goto LABEL_202;
+							goto LABEL_158;
+						}
+					}
+				}
+				if (v140 <= _vm->_objectsManager.DERLIGNE)
+					goto LABEL_202;
+			}
+			v41 = v117;
+			v42 = _vm->_globals.essai1;
+			WRITE_LE_UINT16(_vm->_globals.essai1 + 2 * v41, a3);
+			WRITE_LE_UINT16(v42 + 2 * v41 + 2, v39);
+			WRITE_LE_UINT16(v42 + 2 * v41 + 4, 5);
+			v117 += 3;
+			++v39;
+			if (a4 <= v39)
+				goto LABEL_181;
+		}
+	}
+	while (colision2_ligne(v33, v92, &v141, &v140, 0, TOTAL_LIGNES) != 1) {
+		v34 = v117;
+		v35 = _vm->_globals.essai1;
+		WRITE_LE_UINT16(_vm->_globals.essai1 + 2 * v34,v33);
+		WRITE_LE_UINT16(v35 + 2 * v34 + 2, v92);
+		WRITE_LE_UINT16(v35 + 2 * v34 + 4, 3);
+		v117 += 3;
+		++v33;
+		if (a3 <= v33)
+			goto LABEL_165;
+	}
+LABEL_168:
+	if (v140 > _vm->_objectsManager.DERLIGNE)
+		v140 = -1;
+LABEL_202:
+	v52 = v117;
+	v53 = _vm->_globals.essai1;
+	WRITE_LE_UINT16(_vm->_globals.essai1 + 2 * v52, (uint16)-1);
+	WRITE_LE_UINT16(v53 + 2 * v52 + 2, (uint16)-1);
+	WRITE_LE_UINT16(v53 + 2 * v52 + 4, (uint16)-1);
+	v117 = 0;
+	v54 = v98;
+	v93 = v97;
+LABEL_203:
+	v114 = v54;
+	if (a3 >= v54 - 2 && a3 <= v54 + 2 && a4 >= v93 - 2 && a4 <= v93 + 2)
+		goto LABEL_241;
+	if (v93 < a4) {
+		v55 = v93;
+		while (colision2_ligne(v114, v55, &v139, &v138, 0, TOTAL_LIGNES) != 1) {
+			v56 = v117;
+			v57 = _vm->_globals.essai2;
+			WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v56, v114);
+			WRITE_LE_UINT16(v57 + 2 * v56 + 2, v55);
+			WRITE_LE_UINT16(v57 + 2 * v56 + 4, 5);
+			v117 += 3;
+			++v55;
+			if (a4 <= v55)
+				goto LABEL_211;
+		}
+		goto LABEL_214;
+	}
+LABEL_211:
+	if (v93 > a4) {
+		v58 = v93;
+		while (colision2_ligne(v114, v58, &v139, &v138, 0, TOTAL_LIGNES) != 1) {
+			v59 = v117;
+			v60 = _vm->_globals.essai2;
+			WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v59, v114);
+			WRITE_LE_UINT16(v60 + 2 * v59 + 2, v58);
+			WRITE_LE_UINT16(v60 + 2 * v59 + 4, 1);
+			v117 += 3;
+			--v58;
+			if (a4 >= v58)
+				goto LABEL_217;
+		}
+LABEL_214:
+		if (v138 > _vm->_objectsManager.DERLIGNE)
+			v138 = -1;
+LABEL_249:
+		v76 = v117;
+		v77 = _vm->_globals.essai2;
+		WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v76, (uint16)-1);
+		WRITE_LE_UINT16(v77 + 2 * v76 + 2, (uint16)-1);
+		WRITE_LE_UINT16(v77 + 2 * v76 + 4, (uint16)-1);
+		if (v136 != 1) {
+			if (a6 > v144) {
+				if (READ_LE_UINT16(_vm->_globals.essai0) != -1 && v142 > v144 && v140 <= v142 && v138 <= v142 && a6 >= v142) {
+					NV_LIGNEDEP = v142;
+					NV_LIGNEOFS = v143;
+					v130 = 0;
+					v120 = 0;
+					v78 = _vm->_globals.essai0;
+					do {
+						v79 = v137;
+						_vm->_globals.super_parcours[v79] = READ_LE_UINT16(v78 + 2 * v120);
+						_vm->_globals.super_parcours[v79 + 1] = READ_LE_UINT16(v78 + 2 * v120 + 2);
+						_vm->_globals.super_parcours[v79 + 2] = READ_LE_UINT16(v78 + 2 * v120 + 4);
+						_vm->_globals.super_parcours[v79 + 3] = 0;
+						v120 += 3;
+						v137 += 4;
+						if (READ_LE_UINT16(v78 + 2 * v120) == -1 && READ_LE_UINT16(v78 + 2 * v120 + 2) == -1)
+							v130 = 1;
+					} while (v130 != 1);
+LABEL_323:
+					NV_POSI = v137;
+					return 2;
+				}
+				v80 = _vm->_globals.essai1;
+				if (READ_LE_UINT16(_vm->_globals.essai1) != -1 && v144 < v140 && v138 <= v140 && v142 <= v140 && a6 >= v140) {
+					NV_LIGNEDEP = v140;
+					NV_LIGNEOFS = v141;
+					v131 = 0;
+					v121 = 0;
+					do {
+						v81 = v137;
+						_vm->_globals.super_parcours[v81] = READ_LE_UINT16(v80 + 2 * v121);
+						_vm->_globals.super_parcours[v81 + 1] = READ_LE_UINT16(v80 + 2 * v121 + 2);
+						_vm->_globals.super_parcours[v81 + 2] = READ_LE_UINT16(v80 + 2 * v121 + 4);
+						_vm->_globals.super_parcours[v81 + 3] = 0;
+						v121 += 3;
+						v137 += 4;
+						if ((int16)READ_LE_UINT16(v80 + 2 * v121) == -1 && (int16)READ_LE_UINT16(v80 + 2 * v121 + 2) == -1)
+							v131 = 1;
+					} while (v131 != 1);
+LABEL_301:
+					NV_POSI = v137;
+					return 2;
+				}
+				v82 = _vm->_globals.essai2;
+				if (READ_LE_UINT16(_vm->_globals.essai2) != -1) {
+					if (v144 < v138 && v140 < v138 && v142 < v138 && a6 >= v138) {
+						NV_LIGNEDEP = v138;
+						NV_LIGNEOFS = v139;
+						v132 = 0;
+						v122 = 0;
+						do {
+							v83 = v137;
+							_vm->_globals.super_parcours[v83] = READ_LE_UINT16(v82 + 2 * v122);
+							_vm->_globals.super_parcours[v83 + 1] = READ_LE_UINT16(v82 + 2 * v122 + 2);
+							_vm->_globals.super_parcours[v83 + 2] = READ_LE_UINT16(v82 + 2 * v122 + 4);
+							_vm->_globals.super_parcours[v83 + 3] = 0;
+							v122 += 3;
+							v137 += 4;
+							if (READ_LE_UINT16(v82 + 2 * v122) == -1 && READ_LE_UINT16(v82 + 2 * v122 + 2) == -1)
+								v132 = 1;
+						} while (v132 != 1);
+LABEL_312:
+						NV_POSI = v137;
+						return 2;
+					}
+				}
+			}
+			if (a6 < v144) {
+				if (v142 == -1)
+					v142 = 1300;
+				if (v140 == -1)
+					v142 = 1300;
+				if (v138 == -1)
+					v142 = 1300;
+				if (READ_LE_UINT16(_vm->_globals.essai1) != -1 && v140 < v144 && v138 >= v140 && v142 >= v140 && a6 <= v140) {
+					NV_LIGNEDEP = v140;
+					NV_LIGNEOFS = v141;
+					v133 = 0;
+					v123 = 0;
+					v84 = _vm->_globals.essai1;
+					do {
+						v85 = v137;
+						_vm->_globals.super_parcours[v85] = READ_LE_UINT16(v84 + 2 * v123);
+						_vm->_globals.super_parcours[v85 + 1] = READ_LE_UINT16(v84 + 2 * v123 + 2);
+						_vm->_globals.super_parcours[v85 + 2] = READ_LE_UINT16(v84 + 2 * v123 + 4);
+						_vm->_globals.super_parcours[v85 + 3] = 0;
+						v123 += 3;
+						v137 += 4;
+						if (READ_LE_UINT16(v84 + 2 * v123) == -1 && READ_LE_UINT16(v84 + 2 * v123 + 2) == -1)
+							v133 = 1;
+					} while (v133 != 1);
+					goto LABEL_301;
+				}
+				v86 = _vm->_globals.essai2;
+				if ((int16)READ_LE_UINT16(_vm->_globals.essai2) != -1 && v144 > v138 && v140 >= v138 && v142 >= v138 && a6 <= v138) {
+					NV_LIGNEDEP = v138;
+					NV_LIGNEOFS = v139;
+					v134 = 0;
+					v124 = 0;
+					do {
+						v87 = v137;
+						_vm->_globals.super_parcours[v87] = READ_LE_UINT16(v86 + 2 * v124);
+						_vm->_globals.super_parcours[v87 + 1] = READ_LE_UINT16(v86 + 2 * v124 + 2);
+						_vm->_globals.super_parcours[v87 + 2] = READ_LE_UINT16(v86 + 2 * v124 + 4);
+						_vm->_globals.super_parcours[v87 + 3] = 0;
+						v124 += 3;
+						v137 += 4;
+						if (READ_LE_UINT16(v86 + 2 * v124) == -1 && READ_LE_UINT16(v86 + 2 * v124 + 2) == -1)
+							v134 = 1;
+					} while (v134 != 1);
+					goto LABEL_312;
+				}
+				if ((int16)READ_LE_UINT16(_vm->_globals.essai1) != -1 && v144 > v142 && v140 >= v142 && v138 >= v142 && a6 <= v142) {
+					NV_LIGNEDEP = v142;
+					NV_LIGNEOFS = v143;
+					v135 = 0;
+					v125 = 0;
+					v88 = _vm->_globals.essai0;
+					do {
+						v89 = v137;
+						_vm->_globals.super_parcours[v89] = READ_LE_UINT16(v88 + 2 * v125);
+						_vm->_globals.super_parcours[v89 + 1] = READ_LE_UINT16(v88 + 2 * v125 + 2);
+						_vm->_globals.super_parcours[v89 + 2] = READ_LE_UINT16(v88 + 2 * v125 + 4);
+						_vm->_globals.super_parcours[v89 + 3] = 0;
+						v125 += 3;
+						v137 += 4;
+						if (READ_LE_UINT16(v88 + 2 * v125) == -1 && READ_LE_UINT16(v88 + 2 * v125 + 2) == -1)
+							v135 = 1;
+					} while (v135 != 1);
+					goto LABEL_323;
+				}
+			}
+		}
+		return 0;
+	}
+LABEL_217:
+	if (v114 < a3) {
+		v61 = v114;
+		do {
+			if (colision2_ligne(v61, a4, &v139, &v138, 0, TOTAL_LIGNES) == 1) {
+				if (_vm->_objectsManager.DERLIGNE < v138) {
+					v62 = GENIAL(v138, v139, v61, a4, a3, a4, v117, _vm->_globals.essai2, 3);
+					if (v62 == -1)
+						goto LABEL_195;
+					v117 = v62;
+					if (NVPX != -1) {
+						if (NVPY != -1) {
+							v54 = NVPX;
+							v93 = NVPY;
+							colResult = colision2_ligne(NVPX, NVPY, &v139, &v138, 0, _vm->_objectsManager.DERLIGNE);
+LABEL_235:
+							if (colResult == 1 && v138 <= _vm->_objectsManager.DERLIGNE)
+								goto LABEL_249;
+							goto LABEL_203;
+						}
+					}
+				}
+				if (v138 <= _vm->_objectsManager.DERLIGNE)
+					goto LABEL_249;
+			}
+			v63 = v117;
+			v64 = _vm->_globals.essai2;
+			WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v63,  v61);
+			WRITE_LE_UINT16(v64 + 2 * v63 + 2, a4);
+			WRITE_LE_UINT16(v64 + 2 * v63 + 4, 3);
+			v117 += 3;
+			++v61;
+		} while (a3 > v61);
+	}
+	if (v114 > a3) {
+		v65 = v114;
+		do {
+			if (colision2_ligne(v65, a4, &v139, &v138, 0, TOTAL_LIGNES) == 1) {
+				if (_vm->_objectsManager.DERLIGNE < v138) {
+					v66 = GENIAL(v138, v139, v65, a4, a3, a4, v117, _vm->_globals.essai2, 3);
+					if (v66 == -1)
+						goto LABEL_242;
+					v117 = v66;
+					if (NVPX != -1) {
+						if (NVPY != -1) {
+							v54 = NVPX;
+							v93 = NVPY;
+							v67 = colision2_ligne(NVPX, NVPY, &v139, &v138, 0, _vm->_objectsManager.DERLIGNE);
+							goto LABEL_235;
+						}
+					}
+				}
+				if (v138 <= _vm->_objectsManager.DERLIGNE)
+					goto LABEL_249;
+			}
+			v68 = v117;
+			v69 = _vm->_globals.essai2;
+			WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v68, v65);
+			WRITE_LE_UINT16(v69 + 2 * v68 + 2, a4);
+			WRITE_LE_UINT16(v69 + 2 * v68 + 4, 7);
+			v117 += 3;
+			--v65;
+		} while (a3 < v65);
+	}
+	v138 = -1;
+LABEL_241:
+	v70 = v117;
+	v71 = _vm->_globals.essai2;
+	WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v70, (uint16)-1);
+	WRITE_LE_UINT16(v71 + 2 * v70 + 2, (uint16)-1);
+	WRITE_LE_UINT16(v71 + 2 * v70 + 4, (uint16)-1);
+LABEL_242:
+	if (v117) {
+		v129 = 0;
+		v119 = 0;
+		v72 = _vm->_globals.essai2;
+		do {
+			v73 = v137;
+			_vm->_globals.super_parcours[v73] = READ_LE_UINT16(v72 + 2 * v119);
+			_vm->_globals.super_parcours[v73 + 1] = READ_LE_UINT16(v72 + 2 * v119 + 2);
+			_vm->_globals.super_parcours[v73 + 2] = READ_LE_UINT16(v72 + 2 * v119 + 4);
+			_vm->_globals.super_parcours[v73 + 3] = 0;
+			v119 += 3;
+			v137 += 4;
+			if (READ_LE_UINT16(v72 + 2 * v119) == -1 && READ_LE_UINT16(v72 + 2 * v119 + 2) == -1)
+				v129 = 1;
+		} while (v129 != 1);
+	}
+LABEL_248:
+	v74 = v137;
+	_vm->_globals.super_parcours[v74] = -1;
+	_vm->_globals.super_parcours[v74 + 1] = -1;
+	_vm->_globals.super_parcours[v74 + 2] = -1;
+	_vm->_globals.super_parcours[v74 + 3] = -1;
+	return 1;
+}
+
+int LinesManager::VERIF_SMOOTH(int a1, int a2, int a3, int a4) {
+	int v4; 
+	int v5; 
+	int v6; 
+	int v7; 
+	int v8; 
+	int v9; 
+	int v11; 
+	int v12; 
+	int v13; 
+	int v14; 
+	int v15;
+	int v16;
+	int v17; 
+	int v18; 
+
+	v4 = a1 - a3;
+	if (a1 - a3 < 0)
+		v4 = -v4;
+	v5 = v4 + 1;
+	v11 = a2 - a4;
+	if (a2 - a4 < 0)
+		v11 = -(a2 - a4);
+	v13 = v11 + 1;
+	if (v5 > (int)(v11 + 1))
+		v13 = v5;
+	if (v13 <= 10)
+		return -1;
+	v6 = v13 - 1;
+	v16 = 1000 * v5 / v6;
+	v15 = 1000 * (int)(v11 + 1) / v6;
+	if (a3 < a1)
+		v16 = -v16;
+	if (a4 < a2)
+		v15 = -v15;
+	v7 = 1000 * a1;
+	v8 = 1000 * a2;
+	v9 = 1000 * a1 / 1000;
+	v12 = 1000 * a2 / 1000;
+	v14 = 0;
+	if (v13 + 1 > 0) {
+		while (colision2_ligne(v9, v12, &v18, &v17, 0, TOTAL_LIGNES) != 1 || v17 > _vm->_objectsManager.DERLIGNE) {
+			v7 += v16;
+			v8 += v15;
+			v9 = v7 / 1000;
+			v12 = v8 / 1000;
+			++v14;
+			if (v14 >= v13 + 1)
+				return 0;
+		}
+		return -1;
+	}
 	return 0;
 }
 
+int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
+	int v6; 
+	int v7; 
+	int v8; 
+	int v9; 
+	int v10;
+	int v11;
+	int v12;
+	int v13; 
+	int v14; 
+	int v15; 
+	int v16;
+	int v17;
+	int v18;
+	int v19;
+	int v20;
+	int v21;
+	int v22; 
+	int v23; 
+	int v24; 
+	int v25; 
+	int v26; 
+	int v27;
+	int v28;
+	int v29;
+	int v30;
+	int v31;
+	int v32;
+	int v33;
+	int v34;
+	int v35; 
+	int v37; 
+	int v38; 
+	int v39; 
+	int v40; 
+	int v41; 
+	int v42; 
+	int v43; 
+	int v44; 
+	int v45; 
+	int v46; 
+	int v47; 
+	int v48; 
+	int v49; 
+	int v50; 
+	int v51; 
+	int v52; 
+	int v53; 
+	int v54; 
+	int v55; 
+	int v56; 
+	int v57; 
+	int v58; 
+	int v59; 
+	int v60; 
+	int v61; 
+	int v62; 
+
+	warning("TODO: SMOOTH_MOVE - a1 = a4 doesn't look like that in the IDB, need to double-check");
+	v62 = a3;
+	a1 = a4;
+	if (a3 >= a5 || a6 >= a4) {
+		if (a3 <= a5 || a6 >= a4) {
+			if (a3 >= a5 || a6 <= a4) {
+				if (a3 > a5 && a6 > a4) {
+					v53 = 36;
+					v61 = 0;
+					v57 = 0;
+					do {
+						v25 = _vm->_globals.Hopkins[v53].field0;
+						v40 = _vm->_globals.Hopkins[v53].field2;
+						v26 = _vm->_globals.STAILLE[a1];
+						if (v26 < 0) {
+							v27 = v26;
+							v28 = v26;
+							if (v26 < 0)
+								v28 = -v26;
+							v48 = _vm->_globals.STAILLE[a1];
+							v45 = a1;
+							v25 = _vm->_graphicsManager.Reel_Reduc(v25, v28);
+							v29 = v27;
+							if ((v27 & 0x80000000u) != 0)
+								v29 = -v27;
+							v40 = _vm->_graphicsManager.Reel_Reduc(v40, v29);
+							a1 = v45;
+							v26 = v48;
+						}
+						if (v26 > 0) {
+							v30 = v26;
+							v31 = v26;
+							if (v26 < 0)
+								v31 = -v26;
+							v46 = a1;
+							v25 = _vm->_graphicsManager.Reel_Zoom(v25, v31);
+							v32 = v30;
+							if ((v30 & 0x80000000u) != 0)
+								v32 = -v30;
+							v40 = _vm->_graphicsManager.Reel_Zoom(v40, v32);
+							a1 = v46;
+						}
+						v33 = a1 + v40;
+						v34 = 0;
+						if (v25 > 0) {
+							do {
+								--v62;
+								SMOOTH[v61].field0 = v62;
+								if (a1 != v33)
+									a1 = a1 + 1;
+								SMOOTH[v61++].field2 = a1;
+								++v34;
+							} while (v34 < v25);
+						}
+						++v53;
+						if (v53 == 48)
+							v53 = 36;
+						++v57;
+						if (v62 <= a5 || a6 <= a1)
+							v49 = 1;
+					} while (v49 != 1);
+					if (v57 > 5) {
+						v35 = v61;
+						SMOOTH[v35].field0 = -1;
+						SMOOTH[v35].field2 = -1;
+						_vm->_linesManager.SMOOTH_SENS = 6;
+						goto LABEL_85;
+					}
+				}
+			} else {
+				v52 = 36;
+				v60 = 0;
+				v56 = 0;
+				do {
+					v14 = _vm->_globals.Hopkins[v52].field0;
+					v39 = _vm->_globals.Hopkins[v52].field2;
+					v15 = _vm->_globals.STAILLE[a1];
+					if (v15 < 0) {
+						v16 = v15;
+						v17 = v15;
+						if (v15 < 0)
+							v17 = -v15;
+						v47 = _vm->_globals.STAILLE[a1];
+						v43 = a1;
+						v14 = _vm->_graphicsManager.Reel_Reduc(v14, v17);
+						v18 = v16;
+						if ((v16 & 0x80000000u) != 0)
+							v18 = -v16;
+						v39 = _vm->_graphicsManager.Reel_Reduc(v39, v18);
+						a1 = v43;
+						v15 = v47;
+					}
+					if (v15 > 0) {
+						v19 = v15;
+						v20 = v15;
+						if (v15 < 0)
+							v20 = -v15;
+						v44 = a1;
+						v14 = _vm->_graphicsManager.Reel_Zoom(v14, v20);
+						v21 = v19;
+						if ((v19 & 0x80000000u) != 0)
+							v21 = -v19;
+						v39 = _vm->_graphicsManager.Reel_Zoom(v39, v21);
+						a1 = v44;
+					}
+					v22 = a1 + v39;
+					v23 = 0;
+					if (v14 > 0) {
+						do {
+							++v62;
+							SMOOTH[v60].field0 = v62;
+							if (a1 != v22)
+								a1 = a1 + 1;
+							SMOOTH[v60++].field2 = a1;
+							++v23;
+						} while (v23 < v14);
+					}
+					++v52;
+					if (v52 == 48)
+						v52 = 36;
+					++v56;
+					if (v62 >= a5 || a6 <= (int)a1)
+						v49 = 1;
+				} while (v49 != 1);
+				if (v56 > 5) {
+					v24 = v60;
+					SMOOTH[v24].field0 = -1;
+					SMOOTH[v24].field2 = -1;
+					_vm->_linesManager.SMOOTH_SENS = 4;
+					goto LABEL_85;
+				}
+			}
+		} else {
+			v51 = 12;
+			v59 = 0;
+			v55 = 0;
+			do {
+				v10 = _vm->_globals.Hopkins[v51].field2;
+				v42 = a1;
+				v11 = _vm->_graphicsManager.Reel_Reduc(_vm->_globals.Hopkins[v51].field0, 0x19u);
+				v38 = _vm->_graphicsManager.Reel_Reduc(v10, 0x19u);
+				a1 = v42;
+				v12 = 0;
+				if (v11 > 0) {
+					do {
+						--v62;
+						SMOOTH[v59].field0 = v62;
+						if ((uint16)a1 != (uint16)v42 + v38)
+							a1 = a1 - 1;
+						SMOOTH[v59++].field2 = a1;
+						++v12;
+					} while (v12 < v11);
+				}
+				++v51;
+				if (v51 == 24)
+					v51 = 12;
+				++v55;
+				if (v62 <= a5 || a6 >= (int)a1)
+					v49 = 1;
+			} while (v49 != 1);
+			if (v55 > 5) {
+				v13 = 4 * v59;
+				SMOOTH[v13].field0 = -1;
+				SMOOTH[v13].field2 = -1;
+				_vm->_linesManager.SMOOTH_SENS = 8;
+				goto LABEL_85;
+			}
+		}
+	} else {
+		v50 = 12;
+		v58 = 0;
+		v54 = 0;
+		do {
+			v6 = _vm->_globals.Hopkins[v50].field2;
+			v41 = a1;
+			v7 = _vm->_graphicsManager.Reel_Reduc(_vm->_globals.Hopkins[v50].field0, 0x19u);
+			v37 = _vm->_graphicsManager.Reel_Reduc(v6, 0x19u);
+			a1 = v41;
+			v8 = 0;
+			if (v7 > 0) {
+				do {
+					++v62;
+					SMOOTH[v58].field0 = v62;
+					if ((uint16)a1 != (uint16)v41 + v37)
+						a1 = a1 - 1;
+					SMOOTH[v58++].field2 = a1;
+					++v8;
+				} while (v8 < v7);
+			}
+			++v50;
+			if (v50 == 24)
+				v50 = 12;
+			++v54;
+			if (v62 >= a5 || a6 >= (int)a1)
+				v49 = 1;
+		} while (v49 != 1);
+		if (v54 > 5) {
+			v9 = v58;
+			SMOOTH[v9].field0 = -1;
+			SMOOTH[v9].field2 = -1;
+			_vm->_linesManager.SMOOTH_SENS = 2;
+LABEL_85:
+			SMOOTH_X = v62;
+			SMOOTH_Y = a1;
+			return 0;
+		}
+	}
+	return -1;
+}
 
 } // End of namespace Hopkins

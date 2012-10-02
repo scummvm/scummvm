@@ -192,6 +192,11 @@ struct SegmentItem {
 	int field4;
 };
 
+struct HopkinsItem {
+	int field0;
+	int field2;
+};
+
 struct Sauvegarde1 {
 	int field0;
 	int field1;
@@ -333,6 +338,7 @@ public:
 	int STAILLE[500];
 	int16 super_parcours[32002];
 	int Param[2100];
+	HopkinsItem Hopkins[70];
 	byte *Winventaire;
 	byte *texte_tmp;
 	int texte_long;
@@ -414,8 +420,6 @@ public:
 	int ACTION_SENS;
 	int STOP_BUG;
 	int SegmentEnCours;
-	int NVPX;
-	int NVPY;
 
 	int force_to_data_0;
 	int oldzone_46;

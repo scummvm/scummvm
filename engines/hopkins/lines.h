@@ -46,17 +46,27 @@ struct LigneItem {
 	byte *field12;
 };
 
+struct SmoothItem {
+	int field0;
+	int field2;
+};
+
 class LinesManager {
 private:
 	HopkinsEngine *_vm;
 public:
 	LigneZoneItem LigneZone[401];
 	LigneItem Ligne[400];
+	SmoothItem SMOOTH[4000];
 	int next_ligne;
 	int TOTAL_LIGNES;
 	int NV_LIGNEDEP;
 	int NV_LIGNEOFS;
 	int NV_POSI;
+	int NVPX;
+	int NVPY;
+	int SMOOTH_SENS;
+	int SMOOTH_X, SMOOTH_Y;
 public:
 	void setParent(HopkinsEngine *vm);
 
@@ -75,6 +85,8 @@ public:
 	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, byte *a8, int a9);
 	byte *PARCOURS2(int a1, int a2, int a3, int a4);
 	int PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
+	int VERIF_SMOOTH(int a1, int a2, int a3, int a4);
+	int SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6);
 };
 
 } // End of namespace Hopkins
