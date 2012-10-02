@@ -576,7 +576,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			//InventoryObject *obj = inventory->selectedObject();
 			//if (obj != NULL && obj->id == invItemMug) {
 
-			// implement pause and using real object:
+			// FIXME: implement pause in mudpool and using of Mug object, as per original interpreter
 			if (inventory->has(invItemMug)) {
 				playSound(5, 4);
 				playSound(5, 19);
