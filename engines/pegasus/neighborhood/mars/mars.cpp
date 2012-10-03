@@ -128,6 +128,8 @@ void Mars::init() {
 
 	_explosionCallBack.setNotification(&_neighborhoodNotification);
 	_explosionCallBack.setCallBackFlag(kExplosionFinishedFlag);
+
+	_weaponSelection = kNoWeapon;
 }
 
 void Mars::flushGameState() {
