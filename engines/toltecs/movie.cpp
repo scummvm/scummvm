@@ -96,9 +96,9 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 	fetchAudioChunks();
 
-	uint32 lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
 	byte *chunkBuffer = NULL;
 	uint32 chunkBufferSize = 0;
+	uint32 frame = 0;
 
 	while (_chunkCount--) {
 		byte chunkType = _vm->_arc->readByte();
@@ -136,12 +136,11 @@ void MoviePlayer::playMovie(uint resIndex) {
 				fetchAudioChunks();
 			}
 
-			while (_vm->_mixer->getSoundElapsedTime(_audioStreamHandle) < lastTime + 111) {
+			while (_vm->_mixer->getSoundElapsedTime(_audioStreamHandle) < (1000 * frame) / 9) {
 				g_system->delayMillis(10);
 			}
 
-			lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
-
+			frame++;
 			break;
 		case kChunkPalette:
 			unpackPalette(chunkBuffer, moviePalette, 256, 3);
