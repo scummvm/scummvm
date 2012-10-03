@@ -46,8 +46,6 @@ public:
 	void PLAY_ANM(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
 	void PLAY_ANM2(const Common::String &filename, int a2, int a3, int a4);
 	bool REDRAW_ANIM();
-	void BOBANIM_ON(int idx);
-	void BOBANIM_OFF(int idx);
 	void CHARGE_ANIM(const Common::String &animName);
 	void CLEAR_ANIM();
 	void RECHERCHE_ANIM(const byte *data, int idx, int nbytes);

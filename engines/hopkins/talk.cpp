@@ -290,15 +290,15 @@ int TalkManager::DIALOGUE() {
 		v0 = BUFFERPERSO;
 		v1 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 48);
 		if (v1)
-			_vm->_animationManager.BOBANIM_ON(v1);
+			_vm->_objectsManager.BOBANIM_ON(v1);
 		if (READ_LE_UINT16((uint16 *)v0 + 48) != 1)
-			_vm->_animationManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 49));
+			_vm->_objectsManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 49));
 		if (READ_LE_UINT16((uint16 *)v0 + 48) != 2)
-			_vm->_animationManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 50));
+			_vm->_objectsManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 50));
 		if ( READ_LE_UINT16((uint16 *)v0 + 48) != 3)
-			_vm->_animationManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 51));
+			_vm->_objectsManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 51));
 		if (READ_LE_UINT16((uint16 *)v0 + 48) != 4)
-			_vm->_animationManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 52));
+			_vm->_objectsManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 52));
 	} else {
 		VISU_WAIT();
 	}
@@ -363,19 +363,19 @@ int TalkManager::DIALOGUE() {
 		v11 = BUFFERPERSO;
 		v12 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 48);
 		if (v12)
-			_vm->_animationManager.BOBANIM_OFF(v12);
+			_vm->_objectsManager.BOBANIM_OFF(v12);
 		v13 = READ_LE_UINT16((uint16 *)v11 + 49);
 		if (v13 != 1)
-			_vm->_animationManager.BOBANIM_OFF(v13);
+			_vm->_objectsManager.BOBANIM_OFF(v13);
 		v14 = READ_LE_UINT16((uint16 *)v11 + 50);
 		if (v14 != 2)
-			_vm->_animationManager.BOBANIM_OFF(v14);
+			_vm->_objectsManager.BOBANIM_OFF(v14);
 		v15 = READ_LE_UINT16((uint16 *)v11 + 51);
 		if (v15 != 3)
-			_vm->_animationManager.BOBANIM_OFF(v15);
+			_vm->_objectsManager.BOBANIM_OFF(v15);
 		v16 = READ_LE_UINT16((uint16 *)v11 + 52);
 		if (v16 != 4)
-			_vm->_animationManager.BOBANIM_OFF(v16);
+			_vm->_objectsManager.BOBANIM_OFF(v16);
 	} else {
 		FIN_VISU_WAIT();
 	}
@@ -444,19 +444,19 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		v8 = BUFFERPERSO;
 		v9 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
 		if (v9)
-			_vm->_animationManager.BOBANIM_ON(v9);
+			_vm->_objectsManager.BOBANIM_ON(v9);
 		v10 = READ_LE_UINT16((uint16 *)v8 + 44);
 		if (v10)
-			_vm->_animationManager.BOBANIM_ON(v10);
+			_vm->_objectsManager.BOBANIM_ON(v10);
 		v11 = READ_LE_UINT16((uint16 *)v8 + 45);
 		if (v11)
-			_vm->_animationManager.BOBANIM_ON(v11);
+			_vm->_objectsManager.BOBANIM_ON(v11);
 		v12 = READ_LE_UINT16((uint16 *)v8 + 46);
 		if (v12)
-			_vm->_animationManager.BOBANIM_ON(v12);
+			_vm->_objectsManager.BOBANIM_ON(v12);
 		v13 = READ_LE_UINT16((uint16 *)v8 + 47);
 		if (v13)
-			_vm->_animationManager.BOBANIM_ON(v13);
+			_vm->_objectsManager.BOBANIM_ON(v13);
 	} else {
 		VISU_PARLE();
 	}
@@ -482,19 +482,19 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		v15 = BUFFERPERSO;
 		v16 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
 		if (v16)
-			_vm->_animationManager.BOBANIM_OFF(v16);
+			_vm->_objectsManager.BOBANIM_OFF(v16);
 		v17 = READ_LE_UINT16((uint16 *)v15 + 44);
 		if (v17)
-			_vm->_animationManager.BOBANIM_OFF(v17);
+			_vm->_objectsManager.BOBANIM_OFF(v17);
 		v18 = READ_LE_UINT16((uint16 *)v15 + 45);
 		if (v18)
-			_vm->_animationManager.BOBANIM_OFF(v18);
+			_vm->_objectsManager.BOBANIM_OFF(v18);
 		v19 = READ_LE_UINT16((uint16 *)v15 + 46);
 		if (v19)
-			_vm->_animationManager.BOBANIM_OFF(v19);
+			_vm->_objectsManager.BOBANIM_OFF(v19);
 		v20 = READ_LE_UINT16((uint16 *)v15 + 47);
 		if (v20)
-			_vm->_animationManager.BOBANIM_OFF(v20);
+			_vm->_objectsManager.BOBANIM_OFF(v20);
 	} else {
 		FIN_VISU_PARLE(i);
 	}

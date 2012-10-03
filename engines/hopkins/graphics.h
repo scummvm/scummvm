@@ -177,6 +177,7 @@ public:
 	void INI_ECRAN2(const Common::String &file);
 	void OPTI_INI(const Common::String &file, int a2);
 	void NB_SCREEN();
+	void SHOW_PALETTE();
 };
 
 } // End of namespace Hopkins

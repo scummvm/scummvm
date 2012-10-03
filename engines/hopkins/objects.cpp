@@ -2275,7 +2275,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	_vm->_globals.CLEAR_VBOB();
 	_vm->_animationManager.CLEAR_ANIM();
 	_vm->_linesManager.CLEAR_ZONE();
-	RESET_OBSTACLE();
+	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_globals.RESET_CACHE();
 
 	v1 = 0;
@@ -2418,7 +2418,7 @@ LABEL_7:
 			v9 = _vm->_eventsManager.YMOUSE();
 			v12 = _vm->_eventsManager.BMOUSE();
 			v10 = v13;
-			v11 = ZONE_OBJET(v8, v9);
+			v11 = _vm->_linesManager.ZONE_OBJET(v8, v9);
 			v13 = v11;
 			if (v11 != v10)
 				PARAMCADRE(v11);
@@ -2474,7 +2474,7 @@ LABEL_7:
 				break;
 			_vm->_eventsManager.VBL();
 			if ((uint16)(_vm->_globals.ECRAN - 35) <= 5u)
-				SPECIAL_JEU(v9);
+				SPECIAL_JEU();
 		}
 		_vm->_fontManager.TEXTE_OFF(9);
 		if (AFFINVEN == 1) {
@@ -3463,21 +3463,152 @@ LABEL_58:
 	return result;
 }
 
-void ObjectsManager::RESET_OBSTACLE() {
-	warning("TODO: CLEAR_ZONE");
-}
-
-int ObjectsManager::ZONE_OBJET(int a1, int a2) {
-	warning("TODO: ZONE_OBJET");
-	return 0;
-}
-
 void ObjectsManager::PARAMCADRE(int a1) {
-	warning("TODO: PARAMCADRE");
+	old_cadx = cadx;
+	old_cady = cady;
+	old_cadi = cadi;
+	if ((uint16)(a1 - 1) <= 5u)
+		cady = 120;
+	if ((uint16)(a1 - 7) <= 5u)
+		cady = 158;
+	if ((uint16)(a1 - 13) <= 5u)
+		cady = 196;
+	if ((uint16)(a1 - 19) <= 5u)
+		cady = 234;
+	if ((uint16)(a1 - 25) <= 4u)
+		cady = 272;
+	if (a1 == 1 || a1 == 7 || a1 == 13 || a1 == 19 || a1 == 25)
+		cadx = _vm->_graphicsManager.ofscroll + 158;
+	if (a1 == 2 || a1 == 8 || a1 == 14 || a1 == 20 || a1 == 26)
+		cadx = _vm->_graphicsManager.ofscroll + 212;
+	if (a1 == 3 || a1 == 9 || a1 == 15 || a1 == 21 || a1 == 27)
+		cadx = _vm->_graphicsManager.ofscroll + 266;
+	if (a1 == 4 || a1 == 10 || a1 == 16 || a1 == 22 || a1 == 28)
+		cadx = _vm->_graphicsManager.ofscroll + 320;
+	if (a1 == 5 || a1 == 11 || a1 == 17 || a1 == 23 || a1 == 29)
+		cadx = _vm->_graphicsManager.ofscroll + 374;
+	if (a1 == 6 || a1 == 12 || a1 == 18 || a1 == 24 || (uint16)(a1 - 30) <= 1u)
+		cadx = _vm->_graphicsManager.ofscroll + 428;
+	if ((uint16)(a1 - 1) <= 0x1Cu)
+		cadi = 0;
+	if ((uint16)(a1 - 30) <= 1u)
+		cadi = 2;
+	if (a1 == 30)
+		cady = 272;
+	if (a1 == 31)
+		cady = 290;
+	if (!a1 || a1 == 32) {
+		cadx = 0;
+		cady = 0;
+		cadi = 0;
+	}
+	if (!a1)
+		_vm->_eventsManager.btsouris = 0;
+	if (a1 == 32)
+		_vm->_eventsManager.btsouris = 16;
+	if (a1 == 30)
+		_vm->_eventsManager.btsouris = 2;
+	if (a1 == 31)
+		_vm->_eventsManager.btsouris = 3;
+	if ((uint16)(a1 - 1) <= 0x1Cu)
+		_vm->_eventsManager.btsouris = 8;
+	if (a1 == 29)
+		_vm->_eventsManager.btsouris = 1;
+	if ((uint16)(a1 - 1) <= 0x1Bu && !_vm->_globals.INVENTAIRE[a1]) {
+		_vm->_eventsManager.btsouris = 0;
+		cadx = 0;
+		cady = 0;
+		cadi = 0;
+	}
+	if (_vm->_eventsManager.btsouris != 23)
+		_vm->_eventsManager.CHANGE_MOUSE(_vm->_eventsManager.btsouris);
+	_vm->_eventsManager.XMOUSE();
+	_vm->_eventsManager.YMOUSE();
 }
 
-void ObjectsManager::OBJETPLUS(int a1) {
-	warning("TODO: OBJETPLUS");
+void ObjectsManager::OBJETPLUS(int idx) {
+	int v1;
+	int v2;
+	int v3;
+
+	v1 = _vm->_eventsManager.btsouris;
+	if (_vm->_eventsManager.btsouris && _vm->_eventsManager.btsouris != 16 && (uint16)(_vm->_eventsManager.btsouris - 2) > 1u) {
+		v2 = _vm->_eventsManager.btsouris++ + 1;
+		if (v1 == 5)
+			goto LABEL_24;
+		if (v2 == 7)
+			goto LABEL_26;
+		if (v2 != 8) {
+			if (v2 == 9)
+				_vm->_eventsManager.btsouris = 10;
+			if (_vm->_eventsManager.btsouris == 10)
+				goto LABEL_29;
+			if (_vm->_eventsManager.btsouris == 11)
+				goto LABEL_31;
+			if (_vm->_eventsManager.btsouris == 12)
+				_vm->_eventsManager.btsouris = 13;
+			if (_vm->_eventsManager.btsouris == 13)
+				goto LABEL_33;
+			if (_vm->_eventsManager.btsouris == 14)
+				_vm->_eventsManager.btsouris = 15;
+			if (_vm->_eventsManager.btsouris == 15)
+				goto LABEL_35;
+			if ((uint16)(_vm->_eventsManager.btsouris - 16) <= 6u)
+				_vm->_eventsManager.btsouris = 23;
+			if (_vm->_eventsManager.btsouris == 23)
+				goto LABEL_37;
+			if (_vm->_eventsManager.btsouris == 24)
+				_vm->_eventsManager.btsouris = 25;
+			if (_vm->_eventsManager.btsouris == 25)
+				goto LABEL_39;
+			do {
+				_vm->_eventsManager.btsouris = 6;
+LABEL_24:
+				if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field2 == 1)
+					break;
+				++_vm->_eventsManager.btsouris;
+				if (_vm->_eventsManager.btsouris == 7) {
+LABEL_26:
+					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field3 == 1)
+						return;
+				}
+				v3 = _vm->_eventsManager.btsouris++;
+				if (_vm->_eventsManager.btsouris == 8)
+					break;
+				_vm->_eventsManager.btsouris = v3 + 3;
+				if (v3 == 7) {
+LABEL_29:
+					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field7 == 1)
+						return;
+				}
+				++_vm->_eventsManager.btsouris;
+				if (_vm->_eventsManager.btsouris == 11) {
+LABEL_31:
+					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field4 == 1)
+						return;
+				}
+				_vm->_eventsManager.btsouris += 2;
+				if (_vm->_eventsManager.btsouris == 13) {
+LABEL_33:
+					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field5 == 1)
+						return;
+				}
+				_vm->_eventsManager.btsouris += 2;
+				if (_vm->_eventsManager.btsouris == 15) {
+LABEL_35:
+					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field6 == 1)
+						return;
+				}
+				_vm->_eventsManager.btsouris = 23;
+LABEL_37:
+				if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field6 == 2)
+					break;
+				_vm->_eventsManager.btsouris = 25;
+LABEL_39:
+				;
+			} while (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field7 != 2);
+		}
+	}
 }
 
 void ObjectsManager::VALID_OBJET(int a1) {
@@ -3486,11 +3617,170 @@ void ObjectsManager::VALID_OBJET(int a1) {
 }
 
 void ObjectsManager::OPTI_OBJET() {
-	warning("TODO: OPTI_OBJET");
+	byte *data; 
+	Common::String file;
+	int v0 = 1;
+	int v5;
+	int v7;
+
+	file = "OBJET1.ini";
+	data = FileManager::RECHERCHE_CAT(file, 1);
+	if (data == PTRNUL) {
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, file);
+		data = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	}
+	
+	if ((data == PTRNUL) || *data != 'I' || *(data + 1) != 'N' || *(data + 2) != 'I') {
+		error("Not an INI file");
+	} else {
+		v7 = 0;
+		do {
+			v5 = Traduction(data + 20 * v0);
+			if (v5 == 2)
+				v0 = Control_Goto(data + 20 * v0);
+			if (v5 == 3)
+				v0 = Control_If(data, v0);
+			if (v0 == -1)
+				error("defective IFF function");
+			if (v5 == 1 || v5 == 4)
+				++v0;
+			if (!v5 || v5 == 5)
+				v7 = 1;
+		} while (v7 != 1);
+	}
+	_vm->_globals.dos_free2(data);
 }
 
-void ObjectsManager::SPECIAL_JEU(int a1) {
-	warning("TODO: SPECIAL_JEU");
+void ObjectsManager::SPECIAL_JEU() {
+	byte *v1;
+	byte *v2;
+	byte *v3;
+
+	if ((uint16)(_vm->_globals.ECRAN - 35) <= 6u) {
+		if (_vm->_globals.OLD_ECRAN == 16 && _vm->_globals.ECRAN == 35)
+			TEST_FORET(35, 500, 555, 100, 440, 1);
+		if (_vm->_globals.OLD_ECRAN == 36 && _vm->_globals.ECRAN == 35)
+			TEST_FORET(35, 6, 84, 100, 440, 4);
+		if (_vm->_globals.OLD_ECRAN == 35 && _vm->_globals.ECRAN == 36)
+			TEST_FORET(36, 551, 633, 100, 440, 2);
+		if (_vm->_globals.OLD_ECRAN == 37 && _vm->_globals.ECRAN == 36)
+			TEST_FORET(36, 6, 84, 100, 440, 4);
+		if (_vm->_globals.OLD_ECRAN == 36 && _vm->_globals.ECRAN == 37)
+			TEST_FORET(37, 551, 633, 100, 440, 1);
+		if (_vm->_globals.OLD_ECRAN == 38 && _vm->_globals.ECRAN == 37)
+			TEST_FORET(37, 392, 529, 100, 440, 2);
+		if (_vm->_globals.OLD_ECRAN == 37 && _vm->_globals.ECRAN == 38)
+			TEST_FORET(38, 133, 252, 100, 440, 4);
+		if (_vm->_globals.OLD_ECRAN == 39 && _vm->_globals.ECRAN == 38)
+			TEST_FORET(38, 6, 84, 100, 440, 3);
+		if (_vm->_globals.OLD_ECRAN == 38 && _vm->_globals.ECRAN == 39)
+			TEST_FORET(39, 551, 633, 100, 440, 2);
+		if (_vm->_globals.OLD_ECRAN == 40 && _vm->_globals.ECRAN == 39)
+			TEST_FORET(39, 6, 84, 100, 440, 3);
+		if (_vm->_globals.OLD_ECRAN == 39 && _vm->_globals.ECRAN == 40)
+			TEST_FORET(40, 133, 252, 100, 440, 4);
+		if (_vm->_globals.OLD_ECRAN == 41 && _vm->_globals.ECRAN == 40)
+			TEST_FORET(40, 392, 529, 100, 440, 2);
+		if (_vm->_globals.OLD_ECRAN == 40 && _vm->_globals.ECRAN == 41)
+			TEST_FORET(41, 551, 633, 100, 440, 1);
+		if (_vm->_globals.OLD_ECRAN == 17 && _vm->_globals.ECRAN == 41)
+			TEST_FORET(41, 6, 84, 100, 440, 3);
+	}
+	if (_vm->_globals.ECRAN == 5) {
+		if (YSPR(0) <= 399) {
+			if (!_vm->_globals.SAUVEGARDE->data[svField173]) {
+				_vm->_globals.SAUVEGARDE->data[svField173] = 1;
+				_vm->_globals.NOPARLE = 1;
+				_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
+				_vm->_globals.NOPARLE = 0;
+				if (!_vm->_globals.CENSURE) {
+					v1 = _vm->_globals.dos_malloc2(0x3E8u);
+					memcpy(v1, _vm->_graphicsManager.Palette, 0x301u);
+					FileManager::CONSTRUIT_LINUX("TEMP1.SCR");
+					FileManager::SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+					if (!_vm->_graphicsManager.nbrligne)
+						_vm->_graphicsManager.ofscroll = 0;
+					_vm->_graphicsManager.NB_SCREEN();
+					_vm->_soundManager.SPECIAL_SOUND = 198;
+					_vm->_objectsManager.PERSO_ON = 1;
+					_vm->_animationManager.NO_SEQ = 1;
+					_vm->_animationManager.CLS_ANM = 0;
+					_vm->_animationManager.PLAY_ANM("otage.ANM", 1, 24, 500);
+					_vm->_animationManager.NO_SEQ = 0;
+					_vm->_soundManager.SPECIAL_SOUND = 0;
+					_vm->_globals.NECESSAIRE = 1;
+					_vm->_graphicsManager.NB_SCREEN();
+					_vm->_globals.NECESSAIRE = 0;
+					FileManager::CONSTRUIT_LINUX("TEMP1.SCR");
+					FileManager::bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+					_vm->_objectsManager.PERSO_ON = 0;
+					memcpy(_vm->_graphicsManager.Palette, v1, 0x301u);
+					_vm->_graphicsManager.SHOW_PALETTE();
+					_vm->_globals.dos_free2(v1);
+					_vm->_graphicsManager.DD_Lock();
+					if (_vm->_graphicsManager.Winbpp == 2) {
+						if (_vm->_graphicsManager.SDL_ECHELLE)
+							_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+						else
+							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+					}
+					if (_vm->_graphicsManager.Winbpp == 1) {
+						if (_vm->_graphicsManager.SDL_ECHELLE)
+							_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+						else
+							_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+					}
+					_vm->_graphicsManager.DD_Unlock();
+					v2 = _vm->_graphicsManager.VESA_BUFFER;
+					v3 = _vm->_graphicsManager.VESA_SCREEN;
+					memcpy(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.VESA_SCREEN, 0x95FFCu);
+					v3 = v3 + 614396;
+					v2 = v2 + 614396;
+					*v2 = *v3;
+					v2 = v2 + 2;
+					*v2 = *(v3 + 2);
+
+					_vm->_graphicsManager.no_scroll = 0;
+					_vm->_graphicsManager.DD_VBL();
+				}
+			}
+		}
+	}
+	if (_vm->_globals.ECRAN == 20)
+		_vm->_globals.SAUVEGARDE->data[svField132] = XSPR(0) > 65
+		                               && XSPR(0) <= 124
+		                               && YSPR(0) > 372
+		                               && YSPR(0) <= 398;
+	if (_vm->_globals.ECRAN == 57) {
+		_vm->_globals.DESACTIVE_INVENT = 1;
+		if (_vm->_globals.SAUVEGARDE->data[svField261] == 1 && BOBPOSI(5) == 37) {
+			_vm->_objectsManager.BOBANIM_OFF(5);
+			SET_BOBPOSI(5, 0);
+			_vm->_objectsManager.BOBANIM_ON(6);
+			_vm->_globals.SAUVEGARDE->data[svField261] = 2;
+			ZONE_OFF(15);
+			_vm->_soundManager.PLAY_SOUND("SOUND75.WAV");
+		}
+		if (_vm->_globals.SAUVEGARDE->data[svField261] == 2 && BOBPOSI(6) == 6) {
+			_vm->_objectsManager.BOBANIM_OFF(6);
+			SET_BOBPOSI(6, 0);
+			_vm->_objectsManager.BOBANIM_ON(7);
+			ZONE_ON(14);
+			_vm->_globals.SAUVEGARDE->data[svField261] = 3;
+		}
+		_vm->_globals.DESACTIVE_INVENT = 0;
+	}
+	if (_vm->_globals.ECRAN == 93 && !_vm->_globals.SAUVEGARDE->data[svField333]) {
+		_vm->_globals.DESACTIVE_INVENT = 1;
+		do
+			_vm->_eventsManager.VBL();
+		while (BOBPOSI(8) != 3);
+		_vm->_globals.NOPARLE = 1;
+		_vm->_talkManager.PARLER_PERSO("GM3.PE2");
+		_vm->_objectsManager.BOBANIM_OFF(8);
+		_vm->_globals.SAUVEGARDE->data[svField333] = 1;
+		_vm->_globals.DESACTIVE_INVENT = 0;
+	}
 }
 
 int ObjectsManager::Traduction(byte *a1) {
@@ -4060,9 +4350,9 @@ LABEL_1141:
 	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'N' && *(a1 + 4) == 'I') {
 		v75 = READ_LE_UINT16(a1 + 5);
 		if (v75 <= 100)
-			_vm->_animationManager.BOBANIM_ON(v75);
+			_vm->_objectsManager.BOBANIM_ON(v75);
 		else
-			_vm->_animationManager.BOBANIM_OFF(v75 - 100);
+			_vm->_objectsManager.BOBANIM_OFF(v75 - 100);
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'P' && *(a1 + 4) == 'E') {
@@ -4179,36 +4469,36 @@ LABEL_1141:
 			_vm->_globals.NBBLOC = 0;
 		}
 		if (v76 == 608) {
-			_vm->_animationManager.BOBANIM_OFF(2);
-			_vm->_animationManager.BOBANIM_OFF(3);
-			_vm->_animationManager.BOBANIM_OFF(4);
-			_vm->_animationManager.BOBANIM_OFF(6);
-			_vm->_animationManager.BOBANIM_OFF(11);
-			_vm->_animationManager.BOBANIM_OFF(10);
+			_vm->_objectsManager.BOBANIM_OFF(2);
+			_vm->_objectsManager.BOBANIM_OFF(3);
+			_vm->_objectsManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.BOBANIM_OFF(6);
+			_vm->_objectsManager.BOBANIM_OFF(11);
+			_vm->_objectsManager.BOBANIM_OFF(10);
 		}
 		if (v76 == 609) {
-			_vm->_animationManager.BOBANIM_ON(2);
-			_vm->_animationManager.BOBANIM_ON(3);
-			_vm->_animationManager.BOBANIM_ON(4);
-			_vm->_animationManager.BOBANIM_ON(6);
-			_vm->_animationManager.BOBANIM_ON(11);
-			_vm->_animationManager.BOBANIM_ON(10);
+			_vm->_objectsManager.BOBANIM_ON(2);
+			_vm->_objectsManager.BOBANIM_ON(3);
+			_vm->_objectsManager.BOBANIM_ON(4);
+			_vm->_objectsManager.BOBANIM_ON(6);
+			_vm->_objectsManager.BOBANIM_ON(11);
+			_vm->_objectsManager.BOBANIM_ON(10);
 		}
 		if (v76 == 611) {
-			_vm->_animationManager.BOBANIM_ON(5);
-			_vm->_animationManager.BOBANIM_ON(7);
-			_vm->_animationManager.BOBANIM_ON(8);
-			_vm->_animationManager.BOBANIM_ON(9);
-			_vm->_animationManager.BOBANIM_ON(12);
-			_vm->_animationManager.BOBANIM_ON(13);
+			_vm->_objectsManager.BOBANIM_ON(5);
+			_vm->_objectsManager.BOBANIM_ON(7);
+			_vm->_objectsManager.BOBANIM_ON(8);
+			_vm->_objectsManager.BOBANIM_ON(9);
+			_vm->_objectsManager.BOBANIM_ON(12);
+			_vm->_objectsManager.BOBANIM_ON(13);
 		}
 		if (v76 == 610) {
-			_vm->_animationManager.BOBANIM_OFF(5);
-			_vm->_animationManager.BOBANIM_OFF(7);
-			_vm->_animationManager.BOBANIM_OFF(8);
-			_vm->_animationManager.BOBANIM_OFF(9);
-			_vm->_animationManager.BOBANIM_OFF(12);
-			_vm->_animationManager.BOBANIM_OFF(13);
+			_vm->_objectsManager.BOBANIM_OFF(5);
+			_vm->_objectsManager.BOBANIM_OFF(7);
+			_vm->_objectsManager.BOBANIM_OFF(8);
+			_vm->_objectsManager.BOBANIM_OFF(9);
+			_vm->_objectsManager.BOBANIM_OFF(12);
+			_vm->_objectsManager.BOBANIM_OFF(13);
 		}
 		if (v76 == 10)
 			_vm->_talkManager.PARLER_PERSO("bqeflic1.pe2");
@@ -4245,7 +4535,7 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(3) != 100);
+			while (BOBPOSI(3) != 100);
 			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_graphicsManager.FIN_VISU();
 			if (!_vm->_globals.CENSURE) {
@@ -4347,53 +4637,53 @@ LABEL_1141:
 			OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
 			v15 = 0;
 			do {
-				if ((uint16)BOBPOSI(9) == 4 && !v15) {
+				if (BOBPOSI(9) == 4 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v15 = 1;
 				}
-				if ((uint16)BOBPOSI(9) == 5)
+				if (BOBPOSI(9) == 5)
 					v15 = 0;
-				if ((uint16)BOBPOSI(9) == 16 && !v15) {
+				if (BOBPOSI(9) == 16 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v15 = 1;
 				}
-				if ((uint16)BOBPOSI(9) == 17)
+				if (BOBPOSI(9) == 17)
 					v15 = 0;
-				if ((uint16)BOBPOSI(9) == 28 && !v15) {
+				if (BOBPOSI(9) == 28 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v15 = 1;
 				}
-				if ((uint16)BOBPOSI(9) == 29)
+				if (BOBPOSI(9) == 29)
 					v15 = 0;
-				if ((uint16)BOBPOSI(10) == 10 && !v15) {
+				if (BOBPOSI(10) == 10 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
 					v15 = 1;
 				}
-				if ((uint16)BOBPOSI(10) == 11)
+				if (BOBPOSI(10) == 11)
 					v15 = 0;
-				if ((uint16)BOBPOSI(10) == 22 && !v15) {
+				if (BOBPOSI(10) == 22 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
 					v15 = 1;
 				}
-				if ((uint16)BOBPOSI(10) == 23)
+				if (BOBPOSI(10) == 23)
 					v15 = 0;
-				if ((uint16)BOBPOSI(10) == 33 && !v15) {
+				if (BOBPOSI(10) == 33 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
 					v15 = 1;
 				}
-				if ((uint16)BOBPOSI(10) == 34)
+				if (BOBPOSI(10) == 34)
 					v15 = 0;
-				if ((uint16)BOBPOSI(10) == 12)
+				if (BOBPOSI(10) == 12)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 1);
-				if ((uint16)BOBPOSI(10) == 23)
+				if (BOBPOSI(10) == 23)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 2);
-				if ((uint16)BOBPOSI(10) == 34)
+				if (BOBPOSI(10) == 34)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 3);
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(9) != 36);
+			} while (BOBPOSI(9) != 36);
 			SPRITE_ON(0);
-			_vm->_animationManager.BOBANIM_OFF(9);
-			_vm->_animationManager.BOBANIM_OFF(10);
+			_vm->_objectsManager.BOBANIM_OFF(9);
+			_vm->_objectsManager.BOBANIM_OFF(10);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			_vm->_soundManager.DEL_SAMPLE(2);
 		}
@@ -4412,33 +4702,33 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != PTRNUL);
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(7);
+			_vm->_objectsManager.BOBANIM_ON(7);
 			SET_BOBPOSI(7, 0);
 			v18 = 0;
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 			do {
-				if ((uint16)BOBPOSI(7) == 10 && !v18) {
+				if (BOBPOSI(7) == 10 && !v18) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v18 = 1;
 				}
-				if ((uint16)BOBPOSI(7) == 11)
+				if (BOBPOSI(7) == 11)
 					v18 = 0;
-				if ((uint16)BOBPOSI(7) == 18 && !v18) {
+				if (BOBPOSI(7) == 18 && !v18) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v18 = 1;
 				}
-				if ((uint16)BOBPOSI(7) == 19)
+				if (BOBPOSI(7) == 19)
 					v18 = 0;
-				if ((uint16)BOBPOSI(7) == 19)
-					_vm->_animationManager.BOBANIM_ON(3);
+				if (BOBPOSI(7) == 19)
+					_vm->_objectsManager.BOBANIM_ON(3);
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(3) != 48);
+			} while (BOBPOSI(3) != 48);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			SETANISPR(0, 62);
 			SPRITE_ON(0);
-			_vm->_animationManager.BOBANIM_ON(6);
-			_vm->_animationManager.BOBANIM_OFF(7);
-			_vm->_animationManager.BOBANIM_OFF(3);
+			_vm->_objectsManager.BOBANIM_ON(6);
+			_vm->_objectsManager.BOBANIM_OFF(7);
+			_vm->_objectsManager.BOBANIM_OFF(3);
 		}
 		if (v76 == 50) {
 			_vm->_soundManager.PLAY_SOUND("SOUND46.WAv");
@@ -4453,65 +4743,65 @@ LABEL_1141:
 				v19 = 41;
 			v20 = 0;
 			do {
-				if ((uint16)BOBPOSI(9) == 4 && !v20) {
+				if (BOBPOSI(9) == 4 && !v20) {
 					_vm->_soundManager.PLAY_SOUND2("SOUND44.WAV");
 					v20 = 1;
 				}
-				if ((uint16)BOBPOSI(9) == 5)
+				if (BOBPOSI(9) == 5)
 					v20 = 0;
-				if ((uint16)BOBPOSI(9) == 18 && !v20) {
+				if (BOBPOSI(9) == 18 && !v20) {
 					_vm->_soundManager.PLAY_SOUND2("SOUND46.WAV");
 					v20 = 1;
 				}
-				if ((uint16)BOBPOSI(9) == 19)
+				if (BOBPOSI(9) == 19)
 					v20 = 0;
-				if ((uint16)BOBPOSI(10) == 11 && !v20) {
+				if (BOBPOSI(10) == 11 && !v20) {
 					_vm->_soundManager.PLAY_SOUND2("SOUND45.WAV");
 					v20 = 1;
 				}
-				if ((uint16)BOBPOSI(10) == 12)
+				if (BOBPOSI(10) == 12)
 					v20 = 0;
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(9) != v19);
+			} while (BOBPOSI(9) != v19);
 			if (v19 == 12) {
 				SPRITE_ON(0);
-				_vm->_animationManager.BOBANIM_OFF(9);
+				_vm->_objectsManager.BOBANIM_OFF(9);
 			}
 			_vm->_globals.CACHE_ON();
 		}
 		if (v76 == 80) {
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(12);
-			_vm->_animationManager.BOBANIM_ON(13);
+			_vm->_objectsManager.BOBANIM_ON(12);
+			_vm->_objectsManager.BOBANIM_ON(13);
 			SET_BOBPOSI(12, 0);
 			SET_BOBPOSI(13, 0);
 			v21 = 0;
 			_vm->_soundManager.LOAD_WAV("SOUND44.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND71.WAV", 2);
 			do {
-				if ((uint16)BOBPOSI(12) == 4 && !v21) {
+				if (BOBPOSI(12) == 4 && !v21) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 					v21 = 1;
 				}
-				if ((uint16)BOBPOSI(12) == 5)
+				if (BOBPOSI(12) == 5)
 					v21 = 0;
-				if ((uint16)BOBPOSI(4) == 5 && !v21) {
+				if (BOBPOSI(4) == 5 && !v21) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
 					v21 = 1;
 				}
-				if ((uint16)BOBPOSI(4) == 6)
+				if (BOBPOSI(4) == 6)
 					v21 = 0;
-				if ((uint16)BOBPOSI(13) == 8) {
-					_vm->_animationManager.BOBANIM_OFF(13);
-					_vm->_animationManager.BOBANIM_OFF(3);
-					_vm->_animationManager.BOBANIM_ON(4);
+				if (BOBPOSI(13) == 8) {
+					_vm->_objectsManager.BOBANIM_OFF(13);
+					_vm->_objectsManager.BOBANIM_OFF(3);
+					_vm->_objectsManager.BOBANIM_ON(4);
 					SET_BOBPOSI(4, 0);
 					SET_BOBPOSI(13, 0);
 				}
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(4) != 16);
-			_vm->_animationManager.BOBANIM_OFF(12);
-			_vm->_animationManager.BOBANIM_OFF(4);
+			} while (BOBPOSI(4) != 16);
+			_vm->_objectsManager.BOBANIM_OFF(12);
+			_vm->_objectsManager.BOBANIM_OFF(4);
 			SPRITE_ON(0);
 			OBSSEUL = 1;
 			INILINK("IM27a");
@@ -4532,8 +4822,8 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != PTRNUL);
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(11);
-			_vm->_animationManager.BOBANIM_ON(8);
+			_vm->_objectsManager.BOBANIM_ON(11);
+			_vm->_objectsManager.BOBANIM_ON(8);
 			SET_BOBPOSI(11, 0);
 			SET_BOBPOSI(8, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND44.WAV", 1);
@@ -4541,68 +4831,68 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND49.WAV", 3);
 			v24 = 0;
 			do {
-				if ((uint16)BOBPOSI(11) == 4 && !v24) {
+				if (BOBPOSI(11) == 4 && !v24) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 					v24 = 1;
 				}
-				if ((uint16)BOBPOSI(11) == 5)
+				if (BOBPOSI(11) == 5)
 					v24 = 0;
-				if ((uint16)BOBPOSI(8) == 11 && !v24) {
+				if (BOBPOSI(8) == 11 && !v24) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
 					v24 = 1;
 				}
-				if ((uint16)BOBPOSI(8) == 12)
+				if (BOBPOSI(8) == 12)
 					v24 = 0;
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(8) != 32);
+			} while (BOBPOSI(8) != 32);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
 			SPRITE_ON(0);
-			_vm->_animationManager.BOBANIM_OFF(11);
-			_vm->_animationManager.BOBANIM_OFF(8);
-			_vm->_animationManager.BOBANIM_ON(5);
-			_vm->_animationManager.BOBANIM_ON(6);
+			_vm->_objectsManager.BOBANIM_OFF(11);
+			_vm->_objectsManager.BOBANIM_OFF(8);
+			_vm->_objectsManager.BOBANIM_ON(5);
+			_vm->_objectsManager.BOBANIM_ON(6);
 			SET_BOBPOSI(5, 0);
 			SET_BOBPOSI(6, 0);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(5) != 74);
-			_vm->_animationManager.BOBANIM_OFF(5);
-			_vm->_animationManager.BOBANIM_OFF(6);
-			_vm->_animationManager.BOBANIM_ON(9);
-			_vm->_animationManager.BOBANIM_ON(7);
+			while (BOBPOSI(5) != 74);
+			_vm->_objectsManager.BOBANIM_OFF(5);
+			_vm->_objectsManager.BOBANIM_OFF(6);
+			_vm->_objectsManager.BOBANIM_ON(9);
+			_vm->_objectsManager.BOBANIM_ON(7);
 		}
 		if (v76 == 95) {
-			_vm->_animationManager.BOBANIM_ON(9);
-			_vm->_animationManager.BOBANIM_ON(10);
-			_vm->_animationManager.BOBANIM_ON(12);
+			_vm->_objectsManager.BOBANIM_ON(9);
+			_vm->_objectsManager.BOBANIM_ON(10);
+			_vm->_objectsManager.BOBANIM_ON(12);
 			SET_BOBPOSI(9, 0);
 			SET_BOBPOSI(10, 0);
 			SET_BOBPOSI(12, 0);
 			SPRITE_OFF(0);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(9) != 15);
-			_vm->_animationManager.BOBANIM_OFF(9);
+			while (BOBPOSI(9) != 15);
+			_vm->_objectsManager.BOBANIM_OFF(9);
 			SPRITE_ON(0);
 			_vm->_soundManager.PLAY_SOUND("SOUND50.WAV");
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(12) != 117);
+			while (BOBPOSI(12) != 117);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
-			_vm->_animationManager.BOBANIM_OFF(12);
-			_vm->_animationManager.BOBANIM_OFF(10);
-			_vm->_animationManager.BOBANIM_ON(11);
+			_vm->_objectsManager.BOBANIM_OFF(12);
+			_vm->_objectsManager.BOBANIM_OFF(10);
+			_vm->_objectsManager.BOBANIM_ON(11);
 		}
 		if (v76 == 85) {
-			_vm->_animationManager.BOBANIM_OFF(3);
-			_vm->_animationManager.BOBANIM_ON(5);
+			_vm->_objectsManager.BOBANIM_OFF(3);
+			_vm->_objectsManager.BOBANIM_ON(5);
 			SET_BOBPOSI(5, 0);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(5) != 6);
-			_vm->_animationManager.BOBANIM_OFF(5);
-			_vm->_animationManager.BOBANIM_ON(6);
+			while (BOBPOSI(5) != 6);
+			_vm->_objectsManager.BOBANIM_OFF(5);
+			_vm->_objectsManager.BOBANIM_ON(6);
 			OBSSEUL = 1;
 			INILINK("IM24a");
 			OBSSEUL = 0;
@@ -4611,78 +4901,78 @@ LABEL_1141:
 			if (_vm->_globals.SAUVEGARDE->data[svField183] == 1) {
 				SET_BOBPOSI(1, 0);
 				SET_BOBPOSI(2, 0);
-				_vm->_animationManager.BOBANIM_ON(1);
-				_vm->_animationManager.BOBANIM_ON(2);
+				_vm->_objectsManager.BOBANIM_ON(1);
+				_vm->_objectsManager.BOBANIM_ON(2);
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				v25 = 0;
 				do {
-					if ((uint16)BOBPOSI(1) == 1 && !v25) {
+					if (BOBPOSI(1) == 1 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
 					}
-					if ((uint16)BOBPOSI(1) == 2)
+					if (BOBPOSI(1) == 2)
 						v25 = 0;
-					if ((uint16)BOBPOSI(1) == 3 && !v25) {
+					if (BOBPOSI(1) == 3 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
 					}
-					if ((uint16)BOBPOSI(1) == 4)
+					if (BOBPOSI(1) == 4)
 						v25 = 0;
-					if ((uint16)BOBPOSI(1) == 5 && !v25) {
+					if (BOBPOSI(1) == 5 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
 					}
-					if ((uint16)BOBPOSI(1) == 6)
+					if (BOBPOSI(1) == 6)
 						v25 = 0;
-					if ((uint16)BOBPOSI(1) == 7 && !v25) {
+					if (BOBPOSI(1) == 7 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
 					}
-					if ((uint16)BOBPOSI(1) == 8)
+					if (BOBPOSI(1) == 8)
 						v25 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((uint16)BOBPOSI(1) != 9);
-				_vm->_animationManager.BOBANIM_OFF(1);
-				_vm->_animationManager.BOBANIM_OFF(2);
+				} while (BOBPOSI(1) != 9);
+				_vm->_objectsManager.BOBANIM_OFF(1);
+				_vm->_objectsManager.BOBANIM_OFF(2);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField183] == 2) {
 				SET_BOBPOSI(1, 0);
 				SET_BOBPOSI(3, 0);
-				_vm->_animationManager.BOBANIM_ON(1);
-				_vm->_animationManager.BOBANIM_ON(3);
+				_vm->_objectsManager.BOBANIM_ON(1);
+				_vm->_objectsManager.BOBANIM_ON(3);
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				v26 = 0;
 				do {
-					if ((uint16)BOBPOSI(1) == 1 && !v26) {
+					if (BOBPOSI(1) == 1 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
 					}
-					if ((uint16)BOBPOSI(1) == 2)
+					if (BOBPOSI(1) == 2)
 						v26 = 0;
-					if ((uint16)BOBPOSI(1) == 3 && !v26) {
+					if (BOBPOSI(1) == 3 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
 					}
-					if ((uint16)BOBPOSI(1) == 4)
+					if (BOBPOSI(1) == 4)
 						v26 = 0;
-					if ((uint16)BOBPOSI(1) == 5 && !v26) {
+					if (BOBPOSI(1) == 5 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
 					}
-					if ((uint16)BOBPOSI(1) == 6)
+					if (BOBPOSI(1) == 6)
 						v26 = 0;
-					if ((uint16)BOBPOSI(1) == 7 && !v26) {
+					if (BOBPOSI(1) == 7 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
 					}
-					if ((uint16)BOBPOSI(1) == 8)
+					if (BOBPOSI(1) == 8)
 						v26 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((uint16)BOBPOSI(1) != 9);
-				_vm->_animationManager.BOBANIM_OFF(1);
-				_vm->_animationManager.BOBANIM_OFF(3);
+				} while (BOBPOSI(1) != 9);
+				_vm->_objectsManager.BOBANIM_OFF(1);
+				_vm->_objectsManager.BOBANIM_OFF(3);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
@@ -4769,82 +5059,82 @@ LABEL_1141:
 			SETANISPR(0, 60);
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND63.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField253] > 2) {
-				_vm->_animationManager.BOBANIM_ON(4);
+				_vm->_objectsManager.BOBANIM_ON(4);
 				v33 = 0;
 				do {
-					if ((uint16)BOBPOSI(4) == 9 && !v33) {
+					if (BOBPOSI(4) == 9 && !v33) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v33 = 1;
 					}
-					if ((uint16)BOBPOSI(4) == 10)
+					if (BOBPOSI(4) == 10)
 						v33 = 0;
-					if ((uint16)BOBPOSI(4) == 32 && !v33) {
+					if (BOBPOSI(4) == 32 && !v33) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v33 = 1;
 					}
-					if ((uint16)BOBPOSI(4) == 33)
+					if (BOBPOSI(4) == 33)
 						v33 = 0;
-					if ((uint16)BOBPOSI(4) == 55 && !v33) {
+					if (BOBPOSI(4) == 55 && !v33) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v33 = 1;
 					}
-					if ((uint16)BOBPOSI(4) == 56)
+					if (BOBPOSI(4) == 56)
 						v33 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((uint16)BOBPOSI(4) != 72);
-				_vm->_animationManager.BOBANIM_OFF(4);
+				} while (BOBPOSI(4) != 72);
+				_vm->_objectsManager.BOBANIM_OFF(4);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
-				_vm->_animationManager.BOBANIM_ON(6);
+				_vm->_objectsManager.BOBANIM_ON(6);
 				v34 = 0;
 				do {
-					if ((uint16)BOBPOSI(6) == 9 && !v34) {
+					if (BOBPOSI(6) == 9 && !v34) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v34 = 1;
 					}
-					if ((uint16)BOBPOSI(6) == 10)
+					if (BOBPOSI(6) == 10)
 						v34 = 0;
-					if ((uint16)BOBPOSI(6) == 32 && !v34) {
+					if (BOBPOSI(6) == 32 && !v34) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v34 = 1;
 					}
-					if ((uint16)BOBPOSI(6) == 33)
+					if (BOBPOSI(6) == 33)
 						v34 = 0;
-					if ((uint16)BOBPOSI(6) == 55 && !v34) {
+					if (BOBPOSI(6) == 55 && !v34) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v34 = 1;
 					}
-					if ((uint16)BOBPOSI(6) == 56)
+					if (BOBPOSI(6) == 56)
 						v34 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((uint16)BOBPOSI(6) != 72);
-				_vm->_animationManager.BOBANIM_OFF(6);
+				} while (BOBPOSI(6) != 72);
+				_vm->_objectsManager.BOBANIM_OFF(6);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 2) {
-				_vm->_animationManager.BOBANIM_ON(5);
+				_vm->_objectsManager.BOBANIM_ON(5);
 				v35 = 0;
 				do {
-					if ((uint16)BOBPOSI(5) == 9 && !v35) {
+					if (BOBPOSI(5) == 9 && !v35) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v35 = 1;
 					}
-					if ((uint16)BOBPOSI(5) == 10)
+					if (BOBPOSI(5) == 10)
 						v35 = 0;
-					if ((uint16)BOBPOSI(5) == 32 && !v35) {
+					if (BOBPOSI(5) == 32 && !v35) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v35 = 1;
 					}
-					if ((uint16)BOBPOSI(5) == 33)
+					if (BOBPOSI(5) == 33)
 						v35 = 0;
-					if ((uint16)BOBPOSI(5) == 55 && !v35) {
+					if (BOBPOSI(5) == 55 && !v35) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v35 = 1;
 					}
-					if ((uint16)BOBPOSI(5) == 56)
+					if (BOBPOSI(5) == 56)
 						v35 = 0;
 					_vm->_eventsManager.VBL();
-				} while ((uint16)BOBPOSI(5) != 72);
-				_vm->_animationManager.BOBANIM_OFF(5);
+				} while (BOBPOSI(5) != 72);
+				_vm->_objectsManager.BOBANIM_OFF(5);
 			}
 			SPRITE_ON(0);
 			ACTION_DOS(1);
@@ -4852,52 +5142,52 @@ LABEL_1141:
 		}
 		if (v76 == 106) {
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(4);
+			_vm->_objectsManager.BOBANIM_ON(4);
 			SET_BOBPOSI(4, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND62.WAV", 2);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(4) != 10);
+			while (BOBPOSI(4) != 10);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(4) != 18);
+			while (BOBPOSI(4) != 18);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(4) != 62);
+			while (BOBPOSI(4) != 62);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(4) != 77);
-			_vm->_animationManager.BOBANIM_OFF(4);
+			while (BOBPOSI(4) != 77);
+			_vm->_objectsManager.BOBANIM_OFF(4);
 			SPRITE_ON(0);
 		}
 		if (v76 == 107) {
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(5);
+			_vm->_objectsManager.BOBANIM_ON(5);
 			SET_BOBPOSI(5, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND62.WAV", 2);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(5) != 10);
+			while (BOBPOSI(5) != 10);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(5) != 18);
+			while (BOBPOSI(5) != 18);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(5) != 38);
+			while (BOBPOSI(5) != 38);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(5) != 53);
-			_vm->_animationManager.BOBANIM_OFF(5);
+			while (BOBPOSI(5) != 53);
+			_vm->_objectsManager.BOBANIM_OFF(5);
 			SPRITE_ON(0);
 		}
 		if (v76 == 210) {
@@ -4906,7 +5196,7 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SEQ2("SECRET1.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
-			_vm->_animationManager.BOBANIM_ON(9);
+			_vm->_objectsManager.BOBANIM_ON(9);
 			OBSSEUL = 1;
 			INILINK("IM73a");
 			OBSSEUL = 0;
@@ -4970,12 +5260,12 @@ LABEL_1141:
 			SET_BOBPOSI(1, 0);
 			SET_BOBPOSI(2, 0);
 			SETANISPR(0, 60);
-			_vm->_animationManager.BOBANIM_OFF(4);
-			_vm->_animationManager.BOBANIM_ON(1);
+			_vm->_objectsManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.BOBANIM_ON(1);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(1) != 9);
-			_vm->_animationManager.BOBANIM_OFF(1);
+			while (BOBPOSI(1) != 9);
+			_vm->_objectsManager.BOBANIM_OFF(1);
 			_vm->_globals.NO_VISU = 1;
 			_vm->_globals.chemin = PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
@@ -4989,101 +5279,101 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != PTRNUL);
 			SETANISPR(0, 64);
-			_vm->_animationManager.BOBANIM_ON(2);
+			_vm->_objectsManager.BOBANIM_ON(2);
 			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(2) != 10);
-			_vm->_animationManager.BOBANIM_OFF(2);
-			_vm->_animationManager.BOBANIM_ON(4);
+			while (BOBPOSI(2) != 10);
+			_vm->_objectsManager.BOBANIM_OFF(2);
+			_vm->_objectsManager.BOBANIM_ON(4);
 		}
 		if (v76 == 201) {
-			_vm->_animationManager.BOBANIM_ON(3);
+			_vm->_objectsManager.BOBANIM_ON(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(3) != 18);
-			_vm->_animationManager.BOBANIM_OFF(3);
-			_vm->_animationManager.BOBANIM_ON(4);
+			while (BOBPOSI(3) != 18);
+			_vm->_objectsManager.BOBANIM_OFF(3);
+			_vm->_objectsManager.BOBANIM_ON(4);
 		}
 		if (v76 == 203) {
 			_vm->_globals.NO_VISU = 1;
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(4);
+			_vm->_objectsManager.BOBANIM_ON(4);
 			do {
 				_vm->_eventsManager.VBL();
-				if ((uint16)BOBPOSI(4) == 18)
+				if (BOBPOSI(4) == 18)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
-			} while ((uint16)BOBPOSI(4) != 26);
-			_vm->_animationManager.BOBANIM_OFF(4);
+			} while (BOBPOSI(4) != 26);
+			_vm->_objectsManager.BOBANIM_OFF(4);
 			_vm->_globals.NO_VISU = 0;
 			SPRITE_ON(0);
 		}
 		if (v76 == 204) {
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(3);
+			_vm->_objectsManager.BOBANIM_ON(3);
 			_vm->_soundManager.LOAD_WAV("SOUND67.WAV", 1);
 			v41 = 0;
 			do {
-				if ((uint16)BOBPOSI(3) == 10 && !v41) {
+				if (BOBPOSI(3) == 10 && !v41) {
 					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
 					v41 = 1;
 				}
-				if ((uint16)BOBPOSI(3) == 11)
+				if (BOBPOSI(3) == 11)
 					v41 = 0;
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(3) != 50);
-			_vm->_animationManager.BOBANIM_OFF(3);
+			} while (BOBPOSI(3) != 50);
+			_vm->_objectsManager.BOBANIM_OFF(3);
 			SPRITE_ON(0);
 		}
 		if (v76 == 205) {
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(4);
+			_vm->_objectsManager.BOBANIM_ON(4);
 			_vm->_soundManager.LOAD_WAV("SOUND69.WAV", 1);
 			v42 = 0;
 			do {
-				if ((uint16)BOBPOSI(4) == 10 && !v42) {
+				if (BOBPOSI(4) == 10 && !v42) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v42 = 1;
 				}
-				if ((uint16)BOBPOSI(4) == 11)
+				if (BOBPOSI(4) == 11)
 					v42 = 0;
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(4) != 24);
-			_vm->_animationManager.BOBANIM_OFF(4);
+			} while (BOBPOSI(4) != 24);
+			_vm->_objectsManager.BOBANIM_OFF(4);
 			SPRITE_ON(0);
 		}
 		if (v76 == 175) {
 			SETANISPR(0, 55);
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(9);
-			_vm->_animationManager.BOBANIM_ON(10);
+			_vm->_objectsManager.BOBANIM_ON(9);
+			_vm->_objectsManager.BOBANIM_ON(10);
 			BOB_OFFSET(10, 300);
 			_vm->_soundManager.PLAY_SOUND("SOUND44.WAV");
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(10) != 7);
-			_vm->_animationManager.BOBANIM_ON(6);
-			_vm->_animationManager.BOBANIM_OFF(3);
+			while (BOBPOSI(10) != 7);
+			_vm->_objectsManager.BOBANIM_ON(6);
+			_vm->_objectsManager.BOBANIM_OFF(3);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(6) != 10);
+			while (BOBPOSI(6) != 10);
 			_vm->_soundManager.PLAY_SOUND("SOUND71.WAV");
-			_vm->_animationManager.BOBANIM_ON(7);
-			_vm->_animationManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.BOBANIM_ON(7);
+			_vm->_objectsManager.BOBANIM_OFF(4);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(7) != 15);
-			_vm->_animationManager.BOBANIM_OFF(5);
-			_vm->_animationManager.BOBANIM_ON(8);
+			while (BOBPOSI(7) != 15);
+			_vm->_objectsManager.BOBANIM_OFF(5);
+			_vm->_objectsManager.BOBANIM_ON(8);
 			_vm->_soundManager.PLAY_SOUND("SOUND70.WAV");
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(8) != 76);
-			_vm->_animationManager.BOBANIM_OFF(6);
-			_vm->_animationManager.BOBANIM_OFF(7);
-			_vm->_animationManager.BOBANIM_OFF(8);
-			_vm->_animationManager.BOBANIM_OFF(9);
-			_vm->_animationManager.BOBANIM_OFF(10);
+			while (BOBPOSI(8) != 76);
+			_vm->_objectsManager.BOBANIM_OFF(6);
+			_vm->_objectsManager.BOBANIM_OFF(7);
+			_vm->_objectsManager.BOBANIM_OFF(8);
+			_vm->_objectsManager.BOBANIM_OFF(9);
+			_vm->_objectsManager.BOBANIM_OFF(10);
 			SPRITE_ON(0);
 		}
 		if (v76 == 229) {
@@ -5113,15 +5403,15 @@ LABEL_1141:
 			} while (_vm->_globals.chemin != PTRNUL);
 			SPRITE_OFF(0);
 			v45 = 0;
-			_vm->_animationManager.BOBANIM_ON(7);
+			_vm->_objectsManager.BOBANIM_ON(7);
 			do {
-				if ((uint16)BOBPOSI(7) == 9 && !v45) {
+				if (BOBPOSI(7) == 9 && !v45) {
 					v45 = 1;
 					_vm->_soundManager.PLAY_SOUND("SOUND81.WAV");
 				}
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(7) != 15);
-			_vm->_animationManager.BOBANIM_OFF(7);
+			} while (BOBPOSI(7) != 15);
+			_vm->_objectsManager.BOBANIM_OFF(7);
 			SETXSPR(0, 476);
 			SETYSPR(0, 278);
 			SPRITE_ON(0);
@@ -5134,41 +5424,41 @@ LABEL_1141:
 		if (v76 == 231) {
 			_vm->_globals.CACHE_OFF();
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(12);
+			_vm->_objectsManager.BOBANIM_ON(12);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(12) != 6);
+			while (BOBPOSI(12) != 6);
 			_vm->_globals.NOPARLE = 1;
 			_vm->_talkManager.PARLER_PERSO("PRMORT.pe2");
 			_vm->_globals.NOPARLE = 0;
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(12) != 12);
+			while (BOBPOSI(12) != 12);
 			SPRITE_ON(0);
-			_vm->_animationManager.BOBANIM_OFF(12);
+			_vm->_objectsManager.BOBANIM_OFF(12);
 			_vm->_globals.CACHE_ON();
 		}
 		if (v76 == 233) {
 			_vm->_globals.CACHE_OFF();
 			SPRITE_OFF(0);
-			_vm->_animationManager.BOBANIM_ON(11);
+			_vm->_objectsManager.BOBANIM_ON(11);
 			v46 = 0;
 			do {
 				_vm->_eventsManager.VBL();
-				if ((uint16)BOBPOSI(11) == 10 && !v46)
+				if (BOBPOSI(11) == 10 && !v46)
 					v46 = 1;
-			} while ((uint16)BOBPOSI(11) != 13);
-			_vm->_animationManager.BOBANIM_OFF(11);
+			} while (BOBPOSI(11) != 13);
+			_vm->_objectsManager.BOBANIM_OFF(11);
 			_vm->_globals.CACHE_ON();
-			_vm->_animationManager.BOBANIM_ON(13);
+			_vm->_objectsManager.BOBANIM_ON(13);
 			do
 				_vm->_eventsManager.VBL();
-			while ((uint16)BOBPOSI(13) != 48);
+			while (BOBPOSI(13) != 48);
 			_vm->_globals.NOPARLE = 1;
 			_vm->_talkManager.PARLER_PERSO("HRADIO.PE2");
 			_vm->_globals.NOPARLE = 0;
 			_vm->_graphicsManager.FADE_OUTW();
-			_vm->_animationManager.BOBANIM_OFF(13);
+			_vm->_objectsManager.BOBANIM_OFF(13);
 			_vm->_graphicsManager.NOFADE = 1;
 			_vm->_globals.SORTIE = 94;
 		}
@@ -5273,25 +5563,25 @@ LABEL_1141:
 			OPTI_ONE(16, 0, 10, 0);
 		}
 		if (v76 == 240) {
-			_vm->_animationManager.BOBANIM_ON(1);
+			_vm->_objectsManager.BOBANIM_ON(1);
 			v50 = 0;
 			do {
 				_vm->_eventsManager.VBL();
-				if ((uint16)BOBPOSI(1) == 12 && !v50) {
+				if (BOBPOSI(1) == 12 && !v50) {
 					_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND86.WAV");
 					v50 = 1;
 				}
-				if ((uint16)BOBPOSI(1) == 13)
+				if (BOBPOSI(1) == 13)
 					v50 = 0;
-				if ((uint16)BOBPOSI(1) == 25 && !v50) {
+				if (BOBPOSI(1) == 25 && !v50) {
 					_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND85.WAV");
 					v50 = 1;
 				}
-				if ((uint16)BOBPOSI(1) == 25)
+				if (BOBPOSI(1) == 25)
 					v50 = 0;
-			} while ((uint16)BOBPOSI(1) != 32);
-			_vm->_animationManager.BOBANIM_OFF(1);
-			_vm->_animationManager.BOBANIM_ON(2);
+			} while (BOBPOSI(1) != 32);
+			_vm->_objectsManager.BOBANIM_OFF(1);
+			_vm->_objectsManager.BOBANIM_ON(2);
 			_vm->_fontManager.TEXTE_OFF(9);
 			if (!_vm->_soundManager.TEXTOFF) {
 				_vm->_fontManager.DOS_TEXT(9, 617, _vm->_globals.FICH_TEXTE, 91, 41, 20, 25, 3, 30, 253);
@@ -5368,13 +5658,13 @@ LABEL_1141:
 			v52 = 0;
 			_vm->_soundManager.LOAD_WAV("SOUND46.WAV", 1);
 			do {
-				if ((uint16)BOBPOSI(12) == 5 && !v52) {
+				if (BOBPOSI(12) == 5 && !v52) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v52 = 1;
 				}
 				_vm->_eventsManager.VBL();
-			} while ((uint16)BOBPOSI(12) != 34);
-			_vm->_animationManager.BOBANIM_OFF(2);
+			} while (BOBPOSI(12) != 34);
+			_vm->_objectsManager.BOBANIM_OFF(2);
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_graphicsManager.NOFADE = 1;
 			_vm->_globals.SORTIE = 20;
@@ -5571,9 +5861,9 @@ LABEL_1141:
 			_vm->_globals.SORTIE = 100;
 		}
 		if (v76 == 55) {
-			_vm->_animationManager.BOBANIM_OFF(1);
+			_vm->_objectsManager.BOBANIM_OFF(1);
 			OPTI_ONE(15, 0, 12, 0);
-			_vm->_animationManager.BOBANIM_OFF(15);
+			_vm->_objectsManager.BOBANIM_OFF(15);
 			OBSSEUL = 1;
 			INILINK("IM19a");
 			OBSSEUL = 0;
@@ -5695,58 +5985,264 @@ LABEL_1141:
 	return v1;
 }
 
-void ObjectsManager::BOB_VIVANT(int a1) {
-	warning("TODO: BOB_VIVANT");
+void ObjectsManager::BOB_VIVANT(int idx) {
+	int v1;
+	int v2;
+	int v3; 
+	int v4; 
+
+	v1 = 5 * idx;
+	v2 = READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1);
+	v3 = READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 2);
+	v4 = *(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8);
+	if (READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 4)) {
+		if (!_vm->_globals.NO_OFFSET)
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager.PERSOSPR, 
+				_vm->_graphicsManager.ofscroll + v2, v3, 
+				*(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8));
+		if (_vm->_globals.NO_OFFSET)
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager.PERSOSPR, v2, v3, v4);
+	}
 }
 
-void ObjectsManager::VBOB(byte *a1, int a2, int a3, int a4, int a5) {
-	warning("TODO: VBOB");
+void ObjectsManager::VBOB(byte *a1, int idx, int a3, int a4, int a5) {
+	if (idx > 29)
+		error("MAX_VBOB exceeded");
+	
+	if (_vm->_globals.VBob[idx].field4 <= 1u) {
+		_vm->_globals.VBob[idx].field4 = 1;
+		_vm->_globals.VBob[idx].field6 = a3;
+		_vm->_globals.VBob[idx].field8 = a4;
+		_vm->_globals.VBob[idx].fieldA = a5;
+		_vm->_globals.VBob[idx].field14 = a3;
+		_vm->_globals.VBob[idx].field16 = a4;
+		_vm->_globals.VBob[idx].field18 = a5;
+		_vm->_globals.VBob[idx].field0 = a1;
+		_vm->_globals.VBob[idx].field1C = a1;
+		if (_vm->_globals.VBob[idx].field10 != PTRNUL)
+			_vm->_globals.VBob[idx].field10 = _vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
+	}
+	
+	int f4 = _vm->_globals.VBob[idx].field4;
+	if (f4 == 2 || f4 == 4) {
+		_vm->_globals.VBob[idx].field4 = 3;
+		_vm->_globals.VBob[idx].field14 = _vm->_globals.VBob[idx].field6;
+		_vm->_globals.VBob[idx].field16 = _vm->_globals.VBob[idx].field8;
+		_vm->_globals.VBob[idx].field1C = _vm->_globals.VBob[idx].field0;
+		_vm->_globals.VBob[idx].field18 = _vm->_globals.VBob[idx].fieldA;
+		_vm->_globals.VBob[idx].field6 = a3;
+		_vm->_globals.VBob[idx].field8 = a4;
+		_vm->_globals.VBob[idx].fieldA = a5;
+		_vm->_globals.VBob[idx].field0 = a1;
+	}
 }
 
 void ObjectsManager::VBOB_OFF(int idx) {
-	warning("TODO: VBOB_OFF");
+	if (idx > 29)
+		error("MAX_VBOB exceeded");
+	
+	if (_vm->_globals.VBob[idx].field4 <= 1)
+		_vm->_globals.VBob[idx].field4 = 0;
+	else
+		_vm->_globals.VBob[idx].field4 = 4;
 }
 
 void ObjectsManager::ACTION_DOS(int idx) {
-	warning("TODO: ACTION_DOS");
+	if (_vm->_globals.GESTE_FLAG != 1) {
+		if (PTRNUL != _vm->_globals.GESTE)
+			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE_FLAG = 1;
+
+		FileManager::CONSTRUIT_SYSTEM("DOS.SPR");
+		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	}
+	if (idx == 1)
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+	if (idx == 2)
+		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 0, 0, 8, 0);
+	if (idx == 3)
+		SPACTION1(_vm->_globals.GESTE, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+	if (idx == 4)
+		ACTION(
+		    _vm->_globals.GESTE,
+		    "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,",
+		    0,
+		    0,
+		    8,
+		    0);
+	if (idx == 5)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, 0);
+	if (idx == 6)
+		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,16,15,-1,", 0, 0, 8);
+	if (idx == 7)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, 0);
+	if (idx == 8)
+		SPACTION1(_vm->_globals.GESTE, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
+	if (idx == 9)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, 0);
+	if (idx == 10)
+		SPACTION1(_vm->_globals.GESTE, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
 }
 
 void ObjectsManager::ACTION_DROITE(int idx) {
-	warning("TODO: ACTION_DROITE");
+	if (_vm->_globals.GESTE_FLAG != 3) {
+		if (_vm->_globals.GESTE != PTRNUL)
+			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE_FLAG = 3;
+		FileManager::CONSTRUIT_SYSTEM("PROFIL.SPR");
+		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	}
+	if (idx == 1)
+		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, 0);
+	if (idx == 2)
+		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, 0);
+	if (idx == 3)
+		SPACTION1(_vm->_globals.GESTE, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
+	if (idx == 4)
+		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, 0);
+	if (idx == 5)
+		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, 0);
+	if (idx == 6)
+		SPACTION1(_vm->_globals.GESTE, "24,,23,-1,", 0, 0, 8);
+	if (idx == 7)
+		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, 0);
+	if (idx == 8)
+		SPACTION1(_vm->_globals.GESTE, "26,25,24,23,-1,", 0, 0, 8);
+	if (idx == 9)
+		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, 0);
+	if (idx == 10)
+		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
 }
 
 void ObjectsManager::Q_DROITE(int idx) {
-	warning("TODO: Q_DROITE");
+	if (_vm->_globals.GESTE_FLAG != 4) {
+		if (_vm->_globals.GESTE != PTRNUL)
+			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE_FLAG = 4;
+		FileManager::CONSTRUIT_SYSTEM("3Q.SPR");
+		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	}
+	if (idx == 1)
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+	if (idx == 2)
+		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, 0);
+	if (idx == 3)
+		SPACTION1(_vm->_globals.GESTE, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+	if (idx == 4)
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+	if (idx == 5)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, 0);
+	if (idx == 6)
+		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
+	if (idx == 7)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20-1,", 0, 0, 8, 0);
+	if (idx == 8)
+		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
+	if (idx == 9)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, 0);
+	if (idx == 10)
+		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,15,-1,", 0, 0, 8);
 }
 
 void ObjectsManager::ACTION_FACE(int idx) {
-	warning("TODO: ACTION_FACE");
+	if (_vm->_globals.GESTE_FLAG != 2) {
+		if (_vm->_globals.GESTE != PTRNUL)
+			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE_FLAG = 2;
+		FileManager::CONSTRUIT_SYSTEM("FACE.SPR");
+		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	}
+	if (idx == 1)
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+	if (idx == 2)
+		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 0, 0, 8, 0);
+	if (idx == 3)
+		SPACTION1(_vm->_globals.GESTE, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+	if (idx == 4)
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
 }
 
 void ObjectsManager::Q_GAUCHE(int idx) {
-	warning("TODO: Q_GAUCHE");
+	if (_vm->_globals.GESTE_FLAG != 4) {
+		if (_vm->_globals.GESTE != PTRNUL)
+			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE_FLAG = 4;
+		FileManager::CONSTRUIT_SYSTEM("3Q.SPR");
+		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	}
+	if (idx == 1)
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 1);
+	if (idx == 2)
+		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, 1);
+	if (idx == 3)
+		SPACTION1(_vm->_globals.GESTE, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+	if (idx == 4)
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 1);
+	if (idx == 5)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, 1);
+	if (idx == 6)
+		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
+	if (idx == 7)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20-1,", 0, 0, 8, 1);
+	if (idx == 8)
+		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
+	if (idx == 9)
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, 1);
+	if (idx == 10)
+		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,15,-1,", 0, 0, 8);
 }
 
 void ObjectsManager::ACTION_GAUCHE(int idx) {
-	warning("TODO: ACTION_GAUCHE");
+	if (_vm->_globals.GESTE_FLAG != 3) {
+		if (_vm->_globals.GESTE != PTRNUL)
+			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE_FLAG = 3;
+		FileManager::CONSTRUIT_SYSTEM("PROFIL.SPR");
+		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	}
+	if (idx == 1)
+		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, 1);
+	if (idx == 2)
+		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, 1);
+	if (idx == 3)
+		SPACTION1(_vm->_globals.GESTE, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
+	if (idx == 4)
+		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, 1);
+	if (idx == 5)
+		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, 1);
+	if (idx == 6)
+		SPACTION1(_vm->_globals.GESTE, "24,,23,-1,", 0, 0, 8);
+	if (idx == 7)
+		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, 1);
+	if (idx == 8)
+		SPACTION1(_vm->_globals.GESTE, "26,25,24,23,-1,", 0, 0, 8);
+	if (idx == 9)
+		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, 1);
+	if (idx == 10)
+		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
 }
 
 void ObjectsManager::ZONE_ON(int idx) {
-	warning("TODO: ZONE_ON");
+	if (_vm->_globals.BOBZONE[idx]) {
+		_vm->_globals.BOBZONE_FLAG[idx] = 1;
+	} else {
+		_vm->_globals.ZONEP[idx].field10 = 1;
+	}
 }
 
 void ObjectsManager::ZONE_OFF(int idx) {
-	warning("TODO: ZONE_OFF");
+	if (_vm->_globals.BOBZONE[idx]) {
+		_vm->_globals.BOBZONE_FLAG[idx] = 0;
+	} else {
+		_vm->_globals.ZONEP[idx].field10 = 0;
+	}
+
 }
 
 void ObjectsManager::OPTI_ONE(int a1, int a2, int a3, int a4) {
 	warning("TODO: OPTI_ONE");
 }
 
-int ObjectsManager::BOBPOSI(int a1) {
-	warning("BOBPOSI");
-	return 0;
-}
 
 void ObjectsManager::AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img) {
 	SPEED_FLAG = true;
@@ -5756,8 +6252,41 @@ void ObjectsManager::AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img) {
 	SPEED_IMAGE = img;
 }
 
-void ObjectsManager::SET_BOBPOSI(int a1, int a2) {
-	warning("TODO: SET_BOBPOSI");
+int ObjectsManager::BOBPOSI(int idx) {
+	return _vm->_globals.Bob[idx].field10 / 5;
+}
+
+void ObjectsManager::BOBANIM_ON(int idx) {
+	if (_vm->_globals.Bob[idx].field16) {
+		_vm->_globals.Bob[idx].field16 = 0;
+		_vm->_globals.Bob[idx].field10 = 5;
+		_vm->_globals.Bob[idx].fieldC = 250;
+		_vm->_globals.Bob[idx].field12 = 0;
+		_vm->_globals.Bob[idx].field14 = 0;
+	}
+}
+
+void ObjectsManager::BOBANIM_OFF(int idx) {
+	_vm->_globals.Bob[idx].field16 = 1;
+
+}
+
+void ObjectsManager::SET_BOBPOSI(int idx, int a2) {
+	_vm->_globals.Bob[idx].field10 = 5 * a2;
+	_vm->_globals.Bob[idx].field12 = 0;
+	_vm->_globals.Bob[idx].field14 = 0;
+}
+
+int ObjectsManager::BOBX(int idx) {
+	return _vm->_globals.Bob[idx].field8;
+}
+
+int ObjectsManager::BOBY(int idx) {
+	return _vm->_globals.Bob[idx].fieldA;
+}
+
+int ObjectsManager::BOBA(int idx) {
+	return _vm->_globals.Bob[idx].fieldC;
 }
 
 void ObjectsManager::INILINK(const Common::String &file) {
@@ -5886,6 +6415,116 @@ int ObjectsManager::colision(int a1, int a2) {
 	}
 
 	return -1;
+}
+
+void ObjectsManager::ACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6) {
+	warning("TODO: ACTION");
+}
+
+void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6) {
+	warning("TODO: SPACTION");
+}
+
+void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5) {
+	warning("TODO: SPACTION1");
+}
+
+void ObjectsManager::TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6) {
+	signed int v6; 
+	char v7; 
+
+	v6 = a1;
+	if (_vm->_globals.ECRAN == a1) {
+		if (a1 == 35) {
+			if (a6 > 2 || (v6 = 200, a6 > 2))
+				v6 = 201;
+		}
+		if (_vm->_globals.ECRAN == 36) {
+			if (a6 > 2 || (v6 = 202, a6 > 2))
+				v6 = 203;
+		}
+		if (_vm->_globals.ECRAN == 37) {
+			if (a6 > 2 || (v6 = 204, a6 > 2))
+				v6 = 205;
+		}
+		if (_vm->_globals.ECRAN == 38) {
+			if (a6 > 2 || (v6 = 206, a6 > 2))
+				v6 = 207;
+		}
+		if (_vm->_globals.ECRAN == 39) {
+			if (a6 > 2 || (v6 = 208, a6 > 2))
+				v6 = 209;
+		}
+		if (_vm->_globals.ECRAN == 40) {
+			if (a6 > 2 || (v6 = 210, a6 > 2))
+				v6 = 211;
+		}
+		if (_vm->_globals.ECRAN == 41) {
+			if (a6 > 2 || (v6 = 212, a6 > 2))
+				v6 = 213;
+		}
+		v7 = _vm->_globals.SAUVEGARDE->data[v6];
+		if (v7 != 2) {
+			if (v7) {
+				if (v7 == 1) {
+					if (a6 == 1 && BOBPOSI(1) == 26) {
+						VIRE_INVENT = 1;
+						_vm->_soundManager.PLAY_SAMPLE2(1);
+						_vm->_globals.SAUVEGARDE->data[v6] = 4;
+					}
+					if (a6 == 2 && BOBPOSI(2) == 26) {
+						VIRE_INVENT = 1;
+						_vm->_soundManager.PLAY_SAMPLE2(1);
+						_vm->_globals.SAUVEGARDE->data[v6] = 4;
+					}
+					if (a6 == 3 && BOBPOSI(3) == 27) {
+						VIRE_INVENT = 1;
+						_vm->_soundManager.PLAY_SAMPLE2(1);
+						_vm->_globals.SAUVEGARDE->data[v6] = 4;
+					}
+					if (a6 == 4 && BOBPOSI(4) == 27) {
+						VIRE_INVENT = 1;
+						_vm->_soundManager.PLAY_SAMPLE2(1);
+						VIRE_INVENT = 1;
+						_vm->_globals.SAUVEGARDE->data[v6] = 4;
+					}
+				}
+				if (_vm->_globals.SAUVEGARDE->data[v6] == 4) {
+					if (a6 == 1 && (signed int)BOBPOSI(1) > 30)
+						_vm->_globals.SAUVEGARDE->data[v6] = 3;
+					if (a6 == 2 && (signed int)BOBPOSI(2) > 30)
+						_vm->_globals.SAUVEGARDE->data[v6] = 3;
+					if (a6 == 3 && (signed int)BOBPOSI(3) > 30)
+						_vm->_globals.SAUVEGARDE->data[v6] = 3;
+					if (a6 == 4 && (signed int)BOBPOSI(4) > 30)
+						_vm->_globals.SAUVEGARDE->data[v6] = 3;
+				}
+				if (_vm->_globals.SAUVEGARDE->data[v6] == 3) {
+					_vm->_graphicsManager.FADE_LINUX = 2;
+					_vm->_animationManager.PLAY_ANM("CREVE2.ANM", 100, 24, 500);
+					_vm->_globals.SORTIE = 150;
+					_vm->_graphicsManager.NOFADE = 1;
+					BOB_OFF(1);
+					BOB_OFF(2);
+					BOB_OFF(3);
+					BOB_OFF(4);
+				}
+			} else if (a2 < XSPR(0)
+			           && a3 > XSPR(0)
+			           && a4 < YSPR(0)
+			           && a5 > YSPR(0)) {
+				if (a6 == 1)
+					_vm->_objectsManager.BOBANIM_ON(1);
+				if (a6 == 2)
+					_vm->_objectsManager.BOBANIM_ON(2);
+				if (a6 == 3)
+					_vm->_objectsManager.BOBANIM_ON(3);
+				if (a6 == 4)
+					_vm->_objectsManager.BOBANIM_ON(4);
+				_vm->_globals.SAUVEGARDE->data[v6] = 1;
+			}
+		}
+	}
 }
 
 } // End of namespace Hopkins

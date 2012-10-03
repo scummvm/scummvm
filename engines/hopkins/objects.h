@@ -202,13 +202,11 @@ public:
 	void VERBEPLUS();
 	void BTDROITE();
 	int MZONE();
-	void RESET_OBSTACLE();
-	int ZONE_OBJET(int a1, int a2);
 	void PARAMCADRE(int a1);
 	void OBJETPLUS(int a1);
 	void VALID_OBJET(int a1);
 	void OPTI_OBJET();
-	void SPECIAL_JEU(int a1);
+	void SPECIAL_JEU();
 	int Traduction(byte *a1);
 	void BOB_VIVANT(int a1);
 	void VBOB(byte *a1, int a2, int a3, int a4, int a5);
@@ -223,9 +221,15 @@ public:
 	void ZONE_ON(int idx);
 	void ZONE_OFF(int idx);
 	void OPTI_ONE(int a1, int a2, int a3, int a4);
-	int BOBPOSI(int a1);
 	void AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img);
-	void SET_BOBPOSI(int a1, int a2);
+	int BOBPOSI(int idx);
+	void BOBANIM_ON(int idx);
+	void BOBANIM_OFF(int idx);
+	void SET_BOBPOSI(int idx, int a2);
+	int BOBX(int idx);
+	int BOBY(int idx);
+	int BOBA(int idx);
+
 	void INILINK(const Common::String &file);
 	void OBJET_VIVANT(const Common::String &a2);
 	void OPTI_BOBON(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
@@ -238,6 +242,11 @@ public:
 	int CALC_PROPRE(int idx);
 	int PLAN_TEST(byte *a1, int a2, int a3, int a4, int a5, int a6);
 	int colision(int a1, int a2);
+
+	void ACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6);
+	void SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6);
+	void SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5);
+	void TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6);
 };
 
 } // End of namespace Hopkins

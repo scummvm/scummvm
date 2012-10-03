@@ -71,6 +71,8 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	void CLEAR_ZONE();
+	int ZONE_OBJET(int a1, int a2);
+	int OPTI_ZONE(int a1, int a2, int a3);
 	void RETIRE_LIGNE_ZONE(int idx);
 	void AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, int a6);
 	void RESET_OBSTACLE();

@@ -293,21 +293,6 @@ bool AnimationManager::REDRAW_ANIM() {
 	return false;
 }
 
-void AnimationManager::BOBANIM_ON(int idx) {
-	if (GLOBALS.Bob[idx].field16) {
-		GLOBALS.Bob[idx].field16 = 0;
-		GLOBALS.Bob[idx].field10 = 5;
-		GLOBALS.Bob[idx].fieldC = 250;
-		GLOBALS.Bob[idx].field12 = 0;
-		GLOBALS.Bob[idx].field14 = 0;
-	}
-}
-
-void AnimationManager::BOBANIM_OFF(int idx) {
-	GLOBALS.Bob[idx].field16 = 1;
-
-}
-
 void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 	byte v20[15];
 	char header[10];

@@ -220,10 +220,12 @@ enum SauvegardeOffset {
 	, svField95
 	, svField121
 	, svField122
+	, svField132
 	, svField133
 	, svField170
 	, svField171
 	, svField172
+	, svField173
 	, svField176
 	, svField180
 	, svField181
@@ -243,7 +245,9 @@ enum SauvegardeOffset {
 	, svField228
 	, svField253
 	, svField231
+	, svField261
 	, svField270
+	, svField333
 	, svField338
 	, svField339
 	, svField340
@@ -360,7 +364,7 @@ public:
 	int largeur_boite;
 	byte *INVENTAIRE_OBJET;
 	int hauteur_boite;
-	bool GESTE_FLAG;
+	int GESTE_FLAG;
 	byte *FORETSPR;
 	int FORET;
 	byte *COUCOU;
@@ -418,8 +422,9 @@ public:
 	int NECESSAIRE;
 	int Compteur;
 	int ACTION_SENS;
-	int STOP_BUG;
 	int SegmentEnCours;
+	int STOP_BUG;
+	bool NO_OFFSET;
 
 	int force_to_data_0;
 	int oldzone_46;

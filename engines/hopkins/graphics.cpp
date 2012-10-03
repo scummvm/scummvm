@@ -2403,4 +2403,8 @@ void GraphicsManager::NB_SCREEN() {
 	DD_VBL();
 }
 
+void GraphicsManager::SHOW_PALETTE() {
+	warning("TODO: SHOW_PALETTE");
+}
+
 } // End of namespace Hopkins

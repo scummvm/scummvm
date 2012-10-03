@@ -666,8 +666,8 @@ void HopkinsEngine::INTRORUN() {
 				_animationManager.CHARGE_ANIM("INTRO2");
 				_graphicsManager.VISU_ALL();
 				_soundManager.WSOUND(23);
-				_animationManager.BOBANIM_OFF(3);
-				_animationManager.BOBANIM_OFF(5);
+				_objectsManager.BOBANIM_OFF(3);
+				_objectsManager.BOBANIM_OFF(5);
 				_graphicsManager.ofscroll = 0;
 				_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -687,9 +687,9 @@ void HopkinsEngine::INTRORUN() {
 				for (i = 0; i < 200 / _globals.vitesse; ++i)
 					_eventsManager.VBL();
         
-				_animationManager.BOBANIM_ON(3);
+				_objectsManager.BOBANIM_ON(3);
 				_soundManager.VOICE_MIX(5, 3);
-				_animationManager.BOBANIM_OFF(3);
+				_objectsManager.BOBANIM_OFF(3);
 				_eventsManager.VBL();
 				memcpy(&paletteData2, _graphicsManager.Palette, 796);
 				v21 = *(uint16 *)&_graphicsManager.Palette[796];
@@ -708,9 +708,9 @@ void HopkinsEngine::INTRORUN() {
 					_animationManager.CHARGE_ANIM("INTRO2");
 					_graphicsManager.VISU_ALL();
 					_soundManager.WSOUND(23);
-					_animationManager.BOBANIM_OFF(3);
-					_animationManager.BOBANIM_OFF(5);
-					_animationManager.BOBANIM_OFF(1);
+					_objectsManager.BOBANIM_OFF(3);
+					_objectsManager.BOBANIM_OFF(5);
+					_objectsManager.BOBANIM_OFF(1);
 					_graphicsManager.ofscroll = 0;
 					_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 					_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -731,11 +731,11 @@ void HopkinsEngine::INTRORUN() {
           
 					while (!_eventsManager.ESC_KEY) {
 						if (v9 == 12) {
-							_animationManager.BOBANIM_ON(3);
+							_objectsManager.BOBANIM_ON(3);
 							_eventsManager.VBL();
 							_soundManager.VOICE_MIX(6, 3);
 							_eventsManager.VBL();
-							_animationManager.BOBANIM_OFF(3);
+							_objectsManager.BOBANIM_OFF(3);
 						}
             
 						Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
@@ -777,13 +777,13 @@ void HopkinsEngine::INTRORUN() {
 							for (j = 1; j < 100 / _globals.vitesse; ++j)
 								_eventsManager.VBL();
               
-							_animationManager.BOBANIM_ON(3);
+							_objectsManager.BOBANIM_ON(3);
 							_soundManager.VOICE_MIX(7, 3);
-							_animationManager.BOBANIM_OFF(3);
+							_objectsManager.BOBANIM_OFF(3);
 							
 							for (k = 1; k < 60 / _globals.vitesse; ++k)
 								_eventsManager.VBL();
-							_animationManager.BOBANIM_ON(5);
+							_objectsManager.BOBANIM_ON(5);
 							for (l = 0; l < 20 / _globals.vitesse; ++l)
 								_eventsManager.VBL();
 
@@ -792,9 +792,9 @@ void HopkinsEngine::INTRORUN() {
               
 							for (m = 0; m < 50 / _globals.vitesse; ++m) {
 								if (m == 30 / _globals.vitesse) {
-									_animationManager.BOBANIM_ON(3);
+									_objectsManager.BOBANIM_ON(3);
 									_soundManager.VOICE_MIX(8, 3);
-									_animationManager.BOBANIM_OFF(3);
+									_objectsManager.BOBANIM_OFF(3);
 								}
                 
 								_eventsManager.VBL();
@@ -880,7 +880,7 @@ void HopkinsEngine::BOOM() {
 	_graphicsManager.LOAD_IMAGE("IM15");
 	_animationManager.CHARGE_ANIM("ANIM15");
 	_graphicsManager.VISU_ALL();
-	_animationManager.BOBANIM_OFF(7);
+	_objectsManager.BOBANIM_OFF(7);
 	_globals.BPP_NOAFF = 1;
 
 	for (int idx = 0; idx < 5; ++idx) {
@@ -898,7 +898,7 @@ void HopkinsEngine::BOOM() {
 	_globals.NOPARLE = true;
 	_talkManager.PARLER_PERSO2("vire.pe2");
 	_globals.NOPARLE = false;
-	_animationManager.BOBANIM_ON(7);
+	_objectsManager.BOBANIM_ON(7);
 
 	for (int idx = 0; idx < 100; ++idx) {
 		_eventsManager.VBL();

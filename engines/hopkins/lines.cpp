@@ -39,6 +39,74 @@ void LinesManager::CLEAR_ZONE() {
 	next_ligne = 0;
 }
 
+int LinesManager::ZONE_OBJET(int a1, int a2) {
+	int v2;
+
+	v2 = 0;
+	if ((uint)(a2 - 120) <= 0x21u)
+		v2 = OPTI_ZONE(a1, 1, 0);
+	if ((uint)(a2 - 154) <= 0x25u)
+		v2 = OPTI_ZONE(a1, 7, 0);
+	if ((uint)(a2 - 192) <= 0x25u)
+		v2 = OPTI_ZONE(a1, 13, 0);
+	if ((uint)(a2 - 230) <= 0x25u)
+		v2 = OPTI_ZONE(a1, 19, 0);
+	if ((uint)(a2 - 268) <= 0x25u)
+		v2 = OPTI_ZONE(a1, 25, 1);
+	if ((uint)(a2 - 268) <= 0x14u && a1 >= _vm->_graphicsManager.ofscroll + 424 && a1 <= _vm->_graphicsManager.ofscroll + 478)
+		v2 = 30;
+	if ((uint)(a2 - 290) <= 0x10u && a1 >= _vm->_graphicsManager.ofscroll + 424 && a1 <= _vm->_graphicsManager.ofscroll + 478)
+		v2 = 31;
+	if (a1 < _vm->_graphicsManager.ofscroll + 152 || a1 > _vm->_graphicsManager.ofscroll + 484)
+		v2 = 32;
+	if ((uint)(a2 - 114) > 0xC0u)
+		v2 = 32;
+	return v2;
+}
+
+int LinesManager::OPTI_ZONE(int a1, int a2, int a3) {
+	int v3; 
+	signed int v4;
+
+	v3 = a2;
+	v4 = 0;
+	if (a1 >= _vm->_graphicsManager.ofscroll + 158 && a1 <= _vm->_graphicsManager.ofscroll + 208)
+		v4 = 1;
+	if (!v4) {
+		if (a1 >= _vm->_graphicsManager.ofscroll + 208 && a1 <= _vm->_graphicsManager.ofscroll + 266) {
+			v3 = a2 + 1;
+			v4 = 1;
+		}
+		if (!v4) {
+			if (a1 >= _vm->_graphicsManager.ofscroll + 266 && a1 <= _vm->_graphicsManager.ofscroll + 320) {
+				v3 += 2;
+				v4 = 1;
+			}
+			if (!v4) {
+				if (a1 >= _vm->_graphicsManager.ofscroll + 320 && a1 <= _vm->_graphicsManager.ofscroll + 370) {
+					v3 += 3;
+					v4 = 1;
+				}
+				if (!v4) {
+					if (a1 >= _vm->_graphicsManager.ofscroll + 370 && a1 <= _vm->_graphicsManager.ofscroll + 424) {
+						v3 += 4;
+						v4 = 1;
+					}
+					if (!v4) {
+						if (!a3 && a1 >= _vm->_graphicsManager.ofscroll + 424 && a1 <= _vm->_graphicsManager.ofscroll + 478) {
+							v3 += 5;
+							v4 = 1;
+						}
+						if (!v4)
+							v3 = 0;
+					}
+				}
+			}
+		}
+	}
+	return v3;
+}
+
 void LinesManager::RETIRE_LIGNE_ZONE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
@@ -858,21 +926,21 @@ int LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 	int v31;
 	int v32;
 	int v33; 
-	int v35; 
-	int v36; 
+	int v35 = 0; 
+	int v36 = 0; 
 	int v37; 
 	int v38; 
 	int v39; 
 	int v40; 
 	int v41; 
-	int v42; 
-	int v43; 
-	int v44; 
-	int v45; 
-	int v46; 
-	int v47; 
-	int v48; 
-	int v49; 
+	int v42 = 0; 
+	int v43 = 0; 
+	int v44 = 0; 
+	int v45 = 0; 
+	int v46 = 0; 
+	int v47 = 0; 
+	int v48 = 0; 
+	int v49 = 0; 
 	int v50; 
 	int v51; 
 
@@ -2473,7 +2541,7 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v123;
 	int v124;
 	int v125;
-	int v126;
+	int v126 = 0;
 	int v127;
 	int v128;
 	int v129;
@@ -2493,7 +2561,7 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v143; 
 	int v144; 
 	int v145;
-	int colResult;
+	int colResult = 0;
 
 	v7 = a1;
 	v90 = a2;
@@ -3279,7 +3347,7 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 	int v46; 
 	int v47; 
 	int v48; 
-	int v49; 
+	int v49 = 0; 
 	int v50; 
 	int v51; 
 	int v52; 
