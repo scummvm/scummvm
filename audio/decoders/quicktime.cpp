@@ -395,9 +395,9 @@ AudioStream *QuickTimeAudioDecoder::QuickTimeAudioTrack::readAudioChunk(uint chu
 }
 
 void QuickTimeAudioDecoder::QuickTimeAudioTrack::skipSamples(const Timestamp &length, AudioStream *stream) {
-	uint32 sampleCount = length.convertToFramerate(getRate()).totalNumberOfFrames();
+	int32 sampleCount = length.convertToFramerate(getRate()).totalNumberOfFrames();
 
-	if (sampleCount == 0)
+	if (sampleCount <= 0)
 		return;
 
 	if (isStereo())
