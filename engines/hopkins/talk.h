@@ -56,7 +56,7 @@ public:
 	void CHERCHE_PAL(int a1, int a2);
 	void VISU_WAIT();
 	void FIN_VISU_WAIT();
-	void FIN_VISU_PARLE(int a1);
+	void FIN_VISU_PARLE();
 	int VERIF_BOITE(int a1, const Common::String &a2, int a3);
 	void VISU_PARLE();
 	void BOB_VISU_PARLE(int idx);
@@ -66,6 +66,7 @@ public:
 	bool RECHERCHE_ANIM_PERSO(int a1, const byte *a2, int a3, int a4);
 	void REPONSE(int a1, int a2);
 	void REPONSE2(int a1, int a2);
+	void OBJET_VIVANT(const Common::String &a2);
 };
 
 } // End of namespace Hopkins

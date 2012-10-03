@@ -189,6 +189,7 @@ public:
 	void CHARGE_OBSTACLE(const Common::String &file);
 	void CHARGE_CACHE(const Common::String &file);
 	void CHARGE_ZONE(const Common::String &file);
+	void CARRE_ZONE();
 	void PLAN_BETA();
 	void BTGAUCHE();
 	void PARADISE();
@@ -231,22 +232,22 @@ public:
 	int BOBA(int idx);
 
 	void INILINK(const Common::String &file);
-	void OBJET_VIVANT(const Common::String &a2);
 	void OPTI_BOBON(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
 	void SCI_OPTI_ONE(int a1, int a2, int a3, int a4);
 	int Control_Goto(const byte *dataP);
 	int Control_If(const byte *dataP, int a2);
-	void VERBE_OFF(int a1, int a2);
-	void VERBE_ON(int a1, int a2);
-	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9);
+	int Traduction2(const byte *dataP);
+	void VERBE_OFF(int idx, int a2);
+	void VERBE_ON(int idx, int a2);
 	int CALC_PROPRE(int idx);
 	int PLAN_TEST(byte *a1, int a2, int a3, int a4, int a5, int a6);
 	int colision(int a1, int a2);
 
-	void ACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6);
+	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int a5, int a6);
 	void SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6);
 	void SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5);
 	void TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6);
+	void BLOQUE_ANIMX(int idx, int a2);
 };
 
 } // End of namespace Hopkins

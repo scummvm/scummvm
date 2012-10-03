@@ -2404,7 +2404,7 @@ void GraphicsManager::NB_SCREEN() {
 }
 
 void GraphicsManager::SHOW_PALETTE() {
-	warning("TODO: SHOW_PALETTE");
+	setpal_vga256(Palette);
 }
 
 } // End of namespace Hopkins

@@ -46,7 +46,7 @@ ObjectsManager::ObjectsManager() {
 	inventaire2 = PTRNUL;
 	SL_SPR = PTRNUL;
 	SL_SPR2 = PTRNUL;
-	PERSO_ON = false;
+	_vm->_objectsManager.PERSO_ON = false;
 	SL_FLAG = false;
 	FLAG_VISIBLE = false;
 	DESACTIVE_INVENT = false;
@@ -331,7 +331,7 @@ void ObjectsManager::AFF_SPRITES() {
 		++v30;
 	} while (v30 <= 10);
 
-	if (!PERSO_ON) {
+	if (!_vm->_objectsManager.PERSO_ON) {
 		v31 = 0;
 		do {
 			v5 = v31;
@@ -362,7 +362,7 @@ void ObjectsManager::AFF_SPRITES() {
   
 	AFF_BOB_ANIM();
 	AFF_VBOB();
-	if (!PERSO_ON) {
+	if (!_vm->_objectsManager.PERSO_ON) {
 		v32 = 0;
 		do {
 			_vm->_globals.Liste[v32].field0 = 0;
@@ -929,11 +929,11 @@ void ObjectsManager::VERIFCACHE() {
 			v7 = _vm->_globals.Cache[v8].fieldA;
 			v10 = 0;
 			do {
-				if (_vm->_objectsManager.Sprite[v10].field0 == 1) {
-					if (_vm->_objectsManager.Sprite[v10].field10 != 250) {
-						v1 = _vm->_objectsManager.Sprite[v10].field2C;
-						v11 = _vm->_objectsManager.Sprite[v10].field30 + v1;
-						v2 = _vm->_objectsManager.Sprite[v10].field32 + _vm->_objectsManager.Sprite[v10].field2E;
+				if (Sprite[v10].field0 == 1) {
+					if (Sprite[v10].field10 != 250) {
+						v1 = Sprite[v10].field2C;
+						v11 = Sprite[v10].field30 + v1;
+						v2 = Sprite[v10].field32 + Sprite[v10].field2E;
 						v6 = _vm->_globals.Cache[v8].field0;
 						v3 = _vm->_globals.Cache[v8].field4;
 						v9 = _vm->_globals.Cache[v8].field6 + v6;
@@ -1276,7 +1276,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 	int idx = 0;
 	do {
 		++idx;
-		if (idx <= 20 && PERSO_ON == 1) {
+		if (idx <= 20 && _vm->_objectsManager.PERSO_ON == 1) {
 			_vm->_globals.Bob[idx].field1C = 0;
 			continue;
 		}
@@ -1305,7 +1305,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			_vm->_globals.Bob[idx].field8 = READ_LE_UINT16(v20 + 2 * v24);
 			if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 				_vm->_globals.Bob[idx].field8 = _vm->_globals.BL_ANIM[idx].v2;
-			if ( PERSO_ON == 1 && idx > 20 )
+			if ( _vm->_objectsManager.PERSO_ON == 1 && idx > 20 )
 				_vm->_globals.Bob[idx].field8 += _vm->_eventsManager.start_x;
       
 			_vm->_globals.Bob[idx].fieldA = READ_LE_UINT16(v20 + 2 * v24 + 2);
@@ -1346,7 +1346,7 @@ LABEL_38:
 					
 					if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 						_vm->_globals.Bob[idx].field8 = _vm->_globals.BL_ANIM[idx].v2;
-					if (PERSO_ON == 1 && idx > 20)
+					if (_vm->_objectsManager.PERSO_ON == 1 && idx > 20)
 						_vm->_globals.Bob[idx].field8 += _vm->_eventsManager.start_x;
 
 					_vm->_globals.Bob[idx].fieldA = READ_LE_UINT16(v21 + 2);
@@ -1370,7 +1370,7 @@ LABEL_38:
 		}
 	} while (idx != 35);
 
-	if (!PERSO_ON && BOBTOUS == 1) {
+	if (!_vm->_objectsManager.PERSO_ON && BOBTOUS == 1) {
 		v26 = 0;
 		do {
 			v13 = v26;
@@ -1385,7 +1385,7 @@ LABEL_38:
   
 	do {
 		++v27;
-		if (v27 > 20 || PERSO_ON != 1) {
+		if (v27 > 20 || _vm->_objectsManager.PERSO_ON != 1) {
 			if (_vm->_globals.Bob[v27].field0 == 10) {
 				if (_vm->_globals.Bob[v27].field1C == 1) {
 					v14 = _vm->_globals.Bob[v27].field1E;
@@ -1840,6 +1840,77 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 	warning("CHARGE_ZONE");
 }
 
+void ObjectsManager::CARRE_ZONE() {
+	byte *v3;
+	int v4; 
+	int v5; 
+	byte *v6; 
+	int v7; 
+	int v8; 
+	int v10; 
+	int v11; 
+	int v12; 
+	int v13; 
+	int v14;
+
+	for (int idx = 0; idx < 100; ++idx) {
+		_vm->_globals.CarreZone[idx].field0 = 0;
+		_vm->_globals.CarreZone[idx].fieldE = 0;
+		_vm->_globals.CarreZone[idx].field2 = 1280;
+		_vm->_globals.CarreZone[idx].field4 = 0;
+		_vm->_globals.CarreZone[idx].field6 = 460;
+		_vm->_globals.CarreZone[idx].field8 = 0;
+		_vm->_globals.CarreZone[idx].fieldA = 401;
+		_vm->_globals.CarreZone[idx].fieldC = 0;
+	}
+
+	for (int idx = 0; idx < 400; ++idx) {
+		v3 = _vm->_linesManager.LigneZone[idx].field4;
+		if (v3 != PTRNUL) {
+			v4 = _vm->_linesManager.LigneZone[idx].field2;
+			_vm->_globals.CarreZone[v4].field0 = 1;
+			if (_vm->_globals.CarreZone[v4].fieldC < idx)
+				_vm->_globals.CarreZone[v4].fieldC = idx;
+			if (_vm->_globals.CarreZone[v4].fieldA > idx)
+				_vm->_globals.CarreZone[v4].fieldA = idx;
+
+			v13 = 0;
+			v12 = _vm->_linesManager.LigneZone[idx].field0;
+			if (v12 > 0) {
+				do {
+					v5 = READ_LE_UINT16(v3);
+					v6 = v3 + 2;
+					v11 = READ_LE_UINT16(v6);
+					v3 = v6 + 2;
+					if (_vm->_globals.CarreZone[v4].field2 >= v5)
+						_vm->_globals.CarreZone[v4].field2 = v5;
+					if (_vm->_globals.CarreZone[v4].field4 <= v5)
+						_vm->_globals.CarreZone[v4].field4 = v5;
+					if (_vm->_globals.CarreZone[v4].field6 >= v11)
+						_vm->_globals.CarreZone[v4].field6 = v11;
+					if (_vm->_globals.CarreZone[v4].field8 <= v11)
+						_vm->_globals.CarreZone[v4].field8 = v11;
+					++v13;
+				} while (v13 < v12);
+			}
+		}
+	}
+
+	v7 = 0;
+	do {
+		v8 = v7;
+		v10 = _vm->_globals.CarreZone[v8].field2 - _vm->_globals.CarreZone[v8].field4;
+		if (v10 < 0)
+			v10 = -v10;
+		v14 = _vm->_globals.CarreZone[v8].field6 - _vm->_globals.CarreZone[v8].field8;
+		if (v14 < 0)
+			v14 = -v14;
+		if (v10 == v14)
+			_vm->_globals.CarreZone[v8].fieldE = 1;
+		++v7;
+	} while (v7 <= 99);
+}
+
 void ObjectsManager::PLAN_BETA() {
 	int v1;
 	int v2;
@@ -2033,7 +2104,7 @@ void ObjectsManager::BTGAUCHE() {
 		if (GOACTION != 1)
 			goto LABEL_38;
 		VERIFZONE();
-		if (NUMZONE <= 0)
+		if (_vm->_objectsManager.NUMZONE <= 0)
 			return;
 		v2 = 0;
 		v3 = _vm->_globals.essai2;
@@ -2055,10 +2126,10 @@ void ObjectsManager::BTGAUCHE() {
 		_vm->_globals.SAUVEGARDE->data[svField2] = 0;
 	}
 LABEL_38:
-	if (_vm->_globals.PLAN_FLAG == 1 && (_vm->_eventsManager.btsouris != 4 || NUMZONE <= 0))
+	if (_vm->_globals.PLAN_FLAG == 1 && (_vm->_eventsManager.btsouris != 4 || _vm->_objectsManager.NUMZONE <= 0))
 		return;
-	if ((uint16)(NUMZONE + 1) > 1u) {
-		v6 = NUMZONE;
+	if ((uint16)(_vm->_objectsManager.NUMZONE + 1) > 1u) {
+		v6 = _vm->_objectsManager.NUMZONE;
 		v7 = _vm->_globals.ZONEP[v6].field0;
 		if (v7) {
 			v8 = _vm->_globals.ZONEP[v6].field2;
@@ -2073,7 +2144,7 @@ LABEL_38:
 	GOACTION = 0;
 	v9 = _vm->_globals.chemin;
 	_vm->_globals.chemin = PTRNUL;
-	if (_vm->_globals.FORET && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
+	if (_vm->_globals.FORET && ((uint16)(_vm->_objectsManager.NUMZONE - 20) <= 1u || (uint16)(_vm->_objectsManager.NUMZONE - 22) <= 1u)) {
 		if (YSPR(0) <= 374 || YSPR(0) > 410) {
 			v10 = XSPR(0);
 			v11 = YSPR(0);
@@ -2125,24 +2196,24 @@ LABEL_65:
 			_vm->_globals.chemin = PARC_VOITURE(v18, v17, v19, v0);
 		}
 	}
-	if ((uint16)(NUMZONE + 1) > 1u) {
+	if ((uint16)(_vm->_objectsManager.NUMZONE + 1) > 1u) {
 		// TODO: Reformat the weird if statement generated by the decompiler
 		if (_vm->_eventsManager.btsouris == 23 || (_vm->_globals.SAUVEGARDE->data[svField1] = _vm->_eventsManager.btsouris, _vm->_eventsManager.btsouris == 23))
 			_vm->_globals.SAUVEGARDE->data[svField1] = 5;
 		if (_vm->_globals.PLAN_FLAG == 1)
 			_vm->_globals.SAUVEGARDE->data[svField1] = 6;
-		_vm->_globals.SAUVEGARDE->data[svField2] = NUMZONE;
+		_vm->_globals.SAUVEGARDE->data[svField2] = _vm->_objectsManager.NUMZONE;
 		_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals.OBJET_EN_COURS;
 		GOACTION = 1;
 	}
 	_vm->_fontManager.TEXTE_OFF(5);
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 	ARRET_PERSO_FLAG = 0;
-	if (_vm->_eventsManager.btsouris == 21 && _vm->_globals.BOBZONE[NUMZONE]) {
+	if (_vm->_eventsManager.btsouris == 21 && _vm->_globals.BOBZONE[_vm->_objectsManager.NUMZONE]) {
 		ARRET_PERSO_FLAG = 1;
-		ARRET_PERSO_NUM = _vm->_globals.BOBZONE[NUMZONE];
+		ARRET_PERSO_NUM = _vm->_globals.BOBZONE[_vm->_objectsManager.NUMZONE];
 	}
-	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField13] == 1 && _vm->_globals.OBJET_EN_COURS == 20 && NUMZONE == 12 
+	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField13] == 1 && _vm->_globals.OBJET_EN_COURS == 20 && _vm->_objectsManager.NUMZONE == 12 
 				&& _vm->_eventsManager.btsouris == 23) {
 		_vm->_globals.chemin = PTRNUL;
 		XSPR(0);
@@ -2164,7 +2235,7 @@ void ObjectsManager::PARADISE() {
 	result = _vm->_globals.SAUVEGARDE->data[svField1];
 	if (result && _vm->_globals.SAUVEGARDE->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.TEXTE_OFF(5);
-		if (_vm->_globals.FORET != 1 || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
+		if (_vm->_globals.FORET != 1 || ((uint16)(_vm->_objectsManager.NUMZONE - 20) > 1u && (uint16)(_vm->_objectsManager.NUMZONE - 22) > 1u)) {
 			if (_vm->_graphicsManager.DOUBLE_ECRAN == 1) {
 				_vm->_graphicsManager.no_scroll = 2;
 				if (_vm->_eventsManager.start_x >= XSPR(0) - 320)
@@ -2228,11 +2299,11 @@ LABEL_64:
 			_vm->_talkManager.REPONSE2(_vm->_globals.SAUVEGARDE->data[svField2], _vm->_globals.SAUVEGARDE->data[svField1]);
 		}
 		_vm->_eventsManager.CHANGE_MOUSE(4);
-		if ((uint16)(NUMZONE + 1) > 1u && !_vm->_globals.ZONEP[NUMZONE].field16) {
-			NUMZONE = -1;
+		if ((uint16)(_vm->_objectsManager.NUMZONE + 1) > 1u && !_vm->_globals.ZONEP[_vm->_objectsManager.NUMZONE].field16) {
+			_vm->_objectsManager.NUMZONE = -1;
 			FORCEZONE = 1;
 		}
-		if (NUMZONE != _vm->_globals.SAUVEGARDE->data[svField2] || (uint16)(NUMZONE + 1) <= 1u) {
+		if (_vm->_objectsManager.NUMZONE != _vm->_globals.SAUVEGARDE->data[svField2] || (uint16)(_vm->_objectsManager.NUMZONE + 1) <= 1u) {
 			_vm->_eventsManager.btsouris = 4;
 			CHANGEVERBE = 0;
 		} else {
@@ -2246,7 +2317,7 @@ LABEL_64:
 		}
 		if (_vm->_eventsManager.btsouris != 23)
 			_vm->_eventsManager.CHANGE_MOUSE(_vm->_eventsManager.btsouris);
-		NUMZONE = 0;
+		_vm->_objectsManager.NUMZONE = 0;
 		_vm->_globals.SAUVEGARDE->data[svField1] = 0;
 		_vm->_globals.SAUVEGARDE->data[svField2] = 0;
 	}
@@ -2256,8 +2327,8 @@ LABEL_64:
 	}
 	if (_vm->_globals.NOMARCHE == 1) {
 		if (_vm->_eventsManager.btsouris == 4) {
-			result = NUMZONE + 1;
-			if ((uint16)(NUMZONE + 1) > 1u)
+			result = _vm->_objectsManager.NUMZONE + 1;
+			if ((uint16)(_vm->_objectsManager.NUMZONE + 1) > 1u)
 				BTDROITE();
 		}
 	}
@@ -2287,7 +2358,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	} while (v1 <= 48);
 	_vm->_eventsManager.btsouris = 4;
 	verbe = 4;
-	NUMZONE = 0;
+	_vm->_objectsManager.NUMZONE = 0;
 	Vold_taille = 0;
 	SPEED_FLAG = 0;
 	SPEED_PTR = PTRNUL;
@@ -2382,8 +2453,8 @@ LABEL_7:
 		FileManager::CONSTRUIT_SYSTEM("INVENT2.SPR");
 		inventaire2 = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		v19 = _vm->_graphicsManager.ofscroll + 152;
-		v18 = _vm->_objectsManager.Get_Largeur(_vm->_globals.Winventaire, 0);
-		v17 = _vm->_objectsManager.Get_Hauteur(_vm->_globals.Winventaire, 0);
+		v18 = Get_Largeur(_vm->_globals.Winventaire, 0);
+		v17 = Get_Hauteur(_vm->_globals.Winventaire, 0);
 		inventairex = v19;
 		inventairey = 114;
 		inventairel = v18;
@@ -2821,9 +2892,9 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v8 = 5;
 		do {
 			v62 = v8;
-			v9 = _vm->_linesManager.colision2_ligne(v75, v7, &v85, &v90, 0, _vm->_objectsManager.DERLIGNE);
+			v9 = _vm->_linesManager.colision2_ligne(v75, v7, &v85, &v90, 0, DERLIGNE);
 			v8 = v62;
-			if (v9 == 1 && *(&v87 + v62) <= _vm->_objectsManager.DERLIGNE)
+			if (v9 == 1 && *(&v87 + v62) <= DERLIGNE)
 				break;
 			*(&v82 + v62) = 0;
 			*(&v87 + v62) = -1;
@@ -2838,9 +2909,9 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v12 = 1;
 		do {
 			v63 = v12;
-			v13 = _vm->_linesManager.colision2_ligne(v75, v11, &v83, &v88, 0, _vm->_objectsManager.DERLIGNE);
+			v13 = _vm->_linesManager.colision2_ligne(v75, v11, &v83, &v88, 0, DERLIGNE);
 			v12 = v63;
-			if (v13 == 1 && *(&v87 + v63) <= _vm->_objectsManager.DERLIGNE)
+			if (v13 == 1 && *(&v87 + v63) <= DERLIGNE)
 				break;
 			*(&v82 + v63) = 0;
 			*(&v87 + v63) = -1;
@@ -2859,9 +2930,9 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v16 = 3;
 		do {
 			v64 = v16;
-			v17 = _vm->_linesManager.colision2_ligne(v15, v74, &v84, &v89, 0, _vm->_objectsManager.DERLIGNE);
+			v17 = _vm->_linesManager.colision2_ligne(v15, v74, &v84, &v89, 0, DERLIGNE);
 			v16 = v64;
-			if (v17 == 1 && *(&v87 + v64) <= _vm->_objectsManager.DERLIGNE)
+			if (v17 == 1 && *(&v87 + v64) <= DERLIGNE)
 				break;
 			*(&v82 + v64) = 0;
 			*(&v87 + v64) = -1;
@@ -2882,9 +2953,9 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v20 = 7;
 		do {
 			v65 = v20;
-			v21 = _vm->_linesManager.colision2_ligne(v19, v74, &v86, &v91, 0, _vm->_objectsManager.DERLIGNE);
+			v21 = _vm->_linesManager.colision2_ligne(v19, v74, &v86, &v91, 0, DERLIGNE);
 			v20 = v65;
-			if (v21 == 1 && *(&v87 + v65) <= _vm->_objectsManager.DERLIGNE)
+			if (v21 == 1 && *(&v87 + v65) <= DERLIGNE)
 				break;
 			*(&v82 + v65) = 0;
 			*(&v87 + v65) = -1;
@@ -2939,7 +3010,7 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 			v76[v25] = 1300;
 			++v24;
 		} while (v24 <= 8);
-		v26 = _vm->_linesManager.colision2_ligne(a1, a2, &v83, &v88, 0, _vm->_objectsManager.DERLIGNE);
+		v26 = _vm->_linesManager.colision2_ligne(a1, a2, &v83, &v88, 0, DERLIGNE);
 		if (v26 == 1) {
 			v69 = v88;
 			v68 = v83;
@@ -2953,7 +3024,7 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 					v66 = READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27 + 4);
 					v27 = v27 + 4;
 					v30 = v27;
-					v31 = _vm->_linesManager.colision2_ligne(v28, v29, &v83, &v88, 0, _vm->_objectsManager.DERLIGNE);
+					v31 = _vm->_linesManager.colision2_ligne(v28, v29, &v83, &v88, 0, DERLIGNE);
 					v27 = v30;
 					if (v31)
 						break;
@@ -3322,7 +3393,7 @@ void ObjectsManager::BTDROITE() {
 		VERBEPLUS();
 		if (_vm->_eventsManager.btsouris != 23)
 			_vm->_eventsManager.CHANGE_MOUSE(_vm->_eventsManager.btsouris);
-		_vm->_objectsManager.verbe = _vm->_eventsManager.btsouris;
+		verbe = _vm->_eventsManager.btsouris;
 	}
 }
 
@@ -3754,17 +3825,17 @@ void ObjectsManager::SPECIAL_JEU() {
 	if (_vm->_globals.ECRAN == 57) {
 		_vm->_globals.DESACTIVE_INVENT = 1;
 		if (_vm->_globals.SAUVEGARDE->data[svField261] == 1 && BOBPOSI(5) == 37) {
-			_vm->_objectsManager.BOBANIM_OFF(5);
+			BOBANIM_OFF(5);
 			SET_BOBPOSI(5, 0);
-			_vm->_objectsManager.BOBANIM_ON(6);
+			BOBANIM_ON(6);
 			_vm->_globals.SAUVEGARDE->data[svField261] = 2;
 			ZONE_OFF(15);
 			_vm->_soundManager.PLAY_SOUND("SOUND75.WAV");
 		}
 		if (_vm->_globals.SAUVEGARDE->data[svField261] == 2 && BOBPOSI(6) == 6) {
-			_vm->_objectsManager.BOBANIM_OFF(6);
+			BOBANIM_OFF(6);
 			SET_BOBPOSI(6, 0);
-			_vm->_objectsManager.BOBANIM_ON(7);
+			BOBANIM_ON(7);
 			ZONE_ON(14);
 			_vm->_globals.SAUVEGARDE->data[svField261] = 3;
 		}
@@ -3777,7 +3848,7 @@ void ObjectsManager::SPECIAL_JEU() {
 		while (BOBPOSI(8) != 3);
 		_vm->_globals.NOPARLE = 1;
 		_vm->_talkManager.PARLER_PERSO("GM3.PE2");
-		_vm->_objectsManager.BOBANIM_OFF(8);
+		BOBANIM_OFF(8);
 		_vm->_globals.SAUVEGARDE->data[svField333] = 1;
 		_vm->_globals.DESACTIVE_INVENT = 0;
 	}
@@ -3870,7 +3941,6 @@ int ObjectsManager::Traduction(byte *a1) {
 	v70 = 0;
 	if (*a1 != 'F' || *(a1 + 1) != 'C')
 		return 0;
-	// TODO: Change to chars
 	if (*(a1 + 2) == 'T' && *(a1 + 3) == 'X' && *(a1 + 4) == 'T') {
 		v70 = *(a1 + 6);
 		v2 = *(a1 + 7);
@@ -3879,7 +3949,7 @@ int ObjectsManager::Traduction(byte *a1) {
 		v65 = READ_LE_UINT16(a1 + 11);
 		v3 = READ_LE_UINT16(a1 + 13);
 		v1 = 1;
-		if (!_vm->_objectsManager.TRAVAILOBJET) {
+		if (!TRAVAILOBJET) {
 			if (_vm->_globals.SAUVEGARDE->data[svField356] == 1) {
 				if (v3 == 53)
 					v3 = 644;
@@ -3963,7 +4033,7 @@ int ObjectsManager::Traduction(byte *a1) {
 			if (!_vm->_soundManager.VOICEOFF)
 				_vm->_soundManager.VOICE_MIX(v3, 4);
 		}
-		if (_vm->_objectsManager.TRAVAILOBJET == 1) {
+		if (TRAVAILOBJET == 1) {
 			if (_vm->_globals.SAUVEGARDE->data[svField356]) {
 				_vm->_fontManager.DOS_TEXT(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, 20, 25, v69, 35, 253);
 				if (!_vm->_soundManager.TEXTOFF)
@@ -3991,7 +4061,6 @@ LABEL_98:
 		}
 	}
 LABEL_104:
-	// TODO
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'B') {
 		if (DESACTIVE != 1) {
 			v72 = *(a1 + 5);
@@ -4028,36 +4097,36 @@ LABEL_1141:
 				DEUXPERSO = 0;
 				v5 = *(a1 + 5);
 				v6 = *(a1 + 8);
-				_vm->_objectsManager.PERX = READ_LE_UINT16(a1 + 6);
-				_vm->_objectsManager.PERY = v6;
-				_vm->_objectsManager.PERI = v5;
-				if (_vm->_objectsManager.CH_TETE == 1) {
+				PERX = READ_LE_UINT16(a1 + 6);
+				PERY = v6;
+				PERI = v5;
+				if (CH_TETE == 1) {
 					if (_vm->_globals.SAUVEGARDE->data[svField354] == 1
 					        && _vm->_globals.SAUVEGARDE->data[svField180]
 					        && _vm->_globals.SAUVEGARDE->data[svField181]
 					        && _vm->_globals.SAUVEGARDE->data[svField182]
 					        && _vm->_globals.SAUVEGARDE->data[svField183]) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->data[svField180];
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->data[svField181];
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->data[svField182];
+						PERX = _vm->_globals.SAUVEGARDE->data[svField180];
+						PERY = _vm->_globals.SAUVEGARDE->data[svField181];
+						PERI = _vm->_globals.SAUVEGARDE->data[svField182];
 					}
 					if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
 					        && _vm->_globals.SAUVEGARDE->data[svField190]
 					        && _vm->_globals.SAUVEGARDE->data[svField191]
 					        && _vm->_globals.SAUVEGARDE->data[svField192]
 					        && _vm->_globals.SAUVEGARDE->data[svField193]) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->data[svField190];
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->data[svField191];
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->data[svField192];
+						PERX = _vm->_globals.SAUVEGARDE->data[svField190];
+						PERY = _vm->_globals.SAUVEGARDE->data[svField191];
+						PERI = _vm->_globals.SAUVEGARDE->data[svField192];
 					}
 					if (_vm->_globals.SAUVEGARDE->data[svField357] == 1
 					        && _vm->_globals.SAUVEGARDE->data[svField185]
 					        && _vm->_globals.SAUVEGARDE->data[svField186]
 					        && _vm->_globals.SAUVEGARDE->data[svField187]
 					        && _vm->_globals.SAUVEGARDE->data[svField188]) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->data[svField185];
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->data[svField186];
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->data[svField187];
+						PERX = _vm->_globals.SAUVEGARDE->data[svField185];
+						PERY = _vm->_globals.SAUVEGARDE->data[svField186];
+						PERI = _vm->_globals.SAUVEGARDE->data[svField187];
 					}
 				}
 				if (_vm->_globals.SAUVEGARDE->data[svField356] == 1 && _vm->_globals.SAUVEGARDE->data[svField188] == _vm->_globals.ECRAN) {
@@ -4092,7 +4161,7 @@ LABEL_1141:
 				}
 			}
 			v1 = 1;
-			_vm->_objectsManager.CH_TETE = 0;
+			CH_TETE = 0;
 		}
 		if (*(a1 + 2) == 'S' && *(a1 + 3) == 'T' && *(a1 + 4) == 'E') {
 			if (DESACTIVE != 1) {
@@ -4350,9 +4419,9 @@ LABEL_1141:
 	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'N' && *(a1 + 4) == 'I') {
 		v75 = READ_LE_UINT16(a1 + 5);
 		if (v75 <= 100)
-			_vm->_objectsManager.BOBANIM_ON(v75);
+			BOBANIM_ON(v75);
 		else
-			_vm->_objectsManager.BOBANIM_OFF(v75 - 100);
+			BOBANIM_OFF(v75 - 100);
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'P' && *(a1 + 4) == 'E') {
@@ -4469,36 +4538,36 @@ LABEL_1141:
 			_vm->_globals.NBBLOC = 0;
 		}
 		if (v76 == 608) {
-			_vm->_objectsManager.BOBANIM_OFF(2);
-			_vm->_objectsManager.BOBANIM_OFF(3);
-			_vm->_objectsManager.BOBANIM_OFF(4);
-			_vm->_objectsManager.BOBANIM_OFF(6);
-			_vm->_objectsManager.BOBANIM_OFF(11);
-			_vm->_objectsManager.BOBANIM_OFF(10);
+			BOBANIM_OFF(2);
+			BOBANIM_OFF(3);
+			BOBANIM_OFF(4);
+			BOBANIM_OFF(6);
+			BOBANIM_OFF(11);
+			BOBANIM_OFF(10);
 		}
 		if (v76 == 609) {
-			_vm->_objectsManager.BOBANIM_ON(2);
-			_vm->_objectsManager.BOBANIM_ON(3);
-			_vm->_objectsManager.BOBANIM_ON(4);
-			_vm->_objectsManager.BOBANIM_ON(6);
-			_vm->_objectsManager.BOBANIM_ON(11);
-			_vm->_objectsManager.BOBANIM_ON(10);
+			BOBANIM_ON(2);
+			BOBANIM_ON(3);
+			BOBANIM_ON(4);
+			BOBANIM_ON(6);
+			BOBANIM_ON(11);
+			BOBANIM_ON(10);
 		}
 		if (v76 == 611) {
-			_vm->_objectsManager.BOBANIM_ON(5);
-			_vm->_objectsManager.BOBANIM_ON(7);
-			_vm->_objectsManager.BOBANIM_ON(8);
-			_vm->_objectsManager.BOBANIM_ON(9);
-			_vm->_objectsManager.BOBANIM_ON(12);
-			_vm->_objectsManager.BOBANIM_ON(13);
+			BOBANIM_ON(5);
+			BOBANIM_ON(7);
+			BOBANIM_ON(8);
+			BOBANIM_ON(9);
+			BOBANIM_ON(12);
+			BOBANIM_ON(13);
 		}
 		if (v76 == 610) {
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_OFF(7);
-			_vm->_objectsManager.BOBANIM_OFF(8);
-			_vm->_objectsManager.BOBANIM_OFF(9);
-			_vm->_objectsManager.BOBANIM_OFF(12);
-			_vm->_objectsManager.BOBANIM_OFF(13);
+			BOBANIM_OFF(5);
+			BOBANIM_OFF(7);
+			BOBANIM_OFF(8);
+			BOBANIM_OFF(9);
+			BOBANIM_OFF(12);
+			BOBANIM_OFF(13);
 		}
 		if (v76 == 10)
 			_vm->_talkManager.PARLER_PERSO("bqeflic1.pe2");
@@ -4602,11 +4671,11 @@ LABEL_1141:
 		}
 		if (v76 == 29) {
 			_vm->_globals.DESACTIVE_INVENT = 1;
-			OBJET_VIVANT("TELEP.pe2");
+			_vm->_talkManager.OBJET_VIVANT("TELEP.pe2");
 			_vm->_globals.DESACTIVE_INVENT = 0;
 		}
 		if (v76 == 22)
-			OBJET_VIVANT("CADAVRE1.pe2");
+			_vm->_talkManager.OBJET_VIVANT("CADAVRE1.pe2");
 		if (v76 == 20)
 			_vm->_talkManager.PARLER_PERSO("PUNK.pe2");
 		if (v76 == 23)
@@ -4682,8 +4751,8 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (BOBPOSI(9) != 36);
 			SPRITE_ON(0);
-			_vm->_objectsManager.BOBANIM_OFF(9);
-			_vm->_objectsManager.BOBANIM_OFF(10);
+			BOBANIM_OFF(9);
+			BOBANIM_OFF(10);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			_vm->_soundManager.DEL_SAMPLE(2);
 		}
@@ -4702,7 +4771,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != PTRNUL);
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(7);
+			BOBANIM_ON(7);
 			SET_BOBPOSI(7, 0);
 			v18 = 0;
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
@@ -4720,15 +4789,15 @@ LABEL_1141:
 				if (BOBPOSI(7) == 19)
 					v18 = 0;
 				if (BOBPOSI(7) == 19)
-					_vm->_objectsManager.BOBANIM_ON(3);
+					BOBANIM_ON(3);
 				_vm->_eventsManager.VBL();
 			} while (BOBPOSI(3) != 48);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			SETANISPR(0, 62);
 			SPRITE_ON(0);
-			_vm->_objectsManager.BOBANIM_ON(6);
-			_vm->_objectsManager.BOBANIM_OFF(7);
-			_vm->_objectsManager.BOBANIM_OFF(3);
+			BOBANIM_ON(6);
+			BOBANIM_OFF(7);
+			BOBANIM_OFF(3);
 		}
 		if (v76 == 50) {
 			_vm->_soundManager.PLAY_SOUND("SOUND46.WAv");
@@ -4765,14 +4834,14 @@ LABEL_1141:
 			} while (BOBPOSI(9) != v19);
 			if (v19 == 12) {
 				SPRITE_ON(0);
-				_vm->_objectsManager.BOBANIM_OFF(9);
+				BOBANIM_OFF(9);
 			}
 			_vm->_globals.CACHE_ON();
 		}
 		if (v76 == 80) {
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(12);
-			_vm->_objectsManager.BOBANIM_ON(13);
+			BOBANIM_ON(12);
+			BOBANIM_ON(13);
 			SET_BOBPOSI(12, 0);
 			SET_BOBPOSI(13, 0);
 			v21 = 0;
@@ -4792,16 +4861,16 @@ LABEL_1141:
 				if (BOBPOSI(4) == 6)
 					v21 = 0;
 				if (BOBPOSI(13) == 8) {
-					_vm->_objectsManager.BOBANIM_OFF(13);
-					_vm->_objectsManager.BOBANIM_OFF(3);
-					_vm->_objectsManager.BOBANIM_ON(4);
+					BOBANIM_OFF(13);
+					BOBANIM_OFF(3);
+					BOBANIM_ON(4);
 					SET_BOBPOSI(4, 0);
 					SET_BOBPOSI(13, 0);
 				}
 				_vm->_eventsManager.VBL();
 			} while (BOBPOSI(4) != 16);
-			_vm->_objectsManager.BOBANIM_OFF(12);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			BOBANIM_OFF(12);
+			BOBANIM_OFF(4);
 			SPRITE_ON(0);
 			OBSSEUL = 1;
 			INILINK("IM27a");
@@ -4822,8 +4891,8 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != PTRNUL);
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(11);
-			_vm->_objectsManager.BOBANIM_ON(8);
+			BOBANIM_ON(11);
+			BOBANIM_ON(8);
 			SET_BOBPOSI(11, 0);
 			SET_BOBPOSI(8, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND44.WAV", 1);
@@ -4847,25 +4916,25 @@ LABEL_1141:
 			} while (BOBPOSI(8) != 32);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
 			SPRITE_ON(0);
-			_vm->_objectsManager.BOBANIM_OFF(11);
-			_vm->_objectsManager.BOBANIM_OFF(8);
-			_vm->_objectsManager.BOBANIM_ON(5);
-			_vm->_objectsManager.BOBANIM_ON(6);
+			BOBANIM_OFF(11);
+			BOBANIM_OFF(8);
+			BOBANIM_ON(5);
+			BOBANIM_ON(6);
 			SET_BOBPOSI(5, 0);
 			SET_BOBPOSI(6, 0);
 			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(5) != 74);
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_OFF(6);
-			_vm->_objectsManager.BOBANIM_ON(9);
-			_vm->_objectsManager.BOBANIM_ON(7);
+			BOBANIM_OFF(5);
+			BOBANIM_OFF(6);
+			BOBANIM_ON(9);
+			BOBANIM_ON(7);
 		}
 		if (v76 == 95) {
-			_vm->_objectsManager.BOBANIM_ON(9);
-			_vm->_objectsManager.BOBANIM_ON(10);
-			_vm->_objectsManager.BOBANIM_ON(12);
+			BOBANIM_ON(9);
+			BOBANIM_ON(10);
+			BOBANIM_ON(12);
 			SET_BOBPOSI(9, 0);
 			SET_BOBPOSI(10, 0);
 			SET_BOBPOSI(12, 0);
@@ -4873,26 +4942,26 @@ LABEL_1141:
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(9) != 15);
-			_vm->_objectsManager.BOBANIM_OFF(9);
+			BOBANIM_OFF(9);
 			SPRITE_ON(0);
 			_vm->_soundManager.PLAY_SOUND("SOUND50.WAV");
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(12) != 117);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
-			_vm->_objectsManager.BOBANIM_OFF(12);
-			_vm->_objectsManager.BOBANIM_OFF(10);
-			_vm->_objectsManager.BOBANIM_ON(11);
+			BOBANIM_OFF(12);
+			BOBANIM_OFF(10);
+			BOBANIM_ON(11);
 		}
 		if (v76 == 85) {
-			_vm->_objectsManager.BOBANIM_OFF(3);
-			_vm->_objectsManager.BOBANIM_ON(5);
+			BOBANIM_OFF(3);
+			BOBANIM_ON(5);
 			SET_BOBPOSI(5, 0);
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(5) != 6);
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_ON(6);
+			BOBANIM_OFF(5);
+			BOBANIM_ON(6);
 			OBSSEUL = 1;
 			INILINK("IM24a");
 			OBSSEUL = 0;
@@ -4901,8 +4970,8 @@ LABEL_1141:
 			if (_vm->_globals.SAUVEGARDE->data[svField183] == 1) {
 				SET_BOBPOSI(1, 0);
 				SET_BOBPOSI(2, 0);
-				_vm->_objectsManager.BOBANIM_ON(1);
-				_vm->_objectsManager.BOBANIM_ON(2);
+				BOBANIM_ON(1);
+				BOBANIM_ON(2);
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				v25 = 0;
 				do {
@@ -4932,16 +5001,16 @@ LABEL_1141:
 						v25 = 0;
 					_vm->_eventsManager.VBL();
 				} while (BOBPOSI(1) != 9);
-				_vm->_objectsManager.BOBANIM_OFF(1);
-				_vm->_objectsManager.BOBANIM_OFF(2);
+				BOBANIM_OFF(1);
+				BOBANIM_OFF(2);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField183] == 2) {
 				SET_BOBPOSI(1, 0);
 				SET_BOBPOSI(3, 0);
-				_vm->_objectsManager.BOBANIM_ON(1);
-				_vm->_objectsManager.BOBANIM_ON(3);
+				BOBANIM_ON(1);
+				BOBANIM_ON(3);
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				v26 = 0;
 				do {
@@ -4971,8 +5040,8 @@ LABEL_1141:
 						v26 = 0;
 					_vm->_eventsManager.VBL();
 				} while (BOBPOSI(1) != 9);
-				_vm->_objectsManager.BOBANIM_OFF(1);
-				_vm->_objectsManager.BOBANIM_OFF(3);
+				BOBANIM_OFF(1);
+				BOBANIM_OFF(3);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
@@ -5026,9 +5095,9 @@ LABEL_1141:
 			}
 		}
 		if (v76 == 62)
-			OBJET_VIVANT("SBCADA.pe2");
+			_vm->_talkManager.OBJET_VIVANT("SBCADA.pe2");
 		if (v76 == 65)
-			OBJET_VIVANT("ScCADA.pe2");
+			_vm->_talkManager.OBJET_VIVANT("ScCADA.pe2");
 		if (v76 == 105) {
 			_vm->_globals.NOT_VERIF = 1;
 			g_old_x = XSPR(0);
@@ -5059,7 +5128,7 @@ LABEL_1141:
 			SETANISPR(0, 60);
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND63.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField253] > 2) {
-				_vm->_objectsManager.BOBANIM_ON(4);
+				BOBANIM_ON(4);
 				v33 = 0;
 				do {
 					if (BOBPOSI(4) == 9 && !v33) {
@@ -5082,10 +5151,10 @@ LABEL_1141:
 						v33 = 0;
 					_vm->_eventsManager.VBL();
 				} while (BOBPOSI(4) != 72);
-				_vm->_objectsManager.BOBANIM_OFF(4);
+				BOBANIM_OFF(4);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
-				_vm->_objectsManager.BOBANIM_ON(6);
+				BOBANIM_ON(6);
 				v34 = 0;
 				do {
 					if (BOBPOSI(6) == 9 && !v34) {
@@ -5108,10 +5177,10 @@ LABEL_1141:
 						v34 = 0;
 					_vm->_eventsManager.VBL();
 				} while (BOBPOSI(6) != 72);
-				_vm->_objectsManager.BOBANIM_OFF(6);
+				BOBANIM_OFF(6);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 2) {
-				_vm->_objectsManager.BOBANIM_ON(5);
+				BOBANIM_ON(5);
 				v35 = 0;
 				do {
 					if (BOBPOSI(5) == 9 && !v35) {
@@ -5134,7 +5203,7 @@ LABEL_1141:
 						v35 = 0;
 					_vm->_eventsManager.VBL();
 				} while (BOBPOSI(5) != 72);
-				_vm->_objectsManager.BOBANIM_OFF(5);
+				BOBANIM_OFF(5);
 			}
 			SPRITE_ON(0);
 			ACTION_DOS(1);
@@ -5142,7 +5211,7 @@ LABEL_1141:
 		}
 		if (v76 == 106) {
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			BOBANIM_ON(4);
 			SET_BOBPOSI(4, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND62.WAV", 2);
@@ -5162,12 +5231,12 @@ LABEL_1141:
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(4) != 77);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			BOBANIM_OFF(4);
 			SPRITE_ON(0);
 		}
 		if (v76 == 107) {
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(5);
+			BOBANIM_ON(5);
 			SET_BOBPOSI(5, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND62.WAV", 2);
@@ -5187,7 +5256,7 @@ LABEL_1141:
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(5) != 53);
-			_vm->_objectsManager.BOBANIM_OFF(5);
+			BOBANIM_OFF(5);
 			SPRITE_ON(0);
 		}
 		if (v76 == 210) {
@@ -5196,7 +5265,7 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SEQ2("SECRET1.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
-			_vm->_objectsManager.BOBANIM_ON(9);
+			BOBANIM_ON(9);
 			OBSSEUL = 1;
 			INILINK("IM73a");
 			OBSSEUL = 0;
@@ -5231,7 +5300,7 @@ LABEL_1141:
 			_vm->_graphicsManager.SETCOLOR4(254, 0, 0, 0);
 		}
 		if (v76 == 207)
-			OBJET_VIVANT("PANNEAU.PE2");
+			_vm->_talkManager.OBJET_VIVANT("PANNEAU.PE2");
 		if (v76 == 208) {
 			_vm->_globals.DESACTIVE_INVENT = 1;
 			if (_vm->_globals.SAUVEGARDE->data[svField6] != _vm->_globals.SAUVEGARDE->data[svField401]) {
@@ -5260,12 +5329,12 @@ LABEL_1141:
 			SET_BOBPOSI(1, 0);
 			SET_BOBPOSI(2, 0);
 			SETANISPR(0, 60);
-			_vm->_objectsManager.BOBANIM_OFF(4);
-			_vm->_objectsManager.BOBANIM_ON(1);
+			BOBANIM_OFF(4);
+			BOBANIM_ON(1);
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(1) != 9);
-			_vm->_objectsManager.BOBANIM_OFF(1);
+			BOBANIM_OFF(1);
 			_vm->_globals.NO_VISU = 1;
 			_vm->_globals.chemin = PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
@@ -5279,38 +5348,38 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != PTRNUL);
 			SETANISPR(0, 64);
-			_vm->_objectsManager.BOBANIM_ON(2);
+			BOBANIM_ON(2);
 			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(2) != 10);
-			_vm->_objectsManager.BOBANIM_OFF(2);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			BOBANIM_OFF(2);
+			BOBANIM_ON(4);
 		}
 		if (v76 == 201) {
-			_vm->_objectsManager.BOBANIM_ON(3);
+			BOBANIM_ON(3);
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(3) != 18);
-			_vm->_objectsManager.BOBANIM_OFF(3);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			BOBANIM_OFF(3);
+			BOBANIM_ON(4);
 		}
 		if (v76 == 203) {
 			_vm->_globals.NO_VISU = 1;
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			BOBANIM_ON(4);
 			do {
 				_vm->_eventsManager.VBL();
 				if (BOBPOSI(4) == 18)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
 			} while (BOBPOSI(4) != 26);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			BOBANIM_OFF(4);
 			_vm->_globals.NO_VISU = 0;
 			SPRITE_ON(0);
 		}
 		if (v76 == 204) {
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(3);
+			BOBANIM_ON(3);
 			_vm->_soundManager.LOAD_WAV("SOUND67.WAV", 1);
 			v41 = 0;
 			do {
@@ -5322,12 +5391,12 @@ LABEL_1141:
 					v41 = 0;
 				_vm->_eventsManager.VBL();
 			} while (BOBPOSI(3) != 50);
-			_vm->_objectsManager.BOBANIM_OFF(3);
+			BOBANIM_OFF(3);
 			SPRITE_ON(0);
 		}
 		if (v76 == 205) {
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			BOBANIM_ON(4);
 			_vm->_soundManager.LOAD_WAV("SOUND69.WAV", 1);
 			v42 = 0;
 			do {
@@ -5339,41 +5408,41 @@ LABEL_1141:
 					v42 = 0;
 				_vm->_eventsManager.VBL();
 			} while (BOBPOSI(4) != 24);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			BOBANIM_OFF(4);
 			SPRITE_ON(0);
 		}
 		if (v76 == 175) {
 			SETANISPR(0, 55);
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(9);
-			_vm->_objectsManager.BOBANIM_ON(10);
+			BOBANIM_ON(9);
+			BOBANIM_ON(10);
 			BOB_OFFSET(10, 300);
 			_vm->_soundManager.PLAY_SOUND("SOUND44.WAV");
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(10) != 7);
-			_vm->_objectsManager.BOBANIM_ON(6);
-			_vm->_objectsManager.BOBANIM_OFF(3);
+			BOBANIM_ON(6);
+			BOBANIM_OFF(3);
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(6) != 10);
 			_vm->_soundManager.PLAY_SOUND("SOUND71.WAV");
-			_vm->_objectsManager.BOBANIM_ON(7);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			BOBANIM_ON(7);
+			BOBANIM_OFF(4);
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(7) != 15);
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_ON(8);
+			BOBANIM_OFF(5);
+			BOBANIM_ON(8);
 			_vm->_soundManager.PLAY_SOUND("SOUND70.WAV");
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(8) != 76);
-			_vm->_objectsManager.BOBANIM_OFF(6);
-			_vm->_objectsManager.BOBANIM_OFF(7);
-			_vm->_objectsManager.BOBANIM_OFF(8);
-			_vm->_objectsManager.BOBANIM_OFF(9);
-			_vm->_objectsManager.BOBANIM_OFF(10);
+			BOBANIM_OFF(6);
+			BOBANIM_OFF(7);
+			BOBANIM_OFF(8);
+			BOBANIM_OFF(9);
+			BOBANIM_OFF(10);
 			SPRITE_ON(0);
 		}
 		if (v76 == 229) {
@@ -5403,7 +5472,7 @@ LABEL_1141:
 			} while (_vm->_globals.chemin != PTRNUL);
 			SPRITE_OFF(0);
 			v45 = 0;
-			_vm->_objectsManager.BOBANIM_ON(7);
+			BOBANIM_ON(7);
 			do {
 				if (BOBPOSI(7) == 9 && !v45) {
 					v45 = 1;
@@ -5411,7 +5480,7 @@ LABEL_1141:
 				}
 				_vm->_eventsManager.VBL();
 			} while (BOBPOSI(7) != 15);
-			_vm->_objectsManager.BOBANIM_OFF(7);
+			BOBANIM_OFF(7);
 			SETXSPR(0, 476);
 			SETYSPR(0, 278);
 			SPRITE_ON(0);
@@ -5424,7 +5493,7 @@ LABEL_1141:
 		if (v76 == 231) {
 			_vm->_globals.CACHE_OFF();
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(12);
+			BOBANIM_ON(12);
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(12) != 6);
@@ -5435,22 +5504,22 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(12) != 12);
 			SPRITE_ON(0);
-			_vm->_objectsManager.BOBANIM_OFF(12);
+			BOBANIM_OFF(12);
 			_vm->_globals.CACHE_ON();
 		}
 		if (v76 == 233) {
 			_vm->_globals.CACHE_OFF();
 			SPRITE_OFF(0);
-			_vm->_objectsManager.BOBANIM_ON(11);
+			BOBANIM_ON(11);
 			v46 = 0;
 			do {
 				_vm->_eventsManager.VBL();
 				if (BOBPOSI(11) == 10 && !v46)
 					v46 = 1;
 			} while (BOBPOSI(11) != 13);
-			_vm->_objectsManager.BOBANIM_OFF(11);
+			BOBANIM_OFF(11);
 			_vm->_globals.CACHE_ON();
-			_vm->_objectsManager.BOBANIM_ON(13);
+			BOBANIM_ON(13);
 			do
 				_vm->_eventsManager.VBL();
 			while (BOBPOSI(13) != 48);
@@ -5458,7 +5527,7 @@ LABEL_1141:
 			_vm->_talkManager.PARLER_PERSO("HRADIO.PE2");
 			_vm->_globals.NOPARLE = 0;
 			_vm->_graphicsManager.FADE_OUTW();
-			_vm->_objectsManager.BOBANIM_OFF(13);
+			BOBANIM_OFF(13);
 			_vm->_graphicsManager.NOFADE = 1;
 			_vm->_globals.SORTIE = 94;
 		}
@@ -5563,7 +5632,7 @@ LABEL_1141:
 			OPTI_ONE(16, 0, 10, 0);
 		}
 		if (v76 == 240) {
-			_vm->_objectsManager.BOBANIM_ON(1);
+			BOBANIM_ON(1);
 			v50 = 0;
 			do {
 				_vm->_eventsManager.VBL();
@@ -5580,8 +5649,8 @@ LABEL_1141:
 				if (BOBPOSI(1) == 25)
 					v50 = 0;
 			} while (BOBPOSI(1) != 32);
-			_vm->_objectsManager.BOBANIM_OFF(1);
-			_vm->_objectsManager.BOBANIM_ON(2);
+			BOBANIM_OFF(1);
+			BOBANIM_ON(2);
 			_vm->_fontManager.TEXTE_OFF(9);
 			if (!_vm->_soundManager.TEXTOFF) {
 				_vm->_fontManager.DOS_TEXT(9, 617, _vm->_globals.FICH_TEXTE, 91, 41, 20, 25, 3, 30, 253);
@@ -5664,7 +5733,7 @@ LABEL_1141:
 				}
 				_vm->_eventsManager.VBL();
 			} while (BOBPOSI(12) != 34);
-			_vm->_objectsManager.BOBANIM_OFF(2);
+			BOBANIM_OFF(2);
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_graphicsManager.NOFADE = 1;
 			_vm->_globals.SORTIE = 20;
@@ -5861,9 +5930,9 @@ LABEL_1141:
 			_vm->_globals.SORTIE = 100;
 		}
 		if (v76 == 55) {
-			_vm->_objectsManager.BOBANIM_OFF(1);
+			BOBANIM_OFF(1);
 			OPTI_ONE(15, 0, 12, 0);
-			_vm->_objectsManager.BOBANIM_OFF(15);
+			BOBANIM_OFF(15);
 			OBSSEUL = 1;
 			INILINK("IM19a");
 			OBSSEUL = 0;
@@ -6239,16 +6308,35 @@ void ObjectsManager::ZONE_OFF(int idx) {
 
 }
 
-void ObjectsManager::OPTI_ONE(int a1, int a2, int a3, int a4) {
-	warning("TODO: OPTI_ONE");
+void ObjectsManager::OPTI_ONE(int idx, int a2, int a3, int a4) {
+	if (a4 != 3) {
+		BOBANIM_ON(idx);
+		SET_BOBPOSI(idx, a2);
+	}
+
+	do {
+		_vm->_eventsManager.VBL();
+	} while (a3 != BOBPOSI(idx));
+
+	if (!a4)
+		BOBANIM_OFF(idx);
+	if (a4 == 4) {
+		_vm->_graphicsManager.AFFICHE_SPEED(
+		    _vm->_globals.Bob[idx].field4,
+		    _vm->_globals.Bob[idx].field3E,
+		    _vm->_globals.Bob[idx].field40,
+		    _vm->_globals.Bob[idx].fieldC);
+		BOBANIM_OFF(idx);
+		_vm->_eventsManager.VBL();
+	}
 }
 
 
 void ObjectsManager::AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img) {
 	SPEED_FLAG = true;
 	SPEED_PTR = speedData;
-	_vm->_objectsManager.SPEED_X = xp;
-	_vm->_objectsManager.SPEED_Y = yp;
+	SPEED_X = xp;
+	SPEED_Y = yp;
 	SPEED_IMAGE = img;
 }
 
@@ -6290,19 +6378,270 @@ int ObjectsManager::BOBA(int idx) {
 }
 
 void ObjectsManager::INILINK(const Common::String &file) {
-	warning("TODO: INILINK");
-}
+	int v1;
+	int v2;
+	int v8; 
+	int v9; 
+	int v10;
+	int v11;
+	int v12;
+	byte *v13;
+	int v14;
+	int v15;
+	byte *v16;
+	byte *v17;
+	int v18;
+	int v19;
+	int v20;
+	int v21;
+	byte *v22;
+	int v23;
+	int v24;
+	int v25;
+	int v27;
+	int v28;
+	int v29;
+	int v30;
+	int v31;
+	int v32;
+	int v33;
+	int v34;
+	int v35;
+	int v36;
+	byte *v37;
+	int v40;
+	size_t v41;
+	size_t v42;
+	size_t nbytes;
+	byte *ptr; 
+	Common::String filename, filename2;
+	Common::File f;
 
-void ObjectsManager::OBJET_VIVANT(const Common::String &a2) {
-	warning("TODO: OBJET_VIVANT");
+	v1 = 0;
+	v2 = 0;
+
+	filename = file + ".LNK";
+	ptr = FileManager::RECHERCHE_CAT(filename, 3);
+	nbytes = _vm->_globals.CAT_TAILLE;
+	if (ptr == PTRNUL) {
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
+		
+		if (!f.open(_vm->_globals.NFICHIER))
+			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
+
+		nbytes = f.size();
+		ptr = _vm->_globals.dos_malloc2(nbytes);
+		if (PTRNUL == ptr)
+			error("INILINK");
+		FileManager::bload_it(f, ptr, nbytes);
+		f.close();
+	}
+	if (!OBSSEUL) {
+		for (int idx = 0; idx < 500; ++idx)
+			_vm->_globals.STAILLE[idx] = READ_LE_UINT16((uint16 *)ptr + idx);
+
+		_vm->_globals.RESET_CACHE();
+		
+		filename2 = Common::String((const char *)ptr + 1000);
+		if (!filename2.empty()) {
+			_vm->_globals.CACHE_BANQUE[1] = FileManager::RECHERCHE_CAT(filename2, 8);
+			if (_vm->_globals.CACHE_BANQUE[1]) {
+				_vm->_globals.CAT_FLAG = 0;
+				FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename2);
+			} else {
+				_vm->_globals.CAT_FLAG = 1;
+				FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
+			}
+			_vm->_globals.CACHE_BANQUE[1] = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			_vm->_globals.CAT_FLAG = 0;
+			v36 = 60;
+			v37 = ptr + 1000;
+			v40 = 0;
+
+			do {
+				v8 = READ_LE_UINT16(v37 + 2 * v36);
+				v9 = READ_LE_UINT16(v37 + 2 * v36 + 2);
+				v10 = READ_LE_UINT16(v37 + 2 * v36 + 4);
+				v11 = v40;
+
+				_vm->_globals.Cache[v11].field14 = READ_LE_UINT16(v37 + 2 * v36 + 8);
+				_vm->_globals.Cache[v11].field2 = v8;
+				_vm->_globals.Cache[v11].field0 = v9;
+				_vm->_globals.Cache[v11].field4 = v10;
+				_vm->_globals.Cache[v11].field12 = 1;
+				
+				if (_vm->_globals.CACHE_BANQUE[1]) {
+					_vm->_globals.Cache[v40].fieldA = 0;
+				} else {
+					v12 = v8;
+					v13 = _vm->_globals.CACHE_BANQUE[1];
+					v14 = Get_Largeur(v13, v8);
+					v15 = Get_Hauteur(v13, v12);
+					_vm->_globals.Cache[v40].fieldC = v13;
+					_vm->_globals.Cache[v40].field6 = v14;
+					_vm->_globals.Cache[v40].field8 = v15;
+					_vm->_globals.Cache[v40].fieldA = 1;
+				}
+				if (!_vm->_globals.Cache[v40].field0 && !_vm->_globals.Cache[v40].field4 
+							&& !_vm->_globals.Cache[v40].field2)
+					_vm->_globals.Cache[v40].fieldA = 0;
+				v36 += 5;
+				++v40;
+			} while (v40 <= 21);
+			_vm->_globals.CACHE_ON();
+		}
+	}
+
+	_vm->_linesManager.RESET_OBSTACLE();
+	v41 = 0;
+	if (nbytes) {
+		do {
+			if (*(ptr + v41) == 79 && *(ptr + v41 + 1) == 66 && *(ptr + v41 + 2) == 50) {
+				v16 = ptr + v41 + 4;
+				v32 = 0;
+				v34 = 0;
+				_vm->_linesManager.TOTAL_LIGNES = 0;
+				do {
+					v27 = READ_LE_UINT16(v16 + 2 * v32);
+					if (v27 != -1) {
+						_vm->_linesManager.AJOUTE_LIGNE(
+						    v34,
+						    v27,
+						    READ_LE_UINT16(v16 + 2 * v32 + 2),
+						    READ_LE_UINT16(v16 + 2 * v32 + 4),
+						    READ_LE_UINT16(v16 + 2 * v32 + 6),
+						    READ_LE_UINT16(v16 + 2 * v32 + 8),
+						    1);
+						++_vm->_linesManager.TOTAL_LIGNES;
+					}
+					v32 += 5;
+					++v34;
+				} while (v27 != -1);
+				_vm->_linesManager.INIPARCOURS();
+			}
+			++v41;
+		} while (nbytes > v41);
+	}
+	if (!OBSSEUL) {
+		v42 = 0;
+		if (nbytes) {
+			do {
+				if (*(ptr + v42) == 'Z' && *(ptr + v42 + 1) == 'O' && *(ptr + v42 + 2) == '2') {
+					v17 = ptr + v42 + 4;
+					v33 = 0;
+					v35 = 0;
+					v18 = 1;
+					do {
+						v19 = 20 * v18;
+						_vm->_globals.ZONEP[v19].field0 = 0;
+						_vm->_globals.ZONEP[v19].field2 = 0;
+						_vm->_globals.ZONEP[v19].field4 = 0;
+						_vm->_globals.ZONEP[v19].field6 = 0;
+						_vm->_globals.ZONEP[v19].field7 = 0;
+						_vm->_globals.ZONEP[v19].field8 = 0;
+						_vm->_globals.ZONEP[v19].field9 = 0;
+						_vm->_globals.ZONEP[v19].fieldA = 0;
+						_vm->_globals.ZONEP[v19].fieldB = 0;
+						_vm->_globals.ZONEP[v19].fieldC = 0;
+						_vm->_globals.ZONEP[v19].fieldD = 0;
+						_vm->_globals.ZONEP[v19].fieldE = 0;
+						_vm->_globals.ZONEP[v19].fieldF = 0;
+						_vm->_globals.ZONEP[v19].field12 = 0;
+						++v18;
+					} while (v18 <= 100);
+
+					v31 = 0;
+					do {
+						v28 = READ_LE_UINT16(v17 + 2 * v33);
+						if (v28 != -1) {
+							_vm->_linesManager.AJOUTE_LIGNE_ZONE(
+							    v35,
+							    READ_LE_UINT16(v17 + 2 * v33 + 2),
+							    READ_LE_UINT16(v17 + 2 * v33 + 4),
+							    READ_LE_UINT16(v17 + 2 * v33 + 6),
+							    READ_LE_UINT16(v17 + 2 * v33 + 8),
+							    v28);
+							_vm->_globals.ZONEP[v28].field10 = 1;
+						}
+						v33 += 5;
+						++v35;
+						++v31;
+					} while (v28 != -1);
+					v20 = 1;
+					do {
+						v21 = 20 * v20;
+						_vm->_globals.ZONEP[v21].field0 = READ_LE_UINT16(v17 + 2 * v33);
+						_vm->_globals.ZONEP[v21].field2 = READ_LE_UINT16(v17 + 2 * v33 + 2);
+						_vm->_globals.ZONEP[v21].field4 = READ_LE_UINT16(v17 + 2 * v33 + 4);
+						v33 += 3;
+						++v20;
+					} while (v20 <= 100);
+
+					v22 = ptr + v42 + (10 * v31 + 606) + 4;
+					v29 = 0;
+					v23 = 1;
+					do {
+						v24 = 20 * v23;
+						_vm->_globals.ZONEP[v24].field6 = *(v29 + v22);
+						_vm->_globals.ZONEP[v24].field7 = *(v22 + v29 + 1);
+						_vm->_globals.ZONEP[v24].field8 = *(v22 + v29 + 2);
+						_vm->_globals.ZONEP[v24].field9 = *(v22 + v29 + 3);
+						_vm->_globals.ZONEP[v24].fieldA = *(v22 + v29 + 4);
+						_vm->_globals.ZONEP[v24].fieldB = *(v22 + v29 + 5);
+						_vm->_globals.ZONEP[v24].fieldC = *(v22 + v29 + 6);
+						_vm->_globals.ZONEP[v24].fieldD = *(v22 + v29 + 7);
+						_vm->_globals.ZONEP[v24].fieldE = *(v22 + v29 + 8);
+						_vm->_globals.ZONEP[v24].fieldF = *(v22 + v29 + 9);
+						v29 += 10;
+						++v23;
+					} while (v23 <= 100);
+					v30 = 0;
+					v25 = 1;
+					do
+						_vm->_globals.ZONEP[v25].field12 = READ_LE_UINT16(v22 + 1010 + 2 * v30++);
+					while (++v25 <= 100);
+					CARRE_ZONE();
+				}
+				++v42;
+			} while (nbytes > v42);
+		}
+	}
+	_vm->_globals.dos_free2(ptr);	
 }
 
 void ObjectsManager::OPTI_BOBON(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
-	warning("TODO: OPTI_BOBON");
+	if (a1 != -1)
+		_vm->_objectsManager.BOBANIM_ON(a1);
+	if (a2 != -1)
+		_vm->_objectsManager.BOBANIM_ON(a2);
+	if (a3 != -1)
+		_vm->_objectsManager.BOBANIM_ON(a3);
+	if (!a7) {
+		if (a1 != -1)
+			SET_BOBPOSI(a1, a4);
+		if (a2 != -1)
+			SET_BOBPOSI(a2, a5);
+		if (a3 != -1)
+			SET_BOBPOSI(a3, a6);
+	}
 }
 
 void ObjectsManager::SCI_OPTI_ONE(int a1, int a2, int a3, int a4) {
-	warning("TODO: SCI_OPTI_ONE");
+	_vm->_eventsManager.souris_bb = 0;
+	_vm->_eventsManager.souris_b = 0;
+
+	if (a4 != 3) {
+		_vm->_objectsManager.BOBANIM_ON(a1);
+		SET_BOBPOSI(a1, a2);
+	}
+
+	do {
+		_vm->_eventsManager.VBL();
+		if (_vm->_eventsManager.souris_bb)
+			break;
+	} while (a3 != BOBPOSI(a1));
+	if (!a4)
+		_vm->_objectsManager.BOBANIM_OFF(a1);
 }
 
 int ObjectsManager::Control_Goto(const byte *dataP) {
@@ -6310,25 +6649,315 @@ int ObjectsManager::Control_Goto(const byte *dataP) {
 }
 
 int ObjectsManager::Control_If(const byte *dataP, int a2) {
-	warning("TODO: Control_If");
-	return 0;
+	int v2; 
+	int v3; 
+	int v4; 
+	int v5; 
+	int v6; 
+	int v7; 
+	const byte *v8; 
+	int v9; 
+	int v10; 
+	int v11; 
+	int v12; 
+	int v14; 
+	int v15; 
+	int v16; 
+	int v17; 
+	int v18; 
+	int v19; 
+	int v20; 
+
+	v2 = a2;
+LABEL_2:
+	v3 = v2;
+	do {
+		++v3;
+		v4 = Traduction2(dataP + 20 * v3);
+		if (v3 > 400) {
+			v5 = v4;
+			error("Control if failed");
+			v4 = v5;
+		}
+	} while (v4 != 4);
+	v20 = v3;
+	v6 = v2;
+	v7 = 0;
+	do {
+		++v6;
+		if (Traduction2(dataP + 20 * v6) == 3)
+			v7 = 1;
+		if (v6 > 400)
+			error("Control if failed ");
+		if (v7 == 1) {
+			v2 = v20;
+			goto LABEL_2;
+		}
+	} while (v20 != v6);
+	v8 = dataP + 20 * a2;
+	v9 = *(v8 + 13);
+	v17 = *(v8 + 14);
+	v16 = *(v8 + 15);
+	v10 = READ_LE_UINT16(v8 + 5);
+	v11 = READ_LE_UINT16(v8 + 7);
+	v19 = READ_LE_UINT16(v8 + 9);
+	v18 = READ_LE_UINT16(v8 + 11);
+	v14 = 0;
+	v15 = 0;
+	if (v9 == 1 && _vm->_globals.SAUVEGARDE->data[v10] == v11)
+		v14 = 1;
+	if (v9 == 2 && _vm->_globals.SAUVEGARDE->data[v10] != v11)
+		v14 = 1;
+	if (v9 == 3 && _vm->_globals.SAUVEGARDE->data[v10] <= v11)
+		v14 = 1;
+	if (v9 == 4 && _vm->_globals.SAUVEGARDE->data[v10] >= v11)
+		v14 = 1;
+	if (v9 == 5 && _vm->_globals.SAUVEGARDE->data[v10] > v11)
+		v14 = 1;
+	if (v9 == 6 && _vm->_globals.SAUVEGARDE->data[v10] < v11)
+		v14 = 1;
+	if (v16 == 3)
+		goto LABEL_68;
+	if (v17 == 1 && v18 == _vm->_globals.SAUVEGARDE->data[v19])
+		v15 = 1;
+	if (v17 == 2 && v18 != _vm->_globals.SAUVEGARDE->data[v19])
+		v15 = 1;
+	if (v17 == 3 && v18 >= _vm->_globals.SAUVEGARDE->data[v19])
+		v15 = 1;
+	if (v17 == 4 && v18 <= _vm->_globals.SAUVEGARDE->data[v19])
+		v15 = 1;
+	if (v17 == 5 && v18 < _vm->_globals.SAUVEGARDE->data[v19])
+		v15 = 1;
+	if (v17 == 6 && v18 > _vm->_globals.SAUVEGARDE->data[v19])
+		v15 = 1;
+	if (v16 == 3) {
+LABEL_68:
+		if (v14 == 1) {
+			v12 = a2;
+			return (v12 + 1);
+		}
+		if (!v14) {
+LABEL_63:
+			v12 = v20;
+			return (v12 + 1);
+		}
+	}
+	if (v16 == 1) {
+		if (v14 == 1 && v15 == 1) {
+			v12 = a2;
+			return (v12 + 1);
+		}
+		goto LABEL_63;
+	}
+	if (v16 == 2) {
+		if (v14 == 1 || v15 == 1) {
+			v12 = a2;
+			return (v12 + 1);
+		}
+		goto LABEL_63;
+	}
+	return -1;
 }
 
-void ObjectsManager::VERBE_OFF(int a1, int a2) {
-	warning("TODO: VERBE_OFF");
+int ObjectsManager::Traduction2(const byte *dataP) {
+	signed __int16 result; 
+
+	result = 0;
+	if (*dataP != 'F' || *(dataP + 1) != 'C') {
+		result = 0;
+	} else {
+		if (*(dataP + 'T') == 84 && *(dataP + 3) == 'X' && *(dataP + 4) == 'T')
+			result = 1;
+		if (*(dataP + 2) == 'B') {
+			if (*(dataP + 3) == 'O' && *(dataP + 4) == 'B')
+				result = 1;
+			if (*(dataP + 2) == 'B' && *(dataP + 3) == 'O' && *(dataP + 4) == 'F')
+				result = 1;
+		}
+		if (*(dataP + 2) == 'P' && *(dataP + 3) == 'E' && *(dataP + 4) == 'R')
+			result = 1;
+		if (*(dataP + 2) == 'S' && *(dataP + 3) == 'O' && *(dataP + 4) == 'U')
+			result = 1;
+		if (*(dataP + 2) == 'M' && *(dataP + 3) == 'U' && *(dataP + 4) == 'S')
+			result = 1;
+		if (*(dataP + 2) == 'O') {
+			if (*(dataP + 3) == 'B' && *(dataP + 4) == 'P')
+				result = 1;
+			if (*(dataP + 2) == 'O' && *(dataP + 3) == 'B' && *(dataP + 4) == 'M')
+				result = 1;
+		}
+		if (*(dataP + 2) == 'G' && *(dataP + 3) == 'O' && *(dataP + 4) == 'T')
+			result = 2;
+		if (*(dataP + 2) == 'Z') {
+			if (*(dataP + 3) == 'O' && *(dataP + 4) == 'N')
+				result = 1;
+			if (*(dataP + 2) == 'Z' && *(dataP + 3) == 'O' && *(dataP + 4) == 'F')
+				result = 1;
+		}
+		if (*(dataP + 2) == 'E' && *(dataP + 3) == 'X' && *(dataP + 4) == 'I')
+			result = 5;
+		if (*(dataP + 2) == 'S' && *(dataP + 3) == 'O' && *(dataP + 4) == 'R')
+			result = 5;
+		if (*(dataP + 2) == 'A' && *(dataP + 3) == 'N' && *(dataP + 4) == 'I')
+			result = 1;
+		if (*(dataP + 2) == 'S' && *(dataP + 3) == 'P' && *(dataP + 4) == 'E')
+			result = 1;
+		if (*(dataP + 2) == 'E' && *(dataP + 3) == 'I' && *(dataP + 4) == 'F')
+			result = 4;
+		if (*(dataP + 2) == 'V') {
+			if (*(dataP + 3) == 'A' && *(dataP + 4) == 'L')
+				result = 1;
+			if (*(dataP + 2) == 'V') {
+				if (*(dataP + 3) == 'O' && *(dataP + 4) == 'N')
+					result = 1;
+				if (*(dataP + 2) == 'V' && *(dataP + 3) == 'O' && *(dataP + 4) == 'F')
+					result = 1;
+			}
+		}
+		if (*(dataP + 2) == 'I' && *(dataP + 3) == 'I' && *(dataP + 4) == 'F')
+			result = 3;
+		if (*(dataP + 2) == 'J' && *(dataP + 3) == 'U' && *(dataP + 4) == 'M')
+			result = 6;
+		if (*(dataP + 2) == 'B') {
+			if (*(dataP + 3) == 'C' && *(dataP + 4) == 'A')
+				result = 1;
+			if (*(dataP + 2) == 'B' && *(dataP + 3) == 'O' && *(dataP + 4) == 'S')
+				result = 1;
+		}
+		if (*(dataP + 2) == 'Z' && *(dataP + 3) == 'C') {
+			if (*(dataP + 4) == 'H')
+				result = 1;
+		}
+	}
+	return result;
 }
 
-void ObjectsManager::VERBE_ON(int a1, int a2) {
-	warning("TODO: VERBE_ON");
+void ObjectsManager::VERBE_OFF(int idx, int a2) {
+	if (a2 == 6) {
+		_vm->_globals.ZONEP[idx].field6 = 0;
+	}
+	if (a2 == 7) {
+		_vm->_globals.ZONEP[idx].field7 = 0;
+	}
+	if (a2 == 8) {
+		_vm->_globals.ZONEP[idx].field8 = 0;
+	}
+	if (a2 == 9) {
+		_vm->_globals.ZONEP[idx].field9 = 0;
+	}
+	if (a2 == 10) {
+		_vm->_globals.ZONEP[idx].fieldA = 0;
+	}
+	if (a2 == 11) {
+		_vm->_globals.ZONEP[idx].fieldB = 0;
+	}
+	if (a2 == 12) {
+		_vm->_globals.ZONEP[idx].fieldC = 0;
+	}
+	if (a2 == 13) {
+		_vm->_globals.ZONEP[idx].fieldD = 0;
+	}
+	if (a2 == 14 || a2 == 25) {
+		_vm->_globals.ZONEP[idx].fieldE = 0;
+	}
+	if (a2 == 15) {
+		_vm->_globals.ZONEP[idx].fieldF = 0;
+	}
+	if (a2 == 16) {
+		_vm->_globals.ZONEP[idx].field6 = 0;
+	}
+	if (a2 == 5) {
+		_vm->_globals.ZONEP[idx].field8 = 0;
+	}
+	if (a2 == 17) {
+		_vm->_globals.ZONEP[idx].field9 = 0;
+	}
+	if (a2 == 18) {
+		_vm->_globals.ZONEP[idx].fieldA = 0;
+	}
+	if (a2 == 19) {
+		_vm->_globals.ZONEP[idx].fieldB = 0;
+	}
+	if (a2 == 20) {
+		_vm->_globals.ZONEP[idx].fieldC = 0;
+	}
+	if (a2 == 22) {
+		_vm->_globals.ZONEP[idx].fieldD = 0;
+	}
+	if (a2 == 21) {
+		_vm->_globals.ZONEP[idx].fieldE = 0;
+	}
+	if (a2 == 24) {
+		_vm->_globals.ZONEP[idx].field9 = 0;
+	}
+	CHANGEVERBE = 1;
 }
 
-int ObjectsManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9) {
-	warning("TODO: GENIAL");
-	return 0;
+void ObjectsManager::VERBE_ON(int idx, int a2) {
+	if (a2 == 6) {
+		_vm->_globals.ZONEP[idx].field6 = 1;
+	}
+	if (a2 == 7) {
+		_vm->_globals.ZONEP[idx].field7 = 1;
+	}
+	if (a2 == 8) {
+		_vm->_globals.ZONEP[idx].field8 = 1;
+	}
+	if (a2 == 9) {
+		_vm->_globals.ZONEP[idx].field9 = 1;
+	}
+	if (a2 == 10) {
+		_vm->_globals.ZONEP[idx].fieldA = 1;
+	}
+	if (a2 == 11) {
+		_vm->_globals.ZONEP[idx].fieldB = 1;
+	}
+	if (a2 == 12) {
+		_vm->_globals.ZONEP[idx].fieldC = 1;
+	}
+	if (a2 == 13) {
+		_vm->_globals.ZONEP[idx].fieldD = 1;
+	}
+	if (a2 == 14) {
+		_vm->_globals.ZONEP[idx].fieldD = 1;
+	}
+	if (a2 == 15) {
+		_vm->_globals.ZONEP[idx].fieldE = 1;
+	}
+	if (a2 == 16) {
+		_vm->_globals.ZONEP[idx].field6 = 2;
+	}
+	if (a2 == 5) {
+		_vm->_globals.ZONEP[idx].field8 = 2;
+	}
+	if (a2 == 17) {
+		_vm->_globals.ZONEP[idx].field9 = 2;
+	}
+	if (a2 == 18) {
+		_vm->_globals.ZONEP[idx].fieldA = 2;
+	}
+	if (a2 == 19) {
+		_vm->_globals.ZONEP[idx].fieldB = 2;
+	}
+	if (a2 == 20) {
+		_vm->_globals.ZONEP[idx].fieldC = 2;
+	}
+	if (a2 == 22) {
+		_vm->_globals.ZONEP[idx].fieldD = 2;
+	}
+	if (a2 == 21) {
+		_vm->_globals.ZONEP[idx].fieldE = 2;
+	}
+	if (a2 == 24) {
+		_vm->_globals.ZONEP[idx].field9 = 3;
+	}
+	if (a2 == 25) {
+		_vm->_globals.ZONEP[idx].fieldE = 2;
+	}
 }
 
 int ObjectsManager::CALC_PROPRE(int idx) {
-	signed int v1; 
+	int v1; 
 	int v2; 
 	int v3; 
 	int v4; 
@@ -6417,8 +7046,78 @@ int ObjectsManager::colision(int a1, int a2) {
 	return -1;
 }
 
-void ObjectsManager::ACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6) {
-	warning("TODO: ACTION");
+void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int a5, int a6) {
+	int v6; 
+	int v7; 
+	char v8; 
+	int v9; 
+	int v10; 
+	int v11; 
+	int v13; 
+	const byte *v14; 
+	char v15; 
+	int v16; 
+	int v17; 
+	int v18; 
+	Common::String v19; 
+
+	v18 = 0;
+	v6 = 0;
+	v13 = 0;
+	v15 = a5;
+	v19 = "     ";
+	if (_vm->_globals.vitesse == 2)
+		v15 = a5 / 2;
+	if (_vm->_globals.vitesse == 3)
+		v15 = a5 / 3;
+	v14 = Sprite[0].spriteData;
+	v17 = Sprite[0].field10;
+	v16 = Sprite[0].fieldE;
+	Sprite[0].field12 += a3;
+	Sprite[0].field14 += a4;
+	Sprite[0].fieldE = a6;
+
+	for (;;) {
+		v7 = 0;
+		v8 = a2[v18];
+		if (v8 == ',') {
+			v9 = atoi(v19.c_str());
+			v13 = v9;
+			v6 = 0;
+			v19 = "     ";
+			v7 = 1;
+		} else {
+			v9 = v6;
+			v19 += v8;
+			v6 = v6 + 1;
+		}
+		++v18;
+		if (v7 == 1) {
+			if (v13 == -1) {
+				Sprite[0].spriteData = v14;
+				Sprite[0].field10 = v17;
+				Sprite[0].field12 -= a3;
+				Sprite[0].field14 -= a4;
+				Sprite[0].fieldE = v16;
+			} else {
+				Sprite[0].spriteData = spriteData;
+				Sprite[0].field10 = v13;
+			}
+			v10 = 0;
+			v9 = v15;
+			if (v15 > 0) {
+				do {
+					v11 = v9;
+					_vm->_eventsManager.VBL();
+					++v10;
+					v9 = v11;
+				} while (v10 < v11);
+			}
+			if (v13 == -1)
+				break;
+		}
+	}
+	return;
 }
 
 void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6) {
@@ -6514,17 +7213,23 @@ void ObjectsManager::TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6) 
 			           && a4 < YSPR(0)
 			           && a5 > YSPR(0)) {
 				if (a6 == 1)
-					_vm->_objectsManager.BOBANIM_ON(1);
+					BOBANIM_ON(1);
 				if (a6 == 2)
-					_vm->_objectsManager.BOBANIM_ON(2);
+					BOBANIM_ON(2);
 				if (a6 == 3)
-					_vm->_objectsManager.BOBANIM_ON(3);
+					BOBANIM_ON(3);
 				if (a6 == 4)
-					_vm->_objectsManager.BOBANIM_ON(4);
+					BOBANIM_ON(4);
 				_vm->_globals.SAUVEGARDE->data[v6] = 1;
 			}
 		}
 	}
 }
+
+void ObjectsManager::BLOQUE_ANIMX(int idx, int a2) {
+	_vm->_globals.BL_ANIM[idx].v1 = 1;
+	_vm->_globals.BL_ANIM[idx].v2 = a2;
+}
+
 
 } // End of namespace Hopkins

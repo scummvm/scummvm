@@ -130,8 +130,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	CLEAR_ANIM_PERSO();
 	_vm->_globals.NOPARLE = 0;
 	_vm->_globals.NECESSAIRE = 1;
-	BUFFERPERSO = FileManager::LIBERE_FICHIER(BUFFERPERSO);
-	PERSOSPR = FileManager::LIBERE_FICHIER(PERSOSPR);
+	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
+	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = 0;
 	FileManager::CONSTRUIT_LINUX("TEMP.SCR");
@@ -496,7 +496,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		if (v20)
 			_vm->_objectsManager.BOBANIM_OFF(v20);
 	} else {
-		FIN_VISU_PARLE(i);
+		FIN_VISU_PARLE();
 	}
 	v21 = 0;
 	if (!PLIGNE1)
@@ -584,7 +584,7 @@ void TalkManager::FIN_VISU_WAIT() {
 	}
 }
 
-void TalkManager::FIN_VISU_PARLE(int a1) {
+void TalkManager::FIN_VISU_PARLE() {
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
 			_vm->_objectsManager.BOB_OFF(idx);
@@ -934,11 +934,388 @@ bool TalkManager::RECHERCHE_ANIM_PERSO(int a1, const byte *bufPerso, int a3, int
 }
 
 void TalkManager::REPONSE(int a1, int a2) {
-	warning("TODO: RESPONSE");
+	byte v2; 
+	byte v3; 
+	byte *v5; 
+	byte *v6; 
+	uint16 v7; 
+	byte *v8; 
+	int v9; 
+	int v10; 
+	uint16 v11; 
+	int v12; 
+	int v13; 
+	int v14; 
+	int v15; 
+	int v16; 
+	int v17; 
+	byte *ptr; 
+
+	v2 = a1;
+	v3 = a2;
+LABEL_2:
+	v15 = 0;
+	if (PTRNUL != _vm->_globals.COUCOU) {
+		v5 = _vm->_globals.COUCOU;
+		while (1) {
+			if (*v5 == 'C') {
+				if (*(v5 + 1) == 'O') {
+					if (*(v5 + 2) == 'D') {
+						if (*(v5 + 3) == v2) {
+							if (*(v5 + 4) == v3)
+								v15 = 1;
+						}
+					}
+				}
+			}
+			if (*v5 == 'F' && *(v5 + 1) == 'I' && *(v5 + 2) == 'N')
+				break;
+			if (!v15)
+				v5 = v5 + 1;
+			if (v15 == 1) {
+				v6 = v5 + 5;
+				ptr = _vm->_globals.dos_malloc2(0x26Cu);
+				if (PTRNUL == ptr)
+					error("TRADUC");
+				memset(ptr, 0, 0x26Bu);
+				v7 = 0;
+				v12 = 0;
+				v14 = 0;
+				do {
+					v16 = 0;
+					if (*(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'C') {
+						++v12;
+						v8 = (ptr + 20 * v12);
+						v11 = 0;
+						do {
+							*(v11++ + v8) = *(v7++ + v6);
+							if (*(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'F') {
+								v16 = 1;
+								v9 = v11;
+								*(v9 + v8) = 'F';
+								*(v8 + v9 + 1) = 'F';
+								++v7;
+							}
+						} while (v16 != 1);
+					}
+					if (v16 != 1) {
+						if (*(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'O' && *(v6 + v7 + 2) == 'D')
+							v14 = 1;
+						if (v16 != 1 && *(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'I' && *(v6 + v7 + 2) == 'N')
+							v14 = 1;
+					}
+					v6 += v7 + 1;
+					v7 = 0;
+				} while (v14 != 1);
+				v17 = 0;
+				v13 = 1;
+				do {
+					v10 = _vm->_objectsManager.Traduction(ptr + 20 * v13);
+					if (v10 == 2)
+						v13 = _vm->_objectsManager.Control_Goto(ptr + 20 * v13);
+					if (v10 == 3)
+						v13 = _vm->_objectsManager.Control_If(ptr, v13);
+					if (v13 == -1)
+						error("Invalid IFF function");
+					if (v10 == 1 || v10 == 4)
+						++v13;
+					if (!v10 || v10 == 5)
+						v17 = 1;
+					if (v10 == 6) {
+						_vm->_globals.dos_free2(ptr);
+						v2 = _vm->_objectsManager.NVZONE;
+						v3 = _vm->_objectsManager.NVVERBE;
+						goto LABEL_2;
+					}
+				} while (v17 != 1);
+				_vm->_globals.dos_free2(ptr);
+				_vm->_globals.SAUVEGARDE->data[svField2] = 0;
+				return;
+			}
+		}
+	}
 }
 
 void TalkManager::REPONSE2(int a1, int a2) {
-	warning("TODO: RESPONSE2");
+	signed int v3; 
+	__int16 v4; 
+	__int16 v5; 
+	__int16 v6; 
+	__int16 v7; 
+	__int16 v8; 
+	__int16 v9; 
+	__int16 v10; 
+	__int16 v11; 
+
+	v3 = 0;
+	if (a2 == 5 && _vm->_globals.SAUVEGARDE->data[svField3] == 4) {
+		if ((uint16)(a1 - 22) <= 1u) {
+			_vm->_objectsManager.SETFLIPSPR(0, 0);
+			_vm->_objectsManager.SETANISPR(0, 62);
+			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
+			if (a1 == 22) {
+				v4 = _vm->_objectsManager.BOBX(3);
+				_vm->_objectsManager.BLOQUE_ANIMX(6, v4);
+			}
+			if (a1 == 23) {
+				v5 = _vm->_objectsManager.BOBX(4);
+				_vm->_objectsManager.BLOQUE_ANIMX(6, v5);
+			}
+			if (a1 == 22) {
+				v6 = _vm->_objectsManager.BOBX(3);
+				_vm->_objectsManager.BLOQUE_ANIMX(8, v6);
+			}
+			if (a1 == 23) {
+				v7 = _vm->_objectsManager.BOBX(4);
+				_vm->_objectsManager.BLOQUE_ANIMX(8, v7);
+			}
+			_vm->_objectsManager.BOBANIM_OFF(3);
+			_vm->_objectsManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.BOBANIM_ON(6);
+			_vm->_soundManager.PLAY_SAMPLE2(1);
+			_vm->_objectsManager.SPACTION1(_vm->_globals.FORETSPR, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
+			do
+				_vm->_eventsManager.VBL();
+			while (_vm->_objectsManager.BOBPOSI(6) <= 12 && _vm->_objectsManager.BOBPOSI(6) != 12);
+			_vm->_objectsManager.BOBANIM_OFF(6);
+			_vm->_objectsManager.BOBANIM_ON(8);
+			if (_vm->_globals.ECRAN == 35)
+				v3 = 201;
+			if (_vm->_globals.ECRAN == 36)
+				v3 = 203;
+			if (_vm->_globals.ECRAN == 37)
+				v3 = 205;
+			if (_vm->_globals.ECRAN == 38)
+				v3 = 207;
+			if (_vm->_globals.ECRAN == 39)
+				v3 = 209;
+			if (_vm->_globals.ECRAN == 40)
+				v3 = 211;
+			if (_vm->_globals.ECRAN == 41)
+				v3 = 213;
+			_vm->_globals.SAUVEGARDE->data[v3] = 2;
+			_vm->_objectsManager.ZONE_OFF(22);
+			_vm->_objectsManager.ZONE_OFF(23);
+		}
+		if ((uint16)(a1 - 20) <= 1u) {
+			_vm->_objectsManager.SETFLIPSPR(0, 1);
+			_vm->_objectsManager.SETANISPR(0, 62);
+			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
+			if (a1 == 20) {
+				v8 = _vm->_objectsManager.BOBX(1);
+				_vm->_objectsManager.BLOQUE_ANIMX(5, v8);
+			}
+			if (a1 == 21) {
+				v9 = _vm->_objectsManager.BOBX(2);
+				_vm->_objectsManager.BLOQUE_ANIMX(5, v9);
+			}
+			if (a1 == 20) {
+				v10 = _vm->_objectsManager.BOBX(1);
+				_vm->_objectsManager.BLOQUE_ANIMX(7, v10);
+			}
+			if (a1 == 21) {
+				v11 = _vm->_objectsManager.BOBX(2);
+				_vm->_objectsManager.BLOQUE_ANIMX(7, v11);
+			}
+			_vm->_objectsManager.BOBANIM_OFF(1);
+			_vm->_objectsManager.BOBANIM_OFF(2);
+			_vm->_objectsManager.BOBANIM_ON(5);
+			_vm->_soundManager.PLAY_SAMPLE2(1);
+			_vm->_objectsManager.SPACTION1(_vm->_globals.FORETSPR, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
+			do
+				_vm->_eventsManager.VBL();
+			while (_vm->_objectsManager.BOBPOSI(5) <= 12 && _vm->_objectsManager.BOBPOSI(5) != 12);
+			_vm->_objectsManager.BOBANIM_OFF(5);
+			_vm->_objectsManager.BOBANIM_ON(7);
+			if (_vm->_globals.ECRAN == 35)
+				v3 = 200;
+			if (_vm->_globals.ECRAN == 36)
+				v3 = 202;
+			if (_vm->_globals.ECRAN == 37)
+				v3 = 204;
+			if (_vm->_globals.ECRAN == 38)
+				v3 = 206;
+			if (_vm->_globals.ECRAN == 39)
+				v3 = 208;
+			if (_vm->_globals.ECRAN == 40)
+				v3 = 210;
+			if (_vm->_globals.ECRAN == 41)
+				v3 = 212;
+			_vm->_globals.SAUVEGARDE->data[v3] = 2;
+			_vm->_objectsManager.ZONE_OFF(21);
+			_vm->_objectsManager.ZONE_OFF(20);
+		}
+	}
+}
+
+void TalkManager::OBJET_VIVANT(const Common::String &a2) {
+	int v2; 
+	Common::String v3; 
+	const char *v4; 
+	int v5; 
+	bool v6;
+	int v10; 
+	byte *v11; 
+	int v12; 
+	int v13; 
+	byte *v14; 
+	byte *v15; 
+	byte *v16; 
+	int v17; 
+	Common::String s;
+	Common::String v20; 
+	Common::String v22; 
+	Common::String v23; 
+
+	_vm->_fontManager.TEXTE_OFF(5);
+	_vm->_fontManager.TEXTE_OFF(9);
+	_vm->_eventsManager.VBL();
+	_vm->_graphicsManager.no_scroll = 1;
+	_vm->_linesManager.CLEAR_ZONE();
+	_vm->_linesManager.RESET_OBSTACLE();
+	_vm->_globals.RESET_CACHE();
+	v2 = 0;
+	do
+		_vm->_globals.BOBZONE[v2++] = 0;
+	while (v2 <= 44);
+	_vm->_objectsManager.NUMZONE = -1;
+	_vm->_eventsManager.btsouris = 4;
+	_vm->_eventsManager.CHANGE_MOUSE(0);
+	BUFFERPERSO = FileManager::RECHERCHE_CAT(a2, 5);
+	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
+	if (BUFFERPERSO == PTRNUL) {
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, a2);
+		BUFFERPERSO = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		TAILLEPERSO = FileManager::FLONG(_vm->_globals.NFICHIER);
+	}
+	RENVOIE_FICHIER(40, v23, (const char *)BUFFERPERSO);
+	RENVOIE_FICHIER(0, v22, (const char *)BUFFERPERSO);
+	v3 = v20;
+	RENVOIE_FICHIER(20, v20, (const char *)BUFFERPERSO);
+	v4 = "NULL";
+	v5 = 5;
+
+	v6 = v3 != v4;
+	if (!v6) {
+		v20 = Common::String::format("IM%d", _vm->_globals.ECRAN);
+	}
+	PERSOSPR = FileManager::RECHERCHE_CAT(v23, 7);
+	if (PERSOSPR) {
+		_vm->_globals.CAT_FLAG = 0;
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, v23);
+	} else {
+		_vm->_globals.CAT_FLAG = 1;
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_SAN.RES");
+	}
+	PERSOSPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+	_vm->_globals.CAT_FLAG = 0;
+	FileManager::CONSTRUIT_LINUX("TEMP.SCR");
+	if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
+		FileManager::SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+	if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
+		FileManager::SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
+	if (!_vm->_graphicsManager.nbrligne)
+		_vm->_graphicsManager.ofscroll = 0;
+	_vm->_graphicsManager.NB_SCREEN();
+	v10 = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	PCHERCHE = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	_vm->_graphicsManager.NB_SCREEN();
+	_vm->_objectsManager.PERSO_ON = 1;
+	CHERCHE_PAL(v10, 1);
+	CHERCHE_ANIM0(v10, 0);
+	v11 = _vm->_globals.COUCOU;
+	_vm->_globals.COUCOU = PTRNUL;
+	_vm->_globals.NOMARCHE = 1;
+	_vm->_objectsManager.INILINK(v22);
+	_vm->_objectsManager.PERSO_ON = 1;
+	_vm->_globals.GOACTION = 0;
+	_vm->_objectsManager.NUMZONE = -1;
+	ANIM_PERSO_INIT();
+	VISU_PARLE();
+	VISU_WAIT();
+	_vm->_graphicsManager.INI_ECRAN2(v22);
+	_vm->_globals.NOMARCHE = 1;
+	_vm->_objectsManager.FORCEZONE = 1;
+	_vm->_objectsManager.NUMZONE = -1;
+	do {
+		v12 = _vm->_eventsManager.BMOUSE();
+		if (v12 == 1) {
+			_vm->_objectsManager.BTGAUCHE();
+			v12 = 1;
+		}
+		if (v12 == 2)
+			_vm->_objectsManager.BTDROITE();
+		_vm->_objectsManager.VERIFZONE();
+		if (_vm->_globals.GOACTION == 1)
+			_vm->_objectsManager.PARADISE();
+		_vm->_eventsManager.VBL();
+	} while (!_vm->_globals.SORTIE);
+	FIN_VISU_PARLE();
+	FIN_VISU_WAIT();
+	CLEAR_ANIM_PERSO();
+	CLEAR_ANIM_PERSO();
+	_vm->_globals.NOPARLE = 0;
+	_vm->_globals.NECESSAIRE = 1;
+	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
+	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
+	_vm->_graphicsManager.NB_SCREEN();
+	_vm->_globals.NECESSAIRE = 0;
+	_vm->_linesManager.CLEAR_ZONE();
+	_vm->_linesManager.RESET_OBSTACLE();
+	_vm->_globals.RESET_CACHE();
+	v13 = 0;
+	do
+		_vm->_globals.BOBZONE[v13++] = 0;
+	while (v13 <= 44);
+	_vm->_globals.LIBERE_FICHIER(_vm->_globals.COUCOU);
+	_vm->_globals.COUCOU = v11;
+	_vm->_objectsManager.DESACTIVE = 1;
+	_vm->_objectsManager.INILINK(v20);
+	_vm->_graphicsManager.INI_ECRAN2(v20);
+	_vm->_objectsManager.DESACTIVE = 0;
+	_vm->_globals.NOMARCHE = 0;
+	if (_vm->_globals.SORTIE == 101)
+		_vm->_globals.SORTIE = 0;
+	FileManager::CONSTRUIT_LINUX("TEMP.SCR");
+	FileManager::bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+	_vm->_objectsManager.PERSO_ON = 0;
+	_vm->_eventsManager.btsouris = 4;
+	_vm->_eventsManager.CHANGE_MOUSE(4);
+	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.DD_Lock();
+	if (_vm->_graphicsManager.Winbpp == 2) {
+		if (_vm->_graphicsManager.SDL_ECHELLE)
+			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+		else
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+	}
+	if (_vm->_graphicsManager.Winbpp == 1) {
+		if (_vm->_graphicsManager.SDL_ECHELLE)
+			_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+		else
+			_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, 640, 480, 0, 0);
+	}
+	_vm->_graphicsManager.DD_Unlock();
+	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+	v14 = _vm->_graphicsManager.VESA_BUFFER;
+	v15 = _vm->_graphicsManager.VESA_SCREEN;
+	memcpy(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.VESA_SCREEN, 0x95FFCu);
+	v15 = v15 + 614396;
+	v14 = v14 + 614396;
+	WRITE_LE_UINT16(v14, READ_LE_UINT16(v15));
+	v14 = v14 + 2;
+	*v14 = *(v15 + 2);
+	v16 = v14 + 1;
+	_vm->_globals.DESACTIVE_INVENT = 0;
+	_vm->_graphicsManager.DD_VBL();
+	v17 = 0;
+	do {
+		_vm->_eventsManager.VBL();
+		++v17;
+	} while (v17 <= 4);
+	_vm->_graphicsManager.no_scroll = 0;
 }
 
 } // End of namespace Hopkins
