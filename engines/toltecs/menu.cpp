@@ -58,10 +58,6 @@ int MenuSystem::run(MenuID menuId) {
 	_editingDescription = false;
 
 	_running = true;
-
-	// TODO: It seems the Y coordinate of the entire GUI should be offset
-	// by this much to be drawn correctly. At least, that appears to be the
-	// case for the main menu at the start of the game.
 	_top = 30 - _vm->_guiHeight / 2;
 
 	_needRedraw = false;
@@ -106,7 +102,7 @@ void MenuSystem::update() {
 
 	if (_needRedraw) {
 		//_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
-		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
+		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, _top, 640, 400 - _top);
 		//debug("redraw");
 		_needRedraw = false;
 	}
@@ -206,7 +202,7 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 
 ItemID MenuSystem::findItemAt(int x, int y) {
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
-		if ((*iter).rect.contains(x, y))
+		if ((*iter).rect.contains(x, y - _top))
 			return (*iter).id;
 	}
 	return kItemIdNone;
