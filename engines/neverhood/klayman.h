@@ -107,7 +107,7 @@ public:
 
 	void stWalkingFirst();
 	void stWalkingFirstExt();
-	void startWalkingResume(int16 frameIncr);
+	void stStartWalkingResume();
 	void stUpdateWalkingFirst();
 	uint32 hmWalking(int messageNum, const MessageParam &param, Entity *sender);
 	void suWalkingFirst();
@@ -137,6 +137,8 @@ public:
 
 	void stLargeStep();
 	uint32 hmLargeStep(int messageNum, const MessageParam &param, Entity *sender);
+	void suLargeStep();
+	void evLargeStepDone();
 
 	void stInsertKey();
 	uint32 hmInsertKey(int messageNum, const MessageParam &param, Entity *sender);
@@ -351,7 +353,6 @@ public:
 	void stopWalking();
 	
 	void suAction();
-	void suLargeStep();
 	void suUpdateDestX();
 	void suWalkingTestExit();
 
@@ -439,8 +440,6 @@ protected:
 	void sub41C770();
 	void sub41C790();
 
-	void stLargeStepDone();
-	
 	void stStartWalkingSmall();
 	uint32 hmWalkingSmall(int messageNum, const MessageParam &param, Entity *sender);
 	
@@ -599,7 +598,6 @@ protected:
 class KmScene2205 : public Klayman {
 public:
 	KmScene2205(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
-	void stStartWalkingResume();
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -612,7 +610,6 @@ public:
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stStartWalkingResume();
 };
 
 class KmScene2207 : public Klayman {
@@ -628,7 +625,6 @@ public:
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stStartWalkingResume();
 };
 
 class KmHallOfRecords : public Klayman {
@@ -637,7 +633,6 @@ public:
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stStartWalkingResume();
 };
 
 class KmScene2247 : public Klayman {
@@ -646,7 +641,6 @@ public:
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void stStartWalkingResume();
 };
 
 class KmScene2401 : public Klayman {
