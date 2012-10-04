@@ -44,7 +44,7 @@ public:
 	void setParent(HopkinsEngine *vm) { _vm = vm; }
 
 	void PLAY_ANM(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
-	void PLAY_ANM2(const Common::String &filename, int a2, int a3, int a4);
+	void PLAY_ANM2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4);
 	bool REDRAW_ANIM();
 	void CHARGE_ANIM(const Common::String &animName);
 	void CLEAR_ANIM();

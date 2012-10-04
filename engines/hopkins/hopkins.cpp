@@ -148,7 +148,7 @@ LABEL_13:
 									_globals.Max_Ligne_Long = 40;
 									_globals.Max_Propre_Gen = 20;
 									_globals.Max_Perso_Y = 435;
-									PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
+									_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
 								}
                 
 								if (GLOBALS.SORTIE != 3)
@@ -191,7 +191,7 @@ LABEL_13:
 								_globals.Max_Propre_Gen = 5;
 								_globals.Max_Perso_Y = 450;
 								GLOBALS.NOSPRECRAN = 1;
-								PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+								_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
 							}
               
 							if (GLOBALS.SORTIE != 4)
@@ -211,9 +211,9 @@ LABEL_13:
 						byte v1 = *((byte *)GLOBALS.SAUVEGARDE + 80);
 						if (v1) {
 							if (v1 == 1)
-								PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
+								_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
 						} else {
-							PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
+							_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
 						}
             
 						GLOBALS.NOSPRECRAN = 0;
@@ -226,7 +226,7 @@ LABEL_13:
 					_globals.Max_Ligne_Long = 15;
 					_globals.Max_Propre_Gen = 10;
 					_globals.Max_Perso_Y = 450;
-					PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+					_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
 				}
 
 				if (GLOBALS.SORTIE != 6)
@@ -235,15 +235,15 @@ LABEL_13:
 				_globals.Max_Ligne_Long = 20;
 				_globals.Max_Propre_Gen = 10;
 				_globals.Max_Perso_Y = 460;
-				PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+				_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
 			}
 
 			if (GLOBALS.SORTIE != 7)
 				break;
 			if (*((byte *)GLOBALS.SAUVEGARDE + 220))
-				PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
 			else
-				PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
 		}
 
 		if (GLOBALS.SORTIE == 9) {
@@ -254,11 +254,11 @@ LABEL_13:
 			
 			if (!*((byte *)GLOBALS.SAUVEGARDE + 225))
 				goto LABEL_109;
-			PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 		} else {
 			if (GLOBALS.SORTIE == 10) {
 				GLOBALS.NOSPRECRAN = 1;
-				PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
+				_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
 				goto LABEL_124;
 			}
       
@@ -268,7 +268,7 @@ LABEL_13:
 				_globals.Max_Ligne_Long = 20;
 				_globals.Max_Propre_Gen = 10;
 				_globals.Max_Perso_Y = 450;
-				PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
+				_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
 				goto LABEL_124;
 			}
 
@@ -280,7 +280,7 @@ LABEL_13:
 				_globals.Max_Perso_Y = 450;
 				if (*((byte *)GLOBALS.SAUVEGARDE + 225)) {
 					GLOBALS.NOSPRECRAN = 1;
-					PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
+					_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 				} else {
 LABEL_109:
 					BOOM();
@@ -291,19 +291,19 @@ LABEL_109:
 				_globals.Max_Ligne_Long = 40;
 				_globals.Max_Propre_Gen = 20;
 				_globals.Max_Perso_Y = 440;
-				PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1);
+				_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1);
 				break;
 			case 14:
 				_globals.Max_Propre = 50;
 				_globals.Max_Ligne_Long = 40;
 				_globals.Max_Propre_Gen = 20;
 				_globals.Max_Perso_Y = 440;
-				PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
+				_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
 				break;
 			default:
 				if (GLOBALS.SORTIE == 15) {
 					GLOBALS.NOSPRECRAN = 1;
-					PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29);
+					_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29);
 					goto LABEL_124;
 				}
 				if (GLOBALS.SORTIE == 16) {
@@ -314,9 +314,9 @@ LABEL_109:
 
 					byte v2 = *((byte *)GLOBALS.SAUVEGARDE + 113);
 					if (v2 == 1) {
-						PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
+						_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
 					} else if (!v2) {
-						PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
+						_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
 					}
 				} else {
 					if (GLOBALS.SORTIE == 17)
@@ -328,11 +328,11 @@ LABEL_109:
 						_globals.Max_Ligne_Long = 20;
 						_globals.Max_Propre_Gen = 10;
 						_globals.Max_Perso_Y = 445;
-						PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30);
+						_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30);
 					} else {
 						if (GLOBALS.SORTIE == 33) {
 							GLOBALS.NOSPRECRAN = 1;
-							PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
+							_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
 							goto LABEL_124;
 						}
               
@@ -341,7 +341,7 @@ LABEL_109:
 							_globals.Max_Ligne_Long = 40;
 							_globals.Max_Propre_Gen = 20;
 							_globals.Max_Perso_Y = 435;
-							PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30);
+							_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30);
 						} else {
 							if (GLOBALS.SORTIE == 27)
 								PASS();
@@ -364,13 +364,13 @@ LABEL_109:
 								PASS();
 							if (GLOBALS.SORTIE == 111) {
 								GLOBALS.NOSPRECRAN = 1;
-								PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
+								_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
 								goto LABEL_124;
 							}
                 
 							if (GLOBALS.SORTIE == 112) {
 								GLOBALS.NOSPRECRAN = 1;
-								PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
+								_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
 LABEL_124:
 								GLOBALS.NOSPRECRAN = 0;
 							} else if (GLOBALS.SORTIE == 113) {
@@ -379,7 +379,7 @@ LABEL_124:
 								*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
 								_globals.ECRAN = 113;
 								*((byte *)GLOBALS.SAUVEGARDE + 5) = 113;
-								COMPUT_HOPKINS(1);
+								_menuManager.COMPUT_HOPKINS(1);
                   
 								_graphicsManager.DD_Lock();
 								_graphicsManager.Cls_Video();
@@ -396,7 +396,7 @@ LABEL_124:
 									*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
 									_globals.ECRAN = 114;
 									*((byte *)GLOBALS.SAUVEGARDE + 5) = 114;
-									COMPUT_HOPKINS(2);
+									_menuManager.COMPUT_HOPKINS(2);
 									goto LABEL_128;
 								}
 								if (GLOBALS.SORTIE == 115) {
@@ -405,7 +405,7 @@ LABEL_124:
 									*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
 									_globals.ECRAN = 115;
 									*((byte *)GLOBALS.SAUVEGARDE + 5) = 115;
-									COMPUT_HOPKINS(3);
+									_menuManager.COMPUT_HOPKINS(3);
 
 LABEL_128:
 									_graphicsManager.DD_Lock();
@@ -910,16 +910,6 @@ void HopkinsEngine::BOOM() {
 	_globals.SORTIE = 151;
 }
 
-void HopkinsEngine::PERSONAGE(const Common::String &s1, const Common::String &s2, const Common::String &s3,
-							   const Common::String &s4, int v) {
-	warning("TODO: PERSONAGE2");
-}
-
-void HopkinsEngine::PERSONAGE2(const Common::String &s1, const Common::String &s2, const Common::String &s3,
-							   const Common::String &s4, int v) {
-	warning("TODO: PERSONAGE2");
-}
-
 void HopkinsEngine::REST_SYSTEM() {
 	quitGame();
 	_eventsManager.CONTROLE_MES();
@@ -956,10 +946,6 @@ void HopkinsEngine::PUBQUIT() {
 	// that, it's being skipped in favour of simply exitting
 
 	_graphicsManager.FADE_OUTW();
-}
-
-void HopkinsEngine::COMPUT_HOPKINS(int a1) {
-	warning("TODO: COMPUT_HOPKINS");
 }
 
 } // End of namespace Hopkins

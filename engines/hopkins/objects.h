@@ -75,6 +75,7 @@ public:
 	byte *SL_SPR;
 	byte *SL_SPR2;
 	byte *sprite_ptr;
+	const byte *S_old_spr; 
 	bool PERSO_ON;
 	bool SL_FLAG;
 	bool FLAG_VISIBLE;
@@ -121,6 +122,8 @@ public:
 	int OBSSEUL;
 	int NVVERBE;
 	int NVZONE;
+	int S_old_ani; 
+	int S_old_ret;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -195,6 +198,7 @@ public:
 	void PARADISE();
 	void CLEAR_ECRAN();
 	
+	void TEST_INVENT();
 	void INVENT();
 	void CHANGE_TETE(int a1, int a2);
 	void VERIFTAILLE();
@@ -232,6 +236,7 @@ public:
 	int BOBA(int idx);
 
 	void INILINK(const Common::String &file);
+	void SPECIAL_INI(const Common::String &a1);
 	void OPTI_BOBON(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
 	void SCI_OPTI_ONE(int a1, int a2, int a3, int a4);
 	int Control_Goto(const byte *dataP);
@@ -247,6 +252,10 @@ public:
 	void SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5);
 	void TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6);
 	void BLOQUE_ANIMX(int idx, int a2);
+	void PERSONAGE(const Common::String &s1, const Common::String &s2, const Common::String &s3,
+			const Common::String &s4, int v);
+	void PERSONAGE2(const Common::String &s1, const Common::String &s2, const Common::String &s3,
+			const Common::String &s4, int v);
 };
 
 } // End of namespace Hopkins

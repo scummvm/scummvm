@@ -178,6 +178,7 @@ public:
 	void OPTI_INI(const Common::String &file, int a2);
 	void NB_SCREEN();
 	void SHOW_PALETTE();
+	void videkey();
 };
 
 } // End of namespace Hopkins

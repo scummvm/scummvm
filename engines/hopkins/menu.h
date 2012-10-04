@@ -34,12 +34,15 @@ class HopkinsEngine;
 class MenuManager {
 private:
 	HopkinsEngine *_vm;
+
+	byte MenuTxt[10600];
 public:
 	void setParent(HopkinsEngine *vm);
 
 	int MENU();
 	void CHARGE_PARTIE();
 	void SAUVE_PARTIE();
+	void COMPUT_HOPKINS(int a1);
 };
 
 } // End of namespace Hopkins

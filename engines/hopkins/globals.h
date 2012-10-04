@@ -247,6 +247,9 @@ enum SauvegardeOffset {
 	, svField231
 	, svField261
 	, svField270
+	, svField300
+	, svField318
+	, svField320
 	, svField333
 	, svField338
 	, svField339
@@ -423,8 +426,10 @@ public:
 	int Compteur;
 	int ACTION_SENS;
 	int SegmentEnCours;
+
 	int STOP_BUG;
 	bool NO_OFFSET;
+	int MAX_COMPTE;
 
 	int force_to_data_0;
 	int oldzone_46;

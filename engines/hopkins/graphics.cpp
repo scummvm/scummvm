@@ -2407,4 +2407,8 @@ void GraphicsManager::SHOW_PALETTE() {
 	setpal_vga256(Palette);
 }
 
+void GraphicsManager::videkey() {
+	// Empty in original
+}
+
 } // End of namespace Hopkins
