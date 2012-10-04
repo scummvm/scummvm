@@ -466,7 +466,7 @@ public:
 	static void saveStaticState(SaveGame *state);
 	static void restoreStaticState(SaveGame *state);
 
-	bool isAttached() const { return _attachedActor != NULL; }
+	bool isAttached() const { return _attachedActor != 0; }
 	Math::Vector3d getWorldPos() const;
 	void attachToActor(Actor *other, const char *joint);
 	void detach();
@@ -614,7 +614,7 @@ private:
 
 	static bool _isTalkingBackground;
 	int _talkDelay;
-	Actor *_attachedActor;
+	int _attachedActor;
 	Common::String _attachedJoint;
 	AlphaMode _alphaMode;
 	float _globalAlpha;
