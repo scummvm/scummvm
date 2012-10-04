@@ -52,87 +52,311 @@ public:
 
 	void update();
 
+	void startIdleAnimation(uint32 fileHash, AnimationCb callback);
+	void upIdleAnimation();
+
 	void stDoIdlePickEar();
+	void stIdlePickEar();
+	void evIdlePickEarDone();
+	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
+
 	void stDoIdleSpinHead();
+	void stIdleSpinHead();
+	uint32 hmIdleSpinHead(int messageNum, const MessageParam &param, Entity *sender);
+
 	void stDoIdleArms();
+	void stIdleArms();
+	void evIdleArmsDone();
+	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
+	
 	void stDoIdleChest();
+	void stIdleChest();
+	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
+	
 	void stDoIdleHeadOff();
+	void stIdleHeadOff();
+	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stDoIdleTeleporterHands();
+	void stIdleTeleporterHands();
+	
+	void stDoIdleTeleporterHands2();
+	void stIdleTeleporterHands2();
+
 	void stTryStandIdle();
-	void stWakeUp();
-	void stSleeping();
-	void stPickUpGeneric();
-	void stTurnPressButton();
-	void stStampFloorButton();
-	void stPressButtonSide();
-	void stLargeStep();
-	void stWonderAboutHalf();
-	void stWonderAboutAfter();
-	void stTurnToUseHalf();
-	void stTurnAwayFromUse();
-	void stWonderAbout();
-	void stPeekWall();
-	void stJumpToRing1();
-	void setupJumpToRing();
-	void stHangOnRing();
-	void stJumpToRing2();
-	void stJumpToRing3();
-	void stHoldRing();
-	void stReleaseRing();
-	void stJumpToRing4();
-	void stContinueClimbLadderUp();
-	void stStartClimbLadderDown();
-	void stClimbLadderHalf();
-	void stStartClimbLadderUp();
+	void stStandAround();
+	void upStandIdle();
+	void stIdleBlink();
+	
+	bool stStartAction(AnimationCb callback3);
+	bool stStartActionFromIdle(AnimationCb callback);
+	uint32 hmStartAction(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stSneak();
+	uint32 hmSneaking(int messageNum, const MessageParam &param, Entity *sender);
+	void suSneaking();
+	void evSneakingDone();
+
+	void stStartWalking();
+	void stStartWalkingExt();
+	void stWalkingOpenDoor();
+	void suWalkingOpenDoor();
+	void stStepOver();
+	uint32 hmStartWalking(int messageNum, const MessageParam &param, Entity *sender);
+	void evStartWalkingDone();
+
+	void stWalkingFirst();
+	void stWalkingFirstExt();
+	void startWalkingResume(int16 frameIncr);
+	void stUpdateWalkingFirst();
+	uint32 hmWalking(int messageNum, const MessageParam &param, Entity *sender);
+	void suWalkingFirst();
+
 	void stWalkToFrontNoStep();
 	void stWalkToFront();
 	void stTurnToFront();
 	void stTurnToBack();
-	void stLandOnFeet();
+	uint32 hmWalkToFront(int messageNum, const MessageParam &param, Entity *sender);
+
 	void stTurnToBackToUse();
-	void stClayDoorOpen();
-	void stTurnToUse();
-	void stReturnFromUse();
-	void stWalkingOpenDoor();
-	void stSitIdleTeleporter();
-	void stIdleSitBlink();
-	void stIdleSitBlinkSecond();
+	uint32 hmTurnToBackToUse(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stPickUpGeneric();
 	void stPickUpNeedle();
+	uint32 hmPickUpObject(int messageNum, const MessageParam &param, Entity *sender);
+
 	void stPickUpTube();
-	void stTurnToUseInTeleporter();
-	void stReturnFromUseInTeleporter();
-	void stStepOver();
-	void stSitInTeleporter();
-	void stGetUpFromTeleporter();
-	void stMoveObjectSkipTurnFaceObject();
-	void evMoveObjectTurnDone();
-	void stMoveObjectSkipTurn();
-	void stMoveObjectFaceObject();
+	uint32 hmPickUpTube(int messageNum, const MessageParam &param, Entity *sender);
+	
+	void stTurnToUse();
+	void stTurnToUseHalf();
+	void stTurnAwayFromUse();
+	void stReturnFromUse();
+	void stTurnToUseExt();
+	uint32 hmTurnToUse(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stLargeStep();
+	uint32 hmLargeStep(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stInsertKey();
+	uint32 hmInsertKey(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stReadNote();
+	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stHitByDoor();
+	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stPeekWall();
+	uint32 hmPeekWall(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stPeekWallReturn();
+	uint32 hmPeekWallReturn(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stPeekWallBlink();
+	void upPeekWallBlink();
+
+	void stPeekWall1();
+
+	void stPeekWall2();
+
+	void stPullHammerLever();
+	uint32 hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stRidePlatformDown();
+	void suRidePlatformDown();
+
+	void stCrashDown();
+	void stCrashDownFinished();
+
+	void stShrink();
+	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stGrow();
+	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stDrinkPotion();
+	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stPullCord();
+	void stReleaseCord();
+	uint32 hmPullReleaseCord(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stUseTube();
+	uint32 hmUseTube(int messageNum, const MessageParam &param, Entity *sender);
+
 	void stUseLever();
-	void stPullLeverDown();
-	void stHoldLeverDown();
 	void stUseLeverRelease();
 	void stReleaseLever();
+	void stInteractLever();
+	uint32 hmLever(int messageNum, const MessageParam &param, Entity *sender);
+
 	void stLetGoOfLever();
-	void cbLeverReleasedEvent();
+	void evLeverReleasedEvent();
+
+	void stWakeUp();
+
+	void stSleeping();
+	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stPressButton();
+	void stPressFloorButton();
+	void stPressButtonSide();
+	uint32 hmPressButton(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stWonderAbout();
+	void stWonderAboutHalf();
+	void stWonderAboutAfter();
+
+	void stStandWonderAbout();
+
+	void stStartClimbLadderUp();
+	void stStartClimbLadderDown();
+	uint32 hmClimbLadderUpDown(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stContinueClimbLadderUp();
+
+	void stClimbLadderHalf();
+	uint32 hmClimbLadderHalf(int messageNum, const MessageParam &param, Entity *sender);
+
+	void setupJumpToRing();
+	void stJumpToRing1();
+	void stJumpToRing2();
+	void stJumpToRing4();
+	uint32 hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stHangOnRing();
+
+	void stJumpToRing3();
+	uint32 hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stHoldRing3();
+	uint32 hmHoldRing3(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stReleaseRing();
+
+	void stLandOnFeet();
+	uint32 hmLandOnFeet(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stPullLeverDown();
+	void stHoldLeverDown();
+
 	void stInsertDisk();
-	void stWalking();
-	void stUpdateWalking();
-	void stStartWalkingDone();
+	uint32 hmInsertDisk(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stMoveObjectSkipTurnFaceObject();
+	void stMoveObjectSkipTurn();
+	void stMoveObjectFaceObject();
+	uint32 hmMoveObjectTurn(int messageNum, const MessageParam &param, Entity *sender);
+	void evMoveObjectTurnDone();
+
+	void stJumpToGrab();
+	void stJumpToGrabFall();
+	uint32 hmJumpToGrab(int messageNum, const MessageParam &param, Entity *sender);
+	void suJumpToGrab();
+	
+	void stJumpToGrabRelease();
+	uint32 hmJumpToGrabRelease(int messageNum, const MessageParam &param, Entity *sender);
+	
+	void stSitInTeleporter();
+	uint32 hmSitInTeleporter(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stSitIdleTeleporter();
+	void upSitIdleTeleporter();
+
+	void stSitIdleTeleporterBlink();
+
+	void stSitIdleTeleporterBlinkSecond();
+
+	void stTurnToUseInTeleporter();
+
+	void stReturnFromUseInTeleporter();
+
+	void stGetUpFromTeleporter();
+
+	void teleporterAppear(uint32 fileHash);
+	void teleporterDisappear(uint32 fileHash);
+	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stClayDoorOpen();
+	uint32 hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stFallSkipJump();
+	void suFallSkipJump();
+
+	void stMoveObject();
+	void stContinueMoveObject();
+	uint32 hmMoveObject(int messageNum, const MessageParam &param, Entity *sender);
+	void upMoveObject();
+
+	void stCloseEyes();
+
+	void stTumbleHeadless();
+	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stFetchMatch();
+	void stLightMatch();
+	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stHitByBoxingGlove();
+	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
+	void evHitByBoxingGloveDone();
+
+	void stStandIdleSmall();
+	void stWonderAboutSmall();
+	void stWonderAboutHalfSmall();
+	void stWonderAboutAfterSmall();
+
+	void stWalkToFrontNoStepSmall();
+	void stWalkToFrontSmall();
+	void stWalkToFront2Small();
+	void stTurnToBackHalfSmall();
+	void stTurnToBackWalkSmall();
+	void stTurnToBackSmall();
+	uint32 hmWalkFrontBackSmall(int messageNum, const MessageParam &param, Entity *sender);
+
+	void sub421230();//stGrow??
+	uint32 handleMessage41F1D0(int messageNum, const MessageParam &param, Entity *sender);
+	
+	void stJumpToRingVenusFlyTrap();
+	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stDropFromRing();
+
+	void stStandIdleSpecial();
+	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stPressDoorButton();
+	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stSpitOutFall0();
+	void stSpitOutFall2();
+	void suFallDown();
+	void upSpitOutFall();
+
+	void stJumpAndFall();
+	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
+
+	void stFalling();
+	void stFallTouchdown();
+
+	void stMoveVenusFlyTrap();
+	void stContinueMovingVenusFlyTrap();
+	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	void evMoveVenusFlyTrapDone();
+
+	////////////////////////////////////////////////////////////////////////////
 
 	void stopWalking();
 	
-	void spriteUpdate41F250();
-	void suWalking();
+	void suAction();
 	void suLargeStep();
 	void suUpdateDestX();
-	void suWalkingOpenDoor();
-	void spriteUpdate41F300();
 	void suWalkingTestExit();
 
 	uint32 hmLowLevel(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmLowLevelAnimation(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmWalking(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmLever(int messageNum, const MessageParam &param, Entity *sender);
 
 	void setKlaymanIdleTable(const KlaymanIdleTableItem *table, int tableCount);
 	void setKlaymanIdleTable1();
@@ -141,133 +365,16 @@ public:
 	
 	void setSoundFlag(bool value) { _soundFlag = value; }
 
-	void stStandIdleSmall();
-	void stWonderAboutAfterSmall();
-	void stWonderAboutHalfSmall();
-	void stWonderAboutSmall();
-	void stWalkToFrontNoStepSmall();
-	void stWalkToFront2Small();
-	void stWalkToFrontSmall();
-	void stTurnToBackHalfSmall();
-	void stTurnToBackWalkSmall();
-	void stTurnToBackSmall();
-	void stPullCord();
-	void stReleaseCord();
-	uint32 hmPullCord(int messageNum, const MessageParam &param, Entity *sender);
-	void stUseTube();
-	uint32 hmUseTube(int messageNum, const MessageParam &param, Entity *sender);
-	void stWalkingExt();
-	void stStartWalkingExt();
-	
-	void stJumpToGrab();
-	void suJumpToGrab();
-	uint32 hmJumpToGrab(int messageNum, const MessageParam &param, Entity *sender);
-	
-	void sub421230();//stGrow??
-	uint32 handleMessage41F1D0(int messageNum, const MessageParam &param, Entity *sender);
-	
-	void stTurnToUseExt();
-	void stJumpToGrabFall();
-	
-	void stJumpToGrabRelease();
-	uint32 hmJumpToGrabRelease(int messageNum, const MessageParam &param, Entity *sender);
-	
-	void stDoIdleTeleporterHands();
-	void stIdleTeleporterHands();
-	
-	void stDoIdleTeleporterHands2();
-	void stIdleTeleporterHands2();
-
-	void teleporterAppear(uint32 fileHash);
-	void teleporterDisappear(uint32 fileHash);
-	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
-
-	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
-	void stShrink();
-
-	void stStandWonderAbout();
-
-	uint32 hmDrinkPotion(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
-	void stGrow();
-	void stDrinkPotion();
-
-	uint32 hmInsertKey(int messageNum, const MessageParam &param, Entity *sender);
-	void stInsertKey();
-
-	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
-	void stReadNote();
-
-	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
-	void stHitByDoor();
-
-	uint32 hmPeekWallReturn(int messageNum, const MessageParam &param, Entity *sender);
-	void upPeekWallBlink();
-	void stPeekWall1();
-	void stPeekWall2();
-	void stPeekWallBlink();
-	void stPeekWallReturn();
-
-	void stPullHammerLever();
-	uint32 hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender);
-
-	void suRidePlatformDown();
-	void stRidePlatformDown();
-
-	void stCrashDown();
-	void stCrashDownFinished();
-
-	void upSpitOutFall();
-	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
-	void suFallDown();
-	void stJumpToRingVenusFlyTrap();
-	void stStandIdleSpecial();
-	void stSpitOutFall0();
-	void stFalling();
-	void stSpitOutFall2();
-	void stFallTouchdown();
-	void stJumpAndFall();
-	void stDropFromRing();
-	void stPressDoorButton();
-	void stHitByBoxingGlove();
-	void stHitByBoxingGloveDone();
-	void stMoveVenusFlyTrap();
-	void stContinueMovingVenusFlyTrap();
-	void stMoveVenusFlyTrapDone();
-
-	void suFallSkipJump();
-	void stFallSkipJump();
-
-	void upMoveObject();
-	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
-	void stFetchMatch();
-	void stLightMatch();
-	uint32 hmMoveObject(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
-	void stMoveObject();
-	void stContinueMoveObject();
-	void stTumbleHeadless();
-	void stCloseEyes();
-
-	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
-	void stTrySpitIntoPipe();
 	void spitIntoPipe();
+	void stTrySpitIntoPipe();
 	void stContSpitIntoPipe();
+	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
 
-	void suRidePlatform();
 	void stRidePlatform();
-	void stInteractLever();
+	void suRidePlatform();
 	void stPullLever();
 	void stLookLeverDown();
 	void stWaitLeverDown();
-
-	void startWalkingResume(int16 frameIncr);
 
 protected:
 	Entity *_parentScene;
@@ -305,6 +412,8 @@ protected:
 	Sprite *_otherSprite;
 	int _idleTableNum;
 
+    int16 _walkResumeFrameIncr;
+
 	int _moveObjectCountdown;
 
 	bool _canSpitPipe;
@@ -326,77 +435,14 @@ protected:
 	void sub41CC40(int16 x1, int16 x2);
 	void sub41CCE0(int16 x);
 
-	bool stStartActionFromIdle(AnimationCb callback);
 	void gotoNextStateExt();
 	void sub41C770();
 	void sub41C790();
-	
-	void stIdlePickEar();
-	void evIdlePickEarDone();
-	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
 
-	void stIdleSpinHead();
-	uint32 hmIdleSpinHead(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stIdleArms();
-	void evIdleArmsDone();
-	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
-	
-	void stIdleChest();
-	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
-	
-	void stIdleHeadOff();
-	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
-
-	void startIdleAnimation(uint32 fileHash, AnimationCb callback);
-	void upIdleAnimation();
-
-	void upStandIdle();
-
-	void stIdleBlink();
-	void stStandAround();
-	
-	uint32 hmStartAction(int messageNum, const MessageParam &param, Entity *sender);
-
-	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
-	
-	bool stStartAction(AnimationCb callback3);
-	
-	void stSneak();
-	void stWalkingDone();
-	uint32 hmSneaking(int messageNum, const MessageParam &param, Entity *sender);
-	void stStartWalking();
-	uint32 hmStartWalking(int messageNum, const MessageParam &param, Entity *sender);
-
-	uint32 hmPickUpGeneric(int messageNum, const MessageParam &param, Entity *sender);
-	
-	uint32 hmPressButton(int messageNum, const MessageParam &param, Entity *sender);
-	
 	void stLargeStepDone();
-	
-	uint32 hmLargeStep(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmTurnToUse(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmPeekWall(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmHoldRing(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage41DFD0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmClimbLadderUpDown(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmWalkToFront(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmLandOnFeet(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmTurnToBackToUse(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmPickUpTube(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmSitInTeleporter(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmMoveObjectTurn(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender);
-	
-	void upSitIdleTeleporter();
-	
-	uint32 hmInsertDisk(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void stStartWalkingSmall();
 	uint32 hmWalkingSmall(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmWalkFrontBackSmall(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void walkAlongPathPoints();
 	

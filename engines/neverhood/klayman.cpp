@@ -60,7 +60,7 @@ Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int
 	_isWalkingOpenDoorNotified(false), _countdown1(0), _tapesToInsert(0), _keysToInsert(0), /*_field118(0), */_status2(0), _acceptInput(true),
 	_attachedSprite(NULL), _isWalking(false), _status3(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false),
 	_flagF6(false), _isLeverDown(false), _isSittingInTeleporter(false), _flagFA(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false),
-	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _readyToSpit(false) {
+	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _readyToSpit(false), _walkResumeFrameIncr(0) {
 	
 	// TODO DirtySurface
 	createSurface(surfacePriority, 320, 200);
@@ -301,21 +301,21 @@ void Klayman::upSitIdleTeleporter() {
 	} else if (++_blinkCounter >= _blinkCounterMax) {
 		_blinkCounter = 0;
 		_blinkCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
-		stIdleSitBlink();
+		stSitIdleTeleporterBlink();
 	}
 }
 
-void Klayman::stIdleSitBlink() {
+void Klayman::stSitIdleTeleporterBlink() {
 	_status2 = 0;
 	_acceptInput = true;
 	startAnimation(0x5C24C018, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmLowLevelAnimation);
 	SetSpriteUpdate(NULL);
-	NextState(&Klayman::stIdleSitBlinkSecond);
+	NextState(&Klayman::stSitIdleTeleporterBlinkSecond);
 }
 
-void Klayman::stIdleSitBlinkSecond() {
+void Klayman::stSitIdleTeleporterBlinkSecond() {
 	_status2 = 0;
 	_acceptInput = true;
 	startAnimation(0x5C24C018, 0, -1);
@@ -331,7 +331,7 @@ void Klayman::stPickUpNeedle() {
 		_acceptInput = false;
 		startAnimation(0x1449C169, 0, -1);
 		SetUpdateHandler(&Klayman::update);
-		SetMessageHandler(&Klayman::hmPickUpGeneric);
+		SetMessageHandler(&Klayman::hmPickUpObject);
 		SetSpriteUpdate(NULL);
 	}
 }
@@ -675,7 +675,7 @@ bool Klayman::stStartAction(AnimationCb callback3) {
 		startAnimation(0x5C7080D4, 0, -1);
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::hmStartAction);
-		SetSpriteUpdate(&Klayman::spriteUpdate41F250);
+		SetSpriteUpdate(&Klayman::suAction);
 		NextState(callback3);
 		return true;
 	} else {
@@ -684,7 +684,7 @@ bool Klayman::stStartAction(AnimationCb callback3) {
 	}
 }
 
-void Klayman::spriteUpdate41F250() {
+void Klayman::suAction() {
 
 	int16 xdiff = _destX - _x;
 
@@ -715,7 +715,7 @@ void Klayman::spriteUpdate41F250() {
 	
 }
 
-void Klayman::suWalking() {
+void Klayman::suSneaking() {
 	
 	int16 xdiff = _destX - _x;
 	
@@ -770,11 +770,11 @@ void Klayman::stSneak() {
 	startAnimation(0x5C48C506, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmSneaking);
-	SetSpriteUpdate(&Klayman::suWalking);
-	FinalizeState(&Klayman::stWalkingDone);	
+	SetSpriteUpdate(&Klayman::suSneaking);
+	FinalizeState(&Klayman::evSneakingDone);	
 }
 
-void Klayman::stWalkingDone() {
+void Klayman::evSneakingDone() {
 	_isSneaking = false;
 }
 
@@ -810,12 +810,12 @@ void Klayman::stStartWalking() {
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::hmStartWalking);
 		SetSpriteUpdate(&Klayman::suWalkingTestExit);
-		FinalizeState(&Klayman::stStartWalkingDone);	
-		NextState(&Klayman::stWalking);
+		FinalizeState(&Klayman::evStartWalkingDone);	
+		NextState(&Klayman::stWalkingFirst);
 	}
 }
 
-void Klayman::stStartWalkingDone() {
+void Klayman::evStartWalkingDone() {
 	_isWalking = false;
 }
 
@@ -833,19 +833,19 @@ uint32 Klayman::hmStartWalking(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-void Klayman::stWalking() {
+void Klayman::stWalkingFirst() {
 	_status2 = 0;
 	_isWalking = true;
 	_acceptInput = true;
 	startAnimation(0x1A249001, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmWalking);
-	SetSpriteUpdate(&Klayman::spriteUpdate41F300);
-	FinalizeState(&Klayman::stStartWalkingDone);	
-	NextState(&Klayman::stUpdateWalking);
+	SetSpriteUpdate(&Klayman::suWalkingFirst);
+	FinalizeState(&Klayman::evStartWalkingDone);	
+	NextState(&Klayman::stUpdateWalkingFirst);
 }
 
-void Klayman::spriteUpdate41F300() {
+void Klayman::suWalkingFirst() {
 	SetSpriteUpdate(&Klayman::suWalkingTestExit);
 	_deltaX = 0;
 }
@@ -864,7 +864,7 @@ uint32 Klayman::hmWalking(int messageNum, const MessageParam &param, Entity *sen
 	return messageResult;
 }
 
-void Klayman::stUpdateWalking() {
+void Klayman::stUpdateWalkingFirst() {
 	if (_status3 == 2) {
 		gotoNextStateExt();
 	} else if (_status3 == 3) {
@@ -891,8 +891,8 @@ void Klayman::stUpdateWalking() {
 		}
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::hmSneaking);
-		SetSpriteUpdate(&Klayman::suWalking);
-		FinalizeState(&Klayman::stWalkingDone);	
+		SetSpriteUpdate(&Klayman::suSneaking);
+		FinalizeState(&Klayman::evSneakingDone);	
 	}
 }
 
@@ -962,12 +962,12 @@ void Klayman::stPickUpGeneric() {
 		_acceptInput = false;
 		startAnimation(0x1C28C178, 0, -1);
 		SetUpdateHandler(&Klayman::update);
-		SetMessageHandler(&Klayman::hmPickUpGeneric);
+		SetMessageHandler(&Klayman::hmPickUpObject);
 		SetSpriteUpdate(NULL);
 	}
 }
 
-uint32 Klayman::hmPickUpGeneric(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Klayman::hmPickUpObject(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -991,8 +991,8 @@ uint32 Klayman::hmPickUpGeneric(int messageNum, const MessageParam &param, Entit
 
 }
 
-void Klayman::stTurnPressButton() {
-	if (!stStartAction(AnimationCallback(&Klayman::stTurnPressButton))) {
+void Klayman::stPressButton() {
+	if (!stStartAction(AnimationCallback(&Klayman::stPressButton))) {
 		_status2 = 2;
 		_acceptInput = true;
 		startAnimation(0x1C02B03D, 0, -1);
@@ -1018,8 +1018,8 @@ uint32 Klayman::hmPressButton(int messageNum, const MessageParam &param, Entity 
 	return messageResult;
 }
 
-void Klayman::stStampFloorButton() {
-	if (!stStartAction(AnimationCallback(&Klayman::stStampFloorButton))) {
+void Klayman::stPressFloorButton() {
+	if (!stStartAction(AnimationCallback(&Klayman::stPressFloorButton))) {
 		_status2 = 2;
 		_acceptInput = true;
 		startAnimation(0x1C16B033, 0, -1);
@@ -1036,7 +1036,7 @@ void Klayman::stPressButtonSide() {
 		startAnimation(0x1CD89029, 0, -1);
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::hmPressButton);
-		SetSpriteUpdate(&Klayman::spriteUpdate41F250);
+		SetSpriteUpdate(&Klayman::suAction);
 	}
 }
 
@@ -1093,7 +1093,7 @@ void Klayman::stStartWalkingSmall() {
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmWalkingSmall);
 	SetSpriteUpdate(&Klayman::suWalkingTestExit);
-	FinalizeState(&Klayman::stStartWalkingDone);
+	FinalizeState(&Klayman::evStartWalkingDone);
 }
 
 uint32 Klayman::hmWalkingSmall(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1221,7 +1221,7 @@ void Klayman::stPullCord() {
 		_acceptInput = false;
 		startAnimation(0x3F28E094, 0, -1);
 		SetUpdateHandler(&Klayman::update);
-		SetMessageHandler(&Klayman::hmPullCord);
+		SetMessageHandler(&Klayman::hmPullReleaseCord);
 		SetSpriteUpdate(NULL);
 		NextState(&Klayman::stReleaseCord);
 	}
@@ -1231,11 +1231,11 @@ void Klayman::stReleaseCord() {
 	_acceptInput = false;
 	startAnimation(0x3A28C094, 0, -1);
 	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&Klayman::hmPullCord);
+	SetMessageHandler(&Klayman::hmPullReleaseCord);
 	SetSpriteUpdate(NULL);
 }
 
-uint32 Klayman::hmPullCord(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Klayman::hmPullReleaseCord(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1286,16 +1286,16 @@ uint32 Klayman::hmUseTube(int messageNum, const MessageParam &param, Entity *sen
 	return messageResult;
 }
 
-void Klayman::stWalkingExt() {
+void Klayman::stWalkingFirstExt() {
 	_status2 = 0;
 	_isWalking = true;
 	_acceptInput = true;
 	startAnimation(0x5A2CBC00, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmWalking);
-	SetSpriteUpdate(&Klayman::spriteUpdate41F300);
-	NextState(&Klayman::stUpdateWalking);
-	FinalizeState(&Klayman::stStartWalkingDone);
+	SetSpriteUpdate(&Klayman::suWalkingFirst);
+	NextState(&Klayman::stUpdateWalkingFirst);
+	FinalizeState(&Klayman::evStartWalkingDone);
 }
 
 void Klayman::stStartWalkingExt() {
@@ -1308,8 +1308,8 @@ void Klayman::stStartWalkingExt() {
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::hmStartWalking);
 		SetSpriteUpdate(&Klayman::suWalkingTestExit);
-		FinalizeState(&Klayman::stStartWalkingDone);
-		NextState(&Klayman::stWalkingExt);
+		FinalizeState(&Klayman::evStartWalkingDone);
+		NextState(&Klayman::stWalkingFirstExt);
 	}
 }
 
@@ -1588,7 +1588,7 @@ void Klayman::stJumpToRing3() {
 		SetUpdateHandler(&Klayman::update);
 		SetSpriteUpdate(&Klayman::suUpdateDestX);
 		SetMessageHandler(&Klayman::hmJumpToRing3);
-		NextState(&Klayman::stHoldRing);
+		NextState(&Klayman::stHoldRing3);
 		sendMessage(_attachedSprite, 0x482B, 0);
 	}
 }
@@ -1611,16 +1611,16 @@ uint32 Klayman::hmJumpToRing3(int messageNum, const MessageParam &param, Entity 
 	return messageResult;
 }
 
-void Klayman::stHoldRing() {
+void Klayman::stHoldRing3() {
 	_status2 = 0;
 	_acceptInput = true;
 	startAnimation(0x4A293FB0, 0, -1);
 	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&Klayman::hmHoldRing);
+	SetMessageHandler(&Klayman::hmHoldRing3);
 	SetSpriteUpdate(NULL);
 }
 
-uint32 Klayman::hmHoldRing(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Klayman::hmHoldRing3(int messageNum, const MessageParam &param, Entity *sender) {
 	if (messageNum == 0x1008) {
 		stReleaseRing();
 		return 0;
@@ -1702,21 +1702,21 @@ void Klayman::stClimbLadderHalf() {
 		_acceptInput = false;
 		startAnimationByHash(0x3A292504, 0x02421405, 0);
 		SetUpdateHandler(&Klayman::update);
-		SetMessageHandler(&Klayman::handleMessage41DFD0);
+		SetMessageHandler(&Klayman::hmClimbLadderHalf);
 		SetSpriteUpdate(&Klayman::suUpdateDestX);
 	} else if (_ladderStatus == 2) {
 		_ladderStatus = 0;
 		_acceptInput = false;
 		startAnimationByHash(0x122D1505, 0x02421405, 0);
 		SetUpdateHandler(&Klayman::update);
-		SetMessageHandler(&Klayman::handleMessage41DFD0);
+		SetMessageHandler(&Klayman::hmClimbLadderHalf);
 		SetSpriteUpdate(&Klayman::suUpdateDestX);
 	} else {
 		gotoNextStateExt();
 	}
 }
 
-uint32 Klayman::handleMessage41DFD0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Klayman::hmClimbLadderHalf(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -2077,10 +2077,10 @@ void Klayman::stReleaseLever() {
 
 void Klayman::stLetGoOfLever() {
 	startAnimation(0x0928C048, 0, -1);
-	FinalizeState(&Klayman::cbLeverReleasedEvent);
+	FinalizeState(&Klayman::evLeverReleasedEvent);
 }
 
-void Klayman::cbLeverReleasedEvent() {
+void Klayman::evLeverReleasedEvent() {
 	sendMessage(_attachedSprite, 0x482A, 0);
 }
 
@@ -2101,7 +2101,7 @@ void Klayman::stInsertDisk() {
 		} else {
 			startAnimation(0xD8C8D100, 0, -1);
 			SetUpdateHandler(&Klayman::update);
-			SetSpriteUpdate(&Klayman::spriteUpdate41F250);
+			SetSpriteUpdate(&Klayman::suAction);
 			SetMessageHandler(&Klayman::hmInsertDisk);
 			_acceptInput = false;
 			_tapesToInsert--;
@@ -2249,8 +2249,8 @@ void Klayman::stJumpToGrabRelease() {
 	_acceptInput = false;
 	startAnimationByHash(0x00AB8C10, 0x320AC306, 0);
 	SetUpdateHandler(&Klayman::update);
-	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Klayman::hmJumpToGrabRelease);
+	SetSpriteUpdate(NULL);
 	NextState(&Klayman::stReleaseRing);
 }
 
@@ -2276,7 +2276,7 @@ void Klayman::stIdleTeleporterHands() {
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmLowLevelAnimation);
 	SetSpriteUpdate(NULL);
-	NextState(&Klayman::stIdleSitBlinkSecond);
+	NextState(&Klayman::stSitIdleTeleporterBlinkSecond);
 }
 
 void Klayman::stDoIdleTeleporterHands2() {
@@ -2290,7 +2290,7 @@ void Klayman::stIdleTeleporterHands2() {
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmLowLevelAnimation);
 	SetSpriteUpdate(NULL);
-	NextState(&Klayman::stIdleSitBlinkSecond);
+	NextState(&Klayman::stSitIdleTeleporterBlinkSecond);
 }
 
 void Klayman::teleporterAppear(uint32 fileHash) {
@@ -2519,7 +2519,7 @@ void Klayman::stInsertKey() {
 			_acceptInput = false;
 			startAnimation(0xDC409440, 0, -1);
 			SetUpdateHandler(&Klayman::update);
-			SetSpriteUpdate(&Klayman::spriteUpdate41F250);
+			SetSpriteUpdate(&Klayman::suAction);
 			SetMessageHandler(&Klayman::hmInsertKey);
 			_keysToInsert--;
 		}
@@ -2676,7 +2676,7 @@ void Klayman::suRidePlatformDown() {
 }
 
 void Klayman::stRidePlatformDown() {
-	if (!stStartActionFromIdle(AnimationCallback(&KmScene2206::stRidePlatformDown))) {
+	if (!stStartActionFromIdle(AnimationCallback(&Klayman::stRidePlatformDown))) {
 		_status2 = 1;
 		sendMessage(_parentScene, 0x4803, 0);
 		_acceptInput = false;
@@ -2697,7 +2697,7 @@ void Klayman::stCrashDown() {
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Klayman::hmLowLevelAnimation);
-	NextState(&KmScene1305::stCrashDownFinished);
+	NextState(&Klayman::stCrashDownFinished);
 }
 
 void Klayman::stCrashDownFinished() {
@@ -2902,6 +2902,18 @@ void Klayman::stSpitOutFall0() {
 	sendMessage(_parentScene, 0x8000, 0);
 }
 
+void Klayman::stSpitOutFall2() {
+	_countdown1 = 1;
+	_status2 = 0;
+	_acceptInput = false;
+	startAnimation(0x9308C132, 0, -1);
+	SetUpdateHandler(&Klayman::upSpitOutFall);
+	SetMessageHandler(&Klayman::hmLowLevelAnimation);
+	SetSpriteUpdate(&Klayman::suFallDown);
+	NextState(&Klayman::stFalling);
+	sendMessage(_parentScene, 0x8000, 0);
+}
+
 void Klayman::stFalling() {
 	sendMessage(_parentScene, 0x1024, 1);
 	playSound(0, 0x41648271);
@@ -2917,18 +2929,6 @@ void Klayman::stFalling() {
 	// TODO _callbackList = NULL;
 	_attachedSprite = NULL;
 	sendMessage(_parentScene, 0x8001, 0);
-}
-
-void Klayman::stSpitOutFall2() {
-	_countdown1 = 1;
-	_status2 = 0;
-	_acceptInput = false;
-	startAnimation(0x9308C132, 0, -1);
-	SetUpdateHandler(&Klayman::upSpitOutFall);
-	SetMessageHandler(&Klayman::hmLowLevelAnimation);
-	SetSpriteUpdate(&Klayman::suFallDown);
-	NextState(&Klayman::stFalling);
-	sendMessage(_parentScene, 0x8000, 0);
 }
 
 void Klayman::stFallTouchdown() {
@@ -2971,7 +2971,7 @@ void Klayman::stPressDoorButton() {
 	startAnimation(0x1CD89029, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmPressDoorButton);
-	SetSpriteUpdate(&Klayman::spriteUpdate41F250);
+	SetSpriteUpdate(&Klayman::suAction);
 }
 
 void Klayman::stHitByBoxingGlove() {
@@ -2981,10 +2981,10 @@ void Klayman::stHitByBoxingGlove() {
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmHitByBoxingGlove);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	FinalizeState(&Klayman::stHitByBoxingGloveDone);
+	FinalizeState(&Klayman::evHitByBoxingGloveDone);
 }
 
-void Klayman::stHitByBoxingGloveDone() {
+void Klayman::evHitByBoxingGloveDone() {
 	sendMessage(_parentScene, 0x1024, 1);
 }
 
@@ -2998,7 +2998,7 @@ void Klayman::stMoveVenusFlyTrap() {
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::hmMoveVenusFlyTrap);
 		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-		FinalizeState(&Klayman::stMoveVenusFlyTrapDone);
+		FinalizeState(&Klayman::evMoveVenusFlyTrapDone);
 	}
 }
 
@@ -3009,10 +3009,10 @@ void Klayman::stContinueMovingVenusFlyTrap() {
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmMoveVenusFlyTrap);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	FinalizeState(&Klayman::stMoveVenusFlyTrapDone);
+	FinalizeState(&Klayman::evMoveVenusFlyTrapDone);
 }
 
-void Klayman::stMoveVenusFlyTrapDone() {
+void Klayman::evMoveVenusFlyTrapDone() {
 	sendMessage(_attachedSprite, 0x482A, 0);
 }
 
@@ -3292,9 +3292,9 @@ void Klayman::startWalkingResume(int16 frameIncr) {
 	startAnimation(0x1A249001, frameIndex, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmWalking);
-	SetSpriteUpdate(&Klayman::spriteUpdate41F300);
-	NextState(&Klayman::stUpdateWalking);
-	FinalizeState(&Klayman::stStartWalkingDone);
+	SetSpriteUpdate(&Klayman::suWalkingFirst);
+	NextState(&Klayman::stUpdateWalkingFirst);
+	FinalizeState(&Klayman::evStartWalkingDone);
 }
 
 //##############################################################################
@@ -3326,9 +3326,9 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -3592,7 +3592,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4804:
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
-			GotoState(&Klayman::stWalking);
+			GotoState(&Klayman::stWalkingFirst);
 		} else {
 			GotoState(&Klayman::stPeekWall);
 		}
@@ -3838,9 +3838,9 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -4031,9 +4031,9 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;		
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		}
@@ -4510,7 +4510,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4804:
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
-			GotoState(&Klayman::stWalking);
+			GotoState(&Klayman::stWalkingFirst);
 		} else
 			GotoState(&Klayman::stPeekWall);
 		break;
@@ -4587,9 +4587,9 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -4734,9 +4734,9 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -4836,6 +4836,7 @@ void KmScene2205::stStartWalkingResume() {
 KmScene2206::KmScene2206(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
+    _walkResumeFrameIncr = 1;
 	_vm->_soundMan->addSound(0x80101800, 0xD3B02847);
 }
 
@@ -4876,9 +4877,9 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -4971,9 +4972,9 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -5213,9 +5214,9 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -5300,7 +5301,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4804:
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
-			GotoState(&Klayman::stWalking);
+			GotoState(&Klayman::stWalkingFirst);
 		} else {
 			GotoState(&Klayman::stPeekWall);
 		}
@@ -5310,9 +5311,9 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -5374,9 +5375,9 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case NM_KLAYMAN_PRESS_BUTTON:
 		if (param.asInteger() == 1) {
-			GotoState(&Klayman::stTurnPressButton);
+			GotoState(&Klayman::stPressButton);
 		} else if (param.asInteger() == 2) {
-			GotoState(&Klayman::stStampFloorButton);
+			GotoState(&Klayman::stPressFloorButton);
 		} else {
 			GotoState(&Klayman::stPressButtonSide);
 		} 
@@ -5455,7 +5456,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4804:
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
-			GotoState(&Klayman::stWalking);
+			GotoState(&Klayman::stWalkingFirst);
 		} else {
 			GotoState(&Klayman::stPeekWall);
 		}
