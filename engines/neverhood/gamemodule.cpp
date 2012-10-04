@@ -298,9 +298,18 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 void GameModule::startup() {
 	// TODO: Displaying of error text probably not needed in ScummVM
 //	createModule(1500, 0); // Logos and intro video //Real
+
+	// DEBUG>>>
+	setGlobalVar(0x0A310817, 1);
+	setGlobalVar(0x0A18CA33, 0);
+	setGlobalVar(0x0112090A, 0);
+	//setGlobalVar(0x000CF819, 1);
+	// <<<DEBUG
+
+
 #if 1
-	_vm->gameState().sceneNum = 1;
-	createModule(1000, -1);
+	_vm->gameState().sceneNum = 7;
+	createModule(1300, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
