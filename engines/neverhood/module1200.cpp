@@ -219,22 +219,24 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 	return messageResult;
 }
 
-Class466::Class466(NeverhoodEngine *vm, bool flag)
+AsScene1201TntManRope::AsScene1201TntManRope(NeverhoodEngine *vm, bool flag)
 	: AnimatedSprite(vm, 1200) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class466::handleMessage);
+	SetMessageHandler(&AsScene1201TntManRope::handleMessage);
 	createSurface(10, 34, 149);
 	_x = 202;
 	_y = -32;
 	if (flag) {
-		sub40D380();
+		startAnimation(0x928F0C10, 15, -1);
+		_newStickFrameIndex = -2;
 	} else {
-		sub40D340();
+		startAnimation(0x928F0C10, 0, -1);
+		_newStickFrameIndex = 0;
 	}
 }
 
-uint32 Class466::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -243,25 +245,11 @@ uint32 Class466::handleMessage(int messageNum, const MessageParam &param, Entity
 		}
 		break;
 	case 0x2006:
-		sub40D360();
+		startAnimation(0x928F0C10, 1, -1);
+		_newStickFrameIndex = -2;
 		break;
 	}
 	return messageResult;
-}
-
-void Class466::sub40D340() {
-	startAnimation(0x928F0C10, 0, -1);
-	_newStickFrameIndex = 0;
-}
-
-void Class466::sub40D360() {
-	startAnimation(0x928F0C10, 1, -1);
-	_newStickFrameIndex = -2;
-}
-
-void Class466::sub40D380() {
-	startAnimation(0x928F0C10, 15, -1);
-	_newStickFrameIndex = -2;
 }
 
 AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool flag)
@@ -285,7 +273,7 @@ AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman,
 
 void AsScene1201RightDoor::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		sub40D830();
+		stCloseDoor();
 	}
 	AnimatedSprite::update();
 }
@@ -297,43 +285,43 @@ uint32 AsScene1201RightDoor::handleMessage(int messageNum, const MessageParam &p
 		gotoNextState();
 		break;
 	case 0x4829:
-		sub40D7E0();
+		stOpenDoor();
 		break;
 	}
 	return messageResult;
 }
 
-void AsScene1201RightDoor::sub40D7E0() {
+void AsScene1201RightDoor::stOpenDoor() {
 	startAnimation(0xD088AC30, 0, -1);
 	_newStickFrameIndex = -2;
 	setVisible(true);
 	playSound(0, calcHash("fxDoorOpen20"));
 }
 
-void AsScene1201RightDoor::sub40D830() {
+void AsScene1201RightDoor::stCloseDoor() {
 	startAnimation(0xD088AC30, -1, -1);
 	_playBackwards = true;
 	setVisible(true);
 	playSound(0, calcHash("fxDoorClose20"));
-	NextState(&AsScene1201RightDoor::sub40D880);
+	NextState(&AsScene1201RightDoor::stCloseDoorDone);
 }
 
-void AsScene1201RightDoor::sub40D880() {
+void AsScene1201RightDoor::stCloseDoorDone() {
 	stopAnimation();
 	setVisible(false);
 }
 		
-Class464::Class464(NeverhoodEngine *vm)
+AsScene1201KlaymanHead::AsScene1201KlaymanHead(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1200) {
 	
 	createSurface(1200, 69, 98);
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class464::handleMessage);
+	SetMessageHandler(&AsScene1201KlaymanHead::handleMessage);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	setVisible(false);
 }
 
-uint32 Class464::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201KlaymanHead::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2006:
@@ -351,22 +339,20 @@ uint32 Class464::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-AsScene1201TntMan::AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *class466, bool flag)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _class466(class466),
-	_flag(false) {
+AsScene1201TntMan::AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *asTntManRope, bool isComingDown)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _asTntManRope(asTntManRope),
+	_isMoving(false) {
 
-	flag = false;
-	
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
 	createSurface(990, 106, 181);
 	_x = 201;
-	if (flag) {
+	if (isComingDown) {
 		_y = 297;
-		sub40CD60();
+		stComingDown();
 	} else {
 		_y = 334;
-		sub40CD30();
+		stStanding();
 	}
 }
 
@@ -379,7 +365,7 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x092870C0) {
-			sendMessage(_class466, 0x2006, 0);
+			sendMessage(_asTntManRope, 0x2006, 0);
 		} else if (param.asInteger() == 0x11CA0144) {
 			playSound(0, 0x51800A04);
 		}
@@ -387,10 +373,11 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 	case 0x1011:
 		sendMessage(_parentScene, 0x2002, 0);
 		messageResult = 1;
+		break;
 	case 0x480B:
-		if (!_flag) {
+		if (!_isMoving) {
 			_sprite = (Sprite*)sender;
-			sub40CD90();
+			stMoving();
 		}
 		break;
 	}
@@ -398,7 +385,7 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 
 }
 
-uint32 AsScene1201TntMan::handleMessage40CCD0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201TntMan::hmComingDown(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = AsScene1201TntMan::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -408,49 +395,49 @@ uint32 AsScene1201TntMan::handleMessage40CCD0(int messageNum, const MessageParam
 	return messageResult;
 }
 
-void AsScene1201TntMan::spriteUpdate40CD10() {
+void AsScene1201TntMan::suMoving() {
 	_x = _sprite->getX() + 100;
 }
 
-void AsScene1201TntMan::sub40CD30() {
+void AsScene1201TntMan::stStanding() {
 	startAnimation(0x654913D0, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
 	SetSpriteUpdate(NULL);
 }
 
-void AsScene1201TntMan::sub40CD60() {
+void AsScene1201TntMan::stComingDown() {
 	startAnimation(0x356803D0, 0, -1);
-	SetMessageHandler(&AsScene1201TntMan::handleMessage40CCD0);
+	SetMessageHandler(&AsScene1201TntMan::hmComingDown);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	NextState(&AsScene1201TntMan::sub40CD30);
+	NextState(&AsScene1201TntMan::stStanding);
 }
 
-void AsScene1201TntMan::sub40CD90() {
+void AsScene1201TntMan::stMoving() {
 	_vm->_soundMan->addSound(0x01D00560, 0x4B044624);
 	_vm->_soundMan->playSoundLooping(0x4B044624);
-	_flag = true;
+	_isMoving = true;
 	startAnimation(0x85084190, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
-	SetSpriteUpdate(&AsScene1201TntMan::spriteUpdate40CD10);
+	SetSpriteUpdate(&AsScene1201TntMan::suMoving);
 	_newStickFrameIndex = -2;
 }
 
-Class465::Class465(NeverhoodEngine *vm, Sprite *asTntMan)
+AsScene1201TntManFlame::AsScene1201TntManFlame(NeverhoodEngine *vm, Sprite *asTntMan)
 	: AnimatedSprite(vm, 1200), _asTntMan(asTntMan) {
 
 	createSurface1(0x828C0411, 995);
-	SetUpdateHandler(&Class465::update);
+	SetUpdateHandler(&AsScene1201TntManFlame::update);
 	SetMessageHandler(&Sprite::handleMessage);
-	SetSpriteUpdate(&Class465::spriteUpdate40D150);
+	SetSpriteUpdate(&AsScene1201TntManFlame::suUpdate);
 	startAnimation(0x828C0411, 0, -1);
 	setVisible(false);
 }
 
-Class465::~Class465() {
+AsScene1201TntManFlame::~AsScene1201TntManFlame() {
 	_vm->_soundMan->deleteSoundGroup(0x041080A4);
 }
 
-void Class465::update() {
+void AsScene1201TntManFlame::update() {
 	AnimatedSprite::update();
 	if (getGlobalVar(0x20A0C516)) {
 		setVisible(true);
@@ -460,31 +447,30 @@ void Class465::update() {
 	}
 }
 
-void Class465::spriteUpdate40D150() {
+void AsScene1201TntManFlame::suUpdate() {
 	_x = _asTntMan->getX() - 18;
 	_y = _asTntMan->getY() - 158;
 }
 
 AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _countdown(0) {
 	
 	createSurface(1100, 57, 60);
 	SetUpdateHandler(&AsScene1201Match::update);
-	SetMessageHandler(&AsScene1201Match::handleMessage40C2D0);
+	SetMessageHandler(&AsScene1201Match::hmOnDoorFrameAboutToMove);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	
 	switch (getGlobalVar(0x0112090A)) {
 	case 0:
 		_x = 521;
 		_y = 112;
 		_status = 0;
-		sub40C4C0();
+		stIdleOnDoorFrame();
 		break;
 	case 1:
 		_x = 521;
 		_y = 112;
 		_status = 2;
-		sub40C470();
+		stOnDoorFrameAboutToMove();
 		loadSound(0, 0xD00230CD);
 		break;
 	case 2:
@@ -492,21 +478,20 @@ AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
 		_x = 403;
 		_y = 337;
 		_status = 0;
-		sub40C4F0();
+		stIdleOnFloor();
 		break;
 	}
 }
 
 void AsScene1201Match::update() {
-	if (_countdown != 0 && (--_countdown == 0)) {
+	if (_countdown != 0 && (--_countdown == 0))
 		gotoNextState();
-	}
 	updateAnim();
 	handleSpriteUpdate();
 	updatePosition();
 }
 
-uint32 AsScene1201Match::handleMessage40C2D0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201Match::hmOnDoorFrameAboutToMove(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -518,8 +503,8 @@ uint32 AsScene1201Match::handleMessage40C2D0(int messageNum, const MessageParam 
 	return messageResult;
 }
 
-uint32 AsScene1201Match::handleMessage40C320(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage40C2D0(messageNum, param, sender);
+uint32 AsScene1201Match::hmOnDoorFrameMoving(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmOnDoorFrameAboutToMove(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
 		gotoNextState();
@@ -528,8 +513,8 @@ uint32 AsScene1201Match::handleMessage40C320(int messageNum, const MessageParam 
 	return messageResult;
 }
 
-uint32 AsScene1201Match::handleMessage40C360(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage40C2D0(messageNum, param, sender);
+uint32 AsScene1201Match::hmIdle(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmOnDoorFrameAboutToMove(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
 		sendMessage(_parentScene, 0x2001, 0);
@@ -543,48 +528,48 @@ uint32 AsScene1201Match::handleMessage40C360(int messageNum, const MessageParam 
 	return messageResult;
 }
 
-void AsScene1201Match::sub40C3E0() {
+void AsScene1201Match::stOnDoorFrameMoving() {
 	startAnimation(0x00842374, 0, -1);
-	SetMessageHandler(&AsScene1201Match::handleMessage40C320);
+	SetMessageHandler(&AsScene1201Match::hmOnDoorFrameMoving);
 	if (_status == 0) {
-		NextState(&AsScene1201Match::sub40C420);
+		NextState(&AsScene1201Match::stFallingFromDoorFrame);
 	} else {
-		NextState(&AsScene1201Match::sub40C470);
+		NextState(&AsScene1201Match::stOnDoorFrameAboutToMove);
 	}
 }
 
-void AsScene1201Match::sub40C420() {
+void AsScene1201Match::stFallingFromDoorFrame() {
 	setGlobalVar(0x0112090A, 2);
 	_x -= 199;
 	_y += 119;
 	startAnimation(0x018D0240, 0, -1);
-	SetMessageHandler(&AsScene1201Match::handleMessage40C320);
-	NextState(&AsScene1201Match::sub40C4F0);
+	SetMessageHandler(&AsScene1201Match::hmOnDoorFrameMoving);
+	NextState(&AsScene1201Match::stIdleOnFloor);
 }
 
-void AsScene1201Match::sub40C470() {
+void AsScene1201Match::stOnDoorFrameAboutToMove() {
 	startAnimation(0x00842374, 0, -1);
-	SetMessageHandler(&AsScene1201Match::handleMessage40C2D0);
+	SetMessageHandler(&AsScene1201Match::hmOnDoorFrameAboutToMove);
 	_newStickFrameIndex = 0;
 	if (_status != 0) {
 		_countdown = 36;
 		_status--;
-		NextState(&AsScene1201Match::sub40C3E0);
+		NextState(&AsScene1201Match::stOnDoorFrameMoving);
 	}
 }
 
-void AsScene1201Match::sub40C4C0() {
+void AsScene1201Match::stIdleOnDoorFrame() {
 	startAnimation(0x00842374, 0, -1);
-	SetMessageHandler(&AsScene1201Match::handleMessage40C360);
+	SetMessageHandler(&AsScene1201Match::hmIdle);
 	_newStickFrameIndex = 0;
 }
 
-void AsScene1201Match::sub40C4F0() {
+void AsScene1201Match::stIdleOnFloor() {
 	setDoDeltaX(1);
 	_x = 403;
 	_y = 337;
 	startAnimation(0x00842374, 0, -1);
-	SetMessageHandler(&AsScene1201Match::handleMessage40C360);
+	SetMessageHandler(&AsScene1201Match::hmIdle);
 	_newStickFrameIndex = 0;
 }
 
@@ -743,7 +728,7 @@ void AsScene1201LeftDoor::sub40D590() {
 
 Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _flag(false), _asMatch(NULL), _asTntMan(NULL),
-	_asCreature(NULL), _class466(NULL), _asLeftDoor(NULL), _asRightDoor(NULL), _asTape(NULL) {
+	_asCreature(NULL), _asTntManRope(NULL), _asLeftDoor(NULL), _asRightDoor(NULL), _asTape(NULL) {
 
 	int16 topY1, topY2, topY3, topY4;
 	int16 x1, x2;
@@ -780,8 +765,8 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x04063110, 500);
 	topY4 = tempSprite->getY() + 1; 
 
-	_class466 = insertSprite<Class466>(getGlobalVar(0x000CF819) && which != 1);
-	_class466->setClipRect(0, topY4, 640, 480);
+	_asTntManRope = insertSprite<AsScene1201TntManRope>(getGlobalVar(0x000CF819) && which != 1);
+	_asTntManRope->setClipRect(0, topY4, 640, 480);
 	
 	insertStaticSprite(0x400B04B0, 1200);
 
@@ -791,9 +776,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0xA29223FA, 1200);
 	x2 = tempSprite->getX() + tempSprite->getDrawRect().width;
 
-	_class464 = insertSprite<Class464>();
-
-	debug("Scene1201: which = %d", which);
+	_asKlaymanHead = insertSprite<AsScene1201KlaymanHead>();
 
 	if (which < 0) {
 		insertKlayman<KmScene1201>(364, 333);
@@ -838,11 +821,11 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(0x000CF819)) {
 		insertStaticSprite(0x10002ED8, 500);
 		if (!getGlobalVar(0x0A18CA33)) {
-			_asTntMan = insertSprite<AsScene1201TntMan>(this, _class466, which == 1);
+			_asTntMan = insertSprite<AsScene1201TntMan>(this, _asTntManRope, which == 1);
 			_asTntMan->setClipRect(x1, 0, x2, 480);
 			_asTntMan->setRepl(64, 0);
 			_vm->_collisionMan->addSprite(_asTntMan);
-			tempSprite = insertSprite<Class465>(_asTntMan);
+			tempSprite = insertSprite<AsScene1201TntManFlame>(_asTntMan);
 			tempSprite->setClipRect(x1, 0, x2, 480);
 		}
 		
@@ -909,7 +892,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asLeftDoor = insertSprite<AsScene1201LeftDoor>(_klayman);
 	_asLeftDoor->setClipRect(x1, tempSprite->getDrawRect().y, tempSprite->getDrawRect().x2(), 480);
 
-	if (getGlobalVar(0x0A310817) && ! getGlobalVar(0x0112090A)) {
+	if (getGlobalVar(0x0A310817) && getGlobalVar(0x0112090A) == 0) {
 		setGlobalVar(0x0112090A, 1);
 	}
 
@@ -920,7 +903,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_collisionMan->addSprite(_asMatch);
 	}
 
-	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
+	if (getGlobalVar(0x0A310817) && getGlobalVar(0x0A18CA33) == 0) {
 		_asCreature = insertSprite<AsScene1201Creature>(this, _klayman);
 		_asCreature->setClipRect(x1, 0, x2, 480);
 	}
@@ -932,9 +915,8 @@ Scene1201::~Scene1201() {
 
 void Scene1201::update() {
 	Scene::update();
-	if (_asMatch && getGlobalVar(0x0112090A)) {
+	if (_asMatch && getGlobalVar(0x0112090A) == 3)
 		deleteSprite(&_asMatch);
-	}
 }
 
 uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -967,9 +949,11 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2002:		
 		if (getGlobalVar(0x20A0C516)) {
+			// Move the TNT dummy
 			sendEntityMessage(_klayman, 0x1014, _asTntMan);
 			setMessageList2(0x004AECF0, false);
 		} else if (getGlobalVar(0x0112090A) == 3) {
+			// Light the TNT dummy
 			sendEntityMessage(_klayman, 0x1014, _asTntMan);
 			if (_klayman->getX() > _asTntMan->getX()) {
 				setMessageList(0x004AECD0);
@@ -991,7 +975,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_asRightDoor, 0x4829, 0);
 		break;
 	case 0x8000:
-		sendMessage(_class464, 0x2006, 0);
+		sendMessage(_asKlaymanHead, 0x2006, 0);
 		break;		
 	}
 	return messageResult;

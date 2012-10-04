@@ -51,14 +51,11 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Class466 : public AnimatedSprite {
+class AsScene1201TntManRope : public AnimatedSprite {
 public:
-	Class466(NeverhoodEngine *vm, bool flag);
+	AsScene1201TntManRope(NeverhoodEngine *vm, bool flag);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub40D340();
-	void sub40D360();
-	void sub40D380();
 };
 
 class AsScene1201RightDoor : public AnimatedSprite {
@@ -69,43 +66,43 @@ protected:
 	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub40D7E0();
-	void sub40D830();
-	void sub40D880();
+	void stOpenDoor();
+	void stCloseDoor();
+	void stCloseDoorDone();
 };
 
-class Class464 : public AnimatedSprite {
+class AsScene1201KlaymanHead : public AnimatedSprite {
 public:
-	Class464(NeverhoodEngine *vm);
+	AsScene1201KlaymanHead(NeverhoodEngine *vm);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class AsScene1201TntMan : public AnimatedSprite {
 public:
-	AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *class466, bool flag);
+	AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *asTntManRope, bool isDown);
 	virtual ~AsScene1201TntMan();
 protected:
 	Scene *_parentScene;
-	Sprite *_class466;
+	Sprite *_asTntManRope;
 	Sprite *_sprite;
-	bool _flag;
+	bool _isMoving;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage40CCD0(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate40CD10();
-	void sub40CD30();
-	void sub40CD60();
-	void sub40CD90();
+	uint32 hmComingDown(int messageNum, const MessageParam &param, Entity *sender);
+	void suMoving();
+	void stStanding();
+	void stComingDown();
+	void stMoving();
 };
 
-class Class465 : public AnimatedSprite {
+class AsScene1201TntManFlame : public AnimatedSprite {
 public:
-	Class465(NeverhoodEngine *vm, Sprite *asTntMan);
-	~Class465();
+	AsScene1201TntManFlame(NeverhoodEngine *vm, Sprite *asTntMan);
+	~AsScene1201TntManFlame();
 protected:
 	Sprite *_asTntMan;
 	void update();
-	void spriteUpdate40D150();
+	void suUpdate();
 };
 
 class AsScene1201Match : public AnimatedSprite {
@@ -116,14 +113,14 @@ protected:
 	int _countdown;
 	int _status;
 	void update();
-	uint32 handleMessage40C2D0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage40C320(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage40C360(int messageNum, const MessageParam &param, Entity *sender);
-	void sub40C3E0();
-	void sub40C420();
-	void sub40C470();
-	void sub40C4C0();
-	void sub40C4F0();
+	uint32 hmOnDoorFrameAboutToMove(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmOnDoorFrameMoving(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdle(int messageNum, const MessageParam &param, Entity *sender);
+	void stOnDoorFrameMoving();
+	void stFallingFromDoorFrame();
+	void stOnDoorFrameAboutToMove();
+	void stIdleOnDoorFrame();
+	void stIdleOnFloor();
 };
 
 class AsScene1201Creature : public AnimatedSprite {
@@ -173,11 +170,11 @@ protected:
 	Sprite *_asMatch;
 	AsScene1201TntMan *_asTntMan;
 	Sprite *_asCreature;
-	Sprite *_class466;
+	Sprite *_asTntManRope;
 	Sprite *_asLeftDoor;
 	Sprite *_asRightDoor;
 	Sprite *_asTape;
-	Sprite *_class464;
+	Sprite *_asKlaymanHead;
 	bool _flag;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
