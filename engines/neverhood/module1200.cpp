@@ -574,22 +574,23 @@ void AsScene1201Match::stIdleOnFloor() {
 }
 
 AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman)
-	: AnimatedSprite(vm, 900), _parentScene(parentScene), _klayman(klayman), _flag(false) {
+	: AnimatedSprite(vm, 900), _parentScene(parentScene), _klayman(klayman), _klaymanTooClose(false) {
+
+	// NOTE: _countdown2 and _countdown3 were unused/without effect and thus removed
 	
 	createSurface(1100, 203, 199);
 	SetUpdateHandler(&AsScene1201Creature::update);
-	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
+	SetMessageHandler(&AsScene1201Creature::hmWaiting);
 	_x = 540;
 	_y = 320;
-	sub40C8E0();
-	_countdown3 = 2;
+	stWaiting();
 }
 
 void AsScene1201Creature::update() {
-	bool oldFlag = _flag;
-	_flag = _x >= 385;
-	if (_flag != oldFlag)
-		sub40C8E0();
+	bool oldFlag = _klaymanTooClose;
+	_klaymanTooClose = _klayman->getX() >= 385;
+	if (_klaymanTooClose != oldFlag)
+		stWaiting();
 	if (_countdown1 != 0 && (--_countdown1 == 0)) {
 		gotoNextState();
 	}
@@ -598,7 +599,7 @@ void AsScene1201Creature::update() {
 	updatePosition();
 }
 
-uint32 AsScene1201Creature::handleMessage40C710(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201Creature::hmWaiting(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -607,25 +608,18 @@ uint32 AsScene1201Creature::handleMessage40C710(int messageNum, const MessagePar
 		}
 		break;
 	case 0x2004:
-		GotoState(&AsScene1201Creature::sub40C960);
+		GotoState(&AsScene1201Creature::stStartReachForTntDummy);
 		break;
 	case 0x2006:
-		GotoState(&AsScene1201Creature::sub40C9B0);
+		GotoState(&AsScene1201Creature::stPincerSnapKlayman);
 		break;
 	}
 	return messageResult;
 }
 
-uint32 AsScene1201Creature::handleMessage40C7B0(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage40C710(messageNum, param, sender);
+uint32 AsScene1201Creature::hmPincerSnap(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmWaiting(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x02421405) {
-			if (_countdown2 != 0 && (--_countdown2 == 0)) {
-				sub40C990();
-			}
-		}
-		break;
 	case 0x3002:
 		gotoNextState();
 		break;
@@ -633,7 +627,7 @@ uint32 AsScene1201Creature::handleMessage40C7B0(int messageNum, const MessagePar
 	return messageResult;
 }
 
-uint32 AsScene1201Creature::handleMessage40C830(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201Creature::hmPincerSnapKlayman(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -650,45 +644,38 @@ uint32 AsScene1201Creature::handleMessage40C830(int messageNum, const MessagePar
 	return messageResult;
 }
 
-void AsScene1201Creature::sub40C8E0() {
-	_countdown3--;
-	if (_countdown3 == 0)
-		_countdown3 = 3;
+void AsScene1201Creature::stWaiting() {
 	startAnimation(0x08081513, 0, -1);
-	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
-	NextState(&AsScene1201Creature::sub40C930);
+	SetMessageHandler(&AsScene1201Creature::hmWaiting);
+	NextState(&AsScene1201Creature::stPincerSnap);
 	_countdown1 = 36;
 }
 
-void AsScene1201Creature::sub40C930() {
-	if (!_flag) {
+void AsScene1201Creature::stPincerSnap() {
+	if (!_klaymanTooClose) {
 		startAnimation(0xCA287133, 0, -1);
-		SetMessageHandler(&AsScene1201Creature::handleMessage40C7B0);
-		NextState(&AsScene1201Creature::sub40C8E0);
+		SetMessageHandler(&AsScene1201Creature::hmPincerSnap);
+		NextState(&AsScene1201Creature::stWaiting);
 	}
 }
 
-void AsScene1201Creature::sub40C960() {
+void AsScene1201Creature::stStartReachForTntDummy() {
 	startAnimation(0x08081513, 0, -1);
-	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
-	NextState(&AsScene1201Creature::sub40C9E0);
+	SetMessageHandler(&AsScene1201Creature::hmWaiting);
+	NextState(&AsScene1201Creature::stReachForTntDummy);
 	_countdown1 = 48;
 }
 
-void AsScene1201Creature::sub40C990() {
-	startAnimationByHash(0x0B6E13FB, 0x01084280, 0);
-}
-
-void AsScene1201Creature::sub40C9B0() {
-	startAnimation(0xCA287133, 0, -1);
-	SetMessageHandler(&AsScene1201Creature::handleMessage40C830);
-	NextState(&AsScene1201Creature::sub40C8E0);
+void AsScene1201Creature::stReachForTntDummy() {
+	startAnimation(0x5A201453, 0, -1);
+	SetMessageHandler(&AsScene1201Creature::hmWaiting);
 	_countdown1 = 0;
 }
 
-void AsScene1201Creature::sub40C9E0() {
-	startAnimation(0x5A201453, 0, -1);
-	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
+void AsScene1201Creature::stPincerSnapKlayman() {
+	startAnimation(0xCA287133, 0, -1);
+	SetMessageHandler(&AsScene1201Creature::hmPincerSnapKlayman);
+	NextState(&AsScene1201Creature::stWaiting);
 	_countdown1 = 0;
 }
 
@@ -714,13 +701,13 @@ uint32 AsScene1201LeftDoor::handleMessage(int messageNum, const MessageParam &pa
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x4809:
-		sub40D590();
+		stCloseDoor();
 		break;
 	}
 	return messageResult;
 }
 
-void AsScene1201LeftDoor::sub40D590() {
+void AsScene1201LeftDoor::stCloseDoor() {
 	startAnimation(0x508A111B, -1, -1);
 	_playBackwards = true;
 	_newStickFrameIndex = 0;
@@ -1029,36 +1016,36 @@ static const uint32 kScene1202FileHashes[] = {
 	0x1AC14B8
 };
 
-AsScene1202TntItem::AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, int index)
-	: AnimatedSprite(vm, 900), _parentScene(parentScene), _index(index) {
+AsScene1202TntItem::AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, int itemIndex)
+	: AnimatedSprite(vm, 900), _parentScene(parentScene), _itemIndex(itemIndex) {
 
 	int positionIndex;
 
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene1202TntItem::handleMessage453FE0);
-	positionIndex = getSubVar(0x10055D14, _index);
+	SetMessageHandler(&AsScene1202TntItem::hmShowIdle);
+	positionIndex = getSubVar(0x10055D14, _itemIndex);
 	createSurface(900, 37, 67);
 	_x = kScene1202Points[positionIndex].x;
 	_y = kScene1202Points[positionIndex].y;
-	sub4540A0();
+	stShowIdle();
 }
 
-uint32 AsScene1202TntItem::handleMessage453FE0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1202TntItem::hmShowIdle(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		sendMessage(_parentScene, 0x2000, _index);
+		sendMessage(_parentScene, 0x2000, _itemIndex);
 		messageResult = 1;
 		break;
 	case 0x2001:
-		_index2 = (int)param.asInteger();
-		sub4540D0();
+		_newPosition = (int)param.asInteger();
+		stChangePositionFadeOut();
 		break;		
 	}
 	return messageResult;
 }
 
-uint32 AsScene1202TntItem::handleMessage454060(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1202TntItem::hmChangePosition(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -1068,37 +1055,37 @@ uint32 AsScene1202TntItem::handleMessage454060(int messageNum, const MessagePara
 	return messageResult;
 }
 
-void AsScene1202TntItem::sub4540A0() {
-	startAnimation(kScene1202FileHashes[_index], 0, -1);
-	SetMessageHandler(&AsScene1202TntItem::handleMessage453FE0);
+void AsScene1202TntItem::stShowIdle() {
+	startAnimation(kScene1202FileHashes[_itemIndex], 0, -1);
+	SetMessageHandler(&AsScene1202TntItem::hmShowIdle);
 	_newStickFrameIndex = 0;
 }
 
-void AsScene1202TntItem::sub4540D0() {
-	startAnimation(kScene1202FileHashes[_index], 0, -1);
-	SetMessageHandler(&AsScene1202TntItem::handleMessage454060);
-	NextState(&AsScene1202TntItem::sub454100);
+void AsScene1202TntItem::stChangePositionFadeOut() {
+	startAnimation(kScene1202FileHashes[_itemIndex], 0, -1);
+	SetMessageHandler(&AsScene1202TntItem::hmChangePosition);
+	NextState(&AsScene1202TntItem::stChangePositionFadeIn);
 }
 
-void AsScene1202TntItem::sub454100() {
-	_x = kScene1202Points[_index2].x;
-	_y = kScene1202Points[_index2].y;
-	startAnimation(kScene1202FileHashes[_index], 6, -1);
-	SetMessageHandler(&AsScene1202TntItem::handleMessage454060);
-	NextState(&AsScene1202TntItem::sub454160);
+void AsScene1202TntItem::stChangePositionFadeIn() {
+	_x = kScene1202Points[_newPosition].x;
+	_y = kScene1202Points[_newPosition].y;
+	startAnimation(kScene1202FileHashes[_itemIndex], 6, -1);
+	SetMessageHandler(&AsScene1202TntItem::hmChangePosition);
+	NextState(&AsScene1202TntItem::stChangePositionDone);
 	_playBackwards = true;
 }
 
-void AsScene1202TntItem::sub454160() {
-	sendMessage(_parentScene, 0x2002, _index);
-	sub4540A0();
+void AsScene1202TntItem::stChangePositionDone() {
+	sendMessage(_parentScene, 0x2002, _itemIndex);
+	stShowIdle();
 }
 
 Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _paletteResource(vm),  
-	_flag(true), _soundFlag(false), _counter(0), _index(-1) {
+	_flag(true), _soundFlag(false), _counter(0), _clickedIndex(-1) {
 
-	SetMessageHandler(&Scene1202::handleMessage453C10);
+	SetMessageHandler(&Scene1202::handleMessage);
 	SetUpdateHandler(&Scene1202::update);
 
 	_surfaceFlag = true;
@@ -1121,7 +1108,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x8E8419C1, 1100);
 
 	if (getGlobalVar(0x000CF819)) {
-		SetMessageHandler(&Scene1202::handleMessage453D90);
+		SetMessageHandler(&Scene1202::hmSolved);
 	}
 
 	playSound(0, 0x40106542);
@@ -1140,23 +1127,25 @@ Scene1202::~Scene1202() {
 void Scene1202::update() {
 	Scene::update();
 	if (_soundFlag) {
+		debug("CHECK SOLVED");
 		if (!isSoundPlaying(3))
 			leaveScene(0);
 	} else if (_counter == 0 && isSolved()) {
-		SetMessageHandler(&Scene1202::handleMessage453D90);
+		_clickedIndex = 0;
+		SetMessageHandler(&Scene1202::hmSolved);
 		setGlobalVar(0x000CF819, 1);
 		doPaletteEffect();
 		playSound(3);
 		_soundFlag = true;
-	} else if (_index >= 0 && _counter == 0) {
-		int index2 = kScene1202Table[_index];
-		sendMessage(_asTntItems[_index], 0x2001, getSubVar(0x10055D14, index2));
-		sendMessage(_asTntItems[index2], 0x2001, getSubVar(0x10055D14, _index));
-		int temp = getSubVar(0x10055D14, index2);
-		setSubVar(0x10055D14, index2, getSubVar(0x10055D14, _index));
-		setSubVar(0x10055D14, _index, temp);
+	} else if (_clickedIndex >= 0 && _counter == 0) {
+		int destIndex = kScene1202Table[_clickedIndex];
+		sendMessage(_asTntItems[_clickedIndex], 0x2001, getSubVar(0x10055D14, destIndex));
+		sendMessage(_asTntItems[destIndex], 0x2001, getSubVar(0x10055D14, _clickedIndex));
+		int temp = getSubVar(0x10055D14, destIndex);
+		setSubVar(0x10055D14, destIndex, getSubVar(0x10055D14, _clickedIndex));
+		setSubVar(0x10055D14, _clickedIndex, temp);
 		_counter = 2;
-		_index = -1;
+		_clickedIndex = -1;
 		if (_flag) {
 			playSound(1);
 		} else {
@@ -1166,7 +1155,7 @@ void Scene1202::update() {
 	}
 }
 
-uint32 Scene1202::handleMessage453C10(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Scene1202::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -1183,7 +1172,7 @@ uint32 Scene1202::handleMessage453C10(int messageNum, const MessageParam &param,
 		}
 		break;
 	case 0x2000:
-		_index = (int)param.asInteger();
+		_clickedIndex = (int)param.asInteger();
 		break;
 	case 0x2002:
 		_counter--;
@@ -1192,7 +1181,7 @@ uint32 Scene1202::handleMessage453C10(int messageNum, const MessageParam &param,
 	return messageResult;
 }
 
-uint32 Scene1202::handleMessage453D90(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Scene1202::hmSolved(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
@@ -1205,6 +1194,12 @@ uint32 Scene1202::handleMessage453D90(int messageNum, const MessageParam &param,
 }
 
 bool Scene1202::isSolved() {
+
+	debug("isSolved() %d %d %d %d %d %d", 
+		getSubVar(0x10055D14,  0), getSubVar(0x10055D14,  3),
+		getSubVar(0x10055D14,  6), getSubVar(0x10055D14,  9),
+		getSubVar(0x10055D14,  12), getSubVar(0x10055D14,  15));
+
 	return 
 		getSubVar(0x10055D14,  0) ==  0 && getSubVar(0x10055D14,  3) ==  3 && 
 		getSubVar(0x10055D14,  6) ==  6 && getSubVar(0x10055D14,  9) ==  9 &&

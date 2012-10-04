@@ -616,7 +616,7 @@ void AudioResourceMan::stopSound(int16 soundIndex) {
 
 bool AudioResourceMan::isSoundPlaying(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	return soundItem->_isPlaying;
+	return _vm->_mixer->isSoundHandleActive(soundItem->_soundHandle);
 }
 
 int16 AudioResourceMan::loadMusic(uint32 fileHash) {

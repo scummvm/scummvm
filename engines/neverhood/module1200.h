@@ -130,19 +130,16 @@ protected:
 	Scene *_parentScene;
 	Sprite *_klayman;
 	int _countdown1;
-	int _countdown2;
-	int _countdown3;
-	bool _flag;
+	bool _klaymanTooClose;
 	void update();
-	uint32 handleMessage40C710(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage40C7B0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage40C830(int messageNum, const MessageParam &param, Entity *sender);
-	void sub40C8E0();
-	void sub40C930();
-	void sub40C960();
-	void sub40C990();
-	void sub40C9B0();
-	void sub40C9E0();
+	uint32 hmWaiting(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPincerSnap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPincerSnapKlayman(int messageNum, const MessageParam &param, Entity *sender);
+	void stWaiting();
+	void stPincerSnap();
+	void stStartReachForTntDummy();
+	void stReachForTntDummy();
+	void stPincerSnapKlayman();
 };
 
 class AsScene1201LeftDoor : public AnimatedSprite {
@@ -151,7 +148,7 @@ public:
 protected:
 	Sprite *_klayman;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub40D590();
+	void stCloseDoor();
 };
 
 class SsScene1201Tnt : public StaticSprite {
@@ -187,13 +184,13 @@ public:
 	AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, int index);
 protected:
 	Scene *_parentScene;
-	int _index, _index2;
-	uint32 handleMessage453FE0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage454060(int messageNum, const MessageParam &param, Entity *sender);
-	void sub4540A0();
-	void sub4540D0();
-	void sub454100();
-	void sub454160();
+	int _itemIndex, _newPosition;
+	uint32 hmShowIdle(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmChangePosition(int messageNum, const MessageParam &param, Entity *sender);
+	void stShowIdle();
+	void stChangePositionFadeOut();
+	void stChangePositionFadeIn();
+	void stChangePositionDone();
 };
 
 class Scene1202 : public Scene {
@@ -204,13 +201,13 @@ protected:
 	PaletteResource _paletteResource;
 	Sprite *_asTntItems[18];
 	int _counter;
-	int _index;
+	int _clickedIndex;
 	byte _paletteData[1024];
 	bool _soundFlag;
 	bool _flag;
 	void update();
-	uint32 handleMessage453C10(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage453D90(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmSolved(int messageNum, const MessageParam &param, Entity *sender);
 	bool isSolved();
 	void doPaletteEffect();
 };
