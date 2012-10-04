@@ -146,6 +146,7 @@ public:
 	void Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface);
 	void Copy_Video_Vbe3(const byte *surface);
 	void Copy_Video_Vbe16(const byte *surface);
+	void Copy_Video_Vbe16a(const byte *surface);
 	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height);
 	
 	/**
@@ -179,6 +180,8 @@ public:
 	void NB_SCREEN();
 	void SHOW_PALETTE();
 	void videkey();
+	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
+	void Copy_Video_Vbe(const byte *src);
 };
 
 } // End of namespace Hopkins

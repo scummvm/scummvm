@@ -1258,6 +1258,39 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
 	}
 }
 
+void GraphicsManager::Copy_Video_Vbe16a(const byte *surface) {
+	int v2; 
+	const byte *v3; 
+	unsigned __int8 v4; 
+
+	v2 = 0;
+	v3 = surface;
+	for (;;) {
+		v4 = *v3;
+		if (*v3 < 0xFCu)
+			goto Video_Cont_Vbe16a;
+		if (v4 == -4)
+			return;
+		if (v4 == -3) {
+			v2 += *(v3 + 1);
+			v4 = *(v3 + 2);
+			v3 += 2;
+		} else if (v4 == -2) {
+			v2 += READ_LE_UINT16(v3 + 1);
+			v4 = *(v3 + 3);
+			v3 += 3;
+		} else {
+			v2 += READ_LE_UINT32(v3 + 1);
+			v4 = *(v3 + 5);
+			v3 += 5;
+		}
+Video_Cont_Vbe16a:
+		WRITE_LE_UINT16(v2 + v2 + VideoPtr, READ_LE_UINT16(PAL_PIXELS + 2 * v4));
+		++v3;
+		++v2;
+	}
+}
+
 void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height) {
 	const byte *srcP;
 	byte *destP;
@@ -2409,6 +2442,75 @@ void GraphicsManager::SHOW_PALETTE() {
 
 void GraphicsManager::videkey() {
 	// Empty in original
+}
+
+void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
+	int result; 
+	int destOffset; 
+	const byte *srcPtr; 
+	byte byteVal; 
+
+	result = 0;
+	destOffset = 0;
+	srcPtr = src;
+	while (1) {
+		byteVal = *srcPtr;
+		if (*srcPtr < 0xFCu)
+			goto Video_Cont_wVbe;
+		if (byteVal == (byte)-4)
+			return;
+		if (byteVal == (byte)-3) {
+			destOffset += *(srcPtr + 1);
+			byteVal = *(srcPtr + 2);
+			srcPtr += 2;
+		} else if (byteVal == (byte)-2) {
+			destOffset += READ_LE_UINT16(srcPtr + 1);
+			byteVal = *(srcPtr + 3);
+			srcPtr += 3;
+		} else {
+			destOffset += READ_LE_UINT32(srcPtr + 1);
+			byteVal = *(srcPtr + 5);
+			srcPtr += 5;
+		}
+Video_Cont_wVbe:
+		*(dest + destOffset) = byteVal;
+		++srcPtr;
+		++destOffset;
+	}
+}
+
+void GraphicsManager::Copy_Video_Vbe(const byte *src) {
+	int destOffset; 
+	const byte *srcP; 
+	byte byteVal; 
+	
+	assert(VideoPtr);
+	destOffset = 0;
+	srcP = src;
+	while (1) {
+		byteVal = *srcP;
+		if (*srcP < 0xFCu)
+			goto Video_Cont_Vbe;
+		if (byteVal == -4)
+			return;
+		if (byteVal == -3) {
+			destOffset += *(srcP + 1);
+			byteVal = *(srcP + 2);
+			srcP += 2;
+		} else if (byteVal == -2) {
+			destOffset += READ_LE_UINT16(srcP + 1);
+			byteVal = *(srcP + 3);
+			srcP += 3;
+		} else {
+			destOffset += READ_LE_UINT32(srcP + 1);
+			byteVal = *(srcP + 5);
+			srcP += 5;
+		}
+Video_Cont_Vbe:
+		*((byte *)VideoPtr->pixels + destOffset) = byteVal;
+		++srcP;
+		++destOffset;
+	}
 }
 
 } // End of namespace Hopkins

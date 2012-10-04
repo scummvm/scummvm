@@ -92,14 +92,6 @@ void SoundManager::PLAY_SAMPLE2(int idx) {
 	warning("PLAY_SAMPLE2");
 }
 
-void SoundManager::PLAY_SEQ(int a1, const Common::String &a2, int a3, int a4, int a5) {
-	warning("PLAY_SEQ");
-}
-
-void SoundManager::PLAY_SEQ2(const Common::String &a1, int a2, int a3, int a4) {
-	warning("PLAY_SEQ2");
-}
-
 void SoundManager::PLAY_WAV(int a1) {
 	warning("PLAY_WAV");
 }

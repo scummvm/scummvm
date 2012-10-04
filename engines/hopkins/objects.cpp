@@ -4605,7 +4605,7 @@ LABEL_1141:
 			CLEAR_ECRAN();
 			_vm->_soundManager.PLAY_SOUND("SOUND17.WAV");
 			_vm->_graphicsManager.FADE_LINUX = 2;
-			_vm->_soundManager.PLAY_SEQ2("HELICO.SEQ", 10, 4, 10);
+			_vm->_animationManager.PLAY_SEQ2("HELICO.SEQ", 10, 4, 10);
 			_vm->_animationManager.CHARGE_ANIM("otage");
 			_vm->_graphicsManager.LOAD_IMAGE("IM05");
 			_vm->_graphicsManager.VISU_ALL();
@@ -4643,7 +4643,7 @@ LABEL_1141:
 			_vm->_graphicsManager.FIN_VISU();
 			_vm->_soundManager.SPECIAL_SOUND = 14;
 			_vm->_graphicsManager.FADE_LINUX = 2;
-			_vm->_soundManager.PLAY_SEQ2("ASSOM.SEQ", 10, 4, 500);
+			_vm->_animationManager.PLAY_SEQ2("ASSOM.SEQ", 10, 4, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_globals.DESACTIVE_INVENT = 0;
 			_vm->_globals.HELICO = 1;
@@ -4666,7 +4666,7 @@ LABEL_1141:
 		}
 		if (v76 == 37) {
 			_vm->_graphicsManager.FADE_LINUX = 2;
-			_vm->_soundManager.PLAY_SEQ2("corde.SEQ", 32, 32, 100);
+			_vm->_animationManager.PLAY_SEQ2("corde.SEQ", 32, 32, 100);
 			_vm->_graphicsManager.NOFADE = 1;
 		}
 		if (v76 == 38) {
@@ -4674,7 +4674,7 @@ LABEL_1141:
 			_vm->_soundManager.CHARGE_SAMPLE(2, "SOUND42.WAV");
 			_vm->_soundManager.CHARGE_SAMPLE(3, "SOUND41.WAV");
 			_vm->_soundManager.SPECIAL_SOUND = 17;
-			_vm->_soundManager.PLAY_SEQ(v1, "grenade.SEQ", 1, 32, 100);
+			_vm->_animationManager.PLAY_SEQ(v1, "grenade.SEQ", 1, 32, 100);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			_vm->_animationManager.PLAY_ANM("CREVE17.ANM", 24, 24, 200);
@@ -5063,11 +5063,11 @@ LABEL_1141:
 		if (v76 == 90) {
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals.SAUVEGARDE->data[svField186]) {
-				_vm->_soundManager.PLAY_SEQ(v1, "CIB5A.SEQ", 1, 12, 1);
+				_vm->_animationManager.PLAY_SEQ(v1, "CIB5A.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField186] == 1) {
-				_vm->_soundManager.PLAY_SEQ(v1, "CIB5C.SEQ", 1, 12, 1);
+				_vm->_animationManager.PLAY_SEQ(v1, "CIB5C.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 329, 87, 2);
 			}
@@ -5075,11 +5075,11 @@ LABEL_1141:
 		if (v76 == 91) {
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals.SAUVEGARDE->data[svField186]) {
-				_vm->_soundManager.PLAY_SEQ(v1, "CIB5B.SEQ", 1, 12, 1);
+				_vm->_animationManager.PLAY_SEQ(v1, "CIB5B.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField186] == 1) {
-				_vm->_soundManager.PLAY_SEQ(v1, "CIB5D.SEQ", 1, 12, 1);
+				_vm->_animationManager.PLAY_SEQ(v1, "CIB5D.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
 			}
@@ -5087,11 +5087,11 @@ LABEL_1141:
 		if (v76 == 92) {
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals.SAUVEGARDE->data[svField184]) {
-				_vm->_soundManager.PLAY_SEQ(v1, "CIB6A.SEQ", 1, 12, 1);
+				_vm->_animationManager.PLAY_SEQ(v1, "CIB6A.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField184] == 1) {
-				_vm->_soundManager.PLAY_SEQ(v1, "CIB6C.SEQ", 1, 12, 1);
+				_vm->_animationManager.PLAY_SEQ(v1, "CIB6C.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 293, 139, 3);
 			}
@@ -5099,11 +5099,11 @@ LABEL_1141:
 		if (v76 == 93) {
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals.SAUVEGARDE->data[svField184]) {
-				_vm->_soundManager.PLAY_SEQ(v1, "CIB6B.SEQ", 1, 12, 1);
+				_vm->_animationManager.PLAY_SEQ(v1, "CIB6B.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField184] == 1) {
-				_vm->_soundManager.PLAY_SEQ(v1, "CIB6D.SEQ", 1, 12, 1);
+				_vm->_animationManager.PLAY_SEQ(v1, "CIB6D.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
 			}
@@ -5276,7 +5276,7 @@ LABEL_1141:
 		if (v76 == 210) {
 			_vm->_animationManager.NO_SEQ = 1;
 			_vm->_soundManager.SPECIAL_SOUND = 210;
-			_vm->_soundManager.PLAY_SEQ2("SECRET1.SEQ", 1, 12, 1);
+			_vm->_animationManager.PLAY_SEQ2("SECRET1.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
 			BOBANIM_ON(9);
@@ -5298,7 +5298,7 @@ LABEL_1141:
 			_vm->_animationManager.NO_SEQ = 1;
 			_vm->_globals.NO_VISU = 0;
 			_vm->_soundManager.SPECIAL_SOUND = 211;
-			_vm->_soundManager.PLAY_SEQ(v1, "SECRET2.SEQ", 1, 12, 100);
+			_vm->_animationManager.PLAY_SEQ(v1, "SECRET2.SEQ", 1, 12, 100);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_animationManager.NO_SEQ = 0;
 			_vm->_graphicsManager.NOFADE = 1;
@@ -5320,7 +5320,7 @@ LABEL_1141:
 			if (_vm->_globals.SAUVEGARDE->data[svField6] != _vm->_globals.SAUVEGARDE->data[svField401]) {
 				_vm->_soundManager.SPECIAL_SOUND = 208;
 				_vm->_eventsManager.NOESC = true;
-				_vm->_soundManager.PLAY_SEQ(v1, "SORT.SEQ", 10, 4, 10);
+				_vm->_animationManager.PLAY_SEQ(v1, "SORT.SEQ", 10, 4, 10);
 				_vm->_eventsManager.NOESC = false;
 				_vm->_soundManager.SPECIAL_SOUND = 0;
 			}
@@ -5461,7 +5461,7 @@ LABEL_1141:
 		}
 		if (v76 == 229) {
 			_vm->_soundManager.SPECIAL_SOUND = 229;
-			_vm->_soundManager.PLAY_SEQ(v1, "MUR.SEQ", 1, 12, 1);
+			_vm->_animationManager.PLAY_SEQ(v1, "MUR.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 340, 157, 2);
 		}
@@ -5891,7 +5891,7 @@ LABEL_1141:
 			_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND88.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField341] == 2) {
 				_vm->_animationManager.NO_SEQ = 1;
-				_vm->_soundManager.PLAY_SEQ(v1, "RESU.SEQ", 2, 24, 2);
+				_vm->_animationManager.PLAY_SEQ(v1, "RESU.SEQ", 2, 24, 2);
 				_vm->_animationManager.NO_SEQ = 0;
 			} else {
 				OPTI_ONE(7, 0, 14, 0);
@@ -5900,7 +5900,7 @@ LABEL_1141:
 		if (v76 == 242) {
 			_vm->_soundManager.PLAY_SOUND("SOUND87.WAV");
 			_vm->_animationManager.NO_SEQ = 1;
-			_vm->_soundManager.PLAY_SEQ(v1, "RESUF.SEQ", 1, 24, 1);
+			_vm->_animationManager.PLAY_SEQ(v1, "RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager.NO_SEQ = 0;
 			v53 = &_vm->_globals.SAUVEGARDE->field380;
 			v53->field0 = 404;
@@ -5936,7 +5936,7 @@ LABEL_1141:
 			PERSO_ON = 1;
 			_vm->_graphicsManager.NB_SCREEN();
 			_vm->_animationManager.NO_SEQ = 1;
-			_vm->_soundManager.PLAY_SEQ2("TUNNEL.SEQ", 1, 18, 20);
+			_vm->_animationManager.PLAY_SEQ2("TUNNEL.SEQ", 1, 18, 20);
 			_vm->_animationManager.NO_SEQ = 0;
 			_vm->_graphicsManager.NOFADE = 1;
 			_vm->_graphicsManager.FADE_OUTW();
@@ -7522,7 +7522,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	_vm->_globals.BPP_NOAFF = 0;
 	_vm->_graphicsManager.FADE_INW();
 	if (_vm->_globals.ECRAN == 61) {
-		_vm->_soundManager.PLAY_SEQ(0, "OUVRE.SEQ", 10, 4, 10);
+		_vm->_animationManager.PLAY_SEQ(0, "OUVRE.SEQ", 10, 4, 10);
 		BOBANIM_OFF(3);
 		_vm->_globals.NOT_VERIF = 1;
 		g_old_x = XSPR(0);

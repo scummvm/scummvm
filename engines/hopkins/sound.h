@@ -64,8 +64,6 @@ public:
 	void MODSetMusicVolume(int volume);
 	void CHARGE_SAMPLE(int a1, const Common::String &file);
 	void PLAY_SAMPLE2(int idx);
-	void PLAY_SEQ(int a1, const Common::String &a2, int a3, int a4, int a5);
-	void PLAY_SEQ2(const Common::String &a1, int a2, int a3, int a4);
 	void PLAY_WAV(int a1);
 };
 
