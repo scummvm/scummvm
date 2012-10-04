@@ -3572,4 +3572,306 @@ LABEL_85:
 	return -1;
 }
 
+int LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
+	int v6; 
+	int v7; 
+	int v8; 
+	int v9; 
+	int v10; 
+	int v11; 
+	int v12; 
+	int v13; 
+	int v14; 
+	byte *v15; 
+	int v16; 
+	int v17; 
+	int v18; 
+	int v19; 
+	byte *v20; 
+	int v21; 
+	int v22; 
+	int v23; 
+	byte *v25; 
+	byte *v26; 
+	int v27; 
+	int v28; 
+	int v29; 
+	int v30; 
+	int v31; 
+	int v32; 
+	int v33 = 0; 
+	int v34 = 0; 
+	int v35; 
+	int v36; 
+	int v37; 
+	int v38; 
+	int v39; 
+	int v40; 
+	int v41; 
+	int v42; 
+	int v43; 
+	int v44; 
+	int v45; 
+	int v46; 
+	int v47; 
+	int v48; 
+	int v49; 
+	int v50; 
+	int v51; 
+	int v52; 
+	int v53; 
+
+	v41 = a3;
+	v40 = TEST_LIGNE(a1, a2 - 2, &v42, &v50, &v46);
+	v39 = TEST_LIGNE(a1, a2 + 2, &v43, &v51, &v47);
+	v38 = TEST_LIGNE(a1 - 2, a2, &v44, &v52, &v48);
+	v6 = TEST_LIGNE(a1 + 2, a2, &v45, &v53, &v49);
+	v37 = v6;
+	if (v40 == -1 && v39 == -1 && v38 == -1 && v6 == -1)
+		return -1;
+	if (a4 == -1 || a5 == -1) {
+		v8 = 0;
+		if (v40 != -1)
+			v8 = 1;
+		if (v8)
+			goto LABEL_60;
+		if (v39 != -1)
+			v8 = 2;
+		if (v8)
+			goto LABEL_60;
+		if (v38 != -1)
+			v8 = 3;
+		if (v8)
+			goto LABEL_60;
+		if (v6 != -1)
+			v8 = 4;
+		goto LABEL_59;
+	}
+	v28 = 100;
+	v7 = 100;
+	v35 = 100;
+	v27 = 100;
+	v8 = 0;
+	v9 = a4 - a5;
+	if (a4 - a5 < 0)
+		v9 = -v9;
+	v36 = v9;
+	if (v40 != -1) {
+		v10 = v50 - a5;
+		if (v50 - a5 < 0)
+			v10 = -v10;
+		v28 = v10;
+	}
+	if (v39 != -1) {
+		v11 = v51 - a5;
+		if (v11 < 0)
+			v11 = -v11;
+		v7 = v11;
+	}
+	if (v38 != -1) {
+		v12 = v52 - a5;
+		if (v12 < 0)
+			v12 = -v12;
+		v35 = v12;
+	}
+	if (v37 != -1) {
+		v13 = v53 - a5;
+		if (v13 < 0)
+			v13 = -v13;
+		v27 = v13;
+	}
+	if (v28 < v36 && v28 <= v7 && v28 <= v35 && v28 <= v27)
+		v8 = 1;
+	if (v8)
+		goto LABEL_60;
+	if (v36 > v7 && v28 >= v7 && v35 >= v7 && v27 >= v7)
+		v8 = 2;
+	if (v8)
+		goto LABEL_60;
+	if (v35 < v36 && v35 <= v28 && v35 <= v7 && v35 <= v27)
+		v8 = 3;
+	if (v8)
+		goto LABEL_60;
+	if (v27 >= v36 || v27 > v28 || v27 > v7 || v27 > v35) {
+LABEL_59:
+		if (v8)
+			goto LABEL_60;
+		return -1;
+	}
+	v8 = 4;
+LABEL_60:
+	if (v8 == 1) {
+		v34 = v40;
+		v33 = v42;
+		NV_LIGNEDEP = v50;
+		NV_LIGNEOFS = v46;
+	}
+	if (v8 == 2) {
+		v34 = v39;
+		v33 = v43;
+		NV_LIGNEDEP = v51;
+		NV_LIGNEOFS = v47;
+	}
+	if (v8 == 3) {
+		v34 = v38;
+		v33 = v44;
+		NV_LIGNEDEP = v52;
+		NV_LIGNEOFS = v48;
+	}
+	if (v8 == 4) {
+		v34 = v37;
+		v33 = v45;
+		NV_LIGNEDEP = v53;
+		NV_LIGNEOFS = v49;
+	}
+	if (v33 == 1) {
+		v14 = 0;
+		if (Ligne[v34].field0 > 0) {
+			v32 = v34;
+			v25 = _vm->_globals.essai0;
+			do {
+				v15 = Ligne[v32].fieldC;
+				v16 = READ_LE_UINT16(v15 + 4 * v14);
+				v29 = READ_LE_UINT16(v15 + 4 * v14 + 2);
+				if (!a6) {
+					v17 = v41;
+					_vm->_globals.super_parcours[v17] = v16;
+					_vm->_globals.super_parcours[v17 + 1] = v29;
+					_vm->_globals.super_parcours[v17 + 2] = Ligne[v32].field6;
+					_vm->_globals.super_parcours[v17 + 3] = 0;
+				}
+				if (a6 == 1) {
+					v18 = v41;
+					WRITE_LE_UINT16(v25 + 2 * v18, v16);
+					WRITE_LE_UINT16(v25 + 2 * v18 + 2, v29);
+					WRITE_LE_UINT16(v25 + 2 * v18 + 4, Ligne[v32].field6);
+					WRITE_LE_UINT16(v25 + 2 * v18 + 6, 0);
+				}
+				v41 += 4;
+				++v14;
+			} while (Ligne[v32].field0 > v14);
+		}
+	}
+	if (v33 == 2) {
+		v19 = Ligne[v34].field0 - 1;
+		if (v19 > -1) {
+			v31 = 16 * v34;
+			v26 = _vm->_globals.essai0;
+			do {
+				v20 = Ligne[v31].fieldC;
+				v21 = READ_LE_UINT16(v20 + 4 * v19);
+				v30 = READ_LE_UINT16(v20 + 4 * v19 + 2);
+				if (a6) {
+					v23 = v41;
+					WRITE_LE_UINT16(v26 + 2 * v23, v21);
+					WRITE_LE_UINT16(v26 + 2 * v23 + 2, v30);
+					WRITE_LE_UINT16(v26 + 2 * v23 + 4, Ligne[v31].field8);
+					WRITE_LE_UINT16(v26 + 2 * v23 + 6, 0);
+				} else {
+					v22 = v41;
+					_vm->_globals.super_parcours[v22] = v21;
+					_vm->_globals.super_parcours[v22 + 1] = v30;
+					_vm->_globals.super_parcours[v22 + 2] = Ligne[v31].field8;
+					_vm->_globals.super_parcours[v22 + 3] = 0;
+				}
+				v41 += 4;
+				--v19;
+			} while (v19 > -1);
+		}
+	}
+	NV_POSI = v41;
+	return 1;
+}
+
+int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5) {
+	int i; 
+	int v6; 
+	byte *v7; 
+	int v8; 
+	int v9; 
+	int v10; 
+	int v11; 
+	byte *v12; 
+	int v13; 
+	int v14; 
+	int v15; 
+	int v16; 
+	byte *v17; 
+	int v18; 
+	int v19; 
+	int v20; 
+	int v21; 
+	int result; 
+	int v23; 
+	int v24 = 0; 
+	int v25; 
+	int v26; 
+	int v27; 
+	int v28; 
+
+	v26 = 0;
+	v25 = _vm->_objectsManager.DERLIGNE + 1;
+	for (i = (int)(_vm->_objectsManager.DERLIGNE + 1); i < _vm->_linesManager.TOTAL_LIGNES + 1; i = v25) {
+		v6 = i;
+		v7 = Ligne[i].fieldC;
+		v8 = Ligne[v6].field0;
+		v23 = READ_LE_UINT16(v7 + 4 * v8 - 4);
+		v9 = READ_LE_UINT16(v7 + 4 * v8 - 2);
+		if (*v7 == a1 && a2 == READ_LE_UINT16(v7 + 2)) {
+			v24 = v25;
+			v26 = 1;
+			*a3 = 1;
+		}
+		if (v23 == a1 && a2 == v9) {
+			v24 = v25;
+			v26 = 1;
+			*a3 = 2;
+		}
+		if (v26 == 1)
+			goto LABEL_12;
+		++v25;
+	}
+	if (v26 != 1)
+		goto LABEL_33;
+LABEL_12:
+	if (*a3 == 1) {
+		v10 = v24;
+		v11 = Ligne[v10].field0;
+		v12 = Ligne[v10].fieldC;
+		v13 = READ_LE_UINT16(v12 + 4 * v11 - 4);
+		v14 = READ_LE_UINT16(v12 + 4 * v11 - 2);
+		v15 = Ligne[v10].field6;
+		if (v15 == 5 || v15 == 1)
+			v14 += 2;
+		v16 = 16 * v24;
+		if (Ligne[v16].field6 == 3 || Ligne[v16].field8 == 7)
+			v13 += 2;
+		if (!colision2_ligne(v13, v14, &v28, &v27, 0, _vm->_objectsManager.DERLIGNE))
+			error("error");
+		*a4 = v27;
+		*a5 = v28;
+	}
+	if (v26 == 1 && *a3 == 2) {
+		v17 = Ligne[v25].fieldC;
+		v18 = *v17;
+		v19 = READ_LE_UINT16(v17 + 2);
+		v20 = Ligne[v24].field6;
+		if (v20 == 5 || v20 == 1)
+			v19 -= 2;
+		v21 = 16 * v24;
+		if (Ligne[v21].field6 == 3 || Ligne[v21].field8 == 7)
+			v18 -= 2;
+		if (!colision2_ligne(v18, v19, &v28, &v27, 0, _vm->_objectsManager.DERLIGNE))
+			error("erreure");
+		*a4 = v27;
+		*a5 = v28;
+	}
+LABEL_33:
+	if (v26)
+		result = v24;
+	else
+		result = -1;
+	return result;
+}
+
 } // End of namespace Hopkins

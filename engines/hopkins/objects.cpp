@@ -3068,8 +3068,8 @@ LABEL_90:
 				v35 = v34;
 			}
 			for (j = v69 + 1; j < v73; ++j) {
-				if (PLAN_TEST(
-						_vm->_linesManager.Ligne[j].fieldC,
+				if (_vm->_linesManager.PLAN_TEST(
+						READ_LE_UINT16(_vm->_linesManager.Ligne[j].fieldC),
 						READ_LE_UINT16(_vm->_linesManager.Ligne[j].fieldC + 2),
 				        v67,
 				        j,
@@ -3115,8 +3115,8 @@ LABEL_88:
 			}
 			for (l = v69 - 1; l > v73; --l) {
 				v48 = l;
-				if (PLAN_TEST(
-						_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 4,
+				if (_vm->_linesManager.PLAN_TEST(
+						READ_LE_UINT16(_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 4),
 						READ_LE_UINT16(_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 2),
 				        v67,
 				        l,
@@ -6982,11 +6982,6 @@ int ObjectsManager::CALC_PROPRE(int idx) {
 		return _vm->_graphicsManager.Reel_Zoom(0x19u, v2);
 
 	return v1;
-}
-
-int ObjectsManager::PLAN_TEST(byte *a1, int a2, int a3, int a4, int a5, int a6) {
-	warning("TODO: PLAN_TEST");
-	return 0;
 }
 
 int ObjectsManager::colision(int a1, int a2) {
