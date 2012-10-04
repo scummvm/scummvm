@@ -854,11 +854,14 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 void GrimEngine::savegameSave() {
 	debug("GrimEngine::savegameSave() started.");
 	_savegameSaveRequest = false;
-	char filename[200];
+	Common::String filename;
 	if (_savegameFileName.size() == 0) {
-		strcpy(filename, "grim.sav");
+		filename = "grim.sav";
 	} else {
-		strcpy(filename, _savegameFileName.c_str());
+		filename = _savegameFileName;
+	}
+	if (getGameType() == GType_MONKEY4 && filename.contains('/')) {
+		filename = Common::lastPathComponent(filename, '/');
 	}
 	_savedState = SaveGame::openForSaving(filename);
 	if (!_savedState) {
