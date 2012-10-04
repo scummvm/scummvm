@@ -197,7 +197,7 @@ class Scene2205 : public Scene {
 public:
 	Scene2205(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Class426 *_ssLightSwitch;
+	SsCommonPressButton *_ssLightSwitch;
 	Sprite *_ssDoorFrame;
 	bool _isKlaymanInLight;
 	bool _isLightOn;

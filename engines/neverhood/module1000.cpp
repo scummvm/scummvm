@@ -763,7 +763,7 @@ void AsScene1002DoorSpy::stDoorSpyBoxingGlove() {
 	NextState(&AsScene1002DoorSpy::stDoorSpyIdle);
 }
 
-Class426::Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash) 
+SsCommonPressButton::SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash) 
 	: StaticSprite(vm, 1100), _parentScene(parentScene), _status(0) {
 
 	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000;
@@ -784,12 +784,12 @@ Class426::Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, ui
 	setVisible(false);
 	_needRefresh = true;
 	
-	SetUpdateHandler(&Class426::update);
-	SetMessageHandler(&Class426::handleMessage);
+	SetUpdateHandler(&SsCommonPressButton::update);
+	SetMessageHandler(&SsCommonPressButton::handleMessage);
 
 }
 
-void Class426::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
+void SsCommonPressButton::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 	_fileHashes[0] = fileHash1;
 	_fileHashes[1] = fileHash2;
 	if (_status == 2) {
@@ -815,7 +815,7 @@ void Class426::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 	}
 }
 
-void Class426::update() {
+void SsCommonPressButton::update() {
 	if (_countdown != 0 && (--_countdown) == 0) {
 		if (_status == 1) {
 			_status = 2;
@@ -848,7 +848,7 @@ void Class426::update() {
 	}
 }
 
-uint32 Class426::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 SsCommonPressButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x480B:
@@ -1353,7 +1353,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asDoor = insertSprite<AsScene1002Door>(tempClipRect);
 	tempSprite = insertSprite<AsScene1002BoxingGloveHitEffect>();
 	_asDoorSpy = insertSprite<AsScene1002DoorSpy>(tempClipRect, this, _asDoor, tempSprite);
-	_class426 = insertSprite<Class426>(this, 0x00412692, 0x140B60BE, 800, 0);
+	_ssPressButton = insertSprite<SsCommonPressButton>(this, 0x00412692, 0x140B60BE, 800, 0);
 	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klayman, false);
 	_vm->_collisionMan->addSprite(_asVenusFlyTrap);
 
@@ -1440,7 +1440,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x42845B19) {
 			sendEntityMessage(_klayman, 0x1014, _asRing5);
 		} else if (param.asInteger() == 0xC0A07458) {
-			sendEntityMessage(_klayman, 0x1014, _class426);
+			sendEntityMessage(_klayman, 0x1014, _ssPressButton);
 		}
 		break;
 	case 0x1024:

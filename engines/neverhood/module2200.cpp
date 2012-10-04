@@ -518,7 +518,7 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asTape = insertSprite<AsScene1201Tape>(this, 7, 1100, 459, 432, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape); 
 
-	_ssDoorButton = insertSprite<Class426>(this, 0xE4A43E29, 0xE4A43E29, 100, 0);
+	_ssDoorButton = insertSprite<SsCommonPressButton>(this, 0xE4A43E29, 0xE4A43E29, 100, 0);
 	
 	for (uint32 i = 0; i < 9; i++) {
 		if ((int16)getSubVar(0x484498D0, i) >= 0) {
@@ -1279,14 +1279,14 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 		setPalette(0x0008028D);
 		addEntity(_palette);
 		insertMouse433(0x80289008);
-		_ssLightSwitch = insertSprite<Class426>(this, 0x2D339030, 0x2D309030, 100, 0);
+		_ssLightSwitch = insertSprite<SsCommonPressButton>(this, 0x2D339030, 0x2D309030, 100, 0);
 	} else {
 		_isLightOn = false;
 		setBackground(0xD00A028D);
 		setPalette(0xD00A028D);
 		addEntity(_palette);
 		insertMouse433(0xA0289D08);
-		_ssLightSwitch = insertSprite<Class426>(this, 0x2D339030, 0xDAC86E84, 100, 0);
+		_ssLightSwitch = insertSprite<SsCommonPressButton>(this, 0x2D339030, 0xDAC86E84, 100, 0);
 	}
 
 	_palette->addBasePalette(0xD00A028D, 0, 256, 0);

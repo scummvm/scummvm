@@ -158,9 +158,9 @@ protected:
 	void stDoorSpyBoxingGlove();
 };
 
-class Class426 : public StaticSprite {
+class SsCommonPressButton : public StaticSprite {
 public:
-	Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
+	SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
 	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
 protected:
 	Scene *_parentScene;
@@ -252,7 +252,7 @@ protected:
 	Sprite *_asKlaymanLadderHands;
 	Sprite *_asKlaymanPeekHand;
 	Sprite *_asOutsideDoorBackground;
-	Sprite *_class426;
+	Sprite *_ssPressButton;
 	bool _flag1B4;
 	bool _flag1BE;
 	bool _flag;
