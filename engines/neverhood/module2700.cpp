@@ -267,7 +267,7 @@ void Module2700::createScene(int sceneNum, int which) {
 		createScene2704(which, 0x004B1E60, 150);
 		break;
 	case 30:
-		_childObject = new Class152(_vm, this, 0x09507248, 0x0724C09D);
+		_childObject = new StaticScene(_vm, this, 0x09507248, 0x0724C09D);
 		break;
 	case 31:
 //TODO		_childObject = new Scene2732(_vm, this, which);

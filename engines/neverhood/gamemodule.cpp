@@ -300,7 +300,7 @@ void GameModule::startup() {
 //	createModule(1500, 0); // Logos and intro video //Real
 #if 1
 	_vm->gameState().sceneNum = 6;
-	createModule(1300, -1);
+	createModule(1000, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

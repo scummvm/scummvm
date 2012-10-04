@@ -202,14 +202,14 @@ void Module2200::createScene(int sceneNum, int which) {
 	case 47:
 		if (!getGlobalVar(0x98109F12)) {
 			if (getGlobalVar(0x4D080E54))
-				_childObject = new Class152(_vm, this, 0x83110287, 0x10283839);
+				_childObject = new StaticScene(_vm, this, 0x83110287, 0x10283839);
 			else
-				_childObject = new Class152(_vm, this, 0x83412B9D, 0x12B9983C);
+				_childObject = new StaticScene(_vm, this, 0x83412B9D, 0x12B9983C);
 		} else {
 			if (getGlobalVar(0x4D080E54))
-				_childObject = new Class152(_vm, this, 0x48632087, 0x3208348E);
+				_childObject = new StaticScene(_vm, this, 0x48632087, 0x3208348E);
 			else
-				_childObject = new Class152(_vm, this, 0x08C74886, 0x74882084);
+				_childObject = new StaticScene(_vm, this, 0x08C74886, 0x74882084);
 		}
 		break;
 	}

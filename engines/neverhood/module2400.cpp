@@ -70,13 +70,13 @@ void Module2400::createScene(int sceneNum, int which) {
 		createSmackerScene(0x20D80001, true, true, false);
 		break;
 	case 7:
-		_childObject = new Class152(_vm, this, 0x81523218, 0x2321C81D);
+		_childObject = new StaticScene(_vm, this, 0x81523218, 0x2321C81D);
 		break;
 	case 8:
-		_childObject = new Class152(_vm, this, 0x08100210, 0x00214089);
+		_childObject = new StaticScene(_vm, this, 0x08100210, 0x00214089);
 		break;
 	case 9:
-		_childObject = new Class152(_vm, this, 0x8C020505, 0x205018C8);
+		_childObject = new StaticScene(_vm, this, 0x8C020505, 0x205018C8);
 		break;
 	}
 	SetUpdateHandler(&Module2400::updateScene);

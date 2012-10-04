@@ -126,9 +126,9 @@ void Module2500::createScene(int sceneNum, int which) {
 		break;
 	case 9:
 		if (getGlobalVar(0xD0A14D10))
-			_childObject = new Class152(_vm, this, 0xC62A0645, 0xA0641C6A);
+			_childObject = new StaticScene(_vm, this, 0xC62A0645, 0xA0641C6A);
 		else
-			_childObject = new Class152(_vm, this, 0x7A343546, 0x435427AB);
+			_childObject = new StaticScene(_vm, this, 0x7A343546, 0x435427AB);
 		break;
 	}
 	SetUpdateHandler(&Module2500::updateScene);

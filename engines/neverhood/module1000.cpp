@@ -62,7 +62,7 @@ void Module1000::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		_vm->_soundMan->startMusic(0x061880C6, 0, 0);
-		_childObject = new Class152(_vm, this, 0xC084110C, 0x41108C00);
+		_childObject = new StaticScene(_vm, this, 0xC084110C, 0x41108C00);
 		break;
 	case 3:
 		_vm->_soundMan->stopMusic(0x061880C6, 0, 2);
@@ -1563,21 +1563,21 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 	return messageResult;
 }
 
-// Class152
+// StaticScene
 
-Class152::Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash)
+StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash)
 	: Scene(vm, parentModule, true) {
 
 	_surfaceFlag = false;
 
-	SetMessageHandler(&Class152::handleMessage);
+	SetMessageHandler(&StaticScene::handleMessage);
 	
 	setBackground(backgroundFileHash);
 	setPalette(backgroundFileHash);
 	insertMouse435(cursorFileHash, 20, 620);
 }
 
-uint32 Class152::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 StaticScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:

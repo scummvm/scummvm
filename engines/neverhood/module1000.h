@@ -103,9 +103,9 @@ protected:
 
 // TODO: Move this to some common file since it's used several times
 
-class Class152 : public Scene {
+class StaticScene : public Scene {
 public:
-	Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash);
+	StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
