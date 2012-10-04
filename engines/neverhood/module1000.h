@@ -112,22 +112,6 @@ protected:
 
 // Scene1002
 
-class SsScene1002LadderArch : public StaticSprite {
-public:
-	SsScene1002LadderArch(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class Class599 : public StaticSprite {
-public:
-	Class599(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
 class AsScene1002Ring : public AnimatedSprite {
 public:
 	AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool flag1, int16 x, int16 y, int16 clipY1, bool flag2);

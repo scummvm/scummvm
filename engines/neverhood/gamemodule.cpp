@@ -299,7 +299,7 @@ void GameModule::startup() {
 	// TODO: Displaying of error text probably not needed in ScummVM
 //	createModule(1500, 0); // Logos and intro video //Real
 #if 1
-	_vm->gameState().sceneNum = 6;
+	_vm->gameState().sceneNum = 1;
 	createModule(1000, -1);
 #endif
 #if 0

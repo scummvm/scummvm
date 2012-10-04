@@ -458,44 +458,6 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 
 // Scene1002
 
-SsScene1002LadderArch::SsScene1002LadderArch(NeverhoodEngine *vm, Scene *parentScene)
-	: StaticSprite(vm, 0x152C1313, 1015), _parentScene(parentScene) {
-
-	SetMessageHandler(&SsScene1002LadderArch::handleMessage);
-}
-
-uint32 SsScene1002LadderArch::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 995);
-		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1015);
-		break;
-	}
-	return messageResult;
-}
-
-Class599::Class599(NeverhoodEngine *vm, Scene *parentScene)
-	: StaticSprite(vm, 0x316C4BB4, 1015), _parentScene(parentScene) {
-
-	SetMessageHandler(&Class599::handleMessage);
-}
-
-uint32 Class599::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 995);
-		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1015);
-		break;
-	}
-	return messageResult;
-}
-
 AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool flag1, int16 x, int16 y, int16 clipY1, bool flag2)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _flag1(flag1) {
 
@@ -1327,12 +1289,12 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x06149428, 1100);
 	insertStaticSprite(0x312C8774, 1100);
 
-	_ssLadderArch = insertSprite<SsScene1002LadderArch>(this);
+	_ssLadderArch = insertStaticSprite(0x152C1313, 1015);
 	_ssLadderArchPart1 = insertStaticSprite(0x060000A0, 1200);
 	_ssLadderArchPart2 = insertStaticSprite(0xB2A423B0, 1100);
 	_ssLadderArchPart3 = insertStaticSprite(0x316E0772, 1100);
 
-	_class599 = insertSprite<Class599>(this);
+	_class599 = insertStaticSprite(0x316C4BB4, 1015);
 
 	if (which < 0) {
 		if (_vm->_gameState.field2 == 0) {
@@ -1552,12 +1514,12 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_asOutsideDoorBackground, 0x4808, 0);
 		break;
 	case 0x8000:
-		sendMessage(_class599, 0x482A, 0);
-		sendMessage(_ssLadderArch, 0x482A, 0);
+		setSpriteSurfacePriority(_class599, 995);
+		setSpriteSurfacePriority(_ssLadderArch, 995);
 		break;
 	case 0x8001:
-		sendMessage(_class599, 0x482B, 0);
-		sendMessage(_ssLadderArch, 0x482B, 0);
+		setSpriteSurfacePriority(_class599, 1015);
+		setSpriteSurfacePriority(_ssLadderArch, 1015);
 		break;
 	}	
 	return messageResult;

@@ -49,6 +49,7 @@ public:
 	Sprite *addSprite(Sprite *sprite);
 	void removeSprite(Sprite *sprite);
 	void setSurfacePriority(BaseSurface *surface, int priority);
+	void setSpriteSurfacePriority(Sprite *sprite, int priority);
 	void deleteSprite(Sprite **sprite);
 	Background *addBackground(Background *background);
 	void setBackground(uint32 fileHash, bool dirtyBackground = true);

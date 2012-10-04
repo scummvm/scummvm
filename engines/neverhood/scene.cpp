@@ -169,6 +169,11 @@ void Scene::setSurfacePriority(BaseSurface *surface, int priority) {
 		addSurface(surface);
 }
 
+void Scene::setSpriteSurfacePriority(Sprite *sprite, int priority) {
+	if (sprite)
+		setSurfacePriority(sprite->getSurface(), priority);
+}
+
 void Scene::deleteSprite(Sprite **sprite) {
 	_vm->_collisionMan->removeSprite(*sprite);
 	removeSurface((*sprite)->getSurface());
