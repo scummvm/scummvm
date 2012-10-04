@@ -245,6 +245,18 @@ void Actor::saveState(SaveGame *savedState) const {
 	for (Common::List<Math::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
 		savedState->writeVector3d(*i);
 	}
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		savedState->writeByte(_alphaMode);
+		savedState->writeFloat(_globalAlpha);
+	
+		savedState->writeBool(_inOverworld);
+		savedState->writeLESint32(_sortOrder);
+		savedState->writeBool(_shadowActive);
+
+		savedState->writeLESint32(_attachedActor);
+		savedState->writeString(_attachedJoint);
+	}
 }
 
 bool Actor::restoreState(SaveGame *savedState) {
@@ -380,6 +392,18 @@ bool Actor::restoreState(SaveGame *savedState) {
 	size = savedState->readLEUint32();
 	for (uint32 i = 0; i < size; ++i) {
 		_path.push_back(savedState->readVector3d());
+	}
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		_alphaMode = (AlphaMode) savedState->readByte();
+		_globalAlpha = savedState->readFloat();
+	
+		_inOverworld  = savedState->readBool();
+		_sortOrder    = savedState->readLESint32();
+		_shadowActive = savedState->readBool();
+
+		_attachedActor = savedState->readLESint32();
+		_attachedJoint = savedState->readString();
 	}
 
 	return true;
