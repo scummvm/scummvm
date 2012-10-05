@@ -41,10 +41,10 @@ protected:
 
 // Scene1401
 
-class Class525 : public AnimatedSprite {
+class AsScene1401Pipe : public AnimatedSprite {
 public:
-	Class525(NeverhoodEngine *vm);
-	virtual ~Class525();
+	AsScene1401Pipe(NeverhoodEngine *vm);
+	virtual ~AsScene1401Pipe();
 protected:
 	int _countdown1;
 	int _countdown2;
@@ -57,41 +57,39 @@ protected:
 	void sub4664B0();
 };
 
-class Class526 : public AnimatedSprite {
+class AsScene1401Mouse : public AnimatedSprite {
 public:
-	Class526(NeverhoodEngine *vm, Sprite *class525);
+	AsScene1401Mouse(NeverhoodEngine *vm);
 protected:
-	Sprite *_class525;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate466720();
-	void sub466770();
+	void suSuckedIn();
+	void stSuckedIn();
 };
 
-class Class527 : public AnimatedSprite {
+class AsScene1401Cheese : public AnimatedSprite {
 public:
-	Class527(NeverhoodEngine *vm, Sprite *class526);
+	AsScene1401Cheese(NeverhoodEngine *vm);
 protected:
-	Sprite *_class526;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate466920();
-	void sub466970();
+	void suSuckedIn();
+	void stSuckedIn();
 };
 
-class Class528 : public AnimatedSprite {
+class AsScene1401BackDoor : public AnimatedSprite {
 public:
-	Class528(NeverhoodEngine *vm, Sprite *klayman, bool flag);
+	AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen);
 protected:
 	Sprite *_klayman;
 	int _countdown;
-	bool _flag;
+	bool _isOpen;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub466BF0();
-	void sub466C50();
-	void sub466CB0();
+	void stOpenDoor();
+	void stCloseDoor();
+	void stCloseDoorDone();
 };
 
-struct Class489Item {
+struct AsCommonProjectorItem {
 	NPoint point;
 	int8 varIndex1;
 	int8 varIndex2;
@@ -101,15 +99,15 @@ struct Class489Item {
 	int8 flag;
 };
 
-class Class489 : public AnimatedSprite {
+class AsCommonProjector : public AnimatedSprite {
 public:
-	Class489(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Sprite *class525);
-	virtual ~Class489();
+	AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Sprite *asPipe);
+	virtual ~AsCommonProjector();
 protected:
 	Scene *_parentScene;
 	Sprite *_klayman;
-	Sprite *_class525;
-	const Class489Item *_class489Item;
+	Sprite *_asPipe;
+	const AsCommonProjectorItem *_asProjectorItem;
 	int16 _remX;
 	bool _flag;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -135,11 +133,11 @@ public:
 protected:
 	bool _flag;
 	Sprite *_class427;
-	Class489 *_class489;
-	Sprite *_class525;
-	Sprite *_class526;
-	Sprite *_class527;
-	Sprite *_class528;
+	AsCommonProjector *_asProjector;
+	Sprite *_asPipe;
+	Sprite *_asMouse;
+	Sprite *_asCheese;
+	Sprite *_asBackDoor;
 	Sprite *_sprite1;
 	Sprite *_sprite2;
 	Sprite *_sprite3;
@@ -174,7 +172,7 @@ protected:
 	Sprite *_class454_2;
 	Sprite *_class454_3;
 	Sprite *_class482;
-	Class489 *_class489;
+	AsCommonProjector *_asProjector;
 	bool _flag;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -226,7 +224,7 @@ protected:
 	Sprite *_class401_3;
 	AsScene1201Tape *_asTape1;
 	AsScene1201Tape *_asTape2;
-	Class489 *_class489;
+	AsCommonProjector *_asProjector;
 	bool _flag;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -240,7 +238,7 @@ public:
 protected:
 	Sprite *_sprite1;
 	Sprite *_asTape;
-	Class489 *_class489;
+	AsCommonProjector *_asProjector;
 	Sprite *_class545;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

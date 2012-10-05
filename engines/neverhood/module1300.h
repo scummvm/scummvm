@@ -256,7 +256,7 @@ protected:
 	Sprite *_ssNumber1;
 	Sprite *_ssNumber2;
 	Sprite *_ssNumber3;
-	AnimatedSprite *_class489;
+	AnimatedSprite *_asProjector;
 	Sprite *_sprite1;
 	Sprite *_sprite2;
 	Sprite *_sprite3;

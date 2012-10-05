@@ -1662,12 +1662,12 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x04A105B3) == 4) {
-		_class489 = insertSprite<Class489>(this, _klayman, (Sprite*)NULL);
-		_vm->_collisionMan->addSprite(_class489);
-		_class489->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
-		_class489->setRepl(64, 0);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
+		_vm->_collisionMan->addSprite(_asProjector);
+		_asProjector->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
+		_asProjector->setRepl(64, 0);
 	} else {
-		_class489 = NULL;
+		_asProjector = NULL;
 	}
 
 }
@@ -1680,7 +1680,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 			setRectList(0x004B59A0);
 			_flag1 = true;
 		} else if (param.asInteger() == 0x08821382) {
-			sendEntityMessage(_klayman, 0x1014, _class489);
+			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			if (getGlobalVar(0x80455A41)) {
 				setRectList(0x004B5990);
 			} else {
@@ -1695,7 +1695,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x1022:
-		if (sender == _class489) {
+		if (sender == _asProjector) {
 			if (param.asInteger() >= 1000)
 				setSurfacePriority(_sprite3->getSurface(), 1100);
 			else
@@ -1734,15 +1734,15 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		_ssNumber3->setVisible(true);
 		break;
 	case 0x4826:
-		if (sender == _class489) {
+		if (sender == _asProjector) {
 			if (_flag1) {
 				setMessageList2(0x004B5868);
 			} else {
 				if (param.asInteger() == 1) {
-					sendEntityMessage(_klayman, 0x1014, _class489);
+					sendEntityMessage(_klayman, 0x1014, _asProjector);
 					setMessageList2(0x004B5848);
-				} else if (sendMessage(_class489, 0x480C, _klayman->getX() <= _class489->getX() ? 0 : 1) != 0) {
-					sendEntityMessage(_klayman, 0x1014, _class489);
+				} else if (sendMessage(_asProjector, 0x480C, _klayman->getX() <= _asProjector->getX() ? 0 : 1) != 0) {
+					sendEntityMessage(_klayman, 0x1014, _asProjector);
 					setMessageList2(0x004B5830);
 				} else {
 					setMessageList2(0x004B5800);

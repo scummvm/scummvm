@@ -134,23 +134,23 @@ void Module1400::updateScene() {
 
 // Scene1401
 
-Class525::Class525(NeverhoodEngine *vm)
+AsScene1401Pipe::AsScene1401Pipe(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100), _countdown1(0), _countdown2(0) {
 	
 	// TODO createSurface3(900, dword_4B6768);
 	createSurface(900, 640, 480); //TODO: Remeove once the line above is done
 	_x = 454;
 	_y = 217;
-	SetUpdateHandler(&Class525::update4662A0);
-	SetMessageHandler(&Class525::handleMessage466320);
+	SetMessageHandler(&AsScene1401Pipe::handleMessage466320);
+	SetUpdateHandler(&AsScene1401Pipe::update4662A0);
 	startAnimation(0x4C210500, 0, -1);
 }
 
-Class525::~Class525() {
+AsScene1401Pipe::~AsScene1401Pipe() {
 	_vm->_soundMan->deleteSoundGroup(0x01104C08);
 }
 
-void Class525::update4662A0() {
+void AsScene1401Pipe::update4662A0() {
 	AnimatedSprite::update();
 	if (_countdown1 != 0 && (--_countdown1 == 0)) {
 		sub466460();
@@ -161,14 +161,14 @@ void Class525::update4662A0() {
 	}
 }
 
-void Class525::update466300() {
+void AsScene1401Pipe::update466300() {
 	AnimatedSprite::update();
 	if (_countdown1 != 0) {
 		_countdown1--;
 	}
 }
 
-uint32 Class525::handleMessage466320(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1401Pipe::handleMessage466320(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -188,7 +188,7 @@ uint32 Class525::handleMessage466320(int messageNum, const MessageParam &param, 
 	return messageResult;
 }
 
-uint32 Class525::handleMessage4663C0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1401Pipe::handleMessage4663C0(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -197,43 +197,43 @@ uint32 Class525::handleMessage4663C0(int messageNum, const MessageParam &param, 
 		} else {
 			sub466460();
 		}
-		SetMessageHandler(&Class525::handleMessage466320);
-		SetUpdateHandler(&Class525::update4662A0);
+		SetMessageHandler(&AsScene1401Pipe::handleMessage466320);
+		SetUpdateHandler(&AsScene1401Pipe::update4662A0);
 		break;
 	}
 	return messageResult;
 }
 
-void Class525::sub466420() {
+void AsScene1401Pipe::sub466420() {
 	startAnimation(0x4C240100, 0, -1);
 	playSound(0, 0x4A30063F);
 }
 
-void Class525::sub466460() {
+void AsScene1401Pipe::sub466460() {
 	_vm->_soundMan->deleteSound(0x4A116437);
 	playSound(0, 0x4A120435);
 	startAnimation(0x4C210500, 0, -1);
 }
 
-void Class525::sub4664B0() {
+void AsScene1401Pipe::sub4664B0() {
 	startAnimation(0x6C210810, 0, -1);
-		SetMessageHandler(&Class525::handleMessage4663C0);
-		SetUpdateHandler(&Class525::update466300);
+	SetMessageHandler(&AsScene1401Pipe::handleMessage4663C0);
+	SetUpdateHandler(&AsScene1401Pipe::update466300);
 }
 
-Class526::Class526(NeverhoodEngine *vm, Sprite *class525)
-	: AnimatedSprite(vm, 1100), _class525(class525) {
+AsScene1401Mouse::AsScene1401Mouse(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1100) {
 	
 	// TODO createSurface3(100, dword_4B6778);
 	createSurface(100, 640, 480); //TODO: Remeove once the line above is done
 	_x = 478;
 	_y = 433;
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class526::handleMessage);
+	SetMessageHandler(&AsScene1401Mouse::handleMessage);
 	startAnimation(0xA282C472, 0, -1);
 }
 
-uint32 Class526::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1401Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -246,13 +246,13 @@ uint32 Class526::handleMessage(int messageNum, const MessageParam &param, Entity
 		}
 		break;
 	case 0x4839:
-		sub466770();
+		stSuckedIn();
 		break;		
 	}
 	return messageResult;
 }
 
-void Class526::spriteUpdate466720() {
+void AsScene1401Mouse::suSuckedIn() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
 		playSound(0, 0x0E32247F);
@@ -263,34 +263,34 @@ void Class526::spriteUpdate466720() {
 	}
 }
 
-void Class526::sub466770() {
+void AsScene1401Mouse::stSuckedIn() {
 	startAnimation(0x34880040, 0, -1);
-	SetSpriteUpdate(&Class526::spriteUpdate466720);
+	SetSpriteUpdate(&AsScene1401Mouse::suSuckedIn);
 }
 
-Class527::Class527(NeverhoodEngine *vm, Sprite *class526)
-	: AnimatedSprite(vm, 1100), _class526(class526) {
+AsScene1401Cheese::AsScene1401Cheese(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1100) {
 
 	// TODO createSurface3(200, dword_4B6768);
 	createSurface(200, 640, 480); //TODO: Remeove once the line above is done
 	_x = 427;
 	_y = 433;
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class527::handleMessage);
+	SetMessageHandler(&AsScene1401Cheese::handleMessage);
 	startAnimation(0x461A1490, 0, -1);
 }
 
-uint32 Class527::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1401Cheese::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x4839:
-		sub466970();
+		stSuckedIn();
 		break;		
 	}
 	return messageResult;
 }
 
-void Class527::spriteUpdate466920() {
+void AsScene1401Cheese::suSuckedIn() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
 		playSound(0, 0x18020439);
@@ -301,82 +301,82 @@ void Class527::spriteUpdate466920() {
 	}
 }
 
-void Class527::sub466970() {
+void AsScene1401Cheese::stSuckedIn() {
 	startAnimation(0x103B8020, 0, -1);
-	SetSpriteUpdate(&Class527::spriteUpdate466920);
+	SetSpriteUpdate(&AsScene1401Cheese::suSuckedIn);
 }
 
-Class528::Class528(NeverhoodEngine *vm, Sprite *klayman, bool flag)
+AsScene1401BackDoor::AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen)
 	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown(0) {
 
 	_x = 320;
 	_y = 240;
 	createSurface1(0x04551900, 100);
-	SetUpdateHandler(&Class528::update);
-	SetMessageHandler(&Class528::handleMessage);
+	SetUpdateHandler(&AsScene1401BackDoor::update);
+	SetMessageHandler(&AsScene1401BackDoor::handleMessage);
 	_newStickFrameIndex = -2;
-	if (flag) {
-		_flag = true;
+	if (isOpen) {
+		_isOpen = true;
 		startAnimation(0x04551900, -1,- 1);
 		_countdown = 48;
 	} else {
-		_flag = false;
+		_isOpen = false;
 		stopAnimation();
 		setVisible(false);
 	}
 }
 
-void Class528::update() {
+void AsScene1401BackDoor::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		sub466C50();
+		stCloseDoor();
 	}
 	AnimatedSprite::update();
 }
 
 
-uint32 Class528::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1401BackDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2001:
-		if (_flag)
+		if (_isOpen)
 			_countdown = 168;
-		messageResult = _flag ? 1 : 0;			
+		messageResult = _isOpen ? 1 : 0;			
 		break;
 	case 0x3002:
 		gotoNextState();
 		break;
 	case 0x4808:
 		_countdown = 168;
-		if (_flag)
-			sub466BF0();
+		if (_isOpen)
+			stOpenDoor();
 		break;						
 	}
 	return messageResult;
 }
 
-void Class528::sub466BF0() {
-	_flag = true;
+void AsScene1401BackDoor::stOpenDoor() {
+	_isOpen = true;
 	setVisible(true);
 	startAnimation(0x04551900, 0, -1);
 	_newStickFrameIndex = -2;
 	playSound(0, calcHash("fxDoorOpen24"));
 }
 
-void Class528::sub466C50() {
-	_flag = false;
+void AsScene1401BackDoor::stCloseDoor() {
+	_isOpen = false;
 	setVisible(true);
 	startAnimation(0x04551900, -1, -1);
 	playSound(0, calcHash("fxDoorClose24"));
 	_playBackwards = true;
-	NextState(&Class528::sub466CB0);
+	NextState(&AsScene1401BackDoor::stCloseDoorDone);
 }
 
-void Class528::sub466CB0() {
+void AsScene1401BackDoor::stCloseDoorDone() {
 	stopAnimation();
 	setVisible(false);
 }
 
-static const Class489Item kClass489Items[] = {
+static const AsCommonProjectorItem kAsCommonProjectorItems[] = {
 	{{154, 453}, 4,  2,  0, -1, 0, 1},
 	{{104, 391}, 4, -1, -1, -1, 1, 1},
 	{{ 22, 447}, 6, -1, -1, -1, 1, 1},
@@ -384,30 +384,30 @@ static const Class489Item kClass489Items[] = {
 	{{262, 433}, 1,  1,  0, -1, 0, 0}
 };
 
-Class489::Class489(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Sprite *class525)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _class525(class525) {
+AsCommonProjector::AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Sprite *asPipe)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _asPipe(asPipe) {
 
-	_class489Item = &kClass489Items[getGlobalVar(0x04A105B3)];
+	_asProjectorItem = &kAsCommonProjectorItems[getGlobalVar(0x04A105B3)];
 	// TODO createSurface3(990, dword_4B26D8);
 	createSurface(990, 640, 480); //TODO: Remeove once the line above is done
 	startAnimation(0x10E3042B, 0, -1);
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class489::handleMessage);
-	_x = getGlobalVar(0x04A10F33) * 108 + _class489Item->point.x;
+	SetMessageHandler(&AsCommonProjector::handleMessage);
+	_x = getGlobalVar(0x04A10F33) * 108 + _asProjectorItem->point.x;
 	_flag = true;
 	sub434C80();
 	setDoDeltaX(1);
-	if ((int8)getGlobalVar(0x04A10F33) == _class489Item->varIndex2) {
+	if ((int8)getGlobalVar(0x04A10F33) == _asProjectorItem->varIndex2) {
 		sub434E90();
 	}
 	loadSound(2, 0xC8C2507C);
 }
 
-Class489::~Class489() {
+AsCommonProjector::~AsCommonProjector() {
 	_vm->_soundMan->deleteSoundGroup(0x05331081);
 }
 
-uint32 Class489::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsCommonProjector::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
@@ -415,8 +415,8 @@ uint32 Class489::handleMessage(int messageNum, const MessageParam &param, Entity
 		messageResult = 1;
 		break;
 	case 0x4807:
-		setGlobalVar(0x04A10F33, (_x - _class489Item->point.x) / 108);
-		if ((int8)getGlobalVar(0x04A10F33) == _class489Item->varIndex2) {
+		setGlobalVar(0x04A10F33, (_x - _asProjectorItem->point.x) / 108);
+		if ((int8)getGlobalVar(0x04A10F33) == _asProjectorItem->varIndex2) {
 			sub434E60();
 		} else {
 			sub434DD0();
@@ -424,7 +424,7 @@ uint32 Class489::handleMessage(int messageNum, const MessageParam &param, Entity
 		break;
 	case 0x480B:
 		if (param.asInteger() != 1) {
-			if ((int8)getGlobalVar(0x04A10F33) < _class489Item->varIndex1) {
+			if ((int8)getGlobalVar(0x04A10F33) < _asProjectorItem->varIndex1) {
 				incGlobalVar(0x04A10F33, 1);
 			}
 		} else if (getGlobalVar(0x04A10F33) > 0) {
@@ -434,7 +434,7 @@ uint32 Class489::handleMessage(int messageNum, const MessageParam &param, Entity
 		break;
 	case 0x480C:
 		if (param.asInteger() != 1) {
-			messageResult = (int8)getGlobalVar(0x04A10F33) < _class489Item->varIndex1 ? 1 : 0;
+			messageResult = (int8)getGlobalVar(0x04A10F33) < _asProjectorItem->varIndex1 ? 1 : 0;
 		} else {
 			messageResult = getGlobalVar(0x04A10F33) > 0 ? 1 : 0;
 		}
@@ -445,14 +445,14 @@ uint32 Class489::handleMessage(int messageNum, const MessageParam &param, Entity
 	case 0x482B:
 		sendMessage(_parentScene, 0x1022, 1010);
 		break;
-	case 0x4828:
+	case 0x4839:
 		sub435040();
 		break;
 	}
 	return messageResult;
 }
 
-uint32 Class489::handleMessage4348E0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsCommonProjector::handleMessage4348E0(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
@@ -470,7 +470,7 @@ uint32 Class489::handleMessage4348E0(int messageNum, const MessageParam &param, 
 		break;
 	case 0x480B:
 		if (param.asInteger() != 1) {
-			if ((int8)getGlobalVar(0x04A10F33) < _class489Item->varIndex1) {
+			if ((int8)getGlobalVar(0x04A10F33) < _asProjectorItem->varIndex1) {
 				incGlobalVar(0x04A10F33, 1);
 			}
 		} else if (getGlobalVar(0x04A10F33) > 0) {
@@ -480,7 +480,7 @@ uint32 Class489::handleMessage4348E0(int messageNum, const MessageParam &param, 
 		break;
 	case 0x480C:
 		if (param.asInteger() != 1) {
-			messageResult = (int8)getGlobalVar(0x04A10F33) < _class489Item->varIndex1 ? 1 : 0;
+			messageResult = (int8)getGlobalVar(0x04A10F33) < _asProjectorItem->varIndex1 ? 1 : 0;
 		} else {
 			messageResult = getGlobalVar(0x04A10F33) > 0 ? 1 : 0;
 		}
@@ -498,7 +498,7 @@ uint32 Class489::handleMessage4348E0(int messageNum, const MessageParam &param, 
 	return messageResult;
 }
 
-uint32 Class489::handleMessage434B20(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsCommonProjector::handleMessage434B20(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -508,18 +508,18 @@ uint32 Class489::handleMessage434B20(int messageNum, const MessageParam &param, 
 	return messageResult;
 }
 
-void Class489::spriteUpdate434B60() {
+void AsCommonProjector::spriteUpdate434B60() {
 	if (_x <= _klayman->getX())
 		_x = _klayman->getX() - 100;
 	else
 		_x = _klayman->getX() + 100;
 	sub434C80();
 	if (_remX == _x) {
-		if (getGlobalVar(0x04A10F33) == 0 && _class489Item->flag4 != 0) {
+		if (getGlobalVar(0x04A10F33) == 0 && _asProjectorItem->flag4 != 0) {
 			sendMessage(_parentScene, 0x1019, 0);
 			incGlobalVar(0x04A105B3, -1);
-			setGlobalVar(0x04A10F33, kClass489Items[getGlobalVar(0x04A105B3)].varIndex1);
-		} else if ((int8)getGlobalVar(0x04A10F33) == _class489Item->varIndex1 && _class489Item->flag != 0) {
+			setGlobalVar(0x04A10F33, kAsCommonProjectorItems[getGlobalVar(0x04A105B3)].varIndex1);
+		} else if ((int8)getGlobalVar(0x04A10F33) == _asProjectorItem->varIndex1 && _asProjectorItem->flag != 0) {
 			sendMessage(_parentScene, 0x1019, 1);
 			incGlobalVar(0x04A105B3, +1);
 			setGlobalVar(0x04A10F33, 0);
@@ -528,33 +528,33 @@ void Class489::spriteUpdate434B60() {
 	Sprite::processDelta();
 }
 
-void Class489::sub434C80() {
+void AsCommonProjector::sub434C80() {
 
 	bool soundFlag = false;
 
-	_y = _class489Item->point.y;
+	_y = _asProjectorItem->point.y;
 
-	if (_class489Item->index1 != -1) {
-		int16 elX = _class489Item->index1 * 108 + _class489Item->point.x;
+	if (_asProjectorItem->index1 != -1) {
+		int16 elX = _asProjectorItem->index1 * 108 + _asProjectorItem->point.x;
 		if (elX - 20 < _x && elX + 20 > _x) {
 			soundFlag = true;
-			_y = _class489Item->point.y + 10;
+			_y = _asProjectorItem->point.y + 10;
 		}
 	}
 
-	if (_class489Item->flag2 != -1) {
-		int16 elX = _class489Item->index1 * 108 + _class489Item->point.x;
+	if (_asProjectorItem->flag2 != -1) {
+		int16 elX = _asProjectorItem->index1 * 108 + _asProjectorItem->point.x;
 		if (elX - 20 < _x && elX + 20 > _x) {
 			soundFlag = true;
-			_y = _class489Item->point.y + 10;
+			_y = _asProjectorItem->point.y + 10;
 		}
 	}
 
-	if (_class489Item->varIndex2 != -1) {
-		int16 elX = _class489Item->varIndex2 * 108 + _class489Item->point.x;
+	if (_asProjectorItem->varIndex2 != -1) {
+		int16 elX = _asProjectorItem->varIndex2 * 108 + _asProjectorItem->point.x;
 		if (elX - 20 < _x && elX + 20 > _x) {
 			soundFlag = true;
-			_y = _class489Item->point.y + 10;
+			_y = _asProjectorItem->point.y + 10;
 		}
 	}
 
@@ -569,10 +569,10 @@ void Class489::sub434C80() {
 	
 }
 
-void Class489::sub434D80() {
+void AsCommonProjector::sub434D80() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
-		sendMessage(_class525, 0x483A, 0);
+		sendMessage(_asPipe, 0x483A, 0);
 		stopAnimation();
 		SetMessageHandler(&Sprite::handleMessage);
 		SetSpriteUpdate(NULL);
@@ -580,81 +580,81 @@ void Class489::sub434D80() {
 	}
 }
 
-void Class489::sub434DD0() {
+void AsCommonProjector::sub434DD0() {
 	SetSpriteUpdate(NULL);
-	SetMessageHandler(&Class489::handleMessage);
+	SetMessageHandler(&AsCommonProjector::handleMessage);
 	startAnimation(0x10E3042B, 0, -1);
 }
 
-void Class489::sub434DF0() {
-	_remX = getGlobalVar(0x04A10F33) * 108 + _class489Item->point.x;
+void AsCommonProjector::sub434DF0() {
+	_remX = getGlobalVar(0x04A10F33) * 108 + _asProjectorItem->point.x;
 	startAnimation(0x14A10137, 0, -1);
-	SetSpriteUpdate(&Class489::spriteUpdate434B60);
-	SetMessageHandler(&Class489::handleMessage);
+	SetSpriteUpdate(&AsCommonProjector::spriteUpdate434B60);
+	SetMessageHandler(&AsCommonProjector::handleMessage);
 	playSound(1, 0xEC008474);
 }
 
-void Class489::sub434E60() {
+void AsCommonProjector::sub434E60() {
 	SetSpriteUpdate(NULL);
-	SetMessageHandler(&Class489::handleMessage434B20);
+	SetMessageHandler(&AsCommonProjector::handleMessage434B20);
 	startAnimation(0x80C32213, 0, -1);
-	NextState(&Class489::sub434E90);
+	NextState(&AsCommonProjector::sub434E90);
 }
 
-void Class489::sub434E90() {
+void AsCommonProjector::sub434E90() {
 	SetSpriteUpdate(NULL);
-	SetMessageHandler(&Class489::handleMessage4348E0);
+	SetMessageHandler(&AsCommonProjector::handleMessage4348E0);
 	startAnimation(0xD23B207F, 0, -1);
 }
 
-void Class489::sub434EC0() {
+void AsCommonProjector::sub434EC0() {
 	startAnimation(0x50A80517, 0, -1);
-	SetMessageHandler(&Class489::handleMessage434B20);
+	SetMessageHandler(&AsCommonProjector::handleMessage434B20);
 	SetSpriteUpdate(NULL);
-	NextState(&Class489::sub434F40);
+	NextState(&AsCommonProjector::sub434F40);
 	setGlobalVar(0x12A10DB3, 1);
 	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->addSound(0x05331081, 0xCE428854);
 	_vm->_soundMan->playSoundLooping(0xCE428854);
 }
 
-void Class489::sub434F40() {
+void AsCommonProjector::sub434F40() {
 	sendMessage(_parentScene, 0x480F, 0);
 	startAnimation(0xD833207F, 0, -1);
 	SetSpriteUpdate(NULL);
-	SetMessageHandler(&Class489::handleMessage4348E0);
+	SetMessageHandler(&AsCommonProjector::handleMessage4348E0);
 }
 
-void Class489::sub434F80() {
+void AsCommonProjector::sub434F80() {
 	startAnimation(0x50A94417, 0, -1);
 	SetSpriteUpdate(NULL);
-	SetMessageHandler(&Class489::handleMessage434B20);
-	NextState(&Class489::sub434E90);
+	SetMessageHandler(&AsCommonProjector::handleMessage434B20);
+	NextState(&AsCommonProjector::sub434E90);
 	setGlobalVar(0x12A10DB3, 0);
 	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->deleteSound(0xCE428854);
 }
 
-void Class489::sub434FF0() {
-	_remX = getGlobalVar(0x04A10F33) * 108 + _class489Item->point.x;
+void AsCommonProjector::sub434FF0() {
+	_remX = getGlobalVar(0x04A10F33) * 108 + _asProjectorItem->point.x;
 	startAnimation(0x22CB4A33, 0, -1);
-	SetSpriteUpdate(&Class489::spriteUpdate434B60);
-	SetMessageHandler(&Class489::handleMessage434B20);
-	NextState(&Class489::sub434DF0);
+	SetSpriteUpdate(&AsCommonProjector::spriteUpdate434B60);
+	SetMessageHandler(&AsCommonProjector::handleMessage434B20);
+	NextState(&AsCommonProjector::sub434DF0);
 }
 
-void Class489::sub435040() {
+void AsCommonProjector::sub435040() {
 	setGlobalVar(0x04A105B3, 4);
 	setGlobalVar(0x04A10F33, 0);
-	SetSpriteUpdate(&Class489::sub434D80);
+	SetSpriteUpdate(&AsCommonProjector::sub434D80);
 	SetMessageHandler(&Sprite::handleMessage);
 	startAnimation(0x708D4712, 0, -1);
 	playSound(2);
 }
 
 Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _flag(false), _class427(NULL), _class489(NULL), 
-	_class525(NULL), _class526(NULL), _class527(NULL), _class528(NULL), 
+	: Scene(vm, parentModule, true), _flag(false), _class427(NULL), _asProjector(NULL), 
+	_asPipe(NULL), _asMouse(NULL), _asCheese(NULL), _asBackDoor(NULL), 
 	_sprite1(NULL), _sprite2(NULL), _sprite3(NULL), _ssButton(NULL) {
 
 	SetMessageHandler(&Scene1401::handleMessage);
@@ -667,11 +667,11 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x21FA108A);
 	
 	_class427 = insertSprite<Class427>(this, 0x980F3124, 0x12192892, 100, 0);
-	_class525 = insertSprite<Class525>();
+	_asPipe = insertSprite<AsScene1401Pipe>();
 
 	if (!getGlobalVar(0x01023818)) {
-		_class526 = insertSprite<Class526>(_class525);
-		_class527 = insertSprite<Class527>(_class525);
+		_asMouse = insertSprite<AsScene1401Mouse>();
+		_asCheese = insertSprite<AsScene1401Cheese>();
 	}
 
 	_sprite3 = insertStaticSprite(0xA82BA811, 1100);
@@ -700,35 +700,35 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x04A105B3) == 2) {
-		_class489 = insertSprite<Class489>(this, _klayman, _class525);
-		_vm->_collisionMan->addSprite(_class489);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, _asPipe);
+		_vm->_collisionMan->addSprite(_asProjector);
 		if (getGlobalVar(0x04A10F33) == 6) {
-			sendEntityMessage(_klayman, 0x1014, _class489);
-			_klayman->setX(_class489->getX() + 100);
+			sendEntityMessage(_klayman, 0x1014, _asProjector);
+			_klayman->setX(_asProjector->getX() + 100);
 			_klayman->processDelta();
 			setMessageList(0x004B6670);
 		} else if (getGlobalVar(0x04A10F33) == 0) {
-			sendEntityMessage(_klayman, 0x1014, _class489);
-			_klayman->setX(_class489->getX() - 100);
+			sendEntityMessage(_klayman, 0x1014, _asProjector);
+			_klayman->setX(_asProjector->getX() - 100);
 			_klayman->processDelta();
 			setMessageList(0x004B6670);
 		}
-		_class489->setClipRect(_sprite3->getDrawRect().x, _sprite2->getDrawRect().y, 640, 480);
+		_asProjector->setClipRect(_sprite3->getDrawRect().x, _sprite2->getDrawRect().y, 640, 480);
 	}
 	
 	_klayman->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
 
-	if (which == 0 && _class489) {
-		sendMessage(_class489, 0x482B, 0);
+	if (which == 0 && _asProjector) {
+		sendMessage(_asProjector, 0x482B, 0);
 	}
 
-	_class528 = insertSprite<Class528>(_klayman, which == 1);
+	_asBackDoor = insertSprite<AsScene1401BackDoor>(_klayman, which == 1);
 
 }
 
 void Scene1401::update() {
 	Scene::update();
-	if (_class489 && !_flag && _class489->getY() < 360) {
+	if (_asProjector && !_flag && _asProjector->getY() < 360) {
 		_sprite2->setVisible(true);
 		_flag = true;
 	} else {
@@ -745,7 +745,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x402064D8) {
 			sendEntityMessage(_klayman, 0x1014, _ssButton);
 		} else if (param.asInteger() == 0x01C66840) {
-			if (sendMessage(_class528, 0x2001, 0) != 0) {
+			if (sendMessage(_asBackDoor, 0x2001, 0) != 0) {
 				setMessageList(0x004B6690);
 			} else {
 				setMessageList(0x004B66B0);
@@ -761,23 +761,23 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _class427) {
-			sendMessage(_class525, 0x2000, 0);
+			sendMessage(_asPipe, 0x2000, 0);
 			if (!getGlobalVar(0x01023818)) {
-				sendMessage(_class526, 0x4839, 0);
-				sendMessage(_class527, 0x4839, 0);
+				sendMessage(_asMouse, 0x4839, 0);
+				sendMessage(_asCheese, 0x4839, 0);
 				setGlobalVar(0x01023818, 1);
 			}
-			if (_class489 && _class489->getX() > 404 && _class489->getX() < 504) {
-				sendMessage(_class489 , 0x4839, 0);
+			if (_asProjector && _asProjector->getX() > 404 && _asProjector->getX() < 504) {
+				sendMessage(_asProjector , 0x4839, 0);
 			}
 		} else if (sender == _ssButton) {
 			sendMessage(_ssButton, 0x4808, 0);
 		}
 		break;
 	case 0x4826:
-		if (sender == _class489) {
-			if (sendMessage(_class489, 0x480C, _klayman->getX() > _class489->getX() ? 1 : 0) != 0) {
-				sendEntityMessage(_klayman, 0x1014, _class489);
+		if (sender == _asProjector) {
+			if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B6658);
 			} else {
 				setMessageList2(0x004B65F0);
@@ -786,14 +786,14 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x482A:
 		_sprite1->setVisible(true);
-		if (_class489) {
-			sendMessage(_class489, 0x482B, 0);
+		if (_asProjector) {
+			sendMessage(_asProjector, 0x482B, 0);
 		}
 		break;
 	case 0x482B:
 		_sprite1->setVisible(false);
-		if (_class489) {
-			sendMessage(_class489, 0x482A, 0);
+		if (_asProjector) {
+			sendMessage(_asProjector, 0x482A, 0);
 		}
 		break;
 	}
@@ -869,7 +869,7 @@ void Class482::sub428560() {
 }
 
 Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _flag(false), _class482(NULL), _class489(NULL) {
+	: Scene(vm, parentModule, true), _flag(false), _class482(NULL), _asProjector(NULL) {
 
 	SetMessageHandler(&Scene1402::handleMessage);
 
@@ -924,20 +924,20 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x4A105B3) == 1) {
-		_class489 = insertSprite<Class489>(this, _klayman, (Sprite*)NULL);
-		_vm->_collisionMan->addSprite(_class489);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
+		_vm->_collisionMan->addSprite(_asProjector);
 		if (getGlobalVar(0x4A10F33) == 4) {
-			sendEntityMessage(_klayman, 0x1014, _class489);
-			_klayman->setX(_class489->getX() + 100);
+			sendEntityMessage(_klayman, 0x1014, _asProjector);
+			_klayman->setX(_asProjector->getX() + 100);
 			_klayman->processDelta();
 			setMessageList(0x004B0BD0);
 		} else if (getGlobalVar(0x4A10F33) == 0) {
-			sendEntityMessage(_klayman, 0x1014, _class489);
-			_klayman->setX(_class489->getX() - 100);
+			sendEntityMessage(_klayman, 0x1014, _asProjector);
+			_klayman->setX(_asProjector->getX() - 100);
 			_klayman->processDelta();
 			setMessageList(0x004B0BD0);
 		}
-		_class489->setClipRect(_class454_1->getDrawRect().x, 0, _class454_2->getDrawRect().x, _class454_3->getDrawRect().y2());
+		_asProjector->setClipRect(_class454_1->getDrawRect().x, 0, _class454_2->getDrawRect().x, _class454_3->getDrawRect().y2());
 	}
 
 	_klayman->setClipRect(_class454_1->getDrawRect().x, 0, _class454_2->getDrawRect().x2(), _class454_3->getDrawRect().y2());
@@ -996,9 +996,9 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		sub428230();
 		break;
 	case 0x4826:
-		if (sender == _class489) {
-			if (sendMessage(_class489, 0x408C, _klayman->getX() > _class489->getX() ? 1 : 0) != 0) {
-				sendEntityMessage(_klayman, 0x1014, _class489);
+		if (sender == _asProjector) {
+			if (sendMessage(_asProjector, 0x408C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B0BB8);
 			} else {
 				setMessageList2(0x004B0B68);
@@ -1319,7 +1319,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 // Scene1403
 
 Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _class489(NULL), _flag(false) {
+	: Scene(vm, parentModule, true), _asProjector(NULL), _flag(false) {
 	
 	SetMessageHandler(&Scene1403::handleMessage);
 	
@@ -1355,16 +1355,16 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->setRepl(64, 0);
 
 	if (getGlobalVar(0x04A105B3) == 4) {
-		_class489 = insertSprite<Class489>(this, _klayman, (Sprite*)NULL);
-		_vm->_collisionMan->addSprite(_class489);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
+		_vm->_collisionMan->addSprite(_asProjector);
 		if (getGlobalVar(0x04A10F33) == 4) {
-			sendEntityMessage(_klayman, 0x1014, _class489);
-			_klayman->setX(_class489->getX() + 100);
+			sendEntityMessage(_klayman, 0x1014, _asProjector);
+			_klayman->setX(_asProjector->getX() + 100);
 			_klayman->processDelta();
 			setMessageList(0x004B1F70);
 		}
-		_class489->setClipRect(0, 0, 640, _class401_2->getDrawRect().y2());
-		_class489->setRepl(64, 0);
+		_asProjector->setClipRect(0, 0, 640, _class401_2->getDrawRect().y2());
+		_asProjector->setRepl(64, 0);
 	}
 
 }
@@ -1377,7 +1377,7 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			setRectList(0x004B2008);
 			_flag = true;
 		} else if (param.asInteger() == 0x08821382) {
-			sendEntityMessage(_klayman, 0x1014, _class489);
+			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			setRectList(0x004B1FF8);
 			_flag = false;
 		}
@@ -1386,7 +1386,7 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 		leaveScene(0);
 		break;
 	case 0x1022:
-		if (sender == _class489) {
+		if (sender == _asProjector) {
 			if (param.asInteger() >= 1000) {
 				setSurfacePriority(_class401_3->getSurface(), 1100);
 			} else {
@@ -1401,14 +1401,14 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 		_class401_1->setVisible(true);
 		break;
 	case 0x4826:
-		if (sender == _class489) {
+		if (sender == _asProjector) {
 			if (_flag) {
 				setMessageList2(0x004B1FA8);
 			} else if (param.asInteger() == 1) {
-				sendEntityMessage(_klayman, 0x1014, _class489);
+				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B1F88);
-			} else if (sendMessage(_class489, 0x480C, _klayman->getX() > _class489->getX() ? 1 : 0) != 0) {
-				sendEntityMessage(_klayman, 0x1014, _class489);
+			} else if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B1F58);
 			} else {
 				setMessageList2(0x004B1F28);
@@ -1429,7 +1429,7 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 // Scene1404
 
 Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _class489(NULL), _class545(NULL) {
+	: Scene(vm, parentModule, true), _asProjector(NULL), _class545(NULL) {
 	
 	if (getGlobalVar(0xC0780812) && !getGlobalVar(0x13382860)) {
 		setGlobalVar(0x13382860, 5);
@@ -1475,15 +1475,15 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x04A105B3) == 3) {
-		_class489 = insertSprite<Class489>(this, _klayman, (Sprite*)NULL);
-		_vm->_collisionMan->addSprite(_class489);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
+		_vm->_collisionMan->addSprite(_asProjector);
 		if (getGlobalVar(0x04A10F33) == 0) {
-			sendEntityMessage(_klayman, 0x1014, _class489);
-			_klayman->setX(_class489->getX() - 100);
+			sendEntityMessage(_klayman, 0x1014, _asProjector);
+			_klayman->setX(_asProjector->getX() - 100);
 			_klayman->processDelta();
 			setMessageList(0x004B8CB8);
 		}
-		_class489->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
+		_asProjector->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 	}
 
 	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
@@ -1499,7 +1499,7 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x410650C2) {
-			if (_class489 && _class489->getX() == 220) {
+			if (_asProjector && _asProjector->getX() == 220) {
 				setMessageList(0x004B8C40);
 			} else {
 				setMessageList(0x004B8CE8);
@@ -1510,9 +1510,9 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 		leaveScene(0);
 		break;
 	case 0x4826:
-		if (sender == _class489) {
-			if (sendMessage(_class489, 0x480C, _klayman->getX() > _class489->getX() ? 1 : 0) != 0) {
-				sendEntityMessage(_klayman, 0x1014, _class489);
+		if (sender == _asProjector) {
+			if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B8CA0);
 			} else {
 				setMessageList2(0x004B8C40);
