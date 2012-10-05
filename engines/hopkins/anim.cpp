@@ -996,7 +996,7 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
 void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uint32 a4, uint32 a5) {
 	int v5; 
 	int v7; 
-	byte *ptr; 
+	byte *ptr = NULL; 
 	byte *v9; 
 	byte *v10; 
 	int v12; 
@@ -1008,7 +1008,6 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 	char v18; 
 	size_t nbytes; 
 	int buf; 
-	char v22; 
 	Common::File f;
 
 	v7 = 0;
@@ -1159,8 +1158,211 @@ LABEL_59:
 	_vm->_globals.dos_free2(v10);
 }
 
-void AnimationManager::PLAY_SEQ2(const Common::String &a1, int a2, int a3, int a4) {
-	warning("PLAY_SEQ2");
+void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3, uint32 a4) {
+	int v4; 
+	int v5; 
+	int v7; 
+	byte *ptr; 
+	byte *ptra; 
+	byte *v10; 
+	byte *v11; 
+	int v13; 
+	int v14; 
+	int v15; 
+	int v16; 
+	int v17; 
+	int v18; 
+	char v19; 
+	size_t nbytes; 
+	byte buf[4]; 
+	Common::File f;
+
+	v7 = 0;
+	for (;;) {
+		v15 = 0;
+		v14 = 0;
+		v17 = 0;
+		v16 = 0;
+		v18 = 1;
+		_vm->_eventsManager.souris_flag = 0;
+		v10 = _vm->_graphicsManager.VESA_SCREEN;
+		v11 = _vm->_globals.dos_malloc2(0x16u);
+		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, a1);
+
+		if (!f.open(_vm->_globals.NFICHIER))
+			error("File not found ", _vm->_globals.NFICHIER.c_str());
+
+		f.read(&buf, 6u);
+		f.read(_vm->_graphicsManager.Palette, 0x320u);
+		f.read(&buf, 4u);
+		nbytes = f.readUint32LE();
+		v19 = f.readUint32LE();
+		v18 = f.readUint16LE();
+		v17 = f.readUint16LE();
+		v16 = f.readUint16LE();
+		v15 = f.readUint16LE();
+		v14 = f.readUint16LE();
+		f.read(v10, nbytes);
+
+		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
+			v7 = 1;
+			ptr = _vm->_globals.dos_malloc2(0x4B000u);
+			memcpy((void *)ptr, v10, 0x4B000u);
+		}
+		if (_vm->_animationManager.NO_SEQ) {
+			if (v7 == 1)
+				memcpy((void *)ptr, _vm->_graphicsManager.VESA_BUFFER, 0x4B000u);
+			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+		} else {
+			_vm->_graphicsManager.DD_Lock();
+			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+			if (_vm->_graphicsManager.Winbpp == 2) {
+				if (v7)
+					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				else
+					_vm->_graphicsManager.m_scroll16(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			}
+			if (_vm->_graphicsManager.Winbpp == 1) {
+				if (v7)
+					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				else
+					_vm->_graphicsManager.m_scroll2(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			}
+			_vm->_graphicsManager.DD_Unlock();
+			_vm->_graphicsManager.DD_VBL();
+		}
+		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager.ESC_KEY = 0;
+		_vm->_soundManager.LOAD_ANM_SOUND();
+		if (_vm->_globals.iRegul != 1)
+			break;
+		while (1) {
+			if (_vm->_eventsManager.ESC_KEY == 1)
+				goto LABEL_54;
+			if (REDRAW_ANIM() == 1)
+				break;
+			_vm->_eventsManager.CONTROLE_MES();
+			_vm->_soundManager.VERIF_SOUND();
+			if (_vm->_eventsManager.lItCounter >= a2)
+				goto LABEL_23;
+		}
+LABEL_48:
+		if (_vm->_graphicsManager.NOLOCK == 1)
+			goto LABEL_54;
+		if (v7 == 1)
+			ptr = _vm->_globals.dos_free2(ptr);
+		_vm->_globals.dos_free2(v11);
+		f.close();
+	}
+LABEL_23:
+	_vm->_eventsManager.lItCounter = 0;
+	v4 = 0;
+	v13 = 0;
+	for (;;) {
+		_vm->_soundManager.PLAY_ANM_SOUND(v13++);
+		memset(&buf, 0, 6u);
+		memset(v11, 0, 0x13u);
+		if (f.read(v11, 0x10u) == -1)
+			v4 = -1;
+
+		if (strncmp((const char *)v11, "IMAGE=", 7u))
+			v4 = -1;
+		if (v4)
+			goto LABEL_44;
+		f.read(v10, READ_LE_UINT32(v11 + 8));
+		if (_vm->_globals.iRegul == 1)
+			break;
+LABEL_33:
+		_vm->_eventsManager.lItCounter = 0;
+		_vm->_graphicsManager.DD_Lock();
+		if (v7) {
+			if (*v10 != -4) {
+				_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptr);
+				if (_vm->_graphicsManager.Winbpp == 2)
+					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				else
+					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			}
+		} else if (*v10 != -4) {
+			if (_vm->_graphicsManager.Winbpp == 1)
+				_vm->_graphicsManager.Copy_Video_Vbe(v10);
+			if (_vm->_graphicsManager.Winbpp == 2)
+				_vm->_graphicsManager.Copy_Video_Vbe16a(v10);
+		}
+		_vm->_graphicsManager.DD_Unlock();
+		_vm->_graphicsManager.DD_VBL();
+		_vm->_soundManager.VERIF_SOUND();
+LABEL_44:
+		if (v4 == -1) {
+			if (_vm->_globals.iRegul == 1) {
+				while (_vm->_eventsManager.ESC_KEY != 1) {
+					if (REDRAW_ANIM() == 1)
+						goto LABEL_48;
+					_vm->_eventsManager.CONTROLE_MES();
+					_vm->_soundManager.VERIF_SOUND();
+					if (_vm->_eventsManager.lItCounter >= a4)
+						goto LABEL_53;
+				}
+			} else {
+LABEL_53:
+				_vm->_eventsManager.lItCounter = 0;
+			}
+			goto LABEL_54;
+		}
+	}
+	while (_vm->_eventsManager.ESC_KEY != 1) {
+		_vm->_eventsManager.CONTROLE_MES();
+		if (REDRAW_ANIM() == 1)
+			goto LABEL_48;
+		if (_vm->_eventsManager.lItCounter >= a3)
+			goto LABEL_33;
+	}
+LABEL_54:
+	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v7) {
+		ptra = _vm->_globals.dos_malloc2(0x4B000u);
+		
+		f.seek(0);
+		f.read(&buf, 6u);
+		f.read(_vm->_graphicsManager.Palette, 0x320u);
+		f.read(&buf, 4u);
+		nbytes = f.readUint32LE();
+		v19 = f.readUint32LE();
+		v18 = f.readUint16LE();
+		v17 = f.readUint16LE();
+		v16 = f.readUint16LE();
+		v15 = f.readUint16LE();
+		v14 = f.readUint16LE();
+		f.read(v10, nbytes);
+
+		memcpy(ptra, v10, 0x4B000u);
+		v5 = 0;
+		do {
+			memset(&buf, 0, 6u);
+			memset(v11, 0, 0x13u);
+			if (f.read(v11, 0x10u) == -1)
+				v5 = -1;
+
+			if (strncmp((const char *)v11, "IMAGE=", 7u))
+				v5 = -1;
+			if (!v5) {
+				f.read(v10, READ_LE_UINT32(v11 + 8));
+				if (*v10 != -4)
+					_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptra);
+			}
+		} while (v5 != -1);
+		_vm->_graphicsManager.FADE_OUTW_LINUX(ptra);
+		ptr = _vm->_globals.dos_free2(ptra);
+	}
+	if (v7 == 1) {
+		if (_vm->_graphicsManager.FADE_LINUX == 2)
+			_vm->_graphicsManager.FADE_OUTW_LINUX(ptr);
+		_vm->_globals.dos_free2(ptr);
+	}
+	_vm->_graphicsManager.FADE_LINUX = 0;
+
+	f.close();
+	_vm->_globals.dos_free2(v11);
+	_vm->_eventsManager.souris_flag = 1;
 }
 
 
