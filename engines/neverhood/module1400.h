@@ -48,13 +48,13 @@ public:
 protected:
 	int _countdown1;
 	int _countdown2;
-	void update4662A0();
-	void update466300();
-	uint32 handleMessage466320(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage4663C0(int messageNum, const MessageParam &param, Entity *sender);
-	void sub466420();
-	void sub466460();
-	void sub4664B0();
+	void update();
+	void upSuckInProjector();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmSuckInProjector(int messageNum, const MessageParam &param, Entity *sender);
+	void stStartSucking();
+	void stDoneSucking();
+	void stSuckInProjector();
 };
 
 class AsScene1401Mouse : public AnimatedSprite {
@@ -91,12 +91,11 @@ protected:
 
 struct AsCommonProjectorItem {
 	NPoint point;
-	int8 varIndex1;
-	int8 varIndex2;
+	int8 maxSlotCount;
+	int8 lockSlotIndex;
 	int8 index1;
-	int8 flag2;
-	int8 flag4;
-	int8 flag;
+	int8 leftBorderLeaves;
+	int8 rightBorderLeaves;
 };
 
 class AsCommonProjector : public AnimatedSprite {
@@ -108,30 +107,30 @@ protected:
 	Sprite *_klayman;
 	Sprite *_asPipe;
 	const AsCommonProjectorItem *_asProjectorItem;
-	int16 _remX;
-	bool _flag;
+	int16 _beforeMoveX;
+	bool _lockedInSlot;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage4348E0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage434B20(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate434B60();
-	void sub434C80();
-	void sub434D80();
-	void sub434DD0();
-	void sub434DF0();
-	void sub434E60();
-	void sub434E90();
-	void sub434EC0();
-	void sub434F40();
-	void sub434F80();
-	void sub434FF0();
-	void sub435040();
+	uint32 hmLockedInSlot(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmAnimation(int messageNum, const MessageParam &param, Entity *sender);
+	void suMoving();
+	void moveProjector();
+	void stSuckedIn();
+	void stIdle();
+	void stMoving();
+	void stStartLockedInSlot();
+	void stStayLockedInSlot();
+	void stStartProjecting();
+	void stLockedInSlot();
+	void stStopProjecting();
+	void stTurnToFront();
+	void stStartSuckedIn();
 };
 
 class Scene1401 : public Scene {
 public:
 	Scene1401(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	bool _flag;
+	bool _projectorBorderFlag;
 	Sprite *_class427;
 	AsCommonProjector *_asProjector;
 	Sprite *_asPipe;
@@ -148,36 +147,36 @@ protected:
 
 // Scene1402
 
-class Class454 : public StaticSprite {
+class SsScene1402BridgePart : public StaticSprite {
 public:
-	Class454(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority);
+	SsScene1402BridgePart(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority);
 };
 
-class Class482 : public AnimatedSprite {
+class AsScene1402PuzzleBox : public AnimatedSprite {
 public:
-	Class482(NeverhoodEngine *vm, Scene *parentScene, int which);
+	AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int which);
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub428500();
-	void sub428530();
-	void sub428560();
+	void stMoveUpDone();
+	void stMoveDownDone();
+	void stMoveDownSolvedDone();
 };
 
 class Scene1402 : public Scene {
 public:
 	Scene1402(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_class454_1;
-	Sprite *_class454_2;
-	Sprite *_class454_3;
-	Sprite *_class482;
+	Sprite *_ssBridgePart1;
+	Sprite *_ssBridgePart2;
+	Sprite *_ssBridgePart3;
+	Sprite *_asPuzzleBox;
 	AsCommonProjector *_asProjector;
-	bool _flag;
-	void update();
+	bool _isShaking;
+	void upShaking();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub428220();
-	void sub428230();
+	void startShaking();
+	void stopShaking();
 };
 
 // Scene1407
@@ -249,13 +248,13 @@ class Scene1405;
 
 class AsScene1405Tile : public AnimatedSprite {
 public:
-	AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, uint32 index);
+	AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, uint32 tileIndex);
 	void show();
 	void hide();
 protected:
 	Scene1405 *_parentScene;
-	bool _flag;
-	uint32 _index;
+	bool _isShowing;
+	uint32 _tileIndex;
 	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
