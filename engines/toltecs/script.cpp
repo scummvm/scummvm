@@ -1081,7 +1081,9 @@ void ScriptInterpreter::sfSaveStackPtr() {
 }
 
 void ScriptInterpreter::sfPlayMovie() {
+	CursorMan.showMouse(false);
 	_vm->_moviePlayer->playMovie(arg16(3));
+	CursorMan.showMouse(true);
 }
 
 } // End of namespace Toltecs
