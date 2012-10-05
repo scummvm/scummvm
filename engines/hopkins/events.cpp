@@ -36,7 +36,7 @@ EventsManager::EventsManager() {
 	mouse_linux = false;
 	souris_sizex = souris_sizey = 0;
 	ofset_souris_x = ofset_souris_y = 0;
-	_vm->_eventsManager.start_x = start_y = 0;
+	start_x = start_y = 0;
 	CASSE = false;
 	souris_n = 0;
 	souris_bb = 0;
@@ -183,9 +183,9 @@ void EventsManager::CONTROLE_MES() {
 
 void EventsManager::checkForNextFrameCounter() {
 	uint32 milli = g_system->getMillis();
-	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
+	if ((milli - _priorFrameTime) >= 10) {
 		_priorFrameTime = milli;
-		++lItCounter;
+		lItCounter += 3;
 
 		g_system->updateScreen();
 	}

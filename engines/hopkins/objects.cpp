@@ -42,7 +42,6 @@ ObjectsManager::ObjectsManager() {
 	SL_X = SL_Y = 0;
 	I_old_x = I_old_y = 0;
 	FLAG_VISIBLE_EFFACE = 0;
-	_vm->_globals.Winventaire = PTRNUL;
 	inventaire2 = PTRNUL;
 	SL_SPR = PTRNUL;
 	SL_SPR2 = PTRNUL;

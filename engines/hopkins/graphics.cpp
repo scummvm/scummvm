@@ -43,7 +43,6 @@ GraphicsManager::GraphicsManager() {
 	nbrligne = 0;
 	Linear = false;
 	VideoPtr = NULL;
-	_vm->_eventsManager.start_x = 0;
 	ofscroll = 0;
 	SCROLL = 0;
 	PCX_L = PCX_H = 0;
