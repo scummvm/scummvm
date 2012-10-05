@@ -125,11 +125,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		case kChunkFirstImage:
 		case kChunkSubsequentImages:
 			unpackRle(chunkBuffer, _vm->_screen->_backScreen);
-			// TODO: Rework this
-			_vm->_screen->updateShakeScreen();
 			_vm->_screen->_fullRefresh = true;
-			_vm->updateInput();
-			_vm->drawScreen();
 
 			_soundChunkFramesLeft--;
 			if (_soundChunkFramesLeft <= _framesPerSoundChunk) {
@@ -137,7 +133,12 @@ void MoviePlayer::playMovie(uint resIndex) {
 			}
 
 			while (_vm->_mixer->getSoundElapsedTime(_audioStreamHandle) < (1000 * frame) / 9) {
-				g_system->delayMillis(10);
+				if (_vm->_screen->_shakeActive && _vm->_screen->updateShakeScreen()) {
+					_vm->_screen->_fullRefresh = true;
+				}
+				_vm->updateInput();
+				_vm->drawScreen();
+				// Note: drawScreen() calls delayMillis()
 			}
 
 			frame++;

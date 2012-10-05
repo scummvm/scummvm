@@ -161,7 +161,7 @@ public:
 
 	void startShakeScreen(int16 shakeCounter);
 	void stopShakeScreen();
-	void updateShakeScreen();
+	bool updateShakeScreen();
 
 	// Sprite list
 	void addStaticSprite(byte *spriteItem);
@@ -221,6 +221,7 @@ public:
 
 	// Screen shaking
 	bool _shakeActive;
+	uint32 _shakeTime;
 	int16 _shakeCounterInit, _shakeCounter;
 	int _shakePos;
 

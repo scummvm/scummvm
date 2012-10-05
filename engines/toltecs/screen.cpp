@@ -43,9 +43,11 @@ Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
 
 	// Screen shaking
 	_shakeActive = false;
+	_shakeTime = 0;
 	_shakeCounterInit = 0;
 	_shakeCounter = 0;
 	_shakePos = 0;
+	_shakeTime = 0;
 
 	// Verb line
 	_verbLineNum = 0;
@@ -156,6 +158,7 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 
 void Screen::startShakeScreen(int16 shakeCounter) {
 	_shakeActive = true;
+	_shakeTime = 0;
 	_shakeCounterInit = shakeCounter;
 	_shakeCounter = shakeCounter;
 	_shakePos = 0;
@@ -166,15 +169,19 @@ void Screen::stopShakeScreen() {
 	_vm->_system->setShakePos(0);
 }
 
-void Screen::updateShakeScreen() {
-	if (_shakeActive) {
+bool Screen::updateShakeScreen() {
+	// Assume shaking happens no more often than 50 times per second
+	if (_shakeActive && _vm->_system->getMillis() - _shakeTime >= 20) {
+		_shakeTime = _vm->_system->getMillis();
 		_shakeCounter--;
 		if (_shakeCounter == 0) {
 			_shakeCounter = _shakeCounterInit;
 			_shakePos ^= 8;
 			_vm->_system->setShakePos(_shakePos);
+			return true;
 		}
 	}
+	return false;
 }
 
 void Screen::addStaticSprite(byte *spriteItem) {
