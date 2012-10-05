@@ -311,6 +311,7 @@ void ToltecsEngine::drawScreen() {
 	}
 
 	_system->updateScreen();
+	_system->delayMillis(10);
 
 	updateCamera();
 }
