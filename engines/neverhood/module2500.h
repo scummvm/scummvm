@@ -61,7 +61,7 @@ public:
 	Scene2501(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene2501();
 protected:
-	Class521 *_class521;
+	AsCommonCar *_asCar;
 	Sprite *_class437;
 	Sprite *_class517;
 	Sprite *_class519;

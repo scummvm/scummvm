@@ -1608,6 +1608,7 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x0C0C007D);
 	insertMouse435(0xC00790C8, 20, 620);
 	
+	// DEBUG>>>
 	// TODO: Some debug code: Leave two matching tiles open
 	for (int i = 0; i < 48; i++)
 		setSubVar(0xCCE0280F, i, 1);
@@ -1619,6 +1620,7 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 			break;
 		}
 	}
+	// <<<DEBUG
 	
 	for (uint32 tileIndex = 0; tileIndex < 48; tileIndex++) {
 		_tiles[tileIndex] = insertSprite<AsScene1405Tile>(this, tileIndex);

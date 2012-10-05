@@ -523,8 +523,8 @@ Class437::Class437(NeverhoodEngine *vm, uint32 fileHash)
 	StaticSprite::update();
 }
 
-Class517::Class517(NeverhoodEngine *vm, AnimatedSprite *class521, BaseSurface *shadowSurface, uint index)
-	: AnimatedSprite(vm, 1100), _class521(class521), _index(index), _animFileHash(0) {
+Class517::Class517(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index)
+	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index), _animFileHash(0) {
 
 	SetUpdateHandler(&Class517::update);
 	createShadowSurface(shadowSurface, 320, 240, 100); // TODO Use actual dimensions from resource
@@ -537,28 +537,28 @@ void Class517::update() {
 }
 
 void Class517::updateShadow() {
-	if (_class521->getFrameIndex() != _currFrameIndex || _class521->getCurrAnimFileHash() != _animFileHash) {
-		uint32 fileHash = _class521->getCurrAnimFileHash();
+	if (_asCar->getFrameIndex() != _currFrameIndex || _asCar->getCurrAnimFileHash() != _animFileHash) {
+		uint32 fileHash = _asCar->getCurrAnimFileHash();
 		if (fileHash == 0x35698F78 || fileHash == 0x192ADD30 || fileHash == 0x9C220DA4 ||
 			fileHash == 0x9966B138 || fileHash == 0xB579A77C || fileHash == 0xA86A9538 ||
 			fileHash == 0xD4220027 || fileHash == 0xD00A1364 || fileHash == 0xD4AA03A4 ||
 			fileHash == 0xF46A0324) {
-			startAnimation(fileHash, _class521->getFrameIndex(), -1);
-			_newStickFrameIndex = _class521->getFrameIndex();
+			startAnimation(fileHash, _asCar->getFrameIndex(), -1);
+			_newStickFrameIndex = _asCar->getFrameIndex();
 		}
 		_animFileHash = fileHash;
 	}
-	_x = _class521->getX() + kClass517Points[_index].x;
-	_y = _class521->getY() + kClass517Points[_index].y;
-	if (!_class521->getVisible()) {
+	_x = _asCar->getX() + kClass517Points[_index].x;
+	_y = _asCar->getY() + kClass517Points[_index].y;
+	if (!_asCar->getVisible()) {
 		startAnimation(0x1209E09F, 0, -1);
 		_newStickFrameIndex = 0;
 	}
-	setDoDeltaX(_class521->isDoDeltaX() ? 1 : 0);
+	setDoDeltaX(_asCar->isDoDeltaX() ? 1 : 0);
 }
 
-Class519::Class519(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSurface, uint index)
-	: AnimatedSprite(vm, 1100), _class521(class521), _index(index) {
+Class519::Class519(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index)
+	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index) {
 
 	SetUpdateHandler(&Class519::update);
 	createShadowSurface1(shadowSurface, 0x60281C10, 150);
@@ -567,13 +567,13 @@ Class519::Class519(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSur
 } 
 
 void Class519::update() {
-	_x = _class521->getX() + kClass517Points[_index].x;
-	_y = _class521->getY() + kClass517Points[_index].y;
+	_x = _asCar->getX() + kClass517Points[_index].x;
+	_y = _asCar->getY() + kClass517Points[_index].y;
 	AnimatedSprite::update();
 }
 
-Class520::Class520(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSurface, int16 frameIndex)
-	: AnimatedSprite(vm, 1100), _class521(class521) {
+Class520::Class520(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex)
+	: AnimatedSprite(vm, 1100), _asCar(asCar) {
 
 	SetUpdateHandler(&Class520::update);
 	createShadowSurface1(shadowSurface, 0x0759129C, 100);
@@ -582,8 +582,8 @@ Class520::Class520(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSur
 } 
 
 void Class520::update() {
-	_x = _class521->getX();
-	_y = _class521->getY();
+	_x = _asCar->getX();
+	_y = _asCar->getY();
 	AnimatedSprite::update();
 }
 
@@ -613,43 +613,43 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class437 = createSprite<Class437>(sceneInfo->class437Filename);
 		addEntity(_class437);
 
-		_class521 = insertSprite<Class521>(this, 320, 240);
-		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
+		_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
+		_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
+		_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
 	} else {
 		_class437 = NULL;
-		_class521 = insertSprite<Class521>(this, 320, 240);
+		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 	}
 
-	_class518 = insertSprite<Class518>(_class521);
+	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
 	
 	_which1 = sceneInfo->which1;
 	_which2 = sceneInfo->which2;
 
 	_dataResource.load(sceneInfo->dataResourceFilename);
 	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
-	_class521->setPathPoints(_trackPoints);
+	_asCar->setPathPoints(_trackPoints);
 
 	if (which == _which2) {
 		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
-		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
-			sendMessage(_class521, 0x2007, 150);
+			sendMessage(_asCar, 0x2007, 150);
 	} else {
 		NPoint testPoint = (*_trackPoints)[0];
-		sendMessage(_class521, 0x2002, 0);
+		sendMessage(_asCar, 0x2002, 0);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
-			sendMessage(_class521, 0x2008, 150);
+			sendMessage(_asCar, 0x2008, 150);
 	}
 	
-	_class521->setClipRect(clipRect);
-	_class518->setClipRect(clipRect);
+	_asCar->setClipRect(clipRect);
+	_asCarConnector->setClipRect(clipRect);
 
 	if (which == 1) {
 		SetMessageHandler(&Scene2701::handleMessage42F500);
 	} else {
-		sendMessage(_class521, 0x2009, 0);
+		sendMessage(_asCar, 0x2009, 0);
 		SetMessageHandler(&Scene2701::handleMessage42F600);
 	}
 
@@ -659,7 +659,7 @@ uint32 Scene2701::handleMessage42F500(int messageNum, const MessageParam &param,
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		sendPointMessage(_class521, 0x2004, param.asPoint());
+		sendPointMessage(_asCar, 0x2004, param.asPoint());
 		break;
 	case 0x2005:
 		if (_which1 >= 0)
@@ -683,7 +683,7 @@ uint32 Scene2701::handleMessage42F600(int messageNum, const MessageParam &param,
 		if (param.asPoint().x >= 385) {
 			leaveScene(0);
 		} else {
-			sendPointMessage(_class521, 0x2004, param.asPoint());
+			sendPointMessage(_asCar, 0x2004, param.asPoint());
 			SetMessageHandler(&Scene2701::handleMessage42F500);
 		}
 		break;
@@ -723,11 +723,11 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class437 = createSprite<Class437>(0x12002035);
 	addEntity(_class437);
 	
-	_class521 = insertSprite<Class521>(this, 320, 240);
-	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-	insertSprite<Class518>(_class521);
-	_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-	_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+	_asCar = insertSprite<AsCommonCar>(this, 320, 240);
+	_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
+	insertSprite<AsCommonCarConnector>(_asCar);
+	_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
+	_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
 
 	_dataResource.load(0x04310014);
 	
@@ -761,14 +761,14 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_trackPoints = _dataResource.getPointArray(_currSceneInfos[_currTrackIndex]->pointListName);
-	_class521->setPathPoints(_trackPoints);
+	_asCar->setPathPoints(_trackPoints);
 
 	if (which == _currSceneInfos[_currTrackIndex]->which2) {
-		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
-		sendMessage(_class521, 0x2007, 150);
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, 0x2007, 150);
 	} else {
-		sendMessage(_class521, 0x2002, 0);
-		sendMessage(_class521, 0x2008, 150);
+		sendMessage(_asCar, 0x2002, 0);
+		sendMessage(_asCar, 0x2008, 150);
 	}
 
 	_palette->copyBasePalette(0, 256, 0);
@@ -777,13 +777,13 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 
 void Scene2702::update() {
 	Scene::update();
-	if (_flag1 && _class521->getX() > 422) {
+	if (_flag1 && _asCar->getX() > 422) {
 		debug("fade #1");
 		_palette->addBasePalette(calcHash("paPodShade"), 65, 31, 65);
 		_palette->addBasePalette(calcHash("paKlayShade"), 0, 65, 0);
 		_palette->startFadeToPalette(12);
 		_flag1 = false;
-	} else if (!_flag1 && _class521->getX() <= 422) {
+	} else if (!_flag1 && _asCar->getX() <= 422) {
 		debug("fade #2");
 		_palette->addBasePalette(calcHash("paPodFloor"), 65, 31, 65);
 		_palette->addBasePalette(calcHash("paKlayFloor"), 0, 65, 0);
@@ -839,35 +839,35 @@ void Scene2702::findClosestTrack(NPoint pt) {
 		_newTrackDestX = pt.x;
 		if (_currSceneInfos == _sceneInfos[0]) {
 			if (_currTrackIndex == 0)
-				sendMessage(_class521, 0x2003, _trackPoints->size() - 1);
+				sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 			else
-				sendMessage(_class521, 0x2003, 0);
+				sendMessage(_asCar, 0x2003, 0);
 		} else if (_currTrackIndex == 2) {
-			sendMessage(_class521, 0x2003, 0);
+			sendMessage(_asCar, 0x2003, 0);
 		} else {
-			sendMessage(_class521, 0x2003, _trackPoints->size() - 1);
+			sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 		}
 	} else {
 		_newTrackIndex = -1;
-		sendMessage(_class521, 0x2004, pt.x);
+		sendMessage(_asCar, 0x2004, pt.x);
 	}
 }
 
 void Scene2702::changeTrack() {
 	_currTrackIndex = _newTrackIndex;
 	_trackPoints = _dataResource.getPointArray(_currSceneInfos[_currTrackIndex]->pointListName);
-	_class521->setPathPoints(_trackPoints);
+	_asCar->setPathPoints(_trackPoints);
 	if (_currSceneInfos == _sceneInfos[0]) {
 		if (_currTrackIndex == 0)
-			sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+			sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		else
-			sendMessage(_class521, 0x2002, 0);
+			sendMessage(_asCar, 0x2002, 0);
 	} else if (_currTrackIndex == 2) {
-		sendMessage(_class521, 0x2002, 0);
+		sendMessage(_asCar, 0x2002, 0);
 	} else {
-		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 	}
-	sendMessage(_class521, 0x2004, _newTrackDestX);
+	sendMessage(_asCar, 0x2004, _newTrackDestX);
 	_newTrackIndex = -1;
 }
 
@@ -900,56 +900,56 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 		_class437 = createSprite<Class437>(sceneInfo->class437Filename);
 		addEntity(_class437);
 
-		_class521 = insertSprite<Class521>(this, 320, 240);
-		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
+		_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
+		_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
+		_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
 	} else {
 		_class437 = NULL;
 		_class517 = NULL;
-		_class521 = insertSprite<Class521>(this, 320, 240);
+		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 	}
 
-	_class518 = insertSprite<Class518>(_class521);
+	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
 	
 	_which1 = sceneInfo->which1;
 	_which2 = sceneInfo->which2;
 
 	_dataResource.load(sceneInfo->dataResourceFilename);
 	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
-	_class521->setPathPoints(_trackPoints);
+	_asCar->setPathPoints(_trackPoints);
 	
 	if (sceneInfo->rectListName) {
 		_rectList = _dataResource.getRectArray(sceneInfo->rectListName);
-		// TODO _class521->setPathRects(_rectList);
+		// TODO _asCar->setPathRects(_rectList);
 	}
 
 	if (which == _which2) {
 		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
-		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
-			sendMessage(_class521, 0x2009, 0);
+			sendMessage(_asCar, 0x2009, 0);
 		else
-			sendMessage(_class521, 0x2007, 0);
+			sendMessage(_asCar, 0x2007, 0);
 	} else {
 		NPoint testPoint = (*_trackPoints)[0];
-		sendMessage(_class521, 0x2002, 0);
+		sendMessage(_asCar, 0x2002, 0);
 		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
-			sendMessage(_class521, 0x2009, 0);
+			sendMessage(_asCar, 0x2009, 0);
 		else
-			sendMessage(_class521, 0x2008, 0);
+			sendMessage(_asCar, 0x2008, 0);
 	}
 	
 	if (clipRect) {
-		_class521->getClipRect() = *clipRect;
+		_asCar->getClipRect() = *clipRect;
 		if (_class517)
 			_class517->getClipRect() = *clipRect; 
 		if (_class520)
 			_class520->getClipRect() = *clipRect; 
 		if (_class519)
 			_class519->getClipRect() = *clipRect; 
-		if (_class518)
-			_class518->getClipRect() = *clipRect;
+		if (_asCarConnector)
+			_asCarConnector->getClipRect() = *clipRect;
 	}
 
 }
@@ -957,7 +957,7 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 void Scene2704::update() {
 	Scene::update();
 	if (_mouseClicked) {
-		sendPointMessage(_class521, 0x2004, _mouseClickPos);
+		sendPointMessage(_asCar, 0x2004, _mouseClickPos);
 		_mouseClicked = false;
 	}
 }
@@ -1004,11 +1004,11 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class437 = createSprite<Class437>(0x18808B88);
 	addEntity(_class437);
 	
-	_class521 = insertSprite<Class521>(this, 320, 240);
-	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-	_class518 = insertSprite<Class518>(_class521);
-	_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-	_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+	_asCar = insertSprite<AsCommonCar>(this, 320, 240);
+	_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
+	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
+	_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
+	_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
 
 	_dataResource.load(0x06000162);
 	
@@ -1020,20 +1020,20 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 		_currTrackIndex = 0;
 
 	_trackPoints = _dataResource.getPointArray(calcHash(kSceneInfo2706[_currTrackIndex].pointListName));
-	_class521->setPathPoints(_trackPoints);
+	_asCar->setPathPoints(_trackPoints);
 
 	if (which == kSceneInfo2706[_currTrackIndex].which2) {
-		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		if (which == 5)
-			sendMessage(_class521, 0x2007, 50);
+			sendMessage(_asCar, 0x2007, 50);
 		else			
-			sendMessage(_class521, 0x2007, 150);
+			sendMessage(_asCar, 0x2007, 150);
 	} else {
-		sendMessage(_class521, 0x2002, 0);
+		sendMessage(_asCar, 0x2002, 0);
 		if (which == 5)
-			sendMessage(_class521, 0x2008, 50);
+			sendMessage(_asCar, 0x2008, 50);
 		else			
-			sendMessage(_class521, 0x2008, 150);
+			sendMessage(_asCar, 0x2008, 150);
 	}
 	
 }
@@ -1084,24 +1084,24 @@ void Scene2706::findClosestTrack(NPoint pt) {
 		_newTrackIndex = minMatchTrackIndex;
 		_newTrackDestX = pt.x;
 		if (_currTrackIndex == 0)
-			sendMessage(_class521, 0x2003, _trackPoints->size() - 1);
+			sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 		else
-			sendMessage(_class521, 0x2003, 0);
+			sendMessage(_asCar, 0x2003, 0);
 	} else {
 		_newTrackIndex = -1;
-		sendMessage(_class521, 0x2004, pt.x);
+		sendMessage(_asCar, 0x2004, pt.x);
 	}
 }
 
 void Scene2706::changeTrack() {
 	_currTrackIndex = _newTrackIndex;
 	_trackPoints = _dataResource.getPointArray(calcHash(kSceneInfo2706[_currTrackIndex].pointListName));
-	_class521->setPathPoints(_trackPoints);
+	_asCar->setPathPoints(_trackPoints);
 	if (_currTrackIndex == 0)
-		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 	else
-		sendMessage(_class521, 0x2002, 0);
-	sendMessage(_class521, 0x2004, _newTrackDestX);
+		sendMessage(_asCar, 0x2002, 0);
+	sendMessage(_asCar, 0x2004, _newTrackDestX);
 	_newTrackIndex = -1;
 }
 

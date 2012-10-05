@@ -41,10 +41,10 @@ protected:
 	void updateScene();
 };
 
-class Class521 : public AnimatedSprite {
+class AsCommonCar : public AnimatedSprite {
 public:
-	Class521(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-	~Class521();
+	AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+	~AsCommonCar();
 	void setPathPoints(NPointArray *pathPoints);
 protected:
 	Scene *_parentScene;
@@ -105,33 +105,33 @@ protected:
 	void sub45E0A0();
 };
 
-class Class546 : public AnimatedSprite {
+class AsScene1608Door : public AnimatedSprite {
 public:
-	Class546(NeverhoodEngine *vm, Scene *parentScene);
+	AsScene1608Door(NeverhoodEngine *vm, Scene *parentScene);
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub44D710();
-	void sub44D760();
-	void sub44D790();
-	void sub44D7F0();
+	void stOpenDoor();
+	void stOpenDoorDone();
+	void stCloseDoor();
+	void stCloseDoorDone();
 };
 
-class Class547 : public AnimatedSprite {
+class AsScene1608IdleCarLower : public AnimatedSprite {
 public:
-	Class547(NeverhoodEngine *vm, int16 x, int16 y);
+	AsScene1608IdleCarLower(NeverhoodEngine *vm, int16 x, int16 y);
 };
 
-class Class548 : public AnimatedSprite {
+class AsScene1608IdleCarFull : public AnimatedSprite {
 public:
-	Class548(NeverhoodEngine *vm, int16 x, int16 y);
+	AsScene1608IdleCarFull(NeverhoodEngine *vm, int16 x, int16 y);
 };
 
-class Class518 : public AnimatedSprite {
+class AsCommonCarConnector : public AnimatedSprite {
 public:
-	Class518(NeverhoodEngine *vm, Class521 *class521);
+	AsCommonCarConnector(NeverhoodEngine *vm, AsCommonCar *asCar);
 protected:
-	Class521 *_class521;
+	AsCommonCar *_asCar;
 	void update();
 };
 
@@ -140,34 +140,34 @@ public:
 	Scene1608(NeverhoodEngine *vm, Module *parentModule, int which);
 	~Scene1608();
 protected:
-	Class521 *_class521;
+	AsCommonCar *_asCar;
 	Sprite *_class545;
-	Sprite *_class546;
-	Sprite *_class547;
-	Sprite *_class548;
+	Sprite *_asDoor;
+	Sprite *_asIdleCarLower;
+	Sprite *_asIdleCarFull;
 	Sprite *_sprite1;
 	Sprite *_sprite2;
 	Sprite *_sprite3;
 	Sprite *_asTape;
-	Klayman *_klayman2;
+	Klayman *_kmScene1608;
 	NRect _rect1;
 	NRect _rect2;
 	NRect _rect3;
-	int _flag1;
-	bool _flag2;
-	bool _flag3;
-	bool _flag4;
+	int _carStatus;
+	bool _carClipFlag;
+	bool _klaymanInCar;
 	int _countdown1;
 	NPointArray *_roomPathPoints;
-	void update44CE90();
-	void update44CED0();
-	void update44CFE0();
-	void update44D0C0();
-	void update44D1E0();
-	uint32 handleMessage44D2A0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage44D3C0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage44D470(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage44D510(int messageNum, const MessageParam &param, Entity *sender);
+	void upLowerFloor();
+	void upUpperFloor();
+	void upCarAtHome();
+	void upGettingOutOfCar();
+	void upRidingCar();
+	uint32 hmLowerFloor(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmUpperFloor(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmRidingCar(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender);
+	void updateKlaymanCliprect();
 };
 
 class Scene1609 : public Scene {
@@ -176,12 +176,12 @@ public:
 protected:
 	Sprite *_ssButton;
 	AsScene3011Symbol *_asSymbols[12];
-	int _index1;
-	int _index2;
-	int _index3;
+	int _currentSymbolIndex;
+	int _noisySymbolIndex;
+	int _symbolPosition;
 	int _countdown1;
-	bool _flag5;
-	bool _flag6;
+	bool _changeCurrentSymbol;
+	bool _isSolved;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	bool testVars();

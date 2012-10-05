@@ -179,11 +179,11 @@ void Module1600::updateScene() {
 	}
 }
 
-Class521::Class521(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene) {
 	
-	SetUpdateHandler(&Class521::update);
-	SetMessageHandler(&Class521::handleMessage);
+	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::handleMessage);
 	SetSpriteUpdate(NULL);
 
 	// TODO createSurface2(200, dword_4AF4C0);
@@ -214,17 +214,17 @@ Class521::Class521(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 
 }
 
-Class521::~Class521() {
-	if (_finalizeStateCb == AnimationCallback(&Class521::sub45D620)) {
+AsCommonCar::~AsCommonCar() {
+	if (_finalizeStateCb == AnimationCallback(&AsCommonCar::sub45D620)) {
 		setGlobalVar(0x21E60190, !getGlobalVar(0x21E60190));
 	}
 }
 
-void Class521::setPathPoints(NPointArray *pathPoints) {
+void AsCommonCar::setPathPoints(NPointArray *pathPoints) {
 	_pathPoints = pathPoints;
 }
 
-void Class521::update() {
+void AsCommonCar::update() {
 	if (_newDeltaXType >= 0) {
 		setDoDeltaX(_newDeltaXType);
 		_newDeltaXType = -1;
@@ -242,14 +242,14 @@ void Class521::update() {
 	sub45E0A0();
 }
 
-void Class521::update45C790() {
-	Class521::update();
+void AsCommonCar::update45C790() {
+	AsCommonCar::update();
 	if (++_idleCounter >= _idleCounterMax)
 		sub45D050();
 	sub45E0A0();
 }
 
-uint32 Class521::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1019:
@@ -345,14 +345,14 @@ uint32 Class521::handleMessage(int messageNum, const MessageParam &param, Entity
 		_moreY = param.asInteger();
 		_steps = 0;
 		_flag10E = 0;
-		SetSpriteUpdate(&Class521::suMoveToPrevPoint);
+		SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 		_lastDistance = 640;
 		break;
 	case 0x2008:
 		_moreY = param.asInteger();
 		_steps = 0;
 		_flag10E = 0;
-		SetSpriteUpdate(&Class521::suMoveToNextPoint);
+		SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
 		_lastDistance = 640;
 		break;
 	case 0x2009:
@@ -376,8 +376,8 @@ uint32 Class521::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-uint32 Class521::handleMessage45CC30(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Class521::handleMessage(messageNum, param, sender);
+uint32 AsCommonCar::handleMessage45CC30(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = AsCommonCar::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
 		if (_flag10F && param.asInteger() == 0x025424A2) {
@@ -391,20 +391,20 @@ uint32 Class521::handleMessage45CC30(int messageNum, const MessageParam &param, 
 	return messageResult;
 }
 
-uint32 Class521::handleMessage45CCA0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsCommonCar::handleMessage45CCA0(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
 	case 0x2009:
 		sub45CF80();
 		break;
 	case 0x3002:
 		sendMessage(_parentScene, 0x200A, 0);
-		SetMessageHandler(&Class521::handleMessage);
+		SetMessageHandler(&AsCommonCar::handleMessage);
 		break;
 	}
 	return 0;
 }
 
-void Class521::sub45CD00() {
+void AsCommonCar::sub45CD00() {
 	bool doDeltaX = _doDeltaX;
 	SetSpriteUpdate(NULL);
 	_againDestPtFlag = 0;
@@ -415,12 +415,12 @@ void Class521::sub45CD00() {
 	_flag114 = 0;
 	_flag11A = 0;
 	_rectList = NULL;
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	NextState(&Class521::sub45CFE0);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	NextState(&AsCommonCar::sub45CFE0);
 	startAnimation(0x35698F78, 0, -1);
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update45C790);
-	FinalizeState(&Class521::sub45D040);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update45C790);
+	FinalizeState(&AsCommonCar::sub45D040);
 	setDoDeltaX(doDeltaX ? 1 : 0);
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
@@ -429,36 +429,36 @@ void Class521::sub45CD00() {
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
 
-void Class521::sub45CDC0() {
+void AsCommonCar::sub45CDC0() {
 	if (_value112 == 1) {
 		_lastDistance = 640;
 		_flag113 = 0;
 		_flag10E = 0;
-		SetSpriteUpdate(&Class521::suMoveToNextPoint);
+		SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
 	} else if (_value112 == 2) {
 		_lastDistance = 640;
 		_flag113 = 0;
 		_flag10E = 0;
-		SetSpriteUpdate(&Class521::suMoveToPrevPoint);
+		SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 	}
 }
 
-void Class521::sub45CE10() {
+void AsCommonCar::sub45CE10() {
 	if (_flag10E && !_flag113 && !_flag10F) {
 		gotoNextState();
 		_flag114 = 0;
 		_flag113 = 1;
 		startAnimation(0x192ADD30, 0, -1);
-		SetMessageHandler(&Class521::handleMessage45CC30);
-		SetUpdateHandler(&Class521::update);
-		NextState(&Class521::sub45CFE0);
+		SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+		SetUpdateHandler(&AsCommonCar::update);
+		NextState(&AsCommonCar::sub45CFE0);
 	} else if (!_flag10E && _steps && _flag113) {
 		gotoNextState();
 		_flag113 = 0;
 		startAnimation(0x9966B138, 0, -1);
-		SetMessageHandler(&Class521::handleMessage45CC30);
-		SetUpdateHandler(&Class521::update);
-		NextState(&Class521::sub45D100);
+		SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+		SetUpdateHandler(&AsCommonCar::update);
+		NextState(&AsCommonCar::sub45D100);
 	} else {
 		bool flag = false;
 		uint index = 0;
@@ -483,25 +483,25 @@ void Class521::sub45CE10() {
 	}
 }
 
-void Class521::sub45CF80() {
+void AsCommonCar::sub45CF80() {
 	startAnimation(0xA86A9538, 0, -1);
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update);
-	NextState(&Class521::sub45CFE0);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update);
+	NextState(&AsCommonCar::sub45CFE0);
 }
 
-void Class521::sub45CFB0() {
+void AsCommonCar::sub45CFB0() {
 	startAnimation(0xA86A9538, -1, -1);
 	_playBackwards = true;
-	SetMessageHandler(&Class521::handleMessage45CCA0);
-	SetUpdateHandler(&Class521::update);
+	SetMessageHandler(&AsCommonCar::handleMessage45CCA0);
+	SetUpdateHandler(&AsCommonCar::update);
 }
 
-void Class521::sub45CFE0() {
+void AsCommonCar::sub45CFE0() {
 	startAnimation(0x35698F78, 0, -1);
-	SetMessageHandler(&Class521::handleMessage);
-	SetUpdateHandler(&Class521::update45C790);
-	FinalizeState(&Class521::sub45D040);
+	SetMessageHandler(&AsCommonCar::handleMessage);
+	SetUpdateHandler(&AsCommonCar::update45C790);
+	FinalizeState(&AsCommonCar::sub45D040);
 	_idleCounter = 0;
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
@@ -509,35 +509,35 @@ void Class521::sub45CFE0() {
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
 
-void Class521::sub45D040() {
-	SetUpdateHandler(&Class521::update);
+void AsCommonCar::sub45D040() {
+	SetUpdateHandler(&AsCommonCar::update);
 }
 
-void Class521::sub45D050() {
+void AsCommonCar::sub45D050() {
 	startAnimation(0xB579A77C, 0, -1);
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update);
-	NextState(&Class521::sub45CFE0);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update);
+	NextState(&AsCommonCar::sub45CFE0);
 	_idleCounter = 0;
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
 
-void Class521::sub45D0A0() {
+void AsCommonCar::sub45D0A0() {
 	_flag10F = 1;
 	gotoNextState();
 	startAnimation(0x9C220DA4, 0, -1);
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update);
-	FinalizeState(&Class521::sub45D0E0);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update);
+	FinalizeState(&AsCommonCar::sub45D0E0);
 }
 
-void Class521::sub45D0E0() {
+void AsCommonCar::sub45D0E0() {
 	_flag10F = 0;
 	_newMoveDirection = 0;
 	sub45D100();
 }
 
-void Class521::sub45D100() {
+void AsCommonCar::sub45D100() {
 	_flag114 = 1;
 	if (_currMoveDirection == 1) {
 		startAnimation(0xD4AA03A4, 0, -1);
@@ -551,18 +551,18 @@ void Class521::sub45D100() {
 	setGlobalVar(0x21E60190, _doDeltaX ? 1 : 0);
 }
 
-void Class521::sub45D180() {
+void AsCommonCar::sub45D180() {
 	_flag10F = 1;
 	gotoNextState();
 	startAnimation(0xF46A0324, 0, -1);
 	_value112 = 0;
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update);
-	FinalizeState(&Class521::sub45D620);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update);
+	FinalizeState(&AsCommonCar::sub45D620);
 	sub45CDC0();
 }
 
-void Class521::moveToNextPoint() {
+void AsCommonCar::moveToNextPoint() {
 	if (_currPointIndex >= (int)_pathPoints->size() - 1) {
 		_moreY = 0;
 		sendMessage(this, 0x1019, 0);
@@ -585,39 +585,39 @@ void Class521::moveToNextPoint() {
 				gotoNextState();
 				_flag113 = 0;
 				startAnimation(0x9966B138, 0, -1);
-				SetMessageHandler(&Class521::handleMessage45CC30);
-				SetUpdateHandler(&Class521::update);
-				NextState(&Class521::sub45D100);
+				SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+				SetUpdateHandler(&AsCommonCar::update);
+				NextState(&AsCommonCar::sub45D100);
 			}
 			_flag10E = 0;
-			SetSpriteUpdate(&Class521::suMoveToNextPoint);
+			SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
 			_lastDistance = 640;
 		}
 	}
 }
 
-void Class521::sub45D350() {
+void AsCommonCar::sub45D350() {
 	gotoNextState();
 	_flag10F = 1;
 	_flag10E = 1;
 	startAnimation(0x192ADD30, 0, -1);
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update);
-	NextState(&Class521::sub45D390);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update);
+	NextState(&AsCommonCar::sub45D390);
 }
 
-void Class521::sub45D390() {
+void AsCommonCar::sub45D390() {
 	gotoNextState();
 	_flag10F = 1;
 	startAnimation(0xF46A0324, 0, -1);
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update);
-	FinalizeState(&Class521::sub45D620);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update);
+	FinalizeState(&AsCommonCar::sub45D620);
 	_value112 = 1;
 	sub45CDC0();
 }
 
-void Class521::moveToPrevPoint() {
+void AsCommonCar::moveToPrevPoint() {
 	if (_currPointIndex == 0 && _stepError == 0) {
 		_moreY = 0;
 		sendMessage(this, 0x1019, 0);
@@ -647,46 +647,46 @@ void Class521::moveToPrevPoint() {
 				gotoNextState();
 				_flag113 = 0;
 				startAnimation(0x9966B138, 0, -1);
-				SetMessageHandler(&Class521::handleMessage45CC30);
-				SetUpdateHandler(&Class521::update);
-				NextState(&Class521::sub45D100);
+				SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+				SetUpdateHandler(&AsCommonCar::update);
+				NextState(&AsCommonCar::sub45D100);
 			}
 			_flag10E = 0;
-			SetSpriteUpdate(&Class521::suMoveToPrevPoint);
+			SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 			_lastDistance = 640;
 		}
 	}
 }
 
-void Class521::sub45D580() {
+void AsCommonCar::sub45D580() {
 	_flag10F = 1;
 	_flag10E = 1;
 	FinalizeState(NULL);
 	startAnimation(0x192ADD30, 0, -1);
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update);
-	NextState(&Class521::sub45D5D0);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update);
+	NextState(&AsCommonCar::sub45D5D0);
 }
 
-void Class521::sub45D5D0() {
+void AsCommonCar::sub45D5D0() {
 	_flag10F = 1;
 	FinalizeState(NULL);
 	startAnimation(0xF46A0324, 0, -1);
-	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetUpdateHandler(&Class521::update);
-	FinalizeState(&Class521::sub45D620);
+	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetUpdateHandler(&AsCommonCar::update);
+	FinalizeState(&AsCommonCar::sub45D620);
 	_value112 = 2;
 	sub45CDC0();
 }
 
-void Class521::sub45D620() {
+void AsCommonCar::sub45D620() {
 	_flag10F = 0;
 	_newMoveDirection = 0;
 	setDoDeltaX(2);
 	sub45D100();
 }
 
-void Class521::suMoveToNextPoint() {
+void AsCommonCar::suMoveToNextPoint() {
 	int16 newX = _x, newY = _y;
 
 	if (_currPointIndex >= (int)_pathPoints->size()) {
@@ -831,7 +831,7 @@ void Class521::suMoveToNextPoint() {
 
 }
 
-void Class521::suMoveToPrevPoint() {
+void AsCommonCar::suMoveToPrevPoint() {
 	int16 newX = _x, newY = _y;
 
 	if (_currPointIndex == 0 && _stepError == 0) {
@@ -978,60 +978,60 @@ void Class521::suMoveToPrevPoint() {
 
 }
 
-void Class521::sub45E0A0() {
+void AsCommonCar::sub45E0A0() {
 	// TODO
 }
 
-Class546::Class546(NeverhoodEngine *vm, Scene *parentScene)
+AsScene1608Door::AsScene1608Door(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 0x08C80144, 900, 320, 240), _parentScene(parentScene) {
 
 	setVisible(false);
-	SetMessageHandler(&Class546::handleMessage);
+	SetMessageHandler(&AsScene1608Door::handleMessage);
 	stopAnimation();
 }
 
-uint32 Class546::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1608Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
 		gotoNextState();
 		break;
 	case 0x4808:
-		sub44D710();
+		stOpenDoor();
 		break; 
 	case 0x4809:
-		sub44D790();
+		stCloseDoor();
 		break; 
 	}
 	return messageResult;
 }
 
-void Class546::sub44D710() {
+void AsScene1608Door::stOpenDoor() {
 	startAnimation(0x08C80144, 0, -1);
 	setVisible(true);
-	NextState(&Class546::sub44D760);
+	NextState(&AsScene1608Door::stOpenDoorDone);
 	playSound(0, calcHash("fxDoorOpen23"));
 }
 
-void Class546::sub44D760() {
+void AsScene1608Door::stOpenDoorDone() {
 	sendMessage(_parentScene, 0x2033, 0);
 	stopAnimation();
 	setVisible(false);
 }
 
-void Class546::sub44D790() {
+void AsScene1608Door::stCloseDoor() {
 	startAnimation(0x08C80144, -1, -1);
 	setVisible(true);
-	NextState(&Class546::sub44D7F0);
+	NextState(&AsScene1608Door::stCloseDoorDone);
 	playSound(0, calcHash("fxDoorClose23"));
 }
 
-void Class546::sub44D7F0() {
+void AsScene1608Door::stCloseDoorDone() {
 	sendMessage(_parentScene, 0x2034, 0);
 	stopAnimation();
 }
 
-Class547::Class547(NeverhoodEngine *vm, int16 x, int16 y)
+AsScene1608IdleCarLower::AsScene1608IdleCarLower(NeverhoodEngine *vm, int16 x, int16 y)
 	: AnimatedSprite(vm, 0x1209E09F, 1100, x, y) {
 
 	setDoDeltaX(1);
@@ -1039,35 +1039,39 @@ Class547::Class547(NeverhoodEngine *vm, int16 x, int16 y)
 	_newStickFrameIndex = 1;
 }
 
-Class548::Class548(NeverhoodEngine *vm, int16 x, int16 y)
+AsScene1608IdleCarFull::AsScene1608IdleCarFull(NeverhoodEngine *vm, int16 x, int16 y)
 	: AnimatedSprite(vm, 0x1209E09F, 100, x, y) {
 
 	setDoDeltaX(1);
 	_newStickFrameIndex = 0;
 }
 
-Class518::Class518(NeverhoodEngine *vm, Class521 *class521)
-	: AnimatedSprite(vm, 1100), _class521(class521) {
+AsCommonCarConnector::AsCommonCarConnector(NeverhoodEngine *vm, AsCommonCar *asCar)
+	: AnimatedSprite(vm, 1100), _asCar(asCar) {
 	
-	SetUpdateHandler(&Class518::update);
+	SetUpdateHandler(&AsCommonCarConnector::update);
 	createSurface1(0x60281C10, 150);
 	startAnimation(0x60281C10, -1, -1);
 	_newStickFrameIndex = -2;
 }
 
-void Class518::update() {
-	_x = _class521->getX();
-	_y = _class521->getY();
+void AsCommonCarConnector::update() {
+	_x = _asCar->getX();
+	_y = _asCar->getY();
 	AnimatedSprite::update();
 }
 
 Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _class521(NULL), _countdown1(0) {
+	: Scene(vm, parentModule, true), _asCar(NULL), _countdown1(0) {
+
+	/* TODO: Find out which of the message/update handlers are used for
+		the upper/lower floors and rename them accordingly.
+	*/
 	
 	setGlobalVar(0x21E60190, 1);
 	
 	_surfaceFlag = true;
-	SetMessageHandler(&Scene1608::handleMessage44D2A0);
+	SetMessageHandler(&Scene1608::hmLowerFloor);
 	
 	_class545 = insertSprite<Class545>(this, 1, 1100, 198, 220);
 	_vm->_collisionMan->addSprite(_class545);
@@ -1078,9 +1082,9 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		else {
 			setRectList(0x004B47D0);
 			insertKlayman<KmScene1608>(380, 438);
-			_klayman2 = _klayman;
-			_flag4 = false;
-			_class546 = insertSprite<Class546>(this);
+			_kmScene1608 = _klayman;
+			_klaymanInCar = false;
+			_asDoor = insertSprite<AsScene1608Door>(this);
 			_sprite1 = insertStaticSprite(0x7D0404E8, 1100);
 			setMessageList(0x004B46A8);
 			setBackground(0x10080E01);
@@ -1088,7 +1092,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 			_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
 			_vm->_collisionMan->addSprite(_asTape);
 			_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
-			SetUpdateHandler(&Scene1608::update44CE90);
+			SetUpdateHandler(&Scene1608::upLowerFloor);
 			insertMouse433(0x80E05108);
 			insertStaticSprite(0x4B18F868, 1200);
 		}
@@ -1096,8 +1100,8 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->gameState().which = 0;
 		setRectList(0x004B47D0);
 		insertKlayman<KmScene1608>(0, 438);
-		_klayman2 = _klayman;
-		_flag4 = false;
+		_kmScene1608 = _klayman;
+		_klaymanInCar = false;
 		setMessageList(0x004B46B0);
 		setBackground(0x10080E01);
 		setPalette(0x10080E01);
@@ -1105,10 +1109,10 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_collisionMan->addSprite(_asTape);
 		insertMouse433(0x80E05108);
 		_sprite1 = insertStaticSprite(0x7D0404E8, 1100);
-		_class546 = insertSprite<Class546>(this);
+		_asDoor = insertSprite<AsScene1608Door>(this);
 		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
-		SetUpdateHandler(&Scene1608::update44CE90);
-		sendMessage(_class546, 0x4808, 0);
+		SetUpdateHandler(&Scene1608::upLowerFloor);
+		sendMessage(_asDoor, 0x4808, 0);
 		insertStaticSprite(0x4B18F868, 1200);
 	} else if (which == 2) {
 		_vm->gameState().which = 1;
@@ -1119,38 +1123,38 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette->addPalette("paPodRed", 65, 31, 65);
 		insertMouse433(0x01600988);
 		_sprite2 = insertStaticSprite(0x491F38A8, 1100);
-		_class521 = createSprite<Class521>(this, 375, 227); // Create but don't add to the sprite list yet
-		_class547 = insertSprite<Class547>(375, 227);
-		_class548 = insertSprite<Class548>(375, 227);
-		_class521->setVisible(false);
+		_asCar = createSprite<AsCommonCar>(this, 375, 227); // Create but don't add to the sprite list yet
+		_asIdleCarLower = insertSprite<AsScene1608IdleCarLower>(375, 227);
+		_asIdleCarFull = insertSprite<AsScene1608IdleCarFull>(375, 227);
+		_asCar->setVisible(false);
 		if (getGlobalVar(0xC0418A02)) {
 			insertKlayman<KmScene1608>(373, 220);
 			_klayman->setDoDeltaX(1);
 		} else {
 			insertKlayman<KmScene1608>(283, 220);
 		}
-		_klayman2 = _klayman;
+		_kmScene1608 = _klayman;
 		setMessageList(0x004B47A8);
-		SetMessageHandler(&Scene1608::handleMessage44D3C0);
-		SetUpdateHandler(&Scene1608::update44CED0);
+		SetMessageHandler(&Scene1608::hmUpperFloor);
+		SetUpdateHandler(&Scene1608::upUpperFloor);
 		// NOTE: Setting the point array was handled by messages 0x2000 (array) and 0x2001 (count) in the original
-		_class521->setPathPoints(_roomPathPoints);
-		sendMessage(_class521, 0x2002, _roomPathPoints->size() - 1);
+		_asCar->setPathPoints(_roomPathPoints);
+		sendMessage(_asCar, 0x2002, _roomPathPoints->size() - 1);
 		_sprite3 = insertStaticSprite(0xB47026B0, 1100);
 		_rect1.set(_sprite3->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
 		_rect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
 		_rect2 = _rect1;
 		_rect2.y2 = 215;
 		_klayman->setClipRect(_rect1);
-		_class521->setClipRect(_rect1);
-		_class547->setClipRect(_rect1);
-		_class548->setClipRect(_rect1);
+		_asCar->setClipRect(_rect1);
+		_asIdleCarLower->setClipRect(_rect1);
+		_asIdleCarFull->setClipRect(_rect1);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
 		_vm->_collisionMan->addSprite(_asTape);
-		insertSprite<Class518>(_class521)->setClipRect(_rect1);
-		_flag4 = false;
-		_flag2 = false;
-		_flag1 = 0;
+		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_rect1);
+		_klaymanInCar = false;
+		_carClipFlag = false;
+		_carStatus = 0;
 		setRectList(0x004B4810);
 	} 
 
@@ -1163,36 +1167,36 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		setPalette(0x98001604);
 		_palette->addPalette("paPodRed", 65, 31, 65);
 		insertMouse433(0x01600988);
-		_class521 = insertSprite<Class521>(this, 375, 227);
-		_class547 = insertSprite<Class547>(375, 227);
-		_class548 = insertSprite<Class548>(375, 227);
+		_asCar = insertSprite<AsCommonCar>(this, 375, 227);
+		_asIdleCarLower = insertSprite<AsScene1608IdleCarLower>(375, 227);
+		_asIdleCarFull = insertSprite<AsScene1608IdleCarFull>(375, 227);
 		_sprite2 = insertStaticSprite(0x491F38A8, 1100);
-		_klayman2 = createSprite<KmScene1608>(this, 439, 220); // Special Klayman handling...
-		sendMessage(_klayman2, 0x2032, 1);
-		_klayman2->setDoDeltaX(1);
-		SetMessageHandler(&Scene1608::handleMessage44D470);
-		SetUpdateHandler(&Scene1608::update44D1E0);
-		_class547->setVisible(false);
-		_class548->setVisible(false);
+		_kmScene1608 = createSprite<KmScene1608>(this, 439, 220); // Special Klayman handling...
+		sendMessage(_kmScene1608, 0x2032, 1);
+		_kmScene1608->setDoDeltaX(1);
+		SetMessageHandler(&Scene1608::hmRidingCar);
+		SetUpdateHandler(&Scene1608::upRidingCar);
+		_asIdleCarLower->setVisible(false);
+		_asIdleCarFull->setVisible(false);
 		// NOTE: Setting the point array was handled by messages 0x2000 (array) and 0x2001 (count) in the original
-		_class521->setPathPoints(_roomPathPoints);
-		sendMessage(_class521, 0x2002, 0);
-		sendMessage(_class521, 0x2008, 90);
+		_asCar->setPathPoints(_roomPathPoints);
+		sendMessage(_asCar, 0x2002, 0);
+		sendMessage(_asCar, 0x2008, 90);
 		_sprite3 = insertStaticSprite(0xB47026B0, 1100);
 		_rect1.set(_sprite3->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
 		_rect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
 		_rect2 = _rect1;
 		_rect2.y2 = 215;
-		_klayman2->setClipRect(_rect1);
-		_class521->setClipRect(_rect1);
-		_class547->setClipRect(_rect1);
-		_class548->setClipRect(_rect1);
+		_kmScene1608->setClipRect(_rect1);
+		_asCar->setClipRect(_rect1);
+		_asIdleCarLower->setClipRect(_rect1);
+		_asIdleCarFull->setClipRect(_rect1);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
 		// ... _vm->_collisionMan->addSprite(_asTape);
-		insertSprite<Class518>(_class521)->setClipRect(_rect1);
-		_flag4 = true;
-		_flag2 = true;
-		_flag1 = 0;
+		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_rect1);
+		_klaymanInCar = true;
+		_carClipFlag = true;
+		_carStatus = 0;
 	}
 	
 	_palette->addPalette("paKlayRed", 0, 64, 0);
@@ -1200,113 +1204,100 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1608::~Scene1608() {
-	setGlobalVar(0xC0418A02, _klayman2->isDoDeltaX() ? 1 : 0);
-	// Weird
-	if (_flag4) {
-		delete _klayman2;
+	setGlobalVar(0xC0418A02, _kmScene1608->isDoDeltaX() ? 1 : 0);
+	if (_klaymanInCar) {
+		delete _kmScene1608;
 	} else {
-		delete _class521;
+		delete _asCar;
 	}
 }
 
-void Scene1608::update44CE90() {
+void Scene1608::upLowerFloor() {
 	Scene::update();
 	if (_countdown1 != 0 && (--_countdown1 == 0)) {
 		leaveScene(0);
 	}
 }
 
-void Scene1608::update44CED0() {
+void Scene1608::upUpperFloor() {
 	Scene::update();
-	if (_flag1 == 1) {
+	if (_carStatus == 1) {
 		removeSurface(_klayman->getSurface());
 		removeEntity(_klayman);
-		addSprite(_class521);
-		_flag4 = true;
+		addSprite(_asCar);
+		_klaymanInCar = true;
 		clearRectList();
-		SetUpdateHandler(&Scene1608::update44CFE0);
-		SetMessageHandler(&Scene1608::handleMessage44D510);
-		_class547->setVisible(false);
-		_class548->setVisible(false);
-		_class521->setVisible(true);
-		sendMessage(_class521, 0x2009, 0);
-		_class521->handleUpdate();
+		SetUpdateHandler(&Scene1608::upCarAtHome);
+		SetMessageHandler(&Scene1608::hmCarAtHome);
+		_asIdleCarLower->setVisible(false);
+		_asIdleCarFull->setVisible(false);
+		_asCar->setVisible(true);
+		sendMessage(_asCar, 0x2009, 0);
+		_asCar->handleUpdate();
 		_klayman = NULL;
-		_flag1 = 0;
+		_carStatus = 0;
 	}
-	if (_klayman2->getX() <= 375) {
-		_klayman2->setClipRect(_rect1);
-	} else {
-		_klayman2->setClipRect(_rect2);
-	}
+	updateKlaymanCliprect();
 }
 
-void Scene1608::update44CFE0() {
+void Scene1608::upCarAtHome() {
 	Scene::update();
 	if (_mouseClicked) {
-		if (_mouseClickPos.x <= 329 && _class521->getX() == 375 && _class521->getY() == 227) {
-			sendMessage(_class521, 0x200A, 0);
-			SetUpdateHandler(&Scene1608::update44D0C0);
+		if (_mouseClickPos.x <= 329 && _asCar->getX() == 375 && _asCar->getY() == 227) {
+			sendMessage(_asCar, 0x200A, 0);
+			SetUpdateHandler(&Scene1608::upGettingOutOfCar);
 		} else {
-			sendPointMessage(_class521, 0x2004, _mouseClickPos);
-			SetMessageHandler(&Scene1608::handleMessage44D470);
-			SetUpdateHandler(&Scene1608::update44D1E0);
+			sendPointMessage(_asCar, 0x2004, _mouseClickPos);
+			SetMessageHandler(&Scene1608::hmRidingCar);
+			SetUpdateHandler(&Scene1608::upRidingCar);
 		}
 		_mouseClicked = false;
 	}
-	if (_klayman2->getX() <= 375) {
-		_klayman2->setClipRect(_rect1);
-	} else {
-		_klayman2->setClipRect(_rect2);
-	}
+	updateKlaymanCliprect();
 }
 
-void Scene1608::update44D0C0() {
+void Scene1608::upGettingOutOfCar() {
 	Scene::update();
-	if (_flag1 == 2) {
-		_klayman = _klayman2;
-		removeSurface(_class521->getSurface());
-		removeEntity(_class521);
+	if (_carStatus == 2) {
+		_klayman = _kmScene1608;
+		removeSurface(_asCar->getSurface());
+		removeEntity(_asCar);
 		addSprite(_klayman);
-		_flag4 = false;
-		SetMessageHandler(&Scene1608::handleMessage44D3C0);
-		SetUpdateHandler(&Scene1608::update44CED0);
+		_klaymanInCar = false;
+		SetMessageHandler(&Scene1608::hmUpperFloor);
+		SetUpdateHandler(&Scene1608::update);
 		setRectList(0x004B4810);
-		_class547->setVisible(true);
-		_class548->setVisible(true);
-		_class521->setVisible(false);
+		_asIdleCarLower->setVisible(true);
+		_asIdleCarFull->setVisible(true);
+		_asCar->setVisible(false);
 		setMessageList(0x004B4748);
 		runMessageList();
 		_klayman->handleUpdate();
-		_flag1 = 0;
+		_carStatus = 0;
 	}
-	if (_klayman2->getX() <= 375) {
-		_klayman2->setClipRect(_rect1);
-	} else {
-		_klayman2->setClipRect(_rect2);
-	}
+	updateKlaymanCliprect();
 }
 
-void Scene1608::update44D1E0() {
+void Scene1608::upRidingCar() {
 	Scene::update();
 	if (_mouseClicked) {
-		sendPointMessage(_class521, 0x2004, _mouseClickPos);
+		sendPointMessage(_asCar, 0x2004, _mouseClickPos);
 		_mouseClicked = false;
 	}
-	if (_class521->getX() < 300) {
-		if (_flag2) {
-			_flag2 = false;
-			_class521->setClipRect(_rect1);
-			if (!_class521->isDoDeltaX())
-				sendMessage(_class521, 0x200E, 0);
+	if (_asCar->getX() < 300) {
+		if (_carClipFlag) {
+			_carClipFlag = false;
+			_asCar->setClipRect(_rect1);
+			if (!_asCar->isDoDeltaX())
+				sendMessage(_asCar, 0x200E, 0);
 		}
-	} else if (!_flag2) {
-		_flag2 = true;
-		_class521->setClipRect(_rect3);
+	} else if (!_carClipFlag) {
+		_carClipFlag = true;
+		_asCar->setClipRect(_rect3);
 	}
 }
 
-uint32 Scene1608::handleMessage44D2A0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1315,7 +1306,7 @@ uint32 Scene1608::handleMessage44D2A0(int messageNum, const MessageParam &param,
 			_klayman->setVisible(false);
 			showMouse(false);
 			_sprite1->setVisible(false);
-			sendMessage(_class546, 0x4809, 0);
+			sendMessage(_asDoor, 0x4809, 0);
 			_countdown1 = 28;
 		}
 		break;
@@ -1324,7 +1315,7 @@ uint32 Scene1608::handleMessage44D2A0(int messageNum, const MessageParam &param,
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
-			sendEntityMessage(_klayman2, 0x1014, _asTape);
+			sendEntityMessage(_kmScene1608, 0x1014, _asTape);
 			setMessageList(0x004B4770);
 		} else if (sender == _class545) {
 			setMessageList(0x004B46C8);
@@ -1334,12 +1325,12 @@ uint32 Scene1608::handleMessage44D2A0(int messageNum, const MessageParam &param,
 	return 0;
 }
 
-uint32 Scene1608::handleMessage44D3C0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Scene1608::hmUpperFloor(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x60842040) {
-			_flag1 = true;
+			_carStatus = 1;
 		}
 		break;
 	case 0x200D:
@@ -1347,7 +1338,7 @@ uint32 Scene1608::handleMessage44D3C0(int messageNum, const MessageParam &param,
 		break;
 	case 0x4826:
 		if (sender == _class545) {
-			sendEntityMessage(_klayman2, 0x1014, _class545);
+			sendEntityMessage(_kmScene1608, 0x1014, _class545);
 			setMessageList(0x004B4760);
 		}
 		break;
@@ -1355,16 +1346,16 @@ uint32 Scene1608::handleMessage44D3C0(int messageNum, const MessageParam &param,
 	return 0;
 }
 
-uint32 Scene1608::handleMessage44D470(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Scene1608::hmRidingCar(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2005:
 		leaveScene(1);
 		break;
 	case 0x2006:
-		SetMessageHandler(&Scene1608::handleMessage44D510);
-		SetUpdateHandler(&Scene1608::update44CFE0);
-		sendMessage(_class521, 0x200F, 1);
+		SetMessageHandler(&Scene1608::hmCarAtHome);
+		SetUpdateHandler(&Scene1608::upCarAtHome);
+		sendMessage(_asCar, 0x200F, 1);
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
@@ -1373,11 +1364,11 @@ uint32 Scene1608::handleMessage44D470(int messageNum, const MessageParam &param,
 	return 0;
 }
 
-uint32 Scene1608::handleMessage44D510(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Scene1608::hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x200A:
-		_flag1 = 2;
+		_carStatus = 2;
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
@@ -1386,11 +1377,18 @@ uint32 Scene1608::handleMessage44D510(int messageNum, const MessageParam &param,
 	return 0;
 }
 	
+void Scene1608::updateKlaymanCliprect() {
+	if (_kmScene1608->getX() <= 375)
+		_kmScene1608->setClipRect(_rect1);
+	else
+		_kmScene1608->setClipRect(_rect2);
+}
+
 Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown1(1), _index1(0), _index3(0), _flag5(true), _flag6(false) {
+	: Scene(vm, parentModule, true), _countdown1(1), _currentSymbolIndex(0), _symbolPosition(0), _changeCurrentSymbol(true), _isSolved(false) {
 
 	// TODO _vm->gameModule()->initScene3011Vars();
-	_index2 = getGlobalVar(0x2414C2F2);
+	_noisySymbolIndex = getGlobalVar(0x2414C2F2);
 	
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene1609::handleMessage);
@@ -1399,8 +1397,8 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x92124A14);
 	setPalette(0x92124A14);
 	
-	for (int i = 0; i < 12; i++)
-		_asSymbols[i] = insertSprite<AsScene3011Symbol>(i, false);
+	for (int symbolPosition = 0; symbolPosition < 12; symbolPosition++)
+		_asSymbols[symbolPosition] = insertSprite<AsScene3011Symbol>(symbolPosition, false);
 	
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	_vm->_collisionMan->addSprite(_ssButton);
@@ -1412,21 +1410,21 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 void Scene1609::update() {
-	if (!_flag6 && _countdown1 != 0 && (--_countdown1 == 0)) {
-		if (_flag5) {
-			_index1++;
-			if (_index1 >= 12)
-				_index1 = 0;
-			_asSymbols[_index3]->change(_index1 + 12, _index1 == (int)getSubVar(0x04909A50, _index2));
-			_flag5 = false;
+	if (!_isSolved && _countdown1 != 0 && (--_countdown1 == 0)) {
+		if (_changeCurrentSymbol) {
+			_currentSymbolIndex++;
+			if (_currentSymbolIndex >= 12)
+				_currentSymbolIndex = 0;
+			_asSymbols[_symbolPosition]->change(_currentSymbolIndex + 12, _currentSymbolIndex == (int)getSubVar(0x04909A50, _noisySymbolIndex));
+			_changeCurrentSymbol = false;
 			_countdown1 = 36;
 		} else {
-			_asSymbols[_index3]->hide();
-			_flag5 = true;
+			_asSymbols[_symbolPosition]->hide();
+			_changeCurrentSymbol = true;
 			_countdown1 = 12;
 		}
 	}
-	if (_flag6 && !isSoundPlaying(0)) {
+	if (_isSolved && !isSoundPlaying(0)) {
 		leaveScene(1);
 	}
 	Scene::update();
@@ -1442,23 +1440,23 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	// TODO: Debug stuff
 	case 0x2000:
-		if (!_flag6) {
-			if (_flag5)
-				_asSymbols[_index3]->change(_index1 + 12, false);
-			_asSymbols[_index3]->stopSymbolSound();
-			_index3++;
-			if (_index3 >= 12) {
+		if (!_isSolved) {
+			if (_changeCurrentSymbol)
+				_asSymbols[_symbolPosition]->change(_currentSymbolIndex + 12, false);
+			_asSymbols[_symbolPosition]->stopSymbolSound();
+			_symbolPosition++;
+			if (_symbolPosition >= 12) {
 				if (testVars()) {
 					playSound(0);
 					setGlobalVar(0x2C531AF8, 1);
-					_flag6 = true;
+					_isSolved = true;
 				} else {
-					_index3 = 0;
+					_symbolPosition = 0;
 					for (int i = 0; i < 12; i++)
 						_asSymbols[i]->hide();
 				}
 			}
-			_flag5 = true;
+			_changeCurrentSymbol = true;
 			_countdown1 = 1;
 		}
 		break;
@@ -1468,6 +1466,8 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 
 bool Scene1609::testVars() {
 	int index1 = 0;
+
+	// Find the position of the first symbol
 	do {
 		int cmpIndex = _asSymbols[0]->getIndex();
 		if (!_asSymbols[0]->getFlag1())
@@ -1476,17 +1476,20 @@ bool Scene1609::testVars() {
 			break;
 		index1++;
 	} while(1);
+
+	// Check if the entered symbols match
 	for (int index2 = 0; index2 < 12; index2++) {
 		int cmpIndex = _asSymbols[index2]->getIndex();
 		if (!_asSymbols[index2]->getFlag1())
 			cmpIndex -= 12;
 		if ((int)getSubVar(0x04909A50, index1) != cmpIndex)
 			return false;
-		_index1++;
-		if (_index1 >= 12)
-			_index1 = 0;
-		_index2++;
+		index1++;
+		if (index1 >= 12)
+			index1 = 0;
+		index2++;
 	}
+
 	return true;
 }
 	

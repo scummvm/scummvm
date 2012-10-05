@@ -304,12 +304,13 @@ void GameModule::startup() {
 	setGlobalVar(0x0A18CA33, 0);
 	setGlobalVar(0x0112090A, 0);
 	//setGlobalVar(0x000CF819, 1);
+	setGlobalVar(0x04A105B3, 2);
 	// <<<DEBUG
 
 
 #if 1
-	_vm->gameState().sceneNum = 7;
-	createModule(1300, -1);
+	_vm->gameState().sceneNum = 8;
+	createModule(1600, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

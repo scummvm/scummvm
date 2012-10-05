@@ -249,7 +249,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class437 = createSprite<Class437>(0x99BE9015); // Don't add this to the sprite list
 	addEntity(_class437);
 
-	_class521 = createSprite<Class521>(this, 211, 400); // Create but don't add to the sprite list yet
+	_asCar = createSprite<AsCommonCar>(this, 211, 400); // Create but don't add to the sprite list yet
 	_class541 = insertSprite<Class541>(211, 400);
 	_class542 = insertSprite<Class542>(211, 400);
 	insertStaticSprite(0xC42AC521, 1500);
@@ -262,11 +262,11 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B2608);
 		SetMessageHandler(&Scene2501::handleMessage);
 		SetUpdateHandler(&Scene2501::update);
-		sendMessage(_class521, 0x2009, 0);
-		_class521->setVisible(false);
+		sendMessage(_asCar, 0x2009, 0);
+		_asCar->setVisible(false);
 		_currTrackIndex = 0;
 	} else if (which == 1 || which == 2) {
-		addSprite(_class521);
+		addSprite(_asCar);
 		_kmScene2501 = (Klayman*)new KmScene2501(_vm, this, 275, 393);
 		_klaymanInCar = true;
 		sendMessage(_kmScene2501, 0x2000, 1);
@@ -284,33 +284,33 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B2608);
 		SetMessageHandler(&Scene2501::handleMessage);
 		SetUpdateHandler(&Scene2501::update);
-		sendMessage(_class521, 0x2009, 0);
-		_class521->setVisible(false);
+		sendMessage(_asCar, 0x2009, 0);
+		_asCar->setVisible(false);
 		_currTrackIndex = 0;
 	}
 
-	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
-	_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
-	_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
-	insertSprite<Class518>(_class521);
+	_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
+	_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
+	_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
+	insertSprite<AsCommonCarConnector>(_asCar);
 	
 	_pointListsCount = 3;
 	_newTrackIndex = -1;
 	_dataResource.load(calcHash("Ashooded"));
 
 	_trackPoints = _dataResource.getPointArray(_sceneInfos[_currTrackIndex]->pointListName);
-	_class521->setPathPoints(_trackPoints);
+	_asCar->setPathPoints(_trackPoints);
 
 	if (which >= 0 && _sceneInfos[_currTrackIndex]->which2 == which) {
 		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
-		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
-			sendMessage(_class521, 0x2007, 150);
+			sendMessage(_asCar, 0x2007, 150);
 	} else {
 		NPoint testPoint = (*_trackPoints)[0];
-		sendMessage(_class521, 0x2002, 0);
+		sendMessage(_asCar, 0x2002, 0);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
-			sendMessage(_class521, 0x2008, 150);
+			sendMessage(_asCar, 0x2008, 150);
 	}
 	
 	_carStatus = 0;
@@ -322,23 +322,23 @@ Scene2501::~Scene2501() {
 	if (_klaymanInCar)
 		delete _kmScene2501;
 	else
-		delete _class521;
+		delete _asCar;
 }
 
 void Scene2501::update() {
 	Scene::update();
 	if (_carStatus == 1) {
 		removeSprite(_klayman);
-		addSprite(_class521);
+		addSprite(_asCar);
 		clearRectList();
 		_klaymanInCar = true;
 		SetMessageHandler(&Scene2501::hmCarAtHome);
 		SetUpdateHandler(&Scene2501::upCarAtHome);
 		_class541->setVisible(false);
 		_class542->setVisible(false);
-		_class521->setVisible(true);
-		sendMessage(_class521, 0x2009, 0);
-		_class521->handleUpdate();
+		_asCar->setVisible(true);
+		sendMessage(_asCar, 0x2009, 0);
+		_asCar->handleUpdate();
 		_klayman = NULL;
 		_carStatus = 0;
 	}
@@ -348,8 +348,8 @@ void Scene2501::update() {
 void Scene2501::upCarAtHome() {
 	Scene::update();
 	if (_mouseClicked) {
-		if (_mouseClickPos.x <= 210 && _class521->getX() == 211 && _class521->getY() == 400) {
-			sendMessage(_class521, 0x200A, 0);
+		if (_mouseClickPos.x <= 210 && _asCar->getX() == 211 && _asCar->getY() == 400) {
+			sendMessage(_asCar, 0x200A, 0);
 			SetUpdateHandler(&Scene2501::upGettingOutOfCar);
 		} else {
 			findClosestTrack(_mouseClickPos);
@@ -365,7 +365,7 @@ void Scene2501::upGettingOutOfCar() {
 	Scene::update();
 	if (_carStatus == 2) {
 		_klayman = _kmScene2501;
-		removeSprite(_class521);
+		removeSprite(_asCar);
 		addSprite(_klayman);
 		_klaymanInCar = false;
 		SetMessageHandler(&Scene2501::handleMessage);
@@ -373,7 +373,7 @@ void Scene2501::upGettingOutOfCar() {
 		setRectList(0x004B2608);
 		_class541->setVisible(true);
 		_class542->setVisible(true);
-		_class521->setVisible(false);
+		_asCar->setVisible(false);
 		setMessageList(0x004B2570);
 		runMessageList();
 		_klayman->handleUpdate();
@@ -413,7 +413,7 @@ uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 		} else if (_sceneInfos[_currTrackIndex]->which1 == 0) {
 			SetMessageHandler(&Scene2501::hmCarAtHome);
 			SetUpdateHandler(&Scene2501::upCarAtHome);
-			sendMessage(_class521, 0x200F, 1);
+			sendMessage(_asCar, 0x200F, 1);
 		} else if (_sceneInfos[_currTrackIndex]->which1 > 0) {
 			leaveScene(_sceneInfos[_currTrackIndex]->which1);
 		}
@@ -424,7 +424,7 @@ uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 		} else if (_sceneInfos[_currTrackIndex]->which2 == 0) {
 			SetMessageHandler(&Scene2501::hmCarAtHome);
 			SetUpdateHandler(&Scene2501::upCarAtHome);
-			sendMessage(_class521, 0x200F, 1);
+			sendMessage(_asCar, 0x200F, 1);
 		} else if (_sceneInfos[_currTrackIndex]->which2 > 0) {
 			leaveScene(_sceneInfos[_currTrackIndex]->which2);
 		}
@@ -452,13 +452,13 @@ uint32 Scene2501::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 void Scene2501::changeTrack() {
 	_currTrackIndex = _newTrackIndex;
 	_trackPoints = _dataResource.getPointArray(_sceneInfos[_currTrackIndex]->pointListName);
-	_class521->setPathPoints(_trackPoints);
+	_asCar->setPathPoints(_trackPoints);
 	if (_currTrackIndex == 0) {
-		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 	} else {
-		sendMessage(_class521, 0x2002, 0);
+		sendMessage(_asCar, 0x2002, 0);
 	}
-	sendPointMessage(_class521, 0x2004, _clickPoint);
+	sendPointMessage(_asCar, 0x2004, _clickPoint);
 	_newTrackIndex = -1;
 }
 
@@ -482,12 +482,12 @@ void Scene2501::findClosestTrack(NPoint &pt) {
 		_newTrackIndex = minMatchTrackIndex;
 		_clickPoint = pt;
 		if (_currTrackIndex == 0)
-			sendMessage(_class521, 0x2003, _trackPoints->size() - 1);
+			sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 		else
-			sendMessage(_class521, 0x2003, 0);
+			sendMessage(_asCar, 0x2003, 0);
 	} else {
 		_newTrackIndex = -1;
-		sendMessage(_class521, 0x2004, pt);
+		sendMessage(_asCar, 0x2004, pt);
 	}
 }
 

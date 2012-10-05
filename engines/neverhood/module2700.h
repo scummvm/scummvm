@@ -56,10 +56,10 @@ public:
 
 class Class517 : public AnimatedSprite {
 public:
-	Class517(NeverhoodEngine *vm, AnimatedSprite *class521, BaseSurface *shadowSurface, uint index);
+	Class517(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index);
 protected:
 	uint _index;
-	AnimatedSprite *_class521;
+	AnimatedSprite *_asCar;
 	uint32 _animFileHash;
 	void update();
 	void updateShadow();
@@ -67,18 +67,18 @@ protected:
 
 class Class519 : public AnimatedSprite {
 public:
-	Class519(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSurface, uint index);
+	Class519(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index);
 protected:
 	uint _index;
-	Sprite *_class521;
+	Sprite *_asCar;
 	void update();
 };
 
 class Class520 : public AnimatedSprite {
 public:
-	Class520(NeverhoodEngine *vm, Sprite *class521, BaseSurface *shadowSurface, int16 frameIndex);
+	Class520(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex);
 protected:
-	Sprite *_class521;
+	Sprite *_asCar;
 	void update();
 };
 
@@ -86,12 +86,12 @@ class Scene2701 : public Scene {
 public:
 	Scene2701(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Class521 *_class521;
+	AsCommonCar *_asCar;
 	Sprite *_class437;
 	Sprite *_class517;
 	Sprite *_class520;
 	Sprite *_class519;
-	Sprite *_class518;
+	Sprite *_asCarConnector;
 	Sprite *_sprite1;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
@@ -103,7 +103,7 @@ class Scene2702 : public Scene {
 public:
 	Scene2702(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Class521 *_class521;
+	AsCommonCar *_asCar;
 	Sprite *_class437;
 	Sprite *_class517;
 	Sprite *_class520;
@@ -126,10 +126,10 @@ public:
 	Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
 		const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 protected:
-	Class521 *_class521;
+	AsCommonCar *_asCar;
 	Sprite *_class437;
 	Sprite *_class517;
-	Sprite *_class518;
+	Sprite *_asCarConnector;
 	Sprite *_class520;
 	Sprite *_class519;
 	int _which1, _which2;
@@ -143,10 +143,10 @@ class Scene2706 : public Scene {
 public:
 	Scene2706(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Class521 *_class521;
+	AsCommonCar *_asCar;
 	Sprite *_class437;
 	Sprite *_class517;
-	Sprite *_class518;
+	Sprite *_asCarConnector;
 	Sprite *_class520;
 	Sprite *_class519;
 	int16 _newTrackDestX;
