@@ -183,10 +183,7 @@ void ScriptInterpreter::setMainScript(uint slotIndex) {
 }
 
 void ScriptInterpreter::runScript() {
-	uint32 lastScreenUpdate = 0;
-
 	while (!_vm->shouldQuit()) {
-
 		if (_vm->_movieSceneFlag)
 			_vm->_mouseButton = 0;
 
@@ -217,17 +214,7 @@ void ScriptInterpreter::runScript() {
 
 		byte opcode = readByte();
 		execOpcode(opcode);
-
-		// Update the screen at semi-regular intervals, else the mouse
-		// cursor will be jerky.
-		uint32 now = _vm->_system->getMillis();
-		if (now < lastScreenUpdate || now - lastScreenUpdate > 10) {
-			_vm->_system->updateScreen();
-			lastScreenUpdate = _vm->_system->getMillis();
-		}
-
 	}
-
 }
 
 byte ScriptInterpreter::readByte() {
