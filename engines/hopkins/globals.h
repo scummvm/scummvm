@@ -214,6 +214,7 @@ enum SauvegardeOffset {
 	, svField6
 	, svField8
 	, svField9
+	, svField10
 	, svField13
 	, svField80
 	, svField94
@@ -264,10 +265,12 @@ enum SauvegardeOffset {
 	, svField357
 	, svField399
 	, svField401
+	, svField1300
 };
 
+// TODO: Sauvegrade1 fields should really be mapped into data array
 struct Sauvegarde {
-	byte data[999]; // TODO: GET CORRECT SIZE
+	byte data[0x802];
 	Sauvegarde1 field360;
 	Sauvegarde1 field370;
 	Sauvegarde1 field380;

@@ -78,6 +78,7 @@ public:
 	const byte *S_old_spr; 
 	bool PERSO_ON;
 	bool SL_FLAG;
+	int SL_MODE;
 	bool FLAG_VISIBLE;
 	bool DESACTIVE_INVENT;
 	int DESACTIVE_CURSOR;

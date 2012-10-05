@@ -2513,4 +2513,53 @@ Video_Cont_Vbe:
 	}
 }
 
+// TODO: Check that v9 doesn't get set anywhere (apart from the current init to zero)
+void GraphicsManager::Reduc_Ecran(byte *a1, byte *a2, int a3, int a4, int a5, int a6, int a7) {
+	byte *v7; 
+	byte *v8; 
+	int v9 = 0; 
+	int v10 = 0; 
+	int v11; 
+	int v12; 
+	byte *v13; 
+	int v14; 
+
+	v7 = a3 + nbrligne2 * a4 + a1;
+	v8 = a2;
+	Red = a7;
+	Largeur = a5;
+	Red_x = 0;
+	Red_y = 0;
+	if (a7 < 100) {
+		Reduc_Ecran_L = Asm_Reduc(a5, Red);
+		Reduc_Ecran_H = Asm_Reduc(v9, Red);
+		v11 = Red;
+		do {
+			v14 = v10;
+			v13 = v7;
+			Red_y += v11;
+			if ((uint16)Red_y < 0x64u) {
+				Red_x = 0;
+				v12 = Largeur;
+				do {
+					Red_x += v11;
+					if ((uint16)Red_x < 0x64u) {
+						*v8++ = *v7++;
+					} else {
+						Red_x = Red_x - 100;
+						++v7;
+					}
+					--v12;
+				} while (v12);
+				v10 = v14;
+				v7 = nbrligne2 + v13;
+			} else {
+				Red_y = Red_y - 100;
+				v7 += nbrligne2;
+			}
+			--v10;
+		} while (v10);
+	}
+}
+
 } // End of namespace Hopkins
