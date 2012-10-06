@@ -50,6 +50,7 @@ public:
 		const Graphics::Surface *shadowSurface = NULL);
 	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
 	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent);
+	void drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent);
 protected:
 	NeverhoodEngine *_vm;
 	Graphics::Surface *_backScreen;

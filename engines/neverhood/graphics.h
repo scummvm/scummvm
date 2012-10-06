@@ -101,6 +101,8 @@ public:
 	NDrawRect& getSysRect() { return _sysRect; }
 	NRect& getClipRect() { return _clipRect; }
 	void setClipRect(NRect clipRect) { _clipRect = clipRect; }
+	void setClipRects(NRect *clipRects, uint clipRectsCount) { _clipRects = clipRects; _clipRectsCount = clipRectsCount; }
+	void clearClipRects() { _clipRects = NULL; _clipRectsCount = 0; }
 	bool getVisible() const { return _visible; }
 	void setVisible(bool value) { _visible = value; }
 	void setTransparent(bool value) { _transparent = value; }
@@ -113,6 +115,8 @@ protected:
 	NDrawRect _drawRect;
 	NDrawRect _sysRect;
 	NRect _clipRect;
+	NRect *_clipRects;
+	uint _clipRectsCount;
 	bool _transparent;
 };
 

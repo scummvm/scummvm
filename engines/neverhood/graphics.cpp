@@ -27,7 +27,8 @@
 namespace Neverhood {
 
 BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height)
-	: _vm(vm), _priority(priority), _visible(true), _transparent(true) {
+	: _vm(vm), _priority(priority), _visible(true), _transparent(true),
+	_clipRects(NULL), _clipRectsCount(0) {
 	
 	_drawRect.x = 0;
 	_drawRect.y = 0;
@@ -52,7 +53,9 @@ BaseSurface::~BaseSurface() {
 
 void BaseSurface::draw() {
 	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
-		if (_sysRect.x == 0 && _sysRect.y == 0) {
+		if (_clipRects && _clipRectsCount) {
+			_vm->_screen->drawSurfaceClipRects(_surface, _drawRect, _clipRects, _clipRectsCount, _transparent);
+		} else if (_sysRect.x == 0 && _sysRect.y == 0) {
 			_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent);
 		} else {
 			_vm->_screen->drawUnk(_surface, _drawRect, _sysRect, _clipRect, _transparent);

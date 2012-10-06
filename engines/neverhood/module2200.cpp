@@ -526,49 +526,49 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 	}
 
-	_rect1.y1 = 0;
-	_rect1.x2 = 640;
-	_rect2.x2 = 640;
-	_rect2.y2 = 480;
+	_clipRects[0].y1 = 0;
+	_clipRects[0].x2 = 640;
+	_clipRects[1].x2 = 640;
+	_clipRects[1].y2 = 480;
 	
 	if (!getGlobalVar(0x404290D5)) {
 		insertStaticSprite(0x00026027, 900);
 	}
 	
 	tempSprite = insertStaticSprite(0x030326A0, 1100);
-	_rect1.x1 = tempSprite->getDrawRect().x;
+	_clipRects[0].x1 = tempSprite->getDrawRect().x;
 	
 	insertStaticSprite(0x811DA061, 1100);
 
 	tempSprite = insertStaticSprite(0x11180022, 1100);
-	_rect2.x1 = tempSprite->getDrawRect().x;
+	_clipRects[1].x1 = tempSprite->getDrawRect().x;
 
 	tempSprite = insertStaticSprite(0x0D411130, 1100);
-	_rect1.y2 = tempSprite->getDrawRect().y2();
-	_rect2.y1 = tempSprite->getDrawRect().y2();
+	_clipRects[0].y2 = tempSprite->getDrawRect().y2();
+	_clipRects[1].y1 = tempSprite->getDrawRect().y2();
 	
 	_doorLightSprite = insertStaticSprite(0xA4062212, 900);
 
 	if (which < 0) {
-		insertKlayman<KmScene2201>(300, 427, &_rect1, 2);
+		insertKlayman<KmScene2201>(300, 427, _clipRects, 2);
 		setMessageList(0x004B8118);
 		_asDoor = insertSprite<AsScene2201Door>(_klayman, _doorLightSprite, false);
 	} else if (which == 1) {
-		insertKlayman<KmScene2201>(412, 393, &_rect1, 2);
+		insertKlayman<KmScene2201>(412, 393, _clipRects, 2);
 		setMessageList(0x004B8130);
 		_asDoor = insertSprite<AsScene2201Door>(_klayman, _doorLightSprite, false);
 	} else if (which == 2) {
 		if (getGlobalVar(0xC0418A02)) {
-			insertKlayman<KmScene2201>(379, 427, &_rect1, 2);
+			insertKlayman<KmScene2201>(379, 427, _clipRects, 2);
 			_klayman->setDoDeltaX(1);
 		} else {
-			insertKlayman<KmScene2201>(261, 427, &_rect1, 2);
+			insertKlayman<KmScene2201>(261, 427, _clipRects, 2);
 		}
 		setMessageList(0x004B8178);
 		_asDoor = insertSprite<AsScene2201Door>(_klayman, _doorLightSprite, false);
 	} else {
 		NPoint pt = _dataResource.getPoint(0x0304D8DC);
-		insertKlayman<KmScene2201>(pt.x, pt.y, &_rect1, 2);
+		insertKlayman<KmScene2201>(pt.x, pt.y, _clipRects, 2);
 		setMessageList(0x004B8120);
 		_asDoor = insertSprite<AsScene2201Door>(_klayman, _doorLightSprite, true);
 	}

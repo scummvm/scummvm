@@ -4636,8 +4636,9 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2201::KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
-	// TODO: NRect *rect1, int16 unk in Klayman ctor
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+
+	_surface->setClipRects(clipRects, clipRectsCount);
 
 	_dataResource.load(0x04104242);
 	_flagF6 = false;
@@ -4831,7 +4832,7 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene2206::KmScene2206(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
-    _walkResumeFrameIncr = 1;
+	_walkResumeFrameIncr = 1;
 	_vm->_soundMan->addSound(0x80101800, 0xD3B02847);
 }
 

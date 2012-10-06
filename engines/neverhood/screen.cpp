@@ -299,4 +299,10 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 
 }
 
+void Screen::drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent) {
+	NDrawRect clipDrawRect(0, 0, drawRect.width, drawRect.height);
+	for (uint i = 0; i < clipRectsCount; i++)
+		drawSurface3(surface, drawRect.x, drawRect.y, clipDrawRect, clipRects[i], transparent);
+}
+
 } // End of namespace Neverhood

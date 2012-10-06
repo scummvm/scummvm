@@ -96,8 +96,7 @@ public:
 	Scene2201(NeverhoodEngine *vm, Module *parentModule, int which);
 	~Scene2201();
 protected:
-	NRect _rect1;
-	NRect _rect2;
+	NRect _clipRects[2];
 	Sprite *_doorLightSprite;
 	Sprite *_asDoor;
 	Sprite *_ssDoorButton;
