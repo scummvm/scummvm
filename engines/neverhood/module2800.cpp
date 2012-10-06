@@ -422,7 +422,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_sprite2 = insertStaticSprite(0x061601C8, 1100);
 		_klayman->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
 		insertMouse433(0x00680116);
-		_asTape = insertSprite<Class606>(this, 8, 1100, 302, 437, 0x01142428);
+		_asTape = insertSprite<SsScene1705Tape>(this, 8, 1100, 302, 437, 0x01142428);
 		_vm->_collisionMan->addSprite(_asTape); 
 	} else {
 		setRectList(0x004B6CF0);
@@ -2991,8 +2991,8 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_collisionMan->addSprite(_class545);
 	}
 
-	_class606 = insertSprite<Class606>(this, 6, 1100, 513, 437, 0xA1361863);
-	_vm->_collisionMan->addSprite(_class606);
+	_ssTape = insertSprite<SsScene1705Tape>(this, 6, 1100, 513, 437, 0xA1361863);
+	_vm->_collisionMan->addSprite(_ssTape);
 	
 	_asWinch = insertSprite<AsScene2812Winch>();
 	_asTrapDoor = insertSprite<AsScene2812TrapDoor>();
@@ -3068,8 +3068,8 @@ uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_asTrapDoor, 0x2000, 0);
 		break;
 	case 0x4826:
-		if (sender == _class606 && !_flag1) {
-			sendEntityMessage(_klayman, 0x1014, _class606);
+		if (sender == _ssTape && !_flag1) {
+			sendEntityMessage(_klayman, 0x1014, _ssTape);
 			setMessageList(0x004AF658);
 		} else if (sender == _class545 && !_flag1) {
 			sendEntityMessage(_klayman, 0x1014, _class545);

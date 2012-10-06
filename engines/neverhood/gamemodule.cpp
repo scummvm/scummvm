@@ -309,8 +309,8 @@ void GameModule::startup() {
 
 
 #if 1
-	_vm->gameState().sceneNum = 8;
-	createModule(1600, -1);
+	_vm->gameState().sceneNum = 4;
+	createModule(1700, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

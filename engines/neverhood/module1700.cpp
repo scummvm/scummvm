@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/module1700.h"
+#include "neverhood/gamemodule.h"
 
 namespace Neverhood {
 
@@ -139,19 +140,19 @@ static const uint32 kScene1705FileHashes[] = {
 	0x910EA800
 };
 
-Class602::Class602(NeverhoodEngine *vm, uint32 fileHash, int index)
+SsScene1705WallSymbol::SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHash, int symbolIndex)
 	: StaticSprite(vm, fileHash, 100) {
 	
-	_x = _spriteResource.getPosition().x + index * 30;
+	_x = _spriteResource.getPosition().x + symbolIndex * 30;
 	_y = _spriteResource.getPosition().y + 160;
 	StaticSprite::update();
 }
 
-Class606::Class606(NeverhoodEngine *vm, Scene *parentScene, int index, int surfacePriority, int16 x, int16 y, uint32 fileHash)
-	: StaticSprite(vm, fileHash, surfacePriority, x - 24, y - 4), _parentScene(parentScene), _index(index) {
+SsScene1705Tape::SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash)
+	: StaticSprite(vm, fileHash, surfacePriority, x - 24, y - 4), _parentScene(parentScene), _tapeIndex(tapeIndex) {
 
-	if (!getSubVar(0x02038314, _index) && !getSubVar(0x02720344, _index)) {
-		SetMessageHandler(&Class606::handleMessage);
+	if (!getSubVar(0x02038314, _tapeIndex) && !getSubVar(0x02720344, _tapeIndex)) {
+		SetMessageHandler(&SsScene1705Tape::handleMessage);
 	} else {
 		setVisible(false);
 		SetMessageHandler(NULL);
@@ -164,7 +165,7 @@ Class606::Class606(NeverhoodEngine *vm, Scene *parentScene, int index, int surfa
 	Sprite::processDelta();
 }
 
-uint32 Class606::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
@@ -172,7 +173,7 @@ uint32 Class606::handleMessage(int messageNum, const MessageParam &param, Entity
 		messageResult = 1;
 		break;
 	case 0x4806:
-		setSubVar(0x02038314, _index, 1);
+		setSubVar(0x02038314, _tapeIndex, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
 		break;		
@@ -186,7 +187,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	Sprite *tempSprite;
 	
 	setGlobalVar(0xE7498218, 1);
-	// TODO _vm->initVarsScene1705();
+	_vm->gameModule()->initScene3009Vars();
 
 	SetMessageHandler(&Scene1705::handleMessage);
 	SetUpdateHandler(&Scene1705::update);
@@ -204,16 +205,14 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertMouse433(0x18222039);
 
-	insertSprite<Class602>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 0)], 0);
-	insertSprite<Class602>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 1)], 1);
-	insertSprite<Class602>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 2)], 2);
+	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 0)], 0);
+	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 1)], 1);
+	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 2)], 2);
 
 	_sprite = insertStaticSprite(0x31313A22, 1100);
 
-	_class606 = insertSprite<Class606>(this, 15, 1100, 238, 439, 0x02363852);
-	_vm->_collisionMan->addSprite(_class606);
-
-	which = 4;
+	_ssTape = insertSprite<SsScene1705Tape>(this, 15, 1100, 238, 439, 0x02363852);
+	_vm->_collisionMan->addSprite(_ssTape);
 
 	if (which < 0) {
 		insertKlayman<KmScene1705>(231, 434);
@@ -275,7 +274,7 @@ uint32 Scene1705::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x4826:
-		if (sender == _class606 && _klayman->getX() <= 318) {
+		if (sender == _ssTape && _klayman->getX() <= 318) {
 			sendEntityMessage(_klayman, 0x1014, sender);
 			setMessageList(0x004B6AC0);
 		}

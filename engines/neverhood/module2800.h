@@ -461,7 +461,7 @@ protected:
 	Sprite *_sprite3;
 	Sprite *_sprite2;
 	Sprite *_sprite4;
-	Sprite *_class606;
+	Sprite *_ssTape;
 	Sprite *_class545;
 	Sprite *_sprite1;
 	bool _flag1;

@@ -41,17 +41,17 @@ protected:
 
 // Scene1705
 
-class Class602 : public StaticSprite {
+class SsScene1705WallSymbol : public StaticSprite {
 public:
-	Class602(NeverhoodEngine *vm, uint32 fileHash, int index);
+	SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHash, int symbolIndex);
 };
 
-class Class606 : public StaticSprite {
+class SsScene1705Tape : public StaticSprite {
 public:
-	Class606(NeverhoodEngine *vm, Scene *parentScene, int index, int surfacePriority, int16 x, int16 y, uint32 fileHash);
+	SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash);
 protected:	
 	Scene *_parentScene;
-	int _index;
+	uint32 _tapeIndex;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -60,7 +60,7 @@ public:
 	Scene1705(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
 	Sprite *_sprite;
-	Sprite *_class606;
+	Sprite *_ssTape;
 	int _paletteArea;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
