@@ -28,6 +28,26 @@
 
 namespace Hopkins {
 
+LinesManager::LinesManager() {
+	for (int i = 0; i < 400; ++i) {
+		Common::fill((byte *)&LigneZone[i], (byte *)&LigneZone[i] + sizeof(LigneZoneItem), 0);
+		Common::fill((byte *)&Ligne[i], (byte *)&Ligne[i] + sizeof(LigneItem), 0);
+	}
+	for (int i = 0; i < 4000; ++i) {
+		Common::fill((byte *)&SMOOTH[i], (byte *)&SMOOTH[i] + sizeof(SmoothItem), 0);
+	}
+
+	next_ligne = 0;
+	TOTAL_LIGNES = 0;
+	NV_LIGNEDEP = 0;
+	NV_LIGNEOFS = 0;
+	NV_POSI = 0;
+	NVPX = 0;
+	NVPY = 0;
+	SMOOTH_SENS = 0;
+	SMOOTH_X = SMOOTH_Y = 0;
+}
+
 void LinesManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }

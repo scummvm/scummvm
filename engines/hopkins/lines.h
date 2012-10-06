@@ -68,6 +68,7 @@ public:
 	int SMOOTH_SENS;
 	int SMOOTH_X, SMOOTH_Y;
 public:
+	LinesManager();
 	void setParent(HopkinsEngine *vm);
 
 	void CLEAR_ZONE();
