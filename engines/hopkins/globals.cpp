@@ -31,6 +31,50 @@
 namespace Hopkins {
 
 Globals::Globals() {
+	// Initialise array properties
+	for (int i = 0; i < 6; ++i)
+		CACHE_BANQUE[i] = PTRNUL;
+	for (int i = 0; i < 106; ++i)
+		Common::fill((byte *)&ZONEP[i], (byte *)&ZONEP[i] + sizeof(ZonePItem), 0);
+	for (int i = 0; i < 100; ++i)
+		Common::fill((byte *)&CarreZone[i], (byte *)&CarreZone[i] + sizeof(CarreZoneItem), 0);
+	for (int i = 0; i < 35; ++i)
+		Common::fill((byte *)&Bqe_Anim[i], (byte *)&Bqe_Anim[i] + sizeof(BqeAnimItem), 0);
+	for (int i = 0; i < 8; ++i)
+		Common::fill((byte *)&Bank[i], (byte *)&Bank[i] + sizeof(BankItem), 0);
+	for (int i = 0; i < 36; ++i)
+		Common::fill((byte *)&Bob[i], (byte *)&Bob[i] + sizeof(BobItem), 0);
+	for (int i = 0; i < 6; ++i)
+		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
+	for (int i = 0; i < 35; ++i)
+		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(Liste2Item), 0);
+	for (int i = 0; i < 30; ++i)
+		Common::fill((byte *)&BL_ANIM[i], (byte *)&BL_ANIM[i] + sizeof(BlAnimItem), 0);
+	for (int i = 0; i < 35; ++i)
+		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
+	for (int i = 0; i < 300; ++i)
+		Common::fill((byte *)&ObjetW[i], (byte *)&ObjetW[i] + sizeof(ObjetWItem), 0);
+	for (int i = 0; i < 250; ++i)
+		Common::fill((byte *)&BLOC[i], (byte *)&BLOC[i] + sizeof(BlocItem), 0);
+	for (int i = 0; i < 25; ++i)
+		Common::fill((byte *)&Cache[i], (byte *)&Cache[i] + sizeof(CacheItem), 0);
+
+	for (int i = 0; i < 101; ++i)
+		Common::fill((byte *)&Segment[i], (byte *)&Segment[i] + sizeof(SegmentItem), 0);
+	for (int i = 0; i < 105; ++i) {
+		BOBZONE[i] = 0;
+		BOBZONE_FLAG[i] = 0;
+	}
+	for (int i = 0; i < 500; ++i)
+		STAILLE[i] = 0;
+	for (int i = 0; i < 32002; ++i)
+		super_parcours[i] = 0;
+	for (int i = 0; i < 2100; ++i)
+		Param[i] = 0;
+	for (int i = 0; i < 70; ++i)
+		Common::fill((byte *)&Hopkins[i], (byte *)&Hopkins[i] + sizeof(HopkinsItem), 0);
+
+	// Initialise fields
 	FR = 0;
 	SVGA = 2;
 	internet = 1;
@@ -46,6 +90,7 @@ Globals::Globals() {
 	lOldItCounter = 0;
 	g_old_anim = 0;
 	g_old_sens = 0;
+	g_old_sens2 = 0;
 	police_l = police_h = 0;
 	TETE = NULL;
 	texte_long = 0;
@@ -64,6 +109,7 @@ Globals::Globals() {
 	iRegul = 0;
 	SORTIE = 0;
 	PLANX = PLANY = 0;
+	PLANI = 0;
 	PERSO = 0;
 	PASSWORD = 0;
 	ECRAN = 0;
@@ -83,7 +129,19 @@ Globals::Globals() {
 	opt_txt = 0;
 	opt_anm = 0;
 	NBTRI = 0;
+	AFFLI = 0;
+	AFFIVBL = 0;
+	NOT_VERIF = 0;
 	AFFINVEN = 0;
+	PERSO_TYPE = 0;
+	GOACTION = 0;
+	NECESSAIRE = 0;
+	Compteur = 0;
+	ACTION_SENS = 0;
+	ACTION_SENS = 0;
+	SegmentEnCours = 0;
+	STOP_BUG = 0;
+	MAX_COMPTE = 0;
 
 	// Initialise pointers
 	ICONE = NULL;
@@ -135,6 +193,20 @@ Globals::Globals() {
 	OPTION_FLAG = false;
 	CACHEFLAG = false;
 	NOPARLE = false;
+
+	// Reset indexed variables
+	force_to_data_0 = 0;
+	oldzone_46 = 0;
+	old_x1_65 = 0;
+	old_y1_66 = 0;
+	old_x2_67 = 0;
+	old_y2_68 = 0;
+	old_zone_68 = 0;
+	old_z_69 = 0;
+	old_x_69 = 0;
+	old_y_70 = 0;
+	compteur_71 = 0;
+	zozo_73 = 0;
 }
 
 Globals::~Globals() {

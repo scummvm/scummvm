@@ -34,6 +34,10 @@
 namespace Hopkins {
 
 ObjectsManager::ObjectsManager() {
+	for (int i = 0; i < 6; ++i) {
+		Common::fill((byte *)&Sprite[i], (byte *)&Sprite[i] + sizeof(SpriteItem), 0);
+	}
+
 	PRIORITY = 0;
 	inventairex = inventairey = 0;
 	inventairel = inventaireh = 0;
@@ -41,15 +45,62 @@ ObjectsManager::ObjectsManager() {
 	cadx = cady = cadi = 0;
 	SL_X = SL_Y = 0;
 	I_old_x = I_old_y = 0;
+	g_old_x = g_old_y = 0;
 	FLAG_VISIBLE_EFFACE = 0;
+	Winventaire = NULL;
 	inventaire2 = PTRNUL;
 	SL_SPR = PTRNUL;
 	SL_SPR2 = PTRNUL;
+	sprite_ptr = PTRNUL;
+	S_old_spr = PTRNUL;
 	PERSO_ON = false;
 	SL_FLAG = false;
+	SL_MODE = false;
 	FLAG_VISIBLE = false;
 	DESACTIVE_INVENT = false;
+	DESACTIVE_CURSOR = 0;
 	BOBTOUS = false;
+	INVENTFLAG = false;
+	KEY_INVENT = 0;
+	my_anim = 0;
+	GOACTION = 0;
+	NUMZONE = 0;
+	ARRET_PERSO_FLAG = 0;
+	ARRET_PERSO_NUM = 0;
+	FORCEZONE = 0;
+	CHANGEVERBE = 0;
+	verbe = 0;
+	Vold_taille = 0;
+	SPEED_FLAG = false;
+	SPEED_X = SPEED_Y = 0;
+	SPEED_IMAGE = 0;
+	SPEED_PTR = PTRNUL;
+	DERLIGNE = 0;
+	g_old_sens = 0;
+	A_ANIM = 0;
+	MA_ANIM = 0;
+	MA_ANIM1 = 0;
+	A_DEPA = 0;
+	MAX_DEPA = 0;
+	MAX_DEPA1 = 0;
+	VIRE_INVENT = 0;
+	AFFINVEN = 0;
+	TRAVAILOBJET = 0;
+	CH_TETE = 0;
+	T_RECTIF = 0;
+	DESACTIVE = 0;
+	DEUXPERSO = 0;
+	PERX, PERY = 0;
+	PERI = 0;
+	RECALL = 0;
+	PTAILLE = 0;
+	PEROFX = 0;
+	PEROFY = 0;
+	OBSSEUL = 0;
+	NVVERBE = 0;
+	NVZONE = 0;
+	S_old_ani = 0; 
+	S_old_ret = 0;
 }
 
 void ObjectsManager::setParent(HopkinsEngine *vm) {

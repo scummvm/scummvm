@@ -61,6 +61,7 @@ private:
 	HopkinsEngine *_vm;
 
 public:
+	SpriteItem Sprite[6];
 	int PRIORITY;
 	int inventairex, inventairey;
 	int inventairel, inventaireh;
@@ -83,7 +84,6 @@ public:
 	bool DESACTIVE_INVENT;
 	int DESACTIVE_CURSOR;
 	bool BOBTOUS;
-	SpriteItem Sprite[6];
 	bool INVENTFLAG;
 	int KEY_INVENT;
 	int my_anim;
