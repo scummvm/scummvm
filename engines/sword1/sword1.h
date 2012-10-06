@@ -75,6 +75,7 @@ struct SystemVars {
 	uint8   language;
 	bool    isDemo;
 	Common::Platform platform;
+	Common::Language realLanguage;
 };
 
 class SwordEngine : public Engine {

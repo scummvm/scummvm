@@ -116,8 +116,9 @@ Common::Error SwordEngine::init() {
 	_systemVars.controlPanelMode = CP_NEWGAME;
 	_systemVars.forceRestart = false;
 	_systemVars.wantFade = true;
+	_systemVars.realLanguage = Common::parseLanguage(ConfMan.get("language"));
 
-	switch (Common::parseLanguage(ConfMan.get("language"))) {
+	switch (_systemVars.realLanguage) {
 	case Common::DE_DEU:
 		_systemVars.language = BS1_GERMAN;
 		break;
@@ -138,6 +139,7 @@ Common::Error SwordEngine::init() {
 		break;
 	default:
 		_systemVars.language = BS1_ENGLISH;
+		break;
 	}
 
 	_systemVars.showText = ConfMan.getBool("subtitles");

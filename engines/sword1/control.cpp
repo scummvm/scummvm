@@ -541,7 +541,9 @@ void Control::setupMainPanel() {
 	if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN)
 		panelId = SR_DEATHPANEL;
 	else {
-		if (SwordEngine::_systemVars.language <= BS1_SPANISH)
+		if (SwordEngine::_systemVars.realLanguage == Common::EN_USA)
+			panelId = SR_PANEL_AMERICAN;
+		else if (SwordEngine::_systemVars.language <= BS1_SPANISH)
 			panelId = SR_PANEL_ENGLISH + SwordEngine::_systemVars.language;
 		else
 			panelId = SR_PANEL_ENGLISH;
