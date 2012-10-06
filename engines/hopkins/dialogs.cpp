@@ -40,13 +40,13 @@ void OptionsDialog::show(HopkinsEngine *vm) {
 	vm->_eventsManager.CHANGE_MOUSE(0);
 	vm->_eventsManager.VBL();
 	if (vm->_globals.FR == 1)
-		FileManager::CONSTRUIT_SYSTEM("OPTIFR.SPR");
+		vm->_fileManager.CONSTRUIT_SYSTEM("OPTIFR.SPR");
 	if (!vm->_globals.FR)
-		FileManager::CONSTRUIT_SYSTEM("OPTIAN.SPR");
+		vm->_fileManager.CONSTRUIT_SYSTEM("OPTIAN.SPR");
 	if (vm->_globals.FR == 2)
-		FileManager::CONSTRUIT_SYSTEM("OPTIES.SPR");
+		vm->_fileManager.CONSTRUIT_SYSTEM("OPTIES.SPR");
   
-	vm->_globals.OPTION_SPR = FileManager::CHARGE_FICHIER(vm->_globals.NFICHIER);
+	vm->_globals.OPTION_SPR = vm->_fileManager.CHARGE_FICHIER(vm->_globals.NFICHIER);
 	vm->_globals.OPTION_FLAG = true;
 
 	do {

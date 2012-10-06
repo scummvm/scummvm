@@ -30,29 +30,36 @@
 
 namespace Hopkins {
 
+class HopkinsEngine;
+
 class FileManager {
 public:
-	static void initSaves();
-	static bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
-	static bool bsave(const Common::String &file, const void *buf, size_t n);
-	static void Chage_Inifile(Common::StringMap &iniParams);
-	static byte *CHARGE_FICHIER(const Common::String &file);
-	static void CHARGE_FICHIER2(const Common::String &file, byte *a2);
-	static void DMESS();
-	static void DMESS1();
-	static void bload(const Common::String &file, byte *buf);
-	static int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
-	static void F_Censure();
-	static int CONSTRUIT_SYSTEM(const Common::String &file);
-	static void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
-	static byte *LIBERE_FICHIER(byte *ptr);
-	static byte *RECHERCHE_CAT(const Common::String &file, int a2);
-	static Common::String CONSTRUIT_LINUX(const Common::String &file);
+	HopkinsEngine *_vm;
+public:
+	FileManager();
+	void setParent(HopkinsEngine *vm);
+
+	void initSaves();
+	bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
+	bool bsave(const Common::String &file, const void *buf, size_t n);
+	void Chage_Inifile(Common::StringMap &iniParams);
+	byte *CHARGE_FICHIER(const Common::String &file);
+	void CHARGE_FICHIER2(const Common::String &file, byte *a2);
+	void DMESS();
+	void DMESS1();
+	void bload(const Common::String &file, byte *buf);
+	int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
+	void F_Censure();
+	int CONSTRUIT_SYSTEM(const Common::String &file);
+	void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
+	byte *LIBERE_FICHIER(byte *ptr);
+	byte *RECHERCHE_CAT(const Common::String &file, int a2);
+	Common::String CONSTRUIT_LINUX(const Common::String &file);
 
 	/**
 	 * Returns the size of a file. Throws an error if the file can't be found
 	 */
-	static uint32 FLONG(const Common::String &filename);
+	uint32 FLONG(const Common::String &filename);
 };
 
 } // End of namespace Hopkins

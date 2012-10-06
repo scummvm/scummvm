@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 #include "hopkins/anim.h"
 #include "hopkins/events.h"
+#include "hopkins/files.h"
 #include "hopkins/font.h"
 #include "hopkins/globals.h"
 #include "hopkins/graphics.h"
@@ -96,6 +97,7 @@ public:
 	EventsManager _eventsManager;
 	FontManager _fontManager;
 	Globals _globals;
+	FileManager _fileManager;
 	GraphicsManager _graphicsManager;
 	LinesManager _linesManager;
 	MenuManager _menuManager;

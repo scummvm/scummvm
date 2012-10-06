@@ -79,8 +79,8 @@ GraphicsManager::GraphicsManager() {
 }
 
 GraphicsManager::~GraphicsManager() {
-	GLOBALS.dos_free2(VESA_SCREEN);
-	GLOBALS.dos_free2(VESA_BUFFER);
+	_vm->_globals.dos_free2(VESA_SCREEN);
+	_vm->_globals.dos_free2(VESA_BUFFER);
 }
 
 void GraphicsManager::setParent(HopkinsEngine *vm) {
@@ -91,21 +91,21 @@ void GraphicsManager::SET_MODE(int width, int height) {
 	if (!SDL_MODEYES) {
 		SDL_ECHELLE = 0;
 
-		if (GLOBALS.XSETMODE == 1)
+		if (_vm->_globals.XSETMODE == 1)
 			SDL_ECHELLE = 0;
-		if (GLOBALS.XSETMODE == 2)
+		if (_vm->_globals.XSETMODE == 2)
 			SDL_ECHELLE = 25;
-		if (GLOBALS.XSETMODE == 3)
+		if (_vm->_globals.XSETMODE == 3)
 			SDL_ECHELLE = 50;
-		if (GLOBALS.XSETMODE == 4)
+		if (_vm->_globals.XSETMODE == 4)
 			SDL_ECHELLE = 75;
-		if (GLOBALS.XSETMODE == 5)
-			SDL_ECHELLE = GLOBALS.XZOOM;
+		if (_vm->_globals.XSETMODE == 5)
+			SDL_ECHELLE = _vm->_globals.XZOOM;
 		
 		int bpp = 8;
-		if (GLOBALS.XFORCE8 == 1)
+		if (_vm->_globals.XFORCE8 == 1)
 			bpp = 8;
-		if (GLOBALS.XFORCE16 == 1)
+		if (_vm->_globals.XFORCE16 == 1)
 			bpp = 16;
 
 		if (SDL_ECHELLE) {
@@ -122,8 +122,8 @@ void GraphicsManager::SET_MODE(int width, int height) {
 		}
 
 		// Init surfaces
-		VESA_SCREEN = GLOBALS.dos_malloc2(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
-		VESA_BUFFER = GLOBALS.dos_malloc2(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		VESA_SCREEN = _vm->_globals.dos_malloc2(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		VESA_BUFFER = _vm->_globals.dos_malloc2(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 		VideoPtr = NULL;
 		XSCREEN = width;
@@ -174,12 +174,12 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	bool flag;
 	Common::File f;
 
-	FileManager::DMESS1();
+	_vm->_fileManager.DMESS1();
 
 	flag = true;
-	if (FileManager::RECHERCHE_CAT(file, 6)) {
-		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPIMAGE, file);
-		if (!f.open(GLOBALS.NFICHIER))
+	if (_vm->_fileManager.RECHERCHE_CAT(file, 6)) {
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, file);
+		if (!f.open(_vm->_globals.NFICHIER))
 			error("CHARGE_ECRAN - %s", file.c_str());
 
 		f.seek(0, SEEK_END);
@@ -364,12 +364,12 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 	memset(surface, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	if (typeFlag) {
-		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPIMAGE, "PIC.RES");
-		if (!f.open(GLOBALS.NFICHIER))
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, "PIC.RES");
+		if (!f.open(_vm->_globals.NFICHIER))
 			error("(nom)Erreur en cours de lecture.");
-		f.seek(GLOBALS.CAT_POSI);
+		f.seek(_vm->_globals.CAT_POSI);
 
-		v7 = GLOBALS.CAT_TAILLE - 896;
+		v7 = _vm->_globals.CAT_TAILLE - 896;
 		v8 = f.read(HEADER_PCX, 128);
 
 		v6 = READ_LE_UINT16(&HEADER_PCX[8]) + 1;
@@ -387,8 +387,8 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 		if (v8 == -1)
 		  error("Erreur en cours de lecture.");
 	} else {
-		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPIMAGE, file);
-		if (!f.open(GLOBALS.NFICHIER))
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, file);
+		if (!f.open(_vm->_globals.NFICHIER))
 		  error("(nom)Erreur en cours de lecture.");
 
 		filesize = f.size();
@@ -411,7 +411,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 		v7 = filesize - 896;
 	}
 
-	ptr = GLOBALS.dos_malloc2(0xEE60u);
+	ptr = _vm->_globals.dos_malloc2(0xEE60u);
 	if (v7 >= 60000) {
 		v21 = v7 / 60000 + 1;
 		v23 = 60000 * (v7 / 60000) - v7;
@@ -470,7 +470,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 	} while (v18 < v19 * v20);
 
 	if (typeFlag) {
-		f.seek(GLOBALS.CAT_TAILLE + GLOBALS.CAT_POSI - 768);
+		f.seek(_vm->_globals.CAT_TAILLE + _vm->_globals.CAT_POSI - 768);
 	} else {
 		filesize = f.size();
 		f.seek(filesize - 768);
@@ -480,7 +480,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 		error("A_PCX640_480");
   
 	f.close();
-	GLOBALS.dos_free2(ptr);
+	_vm->_globals.dos_free2(ptr);
 }
 
 void GraphicsManager::Cls_Pal() {
@@ -2342,25 +2342,25 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 	v9 = 0;
 	
 	v13 = file + ".ini";
-	ptr = FileManager::RECHERCHE_CAT(v13, 1);
+	ptr = _vm->_fileManager.RECHERCHE_CAT(v13, 1);
 	if (PTRNUL == ptr) {
-		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
-		ptr = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
+		ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (!a2) {
 		v13 = file + ".spr";
 		if (PTRNUL != _vm->_globals.SPRITE_ECRAN)
-			_vm->_globals.SPRITE_ECRAN = FileManager::LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
+			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
 		if (!_vm->_globals.NOSPRECRAN) {
-			_vm->_globals.SPRITE_ECRAN = FileManager::RECHERCHE_CAT(v13, 8);
+			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.RECHERCHE_CAT(v13, 8);
 			if (_vm->_globals.SPRITE_ECRAN) {
 				_vm->_globals.CAT_FLAG = 0;
-				FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
+				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
 			} else {
 				_vm->_globals.CAT_FLAG = 1;
-				FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
+				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
 			}
-			_vm->_globals.SPRITE_ECRAN = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 			_vm->_globals.CAT_FLAG = 0;
 		}
 	}
@@ -2388,11 +2388,11 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 			_vm->_globals.COUCOU = _vm->_globals.dos_free2(_vm->_globals.COUCOU);
 		
 		v13 = file + ".rep";
-		byte *dataP = FileManager::RECHERCHE_CAT(v13, 2);
+		byte *dataP = _vm->_fileManager.RECHERCHE_CAT(v13, 2);
 		_vm->_globals.COUCOU = dataP;
 		if (PTRNUL == dataP) {
-			FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
-			dataP = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
+			dataP = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 			_vm->_globals.COUCOU = dataP;
 		}
 	}

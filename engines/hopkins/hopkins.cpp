@@ -40,6 +40,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	g_vm = this;
 	_animationManager.setParent(this);
 	_eventsManager.setParent(this);
+	_fileManager.setParent(this);
 	_fontManager.setParent(this);
 	_globals.setParent(this);
 	_graphicsManager.setParent(this);
@@ -52,23 +53,23 @@ HopkinsEngine::~HopkinsEngine() {
 }
 
 Common::Error HopkinsEngine::run() {
-	FileManager::initSaves();
+	_fileManager.initSaves();
 
 	Common::StringMap iniParams;
-	FileManager::Chage_Inifile(iniParams);
+	_fileManager.Chage_Inifile(iniParams);
 	processIniParams(iniParams);
 
-	GLOBALS.setConfig();
-	FileManager::F_Censure();
+	_globals.setConfig();
+	_fileManager.F_Censure();
 	INIT_SYSTEM();
 
 	_soundManager.WSOUND_INIT();
 
-	GLOBALS.CHARGE_OBJET();
+	_globals.CHARGE_OBJET();
 	_objectsManager.CHANGE_OBJET(14);
 	_objectsManager.AJOUTE_OBJET(14);
 
-	GLOBALS.HELICO = 0;
+	_globals.HELICO = 0;
 	_eventsManager.MOUSE_OFF();
 
 	_graphicsManager.DD_Lock();
@@ -81,7 +82,7 @@ Common::Error HopkinsEngine::run() {
 	_eventsManager.delay(1500);
 	_graphicsManager.FADE_OUTW();
 
-	if (!GLOBALS.internet) {
+	if (!_globals.internet) {
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.PLAY_ANM("MP.ANM", 10, 16, 200);
 	}
@@ -95,22 +96,22 @@ Common::Error HopkinsEngine::run() {
 		INTRORUN();
   
 	_globals.iRegul = 0;
-	FileManager::CONSTRUIT_SYSTEM("PERSO.SPR");
-	GLOBALS.PERSO = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
-	GLOBALS.PERSO_TYPE = 0;
-	GLOBALS.PLANX = GLOBALS.PLANY = 0;
-	memset(GLOBALS.SAUVEGARDE, 0, 2000);
-	GLOBALS.SORTIE = 0;
-	GLOBALS.PASSWORD = 1;
+	_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
+	_globals.PERSO = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
+	_globals.PERSO_TYPE = 0;
+	_globals.PLANX = _globals.PLANY = 0;
+	memset(_globals.SAUVEGARDE, 0, 2000);
+	_globals.SORTIE = 0;
+	_globals.PASSWORD = 1;
 
 LABEL_12:
-	if (GLOBALS.SORTIE == 300)
+	if (_globals.SORTIE == 300)
 LABEL_13:
-		GLOBALS.SORTIE = 0;
+		_globals.SORTIE = 0;
 
-	if (!GLOBALS.SORTIE) {
-		GLOBALS.SORTIE = _menuManager.MENU();
-		if (GLOBALS.SORTIE == -1) {
+	if (!_globals.SORTIE) {
+		_globals.SORTIE = _menuManager.MENU();
+		if (_globals.SORTIE == -1) {
 			if (!g_system->getEventManager()->shouldQuit())
 				PUBQUIT();
 			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
@@ -129,19 +130,19 @@ LABEL_13:
 									if (g_system->getEventManager()->shouldQuit())
 										return Common::kNoError;
 
-									if (GLOBALS.SORTIE == 300)
+									if (_globals.SORTIE == 300)
 										goto LABEL_13;
-									if (GLOBALS.SORTIE == 18)
+									if (_globals.SORTIE == 18)
 										PASS();
-									if (GLOBALS.SORTIE == 23)
+									if (_globals.SORTIE == 23)
 										PASS();
-									if (GLOBALS.SORTIE == 22)
+									if (_globals.SORTIE == 22)
 										PASS();
-									if (GLOBALS.SORTIE == 19)
+									if (_globals.SORTIE == 19)
 										PASS();
-									if (GLOBALS.SORTIE == 20)
+									if (_globals.SORTIE == 20)
 										PASS();
-									if (GLOBALS.SORTIE != 1)
+									if (_globals.SORTIE != 1)
 										break;
 
 									_globals.Max_Propre = 50;
@@ -151,10 +152,10 @@ LABEL_13:
 									_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
 								}
                 
-								if (GLOBALS.SORTIE != 3)
+								if (_globals.SORTIE != 3)
 									break;
 								
-								if (!*((byte *)GLOBALS.SAUVEGARDE + 170)) {
+								if (!*((byte *)_globals.SAUVEGARDE + 170)) {
 									_soundManager.WSOUND(3);
 									if (_globals.FR == 1)
 										_graphicsManager.LOAD_IMAGE("fond_globals.FR");
@@ -174,41 +175,41 @@ LABEL_13:
 									_graphicsManager.Cls_Pal();
 									_graphicsManager.FADE_LINUX = 2;
 					
-									if (!GLOBALS.CENSURE)
+									if (!_globals.CENSURE)
 										_animationManager.PLAY_ANM("BANQUE.ANM", 200, 28, 200);
-									if (GLOBALS.CENSURE == 1)
+									if (_globals.CENSURE == 1)
 										_animationManager.PLAY_ANM("BANKUK.ANM", 200, 28, 200);
 									_soundManager.SPECIAL_SOUND = 0;
 									_soundManager.DEL_SAMPLE(1);
 									_soundManager.DEL_SAMPLE(2);
 									_soundManager.DEL_SAMPLE(3);
 									_soundManager.DEL_SAMPLE(4);
-									*((byte *)GLOBALS.SAUVEGARDE + 170) = 1;
+									*((byte *)_globals.SAUVEGARDE + 170) = 1;
 								}
                 
 								_globals.Max_Propre = 5;
 								_globals.Max_Ligne_Long = 5;
 								_globals.Max_Propre_Gen = 5;
 								_globals.Max_Perso_Y = 450;
-								GLOBALS.NOSPRECRAN = 1;
+								_globals.NOSPRECRAN = 1;
 								_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
 							}
               
-							if (GLOBALS.SORTIE != 4)
+							if (_globals.SORTIE != 4)
 								break;
 							_globals.DESACTIVE_INVENT = true;
 							_objectsManager.PLAN_BETA();
 							_globals.DESACTIVE_INVENT = false;
 						}
 
-						if (GLOBALS.SORTIE != 5)
+						if (_globals.SORTIE != 5)
 							break;
 						_globals.Max_Propre = 5;
 						_globals.Max_Ligne_Long = 5;
 						_globals.Max_Propre_Gen = 5;
 						_globals.Max_Perso_Y = 455;
-						GLOBALS.NOSPRECRAN = 1;
-						byte v1 = *((byte *)GLOBALS.SAUVEGARDE + 80);
+						_globals.NOSPRECRAN = 1;
+						byte v1 = *((byte *)_globals.SAUVEGARDE + 80);
 						if (v1) {
 							if (v1 == 1)
 								_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
@@ -216,10 +217,10 @@ LABEL_13:
 							_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
 						}
             
-						GLOBALS.NOSPRECRAN = 0;
+						_globals.NOSPRECRAN = 0;
 					}
           
-					if (GLOBALS.SORTIE != 8)
+					if (_globals.SORTIE != 8)
 						break;
 					
 					_globals.Max_Propre = 15;
@@ -229,7 +230,7 @@ LABEL_13:
 					_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
 				}
 
-				if (GLOBALS.SORTIE != 6)
+				if (_globals.SORTIE != 6)
 					break;
 				_globals.Max_Propre = 15;
 				_globals.Max_Ligne_Long = 20;
@@ -238,32 +239,32 @@ LABEL_13:
 				_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
 			}
 
-			if (GLOBALS.SORTIE != 7)
+			if (_globals.SORTIE != 7)
 				break;
-			if (*((byte *)GLOBALS.SAUVEGARDE + 220))
+			if (*((byte *)_globals.SAUVEGARDE + 220))
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
 		}
 
-		if (GLOBALS.SORTIE == 9) {
+		if (_globals.SORTIE == 9) {
 			_globals.Max_Propre = 15;
 			_globals.Max_Ligne_Long = 20;
 			_globals.Max_Propre_Gen = 10;
 			_globals.Max_Perso_Y = 440;
 			
-			if (!*((byte *)GLOBALS.SAUVEGARDE + 225))
+			if (!*((byte *)_globals.SAUVEGARDE + 225))
 				goto LABEL_109;
 			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 		} else {
-			if (GLOBALS.SORTIE == 10) {
-				GLOBALS.NOSPRECRAN = 1;
+			if (_globals.SORTIE == 10) {
+				_globals.NOSPRECRAN = 1;
 				_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
 				goto LABEL_124;
 			}
       
-			if (GLOBALS.SORTIE == 11) {
-				GLOBALS.NOSPRECRAN = 1;
+			if (_globals.SORTIE == 11) {
+				_globals.NOSPRECRAN = 1;
 				_globals.Max_Propre = 15;
 				_globals.Max_Ligne_Long = 20;
 				_globals.Max_Propre_Gen = 10;
@@ -272,14 +273,14 @@ LABEL_13:
 				goto LABEL_124;
 			}
 
-			switch (GLOBALS.SORTIE) {
+			switch (_globals.SORTIE) {
 			case 12:
 				_globals.Max_Propre = 15;
 				_globals.Max_Ligne_Long = 20;
 				_globals.Max_Propre_Gen = 10;
 				_globals.Max_Perso_Y = 450;
-				if (*((byte *)GLOBALS.SAUVEGARDE + 225)) {
-					GLOBALS.NOSPRECRAN = 1;
+				if (*((byte *)_globals.SAUVEGARDE + 225)) {
+					_globals.NOSPRECRAN = 1;
 					_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 				} else {
 LABEL_109:
@@ -301,84 +302,84 @@ LABEL_109:
 				_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
 				break;
 			default:
-				if (GLOBALS.SORTIE == 15) {
-					GLOBALS.NOSPRECRAN = 1;
+				if (_globals.SORTIE == 15) {
+					_globals.NOSPRECRAN = 1;
 					_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29);
 					goto LABEL_124;
 				}
-				if (GLOBALS.SORTIE == 16) {
+				if (_globals.SORTIE == 16) {
 					_globals.Max_Propre = 5;
 					_globals.Max_Ligne_Long = 5;
 					_globals.Max_Propre_Gen = 5;
 					_globals.Max_Perso_Y = 450;
 
-					byte v2 = *((byte *)GLOBALS.SAUVEGARDE + 113);
+					byte v2 = *((byte *)_globals.SAUVEGARDE + 113);
 					if (v2 == 1) {
 						_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
 					} else if (!v2) {
 						_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
 					}
 				} else {
-					if (GLOBALS.SORTIE == 17)
+					if (_globals.SORTIE == 17)
 						PASS();
-					if (GLOBALS.SORTIE == 24)
+					if (_globals.SORTIE == 24)
 						PASS();
-					if (GLOBALS.SORTIE == 25) {
+					if (_globals.SORTIE == 25) {
 						_globals.Max_Propre = 15;
 						_globals.Max_Ligne_Long = 20;
 						_globals.Max_Propre_Gen = 10;
 						_globals.Max_Perso_Y = 445;
 						_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30);
 					} else {
-						if (GLOBALS.SORTIE == 33) {
-							GLOBALS.NOSPRECRAN = 1;
+						if (_globals.SORTIE == 33) {
+							_globals.NOSPRECRAN = 1;
 							_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
 							goto LABEL_124;
 						}
               
-						if (GLOBALS.SORTIE == 26) {
+						if (_globals.SORTIE == 26) {
 							_globals.Max_Propre = 50;
 							_globals.Max_Ligne_Long = 40;
 							_globals.Max_Propre_Gen = 20;
 							_globals.Max_Perso_Y = 435;
 							_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30);
 						} else {
-							if (GLOBALS.SORTIE == 27)
+							if (_globals.SORTIE == 27)
 								PASS();
-							if (GLOBALS.SORTIE == 28)
+							if (_globals.SORTIE == 28)
 								PASS();
-							if (GLOBALS.SORTIE == 29)
+							if (_globals.SORTIE == 29)
 								PASS();
-							if (GLOBALS.SORTIE == 30)
+							if (_globals.SORTIE == 30)
 								PASS();
-							if (GLOBALS.SORTIE == 31)
+							if (_globals.SORTIE == 31)
 								PASS();
-							if (GLOBALS.SORTIE == 35)
+							if (_globals.SORTIE == 35)
 								ENDEMO();
-							if (GLOBALS.SORTIE == 32)
+							if (_globals.SORTIE == 32)
 								PASS();
-							if (GLOBALS.SORTIE == 34)
+							if (_globals.SORTIE == 34)
 								PASS();
                 
-							if ((uint16)(GLOBALS.SORTIE - 51) <= 38)
+							if ((uint16)(_globals.SORTIE - 51) <= 38)
 								PASS();
-							if (GLOBALS.SORTIE == 111) {
-								GLOBALS.NOSPRECRAN = 1;
+							if (_globals.SORTIE == 111) {
+								_globals.NOSPRECRAN = 1;
 								_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
 								goto LABEL_124;
 							}
                 
-							if (GLOBALS.SORTIE == 112) {
-								GLOBALS.NOSPRECRAN = 1;
+							if (_globals.SORTIE == 112) {
+								_globals.NOSPRECRAN = 1;
 								_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
 LABEL_124:
-								GLOBALS.NOSPRECRAN = 0;
-							} else if (GLOBALS.SORTIE == 113) {
-								GLOBALS.SORTIE = 0;
+								_globals.NOSPRECRAN = 0;
+							} else if (_globals.SORTIE == 113) {
+								_globals.SORTIE = 0;
 								_globals.OLD_ECRAN = _globals.ECRAN;
-								*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
+								*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 								_globals.ECRAN = 113;
-								*((byte *)GLOBALS.SAUVEGARDE + 5) = 113;
+								*((byte *)_globals.SAUVEGARDE + 5) = 113;
 								_menuManager.COMPUT_HOPKINS(1);
                   
 								_graphicsManager.DD_Lock();
@@ -390,29 +391,29 @@ LABEL_124:
 								_graphicsManager.Cls_Pal();
 								_graphicsManager.RESET_SEGMENT_VESA();
 							} else {
-								if (GLOBALS.SORTIE == 114) {
-									GLOBALS.SORTIE = 0;
+								if (_globals.SORTIE == 114) {
+									_globals.SORTIE = 0;
 									_globals.OLD_ECRAN = _globals.ECRAN;
-									*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
+									*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 									_globals.ECRAN = 114;
-									*((byte *)GLOBALS.SAUVEGARDE + 5) = 114;
+									*((byte *)_globals.SAUVEGARDE + 5) = 114;
 									_menuManager.COMPUT_HOPKINS(2);
 									goto LABEL_128;
 								}
-								if (GLOBALS.SORTIE == 115) {
-									GLOBALS.SORTIE = 0;
+								if (_globals.SORTIE == 115) {
+									_globals.SORTIE = 0;
 									_globals.OLD_ECRAN = _globals.ECRAN;
-									*((byte *)GLOBALS.SAUVEGARDE + 6) = _globals.ECRAN;
+									*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 									_globals.ECRAN = 115;
-									*((byte *)GLOBALS.SAUVEGARDE + 5) = 115;
+									*((byte *)_globals.SAUVEGARDE + 5) = 115;
 									_menuManager.COMPUT_HOPKINS(3);
 
 LABEL_128:
 									_graphicsManager.DD_Lock();
 									_graphicsManager.Cls_Video();
 									_graphicsManager.DD_Unlock();
-								} else if ((uint16)(GLOBALS.SORTIE - 194) > 5) {
-									if (GLOBALS.SORTIE == 151) {
+								} else if ((uint16)(_globals.SORTIE - 194) > 5) {
+									if (_globals.SORTIE == 151) {
 										_soundManager.WSOUND(16);
 										_globals.iRegul = 1;
                       
@@ -423,10 +424,10 @@ LABEL_128:
 										_graphicsManager.FADE_LINUX = 2;
 										_animationManager.PLAY_ANM("JOUR3A.anm", 12, 12, 2000);
 										_globals.iRegul = 0;
-										GLOBALS.SORTIE = 300;
+										_globals.SORTIE = 300;
 									}
                     
-									if (GLOBALS.SORTIE == 150) {
+									if (_globals.SORTIE == 150) {
 										_soundManager.WSOUND(16);
 										_globals.iRegul = 1;
 										
@@ -437,10 +438,10 @@ LABEL_128:
 										_graphicsManager.FADE_LINUX = 2;
 										_animationManager.PLAY_ANM("JOUR1A.anm", 12, 12, 2000);
 										_globals.iRegul = 0;
-										GLOBALS.SORTIE = 300;
+										_globals.SORTIE = 300;
 									}
                     
-									if (GLOBALS.SORTIE == 152) {
+									if (_globals.SORTIE == 152) {
 										_soundManager.WSOUND(16);
 										_globals.iRegul = 1;
                       
@@ -451,7 +452,7 @@ LABEL_128:
 										_graphicsManager.FADE_LINUX = 2;
 										_animationManager.PLAY_ANM("JOUR4A.anm", 12, 12, 2000);
 										_globals.iRegul = 0;
-										GLOBALS.SORTIE = 300;
+										_globals.SORTIE = 300;
 									}
 									goto LABEL_12;
 								}
@@ -483,23 +484,23 @@ int HopkinsEngine::getRandomNumber(int maxNumber) {
 }
 
 void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
-	GLOBALS.XFULLSCREEN = iniParams["FULLSCREEN"] == "YES";
+	_globals.XFULLSCREEN = iniParams["FULLSCREEN"] == "YES";
 
-	GLOBALS.XSETMODE = 1;
+	_globals.XSETMODE = 1;
 	if (iniParams.contains("SETMODE")) {
 		int setMode = atoi(iniParams["SETMODE"].c_str());
-		GLOBALS.XSETMODE = CLIP(setMode, 1, 5);
+		_globals.XSETMODE = CLIP(setMode, 1, 5);
 	}
 
-	GLOBALS.XZOOM = 0;
-	if (GLOBALS.XSETMODE == 5 && iniParams.contains("ZOOM")) {
+	_globals.XZOOM = 0;
+	if (_globals.XSETMODE == 5 && iniParams.contains("ZOOM")) {
 		int zoom = atoi(iniParams["ZOOM"].c_str());
-		GLOBALS.XZOOM = CLIP(zoom, 25, 100);
+		_globals.XZOOM = CLIP(zoom, 25, 100);
 	}
 
-	GLOBALS.XFORCE16 = iniParams["FORCE16BITS"] == "YES";
-	GLOBALS.XFORCE8 = iniParams["FORCE8BITS"] == "YES";
-	GLOBALS.CARD_SB = iniParams["SOUND"] == "YES";
+	_globals.XFORCE16 = iniParams["FORCE16BITS"] == "YES";
+	_globals.XFORCE8 = iniParams["FORCE8BITS"] == "YES";
+	_globals.CARD_SB = iniParams["SOUND"] == "YES";
 }
 
 void HopkinsEngine::INIT_SYSTEM() {
@@ -511,15 +512,15 @@ void HopkinsEngine::INIT_SYSTEM() {
 	switch (_globals.FR) {
 	case 0:
 		if (!_eventsManager.mouse_linux)
-			FileManager::CONSTRUIT_SYSTEM("SOUAN.SPR");
+			_fileManager.CONSTRUIT_SYSTEM("SOUAN.SPR");
 		if (!_globals.FR && _eventsManager.mouse_linux)
-			FileManager::CONSTRUIT_SYSTEM("LSOUAN.SPR");
+			_fileManager.CONSTRUIT_SYSTEM("LSOUAN.SPR");
 		break;
 	case 1:
-		FileManager::CONSTRUIT_SYSTEM("LSOU_globals.FR.SPR");
+		_fileManager.CONSTRUIT_SYSTEM("LSOU_globals.FR.SPR");
 		break;
 	case 2:
-		FileManager::CONSTRUIT_SYSTEM("SOUES.SPR");
+		_fileManager.CONSTRUIT_SYSTEM("SOUES.SPR");
 		break;
 	}
   
@@ -530,31 +531,31 @@ void HopkinsEngine::INIT_SYSTEM() {
 		_eventsManager.souris_sizex = 34;
 		_eventsManager.souris_sizey = 20;
 	}
-	_eventsManager.pointeur_souris = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+	_eventsManager.pointeur_souris = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
 
-	GLOBALS.clearAll();
+	_globals.clearAll();
 
-	FileManager::CONSTRUIT_SYSTEM("FONTE3.SPR");
-	GLOBALS.police = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
-	GLOBALS.police_l = 12;
-	GLOBALS.police_h = 21;
-	FileManager::CONSTRUIT_SYSTEM("ICONE.SPR");
-	GLOBALS.ICONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
-	FileManager::CONSTRUIT_SYSTEM("TETE.SPR");
-	GLOBALS.TETE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+	_fileManager.CONSTRUIT_SYSTEM("FONTE3.SPR");
+	_globals.police = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
+	_globals.police_l = 12;
+	_globals.police_h = 21;
+	_fileManager.CONSTRUIT_SYSTEM("ICONE.SPR");
+	_globals.ICONE = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
+	_fileManager.CONSTRUIT_SYSTEM("TETE.SPR");
+	_globals.TETE = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
 	
 	switch (_globals.FR) {
 	case 0:
-		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "ZONEAN.TXT");
-		GLOBALS.BUF_ZONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+		_fileManager.CONSTRUIT_FICHIER(_globals.HOPLINK, "ZONEAN.TXT");
+		_globals.BUF_ZONE = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
 		break;
 	case 1:
-		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "ZONE01.TXT");
-		GLOBALS.BUF_ZONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+		_fileManager.CONSTRUIT_FICHIER(_globals.HOPLINK, "ZONE01.TXT");
+		_globals.BUF_ZONE = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
 		break;
 	case 2:
-		FileManager::CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "ZONEES.TXT");
-		GLOBALS.BUF_ZONE = FileManager::CHARGE_FICHIER(GLOBALS.NFICHIER);
+		_fileManager.CONSTRUIT_FICHIER(_globals.HOPLINK, "ZONEES.TXT");
+		_globals.BUF_ZONE = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
 		break;
 	}
 
@@ -563,12 +564,12 @@ void HopkinsEngine::INIT_SYSTEM() {
 	_eventsManager.souris_flag = false;
 	_eventsManager.souris_max();
 
-	GLOBALS.HOPKINS_DATA();
+	_globals.HOPKINS_DATA();
 
 	_eventsManager.ofset_souris_x = 0;
 	_eventsManager.ofset_souris_y = 0;
-	GLOBALS.lItCounter = 0;
-	GLOBALS.lOldItCounter = 0;
+	_globals.lItCounter = 0;
+	_globals.lOldItCounter = 0;
 }
 
 void HopkinsEngine::INTRORUN() {

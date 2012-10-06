@@ -224,7 +224,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 		while (v62 <= 19);
     
 		&Txt[idx].field408 = 1;
-		FileManager::CONSTRUIT_FICHIER(HOPLINK, filename);
+		_vm->_fileManager.CONSTRUIT_FICHIER(HOPLINK, filename);
 		fname = _vm->_globals.NFICHIER;
     
 		if (strncmp(fname.c_str(), oldname.c_str(), fname.size())) {

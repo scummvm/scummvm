@@ -81,11 +81,11 @@ int MenuManager::MENU() {
     
 		_vm->_graphicsManager.FADE_INW();
 		if (_vm->_globals.FR == 0)
-			FileManager::CONSTRUIT_SYSTEM("MENUAN.SPR");
+			_vm->_fileManager.CONSTRUIT_SYSTEM("MENUAN.SPR");
 		if (_vm->_globals.FR == 1)
-			FileManager::CONSTRUIT_SYSTEM("MENUFR.SPR");
+			_vm->_fileManager.CONSTRUIT_SYSTEM("MENUFR.SPR");
 		if (_vm->_globals.FR == 2)
-			FileManager::CONSTRUIT_SYSTEM("MENUES.SPR");
+			_vm->_fileManager.CONSTRUIT_SYSTEM("MENUES.SPR");
     
 		spriteData = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 		_vm->_eventsManager.MOUSE_ON();
@@ -279,13 +279,13 @@ void MenuManager::CHARGE_PARTIE() {
 		v15 = 65;
 		v16 = 84;
 		v17 = 0;
-		FileManager::CONSTRUIT_LINUX(v8);
+		_vm->_fileManager.CONSTRUIT_LINUX(v8);
 		if (f.open(_vm->_globals.NFICHIER)) {
 			f.close();
 
 			v3 = _vm->_globals.SAUVEGARDE->data[svField10];
-			FileManager::CONSTRUIT_LINUX(v8);
-			FileManager::bload(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0]);
+			_vm->_fileManager.CONSTRUIT_LINUX(v8);
+			_vm->_fileManager.bload(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0]);
 
 			v4 = &_vm->_globals.SAUVEGARDE->data[svField1300];
 			v5 = 0;
@@ -349,15 +349,15 @@ void MenuManager::SAUVE_PARTIE() {
 			++v4;
 		} while (v4 <= 34);
 
-		FileManager::CONSTRUIT_LINUX(v7);
-		FileManager::SAUVE_FICHIER(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0], 0x7D0u);
+		_vm->_fileManager.CONSTRUIT_LINUX(v7);
+		_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0], 0x7D0u);
 		v12 = 46;
 		v13 = 69;
 		v14 = 67;
 		v15 = 82;
 		v16 = 0;
-		FileManager::CONSTRUIT_LINUX(v7);
-		FileManager::SAUVE_FICHIER(_vm->_globals.NFICHIER, v1, 0x2B80u);
+		_vm->_fileManager.CONSTRUIT_LINUX(v7);
+		_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, v1, 0x2B80u);
 	}
 	_vm->_globals.dos_free2(v1);
 }
@@ -577,13 +577,13 @@ void MenuManager::LOAD_SAUVE(int a1) {
 	Common::File f;
 
 	if (_vm->_globals.FR == 1)
-		FileManager::CONSTRUIT_SYSTEM("SAVEFR.SPR");
+		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEFR.SPR");
 	if (!_vm->_globals.FR)
-		FileManager::CONSTRUIT_SYSTEM("SAVEAN.SPR");
+		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEAN.SPR");
 	if (_vm->_globals.FR == 2)
-		FileManager::CONSTRUIT_SYSTEM("SAVEES.SPR");
+		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEES.SPR");
 	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
-	FileManager::CONSTRUIT_SYSTEM("SAVE2.SPR");
+	_vm->_fileManager.CONSTRUIT_SYSTEM("SAVE2.SPR");
 	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 483, 360, 0);
 	if (_vm->_globals.FR) {
@@ -611,9 +611,9 @@ void MenuManager::LOAD_SAUVE(int a1) {
 		v11 = 67;
 		v12 = 82;
 		v13 = 0;
-		FileManager::CONSTRUIT_LINUX(s);
+		_vm->_fileManager.CONSTRUIT_LINUX(s);
 		if (f.exists(_vm->_globals.NFICHIER)) {
-			v2 = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			v2 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 			v3 = v2;
 			if (v1 == 1)
 				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v2, _vm->_eventsManager.start_x + 190, 112, 0x80u, 87);

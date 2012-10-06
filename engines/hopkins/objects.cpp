@@ -78,7 +78,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 		if (_vm->_globals.ADR_FICHIER_OBJ != PTRNUL)
 			ObjectsManager::DEL_FICHIER_OBJ();
 		if (val1 == 1) {
-			FileManager::CONSTRUIT_SYSTEM("OBJET1.SPR");
+			_vm->_fileManager.CONSTRUIT_SYSTEM("OBJET1.SPR");
 			_vm->_globals.ADR_FICHIER_OBJ = ObjectsManager::CHARGE_SPRITE(_vm->_globals.NFICHIER);
 		}
 		_vm->_globals.NUM_FICHIER_OBJ = val1;
@@ -218,7 +218,7 @@ int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIn
 byte *ObjectsManager::DEL_FICHIER_OBJ() {
 	_vm->_globals.NUM_FICHIER_OBJ = 0;
 	if (_vm->_globals.ADR_FICHIER_OBJ != PTRNUL)
-		_vm->_globals.ADR_FICHIER_OBJ = FileManager::LIBERE_FICHIER(_vm->_globals.ADR_FICHIER_OBJ);
+		_vm->_globals.ADR_FICHIER_OBJ = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.ADR_FICHIER_OBJ);
   
 	byte *result = PTRNUL;
 	_vm->_globals.ADR_FICHIER_OBJ = PTRNUL;
@@ -226,8 +226,8 @@ byte *ObjectsManager::DEL_FICHIER_OBJ() {
 }
 
 byte *ObjectsManager::CHARGE_SPRITE(const Common::String &file) {
-	FileManager::DMESS1();
-	return FileManager::CHARGE_FICHIER(file);
+	_vm->_fileManager.DMESS1();
+	return _vm->_fileManager.CHARGE_FICHIER(file);
 }
 
 int ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex) {
@@ -1939,8 +1939,8 @@ void ObjectsManager::PLAN_BETA() {
 	CHARGE_OBSTACLE("PLAN.OB2");
 	CHARGE_CACHE("PLAN.CA2");
 	CHARGE_ZONE("PLAN.ZO2");
-	FileManager::CONSTRUIT_SYSTEM("VOITURE.SPR");
-	sprite_ptr = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	_vm->_fileManager.CONSTRUIT_SYSTEM("VOITURE.SPR");
+	sprite_ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	_vm->_animationManager.CHARGE_ANIM("PLAN");
 	_vm->_graphicsManager.VISU_ALL();
 	_vm->_graphicsManager.INI_ECRAN2("PLAN");
@@ -2369,9 +2369,9 @@ void ObjectsManager::CLEAR_ECRAN() {
 	DERLIGNE = 0;
 	_vm->_globals.chemin = PTRNUL;
 	if (_vm->_globals.COUCOU != PTRNUL)
-		_vm->_globals.COUCOU = FileManager::LIBERE_FICHIER(_vm->_globals.COUCOU);
+		_vm->_globals.COUCOU = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.COUCOU);
 	if (PTRNUL != _vm->_globals.SPRITE_ECRAN)
-		_vm->_globals.SPRITE_ECRAN = FileManager::LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
+		_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
 	_vm->_eventsManager.start_x = 0;
 	_vm->_eventsManager.souris_n = 0;
 	Vold_taille = 200;
@@ -2449,22 +2449,22 @@ LABEL_7:
 		_vm->_globals.DESACTIVE_INVENT = 1;
 		_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 		if (_vm->_globals.FR == 1)
-			FileManager::CONSTRUIT_SYSTEM("INVENTFR.SPR");
+			_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTFR.SPR");
 		if (!_vm->_globals.FR)
-			FileManager::CONSTRUIT_SYSTEM("INVENTAN.SPR");
+			_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTAN.SPR");
 		if (_vm->_globals.FR == 2)
-			FileManager::CONSTRUIT_SYSTEM("INVENTES.SPR");
+			_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTES.SPR");
 
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
 		filesize = f.size();
 		_vm->_globals.Winventaire = _vm->_globals.dos_malloc2(filesize);
-		FileManager::bload_it(f, _vm->_globals.Winventaire, filesize);
+		_vm->_fileManager.bload_it(f, _vm->_globals.Winventaire, filesize);
 		f.close();
 
-		FileManager::CONSTRUIT_SYSTEM("INVENT2.SPR");
-		inventaire2 = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("INVENT2.SPR");
+		inventaire2 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		v19 = _vm->_graphicsManager.ofscroll + 152;
 		v18 = Get_Largeur(_vm->_globals.Winventaire, 0);
 		v17 = Get_Hauteur(_vm->_globals.Winventaire, 0);
@@ -2622,8 +2622,8 @@ void ObjectsManager::CHANGE_TETE(int a1, int a2) {
 				_vm->_globals.SAUVEGARDE->data[svField357] = 1;
 				T_RECTIF = 0;
 				v4 = &_vm->_globals.SAUVEGARDE->field370;
-				FileManager::CONSTRUIT_SYSTEM("PERSO.SPR");
-				FileManager::CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+				_vm->_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
+				_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 				_vm->_globals.PERSO_TYPE = 0;
 				SPRITE(_vm->_globals.PERSO, v4->field0, v4->field1, 0, 64, v4->field4, 0, 34, 190);
 LABEL_9:
@@ -2649,8 +2649,8 @@ LABEL_9:
 			_vm->_globals.SAUVEGARDE->data[svField356] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField357] = 0;
 			v6 = &_vm->_globals.SAUVEGARDE->field380;
-			FileManager::CONSTRUIT_SYSTEM("PSAMAN.SPR");
-			FileManager::CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+			_vm->_fileManager.CONSTRUIT_SYSTEM("PSAMAN.SPR");
+			_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 			_vm->_globals.PERSO_TYPE = 2;
 			SPRITE(_vm->_globals.PERSO, v6->field0, v6->field1, 0, 64, v6->field4, 0, 20, 127);
 			goto LABEL_9;
@@ -3708,10 +3708,10 @@ void ObjectsManager::OPTI_OBJET() {
 	int v7;
 
 	file = "OBJET1.ini";
-	data = FileManager::RECHERCHE_CAT(file, 1);
+	data = _vm->_fileManager.RECHERCHE_CAT(file, 1);
 	if (data == PTRNUL) {
-		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, file);
-		data = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, file);
+		data = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	
 	if ((data == PTRNUL) || *data != 'I' || *(data + 1) != 'N' || *(data + 2) != 'I') {
@@ -3780,8 +3780,8 @@ void ObjectsManager::SPECIAL_JEU() {
 				if (!_vm->_globals.CENSURE) {
 					v1 = _vm->_globals.dos_malloc2(0x3E8u);
 					memcpy(v1, _vm->_graphicsManager.Palette, 0x301u);
-					FileManager::CONSTRUIT_LINUX("TEMP1.SCR");
-					FileManager::SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+					_vm->_fileManager.CONSTRUIT_LINUX("TEMP1.SCR");
+					_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
 					if (!_vm->_graphicsManager.nbrligne)
 						_vm->_graphicsManager.ofscroll = 0;
 					_vm->_graphicsManager.NB_SCREEN();
@@ -3795,8 +3795,8 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_globals.NECESSAIRE = 1;
 					_vm->_graphicsManager.NB_SCREEN();
 					_vm->_globals.NECESSAIRE = 0;
-					FileManager::CONSTRUIT_LINUX("TEMP1.SCR");
-					FileManager::bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+					_vm->_fileManager.CONSTRUIT_LINUX("TEMP1.SCR");
+					_vm->_fileManager.bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
 					PERSO_ON = 0;
 					memcpy(_vm->_graphicsManager.Palette, v1, 0x301u);
 					_vm->_graphicsManager.SHOW_PALETTE();
@@ -5687,8 +5687,8 @@ LABEL_1141:
 			_vm->_globals.SAUVEGARDE->data[svField354] = 1;
 		}
 		if (v76 == 56) {
-			FileManager::CONSTRUIT_SYSTEM("HOPFEM.SPR");
-			FileManager::CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+			_vm->_fileManager.CONSTRUIT_SYSTEM("HOPFEM.SPR");
+			_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 			_vm->_globals.PERSO_TYPE = 1;
 			_vm->_globals.SAUVEGARDE->data[svField122] = 1;
 			_vm->_globals.HOPKINS_DATA();
@@ -5697,8 +5697,8 @@ LABEL_1141:
 			VERIFTAILLE();
 		}
 		if (v76 == 57) {
-			FileManager::CONSTRUIT_SYSTEM("PERSO.SPR");
-			FileManager::CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+			_vm->_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
+			_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 			_vm->_globals.PERSO_TYPE = 0;
 			_vm->_globals.SAUVEGARDE->data[svField122] = 0;
 			_vm->_globals.HOPKINS_DATA();
@@ -6135,8 +6135,8 @@ void ObjectsManager::ACTION_DOS(int idx) {
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 1;
 
-		FileManager::CONSTRUIT_SYSTEM("DOS.SPR");
-		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("DOS.SPR");
+		_vm->_globals.GESTE = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
@@ -6171,8 +6171,8 @@ void ObjectsManager::ACTION_DROITE(int idx) {
 		if (_vm->_globals.GESTE != PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
-		FileManager::CONSTRUIT_SYSTEM("PROFIL.SPR");
-		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("PROFIL.SPR");
+		_vm->_globals.GESTE = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, 0);
@@ -6201,8 +6201,8 @@ void ObjectsManager::Q_DROITE(int idx) {
 		if (_vm->_globals.GESTE != PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
-		FileManager::CONSTRUIT_SYSTEM("3Q.SPR");
-		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("3Q.SPR");
+		_vm->_globals.GESTE = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
@@ -6231,8 +6231,8 @@ void ObjectsManager::ACTION_FACE(int idx) {
 		if (_vm->_globals.GESTE != PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 2;
-		FileManager::CONSTRUIT_SYSTEM("FACE.SPR");
-		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("FACE.SPR");
+		_vm->_globals.GESTE = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
@@ -6249,8 +6249,8 @@ void ObjectsManager::Q_GAUCHE(int idx) {
 		if (_vm->_globals.GESTE != PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
-		FileManager::CONSTRUIT_SYSTEM("3Q.SPR");
-		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("3Q.SPR");
+		_vm->_globals.GESTE = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 1);
@@ -6279,8 +6279,8 @@ void ObjectsManager::ACTION_GAUCHE(int idx) {
 		if (_vm->_globals.GESTE != PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
-		FileManager::CONSTRUIT_SYSTEM("PROFIL.SPR");
-		_vm->_globals.GESTE = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("PROFIL.SPR");
+		_vm->_globals.GESTE = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, 1);
@@ -6434,10 +6434,10 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	v2 = 0;
 
 	filename = file + ".LNK";
-	ptr = FileManager::RECHERCHE_CAT(filename, 3);
+	ptr = _vm->_fileManager.RECHERCHE_CAT(filename, 3);
 	nbytes = _vm->_globals.CAT_TAILLE;
 	if (ptr == PTRNUL) {
-		FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
 		
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
@@ -6446,7 +6446,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 		ptr = _vm->_globals.dos_malloc2(nbytes);
 		if (PTRNUL == ptr)
 			error("INILINK");
-		FileManager::bload_it(f, ptr, nbytes);
+		_vm->_fileManager.bload_it(f, ptr, nbytes);
 		f.close();
 	}
 	if (!OBSSEUL) {
@@ -6457,15 +6457,15 @@ void ObjectsManager::INILINK(const Common::String &file) {
 		
 		filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
-			_vm->_globals.CACHE_BANQUE[1] = FileManager::RECHERCHE_CAT(filename2, 8);
+			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.RECHERCHE_CAT(filename2, 8);
 			if (_vm->_globals.CACHE_BANQUE[1]) {
 				_vm->_globals.CAT_FLAG = 0;
-				FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename2);
+				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename2);
 			} else {
 				_vm->_globals.CAT_FLAG = 1;
-				FileManager::CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
+				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
 			}
-			_vm->_globals.CACHE_BANQUE[1] = FileManager::CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 			_vm->_globals.CAT_FLAG = 0;
 			v36 = 60;
 			v37 = ptr + 1000;
@@ -7619,21 +7619,21 @@ void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &
 	if (!_vm->_globals.PERSO_TYPE)
 		goto LABEL_70;
 	if (!_vm->_globals.SAUVEGARDE->data[svField122] && !_vm->_globals.SAUVEGARDE->data[svField356]) {
-		FileManager::CONSTRUIT_SYSTEM("PERSO.SPR");
-		FileManager::CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
+		_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 		_vm->_globals.PERSO_TYPE = 0;
 	}
 	if (!_vm->_globals.PERSO_TYPE) {
 LABEL_70:
 		if (_vm->_globals.SAUVEGARDE->data[svField122] == 1) {
-			FileManager::CONSTRUIT_SYSTEM("HOPFEM.SPR");
-			FileManager::CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+			_vm->_fileManager.CONSTRUIT_SYSTEM("HOPFEM.SPR");
+			_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 			_vm->_globals.PERSO_TYPE = 1;
 		}
 	}
 	if (_vm->_globals.PERSO_TYPE != 2 && _vm->_globals.SAUVEGARDE->data[svField356] == 1) {
-		FileManager::CONSTRUIT_SYSTEM("PSAMAN.SPR");
-		FileManager::CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+		_vm->_fileManager.CONSTRUIT_SYSTEM("PSAMAN.SPR");
+		_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 		_vm->_globals.PERSO_TYPE = 2;
 	}
 	_vm->_globals.HOPKINS_DATA();

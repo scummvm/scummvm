@@ -31,6 +31,13 @@
 
 namespace Hopkins {
 
+FileManager::FileManager() {
+}
+
+void FileManager::setParent(HopkinsEngine *vm) {
+	_vm = vm;
+}
+
 void FileManager::initSaves() {
 	Common::String dataFilename = "HISCORE.DAT";
 	byte data[100];
@@ -107,7 +114,7 @@ byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
 
 	// Allocate space for the file contents
 	size_t filesize = f.size();
-	byte *data = GLOBALS.dos_malloc2(filesize);
+	byte *data = _vm->_globals.dos_malloc2(filesize);
 	if (!data)
 		error("Error allocating space for file being loaded - %s", file.c_str());
 
@@ -126,7 +133,7 @@ void FileManager::CHARGE_FICHIER2(const Common::String &file, byte *buf) {
 		error("Error opening file - %s", file.c_str());
 
 	filesize = f.size();
-	FileManager::bload_it(f, buf, filesize);
+	_vm->_fileManager.bload_it(f, buf, filesize);
 	f.close();
 }
 
@@ -143,7 +150,7 @@ void FileManager::bload(const Common::String &file, byte *buf) {
 	if (!f.open(file))
 		error("Error openinig file - %s", file.c_str());
 	int32 filesize = f.size();
-	FileManager::bload_it(f, buf, filesize);
+	_vm->_fileManager.bload_it(f, buf, filesize);
 	f.close();
 }
 
@@ -152,26 +159,26 @@ int FileManager::bload_it(Common::ReadStream &stream, void *buf, size_t nbytes) 
 }
 
 void FileManager::F_Censure() {
-	GLOBALS.CENSURE = false;
+	_vm->_globals.CENSURE = false;
 
 	CONSTRUIT_SYSTEM("BLOOD.DAT");
-	char *data = (char *)CHARGE_FICHIER(GLOBALS.NFICHIER);
+	char *data = (char *)CHARGE_FICHIER(_vm->_globals.NFICHIER);
   
 	if (*(data + 6) == 'f' && *(data + 7) == 'r')
-		GLOBALS.CENSURE = false;
+		_vm->_globals.CENSURE = false;
 	if (*(data + 6) == 'F' && *(data + 7) == 'R')
-		GLOBALS.CENSURE = false;
+		_vm->_globals.CENSURE = false;
 	if (*(data + 6) == 'u' && *(data + 7) == 'k')
-		GLOBALS.CENSURE = true;
+		_vm->_globals.CENSURE = true;
 	if (*(data + 6) == 'U' && *(data + 7) == 'K')
-		GLOBALS.CENSURE = true;
+		_vm->_globals.CENSURE = true;
 
 	free(data);
 }
 
 int FileManager::CONSTRUIT_SYSTEM(const Common::String &file) {
-	GLOBALS.NFICHIER = Common::String::format("system/%s", file.c_str());
-	return GLOBALS.NFICHIER.size();
+	_vm->_globals.NFICHIER = Common::String::format("system/%s", file.c_str());
+	return _vm->_globals.NFICHIER.size();
 }
 
 void FileManager::CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file) {
@@ -182,7 +189,7 @@ void FileManager::CONSTRUIT_FICHIER(const Common::String &hop, const Common::Str
 		error("TODO: CONSTRUIT_FICHIER");
 	}
 
-	GLOBALS.NFICHIER = Common::String::format("%s/%s", hop.c_str(), file.c_str());
+	_vm->_globals.NFICHIER = Common::String::format("%s/%s", hop.c_str(), file.c_str());
 }
 
 byte *FileManager::LIBERE_FICHIER(byte *ptr) {
@@ -196,91 +203,91 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 
 	switch (a2) {
 	case 1:
-		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_INI.CAT");
-		if (!f.exists(GLOBALS.NFICHIER))
+		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_INI.CAT");
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 		
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
-		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_INI.RES");
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_INI.RES");
 		break;
 
 	case 2:
-		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_REP.CAT");
-		if (!f.exists(GLOBALS.NFICHIER))
+		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_REP.CAT");
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
-		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_REP.RES");
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_REP.RES");
 		break;
 
 	case 3:
-		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_LIN.CAT");
-		if (!f.exists(GLOBALS.NFICHIER))
+		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_LIN.CAT");
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
-		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_LIN.RES");
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_LIN.RES");
 		break;
 
 	case 4:
-		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_ANI.CAT");
-		if (!f.exists(GLOBALS.NFICHIER))
+		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_ANI.CAT");
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
-		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_ANI.RES");
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_ANI.RES");
 		break;
 
 	case 5:
-		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_PER.CAT");
-		if (!f.exists(GLOBALS.NFICHIER))
+		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_PER.CAT");
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
-		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_PER.RES");
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_PER.RES");
 		break;
 
 	case 6:
-		CONSTRUIT_FICHIER(GLOBALS.HOPIMAGE, "PIC.CAT");
-		if (!f.exists(GLOBALS.NFICHIER))
+		CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, "PIC.CAT");
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		break;
 
 	case 7:
-		CONSTRUIT_FICHIER(GLOBALS.HOPANIM, "RES_SAN.CAT");
-		if (!f.exists(GLOBALS.NFICHIER))
+		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_SAN.CAT");
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		break;
 
 	case 8:
-		CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_SLI.CAT");
-		if (!f.exists(GLOBALS.NFICHIER))
+		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.CAT");
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		break;
 
 	case 9:
-		switch (GLOBALS.FR) {
+		switch (_vm->_globals.FR) {
 		case 0:
-			CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_VAN.CAT");
+			CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_VAN.CAT");
 			break;
 		case 1:
-			CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_VFR.CAT");
+			CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_VFR.CAT");
 			break;
 		case 2:
-			CONSTRUIT_FICHIER(GLOBALS.HOPLINK, "RES_VES.CAT");
+			CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_VES.CAT");
 			break;
 		}
 
-		if (!f.exists(GLOBALS.NFICHIER))
+		if (!f.exists(_vm->_globals.NFICHIER))
 			return PTRNUL;
 
-		ptr = CHARGE_FICHIER(GLOBALS.NFICHIER);
+		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		break;
 		// Deliberate fall-through to
 	default:
@@ -298,33 +305,33 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 		if (name == file) {
 			// Found entry for file, so get it's details from the catalogue entry
 			const byte *pData = ptr + offsetVal;
-			GLOBALS.CAT_POSI = READ_LE_UINT32(pData + 15);
-			GLOBALS.CAT_TAILLE = READ_LE_UINT32(pData + 19);
+			_vm->_globals.CAT_POSI = READ_LE_UINT32(pData + 15);
+			_vm->_globals.CAT_TAILLE = READ_LE_UINT32(pData + 19);
 			matchFlag = true;
 		}
 
 		if (name == "FINIS") {
-			GLOBALS.dos_free2(ptr);
+			_vm->_globals.dos_free2(ptr);
 			return false;
 		}
     
 		offsetVal += 23;
 	} while (!matchFlag);
 
-	GLOBALS.dos_free2(ptr);
+	_vm->_globals.dos_free2(ptr);
 
 	// TODO: Double check whether this really should be an unsigned int comparison
 	if ((uint16)(a2 - 6) > 1 && (uint16)(a2 - 8) > 1) {
-		if (!f.open(GLOBALS.NFICHIER))
+		if (!f.open(_vm->_globals.NFICHIER))
 			error("CHARGE_FICHIER");
 
-		f.seek(GLOBALS.CAT_POSI);
+		f.seek(_vm->_globals.CAT_POSI);
 
-		byte *catData = GLOBALS.dos_malloc2(GLOBALS.CAT_TAILLE);
+		byte *catData = _vm->_globals.dos_malloc2(_vm->_globals.CAT_TAILLE);
 		if (catData == PTRNUL)
 			error("CHARGE_FICHIER");
 
-		bload_it(f, catData, GLOBALS.CAT_TAILLE);
+		bload_it(f, catData, _vm->_globals.CAT_TAILLE);
 		f.close();
 		result = catData;
 	} else {

@@ -264,7 +264,7 @@ void EventsManager::VBL() {
 				m_scroll(VESA_BUFFER, ofscroll, 50, SCREEN_WIDTH, 340, 0, 50);
 			else
 				m_scroll(VESA_BUFFER, ofscroll, 20, SCREEN_WIDTH, 440, 0, 20);
-			FileManager::DMESS();
+			_vm->_fileManager.DMESS();
 			--REDRAW;
 		}
 		DD_Unlock();
