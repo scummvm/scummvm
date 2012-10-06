@@ -98,7 +98,7 @@ public:
 	void show();
 protected:
 	void update();
-	uint32 handleMessage46BA20(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmShowing(int messageNum, const MessageParam &param, Entity *sender);
 	void hide();
 };
 

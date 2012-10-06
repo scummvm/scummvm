@@ -41,27 +41,27 @@ protected:
 
 // Scene1901
 
-class Class538 : public AnimatedSprite {
+class AsScene2101Door : public AnimatedSprite {
 public:
-	Class538(NeverhoodEngine *vm, bool flag);
+	AsScene2101Door(NeverhoodEngine *vm, bool flag);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void openDoor();
-	void closeDoor();
-	void hide();
+	void stOpenDoor();
+	void stCloseDoor();
+	void stCloseDoorDone();
 };
 
-class Class539 : public AnimatedSprite {
+class AsScene2101HitByDoorEffect : public AnimatedSprite {
 public:
-	Class539(NeverhoodEngine *vm, Sprite *klayman);
+	AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klayman);
 protected:
 	Sprite *_klayman;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Class427 : public StaticSprite {
+class SsCommonFloorButton : public StaticSprite {
 public:
-	Class427(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
+	SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
 protected:
 	Scene *_parentScene;
 	uint32 _soundFileHash;
@@ -76,14 +76,13 @@ class Scene2101 : public Scene {
 public:
 	Scene2101(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_sprite1;
-	Sprite *_class427;
+	Sprite *_ssFloorButton;
 	Sprite *_asTape1;
 	Sprite *_asTape2;
-	Sprite *_class538;
-	Sprite *_class539;
+	Sprite *_asDoor;
+	Sprite *_asHitByDoorEffect;
 	int _countdown1;
-	int _value1;
+	int _doorStatus;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

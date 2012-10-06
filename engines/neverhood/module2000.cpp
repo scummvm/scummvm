@@ -98,6 +98,8 @@ void Module2000::updateScene() {
 Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
+	Sprite *tempSprite;
+
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2001::handleMessage);
 
@@ -105,7 +107,7 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0xA6417244);
 	insertMouse433(0x17240A6C);
 
-	_class401 = insertStaticSprite(0x0D641724, 1100);
+	tempSprite = insertStaticSprite(0x0D641724, 1100);
 
 	if (which < 0) {
 		insertKlayman<KmScene2001>(300, 345);
@@ -133,7 +135,7 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klayman->setDoDeltaX(1);
 	}
 	
-	_klayman->setClipRect(_class401->getDrawRect().x, 0, 640, 480);
+	_klayman->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
 	
 }
 

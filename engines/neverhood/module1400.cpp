@@ -645,7 +645,7 @@ void AsCommonProjector::stStartSuckedIn() {
 }
 
 Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _projectorBorderFlag(false), _class427(NULL), _asProjector(NULL), 
+	: Scene(vm, parentModule, true), _projectorBorderFlag(false), _ssFloorButton(NULL), _asProjector(NULL), 
 	_asPipe(NULL), _asMouse(NULL), _asCheese(NULL), _asBackDoor(NULL), 
 	_sprite1(NULL), _sprite2(NULL), _sprite3(NULL), _ssButton(NULL) {
 
@@ -658,7 +658,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x08221FA5);
 	insertMouse433(0x21FA108A);
 	
-	_class427 = insertSprite<Class427>(this, 0x980F3124, 0x12192892, 100, 0);
+	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x980F3124, 0x12192892, 100, 0);
 	_asPipe = insertSprite<AsScene1401Pipe>();
 
 	if (!getGlobalVar(0x01023818)) {
@@ -733,7 +733,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x02144CB1) {
-			sendEntityMessage(_klayman, 0x1014, _class427);
+			sendEntityMessage(_klayman, 0x1014, _ssFloorButton);
 		} else if (param.asInteger() == 0x402064D8) {
 			sendEntityMessage(_klayman, 0x1014, _ssButton);
 		} else if (param.asInteger() == 0x01C66840) {
@@ -752,7 +752,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		}			
 		break;
 	case 0x480B:
-		if (sender == _class427) {
+		if (sender == _ssFloorButton) {
 			sendMessage(_asPipe, 0x2000, 0);
 			if (!getGlobalVar(0x01023818)) {
 				sendMessage(_asMouse, 0x4839, 0);

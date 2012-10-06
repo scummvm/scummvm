@@ -409,7 +409,7 @@ Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asFlowingWater = insertSprite<AsScene2401FlowingWater>();
 	insertStaticSprite(0x90C0A4B4, 200);
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x0092916A, 100, 0);
-	_ssFloorButton = insertSprite<Class427>(this, 0x28001120, 0x00911068, 100, 0);
+	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x28001120, 0x00911068, 100, 0);
 
 	for (uint i = 0; i < 5; i++)
 		_asWaterFlushing[i] = insertSprite<AsScene2401WaterFlushing>(kScene2401Points[i].x, kScene2401Points[i].y);

@@ -533,7 +533,7 @@ void AsScene1907WaterHint::update() {
 	AnimatedSprite::updatePosition();
 }
 
-uint32 AsScene1907WaterHint::handleMessage46BA20(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1907WaterHint::hmShowing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -546,7 +546,7 @@ uint32 AsScene1907WaterHint::handleMessage46BA20(int messageNum, const MessagePa
 void AsScene1907WaterHint::show() {
 	setVisible(true);
 	startAnimation(0x110A1061, 0, -1);
-	SetMessageHandler(&AsScene1907WaterHint::handleMessage46BA20);
+	SetMessageHandler(&AsScene1907WaterHint::hmShowing);
 	NextState(&AsScene1907WaterHint::hide);
 }
 
@@ -561,9 +561,6 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule, int which)
 	_moveDownCountdown(0), _moveUpCountdown(0), _countdown3(0), _hasPlugInFailed(false) {
 	
 	_surfaceFlag = true;
-
-	//setGlobalVar(0x10938830, 1);
-	
 	setBackground(0x20628E05);
 	setPalette(0x20628E05);
 

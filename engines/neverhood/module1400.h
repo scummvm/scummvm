@@ -131,7 +131,7 @@ public:
 	Scene1401(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
 	bool _projectorBorderFlag;
-	Sprite *_class427;
+	Sprite *_ssFloorButton;
 	AsCommonProjector *_asProjector;
 	Sprite *_asPipe;
 	Sprite *_asMouse;

@@ -46,7 +46,6 @@ class Scene2001 : public Scene {
 public:
 	Scene2001(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_class401;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
