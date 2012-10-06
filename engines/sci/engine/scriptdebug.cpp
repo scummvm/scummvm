@@ -527,7 +527,8 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 
 		_seeker += objsize;
 
-		objectctr[objType]++;
+		if (objType >= 0 && objType < ARRAYSIZE(objectctr))
+			objectctr[objType]++;
 
 		switch (objType) {
 		case SCI_OBJ_OBJECT:
