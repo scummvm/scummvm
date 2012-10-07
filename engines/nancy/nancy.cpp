@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 
 #include "nancy/nancy.h"
+#include "nancy/resource.h"
 
 #include "engines/util.h"
 
@@ -39,6 +40,10 @@ NancyEngine *NancyEngine::s_Engine = 0;
 NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine(syst), _gameDescription(gd)
 {
 	_system = syst;
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
+
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
 	DebugMan.addDebugChannel(kDebugDisplay, "Display", "Display debug level");
@@ -83,13 +88,39 @@ Common::Platform NancyEngine::getPlatform() const {
 
 Common::Error NancyEngine::run() {
 	s_Engine = this;
-	initGraphics(320, 200, false);
+	Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	initGraphics(640, 480, true, &format);
 	_console = new NancyConsole(this);
 
 //	_mouse = new MouseHandler(this);
+	_res = new ResourceManager(this);
+	_res->initialize();
 
 	// Setup mixer
 	syncSoundSettings();
+
+	Common::EventManager *ev = g_system->getEventManager();
+	bool quit = false;
+
+	while (!shouldQuit() && !quit) {
+		Common::Event event;
+		if (ev->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_CTRL)) {
+				switch(event.kbd.keycode) {
+				case Common::KEYCODE_q:
+					quit = true;
+					break;
+				case Common::KEYCODE_d:
+					_console->attach();
+				default:
+					break;
+				}
+			}
+		}
+		_console->onFrame();
+		_system->updateScreen();
+		_system->delayMillis(16);
+	}
 
 	return Common::kNoError;
 }

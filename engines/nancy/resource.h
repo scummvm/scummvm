@@ -20,33 +20,54 @@
  *
  */
 
-#ifndef NANCY_CONSOLE_H
-#define NANCY_CONSOLE_H
+#ifndef NANCY_RESOURCE_H
+#define NANCY_RESOURCE_H
 
-#include "gui/debugger.h"
+namespace Common {
+class MemoryReadStream;
+class String;
+}
+
+namespace Graphics {
+class Surface;
+}
 
 namespace Nancy {
 
 class NancyEngine;
 
-class NancyConsole : public GUI::Debugger {
+class ResourceManager {
 public:
-	NancyConsole(NancyEngine *vm);
-	virtual ~NancyConsole(void);
+	ResourceManager(NancyEngine *vm);
+	~ResourceManager();
 
+	void initialize();
+	byte *loadResource(const Common::String name, uint &size);
+	bool loadImage(const Common::String name, Graphics::Surface &surf);
+
+	// Debugger functions
+	void listResources(Common::Array<Common::String> &list);
+	Common::String getResourceDesc(const Common::String name);
 private:
-	NancyEngine *_vm;
-	bool Cmd_resHexDump(int argc, const char **argv);
-	bool Cmd_resList(int argc, const char **argv);
-	bool Cmd_resInfo(int argc, const char **argv);
-	bool Cmd_resShowImage(int argc, const char **argv);
+	struct ResInfo {
+		Common::String name;
+		uint16 width, pitch, height;
+		byte flag;
+		uint32 compressedSize, size;
+		uint32 dataOffset;
+		uint16 next;
+	};
 
-	bool Cmd_listScreens(int argc, const char **argv);
-	bool Cmd_listObjects(int argc, const char **argv);
-	bool Cmd_getObject(int argc, const char **argv);
-	bool Cmd_getAllObjects(int argc, const char **argv);
-	bool Cmd_gotoScreen(int argc, const char **argv);
-	bool Cmd_boundaries(int argc, const char **argv);
+	enum {
+		kHashMapSize = 1024
+	};
+
+	NancyEngine *_vm;
+	uint16 _hashMap[kHashMapSize];
+	Common::Array<ResInfo> _resInfo;
+
+	const ResInfo *findResource(const Common::String name);
+	byte *decompress(const ResInfo &res, uint &size);
 };
 
 } // End of namespace Nancy
