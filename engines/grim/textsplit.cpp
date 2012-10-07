@@ -79,6 +79,21 @@ static bool isNum(char c) {
 	return (c >= '0' && c <= '9');
 }
 
+static char *parseCharacterClass(const char *code, bool *isNegated) {
+	char *chars = new char[strlen(code)];
+	*isNegated = code[1] == '^';
+	uint32 j = 0;
+	uint32 k = (*isNegated ? 2 : 1);
+
+	for (; k < strlen(code) && code[k] != ']'; ++k) {
+		assert(code[k] != '[' && code[k] != '-');
+		chars[j++] = code[k];
+	}
+	chars[j++] = '\0';
+
+	return chars;
+}
+
 // This function is modelled after sscanf, and supports a subset of its features. See sscanf documentation
 // for information about the syntax it accepts.
 static void parse(const char *line, const char *fmt, int field_count, va_list va) {
@@ -136,23 +151,36 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 			}
 
 			j = 0;
-			if (code[0] != 'c') {
-				char nextchar = format[i];
-				if (code[0] != '[') {
-					while (src[0] == ' ') { //skip initial whitespace
-						++src;
-					}
-				}
-				while (src != end && src[0] != nextchar && !isSeparator(src[0])) {
-					s[j++] = src[0];
-					++src;
-				}
-			} else {
+			if (code[0] == 'c') {
 				for (unsigned int n = 0; n < fieldWidth; ++n) {
 					s[j++] = src[0];
 					++src;
 				}
+			} else if (code[0] == '[') {
+				bool isNegated;
+				char *allowed = parseCharacterClass(code, &isNegated);
+
+				while (src != end) {
+					bool inSet = strchr(allowed, src[0]) != NULL;
+					if ((isNegated && inSet) || (!isNegated && !inSet))
+						break;
+
+					s[j++] = src[0];
+					++src;
+				}
+
+				delete[] allowed;
+			} else {
+				char nextChar = format[i];
+				while (src[0] == ' ') { //skip initial whitespace
+					++src;
+				}
+				while (src != end && src[0] != nextChar && !isSeparator(src[0])) {
+					s[j++] = src[0];
+					++src;
+				}
 			}
+
 			s[j] = '\0';
 			--i;
 
@@ -176,31 +204,9 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 					string[fieldWidth] = '\0';
 				}
 			} else if (code[0] == '[') {
-				// This doesn't supporty hyphen (-) yet.
-				bool circumflex = code[1] == '^';
-				char *chars = new char[strlen(code)];
-
-				j = 0;
-				unsigned int k = (circumflex ? 2 : 1);
-				for (; k < strlen(code) && code[k] != ']'; ++k) {
-					assert(code[k] != '[' && code[k] != '-');
-					chars[j++] = code[k];
-				}
-				chars[j++] = '\0';
-
-				k = j = 0;
 				char *string = (char*)var;
-				for (; k < strlen(s) && k < fieldWidth; ++k) {
-					char c = s[k];
-					bool inSet = strchr(chars, c) != NULL;
-					if ((circumflex && inSet) || (!circumflex && !inSet)) {
-						break;
-					}
-
-					string[j++] = s[k];
-				}
-				string[j++] = '\0';
-				delete[] chars;
+				strncpy(string, s, fieldWidth);
+				string[fieldWidth-1] = '\0';
 			} else {
 				error("Code not handled: \"%s\" \"%s\"\n\"%s\" \"%s\"", code, s, line, fmt);
 			}
