@@ -35,6 +35,7 @@ class Surface;
 namespace Nancy {
 
 class NancyEngine;
+class CifTree;
 
 class ResourceManager {
 public:
@@ -49,6 +50,16 @@ public:
 		kResCompression
 	};
 
+	struct CifInfo {
+		Common::String name;
+		byte type; // ResType
+		byte comp; // ResCompression
+		uint16 width, pitch, height;
+		byte depth; // Bit depth
+		uint32 compressedSize, size, sizeUnk;
+		uint32 dataOffset;
+	};
+
 	ResourceManager(NancyEngine *vm);
 	~ResourceManager();
 
@@ -60,27 +71,10 @@ public:
 	void listResources(Common::Array<Common::String> &list, uint type);
 	Common::String getResourceDesc(const Common::String name);
 private:
-	struct ResInfo {
-		Common::String name;
-		byte type; // ResType
-		byte comp; // ResCompression
-		uint16 width, pitch, height;
-		byte depth; // Bit depth
-		uint32 compressedSize, size, sizeUnk;
-		uint32 dataOffset;
-		uint16 next;
-	};
-
-	enum {
-		kHashMapSize = 1024
-	};
-
 	NancyEngine *_vm;
-	uint16 _hashMap[kHashMapSize];
-	Common::Array<ResInfo> _resInfo;
+	CifTree *_cifTree;
 
-	const ResInfo *findResource(const Common::String name);
-	byte *decompress(const ResInfo &res, uint &size);
+	byte *decompress(const CifInfo &res, uint &size);
 };
 
 } // End of namespace Nancy

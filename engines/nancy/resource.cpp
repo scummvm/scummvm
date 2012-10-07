@@ -29,6 +29,100 @@
 
 namespace Nancy {
 
+class CifTree {
+public:
+	virtual ~CifTree() { };	
+	bool findResource(const Common::String name, ResourceManager::CifInfo &info);
+	void listResources(Common::Array<Common::String> &list, uint type);
+
+protected:
+	enum {
+		kHashMapSize = 1024
+	};
+
+	struct CifInfoChain {
+		struct ResourceManager::CifInfo info;
+		uint16 next;
+	};
+
+	uint16 _hashMap[kHashMapSize];
+	Common::Array<CifInfoChain> _cifInfo;
+};
+
+void CifTree::listResources(Common::Array<Common::String> &list, uint type) {
+	for (uint i = 0; i < _cifInfo.size(); i++) {
+		if (type == ResourceManager::kResTypeAny || _cifInfo[i].info.type == type)
+			list.push_back(_cifInfo[i].info.name);
+	}
+}
+
+bool CifTree::findResource(const Common::String name, ResourceManager::CifInfo &info) {
+	uint hash = 0;
+
+	for (uint i = 0; i < name.size(); i++)
+		hash += name[i];
+
+	hash &= kHashMapSize - 1;
+
+	uint16 index = _hashMap[hash];
+	while (index != 0xffff) {
+		if (name == _cifInfo[index].info.name) {
+			info = _cifInfo[index].info;
+			return true;
+		}
+		index = _cifInfo[index].next;
+	}
+
+	return false;
+}
+
+class CifTree20 : public CifTree {
+public:
+	CifTree20(Common::File &f);
+	virtual ~CifTree20() { };
+};
+
+CifTree20::CifTree20(Common::File &f) {
+	// Number of info blocks
+	int infoBlockCount = f.readUint16LE();
+
+	for (int i = 0; i < kHashMapSize; i++)
+		_hashMap[i] = f.readUint16LE();
+
+	if (f.eos())
+		error("Failed to read hash map from ciftree.dat");
+
+	for (int i = 0; i < infoBlockCount; i++) {
+		CifInfoChain chain;
+		ResourceManager::CifInfo &info = chain.info;
+
+		char name[9];
+		f.read(name, 9);
+		name[8] = 0;
+		info.name = name;
+
+		f.skip(2); // Index of this block
+		info.width = f.readUint16LE();
+		info.pitch = f.readUint16LE();
+		info.height = f.readUint16LE();
+		info.depth = f.readByte();
+
+		info.comp = f.readByte();
+		info.dataOffset = f.readUint32LE();
+		info.size = f.readUint32LE();
+		info.sizeUnk = f.readUint32LE(); // Unknown
+		info.compressedSize = f.readUint32LE();
+
+		info.type = f.readByte();
+
+		chain.next = f.readUint16LE();
+		if (f.eos())
+			error("Failed to read info blocks from ciftree.dat");
+
+		_cifInfo.push_back(chain);
+	}
+}
+
 ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm) {
 }
 
@@ -52,134 +146,82 @@ void ResourceManager::initialize() {
 	cifTree.skip(4);
 
 	// Probably some kind of version number
-	uint16 ver[2];
-	ver[0] = cifTree.readUint16LE();
-	ver[1] = cifTree.readUint16LE();
+	uint32 ver;
+	ver = cifTree.readUint16LE() << 16;
+	ver |= cifTree.readUint16LE();
 
-	if (cifTree.eos() || ver[0] != 2 || ver[1] != 0)
-		error("ciftree.dat version %i.%i not supported", ver[0], ver[1]);
-
-	// Number of info blocks
-	int infoBlockCount = cifTree.readUint16LE();
-
-	for (int i = 0; i < kHashMapSize; i++)
-		_hashMap[i] = cifTree.readUint16LE();
-
-	if (cifTree.eos())
-		error("Failed to read hash map from ciftree.dat");
-
-	for (int i = 0; i < infoBlockCount; i++) {
-		ResInfo info;
-
-		char name[9];
-		cifTree.read(name, 9);
-		name[8] = 0;
-		info.name = name;
-
-		cifTree.skip(2); // Index of this block
-		info.width = cifTree.readUint16LE();
-		info.pitch = cifTree.readUint16LE();
-		info.height = cifTree.readUint16LE();
-		info.depth = cifTree.readByte();
-
-		info.comp = cifTree.readByte();
-		info.dataOffset = cifTree.readUint32LE();
-		info.size = cifTree.readUint32LE();
-		info.sizeUnk = cifTree.readUint32LE(); // Unknown
-		info.compressedSize = cifTree.readUint32LE();
-
-		info.type = cifTree.readByte();
-
-		info.next = cifTree.readUint16LE();
-		if (cifTree.eos())
-			error("Failed to read info blocks from ciftree.dat");
-
-		_resInfo.push_back(info);
+	switch(ver) {
+	case 0x00020000:
+		_cifTree = new CifTree20(cifTree);
+		break;
+	default:
+		error("CifTree version %d.%d not supported", ver >> 16, ver & 0xffff);
 	}
 
 	cifTree.close();
 }
 
 byte *ResourceManager::loadResource(const Common::String name, uint &size) {
-	const ResInfo *res = findResource(name);
+	CifInfo info;
 
-	if (!res) {
+	if (!_cifTree->findResource(name, info)) {
 		debug("Resource '%s' not found", name.c_str());
 		return 0;
 	}
 
-	byte *buf = decompress(*res, size);
+	byte *buf = decompress(info, size);
 	return buf;
 }
 
 bool ResourceManager::loadImage(const Common::String name, Graphics::Surface &surf) {
-	const ResInfo *res = findResource(name);
+	CifInfo info;
 
-	if (!res) {
+	if (!_cifTree->findResource(name, info)) {
 		debug("Resource '%s' not found", name.c_str());
 		return 0;
 	}
 
-	if (res->type != kResTypeImage) {
+	if (info.type != kResTypeImage) {
 		debug("Resource '%s' is not an image", name.c_str());
 		return 0;
 	}
 
-	if (res->depth != 16) {
-		debug("Image '%s' has unsupported depth %i", name.c_str(), res->depth);
+	if (info.depth != 16) {
+		debug("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
 		return 0;
 	}
 
 	uint size;
-	byte *buf = decompress(*res, size);
+	byte *buf = decompress(info, size);
 
 	Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	surf.w = res->width;
-	surf.h = res->height;
-	surf.pitch = res->pitch;
+	surf.w = info.width;
+	surf.h = info.height;
+	surf.pitch = info.pitch;
 	surf.setPixels(buf);
 	surf.format = format;
 	return true;
 }
 
-const ResourceManager::ResInfo *ResourceManager::findResource(const Common::String name) {
-	uint hash = 0;
-
-	for (uint i = 0; i < name.size(); i++)
-		hash += name[i];
-
-	hash &= kHashMapSize - 1;
-
-	uint16 index = _hashMap[hash];
-	while (index != 0xffff) {
-		const ResInfo &info = _resInfo[index];
-		if (name == info.name)
-			return &_resInfo[index];
-		index = info.next;
-	}
-
-	return 0;
-}
-
-byte *ResourceManager::decompress(const ResInfo &res, uint &size) {
+byte *ResourceManager::decompress(const CifInfo &info, uint &size) {
 	// TODO: clean this up...
 	Common::File cifTree;
 	uint read = 0, written = 0;
 
-	if (res.comp != kResCompression) {
-		debug("Resource '%s' is not compressed", res.name.c_str());
+	if (info.comp != kResCompression) {
+		debug("Resource '%s' is not compressed", info.name.c_str());
 		return 0;
 	}
 
 	if (!cifTree.open("ciftree.dat"))
 		error("Failed to open ciftree.dat");
 
-	cifTree.seek(res.dataOffset);
+	cifTree.seek(info.dataOffset);
 
 	const int bufSize = 4096;
 	const int bufStart = 4078;
 	byte *buf = new byte[bufSize];
-	byte *output = new byte[res.size];
+	byte *output = new byte[info.size];
 	uint bufpos = bufStart;
 
 	memset(buf, ' ', bufStart);
@@ -192,7 +234,7 @@ byte *ResourceManager::decompress(const ResInfo &res, uint &size) {
 		// The highest 8 bits are used to keep track of how many bits are left to process
 		if (!(bits & 0x100)) {
 			// Out of bits
-			if (cifTree.eos() || read == res.compressedSize)
+			if (cifTree.eos() || read == info.compressedSize)
 				break;
 			bits = 0xff00 | ((cifTree.readByte() - val++) & 0xff);
 			++read;
@@ -200,23 +242,23 @@ byte *ResourceManager::decompress(const ResInfo &res, uint &size) {
 
 		if (bits & 1) {
 			// Literal byte
-			if (cifTree.eos() || read == res.compressedSize)
+			if (cifTree.eos() || read == info.compressedSize)
 				break;
 			byte b = cifTree.readByte() - val++;
 			++read;
 			output[written++] = b;
-			if (written == res.size)
+			if (written == info.size)
 				break;
 			buf[bufpos++] = b;
 			bufpos &= bufSize - 1;
 		} else {
 			// Copy from buffer
-			if (cifTree.eos() || read == res.compressedSize)
+			if (cifTree.eos() || read == info.compressedSize)
 				break;
 			byte b1 = cifTree.readByte() - val++;
 			++read;
 
-			if (cifTree.eos() || read == res.compressedSize)
+			if (cifTree.eos() || read == info.compressedSize)
 				break;
 			byte b2 = cifTree.readByte() - val++;
 			++read;
@@ -227,7 +269,7 @@ byte *ResourceManager::decompress(const ResInfo &res, uint &size) {
 			for (uint i = 0; i < len; i++) {
 				byte t = buf[(offset + i) & (bufSize - 1)];
 				output[written++] = t;
-				if (written == res.size)
+				if (written == info.size)
 					break;
 				buf[bufpos++] = t;
 				bufpos &=  bufSize - 1;
@@ -237,7 +279,7 @@ byte *ResourceManager::decompress(const ResInfo &res, uint &size) {
 
 	delete[] buf;
 
-	if (read != res.compressedSize || written != res.size) {
+	if (read != info.compressedSize || written != info.size) {
 		debug("Failed to decompress resource");
 		return 0;
 	}
@@ -247,30 +289,27 @@ byte *ResourceManager::decompress(const ResInfo &res, uint &size) {
 }
 
 void ResourceManager::listResources(Common::Array<Common::String> &list, uint type) {
-	for (uint i = 0; i < _resInfo.size(); i++) {
-		if (type == kResTypeAny || _resInfo[i].type == type)
-			list.push_back(_resInfo[i].name);
-	}
+	_cifTree->listResources(list, type);
 }
 
 Common::String ResourceManager::getResourceDesc(const Common::String name) {
-	const ResInfo *info = findResource(name);
+	CifInfo info;
 
-	if (!info)
+	if (!_cifTree->findResource(name, info))
 		return Common::String::format("Resource '%s' not found\n", name.c_str());
 
 	Common::String desc;
-	desc = Common::String::format("Name: %s\n", info->name.c_str());
-	desc += Common::String::format("Type: %i\n", info->type);
-	desc += Common::String::format("Compression: %i\n", info->comp);
-	desc += Common::String::format("Data offset: %i\n", info->dataOffset);
-	desc += Common::String::format("Size: %i\n", info->size);
-	desc += Common::String::format("Size (unknown): %i\n", info->sizeUnk);
-	desc += Common::String::format("Compressed size: %i\n", info->compressedSize);
-	desc += Common::String::format("Width: %i\n", info->width);
-	desc += Common::String::format("Pitch: %i\n", info->pitch);
-	desc += Common::String::format("Height: %i\n", info->height);
-	desc += Common::String::format("Bit depth: %i\n", info->depth);
+	desc = Common::String::format("Name: %s\n", info.name.c_str());
+	desc += Common::String::format("Type: %i\n", info.type);
+	desc += Common::String::format("Compression: %i\n", info.comp);
+	desc += Common::String::format("Data offset: %i\n", info.dataOffset);
+	desc += Common::String::format("Size: %i\n", info.size);
+	desc += Common::String::format("Size (unknown): %i\n", info.sizeUnk);
+	desc += Common::String::format("Compressed size: %i\n", info.compressedSize);
+	desc += Common::String::format("Width: %i\n", info.width);
+	desc += Common::String::format("Pitch: %i\n", info.pitch);
+	desc += Common::String::format("Height: %i\n", info.height);
+	desc += Common::String::format("Bit depth: %i\n", info.depth);
 	return desc;
 }
 
