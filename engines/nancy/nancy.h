@@ -65,6 +65,8 @@ enum NancyDebugChannels {
 
 struct NancyGameDescription;
 
+class ResourceManager;
+
 class NancyEngine : public Engine {
 public:
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
@@ -75,6 +77,8 @@ public:
 	GUI::Debugger *getDebugger();
 
 	Common::RandomSource *_rnd;
+
+	ResourceManager *_res;
 
 	const NancyGameDescription *_gameDescription;
 	uint32 getFeatures() const;

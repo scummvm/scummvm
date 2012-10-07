@@ -45,6 +45,11 @@ const char *NancyEngine::getGameId() const {
 }
 
 
+const char *const directoryGlobs[] = {
+	"game",
+	0
+};
+
 static const PlainGameDescriptor nancyGames[] = {
 	// Games
 	{"nancy1", "Nancy Drew 1"},
@@ -57,7 +62,7 @@ static const NancyGameDescription gameDescriptions[] = {
 		{
 			"nancy1", 0,
 			{
-				{"ciftree.dat", 0, "92aaf84693a8948497ad57864fa31c2a", 71010},
+				{"ciftree.dat", 0, "9f89e0b53717515ae0eb82d14ffe0e88", 4317962},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -74,6 +79,8 @@ static const NancyGameDescription gameDescriptions[] = {
 class NancyMetaEngine : public AdvancedMetaEngine {
 public:
 	NancyMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(NancyGameDescription), nancyGames) {
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	const char *getName() const {
