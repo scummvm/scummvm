@@ -18,6 +18,18 @@ import java.io.File;
 
 public class ScummVMActivity extends Activity {
 
+	/* Establish whether the hover events are available */
+	private static boolean _hoverAvailable;
+
+	static {
+		try {
+			MouseHelper.checkHoverAvailable(); // this throws exception if we're on too old version
+			_hoverAvailable = true;
+		} catch (Throwable t) {
+			_hoverAvailable = false;
+		}
+	}
+
 	private class MyScummVM extends ScummVM {
 		private boolean usingSmallScreen() {
 			// Multiple screen sizes came in with Android 1.6.  Have
@@ -94,6 +106,7 @@ public class ScummVMActivity extends Activity {
 
 	private MyScummVM _scummvm;
 	private ScummVMEvents _events;
+	private MouseHelper _mouseHelper;
 	private Thread _scummvm_thread;
 
 	@Override
@@ -151,7 +164,13 @@ public class ScummVMActivity extends Activity {
 			"--savepath=" + savePath
 		});
 
-		_events = new ScummVMEvents(this, _scummvm);
+		Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
+		if (_hoverAvailable) {
+			_mouseHelper = new MouseHelper(_scummvm);
+			_mouseHelper.attach(main_surface);
+		}
+
+		_events = new ScummVMEvents(this, _scummvm, _mouseHelper);
 
 		main_surface.setOnKeyListener(_events);
 		main_surface.setOnTouchListener(_events);
