@@ -52,7 +52,8 @@ const char *const directoryGlobs[] = {
 
 static const PlainGameDescriptor nancyGames[] = {
 	// Games
-	{"nancy1", "Nancy Drew 1"},
+	{"nancy1", "Nancy Drew 1: Secrets Can Kill"},
+	{"nancy2", "Nancy Drew 2: Stay Tuned For Danger"},
 	{0, 0}
 };
 
@@ -63,6 +64,20 @@ static const NancyGameDescription gameDescriptions[] = {
 			"nancy1", 0,
 			{
 				{"ciftree.dat", 0, "9f89e0b53717515ae0eb82d14ffe0e88", 4317962},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeNancy1
+	},
+	{
+		{
+			"nancy2", 0,
+			{
+				{"ciftree.dat", 0, "fa4293d728a1b31407961cd82e86a015", 7784516},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
