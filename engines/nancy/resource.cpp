@@ -31,7 +31,8 @@ namespace Nancy {
 
 class CifTree {
 public:
-	virtual ~CifTree() { };	
+	virtual ~CifTree() { };
+	bool initialize(Common::File &f);
 	bool findResource(const Common::String name, ResourceManager::CifInfo &info);
 	void listResources(Common::Array<Common::String> &list, uint type);
 
@@ -45,9 +46,33 @@ protected:
 		uint16 next;
 	};
 
+	virtual uint readHeader(Common::File &f) = 0;
+	virtual void readCifInfo(Common::File &f, CifInfoChain &chain) = 0;
+
 	uint16 _hashMap[kHashMapSize];
 	Common::Array<CifInfoChain> _cifInfo;
+	Common::String _filename;
 };
+
+bool CifTree::initialize(Common::File &f) {
+	_filename = f.getName();
+
+	int infoBlockCount = readHeader(f);
+
+	for (int i = 0; i < kHashMapSize; i++)
+		_hashMap[i] = f.readUint16LE();
+
+	if (f.eos())
+		error("Error reading CifTree '%s'", _filename.c_str());
+
+	for (int i = 0; i < infoBlockCount; i++) {
+		CifInfoChain chain;
+		readCifInfo(f, chain);
+		_cifInfo.push_back(chain);
+	}
+
+	return true;
+}
 
 void CifTree::listResources(Common::Array<Common::String> &list, uint type) {
 	for (uint i = 0; i < _cifInfo.size(); i++) {
@@ -77,50 +102,46 @@ bool CifTree::findResource(const Common::String name, ResourceManager::CifInfo &
 }
 
 class CifTree20 : public CifTree {
-public:
-	CifTree20(Common::File &f);
-	virtual ~CifTree20() { };
+protected:
+	virtual uint readHeader(Common::File &f);
+	virtual void readCifInfo(Common::File &f, CifInfoChain &chain);
 };
 
-CifTree20::CifTree20(Common::File &f) {
-	// Number of info blocks
-	int infoBlockCount = f.readUint16LE();
-
-	for (int i = 0; i < kHashMapSize; i++)
-		_hashMap[i] = f.readUint16LE();
+uint CifTree20::readHeader(Common::File &f) {
+	uint infoBlockCount = f.readUint16LE();
 
 	if (f.eos())
-		error("Failed to read hash map from ciftree.dat");
+		error("Failed to read cif info block count from CifTree");
 
-	for (int i = 0; i < infoBlockCount; i++) {
-		CifInfoChain chain;
-		ResourceManager::CifInfo &info = chain.info;
+	return infoBlockCount;
+}
 
-		char name[9];
-		f.read(name, 9);
-		name[8] = 0;
-		info.name = name;
+void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain)
+{
+	ResourceManager::CifInfo &info = chain.info;
 
-		f.skip(2); // Index of this block
-		info.width = f.readUint16LE();
-		info.pitch = f.readUint16LE();
-		info.height = f.readUint16LE();
-		info.depth = f.readByte();
+	char name[9];
+	f.read(name, 9);
+	name[8] = 0;
+	info.name = name;
 
-		info.comp = f.readByte();
-		info.dataOffset = f.readUint32LE();
-		info.size = f.readUint32LE();
-		info.sizeUnk = f.readUint32LE(); // Unknown
-		info.compressedSize = f.readUint32LE();
+	f.skip(2); // Index of this block
+	info.width = f.readUint16LE();
+	info.pitch = f.readUint16LE();
+	info.height = f.readUint16LE();
+	info.depth = f.readByte();
 
-		info.type = f.readByte();
+	info.comp = f.readByte();
+	info.dataOffset = f.readUint32LE();
+	info.size = f.readUint32LE();
+	info.sizeUnk = f.readUint32LE(); // Unknown
+	info.compressedSize = f.readUint32LE();
 
-		chain.next = f.readUint16LE();
-		if (f.eos())
-			error("Failed to read info blocks from ciftree.dat");
+	info.type = f.readByte();
 
-		_cifInfo.push_back(chain);
-	}
+	chain.next = f.readUint16LE();
+	if (f.eos())
+		error("Failed to read info block from CifTree");
 }
 
 ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm) {
@@ -130,42 +151,45 @@ ResourceManager::~ResourceManager() {
 }
 
 void ResourceManager::initialize() {
-	Common::File cifTree;
+	Common::File f;
 
-	if (!cifTree.open("ciftree.dat"))
+	if (!f.open("ciftree.dat"))
 		error("Failed to open ciftree.dat");
 
 	char id[20];
-	cifTree.read(id, 20);
+	f.read(id, 20);
 	id[19] = 0;
 
-	if (cifTree.eos() || Common::String(id) != "CIF TREE WayneSikes")
+	if (f.eos() || Common::String(id) != "CIF TREE WayneSikes")
 		error("Invalid id string found in ciftree.dat");
 
 	// 4 bytes unused
-	cifTree.skip(4);
+	f.skip(4);
 
 	// Probably some kind of version number
 	uint32 ver;
-	ver = cifTree.readUint16LE() << 16;
-	ver |= cifTree.readUint16LE();
+	ver = f.readUint16LE() << 16;
+	ver |= f.readUint16LE();
 
 	switch(ver) {
 	case 0x00020000:
-		_cifTree = new CifTree20(cifTree);
+		_cifTree = new CifTree20;
 		break;
 	default:
 		error("CifTree version %d.%d not supported", ver >> 16, ver & 0xffff);
 	}
 
-	cifTree.close();
+	if (!_cifTree->initialize(f))
+		error("Failed to read CifTree 'ciftree.dat'");
+
+	f.close();
 }
 
 byte *ResourceManager::loadResource(const Common::String name, uint &size) {
 	CifInfo info;
 
 	if (!_cifTree->findResource(name, info)) {
-		debug("Resource '%s' not found", name.c_str());
+		warning("Resource '%s' not found", name.c_str());
 		return 0;
 	}
 
@@ -177,17 +201,17 @@ bool ResourceManager::loadImage(const Common::String name, Graphics::Surface &su
 	CifInfo info;
 
 	if (!_cifTree->findResource(name, info)) {
-		debug("Resource '%s' not found", name.c_str());
+		warning("Resource '%s' not found", name.c_str());
 		return 0;
 	}
 
 	if (info.type != kResTypeImage) {
-		debug("Resource '%s' is not an image", name.c_str());
+		warning("Resource '%s' is not an image", name.c_str());
 		return 0;
 	}
 
 	if (info.depth != 16) {
-		debug("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
+		warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
 		return 0;
 	}
 
@@ -209,7 +233,7 @@ byte *ResourceManager::decompress(const CifInfo &info, uint &size) {
 	uint read = 0, written = 0;
 
 	if (info.comp != kResCompression) {
-		debug("Resource '%s' is not compressed", info.name.c_str());
+		warning("Resource '%s' is not compressed", info.name.c_str());
 		return 0;
 	}
 
@@ -280,7 +304,7 @@ byte *ResourceManager::decompress(const CifInfo &info, uint &size) {
 	delete[] buf;
 
 	if (read != info.compressedSize || written != info.size) {
-		debug("Failed to decompress resource");
+		warning("Failed to decompress resource");
 		return 0;
 	}
 

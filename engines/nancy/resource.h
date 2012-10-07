@@ -24,7 +24,6 @@
 #define NANCY_RESOURCE_H
 
 namespace Common {
-class MemoryReadStream;
 class String;
 }
 
