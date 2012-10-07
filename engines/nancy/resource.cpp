@@ -67,6 +67,7 @@ bool CifTree::initialize(Common::File &f) {
 
 	for (int i = 0; i < infoBlockCount; i++) {
 		CifInfoChain chain;
+		memset(&chain, 0, sizeof(CifInfoChain));
 		readCifInfo(f, chain);
 		_cifInfo.push_back(chain);
 	}
@@ -116,8 +117,7 @@ uint CifTree20::readHeader(Common::File &f) {
 	return infoBlockCount;
 }
 
-void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain)
-{
+void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain) {
 	ResourceManager::CifInfo &info = chain.info;
 
 	char name[9];
@@ -142,6 +142,52 @@ void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain)
 	chain.next = f.readUint16LE();
 	if (f.eos())
 		error("Failed to read info block from CifTree");
+}
+
+class CifTree21 : public CifTree {
+protected:
+	virtual uint readHeader(Common::File &f);
+	virtual void readCifInfo(Common::File &f, CifInfoChain &chain);
+};
+
+uint CifTree21::readHeader(Common::File &f) {
+	uint infoBlockCount = f.readUint16LE();
+
+	if (f.eos())
+		error("Failed to read cif info block count from CifTree");
+
+	f.readByte(); // Unknown
+	f.readByte(); // Unknown
+
+	return infoBlockCount;
+}
+
+void CifTree21::readCifInfo(Common::File &f, CifInfoChain &chain) {
+	ResourceManager::CifInfo &info = chain.info;
+
+	char name[9];
+	f.read(name, 9);
+	name[8] = 0;
+	info.name = name;
+
+	f.skip(2); // Index of this block
+
+	f.skip(32);
+
+	info.width = f.readUint16LE();
+	info.pitch = f.readUint16LE();
+	info.height = f.readUint16LE();
+	info.depth = f.readByte();
+
+	info.comp = f.readByte();
+	info.dataOffset = f.readUint32LE();
+	info.size = f.readUint32LE();
+	info.sizeUnk = f.readUint32LE(); // Unknown
+	info.compressedSize = f.readUint32LE();
+
+	info.type = f.readByte();
+
+	chain.next = f.readUint16LE();
 }
 
 ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm) {
@@ -174,6 +220,9 @@ void ResourceManager::initialize() {
 	switch(ver) {
 	case 0x00020000:
 		_cifTree = new CifTree20;
+		break;
+	case 0x00020001:
+		_cifTree = new CifTree21;
 		break;
 	default:
 		error("CifTree version %d.%d not supported", ver >> 16, ver & 0xffff);
