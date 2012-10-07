@@ -59,6 +59,11 @@ enum {
 	JE_DOUBLE_TAP = 6,
 	JE_MULTI = 7,
 	JE_BALL = 8,
+	JE_LMB_DOWN = 9,
+	JE_LMB_UP = 10,
+	JE_RMB_DOWN = 11,
+	JE_RMB_UP = 12,
+	JE_MOUSE_MOVE = 13,
 	JE_QUIT = 0x1000
 };
 
@@ -272,7 +277,7 @@ void OSystem_Android::clipMouse(Common::Point &p) {
 }
 
 void OSystem_Android::scaleMouse(Common::Point &p, int x, int y,
-									bool deductDrawRect) {
+									bool deductDrawRect, bool touchpadMode) {
 	const GLESBaseTexture *tex;
 
 	if (_show_overlay)
@@ -282,7 +287,7 @@ void OSystem_Android::scaleMouse(Common::Point &p, int x, int y,
 
 	const Common::Rect &r = tex->getDrawRect();
 
-	if (_touchpad_mode) {
+	if (touchpadMode) {
 		x = x * 100 / _touchpad_scale;
 		y = y * 100 / _touchpad_scale;
 	}
@@ -327,11 +332,16 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 		switch (arg2) {
+
+		// special case. we'll only get it's up event
 		case JKEYCODE_BACK:
 			e.kbd.keycode = Common::KEYCODE_ESCAPE;
 			e.kbd.ascii = Common::ASCII_ESCAPE;
 
 			lockMutex(_event_queue_lock);
+			e.type = Common::EVENT_KEYDOWN;
+			_event_queue.push(e);
+			e.type = Common::EVENT_KEYUP;
 			_event_queue.push(e);
 			unlockMutex(_event_queue_lock);
 
@@ -554,7 +564,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			}
 
 			scaleMouse(e.mouse, arg3 - _touch_pt_scroll.x,
-						arg4 - _touch_pt_scroll.y, false);
+						arg4 - _touch_pt_scroll.y, false, true);
 			e.mouse += _touch_pt_down;
 			clipMouse(e.mouse);
 		} else {
@@ -652,7 +662,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				if (_touchpad_mode) {
 					scaleMouse(e.mouse, arg1 - _touch_pt_dt.x,
-								arg2 - _touch_pt_dt.y, false);
+								arg2 - _touch_pt_dt.y, false, true);
 					e.mouse += _touch_pt_down;
 
 					clipMouse(e.mouse);
@@ -750,6 +760,66 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			LOGE("unhandled jaction on system key: %d", arg1);
 			return;
 		}
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_MOUSE_MOVE:
+		e.type = Common::EVENT_MOUSEMOVE;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_LMB_DOWN:
+		e.type = Common::EVENT_LBUTTONDOWN;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_LMB_UP:
+		e.type = Common::EVENT_LBUTTONUP;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_RMB_DOWN:
+		e.type = Common::EVENT_RBUTTONDOWN;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_RMB_UP:
+		e.type = Common::EVENT_RBUTTONUP;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
 
 		lockMutex(_event_queue_lock);
 		_event_queue.push(e);
