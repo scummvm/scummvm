@@ -38,6 +38,17 @@ class NancyEngine;
 
 class ResourceManager {
 public:
+	enum ResType {
+		kResTypeAny,
+		kResTypeImage = 2,
+		kResTypeScript
+	};
+
+	enum ResCompression {
+		kResCompressionNone = 1,
+		kResCompression
+	};
+
 	ResourceManager(NancyEngine *vm);
 	~ResourceManager();
 
@@ -46,14 +57,16 @@ public:
 	bool loadImage(const Common::String name, Graphics::Surface &surf);
 
 	// Debugger functions
-	void listResources(Common::Array<Common::String> &list);
+	void listResources(Common::Array<Common::String> &list, uint type);
 	Common::String getResourceDesc(const Common::String name);
 private:
 	struct ResInfo {
 		Common::String name;
+		byte type; // ResType
+		byte comp; // ResCompression
 		uint16 width, pitch, height;
-		byte flag;
-		uint32 compressedSize, size;
+		byte depth; // Bit depth
+		uint32 compressedSize, size, sizeUnk;
 		uint32 dataOffset;
 		uint16 next;
 	};

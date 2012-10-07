@@ -80,18 +80,15 @@ void ResourceManager::initialize() {
 		info.width = cifTree.readUint16LE();
 		info.pitch = cifTree.readUint16LE();
 		info.height = cifTree.readUint16LE();
-		cifTree.skip(1); // Unknown
+		info.depth = cifTree.readByte();
 
-		byte flag = cifTree.readByte();
-		if (cifTree.eos() || flag != 2)
-			error("Unsupported compression flag found");
-
+		info.comp = cifTree.readByte();
 		info.dataOffset = cifTree.readUint32LE();
 		info.size = cifTree.readUint32LE();
-		cifTree.skip(4); // Another size?
+		info.sizeUnk = cifTree.readUint32LE(); // Unknown
 		info.compressedSize = cifTree.readUint32LE();
 
-		info.flag = cifTree.readByte(); // Unknown flag
+		info.type = cifTree.readByte();
 
 		info.next = cifTree.readUint16LE();
 		if (cifTree.eos())
@@ -120,6 +117,16 @@ bool ResourceManager::loadImage(const Common::String name, Graphics::Surface &su
 
 	if (!res) {
 		debug("Resource '%s' not found", name.c_str());
+		return 0;
+	}
+
+	if (res->type != kResTypeImage) {
+		debug("Resource '%s' is not an image", name.c_str());
+		return 0;
+	}
+
+	if (res->depth != 16) {
+		debug("Image '%s' has unsupported depth %i", name.c_str(), res->depth);
 		return 0;
 	}
 
@@ -158,6 +165,11 @@ byte *ResourceManager::decompress(const ResInfo &res, uint &size) {
 	// TODO: clean this up...
 	Common::File cifTree;
 	uint read = 0, written = 0;
+
+	if (res.comp != kResCompression) {
+		debug("Resource '%s' is not compressed", res.name.c_str());
+		return 0;
+	}
 
 	if (!cifTree.open("ciftree.dat"))
 		error("Failed to open ciftree.dat");
@@ -234,9 +246,11 @@ byte *ResourceManager::decompress(const ResInfo &res, uint &size) {
 	return output;
 }
 
-void ResourceManager::listResources(Common::Array<Common::String> &list) {
-	for (uint i = 0; i < _resInfo.size(); i++)
-		list.push_back(_resInfo[i].name);
+void ResourceManager::listResources(Common::Array<Common::String> &list, uint type) {
+	for (uint i = 0; i < _resInfo.size(); i++) {
+		if (type == kResTypeAny || _resInfo[i].type == type)
+			list.push_back(_resInfo[i].name);
+	}
 }
 
 Common::String ResourceManager::getResourceDesc(const Common::String name) {
@@ -247,13 +261,16 @@ Common::String ResourceManager::getResourceDesc(const Common::String name) {
 
 	Common::String desc;
 	desc = Common::String::format("Name: %s\n", info->name.c_str());
+	desc += Common::String::format("Type: %i\n", info->type);
+	desc += Common::String::format("Compression: %i\n", info->comp);
 	desc += Common::String::format("Data offset: %i\n", info->dataOffset);
+	desc += Common::String::format("Size: %i\n", info->size);
+	desc += Common::String::format("Size (unknown): %i\n", info->sizeUnk);
+	desc += Common::String::format("Compressed size: %i\n", info->compressedSize);
 	desc += Common::String::format("Width: %i\n", info->width);
 	desc += Common::String::format("Pitch: %i\n", info->pitch);
 	desc += Common::String::format("Height: %i\n", info->height);
-	desc += Common::String::format("Flag: %i\n", info->flag);
-	desc += Common::String::format("Size: %i\n", info->size);
-	desc += Common::String::format("Compressed size: %i\n", info->compressedSize);
+	desc += Common::String::format("Bit depth: %i\n", info->depth);
 	return desc;
 }
 

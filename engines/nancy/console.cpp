@@ -57,14 +57,15 @@ bool NancyConsole::Cmd_resHexDump(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_resList(int argc, const char **argv) {
-	if (argc != 1) {
-		debugPrintf("List all resources\n");
-		debugPrintf("Usage: %s\n", argv[0]);
+	if (argc != 2) {
+		debugPrintf("List resources of a certain type\n");
+		debugPrintf("Types - 0: all, 2: image, 3: script\n");
+		debugPrintf("Usage: %s <resource type>\n", argv[0]);
 		return true;
 	}
 
 	Common::Array<Common::String> list;
-	_vm->_res->listResources(list);
+	_vm->_res->listResources(list, atoi(argv[1]));
 	for (uint i = 0; i < list.size(); i++) {
 		debugPrintf("%-10s", list[i].c_str());
 		if ((i % 8) == 7 && i + 1 != list.size())
@@ -97,7 +98,7 @@ bool NancyConsole::Cmd_resShowImage(int argc, const char **argv) {
 	Graphics::Surface surf;
 	if (_vm->_res->loadImage(argv[1], surf)) {
 		_vm->_system->fillScreen(0);
-		_vm->_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w, surf.h);
+		_vm->_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w > 640 ? 640 : surf.w, surf.h > 480 ? 480 : surf.h);
 		surf.free();
 	} else
 		debugPrintf("Failed to load image\n");
