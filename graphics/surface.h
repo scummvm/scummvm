@@ -137,6 +137,20 @@ struct Surface {
 	/**
 	 * Convert the data to another pixel format.
 	 *
+	 * This works in-place. This means it will not create an additional buffer
+	 * for the conversion process. The value of pixels might change though.
+	 *
+	 * Note that you should only use this, when you created the Surface data via
+	 * create! Otherwise this function has undefined behavior.
+	 *
+	 * @param dstFormat The desired format
+	 * @param palette   The palette (in RGB888), if the source format has a Bpp of 1
+	 */
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = 0);
+
+	/**
+	 * Convert the data to another pixel format.
+	 *
 	 * The calling code must call free on the returned surface and then delete
 	 * it.
 	 *
