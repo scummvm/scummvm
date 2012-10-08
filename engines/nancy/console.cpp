@@ -29,7 +29,9 @@
 namespace Nancy {
 
 NancyConsole::NancyConsole(NancyEngine *vm) : GUI::Debugger(), _vm(vm) {
+	registerCmd("res_load_ciftree", WRAP_METHOD(NancyConsole, Cmd_resLoadCifTree));
 	registerCmd("res_hexdump", WRAP_METHOD(NancyConsole, Cmd_resHexDump));
+	registerCmd("res_diskdump", WRAP_METHOD(NancyConsole, Cmd_resDiskDump));
 	registerCmd("res_list", WRAP_METHOD(NancyConsole, Cmd_resList));
 	registerCmd("res_info", WRAP_METHOD(NancyConsole, Cmd_resInfo));
 	registerCmd("res_show_image", WRAP_METHOD(NancyConsole, Cmd_resShowImage));
@@ -48,11 +50,43 @@ bool NancyConsole::Cmd_resHexDump(int argc, const char **argv) {
 	uint size;
 	byte *buf = _vm->_res->loadResource(argv[1], size);
 	if (!buf) {
-		debugPrintf("Failed to load resource '%s'", argv[1]);
+		debugPrintf("Failed to load resource '%s'\n", argv[1]);
 		return true;
 	}
 
 	Common::hexdump(buf, size);
+	delete[] buf;
+	return true;
+}
+
+bool NancyConsole::Cmd_resDiskDump(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Dumps the specified resource to disk\n");
+		debugPrintf("Usage: %s <resource name>\n", argv[0]);
+		return true;
+	}
+
+	uint size;
+	byte *buf = _vm->_res->loadResource(argv[1], size);
+	if (!buf) {
+		debugPrintf("Failed to load resource '%s'\n", argv[1]);
+		return true;
+	}
+
+	Common::String filename = argv[1];
+	filename += ".raw";
+	Common::DumpFile dump;
+	if (!dump.open(filename)) {
+		debugPrintf("Failed to open dump file '%s'\n", filename.c_str());
+		delete[] buf;
+		return true;
+	}
+
+	if (dump.write(buf, size) < size)
+		debugPrintf("Failed to write dump file '%s'\n", filename.c_str());
+
+	dump.close();
+	delete[] buf;
 	return true;
 }
 
@@ -102,6 +136,18 @@ bool NancyConsole::Cmd_resShowImage(int argc, const char **argv) {
 		surf.free();
 	} else
 		debugPrintf("Failed to load image\n");
+	return true;
+}
+
+bool NancyConsole::Cmd_resLoadCifTree(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Loads a new CifTree file\n");
+		debugPrintf("Usage: %s <filename>\n", argv[0]);
+		return true;
+	}
+
+	if (!_vm->_res->loadCifTree(argv[1]))
+		debugPrintf("Failed to load CifTree '%s'\n", argv[1]);
 	return true;
 }
 
