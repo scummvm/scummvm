@@ -47,6 +47,7 @@ const char *NancyEngine::getGameId() const {
 
 const char *const directoryGlobs[] = {
 	"game",
+	"datafiles",
 	0
 };
 
@@ -54,6 +55,7 @@ static const PlainGameDescriptor nancyGames[] = {
 	// Games
 	{"nancy1", "Nancy Drew 1: Secrets Can Kill"},
 	{"nancy2", "Nancy Drew 2: Stay Tuned For Danger"},
+	{"nancy5", "Nancy Drew 5: The Final Scene"},
 	{0, 0}
 };
 
@@ -78,6 +80,20 @@ static const NancyGameDescription gameDescriptions[] = {
 			"nancy2", 0,
 			{
 				{"ciftree.dat", 0, "fa4293d728a1b31407961cd82e86a015", 7784516},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeNancy1
+	},
+	{
+		{
+			"nancy5", 0,
+			{
+				{"ciftree.dat", 0, "21fa81f322595c3100d8d58d100852d5", 8187692},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
