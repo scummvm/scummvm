@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/module2500.h"
+#include "neverhood/module1600.h"
 
 namespace Neverhood {
 
@@ -212,22 +213,8 @@ uint32 Module2500::handleMessage(int messageNum, const MessageParam &param, Enti
 }
 			
 void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
+	// TODO Move to module class?
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
-}
-
-Class541::Class541(NeverhoodEngine *vm, int16 x, int16 y)
-	: AnimatedSprite(vm, 0x1209E09F, 1100, x, y) {
-	
-	startAnimation(0x1209E09F, 1, -1);
-	_newStickFrameIndex = 1;
-	setDoDeltaX(1);
-}
-
-Class542::Class542(NeverhoodEngine *vm, int16 x, int16 y)
-	: AnimatedSprite(vm, 0x1209E09F, 100, x, y) {
-	
-	_newStickFrameIndex = 0;
-	setDoDeltaX(1);
 }
 
 Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -250,8 +237,8 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	addEntity(_class437);
 
 	_asCar = createSprite<AsCommonCar>(this, 211, 400); // Create but don't add to the sprite list yet
-	_class541 = insertSprite<Class541>(211, 400);
-	_class542 = insertSprite<Class542>(211, 400);
+	_asIdleCarLower = insertSprite<AsCommonIdleCarLower>(211, 400);
+	_asIdleCarFull = insertSprite<AsCommonIdleCarFull>(211, 400);
 	insertStaticSprite(0xC42AC521, 1500);
 
 	if (which < 0) {
@@ -273,8 +260,8 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		_kmScene2501->setDoDeltaX(1);
 		SetMessageHandler(&Scene2501::hmRidingCar);
 		SetUpdateHandler(&Scene2501::upRidingCar);
-		_class541->setVisible(false);
-		_class542->setVisible(false);
+		_asIdleCarLower->setVisible(false);
+		_asIdleCarFull->setVisible(false);
 		_currTrackIndex = which;
 	} else {
 		insertKlayman<KmScene2501>(162, 393);
@@ -334,8 +321,8 @@ void Scene2501::update() {
 		_klaymanInCar = true;
 		SetMessageHandler(&Scene2501::hmCarAtHome);
 		SetUpdateHandler(&Scene2501::upCarAtHome);
-		_class541->setVisible(false);
-		_class542->setVisible(false);
+		_asIdleCarLower->setVisible(false);
+		_asIdleCarFull->setVisible(false);
 		_asCar->setVisible(true);
 		sendMessage(_asCar, 0x2009, 0);
 		_asCar->handleUpdate();
@@ -371,8 +358,8 @@ void Scene2501::upGettingOutOfCar() {
 		SetMessageHandler(&Scene2501::handleMessage);
 		SetUpdateHandler(&Scene2501::update);
 		setRectList(0x004B2608);
-		_class541->setVisible(true);
-		_class542->setVisible(true);
+		_asIdleCarLower->setVisible(true);
+		_asIdleCarFull->setVisible(true);
 		_asCar->setVisible(false);
 		setMessageList(0x004B2570);
 		runMessageList();
@@ -498,8 +485,8 @@ void Scene2501::updateKlaymanCliprect() {
 		_kmScene2501->setClipRect(0, 0, 640, 388);
 }
 
-Class450::Class450(NeverhoodEngine *vm)
-	: StaticSprite(vm, 1400), _countdown(0), _flag1(false) {
+SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
+	: StaticSprite(vm, 1400), _countdown(0), _isSoundPlaying(false) {
 	
 	_spriteResource.load2(0x070220D9);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -517,16 +504,16 @@ Class450::Class450(NeverhoodEngine *vm)
 	loadSound(1, 0x408C0034);
 	loadSound(2, 0x44043000);
 	loadSound(3, 0x44045000);
-	SetMessageHandler(&Class450::handleMessage);
-	SetUpdateHandler(&Class450::update);
+	SetMessageHandler(&SsScene2504Button::handleMessage);
+	SetUpdateHandler(&SsScene2504Button::update);
 }
 
-void Class450::update() {
+void SsScene2504Button::update() {
 	StaticSprite::update();
-	if (_flag1 && !isSoundPlaying(0) && !isSoundPlaying(1)) {
+	if (_isSoundPlaying && !isSoundPlaying(0) && !isSoundPlaying(1)) {
 		playSound(3);
 		setVisible(false);
-		_flag1 = false;
+		_isSoundPlaying = false;
 	}
 	if (_countdown != 0 && (--_countdown) == 0) {
 		if (getSubVar(0x14800353, 0x01180951)) {
@@ -534,15 +521,15 @@ void Class450::update() {
 		} else {
 			playSound(1);
 		}
-		_flag1 = true;
+		_isSoundPlaying = true;
 	}
 }
 
-uint32 Class450::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		if (_countdown == 0 && !_flag1) {
+		if (_countdown == 0 && !_isSoundPlaying) {
 			setVisible(true);
 			_countdown = 2;
 			if (getSubVar(0x14800353, 0x01180951)) {
@@ -561,13 +548,13 @@ uint32 Class450::handleMessage(int messageNum, const MessageParam &param, Entity
 Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
-	Sprite *class450;
+	Sprite *ssButton;
 	
 	_surfaceFlag = true;
 	setBackground(0x90791B80);
 	setPalette(0x90791B80);
-	class450 = insertSprite<Class450>();
-	_vm->_collisionMan->addSprite(class450);
+	ssButton = insertSprite<SsScene2504Button>();
+	_vm->_collisionMan->addSprite(ssButton);
 	insertMouse435(0x91B8490F, 20, 620);
 	SetMessageHandler(&Scene2504::handleMessage);
 	SetUpdateHandler(&Scene::update);

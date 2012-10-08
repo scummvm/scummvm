@@ -117,14 +117,14 @@ protected:
 	void stCloseDoorDone();
 };
 
-class AsScene1608IdleCarLower : public AnimatedSprite {
+class AsCommonIdleCarLower : public AnimatedSprite {
 public:
-	AsScene1608IdleCarLower(NeverhoodEngine *vm, int16 x, int16 y);
+	AsCommonIdleCarLower(NeverhoodEngine *vm, int16 x, int16 y);
 };
 
-class AsScene1608IdleCarFull : public AnimatedSprite {
+class AsCommonIdleCarFull : public AnimatedSprite {
 public:
-	AsScene1608IdleCarFull(NeverhoodEngine *vm, int16 x, int16 y);
+	AsCommonIdleCarFull(NeverhoodEngine *vm, int16 x, int16 y);
 };
 
 class AsCommonCarConnector : public AnimatedSprite {

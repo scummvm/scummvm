@@ -1031,7 +1031,7 @@ void AsScene1608Door::stCloseDoorDone() {
 	stopAnimation();
 }
 
-AsScene1608IdleCarLower::AsScene1608IdleCarLower(NeverhoodEngine *vm, int16 x, int16 y)
+AsCommonIdleCarLower::AsCommonIdleCarLower(NeverhoodEngine *vm, int16 x, int16 y)
 	: AnimatedSprite(vm, 0x1209E09F, 1100, x, y) {
 
 	setDoDeltaX(1);
@@ -1039,7 +1039,7 @@ AsScene1608IdleCarLower::AsScene1608IdleCarLower(NeverhoodEngine *vm, int16 x, i
 	_newStickFrameIndex = 1;
 }
 
-AsScene1608IdleCarFull::AsScene1608IdleCarFull(NeverhoodEngine *vm, int16 x, int16 y)
+AsCommonIdleCarFull::AsCommonIdleCarFull(NeverhoodEngine *vm, int16 x, int16 y)
 	: AnimatedSprite(vm, 0x1209E09F, 100, x, y) {
 
 	setDoDeltaX(1);
@@ -1124,8 +1124,8 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertMouse433(0x01600988);
 		_sprite2 = insertStaticSprite(0x491F38A8, 1100);
 		_asCar = createSprite<AsCommonCar>(this, 375, 227); // Create but don't add to the sprite list yet
-		_asIdleCarLower = insertSprite<AsScene1608IdleCarLower>(375, 227);
-		_asIdleCarFull = insertSprite<AsScene1608IdleCarFull>(375, 227);
+		_asIdleCarLower = insertSprite<AsCommonIdleCarLower>(375, 227);
+		_asIdleCarFull = insertSprite<AsCommonIdleCarFull>(375, 227);
 		_asCar->setVisible(false);
 		if (getGlobalVar(0xC0418A02)) {
 			insertKlayman<KmScene1608>(373, 220);
@@ -1168,8 +1168,8 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette->addPalette("paPodRed", 65, 31, 65);
 		insertMouse433(0x01600988);
 		_asCar = insertSprite<AsCommonCar>(this, 375, 227);
-		_asIdleCarLower = insertSprite<AsScene1608IdleCarLower>(375, 227);
-		_asIdleCarFull = insertSprite<AsScene1608IdleCarFull>(375, 227);
+		_asIdleCarLower = insertSprite<AsCommonIdleCarLower>(375, 227);
+		_asIdleCarFull = insertSprite<AsCommonIdleCarFull>(375, 227);
 		_sprite2 = insertStaticSprite(0x491F38A8, 1100);
 		_kmScene1608 = createSprite<KmScene1608>(this, 439, 220); // Special Klayman handling...
 		sendMessage(_kmScene1608, 0x2032, 1);

@@ -46,16 +46,6 @@ protected:
 	void createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 };
 
-class Class541 : public AnimatedSprite {
-public:
-	Class541(NeverhoodEngine *vm, int16 x, int16 y);
-};
-
-class Class542 : public AnimatedSprite {
-public:
-	Class542(NeverhoodEngine *vm, int16 x, int16 y);
-};
-
 class Scene2501 : public Scene {
 public:
 	Scene2501(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -66,8 +56,8 @@ protected:
 	Sprite *_class517;
 	Sprite *_class519;
 	Sprite *_class520;
-	Sprite *_class541;
-	Sprite *_class542;
+	Sprite *_asIdleCarLower;
+	Sprite *_asIdleCarFull;
 	Klayman *_kmScene2501;
 	NPointArray *_trackPoints;
 	SceneInfo2700 *_sceneInfos[3];
@@ -89,12 +79,12 @@ protected:
 	void updateKlaymanCliprect();
 };
 
-class Class450 : public StaticSprite {
+class SsScene2504Button : public StaticSprite {
 public:
-	Class450(NeverhoodEngine *vm);
+	SsScene2504Button(NeverhoodEngine *vm);
 protected:
 	int _countdown;
-	bool _flag1;
+	bool _isSoundPlaying;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
