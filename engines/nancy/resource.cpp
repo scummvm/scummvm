@@ -83,16 +83,18 @@ void CifTree::listResources(Common::Array<Common::String> &list, uint type) {
 }
 
 bool CifTree::findResource(const Common::String name, ResourceManager::CifInfo &info) {
+	Common::String nameUpper = name;
+	nameUpper.toUppercase();
 	uint hash = 0;
 
-	for (uint i = 0; i < name.size(); i++)
-		hash += name[i];
+	for (uint i = 0; i < nameUpper.size(); i++)
+		hash += nameUpper[i];
 
 	hash &= kHashMapSize - 1;
 
 	uint16 index = _hashMap[hash];
 	while (index != 0xffff) {
-		if (name == _cifInfo[index].info.name) {
+		if (nameUpper == _cifInfo[index].info.name) {
 			info = _cifInfo[index].info;
 			return true;
 		}
