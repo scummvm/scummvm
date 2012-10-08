@@ -37,7 +37,7 @@ public:
 	virtual ~Module2300();
 protected:
 	bool _flag;
-	int _volume;
+	int _soundVolume;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };

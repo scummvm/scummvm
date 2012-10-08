@@ -206,23 +206,19 @@ void Module1100::updateScene() {
 	} else {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-#if 0 // TODO		
-			if (navigationScene()->soundFlag1 && _countdown != 0 && (--_countdown == 0)) {
-				SoundMan_playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64);
-				SoundMan_setSoundVolume(0x48498E46, 65);
-				SoundMan_setSoundVolume(0x50399F64, 65);
+			if (navigationScene()->isWalkingForward() && _countdown != 0 && (--_countdown == 0)) {
+				_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
+				_vm->_soundMan->setSoundVolume(0x48498E46, 65);
+				_vm->_soundMan->setSoundVolume(0x50399F64, 65);
 			}
-#endif			
 			break;
 		case 1:
-#if 0 // TODO		
-			if (navigationScene()->soundFlag1 && _countdown != 0 && (--_countdown == 0)) {
-				SoundMan_playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F);
+			if (navigationScene()->isWalkingForward() && _countdown != 0 && (--_countdown == 0)) {
+				_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
 			}
-#endif			
 			break;
 		case 2:
-			_vm->_soundMan->setSoundParams(0x74E01054, !navigationScene()->getSoundFlag1(), 0, 0, 0, 0);
+			_vm->_soundMan->setSoundParams(0x74E01054, !navigationScene()->isWalkingForward(), 0, 0, 0, 0);
 			break;
 		case 5:
 		case 6:

@@ -27,13 +27,16 @@ namespace Neverhood {
 
 NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint32 navigationListId, int navigationIndex, const byte *itemsTypes)
 	: Scene(vm, parentModule, true), _itemsTypes(itemsTypes), _navigationIndex(navigationIndex), _smackerDone(false),
-	_soundFlag1(false), _soundFlag2(false), _smackerFileHash(0), _interactive(true), _done(false) {
+	_isWalkingForward(false), _isTurning(false), _smackerFileHash(0), _interactive(true), _leaveSceneAfter(false) {
 
 	_navigationList = _vm->_staticData->getNavigationList(navigationListId);
+	
+	//DEBUG>>>
 	for (NavigationList::iterator it = _navigationList->begin(); it != _navigationList->end(); it++) {
 		debug("%08X %08X %08X %08X %d %d %08X",	(*it).fileHash,	(*it).leftSmackerFileHash, (*it).rightSmackerFileHash,
 		(*it).middleSmackerFileHash, (*it).interactive, (*it).middleFlag, (*it).mouseCursorFileHash);
 	}
+	//DEBUG<<<
 
 	if (_navigationIndex < 0) {
 		_navigationIndex = (int)getGlobalVar(0x4200189E);
@@ -46,9 +49,7 @@ NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint
 	SetMessageHandler(&NavigationScene::handleMessage);
 	
 	_smackerPlayer = new SmackerPlayer(_vm, this, (*_navigationList)[_navigationIndex].fileHash, true, true);	
-
 	addEntity(_smackerPlayer);
-	
 	addSurface(_smackerPlayer->getSurface());
 
 	createMouseCursor();
@@ -79,14 +80,14 @@ void NavigationScene::update() {
 		_smackerDone = false;
 		_smackerFileHash = 0;
 	} else if (_smackerDone) {
-		if (_done) {
+		if (_leaveSceneAfter) {
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		} else {
 			const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
 			createMouseCursor();
 			showMouse(true);
-			_soundFlag2 = false;
-			_soundFlag1 = false;
+			_isTurning = false;
+			_isWalkingForward = false;
 			_interactive = true;
 			_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			_vm->_soundMan->setSoundThreePlayFlag(false);
@@ -151,8 +152,8 @@ void NavigationScene::createMouseCursor() {
 void NavigationScene::handleNavigation(const NPoint &mousePos) {
 
 	const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
-	bool oldSoundFlag1 = _soundFlag1;
-	bool oldSoundFlag2 = _soundFlag2;
+	bool oldIsWalkingForward = _isWalkingForward;
+	bool oldIsTurning = _isTurning;
 	uint32 direction = sendPointMessage(_mouseCursor, 0x2064, mousePos);
 	
 	switch (direction) {
@@ -161,8 +162,8 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 		if (navigationItem.leftSmackerFileHash != 0) {
 			_smackerFileHash = navigationItem.leftSmackerFileHash;
 			_interactive = false;
-			_soundFlag1 = false;
-			_soundFlag2 = true;
+			_isWalkingForward = false;
+			_isTurning = true;
 			do {
 				_navigationIndex--;
 				if (_navigationIndex < 0)
@@ -177,8 +178,8 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 		if (navigationItem.rightSmackerFileHash != 0) {
 			_smackerFileHash = navigationItem.rightSmackerFileHash;
 			_interactive = false;
-			_soundFlag1 = false;
-			_soundFlag2 = true;
+			_isWalkingForward = false;
+			_isTurning = true;
 			do {
 				_navigationIndex++;
 				if (_navigationIndex >= (int)_navigationList->size())
@@ -197,20 +198,18 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 		} else if (navigationItem.middleSmackerFileHash != 0) {
 			_smackerFileHash = navigationItem.middleSmackerFileHash;
 			_interactive = false;
-			_soundFlag1 = true;
-			_soundFlag2 = false;
-			_done = true;
+			_isWalkingForward = true;
+			_isTurning = false;
+			_leaveSceneAfter = true;
 		}
 		break;
 	}
 	
-	if (oldSoundFlag2 != _soundFlag2) {
-		_vm->_soundMan->setSoundThreePlayFlag(_soundFlag2);
-	}
+	if (oldIsTurning != _isTurning)
+		_vm->_soundMan->setSoundThreePlayFlag(_isTurning);
 
-	if (oldSoundFlag1 != _soundFlag1) {
-		_vm->_soundMan->setTwoSoundsPlayFlag(_soundFlag1);
-	}
+	if (oldIsWalkingForward != _isWalkingForward)
+		_vm->_soundMan->setTwoSoundsPlayFlag(_isWalkingForward);
 
 }
 

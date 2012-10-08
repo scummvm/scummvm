@@ -35,8 +35,9 @@ public:
 	virtual ~NavigationScene();
 	int getNavigationAreaType();
 	int getNavigationIndex() const { return _navigationIndex; }
-	bool getSoundFlag1() const { return _soundFlag1; }
-	bool getSoundFlag2() const { return _soundFlag2; }
+	bool isWalkingForward() const { return _isWalkingForward; }
+	bool isTurning() const { return _isTurning; }
+	int getFrameNumber() const { return _smackerPlayer->getFrameNumber(); }
 protected:
 	SmackerPlayer *_smackerPlayer;
 	bool _smackerDone;
@@ -44,9 +45,9 @@ protected:
 	int _navigationIndex;
 	uint32 _smackerFileHash;
 	bool _interactive;
-	bool _soundFlag1;
-	bool _soundFlag2;
-	bool _done;
+	bool _isWalkingForward;
+	bool _isTurning;
+	bool _leaveSceneAfter;
 	const byte *_itemsTypes;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

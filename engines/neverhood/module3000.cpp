@@ -240,12 +240,12 @@ void Module3000::updateScene() {
 		case 8:
 			_flag = getGlobalVar(0x10938830); // CHECKME
 			if (_moduleResult != 1) {
-				// TODO: SoundMan_setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0):
+				_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0);
 				createScene(4, 1);
 			} else if (getGlobalVar(0xF0402B0A)) {
 				createScene(1008, -1);
 			} else {
-				// TODO: SoundMan_setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0);
+				_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0);
 				createScene(4, 1);
 			}
 			break;
@@ -280,10 +280,9 @@ void Module3000::updateScene() {
 	} else {
 		switch (_vm->gameState().sceneNum) {
 		case 1:
-#if 0 // ALL TODO
-			if (navigationScene()->getSoundFlag1()) {
+			if (navigationScene()->isWalkingForward()) {
 				uint32 frameNumber = navigationScene()->getFrameNumber();
-				int navigationIndex = navigationScene()->getIndex();
+				int navigationIndex = navigationScene()->getNavigationIndex();
 				if (navigationIndex == 1) {
 					if (frameNumber == 0) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x48498E46, 0x50399F64, 0);
@@ -309,13 +308,11 @@ void Module3000::updateScene() {
 					}
 				}
 			}
-#endif
 			break;
 		case 2:
-#if 0 // ALL TODO
-			if (navigationScene()->getSoundFlag1()) {
+			if (navigationScene()->isWalkingForward()) {
 				uint32 frameNumber = navigationScene()->getFrameNumber();
-				int navigationIndex = navigationScene()->getIndex();
+				int navigationIndex = navigationScene()->getNavigationIndex();
 				if (_flag && _soundVolume > 1 && frameNumber % 2) {
 					_soundVolume--;
 					_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
@@ -332,13 +329,11 @@ void Module3000::updateScene() {
 					}
 				}
 			}
-#endif
 			break;
 		case 3:
-#if 0 // ALL TODO
-			if (navigationScene()->getSoundFlag1()) {
+			if (navigationScene()->isWalkingForward()) {
 				uint32 frameNumber = navigationScene()->getFrameNumber();
-				int navigationIndex = navigationScene()->getIndex();
+				int navigationIndex = navigationScene()->getNavigationIndex();
 				if (navigationIndex == 2) {
 					if (frameNumber == 40) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
@@ -352,10 +347,9 @@ void Module3000::updateScene() {
 					}
 				}
 			}
-#endif
 			break;
 		case 5:
-			if (navigationScene()->getSoundFlag1() && navigationScene()->getNavigationIndex() == 0) {
+			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 0) {
 				_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			}
 			break;

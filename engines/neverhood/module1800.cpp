@@ -158,7 +158,7 @@ void Module1800::updateScene() {
 		case 8:
 			// NOTE: After Klayman jumped into the hole and died...
 			leaveModule(1);
-			// TODO GameState stuff
+			// TODO GameState stuff // Restarts the game?
 			break;
 		case 9:
 			leaveModule(0);
@@ -167,7 +167,7 @@ void Module1800::updateScene() {
 	} else {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-			if (navigationScene()->getSoundFlag1() && navigationScene()->getNavigationIndex() == 2) {
+			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 2) {
 				_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			}
 			break;

@@ -21,24 +21,24 @@
  */
 
 #include "neverhood/module2300.h"
+#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 
 static const uint32 kModule2300SoundList[] = {
-	0x90805C50,
-	0x90804450,
-	0xB4005E60,
-	0x91835066,
-	0x90E14440,
-	0x90F0D1C3,
-	0
+	0x90805C50, 0x90804450, 0xB4005E60, 0x91835066,
+	0x90E14440, 0x90F0D1C3, 0
 };
 
 Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _volume(0) {
+	: Module(vm, parentModule), _soundVolume(0) {
 	
 	_vm->_soundMan->addSoundList(0x1A214010, kModule2300SoundList);
 	_vm->_soundMan->setSoundListParams(kModule2300SoundList, true, 50, 600, 10, 150);
+
+	//DEBUG>>>
+	setGlobalVar(0x10938830, 0);
+	//DEBUG<<<
 
 	_flag = getGlobalVar(0x10938830) == 0;
 	
@@ -82,7 +82,7 @@ void Module2300::createScene(int sceneNum, int which) {
 	case 1:
 		createNavigationScene(0x004B67E8, which);
 		if (_flag) {
-			_volume = 15;
+			_soundVolume = 15;
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 15);
 		}
 		break;
@@ -93,10 +93,10 @@ void Module2300::createScene(int sceneNum, int which) {
 		if (getGlobalVar(0x10938830)) {
 			createNavigationScene(0x004B68F0, which);
 		} else {
-			_vm->_soundMan->setSoundVolume(0x90F0D1C3, _volume);
+			_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
 			createNavigationScene(0x004B68A8, which);
 			if (_flag) {
-				_volume = 87;
+				_soundVolume = 87;
 				_vm->_soundMan->setSoundVolume(0x90F0D1C3, 87);
 			}
 		}
@@ -157,32 +157,23 @@ void Module2300::updateScene() {
 	} else {
 		switch (_vm->gameState().sceneNum) {
 		case 1:
-#if 0 // TODO
-			NavigationScene *navigationScene = (NavigationScene*)_childObject; 
-			if (_flag && navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 4 && 
-				navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
-				_volume++;
-				SoundMan_setSoundVolume(0x90F0D1C3, _volume);
+			if (_flag && navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 4 && 
+				navigationScene()->getFrameNumber() % 2) {
+				_soundVolume++;
+				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
 			}
-#endif
-#if 0 // TODO
-			if (navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 0 && 
-				navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() == 50) {
-				SoundMan_playTwoSounds(0x1A214010, 0x48498E46, 0x50399F64);
-				SoundMan_setSoundVolume(0x48498E46, 70);
-				SoundMan_setSoundVolume(0x50399F64, 70);
+			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 0 && 
+				navigationScene()->getFrameNumber() == 50) {
+				_vm->_soundMan->playTwoSounds(0x1A214010, 0x48498E46, 0x50399F64, 0);
+				_vm->_soundMan->setSoundVolume(0x48498E46, 70);
+				_vm->_soundMan->setSoundVolume(0x50399F64, 70);
 			}
-#endif
 			break;
 		case 3:
-#if 0 // TODO
-			NavigationScene *navigationScene = (NavigationScene*)_childObject; 
-			if (_flag && navigationScene->getSoundFlag1() && navigationScene->getSmackerPlayer() && 
-				navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
-				_volume--;
-				SoundMan_setSoundVolume(0x90F0D1C3, _volume);
+			if (_flag && navigationScene()->isWalkingForward() && navigationScene()->getFrameNumber() % 2) {
+				_soundVolume--;
+				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
 			}
-#endif
 			break;
 		}
 	}
