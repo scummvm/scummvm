@@ -54,7 +54,7 @@ const char *const directoryGlobs[] = {
 static const PlainGameDescriptor nancyGames[] = {
 	// Games
 	{"nancy1", "Nancy Drew 1: Secrets Can Kill"},
-	{"nancy2", "Nancy Drew 2: Stay Tuned For Danger"},
+	{"nancy2", "Nancy Drew 2: Stay Tuned for Danger"},
 	{"nancy5", "Nancy Drew 5: The Final Scene"},
 	{"nancy6", "Nancy Drew 6: Secret of the Scarlet Hand"},
 	{0, 0}
