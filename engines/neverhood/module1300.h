@@ -115,7 +115,7 @@ public:
 	Scene1304(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
 	Sprite *_sprite1;
-	Sprite *_class545;
+	Sprite *_asKey;
 	Sprite *_asNeedle;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -155,7 +155,7 @@ protected:
 	AnimatedSprite *_asElevatorDoor;
 	Sprite *_asElevator;
 	Sprite *_sprite1;
-	Sprite *_class545;
+	Sprite *_asKey;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage416EB0(int messageNum, const MessageParam &param, Entity *sender);
 };

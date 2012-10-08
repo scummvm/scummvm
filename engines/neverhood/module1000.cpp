@@ -62,7 +62,7 @@ void Module1000::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		_vm->_soundMan->startMusic(0x061880C6, 0, 0);
-		_childObject = new StaticScene(_vm, this, 0xC084110C, 0x41108C00);
+		createStaticScene(0xC084110C, 0x41108C00);
 		break;
 	case 3:
 		_vm->_soundMan->stopMusic(0x061880C6, 0, 2);

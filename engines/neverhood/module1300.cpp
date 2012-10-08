@@ -704,11 +704,11 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0xC021006A);
 	
 	if (getGlobalVar(0xAC00C0D0)) {
-		_class545 = insertSprite<Class545>(this, 0, 1100, 278, 347);
-		_vm->_collisionMan->addSprite(_class545);
+		_asKey = insertSprite<AsCommonKey>(this, 0, 1100, 278, 347);
+		_vm->_collisionMan->addSprite(_asKey);
 	} else {
-		_class545 = insertSprite<AnimatedSprite>(0x80106018, 100, 279, 48);
-		// TODO _class545->setUpdateDeltaXY();
+		_asKey = insertSprite<AnimatedSprite>(0x80106018, 100, 279, 48);
+		// TODO _asKey->setUpdateDeltaXY();
 	}
 
 	if (!getGlobalVar(0x31C63C51)) {
@@ -750,8 +750,8 @@ uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _asNeedle) {
 			sendEntityMessage(_klayman, 0x1014, _asNeedle);
 			setMessageList(0x004B9130);
-		} else if (sender == _class545) {
-			sendEntityMessage(_klayman, 0x1014, _class545);
+		} else if (sender == _asKey) {
+			sendEntityMessage(_klayman, 0x1014, _asKey);
 			setMessageList(0x004B9140);
 		}
 		break;
@@ -885,8 +885,8 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x0311005B);
 
 	if (!getGlobalVar(0x13382860)) {
-		_class545 = insertSprite<Class545>(this, 2, 1100, 435, 445);
-		_vm->_collisionMan->addSprite(_class545);
+		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 435, 445);
+		_vm->_collisionMan->addSprite(_asKey);
 	}
 
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x404A36A0, 100, 0x440C1000);
@@ -991,9 +991,9 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x4826:
-		if (sender == _class545) {
+		if (sender == _asKey) {
 			if (_klayman->getX() >= 249) {
-				sendEntityMessage(_klayman, 0x1014, _class545);
+				sendEntityMessage(_klayman, 0x1014, _asKey);
 				setMessageList(0x004AFC58);
 			}
 		} else if (sender == _asTape) {

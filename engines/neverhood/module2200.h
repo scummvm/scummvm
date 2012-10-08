@@ -40,31 +40,20 @@ public:
 protected:
 	void createScene(int sceneNum, int which);
 	void updateScene();
+	void createHallOfRecordsScene(int which, uint32 sceneInfo140Id);
 };
 
 // Scene2201
 
-static const NPoint kClass444Points[] = {
-	{305, 305},
-	{321, 305},
-	{336, 305},
-	{305, 319},
-	{321, 319},
-	{336, 319},
-	{305, 332},
-	{321, 332},
+static const NPoint kSsScene2201PuzzleCubePoints[] = {
+	{305, 305},	{321, 305},	{336, 305},	{305, 319},
+	{321, 319},	{336, 319},	{305, 332},	{321, 332},
 	{336, 333}
 };
 
-static const uint32 kClass444FileHashes[] = {
-	0x88134A44,
-	0xAA124340,
-	0xB8124602,
-	0xA902464C,
-	0x890A4244,
-	0xA8124642,
-	0xB812C204,
-	0x381A4A4C
+static const uint32 kSsScene2201PuzzleCubeFileHashes[] = {
+	0x88134A44,	0xAA124340,	0xB8124602,	0xA902464C,
+	0x890A4244,	0xA8124642,	0xB812C204,	0x381A4A4C
 };
 
 class AsScene2201CeilingFan : public AnimatedSprite {
@@ -74,10 +63,10 @@ public:
 
 class AsScene2201Door : public AnimatedSprite {
 public:
-	AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *doorLightSprite, bool flag1);
+	AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *ssDoorLight, bool flag1);
 protected:
 	Klayman *_klayman;
-	Sprite *_doorLightSprite;
+	Sprite *_ssDoorLight;
 	bool _doorOpen;
 	int _countdown;
 	void update();
@@ -86,9 +75,9 @@ protected:
 	void stCloseDoor();
 };
 
-class Class444 : public StaticSprite {
+class SsScene2201PuzzleCube : public StaticSprite {
 public:
-	Class444(NeverhoodEngine *vm, int pointIndex, int spriteIndex);
+	SsScene2201PuzzleCube(NeverhoodEngine *vm, uint32 positionIndex, uint32 cubeIndex);
 };
 
 class Scene2201 : public Scene {
@@ -97,11 +86,11 @@ public:
 	~Scene2201();
 protected:
 	NRect _clipRects[2];
-	Sprite *_doorLightSprite;
+	Sprite *_ssDoorLight;
 	Sprite *_asDoor;
 	Sprite *_ssDoorButton;
 	Sprite *_asTape;
-	bool _soundFlag;
+	bool _isSoundPlaying;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -135,8 +124,8 @@ public:
 	Scene2202(NeverhoodEngine *vm, Module *parentModule, int which);
 	~Scene2202();
 protected:
-	Sprite *_movingTileSprite;
-	Sprite *_doneMovingTileSprite;
+	Sprite *_ssMovingTile;
+	Sprite *_ssDoneMovingTile;
 	bool _isTileMoving;
 	int16 _movingTileIndex;
 	int _surfacePriority;
@@ -148,22 +137,22 @@ protected:
 	bool testIsSolved();	
 };
 
-class Class545 : public AnimatedSprite {
+class AsCommonKey : public AnimatedSprite {
 public:
-	Class545(NeverhoodEngine *vm, Scene *parentScene, int index, int surfacePriority, int16 x, int16 y);
+	AsCommonKey(NeverhoodEngine *vm, Scene *parentScene, int keyIndex, int surfacePriority, int16 x, int16 y);
 protected:
 	Scene *_parentScene;
-	int _index;
+	int _keyIndex;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class AsScene2203Door : public AnimatedSprite {
 public:
-	AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint index);
+	AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint doorIndex);
 protected:
 	Scene *_parentScene;
 	Sprite *_otherDoor;
-	uint _index;
+	uint _doorIndex;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void openDoor();
 	void closeDoor();
@@ -179,7 +168,7 @@ protected:
 	Sprite *_ssSmallLeftDoor;
 	Sprite *_ssSmallRightDoor;
 	Sprite *_asTape;
-	Sprite *_class545;
+	Sprite *_asKey;
 	NRect _leftDoorClipRect;
 	NRect _rightDoorClipRect;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -204,30 +193,30 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Class603 : public StaticSprite {
+class AsScene2206DoorSpikes : public StaticSprite {
 public:
-	Class603(NeverhoodEngine *vm, uint32 fileHash);
+	AsScene2206DoorSpikes(NeverhoodEngine *vm, uint32 fileHash);
 protected:
-	int _index;
+	int _deltaIndex;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate481E60();
-	void spriteUpdate481E90();
+	void suOpen();
+	void suClose();
 };
 
-class Class604 : public StaticSprite {
+class AsScene2206Platform : public StaticSprite {
 public:
-	Class604(NeverhoodEngine *vm, uint32 fileHash);
+	AsScene2206Platform(NeverhoodEngine *vm, uint32 fileHash);
 protected:
 	int16 _yDelta;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate482020();
+	void suMoveDown();
 };
 
-class Class607 : public StaticSprite {
+class SsScene2206TestTube : public StaticSprite {
 public:
-	Class607(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, uint32 fileHash);
+	SsScene2206TestTube(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, uint32 fileHash);
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -241,14 +230,14 @@ protected:
 	Sprite *_sprite1;
 	Sprite *_sprite2;
 	Sprite *_sprite3;
-	Sprite *_sprite4;
-	Sprite *_sprite5;
-	Sprite *_class604;
-	Sprite *_class607;
+	Sprite *_asDoorSpikes;
+	Sprite *_ssButton;
+	Sprite *_asPlatform;
+	Sprite *_ssTestTube;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub481950();
-	void sub4819D0();
-	void sub481B00();
+	void klaymanInFrontSpikes();
+	void klaymanBehindSpikes();
+	void readClickedColumn();
 };
 
 class AsScene2207Elevator : public AnimatedSprite {

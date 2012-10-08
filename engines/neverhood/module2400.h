@@ -162,7 +162,7 @@ protected:
 	Sprite *_sprite2;
 	Sprite *_ssButton;
 	Sprite *_asTape;
-	Sprite *_class545;
+	Sprite *_asKey;
 	Sprite *_asLightCord;
 	bool _flag1;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -174,7 +174,7 @@ public:
 protected:
 	Sprite *_sprite1;
 	Sprite *_asTape;
-	Sprite *_class545;
+	Sprite *_asKey;
 	NRect _clipRects[2];
 	bool _flag1;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

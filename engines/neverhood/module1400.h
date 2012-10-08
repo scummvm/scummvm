@@ -238,7 +238,7 @@ protected:
 	Sprite *_sprite1;
 	Sprite *_asTape;
 	AsCommonProjector *_asProjector;
-	Sprite *_class545;
+	Sprite *_asKey;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

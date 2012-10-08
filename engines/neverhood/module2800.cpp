@@ -70,7 +70,7 @@ void Module2800::createScene(int sceneNum, int which) {
 		if (_flag) {
 			_childObject = new Scene2802(_vm, this, which);
 		} else {
-			_childObject = new StaticScene(_vm, this, 0x000C6444, 0xC6440008);
+			createStaticScene(0x000C6444, 0xC6440008);
 		}
 #endif		
 		break;
@@ -119,39 +119,39 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 12:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x0000A245, 0x0A241008);
+		createStaticScene(0x0000A245, 0x0A241008);
 		break;
 	case 13:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x81C60635, 0x60631814);
+		createStaticScene(0x81C60635, 0x60631814);
 		break;
 	case 14:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0xCA811204, 0x11200CA0);
+		createStaticScene(0xCA811204, 0x11200CA0);
 		break;
 	case 15:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x2D438A00, 0x38A042DC);
+		createStaticScene(0x2D438A00, 0x38A042DC);
 		break;
 	case 16:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x0A806204, 0x062000A0);
+		createStaticScene(0x0A806204, 0x062000A0);
 		break;
 	case 17:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x010F9284, 0xF9280018);
+		createStaticScene(0x010F9284, 0xF9280018);
 		break;
 	case 18:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x0100022B, 0x0022F018);
+		createStaticScene(0x0100022B, 0x0022F018);
 		break;
 	case 19:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x10866205, 0x66201100);
+		createStaticScene(0x10866205, 0x66201100);
 		break;
 	case 20:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x01C58000, 0x58004014);
+		createStaticScene(0x01C58000, 0x58004014);
 		break;
 	case 21:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
@@ -159,22 +159,22 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 22:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x9408121E, 0x8121A948);
+		createStaticScene(0x9408121E, 0x8121A948);
 		break;
 	case 23:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x048C0600, 0xC0604040);
+		createStaticScene(0x048C0600, 0xC0604040);
 		break;
 	case 24:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		_childObject = new StaticScene(_vm, this, 0x04270A94, 0x70A9004A);
+		createStaticScene(0x04270A94, 0x70A9004A);
 		break;
 	case 25:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		if (getGlobalVar(0x190A1D18))
-			_childObject = new StaticScene(_vm, this, 0x01600204, 0x0020001E);
+			createStaticScene(0x01600204, 0x0020001E);
 		else
-			_childObject = new StaticScene(_vm, this, 0x08611204, 0x1120008E);
+			createStaticScene(0x08611204, 0x1120008E);
 		break;
 	case 26:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
@@ -2987,8 +2987,8 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x0060203E);
 
 	if (getGlobalVar(0x13382860) == 3) {
-		_class545 = insertSprite<Class545>(this, 2, 1100, 474, 437);
-		_vm->_collisionMan->addSprite(_class545);
+		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 474, 437);
+		_vm->_collisionMan->addSprite(_asKey);
 	}
 
 	_ssTape = insertSprite<SsScene1705Tape>(this, 6, 1100, 513, 437, 0xA1361863);
@@ -3071,8 +3071,8 @@ uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _ssTape && !_flag1) {
 			sendEntityMessage(_klayman, 0x1014, _ssTape);
 			setMessageList(0x004AF658);
-		} else if (sender == _class545 && !_flag1) {
-			sendEntityMessage(_klayman, 0x1014, _class545);
+		} else if (sender == _asKey && !_flag1) {
+			sendEntityMessage(_klayman, 0x1014, _asKey);
 			setMessageList(0x004AF668);
 		}
 		break;

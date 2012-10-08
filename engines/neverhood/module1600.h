@@ -141,7 +141,7 @@ public:
 	~Scene1608();
 protected:
 	AsCommonCar *_asCar;
-	Sprite *_class545;
+	Sprite *_asKey;
 	Sprite *_asDoor;
 	Sprite *_asIdleCarLower;
 	Sprite *_asIdleCarFull;

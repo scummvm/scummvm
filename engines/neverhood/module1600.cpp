@@ -1073,8 +1073,8 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene1608::hmLowerFloor);
 	
-	_class545 = insertSprite<Class545>(this, 1, 1100, 198, 220);
-	_vm->_collisionMan->addSprite(_class545);
+	_asKey = insertSprite<AsCommonKey>(this, 1, 1100, 198, 220);
+	_vm->_collisionMan->addSprite(_asKey);
 
 	if (which < 0) {
 		if (_vm->gameState().which == 1)
@@ -1317,7 +1317,7 @@ uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity
 		if (sender == _asTape) {
 			sendEntityMessage(_kmScene1608, 0x1014, _asTape);
 			setMessageList(0x004B4770);
-		} else if (sender == _class545) {
+		} else if (sender == _asKey) {
 			setMessageList(0x004B46C8);
 		}
 		break;
@@ -1337,8 +1337,8 @@ uint32 Scene1608::hmUpperFloor(int messageNum, const MessageParam &param, Entity
 		sendMessage(_parentModule, 0x200D, 0);
 		break;
 	case 0x4826:
-		if (sender == _class545) {
-			sendEntityMessage(_kmScene1608, 0x1014, _class545);
+		if (sender == _asKey) {
+			sendEntityMessage(_kmScene1608, 0x1014, _asKey);
 			setMessageList(0x004B4760);
 		}
 		break;

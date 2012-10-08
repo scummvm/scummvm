@@ -70,13 +70,13 @@ void Module2400::createScene(int sceneNum, int which) {
 		createSmackerScene(0x20D80001, true, true, false);
 		break;
 	case 7:
-		_childObject = new StaticScene(_vm, this, 0x81523218, 0x2321C81D);
+		createStaticScene(0x81523218, 0x2321C81D);
 		break;
 	case 8:
-		_childObject = new StaticScene(_vm, this, 0x08100210, 0x00214089);
+		createStaticScene(0x08100210, 0x00214089);
 		break;
 	case 9:
-		_childObject = new StaticScene(_vm, this, 0x8C020505, 0x205018C8);
+		createStaticScene(0x8C020505, 0x205018C8);
 		break;
 	}
 	SetUpdateHandler(&Module2400::updateScene);
@@ -930,8 +930,8 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0xB03001A8);
 
 	if (getGlobalVar(0x13382860) == 2) {
-		_class545 = insertSprite<Class545>(this, 2, 1100, 560, 409);
-		_vm->_collisionMan->addSprite(_class545);
+		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 560, 409);
+		_vm->_collisionMan->addSprite(_asKey);
 	}
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 5, 1100, 456, 409, 0x9148A011);
@@ -1016,8 +1016,8 @@ uint32 Scene2406::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _asTape && !_flag1) {
 			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004B77C8);
-		} else if (sender == _class545 && !_flag1) {
-			sendEntityMessage(_klayman, 0x1014, _class545);
+		} else if (sender == _asKey && !_flag1) {
+			sendEntityMessage(_klayman, 0x1014, _asKey);
 			setMessageList(0x004B77D8);
 		}
 		break;

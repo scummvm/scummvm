@@ -462,7 +462,7 @@ protected:
 	Sprite *_sprite2;
 	Sprite *_sprite4;
 	Sprite *_ssTape;
-	Sprite *_class545;
+	Sprite *_asKey;
 	Sprite *_sprite1;
 	bool _flag1;
 	int _palStatus;

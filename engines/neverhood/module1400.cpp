@@ -1423,7 +1423,7 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 // Scene1404
 
 Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _asProjector(NULL), _class545(NULL) {
+	: Scene(vm, parentModule, true), _asProjector(NULL), _asKey(NULL) {
 	
 	if (getGlobalVar(0xC0780812) && !getGlobalVar(0x13382860)) {
 		setGlobalVar(0x13382860, 5);
@@ -1440,8 +1440,8 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0xB006BAC8);
 
 	if (getGlobalVar(0x13382860) == 5) {
-		_class545 = insertSprite<Class545>(this, 2, 1100, 267, 411);
-		_vm->_collisionMan->addSprite(_class545);
+		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 267, 411);
+		_vm->_collisionMan->addSprite(_asKey);
 	}
 
 	_sprite1 = insertStaticSprite(0x1900A1F8, 1100);
@@ -1514,8 +1514,8 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (sender == _asTape && _messageListStatus != 2) {
 			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004B8CD0);
-		} else if (sender == _class545 && _messageListStatus != 2) {
-			sendEntityMessage(_klayman, 0x1014, _class545);
+		} else if (sender == _asKey && _messageListStatus != 2) {
+			sendEntityMessage(_klayman, 0x1014, _asKey);
 			setMessageList(0x004B8D18);
 		}
 		break;
