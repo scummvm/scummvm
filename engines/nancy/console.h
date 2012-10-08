@@ -36,7 +36,9 @@ public:
 
 private:
 	NancyEngine *_vm;
+	bool Cmd_resLoadCifTree(int argc, const char **argv);
 	bool Cmd_resHexDump(int argc, const char **argv);
+	bool Cmd_resDiskDump(int argc, const char **argv);
 	bool Cmd_resList(int argc, const char **argv);
 	bool Cmd_resInfo(int argc, const char **argv);
 	bool Cmd_resShowImage(int argc, const char **argv);

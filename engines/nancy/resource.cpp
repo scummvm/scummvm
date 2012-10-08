@@ -35,6 +35,7 @@ public:
 	bool initialize(Common::File &f);
 	bool findResource(const Common::String name, ResourceManager::CifInfo &info);
 	void listResources(Common::Array<Common::String> &list, uint type);
+	const Common::String &getName() { return _filename; }
 
 protected:
 	enum {
@@ -219,24 +220,32 @@ void CifTree21::testLongNames(Common::File &f) {
 	_hasLongNames = !(index1 == 1 && index2 == 2);
 }
 
-ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm) {
+ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm), _cifTree(0) {
 }
 
 ResourceManager::~ResourceManager() {
 }
 
-void ResourceManager::initialize() {
-	Common::File f;
+bool ResourceManager::loadCifTree(const Common::String filename) {
+	// NOTE: It seems likely that multiple CifTrees can be open at the same time
+	// For now, we just replace the current CifTree with the new one
 
-	if (!f.open("ciftree.dat"))
-		error("Failed to open ciftree.dat");
+	Common::File f;
+	CifTree *cifTree;
+
+	if (!f.open(filename)) {
+		warning("Failed to open CifTree '%s'", filename.c_str());
+		return false;
+	}
 
 	char id[20];
 	f.read(id, 20);
 	id[19] = 0;
 
-	if (f.eos() || Common::String(id) != "CIF TREE WayneSikes")
-		error("Invalid id string found in ciftree.dat");
+	if (f.eos() || Common::String(id) != "CIF TREE WayneSikes") {
+		warning("Invalid id string found in CifTree '%s'", filename.c_str());
+		return false;
+	}
 
 	// 4 bytes unused
 	f.skip(4);
@@ -248,19 +257,35 @@ void ResourceManager::initialize() {
 
 	switch(ver) {
 	case 0x00020000:
-		_cifTree = new CifTree20;
+		cifTree = new CifTree20;
 		break;
 	case 0x00020001:
-		_cifTree = new CifTree21;
+		cifTree = new CifTree21;
 		break;
 	default:
-		error("CifTree version %d.%d not supported", ver >> 16, ver & 0xffff);
+		warning("Unsupported version %d.%d found in CifTree '%s'", ver >> 16, ver & 0xffff, filename.c_str());
+		return false;
 	}
 
-	if (!_cifTree->initialize(f))
-		error("Failed to read CifTree 'ciftree.dat'");
+	if (!cifTree->initialize(f)) {
+		warning("Failed to read CifTree '%s'", filename.c_str());
+		delete cifTree;
+		return false;
+	}
 
 	f.close();
+
+	// Delete previous tree
+	if (_cifTree)
+		delete _cifTree;
+
+	_cifTree = cifTree;
+	return true;
+}
+
+void ResourceManager::initialize() {
+	if (!loadCifTree("ciftree.dat"))
+		error("Failed to read 'ciftree.dat'");
 }
 
 byte *ResourceManager::loadResource(const Common::String name, uint &size) {
@@ -296,6 +321,11 @@ bool ResourceManager::loadImage(const Common::String name, Graphics::Surface &su
 	uint size;
 	byte *buf = decompress(info, size);
 
+	if (!buf) {
+		warning("Failed to decompress image '%s'", name.c_str());
+		return false;
+	}
+
 	Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	surf.w = info.width;
 	surf.h = info.height;
@@ -315,8 +345,10 @@ byte *ResourceManager::decompress(const CifInfo &info, uint &size) {
 		return 0;
 	}
 
-	if (!cifTree.open("ciftree.dat"))
-		error("Failed to open ciftree.dat");
+	if (!cifTree.open(_cifTree->getName())) {
+		warning("Failed to open '%s'", _cifTree->getName().c_str());
+		return 0;
+	}
 
 	cifTree.seek(info.dataOffset);
 
@@ -383,6 +415,7 @@ byte *ResourceManager::decompress(const CifInfo &info, uint &size) {
 
 	if (read != info.compressedSize || written != info.size) {
 		warning("Failed to decompress resource");
+		delete[] output;
 		return 0;
 	}
 

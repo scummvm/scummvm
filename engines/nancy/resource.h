@@ -63,6 +63,7 @@ public:
 	~ResourceManager();
 
 	void initialize();
+	bool loadCifTree(const Common::String filename);
 	byte *loadResource(const Common::String name, uint &size);
 	bool loadImage(const Common::String name, Graphics::Surface &surf);
 
