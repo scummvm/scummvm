@@ -45,12 +45,6 @@ static void readCifInfo20(Common::File &f, ResourceManager::CifInfo &info, bool 
 	info.type = f.readByte();
 }
 
-static void readCifInfo21(Common::File &f, ResourceManager::CifInfo &info, bool hasOffset = false) {
-	f.skip(32); // TODO
-
-	readCifInfo20(f, info, hasOffset);
-}
-
 class CifTree {
 public:
 	virtual ~CifTree() { };
@@ -161,15 +155,16 @@ void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain) {
 
 class CifTree21 : public CifTree {
 public:
-	CifTree21() : _hasLongNames(false) { };
+	CifTree21() : _hasLongNames(false), _hasOffsetFirst(false) { };
 
 protected:
 	virtual uint readHeader(Common::File &f);
 	virtual void readCifInfo(Common::File &f, CifInfoChain &chain);
 
 private:
-	void testLongNames(Common::File &f);
+	void determineSubtype(Common::File &f);
 	bool _hasLongNames;
+	bool _hasOffsetFirst;
 };
 
 uint CifTree21::readHeader(Common::File &f) {
@@ -181,7 +176,7 @@ uint CifTree21::readHeader(Common::File &f) {
 	f.readByte(); // Unknown
 	f.readByte(); // Unknown
 
-	testLongNames(f);
+	determineSubtype(f);
 
 	return infoBlockCount;
 }
@@ -200,13 +195,22 @@ void CifTree21::readCifInfo(Common::File &f, CifInfoChain &chain) {
 
 	f.skip(2); // Index of this block
 
-	readCifInfo21(f, info, true);
+	if (_hasOffsetFirst) {
+		info.dataOffset = f.readUint32LE();
+		chain.next = f.readUint16LE();
+	}
 
-	chain.next = f.readUint16LE();
+	f.skip(32); // TODO
+
+	readCifInfo20(f, info, !_hasOffsetFirst);
+
+	if (!_hasOffsetFirst)
+		chain.next = f.readUint16LE();
 }
 
-void CifTree21::testLongNames(Common::File &f) {
-	// This is a heuristic for the switch to long filenames during the 2.1 version
+void CifTree21::determineSubtype(Common::File &f) {
+	// Perform heuristic for long filenames
+	// Assume short file names and read indices 1 and 2
 	uint pos = f.pos();
 
 	f.seek(2159);
@@ -215,8 +219,22 @@ void CifTree21::testLongNames(Common::File &f) {
 	f.seek(68, SEEK_CUR);
 	uint16 index2 = f.readUint16LE();
 
+	// If they don't match, this file must have long filenames
+	if (index1 != 1 || index2 != 2)
+		_hasLongNames = true;
+
+	if (_hasLongNames) {
+		// Perform heuristic for offset at the beginning of the block
+		// Read offset and next of the first info block
+		// If either of these is zero, offset can't be first
+		f.seek(2115);
+		uint32 offset = f.readUint32LE();
+		uint16 next = f.readUint32LE();
+		if (offset && next)
+			_hasOffsetFirst = true;
+	}
+
 	f.seek(pos);
-	_hasLongNames = !(index1 == 1 && index2 == 2);
 }
 
 const CifTree *CifTree::load(const Common::String filename) {
