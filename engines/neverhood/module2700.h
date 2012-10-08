@@ -49,14 +49,14 @@ protected:
 	void createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 };
 
-class Class437 : public StaticSprite {
+class SsCommonTrackShadowBackground : public StaticSprite {
 public:
-	Class437(NeverhoodEngine *vm, uint32 fileHash);
+	SsCommonTrackShadowBackground(NeverhoodEngine *vm, uint32 fileHash);
 };
 
-class Class517 : public AnimatedSprite {
+class AsCommonCarShadow : public AnimatedSprite {
 public:
-	Class517(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index);
+	AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index);
 protected:
 	uint _index;
 	AnimatedSprite *_asCar;
@@ -65,18 +65,18 @@ protected:
 	void updateShadow();
 };
 
-class Class519 : public AnimatedSprite {
+class AsCommonCarConnectorShadow : public AnimatedSprite {
 public:
-	Class519(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index);
+	AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index);
 protected:
 	uint _index;
 	Sprite *_asCar;
 	void update();
 };
 
-class Class520 : public AnimatedSprite {
+class AsCommonCarTrackShadow : public AnimatedSprite {
 public:
-	Class520(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex);
+	AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex);
 protected:
 	Sprite *_asCar;
 	void update();
@@ -87,12 +87,11 @@ public:
 	Scene2701(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
 	AsCommonCar *_asCar;
-	Sprite *_class437;
-	Sprite *_class517;
-	Sprite *_class520;
-	Sprite *_class519;
+	Sprite *_ssTrackShadowBackground;
+	Sprite *_asCarShadow;
+	Sprite *_asCarTrackShadow;
+	Sprite *_asCarConnectorShadow;
 	Sprite *_asCarConnector;
-	Sprite *_sprite1;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
 	uint32 handleMessage42F500(int messageNum, const MessageParam &param, Entity *sender);
@@ -104,10 +103,10 @@ public:
 	Scene2702(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
 	AsCommonCar *_asCar;
-	Sprite *_class437;
-	Sprite *_class517;
-	Sprite *_class520;
-	Sprite *_class519;
+	Sprite *_ssTrackShadowBackground;
+	Sprite *_asCarShadow;
+	Sprite *_asCarTrackShadow;
+	Sprite *_asCarConnectorShadow;
 	int16 _newTrackDestX;
 	int _currTrackIndex, _newTrackIndex;
 	int _count;
@@ -127,11 +126,11 @@ public:
 		const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 protected:
 	AsCommonCar *_asCar;
-	Sprite *_class437;
-	Sprite *_class517;
+	Sprite *_ssTrackShadowBackground;
+	Sprite *_asCarShadow;
 	Sprite *_asCarConnector;
-	Sprite *_class520;
-	Sprite *_class519;
+	Sprite *_asCarTrackShadow;
+	Sprite *_asCarConnectorShadow;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
 	NRectArray *_rectList;
@@ -144,11 +143,11 @@ public:
 	Scene2706(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
 	AsCommonCar *_asCar;
-	Sprite *_class437;
-	Sprite *_class517;
+	Sprite *_ssTrackShadowBackground;
+	Sprite *_asCarShadow;
 	Sprite *_asCarConnector;
-	Sprite *_class520;
-	Sprite *_class519;
+	Sprite *_asCarTrackShadow;
+	Sprite *_asCarConnectorShadow;
 	int16 _newTrackDestX;
 	int _currTrackIndex, _newTrackIndex;
 	NPointArray *_trackPoints;

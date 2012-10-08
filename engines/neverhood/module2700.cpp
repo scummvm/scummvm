@@ -498,7 +498,7 @@ void Module2700::createScene2704(int which, uint32 sceneInfoId, int16 value, con
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
 }
 
-static const NPoint kClass517Points[] = {
+static const NPoint kCarShadowOffsets[] = {
 	{-63,  3},
 	{-48, 40},
 	{-33, 58},
@@ -511,7 +511,7 @@ static const NPoint kClass517Points[] = {
 	{ 26, 25}
 };
 
-Class437::Class437(NeverhoodEngine *vm, uint32 fileHash)
+SsCommonTrackShadowBackground::SsCommonTrackShadowBackground(NeverhoodEngine *vm, uint32 fileHash)
 	: StaticSprite(vm, 0) {
 	
 	_spriteResource.load2(fileHash);
@@ -523,20 +523,20 @@ Class437::Class437(NeverhoodEngine *vm, uint32 fileHash)
 	StaticSprite::update();
 }
 
-Class517::Class517(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index)
+AsCommonCarShadow::AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index)
 	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index), _animFileHash(0) {
 
-	SetUpdateHandler(&Class517::update);
+	SetUpdateHandler(&AsCommonCarShadow::update);
 	createShadowSurface(shadowSurface, 320, 240, 100); // TODO Use actual dimensions from resource
 	updateShadow();
 } 
 
-void Class517::update() {
+void AsCommonCarShadow::update() {
 	updateShadow();
 	AnimatedSprite::update();
 }
 
-void Class517::updateShadow() {
+void AsCommonCarShadow::updateShadow() {
 	if (_asCar->getFrameIndex() != _currFrameIndex || _asCar->getCurrAnimFileHash() != _animFileHash) {
 		uint32 fileHash = _asCar->getCurrAnimFileHash();
 		if (fileHash == 0x35698F78 || fileHash == 0x192ADD30 || fileHash == 0x9C220DA4 ||
@@ -548,8 +548,8 @@ void Class517::updateShadow() {
 		}
 		_animFileHash = fileHash;
 	}
-	_x = _asCar->getX() + kClass517Points[_index].x;
-	_y = _asCar->getY() + kClass517Points[_index].y;
+	_x = _asCar->getX() + kCarShadowOffsets[_index].x;
+	_y = _asCar->getY() + kCarShadowOffsets[_index].y;
 	if (!_asCar->getVisible()) {
 		startAnimation(0x1209E09F, 0, -1);
 		_newStickFrameIndex = 0;
@@ -557,31 +557,31 @@ void Class517::updateShadow() {
 	setDoDeltaX(_asCar->isDoDeltaX() ? 1 : 0);
 }
 
-Class519::Class519(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index)
+AsCommonCarConnectorShadow::AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index)
 	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index) {
 
-	SetUpdateHandler(&Class519::update);
+	SetUpdateHandler(&AsCommonCarConnectorShadow::update);
 	createShadowSurface1(shadowSurface, 0x60281C10, 150);
 	startAnimation(0x60281C10, -1, -1);
 	_newStickFrameIndex = -2;	
 } 
 
-void Class519::update() {
-	_x = _asCar->getX() + kClass517Points[_index].x;
-	_y = _asCar->getY() + kClass517Points[_index].y;
+void AsCommonCarConnectorShadow::update() {
+	_x = _asCar->getX() + kCarShadowOffsets[_index].x;
+	_y = _asCar->getY() + kCarShadowOffsets[_index].y;
 	AnimatedSprite::update();
 }
 
-Class520::Class520(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex)
+AsCommonCarTrackShadow::AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex)
 	: AnimatedSprite(vm, 1100), _asCar(asCar) {
 
-	SetUpdateHandler(&Class520::update);
+	SetUpdateHandler(&AsCommonCarTrackShadow::update);
 	createShadowSurface1(shadowSurface, 0x0759129C, 100);
 	startAnimation(0x0759129C, frameIndex, -1);
 	_newStickFrameIndex = frameIndex;
 } 
 
-void Class520::update() {
+void AsCommonCarTrackShadow::update() {
 	_x = _asCar->getX();
 	_y = _asCar->getY();
 	AnimatedSprite::update();
@@ -590,6 +590,8 @@ void Class520::update() {
 Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
+	Sprite *tempSprite;
+
 	NRect clipRect;
 	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(0x004B2240);
 	setGlobalVar(0x21E60190, 1);
@@ -604,21 +606,21 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertMouse433(0x08B08180);
 	
-	_sprite1 = insertStaticSprite(0x1E086325, 1200);
+	tempSprite = insertStaticSprite(0x1E086325, 1200);
 	
-	clipRect.set(0, 0, 640, _sprite1->getDrawRect().x2());
+	clipRect.set(0, 0, 640, tempSprite->getDrawRect().x2());
 
 	if (sceneInfo->class437Filename) {
 
-		_class437 = createSprite<Class437>(sceneInfo->class437Filename);
-		addEntity(_class437);
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->class437Filename);
+		addEntity(_ssTrackShadowBackground);
 
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
-		_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
-		_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
-		_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
+		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+		_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+		_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	} else {
-		_class437 = NULL;
+		_ssTrackShadowBackground = NULL;
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 	}
 
@@ -720,14 +722,14 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertMouse433(0x08B04180);
 
-	_class437 = createSprite<Class437>(0x12002035);
-	addEntity(_class437);
+	_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(0x12002035);
+	addEntity(_ssTrackShadowBackground);
 	
 	_asCar = insertSprite<AsCommonCar>(this, 320, 240);
-	_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
+	_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	insertSprite<AsCommonCarConnector>(_asCar);
-	_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
-	_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
+	_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+	_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 
 	_dataResource.load(0x04310014);
 	
@@ -897,16 +899,16 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	
 	if (sceneInfo->class437Filename) {
 
-		_class437 = createSprite<Class437>(sceneInfo->class437Filename);
-		addEntity(_class437);
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->class437Filename);
+		addEntity(_ssTrackShadowBackground);
 
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
-		_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
-		_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
-		_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
+		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+		_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+		_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	} else {
-		_class437 = NULL;
-		_class517 = NULL;
+		_ssTrackShadowBackground = NULL;
+		_asCarShadow = NULL;
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 	}
 
@@ -942,12 +944,12 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	
 	if (clipRect) {
 		_asCar->getClipRect() = *clipRect;
-		if (_class517)
-			_class517->getClipRect() = *clipRect; 
-		if (_class520)
-			_class520->getClipRect() = *clipRect; 
-		if (_class519)
-			_class519->getClipRect() = *clipRect; 
+		if (_asCarShadow)
+			_asCarShadow->getClipRect() = *clipRect; 
+		if (_asCarTrackShadow)
+			_asCarTrackShadow->getClipRect() = *clipRect; 
+		if (_asCarConnectorShadow)
+			_asCarConnectorShadow->getClipRect() = *clipRect; 
 		if (_asCarConnector)
 			_asCarConnector->getClipRect() = *clipRect;
 	}
@@ -1001,14 +1003,14 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertMouse433(0x08B8C180);
 
-	_class437 = createSprite<Class437>(0x18808B88);
-	addEntity(_class437);
+	_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(0x18808B88);
+	addEntity(_ssTrackShadowBackground);
 	
 	_asCar = insertSprite<AsCommonCar>(this, 320, 240);
-	_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
+	_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
-	_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
-	_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
+	_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+	_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 
 	_dataResource.load(0x06000162);
 	

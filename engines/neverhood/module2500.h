@@ -52,10 +52,10 @@ public:
 	virtual ~Scene2501();
 protected:
 	AsCommonCar *_asCar;
-	Sprite *_class437;
-	Sprite *_class517;
-	Sprite *_class519;
-	Sprite *_class520;
+	Sprite *_ssTrackShadowBackground;
+	Sprite *_asCarShadow;
+	Sprite *_asCarConnectorShadow;
+	Sprite *_asCarTrackShadow;
 	Sprite *_asIdleCarLower;
 	Sprite *_asIdleCarFull;
 	Klayman *_kmScene2501;

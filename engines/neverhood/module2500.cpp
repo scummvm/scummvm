@@ -233,8 +233,8 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addPalette("paKlayRed", 0, 64, 0);
 	insertMouse433(0xE81111B0);
 
-	_class437 = createSprite<Class437>(0x99BE9015); // Don't add this to the sprite list
-	addEntity(_class437);
+	_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(0x99BE9015); // Don't add this to the sprite list
+	addEntity(_ssTrackShadowBackground);
 
 	_asCar = createSprite<AsCommonCar>(this, 211, 400); // Create but don't add to the sprite list yet
 	_asIdleCarLower = insertSprite<AsCommonIdleCarLower>(211, 400);
@@ -276,9 +276,9 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		_currTrackIndex = 0;
 	}
 
-	_class517 = insertSprite<Class517>(_asCar, _class437->getSurface(), 4);
-	_class520 = insertSprite<Class520>(_asCar, _class437->getSurface(), 4);
-	_class519 = insertSprite<Class519>(_asCar, _class437->getSurface(), 4);
+	_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+	_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+	_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	insertSprite<AsCommonCarConnector>(_asCar);
 	
 	_pointListsCount = 3;
