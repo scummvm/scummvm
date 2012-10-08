@@ -228,6 +228,13 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
+
+	/**
+	 * Syncs the audio options of the ScummVM launcher (speech, subtitles or
+	 * both) with the in-game audio options of certain CD game versions. For
+	 * some games, this allows simultaneous playing of speech and subtitles,
+	 * even if the original games didn't support this feature.
+	 */
 	void syncIngameAudioOptions();
 
 	const SciGameId &getGameId() const { return _gameId; }
