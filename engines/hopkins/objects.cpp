@@ -6462,8 +6462,8 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	int v23;
 	int v24;
 	int v25;
-	int v27;
-	int v28;
+	int16 v27;
+	int16 v28;
 	int v29;
 	int v30;
 	int v31;
@@ -6509,13 +6509,15 @@ void ObjectsManager::INILINK(const Common::String &file) {
 		filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.RECHERCHE_CAT(filename2, 8);
-			if (_vm->_globals.CACHE_BANQUE[1]) {
+			
+			if (_vm->_globals.CACHE_BANQUE[1] || _vm->_globals.CACHE_BANQUE[1] == PTRNUL) {
 				_vm->_globals.CAT_FLAG = 0;
 				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename2);
 			} else {
 				_vm->_globals.CAT_FLAG = 1;
 				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
 			}
+
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 			_vm->_globals.CAT_FLAG = 0;
 			v36 = 60;
@@ -6560,13 +6562,13 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	v41 = 0;
 	if (nbytes) {
 		do {
-			if (*(ptr + v41) == 79 && *(ptr + v41 + 1) == 66 && *(ptr + v41 + 2) == 50) {
+			if (*(ptr + v41) == 'O' && *(ptr + v41 + 1) == 'B' && *(ptr + v41 + 2) == '2') {
 				v16 = ptr + v41 + 4;
 				v32 = 0;
 				v34 = 0;
 				_vm->_linesManager.TOTAL_LIGNES = 0;
 				do {
-					v27 = READ_LE_UINT16(v16 + 2 * v32);
+					v27 = (int16)READ_LE_UINT16(v16 + 2 * v32);
 					if (v27 != -1) {
 						_vm->_linesManager.AJOUTE_LIGNE(
 						    v34,
@@ -6616,7 +6618,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 					v31 = 0;
 					do {
-						v28 = READ_LE_UINT16(v17 + 2 * v33);
+						v28 = (int16)READ_LE_UINT16(v17 + 2 * v33);
 						if (v28 != -1) {
 							_vm->_linesManager.AJOUTE_LIGNE_ZONE(
 							    v35,
@@ -6633,7 +6635,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					} while (v28 != -1);
 					v20 = 1;
 					do {
-						v21 = 20 * v20;
+						v21 = v20;
 						_vm->_globals.ZONEP[v21].field0 = READ_LE_UINT16(v17 + 2 * v33);
 						_vm->_globals.ZONEP[v21].field2 = READ_LE_UINT16(v17 + 2 * v33 + 2);
 						_vm->_globals.ZONEP[v21].field4 = READ_LE_UINT16(v17 + 2 * v33 + 4);
@@ -6645,7 +6647,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					v29 = 0;
 					v23 = 1;
 					do {
-						v24 = 20 * v23;
+						v24 = v23;
 						_vm->_globals.ZONEP[v24].field6 = *(v29 + v22);
 						_vm->_globals.ZONEP[v24].field7 = *(v22 + v29 + 1);
 						_vm->_globals.ZONEP[v24].field8 = *(v22 + v29 + 2);

@@ -200,6 +200,9 @@ byte *FileManager::LIBERE_FICHIER(byte *ptr) {
 byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	byte *ptr = NULL;
 	Common::File f;
+	
+	Common::String filename = file;
+	filename.toUppercase();
 
 	switch (a2) {
 	case 1:

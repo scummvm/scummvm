@@ -312,7 +312,7 @@ void Globals::clearAll() {
 		_vm->_linesManager.Ligne[idx].field4 = 0;
 		_vm->_linesManager.Ligne[idx].field6 = 0;
 		_vm->_linesManager.Ligne[idx].field8 = 0;
-		_vm->_linesManager.Ligne[idx].field12 = PTRNUL;
+		_vm->_linesManager.Ligne[idx].fieldC = PTRNUL;
 
 		_vm->_linesManager.LigneZone[idx].field0 = 0;
 		_vm->_linesManager.LigneZone[idx].field2 = 0;
