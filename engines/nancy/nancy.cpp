@@ -43,6 +43,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");
 
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
