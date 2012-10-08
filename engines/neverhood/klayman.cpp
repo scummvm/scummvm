@@ -5420,7 +5420,9 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 	
 KmScene2406::KmScene2406(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
-	// TODO Cliprects
+	
+	_surface->setClipRects(clipRects, clipRectsCount);
+	
 }
 
 uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -5635,7 +5637,8 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene2803::KmScene2803(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
-	// TODO ClipRects stuff
+	_surface->setClipRects(clipRects, clipRectsCount);
+	
 	_dataResource.load(0x00900849);
 }
 
@@ -5808,6 +5811,8 @@ KmScene2806::KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 
+	_surface->setClipRects(clipRects, clipRectsCount);
+
 	if (flag) {
 		// TODO Maybe? Don't know. Set Klayman clip rects
 		loadSound(3, 0x58E0C341);
@@ -5865,6 +5870,8 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene2809::KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
 	bool flag, NRect *clipRects, uint clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+
+	_surface->setClipRects(clipRects, clipRectsCount);
 
 	if (flag) {
 		// TODO Maybe? Don't know. Set Klayman clip rects
@@ -5973,7 +5980,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 KmScene2810::KmScene2810(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, uint clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
-	// TODO ClipRects stuff
+	_surface->setClipRects(clipRects, clipRectsCount);
 	
 }
 		

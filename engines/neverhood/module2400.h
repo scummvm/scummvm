@@ -141,7 +141,6 @@ public:
 	Scene2402(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene2402();
 protected:
-	Sprite *_sprite1;
 	Sprite *_asDoor;
 	Sprite *_ssButton;
 	Sprite *_asTape;
@@ -158,13 +157,11 @@ class Scene2403 : public Scene {
 public:
 	Scene2403(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_sprite1;
-	Sprite *_sprite2;
 	Sprite *_ssButton;
 	Sprite *_asTape;
 	Sprite *_asKey;
 	Sprite *_asLightCord;
-	bool _flag1;
+	bool _isClimbingLadder;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -172,11 +169,10 @@ class Scene2406 : public Scene {
 public:
 	Scene2406(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_sprite1;
 	Sprite *_asTape;
 	Sprite *_asKey;
 	NRect _clipRects[2];
-	bool _flag1;
+	bool _isClimbingLadder;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

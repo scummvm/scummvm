@@ -720,7 +720,9 @@ uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *
 
 Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _countdown(0), _soundToggle(false) {
-	
+
+	Sprite *tempSprite;
+
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2402::handleMessage);
 	SetUpdateHandler(&Scene2402::update);
@@ -748,9 +750,9 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004AF7D0);
 	}
 
-	_sprite1 = insertStaticSprite(0x081A60A8, 1100);
+	tempSprite = insertStaticSprite(0x081A60A8, 1100);
 	_ssDoorFrame = (StaticSprite*)insertStaticSprite(0x406C0AE0, 1100);
-	_klayman->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 639, _sprite1->getDrawRect().y2());
+	_klayman->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 639, tempSprite->getDrawRect().y2());
 	_asDoor = insertSprite<AsScene2402Door>(this, which == 1/*CHECKME or != ?*/);
 	insertSprite<AsScene2402TV>(_klayman);
 	insertStaticSprite(0x3A01A020, 200);
@@ -823,7 +825,7 @@ void Scene2402::playPipeSound(uint32 fileHash) {
 Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
-	Sprite *tempSprite;
+	Sprite *tempSprite1, *tempSprite2, *tempSprite3;
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2403::handleMessage);
@@ -837,34 +839,34 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asLightCord->setClipRect(0, 25, 640, 480);
 	
 	if (which < 0) {
-		_flag1 = false;
+		_isClimbingLadder = false;
 		insertKlayman<KmScene2403>(220, 449);
 		setMessageList(0x004B5C98);
 		setRectList(0x004B5E18);
 	} else if (which == 1) {
-		_flag1 = false;
+		_isClimbingLadder = false;
 		insertKlayman<KmScene2403>(433, 449);
 		setMessageList(0x004B5D70);
 		setRectList(0x004B5E18);
 	} else if (which == 2) {
-		_flag1 = false;
+		_isClimbingLadder = false;
 		insertKlayman<KmScene2403>(440, 449);
 		_klayman->setDoDeltaX(1);
 		setMessageList(0x004B5C98);
 		setRectList(0x004B5E18);
 	} else {
-		_flag1 = true;
+		_isClimbingLadder = true;
 		insertKlayman<KmScene2403>(122, 599);
 		setMessageList(0x004B5CA0);
 		setRectList(0x004B5E28);
 	}
 
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x3130B0EB, 100, 0);
-	_sprite1 = insertStaticSprite(0x20C24220, 1100);	
-	_sprite2 = insertStaticSprite(0x03080900, 1300);
-	tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
-	tempSprite->setClipRect(_sprite1->getDrawRect().x, 0, 640, _sprite2->getDrawRect().y2());
-	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, _sprite2->getDrawRect().y2());	
+	tempSprite1 = insertStaticSprite(0x20C24220, 1100);	
+	tempSprite2 = insertStaticSprite(0x03080900, 1300);
+	tempSprite3 = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+	tempSprite3->setClipRect(tempSprite1->getDrawRect().x, 0, 640, tempSprite2->getDrawRect().y2());
+	_klayman->setClipRect(tempSprite1->getDrawRect().x, 0, 640, tempSprite2->getDrawRect().y2());	
 
 	loadSound(1, calcHash("fxFogHornSoft"));
 
@@ -881,11 +883,11 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2000:
-		_flag1 = true;
+		_isClimbingLadder = true;
 		setRectList(0x004B5E28);
 		break;
 	case 0x2001:
-		_flag1 = false;
+		_isClimbingLadder = false;
 		setRectList(0x004B5E18);
 		break;
 	case 0x480B:
@@ -905,7 +907,7 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x4826:
-		if (sender == _asTape && !_flag1) {
+		if (sender == _asTape && !_isClimbingLadder) {
 			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004B5D98);
 		}
@@ -917,7 +919,7 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
-	Sprite *tempSprite;
+	Sprite *tempSprite1, *tempSprite2;
 
 	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0) {
 		setGlobalVar(0x13382860, 2);
@@ -937,58 +939,58 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asTape = insertSprite<AsScene1201Tape>(this, 5, 1100, 456, 409, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape);
 
-	tempSprite = insertStaticSprite(0x19625293, 1100);
+	tempSprite2 = insertStaticSprite(0x19625293, 1100);
 	_clipRects[0].x1 = 0;
 	_clipRects[0].y1 = 0;
-	_clipRects[0].x2 = tempSprite->getDrawRect().x2();
+	_clipRects[0].x2 = tempSprite2->getDrawRect().x2();
 	_clipRects[0].y2 = 480;
 
 	if (getGlobalVar(0x18890C91)) {
 		setBackground(0x1A0B0304);
 		setPalette(0x1A0B0304);
-		_sprite1 = insertStaticSprite(0x32923922, 1100);
+		tempSprite1 = insertStaticSprite(0x32923922, 1100);
 	} else {
 		setBackground(0x0A038595);
 		setPalette(0x0A038595);
-		_sprite1 = insertStaticSprite(0x1712112A, 1100);
+		tempSprite1 = insertStaticSprite(0x1712112A, 1100);
 	}
 	
-	tempSprite = insertStaticSprite(0x22300924, 1300);
+	tempSprite2 = insertStaticSprite(0x22300924, 1300);
 
-	_clipRects[1].x1 = _sprite1->getDrawRect().x;
-	_clipRects[1].y1 = tempSprite->getDrawRect().y;
+	_clipRects[1].x1 = tempSprite1->getDrawRect().x;
+	_clipRects[1].y1 = tempSprite2->getDrawRect().y;
 	_clipRects[1].x2 = 640;
 	_clipRects[1].y2 = 480;
 
 	if (which < 0) {
-		_flag1 = false;
+		_isClimbingLadder = false;
 		insertKlayman<KmScene2406>(307, 404, _clipRects, 2);
 		setMessageList(0x004B76C8);
 		setRectList(0x004B78C8);
 	} else if (which == 1) {
-		_flag1 = true;
+		_isClimbingLadder = true;
 		insertKlayman<KmScene2406>(253, -16, _clipRects, 2);
 		setMessageList(0x004B76D8);
 		setRectList(0x004B78D8);
 	} else if (which == 2) {
-		_flag1 = false;
+		_isClimbingLadder = false;
 		insertKlayman<KmScene2406>(480, 404, _clipRects, 2);
 		setMessageList(0x004B77C0);
 		setRectList(0x004B78C8);
 	} else if (which == 3) {
-		_flag1 = false;
+		_isClimbingLadder = false;
 		insertKlayman<KmScene2406>(387, 404, _clipRects, 2);
 		setMessageList(0x004B7810);
 		setRectList(0x004B78C8);
 	} else {
-		_flag1 = false;
+		_isClimbingLadder = false;
 		insertKlayman<KmScene2406>(0, 404, _clipRects, 2);
 		setMessageList(0x004B76D0);
 		setRectList(0x004B78C8);
 	}
 
-	tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
-	tempSprite->setClipRect(_clipRects[1]);
+	tempSprite2 = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+	tempSprite2->setClipRect(_clipRects[1]);
 
 }
 
@@ -1005,18 +1007,18 @@ uint32 Scene2406::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2000:
-		_flag1 = true;
+		_isClimbingLadder = true;
 		setRectList(0x004B78D8);
 		break;
 	case 0x2001:
-		_flag1 = false;
+		_isClimbingLadder = false;
 		setRectList(0x004B78C8);
 		break;
 	case 0x4826:
-		if (sender == _asTape && !_flag1) {
+		if (sender == _asTape && !_isClimbingLadder) {
 			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004B77C8);
-		} else if (sender == _asKey && !_flag1) {
+		} else if (sender == _asKey && !_isClimbingLadder) {
 			sendEntityMessage(_klayman, 0x1014, _asKey);
 			setMessageList(0x004B77D8);
 		}

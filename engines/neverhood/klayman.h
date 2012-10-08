@@ -413,7 +413,7 @@ protected:
 	Sprite *_otherSprite;
 	int _idleTableNum;
 
-    int16 _walkResumeFrameIncr;
+	int16 _walkResumeFrameIncr;
 
 	int _moveObjectCountdown;
 
