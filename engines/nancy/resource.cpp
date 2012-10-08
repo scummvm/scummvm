@@ -145,9 +145,16 @@ void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain) {
 }
 
 class CifTree21 : public CifTree {
+public:
+	CifTree21() : _hasLongNames(false) { };
+
 protected:
 	virtual uint readHeader(Common::File &f);
 	virtual void readCifInfo(Common::File &f, CifInfoChain &chain);
+
+private:
+	void testLongNames(Common::File &f);
+	bool _hasLongNames;
 };
 
 uint CifTree21::readHeader(Common::File &f) {
@@ -159,15 +166,21 @@ uint CifTree21::readHeader(Common::File &f) {
 	f.readByte(); // Unknown
 	f.readByte(); // Unknown
 
+	testLongNames(f);
+
 	return infoBlockCount;
 }
 
 void CifTree21::readCifInfo(Common::File &f, CifInfoChain &chain) {
 	ResourceManager::CifInfo &info = chain.info;
+	int nameSize = 8;
 
-	char name[9];
-	f.read(name, 9);
-	name[8] = 0;
+	if (_hasLongNames)
+		nameSize = 32;
+
+	char name[33];
+	f.read(name, nameSize + 1);
+	name[nameSize] = 0;
 	info.name = name;
 
 	f.skip(2); // Index of this block
@@ -188,6 +201,20 @@ void CifTree21::readCifInfo(Common::File &f, CifInfoChain &chain) {
 	info.type = f.readByte();
 
 	chain.next = f.readUint16LE();
+}
+
+void CifTree21::testLongNames(Common::File &f) {
+	// This is a heuristic for the switch to long filenames during the 2.1 version
+	uint pos = f.pos();
+
+	f.seek(2159);
+	uint16 index1 = f.readUint16LE();
+
+	f.seek(68, SEEK_CUR);
+	uint16 index2 = f.readUint16LE();
+
+	f.seek(pos);
+	_hasLongNames = !(index1 == 1 && index2 == 2);
 }
 
 ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm) {

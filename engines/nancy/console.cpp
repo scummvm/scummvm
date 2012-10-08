@@ -67,8 +67,8 @@ bool NancyConsole::Cmd_resList(int argc, const char **argv) {
 	Common::Array<Common::String> list;
 	_vm->_res->listResources(list, atoi(argv[1]));
 	for (uint i = 0; i < list.size(); i++) {
-		debugPrintf("%-10s", list[i].c_str());
-		if ((i % 8) == 7 && i + 1 != list.size())
+		debugPrintf("%-38s", list[i].c_str());
+		if ((i % 2) == 1 && i + 1 != list.size())
 			debugPrintf("\n");
 	}
 
