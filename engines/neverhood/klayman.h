@@ -692,9 +692,9 @@ protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
-class KmScene2803b : public Klayman {
+class KmScene2803Small : public Klayman {
 public:
-	KmScene2803b(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2803Small(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

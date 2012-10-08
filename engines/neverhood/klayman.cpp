@@ -5698,13 +5698,13 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2803b::KmScene2803b(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2803Small::KmScene2803Small(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	_dataResource.load(0x81120132);
 }
 
-uint32 KmScene2803b::xHandleMessage(int messageNum, const MessageParam &param) {
+uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:

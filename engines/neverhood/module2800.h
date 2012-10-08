@@ -57,15 +57,15 @@ protected:
 class AsScene2803LightCord : public AnimatedSprite {
 public:
 	AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y);
-	void sub434380();
-	void sub4343C0();
+	void stPulled();
+	void stIdle();
 	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
 protected:
 	Scene *_parentScene;
 	uint32 _fileHash1, _fileHash2;
-	bool _flag1, _flag2;	
+	bool _isPulled, _isBusy;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage434340(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPulled(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class AsScene2803TestTubeOne : public AnimatedSprite {
@@ -82,8 +82,8 @@ public:
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage4769E0(int messageNum, const MessageParam &param, Entity *sender);
-	void sub476A70();
+	uint32 hmReleased(int messageNum, const MessageParam &param, Entity *sender);
+	void stReleased();
 	void stHide();
 };
 
@@ -104,25 +104,25 @@ protected:
 	StaticSprite *_sprite8;
 	StaticSprite *_sprite9;
 	Sprite *_sprite10;
-	NRect _clipRects1[2];
-	NRect _clipRects2[3];
-	bool _field134;
+	NRect _clipRectsFloor[2];
+	NRect _clipRectsStairs[3];
+	int _paletteArea;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void update475E40();
-	void sub475FF0();
-	void sub476090();
-	void sub476130();
-	void sub476180();
-	void sub4765D0();
-	void sub4765F0();
-	void sub476610();
+	void upKlaymanStairs();
+	void klaymanStairs();
+	void klaymanFloor();
+	void toggleBackground();
+	void changeBackground();
+	void setPaletteArea0();
+	void setPaletteArea1();
+	void updatePaletteArea();
 };
 
-class Scene2803b : public Scene {
+class Scene2803Small : public Scene {
 public:
-	Scene2803b(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	int _palStatus;
+	int _paletteArea;
 	Sprite *_sprite1;
 	Sprite *_sprite2;
 	Sprite *_sprite3;
@@ -131,15 +131,15 @@ protected:
 	Sprite *_sprite6;
 	Sprite *_sprite7;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void update45FCB0();
-	void update45FD50();
-	void sub460090();
-	void sub460110();
-	void sub460170();
-	void sub460190();
-	void sub4601B0();
-	void sub4601D0();
-	void sub4601F0(bool flag);
+	void upKlaymanSlope();
+	void upKlaymanFloor();
+	void klaymanSlope();
+	void klaymanFloor();
+	void setPaletteArea0();
+	void setPaletteArea1();
+	void setPaletteArea2();
+	void setPaletteArea3();
+	void updatePaletteArea(bool instantly);
 };
 
 class Scene2804;
@@ -420,10 +420,10 @@ protected:
 	Sprite *_asTape;
 	Sprite *_sprite5;
 	Sprite *_sprite6;
-	bool _flag1;
+	bool _isRopingDown;
 	NRect _clipRects[2];
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub406650();
+	void insertKlaymanLadder();
 };
 
 class AsScene2812Winch : public AnimatedSprite {
@@ -440,8 +440,8 @@ public:
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage413DC0(int messageNum, const MessageParam &param, Entity *sender);
-	void sub413E00();
+	uint32 hmRopingDown(int messageNum, const MessageParam &param, Entity *sender);
+	void stRopingDown();
 };
 
 class AsScene2812TrapDoor : public AnimatedSprite {
@@ -464,14 +464,14 @@ protected:
 	Sprite *_ssTape;
 	Sprite *_asKey;
 	Sprite *_sprite1;
-	bool _flag1;
-	int _palStatus;
+	bool _isRopingDown;
+	int _paletteArea;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void setPalStatus0(int fadeTime);
-	void setPalStatus1(int fadeTime);
-	void setPalStatus2(int fadeTime);
-	void setPalStatus(int fadeTime);
+	void setPaletteArea0(bool instantly);
+	void setPaletteArea1(bool instantly);
+	void setPaletteArea2(bool instantly);
+	void updatePaletteArea(bool instantly);
 };
 
 class Scene2822 : public Scene {
