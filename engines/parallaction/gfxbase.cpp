@@ -226,6 +226,11 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 	rect.translate(x, y);
 	data = obj->getData(obj->frame);
 
+	// WORKAROUND: During the end credits, game scripts try to show a
+	// non-existing frame. We change it to an existing one here.
+	if (obj->frame == 14 && obj->getNum() == 9 && !strcmp(obj->getName(), "Dinor"))
+		obj->frame = 8;
+
 	if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
 		blt(rect, data, &surf, obj->layer, obj->scale, obj->transparentKey);
 	} else {
