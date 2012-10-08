@@ -29,13 +29,37 @@
 
 namespace Nancy {
 
+static void readCifInfo20(Common::File &f, ResourceManager::CifInfo &info, bool hasOffset = false) {
+	info.width = f.readUint16LE();
+	info.pitch = f.readUint16LE();
+	info.height = f.readUint16LE();
+	info.depth = f.readByte();
+
+	info.comp = f.readByte();
+	if (hasOffset)
+		info.dataOffset = f.readUint32LE();
+	info.size = f.readUint32LE();
+	info.sizeUnk = f.readUint32LE(); // Unknown
+	info.compressedSize = f.readUint32LE();
+
+	info.type = f.readByte();
+}
+
+static void readCifInfo21(Common::File &f, ResourceManager::CifInfo &info, bool hasOffset = false) {
+	f.skip(32); // TODO
+
+	readCifInfo20(f, info, hasOffset);
+}
+
 class CifTree {
 public:
 	virtual ~CifTree() { };
 	bool initialize(Common::File &f);
-	bool findResource(const Common::String name, ResourceManager::CifInfo &info);
-	void listResources(Common::Array<Common::String> &list, uint type);
-	const Common::String &getName() { return _filename; }
+	bool findResource(const Common::String &name, ResourceManager::CifInfo &info) const;
+	void listResources(Common::Array<Common::String> &list, uint type) const;
+	const Common::String &getName() const { return _filename; }
+
+	static const CifTree *load(const Common::String filename);
 
 protected:
 	enum {
@@ -76,14 +100,14 @@ bool CifTree::initialize(Common::File &f) {
 	return true;
 }
 
-void CifTree::listResources(Common::Array<Common::String> &list, uint type) {
+void CifTree::listResources(Common::Array<Common::String> &list, uint type) const {
 	for (uint i = 0; i < _cifInfo.size(); i++) {
 		if (type == ResourceManager::kResTypeAny || _cifInfo[i].info.type == type)
 			list.push_back(_cifInfo[i].info.name);
 	}
 }
 
-bool CifTree::findResource(const Common::String name, ResourceManager::CifInfo &info) {
+bool CifTree::findResource(const Common::String &name, ResourceManager::CifInfo &info) const {
 	Common::String nameUpper = name;
 	nameUpper.toUppercase();
 	uint hash = 0;
@@ -128,19 +152,7 @@ void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain) {
 	name[8] = 0;
 	info.name = name;
 
-	f.skip(2); // Index of this block
-	info.width = f.readUint16LE();
-	info.pitch = f.readUint16LE();
-	info.height = f.readUint16LE();
-	info.depth = f.readByte();
-
-	info.comp = f.readByte();
-	info.dataOffset = f.readUint32LE();
-	info.size = f.readUint32LE();
-	info.sizeUnk = f.readUint32LE(); // Unknown
-	info.compressedSize = f.readUint32LE();
-
-	info.type = f.readByte();
+	readCifInfo20(f, info, true);
 
 	chain.next = f.readUint16LE();
 	if (f.eos())
@@ -188,20 +200,7 @@ void CifTree21::readCifInfo(Common::File &f, CifInfoChain &chain) {
 
 	f.skip(2); // Index of this block
 
-	f.skip(32);
-
-	info.width = f.readUint16LE();
-	info.pitch = f.readUint16LE();
-	info.height = f.readUint16LE();
-	info.depth = f.readByte();
-
-	info.comp = f.readByte();
-	info.dataOffset = f.readUint32LE();
-	info.size = f.readUint32LE();
-	info.sizeUnk = f.readUint32LE(); // Unknown
-	info.compressedSize = f.readUint32LE();
-
-	info.type = f.readByte();
+	readCifInfo21(f, info, true);
 
 	chain.next = f.readUint16LE();
 }
@@ -220,22 +219,13 @@ void CifTree21::testLongNames(Common::File &f) {
 	_hasLongNames = !(index1 == 1 && index2 == 2);
 }
 
-ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm), _cifTree(0) {
-}
-
-ResourceManager::~ResourceManager() {
-}
-
-bool ResourceManager::loadCifTree(const Common::String filename) {
-	// NOTE: It seems likely that multiple CifTrees can be open at the same time
-	// For now, we just replace the current CifTree with the new one
-
+const CifTree *CifTree::load(const Common::String filename) {
 	Common::File f;
-	CifTree *cifTree;
+	CifTree *cifTree = 0;
 
 	if (!f.open(filename)) {
 		warning("Failed to open CifTree '%s'", filename.c_str());
-		return false;
+		return 0;
 	}
 
 	char id[20];
@@ -244,7 +234,8 @@ bool ResourceManager::loadCifTree(const Common::String filename) {
 
 	if (f.eos() || Common::String(id) != "CIF TREE WayneSikes") {
 		warning("Invalid id string found in CifTree '%s'", filename.c_str());
-		return false;
+		f.close();
+		return 0;
 	}
 
 	// 4 bytes unused
@@ -264,16 +255,32 @@ bool ResourceManager::loadCifTree(const Common::String filename) {
 		break;
 	default:
 		warning("Unsupported version %d.%d found in CifTree '%s'", ver >> 16, ver & 0xffff, filename.c_str());
-		return false;
 	}
 
-	if (!cifTree->initialize(f)) {
+	if (cifTree && !cifTree->initialize(f)) {
 		warning("Failed to read CifTree '%s'", filename.c_str());
 		delete cifTree;
-		return false;
+		cifTree = 0;
 	}
 
 	f.close();
+	return cifTree;
+}
+
+ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm), _cifTree(0) {
+}
+
+ResourceManager::~ResourceManager() {
+}
+
+bool ResourceManager::loadCifTree(const Common::String filename) {
+	// NOTE: It seems likely that multiple CifTrees can be open at the same time
+	// For now, we just replace the current CifTree with the new one
+
+	const CifTree *cifTree = CifTree::load(filename);
+
+	if (!cifTree)
+		return false;
 
 	// Delete previous tree
 	if (_cifTree)
@@ -305,17 +312,17 @@ bool ResourceManager::loadImage(const Common::String name, Graphics::Surface &su
 
 	if (!_cifTree->findResource(name, info)) {
 		warning("Resource '%s' not found", name.c_str());
-		return 0;
+		return false;
 	}
 
 	if (info.type != kResTypeImage) {
 		warning("Resource '%s' is not an image", name.c_str());
-		return 0;
+		return false;
 	}
 
 	if (info.depth != 16) {
 		warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
-		return 0;
+		return false;
 	}
 
 	uint size;
