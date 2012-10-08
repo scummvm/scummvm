@@ -177,14 +177,14 @@ Menu::Menu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture) {
 
 Menu::~Menu() {
 	MenuList::iterator iterh;
-	for (iterh = _menubar.reverse_begin(); iterh != _menubar.end(); ) {
+	for (iterh = _menubar.legacy_reverse_begin(); iterh != _menubar.end(); ) {
 		AgiMenu *m = *iterh;
 
 		debugC(3, kDebugLevelMenu, "deiniting hmenu %s", m->text);
 
 		MenuOptionList::iterator iterv;
 
-		for (iterv = m->down.reverse_begin(); iterv != m->down.end(); ) {
+		for (iterv = m->down.legacy_reverse_begin(); iterv != m->down.end(); ) {
 			AgiMenuOption *d = *iterv;
 
 			debugC(3, kDebugLevelMenu, "  deiniting vmenu %s", d->text);
@@ -233,8 +233,8 @@ void Menu::addItem(const char *s, int code) {
 	d->index = _vIndex++;
 
 	// add to last menu in list
-	assert(_menubar.reverse_begin() != _menubar.end());
-	AgiMenu *m = *_menubar.reverse_begin();
+	assert(_menubar.legacy_reverse_begin() != _menubar.end());
+	AgiMenu *m = *_menubar.legacy_reverse_begin();
 	m->height++;
 
 	_vMaxMenu[m->index] = d->index;
@@ -259,7 +259,7 @@ void Menu::submit() {
 
 	// If a menu has no options, delete it
 	MenuList::iterator iter;
-	for (iter = _menubar.reverse_begin(); iter != _menubar.end(); ) {
+	for (iter = _menubar.legacy_reverse_begin(); iter != _menubar.end(); ) {
 		AgiMenu *m = *iter;
 
 		if (m->down.empty()) {

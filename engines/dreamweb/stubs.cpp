@@ -1206,7 +1206,7 @@ bool DreamWebEngine::checkIfPerson(uint8 x, uint8 y) {
 
 bool DreamWebEngine::checkIfFree(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
-	for (i = _freeList.reverse_begin(); i != _freeList.end(); --i) {
+	for (i = _freeList.legacy_reverse_begin(); i != _freeList.end(); --i) {
 		const ObjPos &pos = *i;
 		assert(pos.index != 0xff);
 		if (!pos.contains(x,y))
@@ -1219,7 +1219,7 @@ bool DreamWebEngine::checkIfFree(uint8 x, uint8 y) {
 
 bool DreamWebEngine::checkIfEx(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
-	for (i = _exList.reverse_begin(); i != _exList.end(); --i) {
+	for (i = _exList.legacy_reverse_begin(); i != _exList.end(); --i) {
 		const ObjPos &pos = *i;
 		assert(pos.index != 0xff);
 		if (!pos.contains(x,y))
@@ -1617,7 +1617,7 @@ void DreamWebEngine::showIcon() {
 
 bool DreamWebEngine::checkIfSet(uint8 x, uint8 y) {
 	Common::List<ObjPos>::const_iterator i;
-	for (i = _setList.reverse_begin(); i != _setList.end(); --i) {
+	for (i = _setList.legacy_reverse_begin(); i != _setList.end(); --i) {
 		const ObjPos &pos = *i;
 		assert(pos.index != 0xff);
 		if (!pos.contains(x,y))

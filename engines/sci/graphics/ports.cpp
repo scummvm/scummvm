@@ -242,7 +242,7 @@ int16 GfxPorts::isFrontWindow(Window *pWnd) {
 
 void GfxPorts::beginUpdate(Window *wnd) {
 	Port *oldPort = setPort(_wmgrPort);
-	PortList::iterator it = _windowList.reverse_begin();
+	PortList::iterator it = _windowList.legacy_reverse_begin();
 	const PortList::iterator end = Common::find(_windowList.begin(), _windowList.end(), wnd);
 	while (it != end) {
 		// We also store Port objects in the window list, but they
