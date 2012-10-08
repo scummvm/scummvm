@@ -55,6 +55,8 @@ static const PlainGameDescriptor nancyGames[] = {
 	// Games
 	{"nancy1", "Nancy Drew 1: Secrets Can Kill"},
 	{"nancy2", "Nancy Drew 2: Stay Tuned for Danger"},
+	{"nancy3", "Nancy Drew 3: Message in a Haunted Mansion"},
+	{"nancy4", "Nancy Drew 4: Treasure in the Royal Tower"},
 	{"nancy5", "Nancy Drew 5: The Final Scene"},
 	{"nancy6", "Nancy Drew 6: Secret of the Scarlet Hand"},
 	{0, 0}
@@ -81,6 +83,34 @@ static const NancyGameDescription gameDescriptions[] = {
 			"nancy2", 0,
 			{
 				{"ciftree.dat", 0, "fa4293d728a1b31407961cd82e86a015", 7784516},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeNancy1
+	},
+	{ // MD5 by waltervn
+		{
+			"nancy3", 0,
+			{
+				{"ciftree.dat", 0, "ee5f8832226567c3610556497c451b09", 16256355},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeNancy1
+	},
+	{ // MD5 by waltervn
+		{
+			"nancy4", 0,
+			{
+				{"ciftree.dat", 0, "e9d45f7db453b0d8f37d202fc979537c", 8742289},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
