@@ -591,7 +591,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
 	Sprite *tempSprite;
-
+	
 	NRect clipRect;
 	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(0x004B2240);
 	setGlobalVar(0x21E60190, 1);
@@ -608,7 +608,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	tempSprite = insertStaticSprite(0x1E086325, 1200);
 	
-	clipRect.set(0, 0, 640, tempSprite->getDrawRect().x2());
+	clipRect.set(0, 0, 640, tempSprite->getDrawRect().y2());
 
 	if (sceneInfo->class437Filename) {
 
@@ -625,7 +625,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
-	
+
 	_which1 = sceneInfo->which1;
 	_which2 = sceneInfo->which2;
 
@@ -649,15 +649,15 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asCarConnector->setClipRect(clipRect);
 
 	if (which == 1) {
-		SetMessageHandler(&Scene2701::handleMessage42F500);
+		SetMessageHandler(&Scene2701::hmRidingCar);
 	} else {
 		sendMessage(_asCar, 0x2009, 0);
-		SetMessageHandler(&Scene2701::handleMessage42F600);
+		SetMessageHandler(&Scene2701::hmCarAtHome);
 	}
 
 }
 
-uint32 Scene2701::handleMessage42F500(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Scene2701::hmRidingCar(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
@@ -665,7 +665,7 @@ uint32 Scene2701::handleMessage42F500(int messageNum, const MessageParam &param,
 		break;
 	case 0x2005:
 		if (_which1 >= 0)
-			SetMessageHandler(&Scene2701::handleMessage42F600);
+			SetMessageHandler(&Scene2701::hmCarAtHome);
 		break;
 	case 0x2006:
 		if (_which2 >= 0)
@@ -678,7 +678,7 @@ uint32 Scene2701::handleMessage42F500(int messageNum, const MessageParam &param,
 	return 0;
 }
 
-uint32 Scene2701::handleMessage42F600(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Scene2701::hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
@@ -686,7 +686,7 @@ uint32 Scene2701::handleMessage42F600(int messageNum, const MessageParam &param,
 			leaveScene(0);
 		} else {
 			sendPointMessage(_asCar, 0x2004, param.asPoint());
-			SetMessageHandler(&Scene2701::handleMessage42F500);
+			SetMessageHandler(&Scene2701::hmRidingCar);
 		}
 		break;
 	case 0x200D:

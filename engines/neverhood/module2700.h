@@ -94,8 +94,8 @@ protected:
 	Sprite *_asCarConnector;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
-	uint32 handleMessage42F500(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage42F600(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmRidingCar(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class Scene2702 : public Scene {
