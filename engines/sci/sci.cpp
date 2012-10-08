@@ -876,6 +876,7 @@ void SciEngine::syncIngameAudioOptions() {
 			if (getGameId() == GID_SQ4
 				|| getGameId() == GID_FREDDYPHARKAS
 				|| getGameId() == GID_ECOQUEST
+				|| getGameId() == GID_LSL6
 				// TODO: The following need script patches for simultaneous speech and subtitles
 				//|| getGameId() == GID_KQ6
 				//|| getGameId() == GID_LAURABOW2
