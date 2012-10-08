@@ -72,7 +72,7 @@ public:
 	Common::String getResourceDesc(const Common::String name);
 private:
 	NancyEngine *_vm;
-	CifTree *_cifTree;
+	const CifTree *_cifTree;
 
 	byte *decompress(const CifInfo &res, uint &size);
 };
