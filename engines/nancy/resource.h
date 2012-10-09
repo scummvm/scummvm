@@ -40,8 +40,9 @@ class ResourceManager {
 public:
 	enum ResType {
 		kResTypeAny,
+		// Type 1 seems to be obsolete
 		kResTypeImage = 2,
-		kResTypeScript
+		kResTypeData
 	};
 
 	enum ResCompression {
@@ -55,7 +56,7 @@ public:
 		byte comp; // ResCompression
 		uint16 width, pitch, height;
 		byte depth; // Bit depth
-		uint32 compressedSize, size, sizeUnk;
+		uint32 compressedSize, size;
 		uint32 dataOffset;
 	};
 
