@@ -39,7 +39,7 @@ static void readCifInfo20(Common::File &f, ResourceManager::CifInfo &info, bool 
 	if (hasOffset)
 		info.dataOffset = f.readUint32LE();
 	info.size = f.readUint32LE();
-	info.sizeUnk = f.readUint32LE(); // Unknown
+	f.skip(4); // A 2nd size for obsolete Cif type 1
 	info.compressedSize = f.readUint32LE();
 
 	info.type = f.readByte();
@@ -466,7 +466,6 @@ Common::String ResourceManager::getResourceDesc(const Common::String name) {
 	desc += Common::String::format("Compression: %i\n", info.comp);
 	desc += Common::String::format("Data offset: %i\n", info.dataOffset);
 	desc += Common::String::format("Size: %i\n", info.size);
-	desc += Common::String::format("Size (unknown): %i\n", info.sizeUnk);
 	desc += Common::String::format("Compressed size: %i\n", info.compressedSize);
 	desc += Common::String::format("Width: %i\n", info.width);
 	desc += Common::String::format("Pitch: %i\n", info.pitch);
