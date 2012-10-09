@@ -60,6 +60,7 @@ public:
 	uint getStatus();
 	void setDrawPos(int16 x, int16 y);
 	void rewind();
+	Video::SmackerDecoder *getSmackerDecoder() const { return _smackerDecoder; }
 protected:
 	Scene *_scene;
 	Palette *_palette;

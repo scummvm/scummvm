@@ -51,10 +51,11 @@ NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint
 	_smackerPlayer = new SmackerPlayer(_vm, this, (*_navigationList)[_navigationIndex].fileHash, true, true);	
 	addEntity(_smackerPlayer);
 	addSurface(_smackerPlayer->getSurface());
-
+	
 	createMouseCursor();
 
 	_vm->_screen->clear();
+	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 
 	sendMessage(_parentModule, 0x100A, _navigationIndex);
 
@@ -77,10 +78,12 @@ void NavigationScene::update() {
 		showMouse(false);
 		_smackerPlayer->open(_smackerFileHash, false);
 		_vm->_screen->clear();
+		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 		_smackerDone = false;
 		_smackerFileHash = 0;
 	} else if (_smackerDone) {
 		if (_leaveSceneAfter) {
+			_vm->_screen->setSmackerDecoder(NULL);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		} else {
 			const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
@@ -94,6 +97,7 @@ void NavigationScene::update() {
 			_smackerDone = false;
 			_smackerPlayer->open(navigationItem.fileHash, true);
 			_vm->_screen->clear();
+			_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 			sendMessage(_parentModule, 0x100A, _navigationIndex);
 		}
 	} 
@@ -171,6 +175,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 			} while (!(*_navigationList)[_navigationIndex].interactive);
 			setGlobalVar(0x4200189E, _navigationIndex);
 		} else {
+			_vm->_screen->setSmackerDecoder(NULL);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		}
 		break;
@@ -187,6 +192,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 			} while (!(*_navigationList)[_navigationIndex].interactive);
 			setGlobalVar(0x4200189E, _navigationIndex);
 		} else {
+			_vm->_screen->setSmackerDecoder(NULL);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		}
 		break;
@@ -194,6 +200,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 	case 3:
 	case 4:
 		if (navigationItem.middleFlag) {
+			_vm->_screen->setSmackerDecoder(NULL);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		} else if (navigationItem.middleSmackerFileHash != 0) {
 			_smackerFileHash = navigationItem.middleSmackerFileHash;

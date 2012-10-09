@@ -159,54 +159,55 @@ protected:
 	Module *_parentModule;
 	Common::Array<Entity*> _entities;
 	Common::Array<BaseSurface*> _surfaces;
-	bool _systemCallbackFlag;
-	MessageList *_messageList;
-	uint _messageListCount;
-	uint _messageListIndex;
-	bool _messageListFlag1;
-	NPoint _mouseClickPos;
-	bool _mouseClicked;
-	DataResource _dataResource;
-	RectList *_rectList;
-	HitRectList _hitRectList;
-	int _rectType;
-	// TODO 0000008E field_8E		dw ?
-	Mouse *_mouseCursor;
-	Klayman *_klayman;
-	Palette *_palette;
-	Background *_background;
+
 	bool _surfaceFlag;
-	bool _messageListFlag;
+
+	Klayman *_klayman;
+	Background *_background;
+	Palette *_palette;
+	SmackerPlayer *_smackerPlayer;
+
+	MessageList *_messageList;
 	MessageList *_messageList2;
 	int _messageListStatus;
-	SmackerPlayer *_smackerPlayer;
+	uint _messageListCount;
+	uint _messageListIndex;
+	bool _systemCallbackFlag;
+
+	bool _canAcceptInput;
+	bool _isKlaymanBusy;
+	bool _isMessageListBusy;
+
+	Mouse *_mouseCursor;
+	NPoint _mouseClickPos;
+	bool _mouseClicked;
+	bool _mouseCursorWasVisible;
+
+	int _rectType;
+	RectList *_rectList;
+	DataResource _dataResource;
+
+	HitRectList _hitRectList;
+
 	void (Entity::*_savedUpdateHandlerCb)();
 	uint32 (Entity::*_savedMessageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);
 	bool _smackerDone;
-	// TODO 000000BD field_BD		db ?
-	// TODO 000000BE field_BE		db ?
-	// TODO 000000BF field_BF		db ?
-	uint32 _smkFileHash;
-	// TODO 000000C4 hitArray		dd ?
-	bool _messageListFlag2;
-	bool _prevVisible;
 	int _messageValue;
-	// TODO 000000CF field_CF		db ?
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void smackerUpdate();
 	uint32 smackerHandleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	bool queryPositionSprite(int16 mouseX, int16 mouseY);
 	bool queryPositionRectList(int16 mouseX, int16 mouseY);
-	void setMessageList(uint32 id, bool messageListFlag = true, bool systemCallbackFlag = false);
-	void setMessageList(MessageList *messageList, bool messageListFlag = true, bool systemCallbackFlag = false);
-	bool setMessageList2(uint32 id, bool messageListFlag = true, bool systemCallbackFlag = false);
-	bool setMessageList2(MessageList *messageList, bool messageListFlag = true, bool systemCallbackFlag = false);
-	void runMessageList();
+	void setMessageList(uint32 id, bool canAcceptInput = true, bool systemCallbackFlag = false);
+	void setMessageList(MessageList *messageList, bool canAcceptInput = true, bool systemCallbackFlag = false);
+	bool setMessageList2(uint32 id, bool canAcceptInput = true, bool systemCallbackFlag = false);
+	bool setMessageList2(MessageList *messageList, bool canAcceptInput = true, bool systemCallbackFlag = false);
+	void processMessageList();
 	void setRectList(uint32 id);
 	void setRectList(RectList *rectList);
 	void clearRectList();
 	void loadHitRectList();
-	void messageList402220();
+	void cancelMessageList();
 	void loadDataResource(uint32 fileHash);
 	uint16 convertMessageNum(uint32 messageNum);
 };

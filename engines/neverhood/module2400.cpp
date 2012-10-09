@@ -517,7 +517,7 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 			setSurfacePriority(_sprite1->getSurface(), 1100);
 		} else if (param.asInteger() == 0x80C40322) {
 			setSurfacePriority(_sprite1->getSurface(), 200);
-			messageList402220();
+			cancelMessageList();
 			_flag = true;
 		} else if (param.asInteger() == 0x09C4B40A && _countdown2 > 12) {
 			_countdown2 = 12;

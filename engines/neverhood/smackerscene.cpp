@@ -73,6 +73,7 @@ void SmackerScene::nextVideo() {
 		uint32 smackerFileHash = _fileHashList[_fileHashListIndex];
 		if (_vm->_res->getResourceTypeByHash(smackerFileHash) != 10) {
 			// Not a Smacker file
+			_vm->_screen->setSmackerDecoder(NULL);
 			sendMessage(_parentModule, 0x1009, 0);
 			return;
 		}
@@ -80,12 +81,13 @@ void SmackerScene::nextVideo() {
 		if (!_fieldDF) {
 			setSubVar(0x00800410, smackerFileHash, 1);
 		}
-		if (_fileHashListIndex == 0) {
+		if (_fileHashListIndex == 0)
 			_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, smackerFileHash, _doubleSurface, false));
-		} else {
+		else
 			_smackerPlayer->open(smackerFileHash, false);
-		}
+		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 	} else {
+		_vm->_screen->setSmackerDecoder(NULL);
 		sendMessage(_parentModule, 0x1009, 0);
 	}
 

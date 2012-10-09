@@ -487,13 +487,13 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (getGlobalVar(0x13206309)) {
 				setMessageList2(0x004B0910);
 			} else {
-				messageList402220();
+				cancelMessageList();
 			}
 		} else if (param.asInteger() == 0x012E2070) {
 			if (getGlobalVar(0x13206309)) {
 				setMessageList2(0x004B0968);
 			} else {
-				messageList402220();
+				cancelMessageList();
 			}
 		} else if (param.asInteger() == 0x11C40840) {
 			if (_asVenusFlyTrap->getX() >= 260 && _asVenusFlyTrap->getX() <= 342) {
@@ -740,7 +740,7 @@ uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x100D:
 		if (param.asInteger() == 0x415634A4) {
 			if (getGlobalVar(0xAC00C0D0)) {
-				messageList402220();
+				cancelMessageList();
 			} else {
 				setMessageList(0x004B9158);
 			}

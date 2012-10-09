@@ -1271,7 +1271,7 @@ void Scene1608::upGettingOutOfCar() {
 		_asIdleCarFull->setVisible(true);
 		_asCar->setVisible(false);
 		setMessageList(0x004B4748);
-		runMessageList();
+		processMessageList();
 		_klayman->handleUpdate();
 		_carStatus = 0;
 	}

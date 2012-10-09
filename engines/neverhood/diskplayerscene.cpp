@@ -347,10 +347,11 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	_class494 = new Class494(_vm);
 	addSprite(_class494);
 
-	// DEBUG: Give all disks
+	// DEBUG>>>: Give all disks
 	for (int i = 0; i < 19; i++) {
 		setSubVar(0x02720344, i, 1);
 	}
+	// DEBUG<<<
 
 	for (int i = 0; i < 20; i++) {
 		_diskAvailable[i] = 0;
@@ -385,6 +386,7 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	addSurface(_smackerPlayer->getSurface());
 	_smackerPlayer->setDrawPos(154, 86);
 	// TODO _smackerPlayer->gotoFrame(0);
+	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 
 	_palette->usePalette();
 
@@ -517,6 +519,7 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 
 void DiskplayerScene::stop() {
 	_smackerPlayer->open(0x08288103, true);
+	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 	_playButton->release();
 	_updateStatus = 0;
@@ -525,6 +528,7 @@ void DiskplayerScene::stop() {
 
 void DiskplayerScene::tuneIn() {
 	_smackerPlayer->open(0x900001C1, false);
+	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 	_playButton->release();
 	_updateStatus = 1;
@@ -533,6 +537,7 @@ void DiskplayerScene::tuneIn() {
 
 void DiskplayerScene::playDisk() {
 	_smackerPlayer->open(kDiskplayerSmackerFileHashes[_diskIndex], false);
+	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 	_updateStatus = 2;
 	_diskSlots[_diskIndex]->play();
@@ -540,6 +545,7 @@ void DiskplayerScene::playDisk() {
 
 void DiskplayerScene::playStatic() {
 	_smackerPlayer->open(0x90000101, false);
+	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 	_playButton->release();
 	_updateStatus = 2;

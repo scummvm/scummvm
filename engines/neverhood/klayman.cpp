@@ -480,6 +480,7 @@ void Klayman::gotoNextStateExt() {
 		removeCallbackList();
 #endif		
 	} else {
+		// Inform the scene that the current Klayman animation sequence has finished
 		sendMessage(_parentScene, 0x1006, 0);
 	}
 }

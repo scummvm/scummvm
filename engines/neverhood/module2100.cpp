@@ -274,7 +274,7 @@ void Scene2101::update() {
 			}
 		} else {
 			if (_klayman->getX() > 575)
-				_messageListFlag  = false;
+				_canAcceptInput  = false;
 			if (--_countdown1 == 0) {
 				if (_klayman->getX() < 480) {
 					sendMessage(_asDoor, 0x4809, 0);
@@ -307,7 +307,7 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B8EC8);
 			}
 		} else if (param.asInteger() == 0x41442820) {
-			messageList402220();
+			cancelMessageList();
 		}
 		break;
 	case 0x2000:

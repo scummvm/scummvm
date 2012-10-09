@@ -916,7 +916,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x140E5744) {
 			sendMessage(_asCreature, 0x2005, 0);
 		} else if (param.asInteger() == 0x40253C40) {
-			_messageListFlag = false;
+			_canAcceptInput = false;
 			sendMessage(_asCreature, 0x2006, 0);
 		} else if (param.asInteger() == 0x090EB048) {
 			if (_klayman->getX() < 572) {
@@ -950,7 +950,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x4814:
-		messageList402220();
+		cancelMessageList();
 		break;
 	case 0x4826:
 		if (sender == _asTape) {

@@ -26,7 +26,7 @@
 namespace Neverhood {
 
 Screen::Screen(NeverhoodEngine *vm)
-	: _vm(vm), _paletteData(NULL), _paletteChanged(false) {
+	: _vm(vm), _paletteData(NULL), _paletteChanged(false), _smackerDecoder(NULL) {
 	
 	_ticks = _vm->_system->getMillis();
 	
@@ -48,8 +48,13 @@ void Screen::update() {
 }
 
 void Screen::wait() {
-	// TODO
-	_vm->_system->delayMillis(40);
+	int32 frameDelay = _frameDelay;
+	if (_smackerDecoder && _smackerDecoder->isVideoLoaded() && !_smackerDecoder->endOfVideo())
+		frameDelay = _smackerDecoder->getTimeToNextFrame();
+	int32 waitTicks = frameDelay - (_vm->_system->getMillis() - _ticks);
+	if (waitTicks > 0)
+		_vm->_system->delayMillis(waitTicks);
+	_ticks = _vm->_system->getMillis();
 }
 
 void Screen::setFps(int fps) {

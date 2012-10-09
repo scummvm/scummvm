@@ -2116,16 +2116,16 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 				sendEntityMessage(_klayman, 0x1014, _asElevator);
 				sendMessage(_klayman, 0x2001, 0);
 			} else {
-				messageList402220();
+				cancelMessageList();
 			}
 		} else if (param.asInteger() == 0x34569073) {
 			if (_klaymanAtElevator) {
-				_messageListFlag1 = true;
+				_isKlaymanBusy = true;
 				sendMessage(_asElevator, 0x2000, 0);
 				sendEntityMessage(_klayman, 0x1014, _asElevator);
 				sendMessage(_klayman, 0x2001, 0);
 			} else {
-				messageList402220();
+				cancelMessageList();
 			}
 		} else if (param.asInteger() == 0x4054C877) {
 			if (_klaymanAtElevator) {
@@ -2133,7 +2133,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 				sendEntityMessage(_klayman, 0x1014, _asElevator);
 				sendMessage(_klayman, 0x2001, 0);
 			} else {
-				messageList402220();
+				cancelMessageList();
 			}
 		} else if (param.asInteger() == 0x0CBC6211) {
 			sendEntityMessage(_klayman, 0x1014, _asElevator);
@@ -2153,7 +2153,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 		_elevatorSurfacePriority = param.asInteger();
 		break;
 	case 0x2003:
-		_messageListFlag1 = false;
+		_isKlaymanBusy = false;
 		break;
 	case 0x4807:
 		sendMessage(_asWallRobotAnimation, 0x2007, 0);

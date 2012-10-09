@@ -24,6 +24,7 @@
 #define NEVERHOOD_SCREEN_H
 
 #include "graphics/surface.h"
+#include "video/smk_decoder.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/graphics.h"
 
@@ -51,11 +52,13 @@ public:
 	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
 	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent);
 	void drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent);
+	void setSmackerDecoder(Video::SmackerDecoder *smackerDecoder) { _smackerDecoder = smackerDecoder; }
 protected:
 	NeverhoodEngine *_vm;
 	Graphics::Surface *_backScreen;
-	uint32 _ticks;
-	uint32 _frameDelay;
+	Video::SmackerDecoder *_smackerDecoder;
+	int32 _ticks;
+	int32 _frameDelay;
 	byte *_paletteData;
 	bool _paletteChanged;
 };
