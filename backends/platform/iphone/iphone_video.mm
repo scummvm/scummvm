@@ -268,6 +268,11 @@ const char *iPhone_getDocumentsDir() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter); printOpenGLError();
+	// We use GL_CLAMP_TO_EDGE here to avoid artifacts when linear filtering
+	// is used. If we would not use this for example the cursor in Loom would
+	// have a line/border artifact on the right side of the covered rect.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); printOpenGLError();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); printOpenGLError();
 }
 
 - (void)setGraphicsMode {
