@@ -1465,29 +1465,19 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 bool Scene1609::testVars() {
-	int index1 = 0;
+	int cmpSymbolIndex = 0;
 
 	// Find the position of the first symbol
-	do {
-		int cmpIndex = _asSymbols[0]->getIndex();
-		if (!_asSymbols[0]->getFlag1())
-			cmpIndex -= 12;
-		if ((int)getSubVar(0x04909A50, index1) == cmpIndex)
-			break;
-		index1++;
-	} while(1);
+	while ((int)getSubVar(0x04909A50, cmpSymbolIndex) != _asSymbols[0]->getSymbolIndex())
+		cmpSymbolIndex++;
 
 	// Check if the entered symbols match
-	for (int index2 = 0; index2 < 12; index2++) {
-		int cmpIndex = _asSymbols[index2]->getIndex();
-		if (!_asSymbols[index2]->getFlag1())
-			cmpIndex -= 12;
-		if ((int)getSubVar(0x04909A50, index1) != cmpIndex)
+	for (int enteredSymbolIndex = 0; enteredSymbolIndex < 12; enteredSymbolIndex++) {
+		if ((int)getSubVar(0x04909A50, cmpSymbolIndex) != _asSymbols[enteredSymbolIndex]->getSymbolIndex())
 			return false;
-		index1++;
-		if (index1 >= 12)
-			index1 = 0;
-		index2++;
+		cmpSymbolIndex++;
+		if (cmpSymbolIndex >= 12)
+			cmpSymbolIndex = 0;
 	}
 
 	return true;

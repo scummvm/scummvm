@@ -359,7 +359,26 @@ void Module3000::updateScene() {
 
 // Scene3009
 
-static const uint32 kScene3009SmackerFileHashes[] = {
+enum {
+	kCTSNull				= 0,
+	kCTSBreakWall			= 1,
+	kCTSWall				= 2,
+	kCTSEmptyness			= 3,
+	kCTSFireRobotNoTarget	= 4,
+	kCTSFireRobotIsTarget	= 5,
+	kCTSFireNoRobot			= 6,
+	kCTSRaiseCannon			= 7,
+	kCTSRightRobotNoTarget	= 8,
+	kCTSRightRobotIsTarget	= 9,
+	kCTSRightNoRobot		= 10,
+	kCTSLeftRobotNoTarget	= 11,
+	kCTSLeftRobotIsTarget	= 12,
+	kCTSLeftNoRobot			= 13,
+	kCTSLowerCannon			= 14,
+	kCTSCount				= 14
+};
+
+static const uint32 kScene3009CannonScopeVideos[] = {
 	0x1010000D,
 	0x340A0049,
 	0x340A0049,
@@ -377,22 +396,22 @@ static const uint32 kScene3009SmackerFileHashes[] = {
 	0x340A0049
 };
 
-static const uint32 kScene3009CannonLocationFileHashes[] = {
+static const uint32 kScene3009CannonActionVideos[] = {
 	0x00000000,
-	0x8004001B,
-	0x0004001A,
-	0x1048404B,
-	0x50200109,
-	0x12032109,
-	0x10201109,
-	0x000A2030,
-	0x000A0028,
-	0x000A0028,
-	0x000A0028,
-	0x040A1069,
-	0x040A1069,
-	0x040A1069,
-	0x240A1101
+	0x8004001B,	// 1 Fire cannon at wall, it breaks (lowered)
+	0x0004001A,	// 2 Fire cannon at wall, nothing happens (lowered)
+	0x1048404B,	// 3 Fire cannon at emptyness (raised)
+	0x50200109,	// 4 Fire cannon, robot missed (raised)
+	0x12032109,	// 5 Fire cannon, robot hit (raised)
+	0x10201109,	// 6 Fire cannon, no robot (raised)
+	0x000A2030,	// 7 Raise the cannon
+	0x000A0028,	// 8
+	0x000A0028,	// 9
+	0x000A0028,	// 10
+	0x040A1069,	// 11
+	0x040A1069,	// 12
+	0x040A1069,	// 13
+	0x240A1101	// 14 Lower the cannon
 };
 
 static const uint32 kSsScene3009SymbolEdgesFileHashes[] = {
@@ -450,7 +469,7 @@ static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
 };
 
 SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene)
-	: StaticSprite(vm, 1400), _parentScene(parentScene), _flag1(false) {
+	: StaticSprite(vm, 1400), _parentScene(parentScene), _isClicked(false) {
 	
 	_spriteResource.load2(0x120B24B0);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -474,7 +493,7 @@ SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Sc
 
 void SsScene3009FireCannonButton::update() {
 	StaticSprite::update();
-	if (_flag1 && !isSoundPlaying(0)) {
+	if (_isClicked && !isSoundPlaying(0)) {
 		sendMessage(_parentScene, 0x2000, 0);
 		setVisible(false);
 	}
@@ -484,8 +503,8 @@ uint32 SsScene3009FireCannonButton::handleMessage(int messageNum, const MessageP
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		if (!_flag1 && !_parentScene->sub462E90()) {
-			_flag1 = true;
+		if (!_isClicked && !_parentScene->isTurning()) {
+			_isClicked = true;
 			setVisible(true);
 			playSound(0);
 		}
@@ -659,7 +678,7 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 	return messageResult;
 }
 
-AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 varValue)
+AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 cannonTargetStatus)
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
 	
 	_x = getGlobalVar(0x9040018A) ? 533 : 92;
@@ -670,7 +689,7 @@ AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *
 	setVisible(false);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene3009HorizontalIndicator::handleMessage);
-	if (varValue == 8 || varValue == 9 || varValue == 10) {
+	if (cannonTargetStatus == kCTSRightRobotNoTarget || cannonTargetStatus == kCTSRightRobotIsTarget || cannonTargetStatus == kCTSRightNoRobot) {
 		SetSpriteUpdate(&AsScene3009HorizontalIndicator::suMoveRight);
 		_x = 280;
 	}
@@ -722,23 +741,23 @@ void AsScene3009HorizontalIndicator::stMoveRight() {
 	SetSpriteUpdate(&AsScene3009HorizontalIndicator::suMoveRight);
 }
 
-AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int index)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _index(index) {
+AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int symbolPosition)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _symbolPosition(symbolPosition) {
 
-	_symbolIndex = getSubVar(0x00000914, _index);
+	_symbolIndex = getSubVar(0x00000914, _symbolPosition);
 	
-	_x = kAsScene3009SymbolPoints[_index].x;
-	_y = kAsScene3009SymbolPoints[_index].y;
-	createSurface1(kAsScene3009SymbolFileHashes[_index / 3], 1200);
-	startAnimation(kAsScene3009SymbolFileHashes[_index / 3], _symbolIndex, -1);
+	_x = kAsScene3009SymbolPoints[_symbolPosition].x;
+	_y = kAsScene3009SymbolPoints[_symbolPosition].y;
+	createSurface1(kAsScene3009SymbolFileHashes[_symbolPosition / 3], 1200);
+	startAnimation(kAsScene3009SymbolFileHashes[_symbolPosition / 3], _symbolIndex, -1);
 	_newStickFrameIndex = _symbolIndex;
 	_needRefresh = true;
 	updatePosition();
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene3009Symbol::handleMessage);
-	_ssArrowPrev = _parentScene->insertSprite<SsScene3009SymbolArrow>(this, _index * 2 + 0);
+	_ssArrowPrev = _parentScene->insertSprite<SsScene3009SymbolArrow>(this, _symbolPosition * 2 + 0);
 	_vm->_collisionMan->addSprite(_ssArrowPrev);
-	_ssArrowNext = _parentScene->insertSprite<SsScene3009SymbolArrow>(this, _index * 2 + 1);
+	_ssArrowNext = _parentScene->insertSprite<SsScene3009SymbolArrow>(this, _symbolPosition * 2 + 1);
 	_vm->_collisionMan->addSprite(_ssArrowNext);
 }
 
@@ -757,10 +776,10 @@ uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &para
 			else
 				_symbolIndex--;
 		}
-		startAnimation(kAsScene3009SymbolFileHashes[_index / 3], _symbolIndex, -1);
+		startAnimation(kAsScene3009SymbolFileHashes[_symbolPosition / 3], _symbolIndex, -1);
 		_newStickFrameIndex = _symbolIndex;
-		setSubVar(0x00000914, _index, _symbolIndex);
-		if (_index / 3 == 0) {
+		setSubVar(0x00000914, _symbolPosition, _symbolIndex);
+		if (_symbolPosition / 3 == 0) {
 			sendMessage(_parentScene, 0x2001, 0);
 		} else {
 			sendMessage(_parentScene, 0x2003, 0);
@@ -777,11 +796,11 @@ void AsScene3009Symbol::hide() {
 }
 
 Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _keepVideo(false), _flag2(false), 
-	/*_flag3(false), */_flag4(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
+	: Scene(vm, parentModule, true), _keepVideo(false), _moveCannonLeftFirst(false), 
+	_isTurning(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
 
-	_cannonLocation = getGlobalVar(0x20580A86);
-	debug("_cannonLocation = %d", _cannonLocation);
+	_cannonTargetStatus = getGlobalVar(0x20580A86);
+	debug("_cannonTargetStatus = %d", _cannonTargetStatus);
 	
 	_vm->gameModule()->initScene3009Vars();
 	
@@ -797,23 +816,23 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssFireCannonButton = insertSprite<SsScene3009FireCannonButton>(this);
 	_vm->_collisionMan->addSprite(_ssFireCannonButton);
 
-	_asVerticalIndicator = insertSprite<AsScene3009VerticalIndicator>(this, _cannonLocation);
+	_asVerticalIndicator = insertSprite<AsScene3009VerticalIndicator>(this, _cannonTargetStatus);
 	_vm->_collisionMan->addSprite(_asVerticalIndicator);
 
-	_asHorizontalIndicator = insertSprite<AsScene3009HorizontalIndicator>(this, _cannonLocation);
+	_asHorizontalIndicator = insertSprite<AsScene3009HorizontalIndicator>(this, _cannonTargetStatus);
 	_vm->_collisionMan->addSprite(_asHorizontalIndicator);
 
-	if (_cannonLocation != 0 && _cannonLocation != 8 && _cannonLocation != 9 && _cannonLocation != 10) {
+	if (_cannonTargetStatus != kCTSNull && _cannonTargetStatus != kCTSRightRobotNoTarget && _cannonTargetStatus != kCTSRightRobotIsTarget && _cannonTargetStatus != kCTSRightNoRobot) {
 		_keepVideo = true;
 	} else {
 		_keepVideo = false;
-		if (_cannonLocation != 0) {
+		if (_cannonTargetStatus != kCTSNull) {
 			_asHorizontalIndicator->stMoveRight();
-			_flag4 = true;
+			_isTurning = true;
 		}
 	}
 
-	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009SmackerFileHashes[_cannonLocation], false, _keepVideo));
+	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009CannonScopeVideos[_cannonTargetStatus], false, _keepVideo));
 	_smackerPlayer->setDrawPos(89, 37);
 	_palette->usePalette(); // Use it again since the SmackerPlayer overrides the usage
 
@@ -824,12 +843,12 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 		_ssTargetLines[i] = insertSprite<SsScene3009TargetLine>(i);
 	}
 
-	for (int i = 0; i < 6; i++) {
-		_asSymbols[i] = insertSprite<AsScene3009Symbol>(this, i);
-		if (i < 3)
-			_correctSymbols[i] = getSubVar(0x00504B86, i);
+	for (int symbolPosition = 0; symbolPosition < 6; symbolPosition++) {
+		_asSymbols[symbolPosition] = insertSprite<AsScene3009Symbol>(this, symbolPosition);
+		if (symbolPosition < 3)
+			_correctSymbols[symbolPosition] = getSubVar(0x00504B86, symbolPosition);
 		else
-			_correctSymbols[i] = getSubVar(0x0A4C0A9A, i - 3);
+			_correctSymbols[symbolPosition] = getSubVar(0x0A4C0A9A, symbolPosition - 3);
 	}
 
 	SetMessageHandler(&Scene3009::handleMessage);
@@ -846,47 +865,47 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 void Scene3009::update() {
 	Scene::update();
 	
-	if (!_keepVideo && _smackerPlayer->getFrameNumber() + 1 == _smackerPlayer->getFrameCount() && _cannonLocation <= 14) {
-		switch (_cannonLocation) {
-		case 0:
-		case 14:
+	if (!_keepVideo && _smackerPlayer->getFrameNumber() + 1 == _smackerPlayer->getFrameCount() && _cannonTargetStatus <= kCTSCount) {
+		switch (_cannonTargetStatus) {
+		case kCTSNull:
+		case kCTSLowerCannon:
 			_smackerPlayer->open(0x340A0049, true);
 			_palette->usePalette();
 			_keepVideo = true;
 			break;
-		case 8:
+		case kCTSRightRobotNoTarget:
 			_smackerPlayer->open(0x0082080D, true);
 			_palette->usePalette();
 			_keepVideo = true;
-			_flag4 = false;
+			_isTurning = false;
 			break;
-		case 9:
+		case kCTSRightRobotIsTarget:
 			_smackerPlayer->open(0x0282080D, true);
 			_palette->usePalette();
 			_keepVideo = true;
-			_flag4 = false;
+			_isTurning = false;
 			break;
-		case 10:
+		case kCTSRightNoRobot:
 			_smackerPlayer->open(0x0882080D, true);
 			_palette->usePalette();
 			_keepVideo = true;
-			_flag4 = false;
+			_isTurning = false;
 			break;
-		case 11:
-		case 12:
-		case 13:
-			if (_flag2) {
-				if (_cannonLocation == 11)
+		case kCTSLeftRobotNoTarget:
+		case kCTSLeftRobotIsTarget:
+		case kCTSLeftNoRobot:
+			if (_moveCannonLeftFirst) {
+				if (_cannonTargetStatus == kCTSLeftRobotNoTarget)
 					_smackerPlayer->open(0x110A000F, false);
-				else if (_cannonLocation == 12)				
+				else if (_cannonTargetStatus == kCTSLeftRobotIsTarget)				
 					_smackerPlayer->open(0x500B004F, false);
-				else if (_cannonLocation == 13)				
+				else if (_cannonTargetStatus == kCTSLeftNoRobot)				
 					_smackerPlayer->open(0x100B010E, false);
 				_palette->usePalette();
-				_flag2 = false;
+				_moveCannonLeftFirst = false;
 				_asHorizontalIndicator->stMoveLeft();
 			} else {
-				playExtVideo();
+				playActionVideo();
 			}
 			break;
 		}
@@ -930,68 +949,72 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (!getGlobalVar(0x000809C2)) {
 			if (!getGlobalVar(0x10938830)) {
-				_cannonLocation = 1;
+				_cannonTargetStatus = kCTSBreakWall;
 				setGlobalVar(0x10938830, 1);
 			} else {
-				_cannonLocation = 2;
+				_cannonTargetStatus = kCTSWall;
 			}
 		} else if (!getGlobalVar(0x9040018A)) {
-			_cannonLocation = 3;
+			_cannonTargetStatus = kCTSEmptyness;
 		} else if (!getGlobalVar(0x610210B7)) {
-			_cannonLocation = 4;
+			_cannonTargetStatus = kCTSFireRobotNoTarget;
 		} else if (!getGlobalVar(0x0C0288F4)) {
 			setGlobalVar(0x0C0288F4, 1);
-			_cannonLocation = 5;
+			_cannonTargetStatus = kCTSFireRobotIsTarget;
 		} else {
-			_cannonLocation = 6;
+			_cannonTargetStatus = kCTSFireNoRobot;
 		}
-		playExtVideo();
+		playActionVideo();
 		break;
 	case 0x2001:
 		_lockSymbolsPart1Countdown = 24;
 		break;
 	case 0x2002:
-		if (!getGlobalVar(0x9040018A) && !_flag4) {
+		// Raise/lower the cannon
+		if (!getGlobalVar(0x9040018A) && !_isTurning) {
 			if (getGlobalVar(0x000809C2)) {
-				_cannonLocation = 14;
+				_cannonTargetStatus = kCTSLowerCannon;
 				setGlobalVar(0x000809C2, 0);
 			} else {
-				_cannonLocation = 7;
+				_cannonTargetStatus = kCTSRaiseCannon;
 				setGlobalVar(0x000809C2, 1);
 			}
-			playExtVideo();
+			playActionVideo();
 		}
 		break;
 	case 0x2003:
 		_lockSymbolsPart2Countdown = 24;
 		break;
 	case 0x2004:
+		// Turn the cannon if it's raised
 		if (getGlobalVar(0x000809C2)) {
 			if (!getGlobalVar(0x9040018A)) {
+				// Cannon is at the left position
 				if (!getGlobalVar(0x610210B7)) {
-					_cannonLocation = 8;
+					_cannonTargetStatus = kCTSRightRobotNoTarget;
 				} else if (!getGlobalVar(0x0C0288F4)) {
-					_cannonLocation = 9;
+					_cannonTargetStatus = kCTSRightRobotIsTarget;
 				} else {
-					_cannonLocation = 10;
+					_cannonTargetStatus = kCTSRightNoRobot;
 				}
 				setGlobalVar(0x9040018A, 1);
-				_flag4 = true;
-				playExtVideo();
+				_isTurning = true;
+				playActionVideo();
 			} else {
+				// Cannon is at the right position
 				if (!getGlobalVar(0x610210B7)) {
-					_cannonLocation = 11;
+					_cannonTargetStatus = kCTSLeftRobotNoTarget;
 					_smackerPlayer->open(0x108A000F, false);
 				} else if (!getGlobalVar(0x0C0288F4)) {
-					_cannonLocation = 12;
+					_cannonTargetStatus = kCTSLeftRobotIsTarget;
 					_smackerPlayer->open(0x500B002F, false);
 				} else {
-					_cannonLocation = 13;
+					_cannonTargetStatus = kCTSLeftNoRobot;
 					_smackerPlayer->open(0x100B008E, false);
 				}
 				_palette->usePalette();
-				_flag2 = true;
-				_flag4 = true;
+				_moveCannonLeftFirst = true;
+				_isTurning = true;
 				_keepVideo = false;
 				setGlobalVar(0x9040018A, 0);
 			}
@@ -1001,9 +1024,9 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 
-void Scene3009::playExtVideo() {
-	setGlobalVar(0x20580A86, _cannonLocation);
-	setGlobalVar(0xF0402B0A, kScene3009CannonLocationFileHashes[_cannonLocation]);
+void Scene3009::playActionVideo() {
+	setGlobalVar(0x20580A86, _cannonTargetStatus);
+	setGlobalVar(0xF0402B0A, kScene3009CannonActionVideos[_cannonTargetStatus]);
 	leaveScene(1);
 }
 
@@ -1021,8 +1044,8 @@ bool Scene3009::isSymbolsPart2Solved() {
 	return true;
 }
 
-bool Scene3009::sub462E90() {
-	return _flag4;
+bool Scene3009::isTurning() {
+	return _isTurning;
 }
 
 // Scene3010
@@ -1454,18 +1477,18 @@ uint32 SsScene3011Button::handleMessage(int messageNum, const MessageParam &para
 	return messageResult;
 }
 
-AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag)
-	: AnimatedSprite(vm, 1000), _index(index), _flag1(flag), _flag2(false) {
+AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int symbolIndex, bool largeSymbol)
+	: AnimatedSprite(vm, 1000), _symbolIndex(symbolIndex), _largeSymbol(largeSymbol), _isNoisy(false) {
 
-	if (flag) {
+	if (_largeSymbol) {
 		_x = 310;
 		_y = 200;
-		createSurface1(kAsScene3011SymbolFileHashes[_index], 1200);
+		createSurface1(kAsScene3011SymbolFileHashes[_symbolIndex], 1200);
 		loadSound(0, 0x6052C60F);
 		loadSound(1, 0x6890433B);
 	} else {
-		_index = 12;
-		_x = index * 39 + 96;
+		_symbolIndex = 12;
+		_x = symbolIndex * 39 + 96;
 		_y = 225;
 		createSurface(1200, 41, 48);
 		loadSound(0, 0x64428609);
@@ -1476,11 +1499,11 @@ AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag)
 	SetUpdateHandler(&AnimatedSprite::update);
 }
 
-void AsScene3011Symbol::show(bool flag) {
-	_flag2 = flag;
-	startAnimation(kAsScene3011SymbolFileHashes[_index], 0, -1);
+void AsScene3011Symbol::show(bool isNoisy) {
+	_isNoisy = isNoisy;
+	startAnimation(kAsScene3011SymbolFileHashes[_symbolIndex], 0, -1);
 	setVisible(true);
-	if (flag) {
+	if (_isNoisy) {
 		playSound(1);
 	} else {
 		playSound(0);
@@ -1493,19 +1516,19 @@ void AsScene3011Symbol::hide() {
 }
 
 void AsScene3011Symbol::stopSymbolSound() {
-	if (_flag2) {
+	if (_isNoisy) {
 		stopSound(1);
 	} else {
 		stopSound(0);
 	}
 }
 
-void AsScene3011Symbol::change(int index, bool flag) {
-	_index = index;
-	_flag2 = flag;
-	startAnimation(kAsScene3011SymbolFileHashes[_index], 0, -1);
+void AsScene3011Symbol::change(int symbolIndex, bool isNoisy) {
+	_symbolIndex = symbolIndex;
+	_isNoisy = isNoisy;
+	startAnimation(kAsScene3011SymbolFileHashes[_symbolIndex], 0, -1);
 	setVisible(true);
-	if (flag) {
+	if (_isNoisy) {
 		playSound(1);
 	} else {
 		playSound(0);
@@ -1513,10 +1536,10 @@ void AsScene3011Symbol::change(int index, bool flag) {
 }
 
 Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _updateStatus(0), _buttonClicked(false), _index2(0) {
+	: Scene(vm, parentModule, true), _updateStatus(0), _buttonClicked(false), _currentSymbolIndex(0) {
 
 	// TODO _vm->gameModule()->initScene3011Vars();
-	_index1 = getGlobalVar(0x2414C2F2);
+	_noisySymbolIndex = getGlobalVar(0x2414C2F2);
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene3011::handleMessage);
@@ -1528,8 +1551,8 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertMouse435(0x24A00929, 20, 620);
 
-	for (int i = 0; i < 12; i++)
-		_asSymbols[i] = insertSprite<AsScene3011Symbol>(i, true);
+	for (int symbolIndex = 0; symbolIndex < 12; symbolIndex++)
+		_asSymbols[symbolIndex] = insertSprite<AsScene3011Symbol>(symbolIndex, true);
 
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	_vm->_collisionMan->addSprite(_ssButton);
@@ -1543,13 +1566,13 @@ void Scene3011::update() {
 		switch (_updateStatus) {
 		case 0:
 			if (_buttonClicked) {
-				if (_index1 == _index2) {
+				if (_noisySymbolIndex == _currentSymbolIndex) {
 					do {
-						_index3 = _vm->_rnd->getRandomNumber(12 - 1);
-					} while (_index1 == _index3);
-					_asSymbols[getSubVar(0x04909A50, _index3)]->show(true);
+						_noisyRandomSymbolIndex = _vm->_rnd->getRandomNumber(12 - 1);
+					} while (_noisySymbolIndex == _noisyRandomSymbolIndex);
+					_asSymbols[getSubVar(0x04909A50, _noisyRandomSymbolIndex)]->show(true);
 				} else {
-					_asSymbols[getSubVar(0x04909A50, _index2)]->show(false);
+					_asSymbols[getSubVar(0x04909A50, _currentSymbolIndex)]->show(false);
 				}
 				_updateStatus = 1;
 				_countdown = 24;
@@ -1569,14 +1592,14 @@ void Scene3011::update() {
 		case 3:
 			_updateStatus = 0;
 			_countdown = 1;
-			if (_index1 == _index2) {
-				_asSymbols[getSubVar(0x04909A50, _index3)]->hide();
+			if (_noisySymbolIndex == _currentSymbolIndex) {
+				_asSymbols[getSubVar(0x04909A50, _noisyRandomSymbolIndex)]->hide();
 			} else {
-				_asSymbols[getSubVar(0x04909A50, _index2)]->hide();
+				_asSymbols[getSubVar(0x04909A50, _currentSymbolIndex)]->hide();
 			}
-			_index2++;
-			if (_index2 >= 12)
-				_index2 = 0;
+			_currentSymbolIndex++;
+			if (_currentSymbolIndex >= 12)
+				_currentSymbolIndex = 0;
 			break;
 		}
 	}

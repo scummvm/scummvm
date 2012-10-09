@@ -50,7 +50,7 @@ public:
 	SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene);
 protected:
 	Scene3009 *_parentScene;
-	bool _flag1;
+	bool _isClicked;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -100,7 +100,7 @@ protected:
 
 class AsScene3009HorizontalIndicator : public AnimatedSprite {
 public:
-	AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 varValue);
+	AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 cannonTargetStatus);
 	void show();
 	void stMoveLeft();
 	void stMoveRight();
@@ -114,11 +114,11 @@ protected:
 
 class AsScene3009Symbol : public AnimatedSprite {
 public:
-	AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int index);
+	AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int symbolPosition);
 	void hide();
 protected:
 	Scene3009 *_parentScene;
-	int _index;
+	int _symbolPosition;
 	uint32 _symbolIndex;
 	SsScene3009SymbolArrow *_ssArrowPrev;
 	SsScene3009SymbolArrow *_ssArrowNext;
@@ -128,7 +128,7 @@ protected:
 class Scene3009 : public Scene {
 public:
 	Scene3009(NeverhoodEngine *vm, Module *parentModule, int which);
-	bool sub462E90();
+	bool isTurning();
 protected:
 	int _lockSymbolsPart1Countdown;
 	int _lockSymbolsPart2Countdown;
@@ -139,15 +139,14 @@ protected:
 	AsScene3009VerticalIndicator *_asVerticalIndicator;
 	AsScene3009HorizontalIndicator *_asHorizontalIndicator;
 	AsScene3009Symbol *_asSymbols[6];
-	uint32 _cannonLocation;
+	uint32 _cannonTargetStatus;
 	uint32 _correctSymbols[6];
 	bool _keepVideo;
-	bool _flag2;
-	// UNUSED? bool _flag3;
-	bool _flag4;
+	bool _moveCannonLeftFirst;
+	bool _isTurning;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void playExtVideo();
+	void playActionVideo();
 	bool isSymbolsPart1Solved();
 	bool isSymbolsPart2Solved();
 };
@@ -221,17 +220,16 @@ protected:
 
 class AsScene3011Symbol : public AnimatedSprite {
 public:
-	AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag);
-	void show(bool flag);
+	AsScene3011Symbol(NeverhoodEngine *vm, int symbolIndex, bool largeSymbol);
+	void show(bool isNoisy);
 	void hide();
 	void stopSymbolSound();
-	void change(int index, bool flag);
-	bool getFlag1() { return _flag1; }
-	int getIndex() { return _index; }
+	void change(int symbolIndex, bool isNoisy);
+	int getSymbolIndex() { return _largeSymbol ? _symbolIndex : _symbolIndex - 12; }
 protected:
-	bool _flag1;
-	bool _flag2;
-	int _index;
+	bool _largeSymbol;
+	bool _isNoisy;
+	int _symbolIndex;
 };
 
 class Scene3011 : public Scene {
@@ -243,9 +241,9 @@ protected:
 	int _updateStatus;
 	bool _buttonClicked;
 	int _countdown;
-	int _index1;
-	int _index2;   
-	int _index3;
+	int _noisySymbolIndex;
+	int _currentSymbolIndex;   
+	int _noisyRandomSymbolIndex;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void fadeIn();
