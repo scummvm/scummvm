@@ -34,105 +34,105 @@ struct InventoryObject;
 class TeenAgentEngine;
 
 // Maximum number of items found within game
-const uint8 numInventoryItems = 92;
+const uint8 kNumInventoryItems = 92;
 
 // Inventory Item Ids
-const uint8 invItemNoItem = 0; // No item i.e. empty inventory slot
-const uint8 invItemFeather = 1;
-const uint8 invItemShotgun = 2;
-const uint8 invItemToolboxFull = 3; // Contains Car Jack and Spanner
-const uint8 invItemToolboxHalfEmpty = 4; // Contains Spanner
-const uint8 invItemSpanner = 5;
-const uint8 invItemComb = 6;
-const uint8 invItemFan = 7;
-const uint8 invItemBrokenPaddle = 8;
-const uint8 invItemPaddle = 9; // Repaired - BrokenPaddle combined with Branch (with Glue)
-const uint8 invItemFirstFlower = 10; // Smells nice
-const uint8 invItemSecondFlower = 11; // Really beautiful
-const uint8 invItemFeatherDusterClean = 12;
-const uint8 invItemChainsaw = 13; // Unfueled
-const uint8 invItemDrunkenChainsaw = 14; // Fueled with Whisky (Chainsaw combined with Whiskey)
-const uint8 invItemBranch = 15;
-const uint8 invItemWhisky = 16;
-const uint8 invItemNeedle = 17;
-const uint8 invItemWrapper = 18;
-const uint8 invItemChocCandy = 19;
-const uint8 invItemPotato = 20;
-const uint8 invItemRakeBroken = 21;
-const uint8 invItemHeartShapedCandy = 22;
-const uint8 invItemWrappedCandy = 23; // HeartShapedCandy combined with Wrapper
-const uint8 invItemRibbon = 24;
-const uint8 invItemRakeFixed = 25; // Rake combined with Ribbon
-const uint8 invItemNut = 26;
-const uint8 invItemPlasticApple = 27;
-const uint8 invItemCone = 28;
-const uint8 invItemSuperGlue = 29;
-const uint8 invItemConeAndNeedle = 30; // Cone combined with Needle
-const uint8 invItemConeAndFeather = 31; // Cone combined with Feather
-const uint8 invItemDart = 32; // Needle combined with ConeAndFeather or Feather combined with ConeAndNeedle
-const uint8 invItemFeatherDusterDirty = 33;
-const uint8 invItemPaintedPotato = 34; // Potato combined with Dirty Feather Duster (Soot)
-const uint8 invItemCarJack = 35;
-const uint8 invItemBone = 36;
-const uint8 invItemShovelAct2 = 37;
-const uint8 invItemRopeAct2 = 38;
-const uint8 invItemMask = 39;
-const uint8 invItemFins = 40;
-const uint8 invItemDiveEquipment = 41; // Mask combined with Fins
-const uint8 invItemAnchor = 42;
-const uint8 invItemGrapplingHook = 43;
-const uint8 invItemSickleBlunt = 44;
-const uint8 invItemCheese = 45;
-const uint8 invItemSickleSharp = 46;
-const uint8 invItemHandkerchief = 47;
-const uint8 invItemMouse = 48;
-const uint8 invItemRock = 49;
-const uint8 invItemNugget = 50;
-const uint8 invItemBanknote = 51;
-const uint8 invItemDictaphoneNoBatteries = 52;
-const uint8 invItemPolaroidCamera = 53;
-const uint8 invItemVideoTape = 54;
-const uint8 invItemSheetOfPaper = 55;
-const uint8 invItemCognac = 56;
-const uint8 invItemRemoteControl = 57;
-const uint8 invItemIceTongs = 58;
-const uint8 invItemCork = 59;
-const uint8 invItemWrappedCork = 60; // Cork combined with Sheet Of Paper
-const uint8 invItemPhoto = 61;
-const uint8 invItemChilliWithLabel = 62;
-const uint8 invItemPastryRoller = 63;
-const uint8 invItemFakeChilli = 64;
-const uint8 invItemLabel = 65;
-const uint8 invItemBatteries = 66;
-const uint8 invItemDictaphoneWithBatteries = 67; // Dictaphone combined with Batteries
-const uint8 invItemBurningPaper = 68;
-const uint8 invItemMeat = 69;
-const uint8 invItemPlasticBag = 70;
-const uint8 invItemSocks = 71;
-const uint8 invItemTimePills = 72;
-const uint8 invItemHandle = 73;
-const uint8 invItemChilliNoLabel = 74;
-const uint8 invItemPass = 75;
-const uint8 invItemBulb = 76;
-const uint8 invItemJailKey = 77;
-const uint8 invItemDelicatePlant = 78;
-const uint8 invItemSwissArmyKnife = 79;
-const uint8 invItemSpring = 80;
-const uint8 invItemShovelAct1 = 81;
-const uint8 invItemKaleidoscope = 82;
-const uint8 invItemSoldierNews = 83;
-const uint8 invItemGrenade = 84;
-const uint8 invItemMug = 85; // Empty
-const uint8 invItemMugOfMud = 86; // Full of mud
-const uint8 invItemCrumbs = 87;
-const uint8 invItemRopeAct1 = 88;
-const uint8 invItemRopeAndGrenade = 89; // Rope combined with Grenade
-const uint8 invItemMedicine = 90;
-const uint8 invItemDruggedFood = 91; // Crumbs combined with Medicine
-const uint8 invItemBird = 92;
+const uint8 kInvItemNoItem = 0; // No item i.e. empty inventory slot
+const uint8 kInvItemFeather = 1;
+const uint8 kInvItemShotgun = 2;
+const uint8 kInvItemToolboxFull = 3; // Contains Car Jack and Spanner
+const uint8 kInvItemToolboxHalfEmpty = 4; // Contains Spanner
+const uint8 kInvItemSpanner = 5;
+const uint8 kInvItemComb = 6;
+const uint8 kInvItemFan = 7;
+const uint8 kInvItemBrokenPaddle = 8;
+const uint8 kInvItemPaddle = 9; // Repaired - BrokenPaddle combined with Branch (with Glue)
+const uint8 kInvItemFirstFlower = 10; // Smells nice
+const uint8 kInvItemSecondFlower = 11; // Really beautiful
+const uint8 kInvItemFeatherDusterClean = 12;
+const uint8 kInvItemChainsaw = 13; // Unfueled
+const uint8 kInvItemDrunkenChainsaw = 14; // Fueled with Whisky (Chainsaw combined with Whiskey)
+const uint8 kInvItemBranch = 15;
+const uint8 kInvItemWhisky = 16;
+const uint8 kInvItemNeedle = 17;
+const uint8 kInvItemWrapper = 18;
+const uint8 kInvItemChocCandy = 19;
+const uint8 kInvItemPotato = 20;
+const uint8 kInvItemRakeBroken = 21;
+const uint8 kInvItemHeartShapedCandy = 22;
+const uint8 kInvItemWrappedCandy = 23; // HeartShapedCandy combined with Wrapper
+const uint8 kInvItemRibbon = 24;
+const uint8 kInvItemRakeFixed = 25; // Rake combined with Ribbon
+const uint8 kInvItemNut = 26;
+const uint8 kInvItemPlasticApple = 27;
+const uint8 kInvItemCone = 28;
+const uint8 kInvItemSuperGlue = 29;
+const uint8 kInvItemConeAndNeedle = 30; // Cone combined with Needle
+const uint8 kInvItemConeAndFeather = 31; // Cone combined with Feather
+const uint8 kInvItemDart = 32; // Needle combined with ConeAndFeather or Feather combined with ConeAndNeedle
+const uint8 kInvItemFeatherDusterDirty = 33;
+const uint8 kInvItemPaintedPotato = 34; // Potato combined with Dirty Feather Duster (Soot)
+const uint8 kInvItemCarJack = 35;
+const uint8 kInvItemBone = 36;
+const uint8 kInvItemShovelAct2 = 37;
+const uint8 kInvItemRopeAct2 = 38;
+const uint8 kInvItemMask = 39;
+const uint8 kInvItemFins = 40;
+const uint8 kInvItemDiveEquipment = 41; // Mask combined with Fins
+const uint8 kInvItemAnchor = 42;
+const uint8 kInvItemGrapplingHook = 43;
+const uint8 kInvItemSickleBlunt = 44;
+const uint8 kInvItemCheese = 45;
+const uint8 kInvItemSickleSharp = 46;
+const uint8 kInvItemHandkerchief = 47;
+const uint8 kInvItemMouse = 48;
+const uint8 kInvItemRock = 49;
+const uint8 kInvItemNugget = 50;
+const uint8 kInvItemBanknote = 51;
+const uint8 kInvItemDictaphoneNoBatteries = 52;
+const uint8 kInvItemPolaroidCamera = 53;
+const uint8 kInvItemVideoTape = 54;
+const uint8 kInvItemSheetOfPaper = 55;
+const uint8 kInvItemCognac = 56;
+const uint8 kInvItemRemoteControl = 57;
+const uint8 kInvItemIceTongs = 58;
+const uint8 kInvItemCork = 59;
+const uint8 kInvItemWrappedCork = 60; // Cork combined with Sheet Of Paper
+const uint8 kInvItemPhoto = 61;
+const uint8 kInvItemChilliWithLabel = 62;
+const uint8 kInvItemPastryRoller = 63;
+const uint8 kInvItemFakeChilli = 64;
+const uint8 kInvItemLabel = 65;
+const uint8 kInvItemBatteries = 66;
+const uint8 kInvItemDictaphoneWithBatteries = 67; // Dictaphone combined with Batteries
+const uint8 kInvItemBurningPaper = 68;
+const uint8 kInvItemMeat = 69;
+const uint8 kInvItemPlasticBag = 70;
+const uint8 kInvItemSocks = 71;
+const uint8 kInvItemTimePills = 72;
+const uint8 kInvItemHandle = 73;
+const uint8 kInvItemChilliNoLabel = 74;
+const uint8 kInvItemPass = 75;
+const uint8 kInvItemBulb = 76;
+const uint8 kInvItemJailKey = 77;
+const uint8 kInvItemDelicatePlant = 78;
+const uint8 kInvItemSwissArmyKnife = 79;
+const uint8 kInvItemSpring = 80;
+const uint8 kInvItemShovelAct1 = 81;
+const uint8 kInvItemKaleidoscope = 82;
+const uint8 kInvItemSoldierNews = 83;
+const uint8 kInvItemGrenade = 84;
+const uint8 kInvItemMug = 85; // Empty
+const uint8 kInvItemMugOfMud = 86; // Full of mud
+const uint8 kInvItemCrumbs = 87;
+const uint8 kInvItemRopeAct1 = 88;
+const uint8 kInvItemRopeAndGrenade = 89; // Rope combined with Grenade
+const uint8 kInvItemMedicine = 90;
+const uint8 kInvItemDruggedFood = 91; // Crumbs combined with Medicine
+const uint8 kInvItemBird = 92;
 
 // Maximum number of inventory items held by Ego (Mark)
-const uint8 inventorySize = 24;
+const uint8 kInventorySize = 24;
 
 class Inventory {
 public:
@@ -159,7 +159,7 @@ private:
 	TeenAgentEngine *_vm;
 	Surface _background;
 	byte *_items;
-	uint _offset[numInventoryItems+1];
+	uint _offset[kNumInventoryItems+1];
 
 	Common::Array<InventoryObject> _objects;
 	byte *_inventory;
@@ -177,7 +177,7 @@ private:
 		void render(Inventory *inventory, uint itemId, Graphics::Surface *surface, int delta);
 	};
 
-	Item _graphics[inventorySize];
+	Item _graphics[kInventorySize];
 
 	bool _active;
 	Common::Point _mouse;

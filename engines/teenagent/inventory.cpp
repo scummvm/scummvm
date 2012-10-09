@@ -52,15 +52,15 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	varia.read(4, _items, itemsSize);
 
 	byte offsets = _items[0];
-	assert(offsets == numInventoryItems);
+	assert(offsets == kNumInventoryItems);
 	for (byte i = 0; i < offsets; ++i) {
 		_offset[i] = READ_LE_UINT16(_items + i * 2 + 1);
 	}
-	_offset[numInventoryItems] = itemsSize;
+	_offset[kNumInventoryItems] = itemsSize;
 
 	InventoryObject ioBlank;
 	_objects.push_back(ioBlank);
-	for (byte i = 0; i < numInventoryItems; ++i) {
+	for (byte i = 0; i < kNumInventoryItems; ++i) {
 		InventoryObject io;
 		uint16 objAddr = vm->res->dseg.get_word(dsAddr_inventoryItemDataPtrTable + i * 2);
 		io.load(vm->res->dseg.ptr(objAddr));
@@ -88,7 +88,7 @@ Inventory::~Inventory() {
 }
 
 bool Inventory::has(byte item) const {
-	for (int i = 0; i < inventorySize; ++i) {
+	for (int i = 0; i < kInventorySize; ++i) {
 		if (_inventory[i] == item)
 			return true;
 	}
@@ -98,32 +98,32 @@ bool Inventory::has(byte item) const {
 void Inventory::remove(byte item) {
 	debugC(0, kDebugInventory, "removing %u from inventory", item);
 	int i;
-	for (i = 0; i < inventorySize; ++i) {
+	for (i = 0; i < kInventorySize; ++i) {
 		if (_inventory[i] == item) {
 			break;
 		}
 	}
-	for (; i < (inventorySize - 1); ++i) {
+	for (; i < (kInventorySize - 1); ++i) {
 		_inventory[i] = _inventory[i + 1];
 		_graphics[i].free();
 	}
-	_inventory[inventorySize - 1] = invItemNoItem;
-	_graphics[inventorySize - 1].free();
+	_inventory[kInventorySize - 1] = kInvItemNoItem;
+	_graphics[kInventorySize - 1].free();
 }
 
 void Inventory::clear() {
 	debugC(0, kDebugInventory, "clearing inventory");
-	for (int i = 0; i < inventorySize; ++i) {
-		_inventory[i] = invItemNoItem;
+	for (int i = 0; i < kInventorySize; ++i) {
+		_inventory[i] = kInvItemNoItem;
 		_graphics[i].free();
 	}
 }
 
 void Inventory::reload() {
-	for (int i = 0; i < inventorySize; ++i) {
+	for (int i = 0; i < kInventorySize; ++i) {
 		_graphics[i].free();
 		uint item = _inventory[i];
-		if (item != invItemNoItem)
+		if (item != kInvItemNoItem)
 			_graphics[i].load(this, item);
 	}
 }
@@ -132,8 +132,8 @@ void Inventory::add(byte item) {
 	if (has(item))
 		return;
 	debugC(0, kDebugInventory, "adding %u to inventory", item);
-	for (int i = 0; i < inventorySize; ++i) {
-		if (_inventory[i] == invItemNoItem) {
+	for (int i = 0; i < kInventorySize; ++i) {
+		if (_inventory[i] == kInvItemNoItem) {
 			_inventory[i] = item;
 			return;
 		}
@@ -176,9 +176,9 @@ bool Inventory::processEvent(const Common::Event &event) {
 		_mouse = event.mouse;
 		_hoveredObj = NULL;
 
-		for (int i = 0; i < inventorySize; ++i) {
+		for (int i = 0; i < kInventorySize; ++i) {
 			byte item = _inventory[i];
-			if (item == invItemNoItem)
+			if (item == kInvItemNoItem)
 				continue;
 
 			_graphics[i]._hovered = _graphics[i]._rect.in(_mouse);
@@ -202,7 +202,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 				return true;
 			//activate(false);
 			int w = _vm->res->font7.render(NULL, 0, 0, _hoveredObj->description, textColorMark);
-			_vm->scene->displayMessage(_hoveredObj->description, textColorMark, Common::Point((screenWidth - w) / 2, 162));
+			_vm->scene->displayMessage(_hoveredObj->description, textColorMark, Common::Point((kScreenWidth - w) / 2, 162));
 			return true;
 		}
 
@@ -244,7 +244,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 		if (_hoveredObj != NULL) {
 			debugC(0, kDebugInventory, "rclick object %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
 			// do not process callback for banknote on r-click
-			if (_hoveredObj->id != invItemBanknote && tryObjectCallback(_hoveredObj))
+			if (_hoveredObj->id != kInvItemBanknote && tryObjectCallback(_hoveredObj))
 				return true;
 		}
 
@@ -338,7 +338,7 @@ void Inventory::Item::render(Inventory *inventory, uint itemId, Graphics::Surfac
 
 	if (_hovered && inventory->_vm->scene->getMessage().empty()) {
 		int w = inventory->_vm->res->font7.render(NULL, 0, 0, name, textColorMark, true);
-		inventory->_vm->res->font7.render(dst, (screenWidth - w) / 2, 180, name, textColorMark, true);
+		inventory->_vm->res->font7.render(dst, (kScreenWidth - w) / 2, 180, name, textColorMark, true);
 	}
 }
 

@@ -69,8 +69,8 @@ enum {
 	kDebugSurface   = (1 << 10)
 };
 
-const uint16 screenWidth = 320;
-const uint16 screenHeight = 200;
+const uint16 kScreenWidth = 320;
+const uint16 kScreenHeight = 200;
 
 class TeenAgentEngine : public Engine {
 public:

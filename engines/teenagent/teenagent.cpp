@@ -100,8 +100,8 @@ bool TeenAgentEngine::trySelectedObject() {
 	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, _dstObject->id);
 
 	//mouse time challenge hack:
-	if ((res->dseg.get_byte(dsAddr_timedCallbackState) == 1 && inv->id == invItemRock && _dstObject->id == 5) ||
-	    (res->dseg.get_byte(dsAddr_timedCallbackState) == 2 && inv->id == invItemSuperGlue && _dstObject->id == 5)) {
+	if ((res->dseg.get_byte(dsAddr_timedCallbackState) == 1 && inv->id == kInvItemRock && _dstObject->id == 5) ||
+	    (res->dseg.get_byte(dsAddr_timedCallbackState) == 2 && inv->id == kInvItemSuperGlue && _dstObject->id == 5)) {
 		//putting rock into hole or superglue on rock
 		fnPutRockInHole();
 		return true;
@@ -305,7 +305,7 @@ bool TeenAgentEngine::showCDLogo() {
 	if (!cdlogo.exists("cdlogo.res") || !cdlogo.open("cdlogo.res"))
 		return true;
 
-	const uint bgSize = screenWidth * screenHeight;
+	const uint bgSize = kScreenWidth * kScreenHeight;
 	const uint paletteSize = 3 * 256;
 
 	byte *bg = (byte *)malloc(bgSize);
@@ -325,7 +325,7 @@ bool TeenAgentEngine::showCDLogo() {
 		palette[c] *= 4;
 
 	_system->getPaletteManager()->setPalette(palette, 0, 256);
-	_system->copyRectToScreen(bg, screenWidth, 0, 0, screenWidth, screenHeight);
+	_system->copyRectToScreen(bg, kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 	_system->updateScreen();
 
 	free(bg);
@@ -351,7 +351,7 @@ bool TeenAgentEngine::showLogo() {
 	if (!frame)
 		return true;
 
-	const uint bgSize = screenWidth * screenHeight;
+	const uint bgSize = kScreenWidth * kScreenHeight;
 	const uint paletteSize = 3 * 256;
 
 	byte *bg = (byte *)malloc(bgSize);
@@ -384,7 +384,7 @@ bool TeenAgentEngine::showLogo() {
 					return r > 0 ? true : false;
 				}
 			}
-			_system->copyRectToScreen(bg, screenWidth, 0, 0, screenWidth, screenHeight);
+			_system->copyRectToScreen(bg, kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 
 			frame.reset(logo.getStream(i));
 			if (!frame) {
@@ -468,7 +468,7 @@ bool TeenAgentEngine::showMetropolis() {
 
 		Graphics::Surface *surface = _system->lockScreen();
 		if (logo_y > 0) {
-			surface->fillRect(Common::Rect(0, 0, screenWidth, logo_y), 0);
+			surface->fillRect(Common::Rect(0, 0, kScreenWidth, logo_y), 0);
 		}
 
 		{
@@ -532,7 +532,7 @@ Common::Error TeenAgentEngine::run() {
 
 	Common::EventManager *_event = _system->getEventManager();
 
-	initGraphics(screenWidth, screenHeight, false);
+	initGraphics(kScreenWidth, kScreenHeight, false);
 	console = new Console(this);
 
 	scene = new Scene(this);
@@ -672,7 +672,7 @@ Common::Error TeenAgentEngine::run() {
 					name += currentObject->name;
 
 				uint w = res->font7.render(NULL, 0, 0, name, textColorMark);
-				res->font7.render(surface, (screenWidth - w) / 2, 180, name, textColorMark, true);
+				res->font7.render(surface, (kScreenWidth - w) / 2, 180, name, textColorMark, true);
 #if 0
 				if (currentObject) {
 					currentObject->rect.render(surface, 0x80);
@@ -791,7 +791,7 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 		event.message += "\n";
 	}
 	int w = res->font8.render(NULL, 0, 0, event.message, textColorCredits);
-	event.dst.x = (screenWidth - w) / 2;
+	event.dst.x = (kScreenWidth - w) / 2;
 	event.timer = timer;
 	scene->push(event);
 }
@@ -799,13 +799,13 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 void TeenAgentEngine::displayCredits() {
 	SceneEvent event(SceneEvent::kCredits);
 	event.message = parseMessage(dsAddr_finalCredits7);
-	event.dst.y = screenHeight;
+	event.dst.y = kScreenHeight;
 
 	int lines = 1;
 	for (uint i = 0; i < event.message.size(); ++i)
 		if (event.message[i] == '\n')
 			++lines;
-	event.dst.x = (screenWidth - res->font7.render(NULL, 0, 0, event.message, textColorCredits)) / 2;
+	event.dst.x = (kScreenWidth - res->font7.render(NULL, 0, 0, event.message, textColorCredits)) / 2;
 	event.timer = 11 * lines - event.dst.y + 22;
 	debug(2, "credits = %s", event.message.c_str());
 	scene->push(event);
