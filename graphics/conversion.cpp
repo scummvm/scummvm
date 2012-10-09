@@ -31,9 +31,9 @@ namespace Graphics {
 namespace {
 
 template<typename SrcColor, typename DstColor, bool backward>
-FORCEINLINE void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
-                              const PixelFormat &srcFmt, const PixelFormat &dstFmt,
-                              const uint srcDelta, const uint dstDelta) {
+inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
+                           const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+                           const uint srcDelta, const uint dstDelta) {
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
 			const uint32 color = *(const SrcColor *)src;
@@ -61,9 +61,9 @@ FORCEINLINE void crossBlitLogic(byte *dst, const byte *src, const uint w, const 
 }
 
 template<typename DstColor, bool backward>
-FORCEINLINE void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint w, const uint h,
-                                          const PixelFormat &srcFmt, const PixelFormat &dstFmt,
-                                          const uint srcDelta, const uint dstDelta) {
+inline void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint w, const uint h,
+                                     const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+                                     const uint srcDelta, const uint dstDelta) {
 	uint32 color;
 	byte r, g, b, a;
 	uint8 *col = (uint8 *)&color;
