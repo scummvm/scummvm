@@ -844,8 +844,11 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 			_vm->_globals.Bank[idx].field1A = v8;
 			
 			Common::String ofsFilename = _vm->_globals.Bank[idx].filename1;
-			while (ofsFilename.lastChar() != '.')
+			char ch;
+			do {
+				ch = ofsFilename.lastChar();
 				ofsFilename.deleteLastChar();
+			} while (ch != '.');
 			ofsFilename += ".OFS";
 			
 			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, ofsFilename);
