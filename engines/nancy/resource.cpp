@@ -146,6 +146,8 @@ void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain) {
 	name[8] = 0;
 	info.name = name;
 
+	f.skip(2); // Index of this block
+
 	readCifInfo20(f, info, true);
 
 	chain.next = f.readUint16LE();
