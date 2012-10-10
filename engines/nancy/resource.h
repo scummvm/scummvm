@@ -64,18 +64,22 @@ public:
 	~ResourceManager();
 
 	void initialize();
-	bool loadCifTree(const Common::String filename);
-	byte *loadResource(const Common::String name, uint &size);
-	bool loadImage(const Common::String name, Graphics::Surface &surf);
+	bool loadCifTree(const Common::String &name, const Common::String &ext);
+	bool loadImage(const Common::String &treeName, const Common::String &name, Graphics::Surface &surf);
+	byte *loadData(const Common::String &treeName, const Common::String &name, uint &size);
 
 	// Debugger functions
-	void listResources(Common::Array<Common::String> &list, uint type);
-	Common::String getResourceDesc(const Common::String name);
+	void list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type);
+	byte *loadCif(const Common::String &treeName, const Common::String &name, uint &size);
+	Common::String getCifDescription(const Common::String &treeName, const Common::String &name);
 private:
 	NancyEngine *_vm;
-	const CifTree *_cifTree;
 
-	byte *decompress(const CifInfo &res, uint &size);
+	byte *getCifData(const Common::String &treeName, const Common::String &name, uint *size = 0);
+	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info);
+	const CifTree *findCifTree(const Common::String &name) const;
+
+	Common::Array<const CifTree *> _cifTrees;
 };
 
 } // End of namespace Nancy
