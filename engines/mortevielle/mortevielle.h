@@ -157,7 +157,7 @@ static const int _actionMenu[12] = { OPCODE_NONE,
 26  "A photograph$",
 27  "The coat of arms$",
 */
-enum places {
+enum Places {
 	OWN_ROOM = 0,     GREEN_ROOM = 1,   PURPLE_ROOM = 2,     TOILETS = 3,      DARKBLUE_ROOM = 4,
 	BLUE_ROOM = 5,    RED_ROOM = 6,     BATHROOM = 7,        GREEN_ROOM2 = 8,  ROOM9 = 9,
 	DINING_ROOM = 10, BUREAU = 11,      KITCHEN = 12,        ATTIC = 13,       CELLAR = 14,
@@ -173,7 +173,7 @@ struct nhom {
 	byte _hom[4];
 };
 
-struct t_pcga {
+struct CgaPalette {
 	byte _p;
 	nhom _a[16];
 };
@@ -260,12 +260,12 @@ private:
 	int  _startHour;
 	int  _endHour;
 	Common::Point _stdPal[91][17];
-	t_pcga _cgaPal[91];
+	CgaPalette _cgaPal[91];
 
-	int  _c_zzz;
-	int  _ment;
-	int  _iouv;
-	int  _dobj;
+	int  _x26KeyCount;
+	int  _roomDoorId;
+	int  _openObjCount;
+	int  _takeObjCount;
 	int  _num;
 	int  _cs;
 	int  _prebru;

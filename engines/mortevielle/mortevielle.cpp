@@ -111,7 +111,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_newGraphicalDevice = -1;
 	_place = -1;
 
-	_c_zzz = -1;
+	_x26KeyCount = -1;
 	_caff = -1;
 	_day = 0;
 
@@ -207,7 +207,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 	loadCFIPH();
 	loadCFIEC();
 	decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
-	_c_zzz = 1;
+	_x26KeyCount = 1;
 	init_nbrepm();
 	initMouse();
 
@@ -587,7 +587,7 @@ void MortevielleEngine::mainGame() {
 	if (_reloadCFIEC)
 		loadCFIEC();
 
-	for (_crep = 1; _crep <= _c_zzz; ++_crep)
+	for (_crep = 1; _crep <= _x26KeyCount; ++_crep)
 		decodeNumber(&_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
 
 	loadBRUIT5();
@@ -1679,8 +1679,8 @@ void MortevielleEngine::startMusicOrSpeech(int so) {
  */
 void MortevielleEngine::loseGame() {
 	initouv();
-	_ment = 0;
-	_iouv = 0;
+	_roomDoorId = OWN_ROOM;
+	_openObjCount = 0;
 	_mchai = 0;
 	_menu.unsetSearchMenu();
 	if (!_blo)
@@ -1892,14 +1892,14 @@ void MortevielleEngine::gameLoaded() {
 	_endHour = 0;
 	_cs = 0;
 	_is = 0;
-	_ment = 0;
+	_roomDoorId = OWN_ROOM;
 	_syn = true;
 	_heroSearching = true;
 	_mchai = 0;
 	_manorDistance = 0;
 	initouv();
-	_iouv = 0;
-	_dobj = 0;
+	_openObjCount = 0;
+	_takeObjCount = 0;
 	affrep();
 	_hintPctMessage = getString(580);
 
@@ -3393,7 +3393,7 @@ void MortevielleEngine::affrep() {
  * @remarks	Originally called 'tsort'
  */
 void MortevielleEngine::exitRoom() {
-	if ((_iouv > 0) && (_coreVar._currPlace != OWN_ROOM)) {
+	if ((_openObjCount > 0) && (_coreVar._currPlace != OWN_ROOM)) {
 		if (_coreVar._faithScore < 50)
 			_coreVar._faithScore += 2;
 		else
@@ -3402,8 +3402,8 @@ void MortevielleEngine::exitRoom() {
 
 	for (int cx = 1; cx <= 7; ++cx)
 		_touv[cx] = chr(0);
-	_ment = 0;
-	_iouv = 0;
+	_roomDoorId = OWN_ROOM;
+	_openObjCount = 0;
 	_mchai = 0;
 	resetRoomVariables(_coreVar._currPlace);
 }
@@ -3523,7 +3523,7 @@ L1:
 		else
 			_speechManager.startSpeech(4, 4, 1);
 
-		if (_iouv == 0)
+		if (_openObjCount == 0)
 			_coreVar._faithScore += 2;
 		else if (_coreVar._faithScore < 50)
 			_coreVar._faithScore += 4;
@@ -3568,7 +3568,7 @@ void MortevielleEngine::tsuiv() {
 		tbcl = _tabdon[cl];
 	} while ((tbcl == 0) && (_cs <= 9));
 
-	if ((tbcl != 0) && (_cs < 11)) {
+	if ((tbcl != 0) && (_cs < 11)) { // 2nd check useless as _cs is <= 10
 		++_is;
 		_caff = tbcl;
 		_crep = _caff + 400;
@@ -3759,9 +3759,9 @@ int MortevielleEngine::testou() {
 		_soundOff = !_soundOff;
 		break;
 	case '\26' :
-		if ((_c_zzz == 1) || (_c_zzz == 2)) {
+		if ((_x26KeyCount == 1) || (_x26KeyCount == 2)) {
 			decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
-			++_c_zzz;
+			++_x26KeyCount;
 
 			return 61;
 		}

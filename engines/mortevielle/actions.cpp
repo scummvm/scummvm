@@ -72,9 +72,9 @@ void MortevielleEngine::fctMove() {
 			_coreVar._currPlace = ROOM26;
 
 		if ((_num > 1) && (_num < 6))
-			_ment = _num - 1;
+			_roomDoorId = _num - 1;
 		else if (_num > 7)
-			_ment = _num - 3;
+			_roomDoorId = _num - 3;
 
 		if (_num != 6)
 			affrep();
@@ -207,10 +207,10 @@ void MortevielleEngine::fctTake() {
 			} else {
 				_tabdon[kAcha + ((_mchai - 1) * 10) + _cs - 1] = 0;
 				tsuiv();
-				++_dobj;
-				if (_dobj > 6) {
+				++_takeObjCount;
+				if (_takeObjCount > 6) {
 					_coreVar._faithScore += 2;
-					_dobj = 0;
+					_takeObjCount = 0;
 				}
 			}
 		}
@@ -583,7 +583,7 @@ void MortevielleEngine::fctOpen() {
 		ecr3(getEngineString(S_OPEN));
 
 	if (_caff == ROOM26) {
-		if (_ment != 0) {
+		if (_roomDoorId != OWN_ROOM) {
 			_msg[4] = OPCODE_ENTER;
 			_syn = true;
 		} else
@@ -604,7 +604,7 @@ void MortevielleEngine::fctOpen() {
 	if (_num != 0) {
 		if (_currBitIndex > 0)
 			_coreVar._faithScore += 2;
-		++_iouv;
+		++_openObjCount;
 		int tmpPlace = 0;
 		do {
 			++tmpPlace;
@@ -880,9 +880,9 @@ void MortevielleEngine::fctClose() {
 				aniof(2, _num);
 				_crep = 998;
 				_touv[cx] = chr(0);
-				--_iouv;
-				if (_iouv < 0)
-					_iouv = 0;
+				--_openObjCount;
+				if (_openObjCount < 0)
+					_openObjCount = 0;
 				int chai = 9999;
 				rechai(chai);
 				if (_mchai == chai)
@@ -924,8 +924,8 @@ void MortevielleEngine::fctKnock() {
 	if (_coreVar._currPlace == ROOM26) {
 		int rand = (getRandomNumber(0, 8)) - 4;
 		_speechManager.startSpeech(11, rand, 1);
-		int p = getPresenceStats(rand, _coreVar._faithScore, _ment);
-		int l = _ment;
+		int p = getPresenceStats(rand, _coreVar._faithScore, _roomDoorId);
+		int l = _roomDoorId;
 		if (l != OWN_ROOM) {
 			if (p != -500) {
 				if (rand > p)
@@ -938,7 +938,7 @@ void MortevielleEngine::fctKnock() {
 				getKnockAnswer();
 		}
 
-		if (_ment == GREEN_ROOM2)
+		if (_roomDoorId == GREEN_ROOM2)
 			_crep = 190;
 	}
 }
@@ -1048,8 +1048,8 @@ void MortevielleEngine::fctListen() {
 		if (_currBitIndex != 0)
 			++_coreVar._faithScore;
 		int rand;
-		int p = getPresenceStats(rand, _coreVar._faithScore, _ment);
-		int l = _ment;
+		int p = getPresenceStats(rand, _coreVar._faithScore, _roomDoorId);
+		int l = _roomDoorId;
 		if (l != OWN_ROOM) {
 			if (p != -500) {
 				if (rand > p)
@@ -1126,17 +1126,17 @@ void MortevielleEngine::fctEnter() {
 		_menu.setDestinationText(_coreVar._currPlace);
 	} else if (_coreVar._currPlace == LANDING)
 		showMoveMenuAlert();
-	else if (_ment == 0)
+	else if (_roomDoorId == OWN_ROOM)
 		_crep = 997;
-	else if ((_ment == 9) && (_coreVar._selectedObjectId != 136)) {
+	else if ((_roomDoorId == ROOM9) && (_coreVar._selectedObjectId != 136)) {
 			_crep = 189;
 			_coreVar._teauto[8] = '*';
 	} else {
 		int z = 0;
 		if (!_blo)
-			z = getPresence(_ment);
+			z = getPresence(_roomDoorId);
 		if (z != 0) {
-			if ((_ment == 3) || (_ment == 7))
+			if ((_roomDoorId == TOILETS) || (_roomDoorId == BATHROOM))
 				_crep = 179;
 			else {
 				_x = (getRandomNumber(0, 10)) - 5;
@@ -1149,26 +1149,26 @@ void MortevielleEngine::fctEnter() {
 				_msg[3] = MENU_DISCUSS;
 				_msg[4] = _menu._discussMenu[_x];
 				_syn = true;
-				if (_ment == 9) {
+				if (_roomDoorId == ROOM9) {
 					_col = true;
 					_caff = 70;
 					afdes();
 					repon(2, _caff);
 				} else
 					_col = false;
-				resetRoomVariables(_ment);
-				_ment = 0;
+				resetRoomVariables(_roomDoorId);
+				_roomDoorId = OWN_ROOM;
 			}
 		} else {
 			_x = (getRandomNumber(0, 10)) - 5;
 			_speechManager.startSpeech(7, _x, 1);
 			aniof(1, 1);
 
-			_coreVar._currPlace = _ment;
+			_coreVar._currPlace = _roomDoorId;
 			affrep();
 			resetRoomVariables(_coreVar._currPlace);
 			_menu.setDestinationText(_coreVar._currPlace);
-			_ment = 0;
+			_roomDoorId = OWN_ROOM;
 			_savedBitIndex = 0;
 			_currBitIndex = 0;
 		}
@@ -1460,7 +1460,7 @@ void MortevielleEngine::fctDiscuss() {
 			if (_col) {
 				_col = false;
 				_coreVar._currPlace = 15;
-				if (_iouv > 0)
+				if (_openObjCount > 0)
 					max = 8;
 				else
 					max = 4;
