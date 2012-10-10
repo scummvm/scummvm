@@ -3979,9 +3979,6 @@ int ObjectsManager::Traduction(byte *a1) {
 	int v58; 
 	int v59; 
 	int v60; 
-	int v61;
-	int v62; 
-	int v63; 
 	int v65;
 	int v66; 
 	int v67; 
@@ -3994,12 +3991,8 @@ int ObjectsManager::Traduction(byte *a1) {
 	int v74;
 	int v75; 
 	int v76; 
-	char v77[12]; 
+	Common::String v77;
 	Common::String s; 
-	char v79; 
-	char v80;
-	char v81;
-	char v82[16]; 
 
 	v1 = 0;
 	v70 = 0;
@@ -6054,65 +6047,48 @@ LABEL_1141:
 		}
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 69 && *(a1 + 3) == 73 && *(a1 + 4) == 70)
+	if (*(a1 + 2) == 'E' && *(a1 + 3) == 'I' && *(a1 + 4) == 'F')
 		v1 = 4;
-	if (*(a1 + 2) == 86 && *(a1 + 3) == 65 && *(a1 + 4) == 76) {
+	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'A' && *(a1 + 4) == 'L') {
 		v1 = 1;
 		_vm->_globals.SAUVEGARDE->data[READ_LE_UINT16(a1 + 5)] = READ_LE_UINT16(a1 + 7);
 	}
-	if (*(a1 + 2) == 65 && *(a1 + 3) == 68 && *(a1 + 4) == 68) {
+	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'D' && *(a1 + 4) == 'D') {
 		v1 = 1;
 		_vm->_globals.SAUVEGARDE->data[READ_LE_UINT16(a1 + 5)] += *(a1 + 7);
 	}
-	if (*(a1 + 2) == 66 && *(a1 + 3) == 79 && *(a1 + 4) == 83) {
+	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'S') {
 		v1 = 1;
 		BOB_OFFSET(READ_LE_UINT16(a1 + 5), READ_LE_UINT16(a1 + 7));
 	}
-	if (*(a1 + 2) == 86 && *(a1 + 3) == 79 && *(a1 + 4) == 78) {
+	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'O' && *(a1 + 4) == 'N') {
 		VERBE_ON(READ_LE_UINT16(a1 + 5), READ_LE_UINT16(a1 + 7));
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 90 && *(a1 + 3) == 67 && *(a1 + 4) == 72) {
+	if (*(a1 + 2) == 'Z' && *(a1 + 3) == 'C' && *(a1 + 4) == 'H') {
 		_vm->_globals.ZONEP[READ_LE_UINT16(a1 + 5)].field12 = READ_LE_UINT16(a1 + 7);
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 74 && *(a1 + 3) == 85 && *(a1 + 4) == 77) {
+	if (*(a1 + 2) == 'J' && *(a1 + 3) == 'U' && *(a1 + 4) == 'M') {
 		v59 = READ_LE_UINT16(a1 + 7);
 		NVZONE = READ_LE_UINT16(a1 + 5);
 		NVVERBE = v59;
 		v1 = 6;
 	}
-	if (*(a1 + 2) == 83 && *(a1 + 3) == 79 && *(a1 + 4) == 85) {
+	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'U') {
 		v60 = READ_LE_UINT16(a1 + 5);
 		memset(&s, 0, 0x13u);
-		memset(v77, 0, 5u);
-		sprintf(v77, "%d", v60);
-		s = 83;
-		v79 = 79;
-		v80 = 85;
-		v81 = 78;
-		v82[0] = 68;
-		v61 = 5;
-		v62 = 0;
-		do
-			*(&s + v61++) = v77[v62++];
-		while (v77[v62]);
-		v63 = v61;
-		*(&s + v63) = 46;
-		*(&v79 + v63) = 87;
-		*(&v80 + v63) = 65;
-		*(&v81 + v63) = 86;
-		v82[v63] = 0;
+		
+		v77 = Common::String::format("SOUND%d.WAV", v60);
 		_vm->_soundManager.PLAY_SOUND(s);
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 86 && *(a1 + 3) == 79 && *(a1 + 4) == 70) {
+	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
 		VERBE_OFF(READ_LE_UINT16(a1 + 5), READ_LE_UINT16(a1 + 7));
 		v1 = 1;
 	}
-	if (*(a1 + 2) == 73 && *(a1 + 3) == 73) {
-		if (*(a1 + 4) == 70)
-			v1 = 3;
+	if (*(a1 + 2) == 'I' && *(a1 + 3) == 'I' && *(a1 + 4) == 'F') {
+		v1 = 3;
 	}
 
 	return v1;
