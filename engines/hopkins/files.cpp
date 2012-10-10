@@ -305,7 +305,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	do {
 		Common::String name = (const char *)ptr + offsetVal;
     
-		if (name == file) {
+		if (name == filename) {
 			// Found entry for file, so get it's details from the catalogue entry
 			const byte *pData = ptr + offsetVal;
 			_vm->_globals.CAT_POSI = READ_LE_UINT32(pData + 15);
