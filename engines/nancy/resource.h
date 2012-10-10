@@ -57,7 +57,6 @@ public:
 		uint16 width, pitch, height;
 		byte depth; // Bit depth
 		uint32 compressedSize, size;
-		uint32 dataOffset;
 	};
 
 	ResourceManager(NancyEngine *vm);
@@ -75,7 +74,7 @@ public:
 private:
 	NancyEngine *_vm;
 
-	byte *getCifData(const Common::String &treeName, const Common::String &name, uint *size = 0);
+	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = 0);
 	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info);
 	const CifTree *findCifTree(const Common::String &name) const;
 
