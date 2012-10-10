@@ -387,19 +387,18 @@ static const AsCommonProjectorItem kAsCommonProjectorItems[] = {
 AsCommonProjector::AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Sprite *asPipe)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _asPipe(asPipe) {
 
-	_asProjectorItem = &kAsCommonProjectorItems[getGlobalVar(0x04A105B3)];
+	_asProjectorItem = &kAsCommonProjectorItems[getGlobalVar(V_PROJECTOR_LOCATION)];
 	// TODO createSurface3(990, dword_4B26D8);
 	createSurface(990, 640, 480); //TODO: Remeove once the line above is done
 	startAnimation(0x10E3042B, 0, -1);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsCommonProjector::handleMessage);
-	_x = getGlobalVar(0x04A10F33) * 108 + _asProjectorItem->point.x;
+	_x = getGlobalVar(V_PROJECTOR_SLOT) * 108 + _asProjectorItem->point.x;
 	_lockedInSlot = true;
 	moveProjector();
 	setDoDeltaX(1);
-	if ((int8)getGlobalVar(0x04A10F33) == _asProjectorItem->lockSlotIndex) {
+	if ((int8)getGlobalVar(V_PROJECTOR_SLOT) == _asProjectorItem->lockSlotIndex)
 		stStayLockedInSlot();
-	}
 	loadSound(2, 0xC8C2507C);
 }
 
@@ -415,8 +414,8 @@ uint32 AsCommonProjector::handleMessage(int messageNum, const MessageParam &para
 		messageResult = 1;
 		break;
 	case 0x4807:
-		setGlobalVar(0x04A10F33, (_x - _asProjectorItem->point.x) / 108);
-		if ((int8)getGlobalVar(0x04A10F33) == _asProjectorItem->lockSlotIndex) {
+		setGlobalVar(V_PROJECTOR_SLOT, (_x - _asProjectorItem->point.x) / 108);
+		if ((int8)getGlobalVar(V_PROJECTOR_SLOT) == _asProjectorItem->lockSlotIndex) {
 			stStartLockedInSlot();
 		} else {
 			stIdle();
@@ -424,20 +423,20 @@ uint32 AsCommonProjector::handleMessage(int messageNum, const MessageParam &para
 		break;
 	case 0x480B:
 		if (param.asInteger() != 1) {
-			if ((int8)getGlobalVar(0x04A10F33) < _asProjectorItem->maxSlotCount) {
-				incGlobalVar(0x04A10F33, 1);
+			if ((int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount) {
+				incGlobalVar(V_PROJECTOR_SLOT, 1);
 			}
-		} else if (getGlobalVar(0x04A10F33) > 0) {
-			incGlobalVar(0x04A10F33, -1);
+		} else if (getGlobalVar(V_PROJECTOR_SLOT) > 0) {
+			incGlobalVar(V_PROJECTOR_SLOT, -1);
 		}
 		stMoving();
 		break;
 	case 0x480C:
 		// Check if the projector can be moved
 		if (param.asInteger() != 1) {
-			messageResult = (int8)getGlobalVar(0x04A10F33) < _asProjectorItem->maxSlotCount ? 1 : 0;
+			messageResult = (int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount ? 1 : 0;
 		} else {
-			messageResult = getGlobalVar(0x04A10F33) > 0 ? 1 : 0;
+			messageResult = getGlobalVar(V_PROJECTOR_SLOT) > 0 ? 1 : 0;
 		}
 		break;
 	case 0x482A:
@@ -471,20 +470,20 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 		break;
 	case 0x480B:
 		if (param.asInteger() != 1) {
-			if ((int8)getGlobalVar(0x04A10F33) < _asProjectorItem->maxSlotCount) {
-				incGlobalVar(0x04A10F33, 1);
+			if ((int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount) {
+				incGlobalVar(V_PROJECTOR_SLOT, 1);
 			}
-		} else if (getGlobalVar(0x04A10F33) > 0) {
-			incGlobalVar(0x04A10F33, -1);
+		} else if (getGlobalVar(V_PROJECTOR_SLOT) > 0) {
+			incGlobalVar(V_PROJECTOR_SLOT, -1);
 		}
 		stTurnToFront();
 		break;
 	case 0x480C:
 		// Check if the projector can be moved
 		if (param.asInteger() != 1) {
-			messageResult = (int8)getGlobalVar(0x04A10F33) < _asProjectorItem->maxSlotCount ? 1 : 0;
+			messageResult = (int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount ? 1 : 0;
 		} else {
-			messageResult = getGlobalVar(0x04A10F33) > 0 ? 1 : 0;
+			messageResult = getGlobalVar(V_PROJECTOR_SLOT) > 0 ? 1 : 0;
 		}
 		break;
 	case 0x480F:
@@ -517,14 +516,14 @@ void AsCommonProjector::suMoving() {
 		_x = _klayman->getX() + 100;
 	moveProjector();
 	if (_beforeMoveX == _x) {
-		if (getGlobalVar(0x04A10F33) == 0 && _asProjectorItem->leftBorderLeaves != 0) {
+		if (getGlobalVar(V_PROJECTOR_SLOT) == 0 && _asProjectorItem->leftBorderLeaves != 0) {
 			sendMessage(_parentScene, 0x1019, 0);
-			incGlobalVar(0x04A105B3, -1);
-			setGlobalVar(0x04A10F33, kAsCommonProjectorItems[getGlobalVar(0x04A105B3)].maxSlotCount);
-		} else if ((int8)getGlobalVar(0x04A10F33) == _asProjectorItem->maxSlotCount && _asProjectorItem->rightBorderLeaves != 0) {
+			incGlobalVar(V_PROJECTOR_LOCATION, -1);
+			setGlobalVar(V_PROJECTOR_SLOT, kAsCommonProjectorItems[getGlobalVar(V_PROJECTOR_LOCATION)].maxSlotCount);
+		} else if ((int8)getGlobalVar(V_PROJECTOR_SLOT) == _asProjectorItem->maxSlotCount && _asProjectorItem->rightBorderLeaves != 0) {
 			sendMessage(_parentScene, 0x1019, 1);
-			incGlobalVar(0x04A105B3, +1);
-			setGlobalVar(0x04A10F33, 0);
+			incGlobalVar(V_PROJECTOR_LOCATION, +1);
+			setGlobalVar(V_PROJECTOR_SLOT, 0);
 		}
 	}
 	Sprite::processDelta();
@@ -579,7 +578,7 @@ void AsCommonProjector::stIdle() {
 }
 
 void AsCommonProjector::stMoving() {
-	_beforeMoveX = getGlobalVar(0x04A10F33) * 108 + _asProjectorItem->point.x;
+	_beforeMoveX = getGlobalVar(V_PROJECTOR_SLOT) * 108 + _asProjectorItem->point.x;
 	startAnimation(0x14A10137, 0, -1);
 	SetSpriteUpdate(&AsCommonProjector::suMoving);
 	SetMessageHandler(&AsCommonProjector::handleMessage);
@@ -604,7 +603,7 @@ void AsCommonProjector::stStartProjecting() {
 	SetMessageHandler(&AsCommonProjector::hmAnimation);
 	SetSpriteUpdate(NULL);
 	NextState(&AsCommonProjector::stLockedInSlot);
-	setGlobalVar(0x12A10DB3, 1);
+	setGlobalVar(V_PROJECTOR_ACTIVE, 1);
 	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->addSound(0x05331081, 0xCE428854);
 	_vm->_soundMan->playSoundLooping(0xCE428854);
@@ -622,13 +621,13 @@ void AsCommonProjector::stStopProjecting() {
 	SetSpriteUpdate(NULL);
 	SetMessageHandler(&AsCommonProjector::hmAnimation);
 	NextState(&AsCommonProjector::stStayLockedInSlot);
-	setGlobalVar(0x12A10DB3, 0);
+	setGlobalVar(V_PROJECTOR_ACTIVE, 0);
 	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->deleteSound(0xCE428854);
 }
 
 void AsCommonProjector::stTurnToFront() {
-	_beforeMoveX = getGlobalVar(0x04A10F33) * 108 + _asProjectorItem->point.x;
+	_beforeMoveX = getGlobalVar(V_PROJECTOR_SLOT) * 108 + _asProjectorItem->point.x;
 	startAnimation(0x22CB4A33, 0, -1);
 	SetSpriteUpdate(&AsCommonProjector::suMoving);
 	SetMessageHandler(&AsCommonProjector::hmAnimation);
@@ -636,8 +635,8 @@ void AsCommonProjector::stTurnToFront() {
 }
 
 void AsCommonProjector::stStartSuckedIn() {
-	setGlobalVar(0x04A105B3, 4);
-	setGlobalVar(0x04A10F33, 0);
+	setGlobalVar(V_PROJECTOR_LOCATION, 4);
+	setGlobalVar(V_PROJECTOR_SLOT, 0);
 	SetSpriteUpdate(&AsCommonProjector::stSuckedIn);
 	SetMessageHandler(&Sprite::handleMessage);
 	startAnimation(0x708D4712, 0, -1);
@@ -661,7 +660,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x980F3124, 0x12192892, 100, 0);
 	_asPipe = insertSprite<AsScene1401Pipe>();
 
-	if (!getGlobalVar(0x01023818)) {
+	if (!getGlobalVar(V_MOUSE_SUCKED_IN)) {
 		_asMouse = insertSprite<AsScene1401Mouse>();
 		_asCheese = insertSprite<AsScene1401Cheese>();
 	}
@@ -691,15 +690,15 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 		_sprite1->setVisible(false);
 	}
 
-	if (getGlobalVar(0x04A105B3) == 2) {
+	if (getGlobalVar(V_PROJECTOR_LOCATION) == 2) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, _asPipe);
 		_vm->_collisionMan->addSprite(_asProjector);
-		if (getGlobalVar(0x04A10F33) == 6) {
+		if (getGlobalVar(V_PROJECTOR_SLOT) == 6) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
 			_klayman->processDelta();
 			setMessageList(0x004B6670);
-		} else if (getGlobalVar(0x04A10F33) == 0) {
+		} else if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() - 100);
 			_klayman->processDelta();
@@ -754,10 +753,10 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x480B:
 		if (sender == _ssFloorButton) {
 			sendMessage(_asPipe, 0x2000, 0);
-			if (!getGlobalVar(0x01023818)) {
+			if (!getGlobalVar(V_MOUSE_SUCKED_IN)) {
 				sendMessage(_asMouse, 0x4839, 0);
 				sendMessage(_asCheese, 0x4839, 0);
-				setGlobalVar(0x01023818, 1);
+				setGlobalVar(V_MOUSE_SUCKED_IN, 1);
 			}
 			if (_asProjector && _asProjector->getX() > 404 && _asProjector->getX() < 504)
 				sendMessage(_asProjector , 0x4839, 0);
@@ -880,7 +879,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssBridgePart2 = insertSprite<SsScene1402BridgePart>(0x10A02120, 1100);
 	_ssBridgePart3 = insertSprite<SsScene1402BridgePart>(0x60882BE0, 1100);
 
-	if (getGlobalVar(0x70A1189C))
+	if (getGlobalVar(V_MOUSE_PUZZLE_SOLVED))
 		setRectList(0x004B0C48);
 	else
 		setRectList(0x004B0C98);
@@ -888,7 +887,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		insertKlayman<KmScene1402>(377, 391);
 		setMessageList(0x004B0B48);
-		if (!getGlobalVar(0x70A1189C)) {
+		if (!getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 0);
 		}
 	} else if (which == 1) {
@@ -898,7 +897,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlayman<KmScene1402>(377, 391);
 		setMessageList(0x004B0B60);
 		_klayman->setDoDeltaX(1);
-		if (getGlobalVar(0x70A1189C)) {
+		if (getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 1);
 			clearRectList();
 			showMouse(false);
@@ -909,7 +908,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else {
 		insertKlayman<KmScene1402>(513, 391);
 		setMessageList(0x004B0B58);
-		if (!getGlobalVar(0x70A1189C)) {
+		if (!getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 2);
 			startShaking();
 		}
@@ -959,7 +958,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x00F43389) {
-			if (getGlobalVar(0x70A1189C)) {
+			if (getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
 				leaveScene(0);
 			} else {
 				clearRectList();
@@ -1301,7 +1300,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2000:
 		// The mouse got the cheese (nomnom)
-		setGlobalVar(0x70A1189C, 1);
+		setGlobalVar(V_MOUSE_PUZZLE_SOLVED, 1);
 		playSound(0, 0x68E25540);
 		showMouse(false);
 		_puzzleSolvedCountdown = 72;
@@ -1348,10 +1347,10 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	_klayman->setRepl(64, 0);
 
-	if (getGlobalVar(0x04A105B3) == 4) {
+	if (getGlobalVar(V_PROJECTOR_LOCATION) == 4) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
 		_vm->_collisionMan->addSprite(_asProjector);
-		if (getGlobalVar(0x04A10F33) == 4) {
+		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
 			_klayman->processDelta();
@@ -1425,8 +1424,8 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _asProjector(NULL), _asKey(NULL) {
 	
-	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
-		setGlobalVar(0x13382860, 5);
+	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
+		setGlobalVar(V_KEY3_LOCATION, 5);
 	
 	SetMessageHandler(&Scene1404::handleMessage);
 	_surfaceFlag = true;
@@ -1438,7 +1437,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addPalette(0x00801510, 0, 65, 0);
 	insertMouse433(0xB006BAC8);
 
-	if (getGlobalVar(0x13382860) == 5) {
+	if (getGlobalVar(V_KEY3_LOCATION) == 5) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 267, 411);
 		_vm->_collisionMan->addSprite(_asKey);
 	}
@@ -1455,7 +1454,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlayman<KmScene1404>(376, 406);
 		setMessageList(0x004B8C30);
 	} else if (which == 2) {
-		if (getGlobalVar(0xC0418A02)) {
+		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1404>(347, 406);
 			_klayman->setDoDeltaX(1);
 		} else {
@@ -1467,10 +1466,10 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B8C38);
 	}
 
-	if (getGlobalVar(0x04A105B3) == 3) {
+	if (getGlobalVar(V_PROJECTOR_LOCATION) == 3) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
 		_vm->_collisionMan->addSprite(_asProjector);
-		if (getGlobalVar(0x04A10F33) == 0) {
+		if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() - 100);
 			_klayman->processDelta();
@@ -1484,7 +1483,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1404::~Scene1404() {
-	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

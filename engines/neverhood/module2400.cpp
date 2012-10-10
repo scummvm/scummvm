@@ -389,8 +389,8 @@ Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_vm->gameModule()->initScene2401Vars();
 
-	setGlobalVar(0x4E0BE910, 1); //DEBUG! Enables water
-	setGlobalVar(0x45080C38, 1); //DEBUG! Gives the test tube
+	setGlobalVar(V_WATER_RUNNING, 1); //DEBUG! Enables water
+	setGlobalVar(V_HAS_TEST_TUBE, 1); //DEBUG! Gives the test tube
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2401::handleMessage);
@@ -454,8 +454,8 @@ void Scene2401::update() {
 					waterInside = true;
 			}
 			if (puzzleSolved) {
-				setGlobalVar(0x0045D021, 1);
-				setGlobalVar(0x86615030, 1);
+				setGlobalVar(V_NOTES_DOOR_UNLOCKED, 1);
+				setGlobalVar(V_NOTES_PUZZLE_SOLVED, 1);
 				sendMessage(_asDoor, 0x4808, 0);
 			} else if (waterInside) {
 				playPipeSound(0xD0431020);
@@ -495,20 +495,20 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 		else if (param.asInteger() == 0x02144CB1)
 			sendEntityMessage(_klayman, 0x1014, _ssFloorButton);
 		else if (param.asInteger() == 0x11C40840) {
-			if (getGlobalVar(0x0045D021) && sendMessage(_asDoor, 0x2004, 0)) {
+			if (getGlobalVar(V_NOTES_DOOR_UNLOCKED) && sendMessage(_asDoor, 0x2004, 0)) {
 				setMessageList(0x004B3090);
 			} else {
 				setMessageList(0x004B30B0);
 			}
 		} else if (param.asInteger() == 0x412722C0) {
-			if (_countdown2 > 0 && getGlobalVar(0x45080C38)) {
+			if (_countdown2 > 0 && getGlobalVar(V_HAS_TEST_TUBE)) {
 				_countdown2 = 144;
 				setMessageList(0x004B3020);
 			} else {
 				setMessageList(0x004B3050);
 			}
 		} else if (param.asInteger() == 0x21142050) {
-			if (_flag && _countdown1 == 0 && getGlobalVar(0x86615030) == 0) {
+			if (_flag && _countdown1 == 0 && getGlobalVar(V_NOTES_PUZZLE_SOLVED) == 0) {
 				setMessageList(0x004B2FA8);
 			} else {
 				setMessageList(0x004B2FC8);
@@ -542,7 +542,7 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _ssButton) {
 			_pipeStatus = 0;
 			_countdown1 = 8;
-		} else if (sender == _ssFloorButton && getGlobalVar(0x4E0BE910)) {
+		} else if (sender == _ssFloorButton && getGlobalVar(V_WATER_RUNNING)) {
 			_countdown2 = 144;
 			sendMessage(_asFlowingWater, 0x2002, 0);
 			playSound(0, 0xE1130324);
@@ -643,7 +643,7 @@ AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman)
 	_y = 210;
 	setDoDeltaX(1);
 
-	if (!getGlobalVar(0x92603A79)) {
+	if (!getGlobalVar(V_TV_JOKE_TOLD)) {
 		loadSound(0, 0x58208810);
 		_countdown1 = 48;
 		startAnimation(0x4919397A, 0, -1);
@@ -697,7 +697,7 @@ void AsScene2402TV::upFocusKlayman() {
 }
 
 void AsScene2402TV::stJokeFinished() {
-	setGlobalVar(0x92603A79, 1);
+	setGlobalVar(V_TV_JOKE_TOLD, 1);
 	startAnimation(0x050A0103, 0, -1);
 	_newStickFrameIndex = 0;
 	SetUpdateHandler(&AsScene2402TV::upFocusKlayman);
@@ -743,7 +743,7 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004AF7D8);
 	} else if (which == 2) {
 		insertKlayman<KmScene2402>(409, 404);
-		_klayman->setDoDeltaX(getGlobalVar(0xC0418A02) ? 1 : 0);
+		_klayman->setDoDeltaX(getGlobalVar(V_KLAYMAN_IS_DELTA_X) ? 1 : 0);
 		setMessageList(0x004AF888);
 	} else {
 		insertKlayman<KmScene2402>(0, 404);
@@ -760,7 +760,7 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene2402::~Scene2402() {
-	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
 }
 
 void Scene2402::update() {
@@ -921,8 +921,8 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite1, *tempSprite2;
 
-	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
-		setGlobalVar(0x13382860, 2);
+	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
+		setGlobalVar(V_KEY3_LOCATION, 2);
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2406::handleMessage);
@@ -930,7 +930,7 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B78C8);
 	insertMouse433(0xB03001A8);
 
-	if (getGlobalVar(0x13382860) == 2) {
+	if (getGlobalVar(V_KEY3_LOCATION) == 2) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 560, 409);
 		_vm->_collisionMan->addSprite(_asKey);
 	}
@@ -944,7 +944,7 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[0].x2 = tempSprite2->getDrawRect().x2();
 	_clipRects[0].y2 = 480;
 
-	if (getGlobalVar(0x18890C91)) {
+	if (getGlobalVar(V_SPIKES_RETRACTED)) {
 		setBackground(0x1A0B0304);
 		setPalette(0x1A0B0304);
 		tempSprite1 = insertStaticSprite(0x32923922, 1100);
@@ -998,7 +998,7 @@ uint32 Scene2406::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x41062804) {
-			if (getGlobalVar(0x18890C91)) {
+			if (getGlobalVar(V_SPIKES_RETRACTED)) {
 				setMessageList(0x004B7758);
 			} else {
 				setMessageList(0x004B7738);

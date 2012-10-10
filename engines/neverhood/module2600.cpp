@@ -68,7 +68,7 @@ void Module2600::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004B86C8, which);
 		break;
 	case 3:
-		if (getGlobalVar(0x0A310817)) {
+		if (getGlobalVar(V_CREATURE_ANGRY)) {
 			createNavigationScene(0x004B8758, which);
 		} else {
 			createNavigationScene(0x004B86F8, which);
@@ -88,31 +88,31 @@ void Module2600::createScene(int sceneNum, int which) {
 		_childObject = new Scene2609(_vm, this, which);
 		break;
 	case 1002:
-		if (getGlobalVar(0x40040831) == 1) {
+		if (getGlobalVar(V_FRUIT_COUNTING_INDEX) == 1) {
 			createSmackerScene(0x018C0404, true, true, false);
-		} else if (getGlobalVar(0x40040831) == 2) {
+		} else if (getGlobalVar(V_FRUIT_COUNTING_INDEX) == 2) {
 			createSmackerScene(0x018C0407, true, true, false);
 		} else {
 			createSmackerScene(0x818C0405, true, true, false);
 		}
-		if (getGlobalVar(0x40040831) >= 2) {
-			setGlobalVar(0x40040831, 0);
+		if (getGlobalVar(V_FRUIT_COUNTING_INDEX) >= 2) {
+			setGlobalVar(V_FRUIT_COUNTING_INDEX, 0);
 		} else {
-			incGlobalVar(0x40040831, +1);
+			incGlobalVar(V_FRUIT_COUNTING_INDEX, +1);
 		}
 		break;
 	case 1003:
 		createSmackerScene(0x001C0007, true, true, false);
 		break;
 	case 1006:
-		if (getGlobalVar(0x4E0BE910)) {
+		if (getGlobalVar(V_WATER_RUNNING)) {
 			createSmackerScene(0x049A1181, true, true, false);
 		} else {
 			createSmackerScene(0x04981181, true, true, false);
 		}
 		break;
 	case 1008:
-		if (getGlobalVar(0x4E0BE910)) {
+		if (getGlobalVar(V_WATER_RUNNING)) {
 			createSmackerScene(0x42B80941, true, true, false);
 		} else {
 			createSmackerScene(0x42980941, true, true, false);
@@ -153,7 +153,7 @@ void Module2600::updateScene() {
 			break;
 		case 3:
 			if (_moduleResult == 0) {
-				if (getGlobalVar(0x0A310817)) {
+				if (getGlobalVar(V_CREATURE_ANGRY)) {
 					createScene(4, 0);
 				} else {
 					createScene(1003, -1);
@@ -161,10 +161,10 @@ void Module2600::updateScene() {
 			} else if (_moduleResult == 2) {
 				createScene(1, 1);
 			} else if (_moduleResult == 3) {
-				if (getGlobalVar(0x0A310817)) {
+				if (getGlobalVar(V_CREATURE_ANGRY)) {
 					createScene(4, 0);
 				} else {
-					setGlobalVar(0x0A310817, 1);
+					setGlobalVar(V_CREATURE_ANGRY, 1);
 					createScene(7, -1);
 				}
 			}
@@ -210,7 +210,7 @@ SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
 	
 	_spriteResource.load2(0x825A6923);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	if (!getGlobalVar(0x4E0BE910))
+	if (!getGlobalVar(V_WATER_RUNNING))
 		setVisible(false);
 
 	_drawRect.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -233,11 +233,11 @@ SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
 void SsScene2609Button::update() {
 	StaticSprite::update();
 	if (_countdown != 0 && (--_countdown == 0)) {
-		if (getGlobalVar(0x4E0BE910)) {
-			setGlobalVar(0x4E0BE910, 0);
+		if (getGlobalVar(V_WATER_RUNNING)) {
+			setGlobalVar(V_WATER_RUNNING, 0);
 			sendMessage(_parentScene, 0x2001, 0);
 		} else {
-			setGlobalVar(0x4E0BE910, 1);
+			setGlobalVar(V_WATER_RUNNING, 1);
 			sendMessage(_parentScene, 0x2002, 0);
 		}
 	}
@@ -249,7 +249,7 @@ uint32 SsScene2609Button::handleMessage(int messageNum, const MessageParam &para
 	case 0x1011:
 		if (_countdown == 0) {
 			sendMessage(_parentScene, 0x2000, 0);
-			if (getGlobalVar(0x4E0BE910)) {
+			if (getGlobalVar(V_WATER_RUNNING)) {
 				setVisible(false);
 				playSound(3);
 				playSound(1);
@@ -278,7 +278,7 @@ AsScene2609Water::AsScene2609Water(NeverhoodEngine *vm)
 	_vm->_soundMan->addSound(0x08526C36, 0xDC2769B0);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2609Water::handleMessage);
-	if (getGlobalVar(0x4E0BE910))
+	if (getGlobalVar(V_WATER_RUNNING))
 		sendMessage(this, 0x2002, 0);
 }
 

@@ -39,11 +39,11 @@ NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint
 	//DEBUG<<<
 
 	if (_navigationIndex < 0) {
-		_navigationIndex = (int)getGlobalVar(0x4200189E);
+		_navigationIndex = (int)getGlobalVar(V_NAVIGATION_INDEX);
 		if (_navigationIndex >= (int)_navigationList->size())
 			_navigationIndex = 0; 
 	}
-	setGlobalVar(0x4200189E, _navigationIndex);
+	setGlobalVar(V_NAVIGATION_INDEX, _navigationIndex);
 	
 	SetUpdateHandler(&NavigationScene::update);
 	SetMessageHandler(&NavigationScene::handleMessage);
@@ -173,7 +173,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 				if (_navigationIndex < 0)
 					_navigationIndex = _navigationList->size() - 1;
 			} while (!(*_navigationList)[_navigationIndex].interactive);
-			setGlobalVar(0x4200189E, _navigationIndex);
+			setGlobalVar(V_NAVIGATION_INDEX, _navigationIndex);
 		} else {
 			_vm->_screen->setSmackerDecoder(NULL);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);
@@ -190,7 +190,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 				if (_navigationIndex >= (int)_navigationList->size())
 					_navigationIndex = 0;
 			} while (!(*_navigationList)[_navigationIndex].interactive);
-			setGlobalVar(0x4200189E, _navigationIndex);
+			setGlobalVar(V_NAVIGATION_INDEX, _navigationIndex);
 		} else {
 			_vm->_screen->setSmackerDecoder(NULL);
 			sendMessage(_parentModule, 0x1009, _navigationIndex);

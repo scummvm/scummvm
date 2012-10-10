@@ -186,7 +186,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 	
-	setGlobalVar(0xE7498218, 1);
+	setGlobalVar(V_FELL_DOWN_HOLE, 1);
 	_vm->gameModule()->initScene3009Vars();
 
 	SetMessageHandler(&Scene1705::handleMessage);

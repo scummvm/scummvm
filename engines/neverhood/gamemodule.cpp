@@ -301,19 +301,20 @@ void GameModule::startup() {
 
 	// DEBUG>>>
 	/*
-	setGlobalVar(0x0A310817, 1);
+	setGlobalVar(V_SEEN_MUSIC_BOX, 1);
 	setGlobalVar(0x0A18CA33, 0);
 	setGlobalVar(0x0112090A, 0);
 	//setGlobalVar(0x000CF819, 1);
-	setGlobalVar(0x04A105B3, 2);
+	setGlobalVar(V_PROJECTOR_LOCATION, 2);
 	*/
+	//setGlobalVar(V_ENTRANCE_OPEN, 0);
+	//setGlobalVar(V_DOOR_SPIKES_OPEN, 1);
 	// <<<DEBUG
-
 
 #if 1
 	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 3;
-	createModule(1300, -1);
+	_vm->gameState().sceneNum = 5;
+	createModule(2200, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -358,7 +359,7 @@ void GameModule::startup() {
 	createModule(2700, -1);
 #endif
 #if 0
-	setGlobalVar(0x1860C990, 1); // DEBUG Make Klayman small
+	setGlobalVar(V_KLAYMAN_SMALL, 1); // DEBUG Make Klayman small
 	_vm->gameState().sceneNum = 2;
 	createModule(2800, -1);
 #endif
@@ -378,84 +379,84 @@ void GameModule::createModule(int moduleNum, int which) {
 	_moduleNum = moduleNum;
 	switch (_moduleNum) {
 	case 1000:
-		setGlobalVar(0x91080831, 0x03294419);
+		setGlobalVar(V_MODULE_NAME, 0x03294419);
 		_childObject = new Module1000(_vm, this, which);
 		break;
 	case 1100:
-		setGlobalVar(0x91080831, 0x0002C818);
+		setGlobalVar(V_MODULE_NAME, 0x0002C818);
 		_childObject = new Module1100(_vm, this, which);
 		break;
 	case 1200:
-		setGlobalVar(0x91080831, 0x00478311);
+		setGlobalVar(V_MODULE_NAME, 0x00478311);
 		_childObject = new Module1200(_vm, this, which);
 		break;
 	case 1300:
-		setGlobalVar(0x91080831, 0x0061C090);
+		setGlobalVar(V_MODULE_NAME, 0x0061C090);
 		_childObject = new Module1300(_vm, this, which);
 		break;
 	case 1400:
-		setGlobalVar(0x91080831, 0x00AD0012);
+		setGlobalVar(V_MODULE_NAME, 0x00AD0012);
 		_childObject = new Module1400(_vm, this, which);
 		break;
 	case 1500:
 		_someFlag1 = false;
-		setGlobalVar(0x91080831, 0x00F10114);
+		setGlobalVar(V_MODULE_NAME, 0x00F10114);
 		_childObject = new Module1500(_vm, this, which, true);
 		break;
 	case 1600:
-		setGlobalVar(0x91080831, 0x01A008D8);
+		setGlobalVar(V_MODULE_NAME, 0x01A008D8);
 		_childObject = new Module1600(_vm, this, which);
 		break;
 	case 1700:
-		setGlobalVar(0x91080831, 0x04212331);
+		setGlobalVar(V_MODULE_NAME, 0x04212331);
 		_childObject = new Module1700(_vm, this, which);
 		break;
 	case 1800:
-		setGlobalVar(0x91080831, 0x04A14718);
+		setGlobalVar(V_MODULE_NAME, 0x04A14718);
 		_childObject = new Module1800(_vm, this, which);
 		break;
 	case 1900:
-		setGlobalVar(0x91080831, 0x04E1C09C);
+		setGlobalVar(V_MODULE_NAME, 0x04E1C09C);
 		_childObject = new Module1900(_vm, this, which);
 		break;
 	case 2000:
-		setGlobalVar(0x91080831, 0x08250000);
+		setGlobalVar(V_MODULE_NAME, 0x08250000);
 		_childObject = new Module2000(_vm, this, which);
 		break;
 	case 2100:
-		setGlobalVar(0x91080831, 0x10A10C14);
+		setGlobalVar(V_MODULE_NAME, 0x10A10C14);
 		_childObject = new Module2100(_vm, this, which);
 		break;
 	case 2200:
-		setGlobalVar(0x91080831, 0x11391412);
+		setGlobalVar(V_MODULE_NAME, 0x11391412);
 		_childObject = new Module2200(_vm, this, which);
 		break;
 	case 2300:
-		setGlobalVar(0x91080831, 0x1A214010);
+		setGlobalVar(V_MODULE_NAME, 0x1A214010);
 		_childObject = new Module2300(_vm, this, which);
 		break;
 	case 2400:
-		setGlobalVar(0x91080831, 0x202D1010);
+		setGlobalVar(V_MODULE_NAME, 0x202D1010);
 		_childObject = new Module2400(_vm, this, which);
 		break;
 	case 2500:
-		setGlobalVar(0x91080831, 0x29220120);
+		setGlobalVar(V_MODULE_NAME, 0x29220120);
 		_childObject = new Module2500(_vm, this, which);
 		break;
 	case 2600:
-		setGlobalVar(0x91080831, 0x40271018);
+		setGlobalVar(V_MODULE_NAME, 0x40271018);
 		_childObject = new Module2600(_vm, this, which);
 		break;
 	case 2700:
-		setGlobalVar(0x91080831, 0x42212411);
+		setGlobalVar(V_MODULE_NAME, 0x42212411);
 		_childObject = new Module2700(_vm, this, which);
 		break;
 	case 2800:
-		setGlobalVar(0x91080831, 0x64210814);
+		setGlobalVar(V_MODULE_NAME, 0x64210814);
 		_childObject = new Module2800(_vm, this, which);
 		break;
 	case 3000:
-		setGlobalVar(0x91080831, 0x81293110);
+		setGlobalVar(V_MODULE_NAME, 0x81293110);
 		_childObject = new Module3000(_vm, this, which);
 		break;
 	default:
@@ -482,7 +483,7 @@ void GameModule::updateModule() {
 			if (_moduleResult == 0) {
 				createModule(2900, 2);
 			} else {
-				setGlobalVar(0xD0A14D10, 1);
+				setGlobalVar(V_ENTRANCE_OPEN, 1);
 				createModule(1300, 0);
 			}
 			break;

@@ -101,9 +101,9 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertStaticSprite(0x42213133, 1100);
 	
-	if (!getGlobalVar(0xA9035F60)) {
+	if (!getGlobalVar(V_STAIRS_PUZZLE_SOLVED)) {
 		insertStaticSprite(0x40A40168, 100);
-	} else if (getGlobalVar(0x09221A62)) {
+	} else if (getGlobalVar(V_STAIRS_DOWN)) {
 		insertStaticSprite(0x124404C4, 100);
 		setGlobalVar(0x2050861A, 1);
 	} else {
@@ -195,10 +195,10 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 	_symbolFlag1 = 0;
 	_symbolFlag2 = 0;
 	
-	if (getGlobalVar(0xA9035F60)) {
+	if (getGlobalVar(V_STAIRS_PUZZLE_SOLVED)) {
 		_isPluggedIn = true;
 		_currPositionIndex = elementIndex;
-		if (!getGlobalVar(0x09221A62)) {
+		if (!getGlobalVar(V_STAIRS_DOWN)) {
 			_x = kAsScene1907SymbolPluggedInPositions[_currPositionIndex].x;
 			_y = kAsScene1907SymbolPluggedInPositions[_currPositionIndex].y;
 		} else {
@@ -325,7 +325,7 @@ void AsScene1907Symbol::suMoveDown() {
 
 void AsScene1907Symbol::suMoveUp() {
 	_y -= _yIncr;
-	if (getGlobalVar(0x10938830)) {
+	if (getGlobalVar(V_WALL_BROKEN)) {
 		if (_y - (9 + (_elementIndex > 5 ? 31 : 0)) < kAsScene1907SymbolPluggedInPositions[_elementIndex].y) {
 			_yIncr--;
 		} else {
@@ -470,8 +470,8 @@ SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 
 	loadSound(0, 0x44061000);
 	SetUpdateHandler(&SsScene1907UpDownButton::update);
 	SetMessageHandler(&SsScene1907UpDownButton::handleMessage);
-	if (getGlobalVar(0xA9035F60)) {
-		if (getGlobalVar(0x09221A62))
+	if (getGlobalVar(V_STAIRS_PUZZLE_SOLVED)) {
+		if (getGlobalVar(V_STAIRS_DOWN))
 			setToDownPosition();
 		else
 			setToUpPosition();
@@ -490,7 +490,7 @@ uint32 SsScene1907UpDownButton::handleMessage(int messageNum, const MessageParam
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		if (_countdown1 == 0 && !_asScene1907Symbol->isMoving() && getGlobalVar(0xA9035F60)) {
+		if (_countdown1 == 0 && !_asScene1907Symbol->isMoving() && getGlobalVar(V_STAIRS_PUZZLE_SOLVED)) {
 			setVisible(true);
 			_countdown1 = 4;
 			StaticSprite::update();
@@ -582,7 +582,7 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1907::handleMessage);
 	SetUpdateHandler(&Scene1907::update);
 
-	if (getGlobalVar(0xA9035F60))
+	if (getGlobalVar(V_STAIRS_PUZZLE_SOLVED))
 		_pluggedInCount = 9;
 		
 	loadSound(0, 0x72004A10);
@@ -640,20 +640,20 @@ uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	// TODO Debug stuff
 	case 0x2000:
-		if (getGlobalVar(0x09221A62)) {
+		if (getGlobalVar(V_STAIRS_DOWN)) {
 			playSound(0);
 			for (int i = 0; i < 9; i++)
 				_asSymbols[i]->moveUp();
 			_ssUpDownButton->setToUpPosition();
-			setGlobalVar(0x09221A62, 0);
+			setGlobalVar(V_STAIRS_DOWN, 0);
 		} else {
-			if (!getGlobalVar(0x10938830)) {
+			if (!getGlobalVar(V_WALL_BROKEN)) {
 				playSound(2);
 				_countdown3 = 5;
 			} else {
 				playSound(1);
 				_ssUpDownButton->setToDownPosition();
-				setGlobalVar(0x09221A62, 1);
+				setGlobalVar(V_STAIRS_DOWN, 1);
 			}
 			_moveDownCountdown = 1;
 			_currMovingSymbolIndex = 8;
@@ -661,7 +661,7 @@ uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2001:
 		playSound(3);
-		setGlobalVar(0xA9035F60, 1);
+		setGlobalVar(V_STAIRS_PUZZLE_SOLVED, 1);
 		break;
 	}	
 	return 0;

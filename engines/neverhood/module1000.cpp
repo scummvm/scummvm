@@ -29,7 +29,7 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	debug("Create Module1000(%d)", which);
 
-	_musicFileHash = getGlobalVar(0xD0A14D10) ? 0x81106480 : 0x00103144;		
+	_musicFileHash = getGlobalVar(V_ENTRANCE_OPEN) ? 0x81106480 : 0x00103144;		
 
 	_vm->_soundMan->addMusic(0x03294419, 0x061880C6);
 	_vm->_soundMan->addMusic(0x03294419, _musicFileHash);
@@ -140,7 +140,7 @@ uint32 AsScene1001Door::handleMessage(int messageNum, const MessageParam &param,
 }
 
 void AsScene1001Door::hammerHitsDoor() {
-	switch (getGlobalVar(0x52371C95)) {
+	switch (getGlobalVar(V_DOOR_STATUS)) {
 	case 0:
 	case 1:
 		playSound(0, 0x65482F03);
@@ -156,11 +156,11 @@ void AsScene1001Door::hammerHitsDoor() {
 		// Nothing
 		break;		
 	}
-	incGlobalVar(0x52371C95, 1);
+	incGlobalVar(V_DOOR_STATUS, 1);
 }
 
 void AsScene1001Door::stShowIdleDoor() {
-	switch (getGlobalVar(0x52371C95)) {
+	switch (getGlobalVar(V_DOOR_STATUS)) {
 	case 1:
 		startAnimation(0x624C0498, 4, -1);
 		_newStickFrameIndex = 4;
@@ -181,7 +181,7 @@ void AsScene1001Door::stShowIdleDoor() {
 }
 
 void AsScene1001Door::stBustedDoorMove() {
-	setGlobalVar(0xD217189D, 1);
+	setGlobalVar(V_DOOR_BUSTED, 1);
 	startAnimation(0x624C0498, 6, 6);
 	NextState(&AsScene1001Door::stBustedDoorGone);
 	_x = 30;
@@ -249,7 +249,7 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 		break;
 	case 0x3002:
 		SetMessageHandler(NULL);
-		setGlobalVar(0x03C698DA, 1);
+		setGlobalVar(V_WINDOW_OPEN, 1);
 		setVisible(false);
 		break;
 	}
@@ -354,7 +354,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B4898);
 	} else if (which == 2) {
 		setRectList(0x004B49F0);
-		if (getGlobalVar(0xC0418A02)) {
+		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1001>(390, 433);
 			_klayman->setDoDeltaX(1);
 		} else {
@@ -371,7 +371,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_klayman->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
 	
-	if (getGlobalVar(0xD217189D) == 0) {
+	if (getGlobalVar(V_DOOR_BUSTED) == 0) {
 		_asDoor = insertSprite<AsScene1001Door>();
 		_asDoor->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
 	} else {
@@ -385,7 +385,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x15288120, 100, 0);
 
-	if (getGlobalVar(0x03C698DA) == 0) {
+	if (getGlobalVar(V_WINDOW_OPEN) == 0) {
 		tempSprite = insertStaticSprite(0x8C066150, 200);
 		_asWindow = insertSprite<AsScene1001Window>();
 		_asWindow->setClipRect(tempSprite->getDrawRect());
@@ -398,7 +398,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1001::~Scene1001() {
-	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX());
+	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX());
 }
 
 uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -407,7 +407,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		if (param.asPoint().x == 0 && getGlobalVar(0xA4014072)) {
+		if (param.asPoint().x == 0 && getGlobalVar(V_DEBUG)) {
 			leaveScene(0);
 		}
 		break;
@@ -423,7 +423,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList2(0x004B4910);
 			messageResult = 1;
 		} else if (param.asInteger() == 0x21E64A00) {
-			if (getGlobalVar(0xD217189D)) {
+			if (getGlobalVar(V_DOOR_BUSTED)) {
 				setMessageList(0x004B48A8);
 			} else {
 				setMessageList(0x004B48C8);
@@ -432,7 +432,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x040424D0) {
 			sendEntityMessage(_klayman, 0x1014, _ssButton);
 		} else if (param.asInteger() == 0x80006358) {
-			if (getGlobalVar(0x03C698DA)) {
+			if (getGlobalVar(V_WINDOW_OPEN)) {
 				setMessageList(0x004B4938);
 			} else {
 				setMessageList(0x004B4960);
@@ -615,7 +615,7 @@ AsScene1002Door::AsScene1002Door(NeverhoodEngine *vm, NRect &clipRect)
 
 	_x = 526;
 	
-	if (getGlobalVar(0x8306F218)) {
+	if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 		_y = 49; 
 	} else {
 		_y = 239; 
@@ -644,11 +644,11 @@ uint32 AsScene1002Door::handleMessage(int messageNum, const MessageParam &param,
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x4808:
-		setGlobalVar(0x8306F218, 1);
+		setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
 		SetSpriteUpdate(&AsScene1002Door::suOpenDoor);
 		break;
 	case 0x4809:
-		setGlobalVar(0x8306F218, 0);
+		setGlobalVar(V_FLYTRAP_RING_DOOR, 0);
 		SetSpriteUpdate(&AsScene1002Door::suCloseDoor);
 		break;
 	}
@@ -872,20 +872,20 @@ AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *par
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 
 	if (!_flag) {
-		if (getGlobalVar(0x8306F218)) {
+		if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 			setDoDeltaX(1);
 			_x = 366;
 			_y = 435;
 			stRingGrabbed();
 		} else {
-			_x = 174 + getGlobalVar(0x1B144052) * 32;
+			_x = 174 + getGlobalVar(V_FLYTRAP_POSITION_1) * 32;
 			_y = 435;
 			stIdle();
 		}
 	} else {
-		_x = 186 + getGlobalVar(0x86341E88) * 32;
+		_x = 186 + getGlobalVar(V_FLYTRAP_POSITION_2) * 32;
 		_y = 364;
-		if (getGlobalVar(0x13206309) || getGlobalVar(0x80101B1E)) {
+		if (getGlobalVar(V_FLYTRAP_RING_BRIDGE) || getGlobalVar(V_FLYTRAP_RING_FENCE)) {
 			stRingGrabbed();
 		} else {
 			stIdle();
@@ -937,13 +937,13 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 	case 0x480B:
 		setDoDeltaX(param.asInteger() != 0 ? 1 : 0);
 		if (!_flag) {
-			if (getGlobalVar(0x8306F218)) {
+			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 				stRelease();
 			} else {
 				stWalk();
 			}
 		} else {
-			if (getGlobalVar(0x13206309) || getGlobalVar(0x80101B1E)) {
+			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE) || getGlobalVar(V_FLYTRAP_RING_FENCE)) {
 				stRelease();
 			} else {
 				stWalk();
@@ -1079,14 +1079,14 @@ void AsScene1002VenusFlyTrap::stIdle() {
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage);
 	if (_flag) {
 		if (_x >= 154 && _x <= 346) {
-			setGlobalVar(0x86341E88, (_x - 186) / 32);
+			setGlobalVar(V_FLYTRAP_POSITION_2, (_x - 186) / 32);
 		} else {
 			NextState(&AsScene1002VenusFlyTrap::stWalkBack);
 			_countdown = 12;
 		}
 	} else {
 		if (_x >= 174 && _x <= 430) {
-			setGlobalVar(0x1B144052, (_x - 174) / 32);
+			setGlobalVar(V_FLYTRAP_POSITION_1, (_x - 174) / 32);
 		} else {
 			NextState(&AsScene1002VenusFlyTrap::stWalkBack);
 			_countdown = 12;
@@ -1129,7 +1129,7 @@ AsScene1002OutsideDoorBackground::AsScene1002OutsideDoorBackground(NeverhoodEngi
 	createSurface(850, 186, 212);
 	_x = 320;
 	_y = 240;
-	if (getGlobalVar(0x8306F218)) {
+	if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 		startAnimation(0x004A4495, -1, -1);
 		_newStickFrameIndex = -2;
 	} else {
@@ -1346,7 +1346,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_asRing1 = insertSprite<AsScene1002Ring>(this, false, 258, 191, _class599->getDrawRect().y, false);
 	_asRing2 = insertSprite<AsScene1002Ring>(this, false, 297, 189, _class599->getDrawRect().y, false);
-	_asRing3 = insertSprite<AsScene1002Ring>(this, true, 370, 201, _class599->getDrawRect().y, getGlobalVar(0x8306F218) != 0);
+	_asRing3 = insertSprite<AsScene1002Ring>(this, true, 370, 201, _class599->getDrawRect().y, getGlobalVar(V_FLYTRAP_RING_DOOR) != 0);
 	_asRing4 = insertSprite<AsScene1002Ring>(this, false, 334, 191, _class599->getDrawRect().y, false);
 	_asRing5 = insertSprite<AsScene1002Ring>(this, false, 425, 184, _class599->getDrawRect().y, false);
 
@@ -1395,24 +1395,24 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		// Debug stuff (original)
-		if (param.asPoint().x == 0 && getGlobalVar(0xA4014072)) {
-			setGlobalVar(0x8306F218, 1);
-			setGlobalVar(0x1B144052, 3);
+		if (param.asPoint().x == 0 && getGlobalVar(V_DEBUG)) {
+			setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
+			setGlobalVar(V_FLYTRAP_POSITION_1, 3);
 			leaveScene(1);
 		}
 		break;
 	case 0x000D:
 		// Debug stuff (original)
 		if (param.asInteger() == 0x48848178) {
-			setGlobalVar(0x8306F218, 1);
-			setGlobalVar(0x1B144052, 3);
+			setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
+			setGlobalVar(V_FLYTRAP_POSITION_1, 3);
 			leaveScene(1);
 		}
 		messageResult = 1;
 		break;
 	case 0x100D:
 		if (param.asInteger() == 0xE6EE60E1) {
-			if (getGlobalVar(0x8306F218)) {
+			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 				setMessageList(0x004B4428);
 			} else {
 				setMessageList(0x004B4448);
@@ -1423,12 +1423,12 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x43807801) {
 			sendEntityMessage(_klayman, 0x1014, _asRing2);
 		} else if (param.asInteger() == 0x46C26A01) {
-			if (getGlobalVar(0x8306F218)) {
+			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 				setMessageList(0x004B44B8);
 			} else {
 				sendEntityMessage(_klayman, 0x1014, _asRing3);
 				if (_asVenusFlyTrap->getX() - 10 < 366 && _asVenusFlyTrap->getX() + 10 > 366) {
-					setGlobalVar(0x2B514304, 1);
+					setGlobalVar(V_FLYTRAP_RING_EATEN, 1);
 					setMessageList(0x004B44A8);
 				} else {
 					setMessageList(0x004B44A0);
@@ -1475,21 +1475,21 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_parentModule, 0x1024, 2);
 		_flag1BE = true;
 		if (sender == _asRing1) {
-			setGlobalVar(0x4DE80AC0, 0);
+			setGlobalVar(V_RING5_PULLED, 0);
 			playSound(0, 0x665198C0);
 		} else if (sender == _asRing2) {
-			setGlobalVar(0x4DE80AC0, 0);
+			setGlobalVar(V_RING5_PULLED, 0);
 			playSound(0, 0xE2D389C0);
 		} else if (sender == _asRing3) {
-			setGlobalVar(0x4DE80AC0, 0);
+			setGlobalVar(V_RING5_PULLED, 0);
 			playSound(1);
 			sendMessage(_asDoor, 0x4808, 0);
 			sendMessage(_asOutsideDoorBackground, 0x4808, 0);
 		} else if (sender == _asRing4) {
-			setGlobalVar(0x4DE80AC0, 0);
+			setGlobalVar(V_RING5_PULLED, 0);
 			playSound(0, 0xE0558848);
 		} else if (sender == _asRing5) {
-			setGlobalVar(0x4DE80AC0, 1);
+			setGlobalVar(V_RING5_PULLED, 1);
 			playSound(0, 0x44014282);
 		}
 		break;
@@ -1499,7 +1499,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 			sendMessage(_asDoor, 0x4809, 0);
 			sendMessage(_asOutsideDoorBackground, 0x4809, 0);
 		} else if (sender == _asVenusFlyTrap) {
-			if (getGlobalVar(0x8306F218)) {
+			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 				sendMessage(_asRing3, 0x4807, 0);
 			}
 		}	
@@ -1508,7 +1508,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendEntityMessage(_klayman, 0x1014, _asDoorSpy);
 		break;				
 	case 0x480F:
-		setGlobalVar(0x4DE80AC0, 0);
+		setGlobalVar(V_RING5_PULLED, 0);
 		playSound(1);
 		sendMessage(_asDoor, 0x4808, 0);
 		sendMessage(_asOutsideDoorBackground, 0x4808, 0);
@@ -1595,7 +1595,7 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x50C03005);
 
-	if (getGlobalVar(0x0D0A14D10)) {
+	if (getGlobalVar(V_ENTRANCE_OPEN)) {
 		setPalette(0xA30BA329);
 		_palette->addBasePalette(0xA30BA329, 0, 256, 0);
 	} else {
@@ -1689,7 +1689,7 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_surfaceFlag = true;
 	
-	if (getGlobalVar(0xD0A14D10)) {
+	if (getGlobalVar(V_ENTRANCE_OPEN)) {
 		setBackground(0x2800E011);
 		setPalette(0x2800E011);
 		insertStaticSprite(0x492D5AD7, 100);
@@ -1745,7 +1745,7 @@ FontSurface *Scene1005::createFontSurface() {
 	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
 	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
 	fontSurface = new FontSurface(_vm, tracking, numRows, firstChar, charWidth, charHeight);	
-	if (getGlobalVar(0xD0A14D10)) {
+	if (getGlobalVar(V_ENTRANCE_OPEN)) {
 		fontSprite.load2(0x283CE401);
 	} else {
 		fontSprite.load2(0xC6604282);
@@ -1757,71 +1757,71 @@ FontSurface *Scene1005::createFontSurface() {
 uint32 Scene1005::getTextIndex() {
 	uint32 textIndex;
 	textIndex = getTextIndex1();
-	if (getGlobalVar(0xD0A14D10)) {
+	if (getGlobalVar(V_ENTRANCE_OPEN)) {
 		textIndex = getTextIndex2();
 	}
-	if (getGlobalVar(0x8440001F) && getGlobalVar(0x01830201) == textIndex) {
+	if (getGlobalVar(V_TEXT_FLAG1) && getGlobalVar(V_TEXT_INDEX) == textIndex) {
 		textIndex = getTextIndex3();
 	} else {
-		setGlobalVar(0x8440001F, 1);
-		setGlobalVar(0x01830201, textIndex);
+		setGlobalVar(V_TEXT_FLAG1, 1);
+		setGlobalVar(V_TEXT_INDEX, textIndex);
 	}
 	return textIndex;
 }
 
 uint32 Scene1005::getTextIndex1() {
 	uint32 textIndex;
-	if (getGlobalVar(0x98109F12)) {
-		if (!getGlobalVar(0x2090590C))
+	if (getGlobalVar(V_WORLDS_JOINED)) {
+		if (!getGlobalVar(V_DOOR_PASSED))
 			textIndex = 18;
-		else if (!getGlobalVar(0x610210B7))
+		else if (!getGlobalVar(V_ROBOT_TARGET))
 			textIndex = 19;
-		else if (getGlobalVar(0x0C0288F4)) {
-			if (!getGlobalVar(0xD0A14D10))
+		else if (getGlobalVar(V_ROBOT_HIT)) {
+			if (!getGlobalVar(V_ENTRANCE_OPEN))
 				textIndex = 23;
 			else if (!getSubVar(0x0090EA95, 0) && !getSubVar(0x08D0AB11, 0))
 				textIndex = 24;
-			else if (!getGlobalVar(0xC0780812))			
+			else if (!getGlobalVar(V_HAS_FINAL_KEY))			
 				textIndex = 26;
 			else if (!getSubVar(0x0090EA95, 1) && !getSubVar(0x08D0AB11, 1))
 				textIndex = 27;
-			else if (!getGlobalVar(0xC0780812)) 
+			else if (!getGlobalVar(V_HAS_FINAL_KEY)) 
 				textIndex = 28;
 			else				
 				textIndex = 29;
-		} else if (!getGlobalVar(0xE7498218))
+		} else if (!getGlobalVar(V_FELL_DOWN_HOLE))
 			textIndex = 20;
-		else if (!getGlobalVar(0x081890D14))
+		else if (!getGlobalVar(V_SEEN_SYMBOLS_NO_LIGHT))
 			textIndex = 21;
 		else			
 			textIndex = 22;
-	} else if (getGlobalVar(0x00040153)) {
-		if (!getGlobalVar(0x10938830))
+	} else if (getGlobalVar(V_BOLT_DOOR_UNLOCKED)) {
+		if (!getGlobalVar(V_WALL_BROKEN))
 			textIndex = 12;
 		else if (!getGlobalVar(0x2050861A))
 			textIndex = 13;
-		else if (!getGlobalVar(0x4DE80AC0))
+		else if (!getGlobalVar(V_RING5_PULLED))
 			textIndex = 50;
 		else if (!getGlobalVar(0x89C669AA))
 			textIndex = 14;
-		else if (!getGlobalVar(0x1C1B8A9A))
+		else if (!getGlobalVar(V_BEEN_SHRINKING_ROOM))
 			textIndex = 15;
-		else if (!getGlobalVar(0xCB45DE03))
+		else if (!getGlobalVar(V_BEEN_STATUE_ROOM))
 			textIndex = 16;
 		else 
 			textIndex = 17;
-	} else if (!getGlobalVar(0x2B514304)) {
+	} else if (!getGlobalVar(V_FLYTRAP_RING_EATEN)) {
 		textIndex = 0;
 	} else if (getGlobalVar(0x0A18CA33)) {
-		if (!getGlobalVar(0x404290D5))
+		if (!getGlobalVar(V_TILE_PUZZLE_SOLVED))
 			textIndex = 4;
-		else if (!getGlobalVar(0x45080C38))
+		else if (!getGlobalVar(V_HAS_TEST_TUBE))
 			textIndex = 5;
 		else if (!getSubVar(0x14800353, 0x40119852))
 			textIndex = 6;
-		else if (!getGlobalVar(0x4E0BE910))
+		else if (!getGlobalVar(V_WATER_RUNNING))
 			textIndex = 7;
-		else if (!getGlobalVar(0x86615030))
+		else if (!getGlobalVar(V_NOTES_PUZZLE_SOLVED))
 			textIndex = 8;
 		else if (!getSubVar(0x14800353, 0x304008D2))
 			textIndex = 9;
@@ -1829,9 +1829,9 @@ uint32 Scene1005::getTextIndex1() {
 			textIndex = 10;
 		else 
 			textIndex = 11;
-	} else if (!getGlobalVar(0x0A310817)) {
+	} else if (!getGlobalVar(V_CREATURE_ANGRY)) {
 		textIndex = 1;
-	} else if (getGlobalVar(0x000CF819)) {
+	} else if (getGlobalVar(V_TNT_DUMMY_BUILT)) {
 		textIndex = 3;
 	} else {
 		textIndex = 2;
@@ -1840,23 +1840,23 @@ uint32 Scene1005::getTextIndex1() {
 }
 
 uint32 Scene1005::getTextIndex2() {
-	uint32 textIndex = getGlobalVar(0x29408F00);
+	uint32 textIndex = getGlobalVar(V_TEXT_COUNTING_INDEX1);
 	if (textIndex + 1 >= 10) {
-		setGlobalVar(0x29408F00, 0);
+		setGlobalVar(V_TEXT_COUNTING_INDEX1, 0);
 		textIndex = 0;
 	} else {
-		setGlobalVar(0x29408F00, textIndex + 1);
+		setGlobalVar(V_TEXT_COUNTING_INDEX1, textIndex + 1);
 	}
 	return textIndex + 40;
 }
 
 uint32 Scene1005::getTextIndex3() {
-	uint32 textIndex = getGlobalVar(0x8A140C21);
+	uint32 textIndex = getGlobalVar(V_TEXT_COUNTING_INDEX2);
 	if (textIndex + 1 >= 10) {
-		setGlobalVar(0x8A140C21, 0);
+		setGlobalVar(V_TEXT_COUNTING_INDEX2, 0);
 		textIndex = 0;
 	} else {
-		setGlobalVar(0x8A140C21, textIndex + 1);
+		setGlobalVar(V_TEXT_COUNTING_INDEX2, textIndex + 1);
 	}
 	return textIndex + 30;
 }

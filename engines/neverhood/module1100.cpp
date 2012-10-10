@@ -76,14 +76,14 @@ void Module1100::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004B8460, which);
 		break;
 	case 2:
-		if (getGlobalVar(0x610210B7)) {
+		if (getGlobalVar(V_ROBOT_TARGET)) {
 			createNavigationScene(0x004B84F0, which);
 		} else {
 			createNavigationScene(0x004B8490, which);
 		}
 		break;
 	case 3:
-		if (getGlobalVar(0x610210B7)) {
+		if (getGlobalVar(V_ROBOT_TARGET)) {
 			createNavigationScene(0x004B8580, which);
 		} else {
 			createNavigationScene(0x004B8550, which);
@@ -93,7 +93,7 @@ void Module1100::createScene(int sceneNum, int which) {
 		_childObject = new Scene1105(_vm, this, which);
 		break;
 	case 5:
-		if (getGlobalVar(0x610210B7))
+		if (getGlobalVar(V_ROBOT_TARGET))
 			createSmackerScene(0x04180001, true, false, false);
 		else
 			createSmackerScene(0x04180007, true, false, false);
@@ -135,7 +135,7 @@ void Module1100::updateScene() {
 			break;
 		case 1:
 			_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
-			if (getGlobalVar(0x0C0288F4)) {
+			if (getGlobalVar(V_ROBOT_HIT)) {
 				if (_moduleResult == 0) {
 					createScene(6, -1);
 				} else if (_moduleResult == 1) {
@@ -175,7 +175,7 @@ void Module1100::updateScene() {
 			break;
 		case 5:
 			_vm->_soundMan->setTwoSoundsPlayFlag(false);
-			if (getGlobalVar(0x610210B7)) {
+			if (getGlobalVar(V_ROBOT_TARGET)) {
 				createScene(3, 0);
 			} else {
 				createScene(4, 0);
@@ -372,7 +372,7 @@ uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &p
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2002:
-		if (getGlobalVar(0x610210B7)) {
+		if (getGlobalVar(V_ROBOT_TARGET)) {
 			startAnimation(0x6B0C0432, 0, -1);
 			playSound(0);
 		} else {
@@ -505,7 +505,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (getSubVar(0x7500993A, 0) == getSubVar(0x61084036, 0) &&
 				getSubVar(0x7500993A, 1) == getSubVar(0x61084036, 1) &&
 				getSubVar(0x7500993A, 2) == getSubVar(0x61084036, 2)) {
-				setGlobalVar(0x610210B7, 1);
+				setGlobalVar(V_ROBOT_TARGET, 1);
 				playSound(2);
 				_flag3 = true;
 			} else {
@@ -520,7 +520,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (sender == _ssActionButton) {
 				sendMessage(_ssActionButton, 0x480B, 0);
 				_flag1 = false;
-			} else if (!getGlobalVar(0x610210B7)) {
+			} else if (!getGlobalVar(V_ROBOT_TARGET)) {
 				if (sender == _ssSymbol1UpButton) {
 					if (getSubVar(0x61084036, 0) < 9) {
 						incSubVar(0x61084036, 0, +1);

@@ -76,8 +76,8 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		//setGlobalVar(0x1860C990,1);//DEBUG
-		if (getGlobalVar(0x1860C990))
+		//setGlobalVar(V_KLAYMAN_SMALL,1);//DEBUG
+		if (getGlobalVar(V_KLAYMAN_SMALL))
 			_childObject = new Scene2803Small(_vm, this, which);
 		else
 			_childObject = new Scene2803(_vm, this, which);
@@ -171,7 +171,7 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 25:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		if (getGlobalVar(0x190A1D18))
+		if (getGlobalVar(V_SHRINK_LIGHTS_ON))
 			createStaticScene(0x01600204, 0x0020001E);
 		else
 			createStaticScene(0x08611204, 0x1120008E);
@@ -378,7 +378,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene2801::handleMessage);
 	SetUpdateHandler(&Scene::update);
 
-	if (getGlobalVar(0x4DE80AC0) == 0) {
+	if (getGlobalVar(V_RING5_PULLED) == 0) {
 		insertStaticSprite(0x0001264C, 100);
 	}
 
@@ -389,7 +389,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlayman<KmScene2801>(443, 398);
 		setMessageList(0x004B6BC0);
 	} else if (which == 2) {
-		if (getGlobalVar(0xC0418A02)) {
+		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene2801>(312, 432);
 			_klayman->setDoDeltaX(1);
 		} else {
@@ -450,7 +450,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene2801::~Scene2801() {
-	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -640,7 +640,7 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 		0x28680AD4
 	};
 
-	setGlobalVar(0x1C1B8A9A, 1);
+	setGlobalVar(V_BEEN_SHRINKING_ROOM, 1);
 	_vm->gameModule()->initScene2808Vars1();
 	
 	SetMessageHandler(&Scene2803::handleMessage);
@@ -815,13 +815,13 @@ void Scene2803::klaymanFloor() {
 }
 
 void Scene2803::toggleBackground() {
-	setGlobalVar(0x190A1D18, getGlobalVar(0x190A1D18) ? 0 : 1);
+	setGlobalVar(V_SHRINK_LIGHTS_ON, getGlobalVar(V_SHRINK_LIGHTS_ON) ? 0 : 1);
 	changeBackground();
 }
 
 void Scene2803::changeBackground() {
 	// TODO? g_screen->resetDirtyRects();
-	if (getGlobalVar(0x190A1D18)) {
+	if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
 		_asLightCord->setFileHashes(0x8FAD5932, 0x276E1A3D);
 		_background->load(0x412A423E);
 		_palette->addPalette(0x412A423E, 0, 256, 0);
@@ -911,7 +911,7 @@ void Scene2803::setPaletteArea1() {
 
 void Scene2803::updatePaletteArea() {
 	uint32 fadePaletteHash;
-	if (getGlobalVar(0x190A1D18))
+	if (getGlobalVar(V_SHRINK_LIGHTS_ON))
 		fadePaletteHash = (_paletteArea == 1) ? 0xB103B604 : 0x412A423E;
 	else
 		fadePaletteHash = (_paletteArea == 1) ? 0x0263D144 : 0x29800A01;
@@ -938,7 +938,7 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 
 	insertSprite<AsScene2803LightCord>(this, 0xAFAD591A, 0x276E321D, 578, 200);
 
-	if (getGlobalVar(0x190A1D18)) {
+	if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
 		setBackground(0x412A423E);
 		setPalette(0x412A423E);
 		_palette->addBasePalette(0x412A423E, 0, 256, 0);
@@ -1148,7 +1148,7 @@ void Scene2803Small::setPaletteArea3() {
 }
 
 void Scene2803Small::updatePaletteArea(bool instantly) {
-	if (getGlobalVar(0x190A1D18)) {
+	if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
 		switch (_paletteArea) {
 		case 1:
 			_palette->addBasePalette(0x0A938204, 0, 64, 0);
@@ -1182,7 +1182,7 @@ void Scene2803Small::updatePaletteArea(bool instantly) {
 SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene)
 	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene) {
 	
-	if (getGlobalVar(0x190A1D18))
+	if (getGlobalVar(V_SHRINK_LIGHTS_ON))
 		_spriteResource.load2(0x51A10202);
 	else
 		_spriteResource.load2(0x11814A21);
@@ -1387,7 +1387,7 @@ AsScene2804Crystal::AsScene2804Crystal(NeverhoodEngine *vm, AsScene2804CrystalWa
 	};
 
 	_colorNum = (int16)getSubVar(0xE11A1929, crystalIndex);
-	_isLightOn = getGlobalVar(0x190A1D18) != 0;
+	_isLightOn = getGlobalVar(V_SHRINK_LIGHTS_ON) != 0;
 	if (_isLightOn) {
 		_x = kAsScene2804CrystalPoints[crystalIndex].x;
 		_y = kAsScene2804CrystalPoints[crystalIndex].y;
@@ -1464,7 +1464,7 @@ SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene280
 		0x5008292B
 	};
 	
-	if (getGlobalVar(0x190A1D18))
+	if (getGlobalVar(V_SHRINK_LIGHTS_ON))
 		_spriteResource.load2(kSsScene2804CrystalButtonFileHashes1[crystalIndex]);
 	else
 		_spriteResource.load2(kSsScene2804CrystalButtonFileHashes2[crystalIndex]);
@@ -1626,9 +1626,9 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene2804::handleMessage);
 	SetUpdateHandler(&Scene2804::update);
 
-	//setGlobalVar(0x190A1D18, 1); // DEBUG Set lights on
+	//setGlobalVar(V_SHRINK_LIGHTS_ON, 1); // DEBUG Set lights on
 
-	if (getGlobalVar(0x190A1D18)) {
+	if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
 		setBackground(0xA1D03005);
 		setPalette(0xA1D03005);
 		addEntity(_palette);
@@ -1652,7 +1652,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	for (uint crystalIndex = 0; crystalIndex < 5; crystalIndex++) {
 		AsScene2804CrystalWaves *asCrystalWaves = NULL;
-		if (crystalIndex < 4 && getGlobalVar(0x190A1D18) == 0)
+		if (crystalIndex < 4 && getGlobalVar(V_SHRINK_LIGHTS_ON) == 0)
 			asCrystalWaves = insertSprite<AsScene2804CrystalWaves>(crystalIndex);
 		_asCrystals[crystalIndex] = insertSprite<AsScene2804Crystal>(asCrystalWaves, crystalIndex);
 		_ssCrystalButtons[crystalIndex] = insertSprite<SsScene2804CrystalButton>(this, _asCrystals[crystalIndex], crystalIndex);
@@ -1676,7 +1676,7 @@ uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		_isWorking = true;
 		sendMessage(_asCoil, 0x2002, 0);
-		if (getGlobalVar(0x190A1D18)) {
+		if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
 			sendMessage(_asTarget, 0x2004, 0);
 			_countdown2 = 48;
 		}
@@ -1716,7 +1716,7 @@ void Scene2804::update() {
 			if (_isSolved) {
 				_palette->fillBaseWhite(0, 256);
 				_palette->startFadeToPalette(18);
-				setGlobalVar(0x1860C990, 1);
+				setGlobalVar(V_KLAYMAN_SMALL, 1);
 				_countdown1 = 48;
 			}
 		} else if (_beamStatus == 6) {
@@ -1736,7 +1736,7 @@ void Scene2804::update() {
 
 void Scene2804::initCrystalColors() {
 	// TODO Maybe move this into the GameModule so all puzzle init code is together
-	if (getGlobalVar(0xDE2EC914) == 0) {
+	if (getGlobalVar(V_CRYSTAL_COLORS_INIT) == 0) {
 		TextResource textResource(_vm);
 		const char *textStart, *textEnd;
 		textResource.load(0x46691611);
@@ -1770,7 +1770,7 @@ void Scene2804::initCrystalColors() {
 			setSubVar(0xD4B2089C, index, correctColorNum);
 			setSubVar(0xE11A1929, index, misalignedColorNum);
 		}
-		setGlobalVar(0xDE2EC914, 1);
+		setGlobalVar(V_CRYSTAL_COLORS_INIT, 1);
 	}
 }
 
@@ -1927,7 +1927,7 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 3) {
 		insertKlayman<KmScene2806>(378, 423, true, _clipRects, 4);
 		setMessageList(0x004AF0A0, false);
-		setGlobalVar(0x1860C990, 0);
+		setGlobalVar(V_KLAYMAN_SMALL, 0);
 	} else {
 		insertKlayman<KmScene2806>(670, 423, false, _clipRects, 4);
 		setMessageList(0x004AF090);
@@ -2562,7 +2562,7 @@ Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 3) {
 		insertKlayman<KmScene2809>(262, 423, true, _clipRects, 4);
 		setMessageList(0x004B5BA8, false);
-		setGlobalVar(0x1860C990, 0);
+		setGlobalVar(V_KLAYMAN_SMALL, 0);
 	} else {
 		insertKlayman<KmScene2809>(-30, 423, false, _clipRects, 4);
 		setMessageList(0x004B5B88);
@@ -2670,7 +2670,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[1].x2 = _sprite6->getDrawRect().x2();
 	_clipRects[1].y2 = 480;
 
-	if (getGlobalVar(0x1860C990)) {
+	if (getGlobalVar(V_KLAYMAN_SMALL)) {
 		_asTape = insertSprite<AsScene1201Tape>(this, 0, 900, 245, 429, 0x9148A011);
 		_vm->_collisionMan->addSprite(_asTape);
 	} else {
@@ -2680,9 +2680,9 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_sprite1 = insertStaticSprite(0x430001C4, 1200);
 
-	if (getGlobalVar(0x0018CA22)) {
-		setGlobalVar(0xCB45DE03, 1);
-		if (getGlobalVar(0x1860C990)) {
+	if (getGlobalVar(V_LADDER_DOWN)) {
+		setGlobalVar(V_BEEN_STATUE_ROOM, 1);
+		if (getGlobalVar(V_KLAYMAN_SMALL)) {
 			_sprite4 = insertStaticSprite(0x82653808, 100);
 		} else {
 			_sprite4 = insertStaticSprite(0x82653808, 1100);
@@ -2691,7 +2691,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	
 	if (which < 0) {
-		if (getGlobalVar(0x1860C990)) {
+		if (getGlobalVar(V_KLAYMAN_SMALL)) {
 			insertKlayman<KmScene2810Small>(240, 448);
 			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
 			setMessageList(0x004AE438);
@@ -2701,7 +2701,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		} else {
 			insertKlayman<KmScene2810>(300, 424, _clipRects, 2);
 			setMessageList(0x004AE438);
-			if (getGlobalVar(0x0018CA22))
+			if (getGlobalVar(V_LADDER_DOWN))
 				loadDataResource(0x84130112);
 			else
 				loadDataResource(0x84500132);
@@ -2733,9 +2733,9 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_soundMan->setSoundVolume(0xC874EE6C, 50);
 		_isRopingDown = false;
 	} else if ((which >= 11 && which <= 14) || (which >= 19 && which <= 22) || which == 3) {
-		if (getGlobalVar(0x1860C990)) {
-			insertKlayman<KmScene2810Small>((int16)getGlobalVar(0x00D30138), 448);
-			if (getGlobalVar(0xC0418A02))
+		if (getGlobalVar(V_KLAYMAN_SMALL)) {
+			insertKlayman<KmScene2810Small>((int16)getGlobalVar(V_KLAYMAN_SAVED_X), 448);
+			if (getGlobalVar(V_KLAYMAN_IS_DELTA_X))
 				_klayman->setDoDeltaX(1);
 			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
 			setMessageList(0x004AE6D8);
@@ -2744,9 +2744,9 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 			_vm->_collisionMan->removeSprite(_asTape);
 		} else {
 			insertKlaymanLadder();
-			if (getGlobalVar(0x00188211)) {
+			if (getGlobalVar(V_LADDER_DOWN_ACTION)) {
 				setMessageList(0x004AE6E8);
-				setGlobalVar(0x00188211, 0);
+				setGlobalVar(V_LADDER_DOWN_ACTION, 0);
 				_isRopingDown = false;
 			} else {
 				setMessageList(0x004AE6D8);
@@ -2758,7 +2758,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004AE6E0);
 		_isRopingDown = false;
 	} else if (which == 4) {
-		if (getGlobalVar(0x1860C990)) {
+		if (getGlobalVar(V_KLAYMAN_SMALL)) {
 			insertKlayman<KmScene2810Small>(473, 448);
 			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
 			setMessageList(0x004AE428);
@@ -2768,7 +2768,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		} else {
 			insertKlayman<KmScene2810>(450, 424, _clipRects, 2);
 			setMessageList(0x004AE418);
-			if (getGlobalVar(0x0018CA22))
+			if (getGlobalVar(V_LADDER_DOWN))
 				loadDataResource(0x84130112);
 			else
 				loadDataResource(0x84500132);
@@ -2789,23 +2789,23 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene2810::~Scene2810() {
-	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
-	setGlobalVar(0x00D30138, _klayman->getX());
+	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMAN_SAVED_X, _klayman->getX());
 	_vm->_soundMan->deleteSoundGroup(0x84400112);
 }
 
 void Scene2810::insertKlaymanLadder() {
 	Sprite *tempSprite;
 
-	if (getGlobalVar(0x00188211)) {
+	if (getGlobalVar(V_LADDER_DOWN_ACTION)) {
 		insertKlayman<KmScene2810>(430, 424, _clipRects, 2);
 		_klayman->setDoDeltaX(1);
 	} else {
-		insertKlayman<KmScene2810>((int16)getGlobalVar(0x00D30138), 424, _clipRects, 2);
-		if (getGlobalVar(0xC0418A02))
+		insertKlayman<KmScene2810>((int16)getGlobalVar(V_KLAYMAN_SAVED_X), 424, _clipRects, 2);
+		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X))
 			_klayman->setDoDeltaX(1);
 	}
-	if (getGlobalVar(0x0018CA22))
+	if (getGlobalVar(V_LADDER_DOWN))
 		loadDataResource(0x84130112);
 	else
 		loadDataResource(0x84500132);
@@ -2848,20 +2848,18 @@ uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList(0x004AE688);
 		break;
 	case 0x2000:
-	debug("0x2000");
 		setRectList(0x004AE800);
 		_isRopingDown = true;
 		break;
 	case 0x2001:
-	debug("0x2001");
-		if (getGlobalVar(0x0018CA22))
+		if (getGlobalVar(V_LADDER_DOWN))
 			loadDataResource(0x84130112);
 		else
 			loadDataResource(0x84500132);
 		_isRopingDown = false;
 		break;
 	case 0x4826:
-		if (sender == _asTape && getGlobalVar(0x1860C990) == 0 && !_isRopingDown) {
+		if (sender == _asTape && getGlobalVar(V_KLAYMAN_SMALL) == 0 && !_isRopingDown) {
 			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004AE750);
 		}
@@ -2968,8 +2966,8 @@ uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &pa
 Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _paletteArea(0) {
 	
-	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
-		setGlobalVar(0x13382860, 3);
+	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
+		setGlobalVar(V_KEY3_LOCATION, 3);
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2812::handleMessage);
@@ -2985,7 +2983,7 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite1 = insertStaticSprite(0x0C06C860, 1100);
 	insertMouse433(0x0060203E);
 
-	if (getGlobalVar(0x13382860) == 3) {
+	if (getGlobalVar(V_KEY3_LOCATION) == 3) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 474, 437);
 		_vm->_collisionMan->addSprite(_asKey);
 	}
@@ -3015,7 +3013,7 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite1->getDrawRect().x2(), _sprite3->getDrawRect().y2());
 	} else if (which == 2) {
 		_isRopingDown = false;
-		if (getGlobalVar(0xC0418A02)) {
+		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene2812>(554, 432);
 			_klayman->setDoDeltaX(1);
 		} else {
@@ -3153,10 +3151,10 @@ void Scene2822::update() {
 				playSound(0, 0x1384CB60);
 				_countdownStatus = 2;
 				_countdown = 12;
-			} else if (_countdownStatus == 2 && getGlobalVar(0x00188211)) {
+			} else if (_countdownStatus == 2 && getGlobalVar(V_LADDER_DOWN_ACTION)) {
 				leaveScene(0);
 			}
-		} else if (_countdownStatus == 2 && getGlobalVar(0x00188211)) {
+		} else if (_countdownStatus == 2 && getGlobalVar(V_LADDER_DOWN_ACTION)) {
 			if (_scrollIndex < 9) {
 				_background->getSurface()->getDrawRect().y = kScene2822BackgroundYPositions[_scrollIndex];
 				_scrollIndex++;
@@ -3180,9 +3178,9 @@ uint32 Scene2822::handleMessage(int messageNum, const MessageParam &param, Entit
 			_countdownStatus = 0;
 			_countdown = 12;
 			playSound(1, 0x44061000);
-			if (getGlobalVar(0x0018CA22) == 0) {
-				setGlobalVar(0x0018CA22, 1);
-				setGlobalVar(0x00188211, 1);
+			if (getGlobalVar(V_LADDER_DOWN) == 0) {
+				setGlobalVar(V_LADDER_DOWN, 1);
+				setGlobalVar(V_LADDER_DOWN_ACTION, 1);
 				SetMessageHandler(NULL);
 				playSound(2);
 				_mouseCursor->setVisible(false);

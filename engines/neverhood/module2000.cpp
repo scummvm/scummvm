@@ -51,10 +51,10 @@ void Module2000::createScene(int sceneNum, int which) {
 		_childObject = new Scene2001(_vm, this, which);
 		break;
 	case 1:
-		createNavigationScene(getGlobalVar(0x98109F12) ? 0x004B7B48 : 0x004B7B00, which);
+		createNavigationScene(getGlobalVar(V_WORLDS_JOINED) ? 0x004B7B48 : 0x004B7B00, which);
 		break;
 	case 2:
-		setGlobalVar(0x98109F12, 1);
+		setGlobalVar(V_WORLDS_JOINED, 1);
 		setSubVar(0x2C145A98, 1, 1);
 		createSmackerScene(0x204B2031, true, true, false);
 		break;
@@ -75,7 +75,7 @@ void Module2000::updateScene() {
 			break;
 		case 1:
 			if (_moduleResult == 0) {
-				if (getGlobalVar(0x98109F12)) {
+				if (getGlobalVar(V_WORLDS_JOINED)) {
 					createScene(1, 0);
 				} else {
 					createScene(2, -1);

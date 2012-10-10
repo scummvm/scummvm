@@ -366,7 +366,7 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 
 	_hasAllDisks = availableDisksCount == 20;
 	
-	if (_hasAllDisks && !getGlobalVar(0xC0780812))
+	if (_hasAllDisks && !getGlobalVar(V_HAS_FINAL_KEY))
 		_dropKey = true;
 
 	_finalDiskSlot = new DiskplayerSlot(_vm, this, 20, 0);
@@ -421,7 +421,7 @@ void DiskplayerScene::update() {
 	} else if (_updateStatus == kUSPlayingFinal) {
 		if (_diskSmackerPlayer->getFrameNumber() == 133) {
 			_asKey->stDropKey();
-			setGlobalVar(0xC0780812, 1);
+			setGlobalVar(V_HAS_FINAL_KEY, 1);
 		} else if (_diskSmackerPlayer->isDone()) {
 			for (int i = 0; i < 20; i++) {
 				_diskSlots[i]->setLocked(false);

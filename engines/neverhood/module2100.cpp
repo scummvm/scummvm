@@ -65,7 +65,7 @@ void Module2100::updateScene() {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
 			if (_moduleResult == 1) {
-				setGlobalVar(0x2090590C, 1);
+				setGlobalVar(V_DOOR_PASSED, 1);
 				leaveModule(0);
 			} else {
 				leaveModule(1);

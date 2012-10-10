@@ -47,7 +47,7 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 	_vm->_soundMan->playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
 
-	_flag = getGlobalVar(0x10938830) != 0;
+	_flag = getGlobalVar(V_WALL_BROKEN) != 0;
 
 	if (_flag) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
@@ -79,9 +79,9 @@ void Module3000::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 1:
-		if (!getGlobalVar(0x01BA1A52)) {
+		if (!getGlobalVar(V_BOLT_DOOR_OPEN)) {
 			createNavigationScene(0x004B7C80, which);
-		} else if (getGlobalVar(0x10938830)) {
+		} else if (getGlobalVar(V_WALL_BROKEN)) {
 			createNavigationScene(0x004B7CE0, which);
 		} else {
 			createNavigationScene(0x004B7CB0, which);
@@ -93,22 +93,22 @@ void Module3000::createScene(int sceneNum, int which) {
 			_soundVolume = 90;
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 90);
 		}
-		if (getGlobalVar(0x10938830)) {
+		if (getGlobalVar(V_WALL_BROKEN)) {
 			createNavigationScene(0x004B7D58, which);
 		} else {
 			createNavigationScene(0x004B7D10, which);
 		}
 		break;
 	case 3:
-		if (getGlobalVar(0x09221A62))
+		if (getGlobalVar(V_STAIRS_DOWN))
 			createNavigationScene(0x004B7E60, which);
-		else if (getGlobalVar(0x10938830))
+		else if (getGlobalVar(V_WALL_BROKEN))
 			createNavigationScene(0x004B7DA0, which);
 		else
 			createNavigationScene(0x004B7E00, which);
 		break;
 	case 4:
-		if (getGlobalVar(0x09221A62))
+		if (getGlobalVar(V_STAIRS_DOWN))
 			createNavigationScene(0x004B7F20, which);
 		else
 			createNavigationScene(0x004B7EC0, which);
@@ -149,23 +149,23 @@ void Module3000::createScene(int sceneNum, int which) {
 		break;
 	// NOTE: Newly introduced sceneNums
 	case 1001:
-		if (!getGlobalVar(0x01BA1A52))
-			if (getGlobalVar(0x10938830))
+		if (!getGlobalVar(V_BOLT_DOOR_OPEN))
+			if (getGlobalVar(V_WALL_BROKEN))
 				createSmackerScene(0x00940021, true, true, false);
 			else
 				createSmackerScene(0x01140021, true, true, false);
 		else
-			if (getGlobalVar(0x10938830))
+			if (getGlobalVar(V_WALL_BROKEN))
 				createSmackerScene(0x001011B1, true, true, false);
 			else
 				createSmackerScene(0x001021B1, true, true, false);
-		setGlobalVar(0x01BA1A52, getGlobalVar(0x01BA1A52) ? 0 : 1);
+		setGlobalVar(V_BOLT_DOOR_OPEN, getGlobalVar(V_BOLT_DOOR_OPEN) ? 0 : 1);
 		break;
 	case 1006:
 		createSmackerScene(0x080810C5, true, true, false);
 		break;
 	case 1008:
-		createSmackerScene(getGlobalVar(0xF0402B0A), true, true, false);
+		createSmackerScene(getGlobalVar(V_CANNON_SMACKER_NAME), true, true, false);
 		break;
 	}
 	SetUpdateHandler(&Module3000::updateScene);
@@ -176,7 +176,7 @@ void Module3000::updateScene() {
 	if (!updateChild()) {
 		switch (_vm->gameState().sceneNum) {
 		case 1:
-			if (!getGlobalVar(0x01BA1A52)) {
+			if (!getGlobalVar(V_BOLT_DOOR_OPEN)) {
 				if (_moduleResult == 0)
 					createScene(9, -1);
 				else if (_moduleResult == 1)
@@ -200,7 +200,7 @@ void Module3000::updateScene() {
 			if (_moduleResult == 0) {
 				createScene(3, 0);
 			} else if (_moduleResult == 1) {
-				setGlobalVar(0x01BA1A52, 0);
+				setGlobalVar(V_BOLT_DOOR_OPEN, 0);
 				createScene(1, 1);
 			}
 			break;
@@ -209,7 +209,7 @@ void Module3000::updateScene() {
 				createScene(4, 0);
 			else if (_moduleResult == 3)
 				createScene(10, -1);
-			else if (getGlobalVar(0x09221A62))
+			else if (getGlobalVar(V_STAIRS_DOWN))
 				createScene(5, 0);
 			else
 				createScene(2, 1);
@@ -238,11 +238,11 @@ void Module3000::updateScene() {
 			createScene(8, -1);
 			break;
 		case 8:
-			_flag = getGlobalVar(0x10938830); // CHECKME
+			_flag = getGlobalVar(V_WALL_BROKEN); // CHECKME
 			if (_moduleResult != 1) {
 				_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0);
 				createScene(4, 1);
-			} else if (getGlobalVar(0xF0402B0A)) {
+			} else if (getGlobalVar(V_CANNON_SMACKER_NAME)) {
 				createScene(1008, -1);
 			} else {
 				_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0);
@@ -265,7 +265,7 @@ void Module3000::updateScene() {
 			createScene(1, 0);
 			break;
 		case 1001:
-			if (getGlobalVar(0x01BA1A52))
+			if (getGlobalVar(V_BOLT_DOOR_OPEN))
 				createScene(1, 0);
 			else
 				createScene(12, -1);
@@ -526,7 +526,7 @@ SsScene3009SymbolEdges::SsScene3009SymbolEdges(NeverhoodEngine *vm, int index)
 	_drawRect.width = _spriteResource.getDimensions().width;
 	_drawRect.height = _spriteResource.getDimensions().height;
 	_needRefresh = true;
-	if (getGlobalVar(0x0C0288F4)) {
+	if (getGlobalVar(V_ROBOT_HIT)) {
 		hide();
 	} else {
 		startBlinking();
@@ -649,7 +649,7 @@ AsScene3009VerticalIndicator::AsScene3009VerticalIndicator(NeverhoodEngine *vm, 
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
 
 	_x = 300;
-	_y = getGlobalVar(0x000809C2) ? 52 : 266;
+	_y = getGlobalVar(V_CANNON_RAISED) ? 52 : 266;
 	createSurface1(0xC2463913, 1200);
 	_needRefresh = true;
 	updatePosition();
@@ -681,7 +681,7 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 cannonTargetStatus)
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
 	
-	_x = getGlobalVar(0x9040018A) ? 533 : 92;
+	_x = getGlobalVar(V_CANNON_TURNED) ? 533 : 92;
 	_y = 150;
 	createSurface1(0xC0C12954, 1200);
 	_needRefresh = true;
@@ -799,12 +799,12 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _keepVideo(false), _moveCannonLeftFirst(false), 
 	_isTurning(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
 
-	_cannonTargetStatus = getGlobalVar(0x20580A86);
+	_cannonTargetStatus = getGlobalVar(V_CANNON_TARGET_STATUS);
 	debug("_cannonTargetStatus = %d", _cannonTargetStatus);
 	
 	_vm->gameModule()->initScene3009Vars();
 	
-	setGlobalVar(0xF0402B0A, 0);
+	setGlobalVar(V_CANNON_SMACKER_NAME, 0);
 	_surfaceFlag = true;
 	
 	_vm->_screen->clear();
@@ -858,7 +858,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	for (int i = 0; i < 6; i++)
 		setSubVar(0x00000914, i, _correctSymbols[i]);
 	sendMessage(this, 0x2003, 0);
-	//setGlobalVar(0x610210B7, 1);   
+	//setGlobalVar(V_ROBOT_TARGET, 1);   
 
 }
 
@@ -914,7 +914,7 @@ void Scene3009::update() {
 	if (_lockSymbolsPart1Countdown != 0 && (--_lockSymbolsPart1Countdown == 0) && isSymbolsPart1Solved()) {
 		for (int i = 0; i < 3; i++)
 			_asSymbols[i]->hide();
-		if (!getGlobalVar(0x0C0288F4) || getGlobalVar(0x000809C2) || getGlobalVar(0x9040018A)) {
+		if (!getGlobalVar(V_ROBOT_HIT) || getGlobalVar(V_CANNON_RAISED) || getGlobalVar(V_CANNON_TURNED)) {
 			_ssSymbolEdges[0]->show();
 			_ssTargetLines[0]->show();
 			_asVerticalIndicator->show();
@@ -924,7 +924,7 @@ void Scene3009::update() {
 	if (_lockSymbolsPart2Countdown != 0 && (--_lockSymbolsPart2Countdown == 0) && isSymbolsPart2Solved()) {
 		for (int i = 3; i < 6; i++)
 			_asSymbols[i]->hide();
-		if (!getGlobalVar(0x0C0288F4) || getGlobalVar(0x000809C2) || getGlobalVar(0x9040018A)) {
+		if (!getGlobalVar(V_ROBOT_HIT) || getGlobalVar(V_CANNON_RAISED) || getGlobalVar(V_CANNON_TURNED)) {
 			_ssSymbolEdges[1]->show();
 			_ssTargetLines[1]->show();
 			_asHorizontalIndicator->show();
@@ -938,8 +938,8 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		// TODO: Debug stuff
-		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !getGlobalVar(0x000809C2)) {
-			setGlobalVar(0x20580A86, 0);
+		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !getGlobalVar(V_CANNON_RAISED)) {
+			setGlobalVar(V_CANNON_TARGET_STATUS, 0);
 			leaveScene(0);
 		}
 		break;
@@ -947,19 +947,19 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 		// TODO: Debug stuff
 		break;
 	case 0x2000:
-		if (!getGlobalVar(0x000809C2)) {
-			if (!getGlobalVar(0x10938830)) {
+		if (!getGlobalVar(V_CANNON_RAISED)) {
+			if (!getGlobalVar(V_WALL_BROKEN)) {
 				_cannonTargetStatus = kCTSBreakWall;
-				setGlobalVar(0x10938830, 1);
+				setGlobalVar(V_WALL_BROKEN, 1);
 			} else {
 				_cannonTargetStatus = kCTSWall;
 			}
-		} else if (!getGlobalVar(0x9040018A)) {
+		} else if (!getGlobalVar(V_CANNON_TURNED)) {
 			_cannonTargetStatus = kCTSEmptyness;
-		} else if (!getGlobalVar(0x610210B7)) {
+		} else if (!getGlobalVar(V_ROBOT_TARGET)) {
 			_cannonTargetStatus = kCTSFireRobotNoTarget;
-		} else if (!getGlobalVar(0x0C0288F4)) {
-			setGlobalVar(0x0C0288F4, 1);
+		} else if (!getGlobalVar(V_ROBOT_HIT)) {
+			setGlobalVar(V_ROBOT_HIT, 1);
 			_cannonTargetStatus = kCTSFireRobotIsTarget;
 		} else {
 			_cannonTargetStatus = kCTSFireNoRobot;
@@ -971,13 +971,13 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2002:
 		// Raise/lower the cannon
-		if (!getGlobalVar(0x9040018A) && !_isTurning) {
-			if (getGlobalVar(0x000809C2)) {
+		if (!getGlobalVar(V_CANNON_TURNED) && !_isTurning) {
+			if (getGlobalVar(V_CANNON_RAISED)) {
 				_cannonTargetStatus = kCTSLowerCannon;
-				setGlobalVar(0x000809C2, 0);
+				setGlobalVar(V_CANNON_RAISED, 0);
 			} else {
 				_cannonTargetStatus = kCTSRaiseCannon;
-				setGlobalVar(0x000809C2, 1);
+				setGlobalVar(V_CANNON_RAISED, 1);
 			}
 			playActionVideo();
 		}
@@ -987,25 +987,25 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2004:
 		// Turn the cannon if it's raised
-		if (getGlobalVar(0x000809C2)) {
-			if (!getGlobalVar(0x9040018A)) {
+		if (getGlobalVar(V_CANNON_RAISED)) {
+			if (!getGlobalVar(V_CANNON_TURNED)) {
 				// Cannon is at the left position
-				if (!getGlobalVar(0x610210B7)) {
+				if (!getGlobalVar(V_ROBOT_TARGET)) {
 					_cannonTargetStatus = kCTSRightRobotNoTarget;
-				} else if (!getGlobalVar(0x0C0288F4)) {
+				} else if (!getGlobalVar(V_ROBOT_HIT)) {
 					_cannonTargetStatus = kCTSRightRobotIsTarget;
 				} else {
 					_cannonTargetStatus = kCTSRightNoRobot;
 				}
-				setGlobalVar(0x9040018A, 1);
+				setGlobalVar(V_CANNON_TURNED, 1);
 				_isTurning = true;
 				playActionVideo();
 			} else {
 				// Cannon is at the right position
-				if (!getGlobalVar(0x610210B7)) {
+				if (!getGlobalVar(V_ROBOT_TARGET)) {
 					_cannonTargetStatus = kCTSLeftRobotNoTarget;
 					_smackerPlayer->open(0x108A000F, false);
-				} else if (!getGlobalVar(0x0C0288F4)) {
+				} else if (!getGlobalVar(V_ROBOT_HIT)) {
 					_cannonTargetStatus = kCTSLeftRobotIsTarget;
 					_smackerPlayer->open(0x500B002F, false);
 				} else {
@@ -1016,7 +1016,7 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 				_moveCannonLeftFirst = true;
 				_isTurning = true;
 				_keepVideo = false;
-				setGlobalVar(0x9040018A, 0);
+				setGlobalVar(V_CANNON_TURNED, 0);
 			}
 		}
 		break;
@@ -1025,8 +1025,8 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 void Scene3009::playActionVideo() {
-	setGlobalVar(0x20580A86, _cannonTargetStatus);
-	setGlobalVar(0xF0402B0A, kScene3009CannonActionVideos[_cannonTargetStatus]);
+	setGlobalVar(V_CANNON_TARGET_STATUS, _cannonTargetStatus);
+	setGlobalVar(V_CANNON_SMACKER_NAME, kScene3009CannonActionVideos[_cannonTargetStatus]);
 	leaveScene(1);
 }
 
@@ -1378,8 +1378,8 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 		_boltUnlocked[param.asInteger()] = true;
 		_boltUnlocking[param.asInteger()] = false;
 		if (_boltUnlocked[0] && _boltUnlocked[1] && _boltUnlocked[2]) {
-			if (!getGlobalVar(0x00040153)) {
-				setGlobalVar(0x00040153, 1);
+			if (!getGlobalVar(V_BOLT_DOOR_UNLOCKED)) {
+				setGlobalVar(V_BOLT_DOOR_UNLOCKED, 1);
 				playSound(0);
 				_countdown = 60;
 			} else {
@@ -1539,7 +1539,7 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _updateStatus(0), _buttonClicked(false), _currentSymbolIndex(0) {
 
 	// TODO _vm->gameModule()->initScene3011Vars();
-	_noisySymbolIndex = getGlobalVar(0x2414C2F2);
+	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene3011::handleMessage);

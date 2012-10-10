@@ -37,10 +37,10 @@ Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->setSoundListParams(kModule2300SoundList, true, 50, 600, 10, 150);
 
 	//DEBUG>>>
-	setGlobalVar(0x10938830, 0);
+	setGlobalVar(V_WALL_BROKEN, 0);
 	//DEBUG<<<
 
-	_flag = getGlobalVar(0x10938830) == 0;
+	_flag = getGlobalVar(V_WALL_BROKEN) == 0;
 	
 	if (_flag) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
@@ -90,7 +90,7 @@ void Module2300::createScene(int sceneNum, int which) {
 		createNavigationScene(0x004B6878, which);
 		break;
 	case 3:
-		if (getGlobalVar(0x10938830)) {
+		if (getGlobalVar(V_WALL_BROKEN)) {
 			createNavigationScene(0x004B68F0, which);
 		} else {
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);

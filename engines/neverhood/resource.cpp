@@ -397,6 +397,17 @@ void TextResource::load(uint32 fileHash) {
 		if (_vm->_res->getResourceType(_resourceHandle) == 6) {
 			_textData = _vm->_res->loadResource(_resourceHandle, true);
 			_count = READ_LE_UINT32(_textData);
+			
+			debug("TEXT RESOURCE %08X, count = %d:", fileHash, _count);
+			for (uint i = 0; i < _count-1; i++) {
+				const char *textEnd, *text = getString(i, textEnd);
+				while (text < textEnd) {
+					debug("[%04d] [%s]", i, text);
+					text += strlen(text) + 1;
+				}
+				debug("------------------");
+			}
+			
 		} else {
 			_vm->_res->unuseResource(_resourceHandle);
 			_resourceHandle = -1;

@@ -60,7 +60,7 @@ void Module1200::createScene(int sceneNum, int which) {
 	case 2:
 		_vm->_soundMan->stopMusic(0x62222CAE, 0, 0);
 		createSmackerScene(0x31890001, true, true, false);
-		setGlobalVar(0x2A02C07B, 1);
+		setGlobalVar(V_CREATURE_EXPLODED, 1);
 		break;
 	}
 	SetUpdateHandler(&Module1200::updateScene);
@@ -74,7 +74,7 @@ void Module1200::updateScene() {
 			if (_moduleResult == 1) {
 				createScene(1, 0);
 			} else if (_moduleResult == 2) {
-				if (getGlobalVar(0x0A18CA33) && !getGlobalVar(0x2A02C07B)) {
+				if (getGlobalVar(0x0A18CA33) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 					createScene(2, -1);
 				} else {
 					leaveModule(1);
@@ -439,7 +439,7 @@ AsScene1201TntManFlame::~AsScene1201TntManFlame() {
 
 void AsScene1201TntManFlame::update() {
 	AnimatedSprite::update();
-	if (getGlobalVar(0x20A0C516)) {
+	if (getGlobalVar(V_TNT_DUMMY_FUSE_LIT)) {
 		setVisible(true);
 		SetUpdateHandler(&AnimatedSprite::update);
 		_vm->_soundMan->addSound(0x041080A4, 0x460A1050);
@@ -459,7 +459,7 @@ AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
 	SetUpdateHandler(&AsScene1201Match::update);
 	SetMessageHandler(&AsScene1201Match::hmOnDoorFrameAboutToMove);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	switch (getGlobalVar(0x0112090A)) {
+	switch (getGlobalVar(V_MATCH_STATUS)) {
 	case 0:
 		_x = 521;
 		_y = 112;
@@ -522,7 +522,7 @@ uint32 AsScene1201Match::hmIdle(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4806:
 		setVisible(false);
-		setGlobalVar(0x0112090A, 3);
+		setGlobalVar(V_MATCH_STATUS, 3);
 		break;
 	}
 	return messageResult;
@@ -539,7 +539,7 @@ void AsScene1201Match::stOnDoorFrameMoving() {
 }
 
 void AsScene1201Match::stFallingFromDoorFrame() {
-	setGlobalVar(0x0112090A, 2);
+	setGlobalVar(V_MATCH_STATUS, 2);
 	_x -= 199;
 	_y += 119;
 	startAnimation(0x018D0240, 0, -1);
@@ -752,7 +752,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x04063110, 500);
 	topY4 = tempSprite->getY() + 1; 
 
-	_asTntManRope = insertSprite<AsScene1201TntManRope>(getGlobalVar(0x000CF819) && which != 1);
+	_asTntManRope = insertSprite<AsScene1201TntManRope>(getGlobalVar(V_TNT_DUMMY_BUILT) && which != 1);
 	_asTntManRope->setClipRect(0, topY4, 640, 480);
 	
 	insertStaticSprite(0x400B04B0, 1200);
@@ -772,7 +772,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlayman<KmScene1201>(400, 329);
 		setMessageList(0x004AEC08);
 	} else if (which == 2) {
-		if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
+		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(0x0A18CA33)) {
 			insertKlayman<KmScene1201>(374, 333);
 			setMessageList(0x004AEC08);
 		} else {
@@ -780,7 +780,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004AEC20);
 		}
 	} else if (which == 1) {
-		if (getGlobalVar(0xC0418A02)) {
+		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1201>(364, 333);
 			_klayman->setDoDeltaX(1);
 		} else {
@@ -795,7 +795,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->setClipRect(x1, 0, x2, 480);
 	_klayman->setRepl(64, 0);
 	
-	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
+	if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(0x0A18CA33)) {
 		setBackground(0x4019A2C4);
 		setPalette(0x4019A2C4);
 		_asRightDoor = NULL;
@@ -805,7 +805,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asRightDoor = insertSprite<AsScene1201RightDoor>(_klayman, which == 2);
 	}
 
-	if (getGlobalVar(0x000CF819)) {
+	if (getGlobalVar(V_TNT_DUMMY_BUILT)) {
 		insertStaticSprite(0x10002ED8, 500);
 		if (!getGlobalVar(0x0A18CA33)) {
 			_asTntMan = insertSprite<AsScene1201TntMan>(this, _asTntManRope, which == 1);
@@ -838,7 +838,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			tntIndex += 3;
 		}
 
-		if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
+		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(0x0A18CA33)) {
 			setRectList(0x004AEE58);
 		} else {
 			setRectList(0x004AEDC8);
@@ -866,7 +866,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			tntIndex++;
 		}
 
-		if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
+		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(0x0A18CA33)) {
 			setRectList(0x004AEE18);
 		} else {
 			setRectList(0x004AED88);
@@ -879,18 +879,18 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asLeftDoor = insertSprite<AsScene1201LeftDoor>(_klayman);
 	_asLeftDoor->setClipRect(x1, tempSprite->getDrawRect().y, tempSprite->getDrawRect().x2(), 480);
 
-	if (getGlobalVar(0x0A310817) && getGlobalVar(0x0112090A) == 0) {
-		setGlobalVar(0x0112090A, 1);
+	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_MATCH_STATUS) == 0) {
+		setGlobalVar(V_MATCH_STATUS, 1);
 	}
 
 	_asMatch = NULL;
 
-	if (getGlobalVar(0x0112090A) < 3) {
+	if (getGlobalVar(V_MATCH_STATUS) < 3) {
 		_asMatch = insertSprite<AsScene1201Match>(this);
 		_vm->_collisionMan->addSprite(_asMatch);
 	}
 
-	if (getGlobalVar(0x0A310817) && getGlobalVar(0x0A18CA33) == 0) {
+	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(0x0A18CA33) == 0) {
 		_asCreature = insertSprite<AsScene1201Creature>(this, _klayman);
 		_asCreature->setClipRect(x1, 0, x2, 480);
 	}
@@ -902,7 +902,7 @@ Scene1201::~Scene1201() {
 
 void Scene1201::update() {
 	Scene::update();
-	if (_asMatch && getGlobalVar(0x0112090A) == 3)
+	if (_asMatch && getGlobalVar(V_MATCH_STATUS) == 3)
 		deleteSprite(&_asMatch);
 }
 
@@ -927,7 +927,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2001:
-		if (!getGlobalVar(0x0112090A)) {
+		if (getGlobalVar(V_MATCH_STATUS) == 0) {
 			setMessageList2(0x004AECB0);
 		} else {
 			sendEntityMessage(_klayman, 0x1014, _asMatch);
@@ -935,12 +935,12 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2002:		
-		if (getGlobalVar(0x20A0C516)) {
-			// Move the TNT dummy
+		if (getGlobalVar(V_TNT_DUMMY_FUSE_LIT)) {
+			// Move the TNT dummy if the fuse is burning
 			sendEntityMessage(_klayman, 0x1014, _asTntMan);
 			setMessageList2(0x004AECF0, false);
-		} else if (getGlobalVar(0x0112090A) == 3) {
-			// Light the TNT dummy
+		} else if (getGlobalVar(V_MATCH_STATUS) == 3) {
+			// Light the TNT dummy if we have the match
 			sendEntityMessage(_klayman, 0x1014, _asTntMan);
 			if (_klayman->getX() > _asTntMan->getX()) {
 				setMessageList(0x004AECD0);
@@ -1107,7 +1107,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertStaticSprite(0x8E8419C1, 1100);
 
-	if (getGlobalVar(0x000CF819)) {
+	if (getGlobalVar(V_TNT_DUMMY_BUILT)) {
 		SetMessageHandler(&Scene1202::hmSolved);
 	}
 
@@ -1120,7 +1120,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 Scene1202::~Scene1202() {
 	if (isSolved()) {
-		setGlobalVar(0x000CF819, 1);
+		setGlobalVar(V_TNT_DUMMY_BUILT, 1);
 	}
 }
 
@@ -1133,7 +1133,7 @@ void Scene1202::update() {
 	} else if (_counter == 0 && isSolved()) {
 		_clickedIndex = 0;
 		SetMessageHandler(&Scene1202::hmSolved);
-		setGlobalVar(0x000CF819, 1);
+		setGlobalVar(V_TNT_DUMMY_BUILT, 1);
 		doPaletteEffect();
 		playSound(3);
 		_soundFlag = true;

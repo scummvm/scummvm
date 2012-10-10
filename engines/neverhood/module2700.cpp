@@ -459,7 +459,7 @@ void Module2700::updateScene() {
 			if (!_flag1) {
 				_vm->_soundMan->stopMusic(0x04020210, 0, 1);
 				// TODO _vm->gameModule()->initScene2801Vars();
-				_musicFileHash = getGlobalVar(0x89A82A15);
+				_musicFileHash = getGlobalVar(V_MUSIC_NAME);
 				// TODO? GameState_sub_469C50(&field_52, 0);
 				// TODO MusicMan_create(); // Why?
 				_vm->_soundMan->addMusic(0x42212411, _musicFileHash);
@@ -594,7 +594,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	NRect clipRect;
 	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(0x004B2240);
-	setGlobalVar(0x21E60190, 1);
+	setGlobalVar(V_CAR_DELTA_X, 1);
 	
 	_surfaceFlag = true;
 	

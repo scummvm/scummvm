@@ -95,17 +95,17 @@ void Module1600::createScene(int sceneNum, int which) {
 		_childObject = new Scene1609(_vm, this, which);
 		break;
 	case 1001:
-		if (getGlobalVar(0xA0808898) == 1) {
+		if (getGlobalVar(V_TALK_COUNTING_INDEX) == 1) {
 			createSmackerScene(0x80050200, true, true, false);
-		} else if (getGlobalVar(0xA0808898) == 2) {
+		} else if (getGlobalVar(V_TALK_COUNTING_INDEX) == 2) {
 			createSmackerScene(0x80090200, true, true, false);
 		} else {
 			createSmackerScene(0x80000200, true, true, false);
 		}
-		if (getGlobalVar(0xA0808898) >= 2)
-			setGlobalVar(0xA0808898, 0);
+		if (getGlobalVar(V_TALK_COUNTING_INDEX) >= 2)
+			setGlobalVar(V_TALK_COUNTING_INDEX, 0);
 		else
-			incGlobalVar(0xA0808898, +1);			
+			incGlobalVar(V_TALK_COUNTING_INDEX, +1);			
 		break;
 	}
 	SetUpdateHandler(&Module1600::updateScene);
@@ -210,13 +210,13 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	_rectList = NULL;
 	
 	startAnimation(0xD4220027, 0, -1);
-	setDoDeltaX(getGlobalVar(0x21E60190));
+	setDoDeltaX(getGlobalVar(V_CAR_DELTA_X));
 
 }
 
 AsCommonCar::~AsCommonCar() {
 	if (_finalizeStateCb == AnimationCallback(&AsCommonCar::sub45D620)) {
-		setGlobalVar(0x21E60190, !getGlobalVar(0x21E60190));
+		setGlobalVar(V_CAR_DELTA_X, !getGlobalVar(V_CAR_DELTA_X));
 	}
 }
 
@@ -548,7 +548,7 @@ void AsCommonCar::sub45D100() {
 	} else {
 		startAnimation(0xD4220027, 0, -1);
 	}
-	setGlobalVar(0x21E60190, _doDeltaX ? 1 : 0);
+	setGlobalVar(V_CAR_DELTA_X, _doDeltaX ? 1 : 0);
 }
 
 void AsCommonCar::sub45D180() {
@@ -1068,7 +1068,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		the upper/lower floors and rename them accordingly.
 	*/
 	
-	setGlobalVar(0x21E60190, 1);
+	setGlobalVar(V_CAR_DELTA_X, 1);
 	
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene1608::hmLowerFloor);
@@ -1127,7 +1127,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asIdleCarLower = insertSprite<AsCommonIdleCarLower>(375, 227);
 		_asIdleCarFull = insertSprite<AsCommonIdleCarFull>(375, 227);
 		_asCar->setVisible(false);
-		if (getGlobalVar(0xC0418A02)) {
+		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1608>(373, 220);
 			_klayman->setDoDeltaX(1);
 		} else {
@@ -1204,7 +1204,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1608::~Scene1608() {
-	setGlobalVar(0xC0418A02, _kmScene1608->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _kmScene1608->isDoDeltaX() ? 1 : 0);
 	if (_klaymanInCar) {
 		delete _kmScene1608;
 	} else {
@@ -1388,7 +1388,7 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _countdown1(1), _currentSymbolIndex(0), _symbolPosition(0), _changeCurrentSymbol(true), _isSolved(false) {
 
 	// TODO _vm->gameModule()->initScene3011Vars();
-	_noisySymbolIndex = getGlobalVar(0x2414C2F2);
+	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
 	
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene1609::handleMessage);

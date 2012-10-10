@@ -32,7 +32,7 @@ SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubl
 
 	// NOTE: Merged from SmackerScene::init, maybe split again if needed (incl. parameter flags)
 	
-	if (getGlobalVar(0x06C02850)) {
+	if (getGlobalVar(V_SMACKER_CAN_ABORT)) {
 		_flag1 = true;
 		_canAbort = true;
 	}

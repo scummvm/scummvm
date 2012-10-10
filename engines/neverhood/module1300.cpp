@@ -305,7 +305,7 @@ AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
 	createSurface1(0x88148150, 500);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1302Bridge::handleMessage);
-	if (!getGlobalVar(0x13206309)) {
+	if (!getGlobalVar(V_FLYTRAP_RING_BRIDGE)) {
 		startAnimation(0x88148150, 0, -1);
 		_newStickFrameIndex = 0;
 	} else {
@@ -358,7 +358,7 @@ SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
 	SetMessageHandler(&SsScene1302Fence::handleMessage);
 	SetSpriteUpdate(NULL);
 	_firstY = _y;
-	if (getGlobalVar(0x80101B1E))
+	if (getGlobalVar(V_FLYTRAP_RING_FENCE))
 		_y += 152;
 	loadSound(0, 0x7A00400C);
 	loadSound(1, 0x78184098);
@@ -422,9 +422,9 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite3 = insertStaticSprite(0x16E01E20, 1100);
 
 	_asRing1 = insertSprite<AsScene1002Ring>(this, false, 218, 122, _class595->getDrawRect().y, false);
-	_asRing2 = insertSprite<AsScene1002Ring>(this, true, 218 + 32, 132, _class595->getDrawRect().y, getGlobalVar(0x13206309));
+	_asRing2 = insertSprite<AsScene1002Ring>(this, true, 218 + 32, 132, _class595->getDrawRect().y, getGlobalVar(V_FLYTRAP_RING_BRIDGE));
 	_asRing3 = insertSprite<AsScene1002Ring>(this, false, 218 + 32 + 32, 122, _class595->getDrawRect().y, false);
-	_asRing4 = insertSprite<AsScene1002Ring>(this, true, 218 + 32 + 32 + 32, 132, _class595->getDrawRect().y, getGlobalVar(0x80101B1E));
+	_asRing4 = insertSprite<AsScene1002Ring>(this, true, 218 + 32 + 32 + 32, 132, _class595->getDrawRect().y, getGlobalVar(V_FLYTRAP_RING_FENCE));
 	_asRing5 = insertSprite<AsScene1002Ring>(this, false, 218 + 32 + 32 + 32 + 32, 115, _class595->getDrawRect().y, false);
 
 	_asBridge = insertSprite<AsScene1302Bridge>(this);
@@ -456,7 +456,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asInteger() == 0x4A845A00) {
 			sendEntityMessage(_klayman, 0x1014, _asRing1);
 		} else if (param.asInteger() == 0x43807801) {
-			if (!getGlobalVar(0x13206309)) {
+			if (!getGlobalVar(V_FLYTRAP_RING_BRIDGE)) {
 				sendEntityMessage(_klayman, 0x1014, _asRing2);
 				if (_asVenusFlyTrap->getX() - 10 < 218 + 32 && _asVenusFlyTrap->getX() + 10 > 218 + 32) {
 					setMessageList(0x004B0940);
@@ -470,7 +470,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x46C26A01) {
 			sendEntityMessage(_klayman, 0x1014, _asRing3);
 		} else if (param.asInteger() == 0x468C7B11) {
-			if (!getGlobalVar(0x80101B1E)) {
+			if (!getGlobalVar(V_FLYTRAP_RING_FENCE)) {
 				sendEntityMessage(_klayman, 0x1014, _asRing4);
 				if (_asVenusFlyTrap->getX() - 10 < 218 + 32 + 32 + 32 && _asVenusFlyTrap->getX() + 10 > 218 + 32 + 32 + 32) {
 					setMessageList(0x004B0940);
@@ -484,13 +484,13 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x42845B19) {
 			sendEntityMessage(_klayman, 0x1014, _asRing5);
 		} else if (param.asInteger() == 0x430A6060) {
-			if (getGlobalVar(0x13206309)) {
+			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE)) {
 				setMessageList2(0x004B0910);
 			} else {
 				cancelMessageList();
 			}
 		} else if (param.asInteger() == 0x012E2070) {
-			if (getGlobalVar(0x13206309)) {
+			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE)) {
 				setMessageList2(0x004B0968);
 			} else {
 				cancelMessageList();
@@ -525,12 +525,12 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 			playSound(0, 0x665198C0);
 		} else if (sender == _asRing2) {
 			sendMessage(_asBridge, 0x4808, 0);
-			setGlobalVar(0x13206309, 1);
+			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 1);
 		} else if (sender == _asRing3) {
 			playSound(0, 0xE2D389C0);
 		} else if (sender == _asRing4) {
 			sendMessage(_ssFence, 0x4808, 0);
-			setGlobalVar(0x80101B1E, 1);
+			setGlobalVar(V_FLYTRAP_RING_FENCE, 1);
 		} else if (sender == _asRing5) {
 			playSound(0, 0x40428A09);
 		}
@@ -538,13 +538,13 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x4807:
 		if (sender == _asRing2) {
 			sendMessage(_asBridge, 0x4809, 0);
-			setGlobalVar(0x13206309, 0);
+			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 0);
 			_sprite2->setVisible(false);
 		} else if (sender == _asRing4) {
 			sendMessage(_ssFence, 0x4809, 0);
-			setGlobalVar(0x80101B1E, 0);
+			setGlobalVar(V_FLYTRAP_RING_FENCE, 0);
 		} else if (sender == _asVenusFlyTrap) {
-			if (getGlobalVar(0x13206309)) {
+			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE)) {
 				sendMessage(_asRing2, 0x4807, 0);
 			} else {
 				sendMessage(_asRing4, 0x4807, 0);
@@ -555,11 +555,11 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _asRing2) {
 			playSound(0, 0x60755842);
 			sendMessage(_asBridge, 0x4808, 0);
-			setGlobalVar(0x13206309, 1);
+			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 1);
 		} else if (sender == _asRing4) {
 			playSound(0, 0x60755842);
 			sendMessage(_ssFence, 0x4808, 0);
-			setGlobalVar(0x80101B1E, 1);
+			setGlobalVar(V_FLYTRAP_RING_FENCE, 1);
 		}
 		break;
 	case 0x482A:
@@ -639,7 +639,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x01581A9C);
 	insertMouse433(0x81A9801D);
 
-	if (!getGlobalVar(0xAC00C0D0)) {
+	if (!getGlobalVar(V_BALLOON_POPPED)) {
 		_asBalloon = insertSprite<AsScene1303Balloon>(this);
 		_vm->_collisionMan->addSprite(_asBalloon);
 	}
@@ -657,11 +657,11 @@ uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2000:
-		setGlobalVar(0xAC00C0D0, 1);
+		setGlobalVar(V_BALLOON_POPPED, 1);
 		sendMessage(_asBalloon, 0x2000, 0);
 		break;
 	case 0x4826:
-		if (sender == _asBalloon && getGlobalVar(0x31C63C51)) {
+		if (sender == _asBalloon && getGlobalVar(V_HAS_NEEDLE)) {
 			setMessageList(0x004AF9B8);
 		}
 		break;
@@ -684,7 +684,7 @@ uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &para
 		messageResult = 1;
 		break;
 	case 0x4806:
-		setGlobalVar(0x31C63C51, 1);
+		setGlobalVar(V_HAS_NEEDLE, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
 		break;
@@ -703,7 +703,7 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x062C0214);
 	insertMouse433(0xC021006A);
 	
-	if (getGlobalVar(0xAC00C0D0)) {
+	if (getGlobalVar(V_BALLOON_POPPED)) {
 		_asKey = insertSprite<AsCommonKey>(this, 0, 1100, 278, 347);
 		_vm->_collisionMan->addSprite(_asKey);
 	} else {
@@ -711,7 +711,7 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 		// TODO _asKey->setUpdateDeltaXY();
 	}
 
-	if (!getGlobalVar(0x31C63C51)) {
+	if (!getGlobalVar(V_HAS_NEEDLE)) {
 		_asNeedle = insertSprite<AsScene1304Needle>(this, 1100, 278, 347);
 		_vm->_collisionMan->addSprite(_asNeedle);
 	} else {
@@ -739,7 +739,7 @@ uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x415634A4) {
-			if (getGlobalVar(0xAC00C0D0)) {
+			if (getGlobalVar(V_BALLOON_POPPED)) {
 				cancelMessageList();
 			} else {
 				setMessageList(0x004B9158);
@@ -874,8 +874,8 @@ void AsScene1306Elevator::cbGoingDownEvent() {
 Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
-	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
-		setGlobalVar(0x13382860, 4);
+	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
+		setGlobalVar(V_KEY3_LOCATION, 4);
 	
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene1306::handleMessage);
@@ -884,7 +884,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x05303114);
 	insertMouse433(0x0311005B);
 
-	if (getGlobalVar(0x13382860) == 4) {
+	if (getGlobalVar(V_KEY3_LOCATION) == 4) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 435, 445);
 		_vm->_collisionMan->addSprite(_asKey);
 	}
@@ -915,7 +915,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(this, 0x2000, 1);
 		_vm->_collisionMan->addSprite(_asTape);
 	} else if (which == 2) {
-		if (getGlobalVar(0xC0418A02)) {
+		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1306>(515, 440);
 			_klayman->setDoDeltaX(1);
 		} else {
@@ -955,7 +955,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 	
 Scene1306::~Scene1306() {
-	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1320,7 +1320,7 @@ void Scene1307::update() {
 	}
 	if (_doLeaveScene && !isSoundPlaying(0)) {
 		leaveScene(1);
-		setGlobalVar(0x80455A41, 1);
+		setGlobalVar(V_KEYDOOR_UNLOCKED, 1);
 	} 
 }
 
@@ -1593,7 +1593,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asTape = insertSprite<AsScene1201Tape>(this, 17, 1100, 502, 445, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape);
 
-	if (getGlobalVar(0x01023818)) {
+	if (getGlobalVar(V_MOUSE_SUCKED_IN)) {
 		insertSprite<AsScene1308Mouse>();
 		insertSprite<AnimatedSprite>(0x461A1490, 200, 235, 429);
 	}
@@ -1613,7 +1613,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		insertKlayman<KmScene1308>(380, 440);
 		setMessageList(0x004B57C0);
-		if (getGlobalVar(0x80455A41)) {
+		if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			setRectList(0x004B5990);
 		} else {
@@ -1623,7 +1623,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 1) {
 		insertKlayman<KmScene1308>(640, 440);
 		setMessageList(0x004B57C8);
-		if (getGlobalVar(0x80455A41)) {
+		if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			setRectList(0x004B5990);
 		} else {
@@ -1633,7 +1633,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 2) {
 		insertKlayman<KmScene1308>(475, 440);
 		setMessageList(0x004B58B0);
-		if (getGlobalVar(0x80455A41)) {
+		if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 			_sprite5 = insertSprite<AsScene1308KeyboardDoor>(this);
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			_sprite4->setVisible(false);
@@ -1646,7 +1646,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B57D0);
 		sendMessage(_asJaggyDoor, 0x4808, 0);
 		_sprite1->setVisible(false);
-		if (getGlobalVar(0x80455A41)) {
+		if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			_klayman->setVisible(false);
 		} else {
@@ -1661,7 +1661,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 	}
 
-	if (getGlobalVar(0x04A105B3) == 4) {
+	if (getGlobalVar(V_PROJECTOR_LOCATION) == 4) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
 		_vm->_collisionMan->addSprite(_asProjector);
 		_asProjector->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
@@ -1681,7 +1681,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 			_flag1 = true;
 		} else if (param.asInteger() == 0x08821382) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
-			if (getGlobalVar(0x80455A41)) {
+			if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 				setRectList(0x004B5990);
 			} else {
 				setRectList(0x004B5980);
@@ -1703,7 +1703,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2000:
-		if (getGlobalVar(0x80455A41)) {
+		if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 			setRectList(0x004B5990);
 		} else {
 			setRectList(0x004B5980);

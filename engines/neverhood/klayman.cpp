@@ -3048,7 +3048,7 @@ uint32 Klayman::hmMatch(int messageNum, const MessageParam &param, Entity *sende
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x51281850) {
-			setGlobalVar(0x20A0C516, 1);
+			setGlobalVar(V_TNT_DUMMY_FUSE_LIT, 1);
 		} else if (param.asInteger() == 0x43000538) {
 			playSound(0, 0x21043059);
 		} else if (param.asInteger() == 0x02B20220) {
@@ -3283,7 +3283,7 @@ void Klayman::stWaitLeverDown() {
 }
 
 void Klayman::stStartWalkingResume() {
-	int16 frameIndex = getGlobalVar(0x18288913) + _walkResumeFrameIncr;
+	int16 frameIndex = getGlobalVar(V_KLAYMAN_FRAMEINDEX) + _walkResumeFrameIncr;
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
@@ -4788,7 +4788,7 @@ KmScene2205::KmScene2205(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 }
 
 void KmScene2205::xUpdate() {
-	setGlobalVar(0x18288913, _currFrameIndex);
+	setGlobalVar(V_KLAYMAN_FRAMEINDEX, _currFrameIndex);
 }
 	
 uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4842,7 +4842,7 @@ KmScene2206::~KmScene2206() {
 }
 
 void KmScene2206::xUpdate() {
-	setGlobalVar(0x18288913, _currFrameIndex);
+	setGlobalVar(V_KLAYMAN_FRAMEINDEX, _currFrameIndex);
 }
 	
 uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -5006,7 +5006,7 @@ KmScene2242::KmScene2242(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 }
 
 void KmScene2242::xUpdate() {
-	setGlobalVar(0x18288913, _currFrameIndex);
+	setGlobalVar(V_KLAYMAN_FRAMEINDEX, _currFrameIndex);
 }
 
 uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -5076,7 +5076,7 @@ KmHallOfRecords::KmHallOfRecords(NeverhoodEngine *vm, Entity *parentScene, int16
 }
 
 void KmHallOfRecords::xUpdate() {
-	setGlobalVar(0x18288913, _currFrameIndex);
+	setGlobalVar(V_KLAYMAN_FRAMEINDEX, _currFrameIndex);
 }
 
 uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -5130,7 +5130,7 @@ KmScene2247::KmScene2247(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 }
 
 void KmScene2247::xUpdate() {
-	setGlobalVar(0x18288913, _currFrameIndex);
+	setGlobalVar(V_KLAYMAN_FRAMEINDEX, _currFrameIndex);
 }
 
 uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -5274,7 +5274,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
-		if (!getGlobalVar(0x92603A79))
+		if (!getGlobalVar(V_TV_JOKE_TOLD))
 			GotoState(&Klayman::stStandWonderAbout);
 		else
 			GotoState(&Klayman::stTryStandIdle);

@@ -92,9 +92,9 @@ void Module2500::createScene(int sceneNum, int which) {
 		createScene2704(which, 0x004B01B8, 220);
 		break;
 	case 2:
-		setGlobalVar(0x98109F12, 1);// TODO DEBUG! Join the tracks.
+		setGlobalVar(V_WORLDS_JOINED, 1);// TODO DEBUG! Join the tracks.
 		_vm->gameState().which = which;
-		if (getGlobalVar(0x98109F12))
+		if (getGlobalVar(V_WORLDS_JOINED))
 			createScene2704(which, 0x004B01E0, 150);
 		else
 			createScene2704(which, 0x004B0208, 150);
@@ -107,7 +107,7 @@ void Module2500::createScene(int sceneNum, int which) {
 		createScene2704(which, 0x004B0230, 150, kScene2505StaticSprites, &kScene2505ClipRect);
 		break;
 	case 5:
-		setGlobalVar(0x21E60190, 1);
+		setGlobalVar(V_CAR_DELTA_X, 1);
 		_vm->gameState().which = which;
 		createScene2704(which, 0x004B0268, 150, kScene2506StaticSprites, &kScene2506ClipRect);
 		break;
@@ -117,7 +117,7 @@ void Module2500::createScene(int sceneNum, int which) {
 		break;
 	case 7:
 		_vm->gameState().which = which;
-		if (getGlobalVar(0xD0A14D10))
+		if (getGlobalVar(V_ENTRANCE_OPEN))
 			createScene2704(which, 0x004B02C8, 150, kScene2508StaticSprites1, &kScene2508ClipRect1);
 		else
 			createScene2704(which, 0x004B02C8, 150, kScene2508StaticSprites2, &kScene2508ClipRect2);
@@ -126,7 +126,7 @@ void Module2500::createScene(int sceneNum, int which) {
 		_childObject = new Scene1608(_vm, this, which);
 		break;
 	case 9:
-		if (getGlobalVar(0xD0A14D10))
+		if (getGlobalVar(V_ENTRANCE_OPEN))
 			createStaticScene(0xC62A0645, 0xA0641C6A);
 		else
 			createStaticScene(0x7A343546, 0x435427AB);
@@ -224,7 +224,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sceneInfos[1] = _vm->_staticData->getSceneInfo2700(0x004B264C);
 	_sceneInfos[2] = _vm->_staticData->getSceneInfo2700(0x004B2670);
 
-	setGlobalVar(0x21E60190, 1);
+	setGlobalVar(V_CAR_DELTA_X, 1);
 	SetUpdateHandler(&Scene2501::update);
 	_surfaceFlag = true;
 	setBackground(0x1B8E8115);
