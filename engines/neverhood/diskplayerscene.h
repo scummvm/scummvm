@@ -32,13 +32,13 @@ namespace Neverhood {
 
 class DiskplayerScene;
 
-class Class494 : public AnimatedSprite {
+class AsDiskplayerSceneKey : public AnimatedSprite {
 public:
-	Class494(NeverhoodEngine *vm);
-	void sub43BE20();
+	AsDiskplayerSceneKey(NeverhoodEngine *vm);
+	void stDropKey();
 protected:	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub43BE00();
+	void stDropKeyDone();
 };
 
 class DiskplayerPlayButton : public StaticSprite {
@@ -59,7 +59,7 @@ public:
 	void stop();
 	void appear();
 	void play();
-	void setFlag2(bool value) { _flag2 = value; }
+	void setLocked(bool isLocked) { _isLocked = isLocked; }
 protected:
 	DiskplayerScene *_diskplayerScene;
 	Sprite *_inactiveSlot;
@@ -68,32 +68,37 @@ protected:
 	int _elementIndex;
 	int _initialCountdown;
 	int _countdown;
-	bool _flag2;
+	bool _isLocked;
 	int _value;
-	bool _flag;
+	bool _isBlinking;
 	void update();	
+};
+
+enum {
+	kUSStopped		= 0,
+	kUSTuningIn		= 1,
+	kUSPlaying		= 2,
+	kUSPlayingFinal	= 3
 };
 
 class DiskplayerScene : public Scene {
 public:
-	DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int which);
-	bool getFlag3() const { return _flag3; }
+	DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int paletteIndex);
+	bool getDropKey() const { return _dropKey; }
 protected:
-	SmackerPlayer *_smackerPlayer;
-	DiskplayerPlayButton *_playButton;
-	Class494 *_class494;
+	SmackerPlayer *_diskSmackerPlayer;
+	DiskplayerPlayButton *_ssPlayButton;
+	AsDiskplayerSceneKey *_asKey;
 	DiskplayerSlot *_diskSlots[20];
-	DiskplayerSlot *_class650;
+	DiskplayerSlot *_finalDiskSlot;
 	int _updateStatus;
 	byte _diskAvailable[20];
-	bool _flag4;
-	int _which;
 	int _diskIndex;
 	int _appearCountdown;
 	int _tuneInCountdown;
-	bool _fullFlag;
+	bool _hasAllDisks;
 	bool _inputDisabled;
-	bool _flag3;
+	bool _dropKey;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stop();

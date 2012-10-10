@@ -1425,9 +1425,8 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _asProjector(NULL), _asKey(NULL) {
 	
-	if (getGlobalVar(0xC0780812) && !getGlobalVar(0x13382860)) {
+	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
 		setGlobalVar(0x13382860, 5);
-	}
 	
 	SetMessageHandler(&Scene1404::handleMessage);
 	_surfaceFlag = true;

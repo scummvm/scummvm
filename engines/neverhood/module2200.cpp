@@ -1028,6 +1028,7 @@ AsCommonKey::AsCommonKey(NeverhoodEngine *vm, Scene *parentScene, int keyIndex, 
 	if (!getSubVar(0x0090EA95, _keyIndex) && !getSubVar(0x08D0AB11, _keyIndex)) {
 		SetMessageHandler(&AsCommonKey::handleMessage);
 	} else {
+		// If Klayman already has the key or it's already inserted then don't show it
 		setVisible(false);
 		SetMessageHandler(NULL);
 	}
@@ -1114,7 +1115,7 @@ void AsScene2203Door::closeDoor() {
 Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
-	if (getGlobalVar(0xC0780812) && !getGlobalVar(0x13382860))
+	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
 		setGlobalVar(0x13382860, 1);
 
 	SetMessageHandler(&Scene2203::handleMessage);

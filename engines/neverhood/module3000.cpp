@@ -865,7 +865,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 void Scene3009::update() {
 	Scene::update();
 	
-	if (!_keepVideo && _smackerPlayer->getFrameNumber() + 1 == _smackerPlayer->getFrameCount() && _cannonTargetStatus <= kCTSCount) {
+	if (!_keepVideo && _smackerPlayer->isDone() && _cannonTargetStatus <= kCTSCount) {
 		switch (_cannonTargetStatus) {
 		case kCTSNull:
 		case kCTSLowerCannon:

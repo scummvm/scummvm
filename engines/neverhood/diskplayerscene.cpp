@@ -155,7 +155,7 @@ static const uint32 kDiskplayerSlotFileHashes4[] = {
 	0xDC802161
 };
 
-Class494::Class494(NeverhoodEngine *vm)
+AsDiskplayerSceneKey::AsDiskplayerSceneKey(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100) {
 	
 	createSurface1(0x100B90B4, 1200);
@@ -168,7 +168,7 @@ Class494::Class494(NeverhoodEngine *vm)
 	_surface->setVisible(false);
 }
 
-uint32 Class494::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsDiskplayerSceneKey::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -178,19 +178,19 @@ uint32 Class494::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-void Class494::sub43BE00() {
+void AsDiskplayerSceneKey::stDropKey() {
+	startAnimation(0x100B90B4, 0, -1);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsDiskplayerSceneKey::handleMessage);
+	NextState(&AsDiskplayerSceneKey::stDropKeyDone);
+	_surface->setVisible(true);
+}
+
+void AsDiskplayerSceneKey::stDropKeyDone() {
 	stopAnimation();
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Sprite::handleMessage);
 	_surface->setVisible(false);
-}
-
-void Class494::sub43BE20() {
-	startAnimation(0x100B90B4, 0, -1);
-	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class494::handleMessage);
-	NextState(&Class494::sub43BE00);
-	_surface->setVisible(true);
 }
 
 DiskplayerPlayButton::DiskplayerPlayButton(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene)
@@ -202,16 +202,13 @@ DiskplayerPlayButton::DiskplayerPlayButton(NeverhoodEngine *vm, DiskplayerScene 
 	_drawRect.y = 0;
 	_drawRect.width = _spriteResource.getDimensions().width;
 	_drawRect.height = _spriteResource.getDimensions().height;
-	_deltaRect.x = 0;
-	_deltaRect.y = 0;
-	_deltaRect.width = _spriteResource.getDimensions().width;
-	_deltaRect.height = _spriteResource.getDimensions().height;
+	_deltaRect = _drawRect;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_surface->setVisible(false);
 	processDelta();
 	_needRefresh = true;
 	StaticSprite::update();
+	_surface->setVisible(false);
 	loadSound(0, 0x44043000);
 	loadSound(1, 0x44045000);
 	SetMessageHandler(&DiskplayerPlayButton::handleMessage);
@@ -222,7 +219,7 @@ uint32 DiskplayerPlayButton::handleMessage(int messageNum, const MessageParam &p
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		if (!_diskplayerScene->getFlag3()) {
+		if (!_diskplayerScene->getDropKey()) {
 			if (_isPlaying) {
 				sendMessage(_diskplayerScene, 0x2001, 0);
 				release();
@@ -258,7 +255,7 @@ void DiskplayerPlayButton::release() {
 
 DiskplayerSlot::DiskplayerSlot(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene, int elementIndex, int value)
 	: Entity(vm, 0), _diskplayerScene(diskplayerScene), _elementIndex(elementIndex), _value(value),
-	_flag2(false), _flag(false), _countdown(0), _initialCountdown(2), _inactiveSlot(NULL), _appearSlot(NULL), _activeSlot(NULL) {
+	_isLocked(false), _isBlinking(false), _countdown(0), _initialCountdown(2), _inactiveSlot(NULL), _appearSlot(NULL), _activeSlot(NULL) {
 
 	if (value != 0 && elementIndex < 20) {
 		_inactiveSlot = _diskplayerScene->addSprite(new StaticSprite(_vm, kDiskplayerSlotFileHashes1[_elementIndex], 1100));
@@ -271,84 +268,84 @@ DiskplayerSlot::DiskplayerSlot(NeverhoodEngine *vm, DiskplayerScene *diskplayerS
 		// TODO sound panning stuff
 	} else if (elementIndex != 20) {
 		_activeSlot = _diskplayerScene->addSprite(new StaticSprite(_vm, kDiskplayerSlotFileHashes4[_elementIndex], 1100));
-		_activeSlot->getSurface()->setVisible(false);
+		_activeSlot->setVisible(false);
 	}
 	SetUpdateHandler(&DiskplayerSlot::update);
 }
 
 void DiskplayerSlot::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		if (_flag) {
+		if (_isBlinking) {
 			if (_inactiveSlot)
-				_inactiveSlot->getSurface()->setVisible(true);
+				_inactiveSlot->setVisible(true);
 			if (_activeSlot)
-				_activeSlot->getSurface()->setVisible(false);
+				_activeSlot->setVisible(false);
 			_countdown = _initialCountdown / 2;
 		} else {
 			if (_inactiveSlot)
-				_inactiveSlot->getSurface()->setVisible(false);
+				_inactiveSlot->setVisible(false);
 			if (_activeSlot)
-				_activeSlot->getSurface()->setVisible(true);
+				_activeSlot->setVisible(true);
 			_countdown = _initialCountdown;
 		}
-		_flag = !_flag;
+		_isBlinking = !_isBlinking;
 	}
 }
 
 void DiskplayerSlot::appear() {
 	if (_inactiveSlot)
-		_inactiveSlot->getSurface()->setVisible(true);
+		_inactiveSlot->setVisible(true);
 	if (_appearSlot)
-		_appearSlot->getSurface()->setVisible(true);
+		_appearSlot->setVisible(true);
 	if (_inactiveSlot)
 		playSound(0);
 }
 
 void DiskplayerSlot::play() {
-	if (!_flag2) {
+	if (!_isLocked) {
 		if (_inactiveSlot)
-			_inactiveSlot->getSurface()->setVisible(false);
+			_inactiveSlot->setVisible(false);
 		if (_activeSlot)
-			_activeSlot->getSurface()->setVisible(true);
-		_flag = true;
+			_activeSlot->setVisible(true);
+		_isBlinking = true;
 		_countdown = 0;
 	}
 }
 
 void DiskplayerSlot::activate() {
-	if (!_flag2)
+	if (!_isLocked)
 		_countdown = _initialCountdown;
 }
 
 void DiskplayerSlot::stop() {
-	if (!_flag2) {
+	if (!_isLocked) {
 		if (_inactiveSlot)
-			_inactiveSlot->getSurface()->setVisible(true);
+			_inactiveSlot->setVisible(true);
 		if (_activeSlot)
-			_activeSlot->getSurface()->setVisible(false);
-		_flag = false;
+			_activeSlot->setVisible(false);
+		_isBlinking = false;
 		_countdown = 0;
 	}
 }
 
-DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _which(which), _diskIndex(0), _appearCountdown(0), _tuneInCountdown(0),
-	_fullFlag(false), _flag3(false), _inputDisabled(true), _updateStatus(0) { 
+DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int paletteIndex)
+	: Scene(vm, parentModule, true), _diskIndex(0), _appearCountdown(0), _tuneInCountdown(0),
+	_hasAllDisks(false), _dropKey(false), _inputDisabled(true), _updateStatus(kUSStopped) { 
 
-	int count = 0;
+	int availableDisksCount = 0;
 	
 	_surfaceFlag = true;
 
 	setBackground(0x8A000044);
-	setPalette(kDiskplayerPaletteFileHashes[_which]);
-	_playButton = new DiskplayerPlayButton(_vm, this);
-	addSprite(_playButton);
-	_vm->_collisionMan->addSprite(_playButton);
-	_class494 = new Class494(_vm);
-	addSprite(_class494);
+	setPalette(kDiskplayerPaletteFileHashes[paletteIndex]);
+
+	_ssPlayButton = insertSprite<DiskplayerPlayButton>(this);
+	_vm->_collisionMan->addSprite(_ssPlayButton);
+
+	_asKey = insertSprite<AsDiskplayerSceneKey>();
 
 	// DEBUG>>>: Give all disks
-	for (int i = 0; i < 19; i++) {
+	for (int i = 0; i < 20; i++) {
 		setSubVar(0x02720344, i, 1);
 	}
 	// DEBUG<<<
@@ -356,37 +353,34 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	for (int i = 0; i < 20; i++) {
 		_diskAvailable[i] = 0;
 		if (getSubVar(0x02720344, i))
-			count++;
+			availableDisksCount++;
 	}
 
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < availableDisksCount; i++)
 		_diskAvailable[kDiskplayerInitArray[i] - 1] = 1;
-	}
 
 	for (int i = 0; i < 20; i++) {
 		_diskSlots[i] = new DiskplayerSlot(_vm, this, i, _diskAvailable[i]);
 		addEntity(_diskSlots[i]);
 	}
 
-	_fullFlag = count == 20;
+	_hasAllDisks = availableDisksCount == 20;
 	
-	if (_fullFlag && !getGlobalVar(0xC0780812))
-		_flag3 = true;
+	if (_hasAllDisks && !getGlobalVar(0xC0780812))
+		_dropKey = true;
 
-	_flag4 = _flag3;	
-
-	_class650 = new DiskplayerSlot(_vm, this, 20, 0);
-	addEntity(_class650);
+	_finalDiskSlot = new DiskplayerSlot(_vm, this, 20, 0);
+	addEntity(_finalDiskSlot);
 
 	insertMouse435(0x000408A8, 20, 620);
 	showMouse(false);
 
-	_smackerPlayer = new SmackerPlayer(_vm, this, 0x08288103, false, true);
-	addEntity(_smackerPlayer);
-	addSurface(_smackerPlayer->getSurface());
-	_smackerPlayer->setDrawPos(154, 86);
-	// TODO _smackerPlayer->gotoFrame(0);
-	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
+	_diskSmackerPlayer = new SmackerPlayer(_vm, this, 0x08288103, false, true);
+	addEntity(_diskSmackerPlayer);
+	addSurface(_diskSmackerPlayer->getSurface());
+	_diskSmackerPlayer->setDrawPos(154, 86);
+	// TODO _diskSmackerPlayer->gotoFrame(0);
+	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 
 	_palette->usePalette();
 
@@ -399,73 +393,63 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 void DiskplayerScene::update() {
 	Scene::update();
 
-	debug("_updateStatus = %d", _updateStatus);
-
-	if (_updateStatus == 1) {
-		if (_smackerPlayer->getFrameNumber() == _smackerPlayer->getFrameCount() - 1) {
-			if (_diskAvailable[_diskIndex]) {
+	if (_updateStatus == kUSTuningIn && _diskSmackerPlayer->isDone()) {
+		if (_diskAvailable[_diskIndex]) {
+			playDisk();
+		} else {
+			playStatic();
+		}
+	} else if (_updateStatus == kUSPlaying && _diskSmackerPlayer->isDone()) {
+		_diskSlots[_diskIndex]->stop();
+		_diskIndex++;
+		if (_hasAllDisks) {
+			if (_diskIndex != 20) {
 				playDisk();
+			} else if (_dropKey) {
+				playDisk();
+				_updateStatus = kUSPlayingFinal;
 			} else {
-				playStatic();
+				_diskIndex = 0;
+				stop();
 			}
+		} else if (_diskIndex != 20) {
+			tuneIn();
+		} else {
+			_diskIndex = 0;
+			stop();
 		}
-	} else if (_updateStatus == 2) {
-		if (_smackerPlayer->getFrameNumber() == _smackerPlayer->getFrameCount() - 1) {
-			_diskSlots[_diskIndex]->stop();
-			_diskIndex++;
-			if (_fullFlag) {
-				if (_diskIndex == 20) {
-					if (_flag3) {
-						playDisk();
-						_updateStatus = 3;
-					} else {
-						_diskIndex = 0;
-						stop();
-					}
-				} else {
-					playDisk();
-				}
-			} else {
-				if (_diskIndex == 20) {
-					_diskIndex = 0;
-					stop();
-				} else {
-					tuneIn();
-				}
-			}
-		}
-	} else if (_updateStatus == 3) {
-		if (_smackerPlayer->getFrameNumber() == 133) {
-			_class494->sub43BE20();
+	} else if (_updateStatus == kUSPlayingFinal) {
+		if (_diskSmackerPlayer->getFrameNumber() == 133) {
+			_asKey->stDropKey();
 			setGlobalVar(0xC0780812, 1);
-		} else if (_smackerPlayer->getFrameNumber() == _smackerPlayer->getFrameCount() - 1) {
+		} else if (_diskSmackerPlayer->isDone()) {
 			for (int i = 0; i < 20; i++) {
-				_diskSlots[i]->setFlag2(false);
+				_diskSlots[i]->setLocked(false);
 				_diskSlots[i]->stop();
 			}
 			_diskIndex = 0;
 			stop();
 			showMouse(true);
-			_flag3 = false;
+			_dropKey = false;
 		}
 	}
 
 	if (_appearCountdown != 0 && (--_appearCountdown == 0)) {
 		_diskSlots[_diskIndex]->appear();
-		if (_flag3) {
+		if (_dropKey) {
 			_diskSlots[_diskIndex]->activate();
-			_diskSlots[_diskIndex]->setFlag2(true);
+			_diskSlots[_diskIndex]->setLocked(true);
 		}
 		_diskIndex++;
-		while (_diskAvailable[_diskIndex] == 0 && _diskIndex < 19)
+		while (!_diskAvailable[_diskIndex] && _diskIndex < 19)
 			_diskIndex++;					
 		if (_diskIndex < 20) {
 			_appearCountdown = 1;
 		} else {
 			_diskIndex = 0;
 			_inputDisabled = false;
-			if (_flag3) {
-				_playButton->press();
+			if (_dropKey) {
+				_ssPlayButton->press();
 				_tuneInCountdown = 2;
 			} else {
 				showMouse(true);
@@ -474,9 +458,8 @@ void DiskplayerScene::update() {
 		}
 	}
 
-	if (_tuneInCountdown != 0 && (--_tuneInCountdown == 0)) {
+	if (_tuneInCountdown != 0 && (--_tuneInCountdown == 0))
 		playDisk();
-	}
 
 }
 
@@ -489,14 +472,14 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 			// TODO: Debug/Cheat
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 				sendMessage(_parentModule, 0x1009, 0);
-			} else if (!_flag3 &&
+			} else if (!_dropKey &&
 				param.asPoint().x > 38 && param.asPoint().x < 598 &&
 				param.asPoint().y > 400 && param.asPoint().y < 460) {
 				
 				_diskSlots[_diskIndex]->stop();
 				_diskIndex = (param.asPoint().x - 38) / 28;
 				_diskSlots[_diskIndex]->activate();
-				if (_updateStatus == 2) {
+				if (_updateStatus == kUSPlaying) {
 					if (_diskAvailable[_diskIndex]) {
 						playDisk();
 					} else {
@@ -518,37 +501,37 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 }
 
 void DiskplayerScene::stop() {
-	_smackerPlayer->open(0x08288103, true);
-	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
+	_diskSmackerPlayer->open(0x08288103, true);
+	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
-	_playButton->release();
-	_updateStatus = 0;
+	_ssPlayButton->release();
+	_updateStatus = kUSStopped;
 	_diskSlots[_diskIndex]->activate();
 }
 
 void DiskplayerScene::tuneIn() {
-	_smackerPlayer->open(0x900001C1, false);
-	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
+	_diskSmackerPlayer->open(0x900001C1, false);
+	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
-	_playButton->release();
-	_updateStatus = 1;
+	_ssPlayButton->release();
+	_updateStatus = kUSTuningIn;
 	_diskSlots[_diskIndex]->activate();
 }
 
 void DiskplayerScene::playDisk() {
-	_smackerPlayer->open(kDiskplayerSmackerFileHashes[_diskIndex], false);
-	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
+	_diskSmackerPlayer->open(kDiskplayerSmackerFileHashes[_diskIndex], false);
+	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
-	_updateStatus = 2;
+	_updateStatus = kUSPlaying;
 	_diskSlots[_diskIndex]->play();
 }
 
 void DiskplayerScene::playStatic() {
-	_smackerPlayer->open(0x90000101, false);
-	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
+	_diskSmackerPlayer->open(0x90000101, false);
+	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
-	_playButton->release();
-	_updateStatus = 2;
+	_ssPlayButton->release();
+	_updateStatus = kUSPlaying;
 	_diskSlots[_diskIndex]->activate();
 }
 

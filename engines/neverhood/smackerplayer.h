@@ -60,6 +60,7 @@ public:
 	uint getStatus();
 	void setDrawPos(int16 x, int16 y);
 	void rewind();
+	bool isDone() { return getFrameNumber() + 1 == getFrameCount(); }
 	Video::SmackerDecoder *getSmackerDecoder() const { return _smackerDecoder; }
 protected:
 	Scene *_scene;

@@ -921,9 +921,8 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite1, *tempSprite2;
 
-	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0) {
+	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
 		setGlobalVar(0x13382860, 2);
-	}
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2406::handleMessage);

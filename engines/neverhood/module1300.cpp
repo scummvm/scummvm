@@ -874,7 +874,7 @@ void AsScene1306Elevator::cbGoingDownEvent() {
 Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
-	if (getGlobalVar(0xC0780812) && !getGlobalVar(0x13382860))
+	if (getGlobalVar(0xC0780812) && getGlobalVar(0x13382860) == 0)
 		setGlobalVar(0x13382860, 4);
 	
 	_surfaceFlag = true;
@@ -884,7 +884,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x05303114);
 	insertMouse433(0x0311005B);
 
-	if (!getGlobalVar(0x13382860)) {
+	if (getGlobalVar(0x13382860) == 4) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 435, 445);
 		_vm->_collisionMan->addSprite(_asKey);
 	}
