@@ -28,28 +28,30 @@
 namespace TeenAgent {
 
 // Text Color Symbols
-const byte textColorJohnNoty = 0xd0;
-const byte textColorCampGuard = 0xd0;
-const byte textColorShockedCaptain = 0xd0;
-const byte textColorMark = 0xd1;
-const byte textColorCredits = 0xd1;
-const byte textColorBankGuard = 0xd7;
-const byte textColorGrandpa = 0xd8;
-const byte textColorMansionGuard = 0xd9;
-const byte textColorMarkEnd = 0xe3;
-const byte textColorProfessor = 0xe5;
-const byte textColorOldLady = 0xe5;
-const byte textColorAnne = 0xe5;
-const byte textColorWellEcho = 0xe5;
-const byte textColorSonny = 0xe5;
-const byte textColorEskimo = 0xe5;
-const byte textColorRGBBoss = 0xe7;
-const byte textColorGoldDriver = 0xe7;
-const byte textColorFortuneTeller = 0xeb;
-const byte textColorCaptain = 0xec;
-const byte textColorMike = 0xef;
-const byte textColorCook = 0xef;
-const byte textColorBarman = 0xef;
+enum {
+	textColorJohnNoty = 0xd0,
+	textColorCampGuard = 0xd0,
+	textColorShockedCaptain = 0xd0,
+	textColorMark = 0xd1,
+	textColorCredits = 0xd1,
+	textColorBankGuard = 0xd7,
+	textColorGrandpa = 0xd8,
+	textColorMansionGuard = 0xd9,
+	textColorMarkEnd = 0xe3,
+	textColorProfessor = 0xe5,
+	textColorOldLady = 0xe5,
+	textColorAnne = 0xe5,
+	textColorWellEcho = 0xe5,
+	textColorSonny = 0xe5,
+	textColorEskimo = 0xe5,
+	textColorRGBBoss = 0xe7,
+	textColorGoldDriver = 0xe7,
+	textColorFortuneTeller = 0xeb,
+	textColorCaptain = 0xec,
+	textColorMike = 0xef,
+	textColorCook = 0xef,
+	textColorBarman = 0xef
+};
 
 class Scene;
 class TeenAgentEngine;
