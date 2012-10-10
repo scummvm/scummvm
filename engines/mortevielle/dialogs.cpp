@@ -462,7 +462,7 @@ void f3f8::aff50(bool drawAni50Fl) {
 	if (drawAni50Fl)
 		ani50();
 	else
-		g_vm->repon(2, kDialogStringIndex + 142);
+		g_vm->handleDescriptionText(2, kDialogStringIndex + 142);
 
 	// Draw the f3/f8 dialog
 	draw();
@@ -474,7 +474,7 @@ void f3f8::ani50() {
 	g_vm->_crep = g_vm->animof(2, 1);
 	g_vm->pictout(kAdrAni, g_vm->_crep, 63, 12);
 	g_vm->_largestClearScreen = (g_vm->_res == 1);
-	g_vm->repon(2, kDialogStringIndex + 143);
+	g_vm->handleDescriptionText(2, kDialogStringIndex + 143);
 }
 
 } // End of namespace Mortevielle

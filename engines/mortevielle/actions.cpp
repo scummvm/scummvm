@@ -43,8 +43,8 @@ void MortevielleEngine::fctMove() {
 	if ((_coreVar._currPlace == ROOM26) && (_msg[4] == _menu._moveMenu[6])) {
 		_coreVar._currPlace = LANDING;
 		_caff = _coreVar._currPlace;
-		afdes();
-		repon(2, _coreVar._currPlace);
+		drawPictureWithText();
+		handleDescriptionText(2, _coreVar._currPlace);
 	}
 	if ((_coreVar._currPlace == LANDING) && (_msg[4] == _menu._moveMenu[6])) {
 		if (!_syn)
@@ -314,7 +314,7 @@ void MortevielleEngine::fctInventoryTake() {
 	_menu.setInventoryText();
 	avpoing(cz);
 	_crep = 998;
-	clearScreenType2();
+	clearDescriptionBar();
 }
 
 /**
@@ -686,7 +686,7 @@ void MortevielleEngine::fctPlace() {
 					// Open hidden passage
 					aniof(1, 2);
 					aniof(1, 1);
-					repon(2, 165);
+					handleDescriptionText(2, 165);
 					displayEmptyHand();
 					_speechManager.startSpeech(6, -9, 1);
 
@@ -700,8 +700,8 @@ void MortevielleEngine::fctPlace() {
 						_mouse.hideMouse();
 						hirs();
 						drawRightFrame();
-						clearScreenType2();
-						clearScreenType3();
+						clearDescriptionBar();
+						clearVerbBar();
 						_mouse.showMouse();
 						prepareRoom();
 						drawClock();
@@ -717,7 +717,7 @@ void MortevielleEngine::fctPlace() {
 						} else {
 							_menu.setDestinationText(_coreVar._currPlace);
 							setPal(14);
-							dessin();
+							drawPicture();
 							aniof(1, 2);
 							aniof(1, 1);
 							alertTxt = getString(577);
@@ -788,7 +788,7 @@ void MortevielleEngine::fctTurn() {
 	if (_num != 0) {
 		_crep = 997;
 		if ((_coreVar._currPlace == ATTIC) && (_coreVar._atticRodHoleObjectId == 159) && (_coreVar._atticBallHoleObjectId == 141)) {
-			repon(2, 167);
+			handleDescriptionText(2, 167);
 			_speechManager.startSpeech(7, 9, 1);
 			int answer = Alert::show(getEngineString(S_YES_NO), 1);
 			if (answer == 1)
@@ -797,8 +797,8 @@ void MortevielleEngine::fctTurn() {
 				_crep = 168;
 		}
 		if ((_coreVar._currPlace == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId == 143)) {
-			repon(2, 175);
-			clearScreenType3();
+			handleDescriptionText(2, 175);
+			clearVerbBar();
 			_speechManager.startSpeech(6, -9, 1);
 			int answer = Alert::show(getEngineString(S_YES_NO), 1);
 			if (answer == 1) {
@@ -1152,8 +1152,8 @@ void MortevielleEngine::fctEnter() {
 				if (_roomDoorId == ROOM9) {
 					_col = true;
 					_caff = 70;
-					afdes();
-					repon(2, _caff);
+					drawPictureWithText();
+					handleDescriptionText(2, _caff);
 				} else
 					_col = false;
 				resetRoomVariables(_roomDoorId);
@@ -1190,12 +1190,12 @@ void MortevielleEngine::fctSleep() {
 		exitRoom();
 		_coreVar._currPlace = OWN_ROOM;
 		affrep();
-		afdes();
+		drawPictureWithText();
 		resetRoomVariables(_coreVar._currPlace);
 		_menu.setDestinationText(_coreVar._currPlace);
 	}
-	clearScreenType3();
-	clearScreenType2();
+	clearVerbBar();
+	clearDescriptionBar();
 	prepareScreenType2();
 	ecr2(getEngineString(S_WANT_TO_WAKE_UP));
 	updateHour(j, h, m);
@@ -1285,7 +1285,7 @@ void MortevielleEngine::fctLeave() {
  */
 void MortevielleEngine::fctWait() {
 	_savedBitIndex = 0;
-	clearScreenType3();
+	clearVerbBar();
 
 	int answer;
 	do {
@@ -1304,7 +1304,7 @@ void MortevielleEngine::fctWait() {
 				prepareRoom();
 			return;
 		}
-		repon(2, 102);
+		handleDescriptionText(2, 102);
 		answer = Alert::show(getEngineString(S_YES_NO), 1);
 	} while (answer != 2);
 	_crep = 998;
@@ -1347,8 +1347,8 @@ void MortevielleEngine::fctDiscuss() {
 			++cx;
 		} while (_menu._discussMenu[cx] != _msg[4]);
 		_caff = 69 + cx;
-		afdes();
-		repon(2, _caff);
+		drawPictureWithText();
+		handleDescriptionText(2, _caff);
 		suj = _caff + 60;
 	}
 	testKey(false);
@@ -1522,7 +1522,7 @@ void MortevielleEngine::fctDiscuss() {
 	affrep();
 	/* chech;*/
 	_menu.setDestinationText(_coreVar._currPlace);
-	clearScreenType3();
+	clearVerbBar();
 }
 
 /**
@@ -1565,10 +1565,10 @@ void MortevielleEngine::endGame() {
 	_quitGame = true;
 	tlu(13, 152);
 	displayEmptyHand();
-	clearScreenType1();
-	clearScreenType2();
-	clearScreenType3();
-	repon(9, 1509);
+	clearUpperLeftPart();
+	clearDescriptionBar();
+	clearVerbBar();
+	handleDescriptionText(9, 1509);
 	testKey(false);
 	_mouse.hideMouse();
 	_caff = 70;
@@ -1577,14 +1577,14 @@ void MortevielleEngine::endGame() {
 	premtet();
 	startDialog(141);
 	_mouse.showMouse();
-	clearScreenType1();
-	repon(9, 1509);
-	repon(2, 142);
+	clearUpperLeftPart();
+	handleDescriptionText(9, 1509);
+	handleDescriptionText(2, 142);
 	testKey(false);
 	_caff = 32;
-	afdes();
-	repon(6, 34);
-	repon(2, 35);
+	drawPictureWithText();
+	handleDescriptionText(6, 34);
+	handleDescriptionText(2, 35);
 	startMusicOrSpeech(0);
 	testKey(false);
 	// A wait message was displayed.
@@ -1600,7 +1600,7 @@ void MortevielleEngine::endGame() {
  * @remarks	Originally called 'tencore'
  */
 void MortevielleEngine::askRestart() {
-	clearScreenType2();
+	clearDescriptionBar();
 	startMusicOrSpeech(0);
 	testKey(false);
 	displayEmptyHand();
@@ -1612,7 +1612,7 @@ void MortevielleEngine::askRestart() {
 	_minute = 0;
 	_hour = 10;
 	_day = 0;
-	repon(2, 180);
+	handleDescriptionText(2, 180);
 
 	int answer = Alert::show(getEngineString(S_YES_NO), 1);
 	_quitGame = (answer != 1);
