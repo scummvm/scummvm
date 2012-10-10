@@ -206,66 +206,66 @@ struct Sauvegarde1 {
 };
 
 enum SauvegardeOffset {
-	svField1
-	, svField2
-	, svField3
-	, svField4
-	, svField5
-	, svField6
-	, svField8
-	, svField9
-	, svField10
-	, svField13
-	, svField80
-	, svField94
-	, svField95
-	, svField121
-	, svField122
-	, svField132
-	, svField133
-	, svField170
-	, svField171
-	, svField172
-	, svField173
-	, svField176
-	, svField180
-	, svField181
-	, svField182
-	, svField183
-	, svField184
-	, svField185
-	, svField186
-	, svField187
-	, svField188
-	, svField189
-	, svField190
-	, svField191
-	, svField192
-	, svField193
-	, svField194
-	, svField228
-	, svField253
-	, svField231
-	, svField261
-	, svField270
-	, svField300
-	, svField318
-	, svField320
-	, svField333
-	, svField338
-	, svField339
-	, svField340
-	, svField341
-	, svField349
-	, svField352
-	, svField353
-	, svField354
-	, svField355
-	, svField356
-	, svField357
-	, svField399
-	, svField401
-	, svField1300
+	svField1 = 1
+	, svField2 = 2
+	, svField3 = 3
+	, svField4 = 4
+	, svField5 = 5
+	, svField6 = 6
+	, svField8 = 8
+	, svField9 = 9
+	, svField10 = 10
+	, svField13 = 13
+	, svField80 = 80
+	, svField94 = 94
+	, svField95 = 95
+	, svField121 = 121
+	, svField122 = 122
+	, svField132 = 132
+	, svField133 = 133
+	, svField170 = 170
+	, svField171 = 171
+	, svField172 = 172
+	, svField173 = 173
+	, svField176 = 176
+	, svField180 = 180
+	, svField181 = 181
+	, svField182 = 182
+	, svField183 = 183
+	, svField184 = 184
+	, svField185 = 185
+	, svField186 = 186
+	, svField187 = 187
+	, svField188 = 188
+	, svField189 = 189
+	, svField190 = 190
+	, svField191 = 191
+	, svField192 = 192
+	, svField193 = 193
+	, svField194 = 194
+	, svField228 = 228
+	, svField231 = 231
+	, svField253 = 253
+	, svField261 = 261
+	, svField270 = 270
+	, svField300 = 300
+	, svField318 = 318
+	, svField320 = 320
+	, svField333 = 333
+	, svField338 = 338
+	, svField339 = 339
+	, svField340 = 340
+	, svField341 = 341
+	, svField349 = 349
+	, svField352 = 352
+	, svField353 = 353
+	, svField354 = 354
+	, svField355 = 355
+	, svField356 = 356
+	, svField357 = 357
+	, svField399 = 399
+	, svField401 = 401
+	, svField1300 = 1300
 };
 
 // TODO: Sauvegrade1 fields should really be mapped into data array
