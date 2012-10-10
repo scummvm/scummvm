@@ -470,7 +470,8 @@ public:
 	void B_CACHE_OFF(int idx);
 };
 
-#define PTRNUL (byte *)NULL
+// Global null pointer
+extern byte *g_PTRNUL;
 
 } // End of namespace Hopkins
 

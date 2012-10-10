@@ -2343,13 +2343,13 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 	
 	v13 = file + ".ini";
 	ptr = _vm->_fileManager.RECHERCHE_CAT(v13, 1);
-	if (PTRNUL == ptr) {
+	if (g_PTRNUL == ptr) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
 		ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	if (!a2) {
 		v13 = file + ".spr";
-		if (PTRNUL != _vm->_globals.SPRITE_ECRAN)
+		if (g_PTRNUL != _vm->_globals.SPRITE_ECRAN)
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
 		if (!_vm->_globals.NOSPRECRAN) {
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.RECHERCHE_CAT(v13, 8);
@@ -2384,13 +2384,13 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 	}
 	_vm->_globals.dos_free2(ptr);
 	if (a2 != 1) {
-		if (PTRNUL != _vm->_globals.COUCOU)
+		if (g_PTRNUL != _vm->_globals.COUCOU)
 			_vm->_globals.COUCOU = _vm->_globals.dos_free2(_vm->_globals.COUCOU);
 		
 		v13 = file + ".rep";
 		byte *dataP = _vm->_fileManager.RECHERCHE_CAT(v13, 2);
 		_vm->_globals.COUCOU = dataP;
-		if (PTRNUL == dataP) {
+		if (g_PTRNUL == dataP) {
 			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
 			dataP = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 			_vm->_globals.COUCOU = dataP;

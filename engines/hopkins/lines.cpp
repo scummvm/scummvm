@@ -130,10 +130,10 @@ int LinesManager::OPTI_ZONE(int a1, int a2, int a3) {
 void LinesManager::RETIRE_LIGNE_ZONE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
-	if (_vm->_linesManager.LigneZone[idx].field4 != PTRNUL)
+	if (_vm->_linesManager.LigneZone[idx].field4 != g_PTRNUL)
 		_vm->_globals.dos_free2(_vm->_linesManager.LigneZone[idx].field4);
 
-	_vm->_linesManager.LigneZone[idx].field4 = PTRNUL;
+	_vm->_linesManager.LigneZone[idx].field4 = g_PTRNUL;
 }
 
 
@@ -160,7 +160,7 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 		if (idx > 400)
 			error("Attempting to add a line obstacle > MAX_LIGNE.");
 		v7 = idx;
-		if (LigneZone[v7].field4 != PTRNUL)
+		if (LigneZone[v7].field4 != g_PTRNUL)
 			LigneZone[v7].field4 = _vm->_globals.dos_free2(LigneZone[v7].field4);
 		v8 = a2 - a4;
 		if (a2 - a4 < 0)
@@ -177,7 +177,7 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 		v10 = _vm->_globals.dos_malloc2(4 * v20 + 8);
 		v11 = idx;
 		LigneZone[v11].field4 = v10;
-		if (PTRNUL == v10)
+		if (g_PTRNUL == v10)
 			error("AJOUTE LIGNE ZONE");
 
 		v12 = LigneZone[v11].field4;
@@ -221,16 +221,16 @@ void LinesManager::RESET_OBSTACLE() {
 	for (int idx =0; idx < 400; ++idx) {
 		RETIRE_LIGNE(idx);
 		Ligne[idx].field0 = 0;
-		Ligne[idx].fieldC = PTRNUL;
+		Ligne[idx].fieldC = g_PTRNUL;
 	}
 }
 
 void LinesManager::RETIRE_LIGNE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
-	if (Ligne[idx].fieldC != PTRNUL)
+	if (Ligne[idx].fieldC != g_PTRNUL)
 		_vm->_globals.dos_free2(Ligne[idx].fieldC);
-	Ligne[idx].fieldC = PTRNUL;
+	Ligne[idx].fieldC = g_PTRNUL;
 }
 
 void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7) {
@@ -262,7 +262,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	if (TOTAL_LIGNES < idx)
 		TOTAL_LIGNES = idx;
 
-	if (Ligne[idx].fieldC != PTRNUL)
+	if (Ligne[idx].fieldC != g_PTRNUL)
 		_vm->_globals.dos_free2(Ligne[idx].fieldC);
 	v7 = a3 - a5;
 	if (a3 - a5 < 0)
@@ -277,7 +277,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 		v34 = v8;
 	v10 = _vm->_globals.dos_malloc2(4 * v34 + 8);
 	Ligne[idx].fieldC = v10;
-	if (v10 == PTRNUL)
+	if (v10 == g_PTRNUL)
 		error("AJOUTE LIGNE OBSTACLE");
 	v32 = Ligne[idx].fieldC;
 	v36 = 1000 * v8;
@@ -412,7 +412,7 @@ LABEL_29:
 		v19 = a2 - 4;
 		while (1) {
 			v7 = Ligne[v6].fieldC;
-			if (v7 != PTRNUL) {
+			if (v7 != g_PTRNUL) {
 				v23 = 1;
 				v8 = 2 * Ligne[v6].field0;
 				v9 = READ_LE_UINT16(v7);
@@ -503,7 +503,7 @@ LABEL_47:
 		v19 = a2 - 10;
 		while (1) {
 			v7 = Ligne[v6].fieldC;
-			if (PTRNUL != v7) {
+			if (g_PTRNUL != v7) {
 				v23 = 1;
 				v8 = 2 * Ligne[v6].field0;
 				v9 = READ_LE_UINT16(v7);
@@ -1342,14 +1342,14 @@ LABEL_112:
 		v86 = v92 - 1;
 		v11 = 2 * Ligne[v92 - 1].field0;
 		v12 = Ligne[v92 - 1].fieldC;
-		if (v12 == PTRNUL)
+		if (v12 == g_PTRNUL)
 			break;
 		while (READ_LE_UINT16(v12 + 2 * v11 - 4) != v98 || v97 != READ_LE_UINT16(v12 + 2 * v11 - 2)) {
 			--v86;
 			if (_vm->_objectsManager.DERLIGNE - 1 != v86) {
 				v11 = 2 * Ligne[v86].field0;
 				v12 = Ligne[v86].fieldC;
-				if (v12 != PTRNUL)
+				if (v12 != g_PTRNUL)
 					continue;
 			}
 			goto LABEL_11;
@@ -1368,7 +1368,7 @@ LABEL_11:
 		v87 = v91 + 1;
 		v15 = 2 * Ligne[v91 + 1].field0;
 		v16 = Ligne[v91 + 1].fieldC;
-		if (PTRNUL == v16)
+		if (g_PTRNUL == v16)
 			break;
 		while (1) {
 			v65 = v15;
@@ -1381,7 +1381,7 @@ LABEL_11:
 			if (v87 != TOTAL_LIGNES + 1) {
 				v15 = 2 * Ligne[v87].field0;
 				v16 = Ligne[v87].fieldC;
-				if (v16 != PTRNUL)
+				if (v16 != g_PTRNUL)
 					continue;
 			}
 			goto LABEL_17;
@@ -1454,7 +1454,7 @@ LABEL_17:
 	for (i = v92; i < v91 + 1; ++i) {
 		v27 = 2 * Ligne[i].field0;
 		v28 = Ligne[i].fieldC;
-		if (PTRNUL == v28)
+		if (g_PTRNUL == v28)
 			error("erreur dans da routine genial");
 		v29 = *(uint16 *)v28;
 		v30 = READ_LE_UINT16(v28 + 2);
@@ -1830,7 +1830,7 @@ byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 					if (v7 < 0)
 						v7 = -v7;
 					if (v7 <= 4)
-						return PTRNUL;
+						return g_PTRNUL;
 				}
 			}
 		}
@@ -1842,10 +1842,10 @@ byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			if (v9 < 0)
 				v9 = -v9;
 			if (v9 <= 4)
-				return PTRNUL;
+				return g_PTRNUL;
 		}
 		if (_vm->_globals.old_z_69 > 0 && _vm->_objectsManager.NUMZONE > 0 && _vm->_globals.old_z_69 == _vm->_objectsManager.NUMZONE)
-			return PTRNUL;
+			return g_PTRNUL;
 	}
 	_vm->_globals.NOT_VERIF = 0;
 	_vm->_globals.old_z_69 = _vm->_objectsManager.NUMZONE;
@@ -1871,7 +1871,7 @@ byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 		if (v11 < 0)
 			v11 = -v11;
 		if (v11 <= 3)
-			return PTRNUL;
+			return g_PTRNUL;
 	}
 	v12 = 0;
 error("TODO: Fix v141/v136 - they look like arrays, not a single int");
@@ -1987,7 +1987,7 @@ error("TODO: Fix v141/v136 - they look like arrays, not a single int");
 		if (v145 < 0)
 			v135 = 1300;
 		if (v142 == -1 && v143 == -1 && v144 == -1 && v145 == -1)
-			return PTRNUL;
+			return g_PTRNUL;
 		v31 = 0;
 		if (v144 != -1 && v132 >= v134 && v133 >= v134 && v135 >= v134) {
 			v121 = v144;

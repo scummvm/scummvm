@@ -58,9 +58,9 @@ void FontManager::TEXTE_ON(int idx) {
 	txt.field0 = 1;
 	txt.field408 = 0;
   
-	if (txt.field400 != PTRNUL) {
+	if (txt.field400 != g_PTRNUL) {
 		_vm->_globals.dos_free2(txt.field400);
-		txt.field400 = PTRNUL;
+		txt.field400 = g_PTRNUL;
 	}
 }
 
@@ -73,9 +73,9 @@ void FontManager::TEXTE_OFF(int idx) {
 	txt.field0 = 0;
 	txt.field408 = 0;
 
-	if (txt.field400 != PTRNUL) {
+	if (txt.field400 != g_PTRNUL) {
 		_vm->_globals.dos_free2(txt.field400);
-		txt.field400 = PTRNUL;
+		txt.field400 = g_PTRNUL;
 	}
 }
 
@@ -250,7 +250,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 			v69 = 2048;
 			f.seek(Index[fileIndex]);
 			texte_tmp = _vm->_globals.dos_malloc2(2058);
-			if (texte_tmp == PTRNUL)
+			if (texte_tmp == g_PTRNUL)
 				error("temporary text");
       
 			f.read(texte_temp, 2048);
@@ -475,7 +475,7 @@ LABEL_57:
 			v49 = v51 * v53;
 			ptrd = _vm->_globals.dos_malloc2(v51 * v53);
 			
-			if (ptrd == PTRNUL) 
+			if (ptrd == g_PTRNUL) 
 				error("Error allocating block (%d)", v49);
 		}
 
@@ -512,12 +512,12 @@ LABEL_57:
 
 	if (v32 == 6 || v32 == 1 || v32 == 3 || v32 == 5) {
 		v33 = idx;
-		if (Txt[v33].field400 != PTRNUL)
+		if (Txt[v33].field400 != g_PTRNUL)
 			Txt[v33].field400 = _vm->_globals.dos_free2(Txt[v33].field400);
 
 		v50 = v52 * v54;
 		ptre = dos_malloc2(v50 + 20);
-		if (ptre == PTRNUL)
+		if (ptre == g_PTRNUL)
 			error("Error allocating block (%d)", v50);
 	}
 

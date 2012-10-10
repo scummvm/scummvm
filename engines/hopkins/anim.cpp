@@ -777,13 +777,13 @@ void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 
 void AnimationManager::CLEAR_ANIM() {
 	for (int idx = 0; idx < 35; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].data != PTRNUL)
+		if (_vm->_globals.Bqe_Anim[idx].data != g_PTRNUL)
 			_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.dos_free2(_vm->_globals.Bqe_Anim[idx].data);
 		_vm->_globals.Bqe_Anim[idx].field4 = 0;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		if (_vm->_globals.Bank[idx].data != PTRNUL)
+		if (_vm->_globals.Bank[idx].data != g_PTRNUL)
 			_vm->_globals.Bank[idx].data = _vm->_globals.dos_free2(_vm->_globals.Bank[idx].data);
 		_vm->_globals.Bank[idx].field4 = 0;
 		_vm->_globals.Bank[idx].filename1 = "";
@@ -937,7 +937,7 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
 
 					if (nbytes < v6) {
 						_vm->_globals.Bqe_Anim[idx].field4 = 0;
-						_vm->_globals.Bqe_Anim[idx].data = PTRNUL;
+						_vm->_globals.Bqe_Anim[idx].data = g_PTRNUL;
 					}
                 
 					++v6;

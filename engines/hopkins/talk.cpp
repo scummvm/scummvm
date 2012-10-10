@@ -62,7 +62,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_globals.DESACTIVE_INVENT = 1;
 	BUFFERPERSO = _vm->_fileManager.RECHERCHE_CAT(filename, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
-	if (BUFFERPERSO == PTRNUL) {
+	if (BUFFERPERSO == g_PTRNUL) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, filename);
 		BUFFERPERSO = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		TAILLEPERSO = _vm->_fileManager.FLONG(_vm->_globals.NFICHIER);
@@ -193,7 +193,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_objectsManager.DESACTIVE_INVENT = 1;
 	BUFFERPERSO = _vm->_fileManager.RECHERCHE_CAT(filename, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
-	if (BUFFERPERSO == PTRNUL) {
+	if (BUFFERPERSO == g_PTRNUL) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, filename);
 		BUFFERPERSO = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		TAILLEPERSO = _vm->_fileManager.FLONG(_vm->_globals.NFICHIER);
@@ -638,7 +638,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 
 	f.seek(READ_LE_UINT32(&indexData[idx * 4]));
 	ptr = _vm->_globals.dos_malloc2(2058);
-	if (ptr == PTRNUL)
+	if (ptr == g_PTRNUL)
 		error("temporary TEXT");
 	f.read(ptr, 2048);
 	f.close();
@@ -831,10 +831,10 @@ void TalkManager::ANIM_PERSO_INIT() {
 
 void TalkManager::CLEAR_ANIM_PERSO() {
 	for (int idx = 21; idx <= 34; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].data != PTRNUL)
+		if (_vm->_globals.Bqe_Anim[idx].data != g_PTRNUL)
 			_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.dos_free2(_vm->_globals.Bqe_Anim[idx].data);
 
-		_vm->_globals.Bqe_Anim[idx].data = PTRNUL;
+		_vm->_globals.Bqe_Anim[idx].data = g_PTRNUL;
 		_vm->_globals.Bqe_Anim[idx].field4 = 0;
 	}
 }
@@ -879,8 +879,8 @@ bool TalkManager::RECHERCHE_ANIM_PERSO(int a1, const byte *bufPerso, int a3, int
 					v7 = 1;
 				if (v18 > a4) {
 					_vm->_globals.Bqe_Anim[a1].field4 = 0;
-					result = PTRNUL;
-					_vm->_globals.Bqe_Anim[v20].data = PTRNUL;
+					result = g_PTRNUL;
+					_vm->_globals.Bqe_Anim[v20].data = g_PTRNUL;
 				}
 				++v18;
 				++v6;
@@ -955,7 +955,7 @@ void TalkManager::REPONSE(int a1, int a2) {
 	v3 = a2;
 LABEL_2:
 	v15 = 0;
-	if (PTRNUL != _vm->_globals.COUCOU) {
+	if (g_PTRNUL != _vm->_globals.COUCOU) {
 		v5 = _vm->_globals.COUCOU;
 		while (1) {
 			if (*v5 == 'C') {
@@ -975,7 +975,7 @@ LABEL_2:
 			if (v15 == 1) {
 				v6 = v5 + 5;
 				ptr = _vm->_globals.dos_malloc2(0x26Cu);
-				if (PTRNUL == ptr)
+				if (g_PTRNUL == ptr)
 					error("TRADUC");
 				memset(ptr, 0, 0x26Bu);
 				v7 = 0;
@@ -1183,7 +1183,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_eventsManager.CHANGE_MOUSE(0);
 	BUFFERPERSO = _vm->_fileManager.RECHERCHE_CAT(a2, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
-	if (BUFFERPERSO == PTRNUL) {
+	if (BUFFERPERSO == g_PTRNUL) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, a2);
 		BUFFERPERSO = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		TAILLEPERSO = _vm->_fileManager.FLONG(_vm->_globals.NFICHIER);
@@ -1224,7 +1224,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	CHERCHE_PAL(v10, 1);
 	CHERCHE_ANIM0(v10, 0);
 	v11 = _vm->_globals.COUCOU;
-	_vm->_globals.COUCOU = PTRNUL;
+	_vm->_globals.COUCOU = g_PTRNUL;
 	_vm->_globals.NOMARCHE = 1;
 	_vm->_objectsManager.INILINK(v22);
 	_vm->_objectsManager.PERSO_ON = 1;

@@ -30,10 +30,16 @@
 
 namespace Hopkins {
 
+byte *g_PTRNUL;
+
 Globals::Globals() {
+	// Set up the special g_PTRNUL variable
+	g_PTRNUL = (byte *)malloc(16);
+	strcpy((char *)g_PTRNUL, "POINTERNULL");
+
 	// Initialise array properties
 	for (int i = 0; i < 6; ++i)
-		CACHE_BANQUE[i] = PTRNUL;
+		CACHE_BANQUE[i] = g_PTRNUL;
 	for (int i = 0; i < 106; ++i)
 		Common::fill((byte *)&ZONEP[i], (byte *)&ZONEP[i] + sizeof(ZonePItem), 0);
 	for (int i = 0; i < 100; ++i)
@@ -211,24 +217,26 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	free(ICONE);
-	free(BUF_ZONE);
-	free(CACHE_BANQUE[6]);
-	free(Winventaire);
-	free(texte_tmp);
-	free(SPRITE_ECRAN);
-	free(SAUVEGARDE);
-	free(BUFFERTAPE);
-	free(Bufferobjet);
-	free(inventaire2);
-	free(GESTE);
-	free(INVENTAIRE_OBJET);
-	free(FORETSPR);
-	free(COUCOU);
-	free(chemin);
-	free(cache_souris);
-	free(Bufferdecor);
-	free(ADR_FICHIER_OBJ);
-	free(PERSO);
+	dos_free2(BUF_ZONE);
+	dos_free2(CACHE_BANQUE[6]);
+	dos_free2(Winventaire);
+	dos_free2(texte_tmp);
+	dos_free2(SPRITE_ECRAN);
+	dos_free2((byte *)SAUVEGARDE);
+	dos_free2(BUFFERTAPE);
+	dos_free2(Bufferobjet);
+	dos_free2(inventaire2);
+	dos_free2(GESTE);
+	dos_free2(INVENTAIRE_OBJET);
+	dos_free2(FORETSPR);
+	dos_free2(COUCOU);
+	dos_free2(chemin);
+	dos_free2(cache_souris);
+	dos_free2(Bufferdecor);
+	dos_free2(ADR_FICHIER_OBJ);
+	dos_free2(PERSO);
+
+	free(g_PTRNUL);
 }
 
 void Globals::setParent(HopkinsEngine *vm) {
@@ -267,14 +275,14 @@ void Globals::clearAll() {
 	// to point to. For now, we're seeing if the NULL value will do as well
 	
 	for (int idx = 0; idx < 6; ++idx)
-		CACHE_BANQUE[idx] = PTRNUL;
+		CACHE_BANQUE[idx] = g_PTRNUL;
 
 	nbrligne = 80;
 	INIT_ANIM();
   
-	texte_tmp = PTRNUL;
+	texte_tmp = g_PTRNUL;
 	texte_long = 0;
-	police = PTRNUL;
+	police = g_PTRNUL;
 	police_h = 0;
 	police_l = 0;
 	hauteur_boite = 0;
@@ -283,15 +291,15 @@ void Globals::clearAll() {
 	_vm->_fontManager.clearAll();
 
 	INIT_VBOB();
-	ADR_FICHIER_OBJ = PTRNUL;
+	ADR_FICHIER_OBJ = g_PTRNUL;
 	NUM_FICHIER_OBJ = 0;
-	Bufferdecor = PTRNUL;
-	Bufferobjet = PTRNUL;
-	Winventaire = PTRNUL;
-	inventaire2 = PTRNUL;
-	COUCOU = PTRNUL;
-	SPRITE_ECRAN = PTRNUL;
-	SAUVEGARDE = (Sauvegarde *)PTRNUL;
+	Bufferdecor = g_PTRNUL;
+	Bufferobjet = g_PTRNUL;
+	Winventaire = g_PTRNUL;
+	inventaire2 = g_PTRNUL;
+	COUCOU = g_PTRNUL;
+	SPRITE_ECRAN = g_PTRNUL;
+	SAUVEGARDE = (Sauvegarde *)g_PTRNUL;
 	OBJET_EN_COURS = 0;
   
 	for (int idx = 0; idx < 105; ++idx) {
@@ -300,11 +308,11 @@ void Globals::clearAll() {
 		ZONEP[idx].field4 = 0;
 	}
 
-	essai0 = PTRNUL;
-	essai1 = PTRNUL;
-	essai2 = PTRNUL;
-	BufLig = PTRNUL;
-	chemin = PTRNUL;
+	essai0 = g_PTRNUL;
+	essai1 = g_PTRNUL;
+	essai2 = g_PTRNUL;
+	BufLig = g_PTRNUL;
+	chemin = g_PTRNUL;
 
 	for (int idx = 0; idx < 400; ++idx) {
 		_vm->_linesManager.Ligne[idx].field0 = 0;
@@ -312,11 +320,11 @@ void Globals::clearAll() {
 		_vm->_linesManager.Ligne[idx].field4 = 0;
 		_vm->_linesManager.Ligne[idx].field6 = 0;
 		_vm->_linesManager.Ligne[idx].field8 = 0;
-		_vm->_linesManager.Ligne[idx].fieldC = PTRNUL;
+		_vm->_linesManager.Ligne[idx].fieldC = g_PTRNUL;
 
 		_vm->_linesManager.LigneZone[idx].field0 = 0;
 		_vm->_linesManager.LigneZone[idx].field2 = 0;
-		_vm->_linesManager.LigneZone[idx].field4 = PTRNUL;
+		_vm->_linesManager.LigneZone[idx].field4 = g_PTRNUL;
 	}
 
 	for (int idx = 0; idx < 100; ++idx) {
@@ -324,7 +332,7 @@ void Globals::clearAll() {
 	}
 
 	texte_long = 0;
-	texte_tmp = PTRNUL;
+	texte_tmp = g_PTRNUL;
 	BUFFERTAPE = dos_malloc2(85000);
 
 	SAUVEGARDE = (Sauvegarde *)malloc(sizeof(Sauvegarde));
@@ -340,12 +348,12 @@ void Globals::clearAll() {
 	Bufferobjet = dos_malloc2(2500);
 	INVENTAIRE_OBJET = dos_malloc2(2500);
 
-	ADR_FICHIER_OBJ = PTRNUL;
-	FORETSPR = PTRNUL;
+	ADR_FICHIER_OBJ = g_PTRNUL;
+	FORETSPR = g_PTRNUL;
 	FORET = 0;
 
 	cache_souris = dos_malloc2(2500);
-	GESTE = PTRNUL;
+	GESTE = g_PTRNUL;
 	GESTE_FLAG = false;
 }
 
@@ -728,12 +736,12 @@ void Globals::HOPKINS_DATA() {
 
 void Globals::INIT_ANIM() {
 	for (int idx = 0; idx < 35; ++idx) {
-		Bqe_Anim[idx].data = PTRNUL;
+		Bqe_Anim[idx].data = g_PTRNUL;
 		Bqe_Anim[idx].field4 = 0;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		Bank[idx].data = PTRNUL;
+		Bank[idx].data = g_PTRNUL;
 		Bank[idx].field4 = 0;
 		Bank[idx].filename1 = "";
 		Bank[idx].fileHeader = 0;
@@ -749,9 +757,9 @@ void Globals::INIT_VBOB() {
 		VBob[idx].field8 = 0;
 		VBob[idx].fieldA = 0;
 		VBob[idx].fieldC = 0;
-		VBob[idx].field10 = PTRNUL;
-		VBob[idx].field0 = PTRNUL;
-		VBob[idx].field1C = PTRNUL;
+		VBob[idx].field10 = g_PTRNUL;
+		VBob[idx].field0 = g_PTRNUL;
+		VBob[idx].field1C = g_PTRNUL;
 	}
 }
 
@@ -762,9 +770,9 @@ void Globals::CLEAR_VBOB() {
 		VBob[idx].field8 = 0;
 		VBob[idx].fieldA = 0;
 		VBob[idx].fieldC = 0;
-		VBob[idx].field10 = PTRNUL;
-		VBob[idx].field0 = PTRNUL;
-		VBob[idx].field1C = PTRNUL;
+		VBob[idx].field10 = g_PTRNUL;
+		VBob[idx].field0 = g_PTRNUL;
+		VBob[idx].field1C = g_PTRNUL;
 	} 
 }
 
@@ -790,18 +798,19 @@ void Globals::CHARGE_OBJET() {
 byte *Globals::dos_malloc2(int count) {
 	byte *result = (byte *)malloc(count);
 	if (!result)
-		result = PTRNUL;
+		result = g_PTRNUL;
 	return result;
 }
 
 byte *Globals::dos_free2(byte *p) {
-	free(p);
-	return PTRNUL;
+	if (p != g_PTRNUL)
+		free(p);
+	return g_PTRNUL;
 }
 
 byte *Globals::LIBERE_FICHIER(byte *p) {
 	dos_free2(p);
-	return PTRNUL;
+	return g_PTRNUL;
 }
 
 void Globals::RESET_CACHE() {
@@ -809,13 +818,13 @@ void Globals::RESET_CACHE() {
 
 	for (int idx = 1; idx <= 5; ++idx) {
 		dataP = CACHE_BANQUE[idx];
-		if (dataP != PTRNUL && dataP)
+		if (dataP != g_PTRNUL && dataP)
 			CACHE_BANQUE[idx] = dos_free2(CACHE_BANQUE[idx]);
-		CACHE_BANQUE[idx] = PTRNUL;
+		CACHE_BANQUE[idx] = g_PTRNUL;
 	}
 
 	for (int idx = 0; idx <= 20; ++idx) {
-		Cache[idx].fieldC = PTRNUL;
+		Cache[idx].fieldC = g_PTRNUL;
 		Cache[idx].field0 = 0;
 		Cache[idx].field4 = 0;
 		Cache[idx].field2 = 0;
@@ -847,7 +856,7 @@ void Globals::CACHE_ADD(int idx) {
 }
 
 void Globals::CHARGE_CACHE(const Common::String &file) {
-	byte *v2 = PTRNUL;
+	byte *v2 = g_PTRNUL;
 	int v4;
 	int v5;
 	int v6; 
@@ -883,7 +892,7 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 			Cache[v6].field0 = v4;
 			Cache[v6].field4 = v5;
 			Cache[v6].field12 = 1;
-			if (spriteData == PTRNUL) {
+			if (spriteData == g_PTRNUL) {
 				Cache[v14].fieldA = 0;
 			} else {
 				v8 = _vm->_objectsManager.Get_Largeur(spriteData, v11);

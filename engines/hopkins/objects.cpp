@@ -48,11 +48,11 @@ ObjectsManager::ObjectsManager() {
 	g_old_x = g_old_y = 0;
 	FLAG_VISIBLE_EFFACE = 0;
 	Winventaire = NULL;
-	inventaire2 = PTRNUL;
-	SL_SPR = PTRNUL;
-	SL_SPR2 = PTRNUL;
-	sprite_ptr = PTRNUL;
-	S_old_spr = PTRNUL;
+	inventaire2 = g_PTRNUL;
+	SL_SPR = g_PTRNUL;
+	SL_SPR2 = g_PTRNUL;
+	sprite_ptr = g_PTRNUL;
+	S_old_spr = g_PTRNUL;
 	PERSO_ON = false;
 	SL_FLAG = false;
 	SL_MODE = false;
@@ -74,7 +74,7 @@ ObjectsManager::ObjectsManager() {
 	SPEED_FLAG = false;
 	SPEED_X = SPEED_Y = 0;
 	SPEED_IMAGE = 0;
-	SPEED_PTR = PTRNUL;
+	SPEED_PTR = g_PTRNUL;
 	DERLIGNE = 0;
 	g_old_sens = 0;
 	A_ANIM = 0;
@@ -126,7 +126,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 	if (mode == 1)
 	    ++val2;
 	if (val1 != _vm->_globals.NUM_FICHIER_OBJ) {
-		if (_vm->_globals.ADR_FICHIER_OBJ != PTRNUL)
+		if (_vm->_globals.ADR_FICHIER_OBJ != g_PTRNUL)
 			ObjectsManager::DEL_FICHIER_OBJ();
 		if (val1 == 1) {
 			_vm->_fileManager.CONSTRUIT_SYSTEM("OBJET1.SPR");
@@ -143,7 +143,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 	switch (mode) {
 	case 0:
 		dataP = _vm->_globals.dos_malloc2(height * width);
-		if (dataP == PTRNUL)
+		if (dataP == g_PTRNUL)
 			error("CAPTURE_OBJET");
 			
 		ObjectsManager::capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, dataP, val2);
@@ -268,11 +268,11 @@ int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIn
 
 byte *ObjectsManager::DEL_FICHIER_OBJ() {
 	_vm->_globals.NUM_FICHIER_OBJ = 0;
-	if (_vm->_globals.ADR_FICHIER_OBJ != PTRNUL)
+	if (_vm->_globals.ADR_FICHIER_OBJ != g_PTRNUL)
 		_vm->_globals.ADR_FICHIER_OBJ = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.ADR_FICHIER_OBJ);
   
-	byte *result = PTRNUL;
-	_vm->_globals.ADR_FICHIER_OBJ = PTRNUL;
+	byte *result = g_PTRNUL;
+	_vm->_globals.ADR_FICHIER_OBJ = g_PTRNUL;
 	return result;
 }
 
@@ -594,7 +594,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	Liste2Item &item = _vm->_globals.Liste2[idx];
 
 	bob.field0 = 0;
-	bob.field4 = PTRNUL;
+	bob.field4 = g_PTRNUL;
 	bob.field8 = 0;
 	bob.fieldA = 0;
 	bob.fieldC = 0;
@@ -603,7 +603,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob.field12 = 0;
 	bob.field14 = 0;
 	bob.field16 = 0;
-	bob.field18 = PTRNUL;
+	bob.field18 = g_PTRNUL;
 	bob.field1A = 0;
 	bob.field1C = 0;
 	bob.field1E = 0;
@@ -614,7 +614,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob.field28 = 0;
 	bob.field2A = 0;
 	bob.field2C = 0;
-	bob.field30 = PTRNUL;
+	bob.field30 = g_PTRNUL;
 	bob.field34 = 0;
 	bob.field36 = 0;
 	bob.field38 = 0;
@@ -1336,7 +1336,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			v1 = _vm->_globals.Bob[idx].field20;
 			if (v1 == -1)
 				v1 = 50;
-			if (_vm->_globals.Bob[idx].field18 == PTRNUL || _vm->_globals.Bob[idx].field16 || v1 <= 0)
+			if (_vm->_globals.Bob[idx].field18 == g_PTRNUL || _vm->_globals.Bob[idx].field16 || v1 <= 0)
 				goto LABEL_38;
       
 			v2 = _vm->_globals.Bob[idx].field14;
@@ -1513,19 +1513,19 @@ void ObjectsManager::AFF_VBOB() {
 				_vm->_globals.VBob[idx].field6 + width,
 				height + _vm->_globals.VBob[idx].field8);
       
-			if (PTRNUL != _vm->_globals.VBob[idx].field10)
+			if (g_PTRNUL != _vm->_globals.VBob[idx].field10)
 				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
       
 			_vm->_globals.VBob[idx].field4 = 0;
-			_vm->_globals.VBob[idx].field10 = PTRNUL;
-			_vm->_globals.VBob[idx].field0 = PTRNUL;
+			_vm->_globals.VBob[idx].field10 = g_PTRNUL;
+			_vm->_globals.VBob[idx].field0 = g_PTRNUL;
 			_vm->_globals.VBob[idx].field6 = 0;
 			_vm->_globals.VBob[idx].field8 = 0;
 			_vm->_globals.VBob[idx].field14 = 0;
 			_vm->_globals.VBob[idx].field16 = 0;
 			_vm->_globals.VBob[idx].fieldA = 0;
 			_vm->_globals.VBob[idx].field18 = 0;
-			_vm->_globals.VBob[idx].field1C = PTRNUL;
+			_vm->_globals.VBob[idx].field1C = g_PTRNUL;
 		}
 
 		if (_vm->_globals.VBob[idx].field4 == 3) {
@@ -1549,10 +1549,10 @@ void ObjectsManager::AFF_VBOB() {
 			_vm->_globals.VBob[idx].field4 = 1;
 			_vm->_globals.VBob[idx].field1C = _vm->_globals.VBob[idx].field0;
       
-			if (PTRNUL != _vm->_globals.VBob[idx].field10)
+			if (g_PTRNUL != _vm->_globals.VBob[idx].field10)
 				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
       
-			_vm->_globals.VBob[idx].field10 = PTRNUL;
+			_vm->_globals.VBob[idx].field10 = g_PTRNUL;
 			_vm->_globals.VBob[idx].field14 = _vm->_globals.VBob[idx].field6;
 			_vm->_globals.VBob[idx].field16 = _vm->_globals.VBob[idx].field8;
 			_vm->_globals.VBob[idx].field18 = _vm->_globals.VBob[idx].fieldA;
@@ -1562,7 +1562,7 @@ void ObjectsManager::AFF_VBOB() {
 			width = Get_Largeur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
 			height = Get_Hauteur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
       
-			if (PTRNUL != _vm->_globals.VBob[idx].field10)
+			if (g_PTRNUL != _vm->_globals.VBob[idx].field10)
 				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
       
 			byte *surface = _vm->_globals.dos_malloc2(height * width);
@@ -1624,8 +1624,8 @@ void ObjectsManager::CLEAR_SPR() {
 
 	idx = 0;
 	do {
-		Sprite[idx].field1C = PTRNUL;
-		Sprite[idx].spriteData = PTRNUL;
+		Sprite[idx].field1C = g_PTRNUL;
+		Sprite[idx].spriteData = g_PTRNUL;
 		Sprite[idx].field0 = 0;
 		++idx;
 	} while (idx <= 4);
@@ -1659,7 +1659,7 @@ void ObjectsManager::SPRITE(const byte *spriteData, int a2, int a3, int idx, int
 	Sprite[idx].fieldC = a6;
 	Sprite[idx].field12 = a8;
 	Sprite[idx].field14 = a9;
-	Sprite[idx].field1C = PTRNUL;
+	Sprite[idx].field1C = g_PTRNUL;
 	Sprite[idx].field20 = 0;
 	Sprite[idx].field24 = 0;
 	Sprite[idx].field26 = 0;
@@ -1698,9 +1698,9 @@ void ObjectsManager::SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, 
 
 void ObjectsManager::SPRITE_OFF(int idx) {
 	Sprite[idx].field0 = 3;
-	if (Sprite[idx].field1C != PTRNUL)
+	if (Sprite[idx].field1C != g_PTRNUL)
 		_vm->_globals.dos_free2(Sprite[idx].field1C);
-	Sprite[idx].field1C = PTRNUL;
+	Sprite[idx].field1C = g_PTRNUL;
 }
 
 void ObjectsManager::SPRITE_GEL(int idx) {
@@ -1794,7 +1794,7 @@ void ObjectsManager::VERIFZONE() {
 	v3 = _vm->_globals.compteur_71 + 1;
 	_vm->_globals.compteur_71 = v3;
 	if (v3 > 1u) {
-		if (_vm->_globals.NOMARCHE || (_vm->_globals.chemin == PTRNUL) || v3 > 4u) {
+		if (_vm->_globals.NOMARCHE || (_vm->_globals.chemin == g_PTRNUL) || v3 > 4u) {
 			_vm->_globals.compteur_71 = 0;
 			if (_vm->_globals.old_x_69 != v0 || _vm->_globals.old_y_70 != v2) {
 				v4 = MZONE();
@@ -1916,7 +1916,7 @@ void ObjectsManager::CARRE_ZONE() {
 
 	for (int idx = 0; idx < 400; ++idx) {
 		v3 = _vm->_linesManager.LigneZone[idx].field4;
-		if (v3 != PTRNUL) {
+		if (v3 != g_PTRNUL) {
 			v4 = _vm->_linesManager.LigneZone[idx].field2;
 			_vm->_globals.CarreZone[v4].field0 = 1;
 			if (_vm->_globals.CarreZone[v4].fieldC < idx)
@@ -1979,7 +1979,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.PLAN_FLAG = 1;
 	_vm->_graphicsManager.NOFADE = false;
 	_vm->_globals.NOMARCHE = 0;
-	sprite_ptr = PTRNUL;
+	sprite_ptr = g_PTRNUL;
 	_vm->_globals.SORTIE = 0;
 	_vm->_globals.AFFLI = 0;
 	_vm->_globals.AFFIVBL = 0;
@@ -2016,7 +2016,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_graphicsManager.SCROLL_ECRAN(v3 - 320);
 	_vm->_graphicsManager.ofscroll = XSPR(0) - 320;
 	SPRITE_ON(0);
-	_vm->_globals.chemin = PTRNUL;
+	_vm->_globals.chemin = g_PTRNUL;
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -2060,7 +2060,7 @@ void ObjectsManager::PLAN_BETA() {
 		VERIFZONE();
 		GOHOME2();
 		
-		if (_vm->_globals.chemin == PTRNUL && _vm->_globals.GOACTION == 1)
+		if (_vm->_globals.chemin == g_PTRNUL && _vm->_globals.GOACTION == 1)
 			PARADISE();
 		_vm->_eventsManager.VBL();
     
@@ -2193,7 +2193,7 @@ LABEL_38:
 	}
 	GOACTION = 0;
 	v9 = _vm->_globals.chemin;
-	_vm->_globals.chemin = PTRNUL;
+	_vm->_globals.chemin = g_PTRNUL;
 	if (_vm->_globals.FORET && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
 		if (YSPR(0) <= 374 || YSPR(0) > 410) {
 			v10 = XSPR(0);
@@ -2201,22 +2201,22 @@ LABEL_38:
 			v12 = XSPR(0);
 			v13 = _vm->_linesManager.PARCOURS2(v12, v11, v10, 390);
 			_vm->_globals.chemin = v13;
-			if (PTRNUL != v13)
+			if (g_PTRNUL != v13)
 				PACOURS_PROPRE(v13);
 			g_old_x = XSPR(0);
 			g_old_y = YSPR(0);
 			_vm->_globals.Compteur = 0;
-			if (PTRNUL != _vm->_globals.chemin || v9 == _vm->_globals.chemin) {
+			if (g_PTRNUL != _vm->_globals.chemin || v9 == _vm->_globals.chemin) {
 LABEL_64:
 				_vm->_globals.g_old_sens = -1;
 				goto LABEL_65;
 			}
 			goto LABEL_63;
 		}
-		_vm->_globals.chemin = PTRNUL;
+		_vm->_globals.chemin = g_PTRNUL;
 		SETANISPR(0, _vm->_globals.g_old_sens2 + 59);
 		_vm->_globals.ACTION_SENS = 0;
-		_vm->_globals.chemin = PTRNUL;
+		_vm->_globals.chemin = g_PTRNUL;
 		VERIFTAILLE();
 		SETFLIPSPR(0, 0);
 		_vm->_globals.Compteur = 0;
@@ -2229,12 +2229,12 @@ LABEL_64:
 			v15 = XSPR(0);
 			v16 = _vm->_linesManager.PARCOURS2(v15, v14, v19, v0);
 			_vm->_globals.chemin = v16;
-			if (PTRNUL != v16)
+			if (g_PTRNUL != v16)
 				PACOURS_PROPRE(v16);
 			g_old_x = XSPR(0);
 			g_old_y = YSPR(0);
 			_vm->_globals.Compteur = 0;
-			if (PTRNUL != _vm->_globals.chemin || v9 == _vm->_globals.chemin)
+			if (g_PTRNUL != _vm->_globals.chemin || v9 == _vm->_globals.chemin)
 				goto LABEL_64;
 LABEL_63:
 			_vm->_globals.chemin = v9;
@@ -2265,7 +2265,7 @@ LABEL_65:
 	}
 	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField13] == 1 && _vm->_globals.OBJET_EN_COURS == 20 && NUMZONE == 12 
 				&& _vm->_eventsManager.btsouris == 23) {
-		_vm->_globals.chemin = PTRNUL;
+		_vm->_globals.chemin = g_PTRNUL;
 		XSPR(0);
 		YSPR(0);
 	}
@@ -2411,17 +2411,17 @@ void ObjectsManager::CLEAR_ECRAN() {
 	NUMZONE = 0;
 	Vold_taille = 0;
 	SPEED_FLAG = 0;
-	SPEED_PTR = PTRNUL;
+	SPEED_PTR = g_PTRNUL;
 	SPEED_X = 0;
 	SPEED_Y = 0;
 	SPEED_IMAGE = 0;
 	FORCEZONE = 1;
 	_vm->_linesManager.TOTAL_LIGNES = 0;
 	DERLIGNE = 0;
-	_vm->_globals.chemin = PTRNUL;
-	if (_vm->_globals.COUCOU != PTRNUL)
+	_vm->_globals.chemin = g_PTRNUL;
+	if (_vm->_globals.COUCOU != g_PTRNUL)
 		_vm->_globals.COUCOU = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.COUCOU);
-	if (PTRNUL != _vm->_globals.SPRITE_ECRAN)
+	if (g_PTRNUL != _vm->_globals.SPRITE_ECRAN)
 		_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
 	_vm->_eventsManager.start_x = 0;
 	_vm->_eventsManager.souris_n = 0;
@@ -2432,7 +2432,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	FORCEZONE = 1;
 	CHANGEVERBE = 0;
 	_vm->_globals.NOSPRECRAN = 0;
-	_vm->_globals.chemin = PTRNUL;
+	_vm->_globals.chemin = g_PTRNUL;
 	g_old_sens = -1;
 	my_anim = 1;
 	A_ANIM = 0;
@@ -2493,7 +2493,7 @@ void ObjectsManager::INVENT() {
 			_vm->_eventsManager.VBL();
 			++v1;
 		} while (v1 <= 1);
-		_vm->_globals.Winventaire = PTRNUL;
+		_vm->_globals.Winventaire = g_PTRNUL;
 LABEL_7:
 		_vm->_eventsManager.souris_bb = 0;
 		_vm->_eventsManager.souris_b = 0;
@@ -2594,7 +2594,7 @@ LABEL_7:
 						_vm->_globals.SORTIE = 0;
 						if (v20 != 1) {
 							inventaire2 = _vm->_globals.dos_free2(inventaire2);
-							if (PTRNUL != _vm->_globals.Winventaire)
+							if (g_PTRNUL != _vm->_globals.Winventaire)
 								_vm->_globals.Winventaire = _vm->_globals.dos_free2(_vm->_globals.Winventaire);
 							goto LABEL_7;
 						}
@@ -2619,7 +2619,7 @@ LABEL_7:
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
 			BOBTOUS = 1;
 		}
-		if (PTRNUL != _vm->_globals.Winventaire)
+		if (g_PTRNUL != _vm->_globals.Winventaire)
 			_vm->_globals.Winventaire = _vm->_globals.dos_free2(_vm->_globals.Winventaire);
 		inventaire2 = _vm->_globals.dos_free2(inventaire2);
 		if (_vm->_eventsManager.btsouris == 1)
@@ -2653,7 +2653,7 @@ void ObjectsManager::CHANGE_TETE(int a1, int a2) {
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, 532, 25, 65, 40, _vm->_graphicsManager.VESA_BUFFER, 532, 25);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 597, 65);
 	_vm->_globals.NOT_VERIF = 1;
-	_vm->_globals.chemin = PTRNUL;
+	_vm->_globals.chemin = g_PTRNUL;
 	if (a1 == 2) {
 		if (!a2) {
 			if (_vm->_globals.SAUVEGARDE->data[svField188] == _vm->_globals.ECRAN) {
@@ -3246,7 +3246,7 @@ LABEL_88:
 		_vm->_globals.super_parcours[v61 + 3] = -1;
 		result = (byte *)&_vm->_globals.super_parcours[0];
 	} else {
-		result = PTRNUL;
+		result = g_PTRNUL;
 	}
 	return result;
 }
@@ -3760,12 +3760,12 @@ void ObjectsManager::OPTI_OBJET() {
 
 	file = "OBJET1.ini";
 	data = _vm->_fileManager.RECHERCHE_CAT(file, 1);
-	if (data == PTRNUL) {
+	if (data == g_PTRNUL) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, file);
 		data = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
 	
-	if ((data == PTRNUL) || *data != 'I' || *(data + 1) != 'N' || *(data + 2) != 'I') {
+	if ((data == g_PTRNUL) || *data != 'I' || *(data + 1) != 'N' || *(data + 2) != 'I') {
 		error("Not an INI file");
 	} else {
 		v7 = 0;
@@ -4754,7 +4754,7 @@ LABEL_1141:
 		}
 		if (v76 == 46) {
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			v13 = YSPR(0);
 			v14 = XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v14, v13, 564, 420);
@@ -4762,7 +4762,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			SPRITE_OFF(0);
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND44.WAV");
@@ -4825,7 +4825,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			v16 = YSPR(0);
 			v17 = XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v17, v16, 445, 332);
@@ -4833,7 +4833,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			SPRITE_OFF(0);
 			BOBANIM_ON(7);
 			SET_BOBPOSI(7, 0);
@@ -4945,7 +4945,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			v22 = YSPR(0);
 			v23 = XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v23, v22, 119, 268);
@@ -4953,7 +4953,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			SPRITE_OFF(0);
 			BOBANIM_ON(11);
 			BOBANIM_ON(8);
@@ -5167,7 +5167,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
 				v27 = YSPR(0);
 				v28 = XSPR(0);
@@ -5187,7 +5187,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			SPRITE_OFF(0);
 			SETANISPR(0, 60);
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND63.WAV");
@@ -5375,7 +5375,7 @@ LABEL_1141:
 				_vm->_soundManager.SPECIAL_SOUND = 0;
 			}
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			v37 = YSPR(0);
 			v38 = XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v38, v37, 330, 418);
@@ -5384,7 +5384,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			SETANISPR(0, 64);
 			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField401];
 			_vm->_globals.DESACTIVE_INVENT = 0;
@@ -5400,7 +5400,7 @@ LABEL_1141:
 			while (BOBPOSI(1) != 9);
 			BOBANIM_OFF(1);
 			_vm->_globals.NO_VISU = 1;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v39 = YSPR(0);
 			v40 = XSPR(0);
@@ -5410,7 +5410,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			SETANISPR(0, 64);
 			BOBANIM_ON(2);
 			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
@@ -5524,7 +5524,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v43 = YSPR(0);
 			v44 = XSPR(0);
@@ -5533,7 +5533,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			SPRITE_OFF(0);
 			v45 = 0;
 			BOBANIM_ON(7);
@@ -6011,7 +6011,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v55 = YSPR(0);
 			v56 = XSPR(0);
@@ -6021,7 +6021,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			_vm->_globals.SORTIE = 59;
 		}
 		if (v76 == 173) {
@@ -6032,7 +6032,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = PTRNUL;
+			_vm->_globals.chemin = g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v57 = YSPR(0);
 			v58 = XSPR(0);
@@ -6042,7 +6042,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != PTRNUL);
+			} while (_vm->_globals.chemin != g_PTRNUL);
 			_vm->_globals.SORTIE = 59;
 		}
 		if (v76 == 174)
@@ -6152,7 +6152,7 @@ void ObjectsManager::VBOB(byte *a1, int idx, int a3, int a4, int a5) {
 		_vm->_globals.VBob[idx].field18 = a5;
 		_vm->_globals.VBob[idx].field0 = a1;
 		_vm->_globals.VBob[idx].field1C = a1;
-		if (_vm->_globals.VBob[idx].field10 != PTRNUL)
+		if (_vm->_globals.VBob[idx].field10 != g_PTRNUL)
 			_vm->_globals.VBob[idx].field10 = _vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
 	}
 	
@@ -6182,7 +6182,7 @@ void ObjectsManager::VBOB_OFF(int idx) {
 
 void ObjectsManager::ACTION_DOS(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 1) {
-		if (PTRNUL != _vm->_globals.GESTE)
+		if (g_PTRNUL != _vm->_globals.GESTE)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 1;
 
@@ -6219,7 +6219,7 @@ void ObjectsManager::ACTION_DOS(int idx) {
 
 void ObjectsManager::ACTION_DROITE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 3) {
-		if (_vm->_globals.GESTE != PTRNUL)
+		if (_vm->_globals.GESTE != g_PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
 		_vm->_fileManager.CONSTRUIT_SYSTEM("PROFIL.SPR");
@@ -6249,7 +6249,7 @@ void ObjectsManager::ACTION_DROITE(int idx) {
 
 void ObjectsManager::Q_DROITE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 4) {
-		if (_vm->_globals.GESTE != PTRNUL)
+		if (_vm->_globals.GESTE != g_PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
 		_vm->_fileManager.CONSTRUIT_SYSTEM("3Q.SPR");
@@ -6279,7 +6279,7 @@ void ObjectsManager::Q_DROITE(int idx) {
 
 void ObjectsManager::ACTION_FACE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 2) {
-		if (_vm->_globals.GESTE != PTRNUL)
+		if (_vm->_globals.GESTE != g_PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 2;
 		_vm->_fileManager.CONSTRUIT_SYSTEM("FACE.SPR");
@@ -6297,7 +6297,7 @@ void ObjectsManager::ACTION_FACE(int idx) {
 
 void ObjectsManager::Q_GAUCHE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 4) {
-		if (_vm->_globals.GESTE != PTRNUL)
+		if (_vm->_globals.GESTE != g_PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
 		_vm->_fileManager.CONSTRUIT_SYSTEM("3Q.SPR");
@@ -6327,7 +6327,7 @@ void ObjectsManager::Q_GAUCHE(int idx) {
 
 void ObjectsManager::ACTION_GAUCHE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 3) {
-		if (_vm->_globals.GESTE != PTRNUL)
+		if (_vm->_globals.GESTE != g_PTRNUL)
 			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
 		_vm->_fileManager.CONSTRUIT_SYSTEM("PROFIL.SPR");
@@ -6487,7 +6487,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	filename = file + ".LNK";
 	ptr = _vm->_fileManager.RECHERCHE_CAT(filename, 3);
 	nbytes = _vm->_globals.CAT_TAILLE;
-	if (ptr == PTRNUL) {
+	if (ptr == g_PTRNUL) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
 		
 		if (!f.open(_vm->_globals.NFICHIER))
@@ -6495,7 +6495,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 		nbytes = f.size();
 		ptr = _vm->_globals.dos_malloc2(nbytes);
-		if (PTRNUL == ptr)
+		if (g_PTRNUL == ptr)
 			error("INILINK");
 		_vm->_fileManager.bload_it(f, ptr, nbytes);
 		f.close();
@@ -6510,7 +6510,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 		if (!filename2.empty()) {
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.RECHERCHE_CAT(filename2, 8);
 			
-			if (_vm->_globals.CACHE_BANQUE[1] || _vm->_globals.CACHE_BANQUE[1] == PTRNUL) {
+			if (_vm->_globals.CACHE_BANQUE[1] || _vm->_globals.CACHE_BANQUE[1] == g_PTRNUL) {
 				_vm->_globals.CAT_FLAG = 0;
 				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename2);
 			} else {
@@ -7179,7 +7179,7 @@ int ObjectsManager::colision(int a1, int a2) {
 
 		do {
 			byte *srcP = _vm->_linesManager.LigneZone[v8].field4;
-			if (srcP != PTRNUL) {
+			if (srcP != g_PTRNUL) {
 				bool flag = true;
 				int v11 = READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 2);
 				int dataV2 = READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 2 + 2);
@@ -7535,7 +7535,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	_vm->_globals.PLAN_FLAG = 0;
 	_vm->_globals.iRegul = 1;
 	_vm->_soundManager.WSOUND(v);
-	_vm->_globals.chemin = PTRNUL;
+	_vm->_globals.chemin = g_PTRNUL;
 	_vm->_globals.NOMARCHE = 1;
 	_vm->_globals.SORTIE = 0;
 	_vm->_globals.AFFLI = 0;
@@ -7557,7 +7557,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	if (_vm->_globals.ECRAN == 61) {
 		SPRITE(_vm->_globals.PERSO, 330, 418, 0, 60, 0, 0, 34, 190);
 		SPRITE_ON(0);
-		_vm->_globals.chemin = PTRNUL;
+		_vm->_globals.chemin = g_PTRNUL;
 		VERIFTAILLE();
 	}
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -7580,7 +7580,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 		g_old_x = XSPR(0);
 		g_old_sens = -1;
 		_vm->_globals.Compteur = 0;
-		_vm->_globals.chemin = PTRNUL;
+		_vm->_globals.chemin = g_PTRNUL;
 		v7 = YSPR(0);
 		v8 = XSPR(0);
 		_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v8, v7, 330, 345);
@@ -7588,7 +7588,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 		do {
 			GOHOME();
 			_vm->_eventsManager.VBL();
-		} while (_vm->_globals.chemin != PTRNUL);
+		} while (_vm->_globals.chemin != g_PTRNUL);
 		SETANISPR(0, 64);
 	}
 	do {
@@ -7702,7 +7702,7 @@ LABEL_70:
 	_vm->_objectsManager.VERIFTAILLE();
 	SPRITE_ON(0);
 	_vm->_globals.CACHE_ON();
-	_vm->_globals.chemin = PTRNUL;
+	_vm->_globals.chemin = g_PTRNUL;
 	_vm->_objectsManager.VERIFTAILLE();
 	SPECIAL_INI(s2);
 	_vm->_eventsManager.souris_n = 4;
@@ -7734,7 +7734,7 @@ LABEL_70:
 					v10 = yp;
 					if (v12 == xp) {
 						if (v11 == yp) {
-							_vm->_globals.chemin = PTRNUL;
+							_vm->_globals.chemin = g_PTRNUL;
 							_vm->_objectsManager.PARADISE();
 							if (_vm->_globals.SORTIE)
 								v13 = 1;
@@ -7751,7 +7751,7 @@ LABEL_70:
 		if (!_vm->_globals.SORTIE) {
 			TEST_INVENT();
 			_vm->_objectsManager.VERIFZONE();
-			if (_vm->_globals.chemin == PTRNUL || (_vm->_objectsManager.GOHOME(), _vm->_globals.chemin == PTRNUL)) {
+			if (_vm->_globals.chemin == g_PTRNUL || (_vm->_objectsManager.GOHOME(), _vm->_globals.chemin == g_PTRNUL)) {
 				if (_vm->_objectsManager.GOACTION == 1)
 					_vm->_objectsManager.PARADISE();
 			}

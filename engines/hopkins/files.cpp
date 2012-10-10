@@ -194,7 +194,7 @@ void FileManager::CONSTRUIT_FICHIER(const Common::String &hop, const Common::Str
 
 byte *FileManager::LIBERE_FICHIER(byte *ptr) {
 	free(ptr);
-	return PTRNUL;
+	return g_PTRNUL;
 }
 
 byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
@@ -208,7 +208,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	case 1:
 		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_INI.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 		
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_INI.RES");
@@ -217,7 +217,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	case 2:
 		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_REP.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_REP.RES");
@@ -226,7 +226,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	case 3:
 		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_LIN.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_LIN.RES");
@@ -235,7 +235,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	case 4:
 		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_ANI.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_ANI.RES");
@@ -244,7 +244,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	case 5:
 		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_PER.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_PER.RES");
@@ -253,7 +253,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	case 6:
 		CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, "PIC.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		break;
@@ -261,7 +261,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	case 7:
 		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_SAN.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		break;
@@ -269,7 +269,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	case 8:
 		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		break;
@@ -288,7 +288,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 		}
 
 		if (!f.exists(_vm->_globals.NFICHIER))
-			return PTRNUL;
+			return g_PTRNUL;
 
 		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
 		break;
@@ -331,7 +331,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 		f.seek(_vm->_globals.CAT_POSI);
 
 		byte *catData = _vm->_globals.dos_malloc2(_vm->_globals.CAT_TAILLE);
-		if (catData == PTRNUL)
+		if (catData == g_PTRNUL)
 			error("CHARGE_FICHIER");
 
 		bload_it(f, catData, _vm->_globals.CAT_TAILLE);
