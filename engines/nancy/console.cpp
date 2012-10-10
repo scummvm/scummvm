@@ -29,7 +29,7 @@
 namespace Nancy {
 
 NancyConsole::NancyConsole(NancyEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("res_load_ciftree", WRAP_METHOD(NancyConsole, Cmd_resLoadCifTree));
+	registerCmd("res_load_cal", WRAP_METHOD(NancyConsole, Cmd_resLoadCal));
 	registerCmd("res_hexdump", WRAP_METHOD(NancyConsole, Cmd_resHexDump));
 	registerCmd("res_diskdump", WRAP_METHOD(NancyConsole, Cmd_resDiskDump));
 	registerCmd("res_list", WRAP_METHOD(NancyConsole, Cmd_resList));
@@ -41,14 +41,14 @@ NancyConsole::~NancyConsole() {
 }
 
 bool NancyConsole::Cmd_resHexDump(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Dumps the specified resource to standard output\n");
-		debugPrintf("Usage: %s <resource name>\n", argv[0]);
+		debugPrintf("Usage: %s name [cal]\n", argv[0]);
 		return true;
 	}
 
 	uint size;
-	byte *buf = _vm->_res->loadResource(argv[1], size);
+	byte *buf = _vm->_res->loadCif((argc == 2 ? "ciftree" : argv[2]), argv[1], size);
 	if (!buf) {
 		debugPrintf("Failed to load resource '%s'\n", argv[1]);
 		return true;
@@ -60,14 +60,14 @@ bool NancyConsole::Cmd_resHexDump(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_resDiskDump(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Dumps the specified resource to disk\n");
-		debugPrintf("Usage: %s <resource name>\n", argv[0]);
+		debugPrintf("Usage: %s name [cal]\n", argv[0]);
 		return true;
 	}
 
 	uint size;
-	byte *buf = _vm->_res->loadResource(argv[1], size);
+	byte *buf = _vm->_res->loadCif((argc == 2 ? "ciftree" : argv[2]), argv[1], size);
 	if (!buf) {
 		debugPrintf("Failed to load resource '%s'\n", argv[1]);
 		return true;
@@ -91,15 +91,15 @@ bool NancyConsole::Cmd_resDiskDump(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_resList(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("List resources of a certain type\n");
 		debugPrintf("Types - 0: all, 2: image, 3: script\n");
-		debugPrintf("Usage: %s <resource type>\n", argv[0]);
+		debugPrintf("Usage: %s type [cal]\n", argv[0]);
 		return true;
 	}
 
 	Common::Array<Common::String> list;
-	_vm->_res->listResources(list, atoi(argv[1]));
+	_vm->_res->list((argc == 2 ? "ciftree" : argv[2]), list, atoi(argv[1]));
 	for (uint i = 0; i < list.size(); i++) {
 		debugPrintf("%-38s", list[i].c_str());
 		if ((i % 2) == 1 && i + 1 != list.size())
@@ -112,25 +112,25 @@ bool NancyConsole::Cmd_resList(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_resInfo(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Prints information about a resource\n");
-		debugPrintf("Usage: %s <resource name>\n", argv[0]);
+		debugPrintf("Usage: %s name [cal]\n", argv[0]);
 		return true;
 	}
 
-	debugPrintf("%s", _vm->_res->getResourceDesc(argv[1]).c_str());
+	debugPrintf("%s", _vm->_res->getCifDescription((argc == 2 ? "ciftree" : argv[2]), argv[1]).c_str());
 	return true;
 }
 
 bool NancyConsole::Cmd_resShowImage(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Draws an image on the screen\n");
-		debugPrintf("Usage: %s <resource name>\n", argv[0]);
+		debugPrintf("Usage: %s name [cal]\n", argv[0]);
 		return true;
 	}
 
 	Graphics::Surface surf;
-	if (_vm->_res->loadImage(argv[1], surf)) {
+	if (_vm->_res->loadImage((argc == 2 ? "ciftree" : argv[2]), argv[1], surf)) {
 		_vm->_system->fillScreen(0);
 		_vm->_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w > 640 ? 640 : surf.w, surf.h > 480 ? 480 : surf.h);
 		surf.free();
@@ -139,15 +139,15 @@ bool NancyConsole::Cmd_resShowImage(int argc, const char **argv) {
 	return true;
 }
 
-bool NancyConsole::Cmd_resLoadCifTree(int argc, const char **argv) {
+bool NancyConsole::Cmd_resLoadCal(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Loads a new CifTree file\n");
-		debugPrintf("Usage: %s <filename>\n", argv[0]);
+		debugPrintf("Loads a .cal file\n");
+		debugPrintf("Usage: %s <name>\n", argv[0]);
 		return true;
 	}
 
-	if (!_vm->_res->loadCifTree(argv[1]))
-		debugPrintf("Failed to load CifTree '%s'\n", argv[1]);
+	if (!_vm->_res->loadCifTree(argv[1], "cal"))
+		debugPrintf("Failed to load '%s.cal'\n", argv[1]);
 	return true;
 }
 
