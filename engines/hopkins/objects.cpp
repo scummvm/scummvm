@@ -332,13 +332,13 @@ void ObjectsManager::AFF_SPRITES() {
 	int v19; 
 	int v20;
 	int v21;
-	int v23;
-	int v24;
+	int y1_1;
+	int y1_2;
 	int v25;
 	int v26;
 	int v27;
-	int v28;
-	int v29;
+	int x1_1;
+	int x1_2;
 	int v30;
 	int v31;
 	int v32;
@@ -354,17 +354,17 @@ void ObjectsManager::AFF_SPRITES() {
 	v30 = 0;
 	do {
 		v0 = v30;
-		if (_vm->_fontManager.ListeTxt[v0].field0 && _vm->_fontManager.Txt[v30].field3FC != 2) {
-			v1 = _vm->_fontManager.ListeTxt[v30].x1;
-			v28 = v1 - 2;
+		if (_vm->_fontManager.ListeTxt[v0].enabled && _vm->_fontManager.Txt[v30].field3FC != 2) {
+			v1 = _vm->_fontManager.ListeTxt[v30].xp;
+			x1_1 = v1 - 2;
       
 			if ((int16)(v1 - 2) < _vm->_graphicsManager.min_x)
-				v28 = _vm->_graphicsManager.min_x;
-			v2 = _vm->_fontManager.ListeTxt[v30].y1;
-			v23 = v2 - 2;
+				x1_1 = _vm->_graphicsManager.min_x;
+			v2 = _vm->_fontManager.ListeTxt[v30].yp;
+			y1_1 = v2 - 2;
       
 			if ((int16)(v2 - 2) < _vm->_graphicsManager.min_y)
-				v23 = _vm->_graphicsManager.min_y;
+				y1_1 = _vm->_graphicsManager.min_y;
 			destX = v1 - 2;
 			if (destX < _vm->_graphicsManager.min_x)
 				destX = _vm->_graphicsManager.min_x;
@@ -372,11 +372,11 @@ void ObjectsManager::AFF_SPRITES() {
 			if (destY < _vm->_graphicsManager.min_y)
 				destY = _vm->_graphicsManager.min_y;
 			
-			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v28, v23,
-				_vm->_fontManager.ListeTxt[v30].x2 + 4, _vm->_fontManager.ListeTxt[destX].y2 + 4,
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, x1_1, y1_1,
+				_vm->_fontManager.ListeTxt[v30].width + 4, _vm->_fontManager.ListeTxt[destX].height + 4,
 				_vm->_graphicsManager.VESA_BUFFER,
 				destX, destY);
-			_vm->_fontManager.ListeTxt[v0].field0 = 0;
+			_vm->_fontManager.ListeTxt[v0].enabled = false;
 		}
 		++v30;
 	} while (v30 <= 10);
@@ -387,13 +387,13 @@ void ObjectsManager::AFF_SPRITES() {
 			v5 = v31;
 			if (_vm->_globals.Liste[v5].field0) {
 				v6 = _vm->_globals.Liste[v5].field2;
-				v29 = v6 - 2;
+				x1_2 = v6 - 2;
 				if ((int16)(v6 - 2) < _vm->_graphicsManager.min_x)
-					v29 = _vm->_graphicsManager.min_x;
+					x1_2 = _vm->_graphicsManager.min_x;
 				v7 = _vm->_globals.Liste[v31].field4;
-				v24 = v7 - 2;
+				y1_2 = v7 - 2;
 				if ((int16)(v7 - 2) < _vm->_graphicsManager.min_y)
-					v24 = _vm->_graphicsManager.min_y;
+					y1_2 = _vm->_graphicsManager.min_y;
 				v8 = v6 - 2;
 				if (v8 < _vm->_graphicsManager.min_x)
 					v8 = _vm->_graphicsManager.min_x;
@@ -401,7 +401,7 @@ void ObjectsManager::AFF_SPRITES() {
 				if (v9 < _vm->_graphicsManager.min_y)
 					v9 = _vm->_graphicsManager.min_y;
 	        
-				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v29, v24, 
+				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, x1_2, y1_2, 
 					_vm->_globals.Liste[v31].width + 4, _vm->_globals.Liste[v31].height + 4, 
 					_vm->_graphicsManager.VESA_BUFFER, v8, v9);
 				_vm->_globals.Liste[v5].field0 = 0;
@@ -541,41 +541,41 @@ void ObjectsManager::AFF_SPRITES() {
 		if (_vm->_fontManager.Txt[v16].field0 == 1) {
 			if ((uint16)(_vm->_fontManager.Txt[v16].field3FC - 2) > 1)
 				_vm->_fontManager.BOITE(v38,
-					_vm->_fontManager.Txt[v16].fieldC, _vm->_fontManager.Txt[v16].field4,
-					_vm->_eventsManager.start_x + _vm->_fontManager.Txt[v16].field8, _vm->_fontManager.Txt[v16].fieldA);
+					_vm->_fontManager.Txt[v16].fieldC, _vm->_fontManager.Txt[v16].filename,
+					_vm->_eventsManager.start_x + _vm->_fontManager.Txt[v16].xp, _vm->_fontManager.Txt[v16].yp);
 			else
 				_vm->_fontManager.BOITE(
 				  v38,
 				  _vm->_fontManager.Txt[v16].fieldC,
-				  _vm->_fontManager.Txt[v16].field4,
-				  _vm->_fontManager.Txt[v16].field8,
-				  _vm->_fontManager.Txt[v16].fieldA);
-			_vm->_fontManager.ListeTxt[v38].field0 = 1;
+				  _vm->_fontManager.Txt[v16].filename,
+				  _vm->_fontManager.Txt[v16].xp,
+				  _vm->_fontManager.Txt[v16].yp);
+			_vm->_fontManager.ListeTxt[v38].enabled = true;
 			
 			v17 = v38;
 			if ((uint16)(_vm->_fontManager.Txt[v17].field3FC - 2) > 1)
-				_vm->_fontManager.ListeTxt[v38].x1 = _vm->_eventsManager.start_x + _vm->_fontManager.Txt[v17].field8;
+				_vm->_fontManager.ListeTxt[v38].xp = _vm->_eventsManager.start_x + _vm->_fontManager.Txt[v17].xp;
 			else
-				_vm->_fontManager.ListeTxt[v38].x1 = _vm->_fontManager.Txt[v17].field8;
+				_vm->_fontManager.ListeTxt[v38].xp = _vm->_fontManager.Txt[v17].xp;
       
 			v18 = v38;
 			v19 = v38;
-			_vm->_fontManager.ListeTxt[v18].y1 = _vm->_fontManager.Txt[v19].fieldA;
-			_vm->_fontManager.ListeTxt[v18].x2 = _vm->_fontManager.Txt[v19].field404;
-			_vm->_fontManager.ListeTxt[v18].y2 = _vm->_fontManager.Txt[v19].field406;
+			_vm->_fontManager.ListeTxt[v18].yp = _vm->_fontManager.Txt[v19].yp;
+			_vm->_fontManager.ListeTxt[v18].width = _vm->_fontManager.Txt[v19].width;
+			_vm->_fontManager.ListeTxt[v18].height = _vm->_fontManager.Txt[v19].height;
 
-			if (_vm->_fontManager.ListeTxt[v38].x1 < _vm->_graphicsManager.min_x)
-				_vm->_fontManager.ListeTxt[v38].x1 = _vm->_graphicsManager.min_x - 1;
-			if (_vm->_fontManager.ListeTxt[v38].y1 < _vm->_graphicsManager.min_y)
-				_vm->_fontManager.ListeTxt[v38].y1 = _vm->_graphicsManager.min_y - 1;
-			v20 = _vm->_fontManager.ListeTxt[v38].x1;
-			if (_vm->_fontManager.ListeTxt[v38].x2 + v20 > _vm->_graphicsManager.max_x)
-				_vm->_fontManager.ListeTxt[v38].x2 = _vm->_graphicsManager.max_x - v20;
-			v21 = _vm->_fontManager.ListeTxt[v38].y1;
-			if (_vm->_fontManager.ListeTxt[v38].y2 + v21 > _vm->_graphicsManager.max_y)
-				_vm->_fontManager.ListeTxt[v38].y2 = _vm->_graphicsManager.max_y - v21;
-			if (_vm->_fontManager.ListeTxt[v38].x2 <= 0 || _vm->_fontManager.ListeTxt[v38].y2 <= 0)
-				_vm->_fontManager.ListeTxt[v18].field0 = 0;
+			if (_vm->_fontManager.ListeTxt[v38].xp < _vm->_graphicsManager.min_x)
+				_vm->_fontManager.ListeTxt[v38].xp = _vm->_graphicsManager.min_x - 1;
+			if (_vm->_fontManager.ListeTxt[v38].yp < _vm->_graphicsManager.min_y)
+				_vm->_fontManager.ListeTxt[v38].yp = _vm->_graphicsManager.min_y - 1;
+			v20 = _vm->_fontManager.ListeTxt[v38].xp;
+			if (_vm->_fontManager.ListeTxt[v38].width + v20 > _vm->_graphicsManager.max_x)
+				_vm->_fontManager.ListeTxt[v38].width = _vm->_graphicsManager.max_x - v20;
+			v21 = _vm->_fontManager.ListeTxt[v38].yp;
+			if (_vm->_fontManager.ListeTxt[v38].height + v21 > _vm->_graphicsManager.max_y)
+				_vm->_fontManager.ListeTxt[v38].height = _vm->_graphicsManager.max_y - v21;
+			if (_vm->_fontManager.ListeTxt[v38].width <= 0 || _vm->_fontManager.ListeTxt[v38].height <= 0)
+				_vm->_fontManager.ListeTxt[v18].enabled = false;
 		}
 		++v38;
 	} while (v38 <= 10);

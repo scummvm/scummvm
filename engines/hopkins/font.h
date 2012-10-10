@@ -33,9 +33,9 @@ class HopkinsEngine;
 struct TxtItem {
 	int field0;
 	int field2;
-	Common::String field4;
-	int field8;
-	int fieldA;
+	Common::String filename;
+	int16 xp;
+	int16 yp;
 	int fieldC;
 	int fieldE;
 	int field10;
@@ -44,18 +44,18 @@ struct TxtItem {
 	int field3FC;
 	int field3FE;
 	byte *field400;
-	int field404;
-	int field406;
+	int16 width;
+	int16 height;
 	int field408;
 	int field40A;
 };
 
 struct ListeTxtItem {
-	int field0;
-	int x1;
-	int y1;
-	int x2;
-	int y2;
+	bool enabled;
+	int16 xp;
+	int16 yp;
+	int16 width;
+	int16 height;
 };
 
 
@@ -78,7 +78,7 @@ public:
 	void TEXTE_OFF(int idx);
 	void COUL_TXT(int idx, byte colByte);
 	void OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4);
-	void DOS_TEXT(int idx, int a2, const Common::String &filename, int a4, int a5, int a6, int a7, int a8, int a9, int a10);
+	void DOS_TEXT(int idx, int a2, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int a10);
 	void BOITE(int idx, int a2, const Common::String &filename, int xp, int yp);
 	void TEXT_NOW1(int xp, int yp, const Common::String &message, int transColour);
 };

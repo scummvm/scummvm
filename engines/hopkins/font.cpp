@@ -42,11 +42,11 @@ void FontManager::clearAll() {
 		Txt[idx].field3FC = 0;
 		Txt[idx].field3FE = 0;
 		Txt[idx].field400 = 0;
-		Txt[idx].field404 = 0;
-		Txt[idx].field406 = 0;
+		Txt[idx].width = 0;
+		Txt[idx].height = 0;
 		Txt[idx].field408 = 0;
 
-		ListeTxt[idx].field0 = 0;
+		ListeTxt[idx].enabled = false;
 	}
 }
 
@@ -90,15 +90,15 @@ void FontManager::OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4) {
 	COUL_TXT(idx4, 253);
 }
 
-void FontManager::DOS_TEXT(int idx, int a2, const Common::String &filename, int a4, int a5, int a6, int a7, int a8, int a9, int a10) {
+void FontManager::DOS_TEXT(int idx, int a2, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int a10) {
 	if ((idx - 5) > 11)
 		error("Attempted to display text > MAX_TEXT.");
   
 	TxtItem &txt = Txt[idx - 5];
 	txt.field0 = 0;
-	txt.field4 = filename;
-	txt.field8 = a4;
-	txt.fieldA = a5;
+	txt.filename = filename;
+	txt.xp = xp;
+	txt.yp = yp;
 	txt.fieldC = a2;
 	txt.fieldE = a6;
 	txt.field10 = a7;
