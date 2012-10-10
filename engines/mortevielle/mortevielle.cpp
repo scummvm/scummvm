@@ -635,7 +635,7 @@ void MortevielleEngine::handleAction() {
 	char inkey = '\0';
 	bool oo, funct = 0;
 
-	clearScreenType3();
+	clearVerbBar();
 	oo = false;
 	_controlMenu = 0;
 	if (!_keyPressedEsc) {
@@ -690,7 +690,7 @@ void MortevielleEngine::handleAction() {
 		if ((funct) && (inkey != '\77'))
 			return;
 		if (temps > lim) {
-			repon(2, 141);
+			handleDescriptionText(2, 141);
 			if (_num == 9999)
 				_num = 0;
 		} else {
@@ -722,10 +722,10 @@ void MortevielleEngine::handleAction() {
 					g_vm->_text.taffich();
 					if (_okdes) {
 						_okdes = false;
-						dessin();
+						drawPicture();
 					}
 					if ((!_syn) || (_col))
-						repon(2, _crep);
+						handleDescriptionText(2, _crep);
 				}
 			} while (_syn);
 			if (_controlMenu != 0)
@@ -883,7 +883,7 @@ void MortevielleEngine::showPeoplePresent(int bitIndex) {
 	for (int i = 1; i <= 8; ++i)
 		_menu.disableMenuItem(_menu._discussMenu[i]);
 
-	clearScreenType10();
+	clearUpperRightPart();
 	if ((bitIndex & 128) == 128) {
 		_screenSurface.putxy(xp, 24);
 		_screenSurface.drawString("LEO", 4);
@@ -1082,7 +1082,7 @@ void MortevielleEngine::displayAloneText() {
 	Common::String sAre = getEngineString(S_ARE);
 	Common::String sAlone = getEngineString(S_ALONE);
 
-	clearScreenType10();
+	clearUpperRightPart();
 	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sYou) / 2), 30);
 	_screenSurface.drawString(sYou, 4);
 	_screenSurface.putxy(580 - (_screenSurface.getStringWidth(sAre) / 2), 50);
@@ -1687,11 +1687,11 @@ void MortevielleEngine::loseGame() {
 		getPresence(MANOR_FRONT);
 
 	_loseGame = true;
-	clearScreenType1();
+	clearUpperLeftPart();
 	_screenSurface.drawBox(60, 35, 400, 50, 15);
-	repon(9, _crep);
-	clearScreenType2();
-	clearScreenType3();
+	handleDescriptionText(9, _crep);
+	clearDescriptionBar();
+	clearVerbBar();
 	_col = false;
 	_syn = false;
 	_okdes = false;
@@ -1776,9 +1776,9 @@ void MortevielleEngine::gotoDiningRoom() {
 		_currBitIndex = 255; // Everybody is present
 		showPeoplePresent(_currBitIndex);
 		_caff = 77;
-		afdes();
+		drawPictureWithText();
 		_screenSurface.drawBox(223, 47, 155, 91, 15);
-		repon(2, 33);
+		handleDescriptionText(2, 33);
 		testKey(false);
 		mennor();
 		_mouse.hideMouse();
@@ -1861,11 +1861,11 @@ void MortevielleEngine::changeGraphicalDevice(int newDevice) {
 		showPeoplePresent(_currBitIndex);
 	else
 		displayAloneText();
-	clearScreenType2();
-	clearScreenType3();
+	clearDescriptionBar();
+	clearVerbBar();
 	_maff = 68;
-	afdes();
-	repon(2, _crep);
+	drawPictureWithText();
+	handleDescriptionText(2, _crep);
 	_menu.displayMenu();
 }
 
@@ -1911,9 +1911,9 @@ void MortevielleEngine::gameLoaded() {
 	displayAloneText();
 	prepareRoom();
 	drawClock();
-	afdes();
-	repon(2, _crep);
-	clearScreenType3();
+	drawPictureWithText();
+	handleDescriptionText(2, _crep);
+	clearVerbBar();
 	_endGame = false;
 	_menu.setDestinationText(_coreVar._currPlace);
 	_menu.setInventoryText();
@@ -1928,7 +1928,7 @@ void MortevielleEngine::gameLoaded() {
  */
 void MortevielleEngine::handleOpcode() {
 	if (!_col)
-		clearScreenType2();
+		clearDescriptionBar();
 	_syn = false;
 	_keyPressedEsc = false;
 	if (!_anyone) {
@@ -2063,20 +2063,20 @@ void MortevielleEngine::charToHour() {
 }
 
 /**
- * Engine function - Clear Screen - Type 1
+ * Engine function - Clear upper left part of Screen - Type 1
  * @remarks	Originally called 'clsf1'
  */
-void MortevielleEngine::clearScreenType1() {
+void MortevielleEngine::clearUpperLeftPart() {
 	_mouse.hideMouse();
 	_screenSurface.fillRect(0, Common::Rect(0, 11, 514, 175));
 	_mouse.showMouse();
 }
 
 /**
- * Engine function - Clear Screen - Type 2
+ * Engine function - Clear low bar used by description
  * @remarks	Originally called 'clsf2'
  */
-void MortevielleEngine::clearScreenType2() {
+void MortevielleEngine::clearDescriptionBar() {
 	_mouse.hideMouse();
 	if (_largestClearScreen) {
 		_screenSurface.fillRect(0, Common::Rect(1, 176, 633, 199));
@@ -2090,10 +2090,10 @@ void MortevielleEngine::clearScreenType2() {
 }
 
 /**
- * Engine function - Clear Screen - Type 3
+ * Engine function - Clear lowest bar used by verbs
  * @remarks	Originally called 'clsf3'
  */
-void MortevielleEngine::clearScreenType3() {
+void MortevielleEngine::clearVerbBar() {
 	_mouse.hideMouse();
 	_screenSurface.fillRect(0, Common::Rect(1, 192, 633, 199));
 	_screenSurface.drawBox(0, 191, 634, 8, 15);
@@ -2101,22 +2101,23 @@ void MortevielleEngine::clearScreenType3() {
 }
 
 /**
- * Engine function - Clear Screen - Type 10
+ * Engine function - Clear upper right part of the screen
  * @remarks	Originally called 'clsf10'
  */
-void MortevielleEngine::clearScreenType10() {
-	int co, cod;
+void MortevielleEngine::clearUpperRightPart() {
+	int x1, x2;
 	Common::String st;
 
 	_mouse.hideMouse();
 	if (_res == 1) {
-		co = 634;
-		cod = 534;
+		x2 = 634;
+		x1 = 534;
 	} else {
-		co = 600;
-		cod = 544;
+		x2 = 600;
+		x1 = 544;
 	}
-	_screenSurface.fillRect(15, Common::Rect(cod, 93, co, 98));
+	// Clear ambiance description
+	_screenSurface.fillRect(15, Common::Rect(x1, 93, x2, 98));
 	if (_coreVar._faithScore < 33)
 		st = getEngineString(S_COOL);
 	else if (_coreVar._faithScore < 66)
@@ -2124,12 +2125,12 @@ void MortevielleEngine::clearScreenType10() {
 	else if (_coreVar._faithScore > 65)
 		st = getEngineString(S_MALSAINE);
 
-	co = 580 - (_screenSurface.getStringWidth(st) / 2);
-	_screenSurface.putxy(co, 92);
+	x1 = 580 - (_screenSurface.getStringWidth(st) / 2);
+	_screenSurface.putxy(x1, 92);
 	_screenSurface.drawString(st, 4);
 
+	// Clear person list
 	_screenSurface.fillRect(15, Common::Rect(560, 24, 610, 86));
-	/* rempli(69,12,32,5,255);*/
 	_mouse.showMouse();
 }
 
@@ -2555,7 +2556,7 @@ void MortevielleEngine::music() {
  */
 void MortevielleEngine::showTitleScreen() {
 	hirs();
-	repon(7, 2035);
+	handleDescriptionText(7, 2035);
 	_caff = 51;
 	_text.taffich();
 	testKeyboard();
@@ -2736,12 +2737,12 @@ void MortevielleEngine::prepareRoom() {
 						_brt = true;
 						_startHour = readclock();
 						if (getRandomNumber(1, 5) < 5) {
-							clearScreenType3();
+							clearVerbBar();
 							prepareScreenType2();
 							ecr3(getEngineString(S_HEAR_NOISE));
 							int rand = (getRandomNumber(0, 4)) - 2;
 							_speechManager.startSpeech(1, rand, 1);
-							clearScreenType3();
+							clearVerbBar();
 						}
 					}
 				}
@@ -2860,7 +2861,7 @@ void MortevielleEngine::initCaveOrCellar() {
 	_coreVar._faithScore += 2;
 	if (_coreVar._faithScore > 69)
 		_coreVar._faithScore += (_coreVar._faithScore / 10);
-	clearScreenType3();
+	clearVerbBar();
 	prepareScreenType2();
 	ecr3(getEngineString(S_SOMEONE_ENTERS));
 	int rand = (getRandomNumber(0, 4)) - 2;
@@ -2869,7 +2870,7 @@ void MortevielleEngine::initCaveOrCellar() {
 	// The original was doing here a useless loop.
 	// It has been removed
 
-	clearScreenType3();
+	clearVerbBar();
 	displayAloneText();
 }
 
@@ -2878,7 +2879,7 @@ void MortevielleEngine::initCaveOrCellar() {
  * @remarks	Originally called 'tctrm'
  */
 void MortevielleEngine::displayControlMenu() {
-	repon(2, (3000 + _controlMenu));
+	handleDescriptionText(2, (3000 + _controlMenu));
 	_controlMenu = 0;
 }
 
@@ -2933,41 +2934,49 @@ int MortevielleEngine::animof(int ouf, int num) {
 	return animof_result;
 }
 
-void MortevielleEngine::text1(int x, int y, int nb, int m) {
+/**
+ * Display text in description bar
+ * @remarks	Originally called 'text1'
+ */
+void MortevielleEngine::displayTextInDescriptionBar(int x, int y, int nb, int mesgId) {
 	int co;
 
 	if (_res == 1)
 		co = 10;
 	else
 		co = 6;
-	Common::String tmpStr = getString(m);
+	Common::String tmpStr = getString(mesgId);
 	if ((y == 182) && ((int) tmpStr.size() * co > nb * 6))
 		y = 176;
 	_text.displayStr(tmpStr, x, y, nb, 20, _textColor);
 }
 
-void MortevielleEngine::repon(int f, int m) {
-	if ((m > 499) && (m < 563)) {
-		Common::String tmpStr = getString(m - 501 + kInventoryStringIndex);
+/**
+ * Display description text
+ * @remarks	Originally called 'repon'
+ */
+void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
+	if ((mesgId > 499) && (mesgId < 563)) {
+		Common::String tmpStr = getString(mesgId - 501 + kInventoryStringIndex);
 
 		if ((int) tmpStr.size() > ((58 + (_res - 1) * 37) << 1))
 			_largestClearScreen = true;
 		else
 			_largestClearScreen = false;
 
-		clearScreenType2();
+		clearDescriptionBar();
 		_text.displayStr(tmpStr, 8, 176, 85, 3, 5);
 	} else {
-		modif(m);
+		mapMessageId(mesgId);
 		switch (f) {
 		case 2:
 		case 8:
-			clearScreenType2();
+			clearDescriptionBar();
 			prepareScreenType2();
-			text1(8, 182, 103, m);
-			if ((m == 68) || (m == 69))
+			displayTextInDescriptionBar(8, 182, 103, mesgId);
+			if ((mesgId == 68) || (mesgId == 69))
 				_coreVar._teauto[40] = '*';
-			if ((m == 104) && (_caff == 14)) {
+			if ((mesgId == 104) && (_caff == 14)) {
 				_coreVar._teauto[36] = '*';
 				if (_coreVar._teauto[39] == '*') {
 					_coreVar._pourc[3] = '*';
@@ -2984,12 +2993,12 @@ void MortevielleEngine::repon(int f, int m) {
 			else
 				i = 5;
 
-			Common::String tmpStr = getString(m);
+			Common::String tmpStr = getString(mesgId);
 			_text.displayStr(tmpStr, 80, 40, 60, 25, i);
 
-			if (m == 180)
+			if (mesgId == 180)
 				_coreVar._pourc[6] = '*';
-			else if (m == 179)
+			else if (mesgId == 179)
 				_coreVar._pourc[10] = '*';
 			}
 			break;
@@ -2999,43 +3008,47 @@ void MortevielleEngine::repon(int f, int m) {
 	}
 }
 
-void MortevielleEngine::modif(int &nu) {
-	if (nu == 26)
-		nu = 25;
-	else if ((nu > 29) && (nu < 36))
-		nu -= 4;
-	else if ((nu > 69) && (nu < 78))
-		nu -= 37;
-	else if ((nu > 99) && (nu < 194))
-		nu -= 59;
-	else if ((nu > 996) && (nu < 1000))
-		nu -= 862;
-	else if ((nu > 1500) && (nu < 1507))
-		nu -= 1363;
-	else if ((nu > 1507) && (nu < 1513))
-		nu -= 1364;
-	else if ((nu > 1999) && (nu < 2002))
-		nu -= 1851;
-	else if (nu == 2010)
-		nu = 151;
-	else if ((nu > 2011) && (nu < 2025))
-		nu -= 1860;
-	else if (nu == 2026)
-		nu = 165;
-	else if ((nu > 2029) && (nu < 2037))
-		nu -= 1864;
-	else if ((nu > 3000) && (nu < 3005))
-		nu -= 2828;
-	else if (nu == 4100)
-		nu = 177;
-	else if (nu == 4150)
-		nu = 178;
-	else if ((nu > 4151) && (nu < 4156))
-		nu -= 3973;
-	else if (nu == 4157)
-		nu = 183;
-	else if ((nu == 4160) || (nu == 4161))
-		nu -= 3976;
+/**
+ * Recompute message Id
+ * @remarks	Originally called 'modif'
+ */
+void MortevielleEngine::mapMessageId(int &mesgId) {
+	if (mesgId == 26)
+		mesgId = 25;
+	else if ((mesgId > 29) && (mesgId < 36))
+		mesgId -= 4;
+	else if ((mesgId > 69) && (mesgId < 78))
+		mesgId -= 37;
+	else if ((mesgId > 99) && (mesgId < 194))
+		mesgId -= 59;
+	else if ((mesgId > 996) && (mesgId < 1000))
+		mesgId -= 862;
+	else if ((mesgId > 1500) && (mesgId < 1507))
+		mesgId -= 1363;
+	else if ((mesgId > 1507) && (mesgId < 1513))
+		mesgId -= 1364;
+	else if ((mesgId > 1999) && (mesgId < 2002))
+		mesgId -= 1851;
+	else if (mesgId == 2010)
+		mesgId = 151;
+	else if ((mesgId > 2011) && (mesgId < 2025))
+		mesgId -= 1860;
+	else if (mesgId == 2026)
+		mesgId = 165;
+	else if ((mesgId > 2029) && (mesgId < 2037))
+		mesgId -= 1864;
+	else if ((mesgId > 3000) && (mesgId < 3005))
+		mesgId -= 2828;
+	else if (mesgId == 4100)
+		mesgId = 177;
+	else if (mesgId == 4150)
+		mesgId = 178;
+	else if ((mesgId > 4151) && (mesgId < 4156))
+		mesgId -= 3973;
+	else if (mesgId == 4157)
+		mesgId = 183;
+	else if ((mesgId == 4160) || (mesgId == 4161))
+		mesgId -= 3976;
 }
 
 void MortevielleEngine::initouv() {
@@ -3057,7 +3070,7 @@ void MortevielleEngine::ecr2(Common::String text) {
 		_screenSurface.drawString(copy(text, tlig, tlig << 1), 5);
 	} else {
 		_largestClearScreen = true;
-		clearScreenType2();
+		clearDescriptionBar();
 		_screenSurface.putxy(8, 176);
 		_screenSurface.drawString(copy(text, 1, (tlig - 1)), 5);
 		_screenSurface.putxy(8, 182);
@@ -3068,7 +3081,7 @@ void MortevielleEngine::ecr2(Common::String text) {
 }
 
 void MortevielleEngine::ecr3(Common::String text) {
-	clearScreenType3();
+	clearVerbBar();
 	_screenSurface.putxy(8, 192);
 	_screenSurface.drawString(text, 5);
 }
@@ -3296,8 +3309,12 @@ void MortevielleEngine::aniof(int ouf, int num) {
 	prepareScreenType1();
 }
 
-void MortevielleEngine::dessin() {
-	clearScreenType1();
+/**
+ * Draw Picture
+ * @remarks	Originally called 'dessin'
+ */
+void MortevielleEngine::drawPicture() {
+	clearUpperLeftPart();
 	if (_caff > 99) {
 		draw(kAdrDes, 60, 33);
 		_screenSurface.drawBox(118, 32, 291, 121, 15);         // Medium box
@@ -3332,9 +3349,9 @@ void MortevielleEngine::dessin() {
 	}
 }
 
-void MortevielleEngine::afdes() {
+void MortevielleEngine::drawPictureWithText() {
 	_text.taffich();
-	dessin();
+	drawPicture();
 	_okdes = false;
 }
 
@@ -3374,9 +3391,9 @@ void MortevielleEngine::testKey(bool d) {
 
 void MortevielleEngine::tlu(int af, int ob) {
 	_caff = 32;
-	afdes();
-	repon(6, ob + 4000);
-	repon(2, 999);
+	drawPictureWithText();
+	handleDescriptionText(6, ob + 4000);
+	handleDescriptionText(2, 999);
 	testKey(true);
 	_caff = af;
 	_msg[3] = OPCODE_NONE;
@@ -3517,7 +3534,7 @@ L1:
 	if (!_hiddenHero) {
 		if (_crep == 997)
 			_crep = 138;
-		repon(2, _crep);
+		handleDescriptionText(2, _crep);
 		if (_crep == 138)
 			_speechManager.startSpeech(5, 2, 1);
 		else
@@ -3544,10 +3561,10 @@ L1:
 			_crep = 137;
 			goto L1;
 		} else {
-			repon(2, 136);
+			handleDescriptionText(2, 136);
 			int rand = (getRandomNumber(0, 4)) - 2;
 			_speechManager.startSpeech(3, rand, 1);
-			clearScreenType2();
+			clearDescriptionBar();
 			displayAloneText();
 			resetRoomVariables(MANOR_FRONT);
 			affrep();
@@ -3677,11 +3694,11 @@ void MortevielleEngine::treg(int objId) {
 	_caff = objId;
 
 	if (((_caff > 29) && (_caff < 33)) || (_caff == 144) || (_caff == 147) || (_caff == 149) || (_msg[4] == OPCODE_SLOOK)) {
-		afdes();
+		drawPictureWithText();
 		if ((_caff > 29) && (_caff < 33))
-			repon(2, _caff);
+			handleDescriptionText(2, _caff);
 		else
-			repon(2, _caff + 400);
+			handleDescriptionText(2, _caff + 400);
 		testKey(true);
 		_caff = mdes;
 		_msg[3] = 0;

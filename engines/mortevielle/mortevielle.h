@@ -323,10 +323,10 @@ private:
 	void endSearch();
 	int convertCharacterIndexToBitIndex(int characterIndex);
 	int convertBitIndexToCharacterIndex(int bitIndex);
-	void clearScreenType1();
-	void clearScreenType2();
-	void clearScreenType3();
-	void clearScreenType10();
+	void clearUpperLeftPart();
+	void clearDescriptionBar();
+	void clearVerbBar();
+	void clearUpperRightPart();
 	int  getRandomNumber(int minval, int maxval);
 	void showMoveMenuAlert();
 	void showConfigScreen();
@@ -424,8 +424,8 @@ private:
 	void cinq_huit(char &c, int &idx, byte &pt, bool &the_end);
 	void copcha();
 	void adzon();
-	void text1(int x, int y, int nb, int m);
-	void modif(int &nu);
+	void displayTextInDescriptionBar(int x, int y, int nb, int mesgId);
+	void mapMessageId(int &mesgId);
 	void initouv();
 	void phaz(int &rand, int &p, int cf);
 	void writetp(Common::String s, int t);
@@ -437,8 +437,8 @@ private:
 	void ecr3(Common::String text);
 	void init_nbrepm();
 	void aniof(int ouf, int num);
-	void dessin();
-	void afdes();
+	void drawPicture();
+	void drawPictureWithText();
 	void tlu(int af, int ob);
 	void affrep();
 	void mennor();
@@ -522,7 +522,7 @@ public:
 
 	void hirs();
 	int  testou();
-	void repon(int f, int m);
+	void handleDescriptionText(int f, int mesgId);
 	int  animof(int ouf, int num);
 	void pictout(int seg, int dep, int x, int y);
 	void sauvecr(int y, int dy);
