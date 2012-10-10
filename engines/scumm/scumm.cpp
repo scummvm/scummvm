@@ -73,6 +73,7 @@
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 #include "scumm/imuse/pcspk.h"
+#include "scumm/imuse/mac_m68k.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -1835,17 +1836,31 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
+		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
+		bool useOnlyNative = false;
 
-		if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK)
+		if (isMacM68kIMuse()) {
+			// We setup this driver as native MIDI driver to avoid playback
+			// of the Mac music via a selected MIDI device.
+			nativeMidiDriver = new MacM68kDriver(_mixer);
+			// The Mac driver is never MT-32.
+			_native_mt32 = false;
+			// Ignore non-native drivers. This also ignores the multi MIDI setting.
+			useOnlyNative = true;
+		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
 			nativeMidiDriver = MidiDriver::createMidi(dev);
+		}
+
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
-		if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
-			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
-			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
-		} else if (_sound->_musicType == MDT_PCSPK) {
-			adlibMidiDriver = new PcSpkDriver(_mixer);
+
+		if (!useOnlyNative) {
+			if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
+				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
+				adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
+			} else if (_sound->_musicType == MDT_PCSPK) {
+				adlibMidiDriver = new PcSpkDriver(_mixer);
+			}
 		}
 
 		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
@@ -1917,6 +1932,13 @@ void ScummEngine::syncSoundSettings() {
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	}
+
+	// Backyard Baseball 2003 uses a unique subtitle variable,
+	// rather than VAR_SUBTITLES
+	if (_game.id == GID_BASEBALL2003) {
+		_scummVars[632] = ConfMan.getBool("subtitles");
+	}
+
 }
 
 void ScummEngine::setTalkSpeed(int talkspeed) {
@@ -1964,11 +1986,11 @@ Common::Error ScummEngine::go() {
 		if (delta < 1)	// Ensure we don't get into an endless loop
 			delta = 1;  // by not decreasing sleepers.
 
-		// WORKAROUND: walking speed in the original v0/v1 interpreter 
+		// WORKAROUND: walking speed in the original v0/v1 interpreter
 		// is sometimes slower (e.g. during scrolling) than in ScummVM.
 		// This is important for the door-closing action in the dungeon,
-		// otherwise (delta < 6) a single kid is able to escape. 
-		if ((_game.version == 0 && isScriptRunning(132)) || 
+		// otherwise (delta < 6) a single kid is able to escape.
+		if ((_game.version == 0 && isScriptRunning(132)) ||
 			(_game.version == 1 && isScriptRunning(137)))
 			delta = 6;
 

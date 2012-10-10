@@ -34,7 +34,7 @@ public:
 	CharacterFlux(ToonEngine *vm);
 	virtual ~CharacterFlux();
 
-	void setPosition(int32 x, int32 y);
+	void setPosition(int16 x, int16 y);
 	void playStandingAnim();
 	void playWalkAnim(int32 start, int32 end);
 	void update(int32 timeIncrement);

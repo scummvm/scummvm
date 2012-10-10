@@ -775,7 +775,7 @@ const uint16 mothergoose256PatchReplay[] = {
 	PATCH_END
 };
 
-// when saving, it also checks if the savegame-id is below 13.
+// when saving, it also checks if the savegame ID is below 13.
 //  we change this to check if below 113 instead
 const byte mothergoose256SignatureSaveLimit[] = {
 	5,
@@ -915,9 +915,53 @@ const uint16 qfg3PatchImportDialog[] = {
 	PATCH_END
 };
 
+
+
+// ===========================================================================
+// Patch for the Woo dialog option in Uhura's conversation. Bug #3040722
+// Problem: The Woo dialog option (0xffb5) is negative, and therefore
+// treated as an option opening a submenu. This leads to uhuraTell::doChild
+// being called, which calls hero::solvePuzzle and then proceeds with
+// Teller::doChild to open the submenu. However, there is no actual submenu
+// defined for option -75 since -75 does not show up in uhuraTell::keys.
+// This will cause Teller::doChild to run out of bounds while scanning through
+// uhuraTell::keys.
+// Strategy: there is another conversation option in uhuraTell::doChild calling
+// hero::solvePuzzle (0xfffc) which does a ret afterwards without going to
+// Teller::doChild. We jump to this call of hero::solvePuzzle to get that same
+// behaviour.
+
+const byte qfg3SignatureWooDialog[] = {
+	30,
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0xb6,       // ldi b6
+	0x1a,             // eq?
+	0x2f, 0x05,       // bt 05
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0x9b,       // ldi 9b
+	0x1a,             // eq?
+	0x31, 0x0c,       // bnt 0c
+	0x38, 0x97, 0x02, // pushi 0297
+	0x7a,             // push2
+	0x38, 0x0c, 0x01, // pushi 010c
+	0x7a,             // push2
+	0x81, 0x00,       // lag 00
+	0x4a, 0x08,       // send 08
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0xb5,       // ldi b5
+	0
+};
+
+const uint16 qfg3PatchWooDialog[] = {
+	PATCH_ADDTOOFFSET | +0x29,
+	0x33, 0x11, // jmp to 0x6a2, the call to hero::solvePuzzle for 0xFFFC
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg3Signatures[] = {
 	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog,         qfg3PatchImportDialog },
+	{    440, "dialog crash when asking about Woo",             1, PATCH_MAGICDWORD(0x67, 0x12, 0x35, 0xb5),  -26, qfg3SignatureWooDialog,         qfg3PatchWooDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -978,7 +1022,27 @@ const uint16 sq4CdPatchTextOptionsButton[] = {
 	PATCH_END
 };
 
-// Patch 2: Add the ability to toggle among the three available options,
+// Patch 2: Adjust a check in babbleIcon::init, which handles the babble icon
+// (e.g. the two guys from Andromeda) shown when dying/quitting.
+// Fixes bug #3538418.
+const byte sq4CdSignatureBabbleIcon[] = {
+	7,
+	0x89, 0x5a,      // lsg 5a
+	0x35, 0x02,      // ldi 02
+	0x1a,            // eq?
+	0x31, 0x26,      // bnt 26  [02a7]
+	0
+};
+
+const uint16 sq4CdPatchBabbleIcon[] = {
+	0x89, 0x5a,      // lsg 5a
+	0x35, 0x01,      // ldi 01
+	0x1a,            // eq?
+	0x2f, 0x26,      // bt 26  [02a7]
+	PATCH_END
+};
+
+// Patch 3: Add the ability to toggle among the three available options,
 // when the text options button is clicked: "Speech", "Text" and "Both".
 // Refer to the patch above for additional details.
 // iconTextSwitch::doit (called when the text options button is clicked)
@@ -1030,6 +1094,7 @@ const SciScriptSignature sq4Signatures[] = {
 	{    298, "Floppy: endless flight",                      1, PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x44),    -3,       sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
 	{    298, "Floppy (German): endless flight",             1, PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x4c),    -3, sq4FloppySignatureEndlessFlightGerman, sq4FloppyPatchEndlessFlight },
 	{    818, "CD: Speech and subtitles option",             1, PATCH_MAGICDWORD(0x89, 0x5a, 0x3c, 0x35),     0,             sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
+	{      0, "CD: Babble icon speech and subtitles fix",    1, PATCH_MAGICDWORD(0x89, 0x5a, 0x35, 0x02),     0,              sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
 	{    818, "CD: Speech and subtitles option button",      1, PATCH_MAGICDWORD(0x35, 0x01, 0xa1, 0x53),     0,       sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };

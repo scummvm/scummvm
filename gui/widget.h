@@ -38,6 +38,7 @@ enum {
 	WIDGET_INVISIBLE	= 1 <<  1,
 	WIDGET_HILITED		= 1 <<  2,
 	WIDGET_BORDER		= 1 <<  3,
+	WIDGET_PRESSED		= 1 <<	4,
 	//WIDGET_INV_BORDER	= 1 <<  4,
 	WIDGET_CLEARBG		= 1 <<  5,
 	WIDGET_WANT_TICKLE	= 1 <<  7,
@@ -73,6 +74,10 @@ enum {
 	kCaretBlinkTime = 300
 };
 
+enum {
+	kPressedButtonTime = 200
+};
+
 /* Widget */
 class Widget : public GuiObject {
 	friend class Dialog;
@@ -83,7 +88,7 @@ protected:
 	uint16		_id;
 	bool		_hasFocus;
 	ThemeEngine::WidgetStateInfo _state;
-	const char	*_tooltip;
+	Common::String _tooltip;
 
 private:
 	uint16		_flags;
@@ -137,7 +142,9 @@ public:
 	uint8 parseHotkey(const Common::String &label);
 	Common::String cleanupHotkey(const Common::String &label);
 
-	const char *getTooltip() const { return _tooltip; }
+	bool hasTooltip() const { return !_tooltip.empty(); }
+	const Common::String &getTooltip() const { return _tooltip; }
+	void setTooltip(const Common::String &tooltip) { _tooltip = tooltip; }
 
 protected:
 	void updateState(int oldFlags, int newFlags);
@@ -189,11 +196,22 @@ public:
 	void setLabel(const Common::String &label);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
+	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); draw(); }
+	void handleTickle();
 
+	void setHighLighted(bool enable);
+	void setPressedState();
+	void startAnimatePressedState();
+	void stopAnimatePressedState();
+
+	void lostFocusWidget() { stopAnimatePressedState(); }
 protected:
 	void drawWidget();
+	void wantTickle(bool tickled);
+private:
+	uint32 _lastTime;
 };
 
 /* PicButtonWidget */
@@ -204,6 +222,7 @@ public:
 	~PicButtonWidget();
 
 	void setGfx(const Graphics::Surface *gfx);
+	void setGfx(int w, int h, int r, int g, int b);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
 	void useThemeTransparency(bool enable) { _transparency = enable; }
@@ -349,7 +368,10 @@ class ContainerWidget : public Widget {
 public:
 	ContainerWidget(GuiObject *boss, int x, int y, int w, int h);
 	ContainerWidget(GuiObject *boss, const Common::String &name);
+	~ContainerWidget();
 
+	virtual Widget *findWidget(int x, int y);
+	virtual void removeWidget(Widget *widget);
 protected:
 	void drawWidget();
 };

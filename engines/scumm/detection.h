@@ -99,6 +99,7 @@ enum FilenameGenMethod {
 	kGenHEMac,
 	kGenHEMacNoParens,
 	kGenHEPC,
+	kGenHEIOS,
 	kGenUnchanged
 };
 

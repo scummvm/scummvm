@@ -148,11 +148,13 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	colorMapping[1] = _screen->getColorWhite(); // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
 	colorMapping[3] = _palette->matchColor(170, 170, 170); // Grey
-	// Special case for the magnifier cursor in LB1 (bug #3487092).
-	// No other SCI0 game has a cursor resource of 1, so this is handled
-	// specifically for LB1.
+	// TODO: Figure out if the grey color is hardcoded
+	// HACK for the magnifier cursor in LB1, fixes its color (bug #3487092)
 	if (g_sci->getGameId() == GID_LAURABOW && resourceId == 1)
 		colorMapping[3] = _screen->getColorWhite();
+	// HACK for Longbow cursors, fixes the shade of grey they're using (bug #3489101)
+	if (g_sci->getGameId() == GID_LONGBOW)
+		colorMapping[3] = _palette->matchColor(223, 223, 223); // Light Grey
 
 	// Seek to actual data
 	resourceData += 4;
@@ -409,7 +411,7 @@ void GfxCursor::refreshPosition() {
 			}
 		}
 
-		CursorMan.replaceCursor((const byte *)_cursorSurface, cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
+		CursorMan.replaceCursor(_cursorSurface, cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
 	}
 }
 

@@ -303,7 +303,7 @@ int LogicHEsoccer::op_1008(int outArray, int srcX, int srcY, int srcZ, int vecX,
 				putInArray(outArray, segmentsSoFar, 5, vecX);
 				putInArray(outArray, segmentsSoFar, 6, vecY);
 				putInArray(outArray, segmentsSoFar++, 7, vecZ);
-			} 
+			}
 		} else {
 			srcY = 0;
 			int thisVecX = vecX;
@@ -628,7 +628,7 @@ int LogicHEsoccer::op_1014(int32 srcX, int32 srcY, int32 srcZ, int32 velX, int32
 		adjustedVelZ = ((double)srcZ - 3869.0) / 100.0;
 		break;
 	}
-	
+
 	int foundCollision = 0;
 
 	// work out which collision objects we might collide with (if any)

@@ -116,7 +116,7 @@ void ModalDialog::draw() {
 	// Make a backup copy of the area the dialog will occupy
 	Rect tempRect = _bounds;
 	tempRect.collapse(-10, -10);
-	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), tempRect);
+	_savedArea = surfaceGetArea(g_globals->_gfxManagerInstance.getSurface(), tempRect);
 
 	_gfxManager.activate();
 

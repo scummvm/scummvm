@@ -42,8 +42,8 @@ enum seqTextIntro {
 class IntroHandler {
 public:
 	IntroHandler(HugoEngine *vm);
-	Graphics::Surface surf;
-	Graphics::WinFont font;
+	Graphics::Surface _surf;
+	Graphics::WinFont _font;
 
 	virtual ~IntroHandler();
 
@@ -62,7 +62,7 @@ protected:
 	byte *_introX;
 	byte *_introY;
 	byte  _introXSize;
-	int16  introTicks;                              // Count calls to introPlay()
+	int16 _introTicks;                              // Count calls to introPlay()
 };
 
 class intro_v1w : public IntroHandler {

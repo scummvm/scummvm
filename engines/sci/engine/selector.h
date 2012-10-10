@@ -149,6 +149,7 @@ struct SelectorCache {
 
 	Selector fixPriority;
 	Selector mirrored;
+	Selector visible;
 
 	Selector useInsetRect;
 	Selector inTop, inLeft, inBottom, inRight;
@@ -170,7 +171,7 @@ struct SelectorCache {
  * SelectorCache and mapped in script.cpp.
  */
 reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId);
-#define readSelectorValue(segMan, _obj_, _slc_) (readSelector(segMan, _obj_, _slc_).offset)
+#define readSelectorValue(segMan, _obj_, _slc_) (readSelector(segMan, _obj_, _slc_).getOffset())
 
 /**
  * Writes a selector value to an object.

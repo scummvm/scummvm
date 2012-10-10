@@ -45,7 +45,7 @@ void CharacterFlux::playStandingAnim() {
 	_animationInstance->stopAnimation();
 	_animationInstance->setLooping(true);
 
-	//s/etVisible(true);
+	//setVisible(true);
 }
 
 void CharacterFlux::setVisible(bool visible) {
@@ -99,7 +99,7 @@ int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animation
 	return finalFacing;
 }
 
-void CharacterFlux::setPosition(int32 x, int32 y) {
+void CharacterFlux::setPosition(int16 x, int16 y) {
 	debugC(5, kDebugCharacter, "setPosition(%d, %d)", x, y);
 
 	_z = _vm->getLayerAtPoint(x, y);

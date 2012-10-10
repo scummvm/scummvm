@@ -166,7 +166,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	} else {
 		warning("Plugin for target \"%s\" not found! Game specific settings might be missing", domain.c_str());
 	}
-	
+
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
 	String extraPath(ConfMan.get("extrapath", _domain));
@@ -663,7 +663,6 @@ LauncherDialog::LauncherDialog()
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
-
 	// Populate the list
 	updateListing();
 
@@ -678,7 +677,7 @@ LauncherDialog::LauncherDialog()
 	_browser = new BrowserDialog(_("Select directory with game data"), true);
 
 	// Create Load dialog
-	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"));
+	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
 }
 
 void LauncherDialog::selectTarget(const String &target) {

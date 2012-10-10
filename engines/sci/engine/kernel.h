@@ -224,23 +224,6 @@ public:
 
 private:
 	/**
-	 * Sets the default kernel function names, based on the SCI version used.
-	 */
-	void setDefaultKernelNames(GameFeatures *features);
-
-#ifdef ENABLE_SCI32
-	/**
-	 * Sets the default kernel function names to the SCI2 kernel functions.
-	 */
-	void setKernelNamesSci2();
-
-	/**
-	 * Sets the default kernel function names to the SCI2.1 kernel functions.
-	 */
-	void setKernelNamesSci21(GameFeatures *features);
-#endif
-
-	/**
 	 * Loads the kernel selector names.
 	 */
 	void loadSelectorNames();
@@ -275,9 +258,6 @@ private:
 
 	const Common::String _invalid;
 };
-
-/* Maximum length of a savegame name (including terminator character). */
-#define SCI_MAX_SAVENAME_LENGTH 0x24
 
 /******************** Kernel functions ********************/
 
@@ -326,10 +306,6 @@ reg_t kTimesCot(EngineState *s, int argc, reg_t *argv);
 reg_t kCosDiv(EngineState *s, int argc, reg_t *argv);
 reg_t kSinDiv(EngineState *s, int argc, reg_t *argv);
 reg_t kValidPath(EngineState *s, int argc, reg_t *argv);
-reg_t kFOpen(EngineState *s, int argc, reg_t *argv);
-reg_t kFPuts(EngineState *s, int argc, reg_t *argv);
-reg_t kFGets(EngineState *s, int argc, reg_t *argv);
-reg_t kFClose(EngineState *s, int argc, reg_t *argv);
 reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv);
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv);
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv);
@@ -436,6 +412,7 @@ reg_t kListAt(EngineState *s, int argc, reg_t *argv);
 reg_t kString(EngineState *s, int argc, reg_t *argv);
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
 reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv);
 // "Screen items" in SCI32 are views
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);
@@ -458,10 +435,15 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
 reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv);
 reg_t kEditText(EngineState *s, int argc, reg_t *argv);
+reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
+reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
+reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
+reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
 reg_t kText(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
+reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
 reg_t kRobot(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
@@ -473,12 +455,16 @@ reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv);
 reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv);
 reg_t kWinHelp(EngineState *s, int argc, reg_t *argv);
 reg_t kGetConfig(EngineState *s, int argc, reg_t *argv);
+reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv);
 reg_t kFont(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv);
+reg_t kAddLine(EngineState *s, int argc, reg_t *argv);
+reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv);
+reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv);
 
 // SCI3 Kernel functions
 reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv);
@@ -556,6 +542,7 @@ reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOCreateSaveSlot(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOIsValidDirectory(EngineState *s, int argc, reg_t *argv);
 #endif
 
 //@}

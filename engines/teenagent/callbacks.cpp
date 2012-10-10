@@ -2252,7 +2252,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x78e0:
-		processCallback(0x50c5);
+		processCallback(0x505c);
 		return false;
 
 	case 0x78e7:
@@ -2265,7 +2265,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x78f5:
 		if (CHECK_FLAG(0xDB95, 1)) {
-			displayMessage(0x3575);
+			displayMessage(0x3E75);
 			return true;
 		} else
 			return false;
@@ -3925,7 +3925,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x39ae);
 			break;
 		default:
-			displayMessage(0x39b7);
+			displayMessage(0x3ab7);
 		}
 		return true;
 

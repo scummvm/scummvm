@@ -753,6 +753,11 @@ static CONFBOX t1RestartBox[] = {
 #endif
 };
 
+static CONFBOX t1RestartBoxPSX[] = {
+	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 122, 48,	23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 82, 48,	23, 19, NULL, IX1_CROSS1 }
+};
+
 static CONFBOX t2RestartBox[] = {
 	{ AAGBUT, INITGAME, TM_NONE, NULL, 0, 140, 78, BW, BH, NULL, IX2_TICK1 },
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78,  BW, BH, NULL, IX2_CROSS1 }
@@ -763,10 +768,10 @@ static CONFINIT t1ciRestart	= { 6, 2, 72, 53, false, t1RestartBox,	ARRAYSIZE(t1R
 #else
 static CONFINIT t1ciRestart	= { 4, 2, 98, 53, false, t1RestartBox,	ARRAYSIZE(t1RestartBox),	SIX_RESTART_HEADING };
 #endif
+static CONFINIT t1ciRestartPSX	= { 8, 2, 46, 53, false, t1RestartBoxPSX,	ARRAYSIZE(t1RestartBoxPSX),	SIX_RESTART_HEADING };
 static CONFINIT t2ciRestart	= { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox)/sizeof(CONFBOX), SS_RESTART_HEADING };
 
-#define ciRestart (TinselV2 ? t2ciRestart : t1ciRestart)
-#define restartBox (TinselV2 ? t2RestartBox : t1RestartBox)
+#define ciRestart (TinselV2 ? t2ciRestart : (TinselV1PSX ? t1ciRestartPSX : t1ciRestart))
 
 /*-------------------------------------------------------------*\
 | This is the sound control 'menu'. In Discworld 2, it also		|
@@ -1038,18 +1043,20 @@ static bool RePosition();
 static bool LanguageChange() {
 	LANGUAGE nLang = _vm->_config->_language;
 
-	if (_vm->getFeatures() & GF_USE_3FLAGS) {
-		// VERY quick dodgy bodge
-		if (cd.selBox == 0)
-			nLang = TXT_FRENCH;		// = 1
-		else if (cd.selBox == 1)
-			nLang = TXT_GERMAN;		// = 2
-		else
-			nLang = TXT_SPANISH;	// = 4
-	} else if (_vm->getFeatures() & GF_USE_4FLAGS) {
-		nLang = (LANGUAGE)(cd.selBox + 1);
-	} else if (_vm->getFeatures() & GF_USE_5FLAGS) {
-		nLang = (LANGUAGE)cd.selBox;
+	if ((_vm->getFeatures() & GF_USE_3FLAGS) || (_vm->getFeatures() & GF_USE_4FLAGS) || (_vm->getFeatures() & GF_USE_5FLAGS)) {
+		// Languages: TXT_ENGLISH, TXT_FRENCH, TXT_GERMAN, TXT_ITALIAN, TXT_SPANISH
+		// 5 flag versions include English
+		int selected = (_vm->getFeatures() & GF_USE_5FLAGS) ? cd.selBox : cd.selBox + 1;
+		// Make sure that a language flag has been selected. If the user has
+		// changed the language speed slider and hasn't clicked on a flag, it
+		// won't be selected.
+		if (selected >= 0 && selected <= 4) {
+			nLang = (LANGUAGE)selected;
+
+			// 3 flag versions don't include Italian
+			if (selected >= 3 && (_vm->getFeatures() & GF_USE_3FLAGS))
+				nLang = TXT_SPANISH;
+		}
 	}
 
 	if (nLang != _vm->_config->_language) {
@@ -1075,7 +1082,7 @@ static void PrimeSceneHopper() {
 	uint32 vSize;
 
 	// Open the file (it's on the CD)
-	CdCD(nullContext);
+	CdCD(Common::nullContext);
 	if (!f.open(HOPPER_FILENAME))
 		error(CANNOT_FIND_FILE, HOPPER_FILENAME);
 
@@ -1191,13 +1198,13 @@ static void HopAction() {
 	debugC(DEBUG_BASIC, kTinselDebugAnimations, "Scene hopper chose scene %xh,%d\n", hScene, eNumber);
 
 	if (FROM_LE_32(pEntry->flags) & fCall) {
-		SaveScene(nullContext);
-		NewScene(nullContext, g_pChosenScene->hScene, pEntry->eNumber, TRANS_FADE);
+		SaveScene(Common::nullContext);
+		NewScene(Common::nullContext, g_pChosenScene->hScene, pEntry->eNumber, TRANS_FADE);
 	}
 	else if (FROM_LE_32(pEntry->flags) & fHook)
 		HookScene(hScene, eNumber, TRANS_FADE);
 	else
-		NewScene(nullContext, hScene, eNumber, TRANS_CUT);
+		NewScene(Common::nullContext, hScene, eNumber, TRANS_CUT);
 }
 
 /**************************************************************************/
@@ -1253,6 +1260,20 @@ static INV_OBJECT *GetInvObject(int id) {
 	}
 
 	error("GetInvObject(%d): Trying to manipulate undefined inventory icon", id);
+}
+
+/**
+ * Returns true if the given id represents a valid inventory object
+ */
+bool GetIsInvObject(int id) {
+	INV_OBJECT *pObject = g_invObjects;
+
+	for (int i = 0; i < g_numObjects; i++, pObject++) {
+		if (pObject->id == id)
+			return true;
+	}
+
+	return false;
 }
 
 /**
@@ -1406,13 +1427,13 @@ static void InvTinselEvent(INV_OBJECT *pinvo, TINSEL_EVENT event, PLR_EVENT be, 
 		return;
 
 	g_GlitterIndex = index;
-	g_scheduler->createProcess(PID_TCODE, ObjectProcess, &to, sizeof(to));
+	CoroScheduler.createProcess(PID_TCODE, ObjectProcess, &to, sizeof(to));
 }
 
 extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, int myEscape, bool *result) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PROCESS		*pProc;
+		Common::PROCESS		*pProc;
 		INV_OBJECT	*pInvo;
 		OP_INIT		op;
 	CORO_END_CONTEXT(_ctx);
@@ -1428,7 +1449,7 @@ extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, i
 	_ctx->op.event = event;
 	_ctx->op.myEscape = myEscape;
 
-	g_scheduler->createProcess(PID_TCODE, ObjectProcess, &_ctx->op, sizeof(_ctx->op));
+	CoroScheduler.createProcess(PID_TCODE, ObjectProcess, &_ctx->op, sizeof(_ctx->op));
 
 	if (bWait)
 		CORO_INVOKE_2(WaitInterpret, _ctx->pProc, result);
@@ -3540,9 +3561,9 @@ extern void ConvAction(int index) {
 		}
 
 		if (g_thisConvPoly != NOPOLY)
-			PolygonEvent(nullContext, g_thisConvPoly, CONVERSE, 0, false, 0);
+			PolygonEvent(Common::nullContext, g_thisConvPoly, CONVERSE, 0, false, 0);
 		else
-			ActorEvent(nullContext, g_thisConvActor, CONVERSE, false, 0);
+			ActorEvent(Common::nullContext, g_thisConvActor, CONVERSE, false, 0);
 	}
 
 }
@@ -5128,7 +5149,7 @@ static void InvPickup(int index) {
 			if (TinselV2)
 				InvPutDown(index);
 			else
-				g_scheduler->createProcess(PID_TCODE, InvPdProcess, &index, sizeof(index));
+				CoroScheduler.createProcess(PID_TCODE, InvPdProcess, &index, sizeof(index));
 		}
 	}
 }

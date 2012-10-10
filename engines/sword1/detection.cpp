@@ -268,9 +268,6 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 
 		SaveStateDescriptor desc(slot, name);
 
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
-
 		if (versionSave < 2) // These older version of the savegames used a flag to signal presence of thumbnail
 			in->skip(1);
 

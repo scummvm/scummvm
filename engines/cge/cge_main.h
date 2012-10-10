@@ -78,7 +78,7 @@ namespace CGE {
 #define kScrHeight     200
 #define kWorldHeight   (kScrHeight - kPanHeight)
 #define kStackSize     2048
-#define kSavegameCheckSum   (1956 + _now + _oldLev + _game + _music + _demoText)
+#define kSavegameCheckSum   (1956 + _now + _oldLev + _game + _music + kDemo)
 #define kSavegame0Name ("{{INIT}}" kSvgExt)
 #define kSavegameStrSize 11
 #define kGameFrameDelay (1000 / 50)
@@ -92,7 +92,7 @@ public:
 
 	void setPal();
 	void funTouch();
-	virtual void touch(uint16 mask, int x, int y);
+	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
 	void tick();
 private:
 	CGEEngine *_vm;
@@ -101,7 +101,7 @@ private:
 class Square : public Sprite {
 public:
 	Square(CGEEngine *vm);
-	virtual void touch(uint16 mask, int x, int y);
+	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
 private:
 	CGEEngine *_vm;
 };

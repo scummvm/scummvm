@@ -73,10 +73,10 @@ protected:
 
 	// The current mouse position on the screen.
 	int _curX, _curY;
-	
+
 	// The current screen dimensions
 	int _screenX, _screenY;
-	
+
 	// The drag distance for linear gestures
 	int _swipeDistX, _swipeDistY;
 
@@ -107,7 +107,7 @@ protected:
 	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
-	
+
 	// Utility functions
 	void calculateDimensions();
 };

@@ -297,7 +297,7 @@ Audio::AudioStream *RawSound::makeAudioStream(uint sound) {
 		warning("RawSound::makeAudioStream: Could not open file \"%s\"", _filename.c_str());
 		return NULL;
 	}
-	
+
 	file->seek(_offsets[sound], SEEK_SET);
 	uint size = file->readUint32BE();
 	return Audio::makeRawStream(new Common::SeekableSubReadStream(file, _offsets[sound] + 4, _offsets[sound] + 4 + size, DisposeAfterUse::YES), 22050, _flags, DisposeAfterUse::YES);

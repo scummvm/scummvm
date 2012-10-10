@@ -56,12 +56,12 @@ Parser_v1w::~Parser_v1w() {
 void Parser_v1w::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	// Toggle God Mode
 	if (!strncmp(_vm->_line, "PPG", 3)) {
 		_vm->_sound->playSound(!_vm->_soundTest, kSoundPriorityHigh);
-		gameStatus.godModeFl = !gameStatus.godModeFl;
+		gameStatus._godModeFl = !gameStatus._godModeFl;
 		return;
 	}
 
@@ -72,7 +72,7 @@ void Parser_v1w::lineHandler() {
 	// fetch <object name>                          Hero carries named object
 	// fetch all                                    Hero carries all possible objects
 	// find <object name>                           Takes hero to screen containing named object
-	if (gameStatus.godModeFl) {
+	if (gameStatus._godModeFl) {
 		// Special code to allow me to go straight to any screen
 		if (strstr(_vm->_line, "goto")) {
 			for (int i = 0; i < _vm->_numScreens; i++) {
@@ -86,7 +86,7 @@ void Parser_v1w::lineHandler() {
 		// Special code to allow me to get objects from anywhere
 		if (strstr(_vm->_line, "fetch all")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (_vm->_object->_objects[i].genericCmd & TAKE)
+				if (_vm->_object->_objects[i]._genericCmd & TAKE)
 					takeObject(&_vm->_object->_objects[i]);
 			}
 			return;
@@ -94,7 +94,7 @@ void Parser_v1w::lineHandler() {
 
 		if (strstr(_vm->_line, "fetch")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 0))) {
+				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 0))) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
 				}
@@ -104,8 +104,8 @@ void Parser_v1w::lineHandler() {
 		// Special code to allow me to goto objects
 		if (strstr(_vm->_line, "find")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 0))) {
-					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
+				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 0))) {
+					_vm->_scheduler->newScreen(_vm->_object->_objects[i]._screenIndex);
 					return;
 				}
 			}
@@ -121,12 +121,12 @@ void Parser_v1w::lineHandler() {
 	}
 
 	// SAVE/RESTORE
-	if (!strcmp("save", _vm->_line) && gameStatus.viewState == kViewPlay) {
+	if (!strcmp("save", _vm->_line) && gameStatus._viewState == kViewPlay) {
 		_vm->_file->saveGame(-1, Common::String());
 		return;
 	}
 
-	if (!strcmp("restore", _vm->_line) && (gameStatus.viewState == kViewPlay || gameStatus.viewState == kViewIdle)) {
+	if (!strcmp("restore", _vm->_line) && (gameStatus._viewState == kViewPlay || gameStatus._viewState == kViewIdle)) {
 		_vm->_file->restoreGame(-1);
 		return;
 	}
@@ -137,7 +137,7 @@ void Parser_v1w::lineHandler() {
 	if (strspn(_vm->_line, " ") == strlen(_vm->_line)) // Nothing but spaces!
 		return;
 
-	if (gameStatus.gameOverFl) {
+	if (gameStatus._gameOverFl) {
 		// No commands allowed!
 		_vm->gameOverMsg();
 		return;
@@ -147,8 +147,8 @@ void Parser_v1w::lineHandler() {
 
 	// Test for nearby objects referenced explicitly
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
-		object_t *obj = &_vm->_object->_objects[i];
-		if (isWordPresent(_vm->_text->getNounArray(obj->nounIndex))) {
+		Object *obj = &_vm->_object->_objects[i];
+		if (isWordPresent(_vm->_text->getNounArray(obj->_nounIndex))) {
 			if (isObjectVerb_v3(obj, farComment) || isGenericVerb_v3(obj, farComment))
 				return;
 		}
@@ -157,8 +157,8 @@ void Parser_v1w::lineHandler() {
 	// Test for nearby objects that only require a verb
 	// Note comment is unused if not near.
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
-		object_t *obj = &_vm->_object->_objects[i];
-		if (obj->verbOnlyFl) {
+		Object *obj = &_vm->_object->_objects[i];
+		if (obj->_verbOnlyFl) {
 			char contextComment[kCompLineSize * 5] = ""; // Unused comment for context objects
 			if (isObjectVerb_v3(obj, contextComment) || isGenericVerb_v3(obj, contextComment))
 				return;
@@ -166,9 +166,9 @@ void Parser_v1w::lineHandler() {
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screen_p]))
+	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screenPtr]))
 		return;
-	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screen_p]))
+	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screenPtr]))
 		return;
 
 	if (isBackgroundWord_v3(_catchallList))
@@ -185,7 +185,7 @@ void Parser_v1w::lineHandler() {
 	// Nothing matches.  Report recognition success to user.
 	const char *verb = findVerb();
 	const char *noun = findNoun();
-	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _vm->_maze.enabledFl) {
+	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _vm->_maze._enabledFl) {
 		Utils::notifyBox(_vm->_text->getTextParser(kTBMaze));
 		_vm->_object->showTakeables();
 	} else if (verb && noun) {                      // A combination I didn't think of
@@ -200,16 +200,16 @@ void Parser_v1w::lineHandler() {
 }
 
 void Parser_v1w::showInventory() const {
-	status_t &gameStatus = _vm->getGameStatus();
-	istate_t inventState = _vm->_inventory->getInventoryState();
-	if (gameStatus.gameOverFl) {
+	Status &gameStatus = _vm->getGameStatus();
+	Istate inventState = _vm->_inventory->getInventoryState();
+	if (gameStatus._gameOverFl) {
 		_vm->gameOverMsg();
-	} else if ((inventState == kInventoryOff) && (gameStatus.viewState == kViewPlay)) {
+	} else if ((inventState == kInventoryOff) && (gameStatus._viewState == kViewPlay)) {
 		_vm->_inventory->setInventoryState(kInventoryDown);
-		gameStatus.viewState = kViewInvent;
+		gameStatus._viewState = kViewInvent;
 	} else if (inventState == kInventoryActive) {
 		_vm->_inventory->setInventoryState(kInventoryUp);
-		gameStatus.viewState = kViewInvent;
+		gameStatus._viewState = kViewInvent;
 	}
 }
 

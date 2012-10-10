@@ -273,8 +273,6 @@ SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, in
 		if (error == Toltecs::ToltecsEngine::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
 
-			desc.setDeletableFlag(true);
-			desc.setWriteProtectedFlag(false);
 			desc.setThumbnail(header.thumbnail);
 
 			if (header.version > 0) {

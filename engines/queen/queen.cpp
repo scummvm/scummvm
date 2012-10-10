@@ -56,8 +56,8 @@ static const PlainGameDescriptor queenGameDescriptor = {
 };
 
 static const ExtraGuiOption queenExtraGuiOption = {
-	_s("Floppy intro"),
-	_s("Use the floppy version's intro (CD version only)"),
+	_s("Alternative intro"),
+	_s("Use an alternative game intro (CD version only)"),
 	"alt_intro",
 	false
 };
@@ -113,12 +113,12 @@ int QueenMetaEngine::getMaximumSaveSlot() const { return 99; }
 const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	Common::String guiOptions;
 	ExtraGuiOptions options;
-	
+
 	if (target.empty()) {
 		options.push_back(queenExtraGuiOption);
 		return options;
 	}
-	
+
 	if (ConfMan.hasKey("guioptions", target)) {
 		guiOptions = ConfMan.get("guioptions", target);
 		guiOptions = parseGameGUIOptions(guiOptions);

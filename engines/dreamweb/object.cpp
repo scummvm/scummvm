@@ -147,7 +147,7 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		delPointer();
@@ -516,7 +516,7 @@ void DreamWebEngine::inToInv() {
 
 	if (_mouseButton == _oldButton || !(_mouseButton & 1))
 		return; // notletgo2
-	
+
 	delPointer();
 	DynObject *object = getExAd(_itemFrame);
 	object->mapad[0] = 4;
@@ -1034,7 +1034,7 @@ void DreamWebEngine::fillOpen() {
 		size = 4;
 	findAllOpen();
 	for (uint8 i = 0; i < size; ++i) {
-		uint8 index = _openInvList[i]._index; 
+		uint8 index = _openInvList[i]._index;
 		uint8 type = _openInvList[i]._type;
 		obToInv(index, type, kInventx + i * kItempicsize, kInventy + 96);
 	}

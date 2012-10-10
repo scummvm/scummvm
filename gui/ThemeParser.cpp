@@ -218,15 +218,12 @@ bool ThemeParser::parserCallback_cursor(ParserNode *node) {
 		return true;
 	}
 
-	int spotx, spoty, scale;
+	int spotx, spoty;
 
 	if (!parseIntegerKey(node->values["hotspot"], 2, &spotx, &spoty))
 		return parserError("Error parsing cursor Hot Spot coordinates.");
 
-	if (!parseIntegerKey(node->values["scale"], 1, &scale))
-		return parserError("Error parsing cursor scale.");
-
-	if (!_theme->createCursor(node->values["file"], spotx, spoty, scale))
+	if (!_theme->createCursor(node->values["file"], spotx, spoty))
 		return parserError("Error creating Bitmap Cursor.");
 
 	return true;
@@ -551,11 +548,11 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		else
 			return parserError("'" + stepNode->values["fill"] + "' is not a valid fill mode for a shape.");
 	}
-	
+
 	if (stepNode->values.contains("padding")) {
 		val = stepNode->values["padding"];
 		int pr, pt, pl, pb;
-		if (parseIntegerKey(val, 4, &pl, &pt, &pr, &pb)) 
+		if (parseIntegerKey(val, 4, &pl, &pt, &pr, &pb))
 			drawstep->padding.left = pl,
 			drawstep->padding.top = pt,
 			drawstep->padding.right = pr,

@@ -31,7 +31,7 @@ namespace Tinsel {
 //----------------- LOCAL GLOBAL DATA --------------------
 
 struct Token {
-	PROCESS		*proc;
+	Common::PROCESS		*proc;
 };
 
 static Token g_tokens[NUMTOKENS];	// FIXME: Avoid non-const global vars
@@ -40,7 +40,7 @@ static Token g_tokens[NUMTOKENS];	// FIXME: Avoid non-const global vars
 /**
  * Release all tokens held by this process, and kill the process.
  */
-static void TerminateProcess(PROCESS *tProc) {
+static void TerminateProcess(Common::PROCESS *tProc) {
 
 	// Release tokens held by the process
 	for (int i = 0; i < NUMTOKENS; i++) {
@@ -50,7 +50,7 @@ static void TerminateProcess(PROCESS *tProc) {
 	}
 
 	// Kill the process
-	g_scheduler->killProcess(tProc);
+	CoroScheduler.killProcess(tProc);
 }
 
 /**
@@ -60,7 +60,7 @@ void GetControlToken() {
 	const int which = TOKEN_CONTROL;
 
 	if (g_tokens[which].proc == NULL) {
-		g_tokens[which].proc = g_scheduler->getCurrentProcess();
+		g_tokens[which].proc = CoroScheduler.getCurrentProcess();
 	}
 }
 
@@ -85,11 +85,11 @@ void GetToken(int which) {
 	assert(TOKEN_LEAD <= which && which < NUMTOKENS);
 
 	if (g_tokens[which].proc != NULL) {
-		assert(g_tokens[which].proc != g_scheduler->getCurrentProcess());
+		assert(g_tokens[which].proc != CoroScheduler.getCurrentProcess());
 		TerminateProcess(g_tokens[which].proc);
 	}
 
-	g_tokens[which].proc = g_scheduler->getCurrentProcess();
+	g_tokens[which].proc = CoroScheduler.getCurrentProcess();
 }
 
 /**
@@ -99,7 +99,7 @@ void GetToken(int which) {
 void FreeToken(int which) {
 	assert(TOKEN_LEAD <= which && which < NUMTOKENS);
 
-	assert(g_tokens[which].proc == g_scheduler->getCurrentProcess());	// we'd have been killed if some other proc had taken this token
+	assert(g_tokens[which].proc == CoroScheduler.getCurrentProcess());	// we'd have been killed if some other proc had taken this token
 
 	g_tokens[which].proc = NULL;
 }

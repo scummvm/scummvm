@@ -18,11 +18,17 @@ MODULE_OBJS := \
 	codecs/qtrle.o \
 	codecs/rpza.o \
 	codecs/smc.o \
+	codecs/svq1.o \
 	codecs/truemotion1.o
 
 ifdef USE_BINK
 MODULE_OBJS += \
 	bink_decoder.o
+endif
+
+ifdef USE_THEORADEC
+MODULE_OBJS += \
+	theora_decoder.o
 endif
 
 # Include common rules

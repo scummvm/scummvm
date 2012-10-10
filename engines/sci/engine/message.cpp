@@ -400,11 +400,21 @@ Common::String MessageState::processString(const char *s) {
 void MessageState::outputString(reg_t buf, const Common::String &str) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		SciString *sciString = _segMan->lookupString(buf);
-		sciString->setSize(str.size() + 1);
-		for (uint32 i = 0; i < str.size(); i++)
-			sciString->setValue(i, str.c_str()[i]);
-		sciString->setValue(str.size(), 0);
+		if (_segMan->getSegmentType(buf.getSegment()) == SEG_TYPE_STRING) {
+			SciString *sciString = _segMan->lookupString(buf);
+			sciString->setSize(str.size() + 1);
+			for (uint32 i = 0; i < str.size(); i++)
+				sciString->setValue(i, str.c_str()[i]);
+			sciString->setValue(str.size(), 0);
+		} else if (_segMan->getSegmentType(buf.getSegment()) == SEG_TYPE_ARRAY) {
+			// Happens in the intro of LSL6, we are asked to write the string
+			// into an array
+			SciArray<reg_t> *sciString = _segMan->lookupArray(buf);
+			sciString->setSize(str.size() + 1);
+			for (uint32 i = 0; i < str.size(); i++)
+				sciString->setValue(i, make_reg(0, str.c_str()[i]));
+			sciString->setValue(str.size(), NULL_REG);
+		}
 	} else {
 #endif
 		SegmentRef buffer_r = _segMan->dereference(buf);

@@ -235,13 +235,18 @@ AGOS Games by Adventuresoft/Horrorsoft:
      The Feeble Files                            [feeble]
 
 GOB Games by Coktel Vision:
+     Bambou le sauveur de la jungle              [bambou]
      Bargon Attack                               [bargon]
+     Fascination                                 [fascination]
+     Geisha                                      [geisha]
      Gobliiins                                   [gob1]
      Gobliins 2                                  [gob2]
      Goblins 3                                   [gob3]
      Lost in Time                                [lostintime]
+     Once Upon A Time: Little Red Riding Hood    [littlered]
      The Bizarre Adventures of Woodruff
          and the Schnibble                       [woodruff]
+     Urban Runner                                [urban]
      Ween: The Prophecy                          [ween]
 
 MADE Games by Activision:
@@ -272,6 +277,7 @@ Other Games:
 SCUMM Games by Humongous Entertainment:
      Backyard Baseball                           [baseball]
      Backyard Baseball 2001                      [baseball2001]
+     Backyard Baseball 2003                      [baseball2003]
      Backyard Football                           [football]
      Big Thinkers First Grade                    [thinker1]
      Big Thinkers Kindergarten                   [thinkerk]
@@ -342,7 +348,6 @@ these at your own risk, and please do not file bug reports about them.
 If you want the latest updates on game compatibility, visit our web site
 and view the compatibility chart.
 
-     Backyard Baseball 2003                      [baseball2003]
      Backyard Football 2002                      [football2002]
      Backyard Soccer                             [soccer]
      Backyard Soccer MLS                         [soccermls]
@@ -2079,7 +2084,7 @@ Sierra games using the SCI engine add the following non-standard keywords:
     originalsaveload   bool     If true, the original save/load screens are
                                 used instead of the enhanced ScummVM ones
     native_fb01        bool     If true, the music driver for an IBM Music
-                                Feature card or a Yahama FB-01 FM synth module
+                                Feature card or a Yamaha FB-01 FM synth module
                                 is used for MIDI output
 
 Broken Sword II adds the following non-standard keywords:
@@ -2120,7 +2125,7 @@ Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
 Space Quest IV CD adds the following non-standard keyword:
 
      silver_cursors    bool     If true, an alternate set of silver mouse cursors
-	                            is used instead of the original golden ones
+                                is used instead of the original golden ones
 
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 

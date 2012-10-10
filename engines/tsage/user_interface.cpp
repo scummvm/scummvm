@@ -112,7 +112,7 @@ void UIQuestion::showItem(int resNum, int rlbNum, int frameNum) {
 	imgRect.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
 	// Save the area behind where the image will be displayed
-	GfxSurface *savedArea = Surface_getArea(GLOBALS.gfxManager().getSurface(), imgRect);
+	GfxSurface *savedArea = surfaceGetArea(GLOBALS.gfxManager().getSurface(), imgRect);
 
 	// Draw the image
 	GLOBALS.gfxManager().copyFrom(objImage, imgRect);

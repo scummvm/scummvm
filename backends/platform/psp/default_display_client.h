@@ -69,8 +69,8 @@ public:
 	bool allocate();
 	void setBytesPerPixel(uint32 size);
 	void setSize(uint32 width, uint32 height);
-	void copyToArray(OverlayColor *buf, int pitch);
-	void copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	void copyToArray(void *buf, int pitch);
+	void copyFromRect(const void *buf, int pitch, int x, int y, int w, int h);
 };
 
 /**

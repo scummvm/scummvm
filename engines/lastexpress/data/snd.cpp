@@ -28,11 +28,9 @@
 #include "lastexpress/debug.h"
 
 #include "audio/decoders/adpcm_intern.h"
-#include "audio/audiostream.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/system.h"
-#include "common/textconsole.h"
 
 namespace LastExpress {
 
@@ -358,6 +356,8 @@ public:
 			Audio::ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {
 		_currentFilterId = -1;
 		_nextFilterId = filterId;
+		_stepAdjust1 = 0;
+		_stepAdjust2 = 0;
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples) {
@@ -378,7 +378,7 @@ public:
 
 				// Get current filter
 				_currentFilterId = _nextFilterId;
-				_nextFilterId = -1;
+				//_nextFilterId = -1; // FIXME: the filter id should be recomputed based on the sound entry status for each block
 
 				// No filter: skip decoding
 				if (_currentFilterId == -1)
@@ -455,7 +455,9 @@ void SimpleSound::play(Audio::AudioStream *as) {
 //////////////////////////////////////////////////////////////////////////
 StreamedSound::StreamedSound() : _as(NULL), _loaded(false) {}
 
-StreamedSound::~StreamedSound() {}
+StreamedSound::~StreamedSound() {
+	_as = NULL;
+}
 
 bool StreamedSound::load(Common::SeekableReadStream *stream, int32 filterId) {
 	if (!stream)
@@ -484,6 +486,9 @@ bool StreamedSound::isFinished() {
 }
 
 void StreamedSound::setFilterId(int32 filterId) {
+	if (!_as)
+		return;
+
 	((LastExpress_ADPCMStream *)_as)->setFilterId(filterId);
 }
 
@@ -521,6 +526,7 @@ void AppendableSound::queueBuffer(Common::SeekableReadStream *bufferIn) {
 	// Setup the ADPCM decoder
 	uint32 sizeIn = (uint32)bufferIn->size();
 	Audio::AudioStream *adpcm = makeDecoder(bufferIn, sizeIn);
+	((LastExpress_ADPCMStream *)adpcm)->setFilterId(16);
 
 	// Queue the stream
 	_as->queueAudioStream(adpcm);

@@ -71,13 +71,19 @@ int Oki_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
 
-	assert(numSamples % 2 == 0);
+	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
+		if (_decodedSampleCount == 0) {
+			data = _stream->readByte();
+			_decodedSamples[0] = decodeOKI((data >> 4) & 0x0f);
+			_decodedSamples[1] = decodeOKI((data >> 0) & 0x0f);
+			_decodedSampleCount = 2;
+		}
 
-	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
-		data = _stream->readByte();
-		buffer[samples] = decodeOKI((data >> 4) & 0x0f);
-		buffer[samples + 1] = decodeOKI(data & 0x0f);
+		// (1 - (count - 1)) ensures that _decodedSamples acts as a FIFO of depth 2
+		buffer[samples] = _decodedSamples[1 - (_decodedSampleCount - 1)];
+		_decodedSampleCount--;
 	}
+
 	return samples;
 }
 
@@ -117,13 +123,19 @@ int DVI_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
 
-	assert(numSamples % 2 == 0);
+	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
+		if (_decodedSampleCount == 0) {
+			data = _stream->readByte();
+			_decodedSamples[0] = decodeIMA((data >> 4) & 0x0f, 0);
+			_decodedSamples[1] = decodeIMA((data >> 0) & 0x0f, _channels == 2 ? 1 : 0);
+			_decodedSampleCount = 2;
+		}
 
-	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
-		data = _stream->readByte();
-		buffer[samples] = decodeIMA((data >> 4) & 0x0f);
-		buffer[samples + 1] = decodeIMA(data & 0x0f, _channels == 2 ? 1 : 0);
+		// (1 - (count - 1)) ensures that _decodedSamples acts as a FIFO of depth 2
+		buffer[samples] = _decodedSamples[1 - (_decodedSampleCount - 1)];
+		_decodedSampleCount--;
 	}
+
 	return samples;
 }
 

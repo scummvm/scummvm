@@ -61,14 +61,14 @@ public:
 	void getRgbModifiertAtPoint(int16 x, int16 y, int16 id, byte &r, byte &g, byte &b);
 
 	void addMasksToRenderQueue();
-	
+
 //protected:
 public: // for debugging purposes
 
 	struct SegmapPathRect {
 		int16 x1, y1, x2, y2;
 	};
-	
+
 	struct SegmapInfoRect {
 		int16 y, x;
 		int16 height, width;
@@ -78,11 +78,11 @@ public: // for debugging purposes
 			return py >= y && py <= y + height && px >= x && px <= x + width;
 		}
 	};
-	
+
 	struct PathPoint {
 		int16 y, x;
 	};
-	
+
 	typedef Common::Array<SegmapMaskRect> SegmapMaskRectArray;
 	typedef Common::Array<SegmapPathRect> SegmapPathRectArray;
 	typedef Common::Array<SegmapInfoRect> SegmapInfoRectArray;

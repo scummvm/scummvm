@@ -1146,7 +1146,7 @@ void cmdFollowEgo(AgiGame *state, uint8 *p) {
 	vt.parm1 = p1 > vt.stepSize ? p1 : vt.stepSize;
 	vt.parm2 = p2;
 	vt.parm3 = 0xff;
-	
+
 	if (getVersion() < 0x2000) {
 		_v[p2] = 0;
 		vt.flags |= fUpdate | fAnimated;
@@ -1270,7 +1270,7 @@ void cmdVersion(AgiGame *state, uint8 *p) {
 	// no Sierra as it wraps textbox
 
 	Common::String verMsg = TITLE " v%s";
-	
+
 	int ver = getVersion();
 	int maj = (ver >> 12) & 0xf;
 	int min = ver & 0xfff;
@@ -1839,7 +1839,7 @@ int AgiEngine::runLogic(int n) {
 //			ip = 2;
 //			warning("running logic %d\n", n);
 //		}
-		
+
 		if (_game.exitAllLogics)
 			break;
 	}

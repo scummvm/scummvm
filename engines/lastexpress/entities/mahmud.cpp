@@ -34,10 +34,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -86,7 +84,8 @@ IMPLEMENT_FUNCTION_SIII(4, Mahmud, enterExitCompartment2, ObjectIndex, uint32, O
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param7, getState()->timeTicks, params->param5);
+		if (!Entity::updateParameter(params->param7, getState()->timeTicks, params->param5))
+			break;
 
 		if (!getScenes()->checkPosition(kSceneNone, SceneManager::kCheckPositionLookingUp))
 			getScenes()->loadSceneFromObject((ObjectIndex)params->param6, true);
@@ -95,7 +94,7 @@ IMPLEMENT_FUNCTION_SIII(4, Mahmud, enterExitCompartment2, ObjectIndex, uint32, O
 	case kActionExitCompartment:
 		getEntities()->exitCompartment(kEntityMahmud, (ObjectIndex)params->param4);
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -146,7 +145,8 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param6, getState()->time, 13500);
+		if (!Entity::updateParameter(params->param6, getState()->time, 13500))
+			break;
 
 		getObjects()->update(kObjectCompartment5, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectCompartment6, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);
@@ -267,7 +267,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMahmud);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -392,7 +392,7 @@ IMPLEMENT_FUNCTION(11, Mahmud, function11)
 			getEntities()->clearSequences(kEntityMahmud);
 			getObjects()->update(kObjectCompartment4, kEntityMahmud, kObjectLocation3, kCursorHandKnock, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -471,7 +471,7 @@ IMPLEMENT_FUNCTION(12, Mahmud, function12)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMahmud);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		}
@@ -537,7 +537,7 @@ IMPLEMENT_FUNCTION(13, Mahmud, function13)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMahmud);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		}
@@ -560,7 +560,8 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 
 		if (!params->param2 && getProgress().chapter == kChapter1) {
 
-			TIME_CHECK_CALLBACK(kTime1098000, params->param6, 1, setup_function13);
+			if (Entity::timeCheckCallback(kTime1098000, params->param6, 1, WRAP_SETUP_FUNCTION(Mahmud, setup_function13)))
+				break;
 
 			if (!getSoundQueue()->isBuffered("HAR1104") && getState()->time > kTime1167300 && !params->param7) {
 				params->param7 = 1;
@@ -572,7 +573,8 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 		}
 
 		if (params->param5) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 75))
+				break;
 
 			params->param4 = 1;
 			params->param5 = 0;
@@ -732,7 +734,7 @@ IMPLEMENT_FUNCTION(15, Mahmud, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chaptersHandler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Mahmud, setup_chaptersHandler));
 		break;
 
 	case kActionDefault:

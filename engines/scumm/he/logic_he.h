@@ -61,6 +61,7 @@ protected:
 LogicHE *makeLogicHErace(ScummEngine_v90he *vm);
 LogicHE *makeLogicHEfunshop(ScummEngine_v90he *vm);
 LogicHE *makeLogicHEfootball(ScummEngine_v90he *vm);
+LogicHE *makeLogicHEfootball2002(ScummEngine_v90he *vm);
 LogicHE *makeLogicHEsoccer(ScummEngine_v90he *vm);
 LogicHE *makeLogicHEbaseball2001(ScummEngine_v90he *vm);
 LogicHE *makeLogicHEbasketball(ScummEngine_v90he *vm);

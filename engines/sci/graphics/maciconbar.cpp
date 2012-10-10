@@ -129,7 +129,7 @@ void GfxMacIconBar::drawIcon(uint16 iconIndex, bool selected) {
 
 void GfxMacIconBar::drawEnabledImage(Graphics::Surface *surface, const Common::Rect &rect) {
 	if (surface)
-		g_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, rect.left, rect.top, rect.width(), rect.height());
+		g_system->copyRectToScreen(surface->pixels, surface->pitch, rect.left, rect.top, rect.width(), rect.height());
 }
 
 void GfxMacIconBar::drawDisabledImage(Graphics::Surface *surface, const Common::Rect &rect) {
@@ -153,7 +153,7 @@ void GfxMacIconBar::drawDisabledImage(Graphics::Surface *surface, const Common::
 			*((byte *)newSurf.getBasePtr(j, i)) = 0;
 	}
 
-	g_system->copyRectToScreen((byte *)newSurf.pixels, newSurf.pitch, rect.left, rect.top, rect.width(), rect.height());
+	g_system->copyRectToScreen(newSurf.pixels, newSurf.pitch, rect.left, rect.top, rect.width(), rect.height());
 	newSurf.free();
 }
 

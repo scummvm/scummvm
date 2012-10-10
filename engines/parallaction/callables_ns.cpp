@@ -275,7 +275,7 @@ void Parallaction_ns::_c_contaFoglie(void *parm) {
 	if (num_foglie != 6)
 		return;
 
-	_globalFlags |= 0x1000;
+	g_globalFlags |= 0x1000;
 
 	return;
 }
@@ -286,7 +286,7 @@ void Parallaction_ns::_c_zeroFoglie(void *parm) {
 }
 
 void Parallaction_ns::_c_trasformata(void *parm) {
-	_engineFlags ^= kEngineTransformedDonna;
+	g_engineFlags ^= kEngineTransformedDonna;
 	// No need to invoke changeCharacter here, as
 	// transformation happens on a location switch
 	// and character change is automatically triggered.
@@ -295,11 +295,11 @@ void Parallaction_ns::_c_trasformata(void *parm) {
 
 void Parallaction_ns::_c_offMouse(void *parm) {
 	_input->setMouseState(MOUSE_DISABLED);
-	_engineFlags |= kEngineBlockInput;
+	g_engineFlags |= kEngineBlockInput;
 }
 
 void Parallaction_ns::_c_onMouse(void *parm) {
-	_engineFlags &= ~kEngineBlockInput;
+	g_engineFlags &= ~kEngineBlockInput;
 	_input->setMouseState(MOUSE_ENABLED_SHOW);
 }
 
@@ -389,7 +389,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 }
 
 void Parallaction_ns::_c_ridux(void *parm) {
-	changeCharacter(_minidinoName);
+	changeCharacter(g_minidinoName);
 	return;
 }
 
@@ -444,7 +444,7 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 		_soundManI->playMusic();
 	}
 
-	_engineFlags |= kEngineBlockInput;
+	g_engineFlags |= kEngineBlockInput;
 	_input->setMouseState(MOUSE_DISABLED);
 	_intro = true;
 }

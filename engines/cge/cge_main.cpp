@@ -150,11 +150,11 @@ void CGEEngine::sndSetVolume() {
 void CGEEngine::syncHeader(Common::Serializer &s) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::syncHeader(s)");
 
-	int i;
+	int i = kDemo;
 
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_oldLev);
-	s.syncAsUint16LE(_demoText);
+	s.syncAsUint16LE(i);        // unused Demo string id
 	for (i = 0; i < 5; i++)
 		s.syncAsUint16LE(_game);
 	s.syncAsSint16LE(i);		// unused VGA::Mono variable
@@ -207,7 +207,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 		readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
 
 	} else {
-		// Open up the savgame file
+		// Open up the savegame file
 		Common::String slotName = generateSaveName(slotNumber);
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
 
@@ -280,7 +280,7 @@ Common::Error CGEEngine::loadGameState(int slot) {
 	sceneDown();
 	_hero->park();
 	resetGame();
-	
+
 	// If music is playing, kill it.
 	if (_music)
 		_midiPlayer->killMidi();
@@ -305,11 +305,20 @@ Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 	_hero->park();
 	_oldLev = _lev;
 
+	int x = _hero->_x;
+	int y = _hero->_y;
+	int z = _hero->_z;
+
 	// Write out the user's progress
 	saveGame(slot, desc);
+	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 
 	// Reload the scene
 	sceneUp();
+
+	// Restore player position
+	_hero->gotoxy(x, y);
+	_hero->_z = z;
 
 	return Common::kNoError;
 }
@@ -499,7 +508,7 @@ void CGEEngine::loadMapping() {
 		if (!cf.err()) {
 			// Move to the data for the given room
 			cf.seek((_now - 1) * kMapArrSize);
-			
+
 			// Read in the data
 			for (int z = 0; z < kMapZCnt; ++z) {
 				cf.read(&_clusterMap[z][0], kMapXCnt);
@@ -518,8 +527,8 @@ Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	setShapeList(MB);
 }
 
-void Square::touch(uint16 mask, int x, int y) {
-	Sprite::touch(mask, x, y);
+void Square::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
+	Sprite::touch(mask, x, y, keyCode);
 	if (mask & kMouseLeftUp) {
 		_vm->XZ(_x + x, _y + y).cell() = 0;
 		_vm->_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, this);
@@ -706,7 +715,7 @@ void CGEEngine::qGame() {
 	saveGame(0, Common::String("Automatic Savegame"));
 
 	_vga->sunset();
-	_finis = true;
+	_endGame = true;
 }
 
 void CGEEngine::switchScene(int newScene) {
@@ -758,12 +767,12 @@ void System::funTouch() {
 		_funDel = n;
 }
 
-void System::touch(uint16 mask, int x, int y) {
+void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	funTouch();
 
 	if (mask & kEventKeyb) {
-		if (x == Common::KEYCODE_ESCAPE) {
-			// The original was calling keyClick() 
+		if (keyCode == Common::KEYCODE_ESCAPE) {
+			// The original was calling keyClick()
 			// The sound is uselessly annoying and noisy, so it has been removed
 			_vm->killText();
 			if (_vm->_startupMode == 1) {
@@ -926,7 +935,7 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 }
 
 #pragma argsused
-void Sprite::touch(uint16 mask, int x, int y) {
+void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	_vm->_sys->funTouch();
 
 	if ((mask & kEventAttn) != 0)
@@ -1035,7 +1044,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 
 		uint16 len;
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
-			len = line.size();			
+			len = line.size();
 			lcnt++;
 			strcpy(tmpStr, line.c_str());
 			if (len == 0 || *tmpStr == '.')
@@ -1312,7 +1321,7 @@ void CGEEngine::runGame() {
 
 	_sceneLight->_flags._tran = true;
 	_vga->_showQ->append(_sceneLight);
-	_sceneLight->_flags._hide = true;
+	_sceneLight->_flags._hide = false;
 
 	const Seq pocSeq[] = {
 		{ 0, 0, 0, 0, 20 },
@@ -1403,14 +1412,14 @@ void CGEEngine::runGame() {
 
 	_keyboard->setClient(_sys);
 	// main loop
-	while (!_finis && !_quitFlag) {
-		if (_flag[3])
+	while (!_endGame && !_quitFlag) {
+		if (_flag[3]) // Flag FINIS
 			_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame);
 		mainLoop();
 	}
 
 	// If finishing game due to closing ScummVM window, explicitly save the game
-	if (!_finis && canSaveGameStateCurrently())
+	if (!_endGame && canSaveGameStateCurrently())
 		qGame();
 
 	_keyboard->setClient(NULL);
@@ -1507,22 +1516,9 @@ bool CGEEngine::showTitle(const char *name) {
 		_vga->_showQ->clear();
 		_vga->copyPage(0, 2);
 
-		if (_mode == 0) {
-// The auto-load of savegame #0 is currently disabled
-#if 0
-			if (savegameExists(0)) {
-				// Load the savegame
-				loadGame(0, NULL, true); // only system vars
-				_vga->setColors(_vga->_sysPal, 64);
-				_vga->update();
-				if (_flag[3]) { //flag FINIS
-					_mode++;
-					_flag[3] = false;
-				}
-			} else
-#endif
-				_mode++;
-		}
+		// The original was automatically loading the savegame when available
+		if (_mode == 0)
+			_mode++;
 	}
 
 	if (_mode < 2)

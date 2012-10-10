@@ -28,6 +28,7 @@
 #include "audio/decoders/wave.h"
 
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"
@@ -749,6 +750,7 @@ void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 		_seqNum = 1;
 		return;
 	}
+	_flicPlayer[index].start();
 	_flicPlayer[index].decodeNextFrame();
 	if (index == 0) {
 		getRGBPalette(index);
@@ -801,7 +803,7 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	if (_flicPlayer[0].getCurFrame() >= 115) {
 		surface = _flicPlayer[1].decodeNextFrame();
 		if (_flicPlayer[1].endOfVideo())
-			_flicPlayer[1].reset();
+			_flicPlayer[1].rewind();
 	}
 
 	bool framesLeft = decodeNextAnimationFrame(0, false);

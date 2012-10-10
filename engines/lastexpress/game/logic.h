@@ -25,8 +25,6 @@
 
 #include "lastexpress/shared.h"
 
-#include "lastexpress/game/entities.h"
-
 #include "lastexpress/eventhandler.h"
 
 #include "common/events.h"
@@ -75,6 +73,7 @@ private:
 
 	void switchChapter() const;
 	void showCredits() const;
+	void redrawCursor() const;
 
 	// Flags & Members
 	bool _flagActionPerformed;

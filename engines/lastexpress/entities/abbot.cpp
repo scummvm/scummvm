@@ -34,9 +34,7 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -60,10 +58,10 @@ Abbot::Abbot(LastExpressEngine *engine) : Entity(engine, kEntityAbbot) {
 	ADD_CALLBACK_FUNCTION(Abbot, chapter2);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter3);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter3Handler);
-	ADD_CALLBACK_FUNCTION(Abbot, function19);
-	ADD_CALLBACK_FUNCTION(Abbot, function20);
-	ADD_CALLBACK_FUNCTION(Abbot, function21);
-	ADD_CALLBACK_FUNCTION(Abbot, function22);
+	ADD_CALLBACK_FUNCTION(Abbot, conversationWithBoutarel);
+	ADD_CALLBACK_FUNCTION(Abbot, readPaper);
+	ADD_CALLBACK_FUNCTION(Abbot, goToLunch);
+	ADD_CALLBACK_FUNCTION(Abbot, haveLunch);
 	ADD_CALLBACK_FUNCTION(Abbot, function23);
 	ADD_CALLBACK_FUNCTION(Abbot, function24);
 	ADD_CALLBACK_FUNCTION(Abbot, function25);
@@ -261,7 +259,7 @@ IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
 			getData()->entityPosition = kPosition_6470;
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function19();
+			setup_conversationWithBoutarel();
 			break;
 		}
 		break;
@@ -274,7 +272,7 @@ IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(19, Abbot, function19)
+IMPLEMENT_FUNCTION(19, Abbot, conversationWithBoutarel)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -313,21 +311,21 @@ IMPLEMENT_FUNCTION(19, Abbot, function19)
 
 		case 3:
 			getSavePoints()->push(kEntityAbbot, kEntityBoutarel, kAction122288808);
-			setup_function20();
+			setup_readPaper();
 			break;
 		}
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(20, Abbot, function20)
+IMPLEMENT_FUNCTION(20, Abbot, readPaper)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionNone:
 		if (getState()->time > kTime1966500 && getEntities()->isInRestaurant(kEntityBoutarel))
-			setup_function21();
+			setup_goToLunch();
 		break;
 
 	case kActionDefault:
@@ -337,7 +335,7 @@ IMPLEMENT_FUNCTION(20, Abbot, function20)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(21, Abbot, function21)
+IMPLEMENT_FUNCTION(21, Abbot, goToLunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -395,7 +393,7 @@ IMPLEMENT_FUNCTION(21, Abbot, function21)
 			break;
 
 		case 7:
-			setup_function22();
+			setup_haveLunch();
 			break;
 		}
 		break;
@@ -411,13 +409,13 @@ IMPLEMENT_FUNCTION(21, Abbot, function21)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(22, Abbot, function22)
+IMPLEMENT_FUNCTION(22, Abbot, haveLunch)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1971000, params->param1, kEntityAbbot, kEntityServers0, kAction218586752);
+		Entity::timeCheckSavepoint(kTime1971000, params->param1, kEntityAbbot, kEntityServers0, kAction218586752);
 
 		if (getState()->time > kTime1989000 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->inventoryItem = kItemNone;
@@ -516,7 +514,8 @@ IMPLEMENT_FUNCTION(24, Abbot, function24)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 900);
+		if (!Entity::updateParameter(params->param1, getState()->time, 900))
+			break;
 
 		setup_function25();
 		break;
@@ -617,7 +616,8 @@ IMPLEMENT_FUNCTION(26, Abbot, function26)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param2, getState()->time, 4500);
+		if (!Entity::updateParameter(params->param2, getState()->time, 4500))
+			break;
 
 		if (getEntities()->isSomebodyInsideRestaurantOrSalon())
 			setup_function27();
@@ -691,7 +691,7 @@ IMPLEMENT_FUNCTION(28, Abbot, function28)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK(kTime2052000, params->param1, 1, setup_function29);
+		Entity::timeCheckCallback(kTime2052000, params->param1, 1, WRAP_SETUP_FUNCTION(Abbot, setup_function29));
 		break;
 
 	case kActionDefault:
@@ -770,7 +770,7 @@ IMPLEMENT_FUNCTION(29, Abbot, function29)
 			getSavePoints()->push(kEntityAbbot, kEntityBoutarel, kAction122358304);
 			getEntities()->drawSequenceLeft(kEntityAbbot, "508B");
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -864,7 +864,8 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 		if (!params->param1)
 			break;
 
-		UPDATE_PARAM(params->param5, getState()->time, 450);
+		if (!Entity::updateParameter(params->param5, getState()->time, 450))
+			break;
 
 		setCallback(6);
 		setup_callbackActionRestaurantOrSalon();
@@ -920,7 +921,8 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 			getSavePoints()->push(kEntityAbbot, kEntityAlexei, kAction122288808);
 			params->param1 = 1;
 
-			UPDATE_PARAM(params->param5, getState()->time, 450);
+			if (!Entity::updateParameter(params->param5, getState()->time, 450))
+				break;
 
 			setCallback(6);
 			setup_callbackActionRestaurantOrSalon();
@@ -1163,7 +1165,8 @@ IMPLEMENT_FUNCTION(36, Abbot, function36)
 			break;
 
 		case 2:
-			UPDATE_PARAM(params->param4, getState()->time, 900);
+			if (!Entity::updateParameter(params->param4, getState()->time, 900))
+				break;
 
 			getSound()->playSound(kEntityAbbot, "Abb3042");
 			break;
@@ -1287,7 +1290,7 @@ IMPLEMENT_FUNCTION_II(40, Abbot, function40, CarIndex, EntityPosition)
 
 	case kActionNone:
 		if (getEntities()->updateEntity(kEntityAbbot, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 		} else if (!getEvent(kEventAbbotInvitationDrink)
 			    && getEntities()->isDistanceBetweenEntities(kEntityAbbot, kEntityPlayer, 1000)
 			    && !getEntities()->isInsideCompartments(kEntityPlayer)
@@ -1302,7 +1305,7 @@ IMPLEMENT_FUNCTION_II(40, Abbot, function40, CarIndex, EntityPosition)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityAbbot, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionCallback:
@@ -1321,7 +1324,7 @@ IMPLEMENT_FUNCTION(41, Abbot, chapter4Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime2358000, params->param1, kEntityAbbot, kEntityServers0, kAction218128129);
+		Entity::timeCheckSavepoint(kTime2358000, params->param1, kEntityAbbot, kEntityServers0, kAction218128129);
 
 		if (getState()->time > kTime2389500 && getEntities()->isSomebodyInsideRestaurantOrSalon())
 			setup_function42();
@@ -1425,10 +1428,12 @@ IMPLEMENT_FUNCTION(43, Abbot, function43)
 		}
 
 label_callback_1:
-		TIME_CHECK(kTime2466000, params->param5, setup_function44);
+		if (Entity::timeCheck(kTime2466000, params->param5, WRAP_SETUP_FUNCTION(Abbot, setup_function44)))
+			break;
 
 		if (params->param3) {
-			UPDATE_PARAM(params->param6, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param6, getState()->timeTicks, 75))
+				break;
 
 			params->param2 = 1;
 			params->param3 = 0;
@@ -1542,7 +1547,7 @@ IMPLEMENT_FUNCTION(45, Abbot, function45)
 		getData()->car = kCarRedSleeping;
 		getData()->location = kLocationOutsideCompartment;
 
-		RESET_ENTITY_STATE(kEntityVerges, Verges, setup_function38);
+		RESET_ENTITY_STATE(kEntityVerges, Verges, setup_resetState);
 
 		getEntities()->drawSequenceLeft(kEntityAbbot, "617Ec");
 		getEntities()->enterCompartment(kEntityAbbot, kObjectCompartmentC, true);
@@ -1646,14 +1651,14 @@ IMPLEMENT_FUNCTION(48, Abbot, function48)
 		if (ENTITY_PARAM(0, 1))
 			getData()->inventoryItem = kItemInvalid;
 
-		UPDATE_PARAM_PROC(params->param1, getState()->time, 1800)
+		if (Entity::updateParameter(params->param1, getState()->time, 1800)) {
 			getData()->inventoryItem = kItemNone;
 
 			setCallback(4);
 			setup_updatePosition("126C", kCarRedSleeping, 52);
-		UPDATE_PARAM_PROC_END
+		}
 
-		TIME_CHECK_CALLBACK_INVENTORY(kTime2533500, params->param2, 5, setup_callbackActionRestaurantOrSalon);
+		Entity::timeCheckCallbackInventory(kTime2533500, params->param2, 5, WRAP_SETUP_FUNCTION(Abbot, setup_callbackActionRestaurantOrSalon));
 		break;
 
 	case kAction1:
@@ -1705,7 +1710,7 @@ IMPLEMENT_FUNCTION(48, Abbot, function48)
 			getEntities()->drawSequenceLeft(kEntityAbbot, "126B");
 			params->param1 = 0;
 
-			TIME_CHECK_CALLBACK_INVENTORY(kTime2533500, params->param2, 5, setup_callbackActionRestaurantOrSalon);
+			Entity::timeCheckCallbackInventory(kTime2533500, params->param2, 5, WRAP_SETUP_FUNCTION(Abbot, setup_callbackActionRestaurantOrSalon));
 			break;
 
 		case 5:
@@ -1750,7 +1755,8 @@ IMPLEMENT_FUNCTION(49, Abbot, pickBomb)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->timeTicks, 150);
+		if (!Entity::updateParameter(params->param1, getState()->timeTicks, 150))
+			break;
 
 		getSavePoints()->push(kEntityAbbot, kEntityAbbot, kAction157489665);
 		break;

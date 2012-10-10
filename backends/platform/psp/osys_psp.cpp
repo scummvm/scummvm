@@ -204,11 +204,11 @@ void OSystem_PSP::setCursorPalette(const byte *colors, uint start, uint num) {
 	_cursor.clearKeyColor();	// Do we need this?
 }
 
-void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_PSP::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
-	_screen.copyFromRect(buf, pitch, x, y, w, h);
+	_screen.copyFromRect((const byte *)buf, pitch, x, y, w, h);
 }
 
 Graphics::Surface *OSystem_PSP::lockScreen() {
@@ -260,12 +260,12 @@ void OSystem_PSP::clearOverlay() {
 	_overlay.clearBuffer();
 }
 
-void OSystem_PSP::grabOverlay(OverlayColor *buf, int pitch) {
+void OSystem_PSP::grabOverlay(void *buf, int pitch) {
 	DEBUG_ENTER_FUNC();
 	_overlay.copyToArray(buf, pitch);
 }
 
-void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_PSP::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
@@ -303,7 +303,7 @@ void OSystem_PSP::warpMouse(int x, int y) {
 	_cursor.setXY(x, y);
 }
 
-void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	DEBUG_ENTER_FUNC();
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
@@ -314,11 +314,13 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 	}
 
 	_cursor.setKeyColor(keycolor);
-	_cursor.setCursorTargetScale(cursorTargetScale);
+	// TODO: The old target scale was saved but never used. Should the new
+	// "do not scale" logic be implemented?
+	//_cursor.setCursorTargetScale(cursorTargetScale);
 	_cursor.setSizeAndScummvmPixelFormat(w, h, format);
 	_cursor.setHotspot(hotspotX, hotspotY);
 	_cursor.clearKeyColor();
-	_cursor.copyFromArray(buf);
+	_cursor.copyFromArray((const byte *)buf);
 }
 
 bool OSystem_PSP::pollEvent(Common::Event &event) {
@@ -444,6 +446,7 @@ void OSystem_PSP::getTimeAndDate(TimeDate &td) const {
 	td.tm_mday = t.tm_mday;
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
+	td.tm_wday = t.tm_wday;
 }
 
 Common::String OSystem_PSP::getDefaultConfigFileName() {

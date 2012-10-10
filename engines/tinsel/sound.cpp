@@ -75,7 +75,7 @@ SoundManager::~SoundManager() {
 // playSample for DiscWorld 1
 bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
 	// Floppy version has no sample file
-	if (_vm->getFeatures() & GF_FLOPPY)
+	if (!_vm->isCD())
 		return false;
 
 	// no sample driver?
@@ -182,7 +182,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 		Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
 
 	// Floppy version has no sample file
-	if (_vm->getFeatures() & GF_FLOPPY)
+	if (!_vm->isCD())
 		return false;
 
 	// no sample driver?
@@ -471,7 +471,7 @@ void SoundManager::setSFXVolumes(uint8 volume) {
  */
 void SoundManager::openSampleFiles() {
 	// Floppy and demo versions have no sample files, except for the Discworld 2 demo
-	if (_vm->getFeatures() & GF_FLOPPY || (IsDemo && !TinselV2))
+	if (!_vm->isCD() || TinselV0)
 		return;
 
 	TinselFile f;

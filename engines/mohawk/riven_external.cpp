@@ -2059,7 +2059,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	debug(0, "\tHotspot    = %d -> %d", argv[3], hotspotMap[argv[3] - 1]);
 
 	// Just let the video play while we wait until Gehn opens the trap book for us
-	while (_vm->_video->getElapsedTime(video) < startTime && !_vm->shouldQuit()) {
+	while (_vm->_video->getTime(video) < startTime && !_vm->shouldQuit()) {
 		if (_vm->_video->updateMovies())
 			_vm->_system->updateScreen();
 
@@ -2084,7 +2084,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 
 	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
 	// and see what the player will do...
-	while (_vm->_video->getElapsedTime(video) < endTime && !_vm->shouldQuit()) {
+	while (_vm->_video->getTime(video) < endTime && !_vm->shouldQuit()) {
 		bool updateScreen = _vm->_video->updateMovies();
 
 		Common::Event event;

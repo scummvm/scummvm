@@ -248,7 +248,10 @@ void Sound::playSound(int soundID) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
-	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKTAG('S','B','L',' ')) {
+	else if (_vm->_game.platform != Common::kPlatformFMTowns
+	         // The Macintosh m68k versions of MI2/Indy4 just ignore SBL effects.
+	         && !_vm->isMacM68kIMuse()
+	         && READ_BE_UINT32(ptr) == MKTAG('S','B','L',' ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
 
 		// SBL resources essentially contain VOC sound data.
@@ -954,7 +957,7 @@ void Sound::setupSfxFile() {
 
 		if (file.open(tmp))
 			_sfxFilename = tmp;
-	
+
 		if (_vm->_game.heversion <= 74)
 			_sfxFileEncByte = 0x69;
 
@@ -1179,7 +1182,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 			// its sound resources, and Amiga games, which feature only ROL
 			// resources, since we are a doing Midi -> AdLib conversion for
 			// these.
-			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 16 
+			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 16
 				&& pri != 15 && pri != 10 && pri != 2 && _game.platform != Common::kPlatformAmiga)
 				pri = -1;
 

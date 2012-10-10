@@ -27,10 +27,21 @@ namespace Sci {
 
 class GfxPicture;
 
+struct PlaneLineEntry {
+	reg_t hunkId;
+	Common::Point startPoint;
+	Common::Point endPoint;
+	byte color;
+	byte priority;
+	byte control;
+};
+
+typedef Common::List<PlaneLineEntry> PlaneLineList;
+
 struct PlaneEntry {
 	reg_t object;
-	uint16 priority;
-	uint16 lastPriority;
+	int16 priority;
+	int16 lastPriority;
 	int16 planeOffsetX;
 	int16 planeOffsetY;
 	GuiResourceId pictureId;
@@ -40,6 +51,7 @@ struct PlaneEntry {
 	Common::Rect upscaledPlaneClipRect;
 	bool planePictureMirrored;
 	byte planeBack;
+	PlaneLineList lines;
 };
 
 typedef Common::List<PlaneEntry> PlaneList;
@@ -60,6 +72,7 @@ struct FrameoutEntry {
 	GfxPicture *picture;
 	int16 picStartX;
 	int16 picStartY;
+	bool visible;
 };
 
 typedef Common::List<FrameoutEntry *> FrameoutList;
@@ -74,6 +87,15 @@ struct PlanePictureEntry {
 };
 
 typedef Common::List<PlanePictureEntry> PlanePictureList;
+
+struct ScrollTextEntry {
+	reg_t bitmapHandle;
+	reg_t kWindow;
+	uint16 x;
+	uint16 y;
+};
+
+typedef Common::Array<ScrollTextEntry> ScrollTextList;
 
 class GfxCache;
 class GfxCoordAdjuster32;
@@ -102,16 +124,30 @@ public:
 
 	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY = 0);
 	void deletePlanePictures(reg_t object);
+	reg_t addPlaneLine(reg_t object, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control);
+	void updatePlaneLine(reg_t object, reg_t hunkId, Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control);
+	void deletePlaneLine(reg_t object, reg_t hunkId);
 	void clear();
+
+	// Scroll text functions
+	void addScrollTextEntry(Common::String &text, reg_t kWindow, uint16 x, uint16 y, bool replace);
+	void showCurrentScrollText();
+	void initScrollText(uint16 maxItems) { _maxScrollTexts = maxItems; }
+	void clearScrollTexts();
+	void firstScrollText() { if (_scrollTexts.size() > 0) _curScrollText = 0; }
+	void lastScrollText() { if (_scrollTexts.size() > 0) _curScrollText = _scrollTexts.size() - 1; }
+	void prevScrollText() { if (_curScrollText > 0) _curScrollText--; }
+	void nextScrollText() { if (_curScrollText + 1 < (uint16)_scrollTexts.size()) _curScrollText++; }
+	void toggleScrollText(bool show) { _showScrollText = show; }
+
+	void printPlaneList(Console *con);
+	void printPlaneItemList(Console *con, reg_t planeObject);
 
 private:
 	void showVideo();
 	void createPlaneItemList(reg_t planeObject, FrameoutList &itemList);
 	bool isPictureOutOfView(FrameoutEntry *itemEntry, Common::Rect planeRect, int16 planeOffsetX, int16 planeOffsetY);
 	void drawPicture(FrameoutEntry *itemEntry, int16 planeOffsetX, int16 planeOffsetY, bool planePictureMirrored);
-	int16 upscaleHorizontalCoordinate(int16 coordinate);
-	int16 upscaleVerticalCoordinate(int16 coordinate);
-	Common::Rect upscaleRect(Common::Rect &rect);
 
 	SegManager *_segMan;
 	ResourceManager *_resMan;
@@ -124,11 +160,12 @@ private:
 	FrameoutList _screenItems;
 	PlaneList _planes;
 	PlanePictureList _planePictures;
+	ScrollTextList _scrollTexts;
+	int16 _curScrollText;
+	bool _showScrollText;
+	uint16 _maxScrollTexts;
 
 	void sortPlanes();
-
-	uint16 _scriptsRunningWidth;
-	uint16 _scriptsRunningHeight;
 };
 
 } // End of namespace Sci

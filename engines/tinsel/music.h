@@ -64,7 +64,7 @@ public:
 
 	virtual void setVolume(int volume);
 
-	void playXMIDI(byte *midiData, uint32 size, bool loop);
+	void playMIDI(uint32 size, bool loop);
 
 //	void stop();
 	void pause();
@@ -76,6 +76,10 @@ public:
 	// The original sets the "sequence timing" to 109 Hz, whatever that
 	// means. The default is 120.
 	uint32 getBaseTempo()	{ return _driver ? (109 * _driver->getBaseTempo()) / 120 : 0; }
+
+private:
+	void playXMIDI(uint32 size, bool loop);
+	void playSEQ(uint32 size, bool loop);
 };
 
 class PCMMusicPlayer : public Audio::AudioStream {

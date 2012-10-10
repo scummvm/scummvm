@@ -219,7 +219,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 			}
 		}
 		itemEntry->textVmPtr = contentVmPtr;
-		itemEntry->textVmPtr.offset += beginPos;
+		itemEntry->textVmPtr.incOffset(beginPos);
 
 		if (rightAlignedPos) {
 			rightAlignedPos++;
@@ -297,13 +297,13 @@ void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeI
 		// We assume here that no script ever creates a separatorLine dynamically
 		break;
 	case SCI_MENU_ATTRIBUTE_KEYPRESS:
-		itemEntry->keyPress = tolower(value.offset);
+		itemEntry->keyPress = tolower(value.getOffset());
 		itemEntry->keyModifier = 0;
 		// TODO: Find out how modifier is handled
-		debug("setAttr keypress %X %X", value.segment, value.offset);
+		debug("setAttr keypress %X %X", value.getSegment(), value.getOffset());
 		break;
 	case SCI_MENU_ATTRIBUTE_TAG:
-		itemEntry->tag = value.offset;
+		itemEntry->tag = value.getOffset();
 		break;
 	default:
 		// Happens when loading a game in LSL3 - attribute 1A

@@ -88,6 +88,12 @@ void SciMusic::init() {
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
+	if (g_sci->_features->useAltWinGMSound() && _musicType != MT_GM) {
+		warning("A Windows CD version with an alternate MIDI soundtrack has been chosen, "
+				"but no MIDI music device has been selected. Reverting to the DOS soundtrack");
+		g_sci->_features->forceDOSTracks();
+	}
+
 	switch (_musicType) {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
@@ -119,7 +125,13 @@ void SciMusic::init() {
 		_pMidiDrv->setTimerCallback(this, &miditimerCallback);
 		_dwTempo = _pMidiDrv->getBaseTempo();
 	} else {
-		error("Failed to initialize sound driver");
+		if (g_sci->getGameId() == GID_FUNSEEKER) {
+			// HACK: The Fun Seeker's Guide demo doesn't have patch 3 and the version
+			// of the Adlib driver (adl.drv) that it includes is unsupported. That demo
+			// doesn't have any sound anyway, so this shouldn't be fatal.
+		} else {
+			error("Failed to initialize sound driver");
+		}
 	}
 
 	// Find out what the first possible channel is (used, when doing channel

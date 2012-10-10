@@ -205,7 +205,7 @@ void Globals::dispatchSounds() {
 
 void TsAGE2Globals::reset() {
 	Globals::reset();
-	
+
 	// Reset the inventory
 	T2_GLOBALS._uiElements.updateInventory();
 	T2_GLOBALS._uiElements._scoreValue = 0;
@@ -247,7 +247,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	for (int i = 0; i < 18; i++)
 		s.syncAsByte(_breakerBoxStatusArr[i]);
 	s.syncAsSint16LE(_hiddenDoorStatus);
-	s.syncAsSint16LE(_v4CEE2);
+	s.syncAsSint16LE(_nico910State);
 	s.syncAsSint16LE(_v4CEE4);
 	s.syncAsSint16LE(_v4CEE6);
 	s.syncAsSint16LE(_v4CEE8);
@@ -277,7 +277,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 void BlueForceGlobals::reset() {
 	TsAGE2Globals::reset();
 	_scenePalette.clearListeners();
-	
+
 	_scrollFollower = &_player;
 	_bookmark = bNone;
 
@@ -320,7 +320,7 @@ void BlueForceGlobals::reset() {
 	_breakerBoxStatusArr[16] = 3;
 	_breakerBoxStatusArr[17] = 0;
 	_hiddenDoorStatus = 0;
-	_v4CEE2 = 0;
+	_nico910State = 0;
 	_v4CEE4 = 0;
 	_v4CEE6 = 0;
 	_v4CEE8 = 0;
@@ -368,7 +368,7 @@ namespace Ringworld2 {
 
 void Ringworld2Globals::reset() {
 	Globals::reset();
-	
+
 	// Reset the inventory
 	R2_INVENTORY.reset();
 	T2_GLOBALS._uiElements.updateInventory();
@@ -526,7 +526,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 
 	for (i = 0; i < MAX_CHARACTERS; ++i)
 		s.syncAsByte(_v565F1[i]);
-	
+
 	s.syncAsByte(_v565AE);
 	s.syncAsByte(_v566A4);
 	s.syncAsByte(_v566A5);

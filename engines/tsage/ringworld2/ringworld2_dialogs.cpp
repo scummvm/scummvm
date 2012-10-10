@@ -85,7 +85,7 @@ RightClickDialog::~RightClickDialog() {
 
 void RightClickDialog::draw() {
 	// Save the covered background area
-	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
+	_savedArea = surfaceGetArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
 
 	// Draw the dialog image
 	g_globals->gfxManager().copyFrom(_surface, _bounds.left, _bounds.top);

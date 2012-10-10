@@ -14,6 +14,7 @@ IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
 
 ID_GDF_XML             DATA    "dists/win32/scummvm.gdf.xml"
 
+scummclassic.zip       FILE    "gui/themes/scummclassic.zip"
 scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
@@ -43,13 +44,16 @@ teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
 #if ENABLE_TOON      == STATIC_PLUGIN
 toon.dat               FILE    "dists/engine-data/toon.dat"
 #endif
+#if ENABLE_TONY      == STATIC_PLUGIN
+tony.dat               FILE    "dists/engine-data/tony.dat"
+#endif
 #if ENABLE_AGI       == STATIC_PLUGIN
 pred.dic               FILE    "dists/pred.dic"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION     1,5,0,0
- PRODUCTVERSION  1,5,0,0
+ FILEVERSION     1,6,0,0
+ PRODUCTVERSION  1,6,0,0
  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
  FILEFLAGS       VS_FF_DEBUG
@@ -66,13 +70,13 @@ BEGIN
         BEGIN
             VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
             VALUE "FileDescription", "http://www.scummvm.org/\0"
-            VALUE "FileVersion", "1.5.0git\0"
+            VALUE "FileVersion", "1.6.0git\0"
             VALUE "InternalName", "scummvm\0"
             VALUE "LegalCopyright", "Copyright © 2001-2012 The ScummVM Team\0"
             VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky and Broken Sword are a TM of Revolution. Flight of the Amazon Queen is a TM of John Passfield and Steve Stamatiadis. \0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "ProductName", "ScummVM\0"
-            VALUE "ProductVersion", "1.5.0git\0"
+            VALUE "ProductVersion", "1.6.0git\0"
         END
     END
 

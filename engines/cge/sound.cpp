@@ -91,6 +91,12 @@ void Sound::sndDigiStart(SmpInfo *PSmpInfo) {
 	// Start the new sound
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle,
 		Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
+
+	// CGE pan:
+	// 8 = Center
+	// Less = Left
+	// More = Right
+	_vm->_mixer->setChannelBalance(_soundHandle, (int8)CLIP(((PSmpInfo->_span - 8) * 16), -127, 127));
 }
 
 void Sound::stop() {

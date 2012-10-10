@@ -63,7 +63,7 @@ int16 Text::count() {
 
 	Common::String line;
 	char tmpStr[kLineMax + 1];
-	
+
 	int counter = 0;
 
 	for (line = tf.readLine(); !tf.eos(); line = tf.readLine()) {

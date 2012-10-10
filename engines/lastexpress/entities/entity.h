@@ -41,10 +41,229 @@ class Sequence;
 class SequenceFrame;
 struct SavePoint;
 
+//////////////////////////////////////////////////////////////////////////
+// Declaration
+//////////////////////////////////////////////////////////////////////////
+#define DECLARE_FUNCTION(name) \
+	void setup_##name(); \
+	void name(const SavePoint &savepoint);
+
+#define DECLARE_FUNCTION_1(name, param1) \
+	void setup_##name(param1); \
+	void name(const SavePoint &savepoint);
+
+#define DECLARE_FUNCTION_2(name, param1, param2) \
+	void setup_##name(param1, param2); \
+	void name(const SavePoint &savepoint);
+
+#define DECLARE_FUNCTION_3(name, param1, param2, param3) \
+	void setup_##name(param1, param2, param3); \
+	void name(const SavePoint &savepoint);
+
+#define DECLARE_FUNCTION_4(name, param1, param2, param3, param4) \
+	void setup_##name(param1, param2, param3, param4); \
+	void name(const SavePoint &savepoint);
+
+#define DECLARE_FUNCTION_NOSETUP(name) \
+	void name(const SavePoint &savepoint);
+
+#define DECLARE_NULL_FUNCTION() \
+	void setup_nullfunction();
+
+//////////////////////////////////////////////////////////////////////////
+// Callbacks
+//////////////////////////////////////////////////////////////////////////
+#define ENTITY_CALLBACK(class, name, pointer) \
+	Common::Functor1Mem<const SavePoint&, void, class>(pointer, &class::name)
+
+#define ADD_CALLBACK_FUNCTION(class, name) \
+	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this));
+
+#define ADD_NULL_FUNCTION() \
+	_callbacks.push_back(new ENTITY_CALLBACK(Entity, nullfunction, this));
+
+#define WRAP_SETUP_FUNCTION(className, method) \
+	new Common::Functor0Mem<void, className>(this, &className::method)
+
+#define WRAP_SETUP_FUNCTION_S(className, method) \
+	new Common::Functor1Mem<const char *, void, className>(this, &className::method)
+
+#define WRAP_SETUP_FUNCTION_B(className, method) \
+	new Common::Functor1Mem<bool, void, className>(this, &className::method)
+
+//////////////////////////////////////////////////////////////////////////
+// Parameters macros
+//////////////////////////////////////////////////////////////////////////
+#define CURRENT_PARAM(index, id) \
+	((EntityData::EntityParametersIIII*)_data->getCurrentParameters(index))->param##id
+
+#define ENTITY_PARAM(index, id) \
+	((EntityData::EntityParametersIIII*)_data->getParameters(8, index))->param##id
+
+//////////////////////////////////////////////////////////////////////////
+// Misc
+//////////////////////////////////////////////////////////////////////////
+#define RESET_ENTITY_STATE(entity, class, function) \
+	getEntities()->resetState(entity); \
+	((class *)getEntities()->get(entity))->function();
+
+//////////////////////////////////////////////////////////////////////////
+// Implementation
+//////////////////////////////////////////////////////////////////////////
+
+// Expose parameters and check validity
+#define EXPOSE_PARAMS(type) \
+	type *params = (type *)_data->getCurrentParameters(); \
+	if (!params) \
+		error("[EXPOSE_PARAMS] Trying to call an entity function with invalid parameters"); \
+
+// function signature without setup (we keep the index for consistency but never use it)
+#define IMPLEMENT_FUNCTION_NOSETUP(index, class, name) \
+	void class::name(const SavePoint &savepoint) { \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(index=" #index ")");
+
+// simple setup with no parameters
+#define IMPLEMENT_FUNCTION(index, class, name) \
+	void class::setup_##name() { \
+		Entity::setup(#class "::setup_" #name, index); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "() - action: %s", ACTION_NAME(savepoint.action));
+
+#define IMPLEMENT_FUNCTION_END }
+
+// nullfunction call
+#define IMPLEMENT_NULL_FUNCTION(index, class) \
+	void class::setup_nullfunction() { \
+		Entity::setup(#class "::setup_nullfunction", index); \
+	}
+
+// setup with one uint parameter
+#define IMPLEMENT_FUNCTION_I(index, class, name, paramType) \
+	void class::setup_##name(paramType param1) { \
+		Entity::setupI(#class "::setup_" #name, index, param1); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%d) - action: %s", params->param1, ACTION_NAME(savepoint.action));
+
+// setup with two uint parameters
+#define IMPLEMENT_FUNCTION_II(index, class, name, paramType1, paramType2) \
+	void class::setup_##name(paramType1 param1, paramType2 param2) { \
+		Entity::setupII(#class "::setup_" #name, index, param1, param2); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%d, %d) - action: %s", params->param1, params->param2, ACTION_NAME(savepoint.action));
+
+// setup with three uint parameters
+#define IMPLEMENT_FUNCTION_III(index, class, name, paramType1, paramType2, paramType3) \
+	void class::setup_##name(paramType1 param1, paramType2 param2, paramType3 param3) { \
+		Entity::setupIII(#class "::setup_" #name, index, param1, param2, param3); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%d, %d, %d) - action: %s", params->param1, params->param2, params->param3, ACTION_NAME(savepoint.action));
+
+// setup with one char *parameter
+#define IMPLEMENT_FUNCTION_S(index, class, name) \
+	void class::setup_##name(const char *seq1) { \
+		Entity::setupS(#class "::setup_" #name, index, seq1); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersSIIS) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s) - action: %s", (char *)&params->seq1, ACTION_NAME(savepoint.action));
+
+// setup with one char *parameter and one uint
+#define IMPLEMENT_FUNCTION_SI(index, class, name, paramType2) \
+	void class::setup_##name(const char *seq1, paramType2 param4) { \
+		Entity::setupSI(#class "::setup_" #name, index, seq1, param4); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersSIIS) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s, %d) - action: %s", (char *)&params->seq1, params->param4, ACTION_NAME(savepoint.action));
+
+// setup with one char *parameter and two uints
+#define IMPLEMENT_FUNCTION_SII(index, class, name, paramType2, paramType3) \
+	void class::setup_##name(const char *seq1, paramType2 param4, paramType3 param5) { \
+		Entity::setupSII(#class "::setup_" #name, index, seq1, param4, param5); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersSIIS) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s, %d, %d) - action: %s", (char *)&params->seq1, params->param4, params->param5, ACTION_NAME(savepoint.action));
+
+// setup with one char *parameter and three uints
+#define IMPLEMENT_FUNCTION_SIII(index, class, name, paramType2, paramType3, paramType4) \
+	void class::setup_##name(const char *seq, paramType2 param4, paramType3 param5, paramType4 param6) { \
+		Entity::setupSIII(#class "::setup_" #name, index, seq, param4, param5, param6); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersSIII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s, %d, %d, %d) - action: %s", (char *)&params->seq, params->param4, params->param5, params->param6, ACTION_NAME(savepoint.action));
+
+#define IMPLEMENT_FUNCTION_SIIS(index, class, name, paramType2, paramType3) \
+	void class::setup_##name(const char *seq1, paramType2 param4, paramType3 param5, const char *seq2) { \
+		Entity::setupSIIS(#class "::setup_" #name, index, seq1, param4, param5, seq2); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersSIIS) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s, %d, %d, %s) - action: %s", (char *)&params->seq1, params->param4, params->param5, (char *)&params->seq2, ACTION_NAME(savepoint.action));
+
+#define IMPLEMENT_FUNCTION_SS(index, class, name) \
+	void class::setup_##name(const char *seq1, const char *seq2) { \
+		Entity::setupSS(#class "::setup_" #name, index, seq1, seq2); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersSSII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s, %s) - action: %s", (char *)&params->seq1, (char *)&params->seq2, ACTION_NAME(savepoint.action));
+
+#define IMPLEMENT_FUNCTION_SSI(index, class, name, paramType3) \
+	void class::setup_##name(const char *seq1, const char *seq2, paramType3 param7) { \
+		Entity::setupSSI(#class "::setup_" #name, index, seq1, seq2, param7); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersSSII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s, %s, %d) - action: %s", (char *)&params->seq1, (char *)&params->seq2, params->param7, ACTION_NAME(savepoint.action));
+
+#define IMPLEMENT_FUNCTION_IS(index, class, name, paramType) \
+	void class::setup_##name(paramType param1, const char *seq) { \
+		Entity::setupIS(#class "::setup_" #name, index, param1, seq); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersISII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%d, %s) - action: %s", params->param1, (char *)&params->seq, ACTION_NAME(savepoint.action));
+
+#define IMPLEMENT_FUNCTION_ISS(index, class, name, paramType) \
+	void class::setup_##name(paramType param1, const char *seq1, const char *seq2) { \
+		Entity::setupISS(#class "::setup_" #name, index, param1, seq1, seq2); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersISSI) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%d, %s, %s) - action: %s", params->param1, (char *)&params->seq1, (char *)&params->seq2, ACTION_NAME(savepoint.action));
+
+#define IMPLEMENT_FUNCTION_IIS(index, class, name, paramType1, paramType2) \
+	void class::setup_##name(paramType1 param1, paramType2 param2, const char *seq) { \
+		Entity::setupIIS(#class "::setup_" #name, index, param1, param2, seq); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersIISI) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%d, %d, %s) - action: %s", params->param1, params->param2, (char *)&params->seq, ACTION_NAME(savepoint.action));
+
+#define IMPLEMENT_FUNCTION_IISS(index, class, name, paramType1, paramType2) \
+	void class::setup_##name(paramType1 param1, paramType2 param2, const char *seq1, const char *seq2) { \
+		Entity::setupIISS(#class "::setup_" #name, index, param1, param2, seq1, seq2); \
+	} \
+	void class::name(const SavePoint &savepoint) { \
+		EXPOSE_PARAMS(EntityData::EntityParametersIISS) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%d, %d, %s, %s) - action: %s", params->param1, params->param2, (char *)&params->seq1, (char *)&params->seq2, ACTION_NAME(savepoint.action));
+
+
+//////////////////////////////////////////////////////////////////////////
 class EntityData : Common::Serializable {
 public:
 
-	struct EntityParameters : Common::Serializable{
+	struct EntityParameters : Common::Serializable {
 		virtual ~EntityParameters() {}
 		virtual Common::String toString() = 0;
 
@@ -596,6 +815,15 @@ public:
 			return str;
 		}
 
+		/**
+		 * Synchronizes a string.
+		 *
+		 * @param	s	  	The Common::Serializer to use.
+		 * @param	string	The string.
+		 * @param	length	Length of the string.
+		 */
+		void syncString(Common::Serializer &s, Common::String &string, uint length) const;
+
 		// Serializable
 		void saveLoadWithSerializer(Common::Serializer &s);
 	};
@@ -611,32 +839,30 @@ public:
 			params->parameters[i] = new T();
 	}
 
-	EntityCallData 	  *getCallData() { return &_data; }
+	EntityCallData       *getCallData() { return &_data; }
 
-	EntityParameters  *getParameters(uint callback, byte index) const;
-	EntityParameters  *getCurrentParameters(byte index = 0) { return getParameters(_data.currentCall, index); }
+	EntityParameters     *getParameters(uint callback, byte index) const;
+	EntityParameters     *getCurrentParameters(byte index = 0) { return getParameters(_data.currentCall, index); }
+	EntityCallParameters *getCurrentCallParameters() { return &_parameters[_data.currentCall]; }
 
-	int 			   getCallback(uint callback) const;
-	int				   getCurrentCallback() { return getCallback(_data.currentCall); }
-	void 			   setCallback(uint callback, byte index);
-	void 			   setCurrentCallback(uint index) { setCallback(_data.currentCall, index); }
+	byte                  getCallback(uint callback) const;
+	byte                  getCurrentCallback() { return getCallback(_data.currentCall); }
+	void                  setCallback(uint callback, byte index);
+	void                  setCurrentCallback(uint index) { setCallback(_data.currentCall, index); }
 
-	void               updateParameters(uint32 index) const;
+	void                  updateParameters(uint32 index) const;
 
 	// Serializable
-	void 			   saveLoadWithSerializer(Common::Serializer &ser);
+	void                  saveLoadWithSerializer(Common::Serializer &ser);
 
 private:
 
-	EntityCallData 		 _data;
+	EntityCallData       _data;
 	EntityCallParameters _parameters[9];
 };
 
 class Entity : Common::Serializable {
 public:
-
-	typedef Common::Functor1<const SavePoint&, void> Callback;
-
 	Entity(LastExpressEngine *engine, EntityIndex index);
 	virtual ~Entity();
 
@@ -657,6 +883,12 @@ public:
 	virtual void setup_chapter4() = 0;
 	virtual void setup_chapter5() = 0;
 
+	// Shared functions
+	virtual void setup_savegame(SavegameType, uint32) { error("[Entity::setup_savegame] Trying to call the parent setup function. Use the specific entity function directly"); }
+	virtual void setup_enterExitCompartment(const char *, ObjectIndex) { error("[Entity::setup_enterExitCompartment] Trying to call the parent setup function. Use the specific entity function directly"); }
+	virtual void setup_updateEntity(CarIndex, EntityPosition) { error("[Entity::setup_updateEntity] Trying to call the parent setup function. Use the specific entity function directly"); }
+	virtual void setup_playSound(const char*) { error("[Entity::setup_playSound] Trying to call the parent setup function. Use the specific entity function directly"); }
+
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser) { _data->saveLoadWithSerializer(ser); }
 
@@ -664,10 +896,11 @@ public:
 
 protected:
 	LastExpressEngine *_engine;
+	typedef Common::Functor1<const SavePoint&, void> Callback;
 
-	EntityIndex				  _entityIndex;
-	EntityData 				 *_data;
-	Common::Array<Callback *> _callbacks;
+	EntityIndex                _entityIndex;
+	EntityData                *_data;
+	Common::Array<Callback *>  _callbacks;
 
 	/**
 	 * Saves the game
@@ -677,6 +910,13 @@ protected:
 	 *                   - EventIndex
 	 */
 	void savegame(const SavePoint &savepoint);
+
+	/**
+	 * Saves the game before being found out with a blood covered jacket.
+	 *
+	 * @param	saveFunction	The setup function to call to save the game
+	 */
+	void savegameBloodJacket();
 
 	/**
 	 * Play sound
@@ -782,15 +1022,83 @@ protected:
 	void enterExitCompartment(const SavePoint &savepoint, EntityPosition position1 = kPositionNone, EntityPosition position2 = kPositionNone, CarIndex car = kCarNone, ObjectIndex compartment = kObjectNone, bool alternate = false, bool updateLocation = false);
 
 	/**
+	 * Go to compartment.
+	 *
+	 * @param	savepoint			 	The savepoint.
+	 * @param	compartmentFrom		 	The compartment from.
+	 * @param	positionFrom		 	The position from.
+	 * @param	sequenceFrom		 	The sequence from.
+	 * @param	sequenceTo			 	The sequence to.
+	 */
+	void goToCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, Common::String sequenceTo);
+
+	/**
+	 * Go to compartment from compartment.
+	 *
+	 * @param	savepoint			  	The savepoint.
+	 * @param	compartmentFrom		  	The compartment from.
+	 * @param	positionFrom		  	The position from.
+	 * @param	sequenceFrom		  	The sequence from.
+	 * @param	compartmentTo		  	The compartment to.
+	 * @param	positionTo			  	The position to.
+	 * @param	sequenceTo			  	The sequence to.
+	 */
+	void goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo);
+
+	/**
 	 * Updates the position
 	 *
-	 * @param savepoint 	 The savepoint
+	 * @param savepoint       The savepoint
 	 *                        - Sequence name
 	 *                        - CarIndex
 	 *                        - Position
 	 * @param handleExcuseMe true to handle excuseMe actions
 	 */
 	void updatePosition(const SavePoint &savepoint, bool handleExcuseMe = false);
+
+	/**
+	 * Store the current callback information and perform the callback action
+	 */
+	void callbackAction();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Setup functions
+	//////////////////////////////////////////////////////////////////////////
+	void setup(const char *name, uint index);
+	void setupI(const char *name, uint index, uint param1);
+	void setupII(const char *name, uint index, uint param1, uint param2);
+	void setupIII(const char *name, uint index, uint param1, uint param2, uint param3);
+	void setupS(const char *name, uint index, const char *seq1);
+	void setupSS(const char *name, uint index, const char *seq1, const char *seq2);
+	void setupSI(const char *name, uint index, const char *seq1, uint param4);
+	void setupSII(const char *name, uint index, const char *seq1, uint param4, uint param5);
+	void setupSIII(const char *name, uint index, const char *seq, uint param4, uint param5, uint param6);
+	void setupSIIS(const char *name, uint index, const char *seq1, uint param4, uint param5, const char *seq2);
+	void setupSSI(const char *name, uint index, const char *seq1, const char *seq2, uint param7);
+	void setupIS(const char *name, uint index, uint param1, const char *seq);
+	void setupISS(const char *name, uint index, uint param1, const char *seq1, const char *seq2);
+	void setupIIS(const char *name, uint index, uint param1, uint param2, const char *seq);
+	void setupIISS(const char *name, uint index, uint param1, uint param2, const char *seq1, const char *seq2);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helper functions
+	//////////////////////////////////////////////////////////////////////////
+
+	bool updateParameter(uint &parameter, uint timeType, uint delta) const;
+	bool updateParameterCheck(uint &parameter, uint timeType, uint delta) const;
+	bool updateParameterTime(TimeValue timeValue, bool check, uint &parameter, uint delta) const;
+
+	bool timeCheck(TimeValue timeValue, uint &parameter, Common::Functor0<void> *function) const;
+	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
+	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, const char *str, Common::Functor1<const char *, void> *function);
+	bool timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, bool check, Common::Functor1<bool, void> *function);
+	bool timeCheckCallbackInventory(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
+	bool timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
+	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) const;
+	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectLocation location) const;
+	bool timeCheckCallbackAction(TimeValue timeValue, uint &parameter);
+	bool timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &parameter, byte callback, const char* sound, EntityPosition position);
+
 };
 
 

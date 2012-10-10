@@ -958,10 +958,9 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	l->hitPoints = stackPos(26);
 	l->speedTotalWaitTicks = 1;
 	l->flags = stackPos(27);
-	l->unk5 = stackPos(28);
-	// FIXME???
+	// This is what the original does here (setting the value first to stackPos(28) and then to stackPos(29):
+	//l->unk5 = stackPos(28);
 	l->unk5 = stackPos(29);
-	//
 
 	l->numDistAttacks = stackPos(30);
 	l->numDistWeapons = stackPos(31);

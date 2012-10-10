@@ -49,7 +49,7 @@ bool TimerSlot::OnStart() {
 		AppLog("failed to start timer");
 		return false;
 	}
-	
+
 	AppLog("started timer %d", _interval);
 	return true;
 }
@@ -57,7 +57,7 @@ bool TimerSlot::OnStart() {
 void TimerSlot::OnStop() {
 	AppLog("timer stopped");
 	if (_timer) {
-		_timer->Cancel();		 
+		_timer->Cancel();
 		delete _timer;
 		_timer = NULL;
 	}

@@ -137,6 +137,20 @@ struct Surface {
 	/**
 	 * Convert the data to another pixel format.
 	 *
+	 * This works in-place. This means it will not create an additional buffer
+	 * for the conversion process. The value of pixels might change though.
+	 *
+	 * Note that you should only use this, when you created the Surface data via
+	 * create! Otherwise this function has undefined behavior.
+	 *
+	 * @param dstFormat The desired format
+	 * @param palette   The palette (in RGB888), if the source format has a Bpp of 1
+	 */
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = 0);
+
+	/**
+	 * Convert the data to another pixel format.
+	 *
 	 * The calling code must call free on the returned surface and then delete
 	 * it.
 	 *
@@ -153,8 +167,24 @@ struct Surface {
 	 * @param x1 The x coordinate of the end point.
 	 * @param y1 The y coordinate of the end point.
 	 * @param color The color of the line.
+	 * @note This is just a wrapper around Graphics::drawLine
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
+
+	/**
+	 * Draw a thick line.
+	 *
+	 * @param x0 The x coordinate of the start point.
+	 * @param y0 The y coordiante of the start point.
+	 * @param x1 The x coordinate of the end point.
+	 * @param y1 The y coordinate of the end point.
+	 * @param penX The width of the pen (thickness in the x direction)
+	 * @param penY The height of the pen (thickness in the y direction)
+	 * @param color The color of the line.
+	 * @note This is just a wrapper around Graphics::drawThickLine
+	 * @note The x/y coordinates of the start and end points are the upper-left most part of the pen
+	 */
+	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color);
 
 	/**
 	 * Draw a horizontal line.

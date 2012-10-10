@@ -234,6 +234,23 @@ void VideoPlayer::closeAll() {
 		closeVideo(i);
 }
 
+bool VideoPlayer::reopenVideo(int slot) {
+	Video *video = getVideoBySlot(slot);
+	if (!video)
+		return true;
+
+	return reopenVideo(*video);
+}
+
+bool VideoPlayer::reopenAll() {
+	bool all = true;
+	for (int i = 0; i < kVideoSlotCount; i++)
+		if (!reopenVideo(i))
+			all = false;
+
+	return all;
+}
+
 void VideoPlayer::pauseVideo(int slot, bool pause) {
 	Video *video = getVideoBySlot(slot);
 	if (!video || !video->decoder)
@@ -848,6 +865,39 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 	properties.height = video->getHeight();
 
 	return video;
+}
+
+bool VideoPlayer::reopenVideo(Video &video) {
+	if (video.isEmpty())
+		return true;
+
+	if (video.fileName.empty()) {
+		video.close();
+		return false;
+	}
+
+	Properties properties;
+
+	properties.type = video.properties.type;
+
+	Common::String fileName = findFile(video.fileName, properties);
+	if (fileName.empty()) {
+		video.close();
+		return false;
+	}
+
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fileName);
+	if (!stream) {
+		video.close();
+		return false;
+	}
+
+	if (!video.decoder->reloadStream(stream)) {
+		delete stream;
+		return false;
+	}
+
+	return true;
 }
 
 void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) {

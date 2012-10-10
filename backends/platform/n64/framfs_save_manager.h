@@ -100,10 +100,10 @@ public:
 class FRAMSaveManager : public Common::SaveFileManager {
 public:
 
-	virtual Common::OutSaveFile *openForSaving(const Common::String &filename) {
+	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) {
 		OutFRAMSave *s = new OutFRAMSave(filename.c_str());
 		if (!s->err()) {
-			return Common::wrapCompressedWriteStream(s);
+			return compress ? Common::wrapCompressedWriteStream(s) : s;
 		} else {
 			delete s;
 			return 0;

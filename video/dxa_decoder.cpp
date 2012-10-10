@@ -37,28 +37,6 @@
 namespace Video {
 
 DXADecoder::DXADecoder() {
-	_fileStream = 0;
-	_surface = 0;
-	_dirtyPalette = false;
-
-	_frameBuffer1 = 0;
-	_frameBuffer2 = 0;
-	_scaledBuffer = 0;
-
-	_inBuffer = 0;
-	_inBufferSize = 0;
-
-	_decompBuffer = 0;
-	_decompBufferSize = 0;
-
-	_width = 0;
-	_height = 0;
-
-	_frameSize = 0;
-	_frameCount = 0;
-	_frameRate = 0;
-
-	_scaleMode = S_NONE;
 }
 
 DXADecoder::~DXADecoder() {
@@ -68,10 +46,34 @@ DXADecoder::~DXADecoder() {
 bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	_fileStream = stream;
+	uint32 tag = stream->readUint32BE();
 
-	uint32 tag = _fileStream->readUint32BE();
-	assert(tag == MKTAG('D','E','X','A'));
+	if (tag != MKTAG('D','E','X','A')) {
+		close();
+		return false;
+	}
+
+	DXAVideoTrack *track = new DXAVideoTrack(stream);
+	addTrack(track);
+
+	readSoundData(stream);
+
+	track->setFrameStartPos();
+	return true;
+}
+
+void DXADecoder::readSoundData(Common::SeekableReadStream *stream) {
+	// Skip over the tag by default
+	stream->readUint32BE();
+}
+
+DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) {
+	_fileStream = stream;
+	_curFrame = -1;
+	_frameStartOffset = 0;
+	_decompBuffer = 0;
+	_inBuffer = 0;
+	memset(_palette, 0, 256 * 3);
 
 	uint8 flags = _fileStream->readByte();
 	_frameCount = _fileStream->readUint16BE();
@@ -105,18 +107,14 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_frameSize = _width * _height;
 	_decompBufferSize = _frameSize;
-	_frameBuffer1 = (uint8 *)malloc(_frameSize);
+	_frameBuffer1 = new byte[_frameSize];
 	memset(_frameBuffer1, 0, _frameSize);
-	_frameBuffer2 = (uint8 *)malloc(_frameSize);
+	_frameBuffer2 = new byte[_frameSize];
 	memset(_frameBuffer2, 0, _frameSize);
-	if (!_frameBuffer1 || !_frameBuffer2)
-		error("DXADecoder: Error allocating frame buffers (size %u)", _frameSize);
 
 	_scaledBuffer = 0;
 	if (_scaleMode != S_NONE) {
-		_scaledBuffer = (uint8 *)malloc(_frameSize);
-		if (!_scaledBuffer)
-			error("Error allocating scale buffer (size %u)", _frameSize);
+		_scaledBuffer = new byte[_frameSize];
 		memset(_scaledBuffer, 0, _frameSize);
 	}
 
@@ -148,36 +146,33 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 		} while (tag != 0);
 	}
 #endif
+}
 
-	// Read the sound header
-	_soundTag = _fileStream->readUint32BE();
+DXADecoder::DXAVideoTrack::~DXAVideoTrack() {
+	delete _fileStream;
+	delete _surface;
+	delete[] _frameBuffer1;
+	delete[] _frameBuffer2;
+	delete[] _scaledBuffer;
+	delete[] _inBuffer;
+	delete[] _decompBuffer;
+}
 
+bool DXADecoder::DXAVideoTrack::rewind() {
+	_curFrame = -1;
+	_fileStream->seek(_frameStartOffset);
 	return true;
 }
 
-void DXADecoder::close() {
-	if (!_fileStream)
-		return;
-
-	delete _fileStream;
-	_fileStream = 0;
-
-	delete _surface;
-	_surface = 0;
-
-	free(_frameBuffer1);
-	free(_frameBuffer2);
-	free(_scaledBuffer);
-	free(_inBuffer);
-	free(_decompBuffer);
-
-	_inBuffer = 0;
-	_decompBuffer = 0;
-
-	reset();
+Graphics::PixelFormat DXADecoder::DXAVideoTrack::getPixelFormat() const {
+	return _surface->format;
 }
 
-void DXADecoder::decodeZlib(byte *data, int size, int totalSize) {
+void DXADecoder::DXAVideoTrack::setFrameStartPos() {
+	_frameStartOffset = _fileStream->pos();
+}
+
+void DXADecoder::DXAVideoTrack::decodeZlib(byte *data, int size, int totalSize) {
 #ifdef USE_ZLIB
 	unsigned long dstLen = totalSize;
 	Common::uncompress(data, &dstLen, _inBuffer, size);
@@ -187,14 +182,13 @@ void DXADecoder::decodeZlib(byte *data, int size, int totalSize) {
 #define BLOCKW 4
 #define BLOCKH 4
 
-void DXADecoder::decode12(int size) {
+void DXADecoder::DXAVideoTrack::decode12(int size) {
 #ifdef USE_ZLIB
-	if (_decompBuffer == NULL) {
-		_decompBuffer = (byte *)malloc(_decompBufferSize);
+	if (!_decompBuffer) {
+		_decompBuffer = new byte[_decompBufferSize];
 		memset(_decompBuffer, 0, _decompBufferSize);
-		if (_decompBuffer == NULL)
-			error("Error allocating decomp buffer (size %u)", _decompBufferSize);
 	}
+
 	/* decompress the input data */
 	decodeZlib(_decompBuffer, size, _decompBufferSize);
 
@@ -287,15 +281,13 @@ void DXADecoder::decode12(int size) {
 #endif
 }
 
-void DXADecoder::decode13(int size) {
+void DXADecoder::DXAVideoTrack::decode13(int size) {
 #ifdef USE_ZLIB
 	uint8 *codeBuf, *dataBuf, *motBuf, *maskBuf;
 
-	if (_decompBuffer == NULL) {
-		_decompBuffer = (byte *)malloc(_decompBufferSize);
+	if (!_decompBuffer) {
+		_decompBuffer = new byte[_decompBufferSize];
 		memset(_decompBuffer, 0, _decompBufferSize);
-		if (_decompBuffer == NULL)
-			error("Error allocating decomp buffer (size %u)", _decompBufferSize);
 	}
 
 	/* decompress the input data */
@@ -475,7 +467,7 @@ void DXADecoder::decode13(int size) {
 #endif
 }
 
-const Graphics::Surface *DXADecoder::decodeNextFrame() {
+const Graphics::Surface *DXADecoder::DXAVideoTrack::decodeNextFrame() {
 	uint32 tag = _fileStream->readUint32BE();
 	if (tag == MKTAG('C','M','A','P')) {
 		_fileStream->read(_palette, 256 * 3);
@@ -486,11 +478,10 @@ const Graphics::Surface *DXADecoder::decodeNextFrame() {
 	if (tag == MKTAG('F','R','A','M')) {
 		byte type = _fileStream->readByte();
 		uint32 size = _fileStream->readUint32BE();
-		if ((_inBuffer == NULL) || (_inBufferSize < size)) {
-			free(_inBuffer);
-			_inBuffer = (byte *)malloc(size);
-			if (_inBuffer == NULL)
-				error("Error allocating input buffer (size %u)", size);
+
+		if (!_inBuffer || _inBufferSize < size) {
+			delete[] _inBuffer;
+			_inBuffer = new byte[size];
 			memset(_inBuffer, 0, size);
 			_inBufferSize = size;
 		}
@@ -550,9 +541,6 @@ const Graphics::Surface *DXADecoder::decodeNextFrame() {
 	_surface->pitch = getWidth();
 
 	_curFrame++;
-
-	if (_curFrame == 0)
-		_startTime = g_system->getMillis();
 
 	return _surface;
 }
