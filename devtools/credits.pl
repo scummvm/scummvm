@@ -48,7 +48,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 21; # The maximal width of a name.
+	$max_name_width = 23; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -69,6 +69,7 @@ sub html_entities_to_ascii {
 	# &aring;   -> aa
 	# &amp;     -> &
 	# &#322;    -> l
+	# &#347;    -> s
 	# &Scaron;  -> S
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
@@ -76,6 +77,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&#322;/l/g;
+	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/aa/g;
 
@@ -101,6 +103,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
 	$text =~ s/&#322;/l/g;
+	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/\\345/g;
 
@@ -356,6 +359,9 @@ sub add_person {
 		my $min_name_width = length $desc > 0 ? $max_name_width : 0;
 		$name = $nick if $name eq "";
 		$name = html_entities_to_ascii($name);
+		if (length $name > $max_name_width) {
+			print STDERR "Warning: max_name_width is too small (" . $max_name_width . " < " . (length $name) . " for \"" . $name. "\")\n";
+		}
 		$desc = html_entities_to_ascii($desc);
 
 		$tab = " " x ($section_level * 2 + 1);
@@ -550,7 +556,9 @@ begin_credits("Credits");
 			begin_section("DreamWeb");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 				add_person("Bertrand Augereau", "Tramb", "");
+				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Vladimir Menshakov", "whoozle", "(retired)");
+				add_person("Willem Jan Palenstijn", "wjp", "");
 			end_section();
 
 			begin_section("Gob");
@@ -606,6 +614,10 @@ begin_credits("Credits");
 
 			begin_section("Parallaction");
 				add_person("", "peres", "");
+			end_section();
+
+			begin_section("Pegasus");
+				add_person("Matthew Hoops", "clone2727", "");
 			end_section();
 
 			begin_section("Queen");
@@ -675,6 +687,12 @@ begin_credits("Credits");
 				add_person("Joost Peters", "joostp", "");
 			end_section();
 
+			begin_section("Tony");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Alyssa Milburn", "fuzzie", "");
+			end_section();
+
 			begin_section("Toon");
 				add_person("Sylvain Dupont", "SylvainTV", "");
 			end_section();
@@ -690,6 +708,10 @@ begin_credits("Credits");
 
 			begin_section("Tucker");
 				add_person("Gregory Montoir", "cyx", "(retired)");
+			end_section();
+
+			begin_section("Wintermute");
+				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 			end_section();
 
 		end_section();
@@ -930,9 +952,12 @@ begin_credits("Credits");
 				begin_section("French");
 					add_person("Thierry Crozat", "criezy", "");
 				end_section();
+				begin_section("Galician");
+					add_person("Santiago G. Sanz", "sgsanz", "");
+				end_section();
 				begin_section("German");
 					add_person("Simon Sawatzki", "SimSaw", "");
-					add_person("Lothar Serra Mari", "Lothar93", "");
+					add_person("Lothar Serra Mari", "Lothar93", "(retired)");
 				end_section();
 				begin_section("Hungarian");
 					add_person("Alex Bevilacqua", "", "");
@@ -942,10 +967,10 @@ begin_credits("Credits");
 					add_person("Matteo Angelino", "Maff", "");
 				end_section();
 				begin_section("Norwegian (Bokm&aring;l)");
-					add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
+					add_person("Einar Johan S&oslash;m&aring;en", "somaen", "");
 				end_section();
 				begin_section("Norwegian (Nynorsk)");
-					add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
+					add_person("Einar Johan S&oslash;m&aring;en", "somaen", "");
 				end_section();
 				begin_section("Polish");
 					add_person("GrajPoPolsku.pl Team", "", "");
@@ -1059,7 +1084,7 @@ begin_credits("Credits");
 
 
 	# HACK!
-	$max_name_width = 16;
+	$max_name_width = 17;
 
 	begin_section("Special thanks to");
 		begin_persons();
@@ -1072,6 +1097,7 @@ begin_credits("Credits");
 			add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
 			add_person("Henrik Engqvist", "qvist", "For generously providing hosting for our buildbot, SVN repository, planet and doxygen sites as well as tons of HD space");
 			add_person("DOSBox Team", "", "For their awesome OPL2 and OPL3 emulator");
+			add_person("Yusuke Kamiyamane", "", "For contributing some GUI icons ");
 			add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
 			add_person("", "Jezar", "For his freeverb filter implementation");
 			add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
@@ -1081,8 +1107,6 @@ begin_credits("Credits");
 			add_person("", "Tristan", "For additional work on the original MT-32 emulator");
 			add_person("James Woodcock", "", "Soundtrack enhancements");
 		end_persons();
-
-	add_paragraph("Some icons by Yusuke Kamiyamane");
 
 	add_paragraph(
     "Tony Warriner and everyone at Revolution Software Ltd. for sharing ".
@@ -1126,6 +1150,22 @@ begin_credits("Credits");
 	add_paragraph(
     "Broken Sword 2.5 team for providing sources of their engine and their great ".
     "support.");
+
+	add_paragraph(
+    "Neil Dodwell and David Dew from Creative Reality for providing the source ".
+    "of Dreamweb and for their tremendous support.");
+
+	add_paragraph(
+    "Janusz Wi&#347;niewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon ".
+    "for providing full source code for So&#322;tys and letting us redistribute the game.");
+
+	add_paragraph(
+    "Jan Nedoma for providing the sources to the Wintermute-engine, and for his ".
+    "support while porting the engine to ScummVM.");
+
+	add_paragraph(
+    "Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for ".
+    "providing the source code of The Journeyman Project: Pegasus Prime.");
 
 	end_section();
 

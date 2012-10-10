@@ -108,7 +108,7 @@ public:
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		return detectGameFilebased(allFiles, CGE::fileBasedFallback);
+		return detectGameFilebased(allFiles, fslist, CGE::fileBasedFallback);
 	}
 
 	virtual const char *getName() const {
@@ -198,7 +198,7 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-	
+
 	if (f) {
 		CGE::SavegameHeader header;
 
@@ -217,8 +217,6 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 		} else {
 			// Create the return descriptor
 			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setDeletableFlag(true);
-			desc.setWriteProtectedFlag(false);
 			desc.setThumbnail(header.thumbnail);
 			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
 			desc.setSaveTime(header.saveHour, header.saveMinutes);
@@ -231,7 +229,7 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 			return desc;
 		}
 	}
-	
+
 	return SaveStateDescriptor();
 }
 

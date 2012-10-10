@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	archive.o \
 	config-file.o \
 	config-manager.o \
+	coroutines.o \
 	dcl.o \
 	debug.o \
 	error.o \
@@ -15,6 +16,7 @@ MODULE_OBJS := \
 	gui_options.o \
 	hashmap.o \
 	iff_container.o \
+	installshield_cab.o \
 	language.o \
 	localization.o \
 	macresman.o \
@@ -41,7 +43,6 @@ MODULE_OBJS := \
 	xmlparser.o \
 	zlib.o
 
-ifdef USE_BINK
 MODULE_OBJS += \
 	cosinetables.o \
 	dct.o \
@@ -49,7 +50,6 @@ MODULE_OBJS += \
 	huffman.o \
 	rdft.o \
 	sinetables.o
-endif
 
 # Include common rules
 include $(srcdir)/rules.mk

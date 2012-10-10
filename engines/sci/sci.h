@@ -228,6 +228,26 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
+
+	/**
+	 * Syncs the audio options of the ScummVM launcher (speech, subtitles or
+	 * both) with the in-game audio options of certain CD game versions. For
+	 * some games, this allows simultaneous playing of speech and subtitles,
+	 * even if the original games didn't support this feature.
+	 *
+	 * SCI1.1 games which support simultaneous speech and subtitles:
+	 * - EcoQuest 1 CD
+	 * - Leisure Suit Larry 6 CD
+	 * SCI1.1 games which don't support simultaneous speech and subtitles,
+	 * and we add this functionality in ScummVM:
+	 * - Space Quest 4 CD
+	 * - Freddy Pharkas CD
+	 * SCI1.1 games which don't support simultaneous speech and subtitles,
+	 * and we haven't added any extra functionality in ScummVM because extra
+	 * script patches are needed:
+	 * - Laura Bow 2 CD
+	 * - King's Quest 6 CD
+	 */
 	void syncIngameAudioOptions();
 
 	const SciGameId &getGameId() const { return _gameId; }

@@ -280,7 +280,7 @@ void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
 
 #define MISALIGNED16(ptr) (((u32) (ptr) & 1) != 0)
 
-void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	if (!_graphicsEnable) return;
 	if (w <= 1) return;
 	if (h < 0) return;
@@ -509,13 +509,13 @@ void OSystem_DS::clearOverlay() {
 //	consolePrintf("clearovl\n");
 }
 
-void OSystem_DS::grabOverlay(OverlayColor *buf, int pitch) {
+void OSystem_DS::grabOverlay(void *buf, int pitch) {
 //	consolePrintf("grabovl\n")
 	u16 *start = DS::get16BitBackBuffer();
 
 	for (int y = 0; y < 200; y++) {
 		u16 *src = start + (y * 320);
-		u16 *dest = ((u16 *) (buf)) + (y * pitch);
+		u16 *dest = (u16 *)((u8 *)buf + (y * pitch));
 
 		for (int x = 0; x < 320; x++) {
 			*dest++ =  *src++;
@@ -524,9 +524,9 @@ void OSystem_DS::grabOverlay(OverlayColor *buf, int pitch) {
 
 }
 
-void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	u16 *bg = (u16 *) DS::get16BitBackBuffer();
-	const u16 *src = (const u16 *) buf;
+	const u8 *source = (const u8 *)buf;
 
 //	if (x + w > 256) w = 256 - x;
 	//if (x + h > 256) h = 256 - y;
@@ -536,7 +536,7 @@ void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, in
 
 
 	for (int dy = y; dy < y + h; dy++) {
-
+		const u16 *src = (const u16 *)source;
 
 		// Slow but save copy:
 		for (int dx = x; dx < x + w; dx++) {
@@ -546,7 +546,7 @@ void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, in
 			//consolePrintf("%d,", *src);
 			src++;
 		}
-		src += (pitch - w);
+		source += pitch;
 
 		// Fast but broken copy: (why?)
 		/*
@@ -580,7 +580,7 @@ bool OSystem_DS::showMouse(bool visible) {
 void OSystem_DS::warpMouse(int x, int y) {
 }
 
-void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, int targetCursorScale, const Graphics::PixelFormat *format) {
+void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	if ((w > 0) && (w < 64) && (h > 0) && (h < 64)) {
 		memcpy(_cursorImage, buf, w * h);
 		_cursorW = w;
@@ -588,7 +588,9 @@ void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, i
 		_cursorHotX = hotspotX;
 		_cursorHotY = hotspotY;
 		_cursorKey = keycolor;
-		_cursorScale = targetCursorScale;
+		// TODO: The old target scales was saved, but never used. Should the
+		// new "do not scale" logic be implemented?
+		//_cursorScale = targetCursorScale;
 		refreshCursor();
 	}
 }
@@ -688,6 +690,7 @@ void OSystem_DS::getTimeAndDate(TimeDate &td) const {
 	td.tm_mday = t.tm_mday;
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
+	td.tm_wday = t.tm_wday;
 }
 
 FilesystemFactory *OSystem_DS::getFilesystemFactory() {

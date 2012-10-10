@@ -397,8 +397,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_FB01_MIDI,
 		{
-			_s("Use IMF/Yahama FB-01 for MIDI output"),
-			_s("Use an IBM Music Feature card or a Yahama FB-01 FM synth module for MIDI output"),
+			_s("Use IMF/Yamaha FB-01 for MIDI output"),
+			_s("Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI output"),
 			"native_fb01",
 			false
 		}
@@ -761,9 +761,6 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
 		desc.setThumbnail(thumbnail);
-
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
 
 		int day = (meta.saveDate >> 24) & 0xFF;
 		int month = (meta.saveDate >> 16) & 0xFF;

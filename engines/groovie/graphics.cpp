@@ -94,7 +94,7 @@ void GraphicsMan::mergeFgAndBg() {
 }
 
 void GraphicsMan::updateScreen(Graphics::Surface *source) {
-	_vm->_system->copyRectToScreen((byte *)source->getBasePtr(0, 0), 640, 0, 80, 640, 320);
+	_vm->_system->copyRectToScreen(source->getBasePtr(0, 0), 640, 0, 80, 640, 320);
 	change();
 }
 

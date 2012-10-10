@@ -160,7 +160,7 @@ bool ROQPlayer::playFrameInternal() {
 
 	if (_dirty) {
 		// Update the screen
-		_syst->copyRectToScreen((byte *)_bg->getBasePtr(0, 0), _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
+		_syst->copyRectToScreen(_bg->getBasePtr(0, 0), _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
 		_syst->updateScreen();
 
 		// Clear the dirty flag
@@ -288,19 +288,18 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		// them it should be just fine.
 		_currBuf->create(width, height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
 		_prevBuf->create(width, height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
+	}
 
-		// Clear the buffers with black YUV values
-		byte *ptr1 = (byte *)_currBuf->getBasePtr(0, 0);
-		byte *ptr2 = (byte *)_prevBuf->getBasePtr(0, 0);
-		for (int i = 0; i < width * height; i++) {
-			*ptr1++ = 0;
-			*ptr1++ = 128;
-			*ptr1++ = 128;
-			*ptr2++ = 0;
-			*ptr2++ = 128;
-			*ptr2++ = 128;
-		}
-
+	// Clear the buffers with black YUV values
+	byte *ptr1 = (byte *)_currBuf->getBasePtr(0, 0);
+	byte *ptr2 = (byte *)_prevBuf->getBasePtr(0, 0);
+	for (int i = 0; i < width * height; i++) {
+		*ptr1++ = 0;
+		*ptr1++ = 128;
+		*ptr1++ = 128;
+		*ptr2++ = 0;
+		*ptr2++ = 128;
+		*ptr2++ = 128;
 	}
 
 	return true;
@@ -405,7 +404,7 @@ void ROQPlayer::processBlockQuadVectorBlock(int baseX, int baseY, int8 Mx, int8 
 }
 
 void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, int8 My) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad vector sub block");
+	debugC(6, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad vector sub block");
 
 	uint16 codingType = getCodingType();
 	switch (codingType) {
@@ -433,7 +432,7 @@ void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, in
 bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing still (JPEG) block");
 
-	warning("Groovie::ROQ: JPEG frame (unfinshed)");
+	warning("Groovie::ROQ: JPEG frame (unfinished)");
 
 	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
 	jpg->loadStream(*_file);

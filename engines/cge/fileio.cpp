@@ -98,7 +98,7 @@ uint16 ResourceManager::XCrypt(void *buf, uint16 length) {
 
 	for (uint16 i = 0; i < length; i++)
 		*b++ ^= kCryptSeed;
-	
+
 	return kCryptSeed;
 }
 
@@ -201,9 +201,28 @@ EncryptedStream::EncryptedStream(CGEEngine *vm, const char *name) : _vm(vm) {
 		_error = true;
 
 	_vm->_resman->seek(kp->_pos);
-	byte *dataBuffer = (byte *)malloc(kp->_size);
-	_vm->_resman->read(dataBuffer, kp->_size);
-	_readStream = new Common::MemoryReadStream(dataBuffer, kp->_size, DisposeAfterUse::YES);
+	byte *dataBuffer;
+	int bufSize;
+
+	if ((strlen(name) > 4) && (scumm_stricmp(name + strlen(name) - 4, ".SPR") == 0)) {
+		// SPR files have some inconsistencies. Some have extra 0x1A at the end, some others
+		// do not have a carriage return at the end of the last line
+		// Therefore, we remove this ending 0x1A and add extra new lines.
+		// This fixes bug #3537527
+		dataBuffer = (byte *)malloc(kp->_size + 2);
+		_vm->_resman->read(dataBuffer, kp->_size);
+		if (dataBuffer[kp->_size - 1] == 0x1A)
+			dataBuffer[kp->_size - 1] = '\n';
+		dataBuffer[kp->_size] = '\n';
+		dataBuffer[kp->_size + 1] = '\n';
+		bufSize = kp->_size + 2;
+	} else {
+		dataBuffer = (byte *)malloc(kp->_size);
+		_vm->_resman->read(dataBuffer, kp->_size);
+		bufSize = kp->_size;
+	}
+
+	_readStream = new Common::MemoryReadStream(dataBuffer, bufSize, DisposeAfterUse::YES);
 }
 
 uint32 EncryptedStream::read(void *dataPtr, uint32 dataSize) {

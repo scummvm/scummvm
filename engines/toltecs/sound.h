@@ -42,6 +42,8 @@ enum SoundChannelType {
 struct SoundChannel {
 	int16 resIndex;
 	int16 type;
+	int16 volume;
+	int16 panning;
 	Audio::SoundHandle handle;
 };
 
@@ -60,15 +62,16 @@ public:
 	void stopAll();
 
 	void saveState(Common::WriteStream *out);
-	void loadState(Common::ReadStream *in);
+	void loadState(Common::ReadStream *in, int version);
 
 protected:
 	ToltecsEngine *_vm;
 
 	SoundChannel channels[kMaxChannels];
 
+	void clearChannel(int channel);
 	void internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning);
-
+	Audio::Mixer::SoundType getScummVMSoundType(SoundChannelType type) const;
 };
 
 

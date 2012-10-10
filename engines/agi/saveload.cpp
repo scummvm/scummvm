@@ -795,41 +795,32 @@ int AgiEngine::selectSlot() {
 }
 
 int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
-	const EnginePlugin *plugin = NULL;
-	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	Common::String desc;
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
-		dialog->setSaveMode(true);
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
-		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
 
 		if (desc.empty()) {
 			// create our own description for the saved game, the user didnt enter it
-#if defined(USE_SAVEGAME_TIMESTAMP)
-			TimeDate curTime;
-			g_system->getTimeAndDate(curTime);
-			curTime.tm_year += 1900; // fixup year
-			curTime.tm_mon++; // fixup month
-			desc = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
-#else
-			desc = Common::String::format("Save %d", slot + 1);
-#endif
+			desc = dialog->createDefaultSaveDescription(slot);
 		}
 
 		if (desc.size() > 28)
 			desc = Common::String(desc.c_str(), 28);
 	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
-		dialog->setSaveMode(false);
-		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		slot = dialog->runModalWithCurrentTarget();
 	}
 
 	delete dialog;
+
+	if (slot < 0)
+		return true;
 
 	if (isSave)
 		return doSave(slot, desc);

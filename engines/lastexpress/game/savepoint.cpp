@@ -26,7 +26,6 @@
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 
@@ -95,7 +94,7 @@ void SavePoints::process() {
 		if (!updateEntityFromData(savepoint)) {
 
 			// Call requested callback
-			Entity::Callback *callback = getCallback(savepoint.entity1);
+			Callback *callback = getCallback(savepoint.entity1);
 			if (callback && callback->isValid()) {
 				debugC(8, kLastExpressDebugLogic, "Savepoint: entity1=%s, action=%s, entity2=%s", ENTITY_NAME(savepoint.entity1), ACTION_NAME(savepoint.action), ENTITY_NAME(savepoint.entity2));
 				(*callback)(savepoint);
@@ -126,7 +125,7 @@ void SavePoints::addData(EntityIndex entity, ActionIndex action, uint32 param) {
 //////////////////////////////////////////////////////////////////////////
 // Callbacks
 //////////////////////////////////////////////////////////////////////////
-void SavePoints::setCallback(EntityIndex index, Entity::Callback *callback) {
+void SavePoints::setCallback(EntityIndex index, Callback *callback) {
 	if (index >= 40)
 		error("[SavePoints::setCallback] Attempting to use an invalid entity index. Valid values 0-39, was %d", index);
 
@@ -136,7 +135,7 @@ void SavePoints::setCallback(EntityIndex index, Entity::Callback *callback) {
 	_callbacks[index] = callback;
 }
 
-Entity::Callback *SavePoints::getCallback(EntityIndex index) const {
+Callback *SavePoints::getCallback(EntityIndex index) const {
 	if (index >= 40)
 		error("[SavePoints::getCallback] Attempting to use an invalid entity index. Valid values 0-39, was %d", index);
 
@@ -150,7 +149,7 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	point.entity2 = entity2;
 	point.param.intValue = param;
 
-	Entity::Callback *callback = getCallback(entity1);
+	Callback *callback = getCallback(entity1);
 	if (callback != NULL && callback->isValid()) {
 		debugC(8, kLastExpressDebugLogic, "Savepoint: entity1=%s, action=%s, entity2=%s, param=%d", ENTITY_NAME(entity1), ACTION_NAME(action), ENTITY_NAME(entity2), param);
 		(*callback)(point);
@@ -164,7 +163,7 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	point.entity2 = entity2;
 	strcpy((char *)&point.param.charValue, param);
 
-	Entity::Callback *callback = getCallback(entity1);
+	Callback *callback = getCallback(entity1);
 	if (callback != NULL && callback->isValid()) {
 		debugC(8, kLastExpressDebugLogic, "Savepoint: entity1=%s, action=%s, entity2=%s, param=%s", ENTITY_NAME(entity1), ACTION_NAME(action), ENTITY_NAME(entity2), param);
 		(*callback)(point);
@@ -181,7 +180,7 @@ void SavePoints::callAndProcess() {
 	bool isRunning = getFlags()->isGameRunning;
 	while (isRunning) {
 
-		Entity::Callback *callback = getCallback(index);
+		Callback *callback = getCallback(index);
 		if (callback != NULL && callback->isValid()) {
 			(*callback)(savepoint);
 			isRunning = getFlags()->isGameRunning;
@@ -203,7 +202,7 @@ void SavePoints::callAndProcess() {
 // Misc
 //////////////////////////////////////////////////////////////////////////
 bool SavePoints::updateEntityFromData(const SavePoint &savepoint) {
-	for (int i = 0; i < (int)_data.size(); i++) {
+	for (uint i = 0; i < _data.size(); i++) {
 
 		// Not a data savepoint!
 		if (!_data[i].entity1)
@@ -211,7 +210,7 @@ bool SavePoints::updateEntityFromData(const SavePoint &savepoint) {
 
 		// Found our data!
 		if (_data[i].entity1 == savepoint.entity1 && _data[i].action == savepoint.action) {
-			debugC(8, kLastExpressDebugLogic, "Update entity from data: entity1=%s, action=%s, param=%d", ENTITY_NAME(_data[i].entity1), ACTION_NAME(_data[i].action), _data[i].param);
+			debugC(8, kLastExpressDebugLogic, "Update entity from data: entity1=%s, action=%s, param=%u", ENTITY_NAME(_data[i].entity1), ACTION_NAME(_data[i].action), _data[i].param);
 
 			// the SavePoint param value is the index of the entity call parameter to update
 			getEntities()->get(_data[i].entity1)->getParamData()->updateParameters(_data[i].param);
@@ -243,7 +242,15 @@ void SavePoints::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 
 	// Skip uninitialized data if any
-	s.skip((_savePointsMaxSize - dataSize) * 16);
+	// (we are using a compressed stream, so we cannot seek on load)
+	uint32 unusedDataSize = (_savePointsMaxSize - dataSize) * 16;
+	if (s.isLoading()) {
+		byte *empty = (byte *)malloc(unusedDataSize);
+		s.syncBytes(empty, unusedDataSize);
+		free(empty);
+	} else {
+		s.skip(unusedDataSize);
+	}
 
 	// Number of savepoints
 	uint32 numSavepoints = _savepoints.size();

@@ -102,8 +102,8 @@ const MouseEventConversion mouseEventMappings[] = {
 	{ Common::EVENT_RBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS, 2 },
 	{ Common::EVENT_MBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS, 3 },
 	{   Common::EVENT_LBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 1 },
-	{   Common::EVENT_LBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 2 },
-	{   Common::EVENT_LBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 3 }
+	{   Common::EVENT_RBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 2 },
+	{   Common::EVENT_MBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 3 }
 };
 
 EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended) {

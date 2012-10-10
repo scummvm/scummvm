@@ -403,7 +403,7 @@ int AgiEngine::testIfCode(int lognum) {
 		case 0xFF:
 			endTest = true;
 			continue;
-		
+
 		default:
 			// Evaluate the command and skip the rest of the instruction
 			_agiCondCommands[op](state, p);

@@ -153,7 +153,7 @@ void DraciMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 		Draci::DraciEngine::getSavegameFile(slot));
-	
+
 	if (f) {
 		Draci::DraciSavegameHeader header;
 		Draci::readSavegameHeader(f, header);
@@ -161,8 +161,6 @@ SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int 
 
 		// Create the return descriptor
 		SaveStateDescriptor desc(slot, header.saveName);
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
 		desc.setThumbnail(header.thumbnail);
 
 		int day = (header.date >> 24) & 0xFF;

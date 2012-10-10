@@ -31,6 +31,7 @@ namespace Gob {
 
 namespace Geisha {
 	class Diving;
+	class Penetration;
 }
 
 class GobEngine;
@@ -48,13 +49,14 @@ protected:
 
 class Cheater_Geisha : public Cheater {
 public:
-	Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving);
+	Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving, Geisha::Penetration *penetration);
 	~Cheater_Geisha();
 
 	bool cheat(GUI::Debugger &console);
 
 private:
-	Geisha::Diving *_diving;
+	Geisha::Diving      *_diving;
+	Geisha::Penetration *_penetration;
 };
 
 } // End of namespace Gob

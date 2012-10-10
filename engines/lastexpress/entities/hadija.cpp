@@ -28,10 +28,7 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -89,22 +86,22 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Hadija, compartment6)
-	COMPARTMENT_TO(Hadija, kObjectCompartment6, kPosition_4070, "619Cf", "619Df");
+	Entity::goToCompartment(savepoint, kObjectCompartment6, kPosition_4070, "619Cf", "619Df");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Hadija, compartment8)
-	COMPARTMENT_TO(Hadija, kObjectCompartment8, kPosition_2740, "619Ch", "619Dh");
+	Entity::goToCompartment(savepoint, kObjectCompartment8, kPosition_2740, "619Ch", "619Dh");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Hadija, compartment6to8)
-	COMPARTMENT_FROM_TO(Hadija, kObjectCompartment6, kPosition_4070, "619Bf", kObjectCompartment8, kPosition_2740, "619Ah");
+	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment6, kPosition_4070, "619Bf", kObjectCompartment8, kPosition_2740, "619Ah");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Hadija, compartment8to6)
-	COMPARTMENT_FROM_TO(Hadija, kObjectCompartment8, kPosition_2740, "619Bh", kObjectCompartment6, kPosition_4070, "619Af");
+	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment8, kPosition_2740, "619Bh", kObjectCompartment6, kPosition_4070, "619Af");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -114,7 +111,7 @@ IMPLEMENT_FUNCTION(10, Hadija, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Hadija, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -133,10 +130,12 @@ IMPLEMENT_FUNCTION(11, Hadija, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_PLAYSOUND_UPDATEPOSITION(kTimeParisEpernay, params->param1, 1, "Har1100", kPosition_4840);
+		if (Entity::timeCheckPlaySoundUpdatePosition(kTimeParisEpernay, params->param1, 1, "Har1100", kPosition_4840))
+			break;
 
 label_callback1:
-		TIME_CHECK_CALLBACK(kTime1084500, params->param2, 2, setup_compartment6to8);
+		if (Entity::timeCheckCallback(kTime1084500, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6to8)))
+			break;
 
 label_callback2:
 		if (params->param3 != kTimeInvalid && getState()->time > kTime1093500) {
@@ -164,7 +163,8 @@ label_callback2:
 		}
 
 label_callback3:
-		TIME_CHECK_CALLBACK(kTime1156500, params->param4, 4, setup_compartment8to6);
+		if (Entity::timeCheckCallback(kTime1156500, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6)))
+			break;
 
 label_callback4:
 		if (params->param5 != kTimeInvalid && getState()->time > kTime1165500) {
@@ -254,7 +254,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 		}
 
 		if (params->param2 == kTimeInvalid || getState()->time <= kTime1786500) {
-			TIME_CHECK_CALLBACK(kTime1822500, params->param3, 2, setup_compartment8to6);
+			Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6));
 			break;
 		}
 
@@ -264,7 +264,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 				params->param2 = (uint)getState()->time + 75;
 
 			if (params->param2 >= getState()->time) {
-				TIME_CHECK_CALLBACK(kTime1822500, params->param3, 2, setup_compartment8to6);
+				Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6));
 				break;
 			}
 		}
@@ -281,7 +281,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 			break;
 
 		case 1:
-			TIME_CHECK_CALLBACK(kTime1822500, params->param3, 2, setup_compartment8to6);
+			Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6));
 			break;
 
 		case 2:
@@ -321,20 +321,26 @@ IMPLEMENT_FUNCTION(16, Hadija, chapter3Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK(kTime1998000, params->param1, 1, setup_compartment6to8);
+		if (Entity::timeCheckCallback(kTime1998000, params->param1, 1, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6to8)))
+			break;
 
 label_callback1:
-		TIME_CHECK_CALLBACK(kTime2020500, params->param2, 2, setup_compartment8to6);
+		if (Entity::timeCheckCallback(kTime2020500, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6)))
+			break;
 
 label_callback2:
-		TIME_CHECK_CALLBACK(kTime2079000, params->param3, 3, setup_compartment6to8);
+		if (Entity::timeCheckCallback(kTime2079000, params->param3, 3, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6to8)))
+			break;
 
 label_callback3:
-		TIME_CHECK_CALLBACK(kTime2187000, params->param4, 4, setup_compartment8to6);
+		if (Entity::timeCheckCallback(kTime2187000, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6)))
+			break;
 
 label_callback4:
-		if (params->param5 != kTimeInvalid && getState()->time > kTime2196000)
-			TIME_CHECK_CAR(kTime2254500, params->param5, 5, setup_compartment6);
+		if (params->param5 != kTimeInvalid && getState()->time > kTime2196000) {
+			if (Entity::timeCheckCar(kTime2254500, params->param5, 5, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6)))
+				break;
+		}
 		break;
 
 	case kActionDefault:
@@ -387,18 +393,24 @@ IMPLEMENT_FUNCTION(18, Hadija, chapter4Handler)
 		break;
 
 	case kActionNone:
-		if (params->param1 != kTimeInvalid)
-			TIME_CHECK_CAR(kTime1714500, params->param1, 1, setup_compartment6);
+		if (params->param1 != kTimeInvalid) {
+			if (Entity::timeCheckCar(kTime1714500, params->param1, 1, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6)))
+				break;
+		}
 
 label_callback1:
-		TIME_CHECK_CALLBACK(kTime2367000, params->param2, 2, setup_compartment6to8);
+		if (Entity::timeCheckCallback(kTime2367000, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6to8)))
+			break;
 
 label_callback2:
-		TIME_CHECK_CALLBACK(kTime2421000, params->param3, 3, setup_compartment8to6);
+		if (Entity::timeCheckCallback(kTime2421000, params->param3, 3, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6)))
+			break;
 
 label_callback3:
-		if (params->param4 != kTimeInvalid && getState()->time > kTime2425500)
-			TIME_CHECK_CAR(kTime2484000, params->param4, 4, setup_compartment6);
+		if (params->param4 != kTimeInvalid && getState()->time > kTime2425500) {
+			if (Entity::timeCheckCar(kTime2484000, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6)))
+				break;
+		}
 		break;
 
 	case kActionCallback:
@@ -468,7 +480,9 @@ IMPLEMENT_FUNCTION(22, Hadija, function22)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 2700);
+		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
+			break;
+
 		setup_function23();
 		break;
 

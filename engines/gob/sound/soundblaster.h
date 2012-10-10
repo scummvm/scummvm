@@ -41,10 +41,12 @@ public:
 			int16 frequency, int16 fadeLength = 0);
 	void stopSound(int16 fadeLength, SoundDesc *sndDesc = 0);
 
-	void playComposition(int16 *composition, int16 freqVal,
+	void playComposition(const int16 *composition, int16 freqVal,
 			SoundDesc *sndDescs = 0, int8 sndCount = 60);
 	void stopComposition();
 	void endComposition();
+
+	void repeatComposition(int32 repCount);
 
 protected:
 	Common::Mutex _mutex;
@@ -53,6 +55,8 @@ protected:
 	int8 _compositionSampleCount;
 	int16 _composition[50];
 	int8 _compositionPos;
+
+	int32 _compositionRepCount;
 
 	SoundDesc *_curSoundDesc;
 

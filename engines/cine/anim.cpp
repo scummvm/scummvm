@@ -202,13 +202,13 @@ AnimData::AnimData(const AnimData &src) : _width(src._width),
 	if (src._data) {
 		_data = new byte[_size];
 		assert(_data);
-		memcpy(_data, src._data, _size*sizeof(byte));
+		memcpy(_data, src._data, _size * sizeof(byte));
 	}
 
 	if (src._mask) {
 		_mask = new byte[_size];
 		assert(_mask);
-		memcpy(_mask, src._mask, _size*sizeof(byte));
+		memcpy(_mask, src._mask, _size * sizeof(byte));
 	}
 
 	memset(_name, 0, sizeof(_name));
@@ -272,8 +272,7 @@ byte AnimData::getColor(int x, int y) {
  * @param transparent Transparent color (for ANIM_MASKSPRITE)
  */
 void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
-	int16 frame, const char *n, byte transparent) {
-
+                    int16 frame, const char *n, byte transparent) {
 	assert(d);
 
 	if (_data) {
@@ -299,7 +298,7 @@ void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
 		_size = w * h;
 		_data = new byte[_size];
 		assert(_data);
-		memcpy(_data, d, _size*sizeof(byte));
+		memcpy(_data, d, _size * sizeof(byte));
 		break;
 
 	case ANIM_MASK:
@@ -536,7 +535,7 @@ int loadSpl(const char *resourceName, int16 idx) {
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
-	g_cine->_animDataTable[entry].load(dataPtr, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize, 1, foundFileIdx, 0, currentPartName);
+	g_cine->_animDataTable[entry].load(dataPtr + 0x16, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize - 0x16, 1, foundFileIdx, 0, currentPartName);
 
 	free(dataPtr);
 	return entry + 1;
@@ -546,9 +545,10 @@ int loadSpl(const char *resourceName, int16 idx) {
  * Load 1bpp mask
  * @param resourceName Mask filename
  * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @param frameIndex frame of animation to load (-1 for all frames)
  * @return The number of the animDataTable entry after the loaded mask (-1 if error)
  */
-int loadMsk(const char *resourceName, int16 idx) {
+int loadMsk(const char *resourceName, int16 idx, int16 frameIndex) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
 	if (foundFileIdx < 0) {
 		return -1;
@@ -563,9 +563,18 @@ int loadMsk(const char *resourceName, int16 idx) {
 	loadAnimHeader(animHeader, readS);
 	ptr = dataPtr + 0x16;
 
+	int16 startFrame = 0;
+	int16 endFrame = animHeader.numFrames;
+
+	if (frameIndex >= 0) {
+		startFrame = frameIndex;
+		endFrame = frameIndex + 1;
+		ptr += frameIndex * animHeader.frameWidth * animHeader.frameHeight;
+	}
+
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
-	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
+	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		g_cine->_animDataTable[entry].load(ptr, ANIM_MASK, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
 	}
@@ -578,9 +587,10 @@ int loadMsk(const char *resourceName, int16 idx) {
  * Load animation
  * @param resourceName Animation filename
  * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @param frameIndex frame of animation to load (-1 for all frames)
  * @return The number of the animDataTable entry after the loaded animation (-1 if error)
  */
-int loadAni(const char *resourceName, int16 idx) {
+int loadAni(const char *resourceName, int16 idx, int16 frameIndex) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
 	if (foundFileIdx < 0) {
 		return -1;
@@ -596,6 +606,15 @@ int loadAni(const char *resourceName, int16 idx) {
 	loadAnimHeader(animHeader, readS);
 	ptr = dataPtr + 0x16;
 
+	int16 startFrame = 0;
+	int16 endFrame = animHeader.numFrames;
+
+	if (frameIndex >= 0) {
+		startFrame = frameIndex;
+		endFrame = frameIndex + 1;
+		ptr += frameIndex * animHeader.frameWidth * animHeader.frameHeight;
+	}
+
 	transparentColor = getAnimTransparentColor(resourceName);
 
 	// TODO: Merge this special case hack into getAnimTransparentColor somehow.
@@ -609,7 +628,7 @@ int loadAni(const char *resourceName, int16 idx) {
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
 
-	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
+	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		// special case transparency handling
 		if (!strcmp(resourceName, "L2202.ANI")) {
 			transparentColor = i < 2 ? 0 : 7;
@@ -669,22 +688,23 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
 					*(source + k) <<= 1;
 					if (k > 0 + m)
 						color <<= 1;
-				}	// end k
+				} // end k
 				*(dest++) = color;
-			}	// end i
-		}	// end m
+			} // end i
+		} // end m
 
 		source += 0x10;
-	}	// end j
+	} // end j
 }
 
 /**
  * Load image set
  * @param resourceName Image set filename
  * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @param frameIndex frame of animation to load (-1 for all frames)
  * @return The number of the animDataTable entry after the loaded image set (-1 if error)
  */
-int loadSet(const char *resourceName, int16 idx) {
+int loadSet(const char *resourceName, int16 idx, int16 frameIndex = -1) {
 	AnimHeader2Struct header2;
 	uint16 numSpriteInAnim;
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -708,7 +728,16 @@ int loadSet(const char *resourceName, int16 idx) {
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
 
-	for (int16 i = 0; i < numSpriteInAnim; i++, entry++) {
+	int16 startFrame = 0;
+	int16 endFrame = numSpriteInAnim;
+
+	if (frameIndex >= 0) {
+		startFrame = frameIndex;
+		endFrame = frameIndex + 1;
+		ptr += 0x10 * frameIndex;
+	}
+
+	for (int16 i = startFrame; i < endFrame; i++, entry++) {
 		Common::MemoryReadStream readS(ptr, 0x10);
 
 		header2.field_0 = readS.readUint32BE();
@@ -755,7 +784,7 @@ int loadSeq(const char *resourceName, int16 idx) {
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	int entry = idx < 0 ? emptyAnimSpace() : idx;
 
-	g_cine->_animDataTable[entry].load(dataPtr+0x16, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize-0x16, 1, foundFileIdx, 0, currentPartName);
+	g_cine->_animDataTable[entry].load(dataPtr + 0x16, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize - 0x16, 1, foundFileIdx, 0, currentPartName);
 	free(dataPtr);
 	return entry + 1;
 }
@@ -767,18 +796,18 @@ int loadSeq(const char *resourceName, int16 idx) {
  * @return The number of the animDataTable entry after the loaded resource (-1 if error)
  * @todo Implement loading of all resource types
  */
-int loadResource(const char *resourceName, int16 idx) {
+int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 	int result = -1; // Return an error by default
 	if (strstr(resourceName, ".SPL")) {
 		result = loadSpl(resourceName, idx);
 	} else if (strstr(resourceName, ".MSK")) {
-		result = loadMsk(resourceName, idx);
+		result = loadMsk(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".ANI")) {
-		result = loadAni(resourceName, idx);
+		result = loadAni(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".ANM")) {
-		result = loadAni(resourceName, idx);
+		result = loadAni(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".SET")) {
-		result = loadSet(resourceName, idx);
+		result = loadSet(resourceName, idx, frameIndex);
 	} else if (strstr(resourceName, ".SEQ")) {
 		result = loadSeq(resourceName, idx);
 	} else if (strstr(resourceName, ".H32")) {

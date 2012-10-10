@@ -224,12 +224,13 @@ enum {
 	KBD_CTRL  = 1 << 0,
 	KBD_ALT   = 1 << 1,
 	KBD_SHIFT = 1 << 2,
-	KBD_NON_STICKY = (KBD_CTRL|KBD_ALT|KBD_SHIFT),
+	KBD_META  = 1 << 3,
+	KBD_NON_STICKY = (KBD_CTRL|KBD_ALT|KBD_SHIFT|KBD_META),
 
 	// Sticky modifier flags
-	KBD_NUM   = 1 << 3,
-	KBD_CAPS  = 1 << 4,
-	KBD_SCRL  = 1 << 5,
+	KBD_NUM   = 1 << 4,
+	KBD_CAPS  = 1 << 5,
+	KBD_SCRL  = 1 << 6,
 	KBD_STICKY = (KBD_NUM|KBD_CAPS|KBD_SCRL)
 
 };
@@ -248,7 +249,10 @@ struct KeyState {
 	 * ASCII-value of the pressed key (if any).
 	 * This depends on modifiers, i.e. pressing the 'A' key results in
 	 * different values here depending on the status of shift, alt and
-	 * caps lock.
+	 * caps lock. This should be used rather than keycode for text input
+	 * to avoid keyboard layout issues. For example you cannot assume that
+	 * KEYCODE_0 without a modifier will be '0' (on AZERTY keyboards it is
+	*  not).
 	 */
 	uint16 ascii;
 

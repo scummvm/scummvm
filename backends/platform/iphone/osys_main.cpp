@@ -235,6 +235,7 @@ void OSystem_IPHONE::getTimeAndDate(TimeDate &td) const {
 	td.tm_mday = t.tm_mday;
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
+	td.tm_wday = t.tm_wday;
 }
 
 Audio::Mixer *OSystem_IPHONE::getMixer() {

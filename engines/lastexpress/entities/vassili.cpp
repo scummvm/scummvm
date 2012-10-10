@@ -35,10 +35,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -85,7 +83,7 @@ IMPLEMENT_FUNCTION(4, Vassili, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Vassili, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -146,7 +144,8 @@ IMPLEMENT_FUNCTION(6, Vassili, function6)
 
 	case kActionNone:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
-			UPDATE_PARAM_GOTO(params->param3, getState()->timeTicks, params->param1, label_function7);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
+				goto label_function7;
 
 			setCallback(1);
 			setup_draw("303B");
@@ -402,7 +401,8 @@ IMPLEMENT_FUNCTION(13, Vassili, sleeping)
 
 	case kActionNone:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, params->param1);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
+				break;
 
 			setCallback(1);
 			setup_draw("303B");
@@ -461,7 +461,8 @@ IMPLEMENT_FUNCTION(15, Vassili, stealEgg)
 
 	case kActionNone:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, params->param1);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
+				break;
 
 			setCallback(1);
 			setup_draw("303B");
@@ -545,7 +546,8 @@ IMPLEMENT_FUNCTION(17, Vassili, chapter4Handler)
 
 	case kActionNone:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_8200)) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, params->param1);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, params->param1))
+				break;
 
 			setCallback(1);
 			setup_draw("303B");

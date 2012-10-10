@@ -491,10 +491,10 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	// processing codes in argv
 	while (argc > 0) {
 		displayArg = argv[0];
-		if (displayArg.segment)
-			displayArg.offset = 0xFFFF;
+		if (displayArg.getSegment())
+			displayArg.setOffset(0xFFFF);
 		argc--; argv++;
-		switch (displayArg.offset) {
+		switch (displayArg.getOffset()) {
 		case SCI_DISPLAY_MOVEPEN:
 			_ports->moveTo(argv[0].toUint16(), argv[1].toUint16());
 			argc -= 2; argv += 2;
@@ -547,9 +547,9 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			if (!(g_sci->getGameId() == GID_LONGBOW && g_sci->isDemo()) &&
 				!(g_sci->getGameId() == GID_QFG1    && g_sci->isDemo()) &&
 				!(g_sci->getGameId() == GID_PQ2))
-				error("Unknown kDisplay argument %d", displayArg.offset);
+				error("Unknown kDisplay argument %d", displayArg.getOffset());
 
-			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {
+			if (displayArg.getOffset() == SCI_DISPLAY_DUMMY2) {
 				if (!argc)
 					error("No parameter left for kDisplay(115)");
 				argc--; argv++;
@@ -559,8 +559,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			SciTrackOriginReply originReply;
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kDisplay_workarounds, &originReply);
 			if (solution.type == WORKAROUND_NONE)
-				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)", 
-						PRINT_REG(displayArg), originReply.objectName.c_str(), originReply.methodName.c_str(), 
+				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)",
+						PRINT_REG(displayArg), originReply.objectName.c_str(), originReply.methodName.c_str(),
 						originReply.scriptNr, originReply.localCallOffset);
 			assert(solution.type == WORKAROUND_IGNORE);
 			break;

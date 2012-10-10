@@ -20,6 +20,13 @@
  *
  */
 
+/**
+ * @file
+ * Image decoder used in engines:
+ *  - groovie
+ *  - mohawk
+ */
+
 #ifndef GRAPHICS_JPEG_H
 #define GRAPHICS_JPEG_H
 

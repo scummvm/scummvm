@@ -219,7 +219,7 @@ void AgiEngine::processEvents() {
 			case Common::KEYCODE_F6:
 				key = 0x4000;
 				break;
-			case Common::KEYCODE_F7: 
+			case Common::KEYCODE_F7:
 				key = 0x4100;
 				break;
 			case Common::KEYCODE_F8:

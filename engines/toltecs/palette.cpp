@@ -31,7 +31,7 @@ namespace Toltecs {
 
 Palette::Palette(ToltecsEngine *vm) : _vm(vm) {
 	clearFragments();
-	
+
 	memset(_colorTransTable, 0, sizeof(_colorTransTable));
 }
 
@@ -81,7 +81,7 @@ void Palette::setDeltaPalette(byte *palette, byte mask, int8 deltaValue, int16 c
 		if (mask & 4) colors[index * 3 + 2] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
 		index++;
 	}
-	
+
 	debug(0, "startIndex = %d; colorCount = %d", startIndex, colorCount);
 
 	_vm->_system->getPaletteManager()->setPalette((const byte *)colors, 0, 256);
@@ -101,9 +101,9 @@ void Palette::addFragment(uint resIndex, int16 id) {
 
 	Resource *fragmentResource = _vm->_res->load(resIndex);
 	byte count = fragmentResource->size / 3;
-	
+
 	memcpy(&_mainPalette[_fragmentIndex * 3], fragmentResource->data, count * 3);
-	
+
 	PaletteFragment fragment;
 	fragment.id = id;
 	fragment.index = _fragmentIndex;
@@ -126,7 +126,7 @@ uint16 Palette::findFragment(int16 id) {
 			break;
 		}
 	}
-	
+
 	debug(0, "Palette::findFragment() result = %04X", result);
 
 	return result;
@@ -140,9 +140,9 @@ void Palette::clearFragments() {
 
 void Palette::buildColorTransTable(byte limit, int8 deltaValue, byte mask) {
 	byte r = 0, g = 0, b = 0;
-	
+
 	mask &= 7;
-	
+
 	for (int i = 0; i < 256; i++) {
 
 		if (deltaValue < 0) {
@@ -161,7 +161,7 @@ void Palette::buildColorTransTable(byte limit, int8 deltaValue, byte mask) {
 					b -= deltaValue;
 			}
 		}
-		
+
 		int bestIndex = 0;
 		uint16 bestMatch = 0xFFFF;
 
@@ -174,7 +174,7 @@ void Palette::buildColorTransTable(byte limit, int8 deltaValue, byte mask) {
 				bestIndex = j;
 			}
 		}
-		
+
 		_colorTransTable[i] = bestIndex;
 
 	}

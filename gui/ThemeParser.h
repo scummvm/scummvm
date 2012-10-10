@@ -85,7 +85,6 @@ protected:
 			XML_KEY(cursor)
 				XML_PROP(file, true)
 				XML_PROP(hotspot, true)
-				XML_PROP(scale, true)
 				XML_PROP(resolution, false)
 			KEY_END()
 
@@ -140,7 +139,7 @@ protected:
 					XML_PROP(height, false)
 					XML_PROP(xpos, false)
 					XML_PROP(ypos, false)
-					XML_PROP(padding, false)					
+					XML_PROP(padding, false)
 					XML_PROP(orientation, false)
 					XML_PROP(file, false)
 				KEY_END()

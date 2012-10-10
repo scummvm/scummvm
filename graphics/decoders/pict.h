@@ -20,6 +20,14 @@
  *
  */
 
+/**
+ * @file
+ * Image decoder used in engines:
+ *  - mohawk
+ *  - pegasus
+ *  - sci
+ */
+
 #ifndef GRAPHICS_PICT_H
 #define GRAPHICS_PICT_H
 
@@ -50,6 +58,7 @@ public:
 	void destroy();
 	const Surface *getSurface() const { return _outputSurface; }
 	const byte *getPalette() const { return _palette; }
+	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
 	struct PixMap {
 		uint32 baseAddr;
@@ -74,13 +83,14 @@ public:
 private:
 	Common::Rect _imageRect;
 	byte _palette[256 * 3];
+	uint16 _paletteColorCount;
 	Graphics::Surface *_outputSurface;
 	bool _continueParsing;
 
 	// Utility Functions
-	void unpackBitsRect(Common::SeekableReadStream &stream, bool hasPalette);
+	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette);
 	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *stream, byte bitsPerPixel, byte bytesPerPixel);
-	void skipBitsRect(Common::SeekableReadStream &stream, bool hasPalette);
+	void skipBitsRect(Common::SeekableReadStream &stream, bool withPalette);
 	void decodeCompressedQuickTime(Common::SeekableReadStream &stream);
 	void outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel);
 

@@ -6031,10 +6031,10 @@ const char *_texthis[NUM_LANGS][NUM_TEXTHIS] = {
 },
 {
 	"",
-	"",
-	"",
-	"",
-	""
+	"Hace mucho tiempo, parece ser que Drascula mato a la mujer de Von Braun, asi que, con la intencion de enfrentarse al conde, Von Braun empezo a investigar todo lo que pudo sobre vampiros.",
+	"Cuando creyo estar preparado, subio al castillo y tuvo un enfrentamiento muy violento con Drascula.",
+	"Nadie sabe que paso exactamente. Aunque Von Braun perdio, Drascula no pudo matarlo.",
+	"Von Braun se sintio humillado por su derrota, huyo del castillo y no ha tenido valor para enfrentarse de nuevo a Drascula."
 },
 {
 	"",

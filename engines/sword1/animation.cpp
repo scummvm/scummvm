@@ -37,6 +37,7 @@
 
 #include "gui/message.h"
 
+#include "video/dxa_decoder.h"
 #include "video/psx_decoder.h"
 #include "video/smk_decoder.h"
 
@@ -68,7 +69,7 @@ static const char *const sequenceList[20] = {
 };
 
 // This is the list of the names of the PlayStation videos
-// TODO: fight.str, flashy.str, 
+// TODO: fight.str, flashy.str,
 static const char *const sequenceListPSX[20] = {
 	"e_ferr1",
 	"ladder1",
@@ -96,9 +97,8 @@ static const char *const sequenceListPSX[20] = {
 // Basic movie player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Video::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _textMan(textMan), _resMan(resMan), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system) {
-	_bgSoundStream = NULL;
+MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType)
+	: _vm(vm), _textMan(textMan), _resMan(resMan), _system(system) {
 	_decoderType = decoderType;
 	_decoder = decoder;
 
@@ -107,7 +107,6 @@ MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::
 }
 
 MoviePlayer::~MoviePlayer() {
-	delete _bgSoundHandle;
 	delete _decoder;
 }
 
@@ -116,16 +115,12 @@ MoviePlayer::~MoviePlayer() {
  * @param id the id of the file
  */
 bool MoviePlayer::load(uint32 id) {
-	Common::File f;
 	Common::String filename;
 
-	if (_decoderType == kVideoDecoderDXA)
-		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(sequenceList[id]);
-	else
-		_bgSoundStream = NULL;
-
 	if (SwordEngine::_systemVars.showText) {
+		Common::File f;
 		filename = Common::String::format("%s.txt", sequenceList[id]);
+
 		if (f.open(filename)) {
 			Common::String line;
 			int lineNo = 0;
@@ -157,19 +152,18 @@ bool MoviePlayer::load(uint32 id) {
 					warning("%s:%d startFrame (%d) <= lastEnd (%d)", filename.c_str(), lineNo, startFrame, lastEnd);
 					continue;
 				}
-				
+
 				int color = 0;
 				if (*ptr == '@') {
 					++ptr;
 					color = strtoul(ptr, const_cast<char **>(&ptr), 10);
 					while (*ptr && Common::isSpace(*ptr))
 						ptr++;
-				} 
+				}
 
 				_movieTexts.push_back(MovieText(startFrame, endFrame, ptr, color));
 				lastEnd = endFrame;
 			}
-			f.close();
 		}
 	}
 
@@ -189,6 +183,7 @@ bool MoviePlayer::load(uint32 id) {
 		// Need to load here in case it fails in which case we'd need
 		// to go back to paletted mode
 		if (_decoder->loadFile(filename)) {
+			_decoder->start();
 			return true;
 		} else {
 			initGraphics(g_system->getWidth(), g_system->getHeight(), true);
@@ -197,29 +192,26 @@ bool MoviePlayer::load(uint32 id) {
 		break;
 	}
 
-	return _decoder->loadFile(filename.c_str());
+	if (!_decoder->loadFile(filename))
+		return false;
+
+	// For DXA, also add the external sound file
+	if (_decoderType == kVideoDecoderDXA)
+		_decoder->addStreamFileTrack(sequenceList[id]);
+
+	_decoder->start();
+	return true;
 }
 
 void MoviePlayer::play() {
-	if (_bgSoundStream)
-		_snd->playStream(Audio::Mixer::kSFXSoundType, _bgSoundHandle, _bgSoundStream);
-
-	bool terminated = false;
-
 	_textX = 0;
 	_textY = 0;
 
-	terminated = !playVideo();
-
-	if (terminated)
-		_snd->stopHandle(*_bgSoundHandle);
+	playVideo();
 
 	_textMan->releaseText(2, false);
 
 	_movieTexts.clear();
-
-	while (_snd->isSoundHandleActive(*_bgSoundHandle))
-		_system->delayMillis(100);
 
 	// It's tempting to call _screen->fullRefresh() here to restore the old
 	// palette. However, that causes glitches with DXA movies, where the
@@ -316,11 +308,11 @@ bool MoviePlayer::playVideo() {
 				if (_decoderType == kVideoDecoderPSX)
 					drawFramePSX(frame);
 				else
-					_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+					_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 			}
 
 			if (_decoder->hasDirtyPalette()) {
-				_decoder->setSystemPalette();
+				_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
 
 				if (!_movieTexts.empty()) {
 					// Look for the best color indexes to use to display the subtitles
@@ -501,29 +493,17 @@ void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
 	uint16 x = (g_system->getWidth() - scaledFrame.w) / 2;
 	uint16 y = (g_system->getHeight() - scaledFrame.h) / 2;
 
-	_vm->_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
+	_vm->_system->copyRectToScreen(scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
 
 	scaledFrame.free();
-}
-
-DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)
-	: _mixer(mixer), _bgSoundHandle(bgSoundHandle)  {
-}
-
-uint32 DXADecoderWithSound::getElapsedTime() const {
-	if (_mixer->isSoundHandleActive(*_bgSoundHandle))
-		return _mixer->getSoundElapsedTime(*_bgSoundHandle);
-
-	return DXADecoder::getElapsedTime();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Factory function for creating the appropriate cutscene player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system) {
+MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, OSystem *system) {
 	Common::String filename;
-	Audio::SoundHandle *bgSoundHandle = new Audio::SoundHandle;
 
 	// For the PSX version, we'll try the PlayStation stream files
 	if (vm->isPsx()) {
@@ -534,7 +514,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 #ifdef USE_RGB_COLOR
 			// All BS1 PSX videos run the videos at 2x speed
 			Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x);
-			return new MoviePlayer(vm, textMan, resMan, snd, system, bgSoundHandle, psxDecoder, kVideoDecoderPSX);
+			return new MoviePlayer(vm, textMan, resMan, system, psxDecoder, kVideoDecoderPSX);
 #else
 			GUI::MessageDialog dialog(Common::String::format(_("PSX stream cutscene '%s' cannot be played in paletted mode"), filename.c_str()), _("OK"));
 			dialog.runModal();
@@ -546,20 +526,20 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 	filename = Common::String::format("%s.smk", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
-		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(snd);
-		return new MoviePlayer(vm, textMan, resMan, snd, system, bgSoundHandle, smkDecoder, kVideoDecoderSMK);
+		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder();
+		return new MoviePlayer(vm, textMan, resMan, system, smkDecoder, kVideoDecoderSMK);
 	}
 
 	filename = Common::String::format("%s.dxa", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
 #ifdef USE_ZLIB
-		DXADecoderWithSound *dxaDecoder = new DXADecoderWithSound(snd, bgSoundHandle);
-		return new MoviePlayer(vm, textMan, resMan, snd, system, bgSoundHandle, dxaDecoder, kVideoDecoderDXA);
+		Video::VideoDecoder *dxaDecoder = new Video::DXADecoder();
+		return new MoviePlayer(vm, textMan, resMan, system, dxaDecoder, kVideoDecoderDXA);
 #else
 		GUI::MessageDialog dialog(_("DXA cutscenes found but ScummVM has been built without zlib support"), _("OK"));
 		dialog.runModal();
-		return NULL;
+		return 0;
 #endif
 	}
 
@@ -569,7 +549,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 	if (Common::File::exists(filename)) {
 		GUI::MessageDialog dialog(_("MPEG2 cutscenes are no longer supported"), _("OK"));
 		dialog.runModal();
-		return NULL;
+		return 0;
 	}
 
 	if (!vm->isPsx() || scumm_stricmp(sequenceList[id], "enddemo") != 0) {
@@ -578,7 +558,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 		dialog.runModal();
 	}
 
-	return NULL;
+	return 0;
 }
 
 } // End of namespace Sword1

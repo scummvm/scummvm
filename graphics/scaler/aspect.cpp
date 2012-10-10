@@ -23,6 +23,13 @@
 #include "graphics/scaler/intern.h"
 #include "graphics/scaler/aspect.h"
 
+#ifdef OPENPANDORA
+#define NEON_ASPECT_CORRECTOR
+#endif
+
+#ifdef NEON_ASPECT_CORRECTOR
+#include <arm_neon.h>
+#endif
 
 #define	kSuperFastAndUglyAspectMode	0	// No interpolation at all, but super-fast
 #define	kVeryFastAndGoodAspectMode	1	// Good quality with very good speed
@@ -55,13 +62,66 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 
 #if ASPECT_MODE == kVeryFastAndGoodAspectMode
 
+#ifdef NEON_ASPECT_CORRECTOR
+
+template<typename ColorMask>
+static void interpolate5LineNeon(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width, int k1, int k2) {
+	uint16x4_t kRedBlueMask_4 = vdup_n_u16(ColorMask::kRedBlueMask);
+	uint16x4_t kGreenMask_4 = vdup_n_u16(ColorMask::kGreenMask);
+	uint16x4_t k1_4 = vdup_n_u16(k1);
+	uint16x4_t k2_4 = vdup_n_u16(k2);
+	while (width >= 4) {
+		uint16x4_t srcA_4 = vld1_u16(srcA);
+		uint16x4_t srcB_4 = vld1_u16(srcB);
+		uint16x4_t p1_4 = srcB_4;
+		uint16x4_t p2_4 = srcA_4;
+
+		uint16x4_t p1_rb_4 = vand_u16(p1_4, kRedBlueMask_4);
+		uint16x4_t p1_g_4  = vand_u16(p1_4, kGreenMask_4);
+		uint16x4_t p2_rb_4 = vand_u16(p2_4, kRedBlueMask_4);
+		uint16x4_t p2_g_4  = vand_u16(p2_4, kGreenMask_4);
+
+		uint32x4_t tmp_rb_4 = vshrq_n_u32(vmlal_u16(vmull_u16(p2_rb_4, k2_4), p1_rb_4, k1_4), 3);
+		uint32x4_t tmp_g_4  = vshrq_n_u32(vmlal_u16(vmull_u16(p2_g_4, k2_4), p1_g_4, k1_4), 3);
+		uint16x4_t p_rb_4 = vmovn_u32(tmp_rb_4);
+		p_rb_4 = vand_u16(p_rb_4, kRedBlueMask_4);
+		uint16x4_t p_g_4 = vmovn_u32(tmp_g_4);
+		p_g_4 = vand_u16(p_g_4, kGreenMask_4);
+
+		uint16x4_t result_4 = p_rb_4 | p_g_4;
+		vst1_u16(dst, result_4);
+
+		dst += 4;
+		srcA += 4;
+		srcB += 4;
+		width -= 4;
+	}
+}
+#endif
+
 template<typename ColorMask, int scale>
-static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
+static void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	if (scale == 1) {
+#ifdef NEON_ASPECT_CORRECTOR
+		int width4 = width & ~3;
+		interpolate5LineNeon<ColorMask>(dst, srcA, srcB, width4, 7, 1);
+		srcA += width4;
+		srcB += width4;
+		dst += width4;
+		width -= width4;
+#endif
 		while (width--) {
 			*dst++ = interpolate16_7_1<ColorMask>(*srcB++, *srcA++);
 		}
 	} else {
+#ifdef NEON_ASPECT_CORRECTOR
+		int width4 = width & ~3;
+		interpolate5LineNeon<ColorMask>(dst, srcA, srcB, width4, 5, 3);
+		srcA += width4;
+		srcB += width4;
+		dst += width4;
+		width -= width4;
+#endif
 		while (width--) {
 			*dst++ = interpolate16_5_3<ColorMask>(*srcB++, *srcA++);
 		}
@@ -160,14 +220,14 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 #if ASPECT_MODE == kSuperFastAndUglyAspectMode
 		if (srcPtr == dstPtr)
 			break;
-		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+		memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 #else
 		// Bilinear filter
 		switch (y % 6) {
 		case 0:
 		case 5:
 			if (srcPtr != dstPtr)
-				memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+				memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 			break;
 		case 1:
 			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
@@ -206,13 +266,13 @@ void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 #if ASPECT_MODE == kSuperFastAndUglyAspectMode
 		if ((y % 6) == 5)
 			srcPtr -= srcPitch;
-		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+		memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 #else
 		// Bilinear filter five input lines onto six output lines
 		switch (y % 6) {
 		case 0:
 			// First output line is copied from first input line
-			memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+			memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 			break;
 		case 1:
 			// Second output line is mixed from first and second input line
@@ -233,7 +293,7 @@ void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 		case 5:
 			// Sixth (and last) output line is copied from fifth (and last) input line
 			srcPtr -= srcPitch;
-			memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+			memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
 			break;
 		}
 #endif

@@ -158,7 +158,8 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 
 	// The following myEscape value setting is used for enabling title screen skipping in DW1
 	if (TinselV1 && (g_sceneCtr == 1)) g_initialMyEscape = GetEscEvents();
-	_ctx->myEscape = (TinselV1 && (g_sceneCtr < 4)) ? g_initialMyEscape : 0;
+	// DW1 PSX has its own scene skipping script code for scenes 2 and 3 (bug #3541542).
+	_ctx->myEscape = (TinselV1 && (g_sceneCtr < (TinselV1PSX ? 2 : 4))) ? g_initialMyEscape : 0;
 
 	// get the stuff copied to process when it was created
 	_ctx->pInit = (const TP_INIT *)param;
@@ -193,7 +194,7 @@ void SendSceneTinselProcess(TINSEL_EVENT event) {
 			init.event = event;
 			init.hTinselCode = ss->hSceneScript;
 
-			g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+			CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 		}
 	}
 }
@@ -271,7 +272,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 					init.event = STARTUP;
 					init.hTinselCode = es->hScript;
 
-					g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+					CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 				}
 				break;
 			}
@@ -291,7 +292,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 			init.event = STARTUP;
 			init.hTinselCode = ss->hSceneScript;
 
-			g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+			CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 		}
 	}
 
@@ -344,7 +345,7 @@ void EndScene() {
 	KillAllObjects();
 
 	// kill all destructable process
-	g_scheduler->killMatchingProcess(PID_DESTROY, PID_DESTROY);
+	CoroScheduler.killMatchingProcess(PID_DESTROY, PID_DESTROY);
 }
 
 /**
@@ -405,16 +406,16 @@ void PrimeScene() {
 	if (!TinselV2)
 		EnableTags();		// Next scene with tags enabled
 
-	g_scheduler->createProcess(PID_SCROLL, ScrollProcess, NULL, 0);
-	g_scheduler->createProcess(PID_SCROLL, EffectPolyProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_SCROLL, ScrollProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_SCROLL, EffectPolyProcess, NULL, 0);
 
 #ifdef DEBUG
 	if (g_ShowPosition)
-		g_scheduler->createProcess(PID_POSITION, CursorPositionProcess, NULL, 0);
+		CoroScheduler.createProcess(PID_POSITION, CursorPositionProcess, NULL, 0);
 #endif
 
-	g_scheduler->createProcess(PID_TAG, TagProcess, NULL, 0);
-	g_scheduler->createProcess(PID_TAG, PointProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_TAG, TagProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_TAG, PointProcess, NULL, 0);
 
 	// init the current background
 	PrimeBackground();
@@ -471,7 +472,7 @@ void DoHailScene(SCNHANDLE scene) {
 		init.event = NOEVENT;
 		init.hTinselCode = ss->hSceneScript;
 
-		g_scheduler->createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+		CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 	}
 }
 

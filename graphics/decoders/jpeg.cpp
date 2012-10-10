@@ -81,7 +81,7 @@ const Surface *JPEGDecoder::getSurface() const {
 	const Graphics::Surface *uComponent = getComponent(2);
 	const Graphics::Surface *vComponent = getComponent(3);
 
-	convertYUV444ToRGB(_rgbSurface, (byte *)yComponent->pixels, (byte *)uComponent->pixels, (byte *)vComponent->pixels, yComponent->w, yComponent->h, yComponent->pitch, uComponent->pitch);
+	YUVToRGBMan.convert444(_rgbSurface, Graphics::YUVToRGBManager::kScaleFull, (byte *)yComponent->pixels, (byte *)uComponent->pixels, (byte *)vComponent->pixels, yComponent->w, yComponent->h, yComponent->pitch, uComponent->pitch);
 
 	return _rgbSurface;
 }
@@ -452,7 +452,7 @@ bool JPEGDecoder::readSOS() {
 					_bitsNumber = 0;
 
 					for (byte i = 0; i < _numScanComp; i++)
-						_scanComp[i]->DCpredictor = 0;					
+						_scanComp[i]->DCpredictor = 0;
 				}
 			}
 		}

@@ -103,6 +103,9 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		outputConfiguration(project, setup, libraries, "Release", "x64", "64", false);
 
 	} else {
+		bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
+		bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
+
 		std::string warnings = "";
 		if (warningsIterator != _projectWarnings.end())
 			for (StringList::const_iterator i = warningsIterator->second.begin(); i != warningsIterator->second.end(); ++i)
@@ -110,9 +113,8 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 		std::string toolConfig;
 		toolConfig  = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
-		toolConfig += (name == "tinsel" ? "DebugInformationFormat=\"3\" " : "");
-		toolConfig += (name == "sword25" ? "DisableLanguageExtensions=\"false\" " : "");
-		toolConfig += (name == "grim" ? "DisableLanguageExtensions=\"false\" " : "");
+		toolConfig += (disableEditAndContinue   ? "DebugInformationFormat=\"3\" " : "");
+		toolConfig += (enableLanguageExtensions ? "DisableLanguageExtensions=\"false\" " : "");
 
 		// Win32
 		outputConfiguration(setup, project, toolConfig, "Debug", "Win32", "");
@@ -144,7 +146,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32) {
 	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << props << ".vsprops\">\n"
-	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" DebugInformationFormat=\"3\" />\n"
 	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << setup.projectName << ".exe\"\n"
 	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
 	           "\t\t\t/>\n";

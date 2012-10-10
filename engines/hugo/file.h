@@ -34,11 +34,11 @@ namespace Hugo {
 /**
  * Enumerate overlay file types
  */
-enum ovl_t {kOvlBoundary, kOvlOverlay, kOvlBase};
+enum OvlType {kOvlBoundary, kOvlOverlay, kOvlBase};
 
-struct uif_hdr_t {                                  // UIF font/image look up
-	uint16  size;                                   // Size of uif item
-	uint32  offset;                                 // Offset of item in file
+struct UifHdr {                                      // UIF font/image look up
+	uint16  _size;                                   // Size of uif item
+	uint32  _offset;                                 // Offset of item in file
 };
 
 
@@ -47,10 +47,10 @@ public:
 	FileManager(HugoEngine *vm);
 	virtual ~FileManager();
 
-	sound_pt getSound(const int16 sound, uint16 *size);
+	SoundPtr getSound(const int16 sound, uint16 *size);
 
 	void     readBootFile();
-	void     readImage(const int objNum, object_t *objPtr);
+	void     readImage(const int objNum, Object *objPtr);
 	void     readUIFImages();
 	void     readUIFItem(const int16 id, byte *buf);
 	bool     restoreGame(const int16 slot);
@@ -69,7 +69,7 @@ public:
 	virtual void instructions() const = 0;
 
 	virtual void readBackground(const int screenIndex) = 0;
-	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType) = 0;
+	virtual void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) = 0;
 
 	virtual const char *fetchString(const int index) = 0;
 
@@ -84,48 +84,42 @@ protected:
 	/**
 	 * Structure of scenery file lookup entry
 	 */
-	struct sceneBlock_t {
-		uint32 scene_off;
-		uint32 scene_len;
-		uint32 b_off;
-		uint32 b_len;
-		uint32 o_off;
-		uint32 o_len;
-		uint32 ob_off;
-		uint32 ob_len;
+	struct SceneBlock {
+		uint32 _sceneOffset;
+		uint32 _sceneLength;
+		uint32 _boundaryOffset;
+		uint32 _boundaryLength;
+		uint32 _overlayOffset;
+		uint32 _overlayLength;
+		uint32 _baseOffset;
+		uint32 _baseLength;
 	};
 
-	struct PCC_header_t {                           // Structure of PCX file header
-		byte   mfctr, vers, enc, bpx;
-		uint16  x1, y1, x2, y2;                     // bounding box
-		uint16  xres, yres;
-		byte   palette[3 * kNumColors];             // EGA color palette
-		byte   vmode, planes;
-		uint16 bytesPerLine;                        // Bytes per line
-		byte   fill2[60];
+	struct PCCHeader {                              // Structure of PCX file header
+		byte   _mfctr, _vers, _enc, _bpx;
+		uint16 _x1, _y1, _x2, _y2;                  // bounding box
+		uint16 _xres, _yres;
+		byte   _palette[3 * kNumColors];            // EGA color palette
+		byte   _vmode, _planes;
+		uint16 _bytesPerLine;                       // Bytes per line
+		byte   _fill2[60];
 	};                                              // Header of a PCC file
 
-	bool firstUIFFl;
-	uif_hdr_t UIFHeader[kMaxUifs];                  // Lookup for uif fonts/images
+	bool _firstUIFFl;
+	UifHdr _UIFHeader[kMaxUifs];                    // Lookup for uif fonts/images
 
 	Common::File _stringArchive;                    // Handle for string file
 	Common::File _sceneryArchive1;                  // Handle for scenery file
 	Common::File _objectsArchive;                   // Handle for objects file
 
-	PCC_header_t PCC_header;
-
-	seq_t *readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
+	Seq *readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
 
 	// If this is the first call, read the lookup table
-	bool has_read_header;
-	sound_hdr_t s_hdr[kMaxSounds];                  // Sound lookup table
+	bool _hasReadHeader;
+	SoundHdr _soundHdr[kMaxSounds];                    // Sound lookup table
 
 private:
-	byte *convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const;
-	uif_hdr_t *getUIFHeader(const uif_t id);
-
-//Strangerke : Not used?
-	void     printBootText();
+	UifHdr *getUIFHeader(const Uif id);
 };
 
 class FileManager_v1d : public FileManager {
@@ -137,7 +131,7 @@ public:
 	virtual void instructions() const;
 	virtual void openDatabaseFiles();
 	virtual void readBackground(const int screenIndex);
-	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
+	virtual void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
 	virtual const char *fetchString(const int index);
 };
 
@@ -149,7 +143,7 @@ public:
 	virtual void closeDatabaseFiles();
 	virtual void openDatabaseFiles();
 	virtual void readBackground(const int screenIndex);
-	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
+	virtual void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
 	const   char *fetchString(const int index);
 private:
 	char *_fetchStringBuf;
@@ -163,7 +157,7 @@ public:
 	void closeDatabaseFiles();
 	void openDatabaseFiles();
 	void readBackground(const int screenIndex);
-	void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
+	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
 private:
 	Common::File _sceneryArchive2;                  // Handle for scenery file
 };
@@ -181,7 +175,7 @@ public:
 	FileManager_v1w(HugoEngine *vm);
 	~FileManager_v1w();
 
-	void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
+	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
 };
 
 } // End of namespace Hugo

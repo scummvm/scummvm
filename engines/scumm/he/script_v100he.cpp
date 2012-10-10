@@ -876,6 +876,7 @@ void ScummEngine_v100he::o100_floodFill() {
 		_floodFillParams.box.top = 0;
 		_floodFillParams.box.right = 639;
 		_floodFillParams.box.bottom = 479;
+		adjustRect(_floodFillParams.box);
 		break;
 	case 6:
 		_floodFillParams.y = pop();
@@ -886,6 +887,7 @@ void ScummEngine_v100he::o100_floodFill() {
 		_floodFillParams.box.right = pop();
 		_floodFillParams.box.top = pop();
 		_floodFillParams.box.left = pop();
+		adjustRect(_floodFillParams.box);
 		break;
 	case 20:
 		_floodFillParams.flags = pop();
@@ -1345,6 +1347,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 135:
 		_wizParams.processFlags |= kWPFDstResNum;
@@ -1358,6 +1361,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.box2.right = pop();
 		_wizParams.box2.top = pop();
 		_wizParams.box2.left = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 137:
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
@@ -1365,6 +1369,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 138:
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
@@ -1374,6 +1379,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.box2.right = pop();
 		_wizParams.box2.top = pop();
 		_wizParams.box2.left = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	default:
 		error("o100_wizImageOps: Unknown case %d", subOp);
@@ -2339,6 +2345,13 @@ void ScummEngine_v100he::o100_writeFile() {
 }
 
 void ScummEngine_v100he::o100_debugInput() {
+	// Backyard Baseball 2003 / Basketball / Football 2002
+	// use older o72_debugInput code
+	if (_game.heversion == 101) {
+		ScummEngine_v72he::o72_debugInput();
+		return;
+	}
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {

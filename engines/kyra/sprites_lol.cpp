@@ -355,7 +355,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 object
 	int yOffs = 0;
 	int flag = 0;
 
-	int r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y), x, y, objectWidth, testFlag, wallFlag);
+	int r = testBlockPassability(calcBlockIndex(x, y), x, y, objectWidth, testFlag, wallFlag);
 	if (r)
 		return r;
 
@@ -369,7 +369,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 object
 			_objectLastDirection = 2;
 			x2 = x + objectWidth;
 
-			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, objectWidth, testFlag, wallFlag);
+			r = testBlockPassability(calcBlockIndex(x2, y), x, y, objectWidth, testFlag, wallFlag);
 			if (r)
 				return r;
 
@@ -385,7 +385,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 object
 			_objectLastDirection = 6;
 			x2 = x - objectWidth;
 
-			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, objectWidth, testFlag, wallFlag);
+			r = testBlockPassability(calcBlockIndex(x2, y), x, y, objectWidth, testFlag, wallFlag);
 			if (r)
 				return r;
 
@@ -403,7 +403,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 object
 			_objectLastDirection = 4;
 			y2 = y + objectWidth;
 
-			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, objectWidth, testFlag, wallFlag);
+			r = testBlockPassability(calcBlockIndex(x, y2), x, y, objectWidth, testFlag, wallFlag);
 			if (r)
 				return r;
 
@@ -420,7 +420,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 object
 			_objectLastDirection = 0;
 			y2 = y - objectWidth;
 
-			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, objectWidth, testFlag, wallFlag);
+			r = testBlockPassability(calcBlockIndex(x, y2), x, y, objectWidth, testFlag, wallFlag);
 			if (r)
 				return r;
 
@@ -436,7 +436,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 object
 	if (!flag)
 		return 0;
 
-	r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y2), x, y, objectWidth, testFlag, wallFlag);
+	r = testBlockPassability(calcBlockIndex(x2, y2), x, y, objectWidth, testFlag, wallFlag);
 	if (r)
 		return r;
 
@@ -447,7 +447,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 object
 	return 0;
 }
 
-int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag) {
+int LoLEngine::testBlockPassability(int block, int x, int y, int objectWidth, int testFlag, int wallFlag) {
 	if (block == _currentBlock)
 		testFlag &= 0xfffe;
 
@@ -461,9 +461,9 @@ int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int
 	if (!(testFlag & 2))
 		return 0;
 
-	uint16 b = _levelBlockProperties[block].assignedObjects;
-	while (b & 0x8000) {
-		LoLMonster *monster = &_monsters[b & 0x7fff];
+	uint16 obj = _levelBlockProperties[block].assignedObjects;
+	while (obj & 0x8000) {
+		LoLMonster *monster = &_monsters[obj & 0x7fff];
 
 		if (monster->mode < 13) {
 			int r = checkDrawObjectSpace(x, y, monster->x, monster->y);
@@ -471,7 +471,7 @@ int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int
 				return 2;
 		}
 
-		b = findObject(b)->nextAssignedObject;
+		obj = findObject(obj)->nextAssignedObject;
 	}
 
 	return 0;
@@ -1105,7 +1105,7 @@ void LoLEngine::updateMonster(LoLMonster *monster) {
 		if ((monster->fightCurTick <= 0) || (checkDrawObjectSpace(_partyPosX, _partyPosY, monster->x, monster->y) > 256) || (monster->flags & 8))
 			setMonsterMode(monster, 7);
 		else
-			rearrangeAttackingMonster(monster);
+			alignMonsterToParty(monster);
 		break;
 
 	case 6:
@@ -1428,26 +1428,26 @@ int LoLEngine::walkMonsterCheckDest(int x, int y, LoLMonster *monster, int unk) 
 	uint8 m = monster->mode;
 	monster->mode = 15;
 
-	int res = checkBlockBeforeObjectPlacement(x, y, monster->properties->maxWidth, 7, monster->properties->flags & 0x1000 ? 32 : unk);
+	int objType = checkBlockBeforeObjectPlacement(x, y, monster->properties->maxWidth, 7, monster->properties->flags & 0x1000 ? 32 : unk);
 
 	monster->mode = m;
-	return res;
+	return objType;
 }
 
 void LoLEngine::getNextStepCoords(int16 srcX, int16 srcY, int &newX, int &newY, uint16 direction) {
-	static const int8 shiftTableX[] = { 0, 32, 32, 32, 0, -32, -32, -32 };
-	static const int8 shiftTableY[] = { -32, -32, 0, 32, 32, 32, 0, -32 };
+	static const int8 stepAdjustX[] = { 0, 32, 32, 32, 0, -32, -32, -32 };
+	static const int8 stepAdjustY[] = { -32, -32, 0, 32, 32, 32, 0, -32 };
 
-	newX = (srcX + shiftTableX[direction]) & 0x1fff;
-	newY = (srcY + shiftTableY[direction]) & 0x1fff;
+	newX = (srcX + stepAdjustX[direction]) & 0x1fff;
+	newY = (srcY + stepAdjustY[direction]) & 0x1fff;
 }
 
-void LoLEngine::rearrangeAttackingMonster(LoLMonster *monster) {
-	int t = (monster->direction >> 1);
+void LoLEngine::alignMonsterToParty(LoLMonster *monster) {
+	uint8 mdir = monster->direction >> 1;
 	uint16 mx = monster->x;
 	uint16 my = monster->y;
-	uint16 *c = (t & 1) ? &my : &mx;
-	bool centered = (*c & 0x7f) == 0;
+	uint16 *pos = (mdir & 1) ? &my : &mx;
+	bool centered = (*pos & 0x7f) == 0;
 
 	bool posFlag = true;
 	if (monster->properties->maxWidth <= 63) {
@@ -1464,11 +1464,13 @@ void LoLEngine::rearrangeAttackingMonster(LoLMonster *monster) {
 					r = true;
 				} else {
 					for (int i = 0; i < 3; i++) {
-						t = (t + 1) & 3;
-						id = _levelBlockProperties[calcNewBlockPosition(monster->block, t)].assignedObjects;
+						mdir = (mdir + 1) & 3;
+						id = _levelBlockProperties[calcNewBlockPosition(monster->block, mdir)].assignedObjects;
 						id = (id & 0x8000) ? (id & 0x7fff) : 0xffff;
-						if (id != 0xffff)
+						if (id != 0xffff) {
 							r = true;
+							break;
+						}
 					}
 				}
 			}
@@ -1484,15 +1486,15 @@ void LoLEngine::rearrangeAttackingMonster(LoLMonster *monster) {
 		return;
 
 	if (posFlag) {
-		if (*c & 0x80)
-			*c -= 32;
+		if (*pos & 0x80)
+			*pos -= 32;
 		else
-			*c += 32;
+			*pos += 32;
 	} else {
-		if (*c & 0x80)
-			*c += 32;
+		if (*pos & 0x80)
+			*pos += 32;
 		else
-			*c -= 32;
+			*pos -= 32;
 	}
 
 	if (walkMonsterCheckDest(mx, my, monster, 4))
@@ -1502,8 +1504,10 @@ void LoLEngine::rearrangeAttackingMonster(LoLMonster *monster) {
 	int fy = _partyPosY;
 	calcSpriteRelPosition(mx, my, fx, fy, monster->direction >> 1);
 
-	t = (fx < 0) ? -fx : fx;
-	if (fy > 160 || t > 80)
+	if (fx < 0)
+		fx = -fx;
+
+	if (fy > 160 || fx > 80)
 		return;
 
 	placeMonster(monster, mx, my);

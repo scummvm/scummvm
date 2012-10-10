@@ -130,7 +130,6 @@ private:
 	void fadeOutSoundEffects();
 
 	int _lastTrack;
-	Audio::AudioStream *_currentSFX;
 	Audio::SoundHandle _sfxHandle;
 
 	uint8 *_musicTrackData;

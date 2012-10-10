@@ -65,10 +65,10 @@ byte FontRenderer::textToFont(byte c) {
 	return map_textToFont[c - 0x80];
 }
 
-void FontRenderer::renderText(int32 x, int32 y, const Common::String &origText, int32 mode) {
+void FontRenderer::renderText(int16 x, int16 y, const Common::String &origText, int32 mode) {
 	debugC(5, kDebugFont, "renderText(%d, %d, %s, %d)", x, y, origText.c_str(), mode);
 
-	int32 xx, yy;
+	int16 xx, yy;
 	computeSize(origText, &xx, &yy);
 
 	if (mode & 2) {
@@ -83,8 +83,8 @@ void FontRenderer::renderText(int32 x, int32 y, const Common::String &origText, 
 
 	_vm->addDirtyRect(x, y, x + xx, y + yy);
 
-	int32 curX = x;
-	int32 curY = y;
+	int16 curX = x;
+	int16 curY = y;
 	int32 height = 0;
 
 	const byte *text = (const byte *)origText.c_str();
@@ -98,20 +98,20 @@ void FontRenderer::renderText(int32 x, int32 y, const Common::String &origText, 
 			curChar = textToFont(curChar);
 			_currentFont->drawFontFrame(_vm->getMainSurface(), curChar, curX, curY, _currentFontColor);
 			curX = curX + _currentFont->getFrameWidth(curChar) - 1;
-			height = MAX(height, _currentFont->getFrameHeight(curChar));
+			height = MAX<int32>(height, _currentFont->getFrameHeight(curChar));
 		}
 		text++;
 	}
 }
 
-void FontRenderer::computeSize(const Common::String &origText, int32 *retX, int32 *retY) {
+void FontRenderer::computeSize(const Common::String &origText, int16 *retX, int16 *retY) {
 	debugC(4, kDebugFont, "computeSize(%s, retX, retY)", origText.c_str());
 
-	int32 lineWidth = 0;
-	int32 lineHeight = 0;
-	int32 totalHeight = 0;
-	int32 totalWidth = 0;
-	int32 lastLineHeight = 0;
+	int16 lineWidth = 0;
+	int16 lineHeight = 0;
+	int16 totalHeight = 0;
+	int16 totalWidth = 0;
+	int16 lastLineHeight = 0;
 
 	const byte *text = (const byte *)origText.c_str();
 	while (*text) {
@@ -127,8 +127,8 @@ void FontRenderer::computeSize(const Common::String &origText, int32 *retX, int3
 			lastLineHeight = 0;
 		} else {
 			curChar = textToFont(curChar);
-			int32 charWidth = _currentFont->getFrameWidth(curChar) - 1;
-			int32 charHeight = _currentFont->getFrameHeight(curChar);
+			int16 charWidth = _currentFont->getFrameWidth(curChar) - 1;
+			int16 charHeight = _currentFont->getFrameHeight(curChar);
 			lineWidth += charWidth;
 			lineHeight = MAX(lineHeight, charHeight);
 
@@ -137,7 +137,7 @@ void FontRenderer::computeSize(const Common::String &origText, int32 *retX, int3
 			// assume we only need to take the lower bound into
 			// consideration.
 			Common::Rect charRect = _currentFont->getFrameRect(curChar);
-			lastLineHeight = MAX<int32>(lastLineHeight, charRect.bottom);
+			lastLineHeight = MAX(lastLineHeight, charRect.bottom);
 		}
 		text++;
 	}
@@ -189,7 +189,7 @@ void FontRenderer::setFontColor(int32 fontColor1, int32 fontColor2, int32 fontCo
 	_currentFontColor[3] = fontColor3;
 }
 
-void FontRenderer::renderMultiLineText(int32 x, int32 y, const Common::String &origText, int32 mode) {
+void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode) {
 	debugC(5, kDebugFont, "renderMultiLineText(%d, %d, %s, %d)", x, y, origText.c_str(), mode);
 
 	// divide the text in several lines
@@ -204,10 +204,10 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, const Common::String &o
 
 	byte *it = text;
 
-	int32 maxWidth = 0;
-	int32 curWidth = 0;
+	int16 maxWidth = 0;
+	int16 curWidth = 0;
 
-	while (1) {
+	while (true) {
 		byte *lastLine = it;
 		byte *lastSpace = it;
 		int32 lastSpaceX = 0;
@@ -223,7 +223,7 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, const Common::String &o
 				curChar = textToFont(curChar);
 
 			int width = _currentFont->getFrameWidth(curChar);
-			curWidth += MAX<int32>(width - 2, 0);
+			curWidth += MAX(width - 2, 0);
 			it++;
 			curLetterNr++;
 		}
@@ -260,8 +260,8 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, const Common::String &o
 	//numLines++;
 
 	// get font height (assumed to be constant)
-	int32 height = _currentFont->getHeight();
-	int textSize = (height - 2) * numLines;
+	int16 height = _currentFont->getHeight();
+	int32 textSize = (height - 2) * numLines;
 	y = y - textSize;
 	if (y < 30)
 		y = 30;
@@ -278,8 +278,8 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, const Common::String &o
 		x = TOON_SCREEN_WIDTH - (maxWidth / 2) - 30;
 
 	// we have good coordinates now, we can render the multi line
-	int32 curX = x;
-	int32 curY = y;
+	int16 curX = x;
+	int16 curY = y;
 
 	for (int32 i = 0; i < numLines; i++) {
 		const byte *line = lines[i];

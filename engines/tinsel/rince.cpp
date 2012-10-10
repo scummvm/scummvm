@@ -202,8 +202,8 @@ void KillMover(PMOVER pMover) {
 		pMover->bActive = false;
 		MultiDeleteObject(GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
 		pMover->actorObj = NULL;
-		assert(g_scheduler->getCurrentProcess() != pMover->pProc);
-		g_scheduler->killProcess(pMover->pProc);
+		assert(CoroScheduler.getCurrentProcess() != pMover->pProc);
+		CoroScheduler.killProcess(pMover->pProc);
 	}
 }
 
@@ -856,10 +856,10 @@ void MoverProcessCreate(int X, int Y, int id, PMOVER pMover) {
 		iStruct.Y = Y;
 		iStruct.pMover = pMover;
 
-		g_scheduler->createProcess(PID_MOVER, T2MoverProcess, &iStruct, sizeof(MAINIT));
+		CoroScheduler.createProcess(PID_MOVER, T2MoverProcess, &iStruct, sizeof(MAINIT));
 	} else {
 		MoverProcessHelper(X, Y, id, pMover);
-		pMover->pProc = g_scheduler->createProcess(PID_MOVER, T1MoverProcess, &pMover, sizeof(PMOVER));
+		pMover->pProc = CoroScheduler.createProcess(PID_MOVER, T1MoverProcess, &pMover, sizeof(PMOVER));
 	}
 }
 

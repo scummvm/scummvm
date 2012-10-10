@@ -161,18 +161,19 @@ void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
 	}
 }
 
-void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_IPHONE::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	//printf("copyRectToScreen(%p, %d, %i, %i, %i, %i)\n", buf, pitch, x, y, w, h);
 	//Clip the coordinates
+	const byte *src = (const byte *)buf;
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x;
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -193,11 +194,11 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 
 	byte *dst = (byte *)_framebuffer.getBasePtr(x, y);
 	if (_framebuffer.pitch == pitch && _framebuffer.w == w) {
-		memcpy(dst, buf, h * pitch);
+		memcpy(dst, src, h * pitch);
 	} else {
 		do {
-			memcpy(dst, buf, w * _framebuffer.format.bytesPerPixel);
-			buf += pitch;
+			memcpy(dst, src, w * _framebuffer.format.bytesPerPixel);
+			src += pitch;
 			dst += _framebuffer.pitch;
 		} while (--h);
 	}
@@ -308,31 +309,33 @@ void OSystem_IPHONE::clearOverlay() {
 	dirtyFullOverlayScreen();
 }
 
-void OSystem_IPHONE::grabOverlay(OverlayColor *buf, int pitch) {
+void OSystem_IPHONE::grabOverlay(void *buf, int pitch) {
 	//printf("grabOverlay()\n");
 	int h = _videoContext->overlayHeight;
 
+	byte *dst = (byte *)buf;
 	const byte *src = (const byte *)_videoContext->overlayTexture.getBasePtr(0, 0);
 	do {
-		memcpy(buf, src, _videoContext->overlayWidth * sizeof(OverlayColor));
+		memcpy(dst, src, _videoContext->overlayWidth * sizeof(uint16));
 		src += _videoContext->overlayTexture.pitch;
-		buf += pitch;
+		dst += pitch;
 	} while (--h);
 }
 
-void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_IPHONE::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	//printf("copyRectToOverlay(%p, pitch=%i, x=%i, y=%i, w=%i, h=%i)\n", (const void *)buf, pitch, x, y, w, h);
+	const byte *src = (const byte *)buf;
 
 	//Clip the coordinates
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * sizeof(uint16);
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -350,9 +353,9 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 	}
 
 	byte *dst = (byte *)_videoContext->overlayTexture.getBasePtr(x, y);
-	do { 
-		memcpy(dst, buf, w * sizeof(OverlayColor));
-		buf += pitch;
+	do {
+		memcpy(dst, src, w * sizeof(uint16));
+		src += pitch;
 		dst += _videoContext->overlayTexture.pitch;
 	} while (--h);
 }
@@ -398,8 +401,8 @@ void OSystem_IPHONE::dirtyFullOverlayScreen() {
 	}
 }
 
-void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
-	//printf("setMouseCursor(%p, %u, %u, %i, %i, %u, %d, %p)\n", (const void *)buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, (const void *)format);
+void OSystem_IPHONE::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+	//printf("setMouseCursor(%p, %u, %u, %i, %i, %u, %d, %p)\n", (const void *)buf, w, h, hotspotX, hotspotY, keycolor, dontScale, (const void *)format);
 
 	const Graphics::PixelFormat pixelFormat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
 #if 0
@@ -432,7 +435,7 @@ void OSystem_IPHONE::setCursorPalette(const byte *colors, uint start, uint num) 
 
 	for (uint i = start; i < start + num; ++i, colors += 3)
 		_mouseCursorPalette[i] = Graphics::RGBToColor<Graphics::ColorMasks<5551> >(colors[0], colors[1], colors[2]);
-	
+
 	// FIXME: This is just stupid, our client code seems to assume that this
 	// automatically enables the cursor palette.
 	_mouseCursorPaletteEnabled = true;

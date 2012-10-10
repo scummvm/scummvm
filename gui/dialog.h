@@ -52,6 +52,7 @@ protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
 	Widget  *_dragWidget;
+	Widget 	*_tickleWidget;
 	bool	_visible;
 
 	ThemeEngine::DialogBackground _backgroundType;
@@ -71,7 +72,13 @@ public:
 	void	setFocusWidget(Widget *widget);
 	Widget *getFocusWidget() { return _focusedWidget; }
 
+	void setTickleWidget(Widget *widget) { _tickleWidget = widget; }
+	void unSetTickleWidget() { _tickleWidget = NULL; }
+	Widget *getTickleWidget() { return _tickleWidget; }
+
 	virtual void reflowLayout();
+	virtual void lostFocus();
+	virtual void receivedFocus() {}
 
 protected:
 	virtual void open();

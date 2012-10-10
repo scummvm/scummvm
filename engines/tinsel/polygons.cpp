@@ -1469,7 +1469,7 @@ static void SetExTags(SCNHANDLE ph) {
 			pts = &TagStates[SceneTags[i].offset];
 			for (j = 0; j < SceneTags[i].nooftags; j++, pts++) {
 				if (!pts->enabled)
-					DisableTag(nullContext, pts->tid);
+					DisableTag(Common::nullContext, pts->tid);
 			}
 			return;
 		}
@@ -1873,7 +1873,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 		} else {
 			for (int i = numPoly - 1; i >= 0; i--) {
 				if (Polys[i]->polyType == TAG) {
-					PolygonEvent(nullContext, i, STARTUP, 0, false, 0);
+					PolygonEvent(Common::nullContext, i, STARTUP, 0, false, 0);
 				}
 			}
 		}

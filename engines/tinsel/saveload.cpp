@@ -55,8 +55,7 @@ namespace Tinsel {
  * only saves/loads those which are valid for the version of the savegame
  * which is being loaded/saved currently.
  */
-#define CURRENT_VER 1
-// TODO: Not yet used
+#define CURRENT_VER 2
 
 /**
  * An auxillary macro, used to specify savegame versions. We use this instead
@@ -97,12 +96,13 @@ struct SaveGameHeader {
 	TimeDate dateTime;
 	bool scnFlag;
 	byte language;
+	uint16 numInterpreters;			// Savegame version 2 or later only
 };
 
 enum {
 	DW1_SAVEGAME_ID = 0x44575399,	// = 'DWSc' = "DiscWorld 1 ScummVM"
 	DW2_SAVEGAME_ID = 0x44573253,	// = 'DW2S' = "DiscWorld 2 ScummVM"
-	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7 + 1 + 1
+	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7 + 1 + 1 + 2
 };
 
 #define SAVEGAME_ID (TinselV2 ? (uint32)DW2_SAVEGAME_ID : (uint32)DW1_SAVEGAME_ID)
@@ -186,6 +186,15 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 		}
 	}
 
+	// Handle the number of interpreter contexts that will be saved in the savegame
+	if (tmp >= 2) {
+		tmp -= 2;
+		hdr.numInterpreters = NUM_INTERPRET;
+		s.syncAsUint16LE(hdr.numInterpreters);
+	} else {
+		hdr.numInterpreters = (TinselV2 ? 70 : 64) - 20;
+	}
+
 	// Skip over any extra bytes
 	s.skip(tmp);
 	return true;
@@ -262,7 +271,7 @@ static void syncSoundReel(Common::Serializer &s, SOUNDREELS &sr) {
 	s.syncAsSint32LE(sr.actorCol);
 }
 
-static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd) {
+static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd, int numInterp) {
 	s.syncAsUint32LE(sd.SavedSceneHandle);
 	s.syncAsUint32LE(sd.SavedBgroundHandle);
 	for (int i = 0; i < MAX_MOVERS; ++i)
@@ -273,7 +282,7 @@ static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd) {
 	s.syncAsSint32LE(sd.NumSavedActors);
 	s.syncAsSint32LE(sd.SavedLoffset);
 	s.syncAsSint32LE(sd.SavedToffset);
-	for (int i = 0; i < NUM_INTERPRET; ++i)
+	for (int i = 0; i < numInterp; ++i)
 		sd.SavedICInfo[i].syncWithSerializer(s);
 	for (int i = 0; i < MAX_POLY; ++i)
 		s.syncAsUint32LE(sd.SavedDeadPolys[i]);
@@ -422,7 +431,7 @@ char *ListEntry(int i, letype which) {
 		return NULL;
 }
 
-static void DoSync(Common::Serializer &s) {
+static bool DoSync(Common::Serializer &s, int numInterp) {
 	int	sg = 0;
 
 	if (TinselV2) {
@@ -434,7 +443,7 @@ static void DoSync(Common::Serializer &s) {
 	if (TinselV2 && s.isLoading())
 		HoldItem(INV_NOICON);
 
-	syncSavedData(s, *g_srsd);
+	syncSavedData(s, *g_srsd, numInterp);
 	syncGlobInfo(s);		// Glitter globals
 	syncInvInfo(s);			// Inventory data
 
@@ -443,6 +452,10 @@ static void DoSync(Common::Serializer &s) {
 		sg = WhichItemHeld();
 	s.syncAsSint32LE(sg);
 	if (s.isLoading()) {
+		if (sg != -1 && !GetIsInvObject(sg))
+			// Not a valid inventory object, so return false
+			return false;
+
 		if (TinselV2)
 			g_thingHeld = sg;
 		else
@@ -459,7 +472,7 @@ static void DoSync(Common::Serializer &s) {
 	if (*g_SaveSceneSsCount != 0) {
 		SAVED_DATA *sdPtr = g_SaveSceneSsData;
 		for (int i = 0; i < *g_SaveSceneSsCount; ++i, ++sdPtr)
-			syncSavedData(s, *sdPtr);
+			syncSavedData(s, *sdPtr, numInterp);
 
 		// Flag that there is a saved scene to return to. Note that in this context 'saved scene'
 		// is a stored scene to return to from another scene, such as from the Summoning Book close-up
@@ -469,6 +482,8 @@ static void DoSync(Common::Serializer &s) {
 
 	if (!TinselV2)
 		syncAllActorsAlive(s);
+
+	return true;
 }
 
 /**
@@ -488,7 +503,22 @@ static bool DoRestore() {
 		return false;
 	}
 
-	DoSync(s);
+	// Load in the data. For older savegame versions, we potentially need to load the data twice, once
+	// for pre 1.5 savegames, and if that fails, a second time for 1.5 savegames
+	int numInterpreters = hdr.numInterpreters;
+	int32 currentPos = f->pos();
+	for (int tryNumber = 0; tryNumber < ((hdr.ver >= 2) ? 1 : 2); ++tryNumber) {
+		// If it's the second loop iteration, try with the 1.5 savegame number of interpreter contexts
+		if (tryNumber == 1) {
+			f->seek(currentPos);
+			numInterpreters = 80;
+		}
+
+		// Load the savegame data
+		if (DoSync(s, numInterpreters))
+			// Data load was successful (or likely), so break out of loop
+			break;
+	}
 
 	uint32 id = f->readSint32LE();
 	if (id != (uint32)0xFEEDFACE)
@@ -575,7 +605,7 @@ static void DoSave() {
 		return;
 	}
 
-	DoSync(s);
+	DoSync(s, hdr.numInterpreters);
 
 	// Write out the special Id for Discworld savegames
 	f->writeUint32LE(0xFEEDFACE);

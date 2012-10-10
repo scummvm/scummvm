@@ -35,6 +35,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -46,36 +47,38 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_roomDesc(kNumRoomTexts), _freeDesc(kNumFreeTexts),
 	_personText(kNumPersonTexts) {
 
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-
 	_vSyncInterrupt = false;
 
 	_console = 0;
+	_sound = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	_speed = 1;
 	_turbo = false;
 	_oldMouseState = 0;
-	_channel0 = 0;
-	_channel1 = 0;
 
 	_datafilePrefix = "DREAMWEB.";
+	_speechDirName = "SPEECH";
+	// ES and FR CD release use a different data file prefix
+	// and speech directory naming.
+	if (isCD()) {
+		switch(getLanguage()) {
+		case Common::ES_ESP:
+			_datafilePrefix = "DREAMWSP.";
+			_speechDirName = "SPANISH";
+			break;
+		case Common::FR_FRA:
+			_datafilePrefix = "DREAMWFR.";
+			_speechDirName = "FRENCH";
+			break;
+		default:
+			// Nothing to do
+			break;
+		}
+	}
 
 	_openChangeSize = kInventx+(4*kItempicsize);
 	_quitRequested = false;
-
-	_currentSample = 0xff;
-	_channel0Playing = 0;
-	_channel0Repeat = 0;
-	_channel1Playing = 0xff;
-
-	_volume = 0;
-	_volumeTo = 0;
-	_volumeDirection = 0;
-	_volumeCount = 0;
 
 	_speechLoaded = false;
 
@@ -228,6 +231,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 DreamWebEngine::~DreamWebEngine() {
 	DebugMan.clearAllDebugChannels();
 	delete _console;
+	delete _sound;
 }
 
 static void vSyncInterrupt(void *refCon) {
@@ -268,7 +272,7 @@ void DreamWebEngine::processEvents() {
 		return;
 	}
 
-	soundHandler();
+	_sound->soundHandler();
 	Common::Event event;
 	int softKey, hardKey;
 	while (_eventMan->pollEvent(event)) {
@@ -364,10 +368,11 @@ void DreamWebEngine::processEvents() {
 Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
+	_sound = new DreamWebSound(this);
 
 	ConfMan.registerDefault("originalsaveload", "false");
 	ConfMan.registerDefault("bright_palette", true);
-	_hasSpeech = Common::File::exists("speech/r01c0000.raw") && !ConfMan.getBool("speech_mute");
+	_hasSpeech = Common::File::exists(_speechDirName + "/r01c0000.raw") && !ConfMan.getBool("speech_mute");
 	_brightPalette = ConfMan.getBool("bright_palette");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
@@ -406,25 +411,6 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 	}
 	_bufferIn = in;
 	DreamWeb::g_keyBuffer[in] = ascii;
-}
-
-void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
-	processEvents();
-	Common::Point pos = _eventMan->getMousePos();
-	if (pos.x > 298)
-		pos.x = 298;
-	if (pos.x < 15)
-		pos.x = 15;
-	if (pos.y < 15)
-		pos.y = 15;
-	if (pos.y > 184)
-		pos.y = 184;
-	*x = pos.x;
-	*y = pos.y;
-
-	unsigned newState = _eventMan->getButtonState();
-	*state = (newState == _oldMouseState? 0 : newState);
-	_oldMouseState = newState;
 }
 
 void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
@@ -526,9 +512,54 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 		default:
 			return c;
 		}
+	case Common::FR_FRA:
+	case Common::IT_ITA:
+		switch(c) {
+		case 133:
+			return 'Z' + 1;
+		case 130:
+			return 'Z' + 2;
+		case 138:
+			return 'Z' + 3;
+		case 136:
+			return 'Z' + 4;
+		case 140:
+			return 'Z' + 5;
+		case 135:
+			return 'Z' + 6;
+		case 149:
+			return ',' - 1;
+		case 131:
+			return ',' - 2;
+		case 141:
+			return ',' - 3;
+		case 139:
+			return ',' - 4;
+		case 151:
+			return 'A' - 1;
+		case 147:
+			return 'A' - 3;
+		case 150:
+			return 'A' - 4;
+		default:
+			return c;
+		}
 	default:
 		return c;
 	}
+}
+
+Common::String DreamWebEngine::modifyFileName(const char *name) {
+	Common::String fileName(name);
+
+	// Sanity check
+	if (!fileName.hasPrefix("DREAMWEB."))
+		return fileName;
+
+	// Make sure we use the correct file name as it differs depending on the game variant
+	fileName = _datafilePrefix;
+	fileName += name + 9;
+	return fileName;
 }
 
 bool DreamWebEngine::hasSpeech() {

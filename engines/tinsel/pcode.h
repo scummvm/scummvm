@@ -25,7 +25,7 @@
 #define TINSEL_PCODE_H
 
 #include "tinsel/events.h"	// for TINSEL_EVENT
-#include "tinsel/sched.h"	// for PROCESS
+#include "tinsel/sched.h"	// for Common::PROCESS
 
 namespace Common {
 class Serializer;
@@ -56,7 +56,7 @@ struct WorkaroundEntry;
 struct INT_CONTEXT {
 
 	// Elements for interpret context management
-	PROCESS *pProc;			///< processes owning this context
+	Common::PROCESS *pProc;			///< processes owning this context
 	GSORT	GSort;			///< sort of this context
 
 	// Previously parameters to Interpret()
@@ -114,12 +114,12 @@ void SaveInterpretContexts(INT_CONTEXT *sICInfo);
 void RegisterGlobals(int num);
 void FreeGlobals();
 
-void AttachInterpret(INT_CONTEXT *pic, PROCESS *pProc);
+void AttachInterpret(INT_CONTEXT *pic, Common::PROCESS *pProc);
 
-void WaitInterpret(CORO_PARAM, PPROCESS pWaitProc, bool *result);
+void WaitInterpret(CORO_PARAM, Common::PPROCESS pWaitProc, bool *result);
 
-#define NUM_INTERPRET	(NUM_PROCESS - 20)
-#define MAX_INTERPRET	(MAX_PROCESSES - 20)
+#define NUM_INTERPRET	(CORO_NUM_PROCESS - 20)
+#define MAX_INTERPRET	(CORO_MAX_PROCESSES - 20)
 
 /*----------------------------------------------------------------------*\
 |*	Library Procedure and Function codes parameter enums		*|

@@ -28,11 +28,11 @@
 
 #define BODGE
 
+#include "common/coroutines.h"
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
 #include "tinsel/bmv.h"
 #include "tinsel/config.h"
-#include "tinsel/coroutine.h"
 #include "tinsel/cursor.h"
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
@@ -1468,7 +1468,7 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 		++g_sceneCtr;
 
 	// Prevent code subsequent to this call running before scene changes
-	if (g_scheduler->getCurrentPID() != PID_MASTER_SCR)
+	if (CoroScheduler.getCurrentPID() != PID_MASTER_SCR)
 		CORO_KILL_SELF();
 	CORO_END_CODE;
 }
@@ -1625,10 +1625,6 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
  * Play a midi file.
  */
 static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
-	// FIXME: This is a workaround for the FIXME below
-	if (GetMidiVolume() == 0 || TinselV1PSX)
-		return;
-
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1637,18 +1633,13 @@ static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 
 	PlayMidiSequence(hMidi, loop == MIDI_LOOP);
 
-	// FIXME: The following check messes up the script arguments when
-	// entering the secret door in the bookshelf in the library,
-	// leading to a crash, when the music volume is set to 0 (MidiPlaying()
-	// always false then).
-	//
-	// Why exactly this happens is unclear. An analysis of the involved
-	// script(s) might reveal more.
-	//
-	// Note: This check&sleep was added in DW v2. It was most likely added
-	// to ensure that the MIDI song started playing before the next opcode
+	// This check&sleep was added in DW v2. It was most likely added to
+	// ensure that the MIDI song started playing before the next opcode
 	// is executed.
-	if (!MidiPlaying())
+	// In DW1, it messes up the script arguments when entering the secret
+	// door in the bookshelf in the library, leading to a crash, when the
+	// music volume is set to 0.
+	if (!MidiPlaying() && TinselV2)
 		CORO_SLEEP(1);
 
 	if (complete) {
@@ -2594,7 +2585,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 			sm.y = _ctx->y;
 			sm.thisScroll = g_scrollNumber;
 			sm.myEscape = myEscape;
-			g_scheduler->createProcess(PID_TCODE, ScrollMonitorProcess, &sm, sizeof(sm));
+			CoroScheduler.createProcess(PID_TCODE, ScrollMonitorProcess, &sm, sizeof(sm));
 		}
 	}
 	CORO_END_CODE;
@@ -2975,12 +2966,12 @@ static void StandTag(int actor, HPOLYGON hp) {
 				&& hFilm != TF_LEFT && hFilm != TF_RIGHT)
 			hFilm = 0;
 
-		Stand(nullContext, actor, pnodex, pnodey, hFilm);
+		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
 
 	} else if (hFilm && (actor == LEAD_ACTOR || actor == GetLeadId()))
-		Stand(nullContext, actor, pnodex, pnodey, hFilm);
+		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
 	else
-		Stand(nullContext, actor, pnodex, pnodey, 0);
+		Stand(Common::nullContext, actor, pnodex, pnodey, 0);
 }
 
 
@@ -3412,7 +3403,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			// Kick off the sample now (perhaps with a delay)
 			if (g_bNoPause)
 				g_bNoPause = false;
-			else if (!IsDemo)
+			else if (!TinselV2Demo)
 				CORO_SLEEP(SysVar(SV_SPEECHDELAY));
 
 			//SamplePlay(VOICE, hText, _ctx->sub, false, -1, -1, PRIORITY_TALK);
@@ -4244,7 +4235,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	int libCode;
 	if (TinselV0) libCode = DW1DEMO_CODES[operand];
 	else if (!TinselV2) libCode = DW1_CODES[operand];
-	else if (_vm->getFeatures() & GF_DEMO) libCode = DW2DEMO_CODES[operand];
+	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
 	else libCode = DW2_CODES[operand];
 
 	debug(7, "CallLibraryRoutine op %d (escOn %d, myEscape %d)", operand, pic->escOn, pic->myEscape);

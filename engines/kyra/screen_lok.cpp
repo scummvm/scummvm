@@ -190,7 +190,6 @@ void Screen_LoK::copyBackgroundBlock(int x, int page, int flag) {
 	_curPage = page;
 
 	int curX = x;
-	hideMouse();
 	copyRegionToBuffer(_curPage, 8, 8, 8, height, ptr2);
 	for (int i = 0; i < 19; ++i) {
 		int tempX = curX + 1;
@@ -208,7 +207,6 @@ void Screen_LoK::copyBackgroundBlock(int x, int page, int flag) {
 			curX = curX % 38;
 		}
 	}
-	showMouse();
 	_curPage = oldVideoPage;
 }
 

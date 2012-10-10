@@ -116,7 +116,7 @@ protected:
 	//@}
 
 	/**
-	 * Assigns the mouse coords to the mouse event. Furthermore notify the 
+	 * Assigns the mouse coords to the mouse event. Furthermore notify the
 	 * graphics manager about the position change.
 	 */
 	virtual void processMouseEvent(Common::Event &event, int x, int y);

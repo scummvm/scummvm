@@ -115,7 +115,7 @@ void RivenGraphics::updateScreen(Common::Rect updateRect) {
 
 			// Copy to screen if there's no transition. Otherwise transition. ;)
 			if (_scheduledTransition < 0)
-				_vm->_system->copyRectToScreen((byte *)_mainScreen->getBasePtr(updateRect.left, updateRect.top), _mainScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
+				_vm->_system->copyRectToScreen(_mainScreen->getBasePtr(updateRect.left, updateRect.top), _mainScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
 			else
 				runScheduledTransition();
 
@@ -255,7 +255,7 @@ void RivenGraphics::runScheduledTransition() {
 	}
 
 	// For now, just copy the image to screen without doing any transition.
-	_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
+	_vm->_system->copyRectToScreen(_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
 	_vm->_system->updateScreen();
 
 	_scheduledTransition = -1; // Clear scheduled transition
@@ -345,7 +345,7 @@ void RivenGraphics::drawInventoryImage(uint16 id, const Common::Rect *rect) {
 	mhkSurface->convertToTrueColor();
 	Graphics::Surface *surface = mhkSurface->getSurface();
 
-	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, rect->left, rect->top, surface->w, surface->h);
+	_vm->_system->copyRectToScreen(surface->pixels, surface->pitch, rect->left, rect->top, surface->w, surface->h);
 
 	delete mhkSurface;
 }
@@ -437,7 +437,7 @@ void RivenGraphics::updateCredits() {
 		}
 
 		// Now flush the new screen
-		_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
+		_vm->_system->copyRectToScreen(_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
 		_vm->_system->updateScreen();
 	}
 }

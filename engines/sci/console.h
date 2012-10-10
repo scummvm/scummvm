@@ -33,7 +33,7 @@ namespace Sci {
 class SciEngine;
 struct List;
 
-reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode);
+reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printBytecode);
 bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpOffset);
 
 class Console : public GUI::Debugger {
@@ -94,6 +94,8 @@ private:
 	bool cmdPlayVideo(int argc, const char **argv);
 	bool cmdAnimateList(int argc, const char **argv);
 	bool cmdWindowList(int argc, const char **argv);
+	bool cmdPlaneList(int argc, const char **argv);
+	bool cmdPlaneItemList(int argc, const char **argv);
 	bool cmdSavedBits(int argc, const char **argv);
 	bool cmdShowSavedBits(int argc, const char **argv);
 	// Segments

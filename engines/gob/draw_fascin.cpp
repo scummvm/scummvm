@@ -222,8 +222,8 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 								_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 					}
 				} else {
-					drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
-							_backColor, _transparency, *_spritesArray[_destSurface], *font);
+					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
+							_backColor, _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {
@@ -747,7 +747,7 @@ int16 Draw_Fascination::openWin(int16 id) {
 int16 Draw_Fascination::getWinFromCoord(int16 &dx, int16 &dy) {
 	int16 bestMatch = -1;
 
-	if ((_renderFlags & 128) == 0)
+	if (!(_renderFlags & RENDERFLAG_HASWINDOWS))
 		return -1;
 
 	for (int i = 0; i < 10; i++) {
@@ -790,7 +790,7 @@ int16 Draw_Fascination::handleCurWin() {
 	int8 matchNum = 0;
 	int16 bestMatch = -1;
 
-	if ((_vm->_game->_mouseButtons != 1) || ((_renderFlags & 128) == 0))
+	if ((_vm->_game->_mouseButtons != 1) || !(_renderFlags & RENDERFLAG_HASWINDOWS))
 		return 0;
 
 	for (int i = 0; i < 10; i++) {

@@ -152,6 +152,8 @@ void InvSetLimit(int invno, int n);
 void InvSetSize(int invno, int MinWidth, int MinHeight,
 		int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
+bool GetIsInvObject(int id);
+
 int WhichInventoryOpen();
 
 bool IsTopWindow();

@@ -959,7 +959,7 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 	// meantime, we don't want any looping sound effects still playing.
 	_sound->quitScreen();
 
-	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _mixer, _system);
+	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _system);
 	if (player) {
 		_screen->clearScreen();
 		if (player->load(sequenceId))

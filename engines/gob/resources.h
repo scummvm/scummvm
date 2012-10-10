@@ -103,7 +103,7 @@ private:
 	static const int kTOTTextItemSize  = 2 + 2;
 
 	enum ResourceType {
-		kResourceTOT,
+		kResourceTOT = 0,
 		kResourceIM,
 		kResourceEXT,
 		kResourceEX
@@ -201,8 +201,8 @@ private:
 
 	byte *getTOTData(TOTResourceItem &totItem) const;
 	byte *getIMData(TOTResourceItem &totItem)  const;
-	byte *getEXTData(EXTResourceItem &extItem, uint32 size) const;
-	byte *getEXData(EXTResourceItem &extItem,  uint32 size) const;
+	byte *getEXTData(EXTResourceItem &extItem, uint32 &size) const;
+	byte *getEXData(EXTResourceItem &extItem,  uint32 &size) const;
 };
 
 } // End of namespace Gob

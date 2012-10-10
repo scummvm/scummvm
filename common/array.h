@@ -332,7 +332,7 @@ protected:
 				// Copy a part of the new data to the position inside the
 				// initialized space.
 				copy(first, first + (_size - idx), pos);
-				
+
 				// Copy a part of the new data to the position inside the
 				// uninitialized space.
 				uninitialized_copy(first + (_size - idx), last, _storage + _size);

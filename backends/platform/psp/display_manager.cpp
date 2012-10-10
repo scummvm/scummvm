@@ -302,7 +302,7 @@ void DisplayManager::init() {
 
 	// Init overlay since we never change the size
 	_overlay->deallocate();
-	_overlay->setBytesPerPixel(sizeof(OverlayColor));
+	_overlay->setBytesPerPixel(sizeof(uint16));
 	_overlay->setSize(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
 	_overlay->allocate();
 }

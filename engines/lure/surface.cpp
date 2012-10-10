@@ -1360,8 +1360,8 @@ bool CopyProtectionDialog::show() {
 						(*tmpHotspot)->copyTo(&screen.screen());
 
 						screen.update();
-					} else if ((events.event().kbd.keycode >= Common::KEYCODE_0) &&
-								(events.event().kbd.keycode <= Common::KEYCODE_9)) {
+					} else if ((events.event().kbd.ascii >= '0') &&
+							   (events.event().kbd.ascii <= '9')) {
 						HotspotsList::iterator tmpHotspot = _hotspots.begin();
 						for (int i = 0; i < _charIndex + 3; i++)
 							++tmpHotspot;

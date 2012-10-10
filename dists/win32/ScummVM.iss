@@ -108,18 +108,6 @@ Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion isreadme; Langua
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
 Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
 Source: SDL.dll; DestDir: {app}
-Source: scummclassic.zip; DestDir: {app}; Flags: ignoreversion
-Source: scummmodern.zip; DestDir: {app}; Flags: ignoreversion
-Source: drascula.dat; DestDir: {app}; Flags: ignoreversion
-Source: hugo.dat; DestDir: {app}; Flags: ignoreversion
-Source: kyra.dat; DestDir: {app}; Flags: ignoreversion
-Source: lure.dat; DestDir: {app}; Flags: ignoreversion
-Source: pred.dic; DestDir: {app}; Flags: ignoreversion
-Source: queen.tbl; DestDir: {app}; Flags: ignoreversion
-Source: sky.cpt; DestDir: {app}; Flags: ignoreversion
-Source: teenagent.dat; DestDir: {app}; Flags: ignoreversion
-Source: toon.dat; DestDir: {app}; Flags: ignoreversion
-Source: translations.dat; DestDir: {app}; Flags: ignoreversion
 ;Mirgration script for saved games in Windows NT4 onwards
 Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
 Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1

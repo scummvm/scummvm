@@ -34,11 +34,10 @@ public:
 	~RPZADecoder();
 
 	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); }
 
 private:
 	Graphics::Surface *_surface;
-	Graphics::PixelFormat _pixelFormat;
 };
 
 } // End of namespace Video

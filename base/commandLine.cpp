@@ -237,6 +237,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
 
+	ConfMan.registerDefault("gui_saveload_chooser", "grid");
+	ConfMan.registerDefault("gui_saveload_last_pos", "0");
 }
 
 //

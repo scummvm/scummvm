@@ -56,7 +56,7 @@ void InventoryHandler::setInventoryObjId(int16 objId) {
 	_inventoryObjId = objId;
 }
 
-void InventoryHandler::setInventoryState(istate_t state) {
+void InventoryHandler::setInventoryState(Istate state) {
 	_inventoryState = state;
 }
 
@@ -68,7 +68,7 @@ int16 InventoryHandler::getInventoryObjId() const {
 	return _inventoryObjId;
 }
 
-istate_t InventoryHandler::getInventoryState() const {
+Istate InventoryHandler::getInventoryState() const {
 	return _inventoryState;
 }
 
@@ -137,8 +137,8 @@ void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayN
  * Process required action for inventory
  * Returns objId under cursor (or -1) for INV_GET
  */
-int16 InventoryHandler::processInventory(const invact_t action, ...) {
-	debugC(1, kDebugInventory, "processInventory(invact_t action, ...)");
+int16 InventoryHandler::processInventory(const InvAct action, ...) {
+	debugC(1, kDebugInventory, "processInventory(InvAct action, ...)");
 
 	int16 imageNumb;                                // Total number of inventory items
 	int displayNumb;                                // Total number displayed/carried
@@ -208,7 +208,7 @@ int16 InventoryHandler::processInventory(const invact_t action, ...) {
  * Process inventory state machine
  */
 void InventoryHandler::runInventory() {
-	status_t &gameStatus = _vm->getGameStatus();
+	Status &gameStatus = _vm->getGameStatus();
 
 	debugC(1, kDebugInventory, "runInventory");
 
@@ -231,7 +231,7 @@ void InventoryHandler::runInventory() {
 			_vm->_screen->moveImage(_vm->_screen->getBackBuffer(), 0, 0, kXPix, kYPix, kXPix, _vm->_screen->getFrontBuffer(), 0, 0, kXPix);
 			_vm->_object->updateImages();           // Add objects back into display list for restore
 			_inventoryState = kInventoryOff;
-			gameStatus.viewState = kViewPlay;
+			gameStatus._viewState = kViewPlay;
 		}
 		break;
 	case kInventoryDown:                            // Icon bar moving down

@@ -1156,7 +1156,7 @@ void Synth::writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u le
 			DT(partial[x].tva.envLevel[0]); \
 			DT(partial[x].tva.envLevel[1]); \
 			DT(partial[x].tva.envLevel[2]); \
-			DT(partial[x].tva.envLevel[3]); 
+			DT(partial[x].tva.envLevel[3]);
 
 			DTP(0);
 			DTP(1);

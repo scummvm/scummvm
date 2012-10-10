@@ -49,8 +49,10 @@ class PathWalker_NS {
 	void checkDoor(const Common::Point &foot);
 	void updateDirection(const Common::Point& pos, const Common::Point& to);
 
+	Parallaction *_vm;
+
 public:
-	PathWalker_NS();
+	PathWalker_NS(Parallaction *vm);
 
 	void buildPath(AnimationPtr a, uint16 x, uint16 y);
 	void walk();
@@ -79,8 +81,10 @@ class PathWalker_BR {
 	void doWalk(State &s);
 	void checkTrap(const Common::Point &p);
 
+	Parallaction *_vm;
+
 public:
-	PathWalker_BR();
+	PathWalker_BR(Parallaction *vm);
 	~PathWalker_BR() { }
 
 	void setCharacterPath(AnimationPtr a, uint16 x, uint16 y);

@@ -65,7 +65,7 @@ public:
 	void setMasterVolume(byte masterVolume);
 	void setVolume(byte volume);
 	void stop() {
-		_abort_parse = true;
+		_abortParse = true;
 		allNotesOff();
 	}
 	void pause() {

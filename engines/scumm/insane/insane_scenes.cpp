@@ -1386,7 +1386,7 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			break;
 		case EN_TORQUE:
 			turnBen(false);
-			if (_actor[1].y != 300)
+			if (_actor[1].y == 300)
 				prepareScenePropScene(57, 1, 0);
 			break;
 		default:

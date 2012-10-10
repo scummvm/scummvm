@@ -111,7 +111,6 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_dontSetPalette = false;
 
 	_debugFlag = 0;
-	_inVM = 0;
 
 	_inter_animDataSize = 10;
 

@@ -69,7 +69,7 @@ void ScummEngine::loadCJKFont() {
 
 		_cjkFont->setDrawingMode(Graphics::FontSJIS::kShadowMode);
 		_2byteWidth = _2byteHeight = 12;
-		_useCJKMode = true;		
+		_useCJKMode = true;
 #endif
 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN) {
 		int numChar = 1413;
@@ -499,7 +499,7 @@ int CharsetRendererV3::getCharWidth(uint16 chr) {
 
 	if (_vm->_useCJKMode && (chr & 0x80))
 		spacing = _vm->_2byteWidth / 2;
-	
+
 	if (!spacing)
 		spacing = *(_widthTable + chr);
 
@@ -644,7 +644,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		drawBits1(*vs, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
 	else
 		drawBits1(_vm->_textSurface, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, charPtr, drawTop, origWidth, origHeight);
-	
+
 	if (is2byte) {
 		origWidth /= _vm->_textSurfaceMultiplier;
 		height /= _vm->_textSurfaceMultiplier;
@@ -1399,7 +1399,7 @@ void CharsetRendererTownsClassic::drawBitsN(const Graphics::Surface&, byte *dst,
 		_vm->_cjkFont->drawChar(_vm->_textSurface, _sjisCurChar, _left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier, _vm->_townsCharsetColorMap[1], _shadowColor);
 		return;
 	}
-	
+
 	bool scale2x = (_vm->_textSurfaceMultiplier == 2);
 	dst = (byte *)_vm->_textSurface.pixels + (_top - _vm->_screenTop) * _vm->_textSurface.pitch * _vm->_textSurfaceMultiplier + _left * _vm->_textSurfaceMultiplier;
 

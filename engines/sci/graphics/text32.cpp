@@ -49,9 +49,12 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
 GfxText32::~GfxText32() {
 }
 
+reg_t GfxText32::createScrollTextBitmap(Common::String text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
+	return createTextBitmapInternal(text, textObject, maxWidth, maxHeight, prevHunk);
+
+}
 reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
 	reg_t stringObject = readSelector(_segMan, textObject, SELECTOR(text));
-
 	// The object in the text selector of the item can be either a raw string
 	// or a Str object. In the latter case, we need to access the object's data
 	// selector to get the raw string.
@@ -59,6 +62,11 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 		stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
 
 	Common::String text = _segMan->getString(stringObject);
+
+	return createTextBitmapInternal(text, textObject, maxWidth, maxHeight, prevHunk);
+}
+
+reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
 	// HACK: The character offsets of the up and down arrow buttons are off by one
 	// in GK1, for some unknown reason. Fix them here.
 	if (text.size() == 1 && (text[0] == 29 || text[0] == 30)) {
@@ -91,7 +99,11 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	reg_t memoryId = NULL_REG;
 	if (prevHunk.isNull()) {
 		memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
-		writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
+
+		// Scroll text objects have no bitmap selector!
+		ObjVarRef varp;
+		if (lookupSelector(_segMan, textObject, SELECTOR(bitmap), &varp, NULL) == kSelectorVariable)
+			writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
 	} else {
 		memoryId = prevHunk;
 	}
@@ -153,10 +165,24 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 			warning("Invalid alignment %d used in TextBox()", alignment);
 		}
 
+		byte curChar;
+
 		for (int i = 0; i < charCount; i++) {
-			unsigned char curChar = txt[i];
-			font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, foreColor, dimmed, bitmap, width, height);
-			curX += font->getCharWidth(curChar);
+			curChar = txt[i];
+
+			switch (curChar) {
+			case 0x0A:
+			case 0x0D:
+			case 0:
+				break;
+			case 0x7C:
+				warning("Code processing isn't implemented in SCI32");
+				break;
+			default:
+				font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, foreColor, dimmed, bitmap, width, height);
+				curX += font->getCharWidth(curChar);
+				break;
+			}
 		}
 
 		curX = 0;
@@ -175,7 +201,25 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 
 void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
-	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
+	drawTextBitmapInternal(x, y, planeRect, textObject, hunkId);
+}
+
+void GfxText32::drawScrollTextBitmap(reg_t textObject, reg_t hunkId, uint16 x, uint16 y) {
+	/*reg_t plane = readSelector(_segMan, textObject, SELECTOR(plane));
+	Common::Rect planeRect;
+	planeRect.top = readSelectorValue(_segMan, plane, SELECTOR(top));
+	planeRect.left = readSelectorValue(_segMan, plane, SELECTOR(left));
+	planeRect.bottom = readSelectorValue(_segMan, plane, SELECTOR(bottom));
+	planeRect.right = readSelectorValue(_segMan, plane, SELECTOR(right));
+
+	drawTextBitmapInternal(x, y, planeRect, textObject, hunkId);*/
+
+	// HACK: we pretty much ignore the plane rect and x, y...
+	drawTextBitmapInternal(0, 0, Common::Rect(20, 390, 600, 460), textObject, hunkId);
+}
+
+void GfxText32::drawTextBitmapInternal(int16 x, int16 y, Common::Rect planeRect, reg_t textObject, reg_t hunkId) {
+	int16 backColor = (int16)readSelectorValue(_segMan, textObject, SELECTOR(back));
 	// Sanity check: Check if the hunk is set. If not, either the game scripts
 	// didn't set it, or an old saved game has been loaded, where it wasn't set.
 	if (hunkId.isNull())
@@ -187,13 +231,17 @@ void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t t
 
 	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
 
-	if (!memoryPtr)
-		error("Attempt to draw an invalid text bitmap");
+	if (!memoryPtr) {
+		// Happens when restoring in some SCI32 games (e.g. SQ6).
+		// Commented out to reduce console spam
+		//warning("Attempt to draw an invalid text bitmap");
+		return;
+	}
 
 	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int curByte = 0;
-	uint16 skipColor = readSelectorValue(_segMan, textObject, SELECTOR(skip));
+	int16 skipColor = (int16)readSelectorValue(_segMan, textObject, SELECTOR(skip));
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
 	// Get totalWidth, totalHeight
@@ -206,10 +254,13 @@ void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t t
 		textY = textY * _screen->getDisplayHeight() / _screen->getHeight();
 	}
 
+	bool translucent = (skipColor == -1 && backColor == -1);
+
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
 			byte pixel = surface[curByte++];
-			if (pixel != skipColor && pixel != backColor)
+			if ((!translucent && pixel != skipColor && pixel != backColor) ||
+				(translucent && pixel != 0xFF))
 				_screen->putFontPixel(textY, curX + textX, curY, pixel);
 		}
 	}
@@ -265,7 +316,7 @@ void GfxText32::StringWidth(const char *str, GuiResourceId fontId, int16 &textWi
 }
 
 void GfxText32::Width(const char *text, int16 from, int16 len, GuiResourceId fontId, int16 &textWidth, int16 &textHeight, bool restoreFont) {
-	uint16 curChar;
+	byte curChar;
 	textWidth = 0; textHeight = 0;
 
 	GfxFont *font = _cache->getFont(fontId);
@@ -277,7 +328,6 @@ void GfxText32::Width(const char *text, int16 from, int16 len, GuiResourceId fon
 			switch (curChar) {
 			case 0x0A:
 			case 0x0D:
-			case 0x9781: // this one is used by SQ4/japanese as line break as well
 				textHeight = MAX<int16> (textHeight, font->getHeight());
 				break;
 			case 0x7C:

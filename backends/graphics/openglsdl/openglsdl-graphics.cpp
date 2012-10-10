@@ -160,7 +160,7 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 			_hwscreen->format->Rshift, _hwscreen->format->Gshift,
 			_hwscreen->format->Bshift, _hwscreen->format->Ashift);
 
-		// Workaround to MacOSX SDL not providing an accurate Aloss value.
+		// Workaround to SDL not providing an accurate Aloss value on Mac OS X.
 		if (_hwscreen->format->Amask == 0)
 			format.aLoss = 8;
 
@@ -665,7 +665,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	adjustMousePosition(point.x, point.y);
 }
- 
+
 void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 	setMousePosition(mouse.x, mouse.y);
 }

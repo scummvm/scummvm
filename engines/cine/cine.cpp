@@ -189,6 +189,19 @@ void CineEngine::initialize() {
 	g_cine->_messageTable.clear();
 	resetObjectTable();
 
+	if (getGameType() == Cine::GType_OS) {
+		disableSystemMenu = 1;
+	} else {
+		// WORKAROUND: We do not save this variable in FW's savegames.
+		// Initializing this to 1, like we do it in the OS case, will
+		// cause the menu disabled when loading from the launcher or
+		// command line.
+		// A proper fix here would be to save this variable in FW's saves.
+		// Since it seems these are unversioned so far, there would be need
+		// to properly add versioning to them first.
+		disableSystemMenu = 0;
+	}
+
 	var8 = 0;
 
 	var2 = var3 = var4 = var5 = 0;

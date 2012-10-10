@@ -34,22 +34,22 @@ namespace Hugo {
 /**
  * Actions for Process_inventory()
  */
-enum invact_t {kInventoryActionInit, kInventoryActionLeft, kInventoryActionRight, kInventoryActionGet};
+enum InvAct {kInventoryActionInit, kInventoryActionLeft, kInventoryActionRight, kInventoryActionGet};
 
 class InventoryHandler {
 public:
 	InventoryHandler(HugoEngine *vm);
 
 	void     setInventoryObjId(int16 objId);
-	void     setInventoryState(istate_t state);
+	void     setInventoryState(Istate state);
 	void     freeInvent();
 
 	int16    getInventoryObjId() const;
-	istate_t getInventoryState() const;
+	Istate   getInventoryState() const;
 
 	int16 findIconId(int16 objId);
 	void  loadInvent(Common::SeekableReadStream &in);
-	int16 processInventory(const invact_t action, ...);
+	int16 processInventory(const InvAct action, ...);
 	void  runInventory();
 
 private:
@@ -59,7 +59,7 @@ private:
 
 	int16    _firstIconId;                          // Index of first icon to display
 	int16   *_invent;
-	istate_t _inventoryState;                       // Inventory icon bar state
+	Istate   _inventoryState;                       // Inventory icon bar state
 	int16    _inventoryHeight;                      // Inventory icon bar height
 	int16    _inventoryObjId;                       // Inventory object selected, or -1
 	byte     _maxInvent;

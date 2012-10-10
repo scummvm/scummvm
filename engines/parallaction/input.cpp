@@ -188,15 +188,15 @@ int Input::updateGameInput() {
 	int event = kEvNone;
 
 	if (!isMouseEnabled() ||
-		(_engineFlags & kEngineBlockInput) ||
-		(_engineFlags & kEngineWalking) ||
-		(_engineFlags & kEngineChangeLocation)) {
+		(g_engineFlags & kEngineBlockInput) ||
+		(g_engineFlags & kEngineWalking) ||
+		(g_engineFlags & kEngineChangeLocation)) {
 
 		debugC(3, kDebugInput, "updateGameInput: input flags (mouse: %i, block: %i, walking: %i, changeloc: %i)",
 			isMouseEnabled(),
-			(_engineFlags & kEngineBlockInput) == 0,
-			(_engineFlags & kEngineWalking) == 0,
-			(_engineFlags & kEngineChangeLocation) == 0
+			(g_engineFlags & kEngineBlockInput) == 0,
+			(g_engineFlags & kEngineWalking) == 0,
+			(g_engineFlags & kEngineChangeLocation) == 0
 		);
 
 		return event;
@@ -289,7 +289,7 @@ void Input::walkTo(const Common::Point &dest) {
 
 bool Input::translateGameInput() {
 
-	if (_engineFlags & kEnginePauseJobs) {
+	if (g_engineFlags & kEnginePauseJobs) {
 		return false;
 	}
 
@@ -312,7 +312,7 @@ bool Input::translateGameInput() {
 	// test if mouse is hovering on an interactive zone for the currently selected inventory item
 	ZonePtr z = _vm->hitZone(_activeItem._id, mousePos.x, mousePos.y);
 
-	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((!z) || (ACTIONTYPE(z) != kZoneCommand))) {
+	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((g_engineFlags & kEngineWalking) == 0)) && ((!z) || (ACTIONTYPE(z) != kZoneCommand))) {
 		walkTo(mousePos);
 		return true;
 	}
@@ -361,7 +361,7 @@ void Input::enterInventoryMode() {
 	if (hitCharacter) {
 		if (_activeItem._id != 0) {
 			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
-			_engineFlags |= kEngineDragging;
+			g_engineFlags |= kEngineDragging;
 		} else {
 			setArrowCursor();
 		}
@@ -384,9 +384,9 @@ void Input::exitInventoryMode() {
 	int pos = _vm->getHoverInventoryItem(mousePos.x, mousePos.y);
 	_vm->highlightInventoryItem(-1);			// disable
 
-	if ((_engineFlags & kEngineDragging)) {
+	if ((g_engineFlags & kEngineDragging)) {
 
-		_engineFlags &= ~kEngineDragging;
+		g_engineFlags &= ~kEngineDragging;
 		ZonePtr z = _vm->hitZone(kZoneMerge, _activeItem._index, _vm->getInventoryItemIndex(pos));
 
 		if (z) {

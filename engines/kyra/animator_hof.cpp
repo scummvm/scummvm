@@ -104,9 +104,7 @@ void KyraEngine_HoF::refreshAnimObjects(int force) {
 		if (height + y > 143)
 			height -= height + y - 144;
 
-		_screen->hideMouse();
 		_screen->copyRegion(x, y, x, y, width, height, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->showMouse();
 
 		curObject->needRefresh = false;
 	}

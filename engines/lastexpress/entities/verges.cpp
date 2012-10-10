@@ -32,10 +32,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -48,40 +46,40 @@ Verges::Verges(LastExpressEngine *engine) : Entity(engine, kEntityVerges) {
 	ADD_CALLBACK_FUNCTION(Verges, callbackActionRestaurantOrSalon);
 	ADD_CALLBACK_FUNCTION(Verges, savegame);
 	ADD_CALLBACK_FUNCTION(Verges, updateEntity);
-	ADD_CALLBACK_FUNCTION(Verges, function9);
-	ADD_CALLBACK_FUNCTION(Verges, function10);
+	ADD_CALLBACK_FUNCTION(Verges, walkBetweenCars);
+	ADD_CALLBACK_FUNCTION(Verges, makeAnnouncement);
 	ADD_CALLBACK_FUNCTION(Verges, function11);
 	ADD_CALLBACK_FUNCTION(Verges, function12);
-	ADD_CALLBACK_FUNCTION(Verges, function13);
+	ADD_CALLBACK_FUNCTION(Verges, baggageCar);
 	ADD_CALLBACK_FUNCTION(Verges, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Verges, function15);
-	ADD_CALLBACK_FUNCTION(Verges, function16);
-	ADD_CALLBACK_FUNCTION(Verges, function17);
+	ADD_CALLBACK_FUNCTION(Verges, dialog);
+	ADD_CALLBACK_FUNCTION(Verges, dialog2);
+	ADD_CALLBACK_FUNCTION(Verges, talkAboutPassengerList);
 	ADD_CALLBACK_FUNCTION(Verges, chapter1);
 	ADD_CALLBACK_FUNCTION(Verges, talkHarem);
 	ADD_CALLBACK_FUNCTION(Verges, talkPassengerList);
 	ADD_CALLBACK_FUNCTION(Verges, talkGendarmes);
-	ADD_CALLBACK_FUNCTION(Verges, function22);
+	ADD_CALLBACK_FUNCTION(Verges, askMertensToRelayAugustInvitation);
 	ADD_CALLBACK_FUNCTION(Verges, function23);
 	ADD_CALLBACK_FUNCTION(Verges, policeGettingOffTrain);
-	ADD_CALLBACK_FUNCTION(Verges, function25);
+	ADD_CALLBACK_FUNCTION(Verges, policeSearch);
 	ADD_CALLBACK_FUNCTION(Verges, chapter1Handler);
 	ADD_CALLBACK_FUNCTION(Verges, chapter2);
 	ADD_CALLBACK_FUNCTION(Verges, chapter2Handler);
 	ADD_CALLBACK_FUNCTION(Verges, chapter3);
 	ADD_CALLBACK_FUNCTION(Verges, function30);
-	ADD_CALLBACK_FUNCTION(Verges, function31);
+	ADD_CALLBACK_FUNCTION(Verges, talkAboutMax);
 	ADD_CALLBACK_FUNCTION(Verges, function32);
 	ADD_CALLBACK_FUNCTION(Verges, function33);
 	ADD_CALLBACK_FUNCTION(Verges, function34);
-	ADD_CALLBACK_FUNCTION(Verges, function35);
+	ADD_CALLBACK_FUNCTION(Verges, organizeConcertInvitations);
 	ADD_CALLBACK_FUNCTION(Verges, chapter4);
 	ADD_CALLBACK_FUNCTION(Verges, chapter4Handler);
-	ADD_CALLBACK_FUNCTION(Verges, function38);
+	ADD_CALLBACK_FUNCTION(Verges, resetState);
 	ADD_CALLBACK_FUNCTION(Verges, chapter5);
 	ADD_CALLBACK_FUNCTION(Verges, chapter5Handler);
-	ADD_CALLBACK_FUNCTION(Verges, function41);
-	ADD_CALLBACK_FUNCTION(Verges, function42);
+	ADD_CALLBACK_FUNCTION(Verges, askPassengersToStayInCompartments);
+	ADD_CALLBACK_FUNCTION(Verges, end);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -102,11 +100,11 @@ IMPLEMENT_FUNCTION(3, Verges, callbackActionOnDirection)
 
 	case kActionNone:
 		if (getData()->direction != kDirectionRight)
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
  		break;
 
 	case kActionExcuseMeCath:
@@ -151,7 +149,7 @@ IMPLEMENT_FUNCTION_II(8, Verges, updateEntity, CarIndex, EntityPosition)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_S(9, Verges, function9)
+IMPLEMENT_FUNCTION_S(9, Verges, walkBetweenCars)
 switch (savepoint.action) {
 	default:
 		break;
@@ -203,7 +201,7 @@ switch (savepoint.action) {
 
 		case 3:
 			setCallback(4);
-			setup_function10(kCarGreenSleeping, kPosition_540, (char *)&params->seq1);
+			setup_makeAnnouncement(kCarGreenSleeping, kPosition_540, (char *)&params->seq1);
 			break;
 
 		case 4:
@@ -219,7 +217,7 @@ switch (savepoint.action) {
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -227,7 +225,7 @@ switch (savepoint.action) {
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
+IMPLEMENT_FUNCTION_IIS(10, Verges, makeAnnouncement, CarIndex, EntityPosition)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -241,12 +239,13 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 		}
 
 		if (getEntities()->updateEntity(kEntityVerges, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
 		if (params->param6) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 75))
+				break;
 
 			getSound()->playSound(kEntityVerges, (char *)&params->seq);
 
@@ -266,7 +265,7 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 		}
 
 		if (getEntities()->updateEntity(kEntityVerges, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -337,7 +336,7 @@ IMPLEMENT_FUNCTION(11, Verges, function11)
 			getObjects()->update(kObject104, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
 			getObjects()->update(kObject105, kEntityVerges, kObjectLocationNone, kCursorNormal, kCursorHand);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 			}
 		}
@@ -397,7 +396,7 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 			getData()->entityPosition = kPosition_850;
 			getEntities()->clearSequences(kEntityVerges);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -405,7 +404,7 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_I(13, Verges, function13, bool)
+IMPLEMENT_FUNCTION_I(13, Verges, baggageCar, bool)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -438,7 +437,7 @@ IMPLEMENT_FUNCTION_I(13, Verges, function13, bool)
 			getEntities()->clearSequences(kEntityVerges);
 			getScenes()->loadSceneFromPosition(kCarBaggage, 91);
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -450,7 +449,7 @@ IMPLEMENT_FUNCTION_I(14, Verges, updateFromTime, uint32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_IS(15, Verges, function15, EntityIndex)
+IMPLEMENT_FUNCTION_IS(15, Verges, dialog, EntityIndex)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -462,7 +461,7 @@ IMPLEMENT_FUNCTION_IS(15, Verges, function15, EntityIndex)
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -487,7 +486,7 @@ IMPLEMENT_FUNCTION_IS(15, Verges, function15, EntityIndex)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
+IMPLEMENT_FUNCTION_ISS(16, Verges, dialog2, EntityIndex)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -499,7 +498,7 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -527,7 +526,7 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(17, Verges, function17)
+IMPLEMENT_FUNCTION(17, Verges, talkAboutPassengerList)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -549,7 +548,7 @@ IMPLEMENT_FUNCTION(17, Verges, function17)
 
 		case 2:
 			setCallback(3);
-			setup_function15(kEntityMertens, "TRA1291");
+			setup_dialog(kEntityMertens, "TRA1291");
 			break;
 
 		case 3:
@@ -559,7 +558,7 @@ IMPLEMENT_FUNCTION(17, Verges, function17)
 
 		case 4:
 			ENTITY_PARAM(0, 3) = 0;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -573,7 +572,7 @@ IMPLEMENT_FUNCTION(18, Verges, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Verges, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -612,7 +611,7 @@ IMPLEMENT_FUNCTION(21, Verges, talkGendarmes)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(22, Verges, function22)
+IMPLEMENT_FUNCTION(22, Verges, askMertensToRelayAugustInvitation)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -635,10 +634,10 @@ IMPLEMENT_FUNCTION(22, Verges, function22)
 		case 2:
 			if (getEvent(kEventMertensAskTylerCompartment) || getEvent(kEventMertensAskTylerCompartmentD) || getEvent(kEventMertensAugustWaiting)) {
 				setCallback(3);
-				setup_function16(kEntityMertens, "TRA1200", "TRA1201");
+				setup_dialog2(kEntityMertens, "TRA1200", "TRA1201");
 			} else {
 				setCallback(4);
-				setup_function16(kEntityMertens, "TRA1200A", "TRA1201");
+				setup_dialog2(kEntityMertens, "TRA1200A", "TRA1201");
 			}
 			break;
 
@@ -651,7 +650,7 @@ IMPLEMENT_FUNCTION(22, Verges, function22)
 			break;
 
 		case 5:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -697,7 +696,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 		break;
 
 	case kActionEndSound:
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -715,7 +714,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(25, Verges, function25)
+IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -775,10 +774,10 @@ IMPLEMENT_FUNCTION(25, Verges, function25)
 
 				if (getData()->car == kCarRedSleeping) {
 					setCallback(6);
-					setup_function10(kCarGreenSleeping, kPosition_540, "TRA1005");
+					setup_makeAnnouncement(kCarGreenSleeping, kPosition_540, "TRA1005");
 				} else {
 					setCallback(7);
-					setup_function10(kCarRedSleeping, kPosition_9460, "TRA1006");
+					setup_makeAnnouncement(kCarRedSleeping, kPosition_9460, "TRA1006");
 				}
 				break;
 			}
@@ -806,7 +805,7 @@ IMPLEMENT_FUNCTION(25, Verges, function25)
 			getSavePoints()->push(kEntityVerges, kEntityCoudert, kAction168254872);
 
 			setCallback(4);
-			setup_function10(kCarRedSleeping, kPosition_9460, "TRA1006");
+			setup_makeAnnouncement(kCarRedSleeping, kPosition_9460, "TRA1006");
 			break;
 
 		case 4:
@@ -818,7 +817,7 @@ IMPLEMENT_FUNCTION(25, Verges, function25)
 		case 11:
 			ENTITY_PARAM(0, 7) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:
@@ -839,7 +838,7 @@ IMPLEMENT_FUNCTION(25, Verges, function25)
 			getSavePoints()->push(kEntityVerges, kEntityCoudert, kAction168254872);
 
 			setCallback(10);
-			setup_function10(kCarGreenSleeping, kPosition_540, "TRA1006");
+			setup_makeAnnouncement(kCarGreenSleeping, kPosition_540, "TRA1006");
 			break;
 
 		case 10:
@@ -893,14 +892,14 @@ IMPLEMENT_FUNCTION(26, Verges, chapter1Handler)
 label_callback1:
 		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
 			setCallback(2);
-			setup_function13(false);
+			setup_baggageCar(false);
 			break;
 		}
 
 label_callback2:
 		if (ENTITY_PARAM(0, 7)) {
 			setCallback(3);
-			setup_function25();
+			setup_policeSearch();
 			break;
 		}
 
@@ -908,10 +907,12 @@ label_callback3:
 		if (params->param6)
 			goto label_callback12;
 
-		TIME_CHECK_CALLBACK_1(kTimeChapter1, params->param7, 4, setup_function9, "TRA1001");
+		if (Entity::timeCheckCallback(kTimeChapter1, params->param7, 4, "TRA1001", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback4:
-		TIME_CHECK_CALLBACK(kTime1089000, params->param8, 5, setup_function12);
+		if (Entity::timeCheckCallback(kTime1089000, params->param8, 5, WRAP_SETUP_FUNCTION(Verges, setup_function12)))
+			break;
 
 		params->param8 = 1;
 
@@ -922,16 +923,20 @@ label_callback4:
 		}
 
 label_callback8:
-		TIME_CHECK_CALLBACK_1(kTime1107000, CURRENT_PARAM(1, 1), 9, setup_function9, "TRA1001A");
+		if (Entity::timeCheckCallback(kTime1107000, CURRENT_PARAM(1, 1), 9, "TRA1001A", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback9:
-		TIME_CHECK_CALLBACK_1(kTime1134000, CURRENT_PARAM(1, 2), 10, setup_function9, "TRA1002");
+		if (Entity::timeCheckCallback(kTime1134000, CURRENT_PARAM(1, 2), 10, "TRA1002", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback10:
-		TIME_CHECK_CALLBACK_1(kTime1165500, CURRENT_PARAM(1, 3), 11, setup_function9, "TRA1003");
+		if (Entity::timeCheckCallback(kTime1165500, CURRENT_PARAM(1, 3), 11, "TRA1003", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback11:
-		TIME_CHECK_CALLBACK_1(kTime1225800, CURRENT_PARAM(1, 4), 12, setup_function9, "TRA1004");
+		if (Entity::timeCheckCallback(kTime1225800, CURRENT_PARAM(1, 4), 12, "TRA1004", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback12:
 		if (ENTITY_PARAM(0, 5) && !params->param2) {
@@ -950,7 +955,7 @@ label_callback13:
 label_callback14:
 		if (ENTITY_PARAM(0, 3) && !params->param4 && (getState()->time < kTime1134000 || getState()->time > kTime1156500)) {
 			setCallback(15);
-			setup_function17();
+			setup_talkAboutPassengerList();
 			break;
 		}
 
@@ -958,14 +963,14 @@ label_callback15:
 		if (ENTITY_PARAM(0, 1) && !params->param5) {
 			if (getState()->time < kTime1134000 || getState()->time > kTime1156500) {
 				setCallback(16);
-				setup_function22();
+				setup_askMertensToRelayAugustInvitation();
 			}
 		}
 		break;
 
 	case kActionOpenDoor:
 		setCallback(17);
-		setup_function13(savepoint.param.intValue < 106 ? true : false);
+		setup_baggageCar(savepoint.param.intValue < 106 ? true : false);
 		break;
 
 	case kActionDefault:
@@ -1001,7 +1006,7 @@ label_callback15:
 
 		case 6:
 			setCallback(7);
-			setup_function15(kEntityMertens, "TRA1202");
+			setup_dialog(kEntityMertens, "TRA1202");
 			break;
 
 		case 7:
@@ -1079,11 +1084,12 @@ IMPLEMENT_FUNCTION(28, Verges, chapter2Handler)
 	case kActionNone:
 		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
 			setCallback(1);
-			setup_function13(false);
+			setup_baggageCar(false);
 		}
 
 label_callback_1:
-		TIME_CHECK_CALLBACK_1(kTime1818900, params->param1, 2, setup_function9, "Tra2177");
+		if (Entity::timeCheckCallback(kTime1818900, params->param1, 2, "Tra2177", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback_2:
 		if (params->param2 == kTimeInvalid || !getState()->time)
@@ -1111,7 +1117,7 @@ label_callback_6:
 
 			if (ENTITY_PARAM(0, 3)) {
 				setCallback(7);
-				setup_function17();
+				setup_talkAboutPassengerList();
 			}
 
 			break;
@@ -1124,7 +1130,7 @@ label_callback_6:
 
 	case kActionOpenDoor:
 		setCallback(8);
-		setup_function13(savepoint.param.intValue < 106);
+		setup_baggageCar(savepoint.param.intValue < 106);
 		break;
 
 	case kActionDefault:
@@ -1149,7 +1155,7 @@ label_callback_6:
 
 		case 4:
 			setCallback(5);
-			setup_function15(kEntityCoudert, "TRA2100");
+			setup_dialog(kEntityCoudert, "TRA2100");
 			break;
 
 		case 5:
@@ -1171,7 +1177,7 @@ IMPLEMENT_FUNCTION(29, Verges, chapter3)
 		break;
 
 	case kActionNone:
-		setup_function23();
+		setup_function33();
 		break;
 
 	case kActionDefault:
@@ -1215,7 +1221,7 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 
 		case 2:
 			setCallback(3);
-			setup_function15(kEntityCoudert, (char *)&params->seq1);
+			setup_dialog(kEntityCoudert, (char *)&params->seq1);
 			break;
 
 		case 3:
@@ -1224,7 +1230,7 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 			break;
 
 		case 4:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1232,7 +1238,7 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(31, Verges, function31)
+IMPLEMENT_FUNCTION(31, Verges, talkAboutMax)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1254,7 +1260,7 @@ IMPLEMENT_FUNCTION(31, Verges, function31)
 
 		case 2:
 			setCallback(3);
-			setup_function15(kEntityCoudert, "TRA3015");
+			setup_dialog(kEntityCoudert, "TRA3015");
 			break;
 
 		case 3:
@@ -1266,7 +1272,7 @@ IMPLEMENT_FUNCTION(31, Verges, function31)
 			getProgress().field_48 = 1;
 			ENTITY_PARAM(0, 4) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1280,7 +1286,12 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_3(kTime2263500, params->param1, 5, setup_function10, kCarRedSleeping, kPosition_9460, "TRA3006");
+		if (getState()->time > kTime2263500 && !params->param1) {
+			params->param1 = 1;
+			setCallback(5);
+			setup_makeAnnouncement(kCarRedSleeping, kPosition_9460, "TRA3006");
+			break;
+		}
 		break;
 
 	case kActionDefault:
@@ -1330,7 +1341,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 
 		case 3:
 			setCallback(4);
-			setup_function10(kCarGreenSleeping, kPosition_540, "TRA3004");
+			setup_makeAnnouncement(kCarGreenSleeping, kPosition_540, "TRA3004");
 			break;
 
 		case 4:
@@ -1343,7 +1354,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1401,7 +1412,7 @@ IMPLEMENT_FUNCTION(33, Verges, function33)
 			getSavePoints()->push(kEntityVerges, kEntityAbbot, kAction192054567);
 
 			setCallback(6);
-			setup_function9("Tra3010");
+			setup_walkBetweenCars("Tra3010");
 			break;
 
 		case 6:
@@ -1421,49 +1432,55 @@ IMPLEMENT_FUNCTION(34, Verges, function34)
 	case kActionNone:
 		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
 			setCallback(1);
-			setup_function13(false);
+			setup_baggageCar(false);
 			break;
 		}
 
 label_callback_1:
 		if (ENTITY_PARAM(0, 4)) {
 			setCallback(2);
-			setup_function31();
+			setup_talkAboutMax();
 			break;
 		}
 
 label_callback_2:
 		if (ENTITY_PARAM(0, 3)) {
 			setCallback(3);
-			setup_function17();
+			setup_talkAboutPassengerList();
 			break;
 		}
 
 label_callback_3:
-		TIME_CHECK_CALLBACK_1(kTime1971000, params->param1, 4, setup_function9, "Tra3001");
+		if (Entity::timeCheckCallback(kTime1971000, params->param1, 4, "Tra3001", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback_4:
-		TIME_CHECK_CALLBACK_1(kTime1998000, params->param2, 5, setup_function9, "Tra3010a");
+		if (Entity::timeCheckCallback(kTime1998000, params->param2, 5, "Tra3010a", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback_5:
-		TIME_CHECK_CALLBACK(kTime2016000, params->param3, 6, setup_function35);
+		if (Entity::timeCheckCallback(kTime2016000, params->param3, 6, WRAP_SETUP_FUNCTION(Verges, setup_organizeConcertInvitations)))
+			break;
 
 label_callback_6:
-		TIME_CHECK_CALLBACK_1(kTime2070000, params->param4, 7, setup_function9, "Tra3002");
+		if (Entity::timeCheckCallback(kTime2070000, params->param4, 7, "Tra3002", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback_7:
-		TIME_CHECK_CALLBACK_1(kTime2142000, params->param5, 8, setup_function9, "Tra3003");
+		if (Entity::timeCheckCallback(kTime2142000, params->param5, 8, "Tra3003", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+			break;
 
 label_callback_8:
-		TIME_CHECK_CALLBACK_1(kTime2173500, params->param6, 9, setup_function30, "Tra3012");
+		if (Entity::timeCheckCallback(kTime2173500, params->param6, 9, "Tra3012", WRAP_SETUP_FUNCTION_S(Verges, setup_function30)))
+			break;
 
 label_callback_9:
-		TIME_CHECK_CALLBACK(kTime2218500, params->param7, 10, setup_function32);
+		Entity::timeCheckCallback(kTime2218500, params->param7, 10, WRAP_SETUP_FUNCTION(Verges, setup_function32));
 		break;
 
 	case kActionOpenDoor:
 		setCallback(11);
-		setup_function13(savepoint.param.intValue < 106);
+		setup_baggageCar(savepoint.param.intValue < 106);
 		break;
 
 	case kActionCallback:
@@ -1503,7 +1520,7 @@ label_callback_9:
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(35, Verges, function35)
+IMPLEMENT_FUNCTION(35, Verges, organizeConcertInvitations)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1525,7 +1542,7 @@ IMPLEMENT_FUNCTION(35, Verges, function35)
 
 		case 2:
 			setCallback(3);
-			setup_function15(kEntityMertens, "Tra3011A");
+			setup_dialog(kEntityMertens, "Tra3011A");
 			break;
 
 		case 3:
@@ -1537,7 +1554,7 @@ IMPLEMENT_FUNCTION(35, Verges, function35)
 
 		case 4:
 			setCallback(5);
-			setup_function15(kEntityMertens, "Tra3011");
+			setup_dialog(kEntityMertens, "Tra3011");
 			break;
 
 		case 5:
@@ -1548,7 +1565,7 @@ IMPLEMENT_FUNCTION(35, Verges, function35)
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1592,7 +1609,7 @@ IMPLEMENT_FUNCTION(37, Verges, chapter4Handler)
 	case kActionNone:
 		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
 			setCallback(1);
-			setup_function13(false);
+			setup_baggageCar(false);
 			break;
 		}
 
@@ -1600,37 +1617,42 @@ label_callback_1:
 		if (ENTITY_PARAM(0, 6)) {
 			if (ENTITY_PARAM(0, 3)) {
 				setCallback(2);
-				setup_function17();
+				setup_talkAboutPassengerList();
 				break;
 			}
 
 label_callback_2:
-			TIME_CHECK_CALLBACK_1(kTime2349000, params->param1, 3, setup_function9, "Tra1001");
+			if (Entity::timeCheckCallback(kTime2349000, params->param1, 3, "Tra1001", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+				break;
 
 label_callback_3:
-			TIME_CHECK_CALLBACK_1(kTime2378700, params->param2, 4, setup_function9, "Tra4001");
+			if (Entity::timeCheckCallback(kTime2378700, params->param2, 4, "Tra4001", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+				break;
 
 label_callback_4:
-			TIME_CHECK_CALLBACK_1(kTime2403000, params->param3, 5, setup_function9, "Tra1001A");
+			if (Entity::timeCheckCallback(kTime2403000, params->param3, 5, "Tra1001A", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+				break;
 
 label_callback_5:
-			TIME_CHECK_CALLBACK_1(kTime2414700, params->param4, 6, setup_function9, "Tra4002");
+			if (Entity::timeCheckCallback(kTime2414700, params->param4, 6, "Tra4002", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+				break;
 
 label_callback_6:
-			TIME_CHECK_CALLBACK_1(kTime2484000, params->param5, 7, setup_function9, "Tra4003");
+			if (Entity::timeCheckCallback(kTime2484000, params->param5, 7, "Tra4003", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+				break;
 
 label_callback_7:
-			TIME_CHECK_CALLBACK_1(kTime2511000, params->param6, 8, setup_function9, "Tra4004");
+			if (Entity::timeCheckCallback(kTime2511000, params->param6, 8, "Tra4004", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars)))
+				break;
 		}
 
 label_callback_8:
-		TIME_CHECK_CALLBACK_1(kTime2538000, params->param7, 9, setup_function9, "Tra4005");
-
+		Entity::timeCheckCallback(kTime2538000, params->param7, 9, "Tra4005", WRAP_SETUP_FUNCTION_S(Verges, setup_walkBetweenCars));
 		break;
 
 	case kActionOpenDoor:
 		setCallback(10);
-		setup_function13(savepoint.param.intValue < 106);
+		setup_baggageCar(savepoint.param.intValue < 106);
 		break;
 
 	case kActionDefault:
@@ -1675,7 +1697,7 @@ label_callback_8:
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(38, Verges, function38)
+IMPLEMENT_FUNCTION(38, Verges, resetState)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1781,14 +1803,14 @@ IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
 			getAction()->playAnimation(kEventCathFreePassengers);
 			getSavePoints()->pushAll(kEntityVerges, kActionProceedChapter5);
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 40);
-			setup_function41();
+			setup_askPassengersToStayInCompartments();
 		}
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(41, Verges, function41)
+IMPLEMENT_FUNCTION(41, Verges, askPassengersToStayInCompartments)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1800,7 +1822,7 @@ IMPLEMENT_FUNCTION(41, Verges, function41)
 		getData()->location = kLocationInsideCompartment;
 
 		setCallback(1);
-		setup_function10(kCarRedSleeping, kPosition_2000, "Tra5001");
+		setup_makeAnnouncement(kCarRedSleeping, kPosition_2000, "Tra5001");
 		break;
 
 	case kActionCallback:
@@ -1830,7 +1852,7 @@ IMPLEMENT_FUNCTION(41, Verges, function41)
 			break;
 
 		case 4:
-			setup_function42();
+			setup_end();
 			break;
 		}
 		break;
@@ -1838,7 +1860,7 @@ IMPLEMENT_FUNCTION(41, Verges, function41)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(42, Verges, function42)
+IMPLEMENT_FUNCTION(42, Verges, end)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityVerges);
 IMPLEMENT_FUNCTION_END
@@ -1869,7 +1891,7 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 
 		case 2:
 			setCallback(3);
-			setup_function15(kEntityCoudert, sound1);
+			setup_dialog(kEntityCoudert, sound1);
 			break;
 
 		case 3:
@@ -1879,7 +1901,7 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 
 		case 4:
 			setCallback(5);
-			setup_function15(kEntityMertens, sound2);
+			setup_dialog(kEntityMertens, sound2);
 			break;
 
 		case 5:
@@ -1887,7 +1909,7 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 			break;
 
 		case 6:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

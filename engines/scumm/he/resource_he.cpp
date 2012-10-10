@@ -129,7 +129,7 @@ bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 	if (!group)
 		return false;
 
-	Graphics::WinCursor *cursor = group->cursors[0].cursor;
+	Graphics::Cursor *cursor = group->cursors[0].cursor;
 
 	cc->bitmap = new byte[cursor->getWidth() * cursor->getHeight()];
 	cc->width = cursor->getWidth();

@@ -80,7 +80,7 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 		case Graphics::DrawStep::kVectorAlignManual:
 			if (step.x >= 0)
 				in_x = area.left + step.x + step.padding.left;
-			else 
+			else
 				in_x = area.left + area.width() + step.x + step.padding.left; // value relative to the opposite corner.
 			break;
 

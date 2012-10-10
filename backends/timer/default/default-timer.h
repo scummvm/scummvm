@@ -34,7 +34,6 @@ private:
 	typedef Common::HashMap<Common::String, TimerProc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TimerSlotMap;
 
 	Common::Mutex _mutex;
-	void *_timerHandler;
 	TimerSlot *_head;
 	TimerSlotMap _callbacks;
 

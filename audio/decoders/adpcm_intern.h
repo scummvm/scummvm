@@ -37,7 +37,6 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-
 namespace Audio {
 
 class ADPCMStream : public RewindableAudioStream {
@@ -64,11 +63,10 @@ public:
 	ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign);
 
 	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
-	virtual bool isStereo() const	{ return _channels == 2; }
-	virtual int getRate() const	{ return _rate; }
+	virtual bool isStereo() const { return _channels == 2; }
+	virtual int getRate() const { return _rate; }
 
 	virtual bool rewind();
-
 
 	/**
 	 * This table is used by some ADPCM variants (IMA and OKI) to adjust the
@@ -83,12 +81,18 @@ public:
 class Oki_ADPCMStream : public ADPCMStream {
 public:
 	Oki_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
+		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
+
+	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 
 protected:
 	int16 decodeOKI(byte);
+
+private:
+	uint8 _decodedSampleCount;
+	int16 _decodedSamples[2];
 };
 
 class Ima_ADPCMStream : public ADPCMStream {
@@ -108,9 +112,15 @@ public:
 class DVI_ADPCMStream : public Ima_ADPCMStream {
 public:
 	DVI_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
+
+	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
+
+private:
+	uint8 _decodedSampleCount;
+	int16 _decodedSamples[2];
 };
 
 class Apple_ADPCMStream : public Ima_ADPCMStream {
