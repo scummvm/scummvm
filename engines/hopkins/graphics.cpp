@@ -1011,7 +1011,9 @@ void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
 	cmap[v8 + 2] = bv;
 	
 	WRITE_LE_UINT16(&SD_PIXELS[2 * palIndex], MapRGB(rv, gv, bv));
-	g_system->getPaletteManager()->setPalette(cmap, palIndex, 1);
+	
+	if (Winbpp == 1)
+		g_system->getPaletteManager()->setPalette(cmap, palIndex, 1);
 }
 
 void GraphicsManager::CHANGE_PALETTE(const byte *palette) {
@@ -2343,7 +2345,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 	
 	v13 = file + ".ini";
 	ptr = _vm->_fileManager.RECHERCHE_CAT(v13, 1);
-	if (g_PTRNUL == ptr) {
+	if (ptr == g_PTRNUL) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
 		ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
