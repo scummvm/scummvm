@@ -24,6 +24,7 @@ add_engine lastexpress "The Last Express" no "" "" "16bit"
 add_engine lure "Lure of the Temptress" yes
 add_engine made "MADE" yes
 add_engine mohawk "Mohawk" yes "cstime myst riven" "Living Books"
+add_engine mortevielle "Mortevielle" no
 add_engine cstime "Where in Time is Carmen Sandiego?" no
 add_engine riven "Riven: The Sequel to Myst" no "" "" "16bit"
 add_engine myst "Myst" no "" "" "16bit"
