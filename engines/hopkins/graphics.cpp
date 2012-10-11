@@ -372,9 +372,9 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 		v7 = _vm->_globals.CAT_TAILLE - 896;
 		v8 = f.read(HEADER_PCX, 128);
 
-		v6 = READ_LE_UINT16(&HEADER_PCX[8]) + 1;
-		v20 = READ_LE_UINT16(&HEADER_PCX[10]) + 1;
-		if ((READ_LE_UINT16(&HEADER_PCX[8]) + 1) <= SCREEN_WIDTH) {
+		v6 = (int16)READ_LE_UINT16(&HEADER_PCX[8]) + 1;
+		v20 = (int16)READ_LE_UINT16(&HEADER_PCX[10]) + 1;
+		if (((int16)READ_LE_UINT16(&HEADER_PCX[8]) + 1) <= SCREEN_WIDTH) {
 			DOUBLE_ECRAN = false;
 		} else {
 			v6 = SCREEN_WIDTH * 2;
@@ -396,8 +396,8 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 		if (bytesRead < 128)
 			error("Erreur en cours de lecture.");
 
-		v6 = READ_LE_UINT16(&HEADER_PCX[8]) + 1;
-		v20 = READ_LE_UINT16(&HEADER_PCX[10]) + 1;
+		v6 = (int16)READ_LE_UINT16(&HEADER_PCX[8]) + 1;
+		v20 = (int16)READ_LE_UINT16(&HEADER_PCX[10]) + 1;
 		if (v6 <= SCREEN_WIDTH) {
 			DOUBLE_ECRAN = false;
 		} else {
@@ -1091,7 +1091,7 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSur
 			v6 = *(v5 + 2);
 			v5 += 2;
 		} else if (v6 == 254) {
-			v3 += READ_LE_UINT16(v5 + 1);
+			v3 += (int16)READ_LE_UINT16(v5 + 1);
 			v6 = *(v5 + 3);
 			v5 += 3;
 		} else {
@@ -1162,7 +1162,7 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
 			v5 = *(v4 + 2);
 			v4 += 2;
 		} else if (v5 == (byte)-2) {
-			v2 += READ_LE_UINT16(v4 + 1);
+			v2 += (int16)READ_LE_UINT16(v4 + 1);
 			v5 = *(v4 + 3);
 			v4 += 3;
 		} else {
@@ -1217,7 +1217,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
 				srcByte = *(const byte *)(srcP + 2);
 				srcP += 2;
 			} else if (srcByte == 254) {
-				destOffset += READ_LE_UINT16(srcP + 1);
+				destOffset += (int16)READ_LE_UINT16(srcP + 1);
 				srcByte = *(const byte *)(srcP + 3);
 				srcP += 3;
 			} else {
@@ -1277,7 +1277,7 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *surface) {
 			v4 = *(v3 + 2);
 			v3 += 2;
 		} else if (v4 == -2) {
-			v2 += READ_LE_UINT16(v3 + 1);
+			v2 += (int16)READ_LE_UINT16(v3 + 1);
 			v4 = *(v3 + 3);
 			v3 += 3;
 		} else {
@@ -1286,7 +1286,7 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *surface) {
 			v3 += 5;
 		}
 Video_Cont_Vbe16a:
-		WRITE_LE_UINT16(v2 + v2 + VideoPtr, READ_LE_UINT16(PAL_PIXELS + 2 * v4));
+		WRITE_LE_UINT16(v2 + v2 + VideoPtr, (int16)READ_LE_UINT16(PAL_PIXELS + 2 * v4));
 		++v3;
 		++v2;
 	}
@@ -1336,9 +1336,9 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	clip_flag = false;
 
 	spriteP += 4;
-	int width = READ_LE_UINT16(spriteP);
+	int width = (int16)READ_LE_UINT16(spriteP);
 	spriteP += 2;
-	int height = READ_LE_UINT16(spriteP);
+	int height = (int16)READ_LE_UINT16(spriteP);
 	
 	// Clip X
 	clip_x1 = width;
@@ -1386,7 +1386,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 	// Set up source
 	spriteP += 6;
-	int srcOffset = READ_LE_UINT16(spriteP);
+	int srcOffset = (int16)READ_LE_UINT16(spriteP);
 	spriteP += 4;
 	const byte *srcP = spriteP;
 	spriteP += srcOffset;
@@ -1404,7 +1404,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 			while ((byteVal = *srcP) != 253) {
 				++srcP;
-				width = READ_LE_UINT16(srcP);
+				width = (int16)READ_LE_UINT16(srcP);
 				srcP += 2;
 
 				if (byteVal == 254) {
@@ -1432,7 +1432,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 			while ((byteVal = *srcP) != 253) {
 				++srcP;
-				width = READ_LE_UINT16(srcP);
+				width = (int16)READ_LE_UINT16(srcP);
 				srcP += 2;
 
 				if (byteVal == 254) {
@@ -2294,9 +2294,9 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 	v9 = 0;
 	v10 = 0;
 	v8 = v6 + 4;
-	v9 = READ_LE_UINT16(v8);
+	v9 = (int16)READ_LE_UINT16(v8);
 	v8 += 2;
-	v10 = READ_LE_UINT16(v8);
+	v10 = (int16)READ_LE_UINT16(v8);
 	v11 = v8 + 10;
 	destP = surface + xp + nbrligne2 * yp;
 	Largeur = v9;
@@ -2465,7 +2465,7 @@ void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
 			byteVal = *(srcPtr + 2);
 			srcPtr += 2;
 		} else if (byteVal == (byte)-2) {
-			destOffset += READ_LE_UINT16(srcPtr + 1);
+			destOffset += (int16)READ_LE_UINT16(srcPtr + 1);
 			byteVal = *(srcPtr + 3);
 			srcPtr += 3;
 		} else {
@@ -2499,7 +2499,7 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 			byteVal = *(srcP + 2);
 			srcP += 2;
 		} else if (byteVal == -2) {
-			destOffset += READ_LE_UINT16(srcP + 1);
+			destOffset += (int16)READ_LE_UINT16(srcP + 1);
 			byteVal = *(srcP + 3);
 			srcP += 3;
 		} else {

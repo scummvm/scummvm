@@ -253,7 +253,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 			v10 = _vm->_globals.BUF_ZONE + Index[fileIndex];
 			memcpy(v9, v10, 0x60u);
 			v11 = 0;
-			WRITE_LE_UINT16((uint16 *)v9 + 48, READ_LE_UINT16(v10 + 96));
+			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
 		}
 		v59 = texte_tmp;
 		v63 = 0;

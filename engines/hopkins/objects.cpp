@@ -214,12 +214,12 @@ void ObjectsManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSi
 int ObjectsManager::get_offsetx(const byte *spriteData, int spriteIndex, bool isSize) {
 	const byte *v3 = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
-		v3 += READ_LE_UINT16(v3) + 16;
+		v3 += (int16)READ_LE_UINT16(v3) + 16;
   
 	const byte *v5 = v3 + 8;
-	int result = READ_LE_UINT16(v5);
+	int result = (int16)READ_LE_UINT16(v5);
 	if (isSize)
-		result = READ_LE_UINT16(v5 + 4);
+		result = (int16)READ_LE_UINT16(v5 + 4);
 
 	return result;
 }
@@ -227,12 +227,12 @@ int ObjectsManager::get_offsetx(const byte *spriteData, int spriteIndex, bool is
 int ObjectsManager::get_offsety(const byte *spriteData, int spriteIndex, bool isSize) {
 	const byte *v3 = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
-		v3 += READ_LE_UINT16(v3) + 16;
+		v3 += (int16)READ_LE_UINT16(v3) + 16;
   
 	const byte *v5 = v3 + 10;
-	int result = READ_LE_UINT16(v5);
+	int result = (int16)READ_LE_UINT16(v5);
 	if (isSize)
-		result = READ_LE_UINT16(v5 + 4);
+		result = (int16)READ_LE_UINT16(v5 + 4);
 
 	return result;
 }
@@ -242,7 +242,7 @@ int ObjectsManager::Get_Largeur(const byte *objectData, int idx) {
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
 	
-	return (int16)READ_LE_UINT16(rectP + 4);
+	return (int16)(int16)READ_LE_UINT16(rectP + 4);
 }
 
 int ObjectsManager::Get_Hauteur(const byte *objectData, int idx) {
@@ -250,7 +250,7 @@ int ObjectsManager::Get_Hauteur(const byte *objectData, int idx) {
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
 	
-	return (int16)READ_LE_UINT16(rectP + 6);
+	return (int16)(int16)READ_LE_UINT16(rectP + 6);
 }
 
 int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIndex) {
@@ -260,7 +260,7 @@ int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIn
 	}
 
 	objP += 4;
-	int result = READ_LE_UINT16(objP) * READ_LE_UINT16(objP + 2);
+	int result = (int16)READ_LE_UINT16(objP) * (int16)READ_LE_UINT16(objP + 2);
 
 	memcpy(sprite + 3, objP - 4, result + 16);
 	return result;
@@ -288,7 +288,7 @@ int ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, int
 	}
 
 	objP += 4;
-	int result = READ_LE_UINT16(objP) * READ_LE_UINT16(objP + 2);
+	int result = (int16)READ_LE_UINT16(objP) * (int16)READ_LE_UINT16(objP + 2);
 
 	memcpy(sprite, objP + 12, result);
 	return result;
@@ -712,19 +712,19 @@ void ObjectsManager::BOB_VISU(int idx) {
 		BOB_ZERO(idx);
 
 		data = _vm->_globals.Bqe_Anim[idx].data;
-		v1 = READ_LE_UINT16(data);
-		v9 = READ_LE_UINT16(data + 2);
-		v8 = READ_LE_UINT16(data + 4);
-		v7 = READ_LE_UINT16(data + 6);
-		v6 = READ_LE_UINT16(data + 8);
-		if (READ_LE_UINT16(data)) {
+		v1 = (int16)READ_LE_UINT16(data);
+		v9 = (int16)READ_LE_UINT16(data + 2);
+		v8 = (int16)READ_LE_UINT16(data + 4);
+		v7 = (int16)READ_LE_UINT16(data + 6);
+		v6 = (int16)READ_LE_UINT16(data + 8);
+		if ((int16)READ_LE_UINT16(data)) {
 			if (_vm->_globals.Bank[idx].field4) {
 				if (!v9)
 					v9 = 1;
 				if (!v6)
 					v6 = -1;
 			
-				if (READ_LE_UINT16(data + 24)) {
+				if ((int16)READ_LE_UINT16(data + 24)) {
 					_vm->_globals.Bob[idx].field3A = 0;
           
 					if (_vm->_globals.Bank[idx].fileHeader == 1) {
@@ -1352,15 +1352,15 @@ void ObjectsManager::AFF_BOB_ANIM() {
       
 			v20 = _vm->_globals.Bob[idx].field18 + 20;
 			v24 = _vm->_globals.Bob[idx].field10;
-			_vm->_globals.Bob[idx].field8 = READ_LE_UINT16(v20 + 2 * v24);
+			_vm->_globals.Bob[idx].field8 = (int16)READ_LE_UINT16(v20 + 2 * v24);
 			if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 				_vm->_globals.Bob[idx].field8 = _vm->_globals.BL_ANIM[idx].v2;
 			if ( PERSO_ON == 1 && idx > 20 )
 				_vm->_globals.Bob[idx].field8 += _vm->_eventsManager.start_x;
       
-			_vm->_globals.Bob[idx].fieldA = READ_LE_UINT16(v20 + 2 * v24 + 2);
-			_vm->_globals.Bob[idx].field12 = READ_LE_UINT16(v20 + 2 * v24 + 4);
-			_vm->_globals.Bob[idx].field36 = READ_LE_UINT16(v20 + 2 * v24 + 6);
+			_vm->_globals.Bob[idx].fieldA = (int16)READ_LE_UINT16(v20 + 2 * v24 + 2);
+			_vm->_globals.Bob[idx].field12 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 4);
+			_vm->_globals.Bob[idx].field36 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 6);
 			_vm->_globals.Bob[idx].fieldC = *(v20 + 2 * v24 + 8);
 			_vm->_globals.Bob[idx].field38 = *(v20 + 2 * v24 + 9);
 			_vm->_globals.Bob[idx].field10 += 5;
@@ -1392,16 +1392,16 @@ LABEL_38:
 				} else {
 					_vm->_globals.Bob[idx].field10 = 0;
 					v21 = _vm->_globals.Bob[idx].field18 + 20;
-					_vm->_globals.Bob[idx].field8 = READ_LE_UINT16(v21);
+					_vm->_globals.Bob[idx].field8 = (int16)READ_LE_UINT16(v21);
 					
 					if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 						_vm->_globals.Bob[idx].field8 = _vm->_globals.BL_ANIM[idx].v2;
 					if (PERSO_ON == 1 && idx > 20)
 						_vm->_globals.Bob[idx].field8 += _vm->_eventsManager.start_x;
 
-					_vm->_globals.Bob[idx].fieldA = READ_LE_UINT16(v21 + 2);
-					_vm->_globals.Bob[idx].field12 = READ_LE_UINT16(v21 + 4);
-					_vm->_globals.Bob[idx].field36 = READ_LE_UINT16(v21 + 6);
+					_vm->_globals.Bob[idx].fieldA = (int16)READ_LE_UINT16(v21 + 2);
+					_vm->_globals.Bob[idx].field12 = (int16)READ_LE_UINT16(v21 + 4);
+					_vm->_globals.Bob[idx].field36 = (int16)READ_LE_UINT16(v21 + 6);
 					_vm->_globals.Bob[idx].fieldC = *(v21 + 8);
 					_vm->_globals.Bob[idx].field38 = *(v21 + 9);
 					_vm->_globals.Bob[idx].field10 += 5;
@@ -1928,9 +1928,9 @@ void ObjectsManager::CARRE_ZONE() {
 			v12 = _vm->_linesManager.LigneZone[idx].field0;
 			if (v12 > 0) {
 				do {
-					v5 = READ_LE_UINT16(v3);
+					v5 = (int16)READ_LE_UINT16(v3);
 					v6 = v3 + 2;
-					v11 = READ_LE_UINT16(v6);
+					v11 = (int16)READ_LE_UINT16(v6);
 					v3 = v6 + 2;
 					if (_vm->_globals.CarreZone[v4].field2 >= v5)
 						_vm->_globals.CarreZone[v4].field2 = v5;
@@ -2160,9 +2160,9 @@ void ObjectsManager::BTGAUCHE() {
 		v3 = _vm->_globals.essai2;
 		v4 = _vm->_globals.chemin;
 		do {
-			WRITE_LE_UINT16(v3 + 2 * v2, READ_LE_UINT16(v4 + 2 * v2));
+			WRITE_LE_UINT16(v3 + 2 * v2, (int16)READ_LE_UINT16(v4 + 2 * v2));
 			++v2;
-		} while ((int16)READ_LE_UINT16(v4 + 2 * v2) != -1);
+		} while ((int16)(int16)READ_LE_UINT16(v4 + 2 * v2) != -1);
 		v5 = _vm->_globals.essai2;
 		WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v2, (uint16)-1);
 		WRITE_LE_UINT16(v5 + 2 * v2 + 2, (uint16)-1);
@@ -2793,29 +2793,29 @@ void ObjectsManager::PACOURS_PROPRE(byte *a1) {
 	v1 = 0;
 	v13 = 0;
 	v14 = -1;
-	v2 = READ_LE_UINT16(a1 + 2);
-	v15 = READ_LE_UINT16(a1 + 4);
-	if ((int16)READ_LE_UINT16(a1) != -1 || v2 != -1) {
+	v2 = (int16)READ_LE_UINT16(a1 + 2);
+	v15 = (int16)READ_LE_UINT16(a1 + 4);
+	if ((int16)(int16)READ_LE_UINT16(a1) != -1 || v2 != -1) {
 		while (1) {
 			if (v14 != -1 && v15 != v14) {
 				v11 = v1;
 				v12 = 0;
 				v10 = CALC_PROPRE(v2);
-				v4 = READ_LE_UINT16(a1 + 2 * v1);
-				v9 = READ_LE_UINT16(a1 + 2 * v1);
-				v5 = READ_LE_UINT16(a1 + 2 * v1 + 2);
+				v4 = (int16)READ_LE_UINT16(a1 + 2 * v1);
+				v9 = (int16)READ_LE_UINT16(a1 + 2 * v1);
+				v5 = (int16)READ_LE_UINT16(a1 + 2 * v1 + 2);
 				v6 = 0;
 				while (v4 != -1 || v5 != -1) {
 					int idx = v1;
 					v1 += 4;
 					++v12;
-					if (READ_LE_UINT16(a1 + 2 * idx + 4) != v15)
+					if ((int16)READ_LE_UINT16(a1 + 2 * idx + 4) != v15)
 						v6 = 1;
 					if (v6 == 1)
 						break;
-					v4 = READ_LE_UINT16(a1 + 2 * v1);
-					v9 = READ_LE_UINT16(a1 + 2 * v1);
-					v5 = READ_LE_UINT16(a1 + 2 * v1 + 2);
+					v4 = (int16)READ_LE_UINT16(a1 + 2 * v1);
+					v9 = (int16)READ_LE_UINT16(a1 + 2 * v1);
+					v5 = (int16)READ_LE_UINT16(a1 + 2 * v1 + 2);
 				}
 				if (v12 < v10) {
 					v7 = v11;
@@ -2837,9 +2837,9 @@ void ObjectsManager::PACOURS_PROPRE(byte *a1) {
 			if (v13 == 1)
 				break;
 			v14 = v15;
-			v2 = READ_LE_UINT16(a1 + 2 * v1 + 2);
-			v15 = READ_LE_UINT16(a1 + 2 * v1 + 4);
-			if (READ_LE_UINT16(a1 + 2 * v1) == -1) {
+			v2 = (int16)READ_LE_UINT16(a1 + 2 * v1 + 2);
+			v15 = (int16)READ_LE_UINT16(a1 + 2 * v1 + 4);
+			if ((int16)READ_LE_UINT16(a1 + 2 * v1) == -1) {
 				if (v2 == -1)
 					break;
 			}
@@ -3083,9 +3083,9 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 			if (_vm->_linesManager.colision2_ligne(a1, a2, &v83, &v88, 0, _vm->_linesManager.TOTAL_LIGNES) == 1) {
 				v27 = 0;
 				while (1) {
-					v28 = READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27);
-					v29 = READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27 + 2);
-					v66 = READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27 + 4);
+					v28 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27);
+					v29 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27 + 2);
+					v66 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27 + 4);
 					v27 = v27 + 4;
 					v30 = v27;
 					v31 = _vm->_linesManager.colision2_ligne(v28, v29, &v83, &v88, 0, DERLIGNE);
@@ -3120,8 +3120,8 @@ LABEL_90:
 			v35 = v68;
 			for (i = _vm->_linesManager.Ligne[v69].field0; v35 < (i - 2); i = _vm->_linesManager.Ligne[v69].field0) {
 				v37 = _vm->_linesManager.Ligne[v69].fieldC;
-				v38 = READ_LE_UINT16(v37 + 4 * v35);
-				int v37_2 = READ_LE_UINT16(v37 + 4 * v35 + 2);
+				v38 = (int16)READ_LE_UINT16(v37 + 4 * v35);
+				int v37_2 = (int16)READ_LE_UINT16(v37 + 4 * v35 + 2);
 				v39 = v67;
 				_vm->_globals.super_parcours[v39] = v38;
 				_vm->_globals.super_parcours[v39 + 1] = v37_2;
@@ -3133,8 +3133,8 @@ LABEL_90:
 			}
 			for (j = v69 + 1; j < v73; ++j) {
 				if (_vm->_linesManager.PLAN_TEST(
-						READ_LE_UINT16(_vm->_linesManager.Ligne[j].fieldC),
-						READ_LE_UINT16(_vm->_linesManager.Ligne[j].fieldC + 2),
+						(int16)READ_LE_UINT16(_vm->_linesManager.Ligne[j].fieldC),
+						(int16)READ_LE_UINT16(_vm->_linesManager.Ligne[j].fieldC + 2),
 				        v67,
 				        j,
 				        v73,
@@ -3150,8 +3150,8 @@ LABEL_88:
 				if (_vm->_linesManager.Ligne[j].field0 - 2 > 0) {
 					do {
 						v41 = _vm->_linesManager.Ligne[j].fieldC;
-						v42 = READ_LE_UINT16(v41 + 4 * v40);
-						int v41_2 = READ_LE_UINT16(v41 + 4 * v40 + 2);
+						v42 = (int16)READ_LE_UINT16(v41 + 4 * v40);
+						int v41_2 = (int16)READ_LE_UINT16(v41 + 4 * v40 + 2);
 						v43 = v67;
 						_vm->_globals.super_parcours[v43] = v42;
 						_vm->_globals.super_parcours[v43 + 1] = v41_2;
@@ -3168,8 +3168,8 @@ LABEL_88:
 		if (v69 > v73) {
 			for (k = v68; k > 0; --k) {
 				v45 = _vm->_linesManager.Ligne[v69].fieldC;
-				v46 = READ_LE_UINT16(v45 + 4 * k);
-				int v45_2 = READ_LE_UINT16(v45 + 4 * k + 2);
+				v46 = (int16)READ_LE_UINT16(v45 + 4 * k);
+				int v45_2 = (int16)READ_LE_UINT16(v45 + 4 * k + 2);
 				v47 = v67;
 				_vm->_globals.super_parcours[v47] = v46;
 				_vm->_globals.super_parcours[v47 + 1] = v45_2;
@@ -3180,8 +3180,8 @@ LABEL_88:
 			for (l = v69 - 1; l > v73; --l) {
 				v48 = l;
 				if (_vm->_linesManager.PLAN_TEST(
-						READ_LE_UINT16(_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 4),
-						READ_LE_UINT16(_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 2),
+						(int16)READ_LE_UINT16(_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 4),
+						(int16)READ_LE_UINT16(_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 2),
 				        v67,
 				        l,
 				        v73,
@@ -3191,8 +3191,8 @@ LABEL_88:
 				if ((_vm->_linesManager.Ligne[v48].field0 - 2) > 0) {
 					do {
 						v50 = _vm->_linesManager.Ligne[l].fieldC;
-						v51 = READ_LE_UINT16(v50 + 4 * v49);
-						int v50_2 = READ_LE_UINT16(v50 + 4 * v49 + 2);
+						v51 = (int16)READ_LE_UINT16(v50 + 4 * v49);
+						int v50_2 = (int16)READ_LE_UINT16(v50 + 4 * v49 + 2);
 						v52 = v67;
 						_vm->_globals.super_parcours[v52] = v51;
 						_vm->_globals.super_parcours[v52 + 1] = v50_2;
@@ -3212,8 +3212,8 @@ LABEL_88:
 					v57 = v68;
 					do {
 						v58 = _vm->_linesManager.Ligne[v73].fieldC;
-						v59 = READ_LE_UINT16(v58 + 4 * v57);
-						int v58_2 = READ_LE_UINT16(v58 + 4 * v57 + 2);
+						v59 = (int16)READ_LE_UINT16(v58 + 4 * v57);
+						int v58_2 = (int16)READ_LE_UINT16(v58 + 4 * v57 + 2);
 						v60 = v67;
 						_vm->_globals.super_parcours[v60] = v59;
 						_vm->_globals.super_parcours[v60 + 1] = v58_2;
@@ -3227,8 +3227,8 @@ LABEL_88:
 				v53 = v68;
 				do {
 					v54 = _vm->_linesManager.Ligne[v73].fieldC;
-					v55 = READ_LE_UINT16(v54 + 4 * v53);
-					int v54_2 = READ_LE_UINT16(v54 + 4 * v53 + 2);
+					v55 = (int16)READ_LE_UINT16(v54 + 4 * v53);
+					int v54_2 = (int16)READ_LE_UINT16(v54 + 4 * v53 + 2);
 					v56 = v67;
 					_vm->_globals.super_parcours[2 * v56] = v55;
 					_vm->_globals.super_parcours[2 * v56 + 1] = v54_2;
@@ -4002,9 +4002,9 @@ int ObjectsManager::Traduction(byte *a1) {
 		v70 = *(a1 + 6);
 		v2 = *(a1 + 7);
 		v69 = *(a1 + 8);
-		v67 = READ_LE_UINT16(a1 + 9);
-		v65 = READ_LE_UINT16(a1 + 11);
-		v3 = READ_LE_UINT16(a1 + 13);
+		v67 = (int16)READ_LE_UINT16(a1 + 9);
+		v65 = (int16)READ_LE_UINT16(a1 + 11);
+		v3 = (int16)READ_LE_UINT16(a1 + 13);
 		v1 = 1;
 		if (!TRAVAILOBJET) {
 			if (_vm->_globals.SAUVEGARDE->data[svField356] == 1) {
@@ -4123,10 +4123,10 @@ LABEL_104:
 			v72 = *(a1 + 5);
 			v70 = *(a1 + 6);
 			v4 = *(a1 + 7);
-			v68 = READ_LE_UINT16(a1 + 8);
-			v66 = READ_LE_UINT16(a1 + 10);
+			v68 = (int16)READ_LE_UINT16(a1 + 8);
+			v66 = (int16)READ_LE_UINT16(a1 + 10);
 			if (v72 == 52) {
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, v68, READ_LE_UINT16(a1 + 10), v70);
+				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, v68, (int16)READ_LE_UINT16(a1 + 10), v70);
 			} else if (v72 == 51) {
 				BOB_VIVANT(v70);
 			} else {
@@ -4154,7 +4154,7 @@ LABEL_1141:
 				DEUXPERSO = 0;
 				v5 = *(a1 + 5);
 				v6 = *(a1 + 8);
-				PERX = READ_LE_UINT16(a1 + 6);
+				PERX = (int16)READ_LE_UINT16(a1 + 6);
 				PERY = v6;
 				PERI = v5;
 				if (CH_TETE == 1) {
@@ -4240,14 +4240,14 @@ LABEL_1141:
 	}
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
 		if (DESACTIVE != 1)
-			VBOB_OFF(READ_LE_UINT16(a1 + 5));
+			VBOB_OFF((int16)READ_LE_UINT16(a1 + 5));
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'P' && *(a1 + 3) == 'E' && *(a1 + 4) == 'R') {
-		v73 = READ_LE_UINT16(a1 + 5);
+		v73 = (int16)READ_LE_UINT16(a1 + 5);
 		if (!_vm->_globals.SAUVEGARDE->data[svField122] && !_vm->_globals.SAUVEGARDE->data[svField356]) {
 			v70 = 0;
-			if (READ_LE_UINT16(a1 + 5) == 14)
+			if ((int16)READ_LE_UINT16(a1 + 5) == 14)
 				v73 = 1;
 			if (v73 == 17)
 				v73 = 7;
@@ -4429,7 +4429,7 @@ LABEL_1141:
 	if (*(a1 + 2) == 'M' && *(a1 + 3) == 'U' && *(a1 + 4) == 'S')
 		v1 = 1;
 	if (*(a1 + 2) == 'W' && *(a1 + 3) == 'A' && *(a1 + 4) == 'I') {
-		v74 = READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
+		v74 = (int16)READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
 		if (!v74)
 			v74 = 1;
 		v10 = 0;
@@ -4444,37 +4444,37 @@ LABEL_1141:
 	if (*(a1 + 2) == 'O') {
 		if (*(a1 + 3) == 'B' && *(a1 + 4) == 'P') {
 			v1 = 1;
-			AJOUTE_OBJET(READ_LE_UINT16(a1 + 5));
+			AJOUTE_OBJET((int16)READ_LE_UINT16(a1 + 5));
 		}
 		if (*(a1 + 2) == 'O' && *(a1 + 3) == 'B' && *(a1 + 4) == 'M') {
 			v1 = 1;
-			DELETE_OBJET(READ_LE_UINT16(a1 + 5));
+			DELETE_OBJET((int16)READ_LE_UINT16(a1 + 5));
 		}
 	}
 	if (*(a1 + 2) == 'G' && *(a1 + 3) == 'O' && *(a1 + 4) == 'T')
 		v1 = 2;
 	if (*(a1 + 2) == 'Z') {
 		if (*(a1 + 3) == 'O' && *(a1 + 4) == 'N') {
-			ZONE_ON(READ_LE_UINT16(a1 + 5));
+			ZONE_ON((int16)READ_LE_UINT16(a1 + 5));
 			v1 = 1;
 		}
 		if (*(a1 + 2) == 'Z' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
-			ZONE_OFF(READ_LE_UINT16(a1 + 5));
+			ZONE_OFF((int16)READ_LE_UINT16(a1 + 5));
 			v1 = 1;
 		}
 	}
 	if (*(a1 + 2) == 'E' && *(a1 + 3) == 'X' && *(a1 + 4) == 'I')
 		v1 = 5;
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'R') {
-		_vm->_globals.SORTIE = READ_LE_UINT16(a1 + 5);
+		_vm->_globals.SORTIE = (int16)READ_LE_UINT16(a1 + 5);
 		v1 = 5;
 	}
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'C' && *(a1 + 4) == 'A') {
-		_vm->_globals.CACHE_OFF(READ_LE_UINT16(a1 + 5));
+		_vm->_globals.CACHE_OFF((int16)READ_LE_UINT16(a1 + 5));
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'N' && *(a1 + 4) == 'I') {
-		v75 = READ_LE_UINT16(a1 + 5);
+		v75 = (int16)READ_LE_UINT16(a1 + 5);
 		if (v75 <= 100)
 			BOBANIM_ON(v75);
 		else
@@ -4482,7 +4482,7 @@ LABEL_1141:
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'P' && *(a1 + 4) == 'E') {
-		v76 = READ_LE_UINT16(a1 + 5);
+		v76 = (int16)READ_LE_UINT16(a1 + 5);
 		if (v76 == 7)
 			_vm->_talkManager.PARLER_PERSO("rueh1.pe2");
 		if (v76 == 8)
@@ -6051,32 +6051,32 @@ LABEL_1141:
 		v1 = 4;
 	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'A' && *(a1 + 4) == 'L') {
 		v1 = 1;
-		_vm->_globals.SAUVEGARDE->data[READ_LE_UINT16(a1 + 5)] = READ_LE_UINT16(a1 + 7);
+		_vm->_globals.SAUVEGARDE->data[(int16)READ_LE_UINT16(a1 + 5)] = (int16)READ_LE_UINT16(a1 + 7);
 	}
 	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'D' && *(a1 + 4) == 'D') {
 		v1 = 1;
-		_vm->_globals.SAUVEGARDE->data[READ_LE_UINT16(a1 + 5)] += *(a1 + 7);
+		_vm->_globals.SAUVEGARDE->data[(int16)READ_LE_UINT16(a1 + 5)] += *(a1 + 7);
 	}
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'S') {
 		v1 = 1;
-		BOB_OFFSET(READ_LE_UINT16(a1 + 5), READ_LE_UINT16(a1 + 7));
+		BOB_OFFSET((int16)READ_LE_UINT16(a1 + 5), (int16)READ_LE_UINT16(a1 + 7));
 	}
 	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'O' && *(a1 + 4) == 'N') {
-		VERBE_ON(READ_LE_UINT16(a1 + 5), READ_LE_UINT16(a1 + 7));
+		VERBE_ON((int16)READ_LE_UINT16(a1 + 5), (int16)READ_LE_UINT16(a1 + 7));
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'Z' && *(a1 + 3) == 'C' && *(a1 + 4) == 'H') {
-		_vm->_globals.ZONEP[READ_LE_UINT16(a1 + 5)].field12 = READ_LE_UINT16(a1 + 7);
+		_vm->_globals.ZONEP[(int16)READ_LE_UINT16(a1 + 5)].field12 = (int16)READ_LE_UINT16(a1 + 7);
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'J' && *(a1 + 3) == 'U' && *(a1 + 4) == 'M') {
-		v59 = READ_LE_UINT16(a1 + 7);
-		NVZONE = READ_LE_UINT16(a1 + 5);
+		v59 = (int16)READ_LE_UINT16(a1 + 7);
+		NVZONE = (int16)READ_LE_UINT16(a1 + 5);
 		NVVERBE = v59;
 		v1 = 6;
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'U') {
-		v60 = READ_LE_UINT16(a1 + 5);
+		v60 = (int16)READ_LE_UINT16(a1 + 5);
 		memset(&s, 0, 0x13u);
 		
 		v77 = Common::String::format("SOUND%d.WAV", v60);
@@ -6084,7 +6084,7 @@ LABEL_1141:
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
-		VERBE_OFF(READ_LE_UINT16(a1 + 5), READ_LE_UINT16(a1 + 7));
+		VERBE_OFF((int16)READ_LE_UINT16(a1 + 5), (int16)READ_LE_UINT16(a1 + 7));
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'I' && *(a1 + 3) == 'I' && *(a1 + 4) == 'F') {
@@ -6101,10 +6101,10 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	int v4; 
 
 	v1 = 5 * idx;
-	v2 = READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1);
-	v3 = READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 2);
+	v2 = (int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1);
+	v3 = (int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 2);
 	v4 = *(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8);
-	if (READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 4)) {
+	if ((int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 4)) {
 		if (!_vm->_globals.NO_OFFSET)
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager.PERSOSPR, 
 				_vm->_graphicsManager.ofscroll + v2, v3, 
@@ -6478,7 +6478,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	}
 	if (!OBSSEUL) {
 		for (int idx = 0; idx < 500; ++idx)
-			_vm->_globals.STAILLE[idx] = READ_LE_UINT16((uint16 *)ptr + idx);
+			_vm->_globals.STAILLE[idx] = (int16)READ_LE_UINT16((uint16 *)ptr + idx);
 
 		_vm->_globals.RESET_CACHE();
 		
@@ -6501,12 +6501,12 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			v40 = 0;
 
 			do {
-				v8 = READ_LE_UINT16(v37 + 2 * v36);
-				v9 = READ_LE_UINT16(v37 + 2 * v36 + 2);
-				v10 = READ_LE_UINT16(v37 + 2 * v36 + 4);
+				v8 = (int16)READ_LE_UINT16(v37 + 2 * v36);
+				v9 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 2);
+				v10 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 4);
 				v11 = v40;
 
-				_vm->_globals.Cache[v11].field14 = READ_LE_UINT16(v37 + 2 * v36 + 8);
+				_vm->_globals.Cache[v11].field14 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 8);
 				_vm->_globals.Cache[v11].field2 = v8;
 				_vm->_globals.Cache[v11].field0 = v9;
 				_vm->_globals.Cache[v11].field4 = v10;
@@ -6544,15 +6544,15 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				v34 = 0;
 				_vm->_linesManager.TOTAL_LIGNES = 0;
 				do {
-					v27 = (int16)READ_LE_UINT16(v16 + 2 * v32);
+					v27 = (int16)(int16)READ_LE_UINT16(v16 + 2 * v32);
 					if (v27 != -1) {
 						_vm->_linesManager.AJOUTE_LIGNE(
 						    v34,
 						    v27,
-						    READ_LE_UINT16(v16 + 2 * v32 + 2),
-						    READ_LE_UINT16(v16 + 2 * v32 + 4),
-						    READ_LE_UINT16(v16 + 2 * v32 + 6),
-						    READ_LE_UINT16(v16 + 2 * v32 + 8),
+						    (int16)READ_LE_UINT16(v16 + 2 * v32 + 2),
+						    (int16)READ_LE_UINT16(v16 + 2 * v32 + 4),
+						    (int16)READ_LE_UINT16(v16 + 2 * v32 + 6),
+						    (int16)READ_LE_UINT16(v16 + 2 * v32 + 8),
 						    1);
 						++_vm->_linesManager.TOTAL_LIGNES;
 					}
@@ -6594,14 +6594,14 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 					v31 = 0;
 					do {
-						v28 = (int16)READ_LE_UINT16(v17 + 2 * v33);
+						v28 = (int16)(int16)READ_LE_UINT16(v17 + 2 * v33);
 						if (v28 != -1) {
 							_vm->_linesManager.AJOUTE_LIGNE_ZONE(
 							    v35,
-							    READ_LE_UINT16(v17 + 2 * v33 + 2),
-							    READ_LE_UINT16(v17 + 2 * v33 + 4),
-							    READ_LE_UINT16(v17 + 2 * v33 + 6),
-							    READ_LE_UINT16(v17 + 2 * v33 + 8),
+							    (int16)READ_LE_UINT16(v17 + 2 * v33 + 2),
+							    (int16)READ_LE_UINT16(v17 + 2 * v33 + 4),
+							    (int16)READ_LE_UINT16(v17 + 2 * v33 + 6),
+							    (int16)READ_LE_UINT16(v17 + 2 * v33 + 8),
 							    v28);
 							_vm->_globals.ZONEP[v28].field10 = 1;
 						}
@@ -6612,9 +6612,9 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					v20 = 1;
 					do {
 						v21 = v20;
-						_vm->_globals.ZONEP[v21].field0 = READ_LE_UINT16(v17 + 2 * v33);
-						_vm->_globals.ZONEP[v21].field2 = READ_LE_UINT16(v17 + 2 * v33 + 2);
-						_vm->_globals.ZONEP[v21].field4 = READ_LE_UINT16(v17 + 2 * v33 + 4);
+						_vm->_globals.ZONEP[v21].field0 = (int16)READ_LE_UINT16(v17 + 2 * v33);
+						_vm->_globals.ZONEP[v21].field2 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 2);
+						_vm->_globals.ZONEP[v21].field4 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 4);
 						v33 += 3;
 						++v20;
 					} while (v20 <= 100);
@@ -6640,7 +6640,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					v30 = 0;
 					v25 = 1;
 					do
-						_vm->_globals.ZONEP[v25].field12 = READ_LE_UINT16(v22 + 1010 + 2 * v30++);
+						_vm->_globals.ZONEP[v25].field12 = (int16)READ_LE_UINT16(v22 + 1010 + 2 * v30++);
 					while (++v25 <= 100);
 					CARRE_ZONE();
 				}
@@ -6796,7 +6796,7 @@ void ObjectsManager::SCI_OPTI_ONE(int a1, int a2, int a3, int a4) {
 }
 
 int ObjectsManager::Control_Goto(const byte *dataP) {
-	return READ_LE_UINT16(dataP + 5);
+	return (int16)READ_LE_UINT16(dataP + 5);
 }
 
 int ObjectsManager::Control_If(const byte *dataP, int a2) {
@@ -6849,10 +6849,10 @@ LABEL_2:
 	v9 = *(v8 + 13);
 	v17 = *(v8 + 14);
 	v16 = *(v8 + 15);
-	v10 = READ_LE_UINT16(v8 + 5);
-	v11 = READ_LE_UINT16(v8 + 7);
-	v19 = READ_LE_UINT16(v8 + 9);
-	v18 = READ_LE_UINT16(v8 + 11);
+	v10 = (int16)READ_LE_UINT16(v8 + 5);
+	v11 = (int16)READ_LE_UINT16(v8 + 7);
+	v19 = (int16)READ_LE_UINT16(v8 + 9);
+	v18 = (int16)READ_LE_UINT16(v8 + 11);
 	v14 = 0;
 	v15 = 0;
 	if (v9 == 1 && _vm->_globals.SAUVEGARDE->data[v10] == v11)
@@ -7157,10 +7157,10 @@ int ObjectsManager::colision(int a1, int a2) {
 			byte *srcP = _vm->_linesManager.LigneZone[v8].field4;
 			if (srcP != g_PTRNUL) {
 				bool flag = true;
-				int v11 = READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 2);
-				int dataV2 = READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 2 + 2);
-				int v12 = READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 4 - 4);
-				int v13 = READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 4 - 2);
+				int v11 = (int16)READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 2);
+				int dataV2 = (int16)READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 2 + 2);
+				int v12 = (int16)READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 4 - 4);
+				int v13 = (int16)READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 4 - 2);
 				int v10 = v13;
 
 				if (v11 < v12 && v4 >= v11 && v5 > v13)
@@ -7176,8 +7176,8 @@ int ObjectsManager::colision(int a1, int a2) {
 				if (!flag) {
 					if (v11 < _vm->_linesManager.LigneZone[v8].field0) {
 						for (; v11 < _vm->_linesManager.LigneZone[v8].field0; ++idx) {
-							int v11 = READ_LE_UINT16(srcP);
-							int v12 = READ_LE_UINT16(srcP + 2);
+							int v11 = (int16)READ_LE_UINT16(srcP);
+							int v12 = (int16)READ_LE_UINT16(srcP + 2);
 							srcP += 4;
 							
 							if ((v2 == v11 || v9 == v11) && a2 == v12)

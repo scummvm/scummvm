@@ -78,9 +78,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	} else if (_vm->_globals.FR == 2) {
 		FREPON = FQUEST = "RUEES.TXT";
 	}
-	v2 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 40);
-	v3 = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
-	PCHERCHE = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	v2 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 40);
+	v3 = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
 	PERSOSPR = _vm->_fileManager.RECHERCHE_CAT(v16, 7);
 	if (PERSOSPR) {
 		_vm->_globals.CAT_FLAG = 0;
@@ -218,8 +218,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		break;
 	}
 
-	v1 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 40);
-	PCHERCHE = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	v1 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 40);
+	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
 	CHERCHE_PAL(PCHERCHE, 0);
 	PLIGNE1 = v1;
 	PLIGNE2 = v1 + 1;
@@ -288,17 +288,17 @@ int TalkManager::DIALOGUE() {
 
 	if (STATI) {
 		v0 = BUFFERPERSO;
-		v1 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 48);
+		v1 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 48);
 		if (v1)
 			_vm->_objectsManager.BOBANIM_ON(v1);
-		if (READ_LE_UINT16((uint16 *)v0 + 48) != 1)
-			_vm->_objectsManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 49));
-		if (READ_LE_UINT16((uint16 *)v0 + 48) != 2)
-			_vm->_objectsManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 50));
-		if ( READ_LE_UINT16((uint16 *)v0 + 48) != 3)
-			_vm->_objectsManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 51));
-		if (READ_LE_UINT16((uint16 *)v0 + 48) != 4)
-			_vm->_objectsManager.BOBANIM_ON(READ_LE_UINT16((uint16 *)v0 + 52));
+		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 1)
+			_vm->_objectsManager.BOBANIM_ON((int16)READ_LE_UINT16((uint16 *)v0 + 49));
+		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 2)
+			_vm->_objectsManager.BOBANIM_ON((int16)READ_LE_UINT16((uint16 *)v0 + 50));
+		if ( (int16)READ_LE_UINT16((uint16 *)v0 + 48) != 3)
+			_vm->_objectsManager.BOBANIM_ON((int16)READ_LE_UINT16((uint16 *)v0 + 51));
+		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 4)
+			_vm->_objectsManager.BOBANIM_ON((int16)READ_LE_UINT16((uint16 *)v0 + 52));
 	} else {
 		VISU_WAIT();
 	}
@@ -361,19 +361,19 @@ int TalkManager::DIALOGUE() {
   
 	if (STATI) {
 		v11 = BUFFERPERSO;
-		v12 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 48);
+		v12 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 48);
 		if (v12)
 			_vm->_objectsManager.BOBANIM_OFF(v12);
-		v13 = READ_LE_UINT16((uint16 *)v11 + 49);
+		v13 = (int16)READ_LE_UINT16((uint16 *)v11 + 49);
 		if (v13 != 1)
 			_vm->_objectsManager.BOBANIM_OFF(v13);
-		v14 = READ_LE_UINT16((uint16 *)v11 + 50);
+		v14 = (int16)READ_LE_UINT16((uint16 *)v11 + 50);
 		if (v14 != 2)
 			_vm->_objectsManager.BOBANIM_OFF(v14);
-		v15 = READ_LE_UINT16((uint16 *)v11 + 51);
+		v15 = (int16)READ_LE_UINT16((uint16 *)v11 + 51);
 		if (v15 != 3)
 			_vm->_objectsManager.BOBANIM_OFF(v15);
-		v16 = READ_LE_UINT16((uint16 *)v11 + 52);
+		v16 = (int16)READ_LE_UINT16((uint16 *)v11 + 52);
 		if (v16 != 4)
 			_vm->_objectsManager.BOBANIM_OFF(v16);
 	} else {
@@ -413,9 +413,9 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	v1 = 0;
 	v2 = 0;
 	v3 = BUFFERPERSO + 110;
-	for (i = idx; READ_LE_UINT16(v3) != idx; v3 = BUFFERPERSO + 20 * v1 + 110) {
+	for (i = idx; (int16)READ_LE_UINT16(v3) != idx; v3 = BUFFERPERSO + 20 * v1 + 110) {
 		++v1;
-		if (READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) < v1)
+		if ((int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) < v1)
 			v2 = 1;
 		if (v2 == 1)
 			return -1;
@@ -424,16 +424,16 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	if (v2 == 1)
 		return -1;
 
-	v22 = READ_LE_UINT16((uint16 *)v3 + 1);
-	v25 = READ_LE_UINT16((uint16 *)v3 + 2);
-	v24 = READ_LE_UINT16((uint16 *)v3 + 3);
-	i = READ_LE_UINT16((uint16 *)v3 + 4);
-	v23 = READ_LE_UINT16((uint16 *)v3 + 4);
-	PLIGNE1 = READ_LE_UINT16((uint16 *)v3 + 5);
-	PLIGNE2 = READ_LE_UINT16((uint16 *)v3 + 6);
-	PLIGNE3 = READ_LE_UINT16((uint16 *)v3 + 7);
-	v6 = READ_LE_UINT16((uint16 *)v3 + 8);
-	v7 = READ_LE_UINT16((uint16 *)v3 + 9);
+	v22 = (int16)READ_LE_UINT16((uint16 *)v3 + 1);
+	v25 = (int16)READ_LE_UINT16((uint16 *)v3 + 2);
+	v24 = (int16)READ_LE_UINT16((uint16 *)v3 + 3);
+	i = (int16)READ_LE_UINT16((uint16 *)v3 + 4);
+	v23 = (int16)READ_LE_UINT16((uint16 *)v3 + 4);
+	PLIGNE1 = (int16)READ_LE_UINT16((uint16 *)v3 + 5);
+	PLIGNE2 = (int16)READ_LE_UINT16((uint16 *)v3 + 6);
+	PLIGNE3 = (int16)READ_LE_UINT16((uint16 *)v3 + 7);
+	v6 = (int16)READ_LE_UINT16((uint16 *)v3 + 8);
+	v7 = (int16)READ_LE_UINT16((uint16 *)v3 + 9);
   
 	if (v7)
 		_vm->_globals.SAUVEGARDE->data[svField4] = v7;
@@ -442,19 +442,19 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		v6 = 10;
 	if (STATI) {
 		v8 = BUFFERPERSO;
-		v9 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
+		v9 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
 		if (v9)
 			_vm->_objectsManager.BOBANIM_ON(v9);
-		v10 = READ_LE_UINT16((uint16 *)v8 + 44);
+		v10 = (int16)READ_LE_UINT16((uint16 *)v8 + 44);
 		if (v10)
 			_vm->_objectsManager.BOBANIM_ON(v10);
-		v11 = READ_LE_UINT16((uint16 *)v8 + 45);
+		v11 = (int16)READ_LE_UINT16((uint16 *)v8 + 45);
 		if (v11)
 			_vm->_objectsManager.BOBANIM_ON(v11);
-		v12 = READ_LE_UINT16((uint16 *)v8 + 46);
+		v12 = (int16)READ_LE_UINT16((uint16 *)v8 + 46);
 		if (v12)
 			_vm->_objectsManager.BOBANIM_ON(v12);
-		v13 = READ_LE_UINT16((uint16 *)v8 + 47);
+		v13 = (int16)READ_LE_UINT16((uint16 *)v8 + 47);
 		if (v13)
 			_vm->_objectsManager.BOBANIM_ON(v13);
 	} else {
@@ -480,19 +480,19 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		_vm->_fontManager.TEXTE_OFF(9);
 	if (STATI) {
 		v15 = BUFFERPERSO;
-		v16 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
+		v16 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
 		if (v16)
 			_vm->_objectsManager.BOBANIM_OFF(v16);
-		v17 = READ_LE_UINT16((uint16 *)v15 + 44);
+		v17 = (int16)READ_LE_UINT16((uint16 *)v15 + 44);
 		if (v17)
 			_vm->_objectsManager.BOBANIM_OFF(v17);
-		v18 = READ_LE_UINT16((uint16 *)v15 + 45);
+		v18 = (int16)READ_LE_UINT16((uint16 *)v15 + 45);
 		if (v18)
 			_vm->_objectsManager.BOBANIM_OFF(v18);
-		v19 = READ_LE_UINT16((uint16 *)v15 + 46);
+		v19 = (int16)READ_LE_UINT16((uint16 *)v15 + 46);
 		if (v19)
 			_vm->_objectsManager.BOBANIM_OFF(v19);
-		v20 = READ_LE_UINT16((uint16 *)v15 + 47);
+		v20 = (int16)READ_LE_UINT16((uint16 *)v15 + 47);
 		if (v20)
 			_vm->_objectsManager.BOBANIM_OFF(v20);
 	} else {
@@ -718,10 +718,10 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 	if (!_vm->_globals.Bob[idx].field0) {
 		_vm->_objectsManager.BOB_ZERO(idx);
 		v5 = _vm->_globals.Bqe_Anim[idx].data;
-		v4 = READ_LE_UINT16(v5 + 2);
+		v4 = (int16)READ_LE_UINT16(v5 + 2);
 		if (!v4)
 			v4 = 1;
-		if (READ_LE_UINT16(v5 + 24)) {
+		if ((int16)READ_LE_UINT16(v5 + 24)) {
 			_vm->_globals.Bob[idx].field3A = 1;
 			_vm->_globals.Bob[idx].field36 = 0;
 			_vm->_globals.Bob[idx].field38 = 0;
@@ -772,10 +772,10 @@ void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 	if (!a2) {
 		v6 = 0;
 		do {
-			v7 = READ_LE_UINT16(&v8[2 * v6 + 4]);
+			v7 = (int16)READ_LE_UINT16(&v8[2 * v6 + 4]);
 			if (v7 && _vm->_globals.vitesse != 501)
-				_vm->_graphicsManager.AFFICHE_SPEED(PERSOSPR, _vm->_eventsManager.start_x + READ_LE_UINT16(&v8[2 * v6]),
-				    READ_LE_UINT16(&v8[2 * v6 + 2]), v9[2 * v6 + 8]);
+				_vm->_graphicsManager.AFFICHE_SPEED(PERSOSPR, _vm->_eventsManager.start_x + (int16)READ_LE_UINT16(&v8[2 * v6]),
+				    (int16)READ_LE_UINT16(&v8[2 * v6 + 2]), v9[2 * v6 + 8]);
 			v6 += 5;
 		} while (_vm->_globals.vitesse != 501 && v7);
 	}
@@ -797,34 +797,34 @@ void TalkManager::ANIM_PERSO_INIT() {
 
 	v0 = BUFFERPERSO;
 	v1 = BUFFERPERSO + 110;
-	v2 = READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
+	v2 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
 	if (v2)
 		RECHERCHE_ANIM_PERSO(21, (BUFFERPERSO + 110), v2, TAILLEPERSO);
-	v4 = READ_LE_UINT16((uint16 *)v0 + 44);
+	v4 = (int16)READ_LE_UINT16((uint16 *)v0 + 44);
 	if (v4)
 		RECHERCHE_ANIM_PERSO(22, v1, v4, TAILLEPERSO);
-	v5 = READ_LE_UINT16((uint16 *)v0 + 45);
+	v5 = (int16)READ_LE_UINT16((uint16 *)v0 + 45);
 	if (v5)
 		RECHERCHE_ANIM_PERSO(23, v1, v5, TAILLEPERSO);
-	v6 = READ_LE_UINT16((uint16 *)v0 + 46);
+	v6 = (int16)READ_LE_UINT16((uint16 *)v0 + 46);
 	if (v6)
 		RECHERCHE_ANIM_PERSO(24, v1, v6, TAILLEPERSO);
-	v7 = READ_LE_UINT16((uint16 *)v0 + 47);
+	v7 = (int16)READ_LE_UINT16((uint16 *)v0 + 47);
 	if (v7)
 		RECHERCHE_ANIM_PERSO(25, v1, v7, TAILLEPERSO);
-	v8 = READ_LE_UINT16((uint16 *)v0 + 48);
+	v8 = (int16)READ_LE_UINT16((uint16 *)v0 + 48);
 	if (v8)
 		RECHERCHE_ANIM_PERSO(26, v1, v8, TAILLEPERSO);
-	v9 = READ_LE_UINT16((uint16 *)v0 + 49);
+	v9 = (int16)READ_LE_UINT16((uint16 *)v0 + 49);
 	if (v9)
 		RECHERCHE_ANIM_PERSO(27, v1, v9, TAILLEPERSO);
-	v10 = READ_LE_UINT16((uint16 *)v0 + 50);
+	v10 = (int16)READ_LE_UINT16((uint16 *)v0 + 50);
 	if (v10)
 		RECHERCHE_ANIM_PERSO(28, v1, v10, TAILLEPERSO);
-	v11 = READ_LE_UINT16((uint16 *)v0 + 51);
+	v11 = (int16)READ_LE_UINT16((uint16 *)v0 + 51);
 	if (v11)
 		RECHERCHE_ANIM_PERSO(29, v1, v11, TAILLEPERSO);
-	v12 = READ_LE_UINT16((uint16 *)v0 + 52);
+	v12 = (int16)READ_LE_UINT16((uint16 *)v0 + 52);
 	if (v12)
 		RECHERCHE_ANIM_PERSO(30, v1, v12, TAILLEPERSO);
 }
@@ -893,10 +893,10 @@ bool TalkManager::RECHERCHE_ANIM_PERSO(int a1, const byte *bufPerso, int a3, int
 
 			v9 = v8 + 20;
 			v24 = v22 + bufPerso + 25;
-			v10 = READ_LE_UINT16(v22 + bufPerso + 25);
-			v11 = READ_LE_UINT16(v22 + bufPerso + 27);
-			v23 = READ_LE_UINT16(v22 + bufPerso + 29);
-			v12 = READ_LE_UINT16(v22 + bufPerso + 31);
+			v10 = (int16)READ_LE_UINT16(v22 + bufPerso + 25);
+			v11 = (int16)READ_LE_UINT16(v22 + bufPerso + 27);
+			v23 = (int16)READ_LE_UINT16(v22 + bufPerso + 29);
+			v12 = (int16)READ_LE_UINT16(v22 + bufPerso + 31);
 			v13 = *(v22 + bufPerso + 33);
 			*(v8 + 29) = *(v22 + bufPerso + 34);
 			WRITE_LE_UINT16(v8 + 20, v10);
@@ -910,10 +910,10 @@ bool TalkManager::RECHERCHE_ANIM_PERSO(int a1, const byte *bufPerso, int a3, int
 				v24 += 10;
 				if (!v23)
 					break;
-				v14 = READ_LE_UINT16(v24);
-				v15 = READ_LE_UINT16(v24 + 2);
-				v23 = READ_LE_UINT16(v24 + 4);
-				v16 = READ_LE_UINT16(v24 + 6);
+				v14 = (int16)READ_LE_UINT16(v24);
+				v15 = (int16)READ_LE_UINT16(v24 + 2);
+				v23 = (int16)READ_LE_UINT16(v24 + 4);
+				v16 = (int16)READ_LE_UINT16(v24 + 6);
 				v17 = *(v24 + 8);
 				*(v9 + 9) = *(v24 + 9);
 				WRITE_LE_UINT16(v9, v14);
@@ -1217,8 +1217,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (!_vm->_graphicsManager.nbrligne)
 		_vm->_graphicsManager.ofscroll = 0;
 	_vm->_graphicsManager.NB_SCREEN();
-	v10 = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
-	PCHERCHE = 20 * READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	v10 = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
+	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_objectsManager.PERSO_ON = 1;
 	CHERCHE_PAL(v10, 1);
@@ -1304,7 +1304,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	memcpy(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.VESA_SCREEN, 0x95FFCu);
 	v15 = v15 + 614396;
 	v14 = v14 + 614396;
-	WRITE_LE_UINT16(v14, READ_LE_UINT16(v15));
+	WRITE_LE_UINT16(v14, (int16)READ_LE_UINT16(v15));
 	v14 = v14 + 2;
 	*v14 = *(v15 + 2);
 	v16 = v14 + 1;

@@ -290,7 +290,7 @@ void MenuManager::CHARGE_PARTIE() {
 			v4 = &_vm->_globals.SAUVEGARDE->data[svField1300];
 			v5 = 0;
 			do {
-				_vm->_globals.INVENTAIRE[v5] = READ_LE_UINT16(v4 + 2 * v5);
+				_vm->_globals.INVENTAIRE[v5] = (int16)READ_LE_UINT16(v4 + 2 * v5);
 				++v5;
 			} while (v5 <= 34);
 

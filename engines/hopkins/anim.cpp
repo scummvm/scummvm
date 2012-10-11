@@ -859,10 +859,10 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 				
 				if (_vm->_globals.Bank[idx].field1A > 0) {
 					for (int v14 = 0; v14 < _vm->_globals.Bank[idx].field1A; ++v14) {
-						v16 = READ_LE_UINT16(v13);
-						v17 = READ_LE_UINT16(v13 + 2);
-						v21 = READ_LE_UINT16(v13 + 4);
-						v20 = READ_LE_UINT16(v13 + 6);
+						v16 = (int16)READ_LE_UINT16(v13);
+						v17 = (int16)READ_LE_UINT16(v13 + 2);
+						v21 = (int16)READ_LE_UINT16(v13 + 4);
+						v20 = (int16)READ_LE_UINT16(v13 + 6);
 						v13 += 8;
 
 						_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx].data, v14, v16, v17, 0);
@@ -953,11 +953,11 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
 
 				v9 = dataP + 20;
 				v23 = v21 + data + 25;
-				v10 = READ_LE_UINT16(v21 + data + 25);
-				v11 = READ_LE_UINT16(v21 + data + 27);
-				v22 = READ_LE_UINT16(v21 + data + 29);
-				v12 = READ_LE_UINT16(v21 + data + 31);
-				v13 = READ_LE_UINT16(v21 + data + 33);
+				v10 = (int16)READ_LE_UINT16(v21 + data + 25);
+				v11 = (int16)READ_LE_UINT16(v21 + data + 27);
+				v22 = (int16)READ_LE_UINT16(v21 + data + 29);
+				v12 = (int16)READ_LE_UINT16(v21 + data + 31);
+				v13 = (int16)READ_LE_UINT16(v21 + data + 33);
 				*(dataP + 29) = *(v21 + data + 34);
 				WRITE_LE_UINT16(dataP + 20, v10);
 				WRITE_LE_UINT16(dataP + 22, v11);
@@ -972,11 +972,11 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
 					if (!v22)
 						break;
                 
-					v24 = READ_LE_UINT16(v23);
-					v15 = READ_LE_UINT16(v23 + 2);
-					v22 = READ_LE_UINT16(v23 + 4);
-					v16 = READ_LE_UINT16(v23 + 6);
-					v17 = READ_LE_UINT16(v23 + 8);
+					v24 = (int16)READ_LE_UINT16(v23);
+					v15 = (int16)READ_LE_UINT16(v23 + 2);
+					v22 = (int16)READ_LE_UINT16(v23 + 4);
+					v16 = (int16)READ_LE_UINT16(v23 + 6);
+					v17 = (int16)READ_LE_UINT16(v23 + 8);
 					*(v9 + 9) = *(v23 + 9);
 					WRITE_LE_UINT16(v9, v24);
 					WRITE_LE_UINT16(v9 + 2, v15);
@@ -1102,7 +1102,7 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 		if (strncmp((const char *)v10, "IMAGE=", 7))
 			v5 = -1;
 		if (!v5) {
-			f.read(v9, READ_LE_UINT16(v10 + 8));
+			f.read(v9, (int16)READ_LE_UINT16(v10 + 8));
 			if (_vm->_globals.iRegul == 1) {
 				do {
 					if (_vm->_eventsManager.ESC_KEY == 1) {

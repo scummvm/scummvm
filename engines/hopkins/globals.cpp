@@ -883,11 +883,11 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 		v15 = 60;
 		v14 = 0;
 		do {
-			v11 = READ_LE_UINT16((uint16 *)ptr + v15);
-			v4 = READ_LE_UINT16((uint16 *)ptr + v15 + 1);
-			v5 = READ_LE_UINT16((uint16 *)ptr + v15 + 2);
+			v11 = (int16)READ_LE_UINT16((uint16 *)ptr + v15);
+			v4 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 1);
+			v5 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
 			v6 = v14;
-			Cache[v6].field14 = READ_LE_UINT16((uint16 *)ptr + v15 + 4);
+			Cache[v6].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 4);
 			Cache[v6].field2 = v11;
 			Cache[v6].field0 = v4;
 			Cache[v6].field4 = v5;
