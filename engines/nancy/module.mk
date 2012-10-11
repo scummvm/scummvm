@@ -4,7 +4,9 @@ MODULE_OBJS = \
   console.o \
   nancy.o \
   detection.o \
-  resource.o
+  resource.o \
+  video.o \
+  decompress.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_NANCY), DYNAMIC_PLUGIN)

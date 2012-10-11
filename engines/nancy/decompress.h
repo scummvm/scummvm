@@ -20,40 +20,38 @@
  *
  */
 
-#ifndef NANCY_CONSOLE_H
-#define NANCY_CONSOLE_H
+#ifndef NANCY_DECOMPRESS_H
+#define NANCY_DECOMPRESS_H
 
-#include "gui/debugger.h"
+namespace Common {
+	class ReadStream;
+	class WriteStream;
+}
 
 namespace Nancy {
 
-class NancyEngine;
-
-class NancyConsole : public GUI::Debugger {
+class Decompressor {
 public:
-	NancyConsole(NancyEngine *vm);
-	virtual ~NancyConsole(void);
-
-	void postEnter();
+	// Decompresses data from input until the end of the stream
+	// The output stream must have the right size for the decompressed data
+	bool decompress(Common::ReadStream &input, Common::MemoryWriteStream &output);
 
 private:
-	NancyEngine *_vm;
-	bool Cmd_resLoadCal(int argc, const char **argv);
-	bool Cmd_resHexDump(int argc, const char **argv);
-	bool Cmd_resDiskDump(int argc, const char **argv);
-	bool Cmd_resList(int argc, const char **argv);
-	bool Cmd_resInfo(int argc, const char **argv);
-	bool Cmd_resShowImage(int argc, const char **argv);
-	bool Cmd_playVideo(int argc, const char **argv);
+	enum {
+		kBufSize = 4096,
+		kBufStart = 4078
+	};
 
-	bool Cmd_listScreens(int argc, const char **argv);
-	bool Cmd_listObjects(int argc, const char **argv);
-	bool Cmd_getObject(int argc, const char **argv);
-	bool Cmd_getAllObjects(int argc, const char **argv);
-	bool Cmd_gotoScreen(int argc, const char **argv);
-	bool Cmd_boundaries(int argc, const char **argv);
+	void init(Common::ReadStream &input, Common::WriteStream &output);
+	bool readByte(byte &b);
+	bool writeByte(byte b);
 
-	Common::String _videoFile;
+	byte _buf[kBufSize];
+	uint _bufpos;
+	bool _err;
+	byte _val;
+	Common::ReadStream *_input;
+	Common::WriteStream *_output;
 };
 
 } // End of namespace Nancy

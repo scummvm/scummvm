@@ -27,6 +27,7 @@
 #include "common/memstream.h"
 #include "graphics/surface.h"
 #include "nancy/resource.h"
+#include "nancy/decompress.h"
 
 namespace Nancy {
 
@@ -44,103 +45,6 @@ static void readCifInfo20(Common::File &f, ResourceManager::CifInfo &info, uint3
 	info.compressedSize = f.readUint32LE();
 
 	info.type = f.readByte();
-}
-
-class Decompressor {
-public:
-	// Decompresses data from input until the end of the stream
-	// The output stream must have the right size for the decompressed data
-	bool decompress(Common::ReadStream &input, Common::MemoryWriteStream &output);
-
-private:
-	enum {
-		kBufSize = 4096,
-		kBufStart = 4078
-	};
-
-	void init(Common::ReadStream &input, Common::WriteStream &output);
-	bool readByte(byte &b);
-	bool writeByte(byte b);
-
-	byte _buf[kBufSize];
-	uint _bufpos;
-	bool _err;
-	byte _val;
-	Common::ReadStream *_input;
-	Common::WriteStream *_output;
-};
-
-void Decompressor::init(Common::ReadStream &input, Common::WriteStream &output) {
-	memset(_buf, ' ', kBufSize);
-	_bufpos = kBufStart;
-	_err = false;
-	_val = 0;
-	_input = &input;
-	_output = &output;
-}
-
-bool Decompressor::readByte(byte &b) {
-	b = _input->readByte();
-
-	if (_input->eos())
-		return false;
-
-	if (_input->err())
-		error("Read error encountered during decompression");
-
-	b -= _val++;
-	return true;
-}
-
-bool Decompressor::writeByte(byte b) {
-	_output->writeByte(b);
-	_buf[_bufpos++] = b;
-	_bufpos &= kBufSize - 1;
-	return true;
-}
-
-bool Decompressor::decompress(Common::ReadStream &input, Common::MemoryWriteStream &output) {
-	init(input, output);
-	uint16 bits = 0;
-
-	while(1) {
-		byte b;
-
-		bits >>= 1;
-
-		// The highest 8 bits are used to keep track of how many bits are left to process
-		if (!(bits & 0x100)) {
-			// Out of bits
-			if (!readByte(b))
-				break;
-			bits = 0xff00 | b;
-		}
-
-		if (bits & 1) {
-			// Literal byte
-			if (!readByte(b))
-				break;
-			writeByte(b);
-		} else {
-			// Copy from buffer
-			byte b2;
-			if (!readByte(b) || !readByte(b2))
-				break;
-
-			uint16 offset = b | ((b2 & 0xf0) << 4);
-			uint16 len = (b2 & 0xf) + 3;
-
-			for (uint i = 0; i < len; i++)
-				writeByte(_buf[(offset + i) & (kBufSize - 1)]);
-		}
-	}
-
-	if (output.err() || output.pos() != output.size()) {
-		warning("Failed to decompress resource");
-		return false;
-	}
-
-	return true;
 }
 
 class CifFile {
@@ -559,11 +463,13 @@ const CifTree *CifTree::load(const Common::String &name, const Common::String &e
 }
 
 ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm) {
+	_dec = new Decompressor;
 }
 
 ResourceManager::~ResourceManager() {
 	for (uint i = 0; i < _cifTrees.size(); i++)
 		delete _cifTrees[i];
+	delete _dec;
 }
 
 bool ResourceManager::loadCifTree(const Common::String &name, const Common::String &ext) {
@@ -625,11 +531,10 @@ byte *ResourceManager::getCifData(const Common::String &treeName, const Common::
 	}
 
 	if (buf && info.comp == kResCompression) {
-		Decompressor dec;
 		Common::MemoryReadStream input(buf, info.compressedSize);
 		byte *raw = new byte[info.size];
 		Common::MemoryWriteStream output(raw, info.size);
-		if (!dec.decompress(input, output)) {
+		if (!_dec->decompress(input, output)) {
 			warning("Failed to decompress '%s'", name.c_str());
 			delete[] buf;
 			delete[] raw;
