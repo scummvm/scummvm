@@ -44,6 +44,10 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "hdsound");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
 
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");

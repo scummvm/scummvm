@@ -35,6 +35,7 @@ namespace Nancy {
 
 class NancyEngine;
 class CifTree;
+class Decompressor;
 
 class ResourceManager {
 public:
@@ -73,6 +74,7 @@ public:
 	Common::String getCifDescription(const Common::String &treeName, const Common::String &name);
 private:
 	NancyEngine *_vm;
+	Decompressor *_dec;
 
 	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = 0);
 	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info);
