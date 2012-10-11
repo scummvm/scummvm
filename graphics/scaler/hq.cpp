@@ -219,8 +219,10 @@ static inline uint32 ConvertYUV(uint32 x) {
  * Original author Maxim Stepin (see http://www.hiend3d.com/hq2x.html).
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
-template<typename ColorMask, typename Pixel>
+template<typename ColorMask>
 static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	typedef typename ColorMask::PixelType Pixel;
+
 	register int w1, w2, w3, w4, w5, w6, w7, w8, w9;
 
 	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
@@ -2154,8 +2156,10 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
  * Original author Maxim Stepin (see http://www.hiend3d.com/hq3x.html).
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
-template<typename ColorMask, typename Pixel>
+template<typename ColorMask>
 static void HQ3x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	typedef typename ColorMask::PixelType Pixel;
+
 	register int  w1, w2, w3, w4, w5, w6, w7, w8, w9;
 
 	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
@@ -5023,18 +5027,18 @@ void HQPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 #else
 		case 2:
 			if (_format.gLoss == 2)
-				HQ2x_implementation<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr,
+				HQ2x_implementation<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			else
-				HQ2x_implementation<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr,
+				HQ2x_implementation<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			break;
 		case 3:
 			if (_format.gLoss == 2)
-				HQ3x_implementation<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr,
+				HQ3x_implementation<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			else
-				HQ3x_implementation<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr,
+				HQ3x_implementation<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			break;
 #endif
@@ -5043,18 +5047,18 @@ void HQPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 		switch (_factor) {
 		case 2:
 			if (_format.aLoss == 0)
-				HQ2x_implementation<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr,
+				HQ2x_implementation<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			else
-				HQ2x_implementation<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr,
+				HQ2x_implementation<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			break;
 		case 3:
 			if (_format.aLoss == 0)
-				HQ3x_implementation<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr,
+				HQ3x_implementation<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			else
-				HQ3x_implementation<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr,
+				HQ3x_implementation<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr,
 						dstPitch, width, height);
 			break;
 		}
