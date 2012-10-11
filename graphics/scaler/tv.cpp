@@ -32,14 +32,14 @@ void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
-			scaleIntern<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			scaleIntern<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 		else
-			scaleIntern<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			scaleIntern<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	} else {
 		if (_format.aLoss == 0)
-			scaleIntern<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			scaleIntern<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 		else
-			scaleIntern<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			scaleIntern<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	}
 
 }
@@ -60,9 +60,11 @@ const char *TVPlugin::getPrettyName() const {
 	return "TV";
 }
 
-template<typename ColorMask, typename Pixel>
+template<typename ColorMask>
 void TVPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height) {
+	typedef typename ColorMask::PixelType Pixel;
+
 	const uint32 nextlineSrc = srcPitch / sizeof(Pixel);
 	const Pixel *p = (const Pixel *)srcPtr;
 

@@ -36,7 +36,7 @@ public:
 private:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
-	template<typename ColorMask, typename Pixel>
+	template<typename ColorMask>
 	void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 			uint32 dstPitch, int width, int height);
 };

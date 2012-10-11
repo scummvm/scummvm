@@ -288,9 +288,9 @@ static double fastAtan(double x0) {
  * This allows 16 and 32 bit functions to easily share
  * the same code.
  */
-template<typename ColorMask, typename Pixel>
-uint16 convertTo16Bit(Pixel p) {
-	if (sizeof(Pixel) == 2)
+template<typename ColorMask>
+uint16 convertTo16Bit(const typename ColorMask::PixelType p) {
+	if (sizeof(typename ColorMask::PixelType) == 2)
 		return p;
 
 	uint16 r, g, b;
@@ -305,15 +305,15 @@ uint16 convertTo16Bit(Pixel p) {
 }
 
 
-template<typename ColorMask, typename Pixel>
-int16 *EdgePlugin::chooseGreyscale(Pixel *pixels) {
+template<typename ColorMask>
+int16 *EdgePlugin::chooseGreyscale(typename ColorMask::PixelType *pixels) {
 	int i, j;
 	int32 scores[3];
 
 	for (i = 0; i < 3; i++) {
 		int16 *diff_ptr;
 		int16 *bptr;
-		Pixel *pptr;
+		typename ColorMask::PixelType *pptr;
 		int16 *grey_ptr;
 		int16 center;
 		int32 sum_diffs;
@@ -326,10 +326,10 @@ int16 *EdgePlugin::chooseGreyscale(Pixel *pixels) {
 		bptr = _bplanes[i];
 		pptr = pixels;
 		for (j = 9; j; --j)
-			*bptr++ = grey_ptr[convertTo16Bit<ColorMask, Pixel>(*pptr++)];
+			*bptr++ = grey_ptr[convertTo16Bit<ColorMask>(*pptr++)];
 		bptr = _bplanes[i];
 
-		center = grey_ptr[convertTo16Bit<ColorMask, Pixel>(pixels[4])];
+		center = grey_ptr[convertTo16Bit<ColorMask>(pixels[4])];
 		diff_ptr = _greyscaleDiffs[i];
 
 		/* calculate the delta from center pixel */
@@ -377,10 +377,10 @@ int16 *EdgePlugin::chooseGreyscale(Pixel *pixels) {
 }
 
 
-template<typename ColorMask, typename Pixel>
-int32 EdgePlugin::calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2) {
-	pixel1 = convertTo16Bit<ColorMask, Pixel>(pixel1);
-	pixel2 = convertTo16Bit<ColorMask, Pixel>(pixel2);
+template<typename ColorMask>
+int32 EdgePlugin::calcPixelDiffNosqrt(typename ColorMask::PixelType pixel1, typename ColorMask::PixelType pixel2) {
+	pixel1 = convertTo16Bit<ColorMask>(pixel1);
+	pixel2 = convertTo16Bit<ColorMask>(pixel2);
 
 #if 1   /* distance between pixels, weighted by roughly luma proportions */
 	int32 sum = 0;
@@ -1770,9 +1770,11 @@ int EdgePlugin::fixKnights(int sub_type, Pixel *pixels, int8 *sim) {
 #define redblueMask 0xF81F
 #define greenMask   0x07E0
 
-template<typename ColorMask, typename Pixel>
+template<typename ColorMask>
 void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
-        Pixel *pixels, int sub_type, int16 *bptr) {
+        typename ColorMask::PixelType *pixels, int sub_type, int16 *bptr) {
+	typedef typename ColorMask::PixelType Pixel;
+
 	Pixel *dptr2;
 	int16 tmp_grey;
 	Pixel center = pixels[4];
@@ -1787,7 +1789,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[6])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[6])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[3]);
 		diff2 = labs(bptr[4] - bptr[7]);
@@ -1797,9 +1799,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[6] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -1807,7 +1809,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			else
 				tmp[6] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[6])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[6])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[8]);
 			if (diff1 <= diff2)
@@ -1821,7 +1823,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[5]);
 		diff2 = labs(bptr[4] - bptr[1]);
@@ -1831,9 +1833,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -1841,7 +1843,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			else
 				tmp[2] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[0]);
 			if (diff1 <= diff2)
@@ -1858,9 +1860,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 
 		if (sub_type != 16) {
 			tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -1871,9 +1873,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 
 		if (sub_type != 17) {
 			tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[6] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -1889,7 +1891,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[1]);
 		diff2 = labs(bptr[4] - bptr[5]);
@@ -1899,9 +1901,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -1909,7 +1911,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			else
 				tmp[2] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[8]);
 			if (diff1 <= diff2)
@@ -1923,7 +1925,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[6])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[6])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[7]);
 		diff2 = labs(bptr[4] - bptr[3]);
@@ -1933,9 +1935,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[6] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -1943,7 +1945,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			else
 				tmp[6] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[6])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[6])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[0]);
 			if (diff1 <= diff2)
@@ -1957,7 +1959,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[1]);
 		diff2 = labs(bptr[4] - bptr[3]);
@@ -1967,9 +1969,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -1977,7 +1979,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			else
 				tmp[0] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[6]);
 			if (diff1 <= diff2)
@@ -1991,7 +1993,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[8])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[8])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[7]);
 		diff2 = labs(bptr[4] - bptr[5]);
@@ -2001,9 +2003,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[8] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2011,7 +2013,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			else
 				tmp[8] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[8])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[8])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[2]);
 			if (diff1 <= diff2)
@@ -2028,9 +2030,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 
 		if (sub_type != 18) {
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2041,9 +2043,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 
 		if (sub_type != 19) {
 			tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[8] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2059,7 +2061,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[8])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[8])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[5]);
 		diff2 = labs(bptr[4] - bptr[7]);
@@ -2069,9 +2071,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[8] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2079,7 +2081,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			else
 				tmp[8] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[8])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[8])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[6]);
 			if (diff1 <= diff2)
@@ -2093,7 +2095,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[3]);
 		diff2 = labs(bptr[4] - bptr[1]);
@@ -2103,9 +2105,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2113,7 +2115,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			else
 				tmp[0] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[2]);
 			if (diff1 <= diff2)
@@ -2127,7 +2129,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[1]);
 		diff2 = labs(bptr[4] - bptr[3]);
@@ -2137,9 +2139,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2149,7 +2151,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		}
 
 		tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[6])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[6])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[3]);
 		diff2 = labs(bptr[4] - bptr[7]);
@@ -2159,9 +2161,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[6] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2177,7 +2179,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[5]);
 		diff2 = labs(bptr[4] - bptr[1]);
@@ -2187,9 +2189,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2199,7 +2201,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		}
 
 		tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[8])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[8])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[7]);
 		diff2 = labs(bptr[4] - bptr[5]);
@@ -2209,9 +2211,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[8] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2227,7 +2229,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[1]);
 		diff2 = labs(bptr[4] - bptr[3]);
@@ -2237,9 +2239,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2249,7 +2251,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		}
 
 		tmp[2] = interpolate_1_1_1(pixels[1], pixels[5], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[5]);
 		diff2 = labs(bptr[4] - bptr[1]);
@@ -2259,9 +2261,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2277,7 +2279,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 			tmp[i] = center;
 
 		tmp[6] = interpolate_1_1_1(pixels[3], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[6])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[6])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[3]);
 		diff2 = labs(bptr[4] - bptr[7]);
@@ -2287,9 +2289,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[6], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[6], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[6] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2299,7 +2301,7 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		}
 
 		tmp[8] = interpolate_1_1_1(pixels[5], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[8])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[8])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[7]);
 		diff2 = labs(bptr[4] - bptr[5]);
@@ -2309,9 +2311,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[8], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[8], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[8] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2369,11 +2371,13 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 }
 
 
-template<typename ColorMask, typename Pixel>
+template<typename ColorMask>
 void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
-                                    Pixel *pixels, int sub_type, int16 *bptr,
+                                    typename ColorMask::PixelType *pixels, int sub_type, int16 *bptr,
                                     int8 *sim,
                                     int interpolate_2x) {
+	typedef typename ColorMask::PixelType Pixel;
+
 	Pixel *dptr2;
 	Pixel center = pixels[4];
 	int32 diff1, diff2, diff3;
@@ -2386,7 +2390,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[1] = tmp[3] = center;
 
 		tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[3]);
 		diff2 = labs(bptr[4] - bptr[7]);
@@ -2396,9 +2400,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2406,7 +2410,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			else
 				tmp[2] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[8]);
 			if (diff1 <= diff2) {
@@ -2419,7 +2423,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 				if (interpolate_2x) {
 					tmp[2] = interpolate_1_1(tmp[2], center);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])])
 						tmp[2] = center;
 				}
 			}
@@ -2431,7 +2435,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[2] = tmp[3] = center;
 
 		tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[5]);
 		diff2 = labs(bptr[4] - bptr[1]);
@@ -2441,9 +2445,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[1] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2451,7 +2455,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			else
 				tmp[1] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[0]);
 			if (diff1 <= diff2) {
@@ -2464,7 +2468,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 				if (interpolate_2x) {
 					tmp[1] = interpolate_1_1(tmp[1], center);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])])
 						tmp[1] = center;
 				}
 			}
@@ -2479,9 +2483,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 
 		if (sub_type != 16) {
 			tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[1] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2496,7 +2500,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
 			 * nearest-neighbor, so detect them and don't anti-alias them.
 			 */
-			else if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])] ||
+			else if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])] ||
 			         (_simSum == 1 && (sim[0] || sim[7]) &&
 			          pixels[1] == pixels[3] && pixels[5] == pixels[7]))
 				tmp[1] = center;
@@ -2504,9 +2508,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 
 		if (sub_type != 17) {
 			tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2521,7 +2525,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
 			 * nearest-neighbor, so detect them and don't anti-alias them.
 			 */
-			else if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])] ||
+			else if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])] ||
 			         (_simSum == 1 && (sim[0] || sim[7]) &&
 			          pixels[1] == pixels[3] && pixels[5] == pixels[7]))
 				tmp[2] = center;
@@ -2533,7 +2537,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[2] = tmp[3] = center;
 
 		tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[1]);
 		diff2 = labs(bptr[4] - bptr[5]);
@@ -2543,9 +2547,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[1] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2553,7 +2557,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			else
 				tmp[1] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[8]);
 			if (diff1 <= diff2) {
@@ -2566,7 +2570,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 				if (interpolate_2x) {
 					tmp[1] = interpolate_1_1(tmp[1], center);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])])
 						tmp[1] = center;
 				}
 			}
@@ -2578,7 +2582,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[1] = tmp[3] = center;
 
 		tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[7]);
 		diff2 = labs(bptr[4] - bptr[3]);
@@ -2588,9 +2592,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2598,7 +2602,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			else
 				tmp[2] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[0]);
 			if (diff1 <= diff2) {
@@ -2611,7 +2615,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 				if (interpolate_2x) {
 					tmp[2] = interpolate_1_1(tmp[2], center);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])])
 						tmp[2] = center;
 				}
 			}
@@ -2623,7 +2627,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[1] = tmp[2] = tmp[3] = center;
 
 		tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[1]);
 		diff2 = labs(bptr[4] - bptr[3]);
@@ -2633,9 +2637,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2643,7 +2647,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			else
 				tmp[0] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[6]);
 			if (diff1 <= diff2) {
@@ -2656,7 +2660,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 				if (interpolate_2x) {
 					tmp[0] = interpolate_1_1(tmp[0], center);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])])
 						tmp[0] = center;
 				}
 			}
@@ -2668,7 +2672,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[1] = tmp[2] = center;
 
 		tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[7]);
 		diff2 = labs(bptr[4] - bptr[5]);
@@ -2678,9 +2682,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[3] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2688,7 +2692,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			else
 				tmp[3] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[2]);
 			if (diff1 <= diff2) {
@@ -2701,7 +2705,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 				if (interpolate_2x) {
 					tmp[3] = interpolate_1_1(tmp[3], center);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])])
 						tmp[3] = center;
 				}
 			}
@@ -2716,9 +2720,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 
 		if (sub_type != 18) {
 			tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2733,7 +2737,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
 			 * nearest-neighbor, so detect them and don't anti-alias them.
 			 */
-			else if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])] ||
+			else if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])] ||
 			         (_simSum == 1 && (sim[2] || sim[5]) &&
 			          pixels[1] == pixels[5] && pixels[3] == pixels[7]))
 				tmp[0] = center;
@@ -2741,9 +2745,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 
 		if (sub_type != 19) {
 			tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[3] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2758,7 +2762,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			 * mouse pointer in Sam&Max.  Half-diags can be too thin in 2x
 			 * nearest-neighbor, so detect them and don't anti-alias them.
 			 */
-			else if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])] ||
+			else if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])] ||
 			         (_simSum == 1 && (sim[2] || sim[5]) &&
 			          pixels[1] == pixels[5] && pixels[3] == pixels[7]))
 				tmp[3] = center;
@@ -2770,7 +2774,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[1] = tmp[2] = center;
 
 		tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[5]);
 		diff2 = labs(bptr[4] - bptr[7]);
@@ -2780,9 +2784,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[3] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2790,7 +2794,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			else
 				tmp[3] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[6]);
 			if (diff1 <= diff2) {
@@ -2803,7 +2807,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 				if (interpolate_2x) {
 					tmp[3] = interpolate_1_1(tmp[3], center);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])])
 						tmp[3] = center;
 				}
 			}
@@ -2815,7 +2819,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[1] = tmp[2] = tmp[3] = center;
 
 		tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 #if PARANOID_KNIGHTS
 		diff1 = labs(bptr[4] - bptr[3]);
 		diff2 = labs(bptr[4] - bptr[1]);
@@ -2825,9 +2829,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2835,7 +2839,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 			else
 				tmp[0] = pixels[4];
 
-			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+			tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 			diff1 = labs(bptr[4] - tmp_grey);
 			diff2 = labs(bptr[4] - bptr[2]);
 			if (diff1 <= diff2) {
@@ -2848,7 +2852,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 				if (interpolate_2x) {
 					tmp[0] = interpolate_1_1(tmp[0], center);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])])
 						tmp[0] = center;
 				}
 			}
@@ -2860,7 +2864,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
 		tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[1]);
 		diff2 = labs(bptr[4] - bptr[3]);
@@ -2870,9 +2874,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2886,7 +2890,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 					tmp[0] = interpolate_1_1(center, tmp[0]);
 					tmp[2] = interpolate_2_1(center, tmp[0]);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])])
 						tmp[0] = center;
 				}
 
@@ -2900,7 +2904,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		}
 
 		tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[3]);
 		diff2 = labs(bptr[4] - bptr[7]);
@@ -2910,9 +2914,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2926,7 +2930,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 					tmp[2] = interpolate_1_1(center, tmp[2]);
 					tmp[0] = interpolate_2_1(center, tmp[2]);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])])
 						tmp[2] = center;
 				}
 
@@ -2945,7 +2949,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
 		tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[5]);
 		diff2 = labs(bptr[4] - bptr[1]);
@@ -2955,9 +2959,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[1] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -2971,7 +2975,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 					tmp[1] = interpolate_1_1(center, tmp[1]);
 					tmp[3] = interpolate_2_1(center, tmp[1]);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])])
 						tmp[1] = center;
 				}
 
@@ -2985,7 +2989,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		}
 
 		tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[7]);
 		diff2 = labs(bptr[4] - bptr[5]);
@@ -2995,9 +2999,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[3] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3011,7 +3015,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 					tmp[3] = interpolate_1_1(center, tmp[3]);
 					tmp[1] = interpolate_2_1(center, tmp[3]);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])])
 						tmp[3] = center;
 				}
 
@@ -3030,7 +3034,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
 		tmp[0] = interpolate_1_1_1(pixels[1], pixels[3], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[1]);
 		diff2 = labs(bptr[4] - bptr[3]);
@@ -3040,9 +3044,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[3]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[0], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[3]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[0], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[0] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3056,7 +3060,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 					tmp[0] = interpolate_1_1(center, tmp[0]);
 					tmp[1] = interpolate_2_1(center, tmp[0]);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[0])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[0])])
 						tmp[0] = center;
 				}
 
@@ -3070,7 +3074,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		}
 
 		tmp[1] = interpolate_1_1_1(pixels[1], pixels[5], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[5]);
 		diff2 = labs(bptr[4] - bptr[1]);
@@ -3080,9 +3084,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[1]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[5]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[1], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[1]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[5]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[1], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[1] = pixels[1];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3096,7 +3100,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 					tmp[1] = interpolate_1_1(center, tmp[1]);
 					tmp[0] = interpolate_2_1(center, tmp[1]);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[1])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[1])])
 						tmp[1] = center;
 				}
 
@@ -3115,7 +3119,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		tmp[0] = tmp[1] = tmp[2] = tmp[3] = center;
 
 		tmp[2] = interpolate_1_1_1(pixels[3], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[3]);
 		diff2 = labs(bptr[4] - bptr[7]);
@@ -3125,9 +3129,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[3]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[2], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[3]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[2], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[2] = pixels[3];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3141,7 +3145,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 					tmp[2] = interpolate_1_1(center, tmp[2]);
 					tmp[3] = interpolate_2_1(center, tmp[2]);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[2])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[2])])
 						tmp[2] = center;
 				}
 
@@ -3155,7 +3159,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		}
 
 		tmp[3] = interpolate_1_1_1(pixels[5], pixels[7], center);
-		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])];
+		tmp_grey = _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])];
 #if PARANOID_ARROWS
 		diff1 = labs(bptr[4] - bptr[7]);
 		diff2 = labs(bptr[4] - bptr[5]);
@@ -3165,9 +3169,9 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 		else    /* choose nearest pixel */
 #endif
 		{
-			diff1 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[5]);
-			diff2 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[7]);
-			diff3 = calcPixelDiffNosqrt<ColorMask, Pixel>(tmp[3], pixels[4]);
+			diff1 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[5]);
+			diff2 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[7]);
+			diff3 = calcPixelDiffNosqrt<ColorMask>(tmp[3], pixels[4]);
 			if (diff1 <= diff2 && diff1 <= diff3)
 				tmp[3] = pixels[5];
 			else if (diff2 <= diff1 && diff2 <= diff3)
@@ -3181,7 +3185,7 @@ void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
 					tmp[3] = interpolate_1_1(center, tmp[3]);
 					tmp[2] = interpolate_2_1(center, tmp[3]);
 				} else {
-					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask, Pixel>(tmp[3])])
+					if (bptr[4] > _chosenGreyscale[convertTo16Bit<ColorMask>(tmp[3])])
 						tmp[3] = center;
 				}
 
@@ -3303,13 +3307,15 @@ void drawUnchangedGrid2x(byte *dptr, int dstPitch,
 }
 
 
-template<typename ColorMask, typename Pixel>
+template<typename ColorMask>
 void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
                                  int w, int h,
                                  int srcPitch, int dstPitch,
                                  bool haveOldSrc,
                                  const uint8* oldSrc, int oldPitch,
                                  const uint8 *buffer, int bufferPitch) {
+	typedef typename ColorMask::PixelType Pixel;
+
 	int x, y;
 	const uint8 *sptr8 = src;
 	uint8 *dptr8 = dst + dstPitch + sizeof(Pixel);
@@ -3360,11 +3366,11 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 				}
 			}
 
-			diffs = chooseGreyscale<ColorMask, Pixel>(pixels);
+			diffs = chooseGreyscale<ColorMask>(pixels);
 
 			/* block of solid color */
 			if (!diffs) {
-				antiAliasGridClean3x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
+				antiAliasGridClean3x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 				                                    0, NULL);
 				continue;
 			}
@@ -3378,14 +3384,14 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 			if (sub_type >= 0)
 				sub_type = fixKnights<Pixel>(sub_type, pixels, sim);
 
-			antiAliasGridClean3x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
+			antiAliasGridClean3x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 			                                    sub_type, bplane);
 		}
 	}
 }
 
 
-template<typename ColorMask, typename Pixel>
+template<typename ColorMask>
 void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
                                  int w, int h,
                                  int srcPitch, int dstPitch,
@@ -3393,6 +3399,8 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
                                  bool haveOldSrc,
                                  const uint8 *oldSrc, int oldSrcPitch,
                                  const uint8 *buffer, int bufferPitch) {
+	typedef typename ColorMask::PixelType Pixel;
+
 	int x, y;
 	const uint8 *sptr8 = src;
 	uint8 *dptr8 = dst;
@@ -3443,11 +3451,11 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 				}
 			}
 
-			diffs = chooseGreyscale<ColorMask, Pixel>(pixels);
+			diffs = chooseGreyscale<ColorMask>(pixels);
 
 			/* block of solid color */
 			if (!diffs) {
-				antiAliasGrid2x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
+				antiAliasGrid2x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 				                              0, NULL, NULL, 0);
 				continue;
 			}
@@ -3461,7 +3469,7 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 			if (sub_type >= 0)
 				sub_type = fixKnights<Pixel>(sub_type, pixels, sim);
 
-			antiAliasGrid2x<ColorMask, Pixel>((uint8 *) dptr16, dstPitch, pixels,
+			antiAliasGrid2x<ColorMask>((uint8 *) dptr16, dstPitch, pixels,
 			                              sub_type, bplane, sim,
 			                              interpolate_2x);
 		}
@@ -3570,26 +3578,26 @@ void EdgePlugin::internScale(const uint8 *srcPtr, uint32 srcPitch,
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {
 			if (_format.gLoss == 2)
-				antiAliasPass2x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass2x<Graphics::ColorMasks<565> >(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass2x<Graphics::ColorMasks<555> >(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		} else {
 			if (_format.gLoss == 2)
-				antiAliasPass3x<Graphics::ColorMasks<565>, uint16>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass3x<Graphics::ColorMasks<565> >(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<555>, uint16>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass3x<Graphics::ColorMasks<555> >(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		}
 	} else {
 		if (_factor == 2) {
 			if (_format.aLoss == 0)
-				antiAliasPass2x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass2x<Graphics::ColorMasks<8888> >(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass2x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass2x<Graphics::ColorMasks<888> >(srcPtr, dstPtr, width, height, srcPitch, dstPitch, 1, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		} else {
 			if (_format.aLoss == 0)
-				antiAliasPass3x<Graphics::ColorMasks<8888>, uint32>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass3x<Graphics::ColorMasks<8888> >(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 			else
-				antiAliasPass3x<Graphics::ColorMasks<888>, uint32>(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
+				antiAliasPass3x<Graphics::ColorMasks<888> >(srcPtr, dstPtr, width, height, srcPitch, dstPitch, enable, oldSrcPtr, oldSrcPitch, buffer, bufferPitch);
 		}
 	}
 }

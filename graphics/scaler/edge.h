@@ -70,8 +70,8 @@ private:
 	 * speed, and is still a lot faster than edge detecting over all three RGB
 	 * bitplanes.  The increase in image quality is well worth the speed hit.
 	 */
-	template<typename ColorMask, typename Pixel>
-	int16 *chooseGreyscale(Pixel *pixels);
+	template<typename ColorMask>
+	int16 *chooseGreyscale(typename ColorMask::PixelType *pixels);
 
 	/**
 	 * Calculate the distance between pixels in RGB space.  Greyscale isn't
@@ -79,8 +79,8 @@ private:
 	 * of the individual bitplane distances prior to squaring gives the most
 	 * useful results.
 	 */
-	template<typename ColorMask, typename Pixel>
-	int32 calcPixelDiffNosqrt(Pixel pixel1, Pixel pixel2);
+	template<typename ColorMask>
+	int32 calcPixelDiffNosqrt(typename ColorMask::PixelType pixel1, typename ColorMask::PixelType pixel2);
 
 	/**
 	 * Create vectors of all delta grey values from center pixel, with magnitudes
@@ -131,23 +131,23 @@ private:
 	/**
 	 * Fill pixel grid with or without interpolation, using the detected edge
 	 */
-	template<typename ColorMask, typename Pixel>
+	template<typename ColorMask>
 	void antiAliasGrid2x(uint8 *dptr, int dstPitch,
-		Pixel *pixels, int sub_type, int16 *bptr,
+		typename ColorMask::PixelType *pixels, int sub_type, int16 *bptr,
 		int8 *sim,
 		int interpolate_2x);
 
 	/**
 	 * Fill pixel grid without interpolation, using the detected edge
 	 */
-	template<typename ColorMask, typename Pixel>
+	template<typename ColorMask>
 	void antiAliasGridClean3x(uint8 *dptr, int dstPitch,
-		Pixel *pixels, int sub_type, int16 *bptr);
+		typename ColorMask::PixelType *pixels, int sub_type, int16 *bptr);
 
 	/**
 	 * Perform edge detection, draw the new 2x pixels
 	 */
-	template<typename ColorMask, typename Pixel>
+	template<typename ColorMask>
 	void antiAliasPass2x(const uint8 *src, uint8 *dst,
 		int w, int h,
 		int srcPitch, int dstPitch,
@@ -159,7 +159,7 @@ private:
 	/**
 	 * Perform edge detection, draw the new 3x pixels
 	 */
-	template<typename ColorMask, typename Pixel>
+	template<typename ColorMask>
 	void antiAliasPass3x(const uint8 *src, uint8 *dst,
 		int w, int h,
 		int srcPitch, int dstPitch,

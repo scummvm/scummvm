@@ -32,8 +32,10 @@
 #define interpolate_1_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1<ColorMask>(a,b) : interpolate32_1_1<ColorMask>(a,b))
 #define interpolate_3_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_3_1<ColorMask>(a,b) : interpolate32_3_1<ColorMask>(a,b))
 
-template<typename ColorMask, typename Pixel>
+template<typename ColorMask>
 void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	typedef typename ColorMask::PixelType Pixel;
+
 	uint32 nextLineSrc = srcPitch / sizeof(Pixel);
 	uint32 nextLine = dstPitch / sizeof(Pixel);
 	uint32 completeLineSrc = nextLineSrc - width;
@@ -194,14 +196,14 @@ void PMPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_format.gLoss == 2)
-			::scaleIntern<Graphics::ColorMasks<565>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			::scaleIntern<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 		else
-			::scaleIntern<Graphics::ColorMasks<555>, uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			::scaleIntern<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	} else {
 		if (_format.aLoss == 0)
-			::scaleIntern<Graphics::ColorMasks<8888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			::scaleIntern<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 		else
-			::scaleIntern<Graphics::ColorMasks<888>, uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			::scaleIntern<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	}
 }
 
