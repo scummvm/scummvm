@@ -184,6 +184,8 @@ public:
 	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
 	void Copy_Video_Vbe(const byte *src);
 	void Reduc_Ecran(byte *a1, byte *a2, int a3, int a4, int a5, int a6, int a7);
+	void Plot_Hline(byte *surface, int xp, int yp, unsigned int width, byte col);
+	void Plot_Vline(byte *surface, int xp, int yp, int height, char col);
 };
 
 } // End of namespace Hopkins

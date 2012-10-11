@@ -2563,4 +2563,22 @@ void GraphicsManager::Reduc_Ecran(byte *a1, byte *a2, int a3, int a4, int a5, in
 	}
 }
 
+void GraphicsManager::Plot_Hline(byte *surface, int xp, int yp, unsigned int width, byte col) {
+	memset(surface + xp + nbrligne2 * yp, col, width);
+}
+
+void GraphicsManager::Plot_Vline(byte *surface, int xp, int yp, int height, char col) {
+	byte *v5;
+	int v6;
+
+	v5 = surface + xp + nbrligne2 * yp;
+	v6 = height;
+	do {
+		*v5 = col;
+		v5 += nbrligne2;
+		--v6;
+	} while (v6);
+}
+
+
 } // End of namespace Hopkins
