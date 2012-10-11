@@ -103,10 +103,14 @@ void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 	
 	_palette = new Palette(_vm);
 	_palette->usePalette();
+
+	_smackerDecoder->start();
 	
 }
 
 void SmackerPlayer::close() {
+	if (_smackerDecoder)
+		_smackerDecoder->stop();
 	delete _smackerDecoder;
 	delete _palette;
 	// NOTE: The SmackerDecoder deletes the _stream

@@ -85,6 +85,13 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 	}				
 }
 
+void GameModule::handleSpaceKey() {
+	if (_childObject) {
+		debug(2, "GameModule::handleSpaceKey()");
+		sendMessage(_childObject, 9, 0);
+	}				
+}
+
 void GameModule::initScene1307Vars() {
 
 	// Exit if it's already initialized
@@ -314,7 +321,7 @@ void GameModule::startup() {
 #if 1
 	_vm->gameState().which = 0;
 	_vm->gameState().sceneNum = 1;
-	createModule(2200, -1);
+	createModule(3000, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

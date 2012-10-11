@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool flag1, bool canAbort)
-	: Scene(vm, parentModule, true), _doubleSurface(doubleSurface), _flag1(flag1), _canAbort(canAbort), _fieldDF(false),
+	: Scene(vm, parentModule, true), _doubleSurface(doubleSurface), _flag1(flag1), _canAbort(canAbort), _videoPlayedBefore(false),
 	_fileHashListIndex(-1), _fileHashList(NULL), _playNextVideoFlag(false) {
 
 	debug("SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, flag1, canAbort);
@@ -77,10 +77,9 @@ void SmackerScene::nextVideo() {
 			sendMessage(_parentModule, 0x1009, 0);
 			return;
 		}
-		_fieldDF = getSubVar(VA_SMACKER_PLAYED, smackerFileHash);
-		if (!_fieldDF) {
+		_videoPlayedBefore = getSubVar(VA_SMACKER_PLAYED, smackerFileHash);
+		if (!_videoPlayedBefore)
 			setSubVar(VA_SMACKER_PLAYED, smackerFileHash, 1);
-		}
 		if (_fileHashListIndex == 0)
 			_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, smackerFileHash, _doubleSurface, false));
 		else
@@ -105,7 +104,7 @@ uint32 SmackerScene::handleMessage(int messageNum, const MessageParam &param, En
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0009:
-		if ((_fieldDF && _flag1) || (_canAbort && _flag1))
+		if ((_videoPlayedBefore && _flag1) || (_canAbort && _flag1))
 			_playNextVideoFlag = true;
 		break;
 	case 0x000C:

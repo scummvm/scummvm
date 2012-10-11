@@ -116,6 +116,13 @@ Common::Error NeverhoodEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				_keyState = event.kbd.keycode;
+				switch (_keyState) {
+				case Common::KEYCODE_SPACE:
+					_gameModule->handleSpaceKey();
+					break;
+				default:
+					break;
+				}
 				break;
 			case Common::EVENT_KEYUP:
 				_keyState = Common::KEYCODE_INVALID;

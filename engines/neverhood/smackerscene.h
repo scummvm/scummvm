@@ -40,7 +40,7 @@ protected:
 	bool _doubleSurface;
 	bool _flag1;
 	bool _canAbort;
-	bool _fieldDF;
+	bool _videoPlayedBefore;
 	bool _playNextVideoFlag;
 	int _fileHashListIndex;
 	const uint32 *_fileHashList;
