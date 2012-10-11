@@ -1779,11 +1779,11 @@ uint32 Scene1005::getTextIndex1() {
 		else if (getGlobalVar(V_ROBOT_HIT)) {
 			if (!getGlobalVar(V_ENTRANCE_OPEN))
 				textIndex = 23;
-			else if (!getSubVar(0x0090EA95, 0) && !getSubVar(0x08D0AB11, 0))
+			else if (!getSubVar(VA_HAS_KEY, 0) && !getSubVar(VA_IS_KEY_INSERTED, 0))
 				textIndex = 24;
 			else if (!getGlobalVar(V_HAS_FINAL_KEY))			
 				textIndex = 26;
-			else if (!getSubVar(0x0090EA95, 1) && !getSubVar(0x08D0AB11, 1))
+			else if (!getSubVar(VA_HAS_KEY, 1) && !getSubVar(VA_IS_KEY_INSERTED, 1))
 				textIndex = 27;
 			else if (!getGlobalVar(V_HAS_FINAL_KEY)) 
 				textIndex = 28;
@@ -1817,15 +1817,15 @@ uint32 Scene1005::getTextIndex1() {
 			textIndex = 4;
 		else if (!getGlobalVar(V_HAS_TEST_TUBE))
 			textIndex = 5;
-		else if (!getSubVar(0x14800353, 0x40119852))
+		else if (!getSubVar(VA_LOCKS_DISABLED, 0x40119852))
 			textIndex = 6;
 		else if (!getGlobalVar(V_WATER_RUNNING))
 			textIndex = 7;
 		else if (!getGlobalVar(V_NOTES_PUZZLE_SOLVED))
 			textIndex = 8;
-		else if (!getSubVar(0x14800353, 0x304008D2))
+		else if (!getSubVar(VA_LOCKS_DISABLED, 0x304008D2))
 			textIndex = 9;
-		else if (!getSubVar(0x14800353, 0x01180951))
+		else if (!getSubVar(VA_LOCKS_DISABLED, 0x01180951))
 			textIndex = 10;
 		else 
 			textIndex = 11;

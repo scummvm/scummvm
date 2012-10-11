@@ -2090,9 +2090,9 @@ void Klayman::stInsertDisk() {
 		_status2 = 2;
 		_tapesToInsert = 0;
 		for (uint32 i = 0; i < 20; i++) {
-			if (getSubVar(0x02038314, i)) {
-				setSubVar(0x02720344, i, 1);
-				setSubVar(0x02038314, i, 0);
+			if (getSubVar(VA_HAS_TAPE, i)) {
+				setSubVar(VA_IS_TAPE_INSERTED, i, 1);
+				setSubVar(VA_HAS_TAPE, i, 0);
 				_tapesToInsert++;
 			}
 		}
@@ -2496,18 +2496,18 @@ void Klayman::stInsertKey() {
 		_status2 = 2;
 		_keysToInsert = 0;
 		for (uint32 i = 0; i < 3; i++) {
-			if (getSubVar(0x0090EA95, i)) {
+			if (getSubVar(VA_HAS_KEY, i)) {
 				bool more;
-				setSubVar(0x08D0AB11, i, 1);
-				setSubVar(0x0090EA95, i, 0);
+				setSubVar(VA_IS_KEY_INSERTED, i, 1);
+				setSubVar(VA_HAS_KEY, i, 0);
 				do {
 					more = false;
-					setSubVar(0xA010B810, i, _vm->_rnd->getRandomNumber(16 - 1));
+					setSubVar(VA_CURR_KEY_SLOT_NUMBERS, i, _vm->_rnd->getRandomNumber(16 - 1));
 					for (uint j = 0; j < i && !more; j++) {
-						if (getSubVar(0x08D0AB11, j) && getSubVar(0xA010B810, j) == getSubVar(0xA010B810, i))
+						if (getSubVar(VA_IS_KEY_INSERTED, j) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, j) == getSubVar(VA_CURR_KEY_SLOT_NUMBERS, i))
 							more = true;
 					}
-					if (getSubVar(0xA010B810, i) == getSubVar(0x0C10A000, i))
+					if (getSubVar(VA_CURR_KEY_SLOT_NUMBERS, i) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, i))
 						more = true;
 				} while (more);
 				_keysToInsert++;

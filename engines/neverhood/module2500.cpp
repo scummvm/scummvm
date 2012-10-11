@@ -516,7 +516,7 @@ void SsScene2504Button::update() {
 		_isSoundPlaying = false;
 	}
 	if (_countdown != 0 && (--_countdown) == 0) {
-		if (getSubVar(0x14800353, 0x01180951)) {
+		if (getSubVar(VA_LOCKS_DISABLED, 0x01180951)) {
 			playSound(0);
 		} else {
 			playSound(1);
@@ -532,10 +532,10 @@ uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &para
 		if (_countdown == 0 && !_isSoundPlaying) {
 			setVisible(true);
 			_countdown = 2;
-			if (getSubVar(0x14800353, 0x01180951)) {
-				setSubVar(0x14800353, 0x01180951, 0);
+			if (getSubVar(VA_LOCKS_DISABLED, 0x01180951)) {
+				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 0);
 			} else {
-				setSubVar(0x14800353, 0x01180951, 1);
+				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 1);
 			}
 			playSound(2);
 		}

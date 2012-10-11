@@ -168,9 +168,9 @@ void Module2700::createScene(int sceneNum, int which) {
 		break;
 	case 10:
 		// TODO _vm->gameModule()->initScene2808Vars2();
-		_scene2711StaticSprites[0] = kScene2711FileHashes1[getSubVar(0x40005834, 2)];
-		_scene2711StaticSprites[1] = kScene2711FileHashes2[getSubVar(0x40005834, 1)];
-		_scene2711StaticSprites[2] = kScene2711FileHashes3[getSubVar(0x40005834, 0)];
+		_scene2711StaticSprites[0] = kScene2711FileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2)];
+		_scene2711StaticSprites[1] = kScene2711FileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1)];
+		_scene2711StaticSprites[2] = kScene2711FileHashes3[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0)];
 		_scene2711StaticSprites[3] = 0x0261282E;
 		_scene2711StaticSprites[4] = 0x9608E5A0;
 		_scene2711StaticSprites[5] = 0;

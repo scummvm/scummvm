@@ -1115,12 +1115,12 @@ AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint ind
 	_dataResource.load(0x22102142);
 	_pointList = _dataResource.getPointArray(0xAC849240);
 	
-	pt = (*_pointList)[getSubVar(0xA010B810, _index)];
+	pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index)];
 	_x = pt.x;
 	_y = pt.y;
 	
-	// TODO createSurface3(kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4], fileHashes);
-	createSurface(kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4], 640, 480); //TODO: Remeove once the line above is done
+	// TODO createSurface3(kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4], fileHashes);
+	createSurface(kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4], 640, 480); //TODO: Remeove once the line above is done
 	
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1307Key::handleMessage);
@@ -1148,7 +1148,7 @@ uint32 AsScene1307Key::handleMessage(int messageNum, const MessageParam &param, 
 		_isClickable = param.asInteger() != 0;
 		break;
 	case 0x2001:
-		setSubVar(0xA010B810, _index, param.asInteger());
+		setSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index, param.asInteger());
 		stMoveKey();
 		break;
 	case 0x2003:
@@ -1196,7 +1196,7 @@ void AsScene1307Key::suMoveKey() {
 		processDelta();
 		_pointIndex++;
 	} else {
-		NPoint pt = (*_pointList)[getSubVar(0xA010B810, _index)];
+		NPoint pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index)];
 		_x = pt.x + kAsScene1307KeyXDelta;
 		_y = pt.y + kAsScene1307KeyYDelta;
 		stInsertKey();
@@ -1213,14 +1213,14 @@ void AsScene1307Key::stRemoveKey() {
 
 void AsScene1307Key::stInsertKey() {
 	_pointIndex = 0;
-	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4]);
-	setClipRect(_clipRects[getSubVar(0xA010B810, _index) % 4]);
+	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4]);
+	setClipRect(_clipRects[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4]);
 	SetSpriteUpdate(&AsScene1307Key::suInsertKey);
 	_newStickFrameIndex = -2;
 }
 
 void AsScene1307Key::stMoveKey() {
-	NPoint pt = (*_pointList)[getSubVar(0xA010B810, _index)];
+	NPoint pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index)];
 	int16 newX = pt.x + kAsScene1307KeyXDelta;
 	int16 newY = pt.y + kAsScene1307KeyYDelta;
 	sendMessage(_parentScene, 0x1022, 1000);
@@ -1257,9 +1257,9 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 	_isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
 
 	//DEBUG>>>
-	setSubVar(0x08D0AB11, 0, 1);
-	setSubVar(0x08D0AB11, 1, 1);
-	setSubVar(0x08D0AB11, 2, 1);
+	setSubVar(VA_IS_KEY_INSERTED, 0, 1);
+	setSubVar(VA_IS_KEY_INSERTED, 1, 1);
+	setSubVar(VA_IS_KEY_INSERTED, 2, 1);
 	//DEBUG<<<
 
 	Sprite *tempSprite;
@@ -1299,7 +1299,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[3].set(tempSprite->getDrawRect().x, 0, 640, 480);
 
 	for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
-		if (getSubVar(0x08D0AB11, keyIndex)) {
+		if (getSubVar(VA_IS_KEY_INSERTED, keyIndex)) {
 			_asKeys[keyIndex] = insertSprite<AsScene1307Key>(this, keyIndex, _clipRects);
 			_vm->_collisionMan->addSprite(_asKeys[keyIndex]);
 		} else {
@@ -1345,8 +1345,8 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 						// Check if the clicked keyhole is already occupied with a key
 						bool occupied = false;
 						for (uint keyIndex = 0; keyIndex < 3 && !occupied; keyIndex++) {
-							if (getSubVar(0x08D0AB11, keyIndex) && _asKeys[keyIndex] != _asCurrKey) {
-								if (getSubVar(0xA010B810, keyIndex) == clickedKeyHoleIndex)
+							if (getSubVar(VA_IS_KEY_INSERTED, keyIndex) && _asKeys[keyIndex] != _asCurrKey) {
+								if (getSubVar(VA_CURR_KEY_SLOT_NUMBERS, keyIndex) == clickedKeyHoleIndex)
 									occupied = true;
 							}
 						}
@@ -1366,9 +1366,9 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 	// TODO Debug stuff
 	case 0x2002:
 		// Check if all keys are in the correct keyholes
-		if (getSubVar(0x08D0AB11, 0) && getSubVar(0xA010B810, 0) == getSubVar(0x0C10A000, 0) &&
-			getSubVar(0x08D0AB11, 1) && getSubVar(0xA010B810, 1) == getSubVar(0x0C10A000, 1) &&
-			getSubVar(0x08D0AB11, 2) && getSubVar(0xA010B810, 2) == getSubVar(0x0C10A000, 2)) {
+		if (getSubVar(VA_IS_KEY_INSERTED, 0) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 0) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 0) &&
+			getSubVar(VA_IS_KEY_INSERTED, 1) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 1) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 1) &&
+			getSubVar(VA_IS_KEY_INSERTED, 2) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 2) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 2)) {
 			// Play unlock animations for all keys
 			for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
 				if (_asKeys[keyIndex])
@@ -1378,11 +1378,9 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 			_isPuzzleSolved = true;
 			_countdown = 47;
 		} else {
-			for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
-				if (getSubVar(0x08D0AB11, keyIndex) && _asKeys[keyIndex]) {
+			for (uint keyIndex = 0; keyIndex < 3; keyIndex++)
+				if (getSubVar(VA_IS_KEY_INSERTED, keyIndex) && _asKeys[keyIndex])
 					sendMessage(_asKeys[keyIndex], 0x2000, 1);
-				}
-			}
 			sendMessage(_asCurrKey, 0x2004, 1);
 		}
 		_asCurrKey = NULL;
@@ -1390,11 +1388,9 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		_asCurrKey = (Sprite*)sender;
-		for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
-			if (getSubVar(0x08D0AB11, keyIndex) && _asKeys[keyIndex]) {
+		for (uint keyIndex = 0; keyIndex < 3; keyIndex++)
+			if (getSubVar(VA_IS_KEY_INSERTED, keyIndex) && _asKeys[keyIndex])
 				sendMessage(_asKeys[keyIndex], 0x2000, 0);
-			}
-		}
 		break;
 	}
 	return messageResult;
@@ -1602,9 +1598,9 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asJaggyDoor = insertSprite<AsScene1308JaggyDoor>(this);
 	_asLightWallSymbols = insertSprite<AsScene1308LightWallSymbols>(this);
 
-	_ssNumber1 = insertSprite<SsScene1308Number>(kScene1308NumberFileHashes[getSubVar(0x0C10A000, 1)], 0);
-	_ssNumber2 = insertSprite<SsScene1308Number>(kScene1308NumberFileHashes[getSubVar(0x0C10A000, 0)], 1);
-	_ssNumber3 = insertSprite<SsScene1308Number>(kScene1308NumberFileHashes[getSubVar(0x0C10A000, 2)], 2);
+	_ssNumber1 = insertSprite<SsScene1308Number>(kScene1308NumberFileHashes[getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 1)], 0);
+	_ssNumber2 = insertSprite<SsScene1308Number>(kScene1308NumberFileHashes[getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 0)], 1);
+	_ssNumber3 = insertSprite<SsScene1308Number>(kScene1308NumberFileHashes[getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 2)], 2);
 
 	_sprite2 = insertStaticSprite(0x40043120, 995);
 	_sprite3 = insertStaticSprite(0x43003100, 995);

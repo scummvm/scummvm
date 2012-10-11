@@ -504,7 +504,7 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
-	if (!getSubVar(0x40050052, 0x60400854)) {
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x60400854)) {
 		// TODO _vm->gameModule()->initScene2201Vars();
 	}
 
@@ -525,8 +525,8 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssDoorButton = insertSprite<SsCommonPressButton>(this, 0xE4A43E29, 0xE4A43E29, 100, 0);
 	
 	for (uint32 cubeIndex = 0; cubeIndex < 9; cubeIndex++)
-		if ((int16)getSubVar(0x484498D0, cubeIndex) >= 0)
-			insertSprite<SsScene2201PuzzleCube>(cubeIndex, (int16)getSubVar(0x484498D0, cubeIndex));
+		if ((int16)getSubVar(VA_CUBE_POSITIONS, cubeIndex) >= 0)
+			insertSprite<SsScene2201PuzzleCube>(cubeIndex, (int16)getSubVar(VA_CUBE_POSITIONS, cubeIndex));
 
 	_clipRects[0].y1 = 0;
 	_clipRects[0].x2 = 640;
@@ -799,8 +799,8 @@ void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 	_drawRect.height = _spriteResource.getDimensions().height;
 	_needRefresh = true;
 
-	setSubVar(0x484498D0, _tileIndex, (uint32)-1);
-	setSubVar(0x484498D0, newTileIndex, (uint32)_value);
+	setSubVar(VA_CUBE_POSITIONS, _tileIndex, (uint32)-1);
+	setSubVar(VA_CUBE_POSITIONS, newTileIndex, (uint32)_value);
 	
 	_tileIndex = newTileIndex;
 	
@@ -901,11 +901,11 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	//DEBUG>>>
 	for (uint32 index = 0; index < 9; index++)
-		setSubVar(0x484498D0, index, 7 - index);
+		setSubVar(VA_CUBE_POSITIONS, index, 7 - index);
 	//DEBUG<<<
 
 	for (uint32 index = 0; index < 9; index++) {
-		int16 value = (int16)getSubVar(0x484498D0, index);
+		int16 value = (int16)getSubVar(VA_CUBE_POSITIONS, index);
 		if (value >= 0) {
 			Sprite *puzzleTileSprite = insertSprite<SsScene2202PuzzleTile>(this, index, value);
 			_vm->_collisionMan->addSprite(puzzleTileSprite);
@@ -995,13 +995,13 @@ uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 int16 Scene2202::getFreeTileIndex(int16 index) {
-	if (index >= 3 && (int16)getSubVar(0x484498D0, index - 3) == -1) {
+	if (index >= 3 && (int16)getSubVar(VA_CUBE_POSITIONS, index - 3) == -1) {
 		return index - 3;
-	} else if (index <= 5 && (int16)getSubVar(0x484498D0, index + 3) == -1) {
+	} else if (index <= 5 && (int16)getSubVar(VA_CUBE_POSITIONS, index + 3) == -1) {
 		return index + 3;
-	} else if (index != 0 && index != 3 && index != 6 && (int16)getSubVar(0x484498D0, index - 1) == -1) {
+	} else if (index != 0 && index != 3 && index != 6 && (int16)getSubVar(VA_CUBE_POSITIONS, index - 1) == -1) {
 		return index - 1;
-	} else if (index != 2 && index != 5 && index != 8 && (int16)getSubVar(0x484498D0, index + 1) == -1) {
+	} else if (index != 2 && index != 5 && index != 8 && (int16)getSubVar(VA_CUBE_POSITIONS, index + 1) == -1) {
 		return index + 1;
 	} else
 		return -1;
@@ -1009,13 +1009,13 @@ int16 Scene2202::getFreeTileIndex(int16 index) {
 
 bool Scene2202::testIsSolved() {
 	return 
-		getSubVar(0x484498D0, 0) == 0 &&
-		getSubVar(0x484498D0, 2) == 2 &&
-		getSubVar(0x484498D0, 3) == 3 &&
-		getSubVar(0x484498D0, 4) == 4 &&
-		getSubVar(0x484498D0, 5) == 5 &&
-		getSubVar(0x484498D0, 6) == 6 &&
-		getSubVar(0x484498D0, 8) == 7;
+		getSubVar(VA_CUBE_POSITIONS, 0) == 0 &&
+		getSubVar(VA_CUBE_POSITIONS, 2) == 2 &&
+		getSubVar(VA_CUBE_POSITIONS, 3) == 3 &&
+		getSubVar(VA_CUBE_POSITIONS, 4) == 4 &&
+		getSubVar(VA_CUBE_POSITIONS, 5) == 5 &&
+		getSubVar(VA_CUBE_POSITIONS, 6) == 6 &&
+		getSubVar(VA_CUBE_POSITIONS, 8) == 7;
 }
 
 static const uint32 kAsCommonKeyFileHashes[] = {
@@ -1025,7 +1025,7 @@ static const uint32 kAsCommonKeyFileHashes[] = {
 AsCommonKey::AsCommonKey(NeverhoodEngine *vm, Scene *parentScene, int keyIndex, int surfacePriority, int16 x, int16 y)
 	: AnimatedSprite(vm, kAsCommonKeyFileHashes[keyIndex], surfacePriority, x, y), _parentScene(parentScene), _keyIndex(keyIndex) {
 
-	if (!getSubVar(0x0090EA95, _keyIndex) && !getSubVar(0x08D0AB11, _keyIndex)) {
+	if (!getSubVar(VA_HAS_KEY, _keyIndex) && !getSubVar(VA_IS_KEY_INSERTED, _keyIndex)) {
 		SetMessageHandler(&AsCommonKey::handleMessage);
 	} else {
 		// If Klayman already has the key or it's already inserted then don't show it
@@ -1042,7 +1042,7 @@ uint32 AsCommonKey::handleMessage(int messageNum, const MessageParam &param, Ent
 		messageResult = 1;
 		break;
 	case 0x4806:
-		setSubVar(0x0090EA95, _keyIndex, 1);
+		setSubVar(VA_HAS_KEY, _keyIndex, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
 	}
@@ -2017,8 +2017,8 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_vm->gameModule()->initScene3009Vars();
 
-	if (!getSubVar(0x40050052, 0x88460852))
-		setSubVar(0x40050052, 0x88460852, 1);
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x88460852))
+		setSubVar(VA_IS_PUZZLE_INIT, 0x88460852, 1);
 
 	SetMessageHandler(&Scene2207::handleMessage);
 	SetUpdateHandler(&Scene2207::update);
@@ -2069,9 +2069,9 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 
 		_ssMaskPart1 = insertStaticSprite(0x980E46A4, 1200);
 
-		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(0x00504B86, 0)], 0);
-		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(0x00504B86, 1)], 1);
-		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(0x00504B86, 2)], 2);
+		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_1, 0)], 0);
+		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_1, 1)], 1);
+		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_1, 2)], 2);
 
 		_asTape = NULL;
 		_asLever = NULL;
@@ -2162,11 +2162,11 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssButton) {
-			if (getSubVar(0x14800353, 0x40119852)) {
-				setSubVar(0x14800353, 0x40119852, 0);
+			if (getSubVar(VA_LOCKS_DISABLED, 0x40119852)) {
+				setSubVar(VA_LOCKS_DISABLED, 0x40119852, 0);
 				playSound(0, calcHash("fx3LocksDisable"));
 			} else {
-				setSubVar(0x14800353, 0x40119852, 1);
+				setSubVar(VA_LOCKS_DISABLED, 0x40119852, 1);
 				playSound(1);
 			}
 		}

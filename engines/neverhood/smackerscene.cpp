@@ -77,9 +77,9 @@ void SmackerScene::nextVideo() {
 			sendMessage(_parentModule, 0x1009, 0);
 			return;
 		}
-		_fieldDF = getSubVar(0x00800410, smackerFileHash);
+		_fieldDF = getSubVar(VA_SMACKER_PLAYED, smackerFileHash);
 		if (!_fieldDF) {
-			setSubVar(0x00800410, smackerFileHash, 1);
+			setSubVar(VA_SMACKER_PLAYED, smackerFileHash, 1);
 		}
 		if (_fileHashListIndex == 0)
 			_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, smackerFileHash, _doubleSurface, false));

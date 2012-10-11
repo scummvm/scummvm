@@ -338,7 +338,7 @@ uint32 SsScene1105SymbolDie::handleMessage(int messageNum, const MessageParam &p
 }
 
 void SsScene1105SymbolDie::loadSymbolSprite() {
-	load(kSsScene1105SymbolDieFileHashes[getSubVar(0x61084036, _index)], true, false);
+	load(kSsScene1105SymbolDieFileHashes[getSubVar(VA_CURR_DICE_NUMBERS, _index)], true, false);
 	_drawRect.x = -(_spriteResource.getDimensions().width / 2);
 	_drawRect.y = -(_spriteResource.getDimensions().height / 2);
 	StaticSprite::update();
@@ -502,9 +502,9 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4807:
 		if (sender == _ssActionButton) {
-			if (getSubVar(0x7500993A, 0) == getSubVar(0x61084036, 0) &&
-				getSubVar(0x7500993A, 1) == getSubVar(0x61084036, 1) &&
-				getSubVar(0x7500993A, 2) == getSubVar(0x61084036, 2)) {
+			if (getSubVar(VA_GOOD_DICE_NUMBERS, 0) == getSubVar(VA_CURR_DICE_NUMBERS, 0) &&
+				getSubVar(VA_GOOD_DICE_NUMBERS, 1) == getSubVar(VA_CURR_DICE_NUMBERS, 1) &&
+				getSubVar(VA_GOOD_DICE_NUMBERS, 2) == getSubVar(VA_CURR_DICE_NUMBERS, 2)) {
 				setGlobalVar(V_ROBOT_TARGET, 1);
 				playSound(2);
 				_flag3 = true;
@@ -522,38 +522,38 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 				_flag1 = false;
 			} else if (!getGlobalVar(V_ROBOT_TARGET)) {
 				if (sender == _ssSymbol1UpButton) {
-					if (getSubVar(0x61084036, 0) < 9) {
-						incSubVar(0x61084036, 0, +1);
+					if (getSubVar(VA_CURR_DICE_NUMBERS, 0) < 9) {
+						incSubVar(VA_CURR_DICE_NUMBERS, 0, +1);
 						sendMessage(_ssSymbol1UpButton, 0x480B, 0);
 						sendMessage(_ssSymbolDice[0], 0x2000, 0);
 					}
 				} else if (sender == _ssSymbol1DownButton) {
-					if (getSubVar(0x61084036, 0) > 1) {
-						incSubVar(0x61084036, 0, -1);
+					if (getSubVar(VA_CURR_DICE_NUMBERS, 0) > 1) {
+						incSubVar(VA_CURR_DICE_NUMBERS, 0, -1);
 						sendMessage(_ssSymbol1DownButton, 0x480B, 0);
 						sendMessage(_ssSymbolDice[0], 0x2000, 0);
 					}
 				} else if (sender == _ssSymbol2UpButton) {
-					if (getSubVar(0x61084036, 1) < 9) {
-						incSubVar(0x61084036, 1, +1);
+					if (getSubVar(VA_CURR_DICE_NUMBERS, 1) < 9) {
+						incSubVar(VA_CURR_DICE_NUMBERS, 1, +1);
 						sendMessage(_ssSymbol2UpButton, 0x480B, 0);
 						sendMessage(_ssSymbolDice[1], 0x2000, 0);
 					}
 				} else if (sender == _ssSymbol2DownButton) {
-					if (getSubVar(0x61084036, 1) > 1) {
-						incSubVar(0x61084036, 1, -1);
+					if (getSubVar(VA_CURR_DICE_NUMBERS, 1) > 1) {
+						incSubVar(VA_CURR_DICE_NUMBERS, 1, -1);
 						sendMessage(_ssSymbol2DownButton, 0x480B, 0);
 						sendMessage(_ssSymbolDice[1], 0x2000, 0);
 					}
 				} else if (sender == _ssSymbol3UpButton) {
-					if (getSubVar(0x61084036, 2) < 9) {
-						incSubVar(0x61084036, 2, +1);
+					if (getSubVar(VA_CURR_DICE_NUMBERS, 2) < 9) {
+						incSubVar(VA_CURR_DICE_NUMBERS, 2, +1);
 						sendMessage(_ssSymbol3UpButton, 0x480B, 0);
 						sendMessage(_ssSymbolDice[2], 0x2000, 0);
 					}
 				} else if (sender == _ssSymbol3DownButton) {
-					if (getSubVar(0x61084036, 2) > 1) {
-						incSubVar(0x61084036, 2, -1);
+					if (getSubVar(VA_CURR_DICE_NUMBERS, 2) > 1) {
+						incSubVar(VA_CURR_DICE_NUMBERS, 2, -1);
 						sendMessage(_ssSymbol3DownButton, 0x480B, 0);
 						sendMessage(_ssSymbolDice[2], 0x2000, 0);
 					}
@@ -566,9 +566,9 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 void Scene1105::createObjects() {
-	_ssSymbols[0] = insertSprite<SsScene1105Symbol>(kScene1105FileHashes[getSubVar(0x13100631, 0)], 161, 304);
-	_ssSymbols[1] = insertSprite<SsScene1105Symbol>(kScene1105FileHashes[getSubVar(0x13100631, 1)], 294, 304);
-	_ssSymbols[2] = insertSprite<SsScene1105Symbol>(kScene1105FileHashes[getSubVar(0x13100631, 2)], 440, 304);
+	_ssSymbols[0] = insertSprite<SsScene1105Symbol>(kScene1105FileHashes[getSubVar(VA_DICE_MEMORY_SYMBOLS, 0)], 161, 304);
+	_ssSymbols[1] = insertSprite<SsScene1105Symbol>(kScene1105FileHashes[getSubVar(VA_DICE_MEMORY_SYMBOLS, 1)], 294, 304);
+	_ssSymbols[2] = insertSprite<SsScene1105Symbol>(kScene1105FileHashes[getSubVar(VA_DICE_MEMORY_SYMBOLS, 2)], 440, 304);
 
 	_ssSymbolDice[0] = insertSprite<SsScene1105SymbolDie>(0, 206, 304);
 	_ssSymbolDice[1] = insertSprite<SsScene1105SymbolDie>(1, 339, 304);
@@ -651,9 +651,9 @@ void Scene1105::update() {
 
 	// DEBUG: Show the correct code
 	debug("(%d, %d) (%d, %d) (%d, %d)", 
-		getSubVar(0x7500993A, 0), getSubVar(0x61084036, 0),
-		getSubVar(0x7500993A, 1), getSubVar(0x61084036, 1),
-		getSubVar(0x7500993A, 2), getSubVar(0x61084036, 2));
+		getSubVar(VA_GOOD_DICE_NUMBERS, 0), getSubVar(VA_CURR_DICE_NUMBERS, 0),
+		getSubVar(VA_GOOD_DICE_NUMBERS, 1), getSubVar(VA_CURR_DICE_NUMBERS, 1),
+		getSubVar(VA_GOOD_DICE_NUMBERS, 2), getSubVar(VA_CURR_DICE_NUMBERS, 2));
 
 	Scene::update();
 	if (_countdown != 0 && (--_countdown == 0)) {

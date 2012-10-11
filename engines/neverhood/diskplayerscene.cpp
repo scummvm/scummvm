@@ -346,13 +346,13 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 
 	// DEBUG>>>: Give all disks
 	for (int i = 0; i < 20; i++) {
-		setSubVar(0x02720344, i, 1);
+		setSubVar(VA_IS_TAPE_INSERTED, i, 1);
 	}
 	// DEBUG<<<
 
 	for (int i = 0; i < 20; i++) {
 		_diskAvailable[i] = 0;
-		if (getSubVar(0x02720344, i))
+		if (getSubVar(VA_IS_TAPE_INSERTED, i))
 			availableDisksCount++;
 	}
 

@@ -222,7 +222,7 @@ uint32 AsScene2401WaterSpit::handleMessage(int messageNum, const MessageParam &p
 	case 0x2000:
 		_x = 240;
 		_y = 447;
-		_soundIndex = getSubVar(0x0800547C, param.asInteger());
+		_soundIndex = getSubVar(VA_CURR_WATER_PIPES_LEVEL, param.asInteger());
 		playSound(0, 0x48640244);
 		startAnimation(kAsScene2401WaterSpitFileHashes2[param.asInteger()], 0, -1);
 		setVisible(true);
@@ -448,9 +448,9 @@ void Scene2401::update() {
 		if (_pipeStatus >= 10) {
 			bool puzzleSolved = true, waterInside = false;
 			for (uint i = 0; i < 5; i++) {
-				if (getSubVar(0x0800547C, i) != getSubVar(0x90405038, i))
+				if (getSubVar(VA_CURR_WATER_PIPES_LEVEL, i) != getSubVar(VA_GOOD_WATER_PIPES_LEVEL, i))
 					puzzleSolved = false;
-				if (getSubVar(0x0800547C, i) != 0)
+				if (getSubVar(VA_CURR_WATER_PIPES_LEVEL, i) != 0)
 					waterInside = true;
 			}
 			if (puzzleSolved) {
@@ -460,18 +460,18 @@ void Scene2401::update() {
 			} else if (waterInside) {
 				playPipeSound(0xD0431020);
 				for (uint i = 0; i < 5; i++) {
-					sendMessage(_asWaterFlushing[i], 0x2002, getSubVar(0x0800547C, i));
-					setSubVar(0x0800547C, i, 0);
+					sendMessage(_asWaterFlushing[i], 0x2002, getSubVar(VA_CURR_WATER_PIPES_LEVEL, i));
+					setSubVar(VA_CURR_WATER_PIPES_LEVEL, i, 0);
 				}
 			}
 		} else if (_pipeStatus >= 5) {
 			_ssWaterPipes[_pipeStatus]->setVisible(true);
 			_countdown1 = 8;
-			playPipeSound(kScene2401FileHashes3[getSubVar(0x0800547C, _pipeStatus - 5)]);
+			playPipeSound(kScene2401FileHashes3[getSubVar(VA_CURR_WATER_PIPES_LEVEL, _pipeStatus - 5)]);
 		} else {
 			_ssWaterPipes[_pipeStatus]->setVisible(true);
 			_countdown1 = _pipeStatus == 4 ? 16 : 8;
-			playPipeSound(kScene2401FileHashes3[getSubVar(0x90405038, _pipeStatus)]);
+			playPipeSound(kScene2401FileHashes3[getSubVar(VA_GOOD_WATER_PIPES_LEVEL, _pipeStatus)]);
 		}
 		_pipeStatus++;
 	}
@@ -534,9 +534,9 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2001:
 		sendMessage(_asWaterSpit[_asWaterSpitIndex], 0x2000, param.asInteger());
 		_asWaterSpitIndex = (_asWaterSpitIndex + 1) & 1;
-		incSubVar(0x0800547C, param.asInteger(), 1);
-		if (getSubVar(0x0800547C, param.asInteger()) >= 5)
-			setSubVar(0x0800547C, param.asInteger(), 4);
+		incSubVar(VA_CURR_WATER_PIPES_LEVEL, param.asInteger(), 1);
+		if (getSubVar(VA_CURR_WATER_PIPES_LEVEL, param.asInteger()) >= 5)
+			setSubVar(VA_CURR_WATER_PIPES_LEVEL, param.asInteger(), 4);
 		break;
 	case 0x480B:
 		if (sender == _ssButton) {
@@ -771,10 +771,10 @@ void Scene2402::update() {
 			_ssDoorFrame->update();
 		} else if (_pipeStatus >= 5) {
 			_countdown = 8;
-			playPipeSound(kScene2402FileHashes[getSubVar(0x0800547C, _pipeStatus - 5)]);
+			playPipeSound(kScene2402FileHashes[getSubVar(VA_CURR_WATER_PIPES_LEVEL, _pipeStatus - 5)]);
 		} else {
 			_countdown = _pipeStatus == 4 ? 16 : 8;
-			playPipeSound(kScene2402FileHashes[getSubVar(0x90405038, _pipeStatus)]);
+			playPipeSound(kScene2402FileHashes[getSubVar(VA_GOOD_WATER_PIPES_LEVEL, _pipeStatus)]);
 		}
 		_pipeStatus++;
 	}
@@ -892,11 +892,11 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssButton) {
-			if (getSubVar(0x14800353, 0x304008D2)) {
-				setSubVar(0x14800353, 0x304008D2, 0);
+			if (getSubVar(VA_LOCKS_DISABLED, 0x304008D2)) {
+				setSubVar(VA_LOCKS_DISABLED, 0x304008D2, 0);
 				playSound(0, calcHash("fx3LocksDisable"));
 			} else {
-				setSubVar(0x14800353, 0x304008D2, 1);
+				setSubVar(VA_LOCKS_DISABLED, 0x304008D2, 1);
 				playSound(1);
 			}
 		}

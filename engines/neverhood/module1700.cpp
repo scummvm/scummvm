@@ -151,7 +151,7 @@ SsScene1705WallSymbol::SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHas
 SsScene1705Tape::SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash)
 	: StaticSprite(vm, fileHash, surfacePriority, x - 24, y - 4), _parentScene(parentScene), _tapeIndex(tapeIndex) {
 
-	if (!getSubVar(0x02038314, _tapeIndex) && !getSubVar(0x02720344, _tapeIndex)) {
+	if (!getSubVar(VA_HAS_TAPE, _tapeIndex) && !getSubVar(VA_IS_TAPE_INSERTED, _tapeIndex)) {
 		SetMessageHandler(&SsScene1705Tape::handleMessage);
 	} else {
 		setVisible(false);
@@ -173,7 +173,7 @@ uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param,
 		messageResult = 1;
 		break;
 	case 0x4806:
-		setSubVar(0x02038314, _tapeIndex, 1);
+		setSubVar(VA_HAS_TAPE, _tapeIndex, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
 		break;		
@@ -205,9 +205,9 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertMouse433(0x18222039);
 
-	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 0)], 0);
-	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 1)], 1);
-	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 2)], 2);
+	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 0)], 0);
+	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 1)], 1);
+	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 2)], 2);
 
 	_sprite = insertStaticSprite(0x31313A22, 1100);
 

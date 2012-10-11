@@ -1415,7 +1415,7 @@ void Scene1609::update() {
 			_currentSymbolIndex++;
 			if (_currentSymbolIndex >= 12)
 				_currentSymbolIndex = 0;
-			_asSymbols[_symbolPosition]->change(_currentSymbolIndex + 12, _currentSymbolIndex == (int)getSubVar(0x04909A50, _noisySymbolIndex));
+			_asSymbols[_symbolPosition]->change(_currentSymbolIndex + 12, _currentSymbolIndex == (int)getSubVar(VA_CODE_SYMBOLS, _noisySymbolIndex));
 			_changeCurrentSymbol = false;
 			_countdown1 = 36;
 		} else {
@@ -1468,12 +1468,12 @@ bool Scene1609::testVars() {
 	int cmpSymbolIndex = 0;
 
 	// Find the position of the first symbol
-	while ((int)getSubVar(0x04909A50, cmpSymbolIndex) != _asSymbols[0]->getSymbolIndex())
+	while ((int)getSubVar(VA_CODE_SYMBOLS, cmpSymbolIndex) != _asSymbols[0]->getSymbolIndex())
 		cmpSymbolIndex++;
 
 	// Check if the entered symbols match
 	for (int enteredSymbolIndex = 0; enteredSymbolIndex < 12; enteredSymbolIndex++) {
-		if ((int)getSubVar(0x04909A50, cmpSymbolIndex) != _asSymbols[enteredSymbolIndex]->getSymbolIndex())
+		if ((int)getSubVar(VA_CODE_SYMBOLS, cmpSymbolIndex) != _asSymbols[enteredSymbolIndex]->getSymbolIndex())
 			return false;
 		cmpSymbolIndex++;
 		if (cmpSymbolIndex >= 12)

@@ -1547,15 +1547,15 @@ AsScene1405Tile::AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, ui
 	_y = kAsScene1405TileItemPositions[_tileIndex].y;
 	createSurface1(0x844B805C, 1100);
 	setVisible(false);
-	if (getSubVar(0xCCE0280F, _tileIndex))
+	if (getSubVar(VA_IS_TILE_MATCH, _tileIndex))
 		_countdown = _vm->_rnd->getRandomNumber(36 - 1) + 1;
 	SetUpdateHandler(&AsScene1405Tile::update);
 	SetMessageHandler(&AsScene1405Tile::handleMessage);
 	
-	debug("getSubVar(0x0C65F80B, _tileIndex) = %d", getSubVar(0x0C65F80B, _tileIndex));
+	debug("getSubVar(VA_TILE_SYMBOLS, _tileIndex) = %d", getSubVar(VA_TILE_SYMBOLS, _tileIndex));
 	
-	startAnimation(0x844B805C, getSubVar(0x0C65F80B, _tileIndex), -1);
-	_newStickFrameIndex = (int16)getSubVar(0x0C65F80B, _tileIndex);
+	startAnimation(0x844B805C, getSubVar(VA_TILE_SYMBOLS, _tileIndex), -1);
+	_newStickFrameIndex = (int16)getSubVar(VA_TILE_SYMBOLS, _tileIndex);
 }
 
 void AsScene1405Tile::update() {
@@ -1570,7 +1570,7 @@ uint32 AsScene1405Tile::handleMessage(int messageNum, const MessageParam &param,
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		if (getSubVar(0xCCE0280F, _tileIndex) == 0 && _parentScene->getCountdown() == 0) {
+		if (getSubVar(VA_IS_TILE_MATCH, _tileIndex) == 0 && _parentScene->getCountdown() == 0) {
 			show();
 			sendMessage(_parentScene, 0x2000, _tileIndex);
 		}
@@ -1609,12 +1609,12 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	// DEBUG>>>
 	// TODO: Some debug code: Leave two matching tiles open
 	for (int i = 0; i < 48; i++)
-		setSubVar(0xCCE0280F, i, 1);
+		setSubVar(VA_IS_TILE_MATCH, i, 1);
 	int debugIndex = 0;
-	setSubVar(0xCCE0280F, debugIndex, 0);
+	setSubVar(VA_IS_TILE_MATCH, debugIndex, 0);
 	for (int i = 0; i < 48; i++) {
-		if (i != debugIndex && getSubVar(0x0C65F80B, i) == getSubVar(0x0C65F80B, debugIndex)) {
-			setSubVar(0xCCE0280F, i, 0);
+		if (i != debugIndex && getSubVar(VA_TILE_SYMBOLS, i) == getSubVar(VA_TILE_SYMBOLS, debugIndex)) {
+			setSubVar(VA_IS_TILE_MATCH, i, 0);
 			break;
 		}
 	}
@@ -1623,7 +1623,7 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	for (uint32 tileIndex = 0; tileIndex < 48; tileIndex++) {
 		_tiles[tileIndex] = insertSprite<AsScene1405Tile>(this, tileIndex);
 		_vm->_collisionMan->addSprite(_tiles[tileIndex]);
-		if (getSubVar(0xCCE0280F, tileIndex))
+		if (getSubVar(VA_IS_TILE_MATCH, tileIndex))
 			_tilesLeft--;
 	}
 	
@@ -1641,9 +1641,9 @@ void Scene1405::update() {
 		_tiles[_firstTileIndex]->hide();
 		_tiles[_secondTileIndex]->hide();
 		for (uint32 i = 0; i < 48; i++) {
-			if (getSubVar(0xCCE0280F, i)) {
+			if (getSubVar(VA_IS_TILE_MATCH, i)) {
 				_tiles[i]->hide();
-				setSubVar(0xCCE0280F, i, 0);
+				setSubVar(VA_IS_TILE_MATCH, i, 0);
 			}
 		}
 	}
@@ -1669,9 +1669,9 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 			_secondTileIndex = param.asInteger();
 			if (_firstTileIndex != _secondTileIndex) {
 				_selectFirstTile = true;
-				if (getSubVar(0x0C65F80B, _secondTileIndex) == getSubVar(0x0C65F80B, _firstTileIndex)) {
-					setSubVar(0xCCE0280F, _firstTileIndex, 1);
-					setSubVar(0xCCE0280F, _secondTileIndex, 1);
+				if (getSubVar(VA_TILE_SYMBOLS, _secondTileIndex) == getSubVar(VA_TILE_SYMBOLS, _firstTileIndex)) {
+					setSubVar(VA_IS_TILE_MATCH, _firstTileIndex, 1);
+					setSubVar(VA_IS_TILE_MATCH, _secondTileIndex, 1);
 					_tilesLeft -= 2;
 					if (_tilesLeft == 0) {
 						playSound(0);

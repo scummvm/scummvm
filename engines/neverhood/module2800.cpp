@@ -658,18 +658,18 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertMouse433(0xA423A41A);
 	
-	if (getSubVar(0x0C601058, 0) == 0) {
+	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
 		_asTestTubeOne = (StaticSprite*)insertStaticSprite(0x66121222, 100);
 	} else {
 		_asTestTubeOne = (StaticSprite*)insertSprite<AsScene2803TestTubeOne>(
-			kScene2803FileHashes1[getSubVar(0x0C601058, 0)],
-			kScene2803FileHashes2[getSubVar(0x0C601058, 0)]);
+			kScene2803FileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)],
+			kScene2803FileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)]);
 	}
 	
-	if (getSubVar(0x0C601058, 1) == 3)
+	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
 		_asTestTubeTwo = (StaticSprite*)insertStaticSprite(0x64330236, 100);
 
-	if (getSubVar(0x0C601058, 2) == 3)
+	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 		_asTestTubeThree = (StaticSprite*)insertStaticSprite(0x2E4A22A2, 100);
 	
 	_asLightCord = insertSprite<AsScene2803LightCord>(this, 0x8FAD5932, 0x276E1A3D, 578, 200);
@@ -842,16 +842,16 @@ void Scene2803::changeBackground() {
 		_sprite8->update();
 		_sprite9->load(0x341A0237, false, false);
 		_sprite9->update();
-		if (getSubVar(0x0C601058, 0) == 0) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
 			_asTestTubeOne->load(0x66121222, false, false);
 			_asTestTubeOne->update();
 		} else
 			sendMessage(_asTestTubeOne, 0x2000, 0);
-		if (getSubVar(0x0C601058, 1) == 3) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3) {
 			_asTestTubeTwo->load(0x64330236, false, false);
 			_asTestTubeTwo->update();
 		}
-		if (getSubVar(0x0C601058, 2) == 3) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3) {
 			_asTestTubeThree->load(0x2E4A22A2, false, false);
 			_asTestTubeThree->update();
 		}
@@ -877,16 +877,16 @@ void Scene2803::changeBackground() {
 		_sprite8->update();
 		_sprite9->load(0x708072E0, false, false);
 		_sprite9->update();
-		if (getSubVar(0x0C601058, 0) == 0) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
 			_asTestTubeOne->load(0x50C027A8, false, false);
 			_asTestTubeOne->update();
 		} else
 			sendMessage(_asTestTubeOne, 0x2000, 1);
-		if (getSubVar(0x0C601058, 1) == 3) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3) {
 			_asTestTubeTwo->load(0xD48077A0, false, false);
 			_asTestTubeTwo->update();
 		}
-		if (getSubVar(0x0C601058, 2) == 3) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3) {
 			_asTestTubeThree->load(0x30022689, false, false);
 			_asTestTubeThree->update();
 		}
@@ -951,15 +951,15 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 		_sprite6 = insertStaticSprite(0x3C42022F, 1100);
 		_sprite7 = insertStaticSprite(0x341A0237, 1100);
 
-		if (getSubVar(0x0C601058, 0) == 0)
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0)
 			insertStaticSprite(0x66121222, 100);
 		else
-			insertSprite<AnimatedSprite>(kScene2803SmallFileHashes1[getSubVar(0x0C601058, 0)], 100, 529, 326);
+			insertSprite<AnimatedSprite>(kScene2803SmallFileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)], 100, 529, 326);
 
-		if (getSubVar(0x0C601058, 1) == 3)
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
 			insertStaticSprite(0x64330236, 100);
 
-		if (getSubVar(0x0C601058, 2) == 3)
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 			insertStaticSprite(0x2E4A22A2, 100);
 
 	} else {
@@ -976,16 +976,16 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 		_sprite7 = insertStaticSprite(0x708072E0, 1100);
 		insertStaticSprite(0x90582EA4, 100);
 
-		setSubVar(0x0C601058, 0, 1);//DEBUG, FIXME crashes when not done?!
-		if (getSubVar(0x0C601058, 0) == 0)
+		setSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0, 1);//DEBUG, FIXME crashes when not done?!
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0)
 			insertStaticSprite(0x50C027A8, 100);
 		else
-			insertSprite<AnimatedSprite>(kScene2803SmallFileHashes2[getSubVar(0x0C601058, 0)], 100, 529, 326);
+			insertSprite<AnimatedSprite>(kScene2803SmallFileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)], 100, 529, 326);
 
-		if (getSubVar(0x0C601058, 1) == 3)
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
 			insertStaticSprite(0xD48077A0, 100);
 
-		if (getSubVar(0x0C601058, 2) == 3)
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 			insertStaticSprite(0x30022689, 100);
 
 	}
@@ -1386,7 +1386,7 @@ AsScene2804Crystal::AsScene2804Crystal(NeverhoodEngine *vm, AsScene2804CrystalWa
 		{470, 180}
 	};
 
-	_colorNum = (int16)getSubVar(0xE11A1929, crystalIndex);
+	_colorNum = (int16)getSubVar(VA_CURR_CRYSTAL_COLORS, crystalIndex);
 	_isLightOn = getGlobalVar(V_SHRINK_LIGHTS_ON) != 0;
 	if (_isLightOn) {
 		_x = kAsScene2804CrystalPoints[crystalIndex].x;
@@ -1441,7 +1441,7 @@ void AsScene2804Crystal::activate() {
 			startAnimation(kAsScene2804CrystalFileHashes[_crystalIndex], _colorNum, -1);
 			_newStickFrameIndex = _colorNum;
 		}
-		setSubVar(0xE11A1929, _crystalIndex, _colorNum);
+		setSubVar(VA_CURR_CRYSTAL_COLORS, _crystalIndex, _colorNum);
 	}
 }
 
@@ -1686,7 +1686,7 @@ uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entit
 		_isSolved = true;
 		_beamStatus = 0;
 		for (uint index = 0; index < 5; index++)
-			if (_asCrystals[index]->getColorNum() != (int16)getSubVar(0xD4B2089C, index))
+			if (_asCrystals[index]->getColorNum() != (int16)getSubVar(VA_GOOD_CRYSTAL_COLORS, index))
 				_isSolved = false;
 		_countdown2 = 48;
 		break;
@@ -1767,8 +1767,8 @@ void Scene2804::initCrystalColors() {
 			do {
 				misalignedColorNum = _vm->_rnd->getRandomNumber(6 - 1);
 			} while (misalignedColorNum == correctColorNum);
-			setSubVar(0xD4B2089C, index, correctColorNum);
-			setSubVar(0xE11A1929, index, misalignedColorNum);
+			setSubVar(VA_GOOD_CRYSTAL_COLORS, index, correctColorNum);
+			setSubVar(VA_CURR_CRYSTAL_COLORS, index, misalignedColorNum);
 		}
 		setGlobalVar(V_CRYSTAL_COLORS_INIT, 1);
 	}
@@ -1989,27 +1989,27 @@ Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2807::handleMessage);
 
-	if (getSubVar(0x0C601058, 0) == 1) {
+	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 1) {
 		insertStaticSprite(0x103021E2, 300);
-	} else if (getSubVar(0x0C601058, 0) == 2) {
+	} else if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 2) {
 		insertStaticSprite(0x103022E2, 300);
-	} else if (getSubVar(0x0C601058, 0) == 3) {
+	} else if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 3) {
 		insertStaticSprite(0x103024E2, 300);
 	}
 
-	if (getSubVar(0x0C601058, 1) == 1) {
+	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 1) {
 		insertStaticSprite(0x4800A52A, 200);
-	} else if (getSubVar(0x0C601058, 1) == 2) {
+	} else if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 2) {
 		insertStaticSprite(0x4800A62A, 200);
-	} else if (getSubVar(0x0C601058, 1) == 3) {
+	} else if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3) {
 		insertStaticSprite(0x4800A02A, 200);
 	}
 
-	if (getSubVar(0x0C601058, 2) == 1) {
+	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 1) {
 		insertStaticSprite(0x31203430, 100);
-	} else if (getSubVar(0x0C601058, 2) == 2) {
+	} else if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 2) {
 		insertStaticSprite(0x31203400, 100);
-	} else if (getSubVar(0x0C601058, 2) == 3) {
+	} else if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3) {
 		insertStaticSprite(0x31203460, 100);
 	}
 
@@ -2439,7 +2439,7 @@ void Scene2808::update() {
 
 	// DEBUG>>>: Show correct values
 	debug("---------------");
-	debug("%03d %03d %03d", getSubVar(0x0C601058, 0), getSubVar(0x0C601058, 1), getSubVar(0x0C601058, 2));
+	debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
 	debug("%03d %03d %03d", _asTestTubes[0]->getFillLevel(), _asTestTubes[1]->getFillLevel(), _asTestTubes[2]->getFillLevel());
 	// DEBUG<<<
 	
@@ -2452,14 +2452,14 @@ void Scene2808::update() {
 bool Scene2808::isMixtureGood() {
 	if (_testTubeSetNum == 0) {
 		return
-			_asTestTubes[0]->getFillLevel() == getSubVar(0x0C601058, 0) &&
-			_asTestTubes[1]->getFillLevel() == getSubVar(0x0C601058, 1) &&
-			_asTestTubes[2]->getFillLevel() == getSubVar(0x0C601058, 2);
+			_asTestTubes[0]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) &&
+			_asTestTubes[1]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) &&
+			_asTestTubes[2]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2);
 	} else {
 		return
-			_asTestTubes[0]->getFillLevel() == getSubVar(0x40005834, 0) &&
-			_asTestTubes[1]->getFillLevel() == getSubVar(0x40005834, 1) &&
-			_asTestTubes[2]->getFillLevel() == getSubVar(0x40005834, 2);
+			_asTestTubes[0]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0) &&
+			_asTestTubes[1]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1) &&
+			_asTestTubes[2]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2);
 	}
 }
 

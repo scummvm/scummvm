@@ -121,8 +121,8 @@ void Module3000::createScene(int sceneNum, int which) {
 		break;
 	case 7:
 		_vm->_soundMan->setSoundListParams(kModule3000SoundList, false, 0, 0, 0, 0);
-		if (!getSubVar(0x40050052, 0x089809C2)) {
-			setSubVar(0x40050052, 0x089809C2, 1);
+		if (!getSubVar(VA_IS_PUZZLE_INIT, 0x089809C2)) {
+			setSubVar(VA_IS_PUZZLE_INIT, 0x089809C2, 1);
 			createSmackerScene(0x90022001, true, true, false);
 		} else
 			createSmackerScene(0x98022001, true, true, false);
@@ -138,8 +138,8 @@ void Module3000::createScene(int sceneNum, int which) {
 		break;
 	case 11:
 		_vm->_soundMan->setSoundListParams(kModule3000SoundList, false, 0, 0, 0, 0);
-		if (!getSubVar(0x40050052, 0x10130993)) {
-			setSubVar(0x40050052, 0x10130993, 1);
+		if (!getSubVar(VA_IS_PUZZLE_INIT, 0x10130993)) {
+			setSubVar(VA_IS_PUZZLE_INIT, 0x10130993, 1);
 			createSmackerScene(0x31093019, true, true, false);
 		} else
 			createSmackerScene(0x20093019, true, true, false);
@@ -744,7 +744,7 @@ void AsScene3009HorizontalIndicator::stMoveRight() {
 AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int symbolPosition)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _symbolPosition(symbolPosition) {
 
-	_symbolIndex = getSubVar(0x00000914, _symbolPosition);
+	_symbolIndex = getSubVar(VA_CURR_CANNON_SYMBOLS, _symbolPosition);
 	
 	_x = kAsScene3009SymbolPoints[_symbolPosition].x;
 	_y = kAsScene3009SymbolPoints[_symbolPosition].y;
@@ -778,7 +778,7 @@ uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &para
 		}
 		startAnimation(kAsScene3009SymbolFileHashes[_symbolPosition / 3], _symbolIndex, -1);
 		_newStickFrameIndex = _symbolIndex;
-		setSubVar(0x00000914, _symbolPosition, _symbolIndex);
+		setSubVar(VA_CURR_CANNON_SYMBOLS, _symbolPosition, _symbolIndex);
 		if (_symbolPosition / 3 == 0) {
 			sendMessage(_parentScene, 0x2001, 0);
 		} else {
@@ -846,9 +846,9 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	for (int symbolPosition = 0; symbolPosition < 6; symbolPosition++) {
 		_asSymbols[symbolPosition] = insertSprite<AsScene3009Symbol>(this, symbolPosition);
 		if (symbolPosition < 3)
-			_correctSymbols[symbolPosition] = getSubVar(0x00504B86, symbolPosition);
+			_correctSymbols[symbolPosition] = getSubVar(VA_GOOD_CANNON_SYMBOLS_1, symbolPosition);
 		else
-			_correctSymbols[symbolPosition] = getSubVar(0x0A4C0A9A, symbolPosition - 3);
+			_correctSymbols[symbolPosition] = getSubVar(VA_GOOD_CANNON_SYMBOLS_2, symbolPosition - 3);
 	}
 
 	SetMessageHandler(&Scene3009::handleMessage);
@@ -856,7 +856,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	// DEBUG: Set the correct code
 	for (int i = 0; i < 6; i++)
-		setSubVar(0x00000914, i, _correctSymbols[i]);
+		setSubVar(VA_CURR_CANNON_SYMBOLS, i, _correctSymbols[i]);
 	sendMessage(this, 0x2003, 0);
 	//setGlobalVar(V_ROBOT_TARGET, 1);   
 
@@ -1032,14 +1032,14 @@ void Scene3009::playActionVideo() {
 
 bool Scene3009::isSymbolsPart1Solved() {
 	for (int i = 0; i < 3; i++)
-		if (_correctSymbols[i] != getSubVar(0x00000914, i))
+		if (_correctSymbols[i] != getSubVar(VA_CURR_CANNON_SYMBOLS, i))
 			return false;
 	return true;
 }
 
 bool Scene3009::isSymbolsPart2Solved() {
 	for (int i = 3; i < 6; i++)
-		if (_correctSymbols[i] != getSubVar(0x00000914, i))
+		if (_correctSymbols[i] != getSubVar(VA_CURR_CANNON_SYMBOLS, i))
 			return false;
 	return true;
 }
@@ -1091,7 +1091,7 @@ SsScene3010DeadBoltButton::SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene 
 
 	NDimensions dimensions1, dimensions2;
 	 
-	_buttonEnabled = getSubVar(0x14800353, kScene3010ButtonNameHashes[_buttonIndex]) != 0;
+	_buttonEnabled = getSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[_buttonIndex]) != 0;
 	_spriteResource.load2(kScene3010DeadBoltButtonFileHashes1[_buttonIndex]);
 	dimensions1 = _spriteResource.getDimensions();
 	_spriteResource.load2(kScene3010DeadBoltButtonFileHashes2[_buttonIndex]);
@@ -1181,7 +1181,7 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 	_x = kAsScene3010DeadBoltPoints[_boltIndex].x;
 	_y = kAsScene3010DeadBoltPoints[_boltIndex].y;
 
-	if (getSubVar(0x14800353, kScene3010ButtonNameHashes[_boltIndex])) {
+	if (getSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[_boltIndex])) {
 		createSurface1(kAsScene3010DeadBoltFileHashes1[_boltIndex], 1200);
 		startAnimation(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 		loadSound(0, 0x46005BC4);
@@ -1293,9 +1293,9 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	int initCountdown = 0;
 
 	// DEBUG: Enable all buttons
-	setSubVar(0x14800353, kScene3010ButtonNameHashes[0], 1);
-	setSubVar(0x14800353, kScene3010ButtonNameHashes[1], 1);
-	setSubVar(0x14800353, kScene3010ButtonNameHashes[2], 1);
+	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[0], 1);
+	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[1], 1);
+	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[2], 1);
 
 	_surfaceFlag = true;
 
@@ -1306,7 +1306,7 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asDeadBolts[i] = insertSprite<AsScene3010DeadBolt>(this, i, which == 1);//CHECKME
 		_ssDeadBoltButtons[i] = insertSprite<SsScene3010DeadBoltButton>(this, i, initCountdown, which == 1);//CHECKME
 		_vm->_collisionMan->addSprite(_ssDeadBoltButtons[i]);
-		if (getSubVar(0x14800353, kScene3010ButtonNameHashes[i]))
+		if (getSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[i]))
 			initCountdown++;
 		_boltUnlocking[i] = false;
 		_boltUnlocked[i] = false;
@@ -1570,9 +1570,9 @@ void Scene3011::update() {
 					do {
 						_noisyRandomSymbolIndex = _vm->_rnd->getRandomNumber(12 - 1);
 					} while (_noisySymbolIndex == _noisyRandomSymbolIndex);
-					_asSymbols[getSubVar(0x04909A50, _noisyRandomSymbolIndex)]->show(true);
+					_asSymbols[getSubVar(VA_CODE_SYMBOLS, _noisyRandomSymbolIndex)]->show(true);
 				} else {
-					_asSymbols[getSubVar(0x04909A50, _currentSymbolIndex)]->show(false);
+					_asSymbols[getSubVar(VA_CODE_SYMBOLS, _currentSymbolIndex)]->show(false);
 				}
 				_updateStatus = 1;
 				_countdown = 24;
@@ -1593,9 +1593,9 @@ void Scene3011::update() {
 			_updateStatus = 0;
 			_countdown = 1;
 			if (_noisySymbolIndex == _currentSymbolIndex) {
-				_asSymbols[getSubVar(0x04909A50, _noisyRandomSymbolIndex)]->hide();
+				_asSymbols[getSubVar(VA_CODE_SYMBOLS, _noisyRandomSymbolIndex)]->hide();
 			} else {
-				_asSymbols[getSubVar(0x04909A50, _currentSymbolIndex)]->hide();
+				_asSymbols[getSubVar(VA_CODE_SYMBOLS, _currentSymbolIndex)]->hide();
 			}
 			_currentSymbolIndex++;
 			if (_currentSymbolIndex >= 12)

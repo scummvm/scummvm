@@ -88,17 +88,17 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 void GameModule::initScene1307Vars() {
 
 	// Exit if it's already initialized
-	if (getSubVar(0x40050052, 0x25400B10))
+	if (getSubVar(VA_IS_PUZZLE_INIT, 0x25400B10))
 		return;
 
 	for (uint i = 0; i < 3; i++) {
 		bool more;
 		do {
 			more = false;
-			setSubVar(0x0C10A000, i, _vm->_rnd->getRandomNumber(16 - 1));
+			setSubVar(VA_GOOD_KEY_SLOT_NUMBERS, i, _vm->_rnd->getRandomNumber(16 - 1));
 			if (i > 0) {
 				for (uint j = 0; j < i && !more; j++) {
-					more = getSubVar(0x0C10A000, j) == getSubVar(0x0C10A000, i);
+					more = getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, j) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, i);
 				}
 			}
 		} while (more);
@@ -108,18 +108,18 @@ void GameModule::initScene1307Vars() {
 		bool more;
 		do {
 			more = false;
-			setSubVar(0xA010B810, i, _vm->_rnd->getRandomNumber(16 - 1));
+			setSubVar(VA_CURR_KEY_SLOT_NUMBERS, i, _vm->_rnd->getRandomNumber(16 - 1));
 			if (i > 0) {
 				for (uint j = 0; j < i && !more; j++) {
-					more = getSubVar(0xA010B810, j) == getSubVar(0xA010B810, i);
+					more = getSubVar(VA_CURR_KEY_SLOT_NUMBERS, j) == getSubVar(VA_CURR_KEY_SLOT_NUMBERS, i);
 				}
 			}
-			if (getSubVar(0xA010B810, i) == getSubVar(0x0C10A000, i))
+			if (getSubVar(VA_CURR_KEY_SLOT_NUMBERS, i) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, i))
 				more = true;
 		} while (more);
 	}
 
-	setSubVar(0x40050052, 0x25400B10, 1);
+	setSubVar(VA_IS_PUZZLE_INIT, 0x25400B10, 1);
 
 }
 
@@ -136,11 +136,11 @@ void GameModule::initScene1405Vars() {
 	uint32 rndIndex;
 
 	// Exit if it's already initialized
-	if (getSubVar(0x40050052, 0xC8606803))
+	if (getSubVar(VA_IS_PUZZLE_INIT, 0xC8606803))
 		return;
 
 	for (uint32 i = 0; i < 3; i++)
-		setSubVar(0x61084036, i, 1);
+		setSubVar(VA_CURR_DICE_NUMBERS, i, 1);
 
 	for (byte i = 0; i < 3; i++)
 		array44[i] = i;
@@ -153,7 +153,7 @@ void GameModule::initScene1405Vars() {
 
 	rndIndex = _vm->_rnd->getRandomNumber(3 - 1);
 
-	setSubVar(0x13100631, array44[rndIndex], 5);
+	setSubVar(VA_DICE_MEMORY_SYMBOLS, array44[rndIndex], 5);
 
 	for (byte i = 5; i < 9; i++)
 		array3C[i] = array3C[i + 1];
@@ -166,7 +166,7 @@ void GameModule::initScene1405Vars() {
 	for (int i = 0; i < 2; i++) {
 		uint32 rndIndex1 = _vm->_rnd->getRandomNumber(index2 - 1); // si
 		uint32 rndIndex2 = _vm->_rnd->getRandomNumber(index1 - 1); // di
-		setSubVar(0x13100631, array44[rndIndex2], array3C[rndIndex1]);
+		setSubVar(VA_DICE_MEMORY_SYMBOLS, array44[rndIndex2], array3C[rndIndex1]);
 		index2--;
 		while (rndIndex1 < index2) {
 			array3C[rndIndex1] = array3C[rndIndex1 + 1];
@@ -182,10 +182,10 @@ void GameModule::initScene1405Vars() {
 	for (uint32 i = 0; i < 3; i++) {
 		uint32 rndValue = _vm->_rnd->getRandomNumber(4 - 1) * 2 + 2;
 		uint32 index4 = 0;
-		setSubVar(0x7500993A, i, rndValue);
+		setSubVar(VA_GOOD_DICE_NUMBERS, i, rndValue);
 		while (index4 < rndValue) {
 			uint32 rndIndex3 = _vm->_rnd->getRandomNumber(index3 - 1);
-			setSubVar(0x0C65F80B, array30[rndIndex3], getSubVar(0x13100631, i));
+			setSubVar(VA_TILE_SYMBOLS, array30[rndIndex3], getSubVar(VA_DICE_MEMORY_SYMBOLS, i));
 			index3--;
 			while (rndIndex3 < index3) {
 				array30[rndIndex3] = array30[rndIndex3 + 1];
@@ -199,14 +199,14 @@ void GameModule::initScene1405Vars() {
 	while (index3 != 0) {
 		uint32 rndIndex4 = _vm->_rnd->getRandomNumber(index3 - 1);
 		index1 = array3C[index5];
-		setSubVar(0x0C65F80B, array30[rndIndex4], index1);
+		setSubVar(VA_TILE_SYMBOLS, array30[rndIndex4], index1);
 		index3--;
 		while (rndIndex4 < index3) {
 			array30[rndIndex4] = array30[rndIndex4 + 1];
 			rndIndex4++;
 		}
 		uint32 rndIndex5 = _vm->_rnd->getRandomNumber(index3 - 1);
-		setSubVar(0x0C65F80B, array30[rndIndex5], index1);
+		setSubVar(VA_TILE_SYMBOLS, array30[rndIndex5], index1);
 		index3--;
 		while (rndIndex5 < index3) {
 			array30[rndIndex5] = array30[rndIndex5 + 1];
@@ -218,57 +218,57 @@ void GameModule::initScene1405Vars() {
 
 	}
 
-	setSubVar(0x40050052, 0xC8606803, 1);
+	setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
 	
 }
 
 void GameModule::initScene2401Vars() {
 
-	if (getSubVar(0x40050052, 0x40520234))
+	if (getSubVar(VA_IS_PUZZLE_INIT, 0x40520234))
 		return;
 
-	setSubVar(0x90405038, 0, 3);
-	setSubVar(0x90405038, 1, 1);
-	setSubVar(0x90405038, 2, 2);
-	setSubVar(0x90405038, 3, 0);
-	setSubVar(0x90405038, 4, 4);
+	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 0, 3);
+	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 1, 1);
+	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 2, 2);
+	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 3, 0);
+	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 4, 4);
 		
-	setSubVar(0x40050052, 0x40520234, 1);
+	setSubVar(VA_IS_PUZZLE_INIT, 0x40520234, 1);
 
 }
 
 void GameModule::initScene2808Vars1() {
 
 	// Exit if it's already initialized
-	if (getSubVar(0x40050052, 0x20479010))
+	if (getSubVar(VA_IS_PUZZLE_INIT, 0x20479010))
 		return;
 
 	for (uint i = 0; i < 3; i++)
-		setSubVar(0x0C601058, i, _vm->_rnd->getRandomNumber(3 - 1) + 1);
+		setSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, i, _vm->_rnd->getRandomNumber(3 - 1) + 1);
 
-	setSubVar(0x40050052, 0x20479010, 1);
+	setSubVar(VA_IS_PUZZLE_INIT, 0x20479010, 1);
 
 }
 
 void GameModule::initScene2808Vars2() {
 
 	// Exit if it's already initialized
-	if (getSubVar(0x40050052, 0x66059818))
+	if (getSubVar(VA_IS_PUZZLE_INIT, 0x66059818))
 		return;
 
 	for (uint i = 0; i < 3; i++)
-		setSubVar(0x40005834, i, _vm->_rnd->getRandomNumber(6 - 1) + 1);
+		setSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, i, _vm->_rnd->getRandomNumber(6 - 1) + 1);
 
-	setSubVar(0x40050052, 0x66059818, 1);
+	setSubVar(VA_IS_PUZZLE_INIT, 0x66059818, 1);
 }
 
 void GameModule::initScene3009Vars() {
-	if (!getSubVar(0x40050052, 0x8C9819C2)) {
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x8C9819C2)) {
 		for (int i = 0; i < 3; i++) {
-			setSubVar(0x00504B86, i, _vm->_rnd->getRandomNumber(12 - 1));
-			setSubVar(0x0A4C0A9A, i, _vm->_rnd->getRandomNumber(12 - 1));
+			setSubVar(VA_GOOD_CANNON_SYMBOLS_1, i, _vm->_rnd->getRandomNumber(12 - 1));
+			setSubVar(VA_GOOD_CANNON_SYMBOLS_2, i, _vm->_rnd->getRandomNumber(12 - 1));
 		}
-		setSubVar(0x40050052, 0x8C9819C2, 1);
+		setSubVar(VA_IS_PUZZLE_INIT, 0x8C9819C2, 1);
 	}
 }
 
@@ -313,7 +313,7 @@ void GameModule::startup() {
 
 #if 1
 	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 5;
+	_vm->gameState().sceneNum = 1;
 	createModule(2200, -1);
 #endif
 #if 0

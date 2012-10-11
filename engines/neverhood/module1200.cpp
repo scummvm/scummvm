@@ -195,7 +195,7 @@ SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 poi
 AsScene1201Tape::AsScene1201Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 nameHash, int surfacePriority, int16 x, int16 y, uint32 fileHash)
 	: AnimatedSprite(vm, fileHash, surfacePriority, x, y), _parentScene(parentScene), _nameHash(nameHash) {
 	
-	if (!getSubVar(0x02038314, _nameHash) && !getSubVar(0x02720344, _nameHash)) {
+	if (!getSubVar(VA_HAS_TAPE, _nameHash) && !getSubVar(VA_IS_TAPE_INSERTED, _nameHash)) {
 		SetMessageHandler(&AsScene1201Tape::handleMessage);
 	} else {
 		setVisible(false);
@@ -211,7 +211,7 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 		messageResult = 1;
 		break;
 	case 0x4806:
-		setSubVar(0x02038314, _nameHash, 1);
+		setSubVar(VA_HAS_TAPE, _nameHash, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
 		break;
@@ -728,10 +728,10 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_surfaceFlag = true;
 
-	if (!getSubVar(0x40050052, 0xE8058B52)) {
-		setSubVar(0x40050052, 0xE8058B52, 1);
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0xE8058B52)) {
+		setSubVar(VA_IS_PUZZLE_INIT, 0xE8058B52, 1);
 		for (uint32 index = 0; index < 18; index++) {
-			setSubVar(0x10055D14, index, kScene1201InitArray[index]);
+			setSubVar(VA_TNT_POSITIONS, index, kScene1201InitArray[index]);
 		}
 	}
 
@@ -818,7 +818,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		
 		uint32 tntIndex = 1; 
 		while (tntIndex < 18) {
-			uint32 elemIndex = getSubVar(0x10055D14, tntIndex);
+			uint32 elemIndex = getSubVar(VA_TNT_POSITIONS, tntIndex);
 			int16 clipY2;
 			if (kScene1201PointArray[elemIndex].y < 175)
 				clipY2 = topY1;
@@ -826,15 +826,15 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 				clipY2 = topY2;
 			else
 				clipY2 = topY3;
-			insertSprite<SsScene1201Tnt>(tntIndex, getSubVar(0x10055D14, tntIndex), clipY2);
-			elemIndex = getSubVar(0x10055D14, tntIndex + 1);
+			insertSprite<SsScene1201Tnt>(tntIndex, getSubVar(VA_TNT_POSITIONS, tntIndex), clipY2);
+			elemIndex = getSubVar(VA_TNT_POSITIONS, tntIndex + 1);
 			if (kScene1201PointArray[elemIndex].y < 175)
 				clipY2 = topY1;
 			else if (kScene1201PointArray[elemIndex].y < 230)
 				clipY2 = topY2;
 			else
 				clipY2 = topY3;
-			insertSprite<SsScene1201Tnt>(tntIndex + 1, getSubVar(0x10055D14, tntIndex + 1), clipY2);
+			insertSprite<SsScene1201Tnt>(tntIndex + 1, getSubVar(VA_TNT_POSITIONS, tntIndex + 1), clipY2);
 			tntIndex += 3;
 		}
 
@@ -850,7 +850,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 		uint32 tntIndex = 0;
 		while (tntIndex < 18) {
-			uint32 elemIndex = getSubVar(0x10055D14, tntIndex);
+			uint32 elemIndex = getSubVar(VA_TNT_POSITIONS, tntIndex);
 			int16 clipY2;
 			if (kScene1201PointArray[elemIndex].x < 300) {
 				clipY2 = 480;
@@ -862,7 +862,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 				else
 					clipY2 = topY3;
 			}
-			insertSprite<SsScene1201Tnt>(tntIndex, getSubVar(0x10055D14, tntIndex), clipY2);
+			insertSprite<SsScene1201Tnt>(tntIndex, getSubVar(VA_TNT_POSITIONS, tntIndex), clipY2);
 			tntIndex++;
 		}
 
@@ -1023,7 +1023,7 @@ AsScene1202TntItem::AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, 
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1202TntItem::hmShowIdle);
-	positionIndex = getSubVar(0x10055D14, _itemIndex);
+	positionIndex = getSubVar(VA_TNT_POSITIONS, _itemIndex);
 	createSurface(900, 37, 67);
 	_x = kScene1202Points[positionIndex].x;
 	_y = kScene1202Points[positionIndex].y;
@@ -1139,11 +1139,11 @@ void Scene1202::update() {
 		_soundFlag = true;
 	} else if (_clickedIndex >= 0 && _counter == 0) {
 		int destIndex = kScene1202Table[_clickedIndex];
-		sendMessage(_asTntItems[_clickedIndex], 0x2001, getSubVar(0x10055D14, destIndex));
-		sendMessage(_asTntItems[destIndex], 0x2001, getSubVar(0x10055D14, _clickedIndex));
-		int temp = getSubVar(0x10055D14, destIndex);
-		setSubVar(0x10055D14, destIndex, getSubVar(0x10055D14, _clickedIndex));
-		setSubVar(0x10055D14, _clickedIndex, temp);
+		sendMessage(_asTntItems[_clickedIndex], 0x2001, getSubVar(VA_TNT_POSITIONS, destIndex));
+		sendMessage(_asTntItems[destIndex], 0x2001, getSubVar(VA_TNT_POSITIONS, _clickedIndex));
+		int temp = getSubVar(VA_TNT_POSITIONS, destIndex);
+		setSubVar(VA_TNT_POSITIONS, destIndex, getSubVar(VA_TNT_POSITIONS, _clickedIndex));
+		setSubVar(VA_TNT_POSITIONS, _clickedIndex, temp);
 		_counter = 2;
 		_clickedIndex = -1;
 		if (_flag) {
@@ -1196,14 +1196,14 @@ uint32 Scene1202::hmSolved(int messageNum, const MessageParam &param, Entity *se
 bool Scene1202::isSolved() {
 
 	debug("isSolved() %d %d %d %d %d %d", 
-		getSubVar(0x10055D14,  0), getSubVar(0x10055D14,  3),
-		getSubVar(0x10055D14,  6), getSubVar(0x10055D14,  9),
-		getSubVar(0x10055D14,  12), getSubVar(0x10055D14,  15));
+		getSubVar(VA_TNT_POSITIONS,  0), getSubVar(VA_TNT_POSITIONS,  3),
+		getSubVar(VA_TNT_POSITIONS,  6), getSubVar(VA_TNT_POSITIONS,  9),
+		getSubVar(VA_TNT_POSITIONS,  12), getSubVar(VA_TNT_POSITIONS,  15));
 
 	return 
-		getSubVar(0x10055D14,  0) ==  0 && getSubVar(0x10055D14,  3) ==  3 && 
-		getSubVar(0x10055D14,  6) ==  6 && getSubVar(0x10055D14,  9) ==  9 &&
-		getSubVar(0x10055D14, 12) == 12 && getSubVar(0x10055D14, 15) == 15;
+		getSubVar(VA_TNT_POSITIONS,  0) ==  0 && getSubVar(VA_TNT_POSITIONS,  3) ==  3 && 
+		getSubVar(VA_TNT_POSITIONS,  6) ==  6 && getSubVar(VA_TNT_POSITIONS,  9) ==  9 &&
+		getSubVar(VA_TNT_POSITIONS, 12) == 12 && getSubVar(VA_TNT_POSITIONS, 15) == 15;
 }
 
 void Scene1202::doPaletteEffect() {
