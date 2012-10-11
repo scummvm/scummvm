@@ -96,6 +96,8 @@ struct ColorMasks<565> {
 		kLow2Bits   = (3 << kRedShift) | (3 << kGreenShift) | (3 << kBlueShift),
 		kLow3Bits   = (7 << kRedShift) | (7 << kGreenShift) | (7 << kBlueShift)
 	};
+
+	typedef uint16 PixelType;
 };
 
 template<>
@@ -138,6 +140,8 @@ struct ColorMasks<555> {
 		kLow2Bits   = (3 << kRedShift) | (3 << kGreenShift) | (3 << kBlueShift),
 		kLow3Bits   = (7 << kRedShift) | (7 << kGreenShift) | (7 << kBlueShift)
 	};
+
+	typedef uint16 PixelType;
 };
 
 template<>
@@ -162,6 +166,8 @@ struct ColorMasks<1555> {
 
 		kRedBlueMask = kRedMask | kBlueMask
 	};
+
+	typedef uint16 PixelType;
 };
 
 template<>
@@ -186,6 +192,8 @@ struct ColorMasks<5551> {
 
 		kRedBlueMask = kRedMask | kBlueMask
 	};
+
+	typedef uint16 PixelType;
 };
 
 template<>
@@ -217,6 +225,8 @@ struct ColorMasks<4444> {
 
 		kRedBlueMask = kRedMask | kBlueMask
 	};
+
+	typedef uint16 PixelType;
 };
 
 template<>
@@ -252,6 +262,8 @@ struct ColorMasks<888> {
 		qlowBits = kLow2Bits,
 		qhighBits = (~kLowBits) & (kRedMask | kBlueMask | kGreenMask)
 	};
+
+	typedef uint32 PixelType;
 };
 
 template<>
@@ -286,6 +298,8 @@ struct ColorMasks<8888> {
 		qlowBits = kLow2Bits,
 		qhighBits = ~kLow2Bits
 	};
+
+	typedef uint32 PixelType;
 };
 
 #ifdef __WII__
@@ -312,6 +326,8 @@ struct ColorMasks<3444> {
 
 		kRedBlueMask = kRedMask | kBlueMask
 	};
+
+	typedef uint16 PixelType;
 };
 #endif
 
