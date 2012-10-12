@@ -90,7 +90,7 @@ ObjectsManager::ObjectsManager() {
 	T_RECTIF = 0;
 	DESACTIVE = 0;
 	DEUXPERSO = 0;
-	PERX, PERY = 0;
+	PERX = PERY = 0;
 	PERI = 0;
 	RECALL = 0;
 	PTAILLE = 0;
@@ -1181,7 +1181,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 	int v17; 
 	int v22;
 
-	Sprite[idx + 42].field2A = 0;
+	Sprite[idx].field2A = 0;
 	int v0 = Sprite[idx].field10;
 	if (v0 != 250) {
 		if (Sprite[idx].fieldE) {
@@ -1256,8 +1256,8 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 			}
 		}
     
-		v15 = Sprite[idx].field8 - v22;
-		v16 = Sprite[idx].fieldA - v7;
+		v15 = Sprite[idx].spritePos.x - v22;
+		v16 = Sprite[idx].spritePos.y - v7;
 		Sprite[idx].field2C = v15;
 		Sprite[idx].field2E = v16;
 		Sprite[idx].field2A = 1;
@@ -1606,13 +1606,13 @@ void ObjectsManager::AFF_VBOB() {
 int ObjectsManager::XSPR(int idx) {
 	if (idx > 5)
 		error("request of the Coord. x a sprite > MAX_SPRITE.");
-	return Sprite[idx].field8;
+	return Sprite[idx].spritePos.x;
 }
 
 int ObjectsManager::YSPR(int idx) {
 	if (idx > 5)
 		error("request of the Coord. y a sprite > MAX_SPRITE.");
-	return Sprite[idx].fieldA;
+	return Sprite[idx].spritePos.y;
 }
 
 void ObjectsManager::SPRITE_NOW(const byte *spriteData, int a2, int a3, int a4, int a5, int a6, int a7, int a8) {
@@ -1649,12 +1649,11 @@ void ObjectsManager::SPRITE_ON(int idx) {
 	Sprite[idx].field0 = 1;
 }
 
-void ObjectsManager::SPRITE(const byte *spriteData, int a2, int a3, int idx, int a5, int a6, int a7, int a8, int a9) {
+void ObjectsManager::SPRITE(const byte *spriteData, int xp, int yp, int idx, int a5, int a6, int a7, int a8, int a9) {
 	if (idx > 5)
 		error("Tentative d'affichage d'un sprite > MAX_SPRITE.");
 	Sprite[idx].spriteData = spriteData;
-	Sprite[idx].field8 = a2;
-	Sprite[idx].fieldA = a3;
+	Sprite[idx].spritePos = Common::Point(xp, yp);
 	Sprite[idx].field10 = a5;
 	Sprite[idx].fieldC = a6;
 	Sprite[idx].field12 = a8;
@@ -1732,7 +1731,7 @@ void ObjectsManager::SETPOSISPR(int idx, int a2) {
 void ObjectsManager::SETXSPR(int idx, int xp) {
 	if (idx > 5)
 		error("Set the Coord. x a sprite> MAX_SPRITE.");
-	Sprite[idx].field8 = xp;
+	Sprite[idx].spritePos.x = xp;
 }
 
 void ObjectsManager::SETANISPR(int idx, int a2) {
@@ -1745,7 +1744,7 @@ void ObjectsManager::SETANISPR(int idx, int a2) {
 void ObjectsManager::SETYSPR(int idx, int yp) {
 	if ( idx > 5 )
 		error("Set the Coord. y a sprite> MAX_SPRITE.");
-	Sprite[idx].fieldA = yp;
+	Sprite[idx].spritePos.y = yp;
 }
 
 void ObjectsManager::SETTAILLESPR(int idx, int a2) {
@@ -4153,7 +4152,7 @@ LABEL_1141:
 			if (DESACTIVE != 1) {
 				DEUXPERSO = 0;
 				v5 = *(a1 + 5);
-				v6 = *(a1 + 8);
+				v6 = (int16)READ_LE_UINT16(a1 + 8);
 				PERX = (int16)READ_LE_UINT16(a1 + 6);
 				PERY = v6;
 				PERI = v5;
