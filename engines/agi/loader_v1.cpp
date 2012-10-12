@@ -64,7 +64,7 @@ int AgiLoader_v1::detectGame() {
 
 int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
 	Common::File fp;
-	
+
 	if (!fp.open(_filenameDisk0))
 		return errBadFileOpen;
 
@@ -73,13 +73,13 @@ int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
 		agid[i].volume = 0xFF;
 		agid[i].offset = _EMPTY;
 	}
-	
+
 	fp.seek(offset, SEEK_SET);
 	for (int i = 0; i <= max; i++) {
 		int b0 = fp.readByte();
 		int b1 = fp.readByte();
 		int b2 = fp.readByte();
-		
+
 		if (b0 == 0xFF && b1 == 0xFF && b2 == 0xFF) {
 			agid[i].volume = 0xFF;
 			agid[i].offset = _EMPTY;
@@ -98,7 +98,7 @@ int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
 
 int AgiLoader_v1::loadDir_BC(AgiDir *agid, int offset, int max) {
 	Common::File fp;
-	
+
 	if (!fp.open(_filenameDisk0))
 		return errBadFileOpen;
 
@@ -107,13 +107,13 @@ int AgiLoader_v1::loadDir_BC(AgiDir *agid, int offset, int max) {
 		agid[i].volume = 0xFF;
 		agid[i].offset = _EMPTY;
 	}
-	
+
 	fp.seek(offset, SEEK_SET);
 	for (int i = 0; i <= max; i++) {
 		int b0 = fp.readByte();
 		int b1 = fp.readByte();
 		int b2 = fp.readByte();
-		
+
 		if (b0 == 0xFF && b1 == 0xFF && b2 == 0xFF) {
 			agid[i].volume = 0xFF;
 			agid[i].offset = _EMPTY;
@@ -171,7 +171,7 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 
 	if (offset == _EMPTY)
 		return NULL;
-	
+
 	if (offset > IMAGE_SIZE) {
 		fp.open(_filenameDisk1);
 		offset -= IMAGE_SIZE;
@@ -191,7 +191,7 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 	agid->len = fp.readUint16LE();
 	data = (uint8 *)calloc(1, agid->len + 32);
 	fp.read(data, agid->len);
-	
+
 	fp.close();
 
 	return data;

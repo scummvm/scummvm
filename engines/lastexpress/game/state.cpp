@@ -49,6 +49,18 @@ State::~State() {
 	_engine = NULL;
 }
 
+void State::reset() {
+	SAFE_DELETE(_inventory);
+	SAFE_DELETE(_objects);
+	SAFE_DELETE(_savepoints);
+	SAFE_DELETE(_state);
+
+	_inventory = new Inventory(_engine);
+	_objects = new Objects(_engine);
+	_savepoints = new SavePoints(_engine);
+	_state = new GameState();
+}
+
 bool State::isNightTime() const {
 	return (_state->progress.chapter == kChapter1
 		 || _state->progress.chapter == kChapter4

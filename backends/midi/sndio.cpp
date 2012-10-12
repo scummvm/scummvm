@@ -81,7 +81,7 @@ void MidiDriver_Sndio::send(uint32 b) {
 
 	if (!hdl)
 		return;
-	buf[0] = b & 0xff;	
+	buf[0] = b & 0xff;
 	buf[1] = (b >> 8) & 0xff;
 	buf[2] = (b >> 16) & 0xff;
 	buf[3] = (b >> 24) & 0xff;
@@ -101,7 +101,7 @@ void MidiDriver_Sndio::send(uint32 b) {
 void MidiDriver_Sndio::sysEx(const byte *msg, uint16 length) {
 	if (!hdl)
 		return;
-	
+
 	unsigned char buf[266];
 
 	assert(length + 2 <= ARRAYSIZE(buf));

@@ -169,7 +169,7 @@ protected:
 	bool _flippedMode;
 	int _fontWidth, _fontHeight;
 	uint8 _bitPosNewLineMask;
-	
+
 	bool isASCII(uint16 ch) const;
 
 	virtual const uint8 *getCharData(uint16 c) const = 0;

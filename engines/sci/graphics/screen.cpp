@@ -53,23 +53,35 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 
 #ifdef ENABLE_SCI32
 	// GK1 Mac uses a 640x480 resolution too
-	if (g_sci->getGameId() == GID_GK1 && g_sci->getPlatform() == Common::kPlatformMacintosh)
-		_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		if (g_sci->getGameId() == GID_GK1)
+			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
+	}
 #endif
 
 	if (_resMan->detectHires()) {
 		_width = 640;
+		_pitch = 640;
 		_height = 480;
 	} else {
 		_width = 320;
+		_pitch = 320;
 		_height = getLowResScreenHeight();
 	}
+
+#ifdef ENABLE_SCI32
+	// Phantasmagoria 1 sets a window area of 630x450
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
+		_width = 630;
+		_height = 450;
+	}
+#endif
 
 	// Japanese versions of games use hi-res font on upscaled version of the game.
 	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
 		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
-	_pixels = _width * _height;
+	_pixels = _pitch * _height;
 
 	switch (_upscaledHires) {
 	case GFX_SCREEN_UPSCALED_640x400:
@@ -91,17 +103,10 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			_upscaledMapping[i] = (i * 12) / 5;
 		break;
 	default:
-		_displayWidth = _width;
+		_displayWidth = _pitch;
 		_displayHeight = _height;
 		memset(&_upscaledMapping, 0, sizeof(_upscaledMapping) );
 		break;
-	}
-
-	// Phantasmagoria 1 sets a window area of 630x450
-	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
-		// TODO: Also set width to 630 (can't be set right now, as it messes up
-		// the pitch). For now, a hack has been placed in GfxFrameout::kernelAddPlane()
-		_height = 450;
 	}
 
 	_displayPixels = _displayWidth * _displayHeight;
@@ -214,7 +219,7 @@ byte GfxScreen::getDrawingMask(byte color, byte prio, byte control) {
 }
 
 void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
-	int offset = y * _width + x;
+	int offset = y * _pitch + x;
 
 	if (drawMask & GFX_SCREEN_MASK_VISUAL) {
 		_visualScreen[offset] = color;
@@ -247,7 +252,7 @@ void GfxScreen::putFontPixel(int startingY, int x, int y, byte color) {
 		// Do not scale ourselves, but put it on the display directly
 		putPixelOnDisplay(x, y + startingY, color);
 	} else {
-		int offset = (startingY + y) * _width + x;
+		int offset = (startingY + y) * _pitch + x;
 
 		_visualScreen[offset] = color;
 		if (!_upscaledHires) {
@@ -349,19 +354,19 @@ void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, u
 }
 
 byte GfxScreen::getVisual(int x, int y) {
-	return _visualScreen[y * _width + x];
+	return _visualScreen[y * _pitch + x];
 }
 
 byte GfxScreen::getPriority(int x, int y) {
-	return _priorityScreen[y * _width + x];
+	return _priorityScreen[y * _pitch + x];
 }
 
 byte GfxScreen::getControl(int x, int y) {
-	return _controlScreen[y * _width + x];
+	return _controlScreen[y * _pitch + x];
 }
 
 byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con, bool isEGA) {
-	int offset = y * _width + x;
+	int offset = y * _pitch + x;
 	byte match = 0;
 
 	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
@@ -422,14 +427,14 @@ void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
 
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
-		bitsSaveScreen(rect, _visualScreen, _width, memoryPtr);
+		bitsSaveScreen(rect, _visualScreen, _pitch, memoryPtr);
 		bitsSaveDisplayScreen(rect, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
-		bitsSaveScreen(rect, _priorityScreen, _width, memoryPtr);
+		bitsSaveScreen(rect, _priorityScreen, _pitch, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_CONTROL) {
-		bitsSaveScreen(rect, _controlScreen, _width, memoryPtr);
+		bitsSaveScreen(rect, _controlScreen, _pitch, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
@@ -482,14 +487,14 @@ void GfxScreen::bitsRestore(byte *memoryPtr) {
 	memcpy((void *)&mask, memoryPtr, sizeof(mask)); memoryPtr += sizeof(mask);
 
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
-		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _width);
+		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _pitch);
 		bitsRestoreDisplayScreen(rect, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
-		bitsRestoreScreen(rect, memoryPtr, _priorityScreen, _width);
+		bitsRestoreScreen(rect, memoryPtr, _priorityScreen, _pitch);
 	}
 	if (mask & GFX_SCREEN_MASK_CONTROL) {
-		bitsRestoreScreen(rect, memoryPtr, _controlScreen, _width);
+		bitsRestoreScreen(rect, memoryPtr, _controlScreen, _pitch);
 	}
 	if (mask & GFX_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
@@ -567,7 +572,7 @@ void GfxScreen::dither(bool addToFlag) {
 	if (!_unditheringEnabled) {
 		// Do dithering on visual and display-screen
 		for (y = 0; y < _height; y++) {
-			for (x = 0; x < _width; x++) {
+			for (x = 0; x < _pitch; x++) {
 				color = *visualPtr;
 				if (color & 0xF0) {
 					color ^= color << 4;
@@ -592,7 +597,7 @@ void GfxScreen::dither(bool addToFlag) {
 			memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
 		// Do dithering on visual screen and put decoded but undithered byte onto display-screen
 		for (y = 0; y < _height; y++) {
-			for (x = 0; x < _width; x++) {
+			for (x = 0; x < _pitch; x++) {
 				color = *visualPtr;
 				if (color & 0xF0) {
 					color ^= color << 4;

@@ -33,7 +33,8 @@ enum {
 	/* Touchscreen TapMode */
 	TAPMODE_LEFT        = 0,
 	TAPMODE_RIGHT       = 1,
-	TAPMODE_HOVER       = 2
+	TAPMODE_HOVER       = 2,
+	TAPMODE_HOVER_DPAD  = 3
 };
 
 int tapmodeLevel = TAPMODE_LEFT;
@@ -44,6 +45,8 @@ void ToggleTapMode() {
 	} else if (tapmodeLevel == TAPMODE_RIGHT) {
 		tapmodeLevel = TAPMODE_HOVER;
 	} else if (tapmodeLevel == TAPMODE_HOVER) {
+		tapmodeLevel = TAPMODE_HOVER_DPAD;
+	} else if (tapmodeLevel == TAPMODE_HOVER_DPAD) {
 		tapmodeLevel = TAPMODE_LEFT;
 	} else {
 		tapmodeLevel = TAPMODE_LEFT;

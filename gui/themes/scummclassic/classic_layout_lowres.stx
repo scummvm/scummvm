@@ -33,6 +33,9 @@
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ShowSearchPic' value = '0'/>
 
+		<def var = 'ShowChooserPics' value = '0'/>
+		<def var = 'ShowChooserPageDisplay' value = '0'/>
+
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '0'/>
 
 		<def var = 'KeyMapper.Spacing' value = '5'/>
@@ -807,6 +810,14 @@
 			<widget name = 'Title' height = 'Globals.Line.Height'/>
 			<widget name = 'List' />
 			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
+				<widget name = 'ListSwitch'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+				<widget name = 'GridSwitch'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
 				<space/>
 				<widget name = 'Delete'
 						type = 'Button'
@@ -816,6 +827,26 @@
 						type = 'Button'
 				/>
 				<widget name = 'Choose'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'SavenameDialog' overlays = 'screen_center'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+			<widget name = 'DescriptionText'
+					width = '180'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Description'
+					height = '19'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
 						type = 'Button'
 				/>
 			</layout>

@@ -64,7 +64,7 @@ class Codec;
  *  - gob
  *  - sci
  */
-class CoktelDecoder : public FixedRateVideoDecoder {
+class CoktelDecoder {
 public:
 	struct State {
 		/** Set accordingly to what was done. */
@@ -77,7 +77,7 @@ public:
 
 	CoktelDecoder(Audio::Mixer *mixer,
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
-	~CoktelDecoder();
+	virtual ~CoktelDecoder();
 
 	/** Replace the current video stream with this identical one. */
 	virtual bool reloadStream(Common::SeekableReadStream *stream) = 0;
@@ -98,6 +98,8 @@ public:
 
 	/** Override the video's frame rate. */
 	void setFrameRate(Common::Rational frameRate);
+	/** Get the video's frame rate. */
+	Common::Rational getFrameRate() const;
 
 	/** Get the video's default X position. */
 	uint16 getDefaultX() const;
@@ -138,20 +140,51 @@ public:
 	/** Is the video paletted or true color? */
 	virtual bool isPaletted() const;
 
+	/**
+	 * Get the current frame
+	 * @see VideoDecoder::getCurFrame()
+	 */
+	int getCurFrame() const;
 
-	// VideoDecoder interface
+	/**
+	 * Decode the next frame
+	 * @see VideoDecoder::decodeNextFrame()
+	 */
+	virtual const Graphics::Surface *decodeNextFrame() = 0;
 
+	/**
+	 * Load a video from a stream
+	 * @see VideoDecoder::loadStream()
+	 */
+	virtual bool loadStream(Common::SeekableReadStream *stream) = 0;
+
+	/** Has a video been loaded? */
+	virtual bool isVideoLoaded() const = 0;
+
+	/** Has the end of the video been reached? */
+	bool endOfVideo() const;
+
+	/** Close the video. */
 	void close();
+
+	/** Get the Mixer SoundType audio is being played with. */
+	Audio::Mixer::SoundType getSoundType() const;
+	/** Get the AudioStream for the audio. */
+	Audio::AudioStream *getAudioStream() const;
 
 	uint16 getWidth()  const;
 	uint16 getHeight() const;
+	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 
 	uint32 getFrameCount() const;
 
 	const byte *getPalette();
 	bool  hasDirtyPalette() const;
 
+	uint32 getTimeToNextFrame() const;
 	uint32 getStaticTimeToNextFrame() const;
+
+	void pauseVideo(bool pause);
 
 protected:
 	enum SoundStage {
@@ -186,7 +219,10 @@ protected:
 
 	uint32 _features;
 
+	 int32 _curFrame;
 	uint32 _frameCount;
+
+	uint32 _startTime;
 
 	byte _palette[768];
 	bool _paletteDirty;
@@ -228,10 +264,9 @@ protected:
 	// Sound helper functions
 	inline void unsignedToSigned(byte *buffer, int length);
 
-
-	// FixedRateVideoDecoder interface
-
-	Common::Rational getFrameRate() const;
+private:
+	uint32 _pauseStartTime;
+	bool   _isPaused;
 };
 
 class PreIMDDecoder : public CoktelDecoder {
@@ -243,9 +278,6 @@ public:
 	bool reloadStream(Common::SeekableReadStream *stream);
 
 	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
-
-
-	// VideoDecoder interface
 
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
@@ -279,9 +311,6 @@ public:
 
 	void setXY(uint16 x, uint16 y);
 
-
-	// VideoDecoder interface
-
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
@@ -290,11 +319,6 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 
 	Graphics::PixelFormat getPixelFormat() const;
-
-protected:
-	// VideoDecoder API
-	void updateVolume();
-	void updateBalance();
 
 private:
 	enum Command {
@@ -367,6 +391,8 @@ private:
 };
 
 class VMDDecoder : public CoktelDecoder {
+friend class AdvancedVMDDecoder;
+
 public:
 	VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~VMDDecoder();
@@ -390,9 +416,6 @@ public:
 	bool hasVideo() const;
 	bool isPaletted() const;
 
-
-	// VideoDecoder interface
-
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
@@ -403,9 +426,7 @@ public:
 	Graphics::PixelFormat getPixelFormat() const;
 
 protected:
-	// VideoDecoder API
-	void updateVolume();
-	void updateBalance();
+	void setAutoStartSound(bool autoStartSound);
 
 private:
 	enum PartType {
@@ -478,6 +499,7 @@ private:
 	uint32 _soundDataSize;
 	uint32 _soundLastFilledFrame;
 	AudioFormat _audioFormat;
+	bool   _autoStartSound;
 
 	// Video properties
 	bool   _hasVideo;
@@ -530,6 +552,57 @@ private:
 	Audio::AudioStream *create16bitADPCM(Common::SeekableReadStream *stream);
 
 	bool getPartCoords(int16 frame, PartType type, int16 &x, int16 &y, int16 &width, int16 &height);
+};
+
+/**
+ * A wrapper around the VMD code that implements the VideoDecoder
+ * API.
+ */
+class AdvancedVMDDecoder : public VideoDecoder {
+public:
+	AdvancedVMDDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	~AdvancedVMDDecoder();
+
+	bool loadStream(Common::SeekableReadStream *stream);
+	void close();
+
+private:
+	class VMDVideoTrack : public FixedRateVideoTrack {
+	public:
+		VMDVideoTrack(VMDDecoder *decoder);
+
+		uint16 getWidth() const;
+		uint16 getHeight() const;
+		Graphics::PixelFormat getPixelFormat() const;
+		int getCurFrame() const;
+		int getFrameCount() const;
+		const Graphics::Surface *decodeNextFrame();
+		const byte *getPalette() const;
+		bool hasDirtyPalette() const;
+
+	protected:
+		Common::Rational getFrameRate() const;
+
+	private:
+		VMDDecoder *_decoder;
+	};
+
+	class VMDAudioTrack : public AudioTrack {
+	public:
+		VMDAudioTrack(VMDDecoder *decoder);
+
+		Audio::Mixer::SoundType getSoundType() const;
+
+	protected:
+		virtual Audio::AudioStream *getAudioStream() const;
+
+	private:
+		VMDDecoder *_decoder;
+	};
+
+	VMDDecoder    *_decoder;
+	VMDVideoTrack *_videoTrack;
+	VMDAudioTrack *_audioTrack;
 };
 
 } // End of namespace Video

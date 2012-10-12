@@ -202,7 +202,7 @@ void revmodel::process(const float *inputL, const float *inputR, float *outputL,
 		// Calculate output REPLACING anything already there
 		*outputL = outL*wet1 + outR*wet2;
 		*outputR = outR*wet1 + outL*wet2;
-		
+
 		inputL++;
 		inputR++;
 		outputL++;

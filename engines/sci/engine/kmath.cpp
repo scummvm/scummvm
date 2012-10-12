@@ -84,27 +84,10 @@ reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
  * accurate.
  */
 uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
-	// TODO: This has been implemented based on behavior observed with a test
-	// program created with SCI Studio. However, the return values have subtle
-	// differences from the original, which uses custom implementation of atan().
-	// The differences in the return values are the cause of bug #3540976
-	// and perhaps bug #3037267 as well.
-	// The results of this function match the expected results of SCI0, but not
-	// SCI1 (hence the bug in Longbow). We need to find the point in history
-	// when this function was changed.
-
-	// HACK: Return the expected value for Longbow, scene 150 (bug #3540976).
-	// This is a temporary solution, till the function returns the expected
-	// results.
-	if (g_sci->getGameId() == GID_LONGBOW && g_sci->getEngineState()->currentRoomNumber() == 150) {
-		if (x1 == 207 && y1 == 88 && x2 == 107 && y2 == 184)
-			return 226;
-	}
-
-#if 0
-	// A simpler atan2-based implementation
-	return (int16)(360 - atan2((double)(x1 - x2), (double)(y1 - y2)) * 57.2958) % 360;
-#endif
+	// SCI1 games (QFG2 and newer) use a simple atan implementation. SCI0 games
+	// use a somewhat less accurate calculation (below).
+	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
+		return (int16)(360 - atan2((double)(x1 - x2), (double)(y1 - y2)) * 57.2958) % 360;
 
 	int16 xRel = x2 - x1;
 	int16 yRel = y1 - y2; // y-axis is mirrored.

@@ -25,37 +25,40 @@
 	.global	_ClassicProc3RendererShadowARM
 
 
-.set	_scaleIndexY	,	112
-.set	_numStrips	,	108
-.set	_palette	,	104
-.set	_shadow_table	,	100
-.set	_scaleIndexX	,	96
-.set	_scaleX		,	92
-.set	_height		,	88
-.set	store_r14	,	84
-.set	store_r11	,	80
-.set	store_r10	,	76
-.set	store_r9	,	72
-.set	store_r8	,	68
-.set	store_r7	,	64
-.set	store_r6	,	60
-.set	store_r5	,	56
-.set	store_r4	,	52
-.set	src		,	48
-.set	height		,	44
-.set	len		,	40
-.set	v1_shr		,	36
-.set	v1_skip_width	,	32
-.set	v1_destptr	,	28
-.set	v1_scaleXstep	,	24
-.set	v1_mask_ptr	,	20
-.set	v1_y		,	16
-.set	v1_scaletable	,	12
-.set	pitch		,	8
-.set	scaleIdxXPtr	,	4
-.set	scaleIdxYPtr	,	0
 
-.set	space		,	48
+.set	space,			48
+
+.set	_scaleIndexY,	store_r14 + 28
+.set	_numStrips,		store_r14 + 24
+.set	_palette,		store_r14 + 20
+.set	_shadow_table,	store_r14 + 16
+.set	_scaleIndexX,	store_r14 + 12
+.set	_scaleX,		store_r14 + 8
+.set	_height,		store_r14 + 4
+
+.set	store_r14,		space + 36
+.set	store_r11,		space + 32
+.set	store_r10,		space + 28
+.set	store_r9,		space + 24
+.set	store_r8,		space + 20
+.set	store_r7,		space + 16
+.set	store_r6,		space + 12
+.set	store_r5,		space + 8
+.set	store_r4,		space + 4
+
+.set	src,			48
+.set	height,			44
+.set	len,			40
+.set	v1_shr,			36
+.set	v1_skip_width,	32
+.set	v1_destptr,		28
+.set	v1_scaleXstep,	24
+.set	v1_mask_ptr,	20
+.set	v1_y,			16
+.set	v1_scaletable,	12
+.set	pitch,			8
+.set	scaleIdxXPtr,	4
+.set	scaleIdxYPtr,	0
 
 	@ r0 = _scaleY
 	@ r1 = v1
@@ -103,7 +106,7 @@ _ClassicProc3RendererShadowARM:
 	LDRB	r1, [r1,#30]		@ r1 = repcolor
 	STR	r8, [r13,#v1_shr]
 	STR	r9, [r13,#v1_destptr]
-        STR	r10,[r13,#v1_mask_ptr]
+	STR	r10,[r13,#v1_mask_ptr]
 	STR	r11,[r13,#v1_scaleXstep]
 
 	LDR	r12,[r13,#_height]
@@ -123,10 +126,10 @@ _ClassicProc3RendererShadowARM:
 	@ r12= _height
 	@ r14= v1.replen
 
-       	MOV	r8,#0x80
+	MOV	r8,#0x80
 	AND	r11,r3,#7		@ r11= v1.x & 7
 	MOV	r8,r8,LSR r11		@ r8 = maskbit = revBitMask(v1.x & 7)
-       	ADD	r10,r10,r3,ASR #3	@ r10= mask = v1.mask_ptr + (v1.x>>3)
+	ADD	r10,r10,r3,ASR #3	@ r10= mask = v1.mask_ptr + (v1.x>>3)
 
 	@ r0 = _scaleY
 	@ r1 = color = v1.repcolor
@@ -152,7 +155,7 @@ _ClassicProc3RendererShadowARM:
 	SUB	r14,r14,r5
 	STR	r12,[r13,#height]
 	STR	r14,[r13,#len]
-        LDR	r12,[r13,#pitch]
+	LDR	r12,[r13,#pitch]
 	LDR	r11,[r13,#_numStrips]
 	B	startpos
 
@@ -174,13 +177,13 @@ outerloop:
 
 	LDR	r11,[r13,#src]
 	LDR	r5,[r13,#v1_shr]
-       	@ stall
+	@ stall
 	LDRB	r14,[r11],#1		@ r14= len = *src++
 	@ stall
 	@ stall
 	MOV	r1, r14,LSR r5		@ r1 = color = len>>v1.shr
-       	BICS	r14,r14,r1,LSL r5	@ r14= len
-       	LDREQB	r14,[r11],#1		@ if (!len)  r14 = len = *src++
+	BICS	r14,r14,r1,LSL r5	@ r14= len
+	LDREQB	r14,[r11],#1		@ if (!len)  r14 = len = *src++
 	STR	r11,[r13,#src]
 	CMP	r14,#0
 middleloop:
@@ -232,7 +235,7 @@ innerloop:
 	CMPLE	r0,r14			@ || _scaleY >= r14
 	BLE	startpos
 
-        ADDS	r4,r4,#1		@ y >= 0 (equiv to y>-1,y+1>0)
+	ADDS	r4,r4,#1		@ y >= 0 (equiv to y>-1,y+1>0)
 	CMPGT   r1,#0			@ && color > 0
 	CMPGT	r6,r4			@ && _out.h+1 > y+1
 	CMNGT	r3,#1			@ && x >= 0 (equiv to x>-1,x+1>0)
@@ -248,12 +251,12 @@ innerloop:
 	@ stall
 	@ stall
 	CMP	r14,#13			@ if (pcolor == 13)
-        LDREQ	r12,[r13,#_shadow_table]
+	LDREQ	r12,[r13,#_shadow_table]
 	LDREQB	r14,[r9]		@ 	r14 = *dst
 	@ stallEQ
 	@ stallEQ
 	LDREQB	r14,[r12,r14]		@	r14 = pcolor=_shadow_tab[r14]
-        LDREQ	r12,[r13,#pitch]
+	LDREQ	r12,[r13,#pitch]
 	@ stallEQ
 	STRB	r14,[r9]		@ *dst = pcolor
 masked:
@@ -282,7 +285,7 @@ startpos:
 	BLE	noXstep
 
 	SUB	r11,r7,#1
-       	ADDS	r3,r3,r12			@ v1.x += v1.scaleXstep
+	ADDS	r3,r3,r12			@ v1.x += v1.scaleXstep
 				@ if v1.x < 0 ||
 	CMPGE	r11,r3		@ _out.w-1 < v1.x
 	BLT	end
@@ -297,7 +300,7 @@ noXstep:
 	LDR	r12,[r13,#_height]		@ r12= height = _height
 	LDR	r4,[r13,#v1_y]			@ r4 = y = v1.y
 	LDR	r2,[r13,#scaleIdxYPtr]		@ r2 = v1.scaletable[sclIdxY]
-       	ADD	r10,r10,r3,ASR #3		@ mask=v1.mask_ptr+(v1.x>>3)
+	ADD	r10,r10,r3,ASR #3		@ mask=v1.mask_ptr+(v1.x>>3)
 notheight:
 	CMP	r14,#0			@ while (len > 0)
 	BGT	middleloop
@@ -305,5 +308,5 @@ notheight:
 end:
 	LDR	r0,[r13,#v1_scaletable]
 	SUB	r0,r2,r0
-        ADD	r13,r13,#space
+	ADD	r13,r13,#space
 	LDMFD	r13!,{r3-r11,PC}

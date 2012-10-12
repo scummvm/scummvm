@@ -1028,7 +1028,7 @@ TestExitStatus GFXtests::paletteRotation() {
 	GFXTestSuite::setCustomColor(255, 0, 0);
 	Testsuite::clearScreen();
 
-	if(Testsuite::handleInteractiveInput("Did you see a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Did you see a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
 		return kTestFailed;
 	}
 
@@ -1121,7 +1121,7 @@ TestExitStatus GFXtests::pixelFormats() {
 		g_system->updateScreen();
 		g_system->delayMillis(500);
 
-		if(Testsuite::handleInteractiveInput("Were you able to notice the colored rectangles on the screen for this format?", "Yes", "No", kOptionLeft)) {
+		if (Testsuite::handleInteractiveInput("Were you able to notice the colored rectangles on the screen for this format?", "Yes", "No", kOptionLeft)) {
 			numPassed++;
 		} else {
 			numFailed++;

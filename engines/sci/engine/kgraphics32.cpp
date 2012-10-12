@@ -39,6 +39,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
@@ -171,8 +172,13 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelStrings, "kCreateTextBitmap case 0 (%04x:%04x, %04x:%04x, %04x:%04x)",
 				PRINT_REG(argv[1]), PRINT_REG(argv[2]), PRINT_REG(argv[3]));
 		debugC(kDebugLevelStrings, "%s", text.c_str());
-		uint16 maxWidth = argv[1].toUint16();	// nsRight - nsLeft + 1
-		uint16 maxHeight = argv[2].toUint16();	// nsBottom - nsTop + 1
+		int16 maxWidth = argv[1].toUint16();
+		int16 maxHeight = argv[2].toUint16();
+		g_sci->_gfxCoordAdjuster->fromScriptToDisplay(maxHeight, maxWidth);
+		// These values can be larger than the screen in the SQ6 demo, room 100
+		// TODO: Find out why. For now, don't show any text in that room.
+		if (g_sci->getGameId() == GID_SQ6 && g_sci->isDemo() && s->currentRoomNumber() == 100)
+			return NULL_REG;
 		return g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
 	}
 	case 1: {
@@ -363,7 +369,8 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 	case 10: // Where, called by ScrollableWindow::where
 		// TODO
 		// argv[2] is an unknown integer
-		kStub(s, argc, argv);
+		// Silenced the warnings because of the high amount of console spam
+		//kStub(s, argc, argv);
 		break;
 	case 11: // Go, called by ScrollableWindow::scrollTo
 		// 2 extra parameters here
@@ -721,6 +728,79 @@ reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
 	default:
 		// TODO
 		kStub(s, argc, argv);
+		break;
+	}
+
+	return s->r_acc;
+}
+
+reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+	case 0:	{ // turn remapping off
+		// WORKAROUND: Game scripts in QFG4 erroneously turn remapping off in room
+		// 140 (the character point allocation screen) and never turn it back on,
+		// even if it's clearly used in that screen.
+		if (g_sci->getGameId() == GID_QFG4 && s->currentRoomNumber() == 140)
+			return s->r_acc;
+
+		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
+		if (base > 0)
+			warning("kRemapColors(0) called with base %d", base);
+		g_sci->_gfxPalette->resetRemapping();
+		}
+		break;
+	case 1:	{ // remap by range
+		uint16 color = argv[1].toUint16();
+		uint16 from = argv[2].toUint16();
+		uint16 to = argv[3].toUint16();
+		uint16 base = argv[4].toUint16();
+		uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
+		if (unk5 > 0)
+			warning("kRemapColors(1) called with 6 parameters, unknown parameter is %d", unk5);
+		g_sci->_gfxPalette->setRemappingRange(color, from, to, base);
+		}
+		break;
+	case 2:	{ // remap by percent
+		uint16 color = argv[1].toUint16();
+		uint16 percent = argv[2].toUint16(); // 0 - 100
+		if (argc >= 4)
+			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		g_sci->_gfxPalette->setRemappingPercent(color, percent);
+		}
+		break;
+	case 3:	{ // remap to gray
+		// Example call: QFG4 room 490 (Baba Yaga's hut) - params are color 253, 75% and 0.
+		// In this room, it's used for the cloud before Baba Yaga appears.
+		int16 color = argv[1].toSint16();
+		int16 percent = argv[2].toSint16(); // 0 - 100
+		if (argc >= 4)
+			warning("RemapToGray called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
+		}
+		break;
+	case 4:	{ // remap to percent gray
+		// Example call: QFG4 rooms 530/535 (swamp) - params are 253, 100%, 200
+		int16 color = argv[1].toSint16();
+		int16 percent = argv[2].toSint16(); // 0 - 100
+		// argv[3] is unknown (a number, e.g. 200) - start color, perhaps?
+		if (argc >= 5)
+			warning("RemapToGrayPercent called with 5 parameters, unknown parameter is %d", argv[4].toUint16());
+		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
+		}
+		break;
+	case 5:	{ // don't map to range
+		//int16 mapping = argv[1].toSint16();
+		uint16 intensity = argv[2].toUint16();
+		// HACK for PQ4
+		if (g_sci->getGameId() == GID_PQ4)
+			g_sci->_gfxPalette->kernelSetIntensity(0, 255, intensity, true);
+
+		kStub(s, argc, argv);
+		}
+		break;
+	default:
 		break;
 	}
 

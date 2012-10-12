@@ -353,7 +353,7 @@ void OSystem_IPHONE::copyRectToOverlay(const void *buf, int pitch, int x, int y,
 	}
 
 	byte *dst = (byte *)_videoContext->overlayTexture.getBasePtr(x, y);
-	do { 
+	do {
 		memcpy(dst, src, w * sizeof(uint16));
 		src += pitch;
 		dst += _videoContext->overlayTexture.pitch;
@@ -435,7 +435,7 @@ void OSystem_IPHONE::setCursorPalette(const byte *colors, uint start, uint num) 
 
 	for (uint i = start; i < start + num; ++i, colors += 3)
 		_mouseCursorPalette[i] = Graphics::RGBToColor<Graphics::ColorMasks<5551> >(colors[0], colors[1], colors[2]);
-	
+
 	// FIXME: This is just stupid, our client code seems to assume that this
 	// automatically enables the cursor palette.
 	_mouseCursorPaletteEnabled = true;

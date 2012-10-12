@@ -207,7 +207,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 		readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
 
 	} else {
-		// Open up the savgame file
+		// Open up the savegame file
 		Common::String slotName = generateSaveName(slotNumber);
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
 
@@ -280,7 +280,7 @@ Common::Error CGEEngine::loadGameState(int slot) {
 	sceneDown();
 	_hero->park();
 	resetGame();
-	
+
 	// If music is playing, kill it.
 	if (_music)
 		_midiPlayer->killMidi();
@@ -305,11 +305,20 @@ Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 	_hero->park();
 	_oldLev = _lev;
 
+	int x = _hero->_x;
+	int y = _hero->_y;
+	int z = _hero->_z;
+
 	// Write out the user's progress
 	saveGame(slot, desc);
+	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 
 	// Reload the scene
 	sceneUp();
+
+	// Restore player position
+	_hero->gotoxy(x, y);
+	_hero->_z = z;
 
 	return Common::kNoError;
 }
@@ -499,7 +508,7 @@ void CGEEngine::loadMapping() {
 		if (!cf.err()) {
 			// Move to the data for the given room
 			cf.seek((_now - 1) * kMapArrSize);
-			
+
 			// Read in the data
 			for (int z = 0; z < kMapZCnt; ++z) {
 				cf.read(&_clusterMap[z][0], kMapXCnt);
@@ -763,7 +772,7 @@ void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 
 	if (mask & kEventKeyb) {
 		if (keyCode == Common::KEYCODE_ESCAPE) {
-			// The original was calling keyClick() 
+			// The original was calling keyClick()
 			// The sound is uselessly annoying and noisy, so it has been removed
 			_vm->killText();
 			if (_vm->_startupMode == 1) {
@@ -1035,7 +1044,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 
 		uint16 len;
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
-			len = line.size();			
+			len = line.size();
 			lcnt++;
 			strcpy(tmpStr, line.c_str());
 			if (len == 0 || *tmpStr == '.')

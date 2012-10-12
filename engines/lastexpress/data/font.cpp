@@ -149,7 +149,7 @@ uint8 Font::getCharWidth(uint16 c) const{
 uint16 Font::getStringWidth(Common::String str) const {
 	uint16 width = 0;
 	for (uint i = 0; i < str.size(); i++)
-		width += getCharWidth((unsigned) (int)str[i]);
+		width += getCharWidth((unsigned char)str[i]);
 
 	return width;
 }
@@ -185,8 +185,8 @@ void Font::drawChar(Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
 Common::Rect Font::drawString(Graphics::Surface *surface, int16 x, int16 y, Common::String str) {
 	int16 currentX = x;
 	for (uint i = 0; i < str.size(); i++) {
-		drawChar(surface, currentX, y, (unsigned) (int)str[i]);
-		currentX += getCharWidth((unsigned) (int)str[i]);
+		drawChar(surface, currentX, y, (unsigned char)str[i]);
+		currentX += getCharWidth((unsigned char)str[i]);
 	}
 
 	return Common::Rect(x, y, x + currentX, y + (int16)_charHeight);

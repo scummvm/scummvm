@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	gui_options.o \
 	hashmap.o \
 	iff_container.o \
+	installshield_cab.o \
 	language.o \
 	localization.o \
 	macresman.o \

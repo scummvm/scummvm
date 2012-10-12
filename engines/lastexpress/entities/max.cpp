@@ -89,7 +89,8 @@ IMPLEMENT_FUNCTION(6, Max, chapter12_handler)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param2, getState()->time, params->param1);
+		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
+			break;
 
 		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max1122");
@@ -123,7 +124,8 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param2, getState()->time, params->param1)
+		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
+			break;
 
 		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max1122");
@@ -212,7 +214,8 @@ IMPLEMENT_FUNCTION(8, Max, chapter4Handler)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param3, getState()->time, params->param2);
+		if (!Entity::updateParameter(params->param3, getState()->time, params->param2))
+			break;
 
 		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max3101");
@@ -321,7 +324,7 @@ IMPLEMENT_FUNCTION(10, Max, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter12_handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Max, setup_chapter12_handler));
 		break;
 
 	case kActionDefault:
@@ -390,7 +393,8 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 			break;
 		}
 
-		UPDATE_PARAM(params->param3, getState()->time, params->param1);
+		if (!Entity::updateParameter(params->param3, getState()->time, params->param1))
+			break;
 
 		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max1122");
@@ -512,7 +516,8 @@ IMPLEMENT_FUNCTION(15, Max, function15)
 		}
 
 		if (!params->param1) {
-			UPDATE_PARAM(params->param3, getState()->time, 900);
+			if (!Entity::updateParameter(params->param3, getState()->time, 900))
+				break;
 
 			getSavePoints()->push(kEntityMax, kEntityCoudert, kAction157026693);
 		}

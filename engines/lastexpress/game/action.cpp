@@ -329,6 +329,22 @@ static const struct {
 	{"8042A",   600}
 };
 
+template<class Arg, class Res, class T>
+class Functor1MemConst : public Common::Functor1<Arg, Res> {
+public:
+	typedef Res (T::*FuncType)(Arg) const;
+
+	Functor1MemConst(T *t, const FuncType &func) : _t(t), _func(func) {}
+
+	bool isValid() const { return _func != 0 && _t != 0; }
+	Res operator()(Arg v1) const {
+		return (_t->*_func)(v1);
+	}
+private:
+	mutable T *_t;
+	const FuncType _func;
+};
+
 Action::Action(LastExpressEngine *engine) : _engine(engine) {
 	ADD_ACTION(dummy);
 	ADD_ACTION(inventory);
@@ -378,7 +394,7 @@ Action::Action(LastExpressEngine *engine) : _engine(engine) {
 }
 
 Action::~Action() {
-	for (int i = 0; i < (int)_actions.size(); i++)
+	for (uint i = 0; i < _actions.size(); i++)
 		SAFE_DELETE(_actions[i]);
 
 	_actions.clear();
@@ -404,9 +420,7 @@ SceneIndex Action::processHotspot(const SceneHotspot &hotspot) {
 //////////////////////////////////////////////////////////////////////////
 // Action 0
 IMPLEMENT_ACTION(dummy)
-	warning("[Action::action_dummy] Dummy action function called (hotspot action: %d)", hotspot.action);
-
-	return kSceneInvalid;
+	error("[Action::action_dummy] Dummy action function called (hotspot action: %d)", hotspot.action);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1739,14 +1753,14 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 			return kCursorBackward;
 
 	case SceneHotspot::kActionKnockOnDoor:
-		warning("================================= DOOR %03d =================================", object);
+		debugC(2, kLastExpressDebugScenes, "================================= DOOR %03d =================================", object);
 		if (object >= kObjectMax)
 			return kCursorNormal;
 		else
 			return (CursorStyle)getObjects()->get(object).cursor;
 
 	case SceneHotspot::kAction12:
-		warning("================================= OBJECT %03d =================================", object);
+		debugC(2, kLastExpressDebugScenes, "================================= OBJECT %03d =================================", object);
 		if (object >= kObjectMax)
 			return kCursorNormal;
 
@@ -1756,7 +1770,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 			return kCursorNormal;
 
 	case SceneHotspot::kActionPickItem:
-		warning("================================= ITEM %03d =================================", object);
+		debugC(2, kLastExpressDebugScenes, "================================= ITEM %03d =================================", object);
 		if (object >= kObjectCompartmentA)
 			return kCursorNormal;
 
@@ -1767,7 +1781,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 			return kCursorNormal;
 
 	case SceneHotspot::kActionDropItem:
-		warning("================================= ITEM %03d =================================", object);
+		debugC(2, kLastExpressDebugScenes, "================================= ITEM %03d =================================", object);
 		if (object >= kObjectCompartmentA)
 			return kCursorNormal;
 
@@ -1884,7 +1898,7 @@ LABEL_KEY:
 	// Handle compartment action
 	case SceneHotspot::kActionCompartment:
 	case SceneHotspot::kActionExitCompartment:
-		warning("================================= DOOR %03d =================================", object);
+		debugC(2, kLastExpressDebugScenes, "================================= DOOR %03d =================================", object);
 		if (object >= kObjectMax)
 			return kCursorNormal;
 

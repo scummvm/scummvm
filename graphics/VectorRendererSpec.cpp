@@ -369,12 +369,12 @@ gradientFill(PixelType *ptr, int width, int x, int y) {
 	int grad = (((y - _gradIndexes[curGrad]) % stripSize) << 2) / stripSize;
 
 	// Dithering:
-	//   +--+ +--+ +--+ +--+ 
-	//   |  | |  | | *| | *| 
-	//   |  | | *| |* | |**| 
-	//   +--+ +--+ +--+ +--+ 
+	//   +--+ +--+ +--+ +--+
+	//   |  | |  | | *| | *|
+	//   |  | | *| |* | |**|
+	//   +--+ +--+ +--+ +--+
 	//     0    1    2    3
-	if (grad == 0 || 
+	if (grad == 0 ||
 		_gradCache[curGrad] == _gradCache[curGrad + 1] || // no color change
 		stripSize < 2) { // the stip is small
 		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad]);
@@ -873,7 +873,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 		case kTriangleDown:
 			drawTriangleVertAlg(x, y, newW, newH, (orient == kTriangleDown), color, Base::_fillMode);
 			break;
-					
+
 		case kTriangleLeft:
 		case kTriangleRight:
 		case kTriangleAuto:
@@ -1206,14 +1206,14 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		pitch = -pitch;
 		y1 += h;
 	}
-	
+
 	PixelType *ptr_right = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	PixelType *floor = ptr_right - 1;
 	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x1 + w, y1);
 
 	int x2 = x1 + w / 2;
 	int y2 = y1 + h;
-  
+
 #if FIXED_POINT
 	int dx = (x2 - x1) << 8;
 	int dy = (y2 - y1) << 8;
@@ -1227,7 +1227,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 #endif
 		while (floor++ != ptr_left)
 			blendPixelPtr(floor, color, 50);
-			
+
 #if FIXED_POINT
 		int gradient = (dy << 8) / dx;
 		int intery = (y1 << 8) + gradient;
@@ -1250,7 +1250,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 			ptr_right += pitch;
 
 			intery += gradient;
-			
+
 			switch (fill_m) {
 			case kFillDisabled:
 				*ptr_left = *ptr_right = color;
@@ -1262,16 +1262,16 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 				blendPixelPtr(ptr_left, color, rfpart(intery));
 				break;
 			case kFillGradient:
-				colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));	
+				colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));
 				blendPixelPtr(ptr_right, color, rfpart(intery));
 				blendPixelPtr(ptr_left, color, rfpart(intery));
 				break;
 			}
 		}
-		
+
 		return;
 	}
-	
+
 #if FIXED_POINT
 	if (abs(dx) < abs(dy)) {
 #else
@@ -1280,7 +1280,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		ptr_left--;
 		while (floor++ != ptr_left)
 			blendPixelPtr(floor, color, 50);
-			
+
 #if FIXED_POINT
 		int gradient = (dx << 8) / (dy + 0x100);
 		int interx = (x1 << 8) + gradient;
@@ -1303,7 +1303,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 			ptr_right += pitch;
 
 			interx += gradient;
-			
+
 			switch (fill_m) {
 			case kFillDisabled:
 				*ptr_left = *ptr_right = color;
@@ -1315,18 +1315,18 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 				blendPixelPtr(ptr_left, color, rfpart(interx));
 				break;
 			case kFillGradient:
-				colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));	
+				colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));
 				blendPixelPtr(ptr_right, color, rfpart(interx));
 				blendPixelPtr(ptr_left, color, rfpart(interx));
 				break;
 			}
 		}
-		
+
 		return;
 	}
-	
+
 	ptr_left--;
-	
+
 	while (floor++ != ptr_left)
 		blendPixelPtr(floor, color, 50);
 
@@ -1341,12 +1341,12 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 	for (int y = y1 + 1; y < y2; y++) {
 		ptr_right++;
 		ptr_left--;
-		
+
 		ptr_left += pitch;
 		ptr_right += pitch;
 
 		interx += gradient;
-		
+
 		switch (fill_m) {
 		case kFillDisabled:
 			*ptr_left = *ptr_right = color;
@@ -1358,13 +1358,13 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 			blendPixelPtr(ptr_left, color, rfpart(interx));
 			break;
 		case kFillGradient:
-			colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));	
+			colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));
 			blendPixelPtr(ptr_right, color, rfpart(interx));
 			blendPixelPtr(ptr_left, color, rfpart(interx));
 			break;
 		}
 	}
-	
+
 }
 
 /** VERTICAL TRIANGLE DRAWING - FAST VERSION FOR SQUARED TRIANGLES */
@@ -1372,12 +1372,12 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	
+
 	if (!inverted) {
 		pitch = -pitch;
 		y1 += size;
 	}
-	
+
 	int gradient_h = 0;
 	PixelType *ptr_right = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x1 + size, y1);
@@ -1388,9 +1388,9 @@ drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, Vecto
 	int signX = x1 < x2 ? 1 : -1;
 	int signY = y1 < y2 ? 1 : -1;
 	int error = deltaX - deltaY;
-		
+
 	colorFill<PixelType>(ptr_right, ptr_left, color);
-	 
+
 	while (1) {
 		switch (fill_m) {
 		case kFillDisabled:
@@ -1401,22 +1401,22 @@ drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, Vecto
 			colorFill<PixelType>(ptr_right, ptr_left, color);
 			break;
 		case kFillGradient:
-			colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, size));	
+			colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, size));
 			break;
 		}
-		
+
 		if (x1 == x2 && y1 == y2)
 			break;
-	
+
 		int error2 = error * 2;
-	 
+
 		if (error2 > -deltaY) {
 			error -= deltaY;
 			x1 += signX;
 			ptr_right += signX;
 			ptr_left += -signX;
 		}
-	 
+
 		if (error2 < deltaX) {
 			error += deltaX;
 			y1 += signY;

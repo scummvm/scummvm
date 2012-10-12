@@ -27,6 +27,7 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/lastexpress.h"
@@ -115,10 +116,8 @@ void SoundEntry::close() {
 }
 
 void SoundEntry::play() {
-	if (!_stream) {
-		warning("[SoundEntry::play] stream has been disposed");
-		return;
-	}
+	if (!_stream)
+		error("[SoundEntry::play] stream has been disposed");
 
 	// Prepare sound stream
 	if (!_soundStream)

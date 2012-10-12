@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/engine.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
@@ -125,23 +126,17 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	if (_planes.empty()) {
 		// There has to be another way for sierra sci to do this or maybe script resolution is compiled into
 		//  interpreter (TODO)
-		uint16 tmpRunningWidth = readSelectorValue(_segMan, object, SELECTOR(resX));
-		uint16 tmpRunningHeight = readSelectorValue(_segMan, object, SELECTOR(resY));
+		uint16 scriptWidth = readSelectorValue(_segMan, object, SELECTOR(resX));
+		uint16 scriptHeight = readSelectorValue(_segMan, object, SELECTOR(resY));
 
-		// The above can be 0 in SCI3 (e.g. Phantasmagoria 2)
-		if (tmpRunningWidth == 0 && tmpRunningHeight == 0) {
-			tmpRunningWidth = 320;
-			tmpRunningHeight = 200;
-		}
-		
-		// HACK: Phantasmagoria 1 sets a window size of 630x450.
-		// We can't set a width of 630, as that messes up the pitch, so we hack
-		// the internal script width here
-		if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
-			tmpRunningWidth = 325;
+		// Phantasmagoria 2 doesn't specify a script width/height
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+			scriptWidth = 640;
+			scriptHeight = 480;
 		}
 
-		_coordAdjuster->setScriptsResolution(tmpRunningWidth, tmpRunningHeight);
+		assert(scriptWidth > 0 && scriptHeight > 0);
+		_coordAdjuster->setScriptsResolution(scriptWidth, scriptHeight);
 	}
 
 	// Import of QfG character files dialog is shown in QFG4.
@@ -159,7 +154,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 
 	newPlane.object = object;
 	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
-	newPlane.lastPriority = 0xFFFF; // hidden
+	newPlane.lastPriority = -1; // hidden
 	newPlane.planeOffsetX = 0;
 	newPlane.planeOffsetY = 0;
 	newPlane.pictureId = kPlanePlainColored;
@@ -202,7 +197,7 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			} else {
 				it->planeOffsetX = 0;
 			}
-			
+
 			if (it->planeRect.top < 0) {
 				it->planeOffsetY = -it->planeRect.top;
 				it->planeRect.top = 0;
@@ -425,7 +420,7 @@ void GfxFrameout::deletePlaneItems(reg_t planeObject) {
 		} else {
 			objectMatches = true;
 		}
-		
+
 		if (objectMatches) {
 			FrameoutEntry *itemEntry = *listIterator;
 			listIterator = _screenItems.erase(listIterator);
@@ -465,15 +460,10 @@ bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
 }
 
 bool planeSortHelper(const PlaneEntry &entry1, const PlaneEntry &entry2) {
-//	SegManager *segMan = g_sci->getEngineState()->_segMan;
-
-//	uint16 plane1Priority = readSelectorValue(segMan, entry1, SELECTOR(priority));
-//	uint16 plane2Priority = readSelectorValue(segMan, entry2, SELECTOR(priority));
-
-	if (entry1.priority == 0xffff)
+	if (entry1.priority < 0)
 		return true;
 
-	if (entry2.priority == 0xffff)
+	if (entry2.priority < 0)
 		return false;
 
 	return entry1.priority < entry2.priority;
@@ -499,7 +489,7 @@ void GfxFrameout::showVideo() {
 	uint16 y = videoDecoder->getPos().y;
 
 	if (videoDecoder->hasDirtyPalette())
-		videoDecoder->setSystemPalette();
+		g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
 
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
@@ -508,7 +498,7 @@ void GfxFrameout::showVideo() {
 				g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
 				if (videoDecoder->hasDirtyPalette())
-					videoDecoder->setSystemPalette();
+					g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
 
 				g_system->updateScreen();
 			}
@@ -639,13 +629,13 @@ void GfxFrameout::kernelFrameout() {
 			_screen->drawLine(startPoint, endPoint, it2->color, it2->priority, it2->control);
 		}
 
-		uint16 planeLastPriority = it->lastPriority;
+		int16 planeLastPriority = it->lastPriority;
 
 		// Update priority here, sq6 sets it w/o UpdatePlane
-		uint16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
+		int16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
 
 		it->lastPriority = planePriority;
-		if (planePriority == 0xffff) { // Plane currently not meant to be shown
+		if (planePriority < 0) { // Plane currently not meant to be shown
 			// If plane was shown before, delete plane rect
 			if (planePriority != planeLastPriority)
 				_paint32->fillRect(it->planeRect, 0);
@@ -671,7 +661,7 @@ void GfxFrameout::kernelFrameout() {
 
 			if (!itemEntry->visible)
 				continue;
-			
+
 			if (itemEntry->object.isNull()) {
 				// Picture cel data
 				_coordAdjuster->fromScriptToDisplay(itemEntry->y, itemEntry->x);
@@ -709,13 +699,13 @@ void GfxFrameout::kernelFrameout() {
 					// TODO: maybe we should clip the cels rect with this, i'm not sure
 					//  the only currently known usage is game menu of gk1
 				} else if (view) {
-						if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-							view->getCelRect(itemEntry->loopNo, itemEntry->celNo,
-								itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
-						else
-							view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, 
-								itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX,
-								itemEntry->scaleY, itemEntry->celRect);
+					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
+						view->getCelRect(itemEntry->loopNo, itemEntry->celNo,
+							itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
+					else
+						view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo,
+							itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX,
+							itemEntry->scaleY, itemEntry->celRect);
 
 					Common::Rect nsRect = itemEntry->celRect;
 					// Translate back to actual coordinate within scrollable plane
@@ -739,7 +729,9 @@ void GfxFrameout::kernelFrameout() {
 					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
-				// FIXME: When does this happen, and why?
+				// Don't attempt to draw sprites that are outside the visible
+				// screen area. An example is the random people walking in
+				// Jackson Square in GK1.
 				if (itemEntry->celRect.bottom < 0 || itemEntry->celRect.top  >= _screen->getDisplayHeight() ||
 				    itemEntry->celRect.right  < 0 || itemEntry->celRect.left >= _screen->getDisplayWidth())
 					continue;
@@ -763,10 +755,10 @@ void GfxFrameout::kernelFrameout() {
 				if (view) {
 					if (!clipRect.isEmpty()) {
 						if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-							view->draw(itemEntry->celRect, clipRect, translatedClipRect, 
+							view->draw(itemEntry->celRect, clipRect, translatedClipRect,
 								itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
 						else
-							view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect, 
+							view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect,
 								itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
 					}
 				}
@@ -825,7 +817,7 @@ void GfxFrameout::printPlaneItemList(Console *con, reg_t planeObject) {
 	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
 		FrameoutEntry *e = *listIterator;
 		reg_t itemPlane = readSelector(_segMan, e->object, SELECTOR(plane));
-			
+
 		if (planeObject == itemPlane) {
 			Common::String curItemName = _segMan->getObjectName(e->object);
 			Common::Rect icr = e->celRect;

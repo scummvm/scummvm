@@ -176,11 +176,11 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 		}
 
 		if (params->param2) {
-			UPDATE_PARAM_PROC(params->param8,  getState()->timeTicks, 75)
+			if (Entity::updateParameter(params->param8,  getState()->timeTicks, 75)) {
 				params->param2 = 0;
 				params->param3 = 1;
 				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		params->param8 = 0;
@@ -189,10 +189,10 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 			break;
 
 		if (params->param6) {
-			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 1), getState()->time, 4500)
+			if (Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->time, 4500)) {
 				params->param6 = 0;
 				CURRENT_PARAM(1, 1) = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!getProgress().field_CC) {
@@ -362,7 +362,7 @@ IMPLEMENT_FUNCTION(12, Milos, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Milos, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -434,7 +434,8 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 			if (CURRENT_PARAM(1, 1) < getState()->timeTicks) {
 
 				if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
-					UPDATE_PARAM(CURRENT_PARAM(1, 2), getState()->timeTicks, 75);
+					if (!Entity::updateParameter(CURRENT_PARAM(1, 2), getState()->timeTicks, 75))
+						break;
 
 					getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
 
@@ -505,7 +506,8 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 			}
 
 label_callback_12:
-			UPDATE_PARAM(CURRENT_PARAM(1, 4), getState()->timeTicks, 75);
+			if (!Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->timeTicks, 75))
+				break;
 
 			getEntities()->exitCompartment(kEntityMilos, kObjectCompartment1, true);
 
@@ -720,7 +722,7 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1071000, params->param3, kEntityMilos, kEntityServers1, kAction223002560);
+		Entity::timeCheckSavepoint(kTime1071000, params->param3, kEntityMilos, kEntityServers1, kAction223002560);
 
 		if (getState()->time > kTime1089000 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			setup_function16();
@@ -728,15 +730,16 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 		}
 
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 61) && !params->param1) {
-			UPDATE_PARAM_PROC(params->param4, getState()->timeTicks, 45)
+			if (Entity::updateParameter(params->param4, getState()->timeTicks, 45)) {
 				setCallback(1);
 				setup_draw("009C");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 70) && !params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 45);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 45))
+				break;
 
 			setCallback(2);
 			setup_draw("009C");
@@ -951,7 +954,8 @@ IMPLEMENT_FUNCTION(21, Milos, function21)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param2, getState()->time, 4500);
+		if (!Entity::updateParameter(params->param2, getState()->time, 4500))
+			break;
 
 		params->param1 = 1;
 		break;
@@ -1116,7 +1120,8 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;
@@ -1282,14 +1287,15 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 
 	case kActionNone:
 		if (!getEvent(kEventMilosCompartmentVisitTyler) && !getProgress().field_54 && !ENTITY_PARAM(0, 4)) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 13500)
+			if (Entity::updateParameter(params->param3, getState()->time, 13500)) {
 				getSavePoints()->push(kEntityMilos, kEntityVesna, kAction155913424);
 				params->param3 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param4, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;
@@ -1534,7 +1540,7 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 
 		TIME_CHECK_PLAYSOUND_MILOS(kTime2370600, params->param5, "Mil4015");
 
-		TIME_CHECK_SAVEPOINT(kTime2407500, params->param6, kEntityMilos, kEntityVesna, kAction55996766);
+		Entity::timeCheckSavepoint(kTime2407500, params->param6, kEntityMilos, kEntityVesna, kAction55996766);
 		break;
 
 	case kActionCallback:

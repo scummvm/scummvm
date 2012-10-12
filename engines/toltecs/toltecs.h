@@ -81,6 +81,14 @@ enum SysString {
 	kSysStrCount
 };
 
+enum MenuID {
+	kMenuIdNone,
+	kMenuIdMain,
+	kMenuIdSave,
+	kMenuIdLoad,
+	kMenuIdVolumes
+};
+
 class ToltecsEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
@@ -99,6 +107,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	const Common::String& getTargetName() const { return _targetName; }
+	void syncSoundSettings();
 
 	void setupSysStrings();
 	void requestSavegame(int slotNum, Common::String &description);
@@ -119,14 +128,18 @@ public:
 	void scrollCameraLeft(int16 delta);
 	void scrollCameraRight(int16 delta);
 	void updateCamera();
-	
+
+	void showMenu(MenuID menuId);
+
 	void talk(int16 slotIndex, int16 slotOffset);
 
 	void walk(byte *walkData);
-	
-	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize, 
+
+	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize,
 		byte *rectDataEnd);
 
+	int _cfgVoicesVolume, _cfgMusicVolume, _cfgSoundFXVolume;
+	bool _cfgText, _cfgVoices;
 public:
 
 	AnimationPlayer *_anim;
@@ -150,7 +163,7 @@ public:
 
 	uint _sceneResIndex;
 	int16 _sceneWidth, _sceneHeight;
-	
+
 	int _counter01, _counter02;
 	bool _movieSceneFlag;
 	byte _flag01;
@@ -161,7 +174,7 @@ public:
 	int16 _guiHeight;
 
 	bool _doSpeech, _doText;
-	
+
 	int16 _walkSpeedY, _walkSpeedX;
 
 	Common::KeyState _keyState;

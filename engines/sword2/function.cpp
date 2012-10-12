@@ -2139,7 +2139,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	uint32 frameCount = Sword2Engine::isPsx() ? params[1] : 0;
 
-	_moviePlayer = makeMoviePlayer(filename, _vm, _vm->_mixer, _vm->_system, frameCount);
+	_moviePlayer = makeMoviePlayer(filename, _vm, _vm->_system, frameCount);
 
 	if (_moviePlayer && _moviePlayer->load(filename)) {
 		_moviePlayer->play(_sequenceTextList, _sequenceTextLines, _smackerLeadIn, _smackerLeadOut);

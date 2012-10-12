@@ -125,7 +125,13 @@ void SciMusic::init() {
 		_pMidiDrv->setTimerCallback(this, &miditimerCallback);
 		_dwTempo = _pMidiDrv->getBaseTempo();
 	} else {
-		error("Failed to initialize sound driver");
+		if (g_sci->getGameId() == GID_FUNSEEKER) {
+			// HACK: The Fun Seeker's Guide demo doesn't have patch 3 and the version
+			// of the Adlib driver (adl.drv) that it includes is unsupported. That demo
+			// doesn't have any sound anyway, so this shouldn't be fatal.
+		} else {
+			error("Failed to initialize sound driver");
+		}
 	}
 
 	// Find out what the first possible channel is (used, when doing channel

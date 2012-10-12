@@ -247,7 +247,7 @@ IMPLEMENT_FUNCTION(10, Kahina, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Kahina, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -267,7 +267,7 @@ IMPLEMENT_FUNCTION(11, Kahina, chapter1Handler)
 		return;
 
 	if (getProgress().jacket != kJacketOriginal)
-		TIME_CHECK_SAVEPOINT(kTime1107000, params->param1, kEntityKahina, kEntityMertens, kAction238732837);
+		Entity::timeCheckSavepoint(kTime1107000, params->param1, kEntityKahina, kEntityMertens, kAction238732837);
 
 	if (getProgress().eventMertensKronosInvitation)
 		setup_function12();
@@ -280,7 +280,7 @@ IMPLEMENT_FUNCTION(12, Kahina, function12)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1485000, params->param2, setup_function13);
+		Entity::timeCheck(kTime1485000, params->param2, WRAP_SETUP_FUNCTION(Kahina, setup_function13));
 		break;
 
 	case kActionKnock:
@@ -394,10 +394,10 @@ IMPLEMENT_FUNCTION(15, Kahina, function15)
 
 	case kActionNone:
 		if (params->param2 != kTimeInvalid) {
-			UPDATE_PARAM_PROC_TIME(params->param1, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param2, 0)
+			if (Entity::updateParameterTime((TimeValue)params->param1, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param2, 0)) {
 				setCallback(9);
 				setup_updateEntity(kCarRedSleeping, kPosition_4070);
-			UPDATE_PARAM_PROC_END
+			}
 		}
 		break;
 
@@ -580,18 +580,18 @@ IMPLEMENT_FUNCTION(17, Kahina, chapter2Handler)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM_PROC(params->param2, getState()->time, 9000)
+			if (Entity::updateParameter(params->param2, getState()->time, 9000)) {
 				params->param1 = 1;
 				params->param2 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (getEvent(kEventKahinaAskSpeakFirebird) && getEvent(kEventKronosConversationFirebird) && getEntities()->isInsideTrainCar(kEntityPlayer, kCarKronos)) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 900)
+			if (Entity::updateParameter(params->param3, getState()->time, 900)) {
 				setCallback(1);
 				setup_savegame(kSavegameTypeEvent, kEventKronosConversationFirebird);
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_callback_3:
@@ -785,16 +785,17 @@ label_callback_2:
 		}
 
 		if (!params->param1) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 9000)
+			if (Entity::updateParameter(params->param3, getState()->time, 9000)) {
 				params->param1 = 1;
 				params->param3 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (getEvent(kEventKahinaAskSpeakFirebird)
 		 && !getEvent(kEventKronosConversationFirebird)
 		 && getEntities()->isInsideTrainCar(kEntityPlayer, kCarKronos)) {
-			UPDATE_PARAM(params->param4, getState()->time, 900);
+			if (!Entity::updateParameter(params->param4, getState()->time, 900))
+				break;
 
 			setCallback(3);
 			setup_savegame(kSavegameTypeEvent, kEventKronosConversationFirebird);
@@ -926,11 +927,11 @@ IMPLEMENT_FUNCTION(21, Kahina, function21)
 				params->param3 = (uint)getState()->time + 4500;
 
 			if (params->param6 != kTimeInvalid) {
-				UPDATE_PARAM_PROC_TIME(params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param5, 0)
+				if (Entity::updateParameterTime((TimeValue)params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param5, 0)) {
 					setCallback(2);
 					setup_function23();
 					break;
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 
@@ -941,14 +942,14 @@ label_callback_2:
 				params->param4 = (uint)getState()->time + 4500;
 
 			if (params->param6 != kTimeInvalid) {
-				UPDATE_PARAM_PROC_TIME(params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param6, 0)
+				if (Entity::updateParameterTime((TimeValue)params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param6, 0)) {
 					getSound()->playSound(kEntityPlayer, "LIB014", getSound()->getSoundFlag(kEntityKahina));
 					getSound()->playSound(kEntityPlayer, "LIB015", getSound()->getSoundFlag(kEntityKahina));
 
 					getEntities()->drawSequenceLeft(kEntityKahina, "202a");
 
 					params->param2 = 0;
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 

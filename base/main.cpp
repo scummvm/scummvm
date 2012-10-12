@@ -57,6 +57,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
+#include "graphics/yuv_to_rgb.h"
 #ifdef USE_FREETYPE2
 #include "graphics/fonts/ttf.h"
 #endif
@@ -511,6 +512,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #ifdef USE_FREETYPE2
 	Graphics::shutdownTTF();
 #endif
+	EngineManager::destroy();
+	Graphics::YUVToRGBManager::destroy();
 
 	return 0;
 }

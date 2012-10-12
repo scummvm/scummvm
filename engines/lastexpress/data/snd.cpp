@@ -378,7 +378,7 @@ public:
 
 				// Get current filter
 				_currentFilterId = _nextFilterId;
-				_nextFilterId = -1;
+				//_nextFilterId = -1; // FIXME: the filter id should be recomputed based on the sound entry status for each block
 
 				// No filter: skip decoding
 				if (_currentFilterId == -1)
@@ -526,7 +526,7 @@ void AppendableSound::queueBuffer(Common::SeekableReadStream *bufferIn) {
 	// Setup the ADPCM decoder
 	uint32 sizeIn = (uint32)bufferIn->size();
 	Audio::AudioStream *adpcm = makeDecoder(bufferIn, sizeIn);
-	((LastExpress_ADPCMStream *)adpcm)->setFilterId(1);
+	((LastExpress_ADPCMStream *)adpcm)->setFilterId(16);
 
 	// Queue the stream
 	_as->queueAudioStream(adpcm);

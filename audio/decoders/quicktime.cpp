@@ -62,41 +62,6 @@ private:
 };
 
 /**
- * An AudioStream wrapper that cuts off the amount of samples read after a
- * given time length is reached.
- */
-class LimitingAudioStream : public AudioStream {
-public:
-	LimitingAudioStream(AudioStream *parentStream, const Audio::Timestamp &length,
-			DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) :
-			_parentStream(parentStream), _samplesRead(0), _disposeAfterUse(disposeAfterUse),
-			_totalSamples(length.convertToFramerate(getRate()).totalNumberOfFrames() * getChannels()) {}
-
-	~LimitingAudioStream() {
-		if (_disposeAfterUse == DisposeAfterUse::YES)
-			delete _parentStream;
-	}
-
-	int readBuffer(int16 *buffer, const int numSamples) {
-		// Cap us off so we don't read past _totalSamples					
-		int samplesRead = _parentStream->readBuffer(buffer, MIN<int>(numSamples, _totalSamples - _samplesRead));
-		_samplesRead += samplesRead;
-		return samplesRead;
-	}
-
-	bool endOfData() const { return _parentStream->endOfData() || _samplesRead >= _totalSamples; }
-	bool isStereo() const { return _parentStream->isStereo(); }
-	int getRate() const { return _parentStream->getRate(); }
-
-private:
-	int getChannels() const { return isStereo() ? 2 : 1; } 
-
-	AudioStream *_parentStream;
-	DisposeAfterUse::Flag _disposeAfterUse;
-	uint32 _totalSamples, _samplesRead;
-};
-
-/**
  * An AudioStream wrapper that forces audio to be played in mono.
  * It currently just ignores the right channel if stereo.
  */
@@ -230,7 +195,7 @@ QuickTimeAudioDecoder::QuickTimeAudioTrack::QuickTimeAudioTrack(QuickTimeAudioDe
 
 	if (entry->getCodecTag() == MKTAG('r', 'a', 'w', ' ') || entry->getCodecTag() == MKTAG('t', 'w', 'o', 's'))
 		_parentTrack->sampleSize = (entry->_bitsPerSample / 8) * entry->_channels;
-	
+
 	// Initialize our edit parser too
 	_curEdit = 0;
 	enterNewEdit(Timestamp());
@@ -263,7 +228,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueAudio(const Timestamp &len
 				_skipSamples = Timestamp();
 			}
 
-			queueStream(new LimitingAudioStream(new SilentAudioStream(getRate(), isStereo()), editLength), editLength);
+			queueStream(makeLimitingAudioStream(new SilentAudioStream(getRate(), isStereo()), editLength), editLength);
 			_curEdit++;
 			enterNewEdit(nextEditTime);
 		} else {
@@ -289,7 +254,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueAudio(const Timestamp &len
 			// we move on to the next edit
 			if (trackPosition >= nextEditTime || _curChunk >= _parentTrack->chunkCount) {
 				chunkLength = nextEditTime.convertToFramerate(getRate()) - getCurrentTrackTime();
-				stream = new LimitingAudioStream(stream, chunkLength);
+				stream = makeLimitingAudioStream(stream, chunkLength);
 				_curEdit++;
 				enterNewEdit(nextEditTime);
 
@@ -430,9 +395,9 @@ AudioStream *QuickTimeAudioDecoder::QuickTimeAudioTrack::readAudioChunk(uint chu
 }
 
 void QuickTimeAudioDecoder::QuickTimeAudioTrack::skipSamples(const Timestamp &length, AudioStream *stream) {
-	uint32 sampleCount = length.convertToFramerate(getRate()).totalNumberOfFrames();
+	int32 sampleCount = length.convertToFramerate(getRate()).totalNumberOfFrames();
 
-	if (sampleCount == 0)
+	if (sampleCount <= 0)
 		return;
 
 	if (isStereo())
@@ -461,7 +426,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::enterNewEdit(const Timestamp &p
 	// If we're at the end of the edit list, there's nothing else for us to do here
 	if (allDataRead())
 		return;
-	
+
 	// For an empty edit, we may need to adjust the start time
 	if (_parentTrack->editList[_curEdit].mediaTime == -1) {
 		// Just invalidate the current media position (and make sure the scale

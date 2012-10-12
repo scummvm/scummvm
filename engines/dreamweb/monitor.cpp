@@ -194,7 +194,7 @@ void DreamWebEngine::printLogo() {
 }
 
 void DreamWebEngine::input() {
-	memset(_inputLine, 0, 64);
+	memset(_inputLine, 0, sizeof(_inputLine));
 	_curPos = 0;
 	printChar(_monitorCharset, _monAdX, _monAdY, '>', 0, NULL, NULL);
 	multiDump(_monAdX, _monAdY, 6, 8);
@@ -665,7 +665,7 @@ void DreamWebEngine::searchForFiles(const char *filesString) {
 const char *DreamWebEngine::parser() {
 	char *output = _operand1;
 
-	memset(output, 0, 14);
+	memset(output, 0, sizeof(_operand1));
 
 	*output++ = '=';
 

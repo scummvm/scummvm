@@ -31,6 +31,7 @@
 #include "lastexpress/data/cursor.h"
 #include "lastexpress/data/sequence.h"
 
+#include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"

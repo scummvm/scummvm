@@ -24,6 +24,7 @@
 #define CINE_SOUND_H_
 
 #include "common/util.h"
+#include "common/mutex.h"
 #include "audio/mixer.h"
 
 namespace Audio {
@@ -47,7 +48,6 @@ public:
 
 	virtual void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) = 0;
 	virtual void stopSound(int channel) = 0;
-	virtual void update() {}
 
 protected:
 
@@ -91,19 +91,39 @@ public:
 
 	virtual void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat);
 	virtual void stopSound(int channel);
-	virtual void update();
 
 	enum {
-		PAULA_FREQ = 7093789,
-		NUM_CHANNELS = 4,
-		SPL_HDR_SIZE = 22
+		PAULA_FREQ = 3579545,
+		NUM_CHANNELS = 4
 	};
 
 protected:
 
-	void playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume);
+	struct SfxChannel {
+		Audio::SoundHandle handle;
+		int volume;
+		int volumeStep;
+		int curStep;
+		int stepCount;
 
-	Audio::SoundHandle _channelsTable[NUM_CHANNELS];
+		void initialize(int vol, int volStep, int stepCnt) {
+			volume     = vol;
+			volumeStep = volStep;
+			curStep    = stepCount = stepCnt;
+		}
+	};
+	SfxChannel _channelsTable[NUM_CHANNELS];
+	static const int _channelBalance[NUM_CHANNELS];
+	Common::Mutex _sfxMutex;
+	int _sfxTimer;
+	static void sfxTimerProc(void *param);
+	void sfxTimerCallback();
+
+	Common::Mutex _musicMutex;
+	int _musicTimer;
+	int _musicFadeTimer;
+	static void musicTimerProc(void *param);
+	void musicTimerCallback();
 	Audio::SoundHandle _moduleHandle;
 	Audio::AudioStream *_moduleStream;
 };

@@ -249,7 +249,8 @@ IMPLEMENT_FUNCTION_I(16, Tatiana, function16, uint32)
 		}
 
 		if (params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param2 = 0;
 			params->param3 = 1;
@@ -340,7 +341,7 @@ IMPLEMENT_FUNCTION(17, Tatiana, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Tatiana, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -373,10 +374,10 @@ IMPLEMENT_FUNCTION(18, Tatiana, function18)
 			}
 
 			if (!params->param1) {
-				UPDATE_PARAM_PROC(params->param3, getState()->time, 4500)
+				if (Entity::updateParameter(params->param3, getState()->time, 4500)) {
 					getEntities()->drawSequenceRight(kEntityTatiana, "806DS");
 					params->param1 = 1;
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 
@@ -423,27 +424,29 @@ IMPLEMENT_FUNCTION(19, Tatiana, chapter1Handler)
 		if (getSoundQueue()->isBuffered(kEntityTatiana) || !params->param4 || params->param3 == 2 || getSoundQueue()->isBuffered("TAT1066"))
 			goto label_tatiana_chapter1_2;
 
-		UPDATE_PARAM_PROC(params->param5, getState()->timeTicks, 450)
+		if (Entity::updateParameter(params->param5, getState()->timeTicks, 450)) {
 			getSound()->playSound(kEntityTatiana, params->param3 ? "TAT1069B" : "TAT1069A");
 			getProgress().field_64 = 1;
 			params->param3++;
 			params->param5 = 0;
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 71)) {
-			UPDATE_PARAM_PROC(params->param6, getState()->timeTicks, 75)
+			if (Entity::updateParameter(params->param6, getState()->timeTicks, 75)) {
 				getSound()->playSound(kEntityTatiana, params->param3 ? "TAT1069B" : "TAT1069A");
 				getProgress().field_64 = 1;
 				params->param3++;
 				params->param6 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_tatiana_chapter1_2:
-		TIME_CHECK_SAVEPOINT(kTime1084500, params->param7, kEntityTatiana, kEntityPascale, kAction257489762);
+		Entity::timeCheckSavepoint(kTime1084500, params->param7, kEntityTatiana, kEntityPascale, kAction257489762);
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 90);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 90))
+				break;
+
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 65);
 		} else {
 			params->param8 = 0;
@@ -612,7 +615,7 @@ IMPLEMENT_FUNCTION(22, Tatiana, function22)
 		if (params->param1 == kTimeInvalid || getState()->time <= kTime1179000)
 			goto label_update;
 
-		UPDATE_PARAM_PROC_TIME(kTime1233000, ((!getEvent(kEventTatianaAskMatchSpeakRussian) && !getEvent(kEventTatianaAskMatch)) || getEntities()->isInGreenCarEntrance(kEntityPlayer)), params->param1, 0)
+		if (Entity::updateParameterTime(kTime1233000, ((!getEvent(kEventTatianaAskMatchSpeakRussian) && !getEvent(kEventTatianaAskMatch)) || getEntities()->isInGreenCarEntrance(kEntityPlayer)), params->param1, 0)) {
 label_update:
 			if (!getEvent(kEventTatianaAskMatchSpeakRussian)
 			 && !getEvent(kEventTatianaAskMatch)
@@ -621,7 +624,7 @@ label_update:
 				getObjects()->update(kObject25, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorForward);
 				getObjects()->update(kObjectTrainTimeTable, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorForward);
 			}
-		UPDATE_PARAM_PROC_END
+		}
 
 		params->param1 = kTimeInvalid;
 
@@ -1020,7 +1023,7 @@ IMPLEMENT_FUNCTION(32, Tatiana, chapter3Handler)
 		}
 
 		if (parameters->param4 && parameters->param5) {
-			UPDATE_PARAM_CHECK(parameters->param4, getState()->time, 6300)
+			if (Entity::updateParameterCheck(parameters->param4, getState()->time, 6300)) {
 				if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 					getData()->location = kLocationOutsideCompartment;
 
@@ -1281,18 +1284,19 @@ IMPLEMENT_FUNCTION(37, Tatiana, function37)
 				params->param3 = (uint)getState()->time + 900;
 
 			if (params->param4 != kTimeInvalid && params->param3 < getState()->time) {
-				UPDATE_PARAM_PROC_TIME(kTime2227500, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param4, 450)
+				if (Entity::updateParameterTime(kTime2227500, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param4, 450)) {
 					getProgress().field_5C = 1;
 					if (getEntities()->isInsideCompartment(kEntityAnna, kCarRedSleeping, kPosition_4070)) {
 						setup_function38();
 						break;
 					}
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			getObjects()->update(kObjectCompartmentB, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
 			getObjects()->update(kObject49, kEntityTatiana, kObjectLocation1, kCursorNormal, kCursorNormal);
@@ -1401,7 +1405,8 @@ IMPLEMENT_FUNCTION(38, Tatiana, function38)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 450);
+		if (!Entity::updateParameter(params->param1, getState()->time, 450))
+			break;
 
 		getEntities()->exitCompartment(kEntityTatiana, kObjectCompartmentF, true);
 
@@ -1950,7 +1955,8 @@ IMPLEMENT_FUNCTION(48, Tatiana, function48)
 		if (!params->param1 || getSoundQueue()->isBuffered(kEntityTatiana))
 			goto label_end;
 
-		UPDATE_PARAM_GOTO(params->param2, getState()->timeTicks, 5 * (3 * rnd(5) + 30), label_end);
+		if (!Entity::updateParameter(params->param2, getState()->timeTicks, 5 * (3 * rnd(5) + 30)))
+			goto label_end;
 
 		getSound()->playSound(kEntityTatiana, "LIB012", kFlagDefault);
 		params->param2 = 0;
@@ -2197,7 +2203,8 @@ IMPLEMENT_FUNCTION(54, Tatiana, function54)
 		}
 
 		if (params->param1 > 3) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, 225);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 225))
+				break;
 
 			params->param1 = 0;
 			params->param3 = 0;

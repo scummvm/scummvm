@@ -64,11 +64,11 @@ static int calcBaseCutoff(const TimbreParam::PartialParam *partialParam, Bit32u 
 	int biasPoint = partialParam->tvf.biasPoint;
 	if ((biasPoint & 0x40) == 0) {
 		// biasPoint range here: 0 to 63
-		int bias = biasPoint + 33 - key; // bias range here: -75 to 84 
+		int bias = biasPoint + 33 - key; // bias range here: -75 to 84
 		if (bias > 0) {
 			bias = -bias; // bias range here: -1 to -84
 			baseCutoff += bias * biasLevelToBiasMult[partialParam->tvf.biasLevel]; // Calculation range: -7140 to 7140
-			// baseCutoff range now: -10164 to 10164 
+			// baseCutoff range now: -10164 to 10164
 		}
 	} else {
 		// biasPoint range here: 64 to 127

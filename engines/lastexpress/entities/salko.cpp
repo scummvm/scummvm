@@ -156,7 +156,7 @@ IMPLEMENT_FUNCTION(9, Salko, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Salko, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -299,7 +299,8 @@ IMPLEMENT_FUNCTION(15, Salko, chapter3Handler)
 
 	case kActionNone:
 		if (getState()->time < kTime2200500) {
-			UPDATE_PARAM(params->param1, getState()->time, 81000);
+			if (!Entity::updateParameter(params->param1, getState()->time, 81000))
+				break;
 
 			setCallback(1);
 			setup_function16();
@@ -329,7 +330,8 @@ IMPLEMENT_FUNCTION(16, Salko, function16)
 		}
 
 label_callback3:
-		UPDATE_PARAM(params->param1, getState()->time, 4500);
+		if (!Entity::updateParameter(params->param1, getState()->time, 4500))
+			break;
 
 		getSavePoints()->push(kEntitySalko, kEntitySalko, kAction101169464);
 		break;

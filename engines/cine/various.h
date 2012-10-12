@@ -41,7 +41,7 @@ void makeActionMenu();
 void waitPlayerInput();
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
-extern bool disableSystemMenu;
+extern int16 disableSystemMenu;
 extern bool inMenu;
 
 extern CommandeType currentSaveName[10];

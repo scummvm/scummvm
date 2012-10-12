@@ -250,20 +250,18 @@ void Console::postEnter() {
 #endif
 
 		if (_videoFile.hasSuffix(".seq")) {
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			seqDecoder->setFrameDelay(_videoFrameDelay);
-			videoDecoder = seqDecoder;
+			videoDecoder = new SEQDecoder(_videoFrameDelay);
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new Video::VMDDecoder(g_system->getMixer());
+			videoDecoder = new Video::AdvancedVMDDecoder();
 		} else if (_videoFile.hasSuffix(".rbt")) {
-			videoDecoder = new RobotDecoder(g_system->getMixer(), _engine->getPlatform() == Common::kPlatformMacintosh);
+			videoDecoder = new RobotDecoder(_engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
 			duckMode = true;
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AVIDecoder();
 		} else {
 			warning("Unrecognized video type");
 		}
@@ -2884,17 +2882,17 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 	reg_t addr = NULL_REG;
 
 	if (!obj) {
-		DebugPrintf("Not an object.");
+		DebugPrintf("Not an object.\n");
 		return true;
 	}
 
 	if (selectorId < 0) {
-		DebugPrintf("Not a valid selector name.");
+		DebugPrintf("Not a valid selector name.\n");
 		return true;
 	}
 
 	if (lookupSelector(_engine->_gamestate->_segMan, objAddr, selectorId, NULL, &addr) != kSelectorMethod) {
-		DebugPrintf("Not a method.");
+		DebugPrintf("Not a method.\n");
 		return true;
 	}
 

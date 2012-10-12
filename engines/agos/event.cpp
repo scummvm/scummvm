@@ -467,11 +467,7 @@ void AGOSEngine::delay(uint amount) {
 					memset(_saveLoadName, 0, sizeof(_saveLoadName));
 					sprintf(_saveLoadName, "Quick %d", _saveLoadSlot);
 					_saveLoadType = (event.kbd.hasFlags(Common::KBD_ALT)) ? 1 : 2;
-
-					// We should only allow a load or save when it was possible in original
-					// This stops load/save during copy protection, conversations and cut scenes
-					if (!_mouseHideCount && !_showPreposition)
-						quickLoadOrSave();
+					quickLoadOrSave();
 				} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 					if (event.kbd.keycode == Common::KEYCODE_a) {
 						GUI::Dialog *_aboutDialog;

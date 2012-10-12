@@ -992,7 +992,7 @@ void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &pre
 	ExtraGuiOptions::const_iterator iter;
 	for (iter = engineOptions.begin(); iter != engineOptions.end(); ++iter, ++i) {
 		Common::String id = Common::String::format("%d", i);
-		_engineCheckboxes.push_back(new CheckboxWidget(boss, 
+		_engineCheckboxes.push_back(new CheckboxWidget(boss,
 			prefix + "customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
 	}
 }

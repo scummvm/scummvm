@@ -112,7 +112,7 @@ public:
 class CharsetRendererClassic : public CharsetRendererCommon {
 protected:
 	virtual void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
-	void printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask);	
+	void printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask);
 	virtual bool prepareDraw(uint16 chr);
 
 	int _width, _height, _origWidth, _origHeight;
@@ -195,7 +195,7 @@ public:
 
 	int getCharWidth(uint16 chr);
 	int getFontHeight();
-	
+
 private:
 	void enableShadow(bool enable);
 	void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);

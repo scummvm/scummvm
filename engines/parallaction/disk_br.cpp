@@ -31,7 +31,7 @@
 
 namespace Parallaction {
 
-extern byte _braAmigaFramesDefaultPalette[];
+extern byte braAmigaFramesDefaultPalette[];
 
 struct Sprite {
 	uint16	size;
@@ -475,7 +475,7 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 		}
 		delete stream;
 	} else {
-		p = _braAmigaFramesDefaultPalette;
+		p = braAmigaFramesDefaultPalette;
 		for (i = 0; i < 16; i++) {
 			r = *p >> 2;
 			p++;
@@ -617,7 +617,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 			}
 		}
 
-		delete []shadow;
+		delete[] shadow;
 		delete stream;
 	}
 

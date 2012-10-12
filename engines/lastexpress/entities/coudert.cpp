@@ -37,15 +37,6 @@
 
 namespace LastExpress {
 
-#define SAVEGAME_BLOOD_JACKET() \
-	if (getProgress().jacket == kJacketBlood \
-		&& getEntities()->isDistanceBetweenEntities(kEntityCoudert, kEntityPlayer, 1000) \
-		&& !getEntities()->isInsideCompartments(kEntityPlayer) \
-		&& !getEntities()->checkFields10(kEntityPlayer)) { \
-		setCallback(1); \
-		setup_savegame(kSavegameTypeEvent, kEventMertensBloodJacket); \
-	}
-
 Coudert::Coudert(LastExpressEngine *engine) : Entity(engine, kEntityCoudert) {
 	ADD_CALLBACK_FUNCTION(Coudert, reset);
 	ADD_CALLBACK_FUNCTION(Coudert, bloodJacket);
@@ -124,7 +115,7 @@ IMPLEMENT_FUNCTION_S(2, Coudert, bloodJacket)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionExitCompartment:
@@ -151,7 +142,7 @@ IMPLEMENT_FUNCTION_SI(3, Coudert, enterExitCompartment, ObjectIndex)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 		return;
 
 	case kActionCallback:
@@ -177,7 +168,7 @@ IMPLEMENT_FUNCTION(4, Coudert, callbackActionOnDirection)
 			break;
 		}
 
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionExitCompartment:
@@ -200,7 +191,7 @@ IMPLEMENT_FUNCTION_SIII(5, Coudert, enterExitCompartment2, ObjectIndex, EntityPo
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 		return;
 
 	case kActionCallback:
@@ -221,7 +212,7 @@ IMPLEMENT_FUNCTION_S(6, Coudert, playSound)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionEndSound:
@@ -250,7 +241,7 @@ IMPLEMENT_FUNCTION_NOSETUP(7, Coudert, playSound16)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionEndSound:
@@ -363,9 +354,10 @@ IMPLEMENT_FUNCTION_I(10, Coudert, updateFromTime, uint32)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 
-		UPDATE_PARAM(params->param2, getState()->time, params->param1);
+		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
+			break;
 
 		callbackAction();
 		break;
@@ -386,9 +378,10 @@ IMPLEMENT_FUNCTION_I(11, Coudert, updateFromTicks, uint32)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 
-		UPDATE_PARAM(params->param2, getState()->timeTicks, params->param1);
+		if (!Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
+			break;
 
 		callbackAction();
 		break;
@@ -460,7 +453,7 @@ IMPLEMENT_FUNCTION_II(13, Coudert, function13, bool, EntityIndex)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 
 		if (!params->param2 && !params->param3) {
 
@@ -485,7 +478,8 @@ IMPLEMENT_FUNCTION_II(13, Coudert, function13, bool, EntityIndex)
 			}
 		}
 
-		UPDATE_PARAM(params->param5, getState()->timeTicks, 225);
+		if (!Entity::updateParameter(params->param5, getState()->timeTicks, 225))
+			break;
 
 		getData()->inventoryItem = kItemNone;
 		setCallback(5);
@@ -582,7 +576,7 @@ IMPLEMENT_FUNCTION_I(14, Coudert, function14, EntityIndex)
 		break;
 
 	case kActionNone:
-		SAVEGAME_BLOOD_JACKET();
+		Entity::savegameBloodJacket();
 		break;
 
 	case kActionDefault:
@@ -914,11 +908,12 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(CURRENT_PARAM(1, 3), getState()->time, 300)
+		if (Entity::updateParameter(CURRENT_PARAM(1, 3), getState()->time, 300)) {
 			getSound()->playSound(kEntityPlayer, "ZFX1004", getSound()->getSoundFlag(kEntityCoudert));
-		UPDATE_PARAM_PROC_END
+		}
 
-		UPDATE_PARAM(CURRENT_PARAM(1, 4), getState()->time, 900);
+		if (!Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->time, 900))
+			break;
 
 		getObjects()->updateLocation2((ObjectIndex)params->param1, kObjectLocation1);
 
@@ -997,7 +992,8 @@ IMPLEMENT_FUNCTION(21, Coudert, function21)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment("627Zh", kObjectCompartmentH);
@@ -1098,7 +1094,8 @@ IMPLEMENT_FUNCTION(22, Coudert, function22)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment("627Rg", kObjectCompartmentG);
@@ -1309,7 +1306,8 @@ IMPLEMENT_FUNCTION(26, Coudert, function26)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment2("627Zd", kObjectCompartmentD, kPosition_5790, kPosition_6130);
@@ -1400,7 +1398,8 @@ IMPLEMENT_FUNCTION(27, Coudert, function27)
 
 	case kActionNone:
 		if (!params->param1) {
-			UPDATE_PARAM(params->param2, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
+				break;
 
 			setCallback(3);
 			setup_enterExitCompartment2("627Rc", kObjectCompartmentC, kPosition_6470, kPosition_6130);
@@ -1900,7 +1899,8 @@ IMPLEMENT_FUNCTION_I(35, Coudert, function35, bool)
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 65);
 		}
 
-		UPDATE_PARAM(params->param2, getState()->time, 2700);
+		if (!Entity::updateParameter(params->param2, getState()->time, 2700))
+			break;
 
 		getSavePoints()->push(kEntityCoudert, kEntityMax, kActionMaxFreeFromCage);
 
@@ -1963,7 +1963,7 @@ IMPLEMENT_FUNCTION(36, Coudert, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK(kTimeChapter1, params->param1, 1, setup_chapter1Handler)
+		Entity::timeCheckCallback(kTimeChapter1, params->param1, 1, WRAP_SETUP_FUNCTION(Coudert, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -2281,22 +2281,22 @@ label_callback_9:
 
 label_callback_10:
 		if (getState()->time > kTime1189800 && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 2700);
+			if (Entity::updateParameter(params->param3, getState()->time, 2700)) {
 				ENTITY_PARAM(0, 2) = 1;
 				ENTITY_PARAM(0, 1) = 1;
 
 				getEntities()->drawSequenceLeft(kEntityCoudert, "697F");
 
 				params->param3 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!ENTITY_PARAM(0, 2))
 			break;
 
-		TIME_CHECK_OBJECT(kTime1107000, params->param4, kObject111, kObjectLocation2);
-		TIME_CHECK_OBJECT(kTime1161000, params->param5, kObject111, kObjectLocation3);
-		TIME_CHECK_OBJECT(kTime1206000, params->param6, kObject111, kObjectLocation4);
+		timeCheckObject(kTime1107000, params->param4, kObject111, kObjectLocation2);
+		timeCheckObject(kTime1161000, params->param5, kObject111, kObjectLocation3);
+		timeCheckObject(kTime1206000, params->param6, kObject111, kObjectLocation4);
 		break;
 
 	case kAction1:
@@ -2825,28 +2825,34 @@ label_callback_12:
 		}
 
 label_callback_13:
-		TIME_CHECK_CALLBACK(kTime2088900, params->param1, 14, setup_function32);
+		if (Entity::timeCheckCallback(kTime2088900, params->param1, 14, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_14:
-		TIME_CHECK_CALLBACK(kTime2119500, params->param2, 15, setup_function32);
+		if (Entity::timeCheckCallback(kTime2119500, params->param2, 15, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_15:
-		TIME_CHECK_CALLBACK(kTime2138400, params->param3, 16, setup_function32);
+		if (Entity::timeCheckCallback(kTime2138400, params->param3, 16, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_16:
-		TIME_CHECK_CALLBACK(kTime2147400, params->param4, 17, setup_function32);
+		if (Entity::timeCheckCallback(kTime2147400, params->param4, 17, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_17:
-		TIME_CHECK_CALLBACK(kTime2160000, params->param5, 18, setup_function32);
+		if (Entity::timeCheckCallback(kTime2160000, params->param5, 18, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_18:
-		TIME_CHECK_CALLBACK(kTime2205000, params->param6, 19, setup_function32);
+		if (Entity::timeCheckCallback(kTime2205000, params->param6, 19, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+			break;
 
 label_callback_19:
 		if (ENTITY_PARAM(0, 2)) {
-			TIME_CHECK_OBJECT(kTime2025000, params->param7, kObject111, kObjectLocation7);
-			TIME_CHECK_OBJECT(kTime2133000, params->param8, kObject111, kObjectLocation8);
-			TIME_CHECK_OBJECT(kTime2173500, CURRENT_PARAM(1, 1), kObject111, kObjectLocation9);
+			timeCheckObject(kTime2025000, params->param7, kObject111, kObjectLocation7);
+			timeCheckObject(kTime2133000, params->param8, kObject111, kObjectLocation8);
+			timeCheckObject(kTime2173500, CURRENT_PARAM(1, 1), kObject111, kObjectLocation9);
 		}
 		break;
 
@@ -3539,11 +3545,11 @@ label_callback_1:
 				params->param2 = (uint)(getState()->time + 4500);
 
 			if (params->param3 != kTimeInvalid) {
-				UPDATE_PARAM_PROC_TIME(params->param2, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param3, 0)
+				if (Entity::updateParameterTime((TimeValue)params->param2, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param3, 0)) {
 					setCallback(2);
 					setup_function55();
 					break;
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 
@@ -3556,18 +3562,22 @@ label_callback_2:
 
 label_callback_3:
 		if (!params->param1) {
-			TIME_CHECK_CALLBACK(kTime2394000, params->param4, 4, setup_function56);
+			if (Entity::timeCheckCallback(kTime2394000, params->param4, 4, WRAP_SETUP_FUNCTION(Coudert, setup_function56)))
+				break;
 
 label_callback_4:
-			TIME_CHECK_CALLBACK(kTime2434500, params->param5, 5, setup_function32);
+			if (Entity::timeCheckCallback(kTime2434500, params->param5, 5, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+				break;
 
 label_callback_5:
-			TIME_CHECK_CALLBACK(kTime2448000, params->param6, 6, setup_function32);
+			if (Entity::timeCheckCallback(kTime2448000, params->param6, 6, WRAP_SETUP_FUNCTION(Coudert, setup_function32)))
+				break;
 		}
 
 label_callback_6:
 		if (getState()->time > kTime2538000 && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
-			UPDATE_PARAM(params->param7, getState()->time, 2700);
+			if (!Entity::updateParameter(params->param7, getState()->time, 2700))
+				break;
 
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 1) = 1;
@@ -4032,7 +4042,8 @@ IMPLEMENT_FUNCTION(62, Coudert, function62)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param4, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;

@@ -292,12 +292,12 @@ struct PackBitsRectData {
 	uint16 mode;
 };
 
-void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool hasPalette) {
+void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette) {
 	PackBitsRectData packBitsData;
-	packBitsData.pixMap = readPixMap(stream, !hasPalette);
+	packBitsData.pixMap = readPixMap(stream, !withPalette);
 
 	// Read in the palette if there is one present
-	if (hasPalette) {
+	if (withPalette) {
 		// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-267.html
 		stream.readUint32BE(); // seed
 		stream.readUint16BE(); // flags
@@ -469,10 +469,10 @@ void PICTDecoder::outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel) {
 	}
 }
 
-void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool hasPalette) {
+void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool withPalette) {
 	// Step through a PackBitsRect/DirectBitsRect function
 
-	if (!hasPalette)
+	if (!withPalette)
 		stream.readUint32BE();
 
 	uint16 rowBytes = stream.readUint16BE();
@@ -492,7 +492,7 @@ void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool hasPalet
 		stream.readUint16BE(); // pixelSize
 		stream.skip(16);
 
-		if (hasPalette) {
+		if (withPalette) {
 			stream.readUint32BE();
 			stream.readUint16BE();
 			stream.skip((stream.readUint16BE() + 1) * 8);
@@ -543,7 +543,7 @@ void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) 
 
 	// Skip the matte and mask
 	stream.skip(matteSize + maskSize);
-	
+
 	// Now we've reached the image descriptor, so read the relevant data from that
 	uint32 idStart = stream.pos();
 	uint32 idSize = stream.readUint32BE();

@@ -262,8 +262,15 @@ Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
 
 Script* Disk_ns::loadLocation(const char *name) {
 	char path[PATH_LEN];
+	const char *charName = _vm->_char.getBaseName();
 
-	sprintf(path, "%s%s/%s.loc", _vm->_char.getBaseName(), _language.c_str(), name);
+	// WORKAROUND: Special case for the Multilingual DOS version: during the ending
+	// sequence, it tries to load a non-existing file using "Dinor" as a character
+	// name. In this case, the character name should be just "dino".
+	if (!strcmp(charName, "Dinor"))
+		charName = "dino";
+
+	sprintf(path, "%s%s/%s.loc", charName, _language.c_str(), name);
 	debugC(3, kDebugDisk, "Disk_ns::loadLocation(%s): trying '%s'", name, path);
 	Common::SeekableReadStream *stream = tryOpenFile(path);
 
@@ -328,7 +335,7 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 	}
 
 	char v20[30];
-	if (_engineFlags & kEngineTransformedDonna) {
+	if (g_engineFlags & kEngineTransformedDonna) {
 		sprintf(v20, "%stta.cnv", name);
 	} else {
 		sprintf(v20, "%stal.cnv", name);
@@ -832,7 +839,7 @@ void AmigaDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 
 	assert(buf);
 	stream->read(buf, rawsize);
 	unpackBitmap(data, buf, numFrames, bytesPerPlane, height);
-	delete []buf;
+	delete[] buf;
 }
 
 #undef NUM_PLANES

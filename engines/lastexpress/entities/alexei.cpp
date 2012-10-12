@@ -251,7 +251,7 @@ IMPLEMENT_FUNCTION(15, Alexei, function15)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_CHECK(params->param2, getState()->time, params->param1)
+		if (Entity::updateParameterCheck(params->param2, getState()->time, params->param1)) {
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				getData()->location = kLocationOutsideCompartment;
 
@@ -314,7 +314,8 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, function16, TimeValue)
 		}
 
 		if (params->param5) {
-			UPDATE_PARAM(CURRENT_PARAM(1, 1), getState()->timeTicks, 75);
+			if (!Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->timeTicks, 75))
+				break;
 
 			params->param5 = 0;
 			params->param6 = 1;
@@ -445,7 +446,7 @@ IMPLEMENT_FUNCTION(17, Alexei, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler)
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Alexei, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -482,7 +483,9 @@ IMPLEMENT_FUNCTION(18, Alexei, chapter1Handler)
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, 90);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 90))
+				break;
+
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 61);
 		} else {
 			params->param3 = 0;
@@ -686,7 +689,7 @@ IMPLEMENT_FUNCTION(21, Alexei, function21)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_CHECK(params->param2, getState()->time, params->param1)
+		if (Entity::updateParameterCheck(params->param2, getState()->time, params->param1)) {
 			getData()->location = kLocationOutsideCompartment;
 			getData()->inventoryItem = kItemNone;
 
@@ -748,7 +751,7 @@ IMPLEMENT_FUNCTION(22, Alexei, function22)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(params->param2, getState()->time, params->param2)
+		if (Entity::updateParameter(params->param2, getState()->time, params->param2)) {
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				getData()->location = kLocationOutsideCompartment;
 				getData()->inventoryItem = kItemNone;
@@ -757,7 +760,7 @@ IMPLEMENT_FUNCTION(22, Alexei, function22)
 				setup_updatePosition("103D", kCarRestaurant, 52);
 				break;
 			}
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (params->param3 == kTimeInvalid || getState()->time <= kTime1111500)
 			break;
@@ -975,7 +978,7 @@ IMPLEMENT_FUNCTION(26, Alexei, function26)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1512000, params->param1, setup_function27)
+		Entity::timeCheck(kTime1512000, params->param1, WRAP_SETUP_FUNCTION(Alexei, setup_function27));
 		break;
 
 	case kActionDefault:
@@ -1330,25 +1333,26 @@ IMPLEMENT_FUNCTION(35, Alexei, function35)
 
 	case kActionNone:
 		if (getEntities()->isInSalon(kEntityPlayer)) {
-			UPDATE_PARAM_PROC(params->param2, getState()->time, 2700)
+			if (Entity::updateParameter(params->param2, getState()->time, 2700)) {
 				setCallback(1);
 				setup_callbackActionRestaurantOrSalon();
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		} else {
 			params->param2 = 0;
 		}
 
-		UPDATE_PARAM_PROC(params->param3, getState()->time, params->param1)
+		if (Entity::updateParameter(params->param3, getState()->time, params->param1)) {
 			if (getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 				setCallback(3);
 				setup_function15();
 				break;
 			}
-		UPDATE_PARAM_PROC_END
+		}
 
 label_callback_3:
-		UPDATE_PARAM(params->param4, getState()->time, 9000);
+		if (!Entity::updateParameter(params->param4, getState()->time, 9000))
+			break;
 
 		setCallback(4);
 		setup_callbackActionRestaurantOrSalon();
@@ -1397,7 +1401,8 @@ IMPLEMENT_FUNCTION(36, Alexei, function36)
 		if (params->param3 || params->param2)
 			break;
 
-		UPDATE_PARAM(params->param4, getState()->timeTicks, params->param1);
+		if (!Entity::updateParameter(params->param4, getState()->timeTicks, params->param1))
+			break;
 
 		getEntities()->drawSequenceRight(kEntityAlexei, "124B");
 

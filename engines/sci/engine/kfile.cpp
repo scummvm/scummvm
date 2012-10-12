@@ -197,8 +197,15 @@ reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 	// TODO: Stub
 	switch (argv[0].toUint16()) {
 	case 0:
-		// Return whether the contents of disc argv[1] is available.
-		return TRUE_REG;
+		if (argc == 1) {
+			// Check if a disc is in the drive
+			return TRUE_REG;
+		} else {
+			// Check if the specified disc is in the drive
+			// and return the current disc number. We just
+			// return the requested disc number.
+			return argv[1];
+		}
 	case 1:
 		// Return the current CD number
 		return make_reg(0, 1);
@@ -333,7 +340,7 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 
 	if (argv[0] == SIGNAL_REG)
 		return s->r_acc;
-	
+
 	uint16 handle = argv[0].toUint16();
 
 #ifdef ENABLE_SCI32
@@ -617,7 +624,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	// Special case for KQ6 Mac: The game checks for two video files to see
 	// if they exist before it plays them. Since we support multiple naming
 	// schemes for resource fork files, we also need to support that here in
-	// case someone has a "HalfDome.bin" file, etc. 
+	// case someone has a "HalfDome.bin" file, etc.
 	if (!exists && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
 			(name == "HalfDome" || name == "Kq6Movie"))
 		exists = Common::MacResManager::exists(name);
@@ -991,7 +998,7 @@ reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
 	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
 		error("kMakeSaveFileName: invalid savegame ID specified");
 	uint saveSlot = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
-	
+
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 

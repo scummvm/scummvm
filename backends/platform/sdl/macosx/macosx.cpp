@@ -156,7 +156,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 			}
 			CFRelease(preferredLocalizations);
 		}
-		
+
 	}
 	// Falback to POSIX implementation
 	return OSystem_POSIX::getSystemLanguage();

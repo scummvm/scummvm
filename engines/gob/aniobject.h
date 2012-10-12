@@ -25,6 +25,8 @@
 
 #include "common/system.h"
 
+#include "gob/backbuffer.h"
+
 namespace Gob {
 
 class ANIFile;
@@ -32,7 +34,7 @@ class CMPFile;
 class Surface;
 
 /** An ANI object, controlling an animation within an ANI file. */
-class ANIObject {
+class ANIObject : public BackBuffer {
 public:
 	enum Mode {
 		kModeContinuous, ///< Play the animation continuously.
@@ -68,10 +70,10 @@ public:
 	/** Return the current position. */
 	void getPosition(int16 &x, int16 &y) const;
 
-	/** Return the current frame position. */
-	void getFramePosition(int16 &x, int16 &y) const;
-	/** Return the current frame size. */
-	void getFrameSize(int16 &width, int16 &height) const;
+	/** Return the frame position after another n frames. */
+	void getFramePosition(int16 &x, int16 &y, uint16 n = 0) const;
+	/** Return the current frame size after another n frames. */
+	void getFrameSize(int16 &width, int16 &height, uint16 n = 0) const;
 
 	/** Are there coordinates within the animation sprite? */
 	bool isIn(int16 x, int16 y) const;
@@ -118,13 +120,6 @@ private:
 	int16 _x; ///< The current X position.
 	int16 _y; ///< The current Y position.
 
-	Surface *_background; ///< The saved background.
-	bool _drawn;          ///< Was the animation drawn?
-
-	int16 _backgroundLeft;   ///< The left position of the saved background.
-	int16 _backgroundTop;    ///< The top of the saved background.
-	int16 _backgroundRight;  ///< The right position of the saved background.
-	int16 _backgroundBottom; ///< The bottom position of the saved background.
 
 	bool drawCMP(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 	bool drawANI(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);

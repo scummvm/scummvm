@@ -326,7 +326,7 @@ bool AudioStreamInstance::readPacket() {
 	}
 
 	if (numDecompressedBytes > _bufferMaxSize) {
-		delete [] _buffer;
+		delete[] _buffer;
 		_bufferMaxSize = numDecompressedBytes;
 		_buffer = new int16[numDecompressedBytes];
 	}

@@ -66,7 +66,7 @@ IMPLEMENT_FUNCTION(2, Gendarmes, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Gendarmes, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -266,7 +266,8 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 			getSound()->playSound(kEntityGendarmes, "POL1046A", kFlagDefault);
 		}
 
-		UPDATE_PARAM(params->param7, getState()->timeTicks, 300);
+		if (!Entity::updateParameter(params->param7, getState()->timeTicks, 300))
+			break;
 
 		if (!params->param4 && getEntities()->isOutsideAlexeiWindow()) {
 			getObjects()->update((ObjectIndex)params->param3, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
@@ -551,7 +552,8 @@ void Gendarmes::arrest(const SavePoint &savepoint, bool shouldPlaySound, SoundFl
 	case kActionNone:
 		if (checkCallback) {
 			EXPOSE_PARAMS(EntityData::EntityParametersIIII);
-			TIME_CHECK_CALLBACK_ACTION(params->param1, params->param2);
+			if (Entity::timeCheckCallbackAction((TimeValue)params->param1, params->param2))
+				break;
 		}
 
 		if (shouldUpdateEntity) {

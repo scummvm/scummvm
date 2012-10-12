@@ -230,7 +230,7 @@ AnimFrame *Animation::processChunkFrame(Common::SeekableReadStream *in, const Ch
 	i.read(str, false);
 
 	// Decode the frame
-	AnimFrame *f = new AnimFrame(str, i);
+	AnimFrame *f = new AnimFrame(str, i, true);
 
 	// Delete the temporary chunk buffer
 	delete str;
@@ -248,7 +248,7 @@ void Animation::processChunkAudio(Common::SeekableReadStream *in, const Chunk &c
 		// Read Snd header
 		uint32 header1 = in->readUint32LE();
 		uint16 header2 = in->readUint16LE();
-		warning("Start ADPCM: %d, %d", header1, header2);
+		debugC(4, kLastExpressDebugSound, "Start ADPCM: %d, %d", header1, header2);
 		size -= 6;
 	}
 

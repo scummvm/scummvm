@@ -476,10 +476,13 @@ IMPLEMENT_FUNCTION_IS(17, Boutarel, function17, TimeValue)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_ACTION(params->param1, params->param6);
+		if (Entity::timeCheckCallbackAction((TimeValue)params->param1, params->param6))
+			break;
 
 		if (params->param5) {
-			UPDATE_PARAM(params->param7, getState()->timeTicks, 90)
+			if (!Entity::updateParameter(params->param7, getState()->timeTicks, 90))
+				break;
+
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 51);
 		} else {
 			params->param7 = 0;
@@ -514,7 +517,8 @@ IMPLEMENT_FUNCTION_I(18, Boutarel, function18, TimeValue)
 		}
 
 		if (params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param2 = 0;
 			params->param3 = 1;
@@ -613,7 +617,7 @@ IMPLEMENT_FUNCTION(19, Boutarel, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Boutarel, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -642,14 +646,14 @@ IMPLEMENT_FUNCTION(20, Boutarel, function20)
 			break;
 
 		if (!params->param2) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 4500)
+			if (Entity::updateParameter(params->param3, getState()->time, 4500)) {
 				setCallback(3);
 				setup_playSound("MRB1078A");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
-		TIME_CHECK_CALLBACK_1(kTime1138500, params->param4, 4, setup_function14, false);
+		Entity::timeCheckCallback(kTime1138500, params->param4, 4, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -674,7 +678,7 @@ IMPLEMENT_FUNCTION(20, Boutarel, function20)
 			break;
 
 		case 3:
-			TIME_CHECK_CALLBACK_1(kTime1138500, params->param4, 4, setup_function14, false);
+			Entity::timeCheckCallback(kTime1138500, params->param4, 4, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 			break;
 
 		case 4:
@@ -832,7 +836,7 @@ IMPLEMENT_FUNCTION(24, Boutarel, chapter2Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_1(kTime1759500, params->param2, 1, setup_function14, false);
+		Entity::timeCheckCallback(kTime1759500, params->param2, 1, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -932,9 +936,9 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(params->param2, getState()->time, 450)
+		if (Entity::updateParameter(params->param2, getState()->time, 450)) {
 			getSavePoints()->push(kEntityBoutarel, kEntityServers1, kAction256200848);
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (!params->param1)
 			break;
@@ -957,7 +961,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 			}
 		}
 
-		TIME_CHECK_CALLBACK_1(kTime2002500, params->param4, 1, setup_function14, true);
+		Entity::timeCheckCallback(kTime2002500, params->param4, 1, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -970,7 +974,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 			break;
 
 		case 1:
-			TIME_CHECK_CALLBACK_1(kTime2002500, params->param4, 1, setup_function14, true);
+			Entity::timeCheckCallback(kTime2002500, params->param4, 1, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 			break;
 
 		case 2:
@@ -1043,7 +1047,7 @@ IMPLEMENT_FUNCTION(32, Boutarel, chapter4Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime2367000, params->param1, setup_function33);
+		Entity::timeCheck(kTime2367000, params->param1, WRAP_SETUP_FUNCTION(Boutarel, setup_function33));
 		break;
 
 	case kActionDefault:
@@ -1061,7 +1065,7 @@ IMPLEMENT_FUNCTION(33, Boutarel, function33)
 
 	case kActionNone:
 		if (params->param1)
-			TIME_CHECK_CALLBACK_1(kTime2389500, params->param2, 3, setup_function14, false);
+			Entity::timeCheckCallback(kTime2389500, params->param2, 3, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -1109,7 +1113,8 @@ IMPLEMENT_FUNCTION(34, Boutarel, function34)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime2470500, params->param1, setup_function35);
+		if (Entity::timeCheck(kTime2470500, params->param1, WRAP_SETUP_FUNCTION(Boutarel, setup_function35)))
+			break;
 
 		if (getState()->time > kTime2457000 && getEvent(kEventAugustDrink)) {
 			getSavePoints()->push(kEntityBoutarel, kEntityAbbot, kAction159003408);

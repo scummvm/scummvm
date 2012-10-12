@@ -319,8 +319,8 @@ static void ActorRestoredProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->pic = RestoreInterpretContext(r->pic);
-	
-	// The newly added check here specially sets the process to RES_NOT when loading a savegame. 
+
+	// The newly added check here specially sets the process to RES_NOT when loading a savegame.
 	// This is needed particularly for the Psychiatrist scene in Discworld 1 - otherwise Rincewind
 	// can't go upstairs without leaving the building and returning.  If this patch causes problems
 	// in other scenes, an added check for the hCode == 1174490602 could be added.

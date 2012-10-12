@@ -79,7 +79,6 @@ private:
 	bool cmdShow(int argc, const char **argv);
 	bool cmdEntity(int argc, const char **argv);
 
-	bool cmdLoadGame(int argc, const char **argv);
 	bool cmdSwitchChapter(int argc, const char **argv);
 	bool cmdClear(int argc, const char **argv);
 
@@ -87,7 +86,7 @@ private:
 	void copyCommand(int argc, const char **argv);
 	int getNumber(const char *arg) const;
 
-	void loadArchive(ArchiveIndex index) const;
+	bool loadArchive(int index);
 	void restoreArchive() const;
 
 	Debuglet *_command;

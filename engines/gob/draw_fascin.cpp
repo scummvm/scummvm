@@ -222,8 +222,8 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 								_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 					}
 				} else {
-					drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
-							_backColor, _transparency, *_spritesArray[_destSurface], *font);
+					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
+							_backColor, _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {

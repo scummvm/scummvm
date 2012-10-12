@@ -105,7 +105,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "17c3993415e8a2cf93040eef7e88ec93", 1156508),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_TESTING,
+			ADGF_UNSTABLE,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
@@ -120,7 +120,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "17eabb456cb1546c66baf1aff387ba6a", 10032614),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
@@ -134,7 +134,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "99983f48cb218f1f3760cf2f9a7ef11d", 63863322),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
@@ -150,7 +150,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "5b2b35c51b62e82d82b0791540bfae2d", 10082565),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_CD | ADGF_TESTING,
+			ADGF_CD | ADGF_UNSTABLE,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,

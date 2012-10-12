@@ -295,7 +295,7 @@ void CruiseMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 		Cruise::CruiseEngine::getSavegameFile(slot));
-	
+
 	if (f) {
 		Cruise::CruiseSavegameHeader header;
 		Cruise::readSavegameHeader(f, header);

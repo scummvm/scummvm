@@ -1,7 +1,6 @@
 MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
-	main.o \
 	sdl.o
 
 ifdef POSIX

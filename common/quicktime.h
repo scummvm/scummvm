@@ -35,6 +35,7 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/rational.h"
+#include "common/types.h"
 
 namespace Common {
 	class MacResManager;
@@ -167,7 +168,7 @@ protected:
 	Rational _scaleFactorX;
 	Rational _scaleFactorY;
 	Array<Track *> _tracks;
-	
+
 	void init();
 
 private:

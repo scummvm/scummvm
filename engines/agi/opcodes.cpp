@@ -130,7 +130,7 @@ AgiInstruction insV1[] = {
 	{ "...",				"",			&cmdUnknown },			// 4E  # show.obj
 	{ "load.logics",		"n",		&cmdLoadLogic },		// 4F # load.global.logics
 	{ "display",			"nnns",		&cmdDisplay },			// 50 TODO: 4 vs 3 args
-	{ "prevent.input???",	"",			&cmdUnknown },			// 51 
+	{ "prevent.input???",	"",			&cmdUnknown },			// 51
 	{ "...",				"",			&cmdUnknown },			// 52 # nop
 	{ "...",				"n",		&cmdUnknown },			// 53 # text.screen
 	{ "...",				"",			&cmdUnknown },			// 54 ???

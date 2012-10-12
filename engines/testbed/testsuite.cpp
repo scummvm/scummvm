@@ -289,7 +289,7 @@ void Testsuite::execute() {
 			continue;
 		}
 
-		if((*i)->isInteractive && !ConfParams.isSessionInteractive()) {
+		if ((*i)->isInteractive && !ConfParams.isSessionInteractive()) {
 			logPrintf("Info! Skipping Test: %s, non-interactive environment is selected\n", ((*i)->featureName).c_str());
 			_numTestsSkipped++;
 			continue;

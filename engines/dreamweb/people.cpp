@@ -411,7 +411,7 @@ void DreamWebEngine::interviewer(ReelRoutine &routine) {
 
 	if (routine.reelPointer() != 250 && routine.reelPointer() != 259 && checkSpeed(routine))
 		routine.incReelPointer();
-	
+
 	showGameReel(&routine);
 }
 
@@ -745,7 +745,7 @@ void DreamWebEngine::introMonks2(ReelRoutine &routine) {
 		if (nextReelPointer == 110) {
 			_introCount++;
 			monks2text();
-		
+
 			if (_introCount == 35)
 				nextReelPointer = 111;
 			else
@@ -895,7 +895,7 @@ void DreamWebEngine::helicopter(ReelRoutine &routine) {
 					nextReelPointer = 9;
 				}
 			}
-		} 
+		}
 
 		routine.setReelPointer(nextReelPointer);
 	}
@@ -1002,7 +1002,7 @@ void DreamWebEngine::businessMan(ReelRoutine &routine) {
 				nextReelPointer = 92;
 			}
 		}
-		
+
 		routine.setReelPointer(nextReelPointer);
 	}
 
@@ -1037,7 +1037,7 @@ void DreamWebEngine::endGameSeq(ReelRoutine &routine) {
 
 	showGameReel(&routine);
 	routine.mapY = _mapY;
-	
+
 	if (routine.reelPointer() == 145) {
 		routine.setReelPointer(146);
 		rollEndCreditsGameWon();
@@ -1070,7 +1070,7 @@ void DreamWebEngine::poolGuard(ReelRoutine &routine) {
 
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
-		
+
 		if (nextReelPointer != 122) {
 			// Not end guard 1
 			if (nextReelPointer == 147) {
@@ -1103,12 +1103,12 @@ void DreamWebEngine::poolGuard(ReelRoutine &routine) {
 				}
 			}
 		}
-		
+
 		routine.setReelPointer(nextReelPointer);
 	}
 
 	showGameReel(&routine);
-	
+
 	if (routine.reelPointer() != 121 && routine.reelPointer() != 146) {
 		_pointerMode = 0;
 		_vars._watchingTime = 2;

@@ -523,7 +523,8 @@ IMPLEMENT_FUNCTION_I(21, August, function21, TimeValue)
 		}
 
 		if (params->param2) {
-			UPDATE_PARAM_GOTO(params->param8, getState()->timeTicks, 75, label_continue);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 75))
+				goto label_continue;
 
 			params->param2 = 0;
 			params->param3 = 1;
@@ -538,10 +539,10 @@ label_continue:
 			break;
 
 		if (params->param6) {
-			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 1), getState()->time, 6300)
+			if (Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->time, 6300)) {
 				params->param6 = 0;
 				CURRENT_PARAM(1, 1) = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!params->param4
@@ -751,7 +752,7 @@ IMPLEMENT_FUNCTION(22, August, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(August, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -804,7 +805,7 @@ IMPLEMENT_FUNCTION_I(23, August, function23, TimeValue)
 			}
 
 label_callback_8:
-			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 4), getState()->timeTicks, 75)
+			if (Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->timeTicks, 75)) {
 				getEntities()->exitCompartment(kEntityAugust, kObjectCompartment1, true);
 
 				if (getProgress().eventCorpseMovedFromFloor) {
@@ -820,7 +821,7 @@ label_callback_8:
 					setup_savegame(kSavegameTypeEvent, kEventAugustFindCorpse);
 				}
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 
 label_callback_9:
 			if (params->param3 && params->param1 < getState()->time && !CURRENT_PARAM(1, 5)) {
@@ -840,7 +841,8 @@ label_callback_9:
 			break;
 
 		if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
-			UPDATE_PARAM(CURRENT_PARAM(1, 2), getState()->timeTicks, 75);
+			if (!Entity::updateParameter(CURRENT_PARAM(1, 2), getState()->timeTicks, 75))
+				break;
 
 			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
 
@@ -1483,7 +1485,8 @@ IMPLEMENT_FUNCTION(30, August, restaurant)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param3, getState()->timeTicks, 75);
+		if (!Entity::updateParameter(params->param3, getState()->timeTicks, 75))
+			break;
 
 		getData()->inventoryItem = kItemInvalid;
 		break;
@@ -1632,9 +1635,9 @@ IMPLEMENT_FUNCTION(32, August, function32)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC_TIME(kTime1179000, (!getEntities()->isInSalon(kEntityAnna) || getEntities()->isInSalon(kEntityPlayer)), params->param6, 0);
+		if (Entity::updateParameterTime(kTime1179000, (!getEntities()->isInSalon(kEntityAnna) || getEntities()->isInSalon(kEntityPlayer)), params->param6, 0)) {
 			getSavePoints()->push(kEntityAugust, kEntityAnna, kAction123712592);
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (params->param1 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			if (!params->param4) {
@@ -1643,18 +1646,19 @@ IMPLEMENT_FUNCTION(32, August, function32)
 			}
 
 			if (params->param7 != kTimeInvalid && params->param4 < getState()->time) {
-				UPDATE_PARAM_PROC_TIME(params->param5, getEntities()->isInSalon(kEntityPlayer), params->param7, 0);
+				if (Entity::updateParameterTime((TimeValue)params->param5, getEntities()->isInSalon(kEntityPlayer), params->param7, 0)) {
 					getData()->location = kLocationOutsideCompartment;
 
 					setCallback(5);
 					setup_updatePosition("109D", kCarRestaurant, 56);
 					break;
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 
 		if (params->param3) {
-			UPDATE_PARAM(params->param8, getState()->timeTicks, 90);
+			if (!Entity::updateParameter(params->param8, getState()->timeTicks, 90))
+				break;
 
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 55);
 		} else {
@@ -1811,7 +1815,7 @@ IMPLEMENT_FUNCTION(36, August, chapter2Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1755000, params->param2, kEntityAugust, kEntityServers0, kAction252568704);
+		Entity::timeCheckSavepoint(kTime1755000, params->param2, kEntityAugust, kEntityServers0, kAction252568704);
 
 		if (getState()->time > kTime1773000 && params->param1 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->inventoryItem = kItemNone;
@@ -1902,7 +1906,7 @@ IMPLEMENT_FUNCTION(37, August, function37)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_1(kTime1791000, params->param2, 5, setup_function20, true);
+		Entity::timeCheckCallback(kTime1791000, params->param2, 5, true, WRAP_SETUP_FUNCTION_B(August, setup_function20));
 		break;
 
 	case kActionDefault:
@@ -1960,9 +1964,9 @@ IMPLEMENT_FUNCTION(38, August, function38)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1801800, params->param1, kEntityAugust, kEntityRebecca, kAction155980128);
+		Entity::timeCheckSavepoint(kTime1801800, params->param1, kEntityAugust, kEntityRebecca, kAction155980128);
 
-		TIME_CHECK_CALLBACK(kTime1820700, params->param2, 3, setup_callbackActionRestaurantOrSalon);
+		Entity::timeCheckCallback(kTime1820700, params->param2, 3, WRAP_SETUP_FUNCTION(August, setup_callbackActionRestaurantOrSalon));
 		break;
 
 	case kActionDefault:
@@ -2210,7 +2214,7 @@ IMPLEMENT_FUNCTION(43, August, chapter3Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_SAVEPOINT(kTime1953000, params->param2, kEntityAugust, kEntityAnna, kAction291662081);
+		Entity::timeCheckSavepoint(kTime1953000, params->param2, kEntityAugust, kEntityAnna, kAction291662081);
 
 		// Set as same position as Anna
 		if (params->param1) {
@@ -2400,7 +2404,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(46, August, function46)
 	switch (savepoint.action) {
 	default:
-		TIME_CHECK_CALLBACK(kTime2088000, params->param1, 1, setup_function47);
+		Entity::timeCheckCallback(kTime2088000, params->param1, 1, WRAP_SETUP_FUNCTION(August, setup_function47));
 		break;
 
 	case kActionNone:
@@ -2485,7 +2489,7 @@ IMPLEMENT_FUNCTION(48, August, function48)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeCityLinz, params->param1, setup_function49);
+		Entity::timeCheck(kTimeCityLinz, params->param1, WRAP_SETUP_FUNCTION(August, setup_function49));
 		break;
 
 	case kActionKnock:
@@ -2768,7 +2772,8 @@ IMPLEMENT_FUNCTION(54, August, function54)
 			getData()->inventoryItem = kItemInvalid;
 
 		if (!params->param2 && params->param1) {
-			UPDATE_PARAM(params->param5, getState()->time, params->param1);
+			if (!Entity::updateParameter(params->param5, getState()->time, params->param1))
+				break;
 
 			getData()->inventoryItem = kItemNone;
 			setup_function55();
@@ -3044,7 +3049,8 @@ IMPLEMENT_FUNCTION(60, August, function60)
 		if (!params->param1)
 			break;
 
-		UPDATE_PARAM(params->param3, getState()->time, 9000);
+		if (!Entity::updateParameter(params->param3, getState()->time, 9000))
+			break;
 
 		setCallback(1);
 		setup_callbackActionRestaurantOrSalon();
@@ -3140,7 +3146,8 @@ IMPLEMENT_FUNCTION(62, August, function62)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 900);
+		if (!Entity::updateParameter(params->param1, getState()->time, 900))
+			break;
 
 		getSound()->playSound(kEntityAugust, "Aug4003A");
 
@@ -3218,9 +3225,9 @@ IMPLEMENT_FUNCTION(63, August, function63)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(params->param3, getState()->time, 1800)
+		if (Entity::updateParameter(params->param3, getState()->time, 1800)) {
 			getData()->inventoryItem = kItemInvalid;
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (getState()->time > kTime2488500 && !params->param4) {
 			params->param4 = 1;
@@ -3229,7 +3236,8 @@ IMPLEMENT_FUNCTION(63, August, function63)
 			break;
 		}
 
-		UPDATE_PARAM(params->param5, getState()->timeTicks, params->param1);
+		if (!Entity::updateParameter(params->param5, getState()->timeTicks, params->param1))
+			break;
 
 		params->param2 = (params->param6 < 1 ? 1 : 0);
 
@@ -3386,7 +3394,8 @@ IMPLEMENT_FUNCTION(68, August, function68)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param4, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param4, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;
@@ -3521,7 +3530,7 @@ IMPLEMENT_FUNCTION(69, August, unhookCars)
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 85, 1);
 			getSavePoints()->pushAll(kEntityAugust, kActionProceedChapter5);
 
-			RESET_ENTITY_STATE(kEntityVerges, Verges, setup_function42)
+			RESET_ENTITY_STATE(kEntityVerges, Verges, setup_end)
 		}
 		break;
 	}

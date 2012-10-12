@@ -665,7 +665,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	adjustMousePosition(point.x, point.y);
 }
- 
+
 void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 	setMousePosition(mouse.x, mouse.y);
 }

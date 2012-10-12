@@ -514,7 +514,7 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 
 		if (!objType) {
 			debugN("End of script object (#0) encountered.\n");
-			debugN("Classes: %i, Objects: %i, Export: %i,\n Var: %i (all base 10)",
+			debugN("Classes: %i, Objects: %i, Export: %i,\n Var: %i (all base 10)\n",
 			          objectctr[6], objectctr[1], objectctr[7], objectctr[10]);
 			return;
 		}
@@ -527,7 +527,8 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 
 		_seeker += objsize;
 
-		objectctr[objType]++;
+		if (objType >= 0 && objType < ARRAYSIZE(objectctr))
+			objectctr[objType]++;
 
 		switch (objType) {
 		case SCI_OBJ_OBJECT:

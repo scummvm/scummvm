@@ -25,6 +25,7 @@
 #include "common/keyboard.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "toon/audio.h"
@@ -33,6 +34,10 @@
 
 namespace Toon {
 
+ToonstruckSmackerDecoder::ToonstruckSmackerDecoder() : Video::SmackerDecoder() {
+	_lowRes = false;
+}
+
 void ToonstruckSmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) {
 	debugC(6, kDebugMovie, "handleAudioTrack(%d, %d, %d)", track, chunkSize, unpackedSize);
 
@@ -40,33 +45,21 @@ void ToonstruckSmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, ui
 		/* uint16 width = */ _fileStream->readUint16LE();
 		uint16 height = _fileStream->readUint16LE();
 		_lowRes = (height == getHeight() / 2);
-	} else
+	} else {
 		Video::SmackerDecoder::handleAudioTrack(track, chunkSize, unpackedSize);
-}
-
-bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename) {
-	debugC(1, kDebugMovie, "loadFile(%s)", filename.c_str());
-
-	_lowRes = false;
-
-	if (Video::SmackerDecoder::loadFile(filename)) {
-		if (_surface->h == 200) {
-			if (_surface) {
-				_surface->free();
-				delete _surface;
-			}
-			_surface = new Graphics::Surface();
-			_surface->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
-			_header.flags = 4;
-		}
-
-		return true;
 	}
-	return false;
 }
 
-ToonstruckSmackerDecoder::ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : Video::SmackerDecoder(mixer, soundType) {
+bool ToonstruckSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
+	if (!Video::SmackerDecoder::loadStream(stream))
+		return false;
+
 	_lowRes = false;
+	return true;
+}
+
+Video::SmackerDecoder::SmackerVideoTrack *ToonstruckSmackerDecoder::createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const {
+	return Video::SmackerDecoder::createVideoTrack(width, height, frameCount, frameRate, (height == 200) ? 4 : flags, signature);
 }
 
 // decoder is deallocated with Movie destruction i.e. new ToonstruckSmackerDecoder is needed
@@ -103,6 +96,9 @@ void Movie::play(const Common::String &video, int32 flags) {
 
 bool Movie::playVideo(bool isFirstIntroVideo) {
 	debugC(1, kDebugMovie, "playVideo(isFirstIntroVideo: %d)", isFirstIntroVideo);
+
+	_decoder->start();
+
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
@@ -131,7 +127,7 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 					}
 				}
 			}
-			_decoder->setSystemPalette();
+			_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
 			_vm->_system->updateScreen();
 		}
 

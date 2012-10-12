@@ -56,7 +56,7 @@ class OSystem_Wii : public EventsBaseBackend, public PaletteManager {
 private:
 	s64 _startup_time;
 
-	int _cursorScale;
+	bool _cursorDontScale;
 	bool _cursorPaletteDisabled;
 	u16 *_cursorPalette;
 	bool _cursorPaletteDirty;

@@ -1221,73 +1221,27 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// Early variant of the SCI32 kRemapColors kernel function, used in the demo of QFG4
 reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-	case 0:	{ // Set remapping to base. 0 turns remapping off.
-		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
-		if (base != 0)	// 0 is the default behavior when changing rooms in GK1, thus silencing the warning
-			warning("kRemapColors: Set remapping to base %d", base);
+	case 0: { // remap by percent
+		uint16 percent = argv[1].toUint16();
+		g_sci->_gfxPalette->resetRemapping();
+		g_sci->_gfxPalette->setRemappingPercent(254, percent);
 		}
 		break;
-	case 1:	{ // unknown
-		// The demo of QFG4 calls this with 1+3 parameters, thus there are differences here
-		//int16 unk1 = argv[1].toSint16();
-		//int16 unk2 = argv[2].toSint16();
-		//int16 unk3 = argv[3].toSint16();
-		//uint16 unk4 = argv[4].toUint16();
-		//uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
-		kStub(s, argc, argv);
+	case 1:	{ // remap by range
+		uint16 from = argv[1].toUint16();
+		uint16 to = argv[2].toUint16();
+		uint16 base = argv[3].toUint16();
+		g_sci->_gfxPalette->resetRemapping();
+		g_sci->_gfxPalette->setRemappingRange(254, from, to, base);
 		}
 		break;
-	case 2:	{ // remap by percent
-		// This adjusts the alpha value of a specific color, and it operates on
-		// an RGBA palette. Since we're operating on an RGB palette, we just
-		// modify the color intensity instead
-		// TODO: From what I understand, palette remapping should be placed
-		// separately, so that it can be reset by case 0 above. Thus, we
-		// should adjust the functionality of the Palette class accordingly.
-		int16 color = argv[1].toSint16();
-		if (color >= 10)
-			color -= 10;
-		uint16 percent = argv[2].toUint16(); // 0 - 100
-		if (argc >= 4)
-			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		warning("kRemapColors: RemapByPercent color %d by %d percent", color, percent);
-		// TODO: It's not correct to set intensity here
-		//g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
-		}
-		break;
-	case 3:	{ // remap to gray
-		// NOTE: This adjusts the alpha value of a specific color, and it operates on
-		// an RGBA palette
-		int16 color = argv[1].toSint16();	// this is subtracted from a maximum color value, and can be offset by 10
-		int16 percent = argv[2].toSint16(); // 0 - 100
-		uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
-		warning("kRemapColors: RemapToGray color %d by %d percent (unk3 = %d)", color, percent, unk3);
-		}
-		break;
-	case 4:	{ // unknown
-		//int16 unk1 = argv[1].toSint16();
-		//uint16 unk2 = argv[2].toUint16();
-		//uint16 unk3 = argv[3].toUint16();
-		//uint16 unk4 = (argc >= 5) ? argv[4].toUint16() : 0;
-		kStub(s, argc, argv);
-		}
-		break;
-	case 5:	{ // set color intensity
-		// TODO: This isn't right, it should be setting a mapping table instead.
-		// For PQ4, we can emulate this with kernelSetIntensity(). In QFG4, this
-		// won't do.
-		//int16 mapping = argv[1].toSint16();
-		uint16 intensity = argv[2].toUint16();
-		// HACK for PQ4
-		if (g_sci->getGameId() == GID_PQ4)
-			g_sci->_gfxPalette->kernelSetIntensity(0, 255, intensity, true);
-
-		kStub(s, argc, argv);
-		}
+	case 2:	// turn remapping off (unused)
+		error("Unused subop kRemapColors(2) has been called");
 		break;
 	default:
 		break;

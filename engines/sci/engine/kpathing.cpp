@@ -31,6 +31,9 @@
 #include "common/debug-channels.h"
 #include "common/list.h"
 #include "common/system.h"
+#include "common/math.h"
+
+//#define DEBUG_MERGEPOLY
 
 namespace Sci {
 
@@ -71,9 +74,23 @@ enum {
 struct FloatPoint {
 	FloatPoint() : x(0), y(0) {}
 	FloatPoint(float x_, float y_) : x(x_), y(y_) {}
+	FloatPoint(Common::Point p) : x(p.x), y(p.y) {}
 
 	Common::Point toPoint() {
 		return Common::Point((int16)(x + 0.5), (int16)(y + 0.5));
+	}
+
+	float operator*(const FloatPoint &p) const {
+		return x*p.x + y*p.y;
+	}
+	FloatPoint operator*(float l) const {
+		return FloatPoint(l*x, l*y);
+	}
+	FloatPoint operator-(const FloatPoint &p) const {
+		return FloatPoint(x-p.x, y-p.y);
+	}
+	float norm() const {
+		return x*x+y*y;
 	}
 
 	float x, y;
@@ -135,15 +152,20 @@ public:
 		return _head;
 	}
 
-	void insertHead(Vertex *elm) {
+	void insertAtEnd(Vertex *elm) {
 		if (_head == NULL) {
 			elm->_next = elm->_prev = elm;
+			_head = elm;
 		} else {
 			elm->_next = _head;
 			elm->_prev = _head->_prev;
 			_head->_prev = elm;
 			elm->_prev->_next = elm;
 		}
+	}
+
+	void insertHead(Vertex *elm) {
+		insertAtEnd(elm);
 		_head = elm;
 	}
 
@@ -788,10 +810,10 @@ int PathfindingState::findNearPoint(const Common::Point &p, Polygon *polygon, Co
  * including the vertices themselves)
  * Parameters: (const Common::Point &) a, b: The line segment (a, b)
  *             (Vertex *) vertex: The first vertex of the edge
- * Returns   : (int) FP_OK on success, PF_ERROR otherwise
+ * Returns   : (int) PF_OK on success, PF_ERROR otherwise
  *             (FloatPoint) *ret: The intersection point
  */
-static int intersection(const Common::Point &a, const Common::Point &b, Vertex *vertex, FloatPoint *ret) {
+static int intersection(const Common::Point &a, const Common::Point &b, const Vertex *vertex, FloatPoint *ret) {
 	// Parameters of parametric equations
 	float s, t;
 	// Numerator and denominator of equations
@@ -1783,39 +1805,619 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+// ==========================================================================
+// kMergePoly utility functions
+
+// Compute square of the distance of p to the segment a-b.
+static float pointSegDistance(const Common::Point &a, const Common::Point &b,
+                              const Common::Point &p) {
+	FloatPoint ba(b-a);
+	FloatPoint pa(p-a);
+	FloatPoint bp(b-p);
+
+	// Check if the projection of p on the line a-b lies between a and b
+	if (ba*pa >= 0.0f && ba*bp >= 0.0f) {
+		// If yes, return the (squared) distance of p to the line a-b:
+		// translate a to origin, project p and subtract
+		float linedist = (ba*((ba*pa)/(ba*ba)) - pa).norm();
+
+		return linedist;
+	} else {
+		// If no, return the (squared) distance to either a or b, whichever
+		// is closest.
+
+		// distance to a:
+		float adist = pa.norm();
+		// distance to b:
+		float bdist = FloatPoint(p-b).norm();
+
+		return MIN(adist, bdist);
+	}
+}
+
+// find intersection between edges of two polygons.
+// endpoints count, except v2->_next
+static bool segSegIntersect(const Vertex *v1, const Vertex *v2, Common::Point &intp) {
+	const Common::Point &a = v1->v;
+	const Common::Point &b = v1->_next->v;
+	const Common::Point &c = v2->v;
+	const Common::Point &d = v2->_next->v;
+
+	// First handle the endpoint cases manually
+
+	if (collinear(a, b, c) && collinear(a, b, d))
+		return false;
+
+	if (collinear(a, b, c)) {
+		// a, b, c collinear
+		// return true/c if c is between a and b
+		intp = c;
+		if (a.x != b.x) {
+			if ((a.x <= c.x && c.x <= b.x) || (b.x <= c.x && c.x <= a.x))
+				return true;
+		} else {
+			if ((a.y <= c.y && c.y <= b.y) || (b.y <= c.y && c.y <= a.y))
+				return true;
+		}
+	}
+
+	if (collinear(a, b, d)) {
+		intp = d;
+		// a, b, d collinear
+		// return false/d if d is between a and b
+		if (a.x != b.x) {
+			if ((a.x <= d.x && d.x <= b.x) || (b.x <= d.x && d.x <= a.x))
+				return false;
+		} else {
+			if ((a.y <= d.y && d.y <= b.y) || (b.y <= d.y && d.y <= a.y))
+				return false;
+		}
+	}
+
+	int len_dc = c.sqrDist(d);
+
+	if (!len_dc) error("zero length edge in polygon");
+
+	if (pointSegDistance(c, d, a) <= 2.0f) {
+		intp = a;
+		return true;
+	}
+
+	if (pointSegDistance(c, d, b) <= 2.0f) {
+		intp = b;
+		return true;
+	}
+
+	// If not an endpoint, call the generic intersection function
+
+	FloatPoint p;
+	if (intersection(a, b, v2, &p) == PF_OK) {
+		intp = p.toPoint();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+// For intersecting polygon segments, determine if
+// * the v2 edge enters polygon 1 at this intersection: positive return value
+// * the v2 edge and the v1 edges are parallel: zero return value
+// * the v2 edge exits polygon 1 at this intersection: negative return value
+static int intersectDir(const Vertex *v1, const Vertex *v2) {
+	Common::Point p1 = v1->_next->v - v1->v;
+	Common::Point p2 = v2->_next->v - v2->v;
+	return (p1.x*p2.y - p2.x*p1.y);
+}
+
+// Direction of edge in degrees from pos. x-axis, between -180 and 180
+static int edgeDir(const Vertex *v) {
+	Common::Point p = v->_next->v - v->v;
+	int deg = (int)Common::rad2deg(atan2((double)p.y, (double)p.x));
+	if (deg < -180) deg += 360;
+	if (deg > 180) deg -= 360;
+	return deg;
+}
+
+// For points p1, p2 on the polygon segment v, determine if
+// * p1 lies before p2: negative return value
+// * p1 and p2 are the same: zero return value
+// * p1 lies after p2: positive return value
+static int liesBefore(const Vertex *v, const Common::Point &p1, const Common::Point &p2) {
+	return v->v.sqrDist(p1) - v->v.sqrDist(p2);
+}
+
+// Structure describing an "extension" to the work polygon following edges
+// of the polygon being merged.
+
+// The patch begins on the point intersection1, being the intersection
+// of the edges starting at indexw1/vertexw1 on the work polygon, and at
+// indexp1/vertexp1 on the polygon being merged.
+// It ends with the point intersection2, being the analogous intersection.
+struct Patch {
+	unsigned int indexw1;
+	unsigned int indexp1;
+	const Vertex *vertexw1;
+	const Vertex *vertexp1;
+	Common::Point intersection1;
+
+	unsigned int indexw2;
+	unsigned int indexp2;
+	const Vertex *vertexw2;
+	const Vertex *vertexp2;
+	Common::Point intersection2;
+
+	bool disabled; // If true, this Patch was made superfluous by another Patch
+};
+
+
+// Check if the given vertex on the work polygon is bypassed by this patch.
+static bool isVertexCovered(const Patch &p, unsigned int wi) {
+
+	//         /             v       (outside)
+	//  ---w1--1----p----w2--2----
+	//         ^             \       (inside)
+	if (wi > p.indexw1 && wi <= p.indexw2)
+		return true; 
+
+	//         v             /       (outside)
+	//  ---w2--2----p----w1--1----
+	//         \             ^       (inside)
+	if (p.indexw1 > p.indexw2 && (wi <= p.indexw2 || wi > p.indexw1))
+		return true;
+
+	//         v  /                  (outside)
+	//  ---w1--2--1-------p-----
+	//     w2  \  ^                  (inside)
+	if (p.indexw1 == p.indexw2 && liesBefore(p.vertexw1, p.intersection1, p.intersection2) > 0)
+		return true; // This patch actually covers _all_ vertices on work
+
+	return false;
+}
+
+// Check if patch p1 makes patch p2 superfluous.
+static bool isPatchCovered(const Patch &p1, const Patch &p2) {
+
+	// Same exit and entry points
+	if (p1.intersection1 == p2.intersection1 && p1.intersection2 == p2.intersection2)
+		return true;
+
+	//           /         *         v       (outside)
+	//  ---p1w1--1----p2w1-1---p1w2--2----
+	//           ^         *         \       (inside)
+	if (p1.indexw1 < p2.indexw1 && p2.indexw1 < p1.indexw2)
+		return true;
+	if (p1.indexw1 > p1.indexw2 && (p2.indexw1 > p1.indexw1 || p2.indexw1 < p1.indexw2))
+		return true;
+
+
+	//            /         *          v       (outside)
+	//  ---p1w1--11----p2w2-2---p1w2--12----
+	//            ^         *          \       (inside)
+	if (p1.indexw1 < p2.indexw2 && p2.indexw2 < p1.indexw2)
+		return true;
+	if (p1.indexw1 > p1.indexw2 && (p2.indexw2 > p1.indexw1 || p2.indexw2 < p1.indexw2))
+		return true;
+
+	// Opposite of two above situations
+	if (p2.indexw1 < p1.indexw1 && p1.indexw1 < p2.indexw2)
+		return false;
+	if (p2.indexw1 > p2.indexw2 && (p1.indexw1 > p2.indexw1 || p1.indexw1 < p2.indexw2))
+		return false;
+
+	if (p2.indexw1 < p1.indexw2 && p1.indexw2 < p2.indexw2)
+		return false;
+	if (p2.indexw1 > p2.indexw2 && (p1.indexw2 > p2.indexw1 || p1.indexw2 < p2.indexw2))
+		return false;
+
+
+	// The above checks covered the cases where one patch covers the other and
+	// the intersections of the patches are on different edges.
+
+	// So, if we passed the above checks, we have to check the order of
+	// intersections on edges.
+
+
+	if (p1.indexw1 != p1.indexw2) {
+
+		//            /    *              v       (outside)
+		//  ---p1w1--11---21--------p1w2--2----
+		//     p2w1   ^    *              \       (inside)
+		if (p1.indexw1 == p2.indexw1)
+			return (liesBefore(p1.vertexw1, p1.intersection1, p2.intersection1) < 0);
+
+		//            /                *    v       (outside)
+		//  ---p1w1--11---------p1w2--21---12----
+		//            ^         p2w1   *    \       (inside)
+		if (p1.indexw2 == p2.indexw1)
+			return (liesBefore(p1.vertexw2, p1.intersection2, p2.intersection1) > 0);
+
+		// If neither of the above, then the intervals of the polygon
+		// covered by patch1 and patch2 are disjoint
+		return false;
+	}
+
+	// p1w1 == p1w2
+	// Also, p1w1/p1w2 isn't strictly between p2
+
+
+	//            v   /             *      (outside)
+	//  ---p1w1--12--11-------p2w1-21----
+	//     p1w2   \   ^             *      (inside)
+
+	//            v   /   /               (outside)
+	//  ---p1w1--12--21--11---------
+	//     p1w2   \   ^   ^               (inside)
+	//     p2w1
+	if (liesBefore(p1.vertexw1, p1.intersection1, p1.intersection2) > 0)
+		return (p1.indexw1 != p2.indexw1);
+
+	// CHECKME: This is meaningless if p2w1 != p2w2 ??
+	if (liesBefore(p2.vertexw1, p2.intersection1, p2.intersection2) > 0)
+		return false;
+
+	// CHECKME: This is meaningless if p1w1 != p2w1 ??
+	if (liesBefore(p2.vertexw1, p2.intersection1, p1.intersection1) <= 0)
+		return false;
+
+	// CHECKME: This is meaningless if p1w2 != p2w1 ??
+	if (liesBefore(p2.vertexw1, p2.intersection1, p1.intersection2) >= 0)
+		return false;
+
+	return true;
+}
+
+// Merge a single polygon into the work polygon.
+// If there is an intersection between work and polygon, this function
+// returns true, and replaces the vertex list of work by an extended version,
+// that covers polygon.
+//
+// NOTE: The strategy used matches qfg1new closely, and is a bit error-prone.
+// A more robust strategy would be inserting all intersection points directly
+// into both vertex lists as a first pass. This would make finding the merged
+// polygon a much more straightforward edge-walk, and avoid cases where SSCI's
+// algorithm mixes up the order of multiple intersections on a single edge.
+bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
+#ifdef DEBUG_MERGEPOLY
+	const Vertex *vertex;
+	debugN("work:");
+	CLIST_FOREACH(vertex, &(work.vertices)) {
+		debugN(" (%d,%d) ", vertex->v.x, vertex->v.y);
+	}
+	debugN("\n");
+	debugN("poly:");
+	CLIST_FOREACH(vertex, &(polygon.vertices)) {
+		debugN(" (%d,%d) ", vertex->v.x, vertex->v.y);
+	}
+	debugN("\n");
+#endif
+	uint workSize = work.vertices.size();
+	uint polygonSize = polygon.vertices.size();
+
+	int patchCount = 0;
+	Patch patchList[8];
+
+	const Vertex *workv = work.vertices._head;
+	const Vertex *polyv = polygon.vertices._head;
+	for (uint wi = 0; wi < workSize; ++wi, workv = workv->_next) {
+		for (uint pi = 0; pi < polygonSize; ++pi, polyv = polyv->_next) {
+			Common::Point intersection1;
+			Common::Point intersection2;
+
+			bool intersects = segSegIntersect(workv, polyv, intersection1);
+			if (!intersects)
+				continue;
+
+#ifdef DEBUG_MERGEPOLY
+			debug("mergePoly: intersection at work %d, poly %d", wi, pi);
+#endif
+
+			if (intersectDir(workv, polyv) >= 0)
+				continue;
+
+#ifdef DEBUG_MERGEPOLY
+			debug("mergePoly: intersection in right direction");
+#endif
+
+			int angle = 0;
+			int baseAngle = edgeDir(workv);
+
+			// We now found the point where an edge of 'polygon' left 'work'.
+			// Now find the re-entry point.
+
+			// NOTE: The order in which this searches does not always work
+			// properly if the correct patch would only use a single partial
+			// edge of poly. Because it starts at polyv->_next, it will skip
+			// the correct re-entry and proceed to the next.
+
+			const Vertex *workv2;
+			const Vertex *polyv2 = polyv->_next;
+
+			intersects = false;
+
+			uint pi2, wi2;
+			for (pi2 = 0; pi2 < polygonSize; ++pi2, polyv2 = polyv2->_next) {
+
+				int newAngle = edgeDir(polyv2);
+
+				int relAngle = newAngle - baseAngle;
+				if (relAngle > 180) relAngle -= 360;
+				if (relAngle < -180) relAngle += 360;
+
+				angle += relAngle;
+				baseAngle = newAngle;
+
+				workv2 = workv;
+				for (wi2 = 0; wi2 < workSize; ++wi2, workv2 = workv2->_next) {
+					intersects = segSegIntersect(workv2, polyv2, intersection2);
+					if (!intersects)
+						continue;
+#ifdef DEBUG_MERGEPOLY
+					debug("mergePoly: re-entry intersection at work %d, poly %d", (wi + wi2) % workSize, (pi + 1 + pi2) % polygonSize);
+#endif
+
+					if (intersectDir(workv2, polyv2) > 0) {
+#ifdef DEBUG_MERGEPOLY
+						debug("mergePoly: re-entry intersection in right direction, angle = %d", angle);
+#endif
+						break; // found re-entry point
+					}
+
+				}
+
+				if (intersects)
+					break;
+
+			}
+
+			if (!intersects || angle < 0)
+				continue;
+
+
+			if (patchCount >= 8)
+				error("kMergePoly: Too many patches");
+
+			// convert relative to absolute vertex indices
+			pi2 = (pi + 1 + pi2) % polygonSize;
+			wi2 = (wi + wi2) % workSize;
+
+			Patch &newPatch = patchList[patchCount];
+			newPatch.indexw1 = wi;
+			newPatch.vertexw1 = workv;
+			newPatch.indexp1 = pi;
+			newPatch.vertexp1 = polyv;
+			newPatch.intersection1 = intersection1;
+
+			newPatch.indexw2 = wi2;
+			newPatch.vertexw2 = workv2;
+			newPatch.indexp2 = pi2;
+			newPatch.vertexp2 = polyv2;
+			newPatch.intersection2 = intersection2;
+			newPatch.disabled = false;
+
+#ifdef DEBUG_MERGEPOLY
+			debug("mergePoly: adding patch at work %d, poly %d", wi, pi);
+#endif
+
+			if (patchCount == 0) {
+				patchCount++;
+				continue;
+			}
+
+			bool necessary = true;
+			for (int i = 0; i < patchCount; ++i) {
+				if (isPatchCovered(patchList[i], newPatch)) {
+					necessary = false;
+					break;
+				}
+			}
+
+			if (!necessary)
+				continue;
+
+			patchCount++;
+
+			if (patchCount > 1) {
+				// check if this patch makes other patches superfluous
+				for (int i = 0; i < patchCount-1; ++i)
+					if (isPatchCovered(newPatch, patchList[i]))
+						patchList[i].disabled = true;
+			}
+		}
+	}
+
+
+	if (patchCount == 0)
+		return false; // nothing changed
+
+
+	// Determine merged work by doing a walk over the edges
+	// of work, crossing over to polygon when encountering a patch.
+
+	Polygon output(0);
+
+	workv = work.vertices._head;
+	for (uint wi = 0; wi < workSize; ++wi, workv = workv->_next) {
+
+		bool covered = false;
+		for (int p = 0; p < patchCount; ++p) {
+			if (patchList[p].disabled) continue;
+			if (isVertexCovered(patchList[p], wi)) {
+				covered = true;
+				break;
+			}
+		}
+
+		if (!covered) {
+			// Add vertex to output
+			output.vertices.insertAtEnd(new Vertex(workv->v));
+		}
+
+
+		// CHECKME: Why is this the correct order in which to process
+		// the patches? (What if two of them start on this line segment
+		// in the opposite order?)
+
+		for (int p = 0; p < patchCount; ++p) {
+
+			const Patch &patch = patchList[p];
+			if (patch.disabled) continue;
+			if (patch.indexw1 != wi) continue;
+			if (patch.intersection1 != workv->v) {
+				// Add intersection point to output
+				output.vertices.insertAtEnd(new Vertex(patch.intersection1));
+			}
+
+			// Add vertices from polygon between vertexp1 (excl) and vertexp2 (incl)
+			for (polyv = patch.vertexp1->_next; polyv != patch.vertexp2; polyv = polyv->_next)
+				output.vertices.insertAtEnd(new Vertex(polyv->v));
+
+			output.vertices.insertAtEnd(new Vertex(patch.vertexp2->v));
+
+			if (patch.intersection2 != patch.vertexp2->v) {
+				// Add intersection point to output
+				output.vertices.insertAtEnd(new Vertex(patch.intersection2));
+			}
+
+			// TODO: We could continue after the re-entry point here?
+		}
+	}
+	// Remove last vertex if it's the same as the first vertex
+	if (output.vertices._head->v == output.vertices._head->_prev->v)
+		output.vertices.remove(output.vertices._head->_prev);
+
+
+	// Slight hack: swap vertex lists of output and work polygons.
+	SWAP(output.vertices._head, work.vertices._head);
+
+	return true;
+}
+
+
 /**
  * This is a quite rare kernel function. An example of when it's called
  * is in QFG1VGA, after killing any monster.
+ *
+ * It takes a polygon, and extends it to also cover any polygons from the
+ * input list with which it intersects. Any of those polygons so covered
+ * from the input list are marked by adding 0x10 to their type field.
  */
 reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
-#if 0
 	// 3 parameters: raw polygon data, polygon list, list size
 	reg_t polygonData = argv[0];
 	List *list = s->_segMan->lookupList(argv[1]);
-	Node *node = s->_segMan->lookupNode(list->first);
-	// List size is not needed
 
-	Polygon *polygon;
-	int count = 0;
+	// The size of the "work" point list SSCI uses. We use a dynamic one instead
+	//reg_t listSize = argv[2];
 
+	SegmentRef pointList = s->_segMan->dereference(polygonData);
+	if (!pointList.isValid() || pointList.skipByte) {
+		warning("kMergePoly: Polygon data pointer is invalid");
+		return make_reg(0, 0);
+	}
+
+	Node *node;
+
+#ifdef DEBUG_MERGEPOLY
+	node = s->_segMan->lookupNode(list->first);
 	while (node) {
-		polygon = convert_polygon(s, node->value);
+		draw_polygon(s, node->value, 320, 190);
+		node = s->_segMan->lookupNode(node->succ);
+	}
+	Common::Point prev, first;
+	prev = first = readPoint(pointList, 0);
+	for (int i = 1; readPoint(pointList, i).x != 0x7777; i++) {
+		Common::Point point = readPoint(pointList, i);
+		draw_line(s, prev, point, 1, 320, 190);
+		prev = point;
+	}
+	draw_line(s, prev, first, 1, 320, 190);
+	// Update the whole screen
+	g_sci->_gfxScreen->copyToScreen();
+	g_system->updateScreen();
+	g_system->delayMillis(1000);
+#endif
+
+	// The work polygon which we're going to merge with the polygons in list
+	Polygon work(0);
+
+	for (int i = 0; true; ++i) {
+		Common::Point p = readPoint(pointList, i);
+		if (p.x == POLY_LAST_POINT)
+			break;
+
+		Vertex *vertex = new Vertex(p);
+		work.vertices.insertAtEnd(vertex);
+	}
+
+	// TODO: Check behaviour for single-vertex polygons
+	node = s->_segMan->lookupNode(list->first);
+	while (node) {
+		Polygon *polygon = convert_polygon(s, node->value);
 
 		if (polygon) {
-			count += readSelectorValue(s->_segMan, node->value, SELECTOR(size));
+			// CHECKME: Confirm vertex order that convert_polygon and
+			// fix_vertex_order output. For now, we re-reverse the order since
+			// convert_polygon reads the vertices reversed, and fix up head.
+			polygon->vertices.reverse();
+			polygon->vertices._head = polygon->vertices._head->_next;
+
+			// Merge this polygon into the work polygon if there is an
+			// intersection.
+			bool intersected = mergeSinglePolygon(work, *polygon);
+
+			// If so, flag it
+			if (intersected) {
+				writeSelectorValue(s->_segMan, node->value,
+				                   SELECTOR(type), polygon->type + 0x10);
+#ifdef DEBUG_MERGEPOLY
+				debugN("Merged polygon: ");
+				// Iterate over edges
+				Vertex *vertex;
+				CLIST_FOREACH(vertex, &(work.vertices)) {
+					debugN(" (%d,%d) ", vertex->v.x, vertex->v.y);
+				}
+				debugN("\n");
+#endif
+			}
 		}
 
 		node = s->_segMan->lookupNode(node->succ);
 	}
+
+
+	// Allocate output array
+	reg_t output = allocateOutputArray(s->_segMan, work.vertices.size()+1);
+	SegmentRef arrayRef = s->_segMan->dereference(output);
+
+	// Copy work.vertices into arrayRef
+	Vertex *vertex;
+	unsigned int n = 0;
+	CLIST_FOREACH(vertex, &work.vertices) {
+		if (vertex == work.vertices._head || vertex->v != vertex->_prev->v)
+			writePoint(arrayRef, n++, vertex->v);
+	}
+
+	writePoint(arrayRef, n, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
+
+#ifdef DEBUG_MERGEPOLY
+	prev = first = readPoint(arrayRef, 0);
+	for (int i = 1; readPoint(arrayRef, i).x != 0x7777; i++) {
+		Common::Point point = readPoint(arrayRef, i);
+		draw_line(s, prev, point, 3, 320, 190);
+		prev = point;
+	}
+
+	draw_line(s, prev, first, 3, 320, 190);
+
+	// Update the whole screen
+	g_sci->_gfxScreen->copyToScreen();
+	g_system->updateScreen();
+	if (!g_sci->_gfxPaint16)
+		g_system->delayMillis(1000);
+
+	debug("kMergePoly done");
 #endif
 
-	// TODO: actually merge the polygon. We return an empty polygon for now.
-	// In QFG1VGA, you can walk over enemy bodies after killing them, since
-	// this is a stub.
-	reg_t output = allocateOutputArray(s->_segMan, 1);
-	SegmentRef arrayRef = s->_segMan->dereference(output);
-	writePoint(arrayRef, 0, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
-	warning("Stub: kMergePoly");
 	return output;
 }
 

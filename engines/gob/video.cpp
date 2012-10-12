@@ -84,6 +84,10 @@ uint16 Font::getCharCount() const {
 	return _endItem - _startItem + 1;
 }
 
+bool Font::hasChar(uint8 c) const {
+	return (c >= _startItem) && (c <= _endItem);
+}
+
 bool Font::isMonospaced() const {
 	return _charWidths == 0;
 }
@@ -131,6 +135,23 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 		}
 
 		dst += surf.getWidth() - _itemWidth;
+	}
+}
+
+void Font::drawString(const Common::String &str, int16 x, int16 y, int16 color1, int16 color2,
+                      bool transp, Surface &dest) const {
+
+	const char *s = str.c_str();
+
+	while (*s != '\0') {
+		const int16 charRight  = x + getCharWidth(*s);
+		const int16 charBottom = y + getCharHeight();
+
+		if ((x >= 0) && (y >= 0) && (charRight <= dest.getWidth()) && (charBottom <= dest.getHeight()))
+			drawLetter(dest, *s, x, y, color1, color2, transp);
+
+		x += getCharWidth(*s);
+		s++;
 	}
 }
 
@@ -225,7 +246,7 @@ void Video::setSize(bool defaultTo1XScaler) {
 
 void Video::retrace(bool mouse) {
 	if (mouse)
-		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
+		CursorMan.showMouse((_vm->_draw->_showCursor & 6) != 0);
 
 	if (_vm->_global->_primarySurfDesc) {
 		int screenX = _screenDeltaX;
@@ -332,6 +353,10 @@ void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 void Video::drawPackedSprite(const char *path, Surface &dest, int width) {
 	int32 size;
 	byte *data = _vm->_dataIO->getFile(path, size);
+	if (!data) {
+		warning("Video::drawPackedSprite(): Failed to open sprite \"%s\"", path);
+		return;
+	}
 
 	drawPackedSprite(data, width, dest.getHeight(), 0, 0, 0, dest);
 	delete[] data;

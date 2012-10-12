@@ -106,11 +106,10 @@ public:
 
 	// UI Control
 	void show();
-	void blinkEgg(bool enabled);
 	void showHourGlass() const;
 	void setPortrait(InventoryItem item) const;
 	void drawEgg() const;
-	void drawBlinkingEgg();
+	void drawBlinkingEgg(uint ticks = 1);
 
 	// Handle inventory UI events.
 	void handleMouseEvent(const Common::Event &ev);
@@ -133,8 +132,6 @@ public:
 	Common::String toString();
 
 private:
-	static const uint32 _defaultBlinkingInterval = 250; ///< Default blinking interval in ms
-
 	LastExpressEngine *_engine;
 
 	InventoryEntry _entries[32];
@@ -144,9 +141,7 @@ private:
 	uint32 _itemsShown;
 
 	bool _showingHourGlass;
-	bool _blinkingEgg;
-	uint32 _blinkingTime;
-	uint32 _blinkingInterval;
+	int16  _blinkingDirection;
 	uint16 _blinkingBrightness;
 
 	// Flags
@@ -157,8 +152,6 @@ private:
 
 	Scene *_itemScene;
 
-	// Important rects
-	//Common::Rect _inventoryRect;
 	Common::Rect _menuEggRect;
 	Common::Rect _selectedItemRect;
 
@@ -173,6 +166,7 @@ private:
 	bool isItemSceneParameter(InventoryItem item) const;
 
 	void drawItem(CursorStyle id, uint16 x, uint16 y, int16 brighnessIndex = -1) const;
+	void blinkEgg();
 
 	void drawSelectedItem();
 	void clearSelectedItem() const;

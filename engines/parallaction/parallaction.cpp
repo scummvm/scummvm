@@ -33,12 +33,12 @@
 #include "parallaction/walk.h"
 
 namespace Parallaction {
-Parallaction *_vm = NULL;
+Parallaction *g_vm = NULL;
 // public stuff
 
-char		_saveData1[30] = { '\0' };
-uint32		_engineFlags = 0;
-uint32		_globalFlags = 0;
+char		g_saveData1[30] = { '\0' };
+uint32		g_engineFlags = 0;
+uint32		g_globalFlags = 0;
 
 // private stuff
 
@@ -48,7 +48,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	// Setup mixer
 	syncSoundSettings();
 
-	_vm = this;
+	g_vm = this;
 	DebugMan.addDebugChannel(kDebugDialogue, "dialogue", "Dialogues debug level");
 	DebugMan.addDebugChannel(kDebugParser, "parser", "Parser debug level");
 	DebugMan.addDebugChannel(kDebugDisk, "disk", "Disk debug level");
@@ -87,7 +87,7 @@ Parallaction::~Parallaction() {
 
 Common::Error Parallaction::init() {
 	_gameType = getGameType();
-	_engineFlags = 0;
+	g_engineFlags = 0;
 	_objectsNames = NULL;
 	_globalFlagsNames = NULL;
 	_location._hasSound = false;
@@ -129,13 +129,9 @@ GUI::Debugger *Parallaction::getDebugger() {
 	return _debugger;
 }
 
-bool canScroll() {
-	return (_vm->_gfx->_backgroundInfo->width > _vm->_screenWidth);
-}
-
 void Parallaction::updateView() {
 
-	if ((_engineFlags & kEnginePauseJobs) && (_input->_inputMode != Input::kInputModeInventory)) {
+	if ((g_engineFlags & kEnginePauseJobs) && (_input->_inputMode != Input::kInputModeInventory)) {
 		return;
 	}
 
@@ -147,14 +143,14 @@ void Parallaction::updateView() {
 void Parallaction::pauseJobs() {
 	debugC(9, kDebugExec, "pausing jobs execution");
 
-	_engineFlags |= kEnginePauseJobs;
+	g_engineFlags |= kEnginePauseJobs;
 	return;
 }
 
 void Parallaction::resumeJobs() {
 	debugC(9, kDebugExec, "resuming jobs execution");
 
-	_engineFlags &= ~kEnginePauseJobs;
+	g_engineFlags &= ~kEnginePauseJobs;
 	return;
 }
 
@@ -265,7 +261,7 @@ void Parallaction::runGameFrame(int event) {
 	if (shouldQuit())
 		return;
 
-	if (_engineFlags & kEngineChangeLocation) {
+	if (g_engineFlags & kEngineChangeLocation) {
 		changeLocation();
 	}
 
@@ -900,14 +896,14 @@ void CharacterName::bind(const char *name) {
 
 	if (!_dummy) {
 		if (!strcmp(name, "donna")) {
-			_engineFlags &= ~kEngineTransformedDonna;
+			g_engineFlags &= ~kEngineTransformedDonna;
 		} else {
-			if (_engineFlags & kEngineTransformedDonna) {
+			if (g_engineFlags & kEngineTransformedDonna) {
 				_suffix = _suffixTras;
 			} else {
 				const char *s = strstr(name, "tras");
 				if (s) {
-					_engineFlags |= kEngineTransformedDonna;
+					g_engineFlags |= kEngineTransformedDonna;
 					_suffix = _suffixTras;
 					end = s;
 				}
@@ -953,7 +949,7 @@ void Parallaction::beep() {
 void Parallaction::scheduleLocationSwitch(const char *location) {
 	debugC(9, kDebugExec, "scheduleLocationSwitch(%s)\n", location);
 	_newLocationName = location;
-	_engineFlags |= kEngineChangeLocation;
+	g_engineFlags |= kEngineChangeLocation;
 }
 
 } // End of namespace Parallaction

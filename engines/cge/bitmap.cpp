@@ -94,7 +94,7 @@ Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill)
 	// Replicate across the entire table
 	for (HideDesc *hdP = b + 1; hdP < (b + _h); hdP++)
 		*hdP = *b;
-	
+
 	b->_skip = 0;                                    // fix the first entry
 	_v = v;
 	_b = b;
@@ -357,7 +357,7 @@ bool Bitmap::loadVBM(EncryptedStream *f) {
 				// Read in the palette
 				byte palData[kPalSize];
 				f->read(palData, kPalSize);
-				
+
 				const byte *srcP = palData;
 				for (int idx = 0; idx < kPalCount; idx++, srcP += 3) {
 					_vm->_bitmapPalette[idx]._r = *srcP;

@@ -67,7 +67,8 @@ int AudioPlayer::startAudio(uint16 module, uint32 number) {
 
 	if (audioStream) {
 		_wPlayFlag = false;
-		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
+		Audio::Mixer::SoundType soundType = (module == 65535) ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType;
+		_mixer->playStream(soundType, &_audioHandle, audioStream);
 		return sampleLen;
 	} else {
 		// Don't throw a warning in this case. getAudioStream() already has. Some games

@@ -433,9 +433,9 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 			// Determine the signalled state
 			_ctx->pidSignalled = (_ctx->pProcess) || !_ctx->pEvent ? false : _ctx->pEvent->signalled;
 
-			if (bWaitAll && _ctx->pidSignalled)
+			if (bWaitAll && !_ctx->pidSignalled)
 				_ctx->signalled = false;
-			else if (!bWaitAll & _ctx->pidSignalled)
+			else if (!bWaitAll && _ctx->pidSignalled)
 				_ctx->signalled = true;
 		}
 
@@ -445,7 +445,7 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 			for (_ctx->i = 0; _ctx->i < nCount; ++_ctx->i) {
 				_ctx->pEvent = getEvent(pidList[_ctx->i]);
 
-				if (_ctx->pEvent->manualReset)
+				if (!_ctx->pEvent->manualReset)
 					_ctx->pEvent->signalled = false;
 			}
 
@@ -717,12 +717,12 @@ void CoroutineScheduler::pulseEvent(uint32 pidEvent) {
 	EVENT *evt = getEvent(pidEvent);
 	if (!evt)
 		return;
-	
+
 	// Set the event as signalled and pulsing
 	evt->signalled = true;
 	evt->pulsing = true;
 
-	// If there's an active process, and it's not the first in the queue, then reschedule all 
+	// If there's an active process, and it's not the first in the queue, then reschedule all
 	// the other prcoesses in the queue to run again this frame
 	if (pCurrent && pCurrent != active->pNext)
 		rescheduleAll();
