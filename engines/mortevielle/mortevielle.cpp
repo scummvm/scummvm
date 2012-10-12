@@ -102,9 +102,9 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_col = false;
 	_syn = false;
 	_obpart = false;
-	_okdes = false;
+	_destinationOk = false;
 	_anyone = false;
-	_brt = false;
+	_uptodatePresence = false;
 
 	_textColor = 0;
 	_currGraphicalDevice = -1;
@@ -116,7 +116,6 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_day = 0;
 
 	memset(_mem, 0, sizeof(_mem));
-	_anyone = false;
 }
 
 MortevielleEngine::~MortevielleEngine() {
@@ -720,8 +719,8 @@ void MortevielleEngine::handleAction() {
 
 				if ((_controlMenu == 0) && (! _loseGame) && (! _endGame)) {
 					g_vm->_text.taffich();
-					if (_okdes) {
-						_okdes = false;
+					if (_destinationOk) {
+						_destinationOk = false;
 						drawPicture();
 					}
 					if ((!_syn) || (_col))
@@ -1694,7 +1693,7 @@ void MortevielleEngine::loseGame() {
 	clearVerbBar();
 	_col = false;
 	_syn = false;
-	_okdes = false;
+	_destinationOk = false;
 }
 
 /**
@@ -1810,7 +1809,7 @@ void MortevielleEngine::checkManorDistance() {
 		_crep = 1506;
 		loseGame();
 	} else {
-		_okdes = true;
+		_destinationOk = true;
 		_coreVar._currPlace = MOUNTAIN;
 		affrep();
 	}
@@ -1878,10 +1877,10 @@ void MortevielleEngine::gameLoaded() {
 	_menu._menuDisplayed = false;
 	_loseGame = true;
 	_anyone = false;
-	_okdes = true;
+	_destinationOk = true;
 	_col = false;
 	_hiddenHero = false;
-	_brt = false;
+	_uptodatePresence = false;
 	_maff = 68;
 	_menuOpcode = OPCODE_NONE;
 	_prebru = 0;
@@ -1903,7 +1902,7 @@ void MortevielleEngine::gameLoaded() {
 	affrep();
 	_hintPctMessage = getString(580);
 
-	_okdes = false;
+	_destinationOk = false;
 	_endGame = true;
 	_loseGame = false;
 	_heroSearching = false;
@@ -1932,7 +1931,7 @@ void MortevielleEngine::handleOpcode() {
 	_syn = false;
 	_keyPressedEsc = false;
 	if (!_anyone) {
-		if (_brt) {
+		if (_uptodatePresence) {
 			if ((_msg[3] == MENU_MOVE) || (_msg[4] == OPCODE_LEAVE) || (_msg[4] == OPCODE_SLEEP) || (_msg[4] == OPCODE_EAT)) {
 				_controlMenu = 4;
 				mennor();
@@ -2733,8 +2732,8 @@ void MortevielleEngine::prepareRoom() {
 					initCaveOrCellar();
 				} else if (_currBitIndex == 10) {
 					_currBitIndex = 0;
-					if (!_brt) {
-						_brt = true;
+					if (!_uptodatePresence) {
+						_uptodatePresence = true;
 						_startHour = readclock();
 						if (getRandomNumber(1, 5) < 5) {
 							clearVerbBar();
@@ -2753,9 +2752,9 @@ void MortevielleEngine::prepareRoom() {
 		}
 	}
 	_endHour = readclock();
-	if ((_brt) && ((_endHour - _startHour) > 17)) {
+	if ((_uptodatePresence) && ((_endHour - _startHour) > 17)) {
 		getPresenceBitIndex(_place);
-		_brt = false;
+		_uptodatePresence = false;
 		_startHour = 0;
 		if ((_coreVar._currPlace > OWN_ROOM) && (_coreVar._currPlace < DINING_ROOM))
 			_anyone = true;
@@ -3352,7 +3351,7 @@ void MortevielleEngine::drawPicture() {
 void MortevielleEngine::drawPictureWithText() {
 	_text.taffich();
 	drawPicture();
-	_okdes = false;
+	_destinationOk = false;
 }
 
 /**
@@ -3710,7 +3709,11 @@ void MortevielleEngine::treg(int objId) {
 	}
 }
 
-void MortevielleEngine::avpoing(int &objId) {
+/**
+ * Engine function - Put in hand
+ * @remarks	Originally called 'avpoing'
+ */
+void MortevielleEngine::putInHand(int &objId) {
 	_crep = 999;
 	if (_coreVar._selectedObjectId != 0)
 		ajjer(_coreVar._selectedObjectId);
