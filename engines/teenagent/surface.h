@@ -33,16 +33,17 @@ namespace TeenAgent {
 
 class Surface : public Graphics::Surface {
 public:
-	enum Type {kTypeOns, kTypeLan};
-
-	uint16 x, y;
-
 	Surface();
 	~Surface();
+
+	enum Type {kTypeOns, kTypeLan};
+
 	void load(Common::SeekableReadStream &, Type type);
-	Common::Rect render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false, Common::Rect src_rect = Common::Rect(), uint zoom = 256) const;
+	Common::Rect render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false, Common::Rect srcRect = Common::Rect(), uint zoom = 256) const;
 
 	bool empty() const { return pixels == NULL; }
+
+	uint16 x, y;
 };
 
 } // End of namespace TeenAgent

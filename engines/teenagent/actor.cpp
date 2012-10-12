@@ -22,47 +22,46 @@
 #include "teenagent/actor.h"
 #include "teenagent/objects.h"
 #include "teenagent/resources.h"
+#include "teenagent/teenagent.h"
 
 #include "common/random.h"
 #include "common/textconsole.h"
 
 namespace TeenAgent {
 
-Actor::Actor() : head_index(0), idle_type(0) {}
+Actor::Actor(TeenAgentEngine *vm) : _vm(vm), headIndex(0), idleType(0) {}
 
-//idle animation lists at dseg: 0x6540
-Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd) {
+Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int deltaFrame, uint zoom, Common::RandomSource &rnd) {
 	if (index == 0) {
-		idle_type = rnd.getRandomNumber(2);
-		debug(0, "switched to idle animation %u", idle_type);
+		idleType = rnd.getRandomNumber(2);
+		debugC(kDebugActor, "switched to idle animation %u", idleType);
 	}
 
-	Resources *res = Resources::instance();
-	byte *frames_idle;
+	byte *framesIdle;
 	do {
-		frames_idle = res->dseg.ptr(res->dseg.get_word(0x6540 + idle_type * 2)) + index;
-		index += delta_frame;
-		if (*frames_idle == 0) {
-			idle_type = rnd.getRandomNumber(2);
-			debug(0, "switched to idle animation %u[loop]", idle_type);
+		framesIdle = _vm->res->dseg.ptr(_vm->res->dseg.get_word(dsAddr_idleAnimationListPtr + idleType * 2)) + index;
+		index += deltaFrame;
+		if (*framesIdle == 0) {
+			idleType = rnd.getRandomNumber(2);
+			debugC(kDebugActor, "switched to idle animation %u[loop]", idleType);
 			index = 3; //put 4th frame (base 1) if idle animation loops
 		}
-	} while (*frames_idle == 0);
+	} while (*framesIdle == 0);
 
 	bool mirror = orientation == kActorLeft;
-	Surface *s = frames + *frames_idle - 1;
+	Surface *s = frames + *framesIdle - 1;
 
-	///\todo remove copy-paste here and below
+	//TODO: remove copy-paste here and below
 	int xp = position.x - s->w * zoom / 512 - s->x, yp = position.y - 62 * zoom / 256 - s->y; //hardcoded in original game
 	return s->render(surface, xp, yp, mirror, Common::Rect(), zoom);
 }
 
-Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool render_head, uint zoom) {
-	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, /* step */ 6, 7, 8, 9};
-	const uint8 frames_up[] = {18, 19, 20, 21, 22, 23, 24, 25, };
-	const uint8 frames_down[] = {10, 11, 12, 13, 14, 15, 16, 17, };
+Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int deltaFrame, bool renderHead, uint zoom) {
+	const uint8 framesLeftRight[] = {0, 1, 2, 3, 4, 5, /* step */ 6, 7, 8, 9};
+	const uint8 framesUp[] = {18, 19, 20, 21, 22, 23, 24, 25, };
+	const uint8 framesDown[] = {10, 11, 12, 13, 14, 15, 16, 17, };
 
-	const uint8 frames_head_left_right[] = {
+	const uint8 framesHeadLeftRight[] = {
 		0x27, 0x1a, 0x1b,
 		0x27, 0x1c, 0x1d,
 		0x27, 0x1a,
@@ -73,14 +72,14 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		0x27, 0x1a,
 	};
 
-	const uint8 frames_head_up[] = {
+	const uint8 framesHeadUp[] = {
 		0x29, 0x25, 0x29, 0x29,
 		0x26, 0x29, 0x26, 0x29,
 		0x29, 0x25, 0x29, 0x25,
 		0x29, 0x29, 0x29, 0x25,
 		0x25, 0x29, 0x29, 0x26
 	};
-	const uint8 frames_head_down[] = {
+	const uint8 framesHeadDown[] = {
 		0x20, 0x21, 0x22, 0x23,
 		0x28, 0x24, 0x28, 0x28,
 		0x24, 0x28, 0x20, 0x21,
@@ -91,45 +90,45 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	Surface *s = NULL, *head = NULL;
 
 	bool mirror = orientation == kActorLeft;
-	index += delta_frame;
+	index += deltaFrame;
 
 	switch (orientation) {
 	case kActorLeft:
 	case kActorRight:
-		if (render_head) {
-			if (head_index >= ARRAYSIZE(frames_head_left_right))
-				head_index = 0;
-			head = frames + frames_head_left_right[head_index];
-			++head_index;
+		if (renderHead) {
+			if (headIndex >= ARRAYSIZE(framesHeadLeftRight))
+				headIndex = 0;
+			head = frames + framesHeadLeftRight[headIndex];
+			++headIndex;
 		}
 
-		if (index >= ARRAYSIZE(frames_left_right))
+		if (index >= ARRAYSIZE(framesLeftRight))
 			index = 1;
-		s = frames + frames_left_right[index];
+		s = frames + framesLeftRight[index];
 		break;
 	case kActorUp:
-		if (render_head) {
-			if (head_index >= ARRAYSIZE(frames_head_up))
-				head_index = 0;
-			head = frames + frames_head_up[head_index];
-			++head_index;
+		if (renderHead) {
+			if (headIndex >= ARRAYSIZE(framesHeadUp))
+				headIndex = 0;
+			head = frames + framesHeadUp[headIndex];
+			++headIndex;
 		}
 
-		if (index >= ARRAYSIZE(frames_up))
+		if (index >= ARRAYSIZE(framesUp))
 			index = 1;
-		s = frames + frames_up[index];
+		s = frames + framesUp[index];
 		break;
 	case kActorDown:
-		if (render_head) {
-			if (head_index >= ARRAYSIZE(frames_head_down))
-				head_index = 0;
-			head = frames + frames_head_down[head_index];
-			++head_index;
+		if (renderHead) {
+			if (headIndex >= ARRAYSIZE(framesHeadDown))
+				headIndex = 0;
+			head = frames + framesHeadDown[headIndex];
+			++headIndex;
 		}
 
-		if (index >= ARRAYSIZE(frames_down))
+		if (index >= ARRAYSIZE(framesDown))
 			index = 1;
-		s = frames + frames_down[index];
+		s = frames + framesDown[index];
 		break;
 	default:
 		return Common::Rect();

@@ -20,8 +20,10 @@
  */
 
 #include "teenagent/font.h"
+
 #include "teenagent/pack.h"
-#include "common/debug.h"
+#include "teenagent/teenagent.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -30,34 +32,41 @@
 
 namespace TeenAgent {
 
-Font::Font() : grid_color(0xd0), shadow_color(0), height(0), width_pack(0), data(0) {
+Font::Font() : _gridColor(0xd0), _shadowColor(0), _height(0), _widthPack(0), _data(0) {
 }
 
-void Font::load(const Pack &pack, int id) {
-	delete[] data;
-	data = NULL;
+Font::~Font() {
+	delete[] _data;
+}
+
+void Font::load(const Pack &pack, int id, byte height, byte widthPack) {
+	delete[] _data;
+	_data = NULL;
 
 	Common::ScopedPtr<Common::SeekableReadStream> s(pack.getStream(id));
 	if (!s)
 		error("loading font %d failed", id);
 
-	data = new byte[s->size()];
-	s->read(data, s->size());
-	debug(0, "font size: %d", s->size());
+	_data = new byte[s->size()];
+	s->read(_data, s->size());
+	debugC(0, kDebugFont, "font size: %d", s->size());
+
+	_height = height;
+	_widthPack = widthPack;
 }
 
 uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) {
 	unsigned idx = (unsigned char)c;
 	if (idx < 0x20 || idx >= 0x81) {
-		debug(0, "unhandled char 0x%02x", idx);
+		debugC(0, kDebugFont, "unhandled char 0x%02x", idx);
 		return 0;
 	}
 	idx -= 0x20;
-	byte *glyph = data + READ_LE_UINT16(data + idx * 2);
+	byte *glyph = _data + READ_LE_UINT16(_data + idx * 2);
 
 	int h = glyph[0], w = glyph[1];
-	if (surface == NULL || surface->pixels == NULL || y + h <= 0 || y >= 200 || x + w <= 0 || x >= 320)
-		return w - width_pack;
+	if (surface == NULL || surface->pixels == NULL || y + h <= 0 || y >= kScreenHeight || x + w <= 0 || x >= kScreenWidth)
+		return w - _widthPack;
 
 	int i0 = 0, j0 = 0;
 	if (x < 0) {
@@ -68,7 +77,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 		i0 = -y;
 		y = 0;
 	}
-	//debug(0, "char %c, width: %dx%d", c, w, h);
+	debugC(0, kDebugFont, "char %c, width: %dx%d", c, w, h);
 	glyph += 2;
 	glyph += i0 * w + j0;
 	byte *dst = (byte *)surface->getBasePtr(x, y);
@@ -80,7 +89,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 			case 0:
 				break;
 			case 1:
-				dst[j] = shadow_color;
+				dst[j] = _shadowColor;
 				break;
 			case 2:
 				dst[j] = color;
@@ -91,57 +100,57 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 		}
 		dst += surface->pitch;
 	}
-	return w - width_pack;
+	return w - _widthPack;
 }
 
-static uint find_in_str(const Common::String &str, char c, uint pos = 0) {
+static uint findInStr(const Common::String &str, char c, uint pos = 0) {
 	while (pos < str.size() && str[pos] != c) ++pos;
 	return pos;
 }
 
-uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool show_grid) {
+uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool showGrid) {
 	if (surface != NULL) {
-		uint max_w = render(NULL, 0, 0, str, false);
-		if (show_grid)
-			grid(surface, x - 4, y - 2, max_w + 8, 8 + 6, grid_color);
+		uint maxW = render(NULL, 0, 0, str, false);
+		if (showGrid)
+			grid(surface, x - 4, y - 2, maxW + 8, 8 + 6, _gridColor);
 
 		uint i = 0, j;
 		do {
-			j = find_in_str(str, '\n', i);
+			j = findInStr(str, '\n', i);
 			Common::String line(str.c_str() + i, j - i);
-			//debug(0, "line: %s", line.c_str());
+			debugC(0, kDebugFont, "line: %s", line.c_str());
 
-			if (y + (int)height >= 0) {
+			if (y + (int)_height >= 0) {
 				uint w = render(NULL, 0, 0, line, false);
-				int xp = x + (max_w - w) / 2;
+				int xp = x + (maxW - w) / 2;
 				for (uint k = 0; k < line.size(); ++k) {
 					xp += render(surface, xp, y, line[k], color);
 				}
-			} else if (y >= 200)
+			} else if (y >= kScreenHeight)
 				break;
 
-			y += height;
+			y += _height;
 			i = j + 1;
 		} while (i < str.size());
-		return max_w;
+		return maxW;
 	} else {
-		//surface == NULL;
-		uint w = 0, max_w = 0;
+		// surface == NULL;
+		uint w = 0, maxW = 0;
 		for (uint i = 0; i < str.size(); ++i) {
 			char c = str[i];
 			if (c == '\n') {
-				y += height;
-				if (w > max_w)
-					max_w = w;
+				y += _height;
+				if (w > maxW)
+					maxW = w;
 				w = 0;
 				continue;
 			}
 			w += render(NULL, 0, 0, c, color);
 		}
-		if (w > max_w)
-			max_w = w;
+		if (w > maxW)
+			maxW = w;
 
-		return max_w;
+		return maxW;
 	}
 }
 
@@ -154,10 +163,6 @@ void Font::grid(Graphics::Surface *surface, int x, int y, int w, int h, byte col
 		}
 		dst += surface->pitch;
 	}
-}
-
-Font::~Font() {
-	delete[] data;
 }
 
 } // End of namespace TeenAgent

@@ -26,6 +26,8 @@
 #include "common/rect.h"
 #include "graphics/surface.h"
 
+#include "teenagent/teenagent.h"
+
 namespace TeenAgent {
 
 enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
@@ -46,13 +48,13 @@ struct Rect {
 	}
 
 	inline bool valid() const {
-		return left >= 0 && left < 320 && right >= 0 && right < 320 && top >= 0 && top < 200 && bottom >= 0 && bottom < 200;
+		return left >= 0 && left < kScreenWidth && right >= 0 && right < kScreenWidth && top >= 0 && top < kScreenHeight && bottom >= 0 && bottom < kScreenHeight;
 	}
 
 	void render(Graphics::Surface *surface, uint8 color) const;
 
 	void dump(int level = 0) const {
-		debug(level, "rect[%u, %u, %u, %u]", left, top, right, bottom);
+		debugC(level, kDebugObject, "rect[%u, %u, %u, %u]", left, top, right, bottom);
 	}
 
 	inline void clear() {
@@ -154,22 +156,21 @@ protected:
 };
 
 struct Object {
-
 	byte id; //0
 	Rect rect; //1
-	Rect actor_rect; //9
-	byte actor_orientation; //17
+	Rect actorRect; //9
+	byte actorOrientation; //17
 	byte enabled; //18
 	//19
 	Common::String name, description;
 
 	Object(): _base(NULL) {}
 	void dump(int level = 0) const;
-	void setName(const Common::String &name);
+	void setName(const Common::String &newName);
 	void load(byte *addr);
 	void save() const;
 
-	static Common::String parse_description(const char *name);
+	static Common::String parseDescription(const char *name);
 
 protected:
 	byte *_base;
@@ -188,10 +189,10 @@ protected:
 };
 
 struct UseHotspot {
-	byte inventory_id;
-	byte object_id;
+	byte inventoryId;
+	byte objectId;
 	byte orientation;
-	uint16 actor_x, actor_y;
+	uint16 actorX, actorY;
 	uint16 callback;
 	void load(byte *src);
 	void dump(int level = 0) const;
@@ -201,7 +202,7 @@ struct Walkbox {
 	byte type;
 	byte orientation;
 	Rect rect;
-	byte side_hint[4];
+	byte sideHint[4];
 
 	Walkbox() : _base(NULL) {}
 	void dump(int level = 0) const;
