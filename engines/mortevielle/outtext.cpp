@@ -248,29 +248,6 @@ void TextHandler::taffich() {
 	Common::String filename;
 
 	if ((a != 50) && (a != 51)) {
-		int m = a + 2000;
-		if ((m > 2001) && (m < 2010))
-			m = 2001;
-		if (m == 2011)
-			m = 2010;
-		if (a == 32)
-			m = 2034;
-		if ((a == 17) && (g_vm->_maff == 14))
-			m = 2018;
-
-		if (a > 99) {
-			if ((g_vm->_is == 1) || (g_vm->_is == 0))
-				m = 2031;
-			else
-				m = 2032;
-		}
-
-		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149))
-			m = 2030;
-
-		if (((a < 27) && (((g_vm->_maff > 69) && (!g_vm->_coreVar._alreadyEnteredManor)) || (g_vm->_maff > 99))) || ((g_vm->_maff > 29) && (g_vm->_maff < 33)))
-			m = 2033;
-
 		g_vm->_maff = a;
 		if (a == 159)
 			a = 86;

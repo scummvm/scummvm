@@ -470,7 +470,7 @@ public:
 	int _res;
 	int _caff;
 	int _crep;
-	byte _is;
+//	byte _is;
 	byte _v_lieu[7][25];
 
 	// TODO: Replace the following with proper implementations, or refactor out the code using them

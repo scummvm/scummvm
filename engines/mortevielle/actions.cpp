@@ -512,7 +512,6 @@ void MortevielleEngine::fctSearch() {
 				rechai(_mchai);
 				if (_mchai != 0) {
 					_cs = 0;
-					_is = 0;
 					_heroSearching = true;
 					_menu.setSearchMenu();
 					tsuiv();
