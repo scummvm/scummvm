@@ -655,7 +655,19 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getRateAdjustedFrameTime() const {
 
 uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTimeOffset() const {
 	// Need to convert to the track scale
-	return _parent->editList[_curEdit].timeOffset * _parent->timeScale / _decoder->_timeScale;
+
+	// We have to round the time off to the nearest in the scale, otherwise
+	// bad things happen. QuickTime docs are pretty silent on all this stuff,
+	// so this was found from samples. It doesn't help that this is really
+	// the only open source implementation of QuickTime edits.
+
+	uint32 mult = _parent->editList[_curEdit].timeOffset * _parent->timeScale;
+	uint32 result = mult / _decoder->_timeScale;
+
+	if ((mult % _decoder->_timeScale) > (_decoder->_timeScale / 2))
+		result++;
+
+	return result;
 }
 
 uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {
