@@ -37,6 +37,7 @@ public:
 	void startup();
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);
+	void handleMouseUp(int16 x, int16 y);
 	void handleSpaceKey();
 	void initScene1307Vars();
 	void initScene1405Vars();
@@ -44,6 +45,7 @@ public:
 	void initScene2808Vars1();
 	void initScene2808Vars2();
 	void initScene3009Vars();
+	uint32 getScene2802MusicFileHash();
 protected:
 	Entity *_prevChildObject;
 	bool _someFlag1;

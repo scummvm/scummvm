@@ -49,12 +49,12 @@ public:
 
 class SmackerPlayer : public Entity {
 public:
-	SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag);
+	SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag, bool paused = false);
 	~SmackerPlayer();
 	BaseSurface *getSurface() { return _smackerSurface; }
 	void open(uint32 fileHash, bool keepLastFrame);
 	void close();
-	void gotoFrame(uint frameNumber);
+	void gotoFrame(int frameNumber);
 	uint32 getFrameCount();
 	uint32 getFrameNumber(); 
 	uint getStatus();
@@ -74,6 +74,7 @@ protected:
 	bool _keepLastFrame;
 	bool _videoDone;
 	bool _dirtyFlag;
+	bool _paused;
 	int _drawX, _drawY;
 	void update();
 	void updateFrame();

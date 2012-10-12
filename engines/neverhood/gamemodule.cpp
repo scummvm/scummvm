@@ -46,6 +46,27 @@
 
 namespace Neverhood {
 
+static const uint32 kScene2801MusicFileHashes[] = {
+	0x82B22000,
+	0x02B22004,
+	0x42B22000,
+	0x03322008,
+	0x02B22001,
+	0x02B22008,
+	0x02B22020,
+	0x03322001,
+	0x03322002,
+	0x03322004,
+	0x03322040,
+	0x02B22002,
+	0x02B22010,
+	0x03322010,
+	0x02B22040,
+	0x43322000,
+	0x83322000,
+	0x03322020
+};
+
 GameModule::GameModule(NeverhoodEngine *vm)
 	: Module(vm, NULL), _moduleNum(-1) {
 	
@@ -82,6 +103,16 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseDown(%d, %d)", x, y);
 		sendPointMessage(_childObject, 1, mousePos);
+	}				
+}
+
+void GameModule::handleMouseUp(int16 x, int16 y) {
+	if (_childObject) {
+		NPoint mousePos;
+		mousePos.x = x;
+		mousePos.y = y;
+		debug(2, "GameModule::handleMouseUp(%d, %d)", x, y);
+		sendPointMessage(_childObject, 2, mousePos);
 	}				
 }
 
@@ -279,6 +310,12 @@ void GameModule::initScene3009Vars() {
 	}
 }
 
+uint32 GameModule::getScene2802MusicFileHash() {
+	uint musicNum = getGlobalVar(0x08CC0828);
+	return (musicNum % 5 != 0) ? 0 : kScene2801MusicFileHashes[CLIP<uint>(musicNum / 5, 0, 17)];
+}
+
+
 uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -321,7 +358,7 @@ void GameModule::startup() {
 #if 1
 	_vm->gameState().which = 0;
 	_vm->gameState().sceneNum = 1;
-	createModule(3000, -1);
+	createModule(2800, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

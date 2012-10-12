@@ -37,21 +37,39 @@ public:
 	virtual ~Module2800();
 protected:
 	bool _flag;
-	uint32 _fileHash;
+	uint32 _currentMusicFileHash;
+	MusicResource *_musicResource;
 	void createScene(int sceneNum, int which);
 	void updateScene();
+	void updateMusic(bool halfVolume);
 };
 
 class Scene2801 : public Scene {
 public:
 	Scene2801(NeverhoodEngine *vm, Module *parentModule, int which);
-	~Scene2801();
+	virtual ~Scene2801();
 protected:
 	Sprite *_sprite1;
 	Sprite *_sprite2;
 	Sprite *_asTape;
 	uint32 _paletteHash;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2802 : public Scene {
+public:
+	Scene2802(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene2802();
+protected:
+	SmackerPlayer *_smackerPlayer;
+	uint _smackerFrameNumber;
+	int _countdownType;
+	int _countdown1;
+	int _countdown2;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void incSmackerFrameNumber(int delta);
+	void changeCountdownType(int prevCountdownType, int newCountdownType);
 };
 
 class AsScene2803LightCord : public AnimatedSprite {

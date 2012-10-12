@@ -31,9 +31,9 @@
 namespace Neverhood {
 
 Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+	: Module(vm, parentModule), _musicResource(NULL) {
 
-	_fileHash = 0;
+	_currentMusicFileHash = 0;
 	// TODO music stuff
 	_vm->_soundMan->addMusic(0x64210814, 0xD2FA4D14);
 	setGlobalVar(0x28D8C940, 1);
@@ -51,7 +51,10 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Module2800::~Module2800() {
-	// TODO music stuff
+	if (_musicResource) {
+		_musicResource->unload();
+		delete _musicResource;
+	}
 	_vm->_soundMan->deleteGroup(0x64210814);
 }
 
@@ -65,6 +68,11 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 1:
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
+		
+		// TODO!!
+		
+		_childObject = new Scene2802(_vm, this, which);
+		
 #if 0		
 		_flag = true; // DEBUG!
 		if (_flag) {
@@ -180,10 +188,10 @@ void Module2800::createScene(int sceneNum, int which) {
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 4);
 		break;
-	//		
 	case 1001:
+		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
+		createSmackerScene(0x00800801, true, true, false);
 		break;
-	// TODO ...		
 	}
 	SetUpdateHandler(&Module2800::updateScene);
 	_childObject->handleUpdate();
@@ -351,20 +359,49 @@ void Module2800::updateScene() {
 		case 26:
 			createScene(11, 2);
 			break;
-		//		
 		case 1001:
+			createScene(1, -1);
 			break;
 		}
 	} else {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-			// TODO Module2800_updateMusic(true);
+			updateMusic(true);
 			break;
 		case 1:
-			// TODO Module2800_updateMusic(false);
+			updateMusic(false);
 			break;
 		}
 	}
+}
+
+void Module2800::updateMusic(bool halfVolume) {
+
+	uint32 newMusicFileHash = _vm->_gameModule->getScene2802MusicFileHash();
+
+	if (!_musicResource)
+		_musicResource = new MusicResource(_vm);
+		
+	if (newMusicFileHash != _currentMusicFileHash) {
+		_currentMusicFileHash = newMusicFileHash;
+		if (_currentMusicFileHash != 0) {
+			_musicResource->load(_currentMusicFileHash);
+			_musicResource->setVolume(halfVolume ? 60 : 100);
+			_musicResource->play(0);
+		} else {
+			_musicResource->stop(0);
+		}
+	} else if (_currentMusicFileHash != 0) {
+		if (!_musicResource->isPlaying()) {
+			_musicResource->setVolume(halfVolume ? 60 : 100);
+			_musicResource->play(0);
+		} else {
+			_musicResource->setVolume(halfVolume ? 60 : 100);
+		}
+	} else {
+		_musicResource->stop(0);
+	}
+
 }
 
 Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -473,6 +510,168 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
+}
+
+Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _countdownType(0), _countdown1(0), _countdown2(0) {
+
+	//DEBUG>>> Disable video
+	setGlobalVar(0x28D8C940, 0);
+	//DEBUG<<<
+		
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2802::handleMessage);
+	SetUpdateHandler(&Scene2802::update);
+	insertMouse435(0x008810A8, 20, 620);
+	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x8284C100, true, true, true));
+	_smackerFrameNumber = getGlobalVar(0x08CC0828);
+	_smackerPlayer->gotoFrame(_smackerFrameNumber);
+	_vm->_soundMan->addSound(0x04360A18, 0x422630C2);
+	_vm->_soundMan->addSound(0x04360A18, 0x00632252);
+	_vm->_soundMan->addSound(0x04360A18, 0x00372241);
+	_vm->_soundMan->setSoundVolume(0x00372241, 60);
+	changeCountdownType(0, 0);
+	_vm->_soundMan->playSoundLooping(0x00372241);
+}
+
+Scene2802::~Scene2802() {
+	_vm->_soundMan->deleteSoundGroup(0x04360A18);
+	if (_smackerFrameNumber == 0) {
+		setGlobalVar(0x09880D40, 1);
+		setGlobalVar(0x08180ABC, 0);
+	} else if (_smackerFrameNumber == getGlobalVar(0x88880915)) {
+		setGlobalVar(0x09880D40, 0);
+		setGlobalVar(0x08180ABC, 1);
+	} else {
+		setGlobalVar(0x09880D40, 0);
+		setGlobalVar(0x08180ABC, 0);
+	}
+	setGlobalVar(0x08CC0828, _smackerFrameNumber);
+}
+	
+void Scene2802::update() {
+	int prevCountdownType = _countdownType;
+	uint prevSmackerFrameNumber = _smackerFrameNumber;
+
+	Scene::update();
+	if (_countdown1 > 0)
+		--_countdown1;
+	else if (_countdownType == 1)
+		_countdownType = 3;
+	else if (_countdownType == 4)
+		_countdownType = 6;
+	
+	switch (_countdownType) {
+	case 2:
+		if (_smackerFrameNumber < 90)
+			incSmackerFrameNumber(+1);
+		_countdownType = 0;
+		break;
+	case 3:
+		if (_countdown2 > 0)
+			--_countdown2;
+		else if (_smackerFrameNumber < 90) {
+			incSmackerFrameNumber(+1);
+			_countdown2 = 1;
+		} else
+			_countdownType = 0;
+		break;
+	case 5:
+		if (_smackerFrameNumber > 0)
+			incSmackerFrameNumber(-1);
+		_countdownType = 0;
+		break;
+	case 6:
+		if (_countdown2 > 0)
+			--_countdown2;
+		else if (_smackerFrameNumber > 0) {
+			incSmackerFrameNumber(-1);
+			_countdown2 = 1;
+		} else
+			_countdownType = 0;
+		break;
+	
+	}
+
+	if (prevSmackerFrameNumber != _smackerFrameNumber)
+		_smackerPlayer->gotoFrame(_smackerFrameNumber);
+		
+	if (prevCountdownType != _countdownType)
+		changeCountdownType(prevCountdownType, _countdownType);
+
+	if (getGlobalVar(0x28D8C940) && prevCountdownType != _countdownType && _smackerFrameNumber != 0) {
+		setGlobalVar(0x28D8C940, 0);
+		leaveScene(1);
+	}
+	
+}
+
+uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	int prevCountdownType = _countdownType;
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			leaveScene(0);
+		} else if (_countdownType == 0) {
+			if (param.asPoint().x > 180 && param.asPoint().x < 300 &&
+				param.asPoint().y > 130 && param.asPoint().y < 310) {
+				_countdownType = 4;
+			} else if (param.asPoint().x > 300 && param.asPoint().x < 400 &&
+				param.asPoint().y > 130 && param.asPoint().y < 310) {
+				_countdownType = 1;
+			}
+			if (_countdownType == 1 || _countdownType == 4) {
+				_countdown1 = 8;
+				changeCountdownType(0, _countdownType);
+			}
+		}
+		break;
+	case 0x0002: // TODO Implement button up event
+		if (_countdown1 == 0)
+			_countdownType = 0;
+		else {
+			if (_countdownType == 1)
+				_countdownType = 2;
+			else if (_countdownType == 4)
+				_countdownType = 5;
+			else
+				_countdownType = 0;
+			_countdown1 = 0;
+		}
+		if (prevCountdownType != _countdownType)
+			changeCountdownType(prevCountdownType, _countdownType);
+		break;
+	case 0x000D:
+		// DEBUG message
+		break;
+	}
+	return 0;
+}
+
+void Scene2802::incSmackerFrameNumber(int delta) {
+	_smackerFrameNumber += delta;
+	setGlobalVar(0x08CC0828, _smackerFrameNumber);
+}
+
+void Scene2802::changeCountdownType(int prevCountdownType, int newCountdownType) {
+
+	if (prevCountdownType == 3 || prevCountdownType == 6) {
+		_vm->_soundMan->stopSound(0x422630C2);
+		_vm->_soundMan->stopSound(0x00632252);
+	}
+
+	if (newCountdownType == 0) {
+		if (_vm->_gameModule->getScene2802MusicFileHash() != 0) {
+			_vm->_soundMan->stopSound(0x00632252);
+		}
+		else
+			_vm->_soundMan->playSoundLooping(0x00632252);
+	} else if (newCountdownType == 3 || newCountdownType == 6) {
+		_vm->_soundMan->playSoundLooping(0x422630C2);
+		_vm->_soundMan->playSoundLooping(0x00632252);
+	}
+
 }
 
 AsScene2803LightCord::AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y)

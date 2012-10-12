@@ -65,8 +65,8 @@ void SmackerDoubleSurface::draw() {
 
 // SmackerPlayer
 
-SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag)
-	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _dirtyFlag(false), _videoDone(false),
+SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag, bool paused)
+	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _dirtyFlag(false), _videoDone(false), _paused(paused),
 	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL), _smackerFirst(true),
 	_drawX(-1), _drawY(-1) {
 
@@ -104,7 +104,8 @@ void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 	_palette = new Palette(_vm);
 	_palette->usePalette();
 
-	_smackerDecoder->start();
+	if (!_paused)
+		_smackerDecoder->start();
 	
 }
 
@@ -121,8 +122,14 @@ void SmackerPlayer::close() {
 	_smackerSurface = NULL;
 }
 
-void SmackerPlayer::gotoFrame(uint frameNumber) {
-	// TODO?
+void SmackerPlayer::gotoFrame(int frameNumber) {
+	// NOTE Slow as hell but only used in Scene2802
+	if (frameNumber != _smackerDecoder->getCurFrame()) {
+		if (frameNumber < _smackerDecoder->getCurFrame())
+			rewind();
+		while (_smackerDecoder->getCurFrame() != frameNumber)
+			updateFrame();
+	}
 }
 
 uint32 SmackerPlayer::getFrameCount() {
@@ -147,20 +154,8 @@ void SmackerPlayer::setDrawPos(int16 x, int16 y) {
 }
 
 void SmackerPlayer::rewind() {
-
-	// TODO Quite dirty, try to implement this in the decoder
-
-	delete _smackerDecoder;
-	_smackerDecoder = NULL;
-	_stream = NULL;
-
-	_smackerFirst = true;
-
-	_stream = _vm->_res->createStream(_fileHash);
-
-	_smackerDecoder = new Video::SmackerDecoder();
-	_smackerDecoder->loadStream(_stream);
-	
+	if (_smackerDecoder)
+		_smackerDecoder->rewind();
 }
 
 void SmackerPlayer::update() {
@@ -174,17 +169,22 @@ void SmackerPlayer::update() {
 		_dirtyFlag = false;
 	}
 
-	if (!_smackerDecoder->endOfVideo()) {
-		updateFrame();
-	} else if (!_keepLastFrame) {
-		// Inform the scene about the end of the video playback
-		if (_scene)
-			sendMessage(_scene, 0x3002, 0);
-		_videoDone = true;
+	if (_paused) {
+		if (_smackerFirst)
+			updateFrame();
 	} else {
-		rewind();
-		updateFrame();
-		_videoDone = false;
+		if (!_smackerDecoder->endOfVideo()) {
+			updateFrame();
+		} else if (!_keepLastFrame) {
+			// Inform the scene about the end of the video playback
+			if (_scene)
+				sendMessage(_scene, 0x3002, 0);
+			_videoDone = true;
+		} else {
+			rewind();
+			updateFrame();
+			_videoDone = false;
+		}
 	}
 	
 }
@@ -214,7 +214,7 @@ void SmackerPlayer::updateFrame() {
 
 	// TODO _vm->_screen->_skipUpdate = true;
 	_dirtyFlag = true;
-
+	
 	if (_smackerDecoder->hasDirtyPalette())
 		updatePalette();
 		

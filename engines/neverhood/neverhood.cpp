@@ -136,6 +136,10 @@ Common::Error NeverhoodEngine::run() {
 			case Common::EVENT_RBUTTONDOWN:
 				_gameModule->handleMouseDown(event.mouse.x, event.mouse.y);
 				break;
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+				_gameModule->handleMouseUp(event.mouse.x, event.mouse.y);
+				break;
 			case Common::EVENT_QUIT:
 				_system->quit();
 				break;
