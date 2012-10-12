@@ -888,6 +888,8 @@ Optional Features:
   --enable-c++11           build as C++11 if the compiler allows that
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
+  --enable-swapless-build  enable options to help avoid out of memory errors
+                           when building on swapless RAM-constrained platforms
   --enable-release         enable building in release mode (this activates
                            optimizations)
   --enable-release-mode    enable building in release mode (without optimizations)
@@ -1165,6 +1167,9 @@ for ac_option in $@; do
 		;;
 	--enable-Werror)
 		CXXFLAGS="$CXXFLAGS -Werror"
+		;;
+	--enable-swapless-build)
+		CXXFLAGS="$CXXFLAGS -Wl,--no-keep-memory"
 		;;
 	--enable-release-mode)
 		_release_build=yes
