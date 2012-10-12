@@ -1724,25 +1724,25 @@ int GraphicsManager::Asm_Reduc(int v, int percentage) {
 	return v;
 }
 
-void GraphicsManager::Affiche_Perfect(byte *destSurface, const byte *srcData, int a3, int a4, int a5, int a6, int a7, int a8) {
+void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int spriteIndex, int a6, int a7, int a8) {
 	const byte *v8; 
 	int i; 
-	const byte *v10; 
+	const byte *v10;
 	int v11;
 	int v12; 
 	const byte *v13; 
 	byte *v14; 
-	int v15;
+	int v15; 
 	byte *v16; 
-	int v17;
+	int v17; 
 	int v18; 
-	int v19;
-	int v20;
-	int v21 = 0;
-	int v22;
+	int v19; 
+	int v20; 
+	int v21 = 0; 
+	int v22; 
 	int v23; 
-	int v24;
-	int v25;
+	int v24; 
+	int v25; 
 	int v26; 
 	int v27; 
 	int v28; 
@@ -1752,447 +1752,392 @@ void GraphicsManager::Affiche_Perfect(byte *destSurface, const byte *srcData, in
 	int v32; 
 	int v33; 
 	int v34; 
-	int v35;
-	int v36 = 0; 
+	int v35; 
+	int v36; 
 	int v37;
 	int v38; 
-	int v39;
+	uint16 v39; 
 	byte *v40; 
 	int v41; 
-	int v42;
-	const byte *v43;
-	const byte *v44;
-	const byte *v45;
-	const byte *v46;
-	byte *v47;
-	byte *v48;
+	uint16 v42; 
+	const byte *v43; 
+	const byte *v44; 
+	const byte *v45; 
+	const byte *v46; 
+	byte *v47; 
+	byte *v48; 
 	int v49; 
 	int v50; 
 	byte *v51; 
-	unsigned int v52;
-	byte *v53;
-	byte *v54;
-	byte *v55;
-	int v56;
-	int v57;
-	int v58;
-	int v59;
-	int v60;
-	int v61;
-	int v62;
-	int v63;
-	int v64;
-	int v65;
+	int v52; 
+	byte *v53; 
+	byte *v54; 
+	byte *v55; 
+	int v56; 
+	int v57; 
+	int v58; 
+	int v59; 
+	int v60; 
+	int v61; 
+	int v62; 
+	int v63; 
+	int v64; 
+	int v65; 
 
 	v8 = srcData + 3;
-	for (i = a5; i; --i)
+	for (i = spriteIndex; i; --i)
 		v8 += READ_LE_UINT32(v8) + 16;
-  
+
 	v11 = 0;
 	v12 = 0;
 	v10 = v8 + 4;
-	v11 = *(uint16 *)v10;
+	v11 = (int16)READ_LE_UINT16(v10);
 	v10 += 2;
-	v12 = *(uint16 *)v10;
+	v12 = v36 = (int16)READ_LE_UINT16(v10);
 	v13 = v10 + 10;
-	clip_x = clip_y = 0;
-	clip_x1 = clip_y1 = 0;
-
-	if (a3 > min_x) {
-		if ((uint)a3 < (uint)(min_x + 300))
-			clip_x = min_x + 300 - a3;
-		if (a4 > min_y) {
-			if ((uint)a4 < (uint)(min_y + 300))
-				clip_y = min_y + 300 - a4;
-			if ((uint)a3 < (uint)(max_x + 300)) {
-				clip_x1 = max_x + 300 - a3;
-			if ((uint)a4 < (uint)(max_y + 300)) {
-				clip_y1 = max_y + 300 - a4;
-				v14 = a3 + nbrligne2 * (a4 - 300) - 300 + destSurface;
-				
-				if ((uint16)a7) {
-					Compteur_y = 0;
-					Agr_x = 0;
-					Agr_y = 0;
-					Agr_Flag_y = 0;
-					Agr_Flag_x = 0;
-					Largeur = v11;
-					v20 = Asm_Zoom(v11, a7);
-					v22 = Asm_Zoom(v21, a7);
-				
-					if (a8) {
-						v29 = v20 + v14;
-						if (clip_y) {
-							if (clip_y >= v22)
-								return;
-							v61 = v22;
-							v52 = v20;
-							v30 = 0;
-							v31 = (uint)clip_y;
-							
-							while (Asm_Zoom(v30 + 1, a7) < v31)
-								;
-							v20 = v52;
-							v13 += Largeur * v30;
-							v29 += nbrligne2 * (uint)clip_y;
-							v22 = v61 - (uint)clip_y;
-						}
-              
-						if (v22 > clip_y1)
-							v22 = clip_y1;
-						if (clip_x) {
-							if (clip_x >= v20)
-								return;
-							v20 -= (uint)clip_x;
-						}
-              
-						if (v20 > clip_x1) {
-							v32 = v20 - clip_x1;
-							v29 -= v32;
-							v62 = v22;
-							v33 = 0;
-							
-							while (Asm_Zoom(v33 + 1, a7) < v32)
-								;
-							v34 = v33;
-							v22 = v62;
-							v13 += v34;
-							v20 = (uint)clip_x1;
-						}
-					
-						do {
-							for (;;) {
-								v63 = v22;
-								v53 = v29;
-								v46 = v13;
-								Agr_Flag_x = 0;
-								Agr_x = 0;
-								v35 = v20;
-                  
-								do {
-									for (;;) {
-										if (*v13)
-											*v29 = *v13;
-										--v29;
-										++v13;
-										if (!Agr_Flag_x)
-											Agr_x = a7 + Agr_x;
-                      
-										if ((uint)Agr_x < 100)
-											break;
-										
-										Agr_x = Agr_x - 100;
-										--v13;
-										Agr_Flag_x = 1;
-										--v35;
-										if (!v35)
-											goto R_Aff_Zoom_Larg_Cont1;
-									}
-									
-									Agr_Flag_x = 0;
-									--v35;
-								} while (v35);
-
-R_Aff_Zoom_Larg_Cont1:
-								v13 = Largeur + v46;
-								v29 = nbrligne2 + v53;
-								++Compteur_y;
-								if (!(uint16)Agr_Flag_y)
-									Agr_y = a7 + Agr_y;
-								
-								if ((uint)Agr_y < 100)
-									break;
-					
-								Agr_y = Agr_y - 100;
-								v13 = v46;
-								Agr_Flag_y = 1;
-								v22 = v63 - 1;
-								if (v63 == 1)
-									return;
-							}
-                
-							Agr_Flag_y = 0;
-							v22 = v63 - 1;
-						} while (v63 != 1);
-					} else {
-						if (clip_y) {
-							if (clip_y >= v22)
-								return;
-							v58 = v22;
-							v49 = v20;
-							v23 = 0;
-							v24 = (uint)clip_y;
-
-							while (Asm_Zoom(v23 + 1, a7) < v24)
-								;
-							v20 = v49;
-							v13 += Largeur * v23;
-							v14 += nbrligne2 * (uint)clip_y;
-							v22 = v58 - (uint)clip_y;
-						}
-              
-						if (v22 > clip_y1)
-							v22 = clip_y1;
-              
-						if (clip_x) {
-							if (clip_x >= v20)
-								return;
-							v59 = v22;
-							v50 = v20;
-							v25 = (uint)clip_x;
-							v26 = 0;
-							
-							while (Asm_Zoom(v26 + 1, a7) < v25)
-								;
-							v27 = v26;
-							v22 = v59;
-							v13 += v27;
-							v14 += (uint)clip_x;
-							v20 = v50 - (uint)clip_x;
-						}
-
-						if (v20 > clip_x1)
-							v20 = clip_x1;
-				
-						do {
-							for (;;) {
-								v60 = v22;
-								v51 = v14;
-								v45 = v13;
-								v28 = v20;
-								Agr_Flag_x = 0;
-								Agr_x = 0;
-                  
-								do {
-									for (;;) {
-										if (*v13)
-											*v14 = *v13;
-										++v14;
-										++v13;
-										
-										if (!Agr_Flag_x)
-											Agr_x = a7 + Agr_x;
-										if ((uint)Agr_x < 100)
-											break;
-                      
-										Agr_x = Agr_x - 100;
-										--v13;
-										Agr_Flag_x = 1;
-										--v28;
-                      
-										if (!v28)
-											goto Aff_Zoom_Larg_Cont1;
-									}
-                    
-									Agr_Flag_x = 0;
-									--v28;
-								}
-								while (v28);
-
-Aff_Zoom_Larg_Cont1:
-								v13 = Largeur + v45;
-								v14 = nbrligne2 + v51;
-								if (!(uint16)Agr_Flag_y)
-									Agr_y = a7 + Agr_y;
-                  
-								if ((uint)Agr_y < 100)
-									break;
-                  
-								Agr_y = Agr_y - 100;
-								v13 = v45;
-								Agr_Flag_y = 1;
-								v22 = v60 - 1;
-
-								if (v60 == 1)
-									return;
-							}
-                
-							Agr_Flag_y = 0;
-							v22 = v60 - 1;
-						} while (v60 != 1);
-					}
-				} else if ((uint16)a6) {
-					Compteur_y = 0;
-					Red_x = 0;
-					Red_y = 0;
-					Largeur = v11;
-					Red = a6;
-					
-					if ((uint)a6 < 100) {
-						v37 = Asm_Reduc(v11, Red);
+	clip_x = 0;
+	clip_y = 0;
+	clip_x1 = 0;
+	clip_y1 = 0;
+	if ((unsigned __int16)xp300 > min_x) {
+		if ((unsigned __int16)xp300 < (unsigned __int16)(min_x + 300))
+			clip_x = min_x + 300 - xp300;
+		if ((unsigned __int16)yp300 > min_y) {
+			if ((unsigned __int16)yp300 < (unsigned __int16)(min_y + 300))
+				clip_y = min_y + 300 - yp300;
+			if ((unsigned __int16)xp300 < (unsigned __int16)(max_x + 300)) {
+				clip_x1 = max_x + 300 - xp300;
+				if ((unsigned __int16)yp300 < (unsigned __int16)(max_y + 300)) {
+					clip_y1 = max_y + 300 - yp300;
+					v14 = xp300 + nbrligne2 * (yp300 - 300) - 300 + surface;
+					if (a7) {
+						Compteur_y = 0;
+						Agr_x = 0;
+						Agr_y = 0;
+						Agr_Flag_y = 0;
+						Agr_Flag_x = 0;
+						Largeur = v11;
+						v20 = Asm_Zoom(v11, a7);
+						v22 = Asm_Zoom(v21, a7);
 						if (a8) {
-							v40 = v37 + v14;
-                
+							v29 = v20 + v14;
+							if (clip_y) {
+								if ((unsigned __int16)clip_y >= v22)
+									return;
+								v61 = v22;
+								v52 = v20;
+								v30 = 0;
+								v31 = (unsigned __int16)clip_y;
+								while (Asm_Zoom(v30 + 1, a7) < v31)
+									;
+								v20 = v52;
+								v13 += Largeur * v30;
+								v29 += nbrligne2 * (unsigned __int16)clip_y;
+								v22 = v61 - (unsigned __int16)clip_y;
+							}
+							if (v22 > (unsigned __int16)clip_y1)
+								v22 = (unsigned __int16)clip_y1;
+							if (clip_x) {
+								if ((unsigned __int16)clip_x >= v20)
+									return;
+								v20 -= (unsigned __int16)clip_x;
+							}
+							if (v20 > (unsigned __int16)clip_x1) {
+								v32 = v20 - (unsigned __int16)clip_x1;
+								v29 -= v32;
+								v62 = v22;
+								v33 = 0;
+								while (Asm_Zoom(v33 + 1, a7) < v32)
+									;
+								v34 = v33;
+								v22 = v62;
+								v13 += v34;
+								v20 = (unsigned __int16)clip_x1;
+							}
 							do {
-								v65 = v36;
-								v55 = v40;
-								Red_y = Red + Red_y;
-								
-								if ((uint)Red_y < 100) {
-									Red_x = 0;
-									v41 = Largeur;
-									v42 = v37;
-                    
+								while (1) {
+									v63 = v22;
+									v53 = v29;
+									v46 = v13;
+									Agr_Flag_x = 0;
+									Agr_x = 0;
+									v35 = v20;
 									do {
-										Red_x = Red + Red_x;
-										if (Red_x < 100) {
-											if (v42 >= clip_x && v42 < clip_x1 && *v13)
-												*v40 = *v13;
-											--v40;
+										while (1) {
+											if (*v13)
+												*v29 = *v13;
+											--v29;
 											++v13;
-											--v42;
-										} else {
-											Red_x = Red_x - 100;
-											++v13;
+											if (!Agr_Flag_x)
+												Agr_x = a7 + Agr_x;
+											if ((unsigned __int16)Agr_x < 0x64u)
+												break;
+											Agr_x = Agr_x - 100;
+											--v13;
+											Agr_Flag_x = 1;
+											--v35;
+											if (!v35)
+												goto R_Aff_Zoom_Larg_Cont1;
 										}
-										--v41;
-									} while (v41);
-                    
-									v36 = v65;
-									v40 = nbrligne2 + v55;
-								} else {
-									Red_y = Red_y - 100;
-									v13 += Largeur;
+										Agr_Flag_x = 0;
+										--v35;
+									} while (v35);
+R_Aff_Zoom_Larg_Cont1:
+									v13 = Largeur + v46;
+									v29 = nbrligne2 + v53;
+									++Compteur_y;
+									if (!Agr_Flag_y)
+										Agr_y = a7 + Agr_y;
+									if ((unsigned __int16)Agr_y < 0x64u)
+										break;
+									Agr_y = Agr_y - 100;
+									v13 = v46;
+									Agr_Flag_y = 1;
+									v22 = v63 - 1;
+									if (v63 == 1)
+										return;
 								}
-								
-								--v36;
-							} while ( v36 );
+								Agr_Flag_y = 0;
+								v22 = v63 - 1;
+							} while (v63 != 1);
 						} else {
+							if (clip_y) {
+								if ((unsigned __int16)clip_y >= v22)
+									return;
+								v58 = v22;
+								v49 = v20;
+								v23 = 0;
+								v24 = (unsigned __int16)clip_y;
+								while (Asm_Zoom(v23 + 1, a7) < v24)
+									;
+								v20 = v49;
+								v13 += Largeur * v23;
+								v14 += nbrligne2 * (unsigned __int16)clip_y;
+								v22 = v58 - (unsigned __int16)clip_y;
+							}
+							if (v22 > (unsigned __int16)clip_y1)
+								v22 = (unsigned __int16)clip_y1;
+							if (clip_x) {
+								if ((unsigned __int16)clip_x >= v20)
+									return;
+								v59 = v22;
+								v50 = v20;
+								v25 = (unsigned __int16)clip_x;
+								v26 = 0;
+								while (Asm_Zoom(v26 + 1, a7) < v25)
+									;
+								v27 = v26;
+								v22 = v59;
+								v13 += v27;
+								v14 += (unsigned __int16)clip_x;
+								v20 = v50 - (unsigned __int16)clip_x;
+							}
+							if (v20 > (unsigned __int16)clip_x1)
+								v20 = (unsigned __int16)clip_x1;
 							do {
-								v64 = v36;
-								v54 = v14;
-								Red_y = Red + Red_y;
-
-								if ((uint)Red_y < 100) {
-									Red_x = 0;
-									v38 = Largeur;
-									v39 = 0;
-                    
+								while (1) {
+									v60 = v22;
+									v51 = v14;
+									v45 = v13;
+									v28 = v20;
+									Agr_Flag_x = 0;
+									Agr_x = 0;
 									do {
-										Red_x = Red + Red_x;
-										if ((uint)Red_x < 100) {
-											if (v39 >= clip_x && v39 < clip_x1 && *v13)
+										while (1) {
+											if (*v13)
 												*v14 = *v13;
 											++v14;
 											++v13;
-											++v39;
-										} else {
-											Red_x = Red_x - 100;
-											++v13;
+											if (!Agr_Flag_x)
+												Agr_x = a7 + Agr_x;
+											if ((unsigned __int16)Agr_x < 0x64u)
+												break;
+											Agr_x = Agr_x - 100;
+											--v13;
+											Agr_Flag_x = 1;
+											--v28;
+											if (!v28)
+												goto Aff_Zoom_Larg_Cont1;
 										}
-										
-										--v38;
-									} while ( v38 );
-									
-									v36 = v64;
-									v14 = nbrligne2 + v54;
-								} else {
-									Red_y = Red_y - 100;
-									v13 += Largeur;
+										Agr_Flag_x = 0;
+										--v28;
+									} while (v28);
+Aff_Zoom_Larg_Cont1:
+									v13 = Largeur + v45;
+									v14 = nbrligne2 + v51;
+									if (!Agr_Flag_y)
+										Agr_y = a7 + Agr_y;
+									if ((unsigned __int16)Agr_y < 0x64u)
+										break;
+									Agr_y = Agr_y - 100;
+									v13 = v45;
+									Agr_Flag_y = 1;
+									v22 = v60 - 1;
+									if (v60 == 1)
+										return;
 								}
-                  
-								--v36;
-							} while (v36);
+								Agr_Flag_y = 0;
+								v22 = v60 - 1;
+							} while (v60 != 1);
 						}
-					}
-				} else {
-					Largeur = v11;
-					Compteur_y = 0;
-					if (a8) {
-						v16 = v11 + v14;
-						spec_largeur = v11;
-						if (clip_y) {
-							if ((uint)clip_y >= (unsigned int)v12)
-								return;
-							v13 += v11 * (uint)clip_y;
-							v16 += nbrligne2 * (uint)clip_y;
-							v12 -= (uint)clip_y;
+					} else if (a6) {
+						Compteur_y = 0;
+						Red_x = 0;
+						Red_y = 0;
+						Largeur = v11;
+						Red = a6;
+						if (a6 < 100) {
+							v37 = Asm_Reduc(v11, Red);
+							if (a8) {
+								v40 = v37 + v14;
+								do {
+									v65 = v36;
+									v55 = v40;
+									Red_y = Red + Red_y;
+									if ((unsigned __int16)Red_y < 0x64u) {
+										Red_x = 0;
+										v41 = Largeur;
+										v42 = v37;
+										do {
+											Red_x = Red + Red_x;
+											if ((unsigned __int16)Red_x < 0x64u) {
+												if (v42 >= clip_x && v42 < clip_x1 && *v13)
+													*v40 = *v13;
+												--v40;
+												++v13;
+												--v42;
+											} else {
+												Red_x = Red_x - 100;
+												++v13;
+											}
+											--v41;
+										} while (v41);
+										v36 = v65;
+										v40 = nbrligne2 + v55;
+									} else {
+										Red_y = Red_y - 100;
+										v13 += Largeur;
+									}
+									--v36;
+								} while (v36);
+							} else {
+								do {
+									v64 = v36;
+									v54 = v14;
+									Red_y = Red + Red_y;
+									if ((unsigned __int16)Red_y < 0x64u) {
+										Red_x = 0;
+										v38 = Largeur;
+										v39 = 0;
+										do {
+											Red_x = Red + Red_x;
+											if ((unsigned __int16)Red_x < 0x64u) {
+												if (v39 >= clip_x && v39 < clip_x1 && *v13)
+													*v14 = *v13;
+												++v14;
+												++v13;
+												++v39;
+											} else {
+												Red_x = Red_x - 100;
+												++v13;
+											}
+											--v38;
+										} while (v38);
+										v36 = v64;
+										v14 = nbrligne2 + v54;
+									} else {
+										Red_y = Red_y - 100;
+										v13 += Largeur;
+									}
+									--v36;
+								} while (v36);
+							}
 						}
-
-						v17 = (uint)clip_y1;
-						if (v12 > clip_y1)
-							v12 = clip_y1;
-              
-						v17 = clip_x;
-						if (clip_x) {
-							if (v17 >= v11)
-								return;
-							v11 -= v17;
-						}
-              
-						if (v11 > clip_x1) {
-							v18 = v11 - clip_x1;
-							v13 += v18;
-							v16 -= v18;
-							v11 = (uint)clip_x1;
-						}
-              
-						do {
-							v57 = v12;
-							v48 = v16;
-							v44 = v13;
-							v19 = v11;
-                
-							do {
-								if (*v13)
-									*v16 = *v13;
-								++v13;
-								--v16;
-								--v19;
-							} while (v19);
-
-							v13 = spec_largeur + v44;
-							v16 = nbrligne2 + v48;
-							v12 = v57 - 1;
-						} while (v57 != 1);
 					} else {
-						spec_largeur = v11;
-						if (clip_y) {
-							if ((uint)clip_y >= (unsigned int)v12)
-								return;
-					
-							v13 += v11 * (uint)clip_y;
-							v14 += nbrligne2 * (uint)clip_y;
-							v12 -= (uint)clip_y;
-						}
-              
-						if (v12 > clip_y1)
-							v12 = clip_y1;
-						if (clip_x) {
-							if (clip_x >= v11)
-								return;
-					
-							v13 += (uint)clip_x;
-							v14 += (uint)clip_x;
-							v11 -= (uint)clip_x;
-						}
-              
-						if (v11 > clip_x1)
-							v11 = clip_x1;
-              
-						do {
-							v56 = v12;
-							v47 = v14;
-							v43 = v13;
-							v15 = v11;
-					
+						Largeur = v11;
+						Compteur_y = 0;
+						if (a8) {
+							v16 = v11 + v14;
+							spec_largeur = v11;
+							if (clip_y) {
+								if ((unsigned __int16)clip_y >= (unsigned int)v12)
+									return;
+								v13 += v11 * (unsigned __int16)clip_y;
+								v16 += nbrligne2 * (unsigned __int16)clip_y;
+								v12 -= (unsigned __int16)clip_y;
+							}
+							v17 = (unsigned __int16)clip_y1;
+							if (v12 > clip_y1)
+								v12 = clip_y1;
+							v17 = clip_x;
+							if (clip_x) {
+								if (v17 >= v11)
+									return;
+								v11 -= v17;
+							}
+							if (v11 > (unsigned __int16)clip_x1) {
+								v18 = v11 - (unsigned __int16)clip_x1;
+								v13 += v18;
+								v16 -= v18;
+								v11 = (unsigned __int16)clip_x1;
+							}
 							do {
-								if (*v13)
-									*v14 = *v13;
-								++v14;
-								++v13;
-								--v15;
-							} while (v15);
-                
-							v13 = spec_largeur + v43;
-							v14 = nbrligne2 + v47;
-							v12 = v56 - 1;
-						} while (v56 != 1);
+								v57 = v12;
+								v48 = v16;
+								v44 = v13;
+								v19 = v11;
+								do {
+									if (*v13)
+										*v16 = *v13;
+									++v13;
+									--v16;
+									--v19;
+								} while (v19);
+								v13 = spec_largeur + v44;
+								v16 = nbrligne2 + v48;
+								v12 = v57 - 1;
+							} while (v57 != 1);
+						} else {
+							spec_largeur = v11;
+							if (clip_y) {
+								if ((unsigned __int16)clip_y >= (unsigned int)v12)
+									return;
+								v13 += v11 * (unsigned __int16)clip_y;
+								v14 += nbrligne2 * (unsigned __int16)clip_y;
+								v12 -= (unsigned __int16)clip_y;
+							}
+							if (v12 > clip_y1)
+								v12 = clip_y1;
+							if (clip_x) {
+								if ((unsigned __int16)clip_x >= v11)
+									return;
+								v13 += (unsigned __int16)clip_x;
+								v14 += (unsigned __int16)clip_x;
+								v11 -= (unsigned __int16)clip_x;
+							}
+							if (v11 > (unsigned __int16)clip_x1)
+								v11 = (unsigned __int16)clip_x1;
+							do {
+								v56 = v12;
+								v47 = v14;
+								v43 = v13;
+								v15 = v11;
+								do {
+									if (*v13)
+										*v14 = *v13;
+									++v14;
+									++v13;
+									--v15;
+								} while (v15);
+								v13 = spec_largeur + v43;
+								v14 = nbrligne2 + v47;
+								v12 = v56 - 1;
+							} while (v56 != 1);
+						}
 					}
 				}
 			}
 		}
-	}
 	}
 }
 
