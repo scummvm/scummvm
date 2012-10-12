@@ -242,7 +242,7 @@ void TextHandler::taffich() {
 		break;
 	}
 
-	g_vm->_okdes = true;
+	g_vm->_destinationOk = true;
 	g_vm->_mouse.hideMouse();
 	lgt = 0;
 	Common::String filename;

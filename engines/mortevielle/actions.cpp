@@ -52,7 +52,7 @@ void MortevielleEngine::fctMove() {
 		tfleche();
 
 		if (_keyPressedEsc)
-			_okdes = false;
+			_destinationOk = false;
 
 		if ((_anyone) || (_keyPressedEsc))
 			return;
@@ -180,7 +180,7 @@ void MortevielleEngine::fctMove() {
 void MortevielleEngine::fctTake() {
 	if (_caff > 99) {
 		int cx = _caff;
-		avpoing(cx);
+		putInHand(cx);
 		if (_crep != 139) {
 			if (_currBitIndex > 0)
 				_coreVar._faithScore += 3;
@@ -236,34 +236,34 @@ void MortevielleEngine::fctTake() {
 				_coreVar._faithScore += 3;
 			_crep = 997;
 			if ((_coreVar._currPlace == PURPLE_ROOM) && (_coreVar._purpleRoomObjectId != 0))
-				avpoing(_coreVar._purpleRoomObjectId);
+				putInHand(_coreVar._purpleRoomObjectId);
 			if ((_coreVar._currPlace == ATTIC) && (_num == 1) && (_coreVar._atticBallHoleObjectId != 0)) {
-				avpoing(_coreVar._atticBallHoleObjectId);
+				putInHand(_coreVar._atticBallHoleObjectId);
 				if ((_crep != 997) && (_crep != 139))
 					aniof(2, 7);
 			}
 			if ((_coreVar._currPlace == ATTIC) && (_num == 2) && (_coreVar._atticRodHoleObjectId != 0)) {
-				avpoing(_coreVar._atticRodHoleObjectId);
+				putInHand(_coreVar._atticRodHoleObjectId);
 				if ((_crep != 997) && (_crep != 139))
 					aniof(2, 6);
 			}
 			if ((_coreVar._currPlace == CELLAR) && (_coreVar._cellarObjectId != 0)) {
-				avpoing(_coreVar._cellarObjectId);
+				putInHand(_coreVar._cellarObjectId);
 				if ((_crep != 997) && (_crep != 139))
 					aniof(2, 2);
 			}
 			if ((_coreVar._currPlace == CRYPT) && (_coreVar._cryptObjectId != 0))
-				avpoing(_coreVar._cryptObjectId);
+				putInHand(_coreVar._cryptObjectId);
 
 			if ((_coreVar._currPlace == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId != 0)) {
-				avpoing(_coreVar._secretPassageObjectId);
+				putInHand(_coreVar._secretPassageObjectId);
 				if ((_crep != 997) && (_crep != 139)) {
 					_crep = 182;
 					aniof(2, 1);
 				}
 			}
 			if ((_coreVar._currPlace == WELL) && (_coreVar._wellObjectId != 0)) {
-				avpoing(_coreVar._wellObjectId);
+				putInHand(_coreVar._wellObjectId);
 				if ((_crep != 997) && (_crep != 139))
 					aniof(2, 1);
 			}
@@ -312,7 +312,7 @@ void MortevielleEngine::fctInventoryTake() {
 	cz = ord(_coreVar._sjer[cy]);
 	_coreVar._sjer[cy] = chr(0);
 	_menu.setInventoryText();
-	avpoing(cz);
+	putInHand(cz);
 	_crep = 998;
 	clearDescriptionBar();
 }

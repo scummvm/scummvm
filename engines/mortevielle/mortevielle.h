@@ -243,7 +243,7 @@ private:
 	bool _syn;
 	bool _obpart;
 	bool _anyone;
-	bool _brt;
+	bool _uptodatePresence;
 
 	int  _textColor;
 	int  _place;
@@ -445,7 +445,7 @@ private:
 	void ajjer(int ob);
 	void tsuiv();
 	void treg(int objId);
-	void avpoing(int &objId);
+	void putInHand(int &objId);
 	void rechai(int &ch);
 	void fenat(char ans);
 
@@ -456,7 +456,7 @@ public:
 	byte _tabdon[4001];
 	bool _soundOff;
 	bool _blo;
-	bool _okdes;
+	bool _destinationOk;
 	bool _largestClearScreen;
 	int  _currGraphicalDevice;
 	int  _newGraphicalDevice;
