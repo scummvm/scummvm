@@ -1753,7 +1753,6 @@ void MortevielleEngine::endSearch() {
 	_heroSearching = false;
 	_obpart = false;
 	_cs = 0;
-	_is = 0;
 	_menu.unsetSearchMenu();
 }
 
@@ -1890,7 +1889,6 @@ void MortevielleEngine::gameLoaded() {
 	_startHour = 0;
 	_endHour = 0;
 	_cs = 0;
-	_is = 0;
 	_roomDoorId = OWN_ROOM;
 	_syn = true;
 	_heroSearching = true;
@@ -3584,8 +3582,7 @@ void MortevielleEngine::tsuiv() {
 		tbcl = _tabdon[cl];
 	} while ((tbcl == 0) && (_cs <= 9));
 
-	if ((tbcl != 0) && (_cs < 11)) { // 2nd check useless as _cs is <= 10
-		++_is;
+	if ((tbcl != 0) && (_cs < 11)) {
 		_caff = tbcl;
 		_crep = _caff + 400;
 		if (_currBitIndex != 0)
