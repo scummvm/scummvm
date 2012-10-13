@@ -1294,16 +1294,16 @@ Video_Cont_Vbe16a:
 void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height) {
 	const byte *srcP;
 	byte *destP;
-	int yCtr; 
+	int rowCount; 
 	unsigned int i;
-	int yTemp; 
+	int rowCount2; 
 
-	srcP = srcSurface + xs + nbrligne2 * ys;
+	assert(xs <= SCREEN_WIDTH && ys <= SCREEN_HEIGHT);
+	srcP = xs + nbrligne2 * ys + srcSurface;
 	destP = destSurface;
-
-	yCtr = height;
+	rowCount = height;
 	do {
-		yTemp = yCtr;
+		rowCount2 = rowCount;
 		if (width & 1) {
 			memcpy(destP, srcP, width);
 			srcP += width;
@@ -1312,16 +1312,16 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 			for (i = width >> 1; i; --i) {
 				*(uint16 *)destP = *(uint16 *)srcP;
 				srcP += 2;
-				destP = (byte *)destP + 2;
+				destP += 2;
 			}
 		} else {
 			memcpy(destP, srcP, 4 * (width >> 2));
 			srcP += 4 * (width >> 2);
-			destP = (byte *)destP + 4 * (width >> 2);
+			destP += 4 * (width >> 2);
 		}
 		srcP = nbrligne2 + srcP - width;
-		yCtr = yTemp - 1;
-	} while (yTemp != 1);
+		rowCount = rowCount2 - 1;
+	} while (rowCount2 != 1);
 }
 
 void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex) {
@@ -1528,6 +1528,7 @@ void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 	}
 	
 	if (v10 == 1) {
+		assert(_vm->_globals.NBBLOC < 50);
 		BlocItem &bloc = _vm->_globals.BLOC[++_vm->_globals.NBBLOC];
 
 		bloc.field0 = 1;
@@ -1556,6 +1557,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 		return;
 
 	SDL_NBLOCS = _vm->_globals.NBBLOC;
+	DD_Lock();
 
 	for (int idx = 1; idx <= _vm->_globals.NBBLOC; ++idx) {
 		BlocItem &bloc = _vm->_globals.BLOC[idx];
@@ -1580,7 +1582,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 			if (bloc.x2 > (_vm->_eventsManager.start_x + SCREEN_WIDTH))
 				bloc.x2 = _vm->_eventsManager.start_x + SCREEN_WIDTH;
 			
-			if (!SDL_ECHELLE) {
+			if (SDL_ECHELLE) {
 				// Calculate the bounds
 				int xp = Magic_Number(bloc.x1) - 4;
 				if (xp < _vm->_eventsManager.start_x)
@@ -1600,6 +1602,9 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 				if ((height - yp) > (SCREEN_HEIGHT - 40))
 					yp -= 4;
 
+				// WORKAROUND: Original didn't lock the screen for access
+				DD_Lock();
+
 				if (Winbpp == 2) {
 					m_scroll16A(VESA_BUFFER, xp, yp, width, height, 
 						Reel_Zoom(xp - _vm->_eventsManager.start_x, SDL_ECHELLE), Reel_Zoom(yp, SDL_ECHELLE));
@@ -1608,11 +1613,16 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 						Reel_Zoom(xp - _vm->_eventsManager.start_x, SDL_ECHELLE), Reel_Zoom(yp, SDL_ECHELLE));
 				}
 
+				DD_Unlock();
+
 				dstRect.left = Reel_Zoom(xp - _vm->_eventsManager.start_x, SDL_ECHELLE);
 				dstRect.top = Reel_Zoom(yp, SDL_ECHELLE);
 				dstRect.setWidth(Reel_Zoom(width, SDL_ECHELLE));
 				dstRect.setHeight(Reel_Zoom(height, SDL_ECHELLE));
 			} else {
+				// WORKAROUND: Original didn't lock the screen for access
+				DD_Lock();
+
 				if (Winbpp == 2) {
 					m_scroll16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1,
 						bloc.x1 - _vm->_eventsManager.start_x, bloc.y1);
@@ -1620,11 +1630,25 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 					m_scroll(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1,
 						bloc.x1 - _vm->_eventsManager.start_x, bloc.y1);
 				}
+
+				dstRect.left = bloc.x1 - _vm->_eventsManager.start_x;
+				dstRect.top = bloc.y1;
+				dstRect.setWidth(bloc.x2 - bloc.x1);
+				dstRect.setHeight(bloc.y2 - bloc.y1);
+
+				DD_Unlock();
 			}
 		}
 		
 		_vm->_globals.BLOC[idx].field0 = 0;
 	}
+
+	_vm->_globals.NBBLOC = 0;
+	DD_Unlock();
+	if (!_vm->_globals.BPP_NOAFF) {
+//		SDL_UpdateRects(LinuxScr, SDL_NBLOCS, dstrect);
+	}
+	SDL_NBLOCS = 0;
 }
 
 void GraphicsManager::CopyAsm(const byte *surface) {
