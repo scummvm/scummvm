@@ -98,7 +98,7 @@ int EventsManager::YMOUSE() {
 	return souris_y + ofset_souris_y;
 }
 
-bool EventsManager::BMOUSE() {
+int EventsManager::BMOUSE() {
 	CONTROLE_MES();
 	return souris_bb;
 }
@@ -215,12 +215,14 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_LBUTTONDOWN:
+			souris_b = 1;
+			break;
 		case Common::EVENT_RBUTTONDOWN:
-			souris_b = true;
+			souris_b = 2;
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			souris_b = false;
+			souris_b = 0;
 			return;
 
 		default:

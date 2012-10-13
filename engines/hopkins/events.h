@@ -67,7 +67,7 @@ public:
 	void souris_max();
 	int XMOUSE();
 	int YMOUSE();
-	bool BMOUSE();
+	int BMOUSE();
 	void MOUSE_ON();
 	void MOUSE_OFF();
 	void CHANGE_MOUSE(int id);

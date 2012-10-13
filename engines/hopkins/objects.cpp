@@ -7596,25 +7596,16 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 
 void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &s2, const Common::String &s3,
 							   const Common::String &s4, int v) {
-	Common::String v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v10; 
-	int v11; 
-	int v12; 
-	int v13; 
+	int mouseButtons;
+	bool breakFlag;
 	int xp, yp;
 
-	v5 = s2;
 	INVENTFLAG = 0;
 	KEY_INVENT = 0;
 	_vm->_objectsManager.verbe = 4;
 	_vm->_globals.MAX_COMPTE = 6;
 	_vm->_graphicsManager.ofscroll = 0;
 	VIRE_INVENT = 0;
-	v11 = 0;
-	v12 = 0;
 	_vm->_globals.PLAN_FLAG = 0;
 	_vm->_graphicsManager.NOFADE = 0;
 	_vm->_globals.NOMARCHE = 0;
@@ -7686,42 +7677,45 @@ LABEL_70:
 	g_old_sens = -1;
 	_vm->_globals.Compteur = 0;
 	_vm->_globals.BPP_NOAFF = 1;
-	v6 = 0;
-	do {
+
+	for (int idx = 0; idx < 5; ++idx) {
 		_vm->_eventsManager.VBL();
-		++v6;
-	} while (v6 <= 4);
+	}
+
 	_vm->_globals.BPP_NOAFF = 0;
 	_vm->_globals.iRegul = 1;
 	if (!_vm->_graphicsManager.NOFADE)
 		_vm->_graphicsManager.FADE_INW();
 	_vm->_graphicsManager.NOFADE = 0;
 	_vm->_eventsManager.CHANGE_MOUSE(4);
-	v13 = 0;
-	do {
-		v7 = _vm->_eventsManager.BMOUSE();
-		v8 = v7;
-		if (v7) {
-			if (v7 == 1) {
+
+	int xCheck = 0; 
+	int yCheck = 0; 
+
+	breakFlag = false;
+	while (!_vm->shouldQuit() && !breakFlag) {
+		mouseButtons = _vm->_eventsManager.BMOUSE();
+		if (mouseButtons) {
+			if (mouseButtons == 1) {
 				if (_vm->_objectsManager.verbe == 16 && _vm->_eventsManager.btsouris == 16) {
 					xp = _vm->_eventsManager.XMOUSE();
 					yp = _vm->_eventsManager.YMOUSE();
-					v10 = yp;
-					if (v12 == xp) {
-						if (v11 == yp) {
+
+					if (xCheck == xp) {
+						if (yCheck == yp) {
 							_vm->_globals.chemin = g_PTRNUL;
 							_vm->_objectsManager.PARADISE();
 							if (_vm->_globals.SORTIE)
-								v13 = 1;
+								breakFlag = true;
 						}
 					}
-					v12 = xp;
-					v11 = v10;
+					xCheck = xp;
+					yCheck = yp;
 				}
 				_vm->_objectsManager.BTGAUCHE();
-			}
-			if (v8 == 2)
+			} else if (mouseButtons == 2) {
 				_vm->_objectsManager.BTDROITE();
+			}
 		}
 		if (!_vm->_globals.SORTIE) {
 			TEST_INVENT();
@@ -7735,8 +7729,9 @@ LABEL_70:
 			if (!_vm->_globals.SORTIE)
 				continue;
 		}
-		v13 = 1;
-	} while (v13 != 1);
+		breakFlag = true;
+	}
+
 	if (_vm->_globals.SORTIE != 8 || _vm->_globals.ECRAN != 5 || _vm->_globals.HELICO != 1) {
 		if (!_vm->_graphicsManager.NOFADE)
 			_vm->_graphicsManager.FADE_OUTW();
