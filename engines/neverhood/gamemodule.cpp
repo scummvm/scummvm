@@ -42,6 +42,7 @@
 #include "neverhood/module2600.h"
 #include "neverhood/module2700.h"
 #include "neverhood/module2800.h"
+#include "neverhood/module2900.h"
 #include "neverhood/module3000.h"
 
 namespace Neverhood {
@@ -358,7 +359,7 @@ void GameModule::startup() {
 #if 1
 	_vm->gameState().which = 0;
 	_vm->gameState().sceneNum = 1;
-	createModule(2800, -1);
+	createModule(2900, 1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -499,6 +500,12 @@ void GameModule::createModule(int moduleNum, int which) {
 		setGlobalVar(V_MODULE_NAME, 0x64210814);
 		_childObject = new Module2800(_vm, this, which);
 		break;
+	case 2900:
+		setGlobalVar(V_MODULE_NAME, 0x81100020);
+		if (which >= 0)
+			setGlobalVar(0x0152899A, which);
+		_childObject = new Module2900(_vm, this, which);
+		break;
 	case 3000:
 		setGlobalVar(V_MODULE_NAME, 0x81293110);
 		_childObject = new Module3000(_vm, this, which);
@@ -628,6 +635,55 @@ void GameModule::updateModule() {
 			} else {
 				createModule(1800, 0);
 			}
+			break;
+		case 2900:
+			if (_moduleResult != 0xFFFFFFFF) {
+				switch (_moduleResult) {
+				case 0:
+					createModule(1300, 5);
+					break;
+				case 1:
+					createModule(2100, 1);
+					break;
+				case 2:
+					createModule(1100, 1);
+					break;
+				case 3:
+					setSubVar(0x2C145A98, 2, 1);
+					createModule(1700, 1);
+					break;
+				case 4:
+					createModule(2000, 0);
+					break;
+				case 5:
+				default:
+					createModule(2800, 1);
+					break;
+				}
+			} else {
+				switch (getGlobalVar(0x0152899A)) {
+				case 0:
+					createModule(1300, 6);
+					break;
+				case 1:
+					createModule(2100, 2);
+					break;
+				case 2:
+					createModule(1100, 2);
+					break;
+				case 3:
+					createModule(1700, 2);
+					break;
+				case 4:
+					createModule(2000, 1);
+					break;
+				case 5:
+				default:
+					createModule(2800, 2);
+					break;
+				}
+			}
+			setGlobalVar(0x0152899A, 0);
 			break;
 		case 3000:
 			if (_moduleResult == 1) {

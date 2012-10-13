@@ -44,9 +44,9 @@ Module1100::Module1100(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
 	} else if (which == 1) {
-		createScene(9, 1);
+		createScene(8, 1);
 	} else {
-		createScene(9, 3);
+		createScene(8, 3);
 	}
 
 	_vm->_soundMan->addSoundList(0x0002C818, kModule1100SoundList);

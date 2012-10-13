@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NEVERHOOD_MODULE2100_H
-#define NEVERHOOD_MODULE2100_H
+#ifndef NEVERHOOD_MODULE2900_H
+#define NEVERHOOD_MODULE2900_H
 
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
@@ -29,63 +29,74 @@
 
 namespace Neverhood {
 
-class Module2100 : public Module {
+// Module2900
+
+class Module2900 : public Module {
 public:
-	Module2100(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module2100();
+	Module2900(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	int _sceneNum;
+	int _field2C;
 	void createScene(int sceneNum, int which);
 	void updateScene();
+	void updateMusic(bool halfVolume);
 };
 
-// Scene1901
-
-class AsScene2101Door : public AnimatedSprite {
+class SsScene2901LocationButton : public StaticSprite {
 public:
-	AsScene2101Door(NeverhoodEngine *vm, bool flag);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stOpenDoor();
-	void stCloseDoor();
-	void stCloseDoorDone();
-};
-
-class AsScene2101HitByDoorEffect : public AnimatedSprite {
-public:
-	AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klayman);
-protected:
-	Sprite *_klayman;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsCommonFloorButton : public StaticSprite {
-public:
-	SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
+	SsScene2901LocationButton(NeverhoodEngine *vm, Scene *parentScene, int which, uint index);
 protected:
 	Scene *_parentScene;
-	uint32 _soundFileHash;
-	uint32 _fileHash1, _fileHash2;
-	int16 _countdown;
+	uint _index;
+	int _countdown1;
 	void update();	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Scene2101 : public Scene {
+class SsScene2901LocationButtonLight : public StaticSprite {
 public:
-	Scene2101(NeverhoodEngine *vm, Module *parentModule, int which);
+	SsScene2901LocationButtonLight(NeverhoodEngine *vm, int which, uint index);
+	void show();
+	void hide();
 protected:
-	Sprite *_ssFloorButton;
-	Sprite *_asTape1;
-	Sprite *_asTape2;
-	Sprite *_asDoor;
-	Sprite *_asHitByDoorEffect;
+	uint _index;
+};
+
+class SsScene2901BrokenButton : public StaticSprite {
+public:
+	SsScene2901BrokenButton(NeverhoodEngine *vm, int which);
+};
+
+class SsScene2901BigButton : public StaticSprite {
+public:
+	SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentScene, int which);
+protected:
+	Scene *_parentScene;
+	int _which;
 	int _countdown1;
-	int _doorStatus;
+	void update();	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2901 : public Scene {
+public:
+	Scene2901(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_ssLocationButtons[6];
+	SsScene2901LocationButtonLight *_ssLocationButtonLights[6];
+	Sprite *_ssBigButton;
+	int _currWhirlButtonNum;
+	int _prevWhirlButtonNum;
+	int _countdown1;
+	int _currLocationButtonNum;
+	int _selectedButtonNum;
+	int _skipCountdown;
+	int _blinkOn;
+	bool _isButton2Broken;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE2100_H */
+#endif /* NEVERHOOD_MODULE2900_H */
