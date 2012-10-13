@@ -39,250 +39,204 @@ AnimationManager::AnimationManager() {
 }
 
 void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
-	int doneFlag;
-	byte *screenCopy = NULL;
-	uint16 v14, v15, v16, v17, v18, v19;
+	signed __int16 v4; 
+	signed __int16 v5; 
+	bool hasScreenCopy; 
+	byte *screenCopy = NULL; 
+	byte *v10 = NULL;
+	int v13;
+	byte *ptr = NULL;
 	size_t nbytes;
-	byte *screenP;
 	Common::File f;
-	char strBuffer[20];
-	int idx = 0;
 
-	doneFlag = 0;
-	for (;;) {
-//MAIN_LOOP:
-		v14 = v15 = v16 = v17 = 0;
-		v18 = 1;
-		screenP = _vm->_graphicsManager.VESA_SCREEN;
+	hasScreenCopy = false;
+	while (!_vm->shouldQuit()) {
+LABEL_2:
+		v10 = _vm->_graphicsManager.VESA_SCREEN;
+		ptr = _vm->_globals.dos_malloc2(0x14u);
 
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANM, filename);
-
 		if (!f.open(_vm->_globals.NFICHIER))
-			error("Not Found file %s", _vm->_globals.NFICHIER.c_str());
+			error("File not found - %s", _vm->_globals.NFICHIER.c_str());
 
-		// TODO: Original above read seems to overlap the doneFlag
 		f.skip(6);
-		//buf = read(4); doneFlag = f.readUint16LE() != 0;
-		f.read(_vm->_graphicsManager.Palette, PALETTE_EXT_BLOCK_SIZE);
+		f.read(_vm->_graphicsManager.Palette, 0x320u);
 		f.skip(4);
 		nbytes = f.readUint32LE();
+		f.skip(14);
+		f.read(v10, nbytes);
 
-		// TODO: Original never seems to do anything with these. Or are these part of 
-		// a bigger structure needed for sub-methods?
-		v19 = f.readUint32LE();
-		v18 = f.readUint16LE();
-		v17 = f.readUint16LE();
-		v16 = f.readUint16LE();
-		v15 = f.readUint16LE();
-		v14 = f.readUint16LE();
-
-		f.read(screenP, nbytes);
-
-		if (CLS_ANM) {
+		if (CLS_ANM == 1) {
 			_vm->_graphicsManager.DD_Lock();
 			_vm->_graphicsManager.Cls_Video();
 			_vm->_graphicsManager.DD_Unlock();
 		}
-
-		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
-			doneFlag = 1;
-			screenCopy = _vm->_globals.dos_malloc2(SCREEN_WIDTH * SCREEN_HEIGHT);
-			memcpy(screenCopy, screenP, SCREEN_WIDTH * SCREEN_HEIGHT);
+		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > 640) {
+			hasScreenCopy = true;
+			screenCopy = _vm->_globals.dos_malloc2(0x4B000u);
+			memcpy(screenCopy, v10, 0x4B000u);
 		}
-
 		if (NO_SEQ) {
-			if (doneFlag == 1)
-				memcpy(screenCopy, _vm->_graphicsManager.VESA_BUFFER, SCREEN_WIDTH * SCREEN_HEIGHT);
+			if (hasScreenCopy)
+				memcpy(screenCopy, _vm->_graphicsManager.VESA_BUFFER, 0x4B000u);
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 		} else {
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 			_vm->_graphicsManager.DD_Lock();
-		
 			if (_vm->_graphicsManager.Winbpp == 2) {
-				if (doneFlag)
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				if (hasScreenCopy)
+					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, 640, 480, 0, 0);
 				else
-					_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					_vm->_graphicsManager.m_scroll16(v10, 0, 0, 640, 480, 0, 0);
 			}
 			if (_vm->_graphicsManager.Winbpp == 1) {
-				if (doneFlag)
-					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				if (hasScreenCopy)
+					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, 640, 480, 0, 0);
 				else
-					_vm->_graphicsManager.m_scroll2(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					_vm->_graphicsManager.m_scroll2(v10, 0, 0, 640, 480, 0, 0);
 			}
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.DD_VBL();
 		}
-
 		_vm->_eventsManager.lItCounter = 0;
 		_vm->_eventsManager.ESC_KEY = 0;
 		_vm->_soundManager.LOAD_ANM_SOUND();
-		if (_vm->_globals.iRegul == 1) {
-			do {
-				if (_vm->_eventsManager.ESC_KEY)
-					goto FINISH;
-
-// TODO: Original REDRAW_ANIM always returns false, so this isn't needed?
-#if 0
-				if (REDRAW_ANIM())
-					goto REDRAW_ANIM;
-#endif
-				_vm->_eventsManager.CONTROLE_MES();
-			} while (_vm->_eventsManager.lItCounter < rate1);
-		}
-
-		_vm->_eventsManager.lItCounter = 0;
-		doneFlag = false;
-		idx = 0;
-		do {
-			_vm->_soundManager.PLAY_ANM_SOUND(idx);
-
-			// Get in string
-			Common::fill(&strBuffer[0], &strBuffer[20], 0);
-			if (f.read(strBuffer, 16) != 16)
-				doneFlag = true;
-
-			if (strncmp(strBuffer, "IMAGE=", 6) != 0)
-				doneFlag = true;
-
-			if (!doneFlag) {
-				f.read(screenP, READ_LE_UINT32(strBuffer + 8));
-
-				if (_vm->_globals.iRegul == 1) {
-					do {
-						if (_vm->_eventsManager.ESC_KEY)
-							goto FINISH;
-
-// TODO: Original REDRAW_ANIM always returns false, so this isn't needed?
-#if 0
-						if (REDRAW_ANIM()) {
-							if (_vm->_graphicsManager.NOLOCK == 1)
-								goto FINISH;
-
-							f.close();
-							if (doneFlag <= SCREEN_WIDTH)
-								goto MAIN_LOOP;
-
-							screenCopy = _vm->_globals.dos_free2(screenCopy);
-							goto MAIN_LOOP;
-						}
-#endif
-
-						_vm->_eventsManager.CONTROLE_MES();
-						_vm->_soundManager._vm->_soundManager.VERIF_SOUND();
-					} while (_vm->_eventsManager.lItCounter < rate2 && !_vm->shouldQuit());
-				}
-
-				_vm->_eventsManager.lItCounter = 0;
-				_vm->_graphicsManager.DD_Lock();
-
-				if (!doneFlag) {
-					if (*screenP != 252) {
-						if (_vm->_graphicsManager.Winbpp == 1)
-							_vm->_graphicsManager.Copy_Video_Vbe3(screenP);
-						if (_vm->_graphicsManager.Winbpp == 2)
-							_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
-					}
-				} else if (*screenP != 252) {
-					_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
-
-					if (_vm->_graphicsManager.Winbpp == 2)
-						_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					else
-						_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				}
-
-				_vm->_graphicsManager.DD_Unlock();
-				_vm->_graphicsManager.DD_VBL();
-				_vm->_soundManager._vm->_soundManager.VERIF_SOUND();
-			}
-		} while (!doneFlag && !_vm->shouldQuit());
-
-		if (_vm->_globals.iRegul != 1) {
-			_vm->_eventsManager.lItCounter = 0;
-			goto FINISH;
-		}
-
-		do {
-			if (_vm->_eventsManager.ESC_KEY)
-				goto FINISH;
-
-// TODO: Original REDRAW_ANIM always returns false, so this isn't needed?
-#if 0
-			if (REDRAW_ANIM()) {
-REDRAW_ANIM:
-				if (_vm->_graphicsManager.NOLOCK == 1)
-					goto FINISH;
-
-				f.close();
-				if (doneFlag != 1)
-					goto MAIN_LOOP;
-
-				screenCopy = _vm->_globals.dos_free2(screenCopy);
-				goto MAIN_LOOP;
-			}
-#endif
-
+		if (_vm->_globals.iRegul != 1)
+			break;
+		while (!_vm->shouldQuit()) {
+			if (_vm->_eventsManager.ESC_KEY == 1)
+				goto LABEL_58;
+			if (REDRAW_ANIM() == 1)
+				break;
 			_vm->_eventsManager.CONTROLE_MES();
-			_vm->_soundManager._vm->_soundManager.VERIF_SOUND();
-		} while (_vm->_eventsManager.lItCounter < rate3 && !_vm->shouldQuit());
+			if (_vm->_eventsManager.lItCounter >= rate1)
+				goto LABEL_25;
+		}
+LABEL_53:
+		if (_vm->_graphicsManager.NOLOCK == 1)
+			goto LABEL_58;
+		_vm->_globals.dos_free2(ptr);
+		f.close();
 
-		_vm->_eventsManager.lItCounter = 0;
-		_vm->_soundManager._vm->_soundManager.VERIF_SOUND();
-		break;
+		if (hasScreenCopy == 1)
+LABEL_55:
+			screenCopy = _vm->_globals.dos_free2(screenCopy);
 	}
+LABEL_25:
+	_vm->_eventsManager.lItCounter = 0;
+	v4 = 0;
+	v13 = 0;
+	while (!_vm->shouldQuit()) {
+		++v13;
+		_vm->_soundManager.PLAY_ANM_SOUND(v13);
 
-FINISH:
-	if (_vm->_graphicsManager.FADE_LINUX == 2 && !doneFlag) {
-		screenCopy = _vm->_globals.dos_malloc2(SCREEN_WIDTH * SCREEN_HEIGHT);
+		if (f.read(ptr, 16) != 16)
+			v4 = -1;
 
+		if (strncmp((char *)ptr, "IMAGE=", 6))
+			v4 = -1;
+		if (v4)
+			goto LABEL_49;
+
+		f.read(v10, READ_LE_UINT32(ptr + 8));
+		if (_vm->_globals.iRegul == 1)
+			break;
+LABEL_38:
+		_vm->_eventsManager.lItCounter = 0;
+		_vm->_graphicsManager.DD_Lock();
+		if (hasScreenCopy) {
+			if (*v10 != (byte)-4) {
+				_vm->_graphicsManager.Copy_WinScan_Vbe3(v10, screenCopy);
+				if (_vm->_graphicsManager.Winbpp == 2)
+					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, 640, 480, 0, 0);
+				else
+					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, 640, 480, 0, 0);
+			}
+		} else if (*v10 != (byte)-4) {
+			if (_vm->_graphicsManager.Winbpp == 1)
+				_vm->_graphicsManager.Copy_Video_Vbe3(v10);
+			if (_vm->_graphicsManager.Winbpp == 2)
+				_vm->_graphicsManager.Copy_Video_Vbe16(v10);
+		}
+		_vm->_graphicsManager.DD_Unlock();
+		_vm->_graphicsManager.DD_VBL();
+		_vm->_soundManager.VERIF_SOUND();
+LABEL_49:
+		if (v4 == -1) {
+			if (_vm->_globals.iRegul == 1) {
+				while (_vm->_eventsManager.ESC_KEY != 1) {
+					if (REDRAW_ANIM() == 1)
+						goto LABEL_53;
+					_vm->_eventsManager.CONTROLE_MES();
+					_vm->_soundManager.VERIF_SOUND();
+					if (_vm->_eventsManager.lItCounter >= rate3)
+						goto LABEL_57;
+				}
+			} else {
+LABEL_57:
+				_vm->_eventsManager.lItCounter = 0;
+				_vm->_soundManager.VERIF_SOUND();
+			}
+			goto LABEL_58;
+		}
+	}
+	while (!_vm->shouldQuit() && _vm->_eventsManager.ESC_KEY != 1) {
+		if (REDRAW_ANIM() == 1) {
+			if (_vm->_graphicsManager.NOLOCK == 1)
+				break;
+			_vm->_globals.dos_free2(ptr);
+			f.close();
+
+			if (1 /*hasScreenCopy <= 640 */)
+				goto LABEL_2;
+			goto LABEL_55;
+		}
+		_vm->_eventsManager.CONTROLE_MES();
+		_vm->_soundManager.VERIF_SOUND();
+		if (_vm->_eventsManager.lItCounter >= rate2)
+			goto LABEL_38;
+	}
+LABEL_58:
+	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
+		screenCopy = _vm->_globals.dos_malloc2(0x4B000u);
+
+		f.seek(0);
 		f.skip(6);
-		f.read(_vm->_graphicsManager.Palette, PALETTE_EXT_BLOCK_SIZE);
+		f.read(_vm->_graphicsManager.Palette, 0x320u);
 		f.skip(4);
 		nbytes = f.readUint32LE();
-		v19 = f.readUint32LE();
-		v18 = f.readUint16LE();
-		v17 = f.readUint16LE();
-		v16 = f.readUint16LE();
-		v15 = f.readUint16LE();
-		v14 = f.readUint16LE();
+		f.skip(14);
+		f.read(v10, nbytes);
+	
+		memcpy(screenCopy, v10, 0x4B000u);
 
-		f.read(screenCopy, nbytes);
-		Common::copy(screenP, screenP + SCREEN_WIDTH * SCREEN_HEIGHT, screenCopy);
-
-		idx = 0;
-		doneFlag = false;
+		v5 = 0;
 		do {
-			// Get in string
-			Common::fill(&strBuffer[0], &strBuffer[20], 0);
-			if (f.read(strBuffer, 16) != 16)
-				doneFlag = true;
+			memset(ptr, 0, 0x13u);
+			if (f.read(ptr, 16) != 16)
+				v5 = -1;
 
-			if (strncmp(strBuffer, "IMAGE=", 7) != 0)
-				doneFlag = true;
-
-			if (!doneFlag) {
-				f.read(screenP, READ_LE_UINT32(strBuffer + 8));
-
-				if (*screenP != 252)
-					_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
+			if (strncmp((char *)ptr, "IMAGE=", 6))
+				v5 = -1;
+			if (!v5) {
+				f.read(v10, READ_LE_UINT32(ptr + 8));
+				if (*v10 != (byte)-4)
+					_vm->_graphicsManager.Copy_WinScan_Vbe3(v10, screenCopy);
 			}
-		} while (!doneFlag);
-
+		} while (v5 != -1);
 		_vm->_graphicsManager.FADE_OUTW_LINUX(screenCopy);
 		screenCopy = _vm->_globals.dos_free2(screenCopy);
 	}
-			
-	if (doneFlag == 1) {
+	if (hasScreenCopy == 1) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
 			_vm->_graphicsManager.FADE_OUTW_LINUX(screenCopy);
 		_vm->_globals.dos_free2(screenCopy);
 	}
-  
+	
 	_vm->_graphicsManager.FADE_LINUX = 0;
 	f.close();
-	_vm->_globals.dos_free2(screenCopy);
-	_vm->_graphicsManager.NOLOCK = false;
+	_vm->_globals.dos_free2(ptr);
+	_vm->_graphicsManager.NOLOCK = 0;
 }
 
 void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4) {
