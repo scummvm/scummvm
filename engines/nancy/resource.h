@@ -71,6 +71,7 @@ public:
 	// Debugger functions
 	void list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type);
 	byte *loadCif(const Common::String &treeName, const Common::String &name, uint &size);
+	bool exportCif(const Common::String &treeName, const Common::String &name);
 	Common::String getCifDescription(const Common::String &treeName, const Common::String &name);
 private:
 	NancyEngine *_vm;
