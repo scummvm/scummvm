@@ -502,8 +502,8 @@ void MortevielleEngine::fctSearch() {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (_num != ord(_openObjects[cx])));
-			if (_num != ord(_openObjects[cx]))
+			} while ((cx <= 6) && (_num != _openObjects[cx]));
+			if (_num != _openObjects[cx])
 				_crep = 187;
 			else {
 				if (_currBitIndex > 0)
@@ -607,8 +607,8 @@ void MortevielleEngine::fctOpen() {
 		int tmpPlace = 0;
 		do {
 			++tmpPlace;
-		} while (!((tmpPlace > 6) || (ord(_openObjects[tmpPlace]) == 0) || (ord(_openObjects[tmpPlace]) == _num)));
-		if (ord(_openObjects[tmpPlace]) != _num) {
+		} while (!((tmpPlace > 6) || (_openObjects[tmpPlace] == 0) || (_openObjects[tmpPlace] == _num)));
+		if (_openObjects[tmpPlace] != _num) {
 			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
 				                 || (_coreVar._currPlace == ROOM9) 
 								 || (_coreVar._currPlace == BLUE_ROOM) 
@@ -631,7 +631,7 @@ void MortevielleEngine::fctOpen() {
 					if (getRandomNumber(1, 4) == 3)
 						_speechManager.startSpeech(7, 9, 1);
 				}
-				_openObjects[tmpPlace] = chr(_num);
+				_openObjects[tmpPlace] = _num;
 				aniof(1, _num);
 			}
 			tmpPlace = _coreVar._currPlace;
@@ -885,11 +885,11 @@ void MortevielleEngine::fctClose() {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (_num != ord(_openObjects[cx])));
-			if (_num == ord(_openObjects[cx])) {
+			} while ((cx <= 6) && (_num != _openObjects[cx]));
+			if (_num == _openObjects[cx]) {
 				aniof(2, _num);
 				_crep = 998;
-				_openObjects[cx] = chr(0);
+				_openObjects[cx] = 0;
 				--_openObjCount;
 				if (_openObjCount < 0)
 					_openObjCount = 0;
@@ -984,8 +984,8 @@ void MortevielleEngine::fctSelfPut() {
 				int cx = 0;
 				do {
 					++cx;
-				} while ((cx <= 6) && (_num != ord(_openObjects[cx])));
-				if (_num != ord(_openObjects[cx]))
+				} while ((cx <= 6) && (_num != _openObjects[cx]));
+				if (_num != _openObjects[cx])
 					_crep = 187;
 				else {
 					_mchai = chai;

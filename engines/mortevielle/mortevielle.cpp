@@ -1677,9 +1677,8 @@ void MortevielleEngine::startMusicOrSpeech(int so) {
  * @remarks	Originally called 'tperd'
  */
 void MortevielleEngine::loseGame() {
-	initouv();
+	resetOpenObjects();
 	_roomDoorId = OWN_ROOM;
-	_openObjCount = 0;
 	_mchai = 0;
 	_menu.unsetSearchMenu();
 	if (!_blo)
@@ -1894,8 +1893,7 @@ void MortevielleEngine::gameLoaded() {
 	_heroSearching = true;
 	_mchai = 0;
 	_manorDistance = 0;
-	initouv();
-	_openObjCount = 0;
+	resetOpenObjects();
 	_takeObjCount = 0;
 	affrep();
 	_hintPctMessage = getString(580);
@@ -3048,9 +3046,14 @@ void MortevielleEngine::mapMessageId(int &mesgId) {
 		mesgId -= 3976;
 }
 
-void MortevielleEngine::initouv() {
+/**
+ * Initialize open objects array
+ * @remarks	Originally called 'initouv'
+ */
+void MortevielleEngine::resetOpenObjects() {
 	for (int cx = 1; cx <= 7; ++cx)
-		_openObjects[cx] = chr(0);
+		_openObjects[cx] = 0;
+	_openObjCount = 0;
 }
 
 void MortevielleEngine::ecr2(Common::String text) {
@@ -3323,8 +3326,8 @@ void MortevielleEngine::drawPicture() {
 		prepareScreenType1();
 		if ((_caff < 30) || (_caff > 32)) {
 			for (int cx = 1; cx <= 6; ++cx) {
-				if (ord(_openObjects[cx]) != 0)
-					aniof(1, ord(_openObjects[cx]));
+				if (_openObjects[cx] != 0)
+					aniof(1, _openObjects[cx]);
 			}
 
 			if (_caff == 13) {
@@ -3414,10 +3417,9 @@ void MortevielleEngine::exitRoom() {
 			_coreVar._faithScore += (_coreVar._faithScore / 10);
 	}
 
-	for (int cx = 1; cx <= 7; ++cx)
-		_openObjects[cx] = chr(0);
+	resetOpenObjects();
+
 	_roomDoorId = OWN_ROOM;
-	_openObjCount = 0;
 	_mchai = 0;
 	resetRoomVariables(_coreVar._currPlace);
 }
