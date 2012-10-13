@@ -278,7 +278,7 @@ private:
 	Common::String _hintPctMessage;
 	byte  *_cfiecBuffer;
 	int    _cfiecBufferSize;
-	byte   _openObjects[8];
+	int    _openObjects[8];
 	int    _nbrep[9];
 	int    _nbrepm[9];
 	uint16 _inpBuffer[kMaxTi + 1];
@@ -425,7 +425,7 @@ private:
 	void adzon();
 	void displayTextInDescriptionBar(int x, int y, int nb, int mesgId);
 	void mapMessageId(int &mesgId);
-	void initouv();
+	void resetOpenObjects();
 	void phaz(int &rand, int &p, int cf);
 	void writetp(Common::String s, int t);
 	void premtet();
