@@ -684,8 +684,8 @@ byte *ResourceManager::loadData(const Common::String &treeName, const Common::St
 	if (!buf)
 		return 0;
 
-	if (info.type != kResTypeData) {
-		warning("Resource '%s' is not data", name.c_str());
+	if (info.type != kResTypeScript) {
+		warning("Resource '%s' is not a script", name.c_str());
 		delete[] buf;
 		return 0;
 	}

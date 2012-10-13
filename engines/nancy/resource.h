@@ -43,7 +43,7 @@ public:
 		kResTypeAny,
 		// Type 1 seems to be obsolete
 		kResTypeImage = 2,
-		kResTypeData
+		kResTypeScript
 	};
 
 	enum ResCompression {

@@ -38,12 +38,12 @@ public:
 
 private:
 	NancyEngine *_vm;
-	bool Cmd_resLoadCal(int argc, const char **argv);
-	bool Cmd_resHexDump(int argc, const char **argv);
-	bool Cmd_exportCif(int argc, const char **argv);
-	bool Cmd_resList(int argc, const char **argv);
-	bool Cmd_resInfo(int argc, const char **argv);
-	bool Cmd_resShowImage(int argc, const char **argv);
+	bool Cmd_loadCal(int argc, const char **argv);
+	bool Cmd_cifHexDump(int argc, const char **argv);
+	bool Cmd_cifExport(int argc, const char **argv);
+	bool Cmd_cifList(int argc, const char **argv);
+	bool Cmd_cifInfo(int argc, const char **argv);
+	bool Cmd_showImage(int argc, const char **argv);
 	bool Cmd_playVideo(int argc, const char **argv);
 	bool Cmd_playAudio(int argc, const char **argv);
 
