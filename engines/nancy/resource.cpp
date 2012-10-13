@@ -74,6 +74,8 @@ CifFile::~CifFile() {
 bool CifFile::initialize() {
 	readCifInfo(*_f);
 
+	_cifInfo.name = _name;
+
 	if (_f->eos() || _f->err()) {
 		warning("Error reading from CifFile '%s'", _name.c_str());
 		return false;
@@ -177,6 +179,8 @@ class CifTree {
 public:
 	CifTree(const Common::String &name, const Common::String &ext);
 	virtual ~CifTree() { };
+	virtual uint32 getVersion() const = 0;
+
 	bool initialize();
 	void list(Common::Array<Common::String> &nameList, uint type) const;
 	byte *getCifData(const Common::String &name, ResourceManager::CifInfo &info, uint *size = 0) const;
@@ -225,7 +229,6 @@ bool CifTree::initialize() {
 
 	for (int i = 0; i < infoBlockCount; i++) {
 		CifInfoChain chain;
-		memset(&chain, 0, sizeof(CifInfoChain));
 		readCifInfo(f, chain);
 		_cifInfo.push_back(chain);
 	}
@@ -301,6 +304,7 @@ public:
 protected:
 	virtual uint readHeader(Common::File &f);
 	virtual void readCifInfo(Common::File &f, CifInfoChain &chain);
+	virtual uint32 getVersion() const { return 0x00020000; }
 };
 
 uint CifTree20::readHeader(Common::File &f) {
@@ -329,13 +333,14 @@ void CifTree20::readCifInfo(Common::File &f, CifInfoChain &chain) {
 		error("Failed to read info block from CifTree");
 }
 
-class CifTree21 : public CifTree {
+class CifTree21 : public CifTree20 {
 public:
-	CifTree21(const Common::String &name, const Common::String &ext) : CifTree(name, ext), _hasLongNames(false), _hasOffsetFirst(false) { };
+	CifTree21(const Common::String &name, const Common::String &ext) : CifTree20(name, ext), _hasLongNames(false), _hasOffsetFirst(false) { };
 
 protected:
 	virtual uint readHeader(Common::File &f);
 	virtual void readCifInfo(Common::File &f, CifInfoChain &chain);
+	virtual uint32 getVersion() const { return 0x00020001; }
 
 private:
 	void determineSubtype(Common::File &f);
@@ -462,6 +467,100 @@ const CifTree *CifTree::load(const Common::String &name, const Common::String &e
 	return cifTree;
 }
 
+class CifExporter {
+public:
+	virtual ~CifExporter() { };
+	bool dump(const byte *data, uint32 size, const ResourceManager::CifInfo &info) const;
+
+	static const CifExporter *create(uint32 version);
+
+protected:
+	virtual void writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const = 0;
+	virtual uint32 getVersion() const = 0;
+	virtual void writeHeader(Common::DumpFile &f) const;
+};
+
+void CifExporter::writeHeader(Common::DumpFile &f) const {
+	f.writeString("CIF FILE WayneSikes");
+	f.writeByte(0);
+	f.writeUint32LE(0);
+	uint32 version = getVersion();
+	f.writeUint16LE(version >> 16);
+	f.writeUint16LE(version);
+}
+
+bool CifExporter::dump(const byte *data, uint32 size, const ResourceManager::CifInfo &info) const {
+	Common::DumpFile f;
+	if (!f.open(info.name + ".cif")) {
+		warning("Failed to open export file '%s.cif'", info.name.c_str());
+		return false;
+	}
+
+	writeHeader(f);
+	writeCifInfo(f, info);
+	f.write(data, size);
+
+	if (f.err()) {
+		warning("Error writing to export file '%s.cif'", info.name.c_str());
+		f.close();
+		return false;
+	}
+
+	f.close();
+	return true;
+}
+
+class CifExporter20 : public CifExporter {
+protected:
+	virtual void writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const;
+	uint32 getVersion() const { return 0x00020000; }
+};
+
+void CifExporter20::writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const {
+	f.writeUint16LE(info.width);
+	f.writeUint16LE(info.pitch);
+	f.writeUint16LE(info.height);
+	f.writeByte(info.depth);
+
+	f.writeByte(1);
+	f.writeUint32LE(info.size);
+	f.writeUint32LE(0);
+	f.writeUint32LE(0);
+
+	f.writeByte(info.type);
+}
+
+class CifExporter21 : public CifExporter20 {
+protected:
+	virtual void writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const;
+	uint32 getVersion() const { return 0x00020001; }
+};
+
+void CifExporter21::writeCifInfo(Common::DumpFile &f, const ResourceManager::CifInfo &info) const {
+	for (uint i = 0; i < 32; i++)
+		f.writeByte(0); // TODO
+
+	CifExporter20::writeCifInfo(f, info);
+}
+
+const CifExporter *CifExporter::create(uint32 version) {
+	const CifExporter *exp;
+
+	switch(version) {
+	case 0x00020000:
+		exp = new CifExporter20;
+		break;
+	case 0x00020001:
+		exp = new CifExporter21;
+		break;
+	default:
+		warning("Version %d.%d not supported by CifExporter", version >> 16, version & 0xffff);
+		return 0;
+	}
+
+	return exp;
+}
+
 ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm) {
 	_dec = new Decompressor;
 }
@@ -505,12 +604,13 @@ bool ResourceManager::getCifInfo(const Common::String &treeName, const Common::S
 	if (cifFile) {
 		cifFile->getCifInfo(info);
 		delete cifFile;
+		return true;
 	}
 
 	const CifTree *cifTree = findCifTree(treeName);
 
 	if (!cifTree)
-		return 0;
+		return false;
 
 	return cifTree->getCifInfo(name, info);
 }
@@ -552,6 +652,28 @@ byte *ResourceManager::getCifData(const Common::String &treeName, const Common::
 byte *ResourceManager::loadCif(const Common::String &treeName, const Common::String &name, uint &size) {
 	CifInfo info;
 	return getCifData(treeName, name, info, &size);
+}
+
+bool ResourceManager::exportCif(const Common::String &treeName, const Common::String &name) {
+	CifInfo info;
+	uint size;
+	byte *buf = getCifData(treeName, name, info, &size);
+
+	if (!buf)
+		return false;
+
+	// Find out what CIF version this game uses
+	uint32 version = 0;
+	if (_cifTrees.size() > 0)
+		version = _cifTrees[0]->getVersion();
+
+	bool retval = false;
+	const CifExporter *exp = CifExporter::create(version);
+	if (exp) {
+		retval = exp->dump(buf, size, info);
+		delete exp;
+	}
+	return retval;
 }
 
 byte *ResourceManager::loadData(const Common::String &treeName, const Common::String &name, uint &size) {
@@ -611,12 +733,7 @@ void ResourceManager::list(const Common::String &treeName, Common::Array<Common:
 
 Common::String ResourceManager::getCifDescription(const Common::String &treeName, const Common::String &name) {
 	CifInfo info;
-	const CifTree *cifTree = findCifTree(treeName);
-
-	if (!cifTree)
-		return Common::String::format("Failed to open CifTree '%s'\n", treeName.c_str());
-
-	if (!cifTree->getCifInfo(name, info))
+	if (!getCifInfo(treeName, name, info))
 		return Common::String::format("Couldn't find '%s' in CifTree '%s'\n", name.c_str(), treeName.c_str());
 
 	Common::String desc;
