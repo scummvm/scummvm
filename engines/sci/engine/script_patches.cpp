@@ -848,10 +848,47 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 	PATCH_END
 };
 
+// Script 814 of QFG1VGA is responsible for showing dialogs. However, the death
+// screen message shown when the hero dies in room 64 (ghost room) is too large
+// (254 chars long). Since the window header and main text are both stored in
+// temp space, this is an issue, as the scripts read the window header, then the
+// window text, which erases the window header text because of its length. To
+// fix that, we allocate more temp space and move the pointer used for the
+// window header a little bit, wherever it's used in script 814.
+// Fixes bug #3568431.
+
+// Patch 1: Increase temp space
+const byte qfg1vgaSignatureTempSpace[] = {
+	4,
+	0x3f, 0xba,       // link 0xba
+	0x87, 0x00,       // lap 0
+	0
+};
+
+const uint16 qfg1vgaPatchTempSpace[] = {
+	0x3f, 0xca,       // link 0xca
+	PATCH_END
+};
+
+// Patch 2: Move the pointer used for the window header a little bit
+const byte qfg1vgaSignatureDialogHeader[] = {
+	4,
+	0x5b, 0x04, 0x80,  // lea temp[0x80]
+	0x36,              // push
+	0
+};
+
+const uint16 qfg1vgaPatchDialogHeader[] = {
+	0x5b, 0x04, 0x90,  // lea temp[0x90]
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
 	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
 	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
+	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,         qfg1vgaPatchTempSpace },
+	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,      qfg1vgaPatchDialogHeader },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
