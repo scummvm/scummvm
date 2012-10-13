@@ -87,14 +87,14 @@ void EventsManager::souris_max() {
 }
 
 int EventsManager::XMOUSE() {
-	souris_x = _vm->_eventsManager.start_x + g_system->getEventManager()->getMousePos().x;
+	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
 	souris_y = g_system->getEventManager()->getMousePos().y;
 
 	return souris_x + ofset_souris_x;
 }
 
 int EventsManager::YMOUSE() {
-	souris_x = _vm->_eventsManager.start_x + g_system->getEventManager()->getMousePos().x;
+	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
 	souris_y = g_system->getEventManager()->getMousePos().y;
 
 	return souris_y + ofset_souris_y;
