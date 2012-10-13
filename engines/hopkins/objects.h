@@ -248,7 +248,7 @@ public:
 	void VERBE_OFF(int idx, int a2);
 	void VERBE_ON(int idx, int a2);
 	int CALC_PROPRE(int idx);
-	int colision(int a1, int a2);
+	int colision(int xp, int yp);
 
 	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int a5, int a6);
 	void SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6);

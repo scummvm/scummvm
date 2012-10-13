@@ -4182,25 +4182,25 @@ int ObjectsManager::MZONE() {
 	__int16 v7;
 	int v8; 
 	int v9; 
-	__int16 i;
+	__int16 yCurrent;
 	__int16 v11;
 	__int16 j; 
 	__int16 k; 
-	__int16 l; 
+	__int16 xCurrent; 
 	int v15; 
 	__int16 v16;
 	__int16 v17;
 	__int16 v18;
 	__int16 v19;
-	__int16 v20;
-	__int16 v21;
+	__int16 yp;
+	__int16 xp;
 
 	v19 = 0;
 	v18 = 0;
 	v17 = 0;
 	v16 = 0;
-	v21 = _vm->_eventsManager.souris_x + _vm->_eventsManager.ofset_souris_x;
-	v20 = _vm->_eventsManager.souris_y + _vm->_eventsManager.ofset_souris_y;
+	xp = _vm->_eventsManager.souris_x + _vm->_eventsManager.ofset_souris_x;
+	yp = _vm->_eventsManager.souris_y + _vm->_eventsManager.ofset_souris_y;
 	if ((_vm->_eventsManager.souris_y + _vm->_eventsManager.ofset_souris_y) > 19) {
 		v1 = 0;
 		do {
@@ -4213,11 +4213,11 @@ int ObjectsManager::MZONE() {
 						if (_vm->_globals.Bob[v3].fieldC != 250) {
 							if (!_vm->_globals.Bob[v3].field16) {
 								v4 = _vm->_globals.Bob[v3].field3E;
-								if (v21 > v4) {
-									if (v21 < _vm->_globals.Bob[v3].field42 + v4) {
+								if (xp > v4) {
+									if (xp < _vm->_globals.Bob[v3].field42 + v4) {
 										v5 = _vm->_globals.Bob[v3].field40;
-										if (v20 > v5) {
-											if (v20 < _vm->_globals.Bob[v3].field44 + v5) {
+										if (yp > v5) {
+											if (yp < _vm->_globals.Bob[v3].field44 + v5) {
 												v6 = v1;
 												if (_vm->_globals.ZONEP[v1].field4 == -1) {
 													_vm->_globals.ZONEP[v6].field0 = 0;
@@ -4248,10 +4248,10 @@ int ObjectsManager::MZONE() {
 			if (_vm->_globals.ZONEP[v7].field10 == 1) {
 				v8 = v7;
 				if (_vm->_globals.CarreZone[v8].field0 == 1) {
-					if (_vm->_globals.CarreZone[v7].field2 <= v21
-					        && _vm->_globals.CarreZone[v7].field4 >= v21
-					        && _vm->_globals.CarreZone[v7].field6 <= v20
-					        && _vm->_globals.CarreZone[v7].field8 >= v20) {
+					if (_vm->_globals.CarreZone[v7].field2 <= xp
+					        && _vm->_globals.CarreZone[v7].field4 >= xp
+					        && _vm->_globals.CarreZone[v7].field6 <= yp
+					        && _vm->_globals.CarreZone[v7].field8 >= yp) {
 								if (_vm->_globals.CarreZone[v7].fieldE == 1) {
 									_vm->_globals.oldzone_46 = _vm->_linesManager.LigneZone[_vm->_globals.CarreZone[v7].fieldA].field2;
 							return _vm->_globals.oldzone_46;
@@ -4267,30 +4267,32 @@ int ObjectsManager::MZONE() {
 		} while (v7 <= 99);
 		if (!_vm->_globals.SegmentEnCours)
 			goto LABEL_58;
-		for (i = v20; i >= 0; --i) {
-			v11 = colision(v21, i);
+
+		for (yCurrent = yp; yCurrent >= 0; --yCurrent) {
+			v11 = colision(xp, yCurrent);
 			v19 = v11;
 			if (v11 != -1 && _vm->_globals.ZONEP[v11].field10 == 1)
 				break;
 		}
 		if (v19 == -1)
 			goto LABEL_58;
-		for (j = v20; _vm->_graphicsManager.max_y > j; ++j) {
-			v18 = colision(v21, j);
+		for (j = yp; _vm->_graphicsManager.max_y > j; ++j) {
+			v18 = colision(xp, j);
 			if (v18 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
 				break;
 		}
 		if (v18 == -1)
 			goto LABEL_58;
-		for (k = v21; k >= 0; --k) {
-			v16 = colision(k, v20);
+		for (k = xp; k >= 0; --k) {
+			v16 = colision(k, yp);
 			if (v16 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
 				break;
 		}
 		if (v16 == -1)
 			goto LABEL_58;
-		for (l = v21; _vm->_graphicsManager.max_x > l; ++l) {
-			v17 = colision(l, v20);
+
+		for (xCurrent = xp; _vm->_graphicsManager.max_x > xCurrent; ++xCurrent) {
+			v17 = colision(xCurrent, yp);
 			if (v17 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
 				break;
 		}
@@ -7845,58 +7847,51 @@ int ObjectsManager::CALC_PROPRE(int idx) {
 	return v1;
 }
 
-int ObjectsManager::colision(int a1, int a2) {
+int ObjectsManager::colision(int xp, int yp) {
 	if (_vm->_globals.SegmentEnCours <= 0)
 		return -1;
 
-	int v2 = a1;
-	int v3 = v2;
-	int v4 = v2 + 4;
-	int v5 = v2 - 4;
+	int xMax = xp + 4;
+	int xMin = xp - 4;
 
 	for (int idx = 0; idx <= _vm->_globals.SegmentEnCours; ++idx) {
-		int v8 = _vm->_globals.Segment[idx].field2;
-		if (v8 < _vm->_globals.Segment[idx].field4)
+		int field2 = _vm->_globals.Segment[idx].field2;
+		if (_vm->_globals.Segment[idx].field4 < field2)
 			continue;
-		
-		int v6 = a2 + 4;
-		int v7 = a2 - 4;
-		int v9 = v3 + 1;
+
+		int yMax = yp + 4;
+		int yMin = yp - 4;
 
 		do {
-			int16 *srcP = _vm->_linesManager.LigneZone[v8].zoneData;
-			if (srcP != (int16 *)g_PTRNUL) {
+			int16 *dataP = _vm->_linesManager.LigneZone[field2].zoneData;
+			if (dataP != (int16 *)g_PTRNUL) {
+				int count = _vm->_linesManager.LigneZone[field2].count;
+				int v1 = *dataP;
+				int v2 = *(dataP + 1);
+				int v3 = *(dataP + count * 2 - 2);
+				int v4 = *(dataP + count * 2 - 1);
+
 				bool flag = true;
-				int v11 = *(srcP + _vm->_linesManager.LigneZone[v8].count);
-				int dataV2 = *(srcP + _vm->_linesManager.LigneZone[v8].count + 1);
-				int v12 = *(srcP + _vm->_linesManager.LigneZone[v8].count * 2 - 2);
-				int v13 = *(srcP + _vm->_linesManager.LigneZone[v8].count * 2 - 1);
-				int v10 = v13;
-
-				if (v11 < v12 && v4 >= v11 && v5 > v13)
+				if (v1 < v3 && (xMax < v1 || xMin > v3))
 					flag = false;
-				if (v11 >= v12 && v5 <= v13 && v4 < v13)
+				if (v1 >= v3 && (xMin > v1 || xMax < v3))
 					flag = false;
-				if (dataV2 < v10 && v6 >= dataV2 && v7 > v10)
+				if (v2 < v4 && (v2 < yMax || yMin > v4))
 					flag = false;
-				if (dataV2 >= v10 && v7 <= dataV2 && v6 < v10)
+				if (v2 >= v4 && (yMin > v2 || yMax < v4))
 					flag = false;
 
+				if (flag && _vm->_linesManager.LigneZone[field2].count > 0) {
+					for (int v5 = 0; v5 < count; ++v5) {
+						int xCheck = *dataP++;
+						int yCheck = *dataP++;
 
-				if (!flag) {
-					if (v11 < _vm->_linesManager.LigneZone[v8].count) {
-						for (; v11 < _vm->_linesManager.LigneZone[v8].count; ++idx) {
-							int v11 = *srcP;
-							int v12 = *(srcP + 1);
-							srcP += 2;
-							
-							if ((v2 == v11 || v9 == v11) && a2 == v12)
-								return _vm->_linesManager.LigneZone[v8].field2;
-						}
+						if ((xp == xCheck || (xp + 1) == xCheck) && (yp == yCheck))
+							return _vm->_linesManager.LigneZone[field2].field2;
 					}
 				}
 			}
-		} while (++v8 < _vm->_globals.Segment[idx].field0);
+		} while (++field2 < _vm->_globals.Segment[idx].field4);
 	}
 
 	return -1;
