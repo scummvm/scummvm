@@ -167,10 +167,13 @@ void EventsManager::CHANGE_MOUSE(int id) {
 				destP += _vm->_globals.OBJL;
 			}
 
+			// Calculate the X offset within the pointer image to the actual cursor data
+			int xOffset = !mouse_linux ? 10 : 20;
+
 			// Set the ScummVM cursor from the surface
 			Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 			g_system->setMouseCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
-				0, 0, 0, true, &pixelFormat);
+				xOffset, 0, 0, true, &pixelFormat);
 
 			// Delete the cursor surface 
 			delete[] cursorPixels;
