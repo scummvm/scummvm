@@ -26,6 +26,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
 #include "graphics/thumbnail.h"
 
@@ -168,7 +169,7 @@ public:
 
 		Common::String desc = buf;
 
-		in->seek(0x777a);
+		in->seek(TeenAgent::saveStateSize);
 		if (!Graphics::checkThumbnailHeader(*in))
 			return SaveStateDescriptor(slot, desc);
 

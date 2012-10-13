@@ -20,6 +20,8 @@
  */
 
 #include "teenagent/pack.h"
+#include "teenagent/teenagent.h"
+
 #include "common/util.h"
 #include "common/debug.h"
 #include "common/memstream.h"
@@ -44,7 +46,7 @@ bool FilePack::open(const Common::String &filename) {
 		return false;
 
 	_fileCount = file.readUint32LE();
-	debug(0, "opened %s, found %u entries", filename.c_str(), _fileCount);
+	debugC(0, kDebugPack, "opened %s, found %u entries", filename.c_str(), _fileCount);
 	offsets = new uint32[_fileCount + 1];
 	for (uint32 i = 0; i <= _fileCount; ++i) {
 		offsets[i] = file.readUint32LE();
@@ -65,17 +67,16 @@ uint32 FilePack::read(uint32 id, byte *dst, uint32 size) const {
 	file.seek(offsets[id - 1]);
 	uint32 rsize = offsets[id] - offsets[id - 1];
 	uint32 r = file.read(dst, MIN(rsize, size));
-	//debug(0, "read(%u, %u) = %u", id, size, r);
+	debugC(0, kDebugPack, "read(%u, %u) = %u", id, size, r);
 	return r;
 }
 
 Common::SeekableReadStream *FilePack::getStream(uint32 id) const {
 	if (id < 1 || id > _fileCount)
 		return NULL;
-	//debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
+	debugC(0, kDebugPack, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
 	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id]);
 }
-
 
 TransientFilePack::TransientFilePack() : offsets(0) {}
 
@@ -97,7 +98,7 @@ bool TransientFilePack::open(const Common::String &filename) {
 		return false;
 
 	_fileCount = file.readUint32LE();
-	debug(0, "opened %s, found %u entries", filename.c_str(), _fileCount);
+	debugC(0, kDebugPack, "opened %s, found %u entries", filename.c_str(), _fileCount);
 	offsets = new uint32[_fileCount + 1];
 	for (uint32 i = 0; i <= _fileCount; ++i) {
 		offsets[i] = file.readUint32LE();
@@ -124,14 +125,14 @@ uint32 TransientFilePack::read(uint32 id, byte *dst, uint32 size) const {
 	uint32 rsize = offsets[id] - offsets[id - 1];
 	uint32 r = file.read(dst, MIN(rsize, size));
 	file.close();
-	//debug(0, "read(%u, %u) = %u", id, size, r);
+	debugC(0, kDebugPack, "read(%u, %u) = %u", id, size, r);
 	return r;
 }
 
 Common::SeekableReadStream *TransientFilePack::getStream(uint32 id) const {
 	if (id < 1 || id > _fileCount)
 		return NULL;
-	//debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
+	debugC(0, kDebugPack, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
 	Common::File file;
 	if (!file.open(_filename))
 		return NULL;
@@ -146,7 +147,6 @@ Common::SeekableReadStream *TransientFilePack::getStream(uint32 id) const {
 	return new Common::MemoryReadStream(ptr, r, DisposeAfterUse::YES);
 }
 
-
 void MemoryPack::close() {
 	chunks.clear();
 }
@@ -157,7 +157,7 @@ bool MemoryPack::open(const Common::String &filename) {
 		return false;
 
 	uint32 count = file.readUint32LE();
-	debug(0, "opened %s, found %u entries [memory]", filename.c_str(), count);
+	debugC(0, kDebugPack, "opened %s, found %u entries [memory]", filename.c_str(), count);
 	for (uint32 i = 0; i < count; ++i) {
 		uint32 offset = file.readUint32LE();
 		int32 pos = file.pos();
@@ -198,6 +198,5 @@ Common::SeekableReadStream *MemoryPack::getStream(uint32 id) const {
 	const Chunk &c = chunks[id];
 	return new Common::MemoryReadStream(c.data, c.size, DisposeAfterUse::NO);
 }
-
 
 } // End of namespace TeenAgent

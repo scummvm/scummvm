@@ -41,25 +41,20 @@ public:
 		assert(offset < _size);
 		return _data[offset];
 	}
+
 	inline uint16 get_word(uint32 offset) const {
 		assert(offset + 1 < _size);
 		return READ_LE_UINT16(_data + offset);
 	}
-	inline uint32 get_quad(uint32 offset) const {
-		assert(offset + 3 < _size);
-		return READ_LE_UINT32(_data + offset);
-	}
+
 	inline void set_byte(uint32 offset, byte v) const {
 		assert(offset < _size);
 		_data[offset] = v;
 	}
+
 	inline void set_word(uint32 offset, uint16 v) const {
 		assert(offset + 1 < _size);
 		return WRITE_LE_UINT16(_data + offset, v);
-	}
-	inline void set_quad(uint32 offset, uint32 v) const {
-		assert(offset + 3 < _size);
-		return WRITE_LE_UINT32(_data + offset, v);
 	}
 
 	const byte *ptr(uint32 addr) const {
@@ -71,6 +66,7 @@ public:
 		assert(addr < _size);
 		return _data + addr;
 	}
+
 	uint size() const { return _size; }
 };
 
