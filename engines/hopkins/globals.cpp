@@ -97,6 +97,7 @@ Globals::Globals() {
 	g_old_anim = 0;
 	g_old_sens = 0;
 	g_old_sens2 = 0;
+	last_sens = 0;
 	police_l = police_h = 0;
 	TETE = NULL;
 	texte_long = 0;
@@ -213,6 +214,7 @@ Globals::Globals() {
 	old_y_70 = 0;
 	compteur_71 = 0;
 	zozo_73 = 0;
+	j_104 = 0;
 }
 
 Globals::~Globals() {

@@ -101,6 +101,9 @@ ObjectsManager::ObjectsManager() {
 	NVZONE = 0;
 	S_old_ani = 0; 
 	S_old_ret = 0;
+	nouveau_x = nouveau_y = 0;
+	nouveau_sens = 0;
+	nouveau_anim = 0;
 }
 
 void ObjectsManager::setParent(HopkinsEngine *vm) {
@@ -1870,23 +1873,741 @@ LABEL_54:
 }
 
 void ObjectsManager::GOHOME() {
-	warning("GOHOME");
+	__int16 v0; 
+	__int16 v1; 
+	__int16 v3; 
+	__int16 v4; 
+	unsigned int v5;
+	unsigned int v6;
+	unsigned int v7;
+	unsigned int v8;
+	__int16 v9; 
+	__int16 v10;
+	unsigned int v11;
+	unsigned int v12;
+	unsigned int v13;
+	unsigned int v14;
+	int v15; 
+	__int16 v16; 
+	unsigned int v17; 
+	unsigned int v18; 
+	int v19; 
+	__int16 v20; 
+	unsigned int v21; 
+	unsigned int v22; 
+	__int16 v23; 
+	__int16 v24; 
+	unsigned int v25; 
+	unsigned int v26; 
+	unsigned int v27; 
+	unsigned int v28; 
+	__int16 v29; 
+	__int16 v30; 
+	unsigned int v31;
+	unsigned int v32;
+	unsigned int v33;
+	unsigned int v34; 
+	__int16 v35;
+	__int16 v36;
+	unsigned int v37;
+	unsigned int v38;
+	unsigned int v39;
+	unsigned int v40;
+	__int16 v41; 
+	__int16 v42; 
+	unsigned int v43;
+	unsigned int v44;
+	unsigned int v45;
+	unsigned int v46;
+	signed __int16 v47;
+	__int16 v48; 
+	__int16 v49; 
+	int v50; 
+	__int16 v51;
+	__int16 v52;
+	__int16 v53;
+	__int16 v54;
+	int v55; 
+	__int16 v56;
+	__int16 v57;
+	__int16 v58;
+
+	v0 = 0;
+	v58 = 0;
+	v1 = 0;
+
+	if (_vm->_globals.chemin == g_PTRNUL)
+		return;
+	if (_vm->_globals.Compteur > 1) {
+		--_vm->_globals.Compteur;
+		return;
+	}
+	_vm->_globals.Compteur = 0;
+	if (g_old_sens == -1) {
+		VERIFTAILLE();
+		nouveau_x = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		_vm->_globals.chemin += 2;
+		v53 = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		nouveau_y = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		_vm->_globals.chemin += 2;
+		nouveau_sens = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		_vm->_globals.chemin += 2;
+		nouveau_anim = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		_vm->_globals.chemin += 2;
+		if (nouveau_x != -1 || v53 != -1) {
+			_vm->_globals.g_old_sens = nouveau_sens;
+			_vm->_globals.g_old_sens2 = nouveau_sens;
+			_vm->_globals.g_old_anim = 0;
+			g_old_x = nouveau_x;
+			g_old_y = nouveau_y;
+		} else {
+			SETANISPR(0, _vm->_globals.g_old_sens + 59);
+			_vm->_globals.ACTION_SENS = 0;
+			if (GOACTION == 1)
+				v54 = _vm->_globals.SAUVEGARDE->data[svField2];
+			else
+				v54 = NUMZONE;
+			_vm->_globals.chemin = g_PTRNUL;
+			VERIFTAILLE();
+			SETFLIPSPR(0, 0);
+			_vm->_globals.Compteur = 0;
+			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.g_old_sens = -1;
+			if (v54 > 0) {
+				v55 = v54;
+				if (_vm->_globals.ZONEP[v55].field0) {
+					v56 = _vm->_globals.ZONEP[v55].field2;
+					if (v56) {
+						if (v56 != 31) {
+							v57 = _vm->_globals.ZONEP[v55].field4;
+							if (v57 == -1) {
+								_vm->_globals.ZONEP[v55].field0 = 0;
+								_vm->_globals.ZONEP[v55].field2 = 0;
+								_vm->_globals.ZONEP[v55].field4 = 0;
+							} else {
+								SETANISPR(0, v57);
+								_vm->_globals.ACTION_SENS = _vm->_globals.ZONEP[v55].field4 - 59;
+							}
+						}
+					}
+				}
+			}
+		}
+LABEL_241:
+		_vm->_globals.Compteur = 0;
+		return;
+	}
+	if (_vm->_globals.g_old_sens == 3) {
+		if ((unsigned __int16)(_vm->_globals.g_old_anim - 24) > 0xBu) {
+			v0 = g_old_x;
+			v58 = g_old_y;
+		} else {
+			v3 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			v4 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0) {
+				v5 = _vm->_objectsManager.Sprite[0].fieldC;
+				if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+					v5 = -_vm->_objectsManager.Sprite[0].fieldC;
+				v3 = _vm->_graphicsManager.Reel_Reduc(v3, v5);
+				v6 = _vm->_objectsManager.Sprite[0].fieldC;
+				if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+					v6 = -_vm->_objectsManager.Sprite[0].fieldC;
+				v4 = _vm->_graphicsManager.Reel_Reduc(v4, v6);
+			}
+			if (_vm->_objectsManager.Sprite[0].fieldC > 0) {
+				v7 = _vm->_objectsManager.Sprite[0].fieldC;
+				if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+					v7 = -_vm->_objectsManager.Sprite[0].fieldC;
+				v3 = _vm->_graphicsManager.Reel_Zoom(v3, v7);
+				v8 = _vm->_objectsManager.Sprite[0].fieldC;
+				if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+					v8 = -_vm->_objectsManager.Sprite[0].fieldC;
+				v4 = _vm->_graphicsManager.Reel_Zoom(v4, v8);
+			}
+			v0 = v3 + g_old_x;
+			v58 = g_old_y + v4;
+			v1 = _vm->_globals.g_old_anim + 1;
+			if (_vm->_globals.g_old_anim != 35)
+				goto LABEL_23;
+		}
+		v1 = 24;
+LABEL_23:
+		_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+	}
+	if (_vm->_globals.g_old_sens != 7)
+		goto LABEL_43;
+	if ((unsigned __int16)(_vm->_globals.g_old_anim - 24) > 0xBu) {
+		v0 = g_old_x;
+		v58 = g_old_y;
+	} else {
+		v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+		v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+		if (_vm->_objectsManager.Sprite[0].fieldC < 0) {
+			v11 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v11 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v9 = _vm->_graphicsManager.Reel_Reduc(v9, v11);
+			v12 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v12 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v10 = _vm->_graphicsManager.Reel_Reduc(v10, v12);
+		}
+		if (_vm->_objectsManager.Sprite[0].fieldC > 0) {
+			v13 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v13 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v9 = _vm->_graphicsManager.Reel_Zoom(v9, v13);
+			v14 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v14 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v10 = _vm->_graphicsManager.Reel_Zoom(v10, v14);
+		}
+		v0 = g_old_x - v9;
+		v58 = g_old_y - v10;
+		v1 = _vm->_globals.g_old_anim + 1;
+		if (_vm->_globals.g_old_anim != 35)
+			goto LABEL_42;
+	}
+	v1 = 24;
+LABEL_42:
+	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+LABEL_43:
+	if (_vm->_globals.g_old_sens != 1)
+		goto LABEL_60;
+	if (_vm->_globals.g_old_anim > 11) {
+		v0 = g_old_x;
+		v58 = g_old_y;
+	} else {
+		v15 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+		if (v15 < 0)
+			v15 = -v15;
+		v16 = v15;
+		if (_vm->_objectsManager.Sprite[0].fieldC < 0) {
+			v17 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v17 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v16 = _vm->_graphicsManager.Reel_Reduc(v16, v17);
+		}
+		if (_vm->_objectsManager.Sprite[0].fieldC > 0) {
+			v18 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v18 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v16 = _vm->_graphicsManager.Reel_Zoom(v16, v18);
+		}
+		v0 = g_old_x;
+		v58 = g_old_y - v16;
+		v1 = _vm->_globals.g_old_anim + 1;
+		if (_vm->_globals.g_old_anim != 11)
+			goto LABEL_59;
+	}
+	v1 = 0;
+LABEL_59:
+	_vm->_globals.Compteur = 4 / _vm->_globals.vitesse;
+LABEL_60:
+	if (_vm->_globals.g_old_sens != 5)
+		goto LABEL_77;
+	if ((unsigned __int16)(_vm->_globals.g_old_anim - 48) > 0xBu) {
+		v0 = g_old_x;
+		v58 = g_old_y;
+	} else {
+		v19 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+		if (v19 < 0)
+			v19 = -v19;
+		v20 = v19;
+		if (_vm->_objectsManager.Sprite[0].fieldC < 0) {
+			v21 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v21 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v20 = _vm->_graphicsManager.Reel_Reduc(v20, v21);
+		}
+		if (_vm->_objectsManager.Sprite[0].fieldC > 0) {
+			v22 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v22 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v20 = _vm->_graphicsManager.Reel_Zoom(v20, v22);
+		}
+		v0 = g_old_x;
+		v58 = v20 + g_old_y;
+		v1 = _vm->_globals.g_old_anim + 1;
+		if (_vm->_globals.g_old_anim != 59)
+			goto LABEL_76;
+	}
+	v1 = 48;
+LABEL_76:
+	_vm->_globals.Compteur = 4 / _vm->_globals.vitesse;
+LABEL_77:
+	if (_vm->_globals.g_old_sens != 2)
+		goto LABEL_96;
+	if ((unsigned __int16)(_vm->_globals.g_old_anim - 12) > 0xBu) {
+		v0 = g_old_x;
+		v58 = g_old_y;
+	} else {
+		v23 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+		v24 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+		if (_vm->_objectsManager.Sprite[0].fieldC < 0) {
+			v25 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v25 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v23 = _vm->_graphicsManager.Reel_Reduc(v23, v25);
+			v26 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v26 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v24 = _vm->_graphicsManager.Reel_Reduc(v24, v26);
+		}
+		if (_vm->_objectsManager.Sprite[0].fieldC > 0) {
+			v27 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v27 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v23 = _vm->_graphicsManager.Reel_Zoom(v23, v27);
+			v28 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v28 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v24 = _vm->_graphicsManager.Reel_Zoom(v24, v28);
+		}
+		v0 = v23 + g_old_x;
+		v58 = g_old_y + v24;
+		v1 = _vm->_globals.g_old_anim + 1;
+		if (_vm->_globals.g_old_anim != 23)
+			goto LABEL_95;
+	}
+	v1 = 12;
+LABEL_95:
+	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+LABEL_96:
+	if (_vm->_globals.g_old_sens != 8)
+		goto LABEL_115;
+	if ((unsigned __int16)(_vm->_globals.g_old_anim - 12) > 0xBu) {
+		v0 = g_old_x;
+		v58 = g_old_y;
+	} else {
+		v29 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+		v30 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+		if (_vm->_objectsManager.Sprite[0].fieldC < 0) {
+			v31 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v31 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v29 = _vm->_graphicsManager.Reel_Reduc(v29, v31);
+			v32 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v32 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v30 = _vm->_graphicsManager.Reel_Reduc(v30, v32);
+		}
+		if (_vm->_objectsManager.Sprite[0].fieldC > 0) {
+			v33 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v33 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v29 = _vm->_graphicsManager.Reel_Zoom(v29, v33);
+			v34 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v34 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v30 = _vm->_graphicsManager.Reel_Zoom(v30, v34);
+		}
+		v0 = g_old_x - v29;
+		v58 = g_old_y + v30;
+		v1 = _vm->_globals.g_old_anim + 1;
+		if (_vm->_globals.g_old_anim != 23)
+			goto LABEL_114;
+	}
+	v1 = 12;
+LABEL_114:
+	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+LABEL_115:
+	if (_vm->_globals.g_old_sens != 4)
+		goto LABEL_134;
+	if ((unsigned __int16)(_vm->_globals.g_old_anim - 36) > 0xBu) {
+		v0 = g_old_x;
+		v58 = g_old_y;
+	} else {
+		v35 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+		v36 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+		if (_vm->_objectsManager.Sprite[0].fieldC < 0) {
+			v37 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v37 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v35 = _vm->_graphicsManager.Reel_Reduc(v35, v37);
+			v38 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v38 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v36 = _vm->_graphicsManager.Reel_Reduc(v36, v38);
+		}
+		if (_vm->_objectsManager.Sprite[0].fieldC > 0) {
+			v39 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v39 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v35 = _vm->_graphicsManager.Reel_Zoom(v35, v39);
+			v40 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v40 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v36 = _vm->_graphicsManager.Reel_Zoom(v36, v40);
+		}
+		v0 = v35 + g_old_x;
+		v58 = g_old_y + v36;
+		v1 = _vm->_globals.g_old_anim + 1;
+		if (_vm->_globals.g_old_anim != 47)
+			goto LABEL_133;
+	}
+	v1 = 36;
+LABEL_133:
+	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+LABEL_134:
+	if (_vm->_globals.g_old_sens != 6)
+		goto LABEL_153;
+	if ((unsigned __int16)(_vm->_globals.g_old_anim - 36) > 0xBu) {
+		v0 = g_old_x;
+		v58 = g_old_y;
+	} else {
+		v41 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+		v42 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+		if (_vm->_objectsManager.Sprite[0].fieldC < 0) {
+			v43 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v43 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v41 = _vm->_graphicsManager.Reel_Reduc(v41, v43);
+			v44 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v44 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v42 = _vm->_graphicsManager.Reel_Reduc(v42, v44);
+		}
+		if (_vm->_objectsManager.Sprite[0].fieldC > 0) {
+			v45 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v45 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v41 = _vm->_graphicsManager.Reel_Zoom(v41, v45);
+			v46 = _vm->_objectsManager.Sprite[0].fieldC;
+			if (_vm->_objectsManager.Sprite[0].fieldC < 0)
+				v46 = -_vm->_objectsManager.Sprite[0].fieldC;
+			v42 = _vm->_graphicsManager.Reel_Zoom(v42, v46);
+		}
+		v0 = g_old_x - v41;
+		v58 = g_old_y + v42;
+		v1 = _vm->_globals.g_old_anim + 1;
+		if (_vm->_globals.g_old_anim != 47)
+			goto LABEL_152;
+	}
+	v1 = 36;
+LABEL_152:
+	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+LABEL_153:
+	v47 = 0;
+	do {
+		nouveau_x = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		_vm->_globals.chemin += 2;
+		v48 = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		nouveau_y = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		_vm->_globals.chemin += 2;
+		nouveau_sens = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		_vm->_globals.chemin += 2;
+		nouveau_anim = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+		_vm->_globals.chemin += 2;
+		if (nouveau_x == -1 && v48 == -1) {
+			if (GOACTION == 1)
+				v49 = _vm->_globals.SAUVEGARDE->data[svField2];
+			else
+				v49 = NUMZONE;
+			SETANISPR(0, _vm->_globals.g_old_sens + 59);
+			_vm->_globals.ACTION_SENS = 0;
+			_vm->_globals.chemin = g_PTRNUL;
+			VERIFTAILLE();
+			SETFLIPSPR(0, 0);
+			_vm->_globals.Compteur = 0;
+			_vm->_globals.g_old_sens = -1;
+			g_old_x = XSPR(0);
+			g_old_y = YSPR(0);
+
+			if (v49 > 0) {
+				v50 = v49;
+				if (_vm->_globals.ZONEP[v50].field0) {
+					v51 = _vm->_globals.ZONEP[v50].field2;;
+					if (v51) {
+						if (v51 != 31) {
+							v52 = _vm->_globals.ZONEP[v50].field4;
+							if (v52 == -1) {
+								_vm->_globals.ZONEP[v50].field0 = 0;
+								_vm->_globals.ZONEP[v50].field2 = 0;
+								_vm->_globals.ZONEP[v50].field4 = 0;
+							} else {
+								SETANISPR(0, v52);
+								_vm->_globals.ACTION_SENS = _vm->_globals.ZONEP[v50].field4 - 59;
+							}
+						}
+					}
+				}
+			}
+			goto LABEL_241;
+		}
+		if (_vm->_globals.g_old_sens != nouveau_sens)
+			break;
+		if (nouveau_sens == 3 && nouveau_x >= v0)
+			v47 = 1;
+		if (_vm->_globals.g_old_sens == 7 && nouveau_x <= v0)
+			v47 = 1;
+		if (_vm->_globals.g_old_sens == 1 && nouveau_y <= v58)
+			v47 = 1;
+		if (_vm->_globals.g_old_sens == 5 && nouveau_y >= v58)
+			v47 = 1;
+		if (_vm->_globals.g_old_sens == 2 && nouveau_x >= v0)
+			v47 = 1;
+		if (_vm->_globals.g_old_sens == 8 && nouveau_x <= v0)
+			v47 = 1;
+		if (_vm->_globals.g_old_sens == 4 && nouveau_x >= v0)
+			v47 = 1;
+		if (_vm->_globals.g_old_sens == 6 && nouveau_x <= v0)
+			v47 = 1;
+	} while (v47 != 1);
+	if (v47 == 1) {
+		VERIFTAILLE();
+		if (_vm->_globals.g_old_sens == 7)
+			SETFLIPSPR(0, 1);
+		if (_vm->_globals.g_old_sens == 3)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 1)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 5)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 2)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 8)
+			SETFLIPSPR(0, 1);
+		if (_vm->_globals.g_old_sens == 4)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 6)
+			SETFLIPSPR(0, 1);
+		SETXSPR(0, nouveau_x);
+		SETYSPR(0, nouveau_y);
+		SETANISPR(0, v1);
+	} else {
+		if (_vm->_globals.g_old_sens == 7)
+			SETFLIPSPR(0, 1);
+		if (_vm->_globals.g_old_sens == 3)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 1)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 5)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 2)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 8)
+			SETFLIPSPR(0, 1);
+		if (_vm->_globals.g_old_sens == 4)
+			SETFLIPSPR(0, 0);
+		if (_vm->_globals.g_old_sens == 6)
+			SETFLIPSPR(0, 1);
+		_vm->_globals.Compteur = 0;
+	}
+	_vm->_globals.g_old_sens = nouveau_sens;
+	_vm->_globals.g_old_sens2 = nouveau_sens;
+	_vm->_globals.g_old_anim = v1;
+	g_old_x = nouveau_x;
+	g_old_y = nouveau_y;
 }
 
 void ObjectsManager::GOHOME2() {
-	warning("GOHOME2");
+	signed int v0;
+	__int16 v2; 
+
+	v0 = 2;
+	if (_vm->_globals.chemin != g_PTRNUL) {
+		if (_vm->_globals.vitesse == 2)
+			v0 = 4;
+		if (_vm->_globals.vitesse == 3)
+			v0 = 6;
+		_vm->_globals.j_104 = 0;
+		if (v0) {
+			while (1) {
+				nouveau_x = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+				_vm->_globals.chemin += 2;
+				v2 = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+				nouveau_y = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+				_vm->_globals.chemin += 2;
+				nouveau_sens = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+				_vm->_globals.chemin += 2;
+				nouveau_anim = (int16)READ_LE_UINT16(_vm->_globals.chemin);
+				_vm->_globals.chemin += 2;
+
+				if (nouveau_x == -1) {
+					if (v2 == -1)
+						break;
+				}
+				++_vm->_globals.j_104;
+				if (_vm->_globals.j_104 >= v0)
+					goto LABEL_19;
+			}
+			if (_vm->_globals.last_sens == 1)
+				SETANISPR(0, 0);
+			if (_vm->_globals.last_sens == 3)
+				SETANISPR(0, 1);
+			if (_vm->_globals.last_sens == 5)
+				SETANISPR(0, 2);
+			if (_vm->_globals.last_sens == 7)
+				SETANISPR(0, 3);
+			
+			_vm->_globals.chemin = g_PTRNUL;
+			my_anim = 0;
+			A_ANIM = 0;
+			A_DEPA = 0;
+		} else {
+LABEL_19:
+			_vm->_globals.last_sens = nouveau_sens;
+			SETXSPR(0, nouveau_x);
+			SETYSPR(0, nouveau_y);
+			if (_vm->_globals.last_sens == 1)
+				SETANISPR(0, 4);
+			if (_vm->_globals.last_sens == 3)
+				SETANISPR(0, 5);
+			if (_vm->_globals.last_sens == 5)
+				SETANISPR(0, 6);
+			if (_vm->_globals.last_sens == 7)
+				SETANISPR(0, 7);
+
+			if (my_anim++ > 1)
+				my_anim = 0;
+		}
+	}
 }
 
 void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
-	warning("CHARGE_OBSTACLE");
-}
+	__int16 v1; 
+	byte *ptr; 
+	__int16 v4; 
+	__int16 v5; 
 
-void ObjectsManager::CHARGE_CACHE(const Common::String &file) {
-	warning("CHARGE_CACHE");
+	_vm->_linesManager.RESET_OBSTACLE();
+	_vm->_linesManager.TOTAL_LIGNES = 0;
+	_vm->_objectsManager.DERLIGNE = 0;
+	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, file);
+	ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	v4 = 0;
+	v5 = 0;
+	do {
+		v1 = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
+		if (v1 != -1) {
+			_vm->_linesManager.AJOUTE_LIGNE(
+			    v5,
+			    v1,
+			    (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1),
+			    (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2),
+			    (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 3),
+			    (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 4),
+			    1);
+			++_vm->_linesManager.TOTAL_LIGNES;
+		}
+		v4 += 5;
+		++v5;
+	} while (v1 != -1);
+	_vm->_linesManager.INIPARCOURS();
+	_vm->_globals.dos_free2(ptr);
 }
 
 void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
-	warning("CHARGE_ZONE");
+	signed int v1; 
+	int v2; 
+	int v3; 
+	int v4; 
+	int v5; 
+	int v6; 
+	signed __int16 v7; 
+	int v8; 
+	byte *v9; 
+	int v10; 
+	signed int v11; 
+	int v12; 
+	byte *v13; 
+	int v14; 
+	signed int v15; 
+	__int16 v17; 
+	__int16 v18; 
+	byte *ptr; 
+
+	v1 = 1;
+	do {
+		v2 = v1;
+		_vm->_globals.ZONEP[v2].field0 = 0;
+		_vm->_globals.ZONEP[v2].field2 = 0;
+		_vm->_globals.ZONEP[v2].field4 = 0;
+		_vm->_globals.ZONEP[v2].field6 = 0;
+		_vm->_globals.ZONEP[v2].field7 = 0;
+		_vm->_globals.ZONEP[v2].field8 = 0;
+		_vm->_globals.ZONEP[v2].field9 = 0;
+		_vm->_globals.ZONEP[v2].fieldA = 0;
+		_vm->_globals.ZONEP[v2].fieldB = 0;
+		_vm->_globals.ZONEP[v2].fieldC = 0;
+		_vm->_globals.ZONEP[v2].fieldD = 0;
+		_vm->_globals.ZONEP[v2].fieldE = 0;
+		_vm->_globals.ZONEP[v2].fieldF = 0;
+		_vm->_globals.ZONEP[v2].field12 = 0;
+		_vm->_globals.ZONEP[v2].field10 = 0;
+		++v1;
+	} while (v1 <= 100);
+
+	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, file);
+	
+	Common::File f;
+	if (!f.exists(_vm->_globals.NFICHIER))
+		error("File not found : %s", _vm->_globals.NFICHIER.c_str());
+
+	ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	v4 = 0;
+	v18 = 0;
+	v17 = 0;
+	do {
+		v3 = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
+		if (v3 != -1) {
+			v5 = v3;
+			v6 = v3;
+			_vm->_linesManager.AJOUTE_LIGNE_ZONE(
+			    v18,
+			    READ_LE_UINT16((uint16 *)ptr + v4 + 1),
+			    READ_LE_UINT16((uint16 *)ptr + v4 + 2),
+			    READ_LE_UINT16((uint16 *)ptr + v4 + 3),
+			    READ_LE_UINT16((uint16 *)ptr + v4 + 4),
+			    v3);
+			_vm->_globals.ZONEP[v5].field10 = 1;
+			v3 = v6;
+		}
+		v4 += 5;
+		++v18;
+		++v17;
+	} while (v3 != -1);
+	v7 = 1;
+	do {
+		v8 = v7;
+		_vm->_globals.ZONEP[v8].field0 = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
+		_vm->_globals.ZONEP[v8].field2 = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1);
+		_vm->_globals.ZONEP[v8].field4 = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2);
+		v4 += 3;
+		++v7;
+	} while (v7 <= 100);
+
+	v9 = (ptr + 10 * v17 + 606);
+	v10 = 0;
+	v11 = 1;
+	do {
+		v12 = v11;
+
+		_vm->_globals.ZONEP[v12].field6 = *(v10 + v9);
+		_vm->_globals.ZONEP[v12].field7 = *(v9 + v10 + 1);
+		_vm->_globals.ZONEP[v12].field8 = *(v9 + v10 + 2);
+		_vm->_globals.ZONEP[v12].field9 = *(v9 + v10 + 3);
+		_vm->_globals.ZONEP[v12].fieldA = *(v9 + v10 + 4);
+		_vm->_globals.ZONEP[v12].fieldB = *(v9 + v10 + 5);
+		_vm->_globals.ZONEP[v12].fieldC = *(v9 + v10 + 6);
+		_vm->_globals.ZONEP[v12].fieldD = *(v9 + v10 + 7);
+		_vm->_globals.ZONEP[v12].fieldE = *(v9 + v10 + 8);
+		_vm->_globals.ZONEP[v12].fieldF = *(v9 + v10 + 9);
+
+		v10 += 10;
+		++v11;
+	} while (v11 <= 100);
+	v13 = v9 + 1010;
+	v14 = 0;
+	v15 = 1;
+	do
+		_vm->_globals.ZONEP[v15++].field12 = READ_LE_UINT16(v13 + 2 * v14++);
+	while (v15 <= 100);
+
+	_vm->_globals.dos_free2(ptr);
+	_vm->_objectsManager.CARRE_ZONE();
 }
 
 void ObjectsManager::CARRE_ZONE() {
@@ -1987,7 +2708,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.LOAD_IMAGE("PLAN");
 	CHARGE_OBSTACLE("PLAN.OB2");
-	CHARGE_CACHE("PLAN.CA2");
+	_vm->_globals.CHARGE_CACHE("PLAN.CA2");
 	CHARGE_ZONE("PLAN.ZO2");
 	_vm->_fileManager.CONSTRUIT_SYSTEM("VOITURE.SPR");
 	sprite_ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);

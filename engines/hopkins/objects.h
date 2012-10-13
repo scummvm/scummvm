@@ -125,6 +125,9 @@ public:
 	int NVZONE;
 	int S_old_ani; 
 	int S_old_ret;
+	int nouveau_x, nouveau_y;
+	int nouveau_sens;
+	int nouveau_anim;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -191,7 +194,6 @@ public:
 	void GOHOME();
 	void GOHOME2();
 	void CHARGE_OBSTACLE(const Common::String &file);
-	void CHARGE_CACHE(const Common::String &file);
 	void CHARGE_ZONE(const Common::String &file);
 	void CARRE_ZONE();
 	void PLAN_BETA();

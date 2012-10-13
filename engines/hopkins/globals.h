@@ -342,6 +342,7 @@ public:
 	int lOldItCounter;
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;
+	int last_sens;
 	int HopkinsArr[140];
 	byte *police;
 	int police_l;
@@ -445,6 +446,7 @@ public:
 	int zozo_73;
 	int old_y2_68;
 	int old_z_69;
+	int j_104;
 
 	Globals();
 	~Globals();
