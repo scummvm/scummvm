@@ -1298,7 +1298,8 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 	unsigned int i;
 	int rowCount2; 
 
-	assert(xs <= SCREEN_WIDTH && ys <= SCREEN_HEIGHT);
+	// TODO: This code in the original is potentially dangerous, as it doesn't clip the area to within
+	// the screen, and so thus can read areas outside of the allocated surface buffer
 	srcP = xs + nbrligne2 * ys + srcSurface;
 	destP = destSurface;
 	rowCount = height;
