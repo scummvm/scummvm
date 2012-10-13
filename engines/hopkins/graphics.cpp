@@ -1129,7 +1129,7 @@ Video_Cont3_wVbe:
 	}
 }
 
-void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
+void GraphicsManager::Copy_Video_Vbe3(const byte *srcData) {
 	int result;
 	int v2;
 	int v3;
@@ -1146,7 +1146,7 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
 	result = 0;
 	v2 = 0;
 	v3 = 0;
-	v4 = surface;
+	v4 = srcData;
 	for (;;) {
 		v5 = *v4;
 		if (*v4 < 222)
@@ -1162,7 +1162,7 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *surface) {
 			v5 = *(v4 + 2);
 			v4 += 2;
 		} else if (v5 == (byte)-2) {
-			v2 += (int16)READ_LE_UINT16(v4 + 1);
+			v2 += READ_LE_UINT16(v4 + 1);
 			v5 = *(v4 + 3);
 			v4 += 3;
 		} else {
@@ -1199,8 +1199,8 @@ Video_Cont3_Vbe:
 	}
 }
 
-void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
-	const byte *srcP = surface;
+void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
+	const byte *srcP = srcData;
 	int destOffset = 0;
 	assert(VideoPtr);
 
@@ -1217,7 +1217,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
 				srcByte = *(const byte *)(srcP + 2);
 				srcP += 2;
 			} else if (srcByte == 254) {
-				destOffset += (int16)READ_LE_UINT16(srcP + 1);
+				destOffset += READ_LE_UINT16(srcP + 1);
 				srcByte = *(const byte *)(srcP + 3);
 				srcP += 3;
 			} else {
@@ -1259,13 +1259,13 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *surface) {
 	}
 }
 
-void GraphicsManager::Copy_Video_Vbe16a(const byte *surface) {
+void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
 	int v2; 
 	const byte *v3; 
 	unsigned __int8 v4; 
 
 	v2 = 0;
-	v3 = surface;
+	v3 = srcData;
 	for (;;) {
 		v4 = *v3;
 		if (*v3 < 0xFCu)
@@ -1277,7 +1277,7 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *surface) {
 			v4 = *(v3 + 2);
 			v3 += 2;
 		} else if (v4 == -2) {
-			v2 += (int16)READ_LE_UINT16(v3 + 1);
+			v2 += READ_LE_UINT16(v3 + 1);
 			v4 = *(v3 + 3);
 			v3 += 3;
 		} else {
@@ -1286,7 +1286,7 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *surface) {
 			v3 += 5;
 		}
 Video_Cont_Vbe16a:
-		WRITE_LE_UINT16(v2 + v2 + VideoPtr, (int16)READ_LE_UINT16(PAL_PIXELS + 2 * v4));
+		WRITE_LE_UINT16(v2 + v2 + VideoPtr, READ_LE_UINT16(PAL_PIXELS + 2 * v4));
 		++v3;
 		++v2;
 	}
@@ -1336,9 +1336,9 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	clip_flag = false;
 
 	spriteP += 4;
-	int width = (int16)READ_LE_UINT16(spriteP);
+	int width = READ_LE_UINT16(spriteP);
 	spriteP += 2;
-	int height = (int16)READ_LE_UINT16(spriteP);
+	int height = READ_LE_UINT16(spriteP);
 	
 	// Clip X
 	clip_x1 = width;
@@ -1386,7 +1386,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 	// Set up source
 	spriteP += 6;
-	int srcOffset = (int16)READ_LE_UINT16(spriteP);
+	int srcOffset = READ_LE_UINT16(spriteP);
 	spriteP += 4;
 	const byte *srcP = spriteP;
 	spriteP += srcOffset;
@@ -1404,7 +1404,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 			while ((byteVal = *srcP) != 253) {
 				++srcP;
-				width = (int16)READ_LE_UINT16(srcP);
+				width = READ_LE_UINT16(srcP);
 				srcP += 2;
 
 				if (byteVal == 254) {
@@ -1432,7 +1432,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 			while ((byteVal = *srcP) != 253) {
 				++srcP;
-				width = (int16)READ_LE_UINT16(srcP);
+				width = READ_LE_UINT16(srcP);
 				srcP += 2;
 
 				if (byteVal == 254) {
