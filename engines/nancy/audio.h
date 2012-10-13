@@ -20,42 +20,18 @@
  *
  */
 
-#ifndef NANCY_CONSOLE_H
-#define NANCY_CONSOLE_H
+#ifndef NANCY_AUDIO_H
+#define NANCY_AUDIO_H
 
-#include "gui/debugger.h"
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Nancy {
 
-class NancyEngine;
+class RewindableAudioStream;
 
-class NancyConsole : public GUI::Debugger {
-public:
-	NancyConsole(NancyEngine *vm);
-	virtual ~NancyConsole(void);
-
-	void postEnter();
-
-private:
-	NancyEngine *_vm;
-	bool Cmd_resLoadCal(int argc, const char **argv);
-	bool Cmd_resHexDump(int argc, const char **argv);
-	bool Cmd_resDiskDump(int argc, const char **argv);
-	bool Cmd_resList(int argc, const char **argv);
-	bool Cmd_resInfo(int argc, const char **argv);
-	bool Cmd_resShowImage(int argc, const char **argv);
-	bool Cmd_playVideo(int argc, const char **argv);
-	bool Cmd_playAudio(int argc, const char **argv);
-
-	bool Cmd_listScreens(int argc, const char **argv);
-	bool Cmd_listObjects(int argc, const char **argv);
-	bool Cmd_getObject(int argc, const char **argv);
-	bool Cmd_getAllObjects(int argc, const char **argv);
-	bool Cmd_gotoScreen(int argc, const char **argv);
-	bool Cmd_boundaries(int argc, const char **argv);
-
-	Common::String _videoFile;
-};
+Audio::RewindableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Nancy
 
