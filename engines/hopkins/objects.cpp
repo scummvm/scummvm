@@ -329,10 +329,7 @@ void ObjectsManager::AFF_SPRITES() {
 	int v13; 
 	int v14; 
 	int v15; 
-	int v16; 
 	int v17; 
-	int v18; 
-	int v19; 
 	int v20;
 	int v21;
 	int y1_1;
@@ -350,7 +347,6 @@ void ObjectsManager::AFF_SPRITES() {
 	int v35;
 	int v36;
 	int v37; 
-	int v38; 
 	uint16 arr[50];
 
 	_vm->_globals.NBTRI = 0;
@@ -538,50 +534,46 @@ void ObjectsManager::AFF_SPRITES() {
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 164, 107, _vm->_eventsManager.start_x + 498, 320);
 	}
 
-	v38 = 0;
-	do {
-		v16 = v38;
-		if (_vm->_fontManager.Txt[v16].field0 == 1) {
-			if ((uint16)(_vm->_fontManager.Txt[v16].field3FC - 2) > 1)
-				_vm->_fontManager.BOITE(v38,
-					_vm->_fontManager.Txt[v16].fieldC, _vm->_fontManager.Txt[v16].filename,
-					_vm->_eventsManager.start_x + _vm->_fontManager.Txt[v16].xp, _vm->_fontManager.Txt[v16].yp);
+	for (int idx = 0; idx <= 10; ++idx) {
+		if (_vm->_fontManager.Txt[idx].field0 == 1) {
+			if ((uint16)(_vm->_fontManager.Txt[idx].field3FC - 2) > 1)
+				_vm->_fontManager.BOITE(idx,
+					_vm->_fontManager.Txt[idx].fieldC, _vm->_fontManager.Txt[idx].filename,
+					_vm->_eventsManager.start_x + _vm->_fontManager.Txt[idx].xp, _vm->_fontManager.Txt[idx].yp);
 			else
 				_vm->_fontManager.BOITE(
-				  v38,
-				  _vm->_fontManager.Txt[v16].fieldC,
-				  _vm->_fontManager.Txt[v16].filename,
-				  _vm->_fontManager.Txt[v16].xp,
-				  _vm->_fontManager.Txt[v16].yp);
-			_vm->_fontManager.ListeTxt[v38].enabled = true;
+				  idx,
+				  _vm->_fontManager.Txt[idx].fieldC,
+				  _vm->_fontManager.Txt[idx].filename,
+				  _vm->_fontManager.Txt[idx].xp,
+				  _vm->_fontManager.Txt[idx].yp);
+			_vm->_fontManager.ListeTxt[idx].enabled = true;
 			
-			v17 = v38;
+			v17 = idx;
 			if ((uint16)(_vm->_fontManager.Txt[v17].field3FC - 2) > 1)
-				_vm->_fontManager.ListeTxt[v38].xp = _vm->_eventsManager.start_x + _vm->_fontManager.Txt[v17].xp;
+				_vm->_fontManager.ListeTxt[idx].xp = _vm->_eventsManager.start_x + _vm->_fontManager.Txt[v17].xp;
 			else
-				_vm->_fontManager.ListeTxt[v38].xp = _vm->_fontManager.Txt[v17].xp;
+				_vm->_fontManager.ListeTxt[idx].xp = _vm->_fontManager.Txt[v17].xp;
       
-			v18 = v38;
-			v19 = v38;
-			_vm->_fontManager.ListeTxt[v18].yp = _vm->_fontManager.Txt[v19].yp;
-			_vm->_fontManager.ListeTxt[v18].width = _vm->_fontManager.Txt[v19].width;
-			_vm->_fontManager.ListeTxt[v18].height = _vm->_fontManager.Txt[v19].height;
+			_vm->_fontManager.ListeTxt[idx].yp = _vm->_fontManager.Txt[idx].yp;
+			_vm->_fontManager.ListeTxt[idx].width = _vm->_fontManager.Txt[idx].width;
+			_vm->_fontManager.ListeTxt[idx].height = _vm->_fontManager.Txt[idx].height;
 
-			if (_vm->_fontManager.ListeTxt[v38].xp < _vm->_graphicsManager.min_x)
-				_vm->_fontManager.ListeTxt[v38].xp = _vm->_graphicsManager.min_x - 1;
-			if (_vm->_fontManager.ListeTxt[v38].yp < _vm->_graphicsManager.min_y)
-				_vm->_fontManager.ListeTxt[v38].yp = _vm->_graphicsManager.min_y - 1;
-			v20 = _vm->_fontManager.ListeTxt[v38].xp;
-			if (_vm->_fontManager.ListeTxt[v38].width + v20 > _vm->_graphicsManager.max_x)
-				_vm->_fontManager.ListeTxt[v38].width = _vm->_graphicsManager.max_x - v20;
-			v21 = _vm->_fontManager.ListeTxt[v38].yp;
-			if (_vm->_fontManager.ListeTxt[v38].height + v21 > _vm->_graphicsManager.max_y)
-				_vm->_fontManager.ListeTxt[v38].height = _vm->_graphicsManager.max_y - v21;
-			if (_vm->_fontManager.ListeTxt[v38].width <= 0 || _vm->_fontManager.ListeTxt[v38].height <= 0)
-				_vm->_fontManager.ListeTxt[v18].enabled = false;
+			if (_vm->_fontManager.ListeTxt[idx].xp < _vm->_graphicsManager.min_x)
+				_vm->_fontManager.ListeTxt[idx].xp = _vm->_graphicsManager.min_x - 1;
+			if (_vm->_fontManager.ListeTxt[idx].yp < _vm->_graphicsManager.min_y)
+				_vm->_fontManager.ListeTxt[idx].yp = _vm->_graphicsManager.min_y - 1;
+
+			v20 = _vm->_fontManager.ListeTxt[idx].xp;
+			if (_vm->_fontManager.ListeTxt[idx].width + v20 > _vm->_graphicsManager.max_x)
+				_vm->_fontManager.ListeTxt[idx].width = _vm->_graphicsManager.max_x - v20;
+			v21 = _vm->_fontManager.ListeTxt[idx].yp;
+			if (_vm->_fontManager.ListeTxt[idx].height + v21 > _vm->_graphicsManager.max_y)
+				_vm->_fontManager.ListeTxt[idx].height = _vm->_graphicsManager.max_y - v21;
+			if (_vm->_fontManager.ListeTxt[idx].width <= 0 || _vm->_fontManager.ListeTxt[idx].height <= 0)
+				_vm->_fontManager.ListeTxt[idx].enabled = false;
 		}
-		++v38;
-	} while (v38 <= 10);
+	}
   
 	INVENT_ANIM();
 }
@@ -2611,10 +2603,9 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 }
 
 void ObjectsManager::CARRE_ZONE() {
-	byte *v3;
+	int16 *dataP;
 	int v4; 
 	int v5; 
-	byte *v6; 
 	int v7; 
 	int v8; 
 	int v10; 
@@ -2635,8 +2626,8 @@ void ObjectsManager::CARRE_ZONE() {
 	}
 
 	for (int idx = 0; idx < 400; ++idx) {
-		v3 = _vm->_linesManager.LigneZone[idx].field4;
-		if (v3 != g_PTRNUL) {
+		dataP = _vm->_linesManager.LigneZone[idx].zoneData;
+		if (dataP != (int16 *)g_PTRNUL) {
 			v4 = _vm->_linesManager.LigneZone[idx].field2;
 			_vm->_globals.CarreZone[v4].field0 = 1;
 			if (_vm->_globals.CarreZone[v4].fieldC < idx)
@@ -2645,13 +2636,12 @@ void ObjectsManager::CARRE_ZONE() {
 				_vm->_globals.CarreZone[v4].fieldA = idx;
 
 			v13 = 0;
-			v12 = _vm->_linesManager.LigneZone[idx].field0;
+			v12 = _vm->_linesManager.LigneZone[idx].count;
 			if (v12 > 0) {
 				do {
-					v5 = (int16)READ_LE_UINT16(v3);
-					v6 = v3 + 2;
-					v11 = (int16)READ_LE_UINT16(v6);
-					v3 = v6 + 2;
+					v5 = *dataP++;
+					v11 = *dataP++;
+
 					if (_vm->_globals.CarreZone[v4].field2 >= v5)
 						_vm->_globals.CarreZone[v4].field2 = v5;
 					if (_vm->_globals.CarreZone[v4].field4 <= v5)
@@ -7874,13 +7864,13 @@ int ObjectsManager::colision(int a1, int a2) {
 		int v9 = v3 + 1;
 
 		do {
-			byte *srcP = _vm->_linesManager.LigneZone[v8].field4;
-			if (srcP != g_PTRNUL) {
+			int16 *srcP = _vm->_linesManager.LigneZone[v8].zoneData;
+			if (srcP != (int16 *)g_PTRNUL) {
 				bool flag = true;
-				int v11 = (int16)READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 2);
-				int dataV2 = (int16)READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 2 + 2);
-				int v12 = (int16)READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 4 - 4);
-				int v13 = (int16)READ_LE_UINT16(srcP + _vm->_linesManager.LigneZone[v8].field0 * 4 - 2);
+				int v11 = *(srcP + _vm->_linesManager.LigneZone[v8].count);
+				int dataV2 = *(srcP + _vm->_linesManager.LigneZone[v8].count + 1);
+				int v12 = *(srcP + _vm->_linesManager.LigneZone[v8].count * 2 - 2);
+				int v13 = *(srcP + _vm->_linesManager.LigneZone[v8].count * 2 - 1);
 				int v10 = v13;
 
 				if (v11 < v12 && v4 >= v11 && v5 > v13)
@@ -7894,11 +7884,11 @@ int ObjectsManager::colision(int a1, int a2) {
 
 
 				if (!flag) {
-					if (v11 < _vm->_linesManager.LigneZone[v8].field0) {
-						for (; v11 < _vm->_linesManager.LigneZone[v8].field0; ++idx) {
-							int v11 = (int16)READ_LE_UINT16(srcP);
-							int v12 = (int16)READ_LE_UINT16(srcP + 2);
-							srcP += 4;
+					if (v11 < _vm->_linesManager.LigneZone[v8].count) {
+						for (; v11 < _vm->_linesManager.LigneZone[v8].count; ++idx) {
+							int v11 = *srcP;
+							int v12 = *(srcP + 1);
+							srcP += 2;
 							
 							if ((v2 == v11 || v9 == v11) && a2 == v12)
 								return _vm->_linesManager.LigneZone[v8].field2;

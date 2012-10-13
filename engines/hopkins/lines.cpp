@@ -130,23 +130,21 @@ int LinesManager::OPTI_ZONE(int a1, int a2, int a3) {
 void LinesManager::RETIRE_LIGNE_ZONE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
-	if (_vm->_linesManager.LigneZone[idx].field4 != g_PTRNUL)
-		_vm->_globals.dos_free2(_vm->_linesManager.LigneZone[idx].field4);
+	if (_vm->_linesManager.LigneZone[idx].zoneData != (int16 *)g_PTRNUL)
+		_vm->_globals.dos_free2((byte *)_vm->_linesManager.LigneZone[idx].zoneData);
 
-	_vm->_linesManager.LigneZone[idx].field4 = g_PTRNUL;
+	_vm->_linesManager.LigneZone[idx].zoneData = (int16 *)g_PTRNUL;
 }
 
 
 void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, int a6) {
-	int v7; 
 	int v8; 
 	int v9; 
-	byte *v10;
+	int16 *zoneData;
+	int16 *dataP; 
 	int v11; 
-	byte *v12; 
 	int v13; 
 	int v14; 
-	byte *v15; 
 	int v16; 
 	int v17; 
 	int v18; 
@@ -159,9 +157,9 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 	if (a2 != a3 || a3 != a4 || a3 != a5) {
 		if (idx > 400)
 			error("Attempting to add a line obstacle > MAX_LIGNE.");
-		v7 = idx;
-		if (LigneZone[v7].field4 != g_PTRNUL)
-			LigneZone[v7].field4 = _vm->_globals.dos_free2(LigneZone[v7].field4);
+
+		if (LigneZone[idx].zoneData != (int16 *)g_PTRNUL)
+			LigneZone[idx].zoneData = (int16 *)_vm->_globals.dos_free2((byte *)LigneZone[idx].zoneData);
 		v8 = a2 - a4;
 		if (a2 - a4 < 0)
 			v8 = -v8;
@@ -170,17 +168,18 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 		if (a3 - a5 < 0)
 			v9 = -v9;
 		v18 = v9;
-		if (v19 <= (int)v9)
+		if (v19 <= v9)
 			v20 = v9 + 1;
 		else
 			v20 = v19 + 1;
-		v10 = _vm->_globals.dos_malloc2(4 * v20 + 8);
+
+		zoneData = (int16 *)_vm->_globals.dos_malloc2(2 * sizeof(int16) * v20 + (4 * sizeof(int16)));
 		v11 = idx;
-		LigneZone[v11].field4 = v10;
-		if (g_PTRNUL == v10)
+		LigneZone[v11].zoneData = zoneData;
+		if (zoneData == (int16 *)g_PTRNUL)
 			error("AJOUTE LIGNE ZONE");
 
-		v12 = LigneZone[v11].field4;
+		dataP = zoneData;
 		v23 = 1000 * v19 / v20;
 		v22 = 1000 * v18 / v20;
 		if (a4 < a2)
@@ -194,10 +193,9 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 		v14 = 0;
 		if (v20 > 0) {
 			do {
-				WRITE_LE_UINT16(v12, v17);
-				v15 = v12 + 2;
-				WRITE_LE_UINT16(v15, v21);
-				v12 = v15 + 2;
+				*dataP++ = v17;
+				*dataP++ = v21;
+
 				v13 += v23;
 				v16 += v22;
 				v17 = v13 / 1000;
@@ -205,14 +203,14 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 				++v14;
 			} while (v20 > v14);
 		}
-		WRITE_LE_UINT16(v12, (uint16)-1);
-		WRITE_LE_UINT16(v12 + 2, (uint16)-1);
+		*dataP++ = -1;
+		*dataP++ = -1;
 		
-		LigneZone[idx].field0 = v20;
+		LigneZone[idx].count = v20;
 		LigneZone[idx].field2 = a6;
 	} else {
-		_vm->_globals.BOBZONE_FLAG[idx] = 1;
-		_vm->_globals.BOBZONE[idx] = a3;
+		_vm->_globals.BOBZONE_FLAG[a6] = 1;
+		_vm->_globals.BOBZONE[a6] = a3;
 	}
 }
 

@@ -31,9 +31,9 @@ namespace Hopkins {
 class HopkinsEngine;
 
 struct LigneZoneItem {
-	int field0;
+	int count;
 	int field2;
-	byte *field4;
+	int16 *zoneData;
 };
 
 struct LigneItem {
