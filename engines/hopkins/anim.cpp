@@ -853,7 +853,7 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 			
 			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, ofsFilename);
 			Common::File f;
-			if (!f.exists(_vm->_globals.NFICHIER)) {
+			if (f.exists(_vm->_globals.NFICHIER)) {
 				v19 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 				v13 = v19;
 				

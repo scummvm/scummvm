@@ -879,7 +879,7 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 
 	_vm->_fileManager.CONSTRUIT_FICHIER(HOPLINK, v16);
 	
-	if (!f.exists(NFICHIER)) {
+	if (f.exists(NFICHIER)) {
 		spriteData = _vm->_fileManager.CHARGE_FICHIER(NFICHIER);
 		CACHE_BANQUE[1] = spriteData;
 		v15 = 60;
