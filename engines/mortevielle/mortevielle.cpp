@@ -791,7 +791,7 @@ void MortevielleEngine::prepareScreenType3() {
  */
 void MortevielleEngine::updateHour(int &day, int &hour, int &minute) {
 	int newHour = readclock();
-	int th = _jh + ((newHour - _mh) / _t);
+	int th = _currentHourCount + ((newHour - _currentDayHour) / _inGameHourDuration);
 	minute = ((th % 2) + _currHalfHour) * 30;
 	hour = ((uint)th >> 1) + _currHour;
 	if (minute == 60) {
@@ -1455,11 +1455,11 @@ int MortevielleEngine::getPresenceBitIndex(int roomId) {
  */
 void MortevielleEngine::initGame() {
 	_place = MANOR_FRONT;
-	_jh = 0;
+	_currentHourCount = 0;
 	if (!_coreVar._alreadyEnteredManor)
 		_blo = true;
-	_t = kTime1;
-	_mh = readclock();
+	_inGameHourDuration = kTime1;
+	_currentDayHour = readclock();
 }
 
 /**
@@ -1649,10 +1649,10 @@ void MortevielleEngine::startMusicOrSpeech(int so) {
 	if (so == 0) {
 		/* musik(0) */
 		;
-	} else if ((_prebru == 0) && (!_coreVar._alreadyEnteredManor)) {
+	} else if ((!_introSpeechPlayed) && (!_coreVar._alreadyEnteredManor)) {
 		// Type 1: Speech
 		_speechManager.startSpeech(10, 1, 1);
-		++_prebru;
+		_introSpeechPlayed = true;
 	} else {
 		if (((_coreVar._currPlace == MOUNTAIN) || (_coreVar._currPlace == MANOR_FRONT) || (_coreVar._currPlace == MANOR_BACK)) && (getRandomNumber(1, 3) == 2))
 			// Type 1: Speech
@@ -1752,7 +1752,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 void MortevielleEngine::endSearch() {
 	_heroSearching = false;
 	_obpart = false;
-	_cs = 0;
+	_searchCount = 0;
 	_menu.unsetSearchMenu();
 }
 
@@ -1882,13 +1882,13 @@ void MortevielleEngine::gameLoaded() {
 	_uptodatePresence = false;
 	_maff = 68;
 	_menuOpcode = OPCODE_NONE;
-	_prebru = 0;
+	_introSpeechPlayed = false;
 	_x = 0;
 	_y = 0;
 	_num = 0;
 	_startHour = 0;
 	_endHour = 0;
-	_cs = 0;
+	_searchCount = 0;
 	_roomDoorId = OWN_ROOM;
 	_syn = true;
 	_heroSearching = true;
@@ -2667,22 +2667,22 @@ void MortevielleEngine::prepareRoom() {
 
 	if (!_blo) {
 		if ((hour == 12) || ((hour > 18) && (hour < 21)) || ((hour >= 0) && (hour < 7)))
-			_t = kTime2;
+			_inGameHourDuration = kTime2;
 		else
-			_t = kTime1;
+			_inGameHourDuration = kTime1;
 		cf = _coreVar._faithScore;
 		if ((cf > 33) && (cf < 66))
-			_t -= (_t / 3);
+			_inGameHourDuration -= (_inGameHourDuration / 3);
 
 		if (cf > 65)
-			_t -= ((_t / 3) * 2);
+			_inGameHourDuration -= ((_inGameHourDuration / 3) * 2);
 
-		int nh = readclock();
-		if ((nh - _mh) > _t) {
+		int newHour = readclock();
+		if ((newHour - _currentDayHour) > _inGameHourDuration) {
 			bool activeMenu = _menu._menuActive;
 			_menu.eraseMenu();
-			_jh += ((nh - _mh) / _t);
-			_mh = nh;
+			_currentHourCount += ((newHour - _currentDayHour) / _inGameHourDuration);
+			_currentDayHour = newHour;
 			switch (_place) {
 			case GREEN_ROOM:
 			case DARKBLUE_ROOM:
@@ -3050,7 +3050,7 @@ void MortevielleEngine::mapMessageId(int &mesgId) {
 
 void MortevielleEngine::initouv() {
 	for (int cx = 1; cx <= 7; ++cx)
-		_touv[cx] = chr(0);
+		_openObjects[cx] = chr(0);
 }
 
 void MortevielleEngine::ecr2(Common::String text) {
@@ -3323,8 +3323,8 @@ void MortevielleEngine::drawPicture() {
 		prepareScreenType1();
 		if ((_caff < 30) || (_caff > 32)) {
 			for (int cx = 1; cx <= 6; ++cx) {
-				if (ord(_touv[cx]) != 0)
-					aniof(1, ord(_touv[cx]));
+				if (ord(_openObjects[cx]) != 0)
+					aniof(1, ord(_openObjects[cx]));
 			}
 
 			if (_caff == 13) {
@@ -3415,7 +3415,7 @@ void MortevielleEngine::exitRoom() {
 	}
 
 	for (int cx = 1; cx <= 7; ++cx)
-		_touv[cx] = chr(0);
+		_openObjects[cx] = chr(0);
 	_roomDoorId = OWN_ROOM;
 	_openObjCount = 0;
 	_mchai = 0;
@@ -3577,12 +3577,12 @@ void MortevielleEngine::tsuiv() {
 	int cx = 0;
 	do {
 		++cx;
-		++_cs;
-		int cl = cy + _cs;
+		++_searchCount;
+		int cl = cy + _searchCount;
 		tbcl = _tabdon[cl];
-	} while ((tbcl == 0) && (_cs <= 9));
+	} while ((tbcl == 0) && (_searchCount <= 9));
 
-	if ((tbcl != 0) && (_cs < 11)) {
+	if ((tbcl != 0) && (_searchCount < 11)) {
 		_caff = tbcl;
 		_crep = _caff + 400;
 		if (_currBitIndex != 0)

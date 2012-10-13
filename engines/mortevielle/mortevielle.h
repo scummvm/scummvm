@@ -267,23 +267,22 @@ private:
 	int  _openObjCount;
 	int  _takeObjCount;
 	int  _num;
-	int  _cs;
-	int  _prebru;
-	int  _t;
+	int  _searchCount;
+	bool _introSpeechPlayed;
+	int  _inGameHourDuration;
 	int  _x;
 	int  _y;
-	int  _jh;
-	int  _mh;
-
+	int  _currentHourCount;
+	int  _currentDayHour;
 
 	Common::String _hintPctMessage;
-	byte *_cfiecBuffer;
-	int _cfiecBufferSize;
-	byte _touv[8];
-	int  _nbrep[9];
-	int  _nbrepm[9];
+	byte  *_cfiecBuffer;
+	int    _cfiecBufferSize;
+	byte   _openObjects[8];
+	int    _nbrep[9];
+	int    _nbrepm[9];
 	uint16 _inpBuffer[kMaxTi + 1];
-	Hint _ntpBuffer[kMaxTd + 1];
+	Hint   _ntpBuffer[kMaxTd + 1];
 
 	Common::ErrorCode initialise();
 	Common::ErrorCode loadMortDat();

@@ -205,7 +205,7 @@ void MortevielleEngine::fctTake() {
 				_obpart = false;
 				affrep();
 			} else {
-				_tabdon[kAcha + ((_mchai - 1) * 10) + _cs - 1] = 0;
+				_tabdon[kAcha + ((_mchai - 1) * 10) + _searchCount - 1] = 0;
 				tsuiv();
 				++_takeObjCount;
 				if (_takeObjCount > 6) {
@@ -502,8 +502,8 @@ void MortevielleEngine::fctSearch() {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (_num != ord(_touv[cx])));
-			if (_num != ord(_touv[cx]))
+			} while ((cx <= 6) && (_num != ord(_openObjects[cx])));
+			if (_num != ord(_openObjects[cx]))
 				_crep = 187;
 			else {
 				if (_currBitIndex > 0)
@@ -511,7 +511,7 @@ void MortevielleEngine::fctSearch() {
 
 				rechai(_mchai);
 				if (_mchai != 0) {
-					_cs = 0;
+					_searchCount = 0;
 					_heroSearching = true;
 					_menu.setSearchMenu();
 					tsuiv();
@@ -590,7 +590,7 @@ void MortevielleEngine::fctOpen() {
 		return;
 	}
 
-	if (_caff == 15) {
+	if (_caff == LANDING) {
 		showMoveMenuAlert();
 		return;
 	}
@@ -607,21 +607,31 @@ void MortevielleEngine::fctOpen() {
 		int tmpPlace = 0;
 		do {
 			++tmpPlace;
-		} while (!((tmpPlace > 6) || (ord(_touv[tmpPlace]) == 0) || (ord(_touv[tmpPlace]) == _num)));
-		if (ord(_touv[tmpPlace]) != _num) {
-			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM) || (_coreVar._currPlace == ROOM9) || (_coreVar._currPlace == BLUE_ROOM) || (_coreVar._currPlace == BATHROOM)))
-			    || ((_num == 4) && ((_coreVar._currPlace == GREEN_ROOM) || (_coreVar._currPlace == PURPLE_ROOM) || (_coreVar._currPlace == RED_ROOM)))
+		} while (!((tmpPlace > 6) || (ord(_openObjects[tmpPlace]) == 0) || (ord(_openObjects[tmpPlace]) == _num)));
+		if (ord(_openObjects[tmpPlace]) != _num) {
+			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
+				                 || (_coreVar._currPlace == ROOM9) 
+								 || (_coreVar._currPlace == BLUE_ROOM) 
+								 || (_coreVar._currPlace == BATHROOM)))
+			    || ((_num == 4) && ((_coreVar._currPlace == GREEN_ROOM) 
+				                 || (_coreVar._currPlace == PURPLE_ROOM)
+								 || (_coreVar._currPlace == RED_ROOM)))
 				|| ((_coreVar._currPlace == DARKBLUE_ROOM) && (_num == 5))
-				|| ((_num == 6) && ((_coreVar._currPlace == BATHROOM) || (_coreVar._currPlace == DINING_ROOM) || (_coreVar._currPlace == GREEN_ROOM2) || (_coreVar._currPlace == ATTIC)))
+				|| ((_num == 6) && ((_coreVar._currPlace == BATHROOM)
+				                 || (_coreVar._currPlace == DINING_ROOM)
+								 || (_coreVar._currPlace == GREEN_ROOM2)
+								 || (_coreVar._currPlace == ATTIC)))
 				|| ((_coreVar._currPlace == GREEN_ROOM2) && (_num == 2))
 				|| ((_coreVar._currPlace == KITCHEN) && (_num == 7))) ) {
 				if ( ((_coreVar._currPlace > DINING_ROOM) && (_coreVar._currPlace < CELLAR))
 				  || ((_coreVar._currPlace > RED_ROOM) && (_coreVar._currPlace < DINING_ROOM))
-				  || (_coreVar._currPlace == OWN_ROOM) || (_coreVar._currPlace == PURPLE_ROOM) || (_coreVar._currPlace == BLUE_ROOM)) {
+				  || (_coreVar._currPlace == OWN_ROOM)
+				  || (_coreVar._currPlace == PURPLE_ROOM)
+				  || (_coreVar._currPlace == BLUE_ROOM)) {
 					if (getRandomNumber(1, 4) == 3)
 						_speechManager.startSpeech(7, 9, 1);
 				}
-				_touv[tmpPlace] = chr(_num);
+				_openObjects[tmpPlace] = chr(_num);
 				aniof(1, _num);
 			}
 			tmpPlace = _coreVar._currPlace;
@@ -631,6 +641,7 @@ void MortevielleEngine::fctOpen() {
 			if (_crep == 254)
 				_crep = 999;
 		} else
+			// display "Already Opened"
 			_crep = 18;
 	}
 }
@@ -874,11 +885,11 @@ void MortevielleEngine::fctClose() {
 			int cx = 0;
 			do {
 				++cx;
-			} while ((cx <= 6) && (_num != ord(_touv[cx])));
-			if (_num == ord(_touv[cx])) {
+			} while ((cx <= 6) && (_num != ord(_openObjects[cx])));
+			if (_num == ord(_openObjects[cx])) {
 				aniof(2, _num);
 				_crep = 998;
-				_touv[cx] = chr(0);
+				_openObjects[cx] = chr(0);
 				--_openObjCount;
 				if (_openObjCount < 0)
 					_openObjCount = 0;
@@ -973,8 +984,8 @@ void MortevielleEngine::fctSelfPut() {
 				int cx = 0;
 				do {
 					++cx;
-				} while ((cx <= 6) && (_num != ord(_touv[cx])));
-				if (_num != ord(_touv[cx]))
+				} while ((cx <= 6) && (_num != ord(_openObjects[cx])));
+				if (_num != ord(_openObjects[cx]))
 					_crep = 187;
 				else {
 					_mchai = chai;
@@ -1106,7 +1117,7 @@ void MortevielleEngine::fctEat() {
 					h = 1;
 			}
 
-			_jh += h;
+			_currentHourCount += h;
 			_crep = 135;
 			prepareRoom();
 		} else {
@@ -1138,15 +1149,15 @@ void MortevielleEngine::fctEnter() {
 			if ((_roomDoorId == TOILETS) || (_roomDoorId == BATHROOM))
 				_crep = 179;
 			else {
-				_x = (getRandomNumber(0, 10)) - 5;
-				_speechManager.startSpeech(7, _x, 1);
+				int randVal = (getRandomNumber(0, 10)) - 5;
+				_speechManager.startSpeech(7, randVal, 1);
 				aniof(1, 1);
 
-				_x = convertBitIndexToCharacterIndex(z);
+				int charIndex = convertBitIndexToCharacterIndex(z);
 				++_coreVar._faithScore;
 				_coreVar._currPlace = LANDING;
 				_msg[3] = MENU_DISCUSS;
-				_msg[4] = _menu._discussMenu[_x];
+				_msg[4] = _menu._discussMenu[charIndex];
 				_syn = true;
 				if (_roomDoorId == ROOM9) {
 					_col = true;
@@ -1159,8 +1170,8 @@ void MortevielleEngine::fctEnter() {
 				_roomDoorId = OWN_ROOM;
 			}
 		} else {
-			_x = (getRandomNumber(0, 10)) - 5;
-			_speechManager.startSpeech(7, _x, 1);
+			int randVal = (getRandomNumber(0, 10)) - 5;
+			_speechManager.startSpeech(7, randVal, 1);
 			aniof(1, 1);
 
 			_coreVar._currPlace = _roomDoorId;
@@ -1206,10 +1217,10 @@ void MortevielleEngine::fctSleep() {
 			z = (7 - h) * 2;
 			if (m == 30)
 				--z;
-			_jh += z;
+			_currentHourCount += z;
 			h = 7;
 		}
-		_jh += 2;
+		_currentHourCount += 2;
 		++h;
 		if (h > 23)
 			h = 0;
@@ -1288,7 +1299,7 @@ void MortevielleEngine::fctWait() {
 
 	int answer;
 	do {
-		++_jh;
+		++_currentHourCount;
 		prepareRoom();
 		if (!_blo)
 			getPresence(_coreVar._currPlace);
