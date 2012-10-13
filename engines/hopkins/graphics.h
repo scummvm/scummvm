@@ -144,7 +144,7 @@ public:
 	void CHANGE_PALETTE(const byte *palette);
 	uint16 MapRGB(byte r, byte g, byte b);
 	void DD_VBL();
-	void Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface);
+	void Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface);
 	void Copy_Video_Vbe3(const byte *srcData);
 	void Copy_Video_Vbe16(const byte *srcData);
 	void Copy_Video_Vbe16a(const byte *srcData);

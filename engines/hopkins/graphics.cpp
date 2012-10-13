@@ -1051,15 +1051,17 @@ void GraphicsManager::DD_VBL() {
 }
 
 void GraphicsManager::FADE_OUTW_LINUX(const byte *surface) {
+	assert(surface);
 	fade_out(Palette, FADESPD, surface);
 }
 
 void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
-	return fade_in(Palette, FADESPD, surface);
+	assert(surface);
+	fade_in(Palette, FADESPD, surface);
 }
 
-void GraphicsManager::Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSurface) {
-	int result;
+void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) {
+	byte v;
 	int v3;
 	int v4;
 	const byte *v5;
@@ -1071,10 +1073,9 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSur
 	unsigned int v11;
 	byte *v12;
 
-	result = 0;
 	v3 = 0;
 	v4 = 0;
-	v5 = sourceSurface;
+	v5 = srcData;
 	for (;;) {
 		v6 = *v5;
 		if (*v5 < 222)
@@ -1091,7 +1092,7 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *sourceSurface, byte *destSur
 			v6 = *(v5 + 2);
 			v5 += 2;
 		} else if (v6 == 254) {
-			v3 += (int16)READ_LE_UINT16(v5 + 1);
+			v3 += READ_LE_UINT16(v5 + 1);
 			v6 = *(v5 + 3);
 			v5 += 3;
 		} else {
@@ -1105,19 +1106,19 @@ Video_Cont3_wVbe:
 			if (v6 == 211) {
 				v7 = v4;
 				v8 = *(v5 + 1);
-				result = *(v5 + 2);
+				v = *(v5 + 2);
 				v9 = v3 + destSurface;
 				v3 += v8;
-				memset(v9, result, v8);
+				memset(v9, v, v8);
 				v5 += 3;
 				v4 = v7;
 			} else {
 				v10 = v4;
 				v11 = *v5 + 45;
-				result = *(v5 + 1);
+				v = *(v5 + 1);
 				v12 = v3 + destSurface;
 				v3 += v11;
-				memset(v12, result, v11);
+				memset(v12, v, v11);
 				v5 += 2;
 				v4 = v10;
 			}
