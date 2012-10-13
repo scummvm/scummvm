@@ -332,15 +332,20 @@ LABEL_45:
 			if (yp + v13 > _vm->_graphicsManager.max_y)
 				v13 -= yp + v13 - _vm->_graphicsManager.max_y;
 			if (v14 > 1 && v13 > 1) {
+/* Commented out in favour of using ScummVM cursor display
 				_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
+*/
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bufferobjet, v15 + 300, yp + 300, 0, 0, 0, 0);
 				_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v14 + v15, yp + v13);
 			}
 		}
 		goto LABEL_54;
 	}
+
+/* Commented out in favour of using ScummVM cursor display
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, pointeur_souris, v15 + 300, yp + 300, souris_n);
+*/
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v12, v11);
 LABEL_54:
 	_vm->_globals.vitesse = 2;
@@ -434,7 +439,9 @@ LABEL_65:
 	if (souris_flag == 1) {
 		if (btsouris != 23) {
 			if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
+/* Commented out in favour of using ScummVM cursor display
 				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
+*/
 				_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v12, v11);
 				goto LABEL_113;
 			}
@@ -442,7 +449,9 @@ LABEL_65:
 				goto LABEL_113;
 		}
 		if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
+/* Commented out in favour of using ScummVM cursor display
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
+*/
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v14 + v15, yp + v13);
 		}
 	}
