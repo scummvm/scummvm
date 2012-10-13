@@ -1061,37 +1061,37 @@ void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
 }
 
 void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) {
-	byte v;
-	int v3;
-	int v4;
-	const byte *v5;
-	uint8 v6;
-	int v7;
-	unsigned int v8;
-	byte *v9;
+	int v;
+	int v3; 
+	int v4; 
+	const byte *v5; 
+	byte v6;
+	int v7; 
+	byte v8;
+	byte *v9; 
 	int v10; 
-	unsigned int v11;
-	byte *v12;
+	byte v11; 
+	byte *v12; 
 
+	v = 0;
 	v3 = 0;
 	v4 = 0;
 	v5 = srcData;
 	for (;;) {
 		v6 = *v5;
-		if (*v5 < 222)
+		if (*v5 < 0xDEu)
 			goto Video_Cont3_wVbe;
-		
-		if (v6 == 252)
+		if (v6 == (byte)-4)
 			return;
-    
-		if (v6 < 251) {
-			v3 += *v5 + 35;
+
+		if (v6 < 0xFBu) {
+			v3 += (byte)(*v5 + 35);
 			v6 = *(v5++ + 1);
-		} else if (v6 == 253) {
+		} else if (v6 == (byte)-3) {
 			v3 += *(v5 + 1);
 			v6 = *(v5 + 2);
 			v5 += 2;
-		} else if (v6 == 254) {
+		} else if (v6 == (byte)-2) {
 			v3 += READ_LE_UINT16(v5 + 1);
 			v6 = *(v5 + 3);
 			v5 += 3;
@@ -1100,10 +1100,9 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) 
 			v6 = *(v5 + 5);
 			v5 += 5;
 		}
-
 Video_Cont3_wVbe:
-		if (v6 > 210) {
-			if (v6 == 211) {
+		if (v6 > 0xD2u) {
+			if (v6 == (byte)-45) {
 				v7 = v4;
 				v8 = *(v5 + 1);
 				v = *(v5 + 2);
@@ -1114,7 +1113,7 @@ Video_Cont3_wVbe:
 				v4 = v7;
 			} else {
 				v10 = v4;
-				v11 = *v5 + 45;
+				v11 = (byte)(*v5 + 45);
 				v = *(v5 + 1);
 				v12 = v3 + destSurface;
 				v3 += v11;
@@ -1127,8 +1126,7 @@ Video_Cont3_wVbe:
 			++v5;
 			++v3;
 		}
-	}
-}
+	}}
 
 void GraphicsManager::Copy_Video_Vbe3(const byte *srcData) {
 	int result;
