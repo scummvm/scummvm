@@ -97,7 +97,8 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
 		info.offset = stream->readUint32LE();
 		info.compressedSize = stream->readUint32LE();
 		info.size = stream->readUint32LE();
-		stream->skip(5); // Unknown
+		info.type = stream->readByte();
+		stream->skip(4); // Unknown;
 		_chunkInfo.push_back(info);
 	}
 }
@@ -113,6 +114,11 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeNextFrame() {
 	_curFrame++;
 	_fileStream->seek(_chunkInfo[_curFrame].offset);
 	uint size = _chunkInfo[_curFrame].size;
+
+	if (_chunkInfo[_curFrame].type != 0) {
+		warning("Skipping frame type %d", _chunkInfo[_curFrame].type);
+		return _surface;
+	}
 
 	if (_compressed) {
 		Common::ReadStream *input = _fileStream->readStream(_chunkInfo[_curFrame].compressedSize);

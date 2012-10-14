@@ -67,6 +67,7 @@ private:
 			uint32 offset;
 			uint32 compressedSize;
 			uint32 size;
+			byte type;
 		};
 
 		bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
