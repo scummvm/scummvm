@@ -118,7 +118,7 @@ bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &
 	return true;
 }
 
-Audio::RewindableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	char buf[22];
 
 	stream->read(buf, 22);

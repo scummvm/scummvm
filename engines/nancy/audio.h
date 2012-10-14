@@ -29,9 +29,9 @@ class SeekableReadStream;
 
 namespace Nancy {
 
-class RewindableAudioStream;
+class SeekableAudioStream;
 
-Audio::RewindableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Nancy
 
