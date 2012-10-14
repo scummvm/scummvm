@@ -154,8 +154,7 @@ static const int _actionMenu[12] = { OPCODE_NONE,
 /*
 9   "A glance at the forbidden$",
 18  "It's already open$",
-26  "A photograph$",
-27  "The coat of arms$",
+26  "A photograph$"
 */
 enum Places {
 	OWN_ROOM = 0,     GREEN_ROOM = 1,   PURPLE_ROOM = 2,     TOILETS = 3,      DARKBLUE_ROOM = 4,
@@ -163,7 +162,7 @@ enum Places {
 	DINING_ROOM = 10, BUREAU = 11,      KITCHEN = 12,        ATTIC = 13,       CELLAR = 14,
 	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17, ROOM18 = 18,      MOUNTAIN = 19,
 	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,     INSIDE_WELL = 23, WELL = 24,
-	DOOR = 25,        ROOM26 = 26,      ROOM27 = 27
+	DOOR = 25,        ROOM26 = 26,      COAT_ARMS = 27
 };
 
 enum GraphicModes { MODE_AMSTRAD1512 = 0, MODE_CGA = 1, MODE_EGA = 2, MODE_HERCULES = 3, MODE_TANDY = 4 };
@@ -185,8 +184,8 @@ struct Pattern {
 
 struct SaveStruct {
 	int _faithScore;
-	byte _pourc[11];
-	byte _teauto[43];
+	byte _pctHintFound[11];
+	byte _availableQuestion[43];
 	byte _inventory[31];
 	int _currPlace;
 	int _atticBallHoleObjectId;
@@ -420,31 +419,32 @@ private:
 	void delay(int amount);
 	void handleOpcode();
 
-	void cinq_huit(char &c, int &idx, byte &pt, bool &the_end);
-	void copcha();
-	void adzon();
 	void displayTextInDescriptionBar(int x, int y, int nb, int mesgId);
 	void mapMessageId(int &mesgId);
 	void resetOpenObjects();
+	void setCoordinates(int sx);
+	void displayTextInVerbBar(Common::String text);
+	void drawPicture();
+	void drawPictureWithText();
+	void addObjectToInventory(int objectId);
+	void putInHand(int &objId);
+
+	void cinq_huit(char &c, int &idx, byte &pt, bool &the_end);
+	void copcha();
+	void adzon();
 	void phaz(int &rand, int &p, int cf);
 	void writetp(Common::String s, int t);
 	void premtet();
 	void ajchai();
 	void tfleche();
-	void setCoordinates(int sx);
 	void ecr2(Common::String text);
-	void ecr3(Common::String text);
 	void init_nbrepm();
 	void aniof(int ouf, int num);
-	void drawPicture();
-	void drawPictureWithText();
 	void tlu(int af, int ob);
 	void affrep();
 	void mennor();
-	void addObjectToInventory(int objectId);
 	void tsuiv();
 	void treg(int objId);
-	void putInHand(int &objId);
 	void rechai(int &ch);
 	void fenat(char ans);
 
@@ -466,10 +466,11 @@ public:
 	SaveStruct _coreVar, _saveStruct;
 
 	int _maff;
-	int _res;
 	int _caff;
 	int _crep;
-	byte _v_lieu[7][25];
+
+	int _resolutionScaler;
+	byte _destinationArray[7][25];
 
 	// TODO: Replace the following with proper implementations, or refactor out the code using them
 	byte _mem[65536 * 16];

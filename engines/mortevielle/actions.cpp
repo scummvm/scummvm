@@ -48,7 +48,7 @@ void MortevielleEngine::fctMove() {
 	}
 	if ((_coreVar._currPlace == LANDING) && (_msg[4] == _menu._moveMenu[6])) {
 		if (!_syn)
-			ecr3(getEngineString(S_GO_TO));
+			displayTextInVerbBar(getEngineString(S_GO_TO));
 		tfleche();
 
 		if (_keyPressedEsc)
@@ -217,7 +217,7 @@ void MortevielleEngine::fctTake() {
 		return;
 	}
 	if (!_syn)
-		ecr3(getEngineString(S_TAKE));
+		displayTextInVerbBar(getEngineString(S_TAKE));
 	tfleche();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
@@ -323,7 +323,7 @@ void MortevielleEngine::fctInventoryTake() {
  */
 void MortevielleEngine::fctLift() {
 	if (!_syn)
-		ecr3(getEngineString(S_LIFT));
+		displayTextInVerbBar(getEngineString(S_LIFT));
 	tfleche();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
@@ -360,7 +360,7 @@ void MortevielleEngine::fctRead() {
 		getReadDescription(_caff);
 	else {
 		if (!_syn)
-			ecr3(getEngineString(S_READ));
+			displayTextInVerbBar(getEngineString(S_READ));
 		tfleche();
 		if (!(_anyone) && !(_keyPressedEsc)) {
 			setCoordinates(4);
@@ -393,7 +393,7 @@ void MortevielleEngine::fctLook() {
 		return;
 	}
 	if (!_syn)
-		ecr3(getEngineString(S_LOOK));
+		displayTextInVerbBar(getEngineString(S_LOOK));
 	tfleche();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
@@ -483,7 +483,7 @@ void MortevielleEngine::fctSearch() {
 	}
 
 	if (!_syn)
-		ecr3(getEngineString(S_SEARCH));
+		displayTextInVerbBar(getEngineString(S_SEARCH));
 
 	tfleche();
 	if (_anyone || _keyPressedEsc)
@@ -579,7 +579,7 @@ void MortevielleEngine::fctSelfSearch() {
  */
 void MortevielleEngine::fctOpen() {
 	if (!_syn)
-		ecr3(getEngineString(S_OPEN));
+		displayTextInVerbBar(getEngineString(S_OPEN));
 
 	if (_caff == ROOM26) {
 		if (_roomDoorId != OWN_ROOM) {
@@ -657,7 +657,7 @@ void MortevielleEngine::fctPlace() {
 	}
 
 	if (!_syn)
-		ecr3(getEngineString(S_PUT));
+		displayTextInVerbBar(getEngineString(S_PUT));
 
 	tfleche();
 	if (_keyPressedEsc)
@@ -669,7 +669,7 @@ void MortevielleEngine::fctPlace() {
 	setCoordinates(8);
 	if (_num != 0) {
 		_crep = 999;
-		if (_caff == 13) {
+		if (_caff == ATTIC) {
 			if (_num == 1) {
 				if (_coreVar._atticBallHoleObjectId != 0) {
 					_crep = 188;
@@ -687,7 +687,7 @@ void MortevielleEngine::fctPlace() {
 			}
 		}
 
-		if (_caff == 14) {
+		if (_caff == CELLAR) {
 			if (_coreVar._cellarObjectId != 0) {
 				_crep = 188;
 			} else {
@@ -745,14 +745,14 @@ void MortevielleEngine::fctPlace() {
 			}
 		}
 
-		if (_caff == 16) {
+		if (_caff == CRYPT) {
 			if (_coreVar._cryptObjectId == 0)
 				_coreVar._cryptObjectId = _coreVar._selectedObjectId;
 			else
 				_crep = 188;
 		}
 
-		if (_caff == 17) {
+		if (_caff == SECRET_PASSAGE) {
 			if (_coreVar._secretPassageObjectId != 0) {
 				_crep = 188;
 			} else if (_coreVar._selectedObjectId == 143) {
@@ -764,7 +764,7 @@ void MortevielleEngine::fctPlace() {
 			}
 		}
 
-		if (_caff == 24) {
+		if (_caff == WELL) {
 			if (_coreVar._wellObjectId != 0) {
 				_crep = 188;
 			} else if ((_coreVar._selectedObjectId == 140) || (_coreVar._selectedObjectId == 120)) {
@@ -790,7 +790,7 @@ void MortevielleEngine::fctTurn() {
 		return;
 	}
 	if (!_syn)
-		ecr3(getEngineString(S_TURN));
+		displayTextInVerbBar(getEngineString(S_TURN));
 	tfleche();
 	if ((_anyone) || (_keyPressedEsc))
 		return;
@@ -826,7 +826,7 @@ void MortevielleEngine::fctTurn() {
  */
 void MortevielleEngine::fctSelfHide() {
 	if (!_syn)
-		ecr3(getEngineString(S_HIDE_SELF));
+		displayTextInVerbBar(getEngineString(S_HIDE_SELF));
 	tfleche();
 	if (!(_anyone) && !(_keyPressedEsc)) {
 		setCoordinates(10);
@@ -848,7 +848,7 @@ void MortevielleEngine::fctAttach() {
 		_crep = 186;
 	else {
 		if (!_syn)
-			ecr3(getEngineString(S_TIE));
+			displayTextInVerbBar(getEngineString(S_TIE));
 		tfleche();
 		if (!(_anyone) && !(_keyPressedEsc)) {
 			setCoordinates(8);
@@ -872,7 +872,7 @@ void MortevielleEngine::fctAttach() {
  */
 void MortevielleEngine::fctClose() {
 	if (!_syn)
-		ecr3(getEngineString(S_CLOSE));
+		displayTextInVerbBar(getEngineString(S_CLOSE));
 
 	if (_caff < ROOM26) {
 		tfleche();
@@ -912,7 +912,7 @@ void MortevielleEngine::fctClose() {
  */
 void MortevielleEngine::fctKnock() {
 	if (!_syn)
-		ecr3(getEngineString(S_HIT));
+		displayTextInVerbBar(getEngineString(S_HIT));
 
 	if (_coreVar._currPlace == LANDING) {
 		Alert::show(getEngineString(S_BEFORE_USE_DEP_MENU), 1);
@@ -959,7 +959,7 @@ void MortevielleEngine::fctKnock() {
  */
 void MortevielleEngine::fctSelfPut() {
 	if (!_syn)
-		ecr3(getEngineString(S_POSE));
+		displayTextInVerbBar(getEngineString(S_POSE));
 	if (_coreVar._selectedObjectId == 0)
 		_crep = 186;
 	else {
@@ -1095,7 +1095,7 @@ void MortevielleEngine::fctEat() {
 	} else {
 		exitRoom();
 		_coreVar._currPlace = DINING_ROOM;
-		_caff = 10;
+		_caff = DINING_ROOM;
 		resetRoomVariables(_coreVar._currPlace);
 		_menu.setDestinationText(_coreVar._currPlace);
 
@@ -1140,7 +1140,7 @@ void MortevielleEngine::fctEnter() {
 		_crep = 997;
 	else if ((_roomDoorId == ROOM9) && (_coreVar._selectedObjectId != 136)) {
 			_crep = 189;
-			_coreVar._teauto[8] = '*';
+			_coreVar._availableQuestion[8] = '*';
 	} else {
 		int z = 0;
 		if (!_blo)
@@ -1238,8 +1238,8 @@ void MortevielleEngine::fctSleep() {
  */
 void MortevielleEngine::fctForce() {
 	if (!_syn)
-		ecr3(getEngineString(S_SMASH));
-	if (_caff < 25)
+		displayTextInVerbBar(getEngineString(S_SMASH));
+	if (_caff < DOOR)
 		tfleche();
 
 	if ((!_anyone) && (!_keyPressedEsc)) {
@@ -1328,7 +1328,7 @@ void MortevielleEngine::fctWait() {
  */
 void MortevielleEngine::fctSound() {
 	if (!_syn)
-		ecr3(getEngineString(S_PROBE2));
+		displayTextInVerbBar(getEngineString(S_PROBE2));
 	if (_caff < 27) {
 		tfleche();
 		if (!(_anyone) && (!_keyPressedEsc))
@@ -1387,7 +1387,7 @@ void MortevielleEngine::fctDiscuss() {
 		int posY = 0;
 		for (int icm = 1; icm < 43; icm++) {
 			_screenSurface.putxy(posX, posY);
-			if (_coreVar._teauto[icm] == '*') {
+			if (_coreVar._availableQuestion[icm] == '*') {
 				// If question already asked, write it in reverse video
 				if (questionAsked[icm])
 					writetp(lib[icm], 1);
@@ -1411,7 +1411,7 @@ void MortevielleEngine::fctDiscuss() {
 			CHECK_QUIT;
 
 			_mouse.getMousePosition(x, y, click);
-			x *= (3 - _res);
+			x *= (3 - _resolutionScaler);
 			if (x > 319)
 				cx = 41;
 			else
@@ -1450,7 +1450,7 @@ void MortevielleEngine::fctDiscuss() {
 							writetp(lib[choice], 1);
 						questionAsked[choice] = ! questionAsked[choice];
 					}
-					if ((_coreVar._teauto[ix] == '*') || (ix == 46)) {
+					if ((_coreVar._availableQuestion[ix] == '*') || (ix == 46)) {
 						posY = ((ix - 1) % 23) << 3;
 						if (ix > 23)
 							posX = 320;
@@ -1501,17 +1501,17 @@ void MortevielleEngine::fctDiscuss() {
 			startDialog(displId);
 			_mouse.showMouse();
 			if ((displId == 84) || (displId == 86)) {
-				_coreVar._pourc[5] = '*';
-				_coreVar._teauto[7] = '*';
+				_coreVar._pctHintFound[5] = '*';
+				_coreVar._availableQuestion[7] = '*';
 			}
 			if ((displId == 106) || (displId == 108) || (displId == 94)) {
 				for (int indx = 29; indx <= 31; ++indx)
-					_coreVar._teauto[indx] = '*';
-				_coreVar._pourc[7] = '*';
+					_coreVar._availableQuestion[indx] = '*';
+				_coreVar._pctHintFound[7] = '*';
 			}
 			if (displId == 70) {
-				_coreVar._pourc[8] = '*';
-				_coreVar._teauto[32] = '*';
+				_coreVar._pctHintFound[8] = '*';
+				_coreVar._availableQuestion[32] = '*';
 			}
 			_mouse.hideMouse();
 			hirs();
@@ -1550,10 +1550,10 @@ void MortevielleEngine::fctSmell() {
 	_crep = 119;
 	if (_caff < ROOM26) {
 		if (!_syn)
-			ecr3(getEngineString(S_SMELL));
+			displayTextInVerbBar(getEngineString(S_SMELL));
 		tfleche();
 		if (!(_anyone) && !(_keyPressedEsc))
-			if (_caff == 16)
+			if (_caff == CRYPT)
 				_crep = 153;
 	} else if (_caff == 123)
 		_crep = 110;
@@ -1568,7 +1568,7 @@ void MortevielleEngine::fctScratch() {
 	_crep = 155;
 	if (_caff < 27) {
 		if (!_syn)
-			ecr3(getEngineString(S_SCRATCH));
+			displayTextInVerbBar(getEngineString(S_SCRATCH));
 		tfleche();
 	}
 	_num = 0;

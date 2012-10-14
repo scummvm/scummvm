@@ -219,8 +219,8 @@ void MouseHandler::showMouse() {
  * @remarks	Originally called 'pos_mouse'
  */
 void MouseHandler::setMousePosition(Common::Point newPos) {
-	if (newPos.x > 314 * g_vm->_res)
-		newPos.x = 314 * g_vm->_res;
+	if (newPos.x > 314 * g_vm->_resolutionScaler)
+		newPos.x = 314 * g_vm->_resolutionScaler;
 	else if (newPos.x < 0)
 		newPos.x = 0;
 	if (newPos.y > 199)
@@ -291,16 +291,16 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			cy = 190;
 			break;
 		case '9':
-			cx = 315 * g_vm->_res;
+			cx = 315 * g_vm->_resolutionScaler;
 			cy = 1;
 			break;
 		case '3':
 			cy = 190;
-			cx = 315 * g_vm->_res;
+			cx = 315 * g_vm->_resolutionScaler;
 			break;
 		case '5':
 			cy = 100;
-			cx = 155 * g_vm->_res;
+			cx = 155 * g_vm->_resolutionScaler;
 			break;
 		case ' ':
 		case '\15':
@@ -354,27 +354,27 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			}
 			break;
 		case 'I':
-			cx = g_vm->_res * 32;
+			cx = g_vm->_resolutionScaler * 32;
 			cy = 8;
 			break;
 		case 'D':
-			cx = 80 * g_vm->_res;
+			cx = 80 * g_vm->_resolutionScaler;
 			cy = 8;
 			break;
 		case 'A':
-			cx = 126 * g_vm->_res;
+			cx = 126 * g_vm->_resolutionScaler;
 			cy = 8;
 			break;
 		case 'S':
-			cx = 174 * g_vm->_res;
+			cx = 174 * g_vm->_resolutionScaler;
 			cy = 8;
 			break;
 		case 'P':
-			cx = 222 * g_vm->_res;
+			cx = 222 * g_vm->_resolutionScaler;
 			cy = 8;
 			break;
 		case 'F':
-			cx = g_vm->_res * 270;
+			cx = g_vm->_resolutionScaler * 270;
 			cy = 8;
 			break;
 		case '\23':

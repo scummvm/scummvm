@@ -46,9 +46,9 @@ Common::String SavegameManager::generateSaveName(int slotNumber) {
 void SavegameManager::sync_save(Common::Serializer &sz) {
 	sz.syncAsSint16LE(g_vm->_saveStruct._faithScore);
 	for (int i = 0; i < 11; ++i)
-		sz.syncAsByte(g_vm->_saveStruct._pourc[i]);
+		sz.syncAsByte(g_vm->_saveStruct._pctHintFound[i]);
 	for (int i = 0; i < 43; ++i)
-		sz.syncAsByte(g_vm->_saveStruct._teauto[i]);
+		sz.syncAsByte(g_vm->_saveStruct._availableQuestion[i]);
 	for (int i = 0; i < 31; ++i)
 		sz.syncAsByte(g_vm->_saveStruct._inventory[i]);
 
