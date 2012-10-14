@@ -238,11 +238,11 @@ void NeverhoodEngine::dumpAllResources() {
 
 	for (uint i = 0; i < entriesCount; i++) {
 		const ResourceFileEntry &entry = _res->getEntry(i);
-		int type = _res->getResourceTypeByHash(entry.fileHash);
-		debug("hash: %08X; type: %d", entry.fileHash, type);
+		int type = _res->getResourceTypeByHash(entry.archiveEntry->fileHash);
+		debug("hash: %08X; type: %d", entry.archiveEntry->fileHash, type);
 		if (type == 4) {
 			AnimResource anim(this);
-			anim.load(entry.fileHash);
+			anim.load(entry.archiveEntry->fileHash);
 			for (uint frameIndex = 0; frameIndex < anim.getFrameCount(); frameIndex++) {
 				const AnimFrameInfo &frameInfo = anim.getFrameInfo(frameIndex);
 				int16 width = (frameInfo.rect.width + 3) & 0xFFFC;
@@ -251,8 +251,8 @@ void NeverhoodEngine::dumpAllResources() {
 				anim.draw(frameIndex, pixels, width, false, false);
 				Common::String filename = 
 					frameInfo.frameHash != 0
-					? Common::String::format("%08X_%03d_%08X.tga", entry.fileHash, frameIndex, frameInfo.frameHash) 
-					: Common::String::format("%08X_%03d.tga", entry.fileHash, frameIndex);
+					? Common::String::format("%08X_%03d_%08X.tga", entry.archiveEntry->fileHash, frameIndex, frameInfo.frameHash) 
+					: Common::String::format("%08X_%03d.tga", entry.archiveEntry->fileHash, frameIndex);
 				writeTga(filename.c_str(), pixels, vgaPalette, width, frameInfo.rect.height);
 				delete[] pixels;
 			}

@@ -56,7 +56,8 @@ BlbArchive::~BlbArchive() {
 }
 
 void BlbArchive::open(const Common::String &filename) {
-	BlbHeader header; 
+	BlbHeader header;
+	uint16 *extDataOffsets;
 	
 	_entries.clear();		
 
@@ -72,7 +73,7 @@ void BlbArchive::open(const Common::String &filename) {
 	if (header.id1 != 0x2004940 || header.id2 != 7 || header.fileSize != _fd.size())
 		error("BlbArchive::open() %s seems to be corrupt", filename.c_str());
 
-	debug(2, "fileCount = %d", header.fileCount);
+	debug(2, "%s: fileCount = %d", filename.c_str(), header.fileCount);
 
 	_entries.reserve(header.fileCount);
 
@@ -83,63 +84,80 @@ void BlbArchive::open(const Common::String &filename) {
 		_entries.push_back(entry);
 	}
 	
+	extDataOffsets = new uint16[header.fileCount];
+	
 	// Load file records
 	for (uint i = 0; i < header.fileCount; i++) {
 		BlbArchiveEntry &entry = _entries[i];
 		entry.type = _fd.readByte();
 		entry.comprType = _fd.readByte();
-		entry.extDataOfs = _fd.readUint16LE();
+		//entry.extDataOfs = _fd.readUint16LE();
+		entry.extData = NULL;
+		extDataOffsets[i] = _fd.readUint16LE(); 
 		entry.timeStamp = _fd.readUint32LE();
 		entry.offset = _fd.readUint32LE();
 		entry.diskSize = _fd.readUint32LE();
 		entry.size = _fd.readUint32LE();
 		debug(2, "%08X: %03d, %02X, %04X, %08X, %08X, %08X, %08X",
-			entry.fileHash, entry.type, entry.comprType, entry.extDataOfs, entry.timeStamp,
+			entry.fileHash, entry.type, entry.comprType, extDataOffsets[i], entry.timeStamp,
 			entry.offset, entry.diskSize, entry.size);
 	}
-
+	
 	// Load ext data
 	if (header.extDataSize > 0) {
 		_extData = new byte[header.extDataSize];
 		_fd.read(_extData, header.extDataSize);
+		for (uint i = 0; i < header.fileCount; i++)
+			_entries[i].extData = extDataOffsets[i] > 0 ? _extData + extDataOffsets[i] - 1 : NULL;
 	}
+
+	delete[] extDataOffsets;
 
 }
 
 void BlbArchive::load(uint index, byte *buffer, uint32 size) {
+	load(&_entries[index], buffer, size);
+}
+
+void BlbArchive::load(BlbArchiveEntry *entry, byte *buffer, uint32 size) {
 	Common::StackLock lock(_mutex);
 	
-	BlbArchiveEntry &entry = _entries[index];
+	_fd.seek(entry->offset);
 	
-	_fd.seek(entry.offset);
-	
-	switch (entry.comprType) {
+	switch (entry->comprType) {
 	case 1: // Uncompressed
 		if (size == 0)
-			size = entry.diskSize;
+			size = entry->diskSize;
 		_fd.read(buffer, size);
 		break;
 	case 3: // DCL-compressed
-		if (!Common::decompressDCL(&_fd, buffer, entry.diskSize, entry.size)) {
-			debug("decompressDCL(diskSize: %d; size: %d)", entry.diskSize, entry.size);
-			debug("-> fileHash: %08X; type: %d; offset: %08X; endOffset: %08X", entry.fileHash, entry.type, entry.offset, entry.offset + entry.diskSize);
+		if (!Common::decompressDCL(&_fd, buffer, entry->diskSize, entry->size)) {
+			debug("decompressDCL(diskSize: %d; size: %d)", entry->diskSize, entry->size);
+			debug("-> fileHash: %08X; type: %d; offset: %08X; endOffset: %08X", entry->fileHash, entry->type, entry->offset, entry->offset + entry->diskSize);
 			debug("-> fd.pos() = %08X", _fd.pos());
 		}
 		break;
 	default:
-		error("BlbArchive::load() Unknown compression type %d", entry.comprType);
+		error("BlbArchive::load() Unknown compression type %d", entry->comprType);
 	}
 
 }
 
 byte *BlbArchive::getEntryExtData(uint index) {
-	BlbArchiveEntry &entry = _entries[index];
-	return (_extData && entry.extDataOfs != 0) ? &_extData[entry.extDataOfs - 1] : NULL;
+	return getEntryExtData(&_entries[index]);
+}
+
+byte *BlbArchive::getEntryExtData(BlbArchiveEntry *entry) {
+	//return (_extData && entry->extDataOfs != 0) ? &_extData[entry->extDataOfs - 1] : NULL;
+	return entry->extData;
 }
 
 Common::SeekableReadStream *BlbArchive::createStream(uint index) {
-	const BlbArchiveEntry &entry = _entries[index];
-	return new SafeMutexedSeekableSubReadStream(&_fd, entry.offset, entry.offset + entry.diskSize,
+	return createStream(&_entries[index]);
+}
+
+Common::SeekableReadStream *BlbArchive::createStream(BlbArchiveEntry *entry) {
+	return new SafeMutexedSeekableSubReadStream(&_fd, entry->offset, entry->offset + entry->diskSize,
 		DisposeAfterUse::NO,_mutex);
 }
 

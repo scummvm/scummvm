@@ -80,6 +80,10 @@ void NavigationScene::update() {
 		_vm->_screen->clear();
 		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 		_smackerDone = false;
+		/*
+		if (!_interactive)
+			_smackerDone = true;
+		*/
 		_smackerFileHash = 0;
 	} else if (_smackerDone) {
 		if (_leaveSceneAfter) {

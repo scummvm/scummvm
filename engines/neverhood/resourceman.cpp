@@ -32,47 +32,38 @@ ResourceMan::~ResourceMan() {
 
 void ResourceMan::addArchive(const Common::String &filename) {
 	BlbArchive *archive = new BlbArchive();
-	uint archiveIndex = _archives.size();
 	archive->open(filename);
 	_archives.push_back(archive);
 	debug(3, "ResourceMan::addArchive(%s) %d files", filename.c_str(), archive->getCount());
-	_entries.reserve(_entries.size() + archive->getCount());
 	for (uint archiveEntryIndex = 0; archiveEntryIndex < archive->getCount(); archiveEntryIndex++) {
 		BlbArchiveEntry *archiveEntry = archive->getEntry(archiveEntryIndex);
 		ResourceFileEntry *entry = findEntrySimple(archiveEntry->fileHash);
 		if (entry) {
-			if (archiveEntry->timeStamp > _archives[entry->archiveIndex]->getEntry(entry->entryIndex)->timeStamp) {
-				entry->archiveIndex = archiveIndex;
-				entry->entryIndex = archiveEntryIndex;
+			if (archiveEntry->timeStamp > entry->archiveEntry->timeStamp) {
+				entry->archive = archive;
+				entry->archiveEntry = archiveEntry;
 			} 
 		} else {
 			ResourceFileEntry newEntry;
-			newEntry.fileHash = archiveEntry->fileHash;
 			newEntry.resourceHandle = -1;
-			newEntry.archiveIndex = archiveIndex;
-			newEntry.entryIndex = archiveEntryIndex;
-			_entries.push_back(newEntry);
+			newEntry.archive = archive;
+			newEntry.archiveEntry = archiveEntry;
+			_entries[archiveEntry->fileHash] = newEntry;
 		}
 	}
+	debug("_entries.size() = %d", _entries.size());
 }
 
 ResourceFileEntry *ResourceMan::findEntrySimple(uint32 fileHash) {
-	for (uint i = 0; i < _entries.size(); i++) {
-		if (_entries[i].fileHash == fileHash)
-			return &_entries[i];
-	}
-	return NULL;
+	EntriesMap::iterator p = _entries.find(fileHash);
+	return p != _entries.end() ? &(*p)._value : NULL;
 }
 
 ResourceFileEntry *ResourceMan::findEntry(uint32 fileHash) {
 	ResourceFileEntry *entry = findEntrySimple(fileHash);
-	for (; entry && getArchiveEntry(entry)->comprType == 0x65; fileHash = getArchiveEntry(entry)->diskSize)
+	for (; entry && entry->archiveEntry->comprType == 0x65; fileHash = entry->archiveEntry->diskSize)
 		entry = findEntrySimple(fileHash);
 	return entry;
-}
-
-BlbArchiveEntry *ResourceMan::getArchiveEntry(ResourceFileEntry *entry) const {
-	return _archives[entry->archiveIndex]->getEntry(entry->entryIndex);
 }
 
 int ResourceMan::useResource(uint32 fileHash) {
@@ -83,11 +74,7 @@ int ResourceMan::useResource(uint32 fileHash) {
 		_resources[entry->resourceHandle]->useRefCount++;
 	} else {
 		Resource *resource = new Resource();
-		resource->fileHash = entry->fileHash;
-		resource->archiveIndex = entry->archiveIndex;
-		resource->entryIndex = entry->entryIndex;
-		resource->data = NULL;
-		resource->dataRefCount = 0;
+		resource->entry = entry;
 		resource->useRefCount = 1;
 		entry->resourceHandle = (int)_resources.size();
 		_resources.push_back(resource);
@@ -103,86 +90,68 @@ void ResourceMan::unuseResource(int resourceHandle) {
 		resource->useRefCount--;
 }
 
-void ResourceMan::unuseResourceByHash(uint32 fileHash) {
-	ResourceFileEntry *entry = findEntry(fileHash);
-	if (entry->resourceHandle != -1)
-		unuseResource(entry->resourceHandle);
-}
-
-int ResourceMan::getResourceHandleByHash(uint32 fileHash) {
-	ResourceFileEntry *entry = findEntry(fileHash);
-	return entry->resourceHandle;
-}
-
-bool ResourceMan::isResourceDataValid(int resourceHandle) const {
-	if (resourceHandle < 0)
-		return false;
-	return _resources[resourceHandle]->data != NULL;
-}
-
 uint32 ResourceMan::getResourceSize(int resourceHandle) const {
 	if (resourceHandle < 0)
 		return 0;
 	Resource *resource = _resources[resourceHandle];
-	return _archives[resource->archiveIndex]->getEntry(resource->entryIndex)->size;
+	return resource->entry->archiveEntry->size;
 }
 
 byte ResourceMan::getResourceType(int resourceHandle) {
 	if (resourceHandle < 0)
 		return 0;
 	Resource *resource = _resources[resourceHandle];
-	return _archives[resource->archiveIndex]->getEntry(resource->entryIndex)->type;
+	return resource->entry->archiveEntry->type;
 }
 
 byte ResourceMan::getResourceTypeByHash(uint32 fileHash) {
 	ResourceFileEntry *entry = findEntry(fileHash);
-	return getArchiveEntry(entry)->type;
+	return entry->archiveEntry->type;
 }
 
 byte *ResourceMan::getResourceExtData(int resourceHandle) {
 	if (resourceHandle < 0)
 		return NULL;
 	Resource *resource = _resources[resourceHandle];
-	return _archives[resource->archiveIndex]->getEntryExtData(resource->entryIndex);
+	return resource->entry->archive->getEntryExtData(resource->entry->archiveEntry);
 }
 
 byte *ResourceMan::getResourceExtDataByHash(uint32 fileHash) {
 	ResourceFileEntry *entry = findEntrySimple(fileHash);
-	return entry ? _archives[entry->archiveIndex]->getEntryExtData(entry->entryIndex) : NULL;
+	return entry ? entry->archive->getEntryExtData(entry->archiveEntry) : NULL;
 }
 
 byte *ResourceMan::loadResource(int resourceHandle, bool moveToFront) {
 	if (resourceHandle < 0)
 		return NULL;
 	Resource *resource = _resources[resourceHandle];
-	if (resource->data != NULL) {
-		resource->dataRefCount++;
-	} else {
-		BlbArchive *archive = _archives[resource->archiveIndex];
-		BlbArchiveEntry *archiveEntry = archive->getEntry(resource->entryIndex);
-		resource->data = new byte[archiveEntry->size];
-		archive->load(resource->entryIndex, resource->data, 0);
-		resource->dataRefCount = 1;
+	ResourceData *resourceData = _data[resource->entry->archiveEntry->fileHash];
+	if (!resourceData) {
+		resourceData = new ResourceData();
+		_data[resource->entry->archiveEntry->fileHash] = resourceData;
 	}
-	return resource->data;
+	if (resourceData->data != NULL) {
+		resourceData->dataRefCount++;
+	} else {
+		resourceData->data = new byte[resource->entry->archiveEntry->size];
+		resource->entry->archive->load(resource->entry->archiveEntry, resourceData->data, 0);
+		resourceData->dataRefCount = 1;
+	}
+	return resourceData->data;
 }
 
 void ResourceMan::unloadResource(int resourceHandle) {
 	if (resourceHandle < 0)
 		return;
 	Resource *resource = _resources[resourceHandle];
-	if (resource->dataRefCount > 0)
-		resource->dataRefCount--;
-}
-
-void ResourceMan::freeResource(Resource *resource) {
-	delete[] resource->data;
-	resource->data = NULL;
+	ResourceData *resourceData = _data[resource->entry->archiveEntry->fileHash];
+	if (resourceData && resourceData->dataRefCount > 0)
+		resourceData->dataRefCount--;
 }
 
 Common::SeekableReadStream *ResourceMan::createStream(uint32 fileHash) {
 	ResourceFileEntry *entry = findEntry(fileHash);
-	return _archives[entry->archiveIndex]->createStream(entry->entryIndex);
+	return entry->archive->createStream(entry->archiveEntry);
 }
 
 } // End of namespace Neverhood

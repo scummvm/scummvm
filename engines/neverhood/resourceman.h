@@ -25,26 +25,43 @@
 
 #include "common/array.h"
 #include "common/file.h"
+#include "common/hashmap.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
 
 namespace Neverhood {
 
 struct ResourceFileEntry {
-	uint32 fileHash;
 	int resourceHandle;
-	uint archiveIndex;
-	uint entryIndex;
+	BlbArchive *archive;
+	BlbArchiveEntry *archiveEntry;
 };
 
 struct Resource {
-	uint32 fileHash;
-	uint archiveIndex;
-	uint entryIndex;
-	byte *data;
-	int dataRefCount;
+	ResourceFileEntry *entry;
 	int useRefCount;
 };
+
+struct ResourceData {
+	byte *data;
+	int dataRefCount;
+	ResourceData() : data(NULL), dataRefCount() {}
+};
+
+#if 0
+class ResourceMan;
+
+struct ResourceHandle {
+public:
+	ResourceHandle();
+	~ResourceHandle();
+	const byte *data();
+	uint32 size() const { return _archiveEntry ? _archiveEntry->size : 0 };
+protected:
+	ResourceMan *_res;
+	ResourceFileEntry *_resourceFileEntry;
+};
+#endif
 
 class ResourceMan {
 public:
@@ -53,12 +70,8 @@ public:
 	void addArchive(const Common::String &filename);
 	ResourceFileEntry *findEntrySimple(uint32 fileHash);
 	ResourceFileEntry *findEntry(uint32 fileHash);
-	BlbArchiveEntry *getArchiveEntry(ResourceFileEntry *entry) const;
 	int useResource(uint32 fileHash);
 	void unuseResource(int resourceHandle);
-	void unuseResourceByHash(uint32 fileHash);
-	int getResourceHandleByHash(uint32 fileHash);
-	bool isResourceDataValid(int resourceHandle) const;
 	uint32 getResourceSize(int resourceHandle) const;
 	byte getResourceType(int resourceHandle);
 	byte getResourceTypeByHash(uint32 fileHash);
@@ -66,13 +79,17 @@ public:
 	byte *getResourceExtDataByHash(uint32 fileHash);
 	byte *loadResource(int resourceHandle, bool moveToFront = false);
 	void unloadResource(int resourceHandle);
-	void freeResource(Resource *resource);
 	Common::SeekableReadStream *createStream(uint32 fileHash);
 	const ResourceFileEntry& getEntry(uint index) { return _entries[index]; }
 	uint getEntryCount() { return _entries.size(); }
-private:
+#if 0	
+	ResourceHandle getResource(uint32 fileHash);
+#endif
+protected:
+	typedef Common::HashMap<uint32, ResourceFileEntry> EntriesMap;
 	Common::Array<BlbArchive*> _archives;
-	Common::Array<ResourceFileEntry> _entries;
+	EntriesMap _entries;
+	Common::HashMap<uint32, ResourceData*> _data;
 	Common::Array<Resource*> _resources;
 };
 

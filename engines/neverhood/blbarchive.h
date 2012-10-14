@@ -44,7 +44,7 @@ struct BlbArchiveEntry {
 	uint32 fileHash;
 	byte type;
 	byte comprType;
-	uint16 extDataOfs;
+	byte *extData;
 	uint32 timeStamp;
 	uint32 offset;
 	uint32 diskSize;
@@ -57,11 +57,14 @@ public:
 	~BlbArchive();
 	void open(const Common::String &filename);
 	void load(uint index, byte *buffer, uint32 size);
+	void load(BlbArchiveEntry *entry, byte *buffer, uint32 size);
 	byte *getEntryExtData(uint index);
+	byte *getEntryExtData(BlbArchiveEntry *entry);
 	uint32 getSize(uint index) { return _entries[index].size; }
 	BlbArchiveEntry *getEntry(uint index) { return &_entries[index]; }
 	uint getCount() { return _entries.size(); }
 	Common::SeekableReadStream *createStream(uint index);
+	Common::SeekableReadStream *createStream(BlbArchiveEntry *entry);
 private:
 	Common::File _fd;
 	Common::Mutex _mutex;
