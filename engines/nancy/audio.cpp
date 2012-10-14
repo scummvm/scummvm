@@ -27,70 +27,149 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/vorbis.h"
 
 namespace Nancy {
 
-Audio::RewindableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-	// HIS files are just WAVE files with the first 22 bytes of the file
-	// overwritten with a string
+enum SoundType {
+	kSoundTypeRaw,
+	kSoundTypeOgg
+};
 
-	char buf[22];
-
-	stream->read(buf, 22);
-	buf[21] = 0;
-
-	if (Common::String(buf) != "Her Interactive Sound") {
-		warning("Invalid header found in HIS file");
-		return 0;
-	}
-
-	// Most of this is copied from the standard WAVE decoder
-	uint16 numChannels = stream->readUint16LE();
-	uint32 samplesPerSec = stream->readUint32LE();
+bool readWaveHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &numChannels,
+                    uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
+	// The earliest HIS files are just WAVE files with the first 22 bytes of
+	// the file overwritten with a string, so most of this is copied from the
+	// standard WAVE decoder
+	numChannels = stream->readUint16LE();
+	samplesPerSec = stream->readUint32LE();
 	stream->skip(6);
-	uint16 bitsPerSample = stream->readUint16LE();
+	bitsPerSample = stream->readUint16LE();
 
-	byte flags = 0;
-	if (bitsPerSample == 8)		// 8 bit data is unsigned
-		flags |= Audio::FLAG_UNSIGNED;
-	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
-		flags |= (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
-	else {
-		warning("Unsupported bitsPerSample %d found in HIS file", bitsPerSample);
-		return 0;
-	}
-
-	if (numChannels == 2)
-		flags |= Audio::FLAG_STEREO;
-	else if (numChannels != 1) {
-		warning("Unsupported number of channels %d found in HIS file", numChannels);
-		return 0;
-	}
-
+	char buf[4 + 1];
 	stream->read(buf, 4);
 	buf[4] = 0;
 
 	if (Common::String(buf) != "data") {
 		warning("Data chunk not found in HIS file");
-		return 0;
+		return false;
 	}
 
-	uint32 size = stream->readUint32LE();
+	size = stream->readUint32LE();
 
 	if (stream->eos() || stream->err()) {
 		warning("Error reading HIS file");
-		return 0;
+		return false;
 	}
 
-	// Raw PCM, make sure the last packet is complete
-	uint sampleSize = (flags & Audio::FLAG_16BITS ? 2 : 1) * (flags & Audio::FLAG_STEREO ? 2 : 1);
-	if (size % sampleSize != 0) {
-		warning("Trying to play an HIS file with an incomplete PCM packet");
-		size &= ~(sampleSize - 1);
+	type = kSoundTypeRaw;
+
+	return true;
+}
+
+bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &numChannels,
+                    uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
+	uint32 ver;
+	ver = stream->readUint16LE() << 16;
+	ver |= stream->readUint16LE();
+	bool hasType = false;
+
+	switch (ver) {
+	case 0x00010000:
+		break;
+	case 0x00020000:
+		hasType = true;
+		break;
+	default:
+		warning("Unsupported version %d.%d found in HIS file", ver >> 16, ver & 0xffff);
+		return false;
 	}
 
-	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(stream, stream->pos(), size, disposeAfterUse);
-	return Audio::makeRawStream(subStream, samplesPerSec, flags);
+	// Same data as Wave fmt chunk
+	stream->skip(2); // AudioFormat
+	numChannels = stream->readUint16LE();
+	samplesPerSec = stream->readUint32LE();
+	stream->skip(6); // ByteRate and BlockAlign
+	bitsPerSample = stream->readUint16LE();
+
+	size = stream->readUint32LE();
+
+	if (hasType) {
+		uint16 tp = stream->readUint16LE();
+		switch (tp) {
+		case 1:
+			type = kSoundTypeRaw;
+			break;
+		case 2:
+			type = kSoundTypeOgg;
+			break;
+		default:
+			warning("Unsupported sound type %d found in HIS file", tp);
+			return false;
+		}
+	} else
+		type = kSoundTypeRaw;
+
+	if (stream->eos() || stream->err()) {
+		warning("Error reading HIS file");
+		return false;
+	}
+
+	return true;
+}
+
+Audio::RewindableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+	char buf[22];
+
+	stream->read(buf, 22);
+	buf[21] = 0;
+
+	uint16 numChannels, bitsPerSample;
+	uint32 samplesPerSec, size;
+	SoundType type;
+
+	if (Common::String(buf) == "Her Interactive Sound") {
+		// Early HIS file
+		if (!readWaveHeader(stream, type, numChannels, samplesPerSec, bitsPerSample, size))
+			return 0;
+	} else if (Common::String(buf) == "HIS") {
+		stream->seek(4);
+		if (!readHISHeader(stream, type, numChannels, samplesPerSec, bitsPerSample, size))
+			return 0;
+	}
+
+	byte flags = 0;
+	if (type == kSoundTypeRaw) {
+		if (bitsPerSample == 8)		// 8 bit data is unsigned
+			flags |= Audio::FLAG_UNSIGNED;
+		else if (bitsPerSample == 16)	// 16 bit data is signed little endian
+			flags |= (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+		else {
+			warning("Unsupported bitsPerSample %d found in HIS file", bitsPerSample);
+			return 0;
+		}
+	
+		if (numChannels == 2)
+			flags |= Audio::FLAG_STEREO;
+		else if (numChannels != 1) {
+			warning("Unsupported number of channels %d found in HIS file", numChannels);
+			return 0;
+		}
+	
+		// Raw PCM, make sure the last packet is complete
+		uint sampleSize = (flags & Audio::FLAG_16BITS ? 2 : 1) * (flags & Audio::FLAG_STEREO ? 2 : 1);
+		if (size % sampleSize != 0) {
+			warning("Trying to play an HIS file with an incomplete PCM packet");
+			size &= ~(sampleSize - 1);
+		}
+	}
+
+	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
+
+	if (type == kSoundTypeRaw)
+		return Audio::makeRawStream(subStream, samplesPerSec, flags, DisposeAfterUse::YES);
+	else
+		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
 }
 
 } // End of namespace Nancy
