@@ -238,10 +238,10 @@ void MouseHandler::setMousePosition(Common::Point newPos) {
  * Get mouse poisition
  * @remarks	Originally called 'read_pos_mouse'
  */
-void MouseHandler::getMousePosition(int &x, int &y, int &c) {
+void MouseHandler::getMousePosition(int &x, int &y, bool &click) {
 	x = g_vm->getMousePos().x;
 	y = g_vm->getMousePos().y;
-	c = g_vm->getMouseClick() ? 1 : 0;
+	click = g_vm->getMouseClick();
 }
 
 /**
@@ -251,7 +251,8 @@ void MouseHandler::getMousePosition(int &x, int &y, int &c) {
 void MouseHandler::moveMouse(bool &funct, char &key) {
 	bool p_key;
 	char in1, in2;
-	int cx, cy, cd;
+	int cx, cy;
+	bool click;
 
 	// Set defaults and check pending events
 	funct = false;
@@ -267,7 +268,7 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 		CHECK_QUIT;
 
 		in1 = g_vm->getChar();
-		getMousePosition(cx, cy, cd);
+		getMousePosition(cx, cy, click);
 		switch (toupper(in1)) {
 		case '4':
 			cx -= 8;
@@ -408,9 +409,10 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
  * @remarks	Originally called 'dans_rect'
  */
 bool MouseHandler::isMouseIn(Common::Rect r) {
-	int x, y, c;
+	int x, y;
+	bool click;
 
-	getMousePosition(x, y, c);
+	getMousePosition(x, y, click);
 	if ((x > r.left) && (x < r.right) && (y > r.top) && (y < r.bottom))
 		return true;
 

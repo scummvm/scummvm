@@ -298,19 +298,19 @@ void MortevielleEngine::fctTake() {
  * @remarks	Originally called 'tsprendre'
  */
 void MortevielleEngine::fctInventoryTake() {
-	int cx = 0;
+	int inventIndex = 0;
 	do {
-		++cx;
-	} while (_menu._inventoryMenu[cx] != _msg[4]);
+		++inventIndex;
+	} while (_menu._inventoryMenu[inventIndex] != _msg[4]);
 	int cz = 0;
 	int cy = 0;
 	do {
 		++cy;
-		if (ord(_coreVar._sjer[cy]) != 0)
+		if (_coreVar._inventory[cy] != 0)
 			++cz;
-	} while (cz != cx);
-	cz = ord(_coreVar._sjer[cy]);
-	_coreVar._sjer[cy] = chr(0);
+	} while (cz != inventIndex);
+	cz = _coreVar._inventory[cy];
+	_coreVar._inventory[cy] = 0;
 	_menu.setInventoryText();
 	putInHand(cz);
 	_crep = 998;
@@ -1342,15 +1342,18 @@ void MortevielleEngine::fctSound() {
  * @remarks	Originally called 'tparler'
  */
 void MortevielleEngine::fctDiscuss() {
-	bool te[47];
-	int cy, cx, max, suj, co, lig, icm, i, choi, x, y, c;
-	char tou;
+	bool questionAsked[47];
+	int cy, cx;
+	int x, y;
+//	int c;
 	Common::String lib[47];
-	bool f;
+
+	int choice; 
+	int displId;
 
 	endSearch();
 	if (_col)
-		suj = 128;
+		displId = 128;
 	else {
 		cx = 0;
 		do {
@@ -1359,54 +1362,55 @@ void MortevielleEngine::fctDiscuss() {
 		_caff = 69 + cx;
 		drawPictureWithText();
 		handleDescriptionText(2, _caff);
-		suj = _caff + 60;
+		displId = _caff + 60;
 	}
 	testKey(false);
 	mennor();
 	_mouse.hideMouse();
 	hirs();
 	premtet();
-	startDialog(suj);
+	startDialog(displId);
 	hirs();
 	for (int ix = 1; ix <= 46; ++ix)
-		te[ix] = false;
+		questionAsked[ix] = false;
 	for (int ix = 1; ix <= 45; ++ix) {
 		lib[ix] = getString(ix + kQuestionStringIndex);
-		for (i = lib[ix].size(); i <= 40; ++i)
+		for (int i = lib[ix].size(); i <= 40; ++i)
 			lib[ix] = lib[ix] + ' ';
 	}
 	lib[46] = lib[45];
 	lib[45] = ' ';
 	_mouse.showMouse();
 	do {
-		choi = 0;
-		icm = 0;
-		co = 0;
-		lig = 0;
-		do {
-			++icm;
-			_screenSurface.putxy(co, lig);
+		choice = 0;
+		int posX = 0;
+		int posY = 0;
+		for (int icm = 1; icm < 43; icm++) {
+			_screenSurface.putxy(posX, posY);
 			if (_coreVar._teauto[icm] == '*') {
-				if (te[icm])
+				// If question already asked, write it in reverse video
+				if (questionAsked[icm])
 					writetp(lib[icm], 1);
 				else
 					writetp(lib[icm], 0);
 			}
 
 			if (icm == 23)  {
-				lig = 0;
-				co = 320;
+				posY = 0;
+				posX = 320;
 			} else
-				lig = lig + 8;
-		} while (icm != 42);
+				posY += 8;
+		}
 		_screenSurface.putxy(320, 176);
 		writetp(lib[46], 0);
-		tou = '\0';
+		char retKey = '\0';
+		bool click;
 		do {
-			_mouse.moveMouse(f, tou);
+			bool dummyFl;
+			_mouse.moveMouse(dummyFl, retKey);
 			CHECK_QUIT;
 
-			_mouse.getMousePosition(x, y, c);
+			_mouse.getMousePosition(x, y, click);
 			x *= (3 - _res);
 			if (x > 319)
 				cx = 41;
@@ -1414,95 +1418,98 @@ void MortevielleEngine::fctDiscuss() {
 				cx = 1;
 			cy = ((uint)y >> 3) + 1;      // 0-199 => 1-25
 			if ((cy > 23) || ((cx == 41) && ((cy >= 20) && (cy <= 22)))) {
-				if (choi != 0) {
-					lig = ((choi - 1) % 23) << 3;
-					if (choi > 23)
-						co = 320;
+				if (choice != 0) {
+					posY = ((choice - 1) % 23) << 3;
+					if (choice > 23)
+						posX = 320;
 					else
-						co = 0;
-					_screenSurface.putxy(co, lig);
-					if (te[choi])
-						writetp(lib[choi], 0);
+						posX = 0;
+					_screenSurface.putxy(posX, posY);
+					if (questionAsked[choice])
+						writetp(lib[choice], 0);
 					else
-						writetp(lib[choi], 1);
-					te[choi] = !te[choi];
-					choi = 0;
+						writetp(lib[choice], 1);
+					questionAsked[choice] = !questionAsked[choice];
+					choice = 0;
 				}
 			} else {
 				int ix = cy;
 				if (cx == 41)
 					ix += 23;
-				if (ix != choi) {
-					if (choi != 0) {
-						lig = ((choi - 1) % 23) << 3;
-						if (choi > 23)
-							co = 320;
+				if (ix != choice) {
+					if (choice != 0) {
+						posY = ((choice - 1) % 23) << 3;
+						if (choice > 23)
+							posX = 320;
 						else
-							co = 0;
-						_screenSurface.putxy(co, lig);
-						if (te[choi])
-							writetp(lib[choi], 0);
+							posX = 0;
+						_screenSurface.putxy(posX, posY);
+						if (questionAsked[choice])
+							writetp(lib[choice], 0);
 						else
-							writetp(lib[choi], 1);
-						te[choi] = ! te[choi];
+							writetp(lib[choice], 1);
+						questionAsked[choice] = ! questionAsked[choice];
 					}
 					if ((_coreVar._teauto[ix] == '*') || (ix == 46)) {
-						lig = ((ix - 1) % 23) << 3;
+						posY = ((ix - 1) % 23) << 3;
 						if (ix > 23)
-							co = 320;
+							posX = 320;
 						else
-							co = 0;
-						_screenSurface.putxy(co, lig);
-						if (te[ix])
+							posX = 0;
+						_screenSurface.putxy(posX, posY);
+						if (questionAsked[ix])
 							writetp(lib[ix], 0);
 						else
 							writetp(lib[ix], 1);
-						te[ix] = ! te[ix];
-						choi = ix;
+						questionAsked[ix] = ! questionAsked[ix];
+						choice = ix;
 					} else
-						choi = 0;
+						choice = 0;
 				}
 			}
-		} while (!((tou == '\15') || (((c != 0) || getMouseClick()) && (choi != 0))));
+		} while (!((retKey == '\15') || (((click != 0) || getMouseClick()) && (choice != 0))));
 		setMouseClick(false);
-		if (choi != 46) {
-			int ix = choi - 1;
+
+		// If choice is not "End of Conversation"
+		if (choice != 46) {
+			int ix = choice - 1;
 			if (_col) {
 				_col = false;
 				_coreVar._currPlace = 15;
+				int maxRandVal;
 				if (_openObjCount > 0)
-					max = 8;
+					maxRandVal = 8;
 				else
-					max = 4;
-				if (getRandomNumber(1, max) == 2)
-					suj = 129;
+					maxRandVal = 4;
+				if (getRandomNumber(1, maxRandVal) == 2)
+					displId = 129;
 				else {
-					suj = 138;
+					displId = 138;
 					_coreVar._faithScore += (3 * (_coreVar._faithScore / 10));
 				}
 			} else if (_nbrep[_caff - 69] < _nbrepm[_caff - 69]) {
-				suj = _tabdon[kArep + (ix << 3) + (_caff - 70)];
+				displId = _tabdon[kArep + (ix << 3) + (_caff - 70)];
 				_coreVar._faithScore += _tabdon[kArcf + ix];
 				++_nbrep[_caff - 69];
 			} else {
 				_coreVar._faithScore += 3;
-				suj = 139;
+				displId = 139;
 			}
 			_mouse.hideMouse();
 			hirs();
 			premtet();
-			startDialog(suj);
+			startDialog(displId);
 			_mouse.showMouse();
-			if ((suj == 84) || (suj == 86)) {
+			if ((displId == 84) || (displId == 86)) {
 				_coreVar._pourc[5] = '*';
 				_coreVar._teauto[7] = '*';
 			}
-			if ((suj == 106) || (suj == 108) || (suj == 94)) {
+			if ((displId == 106) || (displId == 108) || (displId == 94)) {
 				for (int indx = 29; indx <= 31; ++indx)
 					_coreVar._teauto[indx] = '*';
 				_coreVar._pourc[7] = '*';
 			}
-			if (suj == 70) {
+			if (displId == 70) {
 				_coreVar._pourc[8] = '*';
 				_coreVar._teauto[32] = '*';
 			}
@@ -1510,7 +1517,7 @@ void MortevielleEngine::fctDiscuss() {
 			hirs();
 			_mouse.showMouse();
 		}
-	} while ((choi != 46) && (suj != 138));
+	} while ((choice != 46) && (displId != 138));
 	if (_col) {
 		_coreVar._faithScore += (3 * (_coreVar._faithScore / 10));
 		_mouse.hideMouse();
