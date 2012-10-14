@@ -59,7 +59,7 @@ private:
 		const Graphics::Surface *decodeNextFrame();
 
 	protected:
-		Common::Rational getFrameRate() const { return 20; }
+		Common::Rational getFrameRate() const { return Common::Rational(1000, _frameTime); }
 
 	private:
 		struct ChunkInfo {
@@ -78,6 +78,7 @@ private:
 		int _curFrame;
 		uint _frameCount;
 		bool _compressed;
+		uint32 _frameTime;
 		Graphics::Surface *_surface;
 		Common::Array<ChunkInfo> _chunkInfo;
 		Decompressor *_dec;
