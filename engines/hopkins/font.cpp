@@ -219,11 +219,12 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
 
 		file = _vm->_globals.NFICHIER;
-		if (strncmp(file.c_str(), oldname.c_str(), strlen(file.c_str()))) {
+		if (strncmp(file.c_str(), oldname.c_str(), strlen(file.c_str())) != 0) {
+			// Starting to access a new file, so read in the index file for the file
 			oldname = file;
-			nom_index = file;
+			nom_index = Common::String(file.c_str(), file.size() - 3);
+			nom_index += "IND";
 			
-			//*(int *)((char *)&dword_80AE4DC + strlen(nom_index) + 1) = dword_807C98D;
 			if (!f.open(nom_index))
 				error("Error opening file - %s", nom_index.c_str());
 			filesize = f.size();
