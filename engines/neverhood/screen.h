@@ -35,7 +35,7 @@ public:
 	Screen(NeverhoodEngine *vm);
 	~Screen();
 	void update();
-	void wait();
+	uint32 getNextFrameTime();
 	void setFps(int fps);
 	int getFps();
 	void setPaletteData(byte *paletteData);

@@ -41,20 +41,19 @@ Screen::~Screen() {
 }
 
 void Screen::update() {
+	_ticks = _vm->_system->getMillis();
 	updatePalette();
 	// TODO: Implement actual code
 	_vm->_system->copyRectToScreen((const byte*)_backScreen->pixels, _backScreen->pitch, 0, 0, 640, 480);
 	_vm->_system->updateScreen();
 }
 
-void Screen::wait() {
+uint32 Screen::getNextFrameTime() {
 	int32 frameDelay = _frameDelay;
 	if (_smackerDecoder && _smackerDecoder->isVideoLoaded() && !_smackerDecoder->endOfVideo())
 		frameDelay = _smackerDecoder->getTimeToNextFrame();
 	int32 waitTicks = frameDelay - (_vm->_system->getMillis() - _ticks);
-	if (waitTicks > 0)
-		_vm->_system->delayMillis(waitTicks);
-	_ticks = _vm->_system->getMillis();
+	return _vm->_system->getMillis() + waitTicks;
 }
 
 void Screen::setFps(int fps) {

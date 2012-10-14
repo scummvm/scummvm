@@ -209,17 +209,17 @@ void Scene::insertMouse433(uint32 fileHash, NRect *mouseRect) {
 	if (mouseRect)
 		rect = *mouseRect;
 	_mouseCursor = new Mouse(_vm, 0x0820C408, rect);
-	addSprite(_mouseCursor);
+	addEntity(_mouseCursor);
 }
 
 void Scene::insertMouse435(uint32 fileHash, int16 x1, int16 x2) {
 	_mouseCursor = new Mouse(_vm, fileHash, x1, x2);
-	addSprite(_mouseCursor);
+	addEntity(_mouseCursor);
 }
 
 void Scene::insertNavigationMouse(uint32 fileHash, int type) {
 	_mouseCursor = new Mouse(_vm, fileHash, type);
-	addSprite(_mouseCursor);
+	addEntity(_mouseCursor);
 }
 
 void Scene::showMouse(bool visible) {

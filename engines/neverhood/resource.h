@@ -114,7 +114,7 @@ public:
 	NDrawRect& getRect();
 	void draw(int frameNum, byte *dest, int destPitch);
 	int getCursorNum() const { return _cursorNum; }
-	void setCursorNum(int value) { _cursorNum = value; }
+	void setCursorNum(int cursorNum) { _cursorNum = cursorNum; }
 protected:
 	int _cursorNum;
 	SpriteResource _cursorSprite;

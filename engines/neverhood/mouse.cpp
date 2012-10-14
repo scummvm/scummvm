@@ -21,10 +21,9 @@
  */
 
 #include "neverhood/mouse.h"
+#include "graphics/cursorman.h"
 
 namespace Neverhood {
-
-// TODO: Use CursorMan
 
 Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect)
 	: StaticSprite(vm, 2000), _mouseType(kMouseType433), 
@@ -95,64 +94,59 @@ void Mouse::update() {
 
 uint32 Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	debug(7, "Mouse::handleMessage(%04X)", messageNum);
-	uint32 messageResult = 0;
-	if (messageNum != 5) {
-		messageResult = Sprite::handleMessage(messageNum, param, sender);
-		switch (messageNum) {
-		case 0x2064:
-			_x = param.asPoint().x;
-			_y = param.asPoint().y;
-			switch (_type) {
-			case 1:
-				if (_x >= 320)
-					messageResult = 1;
-				else				
-					messageResult = 0;
-				break;
-			case 2:
-			default:
-				if (_x < 100)
-					messageResult = 0;
-				else if (_x > 540)				
-					messageResult = 1;
-				else				
-					messageResult = 2;
-				break;
-			case 3:
-				if (_x < 100)
-					messageResult = 0;
-				else if (_x > 540)				
-					messageResult = 1;
-				else				
-					messageResult = 4;
-				break;
-			case 4:
-				if (_x < 100)
-					messageResult = 0;
-				else if (_x > 540)				
-					messageResult = 1;
-				else if (_y >= 150)				
-					messageResult = 2;
-				else				
-					messageResult = 3;
-				break;
-			case 5:
-				if (_y >= 240)
-					messageResult = 4;
-				else				
-					messageResult = 3;
-				break;
-			}
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2064:
+		_x = param.asPoint().x;
+		_y = param.asPoint().y;
+		switch (_type) {
+		case 1:
+			if (_x >= 320)
+				messageResult = 1;
+			else				
+				messageResult = 0;
 			break;
-		case 0x4002:
-			_x = param.asPoint().x;
-			_y = param.asPoint().y;
-			updateCursorNum();
-			processDelta();
+		case 2:
+		default:
+			if (_x < 100)
+				messageResult = 0;
+			else if (_x > 540)				
+				messageResult = 1;
+			else				
+				messageResult = 2;
+			break;
+		case 3:
+			if (_x < 100)
+				messageResult = 0;
+			else if (_x > 540)				
+				messageResult = 1;
+			else				
+				messageResult = 4;
+			break;
+		case 4:
+			if (_x < 100)
+				messageResult = 0;
+			else if (_x > 540)				
+				messageResult = 1;
+			else if (_y >= 150)				
+				messageResult = 2;
+			else				
+				messageResult = 3;
+			break;
+		case 5:
+			if (_y >= 240)
+				messageResult = 4;
+			else				
+				messageResult = 3;
 			break;
 		}
-	} else {
-		// TODO: Debug stuff
+		break;
+	case 0x4002:
+		_x = param.asPoint().x;
+		_y = param.asPoint().y;
+		updateCursorNum();
+		processDelta();
+		break;
 	}
 	return messageResult;
 }
@@ -178,6 +172,9 @@ void Mouse::updateCursor() {
 		_needRefresh = false;
 		_drawRect = _mouseCursorResource.getRect();
 		_surface->drawMouseCursorResource(_mouseCursorResource, _frameNum / 2);
+		Graphics::Surface *cursorSurface = _surface->getSurface();
+		CursorMan.replaceCursor((const byte*)cursorSurface->pixels,
+			cursorSurface->w, cursorSurface->h, -_drawRect.x, -_drawRect.y, 0);
 	}
 
 }

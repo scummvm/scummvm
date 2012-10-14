@@ -106,6 +106,8 @@ Common::Error NeverhoodEngine::run() {
 	_gameModule = new GameModule(this);
 	
 	_gameModule->startup();
+	
+	uint32 nextFrameTime = 0;
 
 	// Preliminary main loop, needs some more work but works for testing
 	while (!shouldQuit()) {
@@ -148,13 +150,16 @@ Common::Error NeverhoodEngine::run() {
 			}
 		}
 
-		//debug("millis %d", _system->getMillis());		
-		_gameModule->handleUpdate();
-		_gameModule->draw();
+		if (_system->getMillis() >= nextFrameTime) {
+			_gameModule->handleUpdate();
+			_gameModule->draw();
+			nextFrameTime = _screen->getNextFrameTime();
+		};
+		
 		_soundMan->update();
 		_audioResourceMan->update();
-		_screen->wait();
 		_screen->update();
+		_system->delayMillis(10);
 		
 		debug(0, "---------------------------------------");
 	
