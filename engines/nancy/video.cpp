@@ -78,7 +78,7 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
 	_width = stream->readUint16LE();
 	_height = stream->readUint16LE();
 	_depth = stream->readByte();
-	stream->skip(4); // Unknown
+	_frameTime = stream->readUint32LE();
 
 	byte comp = stream->readByte();
 
@@ -117,7 +117,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeNextFrame() {
 
 	if (_chunkInfo[_curFrame].type != 0) {
 		warning("Skipping frame type %d", _chunkInfo[_curFrame].type);
-		return _surface;
+		return 0;
 	}
 
 	if (_compressed) {
