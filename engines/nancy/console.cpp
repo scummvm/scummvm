@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 #include "graphics/surface.h"
 #include "audio/audiostream.h"
 #include "nancy/console.h"
@@ -48,20 +49,32 @@ NancyConsole::~NancyConsole() {
 void NancyConsole::postEnter() {
 	if (!_videoFile.empty()) {
 		Video::VideoDecoder *dec = new AVFDecoder;
-	
+
 		if (dec->loadFile(_videoFile)) {
 			dec->start();
-			while (!dec->endOfVideo()) {
-				const Graphics::Surface *frame = dec->decodeNextFrame();
-				_vm->_system->fillScreen(0);
-				_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
-				_vm->_system->updateScreen();
-				_vm->_system->delayMillis(60);
+			_vm->_system->fillScreen(0);
+			Common::EventManager *ev = g_system->getEventManager();
+			while (!_vm->shouldQuit() && !dec->endOfVideo()) {
+				Common::Event event;
+				if (ev->pollEvent(event)) {
+					if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
+						break;
+				}
+
+				if (dec->needsUpdate()) {
+					const Graphics::Surface *frame = dec->decodeNextFrame();
+					if (frame) {
+						_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+						_vm->_system->updateScreen();
+					}
+				}
+				_vm->_system->delayMillis(10);
 			}
-		} else {
+		} else
 			debugPrintf("Failed to load '%s'\n", _videoFile.c_str());
-		}
+
 		_videoFile.clear();
+		delete dec;
 	}
 }
 
