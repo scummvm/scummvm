@@ -32,6 +32,7 @@
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "hopkins/anim.h"
+#include "hopkins/debugger.h"
 #include "hopkins/events.h"
 #include "hopkins/files.h"
 #include "hopkins/font.h"
@@ -93,6 +94,7 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 
 public:
+	Debugger _debugger;
 	AnimationManager _animationManager;
 	EventsManager _eventsManager;
 	FontManager _fontManager;

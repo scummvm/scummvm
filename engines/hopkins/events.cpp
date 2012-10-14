@@ -198,6 +198,9 @@ void EventsManager::checkForNextFrameCounter() {
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		_priorFrameTime = milli;
 		g_system->updateScreen();
+
+		// Signal the ScummVM debugger
+		_vm->_debugger.onFrame();
 	}
 }
 
@@ -222,6 +225,13 @@ void EventsManager::pollEvents() {
 
 		case Common::EVENT_KEYDOWN:
 			ESC_KEY = event.kbd.keycode == Common::KEYCODE_ESCAPE;
+
+			// Check for debugger
+			if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				_vm->_debugger.attach();
+				_vm->_debugger.onFrame();
+			}
 			return;
 
 		case Common::EVENT_LBUTTONDOWN:

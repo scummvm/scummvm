@@ -38,6 +38,7 @@ HopkinsEngine *g_vm;
 HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _randomSource("Hopkins"), _animationManager() {
 	g_vm = this;
+	_debugger.setParent(this);
 	_animationManager.setParent(this);
 	_eventsManager.setParent(this);
 	_fileManager.setParent(this);
