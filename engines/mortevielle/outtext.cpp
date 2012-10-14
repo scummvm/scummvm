@@ -60,7 +60,7 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 	inputStr += '$';
 
 	g_vm->_screenSurface.putxy(x, y);
-	if (g_vm->_res == 1)
+	if (g_vm->_resolutionScaler == 1)
 		tab = 10;
 	else
 		tab = 6;
@@ -206,37 +206,37 @@ void TextHandler::taffich() {
 
 	switch (a) {
 	case 16:
-		g_vm->_coreVar._pourc[9] = '*';
-		g_vm->_coreVar._teauto[42] = '*';
+		g_vm->_coreVar._pctHintFound[9] = '*';
+		g_vm->_coreVar._availableQuestion[42] = '*';
 		break;
 	case 20:
-		g_vm->_coreVar._teauto[39] = '*';
-		if (g_vm->_coreVar._teauto[36] == '*') {
-			g_vm->_coreVar._pourc[3] = '*';
-			g_vm->_coreVar._teauto[38] = '*';
+		g_vm->_coreVar._availableQuestion[39] = '*';
+		if (g_vm->_coreVar._availableQuestion[36] == '*') {
+			g_vm->_coreVar._pctHintFound[3] = '*';
+			g_vm->_coreVar._availableQuestion[38] = '*';
 		}
 		break;
 	case 24:
-		g_vm->_coreVar._teauto[37] = '*';
+		g_vm->_coreVar._availableQuestion[37] = '*';
 		break;
 	case 30:
-		g_vm->_coreVar._teauto[9] = '*';
+		g_vm->_coreVar._availableQuestion[9] = '*';
 		break;
-	case 31:
-		g_vm->_coreVar._pourc[4] = '*';
-		g_vm->_coreVar._teauto[35] = '*';
+	case 31: // Coat of arms
+		g_vm->_coreVar._pctHintFound[4] = '*';
+		g_vm->_coreVar._availableQuestion[35] = '*';
 		break;
 	case 118:
-		g_vm->_coreVar._teauto[41] = '*';
+		g_vm->_coreVar._availableQuestion[41] = '*';
 		break;
 	case 143:
-		g_vm->_coreVar._pourc[1] = '*';
+		g_vm->_coreVar._pctHintFound[1] = '*';
 		break;
 	case 150:
-		g_vm->_coreVar._teauto[34] = '*';
+		g_vm->_coreVar._availableQuestion[34] = '*';
 		break;
 	case 151:
-		g_vm->_coreVar._pourc[2] = '*';
+		g_vm->_coreVar._pctHintFound[2] = '*';
 		break;
 	default:
 		break;

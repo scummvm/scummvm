@@ -180,7 +180,7 @@ Common::ErrorCode MortevielleEngine::initialise() {
 
 	// Set the screen mode
 	_currGraphicalDevice = MODE_EGA;
-	_res = 2;
+	_resolutionScaler = 2;
 
 	_txxFileFl = false;
 	// Load texts from TXX files
@@ -673,7 +673,7 @@ void MortevielleEngine::handleAction() {
 		} else if (inkey == '\77') {
 			if ((_menuOpcode != OPCODE_NONE) && ((_msg[3] == MENU_ACTION) || (_msg[3] == MENU_SELF))) {
 				_msg[4] = _menuOpcode;
-				ecr3(getEngineString(S_IDEM));
+				displayTextInVerbBar(getEngineString(S_IDEM));
 			} else
 				return;
 		} else if (inkey == '\104') {
@@ -746,7 +746,7 @@ void MortevielleEngine::loadPlaces() {
 
 	for (int i = 0; i < 7; ++i) {
 		for (int j = 0; j < 25; ++j)
-			_v_lieu[i][j] = f.readByte();
+			_destinationArray[i][j] = f.readByte();
 	}
 
 	f.close();
@@ -2004,8 +2004,8 @@ void MortevielleEngine::handleOpcode() {
 	}
 	int hour, day, minute;
 	updateHour(day, hour, minute);
-	if ((((hour == 12) || (hour == 13) || (hour == 19)) && (_coreVar._currPlace != 10)) ||
-	        ((hour > 0) && (hour < 6) && (_coreVar._currPlace != 0)))
+	if ((((hour == 12) || (hour == 13) || (hour == 19)) && (_coreVar._currPlace != DINING_ROOM)) ||
+	        ((hour > 0) && (hour < 6) && (_coreVar._currPlace != OWN_ROOM)))
 		++_coreVar._faithScore;
 	if (((_coreVar._currPlace < CRYPT) || (_coreVar._currPlace > MOUNTAIN)) && (_coreVar._currPlace != INSIDE_WELL)
 	        && (_coreVar._currPlace != OWN_ROOM) && (_coreVar._selectedObjectId != 152) && (!_loseGame)) {
@@ -2104,7 +2104,7 @@ void MortevielleEngine::clearUpperRightPart() {
 	Common::String st;
 
 	_mouse.hideMouse();
-	if (_res == 1) {
+	if (_resolutionScaler == 1) {
 		x2 = 634;
 		x1 = 534;
 	} else {
@@ -2293,21 +2293,21 @@ void MortevielleEngine::resetVariables() {
 	_coreVar._fullHour = chr(20);
 
 	for (int i = 1; i <= 10; ++i)
-		_coreVar._pourc[i] = ' ';
+		_coreVar._pctHintFound[i] = ' ';
 
 	for (int i = 1; i <= 6; ++i)
-		_coreVar._teauto[i] = '*';
+		_coreVar._availableQuestion[i] = '*';
 
 	for (int i = 7; i <= 9; ++i)
-		_coreVar._teauto[i] = ' ';
+		_coreVar._availableQuestion[i] = ' ';
 
 	for (int i = 10; i <= 28; ++i)
-		_coreVar._teauto[i] = '*';
+		_coreVar._availableQuestion[i] = '*';
 
 	for (int i = 29; i <= 42; ++i)
-		_coreVar._teauto[i] = ' ';
+		_coreVar._availableQuestion[i] = ' ';
 
-	_coreVar._teauto[33] = '*';
+	_coreVar._availableQuestion[33] = '*';
 
 	for (int i = 1; i <= 8; ++i)
 		_nbrep[i] = 0;
@@ -2563,7 +2563,7 @@ void MortevielleEngine::showTitleScreen() {
 	draw(kAdrDes, 0, 0);
 
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
-	_screenSurface.putxy(104 + 72 * _res, 185);
+	_screenSurface.putxy(104 + 72 * _resolutionScaler, 185);
 	_screenSurface.drawString(cpr, 0);
 }
 
@@ -2609,14 +2609,7 @@ int MortevielleEngine::readclock() {
  * @remarks	Originally called 'tinke'
  */
 void MortevielleEngine::prepareRoom() {
-	Common::String d1 = getEngineString(S_SHOULD_HAVE_NOTICED);
-	Common::String d2 = getEngineString(S_NUMBER_OF_HINTS);
-	const char d3 = '[';
-	const char d4 = ']';
-	const char d5 = '1';
-	Common::String d6 = getEngineString(S_OK);
-	int cf, day, hour, minute;
-	Common::String stpo;
+	int day, hour, minute;
 
 	_anyone = false;
 	updateHour(day, hour, minute);
@@ -2634,29 +2627,26 @@ void MortevielleEngine::prepareRoom() {
 		_hour = hour;
 		_minute = 0;
 		drawClock();
-		cf = 0;
+		int hintCount = 0;
 		for (int i = 1; i <= 10; ++i) {
-			if (_coreVar._pourc[i] == '*')
-				++cf;
+			if (_coreVar._pctHintFound[i] == '*')
+				++hintCount;
 		}
 
-		if (cf == 10)
-			stpo = "10";
+		Common::String pctStr;
+		if (hintCount == 10)
+			pctStr = "10";
 		else
-			stpo = chr(cf + 48);
+			pctStr = chr(hintCount + 48);
 
-		_hintPctMessage = Common::String(d3);
-		_hintPctMessage += d5;
-		_hintPctMessage += d4;
-		_hintPctMessage += d3;
-		_hintPctMessage += d1;
-		_hintPctMessage += stpo;
+		_hintPctMessage = "[1][";
+		_hintPctMessage += getEngineString(S_SHOULD_HAVE_NOTICED);
+		_hintPctMessage += pctStr;
 		_hintPctMessage += '0';
-		_hintPctMessage += d2;
-		_hintPctMessage += d4;
-		_hintPctMessage += d3;
-		_hintPctMessage += d6;
-		_hintPctMessage += d4;
+		_hintPctMessage += getEngineString(S_NUMBER_OF_HINTS);
+		_hintPctMessage += "][";
+		_hintPctMessage += getEngineString(S_OK);
+		_hintPctMessage += ']';
 	}
 	if (minute > _minute) {
 		_minute = 30;
@@ -2670,11 +2660,10 @@ void MortevielleEngine::prepareRoom() {
 			_inGameHourDuration = kTime2;
 		else
 			_inGameHourDuration = kTime1;
-		cf = _coreVar._faithScore;
-		if ((cf > 33) && (cf < 66))
+		if ((_coreVar._faithScore > 33) && (_coreVar._faithScore < 66))
 			_inGameHourDuration -= (_inGameHourDuration / 3);
 
-		if (cf > 65)
+		if (_coreVar._faithScore > 65)
 			_inGameHourDuration -= ((_inGameHourDuration / 3) * 2);
 
 		int newHour = readclock();
@@ -2686,40 +2675,40 @@ void MortevielleEngine::prepareRoom() {
 			switch (_place) {
 			case GREEN_ROOM:
 			case DARKBLUE_ROOM:
-				setRandomPresenceGreenRoom(cf);
+				setRandomPresenceGreenRoom(_coreVar._faithScore);
 				break;
 			case PURPLE_ROOM:
-				setRandomPresencePurpleRoom(cf);
+				setRandomPresencePurpleRoom(_coreVar._faithScore);
 				break;
 			case BLUE_ROOM:
-				setRandomPresenceBlueRoom(cf);
+				setRandomPresenceBlueRoom(_coreVar._faithScore);
 				break;
 			case RED_ROOM:
 			case GREEN_ROOM2:
-				setRandomPresenceRedRoom(cf);
+				setRandomPresenceRedRoom(_coreVar._faithScore);
 				break;
 			case ROOM9:
-				setRandomPresenceRoom9(cf);
+				setRandomPresenceRoom9(_coreVar._faithScore);
 				break;
 			case DINING_ROOM:
-				setRandomPresenceDiningRoom(cf);
+				setRandomPresenceDiningRoom(_coreVar._faithScore);
 				break;
 			case BUREAU:
-				setRandomPresenceBureau(cf);
+				setRandomPresenceBureau(_coreVar._faithScore);
 				break;
 			case KITCHEN:
-				setRandomPresenceKitchen(cf);
+				setRandomPresenceKitchen(_coreVar._faithScore);
 				break;
 			case ATTIC:
 			case CELLAR:
-				setRandomPresenceAttic(cf);
+				setRandomPresenceAttic(_coreVar._faithScore);
 				break;
 			case LANDING:
 			case ROOM26:
-				setRandomPresenceLanding(cf);
+				setRandomPresenceLanding(_coreVar._faithScore);
 				break;
 			case CHAPEL:
-				setRandomPresenceChapel(cf);
+				setRandomPresenceChapel(_coreVar._faithScore);
 				break;
 			}
 			if ((_savedBitIndex != 0) && (_currBitIndex != 10))
@@ -2736,7 +2725,7 @@ void MortevielleEngine::prepareRoom() {
 						if (getRandomNumber(1, 5) < 5) {
 							clearVerbBar();
 							prepareScreenType2();
-							ecr3(getEngineString(S_HEAR_NOISE));
+							displayTextInVerbBar(getEngineString(S_HEAR_NOISE));
 							int rand = (getRandomNumber(0, 4)) - 2;
 							_speechManager.startSpeech(1, rand, 1);
 							clearVerbBar();
@@ -2771,29 +2760,29 @@ void MortevielleEngine::drawClock() {
 	const int x = 580;
 	const int y = 123;
 	const int rg = 9;
-	int h, co;
+	int hourColor;
 
 	_mouse.hideMouse();
 
 	_screenSurface.drawRectangle(570, 118, 20, 10);
 	_screenSurface.drawRectangle(578, 114, 6, 18);
 	if ((_currGraphicalDevice == MODE_CGA) || (_currGraphicalDevice == MODE_HERCULES))
-		co = 0;
+		hourColor = 0;
 	else
-		co = 1;
+		hourColor = 1;
 
 	if (_minute == 0)
-		_screenSurface.drawLine(((uint)x >> 1) * _res, y, ((uint)x >> 1) * _res, (y - rg), co);
+		_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)x >> 1) * _resolutionScaler, (y - rg), hourColor);
 	else
-		_screenSurface.drawLine(((uint)x >> 1) * _res, y, ((uint)x >> 1) * _res, (y + rg), co);
+		_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)x >> 1) * _resolutionScaler, (y + rg), hourColor);
 
-	h = _hour;
-	if (h > 12)
-		h -= 12;
-	if (h == 0)
-		h = 12;
+	int hour12 = _hour;
+	if (hour12 > 12)
+		hour12 -= 12;
+	if (hour12 == 0)
+		hour12 = 12;
 
-	_screenSurface.drawLine(((uint)x >> 1) * _res, y, ((uint)(x + cv[0][h - 1]) >> 1) * _res, y + cv[1][h - 1], co);
+	_screenSurface.drawLine(((uint)x >> 1) * _resolutionScaler, y, ((uint)(x + cv[0][hour12 - 1]) >> 1) * _resolutionScaler, y + cv[1][hour12 - 1], hourColor);
 	_mouse.showMouse();
 	_screenSurface.putxy(568, 154);
 
@@ -2840,12 +2829,12 @@ void MortevielleEngine::hirs() {
 
 	if (_currGraphicalDevice == MODE_TANDY) {
 		_screenSurface.fillRect(0, Common::Rect(0, 0, 639, 200));
-		_res = 1;
+		_resolutionScaler = 1;
 	} else if (_currGraphicalDevice == MODE_CGA) {
 		palette(1);
-		_res = 1;
+		_resolutionScaler = 1;
 	} else
-		_res = 2;
+		_resolutionScaler = 2;
 
 	_screenSurface.clearScreen();
 }
@@ -2860,7 +2849,7 @@ void MortevielleEngine::initCaveOrCellar() {
 		_coreVar._faithScore += (_coreVar._faithScore / 10);
 	clearVerbBar();
 	prepareScreenType2();
-	ecr3(getEngineString(S_SOMEONE_ENTERS));
+	displayTextInVerbBar(getEngineString(S_SOMEONE_ENTERS));
 	int rand = (getRandomNumber(0, 4)) - 2;
 	_speechManager.startSpeech(2, rand, 1);
 
@@ -2938,7 +2927,7 @@ int MortevielleEngine::animof(int ouf, int num) {
 void MortevielleEngine::displayTextInDescriptionBar(int x, int y, int nb, int mesgId) {
 	int co;
 
-	if (_res == 1)
+	if (_resolutionScaler == 1)
 		co = 10;
 	else
 		co = 6;
@@ -2956,7 +2945,7 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 	if ((mesgId > 499) && (mesgId < 563)) {
 		Common::String tmpStr = getString(mesgId - 501 + kInventoryStringIndex);
 
-		if ((int) tmpStr.size() > ((58 + (_res - 1) * 37) << 1))
+		if ((int) tmpStr.size() > ((58 + (_resolutionScaler - 1) * 37) << 1))
 			_largestClearScreen = true;
 		else
 			_largestClearScreen = false;
@@ -2972,12 +2961,12 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 			prepareScreenType2();
 			displayTextInDescriptionBar(8, 182, 103, mesgId);
 			if ((mesgId == 68) || (mesgId == 69))
-				_coreVar._teauto[40] = '*';
-			if ((mesgId == 104) && (_caff == 14)) {
-				_coreVar._teauto[36] = '*';
-				if (_coreVar._teauto[39] == '*') {
-					_coreVar._pourc[3] = '*';
-					_coreVar._teauto[38] = '*';
+				_coreVar._availableQuestion[40] = '*';
+			if ((mesgId == 104) && (_caff == CELLAR)) {
+				_coreVar._availableQuestion[36] = '*';
+				if (_coreVar._availableQuestion[39] == '*') {
+					_coreVar._pctHintFound[3] = '*';
+					_coreVar._availableQuestion[38] = '*';
 				}
 			}
 			break;
@@ -2994,9 +2983,9 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 			_text.displayStr(tmpStr, 80, 40, 60, 25, i);
 
 			if (mesgId == 180)
-				_coreVar._pourc[6] = '*';
+				_coreVar._pctHintFound[6] = '*';
 			else if (mesgId == 179)
-				_coreVar._pourc[10] = '*';
+				_coreVar._pctHintFound[10] = '*';
 			}
 			break;
 		default:
@@ -3061,7 +3050,7 @@ void MortevielleEngine::resetOpenObjects() {
 void MortevielleEngine::ecr2(Common::String text) {
 	// Some dead code was present in the original: removed
 	_screenSurface.putxy(8, 177);
-	int tlig = 59 + (_res - 1) * 36;
+	int tlig = 59 + (_resolutionScaler - 1) * 36;
 
 	if ((int)text.size() < tlig)
 		_screenSurface.drawString(text, 5);
@@ -3082,7 +3071,7 @@ void MortevielleEngine::ecr2(Common::String text) {
 	}
 }
 
-void MortevielleEngine::ecr3(Common::String text) {
+void MortevielleEngine::displayTextInVerbBar(Common::String text) {
 	clearVerbBar();
 	_screenSurface.putxy(8, 192);
 	_screenSurface.drawString(text, 5);
@@ -3282,19 +3271,19 @@ int MortevielleEngine::getPresence(int roomId) {
 }
 
 void MortevielleEngine::writetp(Common::String s, int t) {
-	if (_res == 2)
+	if (_resolutionScaler == 2)
 		_screenSurface.drawString(s, t);
 	else
 		_screenSurface.drawString(copy(s, 1, 25), t);
 }
 
 void MortevielleEngine::aniof(int ouf, int num) {
-	if ((_caff == 7) && ((num == 4) || (num == 5)))
+	if ((_caff == BATHROOM) && ((num == 4) || (num == 5)))
 		return;
 
-	if ((_caff == 10) && (num == 7))
+	if ((_caff == DINING_ROOM) && (num == 7))
 		num = 6;
-	else if (_caff == 12) {
+	else if (_caff == KITCHEN) {
 		if (num == 3)
 			num = 4;
 		else if (num == 4)
@@ -3332,17 +3321,17 @@ void MortevielleEngine::drawPicture() {
 					aniof(1, _openObjects[cx]);
 			}
 
-			if (_caff == 13) {
+			if (_caff == ATTIC) {
 				if (_coreVar._atticBallHoleObjectId == 141)
 					aniof(1, 7);
 
 				if (_coreVar._atticRodHoleObjectId == 159)
 					aniof(1, 6);
-			} else if ((_caff == 14) && (_coreVar._cellarObjectId == 151))
+			} else if ((_caff == CELLAR) && (_coreVar._cellarObjectId == 151))
 				aniof(1, 2);
-			else if ((_caff == 17) && (_coreVar._secretPassageObjectId == 143))
+			else if ((_caff == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId == 143))
 				aniof(1, 1);
-			else if ((_caff == 24) && (_coreVar._wellObjectId != 0))
+			else if ((_caff == WELL) && (_coreVar._wellObjectId != 0))
 				aniof(1, 1);
 		}
 
@@ -3622,7 +3611,7 @@ void MortevielleEngine::tfleche() {
 			CHECK_QUIT;
 
 			if (getMouseClick())
-				inRect = (_mouse._pos.x < 256 * _res) && (_mouse._pos.y < 176) && (_mouse._pos.y > 12);
+				inRect = (_mouse._pos.x < 256 * _resolutionScaler) && (_mouse._pos.y < 176) && (_mouse._pos.y > 12);
 			prepareRoom();
 		} while (!(qust || inRect || _anyone));
 
@@ -3679,10 +3668,10 @@ void MortevielleEngine::setCoordinates(int sx) {
 	cy = 1;
 	do {
 		cb += 2;
-		sx = _tabdon[a + cb] * _res;
+		sx = _tabdon[a + cb] * _resolutionScaler;
 		sy = _tabdon[(a + cb + 1)];
 		cb += 2;
-		ix = _tabdon[a + cb] * _res;
+		ix = _tabdon[a + cb] * _resolutionScaler;
 		iy = _tabdon[(a + cb + 1)];
 		++cy;
 	} while (!(((_x >= sx) && (_x <= ix) && (_y >= sy) && (_y <= iy)) || (cy > ib)));

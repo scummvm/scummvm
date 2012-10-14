@@ -93,8 +93,8 @@ void Menu::setDestinationText(int roomId) {
 		roomId = LANDING;
 
 	int destinationId = 0;
-	for (; (destinationId < 7) && (g_vm->_v_lieu[destinationId][roomId]); ++destinationId) {
-		nomp = g_vm->getString(g_vm->_v_lieu[destinationId][roomId] + kMenuPlaceStringIndex);
+	for (; (destinationId < 7) && (g_vm->_destinationArray[destinationId][roomId]); ++destinationId) {
+		nomp = g_vm->getString(g_vm->_destinationArray[destinationId][roomId] + kMenuPlaceStringIndex);
 		while (nomp.size() < 20)
 			nomp += ' ';
 		setText(_moveMenu[destinationId + 1], nomp);
@@ -178,7 +178,7 @@ void Menu::displayMenu() {
 	g_vm->_mouse.hideMouse();
 
 	g_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
-	col = 28 * g_vm->_res;
+	col = 28 * g_vm->_resolutionScaler;
 	if (g_vm->_currGraphicalDevice == MODE_CGA)
 		color = 1;
 	else
@@ -207,7 +207,7 @@ void Menu::displayMenu() {
 			} while (k != 3);
 			++y;
 		} while (y != 9);
-		col += 48 * g_vm->_res;
+		col += 48 * g_vm->_resolutionScaler;
 	} while (num_letr != 6);
 	g_vm->_mouse.showMouse();
 }
@@ -284,14 +284,14 @@ void Menu::util(Common::Point pos) {
 
 	int ymx = (_menuConstants[_msg3 - 1][3] << 3) + 16;
 	int dxcar = _menuConstants[_msg3 - 1][2];
-	int xmn = (_menuConstants[_msg3 - 1][0] << 2) * g_vm->_res;
+	int xmn = (_menuConstants[_msg3 - 1][0] << 2) * g_vm->_resolutionScaler;
 
 	int ix;
-	if (g_vm->_res == 1)
+	if (g_vm->_resolutionScaler == 1)
 		ix = 5;
 	else
 		ix = 3;
-	int xmx = dxcar * ix * g_vm->_res + xmn + 2;
+	int xmx = dxcar * ix * g_vm->_resolutionScaler + xmn + 2;
 	if ((pos.x > xmn) && (pos.x < xmx) && (pos.y < ymx) && (pos.y > 15)) {
 		ix = (((uint)pos.y >> 3) - 1) + (_msg3 << 8);
 		if (ix != _msg4) {
@@ -321,7 +321,7 @@ void Menu::menuDown(int ii) {
 	g_vm->_mouse.hideMouse();
 	g_vm->sauvecr(10, (_menuConstants[ii - 1][1] + 1) << 1);
 	xco = xco << 3;
-	if (g_vm->_res == 1)
+	if (g_vm->_resolutionScaler == 1)
 		cx = 10;
 	else
 		cx = 6;
@@ -433,24 +433,24 @@ void Menu::mdn() {
 			g_vm->_prevPos = curPos;
 
 		bool tes =  (curPos.y < 11)
-		   && ((curPos.x >= (28 * g_vm->_res) && curPos.x <= (28 * g_vm->_res + 24))
-		   ||  (curPos.x >= (76 * g_vm->_res) && curPos.x <= (76 * g_vm->_res + 24))
-		   || ((curPos.x > 124 * g_vm->_res) && (curPos.x < 124 * g_vm->_res + 24))
-		   || ((curPos.x > 172 * g_vm->_res) && (curPos.x < 172 * g_vm->_res + 24))
-		   || ((curPos.x > 220 * g_vm->_res) && (curPos.x < 220 * g_vm->_res + 24))
-		   || ((curPos.x > 268 * g_vm->_res) && (curPos.x < 268 * g_vm->_res + 24)));
+		   && ((curPos.x >= (28 * g_vm->_resolutionScaler) && curPos.x <= (28 * g_vm->_resolutionScaler + 24))
+		   ||  (curPos.x >= (76 * g_vm->_resolutionScaler) && curPos.x <= (76 * g_vm->_resolutionScaler + 24))
+		   || ((curPos.x > 124 * g_vm->_resolutionScaler) && (curPos.x < 124 * g_vm->_resolutionScaler + 24))
+		   || ((curPos.x > 172 * g_vm->_resolutionScaler) && (curPos.x < 172 * g_vm->_resolutionScaler + 24))
+		   || ((curPos.x > 220 * g_vm->_resolutionScaler) && (curPos.x < 220 * g_vm->_resolutionScaler + 24))
+		   || ((curPos.x > 268 * g_vm->_resolutionScaler) && (curPos.x < 268 * g_vm->_resolutionScaler + 24)));
 		if (tes) {
 			int ix;
 
-			if (curPos.x < 76 * g_vm->_res)
+			if (curPos.x < 76 * g_vm->_resolutionScaler)
 				ix = MENU_INVENTORY;
-			else if (curPos.x < 124 * g_vm->_res)
+			else if (curPos.x < 124 * g_vm->_resolutionScaler)
 				ix = MENU_MOVE;
-			else if (curPos.x < 172 * g_vm->_res)
+			else if (curPos.x < 172 * g_vm->_resolutionScaler)
 				ix = MENU_ACTION;
-			else if (curPos.x < 220 * g_vm->_res)
+			else if (curPos.x < 220 * g_vm->_resolutionScaler)
 				ix = MENU_SELF;
-			else if (curPos.x < 268 * g_vm->_res)
+			else if (curPos.x < 268 * g_vm->_resolutionScaler)
 				ix = MENU_DISCUSS;
 			else
 				ix = MENU_FILE;

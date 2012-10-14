@@ -71,7 +71,7 @@ int Alert::show(const Common::String &msg, int n) {
 			while ((alertStr[i + 1] != '\174') && (alertStr[i + 1] != '\135')) {
 				++i;
 				displayStr += alertStr[i];
-				if (g_vm->_res == 2)
+				if (g_vm->_resolutionScaler == 2)
 					curPos.x -= 3;
 				else
 					curPos.x -= 5;
@@ -95,12 +95,12 @@ int Alert::show(const Common::String &msg, int n) {
 	int limit[3][3];
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 
-	limit[1][1] = ((uint)(coldep) / 2) * g_vm->_res;
+	limit[1][1] = ((uint)(coldep) / 2) * g_vm->_resolutionScaler;
 	limit[1][2] = limit[1][1] + 40;
 	if (caseNumb == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
-		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * g_vm->_res;
+		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * g_vm->_resolutionScaler;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
 	g_vm->_mouse.showMouse();
@@ -221,7 +221,7 @@ void Alert::decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &li
 	}
 	++i;
 	choiceListStr = g_vm->copy(inputStr, i, 30);
-	if (g_vm->_res == 2)
+	if (g_vm->_resolutionScaler == 2)
 		col *= 6;
 	else
 		col *= 10;
@@ -303,7 +303,7 @@ bool KnowledgeCheck::show() {
 		g_vm->hirs();
 		g_vm->_mouse.showMouse();
 		int dialogHeight;
-		if (g_vm->_res == 1)
+		if (g_vm->_resolutionScaler == 1)
 			dialogHeight = 29;
 		else
 			dialogHeight = 23;
@@ -335,7 +335,7 @@ bool KnowledgeCheck::show() {
 		}
 
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
-			coor[j]._rect = Common::Rect(45 * g_vm->_res, 27 + j * 8, (maxLength * 3 + 55) * g_vm->_res, 34 + j * 8);
+			coor[j]._rect = Common::Rect(45 * g_vm->_resolutionScaler, 27 + j * 8, (maxLength * 3 + 55) * g_vm->_resolutionScaler, 34 + j * 8);
 			coor[j]._enabled = true;
 
 			while ((int)choiceArray[j].size() < maxLength) {
@@ -344,7 +344,7 @@ bool KnowledgeCheck::show() {
 		}
 		coor[lastOption - firstOption + 2]._enabled = false;
 		int rep;
-		if (g_vm->_res == 1)
+		if (g_vm->_resolutionScaler == 1)
 			rep = 10;
 		else
 			rep = 6;
@@ -473,7 +473,7 @@ void f3f8::ani50() {
 	g_vm->pictout(kAdrAni, g_vm->_crep, 63, 12);
 	g_vm->_crep = g_vm->animof(2, 1);
 	g_vm->pictout(kAdrAni, g_vm->_crep, 63, 12);
-	g_vm->_largestClearScreen = (g_vm->_res == 1);
+	g_vm->_largestClearScreen = (g_vm->_resolutionScaler == 1);
 	g_vm->handleDescriptionText(2, kDialogStringIndex + 143);
 }
 
