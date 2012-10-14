@@ -4276,7 +4276,7 @@ int ObjectsManager::MZONE() {
 		}
 		if (v19 == -1)
 			goto LABEL_58;
-		for (j = yp; _vm->_graphicsManager.max_y > j; ++j) {
+		for (j = yp; j < _vm->_graphicsManager.max_y; ++j) {
 			v18 = colision(xp, j);
 			if (v18 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
 				break;
@@ -7876,7 +7876,7 @@ int ObjectsManager::colision(int xp, int yp) {
 					flag = false;
 				if (v1 >= v3 && (xMin > v1 || xMax < v3))
 					flag = false;
-				if (v2 < v4 && (v2 < yMax || yMin > v4))
+				if (v2 < v4 && (yMax < v2 || yMin > v4))
 					flag = false;
 				if (v2 >= v4 && (yMin > v2 || yMax < v4))
 					flag = false;
