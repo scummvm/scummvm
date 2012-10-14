@@ -1702,7 +1702,7 @@ void MortevielleEngine::loseGame() {
 bool MortevielleEngine::checkInventory(int objectId) {
 	bool retVal = false;
 	for (int i = 1; i <= 6; ++i)
-		retVal = (retVal || (ord(_coreVar._sjer[i]) == objectId));
+		retVal = (retVal || (_coreVar._inventory[i] == objectId));
 
 	if (_coreVar._selectedObjectId == objectId)
 		retVal = true;
@@ -2234,7 +2234,7 @@ Common::String MortevielleEngine::getString(int num) {
 	Common::String wrkStr = "";
 
 	if (num < 0) {
-		warning("deline: num < 0! Skipping");
+		warning("getString(%d): num < 0! Skipping", num);
 	} else if (!_txxFileFl) {
 		wrkStr = getGameString(num);
 	} else {
@@ -2285,9 +2285,11 @@ void MortevielleEngine::resetVariables() {
 	_coreVar._currPlace = MANOR_FRONT;
 
 	for (int i = 2; i <= 6; ++i)
-		_coreVar._sjer[i] = chr(0);
+		_coreVar._inventory[i] = 0;
 
-	_coreVar._sjer[1] = chr(113);
+	// Only object in inventory: a gun
+	_coreVar._inventory[1] = 113;
+
 	_coreVar._fullHour = chr(20);
 
 	for (int i = 1; i <= 10; ++i)
@@ -3361,7 +3363,8 @@ void MortevielleEngine::drawPictureWithText() {
  */
 void MortevielleEngine::testKey(bool d) {
 	bool quest = false;
-	int x, y, c;
+	int x, y;
+	bool click;
 
 	_mouse.hideMouse();
 	fenat('K');
@@ -3371,18 +3374,18 @@ void MortevielleEngine::testKey(bool d) {
 		_key = testou();
 
 	do {
-		_mouse.getMousePosition(x, y, c);
+		_mouse.getMousePosition(x, y, click);
 		keyPressed();
-	} while (c != 0);
+	} while (click);
 
 	// Event loop
 	do {
 		if (d)
 			prepareRoom();
 		quest = keyPressed();
-		_mouse.getMousePosition(x, y, c);
+		_mouse.getMousePosition(x, y, click);
 		CHECK_QUIT;
-	} while (!(quest || (c != 0) || (d && _anyone)));
+	} while (!(quest || (click) || (d && _anyone)));
 	if (quest)
 		testou();
 	setMouseClick(false);
@@ -3506,16 +3509,21 @@ void MortevielleEngine::ajchai() {
 		_crep = 192;
 }
 
-void MortevielleEngine::ajjer(int ob) {
-	int cx = 0;
+/**
+ * Check if inventory is full and, if not, add object in it.
+ * @remarks	Originally called 'ajjer'
+ */
+void MortevielleEngine::addObjectToInventory(int objectId) {
+	int i = 0;
 	do {
-		++cx;
-	} while ((cx <= 5) && (ord(_coreVar._sjer[cx]) != 0));
+		++i;
+	} while ((i <= 5) && (_coreVar._inventory[i] != 0));
 
-	if (ord(_coreVar._sjer[cx]) == 0) {
-		_coreVar._sjer[(cx)] = chr(ob);
+	if (_coreVar._inventory[i] == 0) {
+		_coreVar._inventory[i] = objectId;
 		_menu.setInventoryText();
 	} else
+		// Inventory is full
 		_crep = 139;
 }
 
@@ -3715,8 +3723,9 @@ void MortevielleEngine::treg(int objId) {
 void MortevielleEngine::putInHand(int &objId) {
 	_crep = 999;
 	if (_coreVar._selectedObjectId != 0)
-		ajjer(_coreVar._selectedObjectId);
+		addObjectToInventory(_coreVar._selectedObjectId);
 
+	// If inventory wasn't full
 	if (_crep != 139) {
 		displayItemInHand(objId + 400);
 		_coreVar._selectedObjectId = objId;

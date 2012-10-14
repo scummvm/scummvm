@@ -187,7 +187,7 @@ struct SaveStruct {
 	int _faithScore;
 	byte _pourc[11];
 	byte _teauto[43];
-	byte _sjer[31];
+	byte _inventory[31];
 	int _currPlace;
 	int _atticBallHoleObjectId;
 	int _atticRodHoleObjectId;
@@ -441,7 +441,7 @@ private:
 	void tlu(int af, int ob);
 	void affrep();
 	void mennor();
-	void ajjer(int ob);
+	void addObjectToInventory(int objectId);
 	void tsuiv();
 	void treg(int objId);
 	void putInHand(int &objId);
@@ -469,7 +469,6 @@ public:
 	int _res;
 	int _caff;
 	int _crep;
-//	byte _is;
 	byte _v_lieu[7][25];
 
 	// TODO: Replace the following with proper implementations, or refactor out the code using them

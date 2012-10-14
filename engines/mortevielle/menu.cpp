@@ -576,14 +576,13 @@ void Menu::unsetSearchMenu() {
  * @remarks	Originally called 'modinv'
  */
 void Menu::setInventoryText() {
-	int r;
 	Common::String nomp;
 
 	int cy = 0;
 	for (int i = 1; i <= 6; ++i) {
-		if (g_vm->_coreVar._sjer[i] != chr(0)) {
+		if (g_vm->_coreVar._inventory[i] != 0) {
 			++cy;
-			r = (ord(g_vm->_coreVar._sjer[i]) + 400);
+			int r = g_vm->_coreVar._inventory[i] + 400;
 			nomp = g_vm->getString(r - 501 + kInventoryStringIndex);
 			setText(_inventoryMenu[cy], nomp);
 			enableMenuItem(_inventoryMenu[i]);

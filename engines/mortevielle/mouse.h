@@ -43,7 +43,7 @@ public:
 	void hideMouse();
 	void showMouse();
 	void setMousePosition(Common::Point newPos);
-	void getMousePosition(int &x, int &y, int &c);
+	void getMousePosition(int &x, int &y, bool &click);
 	void moveMouse(bool &funct, char &key);
 	bool isMouseIn(Common::Rect r);
 };

@@ -50,7 +50,7 @@ void SavegameManager::sync_save(Common::Serializer &sz) {
 	for (int i = 0; i < 43; ++i)
 		sz.syncAsByte(g_vm->_saveStruct._teauto[i]);
 	for (int i = 0; i < 31; ++i)
-		sz.syncAsByte(g_vm->_saveStruct._sjer[i]);
+		sz.syncAsByte(g_vm->_saveStruct._inventory[i]);
 
 	sz.syncAsSint16LE(g_vm->_saveStruct._currPlace);
 	sz.syncAsSint16LE(g_vm->_saveStruct._atticBallHoleObjectId);
