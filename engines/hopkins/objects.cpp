@@ -7891,7 +7891,7 @@ int ObjectsManager::colision(int xp, int yp) {
 					}
 				}
 			}
-		} while (++field2 < _vm->_globals.Segment[idx].field4);
+		} while (++field2 <= _vm->_globals.Segment[idx].field4);
 	}
 
 	return -1;
