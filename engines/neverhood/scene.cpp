@@ -208,7 +208,7 @@ void Scene::insertMouse433(uint32 fileHash, NRect *mouseRect) {
 	NRect rect(-1, -1, -1, -1);
 	if (mouseRect)
 		rect = *mouseRect;
-	_mouseCursor = new Mouse(_vm, 0x0820C408, rect);
+	_mouseCursor = new Mouse(_vm, fileHash, rect);
 	addEntity(_mouseCursor);
 }
 
