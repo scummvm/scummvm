@@ -126,11 +126,9 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 	int v23;
 	char v24; 
 	int v25; 
-	int v26; 
 	int v27; 
 	int v28; 
 	int v29; 
-	int v30;
 	int v31; 
 	int v32; 
 	int v33; 
@@ -153,8 +151,8 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 	int v54; 
 	int v55; 
 	int v56; 
-	int v57; 
-	int v58; 
+	int lineSize; 
+	int lineCount; 
 	byte *v59; 
 	byte *v60; 
 	byte *v61; 
@@ -177,7 +175,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 
 	v73 = xp;
 	v70 = yp;
-	v58 = 0;
+	lineCount = 0;
 	if (idx < 0)
 		error("Bad number for text");
 	_vm->_globals.police_l = 11;
@@ -191,7 +189,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 			if (Txt[idx].field12 > 0) {
 				do {
 					v40 = idx;
-					TEXT_NOW1(xp + 5, v72, Txt[idx].field14[v38], Txt[idx].field40A);
+					TEXT_NOW1(xp + 5, v72, Txt[idx].lines[v38], Txt[idx].field40A);
 					v72 += _vm->_globals.police_h + 1;
 					++v38;
 					idx = v40;
@@ -281,9 +279,8 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 		if (v69) {
 			while (1) {
 				v14 = *(v60 + v64);
-				if (v14 == 10 || v14 == 13) {
+				if (v14 == '\r' || v14 == '\n') {
 					*(v60 + v64) = 0;
-//					v11 = (int)Txt;
 					if (!Txt[idx].field3FE)
 						break;
 				}
@@ -310,13 +307,10 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 				v17 = -v17;
 			Txt[idx].xp = 320 - v17;
 			v73 = _vm->_eventsManager.start_x + 320 - v17;
-			v58 = 1;
+			lineCount = 1;
 			v18 = 0;
 			if (v64 + 1 > 0) {
-				do {
-					Txt[idx].field14[v18] = *(v60 + v18);
-					++v18;
-				} while (v18 < v64 + 1);
+				Txt[idx].lines[0] = Common::String((const char *)v60, v64);
 			}
 		} else {
 LABEL_43:
@@ -328,31 +322,31 @@ LABEL_43:
 				v19 = 0;
 				ptrb = _vm->_globals.largeur_boite - 4;
 				while (1) {
-					v57 = v19;
+					lineSize = v19;
 					do
 						v11 = *(v61 + v65 + v19++);
 					while (v11 != 32 && v11 != 37);
 					if (v19 >= ptrb / _vm->_globals.police_l)
 						break;
-					if (v11 == 37) {
+					if (v11 == '%') {
 						if (v19 < ptrb / _vm->_globals.police_l)
 							goto LABEL_55;
 						break;
 					}
 				}
-				if (v11 != 37)
+				if (v11 != '%')
 					goto LABEL_57;
 				v11 = 32;
 LABEL_55:
-				if (v11 == 37)
-					v57 = v19;
+				if (v11 == '%')
+					lineSize = v19;
 LABEL_57:
-				v20 = v58;
+				v20 = lineCount;
 				v21 = v11;
-				Txt[idx].field14[v20] = Common::String((const char *)v61 + v65, v57);
-				TRIER_TEXT[v58++] = v57;
+				Txt[idx].lines[v20] = Common::String((const char *)v61 + v65, lineSize);
+				TRIER_TEXT[lineCount++] = lineSize;
 
-				v65 += v57;
+				v65 += lineSize;
 				v11 = v21;
 			} while (v21 != 37);
 			v66 = 0;
@@ -365,7 +359,7 @@ LABEL_57:
 					v23 = 0;
 					if (v22 - 1 > 0) {
 						do {
-							v24 = Txt[idx].field14[v66][v23];
+							v24 = Txt[idx].lines[v66][v23];
 							if ((byte)v24 <= 0x1Fu)
 								v24 = 32;
 							ptrc += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, (byte)v24 - 32);
@@ -412,20 +406,19 @@ LABEL_57:
 				Txt[idx].xp = v73;
 			}
 		}
-		_vm->_globals.hauteur_boite = (_vm->_globals.police_h + 1) * v58 + 2;
+		_vm->_globals.hauteur_boite = (_vm->_globals.police_h + 1) * lineCount + 2;
 		v56 = v73;
 		v55 = yp;
 		v53 = _vm->_globals.largeur_boite + 10;
-		v51 = (_vm->_globals.police_h + 1) * v58 + 12;
-		v26 = 1036 * idx;
+		v51 = (_vm->_globals.police_h + 1) * lineCount + 12;
 		if (Txt[idx].field3FC == 6) {
 			v27 = v53 / 2;
 			if (v27 < 0)
 				v27 = -v27;
-			Txt[v26].xp = 315 - v27;
+			Txt[idx].xp = 315 - v27;
 			v28 = _vm->_eventsManager.start_x + 315 - v27;
 			v73 = _vm->_eventsManager.start_x + 315 - v27;
-			Txt[v26].yp = 50;
+			Txt[idx].yp = 50;
 			v70 = 50;
 			v55 = 50;
 			v56 = v28;
@@ -447,16 +440,15 @@ LABEL_57:
 			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v56, v70, v51, (byte)-2);
 			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v53 + v56, v70, v51, (byte)-2);
 		}
-		Txt[idx].field12 = v58;
+		Txt[idx].field12 = lineCount;
 		v75 = v73 + 5;
 		v71 = v70 + 5;
-		v30 = 0;
-		if (v58 > 0) {
-			do {
-				TEXT_NOW1(v75, v71, Txt[idx].field14[v30], Txt[idx].field40A);
+
+		if (lineCount > 0) {
+			for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
+				TEXT_NOW1(v75, v71, Txt[idx].lines[lineNum], Txt[idx].field40A);
 				v71 += _vm->_globals.police_h + 1;
-				++v30;
-			} while (v58 > v30);
+			}
 		}
 		v54 = v53 + 1;
 		v52 = v51 + 1;

@@ -40,7 +40,7 @@ struct TxtItem {
 	int fieldE;
 	int field10;
 	int field12;
-	Common::String field14[10];
+	Common::String lines[10];
 	int field3FC;
 	int field3FE;
 	byte *field400;
