@@ -42,11 +42,10 @@ SpriteResource::~SpriteResource() {
 
 void SpriteResource::draw(byte *dest, int destPitch, bool flipX, bool flipY) {
 	if (_pixels) {
-		if (_rle) {
+		if (_rle)
 			unpackSpriteRle(_pixels, _dimensions.width, _dimensions.height, dest, destPitch, flipX, flipY);
-		} else {
+		else
 			unpackSpriteNormal(_pixels, _dimensions.width, _dimensions.height, dest, destPitch, flipX, flipY);
-		}
 	}
 }
 
@@ -164,7 +163,7 @@ void AnimResource::draw(uint frameIndex, byte *dest, int destPitch, bool flipX, 
 	_width = frameInfo.rect.width;
 	_height = frameInfo.rect.height;
 	if (_replEnabled && _replOldColor != _replNewColor)
-		unpackSpriteRleRepl(_currSpriteData, _width, _height, dest, destPitch, _replOldColor, _replNewColor, flipX, flipY);
+		unpackSpriteRle(_currSpriteData, _width, _height, dest, destPitch, flipX, flipY, _replOldColor, _replNewColor);
 	else
 		unpackSpriteRle(_currSpriteData, _width, _height, dest, destPitch, flipX, flipY);
 }

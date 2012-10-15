@@ -416,6 +416,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene::update);
 
 	if (getGlobalVar(V_RING5_PULLED) == 0) {
+		// Display the disabled radio; only possible when the left door is open
 		insertStaticSprite(0x0001264C, 100);
 	}
 
@@ -627,7 +628,7 @@ uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x0002: // TODO Implement button up event
+	case 0x0002:
 		if (_countdown1 == 0)
 			_countdownType = 0;
 		else {
@@ -1545,7 +1546,7 @@ AsScene2804CrystalWaves::AsScene2804CrystalWaves(NeverhoodEngine *vm, uint cryst
 	_y = kAsScene2804CrystalWavesPoints[crystalIndex].y;
 	createSurface1(0x840C41F0, 1200);
 	if (crystalIndex & 1)
-		setDoDeltaX(1);
+		setDoDeltaY(1);
 	setVisible(false);
 	_needRefresh = true;
 	SetUpdateHandler(&AnimatedSprite::update);

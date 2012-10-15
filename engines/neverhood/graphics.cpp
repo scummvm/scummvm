@@ -207,6 +207,14 @@ int16 TextSurface::getStringWidth(const byte *string, int stringLen) {
 
 // Misc
 
+enum BitmapFlags {
+	BF_RLE				= 1,
+	BF_HAS_DIMENSIONS	= 2,
+	BF_HAS_POSITION		= 4,
+	BF_HAS_PALETTE		= 8,
+	BF_HAS_IMAGE		= 16
+};
+
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels) {
 
 	uint16 flags;
@@ -215,9 +223,9 @@ void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoin
 	sprite += 2;
 
 	if (rle)
-		*rle = flags & 1;
+		*rle = flags & BF_RLE;
 
-	if (flags & 2) {
+	if (flags & BF_HAS_DIMENSIONS) {
 		if (dimensions) {
 			dimensions->width = READ_LE_UINT16(sprite);
 			dimensions->height = READ_LE_UINT16(sprite + 2);
@@ -228,7 +236,7 @@ void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoin
 		dimensions->height = 1;
 	}
 
-	if (flags & 4) {
+	if (flags & BF_HAS_POSITION) {
 		if (position) {
 			position->x = READ_LE_UINT16(sprite);
 			position->y = READ_LE_UINT16(sprite + 2);
@@ -239,14 +247,14 @@ void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoin
 		position->y = 0;
 	}
 
-	if (flags & 8) {
+	if (flags & BF_HAS_PALETTE) {
 		if (palette)
 			*palette = sprite;
 		sprite += 1024;
 	} else if (palette)
 		*palette = NULL;
 
-	if (flags & 0x10) {
+	if (flags & BF_HAS_IMAGE) {
 		if (pixels)
 			*pixels = sprite;
 	} else if (pixels)
@@ -254,17 +262,22 @@ void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoin
 
 }
 
-void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
+void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY, byte oldColor, byte newColor) {
 
-	// TODO: Flip Y
+	const bool replaceColors = oldColor != newColor;
 
 	int16 rows, chunks;
 	int16 skip, copy;
 
+	if (flipY) {
+		dest += destPitch * (height - 1);
+		destPitch = -destPitch;
+	}
+
 	rows = READ_LE_UINT16(source);
 	chunks = READ_LE_UINT16(source + 2);
 	source += 4;
-
+	
 	do {
 		if (chunks == 0) {
 			dest += rows * destPitch;
@@ -286,49 +299,10 @@ void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPi
 					source += copy;
 				}
 				dest += destPitch;
-			}
-		}
-		rows = READ_LE_UINT16(source);
-		chunks = READ_LE_UINT16(source + 2);
-		source += 4;
-	} while (rows > 0);
-
-}
-
-void unpackSpriteRleRepl(byte *source, int width, int height, byte *dest, int destPitch, byte oldColor, byte newColor, bool flipX, bool flipY) {
-
-	// TODO: Flip Y
-	
-	int16 rows, chunks;
-	int16 skip, copy;
-
-	rows = READ_LE_UINT16(source);
-	chunks = READ_LE_UINT16(source + 2);
-	source += 4;
-
-	do {
-		if (chunks == 0) {
-			dest += rows * destPitch;
-		} else {
-			while (rows-- > 0) {
-				uint16 rowChunks = chunks;
-				while (rowChunks-- > 0) {
-					skip = READ_LE_UINT16(source);
-					copy = READ_LE_UINT16(source + 2);
-					source += 4;
-					if (!flipX) {
-						for (int xc = 0; xc < copy; xc++) {
-							dest[skip + xc] = source[xc] == oldColor ? newColor : source[xc];
-						}
-					} else {
-						byte *flipDest = dest + width - skip - 1;
-						for (int xc = 0; xc < copy; xc++) {
-							*flipDest-- = source[xc] == oldColor ? newColor : source[xc];
-						}
-					}
-					source += copy;
-				}
-				dest += destPitch;
+				if (replaceColors)
+					for (int xc = 0; xc < width; xc++)
+						if (dest[xc] == oldColor)
+							dest[xc] = newColor;
 			}
 		}
 		rows = READ_LE_UINT16(source);
