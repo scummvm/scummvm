@@ -172,7 +172,7 @@ protected:
 	Sprite *_asRightDoor;
 	Sprite *_asTape;
 	Sprite *_asKlaymanHead;
-	bool _flag;
+	bool _creatureExploded;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

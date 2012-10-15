@@ -1448,7 +1448,7 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_symbolPosition >= 12) {
 				if (testVars()) {
 					playSound(0);
-					setGlobalVar(0x2C531AF8, 1);
+					setGlobalVar(V_CODE_SYMBOLS_SOLVED, 1);
 					_isSolved = true;
 				} else {
 					_symbolPosition = 0;

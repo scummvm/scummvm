@@ -45,7 +45,6 @@ enum {
 	V_COLUMN_TEXT_NAME			= 0xC8C28808,
 	V_CLICKED_COLUMN_INDEX		= 0x48A68852,
 	V_CLICKED_COLUMN_ROW		= 0x49C40058,
-	V_MUSIC_NAME				= 0x89A82A15,
 	// Klayman
 	V_KLAYMAN_SMALL				= 0x1860C990,			// Is Klayman small?
 	V_KLAYMAN_FRAMEINDEX		= 0x18288913,
@@ -64,10 +63,12 @@ enum {
 	V_NOTES_PUZZLE_SOLVED		= 0x86615030,
 	V_TILE_PUZZLE_SOLVED		= 0x404290D5,
 	V_STAIRS_PUZZLE_SOLVED		= 0xA9035F60,
+	V_CODE_SYMBOLS_SOLVED		= 0x2C531AF8,
 	V_SPIKES_RETRACTED			= 0x18890C91,
 	V_LARGE_DOOR_NUMBER			= 0x9A500914,			// Number of the currently "large" door
 	V_LIGHTS_ON					= 0x4D080E54,
 	V_SHRINK_LIGHTS_ON			= 0x190A1D18,			// Lights on in the room with the shrinking device
+	V_STAIRS_DOWN_ONCE			= 0x2050861A,			// Stairs have been down once before
 	V_STAIRS_DOWN				= 0x09221A62,
 	V_LADDER_DOWN				= 0x0018CA22,			// Is the ladder in the statue room down?
 	V_LADDER_DOWN_ACTION		= 0x00188211,
@@ -88,7 +89,16 @@ enum {
 	V_TNT_DUMMY_BUILT			= 0x000CF819,			// Are all TNT parts on the dummy?
 	V_TNT_DUMMY_FUSE_LIT		= 0x20A0C516,
 	V_RADIO_ENABLED				= 0x4DE80AC0,
-	V_CREATURE_EXPLODED			= 0x2A02C07B,
+	V_SEEN_CREATURE_EXPLODE_VID	= 0x2A02C07B,
+	V_CREATURE_EXPLODED			= 0x0A18CA33,
+	V_UNUSED					= 0x89C669AA,			// Seems to be unused, confirmed by checking the exe for this constant value (still left in atm)
+	// Radio
+	V_RADIO_ROOM_LEFT_DOOR		= 0x09880D40,
+	V_RADIO_ROOM_RIGHT_DOOR		= 0x08180ABC,
+	V_CURR_RADIO_MUSIC_INDEX	= 0x08CC0828,
+	V_GOOD_RADIO_MUSIC_INDEX	= 0x88880915,
+	V_GOOD_RADIO_MUSIC_NAME		= 0x89A82A15,
+	V_RADIO_MOVE_DISH_VIDEO		= 0x28D8C940,
 	// Match
 	V_MATCH_STATUS				= 0x0112090A,
 	// Venus fly trap
@@ -111,6 +121,10 @@ enum {
 	V_PROJECTOR_SLOT			= 0x04A10F33,			// Projector x slot index
 	V_PROJECTOR_LOCATION		= 0x04A105B3,			// Projector scene location
 	V_PROJECTOR_ACTIVE			= 0x12A10DB3,			// Is the projecor projecting?
+	// Teleporter
+	V_TELEPORTER_CURR_LOCATION	= 0x0152899A,
+	V_TELEPORTER_WHICH			= 0x60826830,
+	V_TELEPORTER_DEST_AVAILABLE	= 0x2C145A98,
 	// Inventory
 	V_HAS_NEEDLE				= 0x31C63C51,			// Has Klayman the needle?
 	V_HAS_FINAL_KEY				= 0xC0780812,			// Has Klayman the key from the diskplayer?

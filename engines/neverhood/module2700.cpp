@@ -458,8 +458,8 @@ void Module2700::updateScene() {
 		case 21:
 			if (!_flag1) {
 				_vm->_soundMan->stopMusic(0x04020210, 0, 1);
-				// TODO _vm->gameModule()->initScene2801Vars();
-				_musicFileHash = getGlobalVar(V_MUSIC_NAME);
+				_vm->gameModule()->initScene2801Vars();
+				_musicFileHash = getGlobalVar(V_GOOD_RADIO_MUSIC_NAME);
 				// TODO? GameState_sub_469C50(&field_52, 0);
 				// TODO MusicMan_create(); // Why?
 				_vm->_soundMan->addMusic(0x42212411, _musicFileHash);

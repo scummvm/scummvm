@@ -36,7 +36,7 @@ public:
 	Module2900(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
 	int _sceneNum;
-	int _field2C;
+	int _teleporterModuleResult;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	void updateMusic(bool halfVolume);

@@ -35,7 +35,7 @@ Module2900::Module2900(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 
 	if (which >= 0)
-		setGlobalVar(0x60826830, which);
+		setGlobalVar(V_TELEPORTER_WHICH, which);
 		
 	createScene(0, 0);
 
@@ -47,7 +47,7 @@ void Module2900::createScene(int sceneNum, int which) {
 	switch (_sceneNum) {
 	case 0:
 		_vm->gameState().sceneNum = 0;
-		_childObject = new Scene2901(_vm, this, getGlobalVar(0x60826830));
+		_childObject = new Scene2901(_vm, this, getGlobalVar(V_TELEPORTER_WHICH));
 		break;
 	case 1:
 		_vm->gameState().sceneNum = 0;
@@ -85,8 +85,8 @@ void Module2900::updateScene() {
 			if (_moduleResult == 0xFFFFFFFF) {
 				leaveModule(0xFFFFFFFF);
 			} else {
-				_field2C = _moduleResult;
-				switch (getGlobalVar(0x60826830)) {
+				_teleporterModuleResult = _moduleResult;
+				switch (getGlobalVar(V_TELEPORTER_WHICH)) {
 				case 0:
 					createScene(3, 4);
 					break;
@@ -117,7 +117,7 @@ void Module2900::updateScene() {
 		case 4:
 		case 5:
 		case 6:
-			leaveModule(_field2C);
+			leaveModule(_teleporterModuleResult);
 			break;
 		}
 	}
@@ -391,15 +391,15 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	//DEBUG>>> Enable all locations
 	for (int i = 0; i < 6; i++)
-		setSubVar(0x2C145A98, i, 1);
+		setSubVar(V_TELEPORTER_DEST_AVAILABLE, i, 1);
 	//DEBUG<<<
 
-	setSubVar(0x2C145A98, which, 1);
-	setSubVar(0x2C145A98, 5, 1);
-	setSubVar(0x2C145A98, 4, 1);
+	setSubVar(V_TELEPORTER_DEST_AVAILABLE, which, 1);
+	setSubVar(V_TELEPORTER_DEST_AVAILABLE, 5, 1);
+	setSubVar(V_TELEPORTER_DEST_AVAILABLE, 4, 1);
 
 	if (_currLocationButtonNum == 3)
-		setSubVar(0x2C145A98, 2, 1);
+		setSubVar(V_TELEPORTER_DEST_AVAILABLE, 2, 1);
 
 	_surfaceFlag = true;
 	setBackground(kScene2901FileHashes1[_currLocationButtonNum]);
@@ -432,7 +432,7 @@ void Scene2901::update() {
 		if (_currLocationButtonNum == _selectedButtonNum) {
 			_ssLocationButtonLights[_currWhirlButtonNum]->hide();
 			++_currWhirlButtonNum;
-			while (!getSubVar(0x2C145A98, _currWhirlButtonNum) || (_currWhirlButtonNum == 2 && _isButton2Broken) || _currLocationButtonNum == _currWhirlButtonNum) {
+			while (!getSubVar(V_TELEPORTER_DEST_AVAILABLE, _currWhirlButtonNum) || (_currWhirlButtonNum == 2 && _isButton2Broken) || _currLocationButtonNum == _currWhirlButtonNum) {
 				++_currWhirlButtonNum;
 				if (_currWhirlButtonNum >= 6)
 					_currWhirlButtonNum = 0;
@@ -474,7 +474,7 @@ uint32 Scene2901::handleMessage(int messageNum, const MessageParam &param, Entit
 			_selectedButtonNum = _currWhirlButtonNum;
 		_ssLocationButtonLights[_selectedButtonNum]->hide();
 		_selectedButtonNum = param.asInteger();
-		if (!getSubVar(0x2C145A98, _selectedButtonNum))
+		if (!getSubVar(V_TELEPORTER_DEST_AVAILABLE, _selectedButtonNum))
 			_selectedButtonNum = _currLocationButtonNum;
 		break;
 	}

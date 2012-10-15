@@ -917,15 +917,15 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (_asPuzzleBox)
 		_asPuzzleBox->setClipRect(0, 0, 640, _ssBridgePart3->getDrawRect().y2());
 
-	if (getGlobalVar(0x4A105B3) == 1) {
+	if (getGlobalVar(V_PROJECTOR_LOCATION) == 1) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
 		_vm->_collisionMan->addSprite(_asProjector);
-		if (getGlobalVar(0x4A10F33) == 4) {
+		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
 			_klayman->processDelta();
 			setMessageList(0x004B0BD0);
-		} else if (getGlobalVar(0x4A10F33) == 0) {
+		} else if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() - 100);
 			_klayman->processDelta();

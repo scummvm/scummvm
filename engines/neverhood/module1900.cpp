@@ -105,7 +105,7 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertStaticSprite(0x40A40168, 100);
 	} else if (getGlobalVar(V_STAIRS_DOWN)) {
 		insertStaticSprite(0x124404C4, 100);
-		setGlobalVar(0x2050861A, 1);
+		setGlobalVar(V_STAIRS_DOWN_ONCE, 1);
 	} else {
 		insertStaticSprite(0x02840064, 100);
 	}

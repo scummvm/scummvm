@@ -276,29 +276,31 @@ void GameModule::initScene2401Vars() {
 
 }
 
+void GameModule::initScene2801Vars() {
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x08C80800)) {
+		int currMusicIndex = _vm->_rnd->getRandomNumber(5 - 1) + 3;
+		setGlobalVar(V_GOOD_RADIO_MUSIC_INDEX, 5 * currMusicIndex);
+		setGlobalVar(V_GOOD_RADIO_MUSIC_NAME, kScene2801MusicFileHashes[currMusicIndex]);
+		setGlobalVar(V_RADIO_ROOM_LEFT_DOOR, 1);
+		setGlobalVar(V_RADIO_ROOM_RIGHT_DOOR, 0);
+		setSubVar(VA_IS_PUZZLE_INIT, 0x08C80800, 1);
+  	}
+}
+
 void GameModule::initScene2808Vars1() {
-
-	// Exit if it's already initialized
-	if (getSubVar(VA_IS_PUZZLE_INIT, 0x20479010))
-		return;
-
-	for (uint i = 0; i < 3; i++)
-		setSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, i, _vm->_rnd->getRandomNumber(3 - 1) + 1);
-
-	setSubVar(VA_IS_PUZZLE_INIT, 0x20479010, 1);
-
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x20479010)) {
+		for (uint i = 0; i < 3; i++)
+			setSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, i, _vm->_rnd->getRandomNumber(3 - 1) + 1);
+		setSubVar(VA_IS_PUZZLE_INIT, 0x20479010, 1);
+	}
 }
 
 void GameModule::initScene2808Vars2() {
-
-	// Exit if it's already initialized
-	if (getSubVar(VA_IS_PUZZLE_INIT, 0x66059818))
-		return;
-
-	for (uint i = 0; i < 3; i++)
-		setSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, i, _vm->_rnd->getRandomNumber(6 - 1) + 1);
-
-	setSubVar(VA_IS_PUZZLE_INIT, 0x66059818, 1);
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x66059818)) {
+		for (uint i = 0; i < 3; i++)
+			setSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, i, _vm->_rnd->getRandomNumber(6 - 1) + 1);
+		setSubVar(VA_IS_PUZZLE_INIT, 0x66059818, 1);
+	}
 }
 
 void GameModule::initScene3009Vars() {
@@ -312,8 +314,8 @@ void GameModule::initScene3009Vars() {
 }
 
 uint32 GameModule::getScene2802MusicFileHash() {
-	uint musicNum = getGlobalVar(0x08CC0828);
-	return (musicNum % 5 != 0) ? 0 : kScene2801MusicFileHashes[CLIP<uint>(musicNum / 5, 0, 17)];
+	uint musicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
+	return (musicIndex % 5 != 0) ? 0 : kScene2801MusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];
 }
 
 
@@ -347,19 +349,21 @@ void GameModule::startup() {
 	// DEBUG>>>
 	/*
 	setGlobalVar(V_SEEN_MUSIC_BOX, 1);
-	setGlobalVar(0x0A18CA33, 0);
-	setGlobalVar(0x0112090A, 0);
-	//setGlobalVar(0x000CF819, 1);
+	setGlobalVar(V_CREATURE_EXPLODED, 0);
+	setGlobalVar(V_MATCH_STATUS, 0);
 	setGlobalVar(V_PROJECTOR_LOCATION, 2);
 	*/
 	//setGlobalVar(V_ENTRANCE_OPEN, 0);
 	//setGlobalVar(V_DOOR_SPIKES_OPEN, 1);
+	setGlobalVar(V_CREATURE_ANGRY, 1);
+	setGlobalVar(V_RADIO_ENABLED, 1);
+	setGlobalVar(V_TNT_DUMMY_BUILT, 1);
 	// <<<DEBUG
 
 #if 1
 	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 2;
-	createModule(2800, -1);
+	_vm->gameState().sceneNum = 0;
+	createModule(1200, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -503,7 +507,7 @@ void GameModule::createModule(int moduleNum, int which) {
 	case 2900:
 		setGlobalVar(V_MODULE_NAME, 0x81100020);
 		if (which >= 0)
-			setGlobalVar(0x0152899A, which);
+			setGlobalVar(V_TELEPORTER_CURR_LOCATION, which);
 		_childObject = new Module2900(_vm, this, which);
 		break;
 	case 3000:
@@ -719,7 +723,7 @@ void GameModule::updateModule() {
 					createModule(1100, 1);
 					break;
 				case 3:
-					setSubVar(0x2C145A98, 2, 1);
+					setSubVar(V_TELEPORTER_DEST_AVAILABLE, 2, 1);
 					createModule(1700, 1);
 					break;
 				case 4:
@@ -731,7 +735,7 @@ void GameModule::updateModule() {
 					break;
 				}
 			} else {
-				switch (getGlobalVar(0x0152899A)) {
+				switch (getGlobalVar(V_TELEPORTER_CURR_LOCATION)) {
 				case 0:
 					createModule(1300, 6);
 					break;
@@ -753,7 +757,7 @@ void GameModule::updateModule() {
 					break;
 				}
 			}
-			setGlobalVar(0x0152899A, 0);
+			setGlobalVar(V_TELEPORTER_CURR_LOCATION, 0);
 			break;
 		case 3000:
 			if (_moduleResult == 1) {

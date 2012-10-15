@@ -62,14 +62,14 @@ public:
 	virtual ~Scene2802();
 protected:
 	SmackerPlayer *_smackerPlayer;
-	uint _smackerFrameNumber;
-	int _countdownType;
+	uint _currRadioMusicIndex;
+	int _currTuneStatus;
 	int _countdown1;
 	int _countdown2;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void incSmackerFrameNumber(int delta);
-	void changeCountdownType(int prevCountdownType, int newCountdownType);
+	void incRadioMusicIndex(int delta);
+	void changeTuneStatus(int prevTuneStatus, int newTuneStatus);
 };
 
 class AsScene2803LightCord : public AnimatedSprite {

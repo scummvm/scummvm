@@ -60,7 +60,7 @@ void Module1200::createScene(int sceneNum, int which) {
 	case 2:
 		_vm->_soundMan->stopMusic(0x62222CAE, 0, 0);
 		createSmackerScene(0x31890001, true, true, false);
-		setGlobalVar(V_CREATURE_EXPLODED, 1);
+		setGlobalVar(V_SEEN_CREATURE_EXPLODE_VID, 1);
 		break;
 	}
 	SetUpdateHandler(&Module1200::updateScene);
@@ -74,7 +74,7 @@ void Module1200::updateScene() {
 			if (_moduleResult == 1) {
 				createScene(1, 0);
 			} else if (_moduleResult == 2) {
-				if (getGlobalVar(0x0A18CA33) && !getGlobalVar(V_CREATURE_EXPLODED)) {
+				if (getGlobalVar(V_CREATURE_EXPLODED) && !getGlobalVar(V_SEEN_CREATURE_EXPLODE_VID)) {
 					createScene(2, -1);
 				} else {
 					leaveModule(1);
@@ -714,7 +714,7 @@ void AsScene1201LeftDoor::stCloseDoor() {
 }
 
 Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _flag(false), _asMatch(NULL), _asTntMan(NULL),
+	: Scene(vm, parentModule, true), _creatureExploded(false), _asMatch(NULL), _asTntMan(NULL),
 	_asCreature(NULL), _asTntManRope(NULL), _asLeftDoor(NULL), _asRightDoor(NULL), _asTape(NULL) {
 
 	int16 topY1, topY2, topY3, topY4;
@@ -772,7 +772,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlayman<KmScene1201>(400, 329);
 		setMessageList(0x004AEC08);
 	} else if (which == 2) {
-		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(0x0A18CA33)) {
+		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 			insertKlayman<KmScene1201>(374, 333);
 			setMessageList(0x004AEC08);
 		} else {
@@ -795,7 +795,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->setClipRect(x1, 0, x2, 480);
 	_klayman->setRepl(64, 0);
 	
-	if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(0x0A18CA33)) {
+	if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 		setBackground(0x4019A2C4);
 		setPalette(0x4019A2C4);
 		_asRightDoor = NULL;
@@ -807,7 +807,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_TNT_DUMMY_BUILT)) {
 		insertStaticSprite(0x10002ED8, 500);
-		if (!getGlobalVar(0x0A18CA33)) {
+		if (!getGlobalVar(V_CREATURE_EXPLODED)) {
 			_asTntMan = insertSprite<AsScene1201TntMan>(this, _asTntManRope, which == 1);
 			_asTntMan->setClipRect(x1, 0, x2, 480);
 			_asTntMan->setRepl(64, 0);
@@ -838,7 +838,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			tntIndex += 3;
 		}
 
-		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(0x0A18CA33)) {
+		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 			setRectList(0x004AEE58);
 		} else {
 			setRectList(0x004AEDC8);
@@ -866,7 +866,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			tntIndex++;
 		}
 
-		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(0x0A18CA33)) {
+		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 			setRectList(0x004AEE18);
 		} else {
 			setRectList(0x004AED88);
@@ -890,7 +890,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_collisionMan->addSprite(_asMatch);
 	}
 
-	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(0x0A18CA33) == 0) {
+	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_CREATURE_EXPLODED) == 0) {
 		_asCreature = insertSprite<AsScene1201Creature>(this, _klayman);
 		_asCreature->setClipRect(x1, 0, x2, 480);
 	}
@@ -898,6 +898,9 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1201::~Scene1201() {
+	if (_creatureExploded)
+		setGlobalVar(V_CREATURE_EXPLODED, 1);
+	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
 }
 
 void Scene1201::update() {
@@ -911,7 +914,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x07053000) {
-			_flag = true;
+			_creatureExploded = true;
 			sendMessage(_asCreature, 0x2004, 0);
 		} else if (param.asInteger() == 0x140E5744) {
 			sendMessage(_asCreature, 0x2005, 0);

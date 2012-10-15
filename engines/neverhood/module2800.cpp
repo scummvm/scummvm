@@ -35,7 +35,7 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_currentMusicFileHash = 0;
 	_vm->_soundMan->addMusic(0x64210814, 0xD2FA4D14);
-	setGlobalVar(0x28D8C940, 1);
+	setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 1);
 	
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, which);
@@ -402,7 +402,7 @@ void Module2800::updateMusic(bool halfVolume) {
 Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
-	// TODO _vm->gameModule()->initScene2801Vars();
+	_vm->gameModule()->initScene2801Vars();
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2801::handleMessage);
@@ -432,7 +432,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B6BB0);
 	}
 
-	if (getGlobalVar(0x09880D40)) {
+	if (getGlobalVar(V_RADIO_ROOM_LEFT_DOOR)) {
 		setRectList(0x004B6CE0);
 		setBackground(0x01400666);
 		setPalette(0x01400666);
@@ -444,7 +444,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertMouse433(0x0066201C);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
 		_vm->_collisionMan->addSprite(_asTape); 
-	} else if (getGlobalVar(0x08180ABC)) {
+	} else if (getGlobalVar(V_RADIO_ROOM_RIGHT_DOOR)) {
 		setRectList(0x004B6CD0);
 		setBackground(0x11E00684);
 		setPalette(0x11E00684);
@@ -507,10 +507,10 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdownType(0), _countdown1(0), _countdown2(0) {
+	: Scene(vm, parentModule, true), _currTuneStatus(0), _countdown1(0), _countdown2(0) {
 
 	//DEBUG>>> Disable video
-	setGlobalVar(0x28D8C940, 0);
+	setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
 	//DEBUG<<<
 		
 	_surfaceFlag = true;
@@ -518,123 +518,127 @@ Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene2802::update);
 	insertMouse435(0x008810A8, 20, 620);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x8284C100, true, true, true));
-	_smackerFrameNumber = getGlobalVar(0x08CC0828);
-	_smackerPlayer->gotoFrame(_smackerFrameNumber);
+	_currRadioMusicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
+	_smackerPlayer->gotoFrame(_currRadioMusicIndex);
 	_vm->_soundMan->addSound(0x04360A18, 0x422630C2);
 	_vm->_soundMan->addSound(0x04360A18, 0x00632252);
 	_vm->_soundMan->addSound(0x04360A18, 0x00372241);
 	_vm->_soundMan->setSoundVolume(0x00372241, 60);
-	changeCountdownType(0, 0);
+	changeTuneStatus(0, 0);
 	_vm->_soundMan->playSoundLooping(0x00372241);
 }
 
 Scene2802::~Scene2802() {
 	_vm->_soundMan->deleteSoundGroup(0x04360A18);
-	if (_smackerFrameNumber == 0) {
-		setGlobalVar(0x09880D40, 1);
-		setGlobalVar(0x08180ABC, 0);
-	} else if (_smackerFrameNumber == getGlobalVar(0x88880915)) {
-		setGlobalVar(0x09880D40, 0);
-		setGlobalVar(0x08180ABC, 1);
+	if (_currRadioMusicIndex == 0) {
+		setGlobalVar(V_RADIO_ROOM_LEFT_DOOR, 1);
+		setGlobalVar(V_RADIO_ROOM_RIGHT_DOOR, 0);
+	} else if (_currRadioMusicIndex == getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX)) {
+		setGlobalVar(V_RADIO_ROOM_LEFT_DOOR, 0);
+		setGlobalVar(V_RADIO_ROOM_RIGHT_DOOR, 1);
 	} else {
-		setGlobalVar(0x09880D40, 0);
-		setGlobalVar(0x08180ABC, 0);
+		setGlobalVar(V_RADIO_ROOM_LEFT_DOOR, 0);
+		setGlobalVar(V_RADIO_ROOM_RIGHT_DOOR, 0);
 	}
-	setGlobalVar(0x08CC0828, _smackerFrameNumber);
+	setGlobalVar(V_CURR_RADIO_MUSIC_INDEX, _currRadioMusicIndex);
 }
 	
 void Scene2802::update() {
-	int prevCountdownType = _countdownType;
-	uint prevSmackerFrameNumber = _smackerFrameNumber;
+	int prevTuneStatus = _currTuneStatus;
+	uint prevRadioMusicIndex = _currRadioMusicIndex;
 
 	Scene::update();
 	if (_countdown1 > 0)
 		--_countdown1;
-	else if (_countdownType == 1)
-		_countdownType = 3;
-	else if (_countdownType == 4)
-		_countdownType = 6;
+	else if (_currTuneStatus == 1)
+		_currTuneStatus = 3;
+	else if (_currTuneStatus == 4)
+		_currTuneStatus = 6;
 	
-	switch (_countdownType) {
+	switch (_currTuneStatus) {
 	case 2:
-		if (_smackerFrameNumber < 90)
-			incSmackerFrameNumber(+1);
-		_countdownType = 0;
+		if (_currRadioMusicIndex < 90)
+			incRadioMusicIndex(+1);
+		_currTuneStatus = 0;
 		break;
 	case 3:
 		if (_countdown2 > 0)
 			--_countdown2;
-		else if (_smackerFrameNumber < 90) {
-			incSmackerFrameNumber(+1);
+		else if (_currRadioMusicIndex < 90) {
+			incRadioMusicIndex(+1);
 			_countdown2 = 1;
 		} else
-			_countdownType = 0;
+			_currTuneStatus = 0;
 		break;
 	case 5:
-		if (_smackerFrameNumber > 0)
-			incSmackerFrameNumber(-1);
-		_countdownType = 0;
+		if (_currRadioMusicIndex > 0)
+			incRadioMusicIndex(-1);
+		_currTuneStatus = 0;
 		break;
 	case 6:
 		if (_countdown2 > 0)
 			--_countdown2;
-		else if (_smackerFrameNumber > 0) {
-			incSmackerFrameNumber(-1);
+		else if (_currRadioMusicIndex > 0) {
+			incRadioMusicIndex(-1);
 			_countdown2 = 1;
 		} else
-			_countdownType = 0;
+			_currTuneStatus = 0;
 		break;
 	
 	}
 
-	if (prevSmackerFrameNumber != _smackerFrameNumber)
-		_smackerPlayer->gotoFrame(_smackerFrameNumber);
+	if (prevRadioMusicIndex != _currRadioMusicIndex)
+		_smackerPlayer->gotoFrame(_currRadioMusicIndex);
 		
-	if (prevCountdownType != _countdownType)
-		changeCountdownType(prevCountdownType, _countdownType);
+	if (prevTuneStatus != _currTuneStatus)
+		changeTuneStatus(prevTuneStatus, _currTuneStatus);
+		
+	//DEBUG>>>
+	debug("_currRadioMusicIndex = %d; V_GOOD_RADIO_MUSIC_INDEX = %d", _currRadioMusicIndex, getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
+	//DEBUG<<<
 
-	if (getGlobalVar(0x28D8C940) && prevCountdownType != _countdownType && _smackerFrameNumber != 0) {
-		setGlobalVar(0x28D8C940, 0);
+	if (getGlobalVar(V_RADIO_MOVE_DISH_VIDEO) && prevTuneStatus != _currTuneStatus && _currRadioMusicIndex != 0) {
+		setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
 		leaveScene(1);
 	}
 	
 }
 
 uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	int prevCountdownType = _countdownType;
+	int prevTuneStatus = _currTuneStatus;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
-		} else if (_countdownType == 0) {
+		} else if (_currTuneStatus == 0) {
 			if (param.asPoint().x > 180 && param.asPoint().x < 300 &&
 				param.asPoint().y > 130 && param.asPoint().y < 310) {
-				_countdownType = 4;
+				_currTuneStatus = 4;
 			} else if (param.asPoint().x > 300 && param.asPoint().x < 400 &&
 				param.asPoint().y > 130 && param.asPoint().y < 310) {
-				_countdownType = 1;
+				_currTuneStatus = 1;
 			}
-			if (_countdownType == 1 || _countdownType == 4) {
+			if (_currTuneStatus == 1 || _currTuneStatus == 4) {
 				_countdown1 = 8;
-				changeCountdownType(0, _countdownType);
+				changeTuneStatus(0, _currTuneStatus);
 			}
 		}
 		break;
 	case 0x0002:
 		if (_countdown1 == 0)
-			_countdownType = 0;
+			_currTuneStatus = 0;
 		else {
-			if (_countdownType == 1)
-				_countdownType = 2;
-			else if (_countdownType == 4)
-				_countdownType = 5;
+			if (_currTuneStatus == 1)
+				_currTuneStatus = 2;
+			else if (_currTuneStatus == 4)
+				_currTuneStatus = 5;
 			else
-				_countdownType = 0;
+				_currTuneStatus = 0;
 			_countdown1 = 0;
 		}
-		if (prevCountdownType != _countdownType)
-			changeCountdownType(prevCountdownType, _countdownType);
+		if (prevTuneStatus != _currTuneStatus)
+			changeTuneStatus(prevTuneStatus, _currTuneStatus);
 		break;
 	case 0x000D:
 		// DEBUG message
@@ -643,25 +647,25 @@ uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 
-void Scene2802::incSmackerFrameNumber(int delta) {
-	_smackerFrameNumber += delta;
-	setGlobalVar(0x08CC0828, _smackerFrameNumber);
+void Scene2802::incRadioMusicIndex(int delta) {
+	_currRadioMusicIndex += delta;
+	setGlobalVar(V_CURR_RADIO_MUSIC_INDEX, _currRadioMusicIndex);
 }
 
-void Scene2802::changeCountdownType(int prevCountdownType, int newCountdownType) {
+void Scene2802::changeTuneStatus(int prevTuneStatus, int newTuneStatus) {
 
-	if (prevCountdownType == 3 || prevCountdownType == 6) {
+	if (prevTuneStatus == 3 || prevTuneStatus == 6) {
 		_vm->_soundMan->stopSound(0x422630C2);
 		_vm->_soundMan->stopSound(0x00632252);
 	}
 
-	if (newCountdownType == 0) {
+	if (newTuneStatus == 0) {
 		if (_vm->_gameModule->getScene2802MusicFileHash() != 0) {
 			_vm->_soundMan->stopSound(0x00632252);
 		}
 		else
 			_vm->_soundMan->playSoundLooping(0x00632252);
-	} else if (newCountdownType == 3 || newCountdownType == 6) {
+	} else if (newTuneStatus == 3 || newTuneStatus == 6) {
 		_vm->_soundMan->playSoundLooping(0x422630C2);
 		_vm->_soundMan->playSoundLooping(0x00632252);
 	}

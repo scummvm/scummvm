@@ -55,7 +55,7 @@ void Module2000::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		setGlobalVar(V_WORLDS_JOINED, 1);
-		setSubVar(0x2C145A98, 1, 1);
+		setSubVar(V_TELEPORTER_DEST_AVAILABLE, 1, 1);
 		createSmackerScene(0x204B2031, true, true, false);
 		break;
 	}

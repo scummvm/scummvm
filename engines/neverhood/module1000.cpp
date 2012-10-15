@@ -1798,11 +1798,11 @@ uint32 Scene1005::getTextIndex1() {
 	} else if (getGlobalVar(V_BOLT_DOOR_UNLOCKED)) {
 		if (!getGlobalVar(V_WALL_BROKEN))
 			textIndex = 12;
-		else if (!getGlobalVar(0x2050861A))
+		else if (!getGlobalVar(V_STAIRS_DOWN_ONCE))
 			textIndex = 13;
 		else if (!getGlobalVar(V_RADIO_ENABLED))
 			textIndex = 50;
-		else if (!getGlobalVar(0x89C669AA))
+		else if (!getGlobalVar(V_UNUSED))
 			textIndex = 14;
 		else if (!getGlobalVar(V_BEEN_SHRINKING_ROOM))
 			textIndex = 15;
@@ -1812,7 +1812,7 @@ uint32 Scene1005::getTextIndex1() {
 			textIndex = 17;
 	} else if (!getGlobalVar(V_FLYTRAP_RING_EATEN)) {
 		textIndex = 0;
-	} else if (getGlobalVar(0x0A18CA33)) {
+	} else if (getGlobalVar(V_CREATURE_EXPLODED)) {
 		if (!getGlobalVar(V_TILE_PUZZLE_SOLVED))
 			textIndex = 4;
 		else if (!getGlobalVar(V_HAS_TEST_TUBE))
