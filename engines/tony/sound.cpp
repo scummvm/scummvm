@@ -489,6 +489,7 @@ bool FPStream::loadFile(const Common::String &fileName, uint32 codec, int bufSiz
 		// Fallback: try with an extra '0' prefix
 		if (!_file.open("0" + fileName))
 			return false;
+		warning("FPStream::loadFile(): Fallback from %s to %s", fileName.c_str(), _file.getName());
 	}
 
 	// Save the size of the stream
