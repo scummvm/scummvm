@@ -318,18 +318,15 @@ void ObjectsManager::AFF_SPRITES() {
 	int v2;
 	int destX;
 	int destY;
-	int v5; 
 	int v6;
 	int v7;
 	int v8;
 	int v9;
-	int v10; 
 	int v11;
 	uint16 *v12;
 	int v13; 
 	int v14; 
 	int v15; 
-	int v17; 
 	int v20;
 	int v21;
 	int y1_1;
@@ -340,8 +337,6 @@ void ObjectsManager::AFF_SPRITES() {
 	int x1_1;
 	int x1_2;
 	int v30;
-	int v31;
-	int v32;
 	int v33;
 	int v34;
 	int v35;
@@ -381,15 +376,13 @@ void ObjectsManager::AFF_SPRITES() {
 	} while (v30 <= 10);
 
 	if (!PERSO_ON) {
-		v31 = 0;
-		do {
-			v5 = v31;
-			if (_vm->_globals.Liste[v5].field0) {
-				v6 = _vm->_globals.Liste[v5].field2;
+		for (int idx = 0; idx < 5; ++idx) {
+			if (_vm->_globals.Liste[idx].field0) {
+				v6 = _vm->_globals.Liste[idx].field2;
 				x1_2 = v6 - 2;
 				if ((int16)(v6 - 2) < _vm->_graphicsManager.min_x)
 					x1_2 = _vm->_graphicsManager.min_x;
-				v7 = _vm->_globals.Liste[v31].field4;
+				v7 = _vm->_globals.Liste[idx].field4;
 				y1_2 = v7 - 2;
 				if ((int16)(v7 - 2) < _vm->_graphicsManager.min_y)
 					y1_2 = _vm->_graphicsManager.min_y;
@@ -401,28 +394,25 @@ void ObjectsManager::AFF_SPRITES() {
 					v9 = _vm->_graphicsManager.min_y;
 	        
 				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, x1_2, y1_2, 
-					_vm->_globals.Liste[v31].width + 4, _vm->_globals.Liste[v31].height + 4, 
+					_vm->_globals.Liste[idx].width + 4, _vm->_globals.Liste[idx].height + 4, 
 					_vm->_graphicsManager.VESA_BUFFER, v8, v9);
-				_vm->_globals.Liste[v5].field0 = 0;
+				_vm->_globals.Liste[idx].field0 = 0;
 			}
-			++v31;
-		} while (v31 <= 4);
+		} 
 	}
   
 	AFF_BOB_ANIM();
 	AFF_VBOB();
 	if (!PERSO_ON) {
-		v32 = 0;
-		do {
-			_vm->_globals.Liste[v32].field0 = 0;
-			v10 = v32;
-			if (Sprite[v10].field0 == 1) {
-				CALCUL_SPRITE(v32);
-				if (Sprite[v10].field2A == 1)
-					AvantTri(2, v32, Sprite[v10].field32 + Sprite[v10].field2E);
+		for (int idx = 0; idx < 5; ++idx) {
+			_vm->_globals.Liste[idx].field0 = 0;
+			idx = idx;
+			if (Sprite[idx].field0 == 1) {
+				CALCUL_SPRITE(idx);
+				if (Sprite[idx].field2A == 1)
+					AvantTri(2, idx, Sprite[idx].field32 + Sprite[idx].field2E);
 			}
-			++v32;
-		} while (v32 <= 4);
+		} 
     
 		if (_vm->_globals.CACHEFLAG)
 			VERIFCACHE();
@@ -513,7 +503,8 @@ void ObjectsManager::AFF_SPRITES() {
     
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 183, 60, _vm->_eventsManager.start_x + 457, 413);
 	}
-  
+
+	// If the Options dialog is activated, draw the elements
 	if (_vm->_globals.OPTION_FLAG) {
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
 			_vm->_eventsManager.start_x + 464, 407, 0);
@@ -534,26 +525,26 @@ void ObjectsManager::AFF_SPRITES() {
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 164, 107, _vm->_eventsManager.start_x + 498, 320);
 	}
 
+	// Loop to draw any on-screen text
 	for (int idx = 0; idx <= 10; ++idx) {
-		if (_vm->_fontManager.Txt[idx].field0 == 1) {
+		if (_vm->_fontManager.Txt[idx].textOn) {
 			if ((uint16)(_vm->_fontManager.Txt[idx].field3FC - 2) > 1)
 				_vm->_fontManager.BOITE(idx,
-					_vm->_fontManager.Txt[idx].fieldC, _vm->_fontManager.Txt[idx].filename,
+					_vm->_fontManager.Txt[idx].messageId, _vm->_fontManager.Txt[idx].filename,
 					_vm->_eventsManager.start_x + _vm->_fontManager.Txt[idx].xp, _vm->_fontManager.Txt[idx].yp);
 			else
 				_vm->_fontManager.BOITE(
 				  idx,
-				  _vm->_fontManager.Txt[idx].fieldC,
+				  _vm->_fontManager.Txt[idx].messageId,
 				  _vm->_fontManager.Txt[idx].filename,
 				  _vm->_fontManager.Txt[idx].xp,
 				  _vm->_fontManager.Txt[idx].yp);
 			_vm->_fontManager.ListeTxt[idx].enabled = true;
 			
-			v17 = idx;
-			if ((uint16)(_vm->_fontManager.Txt[v17].field3FC - 2) > 1)
-				_vm->_fontManager.ListeTxt[idx].xp = _vm->_eventsManager.start_x + _vm->_fontManager.Txt[v17].xp;
+			if ((uint16)(_vm->_fontManager.Txt[idx].field3FC - 2) > 1)
+				_vm->_fontManager.ListeTxt[idx].xp = _vm->_eventsManager.start_x + _vm->_fontManager.Txt[idx].xp;
 			else
-				_vm->_fontManager.ListeTxt[idx].xp = _vm->_fontManager.Txt[v17].xp;
+				_vm->_fontManager.ListeTxt[idx].xp = _vm->_fontManager.Txt[idx].xp;
       
 			_vm->_fontManager.ListeTxt[idx].yp = _vm->_fontManager.Txt[idx].yp;
 			_vm->_fontManager.ListeTxt[idx].width = _vm->_fontManager.Txt[idx].width;
