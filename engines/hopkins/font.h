@@ -31,23 +31,23 @@ namespace Hopkins {
 class HopkinsEngine;
 
 struct TxtItem {
-	int field0;
+	bool textOn;
 	int field2;
 	Common::String filename;
 	int16 xp;
 	int16 yp;
-	int fieldC;
+	int messageId;
 	int fieldE;
 	int field10;
-	int field12;
+	int lineCount;
 	Common::String lines[10];
 	int field3FC;
 	int field3FE;
-	byte *field400;
+	byte *textBlock;
 	int16 width;
 	int16 height;
-	int field408;
-	int field40A;
+	bool textLoaded;
+	int colour;
 };
 
 struct ListeTxtItem {
@@ -78,9 +78,9 @@ public:
 	void TEXTE_OFF(int idx);
 	void COUL_TXT(int idx, byte colByte);
 	void OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4);
-	void DOS_TEXT(int idx, int a2, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int a10);
-	void BOITE(int idx, int a2, const Common::String &filename, int xp, int yp);
-	void TEXT_NOW1(int xp, int yp, const Common::String &message, int transColour);
+	void DOS_TEXT(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int a10);
+	void BOITE(int idx, int messageId, const Common::String &filename, int xp, int yp);
+	void TEXT_NOW1(int xp, int yp, const Common::String &message, int colour);
 };
 
 } // End of namespace Hopkins

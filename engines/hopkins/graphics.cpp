@@ -2243,7 +2243,7 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned 
 }
 
 void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, 
-									int characterIndex, int transColour) {
+									int characterIndex, int colour) {
 	const byte *v6;
 	int i; 
 	const byte *v8; 
@@ -2278,7 +2278,7 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 			v14 = *v11;
 			if (*v11) {
 				if (v14 == (byte)-4)
-					v14 = transColour;
+					v14 = colour;
 				*destP = v14;
 			}
 	      

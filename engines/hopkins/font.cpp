@@ -38,14 +38,14 @@ void FontManager::setParent(HopkinsEngine *vm) {
 
 void FontManager::clearAll() {
 	for (int idx = 0; idx < 11; ++idx) {
-		Txt[idx].field0 = 0;
-		Txt[idx].field12 = 0;
+		Txt[idx].textOn = false;
+		Txt[idx].lineCount = 0;
 		Txt[idx].field3FC = 0;
 		Txt[idx].field3FE = 0;
-		Txt[idx].field400 = 0;
+		Txt[idx].textBlock = NULL;
 		Txt[idx].width = 0;
 		Txt[idx].height = 0;
-		Txt[idx].field408 = 0;
+		Txt[idx].textLoaded = false;
 
 		ListeTxt[idx].enabled = false;
 	}
@@ -56,12 +56,12 @@ void FontManager::TEXTE_ON(int idx) {
 		error("Attempted to display text > MAX_TEXT.");
   
 	TxtItem &txt = Txt[idx - 5];
-	txt.field0 = 1;
-	txt.field408 = 0;
+	txt.textOn = true;
+	txt.textLoaded = false;
   
-	if (txt.field400 != g_PTRNUL) {
-		_vm->_globals.dos_free2(txt.field400);
-		txt.field400 = g_PTRNUL;
+	if (txt.textBlock != g_PTRNUL) {
+		_vm->_globals.dos_free2(txt.textBlock);
+		txt.textBlock = g_PTRNUL;
 	}
 }
 
@@ -71,17 +71,17 @@ void FontManager::TEXTE_OFF(int idx) {
 			error("Attempted to display text > MAX_TEXT.");
   
 	TxtItem &txt = Txt[idx - 5];
-	txt.field0 = 0;
-	txt.field408 = 0;
+	txt.textOn = false;
+	txt.textLoaded = false;
 
-	if (txt.field400 != g_PTRNUL) {
-		_vm->_globals.dos_free2(txt.field400);
-		txt.field400 = g_PTRNUL;
+	if (txt.textBlock != g_PTRNUL) {
+		_vm->_globals.dos_free2(txt.textBlock);
+		txt.textBlock = g_PTRNUL;
 	}
 }
 
 void FontManager::COUL_TXT(int idx, byte colByte) {
-	Txt[idx - 5].field40A = colByte;
+	Txt[idx - 5].colour = colByte;
 }
 
 void FontManager::OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4) {
@@ -91,24 +91,24 @@ void FontManager::OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4) {
 	COUL_TXT(idx4, 253);
 }
 
-void FontManager::DOS_TEXT(int idx, int a2, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int a10) {
+void FontManager::DOS_TEXT(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int colour) {
 	if ((idx - 5) > 11)
 		error("Attempted to display text > MAX_TEXT.");
   
 	TxtItem &txt = Txt[idx - 5];
-	txt.field0 = 0;
+	txt.textOn = false;
 	txt.filename = filename;
 	txt.xp = xp;
 	txt.yp = yp;
-	txt.fieldC = a2;
+	txt.messageId = messageId;
 	txt.fieldE = a6;
 	txt.field10 = a7;
 	txt.field3FC = a8;
 	txt.field3FE = a9;
-	txt.field40A = a10;
+	txt.colour = colour;
 }
 
-void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, int xp, int yp) {
+void FontManager::BOITE(int idx, int messageId, const Common::String &filename, int xp, int yp) {
 	int filesize;
 	byte *v9; 
 	const byte *v10;
@@ -129,26 +129,21 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 	int v27; 
 	int v28; 
 	int v29; 
-	int v31; 
 	int v32; 
-	int v33; 
 	int v34; 
-	int v35; 
 	int v36; 
 	int v37;
-	int v38;
-	int v40; 
 	int ptrb;
 	int ptrc; 
 	byte *ptrd; 
 	byte *ptre; 
 	Common::String s; 
 	int v49; 
-	int v50; 
+	int blockSize; 
 	int v51;
-	int v52;
+	int blockHeight;
 	int v53;
-	int v54; 
+	int blockWidth; 
 	int v55; 
 	int v56; 
 	int lineSize; 
@@ -166,7 +161,6 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 	int v69; 
 	int v70;
 	int v71; 
-	int v72; 
 	int v73; 
 	int i; 
 	int v75;
@@ -181,31 +175,26 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 	_vm->_globals.police_l = 11;
 
 	_vm->_globals.largeur_boite = 11 * Txt[idx].field3FE;
-	if (Txt[idx].field408) {
+	if (Txt[idx].textLoaded) {
 		v34 = Txt[idx].field3FC;
 		if (v34 != 6 && v34 != 1 && v34 != 3 && v34 != 5) {
-			v72 = yp + 5;
-			v38 = 0;
-			if (Txt[idx].field12 > 0) {
-				do {
-					v40 = idx;
-					TEXT_NOW1(xp + 5, v72, Txt[idx].lines[v38], Txt[idx].field40A);
-					v72 += _vm->_globals.police_h + 1;
-					++v38;
-					idx = v40;
-				} while (Txt[v40].field12 > v38);
+			int yCurrent = yp + 5;
+			if (Txt[idx].lineCount > 0) {
+				for (int lineNum = 0; lineNum < Txt[idx].lineCount; ++lineNum) {
+					TEXT_NOW1(xp + 5, yCurrent, Txt[idx].lines[lineNum], Txt[idx].colour);
+					yCurrent += _vm->_globals.police_h + 1;
+				} 
 			}
 		} else {
-			v35 = idx;
-			v36 = Txt[v35].height;
-			v37 = Txt[v35].width;
+			v36 = Txt[idx].height;
+			v37 = Txt[idx].width;
 			_vm->_graphicsManager.Restore_Mem(
 				_vm->_graphicsManager.VESA_BUFFER,
-				Txt[v35].field400,
+				Txt[idx].textBlock,
 			    xp,
 			    yp,
-			    Txt[v35].width,
-			    Txt[v35].height);
+			    Txt[idx].width,
+			    Txt[idx].height);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, xp + v37, yp + v36);
 		}
 	} else {
@@ -213,7 +202,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 		do {
 			TRIER_TEXT[v62++] = 0;
 		} while (v62 <= 19);
-		Txt[idx].field408 = 1;
+		Txt[idx].textLoaded = true;
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
 
 		file = _vm->_globals.NFICHIER;
@@ -235,7 +224,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 				error("Error opening file - %s", nom_index.c_str());
 
 			v69 = 2048;
-			f.seek(Index[fileIndex]);
+			f.seek(Index[messageId]);
 
 			texte_tmp = _vm->_globals.dos_malloc2(0x80Au);
 			if (texte_tmp == g_PTRNUL)
@@ -249,7 +238,7 @@ void FontManager::BOITE(int idx, int fileIndex, const Common::String &filename, 
 			_vm->_globals.texte_long = 100;
 			v9 = _vm->_globals.dos_malloc2(0x6Eu);
 			texte_tmp = v9;
-			v10 = _vm->_globals.BUF_ZONE + Index[fileIndex];
+			v10 = _vm->_globals.BUF_ZONE + Index[messageId];
 			memcpy(v9, v10, 0x60u);
 			v11 = 0;
 			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
@@ -440,48 +429,48 @@ LABEL_57:
 			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v56, v70, v51, (byte)-2);
 			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v53 + v56, v70, v51, (byte)-2);
 		}
-		Txt[idx].field12 = lineCount;
+		Txt[idx].lineCount = lineCount;
 		v75 = v73 + 5;
 		v71 = v70 + 5;
 
 		if (lineCount > 0) {
 			for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
-				TEXT_NOW1(v75, v71, Txt[idx].lines[lineNum], Txt[idx].field40A);
+				TEXT_NOW1(v75, v71, Txt[idx].lines[lineNum], Txt[idx].colour);
 				v71 += _vm->_globals.police_h + 1;
 			}
 		}
-		v54 = v53 + 1;
-		v52 = v51 + 1;
-		v31 = idx;
-		Txt[v31].width = v54;
-		Txt[v31].height = v52;
-		v32 = Txt[v31].field3FC;
-		if (v32 == 6 || v32 == 1 || v32 == 3 || v32 == 5) {
-			v33 = idx;
-			if (Txt[v33].field400 != g_PTRNUL)
-				Txt[v33].field400 = _vm->_globals.dos_free2(Txt[v33].field400);
-			v50 = v52 * v54;
-			ptre = _vm->_globals.dos_malloc2(v50 + 20);
-			if (ptre == g_PTRNUL)
-				error("Cutting a block for text box (%d)", v50);
 
-			Txt[v33].field400 = ptre;
-			Txt[v33].width = v54;
-			Txt[v33].height = v52;
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, Txt[v33].field400, v56, v55, Txt[v33].width, v52);
+		blockWidth = v53 + 1;
+		blockHeight = v51 + 1;
+		
+		Txt[idx].width = blockWidth;
+		Txt[idx].height = blockHeight;
+		v32 = Txt[idx].field3FC;
+		if (v32 == 6 || v32 == 1 || v32 == 3 || v32 == 5) {
+			if (Txt[idx].textBlock != g_PTRNUL)
+				Txt[idx].textBlock = _vm->_globals.dos_free2(Txt[idx].textBlock);
+			blockSize = blockHeight * blockWidth;
+			ptre = _vm->_globals.dos_malloc2(blockSize + 20);
+			if (ptre == g_PTRNUL)
+				error("Cutting a block for text box (%d)", blockSize);
+
+			Txt[idx].textBlock = ptre;
+			Txt[idx].width = blockWidth;
+			Txt[idx].height = blockHeight;
+			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, Txt[idx].textBlock, v56, v55, Txt[idx].width, blockHeight);
 		}
 		texte_tmp = _vm->_globals.dos_free2(texte_tmp);
 	}
 }
 
-void FontManager::TEXT_NOW1(int xp, int yp, const Common::String &message, int transColour) {
+void FontManager::TEXT_NOW1(int xp, int yp, const Common::String &message, int colour) {
 	for (uint idx = 0; idx < message.size(); ++idx) {
 		char currentChar = message[idx];
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
 			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, 
-				xp, yp, characterIndex, transColour);
+				xp, yp, characterIndex, colour);
 			xp += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, characterIndex);
 		}
 	}

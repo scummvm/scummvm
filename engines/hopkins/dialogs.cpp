@@ -152,7 +152,7 @@ void OptionsDialog::show(HopkinsEngine *vm) {
 				doneFlag = true;
 			}
 			if (mousePos.x >= vm->_graphicsManager.ofscroll + 355 && mousePos.y > 285 && mousePos.x <= vm->_graphicsManager.ofscroll + 490 && mousePos.y <= 310)
-				doneFlag = 1;
+				doneFlag = true;
 			if (mousePos.x >= vm->_graphicsManager.ofscroll + 300 && mousePos.y > 194 && mousePos.x <= vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 219) {
 				switch (vm->_graphicsManager.SPEED_SCROLL) {
 				case 1:
@@ -209,22 +209,12 @@ void OptionsDialog::show(HopkinsEngine *vm) {
 			vm->_globals.opt_vitesse = 5;
 		if (vm->_globals.vitesse == 3)
 			vm->_globals.opt_vitesse = 4;
-		if (!vm->_soundManager.TEXTOFF)
-			vm->_globals.opt_txt = 7;
-		if (vm->_soundManager.TEXTOFF == 1)
-			vm->_globals.opt_txt = 8;
-		if (!vm->_soundManager.VOICEOFF)
-			vm->_globals.opt_voice = 7;
-		if (vm->_soundManager.VOICEOFF == 1)
-			vm->_globals.opt_voice = 8;
-		if (!vm->_soundManager.SOUNDOFF)
-			vm->_globals.opt_sound = 7;
-		if (vm->_soundManager.SOUNDOFF == 1)
-			vm->_globals.opt_sound = 8;
-		if (!vm->_soundManager.MUSICOFF)
-			vm->_globals.opt_music = 7;
-		if (vm->_soundManager.MUSICOFF == 1)
-			vm->_globals.opt_music = 8;
+
+		vm->_globals.opt_txt = !vm->_soundManager.TEXTOFF ? 7 : 8;
+		vm->_globals.opt_voice = !vm->_soundManager.VOICEOFF ? 7 : 8;
+		vm->_globals.opt_sound = !vm->_soundManager.SOUNDOFF ? 7 : 8;
+		vm->_globals.opt_music = !vm->_soundManager.MUSICOFF ? 7 : 8;
+			
 		if (vm->_globals.SVGA == 1)
 			vm->_globals.opt_anm = 10;
 		if (vm->_globals.SVGA == 2)

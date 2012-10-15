@@ -174,7 +174,7 @@ public:
 	void AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex);
 	void SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY);
-	void Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int transColour);
+	void Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour);
 	void INI_ECRAN(const Common::String &file);
 	void INI_ECRAN2(const Common::String &file);
 	void OPTI_INI(const Common::String &file, int a2);
