@@ -245,7 +245,7 @@ int ObjectsManager::Get_Largeur(const byte *objectData, int idx) {
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
 	
-	return (int16)(int16)READ_LE_UINT16(rectP + 4);
+	return (int16)READ_LE_UINT16(rectP + 4);
 }
 
 int ObjectsManager::Get_Hauteur(const byte *objectData, int idx) {
@@ -253,7 +253,7 @@ int ObjectsManager::Get_Hauteur(const byte *objectData, int idx) {
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
 	
-	return (int16)(int16)READ_LE_UINT16(rectP + 6);
+	return (int16)READ_LE_UINT16(rectP + 6);
 }
 
 int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIndex) {
@@ -590,7 +590,6 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob.field14 = 0;
 	bob.field16 = 0;
 	bob.field18 = g_PTRNUL;
-	bob.field1A = 0;
 	bob.field1C = 0;
 	bob.field1E = 0;
 	bob.field20 = 0;
@@ -2863,7 +2862,7 @@ void ObjectsManager::BTGAUCHE() {
 		do {
 			WRITE_LE_UINT16(v3 + 2 * v2, (int16)READ_LE_UINT16(v4 + 2 * v2));
 			++v2;
-		} while ((int16)(int16)READ_LE_UINT16(v4 + 2 * v2) != -1);
+		} while ((int16)READ_LE_UINT16(v4 + 2 * v2) != -1);
 		v5 = _vm->_globals.essai2;
 		WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v2, (uint16)-1);
 		WRITE_LE_UINT16(v5 + 2 * v2 + 2, (uint16)-1);
@@ -3496,7 +3495,7 @@ void ObjectsManager::PACOURS_PROPRE(byte *a1) {
 	v14 = -1;
 	v2 = (int16)READ_LE_UINT16(a1 + 2);
 	v15 = (int16)READ_LE_UINT16(a1 + 4);
-	if ((int16)(int16)READ_LE_UINT16(a1) != -1 || v2 != -1) {
+	if ((int16)READ_LE_UINT16(a1) != -1 || v2 != -1) {
 		while (1) {
 			if (v14 != -1 && v15 != v14) {
 				v11 = v1;
@@ -7247,7 +7246,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				v34 = 0;
 				_vm->_linesManager.TOTAL_LIGNES = 0;
 				do {
-					v27 = (int16)(int16)READ_LE_UINT16(v16 + 2 * v32);
+					v27 = (int16)READ_LE_UINT16(v16 + 2 * v32);
 					if (v27 != -1) {
 						_vm->_linesManager.AJOUTE_LIGNE(
 						    v34,
@@ -7277,7 +7276,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					v35 = 0;
 					v18 = 1;
 					do {
-						v19 = 20 * v18;
+						v19 = v18;
 						_vm->_globals.ZONEP[v19].field0 = 0;
 						_vm->_globals.ZONEP[v19].field2 = 0;
 						_vm->_globals.ZONEP[v19].field4 = 0;
@@ -7297,7 +7296,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 					v31 = 0;
 					do {
-						v28 = (int16)(int16)READ_LE_UINT16(v17 + 2 * v33);
+						v28 = (int16)READ_LE_UINT16(v17 + 2 * v33);
 						if (v28 != -1) {
 							_vm->_linesManager.AJOUTE_LIGNE_ZONE(
 							    v35,

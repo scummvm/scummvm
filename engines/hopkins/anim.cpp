@@ -843,111 +843,100 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	return result;
 }
 
-void AnimationManager::RECHERCHE_ANIM(const byte *data, int idx, int nbytes) {
-	int v4; 
+void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count) {
+	int v3;
 	const byte *v5; 
 	int v6; 
 	int v7; 
+	int v8;
 	byte *v9; 
 	int v10;
 	int v11;
 	int v12;
-	char v13;
-	signed int v14;
-	int v15;
-	int v16;
-	char v17;
+	int v13; 
+	int v14;
+	int v15; 
+	int v16; 
+	int v17; 
 	int v19; 
-	char v20;
+	int v20;
 	int v21; 
 	int v22;
-	const byte *v23;
-	int v24;
-
-	bool doneFlag = false;
-	bool breakFlag;
+	const byte *v23; 
+	int v;
 
 	v21 = 0;
-	v4 = 8 * idx;
-	v19 = 8 * idx;
-  
+	v3 = 0;
+	v19 = animIndex;
 	do {
 		v20 = *(v21 + data);
-		if (*(data + v20) == 'A' && *(data + v20 + 1) == 'N' && *(data + v20 + 2) == 'I'
-				&& *(data + v20 + 3) == 'M') {
-            v4 = *(data + v21 + 4);
-            if (idx == v4) {
+		if (v20 == 'A' && *(data + v21 + 1) == 'N' && *(data + v21 + 2) == 'I' && *(data + v21 + 3) == 'M') {
+			int entryIndex = *(data + v21 + 4);
+			if (animIndex == entryIndex) {
 				v5 = v21 + data + 5;
 				v6 = v21 + 5;
 				v7 = 0;
-				breakFlag = false;
-              
+				v8 = 0;
 				do {
 					if (*v5 == 'A' && *(v5 + 1) == 'N' && *(v5 + 2) == 'I' && *(v5 + 3) == 'M')
-						breakFlag = true;
-                
+						v8 = 1;
 					if (*v5 == 'F' && *(v5 + 1) == 'I' && *(v5 + 2) == 'N')
-						breakFlag = true;
-
-					if (nbytes < v6) {
-						_vm->_globals.Bqe_Anim[idx].field4 = 0;
-						_vm->_globals.Bqe_Anim[idx].data = g_PTRNUL;
+						v8 = 1;
+					if (count < v6) {
+						_vm->_globals.Bqe_Anim[animIndex].field4 = 0;
+						_vm->_globals.Bqe_Anim[v19].data = g_PTRNUL;
+						return;
 					}
-                
 					++v6;
 					++v7;
 					++v5;
-				} while (!breakFlag);
+				} while (v8 != 1);
+				_vm->_globals.Bqe_Anim[v19].data = _vm->_globals.dos_malloc2(v7 + 50);
+				_vm->_globals.Bqe_Anim[animIndex].field4 = 1;
+				memcpy(_vm->_globals.Bqe_Anim[v19].data, v21 + data + 5, 0x14u);
 
-				_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.dos_malloc2(v7 + 50);
-				_vm->_globals.Bqe_Anim[idx].field4 = 1;
-				memcpy(_vm->_globals.Bqe_Anim[idx].data, v21 + data + 5, 20);
-				
-				byte *dataP = _vm->_globals.Bqe_Anim[idx].data;
-
+				byte *dataP = _vm->_globals.Bqe_Anim[v19].data;
 				v9 = dataP + 20;
 				v23 = v21 + data + 25;
-				v10 = (int16)READ_LE_UINT16(v21 + data + 25);
-				v11 = (int16)READ_LE_UINT16(v21 + data + 27);
-				v22 = (int16)READ_LE_UINT16(v21 + data + 29);
-				v12 = (int16)READ_LE_UINT16(v21 + data + 31);
-				v13 = (int16)READ_LE_UINT16(v21 + data + 33);
+				v10 = READ_LE_UINT16(v21 + data + 25);
+				v11 = READ_LE_UINT16(v21 + data + 27);
+				v22 = READ_LE_UINT16(v21 + data + 29);
+				v12 = READ_LE_UINT16(v21 + data + 31);
+				v13 = *(v21 + data + 33);
 				*(dataP + 29) = *(v21 + data + 34);
 				WRITE_LE_UINT16(dataP + 20, v10);
 				WRITE_LE_UINT16(dataP + 22, v11);
 				WRITE_LE_UINT16(dataP + 24, v22);
 				WRITE_LE_UINT16(dataP + 26, v12);
-				WRITE_LE_UINT16(dataP + 28, v13);
+				*(dataP + 28) = v13;
+
 				v14 = 1;
-              
 				do {
 					v9 += 10;
 					v23 += 10;
 					if (!v22)
 						break;
-                
-					v24 = (int16)READ_LE_UINT16(v23);
-					v15 = (int16)READ_LE_UINT16(v23 + 2);
-					v22 = (int16)READ_LE_UINT16(v23 + 4);
-					v16 = (int16)READ_LE_UINT16(v23 + 6);
-					v17 = (int16)READ_LE_UINT16(v23 + 8);
+
+					v = READ_LE_UINT16(v23);
+					v15 = READ_LE_UINT16(v23 + 2);
+					v22 = READ_LE_UINT16(v23 + 4);
+					v16 = READ_LE_UINT16(v23 + 6);
+					v17 = *(v23 + 8);
 					*(v9 + 9) = *(v23 + 9);
-					WRITE_LE_UINT16(v9, v24);
+					WRITE_LE_UINT16(v9, v);
 					WRITE_LE_UINT16(v9 + 2, v15);
 					WRITE_LE_UINT16(v9 + 4, v22);
-	                WRITE_LE_UINT16(v9 + 6, v16);
-					WRITE_LE_UINT16(v9 + 8, v17);
+					WRITE_LE_UINT16(v9 + 6, v16);
+					*(v9 + 8) = v17;
 					++v14;
 				} while (v14 <= 4999);
-              
-				doneFlag = 1;
+				v3 = 1;
 			}
 		}
-    
-		if (*(data + v20) == 'F' && *(data + v21 + 1) == 'I' && *(data + v21 + 2) == 'N')
-			doneFlag = 1;
+		if (v20 == 'F' && *(data + v21 + 1) == 'I' && *(data + v21 + 2) == 'N')
+			v3 = 1;
 		++v21;
-	} while (v21 <= nbytes && !doneFlag);
+	} while (v21 <= count && v3 != 1);
 }
 
 void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uint32 a4, uint32 a5) {

@@ -451,8 +451,8 @@ LABEL_65:
 			if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
 /* Commented out in favour of using ScummVM cursor display
 				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
-*/
 				_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v12, v11);
+*/
 				goto LABEL_113;
 			}
 			if (btsouris != 23)
@@ -461,8 +461,8 @@ LABEL_65:
 		if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
 /* Commented out in favour of using ScummVM cursor display
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
-*/
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v14 + v15, yp + v13);
+*/
 		}
 	}
 LABEL_113:

@@ -102,7 +102,6 @@ struct BobItem {
 	int field14;
 	int field16;
 	byte *field18;
-	int field1A;
 	int field1C;
 	int field1E;
 	int field20;

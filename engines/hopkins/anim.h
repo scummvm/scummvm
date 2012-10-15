@@ -49,7 +49,7 @@ public:
 	bool REDRAW_ANIM();
 	void CHARGE_ANIM(const Common::String &animName);
 	void CLEAR_ANIM();
-	void RECHERCHE_ANIM(const byte *data, int idx, int nbytes);
+	void RECHERCHE_ANIM(const byte *data, int animIndex, int count);
 	void PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uint32 a4, uint32 a5);
 	void PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3, uint32 a4);
 };

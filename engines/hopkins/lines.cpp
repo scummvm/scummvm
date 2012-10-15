@@ -3071,7 +3071,7 @@ LABEL_323:
 						_vm->_globals.super_parcours[v81 + 3] = 0;
 						v121 += 3;
 						v137 += 4;
-						if ((int16)(int16)READ_LE_UINT16(v80 + 2 * v121) == -1 && (int16)(int16)READ_LE_UINT16(v80 + 2 * v121 + 2) == -1)
+						if ((int16)READ_LE_UINT16(v80 + 2 * v121) == -1 && (int16)READ_LE_UINT16(v80 + 2 * v121 + 2) == -1)
 							v131 = 1;
 					} while (v131 != 1);
 LABEL_301:
@@ -3129,7 +3129,7 @@ LABEL_312:
 					goto LABEL_301;
 				}
 				v86 = _vm->_globals.essai2;
-				if ((int16)(int16)READ_LE_UINT16(_vm->_globals.essai2) != -1 && v144 > v138 && v140 >= v138 && v142 >= v138 && a6 <= v138) {
+				if ((int16)READ_LE_UINT16(_vm->_globals.essai2) != -1 && v144 > v138 && v140 >= v138 && v142 >= v138 && a6 <= v138) {
 					NV_LIGNEDEP = v138;
 					NV_LIGNEOFS = v139;
 					v134 = 0;
@@ -3147,7 +3147,7 @@ LABEL_312:
 					} while (v134 != 1);
 					goto LABEL_312;
 				}
-				if ((int16)(int16)READ_LE_UINT16(_vm->_globals.essai1) != -1 && v144 > v142 && v140 >= v142 && v138 >= v142 && a6 <= v142) {
+				if ((int16)READ_LE_UINT16(_vm->_globals.essai1) != -1 && v144 > v142 && v140 >= v142 && v138 >= v142 && a6 <= v142) {
 					NV_LIGNEDEP = v142;
 					NV_LIGNEOFS = v143;
 					v135 = 0;
