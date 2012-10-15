@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/algorithm.h"
+#include "common/translation.h"
 
 #include <AppKit/NSOpenPanel.h>
 #include <Foundation/NSString.h>
@@ -36,12 +37,29 @@ namespace GUI {
 
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	: Dialog("Browser") {
-	_titleRef = CFStringCreateWithCString(0, title, CFStringGetSystemEncoding());
+
+	// remember whether this is a file browser or a directory browser.
 	_isDirBrowser = dirBrowser;
+
+	// Get current encoding
+#ifdef USE_TRANSLATION
+	CFStringRef encStr = CFStringCreateWithCString(NULL, TransMan.getCurrentCharset().c_str(), kCFStringEncodingASCII);
+	CFStringEncoding stringEncoding = CFStringConvertIANACharSetNameToEncoding(encStr);
+	CFRelease(encStr);
+#else
+	CFStringEncoding stringEncoding = kCFStringEncodingASCII;
+#endif
+
+	// Convert title to NSString
+	_titleRef = CFStringCreateWithCString(0, title, stringEncoding);
+
+	// Convert button text to NSString
+	_chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
 }
 
 BrowserDialog::~BrowserDialog() {
 	CFRelease(_titleRef);
+	CFRelease(_chooseRef);
 }
 
 int BrowserDialog::runModal() {
@@ -58,15 +76,19 @@ int BrowserDialog::runModal() {
 	// Temporarily show the real mouse
 	CGDisplayShowCursor(kCGDirectMainDisplay);
 
-
-	NSOpenPanel * panel = [NSOpenPanel openPanel];
-	[panel setCanChooseDirectories:YES];
-	if ([panel runModalForTypes:nil] == NSOKButton) {
-		const char *filename = [[panel filename] UTF8String];
-		_choice = Common::FSNode(filename);
-		choiceMade = true;
+	NSOpenPanel *panel = [NSOpenPanel openPanel];
+	[panel setCanChooseFiles:!_isDirBrowser];
+	[panel setCanChooseDirectories:_isDirBrowser];
+	[panel setTitle:(NSString *)_titleRef];
+	[panel setPrompt:(NSString *)_chooseRef];
+	if ([panel runModal] == NSOKButton) {
+		NSURL *url = [panel URL];
+		if ([url isFileURL]) {
+			const char *filename = [[url path] UTF8String];
+			_choice = Common::FSNode(filename);
+			choiceMade = true;
+		}
 	}
-
 
 	// If we were in fullscreen mode, switch back
 	if (wasFullscreen) {
