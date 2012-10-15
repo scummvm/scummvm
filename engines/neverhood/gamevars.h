@@ -87,7 +87,7 @@ enum {
 	V_BALLOON_POPPED			= 0xAC00C0D0,			// Has the balloon with the key been popped?
 	V_TNT_DUMMY_BUILT			= 0x000CF819,			// Are all TNT parts on the dummy?
 	V_TNT_DUMMY_FUSE_LIT		= 0x20A0C516,
-	V_RING5_PULLED				= 0x4DE80AC0,
+	V_RADIO_ENABLED				= 0x4DE80AC0,
 	V_CREATURE_EXPLODED			= 0x2A02C07B,
 	// Match
 	V_MATCH_STATUS				= 0x0112090A,

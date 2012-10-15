@@ -1475,21 +1475,21 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_parentModule, 0x1024, 2);
 		_flag1BE = true;
 		if (sender == _asRing1) {
-			setGlobalVar(V_RING5_PULLED, 0);
+			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(0, 0x665198C0);
 		} else if (sender == _asRing2) {
-			setGlobalVar(V_RING5_PULLED, 0);
+			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(0, 0xE2D389C0);
 		} else if (sender == _asRing3) {
-			setGlobalVar(V_RING5_PULLED, 0);
+			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(1);
 			sendMessage(_asDoor, 0x4808, 0);
 			sendMessage(_asOutsideDoorBackground, 0x4808, 0);
 		} else if (sender == _asRing4) {
-			setGlobalVar(V_RING5_PULLED, 0);
+			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(0, 0xE0558848);
 		} else if (sender == _asRing5) {
-			setGlobalVar(V_RING5_PULLED, 1);
+			setGlobalVar(V_RADIO_ENABLED, 1);
 			playSound(0, 0x44014282);
 		}
 		break;
@@ -1508,7 +1508,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendEntityMessage(_klayman, 0x1014, _asDoorSpy);
 		break;				
 	case 0x480F:
-		setGlobalVar(V_RING5_PULLED, 0);
+		setGlobalVar(V_RADIO_ENABLED, 0);
 		playSound(1);
 		sendMessage(_asDoor, 0x4808, 0);
 		sendMessage(_asOutsideDoorBackground, 0x4808, 0);
@@ -1800,7 +1800,7 @@ uint32 Scene1005::getTextIndex1() {
 			textIndex = 12;
 		else if (!getGlobalVar(0x2050861A))
 			textIndex = 13;
-		else if (!getGlobalVar(V_RING5_PULLED))
+		else if (!getGlobalVar(V_RADIO_ENABLED))
 			textIndex = 50;
 		else if (!getGlobalVar(0x89C669AA))
 			textIndex = 14;

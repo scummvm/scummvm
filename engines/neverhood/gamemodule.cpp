@@ -517,6 +517,76 @@ void GameModule::createModule(int moduleNum, int which) {
 	_childObject->handleUpdate();
 }
 
+void GameModule::createModuleByHash(uint32 nameHash) {
+	switch (nameHash) {
+	case 0x03294419:
+		createModule(1000, -1);
+		break;
+	case 0x0002C818:
+		createModule(1100, -1);
+		break;
+	case 0x00478311:
+		createModule(1200, -1);
+		break;
+	case 0x0061C090:
+		createModule(1300, -1);
+		break;
+	case 0x00AD0012:
+		createModule(1400, -1);
+		break;
+	case 0x00F10114:
+		createModule(1500, -1);
+		break;
+	case 0x01A008D8:
+		createModule(1600, -1);
+		break;
+	case 0x04212331:
+		createModule(1700, -1);
+		break;
+	case 0x04A14718:
+		createModule(1800, -1);
+		break;
+	case 0x04E1C09C:
+		createModule(1900, -1);
+		break;
+	case 0x08250000:
+		createModule(2000, -1);
+		break;
+	case 0x10A10C14:
+		createModule(2100, -1);
+		break;
+	case 0x11391412:
+		createModule(2200, -1);
+		break;
+	case 0x1A214010:
+		createModule(2300, -1);
+		break;
+	case 0x202D1010:
+		createModule(2400, -1);
+		break;
+	case 0x29220120:
+		createModule(2500, -1);
+		break;
+	case 0x40271018:
+		createModule(2600, -1);
+		break;
+	case 0x42212411:
+		createModule(2700, -1);
+		break;
+	case 0x64210814:
+		createModule(2800, -1);
+		break;
+	case 0x81100020:
+		createModule(2900, -1);
+		break;
+	case 0x81293110:
+		createModule(3000, -1);
+		break;
+	default:
+		error("GameModule::createModuleByHash() Unknown module name %08X", nameHash);
+	}
+}
+
 void GameModule::updateModule() {
 	if (!updateChild()) {
 		switch (_moduleNum) {

@@ -54,6 +54,7 @@ protected:
 	int _moduleNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createModule(int moduleNum, int which);
+	void createModuleByHash(uint32 nameHash);
 	void updateModule();
 };
 

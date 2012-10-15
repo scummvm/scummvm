@@ -34,7 +34,6 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _musicResource(NULL) {
 
 	_currentMusicFileHash = 0;
-	// TODO music stuff
 	_vm->_soundMan->addMusic(0x64210814, 0xD2FA4D14);
 	setGlobalVar(0x28D8C940, 1);
 	
@@ -68,19 +67,10 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 1:
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
-		
-		// TODO!!
-		
-		_childObject = new Scene2802(_vm, this, which);
-		
-#if 0		
-		_flag = true; // DEBUG!
-		if (_flag) {
+		if (getGlobalVar(V_RADIO_ENABLED))
 			_childObject = new Scene2802(_vm, this, which);
-		} else {
+		else
 			createStaticScene(0x000C6444, 0xC6440008);
-		}
-#endif		
 		break;
 	case 2:
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
@@ -202,7 +192,12 @@ void Module2800::updateScene() {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
 			if (_moduleResult != 2) {
-				// TODO music stuff
+				if (_musicResource) {
+					_musicResource->unload();
+					delete _musicResource;
+					_musicResource = NULL;
+				}
+				_currentMusicFileHash = 0;
 			}			
 			if (_moduleResult == 1) {
 				createScene(2, 0);
@@ -407,15 +402,13 @@ void Module2800::updateMusic(bool halfVolume) {
 Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
-	// TODO Weird palette glitches in the mouse cursor and sprite, check this later
-
 	// TODO _vm->gameModule()->initScene2801Vars();
 
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2801::handleMessage);
 	SetUpdateHandler(&Scene::update);
 
-	if (getGlobalVar(V_RING5_PULLED) == 0) {
+	if (getGlobalVar(V_RADIO_ENABLED) == 0) {
 		// Display the disabled radio; only possible when the left door is open
 		insertStaticSprite(0x0001264C, 100);
 	}
@@ -1357,7 +1350,7 @@ void Scene2803Small::updatePaletteArea(bool instantly) {
 			_palette->addBasePalette(0xB103B604, 0, 64, 0);
 			break;
 		case 3:
-			// TODO _palette->sub_47BFB0(0, 64);
+			_palette->fillBaseBlack(0, 64);
 			break;
 		default:
 			_palette->addBasePalette(0x412A423E, 0, 64, 0);
@@ -1369,7 +1362,7 @@ void Scene2803Small::updatePaletteArea(bool instantly) {
 			_palette->addBasePalette(0x0263D144, 0, 64, 0);
 			break;
 		case 3:
-			// TODO _palette->sub_47BFB0(0, 64);
+			_palette->fillBaseBlack(0, 64);
 			break;
 		default:
 			_palette->addBasePalette(0x29800A01, 0, 64, 0);
