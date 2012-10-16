@@ -379,7 +379,6 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	addEntity(_diskSmackerPlayer);
 	addSurface(_diskSmackerPlayer->getSurface());
 	_diskSmackerPlayer->setDrawPos(154, 86);
-	// TODO _diskSmackerPlayer->gotoFrame(0);
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 
 	_palette->usePalette();
@@ -469,7 +468,6 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 	if (!_inputDisabled) {
 		switch (messageNum) {
 		case 0x0001:
-			// TODO: Debug/Cheat
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 				sendMessage(_parentModule, 0x1009, 0);
 			} else if (!_dropKey &&
@@ -488,7 +486,6 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 				}
 			}
 			break;
-		// case 0x000D: TODO: Debug/Cheat
 		case 0x2000:
 			tuneIn();
 			break;			

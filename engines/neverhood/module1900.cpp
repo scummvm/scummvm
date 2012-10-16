@@ -390,7 +390,6 @@ void AsScene1907Symbol::fallOff(int newPositionIndex, int fallOffDelay) {
 void AsScene1907Symbol::stFallOffHitGround() {
 	playSound(1);
 	sendMessage(_parentScene, 0x1022, 1000 + _newPositionIndex);
-	// TODO: Meh...
 	Entity::_priority = 1000 - _newPositionIndex;
 	_vm->_collisionMan->removeSprite(this);
 	_vm->_collisionMan->addSprite(this);
@@ -632,13 +631,11 @@ uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO DEBUG stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) &&
 			!_hasPlugInFailed && _moveDownCountdown == 0 && _moveUpCountdown == 0 && _countdown3 == 0) {
 			leaveScene(0);
 		}
 		break;
-	// TODO Debug stuff
 	case 0x2000:
 		if (getGlobalVar(V_STAIRS_DOWN)) {
 			playSound(0);

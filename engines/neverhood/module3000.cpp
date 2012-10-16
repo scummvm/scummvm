@@ -937,14 +937,10 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO: Debug stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !getGlobalVar(V_CANNON_RAISED)) {
 			setGlobalVar(V_CANNON_TARGET_STATUS, 0);
 			leaveScene(0);
 		}
-		break;
-	case 0x000D:
-		// TODO: Debug stuff
 		break;
 	case 0x2000:
 		if (!getGlobalVar(V_CANNON_RAISED)) {
@@ -1347,7 +1343,6 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO: Debug stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && _countdown == 0 && !_checkUnlocked) {
 			if (!_boltUnlocking[0] && !_boltUnlocking[1] && !_boltUnlocking[2]) {
 				showMouse(false);
@@ -1364,9 +1359,6 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 				}
 			}
 		}
-		break;
-	case 0x000D:
-		// TODO: Debug stuff
 		break;
 	case 0x2000:
 		if (!_boltUnlocked[param.asInteger()] && !_checkUnlocked && _countdown == 0) {

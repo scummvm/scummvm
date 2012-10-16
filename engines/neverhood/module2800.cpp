@@ -487,7 +487,6 @@ Scene2801::~Scene2801() {
 uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	// TODO: case 0x000D:
 	case 0x4826:
 		if (sender == _asTape) {
 			sendEntityMessage(_klayman, 0x1014, _asTape);
@@ -1862,13 +1861,9 @@ uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO DEBUG
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		}
-		break;
-	case 0x000D:
-		// TODO DEBUG
 		break;
 	case 0x2000:
 		_isWorking = true;
@@ -2377,53 +2372,23 @@ uint32 AsScene2808TestTube::handleMessage(int messageNum, const MessageParam &pa
 void AsScene2808TestTube::fill() {
 
 
-	if ((int)_fillLevel >= _testTubeSetNum * 3 + 3)
+	if ((int)_fillLevel < _testTubeSetNum * 3 + 3)
 		return;
 		
-	// TODO Remove the two switches
-
 	if (_testTubeSetNum == 0) {
-		switch (_fillLevel) {
-		case 0:
-			playSound(0);
-			break;
-		case 1:
-			playSound(1);
-			break;
-		case 2:
-			playSound(2);
-			break;
-		}
+		playSound(_fillLevel);
 		setVisible(true);
 		startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices1[_fillLevel], kClass490FrameIndices1[_fillLevel + 1]);
 		_newStickFrameIndex = kClass490FrameIndices1[_fillLevel + 1];
 	} else {
-		switch (_fillLevel) {
-		case 0:
-			playSound(3);
-			break;
-		case 1:
-			playSound(4);
-			break;
-		case 2:
-			playSound(5);
-			break;
-		case 3:
-			playSound(6);
-			break;
-		case 4:
-			playSound(7);
-			break;
-		case 5:
-			playSound(8);
-			break;
-		}
+		playSound(3 + _fillLevel);
 		setVisible(true);
 		startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices2[_fillLevel], kClass490FrameIndices2[_fillLevel + 1]);
 		_newStickFrameIndex = kClass490FrameIndices2[_fillLevel + 1];
 	}
 	_ssDispenser->startCountdown(_fillLevel);
 	_fillLevel++;
+
 }
 
 void AsScene2808TestTube::flush() {
@@ -2599,13 +2564,9 @@ uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO DEBUG Stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !isAnyTestTubeFilled()) {
 			leaveScene(1);
 		}
-		break;
-	case 0x000D:
-		// TODO DEBUG Stuff
 		break;
 	case 0x2000:
 		if (!_isFlowing)

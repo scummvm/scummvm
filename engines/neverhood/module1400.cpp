@@ -1278,7 +1278,6 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		if (_puzzleSolvedCountdown == 0) {
-			// TODO: Debug/Cheat stuff
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 				// Exit scene
 				leaveScene(0);
@@ -1294,9 +1293,6 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 				sendMessage(_asMouse, messageNum, param);
 			}
 		}
-		break;
-	case 0x000D:
-		// TODO: Debug/Cheat stuff
 		break;
 	case 0x2000:
 		// The mouse got the cheese (nomnom)
@@ -1542,7 +1538,7 @@ AsScene1405Tile::AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, ui
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _tileIndex(tileIndex), _countdown(0), _isShowing(false) {
 
 	loadSound(0, 0x05308101);
-	// TODO _soundResource.setPan
+	setSoundPan(0, (tileIndex % 8 * 4 + 4) * 25 / 8);
 	_x = kAsScene1405TileItemPositions[_tileIndex].x;
 	_y = kAsScene1405TileItemPositions[_tileIndex].y;
 	createSurface1(0x844B805C, 1100);
@@ -1653,13 +1649,9 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO: Debug/Cheat stuff
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		}
-		break;
-	case 0x000D:
-		// TODO: Debug/Cheat stuff
 		break;
 	case 0x2000:
 		if (_selectFirstTile) {

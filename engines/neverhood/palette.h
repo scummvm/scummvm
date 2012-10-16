@@ -51,6 +51,7 @@ public:
 	void startFadeToPalette(int counter);
 	void fillBaseWhite(int index, int count);
 	void fillBaseBlack(int index, int count);
+	void copyToBasePalette(byte *palette);
 protected:
 	int _status;
 	byte *_palette;

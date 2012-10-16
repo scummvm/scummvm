@@ -476,7 +476,6 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO Debug stuff
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			if (!_flag2 && _backgroundIndex == 0) {
 				if (_flag1) {
@@ -489,7 +488,6 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	// TODO Debug stuff
 	case 0x2001:
 		showMouse(false);
 		_backgroundIndex = 24;

@@ -106,9 +106,6 @@ void Scene1501::update() {
 
 	Scene::update();
 
-	// TODO: Since these countdowns are used a lot, maybe these can be wrapped in a class/struct
-	// so the code gets a little cleaner.
-
 	if (_countdown1 != 0) {
 		_countdown1--;
 		if (_countdown1 == 0) {

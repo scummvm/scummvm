@@ -92,7 +92,9 @@ void Module2500::createScene(int sceneNum, int which) {
 		createScene2704(which, 0x004B01B8, 220);
 		break;
 	case 2:
-		setGlobalVar(V_WORLDS_JOINED, 1);// TODO DEBUG! Join the tracks.
+		//DEBUG>>>Join the tracks.
+		setGlobalVar(V_WORLDS_JOINED, 1);
+		//DEBUG<<< 
 		_vm->gameState().which = which;
 		if (getGlobalVar(V_WORLDS_JOINED))
 			createScene2704(which, 0x004B01E0, 150);
@@ -213,7 +215,6 @@ uint32 Module2500::handleMessage(int messageNum, const MessageParam &param, Enti
 }
 			
 void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
-	// TODO Move to module class?
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
 }
 

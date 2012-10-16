@@ -487,8 +487,6 @@ void Scene2401::update() {
 uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	// case 0x0001: TODO DEBUG
-	// case 0x000D: TODO DEBUG
 	case 0x100D:
 		if (param.asInteger() == 0x402064D8)
 			sendEntityMessage(_klayman, 0x1014, _ssButton);

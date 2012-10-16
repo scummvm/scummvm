@@ -411,8 +411,6 @@ void Module2700::updateScene() {
 			createScene(19, 3);
 			break;
 		case 21:
-			// TODO? GameState_sub_469C50(&field_52, 0);
-			// TODO MusicMan_stopAll (if field_52 above = 1)
 			_vm->_soundMan->deleteMusic(_musicFileHash);
 			_vm->_soundMan->startMusic(0x04020210, 0, 2);
 			_vm->_soundMan->deleteSoundGroup(0x42212411);
@@ -460,8 +458,6 @@ void Module2700::updateScene() {
 				_vm->_soundMan->stopMusic(0x04020210, 0, 1);
 				_vm->gameModule()->initScene2801Vars();
 				_musicFileHash = getGlobalVar(V_GOOD_RADIO_MUSIC_NAME);
-				// TODO? GameState_sub_469C50(&field_52, 0);
-				// TODO MusicMan_create(); // Why?
 				_vm->_soundMan->addMusic(0x42212411, _musicFileHash);
 				_vm->_soundMan->startMusic(_musicFileHash, 0, 2/*TODO ??? */);
 				_vm->_soundMan->addSound(0x42212411, 0x44014282);

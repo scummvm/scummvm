@@ -1137,7 +1137,8 @@ void Scene1202::update() {
 		_clickedIndex = 0;
 		SetMessageHandler(&Scene1202::hmSolved);
 		setGlobalVar(V_TNT_DUMMY_BUILT, 1);
-		doPaletteEffect();
+		_palette->copyToBasePalette(_paletteData);
+		_palette->startFadeToPalette(24);
 		playSound(3);
 		_soundFlag = true;
 	} else if (_clickedIndex >= 0 && _counter == 0) {
@@ -1163,15 +1164,8 @@ uint32 Scene1202::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO: Debug/Cheat stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_soundFlag) {
 			leaveScene(0);
-		}
-		break;
-	case 0x000D:
-		if (param.asInteger() == 0x14210006) {
-			// TODO: Debug/Cheat stuff
-			messageResult = 1;
 		}
 		break;
 	case 0x2000:
@@ -1207,10 +1201,6 @@ bool Scene1202::isSolved() {
 		getSubVar(VA_TNT_POSITIONS,  0) ==  0 && getSubVar(VA_TNT_POSITIONS,  3) ==  3 && 
 		getSubVar(VA_TNT_POSITIONS,  6) ==  6 && getSubVar(VA_TNT_POSITIONS,  9) ==  9 &&
 		getSubVar(VA_TNT_POSITIONS, 12) == 12 && getSubVar(VA_TNT_POSITIONS, 15) == 15;
-}
-
-void Scene1202::doPaletteEffect() {
-	// TODO
 }
 
 } // End of namespace Neverhood

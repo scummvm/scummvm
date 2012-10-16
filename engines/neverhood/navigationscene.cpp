@@ -140,7 +140,6 @@ void NavigationScene::createMouseCursor() {
 	}
 
 	mouseCursorFileHash = navigationItem.mouseCursorFileHash;
-	// TODO: Check the resource...
 	if (mouseCursorFileHash == 0)
 		mouseCursorFileHash = 0x63A40028;
 		

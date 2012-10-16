@@ -161,6 +161,10 @@ void Palette::fillBaseBlack(int index, int count) {
 	}
 }
 
+void Palette::copyToBasePalette(byte *palette) {
+	memcpy(_basePalette, palette, 256 * 4);
+}
+
 void Palette::update() {
 	debug(2, "Palette::update() _status = %d", _status);
 	if (_status == 1) {

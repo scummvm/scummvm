@@ -1064,10 +1064,6 @@ void AsCommonCarConnector::update() {
 Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _asCar(NULL), _countdown1(0) {
 
-	/* TODO: Find out which of the message/update handlers are used for
-		the upper/lower floors and rename them accordingly.
-	*/
-	
 	setGlobalVar(V_CAR_DELTA_X, 1);
 	
 	_surfaceFlag = true;
@@ -1434,11 +1430,9 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO: Debug stuff
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;
-	// TODO: Debug stuff
 	case 0x2000:
 		if (!_isSolved) {
 			if (_changeCurrentSymbol)

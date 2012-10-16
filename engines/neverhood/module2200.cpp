@@ -967,13 +967,9 @@ uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO Debug stuff
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		}
-		break;
-	case 0x000D:
-		// TODO Debug stuff
 		break;
 	case 0x2000:
 		_movingTileIndex = (int16)param.asInteger();
@@ -1126,8 +1122,6 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x80330824);
 
 	setHitRects(0x004B8320);
-
-	//DEBUG setGlobalVar(V_KEY3_LOCATION, 1);//###//TODO CHECK IF Below...
 
 	if (getGlobalVar(V_KEY3_LOCATION) == 1) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 282, 432);
@@ -2391,7 +2385,6 @@ void Scene2208::drawRow(int16 rowIndex) {
 		_background->getSurface()->copyFrom(_backgroundSurface->getSurface(), 0, y, sourceRect, true);
 		if (rowIndex < (int)_strings.size()) {
 			const char *text = _strings[rowIndex];
-			// TODO/CHECKME: Use temporary string up to '{' character (see above)
 			_fontSurface->drawString(_background->getSurface(), 95, y, (const byte*)text);
 		}
 	}
@@ -2667,7 +2660,6 @@ Scene2247::~Scene2247() {
 uint32 Scene2247::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	// TODO: Debug stuff
 	case 0x100D:
 		if (param.asInteger() == 0x800C6694) {
 			readClickedColumn();

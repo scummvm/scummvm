@@ -209,7 +209,6 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmSolved(int messageNum, const MessageParam &param, Entity *sender);
 	bool isSolved();
-	void doPaletteEffect();
 };
 
 } // End of namespace Neverhood

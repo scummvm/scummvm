@@ -1329,7 +1329,6 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		// TODO Debug stuff
 		if (!_isPuzzleSolved) {
 			if (param.asPoint().x > 20 && param.asPoint().x < 620) {
 				if (_asCurrKey && !_isInsertingKey) {
@@ -1363,7 +1362,6 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	// TODO Debug stuff
 	case 0x2002:
 		// Check if all keys are in the correct keyholes
 		if (getSubVar(VA_IS_KEY_INSERTED, 0) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 0) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 0) &&
