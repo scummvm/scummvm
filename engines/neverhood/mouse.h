@@ -51,6 +51,7 @@ protected:
 	int16 _x1;
 	int16 _x2;
 	int _type;
+	bool _visible;
 	void init(uint32 fileHash);	
 	void update();
 	void updateCursorNum();
