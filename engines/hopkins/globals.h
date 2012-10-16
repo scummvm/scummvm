@@ -84,8 +84,8 @@ struct ListeItem {
 
 struct Liste2Item {
 	int field0;
-	int field2;
-	int field4;
+	int xp;
+	int yp;
 	int width;
 	int height;
 };

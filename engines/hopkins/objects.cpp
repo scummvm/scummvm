@@ -606,8 +606,8 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob.field46 = 0;
 
 	item.field0 = 0;
-	item.field2 = 0;
-	item.field4 = 0;
+	item.xp = 0;
+	item.yp = 0;
 	item.width = 0;
 	item.height = 0;
 }
@@ -642,31 +642,31 @@ void ObjectsManager::DEF_BOB(int idx) {
     
 		v3 = idx;
 		_vm->_globals.Liste2[v3].field0 = 1;
-		_vm->_globals.Liste2[v3].field2 = v12;
-		_vm->_globals.Liste2[v3].field4 = v13;
+		_vm->_globals.Liste2[v3].xp = v12;
+		_vm->_globals.Liste2[v3].yp = v13;
 		
 		v4 = idx;
-		_vm->_globals.Liste2[v3].width = _vm->_globals.Bob[v4].field46;
-		_vm->_globals.Liste2[v3].height = _vm->_globals.Bob[v4].field48;
-		v5 = _vm->_globals.Liste2[v3].field2;
-    
+		_vm->_globals.Liste2[v3].width = _vm->_globals.Bob[v4].field42;
+		_vm->_globals.Liste2[v3].height = _vm->_globals.Bob[v4].field44;
+
+		v5 = _vm->_globals.Liste2[v3].xp;
 		v6 = _vm->_graphicsManager.min_x;
 		if (v5 < _vm->_graphicsManager.min_x) {
 			_vm->_globals.Liste2[v3].width -= _vm->_graphicsManager.min_x - v5;
-			_vm->_globals.Liste2[v3].field2 = v6;
+			_vm->_globals.Liste2[v3].xp = v6;
 		}
     
-		v7 = _vm->_globals.Liste2[v3].field4;
+		v7 = _vm->_globals.Liste2[v3].yp;
 		v8 = _vm->_graphicsManager.min_y;
 		if (v7 < _vm->_graphicsManager.min_y) {
 			_vm->_globals.Liste2[v3].height -= _vm->_graphicsManager.min_y - v7;
-			_vm->_globals.Liste2[v3].field4 = v8;
+			_vm->_globals.Liste2[v3].yp = v8;
 		}
     
-		v9 = _vm->_globals.Liste2[v3].field2;
+		v9 = _vm->_globals.Liste2[v3].xp;
 		if (_vm->_globals.Liste2[v3].width + v9 > _vm->_graphicsManager.max_x)
 			_vm->_globals.Liste2[v3].width = _vm->_graphicsManager.max_x - v9;
-		v10 = _vm->_globals.Liste2[v3].field4;
+		v10 = _vm->_globals.Liste2[v3].yp;
 		if (_vm->_globals.Liste2[v3].height + v10 > _vm->_graphicsManager.max_y)
 			_vm->_globals.Liste2[v3].height = _vm->_graphicsManager.max_y - v10;
     
@@ -676,10 +676,10 @@ void ObjectsManager::DEF_BOB(int idx) {
 		v11 = idx;
 		if (_vm->_globals.Liste2[v11].field0 == 1)
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(
-                 _vm->_globals.Liste2[v11].field2,
-                 _vm->_globals.Liste2[v11].field4,
-                 _vm->_globals.Liste2[v11].field2 + _vm->_globals.Liste2[v11].width,
-                 _vm->_globals.Liste2[v11].field4 + _vm->_globals.Liste2[v11].height);
+                 _vm->_globals.Liste2[v11].xp,
+                 _vm->_globals.Liste2[v11].yp,
+                 _vm->_globals.Liste2[v11].xp + _vm->_globals.Liste2[v11].width,
+                 _vm->_globals.Liste2[v11].yp + _vm->_globals.Liste2[v11].height);
 	}
 }
 
@@ -913,7 +913,6 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 			}
 		}
     
-		idx = idx;
 		v13 = _vm->_globals.Bob[idx].field8 - v22;
 		v14 = _vm->_globals.Bob[idx].fieldA - v17;
 		_vm->_globals.Bob[idx].field3C = 1;
@@ -923,8 +922,8 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		_vm->_globals.Bob[idx].field4A = v20;
 
 		_vm->_globals.Liste2[idx].field0 = 1;
-		_vm->_globals.Liste2[idx].field2 = v13;
-		_vm->_globals.Liste2[idx].field4 = v14;
+		_vm->_globals.Liste2[idx].xp = v13;
+		_vm->_globals.Liste2[idx].yp = v14;
 
 		int width = Get_Largeur(_vm->_globals.Bob[idx].field4, _vm->_globals.Bob[idx].fieldC);
 		int height = Get_Hauteur(_vm->_globals.Bob[idx].field4, _vm->_globals.Bob[idx].fieldC);
@@ -1429,10 +1428,10 @@ LABEL_38:
 						if (v14 != 4) {
 							if (_vm->_globals.Liste2[v27].field0) {
 								_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN,
-									_vm->_globals.Liste2[v27].field2, _vm->_globals.Liste2[v27].field4,
+									_vm->_globals.Liste2[v27].xp, _vm->_globals.Liste2[v27].yp,
 									_vm->_globals.Liste2[v27].width, _vm->_globals.Liste2[v27].height,
-									_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Liste2[v27].field2,
-									_vm->_globals.Liste2[v27].field4);
+									_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Liste2[v27].xp,
+									_vm->_globals.Liste2[v27].yp);
 								_vm->_globals.Liste2[v27].field0 = 0;
 							}
 						}
@@ -1444,10 +1443,10 @@ LABEL_38:
 			if (_vm->_globals.Bob[v22].field0 == 11) {
 				if (_vm->_globals.Liste2[v27].field0) {
 					_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN,
-						_vm->_globals.Liste2[v27].field2, _vm->_globals.Liste2[v27].field4,
+						_vm->_globals.Liste2[v27].xp, _vm->_globals.Liste2[v27].yp,
 						_vm->_globals.Liste2[v27].width, _vm->_globals.Liste2[v27].height,
 						_vm->_graphicsManager.VESA_BUFFER,
-						_vm->_globals.Liste2[v27].field2, _vm->_globals.Liste2[v27].field4);
+						_vm->_globals.Liste2[v27].xp, _vm->_globals.Liste2[v27].yp);
 					_vm->_globals.Liste2[v27].field0 = 0;
 				}
         
