@@ -265,7 +265,7 @@ DiskplayerSlot::DiskplayerSlot(NeverhoodEngine *vm, DiskplayerScene *diskplayerS
 		_appearSlot->setVisible(false);
 		_activeSlot->setVisible(false);
 		loadSound(0, 0x46210074);
-		// TODO sound panning stuff
+		setSoundPan(0, elementIndex * 100 / 19);
 	} else if (elementIndex != 20) {
 		_activeSlot = _diskplayerScene->addSprite(new StaticSprite(_vm, kDiskplayerSlotFileHashes4[_elementIndex], 1100));
 		_activeSlot->setVisible(false);

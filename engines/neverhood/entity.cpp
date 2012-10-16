@@ -150,6 +150,10 @@ void Entity::setSoundVolume(uint index, int volume) {
 	getSoundResource(index)->setVolume(volume);
 }
 
+void Entity::setSoundPan(uint index, int pan) {
+	getSoundResource(index)->setPan(pan);
+}
+
 void Entity::deleteSoundResources() {
 	if (_soundResources) {
 		for (uint i = 0; i < kMaxSoundResources; ++i)

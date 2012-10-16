@@ -111,6 +111,7 @@ protected:
 	void stopSound(uint index);
 	bool isSoundPlaying(uint index);
 	void setSoundVolume(uint index, int volume);
+	void setSoundPan(uint index, int pan);
 	void deleteSoundResources();
 };
 
