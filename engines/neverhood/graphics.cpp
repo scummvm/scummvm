@@ -28,7 +28,7 @@ namespace Neverhood {
 
 BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height)
 	: _vm(vm), _priority(priority), _visible(true), _transparent(true),
-	_clipRects(NULL), _clipRectsCount(0) {
+	_clipRects(NULL), _clipRectsCount(0), _version(0) {
 	
 	_drawRect.x = 0;
 	_drawRect.y = 0;
@@ -54,11 +54,11 @@ BaseSurface::~BaseSurface() {
 void BaseSurface::draw() {
 	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
 		if (_clipRects && _clipRectsCount) {
-			_vm->_screen->drawSurfaceClipRects(_surface, _drawRect, _clipRects, _clipRectsCount, _transparent);
+			_vm->_screen->drawSurfaceClipRects(_surface, _drawRect, _clipRects, _clipRectsCount, _transparent, _version);
 		} else if (_sysRect.x == 0 && _sysRect.y == 0) {
-			_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent);
+			_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent, _version);
 		} else {
-			_vm->_screen->drawUnk(_surface, _drawRect, _sysRect, _clipRect, _transparent);
+			_vm->_screen->drawUnk(_surface, _drawRect, _sysRect, _clipRect, _transparent, _version);
 		}
 	}
 }
@@ -69,6 +69,7 @@ void BaseSurface::addDirtyRect() {
 
 void BaseSurface::clear() {
 	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), 0);
+	++_version;
 }
 
 void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
@@ -76,6 +77,7 @@ void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
 		spriteResource.getDimensions().height <= _drawRect.height) {
 		clear();
 		spriteResource.draw((byte*)_surface->pixels, _surface->pitch, false, false);
+		++_version;
 	}
 }
 
@@ -89,6 +91,7 @@ void BaseSurface::drawSpriteResourceEx(SpriteResource &spriteResource, bool flip
 		if (_surface) {
 			clear();
 			spriteResource.draw((byte*)_surface->pixels, _surface->pitch, flipX, flipY);
+			++_version;
 		}
 	}
 }
@@ -102,6 +105,7 @@ void BaseSurface::drawAnimResource(AnimResource &animResource, uint frameIndex, 
 		clear();
 		if (frameIndex < animResource.getFrameCount()) {
 			animResource.draw(frameIndex, (byte*)_surface->pixels, _surface->pitch, flipX, flipY);
+			++_version;
 		}
 	}
 }
@@ -109,6 +113,7 @@ void BaseSurface::drawAnimResource(AnimResource &animResource, uint frameIndex, 
 void BaseSurface::drawMouseCursorResource(MouseCursorResource &mouseCursorResource, int frameNum) {
 	if (frameNum < 3) {
 		mouseCursorResource.draw(frameNum, (byte*)_surface->pixels, _surface->pitch);
+		++_version;
 	}
 }
 
@@ -132,6 +137,7 @@ void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, N
 			dest += _surface->pitch;
 		}
 	}
+	++_version;
 }
 
 // ShadowSurface
@@ -143,7 +149,7 @@ ShadowSurface::ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int
 
 void ShadowSurface::draw() {
 	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
-		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent, _shadowSurface->getSurface());
+		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent, _version, _shadowSurface->getSurface());
 	}
 }
 

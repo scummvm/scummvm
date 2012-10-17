@@ -118,6 +118,7 @@ protected:
 	NRect *_clipRects;
 	uint _clipRectsCount;
 	bool _transparent;
+	byte _version;
 };
 
 class ShadowSurface : public BaseSurface {

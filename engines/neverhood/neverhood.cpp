@@ -153,12 +153,14 @@ Common::Error NeverhoodEngine::run() {
 		if (_system->getMillis() >= nextFrameTime) {
 			_gameModule->handleUpdate();
 			_gameModule->draw();
+			_screen->update();
 			nextFrameTime = _screen->getNextFrameTime();
 		};
 		
 		_soundMan->update();
 		_audioResourceMan->update();
-		_screen->update();
+		//_screen->update();
+		_system->updateScreen();
 		_system->delayMillis(10);
 		
 		debug(0, "---------------------------------------");

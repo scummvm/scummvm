@@ -23,12 +23,38 @@
 #ifndef NEVERHOOD_SCREEN_H
 #define NEVERHOOD_SCREEN_H
 
+#include "common/array.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/graphics.h"
 
 namespace Neverhood {
+
+struct RenderItem {
+	const Graphics::Surface *_surface;
+	const Graphics::Surface *_shadowSurface;
+	int16 _destX, _destY;
+	int16 _srcX, _srcY, _width, _height;
+	bool _transparent;
+	byte _version;
+	bool _refresh;
+	bool operator==(const RenderItem &second) const {
+		return
+			_surface == second._surface &&
+			_shadowSurface == second._shadowSurface &&
+			_destX == second._destX &&
+			_destY == second._destY &&
+			_srcX == second._srcX &&
+			_srcY == second._srcY &&
+			_width == second._width &&
+			_height == second._height &&
+			_transparent == second._transparent &&
+			_version == second._version;
+	}
+};
+
+typedef Common::Array<RenderItem> RenderQueue;
 
 class Screen {
 public:
@@ -43,16 +69,19 @@ public:
 	void testPalette(byte *paletteData);
 	void updatePalette();
 	void clear();
-	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent,
+	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version,
 		const Graphics::Surface *shadowSurface = NULL);
-	void drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent);
+	void drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version);
 	void drawShadowSurface(const Graphics::Surface *surface, const Graphics::Surface *shadowSurface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect);
 	void blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent,
 		const Graphics::Surface *shadowSurface = NULL);
 	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
-	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent);
-	void drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent);
+	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent, byte version);
+	void drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent, byte version);
 	void setSmackerDecoder(Video::SmackerDecoder *smackerDecoder) { _smackerDecoder = smackerDecoder; }
+	void queueBlit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent, byte version,
+		const Graphics::Surface *shadowSurface = NULL);
+	void blitRenderItem(const RenderItem &renderItem, const Common::Rect &clipRect);
 protected:
 	NeverhoodEngine *_vm;
 	Graphics::Surface *_backScreen;
@@ -61,6 +90,9 @@ protected:
 	int32 _frameDelay;
 	byte *_paletteData;
 	bool _paletteChanged;
+	//
+	bool _fullRefresh;
+	RenderQueue *_renderQueue, *_prevRenderQueue;
 };
 
 } // End of namespace Neverhood

@@ -33,9 +33,14 @@ Screen::Screen(NeverhoodEngine *vm)
 	_backScreen = new Graphics::Surface();
 	_backScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	
+	_renderQueue = new RenderQueue();
+	_prevRenderQueue = new RenderQueue();
+	
 }
 
 Screen::~Screen() {
+	delete _renderQueue;
+	delete _prevRenderQueue;
 	_backScreen->free();
 	delete _backScreen;
 }
@@ -43,9 +48,65 @@ Screen::~Screen() {
 void Screen::update() {
 	_ticks = _vm->_system->getMillis();
 	updatePalette();
-	// TODO: Implement actual code
-	_vm->_system->copyRectToScreen((const byte*)_backScreen->pixels, _backScreen->pitch, 0, 0, 640, 480);
-	_vm->_system->updateScreen();
+
+	if (_fullRefresh) {
+		// NOTE When playing a fullscreen/doubled Smacker video usually a full screen refresh is needed
+		_vm->_system->copyRectToScreen((const byte*)_backScreen->pixels, _backScreen->pitch, 0, 0, 640, 480);
+		_fullRefresh = false;
+		return;
+	}
+
+	// NOTE This is more or less experimental code for a smart "render queue".
+	// It works well so far but needs some optimizing, e.g. reducing overdraw.
+	// Maybe I'll use my microtiles code from the Toltecs engine.
+	// Also better move this to a separate method or even class.
+	
+	Common::Array<Common::Rect> updateRects;
+
+	for (RenderQueue::iterator jt = _prevRenderQueue->begin(); jt != _prevRenderQueue->end(); ++jt)
+		(*jt)._refresh = true;
+	
+	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
+		RenderItem &renderItem = (*it);
+		renderItem._refresh = true;
+		for (RenderQueue::iterator jt = _prevRenderQueue->begin(); jt != _prevRenderQueue->end(); ++jt) {
+			RenderItem &prevRenderItem = (*jt);
+			if (prevRenderItem == renderItem) {
+				prevRenderItem._refresh = false;
+				renderItem._refresh = false;
+			}
+		}
+	}
+	
+	for (RenderQueue::iterator jt = _prevRenderQueue->begin(); jt != _prevRenderQueue->end(); ++jt) {
+		RenderItem &prevRenderItem = (*jt);
+		if (prevRenderItem._refresh)
+			updateRects.push_back(Common::Rect(prevRenderItem._destX, prevRenderItem._destY, prevRenderItem._destX + prevRenderItem._width, prevRenderItem._destY + prevRenderItem._height));
+	}
+	
+	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
+		RenderItem &renderItem = (*it);
+		if (renderItem._refresh)
+			updateRects.push_back(Common::Rect(renderItem._destX, renderItem._destY, renderItem._destX + renderItem._width, renderItem._destY + renderItem._height));
+	}
+
+	/*
+	for (Common::Array<Common::Rect>::iterator ri = updateRects.begin(); ri != updateRects.end(); ++ri)
+		debug("## (%d, %d, %d, %d)", (*ri).left, (*ri).top, (*ri).right, (*ri).bottom);
+	*/
+	
+	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
+		RenderItem &renderItem = (*it);
+		for (Common::Array<Common::Rect>::iterator ri = updateRects.begin(); ri != updateRects.end(); ++ri)
+			blitRenderItem(renderItem, *ri);
+	}
+	
+	SWAP(_renderQueue, _prevRenderQueue);
+	_renderQueue->clear();
+
+	for (Common::Array<Common::Rect>::iterator ri = updateRects.begin(); ri != updateRects.end(); ++ri)
+		_vm->_system->copyRectToScreen((const byte*)_backScreen->getBasePtr((*ri).left, (*ri).top), _backScreen->pitch, (*ri).left, (*ri).top, (*ri).width(), (*ri).height());
+		
 }
 
 uint32 Screen::getNextFrameTime() {
@@ -99,7 +160,7 @@ void Screen::clear() {
 	memset(_backScreen->pixels, 0, _backScreen->pitch * _backScreen->h);
 }
 
-void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent,
+void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version,
 	const Graphics::Surface *shadowSurface) {
 
 	int16 destX, destY;
@@ -133,7 +194,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 	
 	//debug(2, "draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
 
-	blit(surface, destX, destY, ddRect, transparent, shadowSurface);
+	queueBlit(surface, destX, destY, ddRect, transparent, version, shadowSurface);
 
 	// Useful for debugging	
 	//_backScreen->frameRect(Common::Rect(clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2), 250); 
@@ -142,7 +203,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 
 }
 
-void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent) {
+void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version) {
 
 	int16 destX, destY;
 	NRect ddRect;
@@ -173,7 +234,7 @@ void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, ND
 		ddRect.y1 = drawRect.y;
 	}
 	
-	blit(surface, destX, destY, ddRect, transparent);
+	queueBlit(surface, destX, destY, ddRect, transparent, version);
 
 }
 
@@ -220,7 +281,7 @@ void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &dra
 
 	const byte *source = (const byte*)surface->getBasePtr(0, 0);
 	byte *dest = (byte*)_backScreen->getBasePtr(drawRect.x, drawRect.y);
-	
+
 	for (int16 yc = 0; yc < surface->h; yc++) {
 		byte *row = dest;
 		for (int16 xc = 0; xc < surface->w; xc++) {
@@ -231,10 +292,12 @@ void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &dra
 		dest += _backScreen->pitch;
 		dest += _backScreen->pitch;
 	}
+	
+	_fullRefresh = true; // See Screen::update
 
 }
 
-void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent) {
+void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent, byte version) {
 	
 	int16 x, y;
 	bool xflag, yflag;
@@ -271,7 +334,7 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 		newDrawRect.height = drawRect.height;
 	}
 	
-	drawSurface3(surface, drawRect.x, drawRect.y, newDrawRect, clipRect, transparent);
+	drawSurface3(surface, drawRect.x, drawRect.y, newDrawRect, clipRect, transparent, version);
   
 	if (!xflag) {
 		newDrawRect.x = 0;
@@ -280,7 +343,7 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 		newDrawRect.height = sysRect.height - y;
 		if (drawRect.height < newDrawRect.height)
 			newDrawRect.height = drawRect.height;
-		drawSurface3(surface, sysRect.width + drawRect.x - x, drawRect.y, newDrawRect, clipRect, transparent);
+		drawSurface3(surface, sysRect.width + drawRect.x - x, drawRect.y, newDrawRect, clipRect, transparent, version);
 	}
   
 	if (!yflag) {
@@ -290,7 +353,7 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 		newDrawRect.height = y + drawRect.height - sysRect.height;
 		if (drawRect.width < newDrawRect.width)
 			newDrawRect.width = drawRect.width;
-		drawSurface3(surface, drawRect.x, sysRect.height + drawRect.y - y, newDrawRect, clipRect, transparent);
+		drawSurface3(surface, drawRect.x, sysRect.height + drawRect.y - y, newDrawRect, clipRect, transparent, version);
 	}
   
 	if (!xflag && !yflag) {
@@ -298,15 +361,84 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 		newDrawRect.y = 0;
 		newDrawRect.width = x + drawRect.width - sysRect.width;
 		newDrawRect.height = y + drawRect.height - sysRect.height;
-		drawSurface3(surface, sysRect.width + drawRect.x - x, sysRect.height + drawRect.y - y, newDrawRect, clipRect, transparent);
+		drawSurface3(surface, sysRect.width + drawRect.x - x, sysRect.height + drawRect.y - y, newDrawRect, clipRect, transparent, version);
 	}
 
 }
 
-void Screen::drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent) {
+void Screen::drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent, byte version) {
 	NDrawRect clipDrawRect(0, 0, drawRect.width, drawRect.height);
 	for (uint i = 0; i < clipRectsCount; i++)
-		drawSurface3(surface, drawRect.x, drawRect.y, clipDrawRect, clipRects[i], transparent);
+		drawSurface3(surface, drawRect.x, drawRect.y, clipDrawRect, clipRects[i], transparent, version);
+}
+
+void Screen::queueBlit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent, byte version,
+	const Graphics::Surface *shadowSurface) {
+	
+	int width = ddRect.x2 - ddRect.x1;
+	int height = ddRect.y2 - ddRect.y1;
+
+	if (width <= 0 || height <= 0)
+		return;
+	
+	RenderItem renderItem;
+	renderItem._surface = surface;
+	renderItem._shadowSurface = shadowSurface;
+	renderItem._destX = destX;
+	renderItem._destY = destY;
+	renderItem._srcX = ddRect.x1;
+	renderItem._srcY = ddRect.y1;
+	renderItem._width = width;
+	renderItem._height = height;
+	renderItem._transparent = transparent;
+	renderItem._version = version;
+	_renderQueue->push_back(renderItem);
+	
+}
+
+void Screen::blitRenderItem(const RenderItem &renderItem, const Common::Rect &clipRect) {
+
+	const Graphics::Surface *surface = renderItem._surface;
+	const Graphics::Surface *shadowSurface = renderItem._shadowSurface;
+	const int16 x0 = MAX<int16>(clipRect.left, renderItem._destX);
+	const int16 y0 = MAX<int16>(clipRect.top, renderItem._destY);
+	const int16 x1 = MIN<int16>(clipRect.right, renderItem._destX + renderItem._width);
+	const int16 y1 = MIN<int16>(clipRect.bottom, renderItem._destY + renderItem._height);
+	int16 width = x1 - x0;
+	int16 height = y1 - y0;
+
+	if (width < 0 || height < 0)
+		return;
+
+	const byte *source = (const byte*)surface->getBasePtr(renderItem._srcX + x0 - renderItem._destX, renderItem._srcY + y0 - renderItem._destY);
+	byte *dest = (byte*)_backScreen->getBasePtr(x0, y0);
+
+	if (shadowSurface) {
+		const byte *shadowSource = (const byte*)shadowSurface->getBasePtr(x0, y0);
+		while (height--) {
+			for (int xc = 0; xc < width; xc++)
+				if (source[xc] != 0)
+					dest[xc] = shadowSource[xc];
+			source += surface->pitch;
+			shadowSource += shadowSurface->pitch;
+			dest += _backScreen->pitch;
+		}
+	} else if (!renderItem._transparent) {
+		while (height--) {
+			memcpy(dest, source, width);
+			source += surface->pitch;
+			dest += _backScreen->pitch;
+		}
+	} else {
+		while (height--) {
+			for (int xc = 0; xc < width; xc++)
+				if (source[xc] != 0)
+					dest[xc] = source[xc];
+			source += surface->pitch;
+			dest += _backScreen->pitch;
+		}
+	}
+
 }
 
 } // End of namespace Neverhood
