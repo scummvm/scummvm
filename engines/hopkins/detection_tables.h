@@ -55,6 +55,36 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// Hopkins FBI OS/2, provided by Strangerke
+		{
+			"hopkins",
+			0,
+			{
+				{"Hopkins.exe", 0, "63d45f882278e5a9fa1027066223e5d9", 292864},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformOS2,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+	{
+		// Hopkins FBI Win95, provided by Strangerke
+		{
+			"hopkins",
+			0,
+			{
+				{"Hopkins.exe", 0, "277a5c144bf9ec7d8450ae37afb85090", 419281},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
 	{ AD_TABLE_END_MARKER }
 };
 
