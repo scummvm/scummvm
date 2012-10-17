@@ -70,16 +70,17 @@ private:
 			byte type;
 		};
 
-		bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
+		const Graphics::Surface *decodeFrame(uint frameNr);
+		bool decode(byte *outBuf, uint32 frameSize, Common::ReadStream &inBuf) const;
 
 		Common::SeekableReadStream *_fileStream;
 		Graphics::PixelFormat _pixelFormat;
-		uint _width, _height, _depth;
+		uint _width, _height, _depth, _frameSize;
 		int _curFrame;
 		uint _frameCount;
-		bool _compressed;
 		uint32 _frameTime;
 		Graphics::Surface *_surface;
+		int _refFrame;
 		Common::Array<ChunkInfo> _chunkInfo;
 		Decompressor *_dec;
 	};

@@ -26,6 +26,7 @@
 #include "common/textconsole.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 
 #include "graphics/surface.h"
 
@@ -70,6 +71,7 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
 	assert(stream);
 	_fileStream = stream;
 	_curFrame = -1;
+	_refFrame = -1;
 	_dec = new Decompressor;
 
 	stream->skip(1); // Unknown
@@ -82,14 +84,13 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
 
 	byte comp = stream->readByte();
 
-	if (comp != 1 && comp != 2)
+	if (comp != 2)
 		error("Unknown compression type %d found in AVF", comp);
-
-	_compressed = comp == 2;
 
 	_surface = new Graphics::Surface();
 	_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	_surface->create(_width, _height, _pixelFormat);
+	_frameSize = _width * _height * _pixelFormat.bytesPerPixel;
 
 	for (uint i = 0; i < _frameCount; i++) {
 		ChunkInfo info;
@@ -110,28 +111,109 @@ AVFDecoder::AVFVideoTrack::~AVFVideoTrack() {
 	delete _dec;
 }
 
-const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeNextFrame() {
-	_curFrame++;
-	_fileStream->seek(_chunkInfo[_curFrame].offset);
-	uint size = _chunkInfo[_curFrame].size;
+bool AVFDecoder::AVFVideoTrack::decode(byte *outBuf, uint32 frameSize, Common::ReadStream &inBuf) const {
+	byte cmd = inBuf.readByte();
+	while (!inBuf.eos()) {
+		uint32 len, offset;
+		switch (cmd) {
+		case 0x20:
+			// Write literal block
+			offset = inBuf.readUint32LE() * 2;
+			len = inBuf.readUint32LE() * 2;
+			if (offset + len > frameSize)
+				return false;
+			inBuf.read(outBuf + offset, len);
+			break;
+		case 0x40: {
+			// Write literal value 'n' times
+			uint16 val = inBuf.readUint16LE();
+			offset = inBuf.readUint32LE() * 2;
+			len = inBuf.readUint32LE() * 2;
+			if (offset + len > frameSize)
+				return false;
+			for (uint i = 0; i < len; i += 2)
+				WRITE_LE_UINT16(outBuf + offset + i, val);
+			break;
+		}
+		case 0x80: {
+			// Write literal block 'n' times
+			len = inBuf.readByte() * 2;
+			uint32 offsetCount = inBuf.readUint32LE();
+			byte buf[510];
 
-	if (_chunkInfo[_curFrame].type != 0) {
-		warning("Skipping frame type %d", _chunkInfo[_curFrame].type);
+			inBuf.read(buf, len);
+			for (uint i = 0; i < offsetCount; ++i) {
+				offset = inBuf.readUint32LE() * 2;
+				if (offset + len > frameSize)
+					return false;
+				memcpy(outBuf + offset, buf, len);
+			}
+			break;
+		}
+		default:
+			break;
+		}
+		cmd = inBuf.readByte();
+	}
+	return true;
+}
+
+const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
+	if (frameNr >= _chunkInfo.size()) {
+		warning("Frame %d doesn't exist", frameNr);
 		return 0;
 	}
 
-	if (_compressed) {
-		Common::ReadStream *input = _fileStream->readStream(_chunkInfo[_curFrame].compressedSize);
-		Common::MemoryWriteStream output((byte *)_surface->getPixels(), size);
-		if (!_dec->decompress(*input, output))
-			warning("Failed to decompress frame %d in AVF", _curFrame);
-		delete input;
-	} else {
-		if (_fileStream->read(_surface->getPixels(), size) < size)
-			warning("Read error trying to copy uncompressed frame");
+	const ChunkInfo &info = _chunkInfo[frameNr];
+
+	if (info.type == 2 && (_refFrame == -1 || _refFrame != (int)frameNr - 1)) {
+		warning("Cannot decode frame %d, reference frame is invalid", frameNr);
+		return 0;
 	}
 
+	if (!info.size && !info.compressedSize) {
+		if (info.type != 2) {
+			warning("Found empty frame %d of type %d", frameNr, info.type);
+			return 0;
+		}
+		// Return previous frame
+		_refFrame = frameNr;
+		return _surface;
+	}
+
+	byte *decompBuf = 0;
+	if (info.type == 0) {
+		// For type 0 we decompress straight to the surface, make sure we don't go out of bounds
+		if (info.size > _frameSize) {
+			warning("Decompressed size %d exceeds frame size %d", info.size, _frameSize);
+			return 0;
+		}
+	} else {
+		// For types 1 and 2, we decompress to a temp buffer for decoding
+		decompBuf = new byte[info.size];
+	}
+
+	Common::MemoryWriteStream output((info.type == 0 ? (byte *)_surface->getPixels() : decompBuf), info.size);
+	Common::SeekableSubReadStream input(_fileStream, info.offset, info.offset + info.compressedSize);
+
+	if (!_dec->decompress(input, output)) {
+		warning("Failed to decompress frame %d", frameNr);
+		delete[] decompBuf;
+		return 0;
+	}
+
+	if (info.type != 0) {
+		Common::MemoryReadStream decompStr(decompBuf, info.size);
+		decode((byte *)_surface->getPixels(), _frameSize, decompStr);
+	}
+
+	_refFrame = frameNr;
+	delete[] decompBuf;
 	return _surface;
+}
+
+const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeNextFrame() {
+	return decodeFrame(++_curFrame);
 }
 
 } // End of namespace Nancy

@@ -28,7 +28,7 @@ class String;
 }
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Nancy {
