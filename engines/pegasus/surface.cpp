@@ -85,7 +85,8 @@ void Surface::getImageFromPICTFile(const Common::String &fileName) {
 	if (!pict.open(fileName))
 		error("Could not open picture '%s'", fileName.c_str());
 
-	getImageFromPICTStream(&pict);
+	if (!getImageFromPICTStream(&pict))
+		error("Failed to load PICT '%s'", fileName.c_str());
 }
 
 void Surface::getImageFromPICTResource(Common::MacResManager *resFork, uint16 id) {
@@ -93,19 +94,22 @@ void Surface::getImageFromPICTResource(Common::MacResManager *resFork, uint16 id
 	if (!res)
 		error("Could not open PICT resource %d from '%s'", id, resFork->getBaseFileName().c_str());
 
-	getImageFromPICTStream(res);
+	if (!getImageFromPICTStream(res))
+		error("Failed to load PICT resource %d from '%s'", id, resFork->getBaseFileName().c_str());
+
 	delete res;
 }
 
-void Surface::getImageFromPICTStream(Common::SeekableReadStream *stream) {
+bool Surface::getImageFromPICTStream(Common::SeekableReadStream *stream) {
 	Graphics::PICTDecoder pict;
 
 	if (!pict.loadStream(*stream))
-		error("Failed to load PICT image");
+		return false;
 
 	_surface = pict.getSurface()->convertTo(g_system->getScreenFormat(), pict.getPalette());
 	_ownsSurface = true;
 	_bounds = Common::Rect(0, 0, _surface->w, _surface->h);
+	return true;
 }
 
 void Surface::getImageFromMovieFrame(Video::VideoDecoder *video, TimeValue time) {
