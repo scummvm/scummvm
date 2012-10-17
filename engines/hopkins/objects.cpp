@@ -703,7 +703,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 		v7 = (int16)READ_LE_UINT16(data + 6);
 		v6 = (int16)READ_LE_UINT16(data + 8);
 		if ((int16)READ_LE_UINT16(data)) {
-			if (_vm->_globals.Bank[idx].field4) {
+			if (_vm->_globals.Bank[v1].field4) {
 				if (!v9)
 					v9 = 1;
 				if (!v6)
@@ -712,7 +712,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 				if ((int16)READ_LE_UINT16(data + 24)) {
 					_vm->_globals.Bob[idx].field3A = 0;
           
-					if (_vm->_globals.Bank[idx].fileHeader == 1) {
+					if (_vm->_globals.Bank[v1].fileHeader == 1) {
 						_vm->_globals.Bob[idx].field3A = 1;
 						_vm->_globals.Bob[idx].field36 = 0;
 						_vm->_globals.Bob[idx].field38 = 0;
@@ -720,7 +720,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 
 					_vm->_globals.Bob[idx].field18 = _vm->_globals.Bqe_Anim[idx].data;
 					_vm->_globals.Bob[idx].field0 = 10;
-					_vm->_globals.Bob[idx].field4 = _vm->_globals.Bank[idx].data;
+					_vm->_globals.Bob[idx].field4 = _vm->_globals.Bank[v1].data;
 
 					_vm->_globals.Bob[idx].field1E = v9;
 					_vm->_globals.Bob[idx].field20 = v6;
