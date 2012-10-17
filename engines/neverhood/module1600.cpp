@@ -191,23 +191,23 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	_x = x;
 	_y = y;
 	
-	_field100 = 0;
+	_inMainArea = false;
 	_exitDirection = 0;
 	_currPointIndex = 0;
-	_againDestPtFlag = 0;
+	_hasAgainDestPoint = false;
 	_stepError = 0;
-	_againDestPointFlag = 0;
+	_hasAgainDestPointIndex = false;
 	_steps = 0;
-	_flag10E = 0;
-	_moreY = 0;
-	_flag10F = 0;
-	_flag113 = 0;
-	_flag114 = 1;
-	_flag11A = 0;
+	_isBraking = false;
+	_yMoveTotalSteps = 0;
+	_isBusy = false;
+	_isIdle = false;
+	_isMoving = true;
+	_rectFlag = false;
 	_newDeltaXType = -1;
-	_field11E = 0;
+	_soundCounter = 0;
 	_pathPoints = NULL;
-	_rectList = NULL;
+	_rectList = NULL; // TODO Check if this is used
 	
 	startAnimation(0xD4220027, 0, -1);
 	setDoDeltaX(getGlobalVar(V_CAR_DELTA_X));
@@ -215,7 +215,7 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 }
 
 AsCommonCar::~AsCommonCar() {
-	if (_finalizeStateCb == AnimationCallback(&AsCommonCar::sub45D620)) {
+	if (_finalizeStateCb == AnimationCallback(&AsCommonCar::evTurnCarDone)) {
 		setGlobalVar(V_CAR_DELTA_X, !getGlobalVar(V_CAR_DELTA_X));
 	}
 }
@@ -230,23 +230,23 @@ void AsCommonCar::update() {
 		_newDeltaXType = -1;
 	}
 	AnimatedSprite::update();
-	if (_againDestPtFlag && _moreY == 0 && !_flag10F) {
-		_againDestPtFlag = 0;
-		_againDestPointFlag = 0;
-		sendPointMessage(this, 0x2004, _againDestPt);
-	} else if (_againDestPointFlag && _moreY == 0 && !_flag10F) {
-		_againDestPointFlag = 0;
+	if (_hasAgainDestPoint && _yMoveTotalSteps == 0 && !_isBusy) {
+		_hasAgainDestPoint = false;
+		_hasAgainDestPointIndex = false;
+		sendPointMessage(this, 0x2004, _againDestPoint);
+	} else if (_hasAgainDestPointIndex && _yMoveTotalSteps == 0 && !_isBusy) {
+		_hasAgainDestPointIndex = false;
 		sendMessage(this, 0x2003, _againDestPointIndex);
 	}
-	sub45CE10();
-	sub45E0A0();
+	updateMovement();
+	updateSound();
 }
 
-void AsCommonCar::update45C790() {
-	AsCommonCar::update();
+void AsCommonCar::upIdle() {
+	update();
 	if (++_idleCounter >= _idleCounterMax)
-		sub45D050();
-	sub45E0A0();
+		stIdleBlink();
+	updateSound();
 }
 
 uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -255,10 +255,6 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 	case 0x1019:
 		SetSpriteUpdate(NULL);
 		break;
-	/* NOTE: Implemented in setPathPoints
-	case 0x2000:
-	case 0x2001:
-	*/
 	case 0x2002:
 		// Set the current position without moving
 		_currPointIndex = param.asInteger();
@@ -270,24 +266,24 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 		// Move to a point by its index
 		{
 			int newPointIndex = param.asInteger();
-			if (_moreY <= 0 && !_flag10F) {
-				_someX = pathPoint(newPointIndex).x;
-				_someY = pathPoint(newPointIndex).y;
+			if (_yMoveTotalSteps <= 0 && !_isBusy) {
+				_destX = pathPoint(newPointIndex).x;
+				_destY = pathPoint(newPointIndex).y;
 				if (_currPointIndex < newPointIndex) {
 					moveToNextPoint();
 				} else if (_currPointIndex == newPointIndex && _stepError == 0) {
 					if (_currPointIndex == 0) {
-						_moreY = 0;
+						_yMoveTotalSteps = 0;
 						sendMessage(_parentScene, 0x2005, 0);
 					} else if (_currPointIndex == (int)_pathPoints->size()) {
-						_moreY = 0;
+						_yMoveTotalSteps = 0;
 						sendMessage(_parentScene, 0x2006, 0);
 					}
 				} else {
 					moveToPrevPoint();
 				}
 			} else {
-				_againDestPointFlag = 1;
+				_hasAgainDestPointIndex = true;
 				_againDestPointIndex = newPointIndex;
 			}
 		}
@@ -298,25 +294,25 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 			int minMatchIndex = -1;
 			int minMatchDistance, distance;
 			NPoint pt = param.asPoint();
-			if (_moreY <= 0 && !_flag10F) {
+			if (_yMoveTotalSteps <= 0 && !_isBusy) {
 				// Check if we're already exiting (or something)
 				if ((pt.x <= 20 && _exitDirection == 1) ||
 					(pt.x >= 620 && _exitDirection == 3) ||
 					(pt.y <= 20 && _exitDirection == 2) ||
 					(pt.y >= 460 && _exitDirection == 4))
 					break;
-				_someX = pt.x;
-				_someY = pt.y;
-				minMatchDistance = calcDistance(_someX, _someY, _x, _y) + 1;
+				_destX = pt.x;
+				_destY = pt.y;
+				minMatchDistance = calcDistance(_destX, _destY, _x, _y) + 1;
 				for (int i = _currPointIndex + 1; i < (int)_pathPoints->size(); i++) {
-					distance = calcDistance(_someX, _someY, pathPoint(i).x, pathPoint(i).y);
+					distance = calcDistance(_destX, _destY, pathPoint(i).x, pathPoint(i).y);
 					if (distance >= minMatchDistance)
 						break;
 					minMatchDistance = distance;
 					minMatchIndex = i;
 				}
 				for (int i = _currPointIndex; i >= 0; i--) {
-					distance = calcDistance(_someX, _someY, pathPoint(i).x, pathPoint(i).y);
+					distance = calcDistance(_destX, _destY, pathPoint(i).x, pathPoint(i).y);
 					if (distance >= minMatchDistance)
 						break;
 					minMatchDistance = distance;
@@ -336,53 +332,48 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 					}
 				}
 			} else {
-				_againDestPtFlag = 1;
-				_againDestPt = pt;
+				_hasAgainDestPoint = true;
+				_againDestPoint = pt;
 			}
 		}
 		break;
 	case 0x2007:
-		_moreY = param.asInteger();
+		_yMoveTotalSteps = param.asInteger();
 		_steps = 0;
-		_flag10E = 0;
+		_isBraking = false;
 		SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 		_lastDistance = 640;
 		break;
 	case 0x2008:
-		_moreY = param.asInteger();
+		_yMoveTotalSteps = param.asInteger();
 		_steps = 0;
-		_flag10E = 0;
+		_isBraking = false;
 		SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
 		_lastDistance = 640;
 		break;
 	case 0x2009:
-		sub45CF80();
+		stEnterCar();
 		break;
 	case 0x200A:
-		sub45CFB0();
+		stLeaveCar();
 		break;
-	/* NOTE: Implemented in setRectList
-	case 0x200B:
-	case 0x200C:
-	*/
 	case 0x200E:
-		sub45D180();
+		stTurnCar();
 		break;
 	case 0x200F:
-		sub45CD00();
+		stCarAtHome();
 		_newDeltaXType = param.asInteger();
 		break;
 	}
 	return messageResult;
 }
 
-uint32 AsCommonCar::handleMessage45CC30(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsCommonCar::hmAnimation(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = AsCommonCar::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (_flag10F && param.asInteger() == 0x025424A2) {
+		if (_isBusy && param.asInteger() == 0x025424A2)
 			gotoNextState();
-		}
 		break;
 	case 0x3002:
 		gotoNextState();
@@ -391,10 +382,10 @@ uint32 AsCommonCar::handleMessage45CC30(int messageNum, const MessageParam &para
 	return messageResult;
 }
 
-uint32 AsCommonCar::handleMessage45CCA0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsCommonCar::hmLeaveCar(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
 	case 0x2009:
-		sub45CF80();
+		stEnterCar();
 		break;
 	case 0x3002:
 		sendMessage(_parentScene, 0x200A, 0);
@@ -404,23 +395,22 @@ uint32 AsCommonCar::handleMessage45CCA0(int messageNum, const MessageParam &para
 	return 0;
 }
 
-void AsCommonCar::sub45CD00() {
+void AsCommonCar::stCarAtHome() {
 	bool doDeltaX = _doDeltaX;
 	SetSpriteUpdate(NULL);
-	_againDestPtFlag = 0;
-	_againDestPointFlag = 0;
-	_flag10E = 0;
-	_flag10F = 0;
-	_flag113 = 0;
-	_flag114 = 0;
-	_flag11A = 0;
+	_hasAgainDestPoint = false;
+	_hasAgainDestPointIndex = false;
+	_isBraking = false;
+	_isBusy = false;
+	_isIdle = false;
+	_isMoving = false;
+	_rectFlag = false;
 	_rectList = NULL;
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
-	NextState(&AsCommonCar::sub45CFE0);
+	NextState(&AsCommonCar::stLeanForwardIdle);
 	startAnimation(0x35698F78, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
-	SetUpdateHandler(&AsCommonCar::update45C790);
-	FinalizeState(&AsCommonCar::sub45D040);
+	SetMessageHandler(&AsCommonCar::handleMessage);
+	SetUpdateHandler(&AsCommonCar::upIdle);
+	FinalizeState(&AsCommonCar::evIdleDone);
 	setDoDeltaX(doDeltaX ? 1 : 0);
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
@@ -429,36 +419,36 @@ void AsCommonCar::sub45CD00() {
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
 
-void AsCommonCar::sub45CDC0() {
-	if (_value112 == 1) {
+void AsCommonCar::updateTurnMovement() {
+	if (_turnMoveStatus == 1) {
 		_lastDistance = 640;
-		_flag113 = 0;
-		_flag10E = 0;
+		_isIdle = false;
+		_isBraking = false;
 		SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
-	} else if (_value112 == 2) {
+	} else if (_turnMoveStatus == 2) {
 		_lastDistance = 640;
-		_flag113 = 0;
-		_flag10E = 0;
+		_isIdle = false;
+		_isBraking = false;
 		SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 	}
 }
 
-void AsCommonCar::sub45CE10() {
-	if (_flag10E && !_flag113 && !_flag10F) {
+void AsCommonCar::updateMovement() {
+	if (_isBraking && !_isIdle && !_isBusy) {
 		gotoNextState();
-		_flag114 = 0;
-		_flag113 = 1;
+		_isMoving = false;
+		_isIdle = true;
 		startAnimation(0x192ADD30, 0, -1);
-		SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+		SetMessageHandler(&AsCommonCar::hmAnimation);
 		SetUpdateHandler(&AsCommonCar::update);
-		NextState(&AsCommonCar::sub45CFE0);
-	} else if (!_flag10E && _steps && _flag113) {
+		NextState(&AsCommonCar::stLeanForwardIdle);
+	} else if (!_isBraking && _steps && _isIdle) {
 		gotoNextState();
-		_flag113 = 0;
+		_isIdle = false;
 		startAnimation(0x9966B138, 0, -1);
-		SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+		SetMessageHandler(&AsCommonCar::hmAnimation);
 		SetUpdateHandler(&AsCommonCar::update);
-		NextState(&AsCommonCar::sub45D100);
+		NextState(&AsCommonCar::stUpdateMoveDirection);
 	} else {
 		bool flag = false;
 		uint index = 0;
@@ -468,103 +458,92 @@ void AsCommonCar::sub45CE10() {
 				if (_x >= r.x1 && _x <= r.x2 && _y >= r.y1 && _y <= r.y2)
 					break;
 			}
-			if (index < _rectList->size() && !_flag11A)
+			if (index < _rectList->size() && !_rectFlag)
 				flag = true;
-			_flag11A = index < _rectList->size();
+			_rectFlag = index < _rectList->size();
 		}
 		if (flag) {
 			gotoNextState();
-			sub45D0A0();
-		} else if (_newMoveDirection != _currMoveDirection && _flag114 && !_flag10F) {
+			stHandleRect();
+		} else if (_newMoveDirection != _currMoveDirection && _isMoving && !_isBusy) {
 			gotoNextState();
 			_currMoveDirection = _newMoveDirection;
-			sub45D100();
+			stUpdateMoveDirection();
 		}
 	}
 }
 
-void AsCommonCar::sub45CF80() {
+void AsCommonCar::stEnterCar() {
 	startAnimation(0xA86A9538, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
-	NextState(&AsCommonCar::sub45CFE0);
+	NextState(&AsCommonCar::stLeanForwardIdle);
 }
 
-void AsCommonCar::sub45CFB0() {
+void AsCommonCar::stLeaveCar() {
 	startAnimation(0xA86A9538, -1, -1);
 	_playBackwards = true;
-	SetMessageHandler(&AsCommonCar::handleMessage45CCA0);
+	SetMessageHandler(&AsCommonCar::hmLeaveCar);
 	SetUpdateHandler(&AsCommonCar::update);
 }
 
-void AsCommonCar::sub45CFE0() {
+void AsCommonCar::stLeanForwardIdle() {
 	startAnimation(0x35698F78, 0, -1);
 	SetMessageHandler(&AsCommonCar::handleMessage);
-	SetUpdateHandler(&AsCommonCar::update45C790);
-	FinalizeState(&AsCommonCar::sub45D040);
-	_idleCounter = 0;
+	SetUpdateHandler(&AsCommonCar::upIdle);
+	FinalizeState(&AsCommonCar::evIdleDone);
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
 	_steps = 0;
-	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
-}
-
-void AsCommonCar::sub45D040() {
-	SetUpdateHandler(&AsCommonCar::update);
-}
-
-void AsCommonCar::sub45D050() {
-	startAnimation(0xB579A77C, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
-	SetUpdateHandler(&AsCommonCar::update);
-	NextState(&AsCommonCar::sub45CFE0);
 	_idleCounter = 0;
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
 
-void AsCommonCar::sub45D0A0() {
-	_flag10F = 1;
+void AsCommonCar::evIdleDone() {
+	SetUpdateHandler(&AsCommonCar::update);
+}
+
+void AsCommonCar::stIdleBlink() {
+	startAnimation(0xB579A77C, 0, -1);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
+	SetUpdateHandler(&AsCommonCar::update);
+	NextState(&AsCommonCar::stLeanForwardIdle);
+	_idleCounter = 0;
+	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
+}
+
+void AsCommonCar::stHandleRect() {
+	_isBusy = true;
 	gotoNextState();
 	startAnimation(0x9C220DA4, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
-	FinalizeState(&AsCommonCar::sub45D0E0);
+	FinalizeState(&AsCommonCar::evHandleRectDone);
 }
 
-void AsCommonCar::sub45D0E0() {
-	_flag10F = 0;
+void AsCommonCar::evHandleRectDone() {
+	_isBusy = false;
 	_newMoveDirection = 0;
-	sub45D100();
+	stUpdateMoveDirection();
 }
 
-void AsCommonCar::sub45D100() {
-	_flag114 = 1;
+void AsCommonCar::stUpdateMoveDirection() {
+	_isMoving = true;
 	if (_currMoveDirection == 1) {
 		startAnimation(0xD4AA03A4, 0, -1);
 	} else if (_currMoveDirection == 3) {
 		startAnimation(0xD00A1364, 0, -1);
 	} else if ((_currMoveDirection == 2 && _doDeltaX) || (_currMoveDirection == 4 && !_doDeltaX)) {
-		sub45D180();
+		stTurnCar();
 	} else {
 		startAnimation(0xD4220027, 0, -1);
 	}
 	setGlobalVar(V_CAR_DELTA_X, _doDeltaX ? 1 : 0);
 }
 
-void AsCommonCar::sub45D180() {
-	_flag10F = 1;
-	gotoNextState();
-	startAnimation(0xF46A0324, 0, -1);
-	_value112 = 0;
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
-	SetUpdateHandler(&AsCommonCar::update);
-	FinalizeState(&AsCommonCar::sub45D620);
-	sub45CDC0();
-}
-
 void AsCommonCar::moveToNextPoint() {
 	if (_currPointIndex >= (int)_pathPoints->size() - 1) {
-		_moreY = 0;
+		_yMoveTotalSteps = 0;
 		sendMessage(this, 0x1019, 0);
 		sendMessage(_parentScene, 0x2006, 0);
 	} else {
@@ -576,50 +555,75 @@ void AsCommonCar::moveToNextPoint() {
 				_currMoveDirection = 2;
 			else if (_currMoveDirection == 2)
 				_currMoveDirection = 4;
-			if (_flag113)
-				sub45D390();
+			if (_isIdle)
+				stTurnCarMoveToNextPoint();
 			else
-				sub45D350();
+				stBrakeMoveToNextPoint();
 		} else {
 			if (_steps == 0) {
 				gotoNextState();
-				_flag113 = 0;
+				_isIdle = false;
 				startAnimation(0x9966B138, 0, -1);
-				SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+				SetMessageHandler(&AsCommonCar::hmAnimation);
 				SetUpdateHandler(&AsCommonCar::update);
-				NextState(&AsCommonCar::sub45D100);
+				NextState(&AsCommonCar::stUpdateMoveDirection);
 			}
-			_flag10E = 0;
+			_isBraking = false;
 			SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
 			_lastDistance = 640;
 		}
 	}
 }
 
-void AsCommonCar::sub45D350() {
+void AsCommonCar::stBrakeMoveToNextPoint() {
 	gotoNextState();
-	_flag10F = 1;
-	_flag10E = 1;
+	_isBusy = true;
+	_isBraking = true;
 	startAnimation(0x192ADD30, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
-	NextState(&AsCommonCar::sub45D390);
+	NextState(&AsCommonCar::stTurnCarMoveToNextPoint);
 }
 
-void AsCommonCar::sub45D390() {
+void AsCommonCar::stTurnCar() {
+	// Turn to left/right #1
 	gotoNextState();
-	_flag10F = 1;
+	_isBusy = true;
 	startAnimation(0xF46A0324, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
-	FinalizeState(&AsCommonCar::sub45D620);
-	_value112 = 1;
-	sub45CDC0();
+	FinalizeState(&AsCommonCar::evTurnCarDone);
+	_turnMoveStatus = 0;
+	updateTurnMovement();
+}
+
+void AsCommonCar::stTurnCarMoveToNextPoint() {
+	// Turn to left/right #2
+	gotoNextState();
+	_isBusy = true;
+	startAnimation(0xF46A0324, 0, -1);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
+	SetUpdateHandler(&AsCommonCar::update);
+	FinalizeState(&AsCommonCar::evTurnCarDone);
+	_turnMoveStatus = 1;
+	updateTurnMovement();
+}
+
+void AsCommonCar::stTurnCarMoveToPrevPoint() {
+	// Turn to left/right #3
+	FinalizeState(NULL);
+	_isBusy = true;
+	startAnimation(0xF46A0324, 0, -1);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
+	SetUpdateHandler(&AsCommonCar::update);
+	FinalizeState(&AsCommonCar::evTurnCarDone);
+	_turnMoveStatus = 2;
+	updateTurnMovement();
 }
 
 void AsCommonCar::moveToPrevPoint() {
 	if (_currPointIndex == 0 && _stepError == 0) {
-		_moreY = 0;
+		_yMoveTotalSteps = 0;
 		sendMessage(this, 0x1019, 0);
 		sendMessage(_parentScene, 0x2005, 0);
 	} else {
@@ -638,65 +642,54 @@ void AsCommonCar::moveToPrevPoint() {
 				_currMoveDirection = 4;
 			else if (_currMoveDirection == 4)
 				_currMoveDirection = 2;
-			if (_flag113)
-				sub45D5D0();
+			if (_isIdle)
+				stTurnCarMoveToPrevPoint();
 			else
-				sub45D580();
+				stBrakeMoveToPrevPoint();
 		} else {
 			if (_steps == 0) {
 				gotoNextState();
-				_flag113 = 0;
+				_isIdle = false;
 				startAnimation(0x9966B138, 0, -1);
-				SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+				SetMessageHandler(&AsCommonCar::hmAnimation);
 				SetUpdateHandler(&AsCommonCar::update);
-				NextState(&AsCommonCar::sub45D100);
+				NextState(&AsCommonCar::stUpdateMoveDirection);
 			}
-			_flag10E = 0;
+			_isBraking = false;
 			SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 			_lastDistance = 640;
 		}
 	}
 }
 
-void AsCommonCar::sub45D580() {
-	_flag10F = 1;
-	_flag10E = 1;
+void AsCommonCar::stBrakeMoveToPrevPoint() {
 	FinalizeState(NULL);
+	_isBusy = true;
+	_isBraking = true;
 	startAnimation(0x192ADD30, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
-	NextState(&AsCommonCar::sub45D5D0);
+	NextState(&AsCommonCar::stTurnCarMoveToPrevPoint);
 }
 
-void AsCommonCar::sub45D5D0() {
-	_flag10F = 1;
-	FinalizeState(NULL);
-	startAnimation(0xF46A0324, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage45CC30);
-	SetUpdateHandler(&AsCommonCar::update);
-	FinalizeState(&AsCommonCar::sub45D620);
-	_value112 = 2;
-	sub45CDC0();
-}
-
-void AsCommonCar::sub45D620() {
-	_flag10F = 0;
+void AsCommonCar::evTurnCarDone() {
+	_isBusy = false;
 	_newMoveDirection = 0;
 	setDoDeltaX(2);
-	sub45D100();
+	stUpdateMoveDirection();
 }
 
 void AsCommonCar::suMoveToNextPoint() {
 	int16 newX = _x, newY = _y;
 
 	if (_currPointIndex >= (int)_pathPoints->size()) {
-		_moreY = 0;
+		_yMoveTotalSteps = 0;
 		sendMessage(this, 0x1019, 0);
 		sendMessage(_parentScene, 0x2006, 0);
 		return;
 	}
 
-	if (_flag10E) {
+	if (_isBraking) {
 		if (_steps <= 0) {
 			sendMessage(this, 0x1019, 0);
 			return;
@@ -708,7 +701,7 @@ void AsCommonCar::suMoveToNextPoint() {
 	}
 
 	bool firstTime = true;
-	_anotherY = _steps;
+	_ySteps = _steps;
 	int stepsCtr = _steps;
 	
 	while (stepsCtr > 0) {
@@ -757,7 +750,7 @@ void AsCommonCar::suMoveToNextPoint() {
 					if (stepsCtr < 0)
 						stepsCtr = 0;
 				}
-				_anotherY = stepsCtr;
+				_ySteps = stepsCtr;
 			}
 			if (stepsCtr + _stepError >= deltaY) {
 				stepsCtr -= deltaY;
@@ -784,25 +777,25 @@ void AsCommonCar::suMoveToNextPoint() {
 		firstTime = false;		
 	}
 
-	if (_moreY != 0) {
+	if (_yMoveTotalSteps != 0) {
 		_x = newX;
 		_y = newY;
-		_moreY -= _anotherY;
-		if (_moreY <= 0) {
-			_flag10E = 1;
-			_moreY = 0;
+		_yMoveTotalSteps -= _ySteps;
+		if (_yMoveTotalSteps <= 0) {
+			_isBraking = true;
+			_yMoveTotalSteps = 0;
 		}
 	} else {
-		int distance = calcDistance(_someX, _someY, _x, _y);
+		int distance = calcDistance(_destX, _destY, _x, _y);
 		_x = newX;
 		_y = newY;
 		if (newX > 20 && newX < 620 && newY > 20 && newY < 460) {
 			_exitDirection = 0;
-			_field100 = 1;
-		} else if (_field100) {
-			_someX = pathPoint(_pathPoints->size() - 1).x;
-			_someY = pathPoint(_pathPoints->size() - 1).y;
-			_field100 = 0;
+			_inMainArea = true;
+		} else if (_inMainArea) {
+			_destX = pathPoint(_pathPoints->size() - 1).x;
+			_destY = pathPoint(_pathPoints->size() - 1).y;
+			_inMainArea = false;
 			if (_x <= 20)
 				_exitDirection = 1;
 			else if (_x >= 620)
@@ -811,19 +804,19 @@ void AsCommonCar::suMoveToNextPoint() {
 				_exitDirection = 2;
 			else if (_y >= 460)
 				_exitDirection = 4;
-			if (_exitDirection != 0 && _flag10E) {
-				_flag10E = 0;
+			if (_exitDirection != 0 && _isBraking) {
+				_isBraking = false;
 				_steps = 11;
 			}
 		}
 		if ((distance < 20 && _exitDirection == 0 && _lastDistance < distance) ||
 			(_exitDirection == 0 && _lastDistance + 20 < distance))
-			_flag10E = 1;
+			_isBraking = true;
 		if (distance < _lastDistance)
 			_lastDistance = distance;
 		if (_currPointIndex == (int)_pathPoints->size() - 1) {
-			_flag10E = 1;
-			_moreY = 0;
+			_isBraking = true;
+			_yMoveTotalSteps = 0;
 			sendMessage(this, 0x1019, 0);
 			sendMessage(_parentScene, 0x2006, 0);
 		}
@@ -835,13 +828,13 @@ void AsCommonCar::suMoveToPrevPoint() {
 	int16 newX = _x, newY = _y;
 
 	if (_currPointIndex == 0 && _stepError == 0) {
-		_moreY = 0;
+		_yMoveTotalSteps = 0;
 		sendMessage(this, 0x1019, 0);
 		sendMessage(_parentScene, 0x2005, 0);
 		return;
 	}
 
-	if (_flag10E) {
+	if (_isBraking) {
 		if (_steps <= 0) {
 			sendMessage(this, 0x1019, 0);
 			return;
@@ -853,7 +846,7 @@ void AsCommonCar::suMoveToPrevPoint() {
 	}
 
 	bool firstTime = true;
-	_anotherY = _steps;
+	_ySteps = _steps;
 	int stepsCtr = _steps;
 	
 	while (stepsCtr > 0) {
@@ -904,7 +897,7 @@ void AsCommonCar::suMoveToPrevPoint() {
 				} else {
 					stepsCtr += 7;
 				}
-				_anotherY = stepsCtr;
+				_ySteps = stepsCtr;
 			}
 			if (_stepError == 0)
 				_stepError = deltaY;
@@ -931,25 +924,25 @@ void AsCommonCar::suMoveToPrevPoint() {
 		firstTime = false;		
 	}
 
-	if (_moreY != 0) {
+	if (_yMoveTotalSteps != 0) {
 		_x = newX;
 		_y = newY;
-		_moreY -= _anotherY;
-		if (_moreY <= 0) {
-			_flag10E = 1;
-			_moreY = 0;
+		_yMoveTotalSteps -= _ySteps;
+		if (_yMoveTotalSteps <= 0) {
+			_isBraking = true;
+			_yMoveTotalSteps = 0;
 		}
 	} else {
-		int distance = calcDistance(_someX, _someY, _x, _y);
+		int distance = calcDistance(_destX, _destY, _x, _y);
 		_x = newX;
 		_y = newY;
 		if (newX > 20 && newX < 620 && newY > 20 && newY < 460) {
 			_exitDirection = 0;
-			_field100 = 1;
-		} else if (_field100) {
-			_someX = pathPoint(0).x;
-			_someY = pathPoint(0).y;
-			_field100 = 0;
+			_inMainArea = true;
+		} else if (_inMainArea) {
+			_destX = pathPoint(0).x;
+			_destY = pathPoint(0).y;
+			_inMainArea = false;
 			if (_x <= 20)
 				_exitDirection = 1;
 			else if (_x >= 620)
@@ -958,19 +951,19 @@ void AsCommonCar::suMoveToPrevPoint() {
 				_exitDirection = 2;
 			else if (_y >= 460)
 				_exitDirection = 4;
-			if (_exitDirection != 0 && _flag10E) {
-				_flag10E = 0;
+			if (_exitDirection != 0 && _isBraking) {
+				_isBraking = false;
 				_steps = 11;
 			}
 		}
 		if ((distance < 20 && _exitDirection == 0 && _lastDistance < distance) ||
 			(_exitDirection == 0 && _lastDistance + 20 < distance))
-			_flag10E = 1;
+			_isBraking = true;
 		if (distance < _lastDistance)
 			_lastDistance = distance;
 		if (_currPointIndex == 0 && _stepError == 0) {
-			_flag10E = 1;
-			_moreY = 0;
+			_isBraking = true;
+			_yMoveTotalSteps = 0;
 			sendMessage(this, 0x1019, 0);
 			sendMessage(_parentScene, 0x2005, 0);
 		}
@@ -978,8 +971,26 @@ void AsCommonCar::suMoveToPrevPoint() {
 
 }
 
-void AsCommonCar::sub45E0A0() {
-	// TODO
+void AsCommonCar::updateSound() {
+	int maxSoundCounter = 0;
+	_soundCounter++;
+	if (_steps != 0 && !_isIdle) {
+		if (_currMoveDirection == 1)
+			maxSoundCounter = 18 - _steps;
+		else if (_currMoveDirection == 3) {
+			maxSoundCounter = 5 - _steps;
+			if (maxSoundCounter < 1)
+				maxSoundCounter = 1;
+		} else {
+			maxSoundCounter = 14 - _steps;
+		}
+	} else {
+		maxSoundCounter = 21;
+	}
+	if (_soundCounter >= maxSoundCounter) {
+		sendMessage(_parentScene, 0x200D, 0);
+		_soundCounter = 0;
+	}
 }
 
 AsScene1608Door::AsScene1608Door(NeverhoodEngine *vm, Scene *parentScene)
@@ -1261,7 +1272,7 @@ void Scene1608::upGettingOutOfCar() {
 		addSprite(_klayman);
 		_klaymanInCar = false;
 		SetMessageHandler(&Scene1608::hmUpperFloor);
-		SetUpdateHandler(&Scene1608::update);
+		SetUpdateHandler(&Scene1608::upUpperFloor);
 		setRectList(0x004B4810);
 		_asIdleCarLower->setVisible(true);
 		_asIdleCarFull->setVisible(true);
