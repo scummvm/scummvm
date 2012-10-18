@@ -57,37 +57,4 @@ void Background::load(uint32 fileHash) {
 		_surface->drawSpriteResource(_spriteResource);
 }
 
-// DirtyBackground
-
-DirtyBackground::DirtyBackground(NeverhoodEngine *vm, int objectPriority)
-	: Background(vm, objectPriority) {
-	// Empty
-}
-
-DirtyBackground::DirtyBackground(NeverhoodEngine *vm, const char *fileName, int objectPriority, int surfacePriority)
-	: Background(vm, objectPriority) {
-	
-	_spriteResource.load(calcHash(fileName));
-	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_surface->drawSpriteResource(_spriteResource);
-}
-
-DirtyBackground::DirtyBackground(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority)
-	: Background(vm, objectPriority) {
-
-	_spriteResource.load(fileHash);
-	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_surface->drawSpriteResource(_spriteResource);
-}
-
-void DirtyBackground::createSurface(int surfacePriority, int16 width, int16 height) {
-
-	// TODO: Later use a DirtySurface once it is implemented
-	_surface = new BaseSurface(_vm, surfacePriority, width, height);
-	_surface->setTransparent(false);
-	_spriteResource.getPosition().x = width;
-	_spriteResource.getPosition().y = height;
-
-}
-
 } // End of namespace Neverhood

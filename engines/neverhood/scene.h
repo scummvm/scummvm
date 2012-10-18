@@ -52,7 +52,7 @@ public:
 	void setSpriteSurfacePriority(Sprite *sprite, int priority);
 	void deleteSprite(Sprite **sprite);
 	Background *addBackground(Background *background);
-	void setBackground(uint32 fileHash, bool dirtyBackground = true);
+	void setBackground(uint32 fileHash);
 	void changeBackground(uint32 fileHash);
 	void setBackgroundY(int16 y) { _background->getSurface()->getDrawRect().y = y; }
 	int16 getBackgroundY() { return _background->getSurface()->getDrawRect().y; }

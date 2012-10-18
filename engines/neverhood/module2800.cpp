@@ -845,7 +845,7 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_surfaceFlag = true;
 
-	_background = new DirtyBackground(_vm, 0);
+	_background = new Background(_vm, 0);
 	_background->createSurface(0, 640, 480);
 	addBackground(_background);
 	

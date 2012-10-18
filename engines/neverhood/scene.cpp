@@ -183,8 +183,8 @@ Background *Scene::addBackground(Background *background) {
 	return background;
 }
 
-void Scene::setBackground(uint32 fileHash, bool dirtyBackground) {
-	_background = addBackground(new DirtyBackground(_vm, fileHash, 0, 0));
+void Scene::setBackground(uint32 fileHash) {
+	_background = addBackground(new Background(_vm, fileHash, 0, 0));
 }
 
 void Scene::changeBackground(uint32 fileHash) {
