@@ -927,11 +927,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:158
 msgid "List view"
-msgstr ""
+msgstr "Вид списка"
 
 #: gui/saveload-dialog.cpp:159
 msgid "Grid view"
-msgstr ""
+msgstr "Вид сетки"
 
 #: gui/saveload-dialog.cpp:202 gui/saveload-dialog.cpp:350
 msgid "No date saved"
@@ -971,31 +971,28 @@ msgstr "Сохранение без имени"
 
 #: gui/saveload-dialog.cpp:517
 msgid "Next"
-msgstr ""
+msgstr "Следующий"
 
 #: gui/saveload-dialog.cpp:520
 msgid "Prev"
-msgstr ""
+msgstr "Предыдущий"
 
 #: gui/saveload-dialog.cpp:684
-#, fuzzy
 msgid "New Save"
-msgstr "Сохранить"
+msgstr "Новое сохранение"
 
 #: gui/saveload-dialog.cpp:684
-#, fuzzy
 msgid "Create a new save game"
-msgstr "Не удалось сохранить игру"
+msgstr "Создать новую запись игры"
 
 #: gui/saveload-dialog.cpp:789
-#, fuzzy
 msgid "Name: "
-msgstr "Название:"
+msgstr "Название: "
 
 #: gui/saveload-dialog.cpp:861
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Введите описание слота %d:"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -2250,12 +2247,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59
 msgid "Alternative intro"
-msgstr ""
+msgstr "Альтернативное вступление"
 
 #: engines/queen/queen.cpp:60
-#, fuzzy
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Использовать вступление с гибких дисков (только для CD версии игры)"
+msgstr "Использовать альтернативное вступление (только для CD версии игры)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2357,12 +2353,15 @@ msgstr "Показывает названия объектов пр инаведении курсора мыши"
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
 msgstr ""
+"У вас отсутствует файл 'teenagent.dat'. Скачайте его с веб-сайта ScummVM"
 
 #: engines/teenagent/resources.cpp:89
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"Файл teenagent.dat сжат, но zlib не включено в эту программу. Пожалуйста,"
+"распакуйте его"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format

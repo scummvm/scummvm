@@ -926,11 +926,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:158
 msgid "List view"
-msgstr ""
+msgstr "Вигляд списку"
 
 #: gui/saveload-dialog.cpp:159
 msgid "Grid view"
-msgstr ""
+msgstr "Вигляд сітки"
 
 #: gui/saveload-dialog.cpp:202 gui/saveload-dialog.cpp:350
 msgid "No date saved"
@@ -970,31 +970,28 @@ msgstr "Збереження без імені"
 
 #: gui/saveload-dialog.cpp:517
 msgid "Next"
-msgstr ""
+msgstr "Насутпний"
 
 #: gui/saveload-dialog.cpp:520
 msgid "Prev"
-msgstr ""
+msgstr "Попередній"
 
 #: gui/saveload-dialog.cpp:684
-#, fuzzy
 msgid "New Save"
-msgstr "Записати"
+msgstr "Нове збереження"
 
 #: gui/saveload-dialog.cpp:684
-#, fuzzy
 msgid "Create a new save game"
-msgstr "Не вдалося записати гру"
+msgstr "Створити новий запис гри"
 
 #: gui/saveload-dialog.cpp:789
-#, fuzzy
 msgid "Name: "
-msgstr "Назва:"
+msgstr "Назва: "
 
 #: gui/saveload-dialog.cpp:861
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Введіть опис для слоту %d:"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -1339,6 +1336,8 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
+"Використовувати дляв виводу MIDI режим карти IBM Feature або FM "
+"сінтез Yamaha FB-01"
 
 #: engines/sci/detection.cpp:411
 msgid "Use CD audio"
@@ -2167,11 +2166,11 @@ msgstr "Увімкнути плаваючі курсори"
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr ""
+msgstr "Стовпчики здоров'я"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "Уиімкнути графічні стовпички здоров'я"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -2237,12 +2236,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59
 msgid "Alternative intro"
-msgstr ""
+msgstr "Алтернативний вступ"
 
 #: engines/queen/queen.cpp:60
-#, fuzzy
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Використовувати дискетні версії введення (тільки CD версія)"
+msgstr "Використовувати альтернативний вступ гри (тільки CD версія)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2341,12 +2339,15 @@ msgstr "Показувати мітки для об'єктів при наведенні миші"
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
 msgstr ""
+"У вас відстуній файл 'teenagent.dat'. Візьміть його на вебсайті ScummVM"
 
 #: engines/teenagent/resources.cpp:89
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"Файл teenagent.dat запаковано, але zlib не було включено в цю программу."
+"Будь-ласка розпакуйте його"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
