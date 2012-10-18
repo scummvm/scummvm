@@ -1062,7 +1062,7 @@ AsCommonCarConnector::AsCommonCarConnector(NeverhoodEngine *vm, AsCommonCar *asC
 	SetUpdateHandler(&AsCommonCarConnector::update);
 	createSurface1(0x60281C10, 150);
 	startAnimation(0x60281C10, -1, -1);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 }
 
 void AsCommonCarConnector::update() {

@@ -205,7 +205,7 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 		}
 		createSurface1(kAsScene1907SymbolFileHashes[_elementIndex], 1000 + _currPositionIndex);
 		startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 	} else {
 		_isPluggedIn = false;
 		_currPositionIndex = positionIndex;
@@ -377,7 +377,7 @@ void AsScene1907Symbol::fallOff(int newPositionIndex, int fallOffDelay) {
 	_someY = _y;
 	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, 0);
 	_playBackwards = true;
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	_currStep = 0;
 	_yAccel = 1;
 	SetUpdateHandler(&AsScene1907Symbol::update);

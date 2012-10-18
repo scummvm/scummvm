@@ -310,7 +310,7 @@ AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
 		_newStickFrameIndex = 0;
 	} else {
 		startAnimation(0x88148150, -1, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 	}
 	loadSound(0, 0x68895082);
 	loadSound(1, 0x689BD0C1);
@@ -348,7 +348,7 @@ void AsScene1302Bridge::stRaiseBridge() {
 void AsScene1302Bridge::cbLowerBridgeEvent() {
 	sendMessage(_parentScene, 0x2032, 0);
 	startAnimation(0x88148150, -1, -1);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 }
 
 SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
@@ -1210,7 +1210,7 @@ void AsScene1307Key::stInsertKey() {
 	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4]);
 	setClipRect(_clipRects[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4]);
 	SetSpriteUpdate(&AsScene1307Key::suInsertKey);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 }
 
 void AsScene1307Key::stMoveKey() {
@@ -1237,13 +1237,13 @@ void AsScene1307Key::stMoveKey() {
 void AsScene1307Key::stUnlock() {
 	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
 	startAnimation(fileHashes[1], 0, -1);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 }
 
 void AsScene1307Key::stInsert() {
 	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
 	startAnimation(fileHashes[2], 0, -1);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 }
 
 Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -1515,7 +1515,7 @@ uint32 AsScene1308LightWallSymbols::handleMessage(int messageNum, const MessageP
 void AsScene1308LightWallSymbols::stFadeIn() {
 	startAnimation(0x80180A10, 0, -1);
 	setVisible(true);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 }
 
 void AsScene1308LightWallSymbols::stFadeOut() {

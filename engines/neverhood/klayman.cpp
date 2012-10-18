@@ -62,7 +62,6 @@ Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int
 	_flagF6(false), _isLeverDown(false), _isSittingInTeleporter(false), _flagFA(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false),
 	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _readyToSpit(false), _walkResumeFrameIncr(0) {
 	
-	// TODO DirtySurface
 	createSurface(surfacePriority, 320, 200);
 	_x = x;
 	_y = y;
@@ -475,10 +474,6 @@ void Klayman::gotoNextStateExt() {
 		AnimationCb cb = _nextStateCb;
 		_nextStateCb = NULL;
 		(this->*cb)();
-#if 0 // TODO (So far, with almost all Klayman subclasses implemented, _callbackList and related code seems unused)
-	} else if (_callbackList) {
-		removeCallbackList();
-#endif		
 	} else {
 		// Inform the scene that the current Klayman animation sequence has finished
 		sendMessage(_parentScene, 0x1006, 0);
@@ -2927,7 +2922,6 @@ void Klayman::stFalling() {
 	SetMessageHandler(&Klayman::hmLowLevelAnimation);
 	NextState(&Klayman::stFallTouchdown);
 	sendMessage(_parentScene, 0x2002, 0);
-	// TODO _callbackList = NULL; (See comment above)
 	_attachedSprite = NULL;
 	sendMessage(_parentScene, 0x8001, 0);
 }
@@ -3338,7 +3332,6 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		gotoNextStateExt();
 		break;		
 	case 0x481B:
-		// TODO: It's not really a point but an x1/x2 pair
 		if (param.asPoint().y != 0) {
 			sub41CC40(param.asPoint().y, param.asPoint().x);
 		} else {
@@ -3575,9 +3568,11 @@ KmScene1109::KmScene1109(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 }
 
 uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
 	switch (messageNum) {
 	case 0x2000:
 		_isSittingInTeleporter = param.asInteger() != 0;
+		messageResult = 1;		
 		break;
 	case 0x4001:
 	case 0x4800:
@@ -3629,7 +3624,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		teleporterDisappear(0x3C2E4245);
 		break;
 	}
-	return 0;
+	return messageResult;
 }
 
 // KmScene1201
@@ -3816,6 +3811,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x2000:
 		_isSittingInTeleporter = param.asInteger() != 0;
+		messageResult = 1;
 		break;
 	case 0x4001:
 	case 0x4800:
@@ -4270,9 +4266,11 @@ KmScene1608::KmScene1608(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 }
 
 uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
 	switch (messageNum) {
 	case 0x2032:
 		_isSittingInTeleporter = param.asInteger() != 0;
+		messageResult = 1;
 		break;
 	case 0x4001:
 	case 0x4800:
@@ -4349,7 +4347,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
-	return 0;
+	return messageResult;
 }
 
 // KmScene1705
@@ -4493,9 +4491,11 @@ KmScene2001::KmScene2001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 }
 
 uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
 	switch (messageNum) {
 	case 0x2000:
 		_isSittingInTeleporter = param.asInteger() != 0;
+		messageResult = 1;
 		break;
 	case 0x4001:
 	case 0x4800:
@@ -4547,7 +4547,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 		teleporterDisappear(0x18AB4ED4);
 		break;
 	}
-	return 0;
+	return messageResult;
 }
 
 KmScene2101::KmScene2101(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
@@ -5758,9 +5758,11 @@ KmScene2805::KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 }
 
 uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
 	switch (messageNum) {
 	case 0x2000:
 		_isSittingInTeleporter = param.asInteger() != 0;
+		messageResult = 1;
 		break;
 	case 0x4001:
 	case 0x4800:
@@ -5804,7 +5806,7 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 		teleporterDisappear(0xD82A4094);
 		break;
 	}
-	return 0;
+	return messageResult;
 }
 
 KmScene2806::KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
@@ -5815,7 +5817,6 @@ KmScene2806::KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 	_surface->setClipRects(clipRects, clipRectsCount);
 
 	if (flag) {
-		// TODO Maybe? Don't know. Set Klayman clip rects
 		loadSound(3, 0x58E0C341);
 		loadSound(4, 0x40A00342);
 		loadSound(5, 0xD0A1C348);
@@ -5875,7 +5876,6 @@ KmScene2809::KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 	_surface->setClipRects(clipRects, clipRectsCount);
 
 	if (flag) {
-		// TODO Maybe? Don't know. Set Klayman clip rects
 		loadSound(3, 0x58E0C341);
 		loadSound(4, 0x40A00342);
 		loadSound(5, 0xD0A1C348);

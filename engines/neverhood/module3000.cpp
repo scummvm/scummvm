@@ -1227,7 +1227,7 @@ void AsScene3010DeadBolt::unlock(bool skipAnim) {
 		setVisible(true);
 		if (skipAnim) {
 			startAnimation(kAsScene3010DeadBoltFileHashes1[_boltIndex], -1, 0);
-			_newStickFrameIndex = -2;
+			_newStickFrameIndex = STICK_LAST_FRAME;
 		} else {
 			startAnimation(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 			SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);

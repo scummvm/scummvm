@@ -30,7 +30,6 @@ Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
 	: Entity(vm, objectPriority), _x(0), _y(0), _spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),   
 	_dataResource(vm), _doDeltaX(false), _doDeltaY(false), _needRefresh(false), _flags(0), _surface(NULL) {
 
-	_name = "Sprite"; 
 	SetMessageHandler(&Sprite::handleMessage);
 	
 }
@@ -119,21 +118,17 @@ void Sprite::setClipRect(NDrawRect& drawRect) {
 StaticSprite::StaticSprite(NeverhoodEngine *vm, int objectPriority)
 	: Sprite(vm, objectPriority), _spriteResource(vm) {
 
-	_name = "StaticSprite"; 
-
 }
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, const char *filename, int surfacePriority, int16 x, int16 y, int16 width, int16 height)
 	: Sprite(vm, 0), _spriteResource(vm) {
 
-	_name = "StaticSprite"; 
 	init(calcHash(filename), surfacePriority, x, y, width, height);
-
 }
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height)
 	: Sprite(vm, 0), _spriteResource(vm) {
-	_name = "StaticSprite"; 
+
 	init(fileHash, surfacePriority, x, y, width, height);
 }
 
@@ -227,13 +222,11 @@ AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surface
 }
 
 void AnimatedSprite::init() {
-	_name = "AnimatedSprite"; 
 	_currFrameTicks = 0;
 	_newAnimFileHash = 0;
 	_deltaX = 0;
 	_deltaY = 0;
 	_nextAnimFileHash = 0;
-	// TODO _callbackList = 0;
 	_plFirstFrameIndex = 0;
 	_currFrameIndex = 0;
 	_currStickFrameIndex = -1;
@@ -289,7 +282,7 @@ void AnimatedSprite::updateAnim() {
 
 	if (_newAnimFileHash == 0) {
 		if (_newStickFrameIndex != -1) {
-			_currStickFrameIndex = _newStickFrameIndex == -2 ? _animResource.getFrameCount() - 1 : _newStickFrameIndex;
+			_currStickFrameIndex = _newStickFrameIndex == STICK_LAST_FRAME ? _animResource.getFrameCount() - 1 : _newStickFrameIndex;
 			_newStickFrameIndex = -1;
 		} else if (_newStickFrameHash != 0) {
 			_currStickFrameIndex = MAX<int16>(0, _animResource.getFrameIndex(_newStickFrameHash));
@@ -360,7 +353,7 @@ void AnimatedSprite::updateAnim() {
 		}
 
 		if (_newStickFrameIndex != -1) {
-			_currStickFrameIndex = _newStickFrameIndex == -2 ? _animResource.getFrameCount() - 1 : _newStickFrameIndex;
+			_currStickFrameIndex = _newStickFrameIndex == STICK_LAST_FRAME ? _animResource.getFrameCount() - 1 : _newStickFrameIndex;
 			_newStickFrameIndex = -1;
 		} else if (_newStickFrameHash != 0) {
 			_currStickFrameIndex = MAX<int16>(0, _animResource.getFrameIndex(_newStickFrameHash));
@@ -428,9 +421,8 @@ void AnimatedSprite::updateFrameInfo() {
 	_currFrameTicks = frameInfo.counter;
 	processDelta();
 	_needRefresh = true;
-	if (frameInfo.frameHash != 0) {
+	if (frameInfo.frameHash != 0)
 		sendMessage(this, 0x100D, frameInfo.frameHash);
-	}
 }
 
 void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
@@ -499,7 +491,6 @@ void AnimatedSprite::gotoState(AnimationCb currStateCb) {
 		_finalizeStateCb = NULL;
 		(this->*cb)();
 	}
-	// TODO _callbackList = NULL;
 	_nextStateCb = NULL;
 	_currStateCb = currStateCb;
 	if (_currStateCb)
@@ -517,10 +508,6 @@ void AnimatedSprite::gotoNextState() {
 		_nextStateCb = NULL;
 		//debug("Fire _nextStateCb '%s'", _nextStateCbName.c_str());
 		(this->*_currStateCb)();
-#if 0 // TODO		
-	} else if (_callbackList) {
-		removeCallbackList();
-#endif		
 	} else {
 		_currStateCb = NULL;
 	}

@@ -229,7 +229,7 @@ AsScene1201TntManRope::AsScene1201TntManRope(NeverhoodEngine *vm, bool flag)
 	_y = -32;
 	if (flag) {
 		startAnimation(0x928F0C10, 15, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 	} else {
 		startAnimation(0x928F0C10, 0, -1);
 		_newStickFrameIndex = 0;
@@ -246,7 +246,7 @@ uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &
 		break;
 	case 0x2006:
 		startAnimation(0x928F0C10, 1, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 		break;
 	}
 	return messageResult;
@@ -260,10 +260,10 @@ AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman,
 	_y = 240;
 	SetUpdateHandler(&AsScene1201RightDoor::update);
 	SetMessageHandler(&AsScene1201RightDoor::handleMessage);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	if (flag) {
 		startAnimation(0xD088AC30, -1, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 		_countdown = 25;
 	} else {
 		stopAnimation();
@@ -293,7 +293,7 @@ uint32 AsScene1201RightDoor::handleMessage(int messageNum, const MessageParam &p
 
 void AsScene1201RightDoor::stOpenDoor() {
 	startAnimation(0xD088AC30, 0, -1);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	setVisible(true);
 	playSound(0, calcHash("fxDoorOpen20"));
 }
@@ -419,7 +419,7 @@ void AsScene1201TntMan::stMoving() {
 	startAnimation(0x85084190, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
 	SetSpriteUpdate(&AsScene1201TntMan::suMoving);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 }
 
 AsScene1201TntManFlame::AsScene1201TntManFlame(NeverhoodEngine *vm, Sprite *asTntMan)
@@ -687,11 +687,11 @@ AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klayman)
 	createSurface(800, 55, 199);
 	if (_klayman->getX() < 100) {
 		startAnimation(0x508A111B, 0, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 		playSound(0, calcHash("fxDoorOpen03"));
 	} else {
 		startAnimation(0x508A111B, -1, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 	}
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1201LeftDoor::handleMessage);

@@ -53,10 +53,8 @@ protected:
 		uint32 _integer;
 		NPoint _point;
 		Entity *_entity;
-		// TODO: Other types...
 	};
 	MessageParamType _type;
-	// TODO: Constructors for the param types...
 };
 
 // TODO: Disable heavy debug stuff in release mode
@@ -75,7 +73,6 @@ const uint kMaxSoundResources = 16;
 
 class Entity {
 public:
-	Common::String _name; // Entity name for debugging purposes
 	Common::String _updateHandlerCbName;
 	Common::String _messageHandlerCbName;
 	Entity(NeverhoodEngine *vm, int priority);
@@ -105,7 +102,6 @@ protected:
 	int _priority;
 	SoundResource **_soundResources;
 	SoundResource *getSoundResource(uint index);
-	// TODO Add other sound stuff
 	void loadSound(uint index, uint32 fileHash);
 	void playSound(uint index, uint32 fileHash = 0);
 	void stopSound(uint index);

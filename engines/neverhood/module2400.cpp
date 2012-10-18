@@ -328,7 +328,7 @@ AsScene2401Door::AsScene2401Door(NeverhoodEngine *vm, bool isOpen)
 	createSurface1(0x44687810, 100);
 	_x = 320;
 	_y = 240;
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	SetUpdateHandler(&AsScene2401Door::update);
 	SetMessageHandler(&AsScene2401Door::handleMessage);
 	if (_isOpen) {
@@ -581,7 +581,7 @@ AsScene2402Door::AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool i
 	createSurface1(0x80495831, 100);
 	_x = 320;
 	_y = 240;
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	if (_isOpen) {
 		startAnimation(0x80495831, -1, -1);
 		_countdown = 48;
@@ -619,7 +619,7 @@ uint32 AsScene2402Door::handleMessage(int messageNum, const MessageParam &param,
 		_isOpen = true;
 		setVisible(true);
 		startAnimation(0x80495831, 0, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 		playSound(0, calcHash("fxDoorOpen38"));
 		break;
 	}

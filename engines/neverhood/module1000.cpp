@@ -200,7 +200,7 @@ AsScene1001Hammer::AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor)
 	_y = 206;
 	createSurface(900, 177, 192);
 	startAnimation(0x022C90D4, -1, -1);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1001Hammer::handleMessage);
 }
@@ -218,7 +218,7 @@ uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &para
 	case 0x2000:
 		startAnimation(0x022C90D4, 1, -1);
 		playSound(0, 0xE741020A);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 		break;
 	}
 	return 0;
@@ -331,8 +331,6 @@ uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &p
 		
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
-
-	_name = "Scene1001";
 
 	Sprite *tempSprite;
 
@@ -1130,7 +1128,7 @@ AsScene1002OutsideDoorBackground::AsScene1002OutsideDoorBackground(NeverhoodEngi
 	_y = 240;
 	if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 		startAnimation(0x004A4495, -1, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 	} else {
 		setVisible(false);
 	}
@@ -1177,7 +1175,7 @@ uint32 AsScene1002OutsideDoorBackground::hmAnimation(int messageNum, const Messa
 void AsScene1002OutsideDoorBackground::stOpenDoor() {
 	startAnimation(0x004A4495, 0, -1);
 	SetMessageHandler(&AsScene1002OutsideDoorBackground::handleMessage);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	setVisible(true);
 }
 

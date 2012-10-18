@@ -559,7 +559,7 @@ AsCommonCarConnectorShadow::AsCommonCarConnectorShadow(NeverhoodEngine *vm, Spri
 	SetUpdateHandler(&AsCommonCarConnectorShadow::update);
 	createShadowSurface1(shadowSurface, 0x60281C10, 150);
 	startAnimation(0x60281C10, -1, -1);
-	_newStickFrameIndex = -2;	
+	_newStickFrameIndex = STICK_LAST_FRAME;	
 } 
 
 void AsCommonCarConnectorShadow::update() {

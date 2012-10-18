@@ -426,7 +426,7 @@ AsScene2201Door::AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *
 	if (_doorOpen) {
 		startAnimation(0xE2CB0412, -1, -1);
 		_countdown = 48;
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 	} else {
 		startAnimation(0xE2CB0412, 0, -1);
 		_newStickFrameIndex = 0;
@@ -473,7 +473,7 @@ uint32 AsScene2201Door::handleMessage(int messageNum, const MessageParam &param,
 void AsScene2201Door::stOpenDoor() {
 	_doorOpen = true;
 	startAnimation(0xE2CB0412, 0, -1);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	playSound(0, calcHash("fxDoorOpen33"));
 }
 
@@ -1056,7 +1056,7 @@ AsScene2203Door::AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint d
 	createSurface1(kAsScene2203DoorFileHashes[_doorIndex], 900);
 	if (getGlobalVar(V_LARGE_DOOR_NUMBER) == _doorIndex) {
 		startAnimation(kAsScene2203DoorFileHashes[_doorIndex], -1, -1);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 	} else {
 		startAnimation(kAsScene2203DoorFileHashes[_doorIndex], 0, -1);
 		_newStickFrameIndex = 0;

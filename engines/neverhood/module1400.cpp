@@ -311,7 +311,7 @@ AsScene1401BackDoor::AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klayman, b
 	createSurface1(0x04551900, 100);
 	SetUpdateHandler(&AsScene1401BackDoor::update);
 	SetMessageHandler(&AsScene1401BackDoor::handleMessage);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	if (isOpen) {
 		_isOpen = true;
 		startAnimation(0x04551900, -1,- 1);
@@ -355,7 +355,7 @@ void AsScene1401BackDoor::stOpenDoor() {
 	_isOpen = true;
 	setVisible(true);
 	startAnimation(0x04551900, 0, -1);
-	_newStickFrameIndex = -2;
+	_newStickFrameIndex = STICK_LAST_FRAME;
 	playSound(0, calcHash("fxDoorOpen24"));
 }
 
@@ -820,7 +820,7 @@ AsScene1402PuzzleBox::AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentSce
 		// Puzzle box is here
 		startAnimation(0x20060259, 0, -1);
 		loadSound(1, 0x61901C29);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 	}
 }
 

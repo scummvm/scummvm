@@ -52,8 +52,7 @@ Entity *MessageParam::asEntity() const {
 #define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler); debug(2, "SetMessageHandler(" #handler ")"); _messageHandlerCbName = #handler
 
 Entity::Entity(NeverhoodEngine *vm, int priority)
-	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _soundResources(NULL),
-	_name("Entity") {
+	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _soundResources(NULL) {
 }
 
 Entity::~Entity() {
@@ -64,7 +63,6 @@ void Entity::draw() {
 }
 
 void Entity::handleUpdate() {
-	//debug("Entity(%s).handleUpdate", _name.c_str());
 	debug(2, "handleUpdate() -> [%s]", _updateHandlerCbName.c_str());
 	if (_updateHandlerCb)
 		(this->*_updateHandlerCb)();

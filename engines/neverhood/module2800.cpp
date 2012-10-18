@@ -3101,7 +3101,7 @@ uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &pa
 	case 0x2000:
 		startAnimation(0x805D0029, 0, -1);
 		playSound(0, 0xEA005F40);
-		_newStickFrameIndex = -2;
+		_newStickFrameIndex = STICK_LAST_FRAME;
 		break;
 	}
 	return messageResult;

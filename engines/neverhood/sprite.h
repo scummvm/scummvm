@@ -113,6 +113,8 @@ protected:
 #define NextState(callback) _nextStateCb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "NextState(" #callback ")"); _nextStateCbName = #callback
 #define FinalizeState(callback) setFinalizeState(static_cast <void (AnimatedSprite::*)()> (callback));
 
+const int STICK_LAST_FRAME = -2;
+
 class AnimatedSprite : public Sprite {
 public:
 	AnimatedSprite(NeverhoodEngine *vm, int objectPriority);
@@ -140,11 +142,6 @@ protected:
 	int16 _deltaX, _deltaY;
 	byte _replOldColor, _replNewColor;
 	bool _playBackwards, _frameChanged;
-	/* TODO
-	callbackListIndex dw ?
-	callbackListCount dw ?
-	callbackList	dd ?
-	*/
 	AnimationCb _finalizeStateCb;
 	AnimationCb _currStateCb;
 	AnimationCb _nextStateCb;
