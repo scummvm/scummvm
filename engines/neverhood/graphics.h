@@ -88,7 +88,6 @@ public:
 	BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height);
 	virtual ~BaseSurface();
 	virtual void draw();
-	virtual void addDirtyRect();
 	void clear();
 	void drawSpriteResource(SpriteResource &spriteResource);
 	void drawSpriteResourceEx(SpriteResource &spriteResource, bool flipX, bool flipY, int16 width, int16 height);
@@ -118,6 +117,7 @@ protected:
 	NRect *_clipRects;
 	uint _clipRectsCount;
 	bool _transparent;
+	// Version changes each time the pixels are touched in any way
 	byte _version;
 };
 
