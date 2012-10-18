@@ -342,7 +342,6 @@ public:
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;
 	int last_sens;
-	int HopkinsArr[140];
 	byte *police;
 	int police_l;
 	int police_h;

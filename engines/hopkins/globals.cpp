@@ -30,7 +30,35 @@
 
 namespace Hopkins {
 
+// Global null pointer. This is needed by the engine to recognise NULL pointers, since
+// there are places that differentiate between it and a 0 'error' value
 byte *g_PTRNUL;
+
+// Default data for the Hopkins array
+
+const int HOPKINS_PERSO_0[] = {
+		0, -2, 0, -3, 0, -6, 0, -1, 0, -3, 0, -3, 0, -5, 0, -3, 0, -6, 0, -3, 0, -3, 0, -3, 
+		9, -4, 8, -4, 6, -2, 9, -2, 9, -3, 9, -3, 9, -4, 9, -2, 9, -2, 8, -2, 9, -3, 9, -2, 
+		13, 0, 13, 0, 13, 0, 13, 0, 14, 0, 13, 0, 13, 0, 12, 0, 12, 0, 14, 0, 13, 0, 14, 0, 
+		10, 3, 9, 3, 10, 4, 8, 2, 7, 1, 10, 2, 9, 2, 7, 4, 7, 3, 8, 0, 9, 1, 9, 1, 0, 4, 0, 
+		4, 0, 6, 0, 3, 0, 4, 0, 3, 0, 4, 0, 4, 0, 6, 0, 3, 0, 3, 0, 3
+};
+
+const int HOPKINS_PERSO_1[] = {
+		0, -2, 0, -2, 0, -5, 0, -1, 0, -2, 0, -2, 0, -4, 0, -2, 0, -5, 0, -2, 0, -2, 0, -2, 
+		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0, 
+		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0, 
+		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0, 
+		0, 3, 0, 3, 0, 5, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 5, 0, 3, 0, 3, 0, 3
+};
+
+const int HOPKINS_PERSO_2[] = {
+		0, -2, 0, 0, 0, -3, 0, -2, 0, -2, 0, -1, 0, -2, 0, -1, 0, -3, 0, -2, 0, -2, 0, -2, 
+		8, 0, 9, 0, 5, 0, 9, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 8, 0, 9, 0, 
+		5, 0, 9, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 8, 0, 9, 0, 5, 0, 9, 0, 
+		7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0, 2, 0, 2, 
+		0, 2, 0, 2, 0, 2, 0, 1, 0, 2, 0, 2
+};
 
 Globals::Globals() {
 	// Set up the special g_PTRNUL variable
@@ -360,376 +388,14 @@ void Globals::clearAll() {
 }
 
 void Globals::HOPKINS_DATA() {
-	// TODO: Replace all the '/ 2' with constant values
-	switch (PERSO_TYPE) {
-	case 0:
-		HopkinsArr[0 / 2] = 0;
-		HopkinsArr[2 / 2] = -2;
-		HopkinsArr[4 / 2] = 0;
-		HopkinsArr[6 / 2] = -3;
-		HopkinsArr[8 / 2] = 0;
-		HopkinsArr[10 / 2] = -6;
-		HopkinsArr[12 / 2] = 0;
-		HopkinsArr[14 / 2] = -1;
-		HopkinsArr[16 / 2] = 0;
-		HopkinsArr[18 / 2] = -3;
-		HopkinsArr[20 / 2] = 0;
-		HopkinsArr[22 / 2] = -3;
-		HopkinsArr[24 / 2] = 0;
-		HopkinsArr[26 / 2] = -5;
-		HopkinsArr[28 / 2] = 0;
-		HopkinsArr[30 / 2] = -3;
-		HopkinsArr[32 / 2] = 0;
-		HopkinsArr[34 / 2] = -6;
-		HopkinsArr[36 / 2] = 0;
-		HopkinsArr[38 / 2] = -3;
-		HopkinsArr[40 / 2] = 0;
-		HopkinsArr[42 / 2] = -3;
-		HopkinsArr[44 / 2] = 0;
-		HopkinsArr[46 / 2] = -3;
-		HopkinsArr[48 / 2] = 9;
-		HopkinsArr[50 / 2] = -4;
-		HopkinsArr[52 / 2] = 8;
-		HopkinsArr[54 / 2] = -4;
-		HopkinsArr[56 / 2] = 6;
-		HopkinsArr[58 / 2] = -2;
-		HopkinsArr[60 / 2] = 9;
-		HopkinsArr[62 / 2] = -2;
-		HopkinsArr[64 / 2] = 9;
-		HopkinsArr[66 / 2] = -3;
-		HopkinsArr[68 / 2] = 9;
-		HopkinsArr[70 / 2] = -3;
-		HopkinsArr[72 / 2] = 9;
-		HopkinsArr[74 / 2] = -4;
-		HopkinsArr[76 / 2] = 9;
-		HopkinsArr[78 / 2] = -2;
-		HopkinsArr[80 / 2] = 9;
-		HopkinsArr[82 / 2] = -2;
-		HopkinsArr[84 / 2] = 8;
-		HopkinsArr[86 / 2] = -2;
-		HopkinsArr[88 / 2] = 9;
-		HopkinsArr[90 / 2] = -3;
-		HopkinsArr[92 / 2] = 9;
-		HopkinsArr[94 / 2] = -2;
-		HopkinsArr[96 / 2] = 13;
-		HopkinsArr[98 / 2] = 0;
-		HopkinsArr[100 / 2] = 13;
-		HopkinsArr[102 / 2] = 0;
-		HopkinsArr[104 / 2] = 13;
-		HopkinsArr[106 / 2] = 0;
-		HopkinsArr[108 / 2] = 13;
-		HopkinsArr[110 / 2] = 0;
-		HopkinsArr[112 / 2] = 14;
-		HopkinsArr[114 / 2] = 0;
-		HopkinsArr[116 / 2] = 13;
-		HopkinsArr[118 / 2] = 0;
-		HopkinsArr[120 / 2] = 13;
-		HopkinsArr[122 / 2] = 0;
-		HopkinsArr[124 / 2] = 12;
-		HopkinsArr[126 / 2] = 0;
-		HopkinsArr[128 / 2] = 12;
-		HopkinsArr[130 / 2] = 0;
-		HopkinsArr[132 / 2] = 14;
-		HopkinsArr[134 / 2] = 0;
-		HopkinsArr[136 / 2] = 13;
-		HopkinsArr[138 / 2] = 0;
-		HopkinsArr[140 / 2] = 14;
-		HopkinsArr[142 / 2] = 0;
-		HopkinsArr[144 / 2] = 10;
-		HopkinsArr[146 / 2] = 3;
-		HopkinsArr[148 / 2] = 9;
-		HopkinsArr[150 / 2] = 3;
-		HopkinsArr[152 / 2] = 10;
-		HopkinsArr[154 / 2] = 4;
-		HopkinsArr[156 / 2] = 8;
-		HopkinsArr[158 / 2] = 2;
-		HopkinsArr[160 / 2] = 7;
-		HopkinsArr[162 / 2] = 1;
-		HopkinsArr[164 / 2] = 10;
-		HopkinsArr[166 / 2] = 2;
-		HopkinsArr[168 / 2] = 9;
-		HopkinsArr[170 / 2] = 2;
-		HopkinsArr[172 / 2] = 7;
-		HopkinsArr[174 / 2] = 4;
-		HopkinsArr[176 / 2] = 7;
-		HopkinsArr[178 / 2] = 3;
-		HopkinsArr[180 / 2] = 8;
-		HopkinsArr[182 / 2] = 0;
-		HopkinsArr[184 / 2] = 9;
-		HopkinsArr[186 / 2] = 1;
-		HopkinsArr[188 / 2] = 9;
-		HopkinsArr[190 / 2] = 1;
-		HopkinsArr[192 / 2] = 0;
-		HopkinsArr[194 / 2] = 4;
-		HopkinsArr[196 / 2] = 0;
-		HopkinsArr[198 / 2] = 4;
-		HopkinsArr[200 / 2] = 0;
-		HopkinsArr[202 / 2] = 6;
-		HopkinsArr[204 / 2] = 0;
-		HopkinsArr[206 / 2] = 3;
-		HopkinsArr[208 / 2] = 0;
-		HopkinsArr[210 / 2] = 4;
-		HopkinsArr[212 / 2] = 0;
-		HopkinsArr[214 / 2] = 3;
-		HopkinsArr[216 / 2] = 0;
-		HopkinsArr[218 / 2] = 4;
-		HopkinsArr[220 / 2] = 0;
-		HopkinsArr[222 / 2] = 4;
-		HopkinsArr[224 / 2] = 0;
-		HopkinsArr[226 / 2] = 6;
-		HopkinsArr[228 / 2] = 0;
-		HopkinsArr[230 / 2] = 3;
-		HopkinsArr[232 / 2] = 0;
-		HopkinsArr[234 / 2] = 3;
-		HopkinsArr[236 / 2] = 0;
-		HopkinsArr[238 / 2] = 3;
-		break;
-	case 1:
-		HopkinsArr[0] = 0;
-		HopkinsArr[2 / 2] = -2;
-		HopkinsArr[4 / 2] = 0;
-		HopkinsArr[6 / 2] = -2;
-		HopkinsArr[8 / 2] = 0;
-		HopkinsArr[10 / 2] = -5;
-		HopkinsArr[12 / 2] = 0;
-		HopkinsArr[14 / 2] = -1;
-		HopkinsArr[16 / 2] = 0;
-		HopkinsArr[18 / 2] = -2;
-		HopkinsArr[20 / 2] = 0;
-		HopkinsArr[22 / 2] = -2;
-		HopkinsArr[24 / 2] = 0;
-		HopkinsArr[26 / 2] = -4;
-		HopkinsArr[28 / 2] = 0;
-		HopkinsArr[30 / 2] = -2;
-		HopkinsArr[32 / 2] = 0;
-		HopkinsArr[34 / 2] = -5;
-		HopkinsArr[36 / 2] = 0;
-		HopkinsArr[38 / 2] = -2;
-		HopkinsArr[40 / 2] = 0;
-		HopkinsArr[42 / 2] = -2;
-		HopkinsArr[44 / 2] = 0;
-		HopkinsArr[46 / 2] = -2;
-		HopkinsArr[48 / 2] = 11;
-		HopkinsArr[50 / 2] = 0;
-		HopkinsArr[52 / 2] = 10;
-		HopkinsArr[54 / 2] = 0;
-		HopkinsArr[56 / 2] = 11;
-		HopkinsArr[58 / 2] = 0;
-		HopkinsArr[60 / 2] = 11;
-		HopkinsArr[62 / 2] = 0;
-		HopkinsArr[64 / 2] = 11;
-		HopkinsArr[66 / 2] = 0;
-		HopkinsArr[68 / 2] = 11;
-		HopkinsArr[70 / 2] = 0;
-		HopkinsArr[72 / 2] = 12;
-		HopkinsArr[74 / 2] = 0;
-		HopkinsArr[76 / 2] = 11;
-		HopkinsArr[78 / 2] = 0;
-		HopkinsArr[80 / 2] = 9;
-		HopkinsArr[82 / 2] = 0;
-		HopkinsArr[84 / 2] = 10;
-		HopkinsArr[86 / 2] = 0;
-		HopkinsArr[88 / 2] = 11;
-		HopkinsArr[90 / 2] = 0;
-		HopkinsArr[92 / 2] = 11;
-		HopkinsArr[94 / 2] = 0;
-		HopkinsArr[96 / 2] = 11;
-		HopkinsArr[98 / 2] = 0;
-		HopkinsArr[100 / 2] = 10;
-		HopkinsArr[102 / 2] = 0;
-		HopkinsArr[104 / 2] = 11;
-		HopkinsArr[106 / 2] = 0;
-		HopkinsArr[108 / 2] = 11;
-		HopkinsArr[110 / 2] = 0;
-		HopkinsArr[112 / 2] = 11;
-		HopkinsArr[114 / 2] = 0;
-		HopkinsArr[116 / 2] = 11;
-		HopkinsArr[118 / 2] = 0;
-		HopkinsArr[120 / 2] = 12;
-		HopkinsArr[122 / 2] = 0;
-		HopkinsArr[124 / 2] = 11;
-		HopkinsArr[126 / 2] = 0;
-		HopkinsArr[128 / 2] = 9;
-		HopkinsArr[130 / 2] = 0;
-		HopkinsArr[132 / 2] = 10;
-		HopkinsArr[134 / 2] = 0;
-		HopkinsArr[136 / 2] = 11;
-		HopkinsArr[138 / 2] = 0;
-		HopkinsArr[140 / 2] = 11;
-		HopkinsArr[142 / 2] = 0;
-		HopkinsArr[144 / 2] = 11;
-		HopkinsArr[146 / 2] = 0;
-		HopkinsArr[148 / 2] = 10;
-		HopkinsArr[150 / 2] = 0;
-		HopkinsArr[152 / 2] = 11;
-		HopkinsArr[154 / 2] = 0;
-		HopkinsArr[156 / 2] = 11;
-		HopkinsArr[158 / 2] = 0;
-		HopkinsArr[160 / 2] = 11;
-		HopkinsArr[162 / 2] = 0;
-		HopkinsArr[164 / 2] = 11;
-		HopkinsArr[166 / 2] = 0;
-		HopkinsArr[168 / 2] = 12;
-		HopkinsArr[170 / 2] = 0;
-		HopkinsArr[172 / 2] = 11;
-		HopkinsArr[174 / 2] = 0;
-		HopkinsArr[176 / 2] = 9;
-		HopkinsArr[178 / 2] = 0;
-		HopkinsArr[180 / 2] = 10;
-		HopkinsArr[182 / 2] = 0;
-		HopkinsArr[184 / 2] = 11;
-		HopkinsArr[186 / 2] = 0;
-		HopkinsArr[188 / 2] = 11;
-		HopkinsArr[190 / 2] = 0;
-		HopkinsArr[192 / 2] = 0;
-		HopkinsArr[194 / 2] = 3;
-		HopkinsArr[196 / 2] = 0;
-		HopkinsArr[198 / 2] = 3;
-		HopkinsArr[200 / 2] = 0;
-		HopkinsArr[202 / 2] = 5;
-		HopkinsArr[204 / 2] = 0;
-		HopkinsArr[206 / 2] = 3;
-		HopkinsArr[208 / 2] = 0;
-		HopkinsArr[210 / 2] = 3;
-		HopkinsArr[212 / 2] = 0;
-		HopkinsArr[214 / 2] = 3;
-		HopkinsArr[216 / 2] = 0;
-		HopkinsArr[218 / 2] = 3;
-		HopkinsArr[220 / 2] = 0;
-		HopkinsArr[222 / 2] = 3;
-		HopkinsArr[224 / 2] = 0;
-		HopkinsArr[226 / 2] = 5;
-		HopkinsArr[228 / 2] = 0;
-		HopkinsArr[230 / 2] = 3;
-		HopkinsArr[232 / 2] = 0;
-		HopkinsArr[234 / 2] = 3;
-		HopkinsArr[236 / 2] = 0;
-		HopkinsArr[238 / 2] = 3;
-		break;
-	case 2:
-		HopkinsArr[0] = 0;
-		HopkinsArr[2 / 2] = -2;
-		HopkinsArr[4 / 2] = 0;
-		HopkinsArr[6 / 2] = 0;
-		HopkinsArr[8 / 2] = 0;
-		HopkinsArr[10 / 2] = -3;
-		HopkinsArr[12 / 2] = 0;
-		HopkinsArr[14 / 2] = -2;
-		HopkinsArr[16 / 2] = 0;
-		HopkinsArr[18 / 2] = -2;
-		HopkinsArr[20 / 2] = 0;
-		HopkinsArr[22 / 2] = -1;
-		HopkinsArr[24 / 2] = 0;
-		HopkinsArr[26 / 2] = -2;
-		HopkinsArr[28 / 2] = 0;
-		HopkinsArr[30 / 2] = -1;
-		HopkinsArr[32 / 2] = 0;
-		HopkinsArr[34 / 2] = -3;
-		HopkinsArr[36 / 2] = 0;
-		HopkinsArr[38 / 2] = -2;
-		HopkinsArr[40 / 2] = 0;
-		HopkinsArr[42 / 2] = -2;
-		HopkinsArr[44 / 2] = 0;
-		HopkinsArr[46 / 2] = -2;
-		HopkinsArr[48 / 2] = 8;
-		HopkinsArr[50 / 2] = 0;
-		HopkinsArr[52 / 2] = 9;
-		HopkinsArr[54 / 2] = 0;
-		HopkinsArr[56 / 2] = 5;
-		HopkinsArr[58 / 2] = 0;
-		HopkinsArr[60 / 2] = 9;
-		HopkinsArr[62 / 2] = 0;
-		HopkinsArr[64 / 2] = 7;
-		HopkinsArr[66 / 2] = 0;
-		HopkinsArr[68 / 2] = 7;
-		HopkinsArr[70 / 2] = 0;
-		HopkinsArr[72 / 2] = 7;
-		HopkinsArr[74 / 2] = 0;
-		HopkinsArr[76 / 2] = 7;
-		HopkinsArr[78 / 2] = 0;
-		HopkinsArr[80 / 2] = 6;
-		HopkinsArr[82 / 2] = 0;
-		HopkinsArr[84 / 2] = 7;
-		HopkinsArr[86 / 2] = 0;
-		HopkinsArr[88 / 2] = 6;
-		HopkinsArr[90 / 2] = 0;
-		HopkinsArr[92 / 2] = 9;
-		HopkinsArr[94 / 2] = 0;
-		HopkinsArr[96 / 2] = 8;
-		HopkinsArr[98 / 2] = 0;
-		HopkinsArr[100 / 2] = 9;
-		HopkinsArr[102 / 2] = 0;
-		HopkinsArr[104 / 2] = 5;
-		HopkinsArr[106 / 2] = 0;
-		HopkinsArr[108 / 2] = 9;
-		HopkinsArr[110 / 2] = 0;
-		HopkinsArr[112 / 2] = 7;
-		HopkinsArr[114 / 2] = 0;
-		HopkinsArr[116 / 2] = 7;
-		HopkinsArr[118 / 2] = 0;
-		HopkinsArr[120 / 2] = 7;
-		HopkinsArr[122 / 2] = 0;
-		HopkinsArr[124 / 2] = 7;
-		HopkinsArr[126 / 2] = 0;
-		HopkinsArr[128 / 2] = 6;
-		HopkinsArr[130 / 2] = 0;
-		HopkinsArr[132 / 2] = 7;
-		HopkinsArr[134 / 2] = 0;
-		HopkinsArr[136 / 2] = 6;
-		HopkinsArr[138 / 2] = 0;
-		HopkinsArr[140 / 2] = 9;
-		HopkinsArr[142 / 2] = 0;
-		HopkinsArr[144 / 2] = 8;
-		HopkinsArr[146 / 2] = 0;
-		HopkinsArr[148 / 2] = 9;
-		HopkinsArr[150 / 2] = 0;
-		HopkinsArr[152 / 2] = 5;
-		HopkinsArr[154 / 2] = 0;
-		HopkinsArr[156 / 2] = 9;
-		HopkinsArr[158 / 2] = 0;
-		HopkinsArr[160 / 2] = 7;
-		HopkinsArr[162 / 2] = 0;
-		HopkinsArr[164 / 2] = 7;
-		HopkinsArr[166 / 2] = 0;
-		HopkinsArr[168 / 2] = 7;
-		HopkinsArr[170 / 2] = 0;
-		HopkinsArr[172 / 2] = 7;
-		HopkinsArr[174 / 2] = 0;
-		HopkinsArr[176 / 2] = 6;
-		HopkinsArr[178 / 2] = 0;
-		HopkinsArr[180 / 2] = 7;
-		HopkinsArr[182 / 2] = 0;
-		HopkinsArr[184 / 2] = 6;
-		HopkinsArr[186 / 2] = 0;
-		HopkinsArr[188 / 2] = 9;
-		HopkinsArr[190 / 2] = 0;
-		HopkinsArr[192 / 2] = 0;
-		HopkinsArr[194 / 2] = 2;
-		HopkinsArr[196 / 2] = 0;
-		HopkinsArr[198 / 2] = 0;
-		HopkinsArr[200 / 2] = 0;
-		HopkinsArr[202 / 2] = 2;
-		HopkinsArr[204 / 2] = 0;
-		HopkinsArr[206 / 2] = 1;
-		HopkinsArr[208 / 2] = 0;
-		HopkinsArr[210 / 2] = 2;
-		HopkinsArr[212 / 2] = 0;
-		HopkinsArr[214 / 2] = 2;
-		HopkinsArr[216 / 2] = 0;
-		HopkinsArr[218 / 2] = 2;
-		HopkinsArr[220 / 2] = 0;
-		HopkinsArr[222 / 2] = 2;
-		HopkinsArr[224 / 2] = 0;
-		HopkinsArr[226 / 2] = 2;
-		HopkinsArr[228 / 2] = 0;
-		HopkinsArr[230 / 2] = 1;
-		HopkinsArr[232 / 2] = 0;
-		HopkinsArr[234 / 2] = 2;
-		HopkinsArr[236 / 2] = 0;
-		HopkinsArr[238 / 2] = 2;
-		break;
-	default:
-		break;
+	assert(PERSO_TYPE >= 0 && PERSO_TYPE <= 2);
+
+	const int *srcList[] = { HOPKINS_PERSO_0, HOPKINS_PERSO_1, HOPKINS_PERSO_2 };
+	const int *srcP = srcList[PERSO_TYPE];
+
+	for (int idx = 0; idx < 240 / 4; ++idx) {
+		Hopkins[idx].field0 = *srcP++;
+		Hopkins[idx].field2 = *srcP++;
 	}
 
 	g_old_anim = -1;
