@@ -647,7 +647,6 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1401::handleMessage);
 	SetUpdateHandler(&Scene1401::update);
 	setRectList(0x004B6758);
-	_surfaceFlag = true;
 
 	setBackground(0x08221FA5);
 	setPalette(0x08221FA5);
@@ -1243,8 +1242,6 @@ void AsScene1407Mouse::stArriveAtHole() {
 Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _puzzleSolvedCountdown(0),	_resetButtonCountdown(0) {
 
-	_surfaceFlag = true;
-
 	SetMessageHandler(&Scene1407::handleMessage);
 	SetUpdateHandler(&Scene1407::update);
 
@@ -1307,7 +1304,6 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1403::handleMessage);
 	
 	setRectList(0x004B1FF8);
-	_surfaceFlag = true;
 
 	setBackground(0x2110A234);
 	setPalette(0x2110A234);
@@ -1418,7 +1414,6 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 		setGlobalVar(V_KEY3_LOCATION, 5);
 	
 	SetMessageHandler(&Scene1404::handleMessage);
-	_surfaceFlag = true;
 
 	setRectList(0x004B8D80);
 
@@ -1590,7 +1585,6 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _selectFirstTile(true), _tilesLeft(48), _countdown(0) {
 
 	_vm->gameModule()->initScene1405Vars();
-	_surfaceFlag = true;
 	
 	setBackground(0x0C0C007D);
 	setPalette(0x0C0C007D);

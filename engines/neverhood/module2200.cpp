@@ -508,7 +508,6 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 		// TODO _vm->gameModule()->initScene2201Vars();
 	}
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2201::handleMessage);
 	SetUpdateHandler(&Scene2201::update);
 	
@@ -892,8 +891,6 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene2202::handleMessage);
 	SetUpdateHandler(&Scene2202::update);
 
-	_surfaceFlag = true;
-
 	setBackground(0x08100A0C);
 	setPalette(0x08100A0C);
 	addEntity(_palette);
@@ -1115,7 +1112,6 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 		setGlobalVar(V_KEY3_LOCATION, 1);
 
 	SetMessageHandler(&Scene2203::handleMessage);
-	_surfaceFlag = true;
 
 	setBackground(0x82C80334);
 	setPalette(0x82C80334);
@@ -1268,7 +1264,6 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene2205::update);
 	
 	setHitRects(0x004B0620);
-	_surfaceFlag = true;
 
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		_isLightOn = true;
@@ -1520,7 +1515,6 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene2206::handleMessage);
-	_surfaceFlag = true;
 	
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		fileHash = 0x41983216;
@@ -2016,7 +2010,6 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene2207::handleMessage);
 	SetUpdateHandler(&Scene2207::update);
-	_surfaceFlag = true;
 
 	insertKlayman<KmScene2207>(0, 0);
 	_klayman->setRepl(64, 0);
@@ -2405,7 +2398,6 @@ static const uint32 kScene2242MessageListIds1[] = {
 Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _isKlaymanInLight(false) {
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2242::handleMessage);
 	SetUpdateHandler(&Scene2242::update);
 	
@@ -2525,7 +2517,6 @@ HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule
 	
 	_sceneInfo140 = _vm->_staticData->getSceneInfo140Item(sceneInfo140Id);
 
-	_surfaceFlag = true;
 	SetMessageHandler(&HallOfRecordsScene::handleMessage);
 	SetUpdateHandler(&Scene::update);
 
@@ -2617,7 +2608,6 @@ Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
 	//DEBUG
 	setGlobalVar(V_LIGHTS_ON, 1);
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2247::handleMessage);
 	SetUpdateHandler(&Scene::update);
 

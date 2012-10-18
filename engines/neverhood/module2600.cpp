@@ -306,7 +306,6 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _isBusy(false) {
 	
-	_surfaceFlag = true;
 	setBackground(0x51409A16);
 	setPalette(0x51409A16);
 	_asWater = insertSprite<AsScene2609Water>();

@@ -48,7 +48,6 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_vm->_screen->setSmackerDecoder(NULL);
 	// TODO g_screen->resetDirtyRects();	
 	_canAcceptInput = true;
-	_surfaceFlag = false;
 	_messageList2 = NULL;
 	_smackerPlayer = NULL;
 	_isMessageListBusy = false;
@@ -75,25 +74,11 @@ Scene::~Scene() {
 
 void Scene::draw() {
 	if (_smackerPlayer) {
-		if (_surfaceFlag) {
-			// TODO g_screen->resetDirtyRects();
-			// TODO g_screen->copyDirtyRects();
-			// TODO g_screen->addDirtyRects();
-		}
 		if (_smackerPlayer->getSurface())
 			_smackerPlayer->getSurface()->draw();
 	} else {
-#if 0	
-		if (_surfaceFlag) {
-			// TODO g_screen->copyDirtyRects();
-			for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
-				(*iter)->addDirtyRect();
-			// TODO g_screen->addDirtyRects();
-		}
-#endif		
-		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
+		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
 			(*iter)->draw();
-		}
 	}	
 }
 

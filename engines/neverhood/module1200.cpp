@@ -726,8 +726,6 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setHitRects(0x004AEBD0);
 	
-	_surfaceFlag = true;
-
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0xE8058B52)) {
 		setSubVar(VA_IS_PUZZLE_INIT, 0xE8058B52, 1);
 		for (uint32 index = 0; index < 18; index++) {
@@ -1090,8 +1088,6 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene1202::handleMessage);
 	SetUpdateHandler(&Scene1202::update);
-
-	_surfaceFlag = true;
 
 	setBackground(0x60210ED5);
 

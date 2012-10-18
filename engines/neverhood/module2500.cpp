@@ -227,7 +227,6 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setGlobalVar(V_CAR_DELTA_X, 1);
 	SetUpdateHandler(&Scene2501::update);
-	_surfaceFlag = true;
 	setBackground(0x1B8E8115);
 	setPalette(0x1B8E8115);
 	_palette->addPalette(0x00128842, 65, 31, 65);
@@ -551,7 +550,6 @@ Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	Sprite *ssButton;
 	
-	_surfaceFlag = true;
 	setBackground(0x90791B80);
 	setPalette(0x90791B80);
 	ssButton = insertSprite<SsScene2504Button>();

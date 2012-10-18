@@ -339,7 +339,6 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1001::handleMessage);
 	
 	setHitRects(0x004B4860);
-	_surfaceFlag = false;
 	setBackground(0x4086520E);
 	setPalette(0x4086520E);
 	insertMouse433(0x6520A400);
@@ -1279,8 +1278,6 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setHitRects(0x004B4138);
 
-	_surfaceFlag = true;
-
 	setBackground(0x12C23307);
 	setPalette(0x12C23307);
 
@@ -1530,8 +1527,6 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash)
 	: Scene(vm, parentModule, true) {
 
-	_surfaceFlag = false;
-
 	SetMessageHandler(&StaticScene::handleMessage);
 	
 	setBackground(backgroundFileHash);
@@ -1587,8 +1582,6 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _paletteAreaStatus(-1) {
 
 	Sprite *tempSprite;
-	
-	_surfaceFlag = true;
 	
 	SetUpdateHandler(&Scene1004::update);
 	SetMessageHandler(&Scene1004::handleMessage);
@@ -1687,8 +1680,6 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene1005::handleMessage);
 
-	_surfaceFlag = true;
-	
 	if (getGlobalVar(V_ENTRANCE_OPEN)) {
 		setBackground(0x2800E011);
 		setPalette(0x2800E011);

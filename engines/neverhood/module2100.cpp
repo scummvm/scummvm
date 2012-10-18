@@ -203,7 +203,6 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	Sprite *tempSprite;
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2101::handleMessage);
 	SetUpdateHandler(&Scene2101::update);
 	

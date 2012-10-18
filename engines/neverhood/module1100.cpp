@@ -452,7 +452,6 @@ Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_vm->gameModule()->initScene1405Vars();
 	
-	_surfaceFlag = true;
 	SetUpdateHandler(&Scene1105::update);
 	SetMessageHandler(&Scene1105::handleMessage);
 	
@@ -668,7 +667,6 @@ void Scene1105::update() {
 Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, which) {
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene1109::handleMessage);
 	
 	setBackground(0x8449E02F);

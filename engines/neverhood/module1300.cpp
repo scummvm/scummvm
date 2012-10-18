@@ -630,7 +630,6 @@ void AsScene1303Balloon::stPopBalloon() {
 Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene1303::handleMessage);
 	setRectList(0x004AF9E8);
 	
@@ -694,7 +693,6 @@ uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &para
 Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene1304::handleMessage);
 	setRectList(0x004B91A8);
 
@@ -761,7 +759,6 @@ uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entit
 Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene1305::handleMessage);
 	setRectList(0x004B6E98);
 
@@ -876,7 +873,6 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 4);
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene1306::handleMessage);
 
 	setBackground(0x05303114);
@@ -1275,7 +1271,6 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 		_keyHoleRects[i].y2 = pt.y + 15;
 	}
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene1307::handleMessage);
 	SetUpdateHandler(&Scene1307::update);
 
@@ -1575,7 +1570,6 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_vm->gameModule()->initScene1307Vars();
 
-	_surfaceFlag = true;		
 	SetMessageHandler(&Scene1308::handleMessage);
 	
 	setBackground(0x41024202);

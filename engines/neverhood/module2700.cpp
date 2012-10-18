@@ -592,8 +592,6 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(0x004B2240);
 	setGlobalVar(V_CAR_DELTA_X, 1);
 	
-	_surfaceFlag = true;
-	
 	setBackground(sceneInfo->bgFilename);
 	setPalette(sceneInfo->bgFilename);
 
@@ -705,7 +703,6 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 		for (int j = 0; j < 3; j++)
 			_sceneInfos[i][j] = _vm->_staticData->getSceneInfo2700(kScene2702Infos[i][j]);
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2702::handleMessage);
 	SetUpdateHandler(&Scene2702::update);
 	
@@ -875,7 +872,6 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 
 	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(sceneInfoId);
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2704::handleMessage);
 	SetUpdateHandler(&Scene2704::update);
 	
@@ -988,7 +984,6 @@ static const struct { const char *pointListName; int which1, which2; } kSceneInf
 Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _newTrackIndex(-1) {
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2706::handleMessage);
 	
 	setBackground(0x18808B88);

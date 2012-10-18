@@ -194,8 +194,6 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setHitRects(0x004B69D8);
 
-	_surfaceFlag = true;
-
 	setBackground(0x03118226);
 
 	setPalette(0x03118226);

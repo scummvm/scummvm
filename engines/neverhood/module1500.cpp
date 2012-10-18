@@ -88,8 +88,6 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 	SetUpdateHandler(&Scene1501::update);
 	SetMessageHandler(&Scene1501::handleMessage);
 	
-	_surfaceFlag = true;
-
 	setBackground(backgroundFileHash);
 
 	setPalette();

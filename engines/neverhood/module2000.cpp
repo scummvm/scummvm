@@ -100,7 +100,6 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2001::handleMessage);
 
 	setBackground(0xA6417244);

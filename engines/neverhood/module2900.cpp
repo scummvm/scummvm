@@ -401,7 +401,6 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (_currLocationButtonNum == 3)
 		setSubVar(V_TELEPORTER_DEST_AVAILABLE, 2, 1);
 
-	_surfaceFlag = true;
 	setBackground(kScene2901FileHashes1[_currLocationButtonNum]);
 	setPalette(kScene2901FileHashes1[_currLocationButtonNum]);
 	

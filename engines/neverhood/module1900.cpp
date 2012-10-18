@@ -91,8 +91,6 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	Sprite *tempSprite;
 
-	_surfaceFlag = true;
-	
 	setRectList(0x004B34C8);
 
 	setBackground(0x01303227);
@@ -559,7 +557,6 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _currMovingSymbolIndex(0), _pluggedInCount(0), 
 	_moveDownCountdown(0), _moveUpCountdown(0), _countdown3(0), _hasPlugInFailed(false) {
 	
-	_surfaceFlag = true;
 	setBackground(0x20628E05);
 	setPalette(0x20628E05);
 

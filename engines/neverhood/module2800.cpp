@@ -404,7 +404,6 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_vm->gameModule()->initScene2801Vars();
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2801::handleMessage);
 	SetUpdateHandler(&Scene::update);
 
@@ -512,7 +511,6 @@ Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
 	setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
 	//DEBUG<<<
 		
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2802::handleMessage);
 	SetUpdateHandler(&Scene2802::update);
 	insertMouse435(0x008810A8, 20, 620);
@@ -843,8 +841,6 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	loadDataResource(0x00900849);
 	
-	_surfaceFlag = true;
-
 	_background = new Background(_vm, 0);
 	_background->createSurface(0, 640, 480);
 	addBackground(_background);
@@ -1126,7 +1122,6 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 		0, 0x286800D4, 0x286806D4, 0x28680AD4
 	};
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2803Small::handleMessage);
 
 	loadDataResource(0x81120132);
@@ -1818,7 +1813,6 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	initCrystalColors();
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2804::handleMessage);
 	SetUpdateHandler(&Scene2804::update);
 
@@ -1969,7 +1963,6 @@ void Scene2804::initCrystalColors() {
 Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2805::handleMessage);
 
 	setBackground(0x08021E04);
@@ -2058,7 +2051,6 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2806::handleMessage);
 	SetUpdateHandler(&Scene2806::update);
 	
@@ -2178,7 +2170,6 @@ void Scene2806::findClosestPoint() {
 Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2807::handleMessage);
 
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 1) {
@@ -2205,7 +2196,6 @@ Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertStaticSprite(0x31203460, 100);
 	}
 
-	_surfaceFlag = true;
 	setBackground(0x3E049A95);
 	setPalette(0x3E049A95);
 	insertMouse435(0x49A913E8, 20, 620);
@@ -2536,7 +2526,6 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->gameModule()->initScene2808Vars2();
 	}
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2808::handleMessage);
 	SetUpdateHandler(&Scene2808::update);
 
@@ -2661,7 +2650,6 @@ Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 		
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2809::handleMessage);
 	SetUpdateHandler(&Scene2809::update);
 	
@@ -2809,7 +2797,6 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2810::handleMessage);
 	
 	setBackground(0x26508804);
@@ -3127,7 +3114,6 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 3);
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2812::handleMessage);
 	SetUpdateHandler(&Scene2812::update);
 	

@@ -392,7 +392,6 @@ Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 	setGlobalVar(V_WATER_RUNNING, 1); //DEBUG! Enables water
 	setGlobalVar(V_HAS_TEST_TUBE, 1); //DEBUG! Gives the test tube
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2401::handleMessage);
 	SetUpdateHandler(&Scene2401::update);
 
@@ -721,7 +720,6 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2402::handleMessage);
 	SetUpdateHandler(&Scene2402::update);
 
@@ -825,7 +823,6 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	Sprite *tempSprite1, *tempSprite2, *tempSprite3;
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2403::handleMessage);
 	setBackground(0x0C05060C);
 	setPalette(0x0C05060C);
@@ -922,7 +919,6 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 2);
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene2406::handleMessage);
 	
 	setRectList(0x004B78C8);

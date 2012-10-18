@@ -1076,7 +1076,6 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setGlobalVar(V_CAR_DELTA_X, 1);
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene1608::hmLowerFloor);
 	
 	_asKey = insertSprite<AsCommonKey>(this, 1, 1100, 198, 220);
@@ -1396,7 +1395,6 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO _vm->gameModule()->initScene3011Vars();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
 	
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene1609::handleMessage);
 	SetUpdateHandler(&Scene1609::update);
 	

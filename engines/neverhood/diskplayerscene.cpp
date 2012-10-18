@@ -334,8 +334,6 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 
 	int availableDisksCount = 0;
 	
-	_surfaceFlag = true;
-
 	setBackground(0x8A000044);
 	setPalette(kDiskplayerPaletteFileHashes[paletteIndex]);
 

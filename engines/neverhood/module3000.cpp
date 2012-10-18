@@ -805,7 +805,6 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->gameModule()->initScene3009Vars();
 	
 	setGlobalVar(V_CANNON_SMACKER_NAME, 0);
-	_surfaceFlag = true;
 	
 	_vm->_screen->clear();
 	
@@ -1293,8 +1292,6 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[1], 1);
 	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[2], 1);
 
-	_surfaceFlag = true;
-
 	setBackground(0x80802626);
 	setPalette(0x80802626);
 
@@ -1533,7 +1530,6 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO _vm->gameModule()->initScene3011Vars();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
 
-	_surfaceFlag = true;
 	SetMessageHandler(&Scene3011::handleMessage);
 	SetUpdateHandler(&Scene3011::update);
 	

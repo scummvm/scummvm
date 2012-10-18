@@ -160,8 +160,6 @@ protected:
 	Common::Array<Entity*> _entities;
 	Common::Array<BaseSurface*> _surfaces;
 
-	bool _surfaceFlag;
-
 	Klayman *_klayman;
 	Background *_background;
 	Palette *_palette;
