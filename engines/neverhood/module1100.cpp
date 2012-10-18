@@ -353,8 +353,7 @@ void SsScene1105SymbolDie::hide() {
 AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 	
-	// TODO createSurface3(100, dword_4AF4C0);
-	createSurface(100, 640, 480); //TODO: Remeove once the line above is done
+	createSurface(100, 556, 328);
 	_x = 320;
 	_y = 240;
 	SetUpdateHandler(&AnimatedSprite::update);

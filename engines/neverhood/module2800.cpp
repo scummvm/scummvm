@@ -675,7 +675,7 @@ AsScene2803LightCord::AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentSce
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _fileHash1(fileHash1), _fileHash2(fileHash2),
 	_isPulled(false), _isBusy(false) {
 
-	createSurface(1010, 640, 480); // TODO Use correct size	from the two hashes
+	createSurface(1010, 28, 379);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	_x = x;

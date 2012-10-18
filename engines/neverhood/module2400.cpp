@@ -635,7 +635,7 @@ void AsScene2402Door::stDoorClosingFinished() {
 AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman)
 	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown1(0), _countdown2(0) {
 
-	createSurface(100, 640, 480); // TODO Use correct size	from the two hashes
+	createSurface(100, 127, 90);
 	SetMessageHandler(&Sprite::handleMessage);
 	_x = 260;
 	_y = 210;

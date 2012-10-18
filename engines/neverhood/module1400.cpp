@@ -137,8 +137,7 @@ void Module1400::updateScene() {
 AsScene1401Pipe::AsScene1401Pipe(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100), _countdown1(0), _countdown2(0) {
 	
-	// TODO createSurface3(900, dword_4B6768);
-	createSurface(900, 640, 480); //TODO: Remeove once the line above is done
+	createSurface(900, 152, 147);
 	_x = 454;
 	_y = 217;
 	SetMessageHandler(&AsScene1401Pipe::handleMessage);
@@ -224,8 +223,7 @@ void AsScene1401Pipe::stSuckInProjector() {
 AsScene1401Mouse::AsScene1401Mouse(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100) {
 	
-	// TODO createSurface3(100, dword_4B6778);
-	createSurface(100, 640, 480); //TODO: Remeove once the line above is done
+	createSurface(100, 71, 41);
 	_x = 478;
 	_y = 433;
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -271,8 +269,7 @@ void AsScene1401Mouse::stSuckedIn() {
 AsScene1401Cheese::AsScene1401Cheese(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100) {
 
-	// TODO createSurface3(200, dword_4B6768);
-	createSurface(200, 640, 480); //TODO: Remeove once the line above is done
+	createSurface(200, 152, 147);
 	_x = 427;
 	_y = 433;
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -388,8 +385,7 @@ AsCommonProjector::AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sp
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _asPipe(asPipe) {
 
 	_asProjectorItem = &kAsCommonProjectorItems[getGlobalVar(V_PROJECTOR_LOCATION)];
-	// TODO createSurface3(990, dword_4B26D8);
-	createSurface(990, 640, 480); //TODO: Remeove once the line above is done
+	createSurface(990, 101, 182);
 	startAnimation(0x10E3042B, 0, -1);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsCommonProjector::handleMessage);
@@ -803,8 +799,7 @@ SsScene1402BridgePart::SsScene1402BridgePart(NeverhoodEngine *vm, uint32 fileHas
 AsScene1402PuzzleBox::AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int which)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
-	// TODO createSurface3(900, dword_4B6768);
-	createSurface(900, 640, 480); //TODO: Remeove once the line above is done
+	createSurface(900, 152, 147);
 
 	SetFilterY(&Sprite::defFilterY);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -1105,8 +1100,7 @@ static const struct {
 AsScene1407Mouse::AsScene1407Mouse(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _currSectionIndex(0) {
 	
-	// TODO createSurface3(100, dword_4B05B0);
-	createSurface(100, 640, 480); //TODO: Remeove once the line above is done
+	createSurface(100, 117, 45);
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	_x = 108;

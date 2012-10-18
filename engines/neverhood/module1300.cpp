@@ -581,8 +581,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 AsScene1303Balloon::AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 	
-	// TODO createSurface3(200, dword_4AF9F8);
-	createSurface(200, 640, 480); //TODO: Remeove once the line above is done
+	createSurface(200, 128, 315);
 	_x = 289;
 	_y = 390;
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -1119,8 +1118,7 @@ AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint ind
 	_x = pt.x;
 	_y = pt.y;
 	
-	// TODO createSurface3(kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4], fileHashes);
-	createSurface(kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4], 640, 480); //TODO: Remeove once the line above is done
+	createSurface(kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index) % 4], 190, 148);
 	
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1307Key::handleMessage);

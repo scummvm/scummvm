@@ -186,8 +186,7 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	SetMessageHandler(&AsCommonCar::handleMessage);
 	SetSpriteUpdate(NULL);
 
-	// TODO createSurface2(200, dword_4AF4C0);
-	createSurface(200, 640, 480); //TODO: Remove once the line above is done
+	createSurface(200, 556, 328);
 	_x = x;
 	_y = y;
 	

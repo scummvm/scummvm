@@ -80,8 +80,7 @@ void Module2100::updateScene() {
 AsScene2101Door::AsScene2101Door(NeverhoodEngine *vm, bool flag)
 	: AnimatedSprite(vm, 1100) {
 
-	// TODO createSurface3(100, dword_4B9018);
-	createSurface(100, 640, 480); //TODO: Remove once the line above is done
+	createSurface(100, 328, 347);
 	_x = 320;
 	_y = 240;
 	SetUpdateHandler(&AnimatedSprite::update);
