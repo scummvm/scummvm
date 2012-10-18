@@ -42,7 +42,7 @@ Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect)
 
 Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2)
 	: StaticSprite(vm, 2000), _mouseType(kMouseType435),
-	_mouseCursorResource(vm), _frameNum(0), _x1(x1), _x2(x2), _visible(true) {
+	_mouseCursorResource(vm), _frameNum(0), _x1(x1), _x2(x2), _visible(false) {
 	
 	init(fileHash);
 	if (_x <= _x1) {
@@ -61,6 +61,10 @@ Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, int type)
 
 	init(fileHash);
 	_mouseCursorResource.setCursorNum(0);
+}
+
+Mouse::~Mouse() {
+	CursorMan.showMouse(false);
 }
 
 void Mouse::init(uint32 fileHash) {

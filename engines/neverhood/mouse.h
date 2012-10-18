@@ -41,6 +41,7 @@ public:
 	Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect);
 	Mouse(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2);
 	Mouse(NeverhoodEngine *vm, uint32 fileHash, int _type);
+	virtual ~Mouse();
 	void load(uint32 fileHash);
 	void updateCursor();
 protected:
