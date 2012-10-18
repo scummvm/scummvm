@@ -802,7 +802,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	_cannonTargetStatus = getGlobalVar(V_CANNON_TARGET_STATUS);
 	debug("_cannonTargetStatus = %d", _cannonTargetStatus);
 	
-	_vm->gameModule()->initScene3009Vars();
+	_vm->gameModule()->initCannonSymbolsPuzzle();
 	
 	setGlobalVar(V_CANNON_SMACKER_NAME, 0);
 	

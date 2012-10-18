@@ -39,14 +39,14 @@ public:
 	void handleMouseDown(int16 x, int16 y);
 	void handleMouseUp(int16 x, int16 y);
 	void handleSpaceKey();
-	void initScene1307Vars();
-	void initScene1405Vars();
-	void initScene2401Vars();
-	void initScene2801Vars();
-	void initScene2808Vars1();
-	void initScene2808Vars2();
-	void initScene3009Vars();
-	uint32 getScene2802MusicFileHash();
+	void initKeySlotsPuzzle();
+	void initMemoryPuzzle();
+	void initWaterPipesPuzzle();
+	void initRadioPuzzle();
+	void initTestTubes1Puzzle();
+	void initTestTubes2Puzzle();
+	void initCannonSymbolsPuzzle();
+	uint32 getCurrRadioMusicFileHash();
 protected:
 	Entity *_prevChildObject;
 	bool _someFlag1;

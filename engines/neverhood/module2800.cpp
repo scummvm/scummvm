@@ -372,7 +372,7 @@ void Module2800::updateScene() {
 
 void Module2800::updateMusic(bool halfVolume) {
 
-	uint32 newMusicFileHash = _vm->_gameModule->getScene2802MusicFileHash();
+	uint32 newMusicFileHash = _vm->_gameModule->getCurrRadioMusicFileHash();
 
 	if (!_musicResource)
 		_musicResource = new MusicResource(_vm);
@@ -402,7 +402,7 @@ void Module2800::updateMusic(bool halfVolume) {
 Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
-	_vm->gameModule()->initScene2801Vars();
+	_vm->gameModule()->initRadioPuzzle();
 
 	SetMessageHandler(&Scene2801::handleMessage);
 	SetUpdateHandler(&Scene::update);
@@ -657,9 +657,8 @@ void Scene2802::changeTuneStatus(int prevTuneStatus, int newTuneStatus) {
 	}
 
 	if (newTuneStatus == 0) {
-		if (_vm->_gameModule->getScene2802MusicFileHash() != 0) {
+		if (_vm->_gameModule->getCurrRadioMusicFileHash() != 0)
 			_vm->_soundMan->stopSound(0x00632252);
-		}
 		else
 			_vm->_soundMan->playSoundLooping(0x00632252);
 	} else if (newTuneStatus == 3 || newTuneStatus == 6) {
@@ -835,7 +834,7 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	};
 
 	setGlobalVar(V_BEEN_SHRINKING_ROOM, 1);
-	_vm->gameModule()->initScene2808Vars1();
+	_vm->gameModule()->initTestTubes1Puzzle();
 	
 	SetMessageHandler(&Scene2803::handleMessage);
 	
@@ -2521,9 +2520,9 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 	Sprite *tempSprite;
 
 	if (which == 0) {
-		_vm->gameModule()->initScene2808Vars1();
+		_vm->gameModule()->initTestTubes1Puzzle();
 	} else {
-		_vm->gameModule()->initScene2808Vars2();
+		_vm->gameModule()->initTestTubes2Puzzle();
 	}
 	
 	SetMessageHandler(&Scene2808::handleMessage);

@@ -38,7 +38,7 @@ public:
 	virtual ~Module2700();
 protected:
 	int _soundIndex;
-	bool _flag1;
+	bool _raidoMusicInitialized;
 	uint32 _scene2711StaticSprites[6];
 	uint32 _musicFileHash;
 	void createScene(int sceneNum, int which);

@@ -387,7 +387,7 @@ Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _countdown1(0), _countdown2(0), _flag(false),
 	_soundToggle(false), _asWaterSpitIndex(0) {
 
-	_vm->gameModule()->initScene2401Vars();
+	_vm->gameModule()->initWaterPipesPuzzle();
 
 	setGlobalVar(V_WATER_RUNNING, 1); //DEBUG! Enables water
 	setGlobalVar(V_HAS_TEST_TUBE, 1); //DEBUG! Gives the test tube

@@ -187,7 +187,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	Sprite *tempSprite;
 	
 	setGlobalVar(V_FELL_DOWN_HOLE, 1);
-	_vm->gameModule()->initScene3009Vars();
+	_vm->gameModule()->initCannonSymbolsPuzzle();
 
 	SetMessageHandler(&Scene1705::handleMessage);
 	SetUpdateHandler(&Scene1705::update);

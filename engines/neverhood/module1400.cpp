@@ -1584,7 +1584,7 @@ void AsScene1405Tile::hide() {
 Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _selectFirstTile(true), _tilesLeft(48), _countdown(0) {
 
-	_vm->gameModule()->initScene1405Vars();
+	_vm->gameModule()->initMemoryPuzzle();
 	
 	setBackground(0x0C0C007D);
 	setPalette(0x0C0C007D);

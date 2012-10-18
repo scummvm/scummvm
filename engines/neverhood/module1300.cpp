@@ -1258,7 +1258,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 	
-	_vm->gameModule()->initScene1307Vars();
+	_vm->gameModule()->initKeySlotsPuzzle();
 	
 	_dataResource.load(0x22102142);
 	_keyHolePoints = _dataResource.getPointArray(0xAC849240);
@@ -1568,7 +1568,7 @@ uint32 AsScene1308Mouse::handleMessage(int messageNum, const MessageParam &param
 Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _flag1(false) {
 	
-	_vm->gameModule()->initScene1307Vars();
+	_vm->gameModule()->initKeySlotsPuzzle();
 
 	SetMessageHandler(&Scene1308::handleMessage);
 	

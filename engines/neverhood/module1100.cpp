@@ -450,7 +450,7 @@ Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	Sprite *ssOpenButton;
 	
-	_vm->gameModule()->initScene1405Vars();
+	_vm->gameModule()->initMemoryPuzzle();
 	
 	SetUpdateHandler(&Scene1105::update);
 	SetMessageHandler(&Scene1105::handleMessage);

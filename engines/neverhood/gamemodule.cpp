@@ -47,7 +47,7 @@
 
 namespace Neverhood {
 
-static const uint32 kScene2801MusicFileHashes[] = {
+static const uint32 kRadioMusicFileHashes[] = {
 	0x82B22000,
 	0x02B22004,
 	0x42B22000,
@@ -124,7 +124,7 @@ void GameModule::handleSpaceKey() {
 	}				
 }
 
-void GameModule::initScene1307Vars() {
+void GameModule::initKeySlotsPuzzle() {
 
 	// Exit if it's already initialized
 	if (getSubVar(VA_IS_PUZZLE_INIT, 0x25400B10))
@@ -162,7 +162,7 @@ void GameModule::initScene1307Vars() {
 
 }
 
-void GameModule::initScene1405Vars() {
+void GameModule::initMemoryPuzzle() {
 
 	// TODO: Give better names
 
@@ -261,33 +261,29 @@ void GameModule::initScene1405Vars() {
 	
 }
 
-void GameModule::initScene2401Vars() {
-
-	if (getSubVar(VA_IS_PUZZLE_INIT, 0x40520234))
-		return;
-
-	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 0, 3);
-	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 1, 1);
-	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 2, 2);
-	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 3, 0);
-	setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 4, 4);
-		
-	setSubVar(VA_IS_PUZZLE_INIT, 0x40520234, 1);
-
+void GameModule::initWaterPipesPuzzle() {
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x40520234)) {
+		setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 0, 3);
+		setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 1, 1);
+		setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 2, 2);
+		setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 3, 0);
+		setSubVar(VA_GOOD_WATER_PIPES_LEVEL, 4, 4);
+		setSubVar(VA_IS_PUZZLE_INIT, 0x40520234, 1);
+	}
 }
 
-void GameModule::initScene2801Vars() {
+void GameModule::initRadioPuzzle() {
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x08C80800)) {
 		int currMusicIndex = _vm->_rnd->getRandomNumber(5 - 1) + 3;
 		setGlobalVar(V_GOOD_RADIO_MUSIC_INDEX, 5 * currMusicIndex);
-		setGlobalVar(V_GOOD_RADIO_MUSIC_NAME, kScene2801MusicFileHashes[currMusicIndex]);
+		setGlobalVar(V_GOOD_RADIO_MUSIC_NAME, kRadioMusicFileHashes[currMusicIndex]);
 		setGlobalVar(V_RADIO_ROOM_LEFT_DOOR, 1);
 		setGlobalVar(V_RADIO_ROOM_RIGHT_DOOR, 0);
 		setSubVar(VA_IS_PUZZLE_INIT, 0x08C80800, 1);
   	}
 }
 
-void GameModule::initScene2808Vars1() {
+void GameModule::initTestTubes1Puzzle() {
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x20479010)) {
 		for (uint i = 0; i < 3; i++)
 			setSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, i, _vm->_rnd->getRandomNumber(3 - 1) + 1);
@@ -295,7 +291,7 @@ void GameModule::initScene2808Vars1() {
 	}
 }
 
-void GameModule::initScene2808Vars2() {
+void GameModule::initTestTubes2Puzzle() {
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x66059818)) {
 		for (uint i = 0; i < 3; i++)
 			setSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, i, _vm->_rnd->getRandomNumber(6 - 1) + 1);
@@ -303,7 +299,7 @@ void GameModule::initScene2808Vars2() {
 	}
 }
 
-void GameModule::initScene3009Vars() {
+void GameModule::initCannonSymbolsPuzzle() {
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x8C9819C2)) {
 		for (int i = 0; i < 3; i++) {
 			setSubVar(VA_GOOD_CANNON_SYMBOLS_1, i, _vm->_rnd->getRandomNumber(12 - 1));
@@ -313,9 +309,9 @@ void GameModule::initScene3009Vars() {
 	}
 }
 
-uint32 GameModule::getScene2802MusicFileHash() {
+uint32 GameModule::getCurrRadioMusicFileHash() {
 	uint musicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
-	return (musicIndex % 5 != 0) ? 0 : kScene2801MusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];
+	return (musicIndex % 5 != 0) ? 0 : kRadioMusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];
 }
 
 
@@ -324,20 +320,18 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 	switch (messageNum) {
 	case 0x0800:
 		_someFlag1 = true;
-		return messageResult;		
+		break;		
 	case 0x1009:
 		_moduleResult = param.asInteger();
 		_done = true;
-		return messageResult;
+		break;		
 	case 0x100A:
-		// Unused resource preloading message
-		return messageResult;
+	case 0x1023:
+		// Unused resource preloading messages
+		break;		
 	case 0x101F:
 		_field2C = true;		
-		return messageResult;
-	case 0x1023:
-		// Unused resource preloading message
-		return messageResult;
+		break;		
 	}
 	return messageResult;
 }

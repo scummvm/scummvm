@@ -2003,7 +2003,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 	//setGlobalVar(V_LIGHTS_ON, 1);
 	//DEBUG<<<
 
-	_vm->gameModule()->initScene3009Vars();
+	_vm->gameModule()->initCannonSymbolsPuzzle();
 
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x88460852))
 		setSubVar(VA_IS_PUZZLE_INIT, 0x88460852, 1);
