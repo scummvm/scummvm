@@ -355,9 +355,9 @@ public:
 	byte *SPRITE_ECRAN;
 	Sauvegarde *SAUVEGARDE;
 	byte *BUFFERTAPE;
-	byte *essai0;
-	byte *essai1;
-	byte *essai2;
+	int16 *essai0;
+	int16 *essai1;
+	int16 *essai2;
 	byte *Bufferobjet;
 	int INVENTAIRE[36];
 	TriItem Tri[51];

@@ -2786,9 +2786,9 @@ void ObjectsManager::BTGAUCHE() {
 	int v0;
 	int v1;
 	int v2;
-	byte *v3; 
+	int16 *v3; 
 	byte *v4; 
-	byte *v5; 
+	int16 *v5; 
 	int v6; 
 	int v7;
 	int v8;
@@ -2859,14 +2859,15 @@ void ObjectsManager::BTGAUCHE() {
 		v3 = _vm->_globals.essai2;
 		v4 = _vm->_globals.chemin;
 		do {
-			WRITE_LE_UINT16(v3 + 2 * v2, (int16)READ_LE_UINT16(v4 + 2 * v2));
+			v3[v2] = READ_LE_UINT16(v4 + 2 * v2);
 			++v2;
 		} while ((int16)READ_LE_UINT16(v4 + 2 * v2) != -1);
+
 		v5 = _vm->_globals.essai2;
-		WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v2, (uint16)-1);
-		WRITE_LE_UINT16(v5 + 2 * v2 + 2, (uint16)-1);
-		WRITE_LE_UINT16(v5 + 2 * v2 + 4, (uint16)-1);
-		WRITE_LE_UINT16(v5 + 2 * v2 + 6, (uint16)-1);
+		v5[v2] = -1;
+		v5[v2 + 1] = -1;
+		v5[v2 + 2] = -1;
+		v5[v2 + 3] = -1;
 	}
 	if (GOACTION == 1) {
 		VERIFZONE();
@@ -3576,7 +3577,7 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v30; 
 	int v31;
 	int v32; 
-	byte *v33; 
+	int16 *v33; 
 	int v34; 
 	int v35; 
 	int i; 
@@ -3796,11 +3797,12 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 					_vm->_globals.super_parcours[v32 + 1] = v29;
 					_vm->_globals.super_parcours[v32 + 2] = v66;
 					_vm->_globals.super_parcours[v32 + 3] = 0;
+
 					v33 = _vm->_globals.essai0;
-					WRITE_LE_UINT16(_vm->_globals.essai0 + 2 * v32, v28);
-					WRITE_LE_UINT16(v33 + 2 * v32 + 2, v29);
-					WRITE_LE_UINT16(v33 + 2 * v32 + 4, v66);
-					WRITE_LE_UINT16(v33 + 2 * v32 + 6, 0);
+					v33[v32] = v28;
+					v33[v32 + 1] = v29;
+					v33[v32 + 2] = v66;
+					v33[v32 + 3] = 0;
 					v67 += 4;
 					if (v28 == -1)
 						goto LABEL_90;

@@ -338,9 +338,9 @@ void Globals::clearAll() {
 		ZONEP[idx].field4 = 0;
 	}
 
-	essai0 = g_PTRNUL;
-	essai1 = g_PTRNUL;
-	essai2 = g_PTRNUL;
+	essai0 = (int16 *)g_PTRNUL;
+	essai1 = (int16 *)g_PTRNUL;
+	essai2 = (int16 *)g_PTRNUL;
 	BufLig = g_PTRNUL;
 	chemin = g_PTRNUL;
 
@@ -368,9 +368,9 @@ void Globals::clearAll() {
 	SAUVEGARDE = (Sauvegarde *)malloc(sizeof(Sauvegarde));
 	memset(SAUVEGARDE, 0, sizeof(Sauvegarde));
 
-	essai0 = BUFFERTAPE;
-	essai1 = BUFFERTAPE + 25000;
-	essai2 = BUFFERTAPE + 50000;
+	essai0 = (int16 *)BUFFERTAPE;
+	essai1 = (int16 *)(BUFFERTAPE + 25000);
+	essai2 = (int16 *)(BUFFERTAPE + 50000);
 	BufLig = (BUFFERTAPE + 75000);
 	largeur_boite = 240;
 	TEXTE_FORMATE = 300;

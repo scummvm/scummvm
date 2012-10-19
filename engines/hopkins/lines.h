@@ -81,10 +81,10 @@ public:
 	int colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6);
 	int Scolision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6);
 	void INIPARCOURS();
-	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, byte *a6, int a7, int a8, int a9);
-	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, byte *a6, int a7);
+	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9);
+	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7);
 	int MIRACLE(int a1, int a2, int a3, int a4, int a5);
-	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, byte *a8, int a9);
+	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9);
 	byte *PARCOURS2(int a1, int a2, int a3, int a4);
 	int PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
 	int VERIF_SMOOTH(int a1, int a2, int a3, int a4);
