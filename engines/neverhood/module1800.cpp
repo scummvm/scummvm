@@ -22,6 +22,7 @@
 
 #include "neverhood/module1800.h"
 #include "neverhood/navigationscene.h"
+#include "neverhood/menumodule.h"
 
 namespace Neverhood {
 
@@ -91,7 +92,7 @@ void Module1800::createScene(int sceneNum, int which) {
 		createSmackerScene(0x0168B121, true, true, false);
 		break;
 	case 8:
-		// TODO _childObject = new CreditsScene(_vm, this, 0);
+		_childObject = new CreditsScene(_vm, this, false);
 		break;
 	case 9:
 		// NOTE: Newly introduced sceneNum 9 (was duplicate 3 with own update handler)

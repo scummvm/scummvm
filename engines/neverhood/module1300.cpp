@@ -27,6 +27,7 @@
 #include "neverhood/module2200.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/diskplayerscene.h"
+#include "neverhood/menumodule.h"
 #include "neverhood/navigationscene.h"
 #include "neverhood/smackerscene.h"
 
@@ -45,7 +46,7 @@ static const uint32 kModule1300SoundList[] = {
 Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	_vm->_soundMan->addMusic(0x61C090, 0x203197);
+	_vm->_soundMan->addMusic(0x61C090, 0x00203197);
 	_vm->_soundMan->addSoundList(0x61C090, kModule1300SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 50, 600, 20, 150);
 	_vm->_soundMan->playTwoSounds(0x61C090, 0x48498E46, 0x50399F64, 0);
@@ -113,86 +114,89 @@ void Module1300::createScene(int sceneNum, int which) {
 	switch (_vm->gameState().sceneNum) {
 	case 1:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->startMusic(0x203197, 0, 2);
+		_vm->_soundMan->startMusic(0x00203197, 0, 2);
 		_childObject = new Scene1302(_vm, this, which);
 		break;
 	case 2:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		_childObject = new Scene1303(_vm, this, which);
 		break;
 	case 3:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		_childObject = new Scene1304(_vm, this, which);
 		break;
 	case 4:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->startMusic(0x203197, 0, 2);
+		_vm->_soundMan->startMusic(0x00203197, 0, 2);
 		_childObject = new Scene1305(_vm, this, which);
 		break;
 	case 5:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->startMusic(0x203197, 0, 2);
+		_vm->_soundMan->startMusic(0x00203197, 0, 2);
 		_childObject = new Scene1306(_vm, this, which);
 		break;
 	case 6:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->startMusic(0x203197, 0, 2);
+		_vm->_soundMan->startMusic(0x00203197, 0, 2);
 		_childObject = new Scene1307(_vm, this, which);
 		break;
 	case 7:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->startMusic(0x203197, 0, 2);
+		_vm->_soundMan->startMusic(0x00203197, 0, 2);
 		_childObject = new Scene1308(_vm, this, which);
 		break;
 	case 8:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 1);
 		break;
 	case 9:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		createSmackerScene(0x20082818, true, true, false);
 		break;
 	case 10:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		createSmackerScene(0x20082828, true, true, false);
 		break;
 	case 11:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, true, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		createNavigationScene(0x004B27A8, which);
 		break;
 	case 12:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, true, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		createNavigationScene(0x004B2718, which);
 		break;
 	case 13:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, true, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		createNavigationScene(0x004B27D8, which);
 		break;
 	case 14:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, true, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		createNavigationScene(0x004B2808, which);
 		break;
 	case 15:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, true, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		createNavigationScene(0x004B2838, which);
 		break;
 	case 16:
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
-		_vm->_soundMan->stopMusic(0x203197, 0, 2);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
 		_childObject = new Scene1317(_vm, this, which);
 		break;
 	case 17:
 		// TODO: Credits scene
+		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);
+		_vm->_soundMan->stopMusic(0x00203197, 0, 2);
+		_childObject = new CreditsScene(_vm, this, false);
 		break;
 	}
 	SetUpdateHandler(&Module1300::updateScene);
@@ -291,7 +295,7 @@ void Module1300::updateScene() {
 			createScene(17, -1);
 			break;
 		case 17:
-			// TODO
+			leaveModule(1);
 			break;
 		}
 	}
