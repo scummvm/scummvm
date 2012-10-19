@@ -176,6 +176,7 @@ public:
 	void setGlobalVar(uint32 nameHash, uint32 value);
 	uint32 getSubVar(uint32 nameHash, uint32 subNameHash);
 	void setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value);
+	void dumpVars();
 protected:
 	Common::Array<GameVar> _vars;
 	int16 addVar(uint32 nameHash, uint32 value);

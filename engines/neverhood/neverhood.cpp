@@ -155,6 +155,7 @@ Common::Error NeverhoodEngine::run() {
 			_gameModule->draw();
 			_screen->update();
 			nextFrameTime = _screen->getNextFrameTime();
+			//_gameVars->dumpVars();
 		};
 		
 		_soundMan->update();

@@ -20,8 +20,6 @@
  *
  */
 
-// TODO: I couldn't come up with a better name than 'Module' so far
-
 #ifndef NEVERHOOD_GAMEMODULE_H
 #define NEVERHOOD_GAMEMODULE_H
 
