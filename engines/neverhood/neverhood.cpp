@@ -85,12 +85,6 @@ Common::Error NeverhoodEngine::run() {
 	_res->addArchive("t.blb");
 
 	CursorMan.showMouse(true);
-	{
-		// DEBUG: Dummy cursor
-		byte buffer[2*2];
-		memset(buffer, 255, 4);
-		CursorMan.replaceCursor(buffer, 2, 2, 0, 0, 0);
-	}
 
 #if 0
 	// TODO: This should probably be implemented as debug command later 
@@ -119,6 +113,9 @@ Common::Error NeverhoodEngine::run() {
 			case Common::EVENT_KEYDOWN:
 				_keyState = event.kbd.keycode;
 				switch (_keyState) {
+				case Common::KEYCODE_ESCAPE:
+					_gameModule->handleEscapeKey();
+					break;
 				case Common::KEYCODE_SPACE:
 					_gameModule->handleSpaceKey();
 					break;
@@ -151,6 +148,7 @@ Common::Error NeverhoodEngine::run() {
 		}
 
 		if (_system->getMillis() >= nextFrameTime) {
+			_gameModule->checkMainMenu();
 			_gameModule->handleUpdate();
 			_gameModule->draw();
 			_screen->update();

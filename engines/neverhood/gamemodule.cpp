@@ -23,6 +23,7 @@
 #include "neverhood/gamemodule.h"
 
 #include "neverhood/graphics.h"
+#include "neverhood/menumodule.h"
 #include "neverhood/module1000.h"
 #include "neverhood/module1100.h"
 #include "neverhood/module1200.h"
@@ -68,8 +69,13 @@ static const uint32 kRadioMusicFileHashes[] = {
 	0x03322020
 };
 
+enum {
+	MENU_MODULE			= 9999
+};
+
 GameModule::GameModule(NeverhoodEngine *vm)
-	: Module(vm, NULL), _moduleNum(-1) {
+	: Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
+	_mainMenuRequested(false), _gameWasLoaded(false) {
 	
 	// Other initializations moved to actual engine class
 	// TODO
@@ -115,6 +121,13 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 		debug(2, "GameModule::handleMouseUp(%d, %d)", x, y);
 		sendPointMessage(_childObject, 2, mousePos);
 	}				
+}
+
+void GameModule::handleEscapeKey() {
+	if (!_prevChildObject /* && _canRequestMainMenu TODO?*/)
+		_mainMenuRequested = true;
+	else
+		sendMessage(_childObject, 0x000C, 0);
 }
 
 void GameModule::handleSpaceKey() {
@@ -416,6 +429,11 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 1;
 	createModule(2400, -1);
 #endif
+}
+
+void GameModule::checkMainMenu() {
+	if (_mainMenuRequested)
+		openMainMenu();
 }
 
 void GameModule::createModule(int moduleNum, int which) {
@@ -768,6 +786,51 @@ void GameModule::updateModule() {
 			}
 			break;
 		}
+	}
+}
+
+void GameModule::openMainMenu() {
+	if (_childObject) {
+		sendMessage(_childObject, 0x101D, 0);
+		_childObject->draw();
+	} else {
+		// If there's no module, create one so there's something to return to
+		createModule(1000, 0);
+	}
+	// TODO Save FPS, Smacker handle, screen offsets, collisition sprites
+	_mainMenuRequested = false;
+	createMenuModule();
+}
+
+void GameModule::createMenuModule() {
+	if (!_prevChildObject) {
+		_prevChildObject = _childObject;
+		_prevModuleNum = _moduleNum;
+		_childObject = new MenuModule(_vm, this, 0);
+		_childObject->handleUpdate();
+		SetUpdateHandler(&GameModule::updateMenuModule);
+	}
+}
+
+void GameModule::updateMenuModule() {
+	if (!updateChild()) {
+		// TODO Restore FPS?
+		_childObject = _prevChildObject;
+		// TODO Restore Smacker handle, screen offsets, collision sprites
+		sendMessage(_childObject, 0x101E, 0); // TODO CHECKME Is this needed?
+		_prevChildObject = NULL;
+		_moduleNum = _prevModuleNum;
+		SetUpdateHandler(&GameModule::updateModule);
+	} else if (_gameWasLoaded) {
+		debug("_gameWasLoaded!");
+		_gameWasLoaded = false;
+		delete _childObject;
+		delete _prevChildObject;
+		_childObject = NULL;
+		_prevChildObject = NULL;
+		_prevModuleNum = 0;
+		// TODO Create module from savegame values...
+		 // TODO createModuleByHash(...);
 	}
 }
 

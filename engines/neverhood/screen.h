@@ -66,6 +66,7 @@ public:
 	int getFps();
 	void setPaletteData(byte *paletteData);
 	void unsetPaletteData(byte *paletteData);
+	byte *getPaletteData() { return _paletteData; }
 	void testPalette(byte *paletteData);
 	void updatePalette();
 	void clear();

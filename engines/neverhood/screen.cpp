@@ -90,11 +90,6 @@ void Screen::update() {
 			updateRects.push_back(Common::Rect(renderItem._destX, renderItem._destY, renderItem._destX + renderItem._width, renderItem._destY + renderItem._height));
 	}
 
-	/*
-	for (Common::Array<Common::Rect>::iterator ri = updateRects.begin(); ri != updateRects.end(); ++ri)
-		debug("## (%d, %d, %d, %d)", (*ri).left, (*ri).top, (*ri).right, (*ri).bottom);
-	*/
-	
 	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
 		RenderItem &renderItem = (*it);
 		for (Common::Array<Common::Rect>::iterator ri = updateRects.begin(); ri != updateRects.end(); ++ri)

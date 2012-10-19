@@ -20,51 +20,52 @@
  *
  */
 
-#ifndef NEVERHOOD_GAMEMODULE_H
-#define NEVERHOOD_GAMEMODULE_H
+// TODO: I couldn't come up with a better name than 'Module' so far
 
+#ifndef NEVERHOOD_MENUMODULE_H
+#define NEVERHOOD_MENUMODULE_H
+
+#include "common/str.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/scene.h"
 
 namespace Neverhood {
 
-class GameModule : public Module {
+class MenuModule : public Module {
 public:
-	GameModule(NeverhoodEngine *vm);
-	virtual ~GameModule();
-	void startup();
-	void checkMainMenu();
-	void handleMouseMove(int16 x, int16 y);
-	void handleMouseDown(int16 x, int16 y);
-	void handleMouseUp(int16 x, int16 y);
-	void handleEscapeKey();
-	void handleSpaceKey();
-	void initKeySlotsPuzzle();
-	void initMemoryPuzzle();
-	void initWaterPipesPuzzle();
-	void initRadioPuzzle();
-	void initTestTubes1Puzzle();
-	void initTestTubes2Puzzle();
-	void initCannonSymbolsPuzzle();
-	uint32 getCurrRadioMusicFileHash();
+	MenuModule(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~MenuModule();
 protected:
-	Entity *_prevChildObject;
-	int _prevModuleNum;
-	bool _gameWasLoaded;
-	bool _mainMenuRequested;
-	bool _someFlag1;
-	bool _field2C;
-	uint32 _counter;
-	int _moduleNum;
+	int _sceneNum;
+	Common::String _savegameName;
+	Background *_savedBackground;
+	byte *_savedPaletteData;
+	// TODO _savegameList (list of strings?)
+	void createScene(int sceneNum, int which);
+	void updateScene();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void createModule(int moduleNum, int which);
-	void createModuleByHash(uint32 nameHash);
-	void updateModule();
-	void openMainMenu();
-	void createMenuModule();
-	void updateMenuModule();
+};
+
+class MainMenuButton : public StaticSprite {
+public:
+	MainMenuButton(NeverhoodEngine *vm, Scene *parentScene, uint buttonIndex);
+protected:
+	Scene *_parentScene;
+	int _countdown;
+	uint _buttonIndex;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class MainMenu : public Scene {
+public:
+	MainMenu(NeverhoodEngine *vm, Module *parentModule);
+protected:
+	Sprite *_musicOnButton;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE_H */
+#endif /* NEVERHOOD_MENUMODULE_H */

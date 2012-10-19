@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	gamevars.o \
 	graphics.o \
 	klayman.o \
+	menumodule.o \
 	module.o \
 	module1000.o \
 	module1100.o \
