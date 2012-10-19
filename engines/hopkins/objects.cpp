@@ -3581,28 +3581,28 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v34; 
 	int v35; 
 	int i; 
-	byte *v37;
+	int16 *v37;
 	int v38;
 	int v39; 
 	int v40;
-	byte *v41; 
+	int16 *v41; 
 	int v42;
 	int v43; 
 	int k;
-	byte *v45; 
+	int16 *v45; 
 	int v46;
 	int v47; 
 	int v48; 
 	int v49;
-	byte *v50; 
+	int16 *v50; 
 	int v51;
 	int v52; 
 	int v53;
-	byte *v54; 
+	int16 *v54; 
 	int v55;
 	int v56; 
 	int v57;
-	byte *v58; 
+	int16 *v58; 
 	int v59;
 	int v60; 
 	int v61; 
@@ -3820,9 +3820,9 @@ LABEL_90:
 			v34 = v68;
 			v35 = v68;
 			for (i = _vm->_linesManager.Ligne[v69].field0; v35 < (i - 2); i = _vm->_linesManager.Ligne[v69].field0) {
-				v37 = _vm->_linesManager.Ligne[v69].fieldC;
-				v38 = (int16)READ_LE_UINT16(v37 + 4 * v35);
-				int v37_2 = (int16)READ_LE_UINT16(v37 + 4 * v35 + 2);
+				v37 = _vm->_linesManager.Ligne[v69].lineData;
+				v38 = v37[2 * v35];
+				int v37_2 = v37[2 * v35 + 1];
 				v39 = v67;
 				_vm->_globals.super_parcours[v39] = v38;
 				_vm->_globals.super_parcours[v39 + 1] = v37_2;
@@ -3834,8 +3834,8 @@ LABEL_90:
 			}
 			for (j = v69 + 1; j < v73; ++j) {
 				if (_vm->_linesManager.PLAN_TEST(
-						(int16)READ_LE_UINT16(_vm->_linesManager.Ligne[j].fieldC),
-						(int16)READ_LE_UINT16(_vm->_linesManager.Ligne[j].fieldC + 2),
+						_vm->_linesManager.Ligne[j].lineData[0],
+						_vm->_linesManager.Ligne[j].lineData[1],
 				        v67,
 				        j,
 				        v73,
@@ -3850,9 +3850,9 @@ LABEL_88:
 				v40 = 0;
 				if (_vm->_linesManager.Ligne[j].field0 - 2 > 0) {
 					do {
-						v41 = _vm->_linesManager.Ligne[j].fieldC;
-						v42 = (int16)READ_LE_UINT16(v41 + 4 * v40);
-						int v41_2 = (int16)READ_LE_UINT16(v41 + 4 * v40 + 2);
+						v41 = _vm->_linesManager.Ligne[j].lineData;
+						v42 = v41[2 * v40];
+						int v41_2 = v41[2 * v40 + 1];
 						v43 = v67;
 						_vm->_globals.super_parcours[v43] = v42;
 						_vm->_globals.super_parcours[v43 + 1] = v41_2;
@@ -3868,9 +3868,9 @@ LABEL_88:
 		}
 		if (v69 > v73) {
 			for (k = v68; k > 0; --k) {
-				v45 = _vm->_linesManager.Ligne[v69].fieldC;
-				v46 = (int16)READ_LE_UINT16(v45 + 4 * k);
-				int v45_2 = (int16)READ_LE_UINT16(v45 + 4 * k + 2);
+				v45 = _vm->_linesManager.Ligne[v69].lineData;
+				v46 = v45[2 * k];
+				int v45_2 = v45[2 * k + 1];
 				v47 = v67;
 				_vm->_globals.super_parcours[v47] = v46;
 				_vm->_globals.super_parcours[v47 + 1] = v45_2;
@@ -3881,8 +3881,8 @@ LABEL_88:
 			for (l = v69 - 1; l > v73; --l) {
 				v48 = l;
 				if (_vm->_linesManager.PLAN_TEST(
-						(int16)READ_LE_UINT16(_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 4),
-						(int16)READ_LE_UINT16(_vm->_linesManager.Ligne[l].fieldC + 4 * _vm->_linesManager.Ligne[v48].field0 - 2),
+						_vm->_linesManager.Ligne[l].lineData[2 * _vm->_linesManager.Ligne[v48].field0 - 2],
+						_vm->_linesManager.Ligne[l].lineData[2 * _vm->_linesManager.Ligne[v48].field0 - 1],
 				        v67,
 				        l,
 				        v73,
@@ -3891,9 +3891,9 @@ LABEL_88:
 				v49 = _vm->_linesManager.Ligne[v48].field0 - 2;
 				if ((_vm->_linesManager.Ligne[v48].field0 - 2) > 0) {
 					do {
-						v50 = _vm->_linesManager.Ligne[l].fieldC;
-						v51 = (int16)READ_LE_UINT16(v50 + 4 * v49);
-						int v50_2 = (int16)READ_LE_UINT16(v50 + 4 * v49 + 2);
+						v50 = _vm->_linesManager.Ligne[l].lineData;
+						v51 = v50[2 * v49];
+						int v50_2 = v50[2 * v49 + 1];
 						v52 = v67;
 						_vm->_globals.super_parcours[v52] = v51;
 						_vm->_globals.super_parcours[v52 + 1] = v50_2;
@@ -3912,9 +3912,9 @@ LABEL_88:
 				if (v68 < v72) {
 					v57 = v68;
 					do {
-						v58 = _vm->_linesManager.Ligne[v73].fieldC;
-						v59 = (int16)READ_LE_UINT16(v58 + 4 * v57);
-						int v58_2 = (int16)READ_LE_UINT16(v58 + 4 * v57 + 2);
+						v58 = _vm->_linesManager.Ligne[v73].lineData;
+						v59 = v58[2 * v57];
+						int v58_2 = v58[2 * v57 + 1];
 						v60 = v67;
 						_vm->_globals.super_parcours[v60] = v59;
 						_vm->_globals.super_parcours[v60 + 1] = v58_2;
@@ -3927,9 +3927,9 @@ LABEL_88:
 			} else {
 				v53 = v68;
 				do {
-					v54 = _vm->_linesManager.Ligne[v73].fieldC;
-					v55 = (int16)READ_LE_UINT16(v54 + 4 * v53);
-					int v54_2 = (int16)READ_LE_UINT16(v54 + 4 * v53 + 2);
+					v54 = _vm->_linesManager.Ligne[v73].lineData;
+					v55 = v54[2 * v53];
+					int v54_2 = v54[2 * v53 + 1];
 					v56 = v67;
 					_vm->_globals.super_parcours[2 * v56] = v55;
 					_vm->_globals.super_parcours[2 * v56 + 1] = v54_2;

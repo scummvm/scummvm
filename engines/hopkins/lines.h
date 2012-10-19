@@ -42,7 +42,7 @@ struct LigneItem {
 	int field4;
 	int field6;
 	int field8;
-	byte *fieldC;
+	int16 *lineData;
 };
 
 struct SmoothItem {

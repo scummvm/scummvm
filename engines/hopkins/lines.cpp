@@ -219,16 +219,16 @@ void LinesManager::RESET_OBSTACLE() {
 	for (int idx =0; idx < 400; ++idx) {
 		RETIRE_LIGNE(idx);
 		Ligne[idx].field0 = 0;
-		Ligne[idx].fieldC = g_PTRNUL;
+		Ligne[idx].lineData = (int16 *)g_PTRNUL;
 	}
 }
 
 void LinesManager::RETIRE_LIGNE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
-	if (Ligne[idx].fieldC != g_PTRNUL)
-		_vm->_globals.dos_free2(Ligne[idx].fieldC);
-	Ligne[idx].fieldC = g_PTRNUL;
+	if (Ligne[idx].lineData != (int16 *)g_PTRNUL)
+		_vm->_globals.dos_free2((byte *)Ligne[idx].lineData);
+	Ligne[idx].lineData = (int16 *)g_PTRNUL;
 }
 
 void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7) {
@@ -242,10 +242,10 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	int v24;
 	int v25;
 	int v26;
-	byte *v27;
+	int16 *v27;
 	int v30;
 	int v31;
-	byte *v32;
+	int16 *v32;
 	int v33;
 	int v34;
 	int v35;
@@ -260,8 +260,8 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	if (TOTAL_LIGNES < idx)
 		TOTAL_LIGNES = idx;
 
-	if (Ligne[idx].fieldC != g_PTRNUL)
-		_vm->_globals.dos_free2(Ligne[idx].fieldC);
+	if (Ligne[idx].lineData != (int16 *)g_PTRNUL)
+		_vm->_globals.dos_free2((byte *)Ligne[idx].lineData);
 	v7 = a3 - a5;
 	if (a3 - a5 < 0)
 		v7 = -v7;
@@ -273,11 +273,13 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	v33 = v9 + 1;
 	if (v8 > (int)(v9 + 1))
 		v34 = v8;
+	
 	v10 = _vm->_globals.dos_malloc2(4 * v34 + 8);
-	Ligne[idx].fieldC = v10;
 	if (v10 == g_PTRNUL)
 		error("AJOUTE LIGNE OBSTACLE");
-	v32 = Ligne[idx].fieldC;
+	Ligne[idx].lineData = (int16 *)v10;
+
+	v32 = Ligne[idx].lineData;
 	v36 = 1000 * v8;
 	v39 = 1000 * v8 / (v34 - 1);
 	v37 = 1000 * v33 / (v34 - 1);
@@ -356,9 +358,10 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	v26 = 0;
 	if (v35 > 0) {
 		do {
-			WRITE_LE_UINT16(v32, v31);
-			WRITE_LE_UINT16(v32 + 2, v30);
-			v32 += 4;
+			v32[0] = v31;
+			v32[1] = v30;
+			v32 += 2;
+
 			v24 += v40;
 			v25 += v38;
 			v31 = v24 / 1000;
@@ -366,11 +369,12 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 			++v26;
 		} while (v35 > v26);
 	}
-	WRITE_LE_UINT16(v32, a5);
-	WRITE_LE_UINT16(v32 + 2, a6);
-	v27 = v32 + 4;
-	WRITE_LE_UINT16(v27, (uint16)-1);
-	WRITE_LE_UINT16(v27 + 2, (uint16)-1);
+	v32[0] = a5;
+	v32[1] = a6;
+
+	v27 = v32 + 2;
+	v27[0] = -1;
+	v27[1] = -1;
 	
 	Ligne[idx].field0 = v35 + 1;
 	Ligne[idx].field2 = a7;
@@ -379,13 +383,13 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 
 int LinesManager::colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
 	int v6; 
-	byte *v7; 
+	int16 *v7; 
 	int v8;
 	int v9;
 	int v10;
 	int v11;
 	int v12;
-	byte *v13; 
+	int16 *v13; 
 	int v14;
 	int result; 
 	int v16; 
@@ -409,15 +413,16 @@ LABEL_29:
 		v20 = a2 + 4;
 		v19 = a2 - 4;
 		while (1) {
-			v7 = Ligne[v6].fieldC;
-			if (v7 != g_PTRNUL) {
+			v7 = Ligne[v6].lineData;
+
+			if (v7 != (int16 *)g_PTRNUL) {
 				v23 = 1;
 				v8 = 2 * Ligne[v6].field0;
-				v9 = (int16)READ_LE_UINT16(v7);
-				v16 = (int16)READ_LE_UINT16(v7 + 2);
-				v10 = (int16)READ_LE_UINT16(v7 + 2 * v8 - 4);
-				v18 = (int16)READ_LE_UINT16(v7 + 2 * v8 - 2);
-				if ((int16)READ_LE_UINT16(v7) >= v10)
+				v9 = v7[0];
+				v16 = v7[1];
+				v10 = v7[v8 - 2];
+				v18 = v7[v8 - 1];
+				if (v7[0] >= v10)
 					goto LABEL_32;
 				if (v22 < v9 || v21 > v10)
 					v23 = 0;
@@ -449,10 +454,12 @@ LABEL_28:
 				goto LABEL_29;
 		}
 		while (1) {
-			v12 = (int16)READ_LE_UINT16(v7);
-			v13 = v7 + 2;
-			v14 = (int16)READ_LE_UINT16(v13);
-			v7 = v13 + 2;
+			v12 = v7[0];
+			
+			v13 = v7 + 1;
+			v14 = v13[0];
+			v7 = v13 + 1;
+
 			if (a1 == v12 || a1 + 1 == v12) {
 				if (a2 == v14 || a2 + 1 == v14)
 					break;
@@ -470,13 +477,13 @@ LABEL_28:
 
 int LinesManager::Scolision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
 	int v6; 
-	byte *v7; 
+	int16 *v7; 
 	int v8; 
 	int v9; 
 	int v10;
 	int v11;
 	int v12;
-	byte *v13;
+	int16 *v13;
 	int result;
 	int v15; 
 	int v16; 
@@ -499,16 +506,17 @@ LABEL_47:
 		v21 = a1 - 10;
 		v20 = a2 + 10;
 		v19 = a2 - 10;
-		while (1) {
-			v7 = Ligne[v6].fieldC;
-			if (g_PTRNUL != v7) {
+		for (;;) {
+			v7 = Ligne[v6].lineData;
+
+			if (v7 != (int16 *)g_PTRNUL) {
 				v23 = 1;
 				v8 = 2 * Ligne[v6].field0;
-				v9 = (int16)READ_LE_UINT16(v7);
-				v15 = (int16)READ_LE_UINT16(v7 + 2);
-				v10 = (int16)READ_LE_UINT16(v7 + 2 * v8 - 4);
-				v17 = (int16)READ_LE_UINT16(v7 + 2 * v8 - 2);
-				if ((int16)READ_LE_UINT16(v7) >= v10)
+				v9 = v7[0];
+				v15 = v7[1];
+				v10 = v7[v8 - 2];
+				v17 = v7[v8 - 1];
+				if (v7[0] >= v10)
 					goto LABEL_50;
 				if (v22 < v9 || v21 > v10)
 					v23 = 0;
@@ -540,10 +548,10 @@ LABEL_46:
 				goto LABEL_47;
 		}
 		while (1) {
-			v12 = (int16)READ_LE_UINT16(v7);
-			v13 = v7 + 2;
-			v16 = (int16)READ_LE_UINT16(v13);
-			v7 = v13 + 2;
+			v12 = v7[0];
+			v13 = v7 + 1;
+			v16 = v13[0];
+			v7 = v13 + 1;
 			if (a1 == v12
 			        || v12 == a1 + 1
 			        || v12 == a1 + 2
@@ -583,11 +591,11 @@ void LinesManager::INIPARCOURS() {
 	int v0; 
 	int v1; 
 	int v2; 
-	byte *v3; 
+	int16 *v3; 
 	int v4; 
 	int v5; 
 	int v6; 
-	byte *v7; 
+	int16 *v7; 
 	int v8; 
 	int v9; 
 	int v11;
@@ -596,16 +604,17 @@ void LinesManager::INIPARCOURS() {
 	int v14;
 	int v15;
 
-	v15 = (int16)READ_LE_UINT16(Ligne[0].fieldC);
-	v14 = (int16)READ_LE_UINT16(Ligne[0].fieldC + 2);
+	v15 = Ligne[0].lineData[0];
+	v14 = Ligne[0].lineData[1];
 
 	v0 = 1;
 	v1 = 0;
 	do {
 		v2 = Ligne[v0].field0;
-		v3 = Ligne[v0].fieldC;
-		v4 = (int16)READ_LE_UINT16(v3 + 4 * v2 - 4);
-		v5 = (int16)READ_LE_UINT16(v3 + 4 * v2 - 2);
+		v3 = Ligne[v0].lineData;
+
+		v4 = v3[2 * v2 - 2];
+		v5 = v3[2 * v2 - 1];
 		if (_vm->_graphicsManager.max_x == v4 || _vm->_graphicsManager.max_y == v5 || _vm->_graphicsManager.min_x == v4 
 				|| _vm->_graphicsManager.min_y == v5)
 			v1 = 1;
@@ -616,8 +625,8 @@ void LinesManager::INIPARCOURS() {
 			error("ERROR - LAST LINE NOT FOUND");
 			v1 = v6;
 		}
-		v7 = Ligne[v0 + 1].fieldC;
-		if ((int16)READ_LE_UINT16(v7) != v4 && (int16)READ_LE_UINT16(v7 + 2) != v5)
+		v7 = Ligne[v0 + 1].lineData;
+		if (v7[0] != v4 && v7[1] != v5)
 			v1 = 1;
 		if (!v1)
 			++v0;
@@ -644,27 +653,27 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	int v7; 
 	int v8; 
 	int i; 
-	byte *v10;
+	int16 *v10;
 	int v11;
 	int v12;
 	int v13;
-	byte *v14;
+	int16 *v14;
 	int v15;
 	int v16;
 	int j; 
-	byte *v18;
+	int16 *v18;
 	int v19;
 	int v20;
 	int k; 
-	byte *v22;
+	int16 *v22;
 	int v23; 
 	int v24; 
 	int v25; 
-	byte *v26; 
+	int16 *v26; 
 	int v27; 
 	int v28; 
 	int v29; 
-	byte *v30; 
+	int16 *v30; 
 	int v31; 
 	int v32; 
 	int v34; 
@@ -677,9 +686,10 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	v8 = a3;
 	if (a1 < a4) {
 		for (i = a2; Ligne[a1].field0 > i; ++i) {
-			v10 = Ligne[a1].fieldC;
-			v11 = (int16)READ_LE_UINT16(v10 + 4 * i);
-			v50 = (int16)READ_LE_UINT16(v10 + 4 * i + 2);
+			v10 = Ligne[a1].lineData;
+			v11 = v10[2 * i];
+			v50 = v10[2 * i + 1];
+			
 			v12 = v8;
 			a6[v12] = v11;
 			a6[v12 + 1] = v50;
@@ -692,9 +702,9 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 				v13 = 0;
 				if (Ligne[v34].field0 > 0) {
 					do {
-						v14 = Ligne[v34].fieldC;
-						v15 = (int16)READ_LE_UINT16(v14 + 4 * v13);
-						v50 = (int16)READ_LE_UINT16(v14 + 4 * v13 + 2);
+						v14 = Ligne[v34].lineData;
+						v15 = v14[2 * v13];
+						v50 = v14[2 * v13 + 1];
 						v16 = v8;
 
 						a6[v16] = v15;
@@ -712,9 +722,10 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	}
 	if (v36 > a4) {
 		for (j = v7; j > 0; --j) {
-			v18 = Ligne[v36].fieldC;
-			v19 = (int16)READ_LE_UINT16(v18 + 4 * j);
-			v50 = (int16)READ_LE_UINT16(v18 + 4 * j + 2);
+			v18 = Ligne[v36].lineData;
+			v19 = v18[2 * j];
+			v50 = v18[2 * j + 1];
+			
 			v20 = v8;
 			a6[v20] = v19;
 			a6[v20 + 1] = v50;
@@ -725,9 +736,10 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 		if ((int)(v36 - 1) > a4) {
 			do {
 				for (k = Ligne[v35].field0 - 1; k > 0; --k) {
-					v22 = Ligne[v35].fieldC;
-					v23 = (int16)READ_LE_UINT16(v22 + 4 * k);
-					v50 = (int16)READ_LE_UINT16(v22 + 4 * k + 2);
+					v22 = Ligne[v35].lineData;
+					v23 = v22[2 * k];
+					v50 = v22[2 * k + 1];
+
 					v24 = v8;
 					a6[v24] = v23;
 					a6[v24 + 1] = v50;
@@ -745,9 +757,10 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 			if (a5 > v7) {
 				v29 = v7;
 				do {
-					v30 = Ligne[a4].fieldC;
-					v31 = (int16)READ_LE_UINT16(v30 + 4 * v29);
-					v50 = (int16)READ_LE_UINT16(v30 + 4 * v29 + 2);
+					v30 = Ligne[a4].lineData;
+					v31 = v30[2 * v29];
+					v50 = v30[2 * v29 + 1];
+
 					v32 = v8;
 					a6[v32] = v31;
 					a6[v32 + 1] = v50;
@@ -759,9 +772,10 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 		} else {
 			v25 = v7;
 			do {
-				v26 = Ligne[a4].fieldC;
-				v27 = (int16)READ_LE_UINT16(v26 + 4 * v25);
-				v50 = (int16)READ_LE_UINT16(v26 + 4 * v25 + 2);
+				v26 = Ligne[a4].lineData;
+				v27 = v26[2 * v25];
+				v50 = v26[2 * v25 + 1];
+
 				v28 = v8;
 				a6[v28] = v27;
 				a6[v28 + 1] = v50;
@@ -778,29 +792,29 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 	int v9; 
 	int v10;
 	int i; 
-	byte *v12;
+	int16 *v12;
 	int v13;
 	int v14;
 	int v15;
 	int v16;
-	byte *v17;
+	int16 *v17;
 	int v18;
 	int v19;
 	int j; 
-	byte *v21;
+	int16 *v21;
 	int v22;
 	int v23;
 	int v24; 
 	int k; 
-	byte *v26;
+	int16 *v26;
 	int v27;
 	int v28;
 	int v29;
-	byte *v30;
+	int16 *v30;
 	int v31;
 	int v32;
 	int v33;
-	byte *v34;
+	int16 *v34;
 	int v35;
 	int v36;
 	int v38;
@@ -813,11 +827,11 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 	v40 = a3;
 	if (a4 < a1) {
 		for (i = a2; Ligne[a1].field0 > i; ++i) {
-			v12 = Ligne[a1].fieldC;
-			v13 = (int16)READ_LE_UINT16(v12 + 4 * i);
-			v50 = (int16)READ_LE_UINT16(v12 + 4 * i + 2);
+			v12 = Ligne[a1].lineData;
+			v13 = v12[2 * i];
+			v50 = v12[2 * i + 1];
+
 			v14 = v40;
-			
 			a6[v14] = v13;
 			a6[v14 + 1] = v50;
 			a6[v14 + 2] = Ligne[a1].field6;
@@ -830,9 +844,10 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 			v16 = 0;
 			if (Ligne[v15].field0 > 0) {
 				do {
-					v17 = Ligne[v15].fieldC;
-					v18 = (int16)READ_LE_UINT16(v17 + 4 * v16);
-					v50 = (int16)READ_LE_UINT16(v17 + 4 * v16 + 2);
+					v17 = Ligne[v15].lineData;
+					v18 = v17[2 * v16];
+					v50 = v17[2 * v16 + 1];
+
 					v19 = v40;
 					a6[v19] = v18;
 					a6[v19 + 1] = v50;
@@ -850,11 +865,11 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 	}
 	if (a4 > v9) {
 		for (j = v10; j > 0; --j) {
-			v21 = Ligne[v9].fieldC;
-			v22 = (int16)READ_LE_UINT16(v21 + 4 * j);
-			v50 = (int16)READ_LE_UINT16(v21 + 4 * j + 2);
+			v21 = Ligne[v9].lineData;
+			v22 = v21[2 * j];
+			v50 = v21[2 * j + 1];
+
 			v23 = v40;
-			
 			a6[v23] = v22;
 			a6[v23 + 1] = v50;
 			a6[v23 + 2] = Ligne[v9].field8;
@@ -865,9 +880,10 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 			v24 = a9;
 		while (a4 != v24) {
 			for (k = Ligne[v24].field0 - 1; k > 0; --k) {
-				v26 = Ligne[v24].fieldC;
-				v27 = (int16)READ_LE_UINT16(v26 + 4 * k);
-				v50 = (int16)READ_LE_UINT16(v26 + 4 * k + 2);
+				v26 = Ligne[v24].lineData;
+				v27 = v26[2 * k];
+				v50 = v26[2 * k + 1];
+
 				v28 = v40;
 				a6[v28] = v27;
 				a6[v28 + 1] = v50;
@@ -887,11 +903,11 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 				v33 = v10;
 				v39 = a4;
 				do {
-					v34 = Ligne[v39].fieldC;
-					v35 = (int16)READ_LE_UINT16(v34 + 4 * v33);
-					v50 = (int16)READ_LE_UINT16(v34 + 4 * v33 + 2);
-					v36 = v40;
+					v34 = Ligne[v39].lineData;
+					v35 = v34[2 * v33];
+					v50 = v34[2 * v33 + 1];
 
+					v36 = v40;
 					a6[v36] = v35;
 					a6[v36 + 1] = v50;
 					a6[v36 + 2] = Ligne[v39].field6;
@@ -903,9 +919,10 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 			v29 = v10;
 			v38 = a4;
 			do {
-				v30 = Ligne[v38].fieldC;
-				v31 = (int16)READ_LE_UINT16(v30 + 4 * v29);
-				v50 = (int16)READ_LE_UINT16(v30 + 4 * v29 + 2);
+				v30 = Ligne[v38].lineData;
+				v31 = v30[2 * v29];
+				v50 = v30[2 * v29 + 1];
+
 				v32 = v40;
 				a6[v32] = v31;
 				a6[v32 + 1] = v50;
@@ -1232,13 +1249,13 @@ LABEL_186:
 
 int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9) {
 	int v9; 
-	byte *v10;
+	int16 *v10;
 	int v11; 
-	byte *v12; 
-	byte *v13; 
+	int16 *v12; 
+	int16 *v13; 
 	int v14; 
 	int v15;
-	byte *v16; 
+	int16 *v16; 
 	int v17;
 	int v18; 
 	int v19; 
@@ -1250,7 +1267,7 @@ int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7,
 	int v25;
 	int v26;
 	int v27; 
-	byte *v28; 
+	int16 *v28; 
 	int v29;
 	int v30;
 	int v31; 
@@ -1335,62 +1352,65 @@ LABEL_112:
 		a8[v9 + 2] = -1;
 		return -1;
 	}
-	v10 = Ligne[a1].fieldC;
-	v98 = (int16)READ_LE_UINT16(v10);
-	v97 = (int16)READ_LE_UINT16(v10 + 2);
+	v10 = Ligne[a1].lineData;
+	v98 = v10[0];
+	v97 = v10[1];
 	v92 = a1;
 
 	while (1) {
 		v86 = v92 - 1;
 		v11 = 2 * Ligne[v92 - 1].field0;
-		v12 = Ligne[v92 - 1].fieldC;
-		if (v12 == g_PTRNUL)
+
+		v12 = Ligne[v92 - 1].lineData;
+		if (v12 == (int16 *)g_PTRNUL)
 			break;
-		while ((int16)READ_LE_UINT16(v12 + 2 * v11 - 4) != v98 || v97 != (int16)READ_LE_UINT16(v12 + 2 * v11 - 2)) {
+		while (v12[v11 - 2] != v98 || v97 != v12[v11 - 1]) {
 			--v86;
 			if (_vm->_objectsManager.DERLIGNE - 1 != v86) {
 				v11 = 2 * Ligne[v86].field0;
-				v12 = Ligne[v86].fieldC;
-				if (v12 != g_PTRNUL)
+				v12 = Ligne[v86].lineData;
+				if (v12 != (int16 *)g_PTRNUL)
 					continue;
 			}
 			goto LABEL_11;
 		}
+
 		v92 = v86;
-		v98 = (int16)READ_LE_UINT16(v12);
-		v97 = (int16)READ_LE_UINT16(v12 + 2);
+		v98 = v12[0];
+		v97 = v12[1];
 	}
 LABEL_11:
-	v13 = Ligne[a1].fieldC;
+	v13 = Ligne[a1].lineData;
 	v14 = 2 * Ligne[a1].field0;
-	v95 = (int16)READ_LE_UINT16(v13 + 2 * v14 - 4);
-	v93 = (int16)READ_LE_UINT16(v13 + 2 * v14 - 2);
+	v95 = v13[v14 - 2];
+	v93 = v13[v14 - 1];
 	v91 = a1;
-	while (1) {
+
+	for (;;) {
 		v87 = v91 + 1;
 		v15 = 2 * Ligne[v91 + 1].field0;
-		v16 = Ligne[v91 + 1].fieldC;
-		if (g_PTRNUL == v16)
+		v16 = Ligne[v91 + 1].lineData;
+		if (v16 == (int16 *)g_PTRNUL)
 			break;
 		while (1) {
 			v65 = v15;
-			v17 = (int16)READ_LE_UINT16(v16 + 2 * v15 - 4);
-			if ((int16)READ_LE_UINT16(v16) == v95) {
-				if (v93 == (int16)READ_LE_UINT16(v16 + 2))
+			v17 = v16[v15 - 2];
+			if (v16[0] == v95) {
+				if (v93 == v16[1])
 					break;
 			}
 			++v87;
 			if (v87 != TOTAL_LIGNES + 1) {
 				v15 = 2 * Ligne[v87].field0;
-				v16 = Ligne[v87].fieldC;
-				if (v16 != g_PTRNUL)
+				v16 = Ligne[v87].lineData;
+				if (v16 != (int16 *)g_PTRNUL)
 					continue;
 			}
 			goto LABEL_17;
 		}
 		v91 = v87;
 		v95 = v17;
-		v93 = (int16)READ_LE_UINT16(v16 + 2 * v65 - 2);
+		v93 = v16[v65 - 1];
 	}
 LABEL_17:
 	v18 = a3 - a5;
@@ -1422,6 +1442,7 @@ LABEL_17:
 	if (v85 + 1 > 0) {
 		v51 = _vm->_globals.BufLig;
 		do {
+error("v51 is an array, not an int");
 			v24 = v23;
 			*((uint16 *)v51 + v24) = v82;
 			*((uint16 *)v51 + v24 + 1) = v81;
@@ -1455,15 +1476,15 @@ LABEL_17:
 	}
 	for (i = v92; i < v91 + 1; ++i) {
 		v27 = 2 * Ligne[i].field0;
-		v28 = Ligne[i].fieldC;
-		if (g_PTRNUL == v28)
-			error("erreur dans da routine genial");
-		v29 = *(uint16 *)v28;
-		v30 = (int16)READ_LE_UINT16(v28 + 2);
-		v59 = (int16)READ_LE_UINT16(v28 + 2);
+		v28 = Ligne[i].lineData;
+		if (v28 == (int16 *)g_PTRNUL)
+			error("error in genial routine");
+		v29 = v28[0];
+		v30 = v28[1];
+		v59 = v28[1];
 		v31 = v27;
-		v32 = (int16)READ_LE_UINT16(v28 + 2 * v27 - 4);
-		v33 = (int16)READ_LE_UINT16(v28 + 2 * v31 - 2);
+		v32 = v28[v27 - 2];
+		v33 = v28[v31 - 1];
 		if (i == v92) {
 			v72 = v33;
 			if (v30 <= v33)
@@ -1727,32 +1748,32 @@ byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 	int v67;
 	int v68;
 	int i;
-	byte *v70; 
+	int16 *v70; 
 	int v71; 
 	int v72; 
 	int j; 
-	byte *v74;
+	int16 *v74;
 	int v75; 
 	int v76;
 	int v77; 
 	int v78; 
 	int v79; 
 	int v80;
-	byte *v81; 
+	int16 *v81; 
 	int v82; 
 	int v83; 
-	byte *v84;
+	int16 *v84;
 	int v85; 
 	int v86;
 	int v87; 
 	int v88; 
 	int v89; 
 	int v90; 
-	byte *v91; 
+	int16 *v91; 
 	int v92; 
 	int v93; 
 	int v94;
-	byte *v95; 
+	int16 *v95; 
 	int v96; 
 	int v97;
 	int v98; 
@@ -2248,9 +2269,9 @@ LABEL_201:
 LABEL_234:
 			if (v115 < v121) {
 				for (i = v114; Ligne[v115].field0 > i; ++i) {
-					v70 = Ligne[v115].fieldC;
-					v119 = (int16)READ_LE_UINT16(v70 + 4 * i);
-					v118 = (int16)READ_LE_UINT16(v70 + 4 * i + 2);
+					v70 = Ligne[v115].lineData;
+					v119 = v70[2 * i];
+					v118 = v70[2 * i + 1];
 					v71 = v112;
 					_vm->_globals.super_parcours[v71] = v119;
 					_vm->_globals.super_parcours[v71 + 1] = v118;
@@ -2264,9 +2285,9 @@ LABEL_234:
 						v72 = 0;
 						v110 = v116;
 						for (j = v116; Ligne[j].field0 > v72; j = v116) {
-							v74 = Ligne[v110].fieldC;
-							v119 = (int16)READ_LE_UINT16(v74 + 4 * v72);
-							v118 = (int16)READ_LE_UINT16(v74 + 4 * v72 + 2);
+							v74 = Ligne[v110].lineData;
+							v119 = v74[2 * v72];
+							v118 = v74[2 * v72 + 1];
 							v75 = v112;
 							_vm->_globals.super_parcours[v75] = v119;
 							_vm->_globals.super_parcours[v75 + 1] = v118;
@@ -2314,9 +2335,10 @@ LABEL_200:
 				if (v114 > 0) {
 					v98 = v115;
 					do {
-						v81 = Ligne[v98].fieldC;
-						v119 = (int16)READ_LE_UINT16(v81 + 4 * v80);
-						v118 = (int16)READ_LE_UINT16(v81 + 4 * v80 + 2);
+						v81 = Ligne[v98].lineData;
+						v119 = v81[2 * v80];
+						v118 = v81[2 * v80 + 1];
+
 						v82 = v112;
 						_vm->_globals.super_parcours[v82] = v119;
 						_vm->_globals.super_parcours[v82 + 1] = v118;
@@ -2333,9 +2355,9 @@ LABEL_200:
 						if (v83 > -1) {
 							v109 = v117;
 							do {
-								v84 = Ligne[v109].fieldC;
-								v119 = (int16)READ_LE_UINT16(v84 + 4 * v83);
-								v118 = (int16)READ_LE_UINT16(v84 + 4 * v83 + 2);
+								v84 = Ligne[v109].lineData;
+								v119 = v84[2 * v83];
+								v118 = v84[2 * v83 + 1];
 								v85 = v112;
 								_vm->_globals.super_parcours[v85] = v119;
 								_vm->_globals.super_parcours[v85 + 1] = v118;
@@ -2379,10 +2401,10 @@ LABEL_200:
 						v94 = v114;
 						v100 = v121;
 						do {
-							v95 = Ligne[v100].fieldC;;
-							v96 = (int16)READ_LE_UINT16(v95 + 4 * v94 + 2);
+							v95 = Ligne[v100].lineData;
+							v96 = v95[2 * v94 + 1];
 							v97 = v112;
-							_vm->_globals.super_parcours[v97] = (int16)READ_LE_UINT16(v95 + 4 * v94);
+							_vm->_globals.super_parcours[v97] = v95[2 * v94];
 							_vm->_globals.super_parcours[v97 + 1] = v96;
 							_vm->_globals.super_parcours[v97 + 2] = Ligne[v100].field6;
 							_vm->_globals.super_parcours[v97 + 3] = 0;
@@ -2394,10 +2416,10 @@ LABEL_200:
 					v90 = v114;
 					v99 = v121;
 					do {
-						v91 = Ligne[v99].fieldC;
-						v92 = (int16)READ_LE_UINT16(v91 + 4 * v90 + 2);
+						v91 = Ligne[v99].lineData;
+						v92 = v91[2 * v90 + 1];
 						v93 = v112;
-						_vm->_globals.super_parcours[v93] = (int16)READ_LE_UINT16(v91 + 4 * v90);
+						_vm->_globals.super_parcours[v93] = v91[2 * v90];
 						_vm->_globals.super_parcours[v93 + 1] = v92;
 						_vm->_globals.super_parcours[v93 + 2] = Ligne[v99].field8;
 						_vm->_globals.super_parcours[v93 + 3] = 0;
@@ -3593,12 +3615,12 @@ int LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
 	int v12; 
 	int v13; 
 	int v14; 
-	byte *v15; 
+	int16 *v15; 
 	int v16; 
 	int v17; 
 	int v18; 
 	int v19; 
-	byte *v20; 
+	int16 *v20; 
 	int v21; 
 	int v22; 
 	int v23; 
@@ -3741,9 +3763,9 @@ LABEL_60:
 			v32 = v34;
 			v25 = _vm->_globals.essai0;
 			do {
-				v15 = Ligne[v32].fieldC;
-				v16 = (int16)READ_LE_UINT16(v15 + 4 * v14);
-				v29 = (int16)READ_LE_UINT16(v15 + 4 * v14 + 2);
+				v15 = Ligne[v32].lineData;
+				v16 = v15[2 * v14];
+				v29 = v15[2 * v14 + 1];
 				if (!a6) {
 					v17 = v41;
 					_vm->_globals.super_parcours[v17] = v16;
@@ -3769,9 +3791,9 @@ LABEL_60:
 			v31 = v34;
 			v26 = _vm->_globals.essai0;
 			do {
-				v20 = Ligne[v31].fieldC;
-				v21 = (int16)READ_LE_UINT16(v20 + 4 * v19);
-				v30 = (int16)READ_LE_UINT16(v20 + 4 * v19 + 2);
+				v20 = Ligne[v31].lineData;
+				v21 = v20[2 * v19];
+				v30 = v20[2 * v19 + 1];
 				if (a6) {
 					v23 = v41;
 					v26[v23] = v21;
@@ -3797,17 +3819,17 @@ LABEL_60:
 int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5) {
 	int i; 
 	int v6; 
-	byte *v7; 
+	int16 *v7; 
 	int v8; 
 	int v9; 
 	int v10; 
 	int v11; 
-	byte *v12; 
+	int16 *v12; 
 	int v13; 
 	int v14; 
 	int v15; 
 	int v16; 
-	byte *v17; 
+	int16 *v17; 
 	int v18; 
 	int v19; 
 	int v20; 
@@ -3824,11 +3846,11 @@ int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5) {
 	v25 = _vm->_objectsManager.DERLIGNE + 1;
 	for (i = (int)(_vm->_objectsManager.DERLIGNE + 1); i < _vm->_linesManager.TOTAL_LIGNES + 1; i = v25) {
 		v6 = i;
-		v7 = Ligne[i].fieldC;
+		v7 = Ligne[i].lineData;
 		v8 = Ligne[v6].field0;
-		v23 = (int16)READ_LE_UINT16(v7 + 4 * v8 - 4);
-		v9 = (int16)READ_LE_UINT16(v7 + 4 * v8 - 2);
-		if (*v7 == a1 && a2 == (int16)READ_LE_UINT16(v7 + 2)) {
+		v23 = v7[2 * v8 - 2];
+		v9 = v7[2 * v8 - 1];
+		if (v7[0] == a1 && a2 == v7[1]) {
 			v24 = v25;
 			v26 = 1;
 			*a3 = 1;
@@ -3848,9 +3870,9 @@ LABEL_12:
 	if (*a3 == 1) {
 		v10 = v24;
 		v11 = Ligne[v10].field0;
-		v12 = Ligne[v10].fieldC;
-		v13 = (int16)READ_LE_UINT16(v12 + 4 * v11 - 4);
-		v14 = (int16)READ_LE_UINT16(v12 + 4 * v11 - 2);
+		v12 = Ligne[v10].lineData;
+		v13 = v12[2 * v11 - 2];
+		v14 = v12[2 * v11 - 1];
 		v15 = Ligne[v10].field6;
 		if (v15 == 5 || v15 == 1)
 			v14 += 2;
@@ -3863,9 +3885,9 @@ LABEL_12:
 		*a5 = v28;
 	}
 	if (v26 == 1 && *a3 == 2) {
-		v17 = Ligne[v25].fieldC;
-		v18 = *v17;
-		v19 = (int16)READ_LE_UINT16(v17 + 2);
+		v17 = Ligne[v25].lineData;
+		v18 = v17[0];
+		v19 = v17[1];
 		v20 = Ligne[v24].field6;
 		if (v20 == 5 || v20 == 1)
 			v19 -= 2;
