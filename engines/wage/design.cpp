@@ -53,7 +53,7 @@
 namespace Wage {
 
 Design::Design(Common::SeekableReadStream *data) {
-	int len = READ_BE_UINT16(data);
+	int len = data->readUint16BE() - 2;
 
 	_data = (byte *)malloc(len);
 	for (int i = 0; i < len; i++)

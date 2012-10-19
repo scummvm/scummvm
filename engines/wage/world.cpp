@@ -74,6 +74,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	res = resMan->getResource(MKTAG('G','C','O','D'), resArray[0]);
 	_globalScript = new Script(res);
 
+	// TODO: read creator
+
 	// Load main configuration
 	if ((resArray = resMan->getResIDArray(MKTAG('V','E','R','S'))).size() == 0)
 		return false;
@@ -81,27 +83,33 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if (resArray.size() > 1)
 		warning("Too many VERS resources");
 
-	res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0]);
+	if (resArray.size()) {
+		debug(3, "Loading version info");
 
-	res->skip(10);
-	byte b = res->readByte();
-	_weaponMenuDisabled = (b != 0);
-	if (b != 0 && b != 1)
-		error("Unexpected value for weapons menu");
+		res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0]);
 
-	res->skip(3);
-	_aboutMessage = readPascalString(*res);
+		res->skip(10);
+		byte b = res->readByte();
+		_weaponMenuDisabled = (b != 0);
+		if (b != 0 && b != 1)
+			error("Unexpected value for weapons menu");
 
-	if (!scumm_stricmp(resMan->getBaseFileName().c_str(), "Scepters"))
-		res->skip(1); // ????
+		res->skip(3);
+		_aboutMessage = readPascalString(res);
 
-	_soundLibrary1 = readPascalString(*res);
-	_soundLibrary2 = readPascalString(*res);
+		if (!scumm_stricmp(resMan->getBaseFileName().c_str(), "Scepters"))
+			res->skip(1); // ????
 
-	delete res;
+		_soundLibrary1 = readPascalString(res);
+		_soundLibrary2 = readPascalString(res);
+
+		delete res;
+	}
 
 	// Load scenes
 	resArray = resMan->getResIDArray(MKTAG('A','S','C','N'));
+	debug(3, "Loading %d scenes", resArray.size());
+
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','S','C','N'), *iter);
 		Scene *scene = new Scene(resMan->getResName(MKTAG('A','S','C','N'), *iter), res);
@@ -112,7 +120,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		res = resMan->getResource(MKTAG('A','T','X','T'), *iter);
 		if (res != NULL) {
-			scene->_textBounds = readRect(*res);
+			scene->_textBounds = readRect(res);
 			scene->_fontType = res->readUint16BE();
 			scene->_fontSize = res->readUint16BE();
 			
@@ -132,6 +140,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	
 	// Load Objects
 	resArray = resMan->getResIDArray(MKTAG('A','O','B','J'));
+	debug(3, "Loading %d objects", resArray.size());
+
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','O','B','J'), *iter);
 		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res));
@@ -139,6 +149,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	// Load Characters
 	resArray = resMan->getResIDArray(MKTAG('A','C','H','R'));
+	debug(3, "Loading %d characters", resArray.size());
+
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','C','H','R'), *iter);
 		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res);
@@ -151,6 +163,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	// Load Sounds
 	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
+	debug(3, "Loading %d sounds", resArray.size());
+
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
 		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
@@ -167,6 +181,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	res = resMan->getResource(MKTAG('P','A','T','#'), 900);
 	if (res != NULL) {
 		int count = res->readUint16BE();
+		debug(3, "Loading %d patterns", count);
+
 		for (int i = 0; i < count; i++) {
 			byte *pattern = (byte *)malloc(8);
 			for (int j = 0; j < 8; j++) {

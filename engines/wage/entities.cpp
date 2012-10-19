@@ -62,7 +62,7 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_design = new Design(data);
 
-	setDesignBounds(readRect(*data));
+	setDesignBounds(readRect(data));
 	_worldY = data->readSint16BE();
 	_worldX = data->readSint16BE();
 	_blocked[Scene::NORTH] = (data->readByte() != 0);
@@ -72,18 +72,19 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_soundFrequency = data->readSint16BE();
 	_soundType = data->readByte();
 	data->readByte(); // unknown
-	_messages[Scene::NORTH] = readPascalString(*data);
-	_messages[Scene::SOUTH] = readPascalString(*data);
-	_messages[Scene::EAST] = readPascalString(*data);
-	_messages[Scene::WEST] = readPascalString(*data);
-	_soundName = readPascalString(*data);
+	_messages[Scene::NORTH] = readPascalString(data);
+	_messages[Scene::SOUTH] = readPascalString(data);
+	_messages[Scene::EAST] = readPascalString(data);
+	_messages[Scene::WEST] = readPascalString(data);
+	_soundName = readPascalString(data);
 }
 
 Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _currentScene(NULL) {
 	_name = name;
+
 	_design = new Design(data);
 
-	setDesignBounds(readRect(*data));
+	setDesignBounds(readRect(data));
 
 	int16 namePlural = data->readSint16BE();
 
@@ -92,7 +93,7 @@ Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _
 	else if (namePlural == 0)
 		_namePlural = false;
 	else
-		error("Obj <%s> had weird namePlural set", name.c_str());
+		error("Obj <%s> had weird namePlural set (%d)", name.c_str(), namePlural);
 
 	if (data->readSint16BE() != 0)
 		error("Obj <%s> had short set", name.c_str());
@@ -114,19 +115,19 @@ Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _
 	else
 		error("Obj <%s> had weird returnTo set", name.c_str());
 
-	_sceneOrOwner = readPascalString(*data);
-	_clickMessage = readPascalString(*data);
-	_operativeVerb = readPascalString(*data);
-	_failureMessage = readPascalString(*data);
-	_useMessage = readPascalString(*data);
-	_sound = readPascalString(*data);
+	_sceneOrOwner = readPascalString(data);
+	_clickMessage = readPascalString(data);
+	_operativeVerb = readPascalString(data);
+	_failureMessage = readPascalString(data);
+	_useMessage = readPascalString(data);
+	_sound = readPascalString(data);
 }
 
 Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_design = new Design(data);
 
-	setDesignBounds(readRect(*data));
+	setDesignBounds(readRect(data));
 
 	_physicalStrength = data->readByte();
 	_physicalHp = data->readByte();
@@ -168,27 +169,27 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 	if (data->readSByte() == 1)
 		_nameProperNoun = true;
 
-	_initialScene = readPascalString(*data);
-	_nativeWeapon1 = readPascalString(*data);
-	_operativeVerb1 = readPascalString(*data);
-	_nativeWeapon2 = readPascalString(*data);
-	_operativeVerb2 = readPascalString(*data);
+	_initialScene = readPascalString(data);
+	_nativeWeapon1 = readPascalString(data);
+	_operativeVerb1 = readPascalString(data);
+	_nativeWeapon2 = readPascalString(data);
+	_operativeVerb2 = readPascalString(data);
 
-	_initialComment = readPascalString(*data);
-	_scoresHitComment = readPascalString(*data);
-	_receivesHitComment = readPascalString(*data);
-	_makesOfferComment = readPascalString(*data);
-	_rejectsOfferComment = readPascalString(*data);
-	_acceptsOfferComment = readPascalString(*data);
-	_dyingWords = readPascalString(*data);
+	_initialComment = readPascalString(data);
+	_scoresHitComment = readPascalString(data);
+	_receivesHitComment = readPascalString(data);
+	_makesOfferComment = readPascalString(data);
+	_rejectsOfferComment = readPascalString(data);
+	_acceptsOfferComment = readPascalString(data);
+	_dyingWords = readPascalString(data);
 
-	_initialSound = readPascalString(*data);
-	_scoresHitSound = readPascalString(*data);
-	_receivesHitSound = readPascalString(*data);
-	_dyingSound = readPascalString(*data);
+	_initialSound = readPascalString(data);
+	_scoresHitSound = readPascalString(data);
+	_receivesHitSound = readPascalString(data);
+	_dyingSound = readPascalString(data);
 
-	_weaponSound1 = readPascalString(*data);
-	_weaponSound2 = readPascalString(*data);
+	_weaponSound1 = readPascalString(data);
+	_weaponSound2 = readPascalString(data);
 }
 
 } // End of namespace Wage

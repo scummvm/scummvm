@@ -76,8 +76,8 @@ enum {
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
-Common::String readPascalString(Common::SeekableReadStream &in);
-Common::Rect *readRect(Common::SeekableReadStream &in);
+Common::String readPascalString(Common::SeekableReadStream *in);
+Common::Rect *readRect(Common::SeekableReadStream *in);
 
 class WageEngine : public Engine {
 public:
