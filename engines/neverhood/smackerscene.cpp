@@ -37,9 +37,8 @@ SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubl
 		_canAbort = true;
 	}
 	
-	if (_doubleSurface) {
+	if (!_doubleSurface)
 		_vm->_screen->clear();
-	}
 
 	_fileHash[0] = 0; 
 	_fileHash[1] = 0;

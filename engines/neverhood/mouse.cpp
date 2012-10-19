@@ -42,7 +42,7 @@ Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect)
 
 Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2)
 	: StaticSprite(vm, 2000), _mouseType(kMouseType435),
-	_mouseCursorResource(vm), _frameNum(0), _x1(x1), _x2(x2), _visible(false) {
+	_mouseCursorResource(vm), _frameNum(0), _x1(x1), _x2(x2) {
 	
 	init(fileHash);
 	if (_x <= _x1) {
@@ -81,6 +81,7 @@ void Mouse::init(uint32 fileHash) {
 	_deltaRect = _drawRect;
 	processDelta();
 	_needRefresh = true;
+	CursorMan.showMouse(false);
 }
 
 void Mouse::load(uint32 fileHash) {
@@ -89,12 +90,10 @@ void Mouse::load(uint32 fileHash) {
 }
 
 void Mouse::update() {
-	if (_visible && !_surface->getVisible()) {
+	if (CursorMan.isVisible() && !_surface->getVisible()) {
 		CursorMan.showMouse(false);
-		_visible = false;
-	} else if (!_visible && _surface->getVisible()) {
+	} else if (!CursorMan.isVisible() && _surface->getVisible()) {
 		CursorMan.showMouse(true);
-		_visible = true;
 	}
 	updateCursor();
 	_frameNum++;

@@ -109,7 +109,7 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseDown(%d, %d)", x, y);
-		sendPointMessage(_childObject, 1, mousePos);
+		sendPointMessage(_childObject, 0x0001, mousePos);
 	}				
 }
 
@@ -119,7 +119,7 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseUp(%d, %d)", x, y);
-		sendPointMessage(_childObject, 2, mousePos);
+		sendPointMessage(_childObject, 0x0002, mousePos);
 	}				
 }
 
@@ -133,7 +133,7 @@ void GameModule::handleEscapeKey() {
 void GameModule::handleSpaceKey() {
 	if (_childObject) {
 		debug(2, "GameModule::handleSpaceKey()");
-		sendMessage(_childObject, 9, 0);
+		sendMessage(_childObject, 0x0009, 0);
 	}				
 }
 

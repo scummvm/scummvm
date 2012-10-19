@@ -153,6 +153,13 @@ void Screen::updatePalette() {
 
 void Screen::clear() {
 	memset(_backScreen->pixels, 0, _backScreen->pitch * _backScreen->h);
+	_fullRefresh = true;
+	clearRenderQueue();
+}
+
+void Screen::clearRenderQueue() {
+	_renderQueue->clear();
+	_prevRenderQueue->clear();
 }
 
 void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version,

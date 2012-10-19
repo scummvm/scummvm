@@ -55,6 +55,8 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene::handleMessage);
+	
+	_vm->_screen->clearRenderQueue();
 }
 
 Scene::~Scene() {

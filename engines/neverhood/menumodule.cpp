@@ -26,7 +26,25 @@ namespace Neverhood {
 
 enum {
 	MAIN_MENU		= 0,
-	CREDITS_SCENE	= 1
+	CREDITS_SCENE	= 1,
+	MAKING_OF		= 2
+};
+
+static const uint32 kMakingOfSmackerFileHashList[] = {
+	0x21082409,
+	0x21082809,
+	0x21083009,
+	0x21080009,
+	0x21086009,
+	0x2108A009,
+	0x21092009,
+	0x210A2009,
+	0x210C2009,
+	0x21082411,
+	0x21082811,
+	0x21083011,
+	0x21080011,
+	0
 };
 
 MenuModule::MenuModule(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -58,6 +76,9 @@ void MenuModule::createScene(int sceneNum, int which) {
 	case CREDITS_SCENE:
 		_childObject = new CreditsScene(_vm, this, true);
 		break;
+	case MAKING_OF:
+		createSmackerScene(kMakingOfSmackerFileHashList, false, true, true);
+		break;
 	}
 	SetUpdateHandler(&MenuModule::updateScene);
 	_childObject->handleUpdate();
@@ -88,7 +109,7 @@ void MenuModule::updateScene() {
 			case 4:
 				debug("QUIT GAME");
 				leaveModule(0);
-				// TODO _gameState->quitGame = true;
+				_vm->quitGame();
 				break;
 			case 5:
 				debug("CREDITS");
@@ -96,7 +117,7 @@ void MenuModule::updateScene() {
 				break;
 			case 6:
 				debug("MAKING OF");
-				// TODO playMakingOf();
+				createScene(MAKING_OF, -1);
 				break;
 			case 7:
 				debug("TOGGLE MUSIC");
@@ -113,6 +134,7 @@ void MenuModule::updateScene() {
 			}
 			break;
 		case CREDITS_SCENE:
+		case MAKING_OF:
 			createScene(MAIN_MENU, -1);
 			break;
 		default:

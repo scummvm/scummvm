@@ -70,6 +70,7 @@ public:
 	void testPalette(byte *paletteData);
 	void updatePalette();
 	void clear();
+	void clearRenderQueue();
 	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version,
 		const Graphics::Surface *shadowSurface = NULL);
 	void drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version);
