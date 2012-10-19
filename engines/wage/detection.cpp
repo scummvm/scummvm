@@ -48,8 +48,6 @@ static const PlainGameDescriptor wageGames[] = {
 
 namespace Wage {
 
-using Common::GUIO_NONE;
-
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"afm",
@@ -58,7 +56,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO0()
 	},
 
 	AD_TABLE_END_MARKER
@@ -70,7 +68,7 @@ class WageMetaEngine : public AdvancedMetaEngine {
 public:
 	WageMetaEngine() : AdvancedMetaEngine(Wage::gameDescriptions, sizeof(ADGameDescription), wageGames) {
 		_singleid = "wage";
-		_guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+		_guioptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
