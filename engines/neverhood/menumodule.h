@@ -66,6 +66,21 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class CreditsScene : public Scene {
+public:
+	CreditsScene(NeverhoodEngine *vm, Module *parentModule, bool canAbort);
+	virtual ~CreditsScene();
+protected:
+	int _screenIndex;
+	int _countdown;
+	MusicResource *_musicResource;
+	uint32 _ticksTime;
+	uint32 _ticksDuration;
+	bool _canAbort;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MENUMODULE_H */

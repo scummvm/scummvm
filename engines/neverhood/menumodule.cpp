@@ -25,7 +25,8 @@
 namespace Neverhood {
 
 enum {
-	MAIN_MENU		= 0
+	MAIN_MENU		= 0,
+	CREDITS_SCENE	= 1
 };
 
 MenuModule::MenuModule(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -53,6 +54,9 @@ void MenuModule::createScene(int sceneNum, int which) {
 	switch (_sceneNum) {
 	case MAIN_MENU:
 		_childObject = new MainMenu(_vm, this);
+		break;
+	case CREDITS_SCENE:
+		_childObject = new CreditsScene(_vm, this, true);
 		break;
 	}
 	SetUpdateHandler(&MenuModule::updateScene);
@@ -88,7 +92,7 @@ void MenuModule::updateScene() {
 				break;
 			case 5:
 				debug("CREDITS");
-				// TODO createCreditsScene();
+				createScene(CREDITS_SCENE, -1);
 				break;
 			case 6:
 				debug("MAKING OF");
@@ -107,6 +111,9 @@ void MenuModule::updateScene() {
 				createScene(MAIN_MENU, -1);
 				break;
 			}
+			break;
+		case CREDITS_SCENE:
+			createScene(MAIN_MENU, -1);
 			break;
 		default:
 			break;
@@ -238,5 +245,102 @@ uint32 MainMenu::handleMessage(int messageNum, const MessageParam &param, Entity
 	return 0;
 }
 
+static const uint32 kCreditsSceneFileHashes[] = {
+	0x6081128C,
+	0x608112BC,
+	0x608112DC,
+	0x6081121C,
+	0x6081139C,
+	0x6081109C,
+	0x6081169C,
+	0x60811A9C,
+	0x6081029C,
+	0x0081128C,
+	0x008112BC,
+	0x008012BC,
+	0x008112DC,
+	0x0081121C,
+	0x0081139C,
+	0x0081109C,
+	0x0081169C,
+	0x00811A9C,
+	0x0081029C,
+	0x0081329C,
+	0xC08112BC,
+	0xC08112DC,
+	0xC081121C,
+	0xC081139C,
+	0
+};
+
+CreditsScene::CreditsScene(NeverhoodEngine *vm, Module *parentModule, bool canAbort)
+	: Scene(vm, parentModule, true), _canAbort(canAbort), _screenIndex(0), _ticksDuration(0),
+	_countdown(216) {
+
+	SetUpdateHandler(&CreditsScene::update);	
+	SetMessageHandler(&CreditsScene::handleMessage);
+	
+	setBackground(0x6081128C);
+	setPalette(0x6081128C);
+
+	_ticksTime = _vm->_system->getMillis() + 202100;
+		
+	_musicResource = new MusicResource(_vm);
+	_musicResource->load(0x30812225);
+	_musicResource->play(0);
+	
+}
+
+CreditsScene::~CreditsScene() {
+	_musicResource->unload();
+	delete _musicResource;
+}
+
+void CreditsScene::update() {
+	Scene::update();
+	if (_countdown != 0) {
+		if (_screenIndex == 23 && _vm->_system->getMillis() > _ticksTime)
+			leaveScene(0);
+		else if ((--_countdown) == 0) {
+			++_screenIndex;
+			if (kCreditsSceneFileHashes[_screenIndex] == 0)
+				leaveScene(0);
+			else {
+				_background->load(kCreditsSceneFileHashes[_screenIndex]);
+				_palette->addPalette(kCreditsSceneFileHashes[_screenIndex], 0, 256, 0);
+				if (_screenIndex < 5)
+					_countdown = 192;
+				else if (_screenIndex < 15)
+					_countdown = 144;
+				else if (_screenIndex < 16)
+					_countdown = 216;
+				else if (_screenIndex < 23)
+					_countdown = 144;
+				else
+					_countdown = 1224;
+			}
+		}
+	}
+}
+
+uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0009:
+		leaveScene(0);
+		break;
+	case 0x000B://TODO Implement this message
+		if (param.asInteger() == 27 && _canAbort)
+			leaveScene(0);
+		break;
+	case 0x101D:
+		_ticksDuration = _ticksTime - _vm->_system->getMillis();
+		break;
+	case 0x101E:
+		_ticksTime = _ticksDuration + _vm->_system->getMillis();
+		break;
+	}
+	return 0;
+}
 
 } // End of namespace Neverhood
