@@ -109,6 +109,7 @@ Common::Error ComposerEngine::run() {
 	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
 		cursor->getHotspotY(), cursor->getKeyColor());
 	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+	delete cursor;
 
 	loadLibrary(0);
 
@@ -212,6 +213,8 @@ Common::Error ComposerEngine::run() {
 
 		_system->delayMillis(20);
 	}
+
+	_surface.free();
 
 	return Common::kNoError;
 }
