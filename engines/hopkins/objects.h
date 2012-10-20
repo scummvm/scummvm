@@ -205,8 +205,8 @@ public:
 	void INVENT();
 	void CHANGE_TETE(int a1, int a2);
 	void VERIFTAILLE();
-	void PACOURS_PROPRE(byte *a1);
-	byte *PARC_VOITURE(int a1, int a2, int a3, int a4);
+	void PACOURS_PROPRE(int16 *a1);
+	int16 *PARC_VOITURE(int a1, int a2, int a3, int a4);
 	void VERBEPLUS();
 	void BTDROITE();
 	int MZONE();

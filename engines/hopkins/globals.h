@@ -373,7 +373,7 @@ public:
 	byte *FORETSPR;
 	int FORET;
 	byte *COUCOU;
-	byte *chemin;
+	int16 *chemin;
 	byte *cache_souris;
 	int16 *BufLig;
 	byte *Bufferdecor;

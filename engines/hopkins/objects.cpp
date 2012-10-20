@@ -1777,7 +1777,7 @@ void ObjectsManager::VERIFZONE() {
 	v3 = _vm->_globals.compteur_71 + 1;
 	_vm->_globals.compteur_71 = v3;
 	if (v3 > 1u) {
-		if (_vm->_globals.NOMARCHE || (_vm->_globals.chemin == g_PTRNUL) || v3 > 4u) {
+		if (_vm->_globals.NOMARCHE || (_vm->_globals.chemin == (int16 *)g_PTRNUL) || v3 > 4u) {
 			_vm->_globals.compteur_71 = 0;
 			if (_vm->_globals.old_x_69 != v0 || _vm->_globals.old_y_70 != v2) {
 				v4 = MZONE();
@@ -1917,7 +1917,7 @@ void ObjectsManager::GOHOME() {
 	v58 = 0;
 	v1 = 0;
 
-	if (_vm->_globals.chemin == g_PTRNUL)
+	if (_vm->_globals.chemin == (int16 *)g_PTRNUL)
 		return;
 	if (_vm->_globals.Compteur > 1) {
 		--_vm->_globals.Compteur;
@@ -1926,15 +1926,19 @@ void ObjectsManager::GOHOME() {
 	_vm->_globals.Compteur = 0;
 	if (g_old_sens == -1) {
 		VERIFTAILLE();
-		nouveau_x = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		_vm->_globals.chemin += 2;
-		v53 = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		nouveau_y = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		_vm->_globals.chemin += 2;
-		nouveau_sens = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		_vm->_globals.chemin += 2;
-		nouveau_anim = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		_vm->_globals.chemin += 2;
+		nouveau_x = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
+		v53 = *_vm->_globals.chemin;
+		nouveau_y = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
+		nouveau_sens = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
+		nouveau_anim = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
 		if (nouveau_x != -1 || v53 != -1) {
 			_vm->_globals.g_old_sens = nouveau_sens;
 			_vm->_globals.g_old_sens2 = nouveau_sens;
@@ -1948,11 +1952,11 @@ void ObjectsManager::GOHOME() {
 				v54 = _vm->_globals.SAUVEGARDE->data[svField2];
 			else
 				v54 = NUMZONE;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			VERIFTAILLE();
 			SETFLIPSPR(0, 0);
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.g_old_sens = -1;
 			if (v54 > 0) {
 				v55 = v54;
@@ -2272,15 +2276,18 @@ LABEL_152:
 LABEL_153:
 	v47 = 0;
 	do {
-		nouveau_x = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		_vm->_globals.chemin += 2;
-		v48 = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		nouveau_y = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		_vm->_globals.chemin += 2;
-		nouveau_sens = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		_vm->_globals.chemin += 2;
-		nouveau_anim = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-		_vm->_globals.chemin += 2;
+		nouveau_x = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
+		v48 = *_vm->_globals.chemin;
+		nouveau_y = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
+		nouveau_sens = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+		nouveau_anim = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
 		if (nouveau_x == -1 && v48 == -1) {
 			if (GOACTION == 1)
 				v49 = _vm->_globals.SAUVEGARDE->data[svField2];
@@ -2288,7 +2295,7 @@ LABEL_153:
 				v49 = NUMZONE;
 			SETANISPR(0, _vm->_globals.g_old_sens + 59);
 			_vm->_globals.ACTION_SENS = 0;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			VERIFTAILLE();
 			SETFLIPSPR(0, 0);
 			_vm->_globals.Compteur = 0;
@@ -2388,7 +2395,7 @@ void ObjectsManager::GOHOME2() {
 	__int16 v2; 
 
 	v0 = 2;
-	if (_vm->_globals.chemin != g_PTRNUL) {
+	if (_vm->_globals.chemin != (int16 *)g_PTRNUL) {
 		if (_vm->_globals.vitesse == 2)
 			v0 = 4;
 		if (_vm->_globals.vitesse == 3)
@@ -2396,15 +2403,17 @@ void ObjectsManager::GOHOME2() {
 		_vm->_globals.j_104 = 0;
 		if (v0) {
 			while (1) {
-				nouveau_x = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-				_vm->_globals.chemin += 2;
-				v2 = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-				nouveau_y = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-				_vm->_globals.chemin += 2;
-				nouveau_sens = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-				_vm->_globals.chemin += 2;
-				nouveau_anim = (int16)READ_LE_UINT16(_vm->_globals.chemin);
-				_vm->_globals.chemin += 2;
+				nouveau_x = *_vm->_globals.chemin;
+				_vm->_globals.chemin++;
+
+				v2 = *_vm->_globals.chemin;
+				nouveau_y = *_vm->_globals.chemin;
+				_vm->_globals.chemin++;
+
+				nouveau_sens = *_vm->_globals.chemin;
+				_vm->_globals.chemin++;
+				nouveau_anim = *_vm->_globals.chemin;
+				_vm->_globals.chemin++;
 
 				if (nouveau_x == -1) {
 					if (v2 == -1)
@@ -2423,7 +2432,7 @@ void ObjectsManager::GOHOME2() {
 			if (_vm->_globals.last_sens == 7)
 				SETANISPR(0, 3);
 			
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			my_anim = 0;
 			A_ANIM = 0;
 			A_DEPA = 0;
@@ -2715,7 +2724,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_graphicsManager.SCROLL_ECRAN(v3 - 320);
 	_vm->_graphicsManager.ofscroll = XSPR(0) - 320;
 	SPRITE_ON(0);
-	_vm->_globals.chemin = g_PTRNUL;
+	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -2759,7 +2768,7 @@ void ObjectsManager::PLAN_BETA() {
 		VERIFZONE();
 		GOHOME2();
 		
-		if (_vm->_globals.chemin == g_PTRNUL && _vm->_globals.GOACTION == 1)
+		if (_vm->_globals.chemin == (int16 *)g_PTRNUL && _vm->_globals.GOACTION == 1)
 			PARADISE();
 		_vm->_eventsManager.VBL();
     
@@ -2787,19 +2796,19 @@ void ObjectsManager::BTGAUCHE() {
 	int v1;
 	int v2;
 	int16 *v3; 
-	byte *v4; 
+	int16 *v4; 
 	int16 *v5; 
 	int v6; 
 	int v7;
 	int v8;
-	byte *v9; 
+	int16 *v9; 
 	int v10;
 	int v11;
 	int v12;
-	byte *v13; 
+	int16 *v13; 
 	int v14;
 	int v15;
-	byte *v16; 
+	int16 *v16; 
 	int v17;
 	int v18;
 	int v19;
@@ -2859,9 +2868,9 @@ void ObjectsManager::BTGAUCHE() {
 		v3 = _vm->_globals.essai2;
 		v4 = _vm->_globals.chemin;
 		do {
-			v3[v2] = READ_LE_UINT16(v4 + 2 * v2);
+			v3[v2] = v4[v2];
 			++v2;
-		} while ((int16)READ_LE_UINT16(v4 + 2 * v2) != -1);
+		} while (v4[v2] != -1);
 
 		v5 = _vm->_globals.essai2;
 		v5[v2] = -1;
@@ -2893,7 +2902,7 @@ LABEL_38:
 	}
 	GOACTION = 0;
 	v9 = _vm->_globals.chemin;
-	_vm->_globals.chemin = g_PTRNUL;
+	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	if (_vm->_globals.FORET && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
 		if (YSPR(0) <= 374 || YSPR(0) > 410) {
 			v10 = XSPR(0);
@@ -2901,22 +2910,22 @@ LABEL_38:
 			v12 = XSPR(0);
 			v13 = _vm->_linesManager.PARCOURS2(v12, v11, v10, 390);
 			_vm->_globals.chemin = v13;
-			if (g_PTRNUL != v13)
+			if (v13 != (int16 *)g_PTRNUL)
 				PACOURS_PROPRE(v13);
 			g_old_x = XSPR(0);
 			g_old_y = YSPR(0);
 			_vm->_globals.Compteur = 0;
-			if (g_PTRNUL != _vm->_globals.chemin || v9 == _vm->_globals.chemin) {
+			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || v9 == _vm->_globals.chemin) {
 LABEL_64:
 				_vm->_globals.g_old_sens = -1;
 				goto LABEL_65;
 			}
 			goto LABEL_63;
 		}
-		_vm->_globals.chemin = g_PTRNUL;
+		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		SETANISPR(0, _vm->_globals.g_old_sens2 + 59);
 		_vm->_globals.ACTION_SENS = 0;
-		_vm->_globals.chemin = g_PTRNUL;
+		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		VERIFTAILLE();
 		SETFLIPSPR(0, 0);
 		_vm->_globals.Compteur = 0;
@@ -2929,12 +2938,12 @@ LABEL_64:
 			v15 = XSPR(0);
 			v16 = _vm->_linesManager.PARCOURS2(v15, v14, v19, v0);
 			_vm->_globals.chemin = v16;
-			if (g_PTRNUL != v16)
+			if (v16 != (int16 *)g_PTRNUL)
 				PACOURS_PROPRE(v16);
 			g_old_x = XSPR(0);
 			g_old_y = YSPR(0);
 			_vm->_globals.Compteur = 0;
-			if (g_PTRNUL != _vm->_globals.chemin || v9 == _vm->_globals.chemin)
+			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || v9 == _vm->_globals.chemin)
 				goto LABEL_64;
 LABEL_63:
 			_vm->_globals.chemin = v9;
@@ -2965,7 +2974,7 @@ LABEL_65:
 	}
 	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField13] == 1 && _vm->_globals.OBJET_EN_COURS == 20 && NUMZONE == 12 
 				&& _vm->_eventsManager.btsouris == 23) {
-		_vm->_globals.chemin = g_PTRNUL;
+		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		XSPR(0);
 		YSPR(0);
 	}
@@ -3118,7 +3127,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	FORCEZONE = 1;
 	_vm->_linesManager.TOTAL_LIGNES = 0;
 	DERLIGNE = 0;
-	_vm->_globals.chemin = g_PTRNUL;
+	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	if (_vm->_globals.COUCOU != g_PTRNUL)
 		_vm->_globals.COUCOU = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.COUCOU);
 	if (g_PTRNUL != _vm->_globals.SPRITE_ECRAN)
@@ -3132,7 +3141,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	FORCEZONE = 1;
 	CHANGEVERBE = 0;
 	_vm->_globals.NOSPRECRAN = 0;
-	_vm->_globals.chemin = g_PTRNUL;
+	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	g_old_sens = -1;
 	my_anim = 1;
 	A_ANIM = 0;
@@ -3353,7 +3362,7 @@ void ObjectsManager::CHANGE_TETE(int a1, int a2) {
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, 532, 25, 65, 40, _vm->_graphicsManager.VESA_BUFFER, 532, 25);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 597, 65);
 	_vm->_globals.NOT_VERIF = 1;
-	_vm->_globals.chemin = g_PTRNUL;
+	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	if (a1 == 2) {
 		if (!a2) {
 			if (_vm->_globals.SAUVEGARDE->data[svField188] == _vm->_globals.ECRAN) {
@@ -3474,7 +3483,7 @@ void ObjectsManager::VERIFTAILLE() {
 	SETTAILLESPR(0, v0);
 }
 
-void ObjectsManager::PACOURS_PROPRE(byte *a1) {
+void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 	int v1;
 	int v2;
 	int v4;
@@ -3493,36 +3502,36 @@ void ObjectsManager::PACOURS_PROPRE(byte *a1) {
 	v1 = 0;
 	v13 = 0;
 	v14 = -1;
-	v2 = (int16)READ_LE_UINT16(a1 + 2);
-	v15 = (int16)READ_LE_UINT16(a1 + 4);
-	if ((int16)READ_LE_UINT16(a1) != -1 || v2 != -1) {
-		while (1) {
+	v2 = a1[1];
+	v15 = a1[2];
+	if (a1[0] != -1 || v2 != -1) {
+		for (;;) {
 			if (v14 != -1 && v15 != v14) {
 				v11 = v1;
 				v12 = 0;
 				v10 = CALC_PROPRE(v2);
-				v4 = (int16)READ_LE_UINT16(a1 + 2 * v1);
-				v9 = (int16)READ_LE_UINT16(a1 + 2 * v1);
-				v5 = (int16)READ_LE_UINT16(a1 + 2 * v1 + 2);
+				v4 = a1[v1];
+				v9 = a1[v1];
+				v5 = a1[v1 + 1];
 				v6 = 0;
 				while (v4 != -1 || v5 != -1) {
 					int idx = v1;
 					v1 += 4;
 					++v12;
-					if ((int16)READ_LE_UINT16(a1 + 2 * idx + 4) != v15)
+					if (a1[idx + 2] != v15)
 						v6 = 1;
 					if (v6 == 1)
 						break;
-					v4 = (int16)READ_LE_UINT16(a1 + 2 * v1);
-					v9 = (int16)READ_LE_UINT16(a1 + 2 * v1);
-					v5 = (int16)READ_LE_UINT16(a1 + 2 * v1 + 2);
+					v4 = a1[v1];
+					v9 = a1[v1];
+					v5 = a1[v1 + 1];
 				}
 				if (v12 < v10) {
 					v7 = v11;
 					v8 = 0;
 					if (v12 > 0) {
 						do {
-							WRITE_LE_UINT16(a1 + 2 * v7 + 4, v14);
+							a1[v7 + 2] = v14;
 							v7 += 4;
 							++v8;
 						} while (v12 > v8);
@@ -3537,9 +3546,9 @@ void ObjectsManager::PACOURS_PROPRE(byte *a1) {
 			if (v13 == 1)
 				break;
 			v14 = v15;
-			v2 = (int16)READ_LE_UINT16(a1 + 2 * v1 + 2);
-			v15 = (int16)READ_LE_UINT16(a1 + 2 * v1 + 4);
-			if ((int16)READ_LE_UINT16(a1 + 2 * v1) == -1) {
+			v2 = a1[v1 + 1];
+			v15 = a1[v1 + 2];
+			if (a1[v1] == -1) {
 				if (v2 == -1)
 					break;
 			}
@@ -3547,7 +3556,7 @@ void ObjectsManager::PACOURS_PROPRE(byte *a1) {
 	}
 }
 
-byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
+int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v4;
 	int v5;
 	int v6; 
@@ -3566,7 +3575,7 @@ byte *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v19; 
 	int v20;
 	int v21; 
-	byte *result; 
+	int16 *result; 
 	int v23; 
 	int v24; 
 	int v25; 
@@ -3945,9 +3954,9 @@ LABEL_88:
 		_vm->_globals.super_parcours[v61 + 1] = -1;
 		_vm->_globals.super_parcours[v61 + 2] = -1;
 		_vm->_globals.super_parcours[v61 + 3] = -1;
-		result = (byte *)&_vm->_globals.super_parcours[0];
+		result = &_vm->_globals.super_parcours[0];
 	} else {
-		result = g_PTRNUL;
+		result = (int16 *)g_PTRNUL;
 	}
 	return result;
 }
@@ -5450,7 +5459,7 @@ LABEL_1141:
 		}
 		if (v76 == 46) {
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			v13 = YSPR(0);
 			v14 = XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v14, v13, 564, 420);
@@ -5458,7 +5467,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			SPRITE_OFF(0);
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND44.WAV");
@@ -5521,7 +5530,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			v16 = YSPR(0);
 			v17 = XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v17, v16, 445, 332);
@@ -5529,7 +5538,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			SPRITE_OFF(0);
 			BOBANIM_ON(7);
 			SET_BOBPOSI(7, 0);
@@ -5641,7 +5650,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			v22 = YSPR(0);
 			v23 = XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v23, v22, 119, 268);
@@ -5649,7 +5658,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			SPRITE_OFF(0);
 			BOBANIM_ON(11);
 			BOBANIM_ON(8);
@@ -5863,7 +5872,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
 				v27 = YSPR(0);
 				v28 = XSPR(0);
@@ -5883,7 +5892,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			SPRITE_OFF(0);
 			SETANISPR(0, 60);
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND63.WAV");
@@ -6071,7 +6080,7 @@ LABEL_1141:
 				_vm->_soundManager.SPECIAL_SOUND = 0;
 			}
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			v37 = YSPR(0);
 			v38 = XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v38, v37, 330, 418);
@@ -6080,7 +6089,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			SETANISPR(0, 64);
 			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField401];
 			_vm->_globals.DESACTIVE_INVENT = 0;
@@ -6096,7 +6105,7 @@ LABEL_1141:
 			while (BOBPOSI(1) != 9);
 			BOBANIM_OFF(1);
 			_vm->_globals.NO_VISU = 1;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v39 = YSPR(0);
 			v40 = XSPR(0);
@@ -6106,7 +6115,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			SETANISPR(0, 64);
 			BOBANIM_ON(2);
 			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
@@ -6220,7 +6229,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v43 = YSPR(0);
 			v44 = XSPR(0);
@@ -6229,7 +6238,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			SPRITE_OFF(0);
 			v45 = 0;
 			BOBANIM_ON(7);
@@ -6707,7 +6716,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v55 = YSPR(0);
 			v56 = XSPR(0);
@@ -6717,7 +6726,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_globals.SORTIE = 59;
 		}
 		if (v76 == 173) {
@@ -6728,7 +6737,7 @@ LABEL_1141:
 			g_old_x = XSPR(0);
 			g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = g_PTRNUL;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v57 = YSPR(0);
 			v58 = XSPR(0);
@@ -6738,7 +6747,7 @@ LABEL_1141:
 			do {
 				GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != g_PTRNUL);
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_globals.SORTIE = 59;
 		}
 		if (v76 == 174)
@@ -8207,7 +8216,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	_vm->_globals.PLAN_FLAG = 0;
 	_vm->_globals.iRegul = 1;
 	_vm->_soundManager.WSOUND(v);
-	_vm->_globals.chemin = g_PTRNUL;
+	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_globals.NOMARCHE = 1;
 	_vm->_globals.SORTIE = 0;
 	_vm->_globals.AFFLI = 0;
@@ -8229,7 +8238,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	if (_vm->_globals.ECRAN == 61) {
 		SPRITE(_vm->_globals.PERSO, 330, 418, 0, 60, 0, 0, 34, 190);
 		SPRITE_ON(0);
-		_vm->_globals.chemin = g_PTRNUL;
+		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		VERIFTAILLE();
 	}
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -8252,7 +8261,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 		g_old_x = XSPR(0);
 		g_old_sens = -1;
 		_vm->_globals.Compteur = 0;
-		_vm->_globals.chemin = g_PTRNUL;
+		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		v7 = YSPR(0);
 		v8 = XSPR(0);
 		_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v8, v7, 330, 345);
@@ -8260,7 +8269,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 		do {
 			GOHOME();
 			_vm->_eventsManager.VBL();
-		} while (_vm->_globals.chemin != g_PTRNUL);
+		} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 		SETANISPR(0, 64);
 	}
 	do {
@@ -8365,7 +8374,7 @@ LABEL_70:
 	_vm->_objectsManager.VERIFTAILLE();
 	SPRITE_ON(0);
 	_vm->_globals.CACHE_ON();
-	_vm->_globals.chemin = g_PTRNUL;
+	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_objectsManager.VERIFTAILLE();
 	SPECIAL_INI(s2);
 	_vm->_eventsManager.souris_n = 4;
@@ -8400,7 +8409,7 @@ LABEL_70:
 
 					if (xCheck == xp) {
 						if (yCheck == yp) {
-							_vm->_globals.chemin = g_PTRNUL;
+							_vm->_globals.chemin = (int16 *)g_PTRNUL;
 							_vm->_objectsManager.PARADISE();
 							if (_vm->_globals.SORTIE)
 								breakFlag = true;
@@ -8417,7 +8426,8 @@ LABEL_70:
 		if (!_vm->_globals.SORTIE) {
 			TEST_INVENT();
 			_vm->_objectsManager.VERIFZONE();
-			if (_vm->_globals.chemin == g_PTRNUL || (_vm->_objectsManager.GOHOME(), _vm->_globals.chemin == g_PTRNUL)) {
+			if (_vm->_globals.chemin == (int16 *)g_PTRNUL 
+					|| (_vm->_objectsManager.GOHOME(), _vm->_globals.chemin == (int16 *)g_PTRNUL)) {
 				if (_vm->_objectsManager.GOACTION == 1)
 					_vm->_objectsManager.PARADISE();
 			}

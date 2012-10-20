@@ -260,7 +260,6 @@ Globals::~Globals() {
 	dos_free2(INVENTAIRE_OBJET);
 	dos_free2(FORETSPR);
 	dos_free2(COUCOU);
-	dos_free2(chemin);
 	dos_free2(cache_souris);
 	dos_free2(Bufferdecor);
 	dos_free2(ADR_FICHIER_OBJ);
@@ -342,7 +341,7 @@ void Globals::clearAll() {
 	essai1 = (int16 *)g_PTRNUL;
 	essai2 = (int16 *)g_PTRNUL;
 	BufLig = (int16 *)g_PTRNUL;
-	chemin = g_PTRNUL;
+	chemin = (int16 *)g_PTRNUL;
 
 	for (int idx = 0; idx < 400; ++idx) {
 		_vm->_linesManager.Ligne[idx].field0 = 0;

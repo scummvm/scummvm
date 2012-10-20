@@ -1683,7 +1683,7 @@ LABEL_17:
 
 // TODO: method casting int arrays as byte pointers. Double-check later whether
 // we can convert the return to a uint16 *
-byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
+int16 *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 	int v4; 
 	int v5; 
 	int v6; 
@@ -1836,7 +1836,7 @@ byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 					if (v7 < 0)
 						v7 = -v7;
 					if (v7 <= 4)
-						return g_PTRNUL;
+						return (int16 *)g_PTRNUL;
 				}
 			}
 		}
@@ -1848,10 +1848,10 @@ byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			if (v9 < 0)
 				v9 = -v9;
 			if (v9 <= 4)
-				return g_PTRNUL;
+				return (int16 *)g_PTRNUL;
 		}
 		if (_vm->_globals.old_z_69 > 0 && _vm->_objectsManager.NUMZONE > 0 && _vm->_globals.old_z_69 == _vm->_objectsManager.NUMZONE)
-			return g_PTRNUL;
+			return (int16 *)g_PTRNUL;
 	}
 	_vm->_globals.NOT_VERIF = 0;
 	_vm->_globals.old_z_69 = _vm->_objectsManager.NUMZONE;
@@ -1877,7 +1877,7 @@ byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 		if (v11 < 0)
 			v11 = -v11;
 		if (v11 <= 3)
-			return g_PTRNUL;
+			return (int16 *)g_PTRNUL;
 	}
 	
 	for (v12 = 0; v12 <= 8; ++v12) {
@@ -1992,7 +1992,7 @@ byte *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 		if (v141[4] < 0)
 			v131[4] = 1300;
 		if (v141[1] == -1 && v141[2] == -1 && v141[3] == -1 && v141[4] == -1)
-			return g_PTRNUL;
+			return (int16 *)g_PTRNUL;
 		v31 = 0;
 		if (v141[3] != -1 && v131[1] >= v131[3] && v131[2] >= v131[3] && v131[4] >= v131[3]) {
 			v121 = v141[3];
@@ -2302,7 +2302,7 @@ LABEL_234:
 								if (v72 == v77) {
 									v78 = PARC_PERS(v119, v118, v123, v122, v110, v121, v112);
 									if (v78 == 1)
-										return (byte *)&_vm->_globals.super_parcours[0];
+										return &_vm->_globals.super_parcours[0];
 									if (v78 == 2)
 										goto LABEL_200;
 									if (MIRACLE(v119, v118, v110, v121, v112) == 1)
@@ -2314,7 +2314,7 @@ LABEL_234:
 						}
 						v79 = PARC_PERS(v119, v118, v123, v122, v116, v121, v112);
 						if (v79 == 1)
-							return (byte *)&_vm->_globals.super_parcours[0];
+							return &_vm->_globals.super_parcours[0];
 						if (v79 == 2) {
 LABEL_200:
 							v115 = NV_LIGNEDEP;
@@ -2372,7 +2372,7 @@ LABEL_200:
 									if (v83 == v87) {
 										v88 = PARC_PERS(v119, v118, v123, v122, v117, v121, v112);
 										if (v88 == 1)
-											return (byte *)&_vm->_globals.super_parcours[0];
+											return &_vm->_globals.super_parcours[0];
 										if (v88 == 2)
 											goto LABEL_200;
 										if (MIRACLE(v119, v118, v117, v121, v112) == 1)
@@ -2384,7 +2384,7 @@ LABEL_200:
 						}
 						v89 = PARC_PERS(v119, v118, v123, v122, v117, v121, v112);
 						if (v89 == 1)
-							return (byte *)&_vm->_globals.super_parcours[0];
+							return &_vm->_globals.super_parcours[0];
 						if (v89 == 2)
 							goto LABEL_200;
 						if (MIRACLE(v119, v118, v117, v121, v112) == 1)
@@ -2443,10 +2443,10 @@ LABEL_282:
 				_vm->_globals.super_parcours[v57 + 2] = -1;
 				_vm->_globals.super_parcours[v57 + 3] = -1;
 			}
-			return (byte *)&_vm->_globals.super_parcours[0];
+			return &_vm->_globals.super_parcours[0];
 		}
 	}
-	return (byte *)&_vm->_globals.super_parcours[0];
+	return &_vm->_globals.super_parcours[0];
 }
 
 int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
@@ -3072,7 +3072,7 @@ LABEL_323:
 					return 2;
 				}
 				v80 = _vm->_globals.essai1;
-				if ((int16)READ_LE_UINT16(_vm->_globals.essai1) != -1 && v144 < v140 && v138 <= v140 && v142 <= v140 && a6 >= v140) {
+				if (_vm->_globals.essai1[0] != -1 && v144 < v140 && v138 <= v140 && v142 <= v140 && a6 >= v140) {
 					NV_LIGNEDEP = v140;
 					NV_LIGNEOFS = v141;
 					v131 = 0;
@@ -3093,7 +3093,7 @@ LABEL_301:
 					return 2;
 				}
 				v82 = _vm->_globals.essai2;
-				if ((int16)READ_LE_UINT16(_vm->_globals.essai2) != -1) {
+				if (_vm->_globals.essai2[0] != -1) {
 					if (v144 < v138 && v140 < v138 && v142 < v138 && a6 >= v138) {
 						NV_LIGNEDEP = v138;
 						NV_LIGNEOFS = v139;
