@@ -375,7 +375,7 @@ public:
 	byte *COUCOU;
 	byte *chemin;
 	byte *cache_souris;
-	byte *BufLig;
+	int16 *BufLig;
 	byte *Bufferdecor;
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;

@@ -341,7 +341,7 @@ void Globals::clearAll() {
 	essai0 = (int16 *)g_PTRNUL;
 	essai1 = (int16 *)g_PTRNUL;
 	essai2 = (int16 *)g_PTRNUL;
-	BufLig = g_PTRNUL;
+	BufLig = (int16 *)g_PTRNUL;
 	chemin = g_PTRNUL;
 
 	for (int idx = 0; idx < 400; ++idx) {
@@ -371,7 +371,7 @@ void Globals::clearAll() {
 	essai0 = (int16 *)BUFFERTAPE;
 	essai1 = (int16 *)(BUFFERTAPE + 25000);
 	essai2 = (int16 *)(BUFFERTAPE + 50000);
-	BufLig = (BUFFERTAPE + 75000);
+	BufLig = (int16 *)(BUFFERTAPE + 75000);
 	largeur_boite = 240;
 	TEXTE_FORMATE = 300;
 

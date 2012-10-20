@@ -1289,7 +1289,7 @@ int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7,
 	int v48 = 0;
 	int v49 = 0; 
 	int v50; 
-	void *v51;
+	int16 *v51;
 	int v52; 
 	int v53; 
 	int v54; 
@@ -1436,16 +1436,16 @@ LABEL_17:
 		v83 = -v83;
 	if (v85 > 800)
 		v85 = 800;
-	memset(_vm->_globals.BufLig, 0, 0x7D0u);
+
+	Common::fill(&_vm->_globals.BufLig[0], &_vm->_globals.BufLig[1000], 0);
 	v23 = 0;
 	v88 = 0;
 	if (v85 + 1 > 0) {
 		v51 = _vm->_globals.BufLig;
 		do {
-error("v51 is an array, not an int");
 			v24 = v23;
-			*((uint16 *)v51 + v24) = v82;
-			*((uint16 *)v51 + v24 + 1) = v81;
+			v51[v24] = v82;
+			v51[v24 + 1] = v81;
 			v21 += v84;
 			v22 += v83;
 			v82 = v21 / 1000;
@@ -1459,8 +1459,8 @@ error("v51 is an array, not an int");
 	v89 = v85 + 1;
 	if ((int)(v85 + 1) > 0) {
 		do {
-			v96 = (int16)READ_LE_UINT16((uint16 *)_vm->_globals.BufLig + v25);
-			v94 = (int16)READ_LE_UINT16((uint16 *)_vm->_globals.BufLig + v25 + 1);
+			v96 = _vm->_globals.BufLig[v25];
+			v94 = _vm->_globals.BufLig[v25 + 1];
 			if (colision2_ligne(v96, v94, &v101, &v100, v92, v91) == 1 && _vm->_objectsManager.DERLIGNE < v100) {
 				v80 = v100;
 				v77 = v101;
