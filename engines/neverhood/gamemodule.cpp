@@ -149,102 +149,36 @@ void GameModule::initKeySlotsPuzzle() {
 }
 
 void GameModule::initMemoryPuzzle() {
-
-	// TODO: Give better names
-
-	byte array44[3];
-	byte array3C[10];
-	byte array30[48];
-	uint32 index3 = 48;
-	uint32 index2 = 9;
-	uint32 index1 = 2;
-	uint32 rndIndex;
-
-	// Exit if it's already initialized
-	if (getSubVar(VA_IS_PUZZLE_INIT, 0xC8606803))
-		return;
-
-	for (uint32 i = 0; i < 3; i++)
-		setSubVar(VA_CURR_DICE_NUMBERS, i, 1);
-
-	for (byte i = 0; i < 3; i++)
-		array44[i] = i;
-
-	for (byte i = 0; i < 10; i++)
-		array3C[i] = i;
-
-	for (byte i = 0; i < 48; i++)
-		array30[i] = i;
-
-	rndIndex = _vm->_rnd->getRandomNumber(3 - 1);
-
-	setSubVar(VA_DICE_MEMORY_SYMBOLS, array44[rndIndex], 5);
-
-	for (byte i = 5; i < 9; i++)
-		array3C[i] = array3C[i + 1];
-
-	while (rndIndex < 2) {
-		array44[rndIndex] = array44[rndIndex + 1];
-		rndIndex++;
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0xC8606803)) {
+		NonRepeatingRandomNumbers diceIndices(_vm->_rnd, 3);	
+		NonRepeatingRandomNumbers availableTiles(_vm->_rnd, 48);
+		NonRepeatingRandomNumbers tileSymbols(_vm->_rnd, 10);
+		for (uint32 i = 0; i < 3; i++)
+			setSubVar(VA_CURR_DICE_NUMBERS, i, 1);
+		// Set special symbols
+		// Symbol 5 is always one the three special symbols
+		setSubVar(VA_DICE_MEMORY_SYMBOLS, diceIndices.getNumber(), 5);
+		tileSymbols.removeNumber(5);
+		for (int i = 0; i < 2; i++)
+			setSubVar(VA_DICE_MEMORY_SYMBOLS, diceIndices.getNumber(), tileSymbols.getNumber());
+		// Insert special symbols tiles
+		for (uint32 i = 0; i < 3; ++i) {
+			int tileSymbolOccurence = _vm->_rnd->getRandomNumber(4 - 1) * 2 + 2;
+			setSubVar(VA_GOOD_DICE_NUMBERS, i, tileSymbolOccurence);
+			while (tileSymbolOccurence--)
+				setSubVar(VA_TILE_SYMBOLS, availableTiles.getNumber(), getSubVar(VA_DICE_MEMORY_SYMBOLS, i));
+		}
+		// Fill the remaining tiles
+		uint32 tileSymbolIndex = 0;
+		while (!availableTiles.empty()) {
+			setSubVar(VA_TILE_SYMBOLS, availableTiles.getNumber(), tileSymbols[tileSymbolIndex]);
+			setSubVar(VA_TILE_SYMBOLS, availableTiles.getNumber(), tileSymbols[tileSymbolIndex]);
+			tileSymbolIndex++;
+			if (tileSymbolIndex >= tileSymbols.size())
+				tileSymbolIndex = 0;
+		}
+		setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
 	}
-
-	for (int i = 0; i < 2; i++) {
-		uint32 rndIndex1 = _vm->_rnd->getRandomNumber(index2 - 1); // si
-		uint32 rndIndex2 = _vm->_rnd->getRandomNumber(index1 - 1); // di
-		setSubVar(VA_DICE_MEMORY_SYMBOLS, array44[rndIndex2], array3C[rndIndex1]);
-		index2--;
-		while (rndIndex1 < index2) {
-			array3C[rndIndex1] = array3C[rndIndex1 + 1];
-			rndIndex1++;
-		}
-		index1--;
-		while (rndIndex2 < index1) {
-			array44[rndIndex2] = array44[rndIndex2 + 1];
-			rndIndex2++;
-		}
-	}
-
-	for (uint32 i = 0; i < 3; i++) {
-		uint32 rndValue = _vm->_rnd->getRandomNumber(4 - 1) * 2 + 2;
-		uint32 index4 = 0;
-		setSubVar(VA_GOOD_DICE_NUMBERS, i, rndValue);
-		while (index4 < rndValue) {
-			uint32 rndIndex3 = _vm->_rnd->getRandomNumber(index3 - 1);
-			setSubVar(VA_TILE_SYMBOLS, array30[rndIndex3], getSubVar(VA_DICE_MEMORY_SYMBOLS, i));
-			index3--;
-			while (rndIndex3 < index3) {
-				array30[rndIndex3] = array30[rndIndex3 + 1];
-				rndIndex3++;
-			}
-			index4++;
-		}
-	}
-
-	uint32 index5 = 0;
-	while (index3 != 0) {
-		uint32 rndIndex4 = _vm->_rnd->getRandomNumber(index3 - 1);
-		index1 = array3C[index5];
-		setSubVar(VA_TILE_SYMBOLS, array30[rndIndex4], index1);
-		index3--;
-		while (rndIndex4 < index3) {
-			array30[rndIndex4] = array30[rndIndex4 + 1];
-			rndIndex4++;
-		}
-		uint32 rndIndex5 = _vm->_rnd->getRandomNumber(index3 - 1);
-		setSubVar(VA_TILE_SYMBOLS, array30[rndIndex5], index1);
-		index3--;
-		while (rndIndex5 < index3) {
-			array30[rndIndex5] = array30[rndIndex5 + 1];
-			rndIndex5++;
-		}
-		index5++;
-		if (index5 >= index2)
-			index5 = 0;
-
-	}
-
-	setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
-	
 }
 
 void GameModule::initWaterPipesPuzzle() {
@@ -344,8 +278,8 @@ void GameModule::startup() {
 
 #if 1
 	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 6;
-	createModule(1300, -1);
+	_vm->gameState().sceneNum = 4;
+	createModule(1100, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -811,18 +745,26 @@ void GameModule::updateMenuModule() {
 NonRepeatingRandomNumbers::NonRepeatingRandomNumbers(Common::RandomSource *rnd, int count)
 	: _rnd(rnd) {
 	for (int i = 0; i < count; i++)
-		_numbers.push_back(i);
+		push_back(i);
 }
 
 int NonRepeatingRandomNumbers::getNumber() {
 	int number;
 	if (!empty()) {
-		uint index = _rnd->getRandomNumber(_numbers.size() - 1);
-		number = _numbers[index];
-		_numbers.remove_at(index);
+		uint index = _rnd->getRandomNumber(size() - 1);
+		number = (*this)[index];
+		remove_at(index);
 	} else
 		number = 0;
 	return number;
+}
+
+void NonRepeatingRandomNumbers::removeNumber(int number) {
+	for (uint i = 0; i < size(); ++i)
+		if ((*this)[i] == number) {
+			remove_at(i);
+			break;
+		}
 }
 
 } // End of namespace Neverhood

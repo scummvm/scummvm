@@ -65,14 +65,13 @@ protected:
 	void updateMenuModule();
 };
 
-class NonRepeatingRandomNumbers {
+class NonRepeatingRandomNumbers : public Common::Array<int> {
 public:
 	NonRepeatingRandomNumbers(Common::RandomSource *rnd, int count);
 	int getNumber();
-	bool empty() const { return _numbers.empty(); }
+	void removeNumber(int number);
 protected:
 	Common::RandomSource *_rnd;
-	Common::Array<int> _numbers;
 };
 
 } // End of namespace Neverhood
