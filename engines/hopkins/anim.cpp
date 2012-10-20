@@ -38,6 +38,7 @@ AnimationManager::AnimationManager() {
 	NO_SEQ = false;
 }
 
+// Play Anim
 void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
 	signed __int16 v4; 
 	signed __int16 v5; 
@@ -239,6 +240,7 @@ LABEL_58:
 	_vm->_graphicsManager.NOLOCK = 0;
 }
 
+// Play Anim 2
 void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4) {
 	byte *v4; 
 	int v5; 
@@ -671,6 +673,7 @@ bool AnimationManager::REDRAW_ANIM() {
 	return false;
 }
 
+// Load Anim
 void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 	byte v20[15];
 	char header[10];
@@ -746,6 +749,7 @@ void AnimationManager::CLEAR_ANIM() {
 	}
 }
 
+// Load Sprite Bank 1
 int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filename) {
 	byte *v3;
 	byte *v4; 
@@ -843,6 +847,7 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	return result;
 }
 
+// Search Anim
 void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count) {
 	int v3;
 	const byte *v5; 

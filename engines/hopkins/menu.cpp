@@ -233,6 +233,7 @@ int MenuManager::MENU() {
 	return v6;
 }
 
+// Load Game
 void MenuManager::CHARGE_PARTIE() {
 	int v1; 
 	char v3; 
@@ -304,6 +305,7 @@ void MenuManager::CHARGE_PARTIE() {
 	_vm->_objectsManager.CHANGE_OBJET(14);
 }
 
+// Save Game
 void MenuManager::SAUVE_PARTIE() {
 	byte *v1; 
 	int v2; 
@@ -559,6 +561,7 @@ void MenuManager::COMPUT_HOPKINS(int idx) {
 	*/
 }
 
+// Load Save
 void MenuManager::LOAD_SAUVE(int a1) {
 	int v1; 
 	byte *v2; 
@@ -638,6 +641,7 @@ void MenuManager::LOAD_SAUVE(int a1) {
 	_vm->_objectsManager.SL_Y = 0;
 }
 
+// Search Game
 int MenuManager::CHERCHE_PARTIE() {
 	int v0; 
 	int v1; 
