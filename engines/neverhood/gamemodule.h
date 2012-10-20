@@ -65,6 +65,16 @@ protected:
 	void updateMenuModule();
 };
 
+class NonRepeatingRandomNumbers {
+public:
+	NonRepeatingRandomNumbers(Common::RandomSource *rnd, int count);
+	int getNumber();
+	bool empty() const { return _numbers.empty(); }
+protected:
+	Common::RandomSource *_rnd;
+	Common::Array<int> _numbers;
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE_H */

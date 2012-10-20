@@ -138,41 +138,14 @@ void GameModule::handleSpaceKey() {
 }
 
 void GameModule::initKeySlotsPuzzle() {
-
-	// Exit if it's already initialized
-	if (getSubVar(VA_IS_PUZZLE_INIT, 0x25400B10))
-		return;
-
-	for (uint i = 0; i < 3; i++) {
-		bool more;
-		do {
-			more = false;
-			setSubVar(VA_GOOD_KEY_SLOT_NUMBERS, i, _vm->_rnd->getRandomNumber(16 - 1));
-			if (i > 0) {
-				for (uint j = 0; j < i && !more; j++) {
-					more = getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, j) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, i);
-				}
-			}
-		} while (more);
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x25400B10)) {
+		NonRepeatingRandomNumbers keySlots(_vm->_rnd, 16);
+		for (uint i = 0; i < 3; i++) {
+			setSubVar(VA_GOOD_KEY_SLOT_NUMBERS, i, keySlots.getNumber());
+			setSubVar(VA_CURR_KEY_SLOT_NUMBERS, i, keySlots.getNumber());
+		}
+		setSubVar(VA_IS_PUZZLE_INIT, 0x25400B10, 1);
 	}
-
-	for (uint i = 0; i < 3; i++) {
-		bool more;
-		do {
-			more = false;
-			setSubVar(VA_CURR_KEY_SLOT_NUMBERS, i, _vm->_rnd->getRandomNumber(16 - 1));
-			if (i > 0) {
-				for (uint j = 0; j < i && !more; j++) {
-					more = getSubVar(VA_CURR_KEY_SLOT_NUMBERS, j) == getSubVar(VA_CURR_KEY_SLOT_NUMBERS, i);
-				}
-			}
-			if (getSubVar(VA_CURR_KEY_SLOT_NUMBERS, i) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, i))
-				more = true;
-		} while (more);
-	}
-
-	setSubVar(VA_IS_PUZZLE_INIT, 0x25400B10, 1);
-
 }
 
 void GameModule::initMemoryPuzzle() {
@@ -371,8 +344,8 @@ void GameModule::startup() {
 
 #if 1
 	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 1;
-	createModule(2400, -1);
+	_vm->gameState().sceneNum = 6;
+	createModule(1300, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -833,6 +806,23 @@ void GameModule::updateMenuModule() {
 		// TODO Create module from savegame values...
 		 // TODO createModuleByHash(...);
 	}
+}
+
+NonRepeatingRandomNumbers::NonRepeatingRandomNumbers(Common::RandomSource *rnd, int count)
+	: _rnd(rnd) {
+	for (int i = 0; i < count; i++)
+		_numbers.push_back(i);
+}
+
+int NonRepeatingRandomNumbers::getNumber() {
+	int number;
+	if (!empty()) {
+		uint index = _rnd->getRandomNumber(_numbers.size() - 1);
+		number = _numbers[index];
+		_numbers.remove_at(index);
+	} else
+		number = 0;
+	return number;
 }
 
 } // End of namespace Neverhood
