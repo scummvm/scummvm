@@ -574,16 +574,16 @@ static const uint32 kScene2402FileHashes[] = {
 };
 
 AsScene2402Door::AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool isOpen)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isOpen(isOpen) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isOpen(isOpen), _countdown(0) {
 
 	SetUpdateHandler(&AsScene2402Door::update);
 	SetMessageHandler(&AsScene2402Door::handleMessage);
 	createSurface1(0x80495831, 100);
 	_x = 320;
 	_y = 240;
-	_newStickFrameIndex = STICK_LAST_FRAME;
 	if (_isOpen) {
 		startAnimation(0x80495831, -1, -1);
+		_newStickFrameIndex = STICK_LAST_FRAME;
 		_countdown = 48;
 	} else {
 		stopAnimation();
@@ -749,7 +749,7 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x081A60A8, 1100);
 	_ssDoorFrame = (StaticSprite*)insertStaticSprite(0x406C0AE0, 1100);
 	_klayman->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 639, tempSprite->getDrawRect().y2());
-	_asDoor = insertSprite<AsScene2402Door>(this, which == 1/*CHECKME or != ?*/);
+	_asDoor = insertSprite<AsScene2402Door>(this, which == 0);
 	insertSprite<AsScene2402TV>(_klayman);
 	insertStaticSprite(0x3A01A020, 200);
 

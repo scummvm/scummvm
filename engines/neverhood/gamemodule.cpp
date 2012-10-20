@@ -366,12 +366,13 @@ void GameModule::startup() {
 	setGlobalVar(V_RADIO_ENABLED, 1);
 	setGlobalVar(V_TNT_DUMMY_BUILT, 1);
 	setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
+	setGlobalVar(V_TV_JOKE_TOLD, 1);
 	// <<<DEBUG
 
 #if 1
 	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 3;
-	createModule(1300, -1);
+	_vm->gameState().sceneNum = 1;
+	createModule(2400, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
