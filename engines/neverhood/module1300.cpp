@@ -1254,12 +1254,6 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _countdown(0), _asCurrKey(NULL),
 	_isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
 
-	//DEBUG>>>
-	setSubVar(VA_IS_KEY_INSERTED, 0, 1);
-	setSubVar(VA_IS_KEY_INSERTED, 1, 1);
-	setSubVar(VA_IS_KEY_INSERTED, 2, 1);
-	//DEBUG<<<
-
 	Sprite *tempSprite;
 	
 	_vm->gameModule()->initKeySlotsPuzzle();

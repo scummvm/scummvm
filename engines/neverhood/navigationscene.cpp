@@ -31,13 +31,6 @@ NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint
 
 	_navigationList = _vm->_staticData->getNavigationList(navigationListId);
 	
-	//DEBUG>>>
-	for (NavigationList::iterator it = _navigationList->begin(); it != _navigationList->end(); it++) {
-		debug("%08X %08X %08X %08X %d %d %08X",	(*it).fileHash,	(*it).leftSmackerFileHash, (*it).rightSmackerFileHash,
-		(*it).middleSmackerFileHash, (*it).interactive, (*it).middleFlag, (*it).mouseCursorFileHash);
-	}
-	//DEBUG<<<
-
 	if (_navigationIndex < 0) {
 		_navigationIndex = (int)getGlobalVar(V_NAVIGATION_INDEX);
 		if (_navigationIndex >= (int)_navigationList->size())

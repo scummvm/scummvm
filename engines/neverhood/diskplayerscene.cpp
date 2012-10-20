@@ -342,12 +342,6 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 
 	_asKey = insertSprite<AsDiskplayerSceneKey>();
 
-	// DEBUG>>>: Give all disks
-	for (int i = 0; i < 20; i++) {
-		setSubVar(VA_IS_TAPE_INSERTED, i, 1);
-	}
-	// DEBUG<<<
-
 	for (int i = 0; i < 20; i++) {
 		_diskAvailable[i] = 0;
 		if (getSubVar(VA_IS_TAPE_INSERTED, i))

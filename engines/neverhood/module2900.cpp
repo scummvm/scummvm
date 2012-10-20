@@ -389,11 +389,6 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_isButton2Broken = getGlobalVar(V_ENTRANCE_OPEN) != 0;
 
-	//DEBUG>>> Enable all locations
-	for (int i = 0; i < 6; i++)
-		setSubVar(V_TELEPORTER_DEST_AVAILABLE, i, 1);
-	//DEBUG<<<
-
 	setSubVar(V_TELEPORTER_DEST_AVAILABLE, which, 1);
 	setSubVar(V_TELEPORTER_DEST_AVAILABLE, 5, 1);
 	setSubVar(V_TELEPORTER_DEST_AVAILABLE, 4, 1);

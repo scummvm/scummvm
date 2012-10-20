@@ -36,10 +36,6 @@ Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->addSoundList(0x1A214010, kModule2300SoundList);
 	_vm->_soundMan->setSoundListParams(kModule2300SoundList, true, 50, 600, 10, 150);
 
-	//DEBUG>>>
-	setGlobalVar(V_WALL_BROKEN, 0);
-	//DEBUG<<<
-
 	_flag = getGlobalVar(V_WALL_BROKEN) == 0;
 	
 	if (_flag) {

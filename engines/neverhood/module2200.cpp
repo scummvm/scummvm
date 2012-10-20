@@ -896,11 +896,6 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	addEntity(_palette);
 	insertMouse435(0x00A08089, 20, 620);
 
-	//DEBUG>>>
-	for (uint32 index = 0; index < 9; index++)
-		setSubVar(VA_CUBE_POSITIONS, index, 7 - index);
-	//DEBUG<<<
-
 	for (uint32 index = 0; index < 9; index++) {
 		int16 value = (int16)getSubVar(VA_CUBE_POSITIONS, index);
 		if (value >= 0) {
@@ -1998,10 +1993,6 @@ SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int i
 
 Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _klaymanAtElevator(true), _elevatorSurfacePriority(0) {
-
-	//DEBUG>>>
-	//setGlobalVar(V_LIGHTS_ON, 1);
-	//DEBUG<<<
 
 	_vm->gameModule()->initCannonSymbolsPuzzle();
 

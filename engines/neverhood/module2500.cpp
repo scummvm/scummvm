@@ -92,9 +92,6 @@ void Module2500::createScene(int sceneNum, int which) {
 		createScene2704(which, 0x004B01B8, 220);
 		break;
 	case 2:
-		//DEBUG>>>Join the tracks.
-		setGlobalVar(V_WORLDS_JOINED, 1);
-		//DEBUG<<< 
 		_vm->gameState().which = which;
 		if (getGlobalVar(V_WORLDS_JOINED))
 			createScene2704(which, 0x004B01E0, 150);

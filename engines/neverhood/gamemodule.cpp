@@ -178,6 +178,21 @@ void GameModule::initMemoryPuzzle() {
 				tileSymbolIndex = 0;
 		}
 		setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
+
+		// DEBUG>>>
+		// TODO: Some debug code: Leave two matching tiles open
+		for (int i = 0; i < 48; i++)
+			setSubVar(VA_IS_TILE_MATCH, i, 1);
+		int debugIndex = 0;
+		setSubVar(VA_IS_TILE_MATCH, debugIndex, 0);
+		for (int i = 0; i < 48; i++) {
+			if (i != debugIndex && getSubVar(VA_TILE_SYMBOLS, i) == getSubVar(VA_TILE_SYMBOLS, debugIndex)) {
+				setSubVar(VA_IS_TILE_MATCH, i, 0);
+				break;
+			}
+		}
+		// <<<DEBUG
+
 	}
 }
 
@@ -274,6 +289,20 @@ void GameModule::startup() {
 	setGlobalVar(V_TNT_DUMMY_BUILT, 1);
 	setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
 	setGlobalVar(V_TV_JOKE_TOLD, 1);
+	// Give all disks
+	for (int i = 0; i < 20; i++)
+		setSubVar(VA_IS_TAPE_INSERTED, i, 1);
+	setSubVar(VA_IS_KEY_INSERTED, 0, 1);
+	setSubVar(VA_IS_KEY_INSERTED, 1, 1);
+	setSubVar(VA_IS_KEY_INSERTED, 2, 1);
+	for (uint32 index = 0; index < 9; index++)
+		setSubVar(VA_CUBE_POSITIONS, index, 7 - index);
+	setGlobalVar(V_WALL_BROKEN, 0);
+	setGlobalVar(V_WORLDS_JOINED, 1);
+	setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
+	// Enable all locations
+	for (int i = 0; i < 6; i++)
+		setSubVar(V_TELEPORTER_DEST_AVAILABLE, i, 1);
 	// <<<DEBUG
 
 #if 1

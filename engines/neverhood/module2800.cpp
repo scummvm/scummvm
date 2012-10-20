@@ -507,10 +507,6 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _currTuneStatus(0), _countdown1(0), _countdown2(0) {
 
-	//DEBUG>>> Disable video
-	setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
-	//DEBUG<<<
-		
 	SetMessageHandler(&Scene2802::handleMessage);
 	SetUpdateHandler(&Scene2802::update);
 	insertMouse435(0x008810A8, 20, 620);
@@ -2583,7 +2579,7 @@ uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entit
 
 void Scene2808::update() {
 
-	// DEBUG>>>: Show correct values
+	// DEBUG>>> Show correct values
 	debug("---------------");
 	debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
 	debug("%03d %03d %03d", _asTestTubes[0]->getFillLevel(), _asTestTubes[1]->getFillLevel(), _asTestTubes[2]->getFillLevel());
