@@ -102,7 +102,7 @@ Common::Error ComposerEngine::run() {
 	if (_bookIni.hasKey("Height", "Common"))
 		height = atoi(getStringFromConfig("Common", "Height").c_str());
 	initGraphics(width, height, true);
-	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_screen.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_needsUpdate = true;
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
@@ -214,7 +214,7 @@ Common::Error ComposerEngine::run() {
 		_system->delayMillis(20);
 	}
 
-	_surface.free();
+	_screen.free();
 
 	return Common::kNoError;
 }
