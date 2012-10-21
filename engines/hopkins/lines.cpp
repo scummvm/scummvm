@@ -2439,8 +2439,8 @@ LABEL_200:
 			}
 			v57 = v112;
 			if (PARC_PERS(
-			            _vm->_globals.Param[v112 + 4192 / 2],
-			            _vm->_globals.Param[v112 + 4194 / 2],
+			            _vm->_globals.super_parcours[v112 - 4],
+			            _vm->_globals.super_parcours[v112 - 3],
 			            v123,
 			            v122,
 			            -1,
@@ -2639,7 +2639,8 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	v142 = -1;
 	v140 = -1;
 	v138 = -1;
-	while (1) {
+
+	for (;;) {
 		v111 = v7;
 		v109 = v90;
 		if (a3 >= v7 - 2 && a3 <= v7 + 2 && a4 >= v90 - 2 && a4 <= v90 + 2) {
