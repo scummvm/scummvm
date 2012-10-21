@@ -320,7 +320,6 @@ int ObjectsManager::AJOUTE_OBJET(int objIndex) {
 
 // Display Sprite
 void ObjectsManager::AFF_SPRITES() {
-	int v0; 
 	int v1;
 	int v2;
 	int destX;
@@ -343,7 +342,6 @@ void ObjectsManager::AFF_SPRITES() {
 	int v27;
 	int x1_1;
 	int x1_2;
-	int v30;
 	int v33;
 	int v34;
 	int v35;
@@ -351,17 +349,16 @@ void ObjectsManager::AFF_SPRITES() {
 	int v37; 
 	uint16 arr[50];
 
+	// Handle drawing any on-screen text
 	_vm->_globals.NBTRI = 0;
-	v30 = 0;
-	do {
-		v0 = v30;
-		if (_vm->_fontManager.ListeTxt[v0].enabled && _vm->_fontManager.Txt[v30].field3FC != 2) {
-			v1 = _vm->_fontManager.ListeTxt[v30].xp;
+	for (int idx = 0; idx <= 10; ++idx) {
+		if (_vm->_fontManager.ListeTxt[idx].enabled && _vm->_fontManager.Txt[idx].field3FC != 2) {
+			v1 = _vm->_fontManager.ListeTxt[idx].xp;
 			x1_1 = v1 - 2;
       
 			if ((int16)(v1 - 2) < _vm->_graphicsManager.min_x)
 				x1_1 = _vm->_graphicsManager.min_x;
-			v2 = _vm->_fontManager.ListeTxt[v30].yp;
+			v2 = _vm->_fontManager.ListeTxt[idx].yp;
 			y1_1 = v2 - 2;
       
 			if ((int16)(v2 - 2) < _vm->_graphicsManager.min_y)
@@ -374,13 +371,12 @@ void ObjectsManager::AFF_SPRITES() {
 				destY = _vm->_graphicsManager.min_y;
 			
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, x1_1, y1_1,
-				_vm->_fontManager.ListeTxt[v30].width + 4, _vm->_fontManager.ListeTxt[destX].height + 4,
+				_vm->_fontManager.ListeTxt[idx].width + 4, _vm->_fontManager.ListeTxt[idx].height + 4,
 				_vm->_graphicsManager.VESA_BUFFER,
 				destX, destY);
-			_vm->_fontManager.ListeTxt[v0].enabled = false;
+			_vm->_fontManager.ListeTxt[idx].enabled = false;
 		}
-		++v30;
-	} while (v30 <= 10);
+	}
 
 	if (!PERSO_ON) {
 		for (int idx = 0; idx < 5; ++idx) {
@@ -632,6 +628,7 @@ void ObjectsManager::DEF_BOB(int idx) {
 	if (_vm->_globals.Bob[idx].field3C) {
 		xp = _vm->_globals.Bob[idx].field3E;
 		yp = _vm->_globals.Bob[idx].field40;
+
 		if (_vm->_globals.Bob[idx].field3A)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bob[idx].field4, 
 				xp + 300, yp + 300, _vm->_globals.Bob[idx].fieldC);
@@ -641,7 +638,7 @@ void ObjectsManager::DEF_BOB(int idx) {
 				_vm->_globals.Bob[idx].field40 + 300, _vm->_globals.Bob[idx].fieldC,
 				_vm->_globals.Bob[idx].field4A, _vm->_globals.Bob[idx].field48,
 				_vm->_globals.Bob[idx].field38);
-    
+
 		_vm->_globals.Liste2[idx].field0 = 1;
 		_vm->_globals.Liste2[idx].xp = xp;
 		_vm->_globals.Liste2[idx].yp = yp;

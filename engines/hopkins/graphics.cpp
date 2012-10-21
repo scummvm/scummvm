@@ -61,7 +61,7 @@ GraphicsManager::GraphicsManager() {
 	min_x = 0;
 	min_y = 20;
 	max_x = SCREEN_WIDTH * 2;
-	max_y = SCREEN_HEIGHT - 20 * 2;
+	max_y = SCREEN_HEIGHT - 20;
 	clip_x = clip_y = 0;
 	clip_x1 = clip_y1 = 0;
 	clip_flag = false;
