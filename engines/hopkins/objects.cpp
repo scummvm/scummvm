@@ -76,7 +76,6 @@ ObjectsManager::ObjectsManager() {
 	SPEED_IMAGE = 0;
 	SPEED_PTR = g_PTRNUL;
 	DERLIGNE = 0;
-	g_old_sens = 0;
 	A_ANIM = 0;
 	MA_ANIM = 0;
 	MA_ANIM1 = 0;
@@ -1913,7 +1912,6 @@ void ObjectsManager::GOHOME() {
 	int v50; 
 	__int16 v51;
 	__int16 v52;
-	__int16 v53;
 	__int16 v54;
 	int v55; 
 	__int16 v56;
@@ -1931,12 +1929,11 @@ void ObjectsManager::GOHOME() {
 		return;
 	}
 	_vm->_globals.Compteur = 0;
-	if (g_old_sens == -1) {
+	if (_vm->_globals.g_old_sens == -1) {
 		VERIFTAILLE();
 		nouveau_x = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
-		v53 = *_vm->_globals.chemin;
 		nouveau_y = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
@@ -1946,7 +1943,7 @@ void ObjectsManager::GOHOME() {
 		nouveau_anim = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
-		if (nouveau_x != -1 || v53 != -1) {
+		if (nouveau_x != -1 || nouveau_y != -1) {
 			_vm->_globals.g_old_sens = nouveau_sens;
 			_vm->_globals.g_old_sens2 = nouveau_sens;
 			_vm->_globals.g_old_anim = 0;
@@ -3154,7 +3151,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	CHANGEVERBE = 0;
 	_vm->_globals.NOSPRECRAN = 0;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	g_old_sens = -1;
+	_vm->_globals.g_old_sens = -1;
 	my_anim = 1;
 	A_ANIM = 0;
 	MA_ANIM = 0;
@@ -5542,7 +5539,7 @@ LABEL_1141:
 		if (v76 == 59) {
 			_vm->_globals.NOT_VERIF = 1;
 			g_old_x = XSPR(0);
-			g_old_sens = -1;
+			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			v16 = YSPR(0);
@@ -5662,7 +5659,7 @@ LABEL_1141:
 		if (v76 == 81) {
 			_vm->_globals.NOT_VERIF = 1;
 			g_old_x = XSPR(0);
-			g_old_sens = -1;
+			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			v22 = YSPR(0);
@@ -5884,7 +5881,7 @@ LABEL_1141:
 		if (v76 == 105) {
 			_vm->_globals.NOT_VERIF = 1;
 			g_old_x = XSPR(0);
-			g_old_sens = -1;
+			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
@@ -6241,7 +6238,7 @@ LABEL_1141:
 			_vm->_globals.CACHE_ON();
 			_vm->_globals.NOT_VERIF = 1;
 			g_old_x = XSPR(0);
-			g_old_sens = -1;
+			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
@@ -6728,7 +6725,7 @@ LABEL_1141:
 			_vm->_globals.NOPARLE = 0;
 			_vm->_globals.NOT_VERIF = 1;
 			g_old_x = XSPR(0);
-			g_old_sens = -1;
+			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
@@ -6749,7 +6746,7 @@ LABEL_1141:
 			_vm->_globals.NOPARLE = 0;
 			_vm->_globals.NOT_VERIF = 1;
 			g_old_x = XSPR(0);
-			g_old_sens = -1;
+			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
@@ -8273,7 +8270,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 		BOBANIM_OFF(3);
 		_vm->_globals.NOT_VERIF = 1;
 		g_old_x = XSPR(0);
-		g_old_sens = -1;
+		_vm->_globals.g_old_sens = -1;
 		_vm->_globals.Compteur = 0;
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		v7 = YSPR(0);
@@ -8394,7 +8391,7 @@ LABEL_70:
 	_vm->_eventsManager.souris_n = 4;
 	g_old_x = _vm->_objectsManager.PERX;
 	g_old_y = _vm->_objectsManager.PERY;
-	g_old_sens = -1;
+	_vm->_globals.g_old_sens = -1;
 	_vm->_globals.Compteur = 0;
 	_vm->_globals.BPP_NOAFF = 1;
 

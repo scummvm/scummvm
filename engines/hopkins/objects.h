@@ -101,7 +101,6 @@ public:
 	int SPEED_IMAGE;
 	byte *SPEED_PTR;
 	int DERLIGNE;
-	int g_old_sens;
 	int A_ANIM;
 	int MA_ANIM;
 	int MA_ANIM1;
