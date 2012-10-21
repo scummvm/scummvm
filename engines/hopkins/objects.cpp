@@ -349,7 +349,7 @@ void ObjectsManager::AFF_SPRITES() {
 	int v37; 
 	uint16 arr[50];
 
-	// Handle drawing any on-screen text
+	// Handle copying any background areas that text are going to be drawn on
 	_vm->_globals.NBTRI = 0;
 	for (int idx = 0; idx <= 10; ++idx) {
 		if (_vm->_fontManager.ListeTxt[idx].enabled && _vm->_fontManager.Txt[idx].field3FC != 2) {
@@ -406,7 +406,9 @@ void ObjectsManager::AFF_SPRITES() {
   
 	AFF_BOB_ANIM();
 	AFF_VBOB();
+
 	if (!PERSO_ON) {
+		// Handle drawing characters on the screen
 		for (int idx = 0; idx < 5; ++idx) {
 			_vm->_globals.Liste[idx].field0 = 0;
 			idx = idx;
@@ -1273,7 +1275,7 @@ int ObjectsManager::AvantTri(int a1, int a2, int a3) {
 
 	++_vm->_globals.NBTRI;
 	if (_vm->_globals.NBTRI > 48)
-		error("NBTRI TROP GRAND");
+		error("NBTRI too high");
   
 	result = _vm->_globals.NBTRI;
 	_vm->_globals.Tri[result].field0 = a1;
@@ -1628,14 +1630,14 @@ void ObjectsManager::CLEAR_SPR() {
 
 void ObjectsManager::SPRITE_ON(int idx) {
 	if (idx > 5)
-		error("Tentative d'affichage d'un sprite > MAX_SPRITE.");
+		error("Attempt to display a sprite > MAX_SPRITE.");
   
 	Sprite[idx].field0 = 1;
 }
 
 void ObjectsManager::SPRITE(const byte *spriteData, int xp, int yp, int idx, int a5, int a6, int a7, int a8, int a9) {
 	if (idx > 5)
-		error("Tentative d'affichage d'un sprite > MAX_SPRITE.");
+		error("Attempt to display a sprite > MAX_SPRITE.");
 	Sprite[idx].spriteData = spriteData;
 	Sprite[idx].spritePos = Common::Point(xp, yp);
 	Sprite[idx].field10 = a5;
