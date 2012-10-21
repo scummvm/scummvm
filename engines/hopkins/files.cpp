@@ -46,6 +46,7 @@ void FileManager::initSaves() {
 	SAUVE_FICHIER(dataFilename, data, 100);
 }
 
+// Save File
 bool FileManager::SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n) {
 	return bsave(file, buf, n);
 }
@@ -63,6 +64,7 @@ bool FileManager::bsave(const Common::String &file, const void *buf, size_t n) {
 		return false;
 }
 
+// Load INI File
 void FileManager::Chage_Inifile(Common::StringMap &iniParams) {
 	char *iniData = (char *)CHARGE_FICHIER("config.ini");
 	char *ptr = iniData;
@@ -105,6 +107,7 @@ void FileManager::Chage_Inifile(Common::StringMap &iniParams) {
 	free(iniData);
 }
 
+// Load File
 byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
 	DMESS1();
 
@@ -124,6 +127,7 @@ byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
 	return data;
 }
 
+// Load File 2
 void FileManager::CHARGE_FICHIER2(const Common::String &file, byte *buf) {
 	Common::File f;
 	size_t filesize;
@@ -137,10 +141,12 @@ void FileManager::CHARGE_FICHIER2(const Common::String &file, byte *buf) {
 	f.close();
 }
 
+// Guess: Debug Message
 void FileManager::DMESS() {
 	// No implementation in original
 }
 
+// Guess: Debug Message 1
 void FileManager::DMESS1() {
 	// No implementation in original
 }
@@ -158,6 +164,7 @@ int FileManager::bload_it(Common::ReadStream &stream, void *buf, size_t nbytes) 
 	return stream.read(buf, nbytes);
 }
 
+// Censorship
 void FileManager::F_Censure() {
 	_vm->_globals.CENSURE = false;
 
@@ -176,11 +183,13 @@ void FileManager::F_Censure() {
 	free(data);
 }
 
+// Build System
 int FileManager::CONSTRUIT_SYSTEM(const Common::String &file) {
 	_vm->_globals.NFICHIER = Common::String::format("system/%s", file.c_str());
 	return _vm->_globals.NFICHIER.size();
 }
 
+// Build File
 void FileManager::CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file) {
 	// At this point, the original program did a big switch statement to determine
 	// whether to preprend the CD or installed directory path into REPJEU
@@ -192,11 +201,13 @@ void FileManager::CONSTRUIT_FICHIER(const Common::String &hop, const Common::Str
 	_vm->_globals.NFICHIER = Common::String::format("%s/%s", hop.c_str(), file.c_str());
 }
 
+// Free File
 byte *FileManager::LIBERE_FICHIER(byte *ptr) {
 	free(ptr);
 	return g_PTRNUL;
 }
 
+// Search Cat
 byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	byte *ptr = NULL;
 	Common::File f;
@@ -344,6 +355,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	return result;
 }
 
+// File Size
 uint32 FileManager::FLONG(const Common::String &filename) {
 	Common::File f;
 	uint32 size;
@@ -357,6 +369,7 @@ uint32 FileManager::FLONG(const Common::String &filename) {
 	return size;
 }
 
+// Build Linux
 Common::String FileManager::CONSTRUIT_LINUX(const Common::String &file) {
 	return file;
 }

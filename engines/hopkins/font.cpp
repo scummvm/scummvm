@@ -51,6 +51,7 @@ void FontManager::clearAll() {
 	}
 }
 
+// Text On
 void FontManager::TEXTE_ON(int idx) {
 	if ((idx - 5) > 11)
 		error("Attempted to display text > MAX_TEXT.");
@@ -65,7 +66,7 @@ void FontManager::TEXTE_ON(int idx) {
 	}
 }
 
-
+// Text Off
 void FontManager::TEXTE_OFF(int idx) {
 	if ((idx - 5) > 11)
 			error("Attempted to display text > MAX_TEXT.");
@@ -80,10 +81,12 @@ void FontManager::TEXTE_OFF(int idx) {
 	}
 }
 
+// Text Color
 void FontManager::COUL_TXT(int idx, byte colByte) {
 	Txt[idx - 5].colour = colByte;
 }
 
+// Text Optimal Color
 void FontManager::OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4) {
 	COUL_TXT(idx1, 255);
 	COUL_TXT(idx2, 255);
@@ -91,6 +94,7 @@ void FontManager::OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4) {
 	COUL_TXT(idx4, 253);
 }
 
+// 
 void FontManager::DOS_TEXT(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int colour) {
 	if ((idx - 5) > 11)
 		error("Attempted to display text > MAX_TEXT.");
@@ -108,6 +112,7 @@ void FontManager::DOS_TEXT(int idx, int messageId, const Common::String &filenam
 	txt.colour = colour;
 }
 
+// Box
 void FontManager::BOITE(int idx, int messageId, const Common::String &filename, int xp, int yp) {
 	int filesize;
 	byte *v9; 

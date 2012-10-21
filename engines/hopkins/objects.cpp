@@ -110,6 +110,7 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
+// Change Object
 byte *ObjectsManager::CHANGE_OBJET(int objIndex) {
 	byte *result = ObjectsManager::CAPTURE_OBJET(objIndex, 1);
 	_vm->_globals.Bufferobjet = result;
@@ -170,6 +171,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 	return result;
 }
 
+// Delete Object
 void ObjectsManager::DELETE_OBJET(int objIndex) {
 	int v1;
 	int v2; 
@@ -240,6 +242,7 @@ int ObjectsManager::get_offsety(const byte *spriteData, int spriteIndex, bool is
 	return result;
 }
 
+// Get Width
 int ObjectsManager::Get_Largeur(const byte *objectData, int idx) {
 	const byte *rectP = objectData + 3;
 	for (int i = idx; i; --i)
@@ -248,6 +251,7 @@ int ObjectsManager::Get_Largeur(const byte *objectData, int idx) {
 	return (int16)READ_LE_UINT16(rectP + 4);
 }
 
+// Get height
 int ObjectsManager::Get_Hauteur(const byte *objectData, int idx) {
 	const byte *rectP = objectData + 3;
 	for (int i = idx; i; --i)
@@ -279,6 +283,7 @@ byte *ObjectsManager::DEL_FICHIER_OBJ() {
 	return result;
 }
 
+// Load Sprite
 byte *ObjectsManager::CHARGE_SPRITE(const Common::String &file) {
 	_vm->_fileManager.DMESS1();
 	return _vm->_fileManager.CHARGE_FICHIER(file);
@@ -297,6 +302,7 @@ int ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, int
 	return result;
 }
 
+// Add Object
 int ObjectsManager::AJOUTE_OBJET(int objIndex) {
 	bool flag = false;
 	int arrIndex = 0;
@@ -312,6 +318,7 @@ int ObjectsManager::AJOUTE_OBJET(int objIndex) {
 	return arrIndex;
 }
 
+// Display Sprite
 void ObjectsManager::AFF_SPRITES() {
 	int v0; 
 	int v1;
@@ -1139,6 +1146,7 @@ void ObjectsManager::DEF_CACHE(int idx) {
            _vm->_globals.Cache[idx].field4 + _vm->_globals.Cache[idx].field8);
 }
 
+// Compute Sprite
 void ObjectsManager::CALCUL_SPRITE(int idx) {
 	int width, height;
 	int v3;
@@ -1262,6 +1270,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 	}
 }
 
+// Before Sort
 int ObjectsManager::AvantTri(int a1, int a2, int a3) {
 	int result;
 
@@ -1277,6 +1286,7 @@ int ObjectsManager::AvantTri(int a1, int a2, int a3) {
 	return result;
 }
 
+// Display BOB Anim
 void ObjectsManager::AFF_BOB_ANIM() {
 	int v1;
 	int v2;
@@ -1465,6 +1475,7 @@ LABEL_38:
 	} while (v28 != 35);
 }
 
+// Display VBOB
 void ObjectsManager::AFF_VBOB() {
 	int width, height; 
 
@@ -1723,6 +1734,7 @@ void ObjectsManager::SETYSPR(int idx, int yp) {
 	Sprite[idx].spritePos.y = yp;
 }
 
+// Set Sprite Size
 void ObjectsManager::SETTAILLESPR(int idx, int a2) {
 	if (idx > 5)
 		error("Set the Coord. there a sprite> MAX_SPRITE.");
@@ -2448,6 +2460,7 @@ LABEL_19:
 	}
 }
 
+// Load Obstacle
 void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
 	__int16 v1; 
 	byte *ptr; 
@@ -2481,6 +2494,7 @@ void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
 	_vm->_globals.dos_free2(ptr);
 }
 
+// Load Zone
 void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 	signed int v1; 
 	int v2; 
@@ -2592,6 +2606,7 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 	_vm->_objectsManager.CARRE_ZONE();
 }
 
+// Square Zone
 void ObjectsManager::CARRE_ZONE() {
 	int16 *dataP;
 	int v4; 
@@ -2783,6 +2798,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.PLAN_FLAG = 0;
 }	
 
+// Left Button
 void ObjectsManager::BTGAUCHE() {
 	int v0;
 	int v1;
@@ -3086,6 +3102,7 @@ LABEL_64:
 	GOACTION = 0;
 }
 
+// Clear Screen
 void ObjectsManager::CLEAR_ECRAN() {
 	int v1;
 	int v2;
@@ -3340,6 +3357,7 @@ LABEL_7:
 	}
 }
 
+// Change Face/Head
 void ObjectsManager::CHANGE_TETE(int a1, int a2) {
 	int v2; 
 	Sauvegarde1 *v3; 
@@ -3454,6 +3472,7 @@ LABEL_9:
 	}
 }
 
+// Check Size
 void ObjectsManager::VERIFTAILLE() {
 	int v0; 
 	int v1; 

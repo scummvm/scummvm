@@ -59,6 +59,7 @@ void LinesManager::CLEAR_ZONE() {
 	next_ligne = 0;
 }
 
+// Object Zone
 int LinesManager::ZONE_OBJET(int a1, int a2) {
 	int v2;
 
@@ -127,6 +128,7 @@ int LinesManager::OPTI_ZONE(int a1, int a2, int a3) {
 	return v3;
 }
 
+// Remove Line Zone
 void LinesManager::RETIRE_LIGNE_ZONE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
@@ -136,7 +138,7 @@ void LinesManager::RETIRE_LIGNE_ZONE(int idx) {
 	_vm->_linesManager.LigneZone[idx].zoneData = (int16 *)g_PTRNUL;
 }
 
-
+// Add Line Zone
 void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, int a6) {
 	int v8; 
 	int v9; 
@@ -223,6 +225,7 @@ void LinesManager::RESET_OBSTACLE() {
 	}
 }
 
+// Remove Line
 void LinesManager::RETIRE_LIGNE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
@@ -231,6 +234,7 @@ void LinesManager::RETIRE_LIGNE(int idx) {
 	Ligne[idx].lineData = (int16 *)g_PTRNUL;
 }
 
+// Add Line
 void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7) {
 	int v7; 
 	int v8; 
@@ -381,6 +385,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	Ligne[idx].field4 = a2;
 }
 
+// Line Collision 2
 int LinesManager::colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
 	int v6; 
 	int16 *v7; 
@@ -587,6 +592,7 @@ LABEL_46:
 	return result;
 }
 
+// Init route
 void LinesManager::INIPARCOURS() {
 	int v0; 
 	int v1; 
@@ -649,6 +655,7 @@ void LinesManager::INIPARCOURS() {
 	} while (v8 != 400);
 }
 
+// Avoid
 int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7) {
 	int v7; 
 	int v8; 
@@ -788,6 +795,7 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	return v8;
 }
 
+// Avoid 1
 int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9) {
 	int v9; 
 	int v10;
@@ -1681,6 +1689,7 @@ LABEL_17:
 	return v99;
 }
 
+// Avoid 2
 // TODO: method casting int arrays as byte pointers. Double-check later whether
 // we can convert the return to a uint16 *
 int16 *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
@@ -3816,6 +3825,7 @@ LABEL_60:
 	return 1;
 }
 
+// Test line
 int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5) {
 	int i; 
 	int v6; 

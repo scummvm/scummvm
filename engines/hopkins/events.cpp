@@ -54,10 +54,12 @@ void EventsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
+// Install Mouse
 void EventsManager::INSTALL_SOURIS() {
 	// No implementation in original
 }
 
+// Mouse On
 void EventsManager::souris_on() {
 	souris_flag = true;
 
@@ -78,14 +80,17 @@ void EventsManager::souris_on() {
 		souris_xy(150, 100);
 }
 
+// Set Mouse position
 void EventsManager::souris_xy(int xp, int yp) {
 	g_system->warpMouse(xp, yp);
 }
 
+// Mouse Max
 void EventsManager::souris_max() {
 	// No implementation in original
 }
 
+// Get Mouse X
 int EventsManager::XMOUSE() {
 	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
 	souris_y = g_system->getEventManager()->getMousePos().y;
@@ -93,6 +98,7 @@ int EventsManager::XMOUSE() {
 	return souris_x + ofset_souris_x;
 }
 
+// Get Mouse Y
 int EventsManager::YMOUSE() {
 	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
 	souris_y = g_system->getEventManager()->getMousePos().y;
@@ -100,22 +106,26 @@ int EventsManager::YMOUSE() {
 	return souris_y + ofset_souris_y;
 }
 
+// Get Mouse Button
 int EventsManager::BMOUSE() {
 	CONTROLE_MES();
 	return souris_bb;
 }
 
+// Mouse Off
 void EventsManager::MOUSE_OFF() {
 	souris_flag = false;
 	g_system->showMouse(false);
 }
 
+// Mouse On
 void EventsManager::MOUSE_ON() {
 	souris_on();
 	souris_flag = true;
 	g_system->showMouse(true);
 }
 
+// Change Mouse Cursor
 void EventsManager::CHANGE_MOUSE(int id) {
 	int cursorId = id;
 
@@ -182,6 +192,7 @@ void EventsManager::CHANGE_MOUSE(int id) {
 	}
 }
 
+// Check Events
 void EventsManager::CONTROLE_MES() {
 	pollEvents();
 }

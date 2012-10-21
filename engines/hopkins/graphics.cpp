@@ -158,6 +158,7 @@ void GraphicsManager::DD_Unlock() {
 	}
 }
 
+// Clear Screen
 void GraphicsManager::Cls_Video() {
 	assert(VideoPtr);
 
@@ -170,6 +171,7 @@ void GraphicsManager::LOAD_IMAGE(const Common::String &file) {
 	INIT_TABLE(165, 170, Palette);
 }
 
+// Load Screen
 void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	bool flag;
 	Common::File f;
@@ -259,6 +261,7 @@ void GraphicsManager::INIT_TABLE(int a1, int a2, byte *palette) {
 	TABLE_COUL[0] = 1;
 }
 
+// Scroll Screen
 int GraphicsManager::SCROLL_ECRAN(int amount) {
 	int result = CLIP(amount, 0, SCREEN_WIDTH);
 	_vm->_eventsManager.start_x = result;
@@ -483,6 +486,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 	_vm->_globals.dos_free2(ptr);
 }
 
+// Clear Palette
 void GraphicsManager::Cls_Pal() {
 	Common::fill(&cmap[0], &cmap[PALETTE_BLOCK_SIZE], 0);
 	SD_PIXELS[0] = 0;
@@ -492,6 +496,7 @@ void GraphicsManager::Cls_Pal() {
 	}
 }
 
+// TODO: Check if it's normal it's defined two times (also in events).
 void GraphicsManager::souris_max() {
 	// Original has no implementation
 }
@@ -1495,6 +1500,7 @@ void GraphicsManager::RESET_SEGMENT_VESA() {
 	}
 }
 
+// Add VESA Segment
 void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 	int v4;
 	int v5;
@@ -1553,6 +1559,7 @@ int GraphicsManager::Magic_Number(signed int v) {
 	return result;
 }
 
+// Display VESA Segment
 void GraphicsManager::Affiche_Segment_Vesa() {
 	if (_vm->_globals.NBBLOC == 0)
 		return;
@@ -1748,6 +1755,7 @@ int GraphicsManager::Asm_Reduc(int v, int percentage) {
 	return v;
 }
 
+// Display 'Perfect?' 
 void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int spriteIndex, int a6, int a7, int a8) {
 	const byte *v8; 
 	int i; 
@@ -2165,6 +2173,7 @@ Aff_Zoom_Larg_Cont1:
 	}
 }
 
+// Display Speed
 void GraphicsManager::AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex) {
 	int width, height;
 
@@ -2242,6 +2251,7 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned 
 	} while (yCurrent != 1);
 }
 
+// Display Font
 void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, 
 									int characterIndex, int colour) {
 	const byte *v6;
@@ -2291,10 +2301,12 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 	} while (v16 != 1);
 }
 
+// Init Screen
 void GraphicsManager::INI_ECRAN(const Common::String &file) {
 	OPTI_INI(file, 0);
 }
 
+// Init Screen 2
 void GraphicsManager::INI_ECRAN2(const Common::String &file) {
 	OPTI_INI(file, 2);
 }
@@ -2483,6 +2495,7 @@ Video_Cont_Vbe:
 	}
 }
 
+// Reduce Screen
 // TODO: Check that v9 doesn't get set anywhere (apart from the current init to zero)
 void GraphicsManager::Reduc_Ecran(byte *a1, byte *a2, int a3, int a4, int a5, int a6, int a7) {
 	byte *v7; 

@@ -443,6 +443,7 @@ void Globals::CLEAR_VBOB() {
 	} 
 }
 
+// Load Object
 void Globals::CHARGE_OBJET() {
 	_vm->_fileManager.CONSTRUIT_SYSTEM("OBJET.DAT");
 	byte *data = _vm->_fileManager.CHARGE_FICHIER(NFICHIER);
@@ -475,11 +476,13 @@ byte *Globals::dos_free2(byte *p) {
 	return g_PTRNUL;
 }
 
+// Free File
 byte *Globals::LIBERE_FICHIER(byte *p) {
 	dos_free2(p);
 	return g_PTRNUL;
 }
 
+// Reset Cache
 void Globals::RESET_CACHE() {
 	byte *dataP;
 
@@ -509,6 +512,7 @@ void Globals::RESET_CACHE() {
 void Globals::CACHE_ON() {
 	CACHEFLAG = 1;
 }
+
 // TODO: Find why some calls have a parameter value
 void Globals::CACHE_OFF(int v1) {
 	CACHEFLAG = 0;
@@ -522,6 +526,7 @@ void Globals::CACHE_ADD(int idx) {
 	Cache[idx].fieldA = 1;
 }
 
+// Load Cache
 void Globals::CHARGE_CACHE(const Common::String &file) {
 	byte *v2 = g_PTRNUL;
 	int v4;
