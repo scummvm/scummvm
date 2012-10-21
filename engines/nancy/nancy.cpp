@@ -30,6 +30,7 @@
 
 #include "nancy/nancy.h"
 #include "nancy/resource.h"
+#include "nancy/iff.h"
 
 #include "engines/util.h"
 
@@ -103,6 +104,11 @@ Common::Error NancyEngine::run() {
 
 	// Setup mixer
 	syncSoundSettings();
+
+	IFF *boot = new IFF(this, "boot");
+	if (!boot->load())
+		error("Failed to load boot script");
+	delete boot;
 
 	Common::EventManager *ev = g_system->getEventManager();
 	bool quit = false;

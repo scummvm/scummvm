@@ -7,7 +7,8 @@ MODULE_OBJS = \
   resource.o \
   video.o \
   decompress.o \
-  audio.o
+  audio.o \
+  iff.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_NANCY), DYNAMIC_PLUGIN)
