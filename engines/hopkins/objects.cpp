@@ -613,73 +613,65 @@ void ObjectsManager::BOB_ZERO(int idx) {
 }
 
 void ObjectsManager::DEF_BOB(int idx) {
-	int v2;
-	int v3;
-	int v4;
 	int v5;
 	int v6;
 	int v7;
 	int v8;
 	int v9;
 	int v10;
-	int v11; 
-	int v12;
-	int v13;
+	int xp;
+	int yp;
 
-	v2 = idx;
-	if (_vm->_globals.Bob[v2].field40) {
-		v12 = _vm->_globals.Bob[v2].field42;
-		v13 = _vm->_globals.Bob[v2].field44;
-		if (_vm->_globals.Bob[v2].field3E)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bob[v2].field4, 
-				v12 + 300, v13 + 300, _vm->_globals.Bob[v2].fieldC);
+	if (_vm->_globals.Bob[idx].field3C) {
+		xp = _vm->_globals.Bob[idx].field3E;
+		yp = _vm->_globals.Bob[idx].field40;
+		if (_vm->_globals.Bob[idx].field3A)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bob[idx].field4, 
+				xp + 300, yp + 300, _vm->_globals.Bob[idx].fieldC);
 		else
 			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, 
-				_vm->_globals.Bob[v2].field4, v12 + 300, 
-				_vm->_globals.Bob[v2].field44 + 300, _vm->_globals.Bob[v2].fieldC,
-				_vm->_globals.Bob[v2].field4A, _vm->_globals.Bob[v2].field48,
-				_vm->_globals.Bob[v2].field38);
+				_vm->_globals.Bob[idx].field4, xp + 300, 
+				_vm->_globals.Bob[idx].field40 + 300, _vm->_globals.Bob[idx].fieldC,
+				_vm->_globals.Bob[idx].field4A, _vm->_globals.Bob[idx].field48,
+				_vm->_globals.Bob[idx].field38);
     
-		v3 = idx;
-		_vm->_globals.Liste2[v3].field0 = 1;
-		_vm->_globals.Liste2[v3].xp = v12;
-		_vm->_globals.Liste2[v3].yp = v13;
+		_vm->_globals.Liste2[idx].field0 = 1;
+		_vm->_globals.Liste2[idx].xp = xp;
+		_vm->_globals.Liste2[idx].yp = yp;
 		
-		v4 = idx;
-		_vm->_globals.Liste2[v3].width = _vm->_globals.Bob[v4].field42;
-		_vm->_globals.Liste2[v3].height = _vm->_globals.Bob[v4].field44;
+		_vm->_globals.Liste2[idx].width = _vm->_globals.Bob[idx].field42;
+		_vm->_globals.Liste2[idx].height = _vm->_globals.Bob[idx].field44;
 
-		v5 = _vm->_globals.Liste2[v3].xp;
+		v5 = _vm->_globals.Liste2[idx].xp;
 		v6 = _vm->_graphicsManager.min_x;
 		if (v5 < _vm->_graphicsManager.min_x) {
-			_vm->_globals.Liste2[v3].width -= _vm->_graphicsManager.min_x - v5;
-			_vm->_globals.Liste2[v3].xp = v6;
+			_vm->_globals.Liste2[idx].width -= _vm->_graphicsManager.min_x - v5;
+			_vm->_globals.Liste2[idx].xp = v6;
 		}
     
-		v7 = _vm->_globals.Liste2[v3].yp;
+		v7 = _vm->_globals.Liste2[idx].yp;
 		v8 = _vm->_graphicsManager.min_y;
 		if (v7 < _vm->_graphicsManager.min_y) {
-			_vm->_globals.Liste2[v3].height -= _vm->_graphicsManager.min_y - v7;
-			_vm->_globals.Liste2[v3].yp = v8;
+			_vm->_globals.Liste2[idx].height -= _vm->_graphicsManager.min_y - v7;
+			_vm->_globals.Liste2[idx].yp = v8;
 		}
     
-		v9 = _vm->_globals.Liste2[v3].xp;
-		if (_vm->_globals.Liste2[v3].width + v9 > _vm->_graphicsManager.max_x)
-			_vm->_globals.Liste2[v3].width = _vm->_graphicsManager.max_x - v9;
-		v10 = _vm->_globals.Liste2[v3].yp;
-		if (_vm->_globals.Liste2[v3].height + v10 > _vm->_graphicsManager.max_y)
-			_vm->_globals.Liste2[v3].height = _vm->_graphicsManager.max_y - v10;
+		v9 = _vm->_globals.Liste2[idx].xp;
+		if (_vm->_globals.Liste2[idx].width + v9 > _vm->_graphicsManager.max_x)
+			_vm->_globals.Liste2[idx].width = _vm->_graphicsManager.max_x - v9;
+		v10 = _vm->_globals.Liste2[idx].yp;
+		if (_vm->_globals.Liste2[idx].height + v10 > _vm->_graphicsManager.max_y)
+			_vm->_globals.Liste2[idx].height = _vm->_graphicsManager.max_y - v10;
     
-		if (_vm->_globals.Liste2[v3].width <= 0 || _vm->_globals.Liste2[v3].height <= 0)
-		_vm->_globals.Liste2[v3].field0 = 0;
+		if (_vm->_globals.Liste2[idx].width <= 0 || _vm->_globals.Liste2[idx].height <= 0)
+		_vm->_globals.Liste2[idx].field0 = 0;
 
-		v11 = idx;
-		if (_vm->_globals.Liste2[v11].field0 == 1)
+		if (_vm->_globals.Liste2[idx].field0 == 1)
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(
-                 _vm->_globals.Liste2[v11].xp,
-                 _vm->_globals.Liste2[v11].yp,
-                 _vm->_globals.Liste2[v11].xp + _vm->_globals.Liste2[v11].width,
-                 _vm->_globals.Liste2[v11].yp + _vm->_globals.Liste2[v11].height);
+                 _vm->_globals.Liste2[idx].xp,
+                 _vm->_globals.Liste2[idx].yp,
+                 _vm->_globals.Liste2[idx].xp + _vm->_globals.Liste2[idx].width,
+                 _vm->_globals.Liste2[idx].yp + _vm->_globals.Liste2[idx].height);
 	}
 }
 
