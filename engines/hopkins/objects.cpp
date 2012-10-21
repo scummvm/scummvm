@@ -331,8 +331,6 @@ void ObjectsManager::AFF_SPRITES() {
 	int v11;
 	uint16 *v12;
 	int v13; 
-	int v14; 
-	int v15; 
 	int v20;
 	int v21;
 	int y1_1;
@@ -345,8 +343,6 @@ void ObjectsManager::AFF_SPRITES() {
 	int v33;
 	int v34;
 	int v35;
-	int v36;
-	int v37; 
 	uint16 arr[50];
 
 	// Handle copying any background areas that text are going to be drawn on
@@ -411,11 +407,10 @@ void ObjectsManager::AFF_SPRITES() {
 		// Handle drawing characters on the screen
 		for (int idx = 0; idx < 5; ++idx) {
 			_vm->_globals.Liste[idx].field0 = 0;
-			idx = idx;
 			if (Sprite[idx].field0 == 1) {
 				CALCUL_SPRITE(idx);
 				if (Sprite[idx].field2A == 1)
-					AvantTri(2, idx, Sprite[idx].field32 + Sprite[idx].field2E);
+					AvantTri(TRI_SPRITE, idx, Sprite[idx].field32 + Sprite[idx].field2E);
 			}
 		} 
     
@@ -454,42 +449,51 @@ void ObjectsManager::AFF_SPRITES() {
 		if (_vm->_globals.NBTRI + 1 > 1) {
 			do {
 				v13 = arr[v35];
-				if (_vm->_globals.Tri[v13].field0 == 1)
-					DEF_BOB(_vm->_globals.Tri[v13].field2);
-				if (_vm->_globals.Tri[v13].field0 == 2)
-					DEF_SPRITE(_vm->_globals.Tri[v13].field2);
-				if (_vm->_globals.Tri[v13].field0 == 3)
-					DEF_CACHE(_vm->_globals.Tri[v13].field2);
-				_vm->_globals.Tri[v13].field0 = 0;
+				switch (_vm->_globals.Tri[v13].triMode) {
+				case TRI_BOB:
+					DEF_BOB(_vm->_globals.Tri[v13].index);
+					break;
+				case TRI_SPRITE:
+					DEF_SPRITE(_vm->_globals.Tri[v13].index);
+					break;
+				case TRI_CACHE:
+					DEF_CACHE(_vm->_globals.Tri[v13].index);
+					break;
+				default:
+					break;
+				}
+				_vm->_globals.Tri[v13].triMode = TRI_NONE;
 				++v35;
 			} while (v35 < _vm->_globals.NBTRI + 1);
 		}
 	} else {
-		v36 = 1;
 		if (_vm->_globals.NBTRI + 1 > 1) {
-			do {
-				v14 = v36;
-				if (_vm->_globals.Tri[v14].field0 == 1)
-					DEF_BOB(_vm->_globals.Tri[v14].field2);
-				if (_vm->_globals.Tri[v14].field0 == 2)
-					DEF_SPRITE(_vm->_globals.Tri[v14].field2);
-				if (_vm->_globals.Tri[v14].field0 == 3)
-					DEF_CACHE(_vm->_globals.Tri[v14].field2);
-				_vm->_globals.Tri[v14].field0 = 0;
-				++v36;
-			} while (v36 < _vm->_globals.NBTRI + 1);
+			for (int idx = 1; idx < (_vm->_globals.NBTRI + 1); ++idx) {
+				switch (_vm->_globals.Tri[idx].triMode) {
+				case TRI_BOB:
+					DEF_BOB(_vm->_globals.Tri[idx].index);
+					break;
+				case TRI_SPRITE:
+					DEF_SPRITE(_vm->_globals.Tri[idx].index);
+					break;
+				case TRI_CACHE:
+					DEF_CACHE(_vm->_globals.Tri[idx].index);
+					break;
+				default:
+					break;
+				}
+				_vm->_globals.Tri[idx].triMode = TRI_NONE;
+			}
 		}
 	}
 
-	v37 = 0;
-	do {
-		v15 = v37;
-		_vm->_globals.Tri[v15].field0 = 0;
-		_vm->_globals.Tri[v15].field4 = 0;
-		_vm->_globals.Tri[v15].field2 = 0;
-		_vm->_globals.Tri[v15].field6 = 0;
-		++v37;
-	} while (v37 <= 49);
+	// Reset the Tri array
+	for (int idx = 0; idx < 50; ++idx) {
+		_vm->_globals.Tri[idx].triMode = TRI_NONE;
+		_vm->_globals.Tri[idx].index = 0;
+		_vm->_globals.Tri[idx].field4 = 0;
+		_vm->_globals.Tri[idx].field6 = 0;
+	}
   
 	_vm->_globals.NBTRI = 0;
 	if (_vm->_globals.AFFINVEN == 1) {
@@ -1017,7 +1021,7 @@ void ObjectsManager::VERIFCACHE() {
 				if (v5 > 440)
 					v5 = 500;
 				
-				AvantTri(3, v8, v5);
+				AvantTri(TRI_CACHE, v8, v5);
 				_vm->_globals.Cache[v8].fieldA = 1;
 				_vm->_globals.Cache[v8].field10 = 1;
 			}
@@ -1270,7 +1274,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 }
 
 // Before Sort
-int ObjectsManager::AvantTri(int a1, int a2, int a3) {
+int ObjectsManager::AvantTri(TriMode triMode, int index, int a3) {
 	int result;
 
 	++_vm->_globals.NBTRI;
@@ -1278,8 +1282,8 @@ int ObjectsManager::AvantTri(int a1, int a2, int a3) {
 		error("NBTRI too high");
   
 	result = _vm->_globals.NBTRI;
-	_vm->_globals.Tri[result].field0 = a1;
-	_vm->_globals.Tri[result].field2 = a2;
+	_vm->_globals.Tri[result].triMode = triMode;
+	_vm->_globals.Tri[result].index = index;
 	_vm->_globals.Tri[result].field4 = a3;
   
 	return result;
@@ -1469,7 +1473,7 @@ LABEL_38:
 			if (v19 > 450)
 				v19 = 600;
 			if (_vm->_globals.Bob[v18].field3C == 1)
-			AvantTri(1, v28, v19);
+			AvantTri(TRI_BOB, v28, v19);
 		}
 	} while (v28 != 35);
 }

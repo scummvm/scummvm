@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/str.h"
+#include "hopkins/globals.h"
 
 namespace Hopkins {
 
@@ -166,7 +167,7 @@ public:
 	void DEF_SPRITE(int idx);
 	void DEF_CACHE(int idx);
 	void CALCUL_SPRITE(int idx);
-	int AvantTri(int a1, int a2, int a3);
+	int AvantTri(TriMode triMode, int index, int a3);
 	void AFF_BOB_ANIM();
 	void AFF_VBOB();
 

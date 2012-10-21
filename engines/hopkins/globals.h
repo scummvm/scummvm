@@ -165,9 +165,17 @@ struct BlocItem {
 	int y2;
 };
 
+/**
+ * Mode for TriItem records
+ */
+enum TriMode { TRI_NONE = 0, TRI_BOB = 1, TRI_SPRITE = 2, TRI_CACHE = 3 };
+
+/**
+ * Structure to represent a pending display of either a Bob, Sprite, or Cache Item.
+ */
 struct TriItem {
-	int field0;
-	int field2;
+	TriMode triMode;
+	int index;
 	int field4;
 	int field6;
 };
