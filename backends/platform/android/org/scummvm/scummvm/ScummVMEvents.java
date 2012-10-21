@@ -193,7 +193,7 @@ public class ScummVMEvents implements
 			boolean isMouse = MouseHelper.isMouse(e);
 			if (isMouse) {
 				// mouse button is pressed
-				return _mouseHelper.onTouch(e, false);
+				return _mouseHelper.onMouseEvent(e, false);
 			}
 		}
 
