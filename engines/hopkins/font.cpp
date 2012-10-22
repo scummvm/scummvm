@@ -220,7 +220,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			if (!f.open(nom_index))
 				error("Error opening file - %s", nom_index.c_str());
 			filesize = f.size();
-			for (int i = 0; i < (filesize / 4); ++i)
+			for (i = 0; i < (filesize / 4); ++i)
 				Index[i] = f.readUint32LE();
 			f.close();
 		}
@@ -255,8 +255,8 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 		do {
 			v13 = *v59;
 			if ((byte)(*v59 + 46) > 0x1Bu) {
-				if ((unsigned __int8)(v13 + 80) > 0x1Bu) {
-					if ((unsigned __int8)(v13 - 65) <= 0x19u || (unsigned __int8)(v13 - 97) <= 0x19u)
+				if ((byte)(v13 + 80) > 0x1Bu) {
+					if ((byte)(v13 - 65) <= 0x19u || (byte)(v13 - 97) <= 0x19u)
 						v13 = 32;
 				} else {
 					v13 -= 79;
@@ -289,7 +289,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			if (v64 + 1 > 0) {
 				do {
 					v16 = *(v60 + v15);
-					if ((unsigned __int8)v16 <= 0x1Fu)
+					if ((byte)v16 <= 0x1Fu)
 						v16 = 32;
 					_vm->_globals.largeur_boite += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, (byte)v16 - 32);
 					++v15;
@@ -373,7 +373,7 @@ LABEL_57:
 						v25 = 0;
 					if (TRIER_TEXT[v67] < TRIER_TEXT[v25])
 						TRIER_TEXT[v67] = 0;
-				} while (v25 != (signed __int16)v67);
+				} while (v25 != (int16)v67);
 				++v67;
 			} while (v67 <= 19);
 			v68 = 0;
@@ -383,7 +383,7 @@ LABEL_57:
 				++v68;
 			} while (v68 <= 19);
 
-			if ((unsigned __int16)(Txt[idx].field3FC - 2) > 1u) {
+			if ((uint16)(Txt[idx].field3FC - 2) > 1u) {
 				for (i = xp - _vm->_eventsManager.start_x; _vm->_globals.largeur_boite + i > 638 && i > -2 && Txt[idx].field3FC; i -= 2)
 					;
 				Txt[idx].xp = i;
@@ -418,7 +418,7 @@ LABEL_57:
 			v56 = v28;
 		}
 		v29 = Txt[idx].field3FC;
-		if (v29 == 1 || v29 == 3 || (unsigned __int16)(v29 - 5) <= 1u) {
+		if (v29 == 1 || v29 == 3 || (uint16)(v29 - 5) <= 1u) {
 			v49 = v51 * v53;
 			ptrd = _vm->_globals.dos_malloc2(v51 * v53);
 			if (ptrd == g_PTRNUL) {
