@@ -40,8 +40,8 @@ AnimationManager::AnimationManager() {
 
 // Play Anim
 void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
-	signed __int16 v4; 
-	signed __int16 v5; 
+	int v4; 
+	int v5; 
 	bool hasScreenCopy; 
 	byte *screenCopy = NULL; 
 	byte *v10 = NULL;
@@ -283,7 +283,7 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANM, filename);
 
 		if (!f.open(_vm->_globals.NFICHIER))
-			error("Error opening file - %s");
+			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
 		f.read(&buf, 6);
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
@@ -431,14 +431,14 @@ LABEL_77:
 		_vm->_eventsManager.lItCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (v8) {
-			if (*v12 != -4) {
+			if (*v12 != (byte)-4) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe3(v12, ptr);
 				if (_vm->_graphicsManager.Winbpp == 2)
 					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
 					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
-		} else if (*v12 != -4) {
+		} else if (*v12 != (byte)-4) {
 			if (_vm->_graphicsManager.Winbpp == 1)
 				_vm->_graphicsManager.Copy_Video_Vbe3(v12);
 			if (_vm->_graphicsManager.Winbpp == 2)
@@ -606,7 +606,7 @@ LABEL_114:
 
 			if (!v6) {
 				f.read(v12, READ_LE_UINT32(v13 + 8));
-				if (*v12 != -4)
+				if (*v12 != (byte)-4)
 					_vm->_graphicsManager.Copy_WinScan_Vbe3(v12, ptra);
 			}
 		} while (v6 != -1);
@@ -982,7 +982,7 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 	v10 = _vm->_globals.dos_malloc2(0x16u);
 	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, a2);
 	if (!f.open(_vm->_globals.NFICHIER))
-		error("Error opening file - %s", _vm->_globals.NFICHIER);
+		error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
 	f.read(&buf, 6u);
 	f.read(_vm->_graphicsManager.Palette, 0x320u);
@@ -1065,14 +1065,14 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 			_vm->_eventsManager.lItCounter = 0;
 			_vm->_graphicsManager.DD_Lock();
 			if (v7) {
-				if (*v9 != -4) {
+				if (*v9 != (byte)-4) {
 					_vm->_graphicsManager.Copy_WinScan_Vbe(v9, ptr);
 					if (_vm->_graphicsManager.Winbpp == 2)
 						_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					else
 						_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				}
-			} else if (*v9 != -4) {
+			} else if (*v9 != (byte)-4) {
 				if (_vm->_graphicsManager.Winbpp == 1)
 					_vm->_graphicsManager.Copy_Video_Vbe(v9);
 				if (_vm->_graphicsManager.Winbpp == 2)
@@ -1213,7 +1213,7 @@ LABEL_23:
 		_vm->_soundManager.PLAY_ANM_SOUND(v13++);
 		memset(&buf, 0, 6u);
 		memset(v11, 0, 0x13u);
-		if (f.read(v11, 0x10u) == -1)
+		if (f.read(v11, 16) != 16)
 			v4 = -1;
 
 		if (strncmp((const char *)v11, "IMAGE=", 7u))
@@ -1227,14 +1227,14 @@ LABEL_33:
 		_vm->_eventsManager.lItCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (v7) {
-			if (*v10 != -4) {
+			if (*v10 != (byte)-4) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptr);
 				if (_vm->_graphicsManager.Winbpp == 2)
 					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
 					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
-		} else if (*v10 != -4) {
+		} else if (*v10 != (byte)-4) {
 			if (_vm->_graphicsManager.Winbpp == 1)
 				_vm->_graphicsManager.Copy_Video_Vbe(v10);
 			if (_vm->_graphicsManager.Winbpp == 2)
@@ -1290,14 +1290,14 @@ LABEL_54:
 		do {
 			memset(&buf, 0, 6u);
 			memset(v11, 0, 0x13u);
-			if (f.read(v11, 0x10u) == -1)
+			if (f.read(v11, 16) != 16)
 				v5 = -1;
 
 			if (strncmp((const char *)v11, "IMAGE=", 7u))
 				v5 = -1;
 			if (!v5) {
 				f.read(v10, READ_LE_UINT32(v11 + 8));
-				if (*v10 != -4)
+				if (*v10 != (byte)-4)
 					_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptra);
 			}
 		} while (v5 != -1);
@@ -1315,6 +1315,5 @@ LABEL_54:
 	_vm->_globals.dos_free2(v11);
 	_vm->_eventsManager.souris_flag = 1;
 }
-
 
 } // End of namespace Hopkins
