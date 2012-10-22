@@ -1038,14 +1038,14 @@ LABEL_2:
 
 void TalkManager::REPONSE2(int a1, int a2) {
 	signed int v3; 
-	__int16 v4; 
-	__int16 v5; 
-	__int16 v6; 
-	__int16 v7; 
-	__int16 v8; 
-	__int16 v9; 
-	__int16 v10; 
-	__int16 v11; 
+	int v4; 
+	int v5; 
+	int v6; 
+	int v7; 
+	int v8; 
+	int v9; 
+	int v10; 
+	int v11; 
 
 	v3 = 0;
 	if (a2 == 5 && _vm->_globals.SAUVEGARDE->data[svField3] == 4) {
