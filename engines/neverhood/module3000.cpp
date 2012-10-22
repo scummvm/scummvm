@@ -475,14 +475,8 @@ SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Sc
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
-	_collisionBoundsOffset.x = 0;
-	_collisionBoundsOffset.y = 0;
-	_collisionBoundsOffset.width = _spriteResource.getDimensions().width;
-	_collisionBoundsOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_collisionBoundsOffset = _drawOffset;
 	setVisible(false);
 	updateBounds();
 	_needRefresh = true;
@@ -521,10 +515,7 @@ SsScene3009SymbolEdges::SsScene3009SymbolEdges(NeverhoodEngine *vm, int index)
 	createSurface(600, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_needRefresh = true;
 	if (getGlobalVar(V_ROBOT_HIT)) {
 		hide();
@@ -573,10 +564,7 @@ SsScene3009TargetLine::SsScene3009TargetLine(NeverhoodEngine *vm, int index)
 	createSurface(600, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	setVisible(false);
 	_needRefresh = true;
 }
@@ -595,10 +583,7 @@ SsScene3009SymbolArrow::SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSy
 	createSurface(1200, 33, 31);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = 33;
-	_drawOffset.height = 31;
+	_drawOffset.set(0, 0, 33, 31);
 	_collisionBoundsOffset = _drawOffset;
 	updateBounds();
 	_needRefresh = true;
@@ -617,10 +602,7 @@ void SsScene3009SymbolArrow::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
 		_spriteResource.load2(kSsScene3009SymbolArrowFileHashes2[_index]);
 		_needRefresh = true;
-		_drawOffset.x = 0;
-		_drawOffset.y = 0;
-		_drawOffset.width = _spriteResource.getDimensions().width;
-		_drawOffset.height = _spriteResource.getDimensions().height;
+		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	}
 }
 
@@ -632,10 +614,7 @@ uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam 
 			_countdown = 2;
 			_spriteResource.load2(kSsScene3009SymbolArrowFileHashes1[_index]);
 			_needRefresh = true;
-			_drawOffset.x = 0;
-			_drawOffset.y = 0;
-			_drawOffset.width = _spriteResource.getDimensions().width;
-			_drawOffset.height = _spriteResource.getDimensions().height;
+			_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 			playSound(0);
 			sendMessage(_asSymbol, 0x2005, _incrDecr);
 		}
@@ -1155,10 +1134,7 @@ void SsScene3010DeadBoltButton::setSprite(uint32 fileHash) {
 	_spriteResource.load(fileHash);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_collisionBoundsOffset = _drawOffset;
 	updateBounds();
 	_needRefresh = true;
@@ -1430,10 +1406,7 @@ SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bo
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_collisionBoundsOffset = _drawOffset;
 	setVisible(false);
 	updateBounds();

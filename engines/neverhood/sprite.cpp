@@ -147,10 +147,7 @@ void StaticSprite::init(uint32 fileHash, int surfacePriority, int16 x, int16 y, 
 	_x = x == kDefPosition ? _spriteResource.getPosition().x : x;
 	_y = y == kDefPosition ? _spriteResource.getPosition().y : y;
 	
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = width;
-	_drawOffset.height = height; 
+	_drawOffset.set(0, 0, width, height);
 
 	_needRefresh = true;
 
@@ -187,10 +184,7 @@ void StaticSprite::load(uint32 fileHash, bool dimensions, bool position) {
 	_spriteResource.load2(fileHash);
 
 	if (dimensions) {
-		_drawOffset.x = 0;
-		_drawOffset.y = 0;
-		_drawOffset.width = _spriteResource.getDimensions().width;
-		_drawOffset.height = _spriteResource.getDimensions().height;
+		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	}
 
 	if (position) {

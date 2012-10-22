@@ -1373,10 +1373,7 @@ SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *paren
 	else
 		_spriteResource.load2(0x11814A21);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	_collisionBoundsOffset = _drawOffset;
@@ -1416,10 +1413,7 @@ SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x8889B008);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -1450,10 +1444,7 @@ SsScene2804LightTarget::SsScene2804LightTarget(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x06092132);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -1484,10 +1475,7 @@ SsScene2804Flash::SsScene2804Flash(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x211003A0);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -1507,10 +1495,7 @@ SsScene2804BeamCoilBody::SsScene2804BeamCoilBody(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x9A816000);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -1656,10 +1641,7 @@ SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene280
 		_spriteResource.load2(kSsScene2804CrystalButtonFileHashes2[crystalIndex]);
 
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	_collisionBoundsOffset = _drawOffset;
@@ -2262,10 +2244,7 @@ SsScene2808Dispenser::SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentSce
 	
 	_spriteResource.load2(kClass428FileHashes[testTubeSetNum * 3 + testTubeIndex]);
 	createSurface(1500, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	_collisionBoundsOffset = _drawOffset;

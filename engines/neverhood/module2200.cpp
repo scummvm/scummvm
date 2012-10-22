@@ -490,10 +490,8 @@ SsScene2201PuzzleCube::SsScene2201PuzzleCube(NeverhoodEngine *vm, uint32 positio
 	
 	_spriteResource.load2(kSsScene2201PuzzleCubeFileHashes[cubeIndex]);
 	createSurface(100, 16, 16);
-	_drawOffset.x = -(_spriteResource.getDimensions().width / 2);
-	_drawOffset.y = -(_spriteResource.getDimensions().height / 2);
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
+		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = kSsScene2201PuzzleCubePoints[positionIndex].x;
 	_y = kSsScene2201PuzzleCubePoints[positionIndex].y;
 	_needRefresh = true;
@@ -683,10 +681,8 @@ SsScene2202PuzzleTile::SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentS
 	} else {
 		createSurface(500, 128, 128);
 	}
-	_drawOffset.x = -(_spriteResource.getDimensions().width / 2);
-	_drawOffset.y = -(_spriteResource.getDimensions().height / 2);
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
+		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_collisionBoundsOffset = _drawOffset;
 	_x = kSsScene2202PuzzleTilePoints[_tileIndex].x;
 	_y = kSsScene2202PuzzleTilePoints[_tileIndex].y;
@@ -792,10 +788,8 @@ void SsScene2202PuzzleTile::suMoveTileY() {
 void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 
 	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes1[_value]);
-	_drawOffset.x = -(_spriteResource.getDimensions().width / 2);
-	_drawOffset.y = -(_spriteResource.getDimensions().height / 2);
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
+		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_needRefresh = true;
 
 	setSubVar(VA_CUBE_POSITIONS, _tileIndex, (uint32)-1);
@@ -873,10 +867,8 @@ void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 
 void SsScene2202PuzzleTile::stopMoving() {
 	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes2[_value]);
-	_drawOffset.x = -(_spriteResource.getDimensions().width / 2);
-	_drawOffset.y = -(_spriteResource.getDimensions().height / 2);
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
+		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_needRefresh = true;
 	SetSpriteUpdate(NULL);
 	_isMoving = false;
@@ -1225,10 +1217,7 @@ SsScene2205DoorFrame::SsScene2205DoorFrame(NeverhoodEngine *vm)
 	SetMessageHandler(&SsScene2205DoorFrame::handleMessage);
 	_spriteResource.load2(getGlobalVar(V_LIGHTS_ON) ? 0x24306227 : 0xD90032A0);
 	createSurface(1100, 45, 206);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	_needRefresh = true;
@@ -1240,10 +1229,7 @@ uint32 SsScene2205DoorFrame::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case 0x2000:
 		_spriteResource.load2(getGlobalVar(V_LIGHTS_ON) ? 0x24306227 : 0xD90032A0);
-		_drawOffset.x = 0;
-		_drawOffset.y = 0;
-		_drawOffset.width = _spriteResource.getDimensions().width;
-		_drawOffset.height = _spriteResource.getDimensions().height;
+		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 		_x = _spriteResource.getPosition().x;
 		_y = _spriteResource.getPosition().y;
 		_needRefresh = true;

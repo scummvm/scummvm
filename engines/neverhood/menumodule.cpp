@@ -166,10 +166,7 @@ MainMenuButton::MainMenuButton(NeverhoodEngine *vm, Scene *parentScene, uint but
 	_spriteResource.load2(kMainMenuButtonFileHashes[_buttonIndex]);
 	createSurface(100, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 

@@ -487,10 +487,7 @@ SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x070220D9);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.x = 0;
-	_drawOffset.y = 0;
-	_drawOffset.width = _spriteResource.getDimensions().width;
-	_drawOffset.height = _spriteResource.getDimensions().height;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	_collisionBoundsOffset = _drawOffset;
