@@ -35,6 +35,7 @@ namespace Nancy {
 class NancyEngine;
 
 #define ID_DATA     MKTAG('D', 'A', 'T', 'A')
+#define ID_PCAL     MKTAG('P', 'C', 'A', 'L')
 
 class IFF {
 public:
@@ -42,7 +43,7 @@ public:
 	~IFF();
 
 	bool load();
-	const byte *getChunk(uint32 id, uint &size);
+	const byte *getChunk(uint32 id, uint &size) const;
 
 private:
 	Common::String idToString(uint32 id);

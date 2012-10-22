@@ -87,7 +87,7 @@ bool IFF::load() {
 	return true;
 }
 
-const byte *IFF::getChunk(uint32 id, uint &size) {
+const byte *IFF::getChunk(uint32 id, uint &size) const {
 	for (uint i = 0; i < _chunks.size(); ++i) {
 		const Chunk &chunk = _chunks[i];
 		if (chunk.id == id) {
@@ -96,7 +96,6 @@ const byte *IFF::getChunk(uint32 id, uint &size) {
 		}
 	}
 
-	warning("Failed to locate chunk");
 	return 0;
 }
 

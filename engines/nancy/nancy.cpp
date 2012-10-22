@@ -27,6 +27,7 @@
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/memstream.h"
 
 #include "nancy/nancy.h"
 #include "nancy/resource.h"
@@ -108,6 +109,7 @@ Common::Error NancyEngine::run() {
 	IFF *boot = new IFF(this, "boot");
 	if (!boot->load())
 		error("Failed to load boot script");
+	preloadCals(*boot);
 	delete boot;
 
 	Common::EventManager *ev = g_system->getEventManager();
@@ -141,6 +143,35 @@ void NancyEngine::initialize() {
 
 	_rnd = new Common::RandomSource("nancy");
 	_rnd->setSeed(42);                              // Kick random number generator
+}
+
+void NancyEngine::preloadCals(const IFF &boot) {
+	const byte *buf;
+	uint size;
+	buf = boot.getChunk(ID_PCAL, size);
+
+	if (buf) {
+		Common::MemoryReadStream stream(buf, size);
+		uint16 count = stream.readUint16LE();
+		debugC(1, kDebugEngine, "Preloading %d CALs", count);
+		int nameLen = size / count;
+
+		char *name = new char[nameLen];
+
+		for (uint i = 0; i < count; i++) {
+			stream.read(name, nameLen);
+			name[nameLen - 1] = 0;
+			debugC(1, kDebugEngine, "Preloading CAL '%s'", name);
+			if (!_res->loadCifTree(name, "cal"))
+				error("Failed to preload CAL '%s'", name);
+		}
+
+		delete[] name;
+
+		if (stream.err())
+			error("Error reading PCAL chunk");
+	} else
+		debugC(1, kDebugEngine, "No PCAL chunk found");
 }
 
 void NancyEngine::syncSoundSettings() {
