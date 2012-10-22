@@ -263,7 +263,7 @@ TextSplitter::TextSplitter(Common::SeekableReadStream *data) {
 	// Allocate an array of the lines
 	_lines = new char *[_numLines];
 	line = (char *)_stringData;
-	for (i = 0; i < _numLines;i++) {
+	for (i = 0; i < _numLines; i++) {
 		char *lastLine = line;
 		line = strchr(lastLine, '\n');
 		*line = '\0';
