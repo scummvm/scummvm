@@ -6840,7 +6840,7 @@ void ObjectsManager::VBOB(byte *a1, int idx, int a3, int a4, int a5) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 	
-	if (_vm->_globals.VBob[idx].field4 <= 1u) {
+	if (_vm->_globals.VBob[idx].field4 <= 1) {
 		_vm->_globals.VBob[idx].field4 = 1;
 		_vm->_globals.VBob[idx].field6 = a3;
 		_vm->_globals.VBob[idx].field8 = a4;
@@ -7984,9 +7984,9 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4
 	int v6; 
 	int16 v7; 
 	char v8; 
-	__int32 v9; 
+	int v9; 
 	int16 v10; 
-	__int32 v11; 
+	int v11; 
 	int spriteIndex; 
 	char v14; 
 	int16 v15; 
