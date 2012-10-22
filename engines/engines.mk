@@ -76,7 +76,7 @@ endif
 endif
 
 ifdef ENABLE_HOPKINS
-DEFINES += -DENABLE_HUGO=$(ENABLE_HOPKINS)
+DEFINES += -DENABLE_HOPKINS=$(ENABLE_HOPKINS)
 MODULES += engines/hopkins
 endif
 
