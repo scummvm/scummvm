@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	sjis.o \
 	surface.o \
 	thumbnail.o \
+	usable_surface.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	wincursor.o \
