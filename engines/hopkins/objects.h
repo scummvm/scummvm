@@ -37,7 +37,7 @@ struct SpriteItem {
 	int spriteY;
 	int fieldC;
 	int fieldE;
-	int field10;
+	int spriteIndex;
 	int field12;
 	int field14;
 	byte *field1C;
@@ -176,7 +176,7 @@ public:
 
 	void CLEAR_SPR();
 	void SPRITE_ON(int idx);
-	void SPRITE(const byte *spriteData, int xp, int yp, int idx, int a5, int a6, int a7, int a8, int a9);
+	void SPRITE(const byte *spriteData, int xp, int yp, int idx, int spriteIndex, int a6, int a7, int a8, int a9);
 	void SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, int a5);
 	void SPRITE_OFF(int idx);
 	void SPRITE_GEL(int idx);
@@ -185,7 +185,7 @@ public:
 	int POSISPR(int idx);
 	void SETPOSISPR(int idx, int a2);
 	void SETXSPR(int idx, int xp);
-	void SETANISPR(int idx, int a2);
+	void SETANISPR(int idx, int spriteIndex);
 	void SETYSPR(int idx, int yp);
 	void SETTAILLESPR(int idx, int a2);
 	void SETFLIPSPR(int idx, int a2);

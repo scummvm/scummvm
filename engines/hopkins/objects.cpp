@@ -965,7 +965,7 @@ void ObjectsManager::VERIFCACHE() {
 			v10 = 0;
 			do {
 				if (Sprite[v10].field0 == 1) {
-					if (Sprite[v10].field10 != 250) {
+					if (Sprite[v10].spriteIndex != 250) {
 						v1 = Sprite[v10].field2C;
 						v11 = Sprite[v10].field30 + v1;
 						v2 = Sprite[v10].field32 + Sprite[v10].field2E;
@@ -1095,10 +1095,10 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		v4 = Sprite[v2].field2E;
 		if (Sprite[v2].field28)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData, 
-				v3 + 300, v4 + 300, Sprite[v2].field10);
+			v3 + 300, v4 + 300, Sprite[v2].spriteIndex);
 		else
 			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData, 
-				v3 + 300, v4 + 300,  Sprite[v2].field10, Sprite[v2].field36, Sprite[v2].field34, Sprite[v2].fieldE);
+				v3 + 300, v4 + 300,  Sprite[v2].spriteIndex, Sprite[v2].field36, Sprite[v2].field34, Sprite[v2].fieldE);
 
 		v5 = idx;
 		v6 = idx;
@@ -1168,18 +1168,18 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 	int v22;
 
 	Sprite[idx].field2A = 0;
-	int v0 = Sprite[idx].field10;
-	if (v0 != 250) {
+	int spriteIndex = Sprite[idx].spriteIndex;
+	if (spriteIndex != 250) {
 		if (Sprite[idx].fieldE) {
-			v5 = get_offsetx(Sprite[idx].spriteData, v0, 1);
+			v5 = get_offsetx(Sprite[idx].spriteData, spriteIndex, 1);
 			v22 = Sprite[idx].field12 + v5;
 			v4 = Sprite[idx].field12 + v5;
-			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].field10, 1);
+			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].spriteIndex, 1);
 		} else {
-			v3 = get_offsetx(Sprite[idx].spriteData, v0, 0);
+			v3 = get_offsetx(Sprite[idx].spriteData, spriteIndex, 0);
 			v22 = Sprite[idx].field12 + v3;
 			v4 = Sprite[idx].field12 + v3;
-			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].field10, 0);
+			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].spriteIndex, 0);
 		}
     
 		v9 = Sprite[idx].field14 + v6;
@@ -1254,8 +1254,8 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 		_vm->_globals.Liste[v17].field0 = 1;
 		_vm->_globals.Liste[v17].field2 = v15;
 		_vm->_globals.Liste[v17].field4 = v16;
-		width = Get_Largeur(Sprite[idx].spriteData, Sprite[idx].field10);
-		height = Get_Hauteur(Sprite[idx].spriteData, Sprite[idx].field10);
+		width = Get_Largeur(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
+		height = Get_Hauteur(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
 
 		if (zoomPercent) {
 			width = _vm->_graphicsManager.Reel_Zoom(width, zoomPercent);
@@ -1638,12 +1638,12 @@ void ObjectsManager::SPRITE_ON(int idx) {
 	Sprite[idx].field0 = 1;
 }
 
-void ObjectsManager::SPRITE(const byte *spriteData, int xp, int yp, int idx, int a5, int a6, int a7, int a8, int a9) {
+void ObjectsManager::SPRITE(const byte *spriteData, int xp, int yp, int idx, int spriteIndex, int a6, int a7, int a8, int a9) {
 	if (idx > 5)
 		error("Attempt to display a sprite > MAX_SPRITE.");
 	Sprite[idx].spriteData = spriteData;
 	Sprite[idx].spritePos = Common::Point(xp, yp);
-	Sprite[idx].field10 = a5;
+	Sprite[idx].spriteIndex = spriteIndex;
 	Sprite[idx].fieldC = a6;
 	Sprite[idx].field12 = a8;
 	Sprite[idx].field14 = a9;
@@ -1698,13 +1698,13 @@ void ObjectsManager::SPRITE_GEL(int idx) {
 int ObjectsManager::SXSPR(int idx) {
 	if (idx > 5)
 		error("request of the size of a sprite x > MAX_SPRITE.");
-	return Get_Largeur(Sprite[idx].spriteData, Sprite[idx].field10);
+	return Get_Largeur(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
 }
 
 int ObjectsManager::SYSPR(int idx) {
 	if (idx > 5)
 		error("request of the size of a sprite y > MAX_SPRITE.");
-	return Get_Hauteur(Sprite[idx].spriteData, Sprite[idx].field10);
+	return Get_Hauteur(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
 }
 
 int ObjectsManager::POSISPR(int idx) {
@@ -1723,11 +1723,11 @@ void ObjectsManager::SETXSPR(int idx, int xp) {
 	Sprite[idx].spritePos.x = xp;
 }
 
-void ObjectsManager::SETANISPR(int idx, int a2) {
+void ObjectsManager::SETANISPR(int idx, int spriteIndex) {
 	if (idx > 5)
 		error("Set the Coord. x a sprite> MAX_SPRITE.");
 
-	Sprite[idx].field10 = a2;
+	Sprite[idx].spriteIndex = spriteIndex;
 }
 
 void ObjectsManager::SETYSPR(int idx, int yp) {
@@ -2800,31 +2800,30 @@ void ObjectsManager::PLAN_BETA() {
 
 // Left Button
 void ObjectsManager::BTGAUCHE() {
-	int v0;
+	int srcX, srcY;
+	int destX, destY;
 	int v1;
 	int v2;
 	int16 *v3; 
 	int16 *v4; 
 	int16 *v5; 
-	int v6; 
-	int v7;
-	int v8;
+	int zoneCount; 
+	int zoneX;
+	int zoneY;
 	int16 *v9; 
 	int v10;
 	int v11;
 	int v12;
 	int16 *v13; 
-	int v14;
-	int v15;
 	int16 *v16; 
 	int v17;
 	int v18;
-	int v19;
 
 	_vm->_fontManager.TEXTE_OFF(9);
-	v19 = _vm->_eventsManager.XMOUSE();
-	v0 = _vm->_eventsManager.YMOUSE();
-	if (!INVENTFLAG && !_vm->_globals.PLAN_FLAG && v19 > _vm->_graphicsManager.ofscroll - 30 && v19 < _vm->_graphicsManager.ofscroll + 50 && (uint16)(v0 + 29) <= 0x4Eu) {
+	destX = _vm->_eventsManager.XMOUSE();
+	destY = _vm->_eventsManager.YMOUSE();
+
+	if (!INVENTFLAG && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager.ofscroll - 30 && destX < _vm->_graphicsManager.ofscroll + 50 && (uint16)(destY + 29) <= 0x4Eu) {
 		v1 = _vm->_eventsManager.btsouris;
 		INVENTFLAG = 1;
 		INVENT();
@@ -2838,30 +2837,30 @@ void ObjectsManager::BTGAUCHE() {
 	}
 	if (_vm->_globals.SAUVEGARDE->data[svField354] == 1
 	        && !_vm->_globals.PLAN_FLAG
-	        && (uint16)(v19 - 533) <= 0x1Au
-	        && (uint16)(v0 - 26) <= 0x21u) {
+	        && (uint16)(destX - 533) <= 0x1Au
+	        && (uint16)(destY - 26) <= 0x21u) {
 		CHANGE_TETE(1, 0);
 		return;
 	}
 	if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
 	        && !_vm->_globals.PLAN_FLAG
-	        && (uint16)(v19 - 533) <= 0x1Au
-	        && (uint16)(v0 - 26) <= 0x21u) {
+	        && (uint16)(destX - 533) <= 0x1Au
+	        && (uint16)(destY - 26) <= 0x21u) {
 		CHANGE_TETE(2, 0);
 		return;
 	}
 	if (_vm->_globals.SAUVEGARDE->data[svField357] == 1) {
 		if (_vm->_globals.SAUVEGARDE->data[svField353] == 1
 		        && !_vm->_globals.PLAN_FLAG
-		        && (uint16)(v19 - 533) <= 0x1Au
-		        && (uint16)(v0 - 26) <= 0x21u) {
+		        && (uint16)(destX - 533) <= 0x1Au
+		        && (uint16)(destY - 26) <= 0x21u) {
 			CHANGE_TETE(0, 1);
 			return;
 		}
 		if (_vm->_globals.SAUVEGARDE->data[svField355] == 1
 		        && !_vm->_globals.PLAN_FLAG
-		        && (uint16)(v19 - 567) <= 0x1Au
-		        && (uint16)(v0 - 26) <= 0x21u) {
+		        && (uint16)(destX - 567) <= 0x1Au
+		        && (uint16)(destY - 26) <= 0x21u) {
 			CHANGE_TETE(0, 2);
 			return;
 		}
@@ -2896,14 +2895,14 @@ LABEL_38:
 	if (_vm->_globals.PLAN_FLAG == 1 && (_vm->_eventsManager.btsouris != 4 || NUMZONE <= 0))
 		return;
 	if ((uint16)(NUMZONE + 1) > 1u) {
-		v6 = NUMZONE;
-		v7 = _vm->_globals.ZONEP[v6].field0;
-		if (v7) {
-			v8 = _vm->_globals.ZONEP[v6].field2;
-			if (v8) {
-				if (v8 != 31) {
-					v19 = v7;
-					v0 = v8;
+		zoneCount = NUMZONE;
+		zoneX = _vm->_globals.ZONEP[zoneCount].field0;
+		if (zoneX) {
+			zoneY = _vm->_globals.ZONEP[zoneCount].field2;
+			if (zoneY) {
+				if (zoneY != 31) {
+					destX = zoneX;
+					destY = zoneY;
 				}
 			}
 		}
@@ -2942,9 +2941,9 @@ LABEL_64:
 	}
 	if (!_vm->_globals.NOMARCHE) {
 		if (!_vm->_globals.PLAN_FLAG) {
-			v14 = YSPR(0);
-			v15 = XSPR(0);
-			v16 = _vm->_linesManager.PARCOURS2(v15, v14, v19, v0);
+			srcY = YSPR(0);
+			srcX = XSPR(0);
+			v16 = _vm->_linesManager.PARCOURS2(srcX, srcY, destX, destY);
 			_vm->_globals.chemin = v16;
 			if (v16 != (int16 *)g_PTRNUL)
 				PACOURS_PROPRE(v16);
@@ -2960,7 +2959,7 @@ LABEL_65:
 		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG == 1) {
 			v17 = YSPR(0);
 			v18 = XSPR(0);
-			_vm->_globals.chemin = PARC_VOITURE(v18, v17, v19, v0);
+			_vm->_globals.chemin = PARC_VOITURE(v18, v17, destX, destY);
 		}
 	}
 	if ((uint16)(NUMZONE + 1) > 1u) {
@@ -7919,7 +7918,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 	const byte *v14; 
 	char v15; 
 	int v16; 
-	int v17; 
+	int spriteIndex; 
 	int v18; 
 	Common::String v19; 
 
@@ -7933,7 +7932,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 	if (_vm->_globals.vitesse == 3)
 		v15 = a5 / 3;
 	v14 = Sprite[0].spriteData;
-	v17 = Sprite[0].field10;
+	spriteIndex = Sprite[0].spriteIndex;
 	v16 = Sprite[0].fieldE;
 	Sprite[0].field12 += a3;
 	Sprite[0].field14 += a4;
@@ -7957,13 +7956,13 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 		if (v7 == 1) {
 			if (v13 == -1) {
 				Sprite[0].spriteData = v14;
-				Sprite[0].field10 = v17;
+				Sprite[0].spriteIndex = spriteIndex;
 				Sprite[0].field12 -= a3;
 				Sprite[0].field14 -= a4;
 				Sprite[0].fieldE = v16;
 			} else {
 				Sprite[0].spriteData = spriteData;
-				Sprite[0].field10 = v13;
+				Sprite[0].spriteIndex = v13;
 			}
 			v10 = 0;
 			v9 = v15;
@@ -7979,7 +7978,6 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 				break;
 		}
 	}
-	return;
 }
 
 void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6) {
@@ -7989,14 +7987,14 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4
 	__int32 v9; 
 	signed __int16 v10; 
 	__int32 v11; 
-	__int16 v13; 
+	int spriteIndex; 
 	char v14; 
 	__int16 v15; 
 	Common::String v16; 
 
 	v15 = 0;
 	v6 = 0;
-	v13 = 0;
+	spriteIndex = 0;
 	v16 = "     ";
 	v14 = a5;
 	if (_vm->_globals.vitesse == 2)
@@ -8004,7 +8002,7 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4
 	if (_vm->_globals.vitesse == 3)
 		v14 = a5 / 3;
 	S_old_spr = Sprite[0].spriteData;
-	S_old_ani = Sprite[0].field10;
+	S_old_ani = Sprite[0].spriteIndex;
 	S_old_ret = Sprite[0].fieldE;
 	Sprite[0].field12 += a3;
 	Sprite[0].field14 += a4;
@@ -8015,7 +8013,7 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4
 			v8 = a2[v15];
 			if (v8 == ',') {
 				v9 = atoi(v16.c_str());
-				v13 = v9;
+				spriteIndex = v9;
 				v6 = 0;
 				v16 = "     ";
 				v7 = 1;
@@ -8026,9 +8024,9 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4
 			}
 			++v15;
 		} while (v7 != 1);
-		if (v13 != -1) {
+		if (spriteIndex != -1) {
 			Sprite[0].spriteData = a1;
-			Sprite[0].field10 = v13;
+			Sprite[0].spriteIndex = spriteIndex;
 		}
 		v10 = 0;
 		v9 = v14;
@@ -8040,7 +8038,7 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4
 				v9 = v11;
 			} while (v10 < v11);
 		}
-	} while (v13 != -1);
+	} while (spriteIndex != -1);
 }
 
 void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5) {
@@ -8050,7 +8048,7 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 	int v8; 
 	int v9; 
 	int v10; 
-	int v12; 
+	int spriteIndex; 
 	int v13; 
 	int v14; 
 	Common::String v15; 
@@ -8058,7 +8056,7 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 
 	v14 = 0;
 	v5 = 0;
-	v12 = 0;
+	spriteIndex = 0;
 	v15 = "     ";
 	v13 = a5;
 	if (_vm->_globals.vitesse == 2)
@@ -8070,7 +8068,7 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 		v7 = a2[v14];
 		if (v7 == 44) {
 			v8 = atoi(v15.c_str());
-			v12 = v8;
+			spriteIndex = v8;
 			v5 = 0;
 			v15 = "     ";
 			v6 = 1;
@@ -8081,15 +8079,15 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 		}
 		++v14;
 		if (v6 == 1) {
-			if (v12 == -1) {
+			if (spriteIndex == -1) {
 				Sprite[0].spriteData = S_old_spr;
-				Sprite[0].field10 = S_old_ani;
+				Sprite[0].spriteIndex = S_old_ani;
 				Sprite[0].field12 -= a3;
 				Sprite[0].field14 -= a4;
 				Sprite[0].fieldE = S_old_ret;
 			} else {
 				Sprite[0].spriteData = a1;
-				Sprite[0].field10 = v12;
+				Sprite[0].spriteIndex = spriteIndex;
 			}
 
 			v9 = 0;
@@ -8102,7 +8100,7 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 					v16 = v10;
 				} while (v9 < v10);
 			}
-			if (v12 == -1)
+			if (spriteIndex == -1)
 				break;
 		}
 	}

@@ -1690,9 +1690,7 @@ LABEL_17:
 }
 
 // Avoid 2
-// TODO: method casting int arrays as byte pointers. Double-check later whether
-// we can convert the return to a uint16 *
-int16 *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
+int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 	int v4; 
 	int v5; 
 	int v6; 
@@ -1818,15 +1816,15 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 	int v136[10];
 	int v141[10];
 	
-	v123 = a3;
-	v122 = a4;
+	v123 = destX;
+	v122 = destY;
 	v121 = 0;
 	v120 = 0;
 	v115 = 0;
 	v114 = 0;
 	v113 = 0;
 	v111 = 0;
-	if (a4 <= 24)
+	if (destY <= 24)
 		v122 = 25;
 	if (!_vm->_globals.NOT_VERIF) {
 		v4 = a1 - _vm->_globals.old_x1_65;
@@ -1837,7 +1835,7 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 			if (v5 < 0)
 				v5 = -v5;
 			if (v5 <= 4) {
-				v6 = _vm->_globals.old_x2_67 - a3;
+				v6 = _vm->_globals.old_x2_67 - destX;
 				if (v6 < 0)
 					v6 = -v6;
 				if (v6 <= 4) {
@@ -1849,7 +1847,7 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 				}
 			}
 		}
-		v8 = a1 - a3;
+		v8 = a1 - destX;
 		if (v8 < 0)
 			v8 = -v8;
 		if (v8 <= 4) {
@@ -1865,12 +1863,12 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int a3, int a4) {
 	_vm->_globals.NOT_VERIF = 0;
 	_vm->_globals.old_z_69 = _vm->_objectsManager.NUMZONE;
 	_vm->_globals.old_x1_65 = a1;
-	_vm->_globals.old_x2_67 = a3;
+	_vm->_globals.old_x2_67 = destX;
 	_vm->_globals.old_y1_66 = a2;
 	_vm->_globals.old_y2_68 = v122;
 	_vm->_globals.STOP_BUG = 0;
 	v112 = 0;
-	if (a3 <= 19)
+	if (destX <= 19)
 		v123 = 20;
 	if (v122 <= 19)
 		v122 = 20;
@@ -2715,7 +2713,7 @@ LABEL_150:
 		}
 		if (v94 == -1 && (unsigned int)(v101 + 150) <= 0x96)
 			v91 = 1;
-		if (v91 == -1 && !VERIF_SMOOTH(v7, v109, a3, a4) && SMOOTH_MOVE(0, a3, v7, v109, a3, a4) != -1)
+		if (v91 == -1 && !VERIF_SMOOTH(v7, v109, a3, a4) && SMOOTH_MOVE(v7, v109, a3, a4) != -1)
 			break;
 LABEL_72:
 		v19 = v111 - a3;
@@ -2855,8 +2853,8 @@ LABEL_67:
 
 		v17 = _vm->_globals.essai0;
 		v17[v16] = v112;
-		WRITE_LE_UINT16(v17 + 2 * v16 + 2, v110);
-		WRITE_LE_UINT16(v17 + 2 * v16 + 4, v91);
+		v17[v16 + 1] = v110;
+		v17[v16 + 2] = v91;
 		v115 += 3;
 		++v14;
 LABEL_70:
@@ -3347,7 +3345,7 @@ int LinesManager::VERIF_SMOOTH(int a1, int a2, int a3, int a4) {
 	return 0;
 }
 
-int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
+int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 	int v6; 
 	int v7; 
 	int v8; 
@@ -3404,10 +3402,10 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 	int v60; 
 	int v61; 
 	int v62; 
+	int v63;
 
-	warning("TODO: SMOOTH_MOVE - a1 = a4 doesn't look like that in the IDB, need to double-check");
 	v62 = a3;
-	a1 = a4;
+	v63 = a4;
 	if (a3 >= a5 || a6 >= a4) {
 		if (a3 <= a5 || a6 >= a4) {
 			if (a3 >= a5 || a6 <= a4) {
@@ -3418,20 +3416,20 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 					do {
 						v25 = _vm->_globals.Hopkins[v53].field0;
 						v40 = _vm->_globals.Hopkins[v53].field2;
-						v26 = _vm->_globals.STAILLE[a1];
+						v26 = _vm->_globals.STAILLE[v63];
 						if (v26 < 0) {
 							v27 = v26;
 							v28 = v26;
 							if (v26 < 0)
 								v28 = -v26;
-							v48 = _vm->_globals.STAILLE[a1];
-							v45 = a1;
+							v48 = _vm->_globals.STAILLE[v63];
+							v45 = v63;
 							v25 = _vm->_graphicsManager.Reel_Reduc(v25, v28);
 							v29 = v27;
 							if ((v27 & 0x80000000u) != 0)
 								v29 = -v27;
 							v40 = _vm->_graphicsManager.Reel_Reduc(v40, v29);
-							a1 = v45;
+							v63 = v45;
 							v26 = v48;
 						}
 						if (v26 > 0) {
@@ -3439,23 +3437,23 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 							v31 = v26;
 							if (v26 < 0)
 								v31 = -v26;
-							v46 = a1;
+							v46 = v63;
 							v25 = _vm->_graphicsManager.Reel_Zoom(v25, v31);
 							v32 = v30;
 							if ((v30 & 0x80000000u) != 0)
 								v32 = -v30;
 							v40 = _vm->_graphicsManager.Reel_Zoom(v40, v32);
-							a1 = v46;
+							v63 = v46;
 						}
-						v33 = a1 + v40;
+						v33 = v63 + v40;
 						v34 = 0;
 						if (v25 > 0) {
 							do {
 								--v62;
 								SMOOTH[v61].field0 = v62;
-								if (a1 != v33)
-									a1 = a1 + 1;
-								SMOOTH[v61++].field2 = a1;
+								if (v63 != v33)
+									v63 = v63 + 1;
+								SMOOTH[v61++].field2 = v63;
 								++v34;
 							} while (v34 < v25);
 						}
@@ -3463,7 +3461,7 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 						if (v53 == 48)
 							v53 = 36;
 						++v57;
-						if (v62 <= a5 || a6 <= a1)
+						if (v62 <= a5 || a6 <= v63)
 							v49 = 1;
 					} while (v49 != 1);
 					if (v57 > 5) {
@@ -3481,20 +3479,20 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 				do {
 					v14 = _vm->_globals.Hopkins[v52].field0;
 					v39 = _vm->_globals.Hopkins[v52].field2;
-					v15 = _vm->_globals.STAILLE[a1];
+					v15 = _vm->_globals.STAILLE[v63];
 					if (v15 < 0) {
 						v16 = v15;
 						v17 = v15;
 						if (v15 < 0)
 							v17 = -v15;
-						v47 = _vm->_globals.STAILLE[a1];
-						v43 = a1;
+						v47 = _vm->_globals.STAILLE[v63];
+						v43 = v63;
 						v14 = _vm->_graphicsManager.Reel_Reduc(v14, v17);
 						v18 = v16;
 						if ((v16 & 0x80000000u) != 0)
 							v18 = -v16;
 						v39 = _vm->_graphicsManager.Reel_Reduc(v39, v18);
-						a1 = v43;
+						v63 = v43;
 						v15 = v47;
 					}
 					if (v15 > 0) {
@@ -3502,23 +3500,23 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 						v20 = v15;
 						if (v15 < 0)
 							v20 = -v15;
-						v44 = a1;
+						v44 = v63;
 						v14 = _vm->_graphicsManager.Reel_Zoom(v14, v20);
 						v21 = v19;
 						if ((v19 & 0x80000000u) != 0)
 							v21 = -v19;
 						v39 = _vm->_graphicsManager.Reel_Zoom(v39, v21);
-						a1 = v44;
+						v63 = v44;
 					}
-					v22 = a1 + v39;
+					v22 = v63 + v39;
 					v23 = 0;
 					if (v14 > 0) {
 						do {
 							++v62;
 							SMOOTH[v60].field0 = v62;
-							if (a1 != v22)
-								a1 = a1 + 1;
-							SMOOTH[v60++].field2 = a1;
+							if (v63 != v22)
+								v63 = v63 + 1;
+							SMOOTH[v60++].field2 = v63;
 							++v23;
 						} while (v23 < v14);
 					}
@@ -3526,7 +3524,7 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 					if (v52 == 48)
 						v52 = 36;
 					++v56;
-					if (v62 >= a5 || a6 <= (int)a1)
+					if (v62 >= a5 || a6 <= (int)v63)
 						v49 = 1;
 				} while (v49 != 1);
 				if (v56 > 5) {
@@ -3543,18 +3541,18 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 			v55 = 0;
 			do {
 				v10 = _vm->_globals.Hopkins[v51].field2;
-				v42 = a1;
+				v42 = v63;
 				v11 = _vm->_graphicsManager.Reel_Reduc(_vm->_globals.Hopkins[v51].field0, 0x19u);
 				v38 = _vm->_graphicsManager.Reel_Reduc(v10, 0x19u);
-				a1 = v42;
+				v63 = v42;
 				v12 = 0;
 				if (v11 > 0) {
 					do {
 						--v62;
 						SMOOTH[v59].field0 = v62;
-						if ((uint16)a1 != (uint16)v42 + v38)
-							a1 = a1 - 1;
-						SMOOTH[v59++].field2 = a1;
+						if ((uint16)v63 != (uint16)v42 + v38)
+							v63 = v63 - 1;
+						SMOOTH[v59++].field2 = v63;
 						++v12;
 					} while (v12 < v11);
 				}
@@ -3562,7 +3560,7 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 				if (v51 == 24)
 					v51 = 12;
 				++v55;
-				if (v62 <= a5 || a6 >= (int)a1)
+				if (v62 <= a5 || a6 >= (int)v63)
 					v49 = 1;
 			} while (v49 != 1);
 			if (v55 > 5) {
@@ -3579,18 +3577,18 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 		v54 = 0;
 		do {
 			v6 = _vm->_globals.Hopkins[v50].field2;
-			v41 = a1;
+			v41 = v63;
 			v7 = _vm->_graphicsManager.Reel_Reduc(_vm->_globals.Hopkins[v50].field0, 0x19u);
 			v37 = _vm->_graphicsManager.Reel_Reduc(v6, 0x19u);
-			a1 = v41;
+			v63 = v41;
 			v8 = 0;
 			if (v7 > 0) {
 				do {
 					++v62;
 					SMOOTH[v58].field0 = v62;
-					if ((uint16)a1 != (uint16)v41 + v37)
-						a1 = a1 - 1;
-					SMOOTH[v58++].field2 = a1;
+					if ((uint16)v63 != (uint16)v41 + v37)
+						v63 = v63 - 1;
+					SMOOTH[v58++].field2 = v63;
 					++v8;
 				} while (v8 < v7);
 			}
@@ -3598,7 +3596,7 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 			if (v50 == 24)
 				v50 = 12;
 			++v54;
-			if (v62 >= a5 || a6 >= (int)a1)
+			if (v62 >= a5 || a6 >= (int)v63)
 				v49 = 1;
 		} while (v49 != 1);
 		if (v54 > 5) {
@@ -3608,7 +3606,7 @@ int LinesManager::SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6) {
 			_vm->_linesManager.SMOOTH_SENS = 2;
 LABEL_85:
 			SMOOTH_X = v62;
-			SMOOTH_Y = a1;
+			SMOOTH_Y = v63;
 			return 0;
 		}
 	}

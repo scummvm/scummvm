@@ -88,7 +88,7 @@ public:
 	int16 *PARCOURS2(int a1, int a2, int a3, int a4);
 	int PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
 	int VERIF_SMOOTH(int a1, int a2, int a3, int a4);
-	int SMOOTH_MOVE(int a1, int a2, int a3, int a4, int a5, int a6);
+	int SMOOTH_MOVE(int a3, int a4, int a5, int a6);
 	int PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6);
 	int TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5);
 };

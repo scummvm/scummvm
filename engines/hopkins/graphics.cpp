@@ -1756,7 +1756,7 @@ int GraphicsManager::Asm_Reduc(int v, int percentage) {
 }
 
 // Display 'Perfect?' 
-void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int spriteIndex, int a6, int a7, int a8) {
+void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int a6, int a7, int a8) {
 	const byte *v8; 
 	int i; 
 	const byte *v10;
@@ -1817,7 +1817,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 	int v65; 
 
 	v8 = srcData + 3;
-	for (i = spriteIndex; i; --i)
+	for (i = frameIndex; i; --i)
 		v8 += READ_LE_UINT32(v8) + 16;
 
 	v11 = 0;
