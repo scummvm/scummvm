@@ -64,6 +64,7 @@
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "base/version.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
@@ -489,7 +490,7 @@ void BaseGame::DEBUG_DebugEnable(const char *filename) {
 	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%02d (Release Build) *****************", hours, mins, secs);
 #endif
 
-	LOG(0, "%s ver %d.%d.%d%s, Compiled on " __DATE__ ", " __TIME__, DCGF_NAME, DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, DCGF_VER_SUFFIX);
+	LOG(0, "%s - %s ver %d.%d.%d%s ", gScummVMFullVersion, DCGF_NAME, DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, DCGF_VER_SUFFIX);
 
 	AnsiString platform = BasePlatform::getPlatformName();
 	LOG(0, "Platform: %s", platform.c_str());
