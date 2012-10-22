@@ -30,9 +30,6 @@ struct Rect;
 
 #include "graphics/pixelformat.h"
 
-// TODO: Find a better solution for this.
-#define ARGB_TO_COLOR(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
-
 namespace Graphics {
 
 /**
