@@ -263,13 +263,13 @@ void EventsManager::pollEvents() {
 }
 
 void EventsManager::VBL() {
-	signed __int16 v1;
+	int v1;
 	int v2; 
 	int v3; 
 	int v4; 
 	int v5; 
 	int v6; 
-	signed __int16 v7;
+	int v7;
 	int v10; 
 	signed int v11 = 0;
 	signed int v12 = 0;
@@ -322,9 +322,9 @@ void EventsManager::VBL() {
 		} else {
 			if (v15 < _vm->_graphicsManager.min_x)
 				v15 = _vm->_graphicsManager.min_x - v1;
-			v2 = (signed __int16)v2;
-			if (souris_y < _vm->_graphicsManager.min_y - (signed __int16)v2)
-				yp = _vm->_graphicsManager.min_y - (signed __int16)v2;
+			v2 = (int16)v2;
+			if (souris_y < _vm->_graphicsManager.min_y - (int16)v2)
+				yp = _vm->_graphicsManager.min_y - (int16)v2;
 			if (souris_sizex + v15 >= _vm->_graphicsManager.max_x)
 				v14 = souris_sizex - (souris_sizex + v15 - _vm->_graphicsManager.max_x - v1);
 			if (yp + souris_sizey < v2 + _vm->_graphicsManager.max_y)
