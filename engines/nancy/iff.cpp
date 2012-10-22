@@ -37,7 +37,15 @@ IFF::~IFF() {
 
 bool IFF::callback(Common::IFFChunk &c) {
 	Chunk chunk;
-	chunk.id = c._type;
+
+	// Replace invalid NULs with spaces
+	char id[4];
+	WRITE_BE_UINT32(id, c._type);
+	for (uint i = 0; i < 4; ++i) {
+		if (id[i] == 0)
+			id[i] = ' ';
+	}
+	chunk.id = READ_BE_UINT32(id);
 
 	if (chunk.id == ID_DATA) {
 		debugN(3, "IFF::callback: Skipping 'DATA' chunk\n");
@@ -106,6 +114,12 @@ Common::String IFF::idToString(uint32 id) {
 		id <<= 8;
 	}
 	return s;
+}
+
+void IFF::list(Common::Array<Common::String> &nameList) {
+	for (uint i = 0; i < _chunks.size(); ++i) {
+		nameList.push_back(idToString(_chunks[i].id));
+	}
 }
 
 } // End of namespace Nancy

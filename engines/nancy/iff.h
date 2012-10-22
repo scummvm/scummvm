@@ -45,6 +45,9 @@ public:
 	bool load();
 	const byte *getChunk(uint32 id, uint &size) const;
 
+	// Debugger functions
+	void list(Common::Array<Common::String> &nameList);
+
 private:
 	Common::String idToString(uint32 id);
 	bool callback(Common::IFFChunk &chunk);

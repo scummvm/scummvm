@@ -40,6 +40,7 @@ NancyConsole::NancyConsole(NancyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("cif_list", WRAP_METHOD(NancyConsole, Cmd_cifList));
 	registerCmd("cif_info", WRAP_METHOD(NancyConsole, Cmd_cifInfo));
 	registerCmd("chunk_hexdump", WRAP_METHOD(NancyConsole, Cmd_chunkHexDump));
+	registerCmd("chunk_list", WRAP_METHOD(NancyConsole, Cmd_chunkList));
 	registerCmd("show_image", WRAP_METHOD(NancyConsole, Cmd_showImage));
 	registerCmd("play_video", WRAP_METHOD(NancyConsole, Cmd_playVideo));
 	registerCmd("play_audio", WRAP_METHOD(NancyConsole, Cmd_playAudio));
@@ -160,13 +161,10 @@ bool NancyConsole::Cmd_chunkHexDump(int argc, const char **argv) {
 	const byte *buf;
 	uint size;
 
-	uint32 id = 0;
-	for (uint i = 0; i < 4; i++) {
-		char c = argv[2][i];
-		if (!c)
-			break;
-		id |= toupper(c) << (24 - 8 * i);
-	}
+	char idStr[4] = { ' ', ' ', ' ', ' ' };
+	uint len = strlen(argv[2]);
+	memcpy(idStr, argv[2], (len <= 4 ? len : 4));
+	uint32 id = READ_BE_UINT32(idStr);
 
 	buf = iff.getChunk(id, size);
 	if (!buf) {
@@ -175,6 +173,32 @@ bool NancyConsole::Cmd_chunkHexDump(int argc, const char **argv) {
 	}
 
 	Common::hexdump(buf, size);
+	return true;
+}
+
+bool NancyConsole::Cmd_chunkList(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("List chunks inside an IFF\n");
+		debugPrintf("Usage: %s iffname\n", argv[0]);
+		return true;
+	}
+
+	IFF iff(_vm, argv[1]);
+	if (!iff.load()) {
+		debugPrintf("Failed to load IFF '%s'\n", argv[1]);
+		return true;
+	}
+
+	Common::Array<Common::String> list;
+	iff.list(list);
+	for (uint i = 0; i < list.size(); i++) {
+		debugPrintf("%-6s", list[i].c_str());
+		if ((i % 13) == 12 && i + 1 != list.size())
+			debugPrintf("\n");
+	}
+
+	debugPrintf("\n");
+
 	return true;
 }
 
