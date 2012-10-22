@@ -974,10 +974,10 @@ LABEL_2:
 				v5 = v5 + 1;
 			if (v15 == 1) {
 				v6 = v5 + 5;
-				ptr = _vm->_globals.dos_malloc2(0x26Cu);
+				ptr = _vm->_globals.dos_malloc2(620);
 				if (g_PTRNUL == ptr)
 					error("TRADUC");
-				memset(ptr, 0, 0x26Bu);
+				memset(ptr, 0, 620);
 				v7 = 0;
 				v12 = 0;
 				v14 = 0;
@@ -985,9 +985,12 @@ LABEL_2:
 					v16 = 0;
 					if (*(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'C') {
 						++v12;
+						assert(v12 < (620 / 20));
+
 						v8 = (ptr + 20 * v12);
 						v11 = 0;
 						do {
+							assert(v11 < 20);
 							*(v11++ + v8) = *(v7++ + v6);
 							if (*(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'F') {
 								v16 = 1;
@@ -999,7 +1002,7 @@ LABEL_2:
 						} while (v16 != 1);
 					}
 					if (v16 != 1) {
-						if (*(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'O' && *(v6 + v7 + 2) == 'D')
+						if (*(v7 + v6) == 'C' && *(v6 + v7 + 1) == 'O' && *(v6 + v7 + 2) == 'D')
 							v14 = 1;
 						if (v16 != 1 && *(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'I' && *(v6 + v7 + 2) == 'N')
 							v14 = 1;
