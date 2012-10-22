@@ -955,7 +955,7 @@ void TalkManager::REPONSE(int a1, int a2) {
 	v3 = a2;
 LABEL_2:
 	v15 = 0;
-	if (g_PTRNUL != _vm->_globals.COUCOU) {
+	if (_vm->_globals.COUCOU != g_PTRNUL) {
 		v5 = _vm->_globals.COUCOU;
 		while (1) {
 			if (*v5 == 'C') {

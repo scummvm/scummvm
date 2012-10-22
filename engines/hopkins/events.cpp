@@ -45,6 +45,7 @@ EventsManager::EventsManager() {
 	lItCounter = 0;
 	ESC_KEY = false;
 	btsouris = 0;
+	OLD_ICONE = 0;
 
 	_priorCounterTime = 0;
 	_priorFrameTime = 0;

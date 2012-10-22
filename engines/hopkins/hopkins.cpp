@@ -49,6 +49,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_menuManager.setParent(this);
 	_objectsManager.setParent(this);
 	_soundManager.setParent(this);
+	_talkManager.setParent(this);
 }
 
 HopkinsEngine::~HopkinsEngine() {
