@@ -108,6 +108,11 @@ Globals::Globals() {
 	for (int i = 0; i < 70; ++i)
 		Common::fill((byte *)&Hopkins[i], (byte *)&Hopkins[i] + sizeof(HopkinsItem), 0);
 
+	for (int i = 0; i < 36; ++i)
+		INVENTAIRE[i] = 0;
+	for (int i = 0; i < 51; ++i)
+		Common::fill((byte *)&Tri[i], (byte *)&Tri[i] + sizeof(TriItem), 0);
+
 	// Initialise fields
 	FR = 0;
 	SVGA = 2;

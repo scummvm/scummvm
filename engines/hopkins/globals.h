@@ -312,6 +312,8 @@ public:
 	int16 super_parcours[32002];
 	int Param[2100];
 	HopkinsItem Hopkins[70];
+	int INVENTAIRE[36];
+	TriItem Tri[51];
 	int FR;
 	int SVGA;
 	int internet;
@@ -367,8 +369,6 @@ public:
 	int16 *essai1;
 	int16 *essai2;
 	byte *Bufferobjet;
-	int INVENTAIRE[36];
-	TriItem Tri[51];
 	byte *inventaire2;
 	byte *GESTE;
 	int OBJET_EN_COURS;

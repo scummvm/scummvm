@@ -75,7 +75,8 @@ GraphicsManager::GraphicsManager() {
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
 	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_SIZE], 0);
 	Common::fill(&cmap[0], &cmap[PALETTE_BLOCK_SIZE], 0);
-	Common::fill(&Palette[0], &Palette[PALETTE_BLOCK_SIZE], 0);
+	Common::fill(&Palette[0], &Palette[PALETTE_EXT_BLOCK_SIZE], 0);
+	Common::fill(&OLD_PAL[0], &OLD_PAL[PALETTE_EXT_BLOCK_SIZE], 0);
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -800,9 +801,9 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 	setpal_vga256(palData2);
   
 	// Loop through fading in the palette
-	uint16 *pTemp1 = &palData1[2];
+	uint16 *pTemp1 = &palData1[1];
 	for (int fadeIndex = 0; fadeIndex < FADESPD; ++fadeIndex) {
-		uint16 *pTemp2 = &palData1[4];
+		uint16 *pTemp2 = &palData1[2];
 
 		for (int palOffset = 0; palOffset < PALETTE_BLOCK_SIZE; palOffset += 3) {
 			if (palData2[palOffset] < palette[palOffset]) {
@@ -818,11 +819,11 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 				palData2[palOffset + 1] = (v >> 8) & 0xff;
 			}
 
-			if (palData2[palOffset + 1] < palette[palOffset + 1]) {
+			if (palData2[palOffset + 2] < palette[palOffset + 2]) {
 				uint16 *pDest = &pTemp2[palOffset];
 				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest; 
 				*pDest = v;
-				palData2[palOffset + 1] = (v >> 8) & 0xff;
+				palData2[palOffset + 2] = (v >> 8) & 0xff;
 			}
 		}
 
