@@ -43,6 +43,7 @@ private:
 	bool Cmd_cifExport(int argc, const char **argv);
 	bool Cmd_cifList(int argc, const char **argv);
 	bool Cmd_cifInfo(int argc, const char **argv);
+	bool Cmd_chunkHexDump(int argc, const char **argv);
 	bool Cmd_showImage(int argc, const char **argv);
 	bool Cmd_playVideo(int argc, const char **argv);
 	bool Cmd_playAudio(int argc, const char **argv);
