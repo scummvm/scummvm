@@ -362,7 +362,7 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 		pixelFormat = Graphics::createPixelFormat<1555>();
 		//convertToColorFormat(0, BM_RGBA);
 	} else {
-		pixelFormat = Graphics::PixelFormat(4, 8,8,8,8, 0, 8, 16, 24);
+		pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 		_colorFormat = BM_RGBA;
 	}
 
