@@ -146,9 +146,9 @@ bool NancyConsole::Cmd_cifInfo(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_chunkHexDump(int argc, const char **argv) {
-	if (argc != 3) {
+	if (argc < 3 || argc > 4) {
 		debugPrintf("Hexdumps an IFF chunk\n");
-		debugPrintf("Usage: %s iffname chunkname\n", argv[0]);
+		debugPrintf("Usage: %s iffname chunkname [index]\n", argv[0]);
 		return true;
 	}
 
@@ -165,10 +165,14 @@ bool NancyConsole::Cmd_chunkHexDump(int argc, const char **argv) {
 	uint len = strlen(argv[2]);
 	memcpy(idStr, argv[2], (len <= 4 ? len : 4));
 	uint32 id = READ_BE_UINT32(idStr);
+	uint index = 0;
 
-	buf = iff.getChunk(id, size);
+	if (argc == 4)
+		index = atoi(argv[3]);
+
+	buf = iff.getChunk(id, size, index);
 	if (!buf) {
-		debugPrintf("Failed to find chunk '%s' in IFF '%s'\n", argv[2], argv[1]);
+		debugPrintf("Failed to find chunk '%s' (index %d) in IFF '%s'\n", argv[2], index, argv[1]);
 		return true;
 	}
 

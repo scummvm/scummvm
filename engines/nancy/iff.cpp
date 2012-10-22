@@ -95,12 +95,16 @@ bool IFF::load() {
 	return true;
 }
 
-const byte *IFF::getChunk(uint32 id, uint &size) const {
+const byte *IFF::getChunk(uint32 id, uint &size, uint index) const {
+	uint found = 0;
 	for (uint i = 0; i < _chunks.size(); ++i) {
 		const Chunk &chunk = _chunks[i];
 		if (chunk.id == id) {
-			size = chunk.size;
-			return chunk.buf;
+			if (found == index) {
+				size = chunk.size;
+				return chunk.buf;
+			}
+			++found;
 		}
 	}
 
