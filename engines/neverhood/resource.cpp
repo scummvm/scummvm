@@ -160,8 +160,8 @@ AnimResource::~AnimResource() {
 void AnimResource::draw(uint frameIndex, byte *dest, int destPitch, bool flipX, bool flipY) {
 	const AnimFrameInfo frameInfo = _frames[frameIndex];
 	_currSpriteData = _spriteData + frameInfo.spriteDataOffs;
-	_width = frameInfo.rect.width;
-	_height = frameInfo.rect.height;
+	_width = frameInfo.drawOffset.width;
+	_height = frameInfo.drawOffset.height;
 	if (_replEnabled && _replOldColor != _replNewColor)
 		unpackSpriteRle(_currSpriteData, _width, _height, dest, destPitch, flipX, flipY, _replOldColor, _replNewColor);
 	else
@@ -235,24 +235,23 @@ bool AnimResource::load(uint32 fileHash) {
 		AnimFrameInfo frameInfo;
 		frameInfo.frameHash = READ_LE_UINT32(frameList);
 		frameInfo.counter = READ_LE_UINT16(frameList + 4);
-		frameInfo.rect.x = READ_LE_UINT16(frameList + 6);
-		frameInfo.rect.y = READ_LE_UINT16(frameList + 8);
-		frameInfo.rect.width = READ_LE_UINT16(frameList + 10);
-		frameInfo.rect.height = READ_LE_UINT16(frameList + 12);
+		frameInfo.drawOffset.x = READ_LE_UINT16(frameList + 6);
+		frameInfo.drawOffset.y = READ_LE_UINT16(frameList + 8);
+		frameInfo.drawOffset.width = READ_LE_UINT16(frameList + 10);
+		frameInfo.drawOffset.height = READ_LE_UINT16(frameList + 12);
 		frameInfo.deltaX = READ_LE_UINT16(frameList + 14);
 		frameInfo.deltaY = READ_LE_UINT16(frameList + 16);
-		frameInfo.deltaRect.x = READ_LE_UINT16(frameList + 18); 
-		frameInfo.deltaRect.y = READ_LE_UINT16(frameList + 20); 
-		frameInfo.deltaRect.width = READ_LE_UINT16(frameList + 22); 
-		frameInfo.deltaRect.height = READ_LE_UINT16(frameList + 24);
-		frameInfo.field_1A = READ_LE_UINT16(frameList + 26); 
+		frameInfo.collisionBoundsOffset.x = READ_LE_UINT16(frameList + 18); 
+		frameInfo.collisionBoundsOffset.y = READ_LE_UINT16(frameList + 20); 
+		frameInfo.collisionBoundsOffset.width = READ_LE_UINT16(frameList + 22); 
+		frameInfo.collisionBoundsOffset.height = READ_LE_UINT16(frameList + 24);
 		frameInfo.spriteDataOffs = READ_LE_UINT32(frameList + 28);
-		debug(8, "frameHash = %08X; counter = %d; rect = (%d,%d,%d,%d); deltaX = %d; deltaY = %d; deltaRect = (%d,%d,%d,%d); field_1A = %04X; spriteDataOffs = %08X", 
+		debug(8, "frameHash = %08X; counter = %d; rect = (%d,%d,%d,%d); deltaX = %d; deltaY = %d; collisionBoundsOffset = (%d,%d,%d,%d); spriteDataOffs = %08X", 
 			frameInfo.frameHash, frameInfo.counter, 
-			frameInfo.rect.x, frameInfo.rect.y, frameInfo.rect.width, frameInfo.rect.height,
+			frameInfo.drawOffset.x, frameInfo.drawOffset.y, frameInfo.drawOffset.width, frameInfo.drawOffset.height,
 			frameInfo.deltaX, frameInfo.deltaY,
-			frameInfo.deltaRect.x, frameInfo.deltaRect.y, frameInfo.deltaRect.width, frameInfo.deltaRect.height,
-			frameInfo.field_1A, frameInfo.spriteDataOffs);
+			frameInfo.collisionBoundsOffset.x, frameInfo.collisionBoundsOffset.y, frameInfo.collisionBoundsOffset.width, frameInfo.collisionBoundsOffset.height,
+			frameInfo.spriteDataOffs);
 		frameList += 32;
 		_frames.push_back(frameInfo);
 	}

@@ -251,15 +251,15 @@ void NeverhoodEngine::dumpAllResources() {
 			anim.load(entry.archiveEntry->fileHash);
 			for (uint frameIndex = 0; frameIndex < anim.getFrameCount(); frameIndex++) {
 				const AnimFrameInfo &frameInfo = anim.getFrameInfo(frameIndex);
-				int16 width = (frameInfo.rect.width + 3) & 0xFFFC;
-				byte *pixels = new byte[width * frameInfo.rect.height];
-				memset(pixels, 0, width * frameInfo.rect.height);
+				int16 width = (frameInfo.drawOffset.width + 3) & 0xFFFC;
+				byte *pixels = new byte[width * frameInfo.drawOffset.height];
+				memset(pixels, 0, width * frameInfo.drawOffset.height);
 				anim.draw(frameIndex, pixels, width, false, false);
 				Common::String filename = 
 					frameInfo.frameHash != 0
 					? Common::String::format("%08X_%03d_%08X.tga", entry.archiveEntry->fileHash, frameIndex, frameInfo.frameHash) 
 					: Common::String::format("%08X_%03d.tga", entry.archiveEntry->fileHash, frameIndex);
-				writeTga(filename.c_str(), pixels, vgaPalette, width, frameInfo.rect.height);
+				writeTga(filename.c_str(), pixels, vgaPalette, width, frameInfo.drawOffset.height);
 				delete[] pixels;
 			}
 		}

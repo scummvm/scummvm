@@ -68,10 +68,9 @@ protected:
 struct AnimFrameInfo {
 	uint32 frameHash;
 	int16 counter;
-	NDrawRect rect;
+	NDrawRect drawOffset;
 	int16 deltaX, deltaY;
-	NDrawRect deltaRect;
-	uint16 field_1A; 
+	NDrawRect collisionBoundsOffset;
 	uint32 spriteDataOffs;
 };
 

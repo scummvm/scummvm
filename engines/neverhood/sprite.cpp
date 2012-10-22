@@ -408,10 +408,10 @@ void AnimatedSprite::updateFrameInfo() {
 	debug(8, "AnimatedSprite::updateFrameInfo()");
 	const AnimFrameInfo &frameInfo = _animResource.getFrameInfo(_currFrameIndex);
 	_frameChanged = true;
-	_drawOffset = frameInfo.rect;
+	_drawOffset = frameInfo.drawOffset;
 	_deltaX = frameInfo.deltaX;
 	_deltaY = frameInfo.deltaY;
-	_collisionBoundsOffset = frameInfo.deltaRect;
+	_collisionBoundsOffset = frameInfo.collisionBoundsOffset;
 	_currFrameTicks = frameInfo.counter;
 	updateBounds();
 	_needRefresh = true;
