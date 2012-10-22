@@ -66,6 +66,7 @@ enum NancyDebugChannels {
 struct NancyGameDescription;
 
 class ResourceManager;
+class IFF;
 
 class NancyEngine : public Engine {
 public:
@@ -108,6 +109,7 @@ private:
 	Common::Platform _platform;
 
 	void initialize();
+	void preloadCals(const IFF &boot);
 };
 
 } // End of namespace Nancy
