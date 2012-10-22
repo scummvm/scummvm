@@ -1860,63 +1860,63 @@ LABEL_54:
 }
 
 void ObjectsManager::GOHOME() {
-	__int16 v0; 
-	__int16 v1; 
-	__int16 v3; 
-	__int16 v4; 
+	int16 v0; 
+	int16 v1; 
+	int16 v3; 
+	int16 v4; 
 	unsigned int v5;
 	unsigned int v6;
 	unsigned int v7;
 	unsigned int v8;
-	__int16 v9; 
-	__int16 v10;
+	int16 v9; 
+	int16 v10;
 	unsigned int v11;
 	unsigned int v12;
 	unsigned int v13;
 	unsigned int v14;
 	int v15; 
-	__int16 v16; 
+	int16 v16; 
 	unsigned int v17; 
 	unsigned int v18; 
 	int v19; 
-	__int16 v20; 
+	int16 v20; 
 	unsigned int v21; 
 	unsigned int v22; 
-	__int16 v23; 
-	__int16 v24; 
+	int16 v23; 
+	int16 v24; 
 	unsigned int v25; 
 	unsigned int v26; 
 	unsigned int v27; 
 	unsigned int v28; 
-	__int16 v29; 
-	__int16 v30; 
+	int16 v29; 
+	int16 v30; 
 	unsigned int v31;
 	unsigned int v32;
 	unsigned int v33;
 	unsigned int v34; 
-	__int16 v35;
-	__int16 v36;
+	int16 v35;
+	int16 v36;
 	unsigned int v37;
 	unsigned int v38;
 	unsigned int v39;
 	unsigned int v40;
-	__int16 v41; 
-	__int16 v42; 
+	int16 v41; 
+	int16 v42; 
 	unsigned int v43;
 	unsigned int v44;
 	unsigned int v45;
 	unsigned int v46;
-	signed __int16 v47;
-	__int16 v48; 
-	__int16 v49; 
+	int16 v47;
+	int16 v48; 
+	int16 v49; 
 	int v50; 
-	__int16 v51;
-	__int16 v52;
-	__int16 v54;
+	int16 v51;
+	int16 v52;
+	int16 v54;
 	int v55; 
-	__int16 v56;
-	__int16 v57;
-	__int16 v58;
+	int16 v56;
+	int16 v57;
+	int16 v58;
 
 	v0 = 0;
 	v58 = 0;
@@ -1987,7 +1987,7 @@ LABEL_241:
 		return;
 	}
 	if (_vm->_globals.g_old_sens == 3) {
-		if ((unsigned __int16)(_vm->_globals.g_old_anim - 24) > 0xBu) {
+		if ((uint16)(_vm->_globals.g_old_anim - 24) > 0xBu) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 		} else {
@@ -2026,7 +2026,7 @@ LABEL_23:
 	}
 	if (_vm->_globals.g_old_sens != 7)
 		goto LABEL_43;
-	if ((unsigned __int16)(_vm->_globals.g_old_anim - 24) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 24) > 0xBu) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2096,7 +2096,7 @@ LABEL_59:
 LABEL_60:
 	if (_vm->_globals.g_old_sens != 5)
 		goto LABEL_77;
-	if ((unsigned __int16)(_vm->_globals.g_old_anim - 48) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 48) > 0xBu) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2128,7 +2128,7 @@ LABEL_76:
 LABEL_77:
 	if (_vm->_globals.g_old_sens != 2)
 		goto LABEL_96;
-	if ((unsigned __int16)(_vm->_globals.g_old_anim - 12) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 12) > 0xBu) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2166,7 +2166,7 @@ LABEL_95:
 LABEL_96:
 	if (_vm->_globals.g_old_sens != 8)
 		goto LABEL_115;
-	if ((unsigned __int16)(_vm->_globals.g_old_anim - 12) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 12) > 0xBu) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2204,7 +2204,7 @@ LABEL_114:
 LABEL_115:
 	if (_vm->_globals.g_old_sens != 4)
 		goto LABEL_134;
-	if ((unsigned __int16)(_vm->_globals.g_old_anim - 36) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 36) > 0xBu) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2242,7 +2242,7 @@ LABEL_133:
 LABEL_134:
 	if (_vm->_globals.g_old_sens != 6)
 		goto LABEL_153;
-	if ((unsigned __int16)(_vm->_globals.g_old_anim - 36) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 36) > 0xBu) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2396,7 +2396,7 @@ LABEL_153:
 
 void ObjectsManager::GOHOME2() {
 	signed int v0;
-	__int16 v2; 
+	int16 v2; 
 
 	v0 = 2;
 	if (_vm->_globals.chemin != (int16 *)g_PTRNUL) {
@@ -2462,10 +2462,10 @@ LABEL_19:
 
 // Load Obstacle
 void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
-	__int16 v1; 
+	int16 v1; 
 	byte *ptr; 
-	__int16 v4; 
-	__int16 v5; 
+	int16 v4; 
+	int16 v5; 
 
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_linesManager.TOTAL_LIGNES = 0;
@@ -2502,7 +2502,7 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 	int v4; 
 	int v5; 
 	int v6; 
-	signed __int16 v7; 
+	int16 v7; 
 	int v8; 
 	byte *v9; 
 	int v10; 
@@ -2511,8 +2511,8 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 	byte *v13; 
 	int v14; 
 	signed int v15; 
-	__int16 v17; 
-	__int16 v18; 
+	int16 v17; 
+	int16 v18; 
 	byte *ptr; 
 
 	v1 = 1;
@@ -3802,9 +3802,9 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 			if (_vm->_linesManager.colision2_ligne(a1, a2, &v83, &v88, 0, _vm->_linesManager.TOTAL_LIGNES) == 1) {
 				v27 = 0;
 				while (1) {
-					v28 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27);
-					v29 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27 + 2);
-					v66 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (signed __int16)v27 + 4);
+					v28 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (int16)v27);
+					v29 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (int16)v27 + 2);
+					v66 = (int16)READ_LE_UINT16(_vm->_globals.essai2 + 2 * (int16)v27 + 4);
 					v27 = v27 + 4;
 					v30 = v27;
 					v31 = _vm->_linesManager.colision2_ligne(v28, v29, &v83, &v88, 0, DERLIGNE);
@@ -4183,27 +4183,27 @@ void ObjectsManager::BTDROITE() {
 
 int ObjectsManager::MZONE() {
 	signed int result;
-	__int16 v1;
-	__int16 v2;
+	int16 v1;
+	int16 v2;
 	int v3; 
-	__int16 v4;
-	__int16 v5;
+	int16 v4;
+	int16 v5;
 	int v6; 
-	__int16 v7;
+	int16 v7;
 	int v8; 
 	int v9; 
-	__int16 yCurrent;
-	__int16 v11;
-	__int16 j; 
-	__int16 k; 
-	__int16 xCurrent; 
+	int16 yCurrent;
+	int16 v11;
+	int16 j; 
+	int16 k; 
+	int16 xCurrent; 
 	int v15; 
-	__int16 v16;
-	__int16 v17;
-	__int16 v18;
-	__int16 v19;
-	__int16 yp;
-	__int16 xp;
+	int16 v16;
+	int16 v17;
+	int16 v18;
+	int16 v19;
+	int16 yp;
+	int16 xp;
 
 	v19 = 0;
 	v18 = 0;
@@ -7633,7 +7633,7 @@ LABEL_63:
 }
 
 int ObjectsManager::Traduction2(const byte *dataP) {
-	signed __int16 result; 
+	int16 result; 
 
 	result = 0;
 	if (*dataP != 'F' || *(dataP + 1) != 'C') {
@@ -7982,14 +7982,14 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 
 void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6) {
 	int v6; 
-	signed __int16 v7; 
+	int16 v7; 
 	char v8; 
 	__int32 v9; 
-	signed __int16 v10; 
+	int16 v10; 
 	__int32 v11; 
 	int spriteIndex; 
 	char v14; 
-	__int16 v15; 
+	int16 v15; 
 	Common::String v16; 
 
 	v15 = 0;
@@ -8379,7 +8379,7 @@ LABEL_70:
 		SPRITE(_vm->_globals.PERSO, _vm->_objectsManager.PERX, _vm->_objectsManager.PERY, 0, _vm->_objectsManager.PERI, 0, 0, 20, 127);
 	_vm->_eventsManager.souris_xy(_vm->_objectsManager.PERX, _vm->_objectsManager.PERY);
 	if (_vm->_graphicsManager.DOUBLE_ECRAN == 1)
-		_vm->_graphicsManager.SCROLL = (signed __int16)XSPR(0) - 320;
+		_vm->_graphicsManager.SCROLL = (int16)XSPR(0) - 320;
 	_vm->_objectsManager.VERIFTAILLE();
 	SPRITE_ON(0);
 	_vm->_globals.CACHE_ON();

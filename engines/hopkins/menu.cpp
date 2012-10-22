@@ -491,7 +491,7 @@ void MenuManager::COMPUT_HOPKINS(int idx) {
 				outtext2((const char *)&MenuText[0xD4A]);
 			}
 			do {
-				v12 = (unsigned __int8)keywin(v2, s2);
+				v12 = (byte)keywin(v2, s2);
 				v2 = 0;
 				if ((uint16)(v12 - 48) <= 8u)
 					v2 = 1;
