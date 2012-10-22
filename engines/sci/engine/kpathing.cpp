@@ -1366,7 +1366,16 @@ static void AStar(PathfindingState *s) {
 			// other, while we apply a penalty to paths traversing it.
 			// This difference might lead to problems, but none are
 			// known at the time of writing.
-			if (s->pointOnScreenBorder(vertex->v))
+
+			// WORKAROUND: This check fails in QFG1VGA, room 81 (bug report #3568452).
+			// However, it is needed in other SCI1.1 games, such as LB2. Therefore, we
+			// add this workaround for that scene in QFG1VGA, until our algorithm matches
+			// better what SSCI is doing. With this workaround, QFG1VGA no longer freezes
+			// in that scene.
+			bool qfg1VgaWorkaround = (g_sci->getGameId() == GID_QFG1VGA &&
+									  g_sci->getEngineState()->currentRoomNumber() == 81);
+
+			if (s->pointOnScreenBorder(vertex->v) && !qfg1VgaWorkaround)
 				new_dist += 10000;
 
 			if (new_dist < vertex->costG) {
