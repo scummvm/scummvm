@@ -29,8 +29,8 @@
 namespace Hopkins {
 
 struct ZonePItem {
-	int field0;
-	int field2;
+	int destX;
+	int destY;
 	int field4;
 	int field6;
 	int field7;

@@ -332,8 +332,8 @@ void Globals::clearAll() {
 	OBJET_EN_COURS = 0;
   
 	for (int idx = 0; idx < 105; ++idx) {
-		ZONEP[idx].field0 = 0;
-		ZONEP[idx].field2 = 0;
+		ZONEP[idx].destX = 0;
+		ZONEP[idx].destY = 0;
 		ZONEP[idx].field4 = 0;
 	}
 

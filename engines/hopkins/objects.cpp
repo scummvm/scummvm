@@ -1964,14 +1964,14 @@ void ObjectsManager::GOHOME() {
 			_vm->_globals.g_old_sens = -1;
 			if (v54 > 0) {
 				v55 = v54;
-				if (_vm->_globals.ZONEP[v55].field0) {
-					v56 = _vm->_globals.ZONEP[v55].field2;
+				if (_vm->_globals.ZONEP[v55].destX) {
+					v56 = _vm->_globals.ZONEP[v55].destY;
 					if (v56) {
 						if (v56 != 31) {
 							v57 = _vm->_globals.ZONEP[v55].field4;
 							if (v57 == -1) {
-								_vm->_globals.ZONEP[v55].field0 = 0;
-								_vm->_globals.ZONEP[v55].field2 = 0;
+								_vm->_globals.ZONEP[v55].destX = 0;
+								_vm->_globals.ZONEP[v55].destY = 0;
 								_vm->_globals.ZONEP[v55].field4 = 0;
 							} else {
 								SETANISPR(0, v57);
@@ -2309,14 +2309,14 @@ LABEL_153:
 
 			if (v49 > 0) {
 				v50 = v49;
-				if (_vm->_globals.ZONEP[v50].field0) {
-					v51 = _vm->_globals.ZONEP[v50].field2;;
+				if (_vm->_globals.ZONEP[v50].destX) {
+					v51 = _vm->_globals.ZONEP[v50].destY;
 					if (v51) {
 						if (v51 != 31) {
 							v52 = _vm->_globals.ZONEP[v50].field4;
 							if (v52 == -1) {
-								_vm->_globals.ZONEP[v50].field0 = 0;
-								_vm->_globals.ZONEP[v50].field2 = 0;
+								_vm->_globals.ZONEP[v50].destX = 0;
+								_vm->_globals.ZONEP[v50].destY = 0;
 								_vm->_globals.ZONEP[v50].field4 = 0;
 							} else {
 								SETANISPR(0, v52);
@@ -2518,8 +2518,8 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 	v1 = 1;
 	do {
 		v2 = v1;
-		_vm->_globals.ZONEP[v2].field0 = 0;
-		_vm->_globals.ZONEP[v2].field2 = 0;
+		_vm->_globals.ZONEP[v2].destX = 0;
+		_vm->_globals.ZONEP[v2].destY = 0;
 		_vm->_globals.ZONEP[v2].field4 = 0;
 		_vm->_globals.ZONEP[v2].field6 = 0;
 		_vm->_globals.ZONEP[v2].field7 = 0;
@@ -2568,8 +2568,8 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 	v7 = 1;
 	do {
 		v8 = v7;
-		_vm->_globals.ZONEP[v8].field0 = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
-		_vm->_globals.ZONEP[v8].field2 = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1);
+		_vm->_globals.ZONEP[v8].destX = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
+		_vm->_globals.ZONEP[v8].destY = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1);
 		_vm->_globals.ZONEP[v8].field4 = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2);
 		v4 += 3;
 		++v7;
@@ -2896,9 +2896,9 @@ LABEL_38:
 		return;
 	if ((uint16)(NUMZONE + 1) > 1u) {
 		zoneCount = NUMZONE;
-		zoneX = _vm->_globals.ZONEP[zoneCount].field0;
+		zoneX = _vm->_globals.ZONEP[zoneCount].destX;
 		if (zoneX) {
-			zoneY = _vm->_globals.ZONEP[zoneCount].field2;
+			zoneY = _vm->_globals.ZONEP[zoneCount].destY;
 			if (zoneY) {
 				if (zoneY != 31) {
 					destX = zoneX;
@@ -4230,13 +4230,13 @@ int ObjectsManager::MZONE() {
 											if (yp < _vm->_globals.Bob[v3].field44 + v5) {
 												v6 = v1;
 												if (_vm->_globals.ZONEP[v1].field4 == -1) {
-													_vm->_globals.ZONEP[v6].field0 = 0;
-													_vm->_globals.ZONEP[v1].field2 = 0;
+													_vm->_globals.ZONEP[v6].destX = 0;
+													_vm->_globals.ZONEP[v1].destY = 0;
 												}
-												if (!_vm->_globals.ZONEP[v6].field0) {
-													if (!_vm->_globals.ZONEP[v1].field2) {
-														_vm->_globals.ZONEP[v6].field0 = _vm->_globals.Bob[v15].field42 + _vm->_globals.Bob[v15].field3E;
-														_vm->_globals.ZONEP[v1].field2 = _vm->_globals.Bob[v15].field44 + _vm->_globals.Bob[v15].field40 + 6;
+												if (!_vm->_globals.ZONEP[v6].destX) {
+													if (!_vm->_globals.ZONEP[v1].destY) {
+														_vm->_globals.ZONEP[v6].destX = _vm->_globals.Bob[v15].field42 + _vm->_globals.Bob[v15].field3E;
+														_vm->_globals.ZONEP[v1].destY = _vm->_globals.Bob[v15].field44 + _vm->_globals.Bob[v15].field40 + 6;
 														_vm->_globals.ZONEP[v1].field4 = -1;
 													}
 												}
@@ -6690,7 +6690,7 @@ LABEL_1141:
 		if (v76 == 245) {
 			_vm->_soundManager.PLAY_SOUND("SOUND89.WAV");
 			OPTI_ONE(5, 0, 6, 0);
-			_vm->_globals.ZONEP[4].field0 = 276;
+			_vm->_globals.ZONEP[4].destX = 276;
 			VERBE_ON(4, 19);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
 			_vm->_globals.SAUVEGARDE->data[svField399] = 1;
@@ -7297,8 +7297,8 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					v18 = 1;
 					do {
 						v19 = v18;
-						_vm->_globals.ZONEP[v19].field0 = 0;
-						_vm->_globals.ZONEP[v19].field2 = 0;
+						_vm->_globals.ZONEP[v19].destX = 0;
+						_vm->_globals.ZONEP[v19].destY = 0;
 						_vm->_globals.ZONEP[v19].field4 = 0;
 						_vm->_globals.ZONEP[v19].field6 = 0;
 						_vm->_globals.ZONEP[v19].field7 = 0;
@@ -7334,8 +7334,8 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					v20 = 1;
 					do {
 						v21 = v20;
-						_vm->_globals.ZONEP[v21].field0 = (int16)READ_LE_UINT16(v17 + 2 * v33);
-						_vm->_globals.ZONEP[v21].field2 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 2);
+						_vm->_globals.ZONEP[v21].destX = (int16)READ_LE_UINT16(v17 + 2 * v33);
+						_vm->_globals.ZONEP[v21].destY = (int16)READ_LE_UINT16(v17 + 2 * v33 + 2);
 						_vm->_globals.ZONEP[v21].field4 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 4);
 						v33 += 3;
 						++v20;
