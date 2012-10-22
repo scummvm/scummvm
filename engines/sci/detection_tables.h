@@ -129,6 +129,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Castle of Dr. Brain - English DOS 5.25" Floppy VGA 1.1 (from rnjacobs, bug report #3578286)
+	{"castlebrain", "", {
+		{"resource.map", 0, "a1deac2647ad09472c63656bfb950a4d", 2739},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 347071},
+		{"resource.001", 0, "13e81e1839cd7b216d2bb5615c1ca160", 356812},
+		{"resource.002", 0, "583d348c908f89f94f8551d7fe0a2eca", 991752},
+		{"resource.003", 0, "6c3d1bb26ad532c94046bc9ac49b5ff4", 728315},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Castle of Dr. Brain - English DOS Floppy 1.1
 	{"castlebrain", "", {
 		{"resource.map", 0, "f77728304c70017c54793eb6ca648174", 2745},
