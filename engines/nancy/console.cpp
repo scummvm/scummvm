@@ -29,6 +29,7 @@
 #include "nancy/resource.h"
 #include "nancy/video.h"
 #include "nancy/audio.h"
+#include "nancy/iff.h"
 
 namespace Nancy {
 
@@ -38,6 +39,7 @@ NancyConsole::NancyConsole(NancyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("cif_export", WRAP_METHOD(NancyConsole, Cmd_cifExport));
 	registerCmd("cif_list", WRAP_METHOD(NancyConsole, Cmd_cifList));
 	registerCmd("cif_info", WRAP_METHOD(NancyConsole, Cmd_cifInfo));
+	registerCmd("chunk_hexdump", WRAP_METHOD(NancyConsole, Cmd_chunkHexDump));
 	registerCmd("show_image", WRAP_METHOD(NancyConsole, Cmd_showImage));
 	registerCmd("play_video", WRAP_METHOD(NancyConsole, Cmd_playVideo));
 	registerCmd("play_audio", WRAP_METHOD(NancyConsole, Cmd_playAudio));
@@ -139,6 +141,40 @@ bool NancyConsole::Cmd_cifInfo(int argc, const char **argv) {
 	}
 
 	debugPrintf("%s", _vm->_res->getCifDescription((argc == 2 ? "ciftree" : argv[2]), argv[1]).c_str());
+	return true;
+}
+
+bool NancyConsole::Cmd_chunkHexDump(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Hexdumps an IFF chunk\n");
+		debugPrintf("Usage: %s iffname chunkname\n", argv[0]);
+		return true;
+	}
+
+	IFF iff(_vm, argv[1]);
+	if (!iff.load()) {
+		debugPrintf("Failed to load IFF '%s'\n", argv[1]);
+		return true;
+	}
+
+	const byte *buf;
+	uint size;
+
+	uint32 id = 0;
+	for (uint i = 0; i < 4; i++) {
+		char c = argv[2][i];
+		if (!c)
+			break;
+		id |= toupper(c) << (24 - 8 * i);
+	}
+
+	buf = iff.getChunk(id, size);
+	if (!buf) {
+		debugPrintf("Failed to find chunk '%s' in IFF '%s'\n", argv[2], argv[1]);
+		return true;
+	}
+
+	Common::hexdump(buf, size);
 	return true;
 }
 
