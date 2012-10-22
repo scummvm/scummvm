@@ -21,6 +21,8 @@
  */
 
 #include "common/endian.h"
+#include "graphics/decoders/tga.h"
+#include "graphics/surface.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/debug.h"
@@ -84,23 +86,16 @@ void MaterialData::initGrim(Common::SeekableReadStream *data) {
 }
 
 void loadTGA(Common::SeekableReadStream *data, Texture *t) {
-	int descField = data->readByte();
-	assert(descField == 0);	// Verify that description-field is empty
-	
-	data->seek(1, SEEK_CUR);
-	
-	int format = data->readByte();
-	if (!(format == 2 || format == 10)) {
-		error("Unsupported TGA-format detected: %d", format);
-	}
-	
-	data->seek(9, SEEK_CUR);
-	t->_width = data->readUint16LE();
-	t->_height = data->readUint16LE();
+	Graphics::TGADecoder *tgaDecoder = new Graphics::TGADecoder();
+	tgaDecoder->loadStream(*data);
+	const Graphics::Surface *tgaSurface = tgaDecoder->getSurface();
+
+	t->_width = tgaSurface->w;
+	t->_height = tgaSurface->h;
 	t->_texture = NULL;
-	
-	int bpp = data->readByte();
-	if (bpp == 32) {
+
+	int bpp = tgaSurface->format.bytesPerPixel;
+	if (bpp == 4) {
 		t->_colorFormat = BM_RGBA;
 		t->_bpp = 4;
 		t->_hasAlpha = true;
@@ -109,45 +104,16 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 		t->_bpp = 3;
 		t->_hasAlpha = false;
 	}
-	
-	uint8 desc = data->readByte();
-	uint8 flipped = !(desc & 32);
-	
-	assert(bpp == 24 || bpp == 32); // Assure we have 24/32 bpp
-	t->_data = new char[t->_width * t->_height * (bpp / 8)];
-	
-	if (format == 2) {
-		// Since certain TGA's are flipped (relative to the tex-coords) and others not
-		// We'll have to handle that here, otherwise we could just do 1.0f - texCoords
-		// When drawing/loading
-		if (flipped) {
-			char *writePtr = t->_data + (t->_width * (t->_height - 1) * bpp / 8);
-			for (int i = 0; i < t->_height; i++) {
-				data->read(writePtr, t->_width * (bpp / 8));
-				writePtr -= (t->_width * bpp / 8);
-			}
-		} else {
-			data->read(t->_data, t->_width * t->_height * (bpp / 8));		
-		}
-	} else if (format == 10) {
-		// Decode Run-Length Encoding
-		char *writePtr = t->_data;
-		while (!data->eos()) {
-			byte head = data->readByte();
-			if (head & 0x80) {
-				byte num = (head & 0x7f) + 1;
-				uint32 d = data->readUint32LE();
-				for (int i = 0; i < num; ++i) {
-					*((uint32 *)writePtr) = d;
-					writePtr += 4;
-				}
-			} else {
-				++head;
-				data->read(writePtr, head*4);
-				writePtr += head*4;
-			}
-		}
-	}
+
+	assert(bpp == 3 || bpp == 4); // Assure we have 24/32 bpp
+
+	// Allocate room for the texture.
+	t->_data = new char[t->_width * t->_height * (bpp)];
+
+	// Copy the texture data, as the decoder owns the current copy.
+	memcpy(t->_data, tgaSurface->pixels, t->_width * t->_height * (bpp));
+
+	delete tgaDecoder;
 }
 	
 void MaterialData::initEMI(Common::SeekableReadStream *data) {
