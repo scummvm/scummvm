@@ -43,7 +43,7 @@ public:
 	~IFF();
 
 	bool load();
-	const byte *getChunk(uint32 id, uint &size) const;
+	const byte *getChunk(uint32 id, uint &size, uint index = 0) const;
 
 	// Debugger functions
 	void list(Common::Array<Common::String> &nameList);
