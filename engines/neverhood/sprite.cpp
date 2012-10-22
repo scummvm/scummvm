@@ -120,42 +120,43 @@ StaticSprite::StaticSprite(NeverhoodEngine *vm, int objectPriority)
 
 }
 
-StaticSprite::StaticSprite(NeverhoodEngine *vm, const char *filename, int surfacePriority, int16 x, int16 y, int16 width, int16 height)
+StaticSprite::StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y)
 	: Sprite(vm, 0), _spriteResource(vm) {
-
-	init(calcHash(filename), surfacePriority, x, y, width, height);
-}
-
-StaticSprite::StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height)
-	: Sprite(vm, 0), _spriteResource(vm) {
-
-	init(fileHash, surfacePriority, x, y, width, height);
-}
-
-void StaticSprite::init(uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height) {
 
 	_spriteResource.load2(fileHash);
-
-	if (width == 0)
-		width = _spriteResource.getDimensions().width;
-
-	if (height == 0)
-		height = _spriteResource.getDimensions().height;
-
-	createSurface(surfacePriority, width, height);
-
+	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = x == kDefPosition ? _spriteResource.getPosition().x : x;
 	_y = y == kDefPosition ? _spriteResource.getPosition().y : y;
-	
-	_drawOffset.set(0, 0, width, height);
-
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_needRefresh = true;
-
-	update();
-	
+	updatePosition();
 }
 
-void StaticSprite::update() {
+void StaticSprite::loadSprite(uint32 fileHash, uint flags, int surfacePriority, int16 x, int16 y) {
+	_spriteResource.load2(fileHash);
+	if (!_surface)
+		createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	if (flags & kSLFDefDrawOffset)
+		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	else if (flags & kSLFCenteredDrawOffset)
+		_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
+			_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	if (flags & kSLFDefPosition) {
+		_x = _spriteResource.getPosition().x;
+		_y = _spriteResource.getPosition().y;
+	} else if (flags & kSLFSetPosition) {
+		_x = x;
+		_y = y;
+	}
+	if (flags & kSLFDefCollisionBoundsOffset) {
+		_collisionBoundsOffset = _drawOffset;
+		updateBounds();
+	}
+	_needRefresh = true;
+	updatePosition();
+}
+
+void StaticSprite::updatePosition() {
 
 	if (!_surface)
 		return;
@@ -176,23 +177,6 @@ void StaticSprite::update() {
 		_surface->drawSpriteResourceEx(_spriteResource, _doDeltaX, _doDeltaY, _drawOffset.width, _drawOffset.height);
 		_needRefresh = false;
 	}
-
-}
-
-void StaticSprite::load(uint32 fileHash, bool dimensions, bool position) {
-
-	_spriteResource.load2(fileHash);
-
-	if (dimensions) {
-		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	}
-
-	if (position) {
-		_x = _spriteResource.getPosition().x;
-		_y = _spriteResource.getPosition().y;
-	}
-
-	_needRefresh = true;
 
 }
 

@@ -165,8 +165,7 @@ SsCommonFloorButton::SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene
 		_soundFileHash = 0x44141000;
 	createSurface(1010, 61, 30);
 	if (_fileHash1) {
-		load(_fileHash1, true, true);
-		StaticSprite::update();
+		loadSprite(_fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
 	} else
 		setVisible(false);
 }
@@ -175,8 +174,7 @@ void SsCommonFloorButton::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
 		sendMessage(_parentScene, 0x1022, 1010);
 		if (_fileHash1) {
-			load(_fileHash1, true, true);
-			StaticSprite::update();
+			loadSprite(_fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
 		} else
 			setVisible(false);
 	}
@@ -189,8 +187,7 @@ uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &pa
 		sendMessage(_parentScene, 0x480B, 0);
 		setVisible(true);
 		sendMessage(_parentScene, 0x1022, 990);
-		load(_fileHash2, true, true);
-		StaticSprite::update();
+		loadSprite(_fileHash2, kSLFDefDrawOffset | kSLFDefPosition);
 		_countdown = 16;
 		playSound(0, _soundFileHash);
 		break;

@@ -163,12 +163,7 @@ static const uint32 kMainMenuButtonFileHashes[] = {
 MainMenuButton::MainMenuButton(NeverhoodEngine *vm, Scene *parentScene, uint buttonIndex)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _buttonIndex(buttonIndex), _countdown(0) {
 
-	_spriteResource.load2(kMainMenuButtonFileHashes[_buttonIndex]);
-	createSurface(100, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
+	loadSprite(kMainMenuButtonFileHashes[_buttonIndex], kSLFDefDrawOffset | kSLFDefPosition, 100);
 
 	// TODO Move to const array
 	switch (_buttonIndex) {
@@ -202,15 +197,12 @@ MainMenuButton::MainMenuButton(NeverhoodEngine *vm, Scene *parentScene, uint but
 	}
 	
 	setVisible(false);
-	_needRefresh = true;
-
 	SetUpdateHandler(&MainMenuButton::update);
 	SetMessageHandler(&MainMenuButton::handleMessage);
-
 }
 
 void MainMenuButton::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		setVisible(false);
 		sendMessage(_parentScene, 0x2000, _buttonIndex);

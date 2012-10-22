@@ -606,32 +606,16 @@ uint32 AsScene1002Ring::hmRingReleased(int messageNum, const MessageParam &param
 AsScene1002Door::AsScene1002Door(NeverhoodEngine *vm, NRect &clipRect)
 	: StaticSprite(vm, 1200) {
 	
-	_spriteResource.load2(0x1052370F);
-	createSurface(800, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	loadSprite(0x1052370F, kSLFDefDrawOffset | kSLFSetPosition, 800, 526, getGlobalVar(V_FLYTRAP_RING_DOOR) ? 49 : 239);
 	setClipRect(clipRect);
-
-	_x = 526;
-	
-	if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
-		_y = 49; 
-	} else {
-		_y = 239; 
-	}
-
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-
-	_needRefresh = true;
-	
 	SetUpdateHandler(&AsScene1002Door::update);
 	SetMessageHandler(&AsScene1002Door::handleMessage);
 	SetSpriteUpdate(NULL);
-	StaticSprite::update();
-	
 }
 
 void AsScene1002Door::update() {
 	handleSpriteUpdate();
-	StaticSprite::update();
+	updatePosition();
 }
 
 uint32 AsScene1002Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -761,42 +745,22 @@ SsCommonPressButton::SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene
 	: StaticSprite(vm, 1100), _parentScene(parentScene), _status(0) {
 
 	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000;
-
 	_fileHashes[0] = fileHash1;
 	_fileHashes[1] = fileHash2;
-	
-	_spriteResource.load2(fileHash1);
 	createSurface(surfacePriority, 40, 40);
-	
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-
+	loadSprite(fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
 	setVisible(false);
-	_needRefresh = true;
-	
 	SetUpdateHandler(&SsCommonPressButton::update);
 	SetMessageHandler(&SsCommonPressButton::handleMessage);
-
 }
 
 void SsCommonPressButton::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 	_fileHashes[0] = fileHash1;
 	_fileHashes[1] = fileHash2;
 	if (_status == 2) {
-		_spriteResource.load2(fileHash2);
-		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-		_x = _spriteResource.getPosition().x;
-		_y = _spriteResource.getPosition().y;
-		_needRefresh = true;
-		StaticSprite::update();
+		loadSprite(fileHash2, kSLFDefDrawOffset | kSLFDefPosition);
 	} else {
-		_spriteResource.load2(fileHash1);
-		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-		_x = _spriteResource.getPosition().x;
-		_y = _spriteResource.getPosition().y;
-		_needRefresh = true;
-		StaticSprite::update();
+		loadSprite(fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
 	}
 }
 
@@ -804,21 +768,11 @@ void SsCommonPressButton::update() {
 	if (_countdown != 0 && (--_countdown) == 0) {
 		if (_status == 1) {
 			_status = 2;
-			_spriteResource.load2(_fileHashes[1]);
-			_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-			_x = _spriteResource.getPosition().x;
-			_y = _spriteResource.getPosition().y;
-			_needRefresh = true;
-			StaticSprite::update();
+			loadSprite(_fileHashes[1], kSLFDefDrawOffset | kSLFDefPosition);
 			_countdown = 4;
 		} else if (_status == 2) {
 			_status = 3;
-			_spriteResource.load2(_fileHashes[0]);
-			_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-			_x = _spriteResource.getPosition().x;
-			_y = _spriteResource.getPosition().y;
-			_needRefresh = true;
-			StaticSprite::update();
+			loadSprite(_fileHashes[0], kSLFDefDrawOffset | kSLFDefPosition);
 			_countdown = 4;
 		} else if (_status == 3) {
 			_status = 0;

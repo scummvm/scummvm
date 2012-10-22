@@ -93,16 +93,22 @@ protected:
 	}
 };
 
+enum {
+	kSLFDefDrawOffset				= 1 << 0,
+	kSLFCenteredDrawOffset			= 1 << 1,
+	kSLFDefPosition					= 1 << 2,
+	kSLFSetPosition					= 1 << 3,
+	kSLFDefCollisionBoundsOffset	= 1 << 4
+};
+
 class StaticSprite : public Sprite {
 public:
 	StaticSprite(NeverhoodEngine *vm, int objectPriority);
-	StaticSprite(NeverhoodEngine *vm, const char *filename, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
-	StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
-	void load(uint32 fileHash, bool dimensions, bool position);
-	void update();
+	StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition);
+	void loadSprite(uint32 fileHash, uint flags = 0, int surfacePriority = 0, int16 x = kDefPosition, int16 y = kDefPosition);
+	void updatePosition();
 protected:
 	SpriteResource _spriteResource;
-	void init(uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
 };
 
 #define AnimationCallback(callback) static_cast <void (AnimatedSprite::*)()> (callback)

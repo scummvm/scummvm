@@ -165,7 +165,7 @@ AsDiskplayerSceneKey::AsDiskplayerSceneKey(NeverhoodEngine *vm)
 	_newStickFrameIndex = 0;
 	_needRefresh = true;
 	updatePosition();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 uint32 AsDiskplayerSceneKey::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -183,29 +183,21 @@ void AsDiskplayerSceneKey::stDropKey() {
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsDiskplayerSceneKey::handleMessage);
 	NextState(&AsDiskplayerSceneKey::stDropKeyDone);
-	_surface->setVisible(true);
+	setVisible(true);
 }
 
 void AsDiskplayerSceneKey::stDropKeyDone() {
 	stopAnimation();
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Sprite::handleMessage);
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 DiskplayerPlayButton::DiskplayerPlayButton(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene)
 	: StaticSprite(vm, 1400), _diskplayerScene(diskplayerScene), _isPlaying(false) {
 	
-	_spriteResource.load2(0x24A4A664);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_collisionBoundsOffset = _drawOffset;
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	updateBounds();
-	_needRefresh = true;
-	StaticSprite::update();
-	_surface->setVisible(false);
+	loadSprite(0x24A4A664, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
+	setVisible(false);
 	loadSound(0, 0x44043000);
 	loadSound(1, 0x44045000);
 	SetMessageHandler(&DiskplayerPlayButton::handleMessage);
@@ -225,7 +217,7 @@ uint32 DiskplayerPlayButton::handleMessage(int messageNum, const MessageParam &p
 				press();
 			}
 		}
-		StaticSprite::update();
+		updatePosition();
 		messageResult = 1;
 		break;
 	}
@@ -234,8 +226,8 @@ uint32 DiskplayerPlayButton::handleMessage(int messageNum, const MessageParam &p
 
 void DiskplayerPlayButton::press() {
 	if (!_isPlaying) {
-		_surface->setVisible(true);
-		StaticSprite::update();
+		setVisible(true);
+		updatePosition();
 		playSound(0);
 		_isPlaying = true;
 	}
@@ -243,8 +235,8 @@ void DiskplayerPlayButton::press() {
 
 void DiskplayerPlayButton::release() {
 	if (_isPlaying) {
-		_surface->setVisible(false);
-		StaticSprite::update();
+		setVisible(false);
+		updatePosition();
 		playSound(1);
 		_isPlaying = false;
 	}

@@ -407,10 +407,9 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene2801::handleMessage);
 	SetUpdateHandler(&Scene::update);
 
-	if (getGlobalVar(V_RADIO_ENABLED) == 0) {
-		// Display the disabled radio; only possible when the left door is open
+	// Display the disabled radio; only possible when the left door is open
+	if (!getGlobalVar(V_RADIO_ENABLED))
 		insertStaticSprite(0x0001264C, 100);
-	}
 
 	if (which < 0) {
 		insertKlayman<KmScene2801>(194, 430);
@@ -1013,34 +1012,24 @@ void Scene2803::changeBackground() {
 		_background->load(0x412A423E);
 		_palette->addPalette(0x412A423E, 0, 256, 0);
 		_palette->addBasePalette(0x412A423E, 0, 256, 0);
-		_sprite3->load(0xA40EF2FB, false, false);
-		_sprite3->update();
-		_sprite4->load(0x0C03AA23, false, false);
-		_sprite4->update();
-		_sprite5->load(0x2A822E2E, false, false);
-		_sprite5->update();
-		_sprite6->load(0x2603A202, false, false);
-		_sprite6->update();
-		_sprite7->load(0x24320220, false, false);
-		_sprite7->update();
+		_sprite3->loadSprite(0xA40EF2FB);
+		_sprite4->loadSprite(0x0C03AA23);
+		_sprite5->loadSprite(0x2A822E2E);
+		_sprite6->loadSprite(0x2603A202);
+		_sprite7->loadSprite(0x24320220);
 		_mouseCursor->load(0xA423A41A);
 		_mouseCursor->updateCursor();
-		_sprite8->load(0x3C42022F, false, false);
-		_sprite8->update();
-		_sprite9->load(0x341A0237, false, false);
-		_sprite9->update();
+		_sprite8->loadSprite(0x3C42022F);
+		_sprite9->loadSprite(0x341A0237);
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
-			_asTestTubeOne->load(0x66121222, false, false);
-			_asTestTubeOne->update();
+			_asTestTubeOne->loadSprite(0x66121222);
 		} else
 			sendMessage(_asTestTubeOne, 0x2000, 0);
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3) {
-			_asTestTubeTwo->load(0x64330236, false, false);
-			_asTestTubeTwo->update();
+			_asTestTubeTwo->loadSprite(0x64330236);
 		}
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3) {
-			_asTestTubeThree->load(0x2E4A22A2, false, false);
-			_asTestTubeThree->update();
+			_asTestTubeThree->loadSprite(0x2E4A22A2);
 		}
 		_sprite10->setVisible(true);
 	} else {
@@ -1048,34 +1037,24 @@ void Scene2803::changeBackground() {
 		_background->load(0x29800A01);
 		_palette->addPalette(0x29800A01, 0, 256, 0);
 		_palette->addBasePalette(0x29800A01, 0, 256, 0);
-		_sprite3->load(0x234340A0, false, false);
-		_sprite3->update();
-		_sprite4->load(0x16202200, false, false);
-		_sprite4->update();
-		_sprite5->load(0x1030169A, false, false);
-		_sprite5->update();
-		_sprite6->load(0x1600A6A8, false, false);
-		_sprite6->update();
-		_sprite7->load(0xD0802EA0, false, false);
-		_sprite7->update();
+		_sprite3->loadSprite(0x234340A0);
+		_sprite4->loadSprite(0x16202200);
+		_sprite5->loadSprite(0x1030169A);
+		_sprite6->loadSprite(0x1600A6A8);
+		_sprite7->loadSprite(0xD0802EA0);
 		_mouseCursor->load(0x00A05290);
 		_mouseCursor->updateCursor();
-		_sprite8->load(0x108012C1, false, false);
-		_sprite8->update();
-		_sprite9->load(0x708072E0, false, false);
-		_sprite9->update();
+		_sprite8->loadSprite(0x108012C1);
+		_sprite9->loadSprite(0x708072E0);
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
-			_asTestTubeOne->load(0x50C027A8, false, false);
-			_asTestTubeOne->update();
+			_asTestTubeOne->loadSprite(0x50C027A8);
 		} else
 			sendMessage(_asTestTubeOne, 0x2000, 1);
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3) {
-			_asTestTubeTwo->load(0xD48077A0, false, false);
-			_asTestTubeTwo->update();
+			_asTestTubeTwo->loadSprite(0xD48077A0);
 		}
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3) {
-			_asTestTubeThree->load(0x30022689, false, false);
-			_asTestTubeThree->update();
+			_asTestTubeThree->loadSprite(0x30022689);
 		}
 		_sprite10->setVisible(false);
 	}
@@ -1368,25 +1347,15 @@ void Scene2803Small::updatePaletteArea(bool instantly) {
 SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene)
 	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene) {
 	
-	if (getGlobalVar(V_SHRINK_LIGHTS_ON))
-		_spriteResource.load2(0x51A10202);
-	else
-		_spriteResource.load2(0x11814A21);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_collisionBoundsOffset = _drawOffset;
-	updateBounds();
+	loadSprite(getGlobalVar(V_SHRINK_LIGHTS_ON) ? 0x51A10202 : 0x11814A21, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
-	_needRefresh = true;
 	SetUpdateHandler(&SsScene2804RedButton::update);
 	SetMessageHandler(&SsScene2804RedButton::handleMessage);
 	loadSound(0, 0x44241240);
 }
 
 void SsScene2804RedButton::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		setVisible(false);
 	}
@@ -1411,14 +1380,8 @@ uint32 SsScene2804RedButton::handleMessage(int messageNum, const MessageParam &p
 SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
 	
-	_spriteResource.load2(0x8889B008);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
+	loadSprite(0x8889B008, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
-	_needRefresh = true;
-	StaticSprite::update();
 	SetMessageHandler(&SsScene2804LightCoil::handleMessage);
 }
 
@@ -1427,12 +1390,12 @@ uint32 SsScene2804LightCoil::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case 0x2002:
 		setVisible(true);
-		StaticSprite::update();
+		updatePosition();
 		messageResult = 1;
 		break;
 	case 0x2003:
 		setVisible(false);
-		StaticSprite::update();
+		updatePosition();
 		messageResult = 1;
 		break;
 	}
@@ -1442,14 +1405,8 @@ uint32 SsScene2804LightCoil::handleMessage(int messageNum, const MessageParam &p
 SsScene2804LightTarget::SsScene2804LightTarget(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
 	
-	_spriteResource.load2(0x06092132);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
+	loadSprite(0x06092132, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
-	_needRefresh = true;
-	StaticSprite::update();
 	SetMessageHandler(&SsScene2804LightTarget::handleMessage);
 }
 
@@ -1458,12 +1415,12 @@ uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam 
 	switch (messageNum) {
 	case 0x2004:
 		setVisible(true);
-		StaticSprite::update();
+		updatePosition();
 		messageResult = 1;
 		break;
 	case 0x2005:
 		setVisible(false);
-		StaticSprite::update();
+		updatePosition();
 		messageResult = 1;
 		break;
 	}
@@ -1473,34 +1430,22 @@ uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam 
 SsScene2804Flash::SsScene2804Flash(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
 	
-	_spriteResource.load2(0x211003A0);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
+	loadSprite(0x211003A0, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
-	_needRefresh = true;
-	StaticSprite::update();
 	loadSound(0, 0xCB36BA54);
 }
 
 void SsScene2804Flash::show() {
 	setVisible(true);
-	StaticSprite::update();
+	updatePosition();
 	playSound(0);
 }
 
 SsScene2804BeamCoilBody::SsScene2804BeamCoilBody(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
 	
-	_spriteResource.load2(0x9A816000);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
+	loadSprite(0x9A816000, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
-	_needRefresh = true;
-	StaticSprite::update();
 }
 
 AsScene2804CrystalWaves::AsScene2804CrystalWaves(NeverhoodEngine *vm, uint crystalIndex)
@@ -1635,26 +1580,16 @@ SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene280
 		0x5008292B
 	};
 	
-	if (getGlobalVar(V_SHRINK_LIGHTS_ON))
-		_spriteResource.load2(kSsScene2804CrystalButtonFileHashes1[crystalIndex]);
-	else
-		_spriteResource.load2(kSsScene2804CrystalButtonFileHashes2[crystalIndex]);
-
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_collisionBoundsOffset = _drawOffset;
-	updateBounds();
+	loadSprite(getGlobalVar(V_SHRINK_LIGHTS_ON) ? kSsScene2804CrystalButtonFileHashes1[crystalIndex] : kSsScene2804CrystalButtonFileHashes2[crystalIndex],
+		kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x44045140);
-	_needRefresh = true;
 	SetUpdateHandler(&SsScene2804CrystalButton::update);
 	SetMessageHandler(&SsScene2804CrystalButton::handleMessage);
 }
 
 void SsScene2804CrystalButton::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		setVisible(false);
 	}
@@ -1721,7 +1656,7 @@ uint32 AsScene2804BeamCoil::handleMessage(int messageNum, const MessageParam &pa
 	
 void AsScene2804BeamCoil::show() {
 	_ssBeamCoilBody->setVisible(true);
-	// TODO _ssBeamCoilBody->update(); -> show()
+	// TODO _ssBeamCoilBody->updatePosition(); -> show()
 	setVisible(true);
 	startAnimation(0x00494891, 0, -1);
 	playSound(0);
@@ -1734,7 +1669,7 @@ void AsScene2804BeamCoil::hide() {
 	SetMessageHandler(&AsScene2804BeamCoil::handleMessage);
 	setVisible(false);
 	_ssBeamCoilBody->setVisible(false);
-	// TODO _ssBeamCoilBody->update(); -> hide()
+	// TODO _ssBeamCoilBody->updatePosition(); -> hide()
 	_vm->_soundMan->stopSound(0xEF56B094);
 }
 
@@ -2242,22 +2177,14 @@ SsScene2808Dispenser::SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentSce
 	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _testTubeSetNum(testTubeSetNum),
 	_testTubeIndex(testTubeIndex) {
 	
-	_spriteResource.load2(kClass428FileHashes[testTubeSetNum * 3 + testTubeIndex]);
-	createSurface(1500, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_collisionBoundsOffset = _drawOffset;
-	updateBounds();
+	loadSprite(kClass428FileHashes[testTubeSetNum * 3 + testTubeIndex], kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 1500);
+	setVisible(false);
 	SetUpdateHandler(&SsScene2808Dispenser::update);
 	SetMessageHandler(&SsScene2808Dispenser::handleMessage);
-	setVisible(false);
-	_needRefresh = true;
-	StaticSprite::update();
 }
 
 void SsScene2808Dispenser::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		setVisible(false);
 	}
@@ -2276,7 +2203,7 @@ uint32 SsScene2808Dispenser::handleMessage(int messageNum, const MessageParam &p
 
 void SsScene2808Dispenser::startCountdown(int index) {
 	setVisible(true);
-	StaticSprite::update();
+	updatePosition();
 	if (_testTubeSetNum == 0) {
 		_countdown = kClass428Countdowns1[index];
 	} else {

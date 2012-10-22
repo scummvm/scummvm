@@ -485,14 +485,7 @@ void Scene2501::updateKlaymanCliprect() {
 SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
 	: StaticSprite(vm, 1400), _countdown(0), _isSoundPlaying(false) {
 	
-	_spriteResource.load2(0x070220D9);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_collisionBoundsOffset = _drawOffset;
-	updateBounds();
-	_needRefresh = true;
+	loadSprite(0x070220D9, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x4600204C);
 	loadSound(1, 0x408C0034);
@@ -503,7 +496,7 @@ SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
 }
 
 void SsScene2504Button::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_isSoundPlaying && !isSoundPlaying(0) && !isSoundPlaying(1)) {
 		playSound(3);
 		setVisible(false);

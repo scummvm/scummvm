@@ -471,22 +471,15 @@ static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
 SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _isClicked(false) {
 	
-	_spriteResource.load2(0x120B24B0);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_collisionBoundsOffset = _drawOffset;
+	loadSprite(0x120B24B0, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
-	updateBounds();
-	_needRefresh = true;
 	SetUpdateHandler(&SsScene3009FireCannonButton::update);
 	SetMessageHandler(&SsScene3009FireCannonButton::handleMessage);
 	loadSound(0, 0x3901B44F);
 }
 
 void SsScene3009FireCannonButton::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_isClicked && !isSoundPlaying(0)) {
 		sendMessage(_parentScene, 0x2000, 0);
 		setVisible(false);
@@ -511,17 +504,11 @@ uint32 SsScene3009FireCannonButton::handleMessage(int messageNum, const MessageP
 SsScene3009SymbolEdges::SsScene3009SymbolEdges(NeverhoodEngine *vm, int index)
 	: StaticSprite(vm, 1400), _blinkCountdown(0) {
 
-	_spriteResource.load2(kSsScene3009SymbolEdgesFileHashes[index]);
-	createSurface(600, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_needRefresh = true;
-	if (getGlobalVar(V_ROBOT_HIT)) {
+	loadSprite(kSsScene3009SymbolEdgesFileHashes[index], kSLFDefDrawOffset | kSLFDefPosition, 600);
+	if (getGlobalVar(V_ROBOT_HIT))
 		hide();
-	} else {
+	else
 		startBlinking();
-	}
 	SetUpdateHandler(&SsScene3009SymbolEdges::update);
 }
 
@@ -532,7 +519,7 @@ void SsScene3009SymbolEdges::update() {
 		} else {
 			setVisible(false);
 		}
-		StaticSprite::update();
+		updatePosition();
 		_blinkCountdown = 3;
 		_blinkToggle = !_blinkToggle;
 	}
@@ -540,19 +527,19 @@ void SsScene3009SymbolEdges::update() {
 
 void SsScene3009SymbolEdges::show() {
 	setVisible(true);
-	StaticSprite::update();
+	updatePosition();
 	_blinkCountdown = 0;
 }
 
 void SsScene3009SymbolEdges::hide() {
 	setVisible(false);
-	StaticSprite::update();
+	updatePosition();
 	_blinkCountdown = 0;
 }
 
 void SsScene3009SymbolEdges::startBlinking() {
 	setVisible(true);
-	StaticSprite::update();
+	updatePosition();
 	_blinkCountdown = 3;
 	_blinkToggle = true;
 }
@@ -560,18 +547,13 @@ void SsScene3009SymbolEdges::startBlinking() {
 SsScene3009TargetLine::SsScene3009TargetLine(NeverhoodEngine *vm, int index)
 	: StaticSprite(vm, 1400) {
 
-	_spriteResource.load2(kSsScene3009TargetLineFileHashes[index]);
-	createSurface(600, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	loadSprite(kSsScene3009TargetLineFileHashes[index], kSLFDefDrawOffset | kSLFDefPosition, 600);
 	setVisible(false);
-	_needRefresh = true;
 }
 
 void SsScene3009TargetLine::show() {
 	setVisible(true);
-	StaticSprite::update();
+	updatePosition();
 }
 
 SsScene3009SymbolArrow::SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSymbol, int index)
@@ -579,14 +561,13 @@ SsScene3009SymbolArrow::SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSy
 
 	_incrDecr = _index % 2;
 
-	_spriteResource.load2(kSsScene3009SymbolArrowFileHashes2[_index]);
 	createSurface(1200, 33, 31);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
+	loadSprite(kSsScene3009SymbolArrowFileHashes2[_index], kSLFDefPosition);
 	_drawOffset.set(0, 0, 33, 31);
 	_collisionBoundsOffset = _drawOffset;
 	updateBounds();
 	_needRefresh = true;
+
 	SetUpdateHandler(&SsScene3009SymbolArrow::update);
 	SetMessageHandler(&SsScene3009SymbolArrow::handleMessage);
 	loadSound(0, 0x2C852206);
@@ -598,11 +579,9 @@ void SsScene3009SymbolArrow::hide() {
 }
 
 void SsScene3009SymbolArrow::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown != 0 && (--_countdown == 0)) {
-		_spriteResource.load2(kSsScene3009SymbolArrowFileHashes2[_index]);
-		_needRefresh = true;
-		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+		loadSprite(kSsScene3009SymbolArrowFileHashes2[_index], kSLFDefDrawOffset);
 	}
 }
 
@@ -612,9 +591,7 @@ uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam 
 	case 0x1011:
 		if (_enabled && _countdown == 0) {
 			_countdown = 2;
-			_spriteResource.load2(kSsScene3009SymbolArrowFileHashes1[_index]);
-			_needRefresh = true;
-			_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+			loadSprite(kSsScene3009SymbolArrowFileHashes1[_index], kSLFDefDrawOffset);
 			playSound(0);
 			sendMessage(_asSymbol, 0x2005, _incrDecr);
 		}
@@ -1063,22 +1040,13 @@ static const uint32 kAsScene3010DeadBoltFileHashes1[] = {
 SsScene3010DeadBoltButton::SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene *parentScene, int buttonIndex, int initCountdown, bool initDisabled)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _buttonLocked(false), _countdown1(0), _countdown2(0), _buttonIndex(buttonIndex) {
 
-	NDimensions dimensions1, dimensions2;
-	 
 	_buttonEnabled = getSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[_buttonIndex]) != 0;
-	_spriteResource.load2(kScene3010DeadBoltButtonFileHashes1[_buttonIndex]);
-	dimensions1 = _spriteResource.getDimensions();
-	_spriteResource.load2(kScene3010DeadBoltButtonFileHashes2[_buttonIndex]);
-	dimensions2 = _spriteResource.getDimensions();
-	createSurface(400, 
-		MAX(dimensions1.width, dimensions2.width),
-		MAX(dimensions1.height, dimensions2.height));
+	createSurface(400, 88, 95);
 	setSprite(kScene3010DeadBoltButtonFileHashes2[_buttonIndex]);
-	if (initDisabled) {
+	if (initDisabled)
 		disableButton();
-	} else if (_buttonEnabled) {
+	else if (_buttonEnabled)
 		_countdown1 = initCountdown * 12 + 1;
-	}
 	loadSound(0, 0xF4217243);
 	loadSound(1, 0x44049000);
 	loadSound(2, 0x6408107E);
@@ -1116,7 +1084,7 @@ uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessagePar
 				sendMessage(_parentScene, 0x2002, _buttonIndex);
 			}
 			_needRefresh = true;
-			StaticSprite::update();
+			updatePosition();
 		}
 		messageResult = 1;
 		break;
@@ -1131,14 +1099,7 @@ void SsScene3010DeadBoltButton::disableButton() {
 }
 
 void SsScene3010DeadBoltButton::setSprite(uint32 fileHash) {
-	_spriteResource.load(fileHash);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_collisionBoundsOffset = _drawOffset;
-	updateBounds();
-	_needRefresh = true;
-	StaticSprite::update();
+	loadSprite(fileHash, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset);
 }
 
 void SsScene3010DeadBoltButton::setCountdown(int count) {
@@ -1397,26 +1358,15 @@ static const uint32 kAsScene3011SymbolFileHashes[] = {
 SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
 	
-	if (flag) {
-		_spriteResource.load2(0x11282020);
-	} else {
-		_spriteResource.load2(0x994D0433);
-	}
-	loadSound(0, 0x44061000);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_collisionBoundsOffset = _drawOffset;
+	loadSprite(flag ? 0x11282020 : 0x994D0433, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
-	updateBounds();
-	_needRefresh = true;
+	loadSound(0, 0x44061000);
 	SetUpdateHandler(&SsScene3011Button::update);
 	SetMessageHandler(&SsScene3011Button::handleMessage);
 }
 
 void SsScene3011Button::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown != 0 && (--_countdown == 0)) {
 		setVisible(false);
 	}

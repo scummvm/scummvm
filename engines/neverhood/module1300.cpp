@@ -370,7 +370,7 @@ SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
 
 void SsScene1302Fence::update() {
 	handleSpriteUpdate();
-	StaticSprite::update();
+	updatePosition();
 }
 
 uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1533,7 +1533,7 @@ SsScene1308Number::SsScene1308Number(NeverhoodEngine *vm, uint32 fileHash, int i
 	
 	setVisible(false);
 	_x = _spriteResource.getPosition().x + index * 20;
-	StaticSprite::update();
+	updatePosition();
 }
 
 AsScene1308Mouse::AsScene1308Mouse(NeverhoodEngine *vm)

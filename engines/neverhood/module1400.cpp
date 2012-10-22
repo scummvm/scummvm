@@ -791,7 +791,7 @@ SsScene1402BridgePart::SsScene1402BridgePart(NeverhoodEngine *vm, uint32 fileHas
 	: StaticSprite(vm, fileHash, surfacePriority) {
 	
 	SetFilterY(&Sprite::defFilterY);
-	SetUpdateHandler(&StaticSprite::update);
+	SetUpdateHandler(&StaticSprite::updatePosition);
 	
 }
 

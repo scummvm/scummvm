@@ -302,19 +302,15 @@ uint32 SsScene1105Button::handleMessage(int messageNum, const MessageParam &para
 }
 
 SsScene1105Symbol::SsScene1105Symbol(NeverhoodEngine *vm, uint32 fileHash, int16 x, int16 y)
-	: StaticSprite(vm, fileHash, 200) {
+	: StaticSprite(vm, 0) {
 
-	_x = x;
-	_y = y;
-	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
-		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	StaticSprite::update();
+	loadSprite(fileHash, kSLFCenteredDrawOffset | kSLFSetPosition, 200, x, y);
 }
 
 void SsScene1105Symbol::hide() {
 	setVisible(false);
 	_needRefresh = true;
-	StaticSprite::update();
+	updatePosition();
 }
 
 SsScene1105SymbolDie::SsScene1105SymbolDie(NeverhoodEngine *vm, uint index, int16 x, int16 y)
@@ -338,16 +334,13 @@ uint32 SsScene1105SymbolDie::handleMessage(int messageNum, const MessageParam &p
 }
 
 void SsScene1105SymbolDie::loadSymbolSprite() {
-	load(kSsScene1105SymbolDieFileHashes[getSubVar(VA_CURR_DICE_NUMBERS, _index)], true, false);
-	_drawOffset.x = -(_spriteResource.getDimensions().width / 2);
-	_drawOffset.y = -(_spriteResource.getDimensions().height / 2);
-	StaticSprite::update();
+	loadSprite(kSsScene1105SymbolDieFileHashes[getSubVar(VA_CURR_DICE_NUMBERS, _index)], kSLFCenteredDrawOffset);
 }
 
 void SsScene1105SymbolDie::hide() {
 	setVisible(false);
 	_needRefresh = true;
-	StaticSprite::update();
+	updatePosition();
 }
 
 AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene)
@@ -402,14 +395,7 @@ void AsScene1105TeddyBear::hide() {
 SsScene1105OpenButton::SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _flag1(false) {
 	
-	_spriteResource.load2(0x8228A46C);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_collisionBoundsOffset = _drawOffset;
-	_needRefresh = true;
-	updateBounds();
+	loadSprite(0x8228A46C, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x44045140);
 	SetUpdateHandler(&SsScene1105OpenButton::update);
@@ -417,7 +403,7 @@ SsScene1105OpenButton::SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentS
 }
 
 void SsScene1105OpenButton::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown != 0 && (--_countdown == 0)) {
 		setVisible(false);
 		sendMessage(_parentScene, 0x2001, 0);

@@ -145,7 +145,7 @@ SsScene1705WallSymbol::SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHas
 	
 	_x = _spriteResource.getPosition().x + symbolIndex * 30;
 	_y = _spriteResource.getPosition().y + 160;
-	StaticSprite::update();
+	updatePosition();
 }
 
 SsScene1705Tape::SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash)

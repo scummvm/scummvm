@@ -169,22 +169,11 @@ SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 poi
 	int16 x = kScene1201PointArray[pointIndex].x;
 	int16 y = kScene1201PointArray[pointIndex].y;
 	if (x < 300) {
-		_spriteResource.load2(kScene1201TntFileHashList1[elemIndex]);
-		_x = _spriteResource.getPosition().x;
-		_y = _spriteResource.getPosition().y;
-		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+		loadSprite(kScene1201TntFileHashList1[elemIndex], kSLFDefDrawOffset | kSLFDefPosition, 50);
 	} else {
-		_spriteResource.load2(kScene1201TntFileHashList2[elemIndex]);
-		_x = x;
-		_y = y;
-		_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -_spriteResource.getDimensions().height,
-			_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	
+		loadSprite(kScene1201TntFileHashList2[elemIndex], kSLFCenteredDrawOffset | kSLFSetPosition, 50, x, y);
 	}
-	createSurface(50, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	setClipRect(0, 0, 640, clipY2);
-	_needRefresh = true;
-	StaticSprite::update();
 }
 	
 AsScene1201Tape::AsScene1201Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 nameHash, int surfacePriority, int16 x, int16 y, uint32 fileHash)

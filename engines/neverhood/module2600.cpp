@@ -208,30 +208,19 @@ void Module2600::updateScene() {
 SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
 	
-	_spriteResource.load2(0x825A6923);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	loadSprite(0x825A6923, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	if (!getGlobalVar(V_WATER_RUNNING))
 		setVisible(false);
-
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_collisionBoundsOffset = _drawOffset;
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	updateBounds();
-	_needRefresh = true;
-
 	loadSound(0, 0x10267160);
 	loadSound(1, 0x7027FD64);
 	loadSound(2, 0x44043000);
 	loadSound(3, 0x44045000);
-
 	SetUpdateHandler(&SsScene2609Button::update);
 	SetMessageHandler(&SsScene2609Button::handleMessage);
-
 }
 
 void SsScene2609Button::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown != 0 && (--_countdown == 0)) {
 		if (getGlobalVar(V_WATER_RUNNING)) {
 			setGlobalVar(V_WATER_RUNNING, 0);

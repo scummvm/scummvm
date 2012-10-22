@@ -455,15 +455,8 @@ SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _asScene1907Symbol(asScene1907Symbol),
 	_countdown1(0) {
 	
-	_spriteResource.load2(0x64516424);
-	createSurface(1400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	loadSprite(0x64516424, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 1400);
 	setVisible(false);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_collisionBoundsOffset = _drawOffset;
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	updateBounds();
-	_needRefresh = true;
 	loadSound(0, 0x44061000);
 	SetUpdateHandler(&SsScene1907UpDownButton::update);
 	SetMessageHandler(&SsScene1907UpDownButton::handleMessage);
@@ -476,7 +469,7 @@ SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 
 }
 
 void SsScene1907UpDownButton::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown1 != 0 && (--_countdown1 == 0)) {
 		setVisible(false);
 		sendMessage(_parentScene, 0x2000, 0);
@@ -490,7 +483,7 @@ uint32 SsScene1907UpDownButton::handleMessage(int messageNum, const MessageParam
 		if (_countdown1 == 0 && !_asScene1907Symbol->isMoving() && getGlobalVar(V_STAIRS_PUZZLE_SOLVED)) {
 			setVisible(true);
 			_countdown1 = 4;
-			StaticSprite::update();
+			updatePosition();
 			playSound(0);
 		}
 		messageResult = 1;
@@ -500,14 +493,14 @@ uint32 SsScene1907UpDownButton::handleMessage(int messageNum, const MessageParam
 
 void SsScene1907UpDownButton::setToUpPosition() {
 	_y = _spriteResource.getPosition().y;
-	Sprite::updateBounds();
-	StaticSprite::update();
+	updateBounds();
+	updatePosition();
 }
 
 void SsScene1907UpDownButton::setToDownPosition() {
 	_y = _spriteResource.getPosition().y + 174;
-	Sprite::updateBounds();
-	StaticSprite::update();
+	updateBounds();
+	updatePosition();
 }
 
 AsScene1907WaterHint::AsScene1907WaterHint(NeverhoodEngine *vm)

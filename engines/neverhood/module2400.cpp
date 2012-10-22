@@ -763,8 +763,7 @@ void Scene2402::update() {
 	if (_countdown != 0 && (--_countdown) == 0) {
 		if (_pipeStatus >= 10) {
 			sendMessage(_asDoor, 0x4808, 0);
-			_ssDoorFrame->load(0x00B415E0, true, true);
-			_ssDoorFrame->update();
+			_ssDoorFrame->loadSprite(0x00B415E0, kSLFDefDrawOffset | kSLFDefPosition);
 		} else if (_pipeStatus >= 5) {
 			_countdown = 8;
 			playPipeSound(kScene2402FileHashes[getSubVar(VA_CURR_WATER_PIPES_LEVEL, _pipeStatus - 5)]);
@@ -791,8 +790,7 @@ uint32 Scene2402::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2001:
-		_ssDoorFrame->load(0x406C0AE0, true, true);
-		_ssDoorFrame->update();
+		_ssDoorFrame->loadSprite(0x406C0AE0, kSLFDefDrawOffset | kSLFDefPosition);
 		break;
 	case 0x480B:
 		if (sender == _ssButton) {

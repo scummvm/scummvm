@@ -254,24 +254,18 @@ static const uint32 kSsScene2901BigButtonFileHashes[] = {
 SsScene2901LocationButton::SsScene2901LocationButton(NeverhoodEngine *vm, Scene *parentScene, int which, uint index)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _index(index), _countdown1(0) {
 
-	_spriteResource.load2(kSsScene2901LocationButtonFileHashes[which * 6 + index]);
-	createSurface(800, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);	
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_collisionBounds.x1 = kSsScene2901LocationButtonPoints[_index].x - 25;
-	_collisionBounds.y1 = kSsScene2901LocationButtonPoints[_index].y - 25;
-	_collisionBounds.x2 = kSsScene2901LocationButtonPoints[_index].x + 25;
-	_collisionBounds.y2 = kSsScene2901LocationButtonPoints[_index].y + 25;
+	const NPoint &pt = kSsScene2901LocationButtonPoints[_index];
+	
+	loadSprite(kSsScene2901LocationButtonFileHashes[which * 6 + index], kSLFDefDrawOffset | kSLFDefPosition, 800);
+	_collisionBounds.set(pt.x - 25, pt.y - 25, pt.x + 25, pt.y + 25);
 	setVisible(false);
-	_needRefresh = true;
 	loadSound(0, 0x440430C0);
 	SetUpdateHandler(&SsScene2901LocationButton::update);
 	SetMessageHandler(&SsScene2901LocationButton::handleMessage);
 }
 	
 void SsScene2901LocationButton::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown1 != 0 && (--_countdown1) == 0) {
 		setVisible(false);
 	}
@@ -296,57 +290,41 @@ uint32 SsScene2901LocationButton::handleMessage(int messageNum, const MessagePar
 SsScene2901LocationButtonLight::SsScene2901LocationButtonLight(NeverhoodEngine *vm, int which, uint index)
 	: StaticSprite(vm, 900), _index(index) {
 	
-	_spriteResource.load2(kSsScene2901LocationButtonLightFileHashes1[which * 6 + index]);
-	createSurface(900, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);	
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
+	loadSprite(kSsScene2901LocationButtonLightFileHashes1[which * 6 + index], kSLFDefDrawOffset | kSLFDefPosition, 900);
 	setVisible(false);
-	_needRefresh = true;
 	loadSound(0, kSsScene2901LocationButtonLightFileHashes2[_index]);
 }
 
 void SsScene2901LocationButtonLight::show() {
 	playSound(0);
 	setVisible(true);
-	StaticSprite::update();
+	updatePosition();
 }
 
 void SsScene2901LocationButtonLight::hide() {
 	setVisible(false);
-	StaticSprite::update();
+	updatePosition();
 }
 
 SsScene2901BrokenButton::SsScene2901BrokenButton(NeverhoodEngine *vm, int which)
 	: StaticSprite(vm, 900) {
 
-	_spriteResource.load2(kSsScene2901BrokenButtonFileHashes[which]);
-	createSurface(900, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);	
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_needRefresh = true;
-	StaticSprite::update();
+	loadSprite(kSsScene2901BrokenButtonFileHashes[which], kSLFDefDrawOffset | kSLFDefPosition, 900);
 }
 
 SsScene2901BigButton::SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentScene, int which)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _which(which), _countdown1(0) {
-	
-	_spriteResource.load2(kSsScene2901BigButtonFileHashes[which]);
-	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);	
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
+
+	loadSprite(kSsScene2901BigButtonFileHashes[which], kSLFDefDrawOffset | kSLFDefPosition, 400);	
 	_collisionBounds.set(62, 94, 322, 350);
 	setVisible(false);
-	_needRefresh = true;
 	loadSound(0, 0xF3D420C8);
 	SetUpdateHandler(&SsScene2901BigButton::update);
 	SetMessageHandler(&SsScene2901BigButton::handleMessage);
 }
 
 void SsScene2901BigButton::update() {
-	StaticSprite::update();
+	updatePosition();
 	if (_countdown1 != 0 && (--_countdown1) == 0) {
 		setVisible(false);
 		sendMessage(_parentScene, 0x2000, 0);

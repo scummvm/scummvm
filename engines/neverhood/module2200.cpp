@@ -488,13 +488,9 @@ void AsScene2201Door::stCloseDoor() {
 SsScene2201PuzzleCube::SsScene2201PuzzleCube(NeverhoodEngine *vm, uint32 positionIndex, uint32 cubeIndex)
 	: StaticSprite(vm, 900) {
 	
-	_spriteResource.load2(kSsScene2201PuzzleCubeFileHashes[cubeIndex]);
 	createSurface(100, 16, 16);
-	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
-		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = kSsScene2201PuzzleCubePoints[positionIndex].x;
-	_y = kSsScene2201PuzzleCubePoints[positionIndex].y;
-	_needRefresh = true;
+	loadSprite(kSsScene2201PuzzleCubeFileHashes[cubeIndex], kSLFCenteredDrawOffset | kSLFSetPosition, 0,
+		kSsScene2201PuzzleCubePoints[positionIndex].x, kSsScene2201PuzzleCubePoints[positionIndex].y);
 }
 
 Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -670,32 +666,26 @@ static const uint32 kSsScene2202PuzzleTileFileHashes2[] = {
 
 SsScene2202PuzzleTile::SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentScene, int16 tileIndex, int16 value)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _value(value), _tileIndex(tileIndex), _isMoving(false) {
-	
+
+	int surfacePriority;	
+
 	SetUpdateHandler(&SsScene2202PuzzleTile::update);
 	SetMessageHandler(&SsScene2202PuzzleTile::handleMessage);
-	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes2[_value]);
-	if (_tileIndex >= 0 && _tileIndex <= 2) {
-		createSurface(100, 128, 128);
-	} else	if (_tileIndex >= 3 && _tileIndex <= 5) {
-		createSurface(300, 128, 128);
-	} else {
-		createSurface(500, 128, 128);
-	}
-	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
-		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_collisionBoundsOffset = _drawOffset;
-	_x = kSsScene2202PuzzleTilePoints[_tileIndex].x;
-	_y = kSsScene2202PuzzleTilePoints[_tileIndex].y;
-	updateBounds();
-	_needRefresh = true;
-	StaticSprite::update();
+	if (_tileIndex >= 0 && _tileIndex <= 2)
+		surfacePriority = 100;
+	else if (_tileIndex >= 3 && _tileIndex <= 5)
+		surfacePriority = 300;
+	else
+		surfacePriority = 500;
+	loadSprite(kSsScene2202PuzzleTileFileHashes2[_value], kSLFCenteredDrawOffset | kSLFSetPosition | kSLFDefCollisionBoundsOffset, 0,
+		kSsScene2202PuzzleTilePoints[_tileIndex].x, kSsScene2202PuzzleTilePoints[_tileIndex].y);
 	loadSound(0, 0x40958621);
 	loadSound(1, 0x51108241);
 }
 
 void SsScene2202PuzzleTile::update() {
 	handleSpriteUpdate();
-	StaticSprite::update();
+	updatePosition();
 }
 
 uint32 SsScene2202PuzzleTile::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -787,10 +777,7 @@ void SsScene2202PuzzleTile::suMoveTileY() {
 
 void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 
-	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes1[_value]);
-	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
-		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_needRefresh = true;
+	loadSprite(kSsScene2202PuzzleTileFileHashes1[_value], kSLFCenteredDrawOffset);
 
 	setSubVar(VA_CUBE_POSITIONS, _tileIndex, (uint32)-1);
 	setSubVar(VA_CUBE_POSITIONS, newTileIndex, (uint32)_value);
@@ -866,10 +853,7 @@ void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 }
 
 void SsScene2202PuzzleTile::stopMoving() {
-	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes2[_value]);
-	_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
-		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_needRefresh = true;
+	loadSprite(kSsScene2202PuzzleTileFileHashes2[_value], kSLFCenteredDrawOffset);
 	SetSpriteUpdate(NULL);
 	_isMoving = false;
 	sendMessage(_parentScene, 0x2002, _tileIndex);
@@ -1215,25 +1199,16 @@ SsScene2205DoorFrame::SsScene2205DoorFrame(NeverhoodEngine *vm)
 	: StaticSprite(vm, 900) {
 
 	SetMessageHandler(&SsScene2205DoorFrame::handleMessage);
-	_spriteResource.load2(getGlobalVar(V_LIGHTS_ON) ? 0x24306227 : 0xD90032A0);
 	createSurface(1100, 45, 206);
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_needRefresh = true;
-	StaticSprite::update();
+	loadSprite(getGlobalVar(V_LIGHTS_ON) ? 0x24306227 : 0xD90032A0, kSLFDefDrawOffset | kSLFDefPosition);
 }
 
 uint32 SsScene2205DoorFrame::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2000:
-		_spriteResource.load2(getGlobalVar(V_LIGHTS_ON) ? 0x24306227 : 0xD90032A0);
-		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-		_x = _spriteResource.getPosition().x;
-		_y = _spriteResource.getPosition().y;
-		_needRefresh = true;
-		StaticSprite::update();
+		loadSprite(getGlobalVar(V_LIGHTS_ON) ? 0x24306227 : 0xD90032A0, kSLFDefDrawOffset | kSLFDefPosition);
+		break;
 	}
 	return messageResult;
 }
@@ -1388,7 +1363,7 @@ AsScene2206DoorSpikes::AsScene2206DoorSpikes(NeverhoodEngine *vm, uint32 fileHas
 
 void AsScene2206DoorSpikes::update() {
 	handleSpriteUpdate();
-	StaticSprite::update();
+	updatePosition();
 }
 
 uint32 AsScene2206DoorSpikes::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1440,7 +1415,7 @@ AsScene2206Platform::AsScene2206Platform(NeverhoodEngine *vm, uint32 fileHash)
 
 void AsScene2206Platform::update() {
 	handleSpriteUpdate();
-	StaticSprite::update();
+	updatePosition();
 }
 
 uint32 AsScene2206Platform::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1974,7 +1949,7 @@ SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int i
 
 	_x = 330;
 	_y = 246 + index * 50;
-	StaticSprite::update();	
+	updatePosition();	
 }
 
 Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)

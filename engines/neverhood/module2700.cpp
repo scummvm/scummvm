@@ -510,13 +510,7 @@ static const NPoint kCarShadowOffsets[] = {
 SsCommonTrackShadowBackground::SsCommonTrackShadowBackground(NeverhoodEngine *vm, uint32 fileHash)
 	: StaticSprite(vm, 0) {
 	
-	_spriteResource.load2(fileHash);
-	createSurface(0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_x = _spriteResource.getPosition().x;
-	_y = _spriteResource.getPosition().y;
-	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_needRefresh = true;
-	StaticSprite::update();
+	loadSprite(fileHash, kSLFDefDrawOffset | kSLFDefPosition, 0);
 }
 
 AsCommonCarShadow::AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index)
