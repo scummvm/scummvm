@@ -1274,13 +1274,13 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
 		v4 = *v3;
 		if (*v3 < 0xFCu)
 			goto Video_Cont_Vbe16a;
-		if (v4 == -4)
+		if (v4 == (byte)-4)
 			return;
-		if (v4 == -3) {
+		if (v4 == (byte)-3) {
 			v2 += *(v3 + 1);
 			v4 = *(v3 + 2);
 			v3 += 2;
-		} else if (v4 == -2) {
+		} else if (v4 == (byte)-2) {
 			v2 += READ_LE_UINT16(v3 + 1);
 			v4 = *(v3 + 3);
 			v3 += 3;
@@ -2473,13 +2473,13 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 		byteVal = *srcP;
 		if (*srcP < 0xFCu)
 			goto Video_Cont_Vbe;
-		if (byteVal == -4)
+		if (byteVal == (byte)-4)
 			return;
-		if (byteVal == -3) {
+		if (byteVal == (byte)-3) {
 			destOffset += *(srcP + 1);
 			byteVal = *(srcP + 2);
 			srcP += 2;
-		} else if (byteVal == -2) {
+		} else if (byteVal == (byte)-2) {
 			destOffset += (int16)READ_LE_UINT16(srcP + 1);
 			byteVal = *(srcP + 3);
 			srcP += 3;
