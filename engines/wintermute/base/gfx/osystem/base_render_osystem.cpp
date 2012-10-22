@@ -34,7 +34,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "common/system.h"
-#include "engines/wintermute/graphics/transparent_surface.h"
+#include "graphics/usable_surface.h"
 #include "common/queue.h"
 #include "common/config-manager.h"
 
@@ -43,12 +43,12 @@ namespace Wintermute {
 RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) : _owner(owner),
 	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(!disableAlpha) {
 	_colorMod = 0;
-	_mirror = TransparentSurface::FLIP_NONE;
+	_mirror = Graphics::UsableSurface::FLIP_NONE;
 	if (mirrorX) {
-		_mirror |= TransparentSurface::FLIP_V;
+		_mirror |= Graphics::UsableSurface::FLIP_V;
 	}
 	if (mirrorY) {
-		_mirror |= TransparentSurface::FLIP_H;
+		_mirror |= Graphics::UsableSurface::FLIP_H;
 	}
 	if (surf) {
 		_surface = new Graphics::Surface();
@@ -60,7 +60,7 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		}
 		// Then scale it if necessary
 		if (dstRect->width() != srcRect->width() || dstRect->height() != srcRect->height()) {
-			TransparentSurface src(*_surface, false);
+			Graphics::UsableSurface src(*_surface, false);
 			Graphics::Surface *temp = src.scale(dstRect->width(), dstRect->height());
 			_surface->free();
 			delete _surface;
@@ -114,7 +114,7 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	delete _renderSurface;
 	_blankSurface->free();
 	delete _blankSurface;
-	TransparentSurface::destroyLookup();
+	Graphics::UsableSurface::destroyLookup();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -474,7 +474,7 @@ void BaseRenderOSystem::drawTickets() {
 
 // Replacement for SDL2's SDL_RenderCopy
 void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *clipRect) {
-	TransparentSurface src(*ticket->getSurface(), false);
+	Graphics::UsableSurface src(*ticket->getSurface(), false);
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;
@@ -490,7 +490,7 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *clip
 	}
 }
 void BaseRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror) {
-	TransparentSurface src(*surf, false);
+	Graphics::UsableSurface src(*surf, false);
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;

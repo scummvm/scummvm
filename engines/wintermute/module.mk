@@ -86,7 +86,6 @@ MODULE_OBJS := \
 	base/base_viewport.o \
 	base/saveload.o \
 	detection.o \
-	graphics/transparent_surface.o \
 	math/math_util.o \
 	math/matrix4.o \
 	math/vector2.o \
