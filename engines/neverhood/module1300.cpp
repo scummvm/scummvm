@@ -1165,7 +1165,7 @@ void AsScene1307Key::suRemoveKey() {
 	if (_pointIndex < kAsScene1307KeyPointsCount) {
 		_x += kAsScene1307KeyPoints[_pointIndex].x;
 		_y += kAsScene1307KeyPoints[_pointIndex].y;
-		processDelta();
+		updateBounds();
 		_pointIndex++;
 	} else {
 		SetSpriteUpdate(NULL);
@@ -1176,7 +1176,7 @@ void AsScene1307Key::suInsertKey() {
 	if (_pointIndex < kAsScene1307KeyPointsCount) {
 		_x -= kAsScene1307KeyPoints[kAsScene1307KeyPointsCount - _pointIndex - 1].x;
 		_y -= kAsScene1307KeyPoints[kAsScene1307KeyPointsCount - _pointIndex - 1].y;
-		processDelta();
+		updateBounds();
 		_pointIndex++;
 		if (_pointIndex == 7)
 			playSound(0);
@@ -1191,7 +1191,7 @@ void AsScene1307Key::suMoveKey() {
 		_frameIndex += kAsScene1307KeyFrameIndices[_pointIndex];
 		_x = _prevX + (_deltaX * _frameIndex) / kAsScene1307KeyDivValue;
 		_y = _prevY + (_deltaY * _frameIndex) / kAsScene1307KeyDivValue;
-		processDelta();
+		updateBounds();
 		_pointIndex++;
 	} else {
 		NPoint pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _index)];

@@ -74,12 +74,12 @@ void Mouse::init(uint32 fileHash) {
 	createSurface(2000, 32, 32);
 	SetUpdateHandler(&Mouse::update);
 	SetMessageHandler(&Mouse::handleMessage);
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = 32;
-	_drawRect.height = 32;
-	_deltaRect = _drawRect;
-	processDelta();
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = 32;
+	_drawOffset.height = 32;
+	_collisionBoundsOffset = _drawOffset;
+	updateBounds();
 	_needRefresh = true;
 	CursorMan.showMouse(false);
 }
@@ -155,7 +155,7 @@ uint32 Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		_x = param.asPoint().x;
 		_y = param.asPoint().y;
 		updateCursorNum();
-		processDelta();
+		updateBounds();
 		break;
 	}
 	return messageResult;
@@ -167,24 +167,24 @@ void Mouse::updateCursor() {
 		return;
 
 	if (_doDeltaX) {
-		_surface->getDrawRect().x = filterX(_x - _drawRect.width - _drawRect.x + 1);
+		_surface->getDrawRect().x = filterX(_x - _drawOffset.width - _drawOffset.x + 1);
 	} else {
-		_surface->getDrawRect().x = filterX(_x + _drawRect.x);
+		_surface->getDrawRect().x = filterX(_x + _drawOffset.x);
 	}
 
 	if (_doDeltaY) {
-		_surface->getDrawRect().y = filterY(_y - _drawRect.height - _drawRect.y + 1);
+		_surface->getDrawRect().y = filterY(_y - _drawOffset.height - _drawOffset.y + 1);
 	} else {
-		_surface->getDrawRect().y = filterY(_y + _drawRect.y);
+		_surface->getDrawRect().y = filterY(_y + _drawOffset.y);
 	}
 
 	if (_needRefresh) {
 		_needRefresh = false;
-		_drawRect = _mouseCursorResource.getRect();
+		_drawOffset = _mouseCursorResource.getRect();
 		_surface->drawMouseCursorResource(_mouseCursorResource, _frameNum / 2);
 		Graphics::Surface *cursorSurface = _surface->getSurface();
 		CursorMan.replaceCursor((const byte*)cursorSurface->pixels,
-			cursorSurface->w, cursorSurface->h, -_drawRect.x, -_drawRect.y, 0);
+			cursorSurface->w, cursorSurface->h, -_drawOffset.x, -_drawOffset.y, 0);
 	}
 
 }

@@ -43,7 +43,7 @@ protected:
 
 class SsScene1105Button : public StaticSprite {
 public:
-	SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &rect);
+	SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &collisionBounds);
 protected:
 	Scene *_parentScene;
 	int _countdown;

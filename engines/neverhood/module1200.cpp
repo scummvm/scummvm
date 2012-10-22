@@ -172,18 +172,18 @@ SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 poi
 		_spriteResource.load2(kScene1201TntFileHashList1[elemIndex]);
 		_x = _spriteResource.getPosition().x;
 		_y = _spriteResource.getPosition().y;
-		_drawRect.x = 0;
-		_drawRect.y = 0;
-		_drawRect.width = _spriteResource.getDimensions().width;
-		_drawRect.height = _spriteResource.getDimensions().height;
+		_drawOffset.x = 0;
+		_drawOffset.y = 0;
+		_drawOffset.width = _spriteResource.getDimensions().width;
+		_drawOffset.height = _spriteResource.getDimensions().height;
 	} else {
 		_spriteResource.load2(kScene1201TntFileHashList2[elemIndex]);
 		_x = x;
 		_y = y;
-		_drawRect.x = -(_spriteResource.getDimensions().width / 2);
-		_drawRect.y = -_spriteResource.getDimensions().height;
-		_drawRect.width = _spriteResource.getDimensions().width;
-		_drawRect.height = _spriteResource.getDimensions().height;
+		_drawOffset.x = -(_spriteResource.getDimensions().width / 2);
+		_drawOffset.y = -_spriteResource.getDimensions().height;
+		_drawOffset.width = _spriteResource.getDimensions().width;
+		_drawOffset.height = _spriteResource.getDimensions().height;
 	
 	}
 	createSurface(50, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);

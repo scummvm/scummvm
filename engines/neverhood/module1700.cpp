@@ -157,12 +157,12 @@ SsScene1705Tape::SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32
 		setVisible(false);
 		SetMessageHandler(NULL);
 	}
-	_deltaRect = _drawRect;
-	_deltaRect.x -= 4;
-	_deltaRect.y -= 8;
-	_deltaRect.width += 8;
-	_deltaRect.height += 16;
-	Sprite::processDelta();
+	_collisionBoundsOffset = _drawOffset;
+	_collisionBoundsOffset.x -= 4;
+	_collisionBoundsOffset.y -= 8;
+	_collisionBoundsOffset.width += 8;
+	_collisionBoundsOffset.height += 16;
+	Sprite::updateBounds();
 }
 
 uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

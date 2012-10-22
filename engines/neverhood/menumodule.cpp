@@ -166,41 +166,41 @@ MainMenuButton::MainMenuButton(NeverhoodEngine *vm, Scene *parentScene, uint but
 	_spriteResource.load2(kMainMenuButtonFileHashes[_buttonIndex]);
 	createSurface(100, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 
 	// TODO Move to const array
 	switch (_buttonIndex) {
 	case 0:
-		_rect.set(52, 121, 110, 156);
+		_collisionBounds.set(52, 121, 110, 156);
 		break;
 	case 1:
-		_rect.set(52, 192, 109, 222);
+		_collisionBounds.set(52, 192, 109, 222);
 		break;
 	case 2:
-		_rect.set(60, 257, 119, 286);
+		_collisionBounds.set(60, 257, 119, 286);
 		break;
 	case 3:
-		_rect.set(67, 326, 120, 354);
+		_collisionBounds.set(67, 326, 120, 354);
 		break;
 	case 4:
-		_rect.set(70, 389, 128, 416);
+		_collisionBounds.set(70, 389, 128, 416);
 		break;
 	case 5:
-		_rect.set(523, 113, 580, 144);
+		_collisionBounds.set(523, 113, 580, 144);
 		break;
 	case 6:
-		_rect.set(525, 176, 577, 206);
+		_collisionBounds.set(525, 176, 577, 206);
 		break;
 	case 7:
-		_rect.set(527, 384, 580, 412);
+		_collisionBounds.set(527, 384, 580, 412);
 		break;
 	case 8:
-		_rect.set(522, 255, 580, 289);
+		_collisionBounds.set(522, 255, 580, 289);
 		break;
 	}
 	

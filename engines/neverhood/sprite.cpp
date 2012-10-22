@@ -38,20 +38,20 @@ Sprite::~Sprite() {
 	delete _surface;
 }
 
-void Sprite::processDelta() {
+void Sprite::updateBounds() {
 	if (_doDeltaX) {
-		_rect.x1 = _x - _deltaRect.x - _deltaRect.width + 1;
-		_rect.x2 = _x - _deltaRect.x;
+		_collisionBounds.x1 = _x - _collisionBoundsOffset.x - _collisionBoundsOffset.width + 1;
+		_collisionBounds.x2 = _x - _collisionBoundsOffset.x;
 	} else {
-		_rect.x1 = _x + _deltaRect.x;
-		_rect.x2 = _x + _deltaRect.x + _deltaRect.width - 1;
+		_collisionBounds.x1 = _x + _collisionBoundsOffset.x;
+		_collisionBounds.x2 = _x + _collisionBoundsOffset.x + _collisionBoundsOffset.width - 1;
 	}
 	if (_doDeltaY) {
-		_rect.y1 = _y - _deltaRect.y - _deltaRect.height + 1;
-		_rect.y2 = _y - _deltaRect.y;
+		_collisionBounds.y1 = _y - _collisionBoundsOffset.y - _collisionBoundsOffset.height + 1;
+		_collisionBounds.y2 = _y - _collisionBoundsOffset.y;
 	} else {
-		_rect.y1 = _y + _deltaRect.y;
-		_rect.y2 = _y + _deltaRect.y + _deltaRect.height - 1;
+		_collisionBounds.y1 = _y + _collisionBoundsOffset.y;
+		_collisionBounds.y2 = _y + _collisionBoundsOffset.y + _collisionBoundsOffset.height - 1;
 	}
 }
 
@@ -66,11 +66,11 @@ void Sprite::setDoDeltaY(int type) {
 }
 
 bool Sprite::isPointInside(int16 x, int16 y) {
-	return x >= _rect.x1 && x <= _rect.x2 && y >= _rect.y1 && y <= _rect.y2;
+	return x >= _collisionBounds.x1 && x <= _collisionBounds.x2 && y >= _collisionBounds.y1 && y <= _collisionBounds.y2;
 }
 
 bool Sprite::checkCollision(NRect &rect) {
-	return (_rect.x1 < rect.x2) && (rect.x1 < _rect.x2) && (_rect.y1 < rect.y2) && (rect.y1 < _rect.y2);	
+	return (_collisionBounds.x1 < rect.x2) && (rect.x1 < _collisionBounds.x2) && (_collisionBounds.y1 < rect.y2) && (rect.y1 < _collisionBounds.y2);	
 }
 
 uint32 Sprite::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -147,10 +147,10 @@ void StaticSprite::init(uint32 fileHash, int surfacePriority, int16 x, int16 y, 
 	_x = x == kDefPosition ? _spriteResource.getPosition().x : x;
 	_y = y == kDefPosition ? _spriteResource.getPosition().y : y;
 	
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = width;
-	_drawRect.height = height; 
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = width;
+	_drawOffset.height = height; 
 
 	_needRefresh = true;
 
@@ -164,19 +164,19 @@ void StaticSprite::update() {
 		return;
 		
 	if (_doDeltaX) {
-		_surface->getDrawRect().x = filterX(_x - _drawRect.x - _drawRect.width + 1);
+		_surface->getDrawRect().x = filterX(_x - _drawOffset.x - _drawOffset.width + 1);
 	} else {
-		_surface->getDrawRect().x = filterX(_x + _drawRect.x);
+		_surface->getDrawRect().x = filterX(_x + _drawOffset.x);
 	}
 		
 	if (_doDeltaY) {
-		_surface->getDrawRect().y = filterY(_y - _drawRect.y - _drawRect.height + 1);
+		_surface->getDrawRect().y = filterY(_y - _drawOffset.y - _drawOffset.height + 1);
 	} else {
-		_surface->getDrawRect().y = filterY(_y + _drawRect.y);
+		_surface->getDrawRect().y = filterY(_y + _drawOffset.y);
 	}
 
 	if (_needRefresh) {
-		_surface->drawSpriteResourceEx(_spriteResource, _doDeltaX, _doDeltaY, _drawRect.width, _drawRect.height);
+		_surface->drawSpriteResourceEx(_spriteResource, _doDeltaX, _doDeltaY, _drawOffset.width, _drawOffset.height);
 		_needRefresh = false;
 	}
 
@@ -187,10 +187,10 @@ void StaticSprite::load(uint32 fileHash, bool dimensions, bool position) {
 	_spriteResource.load2(fileHash);
 
 	if (dimensions) {
-		_drawRect.x = 0;
-		_drawRect.y = 0;
-		_drawRect.width = _spriteResource.getDimensions().width;
-		_drawRect.height = _spriteResource.getDimensions().height;
+		_drawOffset.x = 0;
+		_drawOffset.y = 0;
+		_drawOffset.width = _spriteResource.getDimensions().width;
+		_drawOffset.height = _spriteResource.getDimensions().height;
 	}
 
 	if (position) {
@@ -261,7 +261,7 @@ void AnimatedSprite::updateDeltaXY() {
 	}
 	_deltaX = 0;
 	_deltaY = 0;
-	processDelta();
+	updateBounds();
 }
 
 void AnimatedSprite::setRepl(byte oldColor, byte newColor) {
@@ -370,19 +370,19 @@ void AnimatedSprite::updatePosition() {
 		return;
 
 	if (_doDeltaX) {
-		_surface->getDrawRect().x = filterX(_x - _drawRect.x - _drawRect.width + 1);
+		_surface->getDrawRect().x = filterX(_x - _drawOffset.x - _drawOffset.width + 1);
 	} else {
-		_surface->getDrawRect().x = filterX(_x + _drawRect.x);
+		_surface->getDrawRect().x = filterX(_x + _drawOffset.x);
 	}
 
 	if (_doDeltaY) {
-		_surface->getDrawRect().y = filterY(_y - _drawRect.y - _drawRect.height + 1);
+		_surface->getDrawRect().y = filterY(_y - _drawOffset.y - _drawOffset.height + 1);
 	} else {
-		_surface->getDrawRect().y = filterY(_y + _drawRect.y);
+		_surface->getDrawRect().y = filterY(_y + _drawOffset.y);
 	}
 
 	if (_needRefresh) {
-		_surface->drawAnimResource(_animResource, _currFrameIndex, _doDeltaX, _doDeltaY, _drawRect.width, _drawRect.height);
+		_surface->drawAnimResource(_animResource, _currFrameIndex, _doDeltaX, _doDeltaY, _drawOffset.width, _drawOffset.height);
 		_needRefresh = false;
 	}
 
@@ -414,12 +414,12 @@ void AnimatedSprite::updateFrameInfo() {
 	debug(8, "AnimatedSprite::updateFrameInfo()");
 	const AnimFrameInfo &frameInfo = _animResource.getFrameInfo(_currFrameIndex);
 	_frameChanged = true;
-	_drawRect = frameInfo.rect;
+	_drawOffset = frameInfo.rect;
 	_deltaX = frameInfo.deltaX;
 	_deltaY = frameInfo.deltaY;
-	_deltaRect = frameInfo.deltaRect;
+	_collisionBoundsOffset = frameInfo.deltaRect;
 	_currFrameTicks = frameInfo.counter;
-	processDelta();
+	updateBounds();
 	_needRefresh = true;
 	if (frameInfo.frameHash != 0)
 		sendMessage(this, 0x100D, frameInfo.frameHash);

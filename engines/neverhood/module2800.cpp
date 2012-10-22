@@ -1226,7 +1226,7 @@ uint32 Scene2803Small::handleMessage(int messageNum, const MessageParam &param, 
 			NPoint pt = _dataResource.getPoint(0x0D84A1AD);
 			_klayman->setX(pt.x);
 			_klayman->setY(pt.y);
-			_klayman->processDelta();
+			_klayman->updateBounds();
 			klaymanFloor();
 			_klayman->setClipRect(517, 401, 536, 480);
 			setMessageList(0x004B6198);
@@ -1240,7 +1240,7 @@ uint32 Scene2803Small::handleMessage(int messageNum, const MessageParam &param, 
 			_klayman->setClipRect(0, 0, 560, 315);
 			_klayman->setX(560);
 			_klayman->setY(315);
-			_klayman->processDelta();
+			_klayman->updateBounds();
 			klaymanSlope();
 			setMessageList(0x004B61A0);
 		} else if (param.asInteger() == 0x002CAA68) {
@@ -1373,14 +1373,14 @@ SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *paren
 	else
 		_spriteResource.load2(0x11814A21);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_deltaRect = _drawRect;
-	processDelta();
+	_collisionBoundsOffset = _drawOffset;
+	updateBounds();
 	setVisible(false);
 	_needRefresh = true;
 	SetUpdateHandler(&SsScene2804RedButton::update);
@@ -1416,10 +1416,10 @@ SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x8889B008);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -1450,10 +1450,10 @@ SsScene2804LightTarget::SsScene2804LightTarget(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x06092132);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -1484,10 +1484,10 @@ SsScene2804Flash::SsScene2804Flash(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x211003A0);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -1507,10 +1507,10 @@ SsScene2804BeamCoilBody::SsScene2804BeamCoilBody(NeverhoodEngine *vm)
 	
 	_spriteResource.load2(0x9A816000);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -1656,14 +1656,14 @@ SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene280
 		_spriteResource.load2(kSsScene2804CrystalButtonFileHashes2[crystalIndex]);
 
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_deltaRect = _drawRect;
-	processDelta();
+	_collisionBoundsOffset = _drawOffset;
+	updateBounds();
 	setVisible(false);
 	loadSound(0, 0x44045140);
 	_needRefresh = true;
@@ -2262,14 +2262,14 @@ SsScene2808Dispenser::SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentSce
 	
 	_spriteResource.load2(kClass428FileHashes[testTubeSetNum * 3 + testTubeIndex]);
 	createSurface(1500, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_deltaRect = _drawRect;
-	processDelta();
+	_collisionBoundsOffset = _drawOffset;
+	updateBounds();
 	SetUpdateHandler(&SsScene2808Dispenser::update);
 	SetMessageHandler(&SsScene2808Dispenser::handleMessage);
 	setVisible(false);

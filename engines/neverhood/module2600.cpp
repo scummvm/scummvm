@@ -213,11 +213,11 @@ SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
 	if (!getGlobalVar(V_WATER_RUNNING))
 		setVisible(false);
 
-	_drawRect.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_deltaRect = _drawRect;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_collisionBoundsOffset = _drawOffset;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	processDelta();
+	updateBounds();
 	_needRefresh = true;
 
 	loadSound(0, 0x10267160);

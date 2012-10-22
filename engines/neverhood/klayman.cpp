@@ -707,7 +707,7 @@ void Klayman::suAction() {
 			_x = _destX;				
 	}
 	
-	processDelta();
+	updateBounds();
 	
 }
 
@@ -753,7 +753,7 @@ void Klayman::suSneaking() {
 				}
 			}
 		}
-		processDelta();
+		updateBounds();
 	}
 	
 }
@@ -932,7 +932,7 @@ void Klayman::suWalkingTestExit() {
 				}
 			}
 		}
-		processDelta();
+		updateBounds();
 	}
 	
 }
@@ -1409,7 +1409,7 @@ void Klayman::suLargeStep() {
 				_y = xdiff < 0 ? hitRectPrev->rect.y2 : hitRectPrev->rect.y1;
 			}
 		}
-		processDelta();
+		updateBounds();
 	}
 }
 
@@ -2175,7 +2175,7 @@ void Klayman::suJumpToGrab() {
 	updateDeltaXY();
 	if (_y >= _destY) {
 		_y = _destY;
-		processDelta();
+		updateBounds();
 		gotoNextStateExt();
 	}
 }
@@ -2856,7 +2856,7 @@ void Klayman::suFallDown() {
 	HitRect *hitRect = _vm->_collisionMan->findHitRectAtPos(_x, _y + 10);
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
-		processDelta();
+		updateBounds();
 		sendMessage(this, 0x1019, 0);
 	}
 	_vm->_collisionMan->checkCollision(this, 0xFFFF, 0x4810, 0);
@@ -3016,7 +3016,7 @@ void Klayman::suFallSkipJump() {
 	HitRect *hitRect = _vm->_collisionMan->findHitRectAtPos(_x, _y + 10);
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
-		processDelta();
+		updateBounds();
 		sendMessage(this, 0x1019, 0);
 	}
 }
@@ -3222,7 +3222,7 @@ void Klayman::stContSpitIntoPipe() {
 void Klayman::suRidePlatform() {
 	_x = _attachedSprite->getX() - 20;
 	_y = _attachedSprite->getY() + 46;
-	processDelta();
+	updateBounds();
 }
 
 void Klayman::stRidePlatform() {

@@ -267,10 +267,10 @@ static const uint32 kSsScene1105SymbolDieFileHashes[] = {
 	0x10098414
 };
 
-SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &rect)
+SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &collisionBounds)
 	: StaticSprite(vm, fileHash, 200), _parentScene(parentScene), _countdown(0) {
 	
-	_rect = rect;
+	_collisionBounds = collisionBounds;
 	SetMessageHandler(&SsScene1105Button::handleMessage);
 	SetUpdateHandler(&SsScene1105Button::update);
 	setVisible(false);
@@ -306,8 +306,8 @@ SsScene1105Symbol::SsScene1105Symbol(NeverhoodEngine *vm, uint32 fileHash, int16
 
 	_x = x;
 	_y = y;
-	_drawRect.x = -(_spriteResource.getDimensions().width / 2);
-	_drawRect.y = -(_spriteResource.getDimensions().height / 2);
+	_drawOffset.x = -(_spriteResource.getDimensions().width / 2);
+	_drawOffset.y = -(_spriteResource.getDimensions().height / 2);
 	StaticSprite::update();
 }
 
@@ -339,8 +339,8 @@ uint32 SsScene1105SymbolDie::handleMessage(int messageNum, const MessageParam &p
 
 void SsScene1105SymbolDie::loadSymbolSprite() {
 	load(kSsScene1105SymbolDieFileHashes[getSubVar(VA_CURR_DICE_NUMBERS, _index)], true, false);
-	_drawRect.x = -(_spriteResource.getDimensions().width / 2);
-	_drawRect.y = -(_spriteResource.getDimensions().height / 2);
+	_drawOffset.x = -(_spriteResource.getDimensions().width / 2);
+	_drawOffset.y = -(_spriteResource.getDimensions().height / 2);
 	StaticSprite::update();
 }
 
@@ -406,13 +406,13 @@ SsScene1105OpenButton::SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentS
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
-	_deltaRect = _drawRect;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
+	_collisionBoundsOffset = _drawOffset;
 	_needRefresh = true;
-	processDelta();
+	updateBounds();
 	setVisible(false);
 	loadSound(0, 0x44045140);
 	SetUpdateHandler(&SsScene1105OpenButton::update);

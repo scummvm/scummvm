@@ -42,7 +42,7 @@ public:
 	~Sprite();
 	void init() {}
 	BaseSurface *getSurface() { return _surface; }
-	void processDelta();
+	void updateBounds();
 	void setDoDeltaX(int type);
 	void setDoDeltaY(int type);
 	bool isPointInside(int16 x, int16 y);
@@ -54,7 +54,7 @@ public:
 	uint16 getFlags() const { return _flags; }
 	bool isDoDeltaX() const { return _doDeltaX; }
 	bool isDoDeltaY() const { return _doDeltaY; }
-	NRect& getRect() { return _rect; }
+	NRect& getCollisionBounds() { return _collisionBounds; }
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void loadDataResource(uint32 fileHash);
 	int16 defFilterY(int16 y);
@@ -75,13 +75,10 @@ protected:
 	int16 _x, _y;
 	bool _doDeltaX, _doDeltaY;
 	bool _needRefresh;
-	//0000002B field_2B		db ?
-	//0000002C field2C		dd ? // unused
-	NDrawRect _drawRect;
-	NDrawRect _deltaRect;
-	NRect _rect;
+	NDrawRect _drawOffset;
+	NRect _collisionBounds;
+	NDrawRect _collisionBoundsOffset;
 	uint16 _flags;
-	//0000004A field4A		dw ? // seems to be unused except in ctor
 	DataResource _dataResource;
 	void createSurface(int surfacePriority, int16 width, int16 height);
 	void handleSpriteUpdate() {

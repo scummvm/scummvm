@@ -252,7 +252,7 @@ uint32 AsScene1401Mouse::handleMessage(int messageNum, const MessageParam &param
 
 void AsScene1401Mouse::suSuckedIn() {
 	AnimatedSprite::updateDeltaXY();
-	if (_rect.y1 <= 150) {
+	if (_collisionBounds.y1 <= 150) {
 		playSound(0, 0x0E32247F);
 		stopAnimation();
 		SetSpriteUpdate(NULL);
@@ -289,7 +289,7 @@ uint32 AsScene1401Cheese::handleMessage(int messageNum, const MessageParam &para
 
 void AsScene1401Cheese::suSuckedIn() {
 	AnimatedSprite::updateDeltaXY();
-	if (_rect.y1 <= 150) {
+	if (_collisionBounds.y1 <= 150) {
 		playSound(0, 0x18020439);
 		stopAnimation();
 		SetSpriteUpdate(NULL);
@@ -522,7 +522,7 @@ void AsCommonProjector::suMoving() {
 			setGlobalVar(V_PROJECTOR_SLOT, 0);
 		}
 	}
-	Sprite::processDelta();
+	Sprite::updateBounds();
 }
 
 void AsCommonProjector::moveProjector() {
@@ -558,7 +558,7 @@ void AsCommonProjector::moveProjector() {
 
 void AsCommonProjector::stSuckedIn() {
 	AnimatedSprite::updateDeltaXY();
-	if (_rect.y1 <= 150) {
+	if (_collisionBounds.y1 <= 150) {
 		sendMessage(_asPipe, 0x483A, 0);
 		stopAnimation();
 		SetMessageHandler(&Sprite::handleMessage);
@@ -691,12 +691,12 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 6) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
-			_klayman->processDelta();
+			_klayman->updateBounds();
 			setMessageList(0x004B6670);
 		} else if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() - 100);
-			_klayman->processDelta();
+			_klayman->updateBounds();
 			setMessageList(0x004B6670);
 		}
 		_asProjector->setClipRect(_sprite3->getDrawRect().x, _sprite2->getDrawRect().y, 640, 480);
@@ -917,12 +917,12 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
-			_klayman->processDelta();
+			_klayman->updateBounds();
 			setMessageList(0x004B0BD0);
 		} else if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() - 100);
-			_klayman->processDelta();
+			_klayman->updateBounds();
 			setMessageList(0x004B0BD0);
 		}
 		_asProjector->setClipRect(_ssBridgePart1->getDrawRect().x, 0, _ssBridgePart2->getDrawRect().x, _ssBridgePart3->getDrawRect().y2());
@@ -1118,7 +1118,7 @@ void AsScene1407Mouse::suWalkTo() {
 		sendMessage(this, 0x1019, 0);
 	} else {
 		_x += xdelta;
-		processDelta();
+		updateBounds();
 	}
 }
 
@@ -1339,7 +1339,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
-			_klayman->processDelta();
+			_klayman->updateBounds();
 			setMessageList(0x004B1F70);
 		}
 		_asProjector->setClipRect(0, 0, 640, _class401_2->getDrawRect().y2());
@@ -1457,7 +1457,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() - 100);
-			_klayman->processDelta();
+			_klayman->updateBounds();
 			setMessageList(0x004B8CB8);
 		}
 		_asProjector->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);

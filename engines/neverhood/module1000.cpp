@@ -618,10 +618,10 @@ AsScene1002Door::AsScene1002Door(NeverhoodEngine *vm, NRect &clipRect)
 		_y = 239; 
 	}
 
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 
 	_needRefresh = true;
 	
@@ -771,10 +771,10 @@ SsCommonPressButton::SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene
 	_spriteResource.load2(fileHash1);
 	createSurface(surfacePriority, 40, 40);
 	
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 
@@ -791,20 +791,20 @@ void SsCommonPressButton::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 	_fileHashes[1] = fileHash2;
 	if (_status == 2) {
 		_spriteResource.load2(fileHash2);
-		_drawRect.x = 0;
-		_drawRect.y = 0;
-		_drawRect.width = _spriteResource.getDimensions().width;
-		_drawRect.height = _spriteResource.getDimensions().height;
+		_drawOffset.x = 0;
+		_drawOffset.y = 0;
+		_drawOffset.width = _spriteResource.getDimensions().width;
+		_drawOffset.height = _spriteResource.getDimensions().height;
 		_x = _spriteResource.getPosition().x;
 		_y = _spriteResource.getPosition().y;
 		_needRefresh = true;
 		StaticSprite::update();
 	} else {
 		_spriteResource.load2(fileHash1);
-		_drawRect.x = 0;
-		_drawRect.y = 0;
-		_drawRect.width = _spriteResource.getDimensions().width;
-		_drawRect.height = _spriteResource.getDimensions().height;
+		_drawOffset.x = 0;
+		_drawOffset.y = 0;
+		_drawOffset.width = _spriteResource.getDimensions().width;
+		_drawOffset.height = _spriteResource.getDimensions().height;
 		_x = _spriteResource.getPosition().x;
 		_y = _spriteResource.getPosition().y;
 		_needRefresh = true;
@@ -817,10 +817,10 @@ void SsCommonPressButton::update() {
 		if (_status == 1) {
 			_status = 2;
 			_spriteResource.load2(_fileHashes[1]);
-			_drawRect.x = 0;
-			_drawRect.y = 0;
-			_drawRect.width = _spriteResource.getDimensions().width;
-			_drawRect.height = _spriteResource.getDimensions().height;
+			_drawOffset.x = 0;
+			_drawOffset.y = 0;
+			_drawOffset.width = _spriteResource.getDimensions().width;
+			_drawOffset.height = _spriteResource.getDimensions().height;
 			_x = _spriteResource.getPosition().x;
 			_y = _spriteResource.getPosition().y;
 			_needRefresh = true;
@@ -829,10 +829,10 @@ void SsCommonPressButton::update() {
 		} else if (_status == 2) {
 			_status = 3;
 			_spriteResource.load2(_fileHashes[0]);
-			_drawRect.x = 0;
-			_drawRect.y = 0;
-			_drawRect.width = _spriteResource.getDimensions().width;
-			_drawRect.height = _spriteResource.getDimensions().height;
+			_drawOffset.x = 0;
+			_drawOffset.y = 0;
+			_drawOffset.width = _spriteResource.getDimensions().width;
+			_drawOffset.height = _spriteResource.getDimensions().height;
 			_x = _spriteResource.getPosition().x;
 			_y = _spriteResource.getPosition().y;
 			_needRefresh = true;

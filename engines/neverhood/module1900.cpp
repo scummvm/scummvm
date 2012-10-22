@@ -219,8 +219,8 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 		startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
 		_newStickFrameIndex = 0;
 	}
-	_deltaRect.set(0, 0, 80, 80);
-	Sprite::processDelta();
+	_collisionBoundsOffset.set(0, 0, 80, 80);
+	Sprite::updateBounds();
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 
@@ -413,7 +413,7 @@ void AsScene1907Symbol::cbFallOffHitGroundEvent() {
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteUpdate(NULL);
-	processDelta();
+	updateBounds();
 	playSound(2);
 }
 
@@ -458,11 +458,11 @@ SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 
 	_spriteResource.load2(0x64516424);
 	createSurface(1400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	setVisible(false);
-	_drawRect.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_deltaRect = _drawRect;
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_collisionBoundsOffset = _drawOffset;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	processDelta();
+	updateBounds();
 	_needRefresh = true;
 	loadSound(0, 0x44061000);
 	SetUpdateHandler(&SsScene1907UpDownButton::update);
@@ -500,13 +500,13 @@ uint32 SsScene1907UpDownButton::handleMessage(int messageNum, const MessageParam
 
 void SsScene1907UpDownButton::setToUpPosition() {
 	_y = _spriteResource.getPosition().y;
-	Sprite::processDelta();
+	Sprite::updateBounds();
 	StaticSprite::update();
 }
 
 void SsScene1907UpDownButton::setToDownPosition() {
 	_y = _spriteResource.getPosition().y + 174;
-	Sprite::processDelta();
+	Sprite::updateBounds();
 	StaticSprite::update();
 }
 

@@ -256,16 +256,16 @@ SsScene2901LocationButton::SsScene2901LocationButton(NeverhoodEngine *vm, Scene 
 
 	_spriteResource.load2(kSsScene2901LocationButtonFileHashes[which * 6 + index]);
 	createSurface(800, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);	
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_rect.x1 = kSsScene2901LocationButtonPoints[_index].x - 25;
-	_rect.y1 = kSsScene2901LocationButtonPoints[_index].y - 25;
-	_rect.x2 = kSsScene2901LocationButtonPoints[_index].x + 25;
-	_rect.y2 = kSsScene2901LocationButtonPoints[_index].y + 25;
+	_collisionBounds.x1 = kSsScene2901LocationButtonPoints[_index].x - 25;
+	_collisionBounds.y1 = kSsScene2901LocationButtonPoints[_index].y - 25;
+	_collisionBounds.x2 = kSsScene2901LocationButtonPoints[_index].x + 25;
+	_collisionBounds.y2 = kSsScene2901LocationButtonPoints[_index].y + 25;
 	setVisible(false);
 	_needRefresh = true;
 	loadSound(0, 0x440430C0);
@@ -301,10 +301,10 @@ SsScene2901LocationButtonLight::SsScene2901LocationButtonLight(NeverhoodEngine *
 	
 	_spriteResource.load2(kSsScene2901LocationButtonLightFileHashes1[which * 6 + index]);
 	createSurface(900, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);	
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	setVisible(false);
@@ -328,10 +328,10 @@ SsScene2901BrokenButton::SsScene2901BrokenButton(NeverhoodEngine *vm, int which)
 
 	_spriteResource.load2(kSsScene2901BrokenButtonFileHashes[which]);
 	createSurface(900, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);	
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 	_needRefresh = true;
@@ -343,16 +343,16 @@ SsScene2901BigButton::SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentSce
 	
 	_spriteResource.load2(kSsScene2901BigButtonFileHashes[which]);
 	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);	
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-	_drawRect.width = _spriteResource.getDimensions().width;
-	_drawRect.height = _spriteResource.getDimensions().height;
+	_drawOffset.x = 0;
+	_drawOffset.y = 0;
+	_drawOffset.width = _spriteResource.getDimensions().width;
+	_drawOffset.height = _spriteResource.getDimensions().height;
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_rect.x1 = 62;
-	_rect.y1 = 94;
-	_rect.x2 = 322;
-	_rect.y2 = 350;
+	_collisionBounds.x1 = 62;
+	_collisionBounds.y1 = 94;
+	_collisionBounds.x2 = 322;
+	_collisionBounds.y2 = 350;
 	setVisible(false);
 	_needRefresh = true;
 	loadSound(0, 0xF3D420C8);

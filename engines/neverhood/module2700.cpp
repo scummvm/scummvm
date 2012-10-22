@@ -514,7 +514,7 @@ SsCommonTrackShadowBackground::SsCommonTrackShadowBackground(NeverhoodEngine *vm
 	createSurface(0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
-	_drawRect.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_needRefresh = true;
 	StaticSprite::update();
 }

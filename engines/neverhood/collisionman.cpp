@@ -94,7 +94,7 @@ void CollisionMan::clearSprites() {
 void CollisionMan::checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam) {
 	for (Common::Array<Sprite*>::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++) {
 		Sprite *collSprite = *iter;
-		if ((sprite->getFlags() & flags) && collSprite->checkCollision(sprite->getRect())) {
+		if ((sprite->getFlags() & flags) && collSprite->checkCollision(sprite->getCollisionBounds())) {
 			sprite->sendMessage(collSprite, messageNum, messageParam);
 		}
 	}	
