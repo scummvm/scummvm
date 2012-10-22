@@ -40,6 +40,7 @@
 
 #include "common/system.h"
 #include "graphics/surface.h"
+#include "graphics/usable_surface.h"
 
 namespace Sword25 {
 
@@ -222,7 +223,7 @@ uint RenderedImage::getPixel(int x, int y) {
 
 bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
 	// Create an encapsulating surface for the data
-	Graphics::Surface srcImage;
+	Graphics::UsableSurface srcImage;
 	// TODO: Is the data really in the screen format?
 	srcImage.format = g_system->getScreenFormat();
 	srcImage.pitch = _width * 4;
