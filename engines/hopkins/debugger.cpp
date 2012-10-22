@@ -35,4 +35,4 @@ void Debugger::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-} // End of namespace Tony
+} // End of namespace Hopkins

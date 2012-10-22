@@ -1141,7 +1141,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, a1);
 
 		if (!f.open(_vm->_globals.NFICHIER))
-			error("File not found ", _vm->_globals.NFICHIER.c_str());
+			error("File not found - %s", _vm->_globals.NFICHIER.c_str());
 
 		f.read(&buf, 6u);
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
