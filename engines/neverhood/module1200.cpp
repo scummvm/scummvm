@@ -29,15 +29,12 @@ Module1200::Module1200(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	SetMessageHandler(&Module1200::handleMessage);
 
-	debug("Module1200: which = %d", which);
-	
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else if (which == 1) {
+	else if (which == 1)
 		createScene(0, 2);
-	} else {
+	else
 		createScene(0, 0);
-	}
 
 	_vm->_soundMan->addMusic(0x00478311, 0x62222CAE);
 	_vm->_soundMan->startMusic(0x62222CAE, 0, 0);
@@ -49,15 +46,18 @@ Module1200::~Module1200() {
 
 void Module1200::createScene(int sceneNum, int which) {
 	debug("Module1200::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_childObject = new Scene1201(_vm, this, which);
 		break;
 	case 1:
-		_childObject = new Scene1202(_vm, this, which);
+		_vm->gameState().sceneNum = 1;
+		_childObject = new Scene1202(_vm, this);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		_vm->_soundMan->stopMusic(0x62222CAE, 0, 0);
 		createSmackerScene(0x31890001, true, true, false);
 		setGlobalVar(V_SEEN_CREATURE_EXPLODE_VID, 1);
@@ -69,19 +69,17 @@ void Module1200::createScene(int sceneNum, int which) {
 
 void Module1200::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createScene(1, 0);
-			} else if (_moduleResult == 2) {
-				if (getGlobalVar(V_CREATURE_EXPLODED) && !getGlobalVar(V_SEEN_CREATURE_EXPLODE_VID)) {
+			else if (_moduleResult == 2) {
+				if (getGlobalVar(V_CREATURE_EXPLODED) && !getGlobalVar(V_SEEN_CREATURE_EXPLODE_VID))
 					createScene(2, -1);
-				} else {
+				else
 					leaveModule(1);
-				}
-			} else {
+			} else
 				leaveModule(0);
-			}
 			break;
 		case 1:
 			createScene(0, 1);
@@ -101,78 +99,41 @@ static const uint32 kScene1201InitArray[] = {
 };
 
 static const NPoint kScene1201PointArray[] = {
-	{218, 193},
-	{410, 225},
-	{368, 277},
-	{194, 227},
-	{366, 174},
-	{458, 224},
-	{242, 228},
-	{512, 228},
-	{458, 277},
-	{217, 233},
-	{458, 173},
-	{410, 276},
-	{203, 280},
-	{371, 226},
-	{508, 279},
-	{230, 273},
-	{410, 171},
-	{493, 174}
+	{218, 193}, {410, 225}, {368, 277},
+	{194, 227}, {366, 174}, {458, 224},
+	{242, 228}, {512, 228}, {458, 277},
+	{217, 233}, {458, 173}, {410, 276},
+	{203, 280}, {371, 226}, {508, 279},
+	{230, 273}, {410, 171}, {493, 174}
 };
 
 static const uint32 kScene1201TntFileHashList1[] = {
-	0x2098212D,   
-	0x1600437E,
-	0x1600437E,
-	0x00A840E3,
-	0x1A1830F6,
-	0x1A1830F6,
-	0x00212062,
-	0x384010B6,
-	0x384010B6,
-	0x07A01080,
-	0xD80C2837,
-	0xD80C2837,
-	0x03A22092,
-	0xD8802CB6,
-	0xD8802CB6,
-	0x03A93831,
-	0xDA460476,
-	0xDA460476
+	0x2098212D, 0x1600437E, 0x1600437E,
+	0x00A840E3, 0x1A1830F6, 0x1A1830F6,
+	0x00212062, 0x384010B6, 0x384010B6,
+	0x07A01080, 0xD80C2837, 0xD80C2837,
+	0x03A22092, 0xD8802CB6, 0xD8802CB6,
+	0x03A93831, 0xDA460476, 0xDA460476
 };
 
 static const uint32 kScene1201TntFileHashList2[] = {
-	0x3040C676,  
-	0x10914448,
-	0x10914448,
-	0x3448A066,
-	0x1288C049,
-	0x1288C049,
-	0x78C0E026,
-	0x3098D05A,
-	0x3098D05A,
-	0x304890E6,
-	0x1284E048,
-	0x1284E048,
-	0xB140A1E6,
-	0x5088A068,
-	0x5088A068,
-	0x74C4C866,
-	0x3192C059,
-	0x3192C059
+	0x3040C676, 0x10914448, 0x10914448,
+	0x3448A066, 0x1288C049, 0x1288C049,
+	0x78C0E026, 0x3098D05A, 0x3098D05A,
+	0x304890E6, 0x1284E048, 0x1284E048,
+	0xB140A1E6, 0x5088A068, 0x5088A068,
+	0x74C4C866, 0x3192C059, 0x3192C059
 };
 			
 SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 pointIndex, int16 clipY2)
-	: StaticSprite(vm, 900), _field7A(-1) {
+	: StaticSprite(vm, 900) {
 
 	int16 x = kScene1201PointArray[pointIndex].x;
 	int16 y = kScene1201PointArray[pointIndex].y;
-	if (x < 300) {
+	if (x < 300)
 		loadSprite(kScene1201TntFileHashList1[elemIndex], kSLFDefDrawOffset | kSLFDefPosition, 50);
-	} else {
+	else
 		loadSprite(kScene1201TntFileHashList2[elemIndex], kSLFCenteredDrawOffset | kSLFSetPosition, 50, x, y);
-	}
 	setClipRect(0, 0, 640, clipY2);
 }
 	
@@ -203,7 +164,7 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 	return messageResult;
 }
 
-AsScene1201TntManRope::AsScene1201TntManRope(NeverhoodEngine *vm, bool flag)
+AsScene1201TntManRope::AsScene1201TntManRope(NeverhoodEngine *vm, bool isDummyHanging)
 	: AnimatedSprite(vm, 1200) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -211,7 +172,7 @@ AsScene1201TntManRope::AsScene1201TntManRope(NeverhoodEngine *vm, bool flag)
 	createSurface(10, 34, 149);
 	_x = 202;
 	_y = -32;
-	if (flag) {
+	if (isDummyHanging) {
 		startAnimation(0x928F0C10, 15, -1);
 		_newStickFrameIndex = STICK_LAST_FRAME;
 	} else {
@@ -224,9 +185,8 @@ uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x02060018) {
+		if (param.asInteger() == 0x02060018)
 			playSound(0, 0x47900E06);
-		}
 		break;
 	case 0x2006:
 		startAnimation(0x928F0C10, 1, -1);
@@ -236,7 +196,7 @@ uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &
 	return messageResult;
 }
 
-AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool flag)
+AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen)
 	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown(0) {
 
 	createSurface1(0xD088AC30, 100);
@@ -245,7 +205,7 @@ AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman,
 	SetUpdateHandler(&AsScene1201RightDoor::update);
 	SetMessageHandler(&AsScene1201RightDoor::handleMessage);
 	_newStickFrameIndex = STICK_LAST_FRAME;
-	if (flag) {
+	if (isOpen) {
 		startAnimation(0xD088AC30, -1, -1);
 		_newStickFrameIndex = STICK_LAST_FRAME;
 		_countdown = 25;
@@ -256,9 +216,8 @@ AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman,
 }
 
 void AsScene1201RightDoor::update() {
-	if (_countdown != 0 && (--_countdown == 0)) {
+	if (_countdown != 0 && (--_countdown == 0))
 		stCloseDoor();
-	}
 	AnimatedSprite::update();
 }
 
@@ -348,11 +307,10 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x092870C0) {
+		if (param.asInteger() == 0x092870C0)
 			sendMessage(_asTntManRope, 0x2006, 0);
-		} else if (param.asInteger() == 0x11CA0144) {
+		else if (param.asInteger() == 0x11CA0144)
 			playSound(0, 0x51800A04);
-		}
 		break;
 	case 0x1011:
 		sendMessage(_parentScene, 0x2002, 0);
@@ -479,9 +437,8 @@ uint32 AsScene1201Match::hmOnDoorFrameAboutToMove(int messageNum, const MessageP
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x86668011) {
+		if (param.asInteger() == 0x86668011)
 			playSound(0);
-		}
 		break;
 	}
 	return messageResult;
@@ -571,13 +528,12 @@ AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene
 }
 
 void AsScene1201Creature::update() {
-	bool oldFlag = _klaymanTooClose;
+	bool oldKlaymanTooClose = _klaymanTooClose;
 	_klaymanTooClose = _klayman->getX() >= 385;
-	if (_klaymanTooClose != oldFlag)
+	if (_klaymanTooClose != oldKlaymanTooClose)
 		stWaiting();
-	if (_countdown1 != 0 && (--_countdown1 == 0)) {
+	if (_countdown != 0 && (--_countdown == 0))
 		gotoNextState();
-	}
 	updateAnim();
 	handleSpriteUpdate();
 	updatePosition();
@@ -587,9 +543,8 @@ uint32 AsScene1201Creature::hmWaiting(int messageNum, const MessageParam &param,
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x02060018) {
+		if (param.asInteger() == 0x02060018)
 			playSound(0, 0xCD298116);
-		}
 		break;
 	case 0x2004:
 		GotoState(&AsScene1201Creature::stStartReachForTntDummy);
@@ -632,7 +587,7 @@ void AsScene1201Creature::stWaiting() {
 	startAnimation(0x08081513, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::hmWaiting);
 	NextState(&AsScene1201Creature::stPincerSnap);
-	_countdown1 = 36;
+	_countdown = 36;
 }
 
 void AsScene1201Creature::stPincerSnap() {
@@ -647,20 +602,20 @@ void AsScene1201Creature::stStartReachForTntDummy() {
 	startAnimation(0x08081513, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::hmWaiting);
 	NextState(&AsScene1201Creature::stReachForTntDummy);
-	_countdown1 = 48;
+	_countdown = 48;
 }
 
 void AsScene1201Creature::stReachForTntDummy() {
 	startAnimation(0x5A201453, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::hmWaiting);
-	_countdown1 = 0;
+	_countdown = 0;
 }
 
 void AsScene1201Creature::stPincerSnapKlayman() {
 	startAnimation(0xCA287133, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::hmPincerSnapKlayman);
 	NextState(&AsScene1201Creature::stWaiting);
-	_countdown1 = 0;
+	_countdown = 0;
 }
 
 AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klayman)
@@ -712,9 +667,8 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	if (!getSubVar(VA_IS_PUZZLE_INIT, 0xE8058B52)) {
 		setSubVar(VA_IS_PUZZLE_INIT, 0xE8058B52, 1);
-		for (uint32 index = 0; index < 18; index++) {
+		for (uint32 index = 0; index < 18; index++)
 			setSubVar(VA_TNT_POSITIONS, index, kScene1201InitArray[index]);
-		}
 	}
 
 	insertMouse433(0x9A2C0409);
@@ -748,12 +702,15 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asKlaymanHead = insertSprite<AsScene1201KlaymanHead>();
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene1201>(364, 333);
 		setMessageList(0x004AEC08);
 	} else if (which == 3) {
+		// Klaymen standing after the weasel exploded
 		insertKlayman<KmScene1201>(400, 329);
 		setMessageList(0x004AEC08);
 	} else if (which == 2) {
+		// Klaymen entering from the right
 		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 			insertKlayman<KmScene1201>(374, 333);
 			setMessageList(0x004AEC08);
@@ -762,6 +719,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004AEC20);
 		}
 	} else if (which == 1) {
+		// Klaymen returning from the TNT console
 		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1201>(364, 333);
 			_klayman->setDoDeltaX(1);
@@ -770,6 +728,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 		setMessageList(0x004AEC30);
 	} else {
+		// Klaymen entering from the left
 		insertKlayman<KmScene1201>(0, 336);
 		setMessageList(0x004AEC10);
 	}
@@ -848,11 +807,10 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			tntIndex++;
 		}
 
-		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
+		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED))
 			setRectList(0x004AEE18);
-		} else {
+		else
 			setRectList(0x004AED88);
-		}
 		 
 	}
 
@@ -861,9 +819,8 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asLeftDoor = insertSprite<AsScene1201LeftDoor>(_klayman);
 	_asLeftDoor->setClipRect(x1, tempSprite->getDrawRect().y, tempSprite->getDrawRect().x2(), 480);
 
-	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_MATCH_STATUS) == 0) {
+	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_MATCH_STATUS) == 0)
 		setGlobalVar(V_MATCH_STATUS, 1);
-	}
 
 	_asMatch = NULL;
 
@@ -898,23 +855,22 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asInteger() == 0x07053000) {
 			_creatureExploded = true;
 			sendMessage(_asCreature, 0x2004, 0);
-		} else if (param.asInteger() == 0x140E5744) {
+		} else if (param.asInteger() == 0x140E5744)
 			sendMessage(_asCreature, 0x2005, 0);
-		} else if (param.asInteger() == 0x40253C40) {
+		else if (param.asInteger() == 0x40253C40) {
 			_canAcceptInput = false;
 			sendMessage(_asCreature, 0x2006, 0);
 		} else if (param.asInteger() == 0x090EB048) {
-			if (_klayman->getX() < 572) {
+			if (_klayman->getX() < 572)
 				setMessageList2(0x004AEC90);
-			} else {
+			else
 				setMessageList2(0x004AEC20);
-			}
 		}
 		break;
 	case 0x2001:
-		if (getGlobalVar(V_MATCH_STATUS) == 0) {
+		if (getGlobalVar(V_MATCH_STATUS) == 0)
 			setMessageList2(0x004AECB0);
-		} else {
+		else {
 			sendEntityMessage(_klayman, 0x1014, _asMatch);
 			setMessageList2(0x004AECC0);
 		}
@@ -927,11 +883,10 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (getGlobalVar(V_MATCH_STATUS) == 3) {
 			// Light the TNT dummy if we have the match
 			sendEntityMessage(_klayman, 0x1014, _asTntMan);
-			if (_klayman->getX() > _asTntMan->getX()) {
+			if (_klayman->getX() > _asTntMan->getX())
 				setMessageList(0x004AECD0);
-			} else {
+			else
 				setMessageList(0x004AECE0);
-			}
 		}
 		break;
 	case 0x4814:
@@ -960,45 +915,21 @@ static const uint32 kScene1202Table[] = {
 };
 
 static const NPoint kScene1202Points[] = {
-	{203, 140},
-	{316, 212},
-	{277, 264},
-	{176, 196},
-	{275, 159},
-	{366, 212},
-	{230, 195},
-	{412, 212},
-	{368, 263},
-	{204, 192},
-	{365, 164},
-	{316, 262},
-	{191, 255},
-	{280, 213},
-	{406, 266},
-	{214, 254},
-	{316, 158},
-	{402, 161}
+	{203, 140}, {316, 212}, {277, 264},
+	{176, 196}, {275, 159}, {366, 212},
+	{230, 195}, {412, 212}, {368, 263},
+	{204, 192}, {365, 164}, {316, 262},
+	{191, 255}, {280, 213}, {406, 266},
+	{214, 254}, {316, 158}, {402, 161}
 };
 
 static const uint32 kScene1202FileHashes[] = {
-	0x1AC00B8,
-	0x1AC14B8,
-	0x1AC14B8,
-	0x1AC30B8,
-	0x1AC14B8,
-	0x1AC14B8,
-	0x1AC00B8,
-	0x1AC14B8,
-	0x1AC14B8,
-	0x1AC90B8,
-	0x1AC18B8,
-	0x1AC18B8,
-	0x1AC30B8,
-	0x1AC14B8,
-	0x1AC14B8,
-	0x1AC50B8,
-	0x1AC14B8,
-	0x1AC14B8
+	0x1AC00B8, 0x1AC14B8, 0x1AC14B8,
+	0x1AC30B8, 0x1AC14B8, 0x1AC14B8,
+	0x1AC00B8, 0x1AC14B8, 0x1AC14B8,
+	0x1AC90B8, 0x1AC18B8, 0x1AC18B8,
+	0x1AC30B8, 0x1AC14B8, 0x1AC14B8,
+	0x1AC50B8, 0x1AC14B8, 0x1AC14B8
 };
 
 AsScene1202TntItem::AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, int itemIndex)
@@ -1056,9 +987,9 @@ void AsScene1202TntItem::stChangePositionFadeIn() {
 	_x = kScene1202Points[_newPosition].x;
 	_y = kScene1202Points[_newPosition].y;
 	startAnimation(kScene1202FileHashes[_itemIndex], 6, -1);
+	_playBackwards = true;
 	SetMessageHandler(&AsScene1202TntItem::hmChangePosition);
 	NextState(&AsScene1202TntItem::stChangePositionDone);
-	_playBackwards = true;
 }
 
 void AsScene1202TntItem::stChangePositionDone() {
@@ -1066,15 +997,14 @@ void AsScene1202TntItem::stChangePositionDone() {
 	stShowIdle();
 }
 
-Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
+Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule, true), _paletteResource(vm),  
-	_flag(true), _soundFlag(false), _counter(0), _clickedIndex(-1) {
+	_soundToggle(true), _isPuzzleSolved(false), _counter(0), _clickedIndex(-1) {
 
 	SetMessageHandler(&Scene1202::handleMessage);
 	SetUpdateHandler(&Scene1202::update);
 
 	setBackground(0x60210ED5);
-
 	setPalette(0x60210ED5);
 	addEntity(_palette);
 
@@ -1083,16 +1013,15 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertMouse435(0x10ED160A, 20, 620);
 
-	for (int i = 0; i < 18; i++) {
-		_asTntItems[i] = insertSprite<AsScene1202TntItem>(this, i);
-		_vm->_collisionMan->addSprite(_asTntItems[i]);
+	for (int tntIndex = 0; tntIndex < 18; tntIndex++) {
+		_asTntItems[tntIndex] = insertSprite<AsScene1202TntItem>(this, tntIndex);
+		_vm->_collisionMan->addSprite(_asTntItems[tntIndex]);
 	}
 
 	insertStaticSprite(0x8E8419C1, 1100);
 
-	if (getGlobalVar(V_TNT_DUMMY_BUILT)) {
+	if (getGlobalVar(V_TNT_DUMMY_BUILT))
 		SetMessageHandler(&Scene1202::hmSolved);
-	}
 
 	playSound(0, 0x40106542);
 	loadSound(1, 0x40005446);
@@ -1102,15 +1031,13 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1202::~Scene1202() {
-	if (isSolved()) {
+	if (isSolved())
 		setGlobalVar(V_TNT_DUMMY_BUILT, 1);
-	}
 }
 
 void Scene1202::update() {
 	Scene::update();
-	if (_soundFlag) {
-		debug("CHECK SOLVED");
+	if (_isPuzzleSolved) {
 		if (!isSoundPlaying(3))
 			leaveScene(0);
 	} else if (_counter == 0 && isSolved()) {
@@ -1120,7 +1047,7 @@ void Scene1202::update() {
 		_palette->copyToBasePalette(_paletteData);
 		_palette->startFadeToPalette(24);
 		playSound(3);
-		_soundFlag = true;
+		_isPuzzleSolved = true;
 	} else if (_clickedIndex >= 0 && _counter == 0) {
 		int destIndex = kScene1202Table[_clickedIndex];
 		sendMessage(_asTntItems[_clickedIndex], 0x2001, getSubVar(VA_TNT_POSITIONS, destIndex));
@@ -1130,12 +1057,8 @@ void Scene1202::update() {
 		setSubVar(VA_TNT_POSITIONS, _clickedIndex, temp);
 		_counter = 2;
 		_clickedIndex = -1;
-		if (_flag) {
-			playSound(1);
-		} else {
-			playSound(2);
-		}
-		_flag = !_flag;
+		playSound(_soundToggle ? 1 : 2);
+		_soundToggle = !_soundToggle;
 	}
 }
 
@@ -1144,9 +1067,8 @@ uint32 Scene1202::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_soundFlag) {
+		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_isPuzzleSolved)
 			leaveScene(0);
-		}
 		break;
 	case 0x2000:
 		_clickedIndex = (int)param.asInteger();
@@ -1162,21 +1084,14 @@ uint32 Scene1202::hmSolved(int messageNum, const MessageParam &param, Entity *se
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
-		}
 		break;
 	}
 	return 0;
 }
 
 bool Scene1202::isSolved() {
-
-	debug("isSolved() %d %d %d %d %d %d", 
-		getSubVar(VA_TNT_POSITIONS,  0), getSubVar(VA_TNT_POSITIONS,  3),
-		getSubVar(VA_TNT_POSITIONS,  6), getSubVar(VA_TNT_POSITIONS,  9),
-		getSubVar(VA_TNT_POSITIONS,  12), getSubVar(VA_TNT_POSITIONS,  15));
-
 	return 
 		getSubVar(VA_TNT_POSITIONS,  0) ==  0 && getSubVar(VA_TNT_POSITIONS,  3) ==  3 && 
 		getSubVar(VA_TNT_POSITIONS,  6) ==  6 && getSubVar(VA_TNT_POSITIONS,  9) ==  9 &&

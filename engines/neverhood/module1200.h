@@ -36,6 +36,7 @@ public:
 	Module1200(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1200();
 protected:
+	int _sceneNum;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };
@@ -53,14 +54,14 @@ protected:
 
 class AsScene1201TntManRope : public AnimatedSprite {
 public:
-	AsScene1201TntManRope(NeverhoodEngine *vm, bool flag);
+	AsScene1201TntManRope(NeverhoodEngine *vm, bool isDummyHanging);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class AsScene1201RightDoor : public AnimatedSprite {
 public:
-	AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool flag);
+	AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen);
 protected:
 	Sprite *_klayman;
 	int _countdown;
@@ -129,7 +130,7 @@ public:
 protected:
 	Scene *_parentScene;
 	Sprite *_klayman;
-	int _countdown1;
+	int _countdown;
 	bool _klaymanTooClose;
 	void update();
 	uint32 hmWaiting(int messageNum, const MessageParam &param, Entity *sender);
@@ -156,7 +157,6 @@ public:
 	SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 pointIndex, int16 clipY2);
 protected:
 	uint32 _elemIndex;
-	int16 _field7A;	
 };
 
 class Scene1201 : public Scene {
@@ -195,7 +195,7 @@ protected:
 
 class Scene1202 : public Scene {
 public:
-	Scene1202(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1202(NeverhoodEngine *vm, Module *parentModule);
 	virtual ~Scene1202();
 protected:
 	PaletteResource _paletteResource;
@@ -203,8 +203,8 @@ protected:
 	int _counter;
 	int _clickedIndex;
 	byte _paletteData[1024];
-	bool _soundFlag;
-	bool _flag;
+	bool _isPuzzleSolved;
+	bool _soundToggle;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmSolved(int messageNum, const MessageParam &param, Entity *sender);

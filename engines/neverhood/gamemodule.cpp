@@ -284,9 +284,9 @@ void GameModule::startup() {
 	*/
 	//setGlobalVar(V_ENTRANCE_OPEN, 0);
 	//setGlobalVar(V_DOOR_SPIKES_OPEN, 1);
-	setGlobalVar(V_CREATURE_ANGRY, 1);
+	//setGlobalVar(V_CREATURE_ANGRY, 1);
 	setGlobalVar(V_RADIO_ENABLED, 1);
-	setGlobalVar(V_TNT_DUMMY_BUILT, 1);
+	//setGlobalVar(V_TNT_DUMMY_BUILT, 1);
 	setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
 	setGlobalVar(V_TV_JOKE_TOLD, 1);
 	/*
@@ -316,8 +316,8 @@ void GameModule::startup() {
 	*/
 
 	_vm->gameState().which = 3;
-	_vm->gameState().sceneNum = 8;
-	createModule(1100, -1);
+	_vm->gameState().sceneNum = 0;
+	createModule(1200, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
