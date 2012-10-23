@@ -35,6 +35,7 @@ public:
 	Module2000(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2000();
 protected:
+	int _sceneNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createScene(int sceneNum, int which);
 	void updateScene();

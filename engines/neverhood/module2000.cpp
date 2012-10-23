@@ -29,13 +29,12 @@ namespace Neverhood {
 Module2000::Module2000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else if (which == 0) {
+	else if (which == 0)
 		createScene(0, 1);
-	} else if (which == 1) {
+	else if (which == 1)
 		createScene(0, 3);
-	}
 
 }
 
@@ -45,15 +44,18 @@ Module2000::~Module2000() {
 
 void Module2000::createScene(int sceneNum, int which) {
 	debug("Module2000::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_childObject = new Scene2001(_vm, this, which);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		createNavigationScene(getGlobalVar(V_WORLDS_JOINED) ? 0x004B7B48 : 0x004B7B00, which);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		setGlobalVar(V_WORLDS_JOINED, 1);
 		setSubVar(V_TELEPORTER_DEST_AVAILABLE, 1, 1);
 		createSmackerScene(0x204B2031, true, true, false);
@@ -65,26 +67,23 @@ void Module2000::createScene(int sceneNum, int which) {
 
 void Module2000::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				leaveModule(0);
-			} else {
+			else
 				createScene(1, 0);
-			}
 			break;
 		case 1:
 			if (_moduleResult == 0) {
-				if (getGlobalVar(V_WORLDS_JOINED)) {
+				if (getGlobalVar(V_WORLDS_JOINED))
 					createScene(1, 0);
-				} else {
+				else
 					createScene(2, -1);
-				}
-			} else if (_moduleResult == 1) {
+			} else if (_moduleResult == 1)
 				createScene(1, 1);
-			} else if (_moduleResult == 2) {
+			else if (_moduleResult == 2)
 				createScene(0, 0);
-			}
 			break;
 		case 2:
 			createScene(1, 0);
@@ -109,25 +108,30 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x0D641724, 1100);
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene2001>(300, 345);
 		setMessageList(0x004B3538);
 		sendMessage(this, 0x2000, 0);
 	} else if (which == 1) {
+		// Klaymen teleporting in
 		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B3540, false);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 2) {
+		// Klaymen teleporting out
 		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B35F0, false);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 3) {
+		// Klaymen returning from teleporter console
 		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B3550, false);
 		sendMessage(this, 0x2000, 1);
 	} else {
+		// Klaymen standing around
 		insertKlayman<KmScene2001>(390, 345);
 		setMessageList(0x004B3530);
 		sendMessage(this, 0x2000, 0);
