@@ -41,6 +41,7 @@
 #include "hopkins/lines.h"
 #include "hopkins/menu.h"
 #include "hopkins/objects.h"
+#include "hopkins/script.h"
 #include "hopkins/sound.h"
 #include "hopkins/talk.h"
 
@@ -104,6 +105,7 @@ public:
 	LinesManager _linesManager;
 	MenuManager _menuManager;
 	ObjectsManager _objectsManager;
+	ScriptManager _scriptManager;
 	SoundManager _soundManager;
 	TalkManager _talkManager;
 public:

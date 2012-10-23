@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	lines.o \
 	menu.o \
 	objects.o \
+	script.o \
 	sound.o \
 	talk.o
 

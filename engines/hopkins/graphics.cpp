@@ -2353,11 +2353,11 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 	} else {
 		v11 = 0;
 		do {
-			v6 = _vm->_objectsManager.Traduction(ptr + 20 * v2);
+			v6 =  _vm->_scriptManager.Traduction(ptr + 20 * v2);
 			if (v6 == 2)
-				v2 = _vm->_objectsManager.Control_Goto((ptr + 20 * v2));
+				v2 =  _vm->_scriptManager.Control_Goto((ptr + 20 * v2));
 			if (v6 == 3)
-				v2 = _vm->_objectsManager.Control_If(ptr, v2);
+				v2 =  _vm->_scriptManager.Control_If(ptr, v2);
 			if (v2 == -1)
 				error("Error, defective IFF");
 			if (v6 == 1 || v6 == 4)

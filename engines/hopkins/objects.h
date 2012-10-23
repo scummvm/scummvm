@@ -109,7 +109,6 @@ public:
 	int MAX_DEPA1;
 	int VIRE_INVENT;
 	int AFFINVEN;
-	int TRAVAILOBJET;
 	int CH_TETE;
 	int T_RECTIF;
 	int DESACTIVE;
@@ -215,7 +214,6 @@ public:
 	void VALID_OBJET(int a1);
 	void OPTI_OBJET();
 	void SPECIAL_JEU();
-	int Traduction(byte *a1);
 	void BOB_VIVANT(int a1);
 	void VBOB(byte *a1, int a2, int a3, int a4, int a5);
 	void VBOB_OFF(int idx);
@@ -242,9 +240,6 @@ public:
 	void SPECIAL_INI(const Common::String &a1);
 	void OPTI_BOBON(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
 	void SCI_OPTI_ONE(int a1, int a2, int a3, int a4);
-	int Control_Goto(const byte *dataP);
-	int Control_If(const byte *dataP, int a2);
-	int Traduction2(const byte *dataP);
 	void VERBE_OFF(int idx, int a2);
 	void VERBE_ON(int idx, int a2);
 	int CALC_PROPRE(int idx);

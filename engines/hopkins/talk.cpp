@@ -1013,11 +1013,11 @@ LABEL_2:
 				v17 = 0;
 				v13 = 1;
 				do {
-					v10 = _vm->_objectsManager.Traduction(ptr + 20 * v13);
+					v10 =  _vm->_scriptManager.Traduction(ptr + 20 * v13);
 					if (v10 == 2)
-						v13 = _vm->_objectsManager.Control_Goto(ptr + 20 * v13);
+						v13 =  _vm->_scriptManager.Control_Goto(ptr + 20 * v13);
 					if (v10 == 3)
-						v13 = _vm->_objectsManager.Control_If(ptr, v13);
+						v13 =  _vm->_scriptManager.Control_If(ptr, v13);
 					if (v13 == -1)
 						error("Invalid IFF function");
 					if (v10 == 1 || v10 == 4)
