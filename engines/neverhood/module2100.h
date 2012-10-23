@@ -34,6 +34,7 @@ public:
 	Module2100(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2100();
 protected:
+	int _sceneNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createScene(int sceneNum, int which);
 	void updateScene();
@@ -43,7 +44,7 @@ protected:
 
 class AsScene2101Door : public AnimatedSprite {
 public:
-	AsScene2101Door(NeverhoodEngine *vm, bool flag);
+	AsScene2101Door(NeverhoodEngine *vm, bool isOpen);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stOpenDoor();

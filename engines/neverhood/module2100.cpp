@@ -31,15 +31,14 @@ Module2100::Module2100(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_vm->_soundMan->addMusic(0x10A10C14, 0x11482B95);
 	
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else if (which == 1) {
+	else if (which == 1)
 		createScene(0, 0);
-	} else if (which == 2) {
+	else if (which == 2)
 		createScene(0, 3);
-	} else {
+	else
 		createScene(0, 1);
-	}
 
 }
 
@@ -49,9 +48,10 @@ Module2100::~Module2100() {
 
 void Module2100::createScene(int sceneNum, int which) {
 	debug("Module2100::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_vm->_soundMan->startMusic(0x11482B95, 0, 1);
 		_childObject = new Scene2101(_vm, this, which);
 		break;
@@ -62,14 +62,13 @@ void Module2100::createScene(int sceneNum, int which) {
 
 void Module2100::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			if (_moduleResult == 1) {
 				setGlobalVar(V_DOOR_PASSED, 1);
 				leaveModule(0);
-			} else {
+			} else
 				leaveModule(1);
-			}
 			break;
 		}
 	}
@@ -77,7 +76,7 @@ void Module2100::updateScene() {
 
 // Scene2101
 
-AsScene2101Door::AsScene2101Door(NeverhoodEngine *vm, bool flag)
+AsScene2101Door::AsScene2101Door(NeverhoodEngine *vm, bool isOpen)
 	: AnimatedSprite(vm, 1100) {
 
 	createSurface(100, 328, 347);
@@ -85,12 +84,11 @@ AsScene2101Door::AsScene2101Door(NeverhoodEngine *vm, bool flag)
 	_y = 240;
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2101Door::handleMessage);
-	if (flag) {
+	if (isOpen) {
 		startAnimation(0x0C202B9C, -1, -1);
 		_newStickFrameIndex = STICK_LAST_FRAME;
-	} else {
+	} else
 		setVisible(false);
-	}
 }
 
 uint32 AsScene2101Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -120,8 +118,8 @@ void AsScene2101Door::stCloseDoor() {
 	startAnimation(0xC222A8D4, 0, -1);
 	_newStickFrameIndex = STICK_LAST_FRAME;
 	setVisible(true);
-	NextState(&AsScene2101Door::stCloseDoorDone);
 	playSound(0, calcHash("fxDoorClose32"));
+	NextState(&AsScene2101Door::stCloseDoorDone);
 }
 
 void AsScene2101Door::stCloseDoorDone() {
@@ -164,18 +162,18 @@ SsCommonFloorButton::SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene
 	if (_soundFileHash == 0)
 		_soundFileHash = 0x44141000;
 	createSurface(1010, 61, 30);
-	if (_fileHash1) {
+	if (_fileHash1)
 		loadSprite(_fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
-	} else
+	else
 		setVisible(false);
 }
 
 void SsCommonFloorButton::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
 		sendMessage(_parentScene, 0x1022, 1010);
-		if (_fileHash1) {
+		if (_fileHash1)
 			loadSprite(_fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
-		} else
+		else
 			setVisible(false);
 	}
 }	
@@ -223,6 +221,7 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_doorStatus = 1;
 		_countdown1 = 0;
 	} else if (which == 1) {
+		// Klaymen entering from the right
 		insertKlayman<KmScene2101>(640, 438);
 		setMessageList(0x004B8E50);
 		sendMessage(this, 0x2000, 0);
@@ -230,6 +229,7 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_doorStatus = 2;
 		_countdown1 = 48;
 	} else if (which == 2) {
+		// Klaymen teleporting out
 		insertKlayman<KmScene2101>(115, 438);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B8F58);
@@ -238,6 +238,7 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_doorStatus = 1;
 		_countdown1 = 0;
 	} else if (which == 3) {
+		// Klaymen returning from the teleporter console
 		insertKlayman<KmScene2101>(115, 438);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B8EB0);
@@ -246,6 +247,7 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_doorStatus = 1;
 		_countdown1 = 0;
 	} else {
+		// Klaymen teleporting in
 		insertKlayman<KmScene2101>(115, 438);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B8EA0);
@@ -283,9 +285,8 @@ void Scene2101::update() {
 				}
 			}
 		}
-	} else if (_doorStatus == 1 && _messageValue >= 0 && _klayman->getX() > 470 /* TODO ! && _messageList2 != 0x004B8F48*/) {
+	} else if (_doorStatus == 1 && _messageValue >= 0 && _klayman->getX() > 470 /* TODO ! && _messageList2 != 0x004B8F48*/)
 		setMessageList2(0x004B8F50);
-	}
 	Scene::update();
 }
 
@@ -293,17 +294,15 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x02144CB1) {
+		if (param.asInteger() == 0x02144CB1)
 			sendEntityMessage(_klayman, 0x1014, _ssFloorButton);
-		} else if (param.asInteger() == 0x21E64A00) {
-			if (_doorStatus == 0) {
+		else if (param.asInteger() == 0x21E64A00) {
+			if (_doorStatus == 0)
 				setMessageList(0x004B8E80);
-			} else {
+			else
 				setMessageList(0x004B8EC8);
-			}
-		} else if (param.asInteger() == 0x41442820) {
+		} else if (param.asInteger() == 0x41442820)
 			cancelMessageList();
-		}
 		break;
 	case 0x2000:
 		if (param.asInteger() != 0) {
@@ -326,9 +325,8 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_klayman->getX() >= 228 && _klayman->getX() <= 500) {
 				sendEntityMessage(_klayman, 0x1014, sender);
 				setMessageList(0x004B8F78);
-			} else if (_klayman->getX() < 228) {
+			} else if (_klayman->getX() < 228)
 				setMessageList2(0x004B8F00);
-			}
 		}
 		break;
 	}
