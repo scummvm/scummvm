@@ -61,7 +61,7 @@ public:
 	byte SD_PIXELS[PALETTE_SIZE * 2];
 	byte *PAL_PIXELS;
 	int nbrligne;
-	byte TABLE_COUL[PALETTE_SIZE];
+	byte TABLE_COUL[PALETTE_EXT_BLOCK_SIZE];
 	byte cmap[PALETTE_BLOCK_SIZE];
 	byte Palette[PALETTE_EXT_BLOCK_SIZE];
 	byte OLD_PAL[PALETTE_EXT_BLOCK_SIZE];
@@ -114,7 +114,7 @@ public:
 	void LOAD_IMAGE(const Common::String &file);
 	void INIT_TABLE(int a1, int a2, byte *a3);
 	int SCROLL_ECRAN(int amount);
-	void Trans_bloc(byte *destP, byte *srcP, int count, int param1, int param2);
+	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
 	void Cls_Pal();

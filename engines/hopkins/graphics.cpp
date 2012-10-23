@@ -73,7 +73,7 @@ GraphicsManager::GraphicsManager() {
 	spec_largeur = 0;
 
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
-	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_SIZE], 0);
+	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&cmap[0], &cmap[PALETTE_BLOCK_SIZE], 0);
 	Common::fill(&Palette[0], &Palette[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&OLD_PAL[0], &OLD_PAL[PALETTE_EXT_BLOCK_SIZE], 0);
@@ -271,61 +271,34 @@ int GraphicsManager::SCROLL_ECRAN(int amount) {
 	return result;
 }
 
-void GraphicsManager::Trans_bloc(byte *destP, byte *srcP, int count, int param1, int param2) {
-	byte *v5;
-	int v6;
-	int v7;
-	int v8;
-	unsigned int v11;
-	int v12;
-	int v13;
-	int v14;
-	int v15;
-	int v16;
-	int v17;
-	unsigned int v18;
-	char v19;
-	int v20;
-	bool breakFlag;
+void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold) {
+	byte *destPosP;
+	int palIndex;
+	int srcOffset;
+	int col1, col2;
 
-	v5 = destP;
-	v6 = count - 1;
-	do {
-		breakFlag = v6;
-		v7 = *(byte *)v5++;
-		v8 = (unsigned int)(3 * v7);
+	destPosP = destP;
+	for (int idx = 0; idx < count; ++idx) {
+		palIndex = *(byte *)destPosP++;
+		srcOffset = 3 * palIndex;
+		col1 = *(srcP + srcOffset) + *(srcP + srcOffset + 1) + *(srcP + srcOffset + 2);
 
-		// TODO: Ensure this is the right calculation
-		v11 = *(byte *)(v8 + srcP) + *(byte *)(v8 + srcP + 1)
-				+ *(byte *)(v8 + srcP + 2);
+		for (int idx2 = 0; idx2 < 38; ++idx2) {
+			srcOffset = 3 * idx2;
+			col2 = *(srcP + srcOffset) + *(srcP + srcOffset + 1) + *(srcP + srcOffset + 2);
 
-		v12 = 0;
-		for (;;) {
-			v13 = v12 + 1;
-			if ( v13 == 38 )
-				break;
+			col2 += minThreshold;
+			if (col2 < col1)
+				continue;
+			
+			col2 -= maxThreshold;
+			if (col2 > col1)
+				continue;
 
-			v20 = v13;
-			v8 = 3 * v8;
-			v14 = *(byte *)(v8 + srcP);
-			v15 = v14;
-			v14 = *(byte *)(v8 + srcP + 1);
-			v16 = v14 + v15;
-			v14 = *(byte *)(v8 + srcP + 2);
-			v17 = v14 + v16;
-			v12 = v20;
-			v18 = param1 + v17;
-			if (v18 >= v11 && (unsigned int)(v18 - param2) <= v11) {
-				v19 = v20;
-				if (!v20)
-					v19 = 1;
-				*(byte *)(v5 - 1) = v19;
-				break;
-			}
+			*(destPosP - 1) = (idx2 == 0) ? 1 : idx2;
+			break;
 		}
-
-		v6 = breakFlag - 1;
-	} while ( !breakFlag);
+	}
 }
 
 void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
