@@ -268,6 +268,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			v59 = v59 + 1;
 			++v63;
 		} while (v63 < v69);
+
 		v60 = texte_tmp;
 		v64 = 0;
 		if (v69) {
@@ -337,8 +338,16 @@ LABEL_55:
 LABEL_57:
 				v20 = lineCount;
 				v21 = v11;
-				Txt[idx].lines[v20] = Common::String((const char *)v61 + v65, lineSize);
-				TRIER_TEXT[lineCount++] = lineSize;
+
+				// WORKAROUND: Perhaps due to the usage of ScummVM strings here, recalculate what the
+				// actual length of the line to be copied will be. Otherwise, you can see artifacts,
+				// such as a single character beyond the end of string NULL.
+				int actualSize = 0;
+				while (actualSize < lineSize && *(v61 + v65 + actualSize))
+					++actualSize;
+
+				Txt[idx].lines[v20] = Common::String((const char *)v61 + v65, actualSize);
+				TRIER_TEXT[lineCount++] = actualSize;
 
 				v65 += lineSize;
 				v11 = v21;
