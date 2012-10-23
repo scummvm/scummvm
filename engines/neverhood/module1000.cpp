@@ -50,25 +50,30 @@ Module1000::~Module1000() {
 
 void Module1000::createScene(int sceneNum, int which) {
 	debug("Module1000::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_vm->_soundMan->startMusic(0x061880C6, 0, 0);
 		_childObject = new Scene1001(_vm, this, which);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		_vm->_soundMan->startMusic(0x061880C6, 0, 0);
 		_childObject = new Scene1002(_vm, this, which);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		_vm->_soundMan->startMusic(0x061880C6, 0, 0);
 		createStaticScene(0xC084110C, 0x41108C00);
 		break;
 	case 3:
+		_vm->gameState().sceneNum = 3;
 		_vm->_soundMan->stopMusic(0x061880C6, 0, 2);
 		_childObject = new Scene1004(_vm, this, which);
 		break;
 	case 4:
+		_vm->gameState().sceneNum = 4;
 		_vm->_soundMan->stopMusic(0x061880C6, 0, 0);
 		_vm->_soundMan->startMusic(_musicFileHash, 0, 0);
 		_childObject = new Scene1005(_vm, this, which);
@@ -80,7 +85,7 @@ void Module1000::createScene(int sceneNum, int which) {
 
 void Module1000::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			if (_moduleResult == 2)
 				createScene(2, 0);
@@ -209,11 +214,10 @@ uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &para
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x00352100) {
+		if (param.asInteger() == 0x00352100)
 			sendMessage(_asDoor, 0x2000, 0);
-		} else if (param.asInteger() == 0x0A1A0109) {
+		else if (param.asInteger() == 0x0A1A0109)
 			playSound(0, 0x66410886);
-		}
 		break;
 	case 0x2000:
 		startAnimation(0x022C90D4, 1, -1);
@@ -240,9 +244,8 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x0E0A1410) {
+		if (param.asInteger() == 0x0E0A1410)
 			playSound(0, 0x60803F10);
-		}
 		break;
 	case 0x2001:
 		startAnimation(0xC68C2299, 0, -1);
@@ -273,11 +276,10 @@ uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x00C0C444) {
+		if (param.asInteger() == 0x00C0C444)
 			sendMessage(_parentScene, 0x480F, 0);
-		} else if (param.asInteger() == 0xC41A02C0) {
+		else if (param.asInteger() == 0xC41A02C0)
 			playSound(0, 0x40581882);
-		}
 		break;
 	case 0x1011:
 		sendMessage(_parentScene, 0x4826, 0);
@@ -311,9 +313,8 @@ SsCommonButtonSprite::SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentSce
 }
 	
 void SsCommonButtonSprite::update() {
-	if (_countdown != 0 && (--_countdown) == 0) {
+	if (_countdown != 0 && (--_countdown) == 0)
 		setVisible(false);
-	}
 }
 	
 uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -330,7 +331,7 @@ uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &p
 }
 		
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule, true), _asDoor(NULL), _asWindow(NULL) {
 
 	Sprite *tempSprite;
 
@@ -342,14 +343,17 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x6520A400);
 	
 	if (which < 0) {
+		// Restoring game
 		setRectList(0x004B49F0);
 		insertKlayman<KmScene1001>(200, 433);
 		setMessageList(0x004B4888);
 	} else if (which == 1) {
+		// Klaymen entering from the right
 		setRectList(0x004B49F0);
 		insertKlayman<KmScene1001>(640, 433);
 		setMessageList(0x004B4898);
 	} else if (which == 2) {
+		// Klaymen returning from looking through the window
 		setRectList(0x004B49F0);
 		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1001>(390, 433);
@@ -359,6 +363,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 		setMessageList(0x004B4970);
 	} else {
+		// Klaymen sleeping
 		setRectList(0x004B4A00);
 		insertKlayman<KmScene1001>(200, 433);
 		setMessageList(0x004B4890);
@@ -368,11 +373,9 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_klayman->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
 	
-	if (getGlobalVar(V_DOOR_BUSTED) == 0) {
+	if (!getGlobalVar(V_DOOR_BUSTED)) {
 		_asDoor = insertSprite<AsScene1001Door>();
 		_asDoor->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
-	} else {
-		_asDoor = NULL;
 	}
 
 	_asLever = insertSprite<AsScene1001Lever>(this, 150, 433, 1);
@@ -382,12 +385,10 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x15288120, 100, 0);
 
-	if (getGlobalVar(V_WINDOW_OPEN) == 0) {
+	if (!getGlobalVar(V_WINDOW_OPEN)) {
 		tempSprite = insertStaticSprite(0x8C066150, 200);
 		_asWindow = insertSprite<AsScene1001Window>();
 		_asWindow->setClipRect(tempSprite->getDrawRect());
-	} else {
-		_asWindow = NULL;
 	}
 
 	_asHammer = insertSprite<AsScene1001Hammer>(_asDoor);
@@ -399,21 +400,9 @@ Scene1001::~Scene1001() {
 }
 
 uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Scene1001::handleMessage(%04X)", messageNum);
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
-		if (param.asPoint().x == 0 && getGlobalVar(V_DEBUG)) {
-			leaveScene(0);
-		}
-		break;
-	case 0x000D:
-		if (param.asInteger() == 0x188B2105) {
-			leaveScene(0);
-			messageResult = 1;
-		}
-		break;
 	case 0x100D:
 		if (param.asInteger() == 0x00342624) {
 			sendEntityMessage(_klayman, 0x1014, _asLever);
@@ -440,14 +429,10 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 		setRectList(0x004B49F0);
 		break;
 	case 0x480B:
-		if (_asWindow) {
-			sendMessage(_asWindow, 0x2001, 0);
-		}
+		sendMessage(_asWindow, 0x2001, 0);
 		break;
 	case 0x480F:
-		if (_asHammer) {
-			sendMessage(_asHammer, 0x2000, 0);
-		}
+		sendMessage(_asHammer, 0x2000, 0);
 		break;
 	}
 	return messageResult;
@@ -455,14 +440,14 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 
 // Scene1002
 
-AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool flag1, int16 x, int16 y, int16 clipY1, bool flag2)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _flag1(flag1) {
+AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool isSpecial, int16 x, int16 y, int16 clipY1, bool isRingLow)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isSpecial(isSpecial) {
 
 	SetUpdateHandler(&AsScene1002Ring::update);
 	
-	if (flag1) {
+	if (_isSpecial) {
 		createSurface(990, 68, 314);
-		if (flag2) {
+		if (isRingLow) {
 			startAnimation(0x04103090, 0, -1);
 			SetMessageHandler(&AsScene1002Ring::hmRingHangingLow);
 		} else {
@@ -485,8 +470,8 @@ AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool f
 }
 
 void AsScene1002Ring::update() {
-	AnimatedSprite::updateAnim();
-	AnimatedSprite::updatePosition();
+	updateAnim();
+	updatePosition();
 }
 
 uint32 AsScene1002Ring::hmRingIdle(int messageNum, const MessageParam &param, Entity *sender) {
@@ -496,11 +481,7 @@ uint32 AsScene1002Ring::hmRingIdle(int messageNum, const MessageParam &param, En
 		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
 		sendMessage(_parentScene, 0x4806, 0);
 		SetMessageHandler(&AsScene1002Ring::hmRingPulled1);
-		if (_flag1) {
-			startAnimation(0x87502558, 0, -1);
-		} else {
-			startAnimation(0x80DD4010, 0, -1);
-		}
+		startAnimation(_isSpecial ? 0x87502558 : 0x80DD4010, 0, -1);
 		break;
 	case 0x480F:
 		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
@@ -522,13 +503,8 @@ uint32 AsScene1002Ring::hmRingPulled1(int messageNum, const MessageParam &param,
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		if (_flag1) {
-			startAnimation(0x78D0A812, 0, -1);
-			SetMessageHandler(&AsScene1002Ring::hmRingHangingLow);
-		} else {
-			startAnimation(0xB85D2A10, 0, -1);
-			SetMessageHandler(&AsScene1002Ring::hmRingHangingLow);
-		}
+		startAnimation(_isSpecial ? 0x78D0A812 : 0xB85D2A10, 0, -1);
+		SetMessageHandler(&AsScene1002Ring::hmRingHangingLow);
 		break;
 	case 0x4807:
 		sendMessage(_parentScene, 0x4807, 0);
@@ -586,9 +562,8 @@ uint32 AsScene1002Ring::hmRingReleased(int messageNum, const MessageParam &param
 	uint32 messageResult = hmRingIdle(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x05410F72) {
+		if (param.asInteger() == 0x05410F72)
 			playSound(0, 0x21EE40A9);
-		}
 		break;
 	case 0x3002:
 		startAnimation(0xA85C4011, 0, -1);
@@ -684,25 +659,24 @@ uint32 AsScene1002BoxingGloveHitEffect::handleMessage(int messageNum, const Mess
 AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *asScene1002BoxingGloveHitEffect)
 	: AnimatedSprite(vm, 1300), _clipRect(clipRect), _parentScene(parentScene), _asDoor(asDoor), _asBoxingGloveHitEffect(asScene1002BoxingGloveHitEffect) {
 
-	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene1002DoorSpy::handleMessage);
-	SetSpriteUpdate(&AsScene1002DoorSpy::suDoorSpy);
 	createSurface(800, 136, 147);
 	setClipRect(clipRect);
 	suDoorSpy();
 	loadSound(0, 0xC0C40298);
 	startAnimation(0x586C1D48, 0, 0);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene1002DoorSpy::handleMessage);
+	SetSpriteUpdate(&AsScene1002DoorSpy::suDoorSpy);
 }
 
 uint32 AsScene1002DoorSpy::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0xA61CA1C2) {
+		if (param.asInteger() == 0xA61CA1C2)
 			sendMessage(_asBoxingGloveHitEffect, 0x2004, 0);
-		} else if (param.asInteger() == 0x14CE0620) {
+		else if (param.asInteger() == 0x14CE0620)
 			playSound(0);
-		}
 		break;
 	case 0x2003:
 		stDoorSpyBoxingGlove();
@@ -757,11 +731,7 @@ SsCommonPressButton::SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene
 void SsCommonPressButton::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 	_fileHashes[0] = fileHash1;
 	_fileHashes[1] = fileHash2;
-	if (_status == 2) {
-		loadSprite(fileHash2, kSLFDefDrawOffset | kSLFDefPosition);
-	} else {
-		loadSprite(fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
-	}
+	loadSprite(_status == 2 ? fileHash2 : fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
 }
 
 void SsCommonPressButton::update() {
@@ -795,16 +765,11 @@ uint32 SsCommonPressButton::handleMessage(int messageNum, const MessageParam &pa
 	return messageResult;
 }
 
-AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, bool flag)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _flag(flag), _countdown(0) {
+AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, bool isSecond)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _isSecond(isSecond), _countdown(0) {
 
 	createSurface(995, 175, 195);
-
-	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
-	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-
-	if (!_flag) {
+	if (!_isSecond) {
 		if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 			setDoDeltaX(1);
 			_x = 366;
@@ -824,23 +789,23 @@ AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *par
 			stIdle();
 		} 
 	}
-	
 	_flags = 4;
+	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
+	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
 
 void AsScene1002VenusFlyTrap::update() {
-	if (_countdown != 0 && (--_countdown == 0)) {
+	if (_countdown != 0 && (--_countdown == 0))
 		gotoNextState();
-	}
 	AnimatedSprite::update();
 }
 
 void AsScene1002VenusFlyTrap::upIdle() {
-	if (_countdown == 0 && _klayman->getX() - 20 > _x) {
+	if (_countdown == 0 && _klayman->getX() - 20 > _x)
 		setDoDeltaX(1);
-	} else if (_klayman->getX() + 20 < _x) {
+	else if (_klayman->getX() + 20 < _x)
 		setDoDeltaX(0);
-	}
 	update();
 }
 
@@ -848,14 +813,13 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x000890C4) {
+		if (param.asInteger() == 0x000890C4)
 			playSound(0, 0xC21190D8);
-		} else if (param.asInteger() == 0x522200A0) {
+		else if (param.asInteger() == 0x522200A0)
 			playSound(0, 0x931080C8);
-		}
 		break;
 	case 0x1011:
-		if (_flag) {
+		if (_isSecond) {
 			if (_x >= 154 && _x <= 346) {
 				sendMessage(_parentScene, 0x2000, 0);
 				messageResult = 1;
@@ -869,22 +833,20 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 		break;
 	case 0x480B:
 		setDoDeltaX(param.asInteger() != 0 ? 1 : 0);
-		if (!_flag) {
-			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
+		if (!_isSecond) {
+			if (getGlobalVar(V_FLYTRAP_RING_DOOR))
 				stRelease();
-			} else {
+			else
 				stWalk();
-			}
 		} else {
-			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE) || getGlobalVar(V_FLYTRAP_RING_FENCE)) {
+			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE) || getGlobalVar(V_FLYTRAP_RING_FENCE))
 				stRelease();
-			} else {
+			else
 				stWalk();
-			}
 		}
 		break;
 	case 0x480C:
-		if (_flag) {
+		if (_isSecond) {
 			if (_x >= 154 && _x <= 346)
 				messageResult = 1;
 			else				
@@ -897,9 +859,8 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 		}
 		break;
 	case 0x480E:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			stGrabRing();
-		}
 		break;
 	case 0x4810:
 		swallowKlayman();
@@ -928,25 +889,19 @@ uint32 AsScene1002VenusFlyTrap::hmAnimationExt(int messageNum, const MessagePara
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x000890C4) {
+		if (param.asInteger() == 0x000890C4)
 			playSound(0, 0xC21190D8);
-		} else if (param.asInteger() == 0x41881801) {
-			if (_flag) {
-				if (_x > 330) {
+		else if (param.asInteger() == 0x41881801) {
+			if (_isSecond) {
+				if (_x > 330)
 					sendMessage(_klayman, 0x4811, 2);
-				} else if (_x > 265) {
-					// FIXME: This check is the same as the one below.
-					// Perhaps the third parameter should be 1 here?
+				else
 					sendMessage(_klayman, 0x4811, 0);
-				} else {
-					sendMessage(_klayman, 0x4811, 0);
-				}
 			} else {
 				sendMessage(_klayman, 0x4811, 0);
 			}
-		} else if (param.asInteger() == 0x522200A0) {
+		} else if (param.asInteger() == 0x522200A0)
 			playSound(0, 0x931080C8);
-		}
 		break;
 	case 0x3002:
 		gotoNextState();
@@ -1010,17 +965,17 @@ void AsScene1002VenusFlyTrap::stIdle() {
 	startAnimation(0xC8204250, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::upIdle);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage);
-	if (_flag) {
-		if (_x >= 154 && _x <= 346) {
+	if (_isSecond) {
+		if (_x >= 154 && _x <= 346)
 			setGlobalVar(V_FLYTRAP_POSITION_2, (_x - 186) / 32);
-		} else {
+		else {
 			NextState(&AsScene1002VenusFlyTrap::stWalkBack);
 			_countdown = 12;
 		}
 	} else {
-		if (_x >= 174 && _x <= 430) {
+		if (_x >= 174 && _x <= 430)
 			setGlobalVar(V_FLYTRAP_POSITION_1, (_x - 174) / 32);
-		} else {
+		else {
 			NextState(&AsScene1002VenusFlyTrap::stWalkBack);
 			_countdown = 12;
 		}
@@ -1043,11 +998,10 @@ void AsScene1002VenusFlyTrap::stSpitOutKlayman() {
 
 void AsScene1002VenusFlyTrap::swallowKlayman() {
 	if (_x - 15 < _klayman->getX() && _x + 15 > _klayman->getX()) {
-		if (_flag) {
+		if (_isSecond)
 			setDoDeltaX(_x > 265 && _x < 330 ? 1 : 0);
-		} else {
+		else
 			setDoDeltaX(_x > 320 ? 1 : 0);
-		}
 		sendMessage(_klayman, 0x2001, 0);
 		startAnimation(0x8C2C80D4, 0, -1);
 		SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
@@ -1065,20 +1019,18 @@ AsScene1002OutsideDoorBackground::AsScene1002OutsideDoorBackground(NeverhoodEngi
 	if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 		startAnimation(0x004A4495, -1, -1);
 		_newStickFrameIndex = STICK_LAST_FRAME;
-	} else {
+	} else
 		setVisible(false);
-	}
 	SetUpdateHandler(&AsScene1002OutsideDoorBackground::update);
 	SetMessageHandler(&AsScene1002OutsideDoorBackground::handleMessage);	
 }
 
 void AsScene1002OutsideDoorBackground::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		if (_isDoorClosed) {
+		if (_isDoorClosed)
 			stCloseDoor();
-		} else {
+		else
 			stOpenDoor();
-		}
 	}
 	AnimatedSprite::update();
 }
@@ -1110,17 +1062,17 @@ uint32 AsScene1002OutsideDoorBackground::hmAnimation(int messageNum, const Messa
 
 void AsScene1002OutsideDoorBackground::stOpenDoor() {
 	startAnimation(0x004A4495, 0, -1);
-	SetMessageHandler(&AsScene1002OutsideDoorBackground::handleMessage);
 	_newStickFrameIndex = STICK_LAST_FRAME;
 	setVisible(true);
+	SetMessageHandler(&AsScene1002OutsideDoorBackground::handleMessage);
 }
 
 void AsScene1002OutsideDoorBackground::stCloseDoor() {
 	startAnimation(0x004A4495, -1, -1);
 	_playBackwards = true;
+	setVisible(true);
 	SetMessageHandler(&AsScene1002OutsideDoorBackground::hmAnimation);
 	NextState(&AsScene1002OutsideDoorBackground::stDoorClosed);
-	setVisible(true);
 }
 
 void AsScene1002OutsideDoorBackground::stDoorClosed() {
@@ -1132,9 +1084,9 @@ AsScene1002KlaymanLadderHands::AsScene1002KlaymanLadderHands(NeverhoodEngine *vm
 	: AnimatedSprite(vm, 1200), _klayman(klayman) {
 	
 	createSurface(1200, 40, 163);
+	setVisible(false);
 	SetUpdateHandler(&AsScene1002KlaymanLadderHands::update);
 	SetMessageHandler(&Sprite::handleMessage);
-	setVisible(false);
 }
 
 void AsScene1002KlaymanLadderHands::update() {
@@ -1152,9 +1104,8 @@ void AsScene1002KlaymanLadderHands::update() {
 		_x = _klayman->getX(); 
 		_y = _klayman->getY(); 
 		setDoDeltaX(_klayman->isDoDeltaX() ? 1 : 0);
-	} else {
+	} else
 		setVisible(false);
-	}
 	AnimatedSprite::update();
 }
 
@@ -1162,10 +1113,10 @@ AsScene1002KlaymanPeekHand::AsScene1002KlaymanPeekHand(NeverhoodEngine *vm, Scen
 	: AnimatedSprite(vm, 1200), _parentScene(parentScene), _klayman(klayman),
 	_isClipRectSaved(false) {
 	
-	SetUpdateHandler(&AsScene1002KlaymanPeekHand::update);
-	SetMessageHandler(&AsScene1002KlaymanPeekHand::handleMessage);
 	createSurface(1000, 33, 41);
 	setVisible(false);
+	SetUpdateHandler(&AsScene1002KlaymanPeekHand::update);
+	SetMessageHandler(&AsScene1002KlaymanPeekHand::handleMessage);
 }
 
 void AsScene1002KlaymanPeekHand::update() {
@@ -1176,9 +1127,8 @@ void AsScene1002KlaymanPeekHand::update() {
 		_x = _klayman->getX();
 		_y = _klayman->getY();
 		setDoDeltaX(_klayman->isDoDeltaX() ? 1 : 0);
-	} else {
+	} else
 		setVisible(false);
-	}
 	AnimatedSprite::update();
 }
 
@@ -1202,7 +1152,7 @@ uint32 AsScene1002KlaymanPeekHand::handleMessage(int messageNum, const MessagePa
 }
 
 Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _flag1B4(false), _flag1BE(false) {
+	: Scene(vm, parentModule, true), _isKlaymanFloor(false), _isClimbingLadder(false) {
 
 	NRect tempClipRect;
 	Sprite *tempSprite;
@@ -1211,11 +1161,8 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1002::handleMessage);
 
 	setHitRects(0x004B4138);
-
 	setBackground(0x12C23307);
 	setPalette(0x12C23307);
-
-	_flag = false;
 
 	insertStaticSprite(0x06149428, 1100);
 	insertStaticSprite(0x312C8774, 1100);
@@ -1228,7 +1175,9 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class599 = insertStaticSprite(0x316C4BB4, 1015);
 
 	if (which < 0) {
-		if (_vm->_gameState.field2 == 0) {
+		// Restoring game
+		if (_vm->_gameState.which == 0) {
+			// Klaymen on top
 			insertKlayman<KmScene1002>(90, 226);
 			_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 			setMessageList(0x004B4270);
@@ -1236,6 +1185,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 			_asKlaymanLadderHands->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 			_klayman->setRepl(64, 0);
 		} else {
+			// Klaymen on the floor
 			insertKlayman<KmScene1002>(379, 435);
 			_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 			setMessageList(0x004B4270);
@@ -1243,21 +1193,24 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 			_asKlaymanLadderHands->setClipRect(_klayman->getClipRect());
 		}
 	} else if (which == 1) {
+		// Klaymen entering from the right
 		insertKlayman<KmScene1002>(650, 435);
 		_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 		setMessageList(0x004B4478);
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 		_asKlaymanLadderHands->setClipRect(_klayman->getClipRect());
-		_vm->_gameState.field2 = 1;
+		_vm->_gameState.which = 1;
 	} else if (which == 2) {
+		// Klaymen coming up the ladder
 		insertKlayman<KmScene1002>(68, 645);
 		_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 		setMessageList(0x004B4298);
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 		_asKlaymanLadderHands->setClipRect(_klayman->getClipRect());
-		_vm->_gameState.field2 = 1;
+		_vm->_gameState.which = 1;
 		sendMessage(_klayman, 0x4820, 0);
 	} else {
+		// Klaymen entering from the left, peeking
 		insertKlayman<KmScene1002>(90, 226);
 		_asKlaymanLadderHands = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
 		setMessageList(0x004B4470);
@@ -1266,7 +1219,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asKlaymanPeekHand = insertSprite<AsScene1002KlaymanPeekHand>(this, _klayman);
 		_asKlaymanPeekHand->setClipRect(_klayman->getClipRect());
 		_klayman->setRepl(64, 0);
-		_vm->_gameState.field2 = 0;
+		_vm->_gameState.which = 0;
 	}
 
 	insertMouse433(0x23303124);
@@ -1277,7 +1230,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_asRing1 = insertSprite<AsScene1002Ring>(this, false, 258, 191, _class599->getDrawRect().y, false);
 	_asRing2 = insertSprite<AsScene1002Ring>(this, false, 297, 189, _class599->getDrawRect().y, false);
-	_asRing3 = insertSprite<AsScene1002Ring>(this, true, 370, 201, _class599->getDrawRect().y, getGlobalVar(V_FLYTRAP_RING_DOOR) != 0);
+	_asRing3 = insertSprite<AsScene1002Ring>(this, true, 370, 201, _class599->getDrawRect().y, getGlobalVar(V_FLYTRAP_RING_DOOR));
 	_asRing4 = insertSprite<AsScene1002Ring>(this, false, 334, 191, _class599->getDrawRect().y, false);
 	_asRing5 = insertSprite<AsScene1002Ring>(this, false, 425, 184, _class599->getDrawRect().y, false);
 
@@ -1304,56 +1257,32 @@ Scene1002::~Scene1002() {
 
 void Scene1002::update() {
 	Scene::update();
-	if (!_flag1B4 && _klayman->getY() > 230) {
+	if (!_isKlaymanFloor && _klayman->getY() > 230) {
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 		_asKlaymanLadderHands->setClipRect(_klayman->getClipRect());
 		deleteSprite(&_ssLadderArchPart3);
 		_klayman->clearRepl();
-		_flag1B4 = true;
-		_vm->_gameState.field2 = 1;
+		_isKlaymanFloor = true;
+		_vm->_gameState.which = 1;
 	}
-
-	if (_flag1BE && _klayman->getY() > 422) {
-		sendMessage(_parentModule, 0x1024, 1);
-		_flag1BE = false;
-	}
-	
 }
 
 uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
-		// Debug stuff (original)
-		if (param.asPoint().x == 0 && getGlobalVar(V_DEBUG)) {
-			setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
-			setGlobalVar(V_FLYTRAP_POSITION_1, 3);
-			leaveScene(1);
-		}
-		break;
-	case 0x000D:
-		// Debug stuff (original)
-		if (param.asInteger() == 0x48848178) {
-			setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
-			setGlobalVar(V_FLYTRAP_POSITION_1, 3);
-			leaveScene(1);
-		}
-		messageResult = 1;
-		break;
 	case 0x100D:
 		if (param.asInteger() == 0xE6EE60E1) {
-			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
+			if (getGlobalVar(V_FLYTRAP_RING_DOOR))
 				setMessageList(0x004B4428);
-			} else {
+			else
 				setMessageList(0x004B4448);
-			}
 			messageResult = 1;
-		} else if (param.asInteger() == 0x4A845A00) {
+		} else if (param.asInteger() == 0x4A845A00)
 			sendEntityMessage(_klayman, 0x1014, _asRing1);
-		} else if (param.asInteger() == 0x43807801) {
+		else if (param.asInteger() == 0x43807801)
 			sendEntityMessage(_klayman, 0x1014, _asRing2);
-		} else if (param.asInteger() == 0x46C26A01) {
+		else if (param.asInteger() == 0x46C26A01) {
 			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
 				setMessageList(0x004B44B8);
 			} else {
@@ -1366,19 +1295,18 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 				}
 			}
 			messageResult = 1;
-		} else if (param.asInteger() == 0x468C7B11) {
+		} else if (param.asInteger() == 0x468C7B11)
 			sendEntityMessage(_klayman, 0x1014, _asRing4);
-		} else if (param.asInteger() == 0x42845B19) {
+		else if (param.asInteger() == 0x42845B19)
 			sendEntityMessage(_klayman, 0x1014, _asRing5);
-		} else if (param.asInteger() == 0xC0A07458) {
+		else if (param.asInteger() == 0xC0A07458)
 			sendEntityMessage(_klayman, 0x1014, _ssPressButton);
-		}
 		break;
 	case 0x1024:
 		sendMessage(_parentModule, 0x1024, param.asInteger());
 		break;
 	case 0x2000:
-		if (_flag) {
+		if (_isClimbingLadder) {
 			setMessageList2(0x004B43D0);
 		} else {
 			if (_klayman->getY() > 420) {
@@ -1395,16 +1323,14 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		_messageList = NULL;
 		break;										
 	case 0x2005:
-		_flag = true;
+		_isClimbingLadder = true;
 		setRectList(0x004B4418);
 		break;										
 	case 0x2006:
-		_flag = false;
+		_isClimbingLadder = false;
 		setRectList(0x004B43A0);
 		break;
 	case 0x4806:
-		sendMessage(_parentModule, 0x1024, 2);
-		_flag1BE = true;
 		if (sender == _asRing1) {
 			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(0, 0x665198C0);
@@ -1487,18 +1413,17 @@ AsScene1004TrashCan::AsScene1004TrashCan(NeverhoodEngine *vm)
 	_x = 330;
 	_y = 327;
 	createSurface(800, 56, 50);
+	setVisible(false);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1004TrashCan::handleMessage);
-	setVisible(false);
 }
 
 uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x225A8587) {
+		if (param.asInteger() == 0x225A8587)
 			playSound(0, 0x109AFC4C);
-		}
 		break;
 	case 0x2002:
 		startAnimation(0xEB312C11, 0, -1);
@@ -1534,14 +1459,17 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x03001504);
 
 	if (which < 0) {
+		// Restoring game
 		setRectList(0x004B7C70);
 		insertKlayman<KmScene1004>(330, 327);
 		setMessageList(0x004B7C18);
 	} else if (which == 1) {
+		// Klaymen returning from reading a note
 		setRectList(0x004B7C70);
 		insertKlayman<KmScene1004>(330, 327);
 		setMessageList(0x004B7C08);
 	} else {
+		// Klaymen coming down the ladder
 		loadDataResource(0x01900A04);
 		insertKlayman<KmScene1004>(_dataResource.getPoint(0x80052A29).x, 27);
 		setMessageList(0x004B7BF0);

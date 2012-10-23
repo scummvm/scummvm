@@ -36,7 +36,7 @@ public:
 	virtual ~Module3000();
 protected:
 	int _soundVolume;
-	bool _flag;
+	bool _isWallBroken;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };

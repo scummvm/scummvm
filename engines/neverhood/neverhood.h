@@ -53,7 +53,6 @@ struct NPoint;
 struct GameState {
 	int sceneNum;
 	int which;
-	int field2;
 };
 
 class NeverhoodEngine : public ::Engine {

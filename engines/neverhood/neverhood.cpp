@@ -66,7 +66,7 @@ Common::Error NeverhoodEngine::run() {
 	_mouseY = 0;
 
 	_gameState.sceneNum = 0;
-	_gameState.field2 = 0;
+	_gameState.which = 0;
 
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");

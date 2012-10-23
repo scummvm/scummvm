@@ -289,9 +289,11 @@ void GameModule::startup() {
 	setGlobalVar(V_TNT_DUMMY_BUILT, 1);
 	setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
 	setGlobalVar(V_TV_JOKE_TOLD, 1);
+	/*
 	// Give all disks
 	for (int i = 0; i < 20; i++)
 		setSubVar(VA_IS_TAPE_INSERTED, i, 1);
+	*/
 	setSubVar(VA_IS_KEY_INSERTED, 0, 1);
 	setSubVar(VA_IS_KEY_INSERTED, 1, 1);
 	setSubVar(VA_IS_KEY_INSERTED, 2, 1);
@@ -306,9 +308,16 @@ void GameModule::startup() {
 	// <<<DEBUG
 
 #if 1
-	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 2;
-	createModule(2800, -1);
+	/*
+	//DEBUG>>>
+	createScene(_vm->gameState().sceneNum, _vm->gameState().which);
+	return;
+	//DEBUG<<<
+	*/
+
+	_vm->gameState().which = 1;
+	_vm->gameState().sceneNum = 3;
+	createModule(1000, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

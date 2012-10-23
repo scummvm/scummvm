@@ -47,9 +47,9 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 	_vm->_soundMan->playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
 
-	_flag = getGlobalVar(V_WALL_BROKEN) != 0;
+	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 
-	if (_flag) {
+	if (_isWallBroken) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 		_vm->_soundMan->playSoundLooping(0x90F0D1C3);
 	}
@@ -89,7 +89,7 @@ void Module3000::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
-		if (_flag) {
+		if (_isWallBroken) {
 			_soundVolume = 90;
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 90);
 		}
@@ -193,7 +193,7 @@ void Module3000::updateScene() {
 			break;
 		case 2:
 			_vm->_soundMan->playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
-			if (_flag) {
+			if (_isWallBroken) {
 				_soundVolume = 0;
 				_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 			}
@@ -238,7 +238,7 @@ void Module3000::updateScene() {
 			createScene(8, -1);
 			break;
 		case 8:
-			_flag = getGlobalVar(V_WALL_BROKEN); // CHECKME
+			_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 			if (_moduleResult != 1) {
 				_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0);
 				createScene(4, 1);
@@ -299,7 +299,7 @@ void Module3000::updateScene() {
 					} else if (frameNumber == 10) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (_flag && _soundVolume < 90 && frameNumber % 2) {
+					if (_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
@@ -313,7 +313,7 @@ void Module3000::updateScene() {
 			if (navigationScene()->isWalkingForward()) {
 				uint32 frameNumber = navigationScene()->getFrameNumber();
 				int navigationIndex = navigationScene()->getNavigationIndex();
-				if (_flag && _soundVolume > 1 && frameNumber % 2) {
+				if (_isWallBroken && _soundVolume > 1 && frameNumber % 2) {
 					_soundVolume--;
 					_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
 				}
@@ -338,7 +338,7 @@ void Module3000::updateScene() {
 					if (frameNumber == 40) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (_flag && _soundVolume < 90 && frameNumber % 2) {
+					if (_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else

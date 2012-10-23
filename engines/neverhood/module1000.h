@@ -36,6 +36,7 @@ public:
 	Module1000(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1000();
 protected:
+	int _sceneNum;
 	uint32 _musicFileHash;
 	void createScene(int sceneNum, int which);
 	void updateScene();
@@ -114,10 +115,10 @@ protected:
 
 class AsScene1002Ring : public AnimatedSprite {
 public:
-	AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool flag1, int16 x, int16 y, int16 clipY1, bool flag2);
+	AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool isSpecial, int16 x, int16 y, int16 clipY1, bool isRingLow);
 protected:
 	Scene *_parentScene;
-	bool _flag1;
+	bool _isSpecial;
 	void update();
 	uint32 hmRingIdle(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmRingPulled1(int messageNum, const MessageParam &param, Entity *sender);
@@ -164,22 +165,22 @@ public:
 	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
 protected:
 	Scene *_parentScene;
-	int _countdown;
+	uint32 _soundFileHash;
 	uint32 _fileHashes[2];
 	int _status;
-	uint32 _soundFileHash;
+	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class AsScene1002VenusFlyTrap : public AnimatedSprite {
 public:
-	AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, bool flag);
+	AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, bool isSecond);
 protected:
 	Scene *_parentScene;
 	Sprite *_klayman;
 	int _countdown;
-	bool _flag;
+	bool _isSecond;
 	void update();
 	void upIdle();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -253,9 +254,8 @@ protected:
 	Sprite *_asKlaymanPeekHand;
 	Sprite *_asOutsideDoorBackground;
 	Sprite *_ssPressButton;
-	bool _flag1B4;
-	bool _flag1BE;
-	bool _flag;
+	bool _isKlaymanFloor;
+	bool _isClimbingLadder;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
