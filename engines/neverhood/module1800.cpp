@@ -170,7 +170,7 @@ void Module1800::updateScene() {
 			break;
 		}
 	} else {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 2)
 				_vm->_soundMan->setTwoSoundsPlayFlag(false);

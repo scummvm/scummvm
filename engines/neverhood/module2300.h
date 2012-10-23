@@ -36,7 +36,8 @@ public:
 	Module2300(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2300();
 protected:
-	bool _flag;
+	int _sceneNum;
+	bool _isWallBroken;
 	int _soundVolume;
 	void createScene(int sceneNum, int which);
 	void updateScene();

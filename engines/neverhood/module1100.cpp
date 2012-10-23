@@ -66,7 +66,7 @@ void Module1100::createScene(int sceneNum, int which) {
 	static const uint32 kSmackerFileHashList07[] = {0x00290321, 0x01881000, 0};
 	debug("Module1100::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	switch (_sceneNum) {
 	case 0:
 		_vm->gameState().sceneNum = 0;
 		_countdown = 65;
@@ -206,7 +206,7 @@ void Module1100::updateScene() {
 			break;
 		}
 	} else {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			if (navigationScene()->isWalkingForward() && _countdown != 0 && (--_countdown == 0)) {
 				_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
