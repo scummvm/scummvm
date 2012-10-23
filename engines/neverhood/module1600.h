@@ -37,6 +37,7 @@ public:
 	Module1600(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1600();
 protected:
+	int _sceneNum;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };
@@ -105,18 +106,6 @@ protected:
 	void updateSound();
 };
 
-class AsScene1608Door : public AnimatedSprite {
-public:
-	AsScene1608Door(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stOpenDoor();
-	void stOpenDoorDone();
-	void stCloseDoor();
-	void stCloseDoorDone();
-};
-
 class AsCommonIdleCarLower : public AnimatedSprite {
 public:
 	AsCommonIdleCarLower(NeverhoodEngine *vm, int16 x, int16 y);
@@ -142,7 +131,6 @@ public:
 protected:
 	AsCommonCar *_asCar;
 	Sprite *_asKey;
-	Sprite *_asDoor;
 	Sprite *_asIdleCarLower;
 	Sprite *_asIdleCarFull;
 	Sprite *_sprite1;
@@ -150,9 +138,9 @@ protected:
 	Sprite *_sprite3;
 	Sprite *_asTape;
 	Klayman *_kmScene1608;
-	NRect _rect1;
-	NRect _rect2;
-	NRect _rect3;
+	NRect _clipRect1;
+	NRect _clipRect2;
+	NRect _clipRect3;
 	int _carStatus;
 	bool _carClipFlag;
 	bool _klaymanInCar;
@@ -172,7 +160,7 @@ protected:
 
 class Scene1609 : public Scene {
 public:
-	Scene1609(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1609(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	Sprite *_ssButton;
 	AsScene3011Symbol *_asSymbols[12];

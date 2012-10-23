@@ -39,19 +39,18 @@ static const uint32 kModule1600SoundList[] = {
 Module1600::Module1600(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else if (which == 1) {
+	else if (which == 1)
 		createScene(4, 1);
-	} else if (which == 2) {
+	else if (which == 2)
 		createScene(5, 0);
-	} else if (which == 3) {
+	else if (which == 3)
 		createScene(6, 1);
-	} else if (which == 4) {
+	else if (which == 4)
 		createScene(1, 0);
-	} else {
+	else
 		createScene(0, 0);
-	}
 
 	_vm->_soundMan->addSoundList(0x1A008D8, kModule1600SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1600SoundList, true, 50, 600, 5, 150);
@@ -65,43 +64,52 @@ Module1600::~Module1600() {
 
 void Module1600::createScene(int sceneNum, int which) {
 	debug("Module1600::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		createNavigationScene(0x004B39D0, which);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		createNavigationScene(0x004B3A30, which);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		createNavigationScene(0x004B3A60, which);
 		break;
 	case 3:
+		_vm->gameState().sceneNum = 3;
 		createNavigationScene(0x004B3A90, which);
 		break;
 	case 4:
+		_vm->gameState().sceneNum = 4;
 		createNavigationScene(0x004B3B20, which);
 		break;
 	case 5:
+		_vm->gameState().sceneNum = 5;
 		createNavigationScene(0x004B3B50, which);
 		break;
 	case 6:
+		_vm->gameState().sceneNum = 6;
 		createNavigationScene(0x004B3B80, which);
 		break;
 	case 7:
+		_vm->gameState().sceneNum = 7;
 		_childObject = new Scene1608(_vm, this, which);
 		break;
 	case 8:
-		_childObject = new Scene1609(_vm, this, which);
+		_vm->gameState().sceneNum = 8;
+		_childObject = new Scene1609(_vm, this);
 		break;
 	case 1001:
-		if (getGlobalVar(V_TALK_COUNTING_INDEX) == 1) {
+		_vm->gameState().sceneNum = 1;
+		if (getGlobalVar(V_TALK_COUNTING_INDEX) == 1)
 			createSmackerScene(0x80050200, true, true, false);
-		} else if (getGlobalVar(V_TALK_COUNTING_INDEX) == 2) {
+		else if (getGlobalVar(V_TALK_COUNTING_INDEX) == 2)
 			createSmackerScene(0x80090200, true, true, false);
-		} else {
+		else
 			createSmackerScene(0x80000200, true, true, false);
-		}
 		if (getGlobalVar(V_TALK_COUNTING_INDEX) >= 2)
 			setGlobalVar(V_TALK_COUNTING_INDEX, 0);
 		else
@@ -114,7 +122,7 @@ void Module1600::createScene(int sceneNum, int which) {
 
 void Module1600::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			if (_moduleResult == 0)
 				createScene(2, 0);
@@ -182,10 +190,6 @@ void Module1600::updateScene() {
 AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene) {
 	
-	SetUpdateHandler(&AsCommonCar::update);
-	SetMessageHandler(&AsCommonCar::handleMessage);
-	SetSpriteUpdate(NULL);
-
 	createSurface(200, 556, 328);
 	_x = x;
 	_y = y;
@@ -211,12 +215,14 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	startAnimation(0xD4220027, 0, -1);
 	setDoDeltaX(getGlobalVar(V_CAR_DELTA_X));
 
+	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::handleMessage);
+	SetSpriteUpdate(NULL);
 }
 
 AsCommonCar::~AsCommonCar() {
-	if (_finalizeStateCb == AnimationCallback(&AsCommonCar::evTurnCarDone)) {
+	if (_finalizeStateCb == AnimationCallback(&AsCommonCar::evTurnCarDone))
 		setGlobalVar(V_CAR_DELTA_X, !getGlobalVar(V_CAR_DELTA_X));
-	}
 }
 
 void AsCommonCar::setPathPoints(NPointArray *pathPoints) {
@@ -318,17 +324,15 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 					minMatchIndex = i;
 				}
 				if (minMatchIndex == -1) {
-					if (_currPointIndex == 0) {
+					if (_currPointIndex == 0)
 						moveToPrevPoint();
-					} else {
+					else
 						SetSpriteUpdate(NULL);
-					}
 				} else {
-					if (minMatchIndex > _currPointIndex) {
+					if (minMatchIndex > _currPointIndex)
 						moveToNextPoint();
-					} else {
+					else
 						moveToPrevPoint();
-					}
 				}
 			} else {
 				_hasAgainDestPoint = true;
@@ -340,15 +344,15 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 		_yMoveTotalSteps = param.asInteger();
 		_steps = 0;
 		_isBraking = false;
-		SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 		_lastDistance = 640;
+		SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 		break;
 	case 0x2008:
 		_yMoveTotalSteps = param.asInteger();
 		_steps = 0;
 		_isBraking = false;
-		SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
 		_lastDistance = 640;
+		SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
 		break;
 	case 0x2009:
 		stEnterCar();
@@ -407,15 +411,15 @@ void AsCommonCar::stCarAtHome() {
 	_rectList = NULL;
 	NextState(&AsCommonCar::stLeanForwardIdle);
 	startAnimation(0x35698F78, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage);
-	SetUpdateHandler(&AsCommonCar::upIdle);
-	FinalizeState(&AsCommonCar::evIdleDone);
 	setDoDeltaX(doDeltaX ? 1 : 0);
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
 	_steps = 0;
 	_idleCounter = 0;
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
+	SetUpdateHandler(&AsCommonCar::upIdle);
+	SetMessageHandler(&AsCommonCar::handleMessage);
+	FinalizeState(&AsCommonCar::evIdleDone);
 }
 
 void AsCommonCar::updateTurnMovement() {
@@ -438,18 +442,18 @@ void AsCommonCar::updateMovement() {
 		_isMoving = false;
 		_isIdle = true;
 		startAnimation(0x192ADD30, 0, -1);
-		SetMessageHandler(&AsCommonCar::hmAnimation);
 		SetUpdateHandler(&AsCommonCar::update);
+		SetMessageHandler(&AsCommonCar::hmAnimation);
 		NextState(&AsCommonCar::stLeanForwardIdle);
 	} else if (!_isBraking && _steps && _isIdle) {
 		gotoNextState();
 		_isIdle = false;
 		startAnimation(0x9966B138, 0, -1);
-		SetMessageHandler(&AsCommonCar::hmAnimation);
 		SetUpdateHandler(&AsCommonCar::update);
+		SetMessageHandler(&AsCommonCar::hmAnimation);
 		NextState(&AsCommonCar::stUpdateMoveDirection);
 	} else {
-		bool flag = false;
+		bool inRect = false;
 		uint index = 0;
 		if (_rectList && _rectList->size() > 0) {
 			while (index < _rectList->size()) {
@@ -458,10 +462,10 @@ void AsCommonCar::updateMovement() {
 					break;
 			}
 			if (index < _rectList->size() && !_rectFlag)
-				flag = true;
+				inRect = true;
 			_rectFlag = index < _rectList->size();
 		}
-		if (flag) {
+		if (inRect) {
 			gotoNextState();
 			stHandleRect();
 		} else if (_newMoveDirection != _currMoveDirection && _isMoving && !_isBusy) {
@@ -474,28 +478,28 @@ void AsCommonCar::updateMovement() {
 
 void AsCommonCar::stEnterCar() {
 	startAnimation(0xA86A9538, 0, -1);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	NextState(&AsCommonCar::stLeanForwardIdle);
 }
 
 void AsCommonCar::stLeaveCar() {
 	startAnimation(0xA86A9538, -1, -1);
 	_playBackwards = true;
-	SetMessageHandler(&AsCommonCar::hmLeaveCar);
 	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmLeaveCar);
 }
 
 void AsCommonCar::stLeanForwardIdle() {
 	startAnimation(0x35698F78, 0, -1);
-	SetMessageHandler(&AsCommonCar::handleMessage);
-	SetUpdateHandler(&AsCommonCar::upIdle);
-	FinalizeState(&AsCommonCar::evIdleDone);
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
 	_steps = 0;
 	_idleCounter = 0;
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
+	SetUpdateHandler(&AsCommonCar::upIdle);
+	SetMessageHandler(&AsCommonCar::handleMessage);
+	FinalizeState(&AsCommonCar::evIdleDone);
 }
 
 void AsCommonCar::evIdleDone() {
@@ -504,19 +508,19 @@ void AsCommonCar::evIdleDone() {
 
 void AsCommonCar::stIdleBlink() {
 	startAnimation(0xB579A77C, 0, -1);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
-	SetUpdateHandler(&AsCommonCar::update);
-	NextState(&AsCommonCar::stLeanForwardIdle);
 	_idleCounter = 0;
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
+	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
+	NextState(&AsCommonCar::stLeanForwardIdle);
 }
 
 void AsCommonCar::stHandleRect() {
 	_isBusy = true;
 	gotoNextState();
 	startAnimation(0x9C220DA4, 0, -1);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	FinalizeState(&AsCommonCar::evHandleRectDone);
 }
 
@@ -528,15 +532,14 @@ void AsCommonCar::evHandleRectDone() {
 
 void AsCommonCar::stUpdateMoveDirection() {
 	_isMoving = true;
-	if (_currMoveDirection == 1) {
+	if (_currMoveDirection == 1)
 		startAnimation(0xD4AA03A4, 0, -1);
-	} else if (_currMoveDirection == 3) {
+	else if (_currMoveDirection == 3)
 		startAnimation(0xD00A1364, 0, -1);
-	} else if ((_currMoveDirection == 2 && _doDeltaX) || (_currMoveDirection == 4 && !_doDeltaX)) {
+	else if ((_currMoveDirection == 2 && _doDeltaX) || (_currMoveDirection == 4 && !_doDeltaX))
 		stTurnCar();
-	} else {
+	else
 		startAnimation(0xD4220027, 0, -1);
-	}
 	setGlobalVar(V_CAR_DELTA_X, _doDeltaX ? 1 : 0);
 }
 
@@ -579,8 +582,8 @@ void AsCommonCar::stBrakeMoveToNextPoint() {
 	_isBusy = true;
 	_isBraking = true;
 	startAnimation(0x192ADD30, 0, -1);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	NextState(&AsCommonCar::stTurnCarMoveToNextPoint);
 }
 
@@ -589,8 +592,8 @@ void AsCommonCar::stTurnCar() {
 	gotoNextState();
 	_isBusy = true;
 	startAnimation(0xF46A0324, 0, -1);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	FinalizeState(&AsCommonCar::evTurnCarDone);
 	_turnMoveStatus = 0;
 	updateTurnMovement();
@@ -601,8 +604,8 @@ void AsCommonCar::stTurnCarMoveToNextPoint() {
 	gotoNextState();
 	_isBusy = true;
 	startAnimation(0xF46A0324, 0, -1);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	FinalizeState(&AsCommonCar::evTurnCarDone);
 	_turnMoveStatus = 1;
 	updateTurnMovement();
@@ -613,8 +616,8 @@ void AsCommonCar::stTurnCarMoveToPrevPoint() {
 	FinalizeState(NULL);
 	_isBusy = true;
 	startAnimation(0xF46A0324, 0, -1);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	FinalizeState(&AsCommonCar::evTurnCarDone);
 	_turnMoveStatus = 2;
 	updateTurnMovement();
@@ -666,8 +669,8 @@ void AsCommonCar::stBrakeMoveToPrevPoint() {
 	_isBusy = true;
 	_isBraking = true;
 	startAnimation(0x192ADD30, 0, -1);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
 	SetUpdateHandler(&AsCommonCar::update);
+	SetMessageHandler(&AsCommonCar::hmAnimation);
 	NextState(&AsCommonCar::stTurnCarMoveToPrevPoint);
 }
 
@@ -692,12 +695,10 @@ void AsCommonCar::suMoveToNextPoint() {
 		if (_steps <= 0) {
 			sendMessage(this, 0x1019, 0);
 			return;
-		} else {
+		} else
 			_steps--;
-		}
-	} else if (_steps < 11) {
+	} else if (_steps < 11)
 		_steps++;
-	}
 
 	bool firstTime = true;
 	_ySteps = _steps;
@@ -742,9 +743,9 @@ void AsCommonCar::suMoveToNextPoint() {
 			if (pt1.y < pt2.y)
 				_newMoveDirection = 1;
 			if (firstTime) {
-				if (pt1.y >= pt2.y) {
+				if (pt1.y >= pt2.y)
 					stepsCtr += 7;
-				} else {
+				else {
 					stepsCtr -= 4;
 					if (stepsCtr < 0)
 						stepsCtr = 0;
@@ -837,12 +838,10 @@ void AsCommonCar::suMoveToPrevPoint() {
 		if (_steps <= 0) {
 			sendMessage(this, 0x1019, 0);
 			return;
-		} else {
+		} else
 			_steps--;
-		}
-	} else if (_steps < 11) {
+	} else if (_steps < 11)
 		_steps++;
-	}
 
 	bool firstTime = true;
 	_ySteps = _steps;
@@ -980,65 +979,14 @@ void AsCommonCar::updateSound() {
 			maxSoundCounter = 5 - _steps;
 			if (maxSoundCounter < 1)
 				maxSoundCounter = 1;
-		} else {
+		} else
 			maxSoundCounter = 14 - _steps;
-		}
-	} else {
+	} else
 		maxSoundCounter = 21;
-	}
 	if (_soundCounter >= maxSoundCounter) {
 		sendMessage(_parentScene, 0x200D, 0);
 		_soundCounter = 0;
 	}
-}
-
-AsScene1608Door::AsScene1608Door(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0x08C80144, 900, 320, 240), _parentScene(parentScene) {
-
-	setVisible(false);
-	SetMessageHandler(&AsScene1608Door::handleMessage);
-	stopAnimation();
-}
-
-uint32 AsScene1608Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x3002:
-		gotoNextState();
-		break;
-	case 0x4808:
-		stOpenDoor();
-		break; 
-	case 0x4809:
-		stCloseDoor();
-		break; 
-	}
-	return messageResult;
-}
-
-void AsScene1608Door::stOpenDoor() {
-	startAnimation(0x08C80144, 0, -1);
-	setVisible(true);
-	NextState(&AsScene1608Door::stOpenDoorDone);
-	playSound(0, calcHash("fxDoorOpen23"));
-}
-
-void AsScene1608Door::stOpenDoorDone() {
-	sendMessage(_parentScene, 0x2033, 0);
-	stopAnimation();
-	setVisible(false);
-}
-
-void AsScene1608Door::stCloseDoor() {
-	startAnimation(0x08C80144, -1, -1);
-	setVisible(true);
-	NextState(&AsScene1608Door::stCloseDoorDone);
-	playSound(0, calcHash("fxDoorClose23"));
-}
-
-void AsScene1608Door::stCloseDoorDone() {
-	sendMessage(_parentScene, 0x2034, 0);
-	stopAnimation();
 }
 
 AsCommonIdleCarLower::AsCommonIdleCarLower(NeverhoodEngine *vm, int16 x, int16 y)
@@ -1059,10 +1007,10 @@ AsCommonIdleCarFull::AsCommonIdleCarFull(NeverhoodEngine *vm, int16 x, int16 y)
 AsCommonCarConnector::AsCommonCarConnector(NeverhoodEngine *vm, AsCommonCar *asCar)
 	: AnimatedSprite(vm, 1100), _asCar(asCar) {
 	
-	SetUpdateHandler(&AsCommonCarConnector::update);
 	createSurface1(0x60281C10, 150);
 	startAnimation(0x60281C10, -1, -1);
 	_newStickFrameIndex = STICK_LAST_FRAME;
+	SetUpdateHandler(&AsCommonCarConnector::update);
 }
 
 void AsCommonCarConnector::update() {
@@ -1082,14 +1030,16 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_collisionMan->addSprite(_asKey);
 
 	if (which < 0) {
+		// Restoring game
 		if (_vm->gameState().which == 1)
+			// Klaymen is in the car
 			which = 1;
 		else {
+			// Klaymen is standing around
 			setRectList(0x004B47D0);
 			insertKlayman<KmScene1608>(380, 438);
 			_kmScene1608 = _klayman;
 			_klaymanInCar = false;
-			_asDoor = insertSprite<AsScene1608Door>(this);
 			_sprite1 = insertStaticSprite(0x7D0404E8, 1100);
 			setMessageList(0x004B46A8);
 			setBackground(0x10080E01);
@@ -1102,6 +1052,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 			insertStaticSprite(0x4B18F868, 1200);
 		}
 	} else if (which == 0) {
+		// Klaymen entering from the left
 		_vm->gameState().which = 0;
 		setRectList(0x004B47D0);
 		insertKlayman<KmScene1608>(0, 438);
@@ -1114,12 +1065,11 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_collisionMan->addSprite(_asTape);
 		insertMouse433(0x80E05108);
 		_sprite1 = insertStaticSprite(0x7D0404E8, 1100);
-		_asDoor = insertSprite<AsScene1608Door>(this);
 		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 		SetUpdateHandler(&Scene1608::upLowerFloor);
-		sendMessage(_asDoor, 0x4808, 0);
 		insertStaticSprite(0x4B18F868, 1200);
 	} else if (which == 2) {
+		// Klaymen returning from looking through the upper window
 		_vm->gameState().which = 1;
 		_dataResource.load(0x003C0492);
 		_roomPathPoints = _dataResource.getPointArray(calcHash("meArchroArchRoomPath"));
@@ -1135,28 +1085,26 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1608>(373, 220);
 			_klayman->setDoDeltaX(1);
-		} else {
+		} else
 			insertKlayman<KmScene1608>(283, 220);
-		}
 		_kmScene1608 = _klayman;
 		setMessageList(0x004B47A8);
 		SetMessageHandler(&Scene1608::hmUpperFloor);
 		SetUpdateHandler(&Scene1608::upUpperFloor);
-		// NOTE: Setting the point array was handled by messages 0x2000 (array) and 0x2001 (count) in the original
 		_asCar->setPathPoints(_roomPathPoints);
 		sendMessage(_asCar, 0x2002, _roomPathPoints->size() - 1);
 		_sprite3 = insertStaticSprite(0xB47026B0, 1100);
-		_rect1.set(_sprite3->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
-		_rect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
-		_rect2 = _rect1;
-		_rect2.y2 = 215;
-		_klayman->setClipRect(_rect1);
-		_asCar->setClipRect(_rect1);
-		_asIdleCarLower->setClipRect(_rect1);
-		_asIdleCarFull->setClipRect(_rect1);
+		_clipRect1.set(_sprite3->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
+		_clipRect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
+		_clipRect2 = _clipRect1;
+		_clipRect2.y2 = 215;
+		_klayman->setClipRect(_clipRect1);
+		_asCar->setClipRect(_clipRect1);
+		_asIdleCarLower->setClipRect(_clipRect1);
+		_asIdleCarFull->setClipRect(_clipRect1);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
 		_vm->_collisionMan->addSprite(_asTape);
-		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_rect1);
+		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_clipRect1);
 		_klaymanInCar = false;
 		_carClipFlag = false;
 		_carStatus = 0;
@@ -1165,6 +1113,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	// NOTE: Not in the else because 'which' is set to 1 in the true branch	
 	if (which == 1) {
+		// Klaymen entering riding the car
 		_vm->gameState().which = 1;
 		_dataResource.load(0x003C0492);
 		_roomPathPoints = _dataResource.getPointArray(calcHash("meArchroArchRoomPath"));
@@ -1176,52 +1125,49 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asIdleCarLower = insertSprite<AsCommonIdleCarLower>(375, 227);
 		_asIdleCarFull = insertSprite<AsCommonIdleCarFull>(375, 227);
 		_sprite2 = insertStaticSprite(0x491F38A8, 1100);
-		_kmScene1608 = createSprite<KmScene1608>(this, 439, 220); // Special Klayman handling...
+		_kmScene1608 = createSprite<KmScene1608>(this, 439, 220);
 		sendMessage(_kmScene1608, 0x2032, 1);
 		_kmScene1608->setDoDeltaX(1);
 		SetMessageHandler(&Scene1608::hmRidingCar);
 		SetUpdateHandler(&Scene1608::upRidingCar);
 		_asIdleCarLower->setVisible(false);
 		_asIdleCarFull->setVisible(false);
-		// NOTE: Setting the point array was handled by messages 0x2000 (array) and 0x2001 (count) in the original
 		_asCar->setPathPoints(_roomPathPoints);
 		sendMessage(_asCar, 0x2002, 0);
 		sendMessage(_asCar, 0x2008, 90);
 		_sprite3 = insertStaticSprite(0xB47026B0, 1100);
-		_rect1.set(_sprite3->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
-		_rect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
-		_rect2 = _rect1;
-		_rect2.y2 = 215;
-		_kmScene1608->setClipRect(_rect1);
-		_asCar->setClipRect(_rect1);
-		_asIdleCarLower->setClipRect(_rect1);
-		_asIdleCarFull->setClipRect(_rect1);
+		_clipRect1.set(_sprite3->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
+		_clipRect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
+		_clipRect2 = _clipRect1;
+		_clipRect2.y2 = 215;
+		_kmScene1608->setClipRect(_clipRect1);
+		_asCar->setClipRect(_clipRect1);
+		_asIdleCarLower->setClipRect(_clipRect1);
+		_asIdleCarFull->setClipRect(_clipRect1);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
 		// ... _vm->_collisionMan->addSprite(_asTape);
-		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_rect1);
+		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_clipRect1);
 		_klaymanInCar = true;
 		_carClipFlag = true;
 		_carStatus = 0;
 	}
 	
 	_palette->addPalette("paKlayRed", 0, 64, 0);
-
+	
 }
 
 Scene1608::~Scene1608() {
 	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _kmScene1608->isDoDeltaX() ? 1 : 0);
-	if (_klaymanInCar) {
+	if (_klaymanInCar)
 		delete _kmScene1608;
-	} else {
+	else
 		delete _asCar;
-	}
 }
 
 void Scene1608::upLowerFloor() {
 	Scene::update();
-	if (_countdown1 != 0 && (--_countdown1 == 0)) {
+	if (_countdown1 != 0 && (--_countdown1 == 0))
 		leaveScene(0);
-	}
 }
 
 void Scene1608::upUpperFloor() {
@@ -1292,13 +1238,13 @@ void Scene1608::upRidingCar() {
 	if (_asCar->getX() < 300) {
 		if (_carClipFlag) {
 			_carClipFlag = false;
-			_asCar->setClipRect(_rect1);
+			_asCar->setClipRect(_clipRect1);
 			if (!_asCar->isDoDeltaX())
 				sendMessage(_asCar, 0x200E, 0);
 		}
 	} else if (!_carClipFlag) {
 		_carClipFlag = true;
-		_asCar->setClipRect(_rect3);
+		_asCar->setClipRect(_clipRect3);
 	}
 }
 
@@ -1311,7 +1257,7 @@ uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity
 			_klayman->setVisible(false);
 			showMouse(false);
 			_sprite1->setVisible(false);
-			sendMessage(_asDoor, 0x4809, 0);
+			//sendMessage(_asDoor, 0x4809, 0); // Play sound?
 			_countdown1 = 28;
 		}
 		break;
@@ -1322,9 +1268,8 @@ uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity
 		if (sender == _asTape) {
 			sendEntityMessage(_kmScene1608, 0x1014, _asTape);
 			setMessageList(0x004B4770);
-		} else if (sender == _asKey) {
+		} else if (sender == _asKey)
 			setMessageList(0x004B46C8);
-		}
 		break;
 	}
 	return 0;
@@ -1334,9 +1279,8 @@ uint32 Scene1608::hmUpperFloor(int messageNum, const MessageParam &param, Entity
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x60842040) {
+		if (param.asInteger() == 0x60842040)
 			_carStatus = 1;
-		}
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
@@ -1384,12 +1328,12 @@ uint32 Scene1608::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 	
 void Scene1608::updateKlaymanCliprect() {
 	if (_kmScene1608->getX() <= 375)
-		_kmScene1608->setClipRect(_rect1);
+		_kmScene1608->setClipRect(_clipRect1);
 	else
-		_kmScene1608->setClipRect(_rect2);
+		_kmScene1608->setClipRect(_clipRect2);
 }
 
-Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
+Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule, true), _countdown1(1), _currentSymbolIndex(0), _symbolPosition(0), _changeCurrentSymbol(true), _isSolved(false) {
 
 	// TODO _vm->gameModule()->initScene3011Vars();
@@ -1400,15 +1344,13 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	setBackground(0x92124A14);
 	setPalette(0x92124A14);
+	insertMouse435(0x24A10929, 20, 620);
 	
 	for (int symbolPosition = 0; symbolPosition < 12; symbolPosition++)
 		_asSymbols[symbolPosition] = insertSprite<AsScene3011Symbol>(symbolPosition, false);
 	
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	_vm->_collisionMan->addSprite(_ssButton);
-
-	insertMouse435(0x24A10929, 20, 620);
-
 	loadSound(0, 0x68E25540);
 
 }
@@ -1428,9 +1370,8 @@ void Scene1609::update() {
 			_countdown1 = 12;
 		}
 	}
-	if (_isSolved && !isSoundPlaying(0)) {
+	if (_isSolved && !isSoundPlaying(0))
 		leaveScene(1);
-	}
 	Scene::update();
 }
 
