@@ -35,6 +35,7 @@ public:
 	Module1700(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1700();
 protected:
+	int _sceneNum;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };

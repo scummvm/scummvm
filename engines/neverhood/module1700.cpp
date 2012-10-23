@@ -42,15 +42,14 @@ Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->setSoundListParams(kModule1700SoundList, true, 50, 600, 5, 150);
 	_vm->_soundMan->playTwoSounds(0x04212331, 0x41861371, 0x43A2507F, 0);
 
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else if (which == 0) {
+	else if (which == 0)
 		createScene(0, -1);
-	} else if (which == 1) {
+	else if (which == 1)
 		createScene(4, 1);
-	} else {
+	else
 		createScene(4, 3);
-	}
 
 }
 
@@ -60,23 +59,28 @@ Module1700::~Module1700() {
 
 void Module1700::createScene(int sceneNum, int which) {
 	debug("Module1700::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_vm->_soundMan->setSoundListParams(kModule1700SoundList, false, 0, 0, 0, 0);
 		createSmackerScene(0x3028A005, true, true, false);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		createNavigationScene(0x004AE8B8, which);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		createNavigationScene(0x004AE8E8, which);
 		break;
 	case 3:
+		_vm->gameState().sceneNum = 3;
 		_vm->_soundMan->setSoundListParams(kModule1700SoundList, false, 0, 0, 0, 0);
 		createSmackerScene(0x01190041, true, true, false);
 		break;
 	case 4:
+		_vm->gameState().sceneNum = 4;
 		_vm->_soundMan->setSoundListParams(kModule1700SoundList, false, 0, 0, 0, 0);
 		_vm->_soundMan->startMusic(0x31114225, 0, 2);
 		_childObject = new Scene1705(_vm, this, which);
@@ -88,24 +92,23 @@ void Module1700::createScene(int sceneNum, int which) {
 
 void Module1700::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			_vm->_soundMan->setSoundListParams(kModule1700SoundList, true, 0, 0, 0, 0);
 			createScene(1, 0);
 			break;
 		case 1:
-			if (_moduleResult == 0) {
+			if (_moduleResult == 0)
 				createScene(2, 0);
-			} else if (_moduleResult == 1) {
+			else if (_moduleResult == 1)
 				createScene(1, 1);
-			}
 			break;
 		case 2:
-			if (_moduleResult == 0) {
+			if (_moduleResult == 0)
 				createScene(3, -1);
-			} else if (_moduleResult == 1) {
+			else if (_moduleResult == 1)
 				createScene(1, 1);
-			} else if (_moduleResult == 2) {
+			else if (_moduleResult == 2) {
 				if (!isSoundPlaying(0)) {
 					setSoundVolume(0, 60);
 					playSound(0, 0x58B45E58);
@@ -126,18 +129,10 @@ void Module1700::updateScene() {
 // Scene1705
 
 static const uint32 kScene1705FileHashes[] = {
-	0x910EA801,
-	0x920EA801,
-	0x940EA801,
-	0x980EA801,
-	0x800EA801,
-	0xB00EA801,
-	0xD00EA801,
-	0x100EA801,
-	0x900EA800,
-	0xD10EA801,
-	0x110EA801,
-	0x910EA800
+	0x910EA801, 0x920EA801, 0x940EA801,
+	0x980EA801, 0x800EA801, 0xB00EA801,
+	0xD00EA801, 0x100EA801, 0x900EA800,
+	0xD10EA801, 0x110EA801, 0x910EA800
 };
 
 SsScene1705WallSymbol::SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHash, int symbolIndex)
@@ -193,49 +188,49 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene1705::update);
 
 	setHitRects(0x004B69D8);
-
 	setBackground(0x03118226);
-
 	setPalette(0x03118226);
 	_palette->addBasePalette(0x91D3A391, 0, 64, 0);
 	_palette->copyBasePalette(0, 256, 0);
 	addEntity(_palette);
-
 	insertMouse433(0x18222039);
 
 	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 0)], 0);
 	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 1)], 1);
 	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 2)], 2);
-
 	_sprite = insertStaticSprite(0x31313A22, 1100);
-
 	_ssTape = insertSprite<SsScene1705Tape>(this, 15, 1100, 238, 439, 0x02363852);
 	_vm->_collisionMan->addSprite(_ssTape);
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene1705>(231, 434);
 		setMessageList(0x004B69E8);
 		sendMessage(this, 0x2000, 0);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 1) {
+		// Klaymen teleporting in
 		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6A08, false);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 2) {
+		// Klaymen teleporting out
 		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6AA0, false);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 3) {
+		// Klaymen returning from teleporter console
 		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6A18, false);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else {
+		// Klaymen falling through the hole
 		insertKlayman<KmScene1705>(231, 74);
 		sendMessage(_klayman, 0x2000, 0);
 		setMessageList(0x004B69F0);
