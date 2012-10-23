@@ -66,45 +66,16 @@ bool FileManager::bsave(const Common::String &file, const void *buf, size_t n) {
 
 // Load INI File
 void FileManager::Chage_Inifile(Common::StringMap &iniParams) {
-	char *iniData = (char *)CHARGE_FICHIER("config.ini");
-	char *ptr = iniData;
+	// TODO: Review whether we can do something cleaner with ScummVM initialisation than 
+	// just initialising the INI array as if it had read in the INI file
 
-	bool endOfFile = false;
-	while (!endOfFile) {
-		if (*ptr == '%') {
-			if (*(ptr + 1) == '%') {
-				endOfFile = true;
-			} else {
-				++ptr;
-
-				// Get the parameter name
-				Common::String paramName;
-				while (*ptr == ' ') 
-					++ptr;
-				while (*ptr != '=') {
-					paramName += toupper(*ptr++);
-				}
-				while (paramName.lastChar() == ' ')
-					paramName.deleteLastChar();
-
-				// Get the parameter value
-				Common::String paramValue;
-				while (*++ptr == ' ') 
-					;
-				while (*ptr != ';') {
-					paramValue += toupper(*ptr++);
-				}
-				while (paramValue.lastChar() == ' ')
-					paramValue.deleteLastChar();
-
-				iniParams[paramName] = paramValue;
-			}
-		}
-    
-		++ptr;
-	}
-
-	free(iniData);
+	iniParams["FULLSCREEN"] = "NO";
+	iniParams["SETMODE"] = "1";		// 640x480
+	iniParams["ZOOM"] = "100";		// No zooming
+	iniParams["VIDEOMEM"] = "YES";
+	iniParams["FORCE8BITS"] = "NO";
+	iniParams["FORCE16BITS"] = "YES";
+	iniParams["SOUND"] = "YES";
 }
 
 // Load File
