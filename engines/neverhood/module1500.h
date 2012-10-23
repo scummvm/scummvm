@@ -34,9 +34,9 @@ namespace Neverhood {
 
 class Module1500 : public Module {
 public:
-	Module1500(NeverhoodEngine *vm, Module *parentModule, int which, bool flag);
+	Module1500(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	bool _flag;
+	int _sceneNum;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };
@@ -48,7 +48,7 @@ protected:
 	int _countdown1;
 	int _countdown2;
 	int _countdown3;
-	bool _flag;
+	bool _skip;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

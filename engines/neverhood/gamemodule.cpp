@@ -319,7 +319,7 @@ void GameModule::startup() {
 
 	_vm->gameState().which = 2;
 	_vm->gameState().sceneNum = 3;
-	createModule(1400, -1);
+	createModule(1500, 0);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -411,7 +411,7 @@ void GameModule::createModule(int moduleNum, int which) {
 	case 1500:
 		_someFlag1 = false;
 		setGlobalVar(V_MODULE_NAME, 0x00F10114);
-		_childObject = new Module1500(_vm, this, which, true);
+		_childObject = new Module1500(_vm, this, which);
 		break;
 	case 1600:
 		setGlobalVar(V_MODULE_NAME, 0x01A008D8);

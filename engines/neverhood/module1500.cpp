@@ -24,32 +24,35 @@
 
 namespace Neverhood {
 
-Module1500::Module1500(NeverhoodEngine *vm, Module *parentModule, int which, bool flag)
-	: Module(vm, parentModule), _flag(flag) {
+Module1500::Module1500(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Module(vm, parentModule) {
 	
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else {
+	else
 		createScene(3, -1);
-	}
 
 }
 
 void Module1500::createScene(int sceneNum, int which) {
 	debug("Module1500::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_childObject = new Scene1501(_vm, this, 0x8420221D, 0xA61024C4, 150, 48);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		_childObject = new Scene1501(_vm, this, 0x30050A0A, 0x58B45E58, 110, 48);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		sendMessage(_parentModule, 0x0800, 0);
 		createSmackerScene(0x001A0005, true, true, true);
 		break;
 	case 3:
+		_vm->gameState().sceneNum = 3;
 		_childObject = new Scene1501(_vm, this, 0x0CA04202, 0, 110, 48);
 		break;
 	}
@@ -59,16 +62,12 @@ void Module1500::createScene(int sceneNum, int which) {
 
 void Module1500::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			createScene(1, -1);
 			break;
 		case 1:
-			if (_flag) {
-				createScene(2, -1);
-			} else {
-				leaveModule(0);
-			}
+			createScene(2, -1);
 			break;
 		case 3:
 			createScene(0, -1);
@@ -83,13 +82,12 @@ void Module1500::updateScene() {
 // Scene1501
 
 Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3)
-	: Scene(vm, parentModule, true), _countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _flag(false) {
+	: Scene(vm, parentModule, true), _countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _skip(false) {
 
 	SetUpdateHandler(&Scene1501::update);
 	SetMessageHandler(&Scene1501::handleMessage);
 	
 	setBackground(backgroundFileHash);
-
 	setPalette();
 	addEntity(_palette);
 	_palette->addBasePalette(backgroundFileHash, 0, 256, 0);
@@ -101,9 +99,7 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 }
 
 void Scene1501::update() {
-
 	Scene::update();
-
 	if (_countdown1 != 0) {
 		_countdown1--;
 		if (_countdown1 == 0) {
@@ -118,7 +114,7 @@ void Scene1501::update() {
 	if (_countdown3 != 0)
 		_countdown3--;
 
-	if (_countdown3 == 0 && _flag && _countdown1 == 0) {
+	if (_countdown3 == 0 && _skip && _countdown1 == 0) {
 		_countdown1 = 12;
 		_palette->startFadeToBlack(11);
 	}
@@ -129,7 +125,7 @@ uint32 Scene1501::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0009:
-		_flag = true;
+		_skip = true;
 		break;
 	}
 	return messageResult;
