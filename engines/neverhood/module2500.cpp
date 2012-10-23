@@ -28,30 +28,25 @@ namespace Neverhood {
 // TODO Maybe move these to the DAT
 
 static const uint32 kScene2505StaticSprites[] = {
-	0x4000A226,
-	0
+	0x4000A226, 0
 };
 
 static const NRect kScene2505ClipRect = NRect(0, 0, 564, 480);
 
 static const uint32 kScene2506StaticSprites[] = {
-	0x4027AF02,
-	0
+	0x4027AF02, 0
 };
 
 static const NRect kScene2506ClipRect = NRect(0, 0, 640, 441);
 
 static const uint32 kScene2508StaticSprites1[] = {
-	0x2F08E610,
-	0xD844E6A0,
-	0
+	0x2F08E610, 0xD844E6A0, 0
 };
 
 static const NRect kScene2508ClipRect1 = NRect(0, 0, 594, 448);
 
 static const uint32 kScene2508StaticSprites2[] = {
-	0x2F08E610,
-	0
+	0x2F08E610, 0
 };
 
 static const NRect kScene2508ClipRect2 = NRect(0, 0, 594, 448);
@@ -63,11 +58,10 @@ Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->startMusic(0x05343184, 0, 0);
 	SetMessageHandler(&Module2500::handleMessage);
 
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, _vm->gameState().which);
-	} else {
+	else
 		createScene(0, 0);
-	}
 
 	loadSound(0, 0x00880CCC);
 	loadSound(1, 0x00880CC0);
@@ -82,16 +76,19 @@ Module2500::~Module2500() {
 
 void Module2500::createScene(int sceneNum, int which) {
 	debug("Module2500::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_childObject = new Scene2501(_vm, this, which);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		_vm->gameState().which = which;
 		createScene2704(which, 0x004B01B8, 220);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		_vm->gameState().which = which;
 		if (getGlobalVar(V_WORLDS_JOINED))
 			createScene2704(which, 0x004B01E0, 150);
@@ -99,22 +96,27 @@ void Module2500::createScene(int sceneNum, int which) {
 			createScene2704(which, 0x004B0208, 150);
 		break;
 	case 3:
+		_vm->gameState().sceneNum = 3;
 		_childObject = new Scene2504(_vm, this, which);
 		break;
 	case 4:
+		_vm->gameState().sceneNum = 4;
 		_vm->gameState().which = which;
 		createScene2704(which, 0x004B0230, 150, kScene2505StaticSprites, &kScene2505ClipRect);
 		break;
 	case 5:
 		setGlobalVar(V_CAR_DELTA_X, 1);
+		_vm->gameState().sceneNum = 5;
 		_vm->gameState().which = which;
 		createScene2704(which, 0x004B0268, 150, kScene2506StaticSprites, &kScene2506ClipRect);
 		break;
 	case 6:
+		_vm->gameState().sceneNum = 6;
 		_vm->gameState().which = which;
 		createScene2704(which, 0x004B02A0, 150);
 		break;
 	case 7:
+		_vm->gameState().sceneNum = 7;
 		_vm->gameState().which = which;
 		if (getGlobalVar(V_ENTRANCE_OPEN))
 			createScene2704(which, 0x004B02C8, 150, kScene2508StaticSprites1, &kScene2508ClipRect1);
@@ -122,9 +124,11 @@ void Module2500::createScene(int sceneNum, int which) {
 			createScene2704(which, 0x004B02C8, 150, kScene2508StaticSprites2, &kScene2508ClipRect2);
 		break;
 	case 8:
+		_vm->gameState().sceneNum = 8;
 		_childObject = new Scene1608(_vm, this, which);
 		break;
 	case 9:
+		_vm->gameState().sceneNum = 9;
 		if (getGlobalVar(V_ENTRANCE_OPEN))
 			createStaticScene(0xC62A0645, 0xA0641C6A);
 		else
@@ -137,7 +141,7 @@ void Module2500::createScene(int sceneNum, int which) {
 
 void Module2500::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			if (_moduleResult == 1)
 				createScene(2, 0);
@@ -232,13 +236,13 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(0x99BE9015); // Don't add this to the sprite list
 	addEntity(_ssTrackShadowBackground);
-
 	_asCar = createSprite<AsCommonCar>(this, 211, 400); // Create but don't add to the sprite list yet
 	_asIdleCarLower = insertSprite<AsCommonIdleCarLower>(211, 400);
 	_asIdleCarFull = insertSprite<AsCommonIdleCarFull>(211, 400);
 	insertStaticSprite(0xC42AC521, 1500);
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene2501>(162, 393);
 		_kmScene2501 = _klayman;
 		_klaymanInCar = false;
@@ -250,6 +254,8 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asCar->setVisible(false);
 		_currTrackIndex = 0;
 	} else if (which == 1 || which == 2) {
+		// 1: Klaymen entering riding the car on the left track
+		// 2: Klaymen entering riding the car on the bottom track
 		addSprite(_asCar);
 		_kmScene2501 = (Klayman*)new KmScene2501(_vm, this, 275, 393);
 		_klaymanInCar = true;
@@ -261,6 +267,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asIdleCarFull->setVisible(false);
 		_currTrackIndex = which;
 	} else {
+		// Klaymen entering the car
 		insertKlayman<KmScene2501>(162, 393);
 		_kmScene2501 = _klayman;
 		_klaymanInCar = false;
@@ -392,26 +399,24 @@ uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2005:
-		if (_sceneInfos[_currTrackIndex]->which1 < 0 && _newTrackIndex >= 0) {
+		if (_sceneInfos[_currTrackIndex]->which1 < 0 && _newTrackIndex >= 0)
 			changeTrack();
-		} else if (_sceneInfos[_currTrackIndex]->which1 == 0) {
+		else if (_sceneInfos[_currTrackIndex]->which1 == 0) {
 			SetMessageHandler(&Scene2501::hmCarAtHome);
 			SetUpdateHandler(&Scene2501::upCarAtHome);
 			sendMessage(_asCar, 0x200F, 1);
-		} else if (_sceneInfos[_currTrackIndex]->which1 > 0) {
+		} else if (_sceneInfos[_currTrackIndex]->which1 > 0)
 			leaveScene(_sceneInfos[_currTrackIndex]->which1);
-		}
 		break;
 	case 0x2006:
-		if (_sceneInfos[_currTrackIndex]->which2 < 0 && _newTrackIndex >= 0) {
+		if (_sceneInfos[_currTrackIndex]->which2 < 0 && _newTrackIndex >= 0)
 			changeTrack();
-		} else if (_sceneInfos[_currTrackIndex]->which2 == 0) {
+		else if (_sceneInfos[_currTrackIndex]->which2 == 0) {
 			SetMessageHandler(&Scene2501::hmCarAtHome);
 			SetUpdateHandler(&Scene2501::upCarAtHome);
 			sendMessage(_asCar, 0x200F, 1);
-		} else if (_sceneInfos[_currTrackIndex]->which2 > 0) {
+		} else if (_sceneInfos[_currTrackIndex]->which2 > 0)
 			leaveScene(_sceneInfos[_currTrackIndex]->which2);
-		}
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
@@ -437,11 +442,10 @@ void Scene2501::changeTrack() {
 	_currTrackIndex = _newTrackIndex;
 	_trackPoints = _dataResource.getPointArray(_sceneInfos[_currTrackIndex]->pointListName);
 	_asCar->setPathPoints(_trackPoints);
-	if (_currTrackIndex == 0) {
+	if (_currTrackIndex == 0)
 		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
-	} else {
+	else
 		sendMessage(_asCar, 0x2002, 0);
-	}
 	sendPointMessage(_asCar, 0x2004, _clickPoint);
 	_newTrackIndex = -1;
 }
@@ -503,11 +507,10 @@ void SsScene2504Button::update() {
 		_isSoundPlaying = false;
 	}
 	if (_countdown != 0 && (--_countdown) == 0) {
-		if (getSubVar(VA_LOCKS_DISABLED, 0x01180951)) {
+		if (getSubVar(VA_LOCKS_DISABLED, 0x01180951))
 			playSound(0);
-		} else {
+		else
 			playSound(1);
-		}
 		_isSoundPlaying = true;
 	}
 }
@@ -519,11 +522,10 @@ uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &para
 		if (_countdown == 0 && !_isSoundPlaying) {
 			setVisible(true);
 			_countdown = 2;
-			if (getSubVar(VA_LOCKS_DISABLED, 0x01180951)) {
+			if (getSubVar(VA_LOCKS_DISABLED, 0x01180951))
 				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 0);
-			} else {
+			else
 				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 1);
-			}
 			playSound(2);
 		}
 		messageResult = 1;
