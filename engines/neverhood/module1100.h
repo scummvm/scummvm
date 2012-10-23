@@ -36,6 +36,7 @@ public:
 	Module1100(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1100();
 protected:
+	int _sceneNum;
 	int _countdown;
 	void createScene(int sceneNum, int which);
 	void updateScene();
@@ -59,10 +60,10 @@ public:
 
 class SsScene1105SymbolDie : public StaticSprite {
 public:
-	SsScene1105SymbolDie(NeverhoodEngine *vm, uint index, int16 x, int16 y);
+	SsScene1105SymbolDie(NeverhoodEngine *vm, uint dieIndex, int16 x, int16 y);
 	void hide();
 protected:
-	uint _index;
+	uint _dieIndex;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void loadSymbolSprite();
 };
@@ -83,22 +84,22 @@ public:
 protected:
 	Scene *_parentScene;
 	int _countdown;
-	bool _flag1;
+	bool _isClicked;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class Scene1105 : public Scene {
 public:
-	Scene1105(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1105(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	int _countdown;
 	int _backgroundIndex;
-	bool _flag1;
-	bool _flag2;
-	bool _flag3;
-	bool _flag4;
-	bool _flag5;
+	bool _isPanelOpen;
+	bool _isActionButtonClicked;
+	bool _doMoveTeddy;
+	bool _isClosePanelDone;
+	int _leaveResult;
 	AsScene1105TeddyBear *_asTeddyBear;
 	SsScene1105Symbol *_ssSymbols[3];
 	SsScene1105SymbolDie *_ssSymbolDice[3];
