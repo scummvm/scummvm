@@ -151,7 +151,32 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::resetStream() {
-	warning("VidTheoraPlayer::resetStream - stubbed");
+	warning("VidTheoraPlayer::resetStream - hacked");
+	// HACK: Just reopen the same file again.
+	if (_theoraDecoder) {
+		_theoraDecoder->close();
+	}
+	delete _theoraDecoder;
+	_theoraDecoder = NULL;
+
+	_file = BaseFileManager::getEngineInstance()->openFile(_filename, true, false);
+	if (!_file) {
+		return STATUS_FAILED;
+	}
+	
+#if defined (USE_THEORADEC)
+	_theoraDecoder = new Video::TheoraDecoder();
+#else
+	return STATUS_FAILED;
+#endif
+	_theoraDecoder->loadStream(_file);
+	
+	if (!_theoraDecoder->isVideoLoaded()) {
+		return STATUS_FAILED;
+	}
+
+	return play(_playbackType, _posX, _posY, false, false, _looping, 0, _playZoom);
+	// End of hack.
 #if 0 // Stubbed for now, as theora isn't seekable
 	if (_sound) {
 		_sound->Stop();
@@ -265,8 +290,10 @@ bool VideoTheoraPlayer::update() {
 
 	if (_theoraDecoder) {
 		if (_theoraDecoder->endOfVideo() && _looping) {
-			warning("Should loop movie %s", _filename.c_str());
+			warning("Should loop movie %s, hacked for now", _filename.c_str());
 			_theoraDecoder->rewind();
+			//HACK: Just reinitialize the same video again:
+			return resetStream();
 		} else if (_theoraDecoder->endOfVideo() && !_looping) {
 			debugC(kWintermuteDebugLog, "Finished movie %s", _filename.c_str());
 			_state = THEORA_STATE_FINISHED;
