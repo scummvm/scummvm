@@ -305,6 +305,8 @@ void GameModule::startup() {
 	// Enable all locations
 	for (int i = 0; i < 6; i++)
 		setSubVar(V_TELEPORTER_DEST_AVAILABLE, i, 1);
+	//setGlobalVar(V_PROJECTOR_LOCATION, 4);
+	setGlobalVar(V_KEYDOOR_UNLOCKED, 1);
 	// <<<DEBUG
 
 #if 1
@@ -315,9 +317,9 @@ void GameModule::startup() {
 	//DEBUG<<<
 	*/
 
-	_vm->gameState().which = 3;
-	_vm->gameState().sceneNum = 0;
-	createModule(1200, -1);
+	_vm->gameState().which = 5;
+	_vm->gameState().sceneNum = 6;
+	createModule(1300, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

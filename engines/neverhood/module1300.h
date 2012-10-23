@@ -37,6 +37,7 @@ public:
 	Module1300(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1300();
 protected:
+	int _sceneNum;
 	uint32 _musicFileHash;
 	void createScene(int sceneNum, int which);
 	void updateScene();
@@ -95,7 +96,7 @@ protected:
 
 class Scene1303 : public Scene {
 public:
-	Scene1303(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1303(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	Sprite *_sprite1;
 	Sprite *_asBalloon;
@@ -162,13 +163,13 @@ protected:
 
 class AsScene1307Key : public AnimatedSprite {
 public:
-	AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint index, NRect *clipRects);
+	AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint keyIndex, NRect *clipRects);
 protected:
 	Scene *_parentScene;
 	NPointArray *_pointList;
 	uint _pointIndex;
 	int _frameIndex;
-	uint _index;
+	uint _keyIndex;
 	NRect *_clipRects;
 	bool _isClickable;
 	int16 _prevX, _prevY;
@@ -186,7 +187,7 @@ protected:
 
 class Scene1307 : public Scene {
 public:
-	Scene1307(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1307(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	NPointArray *_keyHolePoints;
 	NRect _keyHoleRects[16];
@@ -262,13 +263,13 @@ protected:
 	Sprite *_sprite3;
 	Sprite *_sprite4;
 	Sprite *_sprite5;
-	bool _flag1;
+	bool _isProjecting;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class Scene1317 : public Scene {
 public:
-	Scene1317(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1317(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	SmackerPlayer *_smackerPlayer;
 	bool _klaymanBlinks;
@@ -280,9 +281,7 @@ protected:
 	void upChooseKing();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmChooseKing(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmNoDecisionYet(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmHoborgAsKing(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmKlaymanAsKing(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmEndMovie(int messageNum, const MessageParam &param, Entity *sender);
 	void stChooseKing();
 	void stNoDecisionYet();
