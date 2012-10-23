@@ -37,11 +37,10 @@ Module1900::Module1900(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	// NOTE: The original has a Scene1908 here as well but it's not used here but in another module... 
 	
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else {
+	else
 		createScene(0, 0);
-	}
 
 	_vm->_soundMan->addSoundList(0x04E1C09C, kModule1900SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1900SoundList, true, 50, 600, 5, 150);
@@ -54,13 +53,15 @@ Module1900::~Module1900() {
 
 void Module1900::createScene(int sceneNum, int which) {
 	debug("Module1900::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_childObject = new Scene1901(_vm, this, which);
 		break;
 	case 6:
-		_childObject = new Scene1907(_vm, this, which);
+		_vm->gameState().sceneNum = 6;
+		_childObject = new Scene1907(_vm, this);
 		break;
 	}
 	SetUpdateHandler(&Module1900::updateScene);
@@ -69,13 +70,12 @@ void Module1900::createScene(int sceneNum, int which) {
 
 void Module1900::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createScene(6, 0);
-			} else {
+			else
 				leaveModule(0);
-			}
 			break;
 		case 6:
 			createScene(0, 1);
@@ -96,25 +96,27 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x01303227);
 	setPalette(0x01303227);
 	insertMouse433(0x0322301B);
-	
+
 	insertStaticSprite(0x42213133, 1100);
 	
-	if (!getGlobalVar(V_STAIRS_PUZZLE_SOLVED)) {
+	if (!getGlobalVar(V_STAIRS_PUZZLE_SOLVED))
 		insertStaticSprite(0x40A40168, 100);
-	} else if (getGlobalVar(V_STAIRS_DOWN)) {
+	else if (getGlobalVar(V_STAIRS_DOWN)) {
 		insertStaticSprite(0x124404C4, 100);
 		setGlobalVar(V_STAIRS_DOWN_ONCE, 1);
-	} else {
+	} else
 		insertStaticSprite(0x02840064, 100);
-	}
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene1901>(120, 380);
 		setMessageList(0x004B3408);
 	} else if (which == 1) {
+		// Klaymen returning from the puzzle
 		insertKlayman<KmScene1901>(372, 380);
 		setMessageList(0x004B3410);
 	} else {
+		// Klaymen entering from the left
 		insertKlayman<KmScene1901>(0, 380);
 		setMessageList(0x004B3400);
 	}
@@ -125,73 +127,43 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 static const NPoint kAsScene1907SymbolGroundPositions[] = {
-	{160, 310},
-	{ 90, 340},
-	{210, 335},
-	{210, 380},
-	{310, 340},
-	{290, 400},
-	{400, 375},
-	{370, 435},
-	{475, 415}
+	{160, 310}, { 90, 340}, {210, 335},
+	{210, 380}, {310, 340}, {290, 400},
+	{400, 375}, {370, 435}, {475, 415}
 };
 
 static const NPoint kAsScene1907SymbolPluggedInPositions[] = { 
-	{275, 125},
-	{244, 125},
-	{238, 131},
-	{221, 135},
-	{199, 136},
-	{168, 149},
-	{145, 152},
-	{123, 154},
-	{103, 157}
+	{275, 125}, {244, 125}, {238, 131},
+	{221, 135}, {199, 136}, {168, 149},
+	{145, 152}, {123, 154}, {103, 157}
 };
 
 static const NPoint kAsScene1907SymbolGroundHitPositions[] = {
-	{275, 299}, 
-	{244, 299}, 
-	{238, 305}, 
-	{221, 309},
-	{199, 310},
-	{168, 323}, 
-	{145, 326}, 
-	{123, 328}, 
-	{103, 331} 
+	{275, 299}, {244, 299}, {238, 305}, 
+	{221, 309}, {199, 310}, {168, 323}, 
+	{145, 326}, {123, 328}, {103, 331} 
 };
 
 static const NPoint kAsScene1907SymbolPluggedInDownPositions[] = {
-	{275, 136},
-	{244, 156},
-	{238, 183},
-	{221, 207},
-	{199, 228},
-	{168, 262},
-	{145, 285},
-	{123, 307},
-	{103, 331}
+	{275, 136}, {244, 156}, {238, 183},
+	{221, 207}, {199, 228}, {168, 262},
+	{145, 285}, {123, 307}, {103, 331}
 };
 
 static const uint32 kAsScene1907SymbolFileHashes[] = {
-	0x006A1034,
-	0x006A1010,
-	0x006A1814,
-	0x006A1016,
-	0x006A0014,
-	0x002A1014,
-	0x00EA1014,
-	0x206A1014,
-	0x046A1414
+	0x006A1034, 0x006A1010, 0x006A1814,
+	0x006A1016, 0x006A0014, 0x002A1014,
+	0x00EA1014, 0x206A1014, 0x046A1414
 };
 
-int AsScene1907Symbol::_symbolFlag1 = 0;
-int AsScene1907Symbol::_symbolFlag2 = 0;
+bool AsScene1907Symbol::_plugInFailed = false;
+int AsScene1907Symbol::_plugInTryCount = 0;
 
 AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene, int elementIndex, int positionIndex)
 	: AnimatedSprite(vm, 1000 - positionIndex), _parentScene(parentScene), _elementIndex(elementIndex), _isMoving(false) {
 
-	_symbolFlag1 = 0;
-	_symbolFlag2 = 0;
+	_plugInFailed = false;
+	_plugInTryCount = 0;
 	
 	if (getGlobalVar(V_STAIRS_PUZZLE_SOLVED)) {
 		_isPluggedIn = true;
@@ -230,20 +202,19 @@ void AsScene1907Symbol::update() {
 	AnimatedSprite::updateAnim();
 	handleSpriteUpdate();
 	AnimatedSprite::updatePosition();
-	if (_symbolFlag1 && !_symbolFlag2)
-		_symbolFlag1 = 0;
+	if (_plugInFailed && _plugInTryCount == 0)
+		_plugInFailed = false;
 }
 
 uint32 AsScene1907Symbol::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		if (!_isPluggedIn && !_symbolFlag1) {
+		if (!_isPluggedIn && !_plugInFailed) {
 			tryToPlugIn();
 			messageResult = 1;
-		} else {
+		} else
 			messageResult = 0;
-		}
 		break;
 	}
 	return messageResult;
@@ -324,14 +295,12 @@ void AsScene1907Symbol::suMoveDown() {
 void AsScene1907Symbol::suMoveUp() {
 	_y -= _yIncr;
 	if (getGlobalVar(V_WALL_BROKEN)) {
-		if (_y - (9 + (_elementIndex > 5 ? 31 : 0)) < kAsScene1907SymbolPluggedInPositions[_elementIndex].y) {
+		if (_y - (9 + (_elementIndex > 5 ? 31 : 0)) < kAsScene1907SymbolPluggedInPositions[_elementIndex].y)
 			_yIncr--;
-		} else {
+		else
 			_yIncr++;
-		}
-	} else {
+	} else
 		_yIncr = 2;
-	}
 	if (_yIncr > 9)
 		_yIncr = 9;
 	else if (_yIncr < 1)
@@ -345,7 +314,7 @@ void AsScene1907Symbol::suMoveUp() {
 
 void AsScene1907Symbol::tryToPlugIn() {
 	_isPluggedIn = true;
-	_symbolFlag2++;
+	_plugInTryCount++;
 	_newPositionIndex = _parentScene->getNextPosition();
 	_parentScene->setPositionFree(_currPositionIndex, true);
 	sendMessage(_parentScene, 0x1022, 1100 + _newPositionIndex);
@@ -361,7 +330,7 @@ void AsScene1907Symbol::tryToPlugIn() {
 	if (_elementIndex == _newPositionIndex) {
 		NextState(&AsScene1907Symbol::stPlugIn);
 	} else {
-		_symbolFlag1 = 1;
+		_plugInFailed = true;
 		NextState(&AsScene1907Symbol::stPlugInFail);
 	}
 }
@@ -406,8 +375,8 @@ void AsScene1907Symbol::stFallOffHitGround() {
 
 void AsScene1907Symbol::cbFallOffHitGroundEvent() {
 	_currPositionIndex = _newPositionIndex;
-	if (_symbolFlag2)
-		_symbolFlag2--;
+	if (_plugInTryCount > 0)
+		_plugInTryCount--;
 	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
 	_newStickFrameIndex = 0;
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -434,7 +403,7 @@ void AsScene1907Symbol::stPlugInFail() {
 }
 
 void AsScene1907Symbol::moveUp() {
-	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);//????
+	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);
 	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteUpdate(&AsScene1907Symbol::suMoveUp);
@@ -443,7 +412,7 @@ void AsScene1907Symbol::moveUp() {
 }
 
 void AsScene1907Symbol::moveDown() {
-	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);//????
+	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);
 	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteUpdate(&AsScene1907Symbol::suMoveDown);
@@ -546,7 +515,7 @@ void AsScene1907WaterHint::hide() {
 	SetMessageHandler(&Sprite::handleMessage);
 }
 
-Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule, int which)	
+Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)	
 	: Scene(vm, parentModule, true), _currMovingSymbolIndex(0), _pluggedInCount(0), 
 	_moveDownCountdown(0), _moveUpCountdown(0), _countdown3(0), _hasPlugInFailed(false) {
 	
@@ -662,11 +631,12 @@ void Scene1907::plugInFailed() {
 int Scene1907::getRandomPositionIndex() {
 	bool flag = false;
 	int index = 0;
-	for (int i = 0; i < 9; i++) {
+	// Check if any position is free
+	for (int i = 0; i < 9; i++)
 		if (_positionFree[i])
 			flag = true;
-	}
 	if (flag) {
+		// Get a random free position
 		flag = false;
 		while (!flag) {
 			index = _vm->_rnd->getRandomNumber(9 - 1);

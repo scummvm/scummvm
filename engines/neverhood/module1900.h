@@ -35,6 +35,7 @@ public:
 	Module1900(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1900();
 protected:
+	int _sceneNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createScene(int sceneNum, int which);
 	void updateScene();
@@ -75,8 +76,8 @@ protected:
 	int _deltaX, _smallDeltaX;
 	int _deltaY, _smallDeltaY;
 	// Dumb, change if possible
-	static int _symbolFlag1;
-	static int _symbolFlag2;
+	static bool _plugInFailed;
+	static int _plugInTryCount;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmTryToPlugIn(int messageNum, const MessageParam &param, Entity *sender);
@@ -117,7 +118,7 @@ protected:
 
 class Scene1907 : public Scene {
 public:
-	Scene1907(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1907(NeverhoodEngine *vm, Module *parentModule);
 	void plugInFailed();
 	void setPositionFree(int index, bool value) { _positionFree[index] = value; }
 	int getNextPosition() { return _pluggedInCount++; }
