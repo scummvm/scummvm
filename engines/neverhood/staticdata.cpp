@@ -125,19 +125,19 @@ void StaticData::load(const char *filename) {
 		_navigationLists[id] = navigationList;
 	}
 
-	// Load SceneInfo140 items
-	uint32 sceneInfo140ItemsCount = fd.readUint32LE();
-	debug("sceneInfo140ItemsCount: %d", sceneInfo140ItemsCount);
-	for (uint32 i = 0; i < sceneInfo140ItemsCount; i++) {
-		SceneInfo140 *sceneInfo140 = new SceneInfo140();
+	// Load HallOfRecordsInfo items
+	uint32 hallOfRecordsInfoItemsCount = fd.readUint32LE();
+	debug("hallOfRecordsInfoItemsCount: %d", hallOfRecordsInfoItemsCount);
+	for (uint32 i = 0; i < hallOfRecordsInfoItemsCount; i++) {
+		HallOfRecordsInfo *hallOfRecordsInfo = new HallOfRecordsInfo();
 		uint32 id = fd.readUint32LE();
-		sceneInfo140->bgFilename1 = fd.readUint32LE();
-		sceneInfo140->bgFilename2 = fd.readUint32LE();
-		sceneInfo140->txFilename = fd.readUint32LE();
-		sceneInfo140->bgFilename3 = fd.readUint32LE();
-		sceneInfo140->xPosIndex = fd.readByte();
-		sceneInfo140->count = fd.readByte();
-		_sceneInfo140Items[id] = sceneInfo140;
+		hallOfRecordsInfo->bgFilename1 = fd.readUint32LE();
+		hallOfRecordsInfo->bgFilename2 = fd.readUint32LE();
+		hallOfRecordsInfo->txFilename = fd.readUint32LE();
+		hallOfRecordsInfo->bgFilename3 = fd.readUint32LE();
+		hallOfRecordsInfo->xPosIndex = fd.readByte();
+		hallOfRecordsInfo->count = fd.readByte();
+		_hallOfRecordsInfoItems[id] = hallOfRecordsInfo;
 	}
 
 	// Load SceneInfo2700 items
@@ -185,10 +185,10 @@ NavigationList *StaticData::getNavigationList(uint32 id) {
 	return _navigationLists[id];
 }
 
-SceneInfo140 *StaticData::getSceneInfo140Item(uint32 id) {
-	if (!_sceneInfo140Items[id])
-		error("StaticData::getSceneInfo140Item() SceneInfo140 with id %08X not found", id);
-	return _sceneInfo140Items[id];
+HallOfRecordsInfo *StaticData::getHallOfRecordsInfoItem(uint32 id) {
+	if (!_hallOfRecordsInfoItems[id])
+		error("StaticData::getHallOfRecordsInfoItem() HallOfRecordsInfo with id %08X not found", id);
+	return _hallOfRecordsInfoItems[id];
 }
 
 SceneInfo2700 *StaticData::getSceneInfo2700(uint32 id) {

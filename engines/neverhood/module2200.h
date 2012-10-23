@@ -38,9 +38,10 @@ public:
 	Module2200(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2200();
 protected:
+	int _sceneNum;
 	void createScene(int sceneNum, int which);
 	void updateScene();
-	void createHallOfRecordsScene(int which, uint32 sceneInfo140Id);
+	void createHallOfRecordsScene(int which, uint32 hallOfRecordsInfoId);
 };
 
 // Scene2201
@@ -63,11 +64,11 @@ public:
 
 class AsScene2201Door : public AnimatedSprite {
 public:
-	AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *ssDoorLight, bool flag1);
+	AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *ssDoorLight, bool isOpen);
 protected:
 	Klayman *_klayman;
 	Sprite *_ssDoorLight;
-	bool _doorOpen;
+	bool _isOpen;
 	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -95,13 +96,13 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class SsScene2202PuzzleTile : public StaticSprite {
+class SsScene2202PuzzleCube : public StaticSprite {
 public:
-	SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentScene, int16 tileIndex, int16 value);
+	SsScene2202PuzzleCube(NeverhoodEngine *vm, Scene *parentScene, int16 cubePosition, int16 cubeSymbol);
 protected:
 	Scene *_parentScene;	
-	int16 _value;
-	int16 _tileIndex;
+	int16 _cubeSymbol;
+	int16 _cubePosition;
 	int16 _newX, _newY;
 	int16 _xDelta, _yDelta;
 	int16 _xIncr;
@@ -113,9 +114,9 @@ protected:
 	bool _isMoving;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void suMoveTileX();
-	void suMoveTileY();
-	void moveTile(int16 newTileIndex);
+	void suMoveCubeX();
+	void suMoveCubeY();
+	void moveCube(int16 newCubePosition);
 	void stopMoving();
 };
 
@@ -124,16 +125,16 @@ public:
 	Scene2202(NeverhoodEngine *vm, Module *parentModule, int which);
 	~Scene2202();
 protected:
-	Sprite *_ssMovingTile;
-	Sprite *_ssDoneMovingTile;
-	bool _isTileMoving;
-	int16 _movingTileIndex;
+	Sprite *_ssMovingCube;
+	Sprite *_ssDoneMovingCube;
+	bool _isCubeMoving;
+	int16 _movingCubePosition;
 	int _surfacePriority;
 	bool _leaveScene;
 	bool _isSolved;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	int16 getFreeTileIndex(int16 index);
+	int16 getFreeCubePosition(int16 index);
 	bool testIsSolved();	
 };
 
@@ -298,7 +299,7 @@ public:
 
 class Scene2207 : public Scene {
 public:
-	Scene2207(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene2207(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	Sprite *_asElevator;
 	Sprite *_ssMaskPart1;
@@ -332,7 +333,7 @@ protected:
 	int16 _rowScrollY;
 	int16 _maxRowIndex;
 	int16 _visibleRowsCount;
-	Common::Array<const char*> _strings; // TODO: Move to TextResource
+	Common::Array<const char*> _strings;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createFontSurface();
@@ -353,10 +354,10 @@ protected:
 
 class HallOfRecordsScene : public Scene {
 public:
-	HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfo140Id);
+	HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule, int which, uint32 hallOfRecordsInfoId);
 	~HallOfRecordsScene();
 protected:
-	SceneInfo140 *_sceneInfo140;
+	HallOfRecordsInfo *_hallOfRecordsInfo;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void readClickedColumn();
 };
