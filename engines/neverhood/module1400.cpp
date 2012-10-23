@@ -35,11 +35,10 @@ Module1400::Module1400(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->addMusic(0x00AD0012, 0x06333232);
 	_vm->_soundMan->addMusic(0x00AD0012, 0x624A220E);
 
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else {
+	else
 		createScene(0, 0);
-	}
 
 }
 
@@ -49,37 +48,44 @@ Module1400::~Module1400() {
 
 void Module1400::createScene(int sceneNum, int which) {
 	debug("Module1400::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_vm->_soundMan->startMusic(0x06333232, 0, 2);
 		_childObject = new Scene1401(_vm, this, which);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		_vm->_soundMan->stopMusic(0x06333232, 0, 2);
 		_vm->_soundMan->stopMusic(0x624A220E, 0, 2);
 		_childObject = new Scene1402(_vm, this, which);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		_vm->_soundMan->stopMusic(0x06333232, 0, 2);
 		_vm->_soundMan->startMusic(0x624A220E, 0, 2);
 		_childObject = new Scene1403(_vm, this, which);
 		break;
 	case 3:
+		_vm->gameState().sceneNum = 3;
 		_vm->_soundMan->startMusic(0x06333232, 0, 2);
 		_childObject = new Scene1404(_vm, this, which);
 		break;
 	case 4:
+		_vm->gameState().sceneNum = 4;
 		_vm->_soundMan->startMusic(0x06333232, 0, 2);
-		_childObject = new Scene1405(_vm, this, which);
+		_childObject = new Scene1405(_vm, this);
 		break;
 	case 5:
+		_vm->gameState().sceneNum = 5;
 		_vm->_soundMan->stopMusic(0x06333232, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 2);
 		break;
 	case 6:
+		_vm->gameState().sceneNum = 6;
 		_vm->_soundMan->stopMusic(0x06333232, 0, 2);
-		_childObject = new Scene1407(_vm, this, which);
+		_childObject = new Scene1407(_vm, this);
 		break;
 	}
 	SetUpdateHandler(&Module1400::updateScene);
@@ -88,36 +94,33 @@ void Module1400::createScene(int sceneNum, int which) {
 
 void Module1400::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createScene(1, 0);
-			} else if (_moduleResult == 2) {
+			else if (_moduleResult == 2)
 				createScene(3, 0);
-			} else {
+			else
 				leaveModule(0);
-			}
 			break;
 		case 1:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createScene(2, 0);
-			} else if (_moduleResult == 2) {
+			else if (_moduleResult == 2)
 				createScene(6, -1);
-			} else {
+			else
 				createScene(0, 1);
-			}
 			break;
 		case 2:
 			createScene(1, 1);
 			break;
 		case 3:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createScene(4, 0);
-			} else if (_moduleResult == 2) {
+			else if (_moduleResult == 2)
 				createScene(5, -1);
-			} else {
+			else
 				createScene(0, 2);
-			}
 			break;
 		case 4:
 			createScene(3, 1);
@@ -140,9 +143,9 @@ AsScene1401Pipe::AsScene1401Pipe(NeverhoodEngine *vm)
 	createSurface(900, 152, 147);
 	_x = 454;
 	_y = 217;
-	SetMessageHandler(&AsScene1401Pipe::handleMessage);
-	SetUpdateHandler(&AsScene1401Pipe::update);
 	startAnimation(0x4C210500, 0, -1);
+	SetUpdateHandler(&AsScene1401Pipe::update);
+	SetMessageHandler(&AsScene1401Pipe::handleMessage);
 }
 
 AsScene1401Pipe::~AsScene1401Pipe() {
@@ -151,9 +154,8 @@ AsScene1401Pipe::~AsScene1401Pipe() {
 
 void AsScene1401Pipe::update() {
 	AnimatedSprite::update();
-	if (_countdown1 != 0 && (--_countdown1 == 0)) {
+	if (_countdown1 != 0 && (--_countdown1 == 0))
 		stDoneSucking();
-	}
 	if (_countdown2 != 0 && (--_countdown2 == 0)) {
 		_vm->_soundMan->addSound(0x01104C08, 0x4A116437);
 		_vm->_soundMan->playSoundLooping(0x4A116437);
@@ -162,18 +164,16 @@ void AsScene1401Pipe::update() {
 
 void AsScene1401Pipe::upSuckInProjector() {
 	AnimatedSprite::update();
-	if (_countdown1 != 0) {
+	if (_countdown1 != 0)
 		_countdown1--;
-	}
 }
 
 uint32 AsScene1401Pipe::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x0A8A1490) {
+		if (param.asInteger() == 0x0A8A1490)
 			playSound(1, 0x6AB6666F);
-		}
 		break;
 	case 0x2000:
 		_countdown1 = 70;
@@ -191,11 +191,10 @@ uint32 AsScene1401Pipe::hmSuckInProjector(int messageNum, const MessageParam &pa
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		if (_countdown1 != 0) {
+		if (_countdown1 != 0)
 			stStartSucking();
-		} else {
+		else
 			stDoneSucking();
-		}
 		SetMessageHandler(&AsScene1401Pipe::handleMessage);
 		SetUpdateHandler(&AsScene1401Pipe::update);
 		break;
@@ -216,8 +215,8 @@ void AsScene1401Pipe::stDoneSucking() {
 
 void AsScene1401Pipe::stSuckInProjector() {
 	startAnimation(0x6C210810, 0, -1);
-	SetMessageHandler(&AsScene1401Pipe::hmSuckInProjector);
 	SetUpdateHandler(&AsScene1401Pipe::upSuckInProjector);
+	SetMessageHandler(&AsScene1401Pipe::hmSuckInProjector);
 }
 
 AsScene1401Mouse::AsScene1401Mouse(NeverhoodEngine *vm)
@@ -226,22 +225,21 @@ AsScene1401Mouse::AsScene1401Mouse(NeverhoodEngine *vm)
 	createSurface(100, 71, 41);
 	_x = 478;
 	_y = 433;
+	startAnimation(0xA282C472, 0, -1);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1401Mouse::handleMessage);
-	startAnimation(0xA282C472, 0, -1);
 }
 
 uint32 AsScene1401Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x66382026) {
+		if (param.asInteger() == 0x66382026)
 			playSound(0, 0x0CD84468);
-		} else if (param.asInteger() == 0x6E28061C) {
+		else if (param.asInteger() == 0x6E28061C)
 			playSound(0, 0x78C8402C);
-		} else if (param.asInteger() == 0x462F0410) {
+		else if (param.asInteger() == 0x462F0410)
 			playSound(0, 0x60984E28);
-		}
 		break;
 	case 0x4839:
 		stSuckedIn();
@@ -255,9 +253,9 @@ void AsScene1401Mouse::suSuckedIn() {
 	if (_collisionBounds.y1 <= 150) {
 		playSound(0, 0x0E32247F);
 		stopAnimation();
-		SetSpriteUpdate(NULL);
-		SetMessageHandler(NULL);
 		setVisible(false);
+		SetMessageHandler(NULL);
+		SetSpriteUpdate(NULL);
 	}
 }
 
@@ -272,9 +270,9 @@ AsScene1401Cheese::AsScene1401Cheese(NeverhoodEngine *vm)
 	createSurface(200, 152, 147);
 	_x = 427;
 	_y = 433;
+	startAnimation(0x461A1490, 0, -1);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1401Cheese::handleMessage);
-	startAnimation(0x461A1490, 0, -1);
 }
 
 uint32 AsScene1401Cheese::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -292,9 +290,9 @@ void AsScene1401Cheese::suSuckedIn() {
 	if (_collisionBounds.y1 <= 150) {
 		playSound(0, 0x18020439);
 		stopAnimation();
-		SetSpriteUpdate(NULL);
-		SetMessageHandler(NULL);
 		setVisible(false);
+		SetMessageHandler(NULL);
+		SetSpriteUpdate(NULL);
 	}
 }
 
@@ -304,29 +302,26 @@ void AsScene1401Cheese::stSuckedIn() {
 }
 
 AsScene1401BackDoor::AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen)
-	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown(0) {
+	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown(0), _isOpen(isOpen) {
 
 	_x = 320;
 	_y = 240;
 	createSurface1(0x04551900, 100);
-	SetUpdateHandler(&AsScene1401BackDoor::update);
-	SetMessageHandler(&AsScene1401BackDoor::handleMessage);
-	_newStickFrameIndex = STICK_LAST_FRAME;
 	if (isOpen) {
-		_isOpen = true;
-		startAnimation(0x04551900, -1,- 1);
+		startAnimation(0x04551900, -1, -1);
 		_countdown = 48;
 	} else {
-		_isOpen = false;
 		stopAnimation();
 		setVisible(false);
 	}
+	_newStickFrameIndex = STICK_LAST_FRAME;
+	SetUpdateHandler(&AsScene1401BackDoor::update);
+	SetMessageHandler(&AsScene1401BackDoor::handleMessage);
 }
 
 void AsScene1401BackDoor::update() {
-	if (_countdown != 0 && (--_countdown == 0)) {
+	if (_countdown != 0 && (--_countdown == 0))
 		stCloseDoor();
-	}
 	AnimatedSprite::update();
 }
 
@@ -411,29 +406,25 @@ uint32 AsCommonProjector::handleMessage(int messageNum, const MessageParam &para
 		break;
 	case 0x4807:
 		setGlobalVar(V_PROJECTOR_SLOT, (_x - _asProjectorItem->point.x) / 108);
-		if ((int8)getGlobalVar(V_PROJECTOR_SLOT) == _asProjectorItem->lockSlotIndex) {
+		if ((int8)getGlobalVar(V_PROJECTOR_SLOT) == _asProjectorItem->lockSlotIndex)
 			stStartLockedInSlot();
-		} else {
+		else
 			stIdle();
-		}
 		break;
 	case 0x480B:
 		if (param.asInteger() != 1) {
-			if ((int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount) {
+			if ((int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount)
 				incGlobalVar(V_PROJECTOR_SLOT, 1);
-			}
-		} else if (getGlobalVar(V_PROJECTOR_SLOT) > 0) {
+		} else if (getGlobalVar(V_PROJECTOR_SLOT) > 0)
 			incGlobalVar(V_PROJECTOR_SLOT, -1);
-		}
 		stMoving();
 		break;
 	case 0x480C:
 		// Check if the projector can be moved
-		if (param.asInteger() != 1) {
+		if (param.asInteger() != 1)
 			messageResult = (int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount ? 1 : 0;
-		} else {
+		else
 			messageResult = getGlobalVar(V_PROJECTOR_SLOT) > 0 ? 1 : 0;
-		}
 		break;
 	case 0x482A:
 		sendMessage(_parentScene, 0x1022, 990);
@@ -455,9 +446,8 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 		if (param.asPoint().x - _x >= 17 && param.asPoint().x - _x <= 56 &&
 			param.asPoint().y - _y >= -120 && param.asPoint().y - _y <= -82) {
 			sendMessage(_parentScene, 0x4826, 1);
-		} else {
+		} else
 			sendMessage(_parentScene, 0x4826, 0);
-		}
 		messageResult = 1;
 		break;
 	case 0x4807:
@@ -466,21 +456,18 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 		break;
 	case 0x480B:
 		if (param.asInteger() != 1) {
-			if ((int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount) {
+			if ((int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount)
 				incGlobalVar(V_PROJECTOR_SLOT, 1);
-			}
-		} else if (getGlobalVar(V_PROJECTOR_SLOT) > 0) {
+		} else if (getGlobalVar(V_PROJECTOR_SLOT) > 0)
 			incGlobalVar(V_PROJECTOR_SLOT, -1);
-		}
 		stTurnToFront();
 		break;
 	case 0x480C:
 		// Check if the projector can be moved
-		if (param.asInteger() != 1) {
+		if (param.asInteger() != 1)
 			messageResult = (int8)getGlobalVar(V_PROJECTOR_SLOT) < _asProjectorItem->maxSlotCount ? 1 : 0;
-		} else {
+		else
 			messageResult = getGlobalVar(V_PROJECTOR_SLOT) > 0 ? 1 : 0;
-		}
 		break;
 	case 0x480F:
 		stStartProjecting();
@@ -547,9 +534,9 @@ void AsCommonProjector::moveProjector() {
 		}
 	}
 
-	if (_lockedInSlot && !nowLockedInSlot) {
+	if (_lockedInSlot && !nowLockedInSlot)
 		_lockedInSlot = false;
-	} else if (!_lockedInSlot && nowLockedInSlot) {
+	else if (!_lockedInSlot && nowLockedInSlot) {
 		playSound(1, 0x5440E474);
 		_lockedInSlot = true;
 	}
@@ -561,82 +548,82 @@ void AsCommonProjector::stSuckedIn() {
 	if (_collisionBounds.y1 <= 150) {
 		sendMessage(_asPipe, 0x483A, 0);
 		stopAnimation();
+		setVisible(false);
 		SetMessageHandler(&Sprite::handleMessage);
 		SetSpriteUpdate(NULL);
-		setVisible(false);
 	}
 }
 
 void AsCommonProjector::stIdle() {
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&AsCommonProjector::handleMessage);
 	startAnimation(0x10E3042B, 0, -1);
+	SetMessageHandler(&AsCommonProjector::handleMessage);
+	SetSpriteUpdate(NULL);
 }
 
 void AsCommonProjector::stMoving() {
 	_beforeMoveX = getGlobalVar(V_PROJECTOR_SLOT) * 108 + _asProjectorItem->point.x;
 	startAnimation(0x14A10137, 0, -1);
-	SetSpriteUpdate(&AsCommonProjector::suMoving);
-	SetMessageHandler(&AsCommonProjector::handleMessage);
 	playSound(1, 0xEC008474);
+	SetMessageHandler(&AsCommonProjector::handleMessage);
+	SetSpriteUpdate(&AsCommonProjector::suMoving);
 }
 
 void AsCommonProjector::stStartLockedInSlot() {
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&AsCommonProjector::hmAnimation);
 	startAnimation(0x80C32213, 0, -1);
+	SetMessageHandler(&AsCommonProjector::hmAnimation);
+	SetSpriteUpdate(NULL);
 	NextState(&AsCommonProjector::stStayLockedInSlot);
 }
 
 void AsCommonProjector::stStayLockedInSlot() {
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&AsCommonProjector::hmLockedInSlot);
 	startAnimation(0xD23B207F, 0, -1);
+	SetMessageHandler(&AsCommonProjector::hmLockedInSlot);
+	SetSpriteUpdate(NULL);
 }
 
 void AsCommonProjector::stStartProjecting() {
 	startAnimation(0x50A80517, 0, -1);
-	SetMessageHandler(&AsCommonProjector::hmAnimation);
-	SetSpriteUpdate(NULL);
-	NextState(&AsCommonProjector::stLockedInSlot);
 	setGlobalVar(V_PROJECTOR_ACTIVE, 1);
 	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->addSound(0x05331081, 0xCE428854);
 	_vm->_soundMan->playSoundLooping(0xCE428854);
+	SetMessageHandler(&AsCommonProjector::hmAnimation);
+	SetSpriteUpdate(NULL);
+	NextState(&AsCommonProjector::stLockedInSlot);
 }
 
 void AsCommonProjector::stLockedInSlot() {
 	sendMessage(_parentScene, 0x480F, 0);
 	startAnimation(0xD833207F, 0, -1);
-	SetSpriteUpdate(NULL);
 	SetMessageHandler(&AsCommonProjector::hmLockedInSlot);
+	SetSpriteUpdate(NULL);
 }
 
 void AsCommonProjector::stStopProjecting() {
 	startAnimation(0x50A94417, 0, -1);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&AsCommonProjector::hmAnimation);
-	NextState(&AsCommonProjector::stStayLockedInSlot);
 	setGlobalVar(V_PROJECTOR_ACTIVE, 0);
 	playSound(0, 0xCC4A8456);
 	_vm->_soundMan->deleteSound(0xCE428854);
+	SetMessageHandler(&AsCommonProjector::hmAnimation);
+	SetSpriteUpdate(NULL);
+	NextState(&AsCommonProjector::stStayLockedInSlot);
 }
 
 void AsCommonProjector::stTurnToFront() {
 	_beforeMoveX = getGlobalVar(V_PROJECTOR_SLOT) * 108 + _asProjectorItem->point.x;
 	startAnimation(0x22CB4A33, 0, -1);
-	SetSpriteUpdate(&AsCommonProjector::suMoving);
 	SetMessageHandler(&AsCommonProjector::hmAnimation);
+	SetSpriteUpdate(&AsCommonProjector::suMoving);
 	NextState(&AsCommonProjector::stMoving);
 }
 
 void AsCommonProjector::stStartSuckedIn() {
 	setGlobalVar(V_PROJECTOR_LOCATION, 4);
 	setGlobalVar(V_PROJECTOR_SLOT, 0);
-	SetSpriteUpdate(&AsCommonProjector::stSuckedIn);
-	SetMessageHandler(&Sprite::handleMessage);
 	startAnimation(0x708D4712, 0, -1);
 	playSound(2);
+	SetMessageHandler(&Sprite::handleMessage);
+	SetSpriteUpdate(&AsCommonProjector::stSuckedIn);
 }
 
 Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -646,8 +633,8 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene1401::handleMessage);
 	SetUpdateHandler(&Scene1401::update);
-	setRectList(0x004B6758);
 
+	setRectList(0x004B6758);
 	setBackground(0x08221FA5);
 	setPalette(0x08221FA5);
 	insertMouse433(0x21FA108A);
@@ -668,18 +655,22 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite2->setVisible(false);
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene1401>(380, 447);
 		setMessageList(0x004B65C8);
 		_sprite1->setVisible(false);
 	} else if (which == 1) {
+		// Klaymen entering from the left
 		insertKlayman<KmScene1401>(0, 447);
 		setMessageList(0x004B65D0);
 		_sprite1->setVisible(false);
 	} else if (which == 2) {
+		// Klaymen entering from the right
 		insertKlayman<KmScene1401>(660, 447);
 		setMessageList(0x004B65D8);
 		_sprite1->setVisible(false);
 	} else {
+		// Klaymen entering from the back
 		insertKlayman<KmScene1401>(290, 413);
 		setMessageList(0x004B65E8);
 		_sprite1->setVisible(false);
@@ -704,11 +695,10 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_klayman->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
 
-	if (which == 0 && _asProjector) {
+	if (which == 0 && _asProjector)
 		sendMessage(_asProjector, 0x482B, 0);
-	}
 
-	_asBackDoor = insertSprite<AsScene1401BackDoor>(_klayman, which == 1);
+	_asBackDoor = insertSprite<AsScene1401BackDoor>(_klayman, which == 0);
 
 }
 
@@ -717,33 +707,30 @@ void Scene1401::update() {
 	if (_asProjector && !_projectorBorderFlag && _asProjector->getY() < 360) {
 		_sprite2->setVisible(true);
 		_projectorBorderFlag = true;
-	} else {
+	} else
 		_sprite2->setVisible(false);
-	}
 }
 
 uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (param.asInteger() == 0x02144CB1) {
+		if (param.asInteger() == 0x02144CB1)
 			sendEntityMessage(_klayman, 0x1014, _ssFloorButton);
-		} else if (param.asInteger() == 0x402064D8) {
+		else if (param.asInteger() == 0x402064D8)
 			sendEntityMessage(_klayman, 0x1014, _ssButton);
-		} else if (param.asInteger() == 0x01C66840) {
-			if (sendMessage(_asBackDoor, 0x2001, 0) != 0) {
+		else if (param.asInteger() == 0x01C66840) {
+			if (sendMessage(_asBackDoor, 0x2001, 0) != 0)
 				setMessageList(0x004B6690);
-			} else {
+			else
 				setMessageList(0x004B66B0);
-			}
 		}
 		break;
 	case 0x1019:
-		if (param.asInteger() != 0) {
+		if (param.asInteger() != 0)
 			leaveScene(2);
-		} else {
+		else
 			leaveScene(1);
-		}			
 		break;
 	case 0x480B:
 		if (sender == _ssFloorButton) {
@@ -755,31 +742,27 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 			if (_asProjector && _asProjector->getX() > 404 && _asProjector->getX() < 504)
 				sendMessage(_asProjector , 0x4839, 0);
-		} else if (sender == _ssButton) {
+		} else if (sender == _ssButton)
 			sendMessage(_ssButton, 0x4808, 0);
-		}
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
 			if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
 				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B6658);
-			} else {
+			} else
 				setMessageList2(0x004B65F0);
-			}
 		}						
 		break;
 	case 0x482A:
 		_sprite1->setVisible(true);
-		if (_asProjector) {
+		if (_asProjector)
 			sendMessage(_asProjector, 0x482B, 0);
-		}
 		break;
 	case 0x482B:
 		_sprite1->setVisible(false);
-		if (_asProjector) {
+		if (_asProjector)
 			sendMessage(_asProjector, 0x482A, 0);
-		}
 		break;
 	}
 	return 0;
@@ -792,10 +775,9 @@ SsScene1402BridgePart::SsScene1402BridgePart(NeverhoodEngine *vm, uint32 fileHas
 	
 	SetFilterY(&Sprite::defFilterY);
 	SetUpdateHandler(&StaticSprite::updatePosition);
-	
 }
 
-AsScene1402PuzzleBox::AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int which)
+AsScene1402PuzzleBox::AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int status)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	createSurface(900, 152, 147);
@@ -805,20 +787,20 @@ AsScene1402PuzzleBox::AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentSce
 	SetMessageHandler(&AsScene1402PuzzleBox::handleMessage);
 	_x = 279;
 	_y = 270;
-	if (which == 2) {
+	if (status == 2) {
 		// Puzzle box after the puzzle was solved
 		startAnimation(0x20060259, 0, -1);
-		NextState(&AsScene1402PuzzleBox::stMoveDownSolvedDone);
 		playSound(0, 0x419014AC);
 		loadSound(1, 0x61901C29);
-	} else if (which == 1) {
+		NextState(&AsScene1402PuzzleBox::stMoveDownSolvedDone);
+	} else if (status == 1) {
 		// Puzzle box appears
 		startAnimation(0x210A0213, 0, -1);
-		NextState(&AsScene1402PuzzleBox::stMoveUpDone);
 		playSound(0, 0x41809C6C);
+		NextState(&AsScene1402PuzzleBox::stMoveUpDone);
 	} else {
 		// Puzzle box is here
-		startAnimation(0x20060259, 0, -1);
+		startAnimation(0x20060259, -1, -1);
 		loadSound(1, 0x61901C29);
 		_newStickFrameIndex = STICK_LAST_FRAME;
 	}
@@ -879,15 +861,17 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B0C98);
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene1402>(377, 391);
 		setMessageList(0x004B0B48);
-		if (!getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
+		if (!getGlobalVar(V_MOUSE_PUZZLE_SOLVED))
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 0);
-		}
 	} else if (which == 1) {
+		// Klaymen entering from the left
 		insertKlayman<KmScene1402>(42, 391);
 		setMessageList(0x004B0B50);
 	} else if (which == 2) {
+		// Klaymen returning from the puzzle box
 		insertKlayman<KmScene1402>(377, 391);
 		setMessageList(0x004B0B60);
 		_klayman->setDoDeltaX(1);
@@ -896,10 +880,10 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 			clearRectList();
 			showMouse(false);
 			startShaking();
-		} else {
+		} else
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 0);
-		}
 	} else {
+		// Klaymen entering from the right
 		insertKlayman<KmScene1402>(513, 391);
 		setMessageList(0x004B0B58);
 		if (!getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
@@ -952,9 +936,9 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x00F43389) {
-			if (getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
+			if (getGlobalVar(V_MOUSE_PUZZLE_SOLVED))
 				leaveScene(0);
-			} else {
+			else {
 				clearRectList();
 				_klayman->setVisible(false);
 				showMouse(false);
@@ -964,11 +948,10 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x1019:
-		if (param.asInteger()) {
+		if (param.asInteger())
 			leaveScene(0);
-		} else {
+		else
 			leaveScene(1);
-		}
 		break;
 	case 0x2000:
 		stopShaking();
@@ -987,9 +970,8 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (sendMessage(_asProjector, 0x408C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
 				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B0BB8);
-			} else {
+			} else
 				setMessageList2(0x004B0B68);
-			}
 		}
 	}
 	return 0;
@@ -1100,11 +1082,10 @@ AsScene1407Mouse::AsScene1407Mouse(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _currSectionIndex(0) {
 	
 	createSurface(100, 117, 45);
-
-	SetUpdateHandler(&AnimatedSprite::update);
 	_x = 108;
 	_y = 106;
 	stIdleLookAtGoodHole();
+	SetUpdateHandler(&AnimatedSprite::update);
 }
 
 void AsScene1407Mouse::suWalkTo() {
@@ -1114,9 +1095,9 @@ void AsScene1407Mouse::suWalkTo() {
 	else if (xdelta < -_deltaX)
 		xdelta = -_deltaX;
 	_deltaX = 0;		
-	if (_walkDestX == _x) {
+	if (_walkDestX == _x)
 		sendMessage(this, 0x1019, 0);
-	} else {
+	else {
 		_x += xdelta;
 		updateBounds();
 	}
@@ -1149,13 +1130,12 @@ uint32 AsScene1407Mouse::handleMessage(int messageNum, const MessageParam &param
 				_walkDestX = kScene1407MouseHoles[holeIndex].x;
 				stWalkToHole();
 			} else {
-				if (mouseX < kScene1407MouseSections[_currSectionIndex].x1) {
+				if (mouseX < kScene1407MouseSections[_currSectionIndex].x1)
 					_walkDestX = kScene1407MouseSections[_currSectionIndex].x1;
-				} else if (mouseX > kScene1407MouseSections[_currSectionIndex].x2) {
+				else if (mouseX > kScene1407MouseSections[_currSectionIndex].x2)
 					_walkDestX = kScene1407MouseSections[_currSectionIndex].x2;
-				} else {
+				else
 					_walkDestX = mouseX;
-				}
 				stWalkToDest();
 			}
 		}
@@ -1169,14 +1149,12 @@ uint32 AsScene1407Mouse::handleMessage(int messageNum, const MessageParam &param
 			// Find the nearest hole and go through it, and exit at the first hole
 			int16 distance = 640;
 			int matchIndex = 50;
-			for (int index = 0; index < 50; index++) {
-				if (kScene1407MouseHoles[index].sectionIndex == _currSectionIndex) {
-					if (ABS(kScene1407MouseHoles[index].x - _x) < distance) {
-						matchIndex = index;
-						distance = ABS(kScene1407MouseHoles[index].x - _x);
-					}
+			for (int index = 0; index < 50; index++)
+				if (kScene1407MouseHoles[index].sectionIndex == _currSectionIndex &&
+					ABS(kScene1407MouseHoles[index].x - _x) < distance) {
+					matchIndex = index;
+					distance = ABS(kScene1407MouseHoles[index].x - _x);
 				}
-			}
 			if (matchIndex < 50) {
 				_nextHoleIndex = 0;
 				_walkDestX = kScene1407MouseHoles[matchIndex].x;
@@ -1191,16 +1169,16 @@ uint32 AsScene1407Mouse::handleMessage(int messageNum, const MessageParam &param
 void AsScene1407Mouse::stIdleLookAtGoodHole() {
 	setDoDeltaX(kScene1407MouseHoles[kScene1407MouseSections[_currSectionIndex].goodHoleIndex].x < _x ? 1 : 0);
 	startAnimation(0x72215194, 0, -1);
-	SetSpriteUpdate(NULL);
 	SetMessageHandler(&AsScene1407Mouse::handleMessage);
+	SetSpriteUpdate(NULL);
 }
 
 void AsScene1407Mouse::stWalkToDest() {
 	if (_walkDestX != _x) {
 		setDoDeltaX(_walkDestX < _x ? 1 : 0);
 		startAnimation(0x22291510, 0, -1);
-		SetSpriteUpdate(&AsScene1407Mouse::suWalkTo);
 		SetMessageHandler(&AsScene1407Mouse::handleMessage);
+		SetSpriteUpdate(&AsScene1407Mouse::suWalkTo);
 		NextState(&AsScene1407Mouse::stIdleLookAtGoodHole);
 	}
 }
@@ -1208,19 +1186,19 @@ void AsScene1407Mouse::stWalkToDest() {
 void AsScene1407Mouse::stWalkToHole() {
 	setDoDeltaX(_walkDestX < _x ? 1 : 0);
 	startAnimation(0x22291510, 0, -1);
-	SetSpriteUpdate(&AsScene1407Mouse::suWalkTo);
 	SetMessageHandler(&AsScene1407Mouse::handleMessage);
+	SetSpriteUpdate(&AsScene1407Mouse::suWalkTo);
 	NextState(&AsScene1407Mouse::stGoThroughHole);
 }
 
 void AsScene1407Mouse::stGoThroughHole() {
 	startAnimation(0x72215194, 0, -1);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(NULL);
-	SetUpdateHandler(&AsScene1407Mouse::upGoThroughHole);
-	NextState(&AsScene1407Mouse::stArriveAtHole);
 	setVisible(false);
 	_countdown = 12;
+	SetUpdateHandler(&AsScene1407Mouse::upGoThroughHole);
+	SetMessageHandler(NULL);
+	SetSpriteUpdate(NULL);
+	NextState(&AsScene1407Mouse::stArriveAtHole);
 }
 
 void AsScene1407Mouse::stArriveAtHole() {
@@ -1239,7 +1217,7 @@ void AsScene1407Mouse::stArriveAtHole() {
 	}
 }
 
-Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
+Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule, true), _puzzleSolvedCountdown(0),	_resetButtonCountdown(0) {
 
 	SetMessageHandler(&Scene1407::handleMessage);
@@ -1257,11 +1235,10 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 
 void Scene1407::update() {
 	Scene::update();
-	if (_puzzleSolvedCountdown != 0 && (--_puzzleSolvedCountdown == 0)) {
+	if (_puzzleSolvedCountdown != 0 && (--_puzzleSolvedCountdown == 0))
 		leaveScene(1);
-	} else if (_resetButtonCountdown != 0 && (--_resetButtonCountdown == 0)) {
+	else if (_resetButtonCountdown != 0 && (--_resetButtonCountdown == 0))
 		_ssResetButton->setVisible(false);
-	}
 }
 
 uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1299,35 +1276,32 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 // Scene1403
 
 Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _asProjector(NULL), _flag(false) {
+	: Scene(vm, parentModule, true), _asProjector(NULL), _isProjecting(false) {
 	
 	SetMessageHandler(&Scene1403::handleMessage);
 	
 	setRectList(0x004B1FF8);
-
 	setBackground(0x2110A234);
 	setPalette(0x2110A234);
 	insertMouse433(0x0A230219);
 
-	_class401_1 = insertStaticSprite(0x01102A33, 100);
-	_class401_1->setVisible(false);
-
-	_class401_2 = insertStaticSprite(0x04442520, 995);
-	
-	_class401_3 = insertStaticSprite(0x08742271, 995);
-
+	_sprite1 = insertStaticSprite(0x01102A33, 100);
+	_sprite1->setVisible(false);
+	_sprite2 = insertStaticSprite(0x04442520, 995);
+	_sprite3 = insertStaticSprite(0x08742271, 995);
 	_asTape1 = insertSprite<AsScene1201Tape>(this, 12, 1100, 201, 468, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape1);
 	_asTape1->setRepl(64, 0);
-
 	_asTape2 = insertSprite<AsScene1201Tape>(this, 16, 1100, 498, 468, 0x9048A093);
 	_vm->_collisionMan->addSprite(_asTape2);
 	_asTape2->setRepl(64, 0);
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene1402>(380, 463);
 		setMessageList(0x004B1F18);
 	} else {
+		// Klaymen entering from the right
 		insertKlayman<KmScene1402>(640, 463);
 		setMessageList(0x004B1F20);
 	}
@@ -1342,7 +1316,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 			_klayman->updateBounds();
 			setMessageList(0x004B1F70);
 		}
-		_asProjector->setClipRect(0, 0, 640, _class401_2->getDrawRect().y2());
+		_asProjector->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
 		_asProjector->setRepl(64, 0);
 	}
 
@@ -1354,11 +1328,11 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x100D:
 		if (param.asInteger() == 0x88C11390) {
 			setRectList(0x004B2008);
-			_flag = true;
+			_isProjecting = true;
 		} else if (param.asInteger() == 0x08821382) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			setRectList(0x004B1FF8);
-			_flag = false;
+			_isProjecting = false;
 		}
 		break;
 	case 0x1019:
@@ -1366,36 +1340,34 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x1022:
 		if (sender == _asProjector) {
-			if (param.asInteger() >= 1000) {
-				setSurfacePriority(_class401_3->getSurface(), 1100);
-			} else {
-				setSurfacePriority(_class401_3->getSurface(), 995);
-			}
+			if (param.asInteger() >= 1000)
+				setSurfacePriority(_sprite3->getSurface(), 1100);
+			else
+				setSurfacePriority(_sprite3->getSurface(), 995);
 		}
 		break;
 	case 0x4807:
-		_class401_1->setVisible(false);
+		_sprite1->setVisible(false);
 		break;
 	case 0x480F:
-		_class401_1->setVisible(true);
+		_sprite1->setVisible(true);
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
-			if (_flag) {
+			if (_isProjecting)
 				setMessageList2(0x004B1FA8);
-			} else if (param.asInteger() == 1) {
+			else if (param.asInteger() == 1) {
 				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B1F88);
 			} else if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
 				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B1F58);
-			} else {
+			} else
 				setMessageList2(0x004B1F28);
-			}
 		} else if (sender == _asTape1 || sender == _asTape2) {
-			if (_flag) {
+			if (_isProjecting)
 				setMessageList2(0x004B1FA8);
-			} else if (_messageListStatus != 2) {
+			else if (_messageListStatus != 2) {
 				sendEntityMessage(_klayman, 0x1014, sender);
 				setMessageList2(0x004B1FB8);
 			}
@@ -1416,7 +1388,6 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1404::handleMessage);
 
 	setRectList(0x004B8D80);
-
 	setBackground(0xAC0B006F);
 	setPalette(0xAC0B006F);
 	_palette->addPalette(0x00801510, 0, 65, 0);
@@ -1428,17 +1399,19 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_sprite1 = insertStaticSprite(0x1900A1F8, 1100);
-
 	_asTape = insertSprite<AsScene1201Tape>(this, 14, 1100, 281, 411, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape);
 
 	if (which < 0) {
+		// Restoring game
 		insertKlayman<KmScene1404>(376, 406);
 		setMessageList(0x004B8C28);
 	} else if (which == 1) {
+		// Klaymen returning from the tiles puzzle
 		insertKlayman<KmScene1404>(376, 406);
 		setMessageList(0x004B8C30);
 	} else if (which == 2) {
+		// Klaymen returning from the diskplayer
 		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
 			insertKlayman<KmScene1404>(347, 406);
 			_klayman->setDoDeltaX(1);
@@ -1447,6 +1420,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 		setMessageList(0x004B8D28);
 	} else {
+		// Klaymen entering from the left
 		insertKlayman<KmScene1404>(30, 406);
 		setMessageList(0x004B8C38);
 	}
@@ -1476,11 +1450,10 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x410650C2) {
-			if (_asProjector && _asProjector->getX() == 220) {
+			if (_asProjector && _asProjector->getX() == 220)
 				setMessageList(0x004B8C40);
-			} else {
+			else
 				setMessageList(0x004B8CE8);
-			}
 		}
 		break;
 	case 0x1019:
@@ -1491,9 +1464,8 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
 				sendEntityMessage(_klayman, 0x1014, _asProjector);
 				setMessageList2(0x004B8CA0);
-			} else {
+			} else
 				setMessageList2(0x004B8C40);
-			}
 		} else if (sender == _asTape && _messageListStatus != 2) {
 			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004B8CD0);
@@ -1534,21 +1506,17 @@ AsScene1405Tile::AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, ui
 	setVisible(false);
 	if (getSubVar(VA_IS_TILE_MATCH, _tileIndex))
 		_countdown = _vm->_rnd->getRandomNumber(36 - 1) + 1;
-	SetUpdateHandler(&AsScene1405Tile::update);
-	SetMessageHandler(&AsScene1405Tile::handleMessage);
-	
-	debug("getSubVar(VA_TILE_SYMBOLS, _tileIndex) = %d", getSubVar(VA_TILE_SYMBOLS, _tileIndex));
-	
 	startAnimation(0x844B805C, getSubVar(VA_TILE_SYMBOLS, _tileIndex), -1);
 	_newStickFrameIndex = (int16)getSubVar(VA_TILE_SYMBOLS, _tileIndex);
+	SetUpdateHandler(&AsScene1405Tile::update);
+	SetMessageHandler(&AsScene1405Tile::handleMessage);
 }
 
 void AsScene1405Tile::update() {
 	updateAnim();
 	updatePosition();
-	if (_countdown != 0 && (--_countdown == 0)) {
+	if (_countdown != 0 && (--_countdown == 0))
 		show();
-	}
 }
 
 uint32 AsScene1405Tile::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1581,11 +1549,14 @@ void AsScene1405Tile::hide() {
 	}
 }
 
-Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
+Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule, true), _selectFirstTile(true), _tilesLeft(48), _countdown(0) {
 
 	_vm->gameModule()->initMemoryPuzzle();
 	
+	SetUpdateHandler(&Scene1405::update);
+	SetMessageHandler(&Scene1405::handleMessage);
+
 	setBackground(0x0C0C007D);
 	setPalette(0x0C0C007D);
 	insertMouse435(0xC00790C8, 20, 620);
@@ -1596,12 +1567,8 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getSubVar(VA_IS_TILE_MATCH, tileIndex))
 			_tilesLeft--;
 	}
-	
-	loadSound(0, 0x68E25540);
-	
-	SetMessageHandler(&Scene1405::handleMessage);
-	SetUpdateHandler(&Scene1405::update);
 
+	loadSound(0, 0x68E25540);
 }
 
 void Scene1405::update() {
@@ -1623,9 +1590,8 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
-		}
 		break;
 	case 0x2000:
 		if (_selectFirstTile) {
@@ -1639,12 +1605,10 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 					setSubVar(VA_IS_TILE_MATCH, _firstTileIndex, 1);
 					setSubVar(VA_IS_TILE_MATCH, _secondTileIndex, 1);
 					_tilesLeft -= 2;
-					if (_tilesLeft == 0) {
+					if (_tilesLeft == 0)
 						playSound(0);
-					}
-				} else {
+				} else
 					_countdown = 10;
-				}
 			}
 		}
 		break;

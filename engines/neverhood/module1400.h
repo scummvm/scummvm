@@ -35,6 +35,7 @@ public:
 	Module1400(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1400();
 protected:
+	int _sceneNum;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };
@@ -154,7 +155,7 @@ public:
 
 class AsScene1402PuzzleBox : public AnimatedSprite {
 public:
-	AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int which);
+	AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int status);
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -202,7 +203,7 @@ protected:
 
 class Scene1407 : public Scene {
 public:
-	Scene1407(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1407(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	Sprite *_asMouse;
 	Sprite *_ssResetButton;
@@ -218,13 +219,13 @@ class Scene1403 : public Scene {
 public:
 	Scene1403(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_class401_1;
-	Sprite *_class401_2;
-	Sprite *_class401_3;
+	Sprite *_sprite1;
+	Sprite *_sprite2;
+	Sprite *_sprite3;
 	AsScene1201Tape *_asTape1;
 	AsScene1201Tape *_asTape2;
 	AsCommonProjector *_asProjector;
-	bool _flag;
+	bool _isProjecting;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -262,7 +263,7 @@ protected:
 
 class Scene1405 : public Scene {
 public:
-	Scene1405(NeverhoodEngine *vm, Module *parentModule, int which);
+	Scene1405(NeverhoodEngine *vm, Module *parentModule);
 	int getCountdown() const { return _countdown; }
 protected:
 	bool _selectFirstTile;
