@@ -159,6 +159,11 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	// TODO: Why do we still insist on Widestrings everywhere?
 	/*  if (_gameRef->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
 	        else text = StringUtil::AnsiToWide((char *)Text);*/
+	// HACK: J.U.L.I.A. uses CP1252, we need to fix that,
+	// And we still don't have any UTF8-support.
+	if (_gameRef->_textEncoding != TEXT_UTF8) {
+		textStr = StringUtil::ansiToWide((char *)text);
+	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
 		textStr = Common::String(textStr.c_str(), (uint32)maxLength);

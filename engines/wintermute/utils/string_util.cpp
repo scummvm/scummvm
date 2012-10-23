@@ -148,11 +148,11 @@ Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 
 // Currently this only does Ansi->ISO 8859, and only for carets.
 char simpleAnsiToWide(const AnsiString &str, uint32 &offset) {
-	char c = str[offset];
+	byte c = str[offset];
 
-	if (c == 92) {
+	if (c == 146) {
 		offset++;
-		return '\'';
+		return 39; // Replace right-quote with apostrophe
 	} else {
 		offset++;
 		return c;
@@ -162,11 +162,11 @@ char simpleAnsiToWide(const AnsiString &str, uint32 &offset) {
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::ansiToWide(const AnsiString &str) {
 	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
-	/*Common::String converted = "";
+	Common::String converted = "";
 	uint32 index = 0;
 	while (index != str.size()) {
 	    converted += simpleAnsiToWide(str, index);
-	}*/
+	}
 	// using default os locale!
 
 	/*  setlocale(LC_CTYPE, "");
@@ -176,7 +176,7 @@ WideString StringUtil::ansiToWide(const AnsiString &str) {
 	    WideString ResultString(wstr);
 	    delete[] wstr;
 	    return ResultString;*/
-	return WideString(str);
+	return WideString(converted);
 }
 
 //////////////////////////////////////////////////////////////////////////
