@@ -26,6 +26,21 @@
 
 namespace Hopkins {
 
+SoundManager::SoundManager() {
+	SPECIAL_SOUND;
+	SOUNDVOL = 0;
+	VOICEVOL = 0;
+	MUSICVOL = 0;
+	OLD_SOUNDVOL = 0;
+	OLD_MUSICVOL = 0;
+	OLD_VOICEVOL = 0;
+	SOUNDOFF = true;
+	MUSICOFF = true;
+	VOICEOFF = true;
+	TEXTOFF = false;
+	SOUND_FLAG = false;
+}
+
 void SoundManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 	SPECIAL_SOUND = 0;

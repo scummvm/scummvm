@@ -31,9 +31,9 @@ namespace Hopkins {
 class HopkinsEngine;
 
 class SoundManager {
-public:
+private:
 	HopkinsEngine *_vm;
-
+public:
 	int SPECIAL_SOUND;
 	int SOUNDVOL;
 	int VOICEVOL;
@@ -47,6 +47,7 @@ public:
 	bool TEXTOFF;
 	bool SOUND_FLAG;
 public:
+	SoundManager();
 	void setParent(HopkinsEngine *vm);
 
 	void WSOUND_INIT();

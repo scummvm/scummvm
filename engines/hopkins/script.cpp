@@ -1030,13 +1030,13 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND71.WAV", 2);
 			do {
 				if (_vm->_objectsManager.BOBPOSI(12) == 4 && !v21) {
-					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
+					_vm->_soundManager.PLAY_WAV(1);
 					v21 = 1;
 				}
 				if (_vm->_objectsManager.BOBPOSI(12) == 5)
 					v21 = 0;
 				if (_vm->_objectsManager.BOBPOSI(4) == 5 && !v21) {
-					_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
+					_vm->_soundManager.PLAY_WAV(2);
 					v21 = 1;
 				}
 				if (_vm->_objectsManager.BOBPOSI(4) == 6)
@@ -1082,13 +1082,13 @@ LABEL_1141:
 			v24 = 0;
 			do {
 				if (_vm->_objectsManager.BOBPOSI(11) == 4 && !v24) {
-					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
+					_vm->_soundManager.PLAY_WAV(1);
 					v24 = 1;
 				}
 				if (_vm->_objectsManager.BOBPOSI(11) == 5)
 					v24 = 0;
 				if (_vm->_objectsManager.BOBPOSI(8) == 11 && !v24) {
-					_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
+					_vm->_soundManager.PLAY_WAV(2);
 					v24 = 1;
 				}
 				if (_vm->_objectsManager.BOBPOSI(8) == 12)
@@ -1103,7 +1103,7 @@ LABEL_1141:
 			_vm->_objectsManager.BOBANIM_ON(6);
 			_vm->_objectsManager.SET_BOBPOSI(5, 0);
 			_vm->_objectsManager.SET_BOBPOSI(6, 0);
-			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
+			_vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(5) != 74);
@@ -1400,15 +1400,15 @@ LABEL_1141:
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(4) != 10);
-			_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
+			_vm->_soundManager.PLAY_WAV(1);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(4) != 18);
-			_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
+			_vm->_soundManager.PLAY_WAV(2);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(4) != 62);
-			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
+			_vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(4) != 77);
@@ -1425,15 +1425,15 @@ LABEL_1141:
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(5) != 10);
-			_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
+			_vm->_soundManager.PLAY_WAV(1);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(5) != 18);
-			_vm->_soundManager._vm->_soundManager.PLAY_WAV(2);
+			_vm->_soundManager.PLAY_WAV(2);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(5) != 38);
-			_vm->_soundManager._vm->_soundManager.PLAY_WAV(3);
+			_vm->_soundManager.PLAY_WAV(3);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(5) != 53);
@@ -1565,7 +1565,7 @@ LABEL_1141:
 			v41 = 0;
 			do {
 				if (_vm->_objectsManager.BOBPOSI(3) == 10 && !v41) {
-					_vm->_soundManager._vm->_soundManager.PLAY_WAV(1);
+					_vm->_soundManager.PLAY_WAV(1);
 					v41 = 1;
 				}
 				if (_vm->_objectsManager.BOBPOSI(3) == 11)
@@ -1732,7 +1732,7 @@ LABEL_1141:
 					v70 = 4;
 				if (v47 == 1)
 					v70 = 6;
-				_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
+				_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
 				if (_vm->_globals.SAUVEGARDE->data[svField341] == 1)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
@@ -1747,7 +1747,7 @@ LABEL_1141:
 				if (_vm->_globals.SAUVEGARDE->data[svField341] == 3)
 					_vm->_globals.SAUVEGARDE->data[svField340] = 0;
 			}
-			_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
+			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(6, 0, 23, 0);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 1);
 		}
@@ -1760,7 +1760,7 @@ LABEL_1141:
 					v70 = 4;
 				if (v48 == 1)
 					v70 = 6;
-				_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
+				_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
 				if (_vm->_globals.SAUVEGARDE->data[svField341] == 1)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
@@ -1775,7 +1775,7 @@ LABEL_1141:
 				if (_vm->_globals.SAUVEGARDE->data[svField341] == 3)
 					_vm->_globals.SAUVEGARDE->data[svField340] = 0;
 			}
-			_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
+			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 23, 0);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 145, 166, 3);
 		}
@@ -1788,7 +1788,7 @@ LABEL_1141:
 					v70 = 4;
 				if (v49 == 1)
 					v70 = 6;
-				_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
+				_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
 				if (_vm->_globals.SAUVEGARDE->data[svField341] == 1)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
@@ -1803,13 +1803,13 @@ LABEL_1141:
 				if (_vm->_globals.SAUVEGARDE->data[svField341] == 3)
 					_vm->_globals.SAUVEGARDE->data[svField340] = 0;
 			}
-			_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
+			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(4, 0, 23, 0);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 296, 212, 5);
 		}
 		if (v76 == 239) {
 			_vm->_objectsManager.SPRITE_OFF(0);
-			_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND84.WAV");
+			_vm->_soundManager.PLAY_SOUND("SOUND84.WAV");
 			_vm->_objectsManager.OPTI_ONE(16, 0, 10, 0);
 		}
 		if (v76 == 240) {
@@ -1818,13 +1818,13 @@ LABEL_1141:
 			do {
 				_vm->_eventsManager.VBL();
 				if (_vm->_objectsManager.BOBPOSI(1) == 12 && !v50) {
-					_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND86.WAV");
+					_vm->_soundManager.PLAY_SOUND("SOUND86.WAV");
 					v50 = 1;
 				}
 				if (_vm->_objectsManager.BOBPOSI(1) == 13)
 					v50 = 0;
 				if (_vm->_objectsManager.BOBPOSI(1) == 25 && !v50) {
-					_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND85.WAV");
+					_vm->_soundManager.PLAY_SOUND("SOUND85.WAV");
 					v50 = 1;
 				}
 				if (_vm->_objectsManager.BOBPOSI(1) == 25)
@@ -2055,7 +2055,7 @@ LABEL_1141:
 		if (v76 == 101)
 			_vm->_talkManager.PARLER_PERSO("tahi1.pe2");
 		if (v76 == 243) {
-			_vm->_soundManager._vm->_soundManager.PLAY_SOUND("SOUND88.WAV");
+			_vm->_soundManager.PLAY_SOUND("SOUND88.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField341] == 2) {
 				_vm->_animationManager.NO_SEQ = 1;
 				_vm->_animationManager.PLAY_SEQ(v1, "RESU.SEQ", 2, 24, 2);
