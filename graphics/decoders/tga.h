@@ -25,7 +25,7 @@
 
 /*
  * TGA decoder used in engines:
- *  - none
+ *  - wintermute
  */
 
 #ifndef GRAPHICS_DECODERS_TGA_H
