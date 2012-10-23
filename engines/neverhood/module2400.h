@@ -44,6 +44,7 @@ public:
 	Module2400(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2400();
 protected:
+	int _sceneNum;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -100,7 +101,7 @@ protected:
 	Sprite *_asWaterFlushing[5];
 	Sprite *_asDoor;
 	bool _soundToggle;
-	bool _flag;
+	bool _unkFlag;
 	int _countdown1;
 	int _countdown2;
 	int _pipeStatus;

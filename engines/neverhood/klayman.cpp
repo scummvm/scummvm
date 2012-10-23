@@ -1825,7 +1825,7 @@ void Klayman::stTurnToFront() {
 	if (!stStartAction(AnimationCallback(&Klayman::stTurnToFront))) {
 		_status2 = 0;
 		_acceptInput = false;
-		startAnimationByHash(0xCA221107, 0x8520108C, 0);
+		startAnimationByHash(0xCA221107, 0, 0x8520108C);
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::hmWalkToFront);
 		SetSpriteUpdate(&Klayman::suUpdateDestX);

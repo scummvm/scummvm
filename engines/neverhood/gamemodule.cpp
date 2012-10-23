@@ -308,6 +308,13 @@ void GameModule::startup() {
 	//setGlobalVar(V_PROJECTOR_LOCATION, 4);
 	setGlobalVar(V_KEYDOOR_UNLOCKED, 1);
 	setGlobalVar(V_LIGHTS_ON, 1);
+	setGlobalVar(V_WATER_RUNNING, 1);
+	setGlobalVar(V_HAS_TEST_TUBE, 1);
+	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 0, 3);
+	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 1, 1);
+	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 2, 2);
+	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 3, 0);
+	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 4, 4);
 	// <<<DEBUG
 
 #if 1
@@ -318,9 +325,9 @@ void GameModule::startup() {
 	//DEBUG<<<
 	*/
 
-	_vm->gameState().which = 2;
-	_vm->gameState().sceneNum = 41;
-	createModule(2200, -1);
+	_vm->gameState().which = 0;
+	_vm->gameState().sceneNum = 0;
+	createModule(2400, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
