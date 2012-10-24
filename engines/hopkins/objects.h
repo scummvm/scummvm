@@ -203,7 +203,7 @@ public:
 	void OPTI_OBJET();
 	void SPECIAL_JEU();
 	void BOB_VIVANT(int a1);
-	void VBOB(byte *a1, int a2, int a3, int a4, int a5);
+	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
 	void VBOB_OFF(int idx);
 	void ACTION_DOS(int idx);
 	void ACTION_DROITE(int idx);

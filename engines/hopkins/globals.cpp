@@ -422,26 +422,26 @@ void Globals::INIT_ANIM() {
 void Globals::INIT_VBOB() {
 	for (int idx = 0; idx < 30; ++idx) {
 		VBob[idx].field4 = 0;
-		VBob[idx].field6 = 0;
-		VBob[idx].field8 = 0;
-		VBob[idx].fieldA = 0;
+		VBob[idx].xp = 0;
+		VBob[idx].yp = 0;
+		VBob[idx].frameIndex = 0;
 		VBob[idx].fieldC = 0;
-		VBob[idx].field10 = g_PTRNUL;
-		VBob[idx].field0 = g_PTRNUL;
-		VBob[idx].field1C = g_PTRNUL;
+		VBob[idx].surface = g_PTRNUL;
+		VBob[idx].spriteData = g_PTRNUL;
+		VBob[idx].oldSpriteData = g_PTRNUL;
 	}
 }
 
 void Globals::CLEAR_VBOB() {
 	for (int idx = 0; idx < 30; ++idx) {
 		VBob[idx].field4 = 0;
-		VBob[idx].field6 = 0;
-		VBob[idx].field8 = 0;
-		VBob[idx].fieldA = 0;
+		VBob[idx].xp = 0;
+		VBob[idx].yp = 0;
+		VBob[idx].frameIndex = 0;
 		VBob[idx].fieldC = 0;
-		VBob[idx].field10 = g_PTRNUL;
-		VBob[idx].field0 = g_PTRNUL;
-		VBob[idx].field1C = g_PTRNUL;
+		VBob[idx].surface = g_PTRNUL;
+		VBob[idx].spriteData = g_PTRNUL;
+		VBob[idx].oldSpriteData = g_PTRNUL;
 	} 
 }
 

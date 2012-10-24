@@ -1426,108 +1426,104 @@ void ObjectsManager::AFF_VBOB() {
 	int idx = 0;
 	do {
 		if (_vm->_globals.VBob[idx].field4 == 4) {
-			width = Get_Largeur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
-			height = Get_Hauteur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
+			width = Get_Largeur(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
+			height = Get_Hauteur(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
 			
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN,
-				_vm->_globals.VBob[idx].field10, _vm->_globals.VBob[idx].field6,
-				_vm->_globals.VBob[idx].field8,
-				width, height);
+			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN, 
+				_vm->_globals.VBob[idx].surface, _vm->_globals.VBob[idx].xp,
+				_vm->_globals.VBob[idx].yp, width, height);
       
 			_vm->_graphicsManager.Restore_Mem(
-				_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.VBob[idx].field10,
-				_vm->_globals.VBob[idx].field6, _vm->_globals.VBob[idx].field8,
+				_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.VBob[idx].surface,
+				_vm->_globals.VBob[idx].xp, _vm->_globals.VBob[idx].yp,
 				width, height);
 
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(
-				_vm->_globals.VBob[idx].field6, _vm->_globals.VBob[idx].field8,
-				_vm->_globals.VBob[idx].field6 + width,
-				height + _vm->_globals.VBob[idx].field8);
+				_vm->_globals.VBob[idx].xp, _vm->_globals.VBob[idx].yp,
+				_vm->_globals.VBob[idx].xp + width, height + _vm->_globals.VBob[idx].yp);
       
-			if (g_PTRNUL != _vm->_globals.VBob[idx].field10)
-				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
+			if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
+				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
       
 			_vm->_globals.VBob[idx].field4 = 0;
-			_vm->_globals.VBob[idx].field10 = g_PTRNUL;
-			_vm->_globals.VBob[idx].field0 = g_PTRNUL;
-			_vm->_globals.VBob[idx].field6 = 0;
-			_vm->_globals.VBob[idx].field8 = 0;
-			_vm->_globals.VBob[idx].field14 = 0;
-			_vm->_globals.VBob[idx].field16 = 0;
-			_vm->_globals.VBob[idx].fieldA = 0;
-			_vm->_globals.VBob[idx].field18 = 0;
-			_vm->_globals.VBob[idx].field1C = g_PTRNUL;
+			_vm->_globals.VBob[idx].surface = g_PTRNUL;
+			_vm->_globals.VBob[idx].spriteData = g_PTRNUL;
+			_vm->_globals.VBob[idx].xp = 0;
+			_vm->_globals.VBob[idx].yp = 0;
+			_vm->_globals.VBob[idx].oldX = 0;
+			_vm->_globals.VBob[idx].oldY = 0;
+			_vm->_globals.VBob[idx].frameIndex = 0;
+			_vm->_globals.VBob[idx].oldFrameIndex = 0;
+			_vm->_globals.VBob[idx].oldSpriteData = g_PTRNUL;
 		}
 
 		if (_vm->_globals.VBob[idx].field4 == 3) {
-			width = Get_Largeur(_vm->_globals.VBob[idx].field1C, _vm->_globals.VBob[idx].field18);
-			height = Get_Hauteur(_vm->_globals.VBob[idx].field1C, _vm->_globals.VBob[idx].field18);
+			width = Get_Largeur(_vm->_globals.VBob[idx].oldSpriteData, _vm->_globals.VBob[idx].oldFrameIndex);
+			height = Get_Hauteur(_vm->_globals.VBob[idx].oldSpriteData, _vm->_globals.VBob[idx].oldFrameIndex);
       
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN,
-				_vm->_globals.VBob[idx].field10, _vm->_globals.VBob[idx].field14,
-				_vm->_globals.VBob[idx].field16,
+				_vm->_globals.VBob[idx].surface, _vm->_globals.VBob[idx].oldX,
+				_vm->_globals.VBob[idx].oldY,
 				width, height);
       
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER,
-				_vm->_globals.VBob[idx].field10, _vm->_globals.VBob[idx].field14,
-				_vm->_globals.VBob[idx].field16,
-				width, height);
+				_vm->_globals.VBob[idx].surface, _vm->_globals.VBob[idx].oldX,
+				_vm->_globals.VBob[idx].oldY, width, height);
       
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.VBob[idx].field14,
-				_vm->_globals.VBob[idx].field16, _vm->_globals.VBob[idx].field14 + width,
-				_vm->_globals.VBob[idx].field16 + height);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.VBob[idx].oldX,
+				_vm->_globals.VBob[idx].oldY, _vm->_globals.VBob[idx].oldX + width,
+				_vm->_globals.VBob[idx].oldY + height);
       
 			_vm->_globals.VBob[idx].field4 = 1;
-			_vm->_globals.VBob[idx].field1C = _vm->_globals.VBob[idx].field0;
+			_vm->_globals.VBob[idx].oldSpriteData = _vm->_globals.VBob[idx].spriteData;
       
-			if (g_PTRNUL != _vm->_globals.VBob[idx].field10)
-				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
+			if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
+				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
       
-			_vm->_globals.VBob[idx].field10 = g_PTRNUL;
-			_vm->_globals.VBob[idx].field14 = _vm->_globals.VBob[idx].field6;
-			_vm->_globals.VBob[idx].field16 = _vm->_globals.VBob[idx].field8;
-			_vm->_globals.VBob[idx].field18 = _vm->_globals.VBob[idx].fieldA;
+			_vm->_globals.VBob[idx].surface = g_PTRNUL;
+			_vm->_globals.VBob[idx].oldX = _vm->_globals.VBob[idx].xp;
+			_vm->_globals.VBob[idx].oldY = _vm->_globals.VBob[idx].yp;
+			_vm->_globals.VBob[idx].oldFrameIndex = _vm->_globals.VBob[idx].frameIndex;
 		}
 
 		if (_vm->_globals.VBob[idx].field4 == 1) {
-			width = Get_Largeur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
-			height = Get_Hauteur(_vm->_globals.VBob[idx].field0, _vm->_globals.VBob[idx].fieldA);
+			width = Get_Largeur(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
+			height = Get_Hauteur(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
       
-			if (g_PTRNUL != _vm->_globals.VBob[idx].field10)
-				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
+			if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
+				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
       
 			byte *surface = _vm->_globals.dos_malloc2(height * width);
-			_vm->_globals.VBob[idx].field10 = surface;
+			_vm->_globals.VBob[idx].surface = surface;
       
 			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_SCREEN, surface, 
-				_vm->_globals.VBob[idx].field6, _vm->_globals.VBob[idx].field8, width, height);
+				_vm->_globals.VBob[idx].xp, _vm->_globals.VBob[idx].yp, width, height);
       
-			byte *v10 = _vm->_globals.VBob[idx].field0;
+			byte *v10 = _vm->_globals.VBob[idx].spriteData;
 			if (*v10 == 78) {
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_SCREEN, v10, 
-					_vm->_globals.VBob[idx].field6 + 300,
-					_vm->_globals.VBob[idx].field8 + 300,
-					_vm->_globals.VBob[idx].fieldA,
+					_vm->_globals.VBob[idx].xp + 300, _vm->_globals.VBob[idx].yp + 300,
+					_vm->_globals.VBob[idx].frameIndex,
 					0, 0, 0);
         
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER,
-					_vm->_globals.VBob[idx].field0,
-					_vm->_globals.VBob[idx].field6 + 300, _vm->_globals.VBob[idx].field8 + 300,
-					_vm->_globals.VBob[idx].fieldA,
+					_vm->_globals.VBob[idx].spriteData,
+					_vm->_globals.VBob[idx].xp + 300, _vm->_globals.VBob[idx].yp + 300,
+					_vm->_globals.VBob[idx].frameIndex,
 					0, 0, 0);
 			} else {
 				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER,
-					v10, _vm->_globals.VBob[idx].field6 + 300, _vm->_globals.VBob[idx].field8 + 300,
-					_vm->_globals.VBob[idx].fieldA);
+					v10, _vm->_globals.VBob[idx].xp + 300, _vm->_globals.VBob[idx].yp + 300,
+					_vm->_globals.VBob[idx].frameIndex);
         
-				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_SCREEN, _vm->_globals.VBob[idx].field0,
-					_vm->_globals.VBob[idx].field6 + 300, _vm->_globals.VBob[idx].field8 + 300,
-					_vm->_globals.VBob[idx].fieldA);
+				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_SCREEN, _vm->_globals.VBob[idx].spriteData,
+					_vm->_globals.VBob[idx].xp + 300, _vm->_globals.VBob[idx].yp + 300,
+					_vm->_globals.VBob[idx].frameIndex);
 			}
       
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.VBob[idx].field6,
-				_vm->_globals.VBob[idx].field8, _vm->_globals.VBob[idx].field6 + width,
-				_vm->_globals.VBob[idx].field8 + height);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.VBob[idx].xp,
+				_vm->_globals.VBob[idx].yp , _vm->_globals.VBob[idx].xp + width,
+				_vm->_globals.VBob[idx].yp + height);
 			_vm->_globals.VBob[idx].field4 = 2;
 		}
 		++idx;
@@ -4407,35 +4403,35 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	}
 }
 
-void ObjectsManager::VBOB(byte *a1, int idx, int a3, int a4, int a5) {
+void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 	
 	if (_vm->_globals.VBob[idx].field4 <= 1) {
 		_vm->_globals.VBob[idx].field4 = 1;
-		_vm->_globals.VBob[idx].field6 = a3;
-		_vm->_globals.VBob[idx].field8 = a4;
-		_vm->_globals.VBob[idx].fieldA = a5;
-		_vm->_globals.VBob[idx].field14 = a3;
-		_vm->_globals.VBob[idx].field16 = a4;
-		_vm->_globals.VBob[idx].field18 = a5;
-		_vm->_globals.VBob[idx].field0 = a1;
-		_vm->_globals.VBob[idx].field1C = a1;
-		if (_vm->_globals.VBob[idx].field10 != g_PTRNUL)
-			_vm->_globals.VBob[idx].field10 = _vm->_globals.dos_free2(_vm->_globals.VBob[idx].field10);
+		_vm->_globals.VBob[idx].xp = xp;
+		_vm->_globals.VBob[idx].yp = yp;
+		_vm->_globals.VBob[idx].frameIndex = frameIndex;
+		_vm->_globals.VBob[idx].oldX = xp;
+		_vm->_globals.VBob[idx].oldY = yp;
+		_vm->_globals.VBob[idx].oldFrameIndex = frameIndex;
+		_vm->_globals.VBob[idx].spriteData = src;
+		_vm->_globals.VBob[idx].oldSpriteData = src;
+		if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
+			_vm->_globals.VBob[idx].surface = _vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
 	}
 	
 	int f4 = _vm->_globals.VBob[idx].field4;
 	if (f4 == 2 || f4 == 4) {
 		_vm->_globals.VBob[idx].field4 = 3;
-		_vm->_globals.VBob[idx].field14 = _vm->_globals.VBob[idx].field6;
-		_vm->_globals.VBob[idx].field16 = _vm->_globals.VBob[idx].field8;
-		_vm->_globals.VBob[idx].field1C = _vm->_globals.VBob[idx].field0;
-		_vm->_globals.VBob[idx].field18 = _vm->_globals.VBob[idx].fieldA;
-		_vm->_globals.VBob[idx].field6 = a3;
-		_vm->_globals.VBob[idx].field8 = a4;
-		_vm->_globals.VBob[idx].fieldA = a5;
-		_vm->_globals.VBob[idx].field0 = a1;
+		_vm->_globals.VBob[idx].oldX = _vm->_globals.VBob[idx].xp;
+		_vm->_globals.VBob[idx].oldY = _vm->_globals.VBob[idx].yp;
+		_vm->_globals.VBob[idx].oldSpriteData = _vm->_globals.VBob[idx].spriteData;
+		_vm->_globals.VBob[idx].oldFrameIndex = _vm->_globals.VBob[idx].frameIndex;
+		_vm->_globals.VBob[idx].xp = xp;
+		_vm->_globals.VBob[idx].yp = yp;
+		_vm->_globals.VBob[idx].frameIndex = frameIndex;
+		_vm->_globals.VBob[idx].spriteData = src;
 	}
 }
 

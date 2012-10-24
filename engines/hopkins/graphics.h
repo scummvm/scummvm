@@ -167,7 +167,7 @@ public:
 	int Magic_Number(int v);
 	void Affiche_Segment_Vesa();
 	void CopyAsm(const byte *surface);
-	void Restore_Mem(byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6);
+	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
 	int Reel_Zoom(int v, int percentage);
 	int Reel_Reduc(int v, int percentage);
 	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int a6, int a7, int a8);

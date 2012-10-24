@@ -1675,36 +1675,36 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 	} while (v4);
 }
 
-void GraphicsManager::Restore_Mem(byte *a1, const byte *a2, int a3, int a4, unsigned int a5, int a6) {
+void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height) {
 	byte *v6;
 	int v7;
-	const byte *v8;
+	const byte *srcP;
 	unsigned int i;
-	int v10;
+	int yCtr;
 
-	v6 = a3 + nbrligne2 * a4 + a1;
-	v7 = a6;
-	v8 = a2;
+	v6 = xp + nbrligne2 * yp + destSurface;
+	v7 = height;
+	srcP = src;
 	do {
-		v10 = v7;
-		if (a5 & 1) {
-			memcpy(v6, v8, a5);
-			v8 += a5;
-			v6 += a5;
-		} else if (a5 & 2) {
-			for (i = a5 >> 1; i; --i) {
-				*(uint16 *)v6 = *(uint16 *)v8;
-				v8 += 2;
+		yCtr = v7;
+		if (width & 1) {
+			memcpy(v6, srcP, width);
+			srcP += width;
+			v6 += width;
+		} else if (width & 2) {
+			for (i = width >> 1; i; --i) {
+				*(uint16 *)v6 = *(uint16 *)srcP;
+				srcP += 2;
 				v6 += 2;
 			}
 		} else {
-			memcpy(v6, v8, 4 * (a5 >> 2));
-			v8 += 4 * (a5 >> 2);
-			v6 += 4 * (a5 >> 2);
+			memcpy(v6, srcP, 4 * (width >> 2));
+			srcP += 4 * (width >> 2);
+			v6 += 4 * (width >> 2);
 		}
-		v6 = nbrligne2 + v6 - a5;
-		v7 = v10 - 1;
-	} while (v10 != 1);
+		v6 = nbrligne2 + v6 - width;
+		v7 = yCtr - 1;
+	} while (yCtr != 1);
 }
 
 int GraphicsManager::Reel_Zoom(int v, int percentage) {

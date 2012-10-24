@@ -132,18 +132,18 @@ struct BlAnimItem {
 };
 
 struct VBobItem {
-	byte *field0;
+	byte *spriteData;
 	int field4;
-	int field6;
-	int field8;
-	int fieldA;
+	int xp;
+	int yp;
+	int frameIndex;
 	int fieldC;
 	int fieldE;
-	byte *field10;
-	int field14;
-	int field16;
-	int field18;
-	byte *field1C;
+	byte *surface;
+	int oldX;
+	int oldY;
+	int oldFrameIndex;
+	byte *oldSpriteData;
 };
 
 struct ObjetWItem {
