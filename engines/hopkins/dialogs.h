@@ -32,11 +32,30 @@ namespace Hopkins {
 class HopkinsEngine;
 
 /**
- * Class for showing the options dialog
+ * Class for manging game dialogs
  */
-class OptionsDialog {
+class DialogsManager {
+private:
+	HopkinsEngine *_vm;
 public:
-	static void show(HopkinsEngine *vm);
+	bool DESACTIVE_INVENT;
+	bool INVENTFLAG;
+	bool AFFINVEN;
+	bool VIRE_INVENT;
+	int inventairex, inventairey;
+	int inventairel, inventaireh;
+	byte *Winventaire;
+	byte *inventaire2;
+public:
+	DialogsManager();
+	~DialogsManager();
+	void setParent(HopkinsEngine *vm);
+
+	void showOptionsDialog();
+	void showInventory();
+
+	void INVENT_ANIM();
+	void TEST_INVENT();
 };
 
 } // End of namespace Hopkins

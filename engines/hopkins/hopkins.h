@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 #include "hopkins/anim.h"
 #include "hopkins/debugger.h"
+#include "hopkins/dialogs.h"
 #include "hopkins/events.h"
 #include "hopkins/files.h"
 #include "hopkins/font.h"
@@ -97,6 +98,7 @@ protected:
 public:
 	Debugger _debugger;
 	AnimationManager _animationManager;
+	DialogsManager _dialogsManager;
 	EventsManager _eventsManager;
 	FontManager _fontManager;
 	Globals _globals;

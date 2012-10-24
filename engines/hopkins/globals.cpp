@@ -186,7 +186,6 @@ Globals::Globals() {
 	ICONE = NULL;
 	BUF_ZONE = NULL;
 	CACHE_BANQUE[6] = NULL;
-	Winventaire = NULL;
 	texte_tmp = NULL;
 	SPRITE_ECRAN = NULL;
 	SAUVEGARDE = NULL;
@@ -253,7 +252,6 @@ Globals::~Globals() {
 	free(ICONE);
 	dos_free2(BUF_ZONE);
 	dos_free2(CACHE_BANQUE[6]);
-	dos_free2(Winventaire);
 	dos_free2(texte_tmp);
 	dos_free2(SPRITE_ECRAN);
 	dos_free2((byte *)SAUVEGARDE);
@@ -328,8 +326,8 @@ void Globals::clearAll() {
 	NUM_FICHIER_OBJ = 0;
 	Bufferdecor = g_PTRNUL;
 	Bufferobjet = g_PTRNUL;
-	Winventaire = g_PTRNUL;
-	inventaire2 = g_PTRNUL;
+	_vm->_dialogsManager.Winventaire = g_PTRNUL;
+	_vm->_dialogsManager.inventaire2 = g_PTRNUL;
 	COUCOU = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
 	SAUVEGARDE = (Sauvegarde *)g_PTRNUL;

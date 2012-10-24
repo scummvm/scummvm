@@ -358,7 +358,6 @@ public:
 	byte *TETE;
 	byte *ICONE;
 	byte *BUF_ZONE;
-	byte *Winventaire;
 	byte *texte_tmp;
 	int texte_long;
 	int TEXTE_FORMATE;

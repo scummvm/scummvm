@@ -40,6 +40,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	g_vm = this;
 	_debugger.setParent(this);
 	_animationManager.setParent(this);
+	_dialogsManager.setParent(this);
 	_eventsManager.setParent(this);
 	_fileManager.setParent(this);
 	_fontManager.setParent(this);

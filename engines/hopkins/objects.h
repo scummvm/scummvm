@@ -64,16 +64,12 @@ private:
 public:
 	SpriteItem Sprite[6];
 	int PRIORITY;
-	int inventairex, inventairey;
-	int inventairel, inventaireh;
 	int old_cadx, old_cady, old_cadi;
 	int cadx, cady, cadi;
 	int SL_X, SL_Y;
 	int I_old_x, I_old_y;
 	int g_old_x, g_old_y;
 	int FLAG_VISIBLE_EFFACE;
-	byte *Winventaire;
-	byte *inventaire2;
 	byte *SL_SPR;
 	byte *SL_SPR2;
 	byte *sprite_ptr;
@@ -82,11 +78,8 @@ public:
 	bool SL_FLAG;
 	int SL_MODE;
 	bool FLAG_VISIBLE;
-	bool DESACTIVE_INVENT;
 	int DESACTIVE_CURSOR;
 	bool BOBTOUS;
-	bool INVENTFLAG;
-	bool AFFINVEN;
 	int my_anim;
 	int GOACTION;
 	int NUMZONE;
@@ -107,7 +100,6 @@ public:
 	int A_DEPA;
 	int MAX_DEPA;
 	int MAX_DEPA1;
-	int VIRE_INVENT;
 	int CH_TETE;
 	int T_RECTIF;
 	int DESACTIVE;
@@ -160,7 +152,6 @@ public:
 	void CALCUL_BOB(int idx);
 
 	void VERIFCACHE();
-	void INVENT_ANIM();
 	void DEF_SPRITE(int idx);
 	void DEF_CACHE(int idx);
 	void CALCUL_SPRITE(int idx);
@@ -199,8 +190,6 @@ public:
 	void PARADISE();
 	void CLEAR_ECRAN();
 	
-	void TEST_INVENT();
-	void INVENT();
 	void CHANGE_TETE(int a1, int a2);
 	void VERIFTAILLE();
 	void PACOURS_PROPRE(int16 *a1);

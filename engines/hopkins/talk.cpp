@@ -189,8 +189,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	v9 = 0;
 	_vm->_objectsManager.DESACTIVE_CURSOR = 1;
 	STATI = 1;
-	v7 = _vm->_objectsManager.DESACTIVE_INVENT;
-	_vm->_objectsManager.DESACTIVE_INVENT = 1;
+	v7 = _vm->_dialogsManager.DESACTIVE_INVENT;
+	_vm->_dialogsManager.DESACTIVE_INVENT = 1;
 	BUFFERPERSO = _vm->_fileManager.RECHERCHE_CAT(filename, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
 	if (BUFFERPERSO == g_PTRNUL) {
@@ -255,7 +255,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	_vm->_objectsManager.DESACTIVE_CURSOR = 0;
-	_vm->_objectsManager.DESACTIVE_INVENT = v7;
+	_vm->_dialogsManager.DESACTIVE_INVENT = v7;
 	STATI = 0;
 }
 

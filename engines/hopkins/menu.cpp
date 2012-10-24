@@ -207,7 +207,7 @@ int MenuManager::MENU() {
 			_vm->_eventsManager.delay(200);
 
 			// Show the options dialog
-			OptionsDialog::show(_vm);
+			_vm->_dialogsManager.showOptionsDialog();
 		}
 		if (menuIndex == INTRODUCTION) {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, 13);
