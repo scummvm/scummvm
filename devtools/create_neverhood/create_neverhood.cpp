@@ -87,7 +87,6 @@ struct HitRect {
 	uint16 messageNum;
 	
 	void load(uint32 offset) {
-		printf("Loading HitRect @ %08X...\n", offset);
 		byte *item = getData(offset);
 		x1 = READ_LE_UINT16(item + 0);
 		y1 = READ_LE_UINT16(item + 2);
@@ -117,7 +116,6 @@ struct MessageItem {
 	MessageItem(uint16 msgNum, uint32 msgParam) : messageNum(msgNum), messageParam(msgParam) {}
 	
 	void load(uint32 offset) {
-		printf("Loading MessageItem @ %08X...\n", offset);
 		byte *item = getData(offset);
 		messageNum = READ_LE_UINT16(item + 0);
 		messageParam = READ_LE_UINT32(item + 4);
@@ -140,7 +138,6 @@ struct SubRectItem {
 	uint32 messageListOffset;
 
 	void load(uint32 offset) {
-		printf("Loading SubRectItem @ %08X...\n", offset);
 		byte *item = getData(offset);
 		x1 = READ_LE_UINT16(item + 0);
 		y1 = READ_LE_UINT16(item + 2);
@@ -173,7 +170,6 @@ struct RectItem {
 	std::vector<SubRectItem> subRectItems;
 
 	void load(uint32 offset) {
-		printf("Loading RectItem @ %08X...\n", offset);
 		byte *item = getData(offset);
 		uint32 subItemOffset;
 		x1 = READ_LE_UINT16(item + 0);
@@ -217,7 +213,6 @@ struct NavigationItem {
 	uint32 mouseCursorFileHash;
 	
 	void load(uint32 offset) {
-		printf("Loading NavigationItem @ %08X...\n", offset);
 		byte *item = getData(offset);
 		fileHash = READ_LE_UINT32(item + 0); 
 		leftSmackerFileHash = READ_LE_UINT32(item + 4);
