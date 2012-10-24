@@ -39,6 +39,7 @@ public:
 	void initSaves();
 	bool bsave(const Common::String &file, const void *buf, size_t n);
 	bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
+	void bload(const Common::String &file, byte *buf);
 };
 
 } // End of namespace Hopkins

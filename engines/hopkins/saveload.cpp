@@ -58,4 +58,14 @@ void SaveLoadManager::initSaves() {
 	SAUVE_FICHIER(dataFilename, data, 100);
 }
 
+void SaveLoadManager::bload(const Common::String &file, byte *buf) {
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(file);
+	if (f == NULL)
+		error("Error openinig file - %s", file.c_str());
+
+	int32 filesize = f->size();
+	f->read(buf, filesize);
+	delete f;
+}
+
 } // End of namespace Hopkins

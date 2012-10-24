@@ -136,8 +136,10 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = 0;
+
 	_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
-	_vm->_fileManager.bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+	_vm->_saveLoadManager.bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+
 	_vm->_objectsManager.PERSO_ON = 0;
 	_vm->_eventsManager.btsouris = v14;
 	
@@ -615,7 +617,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	int v17;
 	int v18;
 	byte *v19; 
-	byte indexData[16188];
+	uint32 indexData[4047];
 	Common::String filename;
 	Common::String dest;
 	Common::File f;
@@ -624,7 +626,11 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	v18 = 0;
 	_vm->_globals.police_l = 11;
 	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, file);
+	
+	// Build up the filename
 	filename = dest = _vm->_globals.NFICHIER;
+	while (filename.lastChar() != '.')
+		filename.deleteLastChar();
 	filename += "IND";
 
 	if (!f.open(filename))
@@ -632,13 +638,14 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	filesize = f.size();
 	assert(filesize < 16188);	
 
-	f.read(indexData, filesize);
+	for (int i = 0; i < (filesize / 4); ++i)
+		indexData[i] = f.readUint32LE();
 	f.close();
 
 	if (!f.open(dest))
 		error("Error opening file - %s", dest.c_str());
 
-	f.seek(READ_LE_UINT32(&indexData[idx * 4]));
+	f.seek(indexData[idx]);
 	ptr = _vm->_globals.dos_malloc2(2058);
 	if (ptr == g_PTRNUL)
 		error("temporary TEXT");
