@@ -3291,6 +3291,44 @@ void Klayman::stStartWalkingResume() {
 	FinalizeState(&Klayman::evStartWalkingDone);
 }
 
+void Klayman::upPeekInsideBlink() {
+	update();
+	++_blinkCounter;
+	if (_blinkCounter >= _blinkCounterMax)
+		stPeekInsideBlink();
+}
+
+void Klayman::stPeekInside() {
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0xAC20C012, 8, 37);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::hmLowLevelAnimation);
+	SetSpriteUpdate(NULL);
+	NextState(&Klayman::stPeekInsideBlink);
+}
+
+void Klayman::stPeekInsideReturn() {
+	_status2 = 1;
+	_acceptInput = false;
+	startAnimation(0xAC20C012, 43, 49);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::hmLowLevelAnimation);
+	SetSpriteUpdate(NULL);
+}
+
+void Klayman::stPeekInsideBlink() {
+	_status2 = 0;
+	_acceptInput = true;
+	startAnimation(0xAC20C012, 38, 42);
+	_newStickFrameIndex = 42;
+	SetUpdateHandler(&Klayman::upPeekInsideBlink);
+	SetMessageHandler(&Klayman::hmLowLevel);
+	SetSpriteUpdate(NULL);
+	_blinkCounter = 0;
+	_blinkCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -5561,6 +5599,23 @@ uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return messageResult;
+}
+
+KmScene2732::KmScene2732(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+	
+uint32 KmScene2732::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4804:
+		GotoState(&Klayman::stPeekInside);
+		break;
+	case 0x483C:
+		GotoState(&Klayman::stPeekInsideReturn);
+		break;
+	}
+	return 0;
 }
 
 KmScene2801::KmScene2801(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)

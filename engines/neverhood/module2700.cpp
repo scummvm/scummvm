@@ -91,12 +91,13 @@ Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		which = _vm->gameState().which;
+		// Scenes 0, 30 and 31 are "normal" scenes, whereas the other scenes are tracks.
+		// "gameState().which" indicates which track the car is at.
 		if (_vm->gameState().sceneNum == 0 || _vm->gameState().sceneNum == 30 || _vm->gameState().sceneNum == 31)
 			which = -1;
 		createScene(_vm->gameState().sceneNum, which);
-	} else {
+	} else
 		createScene(0, 0);
-	}
 
 	loadSound(0, 0x00880CCC);
 	loadSound(1, 0x00880CC0);
@@ -111,17 +112,21 @@ Module2700::~Module2700() {
 
 void Module2700::createScene(int sceneNum, int which) {
 	debug("Module2700::createScene(%d, %d)", sceneNum, which);
-	if (sceneNum != 30 && sceneNum != 31)
-		_vm->gameState().which = which;
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
+		_vm->gameState().which = which;
 		_childObject = new Scene2701(_vm, this, which);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
+		_vm->gameState().which = which;
 		_childObject = new Scene2702(_vm, this, which);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
+		_vm->gameState().which = which;
 		if (which == 6 || which == 7)
 			createScene2703(which, 0x004B1710);
 		else if (which == 4 || which == 5)
@@ -132,41 +137,54 @@ void Module2700::createScene(int sceneNum, int which) {
 			createScene2703(which, 0x004B1788);
 		break;
 	case 3:
+		_vm->gameState().sceneNum = 3;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B17B0, 150);
 		break;
 	case 4:
+		_vm->gameState().sceneNum = 4;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B17D8, 150);
 		break;
 	case 5:
-		if (which >= 4) {
+		_vm->gameState().sceneNum = 5;
+		_vm->gameState().which = which;
+		if (which >= 4)
 			_childObject = new Scene2706(_vm, this, which);
-		} else if (which == 2 || which == 3) {
+		else if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1828, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B1800, 150);
-		}
 		break;
 	case 6:
+		_vm->gameState().sceneNum = 6;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1850, 150);
 		break;
 	case 7:
-		if (which == 2 || which == 3) {
+		_vm->gameState().sceneNum = 7;
+		_vm->gameState().which = which;
+		if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1878, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B18A0, 150);
-		}
 		break;
 	case 8:
-		if (which == 2 || which == 3) {
+		_vm->gameState().sceneNum = 8;
+		_vm->gameState().which = which;
+		if (which == 2 || which == 3)
 			createScene2704(which, 0x004B18C8, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B18F0, 150);
-		}
 		break;
 	case 9:
+		_vm->gameState().sceneNum = 9;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1918, 150, kScene2710StaticSprites, &kScene2710ClipRect);
 		break;
 	case 10:
+		_vm->gameState().sceneNum = 10;
+		_vm->gameState().which = which;
 		// TODO _vm->gameModule()->initScene2808Vars2();
 		_scene2711StaticSprites[0] = kScene2711FileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2)];
 		_scene2711StaticSprites[1] = kScene2711FileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1)];
@@ -177,100 +195,131 @@ void Module2700::createScene(int sceneNum, int which) {
 		createScene2704(which, 0x004B1950, 150, _scene2711StaticSprites, &kScene2711ClipRect);
 		break;
 	case 11:
+		_vm->gameState().sceneNum = 11;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B19E0, 150);
 		break;
 	case 12:
+		_vm->gameState().sceneNum = 12;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1A08, 150);
 		break;
 	case 13:
+		_vm->gameState().sceneNum = 13;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1A30, 150);
 		break;
 	case 14:
-		if (which == 4 || which == 5) {
+		_vm->gameState().sceneNum = 14;
+		_vm->gameState().which = which;
+		if (which == 4 || which == 5)
 			createScene2704(which, 0x004B1A58, 150);
-		} else if (which == 2 || which == 3) {
+		else if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1A80, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B1AA8, 150);
-		}
 		break;
 	case 15:
-		if (which == 4 || which == 5) {
+		_vm->gameState().sceneNum = 15;
+		_vm->gameState().which = which;
+		if (which == 4 || which == 5)
 			createScene2704(which, 0x004B1AD0, 150);
-		} else if (which == 2 || which == 3) {
+		else if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1AF8, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B1B20, 150);
-		}
 		break;
 	case 16:
-		if (which == 4 || which == 5) {
+		_vm->gameState().sceneNum = 16;
+		_vm->gameState().which = which;
+		if (which == 4 || which == 5)
 			createScene2704(which, 0x004B1B48, 150);
-		} else if (which == 2 || which == 3) {
+		else if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1B70, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B1B98, 150);
-		}
 		break;
 	case 17:
-		if (which == 4 || which == 5) {
+		_vm->gameState().sceneNum = 17;
+		_vm->gameState().which = which;
+		if (which == 4 || which == 5)
 			createScene2704(which, 0x004B1BC0, 150);
-		} else if (which == 2 || which == 3) {
+		else if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1BE8, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B1C10, 150);
-		}
 		break;
 	case 18:
-		if (which == 2 || which == 3) {
+		_vm->gameState().sceneNum = 18;
+		_vm->gameState().which = which;
+		if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1C38, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B1C60, 150);
-		}
 		break;
 	case 19:
-		if (which == 2 || which == 3) {
+		_vm->gameState().sceneNum = 19;
+		_vm->gameState().which = which;
+		if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1CB0, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B1C88, 150);
-		}
 		break;
 	case 20:
-		if (which == 2 || which == 3) {
+		_vm->gameState().sceneNum = 20;
+		_vm->gameState().which = which;
+		if (which == 2 || which == 3)
 			createScene2704(which, 0x004B1CD8, 150);
-		} else {
+		else
 			createScene2704(which, 0x004B1D00, 150);
-		}
 		break;
 	case 21:
+		_vm->gameState().sceneNum = 21;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1D28, 150);
 		break;
 	case 22:
+		_vm->gameState().sceneNum = 22;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1D50, 150);
 		break;
 	case 23:
+		_vm->gameState().sceneNum = 23;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1D78, 150, kScene2724StaticSprites, &kScene2724ClipRect);
 		break;
 	case 24:
+		_vm->gameState().sceneNum = 24;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1DB0, 150, kScene2725StaticSprites, &kScene2725ClipRect);
 		break;
 	case 25:
+		_vm->gameState().sceneNum = 25;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1DE8, 150);
 		break;
 	case 26:
+		_vm->gameState().sceneNum = 26;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1E10, 150);
 		break;
 	case 27:
+		_vm->gameState().sceneNum = 27;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1E38, 150);
 		break;
 	case 28:
+		_vm->gameState().sceneNum = 28;
+		_vm->gameState().which = which;
 		createScene2704(which, 0x004B1E60, 150);
 		break;
 	case 30:
+		_vm->gameState().sceneNum = 30;
 		createStaticScene(0x09507248, 0x0724C09D);
 		break;
 	case 31:
-//TODO		_childObject = new Scene2732(_vm, this, which);
+		_vm->gameState().sceneNum = 31;
+		_childObject = new Scene2732(_vm, this);
 		break;
 	}
 	SetUpdateHandler(&Module2700::updateScene);
@@ -282,10 +331,7 @@ void Module2700::createScene(int sceneNum, int which) {
 
 void Module2700::updateScene() {
 	if (!updateChild()) {
-	
-		debug("sceneNum = %d; _moduleResult = %d", _vm->gameState().sceneNum, _moduleResult);
-	
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			SceneLinkIf(1, 1, 0);
 			leaveModule(0);
@@ -444,15 +490,15 @@ void Module2700::updateScene() {
 			SceneLinkIf(1, 31, 0);
 			createScene(27, 1);
 			break;
-		case 29:
+		case 30:
 			createScene(13, 1);
 			break;
-		case 30:
+		case 31:
 			createScene(28, 1);
 			break;
 		}
 	} else {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 21:
 			if (!_raidoMusicInitialized) {
 				_vm->_soundMan->stopMusic(0x04020210, 0, 1);
@@ -469,10 +515,6 @@ void Module2700::updateScene() {
 	}
 }
 
-void Module2700::update() {
-
-}
-
 uint32 Module2700::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -486,8 +528,8 @@ uint32 Module2700::handleMessage(int messageNum, const MessageParam &param, Enti
 	return messageResult;
 }
 			
-void Module2700::createScene2703(int which, uint32 sceneInfoId, const uint32 *staticSprites, const NRect *clipRect) {
-	// TODO
+void Module2700::createScene2703(int which, uint32 sceneInfoId) {
+	_childObject = new Scene2703(_vm, this, which, sceneInfoId);
 }
 
 void Module2700::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
@@ -495,15 +537,9 @@ void Module2700::createScene2704(int which, uint32 sceneInfoId, int16 value, con
 }
 
 static const NPoint kCarShadowOffsets[] = {
-	{-63,  3},
-	{-48, 40},
-	{-33, 58},
-	{  0, 65},
-	{ 40, 53},
-	{ 56, 27},
-	{ 63,  0},
-	{-30, 26},
-	{  0, 30},
+	{-63,  3}, {-48, 40}, {-33, 58},
+	{  0, 65}, { 40, 53}, { 56, 27},
+	{ 63,  0}, {-30, 26}, {  0, 30},
 	{ 26, 25}
 };
 
@@ -588,21 +624,16 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	setBackground(sceneInfo->bgFilename);
 	setPalette(sceneInfo->bgFilename);
-
 	_palette->addPalette(calcHash("paPodFloor"), 65, 31, 65);
 	_palette->addPalette(calcHash("paKlayFloor"), 0, 65, 0);
-	
 	insertMouse433(0x08B08180);
 	
 	tempSprite = insertStaticSprite(0x1E086325, 1200);
-	
 	clipRect.set(0, 0, 640, tempSprite->getDrawRect().y2());
 
 	if (sceneInfo->class437Filename) {
-
 		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->class437Filename);
 		addEntity(_ssTrackShadowBackground);
-
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 		_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
@@ -613,10 +644,8 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
-
 	_which1 = sceneInfo->which1;
 	_which2 = sceneInfo->which2;
-
 	_dataResource.load(sceneInfo->dataResourceFilename);
 	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
 	_asCar->setPathPoints(_trackPoints);
@@ -670,9 +699,9 @@ uint32 Scene2701::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		if (param.asPoint().x >= 385) {
+		if (param.asPoint().x >= 385)
 			leaveScene(0);
-		} else {
+		else {
 			sendPointMessage(_asCar, 0x2004, param.asPoint());
 			SetMessageHandler(&Scene2701::hmRidingCar);
 		}
@@ -691,7 +720,7 @@ static const uint32 kScene2702Infos[2][3] = {
 
 
 Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _flag1(true), _newTrackIndex(-1), _count(3) {
+	: Scene(vm, parentModule, true), _isInLight(true), _newTrackIndex(-1), _count(3) {
 	
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < 3; j++)
@@ -702,22 +731,18 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	setBackground(0x18808B00);
 	setPalette(0x18808B00);
-	
 	_palette->addPalette(calcHash("paPodFloor"), 65, 31, 65);
 	_palette->addPalette(calcHash("paKlayFloor"), 0, 65, 0);
 	addEntity(_palette);
-	
 	insertMouse433(0x08B04180);
 
 	_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(0x12002035);
 	addEntity(_ssTrackShadowBackground);
-	
 	_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 	_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	insertSprite<AsCommonCarConnector>(_asCar);
 	_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
-
 	_dataResource.load(0x04310014);
 	
 	if (which == 1) {
@@ -728,7 +753,7 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 		_currTrackIndex = 2;
 		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
-		_flag1 = false;
+		_isInLight = false;
 	} else if (which == 3) {
 		_currSceneInfos = _sceneInfos[0];
 		_currTrackIndex = 0;
@@ -737,13 +762,13 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 		_currTrackIndex = 2;
 		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
-		_flag1 = false;
+		_isInLight = false;
 	} else if (which == 5) {
 		_currSceneInfos = _sceneInfos[0];
 		_currTrackIndex = 1;
 		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
-		_flag1 = false;
+		_isInLight = false;
 	} else {
 		_currSceneInfos = _sceneInfos[1];
 		_currTrackIndex = 0;
@@ -766,18 +791,16 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 
 void Scene2702::update() {
 	Scene::update();
-	if (_flag1 && _asCar->getX() > 422) {
-		debug("fade #1");
+	if (_isInLight && _asCar->getX() > 422) {
 		_palette->addBasePalette(calcHash("paPodShade"), 65, 31, 65);
 		_palette->addBasePalette(calcHash("paKlayShade"), 0, 65, 0);
 		_palette->startFadeToPalette(12);
-		_flag1 = false;
-	} else if (!_flag1 && _asCar->getX() <= 422) {
-		debug("fade #2");
+		_isInLight = false;
+	} else if (!_isInLight && _asCar->getX() <= 422) {
 		_palette->addBasePalette(calcHash("paPodFloor"), 65, 31, 65);
 		_palette->addBasePalette(calcHash("paKlayFloor"), 0, 65, 0);
 		_palette->startFadeToPalette(12);
-		_flag1 = true;
+		_isInLight = true;
 	}
 }
 
@@ -831,11 +854,10 @@ void Scene2702::findClosestTrack(NPoint pt) {
 				sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 			else
 				sendMessage(_asCar, 0x2003, 0);
-		} else if (_currTrackIndex == 2) {
+		} else if (_currTrackIndex == 2)
 			sendMessage(_asCar, 0x2003, 0);
-		} else {
+		else
 			sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
-		}
 	} else {
 		_newTrackIndex = -1;
 		sendMessage(_asCar, 0x2004, pt.x);
@@ -851,43 +873,34 @@ void Scene2702::changeTrack() {
 			sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		else
 			sendMessage(_asCar, 0x2002, 0);
-	} else if (_currTrackIndex == 2) {
+	} else if (_currTrackIndex == 2)
 		sendMessage(_asCar, 0x2002, 0);
-	} else {
+	else
 		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
-	}
 	sendMessage(_asCar, 0x2004, _newTrackDestX);
 	_newTrackIndex = -1;
 }
 
-Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
-	const uint32 *staticSprites, const NRect *clipRect)
+Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId)
 	: Scene(vm, parentModule, true) {
 
 	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(sceneInfoId);
 	
-	SetMessageHandler(&Scene2704::handleMessage);
-	SetUpdateHandler(&Scene2704::update);
+	SetMessageHandler(&Scene2703::handleMessage);
+	SetUpdateHandler(&Scene2703::update);
 	
 	setBackground(sceneInfo->bgFilename);
 	setPalette(sceneInfo->bgFilename);
-	
-	if (sceneInfo->exPaletteFilename1)
-		_palette->addPalette(sceneInfo->exPaletteFilename1, 0, 65, 0);
-	
-	if (sceneInfo->exPaletteFilename2)
-		_palette->addPalette(sceneInfo->exPaletteFilename2, 65, 31, 65);
-	
-	while (staticSprites && *staticSprites)
-		insertStaticSprite(*staticSprites++, 1100);
-
+	_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
+	_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
+	addEntity(_palette);
 	insertMouse433(sceneInfo->mouseCursorFilename);
 	
+	_palStatus = 2;
+	
 	if (sceneInfo->class437Filename) {
-
 		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->class437Filename);
 		addEntity(_ssTrackShadowBackground);
-
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 		_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
@@ -899,10 +912,132 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	}
 
 	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
-	
 	_which1 = sceneInfo->which1;
 	_which2 = sceneInfo->which2;
+	_dataResource.load(sceneInfo->dataResourceFilename);
+	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
+	_asCar->setPathPoints(_trackPoints);
+	
+	if (sceneInfo->rectListName) {
+		_rectList = _dataResource.getRectArray(sceneInfo->rectListName);
+		// TODO _asCar->setPathRects(_rectList);
+	}
 
+	if (which == _which2) {
+		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
+		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
+		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
+			sendMessage(_asCar, 0x2009, 0);
+		else
+			sendMessage(_asCar, 0x2007, 150);
+	} else {
+		NPoint testPoint = (*_trackPoints)[0];
+		sendMessage(_asCar, 0x2002, 0);
+		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
+			sendMessage(_asCar, 0x2009, 0);
+		else
+			sendMessage(_asCar, 0x2008, 150);
+	}
+	
+	if (which == 0) {
+		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
+		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
+		_palStatus = 1;
+	} else if (which == 2 || which == 4 || which == 6) {
+		_palette->addPalette(calcHash("paPodBlack"), 65, 31, 65);
+		_palette->addPalette(calcHash("paKlayBlack"), 0, 65, 0);
+		_palStatus = 0;
+	}
+	
+	_palette->copyBasePalette(0, 256, 0);
+	
+}
+
+void Scene2703::update() {
+	Scene::update();
+	if (_mouseClicked) {
+		sendPointMessage(_asCar, 0x2004, _mouseClickPos);
+		_mouseClicked = false;
+	}
+	if (_asCar->getX() > 469) {
+		if (_palStatus != 2) {
+			_palette->addBasePalette(calcHash("paPodShade"), 65, 31, 65);
+			_palette->addBasePalette(calcHash("paKlayShade"), 0, 65, 0);
+			_palette->startFadeToPalette(12);
+			_palStatus = 2;
+		}
+	} else if (_asCar->getX() > 181) {
+		if (_palStatus != 1) {
+			_palette->addBasePalette(calcHash("paPodShade"), 65, 31, 65);
+			_palette->addBasePalette(calcHash("paKlayShade"), 0, 65, 0);
+			_palette->startFadeToPalette(12);
+			_palStatus = 1;
+		}
+	} else if (_palStatus != 0) {
+		_palette->addBasePalette(calcHash("paPodBlack"), 65, 31, 65);
+		_palette->addBasePalette(calcHash("paKlayBlack"), 0, 65, 0);
+		_palette->startFadeToPalette(12);
+		_palStatus = 0;
+	}
+}
+
+uint32 Scene2703::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2005:
+		if (_which1 >= 0)
+			leaveScene(_which1);
+		break;
+	case 0x2006:
+		if (_which2 >= 0)
+			leaveScene(_which2);
+		break;
+	case 0x200D:
+		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	}
+	return 0;
+}
+		
+Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
+	const uint32 *staticSprites, const NRect *clipRect)
+	: Scene(vm, parentModule, true) {
+
+	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(sceneInfoId);
+	
+	SetMessageHandler(&Scene2704::handleMessage);
+	SetUpdateHandler(&Scene2704::update);
+	
+	setBackground(sceneInfo->bgFilename);
+	setPalette(sceneInfo->bgFilename);
+
+	if (sceneInfo->exPaletteFilename1)
+		_palette->addPalette(sceneInfo->exPaletteFilename1, 0, 65, 0);
+
+	if (sceneInfo->exPaletteFilename2)
+		_palette->addPalette(sceneInfo->exPaletteFilename2, 65, 31, 65);
+	
+	while (staticSprites && *staticSprites)
+		insertStaticSprite(*staticSprites++, 1100);
+
+	insertMouse433(sceneInfo->mouseCursorFilename);
+	
+	if (sceneInfo->class437Filename) {
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->class437Filename);
+		addEntity(_ssTrackShadowBackground);
+		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
+		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+		_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+		_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
+	} else {
+		_ssTrackShadowBackground = NULL;
+		_asCarShadow = NULL;
+		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
+	}
+
+	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
+	_which1 = sceneInfo->which1;
+	_which2 = sceneInfo->which2;
 	_dataResource.load(sceneInfo->dataResourceFilename);
 	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
 	_asCar->setPathPoints(_trackPoints);
@@ -1090,6 +1225,24 @@ void Scene2706::changeTrack() {
 		sendMessage(_asCar, 0x2002, 0);
 	sendMessage(_asCar, 0x2004, _newTrackDestX);
 	_newTrackIndex = -1;
+}
+
+Scene2732::Scene2732(NeverhoodEngine *vm, Module *parentModule)
+	: Scene(vm, parentModule, true) {
+	
+	Sprite *tempSprite;
+
+	setBackground(0x0220C041);
+	setPalette(0x0220C041);
+	insertMouse433(0x0C04502A);
+	setRectList(0x004AE360);
+
+	insertKlayman<KmScene2732>(108, 331);
+	setMessageList(0x004AE328);
+
+	tempSprite = insertStaticSprite(0x50C22C48, 1100);
+	_klayman->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
+
 }
 
 } // End of namespace Neverhood

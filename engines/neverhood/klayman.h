@@ -348,6 +348,11 @@ public:
 	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 	void evMoveVenusFlyTrapDone();
 
+	void stPeekInside();
+	void stPeekInsideReturn();
+	void stPeekInsideBlink();
+	void upPeekInsideBlink();
+
 	////////////////////////////////////////////////////////////////////////////
 
 	void stopWalking();
@@ -674,6 +679,13 @@ protected:
 class KmScene2501 : public Klayman {
 public:
 	KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2732 : public Klayman {
+public:
+	KmScene2732(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
