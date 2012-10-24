@@ -21,7 +21,6 @@
  */
 
 #include "common/system.h"
-#include "common/events.h"
 #include "common/textconsole.h"
 #include "hopkins/events.h"
 #include "hopkins/files.h"
@@ -44,6 +43,7 @@ EventsManager::EventsManager() {
 	pointeur_souris = NULL;
 	lItCounter = 0;
 	ESC_KEY = false;
+	KEY_INVENT = false;
 	btsouris = 0;
 	OLD_ICONE = 0;
 
@@ -236,14 +236,7 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			ESC_KEY = event.kbd.keycode == Common::KEYCODE_ESCAPE;
-
-			// Check for debugger
-			if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_vm->_debugger.attach();
-				_vm->_debugger.onFrame();
-			}
+			handleKey(event);
 			return;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -261,6 +254,19 @@ void EventsManager::pollEvents() {
  			break;
 		}
 	}
+}
+
+void EventsManager::handleKey(Common::Event &event) {
+	ESC_KEY = event.kbd.keycode == Common::KEYCODE_ESCAPE;
+	KEY_INVENT = event.kbd.keycode == Common::KEYCODE_i || event.kbd.keycode == Common::KEYCODE_TAB;
+
+	// Check for debugger
+	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
+		// Attach to the debugger
+		_vm->_debugger.attach();
+		_vm->_debugger.onFrame();
+	}
+
 }
 
 void EventsManager::VBL() {

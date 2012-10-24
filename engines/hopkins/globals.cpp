@@ -172,7 +172,6 @@ Globals::Globals() {
 	AFFLI = 0;
 	AFFIVBL = 0;
 	NOT_VERIF = 0;
-	AFFINVEN = 0;
 	PERSO_TYPE = 0;
 	GOACTION = 0;
 	NECESSAIRE = 0;

@@ -61,7 +61,7 @@ ObjectsManager::ObjectsManager() {
 	DESACTIVE_CURSOR = 0;
 	BOBTOUS = false;
 	INVENTFLAG = false;
-	KEY_INVENT = 0;
+	AFFINVEN = false;
 	my_anim = 0;
 	GOACTION = 0;
 	NUMZONE = 0;
@@ -83,7 +83,6 @@ ObjectsManager::ObjectsManager() {
 	MAX_DEPA = 0;
 	MAX_DEPA1 = 0;
 	VIRE_INVENT = 0;
-	AFFINVEN = 0;
 	CH_TETE = 0;
 	T_RECTIF = 0;
 	DESACTIVE = 0;
@@ -110,7 +109,7 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
 
 // Change Object
 byte *ObjectsManager::CHANGE_OBJET(int objIndex) {
-	byte *result = ObjectsManager::CAPTURE_OBJET(objIndex, 1);
+	byte *result = CAPTURE_OBJET(objIndex, 1);
 	_vm->_globals.Bufferobjet = result;
 	_vm->_globals.Nouv_objet = 1;
 	_vm->_globals.OBJET_EN_COURS = objIndex;
@@ -118,7 +117,6 @@ byte *ObjectsManager::CHANGE_OBJET(int objIndex) {
 }
 
 byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
-	byte *result = NULL;
 	byte *dataP;
 
 	dataP = 0;
@@ -148,25 +146,24 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 		if (dataP == g_PTRNUL)
 			error("CAPTURE_OBJET");
 			
-		ObjectsManager::capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, dataP, val2);
+		capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, dataP, val2);
 		break;
 
 	case 1:
-		ObjectsManager::sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_globals.Bufferobjet, val2);
-		result = _vm->_globals.Bufferobjet;
+		sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_globals.Bufferobjet, val2);
+		dataP = _vm->_globals.Bufferobjet;
 		break;
 
 	case 3:
-		ObjectsManager::capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, _vm->_globals.INVENTAIRE_OBJET, val2);
-		result = _vm->_globals.INVENTAIRE_OBJET;
+		capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, _vm->_globals.INVENTAIRE_OBJET, val2);
+		dataP = _vm->_globals.INVENTAIRE_OBJET;
 		break;
 
 	default:
-		result = dataP;
 		break;
 	}
 
-	return result;
+	return dataP;
 }
 
 // Delete Object
@@ -494,7 +491,7 @@ void ObjectsManager::AFF_SPRITES() {
 	}
   
 	_vm->_globals.NBTRI = 0;
-	if (_vm->_globals.AFFINVEN == 1) {
+	if (_vm->_objectsManager.AFFINVEN) {
 		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Winventaire, inventairex, inventairey, inventairel, inventaireh);
 		if (old_cadx && old_cady)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, inventaire2, old_cadx + 300, old_cady + 300, old_cadi + 1);
@@ -2684,7 +2681,7 @@ void ObjectsManager::PLAN_BETA() {
 
 	v1 = 0;
 	INVENTFLAG = false;
-	KEY_INVENT = 0;
+	_vm->_eventsManager.KEY_INVENT = 0;
 	_vm->_globals.Max_Propre = 1;
 	_vm->_globals.Max_Ligne_Long = 1;
 	_vm->_globals.Max_Propre_Gen = 1;
@@ -2827,7 +2824,7 @@ void ObjectsManager::BTGAUCHE() {
 		INVENTFLAG = 1;
 		INVENT();
 		INVENTFLAG = 0;
-		KEY_INVENT = 0;
+		_vm->_eventsManager.KEY_INVENT = 0;
 		if (!_vm->_globals.SORTIE) {
 			INVENTFLAG = 0;
 			_vm->_eventsManager.btsouris = v1;
@@ -3162,14 +3159,14 @@ void ObjectsManager::CLEAR_ECRAN() {
 
 void ObjectsManager::TEST_INVENT() {
 	if (_vm->_globals.PLAN_FLAG)
-		KEY_INVENT = 0;
-	if (KEY_INVENT == 1) {
+		_vm->_eventsManager.KEY_INVENT = 0;
+	if (_vm->_eventsManager.KEY_INVENT == 1) {
 		if (!INVENTFLAG) {
-			KEY_INVENT = 0;
+			_vm->_eventsManager.KEY_INVENT = 0;
 			INVENTFLAG = 1;
 			INVENT();
 			INVENTFLAG = 0;
-			KEY_INVENT = 0;
+			_vm->_eventsManager.KEY_INVENT = 0;
 		}
 	}
 }
@@ -3197,7 +3194,7 @@ void ObjectsManager::INVENT() {
 	Common::File f;
 
 	v13 = 0;
-	if (VIRE_INVENT != 1 && AFFINVEN != 1 && _vm->_globals.DESACTIVE_INVENT != 1) {
+	if (VIRE_INVENT != 1 && !AFFINVEN && _vm->_globals.DESACTIVE_INVENT != 1) {
 		_vm->_graphicsManager.no_scroll = 1;
 		FLAG_VISIBLE_EFFACE = 4;
 		FLAG_VISIBLE = 0;
@@ -3210,17 +3207,24 @@ void ObjectsManager::INVENT() {
 			++v1;
 		} while (v1 <= 1);
 		_vm->_globals.Winventaire = g_PTRNUL;
+
 LABEL_7:
 		_vm->_eventsManager.souris_bb = 0;
 		_vm->_eventsManager.souris_b = 0;
 		_vm->_globals.DESACTIVE_INVENT = 1;
 		_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
-		if (_vm->_globals.FR == 1)
-			_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTFR.SPR");
-		if (!_vm->_globals.FR)
-			_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTAN.SPR");
-		if (_vm->_globals.FR == 2)
-			_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTES.SPR");
+
+		switch (_vm->_globals.FR) {
+			case 0:
+				_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTAN.SPR");
+				break;
+			case 1:
+				_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTFR.SPR");
+				break;
+			case 2:
+				_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTES.SPR");
+				break;
+		}
 
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
@@ -3239,7 +3243,8 @@ LABEL_7:
 		inventairey = 114;
 		inventairel = v18;
 		inventaireh = v17;
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Winventaire, v19 + 300, 414, 0, 0, 0, 0);
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Winventaire, 
+			v19 + 300, 414, 0, 0, 0, 0);
 		v15 = 0;
 		v4 = 0;
 		v14 = 1;
@@ -3251,7 +3256,8 @@ LABEL_7:
 				v6 = _vm->_globals.INVENTAIRE[v4];
 				if (v6 && v4 <= 29) {
 					v7 = CAPTURE_OBJET(v6, 0);
-					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v7, v19 + v16 + 6, v15 + 120, _vm->_globals.OBJL, _vm->_globals.OBJH);
+					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v7, v19 + v16 + 6, 
+						v15 + 120, _vm->_globals.OBJL, _vm->_globals.OBJH);
 					_vm->_globals.dos_free2(v7);
 				}
 				v16 += 54;
@@ -3263,8 +3269,12 @@ LABEL_7:
 		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Winventaire, inventairex, inventairey, inventairel, inventaireh);
 		_vm->_eventsManager.souris_bb = 0;
 		v20 = 0;
-		while (1) {
-			AFFINVEN = 1;
+
+		// Main loop to select an inventory item
+		while (!_vm->shouldQuit()) {
+			// Turn on drawing the inventory dialog in the event manager
+			AFFINVEN = true;
+
 			v8 = _vm->_eventsManager.XMOUSE();
 			v9 = _vm->_eventsManager.YMOUSE();
 			v12 = _vm->_eventsManager.BMOUSE();
@@ -3316,7 +3326,7 @@ LABEL_7:
 							goto LABEL_7;
 						}
 					} else if (v20 != 1) {
-						AFFINVEN = 1;
+						AFFINVEN = true;
 					}
 				}
 			}
@@ -3329,16 +3339,17 @@ LABEL_7:
 				SPECIAL_JEU();
 		}
 		_vm->_fontManager.TEXTE_OFF(9);
-		if (AFFINVEN == 1) {
-			AFFINVEN = 0;
+		if (AFFINVEN) {
+			AFFINVEN = false;
 			v9 = 114;
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v19, 114, v18, v17, _vm->_graphicsManager.VESA_BUFFER, v19, 114);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
 			BOBTOUS = 1;
 		}
-		if (g_PTRNUL != _vm->_globals.Winventaire)
+		if (_vm->_globals.Winventaire != g_PTRNUL)
 			_vm->_globals.Winventaire = _vm->_globals.dos_free2(_vm->_globals.Winventaire);
 		inventaire2 = _vm->_globals.dos_free2(inventaire2);
+
 		if (_vm->_eventsManager.btsouris == 1)
 			OptionsDialog::show(_vm);
 		if (_vm->_eventsManager.btsouris == 3)
@@ -5855,7 +5866,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 
 	v5 = 0;
 	INVENTFLAG = 0;
-	KEY_INVENT = 0;
+	_vm->_eventsManager.KEY_INVENT = 0;
 	VIRE_INVENT = 0;
 	_vm->_graphicsManager.ofscroll = 0;
 	_vm->_globals.PLAN_FLAG = 0;
@@ -5952,7 +5963,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &
 	int xp, yp;
 
 	INVENTFLAG = 0;
-	KEY_INVENT = 0;
+	_vm->_eventsManager.KEY_INVENT = 0;
 	_vm->_objectsManager.verbe = 4;
 	_vm->_globals.MAX_COMPTE = 6;
 	_vm->_graphicsManager.ofscroll = 0;

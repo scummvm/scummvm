@@ -428,7 +428,6 @@ public:
 	int AFFIVBL;
 	int NOT_VERIF;
 	bool CACHEFLAG;
-	int AFFINVEN;
 	bool NOPARLE;
 	bool PLAN_FLAG;
 	int GOACTION;

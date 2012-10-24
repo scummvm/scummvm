@@ -86,7 +86,7 @@ public:
 	int DESACTIVE_CURSOR;
 	bool BOBTOUS;
 	bool INVENTFLAG;
-	int KEY_INVENT;
+	bool AFFINVEN;
 	int my_anim;
 	int GOACTION;
 	int NUMZONE;
@@ -108,7 +108,6 @@ public:
 	int MAX_DEPA;
 	int MAX_DEPA1;
 	int VIRE_INVENT;
-	int AFFINVEN;
 	int CH_TETE;
 	int T_RECTIF;
 	int DESACTIVE;

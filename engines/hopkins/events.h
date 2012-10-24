@@ -24,6 +24,7 @@
 #define HOPKINS_EVENTS_H
 
 #include "common/scummsys.h"
+#include "common/events.h"
 #include "common/str.h"
 
 namespace Hopkins {
@@ -38,6 +39,7 @@ private:
 	HopkinsEngine *_vm;
 
 	void pollEvents();
+	void handleKey(Common::Event &event);
 	void checkForNextFrameCounter();
 public:
 	bool souris_flag;
@@ -57,6 +59,7 @@ public:
 	uint32 _priorFrameTime;
 	bool ESC_KEY;
 	bool NOESC;
+	bool KEY_INVENT;
 	int btsouris;
 public:
 	EventsManager();
