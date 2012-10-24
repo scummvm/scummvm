@@ -321,7 +321,8 @@ void MenuManager::SAUVE_PARTIE() {
 
 	_vm->_eventsManager.VBL();
 	v1 = _vm->_globals.dos_malloc2(0x2DB4u);
-	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, v1, _vm->_eventsManager.start_x, 20, SCREEN_WIDTH * 2, 440, 0x50u);
+	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, v1, _vm->_eventsManager.start_x, 20, 
+		SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
 	_vm->_graphicsManager.INIT_TABLE(45, 80, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.Trans_bloc2(v1, _vm->_graphicsManager.TABLE_COUL, 11136);
 	LOAD_SAUVE(1);
@@ -529,7 +530,7 @@ void MenuManager::COMPUT_HOPKINS(int idx) {
 					LIT_TEXTE(8);
 				if (v12 == 53)
 					LIT_TEXTE(9);
-				if (v12 == 54) {
+				if (v12ii == 54) {
 					LIT_TEXTE(10);
 					_vm->_globals.SAUVEGARDE->data[svField270] = 4;
 				}

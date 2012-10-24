@@ -2470,52 +2470,38 @@ Video_Cont_Vbe:
 }
 
 // Reduce Screen
-// TODO: Check that v9 doesn't get set anywhere (apart from the current init to zero)
-void GraphicsManager::Reduc_Ecran(byte *a1, byte *a2, int a3, int a4, int a5, int a6, int a7) {
-	byte *v7; 
-	byte *v8; 
-	int v9 = 0; 
-	int v10 = 0; 
-	int v11; 
-	int v12; 
-	byte *v13; 
-	int v14; 
+void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int xp, int yp, int width, int height, int zoom) {
+	const byte *srcP; 
+	byte *destP; 
+	const byte *lineSrcP;
 
-	v7 = a3 + nbrligne2 * a4 + a1;
-	v8 = a2;
-	Red = a7;
-	Largeur = a5;
+	srcP = xp + nbrligne2 * yp + srcSurface;
+	destP = destSurface;
+	Red = zoom;
+	Largeur = width;
 	Red_x = 0;
 	Red_y = 0;
-	if (a7 < 100) {
-		Reduc_Ecran_L = Asm_Reduc(a5, Red);
-		Reduc_Ecran_H = Asm_Reduc(v9, Red);
-		v11 = Red;
-		do {
-			v14 = v10;
-			v13 = v7;
-			Red_y += v11;
-			if ((uint16)Red_y < 0x64u) {
+	if (zoom < 100) {
+		Reduc_Ecran_L = Asm_Reduc(width, Red);
+		Reduc_Ecran_H = Asm_Reduc(height, Red);
+
+		for (int yCtr = 0; yCtr < Reduc_Ecran_H; ++yCtr, Red_y -= 100, srcP += nbrligne2) {
+			Red_y += Red;
+			if (Red_y < 100) {
 				Red_x = 0;
-				v12 = Largeur;
-				do {
-					Red_x += v11;
-					if ((uint16)Red_x < 0x64u) {
-						*v8++ = *v7++;
+				lineSrcP = srcP;
+
+				for (int xCtr = 0; xCtr < Largeur; ++xCtr) {
+					Red_x += Red;
+					if (Red_x < 100) {
+						*destP++ = *lineSrcP++;
 					} else {
-						Red_x = Red_x - 100;
-						++v7;
+						Red_x -= 100;
+						++lineSrcP;
 					}
-					--v12;
-				} while (v12);
-				v10 = v14;
-				v7 = nbrligne2 + v13;
-			} else {
-				Red_y = Red_y - 100;
-				v7 += nbrligne2;
+				}
 			}
-			--v10;
-		} while (v10);
+		}
 	}
 }
 
