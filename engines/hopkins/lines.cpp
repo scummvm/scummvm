@@ -281,6 +281,8 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	v10 = _vm->_globals.dos_malloc2(4 * v34 + 8);
 	if (v10 == g_PTRNUL)
 		error("AJOUTE LIGNE OBSTACLE");
+
+	Common::fill(v10, v10 + 4 * v34 + 8, 0);
 	Ligne[idx].lineData = (int16 *)v10;
 
 	v32 = Ligne[idx].lineData;
