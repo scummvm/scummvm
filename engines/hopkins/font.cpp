@@ -118,10 +118,10 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 	byte *v9; 
 	const byte *v10;
 	int v11; 
-	char v13;
-	char v14;
+	byte v13;
+	byte v14;
 	int v15;
-	char v16; 
+	byte v16; 
 	int v17; 
 	int v18;
 	int v19;
@@ -129,7 +129,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 	int v21; 
 	int v22; 
 	int v23;
-	char v24; 
+	byte v24; 
 	int v25; 
 	int v27; 
 	int v28; 
@@ -235,6 +235,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			if (texte_tmp == g_PTRNUL)
 				error("Error allocating text");
 			
+			Common::fill(&texte_tmp[0], &texte_tmp[0x80a], 0);
 			f.read(texte_tmp, 0x800u);
 			f.close();
 			_vm->_globals.texte_long = 2048;
@@ -242,6 +243,8 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			v69 = 100;
 			_vm->_globals.texte_long = 100;
 			v9 = _vm->_globals.dos_malloc2(0x6Eu);
+			Common::fill(&v9[0], &v9[0x6e], 0);
+
 			texte_tmp = v9;
 			v10 = _vm->_globals.BUF_ZONE + Index[messageId];
 			memcpy(v9, v10, 0x60u);
