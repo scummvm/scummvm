@@ -36,13 +36,12 @@ static const uint32 kModule2600SoundList[] = {
 Module2600::Module2600(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else if (which == 1) {
+	else if (which == 1)
 		createScene(4, 1);
-	} else {
+	else
 		createScene(0, 1);
-	}
 
 	_vm->_soundMan->addSoundList(0x40271018, kModule2600SoundList);
 	_vm->_soundMan->setSoundListParams(kModule2600SoundList, true, 50, 600, 5, 150);
@@ -56,67 +55,74 @@ Module2600::~Module2600() {
 
 void Module2600::createScene(int sceneNum, int which) {
 	debug("Module2600::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		createNavigationScene(0x004B8608, which);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		createNavigationScene(0x004B8638, which);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		createNavigationScene(0x004B86C8, which);
 		break;
 	case 3:
-		if (getGlobalVar(V_CREATURE_ANGRY)) {
+		_vm->gameState().sceneNum = 3;
+		if (getGlobalVar(V_CREATURE_ANGRY))
 			createNavigationScene(0x004B8758, which);
-		} else {
+		else
 			createNavigationScene(0x004B86F8, which);
-		}
 		break;
 	case 4:
+		_vm->gameState().sceneNum = 4;
 		createNavigationScene(0x004B87B8, which);
 		break;
 	case 6:
+		_vm->gameState().sceneNum = 6;
 		createNavigationScene(0x004B8698, which);
 		break;
 	case 7:
+		_vm->gameState().sceneNum = 7;
 		_vm->_soundMan->deleteGroup(0x40271018);
 		createSmackerScene(0x30090001, true, true, false);
 		break;
 	case 8:
+		_vm->gameState().sceneNum = 8;
 		_childObject = new Scene2609(_vm, this, which);
 		break;
 	case 1002:
-		if (getGlobalVar(V_FRUIT_COUNTING_INDEX) == 1) {
+		_vm->gameState().sceneNum = 2;
+		if (getGlobalVar(V_FRUIT_COUNTING_INDEX) == 1)
 			createSmackerScene(0x018C0404, true, true, false);
-		} else if (getGlobalVar(V_FRUIT_COUNTING_INDEX) == 2) {
+		else if (getGlobalVar(V_FRUIT_COUNTING_INDEX) == 2)
 			createSmackerScene(0x018C0407, true, true, false);
-		} else {
+		else
 			createSmackerScene(0x818C0405, true, true, false);
-		}
-		if (getGlobalVar(V_FRUIT_COUNTING_INDEX) >= 2) {
+		if (getGlobalVar(V_FRUIT_COUNTING_INDEX) >= 2)
 			setGlobalVar(V_FRUIT_COUNTING_INDEX, 0);
-		} else {
+		else
 			incGlobalVar(V_FRUIT_COUNTING_INDEX, +1);
-		}
 		break;
 	case 1003:
+		_vm->gameState().sceneNum = 3;
 		createSmackerScene(0x001C0007, true, true, false);
 		break;
 	case 1006:
-		if (getGlobalVar(V_WATER_RUNNING)) {
+		_vm->gameState().sceneNum = 6;
+		if (getGlobalVar(V_WATER_RUNNING))
 			createSmackerScene(0x049A1181, true, true, false);
-		} else {
+		else
 			createSmackerScene(0x04981181, true, true, false);
-		}
 		break;
 	case 1008:
-		if (getGlobalVar(V_WATER_RUNNING)) {
+		_vm->gameState().sceneNum = 8;
+		if (getGlobalVar(V_WATER_RUNNING))
 			createSmackerScene(0x42B80941, true, true, false);
-		} else {
+		else
 			createSmackerScene(0x42980941, true, true, false);
-		}
 		break;
 	}
 	SetUpdateHandler(&Module2600::updateScene);
@@ -125,63 +131,57 @@ void Module2600::createScene(int sceneNum, int which) {
 
 void Module2600::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createScene(1, 3);
-			} else {
+			else
 				leaveModule(0);
-			}
 			break;
 		case 1:
-			if (_moduleResult == 0) {
+			if (_moduleResult == 0)
 				createScene(6, 0);
-			} else if (_moduleResult == 1) {
+			else if (_moduleResult == 1)
 				createScene(0, 0);
-			} else if (_moduleResult == 2) {
+			else if (_moduleResult == 2)
 				createScene(2, 1);
-			} else if (_moduleResult == 3) {
+			else if (_moduleResult == 3)
 				createScene(3, 0);
-			}
 			break;
 		case 2:
-			if (_moduleResult == 0) {
+			if (_moduleResult == 0)
 				createScene(1, 0);
-			} else if (_moduleResult == 1) {
+			else if (_moduleResult == 1)
 				createScene(1002, -1);
-			}
 			break;
 		case 3:
 			if (_moduleResult == 0) {
-				if (getGlobalVar(V_CREATURE_ANGRY)) {
+				if (getGlobalVar(V_CREATURE_ANGRY))
 					createScene(4, 0);
-				} else {
+				else
 					createScene(1003, -1);
-				}
-			} else if (_moduleResult == 2) {
+			} else if (_moduleResult == 2)
 				createScene(1, 1);
-			} else if (_moduleResult == 3) {
-				if (getGlobalVar(V_CREATURE_ANGRY)) {
+			else if (_moduleResult == 3) {
+				if (getGlobalVar(V_CREATURE_ANGRY))
 					createScene(4, 0);
-				} else {
+				else {
 					setGlobalVar(V_CREATURE_ANGRY, 1);
 					createScene(7, -1);
 				}
 			}
 			break;
 		case 4:
-			if (_moduleResult == 0) {
+			if (_moduleResult == 0)
 				leaveModule(1);
-			} else {
+			else
 				createScene(3, 1);
-			}
 			break;
 		case 6:
-			if (_moduleResult == 0) {
+			if (_moduleResult == 0)
 				createScene(1006, -1);
-			} else if (_moduleResult == 1) {
+			else if (_moduleResult == 1)
 				createScene(1, 2);
-			}
 			break;
 		case 7:
 			leaveModule(0);
@@ -208,6 +208,9 @@ void Module2600::updateScene() {
 SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
 	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
 	
+	SetUpdateHandler(&SsScene2609Button::update);
+	SetMessageHandler(&SsScene2609Button::handleMessage);
+
 	loadSprite(0x825A6923, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	if (!getGlobalVar(V_WATER_RUNNING))
 		setVisible(false);
@@ -215,8 +218,6 @@ SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
 	loadSound(1, 0x7027FD64);
 	loadSound(2, 0x44043000);
 	loadSound(3, 0x44045000);
-	SetUpdateHandler(&SsScene2609Button::update);
-	SetMessageHandler(&SsScene2609Button::handleMessage);
 }
 
 void SsScene2609Button::update() {
@@ -295,6 +296,9 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _isBusy(false) {
 	
+	SetUpdateHandler(&Scene::update);
+	SetMessageHandler(&Scene2609::handleMessage);
+
 	setBackground(0x51409A16);
 	setPalette(0x51409A16);
 	_asWater = insertSprite<AsScene2609Water>();
@@ -303,8 +307,6 @@ Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse435(0x09A1251C, 20, 620);
 	insertStaticSprite(0x02138002, 1200);
 	insertStaticSprite(0x825E2827, 1200);
-	SetMessageHandler(&Scene2609::handleMessage);
-	SetUpdateHandler(&Scene::update);
 }
 
 uint32 Scene2609::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
