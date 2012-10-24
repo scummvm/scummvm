@@ -46,6 +46,7 @@ public:
 	int PLIGNE3, PLIGNE4;
 	int PCHERCHE;
 public:
+	TalkManager();
 	void setParent(HopkinsEngine *vm);
 
 	void PARLER_PERSO2(const Common::String &filename);

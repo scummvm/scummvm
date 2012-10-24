@@ -33,6 +33,18 @@
 
 namespace Hopkins {
 
+TalkManager::TalkManager() {
+	BUFFERPERSO = NULL;
+	PALPERSO = NULL;
+	PERSOSPR = NULL;
+	ADR_ANIM = NULL;
+	TAILLEPERSO = 0;
+	STATI = 0;
+	PLIGNE1 = PLIGNE2 = 0;
+	PLIGNE3 = PLIGNE4 = 0;
+	PCHERCHE = 0;
+}
+
 void TalkManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
