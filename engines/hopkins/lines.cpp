@@ -211,7 +211,7 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 		LigneZone[idx].count = v20;
 		LigneZone[idx].field2 = a6;
 	} else {
-		_vm->_globals.BOBZONE_FLAG[a6] = 1;
+		_vm->_globals.BOBZONE_FLAG[a6] = true;
 		_vm->_globals.BOBZONE[a6] = a3;
 	}
 }

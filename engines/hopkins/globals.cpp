@@ -97,7 +97,7 @@ Globals::Globals() {
 		Common::fill((byte *)&Segment[i], (byte *)&Segment[i] + sizeof(SegmentItem), 0);
 	for (int i = 0; i < 105; ++i) {
 		BOBZONE[i] = 0;
-		BOBZONE_FLAG[i] = 0;
+		BOBZONE_FLAG[i] = false;
 	}
 	for (int i = 0; i < 500; ++i)
 		STAILLE[i] = 0;

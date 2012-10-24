@@ -3062,7 +3062,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	do {
 		v2 = v1;
 		_vm->_globals.BOBZONE[v2] = 0;
-		_vm->_globals.BOBZONE_FLAG[v2] = 0;
+		_vm->_globals.BOBZONE_FLAG[v2] = false;
 		++v1;
 	} while (v1 <= 48);
 	_vm->_eventsManager.btsouris = 4;
@@ -3963,7 +3963,7 @@ int ObjectsManager::MZONE() {
 		do {
 			v2 = _vm->_globals.BOBZONE[v1];
 			if (v2) {
-				if (_vm->_globals.BOBZONE_FLAG[v1] == 1) {
+				if (_vm->_globals.BOBZONE_FLAG[v1]) {
 					v3 = v2;
 					v15 = v3;
 					if (_vm->_globals.Bob[v3].field0) {
@@ -4626,7 +4626,7 @@ void ObjectsManager::ACTION_GAUCHE(int idx) {
 
 void ObjectsManager::ZONE_ON(int idx) {
 	if (_vm->_globals.BOBZONE[idx]) {
-		_vm->_globals.BOBZONE_FLAG[idx] = 1;
+		_vm->_globals.BOBZONE_FLAG[idx] = true;
 	} else {
 		_vm->_globals.ZONEP[idx].field10 = 1;
 	}
@@ -4634,7 +4634,7 @@ void ObjectsManager::ZONE_ON(int idx) {
 
 void ObjectsManager::ZONE_OFF(int idx) {
 	if (_vm->_globals.BOBZONE[idx]) {
-		_vm->_globals.BOBZONE_FLAG[idx] = 0;
+		_vm->_globals.BOBZONE_FLAG[idx] = false;
 	} else {
 		_vm->_globals.ZONEP[idx].field10 = 0;
 	}
@@ -4961,10 +4961,10 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 		_vm->_globals.BOBZONE[21] = 2;
 		_vm->_globals.BOBZONE[22] = 3;
 		_vm->_globals.BOBZONE[23] = 4;
-		_vm->_globals.BOBZONE_FLAG[20] = 1;
-		_vm->_globals.BOBZONE_FLAG[21] = 1;
-		_vm->_globals.BOBZONE_FLAG[22] = 1;
-		_vm->_globals.BOBZONE_FLAG[23] = 1;
+		_vm->_globals.BOBZONE_FLAG[20] = true;
+		_vm->_globals.BOBZONE_FLAG[21] = true;
+		_vm->_globals.BOBZONE_FLAG[22] = true;
+		_vm->_globals.BOBZONE_FLAG[23] = true;
 		VERBE_ON(20, 5);
 		VERBE_ON(21, 5);
 		VERBE_ON(22, 5);
