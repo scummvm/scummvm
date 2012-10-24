@@ -918,11 +918,6 @@ Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
 	_asCar->setPathPoints(_trackPoints);
 	
-	if (sceneInfo->rectListName) {
-		_rectList = _dataResource.getRectArray(sceneInfo->rectListName);
-		// TODO _asCar->setPathRects(_rectList);
-	}
-
 	if (which == _which2) {
 		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
 		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
@@ -1042,11 +1037,6 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
 	_asCar->setPathPoints(_trackPoints);
 	
-	if (sceneInfo->rectListName) {
-		_rectList = _dataResource.getRectArray(sceneInfo->rectListName);
-		// TODO _asCar->setPathRects(_rectList);
-	}
-
 	if (which == _which2) {
 		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
 		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);

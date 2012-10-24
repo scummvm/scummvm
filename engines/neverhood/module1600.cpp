@@ -210,7 +210,6 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	_newDeltaXType = -1;
 	_soundCounter = 0;
 	_pathPoints = NULL;
-	_rectList = NULL; // TODO Check if this is used
 	
 	startAnimation(0xD4220027, 0, -1);
 	setDoDeltaX(getGlobalVar(V_CAR_DELTA_X));
@@ -408,7 +407,6 @@ void AsCommonCar::stCarAtHome() {
 	_isIdle = false;
 	_isMoving = false;
 	_rectFlag = false;
-	_rectList = NULL;
 	NextState(&AsCommonCar::stLeanForwardIdle);
 	startAnimation(0x35698F78, 0, -1);
 	setDoDeltaX(doDeltaX ? 1 : 0);
@@ -452,27 +450,10 @@ void AsCommonCar::updateMovement() {
 		SetUpdateHandler(&AsCommonCar::update);
 		SetMessageHandler(&AsCommonCar::hmAnimation);
 		NextState(&AsCommonCar::stUpdateMoveDirection);
-	} else {
-		bool inRect = false;
-		uint index = 0;
-		if (_rectList && _rectList->size() > 0) {
-			while (index < _rectList->size()) {
-				NRect r = (*_rectList)[index];
-				if (_x >= r.x1 && _x <= r.x2 && _y >= r.y1 && _y <= r.y2)
-					break;
-			}
-			if (index < _rectList->size() && !_rectFlag)
-				inRect = true;
-			_rectFlag = index < _rectList->size();
-		}
-		if (inRect) {
-			gotoNextState();
-			stHandleRect();
-		} else if (_newMoveDirection != _currMoveDirection && _isMoving && !_isBusy) {
-			gotoNextState();
-			_currMoveDirection = _newMoveDirection;
-			stUpdateMoveDirection();
-		}
+	} else if (_newMoveDirection != _currMoveDirection && _isMoving && !_isBusy) {
+		gotoNextState();
+		_currMoveDirection = _newMoveDirection;
+		stUpdateMoveDirection();
 	}
 }
 

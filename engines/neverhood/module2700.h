@@ -133,7 +133,6 @@ protected:
 	int _palStatus;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
-	NRectArray *_rectList;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -151,7 +150,6 @@ protected:
 	Sprite *_asCarConnectorShadow;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
-	NRectArray *_rectList;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

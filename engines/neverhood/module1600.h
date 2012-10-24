@@ -50,7 +50,6 @@ public:
 protected:
 	Scene *_parentScene;
 	NPointArray *_pathPoints;
-	NRectArray *_rectList;
 	int _newMoveDirection;
 	int _currMoveDirection;
 	int _exitDirection;
