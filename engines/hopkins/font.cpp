@@ -350,7 +350,7 @@ LABEL_57:
 					++actualSize;
 
 				Txt[idx].lines[v20] = Common::String((const char *)v61 + v65, actualSize);
-				TRIER_TEXT[lineCount++] = actualSize;
+				TRIER_TEXT[lineCount++] = lineSize;
 
 				v65 += lineSize;
 				v11 = v21;
@@ -365,7 +365,8 @@ LABEL_57:
 					v23 = 0;
 					if (v22 - 1 > 0) {
 						do {
-							v24 = Txt[idx].lines[v66][v23];
+							Common::String &line = Txt[idx].lines[v66];
+							v24 = (v23 >= (int)line.size()) ? '\0' : line[v23];
 							if ((byte)v24 <= 0x1Fu)
 								v24 = 32;
 							ptrc += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, (byte)v24 - 32);
