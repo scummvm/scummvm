@@ -20,45 +20,27 @@
  *
  */
 
-#ifndef HOPKINS_FILES_H
-#define HOPKINS_FILES_H
+#ifndef HOPKINS_SAVELOAD_H
+#define HOPKINS_SAVELOAD_H
 
 #include "common/scummsys.h"
-#include "common/hash-str.h"
 #include "common/str.h"
-#include "common/stream.h"
 
 namespace Hopkins {
 
 class HopkinsEngine;
 
-class FileManager {
-public:
+class SaveLoadManager {
+private:
 	HopkinsEngine *_vm;
 public:
-	FileManager();
 	void setParent(HopkinsEngine *vm);
 
-	void Chage_Inifile(Common::StringMap &iniParams);
-	byte *CHARGE_FICHIER(const Common::String &file);
-	void CHARGE_FICHIER2(const Common::String &file, byte *a2);
-	void DMESS();
-	void DMESS1();
-	void bload(const Common::String &file, byte *buf);
-	int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
-	void F_Censure();
-	int CONSTRUIT_SYSTEM(const Common::String &file);
-	void CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file);
-	byte *LIBERE_FICHIER(byte *ptr);
-	byte *RECHERCHE_CAT(const Common::String &file, int a2);
-	Common::String CONSTRUIT_LINUX(const Common::String &file);
-
-	/**
-	 * Returns the size of a file. Throws an error if the file can't be found
-	 */
-	uint32 FLONG(const Common::String &filename);
+	void initSaves();
+	bool bsave(const Common::String &file, const void *buf, size_t n);
+	bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
 };
 
 } // End of namespace Hopkins
 
-#endif /* HOPKINS_GLOBALS_H */
+#endif /* HOPKINS_SAVELOAD_H */

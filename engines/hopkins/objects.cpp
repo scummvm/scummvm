@@ -4301,7 +4301,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					v1 = _vm->_globals.dos_malloc2(0x3E8u);
 					memcpy(v1, _vm->_graphicsManager.Palette, 0x301u);
 					_vm->_fileManager.CONSTRUIT_LINUX("TEMP1.SCR");
-					_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+					_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
 					if (!_vm->_graphicsManager.nbrligne)
 						_vm->_graphicsManager.ofscroll = 0;
 					_vm->_graphicsManager.NB_SCREEN();

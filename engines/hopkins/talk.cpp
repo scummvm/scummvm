@@ -91,11 +91,13 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	}
 	PERSOSPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 	_vm->_globals.CAT_FLAG = 0;
+
 	_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
-	if (_vm->_graphicsManager.nbrligne == 640)
-		_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
-	if (_vm->_graphicsManager.nbrligne == 1280)
-		_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
+	if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+	if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
+
 	if (!_vm->_graphicsManager.nbrligne)
 		_vm->_graphicsManager.ofscroll = 0;
 	_vm->_graphicsManager.NB_SCREEN();
@@ -1214,9 +1216,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.CAT_FLAG = 0;
 	_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
 	if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
-		_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
 	if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
-		_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
 	if (!_vm->_graphicsManager.nbrligne)
 		_vm->_graphicsManager.ofscroll = 0;
 	_vm->_graphicsManager.NB_SCREEN();

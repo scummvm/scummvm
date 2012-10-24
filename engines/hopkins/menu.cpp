@@ -353,14 +353,14 @@ void MenuManager::SAUVE_PARTIE() {
 		} while (v4 <= 34);
 
 		_vm->_fileManager.CONSTRUIT_LINUX(v7);
-		_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0], 0x7D0u);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0], 0x7D0u);
 		v12 = 46;
 		v13 = 69;
 		v14 = 67;
 		v15 = 82;
 		v16 = 0;
 		_vm->_fileManager.CONSTRUIT_LINUX(v7);
-		_vm->_fileManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, v1, 0x2B80u);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, v1, 0x2B80u);
 	}
 	_vm->_globals.dos_free2(v1);
 }

@@ -38,32 +38,6 @@ void FileManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-void FileManager::initSaves() {
-	Common::String dataFilename = "HISCORE.DAT";
-	byte data[100];
-	Common::fill(&data[0], &data[100], 0);
-	
-	SAUVE_FICHIER(dataFilename, data, 100);
-}
-
-// Save File
-bool FileManager::SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n) {
-	return bsave(file, buf, n);
-}
-
-bool FileManager::bsave(const Common::String &file, const void *buf, size_t n) {
-	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(file);
-
-	if (f) {
-		size_t bytesWritten = f->write(buf, n);
-		f->finalize();
-		delete f;
-
-		return bytesWritten == n;
-	} else 
-		return false;
-}
-
 // Load INI File
 void FileManager::Chage_Inifile(Common::StringMap &iniParams) {
 	// TODO: Review whether we can do something cleaner with ScummVM initialisation than 
@@ -342,6 +316,7 @@ uint32 FileManager::FLONG(const Common::String &filename) {
 
 // Build Linux
 Common::String FileManager::CONSTRUIT_LINUX(const Common::String &file) {
+	_vm->_globals.NFICHIER = file;
 	return file;
 }
 

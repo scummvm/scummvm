@@ -28,6 +28,7 @@
 #include "hopkins/graphics.h"
 #include "hopkins/hopkins.h"
 #include "hopkins/files.h"
+#include "hopkins/saveload.h"
 #include "hopkins/sound.h"
 #include "hopkins/talk.h"
 
@@ -49,6 +50,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_linesManager.setParent(this);
 	_menuManager.setParent(this);
 	_objectsManager.setParent(this);
+	_saveLoadManager.setParent(this);
 	_scriptManager.setParent(this);
 	_soundManager.setParent(this);
 	_talkManager.setParent(this);
@@ -58,7 +60,7 @@ HopkinsEngine::~HopkinsEngine() {
 }
 
 Common::Error HopkinsEngine::run() {
-	_fileManager.initSaves();
+	_saveLoadManager.initSaves();
 
 	Common::StringMap iniParams;
 	_fileManager.Chage_Inifile(iniParams);
