@@ -565,31 +565,28 @@ void MenuManager::COMPUT_HOPKINS(int idx) {
 // Load Save
 void MenuManager::LOAD_SAUVE(int a1) {
 	int v1; 
-	byte *v2; 
-	byte *v3; 
+//	byte *v2; 
+//	byte *v3; 
 	Common::String s; 
-	char v5; 
-	char v6; 
-	char v7; 
-	char v8; 
-	char v9; 
-	char v10; 
-	char v11; 
-	char v12; 
-	char v13; 
-	char v14; 
 	Common::File f;
 
-	if (_vm->_globals.FR == 1)
-		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEFR.SPR");
-	if (!_vm->_globals.FR)
+	switch (_vm->_globals.FR) {
+	case 0:
 		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEAN.SPR");
-	if (_vm->_globals.FR == 2)
+		break;
+	case 1:
+		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEFR.SPR");
+		break;
+	case 2:
 		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEES.SPR");
+		break;
+	}
+
 	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 	_vm->_fileManager.CONSTRUIT_SYSTEM("SAVE2.SPR");
 	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 483, 360, 0);
+
 	if (_vm->_globals.FR) {
 		if (a1 == 1)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 525, 375, 1);
@@ -601,21 +598,13 @@ void MenuManager::LOAD_SAUVE(int a1) {
 		if (a1 == 2)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 539, 372, 2);
 	}
+
 	v1 = 1;
 	do {
-		memset(&s, 0, 0x13u);
-		sprintf(&v14, "%d", v1);
-		s = 80;
-		v5 = 65;
-		v6 = 82;
-		v7 = 84;
-		v8 = v14;
-		v9 = 46;
-		v10 = 69;
-		v11 = 67;
-		v12 = 82;
-		v13 = 0;
+		s = Common::String::format("ART%d.ECR", v1);
+
 		_vm->_fileManager.CONSTRUIT_LINUX(s);
+/* TODO: Get from save file manager as part of save files
 		if (f.exists(_vm->_globals.NFICHIER)) {
 			v2 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 			v3 = v2;
@@ -633,6 +622,7 @@ void MenuManager::LOAD_SAUVE(int a1) {
 				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v3, _vm->_eventsManager.start_x + 323, 294, 0x80u, 87);
 			_vm->_globals.dos_free2(v3);
 		}
+*/
 		++v1;
 	} while (v1 <= 6);
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 183, 60, 0x112u, 353);
