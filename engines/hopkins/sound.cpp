@@ -27,7 +27,7 @@
 namespace Hopkins {
 
 SoundManager::SoundManager() {
-	SPECIAL_SOUND;
+	SPECIAL_SOUND = 0;
 	SOUNDVOL = 0;
 	VOICEVOL = 0;
 	MUSICVOL = 0;
