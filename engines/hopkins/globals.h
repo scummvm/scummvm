@@ -92,21 +92,21 @@ struct Liste2Item {
 
 struct BobItem {
 	int field0;
-	byte *field4;
-	int field8;
-	int fieldA;
-	int fieldC;
+	byte *spriteData;
+	int xp;
+	int yp;
+	int frameIndex;
 	int fieldE;
 	int field10;
 	int field12;
 	int field14;
 	int field16;
-	byte *field18;
+	byte *animData;
 	int field1C;
 	int field1E;
 	int field20;
 	int field22;
-	int field24;
+	int offsetY;
 	int field26;
 	int field28;
 	int field2A;
@@ -115,14 +115,14 @@ struct BobItem {
 	int field34;
 	int field36;
 	int field38;
-	int field3A;
-	int field3C;
-	int field3E;
-	int field40;
-	int field42;
-	int field44;
-	int field46;
-	int field48;
+	bool isSprite;
+	bool isActive;
+	int oldX;
+	int oldY;
+	int oldWidth;
+	int oldHeight;
+	int oldX2;
+	int oldY2;
 	int field4A;
 };
 

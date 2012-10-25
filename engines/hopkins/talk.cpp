@@ -743,17 +743,17 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 		if (!v4)
 			v4 = 1;
 		if ((int16)READ_LE_UINT16(v5 + 24)) {
-			_vm->_globals.Bob[idx].field3A = 1;
+			_vm->_globals.Bob[idx].isSprite = true;
 			_vm->_globals.Bob[idx].field36 = 0;
 			_vm->_globals.Bob[idx].field38 = 0;
-			_vm->_globals.Bob[idx].field18 = _vm->_globals.Bqe_Anim[idx].data;
+			_vm->_globals.Bob[idx].animData = _vm->_globals.Bqe_Anim[idx].data;
 			_vm->_globals.Bob[idx].field0 = 10;
 			v5 = PERSOSPR;
-			_vm->_globals.Bob[idx].field4 = PERSOSPR;
+			_vm->_globals.Bob[idx].spriteData = PERSOSPR;
 			_vm->_globals.Bob[idx].field1E = v4;
 			_vm->_globals.Bob[idx].field20 = -1;
 			_vm->_globals.Bob[idx].field22 = 0;
-			_vm->_globals.Bob[idx].field24 = 0;
+			_vm->_globals.Bob[idx].offsetY = 0;
 		}
 	}
 }
