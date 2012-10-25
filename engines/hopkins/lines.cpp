@@ -3041,9 +3041,9 @@ LABEL_211:
 		while (colision2_ligne(v114, v58, &v139, &v138, 0, TOTAL_LIGNES) != 1) {
 			v59 = v117;
 			v60 = _vm->_globals.essai2;
-			WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v59, v114);
-			WRITE_LE_UINT16(v60 + 2 * v59 + 2, v58);
-			WRITE_LE_UINT16(v60 + 2 * v59 + 4, 1);
+			v60[v59] = v114;
+			v60[v59 + 1] = v58;
+			v60[v59 + 2] = 1;
 			v117 += 3;
 			--v58;
 			if (a4 >= v58)
@@ -3055,9 +3055,10 @@ LABEL_214:
 LABEL_249:
 		v76 = v117;
 		v77 = _vm->_globals.essai2;
-		WRITE_LE_UINT16(_vm->_globals.essai2 + 2 * v76, (uint16)-1);
-		WRITE_LE_UINT16(v77 + 2 * v76 + 2, (uint16)-1);
-		WRITE_LE_UINT16(v77 + 2 * v76 + 4, (uint16)-1);
+		v77[v76] = -1;
+		v77[v76 + 1] = -1;
+		v77[v76 + 2] = -1;
+
 		if (v136 != 1) {
 			if (a6 > v144) {
 				if (_vm->_globals.essai0[0] != -1 && v142 > v144 && v140 <= v142 && v138 <= v142 && a6 >= v142) {
@@ -3088,6 +3089,7 @@ LABEL_323:
 					v131 = 0;
 					v121 = 0;
 					do {
+						assert(137 <= 32000);
 						v81 = v137;
 						_vm->_globals.super_parcours[v81] = v80[v121];
 						_vm->_globals.super_parcours[v81 + 1] = v80[v121 + 1];
@@ -3110,6 +3112,7 @@ LABEL_301:
 						v132 = 0;
 						v122 = 0;
 						do {
+							assert(v137 <= 32000);
 							v83 = v137;
 							_vm->_globals.super_parcours[v83] = v82[v122];
 							_vm->_globals.super_parcours[v83 + 1] = v82[v122 + 1];
@@ -3140,6 +3143,7 @@ LABEL_312:
 					v123 = 0;
 					v84 = _vm->_globals.essai1;
 					do {
+						assert(137 <= 32000);
 						v85 = v137;
 						_vm->_globals.super_parcours[v85] = v84[v123];
 						_vm->_globals.super_parcours[v85 + 1] = v84[v123 + 1];
@@ -3159,6 +3163,7 @@ LABEL_312:
 					v134 = 0;
 					v124 = 0;
 					do {
+						assert(137 <= 32000);
 						v87 = v137;
 						_vm->_globals.super_parcours[v87] = v86[v124];
 						_vm->_globals.super_parcours[v87 + 1] = v86[v124 + 1];
@@ -3178,6 +3183,7 @@ LABEL_312:
 					v125 = 0;
 					v88 = _vm->_globals.essai0;
 					do {
+						assert(137 <= 32000);
 						v89 = v137;
 						_vm->_globals.super_parcours[v89] = v88[v125];
 						_vm->_globals.super_parcours[v89 + 1] = v88[v125 + 1];
