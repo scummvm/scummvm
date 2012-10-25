@@ -149,6 +149,7 @@ public:
 	void drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr);
 	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen);
 	int16 getStringWidth(const byte *string, int stringLen);
+	uint16 getCharHeight() const { return _charHeight; }
 protected:
 	uint16 _numRows;
 	byte _firstChar;

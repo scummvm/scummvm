@@ -450,4 +450,52 @@ uint32 Widget::handleMessage(int messageNum, const MessageParam &param, Entity *
 	return messageResult;
 }
 
+TextLabelWidget::TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	int baseObjectPriority, int baseSurfacePriority, bool visible,
+	const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, TextSurface *textSurface)
+	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority, visible),
+	_string(string), _stringLen(stringLen), _drawSurface(drawSurface), _tx(tx), _ty(ty), _textSurface(textSurface) {
+	
+}
+
+void TextLabelWidget::addSprite() {
+	_parentScene->addSprite(this);
+	_vm->_collisionMan->addSprite(this);
+}
+
+int16 TextLabelWidget::getWidth() {
+	return _textSurface->getStringWidth(_string, _stringLen);
+}
+
+int16 TextLabelWidget::getHeight() {
+	return _textSurface->getCharHeight();
+}
+
+void TextLabelWidget::drawString(int maxStringLength) {
+	_textSurface->drawString(_drawSurface, _x, _y, _string, MIN(_stringLen, maxStringLength));
+	_visible = true;
+	_collisionBoundsOffset.set(_tx, _ty, getWidth(), getHeight());
+	updateBounds();
+}
+
+void TextLabelWidget::clear() {
+	_visible = false;
+	_collisionBoundsOffset.set(0, 0, 0, 0);
+	updateBounds();
+}
+
+void TextLabelWidget::onClick() {
+	Widget::onClick();
+	// TODO Click handler?
+}
+
+void TextLabelWidget::setString(const byte *string, int stringLen) {
+	_string = string;
+	_stringLen = stringLen;
+}
+
+void TextLabelWidget::setY(int16 y) {
+	_ty = y;
+}
+
 } // End of namespace Neverhood

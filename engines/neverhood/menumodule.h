@@ -114,6 +114,28 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class TextLabelWidget : public Widget {
+public:
+	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+		int baseObjectPriority, int baseSurfacePriority, bool visible,
+		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, TextSurface *textSurface);	
+	virtual void onClick();
+	virtual void addSprite();
+	virtual int16 getWidth();
+	virtual int16 getHeight();
+	void drawString(int maxStringLength);
+	void clear();
+	void setString(const byte *string, int stringLen);
+	TextSurface *getTextSurface() const { return _textSurface; }
+	void setY(int16 y);
+protected:
+	BaseSurface *_drawSurface;
+	int16 _tx, _ty;
+	TextSurface *_textSurface;
+	const byte *_string;
+	int _stringLen;
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MENUMODULE_H */
