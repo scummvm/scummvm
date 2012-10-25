@@ -4798,7 +4798,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				_vm->_globals.Cache[v11].field4 = v10;
 				_vm->_globals.Cache[v11].field12 = 1;
 				
-				if (_vm->_globals.CACHE_BANQUE[1]) {
+				if (!_vm->_globals.CACHE_BANQUE[1]) {
 					_vm->_globals.Cache[v40].fieldA = 0;
 				} else {
 					v12 = v8;
@@ -4813,6 +4813,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				if (!_vm->_globals.Cache[v40].field0 && !_vm->_globals.Cache[v40].field4 
 							&& !_vm->_globals.Cache[v40].field2)
 					_vm->_globals.Cache[v40].fieldA = 0;
+
 				v36 += 5;
 				++v40;
 			} while (v40 <= 21);
