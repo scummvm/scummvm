@@ -79,6 +79,41 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class Widget;
+
+class WidgetScene : public Scene {
+public:
+	WidgetScene(NeverhoodEngine *vm, Module *parentModule);
+	void getMousPos(NPoint &pt);
+	virtual void setCurrWidget(Widget *newWidget);
+protected:
+	Widget *_currWidget;
+};
+
+class Widget : public StaticSprite {
+public:
+	Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+		int baseObjectPriority, int baseSurfacePriority, bool visible);
+	virtual void show();
+	virtual void hide();
+	virtual void onClick();
+	virtual void setPosition(int16 x, int16 y);
+	virtual void refresh();
+	virtual void addSprite();
+	virtual int16 getWidth();
+	virtual int16 getHeight();
+	virtual void enterWidget();
+	virtual void exitWidget();
+protected:
+	int16 _itemID;
+	WidgetScene *_parentScene;
+	int _baseObjectPriority;
+	int _baseSurfacePriority;
+	bool _visible;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MENUMODULE_H */

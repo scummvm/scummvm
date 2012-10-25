@@ -354,4 +354,100 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 	return 0;
 }
 
+WidgetScene::WidgetScene(NeverhoodEngine *vm, Module *parentModule)
+	: Scene(vm, parentModule, true), _currWidget(NULL) {
+}
+
+void WidgetScene::getMousPos(NPoint &pt) {
+	pt.x = _mouseCursor->getX();
+	pt.y = _mouseCursor->getY();
+}
+
+void WidgetScene::setCurrWidget(Widget *newWidget) {
+	if (newWidget && newWidget != _currWidget) {
+		if (_currWidget)
+			_currWidget->exitWidget();
+		newWidget->enterWidget();
+		_currWidget = newWidget;
+	}
+}
+
+Widget::Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	int baseObjectPriority, int baseSurfacePriority, bool visible)
+	: StaticSprite(vm, baseObjectPriority), _itemID(itemID), _parentScene(parentScene),
+	_baseObjectPriority(baseObjectPriority), _baseSurfacePriority(baseSurfacePriority), _visible(visible) {
+
+	SetUpdateHandler(&Widget::update);
+	SetMessageHandler(&Widget::handleMessage);
+	
+	setPosition(x, y);
+}
+
+void Widget::show() {
+	if (_surface)
+		_surface->setVisible(true);
+	_visible = true;
+}
+
+void Widget::hide() {
+	if (_surface)
+		_surface->setVisible(false);
+	_visible = false;
+}
+
+void Widget::onClick() {
+	_parentScene->setCurrWidget(this);
+	// TODO Somehow _parentScene->onClick(_itemID, 0);
+}
+
+void Widget::setPosition(int16 x, int16 y) {
+	_x = x;
+	_y = y;
+	updateBounds();
+}
+
+void Widget::refresh() {
+	_needRefresh = true;
+	StaticSprite::updatePosition();
+	_collisionBoundsOffset.set(0, 0,
+		_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	updateBounds();
+}
+
+void Widget::addSprite() {
+	// Empty
+}
+
+int16 Widget::getWidth() {
+	return _spriteResource.getDimensions().width;
+}
+
+int16 Widget::getHeight() {
+	return _spriteResource.getDimensions().height;
+}
+
+void Widget::enterWidget() {
+	// Empty
+}
+
+void Widget::exitWidget() {
+	// Empty
+}
+
+void Widget::update() {
+	handleSpriteUpdate();
+	StaticSprite::updatePosition();
+}
+
+uint32 Widget::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		onClick();
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
 } // End of namespace Neverhood
