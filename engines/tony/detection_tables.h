@@ -124,6 +124,22 @@ static const TonyGameDescription gameDescriptions[] = {
 		},
 	},
 	{
+		// Tony Tough Italian provided by Giovanni Bajo
+		{
+			"tony",
+			0,
+			{
+				{"roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071},
+				{"roasted.mpc", 0, "6202816f991b15af82aab84e3e4be011", 380183},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+	{
 		// Tony Tough Polish provided by Fabio Barzagli
 		{
 			"tony",
