@@ -358,7 +358,7 @@ WidgetScene::WidgetScene(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule, true), _currWidget(NULL) {
 }
 
-void WidgetScene::getMousPos(NPoint &pt) {
+void WidgetScene::getMousePos(NPoint &pt) {
 	pt.x = _mouseCursor->getX();
 	pt.y = _mouseCursor->getY();
 }
@@ -397,7 +397,7 @@ void Widget::hide() {
 
 void Widget::onClick() {
 	_parentScene->setCurrWidget(this);
-	// TODO Somehow _parentScene->onClick(_itemID, 0);
+	// TODO _parentScene->onClick(_itemID, 0);
 }
 
 void Widget::setPosition(int16 x, int16 y) {
@@ -406,7 +406,7 @@ void Widget::setPosition(int16 x, int16 y) {
 	updateBounds();
 }
 
-void Widget::refresh() {
+void Widget::refreshPosition() {
 	_needRefresh = true;
 	StaticSprite::updatePosition();
 	_collisionBoundsOffset.set(0, 0,
@@ -494,8 +494,117 @@ void TextLabelWidget::setString(const byte *string, int stringLen) {
 	_stringLen = stringLen;
 }
 
-void TextLabelWidget::setY(int16 y) {
-	_ty = y;
+void TextLabelWidget::setTY(int16 ty) {
+	_ty = ty;
+}
+
+SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	int baseObjectPriority, int baseSurfacePriority, bool visible,
+	StringArray *savegameList, TextSurface *textSurface1, TextSurface *textSurface2, uint32 fileHash1, NRect &rect)
+	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority, visible),
+	_savegameList(savegameList), _textSurface1(textSurface1), _textSurface2(textSurface2), _fileHash1(fileHash1), _rect(rect),
+	_maxStringLength(0), _topIndex(0), _visibleItemsCount(0), _currIndex(0) {
+
+	_maxVisibleItemsCount = (_rect.y2 - _rect.y1) / _textSurface1->getCharHeight();
+	_maxStringLength = (_rect.x2 - _rect.x1) / _textSurface1->getCharWidth();
+}
+
+void SavegameListBox::onClick() {
+	NPoint mousePos;
+	int16 w = _rect.x2 - _rect.x1, h = _rect.y2 - _rect.y1;
+	_parentScene->getMousePos(mousePos);
+	mousePos.x -= _x + _rect.x1;
+	mousePos.y -= _y + _rect.y1;
+	if (mousePos.x >= 0 && mousePos.x <= w && mousePos.y >= 0 && mousePos.y <= h) {
+		int newIndex = _topIndex + mousePos.y / _textSurface1->getCharHeight();
+		if (newIndex <= _visibleItemsCount) {
+			_currIndex = newIndex;
+			refresh();
+			_parentScene->setCurrWidget(this);
+			// TODO _parentScene->onClick(_itemID, 5);
+		}
+	}
+}
+
+void SavegameListBox::addSprite() {
+	_spriteResource.load2(_fileHash1);
+	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	refreshPosition();
+	_parentScene->addSprite(this);
+	_vm->_collisionMan->addSprite(this);
+	if (_visible)
+		show();
+	else
+		hide();
+	buildItems();
+	_topIndex = 0;
+	_visibleItemsCount = MIN(_maxVisibleItemsCount, (int)_textLabelItems.size());
+	refresh();
+}
+
+void SavegameListBox::buildItems() {
+	StringArray &savegameList = *_savegameList;
+	int16 itemX = _rect.x1, itemY = 0;
+	for (uint i = 0; i < savegameList.size(); ++i) {
+		const byte *string = (const byte*)savegameList[i].c_str();
+		int stringLen = (int)savegameList[i].size();
+		TextLabelWidget *label = new TextLabelWidget(_vm, itemX, itemY, i, _parentScene, _baseObjectPriority + 1,
+			_baseSurfacePriority + 1, _visible, string, MIN(stringLen, _maxStringLength), _surface, _x, _y, _textSurface1);
+		label->addSprite();
+		_textLabelItems.push_back(label);
+	}
+}
+
+void SavegameListBox::drawItems() {
+	for (int i = 0; i < (int)_textLabelItems.size(); ++i) {
+		TextLabelWidget *label = _textLabelItems[i];		
+		if (i >= _topIndex && i <= _visibleItemsCount) {
+			label->setY(_rect.y1 + (i - _topIndex) * _textSurface1->getCharHeight());
+			label->updateBounds();
+			label->drawString(_maxStringLength);
+		} else {
+			label->clear();
+		}
+	}
+}
+
+void SavegameListBox::refresh() {
+	refreshPosition();
+	drawItems();
+}
+
+void SavegameListBox::scrollUp() {
+	if (_topIndex > 0) {
+		--_topIndex;
+		--_visibleItemsCount;
+		refresh();
+	}
+}
+
+void SavegameListBox::scrollDown() {
+	if (_visibleItemsCount < (int)_textLabelItems.size()) {
+		++_topIndex;
+		++_visibleItemsCount;
+		refresh();
+	}
+}
+
+void SavegameListBox::pageUp() {
+	int distance = MIN(_topIndex, _maxVisibleItemsCount);
+	if (distance > 0) {
+		_topIndex -= distance;
+		_visibleItemsCount = distance;
+		refresh();
+	}
+}
+
+void SavegameListBox::pageDown() {
+	int distance = MIN((int)_textLabelItems.size() - _visibleItemsCount - 1, _maxVisibleItemsCount);
+	if (distance > 0) {
+		_topIndex += distance;
+		_visibleItemsCount += distance;
+		refresh();
+	}
 }
 
 } // End of namespace Neverhood

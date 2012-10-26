@@ -79,12 +79,14 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+typedef Common::Array<Common::String> StringArray;
+
 class Widget;
 
 class WidgetScene : public Scene {
 public:
 	WidgetScene(NeverhoodEngine *vm, Module *parentModule);
-	void getMousPos(NPoint &pt);
+	void getMousePos(NPoint &pt);
 	virtual void setCurrWidget(Widget *newWidget);
 protected:
 	Widget *_currWidget;
@@ -98,7 +100,7 @@ public:
 	virtual void hide();
 	virtual void onClick();
 	virtual void setPosition(int16 x, int16 y);
-	virtual void refresh();
+	virtual void refreshPosition();
 	virtual void addSprite();
 	virtual int16 getWidth();
 	virtual int16 getHeight();
@@ -127,13 +129,41 @@ public:
 	void clear();
 	void setString(const byte *string, int stringLen);
 	TextSurface *getTextSurface() const { return _textSurface; }
-	void setY(int16 y);
+	void setTY(int16 ty);
 protected:
 	BaseSurface *_drawSurface;
 	int16 _tx, _ty;
 	TextSurface *_textSurface;
 	const byte *_string;
 	int _stringLen;
+};
+
+class SavegameListBox : public Widget {
+public:
+	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+		int baseObjectPriority, int baseSurfacePriority, bool visible,
+		StringArray *savegameList, TextSurface *textSurface1, TextSurface *textSurface2, uint32 fileHash1, NRect &rect);
+	virtual void onClick();
+	virtual void addSprite();
+	void buildItems();
+	void drawItems();
+	void refresh();
+	void scrollUp();
+	void scrollDown();
+	void pageUp();
+	void pageDown();
+protected:
+	NRect _rect;
+	uint32 _fileHash1;
+	int _maxStringLength;
+	Common::Array<TextLabelWidget*> _textLabelItems;
+	int _topIndex;
+	int _visibleItemsCount;
+	StringArray *_savegameList;
+	TextSurface *_textSurface1;
+	TextSurface *_textSurface2;
+	int _currIndex;
+	int _maxVisibleItemsCount;
 };
 
 } // End of namespace Neverhood
