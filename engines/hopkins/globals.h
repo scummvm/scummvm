@@ -301,7 +301,7 @@ public:
 	ListeItem Liste[6];
 	Liste2Item Liste2[35];
 	BlAnimItem BL_ANIM[30];
-	VBobItem VBob[35];
+	VBobItem VBob[30];
 	ObjetWItem ObjetW[300];
 	BlocItem BLOC[250];
 	CacheItem Cache[25];

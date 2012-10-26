@@ -84,7 +84,7 @@ Globals::Globals() {
 		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(Liste2Item), 0);
 	for (int i = 0; i < 30; ++i)
 		Common::fill((byte *)&BL_ANIM[i], (byte *)&BL_ANIM[i] + sizeof(BlAnimItem), 0);
-	for (int i = 0; i < 35; ++i)
+	for (int i = 0; i < 30; ++i)
 		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
 	for (int i = 0; i < 300; ++i)
 		Common::fill((byte *)&ObjetW[i], (byte *)&ObjetW[i] + sizeof(ObjetWItem), 0);
