@@ -974,7 +974,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 	CORO_BEGIN_CODE(_ctx);
 
 
-	// If it is fully open, do nothing
+	// If it is not fully open, do nothing
 	if (_fadeStep != 6)
 		return;
 
