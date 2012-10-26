@@ -36,6 +36,19 @@
 
 namespace Tony {
 
+/*
+ * Tony uses a [0,63] volume scale (where 0 is silent and 63 is loudest).
+ * The original game engine linearly mapped this scale into DirectSound's
+ * [-10000, 0] scale (where -10000 is silent), which is a logarithmic scale.
+ *
+ * This means that Tony's scale is logarithmic as well, and must be converted
+ * to the linear scale used by the mixer.
+ */
+static int remapVolume(int volume) {
+    double dsvol = (double)(63 - volume) * -10000.0 / 63.0;
+    return (int)((double)Audio::Mixer::kMaxChannelVolume * pow(10.0, dsvol / 2000.0) + 0.5);
+}
+
 /****************************************************************************\
 *       FPSOUND Methods
 \****************************************************************************/
@@ -104,6 +117,9 @@ void FPSound::setMasterVolume(int volume) {
 	if (!_soundSupported)
 		return;
 
+	// WORKAROUND: We don't use remapVolume() here, so that the main option screen exposes
+	// a linear scale to the user. This is an improvement over the original game
+	// where the user had to deal with a logarithmic volume scale.
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, CLIP<int>(volume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
@@ -364,7 +380,7 @@ void FPSfx::setVolume(int volume) {
 	}
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		g_system->getMixer()->setChannelVolume(_handle, volume * Audio::Mixer::kMaxChannelVolume / 63);
+		g_system->getMixer()->setChannelVolume(_handle, remapVolume(volume));
 }
 
 /**
@@ -376,7 +392,7 @@ void FPSfx::setVolume(int volume) {
 
 void FPSfx::getVolume(int *volumePtr) {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		*volumePtr = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
+		*volumePtr = _lastVolume;
 	else
 		*volumePtr = 0;
 }
@@ -669,7 +685,7 @@ void FPStream::setVolume(int volume) {
 	}
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		g_system->getMixer()->setChannelVolume(_handle, volume * Audio::Mixer::kMaxChannelVolume / 63);
+		g_system->getMixer()->setChannelVolume(_handle, remapVolume(volume));
 }
 
 /**
@@ -681,7 +697,7 @@ void FPStream::setVolume(int volume) {
 
 void FPStream::getVolume(int *volumePtr) {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		*volumePtr = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
+		*volumePtr = _lastVolume;
 	else
 		*volumePtr = 0;
 }
