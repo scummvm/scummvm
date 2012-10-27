@@ -779,8 +779,14 @@ Common::String WSC::getHintMovie(uint hintNum) {
 		}
 		break;
 	case MakeRoomView(kWSC03, kNorth):
-		if (inSynthesizerGame())
+		if (inSynthesizerGame()) {
+			// WORKAROUND: The original game is missing the first two hint movies and
+			// just plays nothing in its stead.
+			if (hintNum != 3)
+				return "";
+
 			return Common::String::format("Images/AI/WSC/XW03NH%d", hintNum);
+		}
 
 		return Common::String::format("Images/AI/WSC/XWPH%d", hintNum);
 	case MakeRoomView(kWSC01, kNorth):
