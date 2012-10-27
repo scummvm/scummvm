@@ -212,7 +212,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, (byte *)s->pixels, 
 		_vm->_eventsManager.start_x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
 	_vm->_graphicsManager.INIT_TABLE(45, 80, _vm->_graphicsManager.Palette);
-	_vm->_graphicsManager.Trans_bloc2((byte *)s->pixels, _vm->_graphicsManager.TABLE_COUL, 11136);
+//	_vm->_graphicsManager.Trans_bloc2((byte *)s->pixels, _vm->_graphicsManager.TABLE_COUL, 11136);
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
