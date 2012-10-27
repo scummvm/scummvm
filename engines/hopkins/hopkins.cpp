@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the _globals.FRee Software
- * Foundation, Inc., 51 _globals.FRanklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
@@ -514,8 +514,11 @@ void HopkinsEngine::INIT_SYSTEM() {
 	// Set graphics mode
 	_graphicsManager.SET_MODE(640, 480);
 	
-	_eventsManager.mouse_linux = true;
-  
+	if (getPlatform() == Common::kPlatformLinux)
+		_eventsManager.mouse_linux = true;
+	else
+		_eventsManager.mouse_linux = false;
+
 	switch (_globals.FR) {
 	case 0:
 		if (!_eventsManager.mouse_linux)
@@ -524,7 +527,7 @@ void HopkinsEngine::INIT_SYSTEM() {
 			_fileManager.CONSTRUIT_SYSTEM("LSOUAN.SPR");
 		break;
 	case 1:
-		_fileManager.CONSTRUIT_SYSTEM("LSOU_globals.FR.SPR");
+		_fileManager.CONSTRUIT_SYSTEM("LSOUFR.SPR");
 		break;
 	case 2:
 		_fileManager.CONSTRUIT_SYSTEM("SOUES.SPR");

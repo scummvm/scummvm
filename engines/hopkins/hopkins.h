@@ -119,6 +119,7 @@ public:
 
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
+	Common::Platform HopkinsEngine::getPlatform() const;
 	uint16 getVersion() const;
 	bool getIsDemo() const;
 	bool shouldQuit() const;

@@ -47,6 +47,10 @@ Common::Language HopkinsEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+Common::Platform HopkinsEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
 bool HopkinsEngine::getIsDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
