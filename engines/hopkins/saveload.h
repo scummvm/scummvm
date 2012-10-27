@@ -25,7 +25,9 @@
 
 #include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/str.h"
+#include "hopkins/globals.h"
 
 namespace Hopkins {
 
@@ -45,6 +47,10 @@ struct hopkinsSavegameHeader {
 class SaveLoadManager {
 private:
 	HopkinsEngine *_vm;
+
+	void createThumbnail(Graphics::Surface *s);
+	void syncSavegameData(Common::Serializer &s);
+	void syncSauvegarde1(Common::Serializer &s, Sauvegarde1 &item);
 public:
 	void setParent(HopkinsEngine *vm);
 
@@ -55,6 +61,7 @@ public:
 
 	static bool readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header);
 	void writeSavegameHeader(Common::OutSaveFile *out, hopkinsSavegameHeader &header);
+	static bool readSavegameHeader(int slot, hopkinsSavegameHeader &header);
 	Common::Error save(int slot, const Common::String &saveName);
 	Common::Error restore(int slot);
 };

@@ -956,4 +956,8 @@ void HopkinsEngine::PUBQUIT() {
 	_graphicsManager.FADE_OUTW();
 }
 
+Common::String HopkinsEngine::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
 } // End of namespace Hopkins

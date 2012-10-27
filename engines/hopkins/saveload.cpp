@@ -121,7 +121,7 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-//	::createThumbnail(thumb, _vm->_graphicsManager.VESA_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+	createThumbnail(thumb);
 	Graphics::saveThumbnail(*out, *thumb);
 	thumb->free();
 	delete thumb;
@@ -135,6 +135,102 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
 	out->writeUint32LE(_vm->_eventsManager._gameCounter);
+}
+
+Common::Error SaveLoadManager::save(int slot, const Common::String &saveName) {
+	// Try and create the save file
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
+		_vm->generateSaveName(slot));
+	if (!saveFile)
+		return Common::kCreatingFileFailed;
+
+	// Set up the serializer
+	Common::Serializer serializer(NULL, saveFile);
+
+	// Write out the savegame header
+	hopkinsSavegameHeader header;
+	header.saveName = saveName;
+	header.version = HOPKINS_SAVEGAME_VERSION;
+	writeSavegameHeader(saveFile, header);
+
+	// Write out the savegame data
+	syncSavegameData(serializer);
+
+	// Save file complete
+	saveFile->finalize();
+	delete saveFile;
+
+	return Common::kNoError;
+}
+
+Common::Error SaveLoadManager::restore(int slot) {
+	// Try and open the save file for reading
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		_vm->generateSaveName(slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	// Set up the serializer
+	Common::Serializer serializer(saveFile, NULL);
+
+	// Read in the savegame header
+	hopkinsSavegameHeader header;
+	readSavegameHeader(saveFile, header);
+	if (header.thumbnail)
+		header.thumbnail->free();
+	delete header.thumbnail;
+
+	// Read in the savegame data
+	syncSavegameData(serializer);
+
+	// Loading save file complete
+	delete saveFile;
+
+	return Common::kNoError;
+}
+
+bool SaveLoadManager::readSavegameHeader(int slot, hopkinsSavegameHeader &header) {
+	// Try and open the save file for reading
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		g_vm->generateSaveName(slot));
+	if (!saveFile)
+		return false;
+
+	bool result = readSavegameHeader(saveFile, header);
+	delete saveFile;
+	return result;
+}
+
+#define REDUCE_AMOUNT 80
+
+void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
+	int w = _vm->_graphicsManager.Reel_Reduc(SCREEN_WIDTH, REDUCE_AMOUNT);
+	int h = _vm->_graphicsManager.Reel_Reduc(SCREEN_HEIGHT - 40, REDUCE_AMOUNT); 
+
+	s->create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));	
+
+	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, (byte *)s->pixels, 
+		_vm->_eventsManager.start_x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
+	_vm->_graphicsManager.INIT_TABLE(45, 80, _vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.Trans_bloc2((byte *)s->pixels, _vm->_graphicsManager.TABLE_COUL, 11136);
+}
+
+void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
+	s.syncBytes(&_vm->_globals.SAUVEGARDE->data[0], 0x802);
+	syncSauvegarde1(s, _vm->_globals.SAUVEGARDE->field360);
+	syncSauvegarde1(s, _vm->_globals.SAUVEGARDE->field370);
+	syncSauvegarde1(s, _vm->_globals.SAUVEGARDE->field380);
+
+	for (int i = 0; i < 35; ++i)
+		s.syncAsSint16LE(_vm->_globals.SAUVEGARDE->inventory[i]);
+}
+
+void SaveLoadManager::syncSauvegarde1(Common::Serializer &s, Sauvegarde1 &item) {
+	s.syncAsSint16LE(item.field0);
+	s.syncAsSint16LE(item.field1);
+	s.syncAsSint16LE(item.field2);
+	s.syncAsSint16LE(item.field3);
+	s.syncAsSint16LE(item.field4);
 }
 
 } // End of namespace Hopkins

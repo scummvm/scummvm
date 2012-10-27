@@ -124,6 +124,7 @@ public:
 	bool shouldQuit() const;
 
 	int getRandomNumber(int maxNumber);
+	Common::String generateSaveName(int slotNumber);
 
 	/**
 	 * Run the introduction sequence

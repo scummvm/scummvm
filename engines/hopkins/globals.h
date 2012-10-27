@@ -272,7 +272,6 @@ enum SauvegardeOffset {
 	, svField357 = 357
 	, svField399 = 399
 	, svField401 = 401
-	, svField1300 = 1300
 };
 
 // TODO: Sauvegrade1 fields should really be mapped into data array
@@ -281,6 +280,7 @@ struct Sauvegarde {
 	Sauvegarde1 field360;
 	Sauvegarde1 field370;
 	Sauvegarde1 field380;
+	int16 inventory[35];	// Originally at offset 1300 of data array
 };
 
 class HopkinsEngine;
