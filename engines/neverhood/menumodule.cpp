@@ -27,7 +27,8 @@ namespace Neverhood {
 enum {
 	MAIN_MENU		= 0,
 	CREDITS_SCENE	= 1,
-	MAKING_OF		= 2
+	MAKING_OF		= 2,
+	SAVE_GAME_MENU	= 3
 };
 
 static const uint32 kMakingOfSmackerFileHashList[] = {
@@ -48,22 +49,18 @@ static const uint32 kMakingOfSmackerFileHashList[] = {
 };
 
 MenuModule::MenuModule(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+	: Module(vm, parentModule), _savegameList(NULL) {
 	
 	SetMessageHandler(&MenuModule::handleMessage);
 	
-	// TODO Check if the background actually needs to be saved
-	_savedBackground = new Background(_vm, 0);
-	_savedBackground->createSurface(0, 640, 480);
-	// TODO Save current palette
-	// TODO Stop all sounds and music
-
 	_savedPaletteData = _vm->_screen->getPaletteData();
+	_vm->_mixer->pauseAll(true);
 
 	createScene(MAIN_MENU, -1);
 }
 
 MenuModule::~MenuModule() {
+	_vm->_mixer->pauseAll(false);
 	_vm->_screen->setPaletteData(_savedPaletteData);
 }
 
@@ -78,6 +75,9 @@ void MenuModule::createScene(int sceneNum, int which) {
 		break;
 	case MAKING_OF:
 		createSmackerScene(kMakingOfSmackerFileHashList, false, true, true);
+		break;
+	case SAVE_GAME_MENU:
+		createSaveGameMenu();
 		break;
 	}
 	SetUpdateHandler(&MenuModule::updateScene);
@@ -100,7 +100,7 @@ void MenuModule::updateScene() {
 				break;
 			case 2:
 				debug("SAVE GAME");
-				// TODO createSaveGameMenu();
+				createScene(SAVE_GAME_MENU, -1);
 				break;
 			case 3:
 				debug("RESUME GAME");
@@ -137,6 +137,9 @@ void MenuModule::updateScene() {
 		case MAKING_OF:
 			createScene(MAIN_MENU, -1);
 			break;
+		case SAVE_GAME_MENU:
+			handleSaveGameMenuAction(_moduleResult);
+			break;
 		default:
 			break;
 		}
@@ -148,60 +151,38 @@ uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Enti
 	return Module::handleMessage(messageNum, param, sender);;
 }
 
-static const uint32 kMainMenuButtonFileHashes[] = {
-	0x36C62120,
-	0x56C62120,
-	0x96C62120,
-	0x16C62121,
-	0x16C62122,
-	0x16C62124,
-	0x16C62128,
-	0x16C62130,
-	0x16C62100
-};
-
-MainMenuButton::MainMenuButton(NeverhoodEngine *vm, Scene *parentScene, uint buttonIndex)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _buttonIndex(buttonIndex), _countdown(0) {
-
-	loadSprite(kMainMenuButtonFileHashes[_buttonIndex], kSLFDefDrawOffset | kSLFDefPosition, 100);
-
-	// TODO Move to const array
-	switch (_buttonIndex) {
-	case 0:
-		_collisionBounds.set(52, 121, 110, 156);
-		break;
-	case 1:
-		_collisionBounds.set(52, 192, 109, 222);
-		break;
-	case 2:
-		_collisionBounds.set(60, 257, 119, 286);
-		break;
-	case 3:
-		_collisionBounds.set(67, 326, 120, 354);
-		break;
-	case 4:
-		_collisionBounds.set(70, 389, 128, 416);
-		break;
-	case 5:
-		_collisionBounds.set(523, 113, 580, 144);
-		break;
-	case 6:
-		_collisionBounds.set(525, 176, 577, 206);
-		break;
-	case 7:
-		_collisionBounds.set(527, 384, 580, 412);
-		break;
-	case 8:
-		_collisionBounds.set(522, 255, 580, 289);
-		break;
-	}
-	
-	setVisible(false);
-	SetUpdateHandler(&MainMenuButton::update);
-	SetMessageHandler(&MainMenuButton::handleMessage);
+void MenuModule::createSaveGameMenu() {
+	// TODO Load actual savegames list :)
+	_savegameList = new StringArray();
+	_savegameList->push_back(Common::String("Annoying scene"));
+	_savegameList->push_back(Common::String("Stuff happens"));
+	for (uint i = 0; i < 33; ++i)
+		_savegameList->push_back(Common::String::format("Game %d", i));
+	_childObject = new SaveGameMenu(_vm, this, _savegameList);
 }
 
-void MainMenuButton::update() {
+void MenuModule::handleSaveGameMenuAction(int action) {
+	if (action != 0) {
+		createScene(MAIN_MENU, -1);
+	} else {
+		// TODO Actual saving later 0048A62E
+		createScene(MAIN_MENU, -1);
+	}
+	delete _savegameList;
+	_savegameList = NULL;
+}
+
+MenuButton::MenuButton(NeverhoodEngine *vm, Scene *parentScene, uint buttonIndex, uint32 fileHash, const NRect &collisionBounds)
+	: StaticSprite(vm, 900), _parentScene(parentScene), _buttonIndex(buttonIndex), _countdown(0) {
+
+	loadSprite(fileHash, kSLFDefDrawOffset | kSLFDefPosition, 100);
+	_collisionBounds = collisionBounds;
+	setVisible(false);
+	SetUpdateHandler(&MenuButton::update);
+	SetMessageHandler(&MenuButton::handleMessage);
+}
+
+void MenuButton::update() {
 	updatePosition();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		setVisible(false);
@@ -209,7 +190,7 @@ void MainMenuButton::update() {
 	}
 }
 
-uint32 MainMenuButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 MenuButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
@@ -226,6 +207,30 @@ uint32 MainMenuButton::handleMessage(int messageNum, const MessageParam &param, 
 MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule, true) {
 	
+	static const uint32 kMenuButtonFileHashes[] = {
+		0x36C62120,
+		0x56C62120,
+		0x96C62120,
+		0x16C62121,
+		0x16C62122,
+		0x16C62124,
+		0x16C62128,
+		0x16C62130,
+		0x16C62100
+	};
+	
+	static const NRect kMenuButtonCollisionBounds[] = {
+		NRect(52, 121, 110, 156),
+		NRect(52, 192, 109, 222),
+		NRect(60, 257, 119, 286),
+		NRect(67, 326, 120, 354),
+		NRect(70, 389, 128, 416),
+		NRect(523, 113, 580, 144),
+		NRect(525, 176, 577, 206),
+		NRect(527, 384, 580, 412),
+		NRect(522, 255, 580, 289)
+	};
+	
 	setBackground(0x08C0020C);
 	setPalette(0x08C0020C);
 	insertMouse433(0x00208084);
@@ -233,12 +238,13 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	insertStaticSprite(0x41137051, 100);
 	insertStaticSprite(0xC10B2015, 100);
 	
-	// TODO Only is music is disabled
+	// TODO Only if music is enabled
 	_musicOnButton = insertStaticSprite(0x0C24C0EE, 100);
 
 	for (uint buttonIndex = 0; buttonIndex < 9; ++buttonIndex) {
-		Sprite *mainMenuButton = insertSprite<MainMenuButton>(this, buttonIndex);
-		_vm->_collisionMan->addSprite(mainMenuButton);
+		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
+			kMenuButtonFileHashes[buttonIndex], kMenuButtonCollisionBounds[buttonIndex]);
+		_vm->_collisionMan->addSprite(menuButton);
 	}
 	
 	SetUpdateHandler(&Scene::update);	
@@ -341,7 +347,7 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 		leaveScene(0);
 		break;
 	case 0x000B://TODO Implement this message
-		if (param.asInteger() == 27 && _canAbort)
+		if (param.asInteger() == Common::KEYCODE_ESCAPE && _canAbort)
 			leaveScene(0);
 		break;
 	case 0x101D:
@@ -358,9 +364,11 @@ WidgetScene::WidgetScene(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule, true), _currWidget(NULL) {
 }
 
-void WidgetScene::getMousePos(NPoint &pt) {
+NPoint WidgetScene::getMousePos() {
+	NPoint pt;
 	pt.x = _mouseCursor->getX();
 	pt.y = _mouseCursor->getY();
+	return pt;
 }
 
 void WidgetScene::setCurrWidget(Widget *newWidget) {
@@ -372,27 +380,18 @@ void WidgetScene::setCurrWidget(Widget *newWidget) {
 	}
 }
 
+void WidgetScene::handleEvent(int16 itemID, int eventType) {
+}
+
 Widget::Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-	int baseObjectPriority, int baseSurfacePriority, bool visible)
+	int baseObjectPriority, int baseSurfacePriority)
 	: StaticSprite(vm, baseObjectPriority), _itemID(itemID), _parentScene(parentScene),
-	_baseObjectPriority(baseObjectPriority), _baseSurfacePriority(baseSurfacePriority), _visible(visible) {
+	_baseObjectPriority(baseObjectPriority), _baseSurfacePriority(baseSurfacePriority) {
 
 	SetUpdateHandler(&Widget::update);
 	SetMessageHandler(&Widget::handleMessage);
 	
 	setPosition(x, y);
-}
-
-void Widget::show() {
-	if (_surface)
-		_surface->setVisible(true);
-	_visible = true;
-}
-
-void Widget::hide() {
-	if (_surface)
-		_surface->setVisible(false);
-	_visible = false;
 }
 
 void Widget::onClick() {
@@ -451,9 +450,9 @@ uint32 Widget::handleMessage(int messageNum, const MessageParam &param, Entity *
 }
 
 TextLabelWidget::TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-	int baseObjectPriority, int baseSurfacePriority, bool visible,
+	int baseObjectPriority, int baseSurfacePriority,
 	const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, TextSurface *textSurface)
-	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority, visible),
+	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
 	_string(string), _stringLen(stringLen), _drawSurface(drawSurface), _tx(tx), _ty(ty), _textSurface(textSurface) {
 	
 }
@@ -473,13 +472,11 @@ int16 TextLabelWidget::getHeight() {
 
 void TextLabelWidget::drawString(int maxStringLength) {
 	_textSurface->drawString(_drawSurface, _x, _y, _string, MIN(_stringLen, maxStringLength));
-	_visible = true;
 	_collisionBoundsOffset.set(_tx, _ty, getWidth(), getHeight());
 	updateBounds();
 }
 
 void TextLabelWidget::clear() {
-	_visible = false;
 	_collisionBoundsOffset.set(0, 0, 0, 0);
 	updateBounds();
 }
@@ -498,47 +495,215 @@ void TextLabelWidget::setTY(int16 ty) {
 	_ty = ty;
 }
 
-SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-	int baseObjectPriority, int baseSurfacePriority, bool visible,
-	StringArray *savegameList, TextSurface *textSurface1, TextSurface *textSurface2, uint32 fileHash1, NRect &rect)
-	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority, visible),
-	_savegameList(savegameList), _textSurface1(textSurface1), _textSurface2(textSurface2), _fileHash1(fileHash1), _rect(rect),
-	_maxStringLength(0), _topIndex(0), _visibleItemsCount(0), _currIndex(0) {
+TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	int baseObjectPriority, int baseSurfacePriority,
+	const byte *string, int maxStringLength, TextSurface *textSurface, uint32 fileHash, const NRect &rect)
+	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
+	_maxStringLength(maxStringLength), _textSurface(textSurface), _fileHash(fileHash), _rect(rect),
+	_cursorSurface(NULL), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0) {
 
-	_maxVisibleItemsCount = (_rect.y2 - _rect.y1) / _textSurface1->getCharHeight();
-	_maxStringLength = (_rect.x2 - _rect.x1) / _textSurface1->getCharWidth();
+	_entryString = (const char*)string;
+	_maxVisibleChars = (_rect.x2 - _rect.x1) / _textSurface->getCharWidth();
+	_cursorPos = _entryString.size();
+	
+	SetUpdateHandler(&TextEditWidget::update);
+	SetMessageHandler(&TextEditWidget::handleMessage);
+}
+
+TextEditWidget::~TextEditWidget() {
+	delete _cursorSurface;
+}
+
+void TextEditWidget::onClick() {
+	NPoint mousePos = _parentScene->getMousePos();
+	mousePos.x -= _x + _rect.x1;
+	mousePos.y -= _y + _rect.y1;
+	if (mousePos.x >= 0 && mousePos.x <= _rect.x2 - _rect.x1 &&
+		mousePos.y >= 0 && mousePos.y <= _rect.y2 - _rect.y1) {
+		if (_entryString.size() == 1)
+			_cursorPos = 0;
+		else {
+			int newCursorPos = mousePos.x / _textSurface->getCharWidth();
+			if (mousePos.x % _textSurface->getCharWidth() > _textSurface->getCharWidth() / 2 && newCursorPos <= (int)_entryString.size())//###
+				++newCursorPos;
+			_cursorPos = MIN((int)_entryString.size(), newCursorPos);
+		}
+		_cursorSurface->setVisible(true);
+		refresh();
+	}
+	Widget::onClick();
+}
+
+void TextEditWidget::addSprite() {
+	SpriteResource cursorSpriteResource(_vm);
+
+	_spriteResource.load2(_fileHash);
+	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	refreshPosition();
+	_parentScene->addSprite(this);
+	_vm->_collisionMan->addSprite(this);
+	_surface->setVisible(true);
+	_textLabelWidget = new TextLabelWidget(_vm, _rect.x1, _rect.y1 + (_rect.y2 - _rect.y1 + 1 - _textSurface->getCharHeight()) / 2,
+		0, _parentScene, _baseObjectPriority + 1, _baseSurfacePriority + 1,
+		(const byte*)_entryString.c_str(), _entryString.size(), _surface, _x, _y, _textSurface);
+	_textLabelWidget->addSprite();
+	cursorSpriteResource.load2(_cursorFileHash);
+	_cursorSurface = new BaseSurface(_vm, 0, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
+	_cursorSurface->drawSpriteResourceEx(cursorSpriteResource, false, false, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
+	_cursorSurface->setVisible(true);
+	refresh();
+}
+
+void TextEditWidget::enterWidget() {
+	_cursorSurface->setVisible(true);
+	refresh();
+}
+
+void TextEditWidget::exitWidget() {
+	_cursorSurface->setVisible(false);
+	refresh();
+}
+
+void TextEditWidget::setCursor(uint32 cursorFileHash, int16 cursorWidth, int16 cursorHeight) {
+	_cursorFileHash = cursorFileHash;
+	_cursorWidth = cursorWidth;
+	_cursorHeight = cursorHeight;
+}
+
+void TextEditWidget::drawCursor() {
+	if (_cursorSurface->getVisible() && _cursorPos >= 0 && _cursorPos <= _maxVisibleChars) {
+		NDrawRect sourceRect(0, 0, _cursorWidth, _cursorHeight);
+		_surface->copyFrom(_cursorSurface->getSurface(), _rect.x1 + _cursorPos * _textSurface->getCharWidth(),
+			_rect.y1 + (_rect.y2 - _cursorHeight - _rect.y1 + 1) / 2, sourceRect, true);
+	} else
+		_cursorSurface->setVisible(false);
+}
+
+void TextEditWidget::updateString() {
+	_textLabelWidget->setString((const byte *)_entryString.c_str(), _entryString.size());
+	_textLabelWidget->drawString(_maxVisibleChars);
+}
+
+void TextEditWidget::getString(Common::String &string) {
+	string = _entryString;
+}
+
+void TextEditWidget::setString(const Common::String &string) {
+	_entryString = string;
+	_cursorPos = _entryString.size();
+	refresh();
+}
+
+void TextEditWidget::handleAsciiKey(char ch) {
+	if ((int)_entryString.size() < _maxStringLength &&
+		((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == ' ')) {
+		_entryString.insertChar(ch, _cursorPos);
+		++_cursorPos;
+		refresh();
+	}
+}
+
+void TextEditWidget::handleKeyDown(Common::KeyCode keyCode) {
+	bool doRefresh = true;
+	switch (keyCode) {
+	case Common::KEYCODE_DELETE:
+		if (_entryString.size() > 0 && _cursorPos < (int)_entryString.size())
+			_entryString.deleteChar(_cursorPos);
+		break;
+	case Common::KEYCODE_HOME:
+		_cursorPos = 0;
+		break;
+	case Common::KEYCODE_END:
+		_cursorPos = _entryString.size();
+		break;
+	case Common::KEYCODE_LEFT:
+		if (_entryString.size() > 0 && _cursorPos > 0)
+			--_cursorPos;
+		break;
+	case Common::KEYCODE_RIGHT:
+		if (_cursorPos < (int)_entryString.size())
+			++_cursorPos;
+		break;
+	case Common::KEYCODE_BACKSPACE:
+		if (_entryString.size() > 0 && _cursorPos > 0)
+			_entryString.deleteChar(--_cursorPos);
+		break;
+	default:
+		break;
+	}
+	if (doRefresh) {
+		_cursorSurface->setVisible(true);
+		_cursorTicks = 0;
+		refresh();
+	}
+}
+
+void TextEditWidget::refresh() {
+	refreshPosition();
+	updateString();
+	drawCursor();
+}
+
+void TextEditWidget::update() {
+	Widget::update();
+	if (_parentScene->getCurrWidget() == this && _cursorTicks++ == 10) {
+		_cursorSurface->setVisible(!_cursorSurface->getVisible());
+		refresh();
+		_cursorTicks = 0;
+	}
+}
+
+uint32 TextEditWidget::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Widget::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x000A:
+		handleAsciiKey(param.asInteger());
+		break;
+	case 0x000B:
+		handleKeyDown((Common::KeyCode)param.asInteger());
+		break;
+	}
+	return messageResult;
+}
+
+SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	int baseObjectPriority, int baseSurfacePriority,
+	StringArray *savegameList, TextSurface *textSurface, uint32 bgFileHash, const NRect &rect)
+	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
+	_savegameList(savegameList), _textSurface(textSurface), _bgFileHash(bgFileHash), _rect(rect),
+	_maxStringLength(0), _firstVisibleItem(0), _lastVisibleItem(0), _currIndex(0) {
+
+	_maxVisibleItemsCount = (_rect.y2 - _rect.y1) / _textSurface->getCharHeight();
+	_maxStringLength = (_rect.x2 - _rect.x1) / _textSurface->getCharWidth();
 }
 
 void SavegameListBox::onClick() {
-	NPoint mousePos;
-	int16 w = _rect.x2 - _rect.x1, h = _rect.y2 - _rect.y1;
-	_parentScene->getMousePos(mousePos);
+	NPoint mousePos = _parentScene->getMousePos();
 	mousePos.x -= _x + _rect.x1;
 	mousePos.y -= _y + _rect.y1;
-	if (mousePos.x >= 0 && mousePos.x <= w && mousePos.y >= 0 && mousePos.y <= h) {
-		int newIndex = _topIndex + mousePos.y / _textSurface1->getCharHeight();
-		if (newIndex <= _visibleItemsCount) {
+	if (mousePos.x >= 0 && mousePos.x <= _rect.x2 - _rect.x1 &&
+		mousePos.y >= 0 && mousePos.y <= _rect.y2 - _rect.y1) {
+		int newIndex = _firstVisibleItem + mousePos.y / _textSurface->getCharHeight();
+		if (newIndex <= _lastVisibleItem) {
 			_currIndex = newIndex;
 			refresh();
 			_parentScene->setCurrWidget(this);
-			// TODO _parentScene->onClick(_itemID, 5);
+			debug("_currIndex = %d", _currIndex);
+			_parentScene->handleEvent(_itemID, 5);
 		}
 	}
 }
 
 void SavegameListBox::addSprite() {
-	_spriteResource.load2(_fileHash1);
+	_spriteResource.load2(_bgFileHash);
 	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	refreshPosition();
 	_parentScene->addSprite(this);
 	_vm->_collisionMan->addSprite(this);
-	if (_visible)
-		show();
-	else
-		hide();
+	_surface->setVisible(true);
 	buildItems();
-	_topIndex = 0;
-	_visibleItemsCount = MIN(_maxVisibleItemsCount, (int)_textLabelItems.size());
+	_firstVisibleItem = 0;
+	_lastVisibleItem = MIN(_maxVisibleItemsCount, (int)_textLabelItems.size());
 	refresh();
 }
 
@@ -549,7 +714,7 @@ void SavegameListBox::buildItems() {
 		const byte *string = (const byte*)savegameList[i].c_str();
 		int stringLen = (int)savegameList[i].size();
 		TextLabelWidget *label = new TextLabelWidget(_vm, itemX, itemY, i, _parentScene, _baseObjectPriority + 1,
-			_baseSurfacePriority + 1, _visible, string, MIN(stringLen, _maxStringLength), _surface, _x, _y, _textSurface1);
+			_baseSurfacePriority + 1, string, MIN(stringLen, _maxStringLength), _surface, _x, _y, _textSurface);
 		label->addSprite();
 		_textLabelItems.push_back(label);
 	}
@@ -558,13 +723,12 @@ void SavegameListBox::buildItems() {
 void SavegameListBox::drawItems() {
 	for (int i = 0; i < (int)_textLabelItems.size(); ++i) {
 		TextLabelWidget *label = _textLabelItems[i];		
-		if (i >= _topIndex && i <= _visibleItemsCount) {
-			label->setY(_rect.y1 + (i - _topIndex) * _textSurface1->getCharHeight());
+		if (i >= _firstVisibleItem && i < _lastVisibleItem) {
+			label->setY(_rect.y1 + (i - _firstVisibleItem) * _textSurface->getCharHeight());
 			label->updateBounds();
 			label->drawString(_maxStringLength);
-		} else {
+		} else
 			label->clear();
-		}
 	}
 }
 
@@ -574,37 +738,153 @@ void SavegameListBox::refresh() {
 }
 
 void SavegameListBox::scrollUp() {
-	if (_topIndex > 0) {
-		--_topIndex;
-		--_visibleItemsCount;
+	if (_firstVisibleItem > 0) {
+		--_firstVisibleItem;
+		--_lastVisibleItem;
 		refresh();
 	}
 }
 
 void SavegameListBox::scrollDown() {
-	if (_visibleItemsCount < (int)_textLabelItems.size()) {
-		++_topIndex;
-		++_visibleItemsCount;
+	if (_lastVisibleItem < (int)_textLabelItems.size()) {
+		++_firstVisibleItem;
+		++_lastVisibleItem;
 		refresh();
 	}
 }
 
 void SavegameListBox::pageUp() {
-	int distance = MIN(_topIndex, _maxVisibleItemsCount);
-	if (distance > 0) {
-		_topIndex -= distance;
-		_visibleItemsCount = distance;
+	int amount = MIN(_firstVisibleItem, _maxVisibleItemsCount);
+	if (amount > 0) {
+		_firstVisibleItem -= amount;
+		_lastVisibleItem -= amount;
 		refresh();
 	}
 }
 
 void SavegameListBox::pageDown() {
-	int distance = MIN((int)_textLabelItems.size() - _visibleItemsCount - 1, _maxVisibleItemsCount);
-	if (distance > 0) {
-		_topIndex += distance;
-		_visibleItemsCount += distance;
+	int amount = MIN((int)_textLabelItems.size() - _lastVisibleItem, _maxVisibleItemsCount);
+	if (amount > 0) {
+		_firstVisibleItem += amount;
+		_lastVisibleItem += amount;
 		refresh();
 	}
+}
+
+SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArray *savegameList)
+	: WidgetScene(vm, parentModule), _savegameList(savegameList) {
+
+	static const uint32 kSaveGameMenuButtonFileHashes[] = {
+		0x8359A824,
+		0x0690E260,
+		0x0352B050,
+		0x1392A223,
+		0x13802260,
+		0x0B32B200
+	};
+	
+	static const NRect kSaveGameMenuButtonCollisionBounds[] = {
+		NRect(518, 106, 602, 160),
+		NRect(516, 378, 596, 434),
+		NRect(394, 108, 458, 206),
+		NRect(400, 204, 458, 276),
+		NRect(398, 292, 456, 352),
+		NRect(396, 352, 460, 444)
+	};
+
+	static const NRect kListBoxRect(0, 0, 320, 272);
+	static const NRect kTextEditRect(0, 0, 377, 17);
+	static const NRect kMouseRect(50, 47, 427, 64);
+
+	_textSurface = new TextSurface(_vm, 0x2328121A, 7, 32, 32, 11, 17);
+	
+	setBackground(0x30084E25);
+	setPalette(0x30084E25);
+	insertMouse433(0x84E21308, &kMouseRect);
+	insertStaticSprite(0x1340A5C2, 200);
+	insertStaticSprite(0x1301A7EA, 200);
+
+	_listBox = new SavegameListBox(_vm, 60, 142, 69/*ItemID*/, this, 1000, 1000,
+		_savegameList, _textSurface, 0x1115A223, kListBoxRect);
+	_listBox->addSprite();
+
+	_textEditWidget = new TextEditWidget(_vm, 50, 47, 70/*ItemID*/, this, 1000, 1000,
+		(const byte*)_savegameName.c_str(), 29, _textSurface, 0x3510A868, kTextEditRect);
+	_textEditWidget->setCursor(0x8290AC20, 2, 13);
+	_textEditWidget->addSprite();
+	_textEditWidget->setString(_savegameName);
+	setCurrWidget(_textEditWidget);
+	
+	for (uint buttonIndex = 0; buttonIndex < 6; ++buttonIndex) {
+		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
+			kSaveGameMenuButtonFileHashes[buttonIndex], kSaveGameMenuButtonCollisionBounds[buttonIndex]);
+		_vm->_collisionMan->addSprite(menuButton);
+	}
+
+
+	SetUpdateHandler(&Scene::update);
+	SetMessageHandler(&SaveGameMenu::handleMessage);
+}
+
+SaveGameMenu::~SaveGameMenu() {
+	delete _textSurface;
+}
+
+void SaveGameMenu::handleEvent(int16 itemID, int eventType) {
+	if (itemID == 69 && eventType == 5) {
+		uint currIndex = _listBox->getCurrIndex();
+		_textEditWidget->setString((*_savegameList)[currIndex]);
+		setCurrWidget(_textEditWidget);
+	}
+}
+
+uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x000A:
+		sendMessage(_textEditWidget, 0x000A, param.asInteger());
+		setCurrWidget(_textEditWidget);
+		break;
+	case 0x000B:
+		if (param.asInteger() == Common::KEYCODE_RETURN) {
+			// Return
+			// TODO 00486B05
+			// Get string from edit field and inform main module
+			leaveScene(0);
+		} else if (param.asInteger() == Common::KEYCODE_ESCAPE) {
+			// Escape
+			leaveScene(1);
+		} else {
+			sendMessage(_textEditWidget, 0x000B, param.asInteger());
+			setCurrWidget(_textEditWidget);
+		}
+		break;
+	case 0x2000:
+		// Handle menu button click
+		switch (param.asInteger()) {
+		case 0:
+			// TODO Same handling as Return
+			leaveScene(0);
+			break;
+		case 1:
+			leaveScene(1);
+			break;
+		case 2:
+			_listBox->pageUp();
+			break;
+		case 3:
+			_listBox->scrollUp();
+			break;
+		case 4:
+			_listBox->scrollDown();
+			break;
+		case 5:
+			_listBox->pageDown();
+			break;
+		}
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

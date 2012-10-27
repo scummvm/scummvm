@@ -100,28 +100,29 @@ void Scene::addEntity(Entity *entity) {
 }
 
 bool Scene::removeEntity(Entity *entity) {
-	for (uint index = 0; index < _entities.size(); index++) {
+	for (uint index = 0; index < _entities.size(); index++)
 		if (_entities[index] == entity) {
 			_entities.remove_at(index);
 			return true;
 		}
-	}
 	return false; 
 }
 
 void Scene::addSurface(BaseSurface *surface) {
-	int index = 0, insertIndex = -1;
-	for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
-		if ((*iter)->getPriority() > surface->getPriority()) {
-			insertIndex = index;
-			break;
+	if (surface) {
+		int index = 0, insertIndex = -1;
+		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
+			if ((*iter)->getPriority() > surface->getPriority()) {
+				insertIndex = index;
+				break;
+			}
+			index++;
 		}
-		index++;
+		if (insertIndex >= 0)
+			_surfaces.insert_at(insertIndex, surface);
+		else
+			_surfaces.push_back(surface);		
 	}
-	if (insertIndex >= 0)
-		_surfaces.insert_at(insertIndex, surface);
-	else
-		_surfaces.push_back(surface);		
 }
 
 bool Scene::removeSurface(BaseSurface *surface) {
@@ -191,7 +192,7 @@ Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
 	return addSprite(new StaticSprite(_vm, fileHash, surfacePriority));
 }
 
-void Scene::insertMouse433(uint32 fileHash, NRect *mouseRect) {
+void Scene::insertMouse433(uint32 fileHash, const NRect *mouseRect) {
 	NRect rect(-1, -1, -1, -1);
 	if (mouseRect)
 		rect = *mouseRect;

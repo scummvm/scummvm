@@ -37,8 +37,10 @@ public:
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);
 	void handleMouseUp(int16 x, int16 y);
-	void handleEscapeKey();
 	void handleSpaceKey();
+	void handleAsciiKey(char key);
+	void handleKeyDown(Common::KeyCode keyCode);
+	void handleEscapeKey();
 	void initKeySlotsPuzzle();
 	void initMemoryPuzzle();
 	void initWaterPipesPuzzle();

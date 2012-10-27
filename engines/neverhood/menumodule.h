@@ -30,6 +30,8 @@
 
 namespace Neverhood {
 
+typedef Common::Array<Common::String> StringArray;
+
 class MenuModule : public Module {
 public:
 	MenuModule(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -37,17 +39,18 @@ public:
 protected:
 	int _sceneNum;
 	Common::String _savegameName;
-	Background *_savedBackground;
 	byte *_savedPaletteData;
-	// TODO _savegameList (list of strings?)
+	StringArray *_savegameList;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void createSaveGameMenu();
+	void handleSaveGameMenuAction(int action);
 };
 
-class MainMenuButton : public StaticSprite {
+class MenuButton : public StaticSprite {
 public:
-	MainMenuButton(NeverhoodEngine *vm, Scene *parentScene, uint buttonIndex);
+	MenuButton(NeverhoodEngine *vm, Scene *parentScene, uint buttonIndex, uint32 fileHash, const NRect &collisionBounds);
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -79,15 +82,15 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-typedef Common::Array<Common::String> StringArray;
-
 class Widget;
 
 class WidgetScene : public Scene {
 public:
 	WidgetScene(NeverhoodEngine *vm, Module *parentModule);
-	void getMousePos(NPoint &pt);
+	NPoint getMousePos();
 	virtual void setCurrWidget(Widget *newWidget);
+	virtual Widget *getCurrWidget() { return _currWidget; }
+	virtual void handleEvent(int16 itemID, int eventType);
 protected:
 	Widget *_currWidget;
 };
@@ -95,9 +98,7 @@ protected:
 class Widget : public StaticSprite {
 public:
 	Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-		int baseObjectPriority, int baseSurfacePriority, bool visible);
-	virtual void show();
-	virtual void hide();
+		int baseObjectPriority, int baseSurfacePriority);
 	virtual void onClick();
 	virtual void setPosition(int16 x, int16 y);
 	virtual void refreshPosition();
@@ -111,7 +112,6 @@ protected:
 	WidgetScene *_parentScene;
 	int _baseObjectPriority;
 	int _baseSurfacePriority;
-	bool _visible;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -119,7 +119,7 @@ protected:
 class TextLabelWidget : public Widget {
 public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-		int baseObjectPriority, int baseSurfacePriority, bool visible,
+		int baseObjectPriority, int baseSurfacePriority, 
 		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, TextSurface *textSurface);	
 	virtual void onClick();
 	virtual void addSprite();
@@ -138,11 +138,46 @@ protected:
 	int _stringLen;
 };
 
+class TextEditWidget : public Widget {
+public:
+	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+		int baseObjectPriority, int baseSurfacePriority,
+		const byte *string, int maxStringLength, TextSurface *textSurface, uint32 fileHash, const NRect &rect);
+	~TextEditWidget();
+	virtual void onClick();
+	virtual void addSprite();
+	virtual void enterWidget();
+	virtual void exitWidget();
+	void setCursor(uint32 cursorFileHash, int16 cursorWidth, int16 cursorHeight);
+	void drawCursor();
+	void updateString();
+	void getString(Common::String &string);
+	void setString(const Common::String &string);
+	void handleAsciiKey(char ch);
+	void handleKeyDown(Common::KeyCode keyCode);
+	void refresh();
+protected:
+	NRect _rect;
+	uint32 _fileHash;
+	int _maxVisibleChars;
+	int _maxStringLength;
+	int _cursorPos;
+	int _cursorTicks;
+	Common::String _entryString;
+	TextSurface *_textSurface;
+	TextLabelWidget *_textLabelWidget;
+	BaseSurface *_cursorSurface;
+	uint32 _cursorFileHash;
+	int16 _cursorWidth, _cursorHeight;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 class SavegameListBox : public Widget {
 public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-		int baseObjectPriority, int baseSurfacePriority, bool visible,
-		StringArray *savegameList, TextSurface *textSurface1, TextSurface *textSurface2, uint32 fileHash1, NRect &rect);
+		int baseObjectPriority, int baseSurfacePriority,
+		StringArray *savegameList, TextSurface *textSurface, uint32 bgFileHash, const NRect &rect);
 	virtual void onClick();
 	virtual void addSprite();
 	void buildItems();
@@ -152,18 +187,33 @@ public:
 	void scrollDown();
 	void pageUp();
 	void pageDown();
+	uint getCurrIndex() const { return _currIndex; }
 protected:
-	NRect _rect;
-	uint32 _fileHash1;
+	const NRect _rect;
+	uint32 _bgFileHash;
 	int _maxStringLength;
 	Common::Array<TextLabelWidget*> _textLabelItems;
-	int _topIndex;
-	int _visibleItemsCount;
+	int _firstVisibleItem;
+	int _lastVisibleItem;
 	StringArray *_savegameList;
-	TextSurface *_textSurface1;
-	TextSurface *_textSurface2;
-	int _currIndex;
+	TextSurface *_textSurface;
+	uint _currIndex;
 	int _maxVisibleItemsCount;
+};
+
+class SaveGameMenu : public WidgetScene {
+public:
+	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArray *savegameList);
+	~SaveGameMenu();
+	virtual void handleEvent(int16 itemID, int eventType);
+protected:
+	StringArray *_savegameList;
+	TextSurface *_textSurface;
+	SavegameListBox *_listBox;
+	TextEditWidget *_textEditWidget;
+	Common::String _savegameName;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood

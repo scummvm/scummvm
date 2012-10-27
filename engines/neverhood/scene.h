@@ -59,7 +59,7 @@ public:
 	void setPalette(uint32 fileHash = 0);
 	void setHitRects(uint32 id);
 	Sprite *insertStaticSprite(uint32 fileHash, int surfacePriority);
-	void insertMouse433(uint32 fileHash, NRect *mouseRect = NULL);
+	void insertMouse433(uint32 fileHash, const NRect *mouseRect = NULL);
 	void insertMouse435(uint32 fileHash, int16 x1, int16 x2);
 	void insertNavigationMouse(uint32 fileHash, int type);
 	void showMouse(bool visible);

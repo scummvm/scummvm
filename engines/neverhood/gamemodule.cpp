@@ -123,18 +123,36 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 	}				
 }
 
-void GameModule::handleEscapeKey() {
-	if (!_prevChildObject /* && _canRequestMainMenu TODO?*/)
-		_mainMenuRequested = true;
-	else
-		sendMessage(_childObject, 0x000C, 0);
-}
-
 void GameModule::handleSpaceKey() {
 	if (_childObject) {
 		debug(2, "GameModule::handleSpaceKey()");
 		sendMessage(_childObject, 0x0009, 0);
 	}				
+}
+
+void GameModule::handleAsciiKey(char key) {
+	if (_childObject) {
+		debug(2, "GameModule::handleAsciiKey()");
+		sendMessage(_childObject, 0x000A, (uint32)key);
+	}				
+}
+
+void GameModule::handleKeyDown(Common::KeyCode keyCode) {
+	if (_childObject) {
+		if (keyCode == Common::KEYCODE_ESCAPE)
+			handleEscapeKey();
+		else if (keyCode == Common::KEYCODE_SPACE)
+			handleSpaceKey();
+		debug(2, "GameModule::handleKeyDown()");
+		sendMessage(_childObject, 0x000B, keyCode);
+	}				
+}
+
+void GameModule::handleEscapeKey() {
+	if (!_prevChildObject /* && _canRequestMainMenu TODO?*/)
+		_mainMenuRequested = true;
+	else if (_childObject)
+		sendMessage(_childObject, 0x000C, 0);
 }
 
 void GameModule::initKeySlotsPuzzle() {
