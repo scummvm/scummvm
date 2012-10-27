@@ -54,6 +54,7 @@ public:
 	int souris_bb;
 	int souris_b;
 	byte *pointeur_souris;
+	uint32 _gameCounter;
 	uint32 lItCounter;
 	uint32 _priorCounterTime;
 	uint32 _priorFrameTime;

@@ -41,6 +41,7 @@ EventsManager::EventsManager() {
 	souris_bb = 0;
 	souris_b = 0;
 	pointeur_souris = NULL;
+	_gameCounter = 0;
 	lItCounter = 0;
 	ESC_KEY = false;
 	KEY_INVENT = false;
@@ -204,6 +205,7 @@ void EventsManager::checkForNextFrameCounter() {
 	while ((milli - _priorCounterTime) >= 10) {
 		_priorCounterTime += 10;
 		lItCounter += 3;
+		++_gameCounter;
 	}
 
 	// Check for next game frame

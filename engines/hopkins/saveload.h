@@ -24,11 +24,23 @@
 #define HOPKINS_SAVELOAD_H
 
 #include "common/scummsys.h"
+#include "common/savefile.h"
 #include "common/str.h"
 
 namespace Hopkins {
 
 class HopkinsEngine;
+
+#define HOPKINS_SAVEGAME_VERSION 1
+
+struct hopkinsSavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+	int saveYear, saveMonth, saveDay;
+	int saveHour, saveMinutes;
+	int totalFrames;
+};
 
 class SaveLoadManager {
 private:
@@ -40,6 +52,11 @@ public:
 	bool bsave(const Common::String &file, const void *buf, size_t n);
 	bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
 	void bload(const Common::String &file, byte *buf);
+
+	static bool readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header);
+	void writeSavegameHeader(Common::OutSaveFile *out, hopkinsSavegameHeader &header);
+	Common::Error save(int slot, const Common::String &saveName);
+	Common::Error restore(int slot);
 };
 
 } // End of namespace Hopkins

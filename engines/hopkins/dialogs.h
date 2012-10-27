@@ -56,6 +56,10 @@ public:
 
 	void INVENT_ANIM();
 	void TEST_INVENT();
+	void CHARGE_PARTIE();
+	void SAUVE_PARTIE();
+	void LOAD_SAUVE(int a1);
+	int CHERCHE_PARTIE();
 };
 
 } // End of namespace Hopkins

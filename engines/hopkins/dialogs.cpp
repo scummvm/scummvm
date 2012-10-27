@@ -460,9 +460,10 @@ LABEL_7:
 		if (_vm->_eventsManager.btsouris == 1)
 			showOptionsDialog();
 		if (_vm->_eventsManager.btsouris == 3)
-			_vm->_menuManager.CHARGE_PARTIE();
+			_vm->_dialogsManager.CHARGE_PARTIE();
 		if (_vm->_eventsManager.btsouris == 2)
-			_vm->_menuManager.SAUVE_PARTIE();
+			_vm->_dialogsManager.SAUVE_PARTIE();
+
 		_vm->_eventsManager.btsouris = 4;
 		_vm->_eventsManager.CHANGE_MOUSE(4);
 		_vm->_objectsManager.old_cady = 0;
@@ -532,6 +533,271 @@ void DialogsManager::TEST_INVENT() {
 			_vm->_eventsManager.KEY_INVENT = 0;
 		}
 	}
+}
+
+// Load Game
+void DialogsManager::CHARGE_PARTIE() {
+	int v1; 
+	char v3; 
+	byte *v4; 
+	int v5; 
+	Common::String s; 
+	Common::String v8; 
+	char v9; 
+	char v10; 
+	char v11; 
+	Common::String v12; 
+	char v13; 
+	char v14; 
+	char v15; 
+	char v16; 
+	char v17; 
+	Common::File f;
+
+	_vm->_eventsManager.VBL();
+	LOAD_SAUVE(2);
+	do {
+		do {
+			v1 = CHERCHE_PARTIE();
+			_vm->_eventsManager.VBL();
+		} while (_vm->_eventsManager.BMOUSE() != 1);
+	} while (!v1);
+	_vm->_objectsManager.SL_FLAG = 0;
+	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager.start_x + 183, 60);
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 183, 60, 457, 413);
+	_vm->_objectsManager.BOBTOUS = 1;
+	_vm->_objectsManager.SL_SPR = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR);
+	_vm->_objectsManager.SL_SPR2 = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR2);
+	_vm->_objectsManager.SL_X = 0;
+	_vm->_objectsManager.SL_Y = 0;
+	if (v1 != 7) {
+		s = Common::String::format("%d", v1);
+		v8 = 80;
+		v9 = 65;
+		v10 = 82;
+		v11 = 84;
+		v12 = s;
+		v13 = 46;
+		v14 = 68;
+		v15 = 65;
+		v16 = 84;
+		v17 = 0;
+		_vm->_fileManager.CONSTRUIT_LINUX(v8);
+		if (f.open(_vm->_globals.NFICHIER)) {
+			f.close();
+
+			v3 = _vm->_globals.SAUVEGARDE->data[svField10];
+			_vm->_fileManager.CONSTRUIT_LINUX(v8);
+			_vm->_fileManager.bload(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0]);
+
+			v4 = &_vm->_globals.SAUVEGARDE->data[svField1300];
+			v5 = 0;
+			do {
+				_vm->_globals.INVENTAIRE[v5] = (int16)READ_LE_UINT16(v4 + 2 * v5);
+				++v5;
+			} while (v5 <= 34);
+
+			_vm->_globals.SAUVEGARDE->data[svField10] = v3;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField5];
+			_vm->_globals.SAUVEGARDE->data[svField6] = 0;
+			_vm->_globals.ECRAN = 0;
+		}
+	}
+	
+	_vm->_objectsManager.CHANGE_OBJET(14);
+}
+
+// Save Game
+void DialogsManager::SAUVE_PARTIE() {
+	byte *v1; 
+	int slotNumber; 
+	byte *invItemP; 
+	int v4; 
+	Common::String s; 
+	Common::String v7; 
+	char v12; 
+	char v13; 
+	char v14; 
+	char v15; 
+	char v16; 
+
+	_vm->_eventsManager.VBL();
+	v1 = _vm->_globals.dos_malloc2(0x2DB4u);
+	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, v1, _vm->_eventsManager.start_x, 20, 
+		SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
+	_vm->_graphicsManager.INIT_TABLE(45, 80, _vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.Trans_bloc2(v1, _vm->_graphicsManager.TABLE_COUL, 11136);
+	LOAD_SAUVE(1);
+	do {
+		do {
+			slotNumber = CHERCHE_PARTIE();
+			_vm->_eventsManager.VBL();
+		} while (_vm->_eventsManager.BMOUSE() != 1);
+	} while (!slotNumber);
+	_vm->_objectsManager.SL_FLAG = 0;
+	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager.start_x + 183, 60);
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 183, 60, _vm->_eventsManager.start_x + 457, 413);
+	_vm->_objectsManager.BOBTOUS = 1;
+	_vm->_objectsManager.SL_SPR = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR);
+	_vm->_objectsManager.SL_SPR2 = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR2);
+	_vm->_objectsManager.SL_X = 0;
+	_vm->_objectsManager.SL_Y = 0;
+
+	if (slotNumber != 7) {
+		// Set the selected slot number
+		_vm->_globals.SAUVEGARDE->data[svField10] = slotNumber;
+
+		// Set up the inventory
+		invItemP = &_vm->_globals.SAUVEGARDE->data[svField1300];
+		v4 = 0;
+		do {
+			WRITE_LE_UINT16(invItemP + 2 * v4, _vm->_globals.INVENTAIRE[v4]);
+			++v4;
+		} while (v4 <= 34);
+
+		_vm->_fileManager.CONSTRUIT_LINUX(v7);
+//		SAUVE_FICHIER(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0], 0x7D0u);
+		v12 = 46;
+		v13 = 69;
+		v14 = 67;
+		v15 = 82;
+		v16 = 0;
+		_vm->_fileManager.CONSTRUIT_LINUX(v7);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, v1, 0x2B80u);
+	}
+	_vm->_globals.dos_free2(v1);
+}
+
+
+// Load Save
+void DialogsManager::LOAD_SAUVE(int a1) {
+	int v1; 
+//	byte *v2; 
+//	byte *v3; 
+	Common::String s; 
+	Common::File f;
+
+	switch (_vm->_globals.FR) {
+	case 0:
+		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEAN.SPR");
+		break;
+	case 1:
+		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEFR.SPR");
+		break;
+	case 2:
+		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEES.SPR");
+		break;
+	}
+
+	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+	_vm->_fileManager.CONSTRUIT_SYSTEM("SAVE2.SPR");
+	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 483, 360, 0);
+
+	if (_vm->_globals.FR) {
+		if (a1 == 1)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 525, 375, 1);
+		if (a1 == 2)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 515, 375, 2);
+	} else {
+		if (a1 == 1)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 535, 372, 1);
+		if (a1 == 2)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 539, 372, 2);
+	}
+
+	v1 = 1;
+	do {
+		s = Common::String::format("ART%d.ECR", v1);
+
+		_vm->_fileManager.CONSTRUIT_LINUX(s);
+/* TODO: Get from save file manager as part of save files
+		if (f.exists(_vm->_globals.NFICHIER)) {
+			v2 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			v3 = v2;
+			if (v1 == 1)
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v2, _vm->_eventsManager.start_x + 190, 112, 0x80u, 87);
+			if (v1 == 2)
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v3, _vm->_eventsManager.start_x + 323, 112, 0x80u, 87);
+			if (v1 == 3)
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v3, _vm->_eventsManager.start_x + 190, 203, 0x80u, 87);
+			if (v1 == 4)
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v3, _vm->_eventsManager.start_x + 323, 203, 0x80u, 87);
+			if (v1 == 5)
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v3, _vm->_eventsManager.start_x + 190, 294, 0x80u, 87);
+			if (v1 == 6)
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v3, _vm->_eventsManager.start_x + 323, 294, 0x80u, 87);
+			_vm->_globals.dos_free2(v3);
+		}
+*/
+		++v1;
+	} while (v1 <= 6);
+	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 183, 60, 0x112u, 353);
+	_vm->_objectsManager.SL_FLAG = 1;
+	_vm->_objectsManager.SL_MODE = a1;
+	_vm->_objectsManager.SL_X = 0;
+	_vm->_objectsManager.SL_Y = 0;
+}
+
+// Search Game
+int DialogsManager::CHERCHE_PARTIE() {
+	int v0; 
+	int v1; 
+	int v2; 
+
+	v0 = 0;
+	v1 = _vm->_eventsManager.XMOUSE();
+	v2 = _vm->_eventsManager.YMOUSE();
+	_vm->_graphicsManager.ofscroll = _vm->_eventsManager.start_x;
+	if ((uint16)(v2 - 112) <= 0x56u) {
+		if (v1 > _vm->_eventsManager.start_x + 189 && v1 < _vm->_eventsManager.start_x + 318)
+			v0 = 1;
+		if ((uint16)(v2 - 112) <= 0x56u && v1 > _vm->_graphicsManager.ofscroll + 322 && v1 < _vm->_graphicsManager.ofscroll + 452)
+			v0 = 2;
+	}
+	if ((uint16)(v2 - 203) <= 0x56u) {
+		if (v1 > _vm->_graphicsManager.ofscroll + 189 && v1 < _vm->_graphicsManager.ofscroll + 318)
+			v0 = 3;
+		if ((uint16)(v2 - 203) <= 0x56u && v1 > _vm->_graphicsManager.ofscroll + 322 && v1 < _vm->_graphicsManager.ofscroll + 452)
+			v0 = 4;
+	}
+	if ((uint16)(v2 - 294) <= 0x56u) {
+		if (v1 > _vm->_graphicsManager.ofscroll + 189 && v1 < _vm->_graphicsManager.ofscroll + 318)
+			v0 = 5;
+		if ((uint16)(v2 - 294) <= 0x56u && v1 > _vm->_graphicsManager.ofscroll + 322 && v1 < _vm->_graphicsManager.ofscroll + 452)
+			v0 = 6;
+	}
+	if ((uint16)(v2 - 388) <= 0x10u && v1 > _vm->_graphicsManager.ofscroll + 273 && v1 < _vm->_graphicsManager.ofscroll + 355)
+		v0 = 7;
+	if (v0 == 1) {
+		_vm->_objectsManager.SL_X = 189;
+		_vm->_objectsManager.SL_Y = 111;
+	}
+	if (v0 == 2) {
+		_vm->_objectsManager.SL_X = 322;
+		_vm->_objectsManager.SL_Y = 111;
+	}
+	if (v0 == 3) {
+		_vm->_objectsManager.SL_X = 189;
+		_vm->_objectsManager.SL_Y = 202;
+	}
+	if (v0 == 4) {
+		_vm->_objectsManager.SL_X = 322;
+		_vm->_objectsManager.SL_Y = 202;
+	}
+	if (v0 == 5) {
+		_vm->_objectsManager.SL_X = 189;
+		_vm->_objectsManager.SL_Y = 293;
+	}
+	if (v0 == 6) {
+		_vm->_objectsManager.SL_X = 322;
+		_vm->_objectsManager.SL_Y = 293;
+	}
+	if (v0 == 7 || !v0) {
+		_vm->_objectsManager.SL_X = 0;
+		_vm->_objectsManager.SL_Y = 0;
+	}
+	return v0;
 }
 
 } // End of namespace Hopkins

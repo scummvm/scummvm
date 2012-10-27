@@ -22,11 +22,19 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
+#include "graphics/surface.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "hopkins/saveload.h"
 #include "hopkins/files.h"
 #include "hopkins/globals.h"
+#include "hopkins/graphics.h"
+#include "hopkins/hopkins.h"
 
 namespace Hopkins {
+
+const char *SAVEGAME_STR = "HOPKINS";
+#define SAVEGAME_STR_SIZE 13
 
 void SaveLoadManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
@@ -66,6 +74,67 @@ void SaveLoadManager::bload(const Common::String &file, byte *buf) {
 	int32 filesize = f->size();
 	f->read(buf, filesize);
 	delete f;
+}
+
+bool SaveLoadManager::readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header) {
+	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
+	header.thumbnail = NULL;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
+	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
+		return false;
+
+	header.version = in->readByte();
+	if (header.version > HOPKINS_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header.saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+
+	// Get the thumbnail
+	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!header.thumbnail)
+		return false;
+
+	// Read in save date/time
+	header.saveYear = in->readSint16LE();
+	header.saveMonth = in->readSint16LE();
+	header.saveDay = in->readSint16LE();
+	header.saveHour = in->readSint16LE();
+	header.saveMinutes = in->readSint16LE();
+	header.totalFrames = in->readUint32LE();
+
+	return true;
+}
+
+void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSavegameHeader &header) {
+	// Write out a savegame header
+	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	out->writeByte(HOPKINS_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->write(header.saveName.c_str(), header.saveName.size() + 1);
+
+	// Create a thumbnail and save it
+	Graphics::Surface *thumb = new Graphics::Surface();
+//	::createThumbnail(thumb, _vm->_graphicsManager.VESA_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+	Graphics::saveThumbnail(*out, *thumb);
+	thumb->free();
+	delete thumb;
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+	out->writeUint32LE(_vm->_eventsManager._gameCounter);
 }
 
 } // End of namespace Hopkins

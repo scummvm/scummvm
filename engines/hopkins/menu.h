@@ -40,11 +40,7 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	int MENU();
-	void CHARGE_PARTIE();
-	void SAUVE_PARTIE();
 	void COMPUT_HOPKINS(int a1);
-	void LOAD_SAUVE(int a1);
-	int CHERCHE_PARTIE();
 };
 
 } // End of namespace Hopkins
