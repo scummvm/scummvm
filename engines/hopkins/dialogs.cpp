@@ -647,7 +647,6 @@ void DialogsManager::SAUVE_PARTIE() {
 void DialogsManager::LOAD_SAUVE(int a1) {
 	int slotNumber; 
 	hopkinsSavegameHeader header;
-	Common::InSaveFile *in;
 	byte *thumb;
 
 	switch (_vm->_globals.FR) {
