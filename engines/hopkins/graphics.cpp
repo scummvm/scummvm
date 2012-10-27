@@ -2485,7 +2485,7 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 		Reduc_Ecran_L = Asm_Reduc(width, Red);
 		Reduc_Ecran_H = Asm_Reduc(height, Red);
 
-		for (int yCtr = 0; yCtr < Reduc_Ecran_H; ++yCtr, Red_y -= 100, srcP += nbrligne2) {
+		for (int yCtr = 0; yCtr < height; ++yCtr, srcP += nbrligne2) {
 			Red_y += Red;
 			if (Red_y < 100) {
 				Red_x = 0;
@@ -2500,6 +2500,8 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 						++lineSrcP;
 					}
 				}
+			} else {
+				Red_y -= 100;
 			}
 		}
 	}
