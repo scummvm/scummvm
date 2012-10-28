@@ -1035,6 +1035,9 @@ LABEL_2:
 				v13 = 1;
 				do {
 					v10 =  _vm->_scriptManager.Traduction(ptr + 20 * v13);
+					if (_vm->shouldQuit())
+						return;
+
 					if (v10 == 2)
 						v13 =  _vm->_scriptManager.Control_Goto(ptr + 20 * v13);
 					if (v10 == 3)

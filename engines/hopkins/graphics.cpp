@@ -2326,7 +2326,10 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 	} else {
 		v11 = 0;
 		do {
-			v6 =  _vm->_scriptManager.Traduction(ptr + 20 * v2);
+			v6 = _vm->_scriptManager.Traduction(ptr + 20 * v2);
+			if (_vm->shouldQuit())
+				return;
+
 			if (v6 == 2)
 				v2 =  _vm->_scriptManager.Control_Goto((ptr + 20 * v2));
 			if (v6 == 3)

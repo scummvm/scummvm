@@ -4204,6 +4204,9 @@ void ObjectsManager::OPTI_OBJET() {
 		v7 = 0;
 		do {
 			v5 = _vm->_scriptManager.Traduction(data + 20 * v0);
+			if (_vm->shouldQuit())
+				return;
+
 			if (v5 == 2)
 				v0 = _vm->_scriptManager.Control_Goto(data + 20 * v0);
 			if (v5 == 3)

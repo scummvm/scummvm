@@ -202,9 +202,11 @@ int ScriptManager::Traduction(byte *a1) {
 					v3 = 636;
 			}
 			if (!_vm->_soundManager.SOUNDOFF && _vm->_soundManager.SOUND_FLAG == 1) {
-				do
+				do {
+					if (_vm->shouldQuit())
+						return -1; // Exiting game
 					_vm->_eventsManager.VBL();
-				while (_vm->_soundManager.SOUND_FLAG);
+				} while (_vm->_soundManager.SOUND_FLAG);
 			}
 			if (!_vm->_soundManager.TEXTOFF) {
 				_vm->_fontManager.DOS_TEXT(9, v3, _vm->_globals.FICH_TEXTE, 2 * v67, 2 * v65 + 40, 20, 25, 6, v2, 253);
@@ -261,6 +263,9 @@ LABEL_104:
 					v4 /= _vm->_globals.vitesse;
 				if (v4 > 1) {
 					do {
+						if (_vm->shouldQuit())
+							return -1; // Exiting game
+
 						--v4;
 						_vm->_eventsManager.VBL();
 					} while (v4);
@@ -559,6 +564,9 @@ LABEL_1141:
 		v10 = 0;
 		if (v74 + 1 > 0) {
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
 				++v10;
 			} while (v10 < v74 + 1);
@@ -778,14 +786,20 @@ LABEL_1141:
 			_vm->_graphicsManager.VISU_ALL();
 			v11 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
 				++v11;
 			} while (v11 <= 4);
 			_vm->_eventsManager.MOUSE_OFF();
 			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(3) != 100);
+			} while (_vm->_objectsManager.BOBPOSI(3) != 100);
 			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_graphicsManager.FIN_VISU();
 			if (!_vm->_globals.CENSURE) {
@@ -800,6 +814,9 @@ LABEL_1141:
 			_vm->_graphicsManager.VISU_ALL();
 			v12 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
 				++v12;
 			} while (v12 <= 4);
@@ -863,9 +880,12 @@ LABEL_1141:
 			_vm->_talkManager.PARLER_PERSO2("CHERCHE1.pe2");
 		if (v76 == 35) {
 			if (!_vm->_soundManager.SOUNDOFF) {
-				do
+				do {
+					if (_vm->shouldQuit())
+						return -1; // Exiting game
+
 					_vm->_eventsManager.VBL();
-				while (_vm->_soundManager.SOUND_FLAG);
+				} while (_vm->_soundManager.SOUND_FLAG);
 			}
 			_vm->_talkManager.PARLER_PERSO("PTLAB.pe2");
 		}
@@ -877,6 +897,9 @@ LABEL_1141:
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v14, v13, 564, 420);
 			_vm->_objectsManager.NUMZONE = -1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
@@ -887,6 +910,9 @@ LABEL_1141:
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
 			v15 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(9) == 4 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v15 = 1;
@@ -948,6 +974,9 @@ LABEL_1141:
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v17, v16, 445, 332);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
@@ -957,6 +986,9 @@ LABEL_1141:
 			v18 = 0;
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(7) == 10 && !v18) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
 					v18 = 1;
@@ -993,6 +1025,9 @@ LABEL_1141:
 				v19 = 41;
 			v20 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(9) == 4 && !v20) {
 					_vm->_soundManager.PLAY_SOUND2("SOUND44.WAV");
 					v20 = 1;
@@ -1029,6 +1064,9 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND44.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND71.WAV", 2);
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(12) == 4 && !v21) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v21 = 1;
@@ -1068,6 +1106,9 @@ LABEL_1141:
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v23, v22, 119, 268);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
@@ -1081,6 +1122,9 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND49.WAV", 3);
 			v24 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(11) == 4 && !v24) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v24 = 1;
@@ -1104,9 +1148,12 @@ LABEL_1141:
 			_vm->_objectsManager.SET_BOBPOSI(5, 0);
 			_vm->_objectsManager.SET_BOBPOSI(6, 0);
 			_vm->_soundManager.PLAY_WAV(3);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(5) != 74);
+			} while (_vm->_objectsManager.BOBPOSI(5) != 74);
 			_vm->_objectsManager.BOBANIM_OFF(5);
 			_vm->_objectsManager.BOBANIM_OFF(6);
 			_vm->_objectsManager.BOBANIM_ON(9);
@@ -1120,15 +1167,21 @@ LABEL_1141:
 			_vm->_objectsManager.SET_BOBPOSI(10, 0);
 			_vm->_objectsManager.SET_BOBPOSI(12, 0);
 			_vm->_objectsManager.SPRITE_OFF(0);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(9) != 15);
+			} while (_vm->_objectsManager.BOBPOSI(9) != 15);
 			_vm->_objectsManager.BOBANIM_OFF(9);
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_soundManager.PLAY_SOUND("SOUND50.WAV");
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(12) != 117);
+			} while (_vm->_objectsManager.BOBPOSI(12) != 117);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
 			_vm->_objectsManager.BOBANIM_OFF(12);
 			_vm->_objectsManager.BOBANIM_OFF(10);
@@ -1138,9 +1191,12 @@ LABEL_1141:
 			_vm->_objectsManager.BOBANIM_OFF(3);
 			_vm->_objectsManager.BOBANIM_ON(5);
 			_vm->_objectsManager.SET_BOBPOSI(5, 0);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(5) != 6);
+			} while (_vm->_objectsManager.BOBPOSI(5) != 6);
 			_vm->_objectsManager.BOBANIM_OFF(5);
 			_vm->_objectsManager.BOBANIM_ON(6);
 			_vm->_objectsManager.OBSSEUL = 1;
@@ -1156,6 +1212,9 @@ LABEL_1141:
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				v25 = 0;
 				do {
+					if (_vm->shouldQuit())
+						return -1; // Exiting game
+
 					if (_vm->_objectsManager.BOBPOSI(1) == 1 && !v25) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v25 = 1;
@@ -1195,6 +1254,9 @@ LABEL_1141:
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				v26 = 0;
 				do {
+					if (_vm->shouldQuit())
+						return -1; // Exiting game
+
 					if (_vm->_objectsManager.BOBPOSI(1) == 1 && !v26) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v26 = 1;
@@ -1302,6 +1364,9 @@ LABEL_1141:
 			}
 			_vm->_globals.NOT_VERIF = 1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
@@ -1312,6 +1377,9 @@ LABEL_1141:
 				_vm->_objectsManager.BOBANIM_ON(4);
 				v33 = 0;
 				do {
+					if (_vm->shouldQuit())
+						return -1; // Exiting game
+
 					if (_vm->_objectsManager.BOBPOSI(4) == 9 && !v33) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v33 = 1;
@@ -1338,6 +1406,9 @@ LABEL_1141:
 				_vm->_objectsManager.BOBANIM_ON(6);
 				v34 = 0;
 				do {
+					if (_vm->shouldQuit())
+						return -1; // Exiting game
+
 					if (_vm->_objectsManager.BOBPOSI(6) == 9 && !v34) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v34 = 1;
@@ -1364,6 +1435,9 @@ LABEL_1141:
 				_vm->_objectsManager.BOBANIM_ON(5);
 				v35 = 0;
 				do {
+					if (_vm->shouldQuit())
+						return -1; // Exiting game
+
 					if (_vm->_objectsManager.BOBPOSI(5) == 9 && !v35) {
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						v35 = 1;
@@ -1397,21 +1471,33 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND62.WAV", 2);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 3);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(4) != 10);
+			} while (_vm->_objectsManager.BOBPOSI(4) != 10);
 			_vm->_soundManager.PLAY_WAV(1);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(4) != 18);
+			} while (_vm->_objectsManager.BOBPOSI(4) != 18);
 			_vm->_soundManager.PLAY_WAV(2);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(4) != 62);
+			} while (_vm->_objectsManager.BOBPOSI(4) != 62);
 			_vm->_soundManager.PLAY_WAV(3);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(4) != 77);
+			} while (_vm->_objectsManager.BOBPOSI(4) != 77);
 			_vm->_objectsManager.BOBANIM_OFF(4);
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
@@ -1422,21 +1508,33 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND62.WAV", 2);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 3);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(5) != 10);
+			} while (_vm->_objectsManager.BOBPOSI(5) != 10);
 			_vm->_soundManager.PLAY_WAV(1);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(5) != 18);
+			} while (_vm->_objectsManager.BOBPOSI(5) != 18);
 			_vm->_soundManager.PLAY_WAV(2);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(5) != 38);
+			} while (_vm->_objectsManager.BOBPOSI(5) != 38);
 			_vm->_soundManager.PLAY_WAV(3);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(5) != 53);
+			} while (_vm->_objectsManager.BOBPOSI(5) != 53);
 			_vm->_objectsManager.BOBANIM_OFF(5);
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
@@ -1472,6 +1570,9 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_OUTW();
 			v36 = 1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
 				++v36;
 			} while (v36 <= 39);
@@ -1499,6 +1600,9 @@ LABEL_1141:
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
@@ -1512,9 +1616,12 @@ LABEL_1141:
 			_vm->_objectsManager.SETANISPR(0, 60);
 			_vm->_objectsManager.BOBANIM_OFF(4);
 			_vm->_objectsManager.BOBANIM_ON(1);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(1) != 9);
+			} while (_vm->_objectsManager.BOBPOSI(1) != 9);
 			_vm->_objectsManager.BOBANIM_OFF(1);
 			_vm->_globals.NO_VISU = 1;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -1525,23 +1632,32 @@ LABEL_1141:
 			_vm->_objectsManager.NUMZONE = 0;
 			_vm->_globals.NOT_VERIF = 1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.SETANISPR(0, 64);
 			_vm->_objectsManager.BOBANIM_ON(2);
 			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(2) != 10);
+			} while (_vm->_objectsManager.BOBPOSI(2) != 10);
 			_vm->_objectsManager.BOBANIM_OFF(2);
 			_vm->_objectsManager.BOBANIM_ON(4);
 		}
 		if (v76 == 201) {
 			_vm->_objectsManager.BOBANIM_ON(3);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(3) != 18);
+			} while (_vm->_objectsManager.BOBPOSI(3) != 18);
 			_vm->_objectsManager.BOBANIM_OFF(3);
 			_vm->_objectsManager.BOBANIM_ON(4);
 		}
@@ -1550,6 +1666,9 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.BOBANIM_ON(4);
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
 				if (_vm->_objectsManager.BOBPOSI(4) == 18)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
@@ -1564,6 +1683,9 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND67.WAV", 1);
 			v41 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(3) == 10 && !v41) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v41 = 1;
@@ -1581,6 +1703,9 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND69.WAV", 1);
 			v42 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(4) == 10 && !v42) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v42 = 1;
@@ -1599,26 +1724,38 @@ LABEL_1141:
 			_vm->_objectsManager.BOBANIM_ON(10);
 			_vm->_objectsManager.BOB_OFFSET(10, 300);
 			_vm->_soundManager.PLAY_SOUND("SOUND44.WAV");
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(10) != 7);
+			} while (_vm->_objectsManager.BOBPOSI(10) != 7);
 			_vm->_objectsManager.BOBANIM_ON(6);
 			_vm->_objectsManager.BOBANIM_OFF(3);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(6) != 10);
+			} while (_vm->_objectsManager.BOBPOSI(6) != 10);
 			_vm->_soundManager.PLAY_SOUND("SOUND71.WAV");
 			_vm->_objectsManager.BOBANIM_ON(7);
 			_vm->_objectsManager.BOBANIM_OFF(4);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(7) != 15);
+			} while (_vm->_objectsManager.BOBPOSI(7) != 15);
 			_vm->_objectsManager.BOBANIM_OFF(5);
 			_vm->_objectsManager.BOBANIM_ON(8);
 			_vm->_soundManager.PLAY_SOUND("SOUND70.WAV");
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(8) != 76);
+			} while (_vm->_objectsManager.BOBPOSI(8) != 76);
 			_vm->_objectsManager.BOBANIM_OFF(6);
 			_vm->_objectsManager.BOBANIM_OFF(7);
 			_vm->_objectsManager.BOBANIM_OFF(8);
@@ -1648,6 +1785,9 @@ LABEL_1141:
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v44, v43, 488, 280);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
@@ -1655,6 +1795,9 @@ LABEL_1141:
 			v45 = 0;
 			_vm->_objectsManager.BOBANIM_ON(7);
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(7) == 9 && !v45) {
 					v45 = 1;
 					_vm->_soundManager.PLAY_SOUND("SOUND81.WAV");
@@ -1675,15 +1818,21 @@ LABEL_1141:
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.BOBANIM_ON(12);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(12) != 6);
+			} while (_vm->_objectsManager.BOBPOSI(12) != 6);
 			_vm->_globals.NOPARLE = 1;
 			_vm->_talkManager.PARLER_PERSO("PRMORT.pe2");
 			_vm->_globals.NOPARLE = 0;
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(12) != 12);
+			} while (_vm->_objectsManager.BOBPOSI(12) != 12);
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_objectsManager.BOBANIM_OFF(12);
 			_vm->_globals.CACHE_ON();
@@ -1694,6 +1843,9 @@ LABEL_1141:
 			_vm->_objectsManager.BOBANIM_ON(11);
 			v46 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
 				if (_vm->_objectsManager.BOBPOSI(11) == 10 && !v46)
 					v46 = 1;
@@ -1701,9 +1853,12 @@ LABEL_1141:
 			_vm->_objectsManager.BOBANIM_OFF(11);
 			_vm->_globals.CACHE_ON();
 			_vm->_objectsManager.BOBANIM_ON(13);
-			do
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(13) != 48);
+			} while (_vm->_objectsManager.BOBPOSI(13) != 48);
 			_vm->_globals.NOPARLE = 1;
 			_vm->_talkManager.PARLER_PERSO("HRADIO.PE2");
 			_vm->_globals.NOPARLE = 0;
@@ -1816,6 +1971,9 @@ LABEL_1141:
 			_vm->_objectsManager.BOBANIM_ON(1);
 			v50 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
 				if (_vm->_objectsManager.BOBPOSI(1) == 12 && !v50) {
 					_vm->_soundManager.PLAY_SOUND("SOUND86.WAV");
@@ -1841,6 +1999,9 @@ LABEL_1141:
 				_vm->_soundManager.VOICE_MIX(617, 4);
 			v71 = 0;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_eventsManager.VBL();
 				++v71;
 			} while (v71 <= 29);
@@ -1908,6 +2069,9 @@ LABEL_1141:
 			v52 = 0;
 			_vm->_soundManager.LOAD_WAV("SOUND46.WAV", 1);
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				if (_vm->_objectsManager.BOBPOSI(12) == 5 && !v52) {
 					_vm->_soundManager.PLAY_WAV(1);
 					v52 = 1;
@@ -2136,6 +2300,9 @@ LABEL_1141:
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = -1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
@@ -2157,6 +2324,9 @@ LABEL_1141:
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = -1;
 			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
@@ -2247,6 +2417,9 @@ int ScriptManager::Control_If(const byte *dataP, int a2) {
 LABEL_2:
 	v3 = v2;
 	do {
+		if (_vm->shouldQuit())
+			return 0; // Exiting game
+
 		++v3;
 		v4 = Traduction2(dataP + 20 * v3);
 		if (v3 > 400) {
@@ -2259,6 +2432,9 @@ LABEL_2:
 	v6 = v2;
 	v7 = 0;
 	do {
+		if (_vm->shouldQuit())
+			return 0; // Exiting game
+
 		++v6;
 		if (Traduction2(dataP + 20 * v6) == 3)
 			v7 = 1;

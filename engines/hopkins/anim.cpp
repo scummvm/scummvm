@@ -50,6 +50,9 @@ void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, ui
 	size_t nbytes;
 	Common::File f;
 
+	if (_vm->shouldQuit())
+		return;
+
 	hasScreenCopy = false;
 	while (!_vm->shouldQuit()) {
 LABEL_2:
@@ -263,8 +266,11 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 	char v25; 
 	Common::File f;
 
+	if (_vm->shouldQuit())
+		return;
+
 	v8 = 0;
-	while (1) {
+	while (!_vm->shouldQuit()) {
 		v17 = 0;
 		v16 = 0;
 		v19 = 0;
@@ -967,6 +973,9 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 	size_t nbytes; 
 	int buf; 
 	Common::File f;
+
+	if (_vm->shouldQuit())
+		return;
 
 	v7 = 0;
 	v14 = 0;
