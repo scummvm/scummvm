@@ -5650,7 +5650,10 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 				continue;
 		}
 		v5 = 1;
-	} while (v5 != 1);
+	} while (!_vm->shouldQuit() && v5 != 1);
+	if (_vm->shouldQuit())
+		return;
+
 	_vm->_graphicsManager.FADE_OUTW();
 	if (!s3.empty())
 		_vm->_graphicsManager.FIN_VISU();
