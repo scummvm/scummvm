@@ -647,21 +647,21 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_INS();
 		}
 		if (v76 == 601) {
-			_vm->_globals.NO_VISU = 1;
+			_vm->_globals.NO_VISU = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = 0;
+			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(2, 0, 16, 4);
 		}
 		if (v76 == 602) {
-			_vm->_globals.NO_VISU = 1;
+			_vm->_globals.NO_VISU = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = 0;
+			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(4, 0, 16, 4);
 		}
 		if (v76 == 603) {
-			_vm->_globals.NO_VISU = 1;
+			_vm->_globals.NO_VISU = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = 0;
+			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(3, 0, 16, 4);
 			_vm->_soundManager.SPECIAL_SOUND = 199;
 			_vm->_graphicsManager.FADE_LINUX = 2;
@@ -675,9 +675,9 @@ LABEL_1141:
 			_vm->_globals.SORTIE = 151;
 		}
 		if (v76 == 604) {
-			_vm->_globals.NO_VISU = 1;
+			_vm->_globals.NO_VISU = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = 0;
+			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(1, 0, 16, 4);
 			_vm->_soundManager.SPECIAL_SOUND = 199;
 			if (_vm->_globals.SVGA == 1)
@@ -690,9 +690,9 @@ LABEL_1141:
 			_vm->_globals.SORTIE = 151;
 		}
 		if (v76 == 605) {
-			_vm->_globals.NO_VISU = 1;
+			_vm->_globals.NO_VISU = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = 0;
+			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(5, 0, 16, 4);
 			_vm->_graphicsManager.FADE_OUTS();
 			_vm->_soundManager.SPECIAL_SOUND = 199;
@@ -707,9 +707,9 @@ LABEL_1141:
 			_vm->_globals.SORTIE = 151;
 		}
 		if (v76 == 606) {
-			_vm->_globals.NO_VISU = 1;
+			_vm->_globals.NO_VISU = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = 0;
+			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(6, 0, 16, 4);
 			if (_vm->_globals.SVGA == 1)
 				_vm->_animationManager.PLAY_ANM("BOMBE3.ANM", 50, 14, 500);
@@ -770,7 +770,7 @@ LABEL_1141:
 			_vm->_talkManager.PARLER_PERSO("fjour.pe2");
 		if (v76 == 13) {
 			_vm->_eventsManager.souris_b = _vm->_eventsManager.souris_bb;
-			_vm->_globals.DESACTIVE_INVENT = 1;
+			_vm->_globals.DESACTIVE_INVENT = true;
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.SPRITE_OFF(0);
@@ -829,7 +829,7 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			_vm->_animationManager.PLAY_SEQ2("ASSOM.SEQ", 10, 4, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_globals.DESACTIVE_INVENT = 0;
+			_vm->_globals.DESACTIVE_INVENT = false;
 			_vm->_globals.HELICO = 1;
 		}
 		if (v76 == 36) {
@@ -868,9 +868,9 @@ LABEL_1141:
 			_vm->_graphicsManager.NOFADE = 1;
 		}
 		if (v76 == 29) {
-			_vm->_globals.DESACTIVE_INVENT = 1;
+			_vm->_globals.DESACTIVE_INVENT = true;
 			_vm->_talkManager.OBJET_VIVANT("TELEP.pe2");
-			_vm->_globals.DESACTIVE_INVENT = 0;
+			_vm->_globals.DESACTIVE_INVENT = false;
 		}
 		if (v76 == 22)
 			_vm->_talkManager.OBJET_VIVANT("CADAVRE1.pe2");
@@ -1561,7 +1561,7 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_globals.CACHE_OFF();
 			_vm->_animationManager.NO_SEQ = 1;
-			_vm->_globals.NO_VISU = 0;
+			_vm->_globals.NO_VISU = false;
 			_vm->_soundManager.SPECIAL_SOUND = 211;
 			_vm->_animationManager.PLAY_SEQ(v1, "SECRET2.SEQ", 1, 12, 100);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
@@ -1584,7 +1584,7 @@ LABEL_1141:
 		if (v76 == 207)
 			_vm->_talkManager.OBJET_VIVANT("PANNEAU.PE2");
 		if (v76 == 208) {
-			_vm->_globals.DESACTIVE_INVENT = 1;
+			_vm->_globals.DESACTIVE_INVENT = true;
 			if (_vm->_globals.SAUVEGARDE->data[svField6] != _vm->_globals.SAUVEGARDE->data[svField401]) {
 				_vm->_soundManager.SPECIAL_SOUND = 208;
 				_vm->_eventsManager.NOESC = true;
@@ -1608,7 +1608,7 @@ LABEL_1141:
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.SETANISPR(0, 64);
 			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField401];
-			_vm->_globals.DESACTIVE_INVENT = 0;
+			_vm->_globals.DESACTIVE_INVENT = false;
 		}
 		if (v76 == 209) {
 			_vm->_objectsManager.SET_BOBPOSI(1, 0);
@@ -1623,7 +1623,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(1) != 9);
 			_vm->_objectsManager.BOBANIM_OFF(1);
-			_vm->_globals.NO_VISU = 1;
+			_vm->_globals.NO_VISU = true;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
 			v39 = _vm->_objectsManager.YSPR(0);
@@ -1662,7 +1662,7 @@ LABEL_1141:
 			_vm->_objectsManager.BOBANIM_ON(4);
 		}
 		if (v76 == 203) {
-			_vm->_globals.NO_VISU = 1;
+			_vm->_globals.NO_VISU = true;
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.BOBANIM_ON(4);
 			do {
@@ -1674,7 +1674,7 @@ LABEL_1141:
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
 			} while (_vm->_objectsManager.BOBPOSI(4) != 26);
 			_vm->_objectsManager.BOBANIM_OFF(4);
-			_vm->_globals.NO_VISU = 0;
+			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 204) {
@@ -1824,9 +1824,9 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 6);
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("PRMORT.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1859,18 +1859,18 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(13) != 48);
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("HRADIO.PE2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_objectsManager.BOBANIM_OFF(13);
 			_vm->_graphicsManager.NOFADE = 1;
 			_vm->_globals.SORTIE = 94;
 		}
 		if (v76 == 52) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("GARDE.PE2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 53)
 			_vm->_talkManager.PARLER_PERSO("GARDE1.pe2");
@@ -2049,9 +2049,9 @@ LABEL_1141:
 			if (_vm->_globals.SAUVEGARDE->data[svField231] == 1) {
 				_vm->_talkManager.PARLER_PERSO("chotess1.pe2");
 			} else {
-				_vm->_globals.NOPARLE = 1;
+				_vm->_globals.NOPARLE = true;
 				_vm->_talkManager.PARLER_PERSO("chotesse.pe2");
-				_vm->_globals.NOPARLE = 0;
+				_vm->_globals.NOPARLE = false;
 			}
 		}
 		if (v76 == 51) {
@@ -2112,40 +2112,40 @@ LABEL_1141:
 				_vm->_talkManager.PARLER_PERSO("STANDAR1.pe2");
 		}
 		if (v76 == 58) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("Gm1.PE2");
 			_vm->_globals.SAUVEGARDE->data[svField176] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField270] = 2;
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 200) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("Gm2.PE2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 84) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("CVIGIL1.PE2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 98) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("CVIGIL2.PE2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 83)
 			_vm->_talkManager.PARLER_PERSO("CVIGIL.pe2");
 		if (v76 == 32)
 			_vm->_talkManager.PARLER_PERSO("SAMAN.pe2");
 		if (v76 == 215) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("aviat.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 216) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("aviat1.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 170)
 			_vm->_talkManager.PARLER_PERSO("GRED.pe2");
@@ -2154,9 +2154,9 @@ LABEL_1141:
 		if (v76 == 100)
 			_vm->_talkManager.PARLER_PERSO("tourist.pe2");
 		if (v76 == 103) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("tourist1.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 			if (_vm->_globals.SVGA == 1)
 				_vm->_animationManager.PLAY_ANM2("T421.ANM", 100, 14, 500);
 			if (_vm->_globals.SVGA == 2)
@@ -2164,49 +2164,49 @@ LABEL_1141:
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("tourist2.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 104) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("tourist3.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 108) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("peche1.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 109) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("peche2.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 110) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("peche3.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 111) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("peche4.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 112) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("teint1.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 176) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("gred2.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 177) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("gbleu2.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		if (v76 == 113)
 			_vm->_talkManager.PARLER_PERSO("teint.pe2");
@@ -2285,9 +2285,9 @@ LABEL_1141:
 		if (v76 == 241)
 			_vm->_talkManager.PARLER_PERSO("RECEP.PE2");
 		if (v76 == 171) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("gred1.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.g_old_sens = -1;
@@ -2309,9 +2309,9 @@ LABEL_1141:
 			_vm->_globals.SORTIE = 59;
 		}
 		if (v76 == 173) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("gbleu1.pe2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.g_old_sens = -1;
@@ -2335,9 +2335,9 @@ LABEL_1141:
 		if (v76 == 174)
 			_vm->_talkManager.PARLER_PERSO("Profbl.pe2");
 		if (v76 == 202) {
-			_vm->_globals.NOPARLE = 1;
+			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("SVGARD2.PE2");
-			_vm->_globals.NOPARLE = 0;
+			_vm->_globals.NOPARLE = false;
 		}
 		v1 = 1;
 	}

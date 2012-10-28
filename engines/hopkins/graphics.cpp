@@ -104,9 +104,9 @@ void GraphicsManager::SET_MODE(int width, int height) {
 			SDL_ECHELLE = _vm->_globals.XZOOM;
 		
 		int bpp = 8;
-		if (_vm->_globals.XFORCE8 == 1)
+		if (_vm->_globals.XFORCE8 == true)
 			bpp = 8;
-		if (_vm->_globals.XFORCE16 == 1)
+		if (_vm->_globals.XFORCE16 == true)
 			bpp = 16;
 
 		if (SDL_ECHELLE) {
@@ -1547,7 +1547,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 		if (bloc.field0 != 1)
 			continue;
 	
-		if (_vm->_eventsManager.CASSE != 0) {
+		if (_vm->_eventsManager.CASSE != false) {
 			if (Winbpp == 1) {
 				Copy_Vga(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1, bloc.y1);
 			} else if (Winbpp == 2) {
@@ -2311,14 +2311,14 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 		if (!_vm->_globals.NOSPRECRAN) {
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.RECHERCHE_CAT(v13, 8);
 			if (_vm->_globals.SPRITE_ECRAN) {
-				_vm->_globals.CAT_FLAG = 0;
+				_vm->_globals.CAT_FLAG = false;
 				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
 			} else {
-				_vm->_globals.CAT_FLAG = 1;
+				_vm->_globals.CAT_FLAG = true;
 				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
 			}
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
-			_vm->_globals.CAT_FLAG = 0;
+			_vm->_globals.CAT_FLAG = false;
 		}
 	}
 	if (*ptr != 'I' || *(ptr + 1) != 'N' || *(ptr + 2) != 'I') {

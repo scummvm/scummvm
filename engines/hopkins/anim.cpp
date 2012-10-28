@@ -103,14 +103,14 @@ LABEL_2:
 			_vm->_graphicsManager.DD_VBL();
 		}
 		_vm->_eventsManager.lItCounter = 0;
-		_vm->_eventsManager.ESC_KEY = 0;
+		_vm->_eventsManager.ESC_KEY = false;
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul != 1)
 			break;
 		while (!_vm->shouldQuit()) {
-			if (_vm->_eventsManager.ESC_KEY == 1)
+			if (_vm->_eventsManager.ESC_KEY == true)
 				goto LABEL_58;
-			if (REDRAW_ANIM() == 1)
+			if (REDRAW_ANIM() == true)
 				break;
 			_vm->_eventsManager.CONTROLE_MES();
 			if (_vm->_eventsManager.lItCounter >= rate1)
@@ -168,8 +168,8 @@ LABEL_38:
 LABEL_49:
 		if (v4 == -1) {
 			if (_vm->_globals.iRegul == 1) {
-				while (_vm->_eventsManager.ESC_KEY != 1) {
-					if (REDRAW_ANIM() == 1)
+				while (_vm->_eventsManager.ESC_KEY != true) {
+					if (REDRAW_ANIM() == true)
 						goto LABEL_53;
 					_vm->_eventsManager.CONTROLE_MES();
 					_vm->_soundManager.VERIF_SOUND();
@@ -983,7 +983,7 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 	v16 = 0;
 	v15 = 0;
 	v17 = 1;
-	_vm->_eventsManager.souris_flag = 0;
+	_vm->_eventsManager.souris_flag = false;
 	if (!NO_COUL) {
 		_vm->_eventsManager.VBL();
 
@@ -1120,7 +1120,7 @@ LABEL_59:
 		_vm->_fileManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-		_vm->_eventsManager.souris_flag = 1;
+		_vm->_eventsManager.souris_flag = true;
 	}
 	if (v7 == 1)
 		_vm->_globals.dos_free2(ptr);
@@ -1155,7 +1155,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 		v17 = 0;
 		v16 = 0;
 		v18 = 1;
-		_vm->_eventsManager.souris_flag = 0;
+		_vm->_eventsManager.souris_flag = false;
 		v10 = _vm->_graphicsManager.VESA_SCREEN;
 		v11 = _vm->_globals.dos_malloc2(0x16u);
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, a1);
@@ -1334,7 +1334,7 @@ LABEL_54:
 
 	f.close();
 	_vm->_globals.dos_free2(v11);
-	_vm->_eventsManager.souris_flag = 1;
+	_vm->_eventsManager.souris_flag = true;
 }
 
 } // End of namespace Hopkins

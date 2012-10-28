@@ -55,9 +55,9 @@ int MenuManager::MENU() {
 	v6 = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
 		_vm->_globals.FORET = 0;
-		_vm->_eventsManager.CASSE = 0;
-		_vm->_globals.DESACTIVE_INVENT = 1;
-		_vm->_globals.FLAG_VISIBLE = 0;
+		_vm->_eventsManager.CASSE = false;
+		_vm->_globals.DESACTIVE_INVENT = true;
+		_vm->_globals.FLAG_VISIBLE = false;
 		_vm->_globals.SORTIE = 0;
 
 		for (int idx = 0; idx < 31; ++idx)
@@ -227,8 +227,8 @@ int MenuManager::MENU() {
 	}
   
 	_vm->_globals.LIBERE_FICHIER(spriteData);
-	_vm->_globals.DESACTIVE_INVENT = 0;
-	_vm->_globals.FLAG_VISIBLE = 0;
+	_vm->_globals.DESACTIVE_INVENT = false;
+	_vm->_globals.FLAG_VISIBLE = false;
 	_vm->_graphicsManager.FADE_OUTW();
 	return v6;
 }

@@ -318,7 +318,7 @@ void DialogsManager::showInventory() {
 LABEL_7:
 		_vm->_eventsManager.souris_bb = 0;
 		_vm->_eventsManager.souris_b = 0;
-		_vm->_globals.DESACTIVE_INVENT = 1;
+		_vm->_globals.DESACTIVE_INVENT = true;
 		_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 
 		switch (_vm->_globals.FR) {
@@ -470,7 +470,7 @@ LABEL_7:
 		_vm->_objectsManager.cady = 0;
 		_vm->_objectsManager.old_cadx = 0;
 		_vm->_objectsManager.cadx = 0;
-		_vm->_globals.DESACTIVE_INVENT = 0;
+		_vm->_globals.DESACTIVE_INVENT = false;
 		_vm->_graphicsManager.no_scroll = 0;
 	}
 }

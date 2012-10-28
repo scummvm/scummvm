@@ -310,7 +310,7 @@ void EventsManager::VBL() {
 		}
 		_vm->_graphicsManager.DD_Unlock();
 	}
-	if (souris_flag == 1) {
+	if (souris_flag == true) {
 		v1 = 20;
 		if (!mouse_linux)
 			v1 = 10;
@@ -356,7 +356,7 @@ LABEL_34:
 LABEL_35:
 	if (!_vm->_globals.PUBEXIT)
 		_vm->_objectsManager.AFF_SPRITES();
-	if (souris_flag != 1)
+	if (souris_flag != true)
 		goto LABEL_54;
 	if (btsouris == 23)
 		goto LABEL_45;
@@ -392,7 +392,7 @@ LABEL_54:
 			checkForNextFrameCounter();
 
 			while (CASSE || _vm->_globals.iRegul != 1) {
-				if (CASSE != 1)
+				if (CASSE != true)
 					goto LABEL_63;
 				if (lItCounter > 1)
 					goto LABEL_65;
@@ -474,7 +474,7 @@ LABEL_65:
 	}
 	souris_bb = souris_b;
 	souris_b = 0;
-	if (souris_flag == 1) {
+	if (souris_flag == true) {
 		if (btsouris != 23) {
 			if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
 /* Commented out in favour of using ScummVM cursor display

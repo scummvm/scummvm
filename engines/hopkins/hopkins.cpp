@@ -555,11 +555,14 @@ void HopkinsEngine::INIT_SYSTEM() {
 	case 0:
 		if (!_eventsManager.mouse_linux)
 			_fileManager.CONSTRUIT_SYSTEM("SOUAN.SPR");
-		if (!_globals.FR && _eventsManager.mouse_linux)
+		else 
 			_fileManager.CONSTRUIT_SYSTEM("LSOUAN.SPR");
 		break;
 	case 1:
-		_fileManager.CONSTRUIT_SYSTEM("LSOUFR.SPR");
+		if (!_eventsManager.mouse_linux)
+			_fileManager.CONSTRUIT_SYSTEM("SOUFR.SPR");
+		else
+			_fileManager.CONSTRUIT_SYSTEM("LSOUFR.SPR");
 		break;
 	case 2:
 		_fileManager.CONSTRUIT_SYSTEM("SOUES.SPR");
@@ -639,7 +642,7 @@ void HopkinsEngine::INTRORUN() {
 
 	memset(&paletteData, 0, PALETTE_EXT_BLOCK_SIZE);
 	_eventsManager.VBL();
-	_eventsManager.souris_flag = 0;
+	_eventsManager.souris_flag = false;
 	_globals.iRegul = 1;
 	_eventsManager.VBL();
 	_soundManager.WSOUND(16);
@@ -668,14 +671,14 @@ void HopkinsEngine::INTRORUN() {
 				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-				_globals.BPP_NOAFF = 1;
+				_globals.BPP_NOAFF = true;
 				v2 = 0;
 				do {
 					_eventsManager.VBL();
 					++v2;
 				} while (v2 <= 4);
 
-				_globals.BPP_NOAFF = 0;
+				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
 				if (_graphicsManager.DOUBLE_ECRAN == 1) {
@@ -719,7 +722,7 @@ void HopkinsEngine::INTRORUN() {
 				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-				_globals.BPP_NOAFF = 1;
+				_globals.BPP_NOAFF = true;
 				v5 = 0;
         
 				do {
@@ -727,7 +730,7 @@ void HopkinsEngine::INTRORUN() {
 					++v5;
 				} while (v5 <= 4);
         
-				_globals.BPP_NOAFF = 0;
+				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
 				for (i = 0; i < 200 / _globals.vitesse; ++i)
@@ -769,7 +772,7 @@ void HopkinsEngine::INTRORUN() {
 					_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 					_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 					_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-					_globals.BPP_NOAFF = 1;
+					_globals.BPP_NOAFF = true;
 					v8 = 0;
           
 					do {
@@ -777,7 +780,7 @@ void HopkinsEngine::INTRORUN() {
 						++v8;
 					} while (v8 <= 3);
           
-					_globals.BPP_NOAFF = 0;
+					_globals.BPP_NOAFF = false;
 					_globals.iRegul = 1;
 					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
 					v9 = 0;
@@ -942,13 +945,13 @@ void HopkinsEngine::BOOM() {
 	_animationManager.CHARGE_ANIM("ANIM15");
 	_graphicsManager.VISU_ALL();
 	_objectsManager.BOBANIM_OFF(7);
-	_globals.BPP_NOAFF = 1;
+	_globals.BPP_NOAFF = true;
 
 	for (int idx = 0; idx < 5; ++idx) {
 		_eventsManager.VBL();
 	}
   
-	_globals.BPP_NOAFF = 0;
+	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
 	_eventsManager.MOUSE_OFF();
 	
@@ -980,7 +983,7 @@ void HopkinsEngine::PUBQUIT() {
 	_globals.PUBEXIT = 1;
 	_graphicsManager.RESET_SEGMENT_VESA();
 	_globals.FORET = 0;
-	_eventsManager.CASSE = 0;
+	_eventsManager.CASSE = false;
 	_globals.DESACTIVE_INVENT = true;
 	_globals.FLAG_VISIBLE = false;
 	_graphicsManager.LOAD_IMAGE("BOX");
