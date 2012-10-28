@@ -36,11 +36,14 @@ class MenuModule : public Module {
 public:
 	MenuModule(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~MenuModule();
+	void setSavegameInfo(const Common::String &description, uint slot, bool newSavegame);
 protected:
 	int _sceneNum;
-	Common::String _savegameName;
 	byte *_savedPaletteData;
 	StringArray *_savegameList;
+	Common::String _savegameDescription;
+	uint _savegameSlot;
+	bool _newSavegame;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -129,7 +132,6 @@ public:
 	void clear();
 	void setString(const byte *string, int stringLen);
 	TextSurface *getTextSurface() const { return _textSurface; }
-	void setTY(int16 ty);
 protected:
 	BaseSurface *_drawSurface;
 	int16 _tx, _ty;
@@ -141,8 +143,8 @@ protected:
 class TextEditWidget : public Widget {
 public:
 	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-		int baseObjectPriority, int baseSurfacePriority,
-		const byte *string, int maxStringLength, TextSurface *textSurface, uint32 fileHash, const NRect &rect);
+		int baseObjectPriority, int baseSurfacePriority, int maxStringLength, TextSurface *textSurface,
+		uint32 fileHash, const NRect &rect);
 	~TextEditWidget();
 	virtual void onClick();
 	virtual void addSprite();
@@ -151,11 +153,12 @@ public:
 	void setCursor(uint32 cursorFileHash, int16 cursorWidth, int16 cursorHeight);
 	void drawCursor();
 	void updateString();
-	void getString(Common::String &string);
+	Common::String& getString();
 	void setString(const Common::String &string);
 	void handleAsciiKey(char ch);
 	void handleKeyDown(Common::KeyCode keyCode);
 	void refresh();
+	bool isModified() const { return _modified; }
 protected:
 	NRect _rect;
 	uint32 _fileHash;
@@ -169,6 +172,7 @@ protected:
 	BaseSurface *_cursorSurface;
 	uint32 _cursorFileHash;
 	int16 _cursorWidth, _cursorHeight;
+	bool _modified;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -211,7 +215,7 @@ protected:
 	TextSurface *_textSurface;
 	SavegameListBox *_listBox;
 	TextEditWidget *_textEditWidget;
-	Common::String _savegameName;
+	Common::String _savegameDescription;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

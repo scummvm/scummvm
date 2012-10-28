@@ -64,6 +64,13 @@ MenuModule::~MenuModule() {
 	_vm->_screen->setPaletteData(_savedPaletteData);
 }
 
+void MenuModule::setSavegameInfo(const Common::String &description, uint slot, bool newSavegame) {
+	_savegameDescription = description;
+	_savegameSlot = slot;
+	_newSavegame = newSavegame;
+	debug("SAVEGAME: description = [%s]; slot = %d; new = %d", description.c_str(), slot, newSavegame);
+}
+
 void MenuModule::createScene(int sceneNum, int which) {
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
@@ -491,20 +498,16 @@ void TextLabelWidget::setString(const byte *string, int stringLen) {
 	_stringLen = stringLen;
 }
 
-void TextLabelWidget::setTY(int16 ty) {
-	_ty = ty;
-}
-
 TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-	int baseObjectPriority, int baseSurfacePriority,
-	const byte *string, int maxStringLength, TextSurface *textSurface, uint32 fileHash, const NRect &rect)
+	int baseObjectPriority, int baseSurfacePriority, int maxStringLength, TextSurface *textSurface,
+	uint32 fileHash, const NRect &rect)
 	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
 	_maxStringLength(maxStringLength), _textSurface(textSurface), _fileHash(fileHash), _rect(rect),
-	_cursorSurface(NULL), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0) {
+	_cursorSurface(NULL), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0),
+	_modified(false) {
 
-	_entryString = (const char*)string;
 	_maxVisibleChars = (_rect.x2 - _rect.x1) / _textSurface->getCharWidth();
-	_cursorPos = _entryString.size();
+	_cursorPos = 0;
 	
 	SetUpdateHandler(&TextEditWidget::update);
 	SetMessageHandler(&TextEditWidget::handleMessage);
@@ -584,13 +587,14 @@ void TextEditWidget::updateString() {
 	_textLabelWidget->drawString(_maxVisibleChars);
 }
 
-void TextEditWidget::getString(Common::String &string) {
-	string = _entryString;
+Common::String& TextEditWidget::getString() {
+	return _entryString;
 }
 
 void TextEditWidget::setString(const Common::String &string) {
 	_entryString = string;
 	_cursorPos = _entryString.size();
+	_modified = false;
 	refresh();
 }
 
@@ -599,6 +603,7 @@ void TextEditWidget::handleAsciiKey(char ch) {
 		((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == ' ')) {
 		_entryString.insertChar(ch, _cursorPos);
 		++_cursorPos;
+		_modified = true;
 		refresh();
 	}
 }
@@ -606,10 +611,6 @@ void TextEditWidget::handleAsciiKey(char ch) {
 void TextEditWidget::handleKeyDown(Common::KeyCode keyCode) {
 	bool doRefresh = true;
 	switch (keyCode) {
-	case Common::KEYCODE_DELETE:
-		if (_entryString.size() > 0 && _cursorPos < (int)_entryString.size())
-			_entryString.deleteChar(_cursorPos);
-		break;
 	case Common::KEYCODE_HOME:
 		_cursorPos = 0;
 		break;
@@ -624,9 +625,17 @@ void TextEditWidget::handleKeyDown(Common::KeyCode keyCode) {
 		if (_cursorPos < (int)_entryString.size())
 			++_cursorPos;
 		break;
+	case Common::KEYCODE_DELETE:
+		if (_entryString.size() > 0 && _cursorPos < (int)_entryString.size()) {
+			_entryString.deleteChar(_cursorPos);
+			_modified = true;
+		}
+		break;
 	case Common::KEYCODE_BACKSPACE:
-		if (_entryString.size() > 0 && _cursorPos > 0)
+		if (_entryString.size() > 0 && _cursorPos > 0) {
 			_entryString.deleteChar(--_cursorPos);
+			_modified = true;
+		}
 		break;
 	default:
 		break;
@@ -808,11 +817,10 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArra
 		_savegameList, _textSurface, 0x1115A223, kListBoxRect);
 	_listBox->addSprite();
 
-	_textEditWidget = new TextEditWidget(_vm, 50, 47, 70/*ItemID*/, this, 1000, 1000,
-		(const byte*)_savegameName.c_str(), 29, _textSurface, 0x3510A868, kTextEditRect);
+	_textEditWidget = new TextEditWidget(_vm, 50, 47, 70/*ItemID*/, this, 1000, 1000, 29,
+		_textSurface, 0x3510A868, kTextEditRect);
 	_textEditWidget->setCursor(0x8290AC20, 2, 13);
 	_textEditWidget->addSprite();
-	_textEditWidget->setString(_savegameName);
 	setCurrWidget(_textEditWidget);
 	
 	for (uint buttonIndex = 0; buttonIndex < 6; ++buttonIndex) {
@@ -847,12 +855,10 @@ uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 		break;
 	case 0x000B:
 		if (param.asInteger() == Common::KEYCODE_RETURN) {
-			// Return
-			// TODO 00486B05
-			// Get string from edit field and inform main module
+			((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
+				_listBox->getCurrIndex(), _textEditWidget->isModified());
 			leaveScene(0);
 		} else if (param.asInteger() == Common::KEYCODE_ESCAPE) {
-			// Escape
 			leaveScene(1);
 		} else {
 			sendMessage(_textEditWidget, 0x000B, param.asInteger());
@@ -863,7 +869,9 @@ uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 		// Handle menu button click
 		switch (param.asInteger()) {
 		case 0:
-			// TODO Same handling as Return
+			// TODO Same handling as Return, merge
+			((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
+				_listBox->getCurrIndex(), _textEditWidget->isModified());
 			leaveScene(0);
 			break;
 		case 1:
