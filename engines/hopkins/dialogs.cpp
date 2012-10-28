@@ -537,29 +537,16 @@ void DialogsManager::TEST_INVENT() {
 
 // Load Game
 void DialogsManager::CHARGE_PARTIE() {
-	int v1; 
-	char slotNumber; 
-	Common::String s; 
-	Common::String v8; 
-	char v9; 
-	char v10; 
-	char v11; 
-	Common::String v12; 
-	char v13; 
-	char v14; 
-	char v15; 
-	char v16; 
-	char v17; 
-	Common::File f;
+	int slotNumber; 
 
 	_vm->_eventsManager.VBL();
 	LOAD_SAUVE(2);
 	do {
 		do {
-			v1 = CHERCHE_PARTIE();
+			slotNumber = CHERCHE_PARTIE();
 			_vm->_eventsManager.VBL();
 		} while (_vm->_eventsManager.BMOUSE() != 1);
-	} while (!v1);
+	} while (!slotNumber);
 	_vm->_objectsManager.SL_FLAG = 0;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager.start_x + 183, 60);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 183, 60, 457, 413);
@@ -568,35 +555,9 @@ void DialogsManager::CHARGE_PARTIE() {
 	_vm->_objectsManager.SL_SPR2 = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR2);
 	_vm->_objectsManager.SL_X = 0;
 	_vm->_objectsManager.SL_Y = 0;
-	if (v1 != 7) {
-		s = Common::String::format("%d", v1);
-		v8 = 80;
-		v9 = 65;
-		v10 = 82;
-		v11 = 84;
-		v12 = s;
-		v13 = 46;
-		v14 = 68;
-		v15 = 65;
-		v16 = 84;
-		v17 = 0;
-		_vm->_fileManager.CONSTRUIT_LINUX(v8);
-		if (f.open(_vm->_globals.NFICHIER)) {
-			f.close();
 
-			slotNumber = _vm->_globals.SAUVEGARDE->data[svField10];
-			_vm->_fileManager.CONSTRUIT_LINUX(v8);
-			_vm->_fileManager.bload(_vm->_globals.NFICHIER, &_vm->_globals.SAUVEGARDE->data[0]);
-
-			// Load the inventory
-			for (int i = 0; i < 35; ++i) 
-				_vm->_globals.INVENTAIRE[i] = _vm->_globals.SAUVEGARDE->inventory[i];
-
-			_vm->_globals.SAUVEGARDE->data[svField10] = slotNumber;
-			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField5];
-			_vm->_globals.SAUVEGARDE->data[svField6] = 0;
-			_vm->_globals.ECRAN = 0;
-		}
+	if (slotNumber != 7) {
+		_vm->_saveLoadManager.restore(slotNumber);
 	}
 	
 	_vm->_objectsManager.CHANGE_OBJET(14);

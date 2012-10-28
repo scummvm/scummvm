@@ -186,6 +186,16 @@ Common::Error SaveLoadManager::restore(int slot) {
 	// Loading save file complete
 	delete saveFile;
 
+	// Unpack the inventory
+	for (int i = 0; i < 35; ++i) 
+		_vm->_globals.INVENTAIRE[i] = _vm->_globals.SAUVEGARDE->inventory[i];
+
+	// Set variables from loaded data as necessary
+	_vm->_globals.SAUVEGARDE->data[svField10] = slot;
+	_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField5];
+	_vm->_globals.SAUVEGARDE->data[svField6] = 0;
+	_vm->_globals.ECRAN = 0;
+
 	return Common::kNoError;
 }
 
