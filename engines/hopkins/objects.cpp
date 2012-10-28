@@ -205,7 +205,7 @@ void ObjectsManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSi
 int ObjectsManager::get_offsetx(const byte *spriteData, int spriteIndex, bool isSize) {
 	const byte *v3 = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
-		v3 += (int16)READ_LE_UINT16(v3) + 16;
+		v3 += READ_LE_UINT32(v3) + 16;
   
 	const byte *v5 = v3 + 8;
 	int result = (int16)READ_LE_UINT16(v5);
@@ -218,7 +218,7 @@ int ObjectsManager::get_offsetx(const byte *spriteData, int spriteIndex, bool is
 int ObjectsManager::get_offsety(const byte *spriteData, int spriteIndex, bool isSize) {
 	const byte *v3 = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
-		v3 += (int16)READ_LE_UINT16(v3) + 16;
+		v3 += READ_LE_UINT32(v3) + 16;
   
 	const byte *v5 = v3 + 10;
 	int result = (int16)READ_LE_UINT16(v5);
