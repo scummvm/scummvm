@@ -508,16 +508,16 @@ void Globals::RESET_CACHE() {
 		Cache[idx].field14 = 0;
 	}
 
-	CACHEFLAG = 0;
+	CACHEFLAG = false;
 }
 
 void Globals::CACHE_ON() {
-	CACHEFLAG = 1;
+	CACHEFLAG = true;
 }
 
 // TODO: Find why some calls have a parameter value
 void Globals::CACHE_OFF(int v1) {
-	CACHEFLAG = 0;
+	CACHEFLAG = false;
 }
 
 void Globals::CACHE_SUB(int idx) {

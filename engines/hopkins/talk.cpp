@@ -60,7 +60,6 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	byte *v9; 
 	byte *v10;
 	int v11;
-	byte v13; 
 	int v14;
 	int v15;
 	Common::String v16; 
@@ -70,8 +69,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_fontManager.TEXTE_OFF(9);
 	_vm->_eventsManager.VBL();
 	_vm->_graphicsManager.no_scroll = 1;
-	v13 = _vm->_globals.DESACTIVE_INVENT;
-	_vm->_globals.DESACTIVE_INVENT = 1;
+	bool old_DESACTIVE_INVENT = _vm->_globals.DESACTIVE_INVENT;
+	_vm->_globals.DESACTIVE_INVENT = true;
 	BUFFERPERSO = _vm->_fileManager.RECHERCHE_CAT(filename, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
 	if (BUFFERPERSO == g_PTRNUL) {
@@ -95,14 +94,14 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
 	PERSOSPR = _vm->_fileManager.RECHERCHE_CAT(v16, 7);
 	if (PERSOSPR) {
-		_vm->_globals.CAT_FLAG = 0;
+		_vm->_globals.CAT_FLAG = false;
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, v16);
 	} else {
-		_vm->_globals.CAT_FLAG = 1;
+		_vm->_globals.CAT_FLAG = true;
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_SAN.RES");
 	}
 	PERSOSPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
-	_vm->_globals.CAT_FLAG = 0;
+	_vm->_globals.CAT_FLAG = false;
 
 	_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
 	if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
@@ -135,14 +134,14 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 			_vm->_eventsManager.VBL();
 		} while (v5 != v4);
 	}
-	if (_vm->_globals.NOPARLE == 1) {
+	if (_vm->_globals.NOPARLE == true) {
 		v6 = 1;
 		do
 			v7 = DIALOGUE_REP(v6++);
 		while (v7 != -1);
 	}
 	CLEAR_ANIM_PERSO();
-	_vm->_globals.NOPARLE = 0;
+	_vm->_globals.NOPARLE = false;
 	_vm->_globals.NECESSAIRE = 1;
 	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
 	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
@@ -182,7 +181,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	v8 = v8 + 2;
 	*v8 = *(v9 + 2);
 	v10 = v8 + 1;
-	_vm->_globals.DESACTIVE_INVENT = v13;
+	_vm->_globals.DESACTIVE_INVENT = old_DESACTIVE_INVENT;
 	_vm->_graphicsManager.DD_VBL();
 	v11 = 0;
 	do {
@@ -1228,14 +1227,14 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	}
 	PERSOSPR = _vm->_fileManager.RECHERCHE_CAT(v23, 7);
 	if (PERSOSPR) {
-		_vm->_globals.CAT_FLAG = 0;
+		_vm->_globals.CAT_FLAG = false;
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, v23);
 	} else {
-		_vm->_globals.CAT_FLAG = 1;
+		_vm->_globals.CAT_FLAG = true;
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_SAN.RES");
 	}
 	PERSOSPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
-	_vm->_globals.CAT_FLAG = 0;
+	_vm->_globals.CAT_FLAG = false;
 
 	_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
 	if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
@@ -1254,7 +1253,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	CHERCHE_ANIM0(v10, 0);
 	v11 = _vm->_globals.COUCOU;
 	_vm->_globals.COUCOU = g_PTRNUL;
-	_vm->_globals.NOMARCHE = 1;
+	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager.INILINK(v22);
 	_vm->_objectsManager.PERSO_ON = 1;
 	_vm->_globals.GOACTION = 0;
@@ -1263,7 +1262,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	VISU_PARLE();
 	VISU_WAIT();
 	_vm->_graphicsManager.INI_ECRAN2(v22);
-	_vm->_globals.NOMARCHE = 1;
+	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager.FORCEZONE = 1;
 	_vm->_objectsManager.NUMZONE = -1;
 	do {
@@ -1283,7 +1282,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	FIN_VISU_WAIT();
 	CLEAR_ANIM_PERSO();
 	CLEAR_ANIM_PERSO();
-	_vm->_globals.NOPARLE = 0;
+	_vm->_globals.NOPARLE = false;
 	_vm->_globals.NECESSAIRE = 1;
 	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
 	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
@@ -1302,7 +1301,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_objectsManager.INILINK(v20);
 	_vm->_graphicsManager.INI_ECRAN2(v20);
 	_vm->_objectsManager.DESACTIVE = 0;
-	_vm->_globals.NOMARCHE = 0;
+	_vm->_globals.NOMARCHE = false;
 	if (_vm->_globals.SORTIE == 101)
 		_vm->_globals.SORTIE = 0;
 
@@ -1339,7 +1338,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	v14 = v14 + 2;
 	*v14 = *(v15 + 2);
 	v16 = v14 + 1;
-	_vm->_globals.DESACTIVE_INVENT = 0;
+	_vm->_globals.DESACTIVE_INVENT = false;
 	_vm->_graphicsManager.DD_VBL();
 	v17 = 0;
 	do {
