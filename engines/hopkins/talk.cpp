@@ -1177,7 +1177,6 @@ void TalkManager::REPONSE2(int a1, int a2) {
 
 void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	int v2; 
-	Common::String v3; 
 	const char *v4; 
 	int v5; 
 	bool v6;
@@ -1217,12 +1216,11 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	}
 	RENVOIE_FICHIER(40, v23, (const char *)BUFFERPERSO);
 	RENVOIE_FICHIER(0, v22, (const char *)BUFFERPERSO);
-	v3 = v20;
 	RENVOIE_FICHIER(20, v20, (const char *)BUFFERPERSO);
 	v4 = "NULL";
 	v5 = 5;
 
-	v6 = v3 != v4;
+	v6 = v20 != v4;
 	if (!v6) {
 		v20 = Common::String::format("IM%d", _vm->_globals.ECRAN);
 	}
