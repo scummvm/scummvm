@@ -56,7 +56,6 @@ ObjectsManager::ObjectsManager() {
 	DESACTIVE_CURSOR = 0;
 	BOBTOUS = false;
 	my_anim = 0;
-	GOACTION = 0;
 	NUMZONE = 0;
 	ARRET_PERSO_FLAG = 0;
 	ARRET_PERSO_NUM = 0;
@@ -1890,7 +1889,7 @@ void ObjectsManager::GOHOME() {
 		} else {
 			SETANISPR(0, _vm->_globals.g_old_sens + 59);
 			_vm->_globals.ACTION_SENS = 0;
-			if (GOACTION == 1)
+			if (_vm->_globals.GOACTION == 1)
 				v54 = _vm->_globals.SAUVEGARDE->data[svField2];
 			else
 				v54 = NUMZONE;
@@ -2231,7 +2230,7 @@ LABEL_153:
 		_vm->_globals.chemin++;
 
 		if (nouveau_x == -1 && v48 == -1) {
-			if (GOACTION == 1)
+			if (_vm->_globals.GOACTION == 1)
 				v49 = _vm->_globals.SAUVEGARDE->data[svField2];
 			else
 				v49 = NUMZONE;
@@ -2804,7 +2803,7 @@ void ObjectsManager::BTGAUCHE() {
 		}
 	}
 	if (_vm->_globals.PLAN_FLAG == 1) {
-		if (GOACTION != 1)
+		if (_vm->_globals.GOACTION != 1)
 			goto LABEL_38;
 		VERIFZONE();
 		if (NUMZONE <= 0)
@@ -2823,9 +2822,9 @@ void ObjectsManager::BTGAUCHE() {
 		v5[v2 + 2] = -1;
 		v5[v2 + 3] = -1;
 	}
-	if (GOACTION == 1) {
+	if (_vm->_globals.GOACTION == 1) {
 		VERIFZONE();
-		GOACTION = 0;
+		_vm->_globals.GOACTION = 0;
 		_vm->_globals.SAUVEGARDE->data[svField1] = 0;
 		_vm->_globals.SAUVEGARDE->data[svField2] = 0;
 	}
@@ -2845,7 +2844,7 @@ LABEL_38:
 			}
 		}
 	}
-	GOACTION = 0;
+	_vm->_globals.GOACTION = 0;
 	v9 = _vm->_globals.chemin;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	if (_vm->_globals.FORET && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
@@ -2908,7 +2907,7 @@ LABEL_65:
 			_vm->_globals.SAUVEGARDE->data[svField1] = 6;
 		_vm->_globals.SAUVEGARDE->data[svField2] = NUMZONE;
 		_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals.OBJET_EN_COURS;
-		GOACTION = 1;
+		_vm->_globals.GOACTION = 1;
 	}
 	_vm->_fontManager.TEXTE_OFF(5);
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
@@ -3036,7 +3035,7 @@ LABEL_64:
 				BTDROITE();
 		}
 	}
-	GOACTION = 0;
+	_vm->_globals.GOACTION = 0;
 }
 
 // Clear Screen
@@ -3083,7 +3082,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	Vold_taille = 200;
 	_vm->_globals.SAUVEGARDE->data[svField1] = 0;
 	_vm->_globals.SAUVEGARDE->data[svField2] = 0;
-	GOACTION = 0;
+	_vm->_globals.GOACTION = 0;
 	FORCEZONE = 1;
 	CHANGEVERBE = 0;
 	_vm->_globals.NOSPRECRAN = 0;
@@ -5637,7 +5636,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 			BTDROITE();
 		_vm->_dialogsManager.TestForDialogOpening();
 		VERIFZONE();
-		if (GOACTION == 1)
+		if (_vm->_globals.GOACTION == 1)
 			PARADISE();
 		if (!_vm->_globals.SORTIE) {
 			_vm->_eventsManager.VBL();
@@ -5783,7 +5782,7 @@ LABEL_70:
 			VERIFZONE();
 			if (_vm->_globals.chemin == (int16 *)g_PTRNUL 
 					|| (GOHOME(), _vm->_globals.chemin == (int16 *)g_PTRNUL)) {
-				if (GOACTION == 1)
+				if (_vm->_globals.GOACTION == 1)
 					PARADISE();
 			}
 			SPECIAL_JEU();

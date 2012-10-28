@@ -81,7 +81,6 @@ public:
 	int DESACTIVE_CURSOR;
 	bool BOBTOUS;
 	int my_anim;
-	int GOACTION;
 	int NUMZONE;
 	int ARRET_PERSO_FLAG;
 	int ARRET_PERSO_NUM;

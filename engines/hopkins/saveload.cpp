@@ -138,7 +138,15 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 }
 
 Common::Error SaveLoadManager::save(int slot, const Common::String &saveName) {
-	// Try and create the save file
+	/* Pack any necessary data into the savegame data structure */
+	// Set the selected slot number
+	_vm->_globals.SAUVEGARDE->data[svField10] = slot;
+
+	// Set up the inventory
+	for (int i = 0; i < 35; ++i)
+		_vm->_globals.SAUVEGARDE->inventory[i] = _vm->_globals.INVENTAIRE[i];
+
+	/* Create the savegame */
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
 		_vm->generateSaveName(slot));
 	if (!saveFile)

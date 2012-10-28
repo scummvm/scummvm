@@ -607,13 +607,6 @@ void DialogsManager::SAUVE_PARTIE() {
 	_vm->_objectsManager.SL_Y = 0;
 
 	if (slotNumber != 7) {
-		// Set the selected slot number
-		_vm->_globals.SAUVEGARDE->data[svField10] = slotNumber;
-
-		// Set up the inventory
-		for (int i = 0; i < 35; ++i)
-			_vm->_globals.SAUVEGARDE->inventory[i] = _vm->_globals.INVENTAIRE[i];
-
 		// Since the original GUI doesn't support save names, use a default name
 		saveName = Common::String::format("Save #%d", slotNumber);
 
