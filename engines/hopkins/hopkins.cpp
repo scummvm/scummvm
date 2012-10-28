@@ -695,10 +695,13 @@ void HopkinsEngine::INTRORUN() {
 							_eventsManager.souris_xy(_eventsManager.souris_x + 4, v4);
 						}
 						_eventsManager.VBL();
-					} while (v3 != 1 && _graphicsManager.SCROLL != SCREEN_WIDTH);
+					} while (!shouldQuit() && v3 != 1 && _graphicsManager.SCROLL != SCREEN_WIDTH);
           
 					_eventsManager.VBL();
 					_graphicsManager.no_scroll = 0;
+
+					if (shouldQuit())
+						return;
 				}
         
 				_soundManager.VOICE_MIX(4, 3);
@@ -740,9 +743,16 @@ void HopkinsEngine::INTRORUN() {
 				v7 = (int)&v23;
 				_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
 				_graphicsManager.FIN_VISU();
+
+				if (shouldQuit())
+					return;
+
 				_soundManager.SPECIAL_SOUND = 5;
 				_graphicsManager.FADE_LINUX = 2;
 				_animationManager.PLAY_ANM("ELEC.ANM", 10, 26, 200);
+				if (shouldQuit())
+					return;
+
 				_soundManager.SPECIAL_SOUND = 0;
         
 				if (!_eventsManager.ESC_KEY) {
@@ -772,7 +782,7 @@ void HopkinsEngine::INTRORUN() {
 					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
 					v9 = 0;
           
-					while (!_eventsManager.ESC_KEY) {
+					while (!shouldQuit() && !_eventsManager.ESC_KEY) {
 						if (v9 == 12) {
 							_objectsManager.BOBANIM_ON(3);
 							_eventsManager.VBL();
@@ -849,13 +859,21 @@ void HopkinsEngine::INTRORUN() {
 							_soundManager.WSOUND(3);
 							_soundManager.SPECIAL_SOUND = 1;
 							_animationManager.PLAY_ANM("INTRO1.anm", 10, 24, 18);
+							if (shouldQuit())
+								return;
+
 							_soundManager.SPECIAL_SOUND = 0;
 
 							if (!_eventsManager.ESC_KEY) {
 								_animationManager.PLAY_ANM("INTRO2.anm", 10, 24, 18);
+								if (shouldQuit())
+									return;
                 
 								if (!_eventsManager.ESC_KEY) {
 									_animationManager.PLAY_ANM("INTRO3.anm", 10, 24, 200);
+									if (shouldQuit())
+										return;
+
 									if (!_eventsManager.ESC_KEY) {
 										_animationManager.CLS_ANM = 0;
 										_graphicsManager.FADE_LINUX = 2;
