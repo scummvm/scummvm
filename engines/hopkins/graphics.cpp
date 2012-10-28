@@ -1264,7 +1264,7 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
 			v3 += 5;
 		}
 Video_Cont_Vbe16a:
-		WRITE_LE_UINT16(v2 + v2 + VideoPtr, READ_LE_UINT16(PAL_PIXELS + 2 * v4));
+		WRITE_LE_UINT16((byte *)VideoPtr->pixels + v2 * 2, READ_LE_UINT16(PAL_PIXELS + 2 * v4));
 		++v3;
 		++v2;
 	}
