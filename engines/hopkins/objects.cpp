@@ -4264,8 +4264,10 @@ void ObjectsManager::SPECIAL_JEU() {
 				if (!_vm->_globals.CENSURE) {
 					v1 = _vm->_globals.dos_malloc2(0x3E8u);
 					memcpy(v1, _vm->_graphicsManager.Palette, 0x301u);
+
 					_vm->_fileManager.CONSTRUIT_LINUX("TEMP1.SCR");
 					_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+
 					if (!_vm->_graphicsManager.nbrligne)
 						_vm->_graphicsManager.ofscroll = 0;
 					_vm->_graphicsManager.NB_SCREEN();
@@ -4279,8 +4281,10 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_globals.NECESSAIRE = 1;
 					_vm->_graphicsManager.NB_SCREEN();
 					_vm->_globals.NECESSAIRE = 0;
+					
 					_vm->_fileManager.CONSTRUIT_LINUX("TEMP1.SCR");
-					_vm->_fileManager.bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+					_vm->_saveLoadManager.bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+
 					PERSO_ON = 0;
 					memcpy(_vm->_graphicsManager.Palette, v1, 0x301u);
 					_vm->_graphicsManager.SHOW_PALETTE();
