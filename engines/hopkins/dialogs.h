@@ -55,7 +55,7 @@ public:
 	void showInventory();
 
 	void INVENT_ANIM();
-	void TEST_INVENT();
+	void TestForDialogOpening();
 	void CHARGE_PARTIE();
 	void SAUVE_PARTIE();
 	void LOAD_SAUVE(int a1);

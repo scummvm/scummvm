@@ -521,16 +521,35 @@ void DialogsManager::INVENT_ANIM() {
 	}
 }
 
-void DialogsManager::TEST_INVENT() {
+void DialogsManager::TestForDialogOpening() {
 	if (_vm->_globals.PLAN_FLAG)
-		_vm->_eventsManager.KEY_INVENT = 0;
-	if (_vm->_eventsManager.KEY_INVENT == 1) {
+		_vm->_eventsManager.GAME_KEY = KEY_NONE;
+	
+	if (_vm->_eventsManager.GAME_KEY != KEY_NONE) {
 		if (!INVENTFLAG) {
-			_vm->_eventsManager.KEY_INVENT = 0;
+			GAME_KEY key = _vm->_eventsManager.GAME_KEY;
+			_vm->_eventsManager.GAME_KEY = KEY_NONE;
 			INVENTFLAG = 1;
-			_vm->_dialogsManager.showInventory();
+
+			switch (key) {
+			case KEY_INVENTORY:
+				_vm->_dialogsManager.showInventory();
+				break;
+			case KEY_OPTIONS:
+				_vm->_dialogsManager.showOptionsDialog();
+				break;
+			case KEY_LOAD:
+				_vm->_dialogsManager.CHARGE_PARTIE();
+				break;
+			case KEY_SAVE:
+				_vm->_dialogsManager.SAUVE_PARTIE();
+				break;
+			default:
+				break;
+			}
+
 			INVENTFLAG = 0;
-			_vm->_eventsManager.KEY_INVENT = 0;
+			_vm->_eventsManager.GAME_KEY = KEY_NONE;
 		}
 	}
 }

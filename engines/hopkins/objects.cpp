@@ -2623,7 +2623,7 @@ void ObjectsManager::PLAN_BETA() {
 
 	v1 = 0;
 	_vm->_dialogsManager.INVENTFLAG = false;
-	_vm->_eventsManager.KEY_INVENT = 0;
+	_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	_vm->_globals.Max_Propre = 1;
 	_vm->_globals.Max_Ligne_Long = 1;
 	_vm->_globals.Max_Propre_Gen = 1;
@@ -2766,7 +2766,7 @@ void ObjectsManager::BTGAUCHE() {
 		_vm->_dialogsManager.INVENTFLAG = 1;
 		_vm->_dialogsManager.showInventory();
 		_vm->_dialogsManager.INVENTFLAG = 0;
-		_vm->_eventsManager.KEY_INVENT = 0;
+		_vm->_eventsManager.GAME_KEY = KEY_NONE;
 		if (!_vm->_globals.SORTIE) {
 			_vm->_dialogsManager.INVENTFLAG = 0;
 			_vm->_eventsManager.btsouris = v1;
@@ -5565,7 +5565,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 
 	v5 = 0;
 	_vm->_dialogsManager.INVENTFLAG = 0;
-	_vm->_eventsManager.KEY_INVENT = 0;
+	_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	_vm->_dialogsManager.VIRE_INVENT = false;
 	_vm->_graphicsManager.ofscroll = 0;
 	_vm->_globals.PLAN_FLAG = 0;
@@ -5635,7 +5635,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 		}
 		if (v9 == 2)
 			BTDROITE();
-		_vm->_dialogsManager.TEST_INVENT();
+		_vm->_dialogsManager.TestForDialogOpening();
 		VERIFZONE();
 		if (GOACTION == 1)
 			PARADISE();
@@ -5662,7 +5662,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &
 	int xp, yp;
 
 	_vm->_dialogsManager.INVENTFLAG = 0;
-	_vm->_eventsManager.KEY_INVENT = 0;
+	_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	verbe = 4;
 	_vm->_globals.MAX_COMPTE = 6;
 	_vm->_graphicsManager.ofscroll = 0;
@@ -5779,7 +5779,7 @@ LABEL_70:
 			}
 		}
 		if (!_vm->_globals.SORTIE) {
-			_vm->_dialogsManager.TEST_INVENT();
+			_vm->_dialogsManager.TestForDialogOpening();
 			VERIFZONE();
 			if (_vm->_globals.chemin == (int16 *)g_PTRNUL 
 					|| (GOHOME(), _vm->_globals.chemin == (int16 *)g_PTRNUL)) {

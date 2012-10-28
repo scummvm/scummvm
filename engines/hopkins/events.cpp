@@ -44,7 +44,7 @@ EventsManager::EventsManager() {
 	_gameCounter = 0;
 	lItCounter = 0;
 	ESC_KEY = false;
-	KEY_INVENT = false;
+	GAME_KEY = KEY_NONE;
 	btsouris = 0;
 	OLD_ICONE = 0;
 
@@ -260,7 +260,15 @@ void EventsManager::pollEvents() {
 
 void EventsManager::handleKey(Common::Event &event) {
 	ESC_KEY = event.kbd.keycode == Common::KEYCODE_ESCAPE;
-	KEY_INVENT = event.kbd.keycode == Common::KEYCODE_i || event.kbd.keycode == Common::KEYCODE_TAB;
+	
+	if (event.kbd.keycode == Common::KEYCODE_i || event.kbd.keycode == Common::KEYCODE_TAB)
+		GAME_KEY = KEY_INVENTORY;
+	else if (event.kbd.keycode == Common::KEYCODE_F5)
+		GAME_KEY = KEY_SAVE;
+	else if (event.kbd.keycode == Common::KEYCODE_F7)
+		GAME_KEY = KEY_LOAD;
+	else if (event.kbd.keycode == Common::KEYCODE_F1 || event.kbd.keycode == Common::KEYCODE_o)
+		GAME_KEY = KEY_OPTIONS;
 
 	// Check for debugger
 	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
