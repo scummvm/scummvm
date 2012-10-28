@@ -367,7 +367,7 @@ int TalkManager::DIALOGUE() {
 			v6 = 1;
 		if (v5 == -1)
 			v6 = 0;
-	} while (v6 != 1);
+	} while (!_vm->shouldQuit() && v6 != 1);
   
 	_vm->_soundManager.VOICE_MIX(v5, 1);
 	_vm->_fontManager.TEXTE_OFF(5);
