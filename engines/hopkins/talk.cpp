@@ -1306,7 +1306,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (_vm->_globals.SORTIE == 101)
 		_vm->_globals.SORTIE = 0;
 
-	_vm->_fileManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = 0;
