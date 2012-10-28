@@ -35,6 +35,14 @@ namespace GUI {
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
+
+	// Check (and update if necessary) the theme config here. This catches
+	// resolution changes, which happened after the GUI was closed. This
+	// should assure that the correct GUI width/height are returned below and
+	// prevent the logic from picking the grid dialog, even though it is not
+	// possible to use it.
+	g_gui.checkScreenChange();
+
 	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
 	    && metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
 	    && metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
