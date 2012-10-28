@@ -4265,8 +4265,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					v1 = _vm->_globals.dos_malloc2(0x3E8u);
 					memcpy(v1, _vm->_graphicsManager.Palette, 0x301u);
 
-					_vm->_fileManager.CONSTRUIT_LINUX("TEMP1.SCR");
-					_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+					_vm->_saveLoadManager.SAUVE_FICHIER("TEMP1.SCR", _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
 
 					if (!_vm->_graphicsManager.nbrligne)
 						_vm->_graphicsManager.ofscroll = 0;
@@ -4282,8 +4281,8 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_graphicsManager.NB_SCREEN();
 					_vm->_globals.NECESSAIRE = 0;
 					
-					_vm->_fileManager.CONSTRUIT_LINUX("TEMP1.SCR");
-					_vm->_saveLoadManager.bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+					_vm->_saveLoadManager.bload("TEMP1.SCR", _vm->_graphicsManager.VESA_SCREEN);
+					g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
 
 					PERSO_ON = 0;
 					memcpy(_vm->_graphicsManager.Palette, v1, 0x301u);

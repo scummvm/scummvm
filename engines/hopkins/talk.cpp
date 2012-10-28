@@ -149,8 +149,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = 0;
 
-	_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
-	_vm->_saveLoadManager.bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = 0;
 	_vm->_eventsManager.btsouris = v14;
@@ -1233,11 +1233,13 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	}
 	PERSOSPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 	_vm->_globals.CAT_FLAG = 0;
+
 	_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
 	if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
 		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
 	if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
 		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
+
 	if (!_vm->_graphicsManager.nbrligne)
 		_vm->_graphicsManager.ofscroll = 0;
 	_vm->_graphicsManager.NB_SCREEN();
@@ -1300,8 +1302,10 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.NOMARCHE = 0;
 	if (_vm->_globals.SORTIE == 101)
 		_vm->_globals.SORTIE = 0;
-	_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
-	_vm->_fileManager.bload(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN);
+
+	_vm->_fileManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
+
 	_vm->_objectsManager.PERSO_ON = 0;
 	_vm->_eventsManager.btsouris = 4;
 	_vm->_eventsManager.CHANGE_MOUSE(4);
