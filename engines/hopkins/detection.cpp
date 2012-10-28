@@ -33,6 +33,8 @@
 
 #include "hopkins/hopkins.h"
 
+#define MAX_SAVES 99
+
 namespace Hopkins {
 
 struct HopkinsGameDescription {
@@ -113,29 +115,65 @@ SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = "hopkins.0??";
+	Common::String pattern = Common::String::format("%s.0??", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
+
+	Hopkins::hopkinsSavegameHeader header;
 
 	SaveStateList saveList;
-	// TODO
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		const char *ext = strrchr(file->c_str(), '.');
+		int slot = ext ? atoi(ext + 1) : -1;
+
+		if (slot >= 0 && slot < MAX_SAVES) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+			if (in) {
+				if (Hopkins::SaveLoadManager::readSavegameHeader(in, header)) {
+					saveList.push_back(SaveStateDescriptor(slot, header.saveName));
+
+					header.thumbnail->free();
+					delete header.thumbnail;
+				}
+
+				delete in;
+			}
+		}
+	}
 
 	return saveList;
 }
 
 int HopkinsMetaEngine::getMaximumSaveSlot() const {
-	return 99;
+	return MAX_SAVES;
 }
 
 void HopkinsMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = "todo";
-
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor HopkinsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	// TODO
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (f) {
+		Hopkins::hopkinsSavegameHeader header;
+		Hopkins::SaveLoadManager::readSavegameHeader(f, header);
+		delete f;
+
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header.saveName);
+		desc.setThumbnail(header.thumbnail);
+		desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
+		desc.setSaveTime(header.saveHour, header.saveMinutes);
+		desc.setPlayTime(header.totalFrames * GAME_FRAME_TIME);
+
+		return desc;
+	}
+
 	return SaveStateDescriptor();
 }
 

@@ -205,11 +205,11 @@ void EventsManager::checkForNextFrameCounter() {
 	while ((milli - _priorCounterTime) >= 10) {
 		_priorCounterTime += 10;
 		lItCounter += 3;
-		++_gameCounter;
 	}
 
 	// Check for next game frame
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
+		++_gameCounter;
 		_priorFrameTime = milli;
 		g_system->updateScreen();
 

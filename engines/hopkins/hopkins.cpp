@@ -59,6 +59,38 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 HopkinsEngine::~HopkinsEngine() {
 }
 
+Common::String HopkinsEngine::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
+/**
+ * Returns true if it is currently okay to restore a game
+ */
+bool HopkinsEngine::canLoadGameStateCurrently() {
+	return !_globals.SORTIE && !_globals.PLAN_FLAG;
+}
+
+/**
+ * Returns true if it is currently okay to save the game
+ */
+bool HopkinsEngine::canSaveGameStateCurrently() {
+	return !_globals.SORTIE && !_globals.PLAN_FLAG;
+}
+
+/**
+ * Load the savegame at the specified slot index
+ */
+Common::Error HopkinsEngine::loadGameState(int slot) {
+	return _saveLoadManager.restore(slot);
+}
+
+/**
+ * Save the game to the given slot index, and with the given name
+ */
+Common::Error HopkinsEngine::saveGameState(int slot, const Common::String &desc) {
+	return _saveLoadManager.save(slot, desc);
+}
+
 Common::Error HopkinsEngine::run() {
 	_saveLoadManager.initSaves();
 
@@ -957,10 +989,6 @@ void HopkinsEngine::PUBQUIT() {
 	// that, it's being skipped in favour of simply exitting
 
 	_graphicsManager.FADE_OUTW();
-}
-
-Common::String HopkinsEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 } // End of namespace Hopkins

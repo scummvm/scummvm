@@ -126,6 +126,10 @@ public:
 
 	int getRandomNumber(int maxNumber);
 	Common::String generateSaveName(int slotNumber);
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	/**
 	 * Run the introduction sequence
