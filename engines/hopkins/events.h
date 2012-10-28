@@ -34,7 +34,7 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-enum GAME_KEY { KEY_NONE = 0, KEY_INVENTORY = 1, KEY_OPTIONS = 2, KEY_SAVE = 3, KEY_LOAD = 4 };
+enum DIALOG_KEY { KEY_NONE = 0, KEY_INVENTORY = 1, KEY_OPTIONS = 2, KEY_SAVE = 3, KEY_LOAD = 4 };
 
 class EventsManager {
 private:
@@ -62,7 +62,7 @@ public:
 	uint32 _priorFrameTime;
 	bool ESC_KEY;
 	bool NOESC;
-	GAME_KEY GAME_KEY;
+	DIALOG_KEY GAME_KEY;
 	int btsouris;
 public:
 	EventsManager();

@@ -527,7 +527,7 @@ void DialogsManager::TestForDialogOpening() {
 	
 	if (_vm->_eventsManager.GAME_KEY != KEY_NONE) {
 		if (!INVENTFLAG) {
-			GAME_KEY key = _vm->_eventsManager.GAME_KEY;
+			DIALOG_KEY key = _vm->_eventsManager.GAME_KEY;
 			_vm->_eventsManager.GAME_KEY = KEY_NONE;
 			INVENTFLAG = 1;
 
