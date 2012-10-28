@@ -1122,10 +1122,10 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 	bool v4; 
 	bool v5; 
 	int v7; 
-	byte *ptr; 
+	byte *ptr = NULL; 
 	byte *ptra; 
 	byte *v10; 
-	byte *v11; 
+	byte *v11 = NULL; 
 	int v13; 
 	int v14; 
 	int v15; 
@@ -1134,11 +1134,13 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 	int v18; 
 	char v19; 
 	size_t nbytes; 
-	byte buf[4]; 
 	Common::File f;
 
 	v7 = 0;
-	while (!_vm->shouldQuit()) {
+	for (;;) {
+		if (_vm->shouldQuit())
+			return;
+
 		v15 = 0;
 		v14 = 0;
 		v17 = 0;
@@ -1152,9 +1154,9 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("File not found - %s", _vm->_globals.NFICHIER.c_str());
 
-		f.read(&buf, 6u);
+		f.skip(6);
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
-		f.read(&buf, 4u);
+		f.skip(4);
 		nbytes = f.readUint32LE();
 		v19 = f.readUint32LE();
 		v18 = f.readUint16LE();
@@ -1170,8 +1172,10 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 			memcpy((void *)ptr, v10, 0x4B000u);
 		}
 		if (_vm->_animationManager.NO_SEQ) {
-			if (v7 == 1)
+			if (v7 == 1) {
+				assert(ptr != NULL);
 				memcpy((void *)ptr, _vm->_graphicsManager.VESA_BUFFER, 0x4B000u);
+			}
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 		} else {
 			_vm->_graphicsManager.DD_Lock();
@@ -1221,7 +1225,6 @@ LABEL_23:
 	while (!_vm->shouldQuit()) {
 		_vm->_soundManager.PLAY_ANM_SOUND(v13++);
 
-		memset(&buf, 0, 6u);
 		memset(v11, 0, 0x13u);
 		if (f.read(v11, 16) != 16)
 			v4 = true;
@@ -1283,9 +1286,9 @@ LABEL_54:
 		ptra = _vm->_globals.dos_malloc2(0x4B000u);
 		
 		f.seek(0);
-		f.read(&buf, 6u);
+		f.skip(6);
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
-		f.read(&buf, 4u);
+		f.skip(4);
 		nbytes = f.readUint32LE();
 		v19 = f.readUint32LE();
 		v18 = f.readUint16LE();
@@ -1298,7 +1301,6 @@ LABEL_54:
 		memcpy(ptra, v10, 0x4B000u);
 		v5 = false;
 		do {
-			memset(&buf, 0, 6u);
 			memset(v11, 0, 0x13u);
 			if (f.read(v11, 16) != 16)
 				v5 = true;
