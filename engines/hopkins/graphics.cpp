@@ -2420,7 +2420,7 @@ void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
 			byteVal = *(srcPtr + 2);
 			srcPtr += 2;
 		} else if (byteVal == (byte)-2) {
-			destOffset += (int16)READ_LE_UINT16(srcPtr + 1);
+			destOffset += READ_LE_UINT16(srcPtr + 1);
 			byteVal = *(srcPtr + 3);
 			srcPtr += 3;
 		} else {
@@ -2454,7 +2454,7 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 			byteVal = *(srcP + 2);
 			srcP += 2;
 		} else if (byteVal == (byte)-2) {
-			destOffset += (int16)READ_LE_UINT16(srcP + 1);
+			destOffset += READ_LE_UINT16(srcP + 1);
 			byteVal = *(srcP + 3);
 			srcP += 3;
 		} else {
