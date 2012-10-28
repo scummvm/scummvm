@@ -606,7 +606,7 @@ LABEL_114:
 			memset(v13, 0, 0x13u);
 			if (f.read(v13, 16) != 16)
 				v6 = -1;
-			if (strncmp((const char *)v13, "IMAGE=", 7))
+			if (strncmp((const char *)v13, "IMAGE=", 6))
 				v6 = -1;
 
 			if (!v6) {
@@ -1055,7 +1055,7 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 		if (f.read(v10, 16) != 16)
 			v5 = -1;
 
-		if (strncmp((const char *)v10, "IMAGE=", 7))
+		if (strncmp((const char *)v10, "IMAGE=", 6))
 			v5 = -1;
 		if (!v5) {
 			f.read(v9, (int16)READ_LE_UINT16(v10 + 8));
@@ -1119,8 +1119,8 @@ LABEL_59:
 }
 
 void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3, uint32 a4) {
-	int v4; 
-	int v5; 
+	bool v4; 
+	bool v5; 
 	int v7; 
 	byte *ptr; 
 	byte *ptra; 
@@ -1138,7 +1138,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 	Common::File f;
 
 	v7 = 0;
-	for (;;) {
+	while (!_vm->shouldQuit()) {
 		v15 = 0;
 		v14 = 0;
 		v17 = 0;
@@ -1196,7 +1196,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul != 1)
 			break;
-		while (1) {
+		while (!_vm->shouldQuit()) {
 			if (_vm->_eventsManager.ESC_KEY == 1)
 				goto LABEL_54;
 			if (REDRAW_ANIM() == 1)
@@ -1216,17 +1216,18 @@ LABEL_48:
 	}
 LABEL_23:
 	_vm->_eventsManager.lItCounter = 0;
-	v4 = 0;
+	v4 = false;
 	v13 = 0;
-	for (;;) {
+	while (!_vm->shouldQuit()) {
 		_vm->_soundManager.PLAY_ANM_SOUND(v13++);
+
 		memset(&buf, 0, 6u);
 		memset(v11, 0, 0x13u);
 		if (f.read(v11, 16) != 16)
-			v4 = -1;
+			v4 = true;
 
-		if (strncmp((const char *)v11, "IMAGE=", 7u))
-			v4 = -1;
+		if (strncmp((const char *)v11, "IMAGE=", 6))
+			v4 = true;
 		if (v4)
 			goto LABEL_44;
 		f.read(v10, READ_LE_UINT32(v11 + 8));
@@ -1253,7 +1254,7 @@ LABEL_33:
 		_vm->_graphicsManager.DD_VBL();
 		_vm->_soundManager.VERIF_SOUND();
 LABEL_44:
-		if (v4 == -1) {
+		if (v4) {
 			if (_vm->_globals.iRegul == 1) {
 				while (_vm->_eventsManager.ESC_KEY != 1) {
 					if (REDRAW_ANIM() == 1)
@@ -1295,21 +1296,21 @@ LABEL_54:
 		f.read(v10, nbytes);
 
 		memcpy(ptra, v10, 0x4B000u);
-		v5 = 0;
+		v5 = false;
 		do {
 			memset(&buf, 0, 6u);
 			memset(v11, 0, 0x13u);
 			if (f.read(v11, 16) != 16)
-				v5 = -1;
+				v5 = true;
 
-			if (strncmp((const char *)v11, "IMAGE=", 7u))
-				v5 = -1;
+			if (strncmp((const char *)v11, "IMAGE=", 6))
+				v5 = true;
 			if (!v5) {
 				f.read(v10, READ_LE_UINT32(v11 + 8));
 				if (*v10 != (byte)-4)
 					_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptra);
 			}
-		} while (v5 != -1);
+		} while (!v5);
 		_vm->_graphicsManager.FADE_OUTW_LINUX(ptra);
 		ptr = _vm->_globals.dos_free2(ptra);
 	}
