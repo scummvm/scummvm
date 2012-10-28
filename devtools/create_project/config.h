@@ -28,7 +28,7 @@
 #define LIBS_DEFINE "RESIDUALVM_LIBS"     // Name of the include environment variable
 #define REVISION_DEFINE "SCUMMVM_INTERNAL_REVISION"
 
-#define ENABLE_LANGUAGE_EXTENSIONS ""    // Comma separated list of projects that need language extensions
+#define ENABLE_LANGUAGE_EXTENSIONS "grim,myst3"    // Comma separated list of projects that need language extensions
 #define DISABLE_EDIT_AND_CONTINUE "grim,myst3"     // Comma separated list of projects that need Edit&Continue to be disabled for co-routine support (the main project is automatically added)
 
 #define ADDITIONAL_LIBRARY "glu32"
