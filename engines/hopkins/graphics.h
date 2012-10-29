@@ -112,7 +112,7 @@ public:
 	void DD_UNLOCK() { DD_Unlock(); }
 	void Cls_Video();
 	void LOAD_IMAGE(const Common::String &file);
-	void INIT_TABLE(int a1, int a2, byte *a3);
+	void INIT_TABLE(int minIndex, int maxIndex, byte *palette);
 	int SCROLL_ECRAN(int amount);
 	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void Trans_bloc2(byte *surface, byte *col, int size);
@@ -148,7 +148,7 @@ public:
 	void Copy_Video_Vbe3(const byte *srcData);
 	void Copy_Video_Vbe16(const byte *srcData);
 	void Copy_Video_Vbe16a(const byte *srcData);
-	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height);
+	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height);
 	
 	/**
 	 * Draws a sprite onto the screen
@@ -177,7 +177,7 @@ public:
 	void Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour);
 	void INI_ECRAN(const Common::String &file);
 	void INI_ECRAN2(const Common::String &file);
-	void OPTI_INI(const Common::String &file, int a2);
+	void OPTI_INI(const Common::String &file, int mode);
 	void NB_SCREEN();
 	void SHOW_PALETTE();
 	void videkey();
@@ -185,7 +185,7 @@ public:
 	void Copy_Video_Vbe(const byte *src);
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 	void Plot_Hline(byte *surface, int xp, int yp, unsigned int width, byte col);
-	void Plot_Vline(byte *surface, int xp, int yp, int height, char col);
+	void Plot_Vline(byte *surface, int xp, int yp, int height, byte col);
 };
 
 } // End of namespace Hopkins

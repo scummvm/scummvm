@@ -245,11 +245,11 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	memcpy(VESA_BUFFER, VESA_SCREEN, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 }
 
-void GraphicsManager::INIT_TABLE(int a1, int a2, byte *palette) {
+void GraphicsManager::INIT_TABLE(int minIndex, int maxIndex, byte *palette) {
 	for (int idx = 0; idx < 256; ++idx)
 		TABLE_COUL[idx] = idx;
   
-	Trans_bloc(TABLE_COUL, palette, 256, a1, a2);
+	Trans_bloc(TABLE_COUL, palette, 256, minIndex, maxIndex);
 
 	for (int idx = 0; idx < 256; ++idx) {
 		byte v = TABLE_COUL[idx];
@@ -1270,7 +1270,7 @@ Video_Cont_Vbe16a:
 	}
 }
 
-void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, unsigned int width, int height) {
+void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height) {
 	const byte *srcP;
 	byte *destP;
 	int rowCount; 
@@ -2285,7 +2285,7 @@ void GraphicsManager::INI_ECRAN2(const Common::String &file) {
 	OPTI_INI(file, 2);
 }
 
-void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
+void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 	int v2; 
 	unsigned int v3; 
 	int v6; 
@@ -2304,7 +2304,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, v13);
 		ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	}
-	if (!a2) {
+	if (!mode) {
 		v13 = file + ".spr";
 		if (g_PTRNUL != _vm->_globals.SPRITE_ECRAN)
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
@@ -2343,7 +2343,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int a2) {
 		} while (v11 != 1);
 	}
 	_vm->_globals.dos_free2(ptr);
-	if (a2 != 1) {
+	if (mode != 1) {
 		if (g_PTRNUL != _vm->_globals.COUCOU)
 			_vm->_globals.COUCOU = _vm->_globals.dos_free2(_vm->_globals.COUCOU);
 		
@@ -2514,7 +2514,7 @@ void GraphicsManager::Plot_Hline(byte *surface, int xp, int yp, unsigned int wid
 	memset(surface + xp + nbrligne2 * yp, col, width);
 }
 
-void GraphicsManager::Plot_Vline(byte *surface, int xp, int yp, int height, char col) {
+void GraphicsManager::Plot_Vline(byte *surface, int xp, int yp, int height, byte col) {
 	byte *v5;
 	int v6;
 
