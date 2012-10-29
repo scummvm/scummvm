@@ -1136,6 +1136,7 @@ void PegasusEngine::doInterfaceOverview() {
 		overviewText.redrawMovieWorld();
 
 		refreshDisplay();
+		_system->delayMillis(10);
 	}
 
 	if (shouldQuit())
