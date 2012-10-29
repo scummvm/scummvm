@@ -386,7 +386,6 @@ public:
 	byte *Bufferdecor;
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;
-	bool redraw;
 	int OBJL, OBJH;
 	int Nouv_objet;
 	int HELICO;

@@ -646,7 +646,7 @@ void HopkinsEngine::INTRORUN() {
 	_globals.iRegul = 1;
 	_eventsManager.VBL();
 	_soundManager.WSOUND(16);
-	_animationManager.CLS_ANM = 1;
+	_animationManager.CLS_ANM = true;
 	_animationManager.PLAY_ANM("J1.anm", 12, 12, 50);
 	if (!_eventsManager.ESC_KEY) {
 		_soundManager.VOICE_MIX(1, 3);
@@ -681,7 +681,7 @@ void HopkinsEngine::INTRORUN() {
 				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
-				if (_graphicsManager.DOUBLE_ECRAN == 1) {
+				if (_graphicsManager.DOUBLE_ECRAN == true) {
 					_graphicsManager.no_scroll = 2;
 					v3 = 0;
 					_graphicsManager.SCROLL = 0;
@@ -858,7 +858,7 @@ void HopkinsEngine::INTRORUN() {
 
 							_graphicsManager.FADE_OUTW();
 							_graphicsManager.FIN_VISU();
-							_animationManager.CLS_ANM = 1;
+							_animationManager.CLS_ANM = true;
 							_soundManager.WSOUND(3);
 							_soundManager.SPECIAL_SOUND = 1;
 							_animationManager.PLAY_ANM("INTRO1.anm", 10, 24, 18);
@@ -878,7 +878,7 @@ void HopkinsEngine::INTRORUN() {
 										return;
 
 									if (!_eventsManager.ESC_KEY) {
-										_animationManager.CLS_ANM = 0;
+										_animationManager.CLS_ANM = false;
 										_graphicsManager.FADE_LINUX = 2;
 										_animationManager.PLAY_ANM("J4.anm", 12, 12, 1000);
 									}

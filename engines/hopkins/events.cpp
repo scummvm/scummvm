@@ -408,7 +408,7 @@ LABEL_63:
 LABEL_65:
 	_vm->_globals.vitesse = 2;
 	lItCounter = 0;
-	if (_vm->_graphicsManager.DOUBLE_ECRAN != 1 || _vm->_graphicsManager.no_scroll == 1) {
+	if (_vm->_graphicsManager.DOUBLE_ECRAN != true || _vm->_graphicsManager.no_scroll == 1) {
 		_vm->_graphicsManager.Affiche_Segment_Vesa();
 	} else {
 		if (_vm->_graphicsManager.no_scroll != 2) {

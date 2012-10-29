@@ -70,7 +70,7 @@ LABEL_2:
 		f.skip(14);
 		f.read(v10, nbytes);
 
-		if (CLS_ANM == 1) {
+		if (CLS_ANM == true) {
 			_vm->_graphicsManager.DD_Lock();
 			_vm->_graphicsManager.Cls_Video();
 			_vm->_graphicsManager.DD_Unlock();
@@ -117,7 +117,7 @@ LABEL_2:
 				goto LABEL_25;
 		}
 LABEL_53:
-		if (_vm->_graphicsManager.NOLOCK == 1)
+		if (_vm->_graphicsManager.NOLOCK == true)
 			goto LABEL_58;
 		_vm->_globals.dos_free2(ptr);
 		f.close();
@@ -184,9 +184,9 @@ LABEL_57:
 			goto LABEL_58;
 		}
 	}
-	while (!_vm->shouldQuit() && _vm->_eventsManager.ESC_KEY != 1) {
-		if (REDRAW_ANIM() == 1) {
-			if (_vm->_graphicsManager.NOLOCK == 1)
+	while (!_vm->shouldQuit() && _vm->_eventsManager.ESC_KEY != true) {
+		if (REDRAW_ANIM() == true) {
+			if (_vm->_graphicsManager.NOLOCK == true)
 				break;
 			_vm->_globals.dos_free2(ptr);
 			f.close();
@@ -240,7 +240,7 @@ LABEL_58:
 	_vm->_graphicsManager.FADE_LINUX = 0;
 	f.close();
 	_vm->_globals.dos_free2(ptr);
-	_vm->_graphicsManager.NOLOCK = 0;
+	_vm->_graphicsManager.NOLOCK = false;
 }
 
 // Play Anim 2
@@ -342,20 +342,20 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 			_vm->_graphicsManager.DD_VBL();
 		}
 		_vm->_eventsManager.lItCounter = 0;
-		_vm->_eventsManager.ESC_KEY = 0;
+		_vm->_eventsManager.ESC_KEY = false;
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul != 1)
 			break;
 		while (1) {
-			if (_vm->_eventsManager.ESC_KEY == 1)
+			if (_vm->_eventsManager.ESC_KEY == true)
 				goto LABEL_114;
-			if (REDRAW_ANIM() == 1)
+			if (REDRAW_ANIM() == true)
 				break;
 			_vm->_eventsManager.CONTROLE_MES();
 			if (_vm->_eventsManager.lItCounter >= a2)
 				goto LABEL_48;
 		}
-		if (_vm->_graphicsManager.NOLOCK == 1)
+		if (_vm->_graphicsManager.NOLOCK == true)
 			goto LABEL_114;
 		if (v8 == 1)
 			ptr = _vm->_globals.dos_free2(ptr);
@@ -373,7 +373,7 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.SCROLL = v11;
 		_vm->_graphicsManager.SCROLL_ECRAN(v11);
-		if (_vm->_graphicsManager.DOUBLE_ECRAN == 1) {
+		if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
 			_vm->_graphicsManager.SCANLINE(0x500u);
 			_vm->_graphicsManager.max_x = 1280;
 			_vm->_graphicsManager.DD_Lock();
@@ -459,9 +459,9 @@ LABEL_77:
 LABEL_88:
 		if (v5 == -1) {
 			if (_vm->_globals.iRegul == 1) {
-				while (_vm->_eventsManager.ESC_KEY != 1) {
-					if (REDRAW_ANIM() == 1) {
-						if (_vm->_graphicsManager.NOLOCK == 1)
+				while (_vm->_eventsManager.ESC_KEY != true) {
+					if (REDRAW_ANIM() == true) {
+						if (_vm->_graphicsManager.NOLOCK == true)
 							goto LABEL_114;
 						if (v8 == 1)
 							ptr = _vm->_globals.dos_free2(ptr);
@@ -479,7 +479,7 @@ LABEL_88:
 						_vm->_graphicsManager.DD_Unlock();
 						_vm->_graphicsManager.SCROLL = v11;
 						_vm->_graphicsManager.SCROLL_ECRAN(v11);
-						if (_vm->_graphicsManager.DOUBLE_ECRAN == 1) {
+						if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
 							_vm->_graphicsManager.SCANLINE(0x500u);
 							_vm->_graphicsManager.max_x = 1280;
 							_vm->_graphicsManager.DD_Lock();
@@ -524,9 +524,9 @@ LABEL_88:
 			goto LABEL_114;
 		}
 	}
-	while (_vm->_eventsManager.ESC_KEY != 1) {
-		if (REDRAW_ANIM() == 1) {
-			if (_vm->_graphicsManager.NOLOCK == 1)
+	while (_vm->_eventsManager.ESC_KEY != true) {
+		if (REDRAW_ANIM() == true) {
+			if (_vm->_graphicsManager.NOLOCK == true)
 				break;
 			if (v8 == 1)
 				ptr = _vm->_globals.dos_free2(ptr);
@@ -544,7 +544,7 @@ LABEL_88:
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.SCROLL = v11;
 			_vm->_graphicsManager.SCROLL_ECRAN(v11);
-			if (_vm->_graphicsManager.DOUBLE_ECRAN == 1) {
+			if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
 				_vm->_graphicsManager.SCANLINE(0x500u);
 				_vm->_graphicsManager.max_x = 1280;
 				_vm->_graphicsManager.DD_Lock();
@@ -586,7 +586,7 @@ LABEL_88:
 			goto LABEL_77;
 	}
 LABEL_114:
-	_vm->_graphicsManager.NOLOCK = 0;
+	_vm->_graphicsManager.NOLOCK = false;
 	f.close();
 
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v8) {
@@ -642,7 +642,7 @@ LABEL_114:
 	_vm->_graphicsManager.DD_Unlock();
 	_vm->_graphicsManager.SCROLL = v11;
 	_vm->_graphicsManager.SCROLL_ECRAN(v11);
-	if (_vm->_graphicsManager.DOUBLE_ECRAN == 1) {
+	if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
 		_vm->_graphicsManager.SCANLINE(0x500u);
 		_vm->_graphicsManager.max_x = 1280;
 		_vm->_graphicsManager.DD_Lock();
@@ -1040,14 +1040,14 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 		_vm->_graphicsManager.DD_VBL();
 	}
 	_vm->_eventsManager.lItCounter = 0;
-	_vm->_eventsManager.ESC_KEY = 0;
+	_vm->_eventsManager.ESC_KEY = false;
 	_vm->_soundManager.LOAD_ANM_SOUND();
 	if (_vm->_globals.iRegul == 1) {
 		do {
-			if (_vm->_eventsManager.ESC_KEY == 1) {
+			if (_vm->_eventsManager.ESC_KEY == true) {
 				if (!_vm->_eventsManager.NOESC)
 					goto LABEL_59;
-				_vm->_eventsManager.ESC_KEY = 0;
+				_vm->_eventsManager.ESC_KEY = false;
 			}
 			_vm->_eventsManager.CONTROLE_MES();
 			_vm->_soundManager.VERIF_SOUND();
@@ -1070,10 +1070,10 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 			f.read(v9, (int16)READ_LE_UINT16(v10 + 8));
 			if (_vm->_globals.iRegul == 1) {
 				do {
-					if (_vm->_eventsManager.ESC_KEY == 1) {
+					if (_vm->_eventsManager.ESC_KEY == true) {
 						if (!_vm->_eventsManager.NOESC)
 							goto LABEL_59;
-						_vm->_eventsManager.ESC_KEY = 0;
+						_vm->_eventsManager.ESC_KEY = false;
 					}
 					_vm->_eventsManager.CONTROLE_MES();
 					_vm->_soundManager.VERIF_SOUND();
@@ -1102,10 +1102,10 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 	} while (v5 != -1);
 	if (_vm->_globals.iRegul == 1) {
 		do {
-			if (_vm->_eventsManager.ESC_KEY == 1) {
+			if (_vm->_eventsManager.ESC_KEY == true) {
 				if (!_vm->_eventsManager.NOESC)
 					goto LABEL_59;
-				_vm->_eventsManager.ESC_KEY = 0;
+				_vm->_eventsManager.ESC_KEY = false;
 			}
 			_vm->_eventsManager.CONTROLE_MES();
 			_vm->_soundManager.VERIF_SOUND();
@@ -1113,7 +1113,7 @@ void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uin
 	}
 	_vm->_eventsManager.lItCounter = 0;
 LABEL_59:
-	_vm->_graphicsManager.NOLOCK = 0;
+	_vm->_graphicsManager.NOLOCK = false;
 	f.close();
 
 	if (!NO_COUL) {
@@ -1205,14 +1205,14 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 			_vm->_graphicsManager.DD_VBL();
 		}
 		_vm->_eventsManager.lItCounter = 0;
-		_vm->_eventsManager.ESC_KEY = 0;
+		_vm->_eventsManager.ESC_KEY = false;
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul != 1)
 			break;
 		while (!_vm->shouldQuit()) {
-			if (_vm->_eventsManager.ESC_KEY == 1)
+			if (_vm->_eventsManager.ESC_KEY == true)
 				goto LABEL_54;
-			if (REDRAW_ANIM() == 1)
+			if (REDRAW_ANIM() == true)
 				break;
 			_vm->_eventsManager.CONTROLE_MES();
 			_vm->_soundManager.VERIF_SOUND();
@@ -1220,7 +1220,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 				goto LABEL_23;
 		}
 LABEL_48:
-		if (_vm->_graphicsManager.NOLOCK == 1)
+		if (_vm->_graphicsManager.NOLOCK == true)
 			goto LABEL_54;
 		if (v7 == 1)
 			ptr = _vm->_globals.dos_free2(ptr);
@@ -1268,8 +1268,8 @@ LABEL_33:
 LABEL_44:
 		if (v4) {
 			if (_vm->_globals.iRegul == 1) {
-				while (_vm->_eventsManager.ESC_KEY != 1) {
-					if (REDRAW_ANIM() == 1)
+				while (_vm->_eventsManager.ESC_KEY != true) {
+					if (REDRAW_ANIM() == true)
 						goto LABEL_48;
 					_vm->_eventsManager.CONTROLE_MES();
 					_vm->_soundManager.VERIF_SOUND();
@@ -1283,9 +1283,9 @@ LABEL_53:
 			goto LABEL_54;
 		}
 	}
-	while (_vm->_eventsManager.ESC_KEY != 1) {
+	while (_vm->_eventsManager.ESC_KEY != true) {
 		_vm->_eventsManager.CONTROLE_MES();
-		if (REDRAW_ANIM() == 1)
+		if (REDRAW_ANIM() == true)
 			goto LABEL_48;
 		if (_vm->_eventsManager.lItCounter >= a3)
 			goto LABEL_33;

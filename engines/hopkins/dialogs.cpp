@@ -437,7 +437,7 @@ LABEL_7:
 					}
 				}
 			}
-			if (VIRE_INVENT == 1)
+			if (VIRE_INVENT == true)
 				v20 = 1;
 			if (v20 == 1)
 				break;
@@ -529,7 +529,7 @@ void DialogsManager::TestForDialogOpening() {
 		if (!INVENTFLAG) {
 			DIALOG_KEY key = _vm->_eventsManager.GAME_KEY;
 			_vm->_eventsManager.GAME_KEY = KEY_NONE;
-			INVENTFLAG = 1;
+			INVENTFLAG = true;
 
 			switch (key) {
 			case KEY_INVENTORY:
@@ -548,7 +548,7 @@ void DialogsManager::TestForDialogOpening() {
 				break;
 			}
 
-			INVENTFLAG = 0;
+			INVENTFLAG = false;
 			_vm->_eventsManager.GAME_KEY = KEY_NONE;
 		}
 	}
