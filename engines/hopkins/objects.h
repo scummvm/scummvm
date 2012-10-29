@@ -101,8 +101,8 @@ public:
 	int MAX_DEPA1;
 	int CH_TETE;
 	int T_RECTIF;
-	int DESACTIVE;
-	int DEUXPERSO;
+	bool DESACTIVE;
+	bool DEUXPERSO;
 	int PERX, PERY;
 	int PERI;
 	int RECALL;

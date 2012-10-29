@@ -112,7 +112,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	if (!_vm->_graphicsManager.nbrligne)
 		_vm->_graphicsManager.ofscroll = 0;
 	_vm->_graphicsManager.NB_SCREEN();
-	_vm->_objectsManager.PERSO_ON = 1;
+	_vm->_objectsManager.PERSO_ON = true;
 	CHERCHE_PAL(v3, 0);
 	CHERCHE_ANIM0(v3, 0);
 	ANIM_PERSO_INIT();
@@ -151,7 +151,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	_vm->_objectsManager.PERSO_ON = 0;
+	_vm->_objectsManager.PERSO_ON = false;
 	_vm->_eventsManager.btsouris = v14;
 	
 	_vm->_eventsManager.CHANGE_MOUSE(v14);
@@ -1246,14 +1246,14 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	v10 = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
 	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
 	_vm->_graphicsManager.NB_SCREEN();
-	_vm->_objectsManager.PERSO_ON = 1;
+	_vm->_objectsManager.PERSO_ON = true;
 	CHERCHE_PAL(v10, 1);
 	CHERCHE_ANIM0(v10, 0);
 	v11 = _vm->_globals.COUCOU;
 	_vm->_globals.COUCOU = g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager.INILINK(v22);
-	_vm->_objectsManager.PERSO_ON = 1;
+	_vm->_objectsManager.PERSO_ON = true;
 	_vm->_globals.GOACTION = 0;
 	_vm->_objectsManager.NUMZONE = -1;
 	ANIM_PERSO_INIT();
@@ -1295,10 +1295,10 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	while (v13 <= 44);
 	_vm->_globals.LIBERE_FICHIER(_vm->_globals.COUCOU);
 	_vm->_globals.COUCOU = v11;
-	_vm->_objectsManager.DESACTIVE = 1;
+	_vm->_objectsManager.DESACTIVE = true;
 	_vm->_objectsManager.INILINK(v20);
 	_vm->_graphicsManager.INI_ECRAN2(v20);
-	_vm->_objectsManager.DESACTIVE = 0;
+	_vm->_objectsManager.DESACTIVE = false;
 	_vm->_globals.NOMARCHE = false;
 	if (_vm->_globals.SORTIE == 101)
 		_vm->_globals.SORTIE = 0;
@@ -1306,7 +1306,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	_vm->_objectsManager.PERSO_ON = 0;
+	_vm->_objectsManager.PERSO_ON = false;
 	_vm->_eventsManager.btsouris = 4;
 	_vm->_eventsManager.CHANGE_MOUSE(4);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);

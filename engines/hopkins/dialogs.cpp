@@ -304,7 +304,7 @@ void DialogsManager::showInventory() {
 	if (!VIRE_INVENT && !AFFINVEN && !_vm->_globals.DESACTIVE_INVENT) {
 		_vm->_graphicsManager.no_scroll = 1;
 		_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
-		_vm->_objectsManager.FLAG_VISIBLE = 0;
+		_vm->_objectsManager.FLAG_VISIBLE = false;
 		v1 = 0;
 		do {
 			INVENT_ANIM();
@@ -451,7 +451,7 @@ LABEL_7:
 			v9 = 114;
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v19, 114, v18, v17, _vm->_graphicsManager.VESA_BUFFER, v19, 114);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
-			_vm->_objectsManager.BOBTOUS = 1;
+			_vm->_objectsManager.BOBTOUS = true;
 		}
 		if (_vm->_dialogsManager.Winventaire != g_PTRNUL)
 			_vm->_dialogsManager.Winventaire = _vm->_globals.dos_free2(_vm->_dialogsManager.Winventaire);
@@ -566,10 +566,10 @@ void DialogsManager::CHARGE_PARTIE() {
 			_vm->_eventsManager.VBL();
 		} while (_vm->_eventsManager.BMOUSE() != 1);
 	} while (!slotNumber);
-	_vm->_objectsManager.SL_FLAG = 0;
+	_vm->_objectsManager.SL_FLAG = false;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager.start_x + 183, 60);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 183, 60, 457, 413);
-	_vm->_objectsManager.BOBTOUS = 1;
+	_vm->_objectsManager.BOBTOUS = true;
 	_vm->_objectsManager.SL_SPR = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR);
 	_vm->_objectsManager.SL_SPR2 = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR2);
 	_vm->_objectsManager.SL_X = 0;
@@ -597,10 +597,10 @@ void DialogsManager::SAUVE_PARTIE() {
 		} while (!_vm->shouldQuit() && _vm->_eventsManager.BMOUSE() != 1);
 	} while (!_vm->shouldQuit() && !slotNumber);
 
-	_vm->_objectsManager.SL_FLAG = 0;
+	_vm->_objectsManager.SL_FLAG = false;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager.start_x + 183, 60);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 183, 60, _vm->_eventsManager.start_x + 457, 413);
-	_vm->_objectsManager.BOBTOUS = 1;
+	_vm->_objectsManager.BOBTOUS = true;
 	_vm->_objectsManager.SL_SPR = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR);
 	_vm->_objectsManager.SL_SPR2 = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR2);
 	_vm->_objectsManager.SL_X = 0;
@@ -681,7 +681,7 @@ void DialogsManager::LOAD_SAUVE(int a1) {
 	}
 
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 183, 60, 0x112u, 353);
-	_vm->_objectsManager.SL_FLAG = 1;
+	_vm->_objectsManager.SL_FLAG = true;
 	_vm->_objectsManager.SL_MODE = a1;
 	_vm->_objectsManager.SL_X = 0;
 	_vm->_objectsManager.SL_Y = 0;

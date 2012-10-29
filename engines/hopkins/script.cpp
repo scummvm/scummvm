@@ -245,7 +245,7 @@ LABEL_98:
 	}
 LABEL_104:
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'B') {
-		if (_vm->_objectsManager.DESACTIVE != 1) {
+		if (_vm->_objectsManager.DESACTIVE != true) {
 			v72 = *(a1 + 5);
 			v70 = *(a1 + 6);
 			v4 = *(a1 + 7);
@@ -279,8 +279,8 @@ LABEL_1141:
 	}
 	if (*(a1 + 2) == 'S') {
 		if (*(a1 + 3) == 'T' && *(a1 + 4) == 'P') {
-			if (_vm->_objectsManager.DESACTIVE != 1) {
-				_vm->_objectsManager.DEUXPERSO = 0;
+			if (_vm->_objectsManager.DESACTIVE != true) {
+				_vm->_objectsManager.DEUXPERSO = false;
 				v5 = *(a1 + 5);
 				v6 = (int16)READ_LE_UINT16(a1 + 8);
 				_vm->_objectsManager.PERX = (int16)READ_LE_UINT16(a1 + 6);
@@ -327,7 +327,7 @@ LABEL_1141:
 					    34,
 					    190);
 					_vm->_objectsManager.SPRITE_ON(1);
-					_vm->_objectsManager.DEUXPERSO = 1;
+					_vm->_objectsManager.DEUXPERSO = true;
 				}
 				if (_vm->_globals.SAUVEGARDE->data[svField357] == 1
 				        && _vm->_globals.SAUVEGARDE->data[svField355] == 1
@@ -343,14 +343,14 @@ LABEL_1141:
 					    20,
 					    127);
 					_vm->_objectsManager.SPRITE_ON(1);
-					_vm->_objectsManager.DEUXPERSO = 1;
+					_vm->_objectsManager.DEUXPERSO = true;
 				}
 			}
 			v1 = 1;
 			_vm->_objectsManager.CH_TETE = 0;
 		}
 		if (*(a1 + 2) == 'S' && *(a1 + 3) == 'T' && *(a1 + 4) == 'E') {
-			if (_vm->_objectsManager.DESACTIVE != 1) {
+			if (_vm->_objectsManager.DESACTIVE != true) {
 				v7 = *(a1 + 5);
 				v70 = *(a1 + 6);
 				v8 = *(a1 + 7);
@@ -368,7 +368,7 @@ LABEL_1141:
 		}
 	}
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
-		if (_vm->_objectsManager.DESACTIVE != 1)
+		if (_vm->_objectsManager.DESACTIVE != true)
 			_vm->_objectsManager.VBOB_OFF((int16)READ_LE_UINT16(a1 + 5));
 		v1 = 1;
 	}
@@ -2248,7 +2248,7 @@ LABEL_1141:
 			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField356] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField355] = 1;
-			_vm->_objectsManager.DEUXPERSO = 1;
+			_vm->_objectsManager.DEUXPERSO = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
 			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->field0, v53->field1, 1, 3, v53->field4, 0, 20, 127);
 			_vm->_objectsManager.SPRITE_ON(1);
@@ -2264,14 +2264,14 @@ LABEL_1141:
 		if (v76 == 246) {
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.OPTI_ONE(6, 0, 15, 0);
-			_vm->_objectsManager.PERSO_ON = 1;
+			_vm->_objectsManager.PERSO_ON = true;
 			_vm->_graphicsManager.NB_SCREEN();
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.PLAY_SEQ2("TUNNEL.SEQ", 1, 18, 20);
 			_vm->_animationManager.NO_SEQ = false;
 			_vm->_graphicsManager.NOFADE = true;
 			_vm->_graphicsManager.FADE_OUTW();
-			_vm->_objectsManager.PERSO_ON = 0;
+			_vm->_objectsManager.PERSO_ON = false;
 			_vm->_globals.SORTIE = 100;
 		}
 		if (v76 == 55) {
