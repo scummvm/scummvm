@@ -45,14 +45,14 @@ int MenuManager::MENU() {
 	byte *spriteData = NULL; 
 	MenuSelection menuIndex;
 	Common::Point mousePos;
-	signed int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v10;
-	int v11;
+	signed int result;
+	int frame5Index;
+	int frame4Index;
+	int frame3Index;
+	int frame2Index;
+	int frame1Index;
 
-	v6 = 0;
+	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
 		_vm->_globals.FORET = 0;
 		_vm->_eventsManager.CASSE = false;
@@ -65,11 +65,11 @@ int MenuManager::MENU() {
     
 		memset(_vm->_globals.SAUVEGARDE, 0, 2000);
 		_vm->_objectsManager.AJOUTE_OBJET(14);
-		v7 = 0;
-		v8 = 0;
-		v9 = 0;
-		v10 = 0;
-		v11 = 0;
+		frame5Index = 0;
+		frame4Index = 0;
+		frame3Index = 0;
+		frame2Index = 0;
+		frame1Index = 0;
 
 
 		if (_vm->_globals.FR == 0)
@@ -122,53 +122,53 @@ int MenuManager::MENU() {
           
 					switch (menuIndex) {
 					case MENU_NONE:
-						v11 = 0;
-						v10 = 0;
-						v9 = 0;
-						v8 = 0;
-						v7 = 0;
+						frame1Index = 0;
+						frame2Index = 0;
+						frame3Index = 0;
+						frame4Index = 0;
+						frame5Index = 0;
 						break;
 					case PLAY_GAME:
-						v11 = 1;
-						v10 = 0;
-						v9 = 0;
-						v8 = 0;
-						v7 = 0;
+						frame1Index = 1;
+						frame2Index = 0;
+						frame3Index = 0;
+						frame4Index = 0;
+						frame5Index = 0;
 						break;
 					case LOAD_GAME:
-						v11 = 0;
-						v10 = 1;
-						v9 = 0;
-						v8 = 0;
-						v7 = 0;
+						frame1Index = 0;
+						frame2Index = 1;
+						frame3Index = 0;
+						frame4Index = 0;
+						frame5Index = 0;
 						break;
 					case OPTIONS:
-						v11 = 0;
-						v10 = 0;
-						v9 = 1;
-						v8 = 0;
-						v7 = 0;
+						frame1Index = 0;
+						frame2Index = 0;
+						frame3Index = 1;
+						frame4Index = 0;
+						frame5Index = 0;
 						break;
 					case INTRODUCTION:
-						v11 = 0;
-						v10 = 0;
-						v9 = 0;
-						v8 = 1;
-						v7 = 0;
+						frame1Index = 0;
+						frame2Index = 0;
+						frame3Index = 0;
+						frame4Index = 1;
+						frame5Index = 0;
 						break;
 					case QUIT:
-						v11 = 0;
-						v10 = 0;
-						v9 = 0;
-						v8 = 0;
-						v7 = 1;
+						frame1Index = 0;
+						frame2Index = 0;
+						frame3Index = 0;
+						frame4Index = 0;
+						frame5Index = 1;
 					}
           
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, v11);
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, v10 + 2);
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, v9 + 4);
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, v8 + 6);
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, v7 + 8);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, frame1Index);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, frame2Index + 2);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, frame3Index + 4);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, frame4Index + 6);
+					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, frame5Index + 8);
 					_vm->_eventsManager.VBL();
           
 					if (_vm->_eventsManager.BMOUSE() == 1 && menuIndex != MENU_NONE)
@@ -179,7 +179,7 @@ int MenuManager::MENU() {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, 10);
 					_vm->_eventsManager.VBL();
 					_vm->_eventsManager.delay(200);
-					v6 = 1;
+					result = 1;
 				}
 				if (menuIndex != LOAD_GAME)
 					break;
@@ -192,7 +192,7 @@ int MenuManager::MENU() {
 				_vm->_dialogsManager.CHARGE_PARTIE();
         
 				if (_vm->_globals.SORTIE != -1) {
-					v6 = _vm->_globals.SORTIE;
+					result = _vm->_globals.SORTIE;
 					break;
 				}
 				_vm->_globals.SORTIE = 0;
@@ -221,7 +221,7 @@ int MenuManager::MENU() {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, 14);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.delay(200);
-			v6 = -1;
+			result = -1;
 		}
 		break;
 	}
@@ -230,7 +230,7 @@ int MenuManager::MENU() {
 	_vm->_globals.DESACTIVE_INVENT = false;
 	_vm->_globals.FLAG_VISIBLE = false;
 	_vm->_graphicsManager.FADE_OUTW();
-	return v6;
+	return result;
 }
 
 void MenuManager::COMPUT_HOPKINS(int idx) {
