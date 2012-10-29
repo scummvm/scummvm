@@ -421,7 +421,7 @@ void ObjectsManager::AFF_SPRITES() {
 				do {
 					v11 = arr[v34];
 					v12 = &arr[v34 + 1];
-					if (_vm->_globals.Tri[arr[v34]].field4 > _vm->_globals.Tri[*v12].field4) {
+					if (_vm->_globals.Tri[arr[v34]].priority > _vm->_globals.Tri[*v12].priority) {
 						arr[v34] = *v12;
 						*v12 = v11;
 						++v27;
@@ -477,8 +477,8 @@ void ObjectsManager::AFF_SPRITES() {
 	for (int idx = 0; idx < 50; ++idx) {
 		_vm->_globals.Tri[idx].triMode = TRI_NONE;
 		_vm->_globals.Tri[idx].index = 0;
-		_vm->_globals.Tri[idx].field4 = 0;
-		_vm->_globals.Tri[idx].field6 = 0;
+		_vm->_globals.Tri[idx].priority = 0;
+		_vm->_globals.Tri[idx].unused = 0;
 	}
   
 	_vm->_globals.NBTRI = 0;
@@ -1213,7 +1213,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 }
 
 // Before Sort
-int ObjectsManager::AvantTri(TriMode triMode, int index, int a3) {
+int ObjectsManager::AvantTri(TriMode triMode, int index, int priority) {
 	int result;
 
 	++_vm->_globals.NBTRI;
@@ -1223,7 +1223,7 @@ int ObjectsManager::AvantTri(TriMode triMode, int index, int a3) {
 	result = _vm->_globals.NBTRI;
 	_vm->_globals.Tri[result].triMode = triMode;
 	_vm->_globals.Tri[result].index = index;
-	_vm->_globals.Tri[result].field4 = a3;
+	_vm->_globals.Tri[result].priority = priority;
   
 	return result;
 }

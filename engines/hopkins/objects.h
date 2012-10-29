@@ -154,7 +154,7 @@ public:
 	void DEF_SPRITE(int idx);
 	void DEF_CACHE(int idx);
 	void CALCUL_SPRITE(int idx);
-	int AvantTri(TriMode triMode, int index, int a3);
+	int AvantTri(TriMode triMode, int index, int priority);
 	void AFF_BOB_ANIM();
 	void AFF_VBOB();
 

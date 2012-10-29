@@ -176,8 +176,8 @@ enum TriMode { TRI_NONE = 0, TRI_BOB = 1, TRI_SPRITE = 2, TRI_CACHE = 3 };
 struct TriItem {
 	TriMode triMode;
 	int index;
-	int field4;
-	int field6;
+	int priority;
+	int unused;
 };
 
 struct CacheItem {
