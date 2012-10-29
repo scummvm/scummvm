@@ -758,8 +758,8 @@ void ObjectsManager::SCBOB(int idx) {
 					if (!_vm->_globals.Bob[v8].field34) {
 						if ( _vm->_globals.Bob[v8].frameIndex != 250) {
 							v2 = _vm->_globals.Bob[v8].oldWidth;
-							v9 = _vm->_globals.Bob[v8].oldX2 + _vm->_globals.Bob[v8].oldWidth;
-							v6 = _vm->_globals.Bob[v8].oldY2 + _vm->_globals.Bob[v8].oldHeight;
+							v9 = _vm->_globals.Bob[v8].oldX + _vm->_globals.Bob[v8].oldWidth;
+							v6 = _vm->_globals.Bob[v8].oldY + _vm->_globals.Bob[v8].oldHeight;
 							v3 =_vm->_globals.Cache[idx].field0;
 							v4 =_vm->_globals.Cache[idx].field4;
 							v7 =_vm->_globals.Cache[idx].field6 + v3;
