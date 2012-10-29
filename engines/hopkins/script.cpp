@@ -671,7 +671,7 @@ LABEL_1141:
 				_vm->_animationManager.PLAY_ANM("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_graphicsManager.NOFADE = true;
 			_vm->_globals.SORTIE = 151;
 		}
 		if (v76 == 604) {
@@ -685,7 +685,7 @@ LABEL_1141:
 			if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.PLAY_ANM("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_graphicsManager.NOFADE = true;
 			memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
 			_vm->_globals.SORTIE = 151;
 		}
@@ -702,7 +702,7 @@ LABEL_1141:
 			if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.PLAY_ANM("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_graphicsManager.NOFADE = true;
 			memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
 			_vm->_globals.SORTIE = 151;
 		}
@@ -851,7 +851,7 @@ LABEL_1141:
 		if (v76 == 37) {
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			_vm->_animationManager.PLAY_SEQ2("corde.SEQ", 32, 32, 100);
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_graphicsManager.NOFADE = true;
 		}
 		if (v76 == 38) {
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND44.WAV");
@@ -865,7 +865,7 @@ LABEL_1141:
 			_vm->_soundManager.DEL_SAMPLE(1);
 			_vm->_soundManager.DEL_SAMPLE(2);
 			_vm->_soundManager.DEL_SAMPLE(3);
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_graphicsManager.NOFADE = true;
 		}
 		if (v76 == 29) {
 			_vm->_globals.DESACTIVE_INVENT = true;
@@ -1539,7 +1539,7 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 210) {
-			_vm->_animationManager.NO_SEQ = 1;
+			_vm->_animationManager.NO_SEQ = true;
 			_vm->_soundManager.SPECIAL_SOUND = 210;
 			_vm->_animationManager.PLAY_SEQ2("SECRET1.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
@@ -1549,7 +1549,7 @@ LABEL_1141:
 			_vm->_objectsManager.INILINK("IM73a");
 			_vm->_objectsManager.OBSSEUL = 0;
 			_vm->_globals.CACHE_ON();
-			_vm->_animationManager.NO_SEQ = 0;
+			_vm->_animationManager.NO_SEQ = false;
 			_vm->_globals.CACHE_ADD(0);
 			_vm->_globals.CACHE_ADD(1);
 			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
@@ -1560,13 +1560,13 @@ LABEL_1141:
 		if (v76 == 211) {
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_globals.CACHE_OFF();
-			_vm->_animationManager.NO_SEQ = 1;
+			_vm->_animationManager.NO_SEQ = true;
 			_vm->_globals.NO_VISU = false;
 			_vm->_soundManager.SPECIAL_SOUND = 211;
 			_vm->_animationManager.PLAY_SEQ(v1, "SECRET2.SEQ", 1, 12, 100);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_animationManager.NO_SEQ = 0;
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_animationManager.NO_SEQ = false;
+			_vm->_graphicsManager.NOFADE = true;
 			_vm->_graphicsManager.FADE_OUTW();
 			v36 = 1;
 			do {
@@ -1864,7 +1864,7 @@ LABEL_1141:
 			_vm->_globals.NOPARLE = false;
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_objectsManager.BOBANIM_OFF(13);
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_graphicsManager.NOFADE = true;
 			_vm->_globals.SORTIE = 94;
 		}
 		if (v76 == 52) {
@@ -2080,7 +2080,7 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(12) != 34);
 			_vm->_objectsManager.BOBANIM_OFF(2);
 			_vm->_graphicsManager.FADE_OUTW();
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_graphicsManager.NOFADE = true;
 			_vm->_globals.SORTIE = 20;
 		}
 		if (v76 == 41)
@@ -2221,18 +2221,18 @@ LABEL_1141:
 		if (v76 == 243) {
 			_vm->_soundManager.PLAY_SOUND("SOUND88.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField341] == 2) {
-				_vm->_animationManager.NO_SEQ = 1;
+				_vm->_animationManager.NO_SEQ = true;
 				_vm->_animationManager.PLAY_SEQ(v1, "RESU.SEQ", 2, 24, 2);
-				_vm->_animationManager.NO_SEQ = 0;
+				_vm->_animationManager.NO_SEQ = false;
 			} else {
 				_vm->_objectsManager.OPTI_ONE(7, 0, 14, 0);
 			}
 		}
 		if (v76 == 242) {
 			_vm->_soundManager.PLAY_SOUND("SOUND87.WAV");
-			_vm->_animationManager.NO_SEQ = 1;
+			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.PLAY_SEQ(v1, "RESUF.SEQ", 1, 24, 1);
-			_vm->_animationManager.NO_SEQ = 0;
+			_vm->_animationManager.NO_SEQ = false;
 			v53 = &_vm->_globals.SAUVEGARDE->field380;
 			v53->field0 = 404;
 			v53->field1 = 395;
@@ -2266,10 +2266,10 @@ LABEL_1141:
 			_vm->_objectsManager.OPTI_ONE(6, 0, 15, 0);
 			_vm->_objectsManager.PERSO_ON = 1;
 			_vm->_graphicsManager.NB_SCREEN();
-			_vm->_animationManager.NO_SEQ = 1;
+			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.PLAY_SEQ2("TUNNEL.SEQ", 1, 18, 20);
-			_vm->_animationManager.NO_SEQ = 0;
-			_vm->_graphicsManager.NOFADE = 1;
+			_vm->_animationManager.NO_SEQ = false;
+			_vm->_graphicsManager.NOFADE = true;
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_objectsManager.PERSO_ON = 0;
 			_vm->_globals.SORTIE = 100;

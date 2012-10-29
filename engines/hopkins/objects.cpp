@@ -2762,12 +2762,12 @@ void ObjectsManager::BTGAUCHE() {
 
 	if (!_vm->_dialogsManager.INVENTFLAG && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager.ofscroll - 30 && destX < _vm->_graphicsManager.ofscroll + 50 && (uint16)(destY + 29) <= 0x4Eu) {
 		v1 = _vm->_eventsManager.btsouris;
-		_vm->_dialogsManager.INVENTFLAG = 1;
+		_vm->_dialogsManager.INVENTFLAG = true;
 		_vm->_dialogsManager.showInventory();
-		_vm->_dialogsManager.INVENTFLAG = 0;
+		_vm->_dialogsManager.INVENTFLAG = false;
 		_vm->_eventsManager.GAME_KEY = KEY_NONE;
 		if (!_vm->_globals.SORTIE) {
-			_vm->_dialogsManager.INVENTFLAG = 0;
+			_vm->_dialogsManager.INVENTFLAG = false;
 			_vm->_eventsManager.btsouris = v1;
 		}
 		return;
@@ -2939,7 +2939,7 @@ void ObjectsManager::PARADISE() {
 	if (result && _vm->_globals.SAUVEGARDE->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.TEXTE_OFF(5);
 		if (_vm->_globals.FORET != 1 || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
-			if (_vm->_graphicsManager.DOUBLE_ECRAN == 1) {
+			if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
 				_vm->_graphicsManager.no_scroll = 2;
 				if (_vm->_eventsManager.start_x >= XSPR(0) - 320)
 					goto LABEL_64;
@@ -3735,7 +3735,7 @@ void ObjectsManager::VERBEPLUS() {
 		do {
 			_vm->_eventsManager.btsouris = 4;
 LABEL_24:
-			if (_vm->_globals.NOMARCHE != 1 || (v = NUMZONE + 1, (uint16)(NUMZONE + 1) <= 1u)) {
+			if (_vm->_globals.NOMARCHE != true || (v = NUMZONE + 1, (uint16)(NUMZONE + 1) <= 1u)) {
 				if (_vm->_eventsManager.btsouris == 4)
 					return;
 			} else {
@@ -4275,10 +4275,10 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_graphicsManager.NB_SCREEN();
 					_vm->_soundManager.SPECIAL_SOUND = 198;
 					PERSO_ON = 1;
-					_vm->_animationManager.NO_SEQ = 1;
-					_vm->_animationManager.CLS_ANM = 0;
+					_vm->_animationManager.NO_SEQ = true;
+					_vm->_animationManager.CLS_ANM = false;
 					_vm->_animationManager.PLAY_ANM("otage.ANM", 1, 24, 500);
-					_vm->_animationManager.NO_SEQ = 0;
+					_vm->_animationManager.NO_SEQ = false;
 					_vm->_soundManager.SPECIAL_SOUND = 0;
 					_vm->_globals.NECESSAIRE = 1;
 					_vm->_graphicsManager.NB_SCREEN();
@@ -4964,10 +4964,10 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 		_vm->_graphicsManager.FADE_INW();
 		_vm->_globals.iRegul = 1;
 		_vm->_globals.DESACTIVE_INVENT = false;
-		_vm->_graphicsManager.NOFADE = 1;
+		_vm->_graphicsManager.NOFADE = true;
 		_vm->_globals.NOPARLE = true;
 		_vm->_talkManager.PARLER_PERSO("MAGE1.pe2");
-		_vm->_graphicsManager.NOFADE = 1;
+		_vm->_graphicsManager.NOFADE = true;
 		_vm->_globals.DESACTIVE_INVENT = false;
 	}
 	if (_vm->_globals.ECRAN == 17 && _vm->_globals.OLD_ECRAN == 20) {
@@ -5016,7 +5016,7 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 			_vm->_eventsManager.VBL();
 			++v7;
 		} while (v7 <= 3);
-		_vm->_graphicsManager.NOFADE = 1;
+		_vm->_graphicsManager.NOFADE = true;
 		_vm->_globals.DESACTIVE_INVENT = false;
 	}
 }
@@ -5531,7 +5531,7 @@ void ObjectsManager::TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6) 
 					_vm->_graphicsManager.FADE_LINUX = 2;
 					_vm->_animationManager.PLAY_ANM("CREVE2.ANM", 100, 24, 500);
 					_vm->_globals.SORTIE = 150;
-					_vm->_graphicsManager.NOFADE = 1;
+					_vm->_graphicsManager.NOFADE = true;
 					BOB_OFF(1);
 					BOB_OFF(2);
 					BOB_OFF(3);
@@ -5569,7 +5569,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	int v9; 
 
 	v5 = 0;
-	_vm->_dialogsManager.INVENTFLAG = 0;
+	_vm->_dialogsManager.INVENTFLAG = false;
 	_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	_vm->_dialogsManager.VIRE_INVENT = false;
 	_vm->_graphicsManager.ofscroll = 0;
@@ -5669,14 +5669,14 @@ void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &
 	bool breakFlag;
 	int xp, yp;
 
-	_vm->_dialogsManager.INVENTFLAG = 0;
+	_vm->_dialogsManager.INVENTFLAG = false;
 	_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	verbe = 4;
 	_vm->_globals.MAX_COMPTE = 6;
 	_vm->_graphicsManager.ofscroll = 0;
 	_vm->_dialogsManager.VIRE_INVENT = false;
 	_vm->_globals.PLAN_FLAG = false;
-	_vm->_graphicsManager.NOFADE = 0;
+	_vm->_graphicsManager.NOFADE = false;
 	_vm->_globals.NOMARCHE = false;
 	_vm->_globals.SORTIE = 0;
 	_vm->_globals.AFFLI = 0;
@@ -5732,7 +5732,7 @@ LABEL_70:
 	if (_vm->_globals.PERSO_TYPE == 2)
 		SPRITE(_vm->_globals.PERSO, PERX, PERY, 0, PERI, 0, 0, 20, 127);
 	_vm->_eventsManager.souris_xy(PERX, PERY);
-	if (_vm->_graphicsManager.DOUBLE_ECRAN == 1)
+	if (_vm->_graphicsManager.DOUBLE_ECRAN == true)
 		_vm->_graphicsManager.SCROLL = (int16)XSPR(0) - 320;
 	VERIFTAILLE();
 	SPRITE_ON(0);
@@ -5755,7 +5755,7 @@ LABEL_70:
 	_vm->_globals.iRegul = 1;
 	if (!_vm->_graphicsManager.NOFADE)
 		_vm->_graphicsManager.FADE_INW();
-	_vm->_graphicsManager.NOFADE = 0;
+	_vm->_graphicsManager.NOFADE = false;
 	_vm->_eventsManager.CHANGE_MOUSE(4);
 
 	int xCheck = 0; 
@@ -5805,7 +5805,7 @@ LABEL_70:
 	if (_vm->_globals.SORTIE != 8 || _vm->_globals.ECRAN != 5 || _vm->_globals.HELICO != 1) {
 		if (!_vm->_graphicsManager.NOFADE)
 			_vm->_graphicsManager.FADE_OUTW();
-		_vm->_graphicsManager.NOFADE = 0;
+		_vm->_graphicsManager.NOFADE = false;
 		SPRITE_OFF(0);
 		_vm->_globals.AFFLI = 0;
 		if (DEUXPERSO == 1) {

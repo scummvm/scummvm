@@ -221,7 +221,6 @@ Globals::Globals() {
 	VOICEOFF = false;
 	CENSURE = false;
 	GESTE_FLAG = false;
-	redraw = false;
 	BPP_NOAFF = false;
 	DESACTIVE_INVENT = false;
 	FLAG_VISIBLE = false;
