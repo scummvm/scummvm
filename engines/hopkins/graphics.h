@@ -118,7 +118,6 @@ public:
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
 	void Cls_Pal();
-	void souris_max();
 	void SCANLINE(int pitch);
 	void m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll2(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);

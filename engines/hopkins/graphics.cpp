@@ -198,7 +198,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	Cls_Pal();
 
 	if (!DOUBLE_ECRAN) {
-		souris_max();
+		_vm->_eventsManager.souris_max();
 		SCANLINE(SCREEN_WIDTH);
 		max_x = SCREEN_WIDTH;
 		DD_Lock();
@@ -468,11 +468,6 @@ void GraphicsManager::Cls_Pal() {
 	if (Winbpp == 1) {
 		g_system->getPaletteManager()->setPalette(cmap, 0, 256);
 	}
-}
-
-// TODO: Check if it's normal it's defined two times (also in events).
-void GraphicsManager::souris_max() {
-	// Original has no implementation
 }
 
 void GraphicsManager::SCANLINE(int pitch) {
