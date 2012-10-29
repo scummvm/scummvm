@@ -646,11 +646,13 @@ uint WSC::getNumHints() {
 			return 1;
 		break;
 	case MakeRoomView(kWSC03, kNorth):
-		if (inSynthesizerGame() || (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
-				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
-				!GameState.getWSCDesignedAntidote()))
-			return 3;
-		break;
+		// WORKAROUND: The original game is missing the first two hint movies and
+		// just plays nothing in its stead. We'll just return that we have one
+		// hint available.
+		if (inSynthesizerGame())
+			return 1;
+
+		// fall through
 	case MakeRoomView(kWSC01, kNorth):
 	case MakeRoomView(kWSC01, kSouth):
 	case MakeRoomView(kWSC01, kEast):
@@ -779,16 +781,12 @@ Common::String WSC::getHintMovie(uint hintNum) {
 		}
 		break;
 	case MakeRoomView(kWSC03, kNorth):
-		if (inSynthesizerGame()) {
-			// WORKAROUND: The original game is missing the first two hint movies and
-			// just plays nothing in its stead.
-			if (hintNum != 3)
-				return "";
+		// WORKAROUND: The original game is missing the first two hint movies and
+		// just plays nothing in its stead. We just make it the first hint.
+		if (inSynthesizerGame())
+			return "Images/AI/WSC/XW03NH3";
 
-			return Common::String::format("Images/AI/WSC/XW03NH%d", hintNum);
-		}
-
-		return Common::String::format("Images/AI/WSC/XWPH%d", hintNum);
+		// fall through
 	case MakeRoomView(kWSC01, kNorth):
 	case MakeRoomView(kWSC01, kSouth):
 	case MakeRoomView(kWSC01, kEast):
