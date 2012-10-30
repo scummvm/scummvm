@@ -1711,18 +1711,18 @@ int GraphicsManager::Asm_Reduc(int v, int percentage) {
 
 // Display 'Perfect?' 
 void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int a6, int a7, int a8) {
-	const byte *v8; 
+	const byte *spriteStartP; 
 	int i; 
-	const byte *v10;
-	int v11;
-	int v12; 
-	const byte *v13; 
-	byte *v14; 
-	int v15; 
-	byte *v16; 
-	int v17; 
-	int v18; 
-	int v19; 
+	const byte *spriteSizeP;
+	int spriteWidth;
+	int spriteHeight1; 
+	const byte *spritePixelsP; 
+	byte *dest1P; 
+	int xCtr1; 
+	byte *dest2P; 
+	int xLeft; 
+	int clippedWidth; 
+	int xCtr2; 
 	int v20; 
 	int v21 = 0; 
 	int v22; 
@@ -1739,19 +1739,19 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 	int v33; 
 	int v34; 
 	int v35; 
-	int v36; 
+	int spriteHeight2; 
 	int v37;
 	int v38; 
 	uint16 v39; 
 	byte *v40; 
 	int v41; 
 	uint16 v42; 
-	const byte *v43; 
-	const byte *v44; 
+	const byte *spritePixelsCopyP; 
+	const byte *spritePixelsCopy2P; 
 	const byte *v45; 
 	const byte *v46; 
-	byte *v47; 
-	byte *v48; 
+	byte *dest1CopyP; 
+	byte *destCopy2P; 
 	int v49; 
 	int v50; 
 	byte *v51; 
@@ -1759,8 +1759,8 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 	byte *v53; 
 	byte *v54; 
 	byte *v55; 
-	int v56; 
-	int v57; 
+	int yCtr1; 
+	int yCtr2; 
 	int v58; 
 	int v59; 
 	int v60; 
@@ -1770,17 +1770,17 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 	int v64; 
 	int v65; 
 
-	v8 = srcData + 3;
+	spriteStartP = srcData + 3;
 	for (i = frameIndex; i; --i)
-		v8 += READ_LE_UINT32(v8) + 16;
+		spriteStartP += READ_LE_UINT32(spriteStartP) + 16;
 
-	v11 = 0;
-	v12 = 0;
-	v10 = v8 + 4;
-	v11 = (int16)READ_LE_UINT16(v10);
-	v10 += 2;
-	v12 = v36 = (int16)READ_LE_UINT16(v10);
-	v13 = v10 + 10;
+	spriteWidth = 0;
+	spriteHeight1 = 0;
+	spriteSizeP = spriteStartP + 4;
+	spriteWidth = (int16)READ_LE_UINT16(spriteSizeP);
+	spriteSizeP += 2;
+	spriteHeight1 = spriteHeight2 = (int16)READ_LE_UINT16(spriteSizeP);
+	spritePixelsP = spriteSizeP + 10;
 	clip_x = 0;
 	clip_y = 0;
 	clip_x1 = 0;
@@ -1795,18 +1795,18 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				clip_x1 = max_x + 300 - xp300;
 				if ((uint16)yp300 < (uint16)(max_y + 300)) {
 					clip_y1 = max_y + 300 - yp300;
-					v14 = xp300 + nbrligne2 * (yp300 - 300) - 300 + surface;
+					dest1P = xp300 + nbrligne2 * (yp300 - 300) - 300 + surface;
 					if (a7) {
 						Compteur_y = 0;
 						Agr_x = 0;
 						Agr_y = 0;
 						Agr_Flag_y = 0;
 						Agr_Flag_x = 0;
-						Largeur = v11;
-						v20 = Asm_Zoom(v11, a7);
+						Largeur = spriteWidth;
+						v20 = Asm_Zoom(spriteWidth, a7);
 						v22 = Asm_Zoom(v21, a7);
 						if (a8) {
-							v29 = v20 + v14;
+							v29 = v20 + dest1P;
 							if (clip_y) {
 								if ((uint16)clip_y >= v22)
 									return;
@@ -1817,7 +1817,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								while (Asm_Zoom(v30 + 1, a7) < v31)
 									;
 								v20 = v52;
-								v13 += Largeur * v30;
+								spritePixelsP += Largeur * v30;
 								v29 += nbrligne2 * (uint16)clip_y;
 								v22 = v61 - (uint16)clip_y;
 							}
@@ -1837,29 +1837,29 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 									;
 								v34 = v33;
 								v22 = v62;
-								v13 += v34;
+								spritePixelsP += v34;
 								v20 = (uint16)clip_x1;
 							}
 							do {
 								while (1) {
 									v63 = v22;
 									v53 = v29;
-									v46 = v13;
+									v46 = spritePixelsP;
 									Agr_Flag_x = 0;
 									Agr_x = 0;
 									v35 = v20;
 									do {
 										while (1) {
-											if (*v13)
-												*v29 = *v13;
+											if (*spritePixelsP)
+												*v29 = *spritePixelsP;
 											--v29;
-											++v13;
+											++spritePixelsP;
 											if (!Agr_Flag_x)
 												Agr_x = a7 + Agr_x;
 											if ((uint16)Agr_x < 0x64u)
 												break;
 											Agr_x = Agr_x - 100;
-											--v13;
+											--spritePixelsP;
 											Agr_Flag_x = 1;
 											--v35;
 											if (!v35)
@@ -1869,7 +1869,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 										--v35;
 									} while (v35);
 R_Aff_Zoom_Larg_Cont1:
-									v13 = Largeur + v46;
+									spritePixelsP = Largeur + v46;
 									v29 = nbrligne2 + v53;
 									++Compteur_y;
 									if (!Agr_Flag_y)
@@ -1877,7 +1877,7 @@ R_Aff_Zoom_Larg_Cont1:
 									if ((uint16)Agr_y < 0x64u)
 										break;
 									Agr_y = Agr_y - 100;
-									v13 = v46;
+									spritePixelsP = v46;
 									Agr_Flag_y = 1;
 									v22 = v63 - 1;
 									if (v63 == 1)
@@ -1897,8 +1897,8 @@ R_Aff_Zoom_Larg_Cont1:
 								while (Asm_Zoom(v23 + 1, a7) < v24)
 									;
 								v20 = v49;
-								v13 += Largeur * v23;
-								v14 += nbrligne2 * (uint16)clip_y;
+								spritePixelsP += Largeur * v23;
+								dest1P += nbrligne2 * (uint16)clip_y;
 								v22 = v58 - (uint16)clip_y;
 							}
 							if (v22 > (uint16)clip_y1)
@@ -1914,8 +1914,8 @@ R_Aff_Zoom_Larg_Cont1:
 									;
 								v27 = v26;
 								v22 = v59;
-								v13 += v27;
-								v14 += (uint16)clip_x;
+								spritePixelsP += v27;
+								dest1P += (uint16)clip_x;
 								v20 = v50 - (uint16)clip_x;
 							}
 							if (v20 > (uint16)clip_x1)
@@ -1923,23 +1923,23 @@ R_Aff_Zoom_Larg_Cont1:
 							do {
 								while (1) {
 									v60 = v22;
-									v51 = v14;
-									v45 = v13;
+									v51 = dest1P;
+									v45 = spritePixelsP;
 									v28 = v20;
 									Agr_Flag_x = 0;
 									Agr_x = 0;
 									do {
 										while (1) {
-											if (*v13)
-												*v14 = *v13;
-											++v14;
-											++v13;
+											if (*spritePixelsP)
+												*dest1P = *spritePixelsP;
+											++dest1P;
+											++spritePixelsP;
 											if (!Agr_Flag_x)
 												Agr_x = a7 + Agr_x;
 											if ((uint16)Agr_x < 0x64u)
 												break;
 											Agr_x = Agr_x - 100;
-											--v13;
+											--spritePixelsP;
 											Agr_Flag_x = 1;
 											--v28;
 											if (!v28)
@@ -1949,14 +1949,14 @@ R_Aff_Zoom_Larg_Cont1:
 										--v28;
 									} while (v28);
 Aff_Zoom_Larg_Cont1:
-									v13 = Largeur + v45;
-									v14 = nbrligne2 + v51;
+									spritePixelsP = Largeur + v45;
+									dest1P = nbrligne2 + v51;
 									if (!Agr_Flag_y)
 										Agr_y = a7 + Agr_y;
 									if ((uint16)Agr_y < 0x64u)
 										break;
 									Agr_y = Agr_y - 100;
-									v13 = v45;
+									spritePixelsP = v45;
 									Agr_Flag_y = 1;
 									v22 = v60 - 1;
 									if (v60 == 1)
@@ -1970,14 +1970,14 @@ Aff_Zoom_Larg_Cont1:
 						Compteur_y = 0;
 						Red_x = 0;
 						Red_y = 0;
-						Largeur = v11;
+						Largeur = spriteWidth;
 						Red = a6;
 						if (a6 < 100) {
-							v37 = Asm_Reduc(v11, Red);
+							v37 = Asm_Reduc(spriteWidth, Red);
 							if (a8) {
-								v40 = v37 + v14;
+								v40 = v37 + dest1P;
 								do {
-									v65 = v36;
+									v65 = spriteHeight2;
 									v55 = v40;
 									Red_y = Red + Red_y;
 									if ((uint16)Red_y < 0x64u) {
@@ -1987,29 +1987,29 @@ Aff_Zoom_Larg_Cont1:
 										do {
 											Red_x = Red + Red_x;
 											if ((uint16)Red_x < 0x64u) {
-												if (v42 >= clip_x && v42 < clip_x1 && *v13)
-													*v40 = *v13;
+												if (v42 >= clip_x && v42 < clip_x1 && *spritePixelsP)
+													*v40 = *spritePixelsP;
 												--v40;
-												++v13;
+												++spritePixelsP;
 												--v42;
 											} else {
 												Red_x = Red_x - 100;
-												++v13;
+												++spritePixelsP;
 											}
 											--v41;
 										} while (v41);
-										v36 = v65;
+										spriteHeight2 = v65;
 										v40 = nbrligne2 + v55;
 									} else {
 										Red_y = Red_y - 100;
-										v13 += Largeur;
+										spritePixelsP += Largeur;
 									}
-									--v36;
-								} while (v36);
+									--spriteHeight2;
+								} while (spriteHeight2);
 							} else {
 								do {
-									v64 = v36;
-									v54 = v14;
+									v64 = spriteHeight2;
+									v54 = dest1P;
 									Red_y = Red + Red_y;
 									if ((uint16)Red_y < 0x64u) {
 										Red_x = 0;
@@ -2018,107 +2018,107 @@ Aff_Zoom_Larg_Cont1:
 										do {
 											Red_x = Red + Red_x;
 											if ((uint16)Red_x < 0x64u) {
-												if (v39 >= clip_x && v39 < clip_x1 && *v13)
-													*v14 = *v13;
-												++v14;
-												++v13;
+												if (v39 >= clip_x && v39 < clip_x1 && *spritePixelsP)
+													*dest1P = *spritePixelsP;
+												++dest1P;
+												++spritePixelsP;
 												++v39;
 											} else {
 												Red_x = Red_x - 100;
-												++v13;
+												++spritePixelsP;
 											}
 											--v38;
 										} while (v38);
-										v36 = v64;
-										v14 = nbrligne2 + v54;
+										spriteHeight2 = v64;
+										dest1P = nbrligne2 + v54;
 									} else {
 										Red_y = Red_y - 100;
-										v13 += Largeur;
+										spritePixelsP += Largeur;
 									}
-									--v36;
-								} while (v36);
+									--spriteHeight2;
+								} while (spriteHeight2);
 							}
 						}
 					} else {
-						Largeur = v11;
+						Largeur = spriteWidth;
 						Compteur_y = 0;
 						if (a8) {
-							v16 = v11 + v14;
-							spec_largeur = v11;
+							dest2P = spriteWidth + dest1P;
+							spec_largeur = spriteWidth;
 							if (clip_y) {
-								if ((uint16)clip_y >= (unsigned int)v12)
+								if ((uint16)clip_y >= (unsigned int)spriteHeight1)
 									return;
-								v13 += v11 * (uint16)clip_y;
-								v16 += nbrligne2 * (uint16)clip_y;
-								v12 -= (uint16)clip_y;
+								spritePixelsP += spriteWidth * (uint16)clip_y;
+								dest2P += nbrligne2 * (uint16)clip_y;
+								spriteHeight1 -= (uint16)clip_y;
 							}
-							v17 = (uint16)clip_y1;
-							if (v12 > clip_y1)
-								v12 = clip_y1;
-							v17 = clip_x;
+							xLeft = (uint16)clip_y1;
+							if (spriteHeight1 > clip_y1)
+								spriteHeight1 = clip_y1;
+							xLeft = clip_x;
 							if (clip_x) {
-								if (v17 >= v11)
+								if (xLeft >= spriteWidth)
 									return;
-								v11 -= v17;
+								spriteWidth -= xLeft;
 							}
-							if (v11 > (uint16)clip_x1) {
-								v18 = v11 - (uint16)clip_x1;
-								v13 += v18;
-								v16 -= v18;
-								v11 = (uint16)clip_x1;
+							if (spriteWidth > (uint16)clip_x1) {
+								clippedWidth = spriteWidth - (uint16)clip_x1;
+								spritePixelsP += clippedWidth;
+								dest2P -= clippedWidth;
+								spriteWidth = (uint16)clip_x1;
 							}
 							do {
-								v57 = v12;
-								v48 = v16;
-								v44 = v13;
-								v19 = v11;
+								yCtr2 = spriteHeight1;
+								destCopy2P = dest2P;
+								spritePixelsCopy2P = spritePixelsP;
+								xCtr2 = spriteWidth;
 								do {
-									if (*v13)
-										*v16 = *v13;
-									++v13;
-									--v16;
-									--v19;
-								} while (v19);
-								v13 = spec_largeur + v44;
-								v16 = nbrligne2 + v48;
-								v12 = v57 - 1;
-							} while (v57 != 1);
+									if (*spritePixelsP)
+										*dest2P = *spritePixelsP;
+									++spritePixelsP;
+									--dest2P;
+									--xCtr2;
+								} while (xCtr2);
+								spritePixelsP = spec_largeur + spritePixelsCopy2P;
+								dest2P = nbrligne2 + destCopy2P;
+								spriteHeight1 = yCtr2 - 1;
+							} while (yCtr2 != 1);
 						} else {
-							spec_largeur = v11;
+							spec_largeur = spriteWidth;
 							if (clip_y) {
-								if ((uint16)clip_y >= (unsigned int)v12)
+								if ((uint16)clip_y >= (unsigned int)spriteHeight1)
 									return;
-								v13 += v11 * (uint16)clip_y;
-								v14 += nbrligne2 * (uint16)clip_y;
-								v12 -= (uint16)clip_y;
+								spritePixelsP += spriteWidth * (uint16)clip_y;
+								dest1P += nbrligne2 * (uint16)clip_y;
+								spriteHeight1 -= (uint16)clip_y;
 							}
-							if (v12 > clip_y1)
-								v12 = clip_y1;
+							if (spriteHeight1 > clip_y1)
+								spriteHeight1 = clip_y1;
 							if (clip_x) {
-								if ((uint16)clip_x >= v11)
+								if ((uint16)clip_x >= spriteWidth)
 									return;
-								v13 += (uint16)clip_x;
-								v14 += (uint16)clip_x;
-								v11 -= (uint16)clip_x;
+								spritePixelsP += (uint16)clip_x;
+								dest1P += (uint16)clip_x;
+								spriteWidth -= (uint16)clip_x;
 							}
-							if (v11 > (uint16)clip_x1)
-								v11 = (uint16)clip_x1;
+							if (spriteWidth > (uint16)clip_x1)
+								spriteWidth = (uint16)clip_x1;
 							do {
-								v56 = v12;
-								v47 = v14;
-								v43 = v13;
-								v15 = v11;
+								yCtr1 = spriteHeight1;
+								dest1CopyP = dest1P;
+								spritePixelsCopyP = spritePixelsP;
+								xCtr1 = spriteWidth;
 								do {
-									if (*v13)
-										*v14 = *v13;
-									++v14;
-									++v13;
-									--v15;
-								} while (v15);
-								v13 = spec_largeur + v43;
-								v14 = nbrligne2 + v47;
-								v12 = v56 - 1;
-							} while (v56 != 1);
+									if (*spritePixelsP)
+										*dest1P = *spritePixelsP;
+									++dest1P;
+									++spritePixelsP;
+									--xCtr1;
+								} while (xCtr1);
+								spritePixelsP = spec_largeur + spritePixelsCopyP;
+								dest1P = nbrligne2 + dest1CopyP;
+								spriteHeight1 = yCtr1 - 1;
+							} while (yCtr1 != 1);
 						}
 					}
 				}
