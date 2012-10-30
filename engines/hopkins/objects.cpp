@@ -76,8 +76,8 @@ ObjectsManager::ObjectsManager() {
 	MAX_DEPA1 = 0;
 	CH_TETE = 0;
 	T_RECTIF = 0;
-	DESACTIVE = 0;
-	DEUXPERSO = 0;
+	DESACTIVE = false;
+	DEUXPERSO = false;
 	PERX = PERY = 0;
 	PERI = 0;
 	RECALL = 0;
@@ -491,7 +491,7 @@ void ObjectsManager::AFF_SPRITES() {
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_dialogsManager.inventairex, _vm->_dialogsManager.inventairey, _vm->_dialogsManager.inventairex + _vm->_dialogsManager.inventairel, _vm->_dialogsManager.inventairey + _vm->_dialogsManager.inventaireh);
 	}
   
-	if (SL_FLAG == 1) {
+	if (SL_FLAG == true) {
 		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, SL_SPR, _vm->_eventsManager.start_x + 183, 60, 0x112u, 353);
 		if (SL_X && SL_Y)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, SL_SPR2, SL_X + _vm->_eventsManager.start_x + 300, SL_Y + 300, 0);
@@ -1254,7 +1254,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 	int idx = 0;
 	do {
 		++idx;
-		if (idx <= 20 && PERSO_ON == 1) {
+		if (idx <= 20 && PERSO_ON == true) {
 			_vm->_globals.Bob[idx].field1C = 0;
 			continue;
 		}
@@ -1283,7 +1283,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			_vm->_globals.Bob[idx].xp = (int16)READ_LE_UINT16(v20 + 2 * v24);
 			if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 				_vm->_globals.Bob[idx].xp = _vm->_globals.BL_ANIM[idx].v2;
-			if ( PERSO_ON == 1 && idx > 20 )
+			if ( PERSO_ON == true && idx > 20 )
 				_vm->_globals.Bob[idx].xp += _vm->_eventsManager.start_x;
       
 			_vm->_globals.Bob[idx].yp = (int16)READ_LE_UINT16(v20 + 2 * v24 + 2);
@@ -1324,7 +1324,7 @@ LABEL_38:
 					
 					if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 						_vm->_globals.Bob[idx].xp = _vm->_globals.BL_ANIM[idx].v2;
-					if (PERSO_ON == 1 && idx > 20)
+					if (PERSO_ON == true && idx > 20)
 						_vm->_globals.Bob[idx].xp += _vm->_eventsManager.start_x;
 
 					_vm->_globals.Bob[idx].yp = (int16)READ_LE_UINT16(v21 + 2);
@@ -1348,7 +1348,7 @@ LABEL_38:
 		}
 	} while (idx != 35);
 
-	if (!PERSO_ON && BOBTOUS == 1) {
+	if (!PERSO_ON && BOBTOUS == true) {
 		v26 = 0;
 		do {
 			v13 = v26;
@@ -1358,12 +1358,12 @@ LABEL_38:
 		} while (v26 != 35);
 	}
   
-	BOBTOUS = 0;
+	BOBTOUS = false;
 	v27 = 0;
   
 	do {
 		++v27;
-		if (v27 > 20 || PERSO_ON != 1) {
+		if (v27 > 20 || PERSO_ON != true) {
 			if (_vm->_globals.Bob[v27].field0 == 10) {
 				if (_vm->_globals.Bob[v27].field1C == 1) {
 					v14 = _vm->_globals.Bob[v27].field1E;
@@ -1704,11 +1704,11 @@ void ObjectsManager::VERIFZONE() {
 	        || _vm->_eventsManager.start_x >= v0
 	        || (v1 = _vm->_graphicsManager.ofscroll + 54, v0 >= v1)
 	        || (v1 = v2 - 1, (uint16)(v2 - 1) > 0x3Bu)) {
-		if (FLAG_VISIBLE == 1)
+		if (FLAG_VISIBLE == true)
 			FLAG_VISIBLE_EFFACE = 4;
-		FLAG_VISIBLE = 0;
+		FLAG_VISIBLE = false;
 	} else {
-		FLAG_VISIBLE = 1;
+		FLAG_VISIBLE = true;
 	}
 	if (FORCEZONE == 1) {
 		_vm->_globals.compteur_71 = 100;
@@ -3064,7 +3064,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	verbe = 4;
 	NUMZONE = 0;
 	Vold_taille = 0;
-	SPEED_FLAG = 0;
+	SPEED_FLAG = false;
 	SPEED_PTR = g_PTRNUL;
 	SPEED_X = 0;
 	SPEED_Y = 0;
@@ -4274,7 +4274,7 @@ void ObjectsManager::SPECIAL_JEU() {
 						_vm->_graphicsManager.ofscroll = 0;
 					_vm->_graphicsManager.NB_SCREEN();
 					_vm->_soundManager.SPECIAL_SOUND = 198;
-					PERSO_ON = 1;
+					PERSO_ON = true;
 					_vm->_animationManager.NO_SEQ = true;
 					_vm->_animationManager.CLS_ANM = false;
 					_vm->_animationManager.PLAY_ANM("otage.ANM", 1, 24, 500);
@@ -4287,7 +4287,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_saveLoadManager.bload("TEMP1.SCR", _vm->_graphicsManager.VESA_SCREEN);
 					g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
 
-					PERSO_ON = 0;
+					PERSO_ON = false;
 					memcpy(_vm->_graphicsManager.Palette, v1, 0x301u);
 					_vm->_graphicsManager.SHOW_PALETTE();
 					_vm->_globals.dos_free2(v1);
@@ -5808,9 +5808,9 @@ LABEL_70:
 		_vm->_graphicsManager.NOFADE = false;
 		SPRITE_OFF(0);
 		_vm->_globals.AFFLI = 0;
-		if (DEUXPERSO == 1) {
+		if (DEUXPERSO == true) {
 			SPRITE_OFF(1);
-			DEUXPERSO = 0;
+			DEUXPERSO = false;
 		}
 		if (!s3.empty())
 			_vm->_graphicsManager.FIN_VISU();
