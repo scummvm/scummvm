@@ -26,9 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_node_state.h"
+#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 

@@ -1317,7 +1317,7 @@ void IMDDecoder::processFrame() {
 		// Set palette
 		if (cmd == kCommandPalette) {
 			_stream->skip(2);
-	
+
 			_paletteDirty = true;
 
 			for (int i = 0; i < 768; i++)

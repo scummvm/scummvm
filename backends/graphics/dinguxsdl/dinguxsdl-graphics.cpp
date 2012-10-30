@@ -479,7 +479,7 @@ void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteDisabled = !enable;
 		blitCursor();
-		break;	
+		break;
 	default:
 		break;
 	}

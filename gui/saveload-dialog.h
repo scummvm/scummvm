@@ -103,6 +103,7 @@ public:
 	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogList; }
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
+	virtual void open();
 	virtual void close();
 private:
 	virtual int runIntern();

@@ -39,36 +39,21 @@ class BaseSurface;
 class BaseObject;
 class BaseSprite: public BaseScriptHolder {
 public:
-	bool killAllSounds();
 	BaseSurface *getSurface();
-	char *_editorBgFile;
-	int _editorBgOffsetX;
-	int _editorBgOffsetY;
-	int _editorBgAlpha;
-	bool _streamed;
-	bool _streamedKeepLoaded;
 	void cleanup();
 	void setDefaults();
-	bool _precise;
 	DECLARE_PERSISTENT(BaseSprite, BaseScriptHolder)
 
-	bool _editorAllFrames;
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	int _moveY;
 	int _moveX;
 	bool display(int x, int y, BaseObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
 	bool getCurrentFrame(float zoomX = 100, float zoomY = 100);
-	bool _canBreak;
-	bool _editorMuted;
-	bool _continuous;
 	void reset();
-	BaseObject *_owner;
-	bool _changed;
-	bool _paused;
-	bool _finished;
+	bool isChanged();
+	bool isFinished();
 	bool loadBuffer(byte *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadFile(const Common::String &filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
-	uint32 _lastFrameTime;
 	bool draw(int x, int y, BaseObject *Register = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
 	bool _looping;
 	int _currentFrame;
@@ -79,10 +64,28 @@ public:
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const char *name);
+	virtual ScValue *scGetProperty(const Common::String &name);
 	virtual bool scSetProperty(const char *name, ScValue *value);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
+private:
+	BaseObject *_owner;
+	bool _canBreak;
+	bool _changed;
+	bool _editorAllFrames;
+	char *_editorBgFile;
+	int _editorBgOffsetX;
+	int _editorBgOffsetY;
+	int _editorBgAlpha;
+	bool _editorMuted;
+	bool _finished;
+	bool _continuous;
+	uint32 _lastFrameTime;
+	bool _precise;
+	bool _paused;
+	bool _streamed;
+	bool _streamedKeepLoaded;
+	bool killAllSounds();
 };
 
 } // end of namespace Wintermute

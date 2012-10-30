@@ -36,7 +36,7 @@ CosineTable::CosineTable(int bitPrecision) {
 	double freq = 2 * M_PI / m;
 	_table = new float[m];
 
-	// Table contains cos(2*pi*x/n) for 0<=x<=n/4, 
+	// Table contains cos(2*pi*x/n) for 0<=x<=n/4,
 	// followed by its reverse
 	for (int i = 0; i <= m / 4; i++)
 		_table[i] = cos(i * freq);

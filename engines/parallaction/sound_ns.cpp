@@ -168,13 +168,13 @@ void DosSoundMan_ns::playCharacterMusic(const char *character) {
 	char *name = const_cast<char *>(character);
 	const char *newMusicFile = 0;
 
-	if (!scumm_stricmp(name, _dinoName)) {
+	if (!scumm_stricmp(name, g_dinoName)) {
 		newMusicFile = "dino";
 	} else
-	if (!scumm_stricmp(name, _donnaName)) {
+	if (!scumm_stricmp(name, g_donnaName)) {
 		newMusicFile = "donna";
 	} else
-	if (!scumm_stricmp(name, _doughName)) {
+	if (!scumm_stricmp(name, g_doughName)) {
 		newMusicFile = "nuts";
 	} else {
 		warning("unknown character '%s' in DosSoundMan_ns_ns::playCharacterMusic", character);

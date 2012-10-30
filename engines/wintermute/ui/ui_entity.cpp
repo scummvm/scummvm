@@ -305,13 +305,13 @@ bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIEntity::scGetProperty(const char *name) {
+ScValue *UIEntity::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("entity container");
 		return _scValue;
 	}
@@ -319,7 +319,7 @@ ScValue *UIEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Freezable") == 0) {
+	else if (name == "Freezable") {
 		if (_entity) {
 			_scValue->setBool(_entity->_freezable);
 		} else {

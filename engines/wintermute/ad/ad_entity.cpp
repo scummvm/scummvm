@@ -28,28 +28,29 @@
 
 
 #include "engines/wintermute/ad/ad_entity.h"
-#include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_active_rect.h"
-#include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_scene.h"
-#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/ad/ad_sentence.h"
+#include "engines/wintermute/base/base_active_rect.h"
+#include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/video/video_theora_player.h"
-#include "engines/wintermute/base/particles/part_emitter.h"
+#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
 namespace Wintermute {
@@ -577,7 +578,7 @@ bool AdEntity::update() {
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->_finished) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->isFinished()) {
 		_state = STATE_READY;
 		_currentSprite = _animSprite;
 	}
@@ -612,7 +613,7 @@ bool AdEntity::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == NULL || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = NULL;
@@ -638,7 +639,7 @@ bool AdEntity::update() {
 
 	if (_currentSprite) {
 		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
-		if (_currentSprite->_changed) {
+		if (_currentSprite->isChanged()) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
 		}
@@ -828,13 +829,13 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdEntity::scGetProperty(const char *name) {
+ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("entity");
 		return _scValue;
 	}
@@ -842,7 +843,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Item") == 0) {
+	else if (name == "Item") {
 		if (_item) {
 			_scValue->setString(_item);
 		} else {
@@ -855,7 +856,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Subtype (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Subtype") == 0) {
+	else if (name == "Subtype") {
 		if (_subtype == ENTITY_SOUND) {
 			_scValue->setString("sound");
 		} else {
@@ -868,7 +869,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToX") == 0) {
+	else if (name == "WalkToX") {
 		_scValue->setInt(_walkToX);
 		return _scValue;
 	}
@@ -876,7 +877,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToY") == 0) {
+	else if (name == "WalkToY") {
 		_scValue->setInt(_walkToY);
 		return _scValue;
 	}
@@ -884,7 +885,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToDirection") == 0) {
+	else if (name == "WalkToDirection") {
 		_scValue->setInt((int)_walkToDir);
 		return _scValue;
 	}
@@ -892,7 +893,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Region (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Region") == 0) {
+	else if (name == "Region") {
 		if (_region) {
 			_scValue->setNative(_region, true);
 		} else {

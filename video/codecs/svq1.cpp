@@ -180,28 +180,29 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			frameData.skip(8);
 	}
 
-	int yWidth = ALIGN(_frameWidth, 16);
-	int yHeight = ALIGN(_frameHeight, 16);
-	int uvWidth = ALIGN(yWidth / 4, 16);
-	int uvHeight = ALIGN(yHeight / 4, 16);
+	uint yWidth = ALIGN(_frameWidth, 16);
+	uint yHeight = ALIGN(_frameHeight, 16);
+	uint uvWidth = ALIGN(yWidth / 4, 16);
+	uint uvHeight = ALIGN(yHeight / 4, 16);
+	uint uvPitch = uvWidth + 4; // we need at least one extra column and pitch must be divisible by 4
 
 	byte *current[3];
 
 	// Decode Y, U and V component planes
 	for (int i = 0; i < 3; i++) {
-		int width, height;
+		uint width, height, pitch;
 		if (i == 0) {
 			width = yWidth;
 			height = yHeight;
+			pitch = width;
 			current[i] = new byte[width * height];
 		} else {
 			width = uvWidth;
 			height = uvHeight;
+			pitch = uvPitch;
 
-			// Add an extra row's worth of data to not go out-of-bounds in the
-			// color conversion. Then fill that with "empty" data.
-			current[i] = new byte[width * (height + 1)];
-			memset(current[i] + width * height, 0x80, width);
+			// Add an extra row here. See below for more information.
+			current[i] = new byte[pitch * (height + 1)];
 		}
 
 		if (frameType == 0) { // I Frame
@@ -209,12 +210,12 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			byte *currentP = current[i];
 			for (uint16 y = 0; y < height; y += 16) {
 				for (uint16 x = 0; x < width; x += 16) {
-					if (!svq1DecodeBlockIntra(&frameData, &currentP[x], width)) {
+					if (!svq1DecodeBlockIntra(&frameData, &currentP[x], pitch)) {
 						warning("svq1DecodeBlockIntra decode failure");
 						return _surface;
 					}
 				}
-				currentP += 16 * width;
+				currentP += 16 * pitch;
 			}
 		} else {
 			// Delta frame (P or B)
@@ -233,7 +234,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			byte *currentP = current[i];
 			for (uint16 y = 0; y < height; y += 16) {
 				for (uint16 x = 0; x < width; x += 16) {
-					if (!svq1DecodeDeltaBlock(&frameData, &currentP[x], previous, width, pmv, x, y)) {
+					if (!svq1DecodeDeltaBlock(&frameData, &currentP[x], previous, pitch, pmv, x, y)) {
 						warning("svq1DecodeDeltaBlock decode failure");
 						return _surface;
 					}
@@ -241,7 +242,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 
 				pmv[0].x = pmv[0].y = 0;
 
-				currentP += 16 * width;
+				currentP += 16 * pitch;
 			}
 
 			delete[] pmv;
@@ -256,7 +257,21 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 		_surface->h = _height;
 	}
 
-	convertYUV410ToRGB(_surface, current[0], current[1], current[2], yWidth, yHeight, yWidth, uvWidth);
+	// We need to massage the chrominance data a bit to be able to be used by the converter
+	// Since the thing peeks at values one column and one row beyond the data, we need to fill it in
+
+	// First, fill in the column-after-last with the last column's value
+	for (uint i = 0; i < uvHeight; i++) {
+		current[1][i * uvPitch + uvWidth] = current[1][i * uvPitch + uvWidth - 1];
+		current[2][i * uvPitch + uvWidth] = current[2][i * uvPitch + uvWidth - 1];
+	}
+
+	// Then, copy the last row to the one after the last row
+	memcpy(current[1] + uvHeight * uvPitch, current[1] + (uvHeight - 1) * uvPitch, uvWidth + 1);
+	memcpy(current[2] + uvHeight * uvPitch, current[2] + (uvHeight - 1) * uvPitch, uvWidth + 1);
+
+	// Finally, actually do the conversion ;)
+	YUVToRGBMan.convert410(_surface, Graphics::YUVToRGBManager::kScaleFull, current[0], current[1], current[2], yWidth, yHeight, yWidth, uvPitch);
 
 	// Store the current surfaces for later and free the old ones
 	for (int i = 0; i < 3; i++) {

@@ -335,7 +335,7 @@ int ScummEngine::whereIsObject(int object) const {
 		return WIO_NOT_FOUND;
 
 	if ((_game.version != 0 || OBJECT_V0_TYPE(object) == 0) &&
-		 _objectOwnerTable[object] != OF_OWNER_ROOM) 
+		 _objectOwnerTable[object] != OF_OWNER_ROOM)
 	{
 		for (i = 0; i < _numInventory; i++)
 			if (_inventory[i] == object)
@@ -1225,7 +1225,7 @@ byte *ScummEngine::getOBCDFromObject(int obj, bool v0CheckInventory) {
 	byte *ptr;
 
 	if ((_game.version != 0 || OBJECT_V0_TYPE(obj) == 0) &&
-		_objectOwnerTable[obj] != OF_OWNER_ROOM) 
+		_objectOwnerTable[obj] != OF_OWNER_ROOM)
 	{
 		if (_game.version == 0 && !v0CheckInventory)
 			return 0;

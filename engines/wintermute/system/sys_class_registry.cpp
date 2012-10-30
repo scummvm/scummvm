@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/system/sys_class.h"

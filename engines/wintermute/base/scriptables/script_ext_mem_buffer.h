@@ -38,7 +38,7 @@ class SXMemBuffer : public BaseScriptable {
 public:
 	virtual int scCompare(BaseScriptable *Val);
 	DECLARE_PERSISTENT(SXMemBuffer, BaseScriptable)
-	ScValue *scGetProperty(const char *name);
+	ScValue *scGetProperty(const Common::String &name);
 	bool scSetProperty(const char *name, ScValue *value);
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();

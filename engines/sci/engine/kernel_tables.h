@@ -94,7 +94,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI0,       7, MAP_CALL(DoSoundResumeAfterRestore), "",                     NULL },
 	{ SIG_SOUNDSCI0,       8, MAP_CALL(DoSoundMasterVolume),       "(i)",                  NULL },
 	{ SIG_SOUNDSCI0,       9, MAP_CALL(DoSoundUpdate),             "o",                    NULL },
-	{ SIG_SOUNDSCI0,      10, MAP_CALL(DoSoundFade),               "o",                    kDoSoundFade_workarounds },
+	{ SIG_SOUNDSCI0,      10, MAP_CALL(DoSoundFade),               "[o0]",                 kDoSoundFade_workarounds },
 	{ SIG_SOUNDSCI0,      11, MAP_CALL(DoSoundGetPolyphony),       "",                     NULL },
 	{ SIG_SOUNDSCI0,      12, MAP_CALL(DoSoundStopAll),            "",                     NULL },
 	{ SIG_SOUNDSCI1EARLY,  0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
@@ -524,7 +524,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 
 	// SCI2 Empty functions
-	
+
 	// Debug function used to track resources
 	{ MAP_EMPTY(ResourceTrack),     SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
 	// Future TODO: This call is used in the floppy version of QFG4 to add

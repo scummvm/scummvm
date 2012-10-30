@@ -993,7 +993,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
 
-	if (!((_userState & USERSTATE_IFACE_SENTENCE) || 
+	if (!((_userState & USERSTATE_IFACE_SENTENCE) ||
 	      (_game.platform == Common::kPlatformNES && (_userState & USERSTATE_IFACE_ALL))))
 		return;
 
@@ -1486,8 +1486,8 @@ void ScummEngine_v2::o2_cutscene() {
 	VAR(VAR_CURSORSTATE) = 200;
 
 	// Hide inventory, freeze scripts, hide cursor
-	setUserState(USERSTATE_SET_IFACE | 
-		USERSTATE_SET_CURSOR | 
+	setUserState(USERSTATE_SET_IFACE |
+		USERSTATE_SET_CURSOR |
 		USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON);
 
 	_sentenceNum = 0;

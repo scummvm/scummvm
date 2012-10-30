@@ -242,6 +242,10 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 	return result;
 }
 
+bool ScummEngine::isMacM68kIMuse() const {
+	return _game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && !(_game.features & GF_MAC_CONTAINER);
+}
+
 struct DetectorDesc {
 	Common::FSNode node;
 	Common::String md5;
@@ -473,6 +477,11 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 				if (dr.language == UNK_LANG) {
 					dr.language = detectLanguage(fslist, dr.game.id);
 				}
+
+				// HACK: Detect between 68k and PPC versions
+				if (dr.game.platform == Common::kPlatformMacintosh && dr.game.version >= 5 && dr.game.heversion == 0 && strstr(gfp->pattern, "Data"))
+					dr.game.features |= GF_MAC_CONTAINER;
+
 				break;
 			}
 		}

@@ -250,13 +250,13 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXMath::scGetProperty(const char *name) {
+ScValue *SXMath::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("math");
 		return _scValue;
 	}
@@ -264,7 +264,7 @@ ScValue *SXMath::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PI
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PI") == 0) {
+	else if (name == "PI") {
 		_scValue->setFloat(M_PI);
 		return _scValue;
 	} else {

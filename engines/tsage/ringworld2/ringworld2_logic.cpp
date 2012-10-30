@@ -1695,7 +1695,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	_playbackTickPrior = -1;
 	_playbackTick = 0;
 
-	// The final multiplication is used to deliberately slow down playback, since the original 
+	// The final multiplication is used to deliberately slow down playback, since the original
 	// was slowed down by the amount of time spent to decode and display the frames
 	_frameDelay = (60 / _subData._frameRate) * 8;
 	_gameFrame = R2_GLOBALS._events.getFrameNumber();
@@ -1706,7 +1706,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 		int v = (_subData._sliceSize + 2) * _subData._ySlices * _subData._framesPerSlices;
 		_dataNeeded = (_subData._field16 / _subData._framesPerSlices) + v + 96;
 	}
-	
+
 	debugC(1, ktSageDebugGraphics, "Data needed %d", _dataNeeded);
 
 	// Set up animation data objects
@@ -1760,7 +1760,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 			byte r = _subData._palData[idx * 3];
 			byte g = _subData._palData[idx * 3 + 1];
 			byte b = _subData._palData[idx * 3 + 2];
-		
+
 			int palIndex = R2_GLOBALS._scenePalette.indexOf(r, g, b);
 			_palIndexes[idx] = palIndex;
 		}

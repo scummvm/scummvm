@@ -33,7 +33,6 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/file/base_file.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/script_ext_file.h"
@@ -641,13 +640,13 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXFile::scGetProperty(const char *name) {
+ScValue *SXFile::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("file");
 		return _scValue;
 	}
@@ -655,7 +654,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Filename (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Filename") == 0) {
+	if (name == "Filename") {
 		_scValue->setString(_filename);
 		return _scValue;
 	}
@@ -663,7 +662,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Position (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Position") == 0) {
+	else if (name == "Position") {
 		_scValue->setInt(getPos());
 		return _scValue;
 	}
@@ -671,7 +670,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Length") == 0) {
+	else if (name == "Length") {
 		_scValue->setInt(getLength());
 		return _scValue;
 	}
@@ -679,7 +678,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextMode (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TextMode") == 0) {
+	else if (name == "TextMode") {
 		_scValue->setBool(_textMode);
 		return _scValue;
 	}
@@ -687,7 +686,7 @@ ScValue *SXFile::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccessMode (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccessMode") == 0) {
+	else if (name == "AccessMode") {
 		_scValue->setInt(_mode);
 		return _scValue;
 	} else {

@@ -289,7 +289,7 @@ bool Menu::keyhandler(int key) {
 		_vm->_game.clockEnabled = false;
 		drawMenuBar();
 	}
-	
+
 	// Mouse handling
 	if (_vm->_mouse.button) {
 		int hmenu, vmenu;

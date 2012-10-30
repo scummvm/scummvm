@@ -196,7 +196,7 @@ protected:
 
 	// from monitor.cpp
 	char _inputLine[64];
-	char _operand1[14];
+	char _operand1[64];
 	char _currentFile[14];
 
 	// from newplace.cpp

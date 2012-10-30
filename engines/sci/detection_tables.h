@@ -129,6 +129,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Castle of Dr. Brain - English DOS 5.25" Floppy VGA 1.1 (from rnjacobs, bug report #3578286)
+	{"castlebrain", "", {
+		{"resource.map", 0, "a1deac2647ad09472c63656bfb950a4d", 2739},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 347071},
+		{"resource.001", 0, "13e81e1839cd7b216d2bb5615c1ca160", 356812},
+		{"resource.002", 0, "583d348c908f89f94f8551d7fe0a2eca", 991752},
+		{"resource.003", 0, "6c3d1bb26ad532c94046bc9ac49b5ff4", 728315},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Castle of Dr. Brain - English DOS Floppy 1.1
 	{"castlebrain", "", {
 		{"resource.map", 0, "f77728304c70017c54793eb6ca648174", 2745},
@@ -161,6 +171,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "735be4e58957180cfc807d5e18fdffcd", 1433302},
 		AD_LISTEND},
 	 	Common::ES_ESP, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+#ifdef ENABLE_SCI32
+	// Inside the Chest / Behind the Developer's Shield
+	// SCI interpreter version 2.000.000
+	{"chest", "", {
+		{"resource.map", 0, "9dd015e79cac4f91e7de805448f39775", 1912},
+		{"resource.000", 0, "e4efcd042f86679dd4e1834bb3a38edb", 3770943},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE, GUIO3(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_FB01_MIDI)	},
+#endif
 
 	// Christmas Card 1988 - English DOS
 	// SCI interpreter version 0.000.294
@@ -268,7 +288,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "08050329aa113a9f14ed99cbfe3536ec", 232942},
 		{"resource.007", 0, "64f342463f6f35ba71b3509ef696ae3f", 267702},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Conquests of Camelot - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.002.030"

@@ -156,7 +156,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 			generateGameStateFileName(target, slot));
-		
+
 		if (f) {
 			TsAGE::tSageSavegameHeader header;
 			TsAGE::Saver::readSavegameHeader(f, header);

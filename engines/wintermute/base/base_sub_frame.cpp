@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 
@@ -225,6 +226,9 @@ void BaseSubFrame::setRect(Rect32 rect) {
 	_rect = rect;
 }
 
+const char* BaseSubFrame::getSurfaceFilename() {
+	return _surfaceFilename;
+}
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
@@ -442,7 +446,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseSubFrame::scGetProperty(const char *name) {
+ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
 		_scValue = new ScValue(_gameRef);
 	}
@@ -451,7 +455,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("subframe");
 		return _scValue;
 	}
@@ -459,7 +463,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AlphaColor") == 0) {
+	else if (name == "AlphaColor") {
 
 		_scValue->setInt((int)_alpha);
 		return _scValue;
@@ -468,7 +472,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TransparentColor (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TransparentColor") == 0) {
+	else if (name == "TransparentColor") {
 		_scValue->setInt((int)_transparent);
 		return _scValue;
 	}
@@ -476,7 +480,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Is2DOnly") == 0) {
+	else if (name == "Is2DOnly") {
 		_scValue->setBool(_2DOnly);
 		return _scValue;
 	}
@@ -484,7 +488,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Is3DOnly") == 0) {
+	else if (name == "Is3DOnly") {
 		_scValue->setBool(_3DOnly);
 		return _scValue;
 	}
@@ -492,7 +496,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MirrorX") == 0) {
+	else if (name == "MirrorX") {
 		_scValue->setBool(_mirrorX);
 		return _scValue;
 	}
@@ -500,7 +504,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MirrorY") == 0) {
+	else if (name == "MirrorY") {
 		_scValue->setBool(_mirrorY);
 		return _scValue;
 	}
@@ -508,7 +512,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Decoration") == 0) {
+	else if (name == "Decoration") {
 		_scValue->setBool(_decoration);
 		return _scValue;
 	}
@@ -516,7 +520,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HotspotX") == 0) {
+	else if (name == "HotspotX") {
 		_scValue->setInt(_hotspotX);
 		return _scValue;
 	}
@@ -524,7 +528,7 @@ ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HotspotY") == 0) {
+	else if (name == "HotspotY") {
 		_scValue->setInt(_hotspotY);
 		return _scValue;
 	} else {

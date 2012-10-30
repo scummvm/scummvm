@@ -165,6 +165,7 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 		// do clipping. In SQ4 we get the door code in here and that's even
 		// larger than uint32!
 		if (*source == '-') {
+			// FIXME: Setting result to -1 does _not_ negate the output.
 			result = -1;
 			source++;
 		}

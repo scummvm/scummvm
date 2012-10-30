@@ -236,7 +236,7 @@ BinkDecoder::AudioInfo::~AudioInfo() {
 
 BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const Graphics::PixelFormat &format, uint32 frameCount, const Common::Rational &frameRate, bool swapPlanes, bool hasAlpha, uint32 id) :
 		_frameCount(frameCount), _frameRate(frameRate), _swapPlanes(swapPlanes), _hasAlpha(hasAlpha), _id(id) {
-	_curFrame = -1;	
+	_curFrame = -1;
 
 	for (int i = 0; i < 16; i++)
 		_huffman[i] = 0;
@@ -260,7 +260,23 @@ BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const G
 			_colHighHuffman[i].symbols[j] = j;
 	}
 
-	_surface.create(width, height, format);
+	// Make the surface even-sized:
+	_surfaceHeight = height;
+	_surfaceWidth = width;
+
+	if (height & 1) {
+		_surfaceHeight++;
+	}
+	if (width & 1) {
+		_surfaceWidth++;
+	}
+
+	_surface.create(_surfaceWidth, _surfaceHeight, format);
+	// Since we over-allocate to make surfaces even-sized
+	// we need to set the actual VIDEO size back into the
+	// surface.
+	_surface.h = height;
+	_surface.w = width;
 
 	// Give the planes a bit extra space
 	width  = _surface.w + 32;
@@ -329,9 +345,11 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 
 	// Convert the YUV data we have to our format
 	// We're ignoring alpha for now
+	// The width used here is the surface-width, and not the video-width
+	// to allow for odd-sized videos.
 	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
-	Graphics::convertYUV420ToRGB(&_surface, _curPlanes[0], _curPlanes[1], _curPlanes[2],
-			_surface.w, _surface.h, _surface.w, _surface.w >> 1);
+	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
+			_surfaceWidth, _surfaceHeight, _surfaceWidth, _surfaceWidth >> 1);
 
 	// And swap the planes with the reference planes
 	for (int i = 0; i < 4; i++)

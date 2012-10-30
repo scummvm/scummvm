@@ -261,7 +261,7 @@ void BaseRenderOSystem::fade(uint16 alpha) {
 void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect) {
 	// This particular warning is rather messy, as this function is called a ton,
 	// thus we avoid printing it more than once.
-	
+
 	// TODO: Add fading with dirty rects.
 	if (!_disableDirtyRects) {
 		warning("BaseRenderOSystem::FadeToColor - Breaks when using dirty rects");
@@ -573,6 +573,11 @@ Rect32 BaseRenderOSystem::getViewPort() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
+	// FIXME: This is wrong in quite a few ways right now, and ends up
+	// breaking the notebook in Dirty Split, so we disable the correction
+	// for now, this will need fixing when a game with odd aspect-ratios
+	// show up.
+	return;
 	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft - _renderRect.left);
 	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop - _renderRect.top);
 	rect->setWidth((int16)MathUtil::roundUp(rect->width() * _ratioX));

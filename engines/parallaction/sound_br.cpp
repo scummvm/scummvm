@@ -91,20 +91,20 @@ public:
 };
 
 void MidiParser_MSC::parseMetaEvent(EventInfo &info) {
-	uint8 type = read1(_position._play_pos);
-	uint8 len = read1(_position._play_pos);
+	uint8 type = read1(_position._playPos);
+	uint8 len = read1(_position._playPos);
 	info.ext.type = type;
 	info.length = len;
 	info.ext.data = 0;
 
 	if (type == 0x51) {
-		info.ext.data = _position._play_pos;
+		info.ext.data = _position._playPos;
 	} else {
 		warning("unknown meta event 0x%02X", type);
 		info.ext.type = 0;
 	}
 
-	_position._play_pos += len;
+	_position._playPos += len;
 }
 
 void MidiParser_MSC::parseMidiEvent(EventInfo &info) {
@@ -116,13 +116,13 @@ void MidiParser_MSC::parseMidiEvent(EventInfo &info) {
 	case 0xA:
 	case 0xB:
 	case 0xE:
-		info.basic.param1 = read1(_position._play_pos);
-		info.basic.param2 = read1(_position._play_pos);
+		info.basic.param1 = read1(_position._playPos);
+		info.basic.param2 = read1(_position._playPos);
 		break;
 
 	case 0xC:
 	case 0xD:
-		info.basic.param1 = read1(_position._play_pos);
+		info.basic.param1 = read1(_position._playPos);
 		info.basic.param2 = 0;
 		break;
 
@@ -135,9 +135,9 @@ void MidiParser_MSC::parseMidiEvent(EventInfo &info) {
 }
 
 void MidiParser_MSC::parseNextEvent(EventInfo &info) {
-	info.start = _position._play_pos;
+	info.start = _position._playPos;
 
-	if (_position._play_pos >= _trackEnd) {
+	if (_position._playPos >= _trackEnd) {
 		// fake an end-of-track meta event
 		info.delta = 0;
 		info.event = 0xFF;
@@ -146,8 +146,9 @@ void MidiParser_MSC::parseNextEvent(EventInfo &info) {
 		return;
 	}
 
-	info.delta = readVLQ(_position._play_pos);
-	info.event = read1(_position._play_pos);
+	info.length = 0;
+	info.delta = readVLQ(_position._playPos);
+	info.event = read1(_position._playPos);
 
 	if (info.event == 0xFF) {
 		parseMetaEvent(info);
@@ -155,7 +156,7 @@ void MidiParser_MSC::parseNextEvent(EventInfo &info) {
 	}
 
 	if (info.event < 0x80) {
-		_position._play_pos--;
+		_position._playPos--;
 		info.event = _lastEvent;
 	}
 
@@ -185,7 +186,7 @@ bool MidiParser_MSC::loadMusic(byte *data, uint32 size) {
 	_lastEvent = 0;
 	_trackEnd = data + size;
 
-	_num_tracks = 1;
+	_numTracks = 1;
 	_tracks[0] = pos;
 
 	setTempo(500000);
@@ -224,7 +225,12 @@ MidiPlayer_MSC::MidiPlayer_MSC()
 	: _paused(false) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
+	const MusicType musicType = MidiDriver::getMusicType(dev);
+	if (musicType == MT_ADLIB) {
+		_driver = createAdLibDriver();
+	} else {
+		_driver = MidiDriver::createMidi(dev);
+	}
 	assert(_driver);
 
 	int ret = _driver->open();

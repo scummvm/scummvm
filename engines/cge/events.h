@@ -105,7 +105,7 @@ private:
 	void handleEvents();
 public:
 	EventManager(CGEEngine *vm);
-	void poll();	
+	void poll();
 	void clearEvent(Sprite *spr);
 
 	CGEEvent &getNextEvent();

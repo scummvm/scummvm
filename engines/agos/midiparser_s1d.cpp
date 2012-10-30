@@ -35,7 +35,7 @@ namespace AGOS {
 class MidiParser_S1D : public MidiParser {
 private:
 	byte *_data;
-	bool _no_delta;
+	bool _noDelta;
 
 	struct Loop {
 		uint16 timer;
@@ -49,7 +49,7 @@ protected:
 	void resetTracking();
 
 public:
-	MidiParser_S1D() : _data(0), _no_delta(false) {}
+	MidiParser_S1D() : _data(0), _noDelta(false) {}
 
 	bool loadMusic(byte *data, uint32 size);
 };
@@ -75,14 +75,14 @@ void MidiParser_S1D::chainEvent(EventInfo &info) {
 }
 
 void MidiParser_S1D::parseNextEvent(EventInfo &info) {
-	info.start = _position._play_pos;
+	info.start = _position._playPos;
 	info.length = 0;
-	info.delta = _no_delta ? 0 : readVLQ2(_position._play_pos);
-	_no_delta = false;
+	info.delta = _noDelta ? 0 : readVLQ2(_position._playPos);
+	_noDelta = false;
 
-	info.event = *_position._play_pos++;
+	info.event = *_position._playPos++;
 	if (!(info.event & 0x80)) {
-		_no_delta = true;
+		_noDelta = true;
 		info.event |= 0x80;
 	}
 
@@ -94,34 +94,43 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 	} else {
 		switch (info.command()) {
 		case 0x8: // note off
-			info.basic.param1 = *_position._play_pos++;
+			info.basic.param1 = *_position._playPos++;
 			info.basic.param2 = 0;
 			break;
 
 		case 0x9: // note on
-			info.basic.param1 = *_position._play_pos++;
-			info.basic.param2 = *_position._play_pos++;
+			info.basic.param1 = *_position._playPos++;
+			info.basic.param2 = *_position._playPos++;
+			// Rewrite note on events with velocity 0 as note off events.
+			// This is the actual meaning of this, but theoretically this
+			// should not need to be rewritten, since all MIDI devices should
+			// interpret it like that. On the other hand all our MidiParser
+			// implementations do it and there seems to be code in MidiParser
+			// which relies on this for tracking active notes.
+			if (info.basic.param2 == 0) {
+				info.event = info.channel() | 0x80;
+			}
 			break;
 
 		case 0xA: { // loop control
 			// In case the stop mode(?) is set to 0x80 this will stop the
 			// track over here.
 
-			const int16 loopIterations = int8(*_position._play_pos++);
+			const int16 loopIterations = int8(*_position._playPos++);
 			if (!loopIterations) {
-				_loops[info.channel()].start = _position._play_pos;
+				_loops[info.channel()].start = _position._playPos;
 			} else {
 				if (!_loops[info.channel()].timer) {
 					if (_loops[info.channel()].start) {
 						_loops[info.channel()].timer = uint16(loopIterations);
-						_loops[info.channel()].end = _position._play_pos;
+						_loops[info.channel()].end = _position._playPos;
 
 						// Go to the start of the loop
-						_position._play_pos = _loops[info.channel()].start;
+						_position._playPos = _loops[info.channel()].start;
 					}
 				} else {
 					if (_loops[info.channel()].timer)
-						_position._play_pos = _loops[info.channel()].start;
+						_position._playPos = _loops[info.channel()].start;
 					--_loops[info.channel()].timer;
 				}
 			}
@@ -141,13 +150,13 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			break;
 
 		case 0xC: // program change
-			info.basic.param1 = *_position._play_pos++;
+			info.basic.param1 = *_position._playPos++;
 			info.basic.param2 = 0;
 			break;
 
 		case 0xD: // jump to loop end
 			if (_loops[info.channel()].end)
-				_position._play_pos = _loops[info.channel()].end;
+				_position._playPos = _loops[info.channel()].end;
 
 			// We need to read the next midi event here. Since we can not
 			// safely pass this event to the MIDI event processing.
@@ -178,7 +187,7 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 	pos += 1;
 
 	// And now we're at the actual data. Only one track.
-	_num_tracks = 1;
+	_numTracks = 1;
 	_data = pos;
 	_tracks[0] = pos;
 
@@ -194,7 +203,7 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 void MidiParser_S1D::resetTracking() {
 	MidiParser::resetTracking();
 	// The first event never contains any delta.
-	_no_delta = true;
+	_noDelta = true;
 	memset(_loops, 0, sizeof(_loops));
 }
 

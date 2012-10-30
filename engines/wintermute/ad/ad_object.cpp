@@ -37,18 +37,19 @@
 #include "engines/wintermute/ad/ad_waypoint_group.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_frame.h"
-#include "engines/wintermute/base/sound/base_sound.h"
-#include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/base_sub_frame.h"
-#include "engines/wintermute/base/font/base_font.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_string_table.h"
+#include "engines/wintermute/base/base_sub_frame.h"
+#include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/particles/part_emitter.h"
+#include "engines/wintermute/base/sound/base_sound.h"
 #include "common/str.h"
 #include "common/util.h"
 
@@ -658,13 +659,13 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdObject::scGetProperty(const char *name) {
+ScValue *AdObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("object");
 		return _scValue;
 	}
@@ -672,7 +673,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Active") == 0) {
+	else if (name == "Active") {
 		_scValue->setBool(_active);
 		return _scValue;
 	}
@@ -680,7 +681,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IgnoreItems
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IgnoreItems") == 0) {
+	else if (name == "IgnoreItems") {
 		_scValue->setBool(_ignoreItems);
 		return _scValue;
 	}
@@ -688,7 +689,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SceneIndependent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SceneIndependent") == 0) {
+	else if (name == "SceneIndependent") {
 		_scValue->setBool(_sceneIndependent);
 		return _scValue;
 	}
@@ -696,7 +697,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesWidth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesWidth") == 0) {
+	else if (name == "SubtitlesWidth") {
 		_scValue->setInt(_subtitlesWidth);
 		return _scValue;
 	}
@@ -704,7 +705,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosRelative
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesPosRelative") == 0) {
+	else if (name == "SubtitlesPosRelative") {
 		_scValue->setBool(_subtitlesModRelative);
 		return _scValue;
 	}
@@ -712,7 +713,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesPosX") == 0) {
+	else if (name == "SubtitlesPosX") {
 		_scValue->setInt(_subtitlesModX);
 		return _scValue;
 	}
@@ -720,7 +721,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesPosY") == 0) {
+	else if (name == "SubtitlesPosY") {
 		_scValue->setInt(_subtitlesModY);
 		return _scValue;
 	}
@@ -728,7 +729,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosXCenter
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesPosXCenter") == 0) {
+	else if (name == "SubtitlesPosXCenter") {
 		_scValue->setBool(_subtitlesModXCenter);
 		return _scValue;
 	}
@@ -736,7 +737,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumItems (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumItems") == 0) {
+	else if (name == "NumItems") {
 		_scValue->setInt(getInventory()->_takenItems.size());
 		return _scValue;
 	}
@@ -744,7 +745,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ParticleEmitter (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ParticleEmitter") == 0) {
+	else if (name == "ParticleEmitter") {
 		if (_partEmitter) {
 			_scValue->setNative(_partEmitter, true);
 		} else {
@@ -757,7 +758,7 @@ ScValue *AdObject::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumAttachments (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "NumAttachments") == 0) {
+	else if (name == "NumAttachments") {
 		_scValue->setInt(_attachmentsPre.size() + _attachmentsPost.size());
 		return _scValue;
 	} else {

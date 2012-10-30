@@ -38,7 +38,7 @@ class SXString : public BaseScriptable {
 public:
 	virtual int scCompare(BaseScriptable *Val);
 	DECLARE_PERSISTENT(SXString, BaseScriptable)
-	ScValue *scGetProperty(const char *name);
+	ScValue *scGetProperty(const Common::String &name);
 	bool scSetProperty(const char *name, ScValue *value);
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	void scSetString(const char *val);

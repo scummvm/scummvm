@@ -37,10 +37,10 @@ class BaseQuickMsg : public BaseClass {
 public:
 	char *getText();
 	uint32 _startTime;
-	char *_text;
-	BaseQuickMsg(BaseGame *inGame, const char *Text);
+	BaseQuickMsg(BaseGame *inGame, const char *text);
 	virtual ~BaseQuickMsg();
-
+private:
+	char *_text;
 };
 
 } // end of namespace Wintermute

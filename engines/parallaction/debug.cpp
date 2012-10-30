@@ -103,7 +103,7 @@ bool Debugger::Cmd_Locations(int argc, const char **argv) {
 
 bool Debugger::Cmd_GlobalFlags(int argc, const char **argv) {
 
-	uint32 flags = _globalFlags;
+	uint32 flags = g_globalFlags;
 
 	DebugPrintf("+------------------------------+---------+\n"
 				"| flag name                    |  value  |\n"
@@ -128,10 +128,10 @@ bool Debugger::Cmd_ToggleGlobalFlag(int argc, const char **argv) {
 			DebugPrintf("invalid flag '%s'\n", argv[1]);
 		} else {
 			i--;
-			if ((_globalFlags & (1 << i)) == 0)
-				_globalFlags |= (1 << i);
+			if ((g_globalFlags & (1 << i)) == 0)
+				g_globalFlags |= (1 << i);
 			else
-				_globalFlags &= ~(1 << i);
+				g_globalFlags &= ~(1 << i);
 		}
 		break;
 

@@ -36,11 +36,11 @@
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 
 namespace Wintermute {
@@ -340,7 +340,7 @@ bool AdItem::update() {
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->_finished) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->isFinished()) {
 		_state = STATE_READY;
 		_currentSprite = _animSprite;
 	}
@@ -379,7 +379,7 @@ bool AdItem::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == NULL || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = NULL;
@@ -614,13 +614,13 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdItem::scGetProperty(const char *name) {
+ScValue *AdItem::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("item");
 		return _scValue;
 	}
@@ -628,7 +628,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Name") == 0) {
+	else if (name == "Name") {
 		_scValue->setString(getName());
 		return _scValue;
 	}
@@ -636,7 +636,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DisplayAmount
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DisplayAmount") == 0) {
+	else if (name == "DisplayAmount") {
 		_scValue->setBool(_displayAmount);
 		return _scValue;
 	}
@@ -644,7 +644,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Amount
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Amount") == 0) {
+	else if (name == "Amount") {
 		_scValue->setInt(_amount);
 		return _scValue;
 	}
@@ -652,7 +652,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountOffsetX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AmountOffsetX") == 0) {
+	else if (name == "AmountOffsetX") {
 		_scValue->setInt(_amountOffsetX);
 		return _scValue;
 	}
@@ -660,7 +660,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountOffsetY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AmountOffsetY") == 0) {
+	else if (name == "AmountOffsetY") {
 		_scValue->setInt(_amountOffsetY);
 		return _scValue;
 	}
@@ -668,7 +668,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AmountAlign") == 0) {
+	else if (name == "AmountAlign") {
 		_scValue->setInt(_amountAlign);
 		return _scValue;
 	}
@@ -676,7 +676,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AmountString") == 0) {
+	else if (name == "AmountString") {
 		if (!_amountString) {
 			_scValue->setNULL();
 		} else {
@@ -688,7 +688,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorCombined
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CursorCombined") == 0) {
+	else if (name == "CursorCombined") {
 		_scValue->setBool(_cursorCombined);
 		return _scValue;
 	} else {

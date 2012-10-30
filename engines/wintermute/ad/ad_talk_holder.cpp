@@ -28,13 +28,13 @@
 
 #include "engines/wintermute/ad/ad_talk_holder.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "common/str.h"
 
 namespace Wintermute {
@@ -334,13 +334,13 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdTalkHolder::scGetProperty(const char *name) {
+ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("talk-holder");
 		return _scValue;
 	} else {

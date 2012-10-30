@@ -4,6 +4,9 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
+ * Additional copyright for this file:
+ * Copyright (C) 1995-1997 Presto Studios, Inc.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -20,21 +23,45 @@
  *
  */
 
-#ifndef COMMON_MD5_H
-#define COMMON_MD5_H
+#ifndef PEGASUS_NEIGHBORHOOD_EXTRA_H
+#define PEGASUS_NEIGHBORHOOD_EXTRA_H
 
-#include "util.h"
+#include "common/array.h"
+#include "common/endian.h"
 
-typedef struct {
-	uint32 total[2];
-	uint32 state[4];
-	uint8 buffer[64];
-} md5_context;
+#include "pegasus/constants.h"
 
-void md5_starts(md5_context *ctx);
-void md5_update(md5_context *ctx, const uint8 *input, uint32 length);
-void md5_finish(md5_context *ctx, uint8 digest[16]);
+namespace Common {
+	class SeekableReadStream;
+}
 
-bool md5_file(const char *name, uint8 digest[16], uint32 length = 0);
+namespace Pegasus {
+
+class ExtraTable {
+public:
+	ExtraTable() {}
+	~ExtraTable() {}
+
+	static uint32 getResTag() { return MKTAG('X', 't', 'r', 'a'); }
+
+	void loadFromStream(Common::SeekableReadStream *stream);
+	void clear();
+
+	struct Entry {
+		Entry() { movieStart = 0xffffffff; }
+		bool isEmpty() { return movieStart == 0xffffffff; }
+
+		ExtraID extra;
+		TimeValue movieStart;
+		TimeValue movieEnd;
+	};
+
+	Entry findEntry(ExtraID extra);
+
+private:
+	Common::Array<Entry> _entries;
+};
+
+} // End of namespace Pegasus
 
 #endif

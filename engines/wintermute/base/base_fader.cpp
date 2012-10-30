@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "common/util.h"
 
 namespace Wintermute {

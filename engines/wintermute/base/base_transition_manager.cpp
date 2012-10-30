@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
 

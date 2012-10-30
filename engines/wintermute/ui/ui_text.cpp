@@ -431,13 +431,13 @@ bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIText::scGetProperty(const char *name) {
+ScValue *UIText::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("static");
 		return _scValue;
 	}
@@ -445,7 +445,7 @@ ScValue *UIText::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TextAlign") == 0) {
+	else if (name == "TextAlign") {
 		_scValue->setInt(_textAlign);
 		return _scValue;
 	}
@@ -453,7 +453,7 @@ ScValue *UIText::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// VerticalAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "VerticalAlign") == 0) {
+	else if (name == "VerticalAlign") {
 		_scValue->setInt(_verticalAlign);
 		return _scValue;
 	} else {

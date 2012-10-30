@@ -159,7 +159,7 @@ void Scene710::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_skipSpeaker);
 	_stripManager.addSpeaker(&_lauraSpeaker);
 	_stripManager.addSpeaker(&_gameTextSpeaker);
-	
+
 	_kid.postInit();
 	_kid._moveDiff = Common::Point(4, 2);
 	_laura.postInit();

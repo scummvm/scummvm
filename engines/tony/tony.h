@@ -71,7 +71,7 @@ struct TonyGameDescription;
 
 #define MAX_SFX_CHANNELS    32
 #define TONY_DAT_VER_MAJ 0
-#define TONY_DAT_VER_MIN 1
+#define TONY_DAT_VER_MIN 3
 
 struct VoiceHeader {
 	int _offset;
@@ -169,7 +169,6 @@ public:
 
 	void play();
 	void close();
-	void abortGame();
 
 	void getDataDirectory(DataDir dir, char *path);
 

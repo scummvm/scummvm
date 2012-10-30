@@ -507,7 +507,7 @@ const Sprite *ComposerEngine::getSpriteAtPos(const Common::Point &pos) {
 
 void ComposerEngine::dirtySprite(const Sprite &sprite) {
 	Common::Rect rect(sprite._pos.x, sprite._pos.y, sprite._pos.x + sprite._surface.w, sprite._pos.y + sprite._surface.h);
-	rect.clip(_surface.w, _surface.h);
+	rect.clip(_screen.w, _screen.h);
 	if (rect.isEmpty())
 		return;
 
@@ -541,8 +541,8 @@ void ComposerEngine::redraw() {
 
 	for (uint i = 0; i < _dirtyRects.size(); i++) {
 		const Common::Rect &rect = _dirtyRects[i];
-		byte *pixels = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
-		_system->copyRectToScreen(pixels, _surface.pitch, rect.left, rect.top, rect.width(), rect.height());
+		byte *pixels = (byte *)_screen.pixels + (rect.top * _screen.pitch) + rect.left;
+		_system->copyRectToScreen(pixels, _screen.pitch, rect.left, rect.top, rect.width(), rect.height());
 	}
 	_system->updateScreen();
 
@@ -814,16 +814,16 @@ void ComposerEngine::drawSprite(const Sprite &sprite) {
 	int y = sprite._pos.y;
 
 	// incoming data is BMP-style (bottom-up), so flip it
-	byte *pixels = (byte *)_surface.pixels;
+	byte *pixels = (byte *)_screen.pixels;
 	for (int j = 0; j < sprite._surface.h; j++) {
 		if (j + y < 0)
 			continue;
-		if (j + y >= _surface.h)
+		if (j + y >= _screen.h)
 			break;
 		byte *in = (byte *)sprite._surface.pixels + (sprite._surface.h - j - 1) * sprite._surface.w;
-		byte *out = pixels + ((j + y) * _surface.w) + x;
+		byte *out = pixels + ((j + y) * _screen.w) + x;
 		for (int i = 0; i < sprite._surface.w; i++)
-			if ((x + i >= 0) && (x + i < _surface.w) && in[i])
+			if ((x + i >= 0) && (x + i < _screen.w) && in[i])
 				out[i] = in[i];
 	}
 }

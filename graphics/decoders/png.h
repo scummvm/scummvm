@@ -23,6 +23,7 @@
 /*
  * PNG decoder used in engines:
  *  - sword25
+ *  - wintermute
  * Dependencies:
  *  - libpng
  */

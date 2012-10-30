@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -25,7 +25,7 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
- 
+
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
@@ -71,10 +71,10 @@ void BaseEngine::LOG(bool res, const char *fmt, ...) {
 	secs = secs % 3600;
 	uint32 mins = secs / 60;
 	secs = secs % 60;
-	
+
 	char buff[512];
 	va_list va;
-	
+
 	va_start(va, fmt);
 	vsprintf(buff, fmt, va);
 	va_end(va);
@@ -82,7 +82,7 @@ void BaseEngine::LOG(bool res, const char *fmt, ...) {
 	if (instance()._gameRef) {
 		instance()._gameRef->LOG("%s", buff);
 	} else {
-		debugCN(kWintermuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);		
+		debugCN(kWintermuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
 	}
 }
 

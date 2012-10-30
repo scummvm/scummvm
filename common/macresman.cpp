@@ -124,7 +124,7 @@ bool MacResManager::open(String filename) {
 	File *file = new File();
 
 	// First, let's try to see if the Mac converted name exists
-	if (file->open("._" + filename) && loadFromAppleDouble(*file)) {
+	if (file->open(constructAppleDoubleName(filename)) && loadFromAppleDouble(*file)) {
 		_baseFileName = filename;
 		return true;
 	}
@@ -185,7 +185,7 @@ bool MacResManager::open(FSNode path, String filename) {
 #endif
 
 	// First, let's try to see if the Mac converted name exists
-	FSNode fsNode = path.getChild("._" + filename);
+	FSNode fsNode = path.getChild(constructAppleDoubleName(filename));
 	if (fsNode.exists() && !fsNode.isDirectory()) {
 		SeekableReadStream *stream = fsNode.createReadStream();
 		if (loadFromAppleDouble(*stream)) {
@@ -253,7 +253,7 @@ bool MacResManager::exists(const String &filename) {
 		return true;
 
 	// Check if we have an AppleDouble file
-	if (tempFile.open("._" + filename) && tempFile.readUint32BE() == 0x00051607)
+	if (tempFile.open(constructAppleDoubleName(filename)) && tempFile.readUint32BE() == 0x00051607)
 		return true;
 
 	return false;
@@ -572,6 +572,22 @@ void MacResManager::readMap() {
 			}
 		}
 	}
+}
+
+Common::String MacResManager::constructAppleDoubleName(Common::String name) {
+	// Insert "._" before the last portion of a path name
+	for (int i = name.size() - 1; i >= 0; i--) {
+		if (i == 0) {
+			name.insertChar('_', 0);
+			name.insertChar('.', 0);
+		} else if (name[i] == '/') {
+			name.insertChar('_', i + 1);
+			name.insertChar('.', i + 1);
+			break;
+		}
+	}
+
+	return name;
 }
 
 } // End of namespace Common

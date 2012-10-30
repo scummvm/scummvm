@@ -37,6 +37,7 @@
 #include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -1081,13 +1082,13 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIButton::scGetProperty(const char *name) {
+ScValue *UIButton::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("button");
 		return _scValue;
 	}
@@ -1095,7 +1096,7 @@ ScValue *UIButton::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TextAlign") == 0) {
+	else if (name == "TextAlign") {
 		_scValue->setInt(_align);
 		return _scValue;
 	}
@@ -1103,21 +1104,21 @@ ScValue *UIButton::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Focusable
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Focusable") == 0) {
+	else if (name == "Focusable") {
 		_scValue->setBool(_canFocus);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Pressed
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Pressed") == 0) {
+	else if (name == "Pressed") {
 		_scValue->setBool(_stayPressed);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PixelPerfect") == 0) {
+	else if (name == "PixelPerfect") {
 		_scValue->setBool(_pixelPerfect);
 		return _scValue;
 	} else {

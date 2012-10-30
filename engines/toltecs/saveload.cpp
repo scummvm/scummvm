@@ -36,12 +36,11 @@
 namespace Toltecs {
 
 /* TODO:
-	- Save with F7; Load with F9
 	- Saving during an animation (AnimationPlayer) is not working correctly yet
 	- Maybe switch to SCUMM/Tinsel serialization approach?
 */
 
-#define TOLTECS_SAVEGAME_VERSION 3
+#define TOLTECS_SAVEGAME_VERSION 4
 
 ToltecsEngine::kReadSaveHeaderError ToltecsEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
 
@@ -93,7 +92,7 @@ void ToltecsEngine::savegame(const char *filename, const char *description) {
 	byte descriptionLen = strlen(description);
 	out->writeByte(descriptionLen);
 	out->write(description, descriptionLen);
-	
+
 	Graphics::saveThumbnail(*out);
 
 	// Not used yet, reserved for future usage
@@ -141,8 +140,8 @@ void ToltecsEngine::savegame(const char *filename, const char *description) {
 }
 
 void ToltecsEngine::loadgame(const char *filename) {
-	Common::InSaveFile *in;
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
+	if (!in) {
 		warning("Can't open file '%s', game not loaded", filename);
 		return;
 	}
@@ -150,13 +149,13 @@ void ToltecsEngine::loadgame(const char *filename) {
 	SaveHeader header;
 
 	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
-	
+
 	if (errorCode != kRSHENoError) {
 		warning("Error loading savegame '%s'", filename);
 		delete in;
 		return;
 	}
-	
+
 	_sound->stopAll();
 	_music->stopSequence();
 	g_engine->setTotalPlayTime(header.playTime * 1000);
@@ -182,7 +181,7 @@ void ToltecsEngine::loadgame(const char *filename) {
 	_mouseX = in->readUint16LE();
 	_mouseY = in->readUint16LE();
 	_mouseDisabled = in->readUint16LE();
-	
+
 	_system->warpMouse(_mouseX, _mouseY);
  	_system->showMouse(_mouseDisabled == 0);
 
@@ -191,7 +190,7 @@ void ToltecsEngine::loadgame(const char *filename) {
 	_anim->loadState(in);
 	_screen->loadState(in);
 	if (header.version >= 2)
-		_sound->loadState(in);
+		_sound->loadState(in, header.version);
 	if (header.version >= 3)
 		_music->loadState(in);
 

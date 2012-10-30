@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_frame.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_frame.h"

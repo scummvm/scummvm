@@ -602,13 +602,13 @@ bool AdActor::update() {
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->_finished) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->isFinished()) {
 		_state = _nextState;
 		_nextState = STATE_READY;
 		_currentSprite = _animSprite;
 	}
 
-	if (_state == STATE_PLAYING_ANIM_SET && _animSprite2 != NULL && _animSprite2->_finished) {
+	if (_state == STATE_PLAYING_ANIM_SET && _animSprite2 != NULL && _animSprite2->isFinished()) {
 		_state = _nextState;
 		_nextState = STATE_READY;
 		_currentSprite = _animSprite2;
@@ -649,7 +649,7 @@ bool AdActor::update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_LEFT:
-		if (_tempSprite2 == NULL || _tempSprite2->_finished) {
+		if (_tempSprite2 == NULL || _tempSprite2->isFinished()) {
 			if (_dir > 0) {
 				_dir = (TDirection)(_dir - 1);
 			} else {
@@ -686,7 +686,7 @@ bool AdActor::update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_RIGHT:
-		if (_tempSprite2 == NULL || _tempSprite2->_finished) {
+		if (_tempSprite2 == NULL || _tempSprite2->isFinished()) {
 			_dir = (TDirection)(_dir + 1);
 
 			if ((int)_dir >= (int)NUM_DIRECTIONS) {
@@ -753,7 +753,7 @@ bool AdActor::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == NULL || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = NULL;
@@ -798,7 +798,7 @@ bool AdActor::update() {
 
 	if (_currentSprite && !already_moved) {
 		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
-		if (_currentSprite->_changed) {
+		if (_currentSprite->isChanged()) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
 			afterMove();
@@ -830,7 +830,7 @@ void AdActor::followPath() {
 
 	// are there points to follow?
 	if (_path->getCurrent() != NULL) {
-		_state = STATE_FOLLOWING_PATH;;
+		_state = STATE_FOLLOWING_PATH;
 		initLine(BasePoint(_posX, _posY), *_path->getCurrent());
 	} else {
 		if (_afterWalkDir != DI_NONE) {
@@ -858,7 +858,7 @@ void AdActor::getNextStep() {
 	}
 
 	_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
-	if (!_currentSprite->_changed) {
+	if (!_currentSprite->isChanged()) {
 		return;
 	}
 
@@ -1075,27 +1075,27 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdActor::scGetProperty(const char *name) {
+ScValue *AdActor::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Direction") == 0) {
+	if (name == "Direction") {
 		_scValue->setInt(_dir);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Type") == 0) {
+	else if (name == "Type") {
 		_scValue->setString("actor");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TalkAnimName") == 0) {
+	else if (name == "TalkAnimName") {
 		_scValue->setString(_talkAnimName);
 		return _scValue;
 	}
@@ -1103,7 +1103,7 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkAnimName") == 0) {
+	else if (name == "WalkAnimName") {
 		_scValue->setString(_walkAnimName);
 		return _scValue;
 	}
@@ -1111,7 +1111,7 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IdleAnimName") == 0) {
+	else if (name == "IdleAnimName") {
 		_scValue->setString(_idleAnimName);
 		return _scValue;
 	}
@@ -1119,7 +1119,7 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TurnLeftAnimName") == 0) {
+	else if (name == "TurnLeftAnimName") {
 		_scValue->setString(_turnLeftAnimName);
 		return _scValue;
 	}
@@ -1127,7 +1127,7 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TurnRightAnimName") == 0) {
+	else if (name == "TurnRightAnimName") {
 		_scValue->setString(_turnRightAnimName);
 		return _scValue;
 	} else {
@@ -1351,7 +1351,7 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 TDirection AdActor::angleToDirection(int angle) {
-	TDirection ret = DI_DOWN;;
+	TDirection ret = DI_DOWN;
 
 	if (angle > -112 && angle <= -67) {
 		ret = DI_UP;

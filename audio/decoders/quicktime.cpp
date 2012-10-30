@@ -195,7 +195,7 @@ QuickTimeAudioDecoder::QuickTimeAudioTrack::QuickTimeAudioTrack(QuickTimeAudioDe
 
 	if (entry->getCodecTag() == MKTAG('r', 'a', 'w', ' ') || entry->getCodecTag() == MKTAG('t', 'w', 'o', 's'))
 		_parentTrack->sampleSize = (entry->_bitsPerSample / 8) * entry->_channels;
-	
+
 	// Initialize our edit parser too
 	_curEdit = 0;
 	enterNewEdit(Timestamp());
@@ -395,9 +395,9 @@ AudioStream *QuickTimeAudioDecoder::QuickTimeAudioTrack::readAudioChunk(uint chu
 }
 
 void QuickTimeAudioDecoder::QuickTimeAudioTrack::skipSamples(const Timestamp &length, AudioStream *stream) {
-	uint32 sampleCount = length.convertToFramerate(getRate()).totalNumberOfFrames();
+	int32 sampleCount = length.convertToFramerate(getRate()).totalNumberOfFrames();
 
-	if (sampleCount == 0)
+	if (sampleCount <= 0)
 		return;
 
 	if (isStereo())
@@ -426,7 +426,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::enterNewEdit(const Timestamp &p
 	// If we're at the end of the edit list, there's nothing else for us to do here
 	if (allDataRead())
 		return;
-	
+
 	// For an empty edit, we may need to adjust the start time
 	if (_parentTrack->editList[_curEdit].mediaTime == -1) {
 		// Just invalidate the current media position (and make sure the scale

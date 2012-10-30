@@ -32,7 +32,11 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/config-manager.h"
+
+#include "graphics/surface.h"
+#include "graphics/decoders/pcx.h"
 #include "graphics/thumbnail.h"
+
 #include "gui/saveload.h"
 
 #include "hugo/hugo.h"
@@ -88,51 +92,12 @@ const char *FileManager::getUifFilename() const {
 }
 
 /**
- * Convert 4 planes (RGBI) data to 8-bit DIB format
- * Return original plane data ptr
- */
-byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, ImagePtr dataPtr) const {
-	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, ImagePtr dataPtr)", y, bpl);
-
-	dataPtr += y * bpl * 8;                         // Point to correct DIB line
-	for (int16 r = 0, g = bpl, b = g + bpl, i = b + bpl; r < bpl; r++, g++, b++, i++) { // Each byte in all planes
-		for (int8 bit = 7; bit >= 0; bit--) {       // Each bit in byte
-			*dataPtr++ = (((p[r] >> bit & 1) << 0) |
-			              ((p[g] >> bit & 1) << 1) |
-			              ((p[b] >> bit & 1) << 2) |
-			              ((p[i] >> bit & 1) << 3));
-		}
-	}
-	return p;
-}
-
-/**
  * Read a pcx file of length len.  Use supplied seqPtr and image_p or
  * allocate space if NULL.  Name used for errors.  Returns address of seqPtr
  * Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
  */
-Seq *FileManager::readPCX(Common::ReadStream &f, Seq *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
+Seq *FileManager::readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
-
-	// Read in the PCC header and check consistency
-	_PCCHeader._mfctr = f.readByte();
-	_PCCHeader._vers = f.readByte();
-	_PCCHeader._enc = f.readByte();
-	_PCCHeader._bpx = f.readByte();
-	_PCCHeader._x1 = f.readUint16LE();
-	_PCCHeader._y1 = f.readUint16LE();
-	_PCCHeader._x2 = f.readUint16LE();
-	_PCCHeader._y2 = f.readUint16LE();
-	_PCCHeader._xres = f.readUint16LE();
-	_PCCHeader._yres = f.readUint16LE();
-	f.read(_PCCHeader._palette, sizeof(_PCCHeader._palette));
-	_PCCHeader._vmode = f.readByte();
-	_PCCHeader._planes = f.readByte();
-	_PCCHeader._bytesPerLine = f.readUint16LE();
-	f.read(_PCCHeader._fill2, sizeof(_PCCHeader._fill2));
-
-	if (_PCCHeader._mfctr != 10)
-		error("Bad data file format: %s", name);
 
 	// Allocate memory for Seq if 0
 	if (seqPtr == 0) {
@@ -140,14 +105,20 @@ Seq *FileManager::readPCX(Common::ReadStream &f, Seq *seqPtr, byte *imagePtr, co
 			error("Insufficient memory to run game.");
 	}
 
+	Graphics::PCXDecoder pcx;
+	if (!pcx.loadStream(f))
+		error("Error while reading PCX image");
+
+	const Graphics::Surface *pcxSurface = pcx.getSurface();
+	if (pcxSurface->format.bytesPerPixel != 1)
+		error("Invalid bytes per pixel in PCX surface (%d)", pcxSurface->format.bytesPerPixel);
+
 	// Find size of image data in 8-bit DIB format
 	// Note save of x2 - marks end of valid data before garbage
-	uint16 bytesPerLine4 = _PCCHeader._bytesPerLine * 4; // 4-bit bpl
-	seqPtr->_bytesPerLine8 = bytesPerLine4 * 2;      // 8-bit bpl
-	seqPtr->_lines = _PCCHeader._y2 - _PCCHeader._y1 + 1;
-	seqPtr->_x2 = _PCCHeader._x2 - _PCCHeader._x1 + 1;
+	seqPtr->_lines = pcxSurface->h;
+	seqPtr->_x2 = seqPtr->_bytesPerLine8 = pcxSurface->w;
 	// Size of the image
-	uint16 size = seqPtr->_lines * seqPtr->_bytesPerLine8;
+	uint16 size = pcxSurface->w * pcxSurface->h;
 
 	// Allocate memory for image data if NULL
 	if (imagePtr == 0)
@@ -156,26 +127,9 @@ Seq *FileManager::readPCX(Common::ReadStream &f, Seq *seqPtr, byte *imagePtr, co
 	assert(imagePtr);
 
 	seqPtr->_imagePtr = imagePtr;
+	for (uint16 y = 0; y < pcxSurface->h; y++)
+		memcpy(imagePtr + y * pcxSurface->w, pcxSurface->getBasePtr(0, y), pcxSurface->w);
 
-	// Process the image data, converting to 8-bit DIB format
-	uint16 y = 0;                                   // Current line index
-	byte  pline[kXPix];                             // Hold 4 planes of data
-	byte  *p = pline;                               // Ptr to above
-	while (y < seqPtr->_lines) {
-		byte c = f.readByte();
-		if ((c & kRepeatMask) == kRepeatMask) {
-			byte d = f.readByte();                  // Read data byte
-			for (int i = 0; i < (c & kLengthMask); i++) {
-				*p++ = d;
-				if ((uint16)(p - pline) == bytesPerLine4)
-					p = convertPCC(pline, y++, _PCCHeader._bytesPerLine, imagePtr);
-			}
-		} else {
-			*p++ = c;
-			if ((uint16)(p - pline) == bytesPerLine4)
-				p = convertPCC(pline, y++, _PCCHeader._bytesPerLine, imagePtr);
-		}
-	}
 	return seqPtr;
 }
 

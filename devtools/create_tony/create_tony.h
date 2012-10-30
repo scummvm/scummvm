@@ -28,7 +28,7 @@
 #define DATAALIGNMENT 4
 
 #define TONY_DAT_VER_MAJ 0  // 1 byte
-#define TONY_DAT_VER_MIN 1  // 1 byte
+#define TONY_DAT_VER_MIN 3  // 1 byte
 
 // Number of variants of the game. For the moment, it's the same
 // as the number of languages

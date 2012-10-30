@@ -848,10 +848,47 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 	PATCH_END
 };
 
+// Script 814 of QFG1VGA is responsible for showing dialogs. However, the death
+// screen message shown when the hero dies in room 64 (ghost room) is too large
+// (254 chars long). Since the window header and main text are both stored in
+// temp space, this is an issue, as the scripts read the window header, then the
+// window text, which erases the window header text because of its length. To
+// fix that, we allocate more temp space and move the pointer used for the
+// window header a little bit, wherever it's used in script 814.
+// Fixes bug #3568431.
+
+// Patch 1: Increase temp space
+const byte qfg1vgaSignatureTempSpace[] = {
+	4,
+	0x3f, 0xba,       // link 0xba
+	0x87, 0x00,       // lap 0
+	0
+};
+
+const uint16 qfg1vgaPatchTempSpace[] = {
+	0x3f, 0xca,       // link 0xca
+	PATCH_END
+};
+
+// Patch 2: Move the pointer used for the window header a little bit
+const byte qfg1vgaSignatureDialogHeader[] = {
+	4,
+	0x5b, 0x04, 0x80,  // lea temp[0x80]
+	0x36,              // push
+	0
+};
+
+const uint16 qfg1vgaPatchDialogHeader[] = {
+	0x5b, 0x04, 0x90,  // lea temp[0x90]
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
 	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
 	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
+	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,         qfg1vgaPatchTempSpace },
+	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,      qfg1vgaPatchDialogHeader },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -915,9 +952,53 @@ const uint16 qfg3PatchImportDialog[] = {
 	PATCH_END
 };
 
+
+
+// ===========================================================================
+// Patch for the Woo dialog option in Uhura's conversation. Bug #3040722
+// Problem: The Woo dialog option (0xffb5) is negative, and therefore
+// treated as an option opening a submenu. This leads to uhuraTell::doChild
+// being called, which calls hero::solvePuzzle and then proceeds with
+// Teller::doChild to open the submenu. However, there is no actual submenu
+// defined for option -75 since -75 does not show up in uhuraTell::keys.
+// This will cause Teller::doChild to run out of bounds while scanning through
+// uhuraTell::keys.
+// Strategy: there is another conversation option in uhuraTell::doChild calling
+// hero::solvePuzzle (0xfffc) which does a ret afterwards without going to
+// Teller::doChild. We jump to this call of hero::solvePuzzle to get that same
+// behaviour.
+
+const byte qfg3SignatureWooDialog[] = {
+	30,
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0xb6,       // ldi b6
+	0x1a,             // eq?
+	0x2f, 0x05,       // bt 05
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0x9b,       // ldi 9b
+	0x1a,             // eq?
+	0x31, 0x0c,       // bnt 0c
+	0x38, 0x97, 0x02, // pushi 0297
+	0x7a,             // push2
+	0x38, 0x0c, 0x01, // pushi 010c
+	0x7a,             // push2
+	0x81, 0x00,       // lag 00
+	0x4a, 0x08,       // send 08
+	0x67, 0x12,       // pTos 12 (query)
+	0x35, 0xb5,       // ldi b5
+	0
+};
+
+const uint16 qfg3PatchWooDialog[] = {
+	PATCH_ADDTOOFFSET | +0x29,
+	0x33, 0x11, // jmp to 0x6a2, the call to hero::solvePuzzle for 0xFFFC
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg3Signatures[] = {
 	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog,         qfg3PatchImportDialog },
+	{    440, "dialog crash when asking about Woo",             1, PATCH_MAGICDWORD(0x67, 0x12, 0x35, 0xb5),  -26, qfg3SignatureWooDialog,         qfg3PatchWooDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

@@ -214,7 +214,7 @@ private:
 	};
 
 	OldIndex _ixInfo;
-	AVIHeader _header;	
+	AVIHeader _header;
 
 	Common::SeekableReadStream *_fileStream;
 	bool _decodedHeader;

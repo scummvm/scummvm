@@ -39,19 +39,6 @@ namespace Tony {
 
 namespace MPAL {
 
-#define GETARG(type)   va_arg(v, type)
-
-/****************************************************************************\
-*       Copyright
-\****************************************************************************/
-
-const char *mpalCopyright =
-	"\n\nMPAL - MultiPurpose Adventure Language for Windows 95\n"
-	"Copyright 1997-98 Giovanni Bajo and Luca Giusti\n"
-	"ALL RIGHTS RESERVED\n"
-	"\n"
-	"\n";
-
 /****************************************************************************\
 *       Internal functions
 \****************************************************************************/
@@ -363,24 +350,22 @@ static char *duplicateDialogPeriod(uint32 nPeriod) {
 MpalHandle resLoad(uint32 dwId) {
 	MpalHandle h;
 	char head[4];
-	uint32 nBytesRead;
-	uint32 nSizeComp, nSizeDecomp;
 	byte *temp, *buf;
 
 	for (int i = 0; i < GLOBALS._nResources; i++)
 		if (GLOBALS._lpResources[i * 2] == dwId) {
 			GLOBALS._hMpr.seek(GLOBALS._lpResources[i * 2 + 1]);
-			nBytesRead = GLOBALS._hMpr.read(head, 4);
+			uint32 nBytesRead = GLOBALS._hMpr.read(head, 4);
 			if (nBytesRead != 4)
 				return NULL;
 			if (head[0] != 'R' || head[1] != 'E' || head[2] != 'S' || head[3] != 'D')
 				return NULL;
 
-			nSizeDecomp = GLOBALS._hMpr.readUint32LE();
+			uint32 nSizeDecomp = GLOBALS._hMpr.readUint32LE();
 			if (GLOBALS._hMpr.err())
 				return NULL;
 
-			nSizeComp = GLOBALS._hMpr.readUint32LE();
+			uint32 nSizeComp = GLOBALS._hMpr.readUint32LE();
 			if (GLOBALS._hMpr.err())
 				return NULL;
 
@@ -463,18 +448,16 @@ static uint32 *GetItemList(uint32 nLoc) {
 
 static LpItem getItemData(uint32 nOrdItem) {
 	LpMpalItem curitem = GLOBALS._lpmiItems + nOrdItem;
-	LpItem ret;
-	MpalHandle hDat;
 	char *dat;
 	char *patlength;
 
 	// Zeroing out the allocated memory is required!!!
-	ret = (LpItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(Item));
+	LpItem ret = (LpItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(Item));
 	if (ret == NULL)
 		return NULL;
 	ret->_speed = 150;
 
-	hDat = resLoad(curitem->_dwRes);
+	MpalHandle hDat = resLoad(curitem->_dwRes);
 	dat = (char *)globalLock(hDat);
 
 	if (dat[0] == 'D' && dat[1] == 'A' && dat[2] == 'T') {
@@ -659,6 +642,9 @@ void ScriptThread(CORO_PARAM, const void *param) {
 				CORO_KILL_SELF();
 				return;
 			}
+
+			// WORKAROUND: Wait for events to pulse.
+			CORO_SLEEP(1);
 		}
 	}
 
@@ -727,6 +713,9 @@ void ActionThread(CORO_PARAM, const void *param) {
 			GLOBALS._mpalError = 1;
 			break;
 		}
+
+		// WORKAROUND: Wait for events to pulse.
+		CORO_SLEEP(1);
 	}
 
 	globalDestroy(_ctx->item);
@@ -1138,6 +1127,9 @@ void GroupThread(CORO_PARAM, const void *param) {
 					CORO_KILL_SELF();
 					return;
 				}
+
+				// WORKAROUND: Wait for events to pulse.
+				CORO_SLEEP(1);
 			}
 
 			// The gruop is finished, so we can return to the calling function.
@@ -1403,11 +1395,7 @@ bool doSelection(uint32 i, uint32 dwData) {
  */
 bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 			  LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings) {
-	Common::File hMpc;
 	byte buf[5];
-	uint32 nBytesRead;
-	bool bCompress;
-	uint32 dwSizeDecomp, dwSizeComp;
 	byte *cmpbuf;
 
 	// Save the array of custom functions
@@ -1415,21 +1403,22 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	GLOBALS._lplpFunctionStrings = lpcfStrings;
 
 	// OPen the MPC file for reading
+	Common::File hMpc;
 	if (!hMpc.open(lpszMpcFileName))
 		return false;
 
 	// Read and check the header
-	nBytesRead = hMpc.read(buf, 5);
+	uint32 nBytesRead = hMpc.read(buf, 5);
 	if (nBytesRead != 5)
 		return false;
 
 	if (buf[0] != 'M' || buf[1] != 'P' || buf[2] != 'C' || buf[3] != 0x20)
 		return false;
 
-	bCompress = buf[4];
+	bool bCompress = buf[4];
 
 	// Reads the size of the uncompressed file, and allocate memory
-	dwSizeDecomp = hMpc.readUint32LE();
+	uint32 dwSizeDecomp = hMpc.readUint32LE();
 	if (hMpc.err())
 		return false;
 
@@ -1439,7 +1428,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 
 	if (bCompress) {
 		// Get the compressed size and read the data in
-		dwSizeComp = hMpc.readUint32LE();
+		uint32 dwSizeComp = hMpc.readUint32LE();
 		if (hMpc.err())
 			return false;
 
@@ -1480,7 +1469,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	// Seek to the end of the file to read overall information
 	GLOBALS._hMpr.seek(-12, SEEK_END);
 
-	dwSizeComp = GLOBALS._hMpr.readUint32LE();
+	uint32 dwSizeComp = GLOBALS._hMpr.readUint32LE();
 	if (GLOBALS._hMpr.err())
 		return false;
 
@@ -1958,11 +1947,9 @@ uint32 mpalGetError() {
  * @returns		TRUE if the script 'was launched, FALSE on failure
  */
 bool mpalExecuteScript(int nScript) {
-	LpMpalScript s;
-
 	LockScripts();
 	int n = scriptGetOrderFromNum(nScript);
-	s = (LpMpalScript)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalScript));
+	LpMpalScript s = (LpMpalScript)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalScript));
 	if (s == NULL)
 		return false;
 

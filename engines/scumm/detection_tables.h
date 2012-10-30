@@ -236,7 +236,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"monkey", "VGA",      "vga", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO1(GUIO_NOSPEECH)},
 	{"monkey", "EGA",      "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, GF_16COLOR,     Common::kPlatformPC, GUIO1(GUIO_NOSPEECH)},
 	{"monkey", "No AdLib", "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR,                        GF_16COLOR,     Common::kPlatformAtariST, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
-	{"monkey", "Demo",     "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_ADLIB,            GF_16COLOR,     Common::kPlatformPC, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
+	{"monkey", "Demo",     "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB,            GF_16COLOR,     Common::kPlatformPC, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"monkey", "CD",           0, GID_MONKEY,     5, 0, MDT_ADLIB,                        GF_AUDIOTRACKS, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"monkey", "FM-TOWNS",     0, GID_MONKEY,     5, 0, MDT_TOWNS,                        GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_MIDITOWNS, GUIO_NOASPECT)},
 	{"monkey", "SEGA",         0, GID_MONKEY,     5, 0, MDT_NONE,                         GF_AUDIOTRACKS, Common::kPlatformSegaCD, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},

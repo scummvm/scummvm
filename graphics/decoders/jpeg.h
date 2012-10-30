@@ -25,6 +25,7 @@
  * Image decoder used in engines:
  *  - groovie
  *  - mohawk
+ *  - wintermute
  */
 
 #ifndef GRAPHICS_JPEG_H

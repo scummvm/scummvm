@@ -2882,17 +2882,17 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 	reg_t addr = NULL_REG;
 
 	if (!obj) {
-		DebugPrintf("Not an object.");
+		DebugPrintf("Not an object.\n");
 		return true;
 	}
 
 	if (selectorId < 0) {
-		DebugPrintf("Not a valid selector name.");
+		DebugPrintf("Not a valid selector name.\n");
 		return true;
 	}
 
 	if (lookupSelector(_engine->_gamestate->_segMan, objAddr, selectorId, NULL, &addr) != kSelectorMethod) {
-		DebugPrintf("Not a method.");
+		DebugPrintf("Not a method.\n");
 		return true;
 	}
 

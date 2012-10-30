@@ -402,7 +402,7 @@ public:
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples) {
-		// Cap us off so we don't read past _totalSamples					
+		// Cap us off so we don't read past _totalSamples
 		int samplesRead = _parentStream->readBuffer(buffer, MIN<int>(numSamples, _totalSamples - _samplesRead));
 		_samplesRead += samplesRead;
 		return samplesRead;
@@ -413,7 +413,7 @@ public:
 	int getRate() const { return _parentStream->getRate(); }
 
 private:
-	int getChannels() const { return isStereo() ? 2 : 1; } 
+	int getChannels() const { return isStereo() ? 2 : 1; }
 
 	AudioStream *_parentStream;
 	DisposeAfterUse::Flag _disposeAfterUse;

@@ -200,10 +200,10 @@ void ScreenEffects::stepBlendedPalette() {
 		setBlendedPalette(_blendedPaletteStatus._palette, _blendedPaletteStatus._newPalette,
 			_blendedPaletteStatus._colorCount, _blendedPaletteStatus._value, _blendedPaletteStatus._maxValue);
 		if (_blendedPaletteStatus._value == _blendedPaletteStatus._maxValue)
-			_blendedPaletteStatus._value++;	
-		else					
-			_blendedPaletteStatus._value = MIN<int16>(_blendedPaletteStatus._value + _blendedPaletteStatus._incr, _blendedPaletteStatus._maxValue);	
-	}		
+			_blendedPaletteStatus._value++;
+		else
+			_blendedPaletteStatus._value = MIN<int16>(_blendedPaletteStatus._value + _blendedPaletteStatus._incr, _blendedPaletteStatus._maxValue);
+	}
 }
 
 void ScreenEffects::copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2) {

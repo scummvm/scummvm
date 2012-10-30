@@ -138,7 +138,7 @@ Common::Rect * MicroTileArray::getRectangles(int *num_rects, int min_x, int min_
 			x0 = CLIP (x0, min_x, max_x);
 			y0 = CLIP (y0, min_y, max_y);
 			y1 = CLIP (y1, min_y, max_y);
-			
+
 			// FIXME: Why is the following code in an #if block?
 #if 1
 			start = i;

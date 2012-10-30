@@ -197,7 +197,7 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			} else {
 				it->planeOffsetX = 0;
 			}
-			
+
 			if (it->planeRect.top < 0) {
 				it->planeOffsetY = -it->planeRect.top;
 				it->planeRect.top = 0;
@@ -420,7 +420,7 @@ void GfxFrameout::deletePlaneItems(reg_t planeObject) {
 		} else {
 			objectMatches = true;
 		}
-		
+
 		if (objectMatches) {
 			FrameoutEntry *itemEntry = *listIterator;
 			listIterator = _screenItems.erase(listIterator);
@@ -661,7 +661,7 @@ void GfxFrameout::kernelFrameout() {
 
 			if (!itemEntry->visible)
 				continue;
-			
+
 			if (itemEntry->object.isNull()) {
 				// Picture cel data
 				_coordAdjuster->fromScriptToDisplay(itemEntry->y, itemEntry->x);
@@ -703,7 +703,7 @@ void GfxFrameout::kernelFrameout() {
 						view->getCelRect(itemEntry->loopNo, itemEntry->celNo,
 							itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
 					else
-						view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, 
+						view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo,
 							itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX,
 							itemEntry->scaleY, itemEntry->celRect);
 
@@ -755,10 +755,10 @@ void GfxFrameout::kernelFrameout() {
 				if (view) {
 					if (!clipRect.isEmpty()) {
 						if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-							view->draw(itemEntry->celRect, clipRect, translatedClipRect, 
+							view->draw(itemEntry->celRect, clipRect, translatedClipRect,
 								itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
 						else
-							view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect, 
+							view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect,
 								itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
 					}
 				}
@@ -817,7 +817,7 @@ void GfxFrameout::printPlaneItemList(Console *con, reg_t planeObject) {
 	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
 		FrameoutEntry *e = *listIterator;
 		reg_t itemPlane = readSelector(_segMan, e->object, SELECTOR(plane));
-			
+
 		if (planeObject == itemPlane) {
 			Common::String curItemName = _segMan->getObjectName(e->object);
 			Common::Rect icr = e->celRect;

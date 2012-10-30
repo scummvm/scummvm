@@ -51,10 +51,8 @@ void RMPalette::readFromStream(Common::ReadStream &ds) {
 \****************************************************************************/
 
 void RMPattern::RMSlot::readFromStream(Common::ReadStream &ds, bool bLOX) {
-	byte type;
-
 	// Type
-	type = ds.readByte();
+	byte type = ds.readByte();
 	_type = (RMPattern::RMSlotType)type;
 
 	// Data
@@ -73,8 +71,6 @@ void RMPattern::RMSlot::readFromStream(Common::ReadStream &ds, bool bLOX) {
 \****************************************************************************/
 
 void RMPattern::readFromStream(Common::ReadStream &ds, bool bLOX) {
-	int i;
-
 	// Pattern name
 	if (!bLOX)
 		_name = readString(ds);
@@ -94,7 +90,7 @@ void RMPattern::readFromStream(Common::ReadStream &ds, bool bLOX) {
 	// Create and read the slots
 	_slots = new RMSlot[_nSlots];
 
-	for (i = 0; i < _nSlots && !ds.err(); i++) {
+	for (int i = 0; i < _nSlots && !ds.err(); i++) {
 		if (bLOX)
 			_slots[i].readFromStream(ds, true);
 		else
@@ -118,14 +114,12 @@ void RMPattern::stopSfx(RMSfx *sfx) {
 }
 
 int RMPattern::init(RMSfx *sfx, bool bPlayP0, byte *bFlag) {
-	int i;
-
 	// Read the current time
 	_nStartTime = g_vm->getTime();
 	_nCurSlot = 0;
 
 	// Find the first frame of the pattern
-	i = 0;
+	int i = 0;
 	while (_slots[i]._type != SPRITE) {
 		assert(i + 1 < _nSlots);
 		i++;
@@ -297,15 +291,13 @@ void RMSprite::getSizeFromStream(Common::SeekableReadStream &ds, int *dimx, int 
 }
 
 void RMSprite::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
-	int dimx, dimy;
-
 	// Sprite name
 	if (!bLOX)
 		_name = readString(ds);
 
 	// Dimensions
-	dimx = ds.readSint32LE();
-	dimy = ds.readSint32LE();
+	int dimx = ds.readSint32LE();
+	int dimy = ds.readSint32LE();
 
 	// Bounding box
 	_rcBox.readFromStream(ds);
@@ -343,12 +335,10 @@ RMSprite::~RMSprite() {
 \****************************************************************************/
 
 void RMSfx::readFromStream(Common::ReadStream &ds, bool bLOX) {
-	int size;
-
 	// sfx name
 	_name = readString(ds);
 
-	size = ds.readSint32LE();
+	int size = ds.readSint32LE();
 
 	// Read the entire buffer into a MemoryReadStream
 	byte *buffer = (byte *)malloc(size);
@@ -390,7 +380,7 @@ void RMSfx::setVolume(int vol) {
 
 void RMSfx::pause(bool bPause) {
 	if (_fx) {
-		_fx->pause(bPause);
+		_fx->setPause(bPause);
 	}
 }
 
@@ -463,9 +453,6 @@ bool RMItem::isIn(const RMPoint &pt, int *size)  {
 }
 
 void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
-	int i, dimx, dimy;
-	byte cm;
-
 	// MPAL code
 	_mpalCode = ds.readSint32LE();
 
@@ -490,7 +477,7 @@ void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 	_nPatterns = ds.readSint32LE();
 
 	// Color mode
-	cm = ds.readByte();
+	byte cm = ds.readByte();
 	_cm = (RMColorMode)cm;
 
 	// Flag for the presence of custom palette differences
@@ -519,9 +506,10 @@ void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 		_sfx = new RMSfx[_nSfx];
 	_patterns = new RMPattern[_nPatterns + 1];
 
+	int dimx, dimy;
 	// Read in class data
-	if (!ds.err())
-		for (i = 0; i < _nSprites && !ds.err(); i++) {
+	if (!ds.err()) {
+		for (int i = 0; i < _nSprites && !ds.err(); i++) {
 			// Download the sprites
 			if (bLOX) {
 				_sprites[i].LOXGetSizeFromStream(ds, &dimx, &dimy);
@@ -536,23 +524,26 @@ void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 			if (_cm == CM_256 && _bPal)
 				_sprites[i].setPalette(_pal._data);
 		}
+	}
 
-	if (!ds.err())
-		for (i = 0; i < _nSfx && !ds.err(); i++) {
+	if (!ds.err()) {
+		for (int i = 0; i < _nSfx && !ds.err(); i++) {
 			if (bLOX)
 				_sfx[i].readFromStream(ds, true);
 			else
 				_sfx[i].readFromStream(ds, false);
 		}
+	}
 
 	// Read the pattern from pattern 1
-	if (!ds.err())
-		for (i = 1; i <= _nPatterns && !ds.err(); i++) {
+	if (!ds.err()) {
+		for (int i = 1; i <= _nPatterns && !ds.err(); i++) {
 			if (bLOX)
 				_patterns[i].readFromStream(ds, true);
 			else
 				_patterns[i].readFromStream(ds, false);
 		}
+	}
 
 	// Initialize the current pattern
 	if (_bInitCurPattern)
@@ -662,7 +653,7 @@ void RMItem::setStatus(int nStatus) {
 	_bIsActive = (nStatus > 0);
 }
 
-RMPoint RMItem::hotspot() {
+RMPoint RMItem::getHotspot() {
 	return _hot;
 }
 
@@ -677,7 +668,7 @@ void RMItem::setPattern(int nPattern, bool bPlayP0) {
 		if (_nCurPattern > 0)
 			_patterns[_nCurPattern].stopSfx(_sfx);
 	}
-	
+
 	// Remember the current pattern
 	_nCurPattern = nPattern;
 
@@ -789,12 +780,9 @@ void RMItem::playSfx(int nSfx) {
 }
 
 void RMItem::pauseSound(bool bPause) {
-	int i;
-
-	for (i = 0; i < _nSfx; i++)
+	for (int i = 0; i < _nSfx; i++)
 		_sfx[i].pause(bPause);
 }
-
 
 
 /****************************************************************************\
@@ -823,8 +811,8 @@ int RMWipe::priority() {
 	return 200;
 }
 
-void RMWipe::Unregister() {
-	RMGfxTask::Unregister();
+void RMWipe::unregister() {
+	RMGfxTask::unregister();
 	assert(_nInList == 0);
 	CoroScheduler.setEvent(_hUnregistered);
 }
@@ -952,7 +940,7 @@ short RMCharacter::findPath(short source, short destination) {
 		error = 1;                         // Possible error
 
 		// 1st cycle: explore possible new nodes
-		for (int i = 0; i < cur->_numbBox; i++)
+		for (int i = 0; i < cur->_numbBox; i++) {
 			if (valid[i] == 1) {
 				error = 0;                 // Failure de-bunked
 				int j = 0;
@@ -967,12 +955,13 @@ short RMCharacter::findPath(short source, short destination) {
 						minCost = nodeCost[i] + 1;
 				}
 			}
+		}
 
 		if (error)
 			finish = true;                                 // All nodes saturated
 
 		// 2nd cycle: adding new nodes that were found, saturate old nodes
-		for (int i = 0; i < cur->_numbBox; i++)
+		for (int i = 0; i < cur->_numbBox; i++) {
 			if ((valid[i] == 1) && ((nodeCost[i] + 1) == minCost)) {
 				box[i]._adj[nextNode[i]] = 2;
 				nodeCost[nextNode[i]] = minCost;
@@ -984,6 +973,7 @@ short RMCharacter::findPath(short source, short destination) {
 				if (nextNode[i] == destination)
 					finish = true;
 			}
+		}
 	}
 
 	// Remove the path from the adjacent modified matrixes
@@ -1079,91 +1069,91 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 }
 
 
-RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint punto) {
-	short passi, minimo;
-	RMPoint nuovo, trovato;
-	minimo = 32000;
+RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint point) {
+	short steps;
+	RMPoint newPt, foundPt;
+	short minStep = 32000;
 
 	if (UP) {
-		nuovo = punto;
-		passi = 0;
-		while ((inWhichBox(nuovo) == -1) && (nuovo._y >= 0)) {
-			nuovo._y--;
-			passi++;
+		newPt = point;
+		steps = 0;
+		while ((inWhichBox(newPt) == -1) && (newPt._y >= 0)) {
+			newPt._y--;
+			steps++;
 		}
-		if ((inWhichBox(nuovo) != -1) && (passi < minimo) &&
-		        findPath(inWhichBox(_pos), inWhichBox(nuovo))) {
-			minimo = passi;
-			nuovo._y--;       // to avoid error?
-			trovato = nuovo;
+		if ((inWhichBox(newPt) != -1) && (steps < minStep) &&
+		        findPath(inWhichBox(_pos), inWhichBox(newPt))) {
+			minStep = steps;
+			newPt._y--;       // to avoid error?
+			foundPt = newPt;
 		}
 	}
 
 	if (DOWN) {
-		nuovo = punto;
-		passi = 0;
-		while ((inWhichBox(nuovo) == -1) && (nuovo._y < 480)) {
-			nuovo._y++;
-			passi++;
+		newPt = point;
+		steps = 0;
+		while ((inWhichBox(newPt) == -1) && (newPt._y < 480)) {
+			newPt._y++;
+			steps++;
 		}
-		if ((inWhichBox(nuovo) != -1) && (passi < minimo) &&
-		        findPath(inWhichBox(_pos), inWhichBox(nuovo))) {
-			minimo = passi;
-			nuovo._y++;     // to avoid error?
-			trovato = nuovo;
+		if ((inWhichBox(newPt) != -1) && (steps < minStep) &&
+		        findPath(inWhichBox(_pos), inWhichBox(newPt))) {
+			minStep = steps;
+			newPt._y++;     // to avoid error?
+			foundPt = newPt;
 		}
 	}
 
 	if (RIGHT) {
-		nuovo = punto;
-		passi = 0;
-		while ((inWhichBox(nuovo) == -1) && (nuovo._x < 640)) {
-			nuovo._x++;
-			passi++;
+		newPt = point;
+		steps = 0;
+		while ((inWhichBox(newPt) == -1) && (newPt._x < 640)) {
+			newPt._x++;
+			steps++;
 		}
-		if ((inWhichBox(nuovo) != -1) && (passi < minimo) &&
-		        findPath(inWhichBox(_pos), inWhichBox(nuovo))) {
-			minimo = passi;
-			nuovo._x++;     // to avoid error?
-			trovato = nuovo;
+		if ((inWhichBox(newPt) != -1) && (steps < minStep) &&
+		        findPath(inWhichBox(_pos), inWhichBox(newPt))) {
+			minStep = steps;
+			newPt._x++;     // to avoid error?
+			foundPt = newPt;
 		}
 	}
 
 	if (LEFT) {
-		nuovo = punto;
-		passi = 0;
-		while ((inWhichBox(nuovo) == -1) && (nuovo._x >= 0)) {
-			nuovo._x--;
-			passi++;
+		newPt = point;
+		steps = 0;
+		while ((inWhichBox(newPt) == -1) && (newPt._x >= 0)) {
+			newPt._x--;
+			steps++;
 		}
-		if ((inWhichBox(nuovo) != -1) && (passi < minimo) &&
-		        findPath(inWhichBox(_pos), inWhichBox(nuovo))) {
-			minimo = passi;
-			nuovo._x--;     // to avoid error?
-			trovato = nuovo;
+		if ((inWhichBox(newPt) != -1) && (steps < minStep) &&
+		        findPath(inWhichBox(_pos), inWhichBox(newPt))) {
+			minStep = steps;
+			newPt._x--;     // to avoid error?
+			foundPt = newPt;
 		}
 	}
 
-	if (minimo == 32000)
-		trovato = punto;
+	if (minStep == 32000)
+		foundPt = point;
 
-	return trovato;
+	return foundPt;
 }
 
 
-RMPoint RMCharacter::nearestPoint(const RMPoint &punto) {
-	return searching(1, 1, 1, 1, punto);
+RMPoint RMCharacter::nearestPoint(const RMPoint &point) {
+	return searching(1, 1, 1, 1, point);
 }
 
 
-short RMCharacter::scanLine(const RMPoint &punto) {
+short RMCharacter::scanLine(const RMPoint &point) {
 	int Ldx, Ldy, Lcount;
 	float Lfx, Lfy, Lslope;
 	RMPoint Lstart, Lend, Lscan;
 	signed char Lspeed, Lstatus;
 
 	Lstart = _pos;
-	Lend = punto;
+	Lend = point;
 	Ldx = Lstart._x - Lend._x;
 	Ldy = Lstart._y - Lend._y;
 	Lfx = Ldx;
@@ -1209,60 +1199,60 @@ short RMCharacter::scanLine(const RMPoint &punto) {
 /**
  * Calculates intersections between the straight line and the closest BBOX
  */
-RMPoint RMCharacter::invScanLine(const RMPoint &punto) {
-	int Ldx, Ldy, Lcount;
-	float Lfx, Lfy, Lslope;
-	RMPoint Lstart, Lend, Lscan;
-	signed char Lspeed, Lstatus, Lbox = -1;
+RMPoint RMCharacter::invScanLine(const RMPoint &point) {
+	RMPoint lStart = point;      // Exchange!
+	RMPoint lEnd = _pos;    // :-)
+	int lDx = lStart._x - lEnd._x;
+	int lDy = lStart._y - lEnd._y;
+	float lFx = lDx;
+	float lFy = lDy;
+	lDx = ABS(lDx);
+	lDy = ABS(lDy);
+	signed char lSpeed = 1;
+	int lCount = 0;
 
-	Lstart = punto;      // Exchange!
-	Lend = _pos;    // :-)
-	Ldx = Lstart._x - Lend._x;
-	Ldy = Lstart._y - Lend._y;
-	Lfx = Ldx;
-	Lfy = Ldy;
-	Ldx = ABS(Ldx);
-	Ldy = ABS(Ldy);
-	Lspeed = 1;
-	Lcount = 0;
+	signed char lStatus;
+	float lSlope;
 
-	if (Ldx > Ldy) {
-		Lslope = Lfy / Lfx;
-		if (Lend._x < Lstart._x)
-			Lspeed = -Lspeed;
-		Lstatus = 1;
+	if (lDx > lDy) {
+		lSlope = lFy / lFx;
+		if (lEnd._x < lStart._x)
+			lSpeed = -lSpeed;
+		lStatus = 1;
 	} else {
-		Lslope = Lfx / Lfy;
-		if (Lend._y < Lstart._y)
-			Lspeed = -Lspeed;
-		Lstatus = 0;
+		lSlope = lFx / lFy;
+		if (lEnd._y < lStart._y)
+			lSpeed = -lSpeed;
+		lStatus = 0;
 	}
-	Lscan = Lstart;
+
+	RMPoint lScan = lStart;
+	signed char lBox = -1;
 
 	for (;;) {
-		if (inWhichBox(Lscan) != -1) {
-			if (inWhichBox(Lscan) != Lbox) {
-				if (inWhichBox(_pos) == inWhichBox(Lscan) || findPath(inWhichBox(_pos), inWhichBox(Lscan)))
-					return Lscan;
+		if (inWhichBox(lScan) != -1) {
+			if (inWhichBox(lScan) != lBox) {
+				if (inWhichBox(_pos) == inWhichBox(lScan) || findPath(inWhichBox(_pos), inWhichBox(lScan)))
+					return lScan;
 				else
-					Lbox = inWhichBox(Lscan);
+					lBox = inWhichBox(lScan);
 			}
 		}
 
-		Lcount++;
-		if (Lstatus) {
-			Ldx = Lspeed * Lcount;
-			Ldy = (int)(Lslope * Ldx);
+		lCount++;
+		if (lStatus) {
+			lDx = lSpeed * lCount;
+			lDy = (int)(lSlope * lDx);
 		} else {
-			Ldy = Lspeed * Lcount;
-			Ldx = (int)(Lslope * Ldy);
+			lDy = lSpeed * lCount;
+			lDx = (int)(lSlope * lDy);
 		}
-		Lscan._x = Lstart._x + Ldx;
-		Lscan._y = Lstart._y + Ldy;
+		lScan._x = lStart._x + lDx;
+		lScan._y = lStart._y + lDy;
 
 		// WORKAROUND: Handles cases where the points never fall inside a bounding box
-		if (Lscan._x < -100 || Lscan._y < -100 || Lscan._x >= 1000 || Lscan._y >= 1000)
-			return punto;
+		if (lScan._x < -100 || lScan._y < -100 || lScan._x >= 1000 || lScan._y >= 1000)
+			return point;
 	}
 }
 
@@ -1272,25 +1262,24 @@ RMPoint RMCharacter::invScanLine(const RMPoint &punto) {
  */
 
 RMPoint RMCharacter::nearestHotSpot(int sourcebox, int destbox) {
-	RMPoint puntocaldo;
-	short cc;
-	int x, y, distanzaminima;
-	distanzaminima = 10000000;
+	RMPoint hotspot;
+	int x, y;
+	int minDist = 10000000;
 	RMBoxLoc *cur = _theBoxes->getBoxes(_curLocation);
 
-	for (cc = 0; cc < cur->_boxes[sourcebox]._numHotspot; cc++)
+	for (short cc = 0; cc < cur->_boxes[sourcebox]._numHotspot; cc++)
 		if ((cur->_boxes[sourcebox]._hotspot[cc]._destination) == destbox) {
 			x = ABS(cur->_boxes[sourcebox]._hotspot[cc]._hotx - _pos._x);
 			y = ABS(cur->_boxes[sourcebox]._hotspot[cc]._hoty - _pos._y);
 
-			if ((x * x + y * y) < distanzaminima) {
-				distanzaminima = x * x + y * y;
-				puntocaldo._x = cur->_boxes[sourcebox]._hotspot[cc]._hotx;
-				puntocaldo._y = cur->_boxes[sourcebox]._hotspot[cc]._hoty;
+			if ((x * x + y * y) < minDist) {
+				minDist = x * x + y * y;
+				hotspot._x = cur->_boxes[sourcebox]._hotspot[cc]._hotx;
+				hotspot._y = cur->_boxes[sourcebox]._hotspot[cc]._hoty;
 			}
 		}
 
-	return puntocaldo;
+	return hotspot;
 }
 
 void RMCharacter::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -1310,13 +1299,12 @@ void RMCharacter::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pr
 
 void RMCharacter::newBoxEntered(int nBox) {
 	RMBoxLoc *cur;
-	bool bOldReverse;
 
 	// Recall on ExitBox
 	mpalQueryDoAction(3, _curLocation, _curBox);
 
 	cur = _theBoxes->getBoxes(_curLocation);
-	bOldReverse = cur->_boxes[_curBox]._bReversed;
+	bool bOldReverse = cur->_boxes[_curBox]._bReversed;
 	_curBox = nBox;
 
 	// If Z is changed, we must remove it from the OT
@@ -1673,7 +1661,7 @@ RMCharacter::RMCharacter() {
 	_bMovingWithoutMinpath = false;
 	_bDrawNow = false;
 	_bNeedToStop = false;
-	
+
 	memset(_path, 0, sizeof(_path));
 
 	_pos.set(0, 0);
@@ -1693,10 +1681,6 @@ void RMCharacter::linkToBoxes(RMGameBoxes *boxes) {
 \****************************************************************************/
 
 void RMBox::readFromStream(Common::ReadStream &ds) {
-	uint16 w;
-	int i;
-	byte b;
-
 	// Bbox
 	_left = ds.readSint32LE();
 	_top = ds.readSint32LE();
@@ -1704,24 +1688,25 @@ void RMBox::readFromStream(Common::ReadStream &ds) {
 	_bottom = ds.readSint32LE();
 
 	// Adjacency
-	for (i = 0; i < MAXBOXES; i++) {
+	for (int i = 0; i < MAXBOXES; i++) {
 		_adj[i] = ds.readSint32LE();
 	}
 
 	// Misc
 	_numHotspot = ds.readSint32LE();
 	_destZ = ds.readByte();
-	b = ds.readByte();
+	byte b = ds.readByte();
 	_bActive = b;
 	b = ds.readByte();
 	_bReversed = b;
 
 	// Reversed expansion space
-	for (i = 0; i < 30; i++)
+	for (int i = 0; i < 30; i++)
 		ds.readByte();
 
+	uint16 w;
 	// Hotspots
-	for (i = 0; i < _numHotspot; i++) {
+	for (int i = 0; i < _numHotspot; i++) {
 		w = ds.readUint16LE();
 		_hotspot[i]._hotx = w;
 		w = ds.readUint16LE();
@@ -1745,14 +1730,12 @@ RMBoxLoc::~RMBoxLoc() {
 }
 
 void RMBoxLoc::readFromStream(Common::ReadStream &ds) {
-	int i;
 	char buf[2];
-	byte ver;
 
 	// ID and version
 	buf[0] = ds.readByte();
 	buf[1] = ds.readByte();
-	ver = ds.readByte();
+	byte ver = ds.readByte();
 	assert(buf[0] == 'B' && buf[1] == 'X');
 	assert(ver == 3);
 
@@ -1763,19 +1746,18 @@ void RMBoxLoc::readFromStream(Common::ReadStream &ds) {
 	_boxes = new RMBox[_numbBox];
 
 	// Read in boxes
-	for (i = 0; i < _numbBox; i++)
+	for (int i = 0; i < _numbBox; i++)
 		_boxes[i].readFromStream(ds);
 }
 
 void RMBoxLoc::recalcAllAdj() {
-	int i, j;
-
-	for (i = 0; i < _numbBox; i++) {
+	for (int i = 0; i < _numbBox; i++) {
 		Common::fill(_boxes[i]._adj, _boxes[i]._adj + MAXBOXES, 0);
 
-		for (j = 0; j < _boxes[i]._numHotspot; j++)
+		for (int j = 0; j < _boxes[i]._numHotspot; j++) {
 			if (_boxes[_boxes[i]._hotspot[j]._destination]._bActive)
 				_boxes[i]._adj[_boxes[i]._hotspot[j]._destination] = 1;
+		}
 	}
 }
 
@@ -1794,11 +1776,9 @@ RMGameBoxes::~RMGameBoxes() {
 }
 
 void RMGameBoxes::init() {
-	int i;
-
 	// Load boxes from disk
 	_nLocBoxes = 130;
-	for (i = 1; i <= _nLocBoxes; i++) {
+	for (int i = 1; i <= _nLocBoxes; i++) {
 		RMRes res(10000 + i);
 
 		Common::SeekableReadStream *ds = res.getReadStream();
@@ -1834,13 +1814,12 @@ bool RMGameBoxes::isInBox(int nLoc, int nBox, const RMPoint &pt) {
 }
 
 int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
-	int i;
 	RMBoxLoc *cur = getBoxes(nLoc);
 
 	if (!cur)
 		return -1;
 
-	for (i = 0; i < cur->_numbBox; i++) {
+	for (int i = 0; i < cur->_numbBox; i++) {
 		if (cur->_boxes[i]._bActive) {
 			if ((punto._x >= cur->_boxes[i]._left) && (punto._x <= cur->_boxes[i]._right) &&
 			        (punto._y >= cur->_boxes[i]._top)  && (punto._y <= cur->_boxes[i]._bottom))
@@ -1857,12 +1836,9 @@ void RMGameBoxes::changeBoxStatus(int nLoc, int nBox, int status) {
 }
 
 int RMGameBoxes::getSaveStateSize() {
-	int size;
-	int i;
+	int size = 4;
 
-	size = 4;
-
-	for (i = 1; i <= _nLocBoxes; i++) {
+	for (int i = 1; i <= _nLocBoxes; i++) {
 		size += 4;
 		size += _allBoxes[i]->_numbBox;
 	}
@@ -1871,38 +1847,34 @@ int RMGameBoxes::getSaveStateSize() {
 }
 
 void RMGameBoxes::saveState(byte *state) {
-	int i, j;
-
 	// Save the number of locations with boxes
 	WRITE_LE_UINT32(state, _nLocBoxes);
 	state += 4;
 
 	// For each location, write out the number of boxes and their status
-	for (i = 1; i <= _nLocBoxes; i++) {
+	for (int i = 1; i <= _nLocBoxes; i++) {
 		WRITE_LE_UINT32(state, _allBoxes[i]->_numbBox);
 		state += 4;
 
-		for (j = 0; j < _allBoxes[i]->_numbBox; j++)
+		for (int j = 0; j < _allBoxes[i]->_numbBox; j++)
 			*state++ = _allBoxes[i]->_boxes[j]._bActive;
 	}
 }
 
 void RMGameBoxes::loadState(byte *state) {
-	int i, j;
-	int nloc, nbox;
-
 	// Load number of items
-	nloc = READ_LE_UINT32(state);
+	int nloc = READ_LE_UINT32(state);
 	state += 4;
 
 	assert(nloc <= _nLocBoxes);
 
+	int nbox;
 	// For each location, read the number of boxes and their status
-	for (i = 1; i <= nloc; i++) {
+	for (int i = 1; i <= nloc; i++) {
 		nbox = READ_LE_UINT32(state);
 		state += 4;
 
-		for (j = 0; j < nbox ; j++) {
+		for (int j = 0; j < nbox ; j++) {
 			if (j < _allBoxes[i]->_numbBox)
 				_allBoxes[i]->_boxes[j]._bActive = *state;
 
@@ -1944,10 +1916,6 @@ int RMLocation::TEMPGetNumLoc() {
  */
 bool RMLocation::load(Common::SeekableReadStream &ds) {
 	char id[3];
-	int dimx, dimy;
-	byte ver;
-	byte cm;
-	int i;
 
 	// Reset dirty rectangling
 	_prevScroll.set(-1, -1);
@@ -1965,7 +1933,7 @@ bool RMLocation::load(Common::SeekableReadStream &ds) {
 		return false;
 
 	// Version
-	ver = ds.readByte();
+	byte ver = ds.readByte();
 	assert(ver == 6);
 
 	// Location name
@@ -1981,12 +1949,12 @@ bool RMLocation::load(Common::SeekableReadStream &ds) {
 	ds.skip(1);
 
 	// Location dimensions
-	dimx = ds.readSint32LE();
-	dimy = ds.readSint32LE();
+	int dimx = ds.readSint32LE();
+	int dimy = ds.readSint32LE();
 	_curScroll.set(0, 0);
 
 	// Read the color mode
-	cm = ds.readByte();
+	byte cm = ds.readByte();
 	_cmode = (RMColorMode)cm;
 
 	// Initialize the source buffer and read the location
@@ -2019,7 +1987,7 @@ bool RMLocation::load(Common::SeekableReadStream &ds) {
 
 
 	g_vm->freezeTime();
-	for (i = 0; i < _nItems && !ds.err(); i++)
+	for (int i = 0; i < _nItems && !ds.err(); i++)
 		_items[i].readFromStream(ds);
 	g_vm->unfreezeTime();
 
@@ -2028,12 +1996,8 @@ bool RMLocation::load(Common::SeekableReadStream &ds) {
 
 
 bool RMLocation::loadLOX(Common::SeekableReadStream &ds) {
-	int dimx, dimy;
-	byte ver;
-	int i;
-
 	// Version
-	ver = ds.readByte();
+	byte ver = ds.readByte();
 	assert(ver == 1);
 
 	// Location name
@@ -2045,8 +2009,8 @@ bool RMLocation::loadLOX(Common::SeekableReadStream &ds) {
 	TEMPTonyStart._y = ds.readSint32LE();
 
 	// Dimensions
-	dimx = ds.readSint32LE();
-	dimy = ds.readSint32LE();
+	int dimx = ds.readSint32LE();
+	int dimy = ds.readSint32LE();
 	_curScroll.set(0, 0);
 
 	// It's always 65K (16-bit) mode
@@ -2063,7 +2027,7 @@ bool RMLocation::loadLOX(Common::SeekableReadStream &ds) {
 	if (_nItems > 0)
 		_items = new RMItem[_nItems];
 
-	for (i = 0; i < _nItems && !ds.err(); i++)
+	for (int i = 0; i < _nItems && !ds.err(); i++)
 		_items[i].readFromStream(ds, true);
 
 	return ds.err();
@@ -2111,22 +2075,18 @@ void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
  * Prepare a frame, adding the location to the OT list, and all the items that have changed animation frame.
  */
 void RMLocation::doFrame(RMGfxTargetBuffer *bigBuf) {
-	int i;
-
 	// If the location is not in the OT list, add it in
 	if (!_nInList)
 		bigBuf->addPrim(new RMGfxPrimitive(this));
 
 	// Process all the location items
-	for (i = 0; i < _nItems; i++)
+	for (int i = 0; i < _nItems; i++)
 		_items[i].doFrame(bigBuf);
 }
 
 
 RMItem *RMLocation::getItemFromCode(uint32 dwCode) {
-	int i;
-
-	for (i = 0; i < _nItems; i++) {
+	for (int i = 0; i < _nItems; i++) {
 		if (_items[i].mpalCode() == (int)dwCode)
 			return &_items[i];
 	}
@@ -2239,9 +2199,7 @@ void RMLocation::setScrollPosition(const RMPoint &scroll) {
 
 
 void RMLocation::pauseSound(bool bPause) {
-	int i;
-
-	for (i = 0; i < _nItems; i++)
+	for (int i = 0; i < _nItems; i++)
 		_items[i].pauseSound(bPause);
 }
 

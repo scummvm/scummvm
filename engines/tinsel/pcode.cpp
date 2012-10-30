@@ -152,7 +152,7 @@ static const byte fragment12[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1491),
 		OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
 		OP_JUMP | OPSIZE16, FRAGMENT_WORD(1568)};
 static const byte fragment13[] = {OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(306)};
-static const byte fragment14[] = {OP_LIBCALL | OPSIZE8, 58, 
+static const byte fragment14[] = {OP_LIBCALL | OPSIZE8, 58,
 		OP_IMM, FRAGMENT_DWORD((42 << 23)), OP_ONE, OP_ZERO, OP_LIBCALL | OPSIZE8, 44,
 		OP_LIBCALL | OPSIZE8, 97, OP_JUMP | OPSIZE16, FRAGMENT_WORD(2220)
 };
@@ -222,7 +222,7 @@ const WorkaroundEntry workaroundList[] = {
 	// times would cause the game to crash
 	{TINSEL_V2, true, false, Common::kPlatformUnknown, 1109294728, 0, sizeof(fragment13), fragment13},
 
-	// DW1 PSX DEMO: Alters a script in the PSX DW1 demo to show the Idle animation scene rather than 
+	// DW1 PSX DEMO: Alters a script in the PSX DW1 demo to show the Idle animation scene rather than
 	// quitting the game when no user input happens for a while
 	{TINSEL_V1, true, true, Common::kPlatformPSX, 0, 2186, sizeof(fragment14), fragment14},
 

@@ -112,16 +112,13 @@ protected:
 	Common::File _sceneryArchive1;                  // Handle for scenery file
 	Common::File _objectsArchive;                   // Handle for objects file
 
-	PCCHeader _PCCHeader;
-
-	Seq *readPCX(Common::ReadStream &f, Seq *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
+	Seq *readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
 
 	// If this is the first call, read the lookup table
 	bool _hasReadHeader;
 	SoundHdr _soundHdr[kMaxSounds];                    // Sound lookup table
 
 private:
-	byte *convertPCC(byte *p, const uint16 y, const uint16 bpl, ImagePtr dataPtr) const;
 	UifHdr *getUIFHeader(const Uif id);
 };
 

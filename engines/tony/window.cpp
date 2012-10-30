@@ -256,7 +256,7 @@ void RMWindow::plotLines(const byte *lpBuf, const Common::Point &center, int x, 
 }
 
 void RMWindow::showDirtyRects(bool v) {
-	_showDirtyRects = v; 
+	_showDirtyRects = v;
 }
 
 /****************************************************************************\

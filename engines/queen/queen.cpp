@@ -113,12 +113,12 @@ int QueenMetaEngine::getMaximumSaveSlot() const { return 99; }
 const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	Common::String guiOptions;
 	ExtraGuiOptions options;
-	
+
 	if (target.empty()) {
 		options.push_back(queenExtraGuiOption);
 		return options;
 	}
-	
+
 	if (ConfMan.hasKey("guioptions", target)) {
 		guiOptions = ConfMan.get("guioptions", target);
 		guiOptions = parseGameGUIOptions(guiOptions);

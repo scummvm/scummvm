@@ -109,13 +109,13 @@ bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 bool RobotDecoder::load(GuiResourceId id) {
-	// TODO: RAMA's robot 1003 cannot be played (shown at the menu screen) - 
+	// TODO: RAMA's robot 1003 cannot be played (shown at the menu screen) -
 	// its drawn at odd coordinates. SV can't play it either (along with some
 	// others), so it must be some new functionality added in RAMA's robot
 	// videos. Skip it for now.
 	if (g_sci->getGameId() == GID_RAMA && id == 1003)
 		return false;
-	
+
 	// TODO: The robot video in the Lighthouse demo gets stuck
 	if (g_sci->getGameId() == GID_LIGHTHOUSE && id == 16)
 		return false;
@@ -247,7 +247,7 @@ void RobotDecoder::readNextPacket() {
 		audioTrack->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(_fileStream, audioChunkSize), audioChunkSize * 2);
 	} else {
 		_fileStream->skip(audioChunkSize);
-	}	
+	}
 }
 
 void RobotDecoder::readHeaderChunk() {

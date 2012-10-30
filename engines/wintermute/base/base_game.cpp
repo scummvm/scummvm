@@ -64,6 +64,7 @@
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "base/version.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
@@ -489,7 +490,7 @@ void BaseGame::DEBUG_DebugEnable(const char *filename) {
 	LOG(0, "********** DEBUG LOG OPENED %02d-%02d-%02d (Release Build) *****************", hours, mins, secs);
 #endif
 
-	LOG(0, "%s ver %d.%d.%d%s, Compiled on " __DATE__ ", " __TIME__, DCGF_NAME, DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, DCGF_VER_SUFFIX);
+	LOG(0, "%s - %s ver %d.%d.%d%s ", gScummVMFullVersion, DCGF_NAME, DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, DCGF_VER_SUFFIX);
 
 	AnsiString platform = BasePlatform::getPlatformName();
 	LOG(0, "Platform: %s", platform.c_str());
@@ -740,7 +741,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(LOCAL_SAVE_DIR)
 	TOKEN_TABLE(COMPAT_KILL_METHOD_THREADS)
 	TOKEN_TABLE_END
-	
+
 	// Declare a few variables necessary for moving data from these settings over to the renderer:
 	// The values are the same as the defaults set in BaseRenderer.
 	int loadImageX = 0;
@@ -2241,27 +2242,27 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseGame::scGetProperty(const char *name) {
+ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Type") == 0) {
+	if (name == "Type") {
 		_scValue->setString("game");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Name") == 0) {
+	else if (name == "Name") {
 		_scValue->setString(getName());
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Hwnd (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Hwnd") == 0) {
+	else if (name == "Hwnd") {
 		_scValue->setInt((int)_renderer->_window);
 		return _scValue;
 	}
@@ -2269,7 +2270,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentTime (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CurrentTime") == 0) {
+	else if (name == "CurrentTime") {
 		_scValue->setInt((int)_timer);
 		return _scValue;
 	}
@@ -2277,7 +2278,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WindowsTime (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WindowsTime") == 0) {
+	else if (name == "WindowsTime") {
 		_scValue->setInt((int)g_system->getMillis());
 		return _scValue;
 	}
@@ -2285,7 +2286,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WindowedMode (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WindowedMode") == 0) {
+	else if (name == "WindowedMode") {
 		_scValue->setBool(_renderer->_windowed);
 		return _scValue;
 	}
@@ -2293,7 +2294,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MouseX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MouseX") == 0) {
+	else if (name == "MouseX") {
 		_scValue->setInt(_mousePos.x);
 		return _scValue;
 	}
@@ -2301,7 +2302,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MouseY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MouseY") == 0) {
+	else if (name == "MouseY") {
 		_scValue->setInt(_mousePos.y);
 		return _scValue;
 	}
@@ -2309,7 +2310,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MainObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MainObject") == 0) {
+	else if (name == "MainObject") {
 		_scValue->setNative(_mainObject, true);
 		return _scValue;
 	}
@@ -2317,7 +2318,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ActiveObject (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ActiveObject") == 0) {
+	else if (name == "ActiveObject") {
 		_scValue->setNative(_activeObject, true);
 		return _scValue;
 	}
@@ -2325,7 +2326,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScreenWidth (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScreenWidth") == 0) {
+	else if (name == "ScreenWidth") {
 		_scValue->setInt(_renderer->_width);
 		return _scValue;
 	}
@@ -2333,7 +2334,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScreenHeight (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScreenHeight") == 0) {
+	else if (name == "ScreenHeight") {
 		_scValue->setInt(_renderer->_height);
 		return _scValue;
 	}
@@ -2341,7 +2342,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Interactive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Interactive") == 0) {
+	else if (name == "Interactive") {
 		_scValue->setBool(_interactive);
 		return _scValue;
 	}
@@ -2349,7 +2350,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DebugMode (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DebugMode") == 0) {
+	else if (name == "DebugMode") {
 		_scValue->setBool(_debugDebugMode);
 		return _scValue;
 	}
@@ -2357,7 +2358,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SoundAvailable (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SoundAvailable") == 0) {
+	else if (name == "SoundAvailable") {
 		_scValue->setBool(_soundMgr->_soundAvailable);
 		return _scValue;
 	}
@@ -2365,7 +2366,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SFXVolume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SFXVolume") == 0) {
+	else if (name == "SFXVolume") {
 		_gameRef->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType));
 		return _scValue;
@@ -2374,7 +2375,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SpeechVolume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SpeechVolume") == 0) {
+	else if (name == "SpeechVolume") {
 		_gameRef->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kSpeechSoundType));
 		return _scValue;
@@ -2383,7 +2384,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MusicVolume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MusicVolume") == 0) {
+	else if (name == "MusicVolume") {
 		_gameRef->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kMusicSoundType));
 		return _scValue;
@@ -2392,7 +2393,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MasterVolume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MasterVolume") == 0) {
+	else if (name == "MasterVolume") {
 		_gameRef->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getMasterVolumePercent());
 		return _scValue;
@@ -2401,7 +2402,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Keyboard (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Keyboard") == 0) {
+	else if (name == "Keyboard") {
 		if (_keyboardState) {
 			_scValue->setNative(_keyboardState, true);
 		} else {
@@ -2414,7 +2415,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Subtitles
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Subtitles") == 0) {
+	else if (name == "Subtitles") {
 		_scValue->setBool(_subtitles);
 		return _scValue;
 	}
@@ -2422,14 +2423,14 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesSpeed
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesSpeed") == 0) {
+	else if (name == "SubtitlesSpeed") {
 		_scValue->setInt(_subtitlesSpeed);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// VideoSubtitles
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "VideoSubtitles") == 0) {
+	else if (name == "VideoSubtitles") {
 		_scValue->setBool(_videoSubtitles);
 		return _scValue;
 	}
@@ -2437,7 +2438,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// FPS (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "FPS") == 0) {
+	else if (name == "FPS") {
 		_scValue->setInt(_fps);
 		return _scValue;
 	}
@@ -2445,7 +2446,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AcceleratedMode / Accelerated (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AcceleratedMode") == 0 || strcmp(name, "Accelerated") == 0) {
+	else if (name == "AcceleratedMode" || name == "Accelerated") {
 		_scValue->setBool(_useD3D);
 		return _scValue;
 	}
@@ -2453,7 +2454,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextEncoding
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TextEncoding") == 0) {
+	else if (name == "TextEncoding") {
 		_scValue->setInt(_textEncoding);
 		return _scValue;
 	}
@@ -2461,7 +2462,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextRTL
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TextRTL") == 0) {
+	else if (name == "TextRTL") {
 		_scValue->setBool(_textRTL);
 		return _scValue;
 	}
@@ -2469,7 +2470,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SoundBufferSize
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SoundBufferSize") == 0) {
+	else if (name == "SoundBufferSize") {
 		_scValue->setInt(_soundBufferSizeSec);
 		return _scValue;
 	}
@@ -2477,7 +2478,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SuspendedRendering
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SuspendedRendering") == 0) {
+	else if (name == "SuspendedRendering") {
 		_scValue->setBool(_suspendedRendering);
 		return _scValue;
 	}
@@ -2485,7 +2486,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SuppressScriptErrors
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SuppressScriptErrors") == 0) {
+	else if (name == "SuppressScriptErrors") {
 		_scValue->setBool(_suppressScriptErrors);
 		return _scValue;
 	}
@@ -2494,7 +2495,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Frozen
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Frozen") == 0) {
+	else if (name == "Frozen") {
 		_scValue->setBool(_state == GAME_FROZEN);
 		return _scValue;
 	}
@@ -2502,7 +2503,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccTTSEnabled
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccTTSEnabled") == 0) {
+	else if (name == "AccTTSEnabled") {
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -2510,7 +2511,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccTTSTalk
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccTTSTalk") == 0) {
+	else if (name == "AccTTSTalk") {
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -2518,7 +2519,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccTTSCaptions
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccTTSCaptions") == 0) {
+	else if (name == "AccTTSCaptions") {
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -2526,7 +2527,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccTTSKeypress
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccTTSKeypress") == 0) {
+	else if (name == "AccTTSKeypress") {
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -2534,7 +2535,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccKeyboardEnabled
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccKeyboardEnabled") == 0) {
+	else if (name == "AccKeyboardEnabled") {
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -2542,7 +2543,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccKeyboardCursorSkip
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccKeyboardCursorSkip") == 0) {
+	else if (name == "AccKeyboardCursorSkip") {
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -2550,7 +2551,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccKeyboardPause
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AccKeyboardPause") == 0) {
+	else if (name == "AccKeyboardPause") {
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -2558,7 +2559,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AutorunDisabled
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AutorunDisabled") == 0) {
+	else if (name == "AutorunDisabled") {
 		_scValue->setBool(_autorunDisabled);
 		return _scValue;
 	}
@@ -2566,7 +2567,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SaveDirectory (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SaveDirectory") == 0) {
+	else if (name == "SaveDirectory") {
 		AnsiString dataDir = "saves/";	// TODO: This is just to avoid telling the engine actual paths.
 		_scValue->setString(dataDir.c_str());
 		return _scValue;
@@ -2575,7 +2576,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AutoSaveOnExit
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AutoSaveOnExit") == 0) {
+	else if (name == "AutoSaveOnExit") {
 		_scValue->setBool(_autoSaveOnExit);
 		return _scValue;
 	}
@@ -2583,7 +2584,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AutoSaveSlot
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AutoSaveSlot") == 0) {
+	else if (name == "AutoSaveSlot") {
 		_scValue->setInt(_autoSaveSlot);
 		return _scValue;
 	}
@@ -2591,7 +2592,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorHidden
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CursorHidden") == 0) {
+	else if (name == "CursorHidden") {
 		_scValue->setBool(_cursorHidden);
 		return _scValue;
 	}
@@ -2599,7 +2600,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Platform (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Platform") == 0) {
+	else if (name == "Platform") {
 		_scValue->setString(BasePlatform::getPlatformName().c_str());
 		return _scValue;
 	}
@@ -2607,7 +2608,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DeviceType (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeviceType") == 0) {
+	else if (name == "DeviceType") {
 		_scValue->setString(getDeviceType().c_str());
 		return _scValue;
 	}
@@ -2615,7 +2616,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MostRecentSaveSlot (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MostRecentSaveSlot") == 0) {
+	else if (name == "MostRecentSaveSlot") {
 		if (!ConfMan.hasKey("most_recent_saveslot")) {
 			_scValue->setInt(-1);
 		} else {
@@ -2627,7 +2628,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Store (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Store") == 0) {
+	else if (name == "Store") {
 		_scValue->setNULL();
 		error("Request for a SXStore-object, which is not supported by ScummVM");
 
@@ -3624,7 +3625,7 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel1));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel2));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeSwap));
-	
+
 	_renderer->persistSaveLoadImages(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_textEncoding));

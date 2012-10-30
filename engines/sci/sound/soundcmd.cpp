@@ -340,6 +340,12 @@ reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc)
 reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
 
+	// The object can be null in several SCI0 games (e.g. Camelot, KQ1, KQ4, MUMG).
+	// Check bugs #3035149, #3036942 and #3578335.
+	// In this case, we just ignore the call.
+	if (obj.isNull() && argc == 1)
+		return acc;
+
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		debugC(kDebugLevelSound, "kDoSound(fade): Slot not found (%04x:%04x)", PRINT_REG(obj));

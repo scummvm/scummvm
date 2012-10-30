@@ -234,7 +234,7 @@ int SoundGenPCJr::getNextNote(int ch)
 // if tone isn't touched.. it should be inited so it just plays silence
 // return 0 if it's passing more data
 // return -1 if it's passing nothing (end of data)
-int SoundGenPCJr::getNextNote_v2(int ch) { 
+int SoundGenPCJr::getNextNote_v2(int ch) {
 	ToneChan *tpcm;
 	SndGenChan *chan;
 	const byte *data;
@@ -308,7 +308,7 @@ int SoundGenPCJr::getNextNote_v1(int ch) {
 		_channel[ch].attenuationCopy = 0x0F;
 		return -1;
 	}
-	
+
 	// In the V1 player the default duration for a row is 3 ticks
 	if (duration > 0) {
 		duration--;

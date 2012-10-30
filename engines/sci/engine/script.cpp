@@ -144,7 +144,7 @@ void Script::load(int script_nr, ResourceManager *resMan) {
 
 		_heapStart = _buf + _scriptSize;
 
-		assert(_bufSize - _scriptSize <= heap->size);
+		assert(_bufSize - _scriptSize >= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
 	}
 

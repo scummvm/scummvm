@@ -142,7 +142,7 @@ void AGOSEngine_Feeble::quickLoadOrSave() {
 }
 #endif
 
-// The function uses segments of code from the original game scripts 
+// The function uses segments of code from the original game scripts
 // to allow quick loading and saving, but isn't perfect.
 //
 // Unfortuntely this allows loading and saving in locations,
@@ -1424,7 +1424,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	// The floppy disk versions of Simon the Sorcerer 2 block changing
 	// to scrolling rooms, if the copy protection fails. But the copy
 	// protection flags are never set in the CD version.
-	// Setting this copy protection flag, allows saved games to be shared 
+	// Setting this copy protection flag, allows saved games to be shared
 	// between all versions of Simon the Sorcerer 2.
 	if (getGameType() == GType_SIMON2) {
 		setBitFlag(135, 1);

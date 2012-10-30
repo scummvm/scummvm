@@ -348,17 +348,26 @@ bool QuickTimeDecoder::VideoTrackHandler::endOfTrack() const {
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requestedTime) {
-	// First, figure out what edit we're in
-	Audio::Timestamp time = requestedTime.convertToFramerate(_parent->timeScale);
-
-	// Continue until we get to where we need to be
+	uint32 convertedFrames = requestedTime.convertToFramerate(_decoder->_timeScale).totalNumberOfFrames();
 	for (_curEdit = 0; !endOfTrack(); _curEdit++)
-		if ((uint32)time.totalNumberOfFrames() >= getCurEditTimeOffset() && (uint32)time.totalNumberOfFrames() < getCurEditTimeOffset() + getCurEditTrackDuration())
+		if (convertedFrames >= _parent->editList[_curEdit].timeOffset && convertedFrames < _parent->editList[_curEdit].timeOffset + _parent->editList[_curEdit].trackDuration)
 			break;
 
-	// This track is done
+	// If we did reach the end of the track, break out
 	if (endOfTrack())
 		return true;
+
+	// If this track is in an empty edit, position us at the next non-empty
+	// edit. There's nothing else to do after this.
+	if (_parent->editList[_curEdit].mediaTime == -1) {
+		while (!endOfTrack() && _parent->editList[_curEdit].mediaTime == -1)
+			_curEdit++;
+
+		if (!endOfTrack())
+			enterNewEditList(true);
+
+		return true;
+	}
 
 	enterNewEditList(false);
 
@@ -367,6 +376,7 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 		return true;
 
 	// Now we're in the edit and need to figure out what frame we need
+	Audio::Timestamp time = requestedTime.convertToFramerate(_parent->timeScale);
 	while (getRateAdjustedFrameTime() < (uint32)time.totalNumberOfFrames()) {
 		_curFrame++;
 		if (_durationOverride >= 0) {
@@ -557,6 +567,8 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
 	uint32 prevDuration = 0;
 
 	// Track down where the mediaTime is in the media
+	// This is basically time -> frame mapping
+	// Note that this code uses first frame = 0
 	for (int32 i = 0; i < _parent->timeToSampleCount && !done; i++) {
 		for (int32 j = 0; j < _parent->timeToSample[i].count; j++) {
 			if (totalDuration == (uint32)_parent->editList[_curEdit].mediaTime) {
@@ -577,10 +589,13 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
 
 	if (bufferFrames) {
 		// Track down the keyframe
+		// Then decode until the frame before target
 		_curFrame = findKeyFrame(frameNum) - 1;
 		while (_curFrame < (int32)frameNum - 1)
 			bufferNextFrame();
 	} else {
+		// Since frameNum is the frame that needs to be displayed
+		// we'll set _curFrame to be the "last frame displayed"
 		_curFrame = frameNum - 1;
 	}
 
@@ -589,6 +604,8 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
 	// Set an override for the duration since we came up in-between two frames
 	if (prevDuration != totalDuration)
 		_durationOverride = totalDuration - prevDuration;
+	else
+		_durationOverride = -1;
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() {
@@ -638,7 +655,19 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getRateAdjustedFrameTime() const {
 
 uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTimeOffset() const {
 	// Need to convert to the track scale
-	return _parent->editList[_curEdit].timeOffset * _parent->timeScale / _decoder->_timeScale;
+
+	// We have to round the time off to the nearest in the scale, otherwise
+	// bad things happen. QuickTime docs are pretty silent on all this stuff,
+	// so this was found from samples. It doesn't help that this is really
+	// the only open source implementation of QuickTime edits.
+
+	uint32 mult = _parent->editList[_curEdit].timeOffset * _parent->timeScale;
+	uint32 result = mult / _decoder->_timeScale;
+
+	if ((mult % _decoder->_timeScale) > (_decoder->_timeScale / 2))
+		result++;
+
+	return result;
 }
 
 uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {

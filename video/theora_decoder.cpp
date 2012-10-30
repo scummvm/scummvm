@@ -302,7 +302,7 @@ bool TheoraDecoder::TheoraVideoTrack::decodePacket(ogg_packet &oggPacket) {
 			_nextFrameStartTime += _frameRate.getInverse().toDouble();
 		else
 			_nextFrameStartTime = time;
-	
+
 		return true;
 	}
 
@@ -328,7 +328,7 @@ void TheoraDecoder::TheoraVideoTrack::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuf
 	assert(YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height >> 1);
 	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
 
-	Graphics::convertYUV420ToRGB(&_surface, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
 }
 
 static vorbis_info *info = 0;

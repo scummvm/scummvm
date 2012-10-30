@@ -32,78 +32,110 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "md5.h"
-
-static void print_hex(FILE * f, const uint8 * data, size_t len) {
-	for (size_t i = 0; i < len; ++i) {
-		fprintf(f, "%02x", data[i]);
-	}
-}
-
-static void extract(FILE * fout, FILE *fin, size_t pos, size_t size, const char *what) {
-	char buf[0x10000];
-	assert(size < sizeof(buf));
-
-	if (fseek(fin, pos, SEEK_SET) != 0) {
-		perror(what);
-		exit(1);
-	}
-
-	if (fread(buf, size, 1, fin) != 1) {
-		perror(what);
-		exit(1);
-	}
-
-	if (fwrite(buf, size, 1, fout) != 1) {
-		perror(what);
-		exit(1);
-	}
-}
+#include "util.h"
+#include "static_tables.h"
 
 int main(int argc, char *argv[]) {
-	if (argc < 2) {
-		fprintf(stderr, "usage: %s: Teenagnt.exe (unpacked one)\n", argv[0]);
-		exit(1);
-	}
-	const char * fname = argv[1];
+	const char *dat_name = "teenagent.dat";
 
-	uint8 digest[16];
-	if (!md5_file(fname, digest, 0)) {
-		fprintf(stderr, "cannot calculate md5 for %s", fname);
-		exit(1);
-	}
-
-	const uint8 ethalon[16] = {
-		0x51, 0xb6, 0xd6, 0x47, 0x21, 0xf7, 0xc4, 0xb4,
-		0x98, 0xbf, 0xc0, 0xf3, 0x23, 0x01, 0x3e, 0x36,
-	};
-
-	if (memcmp(digest, ethalon, 16) != 0) {
-		fprintf(stderr, "cannot extract data, your md5: ");
-		print_hex(stderr, digest, 16);
-		fprintf(stderr, ", need md5: ");
-		print_hex(stderr, ethalon, 16);
-		fprintf(stderr, ", sorry\n");
-		exit(1);
-	}
-	FILE *fin = fopen(fname, "rb");
-	if (fin == NULL) {
-		perror("opening input file");
-		exit(1);
-	}
-
-	const char * dat_name = "teenagent.dat";
 	FILE *fout = fopen(dat_name, "wb");
 	if (fout == NULL) {
 		perror("opening output file");
 		exit(1);
 	}
-	//0x0200, 0xb5b0, 0x1c890
-	extract(fout, fin, 0x00200, 0xb3b0, "extracting code segment");
-	extract(fout, fin, 0x0b5b0, 0xe790, "extracting data segment");
-	extract(fout, fin, 0x1c890, 0x8be2, "extracting second data segment");
 
-	fclose(fin);
+	if (fwrite(cseg, CSEG_SIZE, 1, fout) != 1) {
+		perror("Writing code segment");
+		exit(1);
+	}
+
+	if (fwrite(dsegStartBlock, DSEG_STARTBLK_SIZE, 1, fout) != 1) {
+		perror("Writing data segment start block");
+		exit(1);
+	}
+
+	// Write out message string block
+	for (uint i = 0; i < (sizeof(messages)/sizeof(char*)); i++) {
+		if (i == 0) {
+			// Write out reject message pointer block
+			uint16 off = DSEG_STARTBLK_SIZE + (4 * 2);
+			writeUint16LE(fout, off);
+			off += strlen(messages[0]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[1]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[2]) + 2;
+			writeUint16LE(fout, off);
+		}
+
+		if (i == 327) {
+			// Write out book color pointer block
+			uint16 off = DSEG_STARTBLK_SIZE + (4 * 2);
+			for (uint k = 0; k < 327; k++)
+				off += strlen(messages[k]) + 2;
+			off += (6 * 2);
+			writeUint16LE(fout, off);
+			off += strlen(messages[327]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[328]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[329]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[330]) + 2;
+			writeUint16LE(fout, off);
+			off += strlen(messages[331]) + 2;
+			writeUint16LE(fout, off);
+		}
+		for (uint j = 0; j < strlen(messages[i]); j++) {
+			if (messages[i][j] == '\n')
+				writeByte(fout, '\0');
+			else
+				writeByte(fout, messages[i][j]);
+		}
+		writeByte(fout, '\0');
+		writeByte(fout, '\0');
+	}
+
+	if (fwrite(dsegEndBlock, DSEG_ENDBLK_SIZE, 1, fout) != 1) {
+		perror("Writing data segment end block");
+		exit(1);
+	}
+
+	// Write out dialog string block
+	static const char nulls[6] = "\0\0\0\0\0";
+	for (uint i = 0; i < (sizeof(dialogs)/sizeof(char**)); i++) {
+		//printf("Writing Dialog #%d\n", i);
+		bool dialogEnd = false;
+		uint j = 0;
+		while (!dialogEnd) {
+			uint nullCount = 0;
+			if (strcmp(dialogs[i][j], NEW_LINE) == 0) {
+				nullCount = 1;
+			} else if (strcmp(dialogs[i][j], DISPLAY_MESSAGE) == 0) {
+				nullCount = 2;
+			} else if (strcmp(dialogs[i][j], CHANGE_CHARACTER) == 0) {
+				nullCount = 3;
+			} else if (strcmp(dialogs[i][j], END_DIALOG) == 0) {
+				nullCount = 4;
+				dialogEnd = true;
+			} else { // Deals with normal dialogue and ANIM_WAIT cases
+				if (fwrite(dialogs[i][j], 1, strlen(dialogs[i][j]), fout) != strlen(dialogs[i][j])) {
+					perror("Writing dialog string");
+					exit(1);
+				}
+			}
+
+			if (nullCount != 0 && nullCount < 5) {
+				if (fwrite(nulls, 1, nullCount, fout) != nullCount) {
+					perror("Writing dialog string nulls");
+					exit(1);
+				}
+			}
+
+			j++;
+		}
+	}
+
 	fclose(fout);
 
 	return 0;

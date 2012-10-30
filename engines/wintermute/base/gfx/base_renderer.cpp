@@ -129,13 +129,13 @@ void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
 	_indicatorDisplay = true;
 	_indicatorProgress = 0;
 	_hasDrawnSaveLoadImage = false;
-	
+
 	if (isSaving && !quickSave) {
 		delete _saveLoadImage;
 		_saveLoadImage = NULL;
 		if (_saveImageName.size()) {
 			_saveLoadImage = createSurface();
-			
+
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
 				delete _saveLoadImage;
 				_saveLoadImage = NULL;
@@ -146,7 +146,7 @@ void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
 		_saveLoadImage = NULL;
 		if (_loadImageName.size()) {
 			_saveLoadImage = createSurface();
-			
+
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
 				delete _saveLoadImage;
 				_saveLoadImage = NULL;
@@ -360,7 +360,7 @@ bool BaseRenderer::displayIndicator() {
 		flip();
 		_hasDrawnSaveLoadImage = true;
 	}
-	
+
 	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) {
 		return STATUS_OK;
 	}
@@ -369,7 +369,7 @@ bool BaseRenderer::displayIndicator() {
 	for (int i = 0; i < _indicatorHeight; i++) {
 		drawLine(_indicatorX, _indicatorY + i, _indicatorX + curWidth, _indicatorY + i, _indicatorColor);
 	}
-	
+
 	setup2D();
 	_indicatorWidthDrawn = curWidth;
 	if (_indicatorWidthDrawn) {

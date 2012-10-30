@@ -40,7 +40,7 @@ protected:
 	SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const;
 
 private:
-	bool _lowRes;	
+	bool _lowRes;
 };
 
 class Movie {
