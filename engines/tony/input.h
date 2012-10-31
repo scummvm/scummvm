@@ -40,8 +40,6 @@ private:
 
 	// Mouse related fields
 	RMPoint _mousePos;
-	bool _clampMouse;
-	bool _leftButton, _rightButton;
 	bool _leftClickMouse, _leftReleaseMouse, _rightClickMouse, _rightReleaseMouse;
 
 	// Keyboard related fields
@@ -49,7 +47,6 @@ private:
 
 public:
 	RMInput();
-	~RMInput();
 
 	/**
 	 * Polling (must be performed once per frame)
@@ -66,10 +63,8 @@ public:
 	 */
 	bool mouseLeftClicked();
 	bool mouseRightClicked();
-	bool mouseBothClicked();
 	bool mouseLeftReleased();
 	bool mouseRightReleased();
-	bool mouseBothReleased();
 
 	/**
 	 * Returns true if the given key is pressed

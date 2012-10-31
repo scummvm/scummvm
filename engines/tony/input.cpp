@@ -33,19 +33,12 @@ namespace Tony {
 
 RMInput::RMInput() {
 	// Setup mouse fields
-	_clampMouse = false;
 	_mousePos.set(0, 0);
-	_leftButton = _rightButton = false;
 	_leftClickMouse = _leftReleaseMouse = false;
 	_rightClickMouse = _rightReleaseMouse = false;
 
-	Common::fill((byte *)&_event, (byte *)&_event + sizeof(Common::Event), 0);
-
 	// Setup keyboard fields
 	Common::fill(&_keyDown[0], &_keyDown[350], 0);
-}
-
-RMInput::~RMInput() {
 }
 
 void RMInput::poll() {
@@ -62,16 +55,12 @@ void RMInput::poll() {
 			_mousePos.set(_event.mouse.x, _event.mouse.y);
 
 			if (_event.type == Common::EVENT_LBUTTONDOWN) {
-				_leftButton = true;
 				_leftClickMouse = true;
 			} else if (_event.type == Common::EVENT_LBUTTONUP) {
-				_leftButton = false;
 				_leftReleaseMouse = true;
 			} else if (_event.type == Common::EVENT_RBUTTONDOWN) {
-				_rightButton = true;
 				_rightClickMouse = true;
 			} else if (_event.type == Common::EVENT_RBUTTONUP) {
-				_rightButton = false;
 				_rightReleaseMouse = true;
 			} else
 				continue;
@@ -130,20 +119,12 @@ bool RMInput::mouseRightClicked() {
 	return _rightClickMouse;
 }
 
-bool RMInput::mouseBothClicked() {
-	return _leftClickMouse && _rightClickMouse;
-}
-
 bool RMInput::mouseLeftReleased() {
 	return _leftReleaseMouse;
 }
 
 bool RMInput::mouseRightReleased() {
 	return _rightReleaseMouse;
-}
-
-bool RMInput::mouseBothReleased() {
-	return _leftReleaseMouse && _rightReleaseMouse;
 }
 
 } // End of namespace Tony
