@@ -30,6 +30,9 @@
 #define TONY_INPUT_H
 
 #include "common/events.h"
+#include "common/rect.h"
+#include "common/array.h"
+#include "common/keyboard.h"
 #include "tony/utils.h"
 
 namespace Tony {
@@ -39,11 +42,11 @@ private:
 	Common::Event _event;
 
 	// Mouse related fields
-	RMPoint _mousePos;
+	Common::Point _mousePos;
 	bool _leftClickMouse, _leftReleaseMouse, _rightClickMouse, _rightReleaseMouse;
 
 	// Keyboard related fields
-	bool _keyDown[350];
+	Common::Array<Common::KeyCode> _keyDown;
 
 public:
 	RMInput();

@@ -32,13 +32,8 @@
 namespace Tony {
 
 RMInput::RMInput() {
-	// Setup mouse fields
-	_mousePos.set(0, 0);
 	_leftClickMouse = _leftReleaseMouse = false;
 	_rightClickMouse = _rightReleaseMouse = false;
-
-	// Setup keyboard fields
-	Common::fill(&_keyDown[0], &_keyDown[350], 0);
 }
 
 void RMInput::poll() {
@@ -52,7 +47,7 @@ void RMInput::poll() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
-			_mousePos.set(_event.mouse.x, _event.mouse.y);
+			_mousePos = _event.mouse;
 
 			if (_event.type == Common::EVENT_LBUTTONDOWN) {
 				_leftClickMouse = true;
@@ -76,12 +71,17 @@ void RMInput::poll() {
 				g_vm->_debugger->onFrame();
 			} else {
 				// Flag the given key as being down
-				_keyDown[(int)_event.kbd.keycode] = true;
+				_keyDown.push_back(_event.kbd.keycode);
 			}
 			return;
 
 		case Common::EVENT_KEYUP:
-			_keyDown[(int)_event.kbd.keycode] = false;
+			for (int i = 0; i < _keyDown.size(); i++) {
+				if (_keyDown[i] == _event.kbd.keycode) {
+					_keyDown.remove_at(i);
+					break;
+				}
+			}
 			return;
 
 		default:
@@ -96,16 +96,21 @@ void RMInput::poll() {
 bool RMInput::getAsyncKeyState(Common::KeyCode kc) {
 	// The act of testing for a particular key automatically clears the state, to prevent
 	// the same key being registered in multiple different frames
-	bool result = _keyDown[(int)kc];
-	_keyDown[(int)kc] = false;
-	return result;
+	for (int i = 0; i < _keyDown.size(); i++) {
+		if (_keyDown[i] == kc) {
+			_keyDown.remove_at(i);
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
  * Reading of the mouse
  */
 RMPoint RMInput::mousePos() {
-	return _mousePos;
+	RMPoint p(_mousePos.x, _mousePos.y);
+	return p;
 }
 
 /**
