@@ -4280,9 +4280,9 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_animationManager.PLAY_ANM("otage.ANM", 1, 24, 500);
 					_vm->_animationManager.NO_SEQ = false;
 					_vm->_soundManager.SPECIAL_SOUND = 0;
-					_vm->_globals.NECESSAIRE = 1;
+					_vm->_globals.NECESSAIRE = true;
 					_vm->_graphicsManager.NB_SCREEN();
-					_vm->_globals.NECESSAIRE = 0;
+					_vm->_globals.NECESSAIRE = false;
 					
 					_vm->_saveLoadManager.bload("TEMP1.SCR", _vm->_graphicsManager.VESA_SCREEN);
 					g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");

@@ -142,11 +142,11 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	}
 	CLEAR_ANIM_PERSO();
 	_vm->_globals.NOPARLE = false;
-	_vm->_globals.NECESSAIRE = 1;
+	_vm->_globals.NECESSAIRE = true;
 	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
 	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
 	_vm->_graphicsManager.NB_SCREEN();
-	_vm->_globals.NECESSAIRE = 0;
+	_vm->_globals.NECESSAIRE = false;
 
 	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
@@ -156,6 +156,10 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	
 	_vm->_eventsManager.CHANGE_MOUSE(v14);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+
+	if (_vm->getIsDemo() == false)
+		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.DD_LOCK();
@@ -1281,11 +1285,11 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	CLEAR_ANIM_PERSO();
 	CLEAR_ANIM_PERSO();
 	_vm->_globals.NOPARLE = false;
-	_vm->_globals.NECESSAIRE = 1;
+	_vm->_globals.NECESSAIRE = true;
 	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
 	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
 	_vm->_graphicsManager.NB_SCREEN();
-	_vm->_globals.NECESSAIRE = 0;
+	_vm->_globals.NECESSAIRE = false;
 	_vm->_linesManager.CLEAR_ZONE();
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_globals.RESET_CACHE();

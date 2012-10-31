@@ -428,8 +428,8 @@ public:
 	bool CACHEFLAG;
 	bool NOPARLE;
 	bool PLAN_FLAG;
+	bool NECESSAIRE;
 	int GOACTION;
-	int NECESSAIRE;
 	int Compteur;
 	int ACTION_SENS;
 	int SegmentEnCours;

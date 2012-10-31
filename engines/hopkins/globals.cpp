@@ -174,7 +174,7 @@ Globals::Globals() {
 	NOT_VERIF = 0;
 	PERSO_TYPE = 0;
 	GOACTION = 0;
-	NECESSAIRE = 0;
+	NECESSAIRE = false;
 	Compteur = 0;
 	ACTION_SENS = 0;
 	ACTION_SENS = 0;
