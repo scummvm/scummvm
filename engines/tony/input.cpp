@@ -101,14 +101,6 @@ void RMInput::poll() {
 	}
 }
 
-bool RMInput::mouseLeft() {
-	return _leftButton;
-}
-
-bool RMInput::mouseRight() {
-	return _rightButton;
-}
-
 /**
  * Return true if a key has been pressed
  */

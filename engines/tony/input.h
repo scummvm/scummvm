@@ -62,12 +62,6 @@ public:
 	RMPoint mousePos();
 
 	/**
-	 * Current status of the mouse buttons
-	 */
-	bool mouseLeft();
-	bool mouseRight();
-
-	/**
 	 * Events of mouse clicks
 	 */
 	bool mouseLeftClicked();
