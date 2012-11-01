@@ -367,7 +367,6 @@ public:
 	int16 *essai0;
 	int16 *essai1;
 	int16 *essai2;
-	byte *Bufferobjet;
 	byte *inventaire2;
 	byte *GESTE;
 	int OBJET_EN_COURS;

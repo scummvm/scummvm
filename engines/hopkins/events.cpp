@@ -47,9 +47,14 @@ EventsManager::EventsManager() {
 	GAME_KEY = KEY_NONE;
 	btsouris = 0;
 	OLD_ICONE = 0;
+	Bufferobjet = NULL;
 
 	_priorCounterTime = 0;
 	_priorFrameTime = 0;
+}
+
+EventsManager::~EventsManager() {
+	_vm->_globals.dos_free2(Bufferobjet);
 }
 
 void EventsManager::setParent(HopkinsEngine *vm) {
@@ -141,55 +146,7 @@ void EventsManager::CHANGE_MOUSE(int id) {
 			OLD_ICONE = cursorId;
 			souris_n = cursorId;
 
-			// Backup the current sprite clipping bounds and reset them
-			Common::Rect clipBounds(_vm->_graphicsManager.min_x, _vm->_graphicsManager.min_y,
-				_vm->_graphicsManager.max_x, _vm->_graphicsManager.max_y);
-			_vm->_graphicsManager.min_x = _vm->_graphicsManager.min_y = 0;
-			_vm->_graphicsManager.max_x = _vm->_globals.OBJL;
-			_vm->_graphicsManager.max_y = _vm->_globals.OBJH;
-			int pitch = _vm->_graphicsManager.nbrligne2;
-			_vm->_graphicsManager.nbrligne2 = _vm->_globals.OBJL;
-
-			// Draw the cursor onto a temporary surface
-			byte *cursorSurface = new byte[_vm->_globals.OBJH * _vm->_globals.OBJL];
-			Common::fill(cursorSurface, cursorSurface + _vm->_globals.OBJH * _vm->_globals.OBJL, 0);
-			_vm->_graphicsManager.Sprite_Vesa(cursorSurface, pointeur_souris, 300, 300, cursorId);
-
-			// Reset the clipping bounds
-			_vm->_graphicsManager.min_x = clipBounds.left;
-			_vm->_graphicsManager.min_y = clipBounds.top;
-			_vm->_graphicsManager.max_x = clipBounds.right;
-			_vm->_graphicsManager.max_y = clipBounds.bottom;
-			_vm->_graphicsManager.nbrligne2 = pitch;
-			
-			// Convert the cursor to the pixel format. At the moment, it's hardcoded
-			// to expect the game to be in 16-bit mode
-			uint16 *cursorPixels = new uint16[_vm->_globals.OBJH * _vm->_globals.OBJL];
-			const byte *srcP = cursorSurface;
-			uint16 *destP = cursorPixels;
-
-			for (int yp = 0; yp < _vm->_globals.OBJH; ++yp) {
-				const byte *lineSrcP = srcP;
-				uint16 *lineDestP = destP;
-
-				for (int xp = 0; xp < _vm->_globals.OBJL; ++xp)
-					*lineDestP++ = *(uint16 *)&_vm->_graphicsManager.PAL_PIXELS[*lineSrcP++ * 2];
-
-				srcP += _vm->_globals.OBJL;
-				destP += _vm->_globals.OBJL;
-			}
-
-			// Calculate the X offset within the pointer image to the actual cursor data
-			int xOffset = !mouse_linux ? 10 : 20;
-
-			// Set the ScummVM cursor from the surface
-			Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-			g_system->setMouseCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
-				xOffset, 0, 0, true, &pixelFormat);
-
-			// Delete the cursor surface 
-			delete[] cursorPixels;
-			delete[] cursorSurface;
+			updateCursor();
 		}
 	}
 }
@@ -370,11 +327,13 @@ LABEL_45:
 			if (yp + v13 > _vm->_graphicsManager.max_y)
 				v13 -= yp + v13 - _vm->_graphicsManager.max_y;
 			if (v14 > 1 && v13 > 1) {
+				_vm->_eventsManager.updateCursor();
 /* Commented out in favour of using ScummVM cursor display
 				_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
-*/
+
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bufferobjet, v15 + 300, yp + 300, 0, 0, 0, 0);
 				_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v14 + v15, yp + v13);
+*/
 			}
 		}
 		goto LABEL_54;
@@ -497,5 +456,64 @@ LABEL_113:
 	_vm->_soundManager.VERIF_SOUND();
 	CONTROLE_MES();
 }	
+
+void EventsManager::updateCursor() {
+	// Backup the current sprite clipping bounds and reset them
+	Common::Rect clipBounds(_vm->_graphicsManager.min_x, _vm->_graphicsManager.min_y,
+		_vm->_graphicsManager.max_x, _vm->_graphicsManager.max_y);
+	_vm->_graphicsManager.min_x = _vm->_graphicsManager.min_y = 0;
+	_vm->_graphicsManager.max_x = _vm->_globals.OBJL;
+	_vm->_graphicsManager.max_y = _vm->_globals.OBJH;
+	int pitch = _vm->_graphicsManager.nbrligne2;
+	_vm->_graphicsManager.nbrligne2 = _vm->_globals.OBJL;
+
+	// Create the temporary cursor surface
+	byte *cursorSurface = new byte[_vm->_globals.OBJH * _vm->_globals.OBJL];
+	Common::fill(cursorSurface, cursorSurface + _vm->_globals.OBJH * _vm->_globals.OBJL, 0);
+
+	if (btsouris != 23) {
+		// Draw standard cursor
+		_vm->_graphicsManager.Sprite_Vesa(cursorSurface, pointeur_souris, 300, 300, souris_n);
+	} else {
+		// Draw the active inventory object
+		_vm->_graphicsManager.Affiche_Perfect(cursorSurface, Bufferobjet, 300, 300, 0, 0, 0, 0);
+	}
+
+	// Reset the clipping bounds
+	_vm->_graphicsManager.min_x = clipBounds.left;
+	_vm->_graphicsManager.min_y = clipBounds.top;
+	_vm->_graphicsManager.max_x = clipBounds.right;
+	_vm->_graphicsManager.max_y = clipBounds.bottom;
+	_vm->_graphicsManager.nbrligne2 = pitch;
+	
+	// Convert the cursor to the pixel format. At the moment, it's hardcoded
+	// to expect the game to be in 16-bit mode
+	uint16 *cursorPixels = new uint16[_vm->_globals.OBJH * _vm->_globals.OBJL];
+	const byte *srcP = cursorSurface;
+	uint16 *destP = cursorPixels;
+
+	for (int yp = 0; yp < _vm->_globals.OBJH; ++yp) {
+		const byte *lineSrcP = srcP;
+		uint16 *lineDestP = destP;
+
+		for (int xp = 0; xp < _vm->_globals.OBJL; ++xp)
+			*lineDestP++ = *(uint16 *)&_vm->_graphicsManager.PAL_PIXELS[*lineSrcP++ * 2];
+
+		srcP += _vm->_globals.OBJL;
+		destP += _vm->_globals.OBJL;
+	}
+
+	// Calculate the X offset within the pointer image to the actual cursor data
+	int xOffset = !mouse_linux ? 10 : 20;
+
+	// Set the ScummVM cursor from the surface
+	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
+	g_system->setMouseCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
+		xOffset, 0, 0, true, &pixelFormat);
+
+	// Delete the cursor surface 
+	delete[] cursorPixels;
+	delete[] cursorSurface;
+}
 
 } // End of namespace Hopkins

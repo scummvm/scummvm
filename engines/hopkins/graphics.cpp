@@ -1710,7 +1710,7 @@ int GraphicsManager::Asm_Reduc(int v, int percentage) {
 }
 
 // Display 'Perfect?' 
-void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int a6, int a7, int a8) {
+void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, int modeFlag) {
 	const byte *spriteStartP; 
 	int i; 
 	const byte *spriteSizeP;
@@ -1796,16 +1796,16 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				if ((uint16)yp300 < (uint16)(max_y + 300)) {
 					clip_y1 = max_y + 300 - yp300;
 					dest1P = xp300 + nbrligne2 * (yp300 - 300) - 300 + surface;
-					if (a7) {
+					if (zoom2) {
 						Compteur_y = 0;
 						Agr_x = 0;
 						Agr_y = 0;
 						Agr_Flag_y = 0;
 						Agr_Flag_x = 0;
 						Largeur = spriteWidth;
-						v20 = Asm_Zoom(spriteWidth, a7);
-						v22 = Asm_Zoom(v21, a7);
-						if (a8) {
+						v20 = Asm_Zoom(spriteWidth, zoom2);
+						v22 = Asm_Zoom(v21, zoom2);
+						if (modeFlag) {
 							v29 = v20 + dest1P;
 							if (clip_y) {
 								if ((uint16)clip_y >= v22)
@@ -1814,7 +1814,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								v52 = v20;
 								v30 = 0;
 								v31 = (uint16)clip_y;
-								while (Asm_Zoom(v30 + 1, a7) < v31)
+								while (Asm_Zoom(v30 + 1, zoom2) < v31)
 									;
 								v20 = v52;
 								spritePixelsP += Largeur * v30;
@@ -1833,7 +1833,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								v29 -= v32;
 								v62 = v22;
 								v33 = 0;
-								while (Asm_Zoom(v33 + 1, a7) < v32)
+								while (Asm_Zoom(v33 + 1, zoom2) < v32)
 									;
 								v34 = v33;
 								v22 = v62;
@@ -1855,7 +1855,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 											--v29;
 											++spritePixelsP;
 											if (!Agr_Flag_x)
-												Agr_x = a7 + Agr_x;
+												Agr_x = zoom2 + Agr_x;
 											if ((uint16)Agr_x < 0x64u)
 												break;
 											Agr_x = Agr_x - 100;
@@ -1873,7 +1873,7 @@ R_Aff_Zoom_Larg_Cont1:
 									v29 = nbrligne2 + v53;
 									++Compteur_y;
 									if (!Agr_Flag_y)
-										Agr_y = a7 + Agr_y;
+										Agr_y = zoom2 + Agr_y;
 									if ((uint16)Agr_y < 0x64u)
 										break;
 									Agr_y = Agr_y - 100;
@@ -1894,7 +1894,7 @@ R_Aff_Zoom_Larg_Cont1:
 								v49 = v20;
 								v23 = 0;
 								v24 = (uint16)clip_y;
-								while (Asm_Zoom(v23 + 1, a7) < v24)
+								while (Asm_Zoom(v23 + 1, zoom2) < v24)
 									;
 								v20 = v49;
 								spritePixelsP += Largeur * v23;
@@ -1910,7 +1910,7 @@ R_Aff_Zoom_Larg_Cont1:
 								v50 = v20;
 								v25 = (uint16)clip_x;
 								v26 = 0;
-								while (Asm_Zoom(v26 + 1, a7) < v25)
+								while (Asm_Zoom(v26 + 1, zoom2) < v25)
 									;
 								v27 = v26;
 								v22 = v59;
@@ -1935,7 +1935,7 @@ R_Aff_Zoom_Larg_Cont1:
 											++dest1P;
 											++spritePixelsP;
 											if (!Agr_Flag_x)
-												Agr_x = a7 + Agr_x;
+												Agr_x = zoom2 + Agr_x;
 											if ((uint16)Agr_x < 0x64u)
 												break;
 											Agr_x = Agr_x - 100;
@@ -1952,7 +1952,7 @@ Aff_Zoom_Larg_Cont1:
 									spritePixelsP = Largeur + v45;
 									dest1P = nbrligne2 + v51;
 									if (!Agr_Flag_y)
-										Agr_y = a7 + Agr_y;
+										Agr_y = zoom2 + Agr_y;
 									if ((uint16)Agr_y < 0x64u)
 										break;
 									Agr_y = Agr_y - 100;
@@ -1966,15 +1966,15 @@ Aff_Zoom_Larg_Cont1:
 								v22 = v60 - 1;
 							} while (v60 != 1);
 						}
-					} else if (a6) {
+					} else if (zoom1) {
 						Compteur_y = 0;
 						Red_x = 0;
 						Red_y = 0;
 						Largeur = spriteWidth;
-						Red = a6;
-						if (a6 < 100) {
+						Red = zoom1;
+						if (zoom1 < 100) {
 							v37 = Asm_Reduc(spriteWidth, Red);
-							if (a8) {
+							if (modeFlag) {
 								v40 = v37 + dest1P;
 								do {
 									v65 = spriteHeight2;
@@ -2042,7 +2042,7 @@ Aff_Zoom_Larg_Cont1:
 					} else {
 						Largeur = spriteWidth;
 						Compteur_y = 0;
-						if (a8) {
+						if (modeFlag) {
 							dest2P = spriteWidth + dest1P;
 							spec_largeur = spriteWidth;
 							if (clip_y) {

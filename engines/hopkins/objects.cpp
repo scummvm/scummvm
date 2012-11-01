@@ -101,7 +101,7 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
 // Change Object
 byte *ObjectsManager::CHANGE_OBJET(int objIndex) {
 	byte *result = CAPTURE_OBJET(objIndex, 1);
-	_vm->_globals.Bufferobjet = result;
+	_vm->_eventsManager.Bufferobjet = result;
 	_vm->_globals.Nouv_objet = 1;
 	_vm->_globals.OBJET_EN_COURS = objIndex;
 	return result;
@@ -141,8 +141,8 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 		break;
 
 	case 1:
-		sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_globals.Bufferobjet, val2);
-		dataP = _vm->_globals.Bufferobjet;
+		sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_eventsManager.Bufferobjet, val2);
+		dataP = _vm->_eventsManager.Bufferobjet;
 		break;
 
 	case 3:

@@ -169,7 +169,7 @@ public:
 	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
 	int Reel_Zoom(int v, int percentage);
 	int Reel_Reduc(int v, int percentage);
-	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int a6, int a7, int a8);
+	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, int modeFlag);
 	void AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex);
 	void SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY);

@@ -193,7 +193,6 @@ Globals::Globals() {
 	essai0 = NULL;
 	essai1 = NULL;
 	essai2 = NULL;
-	Bufferobjet = NULL;
 	inventaire2 = NULL;
 	GESTE = NULL;
 	INVENTAIRE_OBJET = NULL;
@@ -255,7 +254,6 @@ Globals::~Globals() {
 	dos_free2(SPRITE_ECRAN);
 	dos_free2((byte *)SAUVEGARDE);
 	dos_free2(BUFFERTAPE);
-	dos_free2(Bufferobjet);
 	dos_free2(inventaire2);
 	dos_free2(GESTE);
 	dos_free2(INVENTAIRE_OBJET);
@@ -324,7 +322,7 @@ void Globals::clearAll() {
 	ADR_FICHIER_OBJ = g_PTRNUL;
 	NUM_FICHIER_OBJ = 0;
 	Bufferdecor = g_PTRNUL;
-	Bufferobjet = g_PTRNUL;
+	_vm->_eventsManager.Bufferobjet = g_PTRNUL;
 	_vm->_dialogsManager.Winventaire = g_PTRNUL;
 	_vm->_dialogsManager.inventaire2 = g_PTRNUL;
 	COUCOU = g_PTRNUL;
@@ -375,7 +373,7 @@ void Globals::clearAll() {
 	largeur_boite = 240;
 	TEXTE_FORMATE = 300;
 
-	Bufferobjet = dos_malloc2(2500);
+	_vm->_eventsManager.Bufferobjet = dos_malloc2(2500);
 	INVENTAIRE_OBJET = dos_malloc2(2500);
 
 	ADR_FICHIER_OBJ = g_PTRNUL;

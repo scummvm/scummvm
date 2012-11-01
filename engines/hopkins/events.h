@@ -43,6 +43,7 @@ private:
 	void pollEvents();
 	void handleKey(Common::Event &event);
 	void checkForNextFrameCounter();
+	void updateCursor();
 public:
 	bool souris_flag;
 	bool mouse_linux;
@@ -64,8 +65,10 @@ public:
 	bool NOESC;
 	DIALOG_KEY GAME_KEY;
 	int btsouris;
+	byte *Bufferobjet;
 public:
 	EventsManager();
+	~EventsManager();
 	void setParent(HopkinsEngine *vm);
 
 	void INSTALL_SOURIS();
