@@ -677,8 +677,10 @@ int RMInventory::getSaveStateSize() {
 void RMInventory::saveState(byte *state) {
 	WRITE_LE_UINT32(state, _nInv);
 	state += 4;
-	Common::copy(_inv, _inv + 256, (uint32 *)state);
-	state += 256 * 4;
+	for (int i = 0; i < 256; ++i) {
+		WRITE_LE_UINT32(state, _inv[i]);
+		state += 4;
+	}
 
 	int x;
 	for (int i = 0; i < 256; i++) {
@@ -695,8 +697,10 @@ void RMInventory::saveState(byte *state) {
 int RMInventory::loadState(byte *state) {
 	_nInv = READ_LE_UINT32(state);
 	state += 4;
-	Common::copy((uint32 *)state, (uint32 *)state + 256, _inv);
-	state += 256 * 4;
+	for (int i = 0; i < 256; ++i) {
+		_inv[i] = READ_LE_UINT32(state);
+		state += 4;
+	}
 
 	int x;
 	for (int i = 0; i < 256; i++) {
