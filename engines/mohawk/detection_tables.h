@@ -2525,6 +2525,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Rugrats Print Shop
+	// English Windows Demo
+	// From GeorgeQGreg (Rugrats Movie Soundtrack)
+	{
+		{
+			"rugratsps",
+			"Demo",
+			AD_ENTRY1("outline", "808d5ee8427180ddebdd5dd4199b47cb"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
