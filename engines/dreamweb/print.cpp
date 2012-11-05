@@ -59,9 +59,13 @@ uint8 DreamWebEngine::getNextWord(const GraphicsFile &charSet, const uint8 *stri
 }
 
 void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
-	if (c == 255)
+	// WORKAROUND: Some texts contain leftover tab characters, which will cause
+	// OOB memory access when showing a character, as all the printable ones are
+	// from 32 onwards. We compensate for that here by ignoring all the invalid
+	// characters (0 - 31).
+	if (c < 32 || c == 255)
 		return;
-
+	
 	uint8 dummyWidth, dummyHeight;
 	if (width == NULL)
 		width = &dummyWidth;
