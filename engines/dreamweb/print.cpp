@@ -49,7 +49,9 @@ uint8 DreamWebEngine::getNextWord(const GraphicsFile &charSet, const uint8 *stri
 			return 0;
 		}
 		firstChar = modifyChar(firstChar);
-		if (firstChar != 255) {
+		// WORKAROUND: Also filter out invalid characters here (refer to the
+		// workaround in printChar() below for more info).
+		if (firstChar >= 32 && firstChar != 255) {
 			uint8 secondChar = *string;
 			uint8 width = charSet._frames[firstChar - 32 + _charShift].width;
 			width = kernChars(firstChar, secondChar, width);
