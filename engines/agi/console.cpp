@@ -35,7 +35,6 @@ Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	DCmd_Register("debug",      WRAP_METHOD(Console, Cmd_Debug));
 	DCmd_Register("cont",       WRAP_METHOD(Console, Cmd_Cont));
 	DCmd_Register("agiver",     WRAP_METHOD(Console, Cmd_Agiver));
-	DCmd_Register("crc",        WRAP_METHOD(Console, Cmd_Crc));
 	DCmd_Register("flags",      WRAP_METHOD(Console, Cmd_Flags));
 	DCmd_Register("logic0",     WRAP_METHOD(Console, Cmd_Logic0));
 	DCmd_Register("objs",       WRAP_METHOD(Console, Cmd_Objs));
@@ -115,12 +114,6 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Unknown opcode\n");
-
-	return true;
-}
-
-bool Console::Cmd_Crc(int argc, const char **argv) {
-	DebugPrintf("command removed from scummvm\n");
 
 	return true;
 }
@@ -278,22 +271,17 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 MickeyConsole::MickeyConsole(MickeyEngine *mickey) : GUI::Debugger() {
 	_mickey = mickey;
 
-	DCmd_Register("curRoom",     WRAP_METHOD(MickeyConsole, Cmd_CurRoom));
-	DCmd_Register("gotoRoom",    WRAP_METHOD(MickeyConsole, Cmd_GotoRoom));
+	DCmd_Register("room",        WRAP_METHOD(MickeyConsole, Cmd_Room));
 	DCmd_Register("drawPic",     WRAP_METHOD(MickeyConsole, Cmd_DrawPic));
 	DCmd_Register("drawObj",     WRAP_METHOD(MickeyConsole, Cmd_DrawObj));
 }
 
-bool MickeyConsole::Cmd_CurRoom(int argc, const char **argv) {
-	_mickey->debugCurRoom();
-	return true;
-}
-
-bool MickeyConsole::Cmd_GotoRoom(int argc, const char **argv) {
-	if (argc != 2)
-		DebugPrintf("Usage: %s <Room number>\n", argv[0]);
-	else
+bool MickeyConsole::Cmd_Room(int argc, const char **argv) {
+	if (argc == 2)
 		_mickey->debugGotoRoom(atoi(argv[1]));
+
+	_mickey->debugCurRoom();
+
 	return true;
 }
 
