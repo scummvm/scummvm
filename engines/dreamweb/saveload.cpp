@@ -156,8 +156,16 @@ void DreamWebEngine::doLoad(int savegameId) {
 	} else {
 
 		if (savegameId == -1) {
-			// Open dialog to get savegameId
+			// Wait till both mouse buttons are up. We should wait till the user
+			// releases the mouse button, otherwise the follow-up mouseup event
+			// will trigger a load of the save slot under the mouse cursor. Fixes
+			// bug #3582582.
+			while (_oldMouseState > 0) {
+				readMouse();
+				g_system->delayMillis(10);
+			}
 
+			// Open dialog to get savegameId
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
@@ -241,6 +249,15 @@ void DreamWebEngine::saveGame() {
 		}
 		return;
 	} else {
+		// Wait till both mouse buttons are up. We should wait till the user
+		// releases the mouse button, otherwise the follow-up mouseup event
+		// will trigger a save into the save slot under the mouse cursor. Fixes
+		// bug #3582582.
+		while (_oldMouseState > 0) {
+			readMouse();
+			g_system->delayMillis(10);
+		}
+
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		int savegameId = dialog->runModalWithCurrentTarget();
 		Common::String game_description = dialog->getResultString();
