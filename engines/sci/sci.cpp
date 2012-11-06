@@ -699,6 +699,7 @@ void SciEngine::runGame() {
 			patchGameSaveRestore();
 			setLauncherLanguage();
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
+			_gamestate->_throttleLastTime = 0;
 			if (_gfxMenu)
 				_gfxMenu->reset();
 			_gamestate->abortScriptProcessing = kAbortNone;
