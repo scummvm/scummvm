@@ -433,10 +433,14 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 		}
 	} else if (_game.version <= 2) {
-		if (od.actordir) {
-			x = od.walk_x;
-			y = od.walk_y;
-		} else {
+		x = od.walk_x;
+		y = od.walk_y;
+
+		// Adjust x, y when no actor direction is set, but only perform this
+		// adjustment for V0 games (e.g. MM C64), otherwise certain scenes in
+		// newer games are affected as well (e.g. the interior of the Shuttle
+		// Bus scene in Zak V2, where no actor is present). Refer to bug #3526089.
+		if (!od.actordir && _game.version == 0) {
 			x = od.x_pos + od.width / 2;
 			y = od.y_pos + od.height / 2;
 		}
