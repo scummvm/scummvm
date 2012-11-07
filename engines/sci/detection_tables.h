@@ -3281,7 +3281,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "1aeafe2b495de288d002109650b66614", 1364},
 		{"resource.000", 0, "8e10d4f05c1fd9f883384fa38a898489", 377394},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Slater & Charlie Go Camping - English DOS/Windows
 	{"slater", "", {
@@ -3289,7 +3289,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
 		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 
 	// Slater & Charlie Go Camping - English DOS/Windows (Sierra Originals)
@@ -3298,7 +3298,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
 		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Slater & Charlie Go Camping - English Macintosh
 	{"slater", "", {
