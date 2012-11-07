@@ -282,6 +282,22 @@ void Globals::setConfig() {
 	HOPANM = "ANM";
 	HOPSEQ = "SEQ";
 
+	// CHECKME: Should be in Globals() but it doesn't work
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY:
+		FR = 0;
+		break;
+	case Common::FR_FRA:
+		FR = 1;
+		break;
+	case Common::ES_ESP:
+		FR = 2;
+		break;
+	default:
+		warning("Language initialization to be verified");
+		break;
+	}
+
 	switch (FR) {
 	case 0:
 		FICH_ZONE = "ZONEAN.TXT";
