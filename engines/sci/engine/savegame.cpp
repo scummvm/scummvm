@@ -878,6 +878,10 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		}
 	}
 
+	// Remove the palVary effect timer, if there is one running currently.
+	// Fixes bug #3575569.
+	g_sci->_gfxPalette->palVaryRemoveTimer();
+
 	// We don't need the thumbnail here, so just read it and discard it
 	Graphics::skipThumbnail(*fh);
 
