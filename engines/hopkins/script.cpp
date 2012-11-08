@@ -722,7 +722,7 @@ LABEL_1141:
 			if (!_vm->_globals.internet) {
 				memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 0x301u);
 				v1 = _vm->_graphicsManager.OLD_PAL[769];
-				_vm->_animationManager.PLAY_ANM2("plan.ANm", 50, 10, 800);
+				_vm->_animationManager.PLAY_ANM2("PLAN.ANM", 50, 10, 800);
 			}
 			_vm->_globals.NBBLOC = 0;
 		}

@@ -316,8 +316,8 @@ public:
 	TriItem Tri[51];
 	int FR;
 	int SVGA;
-	int internet;
-	int PUBEXIT;
+	bool internet;
+	bool PUBEXIT;
 	bool XFULLSCREEN;
 	int XSETMODE;
 	int XZOOM;

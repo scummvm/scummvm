@@ -980,7 +980,7 @@ void HopkinsEngine::REST_SYSTEM() {
 }
 
 void HopkinsEngine::PUBQUIT() {
-	_globals.PUBEXIT = 1;
+	_globals.PUBEXIT = true;
 	_graphicsManager.RESET_SEGMENT_VESA();
 	_globals.FORET = 0;
 	_eventsManager.CASSE = false;

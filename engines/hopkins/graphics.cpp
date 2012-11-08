@@ -48,8 +48,14 @@ GraphicsManager::GraphicsManager() {
 	PCX_L = PCX_H = 0;
 	DOUBLE_ECRAN = false;
 	OLD_SCROLL = 0;
-	MANU_SCROLL = 1;
-	SPEED_SCROLL = 16;
+	if (_vm->getIsDemo()) {
+		// CHECKME: Should be 0?
+		MANU_SCROLL = 1;
+		SPEED_SCROLL = 16;
+	} else {
+		MANU_SCROLL = 0;
+		SPEED_SCROLL = 32;
+	}
 	nbrligne2 = 0;
 	Agr_x = Agr_y = 0;
 	Agr_Flag_x = Agr_Flag_y = 0;

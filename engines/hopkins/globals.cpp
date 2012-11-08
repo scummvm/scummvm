@@ -116,8 +116,9 @@ Globals::Globals() {
 	// Initialise fields
 	FR = 0;
 	SVGA = 2;
-	internet = 1;
-	PUBEXIT = 0;
+	internet = true;
+
+	PUBEXIT = false;
 	vitesse = 1;
 	INSTALL_TYPE = 1;
 	MUSICVOL = 6;
@@ -297,6 +298,12 @@ void Globals::setConfig() {
 		warning("Language initialization to be verified");
 		break;
 	}
+
+	if (_vm->getIsDemo())
+		internet = true;
+	else
+		internet = false;
+	// End of CHECKME
 
 	switch (FR) {
 	case 0:
