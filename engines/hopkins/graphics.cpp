@@ -48,14 +48,7 @@ GraphicsManager::GraphicsManager() {
 	PCX_L = PCX_H = 0;
 	DOUBLE_ECRAN = false;
 	OLD_SCROLL = 0;
-	if (_vm->getIsDemo()) {
-		// CHECKME: Should be 0?
-		MANU_SCROLL = 1;
-		SPEED_SCROLL = 16;
-	} else {
-		MANU_SCROLL = 0;
-		SPEED_SCROLL = 32;
-	}
+
 	nbrligne2 = 0;
 	Agr_x = Agr_y = 0;
 	Agr_Flag_x = Agr_Flag_y = 0;
@@ -92,6 +85,15 @@ GraphicsManager::~GraphicsManager() {
 
 void GraphicsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
+
+	if (_vm->getIsDemo()) {
+		// CHECKME: Should be 0?
+		MANU_SCROLL = 1;
+		SPEED_SCROLL = 16;
+	} else {
+		MANU_SCROLL = 0;
+		SPEED_SCROLL = 32;
+	}
 }
 
 void GraphicsManager::SET_MODE(int width, int height) {
