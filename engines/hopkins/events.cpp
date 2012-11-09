@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/cursorman.h"
 #include "hopkins/events.h"
 #include "hopkins/files.h"
 #include "hopkins/globals.h"
@@ -122,14 +123,14 @@ int EventsManager::BMOUSE() {
 // Mouse Off
 void EventsManager::MOUSE_OFF() {
 	souris_flag = false;
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 }
 
 // Mouse On
 void EventsManager::MOUSE_ON() {
 	souris_on();
 	souris_flag = true;
-	g_system->showMouse(true);
+	CursorMan.showMouse(true);
 }
 
 // Change Mouse Cursor
@@ -508,7 +509,7 @@ void EventsManager::updateCursor() {
 
 	// Set the ScummVM cursor from the surface
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-	g_system->setMouseCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
+	CursorMan.replaceCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
 		xOffset, 0, 0, true, &pixelFormat);
 
 	// Delete the cursor surface 
