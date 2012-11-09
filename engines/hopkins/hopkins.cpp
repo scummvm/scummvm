@@ -104,6 +104,9 @@ Common::Error HopkinsEngine::run() {
 
 	_soundManager.WSOUND_INIT();
 
+	if (!getIsDemo())
+		_soundManager.WSOUND(16);
+
 	_globals.CHARGE_OBJET();
 	_objectsManager.CHANGE_OBJET(14);
 	_objectsManager.AJOUTE_OBJET(14);
@@ -118,18 +121,27 @@ Common::Error HopkinsEngine::run() {
 	_graphicsManager.LOAD_IMAGE("LINUX");
 
 	_graphicsManager.FADE_INW();
-	_eventsManager.delay(1500);
-	_graphicsManager.FADE_OUTW();
-
-	if (!_globals.internet) {
+	if (getIsDemo())
+		_eventsManager.delay(1500);
+	else {
+		_eventsManager.delay(500);
+		_globals.vitesse = 2;
+		_globals.iRegul = 1;
 		_graphicsManager.FADE_LINUX = 2;
-		_animationManager.PLAY_ANM("MP.ANM", 10, 16, 200);
 	}
-
-	_graphicsManager.LOAD_IMAGE("H2");
-	_graphicsManager.FADE_INW();
-	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
+
+	if (getIsDemo()) {
+		if (!_globals.internet) {
+			_graphicsManager.FADE_LINUX = 2;
+			_animationManager.PLAY_ANM("MP.ANM", 10, 16, 200);
+		}
+
+		_graphicsManager.LOAD_IMAGE("H2");
+		_graphicsManager.FADE_INW();
+		_eventsManager.delay(500);
+		_graphicsManager.FADE_OUTW();
+	}
 
 	if (!_eventsManager.ESC_KEY)
 		INTRORUN();
