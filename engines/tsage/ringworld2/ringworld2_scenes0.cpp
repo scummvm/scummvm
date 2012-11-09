@@ -61,7 +61,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene50::process(Event &event) {
-	if ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType != EVENT_KEYPRESS) && (event.eventType == 27)) {
+	if ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType != EVENT_KEYPRESS) && (event.eventType == EVENT_UNK27)) {
 		event.handled = true;
 		warning("TODO: incomplete Scene50::process()");
 		// CursorType _oldCursorId = _cursorId;
