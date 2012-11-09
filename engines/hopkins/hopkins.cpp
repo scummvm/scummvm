@@ -118,7 +118,10 @@ Common::Error HopkinsEngine::run() {
 	_graphicsManager.Cls_Video();
 	_graphicsManager.DD_Unlock();
 
-	_graphicsManager.LOAD_IMAGE("LINUX");
+	if (getIsDemo())
+		_graphicsManager.LOAD_IMAGE("LINUX");
+	else
+		_graphicsManager.LOAD_IMAGE("H2");
 
 	_graphicsManager.FADE_INW();
 	if (getIsDemo())
@@ -153,7 +156,10 @@ Common::Error HopkinsEngine::run() {
 	_globals.PLANX = _globals.PLANY = 0;
 	memset(_globals.SAUVEGARDE, 0, 2000);
 	_globals.SORTIE = 0;
-	_globals.PASSWORD = 1;
+	if (getIsDemo())
+		_globals.PASSWORD = true;
+	else
+		_globals.PASSWORD = false;
 
 LABEL_12:
 	if (_globals.SORTIE == 300)

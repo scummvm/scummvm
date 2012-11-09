@@ -396,7 +396,7 @@ public:
 	int SORTIE;
 	int PLANX, PLANY;
 	int PLANI;
-	int PASSWORD;
+	bool PASSWORD; // CHECKME: Useless variable?
 	int NOSPRECRAN;
 	int ECRAN;
 	int OLD_ECRAN;

@@ -152,7 +152,7 @@ Globals::Globals() {
 	PLANX = PLANY = 0;
 	PLANI = 0;
 	PERSO = 0;
-	PASSWORD = 0;
+	PASSWORD = false;
 	ECRAN = 0;
 	NOSPRECRAN = 0;
 	OLD_ECRAN = 0;
