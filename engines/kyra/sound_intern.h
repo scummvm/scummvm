@@ -193,7 +193,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx);
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume = 255, uint8 priority = 255, bool isSfx = true);
 	void playSoundEffect(uint8 track, uint8 volume = 0xff);
 
 	void updateVolumeSettings();

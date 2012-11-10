@@ -184,11 +184,11 @@ public:
 	 * @param handle    store a copy of the sound handle
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
+	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, uint8 priority = 255, bool isSfx = false);
 
 	Audio::SeekableAudioStream *getVoiceStream(const char *file) const;
 
-	bool playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
+	bool playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle = 0, uint8 volume = 255, uint8 priority = 255, bool isSfx = false);
 
 	/**
 	 * Checks if a voice is being played.
@@ -238,7 +238,13 @@ protected:
 		kNumChannelHandles = 4
 	};
 
-	Audio::SoundHandle _soundChannels[kNumChannelHandles];
+	struct SoundChannel {
+		SoundChannel() : handle(), priority(0) {}
+		Audio::SoundHandle handle;
+		int priority;
+	};
+	
+	SoundChannel _soundChannels[kNumChannelHandles];
 
 	int _musicEnabled;
 	bool _sfxEnabled;

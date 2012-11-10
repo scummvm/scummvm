@@ -569,15 +569,24 @@ void SoundTownsPC98_v2::beginFadeOut() {
 	haltTrack();
 }
 
-int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle, uint8, bool) {
+int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool) {
 	static const uint16 rates[] = { 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
 	static const char patternHOF[] = "%s.PCM";
 	static const char patternLOL[] = "%s.VOC";
 
 	int h = 0;
 	if (_currentSFX) {
-		while (h < kNumChannelHandles && _mixer->isSoundHandleActive(_soundChannels[h]))
+		while (h < kNumChannelHandles && _mixer->isSoundHandleActive(_soundChannels[h].handle))
 			h++;
+
+		if (h >= kNumChannelHandles) {
+			h = 0;
+			while (h < kNumChannelHandles && _soundChannels[h].priority > priority)
+				++h;
+			if (h < kNumChannelHandles)
+				voiceStop(&_soundChannels[h].handle);
+		}
+
 		if (h >= kNumChannelHandles)
 			return 0;
 	}
@@ -630,9 +639,10 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 	}
 
 	_currentSFX = Audio::makeRawStream(sfx, outsize, sfxRate * 10, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h], _currentSFX);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h].handle, _currentSFX, -1, volume);
+	_soundChannels[h].priority = priority;
 	if (handle)
-		*handle = _soundChannels[h];
+		*handle = _soundChannels[h].handle;
 
 	delete[] data;
 	return 1;

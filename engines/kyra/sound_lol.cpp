@@ -165,9 +165,8 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 		return;
 
 	volume &= 0xff;
-	// Priority setting (used for acquiring one of the 4 pcm channels) currently not implemented.
-	// int16 vprIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2 + 1]);
-	// uint16 priority = (vprIndex > 0) ? (vprIndex * volume) >> 8 : -vprIndex;
+	int16 prIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2 + 1]);
+	uint16 priority = (prIndex > 0) ? (prIndex * volume) >> 8 : -prIndex;
 
 	static const uint8 volTable1[] = { 223, 159, 95, 47, 15, 0 };
 	static const uint8 volTable2[] = { 255, 191, 127, 63, 30, 0 };
@@ -189,7 +188,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 
 	if (hasVocFile) {
 		if (_sound->isVoicePresent(_ingameSoundList[vocIndex]))
-			_sound->voicePlay(_ingameSoundList[vocIndex], 0, volume, true);
+			_sound->voicePlay(_ingameSoundList[vocIndex], 0, volume, priority, true);
 	} else if (_flags.platform == Common::kPlatformPC) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = (track < _ingameMT32SoundIndexSize) ? (_ingameMT32SoundIndex[track] - 1) : -1;
