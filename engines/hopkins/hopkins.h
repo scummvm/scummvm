@@ -91,6 +91,10 @@ private:
 	void PUBQUIT();
 	void ENDEMO();
 	void BOOM();
+
+	bool runLinuxDemo();
+	bool runLinuxFull();
+
 protected:
 	// Engine APIs
 	virtual Common::Error run();
