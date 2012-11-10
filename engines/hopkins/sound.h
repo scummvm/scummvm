@@ -25,14 +25,61 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 
 namespace Hopkins {
+
+class VoiceItem {
+public:
+	bool active;
+	int wavIndex;
+	Audio::RewindableAudioStream *audioStream;
+
+	// Decprecated fields
+	int audioLen;
+	int fieldC;
+	byte *audioBuf;
+
+	int field14;
+};
+
+class SwavItem {
+public:
+	bool active;
+	Audio::RewindableAudioStream *audioStream;
+
+	// Deprecated fields
+	int audioSpec;
+	byte *audioBuf;
+	int audioLen;
+	
+	int field24;
+};
+
+class MusicItem {
+public:
+	byte field0;
+	byte field1;
+	int field16[50];
+};
+
+#define VOICE_COUNT 3
+#define SWAV_COUNT 50
 
 class HopkinsEngine;
 
 class SoundManager {
 private:
 	HopkinsEngine *_vm;
+
+	bool VOICE_STAT(int voiceIndex);
+	void STOP_VOICE(int voiceIndex);
+	void SDL_LVOICE(int catPos);
+	void PLAY_VOICE_SDL();
+	bool DEL_SAMPLE_SDL(int wavIndex);
+	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, SwavItem &item);
+
 public:
 	int SPECIAL_SOUND;
 	int SOUNDVOL;
@@ -46,6 +93,11 @@ public:
 	bool VOICEOFF;
 	bool TEXTOFF;
 	bool SOUND_FLAG;
+	bool VBL_MERDE;
+	bool CARD_SB;
+	VoiceItem Voice[VOICE_COUNT];
+	SwavItem Swav[SWAV_COUNT];
+	MusicItem Music[2];
 public:
 	SoundManager();
 	void setParent(HopkinsEngine *vm);
@@ -56,7 +108,7 @@ public:
 	void LOAD_WAV(const Common::String &file, int a2);
 	void PLAY_ANM_SOUND(int soundNumber);
 	void WSOUND(int soundNumber);
-	bool VOICE_MIX(int a1, int a2);
+	bool VOICE_MIX(int voiceId, int voiceMode);
 	void DEL_SAMPLE(int soundNumber);
 	void PLAY_SOUND(const Common::String &file);
 	void PLAY_SOUND2(const Common::String &file2);
