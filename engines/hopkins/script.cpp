@@ -115,8 +115,7 @@ int ScriptManager::Traduction(byte *a1) {
 	int v74;
 	int v75; 
 	int v76; 
-	Common::String v77;
-	Common::String s; 
+	Common::String file; 
 
 	v1 = 0;
 	v70 = 0;
@@ -2371,10 +2370,9 @@ LABEL_1141:
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'U') {
 		v60 = (int16)READ_LE_UINT16(a1 + 5);
-		memset(&s, 0, 0x13u);
 		
-		v77 = Common::String::format("SOUND%d.WAV", v60);
-		_vm->_soundManager.PLAY_SOUND(s);
+		file = Common::String::format("SOUND%d.WAV", v60);
+		_vm->_soundManager.PLAY_SOUND(file);
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
