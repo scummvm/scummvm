@@ -1482,6 +1482,8 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	lzo1x_decompress((const byte *)cmpbuf, dwSizeComp, (byte *)GLOBALS._lpResources, (uint32 *)&nBytesRead);
 	if (nBytesRead != (uint32)GLOBALS._nResources * 8)
 		return false;
+	for (int i = 0; i < 2*GLOBALS._nResources; ++i)
+		GLOBALS._lpResources[i] = FROM_LE_32(GLOBALS._lpResources[i]);
 
 	globalDestroy(cmpbuf);
 
