@@ -1931,7 +1931,46 @@ void HopkinsEngine::BASE() {
 }
 
 void HopkinsEngine::BASED() {
-	warning("STUB - BASED()");
+	warning("BASED()");
+
+	_graphicsManager.DD_Lock();
+	_graphicsManager.Cls_Video();
+	_graphicsManager.DD_Unlock();
+	_graphicsManager.Cls_Pal();
+	_animationManager.NO_SEQ = false;
+	_soundManager.WSOUND(26);
+	_globals.iRegul = 1;
+	_globals.DESACTIVE_INVENT = true;
+	_animationManager.NO_COUL = true;
+	_graphicsManager.FADE_LINUX = 2;
+	_animationManager.PLAY_SEQ("abase.seq", 50, 15, 50);
+	_animationManager.NO_COUL = false;
+	_graphicsManager.LOAD_IMAGE("IM92");
+	_animationManager.CHARGE_ANIM("ANIM92");
+	_graphicsManager.VISU_ALL();
+	_objectsManager.INILINK("IM92");
+	_globals.BPP_NOAFF = true;
+
+	int cpt = 0;
+	do {
+		_eventsManager.VBL();
+		++cpt;
+	} while (cpt <= 4);
+
+	_globals.BPP_NOAFF = false;
+	_graphicsManager.FADE_INW();
+	_globals.CACHE_ON();
+
+	do
+		_eventsManager.VBL();
+	while (_objectsManager.BOBPOSI(8) != 22);
+
+	_graphicsManager.FADE_OUTW();
+	_graphicsManager.FIN_VISU();
+	_globals.RESET_CACHE();
+	_globals.DESACTIVE_INVENT = false;
+	_globals.SORTIE = 93;
+	_globals.iRegul = 0;
 }
 
 void HopkinsEngine::JOUE_FIN() {

@@ -5615,7 +5615,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	_vm->_globals.BPP_NOAFF = false;
 	_vm->_graphicsManager.FADE_INW();
 	if (_vm->_globals.ECRAN == 61) {
-		_vm->_animationManager.PLAY_SEQ(0, "OUVRE.SEQ", 10, 4, 10);
+		_vm->_animationManager.PLAY_SEQ("OUVRE.SEQ", 10, 4, 10);
 		BOBANIM_OFF(3);
 		_vm->_globals.NOT_VERIF = 1;
 		g_old_x = XSPR(0);

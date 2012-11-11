@@ -957,7 +957,7 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count
 	} while (v21 <= count && v3 != 1);
 }
 
-void AnimationManager::PLAY_SEQ(int a1, const Common::String &a2, uint32 a3, uint32 a4, uint32 a5) {
+void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, uint32 a5) {
 	int v5; 
 	int v7; 
 	byte *ptr = NULL; 
