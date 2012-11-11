@@ -397,9 +397,10 @@ public:
 	int PLANX, PLANY;
 	int PLANI;
 	bool PASSWORD; // CHECKME: Useless variable?
-	int NOSPRECRAN;
+	bool NOSPRECRAN;
 	int ECRAN;
 	int OLD_ECRAN;
+	int fmusic;
 	int Max_Propre;
 	int Max_Propre_Gen;
 	int Max_Ligne_Long;

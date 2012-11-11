@@ -154,12 +154,13 @@ Globals::Globals() {
 	PERSO = 0;
 	PASSWORD = false;
 	ECRAN = 0;
-	NOSPRECRAN = 0;
+	NOSPRECRAN = false;
 	OLD_ECRAN = 0;
 	Max_Propre_Gen = 0;
 	Max_Ligne_Long = 0;
 	Max_Perso_Y = 0;
 	Max_Propre = 0;
+	fmusic = 0;
 	NBBLOC = 0;
 	opt_scrtype = 0;
 	opt_scrspeed = 0;

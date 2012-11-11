@@ -91,6 +91,13 @@ private:
 	void PUBQUIT();
 	void ENDEMO();
 	void BOOM();
+	void INCENDIE();
+	void BASE();
+	void BASED();
+	void JOUE_FIN();
+	void AVION();
+	int  PWBASE();
+	void OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9);
 
 	bool runLinuxDemo();
 	bool runLinuxFull();

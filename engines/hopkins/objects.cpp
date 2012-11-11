@@ -2627,7 +2627,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.Max_Ligne_Long = 1;
 	_vm->_globals.Max_Propre_Gen = 1;
 	_vm->_globals.Max_Perso_Y = 440;
-	_vm->_globals.NOSPRECRAN = 1;
+	_vm->_globals.NOSPRECRAN = true;
 	_vm->_globals.PLAN_FLAG = true;
 	_vm->_graphicsManager.NOFADE = false;
 	_vm->_globals.NOMARCHE = false;
@@ -2731,7 +2731,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.AFFLI = 0;
 	sprite_ptr = _vm->_globals.LIBERE_FICHIER(sprite_ptr);
 	CLEAR_ECRAN();
-	_vm->_globals.NOSPRECRAN = 0;
+	_vm->_globals.NOSPRECRAN = false;
 	_vm->_globals.PLAN_FLAG = false;
 }	
 
@@ -3085,7 +3085,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	_vm->_globals.GOACTION = 0;
 	FORCEZONE = 1;
 	CHANGEVERBE = 0;
-	_vm->_globals.NOSPRECRAN = 0;
+	_vm->_globals.NOSPRECRAN = false;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_globals.g_old_sens = -1;
 	my_anim = 1;
@@ -5591,7 +5591,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	if (!s4.empty()) {
 		if (!_vm->_globals.NOSPRECRAN)
 			_vm->_graphicsManager.INI_ECRAN(s4);
-		if (!s4.empty() && _vm->_globals.NOSPRECRAN == 1)
+		if (!s4.empty() && _vm->_globals.NOSPRECRAN)
 			_vm->_graphicsManager.INI_ECRAN2(s4);
 	}
 	_vm->_eventsManager.MOUSE_ON();
@@ -5695,7 +5695,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &
 	if (!s4.empty()) {
 		if (!_vm->_globals.NOSPRECRAN)
 			_vm->_graphicsManager.INI_ECRAN(s4);
-		if (!s4.empty() && _vm->_globals.NOSPRECRAN == 1)
+		if (!s4.empty() && _vm->_globals.NOSPRECRAN)
 			_vm->_graphicsManager.INI_ECRAN2(s4);
 	}
 	_vm->_eventsManager.MOUSE_ON();
