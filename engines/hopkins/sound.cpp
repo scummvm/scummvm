@@ -252,7 +252,7 @@ void SoundManager::WSOUND_OFF() {
 }
 
 void SoundManager::PLAY_MOD(const Common::String &file) {
-	if (CARD_SB) {
+	if (CARD_SB && !MUSICOFF) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPMUSIC, file);
 		if (MOD_FLAG) {
 			STOP_MUSIC();
