@@ -45,7 +45,7 @@ public:
 	bool _active;
 	Audio::RewindableAudioStream *_audioStream;
 	Audio::SoundHandle _soundHandle;
-	int field24;
+	bool freeSample;
 };
 
 class MwavItem {
@@ -55,18 +55,16 @@ public:
 	Audio::SoundHandle _soundHandle;
 };
 
+#define MUSIC_WAVE_COUNT 50
+
 class MusicItem {
 public:
 	bool _active;
 	bool _isPlaying;
 	Common::String _string;
-	int _mwavIndexes[50];
+	int _mwavIndexes[MUSIC_WAVE_COUNT];
 	byte unused_mb[100];
 	int _currentIndex;
-	int fieldE0;
-	int fieldE4;
-	int fieldE8;
-	int fieldF0;
 };
 
 class SoundItem {
@@ -91,7 +89,7 @@ private:
 	void PLAY_VOICE_SDL();
 	bool DEL_SAMPLE_SDL(int wavIndex);
 	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
-	void LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, int field24);
+	void LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, bool freeSample);
 	void LOAD_NWAV(const Common::String &file, int wavIndex);
 	void PLAY_NWAV(int wavIndex);
 	void DEL_NWAV(int wavIndex);

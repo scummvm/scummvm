@@ -296,6 +296,7 @@ void SoundManager::LOAD_MUSIC(const Common::String &file) {
 			Common::String filename = Common::String::format("%s_%s.WAV", file.c_str(), &s[0]);
 			LOAD_MSAMPLE(mwavIndex, filename);
 
+			assert(destIndex < MUSIC_WAVE_COUNT);
 			Music._mwavIndexes[destIndex++] = mwavIndex;
 		}
 	} while (!breakFlag);
@@ -305,10 +306,6 @@ void SoundManager::LOAD_MUSIC(const Common::String &file) {
 	Music._active = true;
 	Music._isPlaying = false;
 	Music._currentIndex = -1;
-	Music.fieldE0 = 0;
-	Music.fieldE4 = 0;
-	Music.fieldE8 = 0;
-	Music.fieldF0 = 3;
 }
 
 void SoundManager::PLAY_MUSIC() {
@@ -332,10 +329,6 @@ void SoundManager::DEL_MUSIC() {
 	Music._isPlaying = false;
 	Music._string = "     ";
 	Music._currentIndex = -1;
-	Music.fieldE0 = 0;
-	Music.fieldE4 = 0;
-	Music.fieldE8 = 0;
-	Music.fieldF0 = 0;
 }
 
 void SoundManager::checkMusic() {
@@ -599,7 +592,7 @@ void SoundManager::STOP_VOICE(int voiceIndex) {
 		Voice[voiceIndex]._status = 0;
 		wavIndex = Voice[voiceIndex]._wavIndex;
 		if (Swav[wavIndex]._active) {
-			if (Swav[wavIndex].field24 == 1)
+			if (Swav[wavIndex].freeSample)
 				DEL_SAMPLE_SDL(wavIndex);
 		}
 	}
@@ -622,7 +615,7 @@ void SoundManager::PLAY_VOICE_SDL() {
 
 	if (!Voice[2]._status) {
 		int wavIndex = Voice[2]._wavIndex;
-		if (Swav[wavIndex]._active && Swav[wavIndex].field24 == 1)
+		if (Swav[wavIndex]._active && Swav[wavIndex].freeSample)
 			DEL_SAMPLE_SDL(wavIndex);
 	}
 
@@ -654,13 +647,13 @@ bool SoundManager::SDL_LoadVoice(const Common::String &filename, size_t fileOffs
 	return true;
 }
 
-void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, int field24) {
+void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, bool freeSample) {
 	if (Swav[wavIndex]._active)
 		DEL_SAMPLE_SDL(wavIndex);
 
 	SDL_LoadVoice(filename, 0, 0, Swav[wavIndex]);
 	Swav[wavIndex]._active = true;
-	Swav[wavIndex].field24 = field24;
+	Swav[wavIndex].freeSample = freeSample;
 }
 
 void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
@@ -694,7 +687,7 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 	if (!Swav[wavIndex]._active)
 		warning("Bad handle");
 
-	if (Voice[voiceIndex]._status == 1 && Swav[wavIndex]._active && Swav[wavIndex].field24 == 1)
+	if (Voice[voiceIndex]._status == 1 && Swav[wavIndex]._active && Swav[wavIndex].freeSample)
 		DEL_SAMPLE_SDL(wavIndex);
 
 	Voice[voiceIndex].fieldC = 0;
