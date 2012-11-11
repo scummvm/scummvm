@@ -2438,7 +2438,193 @@ void HopkinsEngine::Credits() {
 }
 
 void HopkinsEngine::BTOCEAN() {
-	warning("STUB - BTOCEAN()");
+	warning("BTOCEAN()");
+
+	_fontManager.TEXTE_OFF(9);
+	if (_eventsManager.btsouris == 16) {
+		_eventsManager.XMOUSE();
+		if (_objectsManager.NUMZONE > 0) {
+			int oldPosX = _eventsManager.XMOUSE();
+			int oldPosY = _eventsManager.YMOUSE();
+			bool displAnim = false;
+			if (_objectsManager.NUMZONE == 1) {
+				if (_globals.OCEAN_SENS == 3)
+					_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, 0);
+				if (_globals.OCEAN_SENS == 1)
+					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, 0);
+				if (_globals.OCEAN_SENS == 5)
+					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, 0);
+				_globals.OCEAN_SENS = 7;
+				_globals.SORTIE = 1;
+				int oldX = _objectsManager.XSPR(0);
+				while (1) {
+					if (_globals.vitesse == 1)
+						oldX -= 2;
+					if (_globals.vitesse == 2)
+						oldX -= 4;
+					if (_globals.vitesse == 3)
+						oldX -= 6;
+					_objectsManager.SETXSPR(0, oldX);
+					OCEAN_HOME();
+					_eventsManager.VBL();
+					if (_eventsManager.BMOUSE() == 1) {
+						if (oldPosX == _eventsManager.XMOUSE()) {
+							if (_eventsManager.YMOUSE() == oldPosY)
+								break;
+						}
+					}
+					if (oldX <= -100)
+						goto LABEL_22;
+				}
+				displAnim = true;
+			}
+LABEL_22:
+			if (_objectsManager.NUMZONE == 2) {
+				if (_globals.OCEAN_SENS == 7)
+					_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
+				if (_globals.OCEAN_SENS == 1)
+					_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
+				if (_globals.OCEAN_SENS == 5)
+					_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, 0);
+				_globals.OCEAN_SENS = 3;
+				_globals.SORTIE = 2;
+				int oldX = _objectsManager.XSPR(0);
+				while (1) {
+					if (_globals.vitesse == 1)
+						oldX += 2;
+					if (_globals.vitesse == 2)
+						oldX += 4;
+					if (_globals.vitesse == 3)
+						oldX += 6;
+					_objectsManager.SETXSPR(0, oldX);
+					OCEAN_HOME();
+					_eventsManager.VBL();
+					if (_eventsManager.BMOUSE() == 1) {
+						if (oldPosX == _eventsManager.XMOUSE()) {
+							if (_eventsManager.YMOUSE() == oldPosY)
+								break;
+						}
+					}
+					if (oldX > 499)
+						goto LABEL_41;
+				}
+				displAnim = true;
+			}
+LABEL_41:
+			if (_objectsManager.NUMZONE == 3) {
+				if (_globals.OCEAN_SENS == 3) {
+					int oldX = _objectsManager.XSPR(0);
+					do {
+						if (_globals.vitesse == 1)
+							oldX += 2;
+						if (_globals.vitesse == 2)
+							oldX += 4;
+						if (_globals.vitesse == 3)
+							oldX += 6;
+						_objectsManager.SETXSPR(0, oldX);
+						OCEAN_HOME();
+						_eventsManager.VBL();
+						if (_eventsManager.BMOUSE() == 1) {
+							if (oldPosX == _eventsManager.XMOUSE()) {
+								if (_eventsManager.YMOUSE() == oldPosY) {
+									displAnim = true;
+									goto LABEL_57;
+								}
+							}
+						}
+					} while (oldX <= 235);
+					if (!displAnim)
+						_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, 0);
+				}
+LABEL_57:
+				if (_globals.OCEAN_SENS == 7) {
+					int oldX = _objectsManager.XSPR(0);
+					do {
+						if (_globals.vitesse == 1)
+							oldX -= 2;
+						if (_globals.vitesse == 2)
+							oldX -= 4;
+						if (_globals.vitesse == 3)
+							oldX -= 6;
+						_objectsManager.SETXSPR(0, oldX);
+						OCEAN_HOME();
+						_eventsManager.VBL();
+						if (_eventsManager.BMOUSE() == 1) {
+							if (oldPosX == _eventsManager.XMOUSE()) {
+								if (_eventsManager.YMOUSE() == oldPosY) {
+									displAnim = true;
+									goto LABEL_72;
+								}
+							}
+						}
+					} while (oldX > 236);
+					if (!displAnim)
+						_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, 0);
+				}
+LABEL_72:
+				if (_globals.OCEAN_SENS == 5)
+					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, 0);
+				_globals.OCEAN_SENS = 1;
+				_globals.SORTIE = 3;
+			}
+			if (_objectsManager.NUMZONE == 4) {
+				if (_globals.OCEAN_SENS == 3) {
+					int oldX = _objectsManager.XSPR(0);
+					do {
+						if (_globals.vitesse == 1)
+							oldX += 2;
+						if (_globals.vitesse == 2)
+							oldX += 4;
+						if (_globals.vitesse == 3)
+							oldX += 6;
+						_objectsManager.SETXSPR(0, oldX);
+						OCEAN_HOME();
+						_eventsManager.VBL();
+						if (_eventsManager.BMOUSE() == 1) {
+							if (oldPosX == _eventsManager.XMOUSE()) {
+								if (_eventsManager.YMOUSE() == oldPosY) {
+									displAnim = true;
+									goto LABEL_91;
+								}
+							}
+						}
+					} while (oldX <= 235);
+					if (!displAnim)
+						_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, 0);
+				}
+LABEL_91:
+				if (_globals.OCEAN_SENS == 7) {
+					int oldX = _objectsManager.XSPR(0);
+					while (1) {
+						if (_globals.vitesse == 1)
+							oldX -= 2;
+						if (_globals.vitesse == 2)
+							oldX -= 4;
+						if (_globals.vitesse == 3)
+							oldX -= 6;
+						_objectsManager.SETXSPR(0, oldX);
+						OCEAN_HOME();
+						_eventsManager.VBL();
+						if (_eventsManager.BMOUSE() == 1) {
+							if (oldPosX == _eventsManager.XMOUSE()) {
+								if (_eventsManager.YMOUSE() == oldPosY)
+									break;
+							}
+						}
+						if (oldX <= 236) {
+							if (!displAnim)
+								_objectsManager.SPACTION(_globals.PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, 0);
+							break;
+						}
+					}
+				}
+				if (_globals.OCEAN_SENS == 1)
+					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, 0);
+				_globals.OCEAN_SENS = 5;
+				_globals.SORTIE = 4;
+			}
+		}
+	}
 }
 
 void HopkinsEngine::OCEAN_HOME() {
