@@ -1897,7 +1897,85 @@ void HopkinsEngine::JOUE_FIN() {
 }
 
 void HopkinsEngine::AVION() {
-	warning("STUB - AVION()");
+	warning("AVION()");
+
+	_soundManager.WSOUND(28);
+	_globals.iRegul = 1;
+	_globals.nbrligne = 640;
+	_graphicsManager.DD_Lock();
+	_graphicsManager.Cls_Video();
+	_graphicsManager.DD_Unlock();
+	_graphicsManager.Cls_Pal();
+
+	_animationManager.CLS_ANM = false;
+	if (_globals.SVGA == 1) {
+		_animationManager.PLAY_ANM("aerop00.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop10.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop20.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop30.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop40.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop50.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop60.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop70.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans00.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans10.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans15.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans20.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans30.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans40.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY) {
+			_graphicsManager.FADE_LINUX = 2;
+			_animationManager.PLAY_ANM("PARA00.anm", 9, 9, 9);
+		}
+	} else if (_globals.SVGA == 2) {
+		_animationManager.PLAY_ANM("aerop00a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("serop10a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop20a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop30a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop40a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop50a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop60a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("aerop70a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans00a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans10a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans15a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans20a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans30a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("trans40a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY) {
+			_graphicsManager.FADE_LINUX = 2;
+			_animationManager.PLAY_ANM("PARA00a.anm", 9, 9, 9);
+		}
+	}
+
+	_eventsManager.ESC_KEY = 0;
+	_animationManager.CLS_ANM = 0;
 }
 
 int HopkinsEngine::PWBASE() {
@@ -1950,6 +2028,7 @@ int HopkinsEngine::PWBASE() {
 		if ((mouseButton == 1) && zone)
 			loopCond = true;
 	} while (!loopCond);
+
 	_globals.DESACTIVE_INVENT = false;
 	_graphicsManager.FADE_OUTW();
 
