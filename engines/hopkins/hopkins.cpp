@@ -1939,79 +1939,60 @@ void HopkinsEngine::BASE() {
 	_soundManager.WSOUND(25);
 	if (_globals.SVGA == 1) {
 		_animationManager.PLAY_ANM("base00.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("base05.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("base10.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("base20.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("base30.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("base40.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("base50.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("OC00.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("OC05.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("OC10.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_animationManager.PLAY_ANM("OC20.anm", 10, 18, 18);
-		if (_eventsManager.ESC_KEY)
-			goto LABEL_27;
-		_graphicsManager.FADE_LINUX = 2;
-		_animationManager.PLAY_ANM("OC30.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base05.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base10.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base20.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base30.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base40.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base50.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("OC00.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("OC05.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("OC10.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("OC20.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY) {
+			_graphicsManager.FADE_LINUX = 2;
+			_animationManager.PLAY_ANM("OC30.anm", 10, 18, 18);
+		}
 	}
 	if (_globals.SVGA == 2) {
 		_animationManager.PLAY_ANM("base00a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY) {
+		if (!_eventsManager.ESC_KEY)
 			_animationManager.PLAY_ANM("base05a.anm", 10, 18, 18);
-			if (!_eventsManager.ESC_KEY) {
-				_animationManager.PLAY_ANM("base10a.anm", 10, 18, 18);
-				if (!_eventsManager.ESC_KEY) {
-					_animationManager.PLAY_ANM("base20a.anm", 10, 18, 18);
-					if (_eventsManager.ESC_KEY) {
-						_animationManager.PLAY_ANM("base30a.anm", 10, 18, 18);
-						if (!_eventsManager.ESC_KEY) {
-							_animationManager.PLAY_ANM("base40a.anm", 10, 18, 18);
-							if (!_eventsManager.ESC_KEY) {
-								_animationManager.PLAY_ANM("base50a.anm", 10, 18, 18);
-								if (!_eventsManager.ESC_KEY) {
-									_animationManager.PLAY_ANM("OC00a.anm", 10, 18, 18);
-									if (!_eventsManager.ESC_KEY) {
-										_animationManager.PLAY_ANM("OC05a.anm", 10, 18, 18);
-										if (!_eventsManager.ESC_KEY) {
-											_animationManager.PLAY_ANM("OC10a.anm", 10, 18, 18);
-											if (!_eventsManager.ESC_KEY) {
-												_animationManager.PLAY_ANM("OC20a.anm", 10, 18, 18);
-												if (!_eventsManager.ESC_KEY) {
-													_graphicsManager.FADE_LINUX = 2;
-													_animationManager.PLAY_ANM("OC30a.anm", 10, 18, 18);
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base10a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base20a.anm", 10, 18, 18);
+		// CHECKME: The original code was doing the opposite test, which looks like a bug.
+		if (!_eventsManager.ESC_KEY) 
+			_animationManager.PLAY_ANM("base30a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base40a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("base50a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("OC00a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("OC05a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("OC10a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY)
+			_animationManager.PLAY_ANM("OC20a.anm", 10, 18, 18);
+		if (!_eventsManager.ESC_KEY) {
+			_graphicsManager.FADE_LINUX = 2;
+			_animationManager.PLAY_ANM("OC30a.anm", 10, 18, 18);
 		}
 	}
-LABEL_27:
+
 	_eventsManager.ESC_KEY = false;
 	_animationManager.CLS_ANM = false;
 	_globals.SORTIE = 85;
