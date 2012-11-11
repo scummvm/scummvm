@@ -332,13 +332,22 @@ int Events::handleOneShot(Event *event) {
 
 #ifdef ENABLE_IHNM
 					if (_vm->getGameId() == GID_IHNM) {
+						PalEntry portraitBgColor = _vm->_interface->_portraitBgColor;
+						byte portraitColor = (_vm->getLanguage() == Common::ES_ESP) ? 253 : 254;
+
+						// Set the portrait bg color, in case a saved state is restored from the
+						// launcher. In this case, sfSetPortraitBgColor is not called, thus the
+						// portrait color will always be 0 (black).
+						if (portraitBgColor.red == 0 && portraitBgColor.green == 0 && portraitBgColor.blue == 0)
+							portraitBgColor.green = 255;
+
 						if (_vm->_spiritualBarometer > 255)
-							_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
+							_vm->_gfx->setPaletteColor(portraitColor, 0xff, 0xff, 0xff);
 						else
-							_vm->_gfx->setPaletteColor(kIHNMColorPortrait,
-								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.red / 256,
-								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.green / 256,
-								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.blue / 256);
+							_vm->_gfx->setPaletteColor(portraitColor,
+								_vm->_spiritualBarometer * portraitBgColor.red / 256,
+								_vm->_spiritualBarometer * portraitBgColor.green / 256,
+								_vm->_spiritualBarometer * portraitBgColor.blue / 256);
 					}
 #endif
 
