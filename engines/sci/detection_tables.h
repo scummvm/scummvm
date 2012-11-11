@@ -3121,6 +3121,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::DE_DEU, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Quest for Glory 3 - French DOS v1.1 (supplied by misterhands in bug report #3586214)
+	// Executable scanning reports "L.rry.083"
+	{"qfg3", "", {
+		{"resource.map", 0, "19e2bf9b693932b5e2bb59b9f9ab86c9", 5958},
+		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868000},
+		{"resource.msg", 0, "0fa1047002df904b8d1807bb7bab4fab", 267210},
+		AD_LISTEND},
+	 	Common::FR_FRA, Common::kPlatformPC, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Quest for Glory 3 - Spanish DOS CD (from jvprat)
 	// Executable scanning reports "L.rry.083", VERSION file reports "1.000.000, June 30, 1994"
 	{"qfg3", "", {
