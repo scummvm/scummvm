@@ -116,6 +116,7 @@ public:
 	ScriptManager _scriptManager;
 	SoundManager _soundManager;
 	TalkManager _talkManager;
+
 public:
 	HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc);
 	virtual ~HopkinsEngine();
@@ -139,6 +140,11 @@ public:
 	 * Run the introduction sequence
 	 */
 	void INTRORUN();
+
+	/**
+	 * Synchronises the sound settings from ScummVM into the engine
+	 */
+	virtual void syncSoundSettings();
 };
 
 // Global reference to the HopkinsEngine object

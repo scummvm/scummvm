@@ -27,20 +27,16 @@
 #include "common/str.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
+#include "audio/mixer.h"
 
 namespace Hopkins {
 
 class VoiceItem {
 public:
-	bool active;
+	int status;
 	int wavIndex;
 	Audio::RewindableAudioStream *audioStream;
-
-	// Decprecated fields
-	int audioLen;
 	int fieldC;
-	byte *audioBuf;
-
 	int field14;
 };
 
@@ -48,12 +44,7 @@ class SwavItem {
 public:
 	bool active;
 	Audio::RewindableAudioStream *audioStream;
-
-	// Deprecated fields
-	int audioSpec;
-	byte *audioBuf;
-	int audioLen;
-	
+	Audio::SoundHandle _soundHandle;
 	int field24;
 };
 
@@ -64,8 +55,15 @@ public:
 	int field16[50];
 };
 
+class SoundItem {
+public:
+	bool active;
+
+};
+
 #define VOICE_COUNT 3
 #define SWAV_COUNT 50
+#define SOUND_COUNT 10
 
 class HopkinsEngine;
 
@@ -73,13 +71,17 @@ class SoundManager {
 private:
 	HopkinsEngine *_vm;
 
-	bool VOICE_STAT(int voiceIndex);
+	int VOICE_STAT(int voiceIndex);
 	void STOP_VOICE(int voiceIndex);
-	void SDL_LVOICE(int catPos);
+	void SDL_LVOICE(size_t filePosition, size_t entryLength);
 	void PLAY_VOICE_SDL();
 	bool DEL_SAMPLE_SDL(int wavIndex);
-	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, SwavItem &item);
-
+	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
+	void LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, int field24);
+	void LOAD_NWAV(const Common::String &file, int wavIndex);
+	void PLAY_NWAV(int wavIndex);
+	void DEL_NWAV(int wavIndex);
+	void PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex);
 public:
 	int SPECIAL_SOUND;
 	int SOUNDVOL;
@@ -95,9 +97,11 @@ public:
 	bool SOUND_FLAG;
 	bool VBL_MERDE;
 	bool CARD_SB;
+	int SOUND_NUM;
 	VoiceItem Voice[VOICE_COUNT];
 	SwavItem Swav[SWAV_COUNT];
 	MusicItem Music[2];
+	SoundItem SOUND[SOUND_COUNT];
 public:
 	SoundManager();
 	void setParent(HopkinsEngine *vm);
@@ -105,19 +109,22 @@ public:
 	void WSOUND_INIT();
 	void VERIF_SOUND();
 	void LOAD_ANM_SOUND();
-	void LOAD_WAV(const Common::String &file, int a2);
 	void PLAY_ANM_SOUND(int soundNumber);
+	void LOAD_WAV(const Common::String &file, int wavIndex);
 	void WSOUND(int soundNumber);
 	bool VOICE_MIX(int voiceId, int voiceMode);
-	void DEL_SAMPLE(int soundNumber);
+	void DEL_SAMPLE(int soundIndex);
 	void PLAY_SOUND(const Common::String &file);
 	void PLAY_SOUND2(const Common::String &file2);
 	void MODSetSampleVolume();
 	void MODSetVoiceVolume();
 	void MODSetMusicVolume(int volume);
-	void CHARGE_SAMPLE(int a1, const Common::String &file);
+	void CHARGE_SAMPLE(int wavIndex, const Common::String &file);
 	void PLAY_SAMPLE2(int idx);
-	void PLAY_WAV(int a1);
+	void PLAY_WAV(int wavIndex);
+	
+	void syncSoundSettings();
+	void updateScummVMSoundSettings();
 };
 
 } // End of namespace Hopkins

@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "hopkins/sound.h"
@@ -43,7 +44,8 @@ SoundManager::SoundManager() {
 	TEXTOFF = false;
 	SOUND_FLAG = false;
 	VBL_MERDE = false;
-	CARD_SB = false;
+	CARD_SB = true;
+	SOUND_NUM = 0;
 
 	for (int i = 0; i < VOICE_COUNT; ++i)
 		Common::fill((byte *)&Voice[i], (byte *)&Voice[i] + sizeof(VoiceItem), 0);
@@ -51,6 +53,8 @@ SoundManager::SoundManager() {
 		Common::fill((byte *)&Swav[i], (byte *)&Swav[i] + sizeof(SwavItem), 0);
 	for (int i = 0; i < 2; ++i)
 		Common::fill((byte *)&Music[i], (byte *)&Music[i] + sizeof(MusicItem), 0);
+	for (int i = 0; i < SOUND_COUNT; ++i)
+		Common::fill((byte *)&SOUND[i], (byte *)&SOUND[i] + sizeof(SoundItem), 0);
 }
 
 void SoundManager::setParent(HopkinsEngine *vm) {
@@ -63,15 +67,44 @@ void SoundManager::WSOUND_INIT() {
 }
 
 void SoundManager::VERIF_SOUND() {
-//	warning("TODO: VERIF_SOUND");
+	if (CARD_SB && !SOUNDOFF && SOUND_FLAG) {
+		if (!VOICE_STAT(1)) {
+			STOP_VOICE(1);
+			DEL_NWAV(SOUND_NUM);
+		}
+	}
 }
 
 void SoundManager::LOAD_ANM_SOUND() {
-	warning("TODO: LOAD_ANIM_SOUND");
-}
-
-void SoundManager::LOAD_WAV(const Common::String &file, int a2) {
-	warning("TODO: LOAD_WAV");
+	if (SPECIAL_SOUND == 200)
+		VOICE_MIX(682, 1);
+	if (SPECIAL_SOUND == 199)
+		LOAD_WAV("SOUND22.WAV", 1);
+	if (SPECIAL_SOUND == 198)
+		LOAD_WAV("SOUND3.WAV", 1);
+	if (SPECIAL_SOUND == 16)
+		LOAD_WAV("SOUND16.WAV", 1);
+	if (SPECIAL_SOUND == 14)
+		LOAD_WAV("SOUND14.WAV", 1);
+	if (SPECIAL_SOUND == 208)
+		LOAD_WAV("SOUND77.WAV", 1);
+	if (SPECIAL_SOUND == 210)
+		LOAD_WAV("SOUND78.WAV", 1);
+	if (SPECIAL_SOUND == 211)
+		LOAD_WAV("SOUND78.WAV", 1);
+	if (SPECIAL_SOUND == 5)
+		LOAD_WAV("CRIE.WAV", 1);
+	if (SPECIAL_SOUND == 2) {
+		CHARGE_SAMPLE(5, "mitra1.wav");
+		CHARGE_SAMPLE(1, "tir2.wav");
+		CHARGE_SAMPLE(2, "sound6.wav");
+		CHARGE_SAMPLE(3, "sound5.WAV");
+		CHARGE_SAMPLE(4, "sound4.WAV");
+	}
+	if (SPECIAL_SOUND == 229) {
+		LOAD_WAV("SOUND80.WAV", 1);
+		LOAD_WAV("SOUND82.WAV", 2);
+	}
 }
 
 void SoundManager::PLAY_ANM_SOUND(int soundNumber) {
@@ -127,6 +160,75 @@ void SoundManager::PLAY_ANM_SOUND(int soundNumber) {
 
 void SoundManager::WSOUND(int soundNumber) {
 	warning("TODO: WSOUND");
+/*
+	if (CARD_SB && (old_music != a1 || !MOD_FLAG)) {
+		if (MOD_FLAG == 1)
+			result = WSOUND_OFF();
+		if (a1 == 1)
+			result = PLAY_MOD("appar");
+		if (a1 == 2)
+			result = PLAY_MOD("ville");
+		if (a1 == 3)
+			result = PLAY_MOD("Rock");
+		if (a1 == 4)
+			result = PLAY_MOD("polic");
+		if (a1 == 5)
+			result = PLAY_MOD("deep");
+		if (a1 == 6)
+			result = PLAY_MOD("purga");
+		if (a1 == 12)
+			result = PLAY_MOD("purg2");
+		if (a1 == 7)
+			result = PLAY_MOD("rivie");
+		if (a1 == 8)
+			result = PLAY_MOD("SUSPE");
+		if (a1 == 9)
+			result = PLAY_MOD("labo");
+		if (a1 == 10)
+			result = PLAY_MOD("cadav");
+		if (a1 == 11)
+			result = PLAY_MOD("caban");
+		if (a1 == 13)
+			result = PLAY_MOD("foret");
+		if (a1 == 14)
+			result = PLAY_MOD("ile");
+		if (a1 == 15)
+			result = PLAY_MOD("ile2");
+		if (a1 == 16)
+			result = PLAY_MOD("hopki");
+		if (a1 == 17)
+			result = PLAY_MOD("peur");
+		if (a1 == 18)
+			result = PLAY_MOD("peur");
+		if (a1 == 19)
+			result = PLAY_MOD("BASE");
+		if (a1 == 20)
+			result = PLAY_MOD("cada2");
+		if (a1 == 21)
+			result = PLAY_MOD("usine");
+		if (a1 == 22)
+			result = PLAY_MOD("chien");
+		if (a1 == 23)
+			result = PLAY_MOD("coeur");
+		if (a1 == 24)
+			result = PLAY_MOD("stand");
+		if (a1 == 25)
+			result = PLAY_MOD("ocean");
+		if (a1 == 26)
+			result = PLAY_MOD("base3");
+		if (a1 == 27)
+			result = PLAY_MOD("gloop");
+		if (a1 == 28)
+			result = PLAY_MOD("cant");
+		if (a1 == 29)
+			result = PLAY_MOD("feel");
+		if (a1 == 30)
+			result = PLAY_MOD("lost");
+		if (a1 == 31)
+			result = PLAY_MOD("tobac");
+		old_music = a1;
+	}
+*/
 }
 
 bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
@@ -136,7 +238,7 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 	Common::String prefix;
 	Common::String filename;
 	Common::File f;
-	int catPos;
+	size_t catPos, catLen;
 
 	fileNumber = voiceId;
 	if (!CARD_SB || VOICEOFF == 1)
@@ -207,6 +309,7 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VES.RES");
 
 		catPos = _vm->_globals.CAT_POSI;
+		catLen = _vm->_globals.CAT_TAILLE;
 	} else {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, filename);
 	
@@ -214,15 +317,17 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 			return false;
 
 		catPos = 0;
+		catLen = 0;
 	}
 
-	SDL_LVOICE(catPos);
+	SDL_LVOICE(catPos, catLen);
 	oldMusicVol = MUSICVOL;
 	if (!MUSICOFF && MUSICVOL > 2)
 		MUSICVOL = (signed int)((long double)MUSICVOL - (long double)MUSICVOL / 100.0 * 45.0);
 
 	PLAY_VOICE_SDL();
 
+	// Loop for playing voice
 	breakFlag = 0;
 	do {
 		if (SPECIAL_SOUND != 4 && !VBL_MERDE)
@@ -245,16 +350,35 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 	return true;
 }
 
-void SoundManager::DEL_SAMPLE(int soundNumber) {
-	warning("TODO: DEL_SAMPLE");
+void SoundManager::DEL_SAMPLE(int soundIndex) {
+	if (CARD_SB) {
+		if (VOICE_STAT(1) == 1)
+			STOP_VOICE(1);
+		if (VOICE_STAT(2) == 2)
+			STOP_VOICE(2);
+		if (VOICE_STAT(3) == 3)
+			STOP_VOICE(3);
+		DEL_SAMPLE_SDL(soundIndex);
+		SOUND[soundIndex].active = false;
+	}
 }
 
 void SoundManager::PLAY_SOUND(const Common::String &file) {
-	warning("TODO: PLAY_SOUND");
+	if (CARD_SB && !SOUNDOFF) {
+		if (SOUND_FLAG)
+			DEL_NWAV(SOUND_NUM);
+		LOAD_NWAV(file, 1);
+		PLAY_NWAV(1);
+	}
 }
 
 void SoundManager::PLAY_SOUND2(const Common::String &file) {
-	warning("TODO: PLAY_SOUND2");
+	if (CARD_SB) {
+		if (!SOUNDOFF) {
+			LOAD_NWAV(file, 1);
+			PLAY_NWAV(1);
+		}
+	}
 }
 
 void SoundManager::MODSetSampleVolume() {
@@ -269,43 +393,62 @@ void SoundManager::MODSetMusicVolume(int volume) {
 	warning("TODO MODSetMusicVolume");
 }
 
-void SoundManager::CHARGE_SAMPLE(int a1, const Common::String &file) {
-	warning("TODO: CHARGE_SAMPLE");
+void SoundManager::CHARGE_SAMPLE(int wavIndex, const Common::String &file) {
+	if (CARD_SB) {
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSOUND, file);
+		LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 0);
+		SOUND[wavIndex].active = true;
+	}
 }
 
 void SoundManager::PLAY_SAMPLE2(int idx) {
-	warning("PLAY_SAMPLE2");
+	if (CARD_SB && !SOUNDOFF && SOUND[idx].active) {
+		if (SOUND_FLAG)
+			DEL_NWAV(SOUND_NUM);
+		if (VOICE_STAT(1) == 1)
+			STOP_VOICE(1);
+		PLAY_SAMPLE_SDL(1, idx);
+	}
 }
 
-void SoundManager::PLAY_WAV(int a1) {
-	warning("PLAY_WAV");
+void SoundManager::LOAD_WAV(const Common::String &file, int wavIndex) {
+	if (CARD_SB)
+		LOAD_NWAV(file, wavIndex);
 }
 
-bool SoundManager::VOICE_STAT(int voiceIndex) {
-	return Voice[voiceIndex].active;
+void SoundManager::PLAY_WAV(int wavIndex) {
+	if (CARD_SB)
+		PLAY_NWAV(wavIndex);
+}
+
+int SoundManager::VOICE_STAT(int voiceIndex) {
+	if (Voice[voiceIndex].status) {
+		if (Voice[voiceIndex].audioStream->endOfStream())
+			STOP_VOICE(voiceIndex);
+	}
+
+	return Voice[voiceIndex].status;
 }
 
 void SoundManager::STOP_VOICE(int voiceIndex) {
 	int wavIndex; 
 
-	if (Voice[voiceIndex].active) {
-		Voice[voiceIndex].active = false;
+	if (Voice[voiceIndex].status) {
+		Voice[voiceIndex].status = 0;
 		wavIndex = Voice[voiceIndex].wavIndex;
 		if (Swav[wavIndex].active) {
 			if (Swav[wavIndex].field24 == 1)
 				DEL_SAMPLE_SDL(wavIndex);
 		}
 	}
-	Voice[voiceIndex].audioLen = 0;
 	Voice[voiceIndex].fieldC = 0;
-	Voice[voiceIndex].audioBuf = NULL;
-	Voice[voiceIndex].active = false;
+	Voice[voiceIndex].status = 0;
 	Voice[voiceIndex].field14 = 0;
 	Voice[voiceIndex].audioStream = NULL;
 }
 
-void SoundManager::SDL_LVOICE(int catPos) {
-	if (!SDL_LoadVoice(_vm->_globals.NFICHIER, catPos, Swav[20]))
+void SoundManager::SDL_LVOICE(size_t filePosition, size_t entryLength) {
+	if (!SDL_LoadVoice(_vm->_globals.NFICHIER, filePosition, entryLength, Swav[20]))
 		error("Couldn't load the sample %s", _vm->_globals.NFICHIER.c_str());
 
 	Swav[20].active = true;
@@ -315,24 +458,20 @@ void SoundManager::PLAY_VOICE_SDL() {
 	if (!Swav[20].active)
 		error("Bad handle");
 
-	if (!Voice[2].active) {
+	if (!Voice[2].status) {
 		int wavIndex = Voice[2].wavIndex;
 		if (Swav[wavIndex].active && Swav[wavIndex].field24 == 1)
 			DEL_SAMPLE_SDL(wavIndex);
 	}
 
-	Voice[2].audioLen = Swav[20].audioLen;
-	Voice[2].fieldC = 0;
-	Voice[2].audioBuf = Swav[20].audioBuf;
-	Voice[2].active = true;
-	Voice[2].field14 = 4;
-	Voice[2].audioStream = Swav[20].audioStream;
+	PLAY_SAMPLE_SDL(2, 20);
 }
 
 bool SoundManager::DEL_SAMPLE_SDL(int wavIndex) {
 	if (Swav[wavIndex].active) {
 		Swav[wavIndex].active = false;
-		free(Swav[wavIndex].audioBuf);
+		
+		_vm->_mixer->stopHandle(Swav[wavIndex]._soundHandle);
 		delete Swav[wavIndex].audioStream;
 		return true;
 	} else {
@@ -340,16 +479,105 @@ bool SoundManager::DEL_SAMPLE_SDL(int wavIndex) {
 	}
 }
 
-bool SoundManager::SDL_LoadVoice(const Common::String &filename, size_t fileOffset, SwavItem &item) {
+bool SoundManager::SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item) {
 	Common::File f;
 	if (!f.open(filename))
 		error("Could not open %s for reading", filename.c_str());
 
 	f.seek(fileOffset);
-	item.audioStream = Audio::makeWAVStream(&f, DisposeAfterUse::NO);
+	item.audioStream = Audio::makeWAVStream(f.readStream((entryLength == 0) ? f.size() : entryLength),
+		DisposeAfterUse::YES);
 	f.close();
 
 	return true;
+}
+
+void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, int field24) {
+	if (Swav[wavIndex].active)
+		DEL_SAMPLE_SDL(wavIndex);
+
+	SDL_LoadVoice(filename, 0, 0, Swav[wavIndex]);
+	Swav[wavIndex].active = true;
+	Swav[wavIndex].field24 = field24;
+}
+
+void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
+	if (CARD_SB) {
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSOUND, file);
+		LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 1);
+	}
+}
+
+void SoundManager::PLAY_NWAV(int wavIndex) {
+	if (CARD_SB && !SOUND_FLAG && !SOUNDOFF) {
+		SOUND_FLAG = true;
+		SOUND_NUM = wavIndex;
+		PLAY_SAMPLE_SDL(1, wavIndex);
+	}
+}
+
+void SoundManager::DEL_NWAV(int wavIndex) {
+	if (CARD_SB) {
+		if (DEL_SAMPLE_SDL(wavIndex)) {
+			if (VOICE_STAT(1) == 1)
+				STOP_VOICE(1);
+
+			SOUND_NUM = 0;
+			SOUND_FLAG = false;
+		}
+	}
+}
+
+void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
+	if (!Swav[wavIndex].active)
+		warning("Bad handle");
+
+	if (Voice[voiceIndex].status == 1 && Swav[wavIndex].active && Swav[wavIndex].field24 == 1)
+		DEL_SAMPLE_SDL(wavIndex);
+
+	Voice[voiceIndex].fieldC = 0;
+	Voice[voiceIndex].audioStream = Swav[wavIndex].audioStream;
+	Voice[voiceIndex].status = 1;
+	Voice[voiceIndex].field14 = 4;
+	
+	int volume = (voiceIndex == 2) ? VOICEVOL * 255 / 16 : SOUNDVOL * 255 / 16;
+
+	// Start the voice playing
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Swav[wavIndex]._soundHandle, 
+		Swav[wavIndex].audioStream, -1, volume, 0, DisposeAfterUse::NO);
+}
+
+void SoundManager::syncSoundSettings() {
+	bool muteAll = false;
+	if (ConfMan.hasKey("mute"))
+		muteAll = ConfMan.getBool("mute");
+
+	// Update the mute settings
+	MUSICOFF = muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
+	SOUNDOFF = muteAll || (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute"));
+	VOICEOFF = muteAll || (ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute"));
+
+	// Update the volume levels
+	MUSICVOL = MIN(255, ConfMan.getInt("music_volume")) * 16 / 255;
+	SOUNDVOL = MIN(255, ConfMan.getInt("sfx_volume")) * 16 / 255;
+	VOICEVOL = MIN(255, ConfMan.getInt("speech_volume")) * 16 / 255;
+
+	//
+	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
+		if (Swav[idx].active) {
+		}
+	}
+}
+
+void SoundManager::updateScummVMSoundSettings() {
+	ConfMan.setBool("mute", MUSICOFF && SOUNDOFF && VOICEOFF);
+	ConfMan.setBool("music_mute", MUSICOFF);
+	ConfMan.setBool("sfx_mute", SOUNDOFF);
+	ConfMan.setBool("speech_mute", VOICEOFF);
+
+	ConfMan.setInt("music_volume", MUSICVOL * 255 / 16);
+	ConfMan.setInt("sfx_volume", SOUNDVOL * 255 / 16);
+	ConfMan.setInt("speech_volume", VOICEVOL * 255 / 16);
 }
 
 } // End of namespace Hopkins

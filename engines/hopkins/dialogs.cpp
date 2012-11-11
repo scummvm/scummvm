@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/util.h"
@@ -77,6 +78,7 @@ void DialogsManager::showOptionsDialog() {
 	      
 			if (!_vm->_soundManager.MUSICOFF) {
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 138) {
+					// Change the music volume
 					++_vm->_soundManager.MUSICVOL;
 					_vm->_soundManager.OLD_MUSICVOL = _vm->_soundManager.MUSICVOL;
 	          
@@ -85,6 +87,8 @@ void DialogsManager::showOptionsDialog() {
 					else
 						_vm->_soundManager.MUSICVOL = 12;
 					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager.MUSICVOL);
+
+					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 	        
 				if (!_vm->_soundManager.MUSICOFF && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 138) {
@@ -96,6 +100,8 @@ void DialogsManager::showOptionsDialog() {
 				
 					_vm->_soundManager.OLD_MUSICVOL = _vm->_soundManager.MUSICVOL;
 					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager.MUSICVOL);
+
+					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 			}
 			if (!_vm->_soundManager.SOUNDOFF) {
@@ -107,6 +113,8 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.SOUNDVOL = 16;
 					_vm->_soundManager.OLD_SOUNDVOL = _vm->_soundManager.SOUNDVOL;
 					_vm->_soundManager.MODSetSampleVolume();
+
+					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 	        
 				if (!_vm->_soundManager.SOUNDOFF && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 165) {
@@ -117,6 +125,8 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.SOUNDVOL = 0;
 					_vm->_soundManager.OLD_SOUNDVOL = _vm->_soundManager.SOUNDVOL;
 					_vm->_soundManager.MODSetSampleVolume();
+
+					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 			}
 	      
@@ -130,6 +140,8 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.VOICEVOL = 16;
 					_vm->_soundManager.OLD_VOICEVOL = _vm->_soundManager.VOICEVOL;
 					_vm->_soundManager.MODSetVoiceVolume();
+
+					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 	        
 				if (!_vm->_soundManager.VOICEOFF && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 192) {
@@ -140,6 +152,8 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.VOICEVOL = 0;
 					_vm->_soundManager.OLD_VOICEVOL = _vm->_soundManager.VOICEVOL;
 					_vm->_soundManager.MODSetVoiceVolume();
+
+					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 			}
 	      
@@ -148,8 +162,11 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.TEXTOFF = _vm->_soundManager.TEXTOFF != 1;
 
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
-					if (mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 192)
+					if (mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 192) {
 						_vm->_soundManager.VOICEOFF = _vm->_soundManager.VOICEOFF != 1;
+
+						_vm->_soundManager.updateScummVMSoundSettings();
+					}
 					if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
 						if (mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 138) {
 							if (_vm->_soundManager.MUSICOFF == 1) {
@@ -159,10 +176,15 @@ void DialogsManager::showOptionsDialog() {
 								_vm->_soundManager.MUSICOFF = 1;
 								_vm->_soundManager.MODSetMusicVolume(0);
 							}
+
+							_vm->_soundManager.updateScummVMSoundSettings();
 						}
 	        
-						if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 165)
+						if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 165) {
 							_vm->_soundManager.SOUNDOFF = _vm->_soundManager.SOUNDOFF != 1;
+
+							_vm->_soundManager.updateScummVMSoundSettings();
+						}
 					}
 				}
 			}

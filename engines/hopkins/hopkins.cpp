@@ -959,7 +959,10 @@ void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
 void HopkinsEngine::INIT_SYSTEM() {
 	// Set graphics mode
 	_graphicsManager.SET_MODE(640, 480);
-	
+
+	// Synchronise the sound settings from ScummVM
+	_soundManager.syncSoundSettings();
+
 	if (getPlatform() == Common::kPlatformLinux)
 		_eventsManager.mouse_linux = true;
 	else
@@ -1424,6 +1427,12 @@ void HopkinsEngine::PUBQUIT() {
 	// that, it's being skipped in favour of simply exitting
 
 	_graphicsManager.FADE_OUTW();
+}
+
+void HopkinsEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_soundManager.syncSoundSettings();
 }
 
 } // End of namespace Hopkins
