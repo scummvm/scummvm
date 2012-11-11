@@ -1881,7 +1881,49 @@ void HopkinsEngine::PUBQUIT() {
 }
 
 void HopkinsEngine::INCENDIE() {
-	warning("STUB - INCENDIE()");
+	warning("INCENDIE()");
+
+	_globals.DESACTIVE_INVENT = true;
+	_globals.iRegul = 1;
+	_graphicsManager.LOAD_IMAGE("IM71");
+	_animationManager.CHARGE_ANIM("ANIM71");
+	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager.VISU_ALL();
+	_globals.BPP_NOAFF = true;
+
+	int cpt = 0;
+	do {
+		_eventsManager.VBL();
+		++cpt;
+	} while (cpt <= 4);
+
+	_globals.BPP_NOAFF = false;
+	_graphicsManager.FADE_INW();
+	_globals.iRegul = 1;
+
+	cpt = 0;
+	do {
+		_eventsManager.VBL();
+		++cpt;
+	} while (cpt <= 249);
+
+	_globals.NOPARLE = true;
+	_talkManager.PARLER_PERSO("SVGARD1.pe2");
+	_globals.NOPARLE = false;
+
+	cpt = 0;
+	do {
+		_eventsManager.VBL();
+		++cpt;
+	} while (cpt <= 49);
+
+	_graphicsManager.FADE_OUTW();
+	_graphicsManager.FIN_VISU();
+	*((byte *)_globals.SAUVEGARDE + 312) = 1;
+	_globals.DESACTIVE_INVENT = false;
 }
 
 void HopkinsEngine::BASE() {
