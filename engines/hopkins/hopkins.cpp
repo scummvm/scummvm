@@ -2460,17 +2460,16 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	_fileManager.CHARGE_FICHIER2(_globals.NFICHIER, _globals.PERSO);
 	if (a2.size())
 		_graphicsManager.LOAD_IMAGE(a2);
-	if (a1 == 77)
-		goto LABEL_53;
-	if (a1 != 84 && a1 != 91)
+
+	if ((a1 != 77) && (a1 != 84) && (a1 != 91))
 		_objectsManager.INILINK("ocean");
-	if (a1 == 77)
-LABEL_53:
+	else if (a1 == 77)
 		_objectsManager.INILINK("IM77");
-	if (a1 == 84)
+	else if (a1 == 84)
 		_objectsManager.INILINK("IM84");
-	if (a1 == 91)
+	else if (a1 == 91)
 		_objectsManager.INILINK("IM91");
+
 	if (!a5)
 		_objectsManager.ZONE_OFF(1);
 	if (!a6)
