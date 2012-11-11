@@ -37,7 +37,7 @@ namespace Kyra {
 
 Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
-	_sfxEnabled(true), _soundDataList(0) {
+	_sfxEnabled(true) {
 }
 
 Sound::~Sound() {
@@ -45,14 +45,6 @@ Sound::~Sound() {
 
 Sound::kType Sound::getSfxType() const {
 	return getMusicType();
-}
-
-void Sound::setSoundList(const AudioDataStruct *list) {
-	_soundDataList = list;
-}
-
-bool Sound::hasSoundFile(uint file) const {
-	return (fileListEntry(file) != 0);
 }
 
 bool Sound::isPlaying() const {
@@ -203,12 +195,17 @@ void MixedSoundDriver::updateVolumeSettings() {
 	_sfx->updateVolumeSettings();
 }
 
-void MixedSoundDriver::setSoundList(const AudioDataStruct *list) {
-	_music->setSoundList(list);
-	_sfx->setSoundList(list);
+void MixedSoundDriver::initAudioResourceInfo(int set, void *info) {
+	_music->initAudioResourceInfo(set, info);
+	_sfx->initAudioResourceInfo(set, info);
 }
 
-bool MixedSoundDriver::hasSoundFile(uint file) const {
+void MixedSoundDriver::selectAudioResourceSet(int set) {
+	_music->selectAudioResourceSet(set);
+	_sfx->selectAudioResourceSet(set);
+}
+
+bool MixedSoundDriver::hasSoundFile(uint file) {
 	return _music->hasSoundFile(file) && _sfx->hasSoundFile(file);
 }
 

@@ -275,8 +275,6 @@ public:
 	Screen *screen();
 	GUI *gui() const;
 
-	const AudioDataStruct *soundData(int index) { return &_soundData[index]; }
-
 private:
 	Screen_LoL *_screen;
 	GUI_LoL *_gui;
@@ -471,8 +469,6 @@ private:
 	int _ingameMT32SoundIndexSize;
 	const uint8 *_ingamePCSpeakerSoundIndex;
 	int _ingamePCSpeakerSoundIndexSize;
-
-	AudioDataStruct _soundData[3];
 
 	// gui
 	void gui_drawPlayField();

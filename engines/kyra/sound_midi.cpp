@@ -442,6 +442,8 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	_output = 0;
 
 	_musicFile = _sfxFile = 0;
+	_currentResourceSet = 0;
+	memset(&_resInfo, 0, sizeof(_resInfo));
 
 	_music = MidiParser::createParser_XMIDI();
 	assert(_music);
@@ -495,6 +497,9 @@ SoundMidiPC::~SoundMidiPC() {
 		delete[] _sfxFile;
 
 	delete[] _musicFile;
+
+	for (int i = 0; i < 3; i++)
+		initAudioResourceInfo(i, 0);
 }
 
 bool SoundMidiPC::init() {
@@ -586,8 +591,29 @@ void SoundMidiPC::updateVolumeSettings() {
 		_output->setSourceVolume(i, _sfxVolume, false);
 }
 
+void SoundMidiPC::initAudioResourceInfo(int set, void *info) {
+	if (set >= kMusicIntro && set <= kMusicFinale) {
+		delete _resInfo[set];
+		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : 0;
+	}
+}
+
+void SoundMidiPC::selectAudioResourceSet(int set) {
+	if (set >= kMusicIntro && set <= kMusicFinale) {
+		if (_resInfo[set])
+			_currentResourceSet = set;
+	}
+}
+
+bool SoundMidiPC::hasSoundFile(uint file) {
+	if (file < res()->fileListSize)
+		return (res()->fileList[file] != 0);
+	return false;
+}
+
 void SoundMidiPC::loadSoundFile(uint file) {
-	loadSoundFile(fileListEntry(file));
+	if (file < res()->fileListSize)
+		loadSoundFile(res()->fileList[file]);
 }
 
 void SoundMidiPC::loadSoundFile(Common::String file) {

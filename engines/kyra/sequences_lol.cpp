@@ -182,7 +182,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		memset(_selectionAnimTimers, 0, sizeof(_selectionAnimTimers));
 		_screen->getPalette(1).clear();
 
-		_sound->setSoundList(&_soundData[kMusicIntro]);
+		_sound->selectAudioResourceSet(kMusicIntro);
 
 		// We have three sound.dat files, one for the intro, one for the
 		// end sequence and one for ingame, each contained in a different
@@ -203,7 +203,7 @@ void LoLEngine::setupPrologueData(bool load) {
 			return;
 
 		_eventList.clear();
-		_sound->setSoundList(0);
+		_sound->selectAudioResourceSet(kMusicIntro);
 	}
 }
 
@@ -1041,7 +1041,7 @@ void LoLEngine::setupEpilogueData(bool load) {
 	_screen->clearPage(3);
 
 	if (load) {
-		_sound->setSoundList(&_soundData[kMusicFinale]);
+		_sound->selectAudioResourceSet(kMusicFinale);
 
 		// We have three sound.dat files, one for the intro, one for the
 		// end sequence and one for ingame, each contained in a different
@@ -1057,7 +1057,7 @@ void LoLEngine::setupEpilogueData(bool load) {
 			return;
 
 		_eventList.clear();
-		_sound->setSoundList(0);
+		_sound->selectAudioResourceSet(kMusicIntro);
 	}
 }
 

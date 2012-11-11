@@ -134,8 +134,6 @@ public:
 	const uint8 * const *palTable1() { return &_specialPalettes[0]; }
 	const uint8 * const *palTable2() { return &_specialPalettes[29]; }
 
-	const AudioDataStruct *soundData(int index) { return &_soundData[index]; }
-
 protected:
 	virtual Common::Error go();
 	virtual Common::Error init();
@@ -644,14 +642,6 @@ protected:
 	const uint8 *_amuleteAnim;
 
 	const uint8 * const *_specialPalettes;
-
-	const char * const *_soundFiles;
-	int _soundFilesSize;
-	const char * const *_soundFilesIntro;
-	int _soundFilesIntroSize;
-	const int32 *_cdaTrackTable;
-	int _cdaTrackTableSize;
-	AudioDataStruct _soundData[3];
 
 	// positions of the inventory
 	static const uint16 _itemPosX[];

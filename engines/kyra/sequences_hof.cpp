@@ -153,7 +153,7 @@ private:
 	void closeNestedAnimation(int animSlot);
 	void unloadNestedAnimation(int animSlot);
 	void doNestedFrameTransition(int transitionType, int animSlot);
-	void updateAllNestedAnimations();	
+	void updateAllNestedAnimations();
 	bool updateNestedAnimation(int animSlot);
 
 	struct AnimSlot {
@@ -478,7 +478,7 @@ SeqPlayer_HOF::~SeqPlayer_HOF() {
 
 int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
 	bool incompatibleData = false;
-	MusicDataID soundSet = kMusicIntro;
+	AudioResourceSet soundSet = kMusicIntro;
 	_firstScene = firstScene;
 	_loopStartScene = loopStartScene;
 	_preventLooping = false;
@@ -521,7 +521,7 @@ int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
 	if (incompatibleData)
 		error("SeqPlayer_HOF::play(): Specified sequences do not match the available sequence data for this target");
 
-	_vm->sound()->setSoundList(_vm->soundData(soundSet));
+	_vm->sound()->selectAudioResourceSet(soundSet);
 	_vm->sound()->loadSoundFile(0);
 
 	setupCallbacks();
@@ -536,7 +536,7 @@ void SeqPlayer_HOF::pause(bool toggle) {
 	} else {
 		uint32 pausedTime = _system->getMillis() - _pauseStart;
 		_pauseStart = 0;
-		
+
 		_countDownLastUpdate += pausedTime;
 		_fisherAnimCurTime += pausedTime;
 		_specialAnimTimeOutTotal += pausedTime;
@@ -702,7 +702,7 @@ void SeqPlayer_HOF::playScenes() {
 			while (!checkAbortPlayback() && !_vm->shouldQuit() && (countDownRunning() || _updateAnimations)) {
 				uint32 endFrame = (_system->getMillis() + _vm->tickLength()) & ~(_vm->tickLength() - 1);
 				updateAllNestedAnimations();
-				
+
 				if (_config->seqProc[_curScene])
 					(this->*_config->seqProc[_curScene])(0, 0, 0, 0);
 
@@ -715,7 +715,7 @@ void SeqPlayer_HOF::playScenes() {
 				do {
 					if (checkAbortPlayback())
 						if (checkPlaybackStatus())
-							break;				
+							break;
 				} while (_system->getMillis() < endFrame);
 			}
 		}
@@ -968,7 +968,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 	}
 
 	int8 frameStep = (startFrame > lastFrame) ? -1 : 1;
-	_animCurrentFrame = startFrame;	
+	_animCurrentFrame = startFrame;
 
 	while (!_vm->shouldQuit() && !finished) {
 		if (checkAbortPlayback())
@@ -1474,7 +1474,7 @@ void SeqPlayer_HOF::playHoFTalkieCredits() {
 	const uint8 *talkieCredits = _vm->staticres()->loadRawData(k2SeqplayCredits, talkieCreditsSize);
 	const char * const *talkieCreditsSpecial = _vm->staticres()->loadStrings(k2SeqplayCreditsSpecial, talkieCreditsSpecialSize);
 
-	_vm->sound()->setSoundList(_vm->soundData(kMusicIngame));
+	_vm->sound()->selectAudioResourceSet(kMusicIngame);
 	_vm->sound()->loadSoundFile(3);
 	_vm->sound()->playTrack(3);
 
@@ -1493,7 +1493,7 @@ void SeqPlayer_HOF::playHoFTalkieCredits() {
 
 	delete[] dataPtr;
 	_vm->staticres()->unloadId(k2SeqplayCreditsSpecial);
-	_vm->sound()->setSoundList(_vm->soundData(kMusicFinale));
+	_vm->sound()->selectAudioResourceSet(kMusicFinale);
 	_vm->sound()->loadSoundFile(0);
 }
 
@@ -1735,7 +1735,7 @@ void SeqPlayer_HOF::setCountDown(uint32 ticks) {
 		_countDownRemainder = _countDownRemainder * 2 / 3;
 	_countDownLastUpdate = _system->getMillis() & ~(_vm->tickLength() - 1);
 }
-	
+
 bool SeqPlayer_HOF::countDownRunning() {
 	uint32 cur = _system->getMillis();
 	uint32 step = cur - _countDownLastUpdate;
@@ -1770,7 +1770,7 @@ int SeqPlayer_HOF::cbHOF_title(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_system->updateScreen();
 		_result = _menu->handle(11) + 1;
 		_updateAnimations = false;
-		
+
 		if (_result == 1) {
 			_curScene = _lastScene;
 			_preventLooping = true;

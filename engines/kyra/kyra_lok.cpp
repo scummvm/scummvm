@@ -98,8 +98,6 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 
 	_malcolmFrame = 0;
 	_malcolmTimer1 = _malcolmTimer2 = 0;
-
-	_soundFiles = 0;
 }
 
 KyraEngine_LoK::~KyraEngine_LoK() {
@@ -122,8 +120,6 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 	delete _sprites;
 	delete _animator;
 	delete _seq;
-
-	delete[] _soundFiles;
 
 	delete[] _characterList;
 
@@ -194,7 +190,7 @@ Common::Error KyraEngine_LoK::init() {
 
 	initStaticResource();
 
-	_sound->setSoundList(&_soundData[kMusicIntro]);
+	_sound->selectAudioResourceSet(kMusicIntro);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		_trackMap = _amigaTrackMap;
@@ -349,7 +345,7 @@ void KyraEngine_LoK::startup() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
 
-	_sound->setSoundList(&_soundData[kMusicIngame]);
+	_sound->selectAudioResourceSet(kMusicIngame);
 	if (_flags.platform == Common::kPlatformPC98)
 		_sound->loadSoundFile("SE.DAT");
 	else

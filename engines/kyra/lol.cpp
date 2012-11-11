@@ -534,7 +534,7 @@ Common::Error LoLEngine::go() {
 	if (_flags.platform == Common::kPlatformPC98)
 		_sound->loadSoundFile("sound.dat");
 
-	_sound->setSoundList(&_soundData[kMusicIngame]);
+	_sound->selectAudioResourceSet(kMusicIngame);
 	if (_flags.platform != Common::kPlatformPC)
 		_sound->loadSoundFile(0);
 

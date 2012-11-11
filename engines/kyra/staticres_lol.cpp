@@ -24,6 +24,7 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/gui_lol.h"
+#include "kyra/sound_intern.h"
 
 #ifdef ENABLE_LOL
 
@@ -213,35 +214,16 @@ void StaticResource::freeButtonDefs(void *&ptr, int &size) {
 }
 
 void LoLEngine::initStaticResource() {
-	// assign music resource data
-	static const char *const pcMusicFileListIntro[] = { "LOREINTR" };
-	static const char *const pcMusicFileListFinale[] = { "LOREFINL" };
-	static const char *const pcMusicFileListIngame[] = { "LORE%02d%c" };
-	static const char *const pcMusicFileListDemo[] = { "LOREDEMO" };
-
-	static const char *const pc98MusicFileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
-	static const char *const pc98MusicFileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
-	static const char *const pc98MusicFileListIngame[] = { "lore%02d.86" };
-
-	memset(_soundData, 0, sizeof(_soundData));
-
+	// assign music resource data (not required for the PC version, resource loading is implemented differently there)
 	if (_flags.isDemo) {
-		_soundData[0].fileList = pcMusicFileListDemo;
-		_soundData[0].fileListLen = ARRAYSIZE(pcMusicFileListDemo);
-	} else if (_flags.platform == Common::kPlatformPC) {
-		_soundData[0].fileList = pcMusicFileListIntro;
-		_soundData[0].fileListLen = ARRAYSIZE(pcMusicFileListIntro);
-		_soundData[1].fileList = pcMusicFileListIngame;
-		_soundData[1].fileListLen = ARRAYSIZE(pcMusicFileListIngame);
-		_soundData[2].fileList = pcMusicFileListFinale;
-		_soundData[2].fileListLen = ARRAYSIZE(pcMusicFileListFinale);
+		static const char *const file[] = { "LOREDEMO" };
+		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_TownsPC98V2(file, ARRAYSIZE(file), 0, 0, 0));
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_soundData[0].fileList = pc98MusicFileListIntro;
-		_soundData[0].fileListLen = ARRAYSIZE(pc98MusicFileListIntro);
-		_soundData[1].fileList = pc98MusicFileListIngame;
-		_soundData[1].fileListLen = ARRAYSIZE(pc98MusicFileListIngame);
-		_soundData[2].fileList = pc98MusicFileListFinale;
-		_soundData[2].fileListLen = ARRAYSIZE(pc98MusicFileListFinale);
+		static const char *const fileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
+		static const char *const fileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
+		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_TownsPC98V2(fileListIntro, ARRAYSIZE(fileListIntro), 0, 0, 0));
+		_sound->initAudioResourceInfo(kMusicIngame, &SoundResourceInfo_TownsPC98V2(0, 0, "lore%02d.86", 0, 0));
+		_sound->initAudioResourceInfo(kMusicFinale, &SoundResourceInfo_TownsPC98V2(fileListFinale, ARRAYSIZE(fileListFinale), 0, 0, 0));
 	}
 
 	if (_flags.isDemo)

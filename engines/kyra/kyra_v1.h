@@ -140,14 +140,6 @@ enum {
 	GI_EOB2 = 6
 };
 
-struct AudioDataStruct {
-	const char *const *fileList;
-	int fileListLen;
-	const void *cdaTracks;
-	int cdaNumTracks;
-	int extraOffset;
-};
-
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
 // in the future we maybe merge some flags  and/or create new ones
 enum DebugLevels {
@@ -164,7 +156,7 @@ enum DebugLevels {
 	kDebugLevelTimer       = 1 << 10  ///< debug level for "TimerManager" functions
 };
 
-enum MusicDataID {
+enum AudioResourceSet {
 	kMusicIntro = 0,
 	kMusicIngame,
 	kMusicFinale
@@ -242,8 +234,6 @@ public:
 	virtual void snd_playVoiceFile(int id) = 0;
 	virtual bool snd_voiceIsPlaying();
 	virtual void snd_stopVoice();
-
-	virtual const AudioDataStruct *soundData(int index) { return 0; }
 
 	// delay functionallity
 	virtual void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);

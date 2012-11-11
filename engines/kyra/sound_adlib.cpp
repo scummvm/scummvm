@@ -2292,6 +2292,8 @@ SoundAdLibPC::SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	_numSoundTriggers = 0;
 	_sfxPlayingSound = -1;
 	_soundFileLoaded.clear();
+	_currentResourceSet = 0;
+	memset(&_resInfo, 0, sizeof(_resInfo));
 
 	switch (vm->game()) {
 	case GI_LOL:
@@ -2322,6 +2324,8 @@ SoundAdLibPC::SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 SoundAdLibPC::~SoundAdLibPC() {
 	delete _driver;
 	delete[] _soundDataPtr;
+	for (int i = 0; i < 3; i++)
+		initAudioResourceInfo(i, 0);
 }
 
 bool SoundAdLibPC::init() {
@@ -2416,8 +2420,29 @@ void SoundAdLibPC::resetTrigger() {
 	_driver->resetSoundTrigger();
 }
 
+void SoundAdLibPC::initAudioResourceInfo(int set, void *info) {
+	if (set >= kMusicIntro && set <= kMusicFinale) {
+		delete _resInfo[set];
+		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : 0;
+	}
+}
+
+void SoundAdLibPC::selectAudioResourceSet(int set) {
+	if (set >= kMusicIntro && set <= kMusicFinale) {
+		if (_resInfo[set])
+			_currentResourceSet = set;
+	}
+}
+
+bool SoundAdLibPC::hasSoundFile(uint file) {
+	if (file < res()->fileListSize)
+		return (res()->fileList[file] != 0);
+	return false;
+}
+
 void SoundAdLibPC::loadSoundFile(uint file) {
-	internalLoadFile(fileListEntry(file));
+	if (file < res()->fileListSize)
+		internalLoadFile(res()->fileList[file]);
 }
 
 void SoundAdLibPC::loadSoundFile(Common::String file) {

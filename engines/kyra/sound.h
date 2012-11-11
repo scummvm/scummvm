@@ -37,6 +37,35 @@ class SeekableAudioStream;
 
 namespace Kyra {
 
+// Helper structs to format the data passed to the various initAudioResourceInfo() implementations
+struct SoundResourceInfo_PC {
+	SoundResourceInfo_PC(const char *const *files, int numFiles) : fileList(files), fileListSize(numFiles) {}
+	const char *const *fileList;
+	int fileListSize;
+};
+
+struct SoundResourceInfo_Towns {
+	SoundResourceInfo_Towns(const char *const *files, int numFiles, const int32 *cdaTbl, int cdaTblSize) : fileList(files), fileListSize(numFiles), cdaTable(cdaTbl), cdaTableSize(cdaTblSize) {}
+	const char *const *fileList;
+	int fileListSize;
+	const int32 *cdaTable;
+	int cdaTableSize;
+};
+
+struct SoundResourceInfo_PC98 {
+	SoundResourceInfo_PC98(const char *fileNamePattern) : pattern(fileNamePattern) {}
+	const char *pattern;
+};
+
+struct SoundResourceInfo_TownsPC98V2 {
+	SoundResourceInfo_TownsPC98V2(const char *const *files, int numFiles, const char *fileNamePattern, const uint16 *cdaTbl, int cdaTblSize) : fileList(files), fileListSize(numFiles), pattern(fileNamePattern), cdaTable(cdaTbl), cdaTableSize(cdaTblSize) {}
+	const char *const *fileList;
+	int fileListSize;
+	const char *pattern;
+	const uint16 *cdaTable;
+	int cdaTableSize;
+};
+
 /**
  * Analog audio output device API for Kyrandia games.
  * It contains functionality to play music tracks,
@@ -78,12 +107,20 @@ public:
 	virtual void updateVolumeSettings() {}
 
 	/**
-	 * Sets the soundfiles the output device will use
-	 * when playing a track and/or sound effect.
+	 * Assigns static resource data with information on how to load
+	 * audio resources to
 	 *
-	 * @param list soundfile list
+	 * @param	set				value defined in AudioResourceSet enum
+	 *			info			various types of resource info data (file list, file name pattern, struct, etc. - depending on the inheriting driver type)
 	 */
-	virtual void setSoundList(const AudioDataStruct *list);
+	virtual void initAudioResourceInfo(int set, void *info) = 0;
+
+	/**
+	 * Select audio resource set.
+	 *
+	 * @param	set				value defined in AudioResourceSet enum
+	 */
+	virtual void selectAudioResourceSet(int set) = 0;
 
 	/**
 	 * Checks if a given sound file is present.
@@ -91,7 +128,7 @@ public:
 	 * @param track track number
 	 * @return true if available, false otherwise
 	 */
-	virtual bool hasSoundFile(uint file) const;
+	virtual bool hasSoundFile(uint file) = 0;
 
 	/**
 	 * Load a specifc sound file for use of
@@ -228,12 +265,6 @@ public:
 	 */
 	virtual void resetTrigger() {}
 protected:
-	const char *fileListEntry(int file) const { return (_soundDataList != 0 && file >= 0 && file < _soundDataList->fileListLen) ? _soundDataList->fileList[file] : ""; }
-	int fileListLen() const { return _soundDataList->fileListLen; }
-	const void *cdaData() const { return _soundDataList != 0 ? _soundDataList->cdaTracks : 0; }
-	int cdaTrackNum() const { return _soundDataList != 0 ? _soundDataList->cdaNumTracks : 0; }
-	int extraOffset() const { return _soundDataList != 0 ? _soundDataList->extraOffset : 0; }
-
 	enum {
 		kNumChannelHandles = 4
 	};
@@ -243,7 +274,7 @@ protected:
 		Audio::SoundHandle handle;
 		int priority;
 	};
-	
+
 	SoundChannel _soundChannels[kNumChannelHandles];
 
 	int _musicEnabled;
@@ -253,8 +284,6 @@ protected:
 	Audio::Mixer *_mixer;
 
 private:
-	const AudioDataStruct *_soundDataList;
-
 	struct SpeechCodecs {
 		const char *fileext;
 		Audio::SeekableAudioStream *(*streamFunc)(
@@ -278,8 +307,9 @@ public:
 
 	virtual void updateVolumeSettings();
 
-	virtual void setSoundList(const AudioDataStruct *list);
-	virtual bool hasSoundFile(uint file) const;
+	virtual void initAudioResourceInfo(int set, void *info);
+	virtual void selectAudioResourceSet(int set);
+	virtual bool hasSoundFile(uint file);
 	virtual void loadSoundFile(uint file);
 	virtual void loadSoundFile(Common::String file);
 

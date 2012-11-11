@@ -57,7 +57,6 @@ public:
 	GUI *gui() const { return _gui; }
 	virtual TextDisplayer *text() { return _text; }
 	int language() const { return _lang; }
-	const AudioDataStruct *soundData(int index) { return &_soundData[index]; }
 
 protected:
 	static const EngineDesc _hofEngineDesc;
@@ -86,8 +85,6 @@ protected:
 	static const int _gmSfxMapSize;
 	static const int8 _pcSpkSfxMap[];
 	static const int _pcSpkSfxMapSize;
-
-	AudioDataStruct _soundData[3];
 
 protected:
 	// game initialization

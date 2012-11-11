@@ -23,6 +23,8 @@
 #ifndef KYRA_SOUND_INTERN_H
 #define KYRA_SOUND_INTERN_H
 
+
+
 #include "kyra/sound.h"
 #include "kyra/sound_adlib.h"
 
@@ -40,6 +42,7 @@ class MaxTrax;
 } // End of namespace Audio
 
 namespace Kyra {
+
 class MidiOutput;
 
 /**
@@ -59,6 +62,9 @@ public:
 
 	void updateVolumeSettings();
 
+	void initAudioResourceInfo(int set, void *info);
+	void selectAudioResourceSet(int set);
+	bool hasSoundFile(uint file);
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
 	void loadSfxFile(Common::String file);
@@ -89,6 +95,10 @@ private:
 	MidiParser *_music;
 	MidiParser *_sfx[3];
 
+	const SoundResourceInfo_PC *res() {return _resInfo[_currentResourceSet]; }
+	SoundResourceInfo_PC *_resInfo[3];
+	int _currentResourceSet;
+
 	// misc
 	kType _type;
 	Common::String getFileName(const Common::String &str);
@@ -110,6 +120,9 @@ public:
 	bool init();
 	void process();
 
+	void initAudioResourceInfo(int set, void *info);
+	void selectAudioResourceSet(int set);
+	bool hasSoundFile(uint file);
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String) {}
 
@@ -142,6 +155,10 @@ private:
 
 	bool _cdaPlaying;
 
+	const SoundResourceInfo_Towns *res() {return _resInfo[_currentResourceSet]; }
+	SoundResourceInfo_Towns *_resInfo[3];
+	int _currentResourceSet;
+
 	const uint8 *_musicFadeTable;
 	const uint8 *_sfxBTTable;
 	const uint8 *_sfxWDTable;
@@ -157,6 +174,9 @@ public:
 	bool init();
 
 	void process() {}
+	void initAudioResourceInfo(int set, void *info);
+	void selectAudioResourceSet(int set);
+	bool hasSoundFile(uint file);
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
 
@@ -169,11 +189,15 @@ public:
 
 	void updateVolumeSettings();
 
-protected:
+private:
 	int _lastTrack;
 	uint8 *_musicTrackData;
 	uint8 *_sfxTrackData;
 	TownsPC98_AudioDriver *_driver;
+
+	const char *resPattern() {return _resInfo[_currentResourceSet]->c_str(); }
+	Common::String *_resInfo[3];
+	int _currentResourceSet;
 };
 
 class SoundTownsPC98_v2 : public Sound {
@@ -186,6 +210,9 @@ public:
 	bool init();
 	void process();
 
+	void initAudioResourceInfo(int set, void *info);
+	void selectAudioResourceSet(int set);
+	bool hasSoundFile(uint file);
 	void loadSoundFile(uint file) {}
 	void loadSoundFile(Common::String file);
 
@@ -198,7 +225,7 @@ public:
 
 	void updateVolumeSettings();
 
-protected:
+private:
 	Audio::AudioStream *_currentSFX;
 	int _lastTrack;
 	bool _useFmSfx;
@@ -206,6 +233,10 @@ protected:
 	uint8 *_musicTrackData;
 	uint8 *_sfxTrackData;
 	TownsPC98_AudioDriver *_driver;
+
+	const SoundResourceInfo_TownsPC98V2 *res() {return _resInfo[_currentResourceSet]; }
+	SoundResourceInfo_TownsPC98V2 *_resInfo[3];
+	int _currentResourceSet;
 };
 
 // PC Speaker MIDI driver
@@ -295,6 +326,10 @@ public:
 	bool init();
 
 	void process() {}
+
+	void initAudioResourceInfo(int set, void *info);
+	void selectAudioResourceSet(int set);
+	bool hasSoundFile(uint file);
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String) {}
 

@@ -274,7 +274,7 @@ Common::Error KyraEngine_HoF::go() {
 }
 
 void KyraEngine_HoF::startup() {
-	_sound->setSoundList(&_soundData[kMusicIngame]);
+	_sound->selectAudioResourceSet(kMusicIngame);
 	// The track map is exactly the same
 	// for FM-TOWNS and DOS
 	_trackMap = _dosTrackMap;
