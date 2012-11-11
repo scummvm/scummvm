@@ -1893,7 +1893,163 @@ void HopkinsEngine::BASED() {
 }
 
 void HopkinsEngine::JOUE_FIN() {
-	warning("STUB - JOUE_FIN()");
+	warning("JOUE_FIN()");
+
+	_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+	_dialogsManager.VIRE_INVENT = true;
+	_globals.DESACTIVE_INVENT = true;
+	_graphicsManager.ofscroll = 0;
+	_globals.PLAN_FLAG = false;
+	_globals.iRegul = 1;
+	_soundManager.WSOUND(26);
+	_globals.chemin = (int16 *)g_PTRNUL;
+	_globals.NOMARCHE = true;
+	_globals.SORTIE = 0;
+	_globals.AFFLI = false;
+	_globals.AFFIVBL = false;
+	_soundManager.CHARGE_SAMPLE(1, "SOUND90.WAV");
+	_graphicsManager.LOAD_IMAGE("IM100");
+	_animationManager.CHARGE_ANIM("ANIM100");
+	_graphicsManager.VISU_ALL();
+	_eventsManager.MOUSE_ON();
+	_objectsManager.BOBANIM_OFF(7);
+	_objectsManager.BOBANIM_OFF(8);
+	_objectsManager.BOBANIM_OFF(9);
+	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_eventsManager.CHANGE_MOUSE(0);
+	_globals.BPP_NOAFF = true;
+
+	int cpt = 0;
+	do {
+		_eventsManager.VBL();
+		++cpt;
+	} while (cpt <= 4);
+
+	_globals.BPP_NOAFF = false;
+	_graphicsManager.FADE_INW();
+	_globals.iRegul = 1;
+
+	do
+		_eventsManager.VBL();
+	while (_objectsManager.BOBPOSI(6) != 54);
+
+	_globals.NOPARLE = true;
+	_talkManager.PARLER_PERSO("GM4.PE2");
+	_globals.DESACTIVE_INVENT = true;
+	_objectsManager.BOBANIM_OFF(6);
+	_objectsManager.BOBANIM_OFF(10);
+	_objectsManager.BOBANIM_ON(9);
+	_objectsManager.BOBANIM_ON(7);
+
+	do
+		_eventsManager.VBL();
+	while (_objectsManager.BOBPOSI(7) != 54);
+
+	_soundManager.PLAY_SAMPLE2(1);
+
+	do
+		_eventsManager.VBL();
+	while (_objectsManager.BOBPOSI(7) != 65);
+
+	_globals.NOPARLE = true;
+	_talkManager.PARLER_PERSO("DUELB4.PE2");
+	_eventsManager.MOUSE_OFF();
+	_globals.DESACTIVE_INVENT = true;
+
+	do
+		_eventsManager.VBL();
+	while (_objectsManager.BOBPOSI(7) != 72);
+
+	_globals.NOPARLE = true;
+	_talkManager.PARLER_PERSO("DUELH1.PE2");
+
+	do
+		_eventsManager.VBL();
+	while (_objectsManager.BOBPOSI(7) != 81);
+
+	_globals.NOPARLE = true;
+	_talkManager.PARLER_PERSO("DUELB5.PE2");
+
+	do
+		_eventsManager.VBL();
+	while (_objectsManager.BOBPOSI(7) != 120);
+
+	_objectsManager.BOBANIM_OFF(7);
+	if (*((byte *)_globals.SAUVEGARDE + 135) == 1) {
+		_soundManager.SPECIAL_SOUND = 200;
+		_soundManager.VBL_MERDE = true;
+		_graphicsManager.FADE_LINUX = 2;
+		_animationManager.PLAY_ANM("BERM.ANM", 100, 24, 300);
+		_graphicsManager.FIN_VISU();
+		_soundManager.DEL_SAMPLE(1);
+		_graphicsManager.LOAD_IMAGE("PLAN3");
+		_graphicsManager.FADE_INW();
+		_globals.lItCounter = 0;
+		if (!_eventsManager.ESC_KEY) {
+			do
+				_eventsManager.CONTROLE_MES();
+			while (_globals.lItCounter < 2000 / _globals.vitesse && !_eventsManager.ESC_KEY);
+		}
+		_eventsManager.ESC_KEY = false;
+		_graphicsManager.FADE_OUTW();
+		_globals.iRegul = 1;
+		_soundManager.SPECIAL_SOUND = 0;
+		_graphicsManager.FADE_LINUX = 2;
+		_animationManager.PLAY_ANM("JOUR2A.anm", 12, 12, 1000);
+		_soundManager.WSOUND(11);
+		_graphicsManager.DD_Lock();
+		_graphicsManager.Cls_Video();
+		_graphicsManager.DD_Unlock();
+		_graphicsManager.Cls_Pal();
+		_animationManager.PLAY_ANM("FF1a.anm", 18, 18, 9);
+		_animationManager.PLAY_ANM("FF1a.anm", 9, 18, 9);
+		_animationManager.PLAY_ANM("FF1a.anm", 9, 18, 18);
+		_animationManager.PLAY_ANM("FF1a.anm", 9, 18, 9);
+		_animationManager.PLAY_ANM("FF2a.anm", 24, 24, 100);
+		Credits();
+		_globals.iRegul = 0;
+		_globals.SORTIE = 300;
+		_dialogsManager.VIRE_INVENT = false;
+		_globals.DESACTIVE_INVENT = false;
+	} else {
+		_soundManager.SPECIAL_SOUND = 200;
+		_soundManager.VBL_MERDE = true;
+		_animationManager.PLAY_ANM2("BERM.ANM", 100, 24, 300);
+		_objectsManager.BOBANIM_OFF(7);
+		_objectsManager.BOBANIM_ON(8);
+		_globals.NOPARLE = true;
+		_talkManager.PARLER_PERSO("GM5.PE2");
+		_globals.DESACTIVE_INVENT = true;
+
+		do
+			_eventsManager.VBL();
+		while (_objectsManager.BOBPOSI(8) != 5);
+
+		_soundManager.PLAY_SOUND2("SOUND41.WAV");
+
+		do
+			_eventsManager.VBL();
+		while (_objectsManager.BOBPOSI(8) != 21);
+
+		_graphicsManager.FADE_OUTW();
+		_graphicsManager.FIN_VISU();
+		_soundManager.DEL_SAMPLE(1);
+		_soundManager.WSOUND(16);
+		_globals.iRegul = 1;
+		_soundManager.SPECIAL_SOUND = 0;
+		_dialogsManager.VIRE_INVENT = false;
+		_globals.DESACTIVE_INVENT = false;
+		_animationManager.PLAY_ANM("JOUR4A.anm", 12, 12, 1000);
+		_globals.iRegul = 0;
+		_globals.SORTIE = 300;
+	}
+	_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
+	_globals.PERSO = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
+	_globals.PERSO_TYPE = 0;
+	_globals.iRegul = 0;
 }
 
 void HopkinsEngine::AVION() {
@@ -2057,6 +2213,10 @@ int HopkinsEngine::PWBASE() {
 		break;
 	}
 	return result;
+}
+
+void HopkinsEngine::Credits() {
+	warning("STUB - Credits()");
 }
 
 void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9) {

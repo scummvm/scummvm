@@ -422,8 +422,8 @@ public:
 	int opt_music;
 	int opt_txt;
 	int NBTRI;
-	int AFFLI;
-	int AFFIVBL;
+	bool AFFLI; // CHECKME: Useless variable?
+	bool AFFIVBL; // CHECKME: Useless variable?
 	int NOT_VERIF;
 	bool CACHEFLAG;
 	bool NOPARLE;

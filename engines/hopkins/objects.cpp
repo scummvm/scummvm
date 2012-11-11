@@ -2633,8 +2633,8 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.NOMARCHE = false;
 	sprite_ptr = g_PTRNUL;
 	_vm->_globals.SORTIE = 0;
-	_vm->_globals.AFFLI = 0;
-	_vm->_globals.AFFIVBL = 0;
+	_vm->_globals.AFFLI = false;
+	_vm->_globals.AFFIVBL = false;
 	_vm->_globals.NOT_VERIF = 1;
 	_vm->_soundManager.WSOUND(31);
 	_vm->_globals.iRegul = 1;
@@ -2728,7 +2728,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.PLANY = YSPR(0);
 	_vm->_globals.PLANI = 1;
 	SPRITE_OFF(0);
-	_vm->_globals.AFFLI = 0;
+	_vm->_globals.AFFLI = false;
 	sprite_ptr = _vm->_globals.LIBERE_FICHIER(sprite_ptr);
 	CLEAR_ECRAN();
 	_vm->_globals.NOSPRECRAN = false;
@@ -5579,8 +5579,8 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;
 	_vm->_globals.SORTIE = 0;
-	_vm->_globals.AFFLI = 0;
-	_vm->_globals.AFFIVBL = 0;
+	_vm->_globals.AFFLI = false;
+	_vm->_globals.AFFIVBL = false;
 	if (!s1.empty())
 		_vm->_graphicsManager.LOAD_IMAGE(s1);
 	if (!s2.empty())
@@ -5679,8 +5679,8 @@ void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &
 	_vm->_graphicsManager.NOFADE = false;
 	_vm->_globals.NOMARCHE = false;
 	_vm->_globals.SORTIE = 0;
-	_vm->_globals.AFFLI = 0;
-	_vm->_globals.AFFIVBL = 0;
+	_vm->_globals.AFFLI = false;
+	_vm->_globals.AFFIVBL = false;
 	_vm->_globals.NOT_VERIF = 1;
 	_vm->_soundManager.WSOUND(v);
 	_vm->_globals.iRegul = 1;
@@ -5807,7 +5807,7 @@ LABEL_70:
 			_vm->_graphicsManager.FADE_OUTW();
 		_vm->_graphicsManager.NOFADE = false;
 		SPRITE_OFF(0);
-		_vm->_globals.AFFLI = 0;
+		_vm->_globals.AFFLI = false;
 		if (DEUXPERSO == true) {
 			SPRITE_OFF(1);
 			DEUXPERSO = false;

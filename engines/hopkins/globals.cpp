@@ -171,8 +171,8 @@ Globals::Globals() {
 	opt_txt = 0;
 	opt_anm = 0;
 	NBTRI = 0;
-	AFFLI = 0;
-	AFFIVBL = 0;
+	AFFLI = false;
+	AFFIVBL = false;
 	NOT_VERIF = 0;
 	PERSO_TYPE = 0;
 	GOACTION = 0;
