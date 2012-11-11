@@ -1903,9 +1903,6 @@ void HopkinsEngine::AVION() {
 int HopkinsEngine::PWBASE() {
 	warning("PWBASE()");
 
-	int v0; // edi@1
-	int result; // eax@30
-
 	_globals.DESACTIVE_INVENT = true;
 	_graphicsManager.LOAD_IMAGE("PBASE");
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -1914,7 +1911,7 @@ int HopkinsEngine::PWBASE() {
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_eventsManager.CHANGE_MOUSE(0);
 	_graphicsManager.FADE_INW();
-	v0 = 0;
+	bool loopCond = false;
 	int zone;
 	do {
 		int mouseButton = _eventsManager.BMOUSE();
@@ -1951,10 +1948,12 @@ int HopkinsEngine::PWBASE() {
 		}
 		_eventsManager.VBL();
 		if ((mouseButton == 1) && zone)
-			v0 = 1;
-	} while (v0 != 1);
+			loopCond = true;
+	} while (!loopCond);
 	_globals.DESACTIVE_INVENT = false;
 	_graphicsManager.FADE_OUTW();
+
+	int result;
 	switch (zone) {
 	case 1:
 		result = 94;
