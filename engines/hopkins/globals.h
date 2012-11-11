@@ -452,6 +452,15 @@ public:
 	int old_z_69;
 	int j_104;
 
+	int Credit_bx;
+	int Credit_bx1;
+	int Credit_by;
+	int Credit_by1;
+	int Credit_y;
+	int Credit_lignes;
+	char Credit[12000];
+	int Credit_step;
+
 	Globals();
 	~Globals();
 	void setParent(HopkinsEngine *vm);

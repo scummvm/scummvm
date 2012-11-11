@@ -2215,8 +2215,77 @@ int HopkinsEngine::PWBASE() {
 	return result;
 }
 
+void HopkinsEngine::Charge_Credits() {
+	warning("STUB - Charge_Credits()");
+}
+
+void HopkinsEngine::CREDIT_AFFICHE(int a1, int a2, char a3) {
+	warning("STUB - CREDIT_AFFICHE");
+}
+
 void HopkinsEngine::Credits() {
-	warning("STUB - Credits()");
+	warning("Credits()");
+
+	Charge_Credits();
+	_globals.Credit_y = 436;
+	_graphicsManager.LOAD_IMAGE("GENERIC");
+	_graphicsManager.FADE_INW();
+	_soundManager.WSOUND(28);
+	_eventsManager.souris_flag = false;
+	_globals.iRegul = 3;
+	_globals.Credit_bx = _globals.Credit_bx1 = _globals.Credit_by = _globals.Credit_by1 = -1;
+	int soundId = 28;
+	do {
+		for (int i = 0; i < _globals.Credit_lignes; ++i) {
+			if (_globals.Credit[60 * i] == 1) {
+				int nextY = _globals.Credit_y + i * _globals.Credit_step;
+//				*(_DWORD *)&Credit[60 * i + 4] = nextY;
+				_globals.Credit[60 * i + 4] = nextY & 0xFF;
+				_globals.Credit[60 * i + 5] = (nextY >> 8) & 0xFF;
+				_globals.Credit[60 * i + 6] = (nextY >> 16) & 0xFF;
+				_globals.Credit[60 * i + 7] = (nextY >> 24) & 0xFF;
+
+				if ((nextY - 21  >= 0) && (nextY - 21 <= 418)) {
+					char tmpVal = _globals.Credit[60 * i + 1];
+					int a1 = 0;
+					if (tmpVal == 49)
+						a1 = 163;
+					if (tmpVal == 50)
+						a1 = 161;
+					if (tmpVal == 51)
+						a1 = 162;
+//					if (*(_WORD *)&Credit[60 * i + 8] != -1)
+					if ((_globals.Credit[60 * i + 8] != 0xFF) && _globals.Credit[60 * i + 9] != 0xFF)
+						CREDIT_AFFICHE(nextY, 60 * i + 8, a1);
+				}
+			}
+		}
+		--_globals.Credit_y;
+		if (_globals.Credit_bx != -1 || _globals.Credit_bx1 != -1 || _globals.Credit_by != -1 || _globals.Credit_by1 != -1) {
+			_eventsManager.VBL();
+			_graphicsManager.SCOPY(_graphicsManager.VESA_SCREEN, 60, 50, 520, 380, _graphicsManager.VESA_BUFFER, 60, 50);
+		} else {
+			_eventsManager.VBL();
+		}
+//		if (*(_DWORD *)&Credit[20 * (3 * Credit_lignes - 3) + 4] <= 39) {
+		if ( _globals.Credit[20 * (3 * _globals.Credit_lignes - 3) + 4] +
+			(_globals.Credit[20 * (3 * _globals.Credit_lignes - 3) + 4] << 8) +
+			(_globals.Credit[20 * (3 * _globals.Credit_lignes - 3) + 4] << 16) +
+			(_globals.Credit[20 * (3 * _globals.Credit_lignes - 3) + 4] << 24) <= 39) {
+			_globals.Credit_y = 440;
+			++soundId;
+			if (soundId > 31)
+				soundId = 28;
+			_soundManager.WSOUND(soundId);
+		}
+		_globals.Credit_bx = -1;
+		_globals.Credit_bx1 = -1;
+		_globals.Credit_by = -1;
+		_globals.Credit_by1 = -1;
+	} while (_eventsManager.BMOUSE() != 1);
+	_graphicsManager.FADE_OUTW();
+	_globals.iRegul = 1;
+	_eventsManager.souris_flag = true;
 }
 
 void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9) {

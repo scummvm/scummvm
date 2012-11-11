@@ -184,6 +184,15 @@ Globals::Globals() {
 	STOP_BUG = 0;
 	MAX_COMPTE = 0;
 
+	Credit_bx = -1;
+	Credit_bx1 = -1;
+	Credit_by = -1;
+	Credit_by1 = -1;
+	Credit_y = 0;
+	Credit_lignes = 0;
+	memset(Credit, 0, 12000);
+	Credit_step = 0;
+
 	// Initialise pointers
 	ICONE = NULL;
 	BUF_ZONE = NULL;

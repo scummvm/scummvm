@@ -98,6 +98,8 @@ private:
 	void AVION();
 	int  PWBASE();
 	void OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9);
+	void Charge_Credits();
+	void CREDIT_AFFICHE(int a1, int a2, char a3);
 	void Credits();
 
 	bool runLinuxDemo();
