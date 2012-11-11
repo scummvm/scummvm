@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "graphics/palette.h"
+#include "graphics/decoders/pcx.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "engines/util.h"
@@ -325,147 +326,43 @@ void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
 
 // TODO: See if it's feasible and/or desirable to change this to use the Common PCX decoder
 void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
-	int filesize; 
-	int v6;
-	int v7;
-	int v8;
-	int v9; 
-	int v10;
-	int v11;
-	byte v12; 
-	int v13;
-	int v14;
-	char v15; 
-	int v18;
-	int v19; 
-	int v20;
-	unsigned int v21;
-	int v22;
-	int32 v23;
-	byte *ptr;
 	Common::File f;
+	Graphics::PCXDecoder pcxDecoder;
 
 	// Clear the passed surface
 	memset(surface, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	if (typeFlag) {
+		// Load PCX from within the PIC resource
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, "PIC.RES");
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("(nom)Erreur en cours de lecture.");
 		f.seek(_vm->_globals.CAT_POSI);
 
-		v7 = _vm->_globals.CAT_TAILLE - 896;
-		v8 = f.read(HEADER_PCX, 128);
-
-		v6 = (int16)READ_LE_UINT16(&HEADER_PCX[8]) + 1;
-		v20 = (int16)READ_LE_UINT16(&HEADER_PCX[10]) + 1;
-		if (((int16)READ_LE_UINT16(&HEADER_PCX[8]) + 1) <= SCREEN_WIDTH) {
-			DOUBLE_ECRAN = false;
-		} else {
-			v6 = SCREEN_WIDTH * 2;
-			DOUBLE_ECRAN = true;
-		}
-		if (v20 > SCREEN_HEIGHT)
-			v20 = SCREEN_HEIGHT;
-		PCX_L = v6;
-		PCX_H = v20;
-		if (v8 == -1)
-		  error("Erreur en cours de lecture.");
 	} else {
+		// Load stand alone PCX file
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, file);
 		if (!f.open(_vm->_globals.NFICHIER))
 		  error("(nom)Erreur en cours de lecture.");
-
-		filesize = f.size();
-		int bytesRead = f.read(HEADER_PCX, 128);
-		if (bytesRead < 128)
-			error("Erreur en cours de lecture.");
-
-		v6 = (int16)READ_LE_UINT16(&HEADER_PCX[8]) + 1;
-		v20 = (int16)READ_LE_UINT16(&HEADER_PCX[10]) + 1;
-		if (v6 <= SCREEN_WIDTH) {
-			DOUBLE_ECRAN = false;
-		} else {
-			v6 = SCREEN_WIDTH * 2;
-			DOUBLE_ECRAN = true;
-		}
-		if (v20 > SCREEN_HEIGHT)
-			v20 = SCREEN_HEIGHT;
-		PCX_L = v6;
-		PCX_H = v20;
-		v7 = filesize - 896;
 	}
 
-	ptr = _vm->_globals.dos_malloc2(0xEE60u);
-	if (v7 >= 60000) {
-		v21 = v7 / 60000 + 1;
-		v23 = 60000 * (v7 / 60000) - v7;
-    
-		if (((uint32)v23 & 0x80000000u) != 0)
-			v23 = -v23;
-		f.read(ptr, 60000);
-		v7 = 60000;
-	} else {
-		v21 = 1;
-		v23 = v7;
-		f.read(ptr, v7);
-	}
-	v22 = v21 - 1;
-	v18 = 0;
-	v9 = 0;
-	v10 = 0;
-	v19 = v6;
-  
-	do {
-		if (v9 == v7) {
-			v9 = 0;
-			--v22;
-			v7 = 60000;
-			if ( !v22 )
-				v7 = v23;
-			v11 = v10;
-			f.read(ptr, v7);
-			v10 = v11;
-		}
+	// Decode the PCX
+	if (!pcxDecoder.loadStream(f))
+		error("Error decoding PCX");
 
-		v12 = *((byte *)ptr + v9++);
-		if (v12 > 0xC0u) {
-			v13 = v12 - 192;
-			if (v9 == v7) {
-				v9 = 0;
-				--v22;
-				v7 = 60000;
-				if ( v22 == 1 )
-					v7 = v23;
-				v14 = v10;
-				f.read(ptr, v7);
-				v10 = v14;
-			}
-			v15 = *((byte *)ptr + v9++);
+	const Graphics::Surface *s = pcxDecoder.getSurface();
+	
+	// Copy out the dimensions and pixels of the decoded surface
+	DOUBLE_ECRAN = s->w > SCREEN_WIDTH;
+	PCX_L = s->w;
+	PCX_H = s->h;
+	Common::copy((byte *)s->pixels, (byte *)s->pixels + (s->pitch * s->h), surface);
 
-			do {
-				*((byte *)surface + v10++) = v15;
-				++v18;
-				--v13;
-			} while (v13);
-		} else {
-			*((byte *)surface + v10++) = v12;
-			++v18;
-		}
-	} while (v18 < v19 * v20);
-
-	if (typeFlag) {
-		f.seek(_vm->_globals.CAT_TAILLE + _vm->_globals.CAT_POSI - 768);
-	} else {
-		filesize = f.size();
-		f.seek(filesize - 768);
-	}
-
-	if (f.read(palette, PALETTE_BLOCK_SIZE) != (PALETTE_BLOCK_SIZE))
-		error("A_PCX640_480");
+	// Copy out the palette
+	const byte *palSrc = pcxDecoder.getPalette();
+	Common::copy((byte *)palSrc, (byte *)palSrc + PALETTE_BLOCK_SIZE, palette);
   
 	f.close();
-	_vm->_globals.dos_free2(ptr);
 }
 
 // Clear Palette
