@@ -733,6 +733,8 @@ void SoundManager::updateScummVMSoundSettings() {
 	ConfMan.setInt("music_volume", MUSICVOL * 255 / 16);
 	ConfMan.setInt("sfx_volume", SOUNDVOL * 255 / 16);
 	ConfMan.setInt("speech_volume", VOICEVOL * 255 / 16);
+
+	ConfMan.flushToDisk();
 }
 
 } // End of namespace Hopkins
