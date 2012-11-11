@@ -717,9 +717,16 @@ void SoundManager::syncSoundSettings() {
 	SOUNDVOL = MIN(255, ConfMan.getInt("sfx_volume")) * 16 / 255;
 	VOICEVOL = MIN(255, ConfMan.getInt("speech_volume")) * 16 / 255;
 
-	//
+	// Update any active sounds
 	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
 		if (Swav[idx]._active) {
+			int volume = (idx == 20) ? (VOICEVOL * 255 / 16) : (SOUNDVOL * 255 / 16);
+			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
+		}
+	}
+	for (int idx = 0; idx < MWAV_COUNT; ++idx) {
+		if (Mwav[idx]._active) {
+			_vm->_mixer->setChannelVolume(Mwav[idx]._soundHandle, MUSICVOL * 255 / 16);
 		}
 	}
 }
