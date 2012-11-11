@@ -2442,7 +2442,16 @@ void HopkinsEngine::BTOCEAN() {
 }
 
 void HopkinsEngine::OCEAN_HOME() {
-	warning("STUB - OCEAN_HOME()");
+	warning("OCEAN_HOME()");
+
+	if (_globals.OCEAN_SENS == 3)
+		_objectsManager.SETANISPR(0, 0);
+	if (_globals.OCEAN_SENS == 7)
+		_objectsManager.SETANISPR(0, 18);
+	if (_globals.OCEAN_SENS == 1)
+		_objectsManager.SETANISPR(0, 27);
+	if (_globals.OCEAN_SENS == 5)
+		_objectsManager.SETANISPR(0, 9);
 }
 
 void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9) {
