@@ -217,13 +217,17 @@ void LoLEngine::initStaticResource() {
 	// assign music resource data (not required for the PC version, resource loading is implemented differently there)
 	if (_flags.isDemo) {
 		static const char *const file[] = { "LOREDEMO" };
-		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_TownsPC98V2(file, ARRAYSIZE(file), 0, 0, 0));
+		SoundResourceInfo_TownsPC98V2 resInfoDemo(file, ARRAYSIZE(file), 0, 0, 0);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoDemo);
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		static const char *const fileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
 		static const char *const fileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
-		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_TownsPC98V2(fileListIntro, ARRAYSIZE(fileListIntro), 0, 0, 0));
-		_sound->initAudioResourceInfo(kMusicIngame, &SoundResourceInfo_TownsPC98V2(0, 0, "lore%02d.86", 0, 0));
-		_sound->initAudioResourceInfo(kMusicFinale, &SoundResourceInfo_TownsPC98V2(fileListFinale, ARRAYSIZE(fileListFinale), 0, 0, 0));
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(fileListIntro, ARRAYSIZE(fileListIntro), 0, 0, 0);		
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "lore%02d.86", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(fileListFinale, ARRAYSIZE(fileListFinale), 0, 0, 0);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	}
 
 	if (_flags.isDemo)

@@ -763,14 +763,18 @@ bool SeqPlayer_HOF::checkAbortPlayback() {
 				_abortRequested = true;
 				_vm->quitGame();
 				return true;
-			} else if (event.kbd.keycode != Common::KEYCODE_ESCAPE && event.kbd.keycode != Common::KEYCODE_RETURN && event.kbd.keycode != Common::KEYCODE_SPACE)
+			} else if (event.kbd.keycode != Common::KEYCODE_ESCAPE && event.kbd.keycode != Common::KEYCODE_RETURN && event.kbd.keycode != Common::KEYCODE_SPACE) {
 				continue;
+			}
+			// fall through
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			_abortRequested = true;
 			return true;
+		default:
+			break;
 		}
 	}
 
@@ -995,7 +999,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 		updateAllNestedAnimations();
 		updateSubTitles();
 
-		if (wsaObj || callback && (!(checkAbortPlayback() || _vm->shouldQuit() || _result))) {
+		if ((wsaObj || callback) && (!(checkAbortPlayback() || _vm->shouldQuit() || _result))) {
 			_screen->copyPage(2, 0);
 			_screen->updateScreen();
 		}
@@ -1010,7 +1014,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 					break;
 			}
 
-			if (wsaObj || callback && (!(checkAbortPlayback() || _vm->shouldQuit() || _result))) {
+			if ((wsaObj || callback) && (!(checkAbortPlayback() || _vm->shouldQuit() || _result))) {
 				_screen->copyPage(2, 0);
 				_screen->updateScreen();
 			}
@@ -1792,7 +1796,6 @@ int SeqPlayer_HOF::cbHOF_overview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint8 *tmpPal = _screen->getPalette(3).getData() + 0x101;
 	memset(tmpPal, 0, 256);
 	uint32 frameEnd = 0;
-	uint32 curTime = 0;
 
 	switch (_callbackCurrentFrame) {
 	case 0:

@@ -824,14 +824,20 @@ void KyraEngine_LoK::initStaticResource() {
 	// FIXME: It seems Kyra1 MAC CD includes AdLib and MIDI music and sfx, thus we enable
 	// support for those for now. (Based on patch #2767489 "Support for Mac Kyrandia 1 CD" by satz).
 	if (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformMacintosh) {
-		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_PC(soundFilesIntro, soundFilesIntroSize));
-		_sound->initAudioResourceInfo(kMusicIngame, &SoundResourceInfo_PC(soundFiles, soundFilesSize));
+		SoundResourceInfo_PC resInfoIntro(soundFilesIntro, soundFilesIntroSize);
+		SoundResourceInfo_PC resInfoIngame(soundFiles, soundFilesSize);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
-		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_Towns(soundFiles, soundFilesSize, cdaTable, cdaTableSize));
-		_sound->initAudioResourceInfo(kMusicIngame, &SoundResourceInfo_Towns(soundFiles, soundFilesSize, cdaTable, cdaTableSize));
+		SoundResourceInfo_Towns resInfoIntro(soundFiles, soundFilesSize, cdaTable, cdaTableSize);
+		SoundResourceInfo_Towns resInfoIngame(soundFiles, soundFilesSize, cdaTable, cdaTableSize);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_PC98("INTRO%d.DAT"));
-		_sound->initAudioResourceInfo(kMusicIngame, &SoundResourceInfo_PC98("KYRAM%d.DAT"));
+		SoundResourceInfo_PC98 resInfoIntro("INTRO%d.DAT");
+		SoundResourceInfo_PC98 resInfoIngame("KYRAM%d.DAT");
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 	}
 }
 
@@ -977,8 +983,6 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 }
 
 void KyraEngine_HoF::initStaticResource() {
-	int tmpSize = 0;
-
 	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
 	_ingameSoundList = _staticres->loadStrings(k2IngameSfxFiles, _ingameSoundListSize);
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
@@ -994,17 +998,26 @@ void KyraEngine_HoF::initStaticResource() {
 
 	// assign music data
 	if (_flags.platform == Common::kPlatformPC) {
-		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_PC(_musicFileListIntro, _musicFileListIntroSize));
-		_sound->initAudioResourceInfo(kMusicIngame, &SoundResourceInfo_PC(_musicFileListIngame, _musicFileListIngameSize));
-		_sound->initAudioResourceInfo(kMusicFinale, &SoundResourceInfo_PC(_musicFileListFinale, _musicFileListFinaleSize));
+		SoundResourceInfo_PC resInfoIntro(_musicFileListIntro, _musicFileListIntroSize);
+		SoundResourceInfo_PC resInfoIngame(_musicFileListIngame, _musicFileListIngameSize);
+		SoundResourceInfo_PC resInfoFinale(_musicFileListFinale, _musicFileListFinaleSize);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
-		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_TownsPC98V2(0, 0, "intro%d.twn", (const uint16*)_cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1));
-		_sound->initAudioResourceInfo(kMusicIngame, &SoundResourceInfo_TownsPC98V2(0, 0, "km%02d.twn", (const uint16*)_cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1));
-		_sound->initAudioResourceInfo(kMusicFinale, &SoundResourceInfo_TownsPC98V2(0, 0, "finale%d.twn", (const uint16*)_cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1));
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(0, 0, "intro%d.twn", (const uint16*)_cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "km%02d.twn", (const uint16*)_cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(0, 0, "finale%d.twn", (const uint16*)_cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_sound->initAudioResourceInfo(kMusicIntro, &SoundResourceInfo_TownsPC98V2(0, 0, "intro%d.86", 0, 0));
-		_sound->initAudioResourceInfo(kMusicIngame, &SoundResourceInfo_TownsPC98V2(0, 0, "km%02d.86", 0, 0));
-		_sound->initAudioResourceInfo(kMusicFinale, &SoundResourceInfo_TownsPC98V2(0, 0, "finale%d.86", 0, 0));
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(0, 0, "intro%d.86", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "km%02d.86", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(0, 0, "finale%d.86", 0, 0);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	}
 }
 

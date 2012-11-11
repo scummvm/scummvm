@@ -41,15 +41,15 @@ namespace Kyra {
 struct SoundResourceInfo_PC {
 	SoundResourceInfo_PC(const char *const *files, int numFiles) : fileList(files), fileListSize(numFiles) {}
 	const char *const *fileList;
-	int fileListSize;
+	uint fileListSize;
 };
 
 struct SoundResourceInfo_Towns {
 	SoundResourceInfo_Towns(const char *const *files, int numFiles, const int32 *cdaTbl, int cdaTblSize) : fileList(files), fileListSize(numFiles), cdaTable(cdaTbl), cdaTableSize(cdaTblSize) {}
 	const char *const *fileList;
-	int fileListSize;
+	uint fileListSize;
 	const int32 *cdaTable;
-	int cdaTableSize;
+	uint cdaTableSize;
 };
 
 struct SoundResourceInfo_PC98 {
@@ -60,10 +60,10 @@ struct SoundResourceInfo_PC98 {
 struct SoundResourceInfo_TownsPC98V2 {
 	SoundResourceInfo_TownsPC98V2(const char *const *files, int numFiles, const char *fileNamePattern, const uint16 *cdaTbl, int cdaTblSize) : fileList(files), fileListSize(numFiles), pattern(fileNamePattern), cdaTable(cdaTbl), cdaTableSize(cdaTblSize) {}
 	const char *const *fileList;
-	int fileListSize;
+	uint fileListSize;
 	const char *pattern;
 	const uint16 *cdaTable;
-	int cdaTableSize;
+	uint cdaTableSize;
 };
 
 /**

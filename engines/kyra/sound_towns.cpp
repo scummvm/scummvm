@@ -80,7 +80,7 @@ void SoundTowns::playTrack(uint8 track) {
 		return;
 	track -= 2;
 
-	int tTableIndex = 3 * track;
+	uint tTableIndex = 3 * track;
 
 	assert(tTableIndex + 2 < res()->cdaTableSize);
 
@@ -137,6 +137,7 @@ void SoundTowns::selectAudioResourceSet(int set) {
 bool SoundTowns::hasSoundFile(uint file) {
 	if (file < res()->fileListSize)
 		return (res()->fileList[file] != 0);
+	return false;
 }
 
 void SoundTowns::loadSoundFile(uint file) {
@@ -532,9 +533,9 @@ bool SoundTownsPC98_v2::init() {
 		// this misses the possibility that we play the tracks
 		// right off CD. So we should find another way to
 		// check if we have access to CD audio.
-		Resource *res = _vm->resource();
+		Resource *r = _vm->resource();
 		if (_musicEnabled &&
-			(res->exists("track1.mp3") || res->exists("track1.ogg") || res->exists("track1.flac") || res->exists("track1.fla")))
+			(r->exists("track1.mp3") || r->exists("track1.ogg") || r->exists("track1.flac") || r->exists("track1.fla")))
 				_musicEnabled = 2;
 		else
 			_musicEnabled = 1;
@@ -566,6 +567,7 @@ void SoundTownsPC98_v2::selectAudioResourceSet(int set) {
 bool SoundTownsPC98_v2::hasSoundFile(uint file) {
 	if (file < res()->fileListSize)
 		return (res()->fileList[file] != 0);
+	return false;
 }
 
 void SoundTownsPC98_v2::loadSoundFile(Common::String file) {
@@ -583,7 +585,7 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 
 	int trackNum = -1;
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-		for (int i = 0; i < res()->cdaTableSize; i++) {
+		for (uint i = 0; i < res()->cdaTableSize; i++) {
 			if (track == (uint8) READ_LE_UINT16(&res()->cdaTable[i * 2])) {
 				trackNum = (int) READ_LE_UINT16(&res()->cdaTable[i * 2 + 1]) - 1;
 				break;
