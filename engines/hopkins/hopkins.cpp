@@ -2368,8 +2368,47 @@ void HopkinsEngine::Charge_Credits() {
 	warning("STUB - Charge_Credits()");
 }
 
-void HopkinsEngine::CREDIT_AFFICHE(int a1, int a2, char a3) {
-	warning("STUB - CREDIT_AFFICHE");
+void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
+	warning("CREDIT_AFFICHE");
+
+	byte *v3 = buffer;
+	byte *v4 = buffer;
+	int strWidth = 0;
+	byte curChar;
+	while (1) {
+		curChar = *v4++;
+		if (!curChar)
+			break;
+		if (curChar > 31)
+			strWidth += _objectsManager.Get_Largeur(_globals.police, curChar - 32);
+	}
+	int startPosX = 320 - strWidth / 2;
+	int endPosX = strWidth + startPosX;
+	int endPosY = startPosY + 12;
+	if ((_globals.Credit_bx == -1) && (_globals.Credit_bx1 == -1) && (_globals.Credit_by == -1) && (_globals.Credit_by1 == -1)) {
+		_globals.Credit_bx = startPosX;
+		_globals.Credit_bx1 = endPosX;
+		_globals.Credit_by = startPosY;
+		_globals.Credit_by1 = endPosY;
+	}
+	if (startPosX < _globals.Credit_bx)
+		_globals.Credit_bx = startPosX;
+	if (endPosX > _globals.Credit_bx1)
+		_globals.Credit_bx1 = endPosX;
+	if (_globals.Credit_by > startPosY)
+		_globals.Credit_by = startPosY;
+	if (endPosY > _globals.Credit_by1)
+		_globals.Credit_by1 = endPosY;
+
+	while (1) {
+		curChar = *v3++;
+		if (!curChar)
+			break;
+		if (curChar > 31) {
+			_graphicsManager.Affiche_Fonte(_graphicsManager.VESA_BUFFER, _globals.police, startPosX, startPosY, curChar - 32, colour);
+			startPosX += _objectsManager.Get_Largeur(_globals.police, curChar - 32);
+		}
+	}
 }
 
 void HopkinsEngine::Credits() {
@@ -2405,7 +2444,7 @@ void HopkinsEngine::Credits() {
 						a1 = 162;
 //					if (*(_WORD *)&Credit[60 * i + 8] != -1)
 					if ((_globals.Credit[60 * i + 8] != 0xFF) && _globals.Credit[60 * i + 9] != 0xFF)
-						CREDIT_AFFICHE(nextY, 60 * i + 8, a1);
+						CREDIT_AFFICHE(nextY, _globals.Credit + (60 * i + 8), a1);
 				}
 			}
 		}

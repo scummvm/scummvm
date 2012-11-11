@@ -458,7 +458,7 @@ public:
 	int Credit_by1;
 	int Credit_y;
 	int Credit_lignes;
-	char Credit[12000];
+	byte Credit[12000];
 	int Credit_step;
 
 	int OCEAN_SENS;
