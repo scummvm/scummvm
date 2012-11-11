@@ -231,6 +231,7 @@ Globals::Globals() {
 	OPTION_FLAG = false;
 	CACHEFLAG = false;
 	NOPARLE = false;
+	couleur_40 = 50;
 
 	// Reset indexed variables
 	force_to_data_0 = 0;

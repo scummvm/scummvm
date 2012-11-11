@@ -1901,8 +1901,84 @@ void HopkinsEngine::AVION() {
 }
 
 int HopkinsEngine::PWBASE() {
-	warning("STUB - PWBASE()");
-	return 0;
+	warning("PWBASE()");
+
+	int v0; // edi@1
+	int result; // eax@30
+
+	_globals.DESACTIVE_INVENT = true;
+	_graphicsManager.LOAD_IMAGE("PBASE");
+	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_eventsManager.CHANGE_MOUSE(0);
+	_graphicsManager.FADE_INW();
+	v0 = 0;
+	int zone;
+	do {
+		int mouseButton = _eventsManager.BMOUSE();
+		int posX = _eventsManager.XMOUSE();
+		int posY = _eventsManager.YMOUSE();
+		zone = 0;
+		if ((posX - 181 <= 16) && (posY - 66 <= 22) &&
+		    (posX - 181 >= 0) && (posY - 66 >= 0))
+			zone = 1;
+		if ((posX - 353 <= 22) && (posY - 116 <= 19) &&
+		    (posX - 353 >= 0) && (posY - 116 >= 0))
+			zone = 2;
+		if ((posX - 483 <= 20) && (posY - 250 <= 25) &&
+		    (posX - 483 >= 0) && (posY - 250 >= 0))
+			zone = 3;
+		if ((posX - 471 <= 27) && (posY - 326 <= 20) &&
+		    (posX - 471 >= 0) && (posY - 326 >= 0))
+			zone = 4;
+		if ((posX - 162 <= 21) && (posY - 365 <= 23) &&
+		    (posX - 162 >= 0) && (posY - 365 >= 0))
+			zone = 5;
+		if ((posX - 106 <= 20) && (posY - 267 <= 26) &&
+		    (posX - 106 >= 0) && (posY - 267 >= 0))
+			zone = 6;
+		if (zone) {
+			_eventsManager.CHANGE_MOUSE(4);
+			_globals.couleur_40 += 25;
+			if (_globals.couleur_40 > 100)
+				_globals.couleur_40 = 0;
+			_graphicsManager.SETCOLOR4(251, _globals.couleur_40, _globals.couleur_40, _globals.couleur_40);
+		} else {
+			_eventsManager.CHANGE_MOUSE(0);
+			_graphicsManager.SETCOLOR4(251, 100, 100, 100);
+		}
+		_eventsManager.VBL();
+		if ((mouseButton == 1) && zone)
+			v0 = 1;
+	} while (v0 != 1);
+	_globals.DESACTIVE_INVENT = false;
+	_graphicsManager.FADE_OUTW();
+	switch (zone) {
+	case 1:
+		result = 94;
+		break;
+	case 2:
+		result = 95;
+		break;
+	case 3:
+		result = 96;
+		break;
+	case 4:
+		result = 97;
+		break;
+	case 5:
+		result = 98;
+		break;
+	case 6:
+		result = 99;
+		break;
+	default:
+		result = 0;
+		break;
+	}
+	return result;
 }
 
 void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9) {

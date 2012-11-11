@@ -433,6 +433,7 @@ public:
 	int Compteur;
 	int ACTION_SENS;
 	int SegmentEnCours;
+	int couleur_40;
 
 	int STOP_BUG;
 	bool NO_OFFSET;
