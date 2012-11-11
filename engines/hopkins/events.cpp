@@ -154,6 +154,8 @@ void EventsManager::CHANGE_MOUSE(int id) {
 
 // Check Events
 void EventsManager::CONTROLE_MES() {
+	_vm->_soundManager.checkMusic();
+
 	pollEvents();
 }
 

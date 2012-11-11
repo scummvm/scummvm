@@ -33,36 +33,50 @@ namespace Hopkins {
 
 class VoiceItem {
 public:
-	int status;
-	int wavIndex;
-	Audio::RewindableAudioStream *audioStream;
+	int _status;
+	int _wavIndex;
+	Audio::RewindableAudioStream *_audioStream;
 	int fieldC;
 	int field14;
 };
 
 class SwavItem {
 public:
-	bool active;
-	Audio::RewindableAudioStream *audioStream;
+	bool _active;
+	Audio::RewindableAudioStream *_audioStream;
 	Audio::SoundHandle _soundHandle;
 	int field24;
 };
 
+class MwavItem {
+public:
+	bool _active;
+	Audio::RewindableAudioStream *_audioStream;
+	Audio::SoundHandle _soundHandle;
+};
+
 class MusicItem {
 public:
-	byte field0;
-	byte field1;
-	int field16[50];
+	bool _active;
+	bool _isPlaying;
+	Common::String _string;
+	int _mwavIndexes[50];
+	byte unused_mb[100];
+	int _currentIndex;
+	int fieldE0;
+	int fieldE4;
+	int fieldE8;
+	int fieldF0;
 };
 
 class SoundItem {
 public:
-	bool active;
-
+	bool _active;
 };
 
 #define VOICE_COUNT 3
 #define SWAV_COUNT 50
+#define MWAV_COUNT 50
 #define SOUND_COUNT 10
 
 class HopkinsEngine;
@@ -82,6 +96,8 @@ private:
 	void PLAY_NWAV(int wavIndex);
 	void DEL_NWAV(int wavIndex);
 	void PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex);
+	void LOAD_MSAMPLE(int mwavIndex, const Common::String &file);
+	void DEL_MSAMPLE(int mwavIndex);
 public:
 	int SPECIAL_SOUND;
 	int SOUNDVOL;
@@ -98,10 +114,14 @@ public:
 	bool VBL_MERDE;
 	bool CARD_SB;
 	int SOUND_NUM;
+	bool MOD_FLAG;
+	int old_music;
+
 	VoiceItem Voice[VOICE_COUNT];
 	SwavItem Swav[SWAV_COUNT];
-	MusicItem Music[2];
+	MwavItem Mwav[MWAV_COUNT];
 	SoundItem SOUND[SOUND_COUNT];
+	MusicItem Music;
 public:
 	SoundManager();
 	void setParent(HopkinsEngine *vm);
@@ -112,6 +132,19 @@ public:
 	void PLAY_ANM_SOUND(int soundNumber);
 	void LOAD_WAV(const Common::String &file, int wavIndex);
 	void WSOUND(int soundNumber);
+	void WSOUND_OFF();
+	void PLAY_MOD(const Common::String &file);
+	void LOAD_MUSIC(const Common::String &file);
+	void PLAY_MUSIC();
+	void STOP_MUSIC();
+	void DEL_MUSIC();
+
+	/**
+	 * Checks the music structure to see if music playback is active, and whether
+	 * it needs to move to the next WAV file
+	 */
+	void checkMusic();
+
 	bool VOICE_MIX(int voiceId, int voiceMode);
 	void DEL_SAMPLE(int soundIndex);
 	void PLAY_SOUND(const Common::String &file);
