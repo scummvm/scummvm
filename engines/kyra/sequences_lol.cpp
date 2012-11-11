@@ -38,6 +38,7 @@ namespace Kyra {
 int LoLEngine::processPrologue() {
 	// There are two non-interactive demos (one which plays the intro and another one) which plays a number of specific scenes.
 	// We try to identify the latter one by looking for a specific file.
+	_res->loadPakFile("GENERAL.PAK");
 	if (_flags.isDemo && _res->exists("scene1.cps")) {
 		return playDemo();
 	} else {

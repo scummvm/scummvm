@@ -71,6 +71,7 @@ public:
 
 	// used in non-interactive HoF/LoL demos
 	void copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes);
+	void copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *d, bool flag = false);
 protected:
 	uint8 *_wsaFrameAnimBuffer;
 };

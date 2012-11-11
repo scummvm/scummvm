@@ -213,17 +213,22 @@ void StaticResource::freeButtonDefs(void *&ptr, int &size) {
 }
 
 void LoLEngine::initStaticResource() {
-	// assign music data
+	// assign music resource data
 	static const char *const pcMusicFileListIntro[] = { "LOREINTR" };
 	static const char *const pcMusicFileListFinale[] = { "LOREFINL" };
 	static const char *const pcMusicFileListIngame[] = { "LORE%02d%c" };
+	static const char *const pcMusicFileListDemo[] = { "LOREDEMO" };
 
 	static const char *const pc98MusicFileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
 	static const char *const pc98MusicFileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
 	static const char *const pc98MusicFileListIngame[] = { "lore%02d.86" };
 
 	memset(_soundData, 0, sizeof(_soundData));
-	if (_flags.platform == Common::kPlatformPC) {
+
+	if (_flags.isDemo) {
+		_soundData[0].fileList = pcMusicFileListDemo;
+		_soundData[0].fileListLen = ARRAYSIZE(pcMusicFileListDemo);
+	} else if (_flags.platform == Common::kPlatformPC) {
 		_soundData[0].fileList = pcMusicFileListIntro;
 		_soundData[0].fileListLen = ARRAYSIZE(pcMusicFileListIntro);
 		_soundData[1].fileList = pcMusicFileListIngame;

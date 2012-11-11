@@ -93,40 +93,4 @@ void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int
 	}
 }
 
-void Screen_HoF::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX, int dstY, int dstW, int dstH, const ScreenDim *dim, bool flag) {
-	int x0 = dim->sx << 3;
-	int y0 = dim->sy;
-	int w0 = dim->w << 3;
-	int h0 = dim->h;
-
-	int x1 = dstX;
-	int y1 = dstY;
-	int w1 = dstW;
-	int h1 = dstH;
-
-	int x2, y2, w2;
-
-	calcBounds(w0, h0, x1, y1, w1, h1, x2, y2, w2);
-
-	const uint8 *src = getPagePtr(srcPage) + (320 * srcH) + srcW;
-	uint8 *dst = getPagePtr(dstPage) + 320 * (y0 + y1);
-
-	for (int y = 0; y < h1; y++) {
-		const uint8 *s = src + x2;
-		uint8 *d = dst + x0 + x1;
-
-		if (flag)
-			d += (h1 >> 1);
-
-		for (int x = 0; x < w1; x++) {
-			if (*s)
-				*d = *s;
-			s++;
-			d++;
-		}
-		dst += 320;
-		src += 320;
-	}
-}
-
 } // End of namespace Kyra

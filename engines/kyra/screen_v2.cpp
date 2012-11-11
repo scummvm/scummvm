@@ -356,6 +356,42 @@ void Screen_v2::copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos,
 	memcpy(dst, src, numBytes);
 }
 
+void Screen_v2::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX, int dstY, int dstW, int dstH, const ScreenDim *dim, bool flag) {
+	int x0 = dim->sx << 3;
+	int y0 = dim->sy;
+	int w0 = dim->w << 3;
+	int h0 = dim->h;
+
+	int x1 = dstX;
+	int y1 = dstY;
+	int w1 = dstW;
+	int h1 = dstH;
+
+	int x2, y2, w2;
+
+	calcBounds(w0, h0, x1, y1, w1, h1, x2, y2, w2);
+
+	const uint8 *src = getPagePtr(srcPage) + (320 * srcH) + srcW;
+	uint8 *dst = getPagePtr(dstPage) + 320 * (y0 + y1);
+
+	for (int y = 0; y < h1; y++) {
+		const uint8 *s = src + x2;
+		uint8 *d = dst + x0 + x1;
+
+		if (flag)
+			d += (h1 >> 1);
+
+		for (int x = 0; x < w1; x++) {
+			if (*s)
+				*d = *s;
+			s++;
+			d++;
+		}
+		dst += 320;
+		src += 320;
+	}
+}
+
 bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2) {
 	x2 = 0;
 	y2 = 0;

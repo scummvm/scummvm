@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,29 +20,53 @@
  *
  */
 
-#ifndef KYRA_SCREEN_HOF_H
-#define KYRA_SCREEN_HOF_H
+#ifndef KYRA_SEQUENCES_HOF_H
+#define KYRA_SEQUENCES_HOF_H
 
-#include "kyra/screen_v2.h"
+#include "kyra/kyra_v2.h"
 
 namespace Kyra {
 
-class KyraEngine_HoF;
+struct HoFSequence {
+	const char *wsaFile;
+	const char *cpsFile;
+	uint16 flags;
+	uint8 fadeInTransitionType;
+	uint8 fadeOutTransitionType;
+	int16 stringIndex1;
+	int16 stringIndex2;
+	uint16 startFrame;
+	uint16 numFrames;
+	uint16 duration;
+	uint16 xPos;
+	uint16 yPos;
+	uint16 timeout;
+};
 
-class Screen_HoF : public Screen_v2 {
-friend class Debugger_v2;
-public:
-	Screen_HoF(KyraEngine_HoF *vm, OSystem *system);
+struct HoFNestedSequence {
+	const char *wsaFile;
+	const FrameControl *wsaControl;
+	uint16 flags;
+	uint16 startframe;
+	uint16 endFrame;
+	uint16 frameDelay;
+	uint16 x;
+	uint16 y;
+	uint16 fadeInTransitionType;
+	uint16 fadeOutTransitionType;
+};
 
-	// sequence player
-	void generateGrayOverlay(const Palette &pal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
-	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,	int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
+struct HoFSeqData {
+	const HoFSequence *seq;
+	int numSeq;
+	const HoFNestedSequence *nestedSeq;
+	int numNestedSeq;
+};
 
-private:
-	KyraEngine_HoF *_vm;
-
-	static const ScreenDim _screenDimTable[];
-	static const int _screenDimTableCount;
+struct HoFSeqItemAnimData {
+	int16 itemIndex;
+	uint16 y;
+	const uint16 *frames;
 };
 
 } // End of namespace Kyra

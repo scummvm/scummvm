@@ -138,13 +138,7 @@ private:
 	bool checkPlaybackStatus();
 
 	bool _abortRequested;
-
-	uint32 _seqWsaChatTimeout;
-	uint32 _seqWsaChatFrameTimeout;
-
-	int _seqScrollTextCounter;
-	uint8 _seqTextColor[2];
-	uint8 _seqTextColorMap[16];
+	uint32 _pauseStart;
 
 	// Sequence transitions
 	void doTransition(int type);
@@ -153,6 +147,7 @@ private:
 
 	// Animations
 	void playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int numFrames, int frameRate, int x, int y, const SeqProc callback, Palette *fadePal1, Palette *fadePal2, int fadeRate, bool restoreScreen);
+	void playDialogueAnimation(uint16 strID, uint16 soundID, int textColor, int textPosX, int textPosY, int textWidth, WSAMovie_v2 *wsaObj, int animStartFrame, int animLastFrame, int animPosX, int animPosY);
 
 	void startNestedAnimation(int animSlot, int sequenceID);
 	void closeNestedAnimation(int animSlot);
@@ -185,18 +180,22 @@ private:
 	int _animCurrentFrame;
 	int _callbackCurrentFrame;
 
+	// The only reason to declare these here (instead of just locally) is being able to increase them after pausing the Engine
+	uint32 _specialAnimTimeOutTotal;
+	uint32 _specialAnimFrameTimeOut;
+
 	// Subtitles/Dialogue/Sound
-	void seq_playTalkText(uint8 chatNum);
-	void seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width, WSAMovie_v2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
-	void seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor);
-	int seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width);
+	void playSoundEffect(uint16 id, int16 vol);
+	void playSoundAndDisplaySubTitle(uint16 id);
+	void printFadingText(uint16 strID, int x, int y, const uint8 *colorMap, uint8 textcolor);
 
-	void seq_processText();
-	char *seq_preprocessString(const char *str, int width);
-
+	int displaySubTitle(uint16 strID, uint16 posX, uint16 posY, int duration, uint16 width);
+	void updateSubTitles();
+	char *preprocessString(const char *str, int width);
 	void waitForSubTitlesTimeout();
 	uint32 ticksTillSubTitlesTimeout();
-	void seq_resetAllTextEntries();
+	void resetAllTextSlots();
+
 	void fadeOutMusic();
 
 	struct TextSlot {
@@ -213,28 +212,31 @@ private:
 
 	char *_tempString;
 
+	uint8 _textColor[2];
+	uint8 _textColorMap[16];
+	int _textDuration[33];
+
 	const char * const *_sequenceStrings;
 	const char * const *_sequenceSoundList;
 	int _sequenceSoundListSize;
 
-	Audio::SoundHandle _speechHandle;
-
-	int _textDuration[33];
 	static const uint8 _textColorPresets[];
 
 	// HOF credits
-	void seq_finaleActorScreen();
-	void seq_displayScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = 0, const char *const *specialData = 0);
+	void playHoFTalkieCredits();
+	void displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = 0, const char *const *specialData = 0);
 
 	bool _talkieFinaleExtraFlag;
 
-	// HOF demo specific
-	void seq_scrollPage(int bottom, int top);
+	// HOF+LOL demo specific
+	void updateDemoAdText(int bottom, int top);
 
 	ActiveItemAnim _hofDemoActiveItemAnim[5];
-	uint32 _fisherAnimCurTime;
-
 	const HoFSeqItemAnimData *_hofDemoAnimData;
+
+	uint32 _fisherAnimCurTime;
+	int _scrollProgressCounter;
+
 	uint8 *_hofDemoShapeData;
 	uint8 *_hofDemoItemShapes[20];
 
@@ -266,6 +268,7 @@ private:
 
 	KyraEngine_v1 *_vm;
 	Screen_v2 *_screen;
+	// We might consider getting rid of Screen_HoF, since there are only 2 methods left in that class anyway
 	Screen_HoF *_screenHoF;
 	OSystem *_system;
 
@@ -353,6 +356,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_preventLooping = false;
 	_menu = 0;
 	_abortRequested = false;
+	_pauseStart = 0;
 
 	_updateAnimations = false;
 	_animDuration = 0;
@@ -364,6 +368,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_preventSkipBeforeScene = -1;
 	_lastScene = 0;
 
+	_scrollProgressCounter = 0;
 	_fisherAnimCurTime = 0;
 
 	_tempString = new char[200];
@@ -419,10 +424,10 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_vm->staticres()->unloadId(k2SeqplaySfxFiles);
 	_sequenceSoundList = tmpSndLst;
 
-
 	if (_vm->gameFlags().platform == Common::kPlatformPC98)
 		_vm->sound()->loadSoundFile("SOUND.DAT");
 
+	_screen->loadFont(_screen->FID_GOLDFONT_FNT, "GOLDFONT.FNT");
 	_screen->setFont(_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
 
 	if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
@@ -467,7 +472,8 @@ SeqPlayer_HOF::~SeqPlayer_HOF() {
 	delete[] _hofDemoShapeData;
 	delete _menu;
 
-	_screen->setFont(_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	if (_vm->game() != GI_LOL)
+		_screen->setFont(_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 }
 
 int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
@@ -492,7 +498,7 @@ int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
 		_target = kLoLDemo;
 		_screen->_charWidth = 0;
 	} else if (firstScene >= kSequenceHoFDemoVirgin) {
-		incompatibleData = (_vm->game() != GI_KYRA2 || _vm->gameFlags().isDemo || _vm->gameFlags().isTalkie);
+		incompatibleData = (_vm->game() != GI_KYRA2 || !_vm->gameFlags().isDemo || _vm->gameFlags().isTalkie);
 		_firstScene -= kSequenceHoFDemoVirgin;
 		if (loopStartScene != kSequenceNoLooping)
 			_loopStartScene -= kSequenceHoFDemoVirgin;
@@ -513,7 +519,7 @@ int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
 	}
 
 	if (incompatibleData)
-		error("SeqPlayer_HOF::play(): Requested sequences do not match the available sequence data for this target");
+		error("SeqPlayer_HOF::play(): Specified sequences do not match the available sequence data for this target");
 
 	_vm->sound()->setSoundList(_vm->soundData(soundSet));
 	_vm->sound()->loadSoundFile(0);
@@ -526,35 +532,25 @@ int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {
 
 void SeqPlayer_HOF::pause(bool toggle) {
 	if (toggle) {
-
+		_pauseStart = _system->getMillis();
 	} else {
-		//
-		// Timers in KyraEngine_HoF::nestedFrameFadeTransition() and KyraEngine_HoF::nestedFrameAnimTransition()
-		// have been left out for now. I think we don't need them here.
+		uint32 pausedTime = _system->getMillis() - _pauseStart;
+		_pauseStart = 0;
+		
+		_countDownLastUpdate += pausedTime;
+		_fisherAnimCurTime += pausedTime;
+		_specialAnimTimeOutTotal += pausedTime;
+		_specialAnimFrameTimeOut += pausedTime;
 
-	/*	_fisherAnimCurTime += pausedTime;
-		_seqSubFrameStartTime += pausedTime;
-		_seqEndTime += pausedTime;
-		_seqSubFrameEndTimeInternal += pausedTime;
-		_seqWsaChatTimeout += pausedTime;
-		_seqWsaChatFrameTimeout += pausedTime;
-
-		if (_textSlots) {
-			for (int x = 0; x < 10; x++) {
-				if (_textSlots[x].duration != -1)
-					_textSlots[x].startTime += pausedTime;
-			}
+		for (int i = 0; i < 10; i++) {
+			if (_textSlots[i].duration != -1)
+				_textSlots[i].startTime += pausedTime;
 		}
 
-		if (_animSlots) {
-			for (int x = 0; x < 8; x++) {
-				if (_animSlots[x].flags != -1)
-					_animSlots[x].nextFrame += pausedTime;
-			}
+		for (int i = 0; i < 8; i++) {
+			if (_animSlots[i].flags != -1)
+				_animSlots[i].nextFrame += pausedTime;
 		}
-
-		for (int x = 0; x < _itemAnimDefinitionSize; x++)
-			_activeItemAnim[x].nextFrameTime += pausedTime;*/
 	}
 }
 
@@ -569,7 +565,7 @@ void SeqPlayer_HOF::setupCallbacks() {
 #undef SCB
 #ifdef ENABLE_LOL
 #define SCB(x) &SeqPlayer_HOF::cbLOLDEMO_##x
-	static const SeqProc seqCallbacksLoLDemo[] = { SCB(scene1), SCB(scene2), SCB(scene3), SCB(scene4), SCB(scene5), SCB(text5), SCB(scene6), 0 };
+	static const SeqProc seqCallbacksLoLDemo[] = { SCB(scene1), 0, SCB(scene2), 0, SCB(scene3), 0, SCB(scene4), 0, SCB(scene5), SCB(text5), SCB(scene6), 0 };
 #undef SCB
 #else
 	static const SeqProc seqCallbacksLoLDemo[] = { 0 };
@@ -601,13 +597,13 @@ void SeqPlayer_HOF::runLoop() {
 
 	_updateAnimations = false;
 	_animCurrentFrame = 0;
-	_seqTextColor[0] = _seqTextColor[1] = 0;
+	_textColor[0] = _textColor[1] = 0;
 	_curScene = _firstScene;
 
 	do {
 		playScenes();
 		doTransition(0);
-		seq_resetAllTextEntries();
+		resetAllTextSlots();
 		fadeOutMusic();
 		_firstScene = ((!_startupSaveLoadable || _preventLooping) && _curScene >= _loopStartScene) ? kSequenceNoLooping : _loopStartScene;
 	} while (!_vm->shouldQuit() && _firstScene != kSequenceNoLooping);
@@ -635,6 +631,8 @@ void SeqPlayer_HOF::playScenes() {
 	_screen->copyPalette(1, 0);
 	WSAMovie_v2 anim(_vm);
 	_abortRequested = false;
+
+	_scrollProgressCounter = 0;
 
 	while (!_vm->shouldQuit()) {
 		if (checkAbortPlayback())
@@ -704,24 +702,15 @@ void SeqPlayer_HOF::playScenes() {
 			while (!checkAbortPlayback() && !_vm->shouldQuit() && (countDownRunning() || _updateAnimations)) {
 				uint32 endFrame = (_system->getMillis() + _vm->tickLength()) & ~(_vm->tickLength() - 1);
 				updateAllNestedAnimations();
-				// Due to bugged coding / sequence data in the FM-Towns and PC-98 versions these animations will only play correctly on slow hardware.
-				// If the hardware is too fast the animations will not finish. This bug was probably irrelevant for original FM-Towns or PC-98 machines.
-				// We compensate this with a small extra delay.
-				if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-					delayTicks(1);
 				
 				if (_config->seqProc[_curScene])
 					(this->*_config->seqProc[_curScene])(0, 0, 0, 0);
 
-				seq_processText();
+				updateSubTitles();
 
 				_screen->copyPage(2, 0);
 				_screen->updateScreen();
 				_screen->copyPage(12, 2);
-
-				// See comment above.
-				if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-					delayTicks(1);
 
 				do {
 					if (checkAbortPlayback())
@@ -748,15 +737,21 @@ void SeqPlayer_HOF::playScenes() {
 		_curScene++;
 	}
 
-	if (checkAbortPlayback() || _vm->shouldQuit()) {
-		seq_resetAllTextEntries();
-		_vm->sound()->haltTrack();
-		_vm->sound()->voiceStop();
-	}
+	resetAllTextSlots();
+	_vm->sound()->haltTrack();
+	_vm->sound()->voiceStop();
+
+	if ((!checkAbortPlayback() || _vm->shouldQuit()) && _vm->gameFlags().isDemo)
+		_curScene = -1;
 }
 
 bool SeqPlayer_HOF::checkAbortPlayback() {
 	Common::Event event;
+
+	if (_vm->skipFlag()) {
+		_abortRequested = true;
+		_vm->resetSkipFlag();
+	}
 
 	if (_abortRequested)
 		return true;
@@ -785,7 +780,7 @@ bool SeqPlayer_HOF::checkAbortPlayback() {
 bool SeqPlayer_HOF::checkPlaybackStatus() {
 	_updateAnimations = false;
 
-	if (_curScene <= _preventSkipBeforeScene || _curScene == _loopStartScene) {
+	if (_curScene <= _preventSkipBeforeScene || (_curScene == _loopStartScene && !_isFinale)) {
 		_abortRequested = false;
 		return false;
 	}
@@ -813,7 +808,7 @@ void SeqPlayer_HOF::doTransition(int type) {
 		break;
 
 	case 1:
-		seq_playTalkText(_vm->_rnd.getRandomBit());
+		playSoundAndDisplaySubTitle(_vm->_rnd.getRandomBit());
 
 		_screen->getPalette(0).fill(0, 256, 0x3F);
 		_screen->fadePalette(_screen->getPalette(0), 16);
@@ -857,14 +852,9 @@ void SeqPlayer_HOF::doTransition(int type) {
 
 	case 9: {
 		Palette &pal = _screen->getPalette(0);
-		for (int i = 0; i < 256; i++) {
-			int pv = (pal[3 * i] + pal[3 * i + 1] + pal[3 * i + 2]) / 3;
-			pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = pv & 0xff;
-		}
-
-		//int a = 0x100;
-		//int d = (0x800 << 5) - 0x100;
-		//pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = 0x3f;
+		for (int i = 0; i < 255; i++)
+			pal.fill(i, 1, (pal[3 * i] + pal[3 * i + 1] + pal[3 * i + 2]) / 3);
+		pal.fill(255, 1, 0x3F);
 
 		_screen->fadePalette(pal, 64);
 		_screen->copyPalette(1, 0);
@@ -978,7 +968,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 	}
 
 	int8 frameStep = (startFrame > lastFrame) ? -1 : 1;
-	_animCurrentFrame = startFrame;
+	_animCurrentFrame = startFrame;	
 
 	while (!_vm->shouldQuit() && !finished) {
 		if (checkAbortPlayback())
@@ -1003,7 +993,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 		_screen->copyPage(2, 12);
 
 		updateAllNestedAnimations();
-		seq_processText();
+		updateSubTitles();
 
 		if (wsaObj || callback && (!(checkAbortPlayback() || _vm->shouldQuit() || _result))) {
 			_screen->copyPage(2, 0);
@@ -1025,7 +1015,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 				_screen->updateScreen();
 			}
 
-			seq_processText();
+			updateSubTitles();
 
 			if (!countDownRunning())
 				break;
@@ -1033,7 +1023,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 
 		if (wsaObj) {
 			_animCurrentFrame += frameStep;
-			if (_animCurrentFrame == lastFrame)
+			if ((frameStep > 0 && _animCurrentFrame >= lastFrame) || (frameStep < 0 && _animCurrentFrame < lastFrame))
 				finished = true;
 		}
 
@@ -1045,9 +1035,75 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 	}
 }
 
+void SeqPlayer_HOF::playDialogueAnimation(uint16 strID, uint16 soundID, int textColor, int textPosX, int textPosY, int textWidth, WSAMovie_v2 *wsaObj, int animStartFrame, int animLastFrame, int animPosX, int animPosY) {
+	int dur = int(strlen(_sequenceStrings[strID])) * (_vm->gameFlags().isTalkie ? 7 : 15);
+	if (_vm->textEnabled()) {
+		int slot = displaySubTitle(strID, textPosX, textPosY, dur, textWidth);
+		_textSlots[slot].textcolor = textColor;
+	}
+	_specialAnimTimeOutTotal = _system->getMillis() + dur * _vm->tickLength();
+	int curframe = animStartFrame;
+
+	if (soundID && _vm->speechEnabled()) {
+		while (_vm->sound()->voiceIsPlaying() && !_abortPlayback)
+			delayTicks(1);
+		playSoundAndDisplaySubTitle(soundID);
+	}
+
+	while (_system->getMillis() < _specialAnimTimeOutTotal && !_abortPlayback) {
+		if (animLastFrame < 0) {
+			int t = ABS(animLastFrame);
+			if (t < curframe)
+				curframe = t;
+		}
+
+		if (ABS(animLastFrame) < curframe)
+			curframe = animStartFrame;
+
+		_specialAnimFrameTimeOut = _system->getMillis() + _animDuration * _vm->tickLength();
+		setCountDown(_animDuration);
+
+		if (wsaObj)
+			wsaObj->displayFrame(curframe % wsaObj->frames(), 2, animPosX, animPosY, 0, 0, 0);
+
+		_screen->copyPage(2, 12);
+		updateSubTitles();
+		delayUntil(MIN(_specialAnimFrameTimeOut, _specialAnimTimeOutTotal));
+
+		if (_vm->speechEnabled() && !_vm->textEnabled() && !_vm->snd_voiceIsPlaying())
+			break;
+
+		if (checkAbortPlayback())
+			if (checkPlaybackStatus())
+				break;
+
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		curframe++;
+	}
+
+	if (_abortPlayback)
+		_vm->sound()->voiceStop();
+
+	if (ABS(animLastFrame) < curframe)
+		curframe = ABS(animLastFrame);
+
+	if (curframe == animStartFrame)
+		curframe++;
+
+	_animCurrentFrame = curframe;
+}
+
 void SeqPlayer_HOF::startNestedAnimation(int animSlot, int sequenceID) {
 	if (_animSlots[animSlot].flags != -1)
 		return;
+
+	if (_target == kLoLDemo) {
+		 return;
+	} else if (_target == kHoFDemo) {
+		assert(sequenceID >= kNestedSequenceHoFDemoWharf2);
+		sequenceID -= kNestedSequenceHoFDemoWharf2;
+	}
 
 	HoFNestedSequence s = _config->nestedSeq[sequenceID];
 
@@ -1167,7 +1223,7 @@ void SeqPlayer_HOF::updateAllNestedAnimations() {
 bool SeqPlayer_HOF::updateNestedAnimation(int animSlot) {
 	uint16 currentFrame = _animSlots[animSlot].currentFrame;
 	uint32 curTick = _system->getMillis() & ~(_vm->tickLength() - 1);
-	
+
 	if (_animSlots[animSlot].callback && currentFrame != _animSlots[animSlot].lastFrame) {
 		_animSlots[animSlot].lastFrame = currentFrame;
 		currentFrame = (this->*_animSlots[animSlot].callback)(_animSlots[animSlot].movie, _animSlots[animSlot].x, _animSlots[animSlot].y, currentFrame);
@@ -1188,7 +1244,10 @@ bool SeqPlayer_HOF::updateNestedAnimation(int animSlot) {
 		int diff = (curTick - _animSlots[animSlot].nextFrame) / (_animSlots[animSlot].frameDelay * _vm->tickLength());
 		if (diff > 0) {
 			currentFrame++;
-			_animSlots[animSlot].nextFrame = curTick;
+			if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
+				_animSlots[animSlot].nextFrame += ((curTick - _animSlots[animSlot].nextFrame) * 2 / 3);
+			else
+				_animSlots[animSlot].nextFrame = curTick;
 		}
 	}
 
@@ -1223,120 +1282,66 @@ bool SeqPlayer_HOF::updateNestedAnimation(int animSlot) {
 	return res;
 }
 
-void SeqPlayer_HOF::seq_playTalkText(uint8 chatNum) {
-	assert(chatNum < _sequenceSoundListSize);
-
-	if (chatNum < 12 && !_vm->gameFlags().isDemo && _vm->textEnabled())
-		seq_setTextEntry(chatNum, 160, 168, _textDuration[chatNum], 160);
-
-	_vm->sound()->voicePlay(_sequenceSoundList[chatNum], &_speechHandle);
+void SeqPlayer_HOF::playSoundEffect(uint16 id, int16 vol) {
+	assert(id < _sequenceSoundListSize);
+	_vm->sound()->voicePlay(_sequenceSoundList[id], 0, vol);
 }
 
-void SeqPlayer_HOF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width, WSAMovie_v2 *wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos) {
-	int dur = int(strlen(_sequenceStrings[strIndex])) * (_vm->gameFlags().isTalkie ? 7 : 15);
-	if (_vm->textEnabled()) {
-		int entry = seq_setTextEntry(strIndex, x, y, dur, width);
-		_textSlots[entry].textcolor = textColor;
-	}
-	_seqWsaChatTimeout = _system->getMillis() + dur * _vm->tickLength();
-	int curframe = firstframe;
+void SeqPlayer_HOF::playSoundAndDisplaySubTitle(uint16 id) {
+	assert(id < _sequenceSoundListSize);
 
-	if (vocIndex && _vm->speechEnabled()) {
-		while (_vm->sound()->voiceIsPlaying() && !_abortPlayback)
-			delayTicks(1);
-		seq_playTalkText(vocIndex);
-	}
+	if (id < 12 && !_vm->gameFlags().isDemo && _vm->textEnabled())
+		displaySubTitle(id, 160, 168, _textDuration[id], 160);
 
-	while (_system->getMillis() < _seqWsaChatTimeout && !_abortPlayback) {
-		if (lastframe < 0) {
-			int t = ABS(lastframe);
-			if (t < curframe)
-				curframe = t;
-		}
-
-		if (ABS(lastframe) < curframe)
-			curframe = firstframe;
-
-		_seqWsaChatFrameTimeout = _system->getMillis() + _animDuration * _vm->tickLength();
-		setCountDown(_animDuration);
-
-		if (wsa)
-			wsa->displayFrame(curframe % wsa->frames(), 2, wsaXpos, wsaYpos, 0, 0, 0);
-
-		_screen->copyPage(2, 12);
-
-		seq_processText();
-
-		uint32 tm = _system->getMillis();
-		if (_seqWsaChatFrameTimeout > tm && _seqWsaChatTimeout > tm)
-			_vm->delay(MIN(_seqWsaChatFrameTimeout - tm, _seqWsaChatTimeout - tm));
-
-		if (_vm->speechEnabled() && !_vm->textEnabled() && !_vm->snd_voiceIsPlaying())
-			break;
-
-		_screen->copyPage(2, 0);
-		_screen->updateScreen();
-		curframe++;
-	}
-
-	if (_abortPlayback)
-		_vm->sound()->voiceStop();
-
-	if (ABS(lastframe) < curframe)
-		curframe = ABS(lastframe);
-
-	if (curframe == firstframe)
-		curframe++;
-
-	_animCurrentFrame = curframe;
+	_vm->sound()->voicePlay(_sequenceSoundList[id], 0);
 }
 
-void SeqPlayer_HOF::seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor) {
-	uint8 colormap[16];
-	if (_abortPlayback || _vm->shouldQuit() || _result)
+void SeqPlayer_HOF::printFadingText(uint16 strID, int x, int y, const uint8 *colorMap, uint8 textcolor) {
+	uint8 cmap[16];
+
+	if (checkAbortPlayback())
+		checkPlaybackStatus();
+
+	if (_abortPlayback || _abortRequested || _vm->shouldQuit() || _result)
 		return;
 
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+	_screen->getPalette(0).fill(254, 2, 63);
+	_screen->setPaletteIndex(252, 63, 32, 48);
+	cmap[0] = colorMap[0];
+	cmap[1] = 253;
+	memcpy(&cmap[2], &colorMap[2], 14);
+	uint8 col0 = _textColor[0];
 
-	memset(&_screen->getPalette(0)[0x2fa], 0x3f, 6);
-	_screen->getPalette(0)[0x2f6] = 0x3f;
-	_screen->getPalette(0)[0x2f5] = 0x20;
-	_screen->getPalette(0)[0x2f4] = 0x30;
-	colormap[0] = colorMap[0];
-	colormap[1] = 0xfd;
-	memcpy(&colormap[2], &colorMap[2], 14);
-	uint8 seqTextColor0 = _seqTextColor[0];
-
-	_seqTextColor[0] = 253;
-	_screen->setTextColorMap(colormap);
-	seq_resetAllTextEntries();
-	seq_setTextEntry(strIndex, x, y, 0x80, 0x78);
-	seq_processText();
+	_textColor[0] = 253;
+	_screen->setTextColorMap(cmap);
+	resetAllTextSlots();
+	displaySubTitle(strID, x, y, 128, 120);
+	updateSubTitles();
 	_screen->copyPage(2, 0);
 	_screen->updateScreen();
-	_screen->getPalette(0)[0x2f7] = _screen->getPalette(0)[textcolor * 3];
-	_screen->getPalette(0)[0x2f8] = _screen->getPalette(0)[textcolor * 3 + 1];
-	_screen->getPalette(0)[0x2f9] = _screen->getPalette(0)[textcolor * 3 + 2];
-	_screen->fadePalette(_screen->getPalette(0), 0x18);
+	_screen->getPalette(0).copy(_screen->getPalette(0), textcolor, 1, 253);
+	_screen->fadePalette(_screen->getPalette(0), 24);
 
-	_seqTextColor[0] = textcolor;
+	_textColor[0] = textcolor;
 	_screen->setTextColorMap(colorMap);
-	seq_resetAllTextEntries();
-	seq_setTextEntry(strIndex, x, y, 0x80, 0x78);
-	seq_processText();
+	resetAllTextSlots();
+	displaySubTitle(strID, x, y, 128, 120);
+	updateSubTitles();
 	_screen->copyPage(2, 0);
 	_screen->updateScreen();
-	_screen->getPalette(0)[0x2f7] = _screen->getPalette(0)[0x2f8] = _screen->getPalette(0)[0x2f9] = 0;
+	_screen->getPalette(0).fill(253, 1, 0);
 	_screen->fadePalette(_screen->getPalette(0), 1);
-	_screen->copyPage(2, 12);
-	seq_resetAllTextEntries();
 
-	_seqTextColor[0] = seqTextColor0;
+	_screen->copyPage(2, 12);
+	resetAllTextSlots();
+
+	_textColor[0] = col0;
 
 	_screen->setFont(of);
 }
 
-int SeqPlayer_HOF::seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width) {
+int SeqPlayer_HOF::displaySubTitle(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width) {
 	for (int i = 0; i < 10; i++) {
 		if (_textSlots[i].duration != -1) {
 			if (i < 9)
@@ -1358,14 +1363,14 @@ int SeqPlayer_HOF::seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, i
 	return -1;
 }
 
-void SeqPlayer_HOF::seq_processText() {
+void SeqPlayer_HOF::updateSubTitles() {
 	int curPage = _screen->setCurPage(2);
 	char outputStr[70];
 
 	for (int i = 0; i < 10; i++) {
 		if (_textSlots[i].startTime + _textSlots[i].duration > _system->getMillis() && _textSlots[i].duration != -1) {
 
-			char *srcStr = seq_preprocessString(_sequenceStrings[_textSlots[i].strIndex], _textSlots[i].width);
+			char *srcStr = preprocessString(_sequenceStrings[_textSlots[i].strIndex], _textSlots[i].width);
 			int yPos = _textSlots[i].y;
 
 			while (*srcStr) {
@@ -1380,7 +1385,7 @@ void SeqPlayer_HOF::seq_processText() {
 				if (*srcStr == '\r')
 					srcStr++;
 
-				uint8 textColor = (_textSlots[i].textcolor >= 0) ? _textSlots[i].textcolor : _seqTextColor[0];
+				uint8 textColor = (_textSlots[i].textcolor >= 0) ? _textSlots[i].textcolor : _textColor[0];
 				_screen->printText(outputStr, _textSlots[i].x - (_screen->getTextWidth(outputStr) / 2), yPos, textColor, 0);
 				yPos += 10;
 			}
@@ -1392,7 +1397,7 @@ void SeqPlayer_HOF::seq_processText() {
 	_screen->setCurPage(curPage);
 }
 
-char *SeqPlayer_HOF::seq_preprocessString(const char *srcStr, int width) {
+char *SeqPlayer_HOF::preprocessString(const char *srcStr, int width) {
 	char *dstStr = _tempString;
 	int lineStart = 0;
 	int linePos = 0;
@@ -1428,7 +1433,7 @@ void SeqPlayer_HOF::waitForSubTitlesTimeout() {
 			delayTicks(1);
 	}
 
-	seq_resetAllTextEntries();
+	resetAllTextSlots();
 }
 
 uint32 SeqPlayer_HOF::ticksTillSubTitlesTimeout() {
@@ -1448,7 +1453,7 @@ uint32 SeqPlayer_HOF::ticksTillSubTitlesTimeout() {
 	return (longest + (tl - 1)) / tl;
 }
 
-void SeqPlayer_HOF::seq_resetAllTextEntries() {
+void SeqPlayer_HOF::resetAllTextSlots() {
 	for (int i = 0; i < 10; i++)
 		_textSlots[i].duration = -1;
 }
@@ -1458,7 +1463,7 @@ void SeqPlayer_HOF::fadeOutMusic() {
 	delayTicks(80);
 }
 
-void SeqPlayer_HOF::seq_finaleActorScreen() {
+void SeqPlayer_HOF::playHoFTalkieCredits() {
 	static const uint8 colormap[] = {0, 0, 102, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	static const ScreenDim d = { 0x00, 0x0C, 0x28, 0xB4, 0xFF, 0x00, 0x00, 0x00 };
 
@@ -1483,7 +1488,7 @@ void SeqPlayer_HOF::seq_finaleActorScreen() {
 	memcpy(dataPtr, talkieCredits, talkieCreditsSize);
 	_vm->staticres()->unloadId(k2SeqplayCredits);
 
-	seq_displayScrollText(dataPtr, &d, 2, 6, 5, 1, Screen::FID_GOLDFONT_FNT, Screen::FID_GOLDFONT_FNT, 0, talkieCreditsSpecial);
+	displayHoFTalkieScrollText(dataPtr, &d, 2, 6, 5, 1, Screen::FID_GOLDFONT_FNT, Screen::FID_GOLDFONT_FNT, 0, talkieCreditsSpecial);
 	delayTicks(8);
 
 	delete[] dataPtr;
@@ -1492,7 +1497,7 @@ void SeqPlayer_HOF::seq_finaleActorScreen() {
 	_vm->sound()->loadSoundFile(0);
 }
 
-void SeqPlayer_HOF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed,
+void SeqPlayer_HOF::displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed,
 	int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData, const char *const *specialData) {
 	if (!data)
 		return;
@@ -1660,6 +1665,10 @@ void SeqPlayer_HOF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int t
 			cnt = 0;
 		}
 
+		if (checkAbortPlayback())
+			if (checkPlaybackStatus())
+				loop = false;
+
 		if (!cnt || _abortPlayback)
 			loop = false;
 	}
@@ -1667,39 +1676,39 @@ void SeqPlayer_HOF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int t
 	_vm->sound()->beginFadeOut();
 	_screen->fadeToBlack();
 
-	_abortPlayback = false;
+	_abortPlayback = _abortRequested = false;
 
 	delete[] textData;
 }
 
-void SeqPlayer_HOF::seq_scrollPage(int bottom, int top) {
+void SeqPlayer_HOF::updateDemoAdText(int bottom, int top) {
 	int dstY, dstH, srcH;
 
 	static const ScreenDim d = { 0x00, 0x00, 0x28, 0x320, 0xFF, 0xFE, 0x00, 0x00 };
 
-	if (_seqScrollTextCounter - (top - 1) < 0) {
-		dstY = top - _seqScrollTextCounter;
-		dstH = _seqScrollTextCounter;
+	if (_scrollProgressCounter - (top - 1) < 0) {
+		dstY = top - _scrollProgressCounter;
+		dstH = _scrollProgressCounter;
 		srcH = 0;
 	} else {
 		dstY = 0;
-		srcH = _seqScrollTextCounter - top;
+		srcH = _scrollProgressCounter - top;
 		dstH = (400 - srcH <= top) ? 400 - srcH : top;
 	}
 
 	if (dstH > 0) {
-		assert(_hofDemoAnimData);
-		for (int i = 0; i < 4; i++) {
-			const HoFSeqItemAnimData *def = &_hofDemoAnimData[i];
-			ActiveItemAnim *a = &_hofDemoActiveItemAnim[i];
+		if (_hofDemoAnimData) {
+			for (int i = 0; i < 4; i++) {
+				const HoFSeqItemAnimData *def = &_hofDemoAnimData[i];
+				ActiveItemAnim *a = &_hofDemoActiveItemAnim[i];
 
-			_screen->fillRect(12, def->y - 8, 28, def->y + 8, 0, 4);
-			_screen->drawShape(4, _hofDemoItemShapes[def->itemIndex + def->frames[a->currentFrame]], 12, def->y - 8, 0, 0);
-			if (_animCurrentFrame % 2 == 0)
-				a->currentFrame = (a->currentFrame + 1) % 20;
+				_screen->fillRect(12, def->y - 8, 28, def->y + 8, 0, 4);
+				_screen->drawShape(4, _hofDemoItemShapes[def->itemIndex + def->frames[a->currentFrame]], 12, def->y - 8, 0, 0);
+				if (_callbackCurrentFrame % 2 == 0)
+					a->currentFrame = (a->currentFrame + 1) % 20;
+			}
 		}
-		assert(_screenHoF);
-		_screenHoF->copyRegionEx(4, 0, srcH, 2, 2, dstY + bottom, 320, dstH, &d);
+		_screen->copyRegionEx(4, 0, srcH, 2, 2, dstY + bottom, 320, dstH, &d);
 	}
 }
 
@@ -1722,6 +1731,8 @@ void SeqPlayer_HOF::delayUntil(uint32 dest) {
 
 void SeqPlayer_HOF::setCountDown(uint32 ticks) {
 	_countDownRemainder = ticks * _vm->tickLength();
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
+		_countDownRemainder = _countDownRemainder * 2 / 3;
 	_countDownLastUpdate = _system->getMillis() & ~(_vm->tickLength() - 1);
 }
 	
@@ -1790,10 +1801,10 @@ int SeqPlayer_HOF::cbHOF_overview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_vm->sound()->playTrack(4);
 		frameEnd = _system->getMillis() + 60 * _vm->tickLength();
 
-		_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
-		_screen->setTextColorMap(_seqTextColorMap);
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_screen->setTextColorMap(_textColorMap);
 
 		delayUntil(frameEnd);
 		break;
@@ -1822,7 +1833,7 @@ int SeqPlayer_HOF::cbHOF_overview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 120:
-		seq_playTalkText(0);
+		playSoundAndDisplaySubTitle(0);
 		break;
 
 	case 200:
@@ -1844,25 +1855,15 @@ int SeqPlayer_HOF::cbHOF_overview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 282:
 		startNestedAnimation(0, kNestedSequenceForest);
-		seq_playTalkText(1);
+		playSoundAndDisplaySubTitle(1);
 		break;
 
 	CASE_ALT(434, 354)
-	/*case 354:
-	case 434:
-		if (!((_callbackCurrentFrame == 354 && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == 434 && _vm->gameFlags().platform == Common::kPlatformPC)))
-			break;*/
-
 		closeNestedAnimation(0);
 		startNestedAnimation(0, kNestedSequenceDragon);
 		break;
 
 	CASE_ALT(540, 400)
-	/*case 400:
-	case 540:
-		if (!((_callbackCurrentFrame == 400 && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == 540 && _vm->gameFlags().platform == Common::kPlatformPC)))
-			break;*/
-
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
 		setCountDown(0);
@@ -1885,16 +1886,16 @@ int SeqPlayer_HOF::cbHOF_library(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 		assert(_screenHoF);
 		_screenHoF->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
-		_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
 
-		_screen->setTextColorMap(_seqTextColorMap);
+		_screen->setTextColorMap(_textColorMap);
 		break;
 
 	case 1:
 		startNestedAnimation(0, kNestedSequenceLibrary3);
-		seq_playTalkText(4);
+		playSoundAndDisplaySubTitle(4);
 		break;
 
 	case 100:
@@ -1911,7 +1912,7 @@ int SeqPlayer_HOF::cbHOF_library(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 104:
-		seq_playTalkText(5);
+		playSoundAndDisplaySubTitle(5);
 		break;
 
 	case 240:
@@ -1928,15 +1929,10 @@ int SeqPlayer_HOF::cbHOF_library(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->updateScreen();
 
 		startNestedAnimation(0, kNestedSequenceMarco);
-		seq_playTalkText(6);
+		playSoundAndDisplaySubTitle(6);
 		break;
 
 	CASE_ALT(660, 480)
-	/*case 480:
-	case 660:
-		if (!((_callbackCurrentFrame == 480 && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == 660 && _vm->gameFlags().platform == Common::kPlatformPC)))
-			break;*/
-
 		_screen->copyPage(2, 12);
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
@@ -1960,18 +1956,18 @@ int SeqPlayer_HOF::cbHOF_hand(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 		assert(_screenHoF);
 		_screenHoF->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
-		_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
 
-		_screen->setTextColorMap(_seqTextColorMap);
+		_screen->setTextColorMap(_textColorMap);
 		break;
 
 	case 1:
 		startNestedAnimation(0, kNestedSequenceHand1a);
 		startNestedAnimation(1, kNestedSequenceHand1b);
 		startNestedAnimation(2, kNestedSequenceHand1c);
-		seq_playTalkText(7);
+		playSoundAndDisplaySubTitle(7);
 		break;
 
 	case 201:
@@ -1984,47 +1980,27 @@ int SeqPlayer_HOF::cbHOF_hand(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		closeNestedAnimation(1);
 		closeNestedAnimation(2);
 		startNestedAnimation(0, kNestedSequenceHand2);
-		seq_playTalkText(8);
+		playSoundAndDisplaySubTitle(8);
 		break;
 
 	CASE_ALT(395, 260)
-	/*case 260:
-	case 395:
-		if (!((_callbackCurrentFrame == 260 && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == 395 && _vm->gameFlags().platform == Common::kPlatformPC)))
-			break;*/
-
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
 		startNestedAnimation(1, kNestedSequenceHand3);
-		seq_playTalkText(9);
+		playSoundAndDisplaySubTitle(9);
 		break;
 
 	CASE_ALT(500, 365)
-	/*case 365:
-	case 500:
-		if (!((_callbackCurrentFrame == 365 && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == 500 && _vm->gameFlags().platform == Common::kPlatformPC)))
-			break;*/
-
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(1);
 		startNestedAnimation(0, kNestedSequenceHand4);
 		break;
 
 	CASE_ALT(540, 405)
-	/*case 405:
-	case 540:
-		if (!((_callbackCurrentFrame == 405 && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == 540 && _vm->gameFlags().platform == Common::kPlatformPC)))
-			break;*/
-
-		seq_playTalkText(10);
+		playSoundAndDisplaySubTitle(10);
 		break;
 
 	CASE_ALT(630, 484)
-	/*case 484:
-	case 630:
-		if (!((_callbackCurrentFrame == 484 && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == 630 && _vm->gameFlags().platform == Common::kPlatformPC)))
-			break;*/
-
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
 		setCountDown(0);
@@ -2053,16 +2029,16 @@ int SeqPlayer_HOF::cbHOF_point(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		_vm->sound()->playTrack(7);
 
-		_seqTextColor[1] = 0xf7;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
-		_screen->setTextColorMap(_seqTextColorMap);
+		_textColor[1] = 0xf7;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_screen->setTextColorMap(_textColorMap);
 		assert(_screenHoF);
 		_screenHoF->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
 		break;
 
 	case 1:
-		seq_playTalkText(11);
+		playSoundAndDisplaySubTitle(11);
 		break;
 
 	default:
@@ -2084,17 +2060,17 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		_vm->sound()->playTrack(8);
 
-		_seqTextColor[1] = 0xfd;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
-		_screen->setTextColorMap(_seqTextColorMap);
+		_textColor[1] = 0xfd;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_screen->setTextColorMap(_textColorMap);
 		break;
 
 	case 1:
 		if (_vm->gameFlags().isTalkie) {
-			seq_playWsaSyncDialogue(21, 13, -1, 140, 70, 160, wsaObj, 0, 8, x, y);
+			playDialogueAnimation(21, 13, -1, 140, 70, 160, wsaObj, 0, 8, x, y);
 		} else {
-			seq_setTextEntry(21, 140, 70, 200, 160);
+			displaySubTitle(21, 140, 70, 200, 160);
 			_animDuration = 200;
 		}
 		break;
@@ -2108,21 +2084,21 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 9:
 		if (_vm->gameFlags().isTalkie)
-			seq_playWsaSyncDialogue(13, 14, -1, 140, (_vm->gameFlags().lang == Common::FR_FRA
+			playDialogueAnimation(13, 14, -1, 140, (_vm->gameFlags().lang == Common::FR_FRA
 				|| _vm->gameFlags().lang == Common::DE_DEU) ? 50 : 70, 160, wsaObj, 9, 15, x, y);
 		break;
 
 	case 10:
 		if (!_vm->gameFlags().isTalkie) {
 			waitForSubTitlesTimeout();
-			seq_setTextEntry(13, 140, 50, _textDuration[13], 160);
+			displaySubTitle(13, 140, 50, _textDuration[13], 160);
 			_animDuration = 300;
 		}
 		break;
 
 	case 16:
 		if (_vm->gameFlags().isTalkie)
-			seq_playWsaSyncDialogue(18, 15, -1, 140, (_vm->gameFlags().lang == Common::FR_FRA) ? 50 :
+			playDialogueAnimation(18, 15, -1, 140, (_vm->gameFlags().lang == Common::FR_FRA) ? 50 :
 				(_vm->gameFlags().lang == Common::DE_DEU ? 40 : 70), 160, wsaObj, 10, 16, x, y);
 		break;
 
@@ -2134,7 +2110,7 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 20:
 		if (!_vm->gameFlags().isTalkie) {
 			waitForSubTitlesTimeout();
-			seq_setTextEntry(18, 160, 50, _textDuration[18], 160);
+			displaySubTitle(18, 160, 50, _textDuration[18], 160);
 			_animDuration = 200;
 		}
 		break;
@@ -2145,10 +2121,10 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 46:
 		if (_vm->gameFlags().isTalkie) {
-			seq_playWsaSyncDialogue(16, 16, -1, 200, 50, 120, wsaObj, 46, 46, x, y);
+			playDialogueAnimation(16, 16, -1, 200, 50, 120, wsaObj, 46, 46, x, y);
 		} else {
 			waitForSubTitlesTimeout();
-			seq_setTextEntry(16, 200, 50, _textDuration[16], 120);
+			displaySubTitle(16, 200, 50, _textDuration[16], 120);
 		}
 
 		setCountDown(120);
@@ -2166,13 +2142,13 @@ int SeqPlayer_HOF::cbHOF_over1(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (frm == 2)
 		waitForSubTitlesTimeout();
 	else if (frm == 3)
-		seq_playTalkText(12);
+		playSoundAndDisplaySubTitle(12);
 	return frm;
 }
 
 int SeqPlayer_HOF::cbHOF_over2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (frm == 1)
-		seq_playTalkText(12);
+		playSoundAndDisplaySubTitle(12);
 	return frm;
 }
 
@@ -2180,7 +2156,7 @@ int SeqPlayer_HOF::cbHOF_forest(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (frm == 11)
 		waitForSubTitlesTimeout();
 	else if (frm == 12)
-		seq_playTalkText(2);
+		playSoundAndDisplaySubTitle(2);
 
 	return frm;
 }
@@ -2189,17 +2165,15 @@ int SeqPlayer_HOF::cbHOF_dragon(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (frm == 11)
 		waitForSubTitlesTimeout();
 	else if (frm == 3)
-		seq_playTalkText(3);
+		playSoundAndDisplaySubTitle(3);
 	return frm;
 }
 
 int SeqPlayer_HOF::cbHOF_darm(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
 int SeqPlayer_HOF::cbHOF_library2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
@@ -2212,7 +2186,6 @@ int SeqPlayer_HOF::cbHOF_marco(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 }
 
 int SeqPlayer_HOF::cbHOF_hand1a(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
@@ -2229,22 +2202,20 @@ int SeqPlayer_HOF::cbHOF_hand1c(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 }
 
 int SeqPlayer_HOF::cbHOF_hand2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
 int SeqPlayer_HOF::cbHOF_hand3(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
 int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint32 frameEnd = 0;
-	int chatX = 0;
-	int chatY = 0;
-	int chatW = 0;
-	int chatFirstFrame = 0;
-	int chatLastFrame = 0;
+	int subTitleX = 0;
+	int subTitleY = 0;
+	int subTitleW = 0;
+	int subTitleFirstFrame = 0;
+	int subTitleLastFrame = 0;
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
@@ -2255,33 +2226,33 @@ int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		_vm->sound()->playTrack(3);
 
-		_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-		_screen->setTextColorMap(_seqTextColorMap);
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColor[0] = _textColorMap[1] = 0xff;
+		_screen->setTextColorMap(_textColorMap);
 
 		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
-		seq_printCreditsString(81, 240, 70, _seqTextColorMap, 252);
-		seq_printCreditsString(82, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+		printFadingText(81, 240, 70, _textColorMap, 252);
+		printFadingText(82, 240, 90, _textColorMap, _textColor[0]);
 		_screen->copyPage(2, 12);
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 28 : 24);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 28 : 24);
 		delayUntil(frameEnd);
-		_seqTextColor[0] = 1;
+		_textColor[0] = 1;
 
 		if (_vm->gameFlags().isTalkie) {
-			chatY = (_vm->gameFlags().lang == Common::FR_FRA) ? 70 : 78;
-			chatFirstFrame = 9;
-			chatLastFrame = 15;
+			subTitleY = (_vm->gameFlags().lang == Common::FR_FRA) ? 70 : 78;
+			subTitleFirstFrame = 9;
+			subTitleLastFrame = 15;
 			voiceIndex = 34;
 		} else {
-			chatY = (_vm->gameFlags().lang == Common::FR_FRA) ? 78 : 70;
-			chatFirstFrame = 0;
-			chatLastFrame = 8;
+			subTitleY = (_vm->gameFlags().lang == Common::FR_FRA) ? 78 : 70;
+			subTitleFirstFrame = 0;
+			subTitleLastFrame = 8;
 		}
-		chatX = (_vm->gameFlags().lang == Common::FR_FRA) ? 84 : 88;
-		chatW = 100;
+		subTitleX = (_vm->gameFlags().lang == Common::FR_FRA) ? 84 : 88;
+		subTitleW = 100;
 
-		seq_playWsaSyncDialogue(22, voiceIndex, 187, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		playDialogueAnimation(22, voiceIndex, 187, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
 		break;
 
 	case 9:
@@ -2292,24 +2263,24 @@ int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_animDuration = 12;
 
 		if (_vm->gameFlags().lang == Common::FR_FRA) {
-			chatX = 80;
-			chatW = 112;
+			subTitleX = 80;
+			subTitleW = 112;
 		} else {
-			chatX = (_vm->gameFlags().lang == Common::DE_DEU) ? 84 : 96;
-			chatW = 100;
+			subTitleX = (_vm->gameFlags().lang == Common::DE_DEU) ? 84 : 96;
+			subTitleW = 100;
 		}
 
 		if (_vm->gameFlags().isTalkie) {
-			chatFirstFrame = 0;
-			chatLastFrame = 8;
+			subTitleFirstFrame = 0;
+			subTitleLastFrame = 8;
 			voiceIndex = 35;
 		} else {
-			chatFirstFrame = 9;
-			chatLastFrame = 15;
+			subTitleFirstFrame = 9;
+			subTitleLastFrame = 15;
 		}
-		chatY = 70;
+		subTitleY = 70;
 
-		seq_playWsaSyncDialogue(23, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		playDialogueAnimation(23, voiceIndex, 137, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
 		if (_vm->gameFlags().isTalkie)
 			_animCurrentFrame = 17;
 		break;
@@ -2324,77 +2295,77 @@ int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int SeqPlayer_HOF::cbHOF_ferb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint32 frameEnd = 0;
-	int chatX = 0;
-	int chatY = 0;
-	int chatW = 0;
-	int chatFirstFrame = 0;
-	int chatLastFrame = 0;
+	int subTitleX = 0;
+	int subTitleY = 0;
+	int subTitleW = 0;
+	int subTitleFirstFrame = 0;
+	int subTitleLastFrame = 0;
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
 	case -2:
 		doTransition(9);
 		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
-		seq_printCreditsString(34, 240, _vm->gameFlags().isTalkie ? 60 : 40, _seqTextColorMap, 252);
-		seq_printCreditsString(35, 240, _vm->gameFlags().isTalkie ? 70 : 50, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(36, 240, _vm->gameFlags().isTalkie ? 90 : 70, _seqTextColorMap, 252);
-		seq_printCreditsString(37, 240, _vm->gameFlags().isTalkie ? 100 : 90, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(38, 240, _vm->gameFlags().isTalkie ? 120 : 110, _seqTextColorMap, 252);
-		seq_printCreditsString(39, 240, _vm->gameFlags().isTalkie ? 130 : 120, _seqTextColorMap, _seqTextColor[0]);
+		printFadingText(34, 240, _vm->gameFlags().isTalkie ? 60 : 40, _textColorMap, 252);
+		printFadingText(35, 240, _vm->gameFlags().isTalkie ? 70 : 50, _textColorMap, _textColor[0]);
+		printFadingText(36, 240, _vm->gameFlags().isTalkie ? 90 : 70, _textColorMap, 252);
+		printFadingText(37, 240, _vm->gameFlags().isTalkie ? 100 : 90, _textColorMap, _textColor[0]);
+		printFadingText(38, 240, _vm->gameFlags().isTalkie ? 120 : 110, _textColorMap, 252);
+		printFadingText(39, 240, _vm->gameFlags().isTalkie ? 130 : 120, _textColorMap, _textColor[0]);
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-			seq_printCreditsString(103, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+			printFadingText(103, 240, 130, _textColorMap, _textColor[0]);
 		delayUntil(frameEnd);
 		setCountDown(0);
 		break;
 
 	case 0:
-		_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColor[0] = _seqTextColorMap[1] = 255;
-		_screen->setTextColorMap(_seqTextColorMap);
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColor[0] = _textColorMap[1] = 255;
+		_screen->setTextColorMap(_textColorMap);
 		break;
 
 	case 5:
 		if (!_vm->gameFlags().isTalkie)
-			seq_playTalkText(18);
+			playSoundAndDisplaySubTitle(18);
 		_animDuration = 16;
 
 		if (_vm->gameFlags().isTalkie) {
-			chatFirstFrame = 5;
-			chatLastFrame = 8;
+			subTitleFirstFrame = 5;
+			subTitleLastFrame = 8;
 			voiceIndex = 22;
 		} else {
-			chatLastFrame = 14;
+			subTitleLastFrame = 14;
 		}
-		chatX = 116;
-		chatY = 90;
-		chatW = 60;
+		subTitleX = 116;
+		subTitleY = 90;
+		subTitleW = 60;
 
-		seq_playWsaSyncDialogue(24, voiceIndex, 149, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		playDialogueAnimation(24, voiceIndex, 149, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
 		break;
 
 	case 11:
 		if (_vm->gameFlags().isTalkie)
-			seq_playWsaSyncDialogue(24, 22, 149, 116, 90, 60, wsaObj, 11, 14, x, y);
+			playDialogueAnimation(24, 22, 149, 116, 90, 60, wsaObj, 11, 14, x, y);
 		break;
 
 	case 16:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 23 : 19);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 23 : 19);
 		_animDuration = _vm->gameFlags().isTalkie ? 20 : 16;
 
 		if (_vm->gameFlags().lang == Common::FR_FRA) {
-			chatY = 48;
-			chatW = 88;
+			subTitleY = 48;
+			subTitleW = 88;
 		} else {
-			chatY = 60;
-			chatW = 100;
+			subTitleY = 60;
+			subTitleW = 100;
 		}
-		chatX = 60;
+		subTitleX = 60;
 
 		if (_vm->gameFlags().isTalkie)
 			voiceIndex = 36;
 
-		seq_playWsaSyncDialogue(25, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 16, 25, x, y);
+		playDialogueAnimation(25, voiceIndex, 143, subTitleX, subTitleY, subTitleW, wsaObj, 16, 25, x, y);
 		_animDuration = 16;
 		break;
 
@@ -2408,9 +2379,9 @@ int SeqPlayer_HOF::cbHOF_ferb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int SeqPlayer_HOF::cbHOF_fish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint32 frameEnd = 0;
-	int chatX = 0;
-	int chatY = 0;
-	int chatW = 0;
+	int subTitleX = 0;
+	int subTitleY = 0;
+	int subTitleW = 0;
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
@@ -2418,61 +2389,61 @@ int SeqPlayer_HOF::cbHOF_fish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		doTransition(9);
 		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
 
-		seq_printCreditsString(40, 240, _vm->gameFlags().isTalkie ? 55 : 40, _seqTextColorMap, 252);
-		seq_printCreditsString(41, 240, _vm->gameFlags().isTalkie ? 65 : 50, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(42, 240, _vm->gameFlags().isTalkie ? 75 : 60, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(43, 240, _vm->gameFlags().isTalkie ? 95 : 80, _seqTextColorMap, 252);
-		seq_printCreditsString(44, 240, _vm->gameFlags().isTalkie ? 105 : 90, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(93, 240, _vm->gameFlags().isTalkie ? 125 : 110, _seqTextColorMap, 252);
-		seq_printCreditsString(94, 240, _vm->gameFlags().isTalkie ? 135 : 120, _seqTextColorMap, _seqTextColor[0]);
+		printFadingText(40, 240, _vm->gameFlags().isTalkie ? 55 : 40, _textColorMap, 252);
+		printFadingText(41, 240, _vm->gameFlags().isTalkie ? 65 : 50, _textColorMap, _textColor[0]);
+		printFadingText(42, 240, _vm->gameFlags().isTalkie ? 75 : 60, _textColorMap, _textColor[0]);
+		printFadingText(43, 240, _vm->gameFlags().isTalkie ? 95 : 80, _textColorMap, 252);
+		printFadingText(44, 240, _vm->gameFlags().isTalkie ? 105 : 90, _textColorMap, _textColor[0]);
+		printFadingText(93, 240, _vm->gameFlags().isTalkie ? 125 : 110, _textColorMap, 252);
+		printFadingText(94, 240, _vm->gameFlags().isTalkie ? 135 : 120, _textColorMap, _textColor[0]);
 		delayUntil(frameEnd);
 		setCountDown(0);
 		break;
 
 	case 0:
-		_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-		_screen->setTextColorMap(_seqTextColorMap);
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColor[0] = _textColorMap[1] = 0xff;
+		_screen->setTextColorMap(_textColorMap);
 		break;
 
 	case 4:
-		chatX = 94;
-		chatY = 42;
-		chatW = 100;
+		subTitleX = 94;
+		subTitleY = 42;
+		subTitleW = 100;
 		if (_vm->gameFlags().isTalkie)
 			voiceIndex = 37;
-		seq_playWsaSyncDialogue(26, voiceIndex, 149, chatX, chatY, chatW, wsaObj, 3, 12, x, y);
+		playDialogueAnimation(26, voiceIndex, 149, subTitleX, subTitleY, subTitleW, wsaObj, 3, 12, x, y);
 		break;
 
 	case 14:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 19 : 15);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 19 : 15);
 		break;
 
 	case 23:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 20 : 16);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 20 : 16);
 		break;
 
 	case 29:
-		chatX = (_vm->gameFlags().lang == Common::DE_DEU) ? 82 : ((_vm->gameFlags().lang == Common::FR_FRA) ? 92 : 88);
-		chatY = 40;
-		chatW = 100;
+		subTitleX = (_vm->gameFlags().lang == Common::DE_DEU) ? 82 : ((_vm->gameFlags().lang == Common::FR_FRA) ? 92 : 88);
+		subTitleY = 40;
+		subTitleW = 100;
 
 		if (_vm->gameFlags().isTalkie) {
 			if (_vm->gameFlags().lang == Common::DE_DEU)
-				chatY = 35;
+				subTitleY = 35;
 			voiceIndex = 38;
 		}
 
-		seq_playWsaSyncDialogue(27, voiceIndex, 187, chatX, chatY, chatW, wsaObj, 28, 34, x, y);
+		playDialogueAnimation(27, voiceIndex, 187, subTitleX, subTitleY, subTitleW, wsaObj, 28, 34, x, y);
 		break;
 
 	case 45:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 21 : 17);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 21 : 17);
 		break;
 
 	case 50:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 29 : 25);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 29 : 25);
 		break;
 
 	default:
@@ -2485,11 +2456,11 @@ int SeqPlayer_HOF::cbHOF_fish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint32 frameEnd = 0;
-	int chatX = 0;
-	int chatY = 0;
-	int chatW = 0;
-	int chatFirstFrame = 0;
-	int chatLastFrame = 0;
+	int subTitleX = 0;
+	int subTitleY = 0;
+	int subTitleW = 0;
+	int subTitleFirstFrame = 0;
+	int subTitleLastFrame = 0;
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
@@ -2499,61 +2470,61 @@ int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->updateScreen();
 		doTransition(9);
 		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
-		seq_printCreditsString(49, 240, 20, _seqTextColorMap, 252);
-		seq_printCreditsString(50, 240, 30, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(51, 240, 40, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(52, 240, 50, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(53, 240, 60, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(54, 240, 70, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(55, 240, 80, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(56, 240, 90, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(57, 240, 100, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(58, 240, 110, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(60, 240, 120, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(61, 240, 130, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(62, 240, 140, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(63, 240, 150, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(64, 240, 160, _seqTextColorMap, _seqTextColor[0]);
+		printFadingText(49, 240, 20, _textColorMap, 252);
+		printFadingText(50, 240, 30, _textColorMap, _textColor[0]);
+		printFadingText(51, 240, 40, _textColorMap, _textColor[0]);
+		printFadingText(52, 240, 50, _textColorMap, _textColor[0]);
+		printFadingText(53, 240, 60, _textColorMap, _textColor[0]);
+		printFadingText(54, 240, 70, _textColorMap, _textColor[0]);
+		printFadingText(55, 240, 80, _textColorMap, _textColor[0]);
+		printFadingText(56, 240, 90, _textColorMap, _textColor[0]);
+		printFadingText(57, 240, 100, _textColorMap, _textColor[0]);
+		printFadingText(58, 240, 110, _textColorMap, _textColor[0]);
+		printFadingText(60, 240, 120, _textColorMap, _textColor[0]);
+		printFadingText(61, 240, 130, _textColorMap, _textColor[0]);
+		printFadingText(62, 240, 140, _textColorMap, _textColor[0]);
+		printFadingText(63, 240, 150, _textColorMap, _textColor[0]);
+		printFadingText(64, 240, 160, _textColorMap, _textColor[0]);
 
 		delayUntil(frameEnd);
 		setCountDown(0);
 		break;
 
 	case 0:
-		_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-		_screen->setTextColorMap(_seqTextColorMap);
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColor[0] = _textColorMap[1] = 0xff;
+		_screen->setTextColorMap(_textColorMap);
 		break;
 
 	case 2:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 25 : 21);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 25 : 21);
 
 		if (_vm->gameFlags().lang == Common::FR_FRA) {
-			chatX = 92;
-			chatY = 72;
+			subTitleX = 92;
+			subTitleY = 72;
 		} else {
-			chatX = (_vm->gameFlags().lang == Common::DE_DEU) ? 90 : 98;
-			chatY = 84;
+			subTitleX = (_vm->gameFlags().lang == Common::DE_DEU) ? 90 : 98;
+			subTitleY = 84;
 		}
 
 		if (_vm->gameFlags().isTalkie) {
-			chatFirstFrame = 8;
-			chatLastFrame = 9;
+			subTitleFirstFrame = 8;
+			subTitleLastFrame = 9;
 			voiceIndex = 39;
 		} else {
-			chatFirstFrame = 2;
-			chatLastFrame = -8;
+			subTitleFirstFrame = 2;
+			subTitleLastFrame = -8;
 		}
-		chatW = 100;
+		subTitleW = 100;
 
-		seq_playWsaSyncDialogue(28, voiceIndex, -1, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		playDialogueAnimation(28, voiceIndex, -1, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
 		if (_vm->gameFlags().isTalkie)
 			_animCurrentFrame = 4;
 		break;
 
 	case 9:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 24 : 20);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 24 : 20);
 		_animDuration = 100;
 		break;
 
@@ -2567,9 +2538,9 @@ int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint32 frameEnd = 0;
-	int chatX = 0;
-	int chatY = 0;
-	int chatW = 0;
+	int subTitleX = 0;
+	int subTitleY = 0;
+	int subTitleW = 0;
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
@@ -2579,52 +2550,52 @@ int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->updateScreen();
 		doTransition(9);
 		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
-		seq_printCreditsString(45, 240, 40, _seqTextColorMap, 252);
-		seq_printCreditsString(46, 240, 50, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(47, 240, 60, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(83, 240, 80, _seqTextColorMap, 252);
-		seq_printCreditsString(48, 240, 90, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(65, 240, 110, _seqTextColorMap, 252);
-		seq_printCreditsString(66, 240, 120, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(67, 240, 130, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(68, 240, 140, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(69, 240, 150, _seqTextColorMap, _seqTextColor[0]);
+		printFadingText(45, 240, 40, _textColorMap, 252);
+		printFadingText(46, 240, 50, _textColorMap, _textColor[0]);
+		printFadingText(47, 240, 60, _textColorMap, _textColor[0]);
+		printFadingText(83, 240, 80, _textColorMap, 252);
+		printFadingText(48, 240, 90, _textColorMap, _textColor[0]);
+		printFadingText(65, 240, 110, _textColorMap, 252);
+		printFadingText(66, 240, 120, _textColorMap, _textColor[0]);
+		printFadingText(67, 240, 130, _textColorMap, _textColor[0]);
+		printFadingText(68, 240, 140, _textColorMap, _textColor[0]);
+		printFadingText(69, 240, 150, _textColorMap, _textColor[0]);
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-			seq_printCreditsString(104, 240, 160, _seqTextColorMap, _seqTextColor[0]);
+			printFadingText(104, 240, 160, _textColorMap, _textColor[0]);
 		delayUntil(frameEnd);
 		setCountDown(0);
 		break;
 
 	case 0:
-		_seqTextColor[1] = 1 + (_screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 254) & 0xff);
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColorMap[1] = _seqTextColor[0] = 1 + (_screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 254) & 0xff);
-		_screen->setTextColorMap(_seqTextColorMap);
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 30 : 26);
+		_textColor[1] = 1 + (_screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 254) & 0xff);
+		memset(_textColorMap, _textColor[1], 16);
+		_textColorMap[1] = _textColor[0] = 1 + (_screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 254) & 0xff);
+		_screen->setTextColorMap(_textColorMap);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 30 : 26);
 		break;
 
 	case 6:
 		if (_vm->gameFlags().isTalkie)
-			seq_playTalkText(18);
+			playSoundAndDisplaySubTitle(18);
 		break;
 
 	case 12:
 		if (!_vm->gameFlags().isTalkie)
-			seq_playTalkText(14);
+			playSoundAndDisplaySubTitle(14);
 
-		chatX = 90;
-		chatY = 30;
-		chatW = 100;
+		subTitleX = 90;
+		subTitleY = 30;
+		subTitleW = 100;
 
 		if (_vm->gameFlags().isTalkie) {
 			if (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::DE_DEU) {
-				chatX = 75;
-				chatY = 25;
+				subTitleX = 75;
+				subTitleY = 25;
 			}
 			voiceIndex = 40;
 		}
 
-		seq_playWsaSyncDialogue(29, voiceIndex, 150, chatX, chatY, chatW, wsaObj, 12, -21, x, y);
+		playDialogueAnimation(29, voiceIndex, 150, subTitleX, subTitleY, subTitleW, wsaObj, 12, -21, x, y);
 		break;
 
 	default:
@@ -2637,12 +2608,11 @@ int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint32 frameEnd = 0;
-	int chatX = 0;
-	int chatY = 0;
-	int chatW = 0;
-	int chatFirstFrame = 0;
-	int chatLastFrame = 0;
-	//int textCol = 0;
+	int subTitleX = 0;
+	int subTitleY = 0;
+	int subTitleW = 0;
+	int subTitleFirstFrame = 0;
+	int subTitleLastFrame = 0;
 
 	uint16 voiceIndex = 0;
 
@@ -2650,20 +2620,20 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case -2:
 		doTransition(9);
 		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
-		seq_printCreditsString(70, 240, 20, _seqTextColorMap, 252);
-		seq_printCreditsString(71, 240, 30, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(72, 240, 40, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(73, 240, 50, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(74, 240, 60, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(75, 240, 70, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(101, 240, 80, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(102, 240, 90, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(87, 240, 100, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(88, 240, 110, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(89, 240, 120, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(90, 240, 130, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(91, 240, 140, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(92, 240, 150, _seqTextColorMap, _seqTextColor[0]);
+		printFadingText(70, 240, 20, _textColorMap, 252);
+		printFadingText(71, 240, 30, _textColorMap, _textColor[0]);
+		printFadingText(72, 240, 40, _textColorMap, _textColor[0]);
+		printFadingText(73, 240, 50, _textColorMap, _textColor[0]);
+		printFadingText(74, 240, 60, _textColorMap, _textColor[0]);
+		printFadingText(75, 240, 70, _textColorMap, _textColor[0]);
+		printFadingText(101, 240, 80, _textColorMap, _textColor[0]);
+		printFadingText(102, 240, 90, _textColorMap, _textColor[0]);
+		printFadingText(87, 240, 100, _textColorMap, _textColor[0]);
+		printFadingText(88, 240, 110, _textColorMap, _textColor[0]);
+		printFadingText(89, 240, 120, _textColorMap, _textColor[0]);
+		printFadingText(90, 240, 130, _textColorMap, _textColor[0]);
+		printFadingText(91, 240, 140, _textColorMap, _textColor[0]);
+		printFadingText(92, 240, 150, _textColorMap, _textColor[0]);
 		delayUntil(frameEnd);
 		setCountDown(0);
 		break;
@@ -2671,32 +2641,30 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		for (int i = 0; i < 0x300; i++)
 			_screen->getPalette(0)[i] &= 0x3f;
-		_seqTextColor[1] = 0xCf;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColor[0] = _seqTextColorMap[1] = 0xfe;
+		_textColor[1] = 0xCf;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColor[0] = _textColorMap[1] = 0xfe;
 
-		_screen->setTextColorMap(_seqTextColorMap);
+		_screen->setTextColorMap(_textColorMap);
 		break;
 
 	case 6:
 		_animDuration = 20;
 
 		if (_vm->gameFlags().isTalkie) {
-			chatX = 82;
-			//textCol = 143;
-			chatFirstFrame = 16;
-			chatLastFrame = 21;
+			subTitleX = 82;
+			subTitleFirstFrame = 16;
+			subTitleLastFrame = 21;
 			voiceIndex = 41;
 		} else {
-			chatX = 62;
-			//textCol = 137;
-			chatFirstFrame = 9;
-			chatLastFrame = 13;
+			subTitleX = 62;
+			subTitleFirstFrame = 9;
+			subTitleLastFrame = 13;
 		}
-		chatY = (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::DE_DEU) ? 88 :100;
-		chatW = 80;
+		subTitleY = (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::DE_DEU) ? 88 :100;
+		subTitleW = 80;
 
-		seq_playWsaSyncDialogue(30, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		playDialogueAnimation(30, voiceIndex, 137, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
 		if (_vm->gameFlags().isTalkie)
 			_animCurrentFrame = 8;
 		break;
@@ -2706,23 +2674,21 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		if (_vm->gameFlags().isTalkie) {
 			if (frm == 16)
 				break;
-			chatX = 64;
-			//textCol = 137;
-			chatFirstFrame = 9;
-			chatLastFrame = 13;
+			subTitleX = 64;
+			subTitleFirstFrame = 9;
+			subTitleLastFrame = 13;
 			voiceIndex = 42;
 		} else {
 			if (frm == 9)
 				break;
-			chatX = 80;
-			//textCol = 143;
-			chatFirstFrame = 16;
-			chatLastFrame = 21;
+			subTitleX = 80;
+			subTitleFirstFrame = 16;
+			subTitleLastFrame = 21;
 		}
-		chatY = 100;
-		chatW = 100;
+		subTitleY = 100;
+		subTitleW = 100;
 
-		seq_playWsaSyncDialogue(31, voiceIndex, 143, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		playDialogueAnimation(31, voiceIndex, 143, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
 		if (_vm->gameFlags().isTalkie)
 			_animCurrentFrame = 21;
 		break;
@@ -2737,9 +2703,9 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint32 frameEnd = 0;
-	int chatX = 0;
-	int chatY = 0;
-	int chatW = 0;
+	int subTitleX = 0;
+	int subTitleY = 0;
+	int subTitleW = 0;
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
@@ -2749,28 +2715,28 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->updateScreen();
 		doTransition(9);
 		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
-		seq_printCreditsString(76, 240, 40, _seqTextColorMap, 252);
-		seq_printCreditsString(77, 240, 50, _seqTextColorMap, 252);
-		seq_printCreditsString(78, 240, 60, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(79, 240, 70, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(80, 240, 80, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(84, 240, 100, _seqTextColorMap, 252);
-		seq_printCreditsString(85, 240, 110, _seqTextColorMap, _seqTextColor[0]);
-		seq_printCreditsString(99, 240, 130, _seqTextColorMap, 252);
-		seq_printCreditsString(100, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+		printFadingText(76, 240, 40, _textColorMap, 252);
+		printFadingText(77, 240, 50, _textColorMap, 252);
+		printFadingText(78, 240, 60, _textColorMap, _textColor[0]);
+		printFadingText(79, 240, 70, _textColorMap, _textColor[0]);
+		printFadingText(80, 240, 80, _textColorMap, _textColor[0]);
+		printFadingText(84, 240, 100, _textColorMap, 252);
+		printFadingText(85, 240, 110, _textColorMap, _textColor[0]);
+		printFadingText(99, 240, 130, _textColorMap, 252);
+		printFadingText(100, 240, 140, _textColorMap, _textColor[0]);
 		delayUntil(frameEnd);
 		setCountDown(0);
 		break;
 
 	case 0:
-		_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-		memset(_seqTextColorMap, _seqTextColor[1], 16);
-		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-		_screen->setTextColorMap(_seqTextColorMap);
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		memset(_textColorMap, _textColor[1], 16);
+		_textColor[0] = _textColorMap[1] = 0xff;
+		_screen->setTextColorMap(_textColorMap);
 		break;
 
 	case 6:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 31 : 27);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 31 : 27);
 		break;
 
 	case 14:
@@ -2778,41 +2744,41 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		if (!((frm == 15 && !_vm->gameFlags().isTalkie) || (frm == 14 && _vm->gameFlags().isTalkie)))
 			break;
 
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 31 : 27);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 31 : 27);
 
 		if (_vm->gameFlags().lang == Common::DE_DEU) {
-			chatX = 82;
-			chatY = 84;
-			chatW = 140;
+			subTitleX = 82;
+			subTitleY = 84;
+			subTitleW = 140;
 		} else {
-			chatX = 74;
-			chatY = (_vm->gameFlags().lang == Common::FR_FRA) ? 96: 108;
-			chatW = 80;
+			subTitleX = 74;
+			subTitleY = (_vm->gameFlags().lang == Common::FR_FRA) ? 96: 108;
+			subTitleW = 80;
 		}
 
 		if (_vm->gameFlags().isTalkie)
 			voiceIndex = 43;
 
-		seq_playWsaSyncDialogue(32, voiceIndex, 137, chatX, chatY, chatW, wsaObj, 14, 16, x, y);
+		playDialogueAnimation(32, voiceIndex, 137, subTitleX, subTitleY, subTitleW, wsaObj, 14, 16, x, y);
 		break;
 
 	case 28:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 32 : 28);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 32 : 28);
 		break;
 
 	case 29:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 33 : 29);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 33 : 29);
 		break;
 
 	case 31:
 		if (_vm->gameFlags().isTalkie)
 			voiceIndex = 44;
 
-		chatX = 90;
-		chatY = (_vm->gameFlags().lang == Common::DE_DEU) ? 60 : 76;
-		chatW = 80;
+		subTitleX = 90;
+		subTitleY = (_vm->gameFlags().lang == Common::DE_DEU) ? 60 : 76;
+		subTitleW = 80;
 
-		seq_playWsaSyncDialogue(33, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 31, 34, x, y);
+		playDialogueAnimation(33, voiceIndex, 143, subTitleX, subTitleY, subTitleW, wsaObj, 31, 34, x, y);
 		break;
 
 	case 35:
@@ -2843,17 +2809,17 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case -1:
 		if (_vm->gameFlags().isTalkie)
-			 seq_finaleActorScreen();
+			 playHoFTalkieCredits();
 		_talkieFinaleExtraFlag = _vm->gameFlags().isTalkie;
 		break;
 
 	case 0:
 		if (_callbackCurrentFrame == 1) {
 			_vm->sound()->playTrack(4);
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-			_screen->setTextColorMap(_seqTextColorMap);
+			_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+			memset(_textColorMap, _textColor[1], 16);
+			_textColor[0] = _textColorMap[1] = 0xff;
+			_screen->setTextColorMap(_textColorMap);
 		}
 		_animDuration = 10;
 		break;
@@ -2863,7 +2829,7 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			_animCurrentFrame = 0;
 		} else {
 			_animDuration = _vm->gameFlags().isTalkie ? 500 : (300 + _vm->_rnd.getRandomNumberRng(1, 300));
-			seq_playTalkText(_vm->gameFlags().isTalkie ? 26 : 22);
+			playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 26 : 22);
 			if (_talkieFinaleExtraFlag) {
 				_callbackCurrentFrame = 3;
 				_talkieFinaleExtraFlag = false;
@@ -2876,7 +2842,7 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 3:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 27 : 23);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 27 : 23);
 		_animDuration = _vm->gameFlags().isTalkie ? 500 : (300 + _vm->_rnd.getRandomNumberRng(1, 300));
 		break;
 
@@ -2885,7 +2851,7 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 5:
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 27 : 23);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 27 : 23);
 		tmp = _callbackCurrentFrame / 6;
 		if (tmp == 2)
 			_animDuration = _vm->gameFlags().isTalkie ? 7 : (1 + _vm->_rnd.getRandomNumberRng(1, 10));
@@ -2905,7 +2871,7 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 7:
 		_callbackCurrentFrame = 0;
 		_animDuration = 5;
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 26 : 22);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 26 : 22);
 		break;
 
 	case 11:
@@ -2925,7 +2891,7 @@ int SeqPlayer_HOF::cbHOF_figgle(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (_callbackCurrentFrame == 10)
 		setCountDown(0);
 	if (_callbackCurrentFrame == 10 || _callbackCurrentFrame == 5 || _callbackCurrentFrame == 7)
-		seq_playTalkText(_vm->gameFlags().isTalkie ? 45 : 30);
+		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 45 : 30);
 
 	_callbackCurrentFrame++;
 	return frm;
@@ -2977,19 +2943,19 @@ int SeqPlayer_HOF::cbHOFDEMO_hill(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 int SeqPlayer_HOF::cbHOFDEMO_outhome(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
 	case 12:
-		seq_playTalkText(4);
+		playSoundAndDisplaySubTitle(4);
 		break;
 
 	case 32:
-		seq_playTalkText(7);
+		playSoundAndDisplaySubTitle(7);
 		break;
 
 	case 36:
-		seq_playTalkText(10);
+		playSoundAndDisplaySubTitle(10);
 		break;
 
 	case 57:
-		seq_playTalkText(9);
+		playSoundAndDisplaySubTitle(9);
 		break;
 
 	case 80:
@@ -3004,11 +2970,11 @@ int SeqPlayer_HOF::cbHOFDEMO_outhome(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 		break;
 
 	case 110:
-		seq_playTalkText(5);
+		playSoundAndDisplaySubTitle(5);
 		break;
 
 	case 137:
-		seq_playTalkText(6);
+		playSoundAndDisplaySubTitle(6);
 		break;
 	}
 
@@ -3021,7 +2987,7 @@ int SeqPlayer_HOF::cbHOFDEMO_wharf(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	switch (frm) {
 	case 0:
-		seq_playTalkText(11);
+		playSoundAndDisplaySubTitle(11);
 		break;
 
 	case 5:
@@ -3037,15 +3003,15 @@ int SeqPlayer_HOF::cbHOFDEMO_wharf(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 8:
 	case 10:
-		seq_playTalkText(2);
+		playSoundAndDisplaySubTitle(2);
 		break;
 
 	case 13:
-		seq_playTalkText(7);
+		playSoundAndDisplaySubTitle(7);
 		break;
 
 	case 16:
-		seq_playTalkText(12);
+		playSoundAndDisplaySubTitle(12);
 		break;
 
 	default:
@@ -3085,7 +3051,7 @@ int SeqPlayer_HOF::cbHOFDEMO_fisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 			startNestedAnimation(1, kNestedSequenceHoFDemoDig);
 		}
 
-		if (_seqScrollTextCounter >= 0x18f && !_callbackCurrentFrame)
+		if (_scrollProgressCounter >= 0x18f && !_callbackCurrentFrame)
 			return 0;
 
 		if (!_callbackCurrentFrame) {
@@ -3093,15 +3059,15 @@ int SeqPlayer_HOF::cbHOFDEMO_fisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 			_screen->loadBitmap("adtext2.cps", 6, 6, 0);
 			_screen->copyPageMemory(6, 0, 4, 64000, 1024);
 			_screen->copyPageMemory(6, 1023, 6, 0, 64000);
-			_seqScrollTextCounter = 0;
+			_scrollProgressCounter = 0;
 		}
 
-		seq_scrollPage(24, 144);
+		updateDemoAdText(24, 144);
 		_callbackCurrentFrame++;
 		if (_callbackCurrentFrame < 0x256 || _callbackCurrentFrame > 0x31c) {
 			if (_callbackCurrentFrame < 0x174 || _callbackCurrentFrame > 0x1d7) {
 				if (_callbackCurrentFrame < 0x84 || _callbackCurrentFrame > 0xe7) {
-					_seqScrollTextCounter++;
+					_scrollProgressCounter++;
 				}
 			}
 		}
@@ -3114,7 +3080,7 @@ int SeqPlayer_HOF::cbHOFDEMO_fisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 		}
 
 	} else {
-		seq_scrollPage(24, 144);
+		updateDemoAdText(24, 144);
 	}
 	return 0;
 }
@@ -3129,23 +3095,23 @@ int SeqPlayer_HOF::cbHOFDEMO_wharf2(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 int SeqPlayer_HOF::cbHOFDEMO_dinob2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
 	case 19:
-		seq_playTalkText(13);
+		playSoundAndDisplaySubTitle(13);
 		break;
 
 	case 54:
-		seq_playTalkText(15);
+		playSoundAndDisplaySubTitle(15);
 		break;
 
 	case 61:
-		seq_playTalkText(16);
+		playSoundAndDisplaySubTitle(16);
 		break;
 
 	case 69:
-		seq_playTalkText(14);
+		playSoundAndDisplaySubTitle(14);
 		break;
 
 	case 77:
-		seq_playTalkText(13);
+		playSoundAndDisplaySubTitle(13);
 		break;
 
 	case 79:
@@ -3158,7 +3124,7 @@ int SeqPlayer_HOF::cbHOFDEMO_dinob2(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 
 int SeqPlayer_HOF::cbHOFDEMO_water(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (frm == 1)
-		seq_playTalkText(11);
+		playSoundAndDisplaySubTitle(11);
 	return frm;
 }
 
@@ -3181,13 +3147,13 @@ int SeqPlayer_HOF::cbLOLDEMO_scene1(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 		}
 		tmpPal.copy(_screen->getPalette(0));
 
-		for (int i = 3; i < 0x300; i++) {
+		for (int i = 3; i < 768; i++) {
 			tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
 			if (tmpPal[i] > 0x3f)
 				tmpPal[i] = 0x3f;
 		}
 
-		seq_playTalkText(_vm->_rnd.getRandomBit());
+		playSoundAndDisplaySubTitle(_vm->_rnd.getRandomBit());
 		_screen->setScreenPalette(tmpPal);
 		_screen->updateScreen();
 		_vm->delay(8);
@@ -3195,7 +3161,7 @@ int SeqPlayer_HOF::cbLOLDEMO_scene1(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 		_screen->setScreenPalette(_screen->getPalette(0));
 		_screen->updateScreen();
 		if (_callbackCurrentFrame == 40)
-			seq_playTalkText(3);
+			playSoundAndDisplaySubTitle(3);
 	}
 
 	_callbackCurrentFrame++;
@@ -3203,20 +3169,20 @@ int SeqPlayer_HOF::cbLOLDEMO_scene1(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 }
 
 int SeqPlayer_HOF::cbLOLDEMO_scene2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	switch (_callbackCurrentFrame - 17) {
+	switch (frm - 17) {
 	case 0:
 		_animDuration = 8;
 		break;
 	case 3:
 	case 6:
 	case 9:
-		seq_playTalkText(8);
+		playSoundEffect(8, 255 - ((26 - frm) << 3));
 		break;
 	case 15:
-		seq_playTalkText(9);
+		playSoundAndDisplaySubTitle(9);
 		break;
 	case 18:
-		seq_playTalkText(2);
+		playSoundAndDisplaySubTitle(2);
 		break;
 	default:
 		break;
@@ -3226,40 +3192,40 @@ int SeqPlayer_HOF::cbLOLDEMO_scene2(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 }
 
 int SeqPlayer_HOF::cbLOLDEMO_scene3(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	if (_callbackCurrentFrame == 1)
-		seq_playTalkText(6);
-	else if (frm == 26)
-		seq_playTalkText(7);
+	if (frm == 1)
+		playSoundAndDisplaySubTitle(6);
+	else if (frm == 24)
+		playSoundAndDisplaySubTitle(7);
 
 	_callbackCurrentFrame++;
 	return frm;
 }
 
 int SeqPlayer_HOF::cbLOLDEMO_scene4(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	switch (_callbackCurrentFrame) {
+	switch (frm) {
 	case 11:
 	case 14:
 	case 17:
 	case 20:
-		seq_playTalkText(8);
+		playSoundEffect(8, 255 - ((22 - frm) << 3));
 		break;
 	case 22:
-		seq_playTalkText(11);
+		playSoundAndDisplaySubTitle(11);
 		break;
 	case 24:
-		seq_playTalkText(8);
+		playSoundAndDisplaySubTitle(8);
 		break;
 	case 30:
-		seq_playTalkText(15);
+		playSoundAndDisplaySubTitle(15);
 		break;
 	case 34:
-		seq_playTalkText(14);
+		playSoundAndDisplaySubTitle(14);
 		break;
 	case 38:
-		seq_playTalkText(13);
+		playSoundAndDisplaySubTitle(13);
 		break;
 	case 42:
-		seq_playTalkText(12);
+		playSoundAndDisplaySubTitle(12);
 		break;
 	default:
 		break;
@@ -3285,13 +3251,13 @@ int SeqPlayer_HOF::cbLOLDEMO_scene5(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 	case 26:
 	case 28:
 	case 30:
-		seq_playTalkText(15);
+		playSoundEffect(15, 255 - ((31 - frm) << 3));
 		break;
 	case 32:
-		seq_playTalkText(16);
+		playSoundAndDisplaySubTitle(16);
 		break;
 	case 42:
-		seq_playTalkText(6);
+		playSoundAndDisplaySubTitle(6);
 		break;
 	default:
 		break;
@@ -3301,19 +3267,19 @@ int SeqPlayer_HOF::cbLOLDEMO_scene5(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 
 int SeqPlayer_HOF::cbLOLDEMO_text5(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (_callbackCurrentFrame++ == 100)
-		seq_playTalkText(5);
+		playSoundAndDisplaySubTitle(5);
 	return frm;
 }
 
 int SeqPlayer_HOF::cbLOLDEMO_scene6(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	while (_seqScrollTextCounter < 0x122) {
+	while (_scrollProgressCounter < 290) {
 		setCountDown(6);
 		if (!_callbackCurrentFrame) {
 			_screen->loadBitmap("adtext.cps", 4, 4, 0);
 			_screen->loadBitmap("adtext2.cps", 6, 6, 0);
 			_screen->copyPageMemory(6, 0, 4, 64000, 1024);
 			_screen->copyPageMemory(6, 1023, 6, 0, 64000);
-			_seqScrollTextCounter = 0;
+			_scrollProgressCounter = 0;
 		}
 
 		if (_callbackCurrentFrame % 175) {
@@ -3328,22 +3294,22 @@ int SeqPlayer_HOF::cbLOLDEMO_scene6(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 					tmpPal[i] = 0x3f;
 			}
 
-			seq_playTalkText(_vm->_rnd.getRandomBit());
+			playSoundAndDisplaySubTitle(_vm->_rnd.getRandomBit());
 			_screen->setScreenPalette(tmpPal);
 			_screen->updateScreen();
 			_vm->delay(8);
 		}
 
 		if (_callbackCurrentFrame == 40 || _callbackCurrentFrame == 80 || _callbackCurrentFrame == 150 || _callbackCurrentFrame == 300)
-			seq_playTalkText(3);
+			playSoundAndDisplaySubTitle(3);
 
 		_screen->copyPage(12, 2);
-		seq_scrollPage(70, 130);
+		updateDemoAdText(70, 130);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		_callbackCurrentFrame++;
 		if (_callbackCurrentFrame < 128 || _callbackCurrentFrame > 207)
-			_seqScrollTextCounter++;
+			_scrollProgressCounter++;
 
 		while (countDownRunning())
 			delayTicks(1);
@@ -3403,7 +3369,6 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 	_eventList.clear();
 	delete ci;
 }
-
 
 int KyraEngine_HoF::seq_playIntro() {
 	bool startupSaveLoadable = saveFileLoadable(0);
