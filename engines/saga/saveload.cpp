@@ -34,7 +34,7 @@
 #include "saga/scene.h"
 #include "saga/script.h"
 
-#define CURRENT_SAGA_VER 7
+#define CURRENT_SAGA_VER 8
 
 namespace Saga {
 
@@ -204,10 +204,11 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
+	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
 
 	out->writeUint32BE(saveDate);
 	out->writeUint16BE(saveTime);
-	// TODO: played time
+	out->writeUint32BE(playTime);
 
 	// Surrounding scene
 	out->writeSint32LE(_scene->getOutsetSceneNumber());
@@ -299,7 +300,11 @@ void SagaEngine::load(const char *fileName) {
 
 		in->readUint32BE();	// save date
 		in->readUint16BE(); // save time
-		// TODO: played time
+
+		if (_saveHeader.version >= 8) {
+			uint32 playTime = in->readUint32BE();
+			g_engine->setTotalPlayTime(playTime * 1000);
+		}
 	}
 
 	// Clear pending events here, and don't process queued music events
