@@ -192,6 +192,8 @@ Globals::Globals() {
 	Credit_lignes = 0;
 	memset(Credit, 0, 12000);
 	Credit_step = 0;
+	Credit_l = 0;
+	Credit_h = 0;
 
 	OCEAN_SENS = 0;
 

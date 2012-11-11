@@ -460,6 +460,8 @@ public:
 	int Credit_lignes;
 	byte Credit[12000];
 	int Credit_step;
+	int Credit_l;
+	int Credit_h;
 
 	int OCEAN_SENS;
 
