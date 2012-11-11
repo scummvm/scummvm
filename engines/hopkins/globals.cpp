@@ -193,6 +193,8 @@ Globals::Globals() {
 	memset(Credit, 0, 12000);
 	Credit_step = 0;
 
+	OCEAN_SENS = 0;
+
 	// Initialise pointers
 	ICONE = NULL;
 	BUF_ZONE = NULL;

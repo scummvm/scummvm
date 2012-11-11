@@ -2437,8 +2437,114 @@ void HopkinsEngine::Credits() {
 	_eventsManager.souris_flag = true;
 }
 
+void HopkinsEngine::BTOCEAN() {
+	warning("STUB - BTOCEAN()");
+}
+
+void HopkinsEngine::OCEAN_HOME() {
+	warning("STUB - OCEAN_HOME()");
+}
+
 void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9) {
-	warning("STUB - OCEAN()");
+	warning("OCEAN()");
+
+	_globals.PLAN_FLAG = false;
+	_graphicsManager.NOFADE = false;
+	_globals.NOMARCHE = false;
+	_globals.SORTIE = 0;
+	_globals.AFFLI = false;
+	_globals.AFFIVBL = true;
+	_globals.DESACTIVE_INVENT = true;
+	_soundManager.WSOUND(a9);
+	_fileManager.CONSTRUIT_SYSTEM("VAISSEAU.SPR");
+	_fileManager.CHARGE_FICHIER2(_globals.NFICHIER, _globals.PERSO);
+	if (a2.size())
+		_graphicsManager.LOAD_IMAGE(a2);
+	if (a1 == 77)
+		goto LABEL_53;
+	if (a1 != 84 && a1 != 91)
+		_objectsManager.INILINK("ocean");
+	if (a1 == 77)
+LABEL_53:
+		_objectsManager.INILINK("IM77");
+	if (a1 == 84)
+		_objectsManager.INILINK("IM84");
+	if (a1 == 91)
+		_objectsManager.INILINK("IM91");
+	if (!a5)
+		_objectsManager.ZONE_OFF(1);
+	if (!a6)
+		_objectsManager.ZONE_OFF(2);
+	if (!a7)
+		_objectsManager.ZONE_OFF(3);
+	if (!a8)
+		_objectsManager.ZONE_OFF(4);
+	if (!_globals.OCEAN_SENS)
+		_globals.OCEAN_SENS = a4;
+	if (_globals.OCEAN_SENS == 5) {
+		_objectsManager.PERX = 236;
+		_objectsManager.PERI = 9;
+	}
+	if (_globals.OCEAN_SENS == 1) {
+		_objectsManager.PERX = 236;
+		_objectsManager.PERI = 27;
+	}
+	if (_globals.OCEAN_SENS == 7) {
+		_objectsManager.PERX = 415;
+		_objectsManager.PERI = 18;
+	}
+	if (_globals.OCEAN_SENS == 3) {
+		_objectsManager.PERX = -20;
+		_objectsManager.PERI = 0;
+	}
+	_objectsManager.SPRITE(_globals.PERSO, _objectsManager.PERX, 110, 0, _objectsManager.PERI, 0, 0, 0, 0);
+	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_objectsManager.SPRITE_ON(0);
+	_globals.chemin = (int16 *)g_PTRNUL;
+	_eventsManager.MOUSE_ON();
+	_eventsManager.CHANGE_MOUSE(4);
+
+	int cpt = 0;
+	do {
+		_eventsManager.VBL();
+		++cpt;
+	} while (cpt <= 4);
+
+	if (!_graphicsManager.NOFADE)
+		_graphicsManager.FADE_INW();
+	_graphicsManager.NOFADE = false;
+	_globals.iRegul = 1;
+
+	bool loopCond = false;
+	do {
+		int mouseButton = _eventsManager.BMOUSE();
+		if (mouseButton && mouseButton == 1)
+			BTOCEAN();
+		_objectsManager.VERIFZONE();
+		OCEAN_HOME();
+		_eventsManager.VBL();
+		if (_globals.SORTIE)
+			loopCond = true;
+	} while (!loopCond);
+
+	if (_globals.SORTIE == 1)
+		_globals.SORTIE = a5;
+	if (_globals.SORTIE == 2)
+		_globals.SORTIE = a6;
+	if (_globals.SORTIE == 3)
+		_globals.SORTIE = a7;
+	if (_globals.SORTIE == 4)
+		_globals.SORTIE = a8;
+	_graphicsManager.FADE_OUTW();
+	_objectsManager.SPRITE_OFF(0);
+	_globals.AFFLI = false;
+	_objectsManager.CLEAR_ECRAN();
+	_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
+	_fileManager.CHARGE_FICHIER2(_globals.NFICHIER, _globals.PERSO);
+	_globals.PERSO_TYPE = 0;
 }
 
 void HopkinsEngine::syncSoundSettings() {

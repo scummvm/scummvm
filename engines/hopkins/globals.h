@@ -461,6 +461,8 @@ public:
 	char Credit[12000];
 	int Credit_step;
 
+	int OCEAN_SENS;
+
 	Globals();
 	~Globals();
 	void setParent(HopkinsEngine *vm);
