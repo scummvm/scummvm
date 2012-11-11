@@ -357,12 +357,16 @@ void SoundManager::checkMusic() {
 			return;
 
 		mwavIndex = Music._mwavIndexes[Music._currentIndex];
-		if (mwavIndex != -1) {
-			int volume = MUSICVOL * 255 / 16;
+		if (mwavIndex == -1) {
+			Music._currentIndex = 0;
+			mwavIndex = Music._mwavIndexes[Music._currentIndex];
+		}			
 
-			_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Mwav[mwavIndex]._soundHandle, 
-				Mwav[mwavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
-		}
+		int volume = MUSICVOL * 255 / 16;
+
+		Mwav[mwavIndex]._audioStream->rewind();
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Mwav[mwavIndex]._soundHandle, 
+			Mwav[mwavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
 	}
 }
 
