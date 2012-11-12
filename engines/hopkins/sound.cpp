@@ -331,6 +331,11 @@ void SoundManager::DEL_MUSIC() {
 	Music._currentIndex = -1;
 }
 
+void SoundManager::checkSounds() {
+	checkMusic();
+	checkVoices();
+}
+
 void SoundManager::checkMusic() {
 	if (Music._active && Music._isPlaying) {
 		int mwavIndex = Music._mwavIndexes[Music._currentIndex];
@@ -360,6 +365,20 @@ void SoundManager::checkMusic() {
 		Mwav[mwavIndex]._audioStream->rewind();
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Mwav[mwavIndex]._soundHandle, 
 			Mwav[mwavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
+	}
+}
+
+void SoundManager::checkVoices() {
+	// Check the status of each voice.
+	bool hasActiveVoice = false;
+	for (int i = 0; i < VOICE_COUNT; ++i) {
+		VOICE_STAT(i);
+		hasActiveVoice |= Voice[i]._status != 0;
+	}
+
+	if (!hasActiveVoice && SOUND_FLAG) {
+		SOUND_FLAG = false;
+		SOUND_NUM = 0;
 	}
 }
 
@@ -578,7 +597,8 @@ void SoundManager::PLAY_WAV(int wavIndex) {
 
 int SoundManager::VOICE_STAT(int voiceIndex) {
 	if (Voice[voiceIndex]._status) {
-		if (Voice[voiceIndex]._audioStream->endOfStream())
+		int wavIndex = Voice[voiceIndex]._wavIndex;
+		if (Swav[wavIndex]._audioStream->endOfStream())
 			STOP_VOICE(voiceIndex);
 	}
 
@@ -599,7 +619,6 @@ void SoundManager::STOP_VOICE(int voiceIndex) {
 	Voice[voiceIndex].fieldC = 0;
 	Voice[voiceIndex]._status = 0;
 	Voice[voiceIndex].field14 = 0;
-	Voice[voiceIndex]._audioStream = NULL;
 }
 
 void SoundManager::SDL_LVOICE(size_t filePosition, size_t entryLength) {
@@ -691,9 +710,9 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 		DEL_SAMPLE_SDL(wavIndex);
 
 	Voice[voiceIndex].fieldC = 0;
-	Voice[voiceIndex]._audioStream = Swav[wavIndex]._audioStream;
 	Voice[voiceIndex]._status = 1;
 	Voice[voiceIndex].field14 = 4;
+	Voice[voiceIndex]._wavIndex = wavIndex;
 	
 	int volume = (voiceIndex == 2) ? VOICEVOL * 255 / 16 : SOUNDVOL * 255 / 16;
 

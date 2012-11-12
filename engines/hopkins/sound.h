@@ -35,7 +35,6 @@ class VoiceItem {
 public:
 	int _status;
 	int _wavIndex;
-	Audio::RewindableAudioStream *_audioStream;
 	int fieldC;
 	int field14;
 };
@@ -96,6 +95,18 @@ private:
 	void PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex);
 	void LOAD_MSAMPLE(int mwavIndex, const Common::String &file);
 	void DEL_MSAMPLE(int mwavIndex);
+
+	/**
+	 * Checks the music structure to see if music playback is active, and whether
+	 * it needs to move to the next WAV file
+	 */
+	void checkMusic();
+
+	/**
+	 * Checks voices to see if they're finished
+	 */
+	void checkVoices();
+
 public:
 	int SPECIAL_SOUND;
 	int SOUNDVOL;
@@ -137,11 +148,6 @@ public:
 	void STOP_MUSIC();
 	void DEL_MUSIC();
 
-	/**
-	 * Checks the music structure to see if music playback is active, and whether
-	 * it needs to move to the next WAV file
-	 */
-	void checkMusic();
 
 	bool VOICE_MIX(int voiceId, int voiceMode);
 	void DEL_SAMPLE(int soundIndex);
@@ -156,6 +162,7 @@ public:
 	
 	void syncSoundSettings();
 	void updateScummVMSoundSettings();
+	void checkSounds();
 };
 
 } // End of namespace Hopkins
