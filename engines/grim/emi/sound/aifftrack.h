@@ -40,6 +40,7 @@ public:
 	~AIFFTrack();
 	bool openSound(Common::String soundName, Common::SeekableReadStream *file);
 	bool isPlaying() { return true; }
+	bool isStreamOpen() { return _stream != NULL; }
 	void setLooping(bool looping);
 	bool play();
 private:

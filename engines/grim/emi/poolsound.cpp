@@ -48,4 +48,18 @@ namespace Grim {
 		track->openSound(filename, stream);
 	}
 
+	void PoolSound::saveState(SaveGame *state) {
+		if (track && track->isStreamOpen()) {
+			state->writeBool(true);
+			state->writeString(track->getSoundName());
+		} else {
+			state->writeBool(false);
+		}
+	}
+
+	void PoolSound::restoreState(SaveGame *state) {
+		bool hasStream = state->readBool();
+		if (hasStream)
+			openFile(state->readString());
+	}
 }

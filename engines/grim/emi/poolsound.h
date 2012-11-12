@@ -35,6 +35,8 @@ namespace Grim {
 		~PoolSound();
 
 		void openFile(const Common::String &filename);
+		void saveState(SaveGame *state);
+		void restoreState(SaveGame *state);
 
 		static int32 getStaticTag() { return MKTAG('A', 'I', 'F', 'F'); }
 		AIFFTrack *track;
