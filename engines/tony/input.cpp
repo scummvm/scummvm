@@ -76,7 +76,7 @@ void RMInput::poll() {
 			return;
 
 		case Common::EVENT_KEYUP:
-			for (int i = 0; i < _keyDown.size(); i++) {
+			for (uint i = 0; i < _keyDown.size(); i++) {
 				if (_keyDown[i] == _event.kbd.keycode) {
 					_keyDown.remove_at(i);
 					break;
@@ -96,7 +96,7 @@ void RMInput::poll() {
 bool RMInput::getAsyncKeyState(Common::KeyCode kc) {
 	// The act of testing for a particular key automatically clears the state, to prevent
 	// the same key being registered in multiple different frames
-	for (int i = 0; i < _keyDown.size(); i++) {
+	for (uint i = 0; i < _keyDown.size(); i++) {
 		if (_keyDown[i] == kc) {
 			_keyDown.remove_at(i);
 			return true;
