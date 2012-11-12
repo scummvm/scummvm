@@ -104,6 +104,14 @@ Player_V5M::Player_V5M(ScummEngine *scumm, Audio::Mixer *mixer)
 		_channel[i]._velocity = 0;
 		_channel[i]._remaining = 0;
 		_channel[i]._notesLeft = false;
+		_channel[i]._instrument._data = NULL;
+		_channel[i]._instrument._size = 0;
+		_channel[i]._instrument._rate = 0;
+		_channel[i]._instrument._loopStart = 0;
+		_channel[i]._instrument._loopEnd = 0;
+		_channel[i]._instrument._baseFreq = 0;
+		_channel[i]._instrument._pos = 0;
+		_channel[i]._instrument._subPos = 0;
 	}
 
 	_pitchTable[116] = 1664510;
