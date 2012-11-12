@@ -30,7 +30,6 @@
 #ifndef TONY_RESID_H
 #define TONY_RESID_H
 
-
 #define RES_I_INTERFACE 10300
 #define RES_I_INTERPAL  10301
 #define RES_I_INTERPPAL 10302
@@ -40,16 +39,16 @@
 #define RES_I_INTERP4   10306
 #define RES_I_INTERP5   10307
 
-#define RES_I_DLGTEXT           10350
+#define RES_I_DLGTEXT     10350
 #define RES_I_DLGTEXTLINE 10351
-#define RES_I_DLGTEXTPAL    10352
+#define RES_I_DLGTEXTPAL  10352
 
 #define RES_I_MINIINTER 10360
 
-#define RES_P_PAL       10410
-#define RES_P_GO        10400
+#define RES_P_PAL   10410
+#define RES_P_GO    10400
 #define RES_P_TAKE  10401
-#define RES_P_USE       10402
+#define RES_P_USE   10402
 #define RES_P_EXAM  10403
 #define RES_P_TALK  10404
 

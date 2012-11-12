@@ -35,7 +35,6 @@ namespace Tony {
 
 namespace MPAL {
 
-
 /**
  * Duplicate a mathematical expression.
  *
@@ -140,7 +139,6 @@ static void solve(LpExpression one, int num) {
 	}
 }
 
-
 /**
  * Calculates the result of a mathematical expression, replacing the current
  * value of any variable.
@@ -177,7 +175,6 @@ static int evaluateAndFreeExpression(byte *expr) {
 
 	return val;
 }
-
 
 /**
  * Parses a mathematical expression from the MPC file
@@ -248,7 +245,6 @@ const byte *parseExpression(const byte *lpBuf, MpalHandle *h) {
 
 	return lpBuf;
 }
-
 
 /**
  * Calculate the value of a mathamatical expression

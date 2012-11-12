@@ -38,19 +38,19 @@ namespace MPAL {
 class RMRes {
 protected:
 	MpalHandle _h;
-    byte *_buf;
+	byte *_buf;
 
 public:
 	RMRes(uint32 resID);
-    virtual ~RMRes();
+	virtual ~RMRes();
 
-    // Attributes
+	// Attributes
 	unsigned int size();
-    const byte *dataPointer();
+	const byte *dataPointer();
 	bool isValid();
 
-    // Casting for access to data
-    operator const byte*();
+	// Casting for access to data
+	operator const byte*();
 
 	Common::SeekableReadStream *getReadStream();
 };

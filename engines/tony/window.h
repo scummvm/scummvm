@@ -46,7 +46,6 @@ public:
 	void grabScreenshot(byte *lpBuf, int dezoom = 1, uint16 *lpDestBuf = NULL);
 };
 
-
 class RMWindow {
 private:
 	void plotSplices(const byte *lpBuf, const Common::Point &center, int x, int y);

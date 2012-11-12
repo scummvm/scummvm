@@ -324,7 +324,6 @@ public:
 	static bool loadThumbnailFromSaveState(int numState, byte *lpDestBuf, Common::String &name, byte &diff);
 
 protected:
-
 	// Initialization and state change
 	void initState(CORO_PARAM);
 	void closeState();

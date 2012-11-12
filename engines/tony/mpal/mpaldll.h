@@ -73,7 +73,7 @@ namespace MPAL {
  * MPAL global variables
  */
 struct MpalVar {
-	uint32 _dwVal;         // Variable value
+	uint32 _dwVal; // Variable value
 	char _lpszVarName[33]; // Variable name
 } PACKED_STRUCT;
 typedef MpalVar *LpMpalVar;
@@ -82,8 +82,8 @@ typedef MpalVar *LpMpalVar;
  * MPAL Messages
  */
 struct MpalMsg {
-  MpalHandle _hText;       // Handle to the message text
-  uint16 _wNum;            // Message number
+	MpalHandle _hText; // Handle to the message text
+	uint16 _wNum; // Message number
 } PACKED_STRUCT;
 typedef MpalMsg *LpMpalMsg;
 
@@ -91,9 +91,9 @@ typedef MpalMsg *LpMpalMsg;
  * MPAL Locations
  */
 struct MpalLocation {
-	uint32 _nObj;              // Location number
-	uint32 _dwXlen, _dwYlen;   // Dimensions
-	uint32 _dwPicRes;          // Resource that contains the image
+	uint32 _nObj; // Location number
+	uint32 _dwXlen, _dwYlen; // Dimensions
+	uint32 _dwPicRes; // Resource that contains the image
 } PACKED_STRUCT;
 typedef MpalLocation *LpMpalLocation;
 
@@ -110,34 +110,33 @@ struct Command {
    *   #3 -> Making a choice			(DIALOG)
    *
    */
-	byte  _type;                     // Type of control
+	byte _type; // Type of control
 
 	union {
-		int32 _nCf;                  // Custom function call      [#1]
-		char *_lpszVarName;          // Variable name             [#2]
-		int32 _nChoice;              // Number of choice you make [#3]
+		int32 _nCf; // Custom function call [#1]
+		char *_lpszVarName; // Variable name [#2]
+		int32 _nChoice; // Number of choice you make [#3]
 	};
 
 	union {
-		int32 _arg1;                 // Argument for custom function        [#1]
-		MpalHandle _expr;            // Expression to assign to a variable  [#2]
+		int32 _arg1; // Argument for custom function [#1]
+		MpalHandle _expr; // Expression to assign to a variable [#2]
 	};
 
-	int32 _arg2, _arg3, _arg4;       // Arguments for custom function       [#1]
+	int32 _arg2, _arg3, _arg4; // Arguments for custom function [#1]
 } PACKED_STRUCT;
-
 
 /**
  * MPAL dialog
  */
 struct MpalDialog {
-	uint32 _nObj;                    // Dialog number
+	uint32 _nObj; // Dialog number
 
 	struct Command _command[MAX_COMMANDS_PER_DIALOG];
 
 	struct {
 		uint16 _num;
-		byte   _nCmds;
+		byte _nCmds;
 		uint16 _cmdNum[MAX_COMMANDS_PER_GROUP];
 
 	} _group[MAX_GROUPS_PER_DIALOG];
@@ -152,7 +151,7 @@ struct MpalDialog {
 			uint32 _dwData;
 			uint16 _wPlayGroup[MAX_PLAYGROUPS_PER_SELECT];
 
-			// Bit 0=endchoice   Bit 1=enddialog
+			// Bit 0=endchoice Bit 1=enddialog
 			byte _attr;
 
 			// Modified at run-time: 0 if the select is currently disabled,
@@ -172,23 +171,22 @@ typedef MpalDialog *LpMpalDialog;
  * MPAL Item
  */
 struct ItemAction {
-	byte	_num;                // Action number
-	uint16	_wTime;              // If idle, the time which must pass
-    byte	_perc;               // Percentage of the idle run
-    MpalHandle	_when;           // Expression to compute. If != 0, then
-								 // action can be done
-    uint16	_wParm;              // Parameter for action
+	byte _num; // Action number
+	uint16 _wTime; // If idle, the time which must pass
+	byte _perc; // Percentage of the idle run
+	MpalHandle _when; // Expression to compute. If != 0, then action can be done
+	uint16 _wParm; // Parameter for action
 
-    byte	_nCmds;				 // Number of commands to be executed
-    uint32	_cmdNum[MAX_COMMANDS_PER_ACTION]; // Commands to execute
+	byte _nCmds; // Number of commands to be executed
+	uint32 _cmdNum[MAX_COMMANDS_PER_ACTION]; // Commands to execute
 } PACKED_STRUCT;
 
 struct MpalItem {
-	uint32 _nObj;				 // Item number
+	uint32 _nObj; // Item number
 
 	byte _lpszDescribe[MAX_DESCRIBE_SIZE]; // Name
-	byte _nActions;				 // Number of managed actions
-	uint32 _dwRes;				 // Resource that contains frames and patterns
+	byte _nActions; // Number of managed actions
+	uint32 _dwRes; // Resource that contains frames and patterns
 
 	struct Command _command[MAX_COMMANDS_PER_ITEM];
 
@@ -209,14 +207,14 @@ struct MpalScript {
 	struct Command _command[MAX_COMMANDS_PER_SCRIPT];
 
 	struct {
-		int32  _dwTime;
-		byte   _nCmds;
+		int32 _dwTime;
+		byte _nCmds;
 		uint32 _cmdNum[MAX_COMMANDS_PER_MOMENT];
 
 	} _moment[MAX_MOMENTS_PER_SCRIPT];
 
 } PACKED_STRUCT;
-typedef MpalScript   *LpMpalScript;
+typedef MpalScript *LpMpalScript;
 
 #include "common/pack-end.h"
 
@@ -234,7 +232,6 @@ typedef MpalScript   *LpMpalScript;
  * need to remember to call UnlockVar()
  */
 extern int32 varGetValue(const char *lpszVarName);
-
 
 /**
  * Sets the value of a MPAL global variable

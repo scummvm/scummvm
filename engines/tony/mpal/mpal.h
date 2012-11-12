@@ -26,7 +26,6 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-
 /****************************************************************************\
 *       General Introduction
 \****************************************************************************/
@@ -55,7 +54,6 @@
  * To use the DLL, and 'obviously need to create a library for symbols to export.
  *
  */
-
 
 /****************************************************************************\
 *       Custom Functions
@@ -96,11 +94,11 @@ namespace MPAL {
 \****************************************************************************/
 
 // OK value for the error codes
-#define OK      0
+#define OK 0
 
-#define MAXFRAMES  400        // frame animation of an object
-#define MAXPATTERN 40         // pattern of animation of an object
-#define MAXPOLLINGLOCATIONS   64
+#define MAXFRAMES 400 // frame animation of an object
+#define MAXPATTERN 40 // pattern of animation of an object
+#define MAXPOLLINGLOCATIONS 64
 
 #define GETARG(type)   va_arg(v, type)
 
@@ -108,8 +106,8 @@ namespace MPAL {
  * Macro for use with queries that may refer to X and Y co-ordinates
  */
 enum QueryCoordinates {
-  MPQ_X,
-  MPQ_Y
+	MPQ_X,
+	MPQ_Y
 };
 
 /**
@@ -117,54 +115,53 @@ enum QueryCoordinates {
  * that can do at the library
  */
 enum QueryTypes {
-  // General Query
-  MPQ_VERSION = 10,
+	// General Query
+	MPQ_VERSION = 10,
 
-  MPQ_GLOBAL_VAR = 50,
-  MPQ_RESOURCE,
-  MPQ_MESSAGE,
+	MPQ_GLOBAL_VAR = 50,
+	MPQ_RESOURCE,
+	MPQ_MESSAGE,
 
-  // Query on leases
-  MPQ_LOCATION_IMAGE = 100,
-  MPQ_LOCATION_SIZE,
+	// Query on leases
+	MPQ_LOCATION_IMAGE = 100,
+	MPQ_LOCATION_SIZE,
 
-  // Queries about items
-  MPQ_ITEM_LIST = 200,
-  MPQ_ITEM_DATA,
-  MPQ_ITEM_PATTERN,
-  MPQ_ITEM_NAME,
+	// Queries about items
+	MPQ_ITEM_LIST = 200,
+	MPQ_ITEM_DATA,
+	MPQ_ITEM_PATTERN,
+	MPQ_ITEM_NAME,
 	MPQ_ITEM_IS_ACTIVE,
 
-  // Query dialog
-  MPQ_DIALOG_PERIOD = 300,
-  MPQ_DIALOG_WAITFORCHOICE,
-  MPQ_DIALOG_SELECTLIST,
-  MPQ_DIALOG_SELECTION,
+	// Query dialog
+	MPQ_DIALOG_PERIOD = 300,
+	MPQ_DIALOG_WAITFORCHOICE,
+	MPQ_DIALOG_SELECTLIST,
+	MPQ_DIALOG_SELECTION,
 
-  // Query execution
-  MPQ_DO_ACTION = 400,
-  MPQ_DO_DIALOG
+	// Query execution
+	MPQ_DO_ACTION = 400,
+	MPQ_DO_DIALOG
 };
 
 /**
  * Framework to manage the animation of an item
  */
 typedef struct {
-  char *_frames[MAXFRAMES];
-  Common::Rect _frameslocations[MAXFRAMES];
-  Common::Rect _bbox[MAXFRAMES];
-  short _pattern[MAXPATTERN][MAXFRAMES];
-  short _speed;
-  char _numframe;
-  char _numpattern;
-  char _curframe;
-  char _curpattern;
-  short _destX, _destY;
-  signed char _destZ;
-  short _objectID;
+	char *_frames[MAXFRAMES];
+	Common::Rect _frameslocations[MAXFRAMES];
+	Common::Rect _bbox[MAXFRAMES];
+	short _pattern[MAXPATTERN][MAXFRAMES];
+	short _speed;
+	char _numframe;
+	char _numpattern;
+	char _curframe;
+	char _curpattern;
+	short _destX, _destY;
+	signed char _destZ;
+	short _objectID;
 } Item;
 typedef Item *LpItem;
-
 
 /**
  * Define a custom function, to use the language MPAL to perform various controls as a result of an action
@@ -206,7 +203,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryGlobalVar(lpszVarName)                 \
         mpalQueryDWORD(MPQ_GLOBAL_VAR, (const char *)(lpszVarName))
 
-
 /**
  * Provides access to a resource inside the .MPC file
  *
@@ -215,7 +211,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  */
 #define mpalQueryResource(dwResId)                      \
         mpalQueryHANDLE(MPQ_RESOURCE, (uint32)(dwResId))
-
 
 /**
  * Returns a message.
@@ -228,14 +223,12 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryMessage(nMsg)                          \
         (char *)mpalQueryHANDLE(MPQ_MESSAGE, (uint32)(nMsg))
 
-
 /**
  * Provides a location image
  * @return		Returns a picture handle
  */
 #define mpalQueryLocationImage(nLoc)                    \
         mpalQueryHANDLE(MPQ_LOCATION_IMAGE, (uint32)(nLoc))
-
 
 /**
  * Request the x or y size of a location in pixels
@@ -247,7 +240,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryLocationSize(nLoc, dwCoord)             \
         mpalQueryDWORD(MPQ_LOCATION_SIZE, (uint32)(nLoc), (uint32)(dwCoord))
 
-
 /**
  * Provides the list of objects in a location.
  *
@@ -258,7 +250,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryItemList(nLoc)                         \
         (uint32 *)mpalQueryHANDLE(MPQ_ITEM_LIST, (uint32)(nLoc))
 
-
 /**
  * Provides information on an item
  *
@@ -267,7 +258,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  */
 #define mpalQueryItemData(nItem)                          \
         (LpItem)mpalQueryHANDLE(MPQ_ITEM_DATA, (uint32)(nItem))
-
 
 /**
  * Provides the current pattern of an item
@@ -279,7 +269,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryItemPattern(nItem)                  \
         mpalQueryDWORD(MPQ_ITEM_PATTERN, (uint32)(nItem))
 
-
 /**
  * Returns true if an item is active
  *
@@ -288,7 +277,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  */
 #define mpalQueryItemIsActive(nItem)                  \
         (bool)mpalQueryDWORD(MPQ_ITEM_IS_ACTIVE, (uint32)(nItem))
-
 
 /**
  * Returns the name of an item
@@ -302,7 +290,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 #define mpalQueryItemName(nItem, lpszName)             \
         mpalQueryHANDLE(MPQ_ITEM_NAME, (uint32)(nItem), (char *)(lpszName))
 
-
 /**
  * Returns a sentence of dialog.
  *
@@ -315,7 +302,6 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  */
 #define mpalQueryDialogPeriod(nPeriod)                  \
         (char *)mpalQueryHANDLE(MPQ_DIALOG_PERIOD, (uint32)(nPeriod))
-
 
 /**
  * Wait until the moment in which the need is signaled to make a choice by the user.
@@ -393,7 +379,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		TRUE if all OK, FALSE on failure
  */
 bool mpalInit(const char *lpszFileName, const char *lpszMprFileName,
-					 LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings);
+              LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings);
 
 /**
  * Frees resources allocated by the MPAL subsystem
@@ -475,7 +461,6 @@ bool mpalStartIdlePoll(int nLoc);
  * in the process of polling
  */
 void mpalEndIdlePoll(CORO_PARAM, int nLoc, bool *result);
-
 
 /**
  * Load a save state from a buffer.

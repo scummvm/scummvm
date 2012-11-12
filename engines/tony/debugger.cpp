@@ -77,7 +77,6 @@ void DebugChangeScene(CORO_PARAM, const void *param) {
 	CORO_END_CODE;
 }
 
-
 /**
  * This command loads up the specified new scene number
  */

@@ -37,7 +37,6 @@ namespace Tony {
 
 using namespace ::Tony::MPAL;
 
-
 /****************************************************************************\
 *       RMPalette Methods
 \****************************************************************************/
@@ -64,7 +63,6 @@ void RMPattern::RMSlot::readFromStream(Common::ReadStream &ds, bool bLOX) {
 	// Generic flag
 	_flag = ds.readByte();
 }
-
 
 /****************************************************************************\
 *       RMPattern Methods
@@ -329,7 +327,6 @@ RMSprite::~RMSprite() {
 	}
 }
 
-
 /****************************************************************************\
 *       RMSfx Methods
 \****************************************************************************/
@@ -390,8 +387,6 @@ void RMSfx::stop() {
 		_bPlayingLoop = false;
 	}
 }
-
-
 
 /****************************************************************************\
 *       RMItem Methods
@@ -553,7 +548,6 @@ void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 	_bIsActive = mpalQueryItemIsActive(_mpalCode);
 }
 
-
 RMGfxPrimitive *RMItem::newItemPrimitive() {
 	return new RMGfxPrimitive(this);
 }
@@ -647,7 +641,6 @@ void RMItem::removeThis(CORO_PARAM, bool &result) {
 	// Remove from the OT list if the current frame is -1 (pattern over)
 	result = (_nCurSprite == -1);
 }
-
 
 void RMItem::setStatus(int nStatus) {
 	_bIsActive = (nStatus > 0);
@@ -745,7 +738,6 @@ RMItem::~RMItem() {
 	CoroScheduler.closeEvent(_hEndPattern);
 }
 
-
 void RMItem::waitForEndPattern(CORO_PARAM, uint32 hCustomSkip) {
 	CORO_BEGIN_CONTEXT;
 	uint32 h[2];
@@ -784,11 +776,9 @@ void RMItem::pauseSound(bool bPause) {
 		_sfx[i].pause(bPause);
 }
 
-
 /****************************************************************************\
 *       RMWipe Methods
 \****************************************************************************/
-
 
 RMWipe::RMWipe() {
 	_hUnregistered = CoroScheduler.createEvent(false, false);
@@ -799,7 +789,6 @@ RMWipe::RMWipe() {
 	_bEndFade = false;
 	_bFading = false;
 	_nFadeStep = 0;
-
 }
 
 RMWipe::~RMWipe() {
@@ -904,10 +893,10 @@ void RMWipe::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 /****************************************************************************/
 
 short RMCharacter::findPath(short source, short destination) {
-	static RMBox box[MAXBOXES];         // Matrix of adjacent boxes
-	static short nodeCost[MAXBOXES];    // Cost per node
-	static short valid[MAXBOXES];       // 0:Invalid 1:Valid 2:Saturated
-	static short nextNode[MAXBOXES];    // Next node
+	static RMBox box[MAXBOXES];      // Matrix of adjacent boxes
+	static short nodeCost[MAXBOXES]; // Cost per node
+	static short valid[MAXBOXES];    // 0:Invalid 1:Valid 2:Saturated
+	static short nextNode[MAXBOXES]; // Next node
 	short minCost, error = 0;
 	RMBoxLoc *cur;
 
@@ -936,19 +925,19 @@ short RMCharacter::findPath(short source, short destination) {
 
 	// Find the shortest path
 	while (!finish) {
-		minCost = 32000;                // Reset the minimum cost
-		error = 1;                         // Possible error
+		minCost = 32000; // Reset the minimum cost
+		error = 1;       // Possible error
 
 		// 1st cycle: explore possible new nodes
 		for (int i = 0; i < cur->_numbBox; i++) {
 			if (valid[i] == 1) {
-				error = 0;                 // Failure de-bunked
+				error = 0; // Failure de-bunked
 				int j = 0;
 				while (((box[i]._adj[j]) != 1) && (j < cur->_numbBox))
 					j++;
 
 				if (j >= cur->_numbBox)
-					valid[i] = 2;                     // nodo saturated?
+					valid[i] = 2; // nodo saturated?
 				else {
 					nextNode[i] = j;
 					if (nodeCost[i] + 1 < minCost)
@@ -958,7 +947,7 @@ short RMCharacter::findPath(short source, short destination) {
 		}
 
 		if (error)
-			finish = true;                                 // All nodes saturated
+			finish = true; // All nodes saturated
 
 		// 2nd cycle: adding new nodes that were found, saturate old nodes
 		for (int i = 0; i < cur->_numbBox; i++) {
@@ -997,7 +986,6 @@ short RMCharacter::findPath(short source, short destination) {
 
 	return !error;
 }
-
 
 void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 	CORO_BEGIN_CONTEXT;
@@ -1068,7 +1056,6 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 	CORO_END_CODE;
 }
 
-
 RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint point) {
 	short steps;
 	RMPoint newPt, foundPt;
@@ -1082,9 +1069,9 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 			steps++;
 		}
 		if ((inWhichBox(newPt) != -1) && (steps < minStep) &&
-		        findPath(inWhichBox(_pos), inWhichBox(newPt))) {
+		    findPath(inWhichBox(_pos), inWhichBox(newPt))) {
 			minStep = steps;
-			newPt._y--;       // to avoid error?
+			newPt._y--; // to avoid error?
 			foundPt = newPt;
 		}
 	}
@@ -1097,9 +1084,9 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 			steps++;
 		}
 		if ((inWhichBox(newPt) != -1) && (steps < minStep) &&
-		        findPath(inWhichBox(_pos), inWhichBox(newPt))) {
+		    findPath(inWhichBox(_pos), inWhichBox(newPt))) {
 			minStep = steps;
-			newPt._y++;     // to avoid error?
+			newPt._y++; // to avoid error?
 			foundPt = newPt;
 		}
 	}
@@ -1112,9 +1099,9 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 			steps++;
 		}
 		if ((inWhichBox(newPt) != -1) && (steps < minStep) &&
-		        findPath(inWhichBox(_pos), inWhichBox(newPt))) {
+		    findPath(inWhichBox(_pos), inWhichBox(newPt))) {
 			minStep = steps;
-			newPt._x++;     // to avoid error?
+			newPt._x++; // to avoid error?
 			foundPt = newPt;
 		}
 	}
@@ -1127,9 +1114,9 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 			steps++;
 		}
 		if ((inWhichBox(newPt) != -1) && (steps < minStep) &&
-		        findPath(inWhichBox(_pos), inWhichBox(newPt))) {
+		    findPath(inWhichBox(_pos), inWhichBox(newPt))) {
 			minStep = steps;
-			newPt._x--;     // to avoid error?
+			newPt._x--; // to avoid error?
 			foundPt = newPt;
 		}
 	}
@@ -1140,11 +1127,9 @@ RMPoint RMCharacter::searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoin
 	return foundPt;
 }
 
-
 RMPoint RMCharacter::nearestPoint(const RMPoint &point) {
 	return searching(1, 1, 1, 1, point);
 }
-
 
 short RMCharacter::scanLine(const RMPoint &point) {
 	int Ldx, Ldy, Lcount;
@@ -1175,7 +1160,7 @@ short RMCharacter::scanLine(const RMPoint &point) {
 		Lstatus = 0;
 	}
 
-	Lscan = Lstart;   // Start scanning
+	Lscan = Lstart; // Start scanning
 	while (inWhichBox(Lscan) != -1) {
 		Lcount++;
 		if (Lstatus) {
@@ -1200,8 +1185,8 @@ short RMCharacter::scanLine(const RMPoint &point) {
  * Calculates intersections between the straight line and the closest BBOX
  */
 RMPoint RMCharacter::invScanLine(const RMPoint &point) {
-	RMPoint lStart = point;      // Exchange!
-	RMPoint lEnd = _pos;    // :-)
+	RMPoint lStart = point; // Exchange!
+	RMPoint lEnd = _pos; // :-)
 	int lDx = lStart._x - lEnd._x;
 	int lDy = lStart._y - lEnd._y;
 	float lFx = lDx;
@@ -1255,7 +1240,6 @@ RMPoint RMCharacter::invScanLine(const RMPoint &point) {
 			return point;
 	}
 }
-
 
 /**
  * Returns the HotSpot coordinate closest to the player
@@ -1509,7 +1493,6 @@ bool RMCharacter::isMoving() {
 inline int RMCharacter::inWhichBox(const RMPoint &pt) {
 	return _theBoxes->whichBox(_curLocation, pt);
 }
-
 
 void RMCharacter::move(CORO_PARAM, RMPoint pt, bool *result) {
 	CORO_BEGIN_CONTEXT;
@@ -1807,7 +1790,7 @@ bool RMGameBoxes::isInBox(int nLoc, int nBox, const RMPoint &pt) {
 	RMBoxLoc *cur = getBoxes(nLoc);
 
 	if ((pt._x >= cur->_boxes[nBox]._left) && (pt._x <= cur->_boxes[nBox]._right) &&
-	        (pt._y >= cur->_boxes[nBox]._top)  && (pt._y <= cur->_boxes[nBox]._bottom))
+	    (pt._y >= cur->_boxes[nBox]._top)  && (pt._y <= cur->_boxes[nBox]._bottom))
 		return true;
 	else
 		return false;
@@ -1822,7 +1805,7 @@ int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
 	for (int i = 0; i < cur->_numbBox; i++) {
 		if (cur->_boxes[i]._bActive) {
 			if ((punto._x >= cur->_boxes[i]._left) && (punto._x <= cur->_boxes[i]._right) &&
-			        (punto._y >= cur->_boxes[i]._top)  && (punto._y <= cur->_boxes[i]._bottom))
+			    (punto._y >= cur->_boxes[i]._top)  && (punto._y <= cur->_boxes[i]._bottom))
 				return i;
 		}
 	}
@@ -1976,7 +1959,7 @@ bool RMLocation::load(Common::SeekableReadStream &ds) {
 	_buf->init(ds, dimx, dimy, true);
 
 	// Check the size of the location
-//	assert(dimy!=512);
+	//assert(dimy!=512);
 
 	// Number of objects
 	_nItems = ds.readSint32LE();
@@ -1993,7 +1976,6 @@ bool RMLocation::load(Common::SeekableReadStream &ds) {
 
 	return ds.err();
 }
-
 
 bool RMLocation::loadLOX(Common::SeekableReadStream &ds) {
 	// Version
@@ -2033,7 +2015,6 @@ bool RMLocation::loadLOX(Common::SeekableReadStream &ds) {
 	return ds.err();
 }
 
-
 /**
  * Draw method overloaded from RMGfxSourceBUffer8
  */
@@ -2070,7 +2051,6 @@ void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 	CORO_END_CODE;
 }
 
-
 /**
  * Prepare a frame, adding the location to the OT list, and all the items that have changed animation frame.
  */
@@ -2083,7 +2063,6 @@ void RMLocation::doFrame(RMGfxTargetBuffer *bigBuf) {
 	for (int i = 0; i < _nItems; i++)
 		_items[i].doFrame(bigBuf);
 }
-
 
 RMItem *RMLocation::getItemFromCode(uint32 dwCode) {
 	for (int i = 0; i < _nItems; i++) {

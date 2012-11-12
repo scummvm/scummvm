@@ -120,7 +120,7 @@ void RMTony::init() {
 
 void RMTony::close() {
 	// Deallocation of missing item
-//	_shadow.destroy();
+	//_shadow.destroy();
 }
 
 void RMTony::doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int curLoc) {
@@ -164,7 +164,6 @@ void RMTony::hide(bool bShowShadow) {
 	_bShow = false;
 	_bShowShadow = bShowShadow;
 }
-
 
 void RMTony::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
@@ -231,7 +230,6 @@ void RMTony::moveAndDoAction(CORO_PARAM, RMPoint dst, RMItem *item, int nAction,
 	CORO_END_CODE;
 }
 
-
 void RMTony::executeAction(int nAction, int nActionItem, int nParm) {
 	uint32 pid;
 
@@ -280,7 +278,6 @@ void RMTony::executeAction(int nAction, int nActionItem, int nParm) {
 		}
 	}
 }
-
 
 void RMTony::stopNoAction(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
@@ -331,7 +328,6 @@ void RMTony::stop(CORO_PARAM) {
 
 	CORO_END_CODE;
 }
-
 
 int RMTony::getCurPattern() {
 	int nPatt = RMCharacter::getCurPattern();
@@ -393,7 +389,6 @@ void RMTony::setPattern(int nPatt, bool bPlayP0) {
 
 	RMCharacter::setPattern(nPatt, bPlayP0);
 }
-
 
 void RMTony::take(int nWhere, int nPart) {
 	if (nPart == 0) {
@@ -469,7 +464,6 @@ void RMTony::take(int nWhere, int nPart) {
 	}
 }
 
-
 void RMTony::put(int nWhere, int nPart) {
 	if (nPart == 0) {
 		switch (getCurPattern()) {
@@ -542,7 +536,6 @@ void RMTony::put(int nWhere, int nPart) {
 		}
 	}
 }
-
 
 bool RMTony::startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, int &bodyStartPat,
                                 int &headLoopPat, int &bodyLoopPat) {
@@ -1131,7 +1124,6 @@ void RMTony::startTalk(CORO_PARAM, CharacterTalkType nTalkType) {
 
 	CORO_END_CODE;
 }
-
 
 bool RMTony::endTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPat, int &finalPat, bool &bStatic) {
 	bodyEndPat = 0;

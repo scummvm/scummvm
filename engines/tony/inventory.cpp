@@ -34,7 +34,6 @@
 
 namespace Tony {
 
-
 /****************************************************************************\
 *           RMInventory Methods
 \****************************************************************************/
@@ -70,7 +69,6 @@ bool RMInventory::checkPointInside(const RMPoint &pt) {
 	else
 		return pt._y < 70;
 }
-
 
 void RMInventory::init() {
 	// Create the main buffer
@@ -143,10 +141,9 @@ void RMInventory::init() {
 	RMMessage msg2(13);
 	RMMessage msg3(14);
 
-	_hints[0].writeText(msg1[0], 1);       // Examine
-	_hints[1].writeText(msg2[0], 1);       // Take
-	_hints[2].writeText(msg3[0], 1);       // Use
-
+	_hints[0].writeText(msg1[0], 1); // Examine
+	_hints[1].writeText(msg2[0], 1); // Take
+	_hints[2].writeText(msg3[0], 1); // Use
 
 	// Prepare initial inventory
 	prepare();
@@ -280,7 +277,6 @@ void RMInventory::changeItemStatus(uint32 code, uint32 dwStatus) {
 	}
 }
 
-
 void RMInventory::prepare() {
 	for (int i = 1; i < RM_SX / 64 - 1; i++) {
 		if (i - 1 + _curPos < _nInv)
@@ -353,6 +349,7 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 		clearOT();
 		g_system->unlockMutex(_csModifyInterface);
 	}
+
 	// Click the left arrow
 	else if ((_state == OPENED) && _bBlinkingLeft) {
 		assert(_curPos > 0);
@@ -374,7 +371,6 @@ bool RMInventory::leftClick(const RMPoint &mpos, int &nCombineObj) {
 		clearOT();
 		g_system->unlockMutex(_csModifyInterface);
 	}
-
 
 	return false;
 }
@@ -458,7 +454,7 @@ bool RMInventory::rightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 	return false;
 }
 
-#define INVSPEED    20
+#define INVSPEED 20
 
 void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen) {
 	bool bNeedRedraw = false;
@@ -517,7 +513,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		GLOBALS._bCfgInvLocked = !GLOBALS._bCfgInvLocked;
 	}
 
-	if (_bCombining) {//m_state == COMBINING)
+	if (_bCombining) { // m_state == COMBINING)
 		ptr.setCustomPointer(&_items[_nCombine]._pointer[_items[_nCombine]._status - 1]);
 		ptr.setSpecialPointer(RMPointer::PTR_CUSTOM);
 	}
@@ -867,7 +863,7 @@ bool RMInterface::released(const RMPoint &mousepos, RMTonyAction &action) {
 		action = TA_PERORATE;
 		break;
 
-	default:        // No verb
+	default: // No verb
 		return false;
 	}
 
@@ -902,8 +898,8 @@ void RMInterface::init() {
 		_hotzone[i].loadPaletteWA(pal);
 	}
 
-	_hotbbox[0].setRect(126, 123, 159, 208);   // Take
-	_hotbbox[1].setRect(90, 130, 125, 186);    // About
+	_hotbbox[0].setRect(126, 123, 159, 208); // Take
+	_hotbbox[1].setRect(90, 130, 125, 186); // About
 	_hotbbox[2].setRect(110, 60, 152, 125);
 	_hotbbox[3].setRect(56, 51, 93, 99);
 	_hotbbox[4].setRect(51, 105, 82, 172);
@@ -921,11 +917,11 @@ void RMInterface::init() {
 	RMMessage msg3(15);
 	RMMessage msg4(16);
 
-	_hints[0].writeText(msg0[0], 1);   // Take
-	_hints[1].writeText(msg1[0], 1);   // Talk
-	_hints[2].writeText(msg2[0], 1);   // Use
-	_hints[3].writeText(msg3[0], 1);   // Examine
-	_hints[4].writeText(msg4[0], 1);   // Show Yourself
+	_hints[0].writeText(msg0[0], 1); // Take
+	_hints[1].writeText(msg1[0], 1); // Talk
+	_hints[2].writeText(msg2[0], 1); // Use
+	_hints[3].writeText(msg3[0], 1); // Examine
+	_hints[4].writeText(msg4[0], 1); // Show Yourself
 
 	_bActive = false;
 	_bPerorate = false;

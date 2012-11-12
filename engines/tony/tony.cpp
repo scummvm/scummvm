@@ -732,6 +732,7 @@ uint32 TonyEngine::getTime() {
 bool TonyEngine::canLoadGameStateCurrently() {
 	return GLOBALS._gfxEngine != NULL && GLOBALS._gfxEngine->canLoadSave();
 }
+
 bool TonyEngine::canSaveGameStateCurrently() {
 	return GLOBALS._gfxEngine != NULL && GLOBALS._gfxEngine->canLoadSave();
 }

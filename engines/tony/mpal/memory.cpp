@@ -121,7 +121,6 @@ void MemoryManager::unlockItem(MpalHandle handle) {
 	--item->_lockCount;
 }
 
-
 } // end of namespace MPAL
 
 } // end of namespace Tony

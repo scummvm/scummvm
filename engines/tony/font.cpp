@@ -81,7 +81,6 @@ void RMFont::unload() {
 	}
 }
 
-
 RMGfxPrimitive *RMFont::makeLetterPrimitive(byte bChar, int &nLength) {
 	RMFontPrimitive *prim;
 
@@ -223,7 +222,6 @@ void RMFontDialog::init() {
 	}
 }
 
-
 /***************************************************************************\
 *       RMFontMacc Methods
 \****************************************************************************/
@@ -277,8 +275,6 @@ void RMFontCredits::init() {
 		_lTable[i] = g_vm->_lTableCred[i];
 	}
 }
-
-
 
 /***************************************************************************\
 *       RMFontObj Methods
@@ -544,7 +540,6 @@ void RMText::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	else if (_aHorType == HRIGHT)
 		prim->getDst().topLeft() -= RMPoint(_dimx, 0);
 
-
 	// Vertically
 	if (_aVerType == VTOP) {
 
@@ -627,7 +622,6 @@ void RMTextDialog::writeText(const Common::String &text, RMFontColor *font, int 
 		*time = _time;
 }
 
-
 void RMTextDialog::setSkipStatus(bool bEnabled) {
 	_bSkipStatus = bEnabled;
 }
@@ -685,6 +679,7 @@ void RMTextDialog::removeThis(CORO_PARAM, bool &result) {
 			}
 		}
 	}
+
 	// Erase the background
 	else if (!(GLOBALS._bCfgDubbing && _hCustomSkip2 != CORO_INVALID_PID_VALUE)) {
 		if (!_bForceNoTime) {
@@ -805,7 +800,6 @@ void RMTextDialogScrolling::clipOnScreen(RMGfxPrimitive *prim) {
 	// We must not do anything!
 }
 
-
 /****************************************************************************\
 *       RMTextItemName Methods
 \****************************************************************************/
@@ -865,7 +859,6 @@ void RMTextItemName::doFrame(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMLocation &
 
 	CORO_END_CODE;
 }
-
 
 void RMTextItemName::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
@@ -951,7 +944,6 @@ void RMDialogChoice::init() {
 	create(640, 477);
 	setPriority(140);
 }
-
 
 void RMDialogChoice::close() {
 	if (_drawedStrings != NULL) {
@@ -1116,7 +1108,6 @@ void RMDialogChoice::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive 
 	CORO_END_CODE;
 }
 
-
 void RMDialogChoice::hide(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	int deltay;
@@ -1144,7 +1135,6 @@ void RMDialogChoice::hide(CORO_PARAM) {
 
 	CORO_END_CODE;
 }
-
 
 void RMDialogChoice::removeThis(CORO_PARAM, bool &result) {
 	result = _bRemoveFromOT;

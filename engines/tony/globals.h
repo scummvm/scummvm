@@ -63,6 +63,7 @@ struct CharacterStruct {
 		f->writeUint32LE(_endTalkPattern);
 		f->writeUint32LE(_numTexts);
 	}
+
 	void load(Common::InSaveFile *f) {
 		_code = f->readUint32LE();
 		f->readUint32LE();
@@ -106,6 +107,7 @@ struct MCharacterStruct {
 		f->writeUint32LE(_curTalk);
 		f->writeByte(_bAlwaysBack);
 	}
+
 	void load(Common::InSaveFile *f) {
 		_code = f->readUint32LE();
 		f->readUint32LE();
@@ -134,13 +136,13 @@ struct ChangedHotspotStruct {
 		f->writeUint32LE(_nX);
 		f->writeUint32LE(_nY);
 	}
+
 	void load(Common::InSaveFile *f) {
 		_dwCode = f->readUint32LE();
 		_nX = f->readUint32LE();
 		_nY = f->readUint32LE();
 	}
 };
-
 
 /**
  * Description of a call to a custom function.
@@ -150,7 +152,7 @@ typedef struct {
 	int _arg1, _arg2, _arg3, _arg4;
 } CfCall;
 
-typedef CfCall         *LpCfCall;
+typedef CfCall *LpCfCall;
 
 struct CoroutineMutex {
 	CoroutineMutex() : _eventId(0), _ownerPid(0), _lockCount(0) { }
@@ -173,20 +175,20 @@ public:
 
 	Common::String _nextMusic;
 	bool _nextLoop;
-	int  _nextChannel;
-	int  _nextSync;
-	int  _curChannel;
-	int  _flipflop;
+	int _nextChannel;
+	int _nextSync;
+	int _curChannel;
+	int _flipflop;
 	CharacterStruct _character[16];
 	MCharacterStruct _mCharacter[10];
 	ChangedHotspotStruct _changedHotspot[256];
 	bool _isMChar[16];
 	bool _bAlwaysDisplay;
 	RMPoint _saveTonyPos;
-	int  _saveTonyLoc;
+	int _saveTonyLoc;
 	RMTextDialog *_curBackText;
 	bool _bTonyIsSpeaking;
-	int  _curChangedHotspot;
+	int _curChangedHotspot;
 	bool _bCfgInvLocked;
 	bool _bCfgInvNoScroll;
 	bool _bCfgTimerizedText;
@@ -199,16 +201,16 @@ public:
 	bool _bCfgDubbing;
 	bool _bCfgMusic;
 	bool _bCfgSFX;
-	int  _nCfgTonySpeed;
-	int  _nCfgTextSpeed;
-	int  _nCfgDubbingVolume;
-	int  _nCfgMusicVolume;
-	int  _nCfgSFXVolume;
+	int _nCfgTonySpeed;
+	int _nCfgTextSpeed;
+	int _nCfgDubbingVolume;
+	int _nCfgMusicVolume;
+	int _nCfgSFXVolume;
 	bool _bSkipSfxNoLoop;
 	bool _bIdleExited;
 	bool _bNoBullsEye;
-	int  _curDialog;
-	int  _curSoundEffect;
+	int _curDialog;
+	int _curSoundEffect;
 	bool _bFadeOutStop;
 
 	RMTony *_tony;

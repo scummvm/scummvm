@@ -35,7 +35,6 @@
 
 namespace Tony {
 
-
 /****************************************************************************\
 *       RMWindow Methods
 \****************************************************************************/
@@ -111,7 +110,7 @@ void RMWindow::repaint() {
  */
 void RMWindow::wipeEffect(Common::Rect &rcBoundEllipse) {
 	if ((rcBoundEllipse.left == 0) && (rcBoundEllipse.top == 0) &&
-	        (rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
+	    (rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
 		// Full screen clear wanted, so use shortcut method
 		g_system->fillScreen(0);
 	} else {

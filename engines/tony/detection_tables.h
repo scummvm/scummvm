@@ -75,6 +75,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
 	{
 		// Tony Tough French "Collection Aventure" provided by Strangerke
 		{
@@ -91,6 +92,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
 	{
 		// Tony Tough German "Shoe Box" provided by Strangerke
 		{
@@ -107,6 +109,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
 	{
 		// Tony Tough Italian provided by Fabio Barzagli
 		{
@@ -123,6 +126,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
 	{
 		// Tony Tough Italian provided by Giovanni Bajo
 		{
@@ -139,6 +143,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
 	{
 		// Tony Tough Polish provided by Fabio Barzagli
 		{
@@ -155,6 +160,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
 	{
 		// Tony Tough German "Gamestar" provided in bug #3566035
 		{
@@ -171,6 +177,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
 	{
 		// Tony Tough Czech provided in bug #3565765
 		{
@@ -188,6 +195,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
 	{ AD_TABLE_END_MARKER }
 };
 

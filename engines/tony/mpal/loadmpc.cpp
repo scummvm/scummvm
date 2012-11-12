@@ -90,7 +90,7 @@ static const byte *ParseScript(const byte *lpBuf, LpMpalScript lpmsScript) {
 				lpBuf += 4;
 				break;
 
-			case 2: {          // Variable assign
+			case 2: { // Variable assign
 				int len = *lpBuf;
 				lpBuf++;
 				lpmsScript->_command[curCmd]._lpszVarName = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
@@ -216,6 +216,7 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 					return NULL;
 				break;
 			}
+
 			// Do Choice
 			case 3:
 				lpmdDialog->_command[curCmd]._nChoice = READ_LE_UINT16(lpBuf);
@@ -317,7 +318,6 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 	return lpBuf;
 }
 
-
 /**
  * Parses an item from the MPC file, and inserts its data into a structure
  *
@@ -384,7 +384,7 @@ static const byte *parseItem(const byte *lpBuf, LpMpalItem lpmiItem) {
 			lpmiItem->_command[curCmd]._type = *lpBuf;
 			lpBuf++;
 			switch (lpmiItem->_command[curCmd]._type) {
-			case 1:          // Call custom function
+			case 1: // Call custom function
 				lpmiItem->_command[curCmd]._nCf  = READ_LE_UINT16(lpBuf);
 				lpBuf += 2;
 				lpmiItem->_command[curCmd]._arg1 = (int32)READ_LE_UINT32(lpBuf);
@@ -397,7 +397,7 @@ static const byte *parseItem(const byte *lpBuf, LpMpalItem lpmiItem) {
 				lpBuf += 4;
 				break;
 
-			case 2:          // Variable assign
+			case 2: // Variable assign
 				len = *lpBuf;
 				lpBuf++;
 				lpmiItem->_command[curCmd]._lpszVarName = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, len + 1);
@@ -498,7 +498,6 @@ static const byte *ParseLocation(const byte *lpBuf, LpMpalLocation lpmlLocation)
 	return lpBuf;
 }
 
-
 /****************************************************************************\
 *       Exported functions
 \****************************************************************************/
@@ -539,7 +538,7 @@ bool parseMpc(const byte *lpBuf) {
 		GLOBALS._lpmvVars->_dwVal = READ_LE_UINT32(lpBuf);
 		lpBuf += 4;
 
-		lpBuf++;             // Skip 'ext'
+		lpBuf++; // Skip 'ext'
 		GLOBALS._lpmvVars++;
 	}
 

@@ -154,7 +154,6 @@ void rightToMe(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS._tony->setPattern(GLOBALS._tony->PAT_STANDRIGHT);
 }
 
-
 void tonySetPerorate(CORO_PARAM, uint32 bStatus, uint32, uint32, uint32) {
 	g_vm->getEngine()->setPerorate(bStatus);
 }
@@ -175,7 +174,6 @@ void mySleep(CORO_PARAM, uint32 dwTime, uint32, uint32, uint32) {
 void setAlwaysDisplay(CORO_PARAM, uint32 val, uint32, uint32, uint32) {
 	GLOBALS._bAlwaysDisplay = (val != 0);
 }
-
 
 void setPointer(CORO_PARAM, uint32 dwPointer, uint32, uint32, uint32) {
 	switch (dwPointer) {
@@ -214,7 +212,6 @@ VoiceHeader *searchVoiceHeader(uint32 codehi, uint32 codelo) {
 
 	return NULL;
 }
-
 
 void sendTonyMessage(CORO_PARAM, uint32 dwMessage, uint32 nX, uint32 nY, uint32) {
 	CORO_BEGIN_CONTEXT;
@@ -337,7 +334,6 @@ void changeBoxStatus(CORO_PARAM, uint32 nLoc, uint32 nBox, uint32 nStatus, uint3
 	GLOBALS._boxes->changeBoxStatus(nLoc, nBox, nStatus);
 }
 
-
 void custLoadLocation(CORO_PARAM, uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
 	CORO_BEGIN_CONTEXT;
 	uint32 h;
@@ -359,7 +355,6 @@ void custLoadLocation(CORO_PARAM, uint32 nLoc, uint32 tX, uint32 tY, uint32 bUse
 
 	CORO_END_CODE;
 }
-
 
 void sendFullscreenMsgStart(CORO_PARAM, uint32 nMsg, uint32 nFont, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
@@ -484,7 +479,6 @@ void closeLocation(CORO_PARAM, uint32, uint32, uint32, uint32) {
 
 	CORO_END_CODE;
 }
-
 
 void changeLocation(CORO_PARAM, uint32 nLoc, uint32 tX, uint32 tY, uint32 bUseStartPos) {
 	CORO_BEGIN_CONTEXT;
@@ -639,11 +633,9 @@ void tonyGenericPut2(CORO_PARAM, uint32 nDirection) {
 	CORO_END_CODE;
 }
 
-
 void tonyTakeUp1(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	tonyGenericTake1(coroParam, 0);
 }
-
 
 void tonyTakeMid1(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	tonyGenericTake1(coroParam, 1);
@@ -656,7 +648,6 @@ void tonyTakeDown1(CORO_PARAM, uint32, uint32, uint32, uint32) {
 void tonyTakeUp2(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	tonyGenericTake2(coroParam, 0);
 }
-
 
 void tonyTakeMid2(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	tonyGenericTake2(coroParam, 1);
@@ -689,7 +680,6 @@ void tonyPutMid2(CORO_PARAM, uint32, uint32, uint32, uint32) {
 void tonyPutDown2(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	tonyGenericPut2(coroParam, 2);
 }
-
 
 void tonyOnTheFloor(CORO_PARAM, uint32 dwParte, uint32, uint32, uint32) {
 	if (dwParte == 0)
@@ -1032,7 +1022,6 @@ void tonyScaredEnd(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	CORO_END_CODE;
 }
 
-
 void tonyDisgusted(CORO_PARAM, uint32 dwText, uint32, uint32, uint32) {
 	tonySetNumTexts(dwText);
 	GLOBALS._nTonyNextTalkType = GLOBALS._tony->TALK_DISGUSTED;
@@ -1101,7 +1090,6 @@ void tonyMacbeth(CORO_PARAM, uint32 nPos, uint32, uint32, uint32) {
 	}
 }
 
-
 void enableTony(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	GLOBALS._tony->show();
 }
@@ -1124,7 +1112,6 @@ void waitForPatternEnd(CORO_PARAM, uint32 nItem, uint32, uint32, uint32) {
 
 	CORO_END_CODE;
 }
-
 
 void setTonyPosition(CORO_PARAM, uint32 nX, uint32 nY, uint32 nLoc, uint32) {
 	GLOBALS._tony->setPosition(RMPoint(nX, nY), nLoc);
@@ -1252,16 +1239,13 @@ void syncScrollLocation(CORO_PARAM, uint32 nX, uint32 nY, uint32 sX, uint32 sY) 
 				_ctx->pt._y += (_ctx->dimy * _ctx->dwCurTime) / _ctx->dwTotalTime;
 			else
 				_ctx->pt._y -= (_ctx->dimy * _ctx->dwCurTime) / _ctx->dwTotalTime;
-
 		}
 
 		CORO_INVOKE_2(CoroScheduler.waitForSingleObject, g_vm->_hEndOfFrame, CORO_INFINITE);
 
 		GLOBALS._loc->setScrollPosition(_ctx->pt);
 		GLOBALS._tony->setScrollPosition(_ctx->pt);
-
 	}
-
 
 	// Set the position finale
 	if (sX) {
@@ -1281,7 +1265,6 @@ void syncScrollLocation(CORO_PARAM, uint32 nX, uint32 nY, uint32 sX, uint32 sY) 
 
 	CORO_END_CODE;
 }
-
 
 void changeHotspot(CORO_PARAM, uint32 dwCode, uint32 nX, uint32 nY, uint32) {
 	int i;
@@ -1303,7 +1286,6 @@ void changeHotspot(CORO_PARAM, uint32 dwCode, uint32 nX, uint32 nY, uint32) {
 
 	GLOBALS._loc->getItemFromCode(dwCode)->changeHotspot(RMPoint(nX, nY));
 }
-
 
 void autoSave(CORO_PARAM, uint32, uint32, uint32, uint32) {
 	g_vm->autoSave(coroParam);
@@ -1476,7 +1458,6 @@ void charSendMessage(CORO_PARAM, uint32 nChar, uint32 dwMessage, uint32 bIsBack,
 			_ctx->voice = NULL;
 		}
 
-
 		GLOBALS._curBackText = NULL;
 		delete _ctx->text;
 	}
@@ -1503,7 +1484,6 @@ void removeInventory(CORO_PARAM, uint32 dwCode, uint32, uint32, uint32) {
 void changeInventoryStatus(CORO_PARAM, uint32 dwCode, uint32 dwStatus, uint32, uint32) {
 	GLOBALS._inventory->changeItemStatus(dwCode, dwStatus);
 }
-
 
 /*
  * Master Characters
@@ -1534,7 +1514,6 @@ void mCharSetCode(CORO_PARAM, uint32 nChar, uint32 nCode, uint32, uint32) {
 void mCharResetCode(CORO_PARAM, uint32 nChar, uint32, uint32, uint32) {
 	GLOBALS._mCharacter[nChar]._item = GLOBALS._loc->getItemFromCode(GLOBALS._mCharacter[nChar]._code);
 }
-
 
 void mCharSetPosition(CORO_PARAM, uint32 nChar, uint32 nX, uint32 nY, uint32) {
 	assert(nChar < 10);
@@ -1879,7 +1858,6 @@ void sendDialogMessage(CORO_PARAM, uint32 nPers, uint32 nMsg, uint32, uint32) {
 	CORO_END_CODE;
 }
 
-
 // @@@@ This cannot be skipped!!!!!!!!!!!!!!!!!!!
 
 void startDialog(CORO_PARAM, uint32 nDialog, uint32 nStartGroup, uint32, uint32) {
@@ -1959,7 +1937,6 @@ void startDialog(CORO_PARAM, uint32 nDialog, uint32 nStartGroup, uint32, uint32)
 
 	CORO_END_CODE;
 }
-
 
 /*
  *  Sync between idle and mpal
@@ -2270,7 +2247,6 @@ void doCredits(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint32, uint32) {
 			_ctx->text[_ctx->i].setPosition(RMPoint(260, 70 + _ctx->i * 26));
 		}
 
-
 		// Set the position
 		_ctx->text[_ctx->i].setAlwaysDisplay();
 		_ctx->text[_ctx->i].setForcedTime(dwTime * 1000);
@@ -2520,8 +2496,6 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	GLOBALS._ambiance[57] = AMBIANCE_WIND;
 	GLOBALS._ambiance[58] = AMBIANCE_WIND;
 	GLOBALS._ambiance[60] = AMBIANCE_WIND;
-
-
 
 	// Create an event for the idle skipping
 	GLOBALS._hSkipIdle = CoroScheduler.createEvent(true, false);
