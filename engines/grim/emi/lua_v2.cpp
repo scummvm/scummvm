@@ -356,6 +356,17 @@ void Lua_V2::FileFindFirst() {
 		FileFindNext();
 }
 
+void Lua_V2::ThumbnailFromFile() {
+	lua_Object texIdObj = lua_getparam(1);
+	lua_Object filenameObj = lua_getparam(2);
+
+	if (!lua_isnumber(texIdObj) || !lua_isstring(filenameObj))
+		return;
+
+	warning("Lua_V2::ThumbnailFromFile: implement opcode, pushing true");
+	pushbool(true);
+}
+
 // Stub function for builtin functions not yet implemented
 /*static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -399,9 +410,9 @@ static void stubError(const char *funcName) {
 // STUB_FUNC2(Lua_V2::SetLightPosition)
 // STUB_FUNC2(Lua_V2::GetAngleBetweenVectors)
 // STUB_FUNC2(Lua_V2::IsPointInSector)
+// STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 
 // Monkey specific LUA_OPCODEs
-STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 STUB_FUNC2(Lua_V2::EnableActorPuck)
 STUB_FUNC2(Lua_V2::CompleteChore)
 STUB_FUNC2(Lua_V2::GetSoundVolume)
