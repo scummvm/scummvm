@@ -247,6 +247,11 @@ void Lua_V2::ToggleOverworld() {
 	if (backToNormal) {
 		GrimEngine::EngineMode previous = g_grim->getPreviousMode();
 		g_grim->setPreviousMode(GrimEngine::OverworldMode);
+		// HACK: ToggleOverworld is only called after we load a save game.
+		//       However, the engine saved PreviousMode as OverworldMode.
+		//       Reset it to normal here.
+		if (previous == GrimEngine::OverworldMode)
+			previous = GrimEngine::NormalMode;
 		g_grim->setMode(previous);
 	} else {
 		GrimEngine::EngineMode previous = g_grim->getMode();
