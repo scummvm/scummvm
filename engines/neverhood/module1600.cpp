@@ -1317,7 +1317,7 @@ void Scene1608::updateKlaymanCliprect() {
 Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule, true), _countdown1(1), _currentSymbolIndex(0), _symbolPosition(0), _changeCurrentSymbol(true), _isSolved(false) {
 
-	// TODO _vm->gameModule()->initScene3011Vars();
+	_vm->gameModule()->initCodeSymbolsPuzzle();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
 	
 	SetMessageHandler(&Scene1609::handleMessage);

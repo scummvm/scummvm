@@ -262,6 +262,23 @@ void GameModule::initCannonSymbolsPuzzle() {
 	}
 }
 
+void GameModule::initCodeSymbolsPuzzle() {
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x0CD09B50)) {
+		for (int i = 0; i < 12; ++i)
+			setSubVar(VA_CODE_SYMBOLS, i, i);
+		for (int i = 0; i < 12; ++i) {
+			uint32 index1 = _vm->_rnd->getRandomNumber(12 - 1);
+			uint32 index2 = _vm->_rnd->getRandomNumber(12 - 1);
+			uint32 temp = getSubVar(VA_CODE_SYMBOLS, index1);
+			setSubVar(VA_CODE_SYMBOLS, index1, getSubVar(VA_CODE_SYMBOLS, index2));
+			setSubVar(VA_CODE_SYMBOLS, index2, temp);
+		}
+		setGlobalVar(V_NOISY_SYMBOL_INDEX, _vm->_rnd->getRandomNumber(11 - 1) + 1);
+		setSubVar(VA_IS_PUZZLE_INIT, 0x0CD09B50, 1);
+	}
+
+}
+
 uint32 GameModule::getCurrRadioMusicFileHash() {
 	uint musicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
 	return (musicIndex % 5 != 0) ? 0 : kRadioMusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];

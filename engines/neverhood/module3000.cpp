@@ -1450,7 +1450,7 @@ void AsScene3011Symbol::change(int symbolIndex, bool isNoisy) {
 Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _updateStatus(0), _buttonClicked(false), _currentSymbolIndex(0) {
 
-	// TODO _vm->gameModule()->initScene3011Vars();
+	_vm->gameModule()->initCodeSymbolsPuzzle();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
 
 	SetMessageHandler(&Scene3011::handleMessage);
