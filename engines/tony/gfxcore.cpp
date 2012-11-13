@@ -1951,7 +1951,7 @@ void RMGfxSourceBuffer16::prepareImage() {
 	uint16 *buf = (uint16 *)_buf;
 
 	for (int i = 0; i < _dimx * _dimy; i++)
-		WRITE_LE_UINT16(&buf[i], FROM_LE_16(buf[i]) & 0x7FFF);
+		buf[i] = FROM_LE_16(buf[i]) & 0x7FFF;
 }
 
 RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy)
