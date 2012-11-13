@@ -380,11 +380,7 @@ static void stubError(const char *funcName) {
 // Monkey specific LUA_OPCODEs
 STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 STUB_FUNC2(Lua_V2::EnableActorPuck)
-STUB_FUNC2(Lua_V2::PlayChore)
-STUB_FUNC2(Lua_V2::PauseChore)
 STUB_FUNC2(Lua_V2::CompleteChore)
-STUB_FUNC2(Lua_V2::LockChoreSet)
-STUB_FUNC2(Lua_V2::UnlockChoreSet)
 STUB_FUNC2(Lua_V2::GetSoundVolume)
 STUB_FUNC2(Lua_V2::SetSoundVolume)
 STUB_FUNC2(Lua_V2::UpdateSoundPosition)

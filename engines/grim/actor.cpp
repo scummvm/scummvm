@@ -998,7 +998,10 @@ void Actor::pushCostume(const char *n) {
 	Costume *newCost = g_resourceloader->loadCostume(n, getCurrentCostume());
 
 	newCost->setColormap(NULL);
-	_costumeStack.push_back(newCost);
+	if (Common::String("fx/dumbshadow.cos").equals(n))
+		_costumeStack.push_front(newCost);
+	else
+		_costumeStack.push_back(newCost);
 }
 
 void Actor::setColormap(const char *map) {
@@ -1292,8 +1295,9 @@ void Actor::draw() {
 		}
 	}
 
-	// FIXME: if isAttached(), factor in the joint & actor rotation as well.
+	// FIXME: if isAttached(), factor in the joint rotation as well.
 	Math::Vector3d absPos = getWorldPos();
+	const Math::Quaternion rot = getRotationQuat();
 	if (!_costumeStack.empty()) {
 		g_grim->getCurrSet()->setupLights(absPos);
 
@@ -1305,7 +1309,7 @@ void Actor::draw() {
 			g_driver->setShadowMode();
 			if (g_driver->isHardwareAccelerated())
 				g_driver->drawShadowPlanes();
-			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
+			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
 			costume->draw();
 			g_driver->finishActorDraw();
 			g_driver->clearShadowMode();
@@ -1313,9 +1317,9 @@ void Actor::draw() {
 		}
 
 		bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
-		if (!isShadowCostume || _shadowActive) {
+		if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
 			// normal draw actor
-			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
+			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, _alphaMode != AlphaOff ? _globalAlpha : 1.f);
 			costume->draw();
 			g_driver->finishActorDraw();
 		}
@@ -1326,7 +1330,7 @@ void Actor::draw() {
 		x1 = y1 = 1000;
 		x2 = y2 = -1000;
 		if (!_costumeStack.empty()) {
-			g_driver->startActorDraw(absPos, _scale, _yaw, _pitch, _roll, _inOverworld, 1.f);
+			g_driver->startActorDraw(absPos, _scale, rot, _inOverworld, 1.f);
 			_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
 			g_driver->finishActorDraw();
 		}
@@ -1699,24 +1703,34 @@ Math::Vector3d Actor::getWorldPos() const {
 	if (! isAttached())
 		return getPos();
 
-	EMICostume * cost = static_cast<EMICostume *>(_attachedActor->getCurrentCostume());
-	assert(cost != NULL);
-
-	Math::Matrix4 attachedToWorld;
+	Math::Quaternion q = _attachedActor->getRotationQuat();
+	Math::Matrix4 attachedToWorld = q.toMatrix();
+	attachedToWorld.transpose();
 	attachedToWorld.setPosition(_attachedActor->getPos());
-	attachedToWorld.buildFromPitchYawRoll(_attachedActor->getPitch(), _attachedActor->getYaw(), _attachedActor->getRoll());
 
 	// If we were attached to a joint, factor in the joint's position & rotation,
 	// relative to its actor.
-	if (cost->_emiSkel && cost->_emiSkel->_obj) {
-		Joint * j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
-		const Math::Matrix4 & jointToAttached = j->_finalMatrix;
+	EMICostume *cost = static_cast<EMICostume *>(_attachedActor->getCurrentCostume());
+	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
+		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+		const Math::Matrix4 &jointToAttached = j->_finalMatrix;
 		attachedToWorld = attachedToWorld * jointToAttached;
 	}
 
 	Math::Vector3d myPos = getPos();
 	attachedToWorld.transform(&myPos, true);
 	return myPos;
+}
+
+Math::Quaternion Actor::getRotationQuat() const {
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Math::Quaternion ret = Math::Quaternion::fromEuler(_yaw, _pitch, _roll);
+		if (isAttached())
+			ret = ret * _attachedActor->getRotationQuat();
+		return ret;
+	} else {
+		return Math::Quaternion::fromEuler(_pitch, _roll, -_yaw);
+	}
 }
 
 void Actor::attachToActor(Actor *other, const char *joint) {
@@ -1726,20 +1740,17 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 	if (_attachedActor != NULL)
 		detach();
 
-	EMICostume * cost = static_cast<EMICostume *>(other->getCurrentCostume());
-	assert(cost != NULL);
-
 	Common::String jointStr = joint ? joint : "";
+
+	EMICostume *cost = static_cast<EMICostume *>(other->getCurrentCostume());
 	// If 'other' has a skeleton, check if it has the joint.
 	// Some models (pile o' boulders) don't have a skeleton,
 	// so we don't make the check in that case.
-	if (cost->_emiSkel && cost->_emiSkel->_obj)
+	if (cost && cost->_emiSkel && cost->_emiSkel->_obj)
 		assert(cost->_emiSkel->_obj->hasJoint(jointStr));
 
 	_attachedActor = other;
 	_attachedJoint = jointStr;
-	setPos(Math::Vector3d(0,0,0));
-	setRot(0,0,0);
 }
 
 void Actor::detach() {

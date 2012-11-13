@@ -50,8 +50,8 @@ public:
 	Quaternion(const Quaternion &q) : Vector4d(q.x(), q.y(), q.z(), q.w()) {} 
 	Quaternion(const Vector4d &vec) : Vector4d(vec.x(), vec.y(), vec.z(), vec.w()) {}
 	
-	Matrix4 toMatrix();
-	void toMatrix(Matrix4 &dst);
+	Matrix4 toMatrix() const;
+	void toMatrix(Matrix4 &dst) const;
 	/**
 	 * Slerps between this quaternion and to by factor t
 	 * @param to	the quaternion to slerp between
@@ -65,6 +65,7 @@ public:
 		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
 	}
 	Quaternion& operator=(Vector4d &vec);
+	Quaternion operator*(const Quaternion &quat) const;
 };
 
 } // end of namespace Math
