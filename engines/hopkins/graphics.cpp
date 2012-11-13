@@ -360,7 +360,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 
 	// Copy out the palette
 	const byte *palSrc = pcxDecoder.getPalette();
-	Common::copy((byte *)palSrc, (byte *)palSrc + PALETTE_BLOCK_SIZE, palette);
+	Common::copy((const byte *)palSrc, (const byte *)palSrc + PALETTE_BLOCK_SIZE, palette);
   
 	f.close();
 }

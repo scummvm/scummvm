@@ -919,7 +919,7 @@ LABEL_140:
 						}
 						if (_globals.SORTIE == 31) {
 							_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10);
-						} else if ((unsigned __int16)(_globals.SORTIE - 35) <= 6u) {
+						} else if ((uint16)(_globals.SORTIE - 35) <= 6u) {
 							_globals.fmusic = 13;
 							_globals.Max_Propre = 50;
 							_globals.Max_Ligne_Long = 40;
@@ -1308,7 +1308,7 @@ LABEL_243:
 														_globals.SORTIE = 51;
 														break;
 													default:
-														if ((unsigned __int16)(_globals.SORTIE - 194) > 5u) {
+														if ((uint16)(_globals.SORTIE - 194) > 5u) {
 															if (_globals.SORTIE == 151) {
 																_soundManager.WSOUND(16);
 																_globals.iRegul = 1;
@@ -2369,11 +2369,11 @@ void HopkinsEngine::Charge_Credits() {
 
 	char v0; // al@3
 	int v1; // edx@5
-	__int16 v2; // cx@5
+	int v2; // cx@5
 	byte *v3; // ebx@5
 	char v4; // al@6
-	__int16 v5; // cx@14
-	__int16 v7; // [sp+10h] [bp-10h]@1
+	int v5; // cx@14
+	int v7; // [sp+10h] [bp-10h]@1
 	char v8; // [sp+14h] [bp-Ch]@1
 	byte *v9; // [sp+18h] [bp-8h]@1
 	byte *ptr; // [sp+1Ch] [bp-4h]@1
