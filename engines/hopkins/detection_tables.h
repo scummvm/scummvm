@@ -100,6 +100,21 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+	{
+		// Hopkins FBI Linux, provided by Strangerke
+		{
+			"hopkins",
+			0,
+			{
+				{"Hopkins.bin", 0, "71611380cb31744bf909b8319a65e6e6", 275844},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformLinux,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
 	{ AD_TABLE_END_MARKER }
 };
 
