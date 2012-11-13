@@ -61,6 +61,7 @@
 #include "scumm/player_v2cms.h"
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
+#include "scumm/player_v3m.h"
 #include "scumm/player_v4a.h"
 #include "scumm/player_v5m.h"
 #include "scumm/resource.h"
@@ -1820,6 +1821,8 @@ void ScummEngine::setupMusic(int midi) {
 #endif
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
+	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_LOOM) {
+		_musicEngine = new Player_V3M(this, _mixer);
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY) {
 		_musicEngine = new Player_V5M(this, _mixer);
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
