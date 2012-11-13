@@ -247,6 +247,11 @@ void Lua_V2::ToggleOverworld() {
 	if (backToNormal) {
 		GrimEngine::EngineMode previous = g_grim->getPreviousMode();
 		g_grim->setPreviousMode(GrimEngine::OverworldMode);
+		// HACK: ToggleOverworld is only called after we load a save game.
+		//       However, the engine saved PreviousMode as OverworldMode.
+		//       Reset it to normal here.
+		if (previous == GrimEngine::OverworldMode)
+			previous = GrimEngine::NormalMode;
 		g_grim->setMode(previous);
 	} else {
 		GrimEngine::EngineMode previous = g_grim->getMode();
@@ -333,6 +338,40 @@ void Lua_V2::GammaEnabled() {
 	lua_pushnil();
 }
 
+void Lua_V2::FileFindFirst() {
+	lua_Object extObj = lua_getparam(1);
+	if (!lua_isstring(extObj)) {
+		lua_pushnil();
+		return;
+	}
+
+	FileFindDispose();
+
+	const char *extension = lua_getstring(extObj);
+	if (0 == strncmp(extension, "Saves/", 6))
+		extension += 6;
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	g_grim->_listFiles = saveFileMan->listSavefiles(extension);
+	Common::sort(g_grim->_listFiles.begin(), g_grim->_listFiles.end());
+	g_grim->_listFilesIter = g_grim->_listFiles.begin();
+
+	if (g_grim->_listFilesIter == g_grim->_listFiles.end())
+		lua_pushnil();
+	else
+		FileFindNext();
+}
+
+void Lua_V2::ThumbnailFromFile() {
+	lua_Object texIdObj = lua_getparam(1);
+	lua_Object filenameObj = lua_getparam(2);
+
+	if (!lua_isnumber(texIdObj) || !lua_isstring(filenameObj))
+		return;
+
+	warning("Lua_V2::ThumbnailFromFile: implement opcode, pushing true");
+	pushbool(true);
+}
+
 // Stub function for builtin functions not yet implemented
 /*static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -376,9 +415,9 @@ static void stubError(const char *funcName) {
 // STUB_FUNC2(Lua_V2::SetLightPosition)
 // STUB_FUNC2(Lua_V2::GetAngleBetweenVectors)
 // STUB_FUNC2(Lua_V2::IsPointInSector)
+// STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 
 // Monkey specific LUA_OPCODEs
-STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 STUB_FUNC2(Lua_V2::EnableActorPuck)
 STUB_FUNC2(Lua_V2::CompleteChore)
 STUB_FUNC2(Lua_V2::GetSoundVolume)

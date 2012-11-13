@@ -8,44 +8,39 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
 
-#ifndef GRIM_AIFFTRACK_H
-#define GRIM_AIFFTRACK_H
+#ifndef GRIM_POOLSOUND_H
+#define GRIM_POOLSOUND_H
 
-#include "common/str.h"
-#include "common/stream.h"
-#include "engines/grim/emi/sound/track.h"
+#include "engines/grim/pool.h"
+#include "engines/grim/emi/sound/aifftrack.h"
 
-namespace Audio {
-	class AudioStream;
-	class SoundHandle;
-}
 
 namespace Grim {
+	class PoolSound : public PoolObject<PoolSound>{
+	public:
+		PoolSound();
+		PoolSound(const Common::String &filename);
+		~PoolSound();
 
-class AIFFTrack : public SoundTrack {
-public:
-	AIFFTrack(Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeOfStream = DisposeAfterUse::YES);
-	~AIFFTrack();
-	bool openSound(Common::String soundName, Common::SeekableReadStream *file);
-	bool isPlaying() { return true; }
-	bool isStreamOpen() { return _stream != NULL; }
-	void setLooping(bool looping);
-	bool play();
-private:
-	bool _looping;
-};
+		void openFile(const Common::String &filename);
+		void saveState(SaveGame *state);
+		void restoreState(SaveGame *state);
 
+		static int32 getStaticTag() { return MKTAG('A', 'I', 'F', 'F'); }
+		AIFFTrack *track;
+	};
 }
+
 #endif

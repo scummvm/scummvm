@@ -164,6 +164,7 @@ protected:
 	DECLARE_LUA_OPCODE(SetActorTalkChore);
 	DECLARE_LUA_OPCODE(SetActorMumblechore);
 	DECLARE_LUA_OPCODE(GammaEnabled);
+	DECLARE_LUA_OPCODE(FileFindFirst);
 	DECLARE_LUA_OPCODE(WalkActorToAvoiding);
 };
 

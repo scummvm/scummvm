@@ -193,9 +193,11 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 
 void Set::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
-	savedState->writeLESint32(_numCmaps);
-	for (int i = 0; i < _numCmaps; ++i) {
-		savedState->writeString(_cmaps[i]->getFilename());
+	if (g_grim->getGameType() == GType_GRIM) {
+		savedState->writeLESint32(_numCmaps);
+		for (int i = 0; i < _numCmaps; ++i) {
+			savedState->writeString(_cmaps[i]->getFilename());
+		}
 	}
 	savedState->writeLEUint32((uint32)(_currSetup - _setups)); // current setup id
 	savedState->writeBool(_locked);
@@ -229,11 +231,13 @@ void Set::saveState(SaveGame *savedState) const {
 
 bool Set::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
-	_numCmaps = savedState->readLESint32();
-	_cmaps = new CMapPtr[_numCmaps];
-	for (int i = 0; i < _numCmaps; ++i) {
-		Common::String str = savedState->readString();
-		_cmaps[i] = g_resourceloader->getColormap(str);
+	if (g_grim->getGameType() == GType_GRIM) {
+		_numCmaps = savedState->readLESint32();
+		_cmaps = new CMapPtr[_numCmaps];
+		for (int i = 0; i < _numCmaps; ++i) {
+			Common::String str = savedState->readString();
+			_cmaps[i] = g_resourceloader->getColormap(str);
+		}
 	}
 
 	int32 currSetupId = savedState->readLEUint32();

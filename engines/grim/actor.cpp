@@ -68,7 +68,7 @@ Actor::Actor(const Common::String &actorName) :
 		_walkedLast(false), _walkedCur(false),
 		_lastTurnDir(0), _currTurnDir(0),
 		_sayLineText(0), _talkDelay(0),
-		_attachedActor(NULL), _attachedJoint(""),
+		_attachedActor(0), _attachedJoint(""),
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
 		_shadowActive(false) {
 	_lookingMode = false;
@@ -106,7 +106,7 @@ Actor::Actor() {
 	_collisionScale = 1.f;
 	_inOverworld = false;
 
-	_attachedActor = NULL;
+	_attachedActor = 0;
 	_attachedJoint = "";
 
 	_alphaMode = AlphaOff;
@@ -245,6 +245,18 @@ void Actor::saveState(SaveGame *savedState) const {
 	for (Common::List<Math::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
 		savedState->writeVector3d(*i);
 	}
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		savedState->writeByte(_alphaMode);
+		savedState->writeFloat(_globalAlpha);
+	
+		savedState->writeBool(_inOverworld);
+		savedState->writeLESint32(_sortOrder);
+		savedState->writeBool(_shadowActive);
+
+		savedState->writeLESint32(_attachedActor);
+		savedState->writeString(_attachedJoint);
+	}
 }
 
 bool Actor::restoreState(SaveGame *savedState) {
@@ -380,6 +392,18 @@ bool Actor::restoreState(SaveGame *savedState) {
 	size = savedState->readLEUint32();
 	for (uint32 i = 0; i < size; ++i) {
 		_path.push_back(savedState->readVector3d());
+	}
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		_alphaMode = (AlphaMode) savedState->readByte();
+		_globalAlpha = savedState->readFloat();
+	
+		_inOverworld  = savedState->readBool();
+		_sortOrder    = savedState->readLESint32();
+		_shadowActive = savedState->readBool();
+
+		_attachedActor = savedState->readLESint32();
+		_attachedJoint = savedState->readString();
 	}
 
 	return true;
@@ -716,7 +740,7 @@ Math::Vector3d Actor::getSimplePuckVector() const {
 Math::Vector3d Actor::getPuckVector() const {
 	Math::Vector3d forwardVec = getSimplePuckVector();
 
-	Set * currSet = g_grim->getCurrSet();
+	Set *currSet = g_grim->getCurrSet();
 	if (!currSet)
 		return forwardVec;
 
@@ -1703,14 +1727,15 @@ Math::Vector3d Actor::getWorldPos() const {
 	if (! isAttached())
 		return getPos();
 
-	Math::Quaternion q = _attachedActor->getRotationQuat();
+	Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
+	Math::Quaternion q = attachedActor->getRotationQuat();
 	Math::Matrix4 attachedToWorld = q.toMatrix();
 	attachedToWorld.transpose();
-	attachedToWorld.setPosition(_attachedActor->getPos());
+	attachedToWorld.setPosition(attachedActor->getPos());
 
 	// If we were attached to a joint, factor in the joint's position & rotation,
 	// relative to its actor.
-	EMICostume *cost = static_cast<EMICostume *>(_attachedActor->getCurrentCostume());
+	EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
 	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
 		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
 		const Math::Matrix4 &jointToAttached = j->_finalMatrix;
@@ -1725,8 +1750,10 @@ Math::Vector3d Actor::getWorldPos() const {
 Math::Quaternion Actor::getRotationQuat() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		Math::Quaternion ret = Math::Quaternion::fromEuler(_yaw, _pitch, _roll);
-		if (isAttached())
-			ret = ret * _attachedActor->getRotationQuat();
+		if (isAttached()) {
+			Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
+			ret = ret * attachedActor->getRotationQuat();
+		}
 		return ret;
 	} else {
 		return Math::Quaternion::fromEuler(_pitch, _roll, -_yaw);
@@ -1735,9 +1762,9 @@ Math::Quaternion Actor::getRotationQuat() const {
 
 void Actor::attachToActor(Actor *other, const char *joint) {
 	assert(other != NULL);
-	if (other == _attachedActor)
+	if (other->getId() == _attachedActor)
 		return;
-	if (_attachedActor != NULL)
+	if (_attachedActor != 0)
 		detach();
 
 	Common::String jointStr = joint ? joint : "";
@@ -1749,18 +1776,20 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 	if (cost && cost->_emiSkel && cost->_emiSkel->_obj)
 		assert(cost->_emiSkel->_obj->hasJoint(jointStr));
 
-	_attachedActor = other;
+	_attachedActor = other->getId();
 	_attachedJoint = jointStr;
 }
 
 void Actor::detach() {
-	if (_attachedActor != NULL) {
-		_attachedJoint = "";
-		// FIXME: Use last known position of attached joint
-		setPos(_attachedActor->_pos);
-		setRot(0,0,0);
-		_attachedActor = NULL;
-	}
+	if (!isAttached())
+		return;
+	
+	// FIXME: Use last known position of attached joint
+	Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
+	setPos(attachedActor->_pos);
+	setRot(0, 0, 0);
+	_attachedActor = 0;
+	_attachedJoint = "";
 }
 
 unsigned const int Actor::Chore::fadeTime = 150;

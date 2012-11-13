@@ -44,6 +44,7 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/lua_v1.h"
 #include "engines/grim/emi/lua_v2.h"
+#include "engines/grim/emi/poolsound.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/savegame.h"
@@ -758,6 +759,11 @@ void GrimEngine::savegameRestore() {
 	Actor::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Actors restored succesfully.");
 
+	if (getGameType() == GType_MONKEY4) {
+		PoolSound::getPool().restoreObjects(_savedState);
+		Debug::debug(Debug::Engine, "Pool sounds saved succesfully.");
+	}
+
 	restoreGRIM();
 	Debug::debug(Debug::Engine, "Engine restored succesfully.");
 
@@ -854,11 +860,14 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 void GrimEngine::savegameSave() {
 	debug("GrimEngine::savegameSave() started.");
 	_savegameSaveRequest = false;
-	char filename[200];
+	Common::String filename;
 	if (_savegameFileName.size() == 0) {
-		strcpy(filename, "grim.sav");
+		filename = "grim.sav";
 	} else {
-		strcpy(filename, _savegameFileName.c_str());
+		filename = _savegameFileName;
+	}
+	if (getGameType() == GType_MONKEY4 && filename.contains('/')) {
+		filename = Common::lastPathComponent(filename, '/');
 	}
 	_savedState = SaveGame::openForSaving(filename);
 	if (!_savedState) {
@@ -894,6 +903,11 @@ void GrimEngine::savegameSave() {
 
 	Actor::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Actors saved succesfully.");
+
+	if (getGameType() == GType_MONKEY4) {
+		PoolSound::getPool().saveObjects(_savedState);
+		Debug::debug(Debug::Engine, "Pool sounds saved succesfully.");
+	}
 
 	saveGRIM();
 	Debug::debug(Debug::Engine, "Engine saved succesfully.");

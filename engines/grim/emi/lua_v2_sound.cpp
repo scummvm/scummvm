@@ -27,6 +27,7 @@
 #include "engines/grim/emi/sound/aifftrack.h"
 #include "engines/grim/emi/sound/scxtrack.h"
 #include "engines/grim/emi/lua_v2.h"
+#include "engines/grim/emi/poolsound.h"
 #include "engines/grim/lua/lua.h"
 
 #include "engines/grim/sound.h"
@@ -174,26 +175,6 @@ void Lua_V2::ImFlushStack() {
 	warning("Lua_V2::ImFlushStack: implement opcode");
 }
 
-class PoolSound : public PoolObject<PoolSound>{
-public:
-	PoolSound(const Common::String &filename);
-	~PoolSound();
-	static int32 getStaticTag() { return MKTAG('A', 'I', 'F', 'F'); }
-	AIFFTrack *track;
-};
-
-PoolSound::PoolSound(const Common::String &filename) {
-	track = new AIFFTrack(Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
-	if (!stream)
-		return;
-	track->openSound(filename, stream);
-}
-
-// Called when the engine restarts or Lua code calls FreeSound
-PoolSound::~PoolSound() {
-	delete track;
-}
 
 void Lua_V2::LoadSound() {
 	lua_Object strObj = lua_getparam(1);
