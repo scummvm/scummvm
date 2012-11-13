@@ -53,7 +53,7 @@ void EMISpriteComponent::init() {
 	char data[8];
 	stream->read(data, sizeof(data));
 	width = get_float(data);
-	height = get_float(data+4);
+	height = get_float(data + 4);
 
 
 	_sprite = new Sprite();
@@ -62,7 +62,7 @@ void EMISpriteComponent::init() {
 	_sprite->_height = height;
 	_sprite->_next = NULL;
 	_sprite->_visible = true;
-	_sprite->_pos.set(0,0,0);
+	_sprite->_pos.set(0, 0, 0);
 
 	delete[] texname;
 	delete stream;
