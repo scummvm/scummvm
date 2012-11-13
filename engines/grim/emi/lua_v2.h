@@ -157,6 +157,7 @@ protected:
 	DECLARE_LUA_OPCODE(RenderModeUser);
 	DECLARE_LUA_OPCODE(GetFontDimensions);
 	DECLARE_LUA_OPCODE(GetTextObjectDimensions);
+	DECLARE_LUA_OPCODE(GetTextCharPosition);
 	DECLARE_LUA_OPCODE(SetActorRestChore);
 	DECLARE_LUA_OPCODE(SetActorWalkChore);
 	DECLARE_LUA_OPCODE(SetActorTurnChores);

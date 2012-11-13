@@ -158,13 +158,11 @@ void TextObject::reposition() {
 				_posX = _posX + 640;
 			if (_justify == CENTER && _posX == 0)
 				_posX = 320;
-		} else if (g_grim->getMode() == GrimEngine::OverworldMode) {
-			_posX = 320 + _posX;
-			_posY = 240 - _posY;
 		} else {
 			_posX = 320 + _posX;
-			_posY = abs(_posY);
+			_posY = 240 - _posY;
 		}
+
 		Debug::debug(Debug::TextObjects, "Repositioning (%d, %d) -> (%d, %d)", _x, _y, _posX, _posY);
 		assert(0 <= _posX && _posX <= 640);
 		assert(0 <= _posY && _posY <= 480);

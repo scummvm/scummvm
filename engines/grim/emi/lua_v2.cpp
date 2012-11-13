@@ -21,13 +21,16 @@
  */
 
 #include "common/endian.h"
+#include "common/foreach.h"
 
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/lauxlib.h"
 
+#include "engines/grim/resource.h"
 #include "engines/grim/set.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/font.h"
 
 #include "engines/grim/movie/movie.h"
 
@@ -189,9 +192,43 @@ void Lua_V2::PurgeText() {
 }
 
 void Lua_V2::GetFontDimensions() {
-	warning("Lua_V2::GetFontDimensions: returns 0,0");
-	lua_pushnumber(0.f);
-	lua_pushnumber(0.f);
+	lua_Object fontObj = lua_getparam(1);
+	if (!lua_isstring(fontObj))
+		return;
+
+	const char *fontName = lua_getstring(fontObj);
+
+	Font *font = NULL;
+	foreach (Font *f, Font::getPool()) {
+		if (f->getFilename() == fontName) {
+			font = f;
+		}
+	}
+	if (!font) {
+		font = g_resourceloader->loadFont(fontName);
+	}
+	if (font) {
+		int32 h = font->getBaseOffsetY();
+		int32 w = font->getCharWidth('w');
+		warning("Lua_V2::GetFontDimensions for font '%s': returns %d,%d", fontName, h, w);
+		lua_pushnumber(w);
+		lua_pushnumber(h);
+	} else {
+		warning("Lua_V2::GetFontDimensions for font '%s': returns 0,0", fontName);
+		lua_pushnumber(0.f);
+		lua_pushnumber(0.f);
+	}
+}
+
+void Lua_V2::GetTextCharPosition() {
+	lua_Object textObj = lua_getparam(1);
+	lua_Object posObj = lua_getparam(2);
+	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
+		TextObject *textObject = gettextobject(textObj);
+		int pos = (int)lua_getnumber(posObj);
+		float textPos = textObject->getTextCharPosition(pos);
+		lua_pushnumber(textPos / 320.f);
+	}
 }
 
 void Lua_V2::GetTextObjectDimensions() {
@@ -199,8 +236,8 @@ void Lua_V2::GetTextObjectDimensions() {
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
-		lua_pushnumber(textObject->getBitmapWidth()/640.f);
-		lua_pushnumber(textObject->getBitmapHeight()/480.f);
+		lua_pushnumber(textObject->getBitmapWidth() / 320.f);
+		lua_pushnumber(textObject->getBitmapHeight() / 240.f);
 	}
 }
 

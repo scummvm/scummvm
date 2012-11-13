@@ -598,15 +598,18 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glEnable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
 
+	float halfWidth = (sprite->_width / 2) * _scaleW;
+	float halfHeight = (sprite->_height / 2) * _scaleH;
+
 	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f((sprite->_width / 2) *_scaleW, sprite->_height * _scaleH, 0.0f);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f((sprite->_width / 2) * _scaleW, 0.0f, 0.0f);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f((-sprite->_width / 2) * _scaleW, 0.0f, 0.0f);
+	glVertex3f(-halfWidth, -halfHeight, 0.0f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-halfWidth, +halfHeight, 0.0f);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f((-sprite->_width / 2) * _scaleW, sprite->_height * _scaleH, 0.0f);
+	glVertex3f(+halfWidth, +halfHeight, 0.0f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(+halfWidth, -halfHeight, 0.0f);
 	glEnd();
 
 	glEnable(GL_LIGHTING);
@@ -1040,7 +1043,9 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 		int y = text->getLineY(j);
 		for (uint i = 0; i < line.size(); ++i) {
 			uint8 character = line[i];
-			float w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
+			float w = y + font->getCharStartingLine(character);
+			if (g_grim->getGameType() == GType_GRIM)
+				w += font->getBaseOffsetY();
 			float z = x + font->getCharStartingCol(character);
 			z *= _scaleW;
 			w *= _scaleH;
