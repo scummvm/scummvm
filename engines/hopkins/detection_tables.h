@@ -27,7 +27,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		// Hopkins FBI Linux Demo 1.00
 		{
 			"hopkins",
-			0,
+			"Linux Demo v1.00",
 			{
 				{"Hopkins-PDemo.bin", 0, "88b4d6e14b9b1407083cb3d1213c0fa7", 272027},
 				AD_LISTEND
@@ -43,7 +43,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		// Hopkins FBI Linux Demo 1.02
 		{
 			"hopkins",
-			0,
+			"Linux Demo v1.02",
 			{
 				{"Hopkins-PDemo.bin", 0, "f82f4e698f3a189419351be0de2b2f8e", 273760},
 				AD_LISTEND
@@ -74,7 +74,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		// Hopkins FBI Win95 Demo, provided by Strangerke
 		{
 			"hopkins",
-			0,
+			"Win95 Demo",
 			{
 				{"Hopkins.exe", 0, "0c9ebfe371f4dcf84a49f333f04839a0", 376897},
 				AD_LISTEND
