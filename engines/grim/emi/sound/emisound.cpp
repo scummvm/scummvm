@@ -251,7 +251,11 @@ void EMISound::initMusicTable() {
 }
 
 void EMISound::selectMusicSet(int setId) {
-	assert(g_grim->getGamePlatform() != Common::kPlatformPS2);
+	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		assert(setId == 0);
+		_musicPrefix = "";
+		return;
+	}
 	if (setId == 0) {
 		_musicPrefix = "Textures/spago/";
 	} else if (setId == 1) {
