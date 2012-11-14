@@ -46,6 +46,8 @@ public:
 	Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask);
 	virtual ~Player_Mac();
 
+	void init();
+
 	// MusicEngine API
 	virtual void setMusicVolume(int vol);
 	virtual void startSound(int sound);

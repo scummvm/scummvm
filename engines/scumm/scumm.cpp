@@ -1823,8 +1823,10 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_LOOM) {
 		_musicEngine = new Player_V3M(this, _mixer);
+		((Player_V3M *)_musicEngine)->init();
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY) {
 		_musicEngine = new Player_V5M(this, _mixer);
+		((Player_V5M *)_musicEngine)->init();
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {

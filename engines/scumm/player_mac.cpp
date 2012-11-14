@@ -36,11 +36,12 @@ Player_Mac::Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChan
 	  _soundPlaying(-1),
 	  _numberOfChannels(numberOfChannels),
 	  _channelMask(channelMask) {
-
 	assert(scumm);
 	assert(mixer);
+}
 
-	if (checkMusicAvailable()) {
+void Player_Mac::init() {
+	if (!checkMusicAvailable()) {
 		_channel = NULL;
 		return;
 	}
