@@ -172,8 +172,6 @@ void Lua_V2::EnableAudioGroup() {
 		state = true;
 
 	// FIXME: func(group, state);
-	assert (state == 1 || state == 0);
-	
 	switch (group) {
 		case 1: // SFX
 			g_system->getMixer()->muteSoundType(Audio::Mixer::kSFXSoundType, !state);
