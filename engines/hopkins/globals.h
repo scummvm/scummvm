@@ -288,7 +288,7 @@ struct CreditItem {
 	int _colour;
 	int _linePosY;
 	int _lineSize;
-	byte _line[49];
+	byte _line[50];
 };
 
 class HopkinsEngine;

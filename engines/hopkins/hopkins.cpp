@@ -104,8 +104,6 @@ Common::Error HopkinsEngine::run() {
 
 	_soundManager.WSOUND_INIT();
 
-	Credits();
-
 	bool retVal;
 	if (getPlatform() == Common::kPlatformLinux) {
 		if (getIsDemo())
@@ -2369,12 +2367,6 @@ int HopkinsEngine::PWBASE() {
 void HopkinsEngine::Charge_Credits() {
 	warning("Charge_Credits()");
 
-	CreditItem v3; // ebx@5
-	char v4; // al@6
-	char v8; // [sp+14h] [bp-Ch]@1
-	byte *v9; // [sp+18h] [bp-8h]@1
-	byte *ptr; // [sp+1Ch] [bp-4h]@1
-
 	_globals.Credit_y = 440;
 	_globals.Credit_l = 10;
 	_globals.Credit_h = 40;
@@ -2394,39 +2386,38 @@ void HopkinsEngine::Charge_Credits() {
 		break;
 	}
 
-	ptr = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
-	v9 = ptr;
+	byte *bufPtr = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
+	byte *curPtr = bufPtr;
 	int idxLines = 0;
-	v8 = 0;
+	bool loopCond = false;
 	do {
-		if (*v9 == '%') {
-			if (v9[1] == '%') {
-				v8 = 1;
-				goto LABEL_13;
+		if (*curPtr == '%') {
+			if (curPtr[1] == '%') {
+				loopCond = true;
+				break;
 			}
-			_globals.Credit[idxLines]._colour = v9[1];
+			_globals.Credit[idxLines]._colour = curPtr[1];
 			_globals.Credit[idxLines]._actvFl = true;
 			_globals.Credit[idxLines]._linePosY = _globals.Credit_y + idxLines * _globals.Credit_step;
 			int idxBuf = 0;
-			v3 = _globals.Credit[idxLines];
 			while (1) {
-				v4 = *(v9 + idxBuf + 3);
-				if (v4 == '%' || v4 == 10)
+				byte curChar = curPtr[idxBuf + 3];
+				if (curChar == '%' || curChar == 10)
 					break;
-				v3._line[idxBuf] = v4;
+				_globals.Credit[idxLines]._line[idxBuf] = curChar;
 				idxBuf++;
-				if (idxBuf > 49)
-					goto LABEL_11;
+				if (idxBuf >= 49)
+					break;
 			}
-			v3._line[idxBuf] = 0;
+			_globals.Credit[idxLines]._line[idxBuf] = 0;
 			_globals.Credit[idxLines]._lineSize = idxBuf - 1;
-LABEL_11:
+			curPtr = curPtr + idxBuf + 2;
 			++idxLines;
+		} else {
+			curPtr++;
 		}
 		_globals.Credit_lignes = idxLines;
-LABEL_13:
-		v9 = v9 + 1;
-	} while (v8 != 1);
+	} while (!loopCond);
 
 /* Useless
 	v5 = 0;
@@ -2436,18 +2427,17 @@ LABEL_13:
 		while (v5 < _globals.Credit_lignes);
 	}
 */
-	_globals.dos_free2(ptr);
+	_globals.dos_free2(bufPtr);
 }
 
 void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 	warning("CREDIT_AFFICHE");
 
-	byte *v3 = buffer;
-	byte *v4 = buffer;
+	byte *bufPtr = buffer;
 	int strWidth = 0;
 	byte curChar;
 	while (1) {
-		curChar = *v4++;
+		curChar = *bufPtr++;
 		if (!curChar)
 			break;
 		if (curChar > 31)
@@ -2471,8 +2461,9 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 	if (endPosY > _globals.Credit_by1)
 		_globals.Credit_by1 = endPosY;
 
+	bufPtr = buffer;
 	while (1) {
-		curChar = *v3++;
+		curChar = *bufPtr++;
 		if (!curChar)
 			break;
 		if (curChar > 31) {
@@ -2513,7 +2504,8 @@ void HopkinsEngine::Credits() {
 						col = 162;
 						break;
 					default:
-						warning("Credit line skipped, unknown colour");
+						warning("Unknown colour, default to col #1");
+						col = 163;
 						break;
 					}
 					if (_globals.Credit[i]._lineSize != -1)
@@ -2539,7 +2531,7 @@ void HopkinsEngine::Credits() {
 		_globals.Credit_bx1 = -1;
 		_globals.Credit_by = -1;
 		_globals.Credit_by1 = -1;
-	} while (_eventsManager.BMOUSE() != 1);
+	} while ((_eventsManager.BMOUSE() != 1) && (!g_system->getEventManager()->shouldQuit()));
 	_graphicsManager.FADE_OUTW();
 	_globals.iRegul = 1;
 	_eventsManager.souris_flag = true;
