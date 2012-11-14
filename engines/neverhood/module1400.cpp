@@ -1300,11 +1300,11 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1402>(380, 463);
+		insertKlayman<KmScene1403>(380, 463);
 		setMessageList(0x004B1F18);
 	} else {
 		// Klaymen entering from the right
-		insertKlayman<KmScene1402>(640, 463);
+		insertKlayman<KmScene1403>(640, 463);
 		setMessageList(0x004B1F20);
 	}
 	_klayman->setRepl(64, 0);
