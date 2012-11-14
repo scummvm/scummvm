@@ -186,10 +186,11 @@ static void io_readfrom() {
 		setreturn(id, FINPUT);
 	} else {
 		const char *s = luaL_check_string(FIRSTARG);
+		Common::String fileName = Common::lastPathComponent(s, '\\');
 		LuaFile *current = NULL;
 		Common::SeekableReadStream *inFile = NULL;
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		inFile = saveFileMan->openForLoading(s);
+		inFile = saveFileMan->openForLoading(fileName);
 		if (!inFile) {
 			inFile = g_resourceloader->openNewStreamFile(s);
 		}
