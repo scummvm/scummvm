@@ -391,8 +391,7 @@ void Sound::playSound(int soundID) {
 	}
 	else {
 
-		if (_vm->_game.id == GID_MONKEY_VGA || _vm->_game.id == GID_MONKEY_EGA
-			|| (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformMacintosh)) {
+		if (_vm->_game.id == GID_MONKEY_VGA || _vm->_game.id == GID_MONKEY_EGA) {
 			// Works around the fact that in some places in MonkeyEGA/VGA,
 			// the music is never explicitly stopped.
 			// Rather it seems that starting a new music is supposed to
