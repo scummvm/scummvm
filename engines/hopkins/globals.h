@@ -283,6 +283,14 @@ struct Sauvegarde {
 	int16 inventory[35];	// Originally at offset 1300 of data array
 };
 
+struct CreditItem {
+	bool _actvFl;
+	int _colour;
+	int _linePosY;
+	int _lineSize;
+	byte _line[49];
+};
+
 class HopkinsEngine;
 
 /**
@@ -458,7 +466,7 @@ public:
 	int Credit_by1;
 	int Credit_y;
 	int Credit_lignes;
-	byte Credit[12000];
+	CreditItem Credit[200];
 	int Credit_step;
 	int Credit_l;
 	int Credit_h;

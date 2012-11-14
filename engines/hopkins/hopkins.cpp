@@ -104,6 +104,8 @@ Common::Error HopkinsEngine::run() {
 
 	_soundManager.WSOUND_INIT();
 
+	Credits();
+
 	bool retVal;
 	if (getPlatform() == Common::kPlatformLinux) {
 		if (getIsDemo())
@@ -2367,13 +2369,8 @@ int HopkinsEngine::PWBASE() {
 void HopkinsEngine::Charge_Credits() {
 	warning("Charge_Credits()");
 
-	char v0; // al@3
-	int v1; // edx@5
-	int v2; // cx@5
-	byte *v3; // ebx@5
+	CreditItem v3; // ebx@5
 	char v4; // al@6
-	int v5; // cx@14
-	int v7; // [sp+10h] [bp-10h]@1
 	char v8; // [sp+14h] [bp-Ch]@1
 	byte *v9; // [sp+18h] [bp-8h]@1
 	byte *ptr; // [sp+1Ch] [bp-4h]@1
@@ -2382,53 +2379,63 @@ void HopkinsEngine::Charge_Credits() {
 	_globals.Credit_l = 10;
 	_globals.Credit_h = 40;
 	_globals.Credit_step = 45;
-	_fileManager.CONSTRUIT_FICHIER(_globals.HOPLINK, "CREAN.TXT");
+	switch (_globals.FR) {
+	case 0:
+		_fileManager.CONSTRUIT_FICHIER(_globals.HOPLINK, "CREAN.TXT");
+		break;
+	case 1:
+		_fileManager.CONSTRUIT_FICHIER(_globals.HOPLINK, "CREFR.TXT");
+		break;
+	case 2:
+		_fileManager.CONSTRUIT_FICHIER(_globals.HOPLINK, "CREES.TXT");
+		break;
+	default:
+		error("Charge_Credits(): Unhandled language");
+		break;
+	}
+
 	ptr = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
 	v9 = ptr;
-	v7 = 0;
+	int idxLines = 0;
 	v8 = 0;
 	do {
-		if (*v9 == 37) {
-			v0 = *(v9 + 1);
-			if (v0 == 37) {
+		if (*v9 == '%') {
+			if (v9[1] == '%') {
 				v8 = 1;
 				goto LABEL_13;
 			}
-			v1 = 60 * v7;
-			_globals.Credit[v1 + 1] = v0;
-			_globals.Credit[v1] = 1;
-//			*(_DWORD *)(v1 + _globals.Credit[4]) = _globals.Credit_y + v7 * _globals.Credit_step;
-			_globals.Credit[4 + v1] = _globals.Credit_y + v7 * _globals.Credit_step & 0xFF;
-			_globals.Credit[4 + v1 + 1] = (_globals.Credit_y + v7 * _globals.Credit_step) >> 8 & 0xFF;
-			_globals.Credit[4 + v1 + 1] = (_globals.Credit_y + v7 * _globals.Credit_step) >> 16 & 0xFF;
-			_globals.Credit[4 + v1 + 1] = (_globals.Credit_y + v7 * _globals.Credit_step) >> 24 & 0xFF;
-			v2 = 0;
-			v3 = &_globals.Credit[v1];
+			_globals.Credit[idxLines]._colour = v9[1];
+			_globals.Credit[idxLines]._actvFl = true;
+			_globals.Credit[idxLines]._linePosY = _globals.Credit_y + idxLines * _globals.Credit_step;
+			int idxBuf = 0;
+			v3 = _globals.Credit[idxLines];
 			while (1) {
-				v4 = *(v9 + v2 + 3);
-				if (v4 == 37 || v4 == 10)
+				v4 = *(v9 + idxBuf + 3);
+				if (v4 == '%' || v4 == 10)
 					break;
-				v3[v2++ + 10] = v4;
-				if (v2 > 49)
+				v3._line[idxBuf] = v4;
+				idxBuf++;
+				if (idxBuf > 49)
 					goto LABEL_11;
 			}
-			v3[v2 + 10] = 0;
-//			*(_WORD *)&_globals.Credit[60 * v7 + 8] = v2 - 1;
-			_globals.Credit[60 * v7 + 8] = (v2 - 1) & 0xFF;
-			_globals.Credit[60 * v7 + 9] = ((v2 - 1) >> 8) & 0xFF;
+			v3._line[idxBuf] = 0;
+			_globals.Credit[idxLines]._lineSize = idxBuf - 1;
 LABEL_11:
-			++v7;
+			++idxLines;
 		}
-		_globals.Credit_lignes = v7;
+		_globals.Credit_lignes = idxLines;
 LABEL_13:
 		v9 = v9 + 1;
 	} while (v8 != 1);
+
+/* Useless
 	v5 = 0;
 	if (_globals.Credit_lignes > 0) {
 		do
 			++v5;
 		while (v5 < _globals.Credit_lignes);
 	}
+*/
 	_globals.dos_free2(ptr);
 }
 
@@ -2489,26 +2496,28 @@ void HopkinsEngine::Credits() {
 	int soundId = 28;
 	do {
 		for (int i = 0; i < _globals.Credit_lignes; ++i) {
-			if (_globals.Credit[60 * i] == 1) {
+			if (_globals.Credit[i]._actvFl) {
 				int nextY = _globals.Credit_y + i * _globals.Credit_step;
-//				*(_DWORD *)&Credit[60 * i + 4] = nextY;
-				_globals.Credit[60 * i + 4] = nextY & 0xFF;
-				_globals.Credit[60 * i + 5] = (nextY >> 8) & 0xFF;
-				_globals.Credit[60 * i + 6] = (nextY >> 16) & 0xFF;
-				_globals.Credit[60 * i + 7] = (nextY >> 24) & 0xFF;
+				_globals.Credit[i]._linePosY = nextY;
 
 				if ((nextY - 21  >= 0) && (nextY - 21 <= 418)) {
-					char tmpVal = _globals.Credit[60 * i + 1];
-					int a1 = 0;
-					if (tmpVal == 49)
-						a1 = 163;
-					if (tmpVal == 50)
-						a1 = 161;
-					if (tmpVal == 51)
-						a1 = 162;
-//					if (*(_WORD *)&Credit[60 * i + 8] != -1)
-					if ((_globals.Credit[60 * i + 8] != 0xFF) && _globals.Credit[60 * i + 9] != 0xFF)
-						CREDIT_AFFICHE(nextY, _globals.Credit + (60 * i + 8), a1);
+					int col = 0;
+					switch (_globals.Credit[i]._colour) {
+					case '1':
+						col = 163;
+						break;
+					case '2':
+						col = 161;
+						break;
+					case '3':
+						col = 162;
+						break;
+					default:
+						warning("Credit line skipped, unknown colour");
+						break;
+					}
+					if (_globals.Credit[i]._lineSize != -1)
+						CREDIT_AFFICHE(nextY, _globals.Credit[i]._line, col);
 				}
 			}
 		}
@@ -2519,11 +2528,7 @@ void HopkinsEngine::Credits() {
 		} else {
 			_eventsManager.VBL();
 		}
-//		if (*(_DWORD *)&Credit[20 * (3 * Credit_lignes - 3) + 4] <= 39) {
-		if ( _globals.Credit[20 * (3 * _globals.Credit_lignes - 3) + 4] +
-			(_globals.Credit[20 * (3 * _globals.Credit_lignes - 3) + 4] << 8) +
-			(_globals.Credit[20 * (3 * _globals.Credit_lignes - 3) + 4] << 16) +
-			(_globals.Credit[20 * (3 * _globals.Credit_lignes - 3) + 4] << 24) <= 39) {
+		if ( _globals.Credit[_globals.Credit_lignes - 1]._linePosY <= 39) {
 			_globals.Credit_y = 440;
 			++soundId;
 			if (soundId > 31)
