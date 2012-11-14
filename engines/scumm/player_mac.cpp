@@ -245,7 +245,7 @@ int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 						// but I ran into overflow problems with the church
 						// music. It's only once per note, so it should be ok.
 						double mult = (double)(_channel[i]._instrument._rate) / (double)_sampleRate;
-						_channel[i]._pitchModifier = mult * _pitchTable[pitchIdx];
+						_channel[i]._pitchModifier = (int)(mult * _pitchTable[pitchIdx]);
 						_channel[i]._velocity = velocity;
 					} else {
 						_channel[i]._pitchModifier = 0;
