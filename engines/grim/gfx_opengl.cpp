@@ -518,7 +518,10 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
+	if (face->_hasTexture)
+		glEnable(GL_TEXTURE_2D);
+	else
+		glDisable(GL_TEXTURE_2D);
 
 	glBegin(GL_TRIANGLES);
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
