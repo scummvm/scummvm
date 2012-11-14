@@ -77,6 +77,8 @@ public:
 	void stIdleHeadOff();
 	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
 
+	void stIdleWonderAbout();
+
 	void stDoIdleTeleporterHands();
 	void stIdleTeleporterHands();
 	

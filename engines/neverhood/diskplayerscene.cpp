@@ -25,8 +25,6 @@
 
 namespace Neverhood {
 
-// TODO: Maybe move hash tables into neverhood.dat
-
 static const uint32 kDiskplayerPaletteFileHashes[] = {
 	0x03B78240,
 	0x34B32B08,

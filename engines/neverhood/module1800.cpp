@@ -163,7 +163,6 @@ void Module1800::updateScene() {
 		case 8:
 			// NOTE: After Klayman jumped into the hole and died...
 			leaveModule(1);
-			// TODO GameState stuff // Restarts the game?
 			break;
 		case 1009:
 			leaveModule(0);

@@ -53,6 +53,11 @@ static const KlaymanIdleTableItem klaymanTable4[] = {
 	{1, &Klayman::stDoIdleHeadOff},
 };
 
+static const KlaymanIdleTableItem klaymanIdleTable1002[] = {
+	{1, &Klayman::stDoIdlePickEar},
+	{2, &Klayman::stIdleWonderAbout}
+}; 
+
 // Klayman
 
 Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
@@ -266,6 +271,16 @@ uint32 Klayman::hmIdleHeadOff(int messageNum, const MessageParam &param, Entity 
 		break;
 	}
 	return messageResult;
+}
+
+void Klayman::stIdleWonderAbout() {
+	_status2 = 1;
+	_acceptInput = true;
+	startAnimation(0xD820A114, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::hmLowLevelAnimation);
+	SetSpriteUpdate(NULL);
+	NextState(&Klayman::stStandAround);
 }
 
 void Klayman::stSitIdleTeleporter() {
@@ -3421,7 +3436,7 @@ KmScene1002::KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 void KmScene1002::xUpdate() {
 	if (_x >= 250 && _x <= 435 && _y >= 420) {
 		if (_idleTableNum == 0) {
-			// TODO setKlaymanIdleTable(stru_4B44C8);
+			setKlaymanIdleTable(klaymanIdleTable1002, ARRAYSIZE(klaymanIdleTable1002));
 			_idleTableNum = 1;
 		}
 	} else if (_idleTableNum == 1) {
@@ -3670,7 +3685,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene1201::KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
-	// TODO setKlaymanIdleTable(dword_4AEF10, 3);
+	setKlaymanIdleTable(klaymanTable4, ARRAYSIZE(klaymanTable4));
 	_flagF6 = true;
 	
 }

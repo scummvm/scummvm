@@ -34,7 +34,6 @@ BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 h
 	_drawRect.y = 0;
 	_drawRect.width = width;
 	_drawRect.height = height;
-	// TODO: Check if _sysRect is needed at all in the reimplementation...
 	_sysRect.x = 0;
 	_sysRect.y = 0;
 	_sysRect.width = (width + 3) & 0xFFFC; // align by 4 bytes
