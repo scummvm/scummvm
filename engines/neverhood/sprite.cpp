@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/sprite.h"
+#include "neverhood/screen.h"
 
 namespace Neverhood {
 
@@ -74,13 +75,6 @@ bool Sprite::checkCollision(NRect &rect) {
 }
 
 uint32 Sprite::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	switch (messageNum) {
-	case 0x0005:
-		// TODO: Draw debug marker (?)
-		// TODO g_Screen->drawLine(_x - 5, _y, _x + 6, _y);
-		// TODO g_Screen->drawLine(_x, _y - 5, _x, _y + 6);
-		break;
-	}
 	return 0;
 }
 
@@ -93,8 +87,7 @@ void Sprite::createSurface(int surfacePriority, int16 width, int16 height) {
 }
 
 int16 Sprite::defFilterY(int16 y) {
-	// TODO return y - g_screen->field_26;
-	return y;
+	return y - _vm->_screen->getYOffset();
 }
 
 void Sprite::setClipRect(int16 x1, int16 y1, int16 x2, int16 y2) {

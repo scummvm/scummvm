@@ -44,7 +44,6 @@ void SmackerSurface::setSmackerFrame(const Graphics::Surface *smackerFrame) {
 	_drawRect.y = 0;
 	_drawRect.width = smackerFrame->w;
 	_drawRect.height = smackerFrame->h;
-	// TODO: Check if _sysRect is needed at all in the reimplementation...
 	_sysRect.x = 0;
 	_sysRect.y = 0;
 	_sysRect.width = (smackerFrame->w + 3) & 0xFFFC; // align by 4 bytes
@@ -66,7 +65,7 @@ void SmackerDoubleSurface::draw() {
 // SmackerPlayer
 
 SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag, bool paused)
-	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _dirtyFlag(false), _videoDone(false), _paused(paused),
+	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _videoDone(false), _paused(paused),
 	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL), _smackerFirst(true),
 	_drawX(-1), _drawY(-1) {
 
@@ -95,8 +94,6 @@ void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 	_smackerFirst = true;
 
 	_stream = _vm->_res->createStream(fileHash);
-
-	// TODO: _keepLastFrame stuff
 
 	_smackerDecoder = new Video::SmackerDecoder();
 	_smackerDecoder->loadStream(_stream);
@@ -164,11 +161,6 @@ void SmackerPlayer::update() {
 	if (!_smackerDecoder)
 		return;
 
-	if (_dirtyFlag) {
-		// TODO _vm->_screen->resetDirtyRects();
-		_dirtyFlag = false;
-	}
-
 	if (_paused) {
 		if (_smackerFirst)
 			updateFrame();
@@ -207,13 +199,6 @@ void SmackerPlayer::updateFrame() {
 		_smackerSurface->getDrawRect().y = _drawY;
 		_smackerFirst = false;
 	}
-	
-	if (_doubleSurface) {
-		// TODO
-	}
-
-	// TODO _vm->_screen->_skipUpdate = true;
-	_dirtyFlag = true;
 	
 	if (_smackerDecoder->hasDirtyPalette())
 		updatePalette();

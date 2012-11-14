@@ -26,7 +26,8 @@
 namespace Neverhood {
 
 Screen::Screen(NeverhoodEngine *vm)
-	: _vm(vm), _paletteData(NULL), _paletteChanged(false), _smackerDecoder(NULL) {
+	: _vm(vm), _paletteData(NULL), _paletteChanged(false), _smackerDecoder(NULL),
+	_yOffset(0) {
 	
 	_ticks = _vm->_system->getMillis();
 	
@@ -35,10 +36,12 @@ Screen::Screen(NeverhoodEngine *vm)
 	
 	_renderQueue = new RenderQueue();
 	_prevRenderQueue = new RenderQueue();
+	_microTiles = new MicroTileArray(640, 480);
 	
 }
 
 Screen::~Screen() {
+	delete _microTiles;
 	delete _renderQueue;
 	delete _prevRenderQueue;
 	_backScreen->free();
@@ -56,16 +59,8 @@ void Screen::update() {
 		return;
 	}
 
-	// NOTE This is more or less experimental code for a smart "render queue".
-	// It works well so far but needs some optimizing, e.g. reducing overdraw.
-	// Maybe I'll use my microtiles code from the Toltecs engine.
-	// Also better move this to a separate method or even class.
-	
-	Common::Array<Common::Rect> updateRects;
+	_microTiles->clear();
 
-	for (RenderQueue::iterator jt = _prevRenderQueue->begin(); jt != _prevRenderQueue->end(); ++jt)
-		(*jt)._refresh = true;
-	
 	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
 		RenderItem &renderItem = (*it);
 		renderItem._refresh = true;
@@ -81,27 +76,34 @@ void Screen::update() {
 	for (RenderQueue::iterator jt = _prevRenderQueue->begin(); jt != _prevRenderQueue->end(); ++jt) {
 		RenderItem &prevRenderItem = (*jt);
 		if (prevRenderItem._refresh)
-			updateRects.push_back(Common::Rect(prevRenderItem._destX, prevRenderItem._destY, prevRenderItem._destX + prevRenderItem._width, prevRenderItem._destY + prevRenderItem._height));
+			_microTiles->addRect(Common::Rect(prevRenderItem._destX, prevRenderItem._destY, prevRenderItem._destX + prevRenderItem._width, prevRenderItem._destY + prevRenderItem._height));
 	}
 	
 	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
 		RenderItem &renderItem = (*it);
 		if (renderItem._refresh)
-			updateRects.push_back(Common::Rect(renderItem._destX, renderItem._destY, renderItem._destX + renderItem._width, renderItem._destY + renderItem._height));
+			_microTiles->addRect(Common::Rect(renderItem._destX, renderItem._destY, renderItem._destX + renderItem._width, renderItem._destY + renderItem._height));
+		renderItem._refresh = true;
 	}
+
+	RectArray *updateRects = _microTiles->getRectangles();
 
 	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
 		RenderItem &renderItem = (*it);
-		for (Common::Array<Common::Rect>::iterator ri = updateRects.begin(); ri != updateRects.end(); ++ri)
+		for (RectArray::iterator ri = updateRects->begin(); ri != updateRects->end(); ++ri)
 			blitRenderItem(renderItem, *ri);
 	}
 	
 	SWAP(_renderQueue, _prevRenderQueue);
 	_renderQueue->clear();
 
-	for (Common::Array<Common::Rect>::iterator ri = updateRects.begin(); ri != updateRects.end(); ++ri)
-		_vm->_system->copyRectToScreen((const byte*)_backScreen->getBasePtr((*ri).left, (*ri).top), _backScreen->pitch, (*ri).left, (*ri).top, (*ri).width(), (*ri).height());
-		
+	for (Common::Array<Common::Rect>::iterator ri = updateRects->begin(); ri != updateRects->end(); ++ri) {
+		Common::Rect &r = *ri;
+		_vm->_system->copyRectToScreen((const byte*)_backScreen->getBasePtr(r.left, r.top), _backScreen->pitch, r.left, r.top, r.width(), r.height());
+	}
+
+	delete updateRects;
+
 }
 
 uint32 Screen::getNextFrameTime() {
@@ -118,6 +120,14 @@ void Screen::setFps(int fps) {
 
 int Screen::getFps() {
 	return 1000 / _frameDelay;
+}
+
+void Screen::setYOffset(int16 yOffset) {
+	_yOffset = yOffset;
+}
+
+int16 Screen::getYOffset() {
+	return _yOffset;
 }
 
 void Screen::setPaletteData(byte *paletteData) {
@@ -194,14 +204,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		ddRect.y1 = 0;
 	}
 	
-	//debug(2, "draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
-
 	queueBlit(surface, destX, destY, ddRect, transparent, version, shadowSurface);
-
-	// Useful for debugging	
-	//_backScreen->frameRect(Common::Rect(clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2), 250); 
-	//_backScreen->frameRect(Common::Rect(destX, destY, destX + ddRect.x2, destY + ddRect.y2), 255); 
-	//_backScreen->frameRect(Common::Rect(drawRect.x, drawRect.y, drawRect.x + drawRect.width, drawRect.y + drawRect.height), 255);
 
 }
 
@@ -237,45 +240,6 @@ void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, ND
 	}
 	
 	queueBlit(surface, destX, destY, ddRect, transparent, version);
-
-}
-
-void Screen::blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent,
-	const Graphics::Surface *shadowSurface) {
-
-	const byte *source = (const byte*)surface->getBasePtr(ddRect.x1, ddRect.y1);
-	byte *dest = (byte*)_backScreen->getBasePtr(destX, destY);
-	int width = ddRect.x2 - ddRect.x1;
-	int height = ddRect.y2 - ddRect.y1;
-
-	if (width <= 0 || height <= 0)
-		return;
-	
-	if (shadowSurface) {
-		const byte *shadowSource = (const byte*)shadowSurface->getBasePtr(destX, destY);
-		while (height--) {
-			for (int xc = 0; xc < width; xc++)
-				if (source[xc] != 0)
-					dest[xc] = shadowSource[xc];
-			source += surface->pitch;
-			shadowSource += shadowSurface->pitch;
-			dest += _backScreen->pitch;
-		}
-	} else if (!transparent) {
-		while (height--) {
-			memcpy(dest, source, width);
-			source += surface->pitch;
-			dest += _backScreen->pitch;
-		}
-	} else {
-		while (height--) {
-			for (int xc = 0; xc < width; xc++)
-				if (source[xc] != 0)
-					dest[xc] = source[xc];
-			source += surface->pitch;
-			dest += _backScreen->pitch;
-		}
-	}
 
 }
 
@@ -377,8 +341,8 @@ void Screen::drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &d
 void Screen::queueBlit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent, byte version,
 	const Graphics::Surface *shadowSurface) {
 	
-	int width = ddRect.x2 - ddRect.x1;
-	int height = ddRect.y2 - ddRect.y1;
+	const int width = ddRect.x2 - ddRect.x1;
+	const int height = ddRect.y2 - ddRect.y1;
 
 	if (width <= 0 || height <= 0)
 		return;
@@ -406,7 +370,7 @@ void Screen::blitRenderItem(const RenderItem &renderItem, const Common::Rect &cl
 	const int16 y0 = MAX<int16>(clipRect.top, renderItem._destY);
 	const int16 x1 = MIN<int16>(clipRect.right, renderItem._destX + renderItem._width);
 	const int16 y1 = MIN<int16>(clipRect.bottom, renderItem._destY + renderItem._height);
-	int16 width = x1 - x0;
+	const int16 width = x1 - x0;
 	int16 height = y1 - y0;
 
 	if (width < 0 || height < 0)

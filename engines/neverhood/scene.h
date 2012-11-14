@@ -170,7 +170,7 @@ protected:
 	int _messageListStatus;
 	uint _messageListCount;
 	uint _messageListIndex;
-	bool _systemCallbackFlag;
+	bool _doConvertMessages;
 
 	bool _canAcceptInput;
 	bool _isKlaymanBusy;
@@ -189,17 +189,14 @@ protected:
 
 	void (Entity::*_savedUpdateHandlerCb)();
 	uint32 (Entity::*_savedMessageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);
-	bool _smackerDone;
 	int _messageValue;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void smackerUpdate();
-	uint32 smackerHandleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	bool queryPositionSprite(int16 mouseX, int16 mouseY);
 	bool queryPositionRectList(int16 mouseX, int16 mouseY);
-	void setMessageList(uint32 id, bool canAcceptInput = true, bool systemCallbackFlag = false);
-	void setMessageList(MessageList *messageList, bool canAcceptInput = true, bool systemCallbackFlag = false);
-	bool setMessageList2(uint32 id, bool canAcceptInput = true, bool systemCallbackFlag = false);
-	bool setMessageList2(MessageList *messageList, bool canAcceptInput = true, bool systemCallbackFlag = false);
+	void setMessageList(uint32 id, bool canAcceptInput = true, bool doConvertMessages = false);
+	void setMessageList(MessageList *messageList, bool canAcceptInput = true, bool doConvertMessages = false);
+	bool setMessageList2(uint32 id, bool canAcceptInput = true, bool doConvertMessages = false);
+	bool setMessageList2(MessageList *messageList, bool canAcceptInput = true, bool doConvertMessages = false);
 	void processMessageList();
 	void setRectList(uint32 id);
 	void setRectList(RectList *rectList);

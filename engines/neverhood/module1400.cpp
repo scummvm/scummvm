@@ -780,7 +780,7 @@ SsScene1402BridgePart::SsScene1402BridgePart(NeverhoodEngine *vm, uint32 fileHas
 AsScene1402PuzzleBox::AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int status)
 	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
-	createSurface(900, 152, 147);
+	createSurface(900, 347, 230);
 
 	SetFilterY(&Sprite::defFilterY);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -844,9 +844,10 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene1402::handleMessage);
 
+	_vm->_screen->setYOffset(0);
+
 	setBackground(0x231482F0);
 	setBackgroundY(-10);
-	// TODO g_screen->field_26 = 0;
 	setPalette(0x231482F0);
 	_palette->addPalette(0x91D3A391, 0, 64, 0);
 	insertMouse433(0x482F4239);
@@ -891,7 +892,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 			startShaking();
 		}
 	}
-
+	
 	if (_asPuzzleBox)
 		_asPuzzleBox->setClipRect(0, 0, 640, _ssBridgePart3->getDrawRect().y2());
 
@@ -919,10 +920,10 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 void Scene1402::upShaking() {
 	if (_isShaking) {
 		setBackgroundY(_vm->_rnd->getRandomNumber(10 - 1) - 10);
-		// TODO g_screen->field_26 = -10 - _background->getDrawRect().y;
+		_vm->_screen->setYOffset(-10 - getBackgroundY());
 	} else {
 		setBackgroundY(-10);
-		// TODO g_screen->field_26 = 0;
+		_vm->_screen->setYOffset(0);
 		SetUpdateHandler(&Scene::update);
 	}
 	Scene::update();
@@ -973,6 +974,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 			} else
 				setMessageList2(0x004B0B68);
 		}
+		break;
 	}
 	return 0;
 }

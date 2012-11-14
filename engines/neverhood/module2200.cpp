@@ -539,9 +539,7 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
-	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x60400854)) {
-		// TODO _vm->gameModule()->initScene2201Vars();
-	}
+	_vm->gameModule()->initCubeSymbolsPuzzle();
 
 	SetMessageHandler(&Scene2201::handleMessage);
 	SetUpdateHandler(&Scene2201::update);
@@ -875,7 +873,8 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _isSolved(false), _leaveScene(false), _isCubeMoving(false),
 	_ssMovingCube(NULL), _ssDoneMovingCube(NULL) {
 
-	// TODO initScene2201Vars();
+	_vm->gameModule()->initCubeSymbolsPuzzle();
+
 	SetMessageHandler(&Scene2202::handleMessage);
 	SetUpdateHandler(&Scene2202::update);
 

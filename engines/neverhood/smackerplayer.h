@@ -73,7 +73,6 @@ protected:
 	Common::SeekableReadStream *_stream;
 	bool _keepLastFrame;
 	bool _videoDone;
-	bool _dirtyFlag;
 	bool _paused;
 	int _drawX, _drawY;
 	void update();

@@ -49,6 +49,7 @@ public:
 	void initTestTubes2Puzzle();	
 	void initCannonSymbolsPuzzle();
 	void initCodeSymbolsPuzzle();
+	void initCubeSymbolsPuzzle();
 	uint32 getCurrRadioMusicFileHash();
 protected:
 	Entity *_prevChildObject;

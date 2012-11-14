@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	graphics.o \
 	klayman.o \
 	menumodule.o \
+	microtiles.o \
 	module.o \
 	module1000.o \
 	module1100.o \

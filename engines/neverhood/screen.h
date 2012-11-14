@@ -27,6 +27,7 @@
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 #include "neverhood/neverhood.h"
+#include "neverhood/microtiles.h"
 #include "neverhood/graphics.h"
 
 namespace Neverhood {
@@ -64,6 +65,8 @@ public:
 	uint32 getNextFrameTime();
 	void setFps(int fps);
 	int getFps();
+	void setYOffset(int16 yOffset);
+	int16 getYOffset();
 	void setPaletteData(byte *paletteData);
 	void unsetPaletteData(byte *paletteData);
 	byte *getPaletteData() { return _paletteData; }
@@ -75,8 +78,6 @@ public:
 		const Graphics::Surface *shadowSurface = NULL);
 	void drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version);
 	void drawShadowSurface(const Graphics::Surface *surface, const Graphics::Surface *shadowSurface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect);
-	void blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent,
-		const Graphics::Surface *shadowSurface = NULL);
 	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
 	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent, byte version);
 	void drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent, byte version);
@@ -86,13 +87,14 @@ public:
 	void blitRenderItem(const RenderItem &renderItem, const Common::Rect &clipRect);
 protected:
 	NeverhoodEngine *_vm;
+	MicroTileArray *_microTiles;
 	Graphics::Surface *_backScreen;
 	Video::SmackerDecoder *_smackerDecoder;
 	int32 _ticks;
 	int32 _frameDelay;
 	byte *_paletteData;
 	bool _paletteChanged;
-	//
+	int16 _yOffset;
 	bool _fullRefresh;
 	RenderQueue *_renderQueue, *_prevRenderQueue;
 };

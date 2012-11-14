@@ -276,7 +276,15 @@ void GameModule::initCodeSymbolsPuzzle() {
 		setGlobalVar(V_NOISY_SYMBOL_INDEX, _vm->_rnd->getRandomNumber(11 - 1) + 1);
 		setSubVar(VA_IS_PUZZLE_INIT, 0x0CD09B50, 1);
 	}
+}
 
+void GameModule::initCubeSymbolsPuzzle() {
+	if (!getSubVar(VA_IS_PUZZLE_INIT, 0x60400854)) {
+		NonRepeatingRandomNumbers cubeSymbols(_vm->_rnd, 9);
+		for (uint32 cubePosition = 0; cubePosition < 9; ++cubePosition)
+			setSubVar(VA_CUBE_POSITIONS, cubePosition, (uint32)(cubeSymbols.getNumber() - 1));
+		setSubVar(VA_IS_PUZZLE_INIT, 0x60400854, 1);
+	}
 }
 
 uint32 GameModule::getCurrRadioMusicFileHash() {
@@ -352,7 +360,7 @@ void GameModule::startup() {
 	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 4, 4);
 	// <<<DEBUG
 
-#if 1
+#if 0
 	/*
 	//DEBUG>>>
 	createScene(_vm->gameState().sceneNum, _vm->gameState().which);
@@ -364,9 +372,9 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 28;
 	createModule(2700, -1);
 #endif
-#if 0
+#if 1
 	_vm->gameState().sceneNum = 0;
-	createModule(1800, -1);
+	createModule(1400, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;

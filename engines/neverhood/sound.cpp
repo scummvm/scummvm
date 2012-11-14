@@ -166,7 +166,7 @@ void SoundMan::addMusic(uint32 nameHash, uint32 musicFileHash) {
 	musicItem->_countdown = 24;
 	musicItem->_musicResource = new MusicResource(_vm);
 	musicItem->_musicResource->load(musicFileHash);
-	_musicItems.push_back(musicItem);
+	addMusicItem(musicItem);
 }
 
 void SoundMan::deleteMusic(uint32 musicFileHash) {
@@ -203,7 +203,7 @@ void SoundMan::stopMusic(uint32 musicFileHash, int16 countdown, int16 fadeVolume
 
 void SoundMan::addSound(uint32 nameHash, uint32 soundFileHash) {
 	SoundItem *soundItem = new SoundItem(_vm, nameHash, soundFileHash, false, 50, 600, false, 0, false, 0);
-	_soundItems.push_back(soundItem);
+	addSoundItem(soundItem);
 }
 
 void SoundMan::addSoundList(uint32 nameHash, const uint32 *soundFileHashList) {
@@ -337,8 +337,6 @@ void SoundMan::deleteMusicGroup(uint32 nameHash) {
 
 void SoundMan::deleteSoundGroup(uint32 nameHash) {
 
-	SoundItem *soundItem;
-
 	if (_soundIndex1 != -1 && _soundItems[_soundIndex1]->_nameHash == nameHash) {
 		deleteSoundByIndex(_soundIndex1);
 		_soundIndex1 = -1;
@@ -349,13 +347,9 @@ void SoundMan::deleteSoundGroup(uint32 nameHash) {
 		_soundIndex2 = -1;
 	}
 
-	for (uint index = 0; index < _soundItems.size(); ++index) {
-		soundItem = _soundItems[index];
-		if (soundItem && soundItem->_nameHash == nameHash) {
-			delete soundItem;
-			_soundItems[index] = NULL;
-		}
-	}
+	for (uint index = 0; index < _soundItems.size(); ++index)
+		if (_soundItems[index] && _soundItems[index]->_nameHash == nameHash)
+			deleteSoundByIndex(index);
 
 }
 
@@ -384,16 +378,14 @@ void SoundMan::playTwoSounds(uint32 nameHash, uint32 soundFileHash1, uint32 soun
 		soundItem = new SoundItem(_vm, nameHash, soundFileHash1, false, 0, 0,
 			_playOnceAfterCountdown, _initialCountdown, false, currCountdown1);
 		soundItem->_soundResource->setVolume(80);
-		_soundIndex1 = _soundItems.size();
-		_soundItems.push_back(soundItem);
+		_soundIndex1 = addSoundItem(soundItem);
 	}
 
 	if (soundFileHash2 != 0) {
 		soundItem = new SoundItem(_vm, nameHash, soundFileHash2, false, 0, 0,
 			_playOnceAfterCountdown, _initialCountdown, false, currCountdown2);
 		soundItem->_soundResource->setVolume(80);
-		_soundIndex2 = _soundItems.size();
-		_soundItems.push_back(soundItem);
+		_soundIndex2 = addSoundItem(soundItem);
 	}
 
 }
@@ -410,8 +402,7 @@ void SoundMan::playSoundThree(uint32 nameHash, uint32 soundFileHash) {
 	if (soundFileHash != 0) {
 		soundItem = new SoundItem(_vm, nameHash, soundFileHash, false, 0, 0,
 			false, _initialCountdown3, false, 0);
-		_soundIndex3 = _soundItems.size();
-		_soundItems.push_back(soundItem);
+		_soundIndex3 = addSoundItem(soundItem);
 	}
 	
 }
@@ -445,15 +436,26 @@ SoundItem *SoundMan::getSoundItemByHash(uint32 soundFileHash) {
 }
 
 int16 SoundMan::addMusicItem(MusicItem *musicItem) {
-	return 0; // TODO
+#if 0
+	for (uint i = 0; i < _musicItems.size(); ++i)
+		if (!_musicItems[i]) {
+			_musicItems[i] = musicItem;
+			return i;
+		}
+#endif		
+	int16 musicIndex = _musicItems.size();
+	_musicItems.push_back(musicItem);
+	return musicIndex;
 }
 
 int16 SoundMan::addSoundItem(SoundItem *soundItem) {
+#if 0
 	for (uint i = 0; i < _soundItems.size(); ++i)
 		if (!_soundItems[i]) {
 			_soundItems[i] = soundItem;
 			return i;
 		}
+#endif
 	int16 soundIndex = _soundItems.size();
 	_soundItems.push_back(soundItem);
 	return soundIndex;
@@ -541,6 +543,8 @@ int16 AudioResourceMan::addSound(uint32 fileHash) {
 
 void AudioResourceMan::removeSound(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
+	if (_vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
+		_vm->_mixer->stopHandle(soundItem->_soundHandle);
 	if (soundItem->_data) {
 		_vm->_res->unloadResource(soundItem->_resourceHandle);
 		soundItem->_data = NULL;
@@ -549,8 +553,6 @@ void AudioResourceMan::removeSound(int16 soundIndex) {
 		_vm->_res->unuseResource(soundItem->_resourceHandle);
 		soundItem->_resourceHandle = -1;
 	}
-	if (_vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
-		_vm->_mixer->stopHandle(soundItem->_soundHandle);
 	delete soundItem;
 	_soundItems[soundIndex] = NULL;
 }
@@ -565,6 +567,8 @@ void AudioResourceMan::loadSound(int16 soundIndex) {
 
 void AudioResourceMan::unloadSound(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
+	if (_vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
+		_vm->_mixer->stopHandle(soundItem->_soundHandle);
 	if (soundItem->_data) {
 		_vm->_res->unloadResource(soundItem->_resourceHandle);
 		soundItem->_data = NULL;
