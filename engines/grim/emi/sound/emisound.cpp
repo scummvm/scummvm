@@ -152,6 +152,7 @@ void EMISound::setMusicState(int stateId) {
 		filename = _musicTable[stateId]._filename;
 		_music = new MP3Track(Audio::Mixer::kMusicSoundType);	
 	}
+	warning("Loading music: %s", filename.c_str());
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + filename);
 
 	if (_music->openSound(filename, str))
@@ -248,4 +249,16 @@ void EMISound::initMusicTable() {
 		_musicPrefix = "Textures/spago/"; // Hardcode the high-quality music for now.
 	}
 }
+
+void EMISound::selectMusicSet(int setId) {
+	assert(g_grim->getGamePlatform() != Common::kPlatformPS2);
+	if (setId == 0) {
+		_musicPrefix = "Textures/spago/";
+	} else if (setId == 1) {
+		_musicPrefix = "Textures/mego/";
+	} else {
+		error("EMISound::selectMusicSet - Unknown setId %d", setId);
+	}
+}
+
 } // end of namespace Grim

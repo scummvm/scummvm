@@ -41,6 +41,7 @@ public:
 	void setPan(const char *soundName, int pan);
 	
 	void setMusicState(int stateId);
+	void selectMusicSet(int setId);
 	uint32 getMsPos(int stateId);
 };
 

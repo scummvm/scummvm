@@ -166,7 +166,8 @@ void Lua_V2::ImSelectSet() {
 	if (lua_isnumber(qualityObj)) {
 		int quality = (int)lua_getnumber(qualityObj);
 		// FIXME: func(quality);
-		warning("Lua_V2::ImSelectSet: implement opcode, quality mode: %d", quality);
+		g_sound->selectMusicSet(quality);
+		warning("Lua_V2::ImSelectSet: quality mode: %d", quality);
 	}
 }
 
