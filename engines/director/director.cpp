@@ -79,10 +79,14 @@ void DirectorEngine::loadEXE() {
 }
 
 void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
-	stream->readUint32LE(); // unknown
-	stream->readUint16LE(); // unknown
+	uint16 entryCount = stream->readUint16LE();
+
+	if (entryCount != 1)
+		error("Unhandled multiple entry v3 EXE");
+
+	stream->skip(5); // unknown
+
 	stream->readUint32LE(); // Main MMM size
-	stream->readByte();     // zero
 	Common::String mmmFileName = readPascalString(*stream);
 	Common::String directoryName = readPascalString(*stream);
 
