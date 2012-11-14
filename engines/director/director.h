@@ -29,6 +29,10 @@
 
 class OSystem;
 
+namespace Common {
+class MacResManager;
+}
+
 namespace Director {
 
 enum DirectorGameID {
@@ -65,9 +69,12 @@ private:
 	void loadEXEv5(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 
+	void loadMac();
+
 	Common::String readPascalString(Common::SeekableReadStream &stream);
 
 	Archive *_mainArchive;
+	Common::MacResManager *_macBinary;
 };
 
 } // End of namespace Director

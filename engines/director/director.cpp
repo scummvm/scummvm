@@ -25,6 +25,7 @@
 #include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/error.h"
+#include "common/macresman.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -42,10 +43,12 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	syncSoundSettings();
 
 	_mainArchive = 0;
+	_macBinary = 0;
 }
 
 DirectorEngine::~DirectorEngine() {
 	delete _mainArchive;
+	delete _macBinary;
 }
 
 Common::Error DirectorEngine::run() {
@@ -53,6 +56,8 @@ Common::Error DirectorEngine::run() {
 
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();
+	else
+		loadMac();
 
 	return Common::kNoError;
 }
@@ -140,6 +145,34 @@ void DirectorEngine::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offs
 
 	if (!_mainArchive->openStream(stream))
 		error("Failed to load RIFX from EXE");
+}
+
+void DirectorEngine::loadMac() {
+	if (getVersion() < 4)
+		error("Unhandled pre-v4 Mac version");
+
+	_macBinary = new Common::MacResManager();
+
+	if (!_macBinary->open(getEXEName()) || !_macBinary->hasDataFork())
+		error("Failed to open Mac binary '%s'", getEXEName().c_str());
+
+	Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
+	_mainArchive = new RIFXArchive();
+
+	// First we need to detect PPC vs. 68k
+
+	uint32 tag = dataFork->readUint32LE();
+
+	if (tag == MKTAG('P', 'J', '9', '3')) {
+		// PPC: The RIFX shares the data fork with the binary
+		dataFork->seek(dataFork->readUint32BE());
+	} else {
+		// 68k: The RIFX is the only thing in the data fork
+		dataFork->seek(0);
+	}
+
+	if (!_mainArchive->openStream(dataFork))
+		error("Failed to load RIFX from Mac binary");
 }
 
 Common::String DirectorEngine::readPascalString(Common::SeekableReadStream &stream) {
