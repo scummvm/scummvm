@@ -59,13 +59,15 @@ Module2800::~Module2800() {
 
 void Module2800::createScene(int sceneNum, int which) {
 	debug("Module2800::createScene(%d, %d)", sceneNum, which);
-	_vm->gameState().sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	_sceneNum = sceneNum;
+	switch (_sceneNum) {
 	case 0:
+		_vm->gameState().sceneNum = 0;
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		_childObject = new Scene2801(_vm, this, which);
 		break;
 	case 1:
+		_vm->gameState().sceneNum = 1;
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		if (getGlobalVar(V_RADIO_ENABLED))
 			_childObject = new Scene2802(_vm, this, which);
@@ -73,101 +75,124 @@ void Module2800::createScene(int sceneNum, int which) {
 			createStaticScene(0x000C6444, 0xC6440008);
 		break;
 	case 2:
+		_vm->gameState().sceneNum = 2;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		//setGlobalVar(V_KLAYMAN_SMALL,1);//DEBUG
 		if (getGlobalVar(V_KLAYMAN_SMALL))
 			_childObject = new Scene2803Small(_vm, this, which);
 		else
 			_childObject = new Scene2803(_vm, this, which);
 		break;
 	case 3:
+		_vm->gameState().sceneNum = 3;
 		_childObject = new Scene2804(_vm, this, which);
 		break;
 	case 4:
+		_vm->gameState().sceneNum = 4;
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2805(_vm, this, which);
 		break;
 	case 5:
+		_vm->gameState().sceneNum = 5;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2806(_vm, this, which);
 		break;
 	case 6:
+		_vm->gameState().sceneNum = 6;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2807(_vm, this, which);
 		break;
 	case 7:
+		_vm->gameState().sceneNum = 7;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2808(_vm, this, 0);
 		break;
 	case 8:
+		_vm->gameState().sceneNum = 8;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2809(_vm, this, which);
 		break;
 	case 9:
+		_vm->gameState().sceneNum = 9;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2810(_vm, this, which);
 		break;
 	case 10:
+		_vm->gameState().sceneNum = 10;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2808(_vm, this, 1);
 		break;
 	case 11:
+		_vm->gameState().sceneNum = 11;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2812(_vm, this, which);
 		break;
 	case 12:
+		_vm->gameState().sceneNum = 12;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x0000A245, 0x0A241008);
 		break;
 	case 13:
+		_vm->gameState().sceneNum = 13;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x81C60635, 0x60631814);
 		break;
 	case 14:
+		_vm->gameState().sceneNum = 14;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0xCA811204, 0x11200CA0);
 		break;
 	case 15:
+		_vm->gameState().sceneNum = 15;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x2D438A00, 0x38A042DC);
 		break;
 	case 16:
+		_vm->gameState().sceneNum = 16;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x0A806204, 0x062000A0);
 		break;
 	case 17:
+		_vm->gameState().sceneNum = 17;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x010F9284, 0xF9280018);
 		break;
 	case 18:
+		_vm->gameState().sceneNum = 18;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x0100022B, 0x0022F018);
 		break;
 	case 19:
+		_vm->gameState().sceneNum = 19;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x10866205, 0x66201100);
 		break;
 	case 20:
+		_vm->gameState().sceneNum = 20;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x01C58000, 0x58004014);
 		break;
 	case 21:
+		_vm->gameState().sceneNum = 21;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2822(_vm, this, which);
 		break;
 	case 22:
+		_vm->gameState().sceneNum = 22;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x9408121E, 0x8121A948);
 		break;
 	case 23:
+		_vm->gameState().sceneNum = 23;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x048C0600, 0xC0604040);
 		break;
 	case 24:
+		_vm->gameState().sceneNum = 24;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		createStaticScene(0x04270A94, 0x70A9004A);
 		break;
 	case 25:
+		_vm->gameState().sceneNum = 25;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		if (getGlobalVar(V_SHRINK_LIGHTS_ON))
 			createStaticScene(0x01600204, 0x0020001E);
@@ -175,6 +200,7 @@ void Module2800::createScene(int sceneNum, int which) {
 			createStaticScene(0x08611204, 0x1120008E);
 		break;
 	case 26:
+		_vm->gameState().sceneNum = 26;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 4);
 		break;
@@ -189,7 +215,7 @@ void Module2800::createScene(int sceneNum, int which) {
 
 void Module2800::updateScene() {
 	if (!updateChild()) {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			if (_moduleResult != 2) {
 				if (_musicResource) {
@@ -359,7 +385,7 @@ void Module2800::updateScene() {
 			break;
 		}
 	} else {
-		switch (_vm->gameState().sceneNum) {
+		switch (_sceneNum) {
 		case 0:
 			updateMusic(true);
 			break;
@@ -401,6 +427,9 @@ void Module2800::updateMusic(bool halfVolume) {
 
 Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
+
+	Sprite *_sprite1;
+	Sprite *_sprite2;
 
 	_vm->gameModule()->initRadioPuzzle();
 
@@ -586,7 +615,7 @@ void Scene2802::update() {
 		changeTuneStatus(prevTuneStatus, _currTuneStatus);
 		
 	//DEBUG>>>
-	debug("_currRadioMusicIndex = %d; V_GOOD_RADIO_MUSIC_INDEX = %d", _currRadioMusicIndex, getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
+	//debug("_currRadioMusicIndex = %d; V_GOOD_RADIO_MUSIC_INDEX = %d", _currRadioMusicIndex, getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
 	//DEBUG<<<
 
 	if (getGlobalVar(V_RADIO_MOVE_DISH_VIDEO) && prevTuneStatus != _currTuneStatus && _currRadioMusicIndex != 0) {
@@ -1990,8 +2019,6 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[1].x1 = _sprite4->getDrawRect().x;
 	_clipRects[1].y1 = _sprite4->getDrawRect().y;
 	
-	_fieldEC = true;
-
 	tempSprite = insertStaticSprite(0xD2012C02, 1100);
 	_clipRects[2].x1 = tempSprite->getDrawRect().x;
 	_clipRects[2].y2 = tempSprite->getDrawRect().y2();

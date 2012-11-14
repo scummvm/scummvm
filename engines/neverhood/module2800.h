@@ -36,7 +36,7 @@ public:
 	Module2800(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2800();
 protected:
-	bool _flag;
+	int _sceneNum;
 	uint32 _currentMusicFileHash;
 	MusicResource *_musicResource;
 	void createScene(int sceneNum, int which);
@@ -49,8 +49,6 @@ public:
 	Scene2801(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene2801();
 protected:
-	Sprite *_sprite1;
-	Sprite *_sprite2;
 	Sprite *_asTape;
 	uint32 _paletteHash;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -301,7 +299,6 @@ protected:
 	NPointArray *_pointList;
 	int _pointIndex;
 	NRect _clipRects[4];
-	bool _fieldEC;
 	Sprite *_sprite1;
 	Sprite *_sprite2;
 	Sprite *_sprite3;

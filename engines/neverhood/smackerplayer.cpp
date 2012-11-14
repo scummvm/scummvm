@@ -111,7 +111,7 @@ void SmackerPlayer::close() {
 		_smackerDecoder->stop();
 	delete _smackerDecoder;
 	delete _palette;
-	// NOTE: The SmackerDecoder deletes the _stream
+	// NOTE The SmackerDecoder deletes the _stream
 	delete _smackerSurface;
 	_smackerDecoder = NULL;
 	_palette = NULL;
@@ -125,7 +125,7 @@ void SmackerPlayer::gotoFrame(int frameNumber) {
 		if (frameNumber < _smackerDecoder->getCurFrame())
 			rewind();
 		while (_smackerDecoder->getCurFrame() != frameNumber)
-			updateFrame();
+			_smackerDecoder->decodeNextFrame();
 	}
 }
 
@@ -199,7 +199,7 @@ void SmackerPlayer::updateFrame() {
 		_smackerSurface->getDrawRect().y = _drawY;
 		_smackerFirst = false;
 	}
-	
+
 	if (_smackerDecoder->hasDirtyPalette())
 		updatePalette();
 		
