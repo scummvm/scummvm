@@ -251,6 +251,8 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream) {
 bool RIFXArchive::openStream(Common::SeekableReadStream *stream) {
 	close();
 
+	uint32 startPos = stream->pos();
+
 	uint32 tag = stream->readUint32BE();
 	bool isBigEndian;
 
@@ -261,11 +263,12 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream) {
 	else
 		return false;
 
-	Common::SeekableSubReadStreamEndian subStream(stream, 4, stream->size(), isBigEndian, DisposeAfterUse::NO);
+	Common::SeekableSubReadStreamEndian subStream(stream, startPos + 4, stream->size(), isBigEndian, DisposeAfterUse::NO);
 
 	subStream.readUint32(); // size
 
-	if (subStream.readUint32() != MKTAG('M', 'V', '9', '3'))
+	uint32 type = subStream.readUint32();
+	if (type != MKTAG('M', 'V', '9', '3') && type != MKTAG('A', 'P', 'P', 'L'))
 		return false;
 
 	if (subStream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
@@ -273,7 +276,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream) {
 
 	subStream.readUint32(); // imap length
 	subStream.readUint32(); // unknown
-	uint32 mmapOffset = subStream.readUint32() - 4;
+	uint32 mmapOffset = subStream.readUint32() - startPos - 4;
 
 	subStream.seek(mmapOffset);
 
@@ -293,6 +296,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream) {
 		uint32 size = subStream.readUint32();
 		uint32 offset = subStream.readUint32();
 		subStream.skip(8); // always 0?
+
+		debug(0, "Found RIFX resource %d: '%s', %d @ 0x%08x", i, tag2str(tag), size, offset);
 
 		ResourceMap &resMap = _types[tag];
 		Resource &res = resMap[i]; // FIXME: What is the ID? Is this setup even viable?
