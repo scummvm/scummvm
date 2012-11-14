@@ -87,10 +87,9 @@ const Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream 
 	// Borrowed from FFMPEG. This should cut out the extra data Cinepak for Sega has (which is useless).
 	// The theory behind this is that this is here to confuse standard Cinepak decoders. But, we won't let that happen! ;)
 	if (_curFrame.length != (uint32)stream->size()) {
-		uint16 temp = stream->readUint16BE();
-		if (temp == 0xFE00)
+		if (stream->readUint16BE() == 0xFE00)
 			stream->readUint32BE();
-		else if (temp != _curFrame.width)
+		else if ((stream->size() % _curFrame.length) == 0)
 			stream->seek(-2, SEEK_CUR);
 	}
 
