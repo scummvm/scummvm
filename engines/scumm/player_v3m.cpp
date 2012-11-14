@@ -107,9 +107,10 @@ Player_V3M::Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer)
 
 bool Player_V3M::checkMusicAvailable() {
 	Common::MacResManager resource;
-	// \252 is a trademark glyph. I don't think we should assume that it
-	// will be preserved when copying from the Mac disk.
-	if (!resource.exists("Loom\252") && !resource.exists("Loom")) {
+	// \xAA is a trademark glyph in Mac OS Roman. We try that, but also the
+	// UTF-8 version, and just plain without in case the file system can't
+	// handle exotic characters like that.
+	if (!resource.exists("Loom\xAA") && !resource.exists("Loom\xE2\x84\xA2") && !resource.exists("Loom")) {
 		GUI::MessageDialog dialog(_(
 			"Could not find the 'Loom' Macintosh executable to read the\n"
 			"instruments from. Music will be disabled."), _("OK"));
@@ -122,7 +123,7 @@ bool Player_V3M::checkMusicAvailable() {
 
 bool Player_V3M::loadMusic(const byte *ptr) {
 	Common::MacResManager resource;
-	if (!resource.open("Loom\252") && !resource.open("Loom")) {
+	if (!resource.open("Loom\xAA") && !resource.open("Loom\xE2\x84\xA2") && !resource.open("Loom")) {
 		return false;
 	}
 
