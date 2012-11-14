@@ -91,7 +91,8 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 
 	_mainArchive = new RIFFArchive();
 
-	// TODO: Convert MMM name and load
+	if (!_mainArchive->openFile(mmmFileName))
+		error("Could not open '%s'", mmmFileName.c_str());
 
 	delete stream;
 }
