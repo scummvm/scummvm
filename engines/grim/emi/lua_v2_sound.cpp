@@ -284,7 +284,9 @@ void Lua_V2::PlaySound() {
 		if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 			filename += ".scx";
 		} else {
-			filename += ".aif";
+			if (!filename.hasSuffix(".aif")) {
+				filename += ".aif";
+			}
 		}
 	}
 
