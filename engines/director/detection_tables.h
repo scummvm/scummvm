@@ -40,6 +40,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 		5
 	},
 
+	{
+		{
+			"majestic",
+			"",
+			AD_ENTRY1("MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
+	},
+
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 };
 
