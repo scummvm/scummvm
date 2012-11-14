@@ -346,12 +346,6 @@ void Sound::playSound(int soundID) {
 			warning("Scumm::Sound::playSound: encountered audio resoure with chunk type 'SOUN' and sound type %d", type);
 		}
 	}
-	else if ((_vm->_game.id == GID_LOOM) && (_vm->_game.platform == Common::kPlatformMacintosh))  {
-		// Mac version of Loom uses yet another sound format
-		if (_vm->_musicEngine) {
-			_vm->_musicEngine->startSound(soundID);
-		}
-	}
 	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && READ_BE_UINT16(ptr + 8) == 0x1C) {
 		// Sound format as used in Indy3 EGA Mac.
 		// It seems to be closely related to the Amiga format, see player_v3a.cpp
