@@ -225,15 +225,18 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream) {
 
 	uint32 cftcSize = stream->readUint32LE();
 	uint32 startPos = stream->pos();
+	stream->readUint32LE(); // unknown (always 0?)
 
 	while ((uint32)stream->pos() < startPos + cftcSize) {
-		uint32 offset = stream->readUint32LE();
 		uint32 tag = stream->readUint32BE();
 		uint32 size = stream->readUint32LE();
 		uint32 id = stream->readUint32LE();
+		uint32 offset = stream->readUint32LE();
 
 		if (tag == 0)
 			break;
+
+		debug(0, "Found RIFF resource '%s' %d: %d @ 0x%08x", tag2str(tag), id, size, offset);
 
 		ResourceMap &resMap = _types[tag];
 		Resource &res = resMap[id];
