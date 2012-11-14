@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	object.o \
 	palette.o \
 	player_apple2.o \
+	player_mac.o \
 	player_mod.o \
 	player_nes.o \
 	player_pce.o \

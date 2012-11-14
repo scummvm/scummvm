@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "common/mutex.h"
 #include "scumm/music.h"
+#include "scumm/player_mac.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
@@ -39,73 +40,13 @@ class ScummEngine;
 /**
  * Scumm V3 Macintosh music driver.
  */
- class Player_V3M : public Audio::AudioStream, public MusicEngine {
+ class Player_V3M : public Player_Mac {
 public:
 	Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer);
-	virtual ~Player_V3M();
 
-	// MusicEngine API
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
-
-	// AudioStream API
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
-
-private:
-	ScummEngine *const _vm;
-	Common::Mutex _mutex;
-	Audio::Mixer *const _mixer;
-	Audio::SoundHandle _soundHandle;
-	const uint32 _sampleRate;
-	int _soundPlaying;
-
-	void stopAllSounds_Internal();
-
-	struct Instrument {
-		byte *_data;
-		uint32 _size;
-		uint32 _rate;
-		uint32 _loopStart;
-		uint32 _loopEnd;
-		byte _baseFreq;
-
-		uint _pos;
-		uint _subPos;
-
-		void newNote() {
-			_pos = 0;
-			_subPos = 0;
-		}
-
-		void generateSamples(int16 *data, int pitchModifier, int volume, int numSamples);
-	};
-
-	struct Channel {
-		Instrument _instrument;
-		bool _looped;
-		uint32 _length;
-		const byte *_data;
-
-		uint _pos;
-		int _pitchModifier;
-		byte _velocity;
-		uint32 _remaining;
-
-		bool _notesLeft;
-
-		bool loadInstrument(Common::SeekableReadStream *stream);
-		bool getNextNote(uint16 &duration, byte &value, byte &velocity);
- 	};
-
-	Channel _channel[5];
-	int _pitchTable[128];
+	virtual bool checkMusicAvailable();
+	virtual bool loadMusic(const byte *ptr);
+	virtual bool getNextNote(int ch, uint16 &duration, byte &note, byte &velocity);
 };
 
 } // End of namespace Scumm
