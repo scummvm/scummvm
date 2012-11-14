@@ -54,6 +54,10 @@ Common::Language DirectorEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+Common::String DirectorEngine::getEXEName() const {
+	return _gameDescription->desc.filesDescriptions[0].fileName;
+}
+
 bool DirectorEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL);

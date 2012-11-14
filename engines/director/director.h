@@ -35,6 +35,7 @@ enum DirectorGameID {
 	GID_GENERIC
 };
 
+class Archive;
 struct DirectorGameDescription;
 
 class DirectorEngine : public ::Engine {
@@ -48,6 +49,7 @@ public:
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
+	Common::String getEXEName() const;
 
 	bool hasFeature(EngineFeature f) const;
 
@@ -56,6 +58,16 @@ protected:
 
 private:
 	const DirectorGameDescription *_gameDescription;
+
+	void loadEXE();
+	void loadEXEv3(Common::SeekableReadStream *stream);
+	void loadEXEv4(Common::SeekableReadStream *stream);
+	void loadEXEv5(Common::SeekableReadStream *stream);
+	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
+
+	Common::String readPascalString(Common::SeekableReadStream &stream);
+
+	Archive *_mainArchive;
 };
 
 } // End of namespace Director
