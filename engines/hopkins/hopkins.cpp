@@ -589,6 +589,9 @@ LABEL_11:
 											for (;;) {
 												for (;;) {
 													for (;;) {
+														if (g_system->getEventManager()->shouldQuit())
+															return false;
+
 														if (_globals.SORTIE == 300)
 															goto LABEL_11;
 														if (_globals.SORTIE != 18)
