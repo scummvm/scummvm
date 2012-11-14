@@ -33,11 +33,25 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1("Gundam0079.exe", "1a7acbba10a7246ba58c1d53fc7203f5"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
 		5
+	},
+
+	{
+		{
+			"jman",
+			"Turbo!",
+			AD_ENTRY1("JMP Turbo\xE2\x84\xA2", "cc3321069072b90f091f220bba16e4d4"), // Trademark symbol (UTF-8)
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
 	},
 
 	{
@@ -47,7 +61,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
@@ -61,7 +75,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1("SPYCLUB.EXE", "65d06b5fef155a2473434571aff5bc29"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
