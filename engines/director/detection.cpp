@@ -69,6 +69,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "director", "Macromedia Director Game" },
 	{ "gundam0079", "Gundam 0079: The War for Earth" },
 	{ "majestic", "Majestic Part I: Alien Encounter" },
+	{ "spyclub", "Spy Club" },
 	{ 0, 0 }
 };
 

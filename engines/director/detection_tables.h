@@ -54,6 +54,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 		4
 	},
 
+	{
+		{
+			"spyclub",
+			"",
+			AD_ENTRY1("SPYCLUB.EXE", "65d06b5fef155a2473434571aff5bc29"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 };
 
