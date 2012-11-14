@@ -374,7 +374,8 @@ public:
 
 protected:
 	/**
-	 * An abstract representation of a track in a movie.
+	 * An abstract representation of a track in a movie. Since tracks here are designed
+	 * to work independently, they should not reference any other track(s) in the video.
 	 */
 	class Track {
 	public:
@@ -685,9 +686,9 @@ protected:
 	/**
 	 * Decode enough data for the next frame and enough audio to last that long.
 	 *
-	 * This function is used by the decodeNextFrame() function. A subclass
+	 * This function is used by this class' decodeNextFrame() function. A subclass
 	 * of a Track may decide to just have its decodeNextFrame() function read
-	 * and decode the frame.
+	 * and decode the frame, but only if it is the only track in the video.
 	 */
 	virtual void readNextPacket() {}
 
