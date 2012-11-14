@@ -140,8 +140,23 @@ void Lua_V2::SetGroupVolume() {
 	if (lua_isnumber(volumeObj))
 		volume = (int)lua_getnumber(volumeObj);
 
+	volume = (volume * Audio::Mixer::kMaxMixerVolume) / 100;
+
+	switch (group) {
+		case 1: // SFX
+			g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+			break;
+		case 2: // Voice
+			g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
+			break;
+		case 3: // Music
+			g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+			break;
+		default:
+			error("Lua_V2::SetGroupVolume - unknown group %d", group);
+	}
 	// FIXME: func(group, volume);
-	warning("Lua_V2::SetGroupVolume: implement opcode, group: %d, volume %d", group, volume);
+	warning("Lua_V2::SetGroupVolume: group: %d, volume %d", group, volume);
 }
 
 void Lua_V2::EnableAudioGroup() {
@@ -157,7 +172,23 @@ void Lua_V2::EnableAudioGroup() {
 		state = true;
 
 	// FIXME: func(group, state);
-	warning("Lua_V2::EnableAudioGroup: implement opcode, group: %d, state %d", group, (int)state);
+	assert (state == 1 || state == 0);
+	
+	switch (group) {
+		case 1: // SFX
+			g_system->getMixer()->muteSoundType(Audio::Mixer::kSFXSoundType, !state);
+			break;
+		case 2: // Voice
+			g_system->getMixer()->muteSoundType(Audio::Mixer::kSpeechSoundType, !state);
+			break;
+		case 3: // Music
+			g_system->getMixer()->muteSoundType(Audio::Mixer::kMusicSoundType, !state);
+			break;
+		default:
+			error("Lua_V2::EnableAudioGroup - unknown group %d", group);
+	}
+
+	warning("Lua_V2::EnableAudioGroup: group: %d, state %d", group, (int)state);
 }
 
 void Lua_V2::ImSelectSet() {
