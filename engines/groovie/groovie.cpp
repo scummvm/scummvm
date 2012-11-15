@@ -57,13 +57,13 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "media");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "system");
 
-	_modeSpeed = kGroovieSpeedNormal;
-	if (ConfMan.hasKey("t7g_speed")) {
-		Common::String speed = ConfMan.get("t7g_speed");
-		if (speed.equals("im_an_ios"))
-			_modeSpeed = kGroovieSpeediOS;
-		else if (speed.equals("tweaked"))
-			_modeSpeed = kGroovieSpeedTweaked;
+ 	_modeSpeed = kGroovieSpeedNormal;	// normal movies, normal 'teeth' animations
+	if (ConfMan.hasKey("movie_speed")) {
+		int speed = ConfMan.getInt("movie_speed");
+		if (speed == 1)
+			_modeSpeed = kGroovieSpeedTweaked;	// fast movies, normal 'teeth' animations
+		else if (speed == 2)
+			_modeSpeed = kGroovieSpeediOS;	// fast movies, fast 'teeth' animations
 	}
 
 	// Initialize the custom debug levels
