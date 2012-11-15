@@ -80,6 +80,11 @@ void DirectorEngine::loadEXE() {
 	case 5:
 		loadEXEv5(exeStream);
 		break;
+	case 7:
+		loadEXEv7(exeStream);
+		break;
+	default:
+		error("Unhandled Windows EXE version %d", getVersion());
 	}
 }
 
@@ -138,6 +143,20 @@ void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 	loadEXERIFX(stream, rifxOffset);
 }
 
+void DirectorEngine::loadEXEv7(Common::SeekableReadStream *stream) {
+	if (stream->readUint32LE() != MKTAG('P', 'J', '0', '0'))
+		error("Invalid projector tag found in v5 EXE");
+
+	uint32 rifxOffset = stream->readUint32LE();
+	stream->readUint32LE(); // unknown
+	stream->readUint32LE(); // unknown
+	stream->readUint32LE(); // unknown
+	stream->readUint32LE(); // unknown
+	stream->readUint32LE(); // some DLL offset
+
+	loadEXERIFX(stream, rifxOffset);
+}
+
 void DirectorEngine::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
 	stream->seek(offset);
 
@@ -168,7 +187,7 @@ void DirectorEngine::loadMac() {
 
 		uint32 tag = dataFork->readUint32BE();
 
-		if (SWAP_BYTES_32(tag) == MKTAG('P', 'J', '9', '3') || tag == MKTAG('P', 'J', '9', '5')) {
+		if (SWAP_BYTES_32(tag) == MKTAG('P', 'J', '9', '3') || tag == MKTAG('P', 'J', '9', '5') || tag == MKTAG('P', 'J', '0', '0')) {
 			// PPC: The RIFX shares the data fork with the binary
 			dataFork->seek(dataFork->readUint32BE());
 		} else {

@@ -67,6 +67,7 @@ private:
 	void loadEXEv3(Common::SeekableReadStream *stream);
 	void loadEXEv4(Common::SeekableReadStream *stream);
 	void loadEXEv5(Common::SeekableReadStream *stream);
+	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 
 	void loadMac();
