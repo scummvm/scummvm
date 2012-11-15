@@ -284,7 +284,7 @@ void  VqaDecoder::readNextPacket() {
 
 // -----------------------------------------------------------------------
 
-VqaDecoder::VqaAudioTrack::VqaAudioTrack(VqaHeader *header) {
+VqaDecoder::VqaAudioTrack::VqaAudioTrack(const VqaHeader *header) {
 	_audioStream = Audio::makeQueuingAudioStream(header->freq, false);
 }
 
@@ -397,7 +397,7 @@ void VqaDecoder::VqaAudioTrack::handleSND2(Common::SeekableReadStream *stream) {
 
 // -----------------------------------------------------------------------
 
-VqaDecoder::VqaVideoTrack::VqaVideoTrack(VqaHeader *header) {
+VqaDecoder::VqaVideoTrack::VqaVideoTrack(const VqaHeader *header) {
 	memset(_palette, 0, sizeof(_palette));
 	_dirtyPalette = false;
 
