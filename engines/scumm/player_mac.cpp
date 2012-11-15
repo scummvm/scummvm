@@ -97,6 +97,48 @@ Player_Mac::~Player_Mac() {
 	delete[] _channel;
 }
 
+void Player_Mac::saveLoadWithSerializer(Serializer *ser) {
+	Common::StackLock lock(_mutex);
+	if (ser->getVersion() < VER(94)) {
+		if (_vm->_game.id == GID_MONKEY && ser->isLoading()) {
+			// TODO: Skip old iMUSE save/load information
+		}
+	} else {
+		static const SaveLoadEntry musicEntries[] = {
+			MKLINE(Player_Mac, _soundPlaying, sleInt16, VER(94)),
+			MKEND()
+		};
+
+		static const SaveLoadEntry channelEntries[] = {
+			MKLINE(Channel, _pos, sleUint16, VER(94)),
+			MKLINE(Channel, _pitchModifier, sleInt32, VER(94)),
+			MKLINE(Channel, _velocity, sleUint8, VER(94)),
+			MKLINE(Channel, _remaining, sleUint32, VER(94)),
+			MKLINE(Channel, _notesLeft, sleUint8, VER(94)),
+			MKEND()
+		};
+
+		static const SaveLoadEntry instrumentEntries[] = {
+			MKLINE(Instrument, _pos, sleUint32, VER(94)),
+			MKLINE(Instrument, _subPos, sleUint32, VER(94)),
+			MKEND()
+		};
+
+		ser->saveLoadEntries(this, musicEntries);
+
+		if (ser->isLoading() && _soundPlaying != -1) {
+			const byte *ptr = _vm->getResourceAddress(rtSound, _soundPlaying);
+			assert(ptr);
+			loadMusic(ptr);
+		}
+
+		ser->saveLoadArrayOf(_channel, _numberOfChannels, sizeof(Channel), channelEntries);
+		for (int i = 0; i < _numberOfChannels; i++) {
+			ser->saveLoadEntries(&_channel[i], instrumentEntries);
+		}
+	}
+}
+
 void Player_Mac::setMusicVolume(int vol) {
 	debug(5, "Player_Mac::setMusicVolume(%d)", vol);
 }

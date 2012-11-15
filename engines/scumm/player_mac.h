@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "common/mutex.h"
 #include "scumm/music.h"
+#include "scumm/saveload.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
@@ -61,6 +62,8 @@ public:
 	virtual bool isStereo() const { return false; }
 	virtual bool endOfData() const { return false; }
 	virtual int getRate() const { return _sampleRate; }
+
+	virtual void saveLoadWithSerializer(Serializer *ser);
 
 private:
 	Common::Mutex _mutex;
