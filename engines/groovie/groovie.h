@@ -72,6 +72,13 @@ enum DebugLevels {
 		// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
+/**
+ * This enum reflects the available movie speed settings:
+ * - Normal:  both movies and 'teeth' animations are played at a normal speed
+ * - Tweaked: movies are played at a normal speed, 'teeth' animations at
+              increased speed
+ * - iOS:     both movies and 'teeth' animations are played at increased speed
+ */
 enum GameSpeed {
 	kGroovieSpeedNormal,
 	kGroovieSpeediOS,
