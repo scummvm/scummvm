@@ -210,7 +210,7 @@ const ADGameDescription *DirectorMetaEngine::fallbackDetect(const FileMap &allFi
 
 			stream->skip(directoryNameSize);
 
-			if ((uint32)stream->pos() != offset) {
+			if (stream->pos() != stream->size() - 4) {
 				delete stream;
 				continue;
 			}
