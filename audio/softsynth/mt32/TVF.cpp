@@ -117,7 +117,7 @@ void TVF::reset(const TimbreParam::PartialParam *newPartialParam, unsigned int b
 	unsigned int key = partial->getPoly()->getKey();
 	unsigned int velocity = partial->getPoly()->getVelocity();
 
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 
 	baseCutoff = calcBaseCutoff(newPartialParam, basePitch, key);
 #if MT32EMU_MONITOR_TVF >= 1
@@ -179,7 +179,7 @@ void TVF::startDecay() {
 }
 
 void TVF::nextPhase() {
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 	int newPhase = phase + 1;
 
 	switch (newPhase) {

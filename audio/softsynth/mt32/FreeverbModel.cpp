@@ -20,7 +20,7 @@
 
 #include "freeverb.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
 FreeverbModel::FreeverbModel(float useScaleTuning, float useFiltVal, float useWet, Bit8u useRoom, float useDamp) {
 	freeverb = NULL;
@@ -75,4 +75,6 @@ void FreeverbModel::setParameters(Bit8u time, Bit8u level) {
 bool FreeverbModel::isActive() const {
 	// FIXME: Not bothering to do this properly since we'll be replacing Freeverb soon...
 	return false;
+}
+
 }

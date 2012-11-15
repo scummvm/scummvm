@@ -423,7 +423,6 @@ bool Synth::open(SynthProperties &useProp) {
 #if MT32EMU_MONITOR_INIT
 	printDebug("Initialising Constant Tables");
 #endif
-	tables.init();
 #if !MT32EMU_REDUCE_REVERB_MEMORY
 	for (int i = 0; i < 4; i++) {
 		reverbModels[i]->open(useProp.sampleRate);
@@ -627,6 +626,11 @@ void Synth::playMsg(Bit32u msg) {
 		return;
 	}
 	playMsgOnPart(part, code, note, velocity);
+
+	// This ensures minimum 1-sample delay between sequential MIDI events
+	// Without this, a sequence of NoteOn and immediately succeeding NoteOff messages is always silent
+	// Technically, it's also impossible to send events through the MIDI interface faster than about each millisecond
+	prerender();
 }
 
 void Synth::playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity) {

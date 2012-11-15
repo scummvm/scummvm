@@ -544,9 +544,12 @@ void Part::allNotesOff() {
 	// should treat the hold pedal as usual.
 	for (Common::List<Poly *>::iterator polyIt = activePolys.begin(); polyIt != activePolys.end(); polyIt++) {
 		Poly *poly = *polyIt;
-		// FIXME: This has special handling of key 0 in NoteOff that Mok has not yet confirmed
-		// applies to AllNotesOff.
-		poly->noteOff(holdpedal);
+		// FIXME: This has special handling of key 0 in NoteOff that Mok has not yet confirmed applies to AllNotesOff.
+		// if (poly->canSustain() || poly->getKey() == 0) {
+		// FIXME: The real devices are found to be ignoring non-sustaining polys while processing AllNotesOff. Need to be confirmed.
+		if (poly->canSustain()) {
+			poly->noteOff(holdpedal);
+		}
 	}
 }
 

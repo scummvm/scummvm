@@ -20,7 +20,7 @@
 #include "mt32emu.h"
 #include "PartialManager.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
 PartialManager::PartialManager(Synth *useSynth, Part **useParts) {
 	synth = useSynth;
@@ -247,4 +247,6 @@ const Partial *PartialManager::getPartial(unsigned int partialNum) const {
 		return NULL;
 	}
 	return partialTable[partialNum];
+}
+
 }

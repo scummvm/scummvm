@@ -20,7 +20,7 @@
 #include "mt32emu.h"
 #include "DelayReverb.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
 
 // CONFIRMED: The values below are found via analysis of digital samples. Checked with all time and level combinations.
@@ -147,4 +147,6 @@ bool DelayReverb::isActive() const {
 		}
 	}
 	return false;
+}
+
 }

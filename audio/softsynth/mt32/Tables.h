@@ -20,14 +20,21 @@
 
 namespace MT32Emu {
 
+// Sample rate to use in mixing
+const unsigned int SAMPLE_RATE = 32000;
+
 const int MIDDLEC = 60;
 
 class Synth;
 
 class Tables {
-	bool initialised;
+private:
+	Tables();
+	Tables(Tables &);
 
 public:
+	static const Tables &getInstance();
+
 	// Constant LUTs
 
 	// CONFIRMED: This is used to convert several parameters to amp-modifying values in the TVA envelope:
@@ -47,16 +54,11 @@ public:
 	// CONFIRMED:
 	Bit8u pulseWidth100To255[101];
 
+	float exp2[4096];
 	float pulseLenFactor[128];
-	float pitchToFreq[65536];
-	float cutoffToCosineLen[1024];
-	float cutoffToFilterAmp[1024];
 	float resAmpMax[32];
 	float resAmpFadeFactor[8];
 	float sinf10[5120];
-
-	Tables();
-	void init();
 };
 
 }
