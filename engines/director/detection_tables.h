@@ -42,6 +42,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"gundam0079",
+			"",
+			AD_ENTRY1("Gundam0079", "4c38a51a21a1ad231f218c4786ff771d"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
+	},
+
+	{
+		{
 			"jman",
 			"Turbo!",
 			AD_ENTRY1("JMP Turbo\xE2\x84\xA2", "cc3321069072b90f091f220bba16e4d4"), // Trademark symbol (UTF-8)
