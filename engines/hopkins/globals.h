@@ -415,7 +415,7 @@ public:
 	int Max_Perso_Y;
 	bool DESACTIVE_INVENT;
 	bool FLAG_VISIBLE;
-	bool netscape;
+	bool netscape; // CHECKME: Useless variable?
 	bool NOMARCHE;
 	int NBBLOC;
 	bool NO_VISU;

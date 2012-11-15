@@ -1021,6 +1021,12 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 	if (_vm->_animationManager.NO_SEQ) {
 		if (v7 == 1)
 			memcpy(ptr, _vm->_graphicsManager.VESA_BUFFER, 0x4B000u);
+		if (!_vm->getIsDemo()) {
+			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+		}
 		_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	} else {
 		_vm->_graphicsManager.DD_Lock();
@@ -1039,19 +1045,38 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();
 	}
-	_vm->_eventsManager.lItCounter = 0;
-	_vm->_eventsManager.ESC_KEY = false;
-	_vm->_soundManager.LOAD_ANM_SOUND();
-	if (_vm->_globals.iRegul == 1) {
-		do {
-			if (_vm->_eventsManager.ESC_KEY == true) {
-				if (!_vm->_eventsManager.NOESC)
-					goto LABEL_59;
-				_vm->_eventsManager.ESC_KEY = false;
-			}
-			_vm->_eventsManager.CONTROLE_MES();
-			_vm->_soundManager.VERIF_SOUND();
-		} while (_vm->_eventsManager.lItCounter < a3);
+	if (_vm->getIsDemo()) {
+		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager.ESC_KEY = false;
+		_vm->_soundManager.LOAD_ANM_SOUND();
+		if (_vm->_globals.iRegul == 1) {
+			do {
+				if (_vm->_eventsManager.ESC_KEY == true) {
+					if (!_vm->_eventsManager.NOESC)
+						goto LABEL_59;
+					_vm->_eventsManager.ESC_KEY = false;
+				}
+				_vm->_eventsManager.CONTROLE_MES();
+				_vm->_soundManager.VERIF_SOUND();
+			} while (_vm->_eventsManager.lItCounter < a3);
+		}
+	} else {
+		if (NO_COUL)
+			_vm->_graphicsManager.FADE_INW_LINUX(v9);
+		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager.ESC_KEY = 0;
+		_vm->_soundManager.LOAD_ANM_SOUND();
+		if (_vm->_globals.iRegul == 1) {
+			do {
+				if (_vm->_eventsManager.ESC_KEY) {
+					if (!_vm->_eventsManager.NOESC)
+						goto LABEL_59;
+					_vm->_eventsManager.ESC_KEY = false;
+				}
+				_vm->_eventsManager.CONTROLE_MES();
+				_vm->_soundManager.VERIF_SOUND();
+			} while (_vm->_eventsManager.lItCounter < a3);
+		}
 	}
 	_vm->_eventsManager.lItCounter = 0;
 	v5 = 0;

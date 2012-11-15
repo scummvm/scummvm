@@ -489,10 +489,28 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		_vm->_eventsManager.souris_bb = false;
 		_vm->_eventsManager.souris_b = false;
 
-		do {
-			_vm->_eventsManager.VBL();
-			++v14;
-		} while (v14 != v6);
+		if (_vm->getIsDemo()) {
+			do {
+				_vm->_eventsManager.VBL();
+				++v14;
+			} while (v14 != v6);
+		} else {
+			int tmpVal = 0;
+			do {
+				_vm->_eventsManager.VBL();
+				++v14;
+				if ( _vm->_eventsManager.souris_b || _vm->_eventsManager.souris_bb )
+					v14 = v6;
+				if (_vm->_eventsManager.BMOUSE()) {
+					i = 5;
+					tmpVal = v6 / 5;
+				if (tmpVal < 0)
+					tmpVal = -tmpVal;
+				if (v14 > tmpVal)
+					v14 = v6;
+				}
+			} while (v14 != v6);
+		}
 	}
 
 	if (!_vm->_soundManager.TEXTOFF)
@@ -1314,6 +1332,10 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_eventsManager.btsouris = 4;
 	_vm->_eventsManager.CHANGE_MOUSE(4);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+
+	if (!_vm->getIsDemo())
+		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.DD_Lock();

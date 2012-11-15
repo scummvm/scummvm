@@ -1767,19 +1767,21 @@ void HopkinsEngine::INTRORUN() {
 }
 
 void HopkinsEngine::PASS() {
-	if (_globals.FR == 1)
-		_graphicsManager.LOAD_IMAGE("ndfr");
-	else
-		_graphicsManager.LOAD_IMAGE("nduk");
-  
-	_graphicsManager.FADE_INW();
-	if (_soundManager.VOICEOFF)
-	    _eventsManager.delay(500);
-	else
-		_soundManager.VOICE_MIX(628, 4);
-	
-	_graphicsManager.FADE_OUTW();
-	_globals.SORTIE = 4;	
+	if (getIsDemo()) {
+		if (_globals.FR == 1)
+			_graphicsManager.LOAD_IMAGE("ndfr");
+		else
+			_graphicsManager.LOAD_IMAGE("nduk");
+	  
+		_graphicsManager.FADE_INW();
+		if (_soundManager.VOICEOFF)
+			_eventsManager.delay(500);
+		else
+			_soundManager.VOICE_MIX(628, 4);
+		
+		_graphicsManager.FADE_OUTW();
+		_globals.SORTIE = 4;
+	}
 }
 
 void HopkinsEngine::ENDEMO() {
