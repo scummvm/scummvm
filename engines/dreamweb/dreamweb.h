@@ -316,6 +316,7 @@ public:
 	uint16 _charShift;
 	uint8 _kerning;
 	bool _brightPalette;
+	bool _copyProtection;
 	uint8 _roomLoaded;
 	uint8 _didZoom;
 	uint16 _lineSpacing;

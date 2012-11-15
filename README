@@ -384,21 +384,24 @@ entering any answer. Chances are that it will work.
 
 ScummVM will skip copy protection in the following games:
 
-  * Maniac Mansion
-  * Zak McKracken and the Alien Mindbenders
-  * Loom (EGA DOS)
-  * The Secret of Monkey Island (VGA)
-  * Monkey Island 2: LeChuck's Revenge
   * Beneath a Steel Sky
       -- bypassed with kind permission from Revolution Software.
+  * Dreamweb
+      -- a list of available commands in the in-game terminals is now shown
+         when the player uses the 'help' command
   * Inherit the Earth: Quest for the Orb (Floppy version)
       -- bypassed with kind permission from Wyrmkeep Entertainment,
          since it was bypassed in all CD releases of the game.
+  * Loom (EGA DOS)
+  * Maniac Mansion
+  * Monkey Island 2: LeChuck's Revenge
   * Simon the Sorcerer 1 (Floppy version)
   * Simon the Sorcerer 2 (Floppy version)
       -- bypassed with kind permission from Adventure Soft,
          since it was bypassed in all CD releases of the game.
+  * The Secret of Monkey Island (VGA)
   * Waxworks
+  * Zak McKracken and the Alien Mindbenders
 
 
 3.2) Commodore64 games notes:

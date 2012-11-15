@@ -374,6 +374,7 @@ Common::Error DreamWebEngine::run() {
 	ConfMan.registerDefault("bright_palette", true);
 	_hasSpeech = Common::File::exists(_speechDirName + "/r01c0000.raw") && !ConfMan.getBool("speech_mute");
 	_brightPalette = ConfMan.getBool("bright_palette");
+	_copyProtection = ConfMan.getBool("copy_protection");
 
 	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	dreamweb();

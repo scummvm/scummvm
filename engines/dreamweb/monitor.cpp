@@ -149,6 +149,13 @@ bool DreamWebEngine::execCommand() {
 		return true;
 	case 1:
 		monMessage(6);
+		// An extra addition in ScummVM: available commands.
+		// Since the reference to the game manual is a form of copy protection,
+		// this extra text is wrapped around the common copy protection check,
+		// to keep it faithful to the original, if requested.
+		if (!_copyProtection) {
+			monPrint("VALID COMMANDS ARE EXIT, HELP, LIST, READ, LOGON, KEYS");
+		}
 		break;
 	case 2:
 		dirCom();

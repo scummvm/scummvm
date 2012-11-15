@@ -15,6 +15,14 @@ For a more comprehensive changelog of the latest experimental code, see:
      Now music fades out slowly instead of stopping immediately. Sound
      effects are now properly panned, when requested by the game.
 
+  Dreamweb:
+   - Now that the game is freeware, there is a small extra help text showing
+     the available commands in the in-game terminals when the player uses the
+     'help' command. Previously, players needed to consult the manual for the
+     available commands. Since this reference to the manual is a form of copy
+     protection, this extra line can be toggled by the ScummVM copy protection
+     command line option.
+
   SCUMM:
    - Implemented Monkey Island 2 Macintosh's audio driver. Now we properly
      support its sample based audio output. The same output is also used for
