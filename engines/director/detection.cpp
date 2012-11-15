@@ -66,11 +66,12 @@ bool DirectorEngine::hasFeature(EngineFeature f) const {
 } // End of Namespace Director
 
 static const PlainGameDescriptor directorGames[] = {
-	{ "director", "Macromedia Director Game" },
+	{ "director",   "Macromedia Director Game" },
 	{ "gundam0079", "Gundam 0079: The War for Earth" },
-	{ "jman", "The Journeyman Project" },
-	{ "majestic", "Majestic Part I: Alien Encounter" },
-	{ "spyclub", "Spy Club" },
+	{ "jewels",     "Jewels of the Oracle" },
+	{ "jman",       "The Journeyman Project" },
+	{ "majestic",   "Majestic Part I: Alien Encounter" },
+	{ "spyclub",    "Spy Club" },
 	{ 0, 0 }
 };
 

@@ -56,6 +56,106 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"jewels",
+			"",
+			AD_ENTRY1("JEWELS.EXE", "bb6d81471d166088260090472c6c3a87"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
+	},
+
+	{
+		{
+			"jewels",
+			"",
+			AD_ENTRY1("Jewels.exe", "c1a2e8b7e41fa204009324a9c7db1030"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		7
+	},
+
+	{
+		{
+			"jewels",
+			"Two-Minute Demo",
+			AD_ENTRY1("DEMO.EXE", "ebee52d3c4280674c600177df5b09da0"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
+	},
+
+	// Note: There are four versions of the binary included on the disc.
+	// 5.6, 6, and 9 Meg variants all exist too.
+	{
+		{
+			"jewels",
+			"",
+			AD_ENTRY1("Jewels 11 Meg", "339c89a148c4ff2c5c815c62ac006325"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
+	},
+
+	{
+		{
+			"jewels",
+			"Two-Minute Demo",
+			AD_ENTRY1("Two-Minute Demo", "01be45e7241194dad07938e7059b88e3"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
+	},
+
+	{
+		{
+			"jewels",
+			"",
+			AD_ENTRY1("Jewels of the Oracle", "fa52f0136cde568a46249ce74f01a324"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		7
+	},
+
+	{
+		{
+			"jewels",
+			"Demo",
+			AD_ENTRY1("JEWELS.EXE", "abcc448c035e88d4edb4a29034fd1e34"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
+	},
+
+	{
+		{
 			"jman",
 			"Turbo!",
 			AD_ENTRY1("JMP Turbo\xE2\x84\xA2", "cc3321069072b90f091f220bba16e4d4"), // Trademark symbol (UTF-8)
