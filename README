@@ -2137,7 +2137,7 @@ Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
 The Legend of Kyrandia adds the following non-standard keyword:
 
-    walkspeed          int      The walk speed (0-4)
+    walkspeed          number   The walk speed (0-4)
 
 The Legend of Kyrandia: Malcolm's Revenge adds the following non-standard
 keywords:
