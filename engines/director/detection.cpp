@@ -91,6 +91,7 @@ public:
 		return "Macromedia Director (C) Macromedia";
 	}
 
+	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
@@ -101,6 +102,131 @@ bool DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 		*engine = new Director::DirectorEngine(syst, gd);
 
 	return (gd != 0);
+}
+
+static Director::DirectorGameDescription s_fallbackDesc = {
+	{
+		"director",
+		"",
+		AD_ENTRY1(0, 0),
+		Common::UNK_LANG,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	Director::GID_GENERIC,
+	0
+};
+
+static char s_fallbackFileNameBuffer[51];
+
+const ADGameDescription *DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	// TODO: Handle Mac fallback
+
+	// reset fallback description
+	Director::DirectorGameDescription *desc = &s_fallbackDesc;
+	desc->desc.gameid = "director";
+	desc->desc.extra = "";
+	desc->desc.language = Common::UNK_LANG;
+	desc->desc.flags = ADGF_NO_FLAGS;
+	desc->desc.platform = Common::kPlatformWindows;
+	desc->desc.guioptions = GUIO0();
+	desc->desc.filesDescriptions[0].fileName = 0;
+	desc->version = 0;
+	desc->gameID = Director::GID_GENERIC;
+
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory())
+			continue;
+
+		Common::String fileName = file->getName();
+		fileName.toLowercase();
+		if (!fileName.hasSuffix(".exe"))
+			continue;
+
+		SearchMan.clear();
+		SearchMan.addDirectory(file->getParent().getName(), file->getParent());
+
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(file->getName());
+
+		if (!stream)
+			continue;
+
+		stream->seek(-4, SEEK_END);
+
+		uint32 offset = stream->readUint32LE();
+
+		if (stream->eos() || offset == 0 || offset >= (uint32)(stream->size() - 4)) {
+			delete stream;
+			continue;
+		}
+
+		stream->seek(offset);
+
+		uint32 tag = stream->readUint32LE();
+
+		switch (tag) {
+		case MKTAG('3', '9', 'J', 'P'):
+			desc->version = 4;
+			break;
+		case MKTAG('P', 'J', '9', '5'):
+			desc->version = 5;
+			break;
+		case MKTAG('P', 'J', '0', '0'):
+			desc->version = 7;
+			break;
+		default:
+			// Prior to version 4, there was no tag here. So we'll use a bit of a
+			// heuristic to detect. The first field is the entry count, of which
+			// there should only be one.
+			if ((tag & 0xFFFF) != 1) {
+				delete stream;
+				continue;
+			}
+
+			stream->skip(3);
+
+			uint32 mmmSize = stream->readUint32LE();
+
+			if (stream->eos() || mmmSize == 0) {
+				delete stream;
+				continue;
+			}
+
+			byte fileNameSize = stream->readByte();
+
+			if (stream->eos()) {
+				delete stream;
+				continue;
+			}
+
+			stream->skip(fileNameSize);
+			byte directoryNameSize = stream->readByte();
+
+			if (stream->eos()) {
+				delete stream;
+				continue;
+			}
+
+			stream->skip(directoryNameSize);
+
+			if ((uint32)stream->pos() != offset) {
+				delete stream;
+				continue;
+			}
+
+			// Assume v3 at this point (for now at least)
+			desc->version = 3;
+		}
+
+		strncpy(s_fallbackFileNameBuffer, fileName.c_str(), 50);
+		s_fallbackFileNameBuffer[50] = '\0';
+		desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
+
+		return (ADGameDescription *)desc;
+	}
+
+	return 0;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DIRECTOR)
