@@ -148,31 +148,37 @@ void DirectorEngine::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offs
 }
 
 void DirectorEngine::loadMac() {
-	if (getVersion() < 4)
-		error("Unhandled pre-v4 Mac version");
+	if (getVersion() < 4) {
+		// The data is part of the resource fork of the executable
+		_mainArchive = new MacArchive();
 
-	_macBinary = new Common::MacResManager();
-
-	if (!_macBinary->open(getEXEName()) || !_macBinary->hasDataFork())
-		error("Failed to open Mac binary '%s'", getEXEName().c_str());
-
-	Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
-	_mainArchive = new RIFXArchive();
-
-	// First we need to detect PPC vs. 68k
-
-	uint32 tag = dataFork->readUint32LE();
-
-	if (tag == MKTAG('P', 'J', '9', '3')) {
-		// PPC: The RIFX shares the data fork with the binary
-		dataFork->seek(dataFork->readUint32BE());
+		if (!_mainArchive->openFile(getEXEName()))
+			error("Failed to open Mac binary '%s'", getEXEName().c_str());
 	} else {
-		// 68k: The RIFX is the only thing in the data fork
-		dataFork->seek(0);
-	}
+		// The RIFX is located in the data fork of the executable
+		_macBinary = new Common::MacResManager();
 
-	if (!_mainArchive->openStream(dataFork))
-		error("Failed to load RIFX from Mac binary");
+		if (!_macBinary->open(getEXEName()) || !_macBinary->hasDataFork())
+			error("Failed to open Mac binary '%s'", getEXEName().c_str());
+
+		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
+		_mainArchive = new RIFXArchive();
+
+		// First we need to detect PPC vs. 68k
+
+		uint32 tag = dataFork->readUint32LE();
+
+		if (tag == MKTAG('P', 'J', '9', '3')) {
+			// PPC: The RIFX shares the data fork with the binary
+			dataFork->seek(dataFork->readUint32BE());
+		} else {
+			// 68k: The RIFX is the only thing in the data fork
+			dataFork->seek(0);
+		}
+
+		if (!_mainArchive->openStream(dataFork))
+			error("Failed to load RIFX from Mac binary");
+	}
 }
 
 Common::String DirectorEngine::readPascalString(Common::SeekableReadStream &stream) {
