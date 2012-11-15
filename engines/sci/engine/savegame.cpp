@@ -696,8 +696,9 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsSint32LE(_palVaryPaused);
 		}
 
+		_palVarySignal = 0;
+
 		if (s.isLoading() && _palVaryResourceId != -1) {
-			_palVarySignal = 0;
 			palVaryInstallTimer();
 		}
 	}
@@ -877,10 +878,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 			return;
 		}
 	}
-
-	// Remove the palVary effect timer, if there is one running currently.
-	// Fixes bug #3575569.
-	g_sci->_gfxPalette->palVaryRemoveTimer();
 
 	// We don't need the thumbnail here, so just read it and discard it
 	Graphics::skipThumbnail(*fh);

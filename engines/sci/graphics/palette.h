@@ -105,8 +105,6 @@ public:
 	byte findMacIconBarColor(byte r, byte g, byte b);
 	bool colorIsFromMacClut(byte index);
 
-	void palVaryRemoveTimer();
-
 #ifdef ENABLE_SCI32
 	bool loadClut(uint16 clutId);
 	byte matchClutColor(uint16 color);
@@ -116,6 +114,7 @@ public:
 private:
 	void palVaryInit();
 	void palVaryInstallTimer();
+	void palVaryRemoveTimer();
 	bool palVaryLoadTargetPalette(GuiResourceId resourceId);
 	static void palVaryCallback(void *refCon);
 	void palVaryIncreaseSignal();
