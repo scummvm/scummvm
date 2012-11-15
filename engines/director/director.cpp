@@ -166,9 +166,9 @@ void DirectorEngine::loadMac() {
 
 		// First we need to detect PPC vs. 68k
 
-		uint32 tag = dataFork->readUint32LE();
+		uint32 tag = dataFork->readUint32BE();
 
-		if (tag == MKTAG('P', 'J', '9', '3')) {
+		if (SWAP_BYTES_32(tag) == MKTAG('P', 'J', '9', '3') || tag == MKTAG('P', 'J', '9', '5')) {
 			// PPC: The RIFX shares the data fork with the binary
 			dataFork->seek(dataFork->readUint32BE());
 		} else {
