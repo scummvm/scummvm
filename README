@@ -2139,9 +2139,17 @@ The Legend of Kyrandia adds the following non-standard keyword:
 
     walkspeed          number   The walk speed (0-4)
 
+The Legend of Kyrandia: The Hand of Fate adds the following non-standard
+keyword:
+
+    walkspeed          number   The walk speed (3 or 5, resp. fast or
+                                slow)
+
 The Legend of Kyrandia: Malcolm's Revenge adds the following non-standard
 keywords:
 
+    walkspeed          number   The walk speed (3 or 5, resp. fast or
+                                slow)
     studio_audience    bool     If true, applause and cheering sounds are heard
                                 whenever Malcolm makes a joke
     skip_support       bool     If true, the player can skip text and cutscenes
