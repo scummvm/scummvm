@@ -2036,9 +2036,10 @@ The following keywords are recognized:
                                 super2xsai, supereagle, advmame2x, advmame3x,
                                 hq2x, hq3x, tv2x, dotmatrix)
 
-    confirm_exit       bool     Ask for confirmation by the user before quitting
-                                (SDL backend only).
-    console            bool     Enable the console window (default: enabled) (Windows only).
+    confirm_exit       bool     Ask for confirmation by the user before
+                                quitting (SDL backend only).
+    console            bool     Enable the console window (default: enabled)
+                                (Windows only).
     cdrom              number   Number of CD-ROM unit to use for audio. If
                                 negative, don't even try to access the CD-ROM.
     joystick_num       number   Number of joystick device to use for input
@@ -2066,7 +2067,8 @@ The following keywords are recognized:
                                 supported by some MIDI drivers.)
 
     copy_protection    bool     Enable copy protection in certain games, in
-                                those cases where ScummVM disables it by default.
+                                those cases where ScummVM disables it by
+                                default.
     demo_mode          bool     Start demo in Maniac Mansion
     alt_intro          bool     Use alternative intro for CD versions of
                                 Beneath a Steel Sky and Flight of the Amazon
@@ -2127,8 +2129,9 @@ Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
 
 Space Quest IV CD adds the following non-standard keyword:
 
-     silver_cursors    bool     If true, an alternate set of silver mouse cursors
-                                is used instead of the original golden ones
+     silver_cursors    bool     If true, an alternate set of silver mouse
+                                cursors is used instead of the original golden
+                                ones
 
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
@@ -2153,11 +2156,13 @@ keywords:
     studio_audience    bool     If true, applause and cheering sounds are heard
                                 whenever Malcolm makes a joke
     skip_support       bool     If true, the player can skip text and cutscenes
-    helium_mode        bool     If true, people sound like they've inhaled Helium
+    helium_mode        bool     If true, people sound like they've inhaled
+                                Helium
 
 The 7th Guest adds the following non-standard keyword:
 
-    t7g_speed          string   Video playback speed (normal, tweaked, im_an_ios)
+    t7g_speed          string   Video playback speed (normal, tweaked,
+                                im_an_ios)
 
 
 8.2) Custom game options that can be toggled via the GUI
