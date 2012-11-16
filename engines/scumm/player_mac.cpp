@@ -26,6 +26,7 @@
 #include "gui/message.h"
 #include "scumm/player_mac.h"
 #include "scumm/scumm.h"
+#include "scumm/imuse/imuse.h"
 
 namespace Scumm {
 
@@ -101,13 +102,20 @@ void Player_Mac::saveLoadWithSerializer(Serializer *ser) {
 	Common::StackLock lock(_mutex);
 	if (ser->getVersion() < VER(94)) {
 		if (_vm->_game.id == GID_MONKEY && ser->isLoading()) {
-			// TODO: Skip old iMUSE save/load information
+			IMuse *dummyImuse = IMuse::create(_vm->_system, NULL, NULL);
+			dummyImuse->save_or_load(ser, _vm, false);
 		}
 	} else {
 		static const SaveLoadEntry musicEntries[] = {
 			MKLINE(Player_Mac, _soundPlaying, sleInt16, VER(94)),
 			MKEND()
 		};
+
+		// Note: This will fail slightly when loading a savegame if
+		// the mixer output rate has changed, because the pitch
+		// modifier and remaining samples were calculated from it. As
+		// a result, the first note to be played will be out of tune,
+		// and the channels will probably be slightly out of sync.
 
 		static const SaveLoadEntry channelEntries[] = {
 			MKLINE(Channel, _pos, sleUint16, VER(94)),
