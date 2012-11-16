@@ -34,6 +34,10 @@ namespace Hopkins {
 #define PALETTE_SIZE 256
 #define PALETTE_BLOCK_SIZE (PALETTE_SIZE * 3)
 #define PALETTE_EXT_BLOCK_SIZE 800
+static const byte kSetOffset = 251;
+static const byte kByteStop = 252;
+static const byte k8bVal = 253;
+static const byte k16bVal = 254;
 
 struct RGB8 {
 	byte r;

@@ -149,14 +149,14 @@ LABEL_38:
 		_vm->_eventsManager.lItCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (hasScreenCopy) {
-			if (*v10 != (byte)-4) {
+			if (*v10 != kByteStop) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe3(v10, screenCopy);
 				if (_vm->_graphicsManager.Winbpp == 2)
 					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, 640, 480, 0, 0);
 				else
 					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, 640, 480, 0, 0);
 			}
-		} else if (*v10 != (byte)-4) {
+		} else if (*v10 != kByteStop) {
 			if (_vm->_graphicsManager.Winbpp == 1)
 				_vm->_graphicsManager.Copy_Video_Vbe3(v10);
 			if (_vm->_graphicsManager.Winbpp == 2)
@@ -224,7 +224,7 @@ LABEL_58:
 				v5 = -1;
 			if (!v5) {
 				f.read(v10, READ_LE_UINT32(ptr + 8));
-				if (*v10 != (byte)-4)
+				if (*v10 != kByteStop)
 					_vm->_graphicsManager.Copy_WinScan_Vbe3(v10, screenCopy);
 			}
 		} while (v5 != -1);
@@ -440,14 +440,14 @@ LABEL_77:
 		_vm->_eventsManager.lItCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (v8) {
-			if (*v12 != (byte)-4) {
+			if (*v12 != kByteStop) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe3(v12, ptr);
 				if (_vm->_graphicsManager.Winbpp == 2)
 					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
 					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
-		} else if (*v12 != (byte)-4) {
+		} else if (*v12 != kByteStop) {
 			if (_vm->_graphicsManager.Winbpp == 1)
 				_vm->_graphicsManager.Copy_Video_Vbe3(v12);
 			if (_vm->_graphicsManager.Winbpp == 2)
@@ -617,7 +617,7 @@ LABEL_114:
 
 			if (!v6) {
 				f.read(v12, READ_LE_UINT32(v13 + 8));
-				if (*v12 != (byte)-4)
+				if (*v12 != kByteStop)
 					_vm->_graphicsManager.Copy_WinScan_Vbe3(v12, ptra);
 			}
 		} while (v6 != -1);
@@ -1107,14 +1107,14 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 			_vm->_eventsManager.lItCounter = 0;
 			_vm->_graphicsManager.DD_Lock();
 			if (v7) {
-				if (*v9 != (byte)-4) {
+				if (*v9 != kByteStop) {
 					_vm->_graphicsManager.Copy_WinScan_Vbe(v9, ptr);
 					if (_vm->_graphicsManager.Winbpp == 2)
 						_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					else
 						_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				}
-			} else if (*v9 != (byte)-4) {
+			} else if (*v9 != kByteStop) {
 				if (_vm->_graphicsManager.Winbpp == 1)
 					_vm->_graphicsManager.Copy_Video_Vbe(v9);
 				if (_vm->_graphicsManager.Winbpp == 2)
@@ -1274,14 +1274,14 @@ LABEL_33:
 		_vm->_eventsManager.lItCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (v7) {
-			if (*v10 != (byte)-4) {
+			if (*v10 != kByteStop) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptr);
 				if (_vm->_graphicsManager.Winbpp == 2)
 					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
 					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
-		} else if (*v10 != (byte)-4) {
+		} else if (*v10 != kByteStop) {
 			if (_vm->_graphicsManager.Winbpp == 1)
 				_vm->_graphicsManager.Copy_Video_Vbe(v10);
 			if (_vm->_graphicsManager.Winbpp == 2)
@@ -1343,7 +1343,7 @@ LABEL_54:
 				v5 = true;
 			if (!v5) {
 				f.read(v10, READ_LE_UINT32(v11 + 8));
-				if (*v10 != (byte)-4)
+				if (*v10 != kByteStop)
 					_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptra);
 			}
 		} while (!v5);

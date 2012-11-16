@@ -99,7 +99,7 @@ void FileManager::DMESS1() {
 void FileManager::bload(const Common::String &file, byte *buf) {
 	Common::File f;
 	if (!f.open(file))
-		error("Error openinig file - %s", file.c_str());
+		error("Error opening file - %s", file.c_str());
 	int32 filesize = f.size();
 	_vm->_fileManager.bload_it(f, buf, filesize);
 	f.close();
