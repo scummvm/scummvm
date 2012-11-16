@@ -741,10 +741,6 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 		"Silence",      "Shaping",       "Unmaking",
 		"Transcendence"
 	};
-	int odds[] = {
-		15162, 15676, 16190,    64, 16961, 17475, 17989, 18503,
-		   73, 19274,    76,    77, 20302, 20816, 21330,    84
-	};
 
 	const char *notes = "cdefgabC";
 	int i, base, draft;
@@ -801,28 +797,13 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 			DebugPrintf("Learned all drafts and notes.\n");
 			return true;
 		}
-
-		// During the testing of EGA Loom we had some trouble with the
-		// drafts data structure being overwritten. I don't expect
-		// this command is particularly useful any more, but it will
-		// attempt to repair the (probably) static part of it.
-
-		if (strcmp(argv[1], "fix") == 0) {
-			for (i = 0; i < 16; i++)
-				_vm->_scummVars[base + 2 * i + 1] = odds[i];
-			DebugPrintf(
-				"An attempt has been made to repair\n"
-				"the internal drafts data structure.\n"
-				"Continue on your own risk.\n");
-			return true;
-		}
 	}
 
 	// Probably the most useful command for ordinary use: list the drafts.
 
 	for (i = 0; i < 16; i++) {
 		draft = _vm->_scummVars[base + i * 2];
-		DebugPrintf("%d %-13s %c%c%c%c %c%c %5d %c\n",
+		DebugPrintf("%d %-13s %c%c%c%c %c%c\n",
 			base + 2 * i,
 			names[i],
 			notes[draft & 0x0007],
@@ -830,9 +811,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 			notes[(draft & 0x01c0) >> 6],
 			notes[(draft & 0x0e00) >> 9],
 			(draft & 0x2000) ? 'K' : ' ',
-			(draft & 0x4000) ? 'U' : ' ',
-			_vm->_scummVars[base + 2 * i + 1],
-			(_vm->_scummVars[base + 2 * i + 1] != odds[i]) ? '!' : ' ');
+			(draft & 0x4000) ? 'U' : ' ');
 	}
 
 	return true;
