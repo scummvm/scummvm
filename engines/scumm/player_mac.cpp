@@ -107,15 +107,10 @@ void Player_Mac::saveLoadWithSerializer(Serializer *ser) {
 		}
 	} else {
 		static const SaveLoadEntry musicEntries[] = {
+			MKLINE(Player_Mac, _sampleRate, sleUint32, VER(94)),
 			MKLINE(Player_Mac, _soundPlaying, sleInt16, VER(94)),
 			MKEND()
 		};
-
-		// Note: This will fail slightly when loading a savegame if
-		// the mixer output rate has changed, because the pitch
-		// modifier and remaining samples were calculated from it. As
-		// a result, the first note to be played will be out of tune,
-		// and the channels will probably be slightly out of sync.
 
 		static const SaveLoadEntry channelEntries[] = {
 			MKLINE(Channel, _pos, sleUint16, VER(94)),
@@ -132,6 +127,9 @@ void Player_Mac::saveLoadWithSerializer(Serializer *ser) {
 			MKEND()
 		};
 
+		uint32 mixerSampleRate = _sampleRate;
+		int i;
+
 		ser->saveLoadEntries(this, musicEntries);
 
 		if (ser->isLoading() && _soundPlaying != -1) {
@@ -141,8 +139,21 @@ void Player_Mac::saveLoadWithSerializer(Serializer *ser) {
 		}
 
 		ser->saveLoadArrayOf(_channel, _numberOfChannels, sizeof(Channel), channelEntries);
-		for (int i = 0; i < _numberOfChannels; i++) {
+		for (i = 0; i < _numberOfChannels; i++) {
 			ser->saveLoadEntries(&_channel[i], instrumentEntries);
+		}
+
+		if (ser->isLoading()) {
+			// If necessary, adjust the channel data to fit the
+			// current sample rate.
+			if (_soundPlaying != -1 && _sampleRate != mixerSampleRate) {
+				double mult = (double)_sampleRate / (double)mixerSampleRate;
+				for (i = 0; i < _numberOfChannels; i++) {
+					_channel[i]._pitchModifier = (int)((double)_channel[i]._pitchModifier * mult);
+					_channel[i]._remaining = (int)((double)_channel[i]._remaining / mult);
+				}
+			}
+			_sampleRate = mixerSampleRate;
 		}
 	}
 }

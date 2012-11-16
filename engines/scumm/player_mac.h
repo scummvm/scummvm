@@ -69,7 +69,7 @@ private:
 	Common::Mutex _mutex;
 	Audio::Mixer *const _mixer;
 	Audio::SoundHandle _soundHandle;
-	const uint32 _sampleRate;
+	uint32 _sampleRate;
 	int _soundPlaying;
 
 	void stopAllSounds_Internal();
