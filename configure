@@ -2543,6 +2543,13 @@ if test -n "$_host"; then
 			# Only static builds link successfully on buildbot
 			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
 			LDFLAGS="$LDFLAGS -static"
+
+			# toolchain binaries prefixed by host
+			_ranlib=$_host-ranlib
+			_strip=$_host-strip
+			_ar="$_host-ar cru"
+			_as="$_host-as"
+			_windres=$_host-windres
 			;;
 		ps2)
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
