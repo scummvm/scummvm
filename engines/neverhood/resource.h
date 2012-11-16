@@ -27,6 +27,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/graphics.h"
 #include "neverhood/staticdata.h"
+#include "neverhood/resourceman.h"
 
 namespace Neverhood {
 
@@ -41,13 +42,13 @@ public:
 	const NDimensions& getDimensions() { return _dimensions; }
 	NPoint& getPosition() { return _position; }
 	bool isRle() const { return _rle; }
-	byte *getPixels() const { return _pixels; }
+	const byte *getPixels() const { return _pixels; }
 protected:
 	NeverhoodEngine *_vm;
-	int _resourceHandle;
+	ResourceHandle _resourceHandle;
 	NDimensions _dimensions;
 	NPoint _position;
-	byte *_pixels;
+	const byte *_pixels;
 	bool _rle;
 };
 
@@ -58,11 +59,11 @@ public:
 	bool load(uint32 fileHash);
 	void unload();
 	void copyPalette(byte *destPalette);
-	byte *palette() { return _palette; }
+	const byte *palette() { return _palette; }
 protected:
 	NeverhoodEngine *_vm;
-	int _resourceHandle;
-	byte *_palette;
+	ResourceHandle _resourceHandle;
+	const byte *_palette;
 };
 
 struct AnimFrameInfo {
@@ -82,9 +83,6 @@ public:
 	bool load(uint32 fileHash);
 	void unload();
 	void clear();
-	void clear2();
-	bool loadInternal(uint32 fileHash);
-	void unloadInternal();
 	uint getFrameCount() const { return _frames.size(); }
 	const AnimFrameInfo& getFrameInfo(int16 index) const { return _frames[index]; }
 	int16 getFrameIndex(uint32 frameHash);
@@ -93,12 +91,12 @@ public:
 	NDimensions loadSpriteDimensions(uint32 fileHash);
 protected:
 	NeverhoodEngine *_vm;
-	int _resourceHandle;
+	ResourceHandle _resourceHandle;
 	int16 _width, _height;
-	byte *_currSpriteData;
+	const byte *_currSpriteData;
 	uint32 _fileHash;
-	byte *_paletteData;
-	byte *_spriteData;
+	const byte *_paletteData;
+	const byte *_spriteData;
 	bool _replEnabled;
 	byte _replOldColor;
 	byte _replNewColor;
@@ -131,8 +129,8 @@ public:
 	uint getCount() const { return _count;}
 protected:
 	NeverhoodEngine *_vm;
-	int _resourceHandle;
-	byte *_textData;
+	ResourceHandle _resourceHandle;
+	const byte *_textData;
 	uint _count;
 };
 
@@ -178,7 +176,7 @@ protected:
 	typedef Common::Array<DRSubRect> DRSubRectList;
 
 	NeverhoodEngine *_vm;
-	int _resourceHandle;
+	ResourceHandle _resourceHandle;
 	Common::Array<DRDirectoryItem> _directory;
 	Common::Array<NPoint> _points;
 	Common::Array<NPointArray*> _pointArrays;

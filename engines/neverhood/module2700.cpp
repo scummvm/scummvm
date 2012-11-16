@@ -185,7 +185,7 @@ void Module2700::createScene(int sceneNum, int which) {
 	case 10:
 		_vm->gameState().sceneNum = 10;
 		_vm->gameState().which = which;
-		// TODO _vm->gameModule()->initScene2808Vars2();
+		_vm->gameModule()->initTestTubes2Puzzle();
 		_scene2711StaticSprites[0] = kScene2711FileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2)];
 		_scene2711StaticSprites[1] = kScene2711FileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1)];
 		_scene2711StaticSprites[2] = kScene2711FileHashes3[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0)];
@@ -631,8 +631,8 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x1E086325, 1200);
 	clipRect.set(0, 0, 640, tempSprite->getDrawRect().y2());
 
-	if (sceneInfo->class437Filename) {
-		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->class437Filename);
+	if (sceneInfo->bgShadowFilename) {
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->bgShadowFilename);
 		addEntity(_ssTrackShadowBackground);
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
@@ -898,8 +898,8 @@ Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	
 	_palStatus = 2;
 	
-	if (sceneInfo->class437Filename) {
-		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->class437Filename);
+	if (sceneInfo->bgShadowFilename) {
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->bgShadowFilename);
 		addEntity(_ssTrackShadowBackground);
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
@@ -1017,8 +1017,8 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 
 	insertMouse433(sceneInfo->mouseCursorFilename);
 	
-	if (sceneInfo->class437Filename) {
-		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->class437Filename);
+	if (sceneInfo->bgShadowFilename) {
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->bgShadowFilename);
 		addEntity(_ssTrackShadowBackground);
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);

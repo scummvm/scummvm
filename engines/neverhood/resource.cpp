@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/memstream.h"
 #include "neverhood/resource.h"
 #include "neverhood/resourceman.h"
@@ -33,7 +34,7 @@ namespace Neverhood {
 // SpriteResource
 
 SpriteResource::SpriteResource(NeverhoodEngine *vm)
-	 : _vm(vm), _resourceHandle(-1), _pixels(NULL) {
+	 : _vm(vm), _pixels(NULL) {
 }
 
 SpriteResource::~SpriteResource() {
@@ -53,43 +54,30 @@ bool SpriteResource::load(uint32 fileHash) {
 	debug(2, "SpriteResource::load(%08X)", fileHash);
 	// TODO: Later merge with load2 and make the mode a parameter
 	unload();
-	_resourceHandle = _vm->_res->useResource(fileHash);
-	debug(2, "SpriteResource::load(0x%08X) _resourceHandle = %d", fileHash, _resourceHandle);
-	if (_resourceHandle != -1) {
-		if (_vm->_res->getResourceType(_resourceHandle) == 2) {
-			byte *spriteData = _vm->_res->loadResource(_resourceHandle, true);
-			parseBitmapResource(spriteData, &_rle, &_dimensions, NULL, NULL, &_pixels);
-		} else {
-			_vm->_res->unuseResource(_resourceHandle);
-			_resourceHandle = -1;
-		}
+	_vm->_res->queryResource(fileHash, _resourceHandle);
+	if (_resourceHandle.isValid() && _resourceHandle.type() == 2) {
+		_vm->_res->loadResource(_resourceHandle);
+		const byte *spriteData = _resourceHandle.data();
+		parseBitmapResource(spriteData, &_rle, &_dimensions, NULL, NULL, &_pixels);
 	} 
 	return _pixels != NULL;
 }
 
 bool SpriteResource::load2(uint32 fileHash) {
+	debug(2, "SpriteResource::load2(%08X)", fileHash);
 	unload();
-	_resourceHandle = _vm->_res->useResource(fileHash);
-	if (_resourceHandle != -1) {
-		if (_vm->_res->getResourceType(_resourceHandle) == 2) {
-			byte *spriteData = _vm->_res->loadResource(_resourceHandle, true);
-			parseBitmapResource(spriteData, &_rle, &_dimensions, &_position, NULL, &_pixels);
-		} else {
-			_vm->_res->unuseResource(_resourceHandle);
-			_resourceHandle = -1;
-		}
+	_vm->_res->queryResource(fileHash, _resourceHandle);
+	if (_resourceHandle.isValid() && _resourceHandle.type() == 2) {
+		_vm->_res->loadResource(_resourceHandle);
+		const byte *spriteData = _resourceHandle.data();
+		parseBitmapResource(spriteData, &_rle, &_dimensions, &_position, NULL, &_pixels);
 	} 
 	return _pixels != NULL;
 }
 
 void SpriteResource::unload() {
-	if (_resourceHandle != -1) {
-		_vm->_res->unloadResource(_resourceHandle);
-		_vm->_res->unuseResource(_resourceHandle);
-		_resourceHandle = -1;
-	} else {
-		delete[] _pixels;
-	}
+	_vm->_res->unloadResource(_resourceHandle);
+	delete[] _pixels;
 	_pixels = NULL;
 	_rle = false;
 }
@@ -97,7 +85,7 @@ void SpriteResource::unload() {
 // PaletteResource
 
 PaletteResource::PaletteResource(NeverhoodEngine *vm)
-	: _vm(vm), _resourceHandle(-1), _palette(NULL) {
+	: _vm(vm), _palette(NULL) {
 }
 
 PaletteResource::~PaletteResource() {
@@ -107,33 +95,22 @@ PaletteResource::~PaletteResource() {
 bool PaletteResource::load(uint32 fileHash) {
 	debug(2, "PaletteResource::load(%08X)", fileHash);
 	unload();
-	_resourceHandle = _vm->_res->useResource(fileHash);
-	if (_resourceHandle != -1) {
-		_palette = _vm->_res->loadResource(_resourceHandle, true);
-		switch (_vm->_res->getResourceType(_resourceHandle)) {
-		case 2:
-			// Palette is stored in a bitmap
+	_vm->_res->queryResource(fileHash, _resourceHandle);
+	if (_resourceHandle.isValid() &&
+		(_resourceHandle.type() == 2 || _resourceHandle.type() == 3)) {
+		_vm->_res->loadResource(_resourceHandle);
+		_palette = _resourceHandle.data();
+		// Check if the palette is stored in a bitmap
+		if (_resourceHandle.type() == 2)
 			parseBitmapResource(_palette, NULL, NULL, NULL, &_palette, NULL);
-			break;
-		case 3:
-			// _palette already points to the correct data
-			break;
-		default:
-			_vm->_res->unuseResource(_resourceHandle);
-			_resourceHandle = -1;
-			break;
-		}
-	} 
+
+	}
 	return _palette != NULL;
 }
 
 void PaletteResource::unload() {
-	if (_resourceHandle != -1) {
-		_vm->_res->unloadResource(_resourceHandle);
-		_vm->_res->unuseResource(_resourceHandle);
-		_resourceHandle = -1;
-		_palette = NULL;
-	}
+	_vm->_res->unloadResource(_resourceHandle);
+	_palette = NULL;
 }
 
 void PaletteResource::copyPalette(byte *destPalette) {
@@ -147,14 +124,12 @@ void PaletteResource::copyPalette(byte *destPalette) {
 // AnimResource
 
 AnimResource::AnimResource(NeverhoodEngine *vm)
-	: _vm(vm), _width(0), _height(0), _currSpriteData(NULL) {
-	
-	clear();
-	clear2();
+	: _vm(vm), _width(0), _height(0), _currSpriteData(NULL), _fileHash(0), _paletteData(NULL),
+	_spriteData(NULL), _replEnabled(false), _replOldColor(0), _replNewColor(0) {
 }
 
 AnimResource::~AnimResource() {
-	unloadInternal();
+	unload();
 }
 
 void AnimResource::draw(uint frameIndex, byte *dest, int destPitch, bool flipX, bool flipY) {
@@ -175,27 +150,18 @@ bool AnimResource::load(uint32 fileHash) {
 		return true;
 
 	unload();
-	_resourceHandle = _vm->_res->useResource(fileHash);
-	if (_resourceHandle == -1)
+	
+	_vm->_res->queryResource(fileHash, _resourceHandle);
+	if (!_resourceHandle.isValid() || _resourceHandle.type() != 4)
 		return false;
 	
-	byte *resourceData, *animList, *frameList;
+	const byte *resourceData, *animList, *frameList;
 	uint16 animInfoStartOfs, animListIndex, animListCount;
 	uint16 frameListStartOfs, frameCount;
 	uint32 spriteDataOfs, paletteDataOfs;
 
-	if (_vm->_res->getResourceType(_resourceHandle) != 4) {
-		_vm->_res->unuseResource(_resourceHandle);
-		_resourceHandle = -1;
-		return false;
-	}
-	
-	resourceData = _vm->_res->loadResource(_resourceHandle);
-	if (!resourceData) {
-		_vm->_res->unuseResource(_resourceHandle);
-		_resourceHandle = -1;
-		return false;
-	}
+	_vm->_res->loadResource(_resourceHandle);
+	resourceData = _resourceHandle.data();
 
 	animListCount = READ_LE_UINT16(resourceData);
 	animInfoStartOfs = READ_LE_UINT16(resourceData + 2);
@@ -212,8 +178,6 @@ bool AnimResource::load(uint32 fileHash) {
 	
 	if (animListIndex >= animListCount) {
 		_vm->_res->unloadResource(_resourceHandle);
-		_vm->_res->unuseResource(_resourceHandle);
-		_resourceHandle = -1;
 		return false;
 	}
 
@@ -257,42 +221,20 @@ bool AnimResource::load(uint32 fileHash) {
 	}
 	
 	_fileHash = fileHash;
-	
+
 	return true;
 	
 }
 
 void AnimResource::unload() {
-	if (_resourceHandle != -1) {
-		_vm->_res->unloadResource(_resourceHandle);
-		_vm->_res->unuseResource(_resourceHandle);
-		clear();
-	}
-}
-
-void AnimResource::clear() {
-	_resourceHandle = -1;
+	_vm->_res->unloadResource(_resourceHandle);
 	_currSpriteData = NULL;
 	_fileHash = 0;
 	_paletteData = NULL;
 	_spriteData = NULL;
-}
-
-void AnimResource::clear2() {
-	clear();
 	_replEnabled = true;
 	_replOldColor = 0;
 	_replNewColor = 0;
-}
-
-bool AnimResource::loadInternal(uint32 fileHash) {
-	unloadInternal();
-	return load(fileHash);
-}
-
-void AnimResource::unloadInternal() {
-	unload();
-	clear2();
 }
 
 int16 AnimResource::getFrameIndex(uint32 frameHash) {
@@ -312,8 +254,10 @@ void AnimResource::setRepl(byte oldColor, byte newColor) {
 }
 
 NDimensions AnimResource::loadSpriteDimensions(uint32 fileHash) {
+	ResourceHandle resourceHandle;
 	NDimensions dimensions;
-	byte *resDimensions = _vm->_res->getResourceExtDataByHash(fileHash);
+	_vm->_res->queryResource(fileHash, resourceHandle);
+	const byte *resDimensions = resourceHandle.extData();
 	if (resDimensions) {
 		dimensions.width = READ_LE_UINT16(resDimensions + 0);
 		dimensions.height = READ_LE_UINT16(resDimensions + 2);
@@ -368,7 +312,7 @@ NDrawRect& MouseCursorResource::getRect() {
 void MouseCursorResource::draw(int frameNum, byte *dest, int destPitch) {
 	if (_cursorSprite.getPixels()) {
 		int sourcePitch = (_cursorSprite.getDimensions().width + 3) & 0xFFFC; // 4 byte alignment
-		byte *source = _cursorSprite.getPixels() + _cursorNum * (sourcePitch * 32) + frameNum * 32;
+		const byte *source = _cursorSprite.getPixels() + _cursorNum * (sourcePitch * 32) + frameNum * 32;
 		for (int16 yc = 0; yc < 32; yc++) {
 			memcpy(dest, source, 32);
 			source += sourcePitch;
@@ -380,7 +324,7 @@ void MouseCursorResource::draw(int frameNum, byte *dest, int destPitch) {
 // TextResource
 
 TextResource::TextResource(NeverhoodEngine *vm)
-	: _vm(vm), _resourceHandle(-1), _textData(NULL), _count(0) {
+	: _vm(vm), _textData(NULL), _count(0) {
 	
 }
 
@@ -389,38 +333,20 @@ TextResource::~TextResource() {
 }
 
 void TextResource::load(uint32 fileHash) {
+	debug(2, "TextResource::load(%08X)", fileHash);
 	unload();
-	_resourceHandle = _vm->_res->useResource(fileHash);
-	if (_resourceHandle != -1) {
-		if (_vm->_res->getResourceType(_resourceHandle) == 6) {
-			_textData = _vm->_res->loadResource(_resourceHandle, true);
-			_count = READ_LE_UINT32(_textData);
-			
-			debug("TEXT RESOURCE %08X, count = %d:", fileHash, _count);
-			for (uint i = 0; i < _count-1; i++) {
-				const char *textEnd, *text = getString(i, textEnd);
-				while (text < textEnd) {
-					debug("[%04d] [%s]", i, text);
-					text += strlen(text) + 1;
-				}
-				debug("------------------");
-			}
-			
-		} else {
-			_vm->_res->unuseResource(_resourceHandle);
-			_resourceHandle = -1;
-		}
+	_vm->_res->queryResource(fileHash, _resourceHandle);
+	if (_resourceHandle.isValid() && _resourceHandle.type() == 6) {
+		_vm->_res->loadResource(_resourceHandle);
+		_textData = _resourceHandle.data();
+		_count = READ_LE_UINT32(_textData);
 	}
 }
 
 void TextResource::unload() {
-	if (_resourceHandle != -1) {
-		_vm->_res->unloadResource(_resourceHandle);
-		_vm->_res->unuseResource(_resourceHandle);
-		_resourceHandle = -1;
-		_textData = NULL;
-		_count = 0;
-	}
+	_vm->_res->unloadResource(_resourceHandle);
+	_textData = NULL;
+	_count = 0;
 }
 
 const char *TextResource::getString(uint index, const char *&textEnd) {
@@ -432,7 +358,7 @@ const char *TextResource::getString(uint index, const char *&textEnd) {
 // DataResource
 
 DataResource::DataResource(NeverhoodEngine *vm)
-	: _vm(vm), _resourceHandle(-1) {
+	: _vm(vm) {
 }
 
 DataResource::~DataResource() {
@@ -441,18 +367,14 @@ DataResource::~DataResource() {
 
 void DataResource::load(uint32 fileHash) {
 	debug(2, "DataResource::load(%08X)", fileHash);
-	byte *data = NULL;
+	const byte *data = NULL;
 	uint32 dataSize = 0;
 	unload();
-	_resourceHandle = _vm->_res->useResource(fileHash);
-	if (_resourceHandle != -1) {
-		if (_vm->_res->getResourceType(_resourceHandle) == 5) {
-			data = _vm->_res->loadResource(_resourceHandle, true);
-			dataSize = _vm->_res->getResourceSize(_resourceHandle);
-		} else {
-			_vm->_res->unuseResource(_resourceHandle);
-			_resourceHandle = -1;
-		}
+	_vm->_res->queryResource(fileHash, _resourceHandle);
+	if (_resourceHandle.isValid() && _resourceHandle.type() == 5) {
+		_vm->_res->loadResource(_resourceHandle);
+		data = _resourceHandle.data();
+		dataSize = _resourceHandle.size();
 	}
 	if (data && dataSize) {
 		Common::MemoryReadStream dataS(data, dataSize);
@@ -588,40 +510,45 @@ void DataResource::load(uint32 fileHash) {
 }
 
 void DataResource::unload() {
-	if (_resourceHandle != -1) {
-		_vm->_res->unloadResource(_resourceHandle);
-		_vm->_res->unuseResource(_resourceHandle);
-		_resourceHandle = -1;
-		// TODO: Clear arrays
-	}
+	_vm->_res->unloadResource(_resourceHandle);
+	_directory.clear();
+	_points.clear();
+	for (Common::Array<NPointArray*>::iterator it = _pointArrays.begin(); it != _pointArrays.end(); ++it)
+		delete (*it);
+	_pointArrays.clear();
+	for (Common::Array<NRectArray*>::iterator it = _rectArrays.begin(); it != _rectArrays.end(); ++it)
+		delete (*it);
+	_rectArrays.clear();
+	for (Common::Array<HitRectList*>::iterator it = _hitRectLists.begin(); it != _hitRectLists.end(); ++it)
+		delete (*it);
+	_hitRectLists.clear();
+	for (Common::Array<MessageList*>::iterator it = _messageLists.begin(); it != _messageLists.end(); ++it)
+		delete (*it);
+	_messageLists.clear();
+	_drRects.clear();
+	for (Common::Array<DRSubRectList*>::iterator it = _drSubRectLists.begin(); it != _drSubRectLists.end(); ++it)
+		delete (*it);
+	_drSubRectLists.clear();
 }
 
 NPoint DataResource::getPoint(uint32 nameHash) {
 	DataResource::DRDirectoryItem *drDirectoryItem = findDRDirectoryItem(nameHash, 1);
-	if (drDirectoryItem)
-		return _points[drDirectoryItem->offset];
-	return NPoint();
+	return drDirectoryItem ? _points[drDirectoryItem->offset] : NPoint();
 }
 
 NPointArray *DataResource::getPointArray(uint32 nameHash) {
 	DataResource::DRDirectoryItem *drDirectoryItem = findDRDirectoryItem(nameHash, 2);
-	if (drDirectoryItem)
-		return _pointArrays[drDirectoryItem->offset];
-	return NULL;
+	return drDirectoryItem ? _pointArrays[drDirectoryItem->offset] : NULL;
 }
 
 NRectArray *DataResource::getRectArray(uint32 nameHash) {
 	DataResource::DRDirectoryItem *drDirectoryItem = findDRDirectoryItem(nameHash, 3);
-	if (drDirectoryItem)
-		return _rectArrays[drDirectoryItem->offset];
-	return NULL;
+	return drDirectoryItem ? _rectArrays[drDirectoryItem->offset] : NULL;
 }
 
 HitRectList *DataResource::getHitRectList() {
 	DataResource::DRDirectoryItem *drDirectoryItem = findDRDirectoryItem(calcHash("HitArray"), 3);
-	if (drDirectoryItem)
-		return _hitRectLists[drDirectoryItem->offset];
-	return NULL;
+	return drDirectoryItem ? _hitRectLists[drDirectoryItem->offset] : NULL;
 }
 
 MessageList *DataResource::getMessageListAtPos(int16 klaymanX, int16 klaymanY, int16 mouseX, int16 mouseY) {
@@ -642,10 +569,9 @@ MessageList *DataResource::getMessageListAtPos(int16 klaymanX, int16 klaymanY, i
 }
 
 DataResource::DRDirectoryItem *DataResource::findDRDirectoryItem(uint32 nameHash, uint16 type) {
-	for (Common::Array<DRDirectoryItem>::iterator it = _directory.begin(); it != _directory.end(); it++) {
+	for (Common::Array<DRDirectoryItem>::iterator it = _directory.begin(); it != _directory.end(); it++)
 		if ((*it).nameHash == nameHash && (*it).type == type)
 			return &(*it);
-	}
 	return NULL;
 }
 

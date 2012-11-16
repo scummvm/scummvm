@@ -157,7 +157,6 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 	uint32 direction = sendPointMessage(_mouseCursor, 0x2064, mousePos);
 	
 	switch (direction) {
-	// TODO: Merge cases 0 and 1?
 	case 0:
 		if (navigationItem.leftSmackerFileHash != 0) {
 			_smackerFileHash = navigationItem.leftSmackerFileHash;

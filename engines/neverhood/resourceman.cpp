@@ -24,6 +24,13 @@
 
 namespace Neverhood {
 
+ResourceHandle::ResourceHandle()
+	: _resourceFileEntry(NULL), _data(NULL) {
+}
+
+ResourceHandle::~ResourceHandle() {
+}
+
 ResourceMan::ResourceMan() {
 }
 
@@ -66,92 +73,43 @@ ResourceFileEntry *ResourceMan::findEntry(uint32 fileHash) {
 	return entry;
 }
 
-int ResourceMan::useResource(uint32 fileHash) {
-	ResourceFileEntry *entry = findEntry(fileHash);
-	if (!entry)
-		return -1;
-	if (entry->resourceHandle != -1) {
-		_resources[entry->resourceHandle]->useRefCount++;
-	} else {
-		Resource *resource = new Resource();
-		resource->entry = entry;
-		resource->useRefCount = 1;
-		entry->resourceHandle = (int)_resources.size();
-		_resources.push_back(resource);
-	}
-	return entry->resourceHandle;
-}
-
-void ResourceMan::unuseResource(int resourceHandle) {
-	if (resourceHandle < 0)
-		return;
-	Resource *resource = _resources[resourceHandle];
-	if (resource->useRefCount > 0)
-		resource->useRefCount--;
-}
-
-uint32 ResourceMan::getResourceSize(int resourceHandle) const {
-	if (resourceHandle < 0)
-		return 0;
-	Resource *resource = _resources[resourceHandle];
-	return resource->entry->archiveEntry->size;
-}
-
-byte ResourceMan::getResourceType(int resourceHandle) {
-	if (resourceHandle < 0)
-		return 0;
-	Resource *resource = _resources[resourceHandle];
-	return resource->entry->archiveEntry->type;
-}
-
-byte ResourceMan::getResourceTypeByHash(uint32 fileHash) {
-	ResourceFileEntry *entry = findEntry(fileHash);
-	return entry->archiveEntry->type;
-}
-
-byte *ResourceMan::getResourceExtData(int resourceHandle) {
-	if (resourceHandle < 0)
-		return NULL;
-	Resource *resource = _resources[resourceHandle];
-	return resource->entry->archive->getEntryExtData(resource->entry->archiveEntry);
-}
-
-byte *ResourceMan::getResourceExtDataByHash(uint32 fileHash) {
-	ResourceFileEntry *entry = findEntrySimple(fileHash);
-	return entry ? entry->archive->getEntryExtData(entry->archiveEntry) : NULL;
-}
-
-byte *ResourceMan::loadResource(int resourceHandle, bool moveToFront) {
-	if (resourceHandle < 0)
-		return NULL;
-	Resource *resource = _resources[resourceHandle];
-	ResourceData *resourceData = _data[resource->entry->archiveEntry->fileHash];
-	if (!resourceData) {
-		resourceData = new ResourceData();
-		_data[resource->entry->archiveEntry->fileHash] = resourceData;
-	}
-	if (resourceData->data != NULL) {
-		resourceData->dataRefCount++;
-	} else {
-		resourceData->data = new byte[resource->entry->archiveEntry->size];
-		resource->entry->archive->load(resource->entry->archiveEntry, resourceData->data, 0);
-		resourceData->dataRefCount = 1;
-	}
-	return resourceData->data;
-}
-
-void ResourceMan::unloadResource(int resourceHandle) {
-	if (resourceHandle < 0)
-		return;
-	Resource *resource = _resources[resourceHandle];
-	ResourceData *resourceData = _data[resource->entry->archiveEntry->fileHash];
-	if (resourceData && resourceData->dataRefCount > 0)
-		resourceData->dataRefCount--;
-}
-
 Common::SeekableReadStream *ResourceMan::createStream(uint32 fileHash) {
 	ResourceFileEntry *entry = findEntry(fileHash);
 	return entry->archive->createStream(entry->archiveEntry);
+}
+
+void ResourceMan::queryResource(uint32 fileHash, ResourceHandle &resourceHandle) {
+	resourceHandle._resourceFileEntry = findEntry(fileHash);
+}
+
+void ResourceMan::loadResource(ResourceHandle &resourceHandle) {
+	resourceHandle._data = NULL;
+	if (resourceHandle.isValid()) {
+		const uint32 fileHash = resourceHandle.fileHash();
+		ResourceData *resourceData = _data[fileHash];
+		if (!resourceData) {
+			resourceData = new ResourceData();
+			_data[fileHash] = resourceData;
+		}
+		if (resourceData->data != NULL) {
+			resourceData->dataRefCount++;
+		} else {
+			resourceData->data = new byte[resourceHandle._resourceFileEntry->archiveEntry->size];
+			resourceHandle._resourceFileEntry->archive->load(resourceHandle._resourceFileEntry->archiveEntry, resourceData->data, 0);
+			resourceData->dataRefCount = 1;
+		}
+		resourceHandle._data = resourceData->data;
+	}
+}
+
+void ResourceMan::unloadResource(ResourceHandle &resourceHandle) {
+	if (resourceHandle.isValid()) {
+		ResourceData *resourceData = _data[resourceHandle.fileHash()];
+		if (resourceData && resourceData->dataRefCount > 0)
+			--resourceData->dataRefCount;
+		resourceHandle._resourceFileEntry = NULL;
+		resourceHandle._data = NULL;
+	}
 }
 
 } // End of namespace Neverhood

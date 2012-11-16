@@ -73,7 +73,7 @@ void BlbArchive::open(const Common::String &filename) {
 	if (header.id1 != 0x2004940 || header.id2 != 7 || header.fileSize != _fd.size())
 		error("BlbArchive::open() %s seems to be corrupt", filename.c_str());
 
-	debug(2, "%s: fileCount = %d", filename.c_str(), header.fileCount);
+	debug(4, "%s: fileCount = %d", filename.c_str(), header.fileCount);
 
 	_entries.reserve(header.fileCount);
 
@@ -98,7 +98,7 @@ void BlbArchive::open(const Common::String &filename) {
 		entry.offset = _fd.readUint32LE();
 		entry.diskSize = _fd.readUint32LE();
 		entry.size = _fd.readUint32LE();
-		debug(2, "%08X: %03d, %02X, %04X, %08X, %08X, %08X, %08X",
+		debug(4, "%08X: %03d, %02X, %04X, %08X, %08X, %08X, %08X",
 			entry.fileHash, entry.type, entry.comprType, extDataOffsets[i], entry.timeStamp,
 			entry.offset, entry.diskSize, entry.size);
 	}
@@ -131,11 +131,8 @@ void BlbArchive::load(BlbArchiveEntry *entry, byte *buffer, uint32 size) {
 		_fd.read(buffer, size);
 		break;
 	case 3: // DCL-compressed
-		if (!Common::decompressDCL(&_fd, buffer, entry->diskSize, entry->size)) {
-			debug("decompressDCL(diskSize: %d; size: %d)", entry->diskSize, entry->size);
-			debug("-> fileHash: %08X; type: %d; offset: %08X; endOffset: %08X", entry->fileHash, entry->type, entry->offset, entry->offset + entry->diskSize);
-			debug("-> fd.pos() = %08X", _fd.pos());
-		}
+		if (!Common::decompressDCL(&_fd, buffer, entry->diskSize, entry->size))
+			error("BlbArchive::load() Error during decompression of %=8X", entry->fileHash);
 		break;
 	default:
 		error("BlbArchive::load() Unknown compression type %d", entry->comprType);
@@ -148,7 +145,6 @@ byte *BlbArchive::getEntryExtData(uint index) {
 }
 
 byte *BlbArchive::getEntryExtData(BlbArchiveEntry *entry) {
-	//return (_extData && entry->extDataOfs != 0) ? &_extData[entry->extDataOfs - 1] : NULL;
 	return entry->extData;
 }
 

@@ -524,7 +524,7 @@ AudioResourceMan::~AudioResourceMan() {
 
 int16 AudioResourceMan::addSound(uint32 fileHash) {
 	AudioResourceManSoundItem *soundItem = new AudioResourceManSoundItem();
-	soundItem->_resourceHandle = _vm->_res->useResource(fileHash);
+	_vm->_res->queryResource(fileHash, soundItem->_resourceHandle);
 	soundItem->_fileHash = fileHash;
 	soundItem->_data = NULL;
 	soundItem->_isLoaded = false;
@@ -543,16 +543,7 @@ int16 AudioResourceMan::addSound(uint32 fileHash) {
 
 void AudioResourceMan::removeSound(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	if (_vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
-		_vm->_mixer->stopHandle(soundItem->_soundHandle);
-	if (soundItem->_data) {
-		_vm->_res->unloadResource(soundItem->_resourceHandle);
-		soundItem->_data = NULL;
-	}
-	if (soundItem->_resourceHandle != 1) {
-		_vm->_res->unuseResource(soundItem->_resourceHandle);
-		soundItem->_resourceHandle = -1;
-	}
+	unloadSound(soundIndex);
 	delete soundItem;
 	_soundItems[soundIndex] = NULL;
 }
@@ -561,7 +552,8 @@ void AudioResourceMan::loadSound(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
 	if (!soundItem->_data) {
 		// TODO Check if it's a sound resource
-		soundItem->_data = _vm->_res->loadResource(soundItem->_resourceHandle);
+		_vm->_res->loadResource(soundItem->_resourceHandle);
+		soundItem->_data = soundItem->_resourceHandle.data();
 	}
 }
 
@@ -569,10 +561,8 @@ void AudioResourceMan::unloadSound(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
 	if (_vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
 		_vm->_mixer->stopHandle(soundItem->_soundHandle);
-	if (soundItem->_data) {
-		_vm->_res->unloadResource(soundItem->_resourceHandle);
-		soundItem->_data = NULL;
-	}
+	_vm->_res->unloadResource(soundItem->_resourceHandle);
+	soundItem->_data = NULL;
 }
 
 void AudioResourceMan::setSoundVolume(int16 soundIndex, int16 volume) {
@@ -597,9 +587,8 @@ void AudioResourceMan::playSound(int16 soundIndex, bool looping) {
 	if (!soundItem->_data)
 		return;
 		
-	uint32 soundSize = _vm->_res->getResourceSize(soundItem->_resourceHandle);
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundItem->_data, soundSize, DisposeAfterUse::NO);
-	byte *shiftValue = _vm->_res->getResourceExtData(soundItem->_resourceHandle);
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundItem->_data, soundItem->_resourceHandle.size(), DisposeAfterUse::NO);
+	const byte *shiftValue = soundItem->_resourceHandle.extData();
 	NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, false, DisposeAfterUse::YES, stream);
 
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundItem->_soundHandle,
@@ -719,8 +708,10 @@ void AudioResourceMan::updateMusicItem(int16 musicIndex) {
 	AudioResourceManMusicItem *musicItem = _musicItems[musicIndex];
 
 	if (musicItem->_start && !_vm->_mixer->isSoundHandleActive(musicItem->_soundHandle)) {
+		ResourceHandle resourceHandle;
+		_vm->_res->queryResource(musicItem->_fileHash, resourceHandle);
 		Common::SeekableReadStream *stream = _vm->_res->createStream(musicItem->_fileHash);
-		byte *shiftValue = _vm->_res->getResourceExtDataByHash(musicItem->_fileHash);
+		const byte *shiftValue = resourceHandle.extData();
 		NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, true, DisposeAfterUse::YES, stream);
 		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &musicItem->_soundHandle,
 			audioStream, -1, VOLUME(musicItem->_isFadingIn ? musicItem->_fadeVolume : musicItem->_volume),

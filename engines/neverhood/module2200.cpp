@@ -2242,7 +2242,7 @@ void Scene2208::createFontSurface() {
 	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
 	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
 	spriteResource.load2(0x0800090C);
-	_fontSurface = new FontSurface(_vm, tracking, numRows, firstChar, charWidth, charHeight);
+	_fontSurface = new FontSurface(_vm, *tracking, numRows, firstChar, charWidth, charHeight);
 	_fontSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
 }
 

@@ -263,10 +263,10 @@ void AnimatedSprite::updateAnim() {
 			if (_currFrameTicks != 0 && (--_currFrameTicks == 0) && _animResource.getFrameCount() != 0) {
 				
 				if (_nextAnimFileHash != 0) {
-					if (_animResource.loadInternal(_nextAnimFileHash)) {
+					if (_animResource.load(_nextAnimFileHash)) {
 						_currAnimFileHash = _nextAnimFileHash;
 					} else {
-						_animResource.loadInternal(calcHash("sqDefault"));
+						_animResource.load(calcHash("sqDefault"));
 						_currAnimFileHash = 0;
 					}
 					if (_replOldColor != _replNewColor) {
@@ -294,10 +294,10 @@ void AnimatedSprite::updateAnim() {
 			_currStickFrameIndex = _currFrameIndex;
 		} else {
 			if (_animStatus == 1) {
-				if (_animResource.loadInternal(_newAnimFileHash)) {
+				if (_animResource.load(_newAnimFileHash)) {
 					_currAnimFileHash = _newAnimFileHash;
 				} else {
-					_animResource.loadInternal(calcHash("sqDefault"));
+					_animResource.load(calcHash("sqDefault"));
 					_currAnimFileHash = 0;
 				}
 				if (_replOldColor != _replNewColor) {
@@ -307,10 +307,10 @@ void AnimatedSprite::updateAnim() {
 				_currFrameIndex = _plFirstFrameHash != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_plFirstFrameHash)) : 0;
 				_lastFrameIndex = _plLastFrameHash != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_plLastFrameHash)) : _animResource.getFrameCount() - 1;
 			} else {
-				if (_animResource.loadInternal(_newAnimFileHash)) {
+				if (_animResource.load(_newAnimFileHash)) {
 					_currAnimFileHash = _newAnimFileHash;
 				} else {
-					_animResource.loadInternal(calcHash("sqDefault"));
+					_animResource.load(calcHash("sqDefault"));
 					_currAnimFileHash = 0;
 				}
 				if (_replOldColor != _replNewColor) {

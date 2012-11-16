@@ -131,11 +131,11 @@ protected:
 
 class FontSurface : public BaseSurface {
 public:
-	FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
+	FontSurface(NeverhoodEngine *vm, NPointArray &tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
 	void drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr);
 	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string);
 protected:
-	NPointArray *_tracking;
+	NPointArray _tracking;
 	uint16 _numRows;
 	byte _firstChar;
 	uint16 _charWidth;
@@ -162,9 +162,9 @@ protected:
 
 // Misc
 
-void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels);
-void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY, byte oldColor = 0, byte newColor = 0);
-void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
+void parseBitmapResource(const byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, const byte **palette, const byte **pixels);
+void unpackSpriteRle(const byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY, byte oldColor = 0, byte newColor = 0);
+void unpackSpriteNormal(const byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
 int calcDistance(int16 x1, int16 y1, int16 x2, int16 y2);
 
 } // End of namespace Neverhood

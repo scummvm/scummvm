@@ -80,7 +80,7 @@ struct HallOfRecordsInfo {
 struct SceneInfo2700 {
 	uint32 id;
 	uint32 bgFilename;
-	uint32 class437Filename;
+	uint32 bgShadowFilename;
 	uint32 dataResourceFilename;
 	uint32 pointListName;
 	uint32 rectListName;

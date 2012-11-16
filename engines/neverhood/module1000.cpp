@@ -1597,7 +1597,7 @@ FontSurface *Scene1005::createFontSurface() {
 	uint16 charWidth = fontData.getPoint(calcHash("meCharWidth")).x;
 	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
 	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
-	fontSurface = new FontSurface(_vm, tracking, numRows, firstChar, charWidth, charHeight);	
+	fontSurface = new FontSurface(_vm, *tracking, numRows, firstChar, charWidth, charHeight);	
 	if (getGlobalVar(V_ENTRANCE_OPEN)) {
 		fontSprite.load2(0x283CE401);
 	} else {

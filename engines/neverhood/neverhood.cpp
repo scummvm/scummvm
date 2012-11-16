@@ -214,7 +214,7 @@ void writeTga(const char *filename, byte *pixels, byte *palette, int16 width, in
 }
 
 void NeverhoodEngine::dumpAllResources() {
-
+#if 0
 	PaletteResource paletteResource(this);
 	byte *vgaPalette = new byte[768];
 	//paletteResource.load(0x4086520E);
@@ -258,7 +258,7 @@ void NeverhoodEngine::dumpAllResources() {
 	}
 	
 	delete[] vgaPalette;
-
+#endif
 }
 	
 } // End of namespace Neverhood

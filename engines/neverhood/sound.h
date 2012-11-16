@@ -184,8 +184,8 @@ private:
 
 struct AudioResourceManSoundItem {
 	uint32 _fileHash;
-	int _resourceHandle;
-	byte *_data;
+	ResourceHandle _resourceHandle;
+	const byte *_data;
 	bool _isLoaded;
 	bool _isPlaying;
 	int16 _volume;
@@ -195,8 +195,6 @@ struct AudioResourceManSoundItem {
 
 struct AudioResourceManMusicItem {
 	uint32 _fileHash;
-	// streamIndex dw
-	// needCreate db
 	bool _isPlaying;
 	bool _remove;
 	int16 _volume;
@@ -207,8 +205,6 @@ struct AudioResourceManMusicItem {
 	int16 _fadeVolume;
 	int16 _fadeVolumeStep;
 	Audio::SoundHandle _soundHandle;
-	// status dw
-	// updateCounter dd
 };
 
 class AudioResourceMan {

@@ -48,20 +48,23 @@ struct ResourceData {
 	ResourceData() : data(NULL), dataRefCount() {}
 };
 
-#if 0
 class ResourceMan;
 
 struct ResourceHandle {
+friend class ResourceMan;
 public:
 	ResourceHandle();
 	~ResourceHandle();
-	const byte *data();
-	uint32 size() const { return _archiveEntry ? _archiveEntry->size : 0 };
+	bool isValid() const { return _resourceFileEntry != NULL && _resourceFileEntry->archiveEntry != NULL; }
+	byte type() const { return isValid() ? _resourceFileEntry->archiveEntry->type : 0; };
+	const byte *data() const { return _data; }
+	uint32 size() const { return isValid() ? _resourceFileEntry->archiveEntry->size : 0; };
+	const byte *extData() const { return isValid() ? _resourceFileEntry->archiveEntry->extData : NULL; };
+	uint32 fileHash() const { return isValid() ? _resourceFileEntry->archiveEntry->fileHash : 0; };
 protected:
-	ResourceMan *_res;
 	ResourceFileEntry *_resourceFileEntry;
+	const byte *_data;
 };
-#endif
 
 class ResourceMan {
 public:
@@ -70,21 +73,12 @@ public:
 	void addArchive(const Common::String &filename);
 	ResourceFileEntry *findEntrySimple(uint32 fileHash);
 	ResourceFileEntry *findEntry(uint32 fileHash);
-	int useResource(uint32 fileHash);
-	void unuseResource(int resourceHandle);
-	uint32 getResourceSize(int resourceHandle) const;
-	byte getResourceType(int resourceHandle);
-	byte getResourceTypeByHash(uint32 fileHash);
-	byte *getResourceExtData(int resourceHandle);
-	byte *getResourceExtDataByHash(uint32 fileHash);
-	byte *loadResource(int resourceHandle, bool moveToFront = false);
-	void unloadResource(int resourceHandle);
 	Common::SeekableReadStream *createStream(uint32 fileHash);
 	const ResourceFileEntry& getEntry(uint index) { return _entries[index]; }
 	uint getEntryCount() { return _entries.size(); }
-#if 0	
-	ResourceHandle getResource(uint32 fileHash);
-#endif
+	void queryResource(uint32 fileHash, ResourceHandle &resourceHandle);
+	void loadResource(ResourceHandle &resourceHandle);
+	void unloadResource(ResourceHandle &resourceHandle);
 protected:
 	typedef Common::HashMap<uint32, ResourceFileEntry> EntriesMap;
 	Common::Array<BlbArchive*> _archives;

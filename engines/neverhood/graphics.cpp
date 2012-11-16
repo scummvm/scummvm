@@ -150,7 +150,7 @@ void ShadowSurface::draw() {
 
 // FontSurface
 
-FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
+FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray &tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
 	: BaseSurface(vm, 0, charWidth * 16, charHeight * numRows), _tracking(tracking), _numRows(numRows), _firstChar(firstChar),
 	_charWidth(charWidth), _charHeight(charHeight) {
 }
@@ -168,7 +168,7 @@ void FontSurface::drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr)
 void FontSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string) {
 	for (; *string != 0; string++) {
 		drawChar(destSurface, x, y, *string);
-		x += (*_tracking)[*string - _firstChar].x;
+		x += _tracking[*string - _firstChar].x;
 	}	
 }
 
@@ -216,7 +216,7 @@ enum BitmapFlags {
 	BF_HAS_IMAGE		= 16
 };
 
-void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels) {
+void parseBitmapResource(const byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, const byte **palette, const byte **pixels) {
 
 	uint16 flags;
 	
@@ -263,7 +263,7 @@ void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoin
 
 }
 
-void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY, byte oldColor, byte newColor) {
+void unpackSpriteRle(const byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY, byte oldColor, byte newColor) {
 
 	const bool replaceColors = oldColor != newColor;
 
@@ -313,7 +313,7 @@ void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPi
 
 }
 
-void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
+void unpackSpriteNormal(const byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
 
 	// TODO: Flip Y
 
