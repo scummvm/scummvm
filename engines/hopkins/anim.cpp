@@ -279,6 +279,7 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 		memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 0x301u);
 
 		_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
+
 		if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
 		if (_vm->_graphicsManager.nbrligne == 1280)
@@ -362,7 +363,7 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 		_vm->_globals.dos_free2(v13);
 		f.close();
 
-		_vm->_fileManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+		_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 		memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
@@ -468,7 +469,7 @@ LABEL_88:
 						_vm->_globals.dos_free2(v13);
 						f.close();
 
-						_vm->_fileManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+						_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 						g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 						memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
@@ -533,7 +534,7 @@ LABEL_88:
 			_vm->_globals.dos_free2(v13);
 			f.close();
 
-			_vm->_fileManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+			_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 			g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 			memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
@@ -632,7 +633,7 @@ LABEL_114:
 	_vm->_graphicsManager.FADE_LINUX = 0;
 	_vm->_globals.dos_free2(v13);
 
-	_vm->_fileManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
@@ -1142,7 +1143,7 @@ LABEL_59:
 	f.close();
 
 	if (!NO_COUL) {
-		_vm->_fileManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+		_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 		_vm->_eventsManager.souris_flag = true;
