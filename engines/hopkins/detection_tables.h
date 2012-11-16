@@ -30,6 +30,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			"Linux Demo v1.00",
 			{
 				{"Hopkins-PDemo.bin", 0, "88b4d6e14b9b1407083cb3d1213c0fa7", 272027},
+				{"RES_VAN.RES", 0, "29414c05be8f9fe794c61572a65def12", 16060544},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -46,6 +47,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			"Linux Demo v1.02",
 			{
 				{"Hopkins-PDemo.bin", 0, "f82f4e698f3a189419351be0de2b2f8e", 273760},
+				{"RES_VAN.RES", 0, "29414c05be8f9fe794c61572a65def12", 16060544},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -62,6 +64,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"Hopkins.exe", 0, "63d45f882278e5a9fa1027066223e5d9", 292864},
+				{"ENG_VOI.RES", 0, "fa5789d1d8c19d160bce44a33e742fdf", 66860711},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -72,6 +75,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 	},
 	{
 		// Hopkins FBI Win95 Demo, provided by Strangerke
+		// CHECKME: No voice! a second file is required though... Also, it has multi-language support
 		{
 			"hopkins",
 			"Win95 Demo",
@@ -92,6 +96,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"Hopkins.exe", 0, "277a5c144bf9ec7d8450ae37afb85090", 419281},
+				{"RES_VAN.RES", 0, "f1693ac0b0859c8ecd8cb30ff43cf55f", 38296346},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -107,6 +112,23 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"Hopkins.bin", 0, "71611380cb31744bf909b8319a65e6e6", 275844},
+				{"RES_VFR.RES", 0, "0490d4d1aa71075ebf71cc79e5dc7894", 39817945},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformLinux,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+	{
+		// Hopkins FBI Linux, provided by Strangerke
+		{
+			"hopkins",
+			0,
+			{
+				{"Hopkins.bin", 0, "71611380cb31744bf909b8319a65e6e6", 275844},
+				{"RES_VAN.RES", 0, "29414c05be8f9fe794c61572a65def12", 38832455},
 				AD_LISTEND
 			},
 			Common::EN_ANY,

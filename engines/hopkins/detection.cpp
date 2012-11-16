@@ -66,9 +66,17 @@ static const PlainGameDescriptor hopkinsGames[] = {
 
 #include "hopkins/detection_tables.h"
 
+const static char *directoryGlobs[] = {
+	"hopdata",
+	"voice",
+	0
+};
+
 class HopkinsMetaEngine : public AdvancedMetaEngine {
 public:
 	HopkinsMetaEngine() : AdvancedMetaEngine(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames) {
+		_maxScanDepth = 3;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	virtual const char *getName() const {
