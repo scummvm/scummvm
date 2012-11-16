@@ -750,9 +750,9 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 		return true;
 	}
 
-	// There are 16 drafts, stored from variable 50 or 100 and upwards.
-	// Each draft occupies two variables. Even-numbered variables contain
-	// the notes for each draft, and a number of flags:
+	// There are 16 drafts, stored from variable 50, 55 or 100 and upwards.
+	// Each draft occupies two variables, the first of which contains the
+	// notes for the draft and a number of flags.
 	//
 	// +---+---+---+---+-----+-----+-----+-----+
 	// | A | B | C | D | 444 | 333 | 222 | 111 |
@@ -767,13 +767,16 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	// 222 The second note
 	// 111 The first note
 	//
-	// I don't yet know what the odd-numbered variables are used for.
-	// Possibly they store information on where and/or how the draft can
-	// be used. They appear to remain constant throughout the game.
+	// I don't yet know what the second variable is used for. Possibly to
+	// store information on where and/or how the draft can be used. They
+	// appear to remain constant throughout the game.
 
 	if (_vm->_game.version == 4 || _vm->_game.platform == Common::kPlatformPCEngine) {
 		// DOS CD version / PC-Engine version
 		base = 100;
+	} else if (_vm->_game.platform == Common::kPlatformMacintosh) {
+		// Macintosh version
+		base = 55;
 	} else {
 		// All (?) other versions
 		base = 50;
