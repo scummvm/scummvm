@@ -4555,7 +4555,7 @@ void ObjectsManager::Q_GAUCHE(int idx) {
 	if (idx == 6)
 		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
 	if (idx == 7)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,-1,", 0, 0, 8, 1);
 	if (idx == 8)
 		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
 	if (idx == 9)
@@ -5331,19 +5331,16 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 	}
 }
 
-void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6) {
+void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int a5, int a6) {
 	int v6; 
-	int16 v7; 
 	char v8; 
 	int v9; 
 	int16 v10; 
 	int v11; 
 	int spriteIndex; 
 	char v14; 
-	int16 v15; 
 	Common::String v16; 
 
-	v15 = 0;
 	v6 = 0;
 	spriteIndex = 0;
 	v16 = "     ";
@@ -5358,23 +5355,28 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &a2, int a3, int a4
 	Sprite[0].field12 += a3;
 	Sprite[0].field14 += a4;
 	Sprite[0].fieldE = a6;
+
+	uint strPos = 0;
 	do {
+		bool loopCond = false;
 		do {
-			v7 = 0;
-			v8 = a2[v15];
-			if (v8 == ',') {
+			v8 = animationSeq[strPos];
+			if ((animationSeq[strPos] == ',') || (strPos == animationSeq.size() - 1)) {
+				// Safeguard: if the sequence doesn't end with a coma, simulate it's present.
+				if (animationSeq[strPos] != ',')
+					v16.setChar(v8, v6);
 				v9 = atoi(v16.c_str());
 				spriteIndex = v9;
 				v6 = 0;
 				v16 = "     ";
-				v7 = 1;
+				loopCond = true;
 			} else {
 				v9 = v6;
 				v16.setChar(v8, v6);
 				v6 = v6 + 1;
 			}
-			++v15;
-		} while (v7 != 1);
+			++strPos;
+		} while (!loopCond);
 		if (spriteIndex != -1) {
 			Sprite[0].spriteData = a1;
 			Sprite[0].spriteIndex = spriteIndex;

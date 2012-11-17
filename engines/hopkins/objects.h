@@ -233,7 +233,7 @@ public:
 	int colision(int xp, int yp);
 
 	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int a5, int a6);
-	void SPACTION(byte *a1, const Common::String &a2, int a3, int a4, int a5, int a6);
+	void SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int a5, int a6);
 	void SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5);
 	void TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6);
 	void BLOQUE_ANIMX(int idx, int a2);
