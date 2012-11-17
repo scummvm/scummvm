@@ -33,7 +33,11 @@
 namespace Hopkins {
 
 ComputerManager::ComputerManager() {
-	Common::fill(&MenuText[0], &MenuText[10600], '\0');
+	for (int i = 0; i < 50; i++) {
+		MenuText[i]._actvFl = false;
+		MenuText[i]._lineSize = 0;
+		memset(MenuText[i]._line, 0, 90);
+	}
 	Common::fill(&Sup_string[0], &Sup_string[200], '\0');
 	CASSESPR = NULL;
 	FMOUSE = false;
@@ -50,6 +54,7 @@ ComputerManager::ComputerManager() {
 	CASSEP1 = 0;
 	CASSEP2 = 0;
 	CASSDER = 0;
+	Menu_lignes = 0;
 }
 
 void ComputerManager::setParent(HopkinsEngine *vm) {
@@ -117,19 +122,19 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 	_vm->_eventsManager.videkey();
 	settextposition(2, 4);
 	if (mode == 1)
-		outtext(&MenuText[10]);
+		outtext(Common::String(MenuText[0]._line));
 	if (mode == 2)
-		outtext(&MenuText[0xDE]);
+		outtext(Common::String(MenuText[1]._line));
 	if (mode == 3)
-		outtext(&MenuText[0x1B2]);
+		outtext(Common::String(MenuText[2]._line));
 
 	settextcolor(1);
 	if (mode == 3) {
 		settextposition(10, 8);
-		outtext(&MenuText[0x286]);
+		outtext(Common::String(MenuText[3]._line));
 	}
 	settextposition(12, 28);
-	outtext(&MenuText[0x35A]);
+	outtext(Common::String(MenuText[4]._line));
 	settextposition(14, 35);
 
 	v3 = &s[0];
@@ -187,39 +192,40 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 			settextcolor(4);
 			settextposition(2, 4);
 			if (mode == 1)
-				outtext(&MenuText[10]);
+				outtext(Common::String(MenuText[0]._line));
 			if (mode == 2)
-				outtext(&MenuText[0xDE]);
+				outtext(Common::String(MenuText[1]._line));
 			if (mode == 3)
-				outtext(&MenuText[0x1B2]);
+				outtext(Common::String(MenuText[2]._line));
 			settextcolor(15);
 			settextposition(8, 25);
 			settextcolor(15);
-			outtext2(&MenuText[0x502]);
+			outtext2(Common::String(MenuText[6]._line));
 			settextposition(20, 25);
-			outtext2(&MenuText[0x5D6]);
+			outtext2(Common::String(MenuText[7]._line));
 			if (mode == 1) {
 				settextposition(10, 25);
-				outtext2(&MenuText[0x6AA]);
+				outtext2(Common::String(MenuText[8]._line));
 				settextposition(12, 25);
-				outtext2(&MenuText[0x77E]);
+				outtext2(Common::String(MenuText[9]._line));
 				settextposition(14, 25);
-				outtext2(&MenuText[0x852]);
+				outtext2(Common::String(MenuText[10]._line));
 				settextposition(16, 25);
-				outtext2(&MenuText[0x926]);
+				outtext2(Common::String(MenuText[11]._line));
 			}
 			if (mode == 2) {
 				_vm->_eventsManager.videkey();
 				settextposition(10, 25);
-				outtext2(&MenuText[0x95A]);
+//				outtext2(Common::String(MenuText[0x95A])); <=== CHECKME: Unexpected value! replaced by the following line, for consistancy
+				outtext2(Common::String(MenuText[12]._line));
 				settextposition(12, 25);
-				outtext2(&MenuText[0xACE]);
+				outtext2(Common::String(MenuText[13]._line));
 				settextposition(14, 25);
-				outtext2(&MenuText[0xBA2]);
+				outtext2(Common::String(MenuText[14]._line));
 				settextposition(16, 25);
-				outtext2(&MenuText[0xC76]);
+				outtext2(Common::String(MenuText[15]._line));
 				settextposition(18, 25);
-				outtext2(&MenuText[0xD4A]);
+				outtext2(Common::String(MenuText[16]._line));
 			}
 
 			do {
@@ -241,7 +247,7 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 				clearscreen();
 				settextcolor(4);
 				settextposition(2, 4);
-				outtext(&MenuText[10]);
+				outtext(Common::String(MenuText[0]._line));
 				settextcolor(15);
 				if (v12 == 50)
 					LIT_TEXTE(1);
@@ -255,7 +261,7 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 				clearscreen();
 				settextcolor(4);
 				settextposition(2, 4);
-				outtext(&MenuText[0xDE]);
+				outtext(Common::String(MenuText[1]._line));
 				settextcolor(15);
 				if (v12 == 50)
 					LIT_TEXTE(6);
@@ -279,7 +285,7 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 	} else {
 		settextcolor(4);
 		settextposition(16, 25);
-		outtext(&MenuText[0x42E]);
+		outtext(Common::String(MenuText[5]._line));
 		_vm->_eventsManager.VBL();
 		memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x4AFFFu);
 		_vm->_graphicsManager.DD_Lock();
@@ -298,7 +304,39 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 }
 
 void ComputerManager::Charge_Menu() {
+	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "COMPUTAN.TXT");
+	byte *ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	byte *tmpPtr = ptr;
+	int lineNum = 0;
+	int strPos;
+	bool loopCond = false;
 
+	do {
+		if (tmpPtr[0] == '%') {
+			if (tmpPtr[1] == '%') {
+				loopCond = true;
+				goto LABEL_13;
+			}
+			MenuText[lineNum]._actvFl = 1;
+			strPos = 0;
+			while (1) {
+				byte curChar = tmpPtr[strPos + 2];
+				if (curChar == '%' || curChar == 10)
+					break;
+				MenuText[lineNum]._line[strPos++] = curChar;
+				if (strPos > 89)
+					goto LABEL_11;
+			}
+			MenuText[lineNum]._line[strPos] = 0;
+			MenuText[lineNum]._lineSize = strPos - 1;
+	LABEL_11:
+			++lineNum;
+		}
+		Menu_lignes = lineNum;
+	LABEL_13:
+		tmpPtr = tmpPtr + 1;
+	} while (!loopCond);
+	_vm->_globals.dos_free2(ptr);
 }
 
 void ComputerManager::TXT4(int xp, int yp, int a3) {

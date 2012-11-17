@@ -31,10 +31,16 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
+struct MenuItem {
+	bool _actvFl;
+	int  _lineSize;
+	char _line[90];
+};
+
 class ComputerManager {
 private:
 	HopkinsEngine *_vm;
-	char MenuText[10600];
+	MenuItem MenuText[50];
 	char Sup_string[200];
 	byte Score[96];
 	int TEXT_COL;
@@ -55,6 +61,7 @@ private:
 	int CASSEP1;
 	int CASSEP2;
 	int CASSDER;
+	int Menu_lignes; // CHECKME: Useless variable
 
 	/**
 	 * Load the menu text
