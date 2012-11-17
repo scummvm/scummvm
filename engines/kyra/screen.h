@@ -146,7 +146,7 @@ private:
  */
 class OldDOSFont : public Font {
 public:
-	OldDOSFont(Common::RenderMode mode, bool useHiResEGADithering);
+	OldDOSFont(Common::RenderMode mode);
 	~OldDOSFont();
 
 	bool load(Common::SeekableReadStream &file);
@@ -168,8 +168,6 @@ private:
 	int _numGlyphs;
 
 	Common::RenderMode _renderMode;
-	bool _useHiResEGADithering;
-	bool _useLoResEGA;
 
 	static uint16 *_cgaDitheringTable;
 	static int _numRef;
@@ -426,12 +424,12 @@ public:
 	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
 
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
-	virtual void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
+	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
 
 	void clearPage(int pageNum);
 
-	virtual uint8 getPagePixel(int pageNum, int x, int y);
-	virtual void setPagePixel(int pageNum, int x, int y, uint8 color);
+	uint8 getPagePixel(int pageNum, int x, int y);
+	void setPagePixel(int pageNum, int x, int y, uint8 color);
 
 	const uint8 *getCPagePtr(int pageNum) const;
 	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
@@ -457,7 +455,7 @@ public:
 	void copyPalette(const int dst, const int src);
 
 	// gui specific (processing on _curPage)
-	virtual void drawLine(bool vertical, int x, int y, int length, int color);
+	void drawLine(bool vertical, int x, int y, int length, int color);
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
 	virtual void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
 	void drawBox(int x1, int y1, int x2, int y2, int color);
@@ -472,7 +470,7 @@ public:
 	int getCharWidth(uint16 c) const;
 	int getTextWidth(const char *str) const;
 
-	virtual void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
+	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
 
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
@@ -573,14 +571,12 @@ protected:
 
 	uint8 *_pagePtrs[16];
 	uint8 *_sjisOverlayPtrs[SCREEN_OVLS_NUM];
-	uint8 _pageScaleFactor[SCREEN_PAGE_NUM];
 	uint8 _pageMapping[SCREEN_PAGE_NUM];
 
 	bool _useOverlays;
 	bool _useSJIS;
 	bool _use16ColorMode;
 	bool _useHiResEGADithering;
-	bool _useLoResEGA;
 	bool _isAmiga;
 	Common::RenderMode _renderMode;
 

@@ -60,7 +60,7 @@ void EoBCoreEngine::useMagicBookOrSymbol(int charIndex, int type) {
 	}
 
 	if (!_updateFlags)
-		_screen->copyRegion(64, 121, 0, 0, 112, 56, 0, _useHiResDithering ? 4 : 10, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(64, 121, 0, 0, 112, 56, 0, 10, Screen::CR_NO_P_CHECK);
 	_updateFlags = 1;
 	gui_setPlayFieldButtons();
 	gui_drawSpellbook();

@@ -52,10 +52,9 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cgaScaleTable = 0;
 	_gfxMaxY = 0;
 	_egaDitheringTable = 0;
-	_egaPixelValueTable = 0;
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
-	_useLoResEGA = _useHiResEGADithering = false;
+	_useHiResEGADithering = false;
 }
 
 Screen_EoB::~Screen_EoB() {
@@ -63,18 +62,11 @@ Screen_EoB::~Screen_EoB() {
 	delete[] _dsTempPage;
 	delete[] _cgaScaleTable;
 	delete[] _egaDitheringTable;
-	delete[] _egaPixelValueTable;
 	delete[] _cgaDitheringTables[0];
 	delete[] _cgaDitheringTables[1];
 }
 
 bool Screen_EoB::init() {
-	// Define hi-res pages for EGA mode in EOB II
-	if (_vm->gameFlags().useHiRes) {
-		for (int i = 0; i < 8; i++)
-			_pageScaleFactor[i] = 2;
-	}
-
 	if (Screen::init()) {
 		int temp;
 		_gfxMaxY = _vm->staticres()->loadRawData(kEoBBaseExpObjectY, temp);
@@ -98,13 +90,8 @@ bool Screen_EoB::init() {
 		if (_vm->gameFlags().useHiRes && _renderMode == Common::kRenderEGA) {
 			_useHiResEGADithering = true;
 			_egaDitheringTable = new uint8[256];
-			_egaPixelValueTable = new uint8[256];
-			for (int i = 0; i < 256; i++) {
+			for (int i = 0; i < 256; i++)
 				_egaDitheringTable[i] = i & 0x0f;
-				_egaPixelValueTable[i] = i & 0x0f;
-			}
-		} else if (_renderMode == Common::kRenderEGA) {
-			_useLoResEGA = true;
 		} else if (_renderMode == Common::kRenderCGA) {
 			_cgaMappingDefault = _vm->staticres()->loadRawData(kEoB1CgaMappingDefault, temp);
 			_cgaDitheringTables[0] = new uint16[256];
@@ -144,13 +131,19 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	int mouseH = (shape[3]);
 	int colorKey = (_renderMode == Common::kRenderCGA) ? 0 : _cursorColorKey;
 
-	uint8 *cursor = new uint8[mouseW * _pageScaleFactor[6] * mouseH * _pageScaleFactor[6]];
+	int scaleFactor = _useHiResEGADithering ? 2 : 1;
+
+	uint8 *cursor = new uint8[mouseW * scaleFactor * mouseH * scaleFactor];
 	// We use memset and copyBlockToPage instead of fillRect to make sure that the
 	// color key 0xFF doesn't get converted into EGA color
-	memset(cursor, colorKey, mouseW * _pageScaleFactor[6] * mouseH * _pageScaleFactor[6]);
+	memset(cursor, colorKey, mouseW * scaleFactor * mouseH * scaleFactor);
 	copyBlockToPage(6, 0, 0, mouseW, mouseH, cursor);
 	drawShape(6, shape, 0, 0, 0, 2, ovl);
 	CursorMan.showMouse(false);
+
+	if (_useHiResEGADithering) {
+	}
+
 	copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
 	// Mouse cursor post processing for CGA mode. Unlike the original (which uses drawShape for the mouse cursor)
@@ -176,7 +169,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 		}
 	}
 
-	CursorMan.replaceCursor(cursor, mouseW * _pageScaleFactor[6], mouseH * _pageScaleFactor[6], x, y, colorKey);
+	CursorMan.replaceCursor(cursor, mouseW * scaleFactor, mouseH * scaleFactor, x, y, colorKey);
 	if (isMouseVisible())
 		CursorMan.showMouse(true);
 	delete[] cursor;
@@ -190,19 +183,6 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 
 void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size) {
 	s->read(_pagePtrs[pageNum], size);
-}
-
-void Screen_EoB::printText(const char *str, int x, int y, uint8 color1, uint8 color2) {
-	if (_useHiResEGADithering) {
-		// This is sort of an abuse of the text color map. But since EOB doesn't use it anyway
-		// and the font drawing code needs access to both the original color values and the
-		// EGA dithering colors we pass them on like this.
-		uint8 cmap[2];
-		cmap[0] = _egaDitheringTable[color2];
-		cmap[1] = _egaDitheringTable[color1];
-		setTextColor(cmap, 2, 3);
-	}
-	Screen::printText(str, x, y, color1, color2);
 }
 
 void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2) {
@@ -281,134 +261,16 @@ void Screen_EoB::convertPage(int srcPage, int dstPage, const uint8 *cgaMapping) 
 				src += 2;
 			}
 		}
-
-	} else if (_useHiResEGADithering) {
-		for (int height = SCREEN_H; height; height--) {
-			uint8 *dst2 = dst + SCREEN_W * 2;
-			for (int width = SCREEN_W; width; width--) {
-				uint8 in = _egaDitheringTable[*src++];
-				*dst++ = *dst2++ = in >> 4;
-				*dst++ = *dst2++ = in & 0x0f;
-			}
-			dst += (SCREEN_W * 2);
-		}
-
-	} else if (_renderMode == Common::kRenderEGA) {
+	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
 		uint32 len = SCREEN_W * SCREEN_H;
 		while (len--)
 			*dst++ = *src++ & 0x0f;
-
 	} else {
 		copyPage(srcPage, dstPage);
 	}
 
 	if (dstPage == 0 || dstPage == 1)
 		_forceFullUpdate = true;
-}
-
-void Screen_EoB::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, bool xored) {
-	if (!_useHiResEGADithering) {
-		Screen::fillRect(x1, y1, x2, y2, color, pageNum, xored);
-		return;
-	}
-
-	assert(x2 < SCREEN_W && y2 < SCREEN_H);
-	if (pageNum == -1)
-		pageNum = _curPage;
-
-	uint16 pitch = (SCREEN_W - (x2 - x1 + 1)) * _pageScaleFactor[pageNum];
-	uint8 col1 = (_egaDitheringTable[color] >> 4);
-	uint8 col2 = (_egaDitheringTable[color] & 0x0f);
-
-	x1 *= _pageScaleFactor[pageNum];
-	y1 *= _pageScaleFactor[pageNum];
-	x2 *= _pageScaleFactor[pageNum];
-	y2 *= _pageScaleFactor[pageNum];
-	uint16 w = x2 - x1 + _pageScaleFactor[pageNum];
-	uint16 h = y2 - y1 + _pageScaleFactor[pageNum];
-
-	uint8 *dst = getPagePtr(pageNum) + y1 * SCREEN_W * _pageScaleFactor[pageNum] + x1;
-	if (pageNum == 0 || pageNum == 1)
-		addDirtyRect(x1, y1, w, h);
-
-	while (h--) {
-		for (uint16 w1 = w; w1; w1 -= 2) {
-			*dst++ = col1;
-			*dst++ = col2;
-		}
-		dst += pitch;
-	}
-}
-
-void Screen_EoB::drawLine(bool vertical, int x, int y, int length, int color) {
-	if (!_useHiResEGADithering) {
-		Screen::drawLine(vertical, x, y, length, color);
-		return;
-	}
-
-	uint16 pitch = (SCREEN_W - 1) * _pageScaleFactor[_curPage];
-	uint8 col1 = (_egaDitheringTable[color] >> 4);
-	uint8 col2 = (_egaDitheringTable[color] & 0x0f);
-
-	x *= _pageScaleFactor[_curPage];
-	y *= _pageScaleFactor[_curPage];
-	length *= _pageScaleFactor[_curPage];
-	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W * _pageScaleFactor[_curPage] + x;
-	uint8 *ptr2 = ptr + SCREEN_W * _pageScaleFactor[_curPage];
-
-	if (vertical) {
-		assert((y + length) <= SCREEN_H * _pageScaleFactor[_curPage]);
-		int currLine = 0;
-		while (currLine < length) {
-			*ptr++ = col1;
-			*ptr++ = col2;
-			ptr += pitch;
-			currLine++;
-		}
-	} else {
-		assert((x + length) <= SCREEN_W * _pageScaleFactor[_curPage]);
-		int currLine = 0;
-		while (currLine < length) {
-			*ptr++ = *ptr2++ = col1;
-			*ptr++ = *ptr2++ = col2;
-			currLine += 2;
-		}
-	}
-
-	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x, y, (vertical) ? _pageScaleFactor[_curPage] : length, (vertical) ? length : _pageScaleFactor[_curPage]);
-}
-
-uint8 Screen_EoB::getPagePixel(int pageNum, int x, int y) {
-	if (!_useHiResEGADithering)
-		return Screen::getPagePixel(pageNum, x, y);
-
-	x *= _pageScaleFactor[_curPage];
-	y *= _pageScaleFactor[_curPage];
-	uint8 *pos = &_pagePtrs[pageNum][y * SCREEN_W * _pageScaleFactor[_curPage] + x];
-
-	return _egaPixelValueTable[(pos[0] << 4) | (pos[1] & 0x0f)];
-}
-
-void Screen_EoB::setPagePixel(int pageNum, int x, int y, uint8 color) {
-	if (!_useHiResEGADithering) {
-		Screen::setPagePixel(pageNum, x, y, color);
-		return;
-	}
-
-	assert(pageNum < SCREEN_PAGE_NUM);
-	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
-
-	x *= _pageScaleFactor[_curPage];
-	y *= _pageScaleFactor[_curPage];
-
-	if (pageNum == 0 || pageNum == 1)
-		addDirtyRect(x, y, _pageScaleFactor[pageNum], _pageScaleFactor[pageNum]);
-
-	uint8 *pos = &_pagePtrs[pageNum][y * SCREEN_W * _pageScaleFactor[_curPage] + x];
-	uint8 *pos2 = pos + SCREEN_W * _pageScaleFactor[_curPage];
-	pos[0] = pos2[0] = _egaDitheringTable[color] >> 4;
-	pos[1] = pos2[1] = _egaDitheringTable[color] & 0x0f;
 }
 
 void Screen_EoB::setScreenPalette(const Palette &pal) {
@@ -444,7 +306,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 	uint8 *srcLineStart = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
 	uint8 *src = srcLineStart;
 
-	if (_useLoResEGA)
+	if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)
 		encode8bit = false;
 
 	if (_renderMode == Common::kRenderCGA) {
@@ -568,11 +430,11 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 		*dst++ = (w & 0xff);
 		*dst++ = (h & 0xff);
 
-		if (_useLoResEGA) {
+		if (_renderMode != Common::kRenderEGA || _useHiResEGADithering) {
+			memset(dst, 0xff, 0x10);
+		} else {
 			for (int i = 0; i < 16; i++)
 				dst[i] = i;
-		} else {
-			memset(dst, 0xff, 0x10);
 		}
 
 		uint8 *pal = dst;
@@ -632,7 +494,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 		y += _dsY1;
 	}
 
-	dst += (_dsX1 << 3) * _pageScaleFactor[pageNum];
+	dst += (_dsX1 << 3);
 	int16 dX = x - (_dsX1 << 3);
 	int16 dY = y;
 	int16 dW = _dsX2 - _dsX1;
@@ -704,11 +566,11 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			marginRight = w2 - marginLeft - width;
 		}
 
-		dst += (dY * SCREEN_W * _pageScaleFactor[pageNum] * _pageScaleFactor[pageNum] + dX * _pageScaleFactor[pageNum]);
+		dst += (dY * SCREEN_W + dX);
 		uint8 *dstL = dst;
 
 		if (pageNum == 0 || pageNum == 1)
-			addDirtyRect(rX * _pageScaleFactor[pageNum], rY * _pageScaleFactor[pageNum], rW * _pageScaleFactor[pageNum], rH * _pageScaleFactor[pageNum]);
+			addDirtyRect(rX, rY, rW, rH);
 
 		while (dH--) {
 			int16 xpos = (int16) marginLeft;
@@ -743,7 +605,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				} while (xpos > 0);
 			}
 
-			dst -= (xpos * _pageScaleFactor[pageNum]);
+			dst -= xpos;
 			xpos += width;
 
 			while (xpos > 0) {
@@ -752,12 +614,12 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				src += pixelStep;
 
 				if (m) {
-					drawShapeSetPixel(dst, c, SCREEN_W * _pageScaleFactor[pageNum]);
-					dst += _pageScaleFactor[pageNum];
+					drawShapeSetPixel(dst, c);
+					dst++;
 					xpos--;
 				} else {
 					uint8 len = (flags & 1) ? src[1] : src[0];
-					dst += (len * _pageScaleFactor[pageNum]);
+					dst += len;
 					xpos -= len;
 					src += pixelStep;
 				}
@@ -783,7 +645,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				} while (xpos > 0);
 			}
 
-			dstL += SCREEN_W * _pageScaleFactor[pageNum] * _pageScaleFactor[pageNum];
+			dstL += SCREEN_W;
 			dst = dstL;
 			if (flags & 1)
 				src = src2 + 1;
@@ -851,12 +713,12 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 		if (d < width)
 			width = d;
 
-		dst += (dY * _pageScaleFactor[pageNum] * SCREEN_W * _pageScaleFactor[pageNum] + dX * _pageScaleFactor[pageNum]);
+		dst += (dY * SCREEN_W + dX);
 
 		if (pageNum == 0 || pageNum == 1)
-			addDirtyRect(rX * _pageScaleFactor[pageNum], rY * _pageScaleFactor[pageNum], rW * _pageScaleFactor[pageNum], rH * _pageScaleFactor[pageNum]);
+			addDirtyRect(rX, rY, rW, rH);
 
-		int pitch = SCREEN_W * _pageScaleFactor[pageNum] * _pageScaleFactor[pageNum] - width * _pageScaleFactor[pageNum];
+		int pitch = SCREEN_W - width;
 		int16 lineSrcStep = (w2 - width) / pixelsPerByte;
 		uint8 lineSrcStepRemainder = (w2 - width) % pixelsPerByte;
 
@@ -899,8 +761,8 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				}
 				uint8 col = (pixelsPerByte == 2) ? pal[(in >> shift) & pixelPackingMask] : (*dst & ((trans >> shift) & (pixelPackingMask))) | pal[(in >> shift) & pixelPackingMask];
 				if (col || pixelsPerByte == 4)
-					drawShapeSetPixel(dst, col, SCREEN_W * _pageScaleFactor[pageNum]);
-				dst += _pageScaleFactor[pageNum];
+					drawShapeSetPixel(dst, col);
+				dst++;
 				shift = ((shift - (pixelStep * pixelPacking)) & 7);
 			}
 			src += lineSrcStep;
@@ -1367,15 +1229,14 @@ const uint8 *Screen_EoB::getEGADitheringTable() {
 	return _egaDitheringTable;
 }
 
-void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col, uint16 pitch) {
+void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 	if ((_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering) {
 		if (_shapeFadeMode[0]) {
 			if (_shapeFadeMode[1]) {
-				col = _useHiResEGADithering ? _egaPixelValueTable[(dst[0] << 4) | (dst[1] & 0x0f)] : *dst;
+				col = *dst;
 			} else {
 				_shapeFadeInternal &= 7;
-				 col = _useHiResEGADithering ? _egaPixelValueTable[(dst[_shapeFadeInternal] << 4) | (dst[_shapeFadeInternal + 1] & 0x0f)] : dst[_shapeFadeInternal];
-				_shapeFadeInternal++;
+				col = *(dst + _shapeFadeInternal++);
 			}
 		}
 
@@ -1386,13 +1247,7 @@ void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col, uint16 pitch) {
 		}
 	}
 
-	if (_useHiResEGADithering) {
-		col = _egaDitheringTable[col];
-		dst[0] = dst[pitch] = col >> 4;
-		dst[1] = dst[pitch + 1] = col & 0x0f;
-	} else {
-		*dst = col;
-	}
+	*dst = col;
 }
 
 void Screen_EoB::scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc) {
@@ -1479,10 +1334,6 @@ void Screen_EoB::generateEGADitheringTable(const Palette &pal) {
 		}
 		*dst++ = col;
 	}
-
-	memset(_egaPixelValueTable, 0, 256);
-	for (int i = 0; i < 256; i++)
-		_egaPixelValueTable[_egaDitheringTable[i]] = i;
 }
 
 void Screen_EoB::generateCGADitheringTables(const uint8 *mappingData) {
@@ -1546,11 +1397,10 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode, bool useHiResEGADithering) : _renderMode(mode), _useHiResEGADithering(useHiResEGADithering) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode) : _renderMode(mode) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
-	_useLoResEGA = (_renderMode == Common::kRenderEGA && !_useHiResEGADithering);
 
 	_numRef++;
 	if (!_cgaDitheringTable && _numRef == 1) {
@@ -1662,22 +1512,14 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	int w = (_width - 1) >> 3;
 	pitch -= _width;
 
-	if (_useHiResEGADithering)
-		pitch *= 2;
-
 	uint8 color1 = _colorMap[1];
 	uint8 color2 = _colorMap[0];
-
-	uint8 colEGA11 = _colorMap[3] >> 4;
-	uint8 colEGA12 = _colorMap[3] & 0x0f;
-	uint8 colEGA21 = _colorMap[2] >> 4;
-	uint8 colEGA22 = _colorMap[2] & 0x0f;
 
 	static const uint16 cgaColorMask[] = { 0, 0x5555, 0xAAAA, 0xFFFF };
 	uint16 cgaMask1 = cgaColorMask[color1 & 3];
 	uint16 cgaMask2 = cgaColorMask[color2 & 3];
 
-	if (_renderMode == Common::kRenderCGA || _useLoResEGA) {
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA) {
 		color1 &= 0x0f;
 		color2 &= 0x0f;
 	}
@@ -1734,27 +1576,13 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 						break;
 					}
 
-					if (_useHiResEGADithering) {
-						if (s & i) {
-							if (color1) {
-								dst[0] = dst2[0] = colEGA11;
-								dst[1] = dst2[1] = colEGA12;
-							}
-						} else if (color2) {
-							dst[0] = dst2[0] = colEGA21;
-							dst[1] = dst2[1] = colEGA22;
-						}
-						dst += 2;
-						dst2 += 2;
-					} else {
-						if (s & i) {
-							if (color1)
-								*dst = color1;
-						} else if (color2) {
-							*dst = color2;
-						}
-						dst++;
+					if (s & i) {
+						if (color1)
+							*dst = color1;
+					} else if (color2) {
+						*dst = color2;
 					}
+					dst++;
 				}
 
 				if (cW)

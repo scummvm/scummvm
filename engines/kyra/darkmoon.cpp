@@ -158,10 +158,7 @@ void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterInde
 		int colx = 302 + 3 * i;
 
 		for (int ii = 0; ii < 16; ii++) {
-			// Don't use getPagePixel() here, since in EGA mode it will try to
-			// undither the pixel (although the shape bitmap is undithered already)
-			uint8 col = _screen->getCPagePtr(_screen->_curPage | 1)[(184 + ii) * Screen::SCREEN_W + colx];
-
+			uint8 col = _screen->getPagePixel(_screen->_curPage, colx, 184 + ii);
 			int iii = 0;
 			for (; iii < 16; iii++) {
 				if (tmpPal[iii] == col) {
@@ -178,9 +175,7 @@ void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterInde
 			memcpy(tmpPal, _monsterShapes[dci] + 4, 16);
 
 			for (int iii = 0; iii < 16; iii++) {
-				// Don't use getPagePixel() here, since in EGA mode it will try to
-				// undither the pixel (although the shape bitmap is undithered already)
-				uint8 col = _screen->getCPagePtr(_screen->_curPage | 1)[(184 + iii) * Screen::SCREEN_W + colx + ii];
+				uint8 col = _screen->getPagePixel(_screen->_curPage, colx + ii, 184 + iii);
 				if (newPal[iii])
 					tmpPal[newPal[iii]] = col;
 			}

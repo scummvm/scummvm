@@ -57,7 +57,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_configMouse = true;
 	_loading = false;
 
-	_useHiResDithering = false;
+	_enableHiResDithering = false;
 
 	_envAudioTimer = 0;
 	_flashShapeTimer = 0;
@@ -371,7 +371,7 @@ Common::Error EoBCoreEngine::init() {
 	if (ConfMan.hasKey("render_mode"))
 		_configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 
-	_useHiResDithering = (_configRenderMode == Common::kRenderEGA && _flags.useHiRes);
+	_enableHiResDithering = (_configRenderMode == Common::kRenderEGA && _flags.useHiRes);
 
 	_screen = new Screen_EoB(this, _system);
 	assert(_screen);
@@ -416,12 +416,6 @@ Common::Error EoBCoreEngine::init() {
 
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
-
-	if (_useHiResDithering) {
-		_vcnBlockWidth <<= 1;
-		_vcnBlockHeight <<= 1;
-		SWAP(_vcnFlip0, _vcnFlip1);
-	}
 
 	Common::Error err = KyraRpgEngine::init();
 	if (err.getCode() != Common::kNoError)
@@ -1748,7 +1742,7 @@ void EoBCoreEngine::seq_portal() {
 bool EoBCoreEngine::checkPassword() {
 	char answ[20];
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
-	_screen->copyPage(0, _useHiResDithering ? 4 : 10);
+	_screen->copyPage(0, 10);
 
 	_screen->setScreenDim(13);
 	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, guiSettings()->colors.frame1, guiSettings()->colors.frame2, -1);
@@ -1775,7 +1769,7 @@ bool EoBCoreEngine::checkPassword() {
 
 	_screen->modifyScreenDim(13, _screen->_curDim->sx - 1, _screen->_curDim->sy - 2, _screen->_curDim->w + 2, _screen->_curDim->h + 16);
 	_screen->setFont(of);
-	_screen->copyPage(_useHiResDithering ? 4 : 10, 0);
+	_screen->copyPage(10, 0);
 	return true;
 }
 

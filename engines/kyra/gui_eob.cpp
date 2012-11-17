@@ -777,11 +777,11 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	}
 
 	_screen->copyPage(0, 7);
-	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, _useHiResDithering ? 1 : 12, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
 
 	_gui->runCampMenu();
 
-	_screen->copyRegion(0, 0, 0, 120, 176, 24, _useHiResDithering ? 1 : 12, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
 	_screen->setScreenDim(cd);
 	drawScene(0);
 
@@ -1170,7 +1170,7 @@ int EoBCoreEngine::clickedSceneSpecial(Button *button) {
 
 int EoBCoreEngine::clickedSpellbookAbort(Button *button) {
 	_updateFlags = 0;
-	_screen->copyRegion(0, 0, 64, 121, 112, 56, _useHiResDithering ? 4 : 10, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 64, 121, 112, 56, 10, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	gui_drawCompass(true);
 	gui_toggleButtons();
@@ -2172,7 +2172,7 @@ void GUI_EoB::runCampMenu() {
 				if (cnt > 4) {
 					_vm->dropCharacter(selectCharacterDialogue(53));
 					_vm->gui_drawPlayField(false);
-					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, _vm->_useHiResDithering ? 1 : 12, Screen::CR_NO_P_CHECK);
+					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
 					_screen->setFont(Screen::FID_6_FNT);
 					_vm->gui_drawAllCharPortraitsWithStats();
 					_screen->setFont(Screen::FID_8_FNT);
@@ -2607,7 +2607,7 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 			break;
 	} while (_saveSlotIdTemp[slot] == -1);
 
-	_screen->copyRegion(72, 14, 72, 14, 176, 144, _vm->_useHiResDithering ? 7 : 12, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(72, 14, 72, 14, 176, 144, 12, 0, Screen::CR_NO_P_CHECK);
 	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
 
 	return (slot < 6) ? _savegameList[_savegameOffset + slot] : Common::String();
@@ -2650,7 +2650,7 @@ void GUI_EoB::createScreenThumbnail(Graphics::Surface &dst) {
 	_screen->getRealPalette(0, screenPal);
 	uint16 width = Screen::SCREEN_W;
 	uint16 height = Screen::SCREEN_H;
-	if (_vm->_useHiResDithering) {
+	if (_vm->gameFlags().useHiRes) {
 		width <<= 1;
 		height <<= 1;
 	}

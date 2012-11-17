@@ -222,7 +222,6 @@ protected:
 	uint16 _decorationCount;
 	int16 _mappedDecorationsCount;
 	uint16 *_vmpPtr;
-	uint16 _vmpSize;
 	uint8 *_vcnBlocks;
 	uint8 *_vcfBlocks;
 	uint8 *_vcnTransitionMask;
@@ -232,10 +231,6 @@ protected:
 	uint8 *_sceneWindowBuffer;
 	uint8 _blockBrightness;
 	uint8 _wllVcnOffset;
-	uint8 _vcnBlockWidth;
-	uint8 _vcnBlockHeight;
-	uint8 _vcnFlip0;
-	uint8 _vcnFlip1;
 
 	uint8 **_doorShapes;
 
