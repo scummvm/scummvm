@@ -2697,7 +2697,7 @@ void ObjectsManager::PLAN_BETA() {
 				_vm->_globals.NOPARLE = false;
 				v5 = 0;
 			}
-			if (_vm->_globals.SAUVEGARDE->data[svField180] == 1 && !_vm->_globals.SAUVEGARDE->data[svField172]) {
+			if (_vm->_globals.SAUVEGARDE->data[svField80] == 1 && !_vm->_globals.SAUVEGARDE->data[svField172]) {
 				_vm->_globals.SAUVEGARDE->data[svField172] = 1;
 				_vm->_globals.NOPARLE = true;
 				_vm->_talkManager.PARLER_PERSO("APPEL2.pe2");
