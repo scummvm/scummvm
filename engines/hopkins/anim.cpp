@@ -309,7 +309,7 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 	
 		_vm->_graphicsManager.Cls_Pal();
 		v11 = _vm->_graphicsManager.SCROLL;
-		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
+		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
 		_vm->_graphicsManager.SCROLL_ECRAN(0);
 		_vm->_graphicsManager.DD_Lock();
 		_vm->_graphicsManager.Cls_Video();
@@ -434,7 +434,7 @@ LABEL_48:
 
 		if (v5)
 			goto LABEL_88;
-		f.read(v12, READ_LE_UINT32(v13 + 2));
+		f.read(v12, READ_LE_UINT32(v13 + 8));
 		if (_vm->_globals.iRegul == 1)
 			break;
 LABEL_77:
