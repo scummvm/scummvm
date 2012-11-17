@@ -296,6 +296,9 @@ void Globals::setConfig() {
 	HOPMUSIC = "MUSIC";
 	HOPVOICE = "VOICE";
 	HOPANM = "ANM";
+	HOPTSVGA = "TSVGA";
+	HOPSVGA = "SVGA";
+	HOPVGA = "VGA";
 	HOPSEQ = "SEQ";
 
 	// CHECKME: Should be in Globals() but it doesn't work

@@ -143,19 +143,19 @@ void FileManager::CONSTRUIT_FICHIER(const Common::String &folder, const Common::
 	// check for animations that don't exist in the ANM folder, but rather in special
 	// sub-folders depending on the physical screen resolution being used.
 
-	if (folder == "ANM") {
+	if (folder == _vm->_globals.HOPANM) {
 		switch (_vm->_globals.SVGA) {
 		case 1:
 			if (TEST_REP(folderToUse, file))
-				folderToUse = "TSVGA";
+				folderToUse = _vm->_globals.HOPTSVGA;
 			break;
 		case 2:
 			if (TEST_REP(folderToUse, file))
-				folderToUse = "SVGA";
+				folderToUse = _vm->_globals.HOPSVGA;
 			break;
 		case 3:
 			if (TEST_REP(folderToUse, file))
-				folderToUse = "VGA";
+				folderToUse = _vm->_globals.HOPVGA;
 			break;
 		default:
 			break;

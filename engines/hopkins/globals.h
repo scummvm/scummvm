@@ -343,6 +343,9 @@ public:
 	Common::String HOPMUSIC;
 	Common::String HOPVOICE;
 	Common::String HOPANM;
+	Common::String HOPTSVGA;
+	Common::String HOPSVGA;
+	Common::String HOPVGA;
 	Common::String HOPSEQ;
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
