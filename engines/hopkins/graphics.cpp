@@ -181,6 +181,29 @@ void GraphicsManager::LOAD_IMAGE(const Common::String &file) {
 	INIT_TABLE(165, 170, Palette);
 }
 
+
+void GraphicsManager::LOAD_IMAGEVGA(const Common::String &file) {
+	SCANLINE(SCREEN_WIDTH);
+	DD_Lock();
+	Cls_Video();
+	DD_Unlock();
+	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, file);
+	A_PCX320(VESA_SCREEN, _vm->_globals.NFICHIER, Palette);
+	memcpy(VESA_BUFFER, VESA_SCREEN, 0xFA00u);
+	_vm->_eventsManager.souris_max();
+	SCANLINE(320);
+	max_x = 320;
+
+	DD_Lock();
+	if (Winbpp == 1)
+		CopyAsm(VESA_BUFFER);
+	if (Winbpp == 2)
+		CopyAsm16(VESA_BUFFER);
+	DD_Unlock();
+	
+	FADE_IN_CASSE();
+}
+
 // Load Screen
 void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	bool flag;
@@ -363,6 +386,88 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 	Common::copy((const byte *)palSrc, (const byte *)palSrc + PALETTE_BLOCK_SIZE, palette);
   
 	f.close();
+}
+
+void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *palette) {
+	size_t filesize; 
+	int v4; 
+	size_t v5; 
+	int v6; 
+	size_t v7; 
+	int v8; 
+	byte v9; 
+	int v10; 
+	int v11; 
+	char v12; 
+	int v15; 
+	int v16; 
+	int32 v17; 
+	byte *ptr; 
+	Common::File f; 
+
+	if (!f.open(file)) 
+		error("File not found - %s", file.c_str());
+
+	filesize = f.size();
+
+	f.read(surface, 0x80u);
+	v4 = filesize - 896;
+	ptr = _vm->_globals.dos_malloc2(0xFE00u);
+	if (v4 >= 0xFA00) {
+		v15 = v4 / 0xFA00 + 1;
+		v17 = 64000 * (v4 / 0xFA00) - v4;
+		if (((uint32)v17 & 0x80000000u) != 0)
+			v17 = -v17;
+		f.read(ptr, 0xFA00u);
+		v5 = 64000;
+	} else {
+		v15 = 1;
+		v17 = v4;
+		f.read(ptr, v4);
+		v5 = v4;
+	}
+	v16 = v15 - 1;
+	v6 = 0;
+	v7 = 0;
+	do {
+		if (v7 == v5) {
+			v7 = 0;
+			--v16;
+			v5 = 64000;
+			if (!v16)
+				v5 = v17;
+			v8 = v6;
+			f.read(ptr, v5);
+			v6 = v8;
+		}
+		v9 = *(ptr + v7++);
+		if (v9 > 0xC0u) {
+			v10 = v9 - 192;
+			if (v7 == v5) {
+				v7 = 0;
+				--v16;
+				v5 = 64000;
+				if (v16 == 1)
+					v5 = v17;
+				v11 = v6;
+				f.read(ptr, v5);
+				v6 = v11;
+			}
+			v12 = *(ptr + v7++);
+			do {
+				*(surface + v6++) = v12;
+				--v10;
+			} while (v10);
+		} else {
+			*(surface + v6++) = v9;
+		}
+	} while (v6 <= 0xF9FF);
+
+	f.seek(filesize - 768);
+	f.read(palette, 0x300u);
+	f.close();
+
+	_vm->_globals.dos_free2(ptr);
 }
 
 // Clear Palette
@@ -855,9 +960,9 @@ void GraphicsManager::setpal_vga256_linux(const byte *palette, const byte *surfa
 }
 
 void GraphicsManager::SETCOLOR(int palIndex, int r, int g, int b) {
-	_vm->_graphicsManager.Palette[palIndex * 3] = 255 * r / 100;
-	_vm->_graphicsManager.Palette[palIndex * 3 + 1] = 255 * g / 100;
-	_vm->_graphicsManager.Palette[palIndex * 3 + 2] = 255 * b / 100;
+	Palette[palIndex * 3] = 255 * r / 100;
+	Palette[palIndex * 3 + 1] = 255 * g / 100;
+	Palette[palIndex * 3 + 2] = 255 * b / 100;
 	
 	setpal_vga256(Palette);
 }
@@ -938,6 +1043,30 @@ void GraphicsManager::FADE_OUTW_LINUX(const byte *surface) {
 void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
 	assert(surface);
 	fade_in(Palette, FADESPD, surface);
+}
+
+void GraphicsManager::FADE_IN_CASSE() {
+	setpal_vga256(Palette);
+	if (Winbpp == 2) {
+		DD_Lock();
+		CopyAsm16(VESA_BUFFER);
+		DD_Unlock();
+	}
+	DD_VBL();
+}
+
+void GraphicsManager::FADE_OUT_CASSE() {
+	byte palette[PALETTE_EXT_BLOCK_SIZE];
+
+	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
+	setpal_vga256(palette);
+
+	if (Winbpp == 2) {
+		DD_Lock();
+		CopyAsm16(VESA_BUFFER);
+		DD_Unlock();
+	}
+	DD_VBL();
 }
 
 void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) {
@@ -1523,6 +1652,22 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 	SDL_NBLOCS = 0;
 }
 
+void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx) {
+	int height, width;
+
+	width = _vm->_objectsManager.Get_Largeur(objectData, idx);
+	height = _vm->_objectsManager.Get_Hauteur(objectData, idx);
+	if (*objectData == 78) {
+		Affiche_Perfect(VESA_SCREEN, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
+		Affiche_Perfect(VESA_BUFFER, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
+	} else {
+		Sprite_Vesa(VESA_BUFFER, objectData, xp + 300, yp + 300, idx);
+		Sprite_Vesa(VESA_SCREEN, objectData, xp + 300, yp + 300, idx);
+	}
+	if (!_vm->_globals.NO_VISU)
+		Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
+}
+
 void GraphicsManager::CopyAsm(const byte *surface) {
 	const byte *srcP;
 	byte srcByte;
@@ -1563,6 +1708,48 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 		destP = WinScan + WinScan + destPitch;
 		--yCtr;
 	} while (yCtr);
+}
+
+void GraphicsManager::CopyAsm16(const byte *surface) {
+	const byte *v1; 
+	byte *v2; 
+	int v3; 
+	signed int v4; 
+	byte *v5; 
+	uint16 *v6; 
+	int v; 
+	uint16 *v8; 
+	int v9; 
+	byte *v10; 
+	const byte *v11; 
+
+	assert(VideoPtr);
+	v1 = surface;
+	v2 = 30 * WinScan + (byte *)VideoPtr->pixels;
+	v3 = 200;
+	do {
+		v11 = v1;
+		v10 = v2;
+		v4 = 320;
+		v9 = v3;
+		v5 = PAL_PIXELS;
+		do {
+			v = 2 * *v1;
+			v6 = (uint16 *)(v5 + 2 * *v1);
+			v = *v6;
+			*v2 = *v6;
+			*(v2 + 1) = v;
+			v8 = (uint16 *)(WinScan + v2);
+			*v8 = v;
+			*(v8 + 1) = v;
+			++v1;
+			v2 = (byte *)v8 - WinScan + 4;
+			--v4;
+		} while (v4);
+		v1 = v11 + 320;
+		v2 = WinScan * 2 + v10;
+		v3 = v9 - 1;
+	} while (v9 != 1);
 }
 
 void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height) {
@@ -2256,7 +2443,7 @@ void GraphicsManager::NB_SCREEN() {
 		Trans_bloc2(VESA_BUFFER, TABLE_COUL, 307200);
 	if (nbrligne == 1280)
 		Trans_bloc2(VESA_BUFFER, TABLE_COUL, 614400);
-	_vm->_graphicsManager.DD_Lock();
+	DD_Lock();
 	if (Winbpp == 2) {
 		if (SDL_ECHELLE)
 			m_scroll16A(VESA_BUFFER, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -2269,7 +2456,7 @@ void GraphicsManager::NB_SCREEN() {
 		else
 			m_scroll2(VESA_BUFFER, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
-	_vm->_graphicsManager.DD_Unlock();
+	DD_Unlock();
 	
 	destP = VESA_SCREEN;
 	srcP = VESA_BUFFER;
@@ -2412,6 +2599,5 @@ void GraphicsManager::Plot_Vline(byte *surface, int xp, int yp, int height, byte
 		--yCtr;
 	} while (yCtr);
 }
-
 
 } // End of namespace Hopkins

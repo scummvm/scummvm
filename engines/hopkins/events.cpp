@@ -133,6 +133,10 @@ void EventsManager::MOUSE_ON() {
 	CursorMan.showMouse(true);
 }
 
+void EventsManager::MOUSE_ON1() {
+	MOUSE_ON();	
+}
+
 // Change Mouse Cursor
 void EventsManager::CHANGE_MOUSE(int id) {
 	int cursorId = id;
@@ -237,6 +241,27 @@ void EventsManager::handleKey(Common::Event &event) {
 		_vm->_debugger.onFrame();
 	}
 
+}
+
+int EventsManager::keywin() {
+	Common::Event event;
+
+	while (!_vm->shouldQuit()) {
+		_vm->_soundManager.checkSounds();
+		checkForNextFrameCounter();
+
+		// Handle pending events looking for keypress events
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN)
+				return event.kbd.ascii;
+		}
+
+		// Slight delay been checks to avoid maxing CPU usage
+		g_system->delayMillis(10);
+	}
+
+	// Game is quitting
+	return -1;
 }
 
 void EventsManager::VBL() {

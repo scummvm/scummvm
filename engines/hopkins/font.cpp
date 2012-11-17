@@ -481,17 +481,79 @@ LABEL_57:
 	}
 }
 
-void FontManager::TEXT_NOW1(int xp, int yp, const Common::String &message, int colour) {
+void FontManager::TEXT_NOW(int xp, int yp, const Common::String &message, int col) {
+	const char *srcP;
+	char currChar; 
+	int charIndex; 
+
+	srcP = message.c_str();
+	for (;;) {
+		currChar = *srcP++;
+		if (!currChar)
+			break;
+		if (currChar >= 32) {
+			charIndex = currChar - 32;
+			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, 
+				xp, yp, currChar - 32, col);
+			xp += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, charIndex);
+		}
+	}
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, xp, yp + 12);
+}
+
+
+void FontManager::TEXT_NOW1(int xp, int yp, const Common::String &message, int col) {
 	for (uint idx = 0; idx < message.size(); ++idx) {
 		char currentChar = message[idx];
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
 			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, 
-				xp, yp, characterIndex, colour);
+				xp, yp, characterIndex, col);
 			xp += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, characterIndex);
 		}
 	}
+}
+
+void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col) {
+	const char *srcP; 
+	int v5; 
+	int v6; 
+	byte v7; 
+	char v8; 
+	int v9; 
+
+	srcP = msg.c_str();
+	v9 = xp;
+	v8 = col;
+	do {
+		v7 = *srcP++;
+		if (v7 == '&') {
+			v8 = 2;
+			v7 = *srcP++;
+		}
+		if (v7 == '$') {
+			v8 = 4;
+			v7 = *srcP++;
+		}
+		if (!v7)
+			break;
+		if (v7 >= 32) {
+			v5 = v7 - 32;
+			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, v9, yp, v7 - 32, v8);
+			v9 += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, v5);
+			v6 = _vm->_objectsManager.Get_Largeur(_vm->_globals.police, v5);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(v9 - v6, yp, v9, yp + 12);
+			if (_vm->_eventsManager.ESC_KEY) {
+				_vm->_globals.iRegul = 1;
+				_vm->_eventsManager.VBL();
+			} else {
+				_vm->_globals.iRegul = 4;
+				_vm->_eventsManager.VBL();
+				_vm->_globals.iRegul = 1;
+			}
+		}
+	} while (v7);
 }
 
 } // End of namespace Hopkins

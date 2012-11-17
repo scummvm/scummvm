@@ -116,11 +116,13 @@ public:
 	void DD_UNLOCK() { DD_Unlock(); }
 	void Cls_Video();
 	void LOAD_IMAGE(const Common::String &file);
+	void LOAD_IMAGEVGA(const Common::String &file);
 	void INIT_TABLE(int minIndex, int maxIndex, byte *palette);
 	int SCROLL_ECRAN(int amount);
 	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
+	void A_PCX320(byte *surface, const Common::String &file, byte *palette);
 	void Cls_Pal();
 	void SCANLINE(int pitch);
 	void m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
@@ -138,6 +140,8 @@ public:
 	void FADE_OUTW();
 	void FADE_OUTW_LINUX(const byte *surface);
 	void FADE_INW_LINUX(const byte *surface);
+	void FADE_IN_CASSE();
+	void FADE_OUT_CASSE();
 	void setpal_vga256(const byte *palette);
 	void setpal_vga256_linux(const byte *palette, const byte *surface);
 	void SETCOLOR(int palIndex, int r, int g, int b);
@@ -169,7 +173,9 @@ public:
 	void Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2);
 	int Magic_Number(int v);
 	void Affiche_Segment_Vesa();
+	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx);
 	void CopyAsm(const byte *surface);
+	void CopyAsm16(const byte *surface);
 	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
 	int Reel_Zoom(int v, int percentage);
 	int Reel_Reduc(int v, int percentage);

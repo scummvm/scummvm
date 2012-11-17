@@ -2,6 +2,7 @@ MODULE := engines/hopkins
 
 MODULE_OBJS := \
 	anim.o \
+	computer.o \
 	debugger.o \
 	detection.o \
 	dialogs.o \

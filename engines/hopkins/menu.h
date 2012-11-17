@@ -40,7 +40,6 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	int MENU();
-	void COMPUT_HOPKINS(int a1);
 };
 
 } // End of namespace Hopkins

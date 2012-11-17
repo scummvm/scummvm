@@ -575,6 +575,33 @@ void SoundManager::CHARGE_SAMPLE(int wavIndex, const Common::String &file) {
 	}
 }
 
+void SoundManager::PLAY_SAMPLE(int wavIndex, int voiceMode) {
+	if (CARD_SB && !SOUNDOFF && SOUND[wavIndex]._active) {
+		if (SOUND_FLAG)
+			DEL_NWAV(SOUND_NUM);
+		if (voiceMode == 5) {
+			if (VOICE_STAT(1) == 1)
+				STOP_VOICE(1);
+			PLAY_SAMPLE_SDL(1, wavIndex);
+		}
+		if (voiceMode == 6) {
+			if (VOICE_STAT(2) == 1)
+				STOP_VOICE(1);
+			PLAY_SAMPLE_SDL(2, wavIndex);
+		}
+		if (voiceMode == 7) {
+			if (VOICE_STAT(3) == 1)
+				STOP_VOICE(1);
+			PLAY_SAMPLE_SDL(3, wavIndex);
+		}
+		if (voiceMode == 8) {
+			if (VOICE_STAT(1) == 1)
+				STOP_VOICE(1);
+			PLAY_SAMPLE_SDL(1, wavIndex);
+		}
+	}
+}
+
 void SoundManager::PLAY_SAMPLE2(int idx) {
 	if (CARD_SB && !SOUNDOFF && SOUND[idx]._active) {
 		if (SOUND_FLAG)

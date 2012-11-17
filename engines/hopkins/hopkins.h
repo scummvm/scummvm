@@ -32,6 +32,7 @@
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "hopkins/anim.h"
+#include "hopkins/computer.h"
 #include "hopkins/debugger.h"
 #include "hopkins/dialogs.h"
 #include "hopkins/events.h"
@@ -115,6 +116,7 @@ protected:
 public:
 	Debugger _debugger;
 	AnimationManager _animationManager;
+	ComputerManager _computerManager;
 	DialogsManager _dialogsManager;
 	EventsManager _eventsManager;
 	FontManager _fontManager;

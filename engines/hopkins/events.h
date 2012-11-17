@@ -79,12 +79,39 @@ public:
 	int YMOUSE();
 	int BMOUSE();
 	void MOUSE_ON();
+	void MOUSE_ON1();
 	void MOUSE_OFF();
 	void CHANGE_MOUSE(int id);
 
 	void CONTROLE_MES();
 	void delay(int delay);
 	void VBL();
+
+	/**
+	 * Waits for a keypress, ignoring mouse events
+	 * @return		Keypress, or -1 if game quit was requested
+	 */
+	int keywin();
+
+	/**
+	 * Unused by engine 
+	 */
+	void videkey() { }
+
+	/**
+	 * Unused by engine 
+	 */
+	void CASSE_SOURIS_ON() { }
+
+	/**
+	 * Unused by engine 
+	 */
+	void CASSE_SOURIS_OFF() { }
+
+	void wingetch() {
+		// TODO
+		warning("TODO: wingetch");
+	}
 };
 
 } // End of namespace Hopkins
