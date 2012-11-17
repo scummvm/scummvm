@@ -373,7 +373,7 @@ void Player_Mac::Instrument::generateSamples(int16 *data, int pitchModifier, int
 			sample = -32768;
 		}
 
-		*data++ = sample; // (_data[_pos] * 127) / 100;
+		*data++ = sample;
 		samplesLeft--;
 	}
 }
