@@ -792,7 +792,7 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	if (*(v3 + 1) == 'L' && *(v3 + 2) == 'E')
 	    _vm->_globals.Bank[idx].fileHeader = 1;
 	if (*(v3 + 1) == 'O' && *(v3 + 2) == 'R')
-		_vm->_globals.Bank[184].fileHeader = 2;
+		_vm->_globals.Bank[idx].fileHeader = 2;
 	
 	if (_vm->_globals.Bank[idx].fileHeader) {
 		_vm->_globals.Bank[idx].data = v3;
