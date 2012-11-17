@@ -5560,8 +5560,8 @@ void ObjectsManager::BLOQUE_ANIMX(int idx, int a2) {
 	_vm->_globals.BL_ANIM[idx].v2 = a2;
 }
 
-void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s2, const Common::String &s3,
-							   const Common::String &s4, int v) {
+void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile, 
+							   const Common::String &animFile, const Common::String &s4, int v) {
 	int v5; 
 	int v6; 
 	int v7; 
@@ -5581,12 +5581,12 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	_vm->_globals.SORTIE = 0;
 	_vm->_globals.AFFLI = false;
 	_vm->_globals.AFFIVBL = false;
-	if (!s1.empty())
-		_vm->_graphicsManager.LOAD_IMAGE(s1);
-	if (!s2.empty())
-		INILINK(s2);
-	if (!s3.empty())
-		_vm->_animationManager.CHARGE_ANIM(s3);
+	if (!backgroundFile.empty())
+		_vm->_graphicsManager.LOAD_IMAGE(backgroundFile);
+	if (!linkFile.empty())
+		INILINK(linkFile);
+	if (!animFile.empty())
+		_vm->_animationManager.CHARGE_ANIM(animFile);
 	_vm->_graphicsManager.VISU_ALL();
 	if (!s4.empty()) {
 		if (!_vm->_globals.NOSPRECRAN)
@@ -5655,7 +5655,7 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 		return;
 
 	_vm->_graphicsManager.FADE_OUTW();
-	if (!s3.empty())
+	if (!animFile.empty())
 		_vm->_graphicsManager.FIN_VISU();
 	if (_vm->_globals.ECRAN == 61)
 		SPRITE_OFF(0);
@@ -5663,8 +5663,8 @@ void ObjectsManager::PERSONAGE(const Common::String &s1, const Common::String &s
 	_vm->_globals.iRegul = 0;
 }
 
-void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &s2, const Common::String &s3,
-							   const Common::String &s4, int v) {
+void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile, 
+								const Common::String &animFile, const Common::String &s4, int v) {
 	int mouseButtons;
 	bool breakFlag;
 	int xp, yp;
@@ -5684,12 +5684,12 @@ void ObjectsManager::PERSONAGE2(const Common::String &s1, const Common::String &
 	_vm->_globals.NOT_VERIF = 1;
 	_vm->_soundManager.WSOUND(v);
 	_vm->_globals.iRegul = 1;
-	if (!s1.empty())
-		_vm->_graphicsManager.LOAD_IMAGE(s1);
-	if (!s2.empty())
-		INILINK(s2);
-	if (!s3.empty()) {
-		_vm->_animationManager.CHARGE_ANIM(s3);
+	if (!backgroundFile.empty())
+		_vm->_graphicsManager.LOAD_IMAGE(backgroundFile);
+	if (!linkFile.empty())
+		INILINK(linkFile);
+	if (!animFile.empty()) {
+		_vm->_animationManager.CHARGE_ANIM(animFile);
 		_vm->_graphicsManager.VISU_ALL();
 	}
 	if (!s4.empty()) {
@@ -5739,7 +5739,7 @@ LABEL_70:
 	_vm->_globals.CACHE_ON();
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	VERIFTAILLE();
-	SPECIAL_INI(s2);
+	SPECIAL_INI(linkFile);
 	_vm->_eventsManager.souris_n = 4;
 	g_old_x = PERX;
 	g_old_y = PERY;
@@ -5812,7 +5812,7 @@ LABEL_70:
 			SPRITE_OFF(1);
 			DEUXPERSO = false;
 		}
-		if (!s3.empty())
+		if (!animFile.empty())
 			_vm->_graphicsManager.FIN_VISU();
 		CLEAR_ECRAN();
 	} else {

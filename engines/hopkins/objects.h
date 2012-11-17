@@ -237,10 +237,18 @@ public:
 	void SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5);
 	void TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6);
 	void BLOQUE_ANIMX(int idx, int a2);
-	void PERSONAGE(const Common::String &s1, const Common::String &s2, const Common::String &s3,
-			const Common::String &s4, int v);
-	void PERSONAGE2(const Common::String &s1, const Common::String &s2, const Common::String &s3,
-			const Common::String &s4, int v);
+
+	/**
+	 * Game scene control method
+	 */
+	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile, 
+			const Common::String &animFile, const Common::String &s4, int v);
+
+	/**
+	 * Game scene control method
+	 */
+	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile, 
+			const Common::String &animFile, const Common::String &s4, int v);
 };
 
 } // End of namespace Hopkins

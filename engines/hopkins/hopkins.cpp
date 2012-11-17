@@ -932,7 +932,7 @@ LABEL_140:
 							_globals.DESACTIVE_INVENT = false;
 							_globals.FORET = 1;
 							_globals.NOSPRECRAN = true;
-							Common::String im = "IM" + _globals.SORTIE;
+							Common::String im = Common::String::format("IM%d", _globals.SORTIE);
 							_soundManager.WSOUND(13);
 							if (_globals.FORETSPR == g_PTRNUL) {
 								_fileManager.CONSTRUIT_SYSTEM("HOPDEG.SPR");
