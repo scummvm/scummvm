@@ -50,8 +50,8 @@ public:
 	void CHARGE_ANIM(const Common::String &animName);
 	void CLEAR_ANIM();
 	void RECHERCHE_ANIM(const byte *data, int animIndex, int count);
-	void PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, uint32 a5);
-	void PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3, uint32 a4);
+	void PLAY_SEQ(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
+	void PLAY_SEQ2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
 };
 
 } // End of namespace Hopkins

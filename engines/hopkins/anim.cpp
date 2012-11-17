@@ -958,32 +958,20 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count
 	} while (v21 <= count && v3 != 1);
 }
 
-void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, uint32 a5) {
-	int v5; 
+void AnimationManager::PLAY_SEQ(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
+	bool readError; 
 	int v7; 
 	byte *ptr = NULL; 
 	byte *v9; 
 	byte *v10; 
-	int v12; 
-	int v13; 
-	int v14; 
-	int v15; 
-	int v16; 
-	int v17; 
-	char v18; 
+	int soundNumber;
 	size_t nbytes; 
-	int buf; 
 	Common::File f;
 
 	if (_vm->shouldQuit())
 		return;
 
 	v7 = 0;
-	v14 = 0;
-	v13 = 0;
-	v16 = 0;
-	v15 = 0;
-	v17 = 1;
 	_vm->_eventsManager.souris_flag = false;
 	if (!NO_COUL) {
 		_vm->_eventsManager.VBL();
@@ -998,20 +986,15 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 	}
 	v9 = _vm->_graphicsManager.VESA_SCREEN;
 	v10 = _vm->_globals.dos_malloc2(0x16u);
-	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, a2);
+	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, file);
 	if (!f.open(_vm->_globals.NFICHIER))
 		error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
-	f.read(&buf, 6u);
+	f.skip(6);
 	f.read(_vm->_graphicsManager.Palette, 0x320u);
-	f.read(&buf, 4u);
+	f.skip(4);
 	nbytes = f.readUint32LE();
-	v18 = f.readUint32LE();
-	v17 = f.readUint16LE();
-	v16 = f.readUint16LE();
-	v15 = f.readUint16LE();
-	v14 = f.readUint16LE();
-	v13 = f.readUint16LE();
+	f.skip(14);
 	f.read(v9, nbytes);
 
 	if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
@@ -1059,7 +1042,7 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 				}
 				_vm->_eventsManager.CONTROLE_MES();
 				_vm->_soundManager.VERIF_SOUND();
-			} while (_vm->_eventsManager.lItCounter < a3);
+			} while (_vm->_eventsManager.lItCounter < rate1);
 		}
 	} else {
 		if (NO_COUL)
@@ -1076,24 +1059,23 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 				}
 				_vm->_eventsManager.CONTROLE_MES();
 				_vm->_soundManager.VERIF_SOUND();
-			} while (_vm->_eventsManager.lItCounter < a3);
+			} while (_vm->_eventsManager.lItCounter < rate1);
 		}
 	}
 	_vm->_eventsManager.lItCounter = 0;
-	v5 = 0;
-	v12 = 0;
+	readError = false;
+	soundNumber = 0;
 	do {
-		++v12;
-		_vm->_soundManager.PLAY_ANM_SOUND(v12);
-		memset(&buf, 0, 6u);
+		++soundNumber;
+		_vm->_soundManager.PLAY_ANM_SOUND(soundNumber);
 		memset(v10, 0, 0x13u);
 		if (f.read(v10, 16) != 16)
-			v5 = -1;
+			readError = true;
 
 		if (strncmp((const char *)v10, "IMAGE=", 6))
-			v5 = -1;
-		if (!v5) {
-			f.read(v9, (int16)READ_LE_UINT16(v10 + 8));
+			readError = true;
+		if (!readError) {
+			f.read(v9, READ_LE_UINT32(v10 + 8));
 			if (_vm->_globals.iRegul == 1) {
 				do {
 					if (_vm->_eventsManager.ESC_KEY == true) {
@@ -1103,7 +1085,7 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 					}
 					_vm->_eventsManager.CONTROLE_MES();
 					_vm->_soundManager.VERIF_SOUND();
-				} while (_vm->_eventsManager.lItCounter < a4);
+				} while (_vm->_eventsManager.lItCounter < rate2);
 			}
 			_vm->_eventsManager.lItCounter = 0;
 			_vm->_graphicsManager.DD_Lock();
@@ -1125,7 +1107,8 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 			_vm->_graphicsManager.DD_VBL();
 			_vm->_soundManager.VERIF_SOUND();
 		}
-	} while (v5 != -1);
+	} while (!readError);
+
 	if (_vm->_globals.iRegul == 1) {
 		do {
 			if (_vm->_eventsManager.ESC_KEY == true) {
@@ -1135,7 +1118,7 @@ void AnimationManager::PLAY_SEQ(const Common::String &a2, uint32 a3, uint32 a4, 
 			}
 			_vm->_eventsManager.CONTROLE_MES();
 			_vm->_soundManager.VERIF_SOUND();
-		} while (_vm->_eventsManager.lItCounter < a5);
+		} while (_vm->_eventsManager.lItCounter < rate3);
 	}
 	_vm->_eventsManager.lItCounter = 0;
 LABEL_59:
@@ -1153,7 +1136,7 @@ LABEL_59:
 	_vm->_globals.dos_free2(v10);
 }
 
-void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3, uint32 a4) {
+void AnimationManager::PLAY_SEQ2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
 	bool v4; 
 	bool v5; 
 	int v7; 
@@ -1184,7 +1167,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 		_vm->_eventsManager.souris_flag = false;
 		v10 = _vm->_graphicsManager.VESA_SCREEN;
 		v11 = _vm->_globals.dos_malloc2(0x16u);
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, a1);
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, file);
 
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("File not found - %s", _vm->_globals.NFICHIER.c_str());
@@ -1242,7 +1225,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &a1, uint32 a2, uint32 a3,
 				break;
 			_vm->_eventsManager.CONTROLE_MES();
 			_vm->_soundManager.VERIF_SOUND();
-			if (_vm->_eventsManager.lItCounter >= a2)
+			if (_vm->_eventsManager.lItCounter >= rate1)
 				goto LABEL_23;
 		}
 LABEL_48:
@@ -1299,7 +1282,7 @@ LABEL_44:
 						goto LABEL_48;
 					_vm->_eventsManager.CONTROLE_MES();
 					_vm->_soundManager.VERIF_SOUND();
-					if (_vm->_eventsManager.lItCounter >= a4)
+					if (_vm->_eventsManager.lItCounter >= rate3)
 						goto LABEL_53;
 				}
 			} else {
@@ -1313,7 +1296,7 @@ LABEL_53:
 		_vm->_eventsManager.CONTROLE_MES();
 		if (REDRAW_ANIM() == true)
 			goto LABEL_48;
-		if (_vm->_eventsManager.lItCounter >= a3)
+		if (_vm->_eventsManager.lItCounter >= rate2)
 			goto LABEL_33;
 	}
 LABEL_54:
