@@ -625,7 +625,7 @@ void SoundManager::PLAY_WAV(int wavIndex) {
 int SoundManager::VOICE_STAT(int voiceIndex) {
 	if (Voice[voiceIndex]._status) {
 		int wavIndex = Voice[voiceIndex]._wavIndex;
-		if (Swav[wavIndex]._audioStream->endOfStream())
+		if (Swav[wavIndex]._audioStream != NULL && Swav[wavIndex]._audioStream->endOfStream())
 			STOP_VOICE(voiceIndex);
 	}
 
@@ -670,10 +670,11 @@ void SoundManager::PLAY_VOICE_SDL() {
 
 bool SoundManager::DEL_SAMPLE_SDL(int wavIndex) {
 	if (Swav[wavIndex]._active) {
-		Swav[wavIndex]._active = false;
-		
 		_vm->_mixer->stopHandle(Swav[wavIndex]._soundHandle);
 		delete Swav[wavIndex]._audioStream;
+		Swav[wavIndex]._audioStream = NULL;
+		Swav[wavIndex]._active = false;
+
 		return true;
 	} else {
 		return false;
