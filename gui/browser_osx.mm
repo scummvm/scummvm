@@ -32,6 +32,7 @@
 
 #include <AppKit/NSOpenPanel.h>
 #include <Foundation/NSString.h>
+#include <Foundation/NSURL.h>
 
 namespace GUI {
 
