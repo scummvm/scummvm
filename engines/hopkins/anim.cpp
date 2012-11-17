@@ -661,7 +661,7 @@ LABEL_114:
 		}
 	} else {
 		_vm->_eventsManager.souris_max();
-		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
+		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
 		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 		_vm->_graphicsManager.DD_Lock();
 		_vm->_graphicsManager.Cls_Video();
