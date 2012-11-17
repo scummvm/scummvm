@@ -537,7 +537,7 @@ void EventsManager::updateCursor() {
 	// Set the ScummVM cursor from the surface
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	CursorMan.replaceCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
-		xOffset, 0, 0, true, &pixelFormat);
+		xOffset, 0, *((uint16 *)cursorPixels), true, &pixelFormat);
 
 	// Delete the cursor surface 
 	delete[] cursorPixels;
