@@ -134,16 +134,43 @@ int FileManager::CONSTRUIT_SYSTEM(const Common::String &file) {
 	return _vm->_globals.NFICHIER.size();
 }
 
-// Build File
-void FileManager::CONSTRUIT_FICHIER(const Common::String &hop, const Common::String &file) {
-	// At this point, the original program did a big switch statement to determine
-	// whether to preprend the CD or installed directory path into REPJEU
+void FileManager::CONSTRUIT_FICHIER(const Common::String &folder, const Common::String &file) {
+	Common::String folderToUse = folder;
 
-	if (hop[0] == 'A' && hop[1] == 'N' && hop[2] == 'N') {
-		error("TODO: CONSTRUIT_FICHIER");
+	// A lot of the code in the original engine based on COPIE_SEQ was used to determine
+	// whether a file resided on the CD or hard disk. Since the ScummVM implementatoin
+	// requires all the files in the same location, we only need to do a somewhat simpler
+	// check for animations that don't exist in the ANM folder, but rather in special
+	// sub-folders depending on the physical screen resolution being used.
+
+	if (folder == "ANM") {
+		switch (_vm->_globals.SVGA) {
+		case 1:
+			if (TEST_REP(folderToUse, file))
+				folderToUse = "TSVGA";
+			break;
+		case 2:
+			if (TEST_REP(folderToUse, file))
+				folderToUse = "SVGA";
+			break;
+		case 3:
+			if (TEST_REP(folderToUse, file))
+				folderToUse = "VGA";
+			break;
+		default:
+			break;
+		}
 	}
 
-	_vm->_globals.NFICHIER = Common::String::format("%s/%s", hop.c_str(), file.c_str());
+	_vm->_globals.NFICHIER = Common::String::format("%s/%s", folderToUse.c_str(), file.c_str());
+}
+
+bool FileManager::TEST_REP(const Common::String &folder, const Common::String &file) {
+	Common::String filename = folder.empty() ? file : 
+		Common::String::format("%s/%s", folder.c_str(), file.c_str());
+
+	Common::File f;
+	return !f.exists(filename);
 }
 
 // Free File
