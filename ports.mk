@@ -306,7 +306,7 @@ endif
 aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
 	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)
-	cp icons/scummvm.info $(AOS4PATH)/$(EXECUTABLE).info
+	cp ${srcdir}/icons/scummvm.info $(AOS4PATH)/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
