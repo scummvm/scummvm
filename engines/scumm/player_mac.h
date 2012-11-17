@@ -90,7 +90,7 @@ private:
 			_subPos = 0;
 		}
 
-		void generateSamples(int16 *data, int pitchModifier, int volume, int numSamples);
+		void generateSamples(int16 *data, int pitchModifier, int volume, int numSamples, int remainingSamplesOnNote);
 	};
 
 	int _pitchTable[128];

@@ -335,7 +335,7 @@ int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 			}
 			generated = MIN(_channel[i]._remaining, samplesLeft);
 			if (_channel[i]._velocity != 0) {
-				_channel[i]._instrument.generateSamples(ptr, _channel[i]._pitchModifier, _channel[i]._velocity, generated);
+				_channel[i]._instrument.generateSamples(ptr, _channel[i]._pitchModifier, _channel[i]._velocity, generated, _channel[i]._remaining);
 			}
 			ptr += generated;
 			samplesLeft -= generated;
@@ -354,7 +354,7 @@ int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 	return numSamples;
 }
 
-void Player_Mac::Instrument::generateSamples(int16 *data, int pitchModifier, int volume, int numSamples) {
+void Player_Mac::Instrument::generateSamples(int16 *data, int pitchModifier, int volume, int numSamples, int remainingSamplesOnNote) {
 	int samplesLeft = numSamples;
 	while (samplesLeft) {
 		_subPos += pitchModifier;
@@ -366,7 +366,21 @@ void Player_Mac::Instrument::generateSamples(int16 *data, int pitchModifier, int
 			}
 		}
 
-		int sample = *data + ((_data[_pos] - 129) * 128 * volume) / 255;
+		int newSample = ((_data[_pos] - 129) * 128 * volume) / 255;
+
+		// Fade out the last 100 samples on each note. Even at low
+		// output sample rates this is just a fraction of a second,
+		// but it gets rid of distracting "pops" at the end when the
+		// sample would otherwise go abruptly from something to
+		// nothing. This was particularly noticeable on the distaff
+		// notes in Loom.
+
+		remainingSamplesOnNote--;
+		if (remainingSamplesOnNote < 100) {
+			newSample = (newSample * remainingSamplesOnNote) / 100;
+		}
+
+		int sample = *data + newSample;
 		if (sample > 32767) {
 			sample = 32767;
 		} else if (sample < -32768) {
