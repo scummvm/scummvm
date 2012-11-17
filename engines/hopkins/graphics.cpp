@@ -212,7 +212,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	_vm->_fileManager.DMESS1();
 
 	flag = true;
-	if (_vm->_fileManager.RECHERCHE_CAT(file, 6)) {
+	if (_vm->_fileManager.RECHERCHE_CAT(file, 6) == g_PTRNUL) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, file);
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("CHARGE_ECRAN - %s", file.c_str());
@@ -371,7 +371,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 
 	// Decode the PCX
 	if (!pcxDecoder.loadStream(f))
-		error("Error decoding PCX");
+		error("Error decoding PCX %s", file.c_str());
 
 	const Graphics::Surface *s = pcxDecoder.getSurface();
 	

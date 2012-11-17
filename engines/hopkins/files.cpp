@@ -298,7 +298,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 
 		if (name == "FINIS") {
 			_vm->_globals.dos_free2(ptr);
-			return false;
+			return g_PTRNUL;
 		}
     
 		offsetVal += 23;
