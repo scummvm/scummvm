@@ -82,6 +82,9 @@ public:
 	const uint8 *getEGADitheringTable();
 
 private:
+	void updateDirtyRects();
+	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
+
 	void drawShapeSetPixel(uint8 *dst, uint8 col);
 	void scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc);
 	void scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src);
@@ -109,6 +112,7 @@ private:
 	const uint8 *_cgaMappingDefault;
 
 	uint8 *_egaDitheringTable;
+	uint8 *_egaDitheringTempPage;
 
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];

@@ -1074,7 +1074,7 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
 		color &= 0x03;
-	} else if (_renderMode == Common::kRenderEGA) {
+	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
 		color &= 0x0F;
 	}
 
@@ -1151,7 +1151,7 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 		color |= (color << 4);
 	} else if (_renderMode == Common::kRenderCGA) {
 		color &= 0x03;
-	} else if (_renderMode == Common::kRenderEGA) {
+	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
 		color &= 0x0F;
 	}
 
@@ -2862,8 +2862,6 @@ void Screen::setShapePages(int page1, int page2, int minY, int maxY) {
 void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	if (!shape)
 		return;
-	// if mouseDisabled
-	//	return _mouseShape
 
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;

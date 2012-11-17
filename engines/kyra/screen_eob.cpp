@@ -52,6 +52,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cgaScaleTable = 0;
 	_gfxMaxY = 0;
 	_egaDitheringTable = 0;
+	_egaDitheringTempPage = 0;
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
 	_useHiResEGADithering = false;
@@ -62,6 +63,7 @@ Screen_EoB::~Screen_EoB() {
 	delete[] _dsTempPage;
 	delete[] _cgaScaleTable;
 	delete[] _egaDitheringTable;
+	delete[] _egaDitheringTempPage;
 	delete[] _cgaDitheringTables[0];
 	delete[] _cgaDitheringTables[1];
 }
@@ -90,6 +92,7 @@ bool Screen_EoB::init() {
 		if (_vm->gameFlags().useHiRes && _renderMode == Common::kRenderEGA) {
 			_useHiResEGADithering = true;
 			_egaDitheringTable = new uint8[256];
+			_egaDitheringTempPage = new uint8[SCREEN_W * 2 * SCREEN_H * 2];
 			for (int i = 0; i < 256; i++)
 				_egaDitheringTable[i] = i & 0x0f;
 		} else if (_renderMode == Common::kRenderCGA) {
@@ -137,14 +140,14 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	// We use memset and copyBlockToPage instead of fillRect to make sure that the
 	// color key 0xFF doesn't get converted into EGA color
 	memset(cursor, colorKey, mouseW * scaleFactor * mouseH * scaleFactor);
-	copyBlockToPage(6, 0, 0, mouseW, mouseH, cursor);
+	copyBlockToPage(6, 0, 0, mouseW * scaleFactor, mouseH * scaleFactor, cursor);
 	drawShape(6, shape, 0, 0, 0, 2, ovl);
 	CursorMan.showMouse(false);
 
-	if (_useHiResEGADithering) {
-	}
-
-	copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
+	if (_useHiResEGADithering)
+		ditherRect(getCPagePtr(6), cursor, mouseW * scaleFactor, mouseW, mouseH, colorKey);
+	else
+		copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
 	// Mouse cursor post processing for CGA mode. Unlike the original (which uses drawShape for the mouse cursor)
 	// the cursor manager cannot know whether a pixel value of 0 is supposed to be black or transparent. Thus, we
@@ -1227,6 +1230,47 @@ const uint16 *Screen_EoB::getCGADitheringTable(int index) {
 
 const uint8 *Screen_EoB::getEGADitheringTable() {
 	return _egaDitheringTable;
+}
+
+void Screen_EoB::updateDirtyRects() {
+	if (!_useHiResEGADithering) {
+		Screen::updateDirtyRects();
+		return;
+	}
+
+	if (_forceFullUpdate) {
+		ditherRect(getCPagePtr(0), _egaDitheringTempPage, SCREEN_W * 2, SCREEN_W, SCREEN_H);
+		_system->copyRectToScreen(_egaDitheringTempPage, SCREEN_W * 2, 0, 0, SCREEN_W * 2, SCREEN_H * 2);
+	} else {
+		const byte *page0 = getCPagePtr(0);
+		Common::List<Common::Rect>::iterator it;
+		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			ditherRect(page0 + it->top * SCREEN_W + it->left, _egaDitheringTempPage, SCREEN_W * 2, it->width(), it->height());
+			_system->copyRectToScreen(_egaDitheringTempPage, SCREEN_W * 2, it->left * 2, it->top * 2, it->width() * 2, it->height() * 2);
+		}
+	}
+	_forceFullUpdate = false;
+	_dirtyRects.clear();
+}
+
+void Screen_EoB::ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey) {
+	while (srcH--) {
+		uint8 *dst2 = dst + dstPitch;
+		for (int i = 0; i < srcW; i++) {
+			int in = *src++;
+			if (in != colorKey) {
+				in = _egaDitheringTable[in];
+				*dst++ = *dst2++ = in >> 4;
+				*dst++ = *dst2++ = in & 0x0f;
+			} else {
+				dst[0] = dst[1] = dst2[0] = dst2[1] = colorKey;
+				dst += 2;
+				dst2 += 2;
+			}
+		}
+		src += (SCREEN_W - srcW);
+		dst += ((dstPitch - srcW) * 2);
+	}
 }
 
 void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {

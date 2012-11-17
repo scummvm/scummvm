@@ -547,7 +547,7 @@ public:
 
 protected:
 	uint8 *getPagePtr(int pageNum);
-	void updateDirtyRects();
+	virtual void updateDirtyRects();
 	void updateDirtyRectsAmiga();
 	void updateDirtyRectsOvl();
 
