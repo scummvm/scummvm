@@ -100,8 +100,8 @@ OSystem_N64::OSystem_N64() {
 	_cursor_pal = NULL;
 	_cursor_hic = NULL;
 
-	_cursorWidth = -1;
-	_cursorHeight = -1;
+	_cursorWidth = 0;
+	_cursorHeight = 0;
 	_cursorKeycolor = -1;
 	_mouseHotspotX = _mouseHotspotY = -1;
 
@@ -578,8 +578,8 @@ void OSystem_N64::updateScreen() {
 		int mX = _mouseX - _mouseHotspotX;
 		int mY = _mouseY - _mouseHotspotY;
 
-		for (int h = 0; h < _cursorHeight; h++)
-			for (int w = 0; w < _cursorWidth; w++) {
+		for (uint h = 0; h < _cursorHeight; h++)
+			for (uint w = 0; w < _cursorWidth; w++) {
 				// Draw pixel
 				if (((mY + h) >= 0) && ((mY + h) < _mouseMaxY) && ((mX + w) >= 0) && ((mX + w) < _mouseMaxX)) {
 					uint16 cursor_pixel_hic = _cursor_hic[(h * _cursorWidth) + w];
