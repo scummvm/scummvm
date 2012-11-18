@@ -37,6 +37,11 @@ struct MenuItem {
 	char _line[90];
 };
 
+struct ScoreItem {
+	Common::String name;
+	Common::String score;
+};
+
 enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHAS = 2, COMPUTER_PUBLIC = 3 };
 
 class ComputerManager {
@@ -44,12 +49,12 @@ private:
 	HopkinsEngine *_vm;
 	MenuItem MenuText[50];
 	char Sup_string[200];
-	byte Score[96];
+	ScoreItem Score[6];
 	int TEXT_COL;
 	Common::Point _textPosition;
 	Common::Point BALLE;
 	byte *CASSESPR;
-	byte *CASSETAB;
+	int16 *CASSETAB;
 	bool FMOUSE;
 	int NBBRIQUES;
 	int CASSESCORE;
@@ -122,7 +127,12 @@ private:
 	void NEWTAB();
 	void AFF_BRIQUES();
 	void AFF_VIE();
+
+	/**
+	 * Play the Breakout game
+	 */
 	void PLAY_BRIQUE();
+
 	int HIGHT_SCORE();
 	void NAME_SCORE();
 	void IMPSCORE(int a1, int a2);

@@ -1528,7 +1528,7 @@ void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 	}
 	
 	if (addFlag) {
-		assert(_vm->_globals.NBBLOC < 50);
+		assert(_vm->_globals.NBBLOC < 250);
 		BlocItem &bloc = _vm->_globals.BLOC[++_vm->_globals.NBBLOC];
 
 		bloc.field0 = 1;

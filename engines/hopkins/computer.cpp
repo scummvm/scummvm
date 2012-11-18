@@ -582,7 +582,7 @@ void ComputerManager::GAMES() {
 	CASSESPR = g_PTRNUL;
 	_vm->_eventsManager.CASSE = 1;
 	_vm->_eventsManager.CASSE_SOURIS_ON();
-	CASSETAB = g_PTRNUL;
+	CASSETAB = (int16 *)g_PTRNUL;
 	NBBRIQUES = 0;
 	CASSESCORE = 0;
 	CASSEVIE = 5;
@@ -605,7 +605,8 @@ void ComputerManager::GAMES() {
 	PLAY_BRIQUE();
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	CASSESPR = _vm->_globals.LIBERE_FICHIER(CASSESPR);
-	CASSETAB = _vm->_globals.dos_free2(CASSETAB);
+	_vm->_globals.dos_free2((byte *)CASSETAB);
+	CASSETAB = (int16 *)g_PTRNUL;
 	_vm->_objectsManager.Sprite[0].spriteData = v1;
 
 	_vm->_soundManager.DEL_SAMPLE(1);
@@ -623,41 +624,31 @@ void ComputerManager::GAMES() {
 }
 
 void ComputerManager::CHARGE_SCORE() {
-	int v0; 
-	int v1; 
-	char v2; 
-	int v3; 
-	int v4; 
-	char v5; 
+	char nextChar; 
 	byte *ptr; 
-	int v8; 
 
 	_vm->_fileManager.CONSTRUIT_LINUX("HISCORE.DAT");
-	ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
-	v8 = 0;
-	do {
-		v0 = 16 * v8;
-		v1 = 0;
-		do {
-			v2 = *(ptr + v1 + (int)(16 * v8));
-			if (!v2)
-				v2 = 32;
-			*(&Score[v0] + v1++) = v2;
-		} while (v1 <= 4);
-		v3 = v0 + 6;
-		v4 = 0;
-		do {
-			v5 = *(ptr + v4 + v3);
-			if (!v5)
-				v5 = 48;
-			*(&Score[16 * v8 + 6] + v4++) = v5;
-		} while (v4 <= 8);
-		*(ptr + v3 + 9) = 0;
-		++v8;
-	} while (v8 <= 5);
+	ptr = _vm->_globals.dos_malloc2(100);
+	_vm->_saveLoadManager.bload(_vm->_globals.NFICHIER, ptr);
+
+	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
+		for (int i = 0; i < 5; ++i) {
+			nextChar = *(ptr + i + (16 * scoreIndex));
+			if (!nextChar)
+				nextChar = ' ';
+			Score[scoreIndex].name += nextChar;
+		} 
+
+		for (int i = 0; i < 9; ++i) {
+			nextChar = *(ptr + i + scoreIndex * 16 + 6);
+			if (!nextChar)
+				nextChar = '0';
+			Score[scoreIndex].score += nextChar;
+		} 
+	} 
 
 	_vm->_globals.dos_free2(ptr);
-	CASSE_HISCORE = atol((const char *)&Score[86]);
+	CASSE_HISCORE = atol(Score[5].score.c_str());
 }
 
 void ComputerManager::MODE_VGA256() {
@@ -680,8 +671,10 @@ void ComputerManager::NEWTAB() {
 		CASSEVIE = 11;
 	_vm->_graphicsManager.LOAD_IMAGEVGA("CASSEF.PCX");
 	AFF_VIE();
-	if (g_PTRNUL != CASSETAB)
-		CASSETAB = _vm->_globals.dos_free2(CASSETAB);
+	if (CASSETAB != (int16 *)g_PTRNUL) {
+		_vm->_globals.dos_free2((byte *)CASSETAB);
+		CASSETAB = (int16 *)g_PTRNUL;
+	}
 
 	++NB_TABLE;
 	while (!_vm->shouldQuit()) {
@@ -695,7 +688,7 @@ void ComputerManager::NEWTAB() {
 	}
 	f.close();
 
-	CASSETAB = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	CASSETAB = (int16 *)_vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	AFF_BRIQUES();
 	_vm->_objectsManager.SPRITE(CASSESPR, 150, 192, 0, 13, 0, 0, 0, 0);
 	_vm->_objectsManager.SPRITE(CASSESPR, 164, 187, 1, 14, 0, 0, 0, 0);
@@ -709,40 +702,42 @@ void ComputerManager::NEWTAB() {
 }
 
 void ComputerManager::AFF_BRIQUES() {
-	int v0; 
-	int v1; 
+	int xp; 
+	int yp; 
 	int v2; 
 	uint16 v3; 
-	byte *v4; 
+	int16 *v4; 
 
 	NBBRIQUES = 0;
 	CASSESPEED = 1;
 	v4 = CASSETAB;
 	v3 = 0;
 	do {
-		v0 = *((uint16 *)v4 + v3);
-		v1 = *((uint16 *)v4 + v3 + 1);
-		v2 = *((uint16 *)v4 + v3 + 4);
-		if (v0 != -1) {
+		xp = v4[v3];
+		yp = v4[v3 + 1];
+		v2 = v4[v3 + 4];
+		if (xp != -1) {
 			if (v2 <= 6)
 				++NBBRIQUES;
+			
 			if (v2 == 3)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, v0, v1, 17);
-			if (v2 == 6)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, v0, v1, 18);
-			if (v2 == 5)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, v0, v1, 19);
-			if (v2 == 4)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, v0, v1, 20);
-			if (v2 == 1)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, v0, v1, 21);
-			if (v2 == 2)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, v0, v1, 22);
-			if (v2 == 31)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, v0, v1, 23);
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, xp, yp, 17);
+			else if (v2 == 6)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, xp, yp, 18);
+			else if (v2 == 5)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, xp, yp, 19);
+			else if (v2 == 4)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, xp, yp, 20);
+			else if (v2 == 1)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, xp, yp, 21);
+			else if (v2 == 2)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, xp, yp, 22);
+			else if (v2 == 31)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, xp, yp, 23);
 		}
 		v3 += 6;
-	} while (v0 != -1);
+	} while (xp != -1);
+
 	IMPRIMESCORE();
 }
 
@@ -873,12 +868,12 @@ int ComputerManager::HIGHT_SCORE() {
 		v0 = v0 + 46;
 		v1 = 0;
 		do {
-			PRINT_HSCORE(ptr, 9 * v1 + 69, v0, *(&Score[16 * v6] + v1));
+			PRINT_HSCORE(ptr, 9 * v1 + 69, v0, Score[v6].name[v1]);
 			++v1;
 		} while (v1 <= 5);
 		v2 = 0;
 		do {
-			PRINT_HSCORE(ptr, 9 * v2 + 199, v0, *(&Score[16 * v6 + 6] + v2));
+			PRINT_HSCORE(ptr, 9 * v2 + 199, v0, Score[v6].score[v2]);
 			++v2;
 		} while (v2 <= 8);
 		++v6;
@@ -905,7 +900,7 @@ int ComputerManager::HIGHT_SCORE() {
 
 void ComputerManager::NAME_SCORE() {
 	int v0; 
-	int v1; 
+	char v1; 
 	int v2; 
 	int v3; 
 	int i; 
@@ -931,7 +926,7 @@ void ComputerManager::NAME_SCORE() {
 			v1 = 32;
 		if ((uint16)(v1 - 58) <= 6u)
 			v1 = 32;
-		Score[v0 + 80] = v1;
+		Score[5].name.setChar(v0, v1);
 		PRINT_HSCORE(ptr, 9 * v0 + 140, 78, v1);
 
 		_vm->_eventsManager.VBL();
@@ -948,14 +943,15 @@ void ComputerManager::NAME_SCORE() {
 		_vm->_eventsManager.VBL();
 		++v0;
 	} while (v0 <= 4);
-	memset(&Score[86], 32, 9u);
+	Score[5].score = "         ";
+
 	sprintf(s, "%d", CASSESCORE);
 	v2 = 0;
 	do
 		++v2;
 	while (s[v2]);
 	v3 = 8;
-	for (i = v2; ; Score[v3-- + 86] = s[i]) {
+	for (i = v2; ; Score[5].score.setChar(v3--, s[i])) {
 		--i;
 		if (i <= -1)
 			break;
@@ -1044,7 +1040,7 @@ void ComputerManager::SAUVE_SCORE() {
 
 	v0 = 0;
 	do {
-		v1 = atol((const char *)(16 * v0 + Score + 6));
+		v1 = atol(Score[v0].score.c_str());
 		v17[v0] = v1;
 		if (!v1)
 			v17[v0] = 5;
@@ -1077,7 +1073,7 @@ void ComputerManager::SAUVE_SCORE() {
 		v14 = v16[v5];
 		v7 = 0;
 		do {
-			v8 = *(&Score[16 * v14] + v7);
+			v8 = Score[v14].name[v7];
 			if (!v8)
 				v8 = 32;
 			*(ptr + (16 * v5) + v7++) = v8;
@@ -1087,7 +1083,7 @@ void ComputerManager::SAUVE_SCORE() {
 		v9 = v6 + 6;
 		v10 = 0;
 		do {
-			v11 = *(&Score[16 * v14 + 6] + v10);
+			v11 = Score[v14].score[v10];
 			if (!v11)
 				v11 = 48;
 			*(ptr + v9 + v10++) = v11;
@@ -1211,20 +1207,20 @@ int ComputerManager::DEP_BALLE() {
 
 
 void ComputerManager::VERIFBRIQUES() {
-	__int16 v0; 
-	__int16 v1; 
-	__int16 v2; 
-	__int16 v3; 
-	signed __int16 v4; 
-	__int16 v5; 
-	__int16 v6; 
-	signed __int16 v7; 
+	int v0; 
+	int v1; 
+	int v2; 
+	int v3; 
+	int v4; 
+	int v5; 
+	int v6; 
+	int v7; 
 	uint16 v8; 
-	byte *v9; 
-	__int16 v10; 
-	__int16 v11; 
-	__int16 v12; 
-	__int16 v13; 
+	int16 *v9; 
+	int v10; 
+	int v11; 
+	int v12; 
+	int v13; 
 
 	v7 = 0;
 	//v6 = (signed int)(6.0 * (long double)rand() / 2147483648.0) + 1;
@@ -1237,12 +1233,12 @@ void ComputerManager::VERIFBRIQUES() {
 	v9 = CASSETAB;
 	v8 = 0;
 	do {
-		v1 = *((uint16 *)v9 + v8);
-		v11 = *((uint16 *)v9 + v8 + 1);
-		v2 = *((uint16 *)v9 + v8 + 2);
-		v10 = *((uint16 *)v9 + v8 + 3);
-		v3 = *((uint16 *)v9 + v8 + 4);
-		if (*((uint16 *)v9 + v8 + 5) != 1 || v1 == -1)
+		v1 = v9[v8];
+		v11 = v9[v8 + 1];
+		v2 = v9[v8 + 2];
+		v10 = v9[v8 + 3];
+		v3 = v9[v8 + 4];
+		if (v9[v8 + 5] != 1 || v1 == -1)
 			goto LABEL_60;
 		v4 = 0;
 		if (v13 <= v10 && v12 >= v10) {
