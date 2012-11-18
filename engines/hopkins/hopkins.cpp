@@ -105,25 +105,14 @@ Common::Error HopkinsEngine::run() {
 
 	_soundManager.WSOUND_INIT();
 
-	bool retVal;
 	if (getPlatform() == Common::kPlatformLinux) {
 		if (getIsDemo())
-			retVal = runLinuxDemo();
+			runLinuxDemo();
 		else
-			retVal = runLinuxFull();
+			runLinuxFull();
 	} else {
 		warning("Unhandled version, switching to linux demo");
-		retVal = runLinuxDemo();
-	}
-
-	if (!retVal)
-		return Common::kNoError;
-
-	// Stub event loop
-	Common::Event evt;
-	while (!g_system->getEventManager()->shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(evt))
-			g_system->updateScreen();
+		runLinuxDemo();
 	}
 
 	return Common::kNoError;
