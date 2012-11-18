@@ -1761,10 +1761,10 @@ void Neighborhood::pauseTimer() {
 }
 
 void Neighborhood::resumeTimer() {
-	// NOTE: Yes, this function calls pauseFuse!
-	// Looks like an original game bug, will need
-	// to investigate how this affects gameplay.
-	_eventTimer.pauseFuse();
+	// NOTE: The original calls pauseFuse() here, which causes a bug with the robot
+	// in WSC on the catwalk, causing him never to come after you if you don't act
+	// against him.
+	_eventTimer.resumeFuse();
 }
 
 bool Neighborhood::timerPaused() {
