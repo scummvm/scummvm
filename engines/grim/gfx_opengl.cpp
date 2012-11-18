@@ -140,6 +140,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_smushNumTex = 0;
 
 	_currentShadowArray = NULL;
+	glViewport(0, 0, _screenWidth, _screenHeight);
 
 	GLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
