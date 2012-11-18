@@ -83,7 +83,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 					parentID = -2;
 				prevComponent = _prevCostume->getComponent(0);
 				// Make sure that the component is valid
-				if (!prevComponent->isComponentType('M','M','D','L'))
+				if (!prevComponent->isComponentType('M', 'M', 'D', 'L'))
 					prevComponent = NULL;
 			}
 			// Actually load the appropriate component
@@ -93,14 +93,14 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				component->init();
 
 				if (strcmp(_chores[i]->getName(), "wear_default") == 0) {
-					if (component->isComponentType('m','e','s','h')) {
+					if (component->isComponentType('m', 'e', 's', 'h')) {
 						_emiMesh = static_cast<EMIMeshComponent *>(component);
 						if (_emiSkel) {
 							_emiMesh->_obj->setSkeleton(_emiSkel->_obj);
 						}
 						for (unsigned int z = 0; z < _emiMesh->_obj->_numTextures; ++z)
 							_materials.push_back(_emiMesh->_obj->_mats[z]);
-					} else if (component->isComponentType('s','k','e','l')) {
+					} else if (component->isComponentType('s', 'k', 'e', 'l')) {
 						_emiSkel = static_cast<EMISkelComponent *>(component);
 						if (_emiMesh) {
 							_emiMesh->_obj->setSkeleton(_emiSkel->_obj);
@@ -156,30 +156,30 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 
 	name += 4;
 
-	if (tag == MKTAG('m','e','s','h')) {
+	if (tag == MKTAG('m', 'e', 's', 'h')) {
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement MESH-handling: %s" , name);
 		return new EMIMeshComponent(parent, parentID, name, prevComponent, tag);
-	} else if (tag == MKTAG('s','k','e','l')) {
+	} else if (tag == MKTAG('s', 'k', 'e', 'l')) {
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
 		return new EMISkelComponent(parent, parentID, name, prevComponent, tag);
-	} else if (tag == MKTAG('t','e','x','i')) {
+	} else if (tag == MKTAG('t', 'e', 'x', 'i')) {
 //    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
 		return new EMITexiComponent(parent, parentID, name, prevComponent, tag);
-	} else if (tag == MKTAG('a','n','i','m')) {
+	} else if (tag == MKTAG('a', 'n', 'i', 'm')) {
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
 		return new EMIAnimComponent(parent, parentID, name, prevComponent, tag);
-	} else if (tag == MKTAG('l','u','a','c')) {
+	} else if (tag == MKTAG('l', 'u', 'a', 'c')) {
 //    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAC-handling: %s" , name);
 		return new EMILuaCodeComponent(parent, parentID, name, prevComponent, tag);
-	} else if (tag == MKTAG('l','u','a','v')) {
+	} else if (tag == MKTAG('l', 'u', 'a', 'v')) {
 //    Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
 		return new EMILuaVarComponent(parent, parentID, name, prevComponent, tag);
-	} else if (tag == MKTAG('s','p','r','t')) {
+	} else if (tag == MKTAG('s', 'p', 'r', 't')) {
 		//Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
 		return new EMISpriteComponent(parent, parentID, name, prevComponent, tag);
-	} else if (tag == MKTAG('s','h','a','d')) {
+	} else if (tag == MKTAG('s', 'h', 'a', 'd')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SHAD-handling: %s" , name);
-	} else if (tag == MKTAG('a','w','g','t')) {
+	} else if (tag == MKTAG('a', 'w', 'g', 't')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement AWGT-handling: %s" , name);
 	} else {
 		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
@@ -192,16 +192,19 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 }
 
 void EMICostume::draw() {
+	bool drewMesh = false;
 	for (Common::List<Chore*>::iterator it = _playingChores.begin(); it != _playingChores.end(); ++it) {
 		Chore *c = (*it);
 		for (int i = 0; i < c->_numTracks; ++i) {
 			if (c->_tracks[i].component) {
 				c->_tracks[i].component->draw();
+				if (c->_tracks[i].component->isComponentType('m', 'e', 's', 'h'))
+					drewMesh = true;
 			}
 		}
 	}
 
-	if (_emiMesh) {
+	if (_emiMesh && !drewMesh) {
 		_emiMesh->draw();
 	}
 }

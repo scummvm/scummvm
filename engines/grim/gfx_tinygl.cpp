@@ -245,6 +245,9 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
+	_scaleW = _screenWidth / (float)_gameWidth;
+	_scaleH = _screenHeight / (float)_gameHeight;
+
 	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 
 	g_system->showMouse(!fullscreen);
@@ -676,15 +679,19 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 
 	tglDisable(TGL_LIGHTING);
 
+	float halfWidth = (sprite->_width / 2) * _scaleW;
+	float halfHeight = (sprite->_height / 2) * _scaleH;
+
+
 	tglBegin(TGL_POLYGON);
-	tglTexCoord2f(0.0f, 0.0f);
-	tglVertex3f(sprite->_width / 2, sprite->_height, 0.0f);
 	tglTexCoord2f(0.0f, 1.0f);
-	tglVertex3f(sprite->_width / 2, 0.0f, 0.0f);
-	tglTexCoord2f(1.0f, 1.0f);
-	tglVertex3f(-sprite->_width / 2, 0.0f, 0.0f);
+	tglVertex3f(-halfWidth, -halfHeight, 0.0f);
+	tglTexCoord2f(0.0f, 0.0f);
+	tglVertex3f(-halfWidth, +halfHeight, 0.0f);
 	tglTexCoord2f(1.0f, 0.0f);
-	tglVertex3f(-sprite->_width / 2, sprite->_height, 0.0f);
+	tglVertex3f(+halfWidth, +halfHeight, 0.0f);
+	tglTexCoord2f(1.0f, 1.0f);
+	tglVertex3f(+halfWidth, -halfHeight, 0.0f);
 	tglEnd();
 
 	tglEnable(TGL_LIGHTING);
@@ -963,6 +970,9 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		userData[j].data = buf.getRawBuffer();
 		userData[j].x = text->getLineX(j);
 		userData[j].y = text->getLineY(j);
+
+		if (g_grim->getGameType() == GType_MONKEY4)
+			userData[j].y -= font->getBaseOffsetY();
 
 		delete[] _textBitmap;
 	}
