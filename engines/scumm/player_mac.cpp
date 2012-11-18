@@ -25,6 +25,7 @@
 #include "engines/engine.h"
 #include "gui/message.h"
 #include "scumm/player_mac.h"
+#include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/imuse/imuse.h"
 
@@ -163,6 +164,9 @@ void Player_Mac::setMusicVolume(int vol) {
 }
 
 void Player_Mac::stopAllSounds_Internal() {
+	if (_soundPlaying != -1) {
+		_vm->_res->unlock(rtSound, _soundPlaying);
+	}
 	_soundPlaying = -1;
 	for (int i = 0; i < _numberOfChannels; i++) {
 		// The channel data is managed by the resource manager, so
@@ -194,6 +198,8 @@ void Player_Mac::startSound(int nr) {
 	Common::StackLock lock(_mutex);
 	debug(5, "Player_Mac::startSound(%d)", nr);
 
+	stopAllSounds_Internal();
+
 	const byte *ptr = _vm->getResourceAddress(rtSound, nr);
 	assert(ptr);
 
@@ -201,11 +207,11 @@ void Player_Mac::startSound(int nr) {
 		return;
 	}
 
+	_vm->_res->lock(rtSound, nr);
 	_soundPlaying = nr;
 }
 
 bool Player_Mac::Channel::loadInstrument(Common::SeekableReadStream *stream) {
-	// Load the sound
 	uint16 soundType = stream->readUint16BE();
 	if (soundType != 1) {
 		warning("Player_Mac::loadInstrument: Unsupported sound type %d", soundType);
