@@ -1133,8 +1133,12 @@ void PegasusEngine::doInterfaceOverview() {
 			controllerHighlight.hide();
 		}
 
-		overviewText.setTime(time * 3 + 2, 15);
-		overviewText.redrawMovieWorld();
+		// The original just constantly redraws the frame, but that
+		// doesn't actually need to be done.
+		if ((time * 3 + 2) * 40 != overviewText.getTime()) {
+			overviewText.setTime(time * 3 + 2, 15);
+			overviewText.redrawMovieWorld();
+		}
 
 		refreshDisplay();
 		_system->delayMillis(10);
