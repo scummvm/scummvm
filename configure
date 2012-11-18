@@ -1091,12 +1091,12 @@ for ac_option in $@; do
 		LIBUNITY_CFLAGS="-I$arg/include"
 		LIBUNITY_LIBS="-L$arg/lib"
 		;;
-// ResidualVM don't use that
-//	--with-opengl-prefix=*)
-//		arg=`echo $ac_option | cut -d '=' -f 2`
-//		OPENGL_CFLAGS="-I$arg/include"
-//		OPENGL_LIBS="-L$arg/lib"
-//		;;
+# ResidualVM don't use that
+#	--with-opengl-prefix=*)
+#		arg=`echo $ac_option | cut -d '=' -f 2`
+#		OPENGL_CFLAGS="-I$arg/include"
+#		OPENGL_LIBS="-L$arg/lib"
+#		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;

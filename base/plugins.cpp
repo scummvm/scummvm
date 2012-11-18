@@ -127,14 +127,14 @@ public:
 //ResidualVM: disabled belows
 //		LINK_PLUGIN(PCSPK)
 //		LINK_PLUGIN(PCJR)
-		LINK_PLUGIN(CMS)
+//		LINK_PLUGIN(CMS)
 		#if defined(__ANDROID__)
 //		LINK_PLUGIN(EAS)
 		#endif
 		#ifndef DISABLE_SID
 //		LINK_PLUGIN(C64)
+//		LINK_PLUGIN(AMIGA)
 		#endif
-		LINK_PLUGIN(AMIGA)
 //		LINK_PLUGIN(APPLEIIGS)
 //		LINK_PLUGIN(TOWNS)
 //		LINK_PLUGIN(PC98)
