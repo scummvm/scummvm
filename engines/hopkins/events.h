@@ -108,11 +108,6 @@ public:
 	 * Unused by engine 
 	 */
 	void CASSE_SOURIS_OFF() { }
-
-	void wingetch() {
-		// TODO
-		warning("TODO: wingetch");
-	}
 };
 
 } // End of namespace Hopkins

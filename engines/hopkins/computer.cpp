@@ -110,7 +110,7 @@ void ComputerManager::COMPUT_HOPKINS(ComputerEnum mode) {
 	char *v9; 
 	int v10; 
 	char v11; 
-	int v12; 
+	char v12; 
 	char s[12]; 
 	const char *s2;
 
@@ -241,7 +241,7 @@ void ComputerManager::COMPUT_HOPKINS(ComputerEnum mode) {
 
 			if (v12 == 48)
 				break;
-			if (v12 == 49) {
+			if (v12 == '1') {
 				GAMES();
 			} else if (mode == COMPUTER_HOPKINS) {
 				_vm->_eventsManager.videkey();
@@ -567,7 +567,7 @@ void ComputerManager::LIT_TEXTE(int a1) {
 	} while (v4 != 37);
 
 	_vm->_eventsManager.videkey();
-	_vm->_eventsManager.wingetch();
+	_vm->_eventsManager.keywin();
 	_vm->_globals.dos_free2(ptr);
 }
 
