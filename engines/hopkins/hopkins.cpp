@@ -433,7 +433,7 @@ LABEL_124:
 								*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 								_globals.ECRAN = 113;
 								*((byte *)_globals.SAUVEGARDE + 5) = 113;
-								_computerManager.COMPUT_HOPKINS(1);
+								_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
                   
 								_graphicsManager.DD_Lock();
 								_graphicsManager.Cls_Video();
@@ -450,7 +450,7 @@ LABEL_124:
 									*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 									_globals.ECRAN = 114;
 									*((byte *)_globals.SAUVEGARDE + 5) = 114;
-									_computerManager.COMPUT_HOPKINS(2);
+									_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
 									goto LABEL_128;
 								}
 								if (_globals.SORTIE == 115) {
@@ -459,7 +459,7 @@ LABEL_124:
 									*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 									_globals.ECRAN = 115;
 									*((byte *)_globals.SAUVEGARDE + 5) = 115;
-									_computerManager.COMPUT_HOPKINS(3);
+									_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
 
 LABEL_128:
 									_graphicsManager.DD_Lock();
@@ -1261,7 +1261,7 @@ LABEL_239:
 													*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 													_globals.ECRAN = 113;
 													*((byte *)_globals.SAUVEGARDE + 5) = 113;
-													_computerManager.COMPUT_HOPKINS(1);
+													_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
 													_graphicsManager.DD_Lock();
 													_graphicsManager.Cls_Video();
 													_graphicsManager.DD_Unlock();
@@ -1277,7 +1277,7 @@ LABEL_239:
 														*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 														_globals.ECRAN = 114;
 														*((byte *)_globals.SAUVEGARDE + 5) = 114;
-														_computerManager.COMPUT_HOPKINS(2);
+														_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
 														goto LABEL_243;
 													}
 													switch (_globals.SORTIE) {
@@ -1287,7 +1287,7 @@ LABEL_239:
 														*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
 														_globals.ECRAN = 115;
 														*((byte *)_globals.SAUVEGARDE + 5) = 115;
-														_computerManager.COMPUT_HOPKINS(3);
+														_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
 LABEL_243:
 														_graphicsManager.DD_Lock();
 														_graphicsManager.Cls_Video();

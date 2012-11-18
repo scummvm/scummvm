@@ -37,6 +37,8 @@ struct MenuItem {
 	char _line[90];
 };
 
+enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHAS = 2, COMPUTER_PUBLIC = 3 };
+
 class ComputerManager {
 private:
 	HopkinsEngine *_vm;
@@ -134,10 +136,10 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	/**
-	 * Show Hopkin's computer
-	 * @param mode		Display mode
+	 * Show a computer in the FBI office
+	 * @param mode		Which computer to display
 	 */
-	void COMPUT_HOPKINS(int mode);
+	void COMPUT_HOPKINS(ComputerEnum mode);
 };
 
 } // End of namespace Hopkins

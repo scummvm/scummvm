@@ -98,8 +98,9 @@ void ComputerManager::settextposition(int yp, int xp) {
 	_textPosition.y = yp << 4;
 }
 
-void ComputerManager::COMPUT_HOPKINS(int mode) {
-	int v2; 
+void ComputerManager::COMPUT_HOPKINS(ComputerEnum mode) {
+	bool passwordMatch; 
+	bool numericFlag;
 	char *v3; 
 	int v4; 
 	char v5; 
@@ -114,22 +115,22 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 	const char *s2;
 
 	_vm->_eventsManager.ESC_KEY = 0;
-	v2 = 0;
+	passwordMatch = false;
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	setvideomode();
 	settextcolor(4);
 
 	_vm->_eventsManager.videkey();
 	settextposition(2, 4);
-	if (mode == 1)
+	if (mode == COMPUTER_HOPKINS)
 		outtext(Common::String(MenuText[0]._line));
-	if (mode == 2)
+	if (mode == COMPUTER_SAMANTHAS)
 		outtext(Common::String(MenuText[1]._line));
-	if (mode == 3)
+	if (mode == COMPUTER_PUBLIC)
 		outtext(Common::String(MenuText[2]._line));
 
 	settextcolor(1);
-	if (mode == 3) {
+	if (mode == COMPUTER_PUBLIC) {
 		settextposition(10, 8);
 		outtext(Common::String(MenuText[3]._line));
 	}
@@ -143,7 +144,7 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 
 	strcpy(s, Sup_string);
 
-	if (mode == 1) {
+	if (mode == COMPUTER_HOPKINS) {
 		s2 = "HOPKINS";
 		v4 = 8;
 		v5 = 1;
@@ -154,9 +155,9 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 			--v4;
 		} while (v5);
 		if (v5)
-			v2 = 1;
+			passwordMatch = true;
 	}
-	if (mode == 2) {
+	if (mode == COMPUTER_SAMANTHAS) {
 		v6 = &s[0];
 		s2 = "328MHZA";
 		v7 = 8;
@@ -168,9 +169,9 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 			--v7;
 		} while (v8);
 		if (v8)
-			v2 = 1;
+			passwordMatch = true;
 	}
-	if (mode == 3) {
+	if (mode == COMPUTER_PUBLIC) {
 		v9 = &s[0];
 		s2 = "ALLFREE";
 		v10 = 8;
@@ -182,20 +183,20 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 			--v10;
 		} while (v11);
 		if (v11)
-			v2 = 1;
+			passwordMatch = true;
 	}
-	if (v2) {
+	if (passwordMatch) {
 		while (!_vm->shouldQuit()) {
-			_vm->_eventsManager.ESC_KEY = 0;
+			_vm->_eventsManager.ESC_KEY = false;
 			_vm->_eventsManager.videkey();
 			clearscreen();
 			settextcolor(4);
 			settextposition(2, 4);
-			if (mode == 1)
+			if (mode == COMPUTER_HOPKINS)
 				outtext(Common::String(MenuText[0]._line));
-			if (mode == 2)
+			if (mode == COMPUTER_SAMANTHAS)
 				outtext(Common::String(MenuText[1]._line));
-			if (mode == 3)
+			if (mode == COMPUTER_PUBLIC)
 				outtext(Common::String(MenuText[2]._line));
 			settextcolor(15);
 			settextposition(8, 25);
@@ -203,7 +204,7 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 			outtext2(Common::String(MenuText[6]._line));
 			settextposition(20, 25);
 			outtext2(Common::String(MenuText[7]._line));
-			if (mode == 1) {
+			if (mode == COMPUTER_HOPKINS) {
 				settextposition(10, 25);
 				outtext2(Common::String(MenuText[8]._line));
 				settextposition(12, 25);
@@ -213,7 +214,7 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 				settextposition(16, 25);
 				outtext2(Common::String(MenuText[11]._line));
 			}
-			if (mode == 2) {
+			if (mode == COMPUTER_SAMANTHAS) {
 				_vm->_eventsManager.videkey();
 				settextposition(10, 25);
 //				outtext2(Common::String(MenuText[0x95A])); <=== CHECKME: Unexpected value! replaced by the following line, for consistancy
@@ -233,16 +234,16 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 				if (_vm->shouldQuit())
 					return;
 
-				v2 = 0;
+				numericFlag = false;
 				if ((uint16)(v12 - 48) <= 8u)
-					v2 = 1;
-			} while (v2 != 1);
+					numericFlag = true;
+			} while (!numericFlag);
 
 			if (v12 == 48)
 				break;
 			if (v12 == 49) {
 				GAMES();
-			} else if (mode == 1) {
+			} else if (mode == COMPUTER_HOPKINS) {
 				_vm->_eventsManager.videkey();
 				clearscreen();
 				settextcolor(4);
@@ -257,7 +258,7 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 					LIT_TEXTE(3);
 				if (v12 == 53)
 					LIT_TEXTE(4);
-			} else if (mode == 2) {
+			} else if (mode == COMPUTER_SAMANTHAS) {
 				clearscreen();
 				settextcolor(4);
 				settextposition(2, 4);
@@ -283,10 +284,13 @@ void ComputerManager::COMPUT_HOPKINS(int mode) {
 		_vm->_graphicsManager.DD_VBL();
 		RESTORE_POLICE();
 	} else {
+		// Access Denied
 		settextcolor(4);
 		settextposition(16, 25);
 		outtext(Common::String(MenuText[5]._line));
 		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.delay(1000);
+
 		memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x4AFFFu);
 		_vm->_graphicsManager.DD_Lock();
 		_vm->_graphicsManager.Cls_Video();
@@ -443,7 +447,7 @@ void ComputerManager::TXT4(int xp, int yp, int a3) {
 			v3 -= _vm->_globals.police_l;
 			v8 = v3 + 2 * _vm->_globals.police_l;
 			v9 = v7;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, v3, yp, 2 * _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, v3, yp);
+			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, v3, yp, 3 * _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, v3, yp);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v3, yp, v8, yp + 12);
 			_vm->_fontManager.TEXT_NOW(v3, yp, "_", -4);
 			v7 = v9;
@@ -592,7 +596,7 @@ void ComputerManager::GAMES() {
 	_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND37.WAV");
 	_vm->_soundManager.CHARGE_SAMPLE(2, "SOUND38.WAV");
 	_vm->_soundManager.CHARGE_SAMPLE(3, "SOUND39.WAV");
-	_vm->_fileManager.CONSTRUIT_SYSTEM("_vm->_eventsManager.CASSE.SPR");
+	_vm->_fileManager.CONSTRUIT_SYSTEM("CASSE.SPR");
 	CASSESPR = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	CHARGE_SCORE();
 	MODE_VGA256();

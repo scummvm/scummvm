@@ -66,6 +66,7 @@ public:
 	DIALOG_KEY GAME_KEY;
 	int btsouris;
 	byte *Bufferobjet;
+	bool keyState[256];
 public:
 	EventsManager();
 	~EventsManager();

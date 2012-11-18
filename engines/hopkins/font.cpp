@@ -485,6 +485,7 @@ void FontManager::TEXT_NOW(int xp, int yp, const Common::String &message, int co
 	const char *srcP;
 	char currChar; 
 	int charIndex; 
+	int currentX = xp;
 
 	srcP = message.c_str();
 	for (;;) {
@@ -494,11 +495,12 @@ void FontManager::TEXT_NOW(int xp, int yp, const Common::String &message, int co
 		if (currChar >= 32) {
 			charIndex = currChar - 32;
 			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, 
-				xp, yp, currChar - 32, col);
-			xp += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, charIndex);
+				currentX, yp, currChar - 32, col);
+			currentX += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, charIndex);
 		}
 	}
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, xp, yp + 12);
+
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, currentX, yp + 12);
 }
 
 
@@ -544,15 +546,6 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 			v9 += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, v5);
 			v6 = _vm->_objectsManager.Get_Largeur(_vm->_globals.police, v5);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v9 - v6, yp, v9, yp + 12);
-			if (_vm->_eventsManager.ESC_KEY) {
-				_vm->_globals.iRegul = 1;
-				_vm->_eventsManager.VBL();
-			} else {
-				_vm->_globals.iRegul = 4;
-				_vm->_eventsManager.VBL();
-				_vm->_globals.iRegul = 1;
-			}
-
 			if (_vm->_eventsManager.ESC_KEY) {
 				_vm->_globals.iRegul = 1;
 				_vm->_eventsManager.VBL();

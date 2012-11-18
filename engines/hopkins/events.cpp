@@ -50,6 +50,7 @@ EventsManager::EventsManager() {
 	OLD_ICONE = 0;
 	Bufferobjet = NULL;
 
+	Common::fill(&keyState[0], &keyState[256], false);
 	_priorCounterTime = 0;
 	_priorFrameTime = 0;
 }
@@ -202,9 +203,12 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
+			keyState[toupper(event.kbd.ascii)] = true;
 			handleKey(event);
 			return;
-
+		case Common::EVENT_KEYUP:
+			keyState[toupper(event.kbd.ascii)] = false;
+			return;
 		case Common::EVENT_LBUTTONDOWN:
 			souris_b = 1;
 			break;
@@ -244,24 +248,46 @@ void EventsManager::handleKey(Common::Event &event) {
 }
 
 int EventsManager::keywin() {
-	Common::Event event;
+	char foundChar = '\0';
 
-	while (!_vm->shouldQuit()) {
-		_vm->_soundManager.checkSounds();
-		checkForNextFrameCounter();
+	while (!foundChar) {
+		if (_vm->shouldQuit())
+			return -1;
 
-		// Handle pending events looking for keypress events
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN)
-				return event.kbd.ascii;
+		for (char ch = 'A'; ch <= 'Z'; ++ch) {
+			if (keyState[ch]) {
+				foundChar = ch;
+				break;
+			}
 		}
 
-		// Slight delay been checks to avoid maxing CPU usage
+		for (char ch = '0'; ch <= '9'; ++ch) {
+			if (keyState[ch]) {
+				foundChar = ch;
+				break;
+			}
+		}
+
+		if (keyState['.'])
+			foundChar = '.';
+		else if (keyState[8])
+			foundChar = 8;
+		else if (keyState[13])
+			foundChar = 13;
+		else if (keyState[' '])
+			foundChar = ' ';
+
+		VBL();
+	}
+
+	// Wait for keypress release
+	while (keyState[foundChar] && !_vm->shouldQuit()) {
+		VBL();
 		g_system->delayMillis(10);
 	}
 
-	// Game is quitting
-	return -1;
+	// Return character
+	return foundChar;
 }
 
 void EventsManager::VBL() {
