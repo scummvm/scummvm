@@ -1031,6 +1031,8 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 	if (material->_colorFormat == BM_RGBA) {
 		format = TGL_RGBA;
 //		internalFormat = TGL_RGBA;
+	} else if (material->_colorFormat == BM_BGRA) {
+		format = TGL_BGRA;
 	} else {	// The only other colorFormat we load right now is BGR
 		format = TGL_BGR;
 //		internalFormat = TGL_RGB;

@@ -96,7 +96,7 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 
 	int bpp = tgaSurface->format.bytesPerPixel;
 	if (bpp == 4) {
-		t->_colorFormat = BM_RGBA;
+		t->_colorFormat = BM_BGRA;
 		t->_bpp = 4;
 		t->_hasAlpha = true;
 	} else {

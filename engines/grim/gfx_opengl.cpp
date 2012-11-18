@@ -1108,6 +1108,9 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	if (material->_colorFormat == BM_RGBA) {
 		format = GL_RGBA;
 		internalFormat = GL_RGBA;
+	} else if (material->_colorFormat == BM_BGRA) {
+		format = GL_BGRA;
+		internalFormat = GL_RGBA;
 	} else {	// The only other colorFormat we load right now is BGR
 		format = GL_BGR;
 		internalFormat = GL_RGB;
