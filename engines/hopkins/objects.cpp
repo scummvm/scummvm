@@ -2916,8 +2916,10 @@ LABEL_65:
 		ARRET_PERSO_FLAG = 1;
 		ARRET_PERSO_NUM = _vm->_globals.BOBZONE[NUMZONE];
 	}
-	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField13] == 1 && _vm->_globals.OBJET_EN_COURS == 20 && NUMZONE == 12 
+	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField132] == 1 
+				&& _vm->_globals.OBJET_EN_COURS == 20 && NUMZONE == 12 
 				&& _vm->_eventsManager.btsouris == 23) {
+		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		XSPR(0);
 		YSPR(0);
