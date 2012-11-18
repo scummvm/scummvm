@@ -580,7 +580,7 @@ void ComputerManager::GAMES() {
 	_vm->_globals.vitesse = 1;
 	_vm->_eventsManager.CHANGE_MOUSE(0);
 	CASSESPR = g_PTRNUL;
-	_vm->_eventsManager.CASSE = 1;
+	_vm->_eventsManager.CASSE = true;
 	_vm->_eventsManager.CASSE_SOURIS_ON();
 	CASSETAB = (int16 *)g_PTRNUL;
 	NBBRIQUES = 0;
@@ -613,7 +613,7 @@ void ComputerManager::GAMES() {
 	_vm->_soundManager.DEL_SAMPLE(2);
 	_vm->_soundManager.DEL_SAMPLE(3);
 	_vm->_globals.vitesse = v2;
-	_vm->_eventsManager.CASSE = 0;
+	_vm->_eventsManager.CASSE = false;
 	_vm->_eventsManager.CASSE_SOURIS_OFF();
 	setvideomode();
 	settextcolor(15);
@@ -775,6 +775,7 @@ void ComputerManager::PLAY_BRIQUE() {
 
 	while (!_vm->shouldQuit()) {
 		while (!_vm->shouldQuit()) {
+			// Set up the racket and ball
 			_vm->_eventsManager.MOUSE_OFF();
 			BALLE = Common::Point(RAQX + 14, 187);
 			_vm->_objectsManager.SETYSPR(1, 187);
@@ -782,6 +783,8 @@ void ComputerManager::PLAY_BRIQUE() {
 			_vm->_graphicsManager.RESET_SEGMENT_VESA();
 			_vm->_eventsManager.VBL();
 			_vm->_graphicsManager.FADE_IN_CASSE();
+
+			// Wait for mouse press to start playing
 			do {
 				RAQX = _vm->_eventsManager.souris_x;
 				if (_vm->_eventsManager.souris_x <= 4)
@@ -792,16 +795,17 @@ void ComputerManager::PLAY_BRIQUE() {
 				_vm->_objectsManager.SETXSPR(1, RAQX + 14);
 				_vm->_objectsManager.SETYSPR(1, 187);
 				_vm->_eventsManager.VBL();
-			} while (_vm->_eventsManager.BMOUSE() != 1);
+			} while (!_vm->shouldQuit() && _vm->_eventsManager.BMOUSE() != 1);
 
 			CASSESPEED = 1;
 			BALLE = Common::Point(RAQX + 14, 187);
 			BALLEHORI = RAQX > 135;
 			BALLEVERTI = 0;
-		
+
+			// Play loop
 			do {
-				RAQX = _vm->_eventsManager.souris_x;
-				if ((int)_vm->_eventsManager.souris_x <= 4)
+				RAQX = _vm->_eventsManager.XMOUSE();
+				if (_vm->_eventsManager.souris_x <= 4)
 					RAQX = 5;
 				if (RAQX > 282)
 					RAQX = 282;

@@ -405,6 +405,8 @@ LABEL_54:
 			checkForNextFrameCounter();
 
 			while (CASSE || _vm->_globals.iRegul != 1) {
+				checkForNextFrameCounter();
+
 				if (CASSE != true)
 					goto LABEL_63;
 				if (lItCounter > 1)
