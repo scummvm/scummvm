@@ -196,7 +196,12 @@ void MidiParser_QT::handleControllerEvent(uint32 control, uint32 part, byte intP
 	byte channel = getChannel(part);
 	EventInfo info;
 
-	if (control == 32) {
+	if (control == 0) {
+		// "Bank select"
+		// QuickTime docs don't list this, but IHNM Mac calls this anyway
+		// We have to ignore this.
+		return;
+	} else if (control == 32) {
 		// Pitch bend
 		info.event = 0xE0 | channel;
 
