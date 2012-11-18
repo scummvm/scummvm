@@ -552,6 +552,15 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 				_vm->_eventsManager.VBL();
 				_vm->_globals.iRegul = 1;
 			}
+
+			if (_vm->_eventsManager.ESC_KEY) {
+				_vm->_globals.iRegul = 1;
+				_vm->_eventsManager.VBL();
+			} else {
+				_vm->_globals.iRegul = 4;
+				_vm->_eventsManager.VBL();
+				_vm->_globals.iRegul = 1;
+			}
 		}
 	} while (v7);
 }

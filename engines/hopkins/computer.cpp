@@ -93,7 +93,7 @@ void ComputerManager::settextcolor(int col) {
 	TEXT_COL = col;
 }
 
-void ComputerManager::settextposition(int xp, int yp) {
+void ComputerManager::settextposition(int yp, int xp) {
 	_textPosition.x = xp << 3;
 	_textPosition.y = yp << 4;
 }

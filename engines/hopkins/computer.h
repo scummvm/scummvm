@@ -96,11 +96,12 @@ private:
 	void settextcolor(int col);
 
 	/**
-	 * Sets the text position
-	 * @param xp		X position
+	 * Sets the text position.
 	 * @param yp		Y position
+	 * @param xp		X position
+	 * @remarks		Yes, the reverse co-ordinate pair is really like that in the original game.
 	 */
-	void settextposition(int xp, int yp);
+	void settextposition(int yp, int xp);
 
 	/**
 	 * Outputs a text string
