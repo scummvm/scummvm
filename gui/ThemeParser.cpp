@@ -548,11 +548,11 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		else
 			return parserError("'" + stepNode->values["fill"] + "' is not a valid fill mode for a shape.");
 	}
-	
+
 	if (stepNode->values.contains("padding")) {
 		val = stepNode->values["padding"];
 		int pr, pt, pl, pb;
-		if (parseIntegerKey(val, 4, &pl, &pt, &pr, &pb)) 
+		if (parseIntegerKey(val, 4, &pl, &pt, &pr, &pb))
 			drawstep->padding.left = pl,
 			drawstep->padding.top = pt,
 			drawstep->padding.right = pr,

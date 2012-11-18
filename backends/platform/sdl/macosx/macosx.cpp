@@ -39,7 +39,6 @@
 
 #include "ApplicationServices/ApplicationServices.h"	// for LSOpenFSRef
 #include "CoreFoundation/CoreFoundation.h"	// for CF* stuff
-#include "CoreServices/CoreServices.h"	// for FSPathMakeRef
 
 OSystem_MacOSX::OSystem_MacOSX()
 	:
@@ -107,13 +106,9 @@ bool OSystem_MacOSX::displayLogFile() {
 	if (_logFilePath.empty())
 		return false;
 
-	FSRef ref;
-	OSStatus err;
-
-	err = FSPathMakeRef((const UInt8 *)_logFilePath.c_str(), &ref, NULL);
-	if (err == noErr) {
-		err = LSOpenFSRef(&ref, NULL);
-	}
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)_logFilePath.c_str(), _logFilePath.size(), false);
+    OSStatus err = LSOpenCFURLRef(url, NULL);
+    CFRelease(url);
 
 	return err != noErr;
 }
@@ -156,7 +151,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 			}
 			CFRelease(preferredLocalizations);
 		}
-		
+
 	}
 	// Falback to POSIX implementation
 	return OSystem_POSIX::getSystemLanguage();

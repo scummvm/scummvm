@@ -36,7 +36,7 @@
 
 namespace MT32Emu {
 
-const ControlROMMap ControlROMMaps[7] = {
+static const ControlROMMap ControlROMMaps[7] = {
 	// ID    IDc IDbytes                     PCMmap  PCMc  tmbrA   tmbrAO, tmbrAC tmbrB   tmbrBO, tmbrBC tmbrR   trC  rhythm  rhyC  rsrv    panpot  prog    rhyMax  patMax  sysMax  timMax
 	{0x4014, 22, "\000 ver1.04 14 July 87 ", 0x3000,  128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200,  30, 0x73A6,  85,  0x57C7, 0x57E2, 0x57D0, 0x5252, 0x525E, 0x526E, 0x520A},
 	{0x4014, 22, "\000 ver1.05 06 Aug, 87 ", 0x3000,  128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200,  30, 0x7414,  85,  0x57C7, 0x57E2, 0x57D0, 0x5252, 0x525E, 0x526E, 0x520A},
@@ -423,7 +423,6 @@ bool Synth::open(SynthProperties &useProp) {
 #if MT32EMU_MONITOR_INIT
 	printDebug("Initialising Constant Tables");
 #endif
-	tables.init();
 #if !MT32EMU_REDUCE_REVERB_MEMORY
 	for (int i = 0; i < 4; i++) {
 		reverbModels[i]->open(useProp.sampleRate);
@@ -627,6 +626,11 @@ void Synth::playMsg(Bit32u msg) {
 		return;
 	}
 	playMsgOnPart(part, code, note, velocity);
+
+	// This ensures minimum 1-sample delay between sequential MIDI events
+	// Without this, a sequence of NoteOn and immediately succeeding NoteOff messages is always silent
+	// Technically, it's also impossible to send events through the MIDI interface faster than about each millisecond
+	prerender();
 }
 
 void Synth::playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity) {
@@ -1156,7 +1160,7 @@ void Synth::writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u le
 			DT(partial[x].tva.envLevel[0]); \
 			DT(partial[x].tva.envLevel[1]); \
 			DT(partial[x].tva.envLevel[2]); \
-			DT(partial[x].tva.envLevel[3]); 
+			DT(partial[x].tva.envLevel[3]);
 
 			DTP(0);
 			DTP(1);

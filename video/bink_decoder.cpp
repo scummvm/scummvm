@@ -305,7 +305,7 @@ void BinkDecoder::videoPacket(VideoFrame &video) {
 	// Convert the YUV data we have to our format
 	// We're ignoring alpha for now
 	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
-	Graphics::convertYUV420ToRGB(&_surface, _curPlanes[0], _curPlanes[1], _curPlanes[2],
+	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
 			_surface.w, _surface.h, _surface.w, _surface.w >> 1);
 
 	// And swap the planes with the reference planes

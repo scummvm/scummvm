@@ -58,6 +58,9 @@ bool Poly::noteOff(bool pedalHeld) {
 		return false;
 	}
 	if (pedalHeld) {
+		if (state == POLY_Held) {
+			return false;
+		}
 		state = POLY_Held;
 	} else {
 		startDecay();

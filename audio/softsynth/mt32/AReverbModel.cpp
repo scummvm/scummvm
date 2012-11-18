@@ -18,7 +18,7 @@
 #include "mt32emu.h"
 #include "AReverbModel.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
 // Default reverb settings for modes 0-2
 
@@ -234,4 +234,6 @@ void AReverbModel::process(const float *inLeft, const float *inRight, float *out
 		outLeft++;
 		outRight++;
 	}
+}
+
 }

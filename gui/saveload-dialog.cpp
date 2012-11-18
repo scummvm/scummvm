@@ -35,6 +35,14 @@ namespace GUI {
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
+
+	// Check (and update if necessary) the theme config here. This catches
+	// resolution changes, which happened after the GUI was closed. This
+	// should assure that the correct GUI width/height are returned below and
+	// prevent the logic from picking the grid dialog, even though it is not
+	// possible to use it.
+	g_gui.checkScreenChange();
+
 	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
 	    && metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
 	    && metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
@@ -422,7 +430,28 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 	}
 }
 
+void SaveLoadChooserSimple::open() {
+	SaveLoadChooserDialog::open();
+
+	// Scroll the list to the last used entry.
+	_list->scrollTo(ConfMan.getInt("gui_saveload_last_pos"));
+}
+
 void SaveLoadChooserSimple::close() {
+	// Save the current scroll position/used entry.
+	const int result = getResult();
+	if (result >= 0) {
+		ConfMan.setInt("gui_saveload_last_pos", result);
+	} else {
+		// Use the current scroll position here.
+		// TODO: This means we canceled the dialog (or switch to the grid). Do
+		// we want to save this position here? Does the user want that?
+		// TODO: Do we want to save the current scroll position or the
+		// currently selected item here? The scroll position is what the user
+		// currently sees and seems to make more sense.
+		ConfMan.setInt("gui_saveload_last_pos", _list->getCurrentScrollPos());
+	}
+
 	_metaEngine = 0;
 	_target.clear();
 	_saveList.clear();
@@ -590,9 +619,28 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 void SaveLoadChooserGrid::open() {
 	SaveLoadChooserDialog::open();
 
-	_curPage = 0;
 	_saveList = _metaEngine->listSaves(_target.c_str());
 	_resultString.clear();
+
+	// Load information to restore the last page the user had open.
+	assert(_entriesPerPage != 0);
+	const uint lastPos = ConfMan.getInt("gui_saveload_last_pos");
+	const uint listSize = _saveList.size();
+	uint bestMatch = 0;
+	uint diff = 0xFFFFFFFF;
+
+	// We look for the nearest available slot, since a slot might be missing
+	// due to the user deleting it via the list based chooser, by deleting
+	// it by hand, etc.
+	for (uint i = 0; i < listSize; ++i) {
+		uint curDiff = ABS(_saveList[i].getSaveSlot() - (int)lastPos);
+		if (curDiff < diff) {
+			diff = curDiff;
+			bestMatch = i;
+		}
+	}
+
+	_curPage = bestMatch / _entriesPerPage;
 
 	// Determine the next free save slot for save mode
 	if (_saveMode) {
@@ -703,7 +751,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 			if (!_saveMode) {
 				buttonCmd += 1;
 			}
-	
+
 			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, 0, buttonCmd);
 			dstY += buttonHeight;
 
@@ -718,6 +766,24 @@ void SaveLoadChooserGrid::reflowLayout() {
 }
 
 void SaveLoadChooserGrid::close() {
+	// Save the current page.
+	const int result = getResult();
+	if (result >= 0 && result != _nextFreeSaveSlot) {
+		// If the user selected a slot we use that one. We ignore new slots
+		// here, since otherwise the dialog would reset to page 0 when the
+		// user cancels the savename dialog.
+		ConfMan.setInt("gui_saveload_last_pos", result);
+	} else {
+		// Otherwise save the first entry on the current page.
+		// This is less precise than the solution above, since the number of
+		// entries shown differs between save and load version of the dialog,
+		// thus it might wrap to a different page than expected.
+		// Similar things happen on resolution changes.
+		// TODO: Should we ignore this here? Is the user likely to be
+		// interested in having this page restored when he canceled?
+		ConfMan.setInt("gui_saveload_last_pos", !_saveList.empty() ? _saveList[_curPage * _entriesPerPage].getSaveSlot() : 0);
+	}
+
 	SaveLoadChooserDialog::close();
 	hideButtons();
 }
@@ -736,6 +802,12 @@ int SaveLoadChooserGrid::runIntern() {
 
 		slot = runModal();
 	} while (_saveMode && slot >= 0 && !selectDescription());
+
+	// Special case for new save games. We need to handle this here, since
+	// we cannot handle it in close() without problems.
+	if (slot == _nextFreeSaveSlot) {
+		ConfMan.setInt("gui_saveload_last_pos", slot);
+	}
 
 	return slot;
 }
@@ -826,7 +898,7 @@ void SaveLoadChooserGrid::updateSaves() {
 		}
 	}
 
-	const uint numPages = (_entriesPerPage != 0) ? (_saveList.size() / _entriesPerPage + 1) : 1;
+	const uint numPages = (_entriesPerPage != 0 && !_saveList.empty()) ? ((_saveList.size() + _entriesPerPage - 1) / _entriesPerPage) : 1;
 	_pageDisplay->setLabel(Common::String::format("%u/%u", _curPage + 1, numPages));
 
 	if (_curPage > 0)

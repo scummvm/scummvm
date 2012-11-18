@@ -171,9 +171,14 @@ void TVP::updatePitch() {
 	if (newPitch < 0) {
 		newPitch = 0;
 	}
+
+// Note: Temporary #ifdef until we have proper "quirk" configuration
+// This is about right emulation of MT-32 GEN0 quirk exploited in Colonel's Bequest timbre "Lightning"
+#ifndef MT32EMU_QUIRK_PITCH_ENVELOPE_OVERFLOW_MT32
 	if (newPitch > 59392) {
 		newPitch = 59392;
 	}
+#endif
 	pitch = (Bit16u)newPitch;
 
 	// FIXME: We're doing this here because that's what the CM-32L does - we should probably move this somewhere more appropriate in future.

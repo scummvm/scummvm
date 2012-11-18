@@ -22,18 +22,14 @@
 #include "mt32emu.h"
 #include "mmath.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
-Tables::Tables() {
-	initialised = false;
+const Tables &Tables::getInstance() {
+	static const Tables instance;
+	return instance;
 }
 
-void Tables::init() {
-	if (initialised) {
-		return;
-	}
-	initialised = true;
-
+Tables::Tables() {
 	int lf;
 	for (lf = 0; lf <= 100; lf++) {
 		// CONFIRMED:KG: This matches a ROM table found by Mok
@@ -83,19 +79,9 @@ void Tables::init() {
 		pulseLenFactor[i] = (1.241857812f - pt) * pt;    // seems to be 2 ^ (5 / 16) = 1.241857812f
 	}
 
-	for (int i = 0; i < 65536; i++) {
-		// Aka (slightly slower): EXP2F(pitchVal / 4096.0f - 16.0f) * 32000.0f
-		pitchToFreq[i] = EXP2F(i / 4096.0f - 1.034215715f);
-	}
-
-	// found from sample analysis
-	for (int i = 0; i < 1024; i++) {
-		cutoffToCosineLen[i] = EXP2F(i / -128.0f);
-	}
-
-	// found from sample analysis
-	for (int i = 0; i < 1024; i++) {
-		cutoffToFilterAmp[i] = EXP2F(-0.125f * (128.0f - i / 8.0f));
+	// The LA32 chip presumably has such a table inside as the internal computaions seem to be performed using fixed point math with 12-bit fractions
+	for (int i = 0; i < 4096; i++) {
+		exp2[i] = EXP2F(i / 4096.0f);
 	}
 
 	// found from sample analysis
@@ -116,4 +102,6 @@ void Tables::init() {
 	for (int i = 0; i < 5120; i++) {
 		sinf10[i] = sin(FLOAT_PI * i / 2048.0f);
 	}
+}
+
 }

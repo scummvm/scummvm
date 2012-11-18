@@ -1,4 +1,5 @@
 # This file is included from the main "configure" script
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
 add_engine grim "Grim" yes "monkey4" "zlib"
 add_engine monkey4 "Escape from Monkey Island" yes
 add_engine myst3 "Myst 3" yes

@@ -276,6 +276,7 @@ public:
 
 	/**
 	 * Run the Global Main Menu Dialog
+	 * added 'virtual' ResidualVM specific
 	 */
 	virtual void openMainMenuDialog();
 

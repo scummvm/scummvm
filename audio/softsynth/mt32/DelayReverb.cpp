@@ -20,15 +20,14 @@
 #include "mt32emu.h"
 #include "DelayReverb.h"
 
-using namespace MT32Emu;
-
+namespace MT32Emu {
 
 // CONFIRMED: The values below are found via analysis of digital samples. Checked with all time and level combinations.
 // Obviously:
 // rightDelay = (leftDelay - 2) * 2 + 2
 // echoDelay = rightDelay - 1
 // Leaving these separate in case it's useful for work on other reverb modes...
-const Bit32u REVERB_TIMINGS[8][3]= {
+static const Bit32u REVERB_TIMINGS[8][3]= {
 	// {leftDelay, rightDelay, feedbackDelay}
 	{402, 802, 801},
 	{626, 1250, 1249},
@@ -40,7 +39,7 @@ const Bit32u REVERB_TIMINGS[8][3]= {
 	{8002, 16002, 16001}
 };
 
-const float REVERB_FADE[8] = {0.0f, -0.049400051f, -0.08220577f, -0.131861118f, -0.197344907f, -0.262956344f, -0.345162114f, -0.509508615f};
+static const float REVERB_FADE[8] = {0.0f, -0.049400051f, -0.08220577f, -0.131861118f, -0.197344907f, -0.262956344f, -0.345162114f, -0.509508615f};
 const float REVERB_FEEDBACK67 = -0.629960524947437f; // = -EXP2F(-2 / 3)
 const float REVERB_FEEDBACK = -0.682034520443118f; // = -EXP2F(-53 / 96)
 const float LPF_VALUE = 0.594603558f; // = EXP2F(-0.75f)
@@ -147,4 +146,6 @@ bool DelayReverb::isActive() const {
 		}
 	}
 	return false;
+}
+
 }

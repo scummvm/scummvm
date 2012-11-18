@@ -99,9 +99,8 @@ endif
 ifdef AMIGAOS
 MODULE_OBJS += \
 	fs/amigaos4/amigaos4-fs.o \
-	fs/amigaos4/amigaos4-fs-factory.o
-#ResidualVM: disabled below
-#	midi/camd.o
+	fs/amigaos4/amigaos4-fs-factory.o \
+	midi/camd.o
 endif
 
 ifdef PLAYSTATION3
