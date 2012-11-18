@@ -609,6 +609,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 
 	glEnable(GL_LIGHTING);
 	glDisable(GL_ALPHA_TEST);
+	glDepthMask(GL_TRUE);
 
 	glPopMatrix();
 }
