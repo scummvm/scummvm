@@ -1410,9 +1410,9 @@ bool Actor::shouldDrawShadow(int shadowId) {
 	p = getPos();
 	// Move the tested point a bit above ground level.
 	if (g_grim->getGameType() == GType_MONKEY4)
-		p.y() += 0.01;
+		p.y() += 0.01f;
 	else
-		p.z() += 0.01;
+		p.z() += 0.01f;
 	bool actorSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
 	p = shadow->pos;
 	bool shadowSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;

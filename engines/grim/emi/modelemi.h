@@ -107,7 +107,7 @@ public:
 public:
 	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent = NULL);
 	~EMIModel();
-	void setTex(int index);
+	void setTex(uint32 index);
 	void setSkeleton(Skeleton *skel);
 	void loadMesh(Common::SeekableReadStream *data);
 	void prepareForRender();
