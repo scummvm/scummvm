@@ -109,7 +109,7 @@ void MidiParser_QT::parseNextEvent(EventInfo &info) {
 	uint32 delta = 0;
 
 	while (_queuedEvents.empty())
-		delta = readNextEvent();
+		delta += readNextEvent();
 
 	info = _queuedEvents.pop();
 	info.delta = delta;
@@ -342,16 +342,17 @@ bool MidiParser_QT::isChannelAllocated(byte channel) const {
 }
 
 bool MidiParser_QT::allChannelsAllocated() const {
-	// Less than 16? Have room
+	// Less than 15? We definitely have room
 	if (_channelMap.size() < 15)
 		return false;
 
-	// 16? See if one of those 
+	// 15? One of the allocated channels might be the percussion one
 	if (_channelMap.size() == 15)
 		for (ChannelMap::const_iterator it = _channelMap.begin(); it != _channelMap.end(); it++)
 			if (it->_value == 9)
 				return false;
 
+	// 16 -> definitely all allocated
 	return true;
 }
 
