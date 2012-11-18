@@ -520,27 +520,27 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 	int v5; 
 	int v6; 
 	byte v7; 
-	char v8; 
+	int fontCol; 
 	int v9; 
 
 	srcP = msg.c_str();
 	v9 = xp;
-	v8 = col;
+	fontCol = col;
 	do {
 		v7 = *srcP++;
 		if (v7 == '&') {
-			v8 = 2;
+			fontCol = 2;
 			v7 = *srcP++;
 		}
 		if (v7 == '$') {
-			v8 = 4;
+			fontCol = 4;
 			v7 = *srcP++;
 		}
 		if (!v7)
 			break;
 		if (v7 >= 32) {
 			v5 = v7 - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, v9, yp, v7 - 32, v8);
+			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, v9, yp, v7 - 32, fontCol);
 			v9 += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, v5);
 			v6 = _vm->_objectsManager.Get_Largeur(_vm->_globals.police, v5);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v9 - v6, yp, v9, yp + 12);

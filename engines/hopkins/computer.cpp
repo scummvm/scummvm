@@ -94,8 +94,8 @@ void ComputerManager::settextcolor(int col) {
 }
 
 void ComputerManager::settextposition(int xp, int yp) {
-	_textPosition.x = xp;
-	_textPosition.y = yp;
+	_textPosition.x = xp << 3;
+	_textPosition.y = yp << 4;
 }
 
 void ComputerManager::COMPUT_HOPKINS(int mode) {
