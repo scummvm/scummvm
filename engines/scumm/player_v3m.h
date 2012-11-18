@@ -40,7 +40,7 @@ class ScummEngine;
 /**
  * Scumm V3 Macintosh music driver.
  */
- class Player_V3M : public Player_Mac {
+class Player_V3M : public Player_Mac {
 public:
 	Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer);
 
