@@ -43,23 +43,24 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	_drgbdx |= (SAR_RND_TO_ZERO(dbdx, 7) << 12) & 0x001FF000; 	\
 }
 
-#define PUT_PIXEL(_a) {						\
-	if (ZCMP(z, pz[_a])) {					\
-		tmp = rgb & 0xF81F07E0;				\
-		pp[_a] = tmp | (tmp >> 16);			\
-		pz[_a] = z;							\
-	}										\
-	z += dzdx;								\
-	rgb = (rgb + drgbdx) & (~0x00200800);	\
+#define PUT_PIXEL(_a) {							\
+	if (ZCMP(z, pz[_a])) {						\
+		tmp = rgb & 0xF81F07E0;					\
+		buf.setPixelAt(_a, tmp | (tmp >> 16));	\
+		pz[_a] = z;								\
+	}											\
+	z += dzdx;									\
+	rgb = (rgb + drgbdx) & (~0x00200800);		\
 }
 
 #define DRAW_LINE()	{								\
 	register unsigned int *pz;						\
-	register PIXEL *pp;								\
+	Graphics::PixelBuffer buf = zb->pbuf;			\
 	register unsigned int z, rgb, drgbdx;			\
 	register int n;									\
 	n = (x2 >> 16) - x1;							\
-	pp = pp1 + x1;									\
+	int bpp = buf.getFormat().bytesPerPixel;		\
+	buf = (byte *)pp1 + x1 * bpp;					\
 	pz = pz1 + x1;									\
 	z = z1;											\
 	rgb =(r1 << 16) & 0xFFC00000;					\
@@ -72,13 +73,13 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 		PUT_PIXEL(2);								\
 		PUT_PIXEL(3);								\
 		pz += 4;									\
-		pp += 4;									\
+		buf.shiftBy(4);								\
 		n -= 4;										\
 	}												\
 	while (n >= 0) {								\
 		PUT_PIXEL(0);								\
+		buf.shiftBy(1);								\
 		pz += 1;									\
-		pp += 1;									\
 		n -= 1;										\
 	}												\
 }
