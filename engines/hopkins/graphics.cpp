@@ -1805,7 +1805,7 @@ int GraphicsManager::Asm_Reduc(int v, int percentage) {
   
 	return v;
 }
-
+ 
 // Display 'Perfect?' 
 void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, int modeFlag) {
 	const byte *spriteStartP; 
@@ -1821,7 +1821,6 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 	int clippedWidth; 
 	int xCtr2; 
 	int v20; 
-	int v21 = 0; 
 	int v22; 
 	int v23; 
 	int v24; 
@@ -1901,7 +1900,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 						Agr_Flag_x = 0;
 						Largeur = spriteWidth;
 						v20 = Asm_Zoom(spriteWidth, zoom2);
-						v22 = Asm_Zoom(v21, zoom2);
+						v22 = Asm_Zoom(spriteHeight1, zoom2);
 						if (modeFlag) {
 							v29 = v20 + dest1P;
 							if (clip_y) {
@@ -2017,6 +2016,7 @@ R_Aff_Zoom_Larg_Cont1:
 							}
 							if (v20 > (uint16)clip_x1)
 								v20 = (uint16)clip_x1;
+
 							do {
 								while (1) {
 									v60 = v22;
