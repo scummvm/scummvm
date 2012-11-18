@@ -9,6 +9,8 @@ ResidualVM
     Grim Team:
        James Brown           - Core developer (retired)
        Giulio Camuffo        - Core developer
+       Dries Harnie          - EMI support, various code fixes and
+                               improvements
        Pawel Kolodziejski    - Core developer (suspended)
        Einar Johan T. Somaen - EMI support, various code fixes and
                                improvements
@@ -32,6 +34,7 @@ ResidualVM
        Marcus Comstedt       - Initial Dreamcast port
        Andrea Corna          - Patcher module, various engine improvements
        Jonathan Gray         - Various code fixes
+       Azamat H. Hackimov    - Configure fix
        Vincent Hamm          - Various engine code fixes and improvements
        Sven Hesse            - Various compilation fixes
        Matthew Hoops         - Some engine improvements, some work on EMI
@@ -43,7 +46,7 @@ ResidualVM
        Guillem Jover         - Few code improvements
        Filippos Karapetis    - Compilation fixes
        Joost Peters          - Various code fixes
-       George Macon          - Compilation fixes
+       George Macon          - Few fixes
        Josh Matthews         - Few fixes to engine
        Matthieu Milan        - Various engine improvements
        Christian Neumair     - Various optimisation patches
@@ -55,6 +58,7 @@ ResidualVM
        Lionel Ulmer          - OpenGL optimisations
        Joni Vahamaki         - A lot of engine improvements and fixes
        JenniBee              - Compilation fixes
+       tobigun               - Initial Android port, few engines fixes
 
     Myst 3:
        Matthew Hoops         - Various engine improvements and code fixes
