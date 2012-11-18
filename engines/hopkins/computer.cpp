@@ -786,7 +786,7 @@ void ComputerManager::PLAY_BRIQUE() {
 
 			// Wait for mouse press to start playing
 			do {
-				RAQX = _vm->_eventsManager.souris_x;
+				RAQX = _vm->_eventsManager.XMOUSE();
 				if (_vm->_eventsManager.souris_x <= 4)
 					RAQX = 5;
 				if (RAQX > 282)
@@ -817,6 +817,7 @@ void ComputerManager::PLAY_BRIQUE() {
 				break;
 			_vm->_graphicsManager.FADE_OUT_CASSE();
 			--CASSEVIE;
+
 			if (CASSEVIE) {
 				AFF_VIE();
 				if (CASSEVIE)

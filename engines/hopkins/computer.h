@@ -57,11 +57,32 @@ private:
 	int16 *CASSETAB;
 	bool FMOUSE;
 	int NBBRIQUES;
+
+	/**
+	 * Breakout score
+	 */
 	int CASSESCORE;
+
+	/**
+	 * Number of Breakout lives remaining
+	 */
 	int CASSEVIE;
+
+	/**
+	 * Breakout game speed
+	 */
 	int CASSESPEED;
+
+	/**
+	 * Breakout ball horizontal position
+	 */
 	int BALLEHORI;
+
+	/**
+	 * Breakout ball vertical position
+	 */
 	int BALLEVERTI;
+
 	int NB_TABLE;
 	int RAQX;
 	int CASSE_HISCORE;
