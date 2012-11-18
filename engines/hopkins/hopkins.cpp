@@ -930,7 +930,7 @@ LABEL_140:
 							_globals.Max_Propre_Gen = 20;
 							_globals.Max_Perso_Y = 435;
 							_globals.DESACTIVE_INVENT = false;
-							_globals.FORET = 1;
+							_globals.FORET = true;
 							_globals.NOSPRECRAN = true;
 							Common::String im = Common::String::format("IM%d", _globals.SORTIE);
 							_soundManager.WSOUND(13);
@@ -941,10 +941,10 @@ LABEL_140:
 							}
 							_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 							_globals.NOSPRECRAN = false;
-							if (_globals.SORTIE - 35 > 14) {
+							if ((uint)(_globals.SORTIE - 35) > 14) {
 								_globals.dos_free2(_globals.FORETSPR);
 								_globals.FORETSPR = g_PTRNUL;
-								_globals.FORET = 0;
+								_globals.FORET = false;
 								_soundManager.DEL_SAMPLE(1);
 							}
 						} else if (_globals.SORTIE == 32) {
@@ -1856,7 +1856,7 @@ void HopkinsEngine::REST_SYSTEM() {
 void HopkinsEngine::PUBQUIT() {
 	_globals.PUBEXIT = true;
 	_graphicsManager.RESET_SEGMENT_VESA();
-	_globals.FORET = 0;
+	_globals.FORET = false;
 	_eventsManager.CASSE = false;
 	_globals.DESACTIVE_INVENT = true;
 	_globals.FLAG_VISIBLE = false;

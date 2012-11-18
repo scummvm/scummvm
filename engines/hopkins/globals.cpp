@@ -141,7 +141,7 @@ Globals::Globals() {
 	nbrligne = 0;
 	largeur_boite = 0;
 	hauteur_boite = 0;
-	FORET = 0;
+	FORET = false;
 	OBJL = OBJH = 0;
 	HELICO = 0;
 	CAT_POSI = 0;
@@ -419,7 +419,7 @@ void Globals::clearAll() {
 
 	ADR_FICHIER_OBJ = g_PTRNUL;
 	FORETSPR = g_PTRNUL;
-	FORET = 0;
+	FORET = false;
 
 	cache_souris = dos_malloc2(2500);
 	GESTE = g_PTRNUL;

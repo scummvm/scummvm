@@ -2940,7 +2940,7 @@ void ObjectsManager::PARADISE() {
 	result = _vm->_globals.SAUVEGARDE->data[svField1];
 	if (result && _vm->_globals.SAUVEGARDE->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.TEXTE_OFF(5);
-		if (_vm->_globals.FORET != 1 || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
+		if (!_vm->_globals.FORET || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
 			if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
 				_vm->_graphicsManager.no_scroll = 2;
 				if (_vm->_eventsManager.start_x >= XSPR(0) - 320)

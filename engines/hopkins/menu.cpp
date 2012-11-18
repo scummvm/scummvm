@@ -54,7 +54,7 @@ int MenuManager::MENU() {
 
 	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
-		_vm->_globals.FORET = 0;
+		_vm->_globals.FORET = false;
 		_vm->_eventsManager.CASSE = false;
 		_vm->_globals.DESACTIVE_INVENT = true;
 		_vm->_globals.FLAG_VISIBLE = false;
