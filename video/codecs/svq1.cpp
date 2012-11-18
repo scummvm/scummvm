@@ -225,7 +225,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 
 			byte *previous = 0;
 			if (frameType == 2) { // B Frame
-				warning("B Frame not supported currently");
+				error("SVQ1 Video: B Frames not supported");
 				//previous = _next[i];
 			} else {
 				previous = _last[i];
