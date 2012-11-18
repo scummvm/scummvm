@@ -46,7 +46,10 @@ public:
 
 	virtual bool checkMusicAvailable();
 	virtual bool loadMusic(const byte *ptr);
-	virtual bool getNextNote(int ch, uint16 &duration, byte &note, byte &velocity);
+	virtual bool getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity);
+
+private:
+	uint32 _lastNoteSamples[3];
 };
 
 } // End of namespace Scumm

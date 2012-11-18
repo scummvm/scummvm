@@ -276,6 +276,34 @@ int Player_Mac::getSoundStatus(int nr) const {
 	return _soundPlaying == nr;
 }
 
+uint32 Player_Mac::durationToSamples(uint16 duration) {
+	// The correct formula should be:
+	//
+	// (duration * 473 * _sampleRate) / (4 * 480 * 480)
+	//
+	// But that's likely to cause integer overflow, so we do it in two
+	// steps and hope that the rounding error won't be noticeable.
+	//
+	// The original code is a bit unclear on if it should be 473 or 437,
+	// but since the comments indicated 473 I'm assuming 437 was a typo.
+	uint32 samples = (duration * _sampleRate) / (4 * 480);
+	samples = (samples * 473) / 480;
+	return samples;
+}
+
+int Player_Mac::noteToPitchModifier(byte note, Instrument *instrument) {
+	if (note > 1) {
+		const int pitchIdx = note + 60 - instrument->_baseFreq;
+		// I don't want to use floating-point arithmetics here, but I
+		// ran into overflow problems with the church music in Monkey
+		// Island. It's only once per note, so it should be ok.
+		double mult = (double)instrument->_rate / (double)_sampleRate;
+		return (int)(mult * _pitchTable[pitchIdx]);
+	} else {
+		return 0;
+	}
+}
+
 int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
@@ -297,36 +325,14 @@ int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 		while (samplesLeft > 0) {
 			int generated;
 			if (_channel[i]._remaining == 0) {
-				uint16 duration;
-				byte note, velocity;
-				if (getNextNote(i, duration, note, velocity)) {
-					if (note > 1) {
-						const int pitchIdx = note + 60 - _channel[i]._instrument._baseFreq;
-						assert(pitchIdx >= 0);
-						// I don't want to use floating-point arithmetics here,
-						// but I ran into overflow problems with the church
-						// music. It's only once per note, so it should be ok.
-						double mult = (double)(_channel[i]._instrument._rate) / (double)_sampleRate;
-						_channel[i]._pitchModifier = (int)(mult * _pitchTable[pitchIdx]);
-						_channel[i]._velocity = velocity;
-					} else {
-						_channel[i]._pitchModifier = 0;
-						_channel[i]._velocity = 0;
-					}
+				uint32 samples;
+				int pitchModifier;
+				byte velocity;
+				if (getNextNote(i, samples, pitchModifier, velocity)) {
+					_channel[i]._remaining = samples;
+					_channel[i]._pitchModifier = pitchModifier;
+					_channel[i]._velocity = velocity;
 
-					// The correct formula should be:
-					//
-					// (duration * 473 * _sampleRate) / (4 * 480 * 480)
-					//
-					// But that's likely to cause integer overflow, so
-					// we do it in two steps and hope that the rounding
-					// error won't be noticeable.
-					//
-					// The original code is a bit unclear on if it should
-					// be 473 or 437, but since the comments indicated
-					// 473 I'm assuming 437 was a typo.
-					_channel[i]._remaining = (duration * _sampleRate) / (4 * 480);
-					_channel[i]._remaining = (_channel[i]._remaining * 473) / 480;
 				} else {
 					_channel[i]._pitchModifier = 0;
 					_channel[i]._velocity = 0;

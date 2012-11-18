@@ -99,7 +99,7 @@ private:
 
 	virtual bool checkMusicAvailable() { return false; }
 	virtual bool loadMusic(const byte *ptr) { return false; }
-	virtual bool getNextNote(int ch, uint16 &duration, byte &value, byte &velocity) { return false; }
+	virtual bool getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity) { return false; }
 
 protected:
 	struct Channel {
@@ -122,6 +122,9 @@ protected:
 
 	ScummEngine *const _vm;
 	Channel *_channel;
+
+	uint32 durationToSamples(uint16 duration);
+	int noteToPitchModifier(byte note, Instrument *instrument);
 };
 
 } // End of namespace Scumm

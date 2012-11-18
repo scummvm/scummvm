@@ -119,7 +119,7 @@ bool Player_V5M::loadMusic(const byte *ptr) {
 		uint32 len = READ_BE_UINT32(ptr + 4);
 		uint32 instrument = READ_BE_UINT32(ptr + 8);
 
-		_channel[i]._length = len - 24;
+		_channel[i]._length = len - 20;
 		_channel[i]._data = ptr + 12;
 		_channel[i]._looped = (READ_BE_UINT32(ptr + len - 8) == MKTAG('L', 'o', 'o', 'p'));
 		_channel[i]._pos = 0;
@@ -147,10 +147,30 @@ bool Player_V5M::loadMusic(const byte *ptr) {
 	}
 
 	resource.close();
+
+	// The last note of each channel is just zeroes. We will adjust this
+	// note so that all the channels end at the same time.
+
+	uint32 samples[3];
+	uint32 maxSamples = 0;
+	for (i = 0; i < 3; i++) {
+		samples[i] = 0;
+		for (uint j = 0; j < _channel[i]._length; j += 4) {
+			samples[i] += durationToSamples(READ_BE_UINT16(&_channel[i]._data[j]));
+		}
+		if (samples[i] > maxSamples) {
+			maxSamples = samples[i];
+		}
+	}
+
+	for (i = 0; i < 3; i++) {
+		_lastNoteSamples[i] = maxSamples - samples[i];
+	}
+
 	return true;
 }
 
-bool Player_V5M::getNextNote(int ch, uint16 &duration, byte &note, byte &velocity) {
+bool Player_V5M::getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity) {
 	_channel[ch]._instrument.newNote();
 	if (_channel[ch]._pos >= _channel[ch]._length) {
 		if (!_channel[ch]._looped) {
@@ -163,10 +183,16 @@ bool Player_V5M::getNextNote(int ch, uint16 &duration, byte &note, byte &velocit
 		// MI1 Lookout music, where I was hearing problems.
 		_channel[ch]._pos = 0;
 	}
-	duration = READ_BE_UINT16(&_channel[ch]._data[_channel[ch]._pos]);
-	note = _channel[ch]._data[_channel[ch]._pos + 2];
+	uint16 duration = READ_BE_UINT16(&_channel[ch]._data[_channel[ch]._pos]);
+	byte note = _channel[ch]._data[_channel[ch]._pos + 2];
+	samples = durationToSamples(duration);
+	pitchModifier = noteToPitchModifier(note, &_channel[ch]._instrument);
 	velocity = _channel[ch]._data[_channel[ch]._pos + 3];
 	_channel[ch]._pos += 4;
+
+	if (_channel[ch]._pos >= _channel[ch]._length) {
+		samples = _lastNoteSamples[ch];
+	}
 	return true;
 }
 

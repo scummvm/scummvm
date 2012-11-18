@@ -156,7 +156,7 @@ bool Player_V3M::loadMusic(const byte *ptr) {
 	return true;
 }
 
-bool Player_V3M::getNextNote(int ch, uint16 &duration, byte &note, byte &velocity) {
+bool Player_V3M::getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity) {
 	_channel[ch]._instrument.newNote();
 	if (_channel[ch]._pos >= _channel[ch]._length) {
 		if (!_channel[ch]._looped) {
@@ -165,8 +165,10 @@ bool Player_V3M::getNextNote(int ch, uint16 &duration, byte &note, byte &velocit
 		}
 		_channel[ch]._pos = 0;
 	}
-	duration = READ_BE_UINT16(&_channel[ch]._data[_channel[ch]._pos]);
-	note = _channel[ch]._data[_channel[ch]._pos + 2];
+	uint16 duration = READ_BE_UINT16(&_channel[ch]._data[_channel[ch]._pos]);
+	byte note = _channel[ch]._data[_channel[ch]._pos + 2];
+	samples = durationToSamples(duration);
+	pitchModifier = noteToPitchModifier(note, &_channel[ch]._instrument);
 	velocity = 127;
 	_channel[ch]._pos += 3;
 	return true;
