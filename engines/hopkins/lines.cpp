@@ -1700,124 +1700,122 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 	int v8; 
 	int v9; 
 	int v10;
-	int v11; 
-	int v12; 
-	int v14; 
-	int v15; 
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
+	int v11;
+	int v12;
+	int v14;
+	int v15;
+	int v16;
+	int v17;
+	int v18;
+	int v19;
 	int v20;
-	int v21; 
+	int v21;
 	int v22;
-	int v23; 
-	int v24; 
-	int v25; 
+	int v23;
+	int v24;
+	int v25;
 	int v26;
-	int v27; 
-	int v28; 
-	int v29; 
+	int v27;
+	int v28;
+	int v29;
 	int v31;
-	int v32; 
-	int v33; 
 	int v34; 
-	int v35; 
+	int v35;
 	int v36;
 	int v37;
 	int v38;
 	int v39;
-	int v40; 
-	int v41; 
+	int v40;
+	int v41;
 	int v42;
-	int v43; 
-	int v44; 
-	int v45; 
+	int v43;
+	int v44;
+	int v45;
 	int v46;
 	int v47;
-	int v48; 
-	int v49; 
-	int v50; 
+	int v48;
+	int v49;
+	int v50;
 	int v51;
-	int v52; 
-	int v53; 
-	int v54; 
+	int v52;
+	int v53;
+	int v54;
 	int v55;
 	int v56;
-	int v57; 
+	int v57;
 	int v58;
-	int v59; 
+	int v59;
 	int v60;
-	int v61; 
-	int v62; 
+	int v61;
+	int v62;
 	int v63;
-	int v64; 
-	int v65; 
-	int v66; 
+	int v64;
+	int v65;
+	int v66;
 	int v67;
 	int v68;
 	int i;
-	int16 *v70; 
-	int v71; 
-	int v72; 
-	int j; 
+	int16 *v70;
+	int v71;
+	int v72;
+	int j;
 	int16 *v74;
 	int v75; 
-	int v76;
+	int v76; 
 	int v77; 
 	int v78; 
 	int v79; 
-	int v80;
-	int16 *v81; 
+	int v80; 
+	int16 *v81;
 	int v82; 
 	int v83; 
-	int16 *v84;
+	int16 *v84; 
 	int v85; 
-	int v86;
+	int v86; 
 	int v87; 
 	int v88; 
 	int v89; 
-	int v90; 
+	int v90;
 	int16 *v91; 
-	int v92; 
+	int v92;
 	int v93; 
 	int v94;
 	int16 *v95; 
-	int v96; 
-	int v97;
+	int v96;
+	int v97; 
 	int v98; 
 	int v99; 
 	int v100; 
-	int v101; 
-	int v102; 
-	int v103; 
+	int v101;
+	int v102;
+	int v103;
 	int v104;
-	int v105; 
-	int v106; 
-	int v107; 
+	int v105;
+	int v106;
+	int v107;
 	int v108;
-	int v109;
+	int v109; 
 	int v110; 
 	int v111; 
 	int v112; 
-	int v113; 
+	int v113;
 	int v114; 
 	int v115; 
-	int v116;
+	int v116; 
 	int v117; 
-	int v118 = 0; 
-	int v119 = 0; 
+	int v118; 
+	int v119; 
 	int v120; 
 	int v121; 
-	int v122;
+	int v122; 
 	int v123; 
 	int v124; 
-	int v125;
-	int v126[10];
-	int v131[10];
-	int v136[10];
-	int v141[10];
-	
+	int v125; 
+	int v126[9];
+	int v131[9];
+	int v136[9];
+	int v141[9];
+
 	v123 = destX;
 	v122 = destY;
 	v121 = 0;
@@ -1904,7 +1902,7 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 			v16 = 5;
 			do {
 				v101 = v16;
-				v17 = colision2_ligne(v123, v15, &v136[3], &v141[3], 0, _vm->_objectsManager.DERLIGNE);
+				v17 = colision2_ligne(v123, v15, &v136[5], &v141[5], 0, _vm->_objectsManager.DERLIGNE);
 				v16 = v101;
 				if (v17 == 1 && v141[v101] <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -1914,7 +1912,7 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 				++v15;
 			} while (_vm->_graphicsManager.max_y > v15);
 		}
-		v131[3] = v14;
+		v131[5] = v14;
 		v18 = 0;
 		v19 = v122;
 		if (_vm->_graphicsManager.min_y < v122) {
@@ -1927,8 +1925,8 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 					break;
 				v136[v102] = 0;
 				v141[v102] = -1;
-				if (v131[3] < v18) {
-					if (v141[3] != -1)
+				if (v131[5] < v18) {
+					if (v141[5] != -1)
 						break;
 				}
 				++v18;
@@ -1942,7 +1940,7 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 			v24 = 3;
 			do {
 				v103 = v24;
-				v25 = colision2_ligne(v23, v122, &v136[2], &v141[2], 0, _vm->_objectsManager.DERLIGNE);
+				v25 = colision2_ligne(v23, v122, &v136[3], &v141[3], 0, _vm->_objectsManager.DERLIGNE);
 				v24 = v103;
 				if (v25 == 1 && v141[v103] <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -1953,19 +1951,19 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 					if (v141[1] != -1)
 						break;
 				}
-				if (v131[3] < v22 && v141[3] != -1)
+				if (v131[5] < v22 && v141[5] != -1)
 					break;
 				++v23;
 			} while (_vm->_graphicsManager.max_x > v23);
 		}
-		v131[2] = v22;
+		v131[3] = v22;
 		v26 = 0;
 		v27 = v123;
 		if (_vm->_graphicsManager.min_x < v123) {
 			v28 = 7;
 			do {
 				v104 = v28;
-				v29 = colision2_ligne(v27, v122, &v136[4], &v141[4], 0, _vm->_objectsManager.DERLIGNE);
+				v29 = colision2_ligne(v27, v122, &v136[7], &v141[7], 0, _vm->_objectsManager.DERLIGNE);
 				v28 = v104;
 				if (v29 == 1 && v141[v104] <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -1976,61 +1974,59 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 					if (v141[1] != -1)
 						break;
 				}
-				if (v131[3] < v26 && v141[3] != -1)
+				if (v131[5] < v26 && v141[5] != -1)
 					break;
-				if (v131[2] < v26 && v141[2] != -1)
+				if (v131[3] < v26 && v141[3] != -1)
 					break;
 				--v27;
 			} while (_vm->_graphicsManager.min_x < v27);
 		}
-		v131[4] = v26;
+		v131[7] = v26;
 		if (v141[1] < 0 || _vm->_objectsManager.DERLIGNE < v141[1])
 			v141[1] = -1;
-		if (v141[2] < 0 || _vm->_objectsManager.DERLIGNE < v141[2])
-			v141[2] = -1;
 		if (v141[3] < 0 || _vm->_objectsManager.DERLIGNE < v141[3])
 			v141[3] = -1;
-		if (v141[4] < 0 || _vm->_objectsManager.DERLIGNE < v141[4])
-			v141[4] = -1;
+		if (v141[5] < 0 || _vm->_objectsManager.DERLIGNE < v141[5])
+			v141[5] = -1;
+		if (v141[7] < 0 || _vm->_objectsManager.DERLIGNE < v141[7])
+			v141[7] = -1;
 		if (v141[1] < 0)
 			v131[1] = 1300;
-		if (v141[2] < 0)
-			v131[2] = 1300;
 		if (v141[3] < 0)
 			v131[3] = 1300;
-		if (v141[4] < 0)
-			v131[4] = 1300;
-		if (v141[1] == -1 && v141[2] == -1 && v141[3] == -1 && v141[4] == -1)
+		if (v141[5] < 0)
+			v131[5] = 1300;
+		if (v141[7] < 0)
+			v131[7] = 1300;
+		if (v141[1] == -1 && v141[3] == -1 && v141[5] == -1 && v141[7] == -1)
 			return (int16 *)g_PTRNUL;
 		v31 = 0;
-		if (v141[3] != -1 && v131[1] >= v131[3] && v131[2] >= v131[3] && v131[4] >= v131[3]) {
-			v121 = v141[3];
-			v120 = v136[3];
+		if (v141[5] != -1 && v131[1] >= v131[5] && v131[3] >= v131[5] && v131[7] >= v131[5]) {
+			v121 = v141[5];
+			v120 = v136[5];
 			v31 = 1;
 		}
-		if (v141[1] != -1 && !v31 && v131[3] >= v131[1] && v131[2] >= v131[1] && v131[4] >= v131[1]) {
+		if (v141[1] != -1 && !v31 && v131[5] >= v131[1] && v131[3] >= v131[1] && v131[7] >= v131[1]) {
 			v121 = v141[1];
 			v120 = v136[1];
 			v31 = 1;
 		}
-		if (v141[2] != -1 && !v31 && v131[1] >= v131[2] && v131[3] >= v131[2] && v131[4] >= v131[2]) {
-			v121 = v141[2];
-			v120 = v136[2];
+		if (v141[3] != -1 && !v31 && v131[1] >= v131[3] && v131[5] >= v131[3] && v131[7] >= v131[3]) {
+			v121 = v141[3];
+			v120 = v136[3];
 			v31 = 1;
 		}
-		if (v141[4] != -1 && !v31 && v131[3] >= v131[4] && v131[2] >= v131[4] && v131[1] >= v131[4]) {
-			v121 = v141[4];
-			v120 = v136[4];
+		if (v141[7] != -1 && !v31 && v131[5] >= v131[7] && v131[3] >= v131[7] && v131[1] >= v131[7]) {
+			v121 = v141[7];
+			v120 = v136[7];
 		}
-		v32 = 0;
-		do {
-			v33 = v32;
-			v141[v33] = -1;
-			v136[v33] = 0;
-			v131[v33] = 1300;
-			v126[v33] = 1300;
-			++v32;
-		} while (v32 <= 8);
+		
+		for (v12 = 0; v12 <= 8; ++v12) {
+			v141[v12] = -1;
+			v136[v12] = 0;
+			v131[v12] = 1300;
+			v126[v12] = 1300;
+		} 
 
 		v34 = 0;
 		v35 = a2;
@@ -2038,7 +2034,7 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 			v36 = 5;
 			do {
 				v105 = v36;
-				v37 = colision2_ligne(a1, v35, &v136[3], &v141[3], 0, _vm->_objectsManager.DERLIGNE);
+				v37 = colision2_ligne(a1, v35, &v136[5], &v141[5], 0, _vm->_objectsManager.DERLIGNE);
 				v36 = v105;
 				if (v37 == 1 && v141[v105] <= _vm->_objectsManager.DERLIGNE)
 					break;
@@ -2048,7 +2044,7 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 				++v35;
 			} while (_vm->_graphicsManager.max_y > v35);
 		}
-		v131[3] = v34 + 1;
+		v131[5] = v34 + 1;
 		v38 = 0;
 		v39 = a2;
 		if (_vm->_graphicsManager.min_y < a2) {
@@ -2062,7 +2058,7 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 				v136[v106] = 0;
 				v141[v106] = -1;
 				++v38;
-				if (v141[3] != -1) {
+				if (v141[5] != -1) {
 					if (v38 > 80)
 						break;
 				}
@@ -2076,70 +2072,70 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 			v44 = 3;
 			do {
 				v107 = v44;
-				v45 = colision2_ligne(v43, a2, &v136[2], &v141[2], 0, _vm->_objectsManager.DERLIGNE);
+				v45 = colision2_ligne(v43, a2, &v136[3], &v141[3], 0, _vm->_objectsManager.DERLIGNE);
 				v44 = v107;
 				if (v45 == 1 && v141[v107] <= _vm->_objectsManager.DERLIGNE)
 					break;
 				v136[v107] = 0;
 				v141[v107] = -1;
 				++v42;
-				if (v141[3] != -1 || v141[1] != -1) {
+				if (v141[5] != -1 || v141[1] != -1) {
 					if (v42 > 100)
 						break;
 				}
 				++v43;
 			} while (_vm->_graphicsManager.max_x > v43);
 		}
-		v131[2] = v42 + 1;
+		v131[3] = v42 + 1;
 		v46 = 0;
 		v47 = a1;
 		if (_vm->_graphicsManager.min_x < a1) {
 			v48 = 7;
 			do {
 				v108 = v48;
-				v49 = colision2_ligne(v47, a2, &v136[4], &v141[4], 0, _vm->_objectsManager.DERLIGNE);
+				v49 = colision2_ligne(v47, a2, &v136[7], &v141[7], 0, _vm->_objectsManager.DERLIGNE);
 				v48 = v108;
 				if (v49 == 1 && v141[v108] <= _vm->_objectsManager.DERLIGNE)
 					break;
 				v136[v108] = 0;
 				v141[v108] = -1;
 				++v46;
-				if (v141[3] != -1 || v141[1] != -1 || v141[2] != -1) {
+				if (v141[5] != -1 || v141[1] != -1 || v141[3] != -1) {
 					if (v46 > 100)
 						break;
 				}
 				--v47;
 			} while (_vm->_graphicsManager.min_x < v47);
 		}
-		v131[4] = v46 + 1;
+		v131[7] = v46 + 1;
 		if (v141[1] != -1) {
 			v50 = v141[1] - v121;
 			if (v50 < 0)
 				v50 = -v50;
 			v126[1] = v50;
 		}
-		if (v141[2] != -1) {
-			v51 = v141[2] - v121;
+		if (v141[3] != -1) {
+			v51 = v141[3] - v121;
 			if (v51 < 0)
 				v51 = -v51;
-			v126[2] = v51;
+			v126[3] = v51;
 		}
-		if (v141[3] != -1) {
-			v52 = v141[3] - v121;
+		if (v141[5] != -1) {
+			v52 = v141[5] - v121;
 			if (v52 < 0)
 				v52 = -v52;
-			v126[3] = v52;
+			v126[5] = v52;
 		}
-		if (v141[4] != -1) {
-			v53 = v141[4] - v121;
+		if (v141[7] != -1) {
+			v53 = v141[7] - v121;
 			if (v53 < 0)
 				v53 = -v53;
-			v126[4] = v53;
+			v126[7] = v53;
 		}
-		if (v141[1] == -1 && v141[2] == -1 && v141[3] == -1 && v141[4] == -1)
-			error("ERREUR POINT PLUS PROCHE Du perso NON TROUVE");
+		if (v141[1] == -1 && v141[3] == -1 && v141[5] == -1 && v141[7] == -1)
+			error("Nearest point not found error");
 		v54 = 0;
-		if (v141[1] != -1 && v126[2] >= v126[1] && v126[3] >= v126[1] && v126[4] >= v126[1]) {
+		if (v141[1] != -1 && v126[3] >= v126[1] && v126[5] >= v126[1] && v126[7] >= v126[1]) {
 			v54 = 1;
 			v115 = v141[1];
 			v111 = v131[1];
@@ -2147,26 +2143,26 @@ int16 *LinesManager::PARCOURS2(int a1, int a2, int destX, int destY) {
 			v114 = v136[1];
 		}
 		if (!v54) {
-			if (v141[3] != -1 && v126[2] >= v126[3] && v126[1] >= v126[3] && v126[4] >= v126[3]) {
+			if (v141[5] != -1 && v126[3] >= v126[5] && v126[1] >= v126[5] && v126[7] >= v126[5]) {
 				v54 = 1;
-				v115 = v141[3];
-				v111 = v131[3];
+				v115 = v141[5];
+				v111 = v131[5];
 				v113 = 5;
-				v114 = v136[3];
+				v114 = v136[5];
 			}
 			if (!v54) {
-				if (v141[2] != -1 && v126[1] >= v126[2] && v126[3] >= v126[2] && v126[4] >= v126[2]) {
+				if (v141[3] != -1 && v126[1] >= v126[3] && v126[5] >= v126[3] && v126[7] >= v126[3]) {
 					v54 = 1;
-					v115 = v141[2];
-					v111 = v131[2];
+					v115 = v141[3];
+					v111 = v131[3];
 					v113 = 3;
-					v114 = v136[2];
+					v114 = v136[3];
 				}
-				if (!v54 && v141[4] != -1 && v126[1] >= v126[4] && v126[3] >= v126[4] && v126[2] >= v126[4]) {
-					v115 = v141[4];
-					v111 = v131[4];
+				if (!v54 && v141[7] != -1 && v126[1] >= v126[7] && v126[5] >= v126[7] && v126[3] >= v126[7]) {
+					v115 = v141[7];
+					v111 = v131[7];
 					v113 = 7;
-					v114 = v136[4];
+					v114 = v136[7];
 				}
 			}
 		}
@@ -2182,7 +2178,7 @@ LABEL_201:
 					v56 = 0;
 					if (v111 > 0) {
 						do {
-							if ((uint16)colision2_ligne(a1, a2 - v56, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if (colision2_ligne(a1, a2 - v56, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v58 = GENIAL(v124, v125, a1, a2 - v56, a1, a2 - v111, v112, &_vm->_globals.super_parcours[0], 4);
@@ -2206,7 +2202,7 @@ LABEL_201:
 					v60 = 0;
 					if (v111 > 0) {
 						do {
-							if ((uint16)colision2_ligne(a1, v60 + a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if (colision2_ligne(a1, v60 + a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v61 = GENIAL(v124, v125, a1, v60 + a2, a1, v111 + a2, v112, &_vm->_globals.super_parcours[0], 4);
@@ -2230,7 +2226,7 @@ LABEL_201:
 					v63 = 0;
 					if (v111 > 0) {
 						do {
-							if ((uint16)colision2_ligne(a1 - v63, a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if (colision2_ligne(a1 - v63, a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v64 = GENIAL(v124, v125, a1 - v63, a2, a1 - v111, a2, v112, &_vm->_globals.super_parcours[0], 4);
@@ -2254,7 +2250,7 @@ LABEL_201:
 					v66 = 0;
 					if (v111 > 0) {
 						do {
-							if ((uint16)colision2_ligne(v66 + a1, a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
+							if (colision2_ligne(v66 + a1, a2, &v125, &v124, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES) == 1
 							        && _vm->_objectsManager.DERLIGNE < v124) {
 								v57 = v112;
 								v67 = GENIAL(v124, v125, v66 + a1, a2, v111 + a1, a2, v112, &_vm->_globals.super_parcours[0], 4);
