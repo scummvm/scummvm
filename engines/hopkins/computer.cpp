@@ -904,13 +904,8 @@ int ComputerManager::HIGHT_SCORE() {
 }
 
 void ComputerManager::NAME_SCORE() {
-	int v0; 
-	char v1; 
-	int v2; 
-	int v3; 
-	int i; 
+	char curChar; 
 	byte *ptr; 
-	char s[16]; 
 
 	_vm->_graphicsManager.LOAD_IMAGEVGA("NAME.PCX");
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -920,19 +915,18 @@ void ComputerManager::NAME_SCORE() {
 	_vm->_fileManager.CONSTRUIT_SYSTEM("ALPHA.SPR");
 	ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.FADE_IN_CASSE();
-	v0 = 0;
+	int strPos = 0;
 	do {
-		PRINT_HSCORE(ptr, 9 * v0 + 140, 78, 1);
+		PRINT_HSCORE(ptr, 9 * strPos + 140, 78, 1);
 
-		v1 = toupper(_vm->_eventsManager.keywin());
-		if (v1 <= 47)
-			v1 = 32;
-		if (v1 > 90)
-			v1 = 32;
-		if ((uint16)(v1 - 58) <= 6u)
-			v1 = 32;
-		Score[5].name.setChar(v0, v1);
-		PRINT_HSCORE(ptr, 9 * v0 + 140, 78, v1);
+		curChar = toupper(_vm->_eventsManager.keywin());
+		if ((curChar <= '/') || (curChar > 'Z'))
+			curChar = ' ';
+		if ((uint16)(curChar - 58) <= 6u)
+			curChar = ' ';
+
+		Score[5].name.setChar(curChar, strPos);
+		PRINT_HSCORE(ptr, 9 * strPos + 140, 78, curChar);
 
 		_vm->_eventsManager.VBL();
 		_vm->_eventsManager.VBL();
@@ -946,17 +940,18 @@ void ComputerManager::NAME_SCORE() {
 		_vm->_eventsManager.VBL();
 		_vm->_eventsManager.VBL();
 		_vm->_eventsManager.VBL();
-		++v0;
-	} while (v0 <= 4);
+		++strPos;
+	} while (strPos <= 4);
 	Score[5].score = "         ";
 
-	sprintf(s, "%d", CASSESCORE);
-	v2 = 0;
+	char score[16]; 
+	sprintf(score, "%d", CASSESCORE);
+	int scoreLen = 0;
 	do
-		++v2;
-	while (s[v2]);
-	v3 = 8;
-	for (i = v2; ; Score[5].score.setChar(v3--, s[i])) {
+		++scoreLen;
+	while (score[scoreLen]);
+	int scorePos = 8;
+	for (int i = scoreLen; ; Score[5].score.setChar(score[i], scorePos--)) {
 		--i;
 		if (i <= -1)
 			break;
