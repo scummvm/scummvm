@@ -168,8 +168,13 @@ bool Player_V3M::getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &
 	uint16 duration = READ_BE_UINT16(&_channel[ch]._data[_channel[ch]._pos]);
 	byte note = _channel[ch]._data[_channel[ch]._pos + 2];
 	samples = durationToSamples(duration);
-	pitchModifier = noteToPitchModifier(note, &_channel[ch]._instrument);
-	velocity = 127;
+	if (note > 0) {
+		pitchModifier = noteToPitchModifier(note, &_channel[ch]._instrument);
+		velocity = 127;
+	} else {
+		pitchModifier = 0;
+		velocity = 0;
+	}
 	_channel[ch]._pos += 3;
 	return true;
 }

@@ -186,8 +186,15 @@ bool Player_V5M::getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &
 	uint16 duration = READ_BE_UINT16(&_channel[ch]._data[_channel[ch]._pos]);
 	byte note = _channel[ch]._data[_channel[ch]._pos + 2];
 	samples = durationToSamples(duration);
-	pitchModifier = noteToPitchModifier(note, &_channel[ch]._instrument);
-	velocity = _channel[ch]._data[_channel[ch]._pos + 3];
+
+	if (note > 1) {
+		pitchModifier = noteToPitchModifier(note, &_channel[ch]._instrument);
+		velocity = _channel[ch]._data[_channel[ch]._pos + 3];
+	} else {
+		pitchModifier = 0;
+		velocity = 0;
+	}
+
 	_channel[ch]._pos += 4;
 
 	if (_channel[ch]._pos >= _channel[ch]._length) {
