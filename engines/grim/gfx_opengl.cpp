@@ -805,6 +805,42 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 }
 
 void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy) {
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-1, 1, -1, 1, 0, 1);
+
+		glDisable(GL_LIGHTING);
+		glEnable(GL_TEXTURE_2D);
+
+		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+
+		BitmapData *data = bitmap->_data;
+		GLuint *textures = (GLuint *)bitmap->getTexIds();
+		float *texc = data->_texc;
+		uint32 offset = data->_offsets[data->_curOffset]._offset;
+		for (uint32 i = offset; i < offset + data->_offsets[data->_curOffset]._numImages; ++i) {
+			glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
+			glBegin(GL_QUADS);
+			uint32 ntex = data->_verts[i]._pos * 4;
+			for (uint32 x = 0; x < data->_verts[i]._verts; ++x) {
+				glTexCoord2f(texc[ntex + 2], texc[ntex + 3]);
+				glVertex2f(texc[ntex + 0], texc[ntex + 1]);
+				ntex += 4;
+			}
+			glEnd();
+		}
+
+		glDisable(GL_TEXTURE_2D);
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+
+		return;
+	}
+
 	int format = bitmap->getFormat();
 	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
 		return;

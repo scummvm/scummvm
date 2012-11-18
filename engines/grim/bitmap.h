@@ -102,6 +102,24 @@ public:
 
 	int _refCount;
 
+	float *_texc;
+
+	struct Vert {
+		uint32 _texid;
+		uint32 _pos;
+		uint32 _verts;
+	};
+	struct Offset {
+		uint32 _offset;
+		uint32 _numImages;
+	};
+	Vert *_verts;
+	Offset *_offsets;
+	uint32 _numCoords;
+	uint32 _numVerts;
+	uint32 _numOffsets;
+	uint32 _curOffset;
+
 // private:
 	Graphics::PixelBuffer *_data;
 };
@@ -153,7 +171,7 @@ public:
 
 	virtual ~Bitmap();
 
-private:
+//private:
 	void freeData();
 
 	BitmapData *_data;
