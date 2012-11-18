@@ -223,7 +223,7 @@ const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *st
 			// Prediction Motion Vector
 			Common::Point *pmv = new Common::Point[(width / 8) + 3];
 
-			byte *previous;
+			byte *previous = 0;
 			if (frameType == 2) { // B Frame
 				warning("B Frame not supported currently");
 				//previous = _next[i];
