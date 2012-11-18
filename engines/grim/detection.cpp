@@ -424,7 +424,6 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 class GrimMetaEngine : public AdvancedMetaEngine {
 public:
 	GrimMetaEngine() : AdvancedMetaEngine(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames, gameGuiOptions) {
-		_singleid = "grim";
 		_guioptions = GUIO_NOMIDI;
 	}
 
