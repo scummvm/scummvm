@@ -372,7 +372,7 @@ void Player_Mac::Instrument::generateSamples(int16 *data, int pitchModifier, int
 			}
 		}
 
-		int newSample = ((_data[_pos] - 129) * 128 * volume) / 255;
+		int newSample = (((int16)((_data[_pos] << 8) ^ 0x8000)) * volume) / 255;
 
 		// Fade out the last 100 samples on each note. Even at low
 		// output sample rates this is just a fraction of a second,
