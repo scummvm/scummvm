@@ -818,7 +818,8 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 	case kMenuCmdDeathQuitDemo:
 		if (isDemo())
 			showTempScreen("Images/Demo/NGquitScrn.pict");
-		_system->quit();
+		_gfx->doFadeOutSync();
+		quitGame();
 		break;
 	case kMenuCmdOverview:
 		stopIntroTimer();
