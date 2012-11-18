@@ -192,16 +192,19 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 }
 
 void EMICostume::draw() {
+	bool drewMesh = false;
 	for (Common::List<Chore*>::iterator it = _playingChores.begin(); it != _playingChores.end(); ++it) {
 		Chore *c = (*it);
 		for (int i = 0; i < c->_numTracks; ++i) {
 			if (c->_tracks[i].component) {
 				c->_tracks[i].component->draw();
+				if (c->_tracks[i].component->isComponentType('m','e','s','h'))
+					drewMesh = true;
 			}
 		}
 	}
 
-	if (_emiMesh) {
+	if (_emiMesh && !drewMesh) {
 		_emiMesh->draw();
 	}
 }
