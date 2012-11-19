@@ -43,11 +43,6 @@ Player_Mac::Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChan
 }
 
 void Player_Mac::init() {
-	if (!checkMusicAvailable()) {
-		_channel = NULL;
-		return;
-	}
-
 	_channel = new Player_Mac::Channel[_numberOfChannels];
 
 	int i;
@@ -88,6 +83,10 @@ void Player_Mac::init() {
 	}
 
 	setMusicVolume(255);
+
+	if (!checkMusicAvailable()) {
+		return;
+	}
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
