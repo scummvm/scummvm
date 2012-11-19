@@ -173,7 +173,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 		if (1 == choicesLeft) {
 			// Automatically run the final dialogue option
-			speak(_talkString[0], &person, otherVoiceFilePrefix)
+			speak(_talkString[0], &person, otherVoiceFilePrefix);
 
 			if (_vm->input()->talkQuit())
 				break;
@@ -249,7 +249,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			findDialogueString(_person1PtrOff, head, _pMax, _talkString[0]);
 			if (_talkString[0][0] != '\0') {
 				sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
-				speak(_talkString[0], &person, otherVoiceFilePrefix)
+				speak(_talkString[0], &person, otherVoiceFilePrefix);
 			}
 		}
 	}
