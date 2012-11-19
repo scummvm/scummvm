@@ -105,12 +105,29 @@ Player_V3M::Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer)
 	// not sure if stream 4 is ever used, but let's use it just in case.
 }
 
+// \xAA is a trademark glyph in Mac OS Roman. We try that, but also the Windows
+// version, the UTF-8 version, and just plain without in case the file system
+// can't handle exotic characters like that.
+
+static const char *loomFileNames[] = {
+	"Loom\xAA",
+	"Loom\x99",
+	"Loom\xE2\x84\xA2",
+	"Loom"
+};
+
 bool Player_V3M::checkMusicAvailable() {
 	Common::MacResManager resource;
-	// \xAA is a trademark glyph in Mac OS Roman. We try that, but also the
-	// UTF-8 version, and just plain without in case the file system can't
-	// handle exotic characters like that.
-	if (!resource.exists("Loom\xAA") && !resource.exists("Loom\xE2\x84\xA2") && !resource.exists("Loom")) {
+	bool found = false;
+
+	for (int i = 0; i < ARRAYSIZE(loomFileNames); i++) {
+		if (resource.exists(loomFileNames[i])) {
+			found = true;
+			break;
+		}
+	}
+		
+	if (!found) {
 		GUI::MessageDialog dialog(_(
 			"Could not find the 'Loom' Macintosh executable to read the\n"
 			"instruments from. Music will be disabled."), _("OK"));
@@ -123,7 +140,16 @@ bool Player_V3M::checkMusicAvailable() {
 
 bool Player_V3M::loadMusic(const byte *ptr) {
 	Common::MacResManager resource;
-	if (!resource.open("Loom\xAA") && !resource.open("Loom\xE2\x84\xA2") && !resource.open("Loom")) {
+	bool found = false;
+
+	for (int i = 0; i < ARRAYSIZE(loomFileNames); i++) {
+		if (resource.open(loomFileNames[i])) {
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
 		return false;
 	}
 
