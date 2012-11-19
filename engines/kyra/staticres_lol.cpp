@@ -222,7 +222,7 @@ void LoLEngine::initStaticResource() {
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		static const char *const fileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
 		static const char *const fileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
-		SoundResourceInfo_TownsPC98V2 resInfoIntro(fileListIntro, ARRAYSIZE(fileListIntro), 0, 0, 0);		
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(fileListIntro, ARRAYSIZE(fileListIntro), 0, 0, 0);
 		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "lore%02d.86", 0, 0);
 		SoundResourceInfo_TownsPC98V2 resInfoFinale(fileListFinale, ARRAYSIZE(fileListFinale), 0, 0, 0);
 		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
