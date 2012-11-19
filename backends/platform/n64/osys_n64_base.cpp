@@ -575,19 +575,20 @@ void OSystem_N64::updateScreen() {
 			horiz_pix_skip = skip_pixels;
 		}
 
-		int mX = _mouseX - _mouseHotspotX;
-		int mY = _mouseY - _mouseHotspotY;
-
-		for (uint h = 0; h < _cursorHeight; h++)
+		for (uint h = 0; h < _cursorHeight; h++) {
 			for (uint w = 0; w < _cursorWidth; w++) {
+				int posX = (_mouseX - _mouseHotspotX) + w;
+				int posY = (_mouseY - _mouseHotspotY) + h;
+
 				// Draw pixel
-				if (((mY + h) >= 0) && ((mY + h) < _mouseMaxY) && ((mX + w) >= 0) && ((mX + w) < _mouseMaxX)) {
+				if ((posY >= 0) && (posY < _mouseMaxY) && (posX >= 0) && (posX < _mouseMaxX)) {
 					uint16 cursor_pixel_hic = _cursor_hic[(h * _cursorWidth) + w];
 
 					if (!(cursor_pixel_hic & 0x00001))
-						mouse_framebuffer[((mY + h) * _frameBufferWidth) + ((mX + w) + _offscrPixels + horiz_pix_skip)] = cursor_pixel_hic;
+						mouse_framebuffer[(posY * _frameBufferWidth) + (posX + _offscrPixels + horiz_pix_skip)] = cursor_pixel_hic;
 				}
 			}
+		}
 	}
 
 #ifndef _ENABLE_DEBUG_
