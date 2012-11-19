@@ -86,11 +86,21 @@ Player_V5M::Player_V5M(ScummEngine *scumm, Audio::Mixer *mixer)
 	assert(_vm->_game.id == GID_MONKEY);
 }
 
+// Try both with and without underscore in the filename, because hfsutils may
+// turn the space into an underscore. At least, it did for me.
+
+static const char *monkeyIslandFileNames[] = {
+	"Monkey Island",
+	"Monkey_Island"
+};
+
 bool Player_V5M::checkMusicAvailable() {
 	Common::MacResManager resource;
 
-	if (resource.exists("Monkey Island")) {
-		return true;
+	for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
+		if (resource.exists(monkeyIslandFileNames[i])) {
+			return true;
+		}
 	}
 
 	GUI::MessageDialog dialog(_(
@@ -102,11 +112,19 @@ bool Player_V5M::checkMusicAvailable() {
 
 bool Player_V5M::loadMusic(const byte *ptr) {
 	Common::MacResManager resource;
-	if (!resource.open("Monkey Island")) {
-		return false;
+	bool found = false;
+	uint i;
+
+	for (i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
+		if (resource.open(monkeyIslandFileNames[i])) {
+			found = true;
+			break;
+		}
 	}
 
-	uint i;
+	if (!found) {
+		return false;
+	}
 
 	ptr += 8;
 	// TODO: Decipher the unknown bytes in the header. For now, skip 'em
