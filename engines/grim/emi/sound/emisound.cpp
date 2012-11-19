@@ -167,6 +167,9 @@ uint32 EMISound::getMsPos(int stateId) {
 	
 MusicEntry *initMusicTableDemo(Common::String filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
+
+	if (!data)
+		error("Couldn't open %s", filename.c_str());
 	// FIXME, for now we use a fixed-size table, as I haven't looked at the retail-data yet.
 	MusicEntry *musicTable = new MusicEntry[15];
 	for (unsigned int i = 0; i < 15; i++)
@@ -193,6 +196,7 @@ MusicEntry *initMusicTableDemo(Common::String filename) {
 		ts->nextLine();
 	}
 	delete ts;
+	delete data;
 	return musicTable;
 }
 
@@ -232,6 +236,7 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 		ts->nextLine();
 	}
 	delete ts;
+	delete data;
 	return musicTable;
 }
 
