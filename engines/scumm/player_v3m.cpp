@@ -118,24 +118,18 @@ static const char *loomFileNames[] = {
 
 bool Player_V3M::checkMusicAvailable() {
 	Common::MacResManager resource;
-	bool found = false;
 
 	for (int i = 0; i < ARRAYSIZE(loomFileNames); i++) {
 		if (resource.exists(loomFileNames[i])) {
-			found = true;
-			break;
+			return true;
 		}
 	}
 		
-	if (!found) {
-		GUI::MessageDialog dialog(_(
-			"Could not find the 'Loom' Macintosh executable to read the\n"
-			"instruments from. Music will be disabled."), _("OK"));
-		dialog.runModal();
-		return false;
-	}
-
-	return true;
+	GUI::MessageDialog dialog(_(
+		"Could not find the 'Loom' Macintosh executable to read the\n"
+		"instruments from. Music will be disabled."), _("OK"));
+	dialog.runModal();
+	return false;
 }
 
 bool Player_V3M::loadMusic(const byte *ptr) {

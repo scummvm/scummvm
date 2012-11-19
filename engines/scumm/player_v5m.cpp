@@ -88,15 +88,16 @@ Player_V5M::Player_V5M(ScummEngine *scumm, Audio::Mixer *mixer)
 
 bool Player_V5M::checkMusicAvailable() {
 	Common::MacResManager resource;
-	if (!resource.exists("Monkey Island")) {
-		GUI::MessageDialog dialog(_(
-			"Could not find the 'Monkey Island' Macintosh executable to read the\n"
-			"instruments from. Music will be disabled."), _("OK"));
-		dialog.runModal();
-		return false;
+
+	if (resource.exists("Monkey Island")) {
+		return true;
 	}
 
-	return true;
+	GUI::MessageDialog dialog(_(
+		"Could not find the 'Monkey Island' Macintosh executable to read the\n"
+		"instruments from. Music will be disabled."), _("OK"));
+	dialog.runModal();
+	return false;
 }
 
 bool Player_V5M::loadMusic(const byte *ptr) {
