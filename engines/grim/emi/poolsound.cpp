@@ -42,7 +42,7 @@ namespace Grim {
 
 	void PoolSound::openFile(const Common::String &filename) {
 		track = new AIFFTrack(Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
-		Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
+		Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
 		if (!stream)
 			return;
 		track->openSound(filename, stream);

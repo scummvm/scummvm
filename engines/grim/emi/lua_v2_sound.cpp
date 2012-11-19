@@ -288,7 +288,7 @@ void Lua_V2::PlaySound() {
 		}
 	}
 
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
+	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
 	if (!stream) {
 		warning("Lua_V2::PlaySound: Could not find sound '%s'", filename.c_str());
 		return;
