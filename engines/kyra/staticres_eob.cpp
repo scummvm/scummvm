@@ -465,13 +465,13 @@ void EoBCoreEngine::initStaticResource() {
 	// EOB I doesn't have load and save menus, because there is only one single
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 
-	static const char *saveLoadStrings[3][4] = {
+	static const char *const saveLoadStrings[3][4] = {
 		{   "Cancel",   "Empty Slot",   "Save Game",    "Load Game"     },
 		{   "Abbr.",    "Leerer Slot",  "Speichern",    "  Laden"       },
 		{   0,          0,              0,              0               }
 	};
 
-	static const char *errorSlotEmptyString[3] = {
+	static const char *const errorSlotEmptyString[3] = {
 		"There is no game\rsaved in that slot!",
 		"Hier ist noch kein\rSpiel gespeichert!",
 		0
@@ -1096,7 +1096,7 @@ void EoBEngine::initStaticResource() {
 		p->dmgModifierEvade = *ps++;
 	}
 
-	static const char *errorSlotNoNameString[3] = {
+	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielstaende mues-\r sen einen Namen\r haben!",
 		0
@@ -1249,7 +1249,7 @@ void DarkMoonEngine::initStaticResource() {
 	_wallOfForceDsNumH = _staticres->loadRawData(kEoB2WallOfForceNumH, temp);
 	_wallOfForceShpId = _staticres->loadRawData(kEoB2WallOfForceShpId, temp);
 
-	static const char *errorSlotNoNameString[3] = {
+	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielst[nde m]ssen\r einen Namen haben!",
 		0
@@ -1258,7 +1258,7 @@ void DarkMoonEngine::initStaticResource() {
 	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 
 	// ScummVM specific
-	static const char *transferStringsScummVM[3][5] = {
+	static const char *const transferStringsScummVM[3][5] = {
 		{
 			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
 			"Game ID",
@@ -1300,7 +1300,7 @@ void DarkMoonEngine::initSpells() {
 	}
 }
 
-const char *DarkMoonEngine::_palFilesIntroVGA[] = {
+const char *const DarkMoonEngine::_palFilesIntroVGA[] = {
 	"PALETTE1.PAL",
 	"PALETTE3.PAL",
 	"PALETTE2.PAL",
@@ -1308,7 +1308,7 @@ const char *DarkMoonEngine::_palFilesIntroVGA[] = {
 	0
 };
 
-const char *DarkMoonEngine::_palFilesIntroEGA[] = {
+const char *const DarkMoonEngine::_palFilesIntroEGA[] = {
 	"PALETTE0.PAL",
 	"PALETTE3.PAL",
 	"PALETTE2.PAL",
@@ -1316,7 +1316,7 @@ const char *DarkMoonEngine::_palFilesIntroEGA[] = {
 	0
 };
 
-const char *DarkMoonEngine::_palFilesFinaleVGA[] = {
+const char *const DarkMoonEngine::_palFilesFinaleVGA[] = {
 	"FINALE_0.PAL",
 	"FINALE_0.PAL",
 	"FINALE_1.PAL",
@@ -1329,7 +1329,7 @@ const char *DarkMoonEngine::_palFilesFinaleVGA[] = {
 	0
 };
 
-const char *DarkMoonEngine::_palFilesFinaleEGA[] = {
+const char *const DarkMoonEngine::_palFilesFinaleEGA[] = {
 	"FINALE_0.PAL",
 	"FINALE_0.PAL",
 	"FINALE_1.PAL",

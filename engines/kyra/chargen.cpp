@@ -1206,7 +1206,7 @@ void CharacterGenerator::finish() {
 		static const int8 itemList1[] = { 1, 2, 0, 17, -1, 0, 0 };
 		static const int8 itemList2[] = { 2, 56, 1, 17, 31, 0, 1, 23, 1, 17, 31, 0, 1 };
 		static const int8 itemList3[] = { 2, 1, 1, 17, 31, 1, 1, 1, 0, 17, 31, 2, 1 };
-		static const int8 *itemList[] = { itemList0, itemList1, itemList2, itemList3 };
+		static const int8 *const itemList[] = { itemList0, itemList1, itemList2, itemList3 };
 
 		for (int i = 0; i < 4; i++) {
 			EoBCharacter *c = &_characters[i];

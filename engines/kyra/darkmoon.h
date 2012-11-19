@@ -83,10 +83,10 @@ private:
 	const DarkMoonAnimCommand **_animFinale;
 	const DarkMoonShapeDef **_shapesFinale;
 
-	static const char *_palFilesIntroVGA[];
-	static const char *_palFilesIntroEGA[];
-	static const char *_palFilesFinaleVGA[];
-	static const char *_palFilesFinaleEGA[];
+	static const char *const _palFilesIntroVGA[];
+	static const char *const _palFilesIntroEGA[];
+	static const char *const _palFilesFinaleVGA[];
+	static const char *const _palFilesFinaleEGA[];
 
 	// Ingame sequence
 	void seq_nightmare();

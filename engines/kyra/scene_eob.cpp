@@ -100,7 +100,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 void EoBCoreEngine::readLevelFileData(int level) {
 	Common::String file;
 	Common::SeekableReadStream *s = 0;
-	static const char *suffix[] = { "INF", "DRO", "ELO", 0 };
+	static const char *const suffix[] = { "INF", "DRO", "ELO", 0 };
 
 	for (const char *const *sf = suffix; *sf && !s; sf++) {
 		file = Common::String::format("LEVEL%d.%s", level, *sf);

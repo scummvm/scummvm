@@ -572,8 +572,8 @@ void SeqPlayer_HOF::setupCallbacks() {
 #endif
 	static const SeqProc nestedSeqCallbacksLoLDemo[] = { 0 };
 
-	static const SeqProc *seqCallbacks[] = { seqCallbacksHoF, seqCallbacksHoFDemo, seqCallbacksLoLDemo};
-	static const SeqProc *nestedSeqCallbacks[] = { nestedSeqCallbacksHoF, nestedSeqCallbacksHoFDemo, nestedSeqCallbacksLoLDemo};
+	static const SeqProc *const seqCallbacks[] = { seqCallbacksHoF, seqCallbacksHoFDemo, seqCallbacksLoLDemo};
+	static const SeqProc *const nestedSeqCallbacks[] = { nestedSeqCallbacksHoF, nestedSeqCallbacksHoFDemo, nestedSeqCallbacksLoLDemo};
 
 	int tmpSize = 0;
 	delete _config;
