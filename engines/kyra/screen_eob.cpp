@@ -255,7 +255,7 @@ void Screen_EoB::convertPage(int srcPage, int dstPage, const uint8 *cgaMapping) 
 		if (cgaMapping)
 			generateCGADitheringTables(cgaMapping);
 
-		uint16 *d = (uint16*)dst;
+		uint16 *d = (uint16 *)dst;
 		uint8 tblSwitch = 0;
 		for (int height = SCREEN_H; height; height--) {
 			const uint16 *table = _cgaDitheringTables[(tblSwitch++) & 1];
@@ -787,7 +787,7 @@ const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 	uint8 *dst = (shp != _dsTempPage) ? _dsTempPage : _dsTempPage + 6000;
 	uint8 *d = dst;
 	uint8 pixelsPerByte = *d++ = *shp++;
-	assert (pixelsPerByte > 1);
+	assert(pixelsPerByte > 1);
 
 	uint16 h = shp[0] + 1;
 	d[0] = d[2] = (h << 1) / 3;
@@ -841,7 +841,7 @@ const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 		shp += w2;
 	}
 
-	return (const uint8*)dst;
+	return (const uint8 *)dst;
 }
 
 const uint8 *Screen_EoB::generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex) {

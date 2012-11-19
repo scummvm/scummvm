@@ -99,7 +99,7 @@ private:
 	void turnUndeadAuto();
 	void turnUndeadAutoHit();
 
-	const char * const *_turnUndeadString;
+	const char *const *_turnUndeadString;
 
 	// Misc
 	bool checkPartyStatusExtra();
@@ -113,8 +113,7 @@ private:
 	static const uint8 _egaDefaultPalette[];
 };
 
-
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

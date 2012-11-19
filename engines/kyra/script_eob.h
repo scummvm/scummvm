@@ -91,7 +91,7 @@ private:
 	EoBCoreEngine *_vm;
 	Screen_EoB *_screen;
 
-	typedef Common::Functor1Mem<int8*, int, EoBInfProcessor> InfProc;
+	typedef Common::Functor1Mem<int8 *, int, EoBInfProcessor> InfProc;
 	struct InfOpcode : private Common::NonCopyable {
 		InfOpcode(InfProc *p, const char *d) : proc(p), desc(d) {}
 		~InfOpcode() { delete proc; }

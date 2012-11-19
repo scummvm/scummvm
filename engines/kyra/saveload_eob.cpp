@@ -680,7 +680,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		in.skip(4);
 		delete[] c->faceShape;
 		c->faceShape = 0;
-		in.read(c->mageSpells, (_flags.gameID == GI_EOB1) ? 30 :80);
+		in.read(c->mageSpells, (_flags.gameID == GI_EOB1) ? 30 : 80);
 		in.read(c->clericSpells, (_flags.gameID == GI_EOB1) ? 30 : 80);
 		c->mageSpellsAvailableFlags = in.readUint32();
 		for (int ii = 0; ii < 27; ii++)

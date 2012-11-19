@@ -321,7 +321,7 @@ void EoBCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
 		break;
 	}
 
-	int textColor= (_configRenderMode == Common::kRenderCGA) ? 2 : 15;
+	int textColor = (_configRenderMode == Common::kRenderCGA) ? 2 : 15;
 
 	if (!tmpStr2.empty()) {
 		_screen->printText(tmpStr.c_str(), x + (16 - tmpStr.size() * 3), y + 2, textColor, 0);
@@ -485,7 +485,7 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int special, int pageNum) {
 
 		uint8 col1 = guiSettings()->colors.frame1;
 		uint8 col2 = guiSettings()->colors.frame2;
-		if (_configRenderMode == Common::kRenderCGA ) {
+		if (_configRenderMode == Common::kRenderCGA) {
 			col1 = 1;
 			col2 = 3;
 		}
@@ -1568,8 +1568,8 @@ int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 
 			// UNUSED
 			//if (buttonList->flags2 & 0x20) {
-				//if (_processButtonListExtraCallback)
-				//	this->*_processButtonListExtraCallback(buttonList);
+			//	if (_processButtonListExtraCallback)
+			//		this->*_processButtonListExtraCallback(buttonList);
 			//}
 
 			if (buttonList->nextButton)

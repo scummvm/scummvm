@@ -380,7 +380,7 @@ protected:
 	bool lineIsPassable(int, int) { return false; }
 };
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB || ENABLE_LOL
 

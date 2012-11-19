@@ -1187,7 +1187,7 @@ void EoBEngine::initSpells() {
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
 	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 135, 130, 132, 133, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180	}
+	{ 135, 130, 132, 133, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180 }
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
@@ -1210,7 +1210,7 @@ void DarkMoonEngine::initStaticResource() {
 		_animIntro[i] = _staticres->loadEoB2SeqData(kEob2IntroAnimData00 + i, temp);
 
 	_shapesIntro = new const DarkMoonShapeDef*[13];
-	memset(_shapesIntro, 0, sizeof(DarkMoonShapeDef*) * 13);
+	memset(_shapesIntro, 0, sizeof(DarkMoonShapeDef *) * 13);
 	_shapesIntro[0] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes00, temp);
 	_shapesIntro[1] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes01, temp);
 	_shapesIntro[4] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes04, temp);
@@ -1225,7 +1225,7 @@ void DarkMoonEngine::initStaticResource() {
 		_animFinale[i] = _staticres->loadEoB2SeqData(kEob2FinaleAnimData00 + i, temp);
 
 	_shapesFinale = new const DarkMoonShapeDef*[13];
-	memset(_shapesFinale, 0, sizeof(DarkMoonShapeDef*) * 13);
+	memset(_shapesFinale, 0, sizeof(DarkMoonShapeDef *) * 13);
 	_shapesFinale[0] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes00, temp);
 	_shapesFinale[3] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes03, temp);
 	_shapesFinale[7] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes07, temp);

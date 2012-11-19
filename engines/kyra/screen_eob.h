@@ -62,7 +62,7 @@ public:
 	const uint8 *generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex);
 
 	void setShapeFrame(int x1, int y1, int x2, int y2);
-	void setShapeFadeMode (uint8 i, bool b);
+	void setShapeFadeMode(uint8 i, bool b);
 
 	void setGfxParameters(int x, int y, int col);
 	void drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
@@ -119,7 +119,7 @@ private:
 	static const int _screenDimTableCount;
 };
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB
 
