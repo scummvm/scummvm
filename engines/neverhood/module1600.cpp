@@ -210,6 +210,7 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	_newDeltaXType = -1;
 	_soundCounter = 0;
 	_pathPoints = NULL;
+	_currMoveDirection = 0;
 	
 	startAnimation(0xD4220027, 0, -1);
 	setDoDeltaX(getGlobalVar(V_CAR_DELTA_X));
@@ -496,21 +497,6 @@ void AsCommonCar::stIdleBlink() {
 	NextState(&AsCommonCar::stLeanForwardIdle);
 }
 
-void AsCommonCar::stHandleRect() {
-	_isBusy = true;
-	gotoNextState();
-	startAnimation(0x9C220DA4, 0, -1);
-	SetUpdateHandler(&AsCommonCar::update);
-	SetMessageHandler(&AsCommonCar::hmAnimation);
-	FinalizeState(&AsCommonCar::evHandleRectDone);
-}
-
-void AsCommonCar::evHandleRectDone() {
-	_isBusy = false;
-	_newMoveDirection = 0;
-	stUpdateMoveDirection();
-}
-
 void AsCommonCar::stUpdateMoveDirection() {
 	_isMoving = true;
 	if (_currMoveDirection == 1)
@@ -532,12 +518,13 @@ void AsCommonCar::moveToNextPoint() {
 	} else {
 		NPoint nextPt = pathPoint(_currPointIndex + 1);
 		NPoint currPt = pathPoint(_currPointIndex);
-		if (ABS(nextPt.y - currPt.y) <= ABS(nextPt.x - currPt.x) && nextPt.x >= currPt.x &&
-			(_currMoveDirection == 4 || _currMoveDirection == 2)) {
-			if (_currMoveDirection == 4) 
-				_currMoveDirection = 2;
-			else if (_currMoveDirection == 2)
+		if (ABS(nextPt.y - currPt.y) <= ABS(nextPt.x - currPt.x) &&
+			((_currMoveDirection == 2 && nextPt.x < currPt.x) ||
+			(_currMoveDirection == 4 && nextPt.x >= currPt.x))) {
+			if (_currMoveDirection == 2) 
 				_currMoveDirection = 4;
+			else if (_currMoveDirection == 4)
+				_currMoveDirection = 2;
 			if (_isIdle)
 				stTurnCarMoveToNextPoint();
 			else
@@ -619,8 +606,9 @@ void AsCommonCar::moveToPrevPoint() {
 			prevPt = pathPoint(_currPointIndex);
 			currPt = pathPoint(_currPointIndex + 1);
 		}
-		if (ABS(prevPt.y - currPt.y) <= ABS(prevPt.x - currPt.x) && currPt.x >= prevPt.x &&
-			(_currMoveDirection == 2 || _currMoveDirection == 4)) {
+		if (ABS(prevPt.y - currPt.y) <= ABS(prevPt.x - currPt.x) &&
+			((_currMoveDirection == 2 && prevPt.x < currPt.x) ||
+			(_currMoveDirection == 4 && prevPt.x >= currPt.x))) {
 			if (_currMoveDirection == 2) 
 				_currMoveDirection = 4;
 			else if (_currMoveDirection == 4)
@@ -657,8 +645,8 @@ void AsCommonCar::stBrakeMoveToPrevPoint() {
 
 void AsCommonCar::evTurnCarDone() {
 	_isBusy = false;
-	_newMoveDirection = 0;
 	setDoDeltaX(2);
+	_newMoveDirection = 0;
 	stUpdateMoveDirection();
 }
 

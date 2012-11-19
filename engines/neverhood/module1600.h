@@ -89,8 +89,6 @@ protected:
 	void stLeanForwardIdle();
 	void evIdleDone();
 	void stIdleBlink();
-	void stHandleRect();
-	void evHandleRectDone();
 	void stUpdateMoveDirection();
 	void stTurnCar();
 	void moveToNextPoint();

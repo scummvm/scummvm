@@ -1736,8 +1736,6 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene2804::handleMessage);
 	SetUpdateHandler(&Scene2804::update);
 
-	//setGlobalVar(V_SHRINK_LIGHTS_ON, 1); // DEBUG Set lights on
-
 	if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
 		setBackground(0xA1D03005);
 		setPalette(0xA1D03005);
@@ -2018,9 +2016,6 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[3].y2 = 480;
 	_clipRects[2].x2 = 640;
 	_clipRects[3].x2 = 640;
-
-	for (uint i = 0; i < 4; i++)
-		debug("clipRect[%d] (%d, %d, %d, %d)", i, _clipRects[i].x1, _clipRects[i].y1, _clipRects[i].x2, _clipRects[i].y2);
 
 	if (which < 0) {
 		insertKlayman<KmScene2806>(441, 423, false, _clipRects, 4);
