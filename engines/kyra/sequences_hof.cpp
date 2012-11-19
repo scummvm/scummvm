@@ -216,8 +216,8 @@ private:
 	uint8 _textColorMap[16];
 	int _textDuration[33];
 
-	const char * const *_sequenceStrings;
-	const char * const *_sequenceSoundList;
+	const char *const *_sequenceStrings;
+	const char *const *_sequenceSoundList;
 	int _sequenceSoundListSize;
 
 	static const uint8 _textColorPresets[];
@@ -1476,7 +1476,7 @@ void SeqPlayer_HOF::playHoFTalkieCredits() {
 
 	int talkieCreditsSize, talkieCreditsSpecialSize;
 	const uint8 *talkieCredits = _vm->staticres()->loadRawData(k2SeqplayCredits, talkieCreditsSize);
-	const char * const *talkieCreditsSpecial = _vm->staticres()->loadStrings(k2SeqplayCreditsSpecial, talkieCreditsSpecialSize);
+	const char *const *talkieCreditsSpecial = _vm->staticres()->loadStrings(k2SeqplayCreditsSpecial, talkieCreditsSpecialSize);
 
 	_vm->sound()->selectAudioResourceSet(kMusicIngame);
 	_vm->sound()->loadSoundFile(3);

@@ -391,7 +391,7 @@ private:
 	uint8 _outroShapeTable[256];
 
 	// TODO: Consider moving these tables to kyra.dat
-	static const char * const _outroShapeFileTable[];
+	static const char *const _outroShapeFileTable[];
 	static const uint8 _outroFrameTable[];
 
 	static const int16 _outroRightMonsterPos[];
@@ -814,7 +814,7 @@ private:
 	void decodeSjis(const char *src, char *dst);
 	int decodeCyrillic(const char *src, char *dst);
 
-	static const char * const _languageExt[];
+	static const char *const _languageExt[];
 
 	// graphics
 	void setupScreenDims();
@@ -1013,8 +1013,8 @@ private:
 
 	uint8 *_tempBuffer5120;
 
-	const char * const *_levelDatList;
-	const char * const *_levelShpList;
+	const char *const *_levelDatList;
+	const char *const *_levelShpList;
 
 	const int8 *_dscWalls;
 

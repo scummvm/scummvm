@@ -72,14 +72,14 @@ private:
 	void seq_playFinale();
 	void seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *data, int sd, int backupPage, int tempPage, int speed);
 
-	const char * const *_introStrings;
-	const char * const *_cpsFilesIntro;
+	const char *const *_introStrings;
+	const char *const *_cpsFilesIntro;
 	const DarkMoonAnimCommand **_animIntro;
 	const DarkMoonShapeDef **_shapesIntro;
 
-	const char * const *_finaleStrings;
+	const char *const *_finaleStrings;
 	const uint8 *_creditsData;
-	const char * const *_cpsFilesFinale;
+	const char *const *_cpsFilesFinale;
 	const DarkMoonAnimCommand **_animFinale;
 	const DarkMoonShapeDef **_shapesFinale;
 

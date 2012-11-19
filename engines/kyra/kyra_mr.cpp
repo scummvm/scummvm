@@ -724,7 +724,7 @@ void KyraEngine_MR::loadCharacterShapes(int newShapes) {
 	static const uint8 numberOffset[] = { 3, 3, 4, 4, 3, 3 };
 	static const uint8 startShape[] = { 0x32, 0x58, 0x78, 0x98, 0xB8, 0xD8 };
 	static const uint8 endShape[] = { 0x57, 0x77, 0x97, 0xB7, 0xD7, 0xF7 };
-	static const char * const filenames[] = {
+	static const char *const filenames[] = {
 		"MSW##.SHP",
 		"MTA##.SHP",
 		"MTFL##.SHP",

@@ -62,7 +62,7 @@ public:
 	bool isInCacheList(Common::String name);
 
 	bool loadFileList(const Common::String &filedata);
-	bool loadFileList(const char * const *filelist, uint32 numFiles);
+	bool loadFileList(const char *const *filelist, uint32 numFiles);
 
 	// This unloads *all* pakfiles, even kyra.dat and protected ones.
 	// It does not remove files from cache though!
@@ -87,7 +87,7 @@ protected:
 	Common::Archive *loadArchive(const Common::String &name, Common::ArchiveMemberPtr member);
 	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
-	bool loadProtectedFiles(const char * const * list);
+	bool loadProtectedFiles(const char *const * list);
 
 	void initializeLoaders();
 
@@ -757,7 +757,7 @@ public:
 	bool init();
 	void deinit();
 
-	const char * const *loadStrings(int id, int &strings);
+	const char *const *loadStrings(int id, int &strings);
 	const uint8 *loadRawData(int id, int &size);
 	const Shape *loadShapeTable(int id, int &entries);
 	const AmigaSfxTable *loadAmigaSfxTable(int id, int &entries);

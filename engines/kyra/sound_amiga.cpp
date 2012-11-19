@@ -72,7 +72,7 @@ bool SoundAmiga::hasSoundFile(uint file) {
 void SoundAmiga::loadSoundFile(uint file) {
 	debugC(5, kDebugLevelSound, "SoundAmiga::loadSoundFile(%d)", file);
 
-	static const char * const tableFilenames[3][2] = {
+	static const char *const tableFilenames[3][2] = {
 		{ "introscr.mx",  "introinst.mx" },
 		{ "kyramusic.mx", 0 },
 		{ "finalescr.mx", "introinst.mx" }

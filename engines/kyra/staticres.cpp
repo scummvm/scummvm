@@ -290,7 +290,7 @@ void StaticResource::deinit() {
 }
 
 const char *const *StaticResource::loadStrings(int id, int &strings) {
-	return (const char * const *)getData(id, kStringList, strings);
+	return (const char *const *)getData(id, kStringList, strings);
 }
 
 const uint8 *StaticResource::loadRawData(int id, int &size) {

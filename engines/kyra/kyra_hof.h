@@ -618,16 +618,16 @@ protected:
 /*	ActiveWSA *_activeWSA;
 	ActiveText *_activeText;
 	*/
-	/*const char * const *_sequencePakList;
+	/*const char *const *_sequencePakList;
 	int _sequencePakListSize;*/
-	const char * const *_ingamePakList;
+	const char *const *_ingamePakList;
 	int _ingamePakListSize;
 
-	const char * const *_musicFileListIntro;
+	const char *const *_musicFileListIntro;
 	int _musicFileListIntroSize;
-	const char * const *_musicFileListFinale;
+	const char *const *_musicFileListFinale;
 	int _musicFileListFinaleSize;
-	const char * const *_musicFileListIngame;
+	const char *const *_musicFileListIngame;
 	int _musicFileListIngameSize;
 	const uint8 *_cdaTrackTableIntro;
 	int _cdaTrackTableIntroSize;
@@ -635,13 +635,13 @@ protected:
 	int _cdaTrackTableIngameSize;
 	const uint8 *_cdaTrackTableFinale;
 	int _cdaTrackTableFinaleSize;
-	const char * const *_ingameSoundList;
+	const char *const *_ingameSoundList;
 	int _ingameSoundListSize;
 	const uint16 *_ingameSoundIndex;
 	int _ingameSoundIndexSize;
 	const uint16 *_ingameTalkObjIndex;
 	int _ingameTalkObjIndexSize;
-	const char * const *_ingameTimJpStr;
+	const char *const *_ingameTimJpStr;
 	int _ingameTimJpStrSize;
 
 	const ItemAnimDefinition *_itemAnimDefinition;

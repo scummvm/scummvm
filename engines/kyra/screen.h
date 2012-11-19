@@ -596,7 +596,7 @@ protected:
 	int _animBlockSize;
 
 	// dimension handling
-	const ScreenDim * const _dimTable;
+	const ScreenDim *const _dimTable;
 	ScreenDim **_customDimTable;
 	const int _dimTableCount;
 	int _curDimIndex;

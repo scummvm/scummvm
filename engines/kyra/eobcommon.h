@@ -858,11 +858,11 @@ protected:
 	void restoreWallOfForceTempData(LevelTempData *tmp);
 	void releaseWallOfForceTempData(LevelTempData *tmp);
 
-	const char * const *_saveLoadStrings;
+	const char *const *_saveLoadStrings;
 
 	const uint8 *_mnDef;
-	const char * const *_mnWord;
-	const char * const *_mnPrompt;
+	const char *const *_mnWord;
+	const char *const *_mnPrompt;
 	int _mnNumWord;
 
 	int _rrCount;
