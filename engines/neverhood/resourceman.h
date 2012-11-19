@@ -59,10 +59,11 @@ public:
 	byte type() const { return isValid() ? _resourceFileEntry->archiveEntry->type : 0; };
 	const byte *data() const { return _data; }
 	uint32 size() const { return isValid() ? _resourceFileEntry->archiveEntry->size : 0; };
-	const byte *extData() const { return isValid() ? _resourceFileEntry->archiveEntry->extData : NULL; };
+	const byte *extData() const { return _extData; };
 	uint32 fileHash() const { return isValid() ? _resourceFileEntry->archiveEntry->fileHash : 0; };
 protected:
 	ResourceFileEntry *_resourceFileEntry;
+	const byte *_extData;
 	const byte *_data;
 };
 
@@ -72,7 +73,7 @@ public:
 	~ResourceMan();
 	void addArchive(const Common::String &filename);
 	ResourceFileEntry *findEntrySimple(uint32 fileHash);
-	ResourceFileEntry *findEntry(uint32 fileHash);
+	ResourceFileEntry *findEntry(uint32 fileHash, ResourceFileEntry **firstEntry = NULL);
 	Common::SeekableReadStream *createStream(uint32 fileHash);
 	const ResourceFileEntry& getEntry(uint index) { return _entries[index]; }
 	uint getEntryCount() { return _entries.size(); }

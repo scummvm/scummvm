@@ -358,6 +358,8 @@ void GameModule::startup() {
 	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 2, 2);
 	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 3, 0);
 	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 4, 4);
+	setGlobalVar(V_KLAYMAN_SMALL, 1);
+	setGlobalVar(V_SHRINK_LIGHTS_ON, 0);
 	// <<<DEBUG
 
 #if 0
@@ -369,13 +371,13 @@ void GameModule::startup() {
 	*/
 
 	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 28;
-	createModule(2700, -1);
+	_vm->gameState().sceneNum = 2;
+	createModule(2800, -1);
 #endif
 #if 1
-	_vm->gameState().sceneNum = 4;
-	_vm->gameState().which = 1;
-	createModule(1000, -1);
+	_vm->gameState().sceneNum = 5;
+	_vm->gameState().which = 0;
+	createModule(2800, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -416,7 +418,6 @@ void GameModule::startup() {
 	createModule(2700, -1);
 #endif
 #if 0
-	setGlobalVar(V_KLAYMAN_SMALL, 1); // DEBUG Make Klayman small
 	_vm->gameState().sceneNum = 2;
 	createModule(2800, -1);
 #endif

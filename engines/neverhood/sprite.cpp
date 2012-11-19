@@ -477,7 +477,6 @@ void AnimatedSprite::gotoNextState() {
 	if (_nextStateCb) {
 		_currStateCb = _nextStateCb;
 		_nextStateCb = NULL;
-		//debug("Fire _nextStateCb '%s'", _nextStateCbName.c_str());
 		(this->*_currStateCb)();
 	} else {
 		_currStateCb = NULL;

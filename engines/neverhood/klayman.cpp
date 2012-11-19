@@ -2212,16 +2212,16 @@ uint32 Klayman::hmJumpToGrab(int messageNum, const MessageParam &param, Entity *
 	return messageResult;
 }
 
-void Klayman::sub421230() {//stGrow
+void Klayman::stFinishGrow() {
 	_status2 = 2;
 	_acceptInput = false;
-	startAnimationByHash(0x38445000, 0, -1);
+	startAnimation(0x38445000, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteUpdate(NULL);
-	SetMessageHandler(&Klayman::handleMessage41F1D0);
+	SetMessageHandler(&Klayman::hmFinishGrow);
 }
 
-uint32 Klayman::handleMessage41F1D0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Klayman::hmFinishGrow(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -5728,7 +5728,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4804:
 		if (param.asInteger() == 3)
-			GotoState(&Klayman::sub421230);
+			GotoState(&Klayman::stFinishGrow);
 		break;
 	case 0x480D:
 		GotoState(&Klayman::stPullCord);
@@ -5882,11 +5882,11 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene2806::KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
 	bool flag, NRect *clipRects, uint clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
-	// Empty
-
-	_surface->setClipRects(clipRects, clipRectsCount);
 
 	if (flag) {
+		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
+		delete _surface;
+		createSurface(1000, dimensions.width, dimensions.height);
 		loadSound(3, 0x58E0C341);
 		loadSound(4, 0x40A00342);
 		loadSound(5, 0xD0A1C348);
@@ -5895,6 +5895,7 @@ KmScene2806::KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 	}
 	
 	_dataResource.load(0x98182003);
+	_surface->setClipRects(clipRects, clipRectsCount);
 
 }
 
@@ -5943,9 +5944,10 @@ KmScene2809::KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 	bool flag, NRect *clipRects, uint clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
-	_surface->setClipRects(clipRects, clipRectsCount);
-
 	if (flag) {
+		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
+		delete _surface;
+		createSurface(1000, dimensions.width, dimensions.height);
 		loadSound(3, 0x58E0C341);
 		loadSound(4, 0x40A00342);
 		loadSound(5, 0xD0A1C348);
@@ -5954,6 +5956,7 @@ KmScene2809::KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 	}
 
 	_dataResource.load(0x1830009A);
+	_surface->setClipRects(clipRects, clipRectsCount);
 	
 }
 
@@ -6070,7 +6073,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4804:
 		if (param.asInteger() == 3)
-			GotoState(&Klayman::sub421230);
+			GotoState(&Klayman::stFinishGrow);
 		break;
 	case NM_KLAYMAN_PICKUP:
 		GotoState(&Klayman::stPickUpGeneric);

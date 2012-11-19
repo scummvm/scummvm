@@ -319,8 +319,8 @@ public:
 	void stTurnToBackSmall();
 	uint32 hmWalkFrontBackSmall(int messageNum, const MessageParam &param, Entity *sender);
 
-	void sub421230();//stGrow??
-	uint32 handleMessage41F1D0(int messageNum, const MessageParam &param, Entity *sender);
+	void stFinishGrow();
+	uint32 hmFinishGrow(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void stJumpToRingVenusFlyTrap();
 	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);

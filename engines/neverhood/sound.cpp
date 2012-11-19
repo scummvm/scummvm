@@ -436,26 +436,22 @@ SoundItem *SoundMan::getSoundItemByHash(uint32 soundFileHash) {
 }
 
 int16 SoundMan::addMusicItem(MusicItem *musicItem) {
-#if 0
 	for (uint i = 0; i < _musicItems.size(); ++i)
 		if (!_musicItems[i]) {
 			_musicItems[i] = musicItem;
 			return i;
 		}
-#endif		
 	int16 musicIndex = _musicItems.size();
 	_musicItems.push_back(musicItem);
 	return musicIndex;
 }
 
 int16 SoundMan::addSoundItem(SoundItem *soundItem) {
-#if 0
 	for (uint i = 0; i < _soundItems.size(); ++i)
 		if (!_soundItems[i]) {
 			_soundItems[i] = soundItem;
 			return i;
 		}
-#endif
 	int16 soundIndex = _soundItems.size();
 	_soundItems.push_back(soundItem);
 	return soundIndex;
@@ -550,7 +546,7 @@ void AudioResourceMan::removeSound(int16 soundIndex) {
 
 void AudioResourceMan::loadSound(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	if (!soundItem->_data) {
+	if (!soundItem->_data && soundItem->_resourceHandle.isValid()) {
 		// TODO Check if it's a sound resource
 		_vm->_res->loadResource(soundItem->_resourceHandle);
 		soundItem->_data = soundItem->_resourceHandle.data();
@@ -580,6 +576,7 @@ void AudioResourceMan::setSoundPan(int16 soundIndex, int16 pan) {
 }
 
 void AudioResourceMan::playSound(int16 soundIndex, bool looping) {
+
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
 	if (!soundItem->_data)
 		loadSound(soundIndex);
@@ -587,8 +584,9 @@ void AudioResourceMan::playSound(int16 soundIndex, bool looping) {
 	if (!soundItem->_data)
 		return;
 		
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundItem->_data, soundItem->_resourceHandle.size(), DisposeAfterUse::NO);
 	const byte *shiftValue = soundItem->_resourceHandle.extData();
+	
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundItem->_data, soundItem->_resourceHandle.size(), DisposeAfterUse::NO);
 	NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, false, DisposeAfterUse::YES, stream);
 
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundItem->_soundHandle,

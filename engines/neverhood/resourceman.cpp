@@ -66,8 +66,10 @@ ResourceFileEntry *ResourceMan::findEntrySimple(uint32 fileHash) {
 	return p != _entries.end() ? &(*p)._value : NULL;
 }
 
-ResourceFileEntry *ResourceMan::findEntry(uint32 fileHash) {
+ResourceFileEntry *ResourceMan::findEntry(uint32 fileHash, ResourceFileEntry **firstEntry) {
 	ResourceFileEntry *entry = findEntrySimple(fileHash);
+	if (firstEntry)
+		*firstEntry = entry;
 	for (; entry && entry->archiveEntry->comprType == 0x65; fileHash = entry->archiveEntry->diskSize)
 		entry = findEntrySimple(fileHash);
 	return entry;
@@ -79,7 +81,9 @@ Common::SeekableReadStream *ResourceMan::createStream(uint32 fileHash) {
 }
 
 void ResourceMan::queryResource(uint32 fileHash, ResourceHandle &resourceHandle) {
-	resourceHandle._resourceFileEntry = findEntry(fileHash);
+	ResourceFileEntry *firstEntry;
+	resourceHandle._resourceFileEntry = findEntry(fileHash, &firstEntry);
+	resourceHandle._extData = firstEntry ? firstEntry->archiveEntry->extData : NULL;
 }
 
 void ResourceMan::loadResource(ResourceHandle &resourceHandle) {

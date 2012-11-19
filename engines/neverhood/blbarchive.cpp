@@ -91,7 +91,6 @@ void BlbArchive::open(const Common::String &filename) {
 		BlbArchiveEntry &entry = _entries[i];
 		entry.type = _fd.readByte();
 		entry.comprType = _fd.readByte();
-		//entry.extDataOfs = _fd.readUint16LE();
 		entry.extData = NULL;
 		extDataOffsets[i] = _fd.readUint16LE(); 
 		entry.timeStamp = _fd.readUint32LE();
@@ -132,7 +131,7 @@ void BlbArchive::load(BlbArchiveEntry *entry, byte *buffer, uint32 size) {
 		break;
 	case 3: // DCL-compressed
 		if (!Common::decompressDCL(&_fd, buffer, entry->diskSize, entry->size))
-			error("BlbArchive::load() Error during decompression of %=8X", entry->fileHash);
+			error("BlbArchive::load() Error during decompression of %08X", entry->fileHash);
 		break;
 	default:
 		error("BlbArchive::load() Unknown compression type %d", entry->comprType);

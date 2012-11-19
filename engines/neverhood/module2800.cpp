@@ -661,9 +661,6 @@ uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (prevTuneStatus != _currTuneStatus)
 			changeTuneStatus(prevTuneStatus, _currTuneStatus);
 		break;
-	case 0x000D:
-		// DEBUG message
-		break;
 	}
 	return 0;
 }
@@ -1035,7 +1032,6 @@ void Scene2803::toggleBackground() {
 }
 
 void Scene2803::changeBackground() {
-	// TODO? g_screen->resetDirtyRects();
 	if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
 		_asLightCord->setFileHashes(0x8FAD5932, 0x276E1A3D);
 		_background->load(0x412A423E);
@@ -1050,16 +1046,14 @@ void Scene2803::changeBackground() {
 		_mouseCursor->updateCursor();
 		_sprite8->loadSprite(0x3C42022F);
 		_sprite9->loadSprite(0x341A0237);
-		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0)
 			_asTestTubeOne->loadSprite(0x66121222);
-		} else
+		else
 			sendMessage(_asTestTubeOne, 0x2000, 0);
-		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
 			_asTestTubeTwo->loadSprite(0x64330236);
-		}
-		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 			_asTestTubeThree->loadSprite(0x2E4A22A2);
-		}
 		_sprite10->setVisible(true);
 	} else {
 		_asLightCord->setFileHashes(0xAFAD591A, 0x276E321D);
@@ -1075,16 +1069,12 @@ void Scene2803::changeBackground() {
 		_mouseCursor->updateCursor();
 		_sprite8->loadSprite(0x108012C1);
 		_sprite9->loadSprite(0x708072E0);
-		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
-			_asTestTubeOne->loadSprite(0x50C027A8);
-		} else
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) != 0)
 			sendMessage(_asTestTubeOne, 0x2000, 1);
-		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
 			_asTestTubeTwo->loadSprite(0xD48077A0);
-		}
-		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3) {
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 			_asTestTubeThree->loadSprite(0x30022689);
-		}
 		_sprite10->setVisible(false);
 	}
 	updatePaletteArea();
@@ -1144,18 +1134,14 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 		_sprite5 = insertStaticSprite(0x34422912, 1100);
 		_sprite6 = insertStaticSprite(0x3C42022F, 1100);
 		_sprite7 = insertStaticSprite(0x341A0237, 1100);
-
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0)
 			insertStaticSprite(0x66121222, 100);
 		else
 			insertSprite<AnimatedSprite>(kScene2803SmallFileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)], 100, 529, 326);
-
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
 			insertStaticSprite(0x64330236, 100);
-
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 			insertStaticSprite(0x2E4A22A2, 100);
-
 	} else {
 		setBackground(0x29800A01);
 		setPalette(0x29800A01);
@@ -1169,19 +1155,12 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 		_sprite6 = insertStaticSprite(0x108012C1, 1100);
 		_sprite7 = insertStaticSprite(0x708072E0, 1100);
 		insertStaticSprite(0x90582EA4, 100);
-
-		setSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0, 1);//DEBUG, FIXME crashes when not done?!
-		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0)
-			insertStaticSprite(0x50C027A8, 100);
-		else
+		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) != 0)
 			insertSprite<AnimatedSprite>(kScene2803SmallFileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)], 100, 529, 326);
-
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
 			insertStaticSprite(0xD48077A0, 100);
-
 		if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
 			insertStaticSprite(0x30022689, 100);
-
 	}
 	
 	_sprite6->setVisible(false);
@@ -1992,6 +1971,8 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
+	which = 3;
+
 	SetMessageHandler(&Scene2806::handleMessage);
 	SetUpdateHandler(&Scene2806::update);
 	
@@ -2023,7 +2004,7 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[2].x1 = tempSprite->getDrawRect().x;
 	_clipRects[2].y2 = tempSprite->getDrawRect().y2();
 	_clipRects[3].y1 = tempSprite->getDrawRect().y2();
-	_clipRects[1].x2 = tempSprite->getDrawRect().x2();
+	_clipRects[1].x2 = tempSprite->getDrawRect().x;
 
 	tempSprite = insertStaticSprite(0x72875F42, 1100);
 	_clipRects[3].x1 = tempSprite->getDrawRect().x;
@@ -2037,6 +2018,9 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[3].y2 = 480;
 	_clipRects[2].x2 = 640;
 	_clipRects[3].x2 = 640;
+
+	for (uint i = 0; i < 4; i++)
+		debug("clipRect[%d] (%d, %d, %d, %d)", i, _clipRects[i].x1, _clipRects[i].y1, _clipRects[i].x2, _clipRects[i].y2);
 
 	if (which < 0) {
 		insertKlayman<KmScene2806>(441, 423, false, _clipRects, 4);
@@ -2288,25 +2272,21 @@ uint32 AsScene2808TestTube::handleMessage(int messageNum, const MessageParam &pa
 }
 
 void AsScene2808TestTube::fill() {
-
-
-	if ((int)_fillLevel < _testTubeSetNum * 3 + 3)
-		return;
-		
-	if (_testTubeSetNum == 0) {
-		playSound(_fillLevel);
-		setVisible(true);
-		startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices1[_fillLevel], kClass490FrameIndices1[_fillLevel + 1]);
-		_newStickFrameIndex = kClass490FrameIndices1[_fillLevel + 1];
-	} else {
-		playSound(3 + _fillLevel);
-		setVisible(true);
-		startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices2[_fillLevel], kClass490FrameIndices2[_fillLevel + 1]);
-		_newStickFrameIndex = kClass490FrameIndices2[_fillLevel + 1];
+	if ((int)_fillLevel < _testTubeSetNum * 3 + 3) {
+		if (_testTubeSetNum == 0) {
+			playSound(_fillLevel);
+			setVisible(true);
+			startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices1[_fillLevel], kClass490FrameIndices1[_fillLevel + 1]);
+			_newStickFrameIndex = kClass490FrameIndices1[_fillLevel + 1];
+		} else {
+			playSound(3 + _fillLevel);
+			setVisible(true);
+			startAnimation(kClass490FileHashes[_testTubeIndex], kClass490FrameIndices2[_fillLevel], kClass490FrameIndices2[_fillLevel + 1]);
+			_newStickFrameIndex = kClass490FrameIndices2[_fillLevel + 1];
+		}
+		_ssDispenser->startCountdown(_fillLevel);
+		_fillLevel++;
 	}
-	_ssDispenser->startCountdown(_fillLevel);
-	_fillLevel++;
-
 }
 
 void AsScene2808TestTube::flush() {
@@ -2446,13 +2426,12 @@ void AsScene2808LightEffect::update() {
 Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _countdown(0), _testTubeSetNum(which), _leaveResult(0), _isFlowing(false) {
 
-	Sprite *tempSprite;
+	Sprite *asHandle;
 
-	if (which == 0) {
+	if (which == 0)
 		_vm->gameModule()->initTestTubes1Puzzle();
-	} else {
+	else
 		_vm->gameModule()->initTestTubes2Puzzle();
-	}
 	
 	SetMessageHandler(&Scene2808::handleMessage);
 	SetUpdateHandler(&Scene2808::update);
@@ -2460,8 +2439,8 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(kScene2808FileHashes1[which]);
 	setPalette(kScene2808FileHashes1[which]);
 
-	tempSprite = insertSprite<AsScene2808Handle>(this, which);
-	_vm->_collisionMan->addSprite(tempSprite);
+	asHandle = insertSprite<AsScene2808Handle>(this, which);
+	_vm->_collisionMan->addSprite(asHandle);
 
 	_asFlow = insertSprite<AsScene2808Flow>(this, which);
 	insertSprite<AsScene2808LightEffect>(which);
@@ -2513,9 +2492,14 @@ uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entit
 void Scene2808::update() {
 
 	// DEBUG>>> Show correct values
+	#if 1
 	debug("---------------");
-	debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
+	if (_testTubeSetNum == 0)
+		debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
+	else
+		debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2));
 	debug("%03d %03d %03d", _asTestTubes[0]->getFillLevel(), _asTestTubes[1]->getFillLevel(), _asTestTubes[2]->getFillLevel());
+	#endif
 	// DEBUG<<<
 	
 	Scene::update();

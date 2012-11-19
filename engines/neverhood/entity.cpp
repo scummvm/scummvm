@@ -46,11 +46,6 @@ Entity *MessageParam::asEntity() const {
 	return _entity; 
 }
 
-// TODO: Disable heavy debug stuff in release mode
-
-#define SetUpdateHandler(handler) _updateHandlerCb = static_cast <void (Entity::*)(void)> (handler); debug(2, "SetUpdateHandler(" #handler ")"); _updateHandlerCbName = #handler
-#define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler); debug(2, "SetMessageHandler(" #handler ")"); _messageHandlerCbName = #handler
-
 Entity::Entity(NeverhoodEngine *vm, int priority)
 	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _soundResources(NULL) {
 }
@@ -63,13 +58,13 @@ void Entity::draw() {
 }
 
 void Entity::handleUpdate() {
-	debug(2, "handleUpdate() -> [%s]", _updateHandlerCbName.c_str());
+	debug(5, "handleUpdate() -> [%s]", _updateHandlerCbName.c_str());
 	if (_updateHandlerCb)
 		(this->*_updateHandlerCb)();
 }
 
 uint32 Entity::receiveMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	debug(2, "receiveMessage(%04X) -> [%s]", messageNum, _messageHandlerCbName.c_str());
+	debug(5, "receiveMessage(%04X) -> [%s]", messageNum, _messageHandlerCbName.c_str());
 	return _messageHandlerCb ? (this->*_messageHandlerCb)(messageNum, param, sender) : 0;
 }
 

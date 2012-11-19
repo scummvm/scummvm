@@ -61,12 +61,12 @@ protected:
 
 #define SetUpdateHandler(handler)												\
 	_updateHandlerCb = static_cast <void (Entity::*)(void)> (handler);			\
-	debug(2, "SetUpdateHandler(" #handler ")");									\
+	debug(5, "SetUpdateHandler(" #handler ")");									\
 	_updateHandlerCbName = #handler
 
 #define SetMessageHandler(handler)												\
 	_messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler);	\
-	debug(2, "SetMessageHandler(" #handler ")");								\
+	debug(5, "SetMessageHandler(" #handler ")");								\
 	_messageHandlerCbName = #handler
 
 const uint kMaxSoundResources = 16;

@@ -162,7 +162,7 @@ bool AnimResource::load(uint32 fileHash) {
 
 	_vm->_res->loadResource(_resourceHandle);
 	resourceData = _resourceHandle.data();
-
+	
 	animListCount = READ_LE_UINT16(resourceData);
 	animInfoStartOfs = READ_LE_UINT16(resourceData + 2);
 	spriteDataOfs = READ_LE_UINT32(resourceData + 4);
