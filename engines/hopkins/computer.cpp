@@ -962,9 +962,9 @@ void ComputerManager::NAME_SCORE() {
 }
 
 void ComputerManager::IMPRIMESCORE() {
-	__int16 v0; 
-	__int16 v1; 
-	__int16 i; 
+	int16 v0; 
+	int16 v1; 
+	int16 i; 
 	char s[40]; 
 
 	sprintf(s, "%d", CASSESCORE);
@@ -981,8 +981,8 @@ void ComputerManager::IMPRIMESCORE() {
 }
 
 void ComputerManager::IMPSCORE(int a1, int a2) {
-	signed __int16 v2; 
-	__int16 v3; 
+	int16 v2; 
+	int16 v3; 
 
 	v2 = 203;
 	v3 = 3;
@@ -1120,9 +1120,9 @@ void ComputerManager::PRINT_HSCORE(byte *objectData, int a2, int a3, int a4) {
 
 int ComputerManager::DEP_BALLE() {
 	int v0; 
-	__int16 v1; 
+	int16 v1; 
 	int v2; 
-	signed __int16 v4; 
+	int16 v4; 
 
 	v4 = 0;
 	//(signed int)(6.0 * (long double)_vm->getRandomNumber( rand() / 2147483648.0) + 1;
