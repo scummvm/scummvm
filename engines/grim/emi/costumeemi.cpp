@@ -123,10 +123,15 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				data->read(&time, 4);
 				data->read(&value, 4);
 				track.keys[j].time = (int)(time * 1000);
+				length = MAX(length, time * 1000);
 				track.keys[j].value = (int)value;
 			}
 			delete[] componentName;
 		}
+
+		// Some chores report duration 1000 while they have components with
+		// keyframes after 1000. See elaine_wedding/take_contract, for example.
+		_chores[i]->_length = ceil(length);
 	}
 
 	_numComponents = components.size();
