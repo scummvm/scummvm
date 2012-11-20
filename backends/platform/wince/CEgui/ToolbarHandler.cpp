@@ -96,10 +96,10 @@ bool ToolbarHandler::draw(SDL_Surface *surface, SDL_Rect *rect) {
 	if (_active) {
 		bool result = _active->draw(surface);
 		if (result) {
-			rect->x = _active->x();
-			rect->y = _active->y();
-			rect->w = _active->width();
-			rect->h = _active->height();
+			rect->x = _active->getX();
+			rect->y = _active->getY();
+			rect->w = _active->getWidth();
+			rect->h = _active->getHeight();
 		}
 		return result;
 	} else
