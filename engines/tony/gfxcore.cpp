@@ -582,7 +582,7 @@ RMGfxSourceBuffer8::~RMGfxSourceBuffer8() {
 }
 
 void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int width, height, u, v;
+	int width = 0, height = 0, u = 0, v = 0;
 	int bufx = bigBuf.getDimx();
 	uint16 *buf = bigBuf;
 	byte *raw = _buf;
@@ -693,7 +693,7 @@ int RMGfxSourceBuffer8AB::calcTrasp(int fore, int back) {
 }
 
 void RMGfxSourceBuffer8AB::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
-	int width, height, u, v;
+	int width = 0, height = 0, u = 0, v = 0;
 	int bufx = bigBuf.getDimx();
 	uint16 *buf = bigBuf;
 	byte *raw = _buf;
