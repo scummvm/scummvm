@@ -2007,12 +2007,13 @@ void MidiDriver_ADLIB::adlibSetupChannelSecondary(int chan, const AdLibInstrumen
 	// The original uses the following (strange) behavior:
 #if 0
 	if (instr->feedback | (pan > 64)) {
-		adlibWriteSecondary((byte)chan + 0xC0, 0x10);
-	} else {
 		adlibWriteSecondary((byte)chan + 0xC0, 0x20);
+	} else {
+		adlibWriteSecondary((byte)chan + 0xC0, 0x10);
 	}
-#endif
+#else
 	adlibWriteSecondary((byte)chan + 0xC0, instr->feedback | ((pan > 64) ? 0x20 : 0x10));
+#endif
 }
 
 void MidiDriver_ADLIB::mcInitStuff(AdLibVoice *voice, Struct10 *s10,
