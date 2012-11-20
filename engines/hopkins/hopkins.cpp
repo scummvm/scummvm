@@ -1479,25 +1479,6 @@ void HopkinsEngine::INIT_SYSTEM() {
 }
 
 void HopkinsEngine::INTRORUN() {
-	signed int v2;
-	signed int v3;
-	uint16 v4;
-	signed int v5;
-	int i; 
-	int v7; 
-	signed int v8;
-	signed int v9;
-	signed int v11;
-	int v12;
-	signed int v13;
-	signed int v14;
-	int j;
-	int k;
-	int l;
-	int m; 
-	int v21;
-	char v22; 
-	char v23; 
 	byte paletteData[PALETTE_EXT_BLOCK_SIZE];
 	byte paletteData2[PALETTE_EXT_BLOCK_SIZE];
 
@@ -1533,33 +1514,28 @@ void HopkinsEngine::INTRORUN() {
 				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 				_globals.BPP_NOAFF = true;
-				v2 = 0;
-				do {
+				for (int i = 0; i <= 4; i++)
 					_eventsManager.VBL();
-					++v2;
-				} while (v2 <= 4);
 
 				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
 				if (_graphicsManager.DOUBLE_ECRAN == true) {
 					_graphicsManager.no_scroll = 2;
-					v3 = 0;
+					bool v3 = false;
 					_graphicsManager.SCROLL = 0;
           
 					do {
 						_graphicsManager.SCROLL += 2;
 						if (_graphicsManager.SCROLL > (SCREEN_WIDTH - 2)) {
 							_graphicsManager.SCROLL = SCREEN_WIDTH;
-							v3 = 1;
+							v3 = true;
 						}
             
-						if (_eventsManager.XMOUSE() < _graphicsManager.SCROLL + 10) {
-							v4 = _eventsManager.YMOUSE();
-							_eventsManager.souris_xy(_eventsManager.souris_x + 4, v4);
-						}
+						if (_eventsManager.XMOUSE() < _graphicsManager.SCROLL + 10)
+							_eventsManager.souris_xy(_eventsManager.souris_x + 4, _eventsManager.YMOUSE());
 						_eventsManager.VBL();
-					} while (!shouldQuit() && v3 != 1 && _graphicsManager.SCROLL != SCREEN_WIDTH);
+					} while (!shouldQuit() && !v3 && _graphicsManager.SCROLL != SCREEN_WIDTH);
           
 					_eventsManager.VBL();
 					_graphicsManager.no_scroll = 0;
@@ -1584,17 +1560,14 @@ void HopkinsEngine::INTRORUN() {
 				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 				_globals.BPP_NOAFF = true;
-				v5 = 0;
-        
-				do {
+
+				for (int i = 0; i <= 4; i++)
 					_eventsManager.VBL();
-					++v5;
-				} while (v5 <= 4);
         
 				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
-				for (i = 0; i < 200 / _globals.vitesse; ++i)
+				for (int i = 0; i < 200 / _globals.vitesse; ++i)
 					_eventsManager.VBL();
         
 				_objectsManager.BOBANIM_ON(3);
@@ -1602,9 +1575,10 @@ void HopkinsEngine::INTRORUN() {
 				_objectsManager.BOBANIM_OFF(3);
 				_eventsManager.VBL();
 				memcpy(&paletteData2, _graphicsManager.Palette, 796);
-				v21 = *(uint16 *)&_graphicsManager.Palette[796];
-				v22 = _graphicsManager.Palette[798];
-				v7 = (int)&v23;
+				
+				// CHECKME: Useless variables?
+				// v21 = *(uint16 *)&_graphicsManager.Palette[796];
+				// v22 = _graphicsManager.Palette[798];
 				_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
 				_graphicsManager.FIN_VISU();
 
@@ -1634,18 +1608,15 @@ void HopkinsEngine::INTRORUN() {
 					_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 					_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 					_globals.BPP_NOAFF = true;
-					v8 = 0;
-          
-					do {
+
+					for (int i = 0; i <= 3; i++)
 						_eventsManager.VBL();
-						++v8;
-					} while (v8 <= 3);
           
 					_globals.BPP_NOAFF = false;
 					_globals.iRegul = 1;
 					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
-					v9 = 0;
-          
+
+					int v9 = 0;
 					while (!shouldQuit() && !_eventsManager.ESC_KEY) {
 						if (v9 == 12) {
 							_objectsManager.BOBANIM_ON(3);
@@ -1657,57 +1628,47 @@ void HopkinsEngine::INTRORUN() {
             
 						Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
 						
-						v11 = 1;
-						v12 = 4 * v9;
-						do {
-							if (_graphicsManager.Palette[v11] > v12)
-								_graphicsManager.Palette[v11] -= v12;
-							++v11;
-						} while ( v11 <= PALETTE_BLOCK_SIZE);
-            
+						
+
+						for (int i = 1, v12 = 4 * v9; i <= PALETTE_BLOCK_SIZE; i++) {
+							if (_graphicsManager.Palette[i] > v12)
+								_graphicsManager.Palette[i] -= v12;
+						}
+
 						_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
-						v13 = 1;
-            
+
+
 						if (2 * v9 > 1) {
-							v7 = 2 * v9;
-              
-							do {
+							for (int i = 1; i < 2 * v9; i++)
 								_eventsManager.VBL();
-								++v13;
-							} while (v13 < v7);
 						} 
 						
 						_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
-						v14 = 1;
-						if (20 - v9 > 1) {
-							v7 = 20 - v9;
-              
-							do {
+						if (20 - v9 > 1) {              
+							for (int i = 1; i < 20 - v9; i++)
 								_eventsManager.VBL();
-								++v14;
-							} while (v14 < v7);
 						}
             
 						v9 += 2;
 						if (v9 > 15) {
 							_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
-							for (j = 1; j < 100 / _globals.vitesse; ++j)
+							for (int j = 1; j < 100 / _globals.vitesse; ++j)
 								_eventsManager.VBL();
               
 							_objectsManager.BOBANIM_ON(3);
 							_soundManager.VOICE_MIX(7, 3);
 							_objectsManager.BOBANIM_OFF(3);
 							
-							for (k = 1; k < 60 / _globals.vitesse; ++k)
+							for (int k = 1; k < 60 / _globals.vitesse; ++k)
 								_eventsManager.VBL();
 							_objectsManager.BOBANIM_ON(5);
-							for (l = 0; l < 20 / _globals.vitesse; ++l)
+							for (int l = 0; l < 20 / _globals.vitesse; ++l)
 								_eventsManager.VBL();
 
 							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
 							_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
               
-							for (m = 0; m < 50 / _globals.vitesse; ++m) {
+							for (int m = 0; m < 50 / _globals.vitesse; ++m) {
 								if (m == 30 / _globals.vitesse) {
 									_objectsManager.BOBANIM_ON(3);
 									_soundManager.VOICE_MIX(8, 3);
