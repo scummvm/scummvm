@@ -397,6 +397,8 @@ LABEL_45:
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, pointeur_souris, v15 + 300, yp + 300, souris_n);
 */
+
+	_vm->_eventsManager.updateCursor();
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v12, v11);
 LABEL_54:
 	_vm->_globals.vitesse = 2;
