@@ -106,6 +106,23 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		},
 	},
 	{
+		// Hopkins FBI Win95, provided by alexbevi
+		// Dec 15  1998 hopkins.exe
+		{
+			"hopkins",
+			0,
+			{
+				{"Hopkins.exe", 0, "a587762dd50d5933e1c89f9975180764", 378694},
+				{"RES_VAN.RES", 0, "f1693ac0b0859c8ecd8cb30ff43cf55f", 38296346},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+	{
 		// Hopkins FBI Linux, provided by Strangerke
 		{
 			"hopkins",
