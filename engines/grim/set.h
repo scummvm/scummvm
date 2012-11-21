@@ -56,6 +56,7 @@ public:
 	int _maxVolume;
 
 	void drawBackground() const;
+	void drawForeground() const;
 	void drawBitmaps(ObjectState::Position stage);
 	void setupCamera() {
 		_currSetup->setupCamera();

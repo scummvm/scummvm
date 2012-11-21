@@ -528,10 +528,23 @@ void GrimEngine::updateDisplayScene() {
 
 		// Draw actors
 		buildActiveActorsList();
-		foreach (Actor *a, _activeActors) {
-			if (a->isVisible())
-				a->draw();
+		if (g_grim->getGameType() == GType_GRIM) {
+			foreach (Actor *a, _activeActors) {
+				if (a->isVisible())
+					a->draw();
+			}
+		} else {
+			bool drewForeground = false;
+			foreach (Actor *a, _activeActors) {
+				if (a->getSortOrder() < 15 && !drewForeground) {
+					drewForeground = true;
+					_currSet->drawForeground();
+				}
+				if (a->isVisible() && a->getSortOrder() < 100)
+					a->draw();
+			}
 		}
+
 
 		flagRefreshShadowMask(false);
 

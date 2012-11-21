@@ -146,6 +146,8 @@ public:
 	void draw();
 	void draw(int x, int y);
 
+	void drawForeground();
+
 	/**
 	 * Set which image in an animated bitmap to use
 	 *

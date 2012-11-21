@@ -805,10 +805,14 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 	}
 }
 
-void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy) {
+void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDraw) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
 		glLoadIdentity();
 		glOrtho(-1, 1, -1, 1, 0, 1);
 
@@ -823,23 +827,38 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy) {
 		BitmapData *data = bitmap->_data;
 		GLuint *textures = (GLuint *)bitmap->getTexIds();
 		float *texc = data->_texc;
-		uint32 offset = data->_offsets[data->_curOffset]._offset;
-		for (uint32 i = offset; i < offset + data->_offsets[data->_curOffset]._numImages; ++i) {
-			glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
-			glBegin(GL_QUADS);
-			uint32 ntex = data->_verts[i]._pos * 4;
-			for (uint32 x = 0; x < data->_verts[i]._verts; ++x) {
-				glTexCoord2f(texc[ntex + 2], texc[ntex + 3]);
-				glVertex2f(texc[ntex + 0], texc[ntex + 1]);
-				ntex += 4;
+		int startOffset, endOffset;
+		if (initialDraw) {
+			startOffset = endOffset = data->_curOffset;
+		} else {
+			startOffset = data->_curOffset - 1;
+			endOffset = 0;
+		}
+
+		while (endOffset <= startOffset) {
+			uint32 offset = data->_offsets[startOffset]._offset;
+			for (uint32 i = offset; i < offset + data->_offsets[startOffset]._numImages; ++i) {
+				glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
+				glBegin(GL_QUADS);
+				uint32 ntex = data->_verts[i]._pos * 4;
+				for (uint32 x = 0; x < data->_verts[i]._verts; ++x) {
+					glTexCoord2f(texc[ntex + 2], texc[ntex + 3]);
+					glVertex2f(texc[ntex + 0], texc[ntex + 1]);
+					ntex += 4;
+				}
+				glEnd();
 			}
-			glEnd();
+			startOffset--;
 		}
 
 		glDisable(GL_TEXTURE_2D);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
+
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
 
 		return;
 	}

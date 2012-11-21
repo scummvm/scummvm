@@ -409,6 +409,14 @@ void Bitmap::draw(int x, int y) {
 	g_driver->drawBitmap(this, x, y);
 }
 
+void Bitmap::drawForeground() {
+	_data->load();
+	if (_currImage == 0)
+		return;
+
+	g_driver->drawBitmap(this, _data->_x, _data->_y, false);
+}
+
 void Bitmap::setActiveImage(int n) {
 	assert(n >= 0);
 	_data->load();

@@ -873,7 +873,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 	}
 }
 
-void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y) {
+void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw) {
 	int format = bitmap->getFormat();
 	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
 		return;

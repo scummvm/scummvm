@@ -549,6 +549,11 @@ void Set::setSetup(int num) {
 	g_grim->flagRefreshShadowMask(true);
 }
 
+void Set::drawForeground() const {
+	assert(g_grim->getGameType() == GType_MONKEY4);
+	_currSetup->_bkgndBm->drawForeground();
+}
+
 void Set::drawBackground() const {
 	if (_currSetup->_bkgndZBm) // Some screens have no zbuffer mask (eg, Alley)
 		_currSetup->_bkgndZBm->draw();
