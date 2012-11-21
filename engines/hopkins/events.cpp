@@ -211,19 +211,24 @@ void EventsManager::pollEvents() {
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			souris_b = 1;
-			break;
+			return;
 		case Common::EVENT_RBUTTONDOWN:
 			souris_b = 2;
-			break;
+			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			souris_b = 0;
 			return;
-
 		default:
  			break;
 		}
 	}
+
+	for (char chr = 'A'; chr <= 'Z'; chr++)
+		keyState[chr] = false;
+
+	for (char chr = '0'; chr <= '9'; chr++)
+		keyState[chr] = false;
 }
 
 void EventsManager::handleKey(Common::Event &event) {
@@ -271,8 +276,10 @@ int EventsManager::keywin() {
 		if (keyState['.'])
 			foundChar = '.';
 		else if (keyState[8])
+			// BACKSPACE
 			foundChar = 8;
 		else if (keyState[13])
+			// ENTER
 			foundChar = 13;
 		else if (keyState[' '])
 			foundChar = ' ';
