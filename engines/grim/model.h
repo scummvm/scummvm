@@ -40,6 +40,7 @@ class CMap;
 
 struct Sprite {
 	void draw() const;
+	void loadBinary(Common::SeekableReadStream*);
 
 	Math::Vector3d _pos;
 	float _width;

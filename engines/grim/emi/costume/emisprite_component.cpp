@@ -35,38 +35,7 @@ EMISpriteComponent::~EMISpriteComponent() {
 }
 
 void EMISpriteComponent::init() {
-
-	// FIXME: this code should probably go into a sprite class.
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(_name+"b");
-	if (!stream)
-		return;
-	uint32 namelength = stream->readUint32LE();
-	char *name = new char[namelength];
-	stream->read(name, namelength);
-	delete[] name;
-	stream->seek(40, SEEK_CUR);
-	uint32 texnamelength = stream->readUint32LE();
-	char *texname = new char[texnamelength];
-	stream->read(texname, texnamelength);
-	/* unknown = */ stream->readUint32LE();
-	float width, height;
-	char data[8];
-	stream->read(data, sizeof(data));
-	width = get_float(data);
-	height = get_float(data + 4);
-
-
-	_sprite = new Sprite();
-	_sprite->_material = g_resourceloader->loadMaterial(texname, 0);
-	_sprite->_width = width;
-	_sprite->_height = height;
-	_sprite->_next = NULL;
-	_sprite->_visible = true;
-	_sprite->_pos.set(0, 0, 0);
-
-	delete[] texname;
-	delete stream;
-
+	_sprite = g_resourceloader->loadSprite(_name);
 }
 
 int EMISpriteComponent::update(uint time) {

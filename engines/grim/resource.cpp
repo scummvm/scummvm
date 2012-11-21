@@ -463,6 +463,25 @@ Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	return result;
 }
 
+Sprite *ResourceLoader::loadSprite(const Common::String &filename) {
+	assert(g_grim->getGameType() == GType_MONKEY4);
+	Common::SeekableReadStream *stream;
+
+	const Common::String fname = fixFilename(filename, true);
+
+	stream = openNewStreamFile(fname.c_str(), true);
+	if(!stream) {
+		warning("Could not find sprite %s", fname.c_str());
+		return NULL;
+	}
+
+	Sprite *result = new Sprite;
+	result->loadBinary(stream);
+	delete stream;
+
+	return result;
+}
+
 AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
 	Common::String fname = fixFilename(filename);
 	Common::SeekableReadStream *stream;

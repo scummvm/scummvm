@@ -41,6 +41,36 @@ void Sprite::draw() const {
 	g_driver->drawSprite(this);
 }
 
+void Sprite::loadBinary(Common::SeekableReadStream *stream) {
+	if (!stream)
+		return;
+
+	uint32 namelength = stream->readUint32LE();
+	stream->skip(namelength);
+
+	stream->seek(40, SEEK_CUR);
+	uint32 texnamelength = stream->readUint32LE();
+	char *texname = new char[texnamelength];
+	stream->read(texname, texnamelength);
+	/* unknown = */ stream->readUint32LE();
+	float width, height;
+	char data[8];
+	stream->read(data, sizeof(data));
+	width = get_float(data);
+	height = get_float(data + 4);
+
+
+	_material = g_resourceloader->loadMaterial(texname, 0);
+	_width = width;
+	_height = height;
+	_next = NULL;
+	_visible = true;
+	_pos.set(0, 0, 0);
+
+	delete[] texname;
+}
+
+
 /**
  * @class Model
  */
