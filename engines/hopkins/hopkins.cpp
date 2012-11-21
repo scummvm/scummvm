@@ -2658,7 +2658,7 @@ void HopkinsEngine::OCEAN_HOME() {
 		_objectsManager.SETANISPR(0, 9);
 }
 
-void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9) {
+void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 a9) {
 	_globals.PLAN_FLAG = false;
 	_graphicsManager.NOFADE = false;
 	_globals.NOMARCHE = false;
@@ -2681,13 +2681,13 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	else if (a1 == 91)
 		_objectsManager.INILINK("IM91");
 
-	if (!a5)
+	if (!exit1)
 		_objectsManager.ZONE_OFF(1);
-	if (!a6)
+	if (!exit2)
 		_objectsManager.ZONE_OFF(2);
-	if (!a7)
+	if (!exit3)
 		_objectsManager.ZONE_OFF(3);
-	if (!a8)
+	if (!exit4)
 		_objectsManager.ZONE_OFF(4);
 	if (!_globals.OCEAN_SENS)
 		_globals.OCEAN_SENS = a4;
@@ -2738,13 +2738,13 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	} while (!loopCond);
 
 	if (_globals.SORTIE == 1)
-		_globals.SORTIE = a5;
+		_globals.SORTIE = exit1;
 	if (_globals.SORTIE == 2)
-		_globals.SORTIE = a6;
+		_globals.SORTIE = exit2;
 	if (_globals.SORTIE == 3)
-		_globals.SORTIE = a7;
+		_globals.SORTIE = exit3;
 	if (_globals.SORTIE == 4)
-		_globals.SORTIE = a8;
+		_globals.SORTIE = exit4;
 	_graphicsManager.FADE_OUTW();
 	_objectsManager.SPRITE_OFF(0);
 	_globals.AFFLI = false;

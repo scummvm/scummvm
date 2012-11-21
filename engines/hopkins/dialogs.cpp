@@ -243,13 +243,14 @@ void DialogsManager::showOptionsDialog() {
 
 		if (!_vm->_graphicsManager.MANU_SCROLL)
 			_vm->_globals.opt_scrtype = 2;
-		if (_vm->_graphicsManager.MANU_SCROLL == 1)
+		else if (_vm->_graphicsManager.MANU_SCROLL == 1)
 			_vm->_globals.opt_scrtype = 1;
+
 		if (_vm->_globals.vitesse == 1)
 			_vm->_globals.opt_vitesse = 6;
-		if (_vm->_globals.vitesse == 2)
+		else if (_vm->_globals.vitesse == 2)
 			_vm->_globals.opt_vitesse = 5;
-		if (_vm->_globals.vitesse == 3)
+		else if (_vm->_globals.vitesse == 3)
 			_vm->_globals.opt_vitesse = 4;
 
 		_vm->_globals.opt_txt = !_vm->_soundManager.TEXTOFF ? 7 : 8;
@@ -259,33 +260,34 @@ void DialogsManager::showOptionsDialog() {
 			
 		if (_vm->_globals.SVGA == 1)
 			_vm->_globals.opt_anm = 10;
-		if (_vm->_globals.SVGA == 2)
+		else if (_vm->_globals.SVGA == 2)
 			_vm->_globals.opt_anm = 9;
-		if (_vm->_globals.SVGA == 3)
+		else if (_vm->_globals.SVGA == 3)
 			_vm->_globals.opt_anm = 11;
+
 		if (_vm->_graphicsManager.SPEED_SCROLL == 1)
 			_vm->_globals.opt_scrspeed = 12;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 2)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 2)
 			_vm->_globals.opt_scrspeed = 13;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 4)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 4)
 			_vm->_globals.opt_scrspeed = 14;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 8)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 8)
 			_vm->_globals.opt_scrspeed = 15;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 16)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 16)
 			_vm->_globals.opt_scrspeed = 16;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 32)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 32)
 			_vm->_globals.opt_scrspeed = 17;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 48)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 48)
 			_vm->_globals.opt_scrspeed = 18;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 64)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 64)
 			_vm->_globals.opt_scrspeed = 19;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 128)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 128)
 			_vm->_globals.opt_scrspeed = 20;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 160)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 160)
 			_vm->_globals.opt_scrspeed = 21;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 320)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 320)
 			_vm->_globals.opt_scrspeed = 22;
-		if (_vm->_graphicsManager.SPEED_SCROLL == 640)
+		else if (_vm->_graphicsManager.SPEED_SCROLL == 640)
 			_vm->_globals.opt_scrspeed = 23;
 
 		_vm->_eventsManager.VBL();
@@ -731,33 +733,37 @@ int DialogsManager::CHERCHE_PARTIE() {
 	}
 	if ((uint16)(yp - 388) <= 0x10u && xp > _vm->_graphicsManager.ofscroll + 273 && xp < _vm->_graphicsManager.ofscroll + 355)
 		slotNumber = 7;
-	if (slotNumber == 1) {
+
+	switch (slotNumber) {
+	case 1:
 		_vm->_objectsManager.SL_X = 189;
 		_vm->_objectsManager.SL_Y = 111;
-	}
-	if (slotNumber == 2) {
+		break;
+	case 2:
 		_vm->_objectsManager.SL_X = 322;
 		_vm->_objectsManager.SL_Y = 111;
-	}
-	if (slotNumber == 3) {
+		break;
+	case 3:
 		_vm->_objectsManager.SL_X = 189;
 		_vm->_objectsManager.SL_Y = 202;
-	}
-	if (slotNumber == 4) {
+		break;
+	case 4:
 		_vm->_objectsManager.SL_X = 322;
 		_vm->_objectsManager.SL_Y = 202;
-	}
-	if (slotNumber == 5) {
+		break;
+	case 5:
 		_vm->_objectsManager.SL_X = 189;
 		_vm->_objectsManager.SL_Y = 293;
-	}
-	if (slotNumber == 6) {
+		break;
+	case 6:
 		_vm->_objectsManager.SL_X = 322;
 		_vm->_objectsManager.SL_Y = 293;
-	}
-	if (slotNumber == 7 || !slotNumber) {
+		break;
+	case 0:
+	case 7:
 		_vm->_objectsManager.SL_X = 0;
 		_vm->_objectsManager.SL_Y = 0;
+		break;
 	}
 	return slotNumber;
 }
