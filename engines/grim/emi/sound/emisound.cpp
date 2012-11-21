@@ -270,4 +270,27 @@ void EMISound::selectMusicSet(int setId) {
 	}
 }
 
+void EMISound::pushStateToStack() {
+	if (_music)
+		_music->pause();
+	_stateStack.push(_music);
+	_music = NULL;
+}
+
+void EMISound::popStateFromStack() {
+	if (_music) {
+		delete _music;
+		_music = _stateStack.pop();
+		if (_music)
+			_music->pause();
+	}
+}
+
+void EMISound::flushStack() {
+	while (!_stateStack.empty()) {
+		SoundTrack *temp = _stateStack.pop();
+		delete temp;
+	}
+}
+
 } // end of namespace Grim

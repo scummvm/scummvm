@@ -24,6 +24,7 @@
 #define GRIM_MSS_H
 
 #include "common/str.h"
+#include "common/stack.h"
 
 namespace Grim {
 
@@ -48,6 +49,7 @@ class EMISound {
 	SoundTrack *_music;
 	MusicEntry *_musicTable;
 	Common::String _musicPrefix;
+	Common::Stack<SoundTrack*> _stateStack;
 
 	void removeItem(SoundTrack* item);
 	int32 getFreeChannel();
@@ -67,6 +69,12 @@ public:
 
 	void setMusicState(int stateId);
 	void selectMusicSet(int setId);
+
+// The stack-classes currently ignore g_imusestate completely.
+	void pushStateToStack();
+	void popStateFromStack();
+	void flushStack();
+
 	uint32 getMsPos(int stateId);
 };
 	

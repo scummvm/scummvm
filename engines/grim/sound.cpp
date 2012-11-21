@@ -106,4 +106,19 @@ void SoundPlayer::selectMusicSet(int setId) {
 	return _emiSound->selectMusicSet(setId);
 }
 
+void SoundPlayer::pushState() {
+	assert(_emiSound); // This shouldn't ever be called from Grim.
+	return _emiSound->pushStateToStack();
+}
+
+void SoundPlayer::popState() {
+	assert(_emiSound); // This shouldn't ever be called from Grim.
+	return _emiSound->popStateFromStack();
+}
+
+void SoundPlayer::flushStack() {
+	assert(_emiSound); // This shouldn't ever be called from Grim.
+	return _emiSound->flushStack();
+}
+
 } // end of namespace Grim

@@ -202,7 +202,8 @@ void Lua_V2::ImSelectSet() {
 
 void Lua_V2::ImFlushStack() {
 	// FIXME
-	warning("Lua_V2::ImFlushStack: implement opcode");
+	warning("Lua_V2::ImFlushStack: currently guesswork");
+	g_sound->flushStack();
 }
 
 
@@ -361,10 +362,12 @@ void Lua_V2::StopAllSounds() {
 }
 
 void Lua_V2::ImPushState() {
-	warning("Lua_V2::ImPushState: implement opcode");
+	g_sound->pushState();
+	warning("Lua_V2::ImPushState: currently guesswork");
 }
 void Lua_V2::ImPopState() {
-	warning("Lua_V2::ImPopState: implement opcode");
+	g_sound->popState();
+	warning("Lua_V2::ImPopState: currently guesswork");
 }
 
 } // end of namespace Grim
