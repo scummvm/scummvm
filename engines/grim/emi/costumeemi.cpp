@@ -186,6 +186,8 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SHAD-handling: %s" , name);
 	} else if (tag == MKTAG('a', 'w', 'g', 't')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement AWGT-handling: %s" , name);
+	} else if (tag == MKTAG('s', 'n', 'd', '2')) {
+		// ignore, this is a leftover from an earlier engine.
 	} else {
 		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
 	}
