@@ -105,6 +105,9 @@ public:
 		uint32 version;
 		byte gameID;
 		uint32 flags;
+		uint32 saveDate;
+		uint32 saveTime;
+		uint32 playTime;
 		Graphics::Surface *thumbnail;
 	};
 
@@ -113,7 +116,6 @@ public:
 	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
 	
-#if 0 // Not used yet but let's keep it for later when it is	
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);
 	void savegame(const char *filename, const char *description);
@@ -121,7 +123,6 @@ public:
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
-#endif
 
 	GameState& gameState() { return _gameState; }
 	GameModule *gameModule() { return _gameModule; }

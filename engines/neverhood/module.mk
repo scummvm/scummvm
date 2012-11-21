@@ -41,6 +41,7 @@ MODULE_OBJS = \
 	palette.o \
 	resource.o \
 	resourceman.o \
+	saveload.o \
 	scene.o \
 	screen.o \
 	smackerscene.o \
