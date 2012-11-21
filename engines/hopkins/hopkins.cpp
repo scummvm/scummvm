@@ -1837,8 +1837,6 @@ void HopkinsEngine::PUBQUIT() {
 }
 
 void HopkinsEngine::INCENDIE() {
-	warning("INCENDIE()");
-
 	_globals.DESACTIVE_INVENT = true;
 	_globals.iRegul = 1;
 	_graphicsManager.LOAD_IMAGE("IM71");
@@ -1850,31 +1848,22 @@ void HopkinsEngine::INCENDIE() {
 	_graphicsManager.VISU_ALL();
 	_globals.BPP_NOAFF = true;
 
-	int cpt = 0;
-	do {
+	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
-		++cpt;
-	} while (cpt <= 4);
 
 	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
 	_globals.iRegul = 1;
 
-	cpt = 0;
-	do {
+	for (int cpt = 0; cpt <= 249; cpt++)
 		_eventsManager.VBL();
-		++cpt;
-	} while (cpt <= 249);
 
 	_globals.NOPARLE = true;
 	_talkManager.PARLER_PERSO("SVGARD1.pe2");
 	_globals.NOPARLE = false;
 
-	cpt = 0;
-	do {
+	for (int cpt = 0; cpt <= 49; cpt++)
 		_eventsManager.VBL();
-		++cpt;
-	} while (cpt <= 49);
 
 	_graphicsManager.FADE_OUTW();
 	_graphicsManager.FIN_VISU();
@@ -1883,8 +1872,6 @@ void HopkinsEngine::INCENDIE() {
 }
 
 void HopkinsEngine::BASE() {
-	warning("BASE()");
-
 	_globals.iRegul = 1;
 	_graphicsManager.nbrligne = 640;
 	_graphicsManager.DD_Lock();
@@ -1919,8 +1906,7 @@ void HopkinsEngine::BASE() {
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.PLAY_ANM("OC30.anm", 10, 18, 18);
 		}
-	}
-	if (_globals.SVGA == 2) {
+	} else if (_globals.SVGA == 2) {
 		_animationManager.PLAY_ANM("base00a.anm", 10, 18, 18);
 		if (!_eventsManager.ESC_KEY)
 			_animationManager.PLAY_ANM("base05a.anm", 10, 18, 18);
@@ -1955,8 +1941,6 @@ void HopkinsEngine::BASE() {
 }
 
 void HopkinsEngine::BASED() {
-	warning("BASED()");
-
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
 	_graphicsManager.DD_Unlock();
@@ -1975,11 +1959,8 @@ void HopkinsEngine::BASED() {
 	_objectsManager.INILINK("IM92");
 	_globals.BPP_NOAFF = true;
 
-	int cpt = 0;
-	do {
+	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
-		++cpt;
-	} while (cpt <= 4);
 
 	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
@@ -1998,8 +1979,6 @@ void HopkinsEngine::BASED() {
 }
 
 void HopkinsEngine::JOUE_FIN() {
-	warning("JOUE_FIN()");
-
 	_globals.PERSO = _globals.dos_free2(_globals.PERSO);
 	_dialogsManager.VIRE_INVENT = true;
 	_globals.DESACTIVE_INVENT = true;
@@ -2027,11 +2006,8 @@ void HopkinsEngine::JOUE_FIN() {
 	_eventsManager.CHANGE_MOUSE(0);
 	_globals.BPP_NOAFF = true;
 
-	int cpt = 0;
-	do {
+	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
-		++cpt;
-	} while (cpt <= 4);
 
 	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
@@ -2158,8 +2134,6 @@ void HopkinsEngine::JOUE_FIN() {
 }
 
 void HopkinsEngine::AVION() {
-	warning("AVION()");
-
 	_soundManager.WSOUND(28);
 	_globals.iRegul = 1;
 	_globals.nbrligne = 640;
@@ -2240,8 +2214,6 @@ void HopkinsEngine::AVION() {
 }
 
 int HopkinsEngine::PWBASE() {
-	warning("PWBASE()");
-
 	_globals.DESACTIVE_INVENT = true;
 	_graphicsManager.LOAD_IMAGE("PBASE");
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -2321,8 +2293,6 @@ int HopkinsEngine::PWBASE() {
 }
 
 void HopkinsEngine::Charge_Credits() {
-	warning("Charge_Credits()");
-
 	_globals.Credit_y = 440;
 	_globals.Credit_l = 10;
 	_globals.Credit_h = 40;
@@ -2387,8 +2357,6 @@ void HopkinsEngine::Charge_Credits() {
 }
 
 void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
-	warning("CREDIT_AFFICHE");
-
 	byte *bufPtr = buffer;
 	int strWidth = 0;
 	byte curChar;
@@ -2430,8 +2398,6 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 }
 
 void HopkinsEngine::Credits() {
-	warning("Credits()");
-
 	Charge_Credits();
 	_globals.Credit_y = 436;
 	_graphicsManager.LOAD_IMAGE("GENERIC");
@@ -2494,8 +2460,6 @@ void HopkinsEngine::Credits() {
 }
 
 void HopkinsEngine::BTOCEAN() {
-	warning("BTOCEAN()");
-
 	_fontManager.TEXTE_OFF(9);
 	if (_eventsManager.btsouris == 16) {
 		_eventsManager.XMOUSE();
@@ -2684,8 +2648,6 @@ LABEL_91:
 }
 
 void HopkinsEngine::OCEAN_HOME() {
-	warning("OCEAN_HOME()");
-
 	if (_globals.OCEAN_SENS == 3)
 		_objectsManager.SETANISPR(0, 0);
 	if (_globals.OCEAN_SENS == 7)
@@ -2697,8 +2659,6 @@ void HopkinsEngine::OCEAN_HOME() {
 }
 
 void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 a5, int16 a6, int16 a7, int16 a8, int16 a9) {
-	warning("OCEAN()");
-
 	_globals.PLAN_FLAG = false;
 	_graphicsManager.NOFADE = false;
 	_globals.NOMARCHE = false;
@@ -2757,11 +2717,8 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	_eventsManager.MOUSE_ON();
 	_eventsManager.CHANGE_MOUSE(4);
 
-	int cpt = 0;
-	do {
+	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
-		++cpt;
-	} while (cpt <= 4);
 
 	if (!_graphicsManager.NOFADE)
 		_graphicsManager.FADE_INW();

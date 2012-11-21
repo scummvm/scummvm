@@ -301,10 +301,8 @@ void DialogsManager::showOptionsDialog() {
 }
 
 void DialogsManager::showInventory() {
-	int v1; 
 	size_t filesize; 
 	int v4;
-	int v5; 
 	int v6; 
 	byte *v7; 
 	int v8; 
@@ -313,7 +311,6 @@ void DialogsManager::showInventory() {
 	int v11; 
 	int v12; 
 	int v13; 
-	int v14; 
 	int v15; 
 	int v16;
 	int v17;
@@ -327,14 +324,12 @@ void DialogsManager::showInventory() {
 		_vm->_graphicsManager.no_scroll = 1;
 		_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
 		_vm->_objectsManager.FLAG_VISIBLE = false;
-		v1 = 0;
-		do {
+		for (int v1 = 0; v1 <= 1; v1++) {
 			INVENT_ANIM();
 			_vm->_eventsManager.XMOUSE();
 			_vm->_eventsManager.YMOUSE();
 			_vm->_eventsManager.VBL();
-			++v1;
-		} while (v1 <= 1);
+		}
 		_vm->_dialogsManager.Winventaire = g_PTRNUL;
 
 LABEL_7:
@@ -376,11 +371,9 @@ LABEL_7:
 			v19 + 300, 414, 0, 0, 0, 0);
 		v15 = 0;
 		v4 = 0;
-		v14 = 1;
-		do {
+		for (int v14 = 1; v14 <= 5; v14++) {
 			v16 = 0;
-			v5 = 1;
-			do {
+			for (int v5 = 1; v5 <= 6; v5++) {
 				++v4;
 				v6 = _vm->_globals.INVENTAIRE[v4];
 				if (v6 && v4 <= 29) {
@@ -390,11 +383,9 @@ LABEL_7:
 					_vm->_globals.dos_free2(v7);
 				}
 				v16 += 54;
-				++v5;
-			} while (v5 <= 6);
+			};
 			v15 += 38;
-			++v14;
-		} while (v14 <= 5);
+		}
 		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, inventairex, inventairey, inventairel, inventaireh);
 		_vm->_eventsManager.souris_bb = 0;
 		v20 = 0;

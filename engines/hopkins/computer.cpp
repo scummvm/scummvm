@@ -742,20 +742,17 @@ void ComputerManager::AFF_BRIQUES() {
 }
 
 void ComputerManager::AFF_VIE() {
-	int v0; 
-	int v1; 
-	int v2; 
 	int v3; 
 	int v4; 
 
-	v0 = CASSEVIE - 1;
-	v1 = 10;
-	v2 = 0;
-	do {
+	int v0 = CASSEVIE - 1;
+	int v1 = 10;
+
+	for (int v2 = 0; v2 <= 11; v2++) {
 		_vm->_graphicsManager.AFFICHE_SPEEDVGA(CASSESPR, v1, 10, 15);
 		v1 += 7;
-		++v2;
-	} while (v2 <= 11);
+	}
+
 	if (v0) {
 		v3 = 10;
 		v4 = 0;
@@ -851,11 +848,8 @@ void ComputerManager::PLAY_BRIQUE() {
 
 int ComputerManager::HIGHT_SCORE() {
 	int v0; 
-	int v1; 
-	int v2; 
 	int v3; 
 	int v4; 
-	int v6; 
 	byte *ptr; 
 
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
@@ -867,22 +861,18 @@ int ComputerManager::HIGHT_SCORE() {
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	v6 = 0;
-	do {
+
+	for (int v6 = 0; v6 <= 5; v6++) {
 		v0 = 19 * v6;
-		v0 = v0 + 46;
-		v1 = 0;
-		do {
+		v0 += 46;
+		for (int v1 = 0; v1 <= 5; v1++)
 			PRINT_HSCORE(ptr, 9 * v1 + 69, v0, Score[v6].name[v1]);
-			++v1;
-		} while (v1 <= 5);
-		v2 = 0;
-		do {
+
+		for (int v2 = 0; v2 <= 8; v2++)
 			PRINT_HSCORE(ptr, 9 * v2 + 199, v0, Score[v6].score[v2]);
-			++v2;
-		} while (v2 <= 8);
-		++v6;
-	} while (v6 <= 5);
+
+	}
+
 	_vm->_graphicsManager.FADE_IN_CASSE();
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	v3 = 0;
@@ -915,8 +905,7 @@ void ComputerManager::NAME_SCORE() {
 	_vm->_fileManager.CONSTRUIT_SYSTEM("ALPHA.SPR");
 	ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.FADE_IN_CASSE();
-	int strPos = 0;
-	do {
+	for (int strPos = 0; strPos <= 4; strPos++) {
 		PRINT_HSCORE(ptr, 9 * strPos + 140, 78, 1);
 
 		curChar = toupper(_vm->_eventsManager.keywin());
@@ -940,8 +929,7 @@ void ComputerManager::NAME_SCORE() {
 		_vm->_eventsManager.VBL();
 		_vm->_eventsManager.VBL();
 		_vm->_eventsManager.VBL();
-		++strPos;
-	} while (strPos <= 4);
+	}
 	Score[5].score = "         ";
 
 	char score[16]; 
@@ -1020,77 +1008,65 @@ void ComputerManager::IMPSCORE(int a1, int a2) {
 }
 
 void ComputerManager::SAUVE_SCORE() {
-	int v0; 
 	int v1; 
 	int v2; 
-	int v3; 
 	int v4; 
-	int v5; 
 	int v6; 
-	int v7; 
 	char v8; 
 	int v9; 
-	int v10; 
 	char v11; 
-	int v13; 
 	int v14; 
 	byte *ptr; 
 	int v16[6]; 
 	int v17[6]; 
 
-	v0 = 0;
-	do {
+	for (int v0 = 0; v0 <= 5; v0++) {
 		v1 = atol(Score[v0].score.c_str());
 		v17[v0] = v1;
 		if (!v1)
 			v17[v0] = 5;
-		++v0;
-	} while (v0 <= 5);
-	v13 = 0;
-	do {
+	}
+
+	for (int v13 = 0; v13 <= 5; v13++) {
 		v2 = 0;
-		v3 = 0;
+		bool v3 = false;
 		do {
 			v4 = v17[v2];
 			if (v4 && v17[0] <= v4 && v17[1] <= v4 && v17[2] <= v4 && v17[3] <= v4 
 					&& v17[4] <= v4 && v17[5] <= v4)
-				v3 = 1;
-			if (v3 == 1) {
+				v3 = true;
+			if (v3) {
 				v16[v13] = v2;
 				v17[v2] = 0;
 			} else {
 				++v2;
 			}
-		} while (v3 != 1);
-		++v13;
-	} while (v13 <= 5);
+		} while (!v3);
+	}
 
 	ptr = _vm->_globals.dos_malloc2(0x64u);
 	memset(ptr, 0, 0x63u);
-	v5 = 0;
-	do {
+	for (int v5 = 0; v5 <= 5; v5++) {
 		v6 = 16 * v5;
 		v14 = v16[v5];
-		v7 = 0;
-		do {
+		for (int v7 = 0; v7 <= 4; v7++) {
 			v8 = Score[v14].name[v7];
 			if (!v8)
 				v8 = 32;
-			*(ptr + (16 * v5) + v7++) = v8;
-		} while (v7 <= 4);
+			*(ptr + (16 * v5) + v7) = v8;
+		};
 
 		*(ptr + v6 + 5) = 0;
 		v9 = v6 + 6;
-		v10 = 0;
-		do {
+
+		for (int v10 = 0; v10 <= 8; v10++) {
 			v11 = Score[v14].score[v10];
 			if (!v11)
 				v11 = 48;
-			*(ptr + v9 + v10++) = v11;
-		} while (v10 <= 8);
+			*(ptr + v9 + v10) = v11;
+		};
 		*(ptr + v9 + 9) = 0;
-		++v5;
-	} while (v5 <= 5);
+	}
 
 	_vm->_fileManager.CONSTRUIT_LINUX("HISCORE.DAT");
 	_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, ptr, 0x64u);

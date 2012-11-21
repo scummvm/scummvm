@@ -873,7 +873,6 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count
 	int v11;
 	int v12;
 	int v13; 
-	int v14;
 	int v15; 
 	int v16; 
 	int v17; 
@@ -929,8 +928,7 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count
 				WRITE_LE_UINT16(dataP + 26, v12);
 				*(dataP + 28) = v13;
 
-				v14 = 1;
-				do {
+				for (int v14 = 1; v14 <= 4999; v14++) {
 					v9 += 10;
 					v23 += 10;
 					if (!v22)
@@ -947,8 +945,7 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count
 					WRITE_LE_UINT16(v9 + 4, v22);
 					WRITE_LE_UINT16(v9 + 6, v16);
 					*(v9 + 8) = v17;
-					++v14;
-				} while (v14 <= 4999);
+				}
 				v3 = 1;
 			}
 		}
