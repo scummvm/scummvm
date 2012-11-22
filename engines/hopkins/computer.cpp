@@ -343,137 +343,132 @@ void ComputerManager::Charge_Menu() {
 	_vm->_globals.dos_free2(ptr);
 }
 
-void ComputerManager::TXT4(int xp, int yp, int a3) {
-	int v3; 
-	bool v4, v12;
-	char v5; 
-	int v6; 
-	char v7; 
-	int v8; 
-	byte v9; 
-	int textIndex;
-	char newChar; 
+void ComputerManager::TXT4(int xp, int yp, int textIdx) {
+	char curChar;
+	char newChar;
+	char mappedChar;
 	Common::String charString;
 
-	v3 = xp;
-	textIndex = 0;
-	v4 = v12 = _vm->_eventsManager.souris_flag;
+	int x1 = xp;
+	int x2 = 0;
+
+	int textIndex = 0;
+	bool oldMouseFlag = _vm->_eventsManager.souris_flag;
 	_vm->_eventsManager.souris_flag = false;
 
 	_vm->_fontManager.TEXT_NOW(xp, yp, "_", -4);
 	do {
-		v5 = _vm->_eventsManager.keywin();
+		curChar = _vm->_eventsManager.keywin();
 		if (_vm->shouldQuit())
 			return;
 
-		v6 = v5;
-		v7 = 42;
-		if (v5 == 45)
-			v7 = 45;
-		if (v5 == 48)
-			v7 = 48;
-		if (v5 == 49)
-			v7 = 49;
-		if (v5 == 50)
-			v7 = 50;
-		if (v5 == 51)
-			v7 = 51;
-		if (v5 == 52)
-			v7 = 52;
-		if (v5 == 53)
-			v7 = 53;
-		if (v5 == 54)
-			v7 = 54;
-		if (v5 == 55)
-			v7 = 55;
-		if (v5 == 56)
-			v7 = 56;
-		if (v5 == 57)
-			v7 = 57;
-		if (v5 == 65 || v5 == 97)
-			v7 = 65;
-		if (v5 == 66 || v5 == 98)
-			v7 = 66;
-		if (v5 == 67 || v5 == 99)
-			v7 = 67;
-		if (v5 == 68 || v5 == 100)
-			v7 = 68;
-		if (v5 == 69 || v5 == 101)
-			v7 = 69;
-		if (v5 == 70 || v5 == 102)
-			v7 = 70;
-		if (v5 == 71 || v5 == 103)
-			v7 = 71;
-		if (v5 == 72 || v5 == 104)
-			v7 = 72;
-		if (v5 == 73 || v5 == 105)
-			v7 = 73;
-		if (v5 == 74 || v5 == 106)
-			v7 = 74;
-		if (v5 == 75 || v5 == 107)
-			v7 = 75;
-		if (v5 == 76 || v5 == 108)
-			v7 = 76;
-		if (v5 == 77 || v5 == 109)
-			v7 = 77;
-		if (v5 == 78 || v5 == 110)
-			v7 = 78;
-		if (v5 == 79 || v5 == 111)
-			v7 = 79;
-		if (v5 == 80 || v5 == 112)
-			v7 = 80;
-		if (v5 == 81 || v5 == 113)
-			v7 = 81;
-		if (v5 == 82 || v5 == 114)
-			v7 = 82;
-		if (v5 == 83 || v5 == 115)
-			v7 = 83;
-		if (v5 == 84 || v5 == 116)
-			v7 = 84;
-		if (v5 == 85 || v5 == 117)
-			v7 = 85;
-		if (v5 == 86 || v5 == 118)
-			v7 = 86;
-		if (v5 == 87 || v5 == 119)
-			v7 = 87;
-		if (v5 == 88 || v5 == 120)
-			v7 = 88;
-		if (v5 == 89 || v5 == 121)
-			v7 = 89;
-		if (v5 == 90 || v5 == 122)
-			v7 = 90;
-		if (v5 == 8 && textIndex > 0) {
+		mappedChar = '*';
+
+		if (curChar == '-')
+			mappedChar = 45;
+		else if (curChar == '0')
+			mappedChar = 48;
+		else if (curChar == '1')
+			mappedChar = 49;
+		else if (curChar == '2')
+			mappedChar = 50;
+		else if (curChar == '3')
+			mappedChar = 51;
+		else if (curChar == '4')
+			mappedChar = 52;
+		else if (curChar == '5')
+			mappedChar = 53;
+		else if (curChar == '6')
+			mappedChar = 54;
+		else if (curChar == '7')
+			mappedChar = 55;
+		else if (curChar == '8')
+			mappedChar = 56;
+		else if (curChar == '9')
+			mappedChar = 57;
+		else if (curChar == 'A' || curChar == 'a')
+			mappedChar = 65;
+		else if (curChar == 'B' || curChar == 'b')
+			mappedChar = 66;
+		else if (curChar == 'C' || curChar == 'c')
+			mappedChar = 67;
+		else if (curChar == 'D' || curChar == 'd')
+			mappedChar = 68;
+		else if (curChar == 'E' || curChar == 'e')
+			mappedChar = 69;
+		else if (curChar == 'F' || curChar == 'f')
+			mappedChar = 70;
+		else if (curChar == 'G' || curChar == 'g')
+			mappedChar = 71;
+		else if (curChar == 'H' || curChar == 'h')
+			mappedChar = 72;
+		else if (curChar == 'I' || curChar == 'i')
+			mappedChar = 73;
+		else if (curChar == 'J' || curChar == 'j')
+			mappedChar = 74;
+		else if (curChar == 'K' || curChar == 'k')
+			mappedChar = 75;
+		else if (curChar == 'L' || curChar == 'l')
+			mappedChar = 76;
+		else if (curChar == 'M' || curChar == 'm')
+			mappedChar = 77;
+		else if (curChar == 'N' || curChar == 'n')
+			mappedChar = 78;
+		else if (curChar == 'O' || curChar == 'o')
+			mappedChar = 79;
+		else if (curChar == 'P' || curChar == 'p')
+			mappedChar = 80;
+		else if (curChar == 'Q' || curChar == 'q')
+			mappedChar = 81;
+		else if (curChar == 'R' || curChar == 'r')
+			mappedChar = 82;
+		else if (curChar == 'S' || curChar == 's')
+			mappedChar = 83;
+		else if (curChar == 'T' || curChar == 't')
+			mappedChar = 84;
+		else if (curChar == 'U' || curChar == 'u')
+			mappedChar = 85;
+		else if (curChar == 'V' || curChar == 'v')
+			mappedChar = 86;
+		else if (curChar == 'W' || curChar == 'w')
+			mappedChar = 87;
+		else if (curChar == 'X' || curChar == 'x')
+			mappedChar = 88;
+		else if (curChar == 'Y' || curChar == 'y')
+			mappedChar = 89;
+		else if (curChar == 'Z' || curChar == 'z')
+			mappedChar = 90;
+
+		// BackSpace
+		if (curChar == 8 && textIndex > 0) {
 			Sup_string[textIndex--] = 0;
-			v3 -= _vm->_globals.police_l;
-			v8 = v3 + 2 * _vm->_globals.police_l;
-			v9 = v7;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, v3, yp, 3 * _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, v3, yp);
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(v3, yp, v8, yp + 12);
-			_vm->_fontManager.TEXT_NOW(v3, yp, "_", -4);
-			v7 = v9;
+			x1 -= _vm->_globals.police_l;
+			x2 = x1 + 2 * _vm->_globals.police_l;
+			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, 3 * _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, x1, yp);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(x1, yp, x2, yp + 12);
+			_vm->_fontManager.TEXT_NOW(x1, yp, "_", -4);
 		}
-		if (v7 != '*') {
-			newChar = v7;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, v3, yp, _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, v3, yp);
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(v3, yp, _vm->_globals.police_l + v3, yp + 12);
+		if (mappedChar != '*') {
+			newChar = mappedChar;
+			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, x1, yp);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(x1, yp, _vm->_globals.police_l + x1, yp + 12);
 			Sup_string[textIndex] = newChar;
 
 			charString = Common::String::format("%c_", newChar);
-			_vm->_fontManager.TEXT_NOW(v3, yp, charString, -4);
+			_vm->_fontManager.TEXT_NOW(x1, yp, charString, -4);
 			++textIndex;
-			v3 += _vm->_globals.police_l;
+			x1 += _vm->_globals.police_l;
 		}
 		_vm->_eventsManager.VBL();
-		v4 = a3;
-	} while (textIndex != a3 && v6 != 13);
+	} while (textIndex != textIdx && curChar != 13);
 
-	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, v3, yp, _vm->_globals.police_l, 
-		12, _vm->_graphicsManager.VESA_BUFFER, v3, yp);
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(v3, yp, _vm->_globals.police_l + v3, yp + 12);
+	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, _vm->_globals.police_l, 
+		12, _vm->_graphicsManager.VESA_BUFFER, x1, yp);
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(x1, yp, _vm->_globals.police_l + x1, yp + 12);
 	
 	_vm->_eventsManager.VBL();
 	Sup_string[textIndex] = 0;
-	_vm->_eventsManager.souris_flag = v12;
+	_vm->_eventsManager.souris_flag = oldMouseFlag;
 }
 
 void ComputerManager::outtext(const Common::String &msg) {
@@ -911,7 +906,7 @@ void ComputerManager::NAME_SCORE() {
 		curChar = toupper(_vm->_eventsManager.keywin());
 		if ((curChar <= '/') || (curChar > 'Z'))
 			curChar = ' ';
-		if ((uint16)(curChar - 58) <= 6u)
+		if ((uint16)(curChar - ':') <= 6u)
 			curChar = ' ';
 
 		Score[5].name.setChar(curChar, strPos);

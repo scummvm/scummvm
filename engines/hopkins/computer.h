@@ -96,7 +96,7 @@ private:
 	 */
 	void Charge_Menu();
 
-	void TXT4(int xp, int yp, int a3);
+	void TXT4(int xp, int yp, int textIdx);
 
 	/**
 	 * Restores the scene for the FBI headquarters room
