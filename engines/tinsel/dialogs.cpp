@@ -2723,7 +2723,7 @@ static OBJECT *AddObject(const FREEL *pfreel, int num) {
 
 static void AddSlider(OBJECT **slide, const FILM *pfilm) {
 	g_SlideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
-	MultiSetAniXY(*slide, MultiRightmost(g_RectObject) + (TinselV2 ? NM_SLX : -M_SXOFF + 2) - 1,
+	MultiSetAniXY(*slide, MultiRightmost(g_RectObject) + (TinselV2 ? NM_SLX : -M_SXOFF + 2),
 		g_InvD[g_ino].inventoryY + g_sliderYpos);
 	MultiSetZPosition(*slide, Z_INV_MFRAME);
 }
@@ -3318,7 +3318,7 @@ static void ConstructInventory(InventoryType filling) {
 				}
 			}
 		} else if (g_InvD[g_ino].NoofItems > g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons) {
-			g_sliderYmin = g_TLheight - (TinselV2 ? 2 : 1);
+			g_sliderYmin = g_TLheight - (TinselV2 ? 1 : 2);
 			g_sliderYmax = g_TLheight + eV + (TinselV2 ? 12 : 10);
 			AddSlider(&retObj[n++], pfilm);
 		}
