@@ -1053,7 +1053,7 @@ bool TinselEngine::pollEvent() {
 	case Common::EVENT_MOUSEMOVE:
 		{
 			// This fragment takes care of Tinsel 2 when it's been compiled with
-			// blank areas at the top and bottom of thes creen
+			// blank areas at the top and bottom of the screen
 			int ySkip = TinselV2 ? (g_system->getHeight() - _vm->screen().h) / 2 : 0;
 			if ((event.mouse.y >= ySkip) && (event.mouse.y < (g_system->getHeight() - ySkip)))
 				_mousePos = Common::Point(event.mouse.x, event.mouse.y - ySkip);
