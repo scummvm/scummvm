@@ -234,8 +234,8 @@ enum PARTS_INDEX {
 #define NM_RS_R_INSET		4
 #define NM_RS_THICKNESS		5
 #define NM_MOVE_AREA_B_Y	30
-#define NM_SLIDE_INSET		(TinselV2 ? 18 : 15)	// X offset (from right) of left of scroll region
-#define NM_SLIDE_THICKNESS	(TinselV2 ? 13 : 4)		// thickness of scroll region
+#define NM_SLIDE_INSET		(TinselV2 ? 18 : 9)	// X offset (from right) of left of scroll region
+#define NM_SLIDE_THICKNESS	(TinselV2 ? 13 : 7)		// thickness of scroll region
 #define NM_UP_ARROW_TOP		34	// Y offset of top of up arrow
 #define NM_UP_ARROW_BOTTOM	49	// Y offset of bottom of up arrow
 #define NM_DN_ARROW_TOP		22	// Y offset (from bottom) of top of down arrow
