@@ -33,6 +33,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/random.h"
+#include "backends/keymapper/keymapper.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "gui/saveload.h"
@@ -151,6 +152,7 @@ Common::Error PegasusEngine::run() {
 	}
 
 	// Set up input
+	initKeymap();
 	InputHandler::setInputHandler(this);
 	allowInput(true);
 
@@ -2347,6 +2349,43 @@ uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
 
 	// Can't really happen, but it's a good fallback anyway :P
 	return 1;
+}
+
+void PegasusEngine::initKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	static const char *const kKeymapName = "pegasus";
+	Common::Keymapper *const mapper = _eventMan->getKeymapper();
+
+	// Do not try to recreate same keymap over again
+	if (mapper->getKeymap(kKeymapName) != 0)
+		return;
+
+	Common::Keymap *const engineKeyMap = new Common::Keymap(kKeymapName);
+
+	// Since the game has multiple built-in keys for each of these anyway,
+	// this just attempts to remap one of them.
+	const Common::KeyActionEntry keyActionEntries[] = {
+		{ Common::KEYCODE_UP, "UP", _("Up/Forward") },
+		{ Common::KEYCODE_DOWN, "DWN", _("Down/Backward") },
+		{ Common::KEYCODE_LEFT, "TL", _("Turn Left") },
+		{ Common::KEYCODE_RIGHT, "TR", _("Turn Right") },
+		{ Common::KEYCODE_BACKQUOTE, "TIV", _("Toggle Inventory Tray") },
+		{ Common::KEYCODE_BACKSPACE, "TBI", _("Toggle Biochip Tray") },
+		{ Common::KEYCODE_RETURN, "ENT", _("Enter/Select") },
+		{ Common::KEYCODE_t, "TMA", _("Toggle Middle Area") },
+		{ Common::KEYCODE_i, "TIN", _("Toggle Info") },
+		{ Common::KEYCODE_ESCAPE, "PM", _("Activate Pause Menu") },
+		{ Common::KEYCODE_e, "WTF", _("???") } // easter egg key (without being completely upfront about it)
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
+		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
+		act->addKeyEvent(keyActionEntries[i].ks);
+	}
+
+	mapper->addGameKeymap(engineKeyMap);
+	mapper->pushKeymap(kKeymapName, true);
+#endif
 }
 
 } // End of namespace Pegasus

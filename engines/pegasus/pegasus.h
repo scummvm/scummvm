@@ -265,6 +265,7 @@ private:
 	void doSubChase();
 	uint getNeighborhoodCD(const NeighborhoodID neighborhood) const;
 	uint _currentCD;
+	void initKeymap();
 
 	// Menu
 	GameMenu *_gameMenu;
