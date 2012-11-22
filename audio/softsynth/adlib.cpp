@@ -1303,9 +1303,16 @@ void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
 	const AdLibInstrument *sec  = NULL;
 
 	// The custom instruments have priority over the default mapping
-	inst = _customInstruments[note];
-	if (inst)
-		note = _notes[note];
+	// We do not support custom instruments in OPL3 mode though.
+#ifdef ENABLE_OPL3
+	if (!_owner->_opl3Mode) {
+#endif
+		inst = _customInstruments[note];
+		if (inst)
+			note = _notes[note];
+#ifdef ENABLE_OPL3
+	}
+#endif
 
 	if (!inst) {
 		// Use the default GM to FM mapping as a fallback
@@ -1333,6 +1340,14 @@ void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
 }
 
 void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *instr) {
+	// We do not allow custom instruments in OPL3 mode right now.
+#ifdef ENABLE_OPL3
+	if (_owner->_opl3Mode) {
+		warning("AdLibPercussionChannel::sysEx_customInstrument: Used in OPL3 mode");
+		return;
+	}
+#endif
+
 	if (type == 'ADLP') {
 		byte note = instr[0];
 		_notes[note] = instr[1];
