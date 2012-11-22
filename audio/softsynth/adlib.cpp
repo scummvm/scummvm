@@ -35,6 +35,12 @@
 static int g_tick;
 #endif
 
+// Only include OPL3 when we actually have an AdLib emulator builtin, which
+// supports OPL3.
+#ifndef DISABLE_DOSBOX_OPL
+#define ENABLE_OPL3
+#endif
+
 class MidiDriver_ADLIB;
 struct AdLibVoice;
 
@@ -88,7 +94,9 @@ protected:
 	byte _priEff;
 	byte _pan;
 	AdLibInstrument _partInstr;
+#ifdef ENABLE_OPL3
 	AdLibInstrument _partInstrSecondary;
+#endif
 
 protected:
 	MidiDriver_ADLIB *_owner;
@@ -117,7 +125,9 @@ public:
 		_channel = 0;
 
 		memset(&_partInstr, 0, sizeof(_partInstr));
+#ifdef ENABLE_OPL3
 		memset(&_partInstrSecondary, 0, sizeof(_partInstrSecondary));
+#endif
 	}
 
 	MidiDriver *device();
@@ -223,8 +233,10 @@ struct AdLibVoice {
 	Struct10 _s10b;
 	Struct11 _s11b;
 
+#ifdef ENABLE_OPL3
 	byte _secTwoChan;
 	byte _secVol1, _secVol2;
+#endif
 
 	AdLibVoice() { memset(this, 0, sizeof(AdLibVoice)); }
 };
@@ -493,6 +505,7 @@ static AdLibInstrument g_gmPercussionInstruments[39] = {
 	{ 0x0A, 0x0E, 0x7F, 0x00, 0x7D, 0x13, 0x20, 0x28, 0x03, 0x7C, 0x06, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0x00 }
 };
 
+#ifdef ENABLE_OPL3
 static const AdLibInstrument g_gmInstrumentsOPL3[128][2] = {
 	{ { 0xC2, 0xC2, 0x0A, 0x6B, 0xA0, 0xC2, 0x08, 0x0D, 0x88, 0xC8, 0x0A, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0x23 },
 	  { 0x02, 0x00, 0x0C, 0x78, 0x61, 0x04, 0x4C, 0x0B, 0x9A, 0xC8, 0x04, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0x23 } },
@@ -832,6 +845,7 @@ static const AdLibInstrument g_gmPercussionInstrumentsOPL3[39][2] = {
 	{ { 0x0A, 0x0E, 0x7F, 0x00, 0xF9, 0x13, 0x16, 0x28, 0x03, 0xF8, 0x06, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0x00 },
 	  { 0x01, 0x0E, 0x54, 0x00, 0xF9, 0x15, 0x03, 0x27, 0x03, 0xF8, 0x06, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0x00 } },
 };
+#endif
 
 static const byte g_gmPercussionInstrumentMap[128] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -938,11 +952,15 @@ public:
 
 private:
 	bool _scummSmallHeader; // FIXME: This flag controls a special mode for SCUMM V3 games
+#ifdef ENABLE_OPL3
 	bool _opl3Mode;
+#endif
 
 	OPL::OPL *_opl;
 	byte *_regCache;
+#ifdef ENABLE_OPL3
 	byte *_regCacheSecondary;
+#endif
 
 	int _timerCounter;
 
@@ -965,17 +983,23 @@ private:
 	void adlibNoteOnEx(int chan, byte note, int mod);
 	int adlibGetRegValueParam(int chan, byte data);
 	void adlibSetupChannel(int chan, const AdLibInstrument *instr, byte vol1, byte vol2);
+#ifdef ENABLE_OPL3
 	void adlibSetupChannelSecondary(int chan, const AdLibInstrument *instr, byte vol1, byte vol2, byte pan);
+#endif
 	byte adlibGetRegValue(byte reg) {
 		return _regCache[reg];
 	}
+#ifdef ENABLE_OPL3
 	byte adlibGetRegValueSecondary(byte reg) {
 		return _regCacheSecondary[reg];
 	}
+#endif
 	void adlibSetParam(int channel, byte param, int value, bool primary = true);
 	void adlibKeyOnOff(int channel);
 	void adlibWrite(byte reg, byte value);
+#ifdef ENABLE_OPL3
 	void adlibWriteSecondary(byte reg, byte value);
+#endif
 	void adlibPlayNote(int channel, int note);
 
 	AdLibVoice *allocateVoice(byte pri);
@@ -1022,7 +1046,13 @@ void AdLibPart::noteOn(byte note, byte velocity) {
 #ifdef DEBUG_ADLIB
 	debug(6, "%10d: noteOn(%d,%d)", g_tick, note, velocity);
 #endif
-	_owner->partKeyOn(this, &_partInstr, note, velocity, &_partInstrSecondary, _pan);
+	_owner->partKeyOn(this, &_partInstr, note, velocity,
+#ifdef ENABLE_OPL3
+			&_partInstrSecondary,
+#else
+			NULL,
+#endif
+			_pan);
 }
 
 void AdLibPart::programChange(byte program) {
@@ -1038,12 +1068,16 @@ void AdLibPart::programChange(byte program) {
 		warning("No AdLib instrument defined for GM program %d", (int)program);
 	*/
 	_program = program;
+#ifdef ENABLE_OPL3
 	if (!_owner->_opl3Mode) {
+#endif
 		memcpy(&_partInstr, &g_gmInstruments[program], sizeof(AdLibInstrument));
+#ifdef ENABLE_OPL3
 	} else {
 		memcpy(&_partInstr,          &g_gmInstrumentsOPL3[program][0], sizeof(AdLibInstrument));
 		memcpy(&_partInstrSecondary, &g_gmInstrumentsOPL3[program][1], sizeof(AdLibInstrument));
 	}
+#endif
 }
 
 void AdLibPart::pitchBend(int16 bend) {
@@ -1051,12 +1085,16 @@ void AdLibPart::pitchBend(int16 bend) {
 
 	_pitchBend = bend;
 	for (voice = _voice; voice; voice = voice->_next) {
+#ifdef ENABLE_OPL3
 		if (!_owner->_opl3Mode) {
+#endif
 			_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
 								  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
+#ifdef ENABLE_OPL3
 		} else {
 			_owner->adlibNoteOn(voice->_channel, voice->_note, _pitchBend >> 1);
 		}
+#endif
 	}
 }
 
@@ -1128,11 +1166,14 @@ void AdLibPart::volume(byte value) {
 
 	_volEff = value;
 	for (voice = _voice; voice; voice = voice->_next) {
+#ifdef ENABLE_OPL3
 		if (!_owner->_opl3Mode) {
+#endif
 			_owner->adlibSetParam(voice->_channel, 0, g_volumeTable[g_volumeLookupTable[voice->_vol2][_volEff >> 2]]);
 			if (voice->_twoChan) {
 				_owner->adlibSetParam(voice->_channel, 13, g_volumeTable[g_volumeLookupTable[voice->_vol1][_volEff >> 2]]);
 			}
+#ifdef ENABLE_OPL3
 		} else {
 			_owner->adlibSetParam(voice->_channel, 0, g_volumeTable[((voice->_vol2    + 1) * _volEff) >> 7], true);
 			_owner->adlibSetParam(voice->_channel, 0, g_volumeTable[((voice->_secVol2 + 1) * _volEff) >> 7], false);
@@ -1143,6 +1184,7 @@ void AdLibPart::volume(byte value) {
 				_owner->adlibSetParam(voice->_channel, 13, g_volumeTable[((voice->_secVol1 + 1) * _volEff) >> 7], false);
 			}
 		}
+#endif
 	}
 }
 
@@ -1151,10 +1193,12 @@ void AdLibPart::panPosition(byte value) {
 }
 
 void AdLibPart::pitchBendFactor(byte value) {
+#ifdef ENABLE_OPL3
 	// Not supported in OPL3 mode.
 	if (_owner->_opl3Mode) {
 		return;
 	}
+#endif
 
 	AdLibVoice *voice;
 
@@ -1171,10 +1215,12 @@ void AdLibPart::detune(byte value) {
 	// TODO: We probably need to look how the interpreter side of Sam&Max's
 	// iMuse version handles all this too. Implementing the driver side here
 	// would be not that hard.
+#ifdef ENABLE_OPL3
 	if (_owner->_opl3Mode) {
 		//_maxNotes = value;
 		return;
 	}
+#endif
 
 	AdLibVoice *voice;
 
@@ -1209,10 +1255,12 @@ void AdLibPart::allNotesOff() {
 void AdLibPart::sysEx_customInstrument(uint32 type, const byte *instr) {
 	// Sam&Max allows for instrument overwrites, but we will not support it
 	// until we can find any track actually using it.
+#ifdef ENABLE_OPL3
 	if (_owner->_opl3Mode) {
 		warning("AdLibPart::sysEx_customInstrument: Used in OPL3 mode");
 		return;
 	}
+#endif
 
 	if (type == 'ADL ') {
 		memcpy(&_partInstr, instr, sizeof(AdLibInstrument));
@@ -1263,12 +1311,16 @@ void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
 		// Use the default GM to FM mapping as a fallback
 		byte key = g_gmPercussionInstrumentMap[note];
 		if (key != 0xFF) {
+#ifdef ENABLE_OPL3
 			if (!_owner->_opl3Mode) {
+#endif
 				inst = &g_gmPercussionInstruments[key];
+#ifdef ENABLE_OPL3
 			} else {
 				inst = &g_gmPercussionInstrumentsOPL3[key][0];
 				sec  = &g_gmPercussionInstrumentsOPL3[key][1];
 			}
+#endif
 		}
 	}
 
@@ -1313,10 +1365,14 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(Audio::Mixer *mixer)
 	uint i;
 
 	_scummSmallHeader = false;
+#ifdef ENABLE_OPL3
 	_opl3Mode = false;
+#endif
 
 	_regCache = 0;
+#ifdef ENABLE_OPL3
 	_regCacheSecondary = 0;
+#endif
 
 	_timerCounter = 0;
 	_voiceIndex = -1;
@@ -1349,28 +1405,36 @@ int MidiDriver_ADLIB::open() {
 	}
 
 	// Try to use OPL3 when requested.
+#ifdef ENABLE_OPL3
 	if (_opl3Mode) {
 		_opl = OPL::Config::create(OPL::Config::kOpl3);
 	}
 
 	// Initialize plain OPL2 when no OPL3 is intiailized already.
 	if (!_opl) {
+#endif
 		_opl = OPL::Config::create();
+#ifdef ENABLE_OPL3
 		_opl3Mode = false;
 	}
+#endif
 	_opl->init(getRate());
 
 	_regCache = (byte *)calloc(256, 1);
 
 	adlibWrite(8, 0x40);
 	adlibWrite(0xBD, 0x00);
+#ifdef ENABLE_OPL3
 	if (!_opl3Mode) {
+#endif
 		adlibWrite(1, 0x20);
 		createLookupTable();
+#ifdef ENABLE_OPL3
 	} else {
 		_regCacheSecondary = (byte *)calloc(256, 1);
 		adlibWriteSecondary(5, 1);
 	}
+#endif
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
@@ -1395,7 +1459,9 @@ void MidiDriver_ADLIB::close() {
 	_opl = 0;
 
 	free(_regCache);
+#ifdef ENABLE_OPL3
 	free(_regCacheSecondary);
+#endif
 }
 
 void MidiDriver_ADLIB::send(uint32 b) {
@@ -1459,7 +1525,9 @@ uint32 MidiDriver_ADLIB::property(int prop, uint32 param) {
 		return 1;
 
 	case PROP_SCUMM_OPL3: // Sam&Max OPL3 support.
+#ifdef ENABLE_OPL3
 		_opl3Mode = (param > 0);
+#endif
 		return 1;
 	}
 
@@ -1467,10 +1535,12 @@ uint32 MidiDriver_ADLIB::property(int prop, uint32 param) {
 }
 
 void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
+#ifdef ENABLE_OPL3
 	// Not supported in OPL3 mode.
 	if (_opl3Mode) {
 		return;
 	}
+#endif
 
 	AdLibVoice *voice;
 	AdLibPart *part = &_parts[channel];
@@ -1514,6 +1584,7 @@ void MidiDriver_ADLIB::adlibWrite(byte reg, byte value) {
 	_opl->writeReg(reg, value);
 }
 
+#ifdef ENABLE_OPL3
 void MidiDriver_ADLIB::adlibWriteSecondary(byte reg, byte value) {
 	assert(_opl3Mode);
 
@@ -1527,6 +1598,7 @@ void MidiDriver_ADLIB::adlibWriteSecondary(byte reg, byte value) {
 
 	_opl->writeReg(reg | 0x100, value);
 }
+#endif
 
 void MidiDriver_ADLIB::generateSamples(int16 *data, int len) {
 	if (_opl->isStereo()) {
@@ -1543,7 +1615,9 @@ void MidiDriver_ADLIB::onTimer() {
 		g_tick++;
 #endif
 		// Sam&Max's OPL3 driver does not have any timer handling like this.
+#ifdef ENABLE_OPL3
 		if (!_opl3Mode) {
+#endif
 			AdLibVoice *voice = _voices;
 			for (int i = 0; i != ARRAYSIZE(_voices); i++, voice++) {
 				if (!voice->_part)
@@ -1559,7 +1633,9 @@ void MidiDriver_ADLIB::onTimer() {
 					mcIncStuff(voice, &voice->_s10b, &voice->_s11b);
 				}
 			}
+#ifdef ENABLE_OPL3
 		}
+#endif
 	}
 }
 
@@ -1627,9 +1703,11 @@ void MidiDriver_ADLIB::mcIncStuff(AdLibVoice *voice, Struct10 *s10, Struct11 *s1
 void MidiDriver_ADLIB::adlibKeyOff(int chan) {
 	byte reg = chan + 0xB0;
 	adlibWrite(reg, adlibGetRegValue(reg) & ~0x20);
+#ifdef ENABLE_OPL3
 	if (_opl3Mode) {
 		adlibWriteSecondary(reg, adlibGetRegValueSecondary(reg) & ~0x20);
 	}
+#endif
 }
 
 byte MidiDriver_ADLIB::struct10OnTimer(Struct10 *s10, Struct11 *s11) {
@@ -1680,7 +1758,9 @@ void MidiDriver_ADLIB::adlibSetParam(int channel, byte param, int value, bool pr
 	byte reg;
 
 	assert(channel >= 0 && channel < 9);
+#ifdef ENABLE_OPL3
 	assert(!_opl3Mode || (param == 0 || param == 13));
+#endif
 
 	if (param <= 12) {
 		reg = g_operator2Offsets[channel];
@@ -1707,15 +1787,21 @@ void MidiDriver_ADLIB::adlibSetParam(int channel, byte param, int value, bool pr
 	if (as->inversion)
 		value = as->inversion - value;
 	reg += as->registerBase;
+#ifdef ENABLE_OPL3
 	if (primary) {
+#endif
 		adlibWrite(reg, (adlibGetRegValue(reg) & ~as->mask) | (((byte)value) << as->shift));
+#ifdef ENABLE_OPL3
 	} else {
 		adlibWriteSecondary(reg, (adlibGetRegValueSecondary(reg) & ~as->mask) | (((byte)value) << as->shift));
 	}
+#endif
 }
 
 void MidiDriver_ADLIB::adlibKeyOnOff(int channel) {
+#ifdef ENABLE_OPL3
 	assert(!_opl3Mode);
+#endif
 
 	byte val;
 	byte reg = channel + 0xB0;
@@ -1886,7 +1972,9 @@ void MidiDriver_ADLIB::linkMc(AdLibPart *part, AdLibVoice *voice) {
 void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, byte note, byte velocity, const AdLibInstrument *second, byte pan) {
 	AdLibPart *part = voice->_part;
 	byte vol1, vol2;
+#ifdef ENABLE_OPL3
 	byte secVol1, secVol2;
+#endif
 
 	voice->_twoChan = instr->feedback & 1;
 	voice->_note = note;
@@ -1895,9 +1983,12 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 	if (voice->_duration != 0)
 		voice->_duration *= 63;
 
+#ifdef ENABLE_OPL3
 	if (!_opl3Mode)
 		vol1 = (instr->modScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->modWaveformSelect >> 2];
-	else if (!_scummSmallHeader)
+	else
+#endif
+	if (!_scummSmallHeader)
 		vol1 = (instr->modScalingOutputLevel & 0x3F) + (velocity * ((instr->modWaveformSelect >> 3) + 1)) / 64;
 	else
 		vol1 = 0x3f - (instr->modScalingOutputLevel & 0x3F);
@@ -1905,9 +1996,12 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 		vol1 = 0x3F;
 	voice->_vol1 = vol1;
 
+#ifdef ENABLE_OPL3
 	if (!_opl3Mode)
 		vol2 = (instr->carScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->carWaveformSelect >> 2];
-	else if (!_scummSmallHeader)
+	else
+#endif
+	if (!_scummSmallHeader)
 		vol2 = (instr->carScalingOutputLevel & 0x3F) + (velocity * ((instr->carWaveformSelect >> 3) + 1)) / 64;
 	else
 		vol2 = 0x3f - (instr->carScalingOutputLevel & 0x3F);
@@ -1915,6 +2009,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 		vol2 = 0x3F;
 	voice->_vol2 = vol2;
 
+#ifdef ENABLE_OPL3
 	if (_opl3Mode) {
 		voice->_secTwoChan = second->feedback & 1;
 		secVol1 = (second->modScalingOutputLevel & 0x3F) + (velocity * ((second->modWaveformSelect >> 3) + 1)) / 64;
@@ -1928,13 +2023,17 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 		}
 		voice->_secVol2 = secVol2;
 	}
+#endif
 
 	if (!_scummSmallHeader) {
+#ifdef ENABLE_OPL3
 		if (!_opl3Mode) {
+#endif
 			int c = part->_volEff >> 2;
 			vol2 = g_volumeTable[g_volumeLookupTable[vol2][c]];
 			if (voice->_twoChan)
 				vol1 = g_volumeTable[g_volumeLookupTable[vol1][c]];
+#ifdef ENABLE_OPL3
 		} else {
 			vol2    = g_volumeTable[((vol2    + 1) * part->_volEff) >> 7];
 			secVol2 = g_volumeTable[((secVol2 + 1) * part->_volEff) >> 7];
@@ -1943,10 +2042,13 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 			if (voice->_secTwoChan)
 				secVol1 = g_volumeTable[((secVol1 + 1) * part->_volEff) >> 7];
 		}
+#endif
 	}
 
 	adlibSetupChannel(voice->_channel, instr, vol1, vol2);
+#ifdef ENABLE_OPL3
 	if (!_opl3Mode) {
+#endif
 		adlibNoteOnEx(voice->_channel, /*part->_transposeEff + */note, part->_detuneEff + (part->_pitchBend * part->_pitchBendFactor >> 6));
 
 		if (instr->flagsA & 0x80) {
@@ -1960,10 +2062,12 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 		} else {
 			voice->_s10b.active = 0;
 		}
+#ifdef ENABLE_OPL3
 	} else {
 		adlibSetupChannelSecondary(voice->_channel, second, secVol1, secVol2, pan);
 		adlibNoteOnEx(voice->_channel, note, part->_pitchBend >> 1);
 	}
+#endif
 }
 
 void MidiDriver_ADLIB::adlibSetupChannel(int chan, const AdLibInstrument *instr, byte vol1, byte vol2) {
@@ -1983,9 +2087,14 @@ void MidiDriver_ADLIB::adlibSetupChannel(int chan, const AdLibInstrument *instr,
 	adlibWrite(channel + 0x80, 0xff & (~instr->carSustainRelease));
 	adlibWrite(channel + 0xE0, instr->carWaveformSelect);
 
-	adlibWrite((byte)chan + 0xC0, instr->feedback | (_opl3Mode ? 0x30 : 0));
+	adlibWrite((byte)chan + 0xC0, instr->feedback
+#ifdef ENABLE_OPL3
+			| (_opl3Mode ? 0x30 : 0)
+#endif
+			);
 }
 
+#ifdef ENABLE_OPL3
 void MidiDriver_ADLIB::adlibSetupChannelSecondary(int chan, const AdLibInstrument *instr, byte vol1, byte vol2, byte pan) {
 	assert(chan >= 0 && chan < 9);
 	assert(_opl3Mode);
@@ -2015,6 +2124,7 @@ void MidiDriver_ADLIB::adlibSetupChannelSecondary(int chan, const AdLibInstrumen
 	adlibWriteSecondary((byte)chan + 0xC0, instr->feedback | ((pan > 64) ? 0x20 : 0x10));
 #endif
 }
+#endif
 
 void MidiDriver_ADLIB::mcInitStuff(AdLibVoice *voice, Struct10 *s10,
 									 Struct11 *s11, byte flags, const InstrumentExtra *ie) {
@@ -2113,10 +2223,12 @@ int MidiDriver_ADLIB::adlibGetRegValueParam(int chan, byte param) {
 }
 
 void MidiDriver_ADLIB::adlibNoteOn(int chan, byte note, int mod) {
+#ifdef ENABLE_OPL3
 	if (_opl3Mode) {
 		adlibNoteOnEx(chan, note, mod);
 		return;
 	}
+#endif
 
 	assert(chan >= 0 && chan < 9);
 	int code = (note << 7) + mod;
@@ -2127,6 +2239,7 @@ void MidiDriver_ADLIB::adlibNoteOn(int chan, byte note, int mod) {
 void MidiDriver_ADLIB::adlibNoteOnEx(int chan, byte note, int mod) {
 	assert(chan >= 0 && chan < 9);
 
+#ifdef ENABLE_OPL3
 	if (_opl3Mode) {
 		const int noteAdjusted = note + (mod >> 8) - 7;
 		const int pitchAdjust = (mod >> 5) & 7;
@@ -2136,11 +2249,14 @@ void MidiDriver_ADLIB::adlibNoteOnEx(int chan, byte note, int mod) {
 		adlibWrite(0xB0 + chan, (CLIP(noteAdjusted / 12, 0, 7) << 2) | 0x20);
 		adlibWriteSecondary(0xB0 + chan, (CLIP(noteAdjusted / 12, 0, 7) << 2) | 0x20);
 	} else {
+#endif
 		int code = (note << 7) + mod;
 		_curNotTable[chan] = code;
 		_channelTable2[chan] = 0;
 		adlibPlayNote(chan, code);
+#ifdef ENABLE_OPL3
 	}
+#endif
 }
 
 // Plugin interface
