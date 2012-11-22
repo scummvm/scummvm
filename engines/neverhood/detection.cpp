@@ -126,12 +126,10 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
-#if 0 // Not used yet but let's keep it for later when it is	
 	SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-#endif
 
 	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 
@@ -139,20 +137,20 @@ public:
 
 bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		false; // Nothing yet :(
-//		(f == kSupportsListSaves) ||
-//		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
 //		(f == kSupportsDeleteSave) ||
-//	   	(f == kSavesSupportMetaInfo) ||
-//		(f == kSavesSupportThumbnail);
+	   	(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool Neverhood::NeverhoodEngine::hasFeature(EngineFeature f) const {
 	return
-		false; // Nothing yet :(
 //		(f == kSupportsRTL) || // TODO: Not yet...
-//		(f == kSupportsLoadingDuringRuntime) ||
-//		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 bool NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -176,8 +174,6 @@ const ADGameDescription *NeverhoodMetaEngine::fallbackDetect(const Common::FSLis
 
 	return NULL;
 }
-
-#if 0 // Not used yet but let's keep it for later when it is	
 
 SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
@@ -213,9 +209,6 @@ int NeverhoodMetaEngine::getMaximumSaveSlot() const {
 }
 
 void NeverhoodMetaEngine::removeSaveState(const char *target, int slot) const {
-	// Slot 0 can't be deleted, it's for restarting the game(s)
-	if (slot == 0)
-		return;
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String filename = Neverhood::NeverhoodEngine::getSavegameFilename(target, slot);
@@ -235,11 +228,6 @@ void NeverhoodMetaEngine::removeSaveState(const char *target, int slot) const {
 		// Rename every slot greater than the deleted slot,
 		// Also do not rename quicksaves.
 		if (slotNum > slot && slotNum < 990) {
-			// FIXME: Our savefile renaming done here is inconsitent with what we do in
-			// GUI_v2::deleteMenu. While here we rename every slot with a greater equal
-			// number of the deleted slot to deleted slot, deleted slot + 1 etc.,
-			// we only rename the following slots in GUI_v2::deleteMenu until a slot
-			// is missing.
 			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
 
 			filename = Neverhood::NeverhoodEngine::getSavegameFilename(target, ++slot);
@@ -265,15 +253,20 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 			desc.setDeletableFlag(false);
 			desc.setWriteProtectedFlag(false);
 			desc.setThumbnail(header.thumbnail);
-
+			int day = (header.saveDate >> 24) & 0xFF;
+			int month = (header.saveDate >> 16) & 0xFF;
+			int year = header.saveDate & 0xFFFF;
+			desc.setSaveDate(year, month, day);
+			int hour = (header.saveTime >> 16) & 0xFF;
+			int minutes = (header.saveTime >> 8) & 0xFF;
+			desc.setSaveTime(hour, minutes);
+			desc.setPlayTime(header.playTime * 1000);
 			return desc;
 		}
 	}
 
 	return SaveStateDescriptor();
 }
-
-#endif
 
 #if PLUGIN_ENABLED_DYNAMIC(NEVERHOOD)
 	REGISTER_PLUGIN_DYNAMIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);

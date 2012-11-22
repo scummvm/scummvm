@@ -24,6 +24,7 @@
 #define NEVERHOOD_GAMEVARS_H
 
 #include "common/array.h"
+#include "common/savefile.h"
 #include "neverhood/neverhood.h"
 
 namespace Neverhood {
@@ -170,8 +171,8 @@ class GameVars {
 public:
 	GameVars();
 	~GameVars();
-	// TODO void load(???);
-	// TODO void save(???);
+	void loadState(Common::InSaveFile *in);
+	void saveState(Common::OutSaveFile *out);
 	uint32 getGlobalVar(uint32 nameHash);
 	void setGlobalVar(uint32 nameHash, uint32 value);
 	uint32 getSubVar(uint32 nameHash, uint32 subNameHash);

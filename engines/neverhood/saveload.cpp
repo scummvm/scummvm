@@ -26,6 +26,7 @@
 #include "graphics/thumbnail.h"
 
 #include "neverhood/neverhood.h"
+#include "neverhood/gamevars.h"
 
 namespace Neverhood {
 
@@ -90,7 +91,10 @@ void NeverhoodEngine::savegame(const char *filename, const char *description) {
 	out->writeUint32LE(playTime);
 	// Header end
 
-	// TODO
+	_gameVars->setGlobalVar(0x108A4870, _gameState.sceneNum);
+	_gameVars->setGlobalVar(0x82C80875, _gameState.which);
+
+	_gameVars->saveState(out);
 	
 	out->finalize();
 	delete out;
@@ -115,7 +119,7 @@ void NeverhoodEngine::loadgame(const char *filename) {
 	
 	g_engine->setTotalPlayTime(header.playTime * 1000);
 
-	// TODO
+	_gameVars->loadState(in);
 	
 	delete in;
 

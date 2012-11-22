@@ -31,6 +31,30 @@ GameVars::GameVars() {
 GameVars::~GameVars() {
 }
 
+void GameVars::loadState(Common::InSaveFile *in) {
+	uint varCount;
+	_vars.clear();
+	varCount = in->readUint32LE();
+	for (uint i = 0; i < varCount; ++i) {
+		GameVar var;
+		var.nameHash = in->readUint32LE();
+		var.value = in->readUint32LE();
+		var.firstIndex = in->readUint16LE();
+		var.nextIndex = in->readUint16LE();
+	}
+}
+
+void GameVars::saveState(Common::OutSaveFile *out) {
+	out->writeUint32LE(_vars.size());
+	for (uint i = 0; i < _vars.size(); ++i) {
+		GameVar &var = _vars[i];
+		out->writeUint32LE(var.nameHash);
+		out->writeUint32LE(var.value);
+		out->writeUint16LE(var.firstIndex);
+		out->writeUint16LE(var.nextIndex);
+	}
+}
+
 uint32 GameVars::getGlobalVar(uint32 nameHash) {
 	int16 varIndex = findSubVarIndex(0, nameHash);
 	return varIndex != -1 ? _vars[varIndex].value : 0;

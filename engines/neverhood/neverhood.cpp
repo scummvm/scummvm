@@ -86,13 +86,6 @@ Common::Error NeverhoodEngine::run() {
 
 	CursorMan.showMouse(true);
 
-#if 0
-	// TODO: This should probably be implemented as debug command later 
-	dumpAllResources();
-#endif
-
-#if 1
-
 	_soundMan = new SoundMan(this);
 	_audioResourceMan = new AudioResourceMan(this);
 	
@@ -100,6 +93,9 @@ Common::Error NeverhoodEngine::run() {
 	_gameModule = new GameModule(this);
 	
 	_gameModule->startup();
+	
+	// TODO Check if this can actually be false...
+	_isSaveAllowed = true;
 	
 	uint32 nextFrameTime = 0;
 
@@ -145,25 +141,19 @@ Common::Error NeverhoodEngine::run() {
 			_gameModule->draw();
 			_screen->update();
 			nextFrameTime = _screen->getNextFrameTime();
-			//_gameVars->dumpVars();
 		};
 		
 		_soundMan->update();
 		_audioResourceMan->update();
-		//_screen->update();
 		_system->updateScreen();
 		_system->delayMillis(10);
 		
-		debug(0, "---------------------------------------");
-	
 	}
 	
 	delete _gameModule;
 	delete _collisionMan;
 	delete _soundMan;
 	delete _audioResourceMan;
-#endif
-
 
 	delete _res;
 	delete _screen;
