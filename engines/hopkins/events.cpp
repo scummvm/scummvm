@@ -374,8 +374,10 @@ LABEL_34:
 LABEL_35:
 	if (!_vm->_globals.PUBEXIT)
 		_vm->_objectsManager.AFF_SPRITES();
-	if (souris_flag != true)
+	if (souris_flag != true) {
+		updateCursor();
 		goto LABEL_54;
+	}
 	if (btsouris == 23)
 		goto LABEL_45;
 	if (yp >= _vm->_graphicsManager.max_y || v15 >= _vm->_graphicsManager.max_x || v14 <= 1 || v13 <= 1) {
