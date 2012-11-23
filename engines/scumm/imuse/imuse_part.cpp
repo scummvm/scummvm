@@ -111,8 +111,19 @@ void Part::saveLoadWithSerializer(Serializer *ser) {
 }
 
 void Part::set_detune(int8 detune) {
-	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
-	sendPitchBend();
+	// Sam&Max does not have detune, so we just ignore this here. We still get
+	// this called, since Sam&Max uses the same controller for a different
+	// purpose.
+	if (_se->_game_id == GID_SAMNMAX) {
+#if 0
+		if (_mc) {
+			_mc->controlChange(17, detune + 0x40);
+		}
+#endif
+	} else {
+		_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
+		sendPitchBend();
+	}
 }
 
 void Part::pitchBend(int16 value) {

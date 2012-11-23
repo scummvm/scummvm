@@ -1858,6 +1858,8 @@ void ScummEngine::setupMusic(int midi) {
 			if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
 				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 				adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
+				// Try to use OPL3 mode for Sam&Max when possible.
+				adlibMidiDriver->property(MidiDriver::PROP_SCUMM_OPL3, (_game.id == GID_SAMNMAX) ? 1 : 0);
 			} else if (_sound->_musicType == MDT_PCSPK) {
 				adlibMidiDriver = new PcSpkDriver(_mixer);
 			}
