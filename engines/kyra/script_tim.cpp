@@ -736,7 +736,7 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 	const int volume = (param[1] * 255) / 100;
 
 	if (index < ARRAYSIZE(_vocFiles) && !_vocFiles[index].empty())
-		_vm->sound()->voicePlay(_vocFiles[index].c_str(), 0, volume, true);
+		_vm->sound()->voicePlay(_vocFiles[index].c_str(), 0, volume, 255, true);
 	else if (index == 7 && !_vm->gameFlags().isTalkie)
 		_vm->sound()->playTrack(index);
 	else
