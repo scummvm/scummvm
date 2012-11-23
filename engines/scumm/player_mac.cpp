@@ -104,6 +104,7 @@ void Player_Mac::saveLoadWithSerializer(Serializer *ser) {
 		if (_vm->_game.id == GID_MONKEY && ser->isLoading()) {
 			IMuse *dummyImuse = IMuse::create(_vm->_system, NULL, NULL);
 			dummyImuse->save_or_load(ser, _vm, false);
+			delete dummyImuse;
 		}
 	} else {
 		static const SaveLoadEntry musicEntries[] = {
