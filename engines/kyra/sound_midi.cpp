@@ -605,7 +605,7 @@ void SoundMidiPC::selectAudioResourceSet(int set) {
 	}
 }
 
-bool SoundMidiPC::hasSoundFile(uint file) {
+bool SoundMidiPC::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
 		return (res()->fileList[file] != 0);
 	return false;

@@ -63,7 +63,7 @@ void SoundAmiga::selectAudioResourceSet(int set) {
 	// this doesn't matter much.
 }
 
-bool SoundAmiga::hasSoundFile(uint file) {
+bool SoundAmiga::hasSoundFile(uint file) const {
 	if (file < 3)
 		return true;
 	return false;

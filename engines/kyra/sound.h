@@ -128,7 +128,7 @@ public:
 	 * @param track track number
 	 * @return true if available, false otherwise
 	 */
-	virtual bool hasSoundFile(uint file) = 0;
+	virtual bool hasSoundFile(uint file) const = 0;
 
 	/**
 	 * Load a specifc sound file for use of
@@ -309,7 +309,7 @@ public:
 
 	virtual void initAudioResourceInfo(int set, void *info);
 	virtual void selectAudioResourceSet(int set);
-	virtual bool hasSoundFile(uint file);
+	virtual bool hasSoundFile(uint file) const;
 	virtual void loadSoundFile(uint file);
 	virtual void loadSoundFile(Common::String file);
 

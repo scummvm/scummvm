@@ -71,7 +71,7 @@ public:
 
 	virtual void initAudioResourceInfo(int set, void *info);
 	virtual void selectAudioResourceSet(int set);
-	virtual bool hasSoundFile(uint file);
+	virtual bool hasSoundFile(uint file) const;
 	virtual void loadSoundFile(uint file);
 	virtual void loadSoundFile(Common::String file);
 
@@ -90,7 +90,7 @@ private:
 
 	void play(uint8 track, uint8 volume);
 
-	const SoundResourceInfo_PC *res() {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_PC *res() const {return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_PC *_resInfo[3];
 	int _currentResourceSet;
 

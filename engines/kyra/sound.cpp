@@ -205,7 +205,7 @@ void MixedSoundDriver::selectAudioResourceSet(int set) {
 	_sfx->selectAudioResourceSet(set);
 }
 
-bool MixedSoundDriver::hasSoundFile(uint file) {
+bool MixedSoundDriver::hasSoundFile(uint file) const {
 	return _music->hasSoundFile(file) && _sfx->hasSoundFile(file);
 }
 

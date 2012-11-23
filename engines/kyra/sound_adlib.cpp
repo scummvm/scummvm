@@ -2434,7 +2434,7 @@ void SoundAdLibPC::selectAudioResourceSet(int set) {
 	}
 }
 
-bool SoundAdLibPC::hasSoundFile(uint file) {
+bool SoundAdLibPC::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
 		return (res()->fileList[file] != 0);
 	return false;

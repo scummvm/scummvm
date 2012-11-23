@@ -64,7 +64,7 @@ public:
 
 	void initAudioResourceInfo(int set, void *info);
 	void selectAudioResourceSet(int set);
-	bool hasSoundFile(uint file);
+	bool hasSoundFile(uint file) const;
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
 	void loadSfxFile(Common::String file);
@@ -95,7 +95,7 @@ private:
 	MidiParser *_music;
 	MidiParser *_sfx[3];
 
-	const SoundResourceInfo_PC *res() {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_PC *res() const {return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_PC *_resInfo[3];
 	int _currentResourceSet;
 
@@ -122,7 +122,7 @@ public:
 
 	void initAudioResourceInfo(int set, void *info);
 	void selectAudioResourceSet(int set);
-	bool hasSoundFile(uint file);
+	bool hasSoundFile(uint file) const;
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String) {}
 
@@ -155,7 +155,7 @@ private:
 
 	bool _cdaPlaying;
 
-	const SoundResourceInfo_Towns *res() {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_Towns *res() const {return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_Towns *_resInfo[3];
 	int _currentResourceSet;
 
@@ -176,7 +176,7 @@ public:
 	void process() {}
 	void initAudioResourceInfo(int set, void *info);
 	void selectAudioResourceSet(int set);
-	bool hasSoundFile(uint file);
+	bool hasSoundFile(uint file) const;
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
 
@@ -212,7 +212,7 @@ public:
 
 	void initAudioResourceInfo(int set, void *info);
 	void selectAudioResourceSet(int set);
-	bool hasSoundFile(uint file);
+	bool hasSoundFile(uint file) const;
 	void loadSoundFile(uint file) {}
 	void loadSoundFile(Common::String file);
 
@@ -234,7 +234,7 @@ private:
 	uint8 *_sfxTrackData;
 	TownsPC98_AudioDriver *_driver;
 
-	const SoundResourceInfo_TownsPC98V2 *res() {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_TownsPC98V2 *res() const {return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_TownsPC98V2 *_resInfo[3];
 	int _currentResourceSet;
 };
@@ -329,7 +329,7 @@ public:
 
 	void initAudioResourceInfo(int set, void *info);
 	void selectAudioResourceSet(int set);
-	bool hasSoundFile(uint file);
+	bool hasSoundFile(uint file) const;
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String) {}
 

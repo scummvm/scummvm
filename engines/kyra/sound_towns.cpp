@@ -134,7 +134,7 @@ void SoundTowns::selectAudioResourceSet(int set) {
 	}
 }
 
-bool SoundTowns::hasSoundFile(uint file) {
+bool SoundTowns::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
 		return (res()->fileList[file] != 0);
 	return false;
@@ -423,7 +423,7 @@ void SoundPC98::selectAudioResourceSet(int set) {
 	}
 }
 
-bool SoundPC98::hasSoundFile(uint file) {
+bool SoundPC98::hasSoundFile(uint file) const {
 	return true;
 }
 
@@ -564,7 +564,7 @@ void SoundTownsPC98_v2::selectAudioResourceSet(int set) {
 	}
 }
 
-bool SoundTownsPC98_v2::hasSoundFile(uint file) {
+bool SoundTownsPC98_v2::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
 		return (res()->fileList[file] != 0);
 	return false;
