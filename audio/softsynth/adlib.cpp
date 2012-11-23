@@ -1988,7 +1988,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 	AdLibPart *part = voice->_part;
 	byte vol1, vol2;
 #ifdef ENABLE_OPL3
-	byte secVol1, secVol2;
+	byte secVol1 = 0, secVol2 = 0;
 #endif
 
 	voice->_twoChan = instr->feedback & 1;
