@@ -374,7 +374,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 using namespace Composer;
 
 // we match from data too, to stop detection from a non-top-level directory
-const static char *directoryGlobs[] = {
+static const char *directoryGlobs[] = {
 	"data",
 	"liam",
 	"programs",
