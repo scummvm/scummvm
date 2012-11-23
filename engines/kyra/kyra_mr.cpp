@@ -213,8 +213,6 @@ Common::Error KyraEngine_MR::init() {
 
 	_soundDigital = new SoundDigital(this, _mixer);
 	assert(_soundDigital);
-	if (!_soundDigital->init())
-		error("_soundDigital->init() failed");
 	KyraEngine_v1::_text = _text = new TextDisplayer_MR(this, _screen);
 	assert(_text);
 	_gui = new GUI_MR(this);

@@ -344,8 +344,6 @@ public:
 	SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer);
 	~SoundDigital();
 
-	bool init() { return true; }
-
 	/**
 	 * Plays a sound.
 	 *
