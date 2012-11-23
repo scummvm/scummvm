@@ -36,7 +36,6 @@ class SeekableAudioStream;
 namespace Kyra {
 
 // Digital Audio
-class AUDStream;
 class KyraAudioStream;
 class KyraEngine_MR;
 
