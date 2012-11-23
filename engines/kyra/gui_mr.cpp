@@ -25,7 +25,7 @@
 #include "kyra/text_mr.h"
 #include "kyra/resource.h"
 #include "kyra/timer.h"
-#include "kyra/sound.h"
+#include "kyra/sound_digital.h"
 
 #include "common/system.h"
 
