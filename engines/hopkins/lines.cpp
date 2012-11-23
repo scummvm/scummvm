@@ -140,21 +140,7 @@ void LinesManager::RETIRE_LIGNE_ZONE(int idx) {
 
 // Add Line Zone
 void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, int a6) {
-	int v8; 
-	int v9; 
 	int16 *zoneData;
-	int16 *dataP; 
-	int v11; 
-	int v13; 
-	int v14; 
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
-	int v20; 
-	int v21; 
-	int v22; 
-	int v23; 
 
 	if (a2 != a3 || a3 != a4 || a3 != a5) {
 		if (idx > 400)
@@ -162,39 +148,39 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 
 		if (LigneZone[idx].zoneData != (int16 *)g_PTRNUL)
 			LigneZone[idx].zoneData = (int16 *)_vm->_globals.dos_free2((byte *)LigneZone[idx].zoneData);
-		v8 = a2 - a4;
+		int v8 = a2 - a4;
 		if (a2 - a4 < 0)
 			v8 = -v8;
-		v19 = v8;
-		v9 = a3 - a5;
+		int v19 = v8;
+		int v9 = a3 - a5;
 		if (a3 - a5 < 0)
 			v9 = -v9;
-		v18 = v9;
+		int v18 = v9;
+		int v20 = 1;
 		if (v19 <= v9)
-			v20 = v9 + 1;
+			v20 += v9;
 		else
-			v20 = v19 + 1;
+			v20 += v19;
 
 		zoneData = (int16 *)_vm->_globals.dos_malloc2(2 * sizeof(int16) * v20 + (4 * sizeof(int16)));
-		v11 = idx;
+		int v11 = idx;
 		LigneZone[v11].zoneData = zoneData;
 		if (zoneData == (int16 *)g_PTRNUL)
 			error("AJOUTE LIGNE ZONE");
 
-		dataP = zoneData;
-		v23 = 1000 * v19 / v20;
-		v22 = 1000 * v18 / v20;
+		int16 *dataP = zoneData;
+		int v23 = 1000 * v19 / v20;
+		int v22 = 1000 * v18 / v20;
 		if (a4 < a2)
 			v23 = -v23;
 		if (a5 < a3)
 			v22 = -v22;
-		v13 = 1000 * a2;
-		v16 = 1000 * a3;
-		v17 = 1000 * a2 / 1000;
-		v21 = 1000 * a3 / 1000;
-		v14 = 0;
+		int v13 = 1000 * a2;
+		int v16 = 1000 * a3;
+		int v17 = 1000 * a2 / 1000;
+		int v21 = 1000 * a3 / 1000;
 		if (v20 > 0) {
-			do {
+			for (int i = 0; i < v20; i++) {
 				*dataP++ = v17;
 				*dataP++ = v21;
 
@@ -202,8 +188,7 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 				v16 += v22;
 				v17 = v13 / 1000;
 				v21 = v16 / 1000;
-				++v14;
-			} while (v20 > v14);
+			}
 		}
 		*dataP++ = -1;
 		*dataP++ = -1;
@@ -389,46 +374,32 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 
 // Line Collision 2
 int LinesManager::colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
-	int v6; 
 	int16 *v7; 
-	int v8;
-	int v9;
-	int v10;
-	int v11;
-	int v12;
 	int16 *v13; 
-	int v14;
 	int result; 
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
-	int v20; 
-	int v21; 
-	int v22; 
-	int v23; 
-	int v24; 
 
-	v24 = a5;
-	v6 = a5;
+	int v24 = a5;
+	int v6 = a5;
 	if (a5 >= a6 + 1) {
 LABEL_29:
 		result = 0;
 	} else {
-		v22 = a1 + 4;
-		v21 = a1 - 4;
-		v20 = a2 + 4;
-		v19 = a2 - 4;
+		int v11;
+		int v22 = a1 + 4;
+		int v21 = a1 - 4;
+		int v20 = a2 + 4;
+		int v19 = a2 - 4;
+		int v17;
 		while (1) {
 			v7 = Ligne[v6].lineData;
 
 			if (v7 != (int16 *)g_PTRNUL) {
-				v23 = 1;
-				v8 = 2 * Ligne[v6].field0;
-				v9 = v7[0];
-				v16 = v7[1];
-				v10 = v7[v8 - 2];
-				v18 = v7[v8 - 1];
+				int v23 = 1;
+				int v8 = 2 * Ligne[v6].field0;
+				int v9 = v7[0];
+				int v16 = v7[1];
+				int v10 = v7[v8 - 2];
+				int v18 = v7[v8 - 1];
 				if (v7[0] >= v10)
 					goto LABEL_32;
 				if (v22 < v9 || v21 > v10)
@@ -461,10 +432,10 @@ LABEL_28:
 				goto LABEL_29;
 		}
 		while (1) {
-			v12 = v7[0];
+			int v12 = v7[0];
 			
 			v13 = v7 + 1;
-			v14 = v13[0];
+			int v14 = v13[0];
 			v7 = v13 + 1;
 
 			if (a1 == v12 || a1 + 1 == v12) {
@@ -483,46 +454,32 @@ LABEL_28:
 }
 
 int LinesManager::Scolision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
-	int v6; 
 	int16 *v7; 
-	int v8; 
-	int v9; 
-	int v10;
-	int v11;
-	int v12;
 	int16 *v13;
 	int result;
-	int v15; 
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
-	int v20; 
-	int v21; 
-	int v22; 
-	int v23; 
-	int v24; 
 
-	v24 = a5;
-	v6 = a5;
+	int v24 = a5;
+	int v6 = a5;
+
 	if (a5 >= a6 + 1) {
 LABEL_47:
 		result = 0;
 	} else {
-		v22 = a1 + 10;
-		v21 = a1 - 10;
-		v20 = a2 + 10;
-		v19 = a2 - 10;
+		int v22 = a1 + 10;
+		int v21 = a1 - 10;
+		int v20 = a2 + 10;
+		int v19 = a2 - 10;
+		int v11, v18;
 		for (;;) {
 			v7 = Ligne[v6].lineData;
 
 			if (v7 != (int16 *)g_PTRNUL) {
-				v23 = 1;
-				v8 = 2 * Ligne[v6].field0;
-				v9 = v7[0];
-				v15 = v7[1];
-				v10 = v7[v8 - 2];
-				v17 = v7[v8 - 1];
+				int v23 = 1;
+				int v8 = 2 * Ligne[v6].field0;
+				int v9 = v7[0];
+				int v15 = v7[1];
+				int v10 = v7[v8 - 2];
+				int v17 = v7[v8 - 1];
 				if (v7[0] >= v10)
 					goto LABEL_50;
 				if (v22 < v9 || v21 > v10)
@@ -555,9 +512,9 @@ LABEL_46:
 				goto LABEL_47;
 		}
 		while (1) {
-			v12 = v7[0];
+			int v12 = v7[0];
 			v13 = v7 + 1;
-			v16 = v13[0];
+			int v16 = v13[0];
 			v7 = v13 + 1;
 			if (a1 == v12
 			        || v12 == a1 + 1

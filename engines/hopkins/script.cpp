@@ -43,52 +43,6 @@ void ScriptManager::setParent(HopkinsEngine *vm) {
 }
 
 int ScriptManager::Traduction(byte *a1) {
-	int v1; 
-	int v2; 
-	int v3; 
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
-	int v10; 
-	int v11; 
-	int v12; 
-	int v13; 
-	int v14; 
-	int v15; 
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
-	int v20; 
-	int v21; 
-	int v22; 
-	int v23; 
-	int v24;
-	int v25;
-	int v26; 
-	int v27; 
-	int v28;
-	int v29;
-	int v30; 
-	int v31;
-	int v32; 
-	int v33; 
-	int v34; 
-	int v35; 
-	int v36;
-	int v37; 
-	int v38; 
-	int v39; 
-	int v40; 
-	int v41; 
-	int v42; 
-	int v43; 
-	int v44; 
-	int v45; 
-	int v46; 
 	char v47; 
 	char v48; 
 	char v49;
@@ -108,7 +62,6 @@ int ScriptManager::Traduction(byte *a1) {
 	int v67; 
 	int v68; 
 	int v69; 
-	int v70;
 	int v71; 
 	int v72; 
 	int v73;
@@ -117,17 +70,17 @@ int ScriptManager::Traduction(byte *a1) {
 	int v76; 
 	Common::String file; 
 
-	v1 = 0;
-	v70 = 0;
+	int v1 = 0;
+	int v70 = 0;
 	if (*a1 != 'F' || *(a1 + 1) != 'C')
 		return 0;
 	if (*(a1 + 2) == 'T' && *(a1 + 3) == 'X' && *(a1 + 4) == 'T') {
 		v70 = *(a1 + 6);
-		v2 = *(a1 + 7);
+		int v2 = *(a1 + 7);
 		v69 = *(a1 + 8);
 		v67 = (int16)READ_LE_UINT16(a1 + 9);
 		v65 = (int16)READ_LE_UINT16(a1 + 11);
-		v3 = (int16)READ_LE_UINT16(a1 + 13);
+		int v3 = (int16)READ_LE_UINT16(a1 + 13);
 		v1 = 1;
 		if (!TRAVAILOBJET) {
 			if (_vm->_globals.SAUVEGARDE->data[svField356] == 1) {
@@ -247,7 +200,7 @@ LABEL_104:
 		if (_vm->_objectsManager.DESACTIVE != true) {
 			v72 = *(a1 + 5);
 			v70 = *(a1 + 6);
-			v4 = *(a1 + 7);
+			int v4 = *(a1 + 7);
 			v68 = (int16)READ_LE_UINT16(a1 + 8);
 			v66 = (int16)READ_LE_UINT16(a1 + 10);
 			if (v72 == 52) {
@@ -280,8 +233,8 @@ LABEL_1141:
 		if (*(a1 + 3) == 'T' && *(a1 + 4) == 'P') {
 			if (_vm->_objectsManager.DESACTIVE != true) {
 				_vm->_objectsManager.DEUXPERSO = false;
-				v5 = *(a1 + 5);
-				v6 = (int16)READ_LE_UINT16(a1 + 8);
+				int v5 = *(a1 + 5);
+				int v6 = (int16)READ_LE_UINT16(a1 + 8);
 				_vm->_objectsManager.PERX = (int16)READ_LE_UINT16(a1 + 6);
 				_vm->_objectsManager.PERY = v6;
 				_vm->_objectsManager.PERI = v5;
@@ -350,10 +303,10 @@ LABEL_1141:
 		}
 		if (*(a1 + 2) == 'S' && *(a1 + 3) == 'T' && *(a1 + 4) == 'E') {
 			if (_vm->_objectsManager.DESACTIVE != true) {
-				v7 = *(a1 + 5);
+				int v7 = *(a1 + 5);
 				v70 = *(a1 + 6);
-				v8 = *(a1 + 7);
-				v9 = *(a1 + 8);
+				int v8 = *(a1 + 7);
+				int v9 = *(a1 + 8);
 				_vm->_objectsManager.RECALL = 0;
 				_vm->_globals.OLD_ECRAN = _vm->_globals.ECRAN;
 				_vm->_globals.SAUVEGARDE->data[svField6] = _vm->_globals.ECRAN;
@@ -560,7 +513,7 @@ LABEL_1141:
 		v74 = (int16)READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
 		if (!v74)
 			v74 = 1;
-		v10 = 0;
+		int v10 = 0;
 		if (v74 + 1 > 0) {
 			do {
 				if (_vm->shouldQuit())
@@ -783,14 +736,14 @@ LABEL_1141:
 			_vm->_animationManager.CHARGE_ANIM("otage");
 			_vm->_graphicsManager.LOAD_IMAGE("IM05");
 			_vm->_graphicsManager.VISU_ALL();
-			v11 = 0;
-			do {
+
+			for (int i = 0; i <= 4; i++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
-				++v11;
-			} while (v11 <= 4);
+			}
+
 			_vm->_eventsManager.MOUSE_OFF();
 			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			do {
@@ -811,14 +764,14 @@ LABEL_1141:
 			_vm->_eventsManager.MOUSE_OFF();
 			_vm->_graphicsManager.LOAD_IMAGE("ASCEN");
 			_vm->_graphicsManager.VISU_ALL();
-			v12 = 0;
-			do {
+
+			for (int i = 0; i <= 4; i++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
-				++v12;
-			} while (v12 <= 4);
+			}
+
 			_vm->_eventsManager.MOUSE_OFF();
 			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_objectsManager.SCI_OPTI_ONE(1, 0, 17, 3);
@@ -891,8 +844,8 @@ LABEL_1141:
 		if (v76 == 46) {
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			v13 = _vm->_objectsManager.YSPR(0);
-			v14 = _vm->_objectsManager.XSPR(0);
+			int v13 = _vm->_objectsManager.YSPR(0);
+			int v14 = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v14, v13, 564, 420);
 			_vm->_objectsManager.NUMZONE = -1;
 			do {
@@ -907,7 +860,7 @@ LABEL_1141:
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND44.WAV");
 			_vm->_soundManager.CHARGE_SAMPLE(2, "SOUND45.WAV");
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
-			v15 = 0;
+			int v15 = 0;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -968,8 +921,8 @@ LABEL_1141:
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			v16 = _vm->_objectsManager.YSPR(0);
-			v17 = _vm->_objectsManager.XSPR(0);
+			int v16 = _vm->_objectsManager.YSPR(0);
+			int v17 = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v17, v16, 445, 332);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
@@ -982,7 +935,7 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.BOBANIM_ON(7);
 			_vm->_objectsManager.SET_BOBPOSI(7, 0);
-			v18 = 0;
+			int v18 = 0;
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 			do {
 				if (_vm->shouldQuit())
@@ -1019,10 +972,10 @@ LABEL_1141:
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
-			v19 = 12;
+			int v19 = 12;
 			if (_vm->_globals.SAUVEGARDE->data[svField133] == 1)
 				v19 = 41;
-			v20 = 0;
+			int v20 = 0;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1059,7 +1012,7 @@ LABEL_1141:
 			_vm->_objectsManager.BOBANIM_ON(13);
 			_vm->_objectsManager.SET_BOBPOSI(12, 0);
 			_vm->_objectsManager.SET_BOBPOSI(13, 0);
-			v21 = 0;
+			int v21 = 0;
 			_vm->_soundManager.LOAD_WAV("SOUND44.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND71.WAV", 2);
 			do {
@@ -1100,8 +1053,8 @@ LABEL_1141:
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			v22 = _vm->_objectsManager.YSPR(0);
-			v23 = _vm->_objectsManager.XSPR(0);
+			int v22 = _vm->_objectsManager.YSPR(0);
+			int v23 = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v23, v22, 119, 268);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
@@ -1119,7 +1072,7 @@ LABEL_1141:
 			_vm->_soundManager.LOAD_WAV("SOUND44.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND48.WAV", 2);
 			_vm->_soundManager.LOAD_WAV("SOUND49.WAV", 3);
-			v24 = 0;
+			int v24 = 0;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1209,7 +1162,7 @@ LABEL_1141:
 				_vm->_objectsManager.BOBANIM_ON(1);
 				_vm->_objectsManager.BOBANIM_ON(2);
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
-				v25 = 0;
+				int v25 = 0;
 				do {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
@@ -1251,7 +1204,7 @@ LABEL_1141:
 				_vm->_objectsManager.BOBANIM_ON(1);
 				_vm->_objectsManager.BOBANIM_ON(3);
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
-				v26 = 0;
+				int v26 = 0;
 				do {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
@@ -1347,18 +1300,18 @@ LABEL_1141:
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
-				v27 = _vm->_objectsManager.YSPR(0);
-				v28 = _vm->_objectsManager.XSPR(0);
+				int v27 = _vm->_objectsManager.YSPR(0);
+				int v28 = _vm->_objectsManager.XSPR(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v28, v27, 201, 294);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 2) {
-				v29 = _vm->_objectsManager.YSPR(0);
-				v30 = _vm->_objectsManager.XSPR(0);
+				int v29 = _vm->_objectsManager.YSPR(0);
+				int v30 = _vm->_objectsManager.XSPR(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v30, v29, 158, 338);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] > 2) {
-				v31 = _vm->_objectsManager.YSPR(0);
-				v32 = _vm->_objectsManager.XSPR(0);
+				int v31 = _vm->_objectsManager.YSPR(0);
+				int v32 = _vm->_objectsManager.XSPR(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v32, v31, 211, 393);
 			}
 			_vm->_globals.NOT_VERIF = 1;
@@ -1374,7 +1327,7 @@ LABEL_1141:
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND63.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField253] > 2) {
 				_vm->_objectsManager.BOBANIM_ON(4);
-				v33 = 0;
+				int v33 = 0;
 				do {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
@@ -1403,7 +1356,7 @@ LABEL_1141:
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
 				_vm->_objectsManager.BOBANIM_ON(6);
-				v34 = 0;
+				int v34 = 0;
 				do {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
@@ -1432,7 +1385,7 @@ LABEL_1141:
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 2) {
 				_vm->_objectsManager.BOBANIM_ON(5);
-				v35 = 0;
+				int v35 = 0;
 				do {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
@@ -1567,14 +1520,14 @@ LABEL_1141:
 			_vm->_animationManager.NO_SEQ = false;
 			_vm->_graphicsManager.NOFADE = true;
 			_vm->_graphicsManager.FADE_OUTW();
-			v36 = 1;
-			do {
+
+			for (int i = 1; i <= 39; i++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
-				++v36;
-			} while (v36 <= 39);
+			}
+
 			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR4(253, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
@@ -1593,8 +1546,8 @@ LABEL_1141:
 			}
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			v37 = _vm->_objectsManager.YSPR(0);
-			v38 = _vm->_objectsManager.XSPR(0);
+			int v37 = _vm->_objectsManager.YSPR(0);
+			int v38 = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v38, v37, 330, 418);
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = 0;
@@ -1625,8 +1578,8 @@ LABEL_1141:
 			_vm->_globals.NO_VISU = true;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			v39 = _vm->_objectsManager.YSPR(0);
-			v40 = _vm->_objectsManager.XSPR(0);
+			int v39 = _vm->_objectsManager.YSPR(0);
+			int v40 = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v40, v39, 330, 314);
 			_vm->_objectsManager.NUMZONE = 0;
 			_vm->_globals.NOT_VERIF = 1;
@@ -1680,7 +1633,7 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.BOBANIM_ON(3);
 			_vm->_soundManager.LOAD_WAV("SOUND67.WAV", 1);
-			v41 = 0;
+			int v41 = 0;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1700,7 +1653,7 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.BOBANIM_ON(4);
 			_vm->_soundManager.LOAD_WAV("SOUND69.WAV", 1);
-			v42 = 0;
+			int v42 = 0;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1779,8 +1732,8 @@ LABEL_1141:
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			v43 = _vm->_objectsManager.YSPR(0);
-			v44 = _vm->_objectsManager.XSPR(0);
+			int v43 = _vm->_objectsManager.YSPR(0);
+			int v44 = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v44, v43, 488, 280);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
@@ -1791,7 +1744,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.SPRITE_OFF(0);
-			v45 = 0;
+			int v45 = 0;
 			_vm->_objectsManager.BOBANIM_ON(7);
 			do {
 				if (_vm->shouldQuit())
@@ -1840,7 +1793,7 @@ LABEL_1141:
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.BOBANIM_ON(11);
-			v46 = 0;
+			int v46 = 0;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game

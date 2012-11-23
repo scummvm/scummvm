@@ -633,11 +633,9 @@ int SoundManager::VOICE_STAT(int voiceIndex) {
 }
 
 void SoundManager::STOP_VOICE(int voiceIndex) {
-	int wavIndex; 
-
 	if (Voice[voiceIndex]._status) {
 		Voice[voiceIndex]._status = 0;
-		wavIndex = Voice[voiceIndex]._wavIndex;
+		int wavIndex = Voice[voiceIndex]._wavIndex;
 		if (Swav[wavIndex]._active) {
 			if (Swav[wavIndex].freeSample)
 				DEL_SAMPLE_SDL(wavIndex);

@@ -1820,10 +1820,12 @@ void HopkinsEngine::PUBQUIT() {
 	_globals.netscape = true;
 
 	bool mouseClicked = false;
-	int xp, yp;
+
+	// CHECKME: Useless variables ?
+	// int xp, yp;
 	do {
-		xp = _eventsManager.XMOUSE();
-		yp = _eventsManager.YMOUSE();
+//		xp = _eventsManager.XMOUSE();
+//		yp = _eventsManager.YMOUSE();
 		_eventsManager.VBL();
 		
 		if (_eventsManager.BMOUSE() == 1)

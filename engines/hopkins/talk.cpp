@@ -196,19 +196,10 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 }
 
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
-	int v1;
-	int v2; 
-	int v3;
-	int v4;
-	int v5;
-	byte v7;
-	int v8;
-	int v9;
-
-	v9 = 0;
+	int v9 = 0;
 	_vm->_objectsManager.DESACTIVE_CURSOR = 1;
 	STATI = 1;
-	v7 = _vm->_dialogsManager.DESACTIVE_INVENT;
+	byte v7 = _vm->_dialogsManager.DESACTIVE_INVENT;
 	_vm->_dialogsManager.DESACTIVE_INVENT = 1;
 	BUFFERPERSO = _vm->_fileManager.RECHERCHE_CAT(filename, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
@@ -237,19 +228,20 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		break;
 	}
 
-	v1 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 40);
+	int v1 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 40);
 	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
 	CHERCHE_PAL(PCHERCHE, 0);
 	PLIGNE1 = v1;
 	PLIGNE2 = v1 + 1;
 	PLIGNE3 = v1 + 2;
 	PLIGNE4 = v1 + 3;
-	v8 = _vm->_eventsManager.btsouris;
+	int v8 = _vm->_eventsManager.btsouris;
 	_vm->_eventsManager.btsouris = 4;
 	_vm->_eventsManager.CHANGE_MOUSE(0);
   
 	if (!_vm->_globals.NOPARLE) {
-		v2 = v1 + 3;
+		int v2 = v1 + 3;
+		int v3;
 		do {
 			v3 = DIALOGUE();
 			if (v3 != v2)
@@ -261,7 +253,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	}
 
 	if (_vm->_globals.NOPARLE) {
-		v4 = 1;
+		int v4 = 1;
+		int v5;
 	    do
 			v5 = DIALOGUE_REP(v4++);
 		while (v5 != -1);

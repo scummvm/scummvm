@@ -159,24 +159,20 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 
 // Delete Object
 void ObjectsManager::DELETE_OBJET(int objIndex) {
-	int v1;
-	int v2; 
-	int i; 
-
-	v1 = 0;
-	v2 = 0;
+	byte lookCond = false;
+	int v2 = 0;
 	do {
 		++v2;
 		if (_vm->_globals.INVENTAIRE[v2] == objIndex)
-			v1 = 1;
+			lookCond = true;
 		if (v2 > 32)
-			v1 = 1;
-	} while (v1 != 1);
+			lookCond = true;
+	} while (!lookCond);
 	if (v2 <= 32) {
 		if (v2 == 32) {
 			_vm->_globals.INVENTAIRE[32] = 0;
 		} else {
-			for (i = v2; i < 32; ++i)
+			for (int i = v2; i < 32; ++i)
 				_vm->_globals.INVENTAIRE[i] = _vm->_globals.INVENTAIRE[i + 1];
 		}
 	}
@@ -608,18 +604,9 @@ void ObjectsManager::BOB_ZERO(int idx) {
 }
 
 void ObjectsManager::DEF_BOB(int idx) {
-	int v5;
-	int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v10;
-	int xp;
-	int yp;
-
 	if (_vm->_globals.Bob[idx].isActive) {
-		xp = _vm->_globals.Bob[idx].oldX;
-		yp = _vm->_globals.Bob[idx].oldY;
+		int xp = _vm->_globals.Bob[idx].oldX;
+		int yp = _vm->_globals.Bob[idx].oldY;
 
 		if (_vm->_globals.Bob[idx].isSprite)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bob[idx].spriteData, 
@@ -637,24 +624,24 @@ void ObjectsManager::DEF_BOB(int idx) {
 		_vm->_globals.Liste2[idx].width = _vm->_globals.Bob[idx].oldWidth;
 		_vm->_globals.Liste2[idx].height = _vm->_globals.Bob[idx].oldHeight;
 
-		v5 = _vm->_globals.Liste2[idx].xp;
-		v6 = _vm->_graphicsManager.min_x;
+		int v5 = _vm->_globals.Liste2[idx].xp;
+		int v6 = _vm->_graphicsManager.min_x;
 		if (v5 < _vm->_graphicsManager.min_x) {
 			_vm->_globals.Liste2[idx].width -= _vm->_graphicsManager.min_x - v5;
 			_vm->_globals.Liste2[idx].xp = v6;
 		}
     
-		v7 = _vm->_globals.Liste2[idx].yp;
-		v8 = _vm->_graphicsManager.min_y;
+		int v7 = _vm->_globals.Liste2[idx].yp;
+		int v8 = _vm->_graphicsManager.min_y;
 		if (v7 < _vm->_graphicsManager.min_y) {
 			_vm->_globals.Liste2[idx].height -= _vm->_graphicsManager.min_y - v7;
 			_vm->_globals.Liste2[idx].yp = v8;
 		}
     
-		v9 = _vm->_globals.Liste2[idx].xp;
+		int v9 = _vm->_globals.Liste2[idx].xp;
 		if (_vm->_globals.Liste2[idx].width + v9 > _vm->_graphicsManager.max_x)
 			_vm->_globals.Liste2[idx].width = _vm->_graphicsManager.max_x - v9;
-		v10 = _vm->_globals.Liste2[idx].yp;
+		int v10 = _vm->_globals.Liste2[idx].yp;
 		if (_vm->_globals.Liste2[idx].height + v10 > _vm->_graphicsManager.max_y)
 			_vm->_globals.Liste2[idx].height = _vm->_graphicsManager.max_y - v10;
     
@@ -671,7 +658,6 @@ void ObjectsManager::DEF_BOB(int idx) {
 }
 
 void ObjectsManager::BOB_VISU(int idx) {
-	int v1;
 	const byte *data;
 	int16 v6;
 	int16 offsetY;
@@ -684,7 +670,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 		BOB_ZERO(idx);
 
 		data = _vm->_globals.Bqe_Anim[idx].data;
-		v1 = (int16)READ_LE_UINT16(data);
+		int v1 = (int16)READ_LE_UINT16(data);
 		v9 = (int16)READ_LE_UINT16(data + 2);
 		v8 = (int16)READ_LE_UINT16(data + 4);
 		offsetY = (int16)READ_LE_UINT16(data + 6);
@@ -850,9 +836,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		v7 = _vm->_globals.Bob[idx].field36;
 		
 		if (v7 < 0) {
-			v7 = v7;
-			if (v7 < 0)
-				v7 = -v7;
+			v7 = -v7;
 			v20 = v7;
 			if (v7 > 95)
 				v20 = 95;
@@ -1130,9 +1114,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
     
 		v9 = Sprite[idx].fieldC;
 		if (v9 < 0) {
-			v9 = v9;
-			if (v9 < 0)
-				v9 = -v9;
+			v9 = -v9;
 			reducePercent = v9;
 			if (v9 > 95)
 				reducePercent = 95;
