@@ -129,7 +129,9 @@ public:
 
 	/**
 	 * Function to directly write to a specific OPL register.
-	 * This writes to *both* chips for a Dual OPL2.
+	 * This writes to *both* chips for a Dual OPL2. We allow
+	 * writing to secondary OPL registers by using register
+	 * values >= 0x100.
 	 *
 	 * @param r		hardware register number to write to
 	 * @param v		value, which will be written
