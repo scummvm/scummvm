@@ -298,6 +298,15 @@ uint32 Player_Mac::durationToSamples(uint16 duration) {
 }
 
 int Player_Mac::noteToPitchModifier(byte note, Instrument *instrument) {
+	// TODO: Monkey Island 1 uses both note values 0 and 1 as rests.
+	// Perhaps 0 means an abrupt end of the current note, while 1 means it
+	// should drop off gradually? One of the voices in the main theme
+	// sounds a lot more staccato than what I hear in a Mac emulator. (But
+	// it's hard to tell since that emulator has problems with the music.)
+	// Also, some instruments (though not this particular one) have data
+	// after the loop end point, which could possible be used to fade out
+	// the instrument.
+
 	if (note > 1) {
 		const int pitchIdx = note + 60 - instrument->_baseFreq;
 		// I don't want to use floating-point arithmetics here, but I
