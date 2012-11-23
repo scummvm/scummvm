@@ -41,7 +41,6 @@ AnimationManager::AnimationManager() {
 // Play Anim
 void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
 	int v4; 
-	int v5; 
 	bool hasScreenCopy; 
 	byte *screenCopy = NULL; 
 	byte *v10 = NULL;
@@ -214,7 +213,7 @@ LABEL_58:
 	
 		memcpy(screenCopy, v10, 0x4B000u);
 
-		v5 = 0;
+		int v5 = 0;
 		do {
 			memset(ptr, 0, 0x13u);
 			if (f.read(ptr, 16) != 16)
@@ -245,25 +244,15 @@ LABEL_58:
 
 // Play Anim 2
 void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4) {
-	byte *v4; 
 	int v5; 
-	int v6; 
 	int v8; 
 	byte *ptr; 
-	byte *ptra; 
 	int v11; 
 	byte *v12; 
 	byte *v13; 
 	int v15; 
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
-	int v20; 
-	char v21; 
 	size_t nbytes; 
 	byte buf[6]; 
-	char v25; 
 	Common::File f;
 
 	if (_vm->shouldQuit())
@@ -271,11 +260,6 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 
 	v8 = 0;
 	while (!_vm->shouldQuit()) {
-		v17 = 0;
-		v16 = 0;
-		v19 = 0;
-		v18 = 0;
-		v20 = 1;
 		memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 0x301u);
 
 		_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
@@ -298,12 +282,12 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
 		f.read(&buf, 4);
 		nbytes = f.readUint32LE();
-		v21 = f.readUint32LE();		
-		v20 = f.readUint16LE();
-		v19 = f.readUint16LE();
-		v18 = f.readUint16LE();
-		v17 = f.readUint16LE();
-		v16 = f.readUint16LE();
+		f.readUint32LE();		
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
 
 		f.read(v12, nbytes);
 	
@@ -367,7 +351,6 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 		memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
-		v4 = &_vm->_graphicsManager.Palette[769];
 		_vm->_graphicsManager.Cls_Pal();
 		_vm->_graphicsManager.DD_Lock();
 		_vm->_graphicsManager.Cls_Video();
@@ -428,7 +411,6 @@ LABEL_48:
 		if (f.read(v13, 0x10) != 0x10)
 			v5 = -1;
 
-		v25 = 0;
 		if (strncmp((const char *)v13, "IMAGE=", 6))
 			v5 = -1;
 
@@ -473,7 +455,6 @@ LABEL_88:
 						g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 						memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
-						v4 = &_vm->_graphicsManager.Palette[769];
 						_vm->_graphicsManager.Cls_Pal();
 						_vm->_graphicsManager.DD_Lock();
 						_vm->_graphicsManager.Cls_Video();
@@ -538,7 +519,6 @@ LABEL_88:
 			g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 			memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
-			v4 = &_vm->_graphicsManager.Palette[769];
 			_vm->_graphicsManager.Cls_Pal();
 			_vm->_graphicsManager.DD_Lock();
 			_vm->_graphicsManager.Cls_Video();
@@ -591,6 +571,7 @@ LABEL_114:
 	f.close();
 
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v8) {
+		byte *ptra; 
 		ptra = _vm->_globals.dos_malloc2(0x4B000u);
 		
 		f.seek(0);
@@ -598,16 +579,18 @@ LABEL_114:
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
 		f.read(&buf, 4u);
 		nbytes = f.readUint32LE();
-		v21 = f.readUint32LE();
-		v20 = f.readUint16LE();
-		v19 = f.readUint16LE();
-		v18 = f.readUint16LE();
-		v17 = f.readUint16LE();
-		v16 = f.readUint16LE();
+
+		f.readUint32LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+
 		f.read(v12, nbytes);
 		memcpy(ptra, v12, 0x4B000u);
 
-		v6 = 0;
+		int v6 = 0;
 		do {
 			memset(&buf, 0, 6u);
 			memset(v13, 0, 0x13u);
@@ -767,17 +750,9 @@ void AnimationManager::CLEAR_ANIM() {
 int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filename) {
 	byte *v3;
 	byte *v4; 
-	int v7; 
-	int v8; 
-	int width; 
-	int height; 
 	byte *v13;
-	int v16;
-	int v17;
 	byte *ptr; 
 	byte *v19;
-	int v20; 
-	int v21; 
 	int result = 0;
 	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, filename);
 	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.FLONG(_vm->_globals.NFICHIER);
@@ -797,20 +772,22 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	if (_vm->_globals.Bank[idx].fileHeader) {
 		_vm->_globals.Bank[idx].data = v3;
 
-		v7 = 0;
-		v8 = 0;
+		bool loopCond = false;
+		int v8 = 0;
+		int width; 
+		int height; 
 		do {
 			ptr = v4;
 			width = _vm->_objectsManager.Get_Largeur(v4, v8);
 			height = _vm->_objectsManager.Get_Hauteur(ptr, v8);
 			v4 = ptr;
 			if (!width && !height)
-				v7 = 1;
-			if (!v7)
+				loopCond = true;
+			if (!loopCond)
 				++v8;
 			if (v8 > 249)
-				v7 = 1;
-		} while (v7 != 1);
+				loopCond = true;
+		} while (!loopCond);
     
 		if (v8 <= 249) {
 			_vm->_globals.Bank[idx].field1A = v8;
@@ -830,16 +807,16 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 				v13 = v19;
 				
 				if (_vm->_globals.Bank[idx].field1A > 0) {
-					for (int v14 = 0; v14 < _vm->_globals.Bank[idx].field1A; ++v14) {
-						v16 = (int16)READ_LE_UINT16(v13);
-						v17 = (int16)READ_LE_UINT16(v13 + 2);
-						v21 = (int16)READ_LE_UINT16(v13 + 4);
-						v20 = (int16)READ_LE_UINT16(v13 + 6);
+					for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx].field1A; ++objIdx) {
+						int x1 = (int16)READ_LE_UINT16(v13);
+						int y1 = (int16)READ_LE_UINT16(v13 + 2);
+						int x2 = (int16)READ_LE_UINT16(v13 + 4);
+						int y2 = (int16)READ_LE_UINT16(v13 + 6);
 						v13 += 8;
 
-						_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx].data, v14, v16, v17, 0);
+						_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx].data, objIdx, x1, y1, 0);
 						if (_vm->_globals.Bank[idx].fileHeader == 2)
-							_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx].data, v14, v21, v20, 1);
+							_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx].data, objIdx, x2, y2, 1);
 					}
 				}
 			
@@ -1135,19 +1112,11 @@ LABEL_59:
 
 void AnimationManager::PLAY_SEQ2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
 	bool v4; 
-	bool v5; 
 	int v7; 
 	byte *ptr = NULL; 
-	byte *ptra; 
 	byte *v10; 
 	byte *v11 = NULL; 
 	int v13; 
-	int v14; 
-	int v15; 
-	int v16; 
-	int v17; 
-	int v18; 
-	char v19; 
 	size_t nbytes; 
 	Common::File f;
 
@@ -1156,11 +1125,6 @@ void AnimationManager::PLAY_SEQ2(const Common::String &file, uint32 rate1, uint3
 		if (_vm->shouldQuit())
 			return;
 
-		v15 = 0;
-		v14 = 0;
-		v17 = 0;
-		v16 = 0;
-		v18 = 1;
 		_vm->_eventsManager.souris_flag = false;
 		v10 = _vm->_graphicsManager.VESA_SCREEN;
 		v11 = _vm->_globals.dos_malloc2(0x16u);
@@ -1173,12 +1137,12 @@ void AnimationManager::PLAY_SEQ2(const Common::String &file, uint32 rate1, uint3
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
 		f.skip(4);
 		nbytes = f.readUint32LE();
-		v19 = f.readUint32LE();
-		v18 = f.readUint16LE();
-		v17 = f.readUint16LE();
-		v16 = f.readUint16LE();
-		v15 = f.readUint16LE();
-		v14 = f.readUint16LE();
+		f.readUint32LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
 		f.read(v10, nbytes);
 
 		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
@@ -1298,6 +1262,7 @@ LABEL_53:
 	}
 LABEL_54:
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v7) {
+		byte *ptra; 
 		ptra = _vm->_globals.dos_malloc2(0x4B000u);
 		
 		f.seek(0);
@@ -1305,16 +1270,18 @@ LABEL_54:
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
 		f.skip(4);
 		nbytes = f.readUint32LE();
-		v19 = f.readUint32LE();
-		v18 = f.readUint16LE();
-		v17 = f.readUint16LE();
-		v16 = f.readUint16LE();
-		v15 = f.readUint16LE();
-		v14 = f.readUint16LE();
+
+		f.readUint32LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+
 		f.read(v10, nbytes);
 
 		memcpy(ptra, v10, 0x4B000u);
-		v5 = false;
+		bool v5 = false;
 		do {
 			memset(v11, 0, 0x13u);
 			if (f.read(v11, 16) != 16)

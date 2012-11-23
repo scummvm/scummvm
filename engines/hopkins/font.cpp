@@ -114,74 +114,23 @@ void FontManager::DOS_TEXT(int idx, int messageId, const Common::String &filenam
 
 // Box
 void FontManager::BOITE(int idx, int messageId, const Common::String &filename, int xp, int yp) {
-	int filesize;
 	byte *v9; 
-	const byte *v10;
-	int v11; 
-	byte v13;
-	byte v14;
-	int v15;
-	byte v16; 
-	int v17; 
-	int v18;
-	int v19;
-	int v20; 
-	int v21; 
-	int v22; 
-	int v23;
-	byte v24; 
-	int v25; 
-	int v27; 
-	int v28; 
-	int v29; 
-	int v32; 
-	int v34; 
-	int v36; 
-	int v37;
-	int ptrb;
-	int ptrc; 
-	byte *ptrd; 
 	byte *ptre; 
 	Common::String s; 
-	int v49; 
-	int blockSize; 
-	int v51;
-	int blockHeight;
-	int v53;
-	int blockWidth; 
-	int v55; 
-	int v56; 
-	int lineSize; 
-	int lineCount; 
 	byte *v59; 
-	byte *v60; 
-	byte *v61; 
-	int v62;
-	int v63;
-	int v64;
-	int v65;
-	int v66;
-	int v67; 
-	int v68; 
-	int v69; 
-	int v70;
-	int v71; 
-	int v73; 
-	int i; 
-	int v75;
 	Common::String file; 
 	Common::File f;
 
-	v73 = xp;
-	v70 = yp;
-	lineCount = 0;
+	int v73 = xp;
+	int v70 = yp;
 	if (idx < 0)
 		error("Bad number for text");
 	_vm->_globals.police_l = 11;
 
 	_vm->_globals.largeur_boite = 11 * Txt[idx].field3FE;
+	int lineCount = 0;
 	if (Txt[idx].textLoaded) {
-		v34 = Txt[idx].field3FC;
+		int v34 = Txt[idx].field3FC;
 		if (v34 != 6 && v34 != 1 && v34 != 3 && v34 != 5) {
 			int yCurrent = yp + 5;
 			if (Txt[idx].lineCount > 0) {
@@ -191,8 +140,8 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 				} 
 			}
 		} else {
-			v36 = Txt[idx].height;
-			v37 = Txt[idx].width;
+			int v36 = Txt[idx].height;
+			int v37 = Txt[idx].width;
 			_vm->_graphicsManager.Restore_Mem(
 				_vm->_graphicsManager.VESA_BUFFER,
 				Txt[idx].textBlock,
@@ -203,7 +152,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, xp + v37, yp + v36);
 		}
 	} else {
-		v62 = 0;
+		int v62 = 0;
 		do {
 			TRIER_TEXT[v62++] = 0;
 		} while (v62 <= 19);
@@ -219,11 +168,12 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			
 			if (!f.open(nom_index))
 				error("Error opening file - %s", nom_index.c_str());
-			filesize = f.size();
-			for (i = 0; i < (filesize / 4); ++i)
+			int filesize = f.size();
+			for (int i = 0; i < (filesize / 4); ++i)
 				Index[i] = f.readUint32LE();
 			f.close();
 		}
+		int v11, v69;
 		if (filename[0] != 'Z' || filename[1] != 'O') {
 			if (!f.open(file))
 				error("Error opening file - %s", nom_index.c_str());
@@ -246,17 +196,19 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			Common::fill(&v9[0], &v9[0x6e], 0);
 
 			texte_tmp = v9;
-			v10 = _vm->_globals.BUF_ZONE + Index[messageId];
+			const byte *v10 = _vm->_globals.BUF_ZONE + Index[messageId];
 			memcpy(v9, v10, 0x60u);
 			v11 = 0;
 			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
 		}
 		v59 = texte_tmp;
-		v63 = 0;
+		int v63 = 0;
+		int v64 = 0;
+		byte *v60;
 		if (!v69)
 			goto LABEL_43;
 		do {
-			v13 = *v59;
+			byte v13 = *v59;
 			if ((byte)(*v59 + 46) > 0x1Bu) {
 				if ((byte)(v13 + 80) > 0x1Bu) {
 					if ((byte)(v13 - 65) <= 0x19u || (byte)(v13 - 97) <= 0x19u)
@@ -273,10 +225,9 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 		} while (v63 < v69);
 
 		v60 = texte_tmp;
-		v64 = 0;
 		if (v69) {
 			while (1) {
-				v14 = *(v60 + v64);
+				byte v14 = *(v60 + v64);
 				if (v14 == '\r' || v14 == '\n') {
 					*(v60 + v64) = 0;
 					if (!Txt[idx].field3FE)
@@ -289,7 +240,8 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			Txt[idx].field3FE = v64;
 			_vm->_globals.largeur_boite = 0;
 
-			v15 = 0;
+			int v15 = 0;
+			byte v16;
 			if (v64 + 1 > 0) {
 				do {
 					v16 = *(v60 + v15);
@@ -300,13 +252,12 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 				} while (v15 < v64 + 1);
 			}
 			_vm->_globals.largeur_boite += 2;
-			v17 = _vm->_globals.largeur_boite / 2;
+			int v17 = _vm->_globals.largeur_boite / 2;
 			if (v17 < 0)
 				v17 = -v17;
 			Txt[idx].xp = 320 - v17;
 			v73 = _vm->_eventsManager.start_x + 320 - v17;
 			lineCount = 1;
-			v18 = 0;
 			if (v64 + 1 > 0) {
 				Txt[idx].lines[0] = Common::String((const char *)v60, v64);
 			}
@@ -314,11 +265,13 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 LABEL_43:
 			if (!_vm->_globals.largeur_boite)
 				_vm->_globals.largeur_boite = 240;
-			v65 = 0;
-			v61 = texte_tmp;
+			int v65 = 0;
+			byte *v61 = texte_tmp;
+			int v21;
+			int lineSize;
 			do {
-				v19 = 0;
-				ptrb = _vm->_globals.largeur_boite - 4;
+				int v19 = 0;
+				int ptrb = _vm->_globals.largeur_boite - 4;
 				while (1) {
 					lineSize = v19;
 					do
@@ -339,7 +292,7 @@ LABEL_55:
 				if (v11 == '%')
 					lineSize = v19;
 LABEL_57:
-				v20 = lineCount;
+				int v20 = lineCount;
 				v21 = v11;
 
 				// WORKAROUND: Perhaps due to the usage of ScummVM strings here, recalculate what the
@@ -355,48 +308,45 @@ LABEL_57:
 				v65 += lineSize;
 				v11 = v21;
 			} while (v21 != 37);
-			v66 = 0;
-			do {
-				v22 = TRIER_TEXT[v66];
+
+			for (int i = 0; i <= 19; i++) {
+				int v22 = TRIER_TEXT[i];
 				if (v22 <= 0) {
-					TRIER_TEXT[v66] = 0;
+					TRIER_TEXT[i] = 0;
 				} else {
-					ptrc = 0;
-					v23 = 0;
+					int ptrc = 0;
+					int v23 = 0;
 					if (v22 - 1 > 0) {
 						do {
-							Common::String &line = Txt[idx].lines[v66];
-							v24 = (v23 >= (int)line.size()) ? '\0' : line[v23];
+							Common::String &line = Txt[idx].lines[i];
+							byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
 							if ((byte)v24 <= 0x1Fu)
 								v24 = 32;
 							ptrc += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, (byte)v24 - 32);
 							++v23;
-						} while (v23 < TRIER_TEXT[v66] - 1);
+						} while (v23 < TRIER_TEXT[i] - 1);
 					}
-					TRIER_TEXT[v66] = ptrc;
+					TRIER_TEXT[i] = ptrc;
 				}
-				++v66;
-			} while (v66 <= 19);
-			v67 = 0;
-			do {
-				v25 = v67;
+			}
+			for (int i = 0; i <= 19; i++) {
+				int v25 = i;
 				do {
 					++v25;
 					if (v25 == 20)
 						v25 = 0;
-					if (TRIER_TEXT[v67] < TRIER_TEXT[v25])
-						TRIER_TEXT[v67] = 0;
-				} while (v25 != (int16)v67);
-				++v67;
-			} while (v67 <= 19);
-			v68 = 0;
-			do {
-				if (TRIER_TEXT[v68])
-					_vm->_globals.largeur_boite = TRIER_TEXT[v68];
-				++v68;
-			} while (v68 <= 19);
+					if (TRIER_TEXT[i] < TRIER_TEXT[v25])
+						TRIER_TEXT[i] = 0;
+				} while (v25 != i);
+			};
+
+			for (int i = 0; i <= 19; i++) {
+				if (TRIER_TEXT[i])
+					_vm->_globals.largeur_boite = TRIER_TEXT[i];
+			}
 
 			if ((uint16)(Txt[idx].field3FC - 2) > 1u) {
+				int i;
 				for (i = xp - _vm->_eventsManager.start_x; _vm->_globals.largeur_boite + i > 638 && i > -2 && Txt[idx].field3FC; i -= 2)
 					;
 				Txt[idx].xp = i;
@@ -414,26 +364,26 @@ LABEL_57:
 			}
 		}
 		_vm->_globals.hauteur_boite = (_vm->_globals.police_h + 1) * lineCount + 2;
-		v56 = v73;
-		v55 = yp;
-		v53 = _vm->_globals.largeur_boite + 10;
-		v51 = (_vm->_globals.police_h + 1) * lineCount + 12;
+		int v56 = v73;
+		int v55 = yp;
+		int v53 = _vm->_globals.largeur_boite + 10;
+		int v51 = (_vm->_globals.police_h + 1) * lineCount + 12;
 		if (Txt[idx].field3FC == 6) {
-			v27 = v53 / 2;
+			int v27 = v53 / 2;
 			if (v27 < 0)
 				v27 = -v27;
 			Txt[idx].xp = 315 - v27;
-			v28 = _vm->_eventsManager.start_x + 315 - v27;
+			int v28 = _vm->_eventsManager.start_x + 315 - v27;
 			v73 = _vm->_eventsManager.start_x + 315 - v27;
 			Txt[idx].yp = 50;
 			v70 = 50;
 			v55 = 50;
 			v56 = v28;
 		}
-		v29 = Txt[idx].field3FC;
+		int v29 = Txt[idx].field3FC;
 		if (v29 == 1 || v29 == 3 || (uint16)(v29 - 5) <= 1u) {
-			v49 = v51 * v53;
-			ptrd = _vm->_globals.dos_malloc2(v51 * v53);
+			int v49 = v51 * v53;
+			byte *ptrd = _vm->_globals.dos_malloc2(v49);
 			if (ptrd == g_PTRNUL) {
 				error("Cutting a block for text box (%d)", v49);
 			}
@@ -448,8 +398,8 @@ LABEL_57:
 			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v53 + v56, v70, v51, (byte)-2);
 		}
 		Txt[idx].lineCount = lineCount;
-		v75 = v73 + 5;
-		v71 = v70 + 5;
+		int v75 = v73 + 5;
+		int v71 = v70 + 5;
 
 		if (lineCount > 0) {
 			for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
@@ -458,16 +408,16 @@ LABEL_57:
 			}
 		}
 
-		blockWidth = v53 + 1;
-		blockHeight = v51 + 1;
+		int blockWidth = v53 + 1;
+		int blockHeight = v51 + 1;
 		
 		Txt[idx].width = blockWidth;
 		Txt[idx].height = blockHeight;
-		v32 = Txt[idx].field3FC;
+		int v32 = Txt[idx].field3FC;
 		if (v32 == 6 || v32 == 1 || v32 == 3 || v32 == 5) {
 			if (Txt[idx].textBlock != g_PTRNUL)
 				Txt[idx].textBlock = _vm->_globals.dos_free2(Txt[idx].textBlock);
-			blockSize = blockHeight * blockWidth;
+			int blockSize = blockHeight * blockWidth;
 			ptre = _vm->_globals.dos_malloc2(blockSize + 20);
 			if (ptre == g_PTRNUL)
 				error("Cutting a block for text box (%d)", blockSize);

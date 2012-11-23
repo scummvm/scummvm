@@ -303,25 +303,6 @@ void DialogsManager::showOptionsDialog() {
 }
 
 void DialogsManager::showInventory() {
-	size_t filesize; 
-	int v4;
-	int v6; 
-	byte *v7; 
-	int v8; 
-	int v9; 
-	int v10; 
-	int v11; 
-	int v12; 
-	int v13; 
-	int v15; 
-	int v16;
-	int v17;
-	int v18;
-	int v19;
-	int v20; 
-	Common::File f;
-
-	v13 = 0;
 	if (!VIRE_INVENT && !AFFINVEN && !_vm->_globals.DESACTIVE_INVENT) {
 		_vm->_graphicsManager.no_scroll = 1;
 		_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
@@ -352,34 +333,35 @@ LABEL_7:
 				break;
 		}
 
+		Common::File f;
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
-		filesize = f.size();
+		size_t filesize = f.size();
 		_vm->_dialogsManager.Winventaire = _vm->_globals.dos_malloc2(filesize);
 		_vm->_fileManager.bload_it(f, _vm->_dialogsManager.Winventaire, filesize);
 		f.close();
 
 		_vm->_fileManager.CONSTRUIT_SYSTEM("INVENT2.SPR");
 		inventaire2 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
-		v19 = _vm->_graphicsManager.ofscroll + 152;
-		v18 = _vm->_objectsManager.Get_Largeur(_vm->_dialogsManager.Winventaire, 0);
-		v17 = _vm->_objectsManager.Get_Hauteur(_vm->_dialogsManager.Winventaire, 0);
+		int v19 = _vm->_graphicsManager.ofscroll + 152;
+		int v18 = _vm->_objectsManager.Get_Largeur(_vm->_dialogsManager.Winventaire, 0);
+		int v17 = _vm->_objectsManager.Get_Hauteur(_vm->_dialogsManager.Winventaire, 0);
 		inventairex = v19;
 		inventairey = 114;
 		inventairel = v18;
 		inventaireh = v17;
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, 
 			v19 + 300, 414, 0, 0, 0, 0);
-		v15 = 0;
-		v4 = 0;
+		int v15 = 0;
+		int v4 = 0;
 		for (int v14 = 1; v14 <= 5; v14++) {
-			v16 = 0;
+			int v16 = 0;
 			for (int v5 = 1; v5 <= 6; v5++) {
 				++v4;
-				v6 = _vm->_globals.INVENTAIRE[v4];
+				int v6 = _vm->_globals.INVENTAIRE[v4];
 				if (v6 && v4 <= 29) {
-					v7 = _vm->_objectsManager.CAPTURE_OBJET(v6, 0);
+					byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(v6, 0);
 					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v7, v19 + v16 + 6, 
 						v15 + 120, _vm->_globals.OBJL, _vm->_globals.OBJH);
 					_vm->_globals.dos_free2(v7);
@@ -390,18 +372,19 @@ LABEL_7:
 		}
 		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, inventairex, inventairey, inventairel, inventaireh);
 		_vm->_eventsManager.souris_bb = 0;
-		v20 = 0;
+		bool v20 = false;
+		int v13 = 0;
 
 		// Main loop to select an inventory item
 		while (!_vm->shouldQuit()) {
 			// Turn on drawing the inventory dialog in the event manager
 			AFFINVEN = true;
 
-			v8 = _vm->_eventsManager.XMOUSE();
-			v9 = _vm->_eventsManager.YMOUSE();
-			v12 = _vm->_eventsManager.BMOUSE();
-			v10 = v13;
-			v11 = _vm->_linesManager.ZONE_OBJET(v8, v9);
+			int v8 = _vm->_eventsManager.XMOUSE();
+			int v9 = _vm->_eventsManager.YMOUSE();
+			int v12 = _vm->_eventsManager.BMOUSE();
+			int v10 = v13;
+			int v11 = _vm->_linesManager.ZONE_OBJET(v8, v9);
 			v13 = v11;
 			if (v11 != v10)
 				_vm->_objectsManager.PARAMCADRE(v11);
@@ -422,8 +405,8 @@ LABEL_7:
 				v9 = v13;
 				_vm->_objectsManager.VALID_OBJET(_vm->_globals.INVENTAIRE[v13]);
 				if (_vm->_eventsManager.btsouris == 8)
-					v20 = 1;
-				if (v20 != 1) {
+					v20 = true;
+				if (!v20) {
 					_vm->_scriptManager.TRAVAILOBJET = 1;
 					_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals.OBJET_EN_COURS;
 					_vm->_globals.SAUVEGARDE->data[svField8] = _vm->_globals.INVENTAIRE[v13];
@@ -439,22 +422,22 @@ LABEL_7:
 					}
 					if (_vm->_globals.SORTIE) {
 						if (_vm->_globals.SORTIE == 2)
-							v20 = 1;
+							v20 = true;
 						_vm->_globals.SORTIE = 0;
-						if (v20 != 1) {
+						if (!v20) {
 							inventaire2 = _vm->_globals.dos_free2(inventaire2);
 							if (g_PTRNUL != _vm->_dialogsManager.Winventaire)
 								_vm->_dialogsManager.Winventaire = _vm->_globals.dos_free2(_vm->_dialogsManager.Winventaire);
 							goto LABEL_7;
 						}
-					} else if (v20 != 1) {
+					} else if (!v20) {
 						AFFINVEN = true;
 					}
 				}
 			}
 			if (VIRE_INVENT == true)
-				v20 = 1;
-			if (v20 == 1)
+				v20 = true;
+			if (v20)
 				break;
 			_vm->_eventsManager.VBL();
 			if ((uint16)(_vm->_globals.ECRAN - 35) <= 5u)
@@ -463,7 +446,7 @@ LABEL_7:
 		_vm->_fontManager.TEXTE_OFF(9);
 		if (AFFINVEN) {
 			AFFINVEN = false;
-			v9 = 114;
+//			v9 = 114;
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v19, 114, v18, v17, _vm->_graphicsManager.VESA_BUFFER, v19, 114);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
 			_vm->_objectsManager.BOBTOUS = true;
@@ -491,9 +474,6 @@ LABEL_7:
 }
 
 void DialogsManager::INVENT_ANIM() {
-	int v0; 
-	int v1;
-
 	if (!DESACTIVE_INVENT) {
 		if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager.FLAG_VISIBLE) {
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38, 
@@ -509,8 +489,8 @@ void DialogsManager::INVENT_ANIM() {
 				_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.I_old_x, 27);
       
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
-			v0 = _vm->_graphicsManager.ofscroll + 2;
-			v1 = _vm->_graphicsManager.ofscroll + 2;
+			int v0 = _vm->_graphicsManager.ofscroll + 2;
+			int v1 = _vm->_graphicsManager.ofscroll + 2;
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.ICONE, v1 + 300, 327, 0);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v1, 27, v1 + 45, 62);
 			_vm->_objectsManager.I_old_x = v0;

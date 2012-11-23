@@ -285,7 +285,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	bool matchFlag = false;
 	int offsetVal = 0;
 	
-	do {
+	while (!matchFlag) {
 		Common::String name = (const char *)ptr + offsetVal;
     
 		if (name == filename) {
@@ -302,7 +302,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 		}
     
 		offsetVal += 23;
-	} while (!matchFlag);
+	}
 
 	_vm->_globals.dos_free2(ptr);
 

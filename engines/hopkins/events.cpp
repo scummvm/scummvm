@@ -301,11 +301,6 @@ void EventsManager::VBL() {
 	int v1;
 	int v2; 
 	int v3; 
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7;
-	int v10; 
 	signed int v11 = 0;
 	signed int v12 = 0;
 	int v13 = 0; 
@@ -437,6 +432,7 @@ LABEL_65:
 	if (_vm->_graphicsManager.DOUBLE_ECRAN != true || _vm->_graphicsManager.no_scroll == 1) {
 		_vm->_graphicsManager.Affiche_Segment_Vesa();
 	} else {
+		int v4; 
 		if (_vm->_graphicsManager.no_scroll != 2) {
 			if (XMOUSE() > _vm->_graphicsManager.SCROLL + 620)
 				_vm->_graphicsManager.SCROLL += _vm->_graphicsManager.SPEED_SCROLL;
@@ -458,10 +454,10 @@ LABEL_65:
 			_vm->_graphicsManager.DD_Lock();
 			if (_vm->_graphicsManager.SDL_ECHELLE) {
 				if (_vm->_graphicsManager.Winbpp == 2) {
-					v5 = _vm->_graphicsManager.Reel_Zoom(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
+					int v5 = _vm->_graphicsManager.Reel_Zoom(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
 					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, 640, 440, 0, v5);
 				} else {
-					v6 = _vm->_graphicsManager.Reel_Zoom(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
+					int v6 = _vm->_graphicsManager.Reel_Zoom(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
 					_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, 640, 440, 0, v6);
 				}
 				_vm->_graphicsManager.DD_Unlock();
@@ -477,17 +473,18 @@ LABEL_65:
 				_vm->_graphicsManager.DD_Unlock();
 				_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, 640, 460);
 			}
-			if (!_vm->_globals.BPP_NOAFF) {
-//				SDL_UpdateRects(LinuxScr, 1, dstrect);
-			}
+
+			// CHECKME: Useless?
+			// if (!_vm->_globals.BPP_NOAFF) {
+			//	// SDL_UpdateRects(LinuxScr, 1, dstrect);
+			// }
+
 			if (_vm->_globals.NBBLOC) {
-				v7 = 1;
-				v10 = _vm->_globals.NBBLOC + 1;
-				do {
-					if (_vm->_globals.BLOC[v7].field0 == 1)
-						_vm->_globals.BLOC[v7].field0 = 0;
-					++v7;
-				} while (v10 != v7);
+				int v10 = _vm->_globals.NBBLOC + 1;
+				for (int i = 1; i != v10; i++) {
+					if (_vm->_globals.BLOC[i].field0 == 1)
+						_vm->_globals.BLOC[i].field0 = 0;
+				}
 			}
 			_vm->_globals.NBBLOC = 0;
 			start_x = v4;
@@ -500,6 +497,9 @@ LABEL_65:
 	}
 	souris_bb = souris_b;
 	souris_b = 0;
+#if 0
+	// Commented by Strangerke. Looks completely useless.
+
 	if (souris_flag == true) {
 		if (btsouris != 23) {
 			if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
@@ -520,6 +520,7 @@ LABEL_65:
 		}
 	}
 LABEL_113:
+#endif
 	_vm->_soundManager.VERIF_SOUND();
 	CONTROLE_MES();
 }	

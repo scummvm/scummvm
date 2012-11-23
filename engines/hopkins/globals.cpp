@@ -569,16 +569,8 @@ void Globals::CACHE_ADD(int idx) {
 // Load Cache
 void Globals::CHARGE_CACHE(const Common::String &file) {
 	byte *v2 = g_PTRNUL;
-	int v4;
-	int v5;
-	int v6; 
-	int v8; 
-	int v9; 
-	int v11;
 	byte *spriteData; 
 	byte *ptr; 
-	int v14; 
-	int v15;
 	Common::String v16;
 	Common::File f;
 
@@ -592,34 +584,32 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 	if (f.exists(NFICHIER)) {
 		spriteData = _vm->_fileManager.CHARGE_FICHIER(NFICHIER);
 		CACHE_BANQUE[1] = spriteData;
-		v15 = 60;
-		v14 = 0;
-		do {
-			v11 = (int16)READ_LE_UINT16((uint16 *)ptr + v15);
-			v4 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 1);
-			v5 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
-			v6 = v14;
+		int v15 = 60;
+		for (int i = 0; i <= 21; i++) {
+			int v11 = (int16)READ_LE_UINT16((uint16 *)ptr + v15);
+			int v4 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 1);
+			int v5 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
+			int v6 = i;
 			Cache[v6].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 4);
 			Cache[v6].field2 = v11;
 			Cache[v6].field0 = v4;
 			Cache[v6].field4 = v5;
 			Cache[v6].field12 = 1;
 			if (spriteData == g_PTRNUL) {
-				Cache[v14].fieldA = 0;
+				Cache[i].fieldA = 0;
 			} else {
-				v8 = _vm->_objectsManager.Get_Largeur(spriteData, v11);
-				v9 = _vm->_objectsManager.Get_Hauteur(spriteData, v11);
-				Cache[v14].fieldC = spriteData;
-				Cache[v14].field6 = v8;
-				Cache[v14].field8 = v9;
-				Cache[v14].fieldA = 1;
+				int v8 = _vm->_objectsManager.Get_Largeur(spriteData, v11);
+				int v9 = _vm->_objectsManager.Get_Hauteur(spriteData, v11);
+				Cache[i].fieldC = spriteData;
+				Cache[i].field6 = v8;
+				Cache[i].field8 = v9;
+				Cache[i].fieldA = 1;
 			}
       
-			if ( !Cache[v14].field0 && !Cache[v14].field4 && !Cache[v14].field2)
-				Cache[v14].fieldA = 0;
+			if ( !Cache[i].field0 && !Cache[i].field4 && !Cache[i].field2)
+				Cache[i].fieldA = 0;
 			v15 += 5;
-			++v14;
-		} while (v14 <= 21);
+		}
 		CACHE_ON();
 		v2 = ptr;
 	}

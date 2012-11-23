@@ -100,17 +100,7 @@ void ComputerManager::settextposition(int yp, int xp) {
 
 void ComputerManager::COMPUT_HOPKINS(ComputerEnum mode) {
 	bool passwordMatch; 
-	bool numericFlag;
 	char *v3; 
-	int v4; 
-	char v5; 
-	char *v6; 
-	int v7; 
-	char v8; 
-	char *v9; 
-	int v10; 
-	char v11; 
-	char v12; 
 	char s[12]; 
 	const char *s2;
 
@@ -138,16 +128,15 @@ void ComputerManager::COMPUT_HOPKINS(ComputerEnum mode) {
 	outtext(Common::String(MenuText[4]._line));
 	settextposition(14, 35);
 
-	v3 = &s[0];
-	memset(s, 0, 8u);
+	memset(s, 0, 12);
 	TXT4(280, 224, 8);
-
 	strcpy(s, Sup_string);
+	v3 = &s[0];
 
 	if (mode == COMPUTER_HOPKINS) {
 		s2 = "HOPKINS";
-		v4 = 8;
-		v5 = 1;
+		int v4 = 8;
+		char v5 = 1;
 		do {
 			if (!v4)
 				break;
@@ -158,28 +147,28 @@ void ComputerManager::COMPUT_HOPKINS(ComputerEnum mode) {
 			passwordMatch = true;
 	}
 	if (mode == COMPUTER_SAMANTHAS) {
-		v6 = &s[0];
+		char *v6 = &s[0];
 		s2 = "328MHZA";
-		v7 = 8;
-		v8 = 1;
+		int v7 = 8;
+		bool v8 = true;
 		do {
 			if (!v7)
 				break;
-			v8 = *v6++ == *s2++;
+			v8 = (*v6++ == *s2++);
 			--v7;
 		} while (v8);
 		if (v8)
 			passwordMatch = true;
 	}
 	if (mode == COMPUTER_PUBLIC) {
-		v9 = &s[0];
+		char *v9 = &s[0];
 		s2 = "ALLFREE";
-		v10 = 8;
-		v11 = 1;
+		int v10 = 8;
+		bool v11 = true;
 		do {
 			if (!v10)
 				break;
-			v11 = *v9++ == *s2++;
+			v11 = (*v9++ == *s2++);
 			--v10;
 		} while (v11);
 		if (v11)
@@ -229,18 +218,21 @@ void ComputerManager::COMPUT_HOPKINS(ComputerEnum mode) {
 				outtext2(Common::String(MenuText[16]._line));
 			}
 
+			bool numericFlag = false;
+			char v12;
 			do {
 				v12 = _vm->_eventsManager.keywin();
 				if (_vm->shouldQuit())
 					return;
 
-				numericFlag = false;
 				if ((uint16)(v12 - 48) <= 8u)
 					numericFlag = true;
 			} while (!numericFlag);
 
-			if (v12 == 48)
+			// 0 - Quit
+			if (v12 == '0')
 				break;
+			// 1 - Games
 			if (v12 == '1') {
 				GAMES();
 			} else if (mode == COMPUTER_HOPKINS) {
@@ -1090,15 +1082,11 @@ void ComputerManager::PRINT_HSCORE(byte *objectData, int a2, int a3, int a4) {
 }
 
 int ComputerManager::DEP_BALLE() {
-	int v0; 
 	int16 v1; 
-	int v2; 
-	int16 v4; 
-
-	v4 = 0;
+	int16 v4 = 0;
 	//(signed int)(6.0 * (long double)_vm->getRandomNumber( rand() / 2147483648.0) + 1;
 	// TODO: Figure out random number
-	v0 = _vm->getRandomNumber(6); 
+	int v0 = _vm->getRandomNumber(6); 
 	if (CASSESPEED == 1) {
 		CASSEP1 = 1;
 		CASSEP2 = 1;
@@ -1145,7 +1133,7 @@ int ComputerManager::DEP_BALLE() {
 	if ((uint16)(BALLE.y - 186) <= 8u) {
 		_vm->_soundManager.PLAY_SAMPLE(2, 6);
 		if (BALLE.x > RAQX - 2) {
-			v2 = BALLE.x + 6;
+			int v2 = BALLE.x + 6;
 			if (v2 < RAQX + 36) {
 				BALLEVERTI = 0;
 				if (v2 <= RAQX + 15) {
@@ -1178,31 +1166,23 @@ int ComputerManager::DEP_BALLE() {
 
 
 void ComputerManager::VERIFBRIQUES() {
-	int v0; 
 	int v1; 
 	int v2; 
 	int v3; 
 	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
-	uint16 v8; 
-	int16 *v9; 
 	int v10; 
 	int v11; 
-	int v12; 
-	int v13; 
 
-	v7 = 0;
+	int v7 = 0;
 	//v6 = (signed int)(6.0 * (long double)rand() / 2147483648.0) + 1;
 	// TODO: Check if correct
-	v6 = _vm->getRandomNumber(6) + 1;
-	v0 = BALLE.x;
-	v13 = BALLE.y;
-	v5 = BALLE.x + 6;
-	v12 = BALLE.y + 6;
-	v9 = CASSETAB;
-	v8 = 0;
+	int v6 = _vm->getRandomNumber(6) + 1;
+	int v0 = BALLE.x;
+	int v13 = BALLE.y;
+	int v5 = BALLE.x + 6;
+	int v12 = BALLE.y + 6;
+	int16 *v9 = CASSETAB;
+	uint16 v8 = 0;
 	do {
 		v1 = v9[v8];
 		v11 = v9[v8 + 1];
