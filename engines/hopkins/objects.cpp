@@ -658,23 +658,17 @@ void ObjectsManager::DEF_BOB(int idx) {
 }
 
 void ObjectsManager::BOB_VISU(int idx) {
-	const byte *data;
-	int16 v6;
-	int16 offsetY;
-	int16 v8;
-	int16 v9;
-
 	PRIORITY = 1;
 
 	if (!_vm->_globals.Bob[idx].field0) {
 		BOB_ZERO(idx);
 
-		data = _vm->_globals.Bqe_Anim[idx].data;
+		const byte *data = _vm->_globals.Bqe_Anim[idx].data;
 		int v1 = (int16)READ_LE_UINT16(data);
-		v9 = (int16)READ_LE_UINT16(data + 2);
-		v8 = (int16)READ_LE_UINT16(data + 4);
-		offsetY = (int16)READ_LE_UINT16(data + 6);
-		v6 = (int16)READ_LE_UINT16(data + 8);
+		int16 v9 = (int16)READ_LE_UINT16(data + 2);
+		int16 v8 = (int16)READ_LE_UINT16(data + 4);
+		int16 offsetY = (int16)READ_LE_UINT16(data + 6);
+		int16 v6 = (int16)READ_LE_UINT16(data + 8);
 		if ((int16)READ_LE_UINT16(data)) {
 			if (_vm->_globals.Bank[v1].field4) {
 				if (!v9)
@@ -725,31 +719,22 @@ void ObjectsManager::BOB_OFFSETY(int idx, int v) {
 }
 
 void ObjectsManager::SCBOB(int idx) {
-	int v1;
-	int v2;
-	int v3;
-	int v4;
-	int v6;
-	int v7;
-	int v8; 
-	int v9; 
-
-	v1 = idx;
+	int v1 = idx;
 	if (_vm->_globals.Cache[idx].fieldA > 0) {
-		v8 = 0;
+		int v8 = 0;
 		do {
 			v1 = v8;
 			if (_vm->_globals.Bob[v1].field0) {
 				if (!_vm->_globals.Bob[v8].field16) {
 					if (!_vm->_globals.Bob[v8].field34) {
 						if ( _vm->_globals.Bob[v8].frameIndex != 250) {
-							v2 = _vm->_globals.Bob[v8].oldWidth;
-							v9 = _vm->_globals.Bob[v8].oldX + _vm->_globals.Bob[v8].oldWidth;
-							v6 = _vm->_globals.Bob[v8].oldY + _vm->_globals.Bob[v8].oldHeight;
-							v3 =_vm->_globals.Cache[idx].field0;
-							v4 =_vm->_globals.Cache[idx].field4;
-							v7 =_vm->_globals.Cache[idx].field6 + v3;
-							v1 =_vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx].field8 + v4;
+							int v2 = _vm->_globals.Bob[v8].oldWidth;
+							int v9 = _vm->_globals.Bob[v8].oldX + _vm->_globals.Bob[v8].oldWidth;
+							int v6 = _vm->_globals.Bob[v8].oldY + _vm->_globals.Bob[v8].oldHeight;
+							int v3 =_vm->_globals.Cache[idx].field0;
+							int v4 =_vm->_globals.Cache[idx].field4;
+							int v7 =_vm->_globals.Cache[idx].field6 + v3;
+							int v1 =_vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx].field8 + v4;
               
 							if (v6 > v4) {
 								if (v6 < v1) {
