@@ -298,7 +298,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	if (in) {
 		Kyra::KyraEngine_v1::SaveHeader header;
-		Kyra::KyraEngine_v1::kReadSaveHeaderError error;
+		Kyra::KyraEngine_v1::ReadSaveHeaderError error;
 
 		error = Kyra::KyraEngine_v1::readSaveHeader(in, true, header);
 		delete in;

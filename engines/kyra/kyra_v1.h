@@ -408,14 +408,14 @@ protected:
 		Graphics::Surface *thumbnail;
 	};
 
-	enum kReadSaveHeaderError {
+	enum ReadSaveHeaderError {
 		kRSHENoError = 0,
 		kRSHEInvalidType = 1,
 		kRSHEInvalidVersion = 2,
 		kRSHEIoError = 3
 	};
 
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
+	static ReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
 
 	void loadGameStateCheck(int slot);
 	virtual Common::Error loadGameState(int slot) = 0;
