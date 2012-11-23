@@ -725,7 +725,7 @@ void OSystem_N64::copyRectToOverlay(const void *buf, int pitch, int x, int y, in
 
 	uint16 *dst = _overlayBuffer + (y * _overlayWidth + x);
 
-	if (_overlayWidth == w && pitch == _overlayWidth * sizeof(uint16)) {
+	if (_overlayWidth == (uint16)w && (uint16)pitch == _overlayWidth * sizeof(uint16)) {
 		memcpy(dst, src, h * pitch);
 	} else {
 		do {
