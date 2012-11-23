@@ -214,11 +214,19 @@ void StaticResource::freeButtonDefs(void *&ptr, int &size) {
 }
 
 void LoLEngine::initStaticResource() {
-	// assign music resource data (not required for the PC version, resource loading is implemented differently there)
+	// assign music resource data.
 	if (_flags.isDemo) {
 		static const char *const file[] = { "LOREDEMO" };
 		SoundResourceInfo_TownsPC98V2 resInfoDemo(file, ARRAYSIZE(file), 0, 0, 0);
 		_sound->initAudioResourceInfo(kMusicIntro, &resInfoDemo);
+	} else if (_flags.platform == Common::kPlatformPC) {
+		static const char *const intro[] = { "LOREINTR" };
+		static const char *const finale[] = { "LOREFINL" };
+		SoundResourceInfo_PC resInfoIntro(intro, ARRAYSIZE(intro));
+		SoundResourceInfo_PC resInfoFinale(finale, ARRAYSIZE(finale));
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		// In game music file handling is different, thus does not need a file list.
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		static const char *const fileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
 		static const char *const fileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
