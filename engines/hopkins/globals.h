@@ -274,7 +274,7 @@ enum SauvegardeOffset {
 	, svField401 = 401
 };
 
-enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARACTER_2 = 2 };
+enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARACTER_SAMANTHA = 2 };
 
 // TODO: Sauvegrade1 fields should really be mapped into data array
 struct Sauvegarde {
