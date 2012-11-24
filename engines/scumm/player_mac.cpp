@@ -31,13 +31,14 @@
 
 namespace Scumm {
 
-Player_Mac::Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask)
+Player_Mac::Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask, bool fadeNoteEnds)
 	: _vm(scumm),
 	  _mixer(mixer),
 	  _sampleRate(_mixer->getOutputRate()),
 	  _soundPlaying(-1),
 	  _numberOfChannels(numberOfChannels),
-	  _channelMask(channelMask) {
+	  _channelMask(channelMask),
+	  _fadeNoteEnds(fadeNoteEnds) {
 	assert(scumm);
 	assert(mixer);
 }
@@ -298,16 +299,7 @@ uint32 Player_Mac::durationToSamples(uint16 duration) {
 }
 
 int Player_Mac::noteToPitchModifier(byte note, Instrument *instrument) {
-	// TODO: Monkey Island 1 uses both note values 0 and 1 as rests.
-	// Perhaps 0 means an abrupt end of the current note, while 1 means it
-	// should drop off gradually? One of the voices in the main theme
-	// sounds a lot more staccato than what I hear in a Mac emulator. (But
-	// it's hard to tell since that emulator has problems with the music.)
-	// Also, some instruments (though not this particular one) have data
-	// after the loop end point, which could possible be used to fade out
-	// the instrument.
-
-	if (note > 1) {
+	if (note > 0) {
 		const int pitchIdx = note + 60 - instrument->_baseFreq;
 		// I don't want to use floating-point arithmetics here, but I
 		// ran into overflow problems with the church music in Monkey
@@ -356,7 +348,7 @@ int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 			}
 			generated = MIN(_channel[i]._remaining, samplesLeft);
 			if (_channel[i]._velocity != 0) {
-				_channel[i]._instrument.generateSamples(ptr, _channel[i]._pitchModifier, _channel[i]._velocity, generated, _channel[i]._remaining);
+				_channel[i]._instrument.generateSamples(ptr, _channel[i]._pitchModifier, _channel[i]._velocity, generated, _channel[i]._remaining, _fadeNoteEnds);
 			}
 			ptr += generated;
 			samplesLeft -= generated;
@@ -375,7 +367,7 @@ int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 	return numSamples;
 }
 
-void Player_Mac::Instrument::generateSamples(int16 *data, int pitchModifier, int volume, int numSamples, int remainingSamplesOnNote) {
+void Player_Mac::Instrument::generateSamples(int16 *data, int pitchModifier, int volume, int numSamples, int remainingSamplesOnNote, bool fadeNoteEnds) {
 	int samplesLeft = numSamples;
 	while (samplesLeft) {
 		_subPos += pitchModifier;
@@ -389,16 +381,23 @@ void Player_Mac::Instrument::generateSamples(int16 *data, int pitchModifier, int
 
 		int newSample = (((int16)((_data[_pos] << 8) ^ 0x8000)) * volume) / 255;
 
-		// Fade out the last 100 samples on each note. Even at low
-		// output sample rates this is just a fraction of a second,
-		// but it gets rid of distracting "pops" at the end when the
-		// sample would otherwise go abruptly from something to
-		// nothing. This was particularly noticeable on the distaff
-		// notes in Loom.
+		if (fadeNoteEnds) {
+			// Fade out the last 100 samples on each note. Even at
+			// low output sample rates this is just a fraction of a
+			// second, but it gets rid of distracting "pops" at the
+			// end when the sample would otherwise go abruptly from
+			// something to nothing. This was particularly
+			// noticeable on the distaff notes in Loom.
+			//
+			// The reason it's conditional is that Monkey Island
+			// appears to have a "hold current note" command, and
+			// if we fade out the current note in that case we
+			// will actually introduce new "pops".
 
-		remainingSamplesOnNote--;
-		if (remainingSamplesOnNote < 100) {
-			newSample = (newSample * remainingSamplesOnNote) / 100;
+			remainingSamplesOnNote--;
+			if (remainingSamplesOnNote < 100) {
+				newSample = (newSample * remainingSamplesOnNote) / 100;
+			}
 		}
 
 		int sample = *data + newSample;

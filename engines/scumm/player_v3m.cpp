@@ -97,7 +97,7 @@
 namespace Scumm {
 
 Player_V3M::Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer)
-	: Player_Mac(scumm, mixer, 5, 0x1E) {
+	: Player_Mac(scumm, mixer, 5, 0x1E, true) {
 	assert(_vm->_game.id == GID_LOOM);
 
 	// Channel 0 seems to be what was played on low-end macs, that couldn't

@@ -44,7 +44,7 @@ class ScummEngine;
  */
 class Player_Mac : public Audio::AudioStream, public MusicEngine {
 public:
-	Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask);
+	Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask, bool fadeNoteEnds);
 	virtual ~Player_Mac();
 
 	void init();
@@ -90,12 +90,13 @@ private:
 			_subPos = 0;
 		}
 
-		void generateSamples(int16 *data, int pitchModifier, int volume, int numSamples, int remainingSamplesOnNote);
+		void generateSamples(int16 *data, int pitchModifier, int volume, int numSamples, int remainingSamplesOnNote, bool fadeNoteEnds);
 	};
 
 	int _pitchTable[128];
 	int _numberOfChannels;
 	int _channelMask;
+	bool _fadeNoteEnds;
 
 	virtual bool checkMusicAvailable() { return false; }
 	virtual bool loadMusic(const byte *ptr) { return false; }

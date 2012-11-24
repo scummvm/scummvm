@@ -82,7 +82,7 @@
 namespace Scumm {
 
 Player_V5M::Player_V5M(ScummEngine *scumm, Audio::Mixer *mixer)
-	: Player_Mac(scumm, mixer, 3, 0x07) {
+	: Player_Mac(scumm, mixer, 3, 0x07, false) {
 	assert(_vm->_game.id == GID_MONKEY);
 }
 
@@ -190,7 +190,6 @@ bool Player_V5M::loadMusic(const byte *ptr) {
 }
 
 bool Player_V5M::getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity) {
-	_channel[ch]._instrument.newNote();
 	if (_channel[ch]._pos >= _channel[ch]._length) {
 		if (!_channel[ch]._looped) {
 			_channel[ch]._notesLeft = false;
@@ -206,9 +205,31 @@ bool Player_V5M::getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &
 	byte note = _channel[ch]._data[_channel[ch]._pos + 2];
 	samples = durationToSamples(duration);
 
+	if (note != 1) {
+		_channel[ch]._instrument.newNote();
+	}
+
 	if (note > 1) {
 		pitchModifier = noteToPitchModifier(note, &_channel[ch]._instrument);
 		velocity = _channel[ch]._data[_channel[ch]._pos + 3];
+	} else if (note == 1) {
+		// This is guesswork, but Monkey Island uses two different
+		// "special" note values: 0, which is clearly a rest, and 1
+		// which is... I thought at first it was a "soft" key off, to
+		// fade out the note, but listening to the music in a Mac
+		// emulator (which unfortunately doesn't work all that well),
+		// I hear no trace of fading out.
+		//
+		// It could mean "change the volume on the current note", but
+		// I can't hear that either, and it always seems to use the
+		// exact same velocity on this note.
+		//
+		// So it appears it really just is a "hold the current note",
+		// but why? Couldn't they just have made the original note
+		// longer?
+
+		pitchModifier = _channel[ch]._pitchModifier;
+		velocity = _channel[ch]._velocity;
 	} else {
 		pitchModifier = 0;
 		velocity = 0;
