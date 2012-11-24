@@ -26,6 +26,7 @@
 #include "audio/mixer.h"
 #include "audio/timestamp.h"	// TODO: Move this to common/ ?
 #include "common/array.h"
+#include "common/rational.h"
 #include "common/str.h"
 #include "graphics/pixelformat.h"
 
@@ -36,7 +37,6 @@ class SeekableAudioStream;
 }
 
 namespace Common {
-class Rational;
 class SeekableReadStream;
 }
 
@@ -100,7 +100,7 @@ public:
 	/////////////////////////////////////////
 
 	/**
-	 * Begin playback of the video.
+	 * Begin playback of the video at normal speed.
 	 *
 	 * @note This has no effect if the video is already playing.
 	 */
@@ -114,6 +114,26 @@ public:
 	void stop();
 
 	/**
+	 * Set the rate of playback.
+	 *
+	 * For instance, a rate of 0 would stop the video, while a rate of 1
+	 * would play the video normally. Passing 2 to this function would
+	 * play the video at twice the normal speed.
+	 *
+	 * @note This function does not work for non-0/1 rates on videos that
+	 * have audio tracks.
+	 *
+	 * @todo This currently does not implement backwards playback, but will
+	 * be implemented soon.
+	 */
+	void setRate(const Common::Rational &rate);
+
+	/**
+	 * Returns the rate at which the video is being played.
+	 */
+	Common::Rational getRate() const { return _playbackRate; }
+
+	/**
 	 * Returns if the video is currently playing or not.
 	 *
 	 * This is not equivalent to the inverse of endOfVideo(). A video keeps
@@ -121,7 +141,7 @@ public:
 	 * return true after calling start() and will continue to return true
 	 * until stop() (or close()) is called.
 	 */
-	bool isPlaying() const { return _isPlaying; }
+	bool isPlaying() const;
 
 	/**
 	 * Returns if a video is rewindable or not. The default implementation
@@ -366,11 +386,6 @@ public:
 	 * This calls SeekableAudioStream::openStreamFile() internally
 	 */
 	bool addStreamFileTrack(const Common::String &baseName);
-
-
-	// Future API
-	//void setRate(const Common::Rational &rate);
-	//Common::Rational getRate() const;
 
 protected:
 	/**
@@ -764,9 +779,10 @@ private:
 	TrackList _tracks;
 
 	// Current playback status
-	bool _isPlaying, _needsUpdate;
+	bool _needsUpdate;
 	Audio::Timestamp _lastTimeChange, _endTime;
 	bool _endTimeSet;
+	Common::Rational _playbackRate;
 
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
@@ -780,6 +796,7 @@ private:
 	void startAudio();
 	void startAudioLimit(const Audio::Timestamp &limit);
 	bool hasFramesLeft() const;
+	bool hasAudio() const;
 
 	int32 _startTime;
 	uint32 _pauseLevel;
