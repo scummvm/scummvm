@@ -3937,7 +3937,7 @@ if test "$_nasm" = yes ; then
 fi
 
 if test "$_16bit" = yes ; then
-	echo_n ""
+	: # residualvm not use it
 fi
 
 if test "$_savegame_timestamp" = yes ; then
@@ -3946,9 +3946,9 @@ fi
 
 if test "$_build_scalers" = yes ; then
 	if test "$_build_hq_scalers" = yes ; then
-		echo_n ""
+		: # residualvm not use it
 	else
-		echo_n ""
+		: # residualvm not use it
 	fi
 fi
 
