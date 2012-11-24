@@ -200,6 +200,7 @@ public:
 	 */
 	virtual void dimScreen() = 0;
 	virtual void dimRegion(int x, int y, int w, int h, float level) = 0;
+	virtual void setDimLevel(float dimLevel) { _dimLevel = dimLevel; }
 
 	/**
 	 * Draw a completely opaque Iris around the specified rectangle.
@@ -272,6 +273,7 @@ protected:
 	SpecialtyMaterial _specialty[8];
 	Math::Vector3d _currentPos;
 	Math::Quaternion _currentQuat;
+	float _dimLevel;
 };
 
 // Factory-like functions:

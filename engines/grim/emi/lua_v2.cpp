@@ -37,6 +37,7 @@
 namespace Grim {
 
 void Lua_V2::UndimAll() {
+	g_driver->setDimLevel(0);
 	warning("Lua_V2::UndimAll: stub");
 }
 
@@ -49,6 +50,9 @@ void Lua_V2::UndimRegion() {
 		warning("Lua_V2::UndimRegion: region: %d", region);
 	} else {
 		lua_pushnil();
+		// HACK: The demo uses this to undim the intro-screen.
+		// thus UndimRegion(nil) might mean UndimScreen.
+		g_driver->setDimLevel(0);
 	}
 }
 
@@ -59,6 +63,7 @@ void Lua_V2::DimScreen() {
 	if (lua_isnumber(dimObj))
 		dim = lua_getnumber(dimObj);
 
+	g_driver->setDimLevel(dim);
 	// FIXME func(dim);
 	warning("Lua_V2::DimScreen: dim: %f", dim);
 }

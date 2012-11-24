@@ -524,13 +524,14 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 	else
 		glDisable(GL_TEXTURE_2D);
 
+	float dim = 1.0f - _dimLevel;
 	glBegin(GL_TRIANGLES);
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
 		if (face->_hasTexture) {
 			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 		}
-		glColor4ub(model->_colorMap[index].r, model->_colorMap[index].g, model->_colorMap[index].b, (int)(model->_colorMap[index].a * _alpha));
+		glColor4ub((byte)(model->_colorMap[index].r * dim), (byte)(model->_colorMap[index].g * dim), (byte)(model->_colorMap[index].b * dim), (int)(model->_colorMap[index].a * _alpha));
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];
@@ -816,6 +817,8 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy) {
 
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
+
+		glColor3f(1.0f - _dimLevel, 1.0f - _dimLevel, 1.0f  - _dimLevel);
 
 		BitmapData *data = bitmap->_data;
 		GLuint *textures = (GLuint *)bitmap->getTexIds();

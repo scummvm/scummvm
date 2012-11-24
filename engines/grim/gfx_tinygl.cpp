@@ -621,12 +621,13 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face)
 		tglDisable(TGL_TEXTURE_2D);
 	tglBegin(TGL_TRIANGLES);
 
+	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
 		if (face->_hasTexture) {
 			tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 		}
-		tglColor4ub(model->_colorMap[index].r, model->_colorMap[index].g, model->_colorMap[index].b, (int)_alpha);
+		tglColor4ub((byte)(model->_colorMap[index].r * dim), (byte)(model->_colorMap[index].g * dim), (byte)(model->_colorMap[index].b * dim), (int)_alpha);
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];
@@ -804,6 +805,12 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 }
 
 void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
+	if (_dimLevel >= 1.0f) {
+		return;
+	} else if (_dimLevel > 0.0f) {
+		warning("TinyGL doesn't implement partial screen-dimming yet");
+	}
+
 	int srcX, srcY;
 	int clampWidth, clampHeight;
 

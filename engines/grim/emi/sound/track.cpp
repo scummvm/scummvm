@@ -32,6 +32,7 @@ namespace Grim {
 SoundTrack::SoundTrack() {
 	_stream = NULL;
 	_handle = NULL;
+	_paused = false;
 	_disposeAfterPlaying = DisposeAfterUse::YES;
 }
 
@@ -47,7 +48,7 @@ Common::String SoundTrack::getSoundName() {
 void SoundTrack::setSoundName(Common::String name) {
 	_soundName = name;
 }
-	
+
 bool SoundTrack::play() {
 	if (_stream) {
 		// If _disposeAfterPlaying is NO, the destructor will take care of the stream.
@@ -57,8 +58,16 @@ bool SoundTrack::play() {
 	return false;
 }
 
+void SoundTrack::pause() {
+	_paused = !_paused;
+	if (_stream) {
+		g_system->getMixer()->pauseHandle(*_handle, _paused);
+	}
+}
+
 void SoundTrack::stop() {
 	if (_handle)
 		g_system->getMixer()->stopHandle(*_handle);
 }
+
 } // end of namespace Grim

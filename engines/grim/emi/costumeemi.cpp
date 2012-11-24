@@ -123,10 +123,15 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				data->read(&time, 4);
 				data->read(&value, 4);
 				track.keys[j].time = (int)(time * 1000);
+				length = MAX(length, time * 1000);
 				track.keys[j].value = (int)value;
 			}
 			delete[] componentName;
 		}
+
+		// Some chores report duration 1000 while they have components with
+		// keyframes after 1000. See elaine_wedding/take_contract, for example.
+		_chores[i]->_length = ceil(length);
 	}
 
 	_numComponents = components.size();
@@ -181,6 +186,8 @@ Component *EMICostume::loadComponent(Component *parent, int parentID, const char
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SHAD-handling: %s" , name);
 	} else if (tag == MKTAG('a', 'w', 'g', 't')) {
 		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement AWGT-handling: %s" , name);
+	} else if (tag == MKTAG('s', 'n', 'd', '2')) {
+		// ignore, this is a leftover from an earlier engine.
 	} else {
 		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
 	}

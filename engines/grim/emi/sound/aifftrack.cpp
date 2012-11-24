@@ -55,6 +55,8 @@ bool AIFFTrack::openSound(Common::String soundName, Common::SeekableReadStream *
 }
 
 void AIFFTrack::setLooping(bool looping) {
+	if (_looping == looping)
+		return;
 	_looping = looping;
 	if (looping && _stream) {
 		_stream = Audio::makeLoopingAudioStream(static_cast<Audio::SeekableAudioStream *>(_stream), 0);
