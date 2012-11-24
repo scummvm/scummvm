@@ -189,7 +189,13 @@ public:
 	void PARADISE();
 	void CLEAR_ECRAN();
 	
-	void CHANGE_TETE(PlayerCharacter a1, PlayerCharacter a2);
+	/**
+	 * Change the currently active player
+	 * @param oldCharacter		Previously played character
+	 * @param newCharacter		New character to play
+	 */
+	void CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
+
 	void VERIFTAILLE();
 	void PACOURS_PROPRE(int16 *a1);
 	int16 *PARC_VOITURE(int a1, int a2, int a3, int a4);

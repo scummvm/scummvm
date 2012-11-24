@@ -3068,7 +3068,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 }
 
 // Change Face/Head
-void ObjectsManager::CHANGE_TETE(PlayerCharacter a1, PlayerCharacter a2) {
+void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter newCharacter) {
 	CharacterLocation *loc; 
 
 	CH_TETE = 1;
@@ -3077,7 +3077,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter a1, PlayerCharacter a2) {
 	_vm->_globals.NOT_VERIF = 1;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 
-	if (a1 == CHARACTER_SAMANTHA && !a2 && _vm->_globals.SAUVEGARDE->field370.location) {
+	if (oldCharacter == CHARACTER_SAMANTHA && !newCharacter && _vm->_globals.SAUVEGARDE->field370.location) {
 		CH_TETE = 0;
 		loc = &_vm->_globals.SAUVEGARDE->field380;
 		loc->xp = XSPR(0);
@@ -3103,7 +3103,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter a1, PlayerCharacter a2) {
 		SPRITE(_vm->_globals.PERSO, loc->xp, loc->yp, 0, 64, loc->field4, 0, 34, 190);
 		SPRITE_ON(0);
 		_vm->_globals.HOPKINS_DATA();
-	} else if (!a1 && a2 == CHARACTER_SAMANTHA && _vm->_globals.SAUVEGARDE->field380.location == _vm->_globals.ECRAN) {
+	} else if (!oldCharacter && newCharacter == CHARACTER_SAMANTHA && _vm->_globals.SAUVEGARDE->field380.location == _vm->_globals.ECRAN) {
 		CH_TETE = 0;
 		loc = &_vm->_globals.SAUVEGARDE->field370;
 		loc->xp = XSPR(0);
@@ -3127,7 +3127,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter a1, PlayerCharacter a2) {
 		SPRITE_ON(0);
 		_vm->_globals.HOPKINS_DATA();
 	} else {
-		switch (a1) {
+		switch (oldCharacter) {
 		case CHARACTER_HOPKINS:
 			loc = &_vm->_globals.SAUVEGARDE->field370;
 			loc->xp = XSPR(0);
@@ -3156,7 +3156,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter a1, PlayerCharacter a2) {
 			break;
 		}
 
-		switch (a2) {
+		switch (newCharacter) {
 		case CHARACTER_HOPKINS:
 			_vm->_globals.SAUVEGARDE->data[svField121] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
