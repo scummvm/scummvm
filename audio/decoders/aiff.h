@@ -48,7 +48,7 @@ class SeekableAudioStream;
  * successful. In that case, the stream's seek position will be set to the
  * start of the audio data, and size, rate and flags contain information
  * necessary for playback. Currently this function only supports uncompressed
- * raw PCM data as well as IMA ADPCM.
+ * raw PCM.
  */
 extern bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags);
 
