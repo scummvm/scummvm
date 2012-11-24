@@ -331,6 +331,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 		Ligne[idx].field6 = 2;
 		Ligne[idx].field8 = 6;
 	}
+	// CHECKME: v37 conditions are impossible to meet!
 	if (v11 == -1 && v37 <= 249 && v37 > 1000) {
 		Ligne[idx].field6 = 8;
 		Ligne[idx].field8 = 4;
@@ -373,6 +374,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 }
 
 // Line Collision 2
+// TODO: Should return a bool
 int LinesManager::colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
 	int16 *v7; 
 	int16 *v13; 
@@ -632,26 +634,23 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 			a6[v12 + 2] = Ligne[a1].field6;
 			v8 += a7;
 		}
-		int v34 = a1 + 1;
+
 		if ((int)(a1 + 1) < a4) {
-			do {
-				int v13 = 0;
+			for (int v34 = a1 + 1; v34 < a4; v34++) {
 				if (Ligne[v34].field0 > 0) {
-					do {
+					for (int i = 0; i < Ligne[v34].field0; i++) {
 						int16 *v14 = Ligne[v34].lineData;
-						int v15 = v14[2 * v13];
-						v50 = v14[2 * v13 + 1];
+						int v15 = v14[2 * i];
+						v50 = v14[2 * i + 1];
 						int v16 = v8;
 
 						a6[v16] = v15;
 						a6[v16 + 1] = v50;
 						a6[v16 + 2] = Ligne[v34].field6;
 						v8 += a7;
-						++v13;
-					} while (Ligne[v34].field0 > v13);
+					}
 				}
-				++v34;
-			} while (v34 < a4);
+			}
 		}
 		v7 = 0;
 		v36 = a4;
@@ -668,9 +667,8 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 			a6[v20 + 2] = Ligne[v36].field8;
 			v8 += a7;
 		}
-		int v35 = v36 - 1;
 		if ((int)(v36 - 1) > a4) {
-			do {
+			for (int v35 = v36 - 1; v35 > a4; v35--) {
 				for (int k = Ligne[v35].field0 - 1; k > 0; --k) {
 					int16 *v22 = Ligne[v35].lineData;
 					int v23 = v22[2 * k];
@@ -682,8 +680,8 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 					a6[v24 + 2] = Ligne[v35].field8;
 					v8 += a7;
 				}
-				--v35;
-			} while (v35 > a4);
+
+			}
 		}
 		v7 = Ligne[a4].field0 - 1;
 		v36 = a4;
@@ -722,72 +720,39 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 
 // Avoid 1
 int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9) {
-	int v9; 
-	int v10;
-	int i; 
-	int16 *v12;
-	int v13;
-	int v14;
-	int v15;
-	int v16;
-	int16 *v17;
-	int v18;
-	int v19;
-	int j; 
-	int16 *v21;
-	int v22;
-	int v23;
-	int v24; 
-	int k; 
-	int16 *v26;
-	int v27;
-	int v28;
-	int v29;
-	int16 *v30;
-	int v31;
-	int v32;
-	int v33;
-	int16 *v34;
-	int v35;
-	int v36;
-	int v38;
-	int v39;
-	int v40;
+	int v9 = a1;
+	int v10 = a2;
+	int v40 = a3;
 	int v50;
-
-	v9 = a1;
-	v10 = a2;
-	v40 = a3;
 	if (a4 < a1) {
-		for (i = a2; Ligne[a1].field0 > i; ++i) {
-			v12 = Ligne[a1].lineData;
-			v13 = v12[2 * i];
+		for (int i = a2; Ligne[a1].field0 > i; ++i) {
+			int16 *v12 = Ligne[a1].lineData;
+			int v13 = v12[2 * i];
 			v50 = v12[2 * i + 1];
 
-			v14 = v40;
+			int v14 = v40;
 			a6[v14] = v13;
 			a6[v14 + 1] = v50;
 			a6[v14 + 2] = Ligne[a1].field6;
 			v40 += a7;
 		}
-		v15 = a1 + 1;
+		int v15 = a1 + 1;
 		if ((int)(a1 + 1) == a9 + 1)
 			v15 = a8;
 		while (a4 != v15) {
-			v16 = 0;
 			if (Ligne[v15].field0 > 0) {
-				do {
-					v17 = Ligne[v15].lineData;
-					v18 = v17[2 * v16];
+				for (int v16 = 0; v16 < Ligne[v15].field0; v16++) {
+					int16 *v17 = Ligne[v15].lineData;
+					int v18 = v17[2 * v16];
 					v50 = v17[2 * v16 + 1];
 
-					v19 = v40;
+					int v19 = v40;
 					a6[v19] = v18;
 					a6[v19 + 1] = v50;
 					a6[v19 + 2] = Ligne[v15].field6;
 					v40 += a7;
-					++v16;
-				} while (Ligne[v15].field0 > v16);
+	
+				}
 			}
 			++v15;
 			if (a9 + 1 == v15)
@@ -797,27 +762,27 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 		v9 = a4;
 	}
 	if (a4 > v9) {
-		for (j = v10; j > 0; --j) {
-			v21 = Ligne[v9].lineData;
-			v22 = v21[2 * j];
+		for (int j = v10; j > 0; --j) {
+			int16 *v21 = Ligne[v9].lineData;
+			int v22 = v21[2 * j];
 			v50 = v21[2 * j + 1];
 
-			v23 = v40;
+			int v23 = v40;
 			a6[v23] = v22;
 			a6[v23 + 1] = v50;
 			a6[v23 + 2] = Ligne[v9].field8;
 			v40 += a7;
 		}
-		v24 = v9 - 1;
+		int v24 = v9 - 1;
 		if (v24 == a8 - 1)
 			v24 = a9;
 		while (a4 != v24) {
-			for (k = Ligne[v24].field0 - 1; k > 0; --k) {
-				v26 = Ligne[v24].lineData;
-				v27 = v26[2 * k];
+			for (int k = Ligne[v24].field0 - 1; k > 0; --k) {
+				int16 *v26 = Ligne[v24].lineData;
+				int v27 = v26[2 * k];
 				v50 = v26[2 * k + 1];
 
-				v28 = v40;
+				int v28 = v40;
 				a6[v28] = v27;
 				a6[v28 + 1] = v50;
 				a6[v28 + 2] = Ligne[v24].field8;
@@ -833,36 +798,32 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 	if (a4 == v9) {
 		if (a5 >= v10) {
 			if (a5 > v10) {
-				v33 = v10;
-				v39 = a4;
-				do {
-					v34 = Ligne[v39].lineData;
-					v35 = v34[2 * v33];
+				int v39 = a4;
+				for (int v33 = v10; v33 < a5; v33++) {
+					int16 *v34 = Ligne[v39].lineData;
+					int v35 = v34[2 * v33];
 					v50 = v34[2 * v33 + 1];
 
-					v36 = v40;
+					int v36 = v40;
 					a6[v36] = v35;
 					a6[v36 + 1] = v50;
 					a6[v36 + 2] = Ligne[v39].field6;
 					v40 += a7;
-					++v33;
-				} while (a5 > v33);
+				}
 			}
 		} else {
-			v29 = v10;
-			v38 = a4;
-			do {
-				v30 = Ligne[v38].lineData;
-				v31 = v30[2 * v29];
+			int v38 = a4;
+			for (int v29 = v10; v29 > a5; v29--) {
+				int16 *v30 = Ligne[v38].lineData;
+				int v31 = v30[2 * v29];
 				v50 = v30[2 * v29 + 1];
 
-				v32 = v40;
+				int v32 = v40;
 				a6[v32] = v31;
 				a6[v32 + 1] = v50;
 				a6[v32 + 2] = Ligne[v38].field8;
 				v40 += a7;
-				--v29;
-			} while (a5 < v29);
+			}
 		}
 	}
 	return v40;
@@ -1181,101 +1142,9 @@ LABEL_186:
 }
 
 int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9) {
-	int v9; 
-	int16 *v10;
-	int v11; 
-	int16 *v12; 
-	int16 *v13; 
-	int v14; 
-	int v15;
-	int16 *v16; 
-	int v17;
-	int v18; 
-	int v19; 
-	int v20;
-	int v21;
-	int v22;
-	int v23; 
-	int v24; 
-	int v25;
-	int v26;
-	int v27; 
-	int16 *v28; 
-	int v29;
-	int v30;
-	int v31; 
-	int v32;
-	int v33;
-	int v34;
-	int v35 = 0;
-	int v36 = 0;
-	int v37;
-	int v38;
-	int v40; 
-	int v41;
-	int v42 = 0;
-	int v43 = 0;
-	int v44 = 0; 
-	int v45 = 0; 
-	int v46 = 0;
-	int v47 = 0;
-	int v48 = 0;
-	int v49 = 0; 
-	int v50; 
-	int16 *v51;
-	int v52; 
-	int v53; 
-	int v54; 
-	int v55; 
-	int v56; 
-	int v57; 
-	int v58;
-	int v59;
-	int v60; 
-	int v61; 
-	int v62; 
-	int v63; 
-	int v64; 
-	int v65; 
-	int v66 = 0;
-	int v67;
-	int v68 = 0;
-	int v69;
-	int v70 = 0;
-	int v71;
-	int v72 = 0;
-	int v73;
-	int v74;
-	int v75;
-	int v76;
-	int v77 = 0; 
-	int v78 = 0; 
-	int v79 = 0; 
-	int v80; 
-	int v81; 
-	int v82; 
-	int v83; 
-	int v84; 
-	int v85;
-	int v86; 
-	int v87; 
-	int v88; 
-	int v89; 
-	int i; 
-	int v91;
-	int v92;
-	int v93;
-	int v94;
-	int v95;
-	int v96;
-	int v97;
-	int v98;
-	int v99;
-	int v100;
-	int v101;
-
-	v99 = a7;
-	v80 = -1;
+	int v99 = a7;
+	int v80 = -1;
+	int v9;
 	++_vm->_globals.STOP_BUG;
 	if (_vm->_globals.STOP_BUG > 10) {
 		v9 = a7;
@@ -1285,16 +1154,17 @@ LABEL_112:
 		a8[v9 + 2] = -1;
 		return -1;
 	}
-	v10 = Ligne[a1].lineData;
-	v98 = v10[0];
-	v97 = v10[1];
-	v92 = a1;
+	int16 *v10 = Ligne[a1].lineData;
+	int v98 = v10[0];
+	int v97 = v10[1];
+	int v92 = a1;
 
+	int v65;
 	while (1) {
-		v86 = v92 - 1;
-		v11 = 2 * Ligne[v92 - 1].field0;
+		int v86 = v92 - 1;
+		int v11 = 2 * Ligne[v92 - 1].field0;
 
-		v12 = Ligne[v92 - 1].lineData;
+		int16 *v12 = Ligne[v92 - 1].lineData;
 		if (v12 == (int16 *)g_PTRNUL)
 			break;
 		while (v12[v11 - 2] != v98 || v97 != v12[v11 - 1]) {
@@ -1313,18 +1183,19 @@ LABEL_112:
 		v97 = v12[1];
 	}
 LABEL_11:
-	v13 = Ligne[a1].lineData;
-	v14 = 2 * Ligne[a1].field0;
-	v95 = v13[v14 - 2];
-	v93 = v13[v14 - 1];
-	v91 = a1;
-
+	int16 *v13 = Ligne[a1].lineData;
+	int v14 = 2 * Ligne[a1].field0;
+	int v95 = v13[v14 - 2];
+	int v93 = v13[v14 - 1];
+	int v91 = a1;
+	int v100, v101;
 	for (;;) {
-		v87 = v91 + 1;
-		v15 = 2 * Ligne[v91 + 1].field0;
-		v16 = Ligne[v91 + 1].lineData;
+		int v87 = v91 + 1;
+		int v15 = 2 * Ligne[v91 + 1].field0;
+		int16 *v16 = Ligne[v91 + 1].lineData;
 		if (v16 == (int16 *)g_PTRNUL)
 			break;
+		int v17;
 		while (1) {
 			v65 = v15;
 			v17 = v16[v15 - 2];
@@ -1346,23 +1217,23 @@ LABEL_11:
 		v93 = v16[v65 - 1];
 	}
 LABEL_17:
-	v18 = a3 - a5;
+	int v18 = a3 - a5;
 	if (a3 - a5 < 0)
 		v18 = -v18;
-	v58 = v18 + 1;
-	v19 = a4 - a6;
+	int v58 = v18 + 1;
+	int v19 = a4 - a6;
 	if (a4 - a6 < 0)
 		v19 = -v19;
-	v85 = v19 + 1;
-	v20 = v19 + 1;
+	int v85 = v19 + 1;
+	int v20 = v19 + 1;
 	if (v58 > v20)
 		v85 = v18 + 1;
-	v84 = 1000 * v58 / v85;
-	v83 = 1000 * v20 / v85;
-	v21 = 1000 * a3;
-	v22 = 1000 * a4;
-	v82 = v21 / 1000;
-	v81 = v22 / 1000;
+	int v84 = 1000 * v58 / v85;
+	int v83 = 1000 * v20 / v85;
+	int v21 = 1000 * a3;
+	int v22 = 1000 * a4;
+	int v82 = v21 / 1000;
+	int v81 = v22 / 1000;
 	if (a5 < a3)
 		v84 = -v84;
 	if (a6 < a4)
@@ -1371,12 +1242,11 @@ LABEL_17:
 		v85 = 800;
 
 	Common::fill(&_vm->_globals.BufLig[0], &_vm->_globals.BufLig[1000], 0);
-	v23 = 0;
-	v88 = 0;
+	int v23 = 0;
 	if (v85 + 1 > 0) {
-		v51 = _vm->_globals.BufLig;
-		do {
-			v24 = v23;
+		int16 *v51 = _vm->_globals.BufLig;
+		for (int v88 = 0; v88 < v85 + 1; v88++) {
+			int v24 = v23;
 			v51[v24] = v82;
 			v51[v24 + 1] = v81;
 			v21 += v84;
@@ -1384,40 +1254,44 @@ LABEL_17:
 			v82 = v21 / 1000;
 			v81 = v22 / 1000;
 			v23 += 2;
-			++v88;
-		} while (v88 < v85 + 1);
+		}
 	}
-	v25 = v23 - 2;
-	v26 = 0;
-	v89 = v85 + 1;
-	if ((int)(v85 + 1) > 0) {
-		do {
-			v96 = _vm->_globals.BufLig[v25];
-			v94 = _vm->_globals.BufLig[v25 + 1];
+	int v25 = v23 - 2;
+	bool loopCond = false;
+	int v77 = 0;
+	int v78 = 0;
+	int v79 = 0;
+	if (v85 + 1 > 0) {
+		for (int v89 = v85 + 1; v89 > 0; v89--) {
+			int v96 = _vm->_globals.BufLig[v25];
+			int v94 = _vm->_globals.BufLig[v25 + 1];
 			if (colision2_ligne(v96, v94, &v101, &v100, v92, v91) == 1 && _vm->_objectsManager.DERLIGNE < v100) {
 				v80 = v100;
 				v77 = v101;
 				v78 = v96;
 				v79 = v94;
-				v26 = 1;
+				loopCond = true;
 			}
-			if (v26 == 1)
+			if (loopCond)
 				break;
 			v25 -= 2;
-			--v89;
-		} while (v89 > 0);
+		}
 	}
-	for (i = v92; i < v91 + 1; ++i) {
-		v27 = 2 * Ligne[i].field0;
-		v28 = Ligne[i].lineData;
+	int v66 = 0;
+	int v68 = 0;
+	int v70 = 0;
+	int v72 = 0;
+	for (int i = v92; i < v91 + 1; ++i) {
+		int v27 = 2 * Ligne[i].field0;
+		int16 *v28 = Ligne[i].lineData;
 		if (v28 == (int16 *)g_PTRNUL)
 			error("error in genial routine");
-		v29 = v28[0];
-		v30 = v28[1];
-		v59 = v28[1];
-		v31 = v27;
-		v32 = v28[v27 - 2];
-		v33 = v28[v31 - 1];
+		int v29 = v28[0];
+		int v30 = v28[1];
+		int v59 = v28[1];
+		int v31 = v27;
+		int v32 = v28[v27 - 2];
+		int v33 = v28[v31 - 1];
 		if (i == v92) {
 			v72 = v33;
 			if (v30 <= v33)
@@ -1450,13 +1324,14 @@ LABEL_17:
 				v66 = v32;
 		}
 	}
-	v69 = v68 - 2;
-	v73 = v72 - 2;
-	v67 = v66 + 2;
-	v71 = v70 + 2;
+	int v69 = v68 - 2;
+	int v73 = v72 - 2;
+	int v67 = v66 + 2;
+	int v71 = v70 + 2;
 	if (a5 >= v69 && a5 <= v67 && a6 >= v73 && a6 <= v71) {
-		v34 = a6;
-		v76 = -1;
+		int v34 = a6;
+		int v76 = -1;
+		int v60 = 0;
 		do {
 			--v34;
 			v60 = colision2_ligne(a5, v34, &v101, &v100, v92, v91);
@@ -1465,8 +1340,9 @@ LABEL_17:
 			if (!v34 || v73 > v34)
 				v60 = 1;
 		} while (v60 != 1);
-		v35 = a6;
-		v75 = -1;
+		int v35 = a6;
+		int v75 = -1;
+		int v61 = 0;
 		do {
 			++v35;
 			v61 = colision2_ligne(a5, v35, &v101, &v100, v92, v91);
@@ -1475,8 +1351,9 @@ LABEL_17:
 			if (_vm->_globals.Max_Perso_Y <= v35 || v71 <= v35)
 				v61 = 1;
 		} while (v61 != 1);
-		v36 = a5;
-		v74 = -1;
+		int v36 = a5;
+		int v74 = -1;
+		int v62 = 0;
 		do {
 			++v36;
 			v62 = colision2_ligne(v36, a6, &v101, &v100, v92, v91);
@@ -1485,8 +1362,9 @@ LABEL_17:
 			if (_vm->_graphicsManager.max_x <= v36 || v67 <= v36)
 				v62 = 1;
 		} while (v62 != 1);
-		v37 = a5;
-		v38 = -1;
+		int v37 = a5;
+		int v38 = -1;
+		int v63 = 0;
 		do {
 			--v37;
 			v63 = colision2_ligne(v37, a6, &v101, &v100, v92, v91);
@@ -1504,13 +1382,13 @@ LABEL_17:
 		NVPX = v78;
 		NVPY = v79;
 		if (a1 < v80) {
-			v40 = v80 - a1;
-			if (v80 - a1 < 0)
+			int v40 = v80 - a1;
+			if (v40 < 0)
 				v40 = -v40;
-			v41 = v40;
-			v42 = a1;
-			v43 = 0;
-			v52 = v92 - 1;
+			int v41 = v40;
+			int v42 = a1;
+			int v43 = 0;
+			int v52 = v92 - 1;
 			do {
 				if (v52 == v42)
 					v42 = v91;
@@ -1520,12 +1398,12 @@ LABEL_17:
 					v42 = v91;
 			} while (v80 != v42);
 			if (v41 == v43) {
-				v44 = Ligne[a1].field0 / 2;
-				v54 = Ligne[a1].field0 / 2;
+				int v44 = Ligne[a1].field0 / 2;
+				int v54 = Ligne[a1].field0 / 2;
 				if (v44 < 0)
 					v54 = -v44;
 				if (a2 > v54) {
-					v55 = Ligne[a1].field0 / 2;
+					int v55 = Ligne[a1].field0 / 2;
 					if (v44 < 0)
 						v55 = -v44;
 					if (a2 >= v55)
@@ -1540,13 +1418,13 @@ LABEL_17:
 				v99 = CONTOURNE1(a1, a2, v99, v80, v77, a8, a9, v92, v91);
 		}
 		if (a1 > v80) {
-			v45 = a1 - v80;
-			if (a1 - v80 < 0)
+			int v45 = a1 - v80;
+			if (v45 < 0)
 				v45 = -v45;
-			v46 = v45;
-			v47 = a1;
-			v48 = 0;
-			v53 = v91 + 1;
+			int v46 = v45;
+			int v47 = a1;
+			int v48 = 0;
+			int v53 = v91 + 1;
 			do {
 				if (v53 == v47)
 					v47 = v92;
@@ -1556,12 +1434,12 @@ LABEL_17:
 					v47 = v92;
 			} while (v80 != v47);
 			if (v46 == v48) {
-				v49 = Ligne[a1].field0 / 2;
-				v56 = Ligne[a1].field0 / 2;
+				int v49 = Ligne[a1].field0 / 2;
+				int v56 = Ligne[a1].field0 / 2;
 				if (v49 < 0)
 					v56 = -v49;
 				if (a2 > v56) {
-					v57 = Ligne[a1].field0 / 2;
+					int v57 = Ligne[a1].field0 / 2;
 					if (v49 < 0)
 						v57 = -v49;
 					if (a2 >= v57)
@@ -1577,10 +1455,11 @@ LABEL_17:
 		}
 		if (a1 == v80)
 			v99 = CONTOURNE(a1, a2, v99, a1, v77, a8, a9);
+		int v64 = 0;
 		do {
 			v64 = colision2_ligne(NVPX, NVPY, &v101, &v100, _vm->_objectsManager.DERLIGNE + 1, TOTAL_LIGNES);
 			if (v64 == 1) {
-				v50 = v100;
+				int v50 = v100;
 				if (Ligne[v50].field4 == 1)
 					--NVPY;
 				if (Ligne[v50].field4 == 2) {
@@ -2378,16 +2257,6 @@ LABEL_282:
 }
 
 int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
-	int v7;
-	int v8; 
-	int v9; 
-	int v10;
-	int v11;
-	int v12;
-	int v13;
-	int v14;
-	int v15;
-	int v16;
 	int16 *v17;
 	int v18;
 	int v19;
@@ -2518,7 +2387,7 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v145;
 	int colResult = 0;
 
-	v7 = a1;
+	int v7 = a1;
 	v90 = a2;
 	v137 = a7;
 	v136 = 0;
@@ -2526,7 +2395,7 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 		v136 = 1;
 	v144 = a5;
 	if (colision2_ligne(a1, a2, &v145, &v144, 0, TOTAL_LIGNES) == 1) {
-		v8 = Ligne[v144].field4;
+		int v8 = Ligne[v144].field4;
 		if (v8 == 1)
 			v90 = a2 - 2;
 		if (v8 == 2) {
@@ -2559,6 +2428,7 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	v140 = -1;
 	v138 = -1;
 
+	int v9, v10, v11, v12, v13, v14;
 	for (;;) {
 		v111 = v7;
 		v109 = v90;
@@ -2705,6 +2575,7 @@ LABEL_103:
 				v91 = 4;
 			if ((unsigned int)v102 <= 0x1FE)
 				v91 = 5;
+			// CHECKME: The two conditions on v102 are not compatible!
 			if (v102 >= -1 && v102 <= -510)
 				v91 = 6;
 			if ((unsigned int)(v102 + 510) <= 0x1FE)
@@ -2760,8 +2631,9 @@ LABEL_67:
 	}
 	v91 = SMOOTH_SENS;
 	v14 = 0;
+	int v16;
 	while (1) {
-		v15 = SMOOTH[v14].field0;
+		int v15 = SMOOTH[v14].field0;
 		v112 = v15;
 		v110 = SMOOTH[v14].field2;
 		if (v15 == -1 || SMOOTH[v14].field2 == -1) {

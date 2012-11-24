@@ -48,26 +48,7 @@ int ScriptManager::Traduction(byte *a1) {
 	char v49;
 	int v50; 
 	CharacterLocation *v51; 
-	int v52; 
 	CharacterLocation *v53; 
-	int v54; 
-	int v55; 
-	int v56; 
-	int v57; 
-	int v58; 
-	int v59; 
-	int v60; 
-	int v65;
-	int v66; 
-	int v67; 
-	int v68; 
-	int v69; 
-	int v71; 
-	int v72; 
-	int v73;
-	int v74;
-	int v75; 
-	int v76; 
 	Common::String file; 
 
 	int v1 = 0;
@@ -77,9 +58,9 @@ int ScriptManager::Traduction(byte *a1) {
 	if (*(a1 + 2) == 'T' && *(a1 + 3) == 'X' && *(a1 + 4) == 'T') {
 		v70 = *(a1 + 6);
 		int v2 = *(a1 + 7);
-		v69 = *(a1 + 8);
-		v67 = (int16)READ_LE_UINT16(a1 + 9);
-		v65 = (int16)READ_LE_UINT16(a1 + 11);
+		int v69 = *(a1 + 8);
+		int v67 = (int16)READ_LE_UINT16(a1 + 9);
+		int v65 = (int16)READ_LE_UINT16(a1 + 11);
 		int v3 = (int16)READ_LE_UINT16(a1 + 13);
 		v1 = 1;
 		if (!TRAVAILOBJET) {
@@ -198,11 +179,11 @@ LABEL_98:
 LABEL_104:
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'B') {
 		if (_vm->_objectsManager.DESACTIVE != true) {
-			v72 = *(a1 + 5);
-			v70 = *(a1 + 6);
+			int v72 = *(a1 + 5);
+			int v70 = *(a1 + 6);
 			int v4 = *(a1 + 7);
-			v68 = (int16)READ_LE_UINT16(a1 + 8);
-			v66 = (int16)READ_LE_UINT16(a1 + 10);
+			int v68 = (int16)READ_LE_UINT16(a1 + 8);
+			int v66 = (int16)READ_LE_UINT16(a1 + 10);
 			if (v72 == 52) {
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, v68, (int16)READ_LE_UINT16(a1 + 10), v70);
 			} else if (v72 == 51) {
@@ -325,7 +306,7 @@ LABEL_1141:
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'P' && *(a1 + 3) == 'E' && *(a1 + 4) == 'R') {
-		v73 = (int16)READ_LE_UINT16(a1 + 5);
+		int v73 = (int16)READ_LE_UINT16(a1 + 5);
 		if (!_vm->_globals.SAUVEGARDE->data[svField122] && !_vm->_globals.SAUVEGARDE->data[svField356]) {
 			v70 = 0;
 			if ((int16)READ_LE_UINT16(a1 + 5) == 14)
@@ -510,7 +491,7 @@ LABEL_1141:
 	if (*(a1 + 2) == 'M' && *(a1 + 3) == 'U' && *(a1 + 4) == 'S')
 		v1 = 1;
 	if (*(a1 + 2) == 'W' && *(a1 + 3) == 'A' && *(a1 + 4) == 'I') {
-		v74 = (int16)READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
+		int v74 = (int16)READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
 		if (!v74)
 			v74 = 1;
 		int v10 = 0;
@@ -558,7 +539,7 @@ LABEL_1141:
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'N' && *(a1 + 4) == 'I') {
-		v75 = (int16)READ_LE_UINT16(a1 + 5);
+		int v75 = (int16)READ_LE_UINT16(a1 + 5);
 		if (v75 <= 100)
 			_vm->_objectsManager.BOBANIM_ON(v75);
 		else
@@ -566,7 +547,7 @@ LABEL_1141:
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'P' && *(a1 + 4) == 'E') {
-		v76 = (int16)READ_LE_UINT16(a1 + 5);
+		int v76 = (int16)READ_LE_UINT16(a1 + 5);
 		if (v76 == 7)
 			_vm->_talkManager.PARLER_PERSO("rueh1.pe2");
 		if (v76 == 8)
@@ -1949,14 +1930,12 @@ LABEL_1141:
 			}
 			if (!_vm->_soundManager.VOICEOFF)
 				_vm->_soundManager.VOICE_MIX(617, 4);
-			v71 = 0;
-			do {
+			for (int i = 0; i <= 29; i++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
-				++v71;
-			} while (v71 <= 29);
+			}
 			v51 = &_vm->_globals.SAUVEGARDE->field370;
 			v51->xp = _vm->_objectsManager.XSPR(0);
 			v51->yp = _vm->_objectsManager.YSPR(0);
@@ -2018,7 +1997,7 @@ LABEL_1141:
 			_vm->_graphicsManager.VISU_ALL();
 			_vm->_eventsManager.MOUSE_OFF();
 			_vm->_graphicsManager.FADE_INW();
-			v52 = 0;
+			bool v52 = false;
 			_vm->_soundManager.LOAD_WAV("SOUND46.WAV", 1);
 			do {
 				if (_vm->shouldQuit())
@@ -2026,7 +2005,7 @@ LABEL_1141:
 
 				if (_vm->_objectsManager.BOBPOSI(12) == 5 && !v52) {
 					_vm->_soundManager.PLAY_WAV(1);
-					v52 = 1;
+					v52 = true;
 				}
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 34);
@@ -2191,7 +2170,7 @@ LABEL_1141:
 			v53->field2 = 64;
 			v53->location = _vm->_globals.ECRAN;
 
-			v54 = _vm->_globals.STAILLE[790 / 2];
+			int v54 = _vm->_globals.STAILLE[790 / 2];
 			if (_vm->_globals.STAILLE[790 / 2] < 0)
 				v54 = -_vm->_globals.STAILLE[790 / 2];
 			v76 = -(100 * (67 - (100 - v54)) / 67);
@@ -2246,8 +2225,8 @@ LABEL_1141:
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			v55 = _vm->_objectsManager.YSPR(0);
-			v56 = _vm->_objectsManager.XSPR(0);
+			int v55 = _vm->_objectsManager.YSPR(0);
+			int v56 = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v56, v55, 361, 325);
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = -1;
@@ -2270,8 +2249,8 @@ LABEL_1141:
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			v57 = _vm->_objectsManager.YSPR(0);
-			v58 = _vm->_objectsManager.XSPR(0);
+			int v57 = _vm->_objectsManager.YSPR(0);
+			int v58 = _vm->_objectsManager.XSPR(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v58, v57, 361, 325);
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = -1;
@@ -2316,13 +2295,13 @@ LABEL_1141:
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'J' && *(a1 + 3) == 'U' && *(a1 + 4) == 'M') {
-		v59 = (int16)READ_LE_UINT16(a1 + 7);
+		int v59 = (int16)READ_LE_UINT16(a1 + 7);
 		_vm->_objectsManager.NVZONE = (int16)READ_LE_UINT16(a1 + 5);
 		_vm->_objectsManager.NVVERBE = v59;
 		v1 = 6;
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'U') {
-		v60 = (int16)READ_LE_UINT16(a1 + 5);
+		int v60 = (int16)READ_LE_UINT16(a1 + 5);
 		
 		file = Common::String::format("SOUND%d.WAV", v60);
 		_vm->_soundManager.PLAY_SOUND(file);

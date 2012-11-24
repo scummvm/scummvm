@@ -2295,7 +2295,6 @@ void GraphicsManager::INI_ECRAN2(const Common::String &file) {
 }
 
 void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
-	int dataOffset = 1;
 	Common::String filename = file + ".ini";
 	byte *ptr = _vm->_fileManager.RECHERCHE_CAT(filename, 1);
 
@@ -2324,6 +2323,8 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 		error("Error, file not ini");
 	} else {
 		bool doneFlag = false;
+		int dataOffset = 1;
+
 		do {
 			int dataVal1 = _vm->_scriptManager.Traduction(ptr + 20 * dataOffset);
 			if (_vm->shouldQuit())
