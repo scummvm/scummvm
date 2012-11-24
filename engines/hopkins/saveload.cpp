@@ -235,19 +235,19 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
 	s.syncBytes(&_vm->_globals.SAUVEGARDE->data[0], 0x802);
-	syncSauvegarde1(s, _vm->_globals.SAUVEGARDE->field360);
-	syncSauvegarde1(s, _vm->_globals.SAUVEGARDE->field370);
-	syncSauvegarde1(s, _vm->_globals.SAUVEGARDE->field380);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->field360);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->field370);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->field380);
 
 	for (int i = 0; i < 35; ++i)
 		s.syncAsSint16LE(_vm->_globals.SAUVEGARDE->inventory[i]);
 }
 
-void SaveLoadManager::syncSauvegarde1(Common::Serializer &s, Sauvegarde1 &item) {
-	s.syncAsSint16LE(item.field0);
-	s.syncAsSint16LE(item.field1);
+void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLocation &item) {
+	s.syncAsSint16LE(item.xp);
+	s.syncAsSint16LE(item.yp);
 	s.syncAsSint16LE(item.field2);
-	s.syncAsSint16LE(item.field3);
+	s.syncAsSint16LE(item.location);
 	s.syncAsSint16LE(item.field4);
 }
 

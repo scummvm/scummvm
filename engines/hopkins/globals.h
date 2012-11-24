@@ -204,11 +204,11 @@ struct HopkinsItem {
 	int field2;
 };
 
-struct Sauvegarde1 {
-	int field0;
-	int field1;
+struct CharacterLocation {
+	int xp;
+	int yp;
 	int field2;
-	int field3;
+	int location;
 	int field4;
 };
 
@@ -274,12 +274,14 @@ enum SauvegardeOffset {
 	, svField401 = 401
 };
 
+enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARACTER_2 = 2 };
+
 // TODO: Sauvegrade1 fields should really be mapped into data array
 struct Sauvegarde {
 	byte data[0x802];
-	Sauvegarde1 field360;
-	Sauvegarde1 field370;
-	Sauvegarde1 field380;
+	CharacterLocation field360;
+	CharacterLocation field370;
+	CharacterLocation field380;
 	int16 inventory[35];	// Originally at offset 1300 of data array
 };
 

@@ -47,9 +47,9 @@ int ScriptManager::Traduction(byte *a1) {
 	char v48; 
 	char v49;
 	int v50; 
-	Sauvegarde1 *v51; 
+	CharacterLocation *v51; 
 	int v52; 
-	Sauvegarde1 *v53; 
+	CharacterLocation *v53; 
 	int v54; 
 	int v55; 
 	int v56; 
@@ -1958,10 +1958,10 @@ LABEL_1141:
 				++v71;
 			} while (v71 <= 29);
 			v51 = &_vm->_globals.SAUVEGARDE->field370;
-			v51->field0 = _vm->_objectsManager.XSPR(0);
-			v51->field1 = _vm->_objectsManager.YSPR(0);
+			v51->xp = _vm->_objectsManager.XSPR(0);
+			v51->yp = _vm->_objectsManager.YSPR(0);
 			v51->field2 = 57;
-			v51->field3 = 97;
+			v51->location = 97;
 			_vm->_globals.SAUVEGARDE->data[svField121] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField352] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField353] = 1;
@@ -2186,10 +2186,10 @@ LABEL_1141:
 			_vm->_animationManager.PLAY_SEQ("RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager.NO_SEQ = false;
 			v53 = &_vm->_globals.SAUVEGARDE->field380;
-			v53->field0 = 404;
-			v53->field1 = 395;
+			v53->xp = 404;
+			v53->yp = 395;
 			v53->field2 = 64;
-			v53->field3 = _vm->_globals.ECRAN;
+			v53->location = _vm->_globals.ECRAN;
 
 			v54 = _vm->_globals.STAILLE[790 / 2];
 			if (_vm->_globals.STAILLE[790 / 2] < 0)
@@ -2202,7 +2202,7 @@ LABEL_1141:
 			_vm->_globals.SAUVEGARDE->data[svField355] = 1;
 			_vm->_objectsManager.DEUXPERSO = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
-			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->field0, v53->field1, 1, 3, v53->field4, 0, 20, 127);
+			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->xp, v53->yp, 1, 3, v53->field4, 0, 20, 127);
 			_vm->_objectsManager.SPRITE_ON(1);
 		}
 		if (v76 == 245) {

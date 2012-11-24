@@ -50,7 +50,7 @@ private:
 
 	void createThumbnail(Graphics::Surface *s);
 	void syncSavegameData(Common::Serializer &s);
-	void syncSauvegarde1(Common::Serializer &s, Sauvegarde1 &item);
+	void syncCharacterLocation(Common::Serializer &s, CharacterLocation &item);
 public:
 	void setParent(HopkinsEngine *vm);
 

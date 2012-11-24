@@ -189,7 +189,7 @@ public:
 	void PARADISE();
 	void CLEAR_ECRAN();
 	
-	void CHANGE_TETE(int a1, int a2);
+	void CHANGE_TETE(PlayerCharacter a1, PlayerCharacter a2);
 	void VERIFTAILLE();
 	void PACOURS_PROPRE(int16 *a1);
 	int16 *PARC_VOITURE(int a1, int a2, int a3, int a4);

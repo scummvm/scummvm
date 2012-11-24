@@ -2743,14 +2743,14 @@ void ObjectsManager::BTGAUCHE() {
 	        && !_vm->_globals.PLAN_FLAG
 	        && (uint16)(destX - 533) <= 0x1Au
 	        && (uint16)(destY - 26) <= 0x21u) {
-		CHANGE_TETE(1, 0);
+		CHANGE_TETE(CHARACTER_HOPKINS_CLONE, CHARACTER_HOPKINS);
 		return;
 	}
 	if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
 	        && !_vm->_globals.PLAN_FLAG
 	        && (uint16)(destX - 533) <= 0x1Au
 	        && (uint16)(destY - 26) <= 0x21u) {
-		CHANGE_TETE(2, 0);
+		CHANGE_TETE(CHARACTER_2, CHARACTER_HOPKINS);
 		return;
 	}
 	if (_vm->_globals.SAUVEGARDE->data[svField357] == 1) {
@@ -2758,14 +2758,14 @@ void ObjectsManager::BTGAUCHE() {
 		        && !_vm->_globals.PLAN_FLAG
 		        && (uint16)(destX - 533) <= 0x1Au
 		        && (uint16)(destY - 26) <= 0x21u) {
-			CHANGE_TETE(0, 1);
+			CHANGE_TETE(CHARACTER_HOPKINS, CHARACTER_HOPKINS_CLONE);
 			return;
 		}
 		if (_vm->_globals.SAUVEGARDE->data[svField355] == 1
 		        && !_vm->_globals.PLAN_FLAG
 		        && (uint16)(destX - 567) <= 0x1Au
 		        && (uint16)(destY - 26) <= 0x21u) {
-			CHANGE_TETE(0, 2);
+			CHANGE_TETE(CHARACTER_HOPKINS, CHARACTER_2);
 			return;
 		}
 	}
@@ -3068,117 +3068,117 @@ void ObjectsManager::CLEAR_ECRAN() {
 }
 
 // Change Face/Head
-void ObjectsManager::CHANGE_TETE(int a1, int a2) {
-	int v2; 
-	Sauvegarde1 *v3; 
-	Sauvegarde1 *v4; 
-	Sauvegarde1 *v5; 
-	Sauvegarde1 *v6; 
-	Sauvegarde1 *v7; 
-	Sauvegarde1 *v8; 
-	Sauvegarde1 *v9; 
+void ObjectsManager::CHANGE_TETE(PlayerCharacter a1, PlayerCharacter a2) {
+	CharacterLocation *loc; 
 
 	CH_TETE = 1;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, 532, 25, 65, 40, _vm->_graphicsManager.VESA_BUFFER, 532, 25);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 597, 65);
 	_vm->_globals.NOT_VERIF = 1;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	if (a1 == 2) {
-		if (!a2) {
-			if (_vm->_globals.SAUVEGARDE->data[svField188] == _vm->_globals.ECRAN) {
-				CH_TETE = 0;
-				v3 = &_vm->_globals.SAUVEGARDE->field380;
-				v3->field0 = XSPR(0);
-				v3->field1 = YSPR(0);
-				v3->field2 = 64;
-				v3->field3 = _vm->_globals.ECRAN;
-				v3->field4 = Sprite[0].field0;
-				SPRITE_OFF(1);
-				SPRITE(_vm->_globals.TETE, v3->field0, v3->field1, 1, 3, v3->field4, 0, 20, 127);
-				SPRITE_ON(1);
-				SPRITE_OFF(0);
-				_vm->_globals.SAUVEGARDE->data[svField354] = 0;
-				_vm->_globals.SAUVEGARDE->data[svField356] = 0;
-				_vm->_globals.SAUVEGARDE->data[svField357] = 1;
-				T_RECTIF = 0;
-				v4 = &_vm->_globals.SAUVEGARDE->field370;
-				_vm->_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
-				_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
-				_vm->_globals.PERSO_TYPE = 0;
-				SPRITE(_vm->_globals.PERSO, v4->field0, v4->field1, 0, 64, v4->field4, 0, 34, 190);
-LABEL_9:
-				SPRITE_ON(0);
-				return;
-			}
-		}
-	}
-	if (!a1) {
-		if (a2 == 2 && _vm->_globals.SAUVEGARDE->data[svField193] == _vm->_globals.ECRAN) {
-			CH_TETE = 0;
-			v5 = &_vm->_globals.SAUVEGARDE->field370;
-			v5->field0 = XSPR(0);
-			v5->field1 = YSPR(0);
-			v5->field2 = 64;
-			v5->field3 = _vm->_globals.ECRAN;
-			v5->field4 = Sprite[0].fieldC;
-			SPRITE_OFF(1);
-			SPRITE(_vm->_globals.TETE, v5->field0, v5->field1, 1, 2, v5->field4, 0, 34, 190);
-			SPRITE_ON(1);
-			SPRITE_OFF(0);
-			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
-			_vm->_globals.SAUVEGARDE->data[svField356] = 1;
-			_vm->_globals.SAUVEGARDE->data[svField357] = 0;
-			v6 = &_vm->_globals.SAUVEGARDE->field380;
-			_vm->_fileManager.CONSTRUIT_SYSTEM("PSAMAN.SPR");
-			_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
-			_vm->_globals.PERSO_TYPE = 2;
-			SPRITE(_vm->_globals.PERSO, v6->field0, v6->field1, 0, 64, v6->field4, 0, 20, 127);
-			goto LABEL_9;
-		}
-		v7 = &_vm->_globals.SAUVEGARDE->field370;
-		v7->field0 = XSPR(0);
-		v7->field1 = YSPR(0);
-		v7->field2 = 64;
-		v7->field3 = _vm->_globals.ECRAN;
-		v7->field4 = Sprite[0].fieldC;
-	}
-	if (a1 == 1) {
-		v8 = &_vm->_globals.SAUVEGARDE->field360;
-		v8->field0 = XSPR(0);
-		v8->field1 = YSPR(0);
-		v8->field2 = 64;
-		v8->field3 = _vm->_globals.ECRAN;
-		v8->field4 = Sprite[0].fieldC;
-	}
-	if (a1 == 2) {
-		v9 = &_vm->_globals.SAUVEGARDE->field380;
-		v9->field0 = XSPR(0);
-		v9->field1 = YSPR(0);
-		v9->field2 = 64;
-		v9->field3 = _vm->_globals.ECRAN;
-		v9->field4 = Sprite[0].fieldC;
-	}
-	if (!a2) {
-		_vm->_globals.SAUVEGARDE->data[svField121] = 0;
+
+	if (a1 == CHARACTER_2 && !a2 && _vm->_globals.SAUVEGARDE->field370.location) {
+		CH_TETE = 0;
+		loc = &_vm->_globals.SAUVEGARDE->field380;
+		loc->xp = XSPR(0);
+		loc->yp = YSPR(0);
+		loc->field2 = 64;
+		loc->location = _vm->_globals.ECRAN;
+		loc->field4 = Sprite[0].field0;
+
+		SPRITE_OFF(1);
+		SPRITE(_vm->_globals.TETE, loc->xp, loc->yp, 1, 3, loc->field4, 0, 20, 127);
+		SPRITE_ON(1);
+		SPRITE_OFF(0);
+
 		_vm->_globals.SAUVEGARDE->data[svField354] = 0;
 		_vm->_globals.SAUVEGARDE->data[svField356] = 0;
 		_vm->_globals.SAUVEGARDE->data[svField357] = 1;
-		_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField188];
-	}
-	if (a2 == 1) {
-		_vm->_globals.SAUVEGARDE->data[svField121] = 1;
-		_vm->_globals.SAUVEGARDE->data[svField354] = 1;
-		_vm->_globals.SAUVEGARDE->data[svField356] = 0;
-		_vm->_globals.SAUVEGARDE->data[svField357] = 0;
-		_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField183];
-	}
-	if (a2 == 2) {
-		_vm->_globals.SAUVEGARDE->data[svField121] = 0;
+		T_RECTIF = 0;
+
+		loc = &_vm->_globals.SAUVEGARDE->field370;
+		_vm->_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
+		_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+		_vm->_globals.PERSO_TYPE = 0;
+		SPRITE(_vm->_globals.PERSO, loc->xp, loc->yp, 0, 64, loc->field4, 0, 34, 190);
+		SPRITE_ON(0);
+		_vm->_globals.HOPKINS_DATA();
+	} else if (!a1 && a2 == CHARACTER_2 && _vm->_globals.SAUVEGARDE->field380.location == _vm->_globals.ECRAN) {
+		CH_TETE = 0;
+		loc = &_vm->_globals.SAUVEGARDE->field370;
+		loc->xp = XSPR(0);
+		loc->yp = YSPR(0);
+		loc->field2 = 64;
+		loc->location = _vm->_globals.ECRAN;
+		loc->field4 = Sprite[0].fieldC;
+		SPRITE_OFF(1);
+		SPRITE(_vm->_globals.TETE, loc->xp, loc->yp, 1, 2, loc->field4, 0, 34, 190);
+		SPRITE_ON(1);
+		SPRITE_OFF(0);
 		_vm->_globals.SAUVEGARDE->data[svField354] = 0;
 		_vm->_globals.SAUVEGARDE->data[svField356] = 1;
 		_vm->_globals.SAUVEGARDE->data[svField357] = 0;
-		v2 = _vm->_globals.SAUVEGARDE->data[svField193];
-		_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField193];
+
+		loc = &_vm->_globals.SAUVEGARDE->field380;
+		_vm->_fileManager.CONSTRUIT_SYSTEM("PSAMAN.SPR");
+		_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+		_vm->_globals.PERSO_TYPE = 2;
+		SPRITE(_vm->_globals.PERSO, loc->xp, loc->yp, 0, 64, loc->field4, 0, 20, 127);
+		SPRITE_ON(0);
+		_vm->_globals.HOPKINS_DATA();
+	} else {
+		switch (a1) {
+		case CHARACTER_HOPKINS:
+			loc = &_vm->_globals.SAUVEGARDE->field370;
+			loc->xp = XSPR(0);
+			loc->yp = YSPR(0);
+			loc->field2 = 64;
+			loc->location = _vm->_globals.ECRAN;
+			loc->field4 = Sprite[0].fieldC;
+			break;
+		case CHARACTER_HOPKINS_CLONE:
+			loc = &_vm->_globals.SAUVEGARDE->field360;
+			loc->xp = XSPR(0);
+			loc->yp = YSPR(0);
+			loc->field2 = 64;
+			loc->location = _vm->_globals.ECRAN;
+			loc->field4 = Sprite[0].fieldC;
+			break;
+		case CHARACTER_2:
+			loc = &_vm->_globals.SAUVEGARDE->field380;
+			loc->xp = XSPR(0);
+			loc->yp = YSPR(0);
+			loc->field2 = 64;
+			loc->location = _vm->_globals.ECRAN;
+			loc->field4 = Sprite[0].fieldC;
+			break;
+		default:
+			break;
+		}
+
+		switch (a2) {
+		case CHARACTER_HOPKINS:
+			_vm->_globals.SAUVEGARDE->data[svField121] = 0;
+			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
+			_vm->_globals.SAUVEGARDE->data[svField356] = 0;
+			_vm->_globals.SAUVEGARDE->data[svField357] = 1;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->field370.location;
+			break;
+		case CHARACTER_HOPKINS_CLONE:
+			_vm->_globals.SAUVEGARDE->data[svField121] = 1;
+			_vm->_globals.SAUVEGARDE->data[svField354] = 1;
+			_vm->_globals.SAUVEGARDE->data[svField356] = 0;
+			_vm->_globals.SAUVEGARDE->data[svField357] = 0;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->field360.location;
+			break;
+		case CHARACTER_2:
+			_vm->_globals.SAUVEGARDE->data[svField121] = 0;
+			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
+			_vm->_globals.SAUVEGARDE->data[svField356] = 1;
+			_vm->_globals.SAUVEGARDE->data[svField357] = 0;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->field380.location;
+			break;
+		}
 	}
 }
 
