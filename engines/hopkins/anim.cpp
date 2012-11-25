@@ -36,6 +36,7 @@ namespace Hopkins {
 AnimationManager::AnimationManager() {
 	CLS_ANM = false;
 	NO_SEQ = false;
+	NO_COUL = false;
 }
 
 // Play Anim
