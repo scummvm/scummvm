@@ -531,13 +531,19 @@ void DialogsManager::TestForDialogOpening() {
 				_vm->_dialogsManager.showInventory();
 				break;
 			case KEY_OPTIONS:
+				_vm->_graphicsManager.no_scroll = 1;
 				_vm->_dialogsManager.showOptionsDialog();
+				_vm->_graphicsManager.no_scroll = 0;
 				break;
 			case KEY_LOAD:
+				_vm->_graphicsManager.no_scroll = 1;
 				_vm->_dialogsManager.CHARGE_PARTIE();
+				_vm->_graphicsManager.no_scroll = 0;
 				break;
 			case KEY_SAVE:
+				_vm->_graphicsManager.no_scroll = 1;
 				_vm->_dialogsManager.SAUVE_PARTIE();
+				_vm->_graphicsManager.no_scroll = 0;
 				break;
 			default:
 				break;
