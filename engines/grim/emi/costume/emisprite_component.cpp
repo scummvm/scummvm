@@ -46,6 +46,9 @@ void EMISpriteComponent::reset() {
 }
 
 void EMISpriteComponent::draw() {
+	// HACK: don't draw _masks for now.
+	if (_name.contains("_mask"))
+		return;
 	if (_sprite) {
 		_sprite->draw();
 	}
