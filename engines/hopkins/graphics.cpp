@@ -1207,7 +1207,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 			}
 		}
 
-		if (destOffset > 640 * 480) {
+		if (destOffset > SCREEN_WIDTH * SCREEN_HEIGHT) {
 			warning("HACK: Stopping anim, out of bounds - 0x%x %d", srcByte, destOffset);
 			return;
 		}

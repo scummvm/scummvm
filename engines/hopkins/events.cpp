@@ -441,8 +441,8 @@ LABEL_65:
 		}
 		if (_vm->_graphicsManager.SCROLL < 0)
 			_vm->_graphicsManager.SCROLL = 0;
-		if (_vm->_graphicsManager.SCROLL > 640)
-			_vm->_graphicsManager.SCROLL = 640;
+		if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH)
+			_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
 		if (_vm->_graphicsManager.SDL_ECHELLE)
 			v4 = _vm->_graphicsManager.Magic_Number(_vm->_graphicsManager.SCROLL);
 		else
@@ -455,10 +455,10 @@ LABEL_65:
 			if (_vm->_graphicsManager.SDL_ECHELLE) {
 				if (_vm->_graphicsManager.Winbpp == 2) {
 					int v5 = _vm->_graphicsManager.Reel_Zoom(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
-					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, 640, 440, 0, v5);
+					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, v5);
 				} else {
 					int v6 = _vm->_graphicsManager.Reel_Zoom(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
-					_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, 640, 440, 0, v6);
+					_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, v6);
 				}
 				_vm->_graphicsManager.DD_Unlock();
 				_vm->_graphicsManager.dstrect[0].left = _vm->_graphicsManager.Reel_Zoom(0, _vm->_graphicsManager.SDL_ECHELLE);
@@ -467,11 +467,11 @@ LABEL_65:
 				_vm->_graphicsManager.dstrect[0].setHeight(_vm->_graphicsManager.Reel_Zoom(0x1B8u, _vm->_graphicsManager.SDL_ECHELLE));
 			} else {
 				if (_vm->_graphicsManager.Winbpp == 2)
-					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, v4, 20, 640, 440, 0, 20);
+					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, 20);
 				else
-					_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, v4, 20, 640, 440, 0, 20);
+					_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, 20);
 				_vm->_graphicsManager.DD_Unlock();
-				_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, 640, 460);
+				_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
 			}
 
 			// CHECKME: Useless?

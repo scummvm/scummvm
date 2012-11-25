@@ -1349,7 +1349,7 @@ LABEL_243:
 														_globals.PERSO = _fileManager.CHARGE_FICHIER(_globals.NFICHIER);
 														_globals.PERSO_TYPE = 0;
 														_globals.iRegul = 0;
-														_graphicsManager.nbrligne = 640;
+														_graphicsManager.nbrligne = SCREEN_WIDTH;
 														break;
 													}
 												}
@@ -1402,7 +1402,7 @@ void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
 
 void HopkinsEngine::INIT_SYSTEM() {
 	// Set graphics mode
-	_graphicsManager.SET_MODE(640, 480);
+	_graphicsManager.SET_MODE(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Synchronise the sound settings from ScummVM
 	_soundManager.syncSoundSettings();
@@ -1749,8 +1749,8 @@ void HopkinsEngine::ENDEMO() {
 }
 
 void HopkinsEngine::BOOM() {
-	_graphicsManager.nbrligne = 640;
-	_graphicsManager.SCANLINE(640);
+	_graphicsManager.nbrligne = SCREEN_WIDTH;
+	_graphicsManager.SCANLINE(SCREEN_WIDTH);
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
 	_graphicsManager.DD_Unlock();
@@ -1875,7 +1875,7 @@ void HopkinsEngine::INCENDIE() {
 
 void HopkinsEngine::BASE() {
 	_globals.iRegul = 1;
-	_graphicsManager.nbrligne = 640;
+	_graphicsManager.nbrligne = SCREEN_WIDTH;
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
 	_graphicsManager.DD_Unlock();
@@ -2138,7 +2138,7 @@ void HopkinsEngine::JOUE_FIN() {
 void HopkinsEngine::AVION() {
 	_soundManager.WSOUND(28);
 	_globals.iRegul = 1;
-	_globals.nbrligne = 640;
+	_globals.nbrligne = SCREEN_WIDTH;
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
 	_graphicsManager.DD_Unlock();

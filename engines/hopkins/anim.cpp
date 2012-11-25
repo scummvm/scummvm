@@ -74,7 +74,7 @@ LABEL_2:
 			_vm->_graphicsManager.Cls_Video();
 			_vm->_graphicsManager.DD_Unlock();
 		}
-		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > 640) {
+		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
 			hasScreenCopy = true;
 			screenCopy = _vm->_globals.dos_malloc2(0x4B000u);
 			memcpy(screenCopy, v10, 0x4B000u);
@@ -88,15 +88,15 @@ LABEL_2:
 			_vm->_graphicsManager.DD_Lock();
 			if (_vm->_graphicsManager.Winbpp == 2) {
 				if (hasScreenCopy)
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, 640, 480, 0, 0);
+					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
-					_vm->_graphicsManager.m_scroll16(v10, 0, 0, 640, 480, 0, 0);
+					_vm->_graphicsManager.m_scroll16(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 			if (_vm->_graphicsManager.Winbpp == 1) {
 				if (hasScreenCopy)
-					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, 640, 480, 0, 0);
+					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
-					_vm->_graphicsManager.m_scroll2(v10, 0, 0, 640, 480, 0, 0);
+					_vm->_graphicsManager.m_scroll2(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.DD_VBL();
@@ -151,9 +151,9 @@ LABEL_38:
 			if (*v10 != kByteStop) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe3(v10, screenCopy);
 				if (_vm->_graphicsManager.Winbpp == 2)
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, 640, 480, 0, 0);
+					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
-					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, 640, 480, 0, 0);
+					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 		} else if (*v10 != kByteStop) {
 			if (_vm->_graphicsManager.Winbpp == 1)
@@ -190,7 +190,7 @@ LABEL_57:
 			_vm->_globals.dos_free2(ptr);
 			f.close();
 
-			if (1 /*hasScreenCopy <= 640 */)
+			if (1 /*hasScreenCopy <= SCREEN_WIDTH */)
 				goto LABEL_2;
 			goto LABEL_55;
 		}
