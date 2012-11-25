@@ -32,23 +32,17 @@
 
 namespace Hopkins {
 
+FontManager::FontManager() {
+	clearAll();
+}
+
 void FontManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
 void FontManager::clearAll() {
-	for (int idx = 0; idx < 11; ++idx) {
-		Txt[idx].textOn = false;
-		Txt[idx].lineCount = 0;
-		Txt[idx].field3FC = 0;
-		Txt[idx].field3FE = 0;
-		Txt[idx].textBlock = NULL;
-		Txt[idx].width = 0;
-		Txt[idx].height = 0;
-		Txt[idx].textLoaded = false;
-
-		ListeTxt[idx].enabled = false;
-	}
+	for (int idx = 0; idx < 11; ++idx)
+		Common::fill((byte *)&Txt[idx], (byte *)&Txt[idx] + sizeof(TxtItem), 0);
 }
 
 // Text On

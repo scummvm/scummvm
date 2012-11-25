@@ -71,6 +71,7 @@ public:
 	int Index[4048];
 	byte *texte_tmp;
 public:
+	FontManager();
 	void setParent(HopkinsEngine *vm);
 	void clearAll();
 
