@@ -235,9 +235,9 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
 	s.syncBytes(&_vm->_globals.SAUVEGARDE->data[0], 0x802);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->field360);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->field370);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->field380);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->cloneHopkins);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->realHopkins);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->samantha);
 
 	for (int i = 0; i < 35; ++i)
 		s.syncAsSint16LE(_vm->_globals.SAUVEGARDE->inventory[i]);

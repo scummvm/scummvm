@@ -279,9 +279,9 @@ enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARA
 // TODO: Sauvegrade1 fields should really be mapped into data array
 struct Sauvegarde {
 	byte data[0x802];
-	CharacterLocation field360;
-	CharacterLocation field370;
-	CharacterLocation field380;
+	CharacterLocation cloneHopkins;
+	CharacterLocation realHopkins;
+	CharacterLocation samantha;
 	int16 inventory[35];	// Originally at offset 1300 of data array
 };
 

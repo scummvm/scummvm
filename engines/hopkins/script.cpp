@@ -1936,7 +1936,7 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			}
-			v51 = &_vm->_globals.SAUVEGARDE->field370;
+			v51 = &_vm->_globals.SAUVEGARDE->realHopkins;
 			v51->xp = _vm->_objectsManager.XSPR(0);
 			v51->yp = _vm->_objectsManager.YSPR(0);
 			v51->field2 = 57;
@@ -2164,7 +2164,7 @@ LABEL_1141:
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.PLAY_SEQ("RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager.NO_SEQ = false;
-			v53 = &_vm->_globals.SAUVEGARDE->field380;
+			v53 = &_vm->_globals.SAUVEGARDE->samantha;
 			v53->xp = 404;
 			v53->yp = 395;
 			v53->field2 = 64;

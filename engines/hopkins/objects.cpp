@@ -3077,9 +3077,9 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 	_vm->_globals.NOT_VERIF = 1;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 
-	if (oldCharacter == CHARACTER_SAMANTHA && !newCharacter && _vm->_globals.SAUVEGARDE->field370.location) {
+	if (oldCharacter == CHARACTER_SAMANTHA && !newCharacter && _vm->_globals.SAUVEGARDE->realHopkins.location) {
 		CH_TETE = 0;
-		loc = &_vm->_globals.SAUVEGARDE->field380;
+		loc = &_vm->_globals.SAUVEGARDE->samantha;
 		loc->xp = XSPR(0);
 		loc->yp = YSPR(0);
 		loc->field2 = 64;
@@ -3096,16 +3096,16 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 		_vm->_globals.SAUVEGARDE->data[svField357] = 1;
 		T_RECTIF = 0;
 
-		loc = &_vm->_globals.SAUVEGARDE->field370;
+		loc = &_vm->_globals.SAUVEGARDE->realHopkins;
 		_vm->_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
 		_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 		_vm->_globals.PERSO_TYPE = 0;
 		SPRITE(_vm->_globals.PERSO, loc->xp, loc->yp, 0, 64, loc->field4, 0, 34, 190);
 		SPRITE_ON(0);
 		_vm->_globals.HOPKINS_DATA();
-	} else if (!oldCharacter && newCharacter == CHARACTER_SAMANTHA && _vm->_globals.SAUVEGARDE->field380.location == _vm->_globals.ECRAN) {
+	} else if (!oldCharacter && newCharacter == CHARACTER_SAMANTHA && _vm->_globals.SAUVEGARDE->samantha.location == _vm->_globals.ECRAN) {
 		CH_TETE = 0;
-		loc = &_vm->_globals.SAUVEGARDE->field370;
+		loc = &_vm->_globals.SAUVEGARDE->realHopkins;
 		loc->xp = XSPR(0);
 		loc->yp = YSPR(0);
 		loc->field2 = 64;
@@ -3119,7 +3119,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 		_vm->_globals.SAUVEGARDE->data[svField356] = 1;
 		_vm->_globals.SAUVEGARDE->data[svField357] = 0;
 
-		loc = &_vm->_globals.SAUVEGARDE->field380;
+		loc = &_vm->_globals.SAUVEGARDE->samantha;
 		_vm->_fileManager.CONSTRUIT_SYSTEM("PSAMAN.SPR");
 		_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
 		_vm->_globals.PERSO_TYPE = 2;
@@ -3129,7 +3129,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 	} else {
 		switch (oldCharacter) {
 		case CHARACTER_HOPKINS:
-			loc = &_vm->_globals.SAUVEGARDE->field370;
+			loc = &_vm->_globals.SAUVEGARDE->realHopkins;
 			loc->xp = XSPR(0);
 			loc->yp = YSPR(0);
 			loc->field2 = 64;
@@ -3137,7 +3137,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 			loc->field4 = Sprite[0].fieldC;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
-			loc = &_vm->_globals.SAUVEGARDE->field360;
+			loc = &_vm->_globals.SAUVEGARDE->cloneHopkins;
 			loc->xp = XSPR(0);
 			loc->yp = YSPR(0);
 			loc->field2 = 64;
@@ -3145,7 +3145,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 			loc->field4 = Sprite[0].fieldC;
 			break;
 		case CHARACTER_SAMANTHA:
-			loc = &_vm->_globals.SAUVEGARDE->field380;
+			loc = &_vm->_globals.SAUVEGARDE->samantha;
 			loc->xp = XSPR(0);
 			loc->yp = YSPR(0);
 			loc->field2 = 64;
@@ -3162,21 +3162,21 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField356] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField357] = 1;
-			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->field370.location;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->realHopkins.location;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
 			_vm->_globals.SAUVEGARDE->data[svField121] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField354] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField356] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField357] = 0;
-			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->field360.location;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->cloneHopkins.location;
 			break;
 		case CHARACTER_SAMANTHA:
 			_vm->_globals.SAUVEGARDE->data[svField121] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField356] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField357] = 0;
-			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->field380.location;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->samantha.location;
 			break;
 		}
 	}
