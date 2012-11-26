@@ -898,6 +898,49 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 }
 
 void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw) {
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// tglColor3f(1.0f - _dimLevel, 1.0f - _dimLevel, 1.0f  - _dimLevel);
+
+		BitmapData *data = bitmap->_data;
+		float *texc = data->_texc;
+
+		int curLayer, frontLayer;
+		if (initialDraw) {
+			curLayer = frontLayer = data->_numLayers - 1;
+		} else {
+			curLayer = data->_numLayers - 2;
+			frontLayer = 0;
+		}
+
+		BlitImage *b = (BlitImage *)bitmap->getTexIds();
+
+		while (frontLayer <= curLayer) {
+			uint32 offset = data->_layers[curLayer]._offset;
+			for (uint32 i = offset; i < offset + data->_layers[curLayer]._numImages; ++i) {
+				const BitmapData::Vert & v = data->_verts[i];
+				uint32 texId = v._texid;
+				uint32 ntex = data->_verts[i]._pos * 4;
+				uint32 numRects = data->_verts[i]._verts / 4;
+				while (numRects-- > 0) {
+					int dx1 = round((texc[ntex+0] + 1) * _screenWidth) / 2;
+					int dy1 = round((1 - texc[ntex+1]) * _screenHeight) / 2;
+					int dx2 = round((texc[ntex+8] + 1) * _screenWidth) / 2;
+					int dy2 = round((1 - texc[ntex+9]) * _screenHeight) / 2;
+					int srcX = round(texc[ntex+2] * bitmap->getWidth());
+					int srcY = round(texc[ntex+3] * bitmap->getHeight());
+
+					blit(bitmap->getPixelFormat(texId), &b[texId], _zb->pbuf.getRawBuffer(), bitmap->getData(texId).getRawBuffer(),
+							x + dx1, y + dy1, srcX, srcY, dx2 - dx1, dy2 - dy1, b[texId]._width, b[texId]._height, !initialDraw);
+					ntex += 16;
+				}
+			}
+			curLayer--;
+		}
+
+		return;
+	}
+
 	int format = bitmap->getFormat();
 	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
 		return;
