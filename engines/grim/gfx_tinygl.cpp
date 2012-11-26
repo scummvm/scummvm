@@ -899,7 +899,9 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 
 void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw) {
 
-	if (g_grim->getGameType() == GType_MONKEY4) {
+	// PS2 EMI uses a TGA for it's splash-screen, avoid using the following
+	// code for drawing that (as it has no tiles).
+	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
 		// tglColor3f(1.0f - _dimLevel, 1.0f - _dimLevel, 1.0f  - _dimLevel);
 
 		BitmapData *data = bitmap->_data;
