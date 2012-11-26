@@ -807,7 +807,10 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 
 void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDraw) {
 
-	if (g_grim->getGameType() == GType_MONKEY4) {
+	// The PS2 version of EMI uses a TGA for it's splash-screen
+	// avoid using the TIL-code below for that, by checking
+	// numImages here:
+	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		glLoadIdentity();
