@@ -2365,16 +2365,16 @@ void PegasusEngine::initKeymap() {
 	// Since the game has multiple built-in keys for each of these anyway,
 	// this just attempts to remap one of them.
 	const Common::KeyActionEntry keyActionEntries[] = {
-		{ Common::KEYCODE_UP, "UP", _("Up/Forward") },
-		{ Common::KEYCODE_DOWN, "DWN", _("Down/Backward") },
+		{ Common::KEYCODE_UP, "UP", _("Up/Zoom In/Move Forward/Open Doors") },
+		{ Common::KEYCODE_DOWN, "DWN", _("Down/Zoom Out") },
 		{ Common::KEYCODE_LEFT, "TL", _("Turn Left") },
 		{ Common::KEYCODE_RIGHT, "TR", _("Turn Right") },
-		{ Common::KEYCODE_BACKQUOTE, "TIV", _("Toggle Inventory Tray") },
-		{ Common::KEYCODE_BACKSPACE, "TBI", _("Toggle Biochip Tray") },
-		{ Common::KEYCODE_RETURN, "ENT", _("Enter/Select") },
-		{ Common::KEYCODE_t, "TMA", _("Toggle Middle Area") },
-		{ Common::KEYCODE_i, "TIN", _("Toggle Info") },
-		{ Common::KEYCODE_ESCAPE, "PM", _("Activate Pause Menu") },
+		{ Common::KEYCODE_BACKQUOTE, "TIV", _("Display/Hide Inventory Tray") },
+		{ Common::KEYCODE_BACKSPACE, "TBI", _("Display/Hide Biochip Tray") },
+		{ Common::KEYCODE_RETURN, "ENT", _("Action/Select") },
+		{ Common::KEYCODE_t, "TMA", _("Toggle Center Data Display") },
+		{ Common::KEYCODE_i, "TIN", _("Display/Hide Info Screen") },
+		{ Common::KEYCODE_ESCAPE, "PM", _("Display/Hide Pause Menu") },
 		{ Common::KEYCODE_e, "WTF", _("???") } // easter egg key (without being completely upfront about it)
 	};
 
