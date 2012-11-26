@@ -166,6 +166,7 @@ protected:
 	DECLARE_LUA_OPCODE(GammaEnabled);
 	DECLARE_LUA_OPCODE(FileFindFirst);
 	DECLARE_LUA_OPCODE(WalkActorToAvoiding);
+	DECLARE_LUA_OPCODE(GetMemoryCardId);
 };
 
 } // end of namespace Grim

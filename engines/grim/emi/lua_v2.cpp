@@ -377,6 +377,12 @@ void Lua_V2::ThumbnailFromFile() {
 	pushbool(true);
 }
 
+void Lua_V2::GetMemoryCardId() {
+	// 0 - No mem card
+	lua_pushnumber(0);
+	warning("GetMemoryCardId: Currently just returning 0");
+}
+
 // Stub function for builtin functions not yet implemented
 /*static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -554,7 +560,9 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "SectEditForgetIt", LUA_OPCODE(Lua_V2, SectEditForgetIt) },
 	{ "GammaEnabled", LUA_OPCODE(Lua_V2, GammaEnabled) },
 	{ "FRUTEY_Begin", LUA_OPCODE(Lua_V2, FRUTEY_Begin) },
-	{ "FRUTEY_End", LUA_OPCODE(Lua_V2, FRUTEY_End) }
+	{ "FRUTEY_End", LUA_OPCODE(Lua_V2, FRUTEY_End) },
+// PS2:
+	{ "GetMemoryCardId", LUA_OPCODE(Lua_V2, GetMemoryCardId) }
 };
 
 void Lua_V2::registerOpcodes() {
