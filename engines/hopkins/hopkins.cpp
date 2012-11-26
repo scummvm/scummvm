@@ -564,6 +564,7 @@ LABEL_11:
 		if (_globals.SORTIE == -1) {
 			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
 			REST_SYSTEM();
+			return true;
 		}
 	}
 	for (;;) {
