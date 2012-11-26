@@ -29,9 +29,9 @@
 
 namespace Grim {
 
-MoviePlayer *CreateSmushPlayer(bool demo) {
+/*MoviePlayer *CreateSmushPlayer(bool demo) {
 	return new SmushPlayer(demo);
-}
+}*/
 
 SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_smushDecoder = new SmushDecoder();

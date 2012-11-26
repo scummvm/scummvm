@@ -215,6 +215,11 @@ void MoviePlayer::restoreState(SaveGame *state) {
 #define NEED_NULLPLAYER
 #endif
 
+// Temporary fix while reworking codecs:
+#ifndef NEED_NULLPLAYER
+#define NEED_NULLPLAYER
+#endif
+
 // Fallback for when USE_MPEG2 / USE_BINK isnt defined
 
 #ifdef NEED_NULLPLAYER
@@ -239,6 +244,10 @@ private:
 	void deinit() {}
 };
 #endif
+
+MoviePlayer *CreateSmushPlayer(bool demo) {
+	return new NullPlayer("SMUSH");
+}
 
 #ifndef USE_MPEG2
 MoviePlayer *CreateMpegPlayer() {

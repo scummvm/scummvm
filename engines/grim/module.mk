@@ -70,10 +70,8 @@ MODULE_OBJS := \
 	movie/codecs/blocky8.o \
 	movie/codecs/blocky16.o \
 	movie/codecs/vima.o \
-	movie/codecs/smush_decoder.o \
 	movie/bink.o \
 	movie/mpeg.o \
-	movie/smush.o \
 	movie/movie.o \
 	update/packfile.o \
 	update/mscab.o \
