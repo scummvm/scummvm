@@ -386,9 +386,9 @@ void GfxPalette::setRemappingPercentGray(byte color, byte percent) {
 
 	// Note: This is not what the original does, but the results are the same visually
 	for (int i = 0; i < 256; i++) {
-		byte rComponent = (byte)_sysPalette.colors[i].r * _remappingPercentToSet * 0.30 / 100;
-		byte gComponent = (byte)_sysPalette.colors[i].g * _remappingPercentToSet * 0.59 / 100;
-		byte bComponent = (byte)_sysPalette.colors[i].b * _remappingPercentToSet * 0.11 / 100;
+		byte rComponent = (byte)(_sysPalette.colors[i].r * _remappingPercentToSet * 0.30 / 100);
+		byte gComponent = (byte)(_sysPalette.colors[i].g * _remappingPercentToSet * 0.59 / 100);
+		byte bComponent = (byte)(_sysPalette.colors[i].b * _remappingPercentToSet * 0.11 / 100);
 		byte luminosity = rComponent + gComponent + bComponent;
 		_remappingByPercent[i] = kernelFindColor(luminosity, luminosity, luminosity);
 	}
