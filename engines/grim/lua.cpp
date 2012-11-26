@@ -518,6 +518,10 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 			textObject->setFont(font);
 		} else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
 			textObject->setFont(getfont(keyObj));
+		} else if (g_grim->getGameType() == GType_MONKEY4 && !textObject->getFont() && g_grim->getGamePlatform() == Common::kPlatformPS2) {
+			// HACK:
+			warning("HACK: No default font set for PS2-version, just picking one for now");
+			textObject->setFont(*Font::getPool().begin());
 		}
 	}
 
