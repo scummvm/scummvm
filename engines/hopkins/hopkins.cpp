@@ -208,7 +208,7 @@ LABEL_13:
 								if (_globals.SORTIE != 3)
 									break;
 								
-								if (!*((byte *)_globals.SAUVEGARDE + 170)) {
+								if (!_globals.SAUVEGARDE->data[svField170]) {
 									_soundManager.WSOUND(3);
 									if (_globals.FR == 1)
 										_graphicsManager.LOAD_IMAGE("fondfr");
@@ -237,7 +237,7 @@ LABEL_13:
 									_soundManager.DEL_SAMPLE(2);
 									_soundManager.DEL_SAMPLE(3);
 									_soundManager.DEL_SAMPLE(4);
-									*((byte *)_globals.SAUVEGARDE + 170) = 1;
+									_globals.SAUVEGARDE->data[svField170] = 1;
 								}
                 
 								_globals.Max_Propre = 5;
@@ -262,7 +262,7 @@ LABEL_13:
 						_globals.Max_Propre_Gen = 5;
 						_globals.Max_Perso_Y = 455;
 						_globals.NOSPRECRAN = true;
-						byte v1 = *((byte *)_globals.SAUVEGARDE + 80);
+						byte v1 = _globals.SAUVEGARDE->data[svField80];
 						if (v1) {
 							if (v1 == 1)
 								_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
@@ -294,7 +294,7 @@ LABEL_13:
 
 			if (_globals.SORTIE != 7)
 				break;
-			if (*((byte *)_globals.SAUVEGARDE + 220))
+			if (_globals.SAUVEGARDE->data[svField220])
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
@@ -306,7 +306,7 @@ LABEL_13:
 			_globals.Max_Propre_Gen = 10;
 			_globals.Max_Perso_Y = 440;
 			
-			if (!*((byte *)_globals.SAUVEGARDE + 225))
+			if (!_globals.SAUVEGARDE->data[svField225])
 				goto LABEL_109;
 			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 		} else {
@@ -332,7 +332,7 @@ LABEL_13:
 				_globals.Max_Ligne_Long = 20;
 				_globals.Max_Propre_Gen = 10;
 				_globals.Max_Perso_Y = 450;
-				if (*((byte *)_globals.SAUVEGARDE + 225)) {
+				if (_globals.SAUVEGARDE->data[svField225]) {
 					_globals.NOSPRECRAN = true;
 					_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 				} else {
@@ -366,7 +366,7 @@ LABEL_109:
 					_globals.Max_Propre_Gen = 5;
 					_globals.Max_Perso_Y = 450;
 
-					byte v2 = *((byte *)_globals.SAUVEGARDE + 113);
+					byte v2 = _globals.SAUVEGARDE->data[svField113];
 					if (v2 == 1) {
 						_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
 					} else if (!v2) {
@@ -430,9 +430,9 @@ LABEL_124:
 							} else if (_globals.SORTIE == 113) {
 								_globals.SORTIE = 0;
 								_globals.OLD_ECRAN = _globals.ECRAN;
-								*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
+								_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 								_globals.ECRAN = 113;
-								*((byte *)_globals.SAUVEGARDE + 5) = 113;
+								_globals.SAUVEGARDE->data[svField5] = 113;
 								_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
                   
 								_graphicsManager.DD_Lock();
@@ -447,18 +447,18 @@ LABEL_124:
 								if (_globals.SORTIE == 114) {
 									_globals.SORTIE = 0;
 									_globals.OLD_ECRAN = _globals.ECRAN;
-									*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
+									_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 									_globals.ECRAN = 114;
-									*((byte *)_globals.SAUVEGARDE + 5) = 114;
+									_globals.SAUVEGARDE->data[svField5] = 114;
 									_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
 									goto LABEL_128;
 								}
 								if (_globals.SORTIE == 115) {
 									_globals.SORTIE = 0;
 									_globals.OLD_ECRAN = _globals.ECRAN;
-									*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
+									_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 									_globals.ECRAN = 115;
-									*((byte *)_globals.SAUVEGARDE + 5) = 115;
+									_globals.SAUVEGARDE->data[svField5] = 115;
 									_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
 
 LABEL_128:
@@ -616,7 +616,7 @@ LABEL_11:
 											_globals.Max_Ligne_Long = 40;
 											_globals.Max_Propre_Gen = 20;
 											_globals.Max_Perso_Y = 440;
-											if (*((byte *)_globals.SAUVEGARDE + 123))
+											if (_globals.SAUVEGARDE->data[svField123])
 												_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6);
 											else
 												_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6);
@@ -655,7 +655,7 @@ LABEL_231:
 								}
 								if (_globals.SORTIE != 3)
 									break;
-								if (!*((byte *)_globals.SAUVEGARDE + 170)) {
+								if (!_globals.SAUVEGARDE->data[svField170]) {
 									_soundManager.WSOUND(3);
 									if (_globals.FR == 1)
 										_graphicsManager.LOAD_IMAGE("fondfr");
@@ -682,7 +682,7 @@ LABEL_231:
 									_soundManager.DEL_SAMPLE(2);
 									_soundManager.DEL_SAMPLE(3);
 									_soundManager.DEL_SAMPLE(4);
-									*((byte *)_globals.SAUVEGARDE + 170) = 1;
+									_globals.SAUVEGARDE->data[svField170] = 1;
 								}
 								_globals.Max_Propre = 5;
 								_globals.Max_Ligne_Long = 5;
@@ -704,7 +704,7 @@ LABEL_231:
 						_globals.Max_Propre_Gen = 5;
 						_globals.Max_Perso_Y = 455;
 						_globals.NOSPRECRAN = true;
-						byte v2 = *((byte *)_globals.SAUVEGARDE + 80);
+						byte v2 = _globals.SAUVEGARDE->data[svField80];
 						if (v2) {
 							if (v2 == 1)
 								_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
@@ -731,7 +731,7 @@ LABEL_231:
 			}
 			if (_globals.SORTIE != 7)
 				break;
-			if (*((byte *)_globals.SAUVEGARDE + 220))
+			if (_globals.SAUVEGARDE->data[svField220])
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
@@ -741,7 +741,7 @@ LABEL_231:
 			_globals.Max_Ligne_Long = 20;
 			_globals.Max_Propre_Gen = 10;
 			_globals.Max_Perso_Y = 440;
-			if (!*((byte *)_globals.SAUVEGARDE + 225))
+			if (!_globals.SAUVEGARDE->data[svField225])
 				goto LABEL_140;
 			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 		} else {
@@ -765,7 +765,7 @@ LABEL_231:
 				_globals.Max_Ligne_Long = 20;
 				_globals.Max_Propre_Gen = 10;
 				_globals.Max_Perso_Y = 450;
-				if (*((byte *)_globals.SAUVEGARDE + 225)) {
+				if (_globals.SAUVEGARDE->data[svField225]) {
 					_globals.NOSPRECRAN = true;
 					_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 				} else {
@@ -799,7 +799,7 @@ LABEL_140:
 					_globals.Max_Ligne_Long = 5;
 					_globals.Max_Propre_Gen = 5;
 					_globals.Max_Perso_Y = 450;
-					byte v3 = *((byte *)_globals.SAUVEGARDE + 113);
+					byte v3 = _globals.SAUVEGARDE->data[svField113];
 					if (v3 == 1) {
 						_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
 					} else if (!v3) {
@@ -812,7 +812,7 @@ LABEL_140:
 					_globals.Max_Ligne_Long = 40;
 					_globals.Max_Propre_Gen = 20;
 					_globals.Max_Perso_Y = 440;
-					byte v4 = *((byte *)_globals.SAUVEGARDE + 117);
+					byte v4 = _globals.SAUVEGARDE->data[svField117];
 					if (v4 == 1) {
 						_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11);
 					} else if (!v4) {
@@ -840,7 +840,7 @@ LABEL_140:
 					_globals.Max_Ligne_Long = 5;
 					_globals.Max_Propre_Gen = 5;
 					_globals.Max_Perso_Y = 450;
-					byte v5 = *((byte *)_globals.SAUVEGARDE + 181);
+					byte v5 = _globals.SAUVEGARDE->data[svField181];
 					if (v5) {
 						if (v5 == 1)
 							_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1);
@@ -875,7 +875,7 @@ LABEL_140:
 						_globals.Max_Ligne_Long = 15;
 						_globals.Max_Propre_Gen = 20;
 						_globals.Max_Perso_Y = 440;
-						byte v6 = *((byte *)_globals.SAUVEGARDE + 177);
+						byte v6 = _globals.SAUVEGARDE->data[svField177];
 						if (v6 == 1) {
 							_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27);
 						} else if (!v6) {
@@ -889,7 +889,7 @@ LABEL_140:
 						_globals.Max_Propre_Gen = 5;
 						_globals.Max_Perso_Y = 450;
 						_globals.NOSPRECRAN = true;
-						if (*((byte *)_globals.SAUVEGARDE + 166) != 1 || *((byte *)_globals.SAUVEGARDE + 167) != 1)
+						if (_globals.SAUVEGARDE->data[svField166] != 1 || _globals.SAUVEGARDE->data[svField167] != 1)
 							_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1);
 						else
 							_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1);
@@ -1022,7 +1022,7 @@ LABEL_140:
 									goto LABEL_239;
 								}
 								if (_globals.SORTIE == 61) {
-									if (*((byte *)_globals.SAUVEGARDE + 311) == 1 && !*((byte *)_globals.SAUVEGARDE + 312))
+									if (_globals.SAUVEGARDE->data[svField311] == 1 && !_globals.SAUVEGARDE->data[svField312])
 										INCENDIE();
 									_globals.NOSPRECRAN = true;
 									_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
@@ -1119,7 +1119,7 @@ LABEL_140:
 												_globals.Max_Ligne_Long = 15;
 												_globals.Max_Propre_Gen = 10;
 												_globals.Max_Perso_Y = 445;
-												byte v7 = *((byte *)_globals.SAUVEGARDE + 318);
+												byte v7 = _globals.SAUVEGARDE->data[svField318];
 												if (v7 == 1) {
 													_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21);
 												} else if (!v7) {
@@ -1135,7 +1135,7 @@ LABEL_140:
 												_globals.Max_Ligne_Long = 5;
 												_globals.Max_Propre_Gen = 5;
 												_globals.Max_Perso_Y = 445;
-												if (*((byte *)_globals.SAUVEGARDE + 330))
+												if (_globals.SAUVEGARDE->data[svField330])
 													_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 29);
 												else
 													_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29);
@@ -1259,9 +1259,9 @@ LABEL_239:
 												} else if (_globals.SORTIE == 113) {
 													_globals.SORTIE = 0;
 													_globals.OLD_ECRAN = _globals.ECRAN;
-													*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
+													_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 													_globals.ECRAN = 113;
-													*((byte *)_globals.SAUVEGARDE + 5) = 113;
+													_globals.SAUVEGARDE->data[svField5] = 113;
 													_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
 													_graphicsManager.DD_Lock();
 													_graphicsManager.Cls_Video();
@@ -1275,9 +1275,9 @@ LABEL_239:
 													if (_globals.SORTIE == 114) {
 														_globals.SORTIE = 0;
 														_globals.OLD_ECRAN = _globals.ECRAN;
-														*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
+														_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 														_globals.ECRAN = 114;
-														*((byte *)_globals.SAUVEGARDE + 5) = 114;
+														_globals.SAUVEGARDE->data[svField5] = 114;
 														_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
 														goto LABEL_243;
 													}
@@ -1285,9 +1285,9 @@ LABEL_239:
 													case 115:
 														_globals.SORTIE = 0;
 														_globals.OLD_ECRAN = _globals.ECRAN;
-														*((byte *)_globals.SAUVEGARDE + 6) = _globals.ECRAN;
+														_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 														_globals.ECRAN = 115;
-														*((byte *)_globals.SAUVEGARDE + 5) = 115;
+														_globals.SAUVEGARDE->data[svField5] = 115;
 														_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
 LABEL_243:
 														_graphicsManager.DD_Lock();
@@ -1870,7 +1870,7 @@ void HopkinsEngine::INCENDIE() {
 
 	_graphicsManager.FADE_OUTW();
 	_graphicsManager.FIN_VISU();
-	*((byte *)_globals.SAUVEGARDE + 312) = 1;
+	_globals.SAUVEGARDE->data[svField312] = 1;
 	_globals.DESACTIVE_INVENT = false;
 }
 
@@ -2062,7 +2062,7 @@ void HopkinsEngine::JOUE_FIN() {
 	while (_objectsManager.BOBPOSI(7) != 120);
 
 	_objectsManager.BOBANIM_OFF(7);
-	if (*((byte *)_globals.SAUVEGARDE + 135) == 1) {
+	if (_globals.SAUVEGARDE->data[svField135] == 1) {
 		_soundManager.SPECIAL_SOUND = 200;
 		_soundManager.VBL_MERDE = true;
 		_graphicsManager.FADE_LINUX = 2;
