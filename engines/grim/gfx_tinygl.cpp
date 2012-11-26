@@ -52,6 +52,8 @@ public:
 	BlitImage() {
 		_lines = NULL;
 		_last = NULL;
+		_width = 0;
+		_height = 0;
 	}
 	~BlitImage() {
 		Line *temp = _lines;
@@ -63,6 +65,8 @@ public:
 	}
 	void create(const Graphics::PixelBuffer &buf, uint32 transparency, int x, int y, int width, int height) {
 		Graphics::PixelBuffer srcBuf = buf;
+		_width = width;
+		_height = height;
 		// A line of pixels can not wrap more that one line of the image, since it would break
 		// blitting of bitmaps with a non-zero x position.
 		for (int l = 0; l < height; l++) {
@@ -119,6 +123,7 @@ public:
 	};
 	Line *_lines;
 	Line *_last;
+	int _width, _height;
 };
 
 GfxBase *CreateGfxTinyGL() {
@@ -805,17 +810,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 }
 
 void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
-	if (_dimLevel >= 1.0f) {
-		return;
-	} else if (_dimLevel > 0.0f) {
-		warning("TinyGL doesn't implement partial screen-dimming yet");
-	}
-
 	int srcX, srcY;
-	int clampWidth, clampHeight;
-
-	if (x >= _gameWidth || y >= _gameHeight)
-		return;
 
 	if (x < 0) {
 		srcX = -x;
@@ -823,6 +818,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 	} else {
 		srcX = 0;
 	}
+
 	if (y < 0) {
 		srcY = -y;
 		y = 0;
@@ -830,18 +826,33 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 		srcY = 0;
 	}
 
-	if (x + width > _gameWidth)
-		clampWidth = _gameWidth - x;
+	blit(format, image, dst, src, x, y, srcX, srcY, width, height, width, height, trans);
+}
+
+void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int dstX, int dstY, int srcX, int srcY, int width, int height, int srcWidth, int srcHeight, bool trans) {
+	if (_dimLevel >= 1.0f) {
+		return;
+	} else if (_dimLevel > 0.0f) {
+		warning("TinyGL doesn't implement partial screen-dimming yet");
+	}
+
+	if (dstX >= _gameWidth || dstY >= _gameHeight)
+		return;
+
+	int clampWidth, clampHeight;
+
+	if (dstX + width > _gameWidth)
+		clampWidth = _gameWidth - dstX;
 	else
 		clampWidth = width;
 
-	if (y + height > _gameHeight)
-		clampHeight = _gameHeight - y;
+	if (dstY + height > _gameHeight)
+		clampHeight = _gameHeight - dstY;
 	else
 		clampHeight = height;
 
-	dst += (x + (y * _gameWidth)) * format.bytesPerPixel;
-	src += (srcX + (srcY * width)) * format.bytesPerPixel;
+	dst += (dstX + (dstY * _gameWidth)) * format.bytesPerPixel;
+	src += (srcX + (srcY * srcWidth)) * format.bytesPerPixel;
 
 	Graphics::PixelBuffer srcBuf(format, src);
 	Graphics::PixelBuffer dstBuf(format, dst);
@@ -850,13 +861,26 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 		for (int l = 0; l < clampHeight; l++) {
 			dstBuf.copyBuffer(0, clampWidth, srcBuf);
 			dstBuf.shiftBy(_gameWidth);
-			srcBuf.shiftBy(width);
+			srcBuf.shiftBy(srcWidth);
 		}
 	} else {
 		if (image) {
 			BlitImage::Line *l = image->_lines;
-			while (l) {
-				memcpy(dstBuf.getRawBuffer(l->y * _gameWidth + l->x), l->pixels, l->length * format.bytesPerPixel);
+			int maxY = srcY + clampHeight;
+			int maxX = srcX + clampWidth;
+			while (l && l->y < srcY)
+				l = l->next;
+
+			while (l && l->y <= maxY) {
+				if (l->x < maxX && l->x + l->length > srcX) {
+					int length = l->length;
+					int skipStart = l->x < srcX ? srcX - l->x : 0;
+					length -= skipStart;
+					int skipEnd   = l->x + l->length > maxX ? l->x + l->length - maxX : 0;
+					length -= skipEnd;
+					memcpy(dstBuf.getRawBuffer((l->y - srcY) * _gameWidth + MAX(l->x - srcX, 0)),
+							l->pixels + skipStart * format.bytesPerPixel, length * format.bytesPerPixel);
+				}
 				l = l->next;
 			}
 		} else {
@@ -867,7 +891,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 					}
 				}
 				dstBuf.shiftBy(_gameWidth);
-				srcBuf.shiftBy(width);
+				srcBuf.shiftBy(srcWidth);
 			}
 		}
 	}
