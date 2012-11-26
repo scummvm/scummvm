@@ -178,6 +178,14 @@ public:
 	virtual bool seek(const Audio::Timestamp &time);
 
 	/**
+	 * Seek to a given frame.
+	 *
+	 * This only works when one video track is present, and that track
+	 * supports getFrameTime(). This calls seek() internally.
+	 */
+	bool seekToFrame(uint frame);
+
+	/**
 	 * Pause or resume the video. This should stop/resume any audio playback
 	 * and other stuff. The initial pause time is kept so that any timing
 	 * variables can be updated appropriately.
@@ -535,6 +543,14 @@ protected:
 		 * Does the palette currently in use by this track need to be updated?
 		 */
 		virtual bool hasDirtyPalette() const { return false; }
+
+		/**
+		 * Get the time the given frame should be shown.
+		 *
+		 * By default, this returns a negative (invalid) value. This function
+		 * should only be used by VideoDecoder::seekToFrame().
+		 */
+		virtual Audio::Timestamp getFrameTime(uint frame) const;
 	};
 
 	/**
@@ -549,12 +565,19 @@ protected:
 
 		uint32 getNextFrameStartTime() const;
 		virtual Audio::Timestamp getDuration() const;
+		Audio::Timestamp getFrameTime(uint frame) const;
 
 	protected:
 		/**
 		 * Get the rate at which this track is played.
 		 */
 		virtual Common::Rational getFrameRate() const = 0;
+
+		/**
+		 * Get the frame that should be displaying at the given time. This is
+		 * helpful for someone implementing seek().
+		 */
+		uint getFrameAtTime(const Audio::Timestamp &time) const;
 	};
 
 	/**

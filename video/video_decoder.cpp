@@ -324,6 +324,35 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 	return true;
 }
 
+bool VideoDecoder::seekToFrame(uint frame) {
+	VideoTrack *track = 0;
+
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+		if (!(*it)->isSeekable())
+			return false;
+
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo) {
+			// We only allow seeking by frame when one video track
+			// is present
+			if (track)
+				return false;
+
+			track = (VideoTrack *)*it;
+		}
+	}
+
+	// If we didn't find a video track, we can't seek by frame (of course)
+	if (!track)
+		return false;
+
+	Audio::Timestamp time = track->getFrameTime(frame);
+
+	if (time < 0)
+		return false;
+
+	return seek(time);
+}
+
 void VideoDecoder::start() {
 	if (!isPlaying())
 		setRate(1);
@@ -434,21 +463,45 @@ bool VideoDecoder::VideoTrack::endOfTrack() const {
 	return getCurFrame() >= (getFrameCount() - 1);
 }
 
+Audio::Timestamp VideoDecoder::VideoTrack::getFrameTime(uint frame) const {
+	// Default implementation: Return an invalid (negative) number
+	return Audio::Timestamp().addFrames(-1);
+}
+
 uint32 VideoDecoder::FixedRateVideoTrack::getNextFrameStartTime() const {
 	if (endOfTrack() || getCurFrame() < 0)
 		return 0;
 
-	Common::Rational time = (getCurFrame() + 1) * 1000;
-	time /= getFrameRate();
-	return time.toInt();
+	return getFrameTime(getCurFrame() + 1).msecs();
+}
+
+Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getFrameTime(uint frame) const {
+	// Try to get as accurate as possible, considering we have a fractional frame rate
+	// (which Audio::Timestamp doesn't support).
+	Common::Rational frameRate = getFrameRate();
+
+	if (frameRate == frameRate.toInt()) // The nice case (a whole number)
+		return Audio::Timestamp(0, frame, frameRate.toInt());
+
+	// Just convert to milliseconds.
+	Common::Rational time = frame * 1000;
+	time /= frameRate;
+	return Audio::Timestamp(time.toInt(), 1000);
+}
+
+uint VideoDecoder::FixedRateVideoTrack::getFrameAtTime(const Audio::Timestamp &time) const {
+	Common::Rational frameRate = getFrameRate();
+
+	// Easy conversion
+	if (frameRate == time.framerate())
+		return time.totalNumberOfFrames();
+
+	// Default case
+	return (time.totalNumberOfFrames() * frameRate / time.framerate()).toInt();
 }
 
 Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getDuration() const {
-	// Since Audio::Timestamp doesn't support a fractional frame rate, we're currently
-	// just converting to milliseconds.
-	Common::Rational time = getFrameCount() * 1000;
-	time /= getFrameRate();
-	return time.toInt();
+	return getFrameTime(getFrameCount());
 }
 
 bool VideoDecoder::AudioTrack::endOfTrack() const {
