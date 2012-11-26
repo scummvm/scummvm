@@ -273,7 +273,7 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	// Should check that we actually HAVE a TIL
 	uint32 bmoffset = o->readUint32LE();
 	_numCoords = o->readUint32LE();
-	_numOffsets = o->readUint32LE();
+	_numLayers = o->readUint32LE();
 	_numVerts = o->readUint32LE();
 
 	// skip some 0
@@ -284,12 +284,11 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 		o->read(&_texc[i], sizeof(float));
 	}
 
-	_offsets = new Offset[_numOffsets];
-	for (uint32 i = 0; i < _numOffsets; ++i) {
-		_offsets[i]._offset = o->readUint32LE();
-		_offsets[i]._numImages = o->readUint32LE();
+	_layers = new Layer[_numLayers];
+	for (uint32 i = 0; i < _numLayers; ++i) {
+		_layers[i]._offset = o->readUint32LE();
+		_layers[i]._numImages = o->readUint32LE();
 	}
-	_curOffset = _numOffsets - 1;
 
 	_verts = new Vert[_numVerts];
 	for (uint32 i = 0; i < _numVerts; ++i) {

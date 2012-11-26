@@ -827,17 +827,18 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDra
 		BitmapData *data = bitmap->_data;
 		GLuint *textures = (GLuint *)bitmap->getTexIds();
 		float *texc = data->_texc;
-		int startOffset, endOffset;
+
+		int curLayer, frontLayer;
 		if (initialDraw) {
-			startOffset = endOffset = data->_curOffset;
+			curLayer = frontLayer = data->_numLayers - 1;
 		} else {
-			startOffset = data->_curOffset - 1;
-			endOffset = 0;
+			curLayer = data->_numLayers - 2;
+			frontLayer = 0;
 		}
 
-		while (endOffset <= startOffset) {
-			uint32 offset = data->_offsets[startOffset]._offset;
-			for (uint32 i = offset; i < offset + data->_offsets[startOffset]._numImages; ++i) {
+		while (frontLayer <= curLayer) {
+			uint32 offset = data->_layers[curLayer]._offset;
+			for (uint32 i = offset; i < offset + data->_layers[curLayer]._numImages; ++i) {
 				glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
 				glBegin(GL_QUADS);
 				uint32 ntex = data->_verts[i]._pos * 4;
@@ -848,7 +849,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDra
 				}
 				glEnd();
 			}
-			startOffset--;
+			curLayer--;
 		}
 
 		glDisable(GL_TEXTURE_2D);
