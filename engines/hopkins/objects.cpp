@@ -719,106 +719,75 @@ void ObjectsManager::BOB_OFFSETY(int idx, int v) {
 }
 
 void ObjectsManager::SCBOB(int idx) {
+	if (_vm->_globals.Cache[idx].fieldA <= 0)
+		return;
+
 	int v1 = idx;
-	if (_vm->_globals.Cache[idx].fieldA > 0) {
-		int v8 = 0;
-		do {
-			v1 = v8;
-			if (_vm->_globals.Bob[v1].field0) {
-				if (!_vm->_globals.Bob[v8].field16) {
-					if (!_vm->_globals.Bob[v8].field34) {
-						if ( _vm->_globals.Bob[v8].frameIndex != 250) {
-							int v2 = _vm->_globals.Bob[v8].oldWidth;
-							int v9 = _vm->_globals.Bob[v8].oldX + _vm->_globals.Bob[v8].oldWidth;
-							int v6 = _vm->_globals.Bob[v8].oldY + _vm->_globals.Bob[v8].oldHeight;
-							int v3 =_vm->_globals.Cache[idx].field0;
-							int v4 =_vm->_globals.Cache[idx].field4;
-							int v7 =_vm->_globals.Cache[idx].field6 + v3;
-							int v1 =_vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx].field8 + v4;
-              
-							if (v6 > v4) {
-								if (v6 < v1) {
-									v1 = 0;
-									if (v9 >= v3 && v9 <= (_vm->_globals.Cache[idx].field6 + v3)) {
-										++_vm->_globals.Cache[idx].fieldA;
-										v1 = 1;
-									}
-                  
-									if (!(uint16)v1) {
-										if (v2 >= v3 && v7 >= v2) {
-											++_vm->_globals.Cache[idx].fieldA;
-											v1 = 1;
-										}
-										if (!(uint16)v1) {
-											if ( v7 >= v2 && v2 >= v3 ) {
-												++_vm->_globals.Cache[idx].fieldA;
-												v1 = 1;
-											}
-											if (!(uint16)v1) {
-												if (v2 >= v3 && v9 <= v7) {
-													++_vm->_globals.Cache[idx].fieldA;
-													v1 = 1;
-												}
-												if (!(uint16)v1 && v2 <= v3 && v9 >= v7)
-													++_vm->_globals.Cache[idx].fieldA;
-											}
-										}
-									}
-								}
-							}
-						}
+	for (int v8 = 0; v8 <= 20; v8++) {
+		v1 = v8;
+		if ((_vm->_globals.Bob[v1].field0) && (!_vm->_globals.Bob[v8].field16) && (!_vm->_globals.Bob[v8].field34) && (_vm->_globals.Bob[v8].frameIndex != 250)) {
+			int v2 = _vm->_globals.Bob[v8].oldWidth;
+			int v9 = _vm->_globals.Bob[v8].oldX + _vm->_globals.Bob[v8].oldWidth;
+			int v6 = _vm->_globals.Bob[v8].oldY + _vm->_globals.Bob[v8].oldHeight;
+			int v3 =_vm->_globals.Cache[idx].field0;
+			int v4 =_vm->_globals.Cache[idx].field4;
+			int v7 =_vm->_globals.Cache[idx].field6 + v3;
+			int v1 =_vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx].field8 + v4;
+          
+			if ((v6 > v4) && (v6 < v1)) {
+				v1 = 0;
+				if (v9 >= v3 && v9 <= (_vm->_globals.Cache[idx].field6 + v3)) {
+					++_vm->_globals.Cache[idx].fieldA;
+						v1 = 1;
+				}
+				if (!(uint16)v1) {
+					if (v2 >= v3 && v7 >= v2) {
+						++_vm->_globals.Cache[idx].fieldA;
+						v1 = 1;
 					}
 				}
+				if (!(uint16)v1) {
+					if ( v7 >= v2 && v2 >= v3 ) {
+						++_vm->_globals.Cache[idx].fieldA;
+						v1 = 1;
+					}
+				}
+				if (!(uint16)v1) {
+					if (v2 >= v3 && v9 <= v7) {
+						++_vm->_globals.Cache[idx].fieldA;
+						v1 = 1;
+					}
+				}
+				if (!(uint16)v1 && v2 <= v3 && v9 >= v7)
+					++_vm->_globals.Cache[idx].fieldA;
 			}
-			++v8;
-		} while (v8 <= 20);
+		}
 	}
 }
 
 void ObjectsManager::CALCUL_BOB(int idx) {
-	int result;
-	int v3;
-	int v4;
-	int v5;
-	int v6;
-	int v7; 
-	int v8; 
-	int v9; 
-	int v10; 
-	int v11; 
-	int v13;
-	int v14;
-	int v15;
-	int v17;
-	int v20;
-	int v21;
-	int v22;
-
 	_vm->_globals.Bob[idx].isActive = false;
 	if (_vm->_globals.Bob[idx].isSprite) {
 		_vm->_globals.Bob[idx].field38 = 0;
 		_vm->_globals.Bob[idx].field36 = 0;
 	}
   
-	result = _vm->_globals.Bob[idx].frameIndex;
+	int result = _vm->_globals.Bob[idx].frameIndex;
 	if (result != 250) {
+		int v5, v15, v22;
 		if (_vm->_globals.Bob[idx].field38) {
-			v4 = get_offsetx(_vm->_globals.Bob[idx].spriteData, result, 1);
-			v22 = v4;
-			v15 = v4;
+			v22 = v15 = get_offsetx(_vm->_globals.Bob[idx].spriteData, result, 1);
 			v5 = get_offsety(_vm->_globals.Bob[idx].spriteData, _vm->_globals.Bob[idx].frameIndex, 1);
 		} else {
-			v3 = get_offsetx(_vm->_globals.Bob[idx].spriteData, result, 0);
-			v22 = v3;
-			v15 = v3;
+			v22 = v15 = get_offsetx(_vm->_globals.Bob[idx].spriteData, result, 0);
 			v5 = get_offsety(_vm->_globals.Bob[idx].spriteData, _vm->_globals.Bob[idx].frameIndex, 0);
 		}
     
-		v17 = v5;
-		v6 = v5;
-		v21 = 0;
-		v20 = 0;
-		v7 = _vm->_globals.Bob[idx].field36;
+		int v17 = v5;
+		int v6 = v5;
+		int v21 = 0;
+		int v20 = 0;
+		int v7 = _vm->_globals.Bob[idx].field36;
 		
 		if (v7 < 0) {
 			v7 = -v7;
@@ -832,16 +801,14 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 			if (v15 >= 0) {
 				v22 = _vm->_graphicsManager.Reel_Zoom(v15, v21);
 			} else {
-				v8 = v15;
 				if (v15 < 0)
-					v8 = -v15;
-				v15 = v8;
-				v22 = -_vm->_graphicsManager.Reel_Zoom(v8, v21);
+					v15 = -v15;
+				v22 = -_vm->_graphicsManager.Reel_Zoom(v15, v21);
 			}
 			if (v6 >= 0) {
 				v17 = _vm->_graphicsManager.Reel_Zoom(v6, v21);
 			} else {
-				v9 = v15;
+				int v9 = v15;
 				if (v15 < 0)
 					v9 = -v15;
 				v6 = v9;
@@ -853,24 +820,21 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 			if (v15 >= 0) {
 				v22 = _vm->_graphicsManager.Reel_Reduc(v15, v20);
 			} else {
-				v10 = v15;
-				if (v15 < 0)
-					v10 = -v15;
-				v15 = v10;
-				v22 = -_vm->_graphicsManager.Reel_Reduc(v10, v20);
+				v15 = -v15;
+				v22 = -_vm->_graphicsManager.Reel_Reduc(v15, v20);
 			}
 			if (v6 >= 0) {
 				v17 = _vm->_graphicsManager.Reel_Reduc(v6, v20);
 			} else {
-				v11 = v15;
+				int v11 = v15;
 				if (v15 < 0)
 					v11 = -v15;
 				v17 = -_vm->_graphicsManager.Reel_Reduc(v11, v20);
 			}
 		}
     
-		v13 = _vm->_globals.Bob[idx].xp - v22;
-		v14 = _vm->_globals.Bob[idx].yp - v17;
+		int v13 = _vm->_globals.Bob[idx].xp - v22;
+		int v14 = _vm->_globals.Bob[idx].yp - v17;
 		_vm->_globals.Bob[idx].isActive = true;
 		_vm->_globals.Bob[idx].oldX = v13;
 		_vm->_globals.Bob[idx].oldY = v14;

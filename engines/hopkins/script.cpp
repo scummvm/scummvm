@@ -43,14 +43,6 @@ void ScriptManager::setParent(HopkinsEngine *vm) {
 }
 
 int ScriptManager::Traduction(byte *a1) {
-	char v47; 
-	char v48; 
-	char v49;
-	int v50; 
-	CharacterLocation *v51; 
-	CharacterLocation *v53; 
-	Common::String file; 
-
 	int v1 = 0;
 	int v70 = 0;
 	if (*a1 != 'F' || *(a1 + 1) != 'C')
@@ -494,15 +486,13 @@ LABEL_1141:
 		int v74 = (int16)READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
 		if (!v74)
 			v74 = 1;
-		int v10 = 0;
 		if (v74 + 1 > 0) {
-			do {
+			for (int v10 = 0; v10 < v74 + 1; v10++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
-				++v10;
-			} while (v10 < v74 + 1);
+			}
 		}
 		v1 = 1;
 	}
@@ -1812,7 +1802,7 @@ LABEL_1141:
 		if (v76 == 40)
 			_vm->_talkManager.PARLER_PERSO("MAGE.pe2");
 		if (v76 == 236) {
-			v47 = _vm->_globals.SAUVEGARDE->data[svField341];
+			char v47 = _vm->_globals.SAUVEGARDE->data[svField341];
 			if (v47) {
 				if (v47 == 2)
 					v70 = 5;
@@ -1840,7 +1830,7 @@ LABEL_1141:
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 1);
 		}
 		if (v76 == 237) {
-			v48 = _vm->_globals.SAUVEGARDE->data[svField341];
+			char v48 = _vm->_globals.SAUVEGARDE->data[svField341];
 			if (v48) {
 				if (v48 == 2)
 					v70 = 5;
@@ -1868,7 +1858,7 @@ LABEL_1141:
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 145, 166, 3);
 		}
 		if (v76 == 238) {
-			v49 = _vm->_globals.SAUVEGARDE->data[svField341];
+			char v49 = _vm->_globals.SAUVEGARDE->data[svField341];
 			if (v49) {
 				if (v49 == 2)
 					v70 = 5;
@@ -1902,24 +1892,24 @@ LABEL_1141:
 		}
 		if (v76 == 240) {
 			_vm->_objectsManager.BOBANIM_ON(1);
-			v50 = 0;
+			bool soundFlag = false;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
-				if (_vm->_objectsManager.BOBPOSI(1) == 12 && !v50) {
+				if (_vm->_objectsManager.BOBPOSI(1) == 12 && !soundFlag) {
 					_vm->_soundManager.PLAY_SOUND("SOUND86.WAV");
-					v50 = 1;
+					soundFlag = true;
 				}
 				if (_vm->_objectsManager.BOBPOSI(1) == 13)
-					v50 = 0;
-				if (_vm->_objectsManager.BOBPOSI(1) == 25 && !v50) {
+					soundFlag = false;
+				if (_vm->_objectsManager.BOBPOSI(1) == 25 && !soundFlag) {
 					_vm->_soundManager.PLAY_SOUND("SOUND85.WAV");
-					v50 = 1;
+					soundFlag = true;
 				}
 				if (_vm->_objectsManager.BOBPOSI(1) == 25)
-					v50 = 0;
+					soundFlag = false;
 			} while (_vm->_objectsManager.BOBPOSI(1) != 32);
 			_vm->_objectsManager.BOBANIM_OFF(1);
 			_vm->_objectsManager.BOBANIM_ON(2);
@@ -1936,7 +1926,7 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			}
-			v51 = &_vm->_globals.SAUVEGARDE->realHopkins;
+			CharacterLocation *v51 = &_vm->_globals.SAUVEGARDE->realHopkins;
 			v51->xp = _vm->_objectsManager.XSPR(0);
 			v51->yp = _vm->_objectsManager.YSPR(0);
 			v51->field2 = 57;
@@ -2164,7 +2154,7 @@ LABEL_1141:
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.PLAY_SEQ("RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager.NO_SEQ = false;
-			v53 = &_vm->_globals.SAUVEGARDE->samantha;
+			CharacterLocation *v53 = &_vm->_globals.SAUVEGARDE->samantha;
 			v53->xp = 404;
 			v53->yp = 395;
 			v53->field2 = 64;
@@ -2303,7 +2293,7 @@ LABEL_1141:
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'U') {
 		int v60 = (int16)READ_LE_UINT16(a1 + 5);
 		
-		file = Common::String::format("SOUND%d.WAV", v60);
+		Common::String file = Common::String::format("SOUND%d.WAV", v60);
 		_vm->_soundManager.PLAY_SOUND(file);
 		v1 = 1;
 	}

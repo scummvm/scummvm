@@ -196,7 +196,6 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 }
 
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
-	int v9 = 0;
 	_vm->_objectsManager.DESACTIVE_CURSOR = 1;
 	STATI = 1;
 	byte v7 = _vm->_dialogsManager.DESACTIVE_INVENT;
@@ -244,11 +243,10 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		int v3;
 		do {
 			v3 = DIALOGUE();
-			if (v3 != v2)
-				v9 = DIALOGUE_REP(v3);
-			
-			if (v9 == -1)
-				v3 = v1 + 3;
+			if (v3 != v2) {
+				if (DIALOGUE_REP(v3) == -1)
+					v3 = v1 + 3;
+			}
 		} while (v3 != v2);
 	}
 

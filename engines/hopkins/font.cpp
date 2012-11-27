@@ -111,7 +111,6 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 	byte *v9; 
 	byte *ptre; 
 	Common::String s; 
-	byte *v59; 
 	Common::String file; 
 	Common::File f;
 
@@ -122,7 +121,6 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 	_vm->_globals.police_l = 11;
 
 	_vm->_globals.largeur_boite = 11 * Txt[idx].field3FE;
-	int lineCount = 0;
 	if (Txt[idx].textLoaded) {
 		int v34 = Txt[idx].field3FC;
 		if (v34 != 6 && v34 != 1 && v34 != 3 && v34 != 5) {
@@ -146,6 +144,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, xp + v37, yp + v36);
 		}
 	} else {
+		int lineCount = 0;
 		int v62 = 0;
 		do {
 			TRIER_TEXT[v62++] = 0;
@@ -195,13 +194,11 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			v11 = 0;
 			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
 		}
-		v59 = texte_tmp;
-		int v63 = 0;
-		int v64 = 0;
+		byte *v59 = texte_tmp;
 		byte *v60;
 		if (!v69)
 			goto LABEL_43;
-		do {
+		for (int v63 = 0; v63 < v69; v63++) {
 			byte v13 = *v59;
 			if ((byte)(*v59 + 46) > 0x1Bu) {
 				if ((byte)(v13 + 80) > 0x1Bu) {
@@ -214,12 +211,12 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 				v13 += 111;
 			}
 			*v59 = v13;
-			v59 = v59 + 1;
-			++v63;
-		} while (v63 < v69);
+			v59++;
+		};
 
 		v60 = texte_tmp;
 		if (v69) {
+			int v64 = 0;
 			while (1) {
 				byte v14 = *(v60 + v64);
 				if (v14 == '\r' || v14 == '\n') {
@@ -234,16 +231,13 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			Txt[idx].field3FE = v64;
 			_vm->_globals.largeur_boite = 0;
 
-			int v15 = 0;
-			byte v16;
 			if (v64 + 1 > 0) {
-				do {
-					v16 = *(v60 + v15);
+				for (int v15 = 0; v15 < v64 + 1; v15++) {
+					byte v16 = *(v60 + v15);
 					if ((byte)v16 <= 0x1Fu)
 						v16 = 32;
 					_vm->_globals.largeur_boite += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, (byte)v16 - 32);
-					++v15;
-				} while (v15 < v64 + 1);
+				}
 			}
 			_vm->_globals.largeur_boite += 2;
 			int v17 = _vm->_globals.largeur_boite / 2;
@@ -309,16 +303,14 @@ LABEL_57:
 					TRIER_TEXT[i] = 0;
 				} else {
 					int ptrc = 0;
-					int v23 = 0;
 					if (v22 - 1 > 0) {
-						do {
+						for (int v23 = 0; v23 < TRIER_TEXT[i] - 1; v23++) {
 							Common::String &line = Txt[idx].lines[i];
 							byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
 							if ((byte)v24 <= 0x1Fu)
 								v24 = 32;
 							ptrc += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, (byte)v24 - 32);
-							++v23;
-						} while (v23 < TRIER_TEXT[i] - 1);
+						}
 					}
 					TRIER_TEXT[i] = ptrc;
 				}
