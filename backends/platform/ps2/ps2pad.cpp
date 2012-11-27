@@ -51,6 +51,9 @@ void Ps2Pad::initPad(void) {
 	} else {
 		if (checkPadReady(_port, _slot)) {
 			switch (_padStatus) {
+				case STAT_NONE:
+					printf("Pad Status is None. Shouldn't happen\n");
+					break;
 				case STAT_OPEN:
 					_padStatus = STAT_DETECT;
 					break;
