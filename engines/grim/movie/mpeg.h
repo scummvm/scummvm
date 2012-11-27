@@ -23,39 +23,20 @@
 #ifndef GRIM_MPEG_PLAYER_H
 #define GRIM_MPEG_PLAYER_H
 
-#include "common/scummsys.h"
-#include "common/file.h"
-
-#include "graphics/pixelformat.h"
-
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
-
-#include "video/mpeg_player.h"
-
 #include "engines/grim/movie/movie.h"
 
 #ifdef USE_MPEG2
 
 namespace Grim {
-
-class MpegPlayer : public MoviePlayer {
-private:
-	Video::BaseAnimationState *_videoBase;
-	Audio::SoundHandle _soundHandle;
-	Audio::QueuingAudioStream *_stream;
-	int _speed;	// <- Quickfix to fix compile, verify when fixing the decoder properly.
-public:
-	MpegPlayer();
-
-	void deliverFrameFromDecode(int width, int height, uint16 *dat);
-private:
-	void handleFrame();
-	void init();
-	void deinit();
-	bool loadFile(Common::String filename);
-};
-
+	
+	class MpegPlayer : public MoviePlayer {
+	public:
+		MpegPlayer();
+	private:
+		bool loadFile(Common::String filename);
+		bool _demo;
+	};
+	
 } // end of namespace Grim
 
 #endif // USE_MPEG2
