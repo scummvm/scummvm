@@ -1047,8 +1047,11 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		userData[j].x = text->getLineX(j);
 		userData[j].y = text->getLineY(j);
 
-		if (g_grim->getGameType() == GType_MONKEY4)
+		if (g_grim->getGameType() == GType_MONKEY4) {
 			userData[j].y -= font->getBaseOffsetY();
+			if (userData[j].y < 0)
+				userData[j].y = 0;
+		}
 
 		delete[] _textBitmap;
 	}
