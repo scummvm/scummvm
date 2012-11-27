@@ -36,6 +36,8 @@
 
 #include "video/video_decoder.h"
 
+#include "graphics/surface.h"
+
 namespace Audio {
 class AudioStream;
 class QueuingAudioStream;
