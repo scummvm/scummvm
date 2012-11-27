@@ -33,6 +33,7 @@
 
 #include "common/array.h"
 #include "common/rational.h"
+#include "graphics/surface.h"
 
 #include "video/video_decoder.h"
 
@@ -69,7 +70,11 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
-
+// ResidualVM-specific:
+	bool seek(const Audio::Timestamp &time);
+	void setAudioTrack(uint32 track);
+	uint32 findKeyFrame(uint32 frame) const;
+	void skipNextFrame();
 protected:
 	void readNextPacket();
 
@@ -146,6 +151,11 @@ private:
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame() { return &_surface; }
+// ResidualVM-specific:
+		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time);
+		void setCurFrame(uint32 frame) { _curFrame = frame; }
+// End of ResidualVM-specific
 
 		/** Decode a video packet. */
 		void decodePacket(VideoFrame &frame);
@@ -322,6 +332,8 @@ private:
 		/** Decode an audio packet. */
 		void decodePacket();
 
+		bool seek(const Audio::Timestamp &time) { return true; }  // ResidualVM-specific
+		bool isSeekable() const { return true; }  // ResidualVM-specific
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
@@ -348,7 +360,9 @@ private:
 	Common::Array<AudioInfo> _audioTracks; ///< All audio tracks.
 	Common::Array<VideoFrame> _frames;      ///< All video frames.
 
-	void initAudioTrack(AudioInfo &audio);
+	void initAudioTrack(AudioInfo &audio, bool doPlay); // ResidualVM-specific
+	// ResidualVM-specific:
+	int32 _selectedAudioTrack;
 };
 
 } // End of namespace Video

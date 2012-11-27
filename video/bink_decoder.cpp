@@ -63,6 +63,7 @@ namespace Video {
 
 BinkDecoder::BinkDecoder() {
 	_bink = 0;
+	_selectedAudioTrack = -1; // ResidualVM-specific
 }
 
 BinkDecoder::~BinkDecoder() {
@@ -121,7 +122,8 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 			_audioTracks.push_back(track);
 
-			initAudioTrack(_audioTracks[i]);
+			bool doPlay = true;//(_selectedAudioTrack == -1 && (int32)i == _selectedAudioTrack); // ResidualVM-specific
+			initAudioTrack(_audioTracks[i], doPlay);
 		}
 
 		_bink->skip(4 * audioTrackCount);
@@ -319,6 +321,90 @@ BinkDecoder::BinkVideoTrack::~BinkVideoTrack() {
 	}
 
 	_surface.free();
+}
+
+// ResidualVM-specific function
+void BinkDecoder::setAudioTrack(uint32 track) {
+	_selectedAudioTrack = track;
+	warning("Selecting audio track for Bink currently broken");
+}
+
+// ResidualVM-specific function
+bool BinkDecoder::seek(const Audio::Timestamp &time) {
+	// TODO: Don't seek if we actually just want the next frame
+	// Fast path
+	//	if ((int32)frame == getCurFrame() + 1)
+	//		return true;
+	VideoDecoder::seek(time);
+	uint32 frame = getCurFrame();
+
+	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
+
+	// Track down the keyframe
+	videoTrack->setCurFrame(findKeyFrame(frame) - 1);
+	while (getCurFrame() < (int32)frame - 1)
+		skipNextFrame();
+	return true;
+}
+
+// ResidualVM-specific function
+uint32 BinkDecoder::findKeyFrame(uint32 frame) const {
+	assert(frame < _frames.size());
+
+	for (int i = frame; i >= 0; i--) {
+		if (_frames[i].keyFrame)
+			return i;
+	}
+
+	// If none found, we'll assume the requested frame is a key frame
+	return frame;
+}
+
+// ResidualVM-specific function
+bool BinkDecoder::BinkVideoTrack::seek(const Audio::Timestamp &time) {
+	_curFrame = getFrameAtTime(time);
+	return true;
+}
+
+// ResidualVM-specific function
+void BinkDecoder::skipNextFrame() {
+	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
+	if (videoTrack->endOfTrack())
+		return;
+
+	VideoFrame &frame = _frames[videoTrack->getCurFrame() + 1];
+
+	if (!_bink->seek(frame.offset))
+		error("Bad bink seek");
+
+	uint32 frameSize = frame.size;
+
+	for (uint32 i = 0; i < _audioTracks.size(); i++) {
+		uint32 audioPacketLength = _bink->readUint32LE();
+
+		frameSize -= 4;
+
+		if (frameSize < audioPacketLength)
+			error("Audio packet too big for the frame");
+
+		if (audioPacketLength >= 4) {
+			// Skip audio data
+			_bink->seek(audioPacketLength, SEEK_CUR);
+
+			frameSize -= audioPacketLength;
+		}
+	}
+
+	uint32 videoPacketStart = _bink->pos();
+	uint32 videoPacketEnd   = _bink->pos() + frameSize;
+
+	frame.bits =
+	new Common::BitStream32LELSB(new Common::SeekableSubReadStream(_bink,
+																   videoPacketStart, videoPacketEnd), true);
+	videoTrack->decodePacket(frame);
+
+	delete frame.bits;
+	frame.bits = 0;
 }
 
 void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
@@ -1524,7 +1610,7 @@ float BinkDecoder::BinkAudioTrack::getFloat() {
 	return f;
 }
 
-void BinkDecoder::initAudioTrack(AudioInfo &audio) {
+void BinkDecoder::initAudioTrack(AudioInfo &audio, bool doPlay) {
 	audio.sampleCount = 0;
 	audio.bits        = 0;
 
@@ -1590,7 +1676,8 @@ void BinkDecoder::initAudioTrack(AudioInfo &audio) {
 	else if (audio.codec == kAudioCodecDCT)
 		audio.dct  = new Common::DCT(frameLenBits, Common::DCT::DCT_III);
 
-	addTrack(new BinkAudioTrack(audio));
+	if (doPlay) // ResidualVM-specific
+		addTrack(new BinkAudioTrack(audio));
 }
 
 } // End of namespace Video

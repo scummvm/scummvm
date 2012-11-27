@@ -59,13 +59,13 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	loadPosition(binkDesc->getVideoData());
 
 	Common::MemoryReadStream *binkStream = binkDesc->getData();
-	_bink.loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	uint language = ConfMan.getInt("audio_language");
+	_bink.setAudioTrack(language);
+	_bink.loadStream(binkStream);
 
 	if (ConfMan.getBool("subtitles"))
 		_subtitles = Subtitles::create(_vm, id);
-
-	uint language = ConfMan.getInt("audio_language");
-	_bink.setAudioTrack(language);
 }
 
 void Movie::loadPosition(const VideoData &videoData) {

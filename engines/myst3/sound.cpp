@@ -25,6 +25,7 @@
 #include "engines/myst3/sound.h"
 #include "engines/myst3/state.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/wave.h"
 

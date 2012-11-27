@@ -135,7 +135,7 @@ _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
-_bink=no
+_bink=yes
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
