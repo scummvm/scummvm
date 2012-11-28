@@ -54,10 +54,13 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream) {
 	stream->read(texname, texnamelength);
 	/* unknown = */ stream->readUint32LE();
 	float width, height;
-	char data[8];
+	float offX, offY;
+	char data[16];
 	stream->read(data, sizeof(data));
 	width = get_float(data);
 	height = get_float(data + 4);
+	offX = get_float(data + 8);
+	offY = get_float(data + 12);
 
 
 	_material = g_resourceloader->loadMaterial(texname, 0);
@@ -65,7 +68,7 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream) {
 	_height = height;
 	_next = NULL;
 	_visible = true;
-	_pos.set(0, 0, 0);
+	_pos.set(-offX, offY, 0);
 
 	delete[] texname;
 }
