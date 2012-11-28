@@ -36,7 +36,6 @@
 namespace Hopkins {
 
 DialogsManager::DialogsManager() {
-	DESACTIVE_INVENT = false;
 	INVENTFLAG = false;
 	AFFINVEN = false;
 	VIRE_INVENT = false;
@@ -474,7 +473,7 @@ LABEL_7:
 }
 
 void DialogsManager::INVENT_ANIM() {
-	if (!DESACTIVE_INVENT) {
+	if (!_vm->_globals.DESACTIVE_INVENT) {
 		if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager.FLAG_VISIBLE) {
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38, 
 				_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.I_old_x, 27);

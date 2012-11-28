@@ -38,7 +38,6 @@ class DialogsManager {
 private:
 	HopkinsEngine *_vm;
 public:
-	bool DESACTIVE_INVENT;
 	bool INVENTFLAG;
 	bool AFFINVEN;
 	bool VIRE_INVENT;
