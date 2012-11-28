@@ -2228,6 +2228,9 @@ int HopkinsEngine::PWBASE() {
 	bool loopCond = false;
 	int zone;
 	do {
+		if (shouldQuit())
+			return 0;
+
 		int mouseButton = _eventsManager.BMOUSE();
 		int posX = _eventsManager.XMOUSE();
 		int posY = _eventsManager.YMOUSE();

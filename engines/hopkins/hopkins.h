@@ -97,7 +97,12 @@ private:
 	void BASED();
 	void JOUE_FIN();
 	void AVION();
+
+	/**
+	 * Displays the map screen in the underground base.
+	 */
 	int  PWBASE();
+
 	void BTOCEAN();
 	void OCEAN_HOME();
 	void OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 a9);
