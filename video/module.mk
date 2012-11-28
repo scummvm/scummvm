@@ -1,7 +1,6 @@
 MODULE := video
 
 MODULE_OBJS := \
-	mpeg_player.o \
 	video_decoder.o \
 	mpegps_decoder.o
 ifdef USE_BINK
