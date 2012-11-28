@@ -702,7 +702,7 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 				}
 			}
 		} else {
-			for (int i = v7; i > a5; i++) {
+			for (int i = v7; i > a5; --i) {
 				int16 *v26 = Ligne[a4].lineData;
 				int v27 = v26[2 * i];
 				v50 = v26[2 * i+ 1];
