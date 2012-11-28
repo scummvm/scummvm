@@ -102,7 +102,26 @@ void MPEGPSDecoder::readNextPacket() {
 		} else {
 			// We haven't seen this before
 
-			if (startCode >= 0x1E0 && startCode <= 0x1EF) {
+			if (startCode == 0x1BD) {
+				// Private stream 1
+				PrivateStreamType streamType = detectPrivateStreamType(packet);
+
+				packet->seek(0);
+
+				switch (streamType) {
+				case kPrivateStreamPS2Audio: {
+					// PS2 Audio stream
+					PS2AudioTrack *audioTrack = new PS2AudioTrack(packet);
+					stream = audioTrack;
+					_streamMap[startCode] = audioTrack;
+					addTrack(audioTrack);
+					break;
+				}
+				default:
+					// Unknown (silently ignore)
+					break;
+				}
+			} if (startCode >= 0x1E0 && startCode <= 0x1EF) {
 				// Video stream
 				// TODO: Multiple video streams
 			} else if (startCode >= 0x1C0 && startCode <= 0x1DF) {
@@ -287,29 +306,10 @@ int MPEGPSDecoder::readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &d
 			continue;
 		}
 
-		if (startCode == PRIVATE_STREAM_1 && _psmESType[startCode & 0xff] == 0) {
-			startCode = _stream->readByte();
-			length--;
-
-			if (startCode >= 0x80 && startCode <= 0xCF) {
-				// audio: skip header
-				_stream->skip(3);
-				length -= 3;
-
-				if (startCode >= 0xB0 && startCode <= 0xBF) {
-					// MLP/TrueHD audio has a 4-byte header
-					_stream->readByte();
-					length--;
-				}
-			}
-		}
-
 		if (length < 0) {
 			_stream->seek(lastSync);
 			continue;
 		}
-
-		// TODO: dts stuff
 
 		return length;
 	}
@@ -376,6 +376,15 @@ bool MPEGPSDecoder::addFirstVideoTrack() {
 	}
 
 	return true;
+}
+
+MPEGPSDecoder::PrivateStreamType MPEGPSDecoder::detectPrivateStreamType(Common::SeekableReadStream *packet) {
+	packet->seek(4);
+
+	if (packet->readUint32BE() == MKTAG('S', 'S', 'h', 'd'))
+		return kPrivateStreamPS2Audio;
+
+	return kPrivateStreamUnknown;
 }
 
 MPEGPSDecoder::MPEGVideoTrack::MPEGVideoTrack(Common::SeekableReadStream *firstPacket, const Graphics::PixelFormat &format) {
@@ -707,5 +716,117 @@ void MPEGPSDecoder::MPEGAudioTrack::decodeMP3Data(Common::SeekableReadStream *pa
 }
 
 #endif
+
+MPEGPSDecoder::PS2AudioTrack::PS2AudioTrack(Common::SeekableReadStream *firstPacket) {
+	firstPacket->seek(12); // unknown data (4), 'SShd', header size (4)
+
+	_soundType = firstPacket->readUint32LE();
+
+	if (_soundType == PS2_ADPCM)
+		error("Unhandled PS2 ADPCM sound in MPEG-PS video");
+	else if (_soundType != PS2_PCM)
+		error("Unknown PS2 sound type %x", _soundType);
+
+	uint32 sampleRate = firstPacket->readUint32LE();
+	_channels = firstPacket->readUint32LE();
+	_interleave = firstPacket->readUint32LE();
+
+	_blockBuffer = new byte[_interleave * _channels];
+	_blockPos = _blockUsed = 0;
+	_audStream = Audio::makeQueuingAudioStream(sampleRate, _channels == 2);
+	_isFirstPacket = true;
+
+	firstPacket->seek(0);
+}
+
+MPEGPSDecoder::PS2AudioTrack::~PS2AudioTrack() {
+	delete[] _blockBuffer;
+	delete _audStream;
+}
+
+bool MPEGPSDecoder::PS2AudioTrack::sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) {
+	packet->skip(4);
+
+	if (_isFirstPacket) {
+		// Skip over the header which we already parsed
+		packet->skip(4);
+		packet->skip(packet->readUint32LE());
+
+		if (packet->readUint32BE() != MKTAG('S', 'S', 'b', 'd'))
+			error("Failed to find 'SSbd' tag");
+
+		packet->readUint32LE(); // body size
+		_isFirstPacket = false;
+	}
+
+	uint32 size = packet->size() - packet->pos();
+	uint32 bytesPerChunk = _interleave * _channels;
+	uint32 sampleCount = calculateSampleCount(size);
+
+	byte *buffer = (byte *)malloc(sampleCount * 2);
+	int16 *ptr = (int16 *)buffer;
+
+	// Handle any full chunks first
+	while (size >= bytesPerChunk) {
+		packet->read(_blockBuffer + _blockPos, bytesPerChunk - _blockPos);
+		size -= bytesPerChunk - _blockPos;
+		_blockPos = 0;
+
+		for (uint32 i = _blockUsed; i < _interleave / 2; i++)
+			for (uint32 j = 0; j < _channels; j++)
+				*ptr++ = READ_UINT16(_blockBuffer + i * 2 + j * _interleave);
+
+		_blockUsed = 0;
+	}
+
+	// Then fallback on loading any leftover
+	if (size > 0) {
+		packet->read(_blockBuffer, size);
+		_blockPos = size;
+
+		if (size > (_channels - 1) * _interleave) {
+			_blockUsed = (size - (_channels - 1) * _interleave) / 2;
+
+			for (uint32 i = 0; i < _blockUsed; i++)
+				for (uint32 j = 0; j < _channels; j++)
+					*ptr++ = READ_UINT16(_blockBuffer + i * 2 + j * _interleave);
+		}
+	}
+
+	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+
+	if (_audStream->isStereo())
+		flags |= Audio::FLAG_STEREO;
+
+	_audStream->queueBuffer((byte *)buffer, sampleCount * 2, DisposeAfterUse::YES, flags);
+
+	delete packet;
+	return true;
+}
+
+Audio::AudioStream *MPEGPSDecoder::PS2AudioTrack::getAudioStream() const {
+	return _audStream;
+}
+
+uint32 MPEGPSDecoder::PS2AudioTrack::calculateSampleCount(uint32 packetSize) const {
+	uint32 bytesPerChunk = _interleave * _channels, result = 0;
+
+	// If we have a partial block, subtract the remainder from the size. That
+    // gets put towards reading the partial block
+	if (_blockPos != 0) {
+		packetSize -= bytesPerChunk - _blockPos;
+		result += (_interleave / 2) - _blockUsed;
+	}
+
+	// Round the number of whole chunks down and then calculate how many samples that gives us
+	result += (packetSize / bytesPerChunk) * _interleave / 2;
+
+	// Total up anything we can get from the remainder
+	packetSize %= bytesPerChunk;
+	if (packetSize > (_channels - 1) * _interleave)
+		result += (packetSize - (_channels - 1) * _interleave) / 2;
+
+	return result * _channels;
+}
 
 } // End of namespace Video

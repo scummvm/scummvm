@@ -186,6 +186,41 @@ private:
 	};
 #endif
 
+	class PS2AudioTrack : public AudioTrack, public MPEGStream {
+	public:
+		PS2AudioTrack(Common::SeekableReadStream *firstPacket);
+		~PS2AudioTrack();
+
+		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts);
+		StreamType getStreamType() const { return kStreamTypeAudio; }
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+	private:
+		Audio::QueuingAudioStream *_audStream;
+
+		enum {
+			PS2_PCM = 0x01,
+			PS2_ADPCM = 0x10
+		};
+
+		uint32 _channels;
+		uint32 _soundType;
+		uint32 _interleave;
+		bool _isFirstPacket;
+
+		byte *_blockBuffer;
+		uint32 _blockPos, _blockUsed;
+
+		uint32 calculateSampleCount(uint32 packetSize) const;
+	};
+
+	enum PrivateStreamType {
+		kPrivateStreamUnknown,
+		kPrivateStreamPS2Audio
+	};
+
 	bool addFirstVideoTrack();
 
 	int readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &dts);
@@ -194,6 +229,8 @@ private:
 
 	void parseProgramStreamMap(int length);
 	byte _psmESType[256];
+
+	PrivateStreamType detectPrivateStreamType(Common::SeekableReadStream *packet);
 
 	typedef Common::HashMap<int, MPEGStream *> StreamMap;
 	StreamMap _streamMap;
