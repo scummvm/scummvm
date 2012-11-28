@@ -219,7 +219,7 @@ private:
 	AVIHeader _header;
 
 	Common::SeekableReadStream *_fileStream;
-	bool _decodedHeader;
+	bool _decodedHeader, _foundMovieList;
 
 	Audio::Mixer::SoundType _soundType;
 

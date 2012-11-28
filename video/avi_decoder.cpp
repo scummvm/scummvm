@@ -64,8 +64,8 @@ namespace Video {
 #define ID_VEDT MKTAG('v','e','d','t')
 #define ID_IDX1 MKTAG('i','d','x','1')
 #define ID_STRD MKTAG('s','t','r','d')
-#define ID_00AM MKTAG('0','0','A','M')
 //#define ID_INFO MKTAG('I','N','F','O')
+#define ID_ISFT MKTAG('I','S','F','T')
 
 // Codec tags
 #define ID_RLE  MKTAG('R','L','E',' ')
@@ -75,6 +75,7 @@ namespace Video {
 #define ID_CVID MKTAG('c','v','i','d')
 #define ID_IV32 MKTAG('i','v','3','2')
 #define ID_DUCK MKTAG('D','U','C','K')
+#define ID_MPG2 MKTAG('m','p','g','2')
 
 static byte char2num(char c) {
 	c = tolower((byte)c);
@@ -91,6 +92,7 @@ static uint16 getStreamType(uint32 tag) {
 
 AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
 	_decodedHeader = false;
+	_foundMovieList = false;
 	_fileStream = 0;
 	memset(&_ixInfo, 0, sizeof(_ixInfo));
 	memset(&_header, 0, sizeof(_header));
@@ -137,6 +139,7 @@ void AVIDecoder::runHandle(uint32 tag) {
 	case ID_STRD: // Extra stream info, safe to ignore
 	case ID_VEDT: // Unknown, safe to ignore
 	case ID_JUNK: // Alignment bytes, should be ignored
+	case ID_ISFT: // Metadata, safe to ignore
 		{
 		uint32 junkSize = _fileStream->readUint32LE();
 		_fileStream->skip(junkSize + (junkSize & 1)); // Alignment
@@ -164,6 +167,13 @@ void AVIDecoder::handleList() {
 	uint32 curPos = _fileStream->pos();
 
 	debug(0, "Found LIST of type %s", tag2str(listType));
+
+	if (listType == ID_MOVI) {
+		// Found the 'movi' list
+		// We're done parsing everything
+		_foundMovieList = true;
+		return;
+	}
 
 	while ((_fileStream->pos() - curPos) < listSize)
 		runHandle(_fileStream->readUint32BE());
@@ -263,26 +273,24 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_fileStream = stream;
 	_decodedHeader = false;
+	_foundMovieList = false;
 
 	// Read chunks until we have decoded the header
-	while (!_decodedHeader)
+	while (!_decodedHeader && _fileStream->pos() < _fileStream->size())
 		runHandle(_fileStream->readUint32BE());
 
-	uint32 nextTag = _fileStream->readUint32BE();
-
-	// Throw out any JUNK section
-	if (nextTag == ID_JUNK) {
-		runHandle(ID_JUNK);
-		nextTag = _fileStream->readUint32BE();
+	if (_fileStream->pos() >= _fileStream->size()) {
+		warning("Failed to find AVI header");
+		return false;
 	}
 
-	// Ignore the 'movi' LIST
-	if (nextTag == ID_LIST) {
-		_fileStream->readUint32BE(); // Skip size
-		if (_fileStream->readUint32BE() != ID_MOVI)
-			error("Expected 'movi' LIST");
-	} else {
-		error("Expected 'movi' LIST");
+	// Then read until we find the movie list
+	while (!_foundMovieList && _fileStream->pos() < _fileStream->size())
+		runHandle(_fileStream->readUint32BE());
+
+	if (_fileStream->pos() >= _fileStream->size()) {
+		warning("Failed to find AVI 'movi' LIST");
+		return false;
 	}
 
 	return true;
@@ -294,6 +302,7 @@ void AVIDecoder::close() {
 	delete _fileStream;
 	_fileStream = 0;
 	_decodedHeader = false;
+	_foundMovieList = false;
 
 	delete[] _ixInfo.indices;
 	memset(&_ixInfo, 0, sizeof(_ixInfo));
@@ -428,6 +437,9 @@ Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 	case ID_DUCK:
 		return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
 #endif
+	case ID_MPG2:
+		warning("Unhandled MPEG-2 codec in AVI file");
+		break;
 	default:
 		warning("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}
