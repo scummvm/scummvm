@@ -372,8 +372,6 @@ public:
 	bool MUSICOFF;
 	bool VOICEOFF;
 	bool CENSURE;
-	int lItCounter;
-	int lOldItCounter;
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;
 	int last_sens;

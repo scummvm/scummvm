@@ -126,8 +126,6 @@ Globals::Globals() {
 	VOICEVOL = 6;
 	XSETMODE = 0;
 	XZOOM = 0;
-	lItCounter = 0;
-	lOldItCounter = 0;
 	g_old_anim = 0;
 	g_old_sens = 0;
 	g_old_sens2 = 0;

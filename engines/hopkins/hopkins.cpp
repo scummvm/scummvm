@@ -1475,8 +1475,6 @@ void HopkinsEngine::INIT_SYSTEM() {
 
 	_eventsManager.ofset_souris_x = 0;
 	_eventsManager.ofset_souris_y = 0;
-	_globals.lItCounter = 0;
-	_globals.lOldItCounter = 0;
 }
 
 void HopkinsEngine::INTRORUN() {
@@ -2071,11 +2069,12 @@ void HopkinsEngine::JOUE_FIN() {
 		_soundManager.DEL_SAMPLE(1);
 		_graphicsManager.LOAD_IMAGE("PLAN3");
 		_graphicsManager.FADE_INW();
-		_globals.lItCounter = 0;
+
+		_eventsManager.lItCounter = 0;
 		if (!_eventsManager.ESC_KEY) {
 			do
 				_eventsManager.CONTROLE_MES();
-			while (_globals.lItCounter < 2000 / _globals.vitesse && !_eventsManager.ESC_KEY);
+			while (_eventsManager.lItCounter < 2000 / _globals.vitesse && !_eventsManager.ESC_KEY);
 		}
 		_eventsManager.ESC_KEY = false;
 		_graphicsManager.FADE_OUTW();
