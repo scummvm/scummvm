@@ -147,7 +147,7 @@ void MoviePlayer::deinit() {
 	_videoFinished = true;
 }
 
-bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
+bool MoviePlayer::play(Common::String filename, bool looping, int x, int y, bool start) {
 	Common::StackLock lock(_frameMutex);
 	deinit();
 	_x = x;
@@ -163,8 +163,12 @@ bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 	init();
 	_internalSurface = NULL;
 
-	// Get the first frame immediately
-	timerCallback(this);
+	if (start) {
+		_videoDecoder->start();
+
+		// Get the first frame immediately
+		timerCallback(this);
+	}
 
 	return true;
 }
@@ -203,7 +207,7 @@ void MoviePlayer::restoreState(SaveGame *state) {
 	int y = state->readLESint32();
 
 	if (!videoFinished && !_fname.empty()) {
-		play(_fname.c_str(), videoLooping, x, y);
+		play(_fname.c_str(), videoLooping, x, y, false);
 	}
 	_frame = frame;
 	_movieTime = movieTime;
@@ -244,10 +248,6 @@ private:
 	void deinit() {}
 };
 #endif
-
-MoviePlayer *CreateSmushPlayer(bool demo) {
-	return new NullPlayer("SMUSH");
-}
 
 #ifndef USE_MPEG2
 MoviePlayer *CreateMpegPlayer() {

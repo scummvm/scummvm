@@ -66,7 +66,7 @@ public:
 	 * @see	init
 	 * @see stop
 	 */
-	virtual bool play(Common::String filename, bool looping, int x, int y);
+	virtual bool play(Common::String filename, bool looping, int x, int y, bool start = true);
 	virtual void stop();
 	virtual void pause(bool p);
 	virtual bool isPlaying() { return !_videoFinished; }

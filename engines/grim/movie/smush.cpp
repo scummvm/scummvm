@@ -22,21 +22,20 @@
 
 #include "engines/grim/movie/codecs/smush_decoder.h"
 #include "engines/grim/movie/smush.h"
-#include "engines/grim/movie/codecs/vima.h"
 
 #include "engines/grim/resource.h"
 #include "engines/grim/grim.h"
 
 namespace Grim {
 
-/*MoviePlayer *CreateSmushPlayer(bool demo) {
+MoviePlayer *CreateSmushPlayer(bool demo) {
 	return new SmushPlayer(demo);
-}*/
+}
 
 SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_smushDecoder = new SmushDecoder();
 	_videoDecoder = _smushDecoder;
-	_smushDecoder->setDemo(_demo);
+	//_smushDecoder->setDemo(_demo);
 }
 
 bool SmushPlayer::loadFile(Common::String filename) {
@@ -65,7 +64,7 @@ void SmushPlayer::handleFrame() {
 			deinit();
 			return;
 		} else {
-// 			getDecoder()->rewind(); // This doesnt handle if looping fails.
+ 			_smushDecoder->rewind(); // This doesnt handle if looping fails.
 		}
 	}
 }
@@ -79,8 +78,11 @@ void SmushPlayer::postHandleFrame() {
 
 void SmushPlayer::restoreState(SaveGame *state) {
 	MoviePlayer::restoreState(state);
+	Common::StackLock lock(_frameMutex);
 	if (isPlaying()) {
-		_smushDecoder->seekToTime((uint32)_movieTime); // Currently not fully working (out of synch)
+	//	_smushDecoder->seek((uint32)_movieTime); // Currently not fully working (out of synch)
+		_smushDecoder->start();
+		timerCallback(this);
 	}
 }
 
