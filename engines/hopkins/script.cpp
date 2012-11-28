@@ -213,41 +213,37 @@ LABEL_1141:
 				_vm->_objectsManager.PERI = v5;
 				if (_vm->_objectsManager.CH_TETE == 1) {
 					if (_vm->_globals.SAUVEGARDE->data[svField354] == 1
-					        && _vm->_globals.SAUVEGARDE->data[svField180]
-					        && _vm->_globals.SAUVEGARDE->data[svField181]
-					        && _vm->_globals.SAUVEGARDE->data[svField182]
-					        && _vm->_globals.SAUVEGARDE->data[svField183]) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->data[svField180];
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->data[svField181];
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->data[svField182];
+							&& _vm->_globals.SAUVEGARDE->cloneHopkins.xp && _vm->_globals.SAUVEGARDE->cloneHopkins.yp
+							&& _vm->_globals.SAUVEGARDE->cloneHopkins.field2 && _vm->_globals.SAUVEGARDE->cloneHopkins.location) {
+						
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->cloneHopkins.xp;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->cloneHopkins.yp;
+						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->cloneHopkins.field2;
 					}
 					if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
-					        && _vm->_globals.SAUVEGARDE->data[svField190]
-					        && _vm->_globals.SAUVEGARDE->data[svField191]
-					        && _vm->_globals.SAUVEGARDE->data[svField192]
-					        && _vm->_globals.SAUVEGARDE->data[svField193]) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->data[svField190];
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->data[svField191];
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->data[svField192];
+							&& _vm->_globals.SAUVEGARDE->samantha.xp && _vm->_globals.SAUVEGARDE->samantha.yp
+							&& _vm->_globals.SAUVEGARDE->samantha.field2 && _vm->_globals.SAUVEGARDE->samantha.location) {
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->samantha.xp;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->samantha.yp;
+						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->samantha.field2;
 					}
 					if (_vm->_globals.SAUVEGARDE->data[svField357] == 1
-					        && _vm->_globals.SAUVEGARDE->data[svField185]
-					        && _vm->_globals.SAUVEGARDE->data[svField186]
-					        && _vm->_globals.SAUVEGARDE->data[svField187]
-					        && _vm->_globals.SAUVEGARDE->data[svField188]) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->data[svField185];
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->data[svField186];
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->data[svField187];
+							&& _vm->_globals.SAUVEGARDE->realHopkins.xp && _vm->_globals.SAUVEGARDE->realHopkins.yp
+							&& _vm->_globals.SAUVEGARDE->realHopkins.field2 && _vm->_globals.SAUVEGARDE->realHopkins.location) {
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->realHopkins.xp;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->realHopkins.yp;
+						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->realHopkins.field2;
 					}
 				}
-				if (_vm->_globals.SAUVEGARDE->data[svField356] == 1 && _vm->_globals.SAUVEGARDE->data[svField188] == _vm->_globals.ECRAN) {
+				if (_vm->_globals.SAUVEGARDE->data[svField356] == 1 
+						&& _vm->_globals.SAUVEGARDE->realHopkins.location == _vm->_globals.ECRAN) {
 					_vm->_objectsManager.SPRITE(
 					    _vm->_globals.TETE,
-					    _vm->_globals.SAUVEGARDE->data[svField185],
-					    _vm->_globals.SAUVEGARDE->data[svField186],
+					    _vm->_globals.SAUVEGARDE->realHopkins.xp,
+					    _vm->_globals.SAUVEGARDE->realHopkins.yp,
 					    1,
 					    2,
-					    _vm->_globals.SAUVEGARDE->data[svField189],
+					    _vm->_globals.SAUVEGARDE->realHopkins.field4,
 					    0,
 					    34,
 					    190);
@@ -256,14 +252,14 @@ LABEL_1141:
 				}
 				if (_vm->_globals.SAUVEGARDE->data[svField357] == 1
 				        && _vm->_globals.SAUVEGARDE->data[svField355] == 1
-				        && _vm->_globals.SAUVEGARDE->data[svField193] == _vm->_globals.ECRAN) {
+				        && _vm->_globals.SAUVEGARDE->samantha.location == _vm->_globals.ECRAN) {
 					_vm->_objectsManager.SPRITE(
 					    _vm->_globals.TETE,
-					    _vm->_globals.SAUVEGARDE->data[svField190],
-					    _vm->_globals.SAUVEGARDE->data[svField191],
+					    _vm->_globals.SAUVEGARDE->samantha.xp,
+					    _vm->_globals.SAUVEGARDE->samantha.yp,
 					    1,
 					    3,
-					    _vm->_globals.SAUVEGARDE->data[svField194],
+					    _vm->_globals.SAUVEGARDE->samantha.field4,
 					    0,
 					    20,
 					    127);
