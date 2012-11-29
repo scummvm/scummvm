@@ -52,6 +52,8 @@ class Codec;
  *
  * Video decoder used in engines:
  *  - sci
+ *  - sword1
+ *  - sword2
  */
 class AVIDecoder : public VideoDecoder {
 public:
