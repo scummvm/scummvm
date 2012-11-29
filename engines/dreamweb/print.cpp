@@ -321,7 +321,7 @@ void DreamWebEngine::rollEndCreditsGameLost() {
 			waitForVSync();
 			multiDump(25, 20, 160, 160);
 
-			if (_lastHardKey == 1)
+			if (_lastHardKey == Common::KEYCODE_ESCAPE)
 				return;
 		}
 
@@ -331,7 +331,7 @@ void DreamWebEngine::rollEndCreditsGameLost() {
 			c = *string++;
 		} while (c != ':' && c != 0);
 
-		if (_lastHardKey == 1)
+		if (_lastHardKey == Common::KEYCODE_ESCAPE)
 			return;
 	}
 

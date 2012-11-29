@@ -194,7 +194,7 @@ void DreamWebEngine::madman(ReelRoutine &routine) {
 		if (newReelPointer == 66) {
 			++_vars._combatCount;
 
-			if (_lastHardKey == 1)	// ESC pressed, skip the mad man's speech
+			if (_lastHardKey == Common::KEYCODE_ESCAPE) // ESC pressed, skip the mad man's speech
 				_vars._combatCount = _speechCount = (hasSpeech() ? 65 : 63);
 
 			madmanText();

@@ -25,6 +25,7 @@
 
 #include "common/error.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/savefile.h"
@@ -420,7 +421,7 @@ public:
 	uint8 _addToRed;
 	uint8 _addToBlue;
 	uint16 _lastSoundReel;
-	uint8 _lastHardKey;
+	Common::KeyCode _lastHardKey;
 	uint16 _bufferIn;
 	uint16 _bufferOut;
 	uint8 _blinkFrame;

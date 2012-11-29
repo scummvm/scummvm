@@ -208,7 +208,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_addToRed = 0;
 	_addToBlue = 0;
 	_lastSoundReel = 0;
-	_lastHardKey = 0;
+	_lastHardKey = Common::KEYCODE_INVALID;
 	_bufferIn = 0;
 	_bufferOut = 0;
 	_blinkFrame = 23;
@@ -263,7 +263,7 @@ void DreamWebEngine::waitForVSync() {
 
 void DreamWebEngine::quit() {
 	_quitRequested = true;
-	_lastHardKey = 1;
+	_lastHardKey = Common::KEYCODE_ESCAPE;
 }
 
 void DreamWebEngine::processEvents() {
@@ -274,7 +274,7 @@ void DreamWebEngine::processEvents() {
 
 	_sound->soundHandler();
 	Common::Event event;
-	int softKey, hardKey;
+	int softKey;
 	while (_eventMan->pollEvent(event)) {
 		switch(event.type) {
 		case Common::EVENT_RTL:
@@ -309,27 +309,20 @@ void DreamWebEngine::processEvents() {
 				return; //do not pass ctrl + key to the engine
 			}
 
-			// Some parts of the ASM code uses the hardware key
-			// code directly. We don't have that code, so we fake
-			// it for the keys where it's needed and assume it's
-			// 0 (which is actually an invalid value, as far as I
-			// know) otherwise.
-
-			hardKey = 0;
+			// Some parts of the code uses the hardware key
+			// code directly.
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				hardKey = 1;
+				_lastHardKey = Common::KEYCODE_ESCAPE;
 				break;
 			case Common::KEYCODE_SPACE:
-				hardKey = 57;
+				_lastHardKey = Common::KEYCODE_SPACE;
 				break;
 			default:
-				hardKey = 0;
+				_lastHardKey = Common::KEYCODE_INVALID;
 				break;
 			}
-
-			_lastHardKey = hardKey;
 
 			// The rest of the keys are converted to ASCII. This
 			// is fairly restrictive, and eventually we may want

@@ -1056,7 +1056,7 @@ void DreamWebEngine::lockMon() {
 	// key because calling readkey() drains characters from the input
 	// buffer, we we want the user to be able to type ahead while the text
 	// is being printed.
-	if (_lastHardKey == 57) {
+	if (_lastHardKey == Common::KEYCODE_SPACE) {
 		// Clear the keyboard buffer. Otherwise the space that caused
 		// the pause will be read immediately unpause the game.
 		do {
@@ -1072,7 +1072,7 @@ void DreamWebEngine::lockMon() {
 		}
 		// Forget the last "hard" key, otherwise the space that caused
 		// the unpausing will immediately re-pause the game.
-		_lastHardKey = 0;
+		_lastHardKey = Common::KEYCODE_INVALID;
 		lockLightOff();
 	}
 }
