@@ -266,7 +266,7 @@ void DreamWebEngine::loadIntroRoom() {
 	_mapOffsetY = 16;
 	clearSprites();
 	_vars._throughDoor = 0;
-	_currentKey = '0';
+	_currentKey = 0;
 	_mainMode = 0;
 	clearWork();
 	_vars._newObs = 1;
