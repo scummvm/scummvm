@@ -36,6 +36,7 @@
 // Video Codecs
 #include "video/codecs/cinepak.h"
 #include "video/codecs/indeo3.h"
+#include "video/codecs/mpeg.h"
 #include "video/codecs/msvideo1.h"
 #include "video/codecs/msrle.h"
 #include "video/codecs/truemotion1.h"
@@ -437,9 +438,10 @@ Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 	case ID_DUCK:
 		return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
 #endif
+#ifdef USE_MPEG2
 	case ID_MPG2:
-		warning("Unhandled MPEG-2 codec in AVI file");
-		break;
+		return new MPEGDecoder();
+#endif
 	default:
 		warning("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}
