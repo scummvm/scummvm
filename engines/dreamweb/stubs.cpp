@@ -26,10 +26,6 @@
 
 namespace DreamWeb {
 
-// Keyboard buffer. _bufferIn and _bufferOut are indexes
-// into this, making it a ring buffer
-uint8 g_keyBuffer[16];
-
 const Room g_roomData[] = {
 	// location 0
 	{ "DREAMWEB.R00", // Ryan's apartment
@@ -2208,8 +2204,8 @@ void DreamWebEngine::readKey() {
 		return;
 	}
 
-	bufOut = (bufOut + 1) & 15; // The buffer has size 16
-	_currentKey = g_keyBuffer[bufOut];
+	bufOut = (bufOut + 1) % ARRAYSIZE(_keyBuffer);
+	_currentKey = _keyBuffer[bufOut];
 	_bufferOut = bufOut;
 }
 

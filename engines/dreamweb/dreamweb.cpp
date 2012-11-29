@@ -397,14 +397,14 @@ Common::String DreamWebEngine::getSavegameFilename(int slot) const {
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(2, "key pressed = %04x", ascii);
-	uint16 in = (_bufferIn + 1) & 0x0f;
+	uint16 in = (_bufferIn + 1) % ARRAYSIZE(_keyBuffer);
 	uint16 out = _bufferOut;
 	if (in == out) {
 		warning("keyboard buffer is full");
 		return;
 	}
 	_bufferIn = in;
-	DreamWeb::g_keyBuffer[in] = ascii;
+	_keyBuffer[in] = ascii;
 }
 
 void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {

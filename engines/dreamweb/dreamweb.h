@@ -89,10 +89,6 @@ const unsigned int kNumRoomTexts = 38;
 const unsigned int kNumFreeTexts = 82;
 const unsigned int kNumPersonTexts = 1026;
 
-// Keyboard buffer. data.word(kBufferin) and data.word(kBufferout) are indexes
-// into this, making it a ring buffer
-extern uint8 g_keyBuffer[16];
-
 // Engine Debug Flags
 enum {
 	kDebugAnimation = (1 << 0),
@@ -157,6 +153,12 @@ public:
 	const Common::String& getSpeechDirName() { return _speechDirName; }
 
 private:
+	// Keyboard buffer. _bufferIn and _bufferOut are indexes
+	// into this, making it a ring buffer
+	uint8 _keyBuffer[16];
+	uint16 _bufferIn;
+	uint16 _bufferOut;
+
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
 
@@ -422,8 +424,6 @@ public:
 	uint8 _addToBlue;
 	uint16 _lastSoundReel;
 	Common::KeyCode _lastHardKey;
-	uint16 _bufferIn;
-	uint16 _bufferOut;
 	uint8 _blinkFrame;
 	uint8 _blinkCount;
 	uint8 _reAssesChanges;
