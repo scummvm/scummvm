@@ -40,7 +40,8 @@ namespace Sword2 {
 enum DecoderType {
 	kVideoDecoderDXA = 0,
 	kVideoDecoderSMK = 1,
-	kVideoDecoderPSX = 2
+	kVideoDecoderPSX = 2,
+	kVideoDecoderMP2 = 3
 };
 
 struct MovieText {
