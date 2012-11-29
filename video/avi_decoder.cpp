@@ -91,16 +91,25 @@ static uint16 getStreamType(uint32 tag) {
 	return tag & 0xffff;
 }
 
-AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
+AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) : _frameRateOverride(0), _soundType(soundType) {
+	initCommon();
+}
+
+AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType)
+		: _frameRateOverride(frameRateOverride), _soundType(soundType) {
+	initCommon();
+}
+
+AVIDecoder::~AVIDecoder() {
+	close();
+}
+
+void AVIDecoder::initCommon() {
 	_decodedHeader = false;
 	_foundMovieList = false;
 	_fileStream = 0;
 	memset(&_ixInfo, 0, sizeof(_ixInfo));
 	memset(&_header, 0, sizeof(_header));
-}
-
-AVIDecoder::~AVIDecoder() {
-	close();
 }
 
 void AVIDecoder::runHandle(uint32 tag) {
@@ -214,6 +223,11 @@ void AVIDecoder::handleStreamHeader() {
 	uint32 startPos = _fileStream->pos();
 
 	if (sHeader.streamType == ID_VIDS) {
+		if (_frameRateOverride != 0) {
+			sHeader.rate = _frameRateOverride.getNumerator();
+			sHeader.scale = _frameRateOverride.getDenominator();
+		}
+
 		BitmapInfoHeader bmInfo;
 		bmInfo.size = _fileStream->readUint32LE();
 		bmInfo.width = _fileStream->readUint32LE();
