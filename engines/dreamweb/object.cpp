@@ -1099,4 +1099,131 @@ void DreamWebEngine::pickupConts(uint8 from, uint8 containerEx) {
 	}
 }
 
+void DreamWebEngine::incRyanPage() {
+	commandOnlyCond(31, 222);
+
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
+		return;
+
+	_vars._ryanPage = (_mouseX - (kInventx + 167)) / 18;
+
+	delPointer();
+	fillRyan();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamWebEngine::emergencyPurge() {
+	while (true) {
+		if (_vars._exFramePos + 4000 < kExframeslen) {
+			// Not near frame end
+			if (_vars._exTextPos + 400 < kExtextlen)
+				return;	// notneartextend
+		}
+
+		purgeAnItem();
+	}
+}
+
+void DreamWebEngine::purgeAnItem() {
+	const DynObject *extraObjects = _exData;
+
+	for (size_t i = 0; i < kNumexobjects; ++i) {
+		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255 &&
+			extraObjects[i].initialLocation != _realLocation) {
+			deleteExObject(i);
+			return;
+		}
+	}
+
+	for (size_t i = 0; i < kNumexobjects; ++i) {
+		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255) {
+			deleteExObject(i);
+			return;
+		}
+	}
+}
+
+void DreamWebEngine::dropError() {
+	_commandType = 255;
+	delPointer();
+	printMessage(76, 21, 56, 240, 240 & 1);
+	workToScreenM();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	_commandType = 255;
+	workToScreenM();
+}
+
+void DreamWebEngine::cantDrop() {
+	_commandType = 255;
+	delPointer();
+	printMessage(76, 21, 24, 240, 240 & 1);
+	workToScreenM();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	_commandType = 255;
+	workToScreenM();
+}
+
+void DreamWebEngine::examineInventory() {
+	commandOnlyCond(32, 249);
+
+	if (!(_mouseButton & 1))
+		return;
+
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	examIcon();
+	_pickUp = 0;
+	_invOpen = 2;
+	openInv();
+	workToScreenM();
+}
+
+void DreamWebEngine::openInv() {
+	_invOpen = 1;
+	printMessage(80, 58 - 10, 61, 240, (240 & 1));
+	fillRyan();
+	_commandType = 255;
+}
+
+void DreamWebEngine::pickupOb(uint8 command, uint8 pos) {
+	_lastInvPos = pos;
+	_objectType = kFreeObjectType;
+	_itemFrame = command;
+	_command = command;
+	//uint8 dummy;
+	//getAnyAd(&dummy, &dummy);	// was in the original source, seems useless here
+	transferToEx(command);
+}
+
+void DreamWebEngine::initialInv() {
+	if (_realLocation != 24)
+		return;
+
+	pickupOb(11, 5);
+	pickupOb(12, 6);
+	pickupOb(13, 7);
+	pickupOb(14, 8);
+	pickupOb(18, 0);
+	pickupOb(19, 1);
+	pickupOb(20, 9);
+	pickupOb(16, 2);
+	_vars._watchMode = 1;
+	_vars._reelToHold = 0;
+	_vars._endOfHoldReel = 6;
+	_vars._watchSpeed = 1;
+	_vars._speedCount = 1;
+	switchRyanOff();
+}
+
 } // End of namespace DreamWeb
