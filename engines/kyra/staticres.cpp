@@ -1514,7 +1514,7 @@ void KyraEngine_HoF::initInventoryButtonList() {
 		_inventoryButtons[i].buttonCallback = inventoryCallback;
 
 	_buttonList = &_inventoryButtons[0];
-	for (size_t i = 1; i < 15; ++i)
+	for (int i = 1; i < 15; ++i)
 		_buttonList = _gui->addButtonToList(_buttonList, &_inventoryButtons[i]);
 }
 
