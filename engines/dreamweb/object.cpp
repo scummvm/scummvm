@@ -1131,7 +1131,8 @@ void DreamWebEngine::purgeAnItem() {
 	const DynObject *extraObjects = _exData;
 
 	for (uint i = 0; i < kNumexobjects; ++i) {
-		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255 &&
+		if (extraObjects[i].mapad[0] == 0 &&
+		    (extraObjects[i].objId[0] == 255 || extraObjects[i].objId[0] == 2) &&
 			extraObjects[i].initialLocation != _realLocation) {
 			deleteExObject(i);
 			return;
@@ -1139,7 +1140,7 @@ void DreamWebEngine::purgeAnItem() {
 	}
 
 	for (uint i = 0; i < kNumexobjects; ++i) {
-		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255) {
+		if (extraObjects[i].mapad[0] == 0 && extraObjects[i].objId[0] == 255) {
 			deleteExObject(i);
 			return;
 		}
