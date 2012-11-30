@@ -904,18 +904,8 @@ void ComputerManager::NAME_SCORE() {
 		Score[5].name.setChar(curChar, strPos);
 		PRINT_HSCORE(ptr, 9 * strPos + 140, 78, curChar);
 
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
-		_vm->_eventsManager.VBL();
+		for (int idx = 0; idx < 12; ++idx)
+			_vm->_eventsManager.VBL();
 	}
 	Score[5].score = "         ";
 
