@@ -68,14 +68,14 @@ Common::String HopkinsEngine::generateSaveName(int slot) {
  * Returns true if it is currently okay to restore a game
  */
 bool HopkinsEngine::canLoadGameStateCurrently() {
-	return !_globals.SORTIE && !_globals.PLAN_FLAG;
+	return !_globals.SORTIE && !_globals.PLAN_FLAG && _eventsManager.souris_flag;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool HopkinsEngine::canSaveGameStateCurrently() {
-	return !_globals.SORTIE && !_globals.PLAN_FLAG;
+	return !_globals.SORTIE && !_globals.PLAN_FLAG && _eventsManager.souris_flag;
 }
 
 /**
