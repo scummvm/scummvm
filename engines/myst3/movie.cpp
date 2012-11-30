@@ -63,6 +63,7 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	uint language = ConfMan.getInt("audio_language");
 	_bink.setAudioTrack(language);
 	_bink.loadStream(binkStream);
+	_bink.start();
 
 	if (ConfMan.getBool("subtitles"))
 		_subtitles = Subtitles::create(_vm, id);
@@ -141,10 +142,12 @@ void Movie::drawOverlay() {
 void Movie::drawNextFrameToTexture() {
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
 
-	if (_texture)
-		_texture->update(frame);
-	else
-		_texture = _vm->_gfx->createTexture(frame);
+	if (frame) {
+		if (_texture)
+			_texture->update(frame);
+		else
+			_texture = _vm->_gfx->createTexture(frame);
+	}
 }
 
 Movie::~Movie() {
