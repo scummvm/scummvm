@@ -435,10 +435,23 @@ void DreamWebEngine::deleteExFrame(uint8 frameNum) {
 	_vars._exFramePos -= frameSize;
 
 	// Adjust all frame pointers pointing into the shifted data
-	for (unsigned int i = 0; i < 3*kNumexobjects; ++i) {
-		frame = &_exFrames._frames[i];
-		if (frame->ptr() >= startOff)
-			frame->setPtr(frame->ptr() - frameSize);
+	for (unsigned int i = 0; i < kNumexobjects; ++i) {
+		if (_exData[i].mapad[0] != 0xff) {
+			frame = &_exFrames._frames[3*i+0];
+			if (frame->ptr() >= startOff) {
+				frame->setPtr(frame->ptr() - frameSize);
+				assert(frame->ptr() + frame->width*frame->height <= _vars._exFramePos);
+			} else {
+				assert(frame->ptr() + frame->width*frame->height <= startOff);
+			}
+			frame = &_exFrames._frames[3*i+1];
+			if (frame->ptr() >= startOff) {
+				frame->setPtr(frame->ptr() - frameSize);
+				assert(frame->ptr() + frame->width*frame->height <= _vars._exFramePos);
+			} else {
+				assert(frame->ptr() + frame->width*frame->height <= startOff);
+			}
+		}
 	}
 }
 
