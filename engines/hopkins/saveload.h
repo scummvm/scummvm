@@ -64,6 +64,11 @@ public:
 	static bool readSavegameHeader(int slot, hopkinsSavegameHeader &header);
 	Common::Error save(int slot, const Common::String &saveName);
 	Common::Error restore(int slot);
+
+	/**
+	 * Converts a 16-bit thumbnail to 8 bit paletted using the currently active palette.
+	 */
+	void convertThumb16To8(Graphics::Surface *thumb16, Graphics::Surface *thumb8);
 };
 
 } // End of namespace Hopkins

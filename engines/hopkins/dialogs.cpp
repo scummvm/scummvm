@@ -653,7 +653,10 @@ void DialogsManager::LOAD_SAUVE(int a1) {
 
 	for (slotNumber = 1; slotNumber <= 6; ++slotNumber) {
 		if (_vm->_saveLoadManager.readSavegameHeader(slotNumber, header)) {
-			thumb = (byte *)header.thumbnail->pixels;
+			Graphics::Surface thumb8;
+			_vm->_saveLoadManager.convertThumb16To8(header.thumbnail, &thumb8);
+
+			thumb = (byte *)thumb8.pixels;
 
 			switch (slotNumber) {
 			case 1:
@@ -676,6 +679,8 @@ void DialogsManager::LOAD_SAUVE(int a1) {
 				break;
 			}
 			
+			thumb8.free();
+			header.thumbnail->free();
 			delete header.thumbnail;
 		}
 	}

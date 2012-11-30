@@ -225,12 +225,30 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 	int w = _vm->_graphicsManager.Reel_Reduc(SCREEN_WIDTH, REDUCE_AMOUNT);
 	int h = _vm->_graphicsManager.Reel_Reduc(SCREEN_HEIGHT - 40, REDUCE_AMOUNT); 
 
+	Graphics::Surface thumb8;
+	thumb8.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+
+	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, (byte *)thumb8.pixels, 
+		_vm->_eventsManager.start_x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
+
+	// Convert the 8-bit pixel to 16 bit surface
 	s->create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));	
 
-	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, (byte *)s->pixels, 
-		_vm->_eventsManager.start_x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
-	_vm->_graphicsManager.INIT_TABLE(45, 80, _vm->_graphicsManager.Palette);
-//	_vm->_graphicsManager.Trans_bloc2((byte *)s->pixels, _vm->_graphicsManager.TABLE_COUL, 11136);
+	const byte *srcP = (const byte *)thumb8.pixels;
+	uint16 *destP = (uint16 *)s->pixels;
+
+	for (int yp = 0; yp < h; ++yp) {
+		// Copy over the line, using the source pixels as lookups into the pixels palette
+		const byte *lineSrcP = srcP;
+		uint16 *lineDestP = destP;
+
+		for (int xp = 0; xp < w; ++xp)
+			*lineDestP++ = *(uint16 *)&_vm->_graphicsManager.PAL_PIXELS[*lineSrcP++ * 2];
+
+		// Move to the start of the next line
+		srcP += w;
+		destP += w;
+	}
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
@@ -249,6 +267,47 @@ void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLoca
 	s.syncAsSint16LE(item.field2);
 	s.syncAsSint16LE(item.location);
 	s.syncAsSint16LE(item.field4);
+}
+
+void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Surface *thumb8) {
+	thumb8->create(thumb16->w, thumb16->h, Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
+	uint16 palette[PALETTE_SIZE];
+	for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex)
+		palette[palIndex] = READ_LE_UINT16(&_vm->_graphicsManager.PAL_PIXELS[palIndex * 2]);
+
+	const uint16 *srcP = (const uint16 *)thumb16->pixels;
+	byte *destP = (byte *)thumb8->pixels;
+
+	for (int yp = 0; yp < thumb16->h; ++yp) {
+		const uint16 *lineSrcP = srcP;
+		byte *lineDestP = destP;
+
+		for (int xp = 0; xp < thumb16->w; ++xp) {
+			byte r, g, b;
+			pixelFormat16.colorToRGB(*lineSrcP++, r, g, b);
+
+			// Scan the palette for the closest match
+			int difference = 99999, foundIndex = 0;
+			for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex) {
+				byte rCurrent, gCurrent, bCurrent;
+				pixelFormat16.colorToRGB(palette[palIndex], rCurrent, gCurrent, bCurrent);
+				
+				int diff = ABS((int)r - (int)rCurrent) + ABS((int)g - (int)gCurrent) + ABS((int)b - (int)bCurrent);
+				if (diff < difference) {
+					difference = diff;
+					foundIndex = palIndex;
+				}
+			}
+
+			*lineDestP++ = foundIndex;
+		}
+
+		// Move to the start of the next line
+		srcP += thumb16->w;
+		destP += thumb16->w;
+	}
 }
 
 } // End of namespace Hopkins
