@@ -305,7 +305,7 @@ public:
 		Common::String saveDesc;
 		SaveStateList saveList;
 		int line = 1;
-		for (size_t i = 0; i < slots.size(); i++) {
+		for (uint i = 0; i < slots.size(); i++) {
 			// ignore lines corresponding to unused saveslots
 			for (; line < slots[i]; line++)
 				epa->readLine();
