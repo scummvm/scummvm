@@ -2705,11 +2705,20 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 			for (int in = -1; in == -1 && !_vm->shouldQuit();) {
 				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 				in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, 2, 0, 8);
+				if (in == -1) {
+					useSlot = false;
+					break;
+				}
+
 				if (!strlen(_saveSlotStringsTemp[slot])) {
 					messageDialogue(11, 54, 6);
 					in = -1;
 				}
-			};
+			}
+
+			if (!useSlot) {
+				continue;
+			}
 
 			_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 			_screen->printShadedText(_saveSlotStringsTemp[slot], (x + 1) << 3, fy, 15, 0);
