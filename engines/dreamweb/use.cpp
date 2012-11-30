@@ -131,7 +131,7 @@ void DreamWebEngine::useRoutine() {
 	uint8 dummy;
 	void *obj = getAnyAd(&dummy, &dummy);
 
-	for (size_t i = 0; i < sizeof(kUseList)/sizeof(UseListEntry); ++i) {
+	for (uint i = 0; i < ARRAYSIZE(kUseList); ++i) {
 		const UseListEntry &entry = kUseList[i];
 		if (objectMatches(obj, entry.id)) {
 			(this->*entry.callback)();

@@ -373,7 +373,7 @@ void DreamWebEngine::lockLightOff() {
 }
 
 void DreamWebEngine::turnOnPower() {
-	for (size_t i = 0; i < 3; ++i) {
+	for (uint i = 0; i < 3; ++i) {
 		powerLightOn();
 		hangOn(30);
 		powerLightOff();

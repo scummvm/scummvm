@@ -433,7 +433,7 @@ void DreamWebEngine::folderExit() {
 void DreamWebEngine::showLeftPage() {
 	showFrame(_folderGraphics2, 0, 12, 3, 0);
 	uint16 y = 12+5;
-	for (size_t i = 0; i < 9; ++i) {
+	for (uint i = 0; i < 9; ++i) {
 		showFrame(_folderGraphics2, 0, y, 4, 0);
 		y += 16;
 	}
@@ -444,7 +444,7 @@ void DreamWebEngine::showLeftPage() {
 	uint8 pageIndex = _folderPage - 2;
 	const uint8 *string = getTextInFile1(pageIndex * 2);
 	y = 48;
-	for (size_t i = 0; i < 2; ++i) {
+	for (uint i = 0; i < 2; ++i) {
 		uint8 lastChar;
 		do {
 			lastChar = printDirect(&string, 2, &y, 140, false);
@@ -455,8 +455,8 @@ void DreamWebEngine::showLeftPage() {
 	_charShift = 0;
 	_lineSpacing = 10;
 	uint8 *bufferToSwap = workspace() + (48*kScreenwidth)+2;
-	for (size_t i = 0; i < 120; ++i) {
-		for (size_t j = 0; j < 65; ++j) {
+	for (uint i = 0; i < 120; ++i) {
+		for (uint j = 0; j < 65; ++j) {
 			SWAP(bufferToSwap[j], bufferToSwap[130 - j]);
 		}
 		bufferToSwap += kScreenwidth;
@@ -466,7 +466,7 @@ void DreamWebEngine::showLeftPage() {
 void DreamWebEngine::showRightPage() {
 	showFrame(_folderGraphics2, 143, 12, 0, 0);
 	uint16 y = 12+37;
-	for (size_t i = 0; i < 7; ++i) {
+	for (uint i = 0; i < 7; ++i) {
 		showFrame(_folderGraphics2, 143, y, 1, 0);
 		y += 16;
 	}
@@ -477,7 +477,7 @@ void DreamWebEngine::showRightPage() {
 	uint8 pageIndex = _folderPage - 1;
 	const uint8 *string = getTextInFile1(pageIndex * 2);
 	y = 48;
-	for (size_t i = 0; i < 2; ++i) {
+	for (uint i = 0; i < 2; ++i) {
 		uint8 lastChar;
 		do {
 			lastChar = printDirect(&string, 152, &y, 140, false);

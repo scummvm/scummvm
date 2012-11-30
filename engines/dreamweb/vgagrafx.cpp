@@ -334,8 +334,8 @@ void DreamWebEngine::zoom() {
 	uint16 dstOffset = (kZoomy + 4) * kScreenwidth + (kZoomx + 5);
 	const uint8 *src = workspace() + srcOffset;
 	uint8 *dst = workspace() + dstOffset;
-	for (size_t i = 0; i < 20; ++i) {
-		for (size_t j = 0; j < 23; ++j) {
+	for (uint i = 0; i < 20; ++i) {
+		for (uint j = 0; j < 23; ++j) {
 			uint8 v = src[j];
 			dst[2*j+0] = v;
 			dst[2*j+1] = v;
@@ -379,7 +379,7 @@ void DreamWebEngine::loadPalFromIFF() {
 
 	const uint8 *src = buf + 0x30;
 	uint8 *dst = _mainPal;
-	for (size_t i = 0; i < 256*3; ++i) {
+	for (uint i = 0; i < 256*3; ++i) {
 		uint8 c = src[i] / 4;
 		if (_brightPalette) {
 			if (c) {

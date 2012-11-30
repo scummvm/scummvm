@@ -1142,7 +1142,7 @@ void DreamWebEngine::plotReel(uint16 &reelPointer) {
 		reel += 8;
 	}
 
-	for (size_t i = 0; i < 8; ++i) {
+	for (uint i = 0; i < 8; ++i) {
 		if (reel->frame() != 0xffff)
 			showReelFrame(reel);
 		++reel;
@@ -1241,7 +1241,7 @@ const uint8 *DreamWebEngine::findObName(uint8 type, uint8 index) {
 
 void DreamWebEngine::copyName(uint8 type, uint8 index, uint8 *dst) {
 	const uint8 *src = findObName(type, index);
-	size_t i;
+	uint i;
 	for (i = 0; i < 28; ++i) {
 		char c = src[i];
 		if (c == ':')
@@ -1371,7 +1371,7 @@ void DreamWebEngine::doChange(uint8 index, uint8 value, uint8 type) {
 }
 
 void DreamWebEngine::deleteTaken() {
-	for (size_t i = 0; i < kNumexobjects; ++i) {
+	for (uint i = 0; i < kNumexobjects; ++i) {
 		uint8 location = _exData[i].initialLocation;
 		if (location == _realLocation) {
 			uint8 index = _exData[i].index;
@@ -1382,7 +1382,7 @@ void DreamWebEngine::deleteTaken() {
 
 uint8 DreamWebEngine::getExPos() {
 	DynObject *objects = _exData;
-	for (size_t i = 0; i < kNumexobjects; ++i) {
+	for (uint i = 0; i < kNumexobjects; ++i) {
 		if (objects[i].mapad[0] == 0xff)
 			return i;
 	}
@@ -1537,7 +1537,7 @@ void DreamWebEngine::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWid
 
 bool DreamWebEngine::objectMatches(void *object, const char *id) {
 	const char *objId = (const char *)object + 12; // whether it is a DynObject or a SetObject
-	for (size_t i = 0; i < 4; ++i) {
+	for (uint i = 0; i < 4; ++i) {
 		if (id[i] != objId[i] + 'A')
 			return false;
 	}

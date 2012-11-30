@@ -31,7 +31,7 @@ void DreamWebEngine::showRyanPage() {
 
 void DreamWebEngine::findAllRyan() {
 	memset(_ryanInvList, 0xff, sizeof(_ryanInvList));
-	for (size_t i = 0; i < kNumexobjects; ++i) {
+	for (uint i = 0; i < kNumexobjects; ++i) {
 		const DynObject *extra = getExAd(i);
 		if (extra->mapad[0] != kExObjectType)
 			continue;
@@ -47,8 +47,8 @@ void DreamWebEngine::findAllRyan() {
 void DreamWebEngine::fillRyan() {
 	ObjectRef *inv = &_ryanInvList[_vars._ryanPage * 10];
 	findAllRyan();
-	for (size_t i = 0; i < 2; ++i) {
-		for (size_t j = 0; j < 5; ++j) {
+	for (uint i = 0; i < 2; ++i) {
+		for (uint j = 0; j < 5; ++j) {
 			obToInv(inv->_index, inv->_type, kInventx + j * kItempicsize, kInventy + i * kItempicsize);
 			++inv;
 		}
@@ -1130,7 +1130,7 @@ void DreamWebEngine::emergencyPurge() {
 void DreamWebEngine::purgeAnItem() {
 	const DynObject *extraObjects = _exData;
 
-	for (size_t i = 0; i < kNumexobjects; ++i) {
+	for (uint i = 0; i < kNumexobjects; ++i) {
 		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255 &&
 			extraObjects[i].initialLocation != _realLocation) {
 			deleteExObject(i);
@@ -1138,7 +1138,7 @@ void DreamWebEngine::purgeAnItem() {
 		}
 	}
 
-	for (size_t i = 0; i < kNumexobjects; ++i) {
+	for (uint i = 0; i < kNumexobjects; ++i) {
 		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255) {
 			deleteExObject(i);
 			return;

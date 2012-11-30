@@ -110,7 +110,7 @@ void DreamWebEngine::checkDest(const RoomPaths *roomsPaths) {
 	const PathSegment *segments = roomsPaths->segments;
 	const uint8 tmp = _mansPath << 4;
 	uint8 destination = _destination;
-	for (size_t i = 0; i < 24; ++i) {
+	for (uint i = 0; i < 24; ++i) {
 		if ((segments[i].b0 & 0xf0) == tmp &&
 		    (segments[i].b0 & 0x0f) == _destination) {
 			_destination = segments[i].b1 & 0x0f;
