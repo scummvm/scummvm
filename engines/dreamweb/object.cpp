@@ -1129,24 +1129,25 @@ void DreamWebEngine::incRyanPage() {
 }
 
 void DreamWebEngine::emergencyPurge() {
-	while (true) {
-		if (_vars._exFramePos + 4000 < kExframeslen) {
-			// Not near frame end
-			if (_vars._exTextPos + 400 < kExtextlen)
-				return;	// notneartextend
-		}
+	debug(2, "Ex memory: frames %d/%d, text %d/%d", _vars._exFramePos, kExframeslen, _vars._exTextPos, kExtextlen);
 
+	while (_vars._exFramePos + 4000 >= kExframeslen ||
+		   _vars._exTextPos + 400 >= kExtextlen)
+	{
 		purgeAnItem();
+		debug(2, "Ex memory after purging: frames %d/%d, text %d/%d", _vars._exFramePos, kExframeslen, _vars._exTextPos, kExtextlen);
 	}
 }
 
 void DreamWebEngine::purgeAnItem() {
 	const DynObject *extraObjects = _exData;
 
+
 	for (uint i = 0; i < kNumexobjects; ++i) {
 		if (extraObjects[i].mapad[0] == 0 &&
 		    (extraObjects[i].objId[0] == 255 || extraObjects[i].objId[0] == 2) &&
 			extraObjects[i].initialLocation != _realLocation) {
+			debug(1, "Purging ex object %d", i);
 			deleteExObject(i);
 			return;
 		}
@@ -1154,10 +1155,13 @@ void DreamWebEngine::purgeAnItem() {
 
 	for (uint i = 0; i < kNumexobjects; ++i) {
 		if (extraObjects[i].mapad[0] == 0 && extraObjects[i].objId[0] == 255) {
+			debug(1, "Purging ex object %d", i);
 			deleteExObject(i);
 			return;
 		}
 	}
+
+	error("Out of Ex object memory");
 }
 
 void DreamWebEngine::dropError() {
