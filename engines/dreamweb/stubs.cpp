@@ -719,7 +719,6 @@ void DreamWebEngine::dreamweb() {
 		showGun();
 		fadeScreenDown();
 		hangOn(100);
-
 	}
 }
 
@@ -961,7 +960,6 @@ void DreamWebEngine::useTimedText() {
 }
 
 void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
-
 	if (hasSpeech() && voiceIndex != 0) {
 		_speechLoaded = _sound->loadSpeech('T', voiceIndex, 'T', textIndex);
 		if (_speechLoaded)
@@ -2134,7 +2132,6 @@ void DreamWebEngine::workToScreenM() {
 }
 
 void DreamWebEngine::atmospheres() {
-
 	const Atmosphere *a = &g_atmosphereList[0];
 
 	for (; a->_location != 255; ++a) {
@@ -2416,10 +2413,6 @@ void DreamWebEngine::errorMessage3() {
 	delPointer();
 }
 
-void DreamWebEngine::reExFromOpen() {
-
-}
-
 void DreamWebEngine::putBackObStuff() {
 	createPanel();
 	showPanel();
@@ -2455,9 +2448,6 @@ void DreamWebEngine::examineInventory() {
 	_invOpen = 2;
 	openInv();
 	workToScreenM();
-}
-
-void DreamWebEngine::middlePanel() {
 }
 
 void DreamWebEngine::underTextLine() {
@@ -2570,7 +2560,6 @@ void DreamWebEngine::madmanRun() {
 		_mouseButton != _oldButton)
 		_vars._lastWeapon = 8;
 }
-
 
 void DreamWebEngine::decide() {
 	setMode();
@@ -2686,7 +2675,6 @@ void DreamWebEngine::getBack1() {
 		blank();
 		return;
 	}
-
 
 	commandOnlyCond(26, 202);
 
@@ -3013,7 +3001,6 @@ void DreamWebEngine::incRyanPage() {
 	showPointer();
 	workToScreen();
 	delPointer();
-
 }
 
 void DreamWebEngine::emergencyPurge() {

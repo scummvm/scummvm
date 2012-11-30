@@ -752,7 +752,6 @@ public:
 	void showRyanPage();
 	void switchRyanOn();
 	void switchRyanOff();
-	void middlePanel();
 	void showDiary();
 	void readMouse();
 	uint16 readMouseState();
@@ -884,7 +883,6 @@ public:
 	void obsThatDoThings();
 	void describeOb();
 	void putBackObStuff();
-	void reExFromOpen();
 	void showDiaryPage();
 	void showDiaryKeys();
 	void dumpDiaryKeys();

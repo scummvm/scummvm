@@ -875,7 +875,7 @@ void DreamWebEngine::useOpened() {
 
 void DreamWebEngine::outOfOpen() {
 	if (_openedOb == 255)
-		return;	// cannot use opened object
+		return; // cannot use opened object
 
 	ObjectRef objectId = findOpenPos();
 
@@ -892,13 +892,10 @@ void DreamWebEngine::outOfOpen() {
 	}
 
 	if (_mouseButton == _oldButton)
-		return;	// notletgo4
+		return; // notletgo4
 
-	if (_mouseButton != 1) {
-		if (_mouseButton == 2)
-			reExFromOpen();
+	if (_mouseButton != 1)
 		return;
-	}
 
 	delPointer();
 	_pickUp = 1;
