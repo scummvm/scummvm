@@ -873,7 +873,7 @@ int ComputerManager::HIGHT_SCORE() {
 		        && (uint16)(v0 - 176) <= 0xDu)
 			v3 = 2;
 		_vm->_eventsManager.VBL();
-	} while (!v3);
+	} while (!v3 && !_vm->shouldQuit());
 	_vm->_eventsManager.MOUSE_OFF();
 	_vm->_graphicsManager.FADE_OUT_CASSE();
 	_vm->_globals.LIBERE_FICHIER(ptr);
