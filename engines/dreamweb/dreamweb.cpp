@@ -416,7 +416,7 @@ void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
 
 void DreamWebEngine::setPalette(const uint8 *data, uint start, uint count) {
 	assert(start + count <= 256);
-	uint8 fixed[768];
+	uint8 fixed[3*256];
 	for (uint i = 0; i < count * 3; ++i) {
 		fixed[i] = data[i] << 2;
 	}
@@ -424,10 +424,10 @@ void DreamWebEngine::setPalette(const uint8 *data, uint start, uint count) {
 }
 
 void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int h) {
-	if (y + h > 200)
-		h = 200 - y;
-	if (x + w > 320)
-		w = 320 - x;
+	if (y + h > (int)kScreenheight)
+		h = kScreenheight - y;
+	if (x + w > (int)kScreenwidth)
+		w = kScreenwidth - x;
 	if (h <= 0 || w <= 0)
 		return;
 	_system->copyRectToScreen(src, pitch, x, y, w, h);

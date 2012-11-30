@@ -103,7 +103,6 @@ void DreamWebEngine::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 d
 // Note: isItRight comes from use.asm, but is only used by enterCode(),
 // so we place it here.
 bool DreamWebEngine::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
-
 	return digit0 == _pressList[0] && digit1 == _pressList[1]
 		&& digit2 == _pressList[2] && digit3 == _pressList[3];
 }
@@ -455,12 +454,12 @@ void DreamWebEngine::showLeftPage() {
 	_kerning = 0;
 	_charShift = 0;
 	_lineSpacing = 10;
-	uint8 *bufferToSwap = workspace() + (48*320)+2;
+	uint8 *bufferToSwap = workspace() + (48*kScreenwidth)+2;
 	for (size_t i = 0; i < 120; ++i) {
 		for (size_t j = 0; j < 65; ++j) {
 			SWAP(bufferToSwap[j], bufferToSwap[130 - j]);
 		}
-		bufferToSwap += 320;
+		bufferToSwap += kScreenwidth;
 	}
 }
 

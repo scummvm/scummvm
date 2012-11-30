@@ -25,7 +25,7 @@
 namespace DreamWeb {
 
 void DreamWebEngine::doBlocks() {
-	uint16 dstOffset = _mapAdY * 320 + _mapAdX;
+	uint16 dstOffset = _mapAdY * kScreenwidth + _mapAdX;
 	uint16 mapOffset = _mapY * kMapWidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 	uint8 *dstBuffer = workspace() + dstOffset;
@@ -34,26 +34,26 @@ void DreamWebEngine::doBlocks() {
 		for (size_t j = 0; j < 11; ++j) {
 			uint16 blockType = mapData[j];
 			if (blockType != 0) {
-				uint8 *dst = dstBuffer + i * 320 * 16 + j * 16;
+				uint8 *dst = dstBuffer + i * kScreenwidth * 16 + j * 16;
 				const uint8 *block = _backdropBlocks + blockType * 256;
 				for (size_t k = 0; k < 4; ++k) {
 					memcpy(dst, block, 16);
 					block += 16;
-					dst += 320;
+					dst += kScreenwidth;
 				}
 				for (size_t k = 0; k < 12; ++k) {
 					memcpy(dst, block, 16);
 					memset(dst + 16, 0xdf, 4);
 					block += 16;
-					dst += 320;
+					dst += kScreenwidth;
 				}
 				dst += 4;
 				memset(dst, 0xdf, 16);
-				dst += 320;
+				dst += kScreenwidth;
 				memset(dst, 0xdf, 16);
-				dst += 320;
+				dst += kScreenwidth;
 				memset(dst, 0xdf, 16);
-				dst += 320;
+				dst += kScreenwidth;
 				memset(dst, 0xdf, 16);
 			}
 		}
