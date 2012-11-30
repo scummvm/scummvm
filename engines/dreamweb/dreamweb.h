@@ -64,6 +64,7 @@ const unsigned int kMapHeight = 60;
 const unsigned int kLengthOfMap = kMapWidth * kMapHeight;
 const unsigned int kNumExObjects = 114;
 const unsigned int kScreenwidth = 320;
+const unsigned int kScreenheight = 200;
 const unsigned int kDiaryx = (68+24);
 const unsigned int kDiaryy = (48+12);
 const unsigned int kInventx = 80;
