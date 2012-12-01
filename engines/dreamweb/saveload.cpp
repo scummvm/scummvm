@@ -574,6 +574,14 @@ void DreamWebEngine::savePosition(unsigned int slot, const char *descbuf) {
 	delete outSaveFile;
 }
 
+
+// Utility struct for a savegame sanity check in loadPosition
+struct FrameExtent {
+	uint16 start;
+	uint16 length;
+	bool operator<(const struct FrameExtent& other) const { return start<other.start; }
+};
+
 void DreamWebEngine::loadPosition(unsigned int slot) {
 	_timeCount = 0;
 	clearChanges();
@@ -653,6 +661,42 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 	}
 
 	delete inSaveFile;
+
+
+	// Do a sanity check on exFrames data to detect exFrames corruption
+	// caused by a (now fixed) bug in emergencyPurge. See bug #3591088.
+	// Gather the location of frame data of all used ex object frames.
+	Common::List<FrameExtent> flist;
+	for (unsigned int i = 0; i < kNumexobjects; ++i) {
+		if (_exData[i].mapad[0] != 0xff) {
+			FrameExtent fe;
+			Frame *frame = &_exFrames._frames[3*i+0];
+			fe.start = frame->ptr();
+			fe.length = frame->width * frame->height;
+			flist.push_back(fe);
+
+			frame = &_exFrames._frames[3*i+1];
+			fe.start = frame->ptr();
+			fe.length = frame->width * frame->height;
+			flist.push_back(fe);
+		}
+	}
+	// ...and check if the frames overlap.
+	Common::sort(flist.begin(), flist.end(), Common::Less<FrameExtent>());
+	Common::List<FrameExtent>::const_iterator iter;
+	uint16 curEnd = 0;
+	for (iter = flist.begin(); iter != flist.end(); ++iter) {
+		if (iter->start < curEnd)
+			error("exFrames data corruption in savegame");
+		curEnd = iter->start + iter->length;
+	}
+	if (curEnd > _vars._exFramePos) {
+		if (curEnd > kExframeslen)
+			error("exFrames data corruption in savegame");
+		warning("Fixing up exFramePos");
+		_vars._exFramePos = curEnd;
+	}
+	// (end of sanity check)
 }
 
 // Count number of save files, and load their descriptions into _saveNames
