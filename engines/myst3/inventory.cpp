@@ -284,6 +284,7 @@ DragItem::DragItem(Myst3Engine *vm, uint id):
 	_movieStream = movieDesc->getData();
 	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	_bink.loadStream(_movieStream);
+	_bink.start();
 
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
 	_texture = _vm->_gfx->createTexture(frame);

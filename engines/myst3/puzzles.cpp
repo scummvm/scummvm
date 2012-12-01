@@ -1517,6 +1517,7 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 	Video::BinkDecoder bink;
 	bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	bink.loadStream(movieStream);
+	bink.start();
 
 	for (uint i = 0; i < 1024; i += 256)
 		for (uint j = 0; j < 1024; j += 256) {
@@ -1542,6 +1543,7 @@ void Puzzles::projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y) {
 	Video::BinkDecoder bink;
 	bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	bink.loadStream(movieStream);
+	bink.start();
 
 	const Graphics::Surface *frame = bink.decodeNextFrame();
 	copySurfaceRect(_vm->_projectorBackground, Common::Point(x, y), frame);

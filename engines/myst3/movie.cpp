@@ -61,8 +61,8 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	Common::MemoryReadStream *binkStream = binkDesc->getData();
 	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	uint language = ConfMan.getInt("audio_language");
-	_bink.setAudioTrack(language);
 	_bink.loadStream(binkStream);
+	_bink.setAudioTrack(language);
 	_bink.start();
 
 	if (ConfMan.getBool("subtitles"))
@@ -225,6 +225,7 @@ void ScriptedMovie::update() {
 					|| _bink.getCurFrame() < _startFrame
 					|| _bink.endOfVideo()) {
 				_bink.seekToFrame(_startFrame);
+				_isLastFrame = false;
 			}
 
 			if (!_scriptDriven)
@@ -255,7 +256,7 @@ void ScriptedMovie::update() {
 			bool complete = false;
 
 			if (_isLastFrame) {
-				_isLastFrame = 0;
+				_isLastFrame = false;
 
 				if (_loop) {
 					_bink.seekToFrame(_startFrame);
