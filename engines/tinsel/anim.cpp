@@ -189,7 +189,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 		default:	// must be an actual animation frame handle
 
 			// set objects new animation frame
-			pAnim->pObject->hShape = FROM_LE_32(pAni[pAnim->scriptIndex].hFrame);
+			pAnim->pObject->hShape = FROM_32(pAni[pAnim->scriptIndex].hFrame);
 
 			// re-shape the object
 			MultiReshape(pAnim->pObject);

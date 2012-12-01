@@ -81,7 +81,7 @@ static void PokeInPalette(SCNHANDLE hMulFrame) {
 		pFrame = (const FRAME *)LockMem(hMulFrame);
 
 		// get pointer to image
-		pim = (IMAGE *)LockMem(READ_LE_UINT32(pFrame));	// handle to image
+		pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
 
 		pim->hImgPal = TO_LE_32(BgPal());
 	}
@@ -451,10 +451,10 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	_ctx->pfreel = &pfilm->reels[ppi->column];
 
 	// Get the MULTI_INIT structure
-	pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(_ctx->pfreel->mobj));
+	pmi = (const MULTI_INIT *)LockMem(FROM_32(_ctx->pfreel->mobj));
 
 	// Save actor's ID
-	_ctx->reelActor = (int32)FROM_LE_32(pmi->mulID);
+	_ctx->reelActor = (int32)FROM_32(pmi->mulID);
 
 	/**** New (experimental? bit 5/1/95 ****/
 	if (!TinselV0 && !actorAlive(_ctx->reelActor))
@@ -488,7 +488,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 		return;
 
 	// Poke in the background palette
-	PokeInPalette(FROM_LE_32(pmi->hMulFrame));
+	PokeInPalette(FROM_32(pmi->hMulFrame));
 
 	// Set up and insert the multi-object
 	_ctx->pPlayObj = MultiInitObject(pmi);
@@ -534,7 +534,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	if (ppi->actorid == 0 && !actorAlive(_ctx->reelActor))
 		_ctx->lifeNoMatter = true;
 
-	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj,  FROM_LE_32(_ctx->pfreel->script), ppi->speed);
+	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj,  FROM_32(_ctx->pfreel->script), ppi->speed);
 
 	// If first column, set Z position as per
 	// Otherwise, column 0's + column number
@@ -952,10 +952,10 @@ void NewestFilm(SCNHANDLE film, const FREEL *reel) {
 	const MULTI_INIT *pmi;		// MULTI_INIT structure
 
 	// Get the MULTI_INIT structure
-	pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(reel->mobj));
+	pmi = (const MULTI_INIT *)LockMem(FROM_32(reel->mobj));
 
-	if (!TinselV2 || ((int32)FROM_LE_32(pmi->mulID) != -2))
-		SetActorLatestFilm((int32)FROM_LE_32(pmi->mulID), film);
+	if (!TinselV2 || ((int32)FROM_32(pmi->mulID) != -2))
+		SetActorLatestFilm((int32)FROM_32(pmi->mulID), film);
 }
 
 // *******************************************************
@@ -988,7 +988,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 	ppi.y = y;
 	ppi.z = 0;
 	ppi.bRestore = false;
-	ppi.speed = (ONE_SECOND / FROM_LE_32(pFilm->frate));
+	ppi.speed = (ONE_SECOND / FROM_32(pFilm->frate));
 	ppi.actorid = actorid;
 	ppi.splay = splay;
 	ppi.bTop = bTop;
@@ -997,7 +997,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 	ppi.myescEvent = myescEvent;
 
 	// Start display process for each reel in the film
-	for (int i = FROM_LE_32(pFilm->numreels) - 1; i >= 0; i--) {
+	for (int i = FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
 		NewestFilm(hFilm, &pFilm->reels[i]);
 
 		ppi.column = i;

@@ -135,6 +135,8 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 
 #define READ_16(v) (TinselV1Mac ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
 #define READ_32(v) (TinselV1Mac ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
+#define FROM_16(v) (TinselV1Mac ? FROM_BE_16(v) : FROM_LE_16(v))
+#define FROM_32(v) (TinselV1Mac ? FROM_BE_32(v) : FROM_LE_32(v))
 
 // Global reference to the TinselEngine object
 extern TinselEngine *_vm;

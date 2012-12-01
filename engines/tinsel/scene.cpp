@@ -167,7 +167,7 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 	assert(_ctx->pInit->hTinselCode);		// Must have some code to run
 
 	_ctx->pic = InitInterpretContext(GS_SCENE,
-		READ_LE_UINT32(&_ctx->pInit->hTinselCode),
+		READ_32(&_ctx->pInit->hTinselCode),
 		TinselV2 ? _ctx->pInit->event : NOEVENT,
 		NOPOLY,			// No polygon
 		0,				// No actor
@@ -265,8 +265,8 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		StartTaggedActors(FROM_LE_32(ss->hTaggedActor), FROM_LE_32(ss->numTaggedActor), true);
 
 		// Run the appropriate entrance code (if any)
-		es = (const ENTRANCE_STRUC *)LockMem(FROM_LE_32(ss->hEntrance));
-		for (i = 0; i < FROM_LE_32(ss->numEntrance); i++) {
+		es = (const ENTRANCE_STRUC *)LockMem(FROM_32(ss->hEntrance));
+		for (i = 0; i < FROM_32(ss->numEntrance); i++) {
 			if (FROM_LE_32(es->eNumber) == (uint)entry) {
 				if (es->hScript) {
 					init.event = STARTUP;

@@ -324,14 +324,14 @@ IMAGE *GetImageFromReel(const FREEL *pfr, const MULTI_INIT **ppmi) {
 	const MULTI_INIT *pmi;
 	const FRAME *pFrame;
 
-	pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pfr->mobj));
+	pmi = (const MULTI_INIT *)LockMem(FROM_32(pfr->mobj));
 	if (ppmi)
 		*ppmi = pmi;
 
-	pFrame = (const FRAME *)LockMem(FROM_LE_32(pmi->hMulFrame));
+	pFrame = (const FRAME *)LockMem(FROM_32(pmi->hMulFrame));
 
 	// get pointer to image
-	return (IMAGE *)LockMem(READ_LE_UINT32(pFrame));
+	return (IMAGE *)LockMem(READ_32(pFrame));
 }
 
 /**
@@ -620,7 +620,7 @@ void DwInitCursor(SCNHANDLE bfilm) {
 	g_hCursorFilm = bfilm;
 
 	pfilm = (const FILM *)LockMem(g_hCursorFilm);
-	g_numTrails = FROM_LE_32(pfilm->numreels) - 1;
+	g_numTrails = FROM_32(pfilm->numreels) - 1;
 
 	assert(g_numTrails <= MAX_TRAILERS);
 }

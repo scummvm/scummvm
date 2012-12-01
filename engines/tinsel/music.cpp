@@ -281,6 +281,10 @@ void OpenMidiFiles() {
 	if (TinselV0 || TinselV2)
 		return;
 
+	// TODO: The Macintosh version does not use MIDI for music
+	if (TinselV1Mac)
+		return;
+
 	if (g_midiBuffer.pDat)
 		// already allocated
 		return;
