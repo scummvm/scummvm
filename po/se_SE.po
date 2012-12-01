@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2012-08-12 14:57+0200\n"
+"POT-Creation-Date: 2012-12-01 17:22+0000\n"
 "PO-Revision-Date: 2012-07-08 18:03+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -48,10 +48,10 @@ msgstr "Uppåt"
 
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:345 gui/massadd.cpp:94 gui/options.cpp:1228
-#: gui/saveload-dialog.cpp:207 gui/saveload-dialog.cpp:267
-#: gui/saveload-dialog.cpp:516 gui/saveload-dialog.cpp:843
+#: gui/saveload-dialog.cpp:215 gui/saveload-dialog.cpp:275
+#: gui/saveload-dialog.cpp:545 gui/saveload-dialog.cpp:919
 #: gui/themebrowser.cpp:54 engines/engine.cpp:442
-#: engines/scumm/dialogs.cpp:190 engines/sword1/control.cpp:865
+#: engines/scumm/dialogs.cpp:190 engines/sword1/control.cpp:867
 #: engines/parallaction/saveload.cpp:274 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:191
 #: backends/events/default/default-events.cpp:213
@@ -73,15 +73,15 @@ msgstr "Stäng"
 msgid "Mouse click"
 msgstr "Musklick"
 
-#: gui/gui-manager.cpp:122 base/main.cpp:300
+#: gui/gui-manager.cpp:122 base/main.cpp:301
 msgid "Display keyboard"
 msgstr "Visa tangentbord"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:304
+#: gui/gui-manager.cpp:126 base/main.cpp:305
 msgid "Remap keys"
 msgstr "Ställ in tangenter"
 
-#: gui/gui-manager.cpp:129 base/main.cpp:307
+#: gui/gui-manager.cpp:129 base/main.cpp:308
 msgid "Toggle FullScreen"
 msgstr "Fullskärmsläge"
 
@@ -95,15 +95,15 @@ msgstr "Ställ in"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:346 gui/launcher.cpp:1001
 #: gui/launcher.cpp:1005 gui/massadd.cpp:91 gui/options.cpp:1229
-#: gui/saveload-dialog.cpp:844 engines/engine.cpp:361 engines/engine.cpp:372
-#: engines/scumm/dialogs.cpp:192 engines/scumm/scumm.cpp:1775
-#: engines/agos/animation.cpp:561 engines/groovie/script.cpp:420
+#: gui/saveload-dialog.cpp:920 engines/engine.cpp:361 engines/engine.cpp:372
+#: engines/scumm/dialogs.cpp:192 engines/scumm/scumm.cpp:1776
+#: engines/agos/animation.cpp:558 engines/groovie/script.cpp:420
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
-#: engines/sword1/animation.cpp:539 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:570 engines/sword1/animation.cpp:577
-#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
-#: engines/sword2/animation.cpp:435 engines/sword2/animation.cpp:455
-#: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:474
+#: engines/sword1/animation.cpp:519 engines/sword1/animation.cpp:540
+#: engines/sword1/animation.cpp:550 engines/sword1/animation.cpp:557
+#: engines/sword1/control.cpp:867 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:419 engines/sword2/animation.cpp:439
+#: engines/sword2/animation.cpp:449 engines/sword2/animation.cpp:458
 #: engines/parallaction/saveload.cpp:274 backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 msgid "OK"
@@ -359,7 +359,7 @@ msgstr "Detta ID-namn är upptaget. Var god välj ett annat."
 msgid "~Q~uit"
 msgstr "~A~vsluta"
 
-#: gui/launcher.cpp:621 backends/platform/sdl/macosx/appmenu_osx.mm:96
+#: gui/launcher.cpp:621 backends/platform/sdl/macosx/appmenu_osx.mm:95
 msgid "Quit ScummVM"
 msgstr "Avsluta ScummVM"
 
@@ -367,7 +367,7 @@ msgstr "Avsluta ScummVM"
 msgid "A~b~out..."
 msgstr "O~m~..."
 
-#: gui/launcher.cpp:622 backends/platform/sdl/macosx/appmenu_osx.mm:70
+#: gui/launcher.cpp:622 backends/platform/sdl/macosx/appmenu_osx.mm:69
 msgid "About ScummVM"
 msgstr "Om ScummVM"
 
@@ -925,74 +925,74 @@ msgstr ""
 "Temat du valde stöder inte ditt språk. Om du vill använda det här temat "
 "måste först byta till ett annat språk."
 
-#: gui/saveload-dialog.cpp:158
+#: gui/saveload-dialog.cpp:166
 msgid "List view"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:159
+#: gui/saveload-dialog.cpp:167
 msgid "Grid view"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:202 gui/saveload-dialog.cpp:350
+#: gui/saveload-dialog.cpp:210 gui/saveload-dialog.cpp:358
 msgid "No date saved"
 msgstr "Inget datum sparat"
 
-#: gui/saveload-dialog.cpp:203 gui/saveload-dialog.cpp:351
+#: gui/saveload-dialog.cpp:211 gui/saveload-dialog.cpp:359
 msgid "No time saved"
 msgstr "Ingen tid sparad"
 
-#: gui/saveload-dialog.cpp:204 gui/saveload-dialog.cpp:352
+#: gui/saveload-dialog.cpp:212 gui/saveload-dialog.cpp:360
 msgid "No playtime saved"
 msgstr "Ingen speltid sparad"
 
-#: gui/saveload-dialog.cpp:211 gui/saveload-dialog.cpp:267
+#: gui/saveload-dialog.cpp:219 gui/saveload-dialog.cpp:275
 msgid "Delete"
 msgstr "Radera"
 
-#: gui/saveload-dialog.cpp:266
+#: gui/saveload-dialog.cpp:274
 msgid "Do you really want to delete this savegame?"
 msgstr "Vill du verkligen radera den här spardatan?"
 
-#: gui/saveload-dialog.cpp:375 gui/saveload-dialog.cpp:796
+#: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:872
 msgid "Date: "
 msgstr "Datum:"
 
-#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:802
+#: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:878
 msgid "Time: "
 msgstr "Tid:"
 
-#: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:810
+#: gui/saveload-dialog.cpp:393 gui/saveload-dialog.cpp:886
 msgid "Playtime: "
 msgstr "Speltid:"
 
-#: gui/saveload-dialog.cpp:398 gui/saveload-dialog.cpp:465
+#: gui/saveload-dialog.cpp:406 gui/saveload-dialog.cpp:494
 msgid "Untitled savestate"
 msgstr "Namnlös spardata"
 
-#: gui/saveload-dialog.cpp:517
+#: gui/saveload-dialog.cpp:546
 msgid "Next"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:520
+#: gui/saveload-dialog.cpp:549
 msgid "Prev"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:684
+#: gui/saveload-dialog.cpp:736
 #, fuzzy
 msgid "New Save"
 msgstr "Spara"
 
-#: gui/saveload-dialog.cpp:684
+#: gui/saveload-dialog.cpp:736
 #, fuzzy
 msgid "Create a new save game"
 msgstr "Kunde inte spara spelet."
 
-#: gui/saveload-dialog.cpp:789
+#: gui/saveload-dialog.cpp:865
 #, fuzzy
 msgid "Name: "
 msgstr "Namn:"
 
-#: gui/saveload-dialog.cpp:861
+#: gui/saveload-dialog.cpp:937
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr ""
@@ -1030,35 +1030,35 @@ msgstr "Antialiserad (16 bpp)"
 msgid "Clear value"
 msgstr "Töm sökfältet"
 
-#: base/main.cpp:209
+#: base/main.cpp:210
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Motorn stöder inte debug-nivå '%s'"
 
-#: base/main.cpp:287
+#: base/main.cpp:288
 msgid "Menu"
 msgstr "Meny"
 
-#: base/main.cpp:290 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:291 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Skippa"
 
-#: base/main.cpp:293 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:294 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Paus"
 
-#: base/main.cpp:296
+#: base/main.cpp:297
 msgid "Skip line"
 msgstr "Skippa rad"
 
-#: base/main.cpp:467
+#: base/main.cpp:468
 msgid "Error running game:"
 msgstr "Fel under körning av spel:"
 
-#: base/main.cpp:491
+#: base/main.cpp:492
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunde inte hitta en motor kapabel till att köra det valda spelet"
 
@@ -1287,13 +1287,13 @@ msgstr ""
 msgid "Start anyway"
 msgstr "Starta ändå"
 
-#: engines/agi/detection.cpp:145 engines/dreamweb/detection.cpp:47
-#: engines/sci/detection.cpp:390
+#: engines/agi/detection.cpp:142 engines/dreamweb/detection.cpp:47
+#: engines/sci/detection.cpp:393
 msgid "Use original save/load screens"
 msgstr "Använd originalskärmar för spara/ladda"
 
-#: engines/agi/detection.cpp:146 engines/dreamweb/detection.cpp:48
-#: engines/sci/detection.cpp:391
+#: engines/agi/detection.cpp:143 engines/dreamweb/detection.cpp:48
+#: engines/sci/detection.cpp:394
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Använder originalskärmarna för spara/ladda istället för ScummVM:s"
 
@@ -1313,27 +1313,27 @@ msgstr "Använd ljus palett-läge"
 msgid "Display graphics using the game's bright palette"
 msgstr "Visa grafik med spelets ljusa palett"
 
-#: engines/sci/detection.cpp:370
+#: engines/sci/detection.cpp:373
 msgid "EGA undithering"
 msgstr "EGA anti-gitter"
 
-#: engines/sci/detection.cpp:371
+#: engines/sci/detection.cpp:374
 msgid "Enable undithering in EGA games"
 msgstr "Aktivera anti-gitter i EGA-spel"
 
-#: engines/sci/detection.cpp:380
+#: engines/sci/detection.cpp:383
 msgid "Prefer digital sound effects"
 msgstr "Föredra digitala ljudeffekter"
 
-#: engines/sci/detection.cpp:381
+#: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Föredra digitala ljudeffekter istället för syntetiserade"
 
-#: engines/sci/detection.cpp:400
+#: engines/sci/detection.cpp:403
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Använd IMF/Yamaha FB-01 för MIDI-uppspelning"
 
-#: engines/sci/detection.cpp:401
+#: engines/sci/detection.cpp:404
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -1341,29 +1341,29 @@ msgstr ""
 "Använd ett IMB Music Feature-kort eller en Yamaha FB-01 FM synthmodul för "
 "MIDI-uppspelning"
 
-#: engines/sci/detection.cpp:411
+#: engines/sci/detection.cpp:414
 msgid "Use CD audio"
 msgstr "Använd CD-ljud"
 
-#: engines/sci/detection.cpp:412
+#: engines/sci/detection.cpp:415
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Använd CD-ljud istället för spelets ljud, om tillgängligt"
 
-#: engines/sci/detection.cpp:422
+#: engines/sci/detection.cpp:425
 msgid "Use Windows cursors"
 msgstr "Använd Windows muspekare"
 
-#: engines/sci/detection.cpp:423
+#: engines/sci/detection.cpp:426
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Använd Windows muspekare (mindre och svartvit) istället för DOS-pekaren"
 
-#: engines/sci/detection.cpp:433
+#: engines/sci/detection.cpp:436
 msgid "Use silver cursors"
 msgstr "Använd silverpekare"
 
-#: engines/sci/detection.cpp:434
+#: engines/sci/detection.cpp:437
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
@@ -2016,7 +2016,7 @@ msgstr "Flyg åt höger"
 msgid "Fly to lower right"
 msgstr "Flyg åt nedre höger"
 
-#: engines/scumm/scumm.cpp:1773
+#: engines/scumm/scumm.cpp:1774
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -2025,7 +2025,7 @@ msgstr ""
 "Stöd för Native MIDI kräver Roland-uppdateringen från LucasArts,\n"
 "men %s saknas. Använder AdLib istället."
 
-#: engines/scumm/scumm.cpp:2278 engines/agos/saveload.cpp:220
+#: engines/scumm/scumm.cpp:2295 engines/agos/saveload.cpp:220
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2036,7 +2036,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2285 engines/agos/saveload.cpp:185
+#: engines/scumm/scumm.cpp:2302 engines/agos/saveload.cpp:185
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2047,7 +2047,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2297 engines/agos/saveload.cpp:228
+#: engines/scumm/scumm.cpp:2314 engines/agos/saveload.cpp:228
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2058,7 +2058,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2512
+#: engines/scumm/scumm.cpp:2529
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -2094,7 +2094,7 @@ msgstr "Huvud~m~eny"
 msgid "~W~ater Effect Enabled"
 msgstr "~V~atteneffekt aktiverad"
 
-#: engines/agos/animation.cpp:560
+#: engines/agos/animation.cpp:557
 #, c-format
 msgid "Cutscene file '%s' not found!"
 msgstr "Filmscensfilen '%s' hittades ej!"
@@ -2222,7 +2222,7 @@ msgstr "Inställningar"
 msgid "Choose Spell"
 msgstr "Välj trollformel"
 
-#: engines/kyra/sound_midi.cpp:475
+#: engines/kyra/sound_midi.cpp:477
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -2269,25 +2269,25 @@ msgstr "Diskettintro"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Använd diskettversionens intro (endast CD-version)"
 
-#: engines/sword1/animation.cpp:539
+#: engines/sword1/animation.cpp:519
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr "PSX-filmscenen '%s' kan inte visas i palettläget"
 
-#: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:455
+#: engines/sword1/animation.cpp:540 engines/sword2/animation.cpp:439
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr "DXA filmscener hittades men ScummVM har byggts utan stöd för zlib"
 
-#: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
+#: engines/sword1/animation.cpp:550 engines/sword2/animation.cpp:449
 msgid "MPEG2 cutscenes are no longer supported"
 msgstr "MPEG2 filmscener stöds inte längre"
 
-#: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:473
+#: engines/sword1/animation.cpp:556 engines/sword2/animation.cpp:457
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Filmscenen '%s' hittades ej"
 
-#: engines/sword1/control.cpp:863
+#: engines/sword1/control.cpp:865
 msgid ""
 "ScummVM found that you have old savefiles for Broken Sword 1 that should be "
 "converted.\n"
@@ -2305,7 +2305,7 @@ msgstr ""
 "Tryck \"OK\" för att konvertera dem nu, annars kommer du tillfrågas igen "
 "nästa gång du startar spelet.\n"
 
-#: engines/sword1/control.cpp:1232
+#: engines/sword1/control.cpp:1234
 #, c-format
 msgid ""
 "Target new save game already exists!\n"
@@ -2314,11 +2314,11 @@ msgstr ""
 "Den valda spardatan existerar redan!\n"
 "Vill du behålla den gamla spardatan (%s) eller den nya (%s)?\n"
 
-#: engines/sword1/control.cpp:1235
+#: engines/sword1/control.cpp:1237
 msgid "Keep the old one"
 msgstr "Behåll den gamla"
 
-#: engines/sword1/control.cpp:1235
+#: engines/sword1/control.cpp:1237
 msgid "Keep the new one"
 msgstr "Behåll den nya"
 
@@ -2326,7 +2326,7 @@ msgstr "Behåll den nya"
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Här slutar Broken Sword 1 demon"
 
-#: engines/sword2/animation.cpp:435
+#: engines/sword2/animation.cpp:419
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "PSX-filmscener hittades men ScummVM har byggts utan stöd för RGB-färg"
@@ -2339,12 +2339,12 @@ msgstr "Visa etiketter"
 msgid "Show labels for objects on mouse hover"
 msgstr "Visar etiketter för objekten som musen pekar på"
 
-#: engines/teenagent/resources.cpp:68
+#: engines/teenagent/resources.cpp:94
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
 msgstr ""
 
-#: engines/teenagent/resources.cpp:89
+#: engines/teenagent/resources.cpp:115
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
@@ -2457,7 +2457,7 @@ msgstr "Ingen musik"
 msgid "Amiga Audio Emulator"
 msgstr "Amiga ljudemulator"
 
-#: audio/softsynth/adlib.cpp:1593
+#: audio/softsynth/adlib.cpp:2284
 msgid "AdLib Emulator"
 msgstr "AdLib-emulator"
 
@@ -2624,24 +2624,24 @@ msgstr "Mittenklick"
 msgid "Right Click"
 msgstr "Högerklick"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:78
+#: backends/platform/sdl/macosx/appmenu_osx.mm:77
 msgid "Hide ScummVM"
 msgstr "Göm ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:83
+#: backends/platform/sdl/macosx/appmenu_osx.mm:82
 msgid "Hide Others"
 msgstr "Göm övriga"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:88
+#: backends/platform/sdl/macosx/appmenu_osx.mm:87
 msgid "Show All"
 msgstr "Visa alla"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:110
-#: backends/platform/sdl/macosx/appmenu_osx.mm:121
+#: backends/platform/sdl/macosx/appmenu_osx.mm:109
+#: backends/platform/sdl/macosx/appmenu_osx.mm:120
 msgid "Window"
 msgstr "Fönster"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:115
+#: backends/platform/sdl/macosx/appmenu_osx.mm:114
 msgid "Minimize"
 msgstr "Minimera"
 
@@ -3024,19 +3024,19 @@ msgstr "Vill du verkligen avsluta?"
 
 #: backends/events/gph/gph-events.cpp:386
 #: backends/events/gph/gph-events.cpp:429
-#: backends/events/openpandora/op-events.cpp:139
+#: backends/events/openpandora/op-events.cpp:168
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Touchscreen \"Tap-läge\" - Vänsterklick"
 
 #: backends/events/gph/gph-events.cpp:388
 #: backends/events/gph/gph-events.cpp:431
-#: backends/events/openpandora/op-events.cpp:141
+#: backends/events/openpandora/op-events.cpp:170
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Touchscren \"Tap-läge\" - Högerklick"
 
 #: backends/events/gph/gph-events.cpp:390
 #: backends/events/gph/gph-events.cpp:433
-#: backends/events/openpandora/op-events.cpp:143
+#: backends/events/openpandora/op-events.cpp:172
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Touchscreen \"Tap-läge\" - Hover (utan klick)"
 
@@ -3056,7 +3056,12 @@ msgstr "Min. volym"
 msgid "Decreasing Volume"
 msgstr "Sänka volymen"
 
-#: backends/updates/macosx/macosx-updates.mm:65
+#: backends/events/openpandora/op-events.cpp:174
+#, fuzzy
+msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
+msgstr "Touchscreen \"Tap-läge\" - Hover (utan klick)"
+
+#: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
 msgstr "Sök efter uppdateringar..."
 
