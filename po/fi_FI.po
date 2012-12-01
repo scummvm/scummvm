@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2012-12-01 17:22+0000\n"
-"PO-Revision-Date: 2012-12-01 16:27+0200\n"
+"PO-Revision-Date: 2012-12-01 19:37+0200\n"
 "Last-Translator: Toni Saarela <saarela@gmail.com>\n"
 "Language-Team: Finnish\n"
 "Language: Suomi\n"
@@ -398,7 +398,7 @@ msgstr "~L~isää peli..."
 
 #: gui/launcher.cpp:633 gui/launcher.cpp:640
 msgid "Hold Shift for Mass Add"
-msgstr "Pidä Shift-näppäintä pohjassa lisätäksesi useita kansioita kerralla"
+msgstr "Pidä Shift-näppäintä pohjassa lisätäksesi useita pelejä kerralla"
 
 #: gui/launcher.cpp:635
 msgid "~E~dit Game..."
@@ -456,7 +456,8 @@ msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Haluatko varmasti ajaa pelin etsijän? Tämä voi lisätä valtavan määrän pelejä."
+"Haluatko varmasti lisätä pelejä alihakemistoineen? Tämä voi lisätä suuren "
+"määrän pelejä."
 
 #: gui/launcher.cpp:789 gui/launcher.cpp:937
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
@@ -870,7 +871,7 @@ msgstr "Teema"
 
 #: gui/options.cpp:1167
 msgid "GUI Renderer:"
-msgstr "GUI renderoija:"
+msgstr "GUI renderöijä:"
 
 #: gui/options.cpp:1179
 msgid "Autosave:"
@@ -1009,7 +1010,7 @@ msgstr "Disabloitu GFX"
 
 #: gui/ThemeEngine.cpp:338
 msgid "Standard Renderer (16bpp)"
-msgstr "Standardirenderoija (16 bpp)"
+msgstr "Standardirenderöijä (16 bpp)"
 
 #: gui/ThemeEngine.cpp:338
 msgid "Standard (16bpp)"
@@ -1017,7 +1018,7 @@ msgstr "Standardi (16 bpp)"
 
 #: gui/ThemeEngine.cpp:340
 msgid "Antialiased Renderer (16bpp)"
-msgstr "Antialiasoitu renderoija (16 bpp)"
+msgstr "Antialiasoitu renderöijä (16 bpp)"
 
 #: gui/ThemeEngine.cpp:340
 msgid "Antialiased (16bpp)"
@@ -2067,7 +2068,7 @@ msgstr ""
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:171
 msgid "~Z~ip Mode Activated"
-msgstr ""
+msgstr "~Z~ip moodi valittu"
 
 #: engines/mohawk/dialogs.cpp:93
 msgid "~T~ransitions Enabled"
@@ -2489,19 +2490,19 @@ msgstr ""
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Active)"
-msgstr "(Aktiivinen)"
+msgstr " (Aktiivinen)"
 
 #: backends/keymapper/remap-dialog.cpp:106
 msgid " (Blocked)"
-msgstr "(Estetty)"
+msgstr " (Estetty)"
 
 #: backends/keymapper/remap-dialog.cpp:119
 msgid " (Global)"
-msgstr "(Globaali)"
+msgstr " (Globaali)"
 
 #: backends/keymapper/remap-dialog.cpp:127
 msgid " (Game)"
-msgstr "(Peli)"
+msgstr " (Peli)"
 
 #: backends/midi/windows.cpp:164
 msgid "Windows MIDI"
