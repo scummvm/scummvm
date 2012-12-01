@@ -40,7 +40,7 @@
 #include "common/dct.h"
 #include "common/system.h"
 
-#include "graphics/yuv_to_rgb.h"
+#include "graphics/yuva_to_rgba.h"
 #include "graphics/surface.h"
 
 #include "video/binkdata.h"
@@ -430,11 +430,10 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	}
 
 	// Convert the YUV data we have to our format
-	// We're ignoring alpha for now
 	// The width used here is the surface-width, and not the video-width
 	// to allow for odd-sized videos.
-	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
-	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
+	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2] && _curPlanes[3]);
+	YUVAToRGBAMan.convert420(&_surface, Graphics::YUVAToRGBAManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2], _curPlanes[3],
 			_surfaceWidth, _surfaceHeight, _surfaceWidth, _surfaceWidth >> 1);
 
 	// And swap the planes with the reference planes

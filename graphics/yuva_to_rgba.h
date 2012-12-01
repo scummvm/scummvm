@@ -23,6 +23,7 @@
 /**
  * @file
  * YUV to RGB conversion used in engines:
+ * - mohawk
  * - scumm (he)
  * - sword25
  */
@@ -31,27 +32,50 @@
 #define GRAPHICS_YUVA_TO_RGBA_H
 
 #include "common/scummsys.h"
+#include "common/singleton.h"
 #include "graphics/surface.h"
 
 namespace Graphics {
 
-struct Surface;
+class YUVAToRGBALookup;
 
-/**
- * Convert a YUVA420 image to an RGBA surface
- *
- * @param dst     the destination surface
- * @param ySrc    the source of the y component
- * @param uSrc    the source of the u component
- * @param vSrc    the source of the v component
- * @param aSrc    the source of the a component
- * @param yWidth  the width of the y surface (must be divisible by 2)
- * @param yHeight the height of the y surface (must be divisible by 2)
- * @param yPitch  the pitch of the y surface
- * @param uvPitch the pitch of the u and v surfaces
- */
-void convertYUVA420ToRGBA(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+class YUVAToRGBAManager : public Common::Singleton<YUVAToRGBAManager> {
+public:
+	/** The scale of the luminance values */
+	enum LuminanceScale {
+		kScaleFull, /** Luminance values range from [0, 255] */
+		kScaleITU   /** Luminance values range from [16, 235], the range from ITU-R BT.601 */
+	};
+
+	/**
+	 * Convert a YUV420 image to an RGB surface
+	 *
+	 * @param dst     the destination surface
+	 * @param scale   the scale of the luminance values
+	 * @param ySrc    the source of the y component
+	 * @param uSrc    the source of the u component
+	 * @param vSrc    the source of the v component
+	 * @param aSrc    the source of the a component
+	 * @param yWidth  the width of the y surface (must be divisible by 2)
+	 * @param yHeight the height of the y surface (must be divisible by 2)
+	 * @param yPitch  the pitch of the y surface
+	 * @param uvPitch the pitch of the u and v surfaces
+	 */
+	void convert420(Graphics::Surface *dst, LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+
+private:
+	friend class Common::Singleton<SingletonBaseType>;
+	YUVAToRGBAManager();
+	~YUVAToRGBAManager();
+
+	const YUVAToRGBALookup *getLookup(Graphics::PixelFormat format, LuminanceScale scale);
+
+	YUVAToRGBALookup *_lookup;
+	int16 _colorTab[4 * 256]; // 2048 bytes
+};
 
 } // End of namespace Graphics
+
+#define YUVAToRGBAMan (::Graphics::YUVAToRGBAManager::instance())
 
 #endif
