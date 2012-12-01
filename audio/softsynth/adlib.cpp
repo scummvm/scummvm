@@ -1998,28 +1998,30 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 	if (voice->_duration != 0)
 		voice->_duration *= 63;
 
+	if (!_scummSmallHeader) {
 #ifdef ENABLE_OPL3
-	if (!_opl3Mode)
-		vol1 = (instr->modScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->modWaveformSelect >> 2];
-	else
+		if (!_opl3Mode)
+			vol1 = (instr->modScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->modWaveformSelect >> 2];
+		else
 #endif
-	if (!_scummSmallHeader)
 		vol1 = (instr->modScalingOutputLevel & 0x3F) + (velocity * ((instr->modWaveformSelect >> 3) + 1)) / 64;
-	else
+	} else {
 		vol1 = 0x3f - (instr->modScalingOutputLevel & 0x3F);
+	}
 	if (vol1 > 0x3F)
 		vol1 = 0x3F;
 	voice->_vol1 = vol1;
 
+	if (!_scummSmallHeader) {
 #ifdef ENABLE_OPL3
-	if (!_opl3Mode)
-		vol2 = (instr->carScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->carWaveformSelect >> 2];
-	else
+		if (!_opl3Mode)
+			vol2 = (instr->carScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->carWaveformSelect >> 2];
+		else
 #endif
-	if (!_scummSmallHeader)
 		vol2 = (instr->carScalingOutputLevel & 0x3F) + (velocity * ((instr->carWaveformSelect >> 3) + 1)) / 64;
-	else
+	} else {
 		vol2 = 0x3f - (instr->carScalingOutputLevel & 0x3F);
+	}
 	if (vol2 > 0x3F)
 		vol2 = 0x3F;
 	voice->_vol2 = vol2;
