@@ -360,9 +360,9 @@ private:
 	Common::Array<AudioInfo> _audioTracks; ///< All audio tracks.
 	Common::Array<VideoFrame> _frames;      ///< All video frames.
 
-	void initAudioTrack(AudioInfo &audio, bool doPlay); // ResidualVM-specific
+	void initAudioTrack(AudioInfo &audio);
 	// ResidualVM-specific:
-	int32 _selectedAudioTrack;
+	uint32 _selectedAudioTrack;
 };
 
 } // End of namespace Video
