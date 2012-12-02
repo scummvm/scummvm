@@ -179,7 +179,7 @@ public:
 	void setIndicator(int width, int height, int x, int y, uint32 color);
 	void persistSaveLoadImages(BasePersistenceManager *persistMgr);
 	void initSaveLoad(bool isSaving, bool quickSave = false);
-	void endSaveLoad();
+	virtual void endSaveLoad();
 	void setLoadingScreen(const char *filename, int x, int y);
 	void setSaveImage(const char *filename, int x, int y);
 

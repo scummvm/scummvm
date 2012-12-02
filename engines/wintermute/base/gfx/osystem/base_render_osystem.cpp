@@ -612,4 +612,17 @@ BaseSurface *BaseRenderOSystem::createSurface() {
 	return new BaseSurfaceOSystem(_gameRef);
 }
 
+void BaseRenderOSystem::endSaveLoad() {
+	BaseRenderer::endSaveLoad();
+
+	// Clear the scale-buffered tickets as we just loaded.
+	RenderQueueIterator it = _renderQueue.begin();
+	while (it != _renderQueue.end()) {
+		RenderTicket *ticket = *it;
+		it = _renderQueue.erase(it);
+		delete ticket;
+	}
+	_drawNum = 1;
+}
+
 } // end of namespace Wintermute

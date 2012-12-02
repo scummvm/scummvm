@@ -97,7 +97,7 @@ public:
 	float getScaleRatioY() const {
 		return _ratioY;
 	}
-
+	void endSaveLoad();
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false);
 	BaseSurface *createSurface();
 private:
