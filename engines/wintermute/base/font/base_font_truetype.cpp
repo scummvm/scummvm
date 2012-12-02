@@ -173,7 +173,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	BaseRenderer *renderer = _gameRef->_renderer;
 
 	// find cached surface, if exists
-	int minUseTime = INT_MAX;
+	uint32 minUseTime = UINT_MAX;
 	int minIndex = -1;
 	BaseSurface *surface = NULL;
 	int textOffset = 0;
