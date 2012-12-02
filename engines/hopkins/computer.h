@@ -154,6 +154,10 @@ private:
 	 */
 	void PLAY_BRIQUE();
 
+	/**
+	 * Show the high scores for the Breakout game
+	 * @return		The selected button index: 1 = Game, 2 = Quit
+	 */
 	int HIGHT_SCORE();
 	void NAME_SCORE();
 	void IMPSCORE(int a1, int a2);

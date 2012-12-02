@@ -834,9 +834,9 @@ void ComputerManager::PLAY_BRIQUE() {
 }
 
 int ComputerManager::HIGHT_SCORE() {
-	int v0; 
-	int v3; 
-	int v4; 
+	int yp; 
+	int buttonIndex; 
+	int xp; 
 	byte *ptr; 
 
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
@@ -849,35 +849,40 @@ int ComputerManager::HIGHT_SCORE() {
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
-	for (int v6 = 0; v6 <= 5; v6++) {
-		v0 = 19 * v6;
-		v0 += 46;
-		for (int v1 = 0; v1 <= 5; v1++)
-			PRINT_HSCORE(ptr, 9 * v1 + 69, v0, Score[v6].name[v1]);
+	// Loop for displaying the scores
+	for (int scoreIndex = 0; scoreIndex <= 5; scoreIndex++) {
+		yp = 19 * scoreIndex;
+		yp += 46;
 
-		for (int v2 = 0; v2 <= 8; v2++)
-			PRINT_HSCORE(ptr, 9 * v2 + 199, v0, Score[v6].score[v2]);
+		// Display the characters of the name
+		for (int i = 0; i <= 5; i++)
+			PRINT_HSCORE(ptr, 9 * i + 69, yp, Score[scoreIndex].name[i]);
 
+		// Display the digits of the score
+		for (int i = 0; i <= 8; i++)
+			PRINT_HSCORE(ptr, 9 * i + 199, yp, Score[scoreIndex].score[i]);
 	}
 
 	_vm->_graphicsManager.FADE_IN_CASSE();
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
-	v3 = 0;
+	buttonIndex = 0;
 	do {
-		v4 = _vm->_eventsManager.souris_x + 13;
-		v0 = _vm->_eventsManager.souris_y;
-		if (_vm->_eventsManager.BMOUSE() == 1 && (uint16)(v4 - 15) <= 0x21u && (uint16)(v0 - 176) <= 0xDu)
-			v3 = 1;
-		if (_vm->_eventsManager.BMOUSE() == 1
-		        && (uint16)(v4 - 274) <= 0x20u
-		        && (uint16)(v0 - 176) <= 0xDu)
-			v3 = 2;
+		_vm->_eventsManager.CONTROLE_MES();
+		xp = _vm->_eventsManager.XMOUSE();
+		yp = _vm->_eventsManager.YMOUSE();
+
+		if (_vm->_eventsManager.BMOUSE() == 1 && ABS(xp - 79) <= 33 && ABS(yp - 396) <= 13)
+			buttonIndex = 1;
+		else if (_vm->_eventsManager.BMOUSE() == 1 && ABS(xp - 583) <= 32 && ABS(yp - 396) <= 13)
+			buttonIndex = 2;
+
 		_vm->_eventsManager.VBL();
-	} while (!v3 && !_vm->shouldQuit());
+	} while (!buttonIndex && !_vm->shouldQuit());
+
 	_vm->_eventsManager.MOUSE_OFF();
 	_vm->_graphicsManager.FADE_OUT_CASSE();
 	_vm->_globals.LIBERE_FICHIER(ptr);
-	return v3;
+	return buttonIndex;
 }
 
 void ComputerManager::NAME_SCORE() {
