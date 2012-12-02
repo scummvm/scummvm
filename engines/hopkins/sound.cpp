@@ -333,7 +333,8 @@ void SoundManager::LOAD_MUSIC(const Common::String &file) {
 			s[2] = '\0';
 			mwavIndex = atol(&s[0]);
 
-			filename = Common::String::format("%s_%s.WAV", file.c_str(), &s[0]);
+			filename = Common::String::format("%s_%s.%s", file.c_str(), &s[0],
+				(_vm->getPlatform() == Common::kPlatformWindows) ? "APC" : "WAV");
 			LOAD_MSAMPLE(mwavIndex, filename);
 
 			assert(destIndex < MUSIC_WAVE_COUNT);
