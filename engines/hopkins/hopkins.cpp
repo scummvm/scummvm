@@ -181,7 +181,10 @@ bool HopkinsEngine::runWin95Demo() {
 	memset(_globals.SAUVEGARDE, 0, 2000);
 	_globals.SORTIE = 0;
 	_globals.PASSWORD = true;
-	warning("TODO ADULT();");
+	
+	if (!ADULT())
+		return Common::kNoError;
+
 //	v37 = v35;
 LABEL_18:
 	if (_globals.SORTIE == 300)
@@ -3090,4 +3093,56 @@ void HopkinsEngine::syncSoundSettings() {
 void HopkinsEngine::NO_DISPO(int sortie) {
 	warning("STUB - NO_DISPO");
 }
+
+bool HopkinsEngine::ADULT() {
+	int xp, yp;
+	int buttonIndex;
+
+	_graphicsManager.min_x = 0;
+	_graphicsManager.min_y = 0;
+	_graphicsManager.max_x = SCREEN_WIDTH;
+	_graphicsManager.max_y = SCREEN_HEIGHT - 1;
+	_eventsManager.CASSE = false;
+	_globals.FORET = false;
+	_globals.FLAG_VISIBLE = false;
+	_globals.DESACTIVE_INVENT = true;
+	_globals.SORTIE = false;
+
+	_graphicsManager.LOAD_IMAGE("ADULT");
+	_graphicsManager.FADE_INW();
+	_eventsManager.MOUSE_ON();
+	_eventsManager.CHANGE_MOUSE(0);
+	_eventsManager.btsouris = false;
+	_eventsManager.souris_n = false;
+
+	do {
+		xp = _eventsManager.XMOUSE();
+		yp = _eventsManager.YMOUSE();
+
+		buttonIndex = 0;
+		if (xp >= 37 && xp <= 169 && yp >= 406 && yp <= 445)
+			buttonIndex = 2;
+		else if (xp >= 424 && xp <= 602 && yp >= 406 && yp <= 445)
+			buttonIndex = 1;
+
+		_eventsManager.VBL();
+	} while (!shouldQuit() && (buttonIndex == 0 || _eventsManager.BMOUSE() != 1));
+	
+	_globals.DESACTIVE_INVENT = false;
+	_globals.FLAG_VISIBLE = false;
+	_graphicsManager.FADE_OUTW();
+
+	if (buttonIndex != 2) {
+		// Quit game
+		return false;
+	} else {
+		// Continue
+		_graphicsManager.min_x = 0;
+		_graphicsManager.max_y = 20;
+		_graphicsManager.max_x = SCREEN_WIDTH;
+		_graphicsManager.max_y = SCREEN_HEIGHT - 20;
+		return true;
+	}
+}
+
 } // End of namespace Hopkins

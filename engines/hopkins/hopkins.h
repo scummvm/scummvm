@@ -115,6 +115,10 @@ private:
 	bool runLinuxDemo();
 	bool runLinuxFull();
 
+	/**
+	 * Show warning screen about the game being adults only.
+	 */
+	bool ADULT();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
