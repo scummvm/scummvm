@@ -400,7 +400,7 @@ static void removeLeadingAndTrailingSpaces(char *dst, size_t dstSize, const char
 	while (src[lastNonSpaceIndex] == ' ')
 		--lastNonSpaceIndex;
 
-	size_t newLen = lastNonSpaceIndex - firstNonSpaceIndex + 1;
+	uint newLen = lastNonSpaceIndex - firstNonSpaceIndex + 1;
 	assert(newLen < dstSize);
 	for (size_t i = 0; i < newLen; ++i) {
 		dst[i] = src[firstNonSpaceIndex + i];
