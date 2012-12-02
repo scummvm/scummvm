@@ -332,11 +332,12 @@ void DreamWebEngine::processEvents() {
 			softKey = 0;
 
 			debug(1, "DreamWebEngine::processEvents() KeyDown keycode:%d ascii:0x%02x", event.kbd.keycode, event.kbd.ascii);
-			if (event.kbd.keycode >= Common::KEYCODE_a && event.kbd.keycode <= Common::KEYCODE_z) {
+			if ((event.kbd.ascii >= 'a' && event.kbd.ascii <= 'z') ||
+				(event.kbd.ascii >= 'A' && event.kbd.ascii <= 'Z')) {
 				softKey = event.kbd.ascii & ~0x20; // (& ~0x20) forces ascii codes for a-z to map to A-Z
-			} else if (event.kbd.keycode == Common::KEYCODE_MINUS ||
-				event.kbd.keycode == Common::KEYCODE_SPACE ||
-				(event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9)) {
+			} else if (event.kbd.ascii == '-' ||
+				event.kbd.ascii == ' ' ||
+				(event.kbd.ascii >= '0' && event.kbd.ascii <= '9')) {
 				softKey = event.kbd.ascii;
 			} else if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
 				softKey = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
