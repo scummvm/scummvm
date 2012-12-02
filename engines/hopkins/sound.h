@@ -107,6 +107,10 @@ private:
 	 */
 	void checkVoices();
 
+	/**
+	 * Creates an audio stream based on a passed raw stream
+	 */
+	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
 public:
 	int SPECIAL_SOUND;
 	int SOUNDVOL;

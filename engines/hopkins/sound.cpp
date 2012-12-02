@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/decoders/adpcm_intern.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -27,6 +28,45 @@
 #include "hopkins/sound.h"
 #include "hopkins/globals.h"
 #include "hopkins/hopkins.h"
+
+namespace Audio {
+
+class APC_ADPCMStream : public Audio::DVI_ADPCMStream {
+public:
+	APC_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate, int channels) : DVI_ADPCMStream(stream, disposeAfterUse, stream->size(), rate, channels, 0) {
+		stream->seek(-12, SEEK_CUR);
+		_status.ima_ch[0].last = _startValue[0] = stream->readUint32LE();
+		_status.ima_ch[1].last = _startValue[1] = stream->readUint32LE();
+		stream->seek(4, SEEK_CUR);
+	}
+
+	void reset() {
+		DVI_ADPCMStream::reset();
+		_status.ima_ch[0].last = _startValue[0];
+		_status.ima_ch[1].last = _startValue[1];
+	}
+
+private:
+	int16 _startValue[2];
+};
+
+Audio::RewindableAudioStream *makeAPCStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+	if (stream->readUint32BE() != MKTAG('C', 'R', 'Y', 'O'))
+		return 0;
+	if (stream->readUint32BE() != MKTAG('_', 'A', 'P', 'C'))
+		return 0;
+	stream->readUint32BE(); // version
+	stream->readUint32LE(); // out size
+	uint32 rate = stream->readUint32LE();
+	stream->skip(8); // initial values, will be handled by the class
+	bool stereo = stream->readUint32LE() != 0;
+
+	return new APC_ADPCMStream(stream, disposeAfterUse, rate, stereo ? 2 : 1);
+}
+
+}
+
+/*------------------------------------------------------------------------*/
 
 namespace Hopkins {
 
@@ -388,7 +428,7 @@ void SoundManager::LOAD_MSAMPLE(int mwavIndex, const Common::String &file) {
 		if (!f.open(file))
 			error("Could not open %s for reading", file.c_str());
 
-		Mwav[mwavIndex]._audioStream = Audio::makeWAVStream(f.readStream(f.size()), DisposeAfterUse::YES);
+		Mwav[mwavIndex]._audioStream = makeSoundStream(f.readStream(f.size()));
 		Mwav[mwavIndex]._active = true;
 
 		f.close();
@@ -685,8 +725,7 @@ bool SoundManager::SDL_LoadVoice(const Common::String &filename, size_t fileOffs
 		error("Could not open %s for reading", filename.c_str());
 
 	f.seek(fileOffset);
-	item._audioStream = Audio::makeWAVStream(f.readStream((entryLength == 0) ? f.size() : entryLength),
-		DisposeAfterUse::YES);
+	item._audioStream = makeSoundStream(f.readStream((entryLength == 0) ? f.size() : entryLength));
 	f.close();
 
 	return true;
@@ -787,6 +826,13 @@ void SoundManager::updateScummVMSoundSettings() {
 	ConfMan.setInt("speech_volume", VOICEVOL * 255 / 16);
 
 	ConfMan.flushToDisk();
+}
+
+Audio::RewindableAudioStream *SoundManager::makeSoundStream(Common::SeekableReadStream *stream) {
+	if (_vm->getPlatform() == Common::kPlatformWindows)
+		return Audio::makeAPCStream(stream, DisposeAfterUse::YES);	
+	else
+		return Audio::makeWAVStream(stream, DisposeAfterUse::YES);	
 }
 
 } // End of namespace Hopkins
