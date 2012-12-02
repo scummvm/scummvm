@@ -52,6 +52,9 @@ int MenuManager::MENU() {
 	int frame2Index;
 	int frame1Index;
 
+	if (g_system->getEventManager()->shouldQuit())
+		return -1;
+
 	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
 		_vm->_globals.FORET = false;

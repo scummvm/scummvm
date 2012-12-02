@@ -195,13 +195,17 @@ LABEL_18:
 		if (_globals.SORTIE == -1) {
 			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
 			REST_SYSTEM();
+			return false;
 		}
 	}
-	while (1) {
-		while (1) {
-			while (1) {
-				while (1) {
-					while (1) {
+	for (;;) {
+		for (;;) {
+			for (;;) {
+				for (;;) {
+					for (;;) {
+						if (g_system->getEventManager()->shouldQuit())
+							return false;
+
 						if (_globals.SORTIE == 300)
 							goto LABEL_18;
 						if (_globals.SORTIE != 1)
@@ -2656,7 +2660,7 @@ void HopkinsEngine::Charge_Credits() {
 			_globals.Credit[idxLines]._actvFl = true;
 			_globals.Credit[idxLines]._linePosY = _globals.Credit_y + idxLines * _globals.Credit_step;
 			int idxBuf = 0;
-			while (1) {
+			for (;;) {
 				byte curChar = curPtr[idxBuf + 3];
 				if (curChar == '%' || curChar == 10)
 					break;
@@ -2690,7 +2694,7 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 	byte *bufPtr = buffer;
 	int strWidth = 0;
 	byte curChar;
-	while (1) {
+	for (;;) {
 		curChar = *bufPtr++;
 		if (!curChar)
 			break;
@@ -2716,7 +2720,7 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 		_globals.Credit_by1 = endPosY;
 
 	bufPtr = buffer;
-	while (1) {
+	for (;;) {
 		curChar = *bufPtr++;
 		if (!curChar)
 			break;
@@ -2807,7 +2811,7 @@ void HopkinsEngine::BTOCEAN() {
 				_globals.OCEAN_SENS = 7;
 				_globals.SORTIE = 1;
 				int oldX = _objectsManager.XSPR(0);
-				while (1) {
+				for (;;) {
 					if (_globals.vitesse == 1)
 						oldX -= 2;
 					else if (_globals.vitesse == 2)
@@ -2839,7 +2843,7 @@ LABEL_22:
 				_globals.OCEAN_SENS = 3;
 				_globals.SORTIE = 2;
 				int oldX = _objectsManager.XSPR(0);
-				while (1) {
+				for (;;) {
 					if (_globals.vitesse == 1)
 						oldX += 2;
 					else if (_globals.vitesse == 2)
@@ -2945,7 +2949,7 @@ LABEL_72:
 LABEL_91:
 				if (_globals.OCEAN_SENS == 7) {
 					int oldX = _objectsManager.XSPR(0);
-					while (1) {
+					for (;;) {
 						if (_globals.vitesse == 1)
 							oldX -= 2;
 						else if (_globals.vitesse == 2)
