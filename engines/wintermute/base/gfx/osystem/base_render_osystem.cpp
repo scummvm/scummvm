@@ -421,9 +421,12 @@ void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
 void BaseRenderOSystem::drawTickets() {
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
+	// Note: We draw invalid tickets too, otherwise we wouldn't be honouring
+	// the draw request they obviously made BEFORE becoming invalid, either way
+	// we have a copy of their data, so their invalidness won't affect us.
 	int decrement = 0;
 	while (it != _renderQueue.end()) {
-		if ((*it)->_wantsDraw == false || (*it)->_isValid == false) {
+		if ((*it)->_wantsDraw == false) {
 			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
 			it = _renderQueue.erase(it);
@@ -453,7 +456,7 @@ void BaseRenderOSystem::drawTickets() {
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 		RenderTicket *ticket = *it;
 		assert(ticket->_drawNum == _drawNum++);
-		if (ticket->_isValid && ticket->_dstRect.intersects(*_dirtyRect)) {
+		if (ticket->_dstRect.intersects(*_dirtyRect)) {
 			// dstClip is the area we want redrawn.
 			Common::Rect dstClip(ticket->_dstRect);
 			// reduce it to the dirty rect
@@ -476,6 +479,23 @@ void BaseRenderOSystem::drawTickets() {
 
 	// Revert the colorMod-state.
 	_colorMod = oldColorMod;
+	
+	it = _renderQueue.begin();
+	// Clean out the old tickets
+	decrement = 0;
+	while (it != _renderQueue.end()) {
+		if ((*it)->_isValid == false) {
+			RenderTicket *ticket = *it;
+			addDirtyRect((*it)->_dstRect);
+			it = _renderQueue.erase(it);
+			delete ticket;
+			decrement++;
+		} else {
+			(*it)->_drawNum -= decrement;
+			++it;
+		}
+	}
+
 }
 
 // Replacement for SDL2's SDL_RenderCopy
