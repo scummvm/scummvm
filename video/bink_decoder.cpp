@@ -339,9 +339,20 @@ bool BinkDecoder::seek(const Audio::Timestamp &time) {
 	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
 
 	// Track down the keyframe
-	videoTrack->setCurFrame(findKeyFrame(frame) - 1);
+	uint32 keyFrame = findKeyFrame(frame);
+	videoTrack->setCurFrame(keyFrame - 1);
 	while (getCurFrame() < (int32)frame - 1)
-		skipNextFrame();
+		decodeNextFrame();
+
+	// Skip decoded audio between the keyframe and the target frame
+	for (uint32 i = 0; i < _audioTracks.size(); i++) {
+		if (i == _selectedAudioTrack) {
+			BinkAudioTrack *audioTrack = (BinkAudioTrack *)getTrack(i + 1);
+			Audio::Timestamp delay = videoTrack->getFrameTime(frame - 1) - videoTrack->getFrameTime(keyFrame);
+			audioTrack->skipSamples(delay);
+		}
+	}
+
 	return true;
 }
 
@@ -365,44 +376,18 @@ bool BinkDecoder::BinkVideoTrack::seek(const Audio::Timestamp &time) {
 }
 
 // ResidualVM-specific function
-void BinkDecoder::skipNextFrame() {
-	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
-	if (videoTrack->endOfTrack())
+void BinkDecoder::BinkAudioTrack::skipSamples(const Audio::Timestamp &length) {
+	int32 sampleCount = length.convertToFramerate(_audioStream->getRate()).totalNumberOfFrames();
+
+	if (sampleCount <= 0)
 		return;
 
-	VideoFrame &frame = _frames[videoTrack->getCurFrame() + 1];
+	if (_audioStream->isStereo())
+		sampleCount *= 2;
 
-	if (!_bink->seek(frame.offset))
-		error("Bad bink seek");
-
-	uint32 frameSize = frame.size;
-
-	for (uint32 i = 0; i < _audioTracks.size(); i++) {
-		uint32 audioPacketLength = _bink->readUint32LE();
-
-		frameSize -= 4;
-
-		if (frameSize < audioPacketLength)
-			error("Audio packet too big for the frame");
-
-		if (audioPacketLength >= 4) {
-			// Skip audio data
-			_bink->seek(audioPacketLength, SEEK_CUR);
-
-			frameSize -= audioPacketLength;
-		}
-	}
-
-	uint32 videoPacketStart = _bink->pos();
-	uint32 videoPacketEnd   = _bink->pos() + frameSize;
-
-	frame.bits =
-	new Common::BitStream32LELSB(new Common::SeekableSubReadStream(_bink,
-																   videoPacketStart, videoPacketEnd), true);
-	videoTrack->decodePacket(frame);
-
-	delete frame.bits;
-	frame.bits = 0;
+	int16 *tempBuffer = new int16[sampleCount];
+	_audioStream->readBuffer(tempBuffer, sampleCount);
+	delete[] tempBuffer;
 }
 
 void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {

@@ -74,7 +74,6 @@ public:
 	bool seek(const Audio::Timestamp &time);
 	void setAudioTrack(uint32 track);
 	uint32 findKeyFrame(uint32 frame) const;
-	void skipNextFrame();
 protected:
 	void readNextPacket();
 
@@ -334,6 +333,7 @@ private:
 
 		bool seek(const Audio::Timestamp &time) { return true; }  // ResidualVM-specific
 		bool isSeekable() const { return true; }  // ResidualVM-specific
+		void skipSamples(const Audio::Timestamp &length);  // ResidualVM-specific
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
