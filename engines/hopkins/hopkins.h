@@ -109,7 +109,9 @@ private:
 	void Charge_Credits();
 	void CREDIT_AFFICHE(int startPosY, byte *buffer, char colour);
 	void Credits();
+	void NO_DISPO(int sortie);
 
+	bool runWin95Demo();
 	bool runLinuxDemo();
 	bool runLinuxFull();
 

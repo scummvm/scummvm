@@ -88,8 +88,11 @@ void GraphicsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 
 	if (_vm->getIsDemo()) {
+		if (_vm->getPlatform() == Common::kPlatformLinux)
 		// CHECKME: Should be 0?
-		MANU_SCROLL = 1;
+			MANU_SCROLL = 1;
+		else 
+			MANU_SCROLL = 0;
 		SPEED_SCROLL = 16;
 	} else {
 		MANU_SCROLL = 0;
