@@ -683,9 +683,8 @@ void SciEngine::runGame() {
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
 		_console->attach();
 
-	_gamestate->_syncedAudioOptions = false;
-
 	do {
+		_gamestate->_syncedAudioOptions = false;
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
 		exitGame();
