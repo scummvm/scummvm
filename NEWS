@@ -13,6 +13,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      select the old one as default too.
    - Rewrote VideoDecoder subsystem.
    - Added Galician translation.
+   - Added Finnish translation.
 
   Cine:
    - Improved audio support for Amiga and AtariST versions of Future Wars.
