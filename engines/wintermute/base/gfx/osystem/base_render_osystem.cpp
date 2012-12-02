@@ -107,7 +107,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	setColorMod(255, 255, 255);
 	_dirtyRect = NULL;
 	_disableDirtyRects = true;
-	if (!ConfMan.hasKey("dirty_rects")) {
+	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
 }
