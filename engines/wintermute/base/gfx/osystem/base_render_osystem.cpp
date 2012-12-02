@@ -435,6 +435,12 @@ void BaseRenderOSystem::drawTickets() {
 		}
 	}
 	if (!_dirtyRect || _dirtyRect->width() == 0 || _dirtyRect->height() == 0) {
+		RenderQueueIterator it = _renderQueue.begin();
+		while (it != _renderQueue.end()) {
+			RenderTicket *ticket = *it;
+			ticket->_wantsDraw = false;
+			++it;
+		}
 		return;
 	}
 	// The color-mods are stored in the RenderTickets on add, since we set that state again during
