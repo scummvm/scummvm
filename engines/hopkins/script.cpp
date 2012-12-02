@@ -479,11 +479,11 @@ LABEL_1141:
 	if (*(a1 + 2) == 'M' && *(a1 + 3) == 'U' && *(a1 + 4) == 'S')
 		v1 = 1;
 	if (*(a1 + 2) == 'W' && *(a1 + 3) == 'A' && *(a1 + 4) == 'I') {
-		int v74 = (int16)READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
+		uint v74 = READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
 		if (!v74)
 			v74 = 1;
 		if (v74 + 1 > 0) {
-			for (int v10 = 0; v10 < v74 + 1; v10++) {
+			for (uint v10 = 0; v10 < v74 + 1; v10++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 

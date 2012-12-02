@@ -347,7 +347,7 @@ public:
 	bool XFORCE8;
 	bool CARD_SB;
 	int PERSO_TYPE;
-	int vitesse;
+	uint vitesse;
 	int INSTALL_TYPE;
 	Common::String HOPIMAGE;
 	Common::String HOPANIM;

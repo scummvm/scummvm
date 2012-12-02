@@ -1888,7 +1888,7 @@ void HopkinsEngine::INTRORUN() {
 				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
-				for (int i = 0; i < 200 / _globals.vitesse; ++i)
+				for (uint i = 0; i < 200 / _globals.vitesse; ++i)
 					_eventsManager.VBL();
         
 				_objectsManager.BOBANIM_ON(3);
@@ -1973,23 +1973,23 @@ void HopkinsEngine::INTRORUN() {
 						v9 += 2;
 						if (v9 > 15) {
 							_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
-							for (int j = 1; j < 100 / _globals.vitesse; ++j)
+							for (uint j = 1; j < 100 / _globals.vitesse; ++j)
 								_eventsManager.VBL();
               
 							_objectsManager.BOBANIM_ON(3);
 							_soundManager.VOICE_MIX(7, 3);
 							_objectsManager.BOBANIM_OFF(3);
 							
-							for (int k = 1; k < 60 / _globals.vitesse; ++k)
+							for (uint k = 1; k < 60 / _globals.vitesse; ++k)
 								_eventsManager.VBL();
 							_objectsManager.BOBANIM_ON(5);
-							for (int l = 0; l < 20 / _globals.vitesse; ++l)
+							for (uint l = 0; l < 20 / _globals.vitesse; ++l)
 								_eventsManager.VBL();
 
 							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
 							_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
               
-							for (int m = 0; m < 50 / _globals.vitesse; ++m) {
+							for (uint m = 0; m < 50 / _globals.vitesse; ++m) {
 								if (m == 30 / _globals.vitesse) {
 									_objectsManager.BOBANIM_ON(3);
 									_soundManager.VOICE_MIX(8, 3);
@@ -2807,9 +2807,9 @@ void HopkinsEngine::BTOCEAN() {
 				while (1) {
 					if (_globals.vitesse == 1)
 						oldX -= 2;
-					if (_globals.vitesse == 2)
+					else if (_globals.vitesse == 2)
 						oldX -= 4;
-					if (_globals.vitesse == 3)
+					else if (_globals.vitesse == 3)
 						oldX -= 6;
 					_objectsManager.SETXSPR(0, oldX);
 					OCEAN_HOME();
@@ -2839,9 +2839,9 @@ LABEL_22:
 				while (1) {
 					if (_globals.vitesse == 1)
 						oldX += 2;
-					if (_globals.vitesse == 2)
+					else if (_globals.vitesse == 2)
 						oldX += 4;
-					if (_globals.vitesse == 3)
+					else if (_globals.vitesse == 3)
 						oldX += 6;
 					_objectsManager.SETXSPR(0, oldX);
 					OCEAN_HOME();
@@ -2864,9 +2864,9 @@ LABEL_41:
 					do {
 						if (_globals.vitesse == 1)
 							oldX += 2;
-						if (_globals.vitesse == 2)
+						else if (_globals.vitesse == 2)
 							oldX += 4;
-						if (_globals.vitesse == 3)
+						else if (_globals.vitesse == 3)
 							oldX += 6;
 						_objectsManager.SETXSPR(0, oldX);
 						OCEAN_HOME();
@@ -2889,9 +2889,9 @@ LABEL_57:
 					do {
 						if (_globals.vitesse == 1)
 							oldX -= 2;
-						if (_globals.vitesse == 2)
+						else if (_globals.vitesse == 2)
 							oldX -= 4;
-						if (_globals.vitesse == 3)
+						else if (_globals.vitesse == 3)
 							oldX -= 6;
 						_objectsManager.SETXSPR(0, oldX);
 						OCEAN_HOME();
@@ -2920,9 +2920,9 @@ LABEL_72:
 					do {
 						if (_globals.vitesse == 1)
 							oldX += 2;
-						if (_globals.vitesse == 2)
+						else if (_globals.vitesse == 2)
 							oldX += 4;
-						if (_globals.vitesse == 3)
+						else if (_globals.vitesse == 3)
 							oldX += 6;
 						_objectsManager.SETXSPR(0, oldX);
 						OCEAN_HOME();
@@ -2945,9 +2945,9 @@ LABEL_91:
 					while (1) {
 						if (_globals.vitesse == 1)
 							oldX -= 2;
-						if (_globals.vitesse == 2)
+						else if (_globals.vitesse == 2)
 							oldX -= 4;
-						if (_globals.vitesse == 3)
+						else if (_globals.vitesse == 3)
 							oldX -= 6;
 						_objectsManager.SETXSPR(0, oldX);
 						OCEAN_HOME();

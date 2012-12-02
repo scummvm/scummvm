@@ -559,11 +559,9 @@ void ComputerManager::LIT_TEXTE(int a1) {
 }
 
 void ComputerManager::GAMES() {
-	const byte *v1; 
-	int v2; 
+	const byte *v1 = _vm->_objectsManager.Sprite[0].spriteData;
+	uint oldSpeed = _vm->_globals.vitesse;
 
-	v1 = _vm->_objectsManager.Sprite[0].spriteData;
-	v2 = _vm->_globals.vitesse;
 	_vm->_globals.vitesse = 1;
 	_vm->_eventsManager.CHANGE_MOUSE(0);
 	CASSESPR = g_PTRNUL;
@@ -599,7 +597,7 @@ void ComputerManager::GAMES() {
 	_vm->_soundManager.DEL_SAMPLE(1);
 	_vm->_soundManager.DEL_SAMPLE(2);
 	_vm->_soundManager.DEL_SAMPLE(3);
-	_vm->_globals.vitesse = v2;
+	_vm->_globals.vitesse = oldSpeed;
 	_vm->_eventsManager.CASSE = false;
 	_vm->_eventsManager.CASSE_SOURIS_OFF();
 	setvideomode();

@@ -1164,7 +1164,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 	int v1;
 	int v2;
 	int v5;
-	int v6;
+	uint v6;
 	int v7;
 	int v8;
 	int v10;
@@ -1269,6 +1269,7 @@ LABEL_38:
 					if (v10 > 0) {
 						v11 = v10 / _vm->_globals.vitesse;
 						_vm->_globals.Bob[idx].field12 = v10 / _vm->_globals.vitesse;
+						// Original code. It can't be negative, so the check is on == 0
 						if (v11 <= 0)
 							_vm->_globals.Bob[idx].field12 = 1;
 					}
@@ -2263,14 +2264,13 @@ LABEL_153:
 }
 
 void ObjectsManager::GOHOME2() {
-	signed int v0;
 	int16 v2; 
 
-	v0 = 2;
 	if (_vm->_globals.chemin != (int16 *)g_PTRNUL) {
+		int v0 = 2;
 		if (_vm->_globals.vitesse == 2)
 			v0 = 4;
-		if (_vm->_globals.vitesse == 3)
+		else if (_vm->_globals.vitesse == 3)
 			v0 = 6;
 		_vm->_globals.j_104 = 0;
 		if (v0) {
@@ -3152,19 +3152,14 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 
 // Check Size
 void ObjectsManager::VERIFTAILLE() {
-	int v0; 
-	int v1; 
-	int v2; 
-
-	v0 = _vm->_globals.STAILLE[YSPR(0)];
+	int v0 = _vm->_globals.STAILLE[YSPR(0)];
 	if (_vm->_globals.PERSO_TYPE == 1) {
-		v1 = v0;
+		int v1 = v0;
 		if (v0 < 0)
 			v1 = -v0;
 		v0 = 20 * (5 * v1 - 100) / -80;
-	}
-	if (_vm->_globals.PERSO_TYPE == 2) {
-		v2 = v0;
+	} else if (_vm->_globals.PERSO_TYPE == 2) {
+		int v2 = v0;
 		if (v0 < 0)
 			v2 = -v0;
 		v0 = 20 * (5 * v2 - 165) / -67;
@@ -5217,7 +5212,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 	v19 = "     ";
 	if (_vm->_globals.vitesse == 2)
 		v15 = a5 / 2;
-	if (_vm->_globals.vitesse == 3)
+	else if (_vm->_globals.vitesse == 3)
 		v15 = a5 / 3;
 	v14 = Sprite[0].spriteData;
 	spriteIndex = Sprite[0].spriteIndex;
@@ -5284,7 +5279,7 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 	v14 = a5;
 	if (_vm->_globals.vitesse == 2)
 		v14 = a5 / 2;
-	if (_vm->_globals.vitesse == 3)
+	else if (_vm->_globals.vitesse == 3)
 		v14 = a5 / 3;
 	S_old_spr = Sprite[0].spriteData;
 	S_old_ani = Sprite[0].spriteIndex;
@@ -5351,7 +5346,7 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 	v13 = a5;
 	if (_vm->_globals.vitesse == 2)
 		v13 = a5 / 2;
-	if (_vm->_globals.vitesse == 3)
+	else if (_vm->_globals.vitesse == 3)
 		v13 = a5 / 3;
 	while (1) {
 		v6 = 0;
