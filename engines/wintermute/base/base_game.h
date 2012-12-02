@@ -138,7 +138,7 @@ public:
 	BaseRenderer *_renderer;
 	BaseSoundMgr *_soundMgr;
 	ScEngine *_scEngine;
-	SXMath *_mathClass;
+	BaseScriptable *_mathClass;
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
 	BaseGame(const Common::String &gameId);

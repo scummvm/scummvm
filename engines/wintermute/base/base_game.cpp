@@ -54,7 +54,6 @@
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_ext_math.h"
 #include "engines/wintermute/video/video_player.h"
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
@@ -405,7 +404,7 @@ bool BaseGame::initialize1() {
 			break;
 		}
 
-		_mathClass = new SXMath(this);
+		_mathClass = makeSXMath(this);
 		if (_mathClass == NULL) {
 			break;
 		}
