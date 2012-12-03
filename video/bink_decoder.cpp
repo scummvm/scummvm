@@ -341,6 +341,10 @@ bool BinkDecoder::seek(const Audio::Timestamp &time) {
 	// Track down the keyframe
 	uint32 keyFrame = findKeyFrame(frame);
 	videoTrack->setCurFrame(keyFrame - 1);
+
+	// Adjust the video track to use for seeking
+	findNextVideoTrack();
+
 	while (getCurFrame() < (int32)frame - 1)
 		decodeNextFrame();
 
