@@ -5450,43 +5450,47 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 
 	case PLR_PGDN:
 		if (g_ino == INV_MENU) {
-			// Only act if load or save screen
+			// Load or Save screen
 			MenuPageDown();
 		} else {
+			// Inventory window
 			InventoryDown();
 		}
 		break;
 
 	case PLR_PGUP:
 		if (g_ino == INV_MENU) {
-			// Only act if load or save screen
+			// Load or Save screen
 			MenuPageUp();
 		} else {
+			// Inventory window
 			InventoryUp();
 		}
 		break;
 
 	case PLR_WHEEL_DOWN:
 		if (g_ino == INV_MENU) {
-			// Only act if load or save screen
+			// Load or Save screen
 			MenuRollDown();
 		} else {
+			// Inventory window
 			InventoryDown();
 		}
 		break;
 
 	case PLR_WHEEL_UP:
 		if (g_ino == INV_MENU) {
-			// Only act if load or save screen
+			// Load or Save screen
 			MenuRollUp();
 		} else {
+			// Inventory window
 			InventoryUp();
 		}
 		break;
 
 	case PLR_HOME:
 		if (g_ino == INV_MENU) {
-			// Only act if load or save screen
+			// Load or Save screen
 			if (cd.box == loadBox || cd.box == saveBox)
 				FirstFile(0);
 			else if (cd.box == hopperBox1)
@@ -5500,6 +5504,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			cd.selBox = 0;
 			Select(cd.selBox, true);
 		} else {
+			// Inventory window
 			g_InvD[g_ino].FirstDisp = 0;
 			g_ItemsChanged = true;
 		}
@@ -5507,6 +5512,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 
 	case PLR_END:
 		if (g_ino == INV_MENU) {
+			// Load or Save screen
 			if (cd.box == loadBox || cd.box == saveBox)
 				FirstFile(MAX_SAVED_FILES);	// Will get reduced to appropriate value
 			else if (cd.box == hopperBox1)
@@ -5520,6 +5526,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			cd.selBox = 0;
 			Select(cd.selBox, true);
 		} else {
+			// Inventory window
 			g_InvD[g_ino].FirstDisp = g_InvD[g_ino].NoofItems - g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons;
 			if (g_InvD[g_ino].FirstDisp < 0)
 				g_InvD[g_ino].FirstDisp = 0;
