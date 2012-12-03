@@ -430,6 +430,14 @@ static void MouseProcess(CORO_PARAM, const void *) {
 				ProcessButEvent(PLR_DRAG2_END);
 			break;
 
+		case Common::EVENT_WHEELUP:
+			PlayerEvent(PLR_WHEEL_UP, mousePos);
+			break;
+
+		case Common::EVENT_WHEELDOWN:
+			PlayerEvent(PLR_WHEEL_DOWN, mousePos);
+			break;
+
 		default:
 			break;
 		}
@@ -1046,6 +1054,8 @@ bool TinselEngine::pollEvent() {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
 		// Add button to queue for the mouse process
 		_mouseButtons.push_back(event.type);
 		break;
