@@ -106,7 +106,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	setAlphaMod(255);
 	setColorMod(255, 255, 255);
 	_dirtyRect = NULL;
-	_disableDirtyRects = true;
+	_disableDirtyRects = false;
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
@@ -263,14 +263,6 @@ void BaseRenderOSystem::fade(uint16 alpha) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect) {
-	// This particular warning is rather messy, as this function is called a ton,
-	// thus we avoid printing it more than once.
-
-	// TODO: Add fading with dirty rects.
-	if (!_disableDirtyRects) {
-		warning("BaseRenderOSystem::FadeToColor - Breaks when using dirty rects");
-	}
-
 	Common::Rect fillRect;
 
 	if (rect) {
