@@ -435,7 +435,7 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 
 	SIT14Data *dat = new SIT14Data();
 
-    // initialization
+	// initialization
 	for (i = k = 0; i < 52; ++i) {
 		dat->var2[i] = k;
 		k += (1 << (dat->var1[i] = ((i >= 4) ? ((i - 4) >> 2) : 0)));
@@ -449,10 +449,10 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 			for (j = 0; j < m; ++j)
 				dat->var8[i++] = l;
 
-    for (i = 0, k = 1; i < 75; ++i) {
+	for (i = 0, k = 1; i < 75; ++i) {
 		dat->var5[i] = k;
 		k += (1 << (dat->var4[i] = (i >= 3 ? ((i - 3) >> 2) : 0)));
-    }
+	}
 
 	for (i = 0; i < 4; ++i)
 		dat->var6[i] = i - 1;
@@ -462,8 +462,8 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 			for (j = 0; j < m; ++j)
 				dat->var6[i++] = l;
 
-    m = bits->getBits(16); // number of blocks
-    j = 0; // window position
+	m = bits->getBits(16); // number of blocks
+	j = 0; // window position
 
 	while (m-- && !bits->eos()) {
 		bits->getBits(16); // skip crunched block size
