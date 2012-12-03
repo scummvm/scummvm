@@ -453,7 +453,7 @@ void MidiParser_QT::initCommon() {
 }
 
 byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track, uint32 &trackSize) {
-	// This just goes through all chunks and 
+	// This just goes through all chunks and appends them together
 
 	Common::MemoryWriteStreamDynamic output;
 	uint32 curSample = 0;
