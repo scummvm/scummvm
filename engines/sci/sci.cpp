@@ -683,8 +683,9 @@ void SciEngine::runGame() {
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
 		_console->attach();
 
+	_gamestate->_syncedAudioOptions = false;
+
 	do {
-		_gamestate->_syncedAudioOptions = false;
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
 		exitGame();
@@ -702,6 +703,7 @@ void SciEngine::runGame() {
 			if (_gfxMenu)
 				_gfxMenu->reset();
 			_gamestate->abortScriptProcessing = kAbortNone;
+			_gamestate->_syncedAudioOptions = false;
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_executionStack.clear();
@@ -713,6 +715,7 @@ void SciEngine::runGame() {
 
 			syncSoundSettings();
 			syncIngameAudioOptions();
+			// Games do not set their audio settings when loading
 		} else {
 			break;	// exit loop
 		}
