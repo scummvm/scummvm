@@ -242,10 +242,15 @@ void ScriptedMovie::update() {
 		if (_nextFrameReadVar) {
 			int32 nextFrame = _vm->_state->getVar(_nextFrameReadVar);
 			if (nextFrame > 0 && nextFrame <= (int32)_bink.getFrameCount()) {
+				// Are we changing frame?
 				if (_bink.getCurFrame() != nextFrame - 1) {
-					_bink.seekToFrame(nextFrame - 1);
+					// Don't seek if we just want to display the next frame
+					if (_bink.getCurFrame() + 1 != nextFrame - 1) {
+						_bink.seekToFrame(nextFrame - 1);
+					}
 					drawNextFrameToTexture();
 				}
+
 				_vm->_state->setVar(_nextFrameReadVar, 0);
 				_isLastFrame = false;
 			}
