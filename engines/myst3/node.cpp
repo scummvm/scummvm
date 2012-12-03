@@ -29,26 +29,20 @@
 #include "common/debug.h"
 #include "common/rect.h"
 
-#include "graphics/conversion.h"
+#include "graphics/yuv_to_rgb.h"
 
 namespace Myst3 {
 
 void Face::setTextureFromJPEG(Graphics::JPEGDecoder *jpeg) {
 	_bitmap = new Graphics::Surface();
-	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	const byte *y = (const byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
 	const byte *u = (const byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
 	const byte *v = (const byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
 	
-	byte *ptr = (byte *)_bitmap->getBasePtr(0, 0);
-	for (int i = 0; i < _bitmap->w * _bitmap->h; i++) {
-		byte r, g, b;
-		Graphics::YUV2RGB(*y++, *u++, *v++, r, g, b);
-		*ptr++ = r;
-		*ptr++ = g;
-		*ptr++ = b;
-	}
+	YUVToRGBMan.convert444(_bitmap, Graphics::YUVToRGBManager::kScaleFull, y, u, v,
+			_bitmap->w, _bitmap->h, jpeg->getComponent(1)->pitch, jpeg->getComponent(2)->pitch);
 
 	_texture = _vm->_gfx->createTexture(_bitmap);
 }
@@ -296,7 +290,7 @@ SpotItemFace::~SpotItemFace() {
 
 void SpotItemFace::initBlack(uint16 width, uint16 height) {
 	_bitmap = new Graphics::Surface();
-	_bitmap->create(width, height, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	_bitmap->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	initNotDrawn(width, height);
 }
@@ -304,30 +298,23 @@ void SpotItemFace::initBlack(uint16 width, uint16 height) {
 void SpotItemFace::loadData(Graphics::JPEGDecoder *jpeg) {
 	// Convert active SpotItem image to raw data
 	_bitmap = new Graphics::Surface();
-	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-	for (int i = 0; i < _bitmap->h; i++) {
-		const byte *y = (const byte *)jpeg->getComponent(1)->getBasePtr(0, i);
-		const byte *u = (const byte *)jpeg->getComponent(2)->getBasePtr(0, i);
-		const byte *v = (const byte *)jpeg->getComponent(3)->getBasePtr(0, i);
+	const byte *y = (const byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
+	const byte *u = (const byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
+	const byte *v = (const byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
 
-		byte *ptr = (byte *)_bitmap->getBasePtr(0, i);
-
-		for (int j = 0; j < _bitmap->w; j++) {
-			byte r, g, b;
-			Graphics::YUV2RGB(*y++, *u++, *v++, r, g, b);
-			*ptr++ = r;
-			*ptr++ = g;
-			*ptr++ = b;
-		}
-	}
+	YUVToRGBMan.convert444(_bitmap, Graphics::YUVToRGBManager::kScaleFull, y, u, v,
+			_bitmap->w, _bitmap->h, jpeg->getComponent(1)->pitch, jpeg->getComponent(2)->pitch);
 
 	initNotDrawn(_bitmap->w, _bitmap->h);
 }
 
-void SpotItemFace::updateData(const uint8 *data) {
-	assert(_bitmap && data);
-	memcpy(_bitmap->pixels, data, _bitmap->pitch * _bitmap->h);
+void SpotItemFace::updateData(const Graphics::Surface *surface) {
+	assert(_bitmap && surface);
+
+	_bitmap->free();
+	_bitmap->copyFrom(*surface);
 
 	_drawn = false;
 }
@@ -341,11 +328,11 @@ void SpotItemFace::clear() {
 void SpotItemFace::initNotDrawn(uint16 width, uint16 height) {
 	// Copy not drawn SpotItem image from face
 	_notDrawnBitmap = new Graphics::Surface();
-	_notDrawnBitmap->create(width, height, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	_notDrawnBitmap->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	for (uint i = 0; i < height; i++) {
 		memcpy(_notDrawnBitmap->getBasePtr(0, i),
-				_face->_bitmap->getBasePtr(_posX, _posY + i), width * 3);
+				_face->_bitmap->getBasePtr(_posX, _posY + i), width * 4);
 	}
 }
 
@@ -353,7 +340,7 @@ void SpotItemFace::draw() {
 	for (uint i = 0; i < _bitmap->h; i++) {
 		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
 				_bitmap->getBasePtr(0, i),
-				_bitmap->w * 3);
+				_bitmap->w * 4);
 	}
 
 	_drawn = true;
@@ -364,7 +351,7 @@ void SpotItemFace::undraw() {
 	for (uint i = 0; i < _notDrawnBitmap->h; i++) {
 		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
 				_notDrawnBitmap->getBasePtr(0, i),
-				_notDrawnBitmap->w * 3);
+				_notDrawnBitmap->w * 4);
 	}
 
 	_drawn = false;
@@ -381,14 +368,17 @@ void SpotItemFace::fadeDraw() {
 			byte rND = *ptrND++;
 			byte gND = *ptrND++;
 			byte bND = *ptrND++;
+			ptrND++; // Alpha
 			byte rD = *ptrD++;
 			byte gD = *ptrD++;
 			byte bD = *ptrD++;
+			ptrD++; // Alpha
 
 			// TODO: optimize ?
 			*ptrDest++ = rND * (100 - _fadeValue) / 100 + rD * _fadeValue / 100;
 			*ptrDest++ = gND * (100 - _fadeValue) / 100 + gD * _fadeValue / 100;
 			*ptrDest++ = bND * (100 - _fadeValue) / 100 + bD * _fadeValue / 100;
+			ptrDest++; // Alpha
 		}
 	}
 

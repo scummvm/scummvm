@@ -83,9 +83,6 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	if (format.bytesPerPixel == 4) {
 		internalFormat = GL_RGBA;
 		sourceFormat = GL_UNSIGNED_BYTE;
-	} else if (format.bytesPerPixel == 3) {
-		internalFormat = GL_RGB;
-		sourceFormat = GL_UNSIGNED_BYTE;
 	} else if (format.bytesPerPixel == 2) {
 		internalFormat = GL_RGB;
 		sourceFormat = GL_UNSIGNED_SHORT_5_6_5;
@@ -409,9 +406,9 @@ void Renderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vec
 
 Graphics::Surface *Renderer::getScreenshot() {
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-	glReadPixels(0, 0, kOriginalWidth, kOriginalHeight, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
+	glReadPixels(0, 0, kOriginalWidth, kOriginalHeight, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels);
 
 	return s;
 }

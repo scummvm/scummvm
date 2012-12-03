@@ -40,7 +40,7 @@ Menu::Menu(Myst3Engine *vm) :
 	_saveDrawCaret(false),
 	_saveCaretCounter(0) {
 	_saveThumb = new Graphics::Surface();
-	_saveThumb->create(240, 135, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	_saveThumb->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 }
 
 Menu::~Menu() {
@@ -345,7 +345,7 @@ void Menu::saveMenuOpen() {
 
 	// Update the thumbnail to display
 	if (_saveLoadSpotItem && _saveThumb)
-		_saveLoadSpotItem->updateData((uint8 *)_saveThumb->pixels);
+		_saveLoadSpotItem->updateData(_saveThumb);
 }
 
 void Menu::saveMenuSelect(uint16 item) {
@@ -539,37 +539,35 @@ void Menu::saveGameReadThumbnail(Common::InSaveFile *save) {
 	// Start of thumbnail data
 	save->seek(8580);
 
-	uint8 *thumbnail = new uint8[kMiniatureSize * 3];
+	Graphics::Surface *thumbnail = new Graphics::Surface();
+	thumbnail->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 
-	// The spot item expects RGB data instead of RGBA
-	uint8 *ptr = thumbnail;
-	for (uint i = 0; i < kMiniatureSize; i++) {
-		uint32 rgba = save->readUint32LE();
-		uint8 a, r, g, b;
-		Graphics::colorToARGB< Graphics::ColorMasks<8888> >(rgba, a, r, g, b);
-		*ptr++ = r;
-		*ptr++ = g;
-		*ptr++ = b;
-	}
+	// Read BGRA
+	save->read(thumbnail->pixels, kMiniatureSize * 4);
+
+	// Convert to RGBA
+	thumbnail->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	if (_saveLoadSpotItem)
 		_saveLoadSpotItem->updateData(thumbnail);
 
-	delete[] thumbnail;
+	thumbnail->free();
+	delete thumbnail;
 }
 
 void Menu::saveGameWriteThumbnail(Common::OutSaveFile *save) {
-	// The file expects ARGB data instead of RGB
+	// The file expects BGRA data instead of RGBA
 	uint8 *src = (uint8 *)_saveThumb->pixels;
 	for (uint i = 0; i < kMiniatureSize; i++) {
-		uint8 r, g, b;
+		uint8 r, g, b, a;
 		r = *src++;
 		g = *src++;
 		b = *src++;
+		a = *src++;
 		save->writeByte(b);
 		save->writeByte(g);
 		save->writeByte(r);
-		save->writeByte(0xFF);   // Alpha
+		save->writeByte(a);
 	}
 }
 
@@ -590,22 +588,20 @@ Common::String Menu::prepareSaveNameForDisplay(const Common::String &name) {
 }
 
 void Menu::createThumbnail(Graphics::Surface *big, Graphics::Surface *small) {
-	assert(big->format.bytesPerPixel == 3
-			&& small->format.bytesPerPixel == 3);
+	assert(big->format.bytesPerPixel == 4
+			&& small->format.bytesPerPixel == 4);
 
 	uint bigHeight = big->h - Renderer::kTopBorderHeight - Renderer::kBottomBorderHeight;
 	uint bigYOffset = Renderer::kBottomBorderHeight;
 
-	uint8 *dst = (uint8 *)small->pixels;
+	uint32 *dst = (uint32 *)small->pixels;
 	for (uint i = 0; i < small->h; i++) {
 		for (uint j = 0; j < small->w; j++) {
 			uint32 srcX = big->w * j / small->w;
 			uint32 srcY = bigYOffset + bigHeight - bigHeight * i / small->h;
-			uint8 *src = (uint8 *)big->getBasePtr(srcX, srcY - 1);
+			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY - 1);
 
-			// Copy RGB bytes
-			*dst++ = *src++;
-			*dst++ = *src++;
+			// Copy RGBA pixel
 			*dst++ = *src++;
 		}
 	}
