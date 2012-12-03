@@ -772,14 +772,11 @@ protected:
 	Graphics::PixelFormat getDefaultHighColorFormat() const { return _defaultHighColorFormat; }
 
 	/**
-	 * Find the video track with the lowest start time for the next frame
+	 * Set _nextVideoTrack to the video track with the lowest start time for the next frame.
+	 *
+	 * @return _nextVideoTrack
 	 */
 	VideoTrack *findNextVideoTrack();
-
-	/**
-	 * Find the video track with the lowest start time for the next frame
-	 */
-	const VideoTrack *findNextVideoTrack() const;
 
 	/**
 	 * Typedef helpers for accessing tracks
@@ -806,6 +803,7 @@ private:
 	Audio::Timestamp _lastTimeChange, _endTime;
 	bool _endTimeSet;
 	Common::Rational _playbackRate;
+	VideoTrack *_nextVideoTrack;
 
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;

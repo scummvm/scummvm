@@ -45,6 +45,7 @@ VideoDecoder::VideoDecoder() {
 	_lastTimeChange = 0;
 	_endTime = 0;
 	_endTimeSet = false;
+	_nextVideoTrack = 0;
 
 	// Find the best format for output
 	_defaultHighColorFormat = g_system->getScreenFormat();
@@ -71,6 +72,7 @@ void VideoDecoder::close() {
 	_lastTimeChange = 0;
 	_endTime = 0;
 	_endTimeSet = false;
+	_nextVideoTrack = 0;
 }
 
 bool VideoDecoder::loadFile(const Common::String &filename) {
@@ -167,17 +169,21 @@ const Graphics::Surface *VideoDecoder::decodeNextFrame() {
 	_needsUpdate = false;
 
 	readNextPacket();
-	VideoTrack *track = findNextVideoTrack();
 
-	if (!track)
+	// If we have no next video track at this point, there shouldn't be
+	// any frame available for us to display.
+	if (!_nextVideoTrack)
 		return 0;
 
-	const Graphics::Surface *frame = track->decodeNextFrame();
+	const Graphics::Surface *frame = _nextVideoTrack->decodeNextFrame();
 
-	if (track->hasDirtyPalette()) {
-		_palette = track->getPalette();
+	if (_nextVideoTrack->hasDirtyPalette()) {
+		_palette = _nextVideoTrack->getPalette();
 		_dirtyPalette = true;
 	}
+
+	// Look for the next video track here for the next decode.
+	findNextVideoTrack();
 
 	return frame;
 }
@@ -229,16 +235,11 @@ uint32 VideoDecoder::getTime() const {
 }
 
 uint32 VideoDecoder::getTimeToNextFrame() const {
-	if (endOfVideo() || _needsUpdate)
-		return 0;
-
-	const VideoTrack *track = findNextVideoTrack();
-
-	if (!track)
+	if (endOfVideo() || _needsUpdate || !_nextVideoTrack)
 		return 0;
 
 	uint32 elapsedTime = getTime();
-	uint32 nextFrameStartTime = track->getNextFrameStartTime();
+	uint32 nextFrameStartTime = _nextVideoTrack->getNextFrameStartTime();
 
 	if (nextFrameStartTime <= elapsedTime)
 		return 0;
@@ -284,6 +285,7 @@ bool VideoDecoder::rewind() {
 	_lastTimeChange = 0;
 	_startTime = g_system->getMillis();
 	resetPauseStartTime();
+	findNextVideoTrack();
 	return true;
 }
 
@@ -320,6 +322,7 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 	}
 
 	resetPauseStartTime();
+	findNextVideoTrack();
 	_needsUpdate = true;
 	return true;
 }
@@ -611,10 +614,14 @@ bool VideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::String &base
 void VideoDecoder::addTrack(Track *track) {
 	_tracks.push_back(track);
 
-	// Update volume settings if it's an audio track
 	if (track->getTrackType() == Track::kTrackTypeAudio) {
+		// Update volume settings if it's an audio track
 		((AudioTrack *)track)->setVolume(_audioVolume);
 		((AudioTrack *)track)->setBalance(_audioBalance);
+	} else if (track->getTrackType() == Track::kTrackTypeVideo) {
+		// If this track has a better time, update _nextVideoTrack
+		if (!_nextVideoTrack || ((VideoTrack *)track)->getNextFrameStartTime() < _nextVideoTrack->getNextFrameStartTime())
+			_nextVideoTrack = (VideoTrack *)track;
 	}
 
 	// Keep the track paused if we're paused
@@ -687,7 +694,7 @@ bool VideoDecoder::endOfVideoTracks() const {
 }
 
 VideoDecoder::VideoTrack *VideoDecoder::findNextVideoTrack() {
-	VideoTrack *bestTrack = 0;
+	_nextVideoTrack = 0;
 	uint32 bestTime = 0xFFFFFFFF;
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
@@ -697,31 +704,12 @@ VideoDecoder::VideoTrack *VideoDecoder::findNextVideoTrack() {
 
 			if (time < bestTime) {
 				bestTime = time;
-				bestTrack = track;
+				_nextVideoTrack = track;
 			}
 		}
 	}
 
-	return bestTrack;
-}
-
-const VideoDecoder::VideoTrack *VideoDecoder::findNextVideoTrack() const {
-	const VideoTrack *bestTrack = 0;
-	uint32 bestTime = 0xFFFFFFFF;
-
-	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
-		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack()) {
-			const VideoTrack *track = (const VideoTrack *)*it;
-			uint32 time = track->getNextFrameStartTime();
-
-			if (time < bestTime) {
-				bestTime = time;
-				bestTrack = track;
-			}
-		}
-	}
-
-	return bestTrack;
+	return _nextVideoTrack;
 }
 
 void VideoDecoder::startAudio() {
