@@ -4861,48 +4861,99 @@ static void InvDragEnd() {
 	g_Xchange = g_Ychange = 0;		// Probably no need, but does no harm!
 }
 
-static void MenuPageDown() {
+static bool MenuDown(int lines) {
 	if (cd.box == loadBox || cd.box == saveBox) {
-		if (cd.extraBase < MAX_SAVED_FILES-NUM_RGROUP_BOXES) {
-			FirstFile(cd.extraBase+(NUM_RGROUP_BOXES - 1));
+		if (cd.extraBase < MAX_SAVED_FILES - NUM_RGROUP_BOXES) {
+			FirstFile(cd.extraBase + lines);
 			AddBoxes(true);
-			cd.selBox = NUM_RGROUP_BOXES - 1;
-			Select(cd.selBox, true);
+			return true;
 		}
 	} else if (cd.box == hopperBox1) {
 		if (cd.extraBase < g_numScenes - NUM_RGROUP_BOXES) {
-			FirstScene(cd.extraBase + (NUM_RGROUP_BOXES - 1));
+			FirstScene(cd.extraBase + lines);
 			AddBoxes(true);
-			if (cd.selBox)
-				cd.selBox = NUM_RGROUP_BOXES - 1;
-			Select(cd.selBox, true);
+			return true;
 		}
 	} else if (cd.box == hopperBox2) {
 		if (cd.extraBase < g_numEntries - NUM_RGROUP_BOXES) {
-			FirstEntry(cd.extraBase+(NUM_RGROUP_BOXES - 1));
+			FirstEntry(cd.extraBase + lines);
 			AddBoxes(true);
-			if (cd.selBox)
-				cd.selBox = NUM_RGROUP_BOXES - 1;
-			Select(cd.selBox, true);
+			return true;
 		}
+	}
+	return false;
+}
+
+static bool MenuUp(int lines) {
+	if (cd.extraBase > 0) {
+		if (cd.box == loadBox || cd.box == saveBox)
+			FirstFile(cd.extraBase - lines);
+		else if (cd.box == hopperBox1)
+			FirstScene(cd.extraBase - lines);
+		else if (cd.box == hopperBox2)
+			FirstEntry(cd.extraBase - lines);
+		else
+			return false;
+
+		AddBoxes(true);
+		return true;
+	}
+	return false;
+}
+
+static void MenuRollDown() {
+	if (MenuDown(1)) {
+		if (cd.selBox > 0)
+			cd.selBox--;
+		Select(cd.selBox, true);
+	}
+}
+
+static void MenuRollUp() {
+	if (MenuUp(1)) {
+		if (cd.selBox < NUM_RGROUP_BOXES - 1)
+			cd.selBox++;
+		Select(cd.selBox, true);
+	}
+}
+
+static void MenuPageDown() {
+	if (MenuDown(NUM_RGROUP_BOXES - 1)) {
+		cd.selBox = NUM_RGROUP_BOXES - 1;
+		Select(cd.selBox, true);
 	}
 }
 
 static void MenuPageUp() {
-	if (cd.extraBase > 0) {
-		if (cd.box == loadBox || cd.box == saveBox)
-			FirstFile(cd.extraBase-(NUM_RGROUP_BOXES - 1));
-		else if (cd.box == hopperBox1)
-			FirstScene(cd.extraBase-(NUM_RGROUP_BOXES - 1));
-		else if (cd.box == hopperBox2)
-			FirstEntry(cd.extraBase-(NUM_RGROUP_BOXES - 1));
-		else
-			return;
-
-		AddBoxes(true);
+	if (MenuUp(NUM_RGROUP_BOXES - 1)) {
 		cd.selBox = 0;
 		Select(cd.selBox, true);
 	}
+}
+
+static void InventoryDown() {
+	// This code is a copy of the IB_SLIDE_DOWN case in InvWalkTo
+	// TODO: So share this duplicate code
+	if (g_InvD[g_ino].NoofVicons == 1)
+		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
+			g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
+	for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++) {
+		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
+			g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
+	}
+	g_ItemsChanged = true;
+}
+
+static void InventoryUp() {
+	// This code is a copy of the I_SLIDE_UP case in InvWalkTo
+	// TODO: So share this duplicate code
+	if (g_InvD[g_ino].NoofVicons == 1)
+		g_InvD[g_ino].FirstDisp -= g_InvD[g_ino].NoofHicons;
+	for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++)
+		g_InvD[g_ino].FirstDisp -= g_InvD[g_ino].NoofHicons;
+	if (g_InvD[g_ino].FirstDisp < 0)
+		g_InvD[g_ino].FirstDisp = 0;
+	g_ItemsChanged = true;
 }
 
 /**************************************************************************/
@@ -5402,16 +5453,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			// Only act if load or save screen
 			MenuPageDown();
 		} else {
-			// This code is a copy of the IB_SLIDE_DOWN case in InvWalkTo
-			// TODO: So share this duplicate code
-			if (g_InvD[g_ino].NoofVicons == 1)
-				if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
-					g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
-			for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++) {
-				if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
-					g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
-			}
-			g_ItemsChanged = true;
+			InventoryDown();
 		}
 		break;
 
@@ -5420,15 +5462,25 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			// Only act if load or save screen
 			MenuPageUp();
 		} else {
-			// This code is a copy of the I_SLIDE_UP case in InvWalkTo
-			// TODO: So share this duplicate code
-			if (g_InvD[g_ino].NoofVicons == 1)
-				g_InvD[g_ino].FirstDisp -= g_InvD[g_ino].NoofHicons;
-			for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++)
-				g_InvD[g_ino].FirstDisp -= g_InvD[g_ino].NoofHicons;
-			if (g_InvD[g_ino].FirstDisp < 0)
-				g_InvD[g_ino].FirstDisp = 0;
-			g_ItemsChanged = true;
+			InventoryUp();
+		}
+		break;
+
+	case PLR_WHEEL_DOWN:
+		if (g_ino == INV_MENU) {
+			// Only act if load or save screen
+			MenuRollDown();
+		} else {
+			InventoryDown();
+		}
+		break;
+
+	case PLR_WHEEL_UP:
+		if (g_ino == INV_MENU) {
+			// Only act if load or save screen
+			MenuRollUp();
+		} else {
+			InventoryUp();
 		}
 		break;
 
