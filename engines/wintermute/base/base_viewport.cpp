@@ -86,13 +86,13 @@ Rect32 *BaseViewport::getRect() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseViewport::getWidth() {
+int BaseViewport::getWidth() const {
 	return _rect.right - _rect.left;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseViewport::getHeight() {
+int BaseViewport::getHeight() const {
 	return _rect.bottom - _rect.top;
 }
 

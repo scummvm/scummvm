@@ -1108,7 +1108,7 @@ uint32 ScScript::getFuncPos(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 ScScript::getMethodPos(const Common::String &name) {
+uint32 ScScript::getMethodPos(const Common::String &name) const {
 	for (uint32 i = 0; i < _numMethods; i++) {
 		if (name == _methods[i].name) {
 			return _methods[i].pos;
@@ -1332,7 +1332,7 @@ ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unb
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 ScScript::getEventPos(const Common::String &name) {
+uint32 ScScript::getEventPos(const Common::String &name) const {
 	for (int i = _numEvents - 1; i >= 0; i--) {
 		if (scumm_stricmp(name.c_str(), _events[i].name) == 0) {
 			return _events[i].pos;
@@ -1343,13 +1343,13 @@ uint32 ScScript::getEventPos(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::canHandleEvent(const Common::String &eventName) {
+bool ScScript::canHandleEvent(const Common::String &eventName) const {
 	return getEventPos(eventName) != 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::canHandleMethod(const Common::String &methodName) {
+bool ScScript::canHandleMethod(const Common::String &methodName) const {
 	return getMethodPos(methodName) != 0;
 }
 

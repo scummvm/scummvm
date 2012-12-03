@@ -43,7 +43,7 @@ public:
 	void putString(const char *val);
 	bool getBytes(byte *buffer, uint32 size);
 	bool putBytes(const byte *buffer, uint32 size);
-	uint32 getSize();
+	uint32 getSize() const;
 	bool init(uint32 initSize = 0);
 	void cleanup();
 	BaseDynamicBuffer(BaseGame *inGame, uint32 initSize = 1000, uint32 growBy = 1000);

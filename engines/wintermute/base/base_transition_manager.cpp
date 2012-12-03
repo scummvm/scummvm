@@ -51,7 +51,7 @@ BaseTransitionMgr::~BaseTransitionMgr() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseTransitionMgr::isReady() {
+bool BaseTransitionMgr::isReady() const {
 	return (_state == TRANS_MGR_READY);
 }
 

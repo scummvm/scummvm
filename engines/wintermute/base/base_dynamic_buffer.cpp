@@ -65,7 +65,7 @@ void BaseDynamicBuffer::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseDynamicBuffer::getSize() {
+uint32 BaseDynamicBuffer::getSize() const {
 	return _size;
 }
 

@@ -36,7 +36,7 @@ namespace Wintermute {
 
 class BaseFader : public BaseObject {
 public:
-	uint32 getCurrentColor();
+	uint32 getCurrentColor() const;
 	bool fadeOut(uint32 targetColor, uint32 duration, bool system = false);
 	bool fadeIn(uint32 sourceColor, uint32 duration, bool system = false);
 	bool deactivate();

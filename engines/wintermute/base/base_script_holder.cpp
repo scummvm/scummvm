@@ -342,7 +342,7 @@ bool BaseScriptHolder::removeScript(ScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptHolder::canHandleEvent(const char *EventName) {
+bool BaseScriptHolder::canHandleEvent(const char *EventName) const {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) {
 			return true;
@@ -353,7 +353,7 @@ bool BaseScriptHolder::canHandleEvent(const char *EventName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptHolder::canHandleMethod(const char *MethodName) {
+bool BaseScriptHolder::canHandleMethod(const char *MethodName) const {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) {
 			return true;

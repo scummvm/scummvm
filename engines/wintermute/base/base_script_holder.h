@@ -43,8 +43,8 @@ public:
 	virtual ~BaseScriptHolder();
 	virtual ScScript *invokeMethodThread(const char *methodName);
 	virtual void makeFreezable(bool freezable);
-	bool canHandleEvent(const char *eventName);
-	virtual bool canHandleMethod(const char *eventMethod);
+	bool canHandleEvent(const char *eventName) const;
+	virtual bool canHandleMethod(const char *eventMethod) const;
 	bool cleanup();
 	bool removeScript(ScScript *script);
 	bool addScript(const char *filename);

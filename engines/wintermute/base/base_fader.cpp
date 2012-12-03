@@ -164,7 +164,7 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseFader::getCurrentColor() {
+uint32 BaseFader::getCurrentColor() const {
 	return BYTETORGBA(_red, _green, _blue, _currentAlpha);
 }
 
