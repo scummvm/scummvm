@@ -258,6 +258,11 @@ bool BaseKeyboardState::isAltDown() {
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseKeyboardState::isCurrentPrintable() const {
+	return _currentPrintable;
+}
+
+//////////////////////////////////////////////////////////////////////////
 uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 	if (event->type != Common::EVENT_KEYDOWN) {
 		return 0;

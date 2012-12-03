@@ -3729,7 +3729,7 @@ bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 // TODO
 
 	if (_focusedWindow) {
-		if (!_gameRef->_focusedWindow->handleKeypress(event, _keyboardState->_currentPrintable)) {
+		if (!_gameRef->_focusedWindow->handleKeypress(event, _keyboardState->isCurrentPrintable())) {
 			/*if (event->type != SDL_TEXTINPUT) {*/
 			if (_gameRef->_focusedWindow->canHandleEvent("Keypress")) {
 				_gameRef->_focusedWindow->applyEvent("Keypress");

@@ -39,14 +39,6 @@ namespace Wintermute {
 
 class BaseKeyboardState : public BaseScriptable {
 public:
-	uint32 _currentKeyData;
-	uint32 _currentCharCode;
-	bool _currentPrintable;
-
-	bool _currentShift;
-	bool _currentAlt;
-	bool _currentControl;
-
 	DECLARE_PERSISTENT(BaseKeyboardState, BaseScriptable)
 	BaseKeyboardState(BaseGame *inGame);
 	virtual ~BaseKeyboardState();
@@ -57,6 +49,7 @@ public:
 	static bool isShiftDown();
 	static bool isControlDown();
 	static bool isAltDown();
+	bool isCurrentPrintable() const;
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name);
@@ -65,6 +58,14 @@ public:
 	virtual const char *scToString();
 
 private:
+	bool _currentPrintable;
+	uint32 _currentKeyData;
+	uint32 _currentCharCode;
+	
+	bool _currentShift;
+	bool _currentAlt;
+	bool _currentControl;
+
 	uint8 *_keyStates;
 	uint32 keyCodeToVKey(Common::Event *event);
 	Common::KeyCode vKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
