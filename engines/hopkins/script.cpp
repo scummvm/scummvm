@@ -630,11 +630,13 @@ LABEL_1141:
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(6, 0, 16, 4);
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.PLAY_ANM("BOMBE3.ANM", 50, 14, 500);
-			if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.PLAY_ANM("BOMBE3A.ANM", 50, 14, 500);
-			memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
+			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
+				if (_vm->_globals.SVGA == 1)
+					_vm->_animationManager.PLAY_ANM("BOMBE3.ANM", 50, 14, 500);
+				if (_vm->_globals.SVGA == 2)
+					_vm->_animationManager.PLAY_ANM("BOMBE3A.ANM", 50, 14, 500);
+				memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
+			}
 			_vm->_globals.SORTIE = 6;
 		}
 		if (v76 == 607) {
@@ -697,9 +699,15 @@ LABEL_1141:
 			_vm->_fontManager.TEXTE_OFF(9);
 			_vm->_graphicsManager.FIN_VISU();
 			_vm->_objectsManager.CLEAR_ECRAN();
-			_vm->_soundManager.PLAY_SOUND("SOUND17.WAV");
-			_vm->_graphicsManager.FADE_LINUX = 2;
-			_vm->_animationManager.PLAY_SEQ2("HELICO.SEQ", 10, 4, 10);
+
+			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) { 
+				_vm->_graphicsManager.FADE_OUTW();
+			} else {
+				_vm->_soundManager.PLAY_SOUND("SOUND17.WAV");
+				_vm->_graphicsManager.FADE_LINUX = 2;
+				_vm->_animationManager.PLAY_SEQ2("HELICO.SEQ", 10, 4, 10);
+			}
+
 			_vm->_animationManager.CHARGE_ANIM("otage");
 			_vm->_graphicsManager.LOAD_IMAGE("IM05");
 			_vm->_graphicsManager.VISU_ALL();
@@ -744,10 +752,18 @@ LABEL_1141:
 			_vm->_objectsManager.SCI_OPTI_ONE(1, 0, 17, 3);
 			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_graphicsManager.FIN_VISU();
+
+			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
+				_vm->_soundManager.PLAY_SOUND("SOUND17.WAV");
+
 			_vm->_soundManager.SPECIAL_SOUND = 14;
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			_vm->_animationManager.PLAY_SEQ2("ASSOM.SEQ", 10, 4, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
+
+			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
+				_vm->_graphicsManager.FADE_OUTW();
+
 			_vm->_globals.DESACTIVE_INVENT = false;
 			_vm->_globals.HELICO = 1;
 		}

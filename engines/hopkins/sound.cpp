@@ -426,8 +426,11 @@ void SoundManager::checkVoices() {
 void SoundManager::LOAD_MSAMPLE(int mwavIndex, const Common::String &file) {
 	if (!Mwav[mwavIndex]._active) {
 		Common::File f;
-		if (!f.open(file))
-			error("Could not open %s for reading", file.c_str());
+		if (!f.open(file)) {
+			// Fallback from WAV to APC...
+			if (!f.open(setExtension(file, ".APC")))
+				error("Could not open %s for reading", file.c_str());
+		}
 
 		Mwav[mwavIndex]._audioStream = makeSoundStream(f.readStream(f.size()));
 		Mwav[mwavIndex]._active = true;
@@ -722,8 +725,11 @@ bool SoundManager::DEL_SAMPLE_SDL(int wavIndex) {
 
 bool SoundManager::SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item) {
 	Common::File f;
-	if (!f.open(filename))
-		error("Could not open %s for reading", filename.c_str());
+	if (!f.open(filename)) {
+		// Fallback from WAV to APC...
+		if (!f.open(setExtension(filename, ".APC")))
+			error("Could not open %s for reading", filename.c_str());
+	}
 
 	f.seek(fileOffset);
 	item._audioStream = makeSoundStream(f.readStream((entryLength == 0) ? f.size() : entryLength));
@@ -836,4 +842,15 @@ Audio::RewindableAudioStream *SoundManager::makeSoundStream(Common::SeekableRead
 		return Audio::makeWAVStream(stream, DisposeAfterUse::YES);	
 }
 
+// Blatant rip from gob engine. Hi DrMcCoy!
+Common::String SoundManager::setExtension(const Common::String &str, const Common::String &ext) {
+	if (str.empty())
+		return str;
+
+	const char *dot = strrchr(str.c_str(), '.');
+	if (dot)
+		return Common::String(str.c_str(), dot - str.c_str()) + ext;
+
+	return str + ext;
+}
 } // End of namespace Hopkins

@@ -168,6 +168,7 @@ public:
 	void syncSoundSettings();
 	void updateScummVMSoundSettings();
 	void checkSounds();
+	Common::String setExtension(const Common::String &str, const Common::String &ext);
 };
 
 } // End of namespace Hopkins

@@ -126,6 +126,8 @@ Common::Error HopkinsEngine::run() {
 }
 
 bool HopkinsEngine::runWin95Demo() {
+	_globals.SVGA = 1;
+
 	_globals.CHARGE_OBJET();
 	_objectsManager.CHANGE_OBJET(14);
 	_objectsManager.AJOUTE_OBJET(14);
@@ -225,7 +227,7 @@ LABEL_18:
 						if (!_globals.FR)
 							_graphicsManager.LOAD_IMAGE("fondan");
 						_graphicsManager.FADE_INW();
-						_eventsManager.delay(0x1F4u);
+						_eventsManager.delay(500);
 						_graphicsManager.FADE_OUTW();
 						_globals.iRegul = 1;
 						_soundManager.SPECIAL_SOUND = 2;
@@ -234,9 +236,9 @@ LABEL_18:
 						_graphicsManager.DD_UNLOCK();
 						_graphicsManager.Cls_Pal();
 						if (!_globals.CENSURE)
-							_animationManager.PLAY_ANM("BANQUE.ANM", 200, 200, 28);
+							_animationManager.PLAY_ANM("BANQUE.ANM", 200, 28, 200);
 						else
-							_animationManager.PLAY_ANM("BANKUK.ANM", 200, 200, 28);
+							_animationManager.PLAY_ANM("BANKUK.ANM", 200, 28, 200);
 						_soundManager.SPECIAL_SOUND = 0;
 						_soundManager.DEL_SAMPLE(1);
 						_soundManager.DEL_SAMPLE(2);
@@ -2063,6 +2065,13 @@ void HopkinsEngine::PASS() {
 	}
 }
 
+void HopkinsEngine::NO_DISPO(int sortie) {
+	// Use the code of the linux demo instead of the code of the Windows demo.
+	// The behavior is somewhat better, and common code is easier to maintain.
+	PASS();
+	_globals.SORTIE = sortie;
+}
+
 void HopkinsEngine::ENDEMO() {
 	_soundManager.WSOUND(28);
 	if (_globals.FR == 1)
@@ -3092,10 +3101,6 @@ void HopkinsEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 	_soundManager.syncSoundSettings();
-}
-
-void HopkinsEngine::NO_DISPO(int sortie) {
-	warning("STUB - NO_DISPO");
 }
 
 bool HopkinsEngine::ADULT() {
