@@ -154,12 +154,10 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals.iRegul = 1;
 	_globals.vitesse = 1;
 
-	int v23 = 1;
-	do {
-		++v23;
+	for (int i = 1; i < 50; i++) {
 		_graphicsManager.SCOPY(_graphicsManager.VESA_SCREEN, 0, 0, 640, 440, _graphicsManager.VESA_BUFFER, 0, 0);
 		_eventsManager.VBL();
-	} while (v23 < 50);
+	}
 
 	_globals.iRegul = 0;
 	warning("TODO SPEEDJ = _globals.lItCounter;");
