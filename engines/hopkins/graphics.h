@@ -195,6 +195,7 @@ public:
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 	void Plot_Hline(byte *surface, int xp, int yp, unsigned int width, byte col);
 	void Plot_Vline(byte *surface, int xp, int yp, int height, byte col);
+	void MODE_VESA();
 };
 
 } // End of namespace Hopkins

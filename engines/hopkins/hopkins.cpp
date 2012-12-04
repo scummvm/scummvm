@@ -356,8 +356,7 @@ LABEL_18:
 						_globals.ECRAN = 113;
 						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 						_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
-//						MODE_VESA();
-						_graphicsManager.SET_MODE(640, 480);
+						_graphicsManager.MODE_VESA();
 						break;
 					case 114:
 						_globals.OLD_ECRAN = _globals.ECRAN;
@@ -366,8 +365,7 @@ LABEL_18:
 						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 						_globals.SORTIE = 0;
 						_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
-//						MODE_VESA();
-						_graphicsManager.SET_MODE(640, 480);
+						_graphicsManager.MODE_VESA();
 						break;
 					case 115:
 						_globals.SORTIE = 0;
@@ -376,8 +374,7 @@ LABEL_18:
 						_globals.ECRAN = 115;
 						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 						_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
-//						MODE_VESA();
-						_graphicsManager.SET_MODE(640, 480);
+						_graphicsManager.MODE_VESA();
 						break;
 					default:
 						if (_globals.SORTIE == 151) {
@@ -1642,8 +1639,7 @@ LABEL_20:
 						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 						_globals.SORTIE = 0;
 						_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
-//						MODE_VESA();
-						_graphicsManager.SET_MODE(640, 480);
+						_graphicsManager.MODE_VESA();
 						break;
 					case 114:
 						_globals.SORTIE = 0;
@@ -1652,8 +1648,7 @@ LABEL_20:
 						_globals.SAUVEGARDE->data[svField6] = _globals.OLD_ECRAN;
 						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 						_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
-//						MODE_VESA();
-						_graphicsManager.SET_MODE(640, 480);
+						_graphicsManager.MODE_VESA();
 						break;
 					case 115:
 						_globals.OLD_ECRAN = _globals.ECRAN;
@@ -1662,8 +1657,7 @@ LABEL_20:
 						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 						_globals.SORTIE = 0;
 						_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
-//						MODE_VESA();
-						_graphicsManager.SET_MODE(640, 480);
+						_graphicsManager.MODE_VESA();
 						break;
 					case 100:
 						JOUE_FIN();
@@ -1722,8 +1716,7 @@ LABEL_20:
 						_globals.PERSO_TYPE = 0;
 						_globals.iRegul = 0;
 						_graphicsManager.nbrligne = SCREEN_WIDTH;
-//						MODE_VESA();
-						_graphicsManager.SET_MODE(640, 480);
+						_graphicsManager.MODE_VESA();
 						if (_globals.SORTIE == -1)
 							error("FIN BASE SOUS MARINE");
 						break;

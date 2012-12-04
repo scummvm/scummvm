@@ -2529,4 +2529,8 @@ void GraphicsManager::Plot_Vline(byte *surface, int xp, int yp, int height, byte
 	} while (yCtr);
 }
 
+void GraphicsManager::MODE_VESA() {
+	SET_MODE(640, 480);
+}
+
 } // End of namespace Hopkins
