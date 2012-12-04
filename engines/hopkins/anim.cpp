@@ -332,7 +332,7 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul != 1)
 			break;
-		while (1) {
+		for (;;) {
 			if (_vm->_eventsManager.ESC_KEY == true)
 				goto LABEL_114;
 			if (REDRAW_ANIM() == true)
@@ -403,7 +403,7 @@ LABEL_48:
 	_vm->_eventsManager.lItCounter = 0;
 	v5 = 0;
 	v15 = 0;
-	while (1) {
+	for (;;) {
 		++v15;
 		_vm->_soundManager.PLAY_ANM_SOUND(v15);
 		memset(&buf, 0, 6u);

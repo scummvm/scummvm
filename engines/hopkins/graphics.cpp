@@ -1874,7 +1874,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 							}
 							int v63;
 							do {
-								while (1) {
+								for (;;) {
 									v63 = v22;
 									byte *v53 = v29;
 									v46 = spritePixelsP;
@@ -1882,7 +1882,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 									Agr_x = 0;
 									int v35 = v20;
 									do {
-										while (1) {
+										for (;;) {
 											if (*spritePixelsP)
 												*v29 = *spritePixelsP;
 											--v29;
@@ -1956,7 +1956,7 @@ R_Aff_Zoom_Larg_Cont1:
 
 							int v60;
 							do {
-								while (1) {
+								for (;;) {
 									v60 = v22;
 									byte *v51 = dest1P;
 									v45 = spritePixelsP;
@@ -1964,7 +1964,7 @@ R_Aff_Zoom_Larg_Cont1:
 									Agr_Flag_x = 0;
 									Agr_x = 0;
 									do {
-										while (1) {
+										for (;;) {
 											if (*spritePixelsP)
 												*dest1P = *spritePixelsP;
 											++dest1P;
@@ -2415,7 +2415,7 @@ void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
 	result = 0;
 	destOffset = 0;
 	srcPtr = src;
-	while (1) {
+	for (;;) {
 		byteVal = *srcPtr;
 		if (*srcPtr < kByteStop)
 			goto Video_Cont_wVbe;
@@ -2449,7 +2449,7 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 	assert(VideoPtr);
 	destOffset = 0;
 	srcP = src;
-	while (1) {
+	for (;;) {
 		byteVal = *srcP;
 		if (*srcP < kByteStop)
 			goto Video_Cont_Vbe;

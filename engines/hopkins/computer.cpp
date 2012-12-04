@@ -315,7 +315,7 @@ void ComputerManager::Charge_Menu() {
 			}
 			MenuText[lineNum]._actvFl = 1;
 			strPos = 0;
-			while (1) {
+			for (;;) {
 				byte curChar = tmpPtr[strPos + 2];
 				if (curChar == '%' || curChar == 10)
 					break;

@@ -217,7 +217,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 		v60 = texte_tmp;
 		if (v69) {
 			int v64 = 0;
-			while (1) {
+			for (;;) {
 				byte v14 = *(v60 + v64);
 				if (v14 == '\r' || v14 == '\n') {
 					*(v60 + v64) = 0;
@@ -260,7 +260,7 @@ LABEL_43:
 			do {
 				int v19 = 0;
 				int ptrb = _vm->_globals.largeur_boite - 4;
-				while (1) {
+				for (;;) {
 					lineSize = v19;
 					do
 						v11 = *(v61 + v65 + v19++);

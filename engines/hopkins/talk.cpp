@@ -783,7 +783,7 @@ void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 	v2 = 0;
 	v3 = 0;
 	v4 = a1;
-	while (1) {
+	for (;;) {
 		if (*(BUFFERPERSO + v4) == 'A'
 		        && *(BUFFERPERSO + v4 + 1) == 'N'
 		        && *(BUFFERPERSO + v4 + 2) == 'I'
@@ -990,7 +990,7 @@ LABEL_2:
 	v15 = 0;
 	if (_vm->_globals.COUCOU != g_PTRNUL) {
 		v5 = _vm->_globals.COUCOU;
-		while (1) {
+		for (;;) {
 			if (*v5 == 'C') {
 				if (*(v5 + 1) == 'O') {
 					if (*(v5 + 2) == 'D') {

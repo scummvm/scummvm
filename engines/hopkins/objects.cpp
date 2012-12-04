@@ -2274,7 +2274,7 @@ void ObjectsManager::GOHOME2() {
 			v0 = 6;
 		_vm->_globals.j_104 = 0;
 		if (v0) {
-			while (1) {
+			for (;;) {
 				nouveau_x = *_vm->_globals.chemin;
 				_vm->_globals.chemin++;
 
@@ -5348,7 +5348,7 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 		v13 = a5 / 2;
 	else if (_vm->_globals.vitesse == 3)
 		v13 = a5 / 3;
-	while (1) {
+	for (;;) {
 		v6 = 0;
 		v7 = a2[v14];
 		if (v7 == 44) {

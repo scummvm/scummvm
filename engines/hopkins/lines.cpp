@@ -392,7 +392,7 @@ LABEL_29:
 		int v20 = a2 + 4;
 		int v19 = a2 - 4;
 		int v17;
-		while (1) {
+		for (;;) {
 			v7 = Ligne[v6].lineData;
 
 			if (v7 != (int16 *)g_PTRNUL) {
@@ -433,7 +433,7 @@ LABEL_28:
 			if (v24 >= a6 + 1)
 				goto LABEL_29;
 		}
-		while (1) {
+		for (;;) {
 			int v12 = v7[0];
 			
 			v13 = v7 + 1;
@@ -513,7 +513,7 @@ LABEL_46:
 			if (v24 >= a6 + 1)
 				goto LABEL_47;
 		}
-		while (1) {
+		for (;;) {
 			int v12 = v7[0];
 			v13 = v7 + 1;
 			int v16 = v13[0];
@@ -1160,7 +1160,7 @@ LABEL_112:
 	int v92 = a1;
 
 	int v65;
-	while (1) {
+	for (;;) {
 		int v86 = v92 - 1;
 		int v11 = 2 * Ligne[v92 - 1].field0;
 
@@ -1196,7 +1196,7 @@ LABEL_11:
 		if (v16 == (int16 *)g_PTRNUL)
 			break;
 		int v17;
-		while (1) {
+		for (;;) {
 			v65 = v15;
 			v17 = v16[v15 - 2];
 			if (v16[0] == v95) {
@@ -2632,7 +2632,7 @@ LABEL_67:
 	v91 = SMOOTH_SENS;
 	v14 = 0;
 	int v16;
-	while (1) {
+	for (;;) {
 		int v15 = SMOOTH[v14].field0;
 		v112 = v15;
 		v110 = SMOOTH[v14].field2;
@@ -2750,7 +2750,7 @@ LABEL_195:
 			goto LABEL_248;
 		}
 		v39 = v92;
-		while (1) {
+		for (;;) {
 			if (colision2_ligne(a3, v39, &v141, &v140, 0, TOTAL_LIGNES) == 1) {
 				if (_vm->_objectsManager.DERLIGNE < v140) {
 					v40 = GENIAL(v140, v141, a3, v39, a3, a4, v117, _vm->_globals.essai1, 3);
