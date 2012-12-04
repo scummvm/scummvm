@@ -1,0 +1,10 @@
+Known issues in ResidualVM 0.1.0pre:
+* Switching full-screen/windowed with alt-enter might crash ResidualVM
+* Loading savegames from sets with movies in them will show the movies
+  as garbage for the first few frames
+* The Conveyour-belt/Crane sequence in Year 3 is very tricky and error-prone
+* Characters might pop into place at times
+* Shadows may have artifacts (especially Manny when holding specific items)
+* Subtitles will overlap when multiple characters are speaking
+* Some animations will show their initial state at the end
+* Glottis will be drawn incorrectly at the Beaver Dam
