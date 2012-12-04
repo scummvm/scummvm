@@ -1724,7 +1724,7 @@ LABEL_20:
 						_graphicsManager.nbrligne = SCREEN_WIDTH;
 //						MODE_VESA();
 						_graphicsManager.SET_MODE(640, 480);
-						if (_objectsManager.SPEED_FLAG >> 16 == -1) // I guess it's not a boolean...
+						if (_globals.SORTIE == -1)
 							error("FIN BASE SOUS MARINE");
 						break;
 					}
