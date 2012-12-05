@@ -90,6 +90,22 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		},
 	},
 	{
+		// Hopkins FBI Win95 Polish Demo, provided by Strangerke
+		{
+			"hopkins",
+			"Win95 Demo",
+			{
+				{"Hopkins.exe", 0, "7595c0b9374739b212ee9f8f412ac716", 307200},
+				{"RES_VAN.RES", 0, "8262cfba261c200af4451902689dffe0", 12233202},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+	},
+	{
 		// Hopkins FBI Win95, provided by Strangerke
 		{
 			"hopkins",
