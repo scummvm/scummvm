@@ -42,9 +42,10 @@ namespace Myst3 {
 enum GameVersionFlags {
 	kFlagNone      = 0,
 	kFlagVersion10 = (1 << 0), // v1.0
-	kFlagSafeDisc  = (1 << 1), // SafeDisc-encrypted
-	kFlagDVD       = (1 << 2)  // DVD version
+	kFlagDVD       = (1 << 1)  // DVD version
 };
+
+typedef uint32 SafeDiskKey[4];
 
 struct ExecutableVersion {
 	const char *description;
@@ -54,6 +55,7 @@ struct ExecutableVersion {
 	uint32 ageTableOffset;
 	uint32 nodeInitScriptOffset;
 	uint32 soundNamesOffset;
+	const SafeDiskKey *safeDiskKey;
 };
 
 // Engine Debug Flags

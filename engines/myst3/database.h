@@ -37,6 +37,8 @@ class SeekableSubReadStreamEndian;
 
 namespace Myst3 {
 
+typedef uint32 SafeDiskKey[4];
+
 struct NodeData
 {
 	int16 id;
@@ -156,6 +158,40 @@ private:
 
 	Common::SeekableSubReadStreamEndian *openDatabaseFile() const;
 	Common::SeekableReadStream *decompressPEFDataSegment(Common::SeekableReadStream *stream, uint segmentID) const;
+
+	static uint32 safeDiscDecode1(uint32 data);
+	static uint32 safeDiscDecode2(uint32 data);
+};
+
+class SafeDisc
+{
+public:
+	/** Constructor */
+	SafeDisc();
+
+	/** Decrypt a SafeDisc executable */
+	Common::SeekableReadStream *decrypt(Common::SeekableReadStream *stream) const;
+
+	/** Set the key used for TEA */
+	void setKey(const SafeDiskKey *key);
+
+	typedef uint32 (*DecodeFunc)(uint32);
+
+	/** Set the decoding functions */
+	void setDecodingFunctions(DecodeFunc f1, DecodeFunc f2);
+
+private:
+	SafeDiskKey _key;
+	DecodeFunc _decode1;
+	DecodeFunc _decode2;
+
+	struct Section {
+		uint32 virtualAddress;
+		uint32 size;
+		uint32 offset;
+	};
+
+	void decryptBlock(uint32 *buffer, uint32 size) const;
 };
 
 } /* namespace Myst3 */
