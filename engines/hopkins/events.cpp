@@ -203,11 +203,11 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			keyState[toupper(event.kbd.ascii)] = true;
+			keyState[(byte)toupper(event.kbd.ascii)] = true;
 			handleKey(event);
 			return;
 		case Common::EVENT_KEYUP:
-			keyState[toupper(event.kbd.ascii)] = false;
+			keyState[(byte)toupper(event.kbd.ascii)] = false;
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			souris_b = 1;
@@ -225,10 +225,10 @@ void EventsManager::pollEvents() {
 	}
 
 	for (char chr = 'A'; chr <= 'Z'; chr++)
-		keyState[chr] = false;
+		keyState[(byte)chr] = false;
 
 	for (char chr = '0'; chr <= '9'; chr++)
-		keyState[chr] = false;
+		keyState[(byte)chr] = false;
 }
 
 void EventsManager::handleKey(Common::Event &event) {
@@ -260,20 +260,20 @@ int EventsManager::keywin() {
 			return -1;
 
 		for (char ch = 'A'; ch <= 'Z'; ++ch) {
-			if (keyState[ch]) {
+			if (keyState[(byte)ch]) {
 				foundChar = ch;
 				break;
 			}
 		}
 
 		for (char ch = '0'; ch <= '9'; ++ch) {
-			if (keyState[ch]) {
+			if (keyState[(byte)ch]) {
 				foundChar = ch;
 				break;
 			}
 		}
 
-		if (keyState['.'])
+		if (keyState[(byte)'.'])
 			foundChar = '.';
 		else if (keyState[8])
 			// BACKSPACE
@@ -281,14 +281,14 @@ int EventsManager::keywin() {
 		else if (keyState[13])
 			// ENTER
 			foundChar = 13;
-		else if (keyState[' '])
+		else if (keyState[(byte)' '])
 			foundChar = ' ';
 
 		VBL();
 	}
 
 	// Wait for keypress release
-	while (keyState[foundChar] && !_vm->shouldQuit()) {
+	while (keyState[(byte)foundChar] && !_vm->shouldQuit()) {
 		VBL();
 		g_system->delayMillis(10);
 	}

@@ -172,7 +172,7 @@ LABEL_104:
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'B') {
 		if (_vm->_objectsManager.DESACTIVE != true) {
 			int v72 = *(a1 + 5);
-			int v70 = *(a1 + 6);
+			v70 = *(a1 + 6);
 			int v4 = *(a1 + 7);
 			int v68 = (int16)READ_LE_UINT16(a1 + 8);
 			int v66 = (int16)READ_LE_UINT16(a1 + 10);

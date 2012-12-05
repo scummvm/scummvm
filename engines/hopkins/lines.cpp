@@ -626,7 +626,7 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 		for (int i = a2; Ligne[a1].field0 > i; ++i) {
 			int16 *v10 = Ligne[a1].lineData;
 			int v11 = v10[2 * i];
-			int v50 = v10[2 * i + 1];
+			v50 = v10[2 * i + 1];
 			
 			int v12 = v8;
 			a6[v12] = v11;
