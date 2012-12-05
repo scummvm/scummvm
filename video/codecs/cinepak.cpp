@@ -34,16 +34,12 @@
 
 namespace Video {
 
-// Convert a color from YUV to RGB colorspace, Cinepak style.
-inline static void CPYUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
-	r = CLIP<int>(y + 2 * (v - 128), 0, 255);
-	g = CLIP<int>(y - (u - 128) / 2 - (v - 128), 0, 255);
-	b = CLIP<int>(y + 2 * (u - 128), 0, 255);
-}
-
 #define PUT_PIXEL(offset, lum, u, v) \
 	if (_pixelFormat.bytesPerPixel != 1) { \
-		CPYUV2RGB(lum, u, v, r, g, b); \
+		byte r = _clipTable[lum + (v << 1)]; \
+		byte g = _clipTable[lum - (u >> 1) - v]; \
+		byte b = _clipTable[lum + (u << 1)]; \
+		\
 		if (_pixelFormat.bytesPerPixel == 2) \
 			*((uint16 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b); \
 		else \
@@ -60,6 +56,21 @@ CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec() {
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	else
 		_pixelFormat = g_system->getScreenFormat();
+
+	// Create a lookup for the clip function
+	// This dramatically improves the performance of the color conversion
+	_clipTableBuf = new byte[1024];
+
+	for (uint i = 0; i < 1024; i++) {
+		if (i <= 512)
+			_clipTableBuf[i] = 0;
+		else if (i >= 768)
+			_clipTableBuf[i] = 255;
+		else
+			_clipTableBuf[i] = i - 512;
+	}
+
+	_clipTable = _clipTableBuf + 512;
 }
 
 CinepakDecoder::~CinepakDecoder() {
@@ -69,6 +80,7 @@ CinepakDecoder::~CinepakDecoder() {
 	}
 
 	delete[] _curFrame.strips;
+	delete[] _clipTableBuf;
 }
 
 const Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
@@ -82,7 +94,7 @@ const Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream 
 	if (_curFrame.strips == NULL)
 		_curFrame.strips = new CinepakStrip[_curFrame.stripCount];
 
-	debug (4, "Cinepak Frame: Width = %d, Height = %d, Strip Count = %d", _curFrame.width, _curFrame.height, _curFrame.stripCount);
+	debug(4, "Cinepak Frame: Width = %d, Height = %d, Strip Count = %d", _curFrame.width, _curFrame.height, _curFrame.stripCount);
 
 	// Borrowed from FFMPEG. This should cut out the extra data Cinepak for Sega has (which is useless).
 	// The theory behind this is that this is here to confuse standard Cinepak decoders. But, we won't let that happen! ;)
@@ -190,14 +202,14 @@ void CinepakDecoder::loadCodebook(Common::SeekableReadStream *stream, uint16 str
 				codebook[i].y[j] = stream->readByte();
 
 			if (n == 6) {
-				codebook[i].u  = stream->readByte() + 128;
-				codebook[i].v  = stream->readByte() + 128;
+				codebook[i].u = stream->readSByte();
+				codebook[i].v = stream->readSByte();
 			} else {
 				// This codebook type indicates either greyscale or
 				// palettized video. For greyscale, default us to
-				// 128 for both u and v.
-				codebook[i].u  = 128;
-				codebook[i].v  = 128;
+				// 0 for both u and v.
+				codebook[i].u = 0;
+				codebook[i].v = 0;
 			}
 		}
 	}
@@ -207,7 +219,6 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream *stream, uint16 st
 	uint32 flag = 0, mask = 0;
 	uint32 iy[4];
 	int32 startPos = stream->pos();
-	byte r = 0, g = 0, b = 0;
 
 	for (uint16 y = _curFrame.strips[strip].rect.top; y < _curFrame.strips[strip].rect.bottom; y += 4) {
 		iy[0] = _curFrame.strips[strip].rect.left + y * _curFrame.width;
