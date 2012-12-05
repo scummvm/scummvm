@@ -180,8 +180,9 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals.SORTIE = 0;
 	_globals.PASSWORD = true;
 	
-	if (!ADULT())
-		return Common::kNoError;
+	if (getLanguage() != Common::PL_POL)
+		if (!ADULT())
+			return Common::kNoError;
 
 //	v37 = v35;
 LABEL_18:
