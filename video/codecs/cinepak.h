@@ -59,6 +59,13 @@ struct CinepakFrame {
 	Graphics::Surface *surface;
 };
 
+/**
+ * Cinepak decoder.
+ *
+ * Used in video:
+ *  - AVIDecoder
+ *  - QuickTimeDecoder
+ */
 class CinepakDecoder : public Codec {
 public:
 	CinepakDecoder(int bitsPerPixel = 24);

@@ -32,6 +32,12 @@
 
 namespace Video {
 
+/**
+ * Duck TrueMotion 1 decoder.
+ *
+ * Used in video:
+ *  - AVIDecoder
+ */
 class TrueMotion1Decoder : public Codec {
 public:
 	TrueMotion1Decoder(uint16 width, uint16 height);
