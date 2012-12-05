@@ -722,11 +722,11 @@ void ObjectsManager::SCBOB(int idx) {
 	if (_vm->_globals.Cache[idx].fieldA <= 0)
 		return;
 
-	for (int idx = 0; idx <= 20; idx++) {
-		if ((_vm->_globals.Bob[idx].field0) && (!_vm->_globals.Bob[idx].field16) && (!_vm->_globals.Bob[idx].field34) && (_vm->_globals.Bob[idx].frameIndex != 250)) {
-			int v2 = _vm->_globals.Bob[idx].oldWidth;
-			int v9 = _vm->_globals.Bob[idx].oldX + _vm->_globals.Bob[idx].oldWidth;
-			int v6 = _vm->_globals.Bob[idx].oldY + _vm->_globals.Bob[idx].oldHeight;
+	for (int v8 = 0; v8 <= 20; v8++) {
+		if ((_vm->_globals.Bob[v8].field0) && (!_vm->_globals.Bob[v8].field16) && (!_vm->_globals.Bob[v8].field34) && (_vm->_globals.Bob[v8].frameIndex != 250)) {
+			int v2 = _vm->_globals.Bob[v8].oldWidth;
+			int v9 = _vm->_globals.Bob[v8].oldX + _vm->_globals.Bob[v8].oldWidth;
+			int v6 = _vm->_globals.Bob[v8].oldY + _vm->_globals.Bob[v8].oldHeight;
 			int v3 =_vm->_globals.Cache[idx].field0;
 			int v4 =_vm->_globals.Cache[idx].field4;
 			int v7 =_vm->_globals.Cache[idx].field6 + v3;
@@ -738,25 +738,25 @@ void ObjectsManager::SCBOB(int idx) {
 					++_vm->_globals.Cache[idx].fieldA;
 						v1 = 1;
 				}
-				if (!v1) {
+				if (!(uint16)v1) {
 					if (v2 >= v3 && v7 >= v2) {
 						++_vm->_globals.Cache[idx].fieldA;
 						v1 = 1;
 					}
 				}
-				if (!v1) {
+				if (!(uint16)v1) {
 					if ( v7 >= v2 && v2 >= v3 ) {
 						++_vm->_globals.Cache[idx].fieldA;
 						v1 = 1;
 					}
 				}
-				if (!v1) {
+				if (!(uint16)v1) {
 					if (v2 >= v3 && v9 <= v7) {
 						++_vm->_globals.Cache[idx].fieldA;
 						v1 = 1;
 					}
 				}
-				if (!v1 && v2 <= v3 && v9 >= v7)
+				if (!(uint16)v1 && v2 <= v3 && v9 >= v7)
 					++_vm->_globals.Cache[idx].fieldA;
 			}
 		}
