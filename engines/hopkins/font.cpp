@@ -41,8 +41,26 @@ void FontManager::setParent(HopkinsEngine *vm) {
 }
 
 void FontManager::clearAll() {
-	for (int idx = 0; idx < 11; ++idx)
+	for (int idx = 0; idx < 12; ++idx) {
 		Common::fill((byte *)&Txt[idx], (byte *)&Txt[idx] + sizeof(TxtItem), 0);
+
+		ListeTxt[idx].enabled = false;
+		ListeTxt[idx].height = 0;
+		ListeTxt[idx].width = 0;
+		ListeTxt[idx].xp = 0;
+		ListeTxt[idx].yp = 0;
+	}
+
+	for (int idx = 0; idx < 21; idx++)
+		TRIER_TEXT[idx] = 0;
+
+	oldname = Common::String("");
+	nom_index = Common::String("");
+	
+	for (int idx = 0; idx < 4048; idx++)
+		Index[idx] = 0;
+
+	texte_tmp = g_PTRNUL;
 }
 
 // Text On
