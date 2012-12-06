@@ -115,11 +115,7 @@ void FileManager::F_Censure() {
 
 	CONSTRUIT_SYSTEM("BLOOD.DAT");
 	char *data = (char *)CHARGE_FICHIER(_vm->_globals.NFICHIER);
-  
-	if (*(data + 6) == 'f' && *(data + 7) == 'r')
-		_vm->_globals.CENSURE = false;
-	if (*(data + 6) == 'F' && *(data + 7) == 'R')
-		_vm->_globals.CENSURE = false;
+
 	if (*(data + 6) == 'u' && *(data + 7) == 'k')
 		_vm->_globals.CENSURE = true;
 	if (*(data + 6) == 'U' && *(data + 7) == 'K')
