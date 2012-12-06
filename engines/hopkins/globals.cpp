@@ -227,7 +227,6 @@ Globals::Globals() {
 	XFULLSCREEN = false;
 	XFORCE16 = false;
 	XFORCE8 = false;
-	CARD_SB = false;
 	SOUNDOFF = false;
 	MUSICOFF = false;
 	VOICEOFF = false;

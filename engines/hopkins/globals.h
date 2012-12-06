@@ -345,7 +345,6 @@ public:
 	int XZOOM;
 	bool XFORCE16;
 	bool XFORCE8;
-	bool CARD_SB;
 	int PERSO_TYPE;
 	uint vitesse;
 	int INSTALL_TYPE;

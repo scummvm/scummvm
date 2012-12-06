@@ -2530,7 +2530,6 @@ void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
 
 	_globals.XFORCE16 = iniParams["FORCE16BITS"] == "YES";
 	_globals.XFORCE8 = iniParams["FORCE8BITS"] == "YES";
-	_globals.CARD_SB = iniParams["SOUND"] == "YES";
 }
 
 void HopkinsEngine::INIT_SYSTEM() {
