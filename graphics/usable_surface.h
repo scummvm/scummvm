@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef GRAPHICS_TRANSPARENTSURFACE_H
-#define GRAPHICS_TRANSPARENTSURFACE_H
+#ifndef GRAPHICS_USABLESURFACE_H
+#define GRAPHICS_USABLESURFACE_H
 
 #include "graphics/surface.h"
 
@@ -37,14 +37,14 @@
 #define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
 #define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
 
-namespace Wintermute {
+namespace Graphics {
 
 /**
  * A transparent graphics surface, which implements alpha blitting.
  */
-struct TransparentSurface : public Graphics::Surface {
-	TransparentSurface();
-	TransparentSurface(const Graphics::Surface &surf, bool copyData = false);
+struct UsableSurface : public Graphics::Surface {
+	UsableSurface();
+	UsableSurface(const Graphics::Surface &surf, bool copyData = false);
 
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();
@@ -103,8 +103,8 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int width = -1, int height = -1);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 	// The following scale-code supports arbitrary scaling (i.e. no repeats of column 0 at the end of lines)
-	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
-	TransparentSurface *scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const;
+	UsableSurface *scale(uint16 newWidth, uint16 newHeight) const;
+	UsableSurface *scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const;
 	static byte *_lookup;
 	static void destroyLookup();
 private:
@@ -118,7 +118,7 @@ private:
  * This deleter assures Surface::free is called on deletion.
  */
 /*struct SharedPtrTransparentSurfaceDeleter {
-    void operator()(TransparentSurface *ptr) {
+    void operator()(UsableSurface *ptr) {
         ptr->free();
         delete ptr;
     }

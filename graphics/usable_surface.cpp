@@ -25,20 +25,20 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "graphics/primitives.h"
-#include "engines/wintermute/graphics/transparent_surface.h"
+#include "graphics/usable_surface.h"
 
-namespace Wintermute {
+namespace Graphics {
 
-byte *TransparentSurface::_lookup = NULL;
+byte *UsableSurface::_lookup = NULL;
 
-void TransparentSurface::destroyLookup() {
+void UsableSurface::destroyLookup() {
 	delete _lookup;
 	_lookup = NULL;
 }
 
-TransparentSurface::TransparentSurface() : Surface(), _enableAlphaBlit(true) {}
+UsableSurface::UsableSurface() : Surface(), _enableAlphaBlit(true) {}
 
-TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _enableAlphaBlit(true) {
+UsableSurface::UsableSurface(const Surface &surf, bool copyData) : Surface(), _enableAlphaBlit(true) {
 	if (copyData) {
 		copyFrom(surf);
 	} else {
@@ -72,7 +72,7 @@ void doBlitOpaque(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pit
 	}
 }
 
-void TransparentSurface::generateLookup() {
+void UsableSurface::generateLookup() {
 	_lookup = new byte[256 * 256];
 	for (int i = 0; i < 256; i++) {
 		for (int j = 0; j < 256; j++) {
@@ -81,7 +81,7 @@ void TransparentSurface::generateLookup() {
 	}
 }
 
-void TransparentSurface::doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+void UsableSurface::doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
 
 	if (!_lookup) {
@@ -162,7 +162,7 @@ void TransparentSurface::doBlitAlpha(byte *ino, byte* outo, uint32 width, uint32
 }
 
 
-Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
+Common::Rect UsableSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
 	int ca = (color >> 24) & 0xff;
 
 	Common::Rect retSize;
@@ -187,10 +187,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	}
 
 	// Create an encapsulating surface for the data
-	TransparentSurface srcImage(*this, false);
+	UsableSurface srcImage(*this, false);
 	// TODO: Is the data really in the screen format?
 	if (format.bytesPerPixel != 4) {
-		warning("TransparentSurface can only blit 32 bpp images");
+		warning("UsableSurface can only blit 32 bpp images");
 		return retSize;
 	}
 
@@ -250,12 +250,12 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 		int inStep = 4;
 		int inoStep = img->pitch;
-		if (flipping & TransparentSurface::FLIP_V) {
+		if (flipping & UsableSurface::FLIP_V) {
 			inStep = -inStep;
 			xp = img->w - 1;
 		}
 
-		if (flipping & TransparentSurface::FLIP_H) {
+		if (flipping & UsableSurface::FLIP_H) {
 			inoStep = -inoStep;
 			yp = img->h - 1;
 		}
@@ -382,17 +382,17 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	return retSize;
 }
 
-TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
+UsableSurface *UsableSurface::scale(uint16 newWidth, uint16 newHeight) const {
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
 	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
 	return scale(srcRect, dstRect);
 }
 
 // Copied from clone2727's https://github.com/clone2727/scummvm/blob/pegasus/engines/pegasus/surface.cpp#L247
-TransparentSurface *TransparentSurface::scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
+UsableSurface *UsableSurface::scale(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
 	// I'm doing simple linear scaling here
 	// dstRect(x, y) = srcRect(x * srcW / dstW, y * srcH / dstH);
-	TransparentSurface *target = new TransparentSurface();
+	UsableSurface *target = new UsableSurface();
 
 	int srcW = srcRect.width();
 	int srcH = srcRect.height();
@@ -419,7 +419,7 @@ TransparentSurface *TransparentSurface::scale(const Common::Rect &srcRect, const
  * @param bKey  the blue component of the color key
  * @param overwriteAlpha if true, all other alpha will be set fully opaque
  */
-void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha) {
+void UsableSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha) {
 	assert(format.bytesPerPixel == 4);
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
