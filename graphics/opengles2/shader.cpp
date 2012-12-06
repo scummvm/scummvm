@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#ifdef USE_GLES2
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengles2/shader.h"
 

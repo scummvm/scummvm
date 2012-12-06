@@ -252,5 +252,13 @@ DIST_FILES_ENGINEDATA+=residualvm-emi-patch.m4b
 endif
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 
+# ResidualVM specific
+# Shaders
+# DIST_FILES_SHADERS=
+DIST_FILES_SHADERS=
+ifdef USE_OPENGL_SHADERS
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/grim/shaders/*)
+endif
+
 
 .PHONY: all clean distclean plugins dist-src
