@@ -88,8 +88,6 @@ SoundManager::SoundManager() {
 	old_music = 0;
 	MOD_FLAG = false;
 
-	CARD_SB = true;
-
 	for (int i = 0; i < VOICE_COUNT; ++i)
 		Common::fill((byte *)&Voice[i], (byte *)&Voice[i] + sizeof(VoiceItem), 0);
 	for (int i = 0; i < SWAV_COUNT; ++i)
@@ -111,7 +109,7 @@ void SoundManager::WSOUND_INIT() {
 }
 
 void SoundManager::VERIF_SOUND() {
-	if (CARD_SB && !SOUNDOFF && SOUND_FLAG) {
+	if (!SOUNDOFF && SOUND_FLAG) {
 		if (!VOICE_STAT(1)) {
 			STOP_VOICE(1);
 			DEL_NWAV(SOUND_NUM);
@@ -203,7 +201,7 @@ void SoundManager::PLAY_ANM_SOUND(int soundNumber) {
 }
 
 void SoundManager::WSOUND(int soundNumber) {
-	if (CARD_SB && (old_music != soundNumber || !MOD_FLAG)) {
+	if (old_music != soundNumber || !MOD_FLAG) {
 		if (MOD_FLAG == 1)
 			WSOUND_OFF();
 		if (soundNumber == 1)
@@ -273,26 +271,24 @@ void SoundManager::WSOUND(int soundNumber) {
 }
 
 void SoundManager::WSOUND_OFF() {
-	if (CARD_SB) {
-		STOP_VOICE(0);
-		STOP_VOICE(1);
-		STOP_VOICE(2);
-		if (_vm->_soundManager.SOUND_FLAG)
-			DEL_NWAV(SOUND_NUM);
+	STOP_VOICE(0);
+	STOP_VOICE(1);
+	STOP_VOICE(2);
+	if (_vm->_soundManager.SOUND_FLAG)
+		DEL_NWAV(SOUND_NUM);
 
-		for (int i = 1; i <= 48; ++i)
-			DEL_SAMPLE_SDL(i);
+	for (int i = 1; i <= 48; ++i)
+		DEL_SAMPLE_SDL(i);
 		
-		if (MOD_FLAG) {
-			STOP_MUSIC();
-			DEL_MUSIC();
-			MOD_FLAG = false;
-		}
+	if (MOD_FLAG) {
+		STOP_MUSIC();
+		DEL_MUSIC();
+		MOD_FLAG = false;
 	}
 }
 
 void SoundManager::PLAY_MOD(const Common::String &file) {
-	if (CARD_SB && !MUSICOFF) {
+	if (!MUSICOFF) {
 		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPMUSIC, file);
 		if (MOD_FLAG) {
 			STOP_MUSIC();
@@ -459,7 +455,7 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 	size_t catPos, catLen;
 
 	fileNumber = voiceId;
-	if (!CARD_SB || VOICEOFF == 1)
+	if (VOICEOFF == 1)
 		return false;
 
 	if ((unsigned int)(voiceMode - 1) <= 1
@@ -569,20 +565,18 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 }
 
 void SoundManager::DEL_SAMPLE(int soundIndex) {
-	if (CARD_SB) {
-		if (VOICE_STAT(1) == 1)
-			STOP_VOICE(1);
-		if (VOICE_STAT(2) == 2)
-			STOP_VOICE(2);
-		if (VOICE_STAT(3) == 3)
-			STOP_VOICE(3);
-		DEL_SAMPLE_SDL(soundIndex);
-		SOUND[soundIndex]._active = false;
-	}
+	if (VOICE_STAT(1) == 1)
+		STOP_VOICE(1);
+	if (VOICE_STAT(2) == 2)
+		STOP_VOICE(2);
+	if (VOICE_STAT(3) == 3)
+		STOP_VOICE(3);
+	DEL_SAMPLE_SDL(soundIndex);
+	SOUND[soundIndex]._active = false;
 }
 
 void SoundManager::PLAY_SOUND(const Common::String &file) {
-	if (CARD_SB && !SOUNDOFF) {
+	if (!SOUNDOFF) {
 		if (SOUND_FLAG)
 			DEL_NWAV(SOUND_NUM);
 		LOAD_NWAV(file, 1);
@@ -591,11 +585,9 @@ void SoundManager::PLAY_SOUND(const Common::String &file) {
 }
 
 void SoundManager::PLAY_SOUND2(const Common::String &file) {
-	if (CARD_SB) {
-		if (!SOUNDOFF) {
-			LOAD_NWAV(file, 1);
-			PLAY_NWAV(1);
-		}
+	if (!SOUNDOFF) {
+		LOAD_NWAV(file, 1);
+		PLAY_NWAV(1);
 	}
 }
 
@@ -612,15 +604,13 @@ void SoundManager::MODSetMusicVolume(int volume) {
 }
 
 void SoundManager::CHARGE_SAMPLE(int wavIndex, const Common::String &file) {
-	if (CARD_SB) {
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSOUND, file);
-		LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 0);
-		SOUND[wavIndex]._active = true;
-	}
+	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSOUND, file);
+	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 0);
+	SOUND[wavIndex]._active = true;
 }
 
 void SoundManager::PLAY_SAMPLE(int wavIndex, int voiceMode) {
-	if (CARD_SB && !SOUNDOFF && SOUND[wavIndex]._active) {
+	if (!SOUNDOFF && SOUND[wavIndex]._active) {
 		if (SOUND_FLAG)
 			DEL_NWAV(SOUND_NUM);
 		if (voiceMode == 5) {
@@ -647,7 +637,7 @@ void SoundManager::PLAY_SAMPLE(int wavIndex, int voiceMode) {
 }
 
 void SoundManager::PLAY_SAMPLE2(int idx) {
-	if (CARD_SB && !SOUNDOFF && SOUND[idx]._active) {
+	if (!SOUNDOFF && SOUND[idx]._active) {
 		if (SOUND_FLAG)
 			DEL_NWAV(SOUND_NUM);
 		if (VOICE_STAT(1) == 1)
@@ -657,13 +647,11 @@ void SoundManager::PLAY_SAMPLE2(int idx) {
 }
 
 void SoundManager::LOAD_WAV(const Common::String &file, int wavIndex) {
-	if (CARD_SB)
-		LOAD_NWAV(file, wavIndex);
+	LOAD_NWAV(file, wavIndex);
 }
 
 void SoundManager::PLAY_WAV(int wavIndex) {
-	if (CARD_SB)
-		PLAY_NWAV(wavIndex);
+	PLAY_NWAV(wavIndex);
 }
 
 int SoundManager::VOICE_STAT(int voiceIndex) {
@@ -748,14 +736,12 @@ void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename
 }
 
 void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
-	if (CARD_SB) {
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSOUND, file);
-		LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 1);
-	}
+	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSOUND, file);
+	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 1);
 }
 
 void SoundManager::PLAY_NWAV(int wavIndex) {
-	if (CARD_SB && !SOUND_FLAG && !SOUNDOFF) {
+	if (!SOUND_FLAG && !SOUNDOFF) {
 		SOUND_FLAG = true;
 		SOUND_NUM = wavIndex;
 		PLAY_SAMPLE_SDL(1, wavIndex);
@@ -763,14 +749,12 @@ void SoundManager::PLAY_NWAV(int wavIndex) {
 }
 
 void SoundManager::DEL_NWAV(int wavIndex) {
-	if (CARD_SB) {
-		if (DEL_SAMPLE_SDL(wavIndex)) {
-			if (VOICE_STAT(1) == 1)
-				STOP_VOICE(1);
+	if (DEL_SAMPLE_SDL(wavIndex)) {
+		if (VOICE_STAT(1) == 1)
+			STOP_VOICE(1);
 
-			SOUND_NUM = 0;
-			SOUND_FLAG = false;
-		}
+		SOUND_NUM = 0;
+		SOUND_FLAG = false;
 	}
 }
 

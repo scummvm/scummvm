@@ -125,7 +125,6 @@ public:
 	bool TEXTOFF;
 	bool SOUND_FLAG;
 	bool VBL_MERDE;
-	bool CARD_SB;
 	int SOUND_NUM;
 	bool MOD_FLAG;
 	int old_music;
