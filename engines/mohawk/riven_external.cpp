@@ -1467,7 +1467,7 @@ static void catherineViewerIdleTimer(MohawkEngine_Riven *vm) {
 	VideoHandle videoHandle = vm->_video->playMovieRiven(30);
 
 	// Reset the timer
-	vm->installTimer(&catherineViewerIdleTimer, vm->_video->getDuration(videoHandle) + vm->_rnd->getRandomNumber(60) * 1000);
+	vm->installTimer(&catherineViewerIdleTimer, vm->_video->getDuration(videoHandle).msecs() + vm->_rnd->getRandomNumber(60) * 1000);
 }
 
 void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
@@ -1507,7 +1507,7 @@ void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
 		_vm->_video->activateMLST(cathMovie, _vm->getCurCard());
 		VideoHandle videoHandle = _vm->_video->playMovieRiven(30);
 
-		timeUntilNextMovie = _vm->_video->getDuration(videoHandle) + _vm->_rnd->getRandomNumber(60) * 1000;
+		timeUntilNextMovie = _vm->_video->getDuration(videoHandle).msecs() + _vm->_rnd->getRandomNumber(60) * 1000;
 	} else {
 		// Otherwise, just redraw the imager
 		timeUntilNextMovie = _vm->_rnd->getRandomNumberRng(10, 20) * 1000;
@@ -2335,7 +2335,7 @@ static void rebelPrisonWindowTimer(MohawkEngine_Riven *vm) {
 	VideoHandle handle = vm->_video->playMovieRiven(movie);
 
 	// Ensure the next video starts after this one ends
-	uint32 timeUntilNextVideo = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(38, 58) * 1000;
+	uint32 timeUntilNextVideo = vm->_video->getDuration(handle).msecs() + vm->_rnd->getRandomNumberRng(38, 58) * 1000;
 
 	// Save the time in case we leave the card and return
 	vm->_vars["rvillagetime"] = timeUntilNextVideo + vm->getTotalPlayTime();
