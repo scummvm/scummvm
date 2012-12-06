@@ -512,9 +512,9 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 		prefix = "OF";
 	}
 
-	filename = Common::String::format("%s%d.WAV", prefix.c_str(), fileNumber);
+	filename = Common::String::format("%s%d", prefix.c_str(), fileNumber);
 	
-	if (!_vm->_fileManager.RECHERCHE_CAT(filename, 9)) {
+	if (!_vm->_fileManager.RECHERCHE_CAT(filename + ".WAV", 9)) {
 		if (_vm->_globals.FR == 1)
 			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VFR.RES");
 		if (!_vm->_globals.FR)
@@ -524,11 +524,23 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 
 		catPos = _vm->_globals.CAT_POSI;
 		catLen = _vm->_globals.CAT_TAILLE;
-	} else {
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, filename);
-	
-		if (!f.exists(_vm->_globals.NFICHIER))
-			return false;
+	} else if (!_vm->_fileManager.RECHERCHE_CAT(filename + ".APC", 9)) {
+		if (_vm->_globals.FR == 1)
+			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VFR.RES");
+		if (!_vm->_globals.FR)
+			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VAN.RES");
+		if (_vm->_globals.FR == 2)
+			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VES.RES");
+
+		catPos = _vm->_globals.CAT_POSI;
+		catLen = _vm->_globals.CAT_TAILLE;
+	} else {		
+		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, filename + ".WAV");
+		if (!f.exists(_vm->_globals.NFICHIER)) {
+			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, filename + ".APC");
+			if (!f.exists(_vm->_globals.NFICHIER))
+				return false;
+		}
 
 		catPos = 0;
 		catLen = 0;
