@@ -3020,7 +3020,12 @@ void Myst::clockReset() {
 		_vm->_system->delayMillis(1000);
 		_vm->_sound->replaceSoundMyst(7113);
 
-		// TODO: Play cl1wggat backwards
+		// Gear closing movie
+		VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack) , 195, 225);
+		_vm->_video->seekToTime(handle, _vm->_video->getDuration(handle));
+		_vm->_video->setVideoRate(handle, -1);
+		_vm->_video->waitUntilMovieEnds(handle);
+
 		// Redraw gear
 		_state.gearsOpen = 0;
 		_vm->redrawArea(40);
