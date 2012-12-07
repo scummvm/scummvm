@@ -882,7 +882,7 @@ Common::SeekableReadStream *SafeDisc::decrypt(Common::SeekableReadStream *stream
 
 	// Check SafeDisc version
 	bool known = false;
-	static const char* knownVersions[] = { "v2.30.31", "v2.40.10" };
+	static const char* knownVersions[] = { "v2.10.30", "v2.30.31", "v2.40.10" };
 	for (uint i = 0; i < ARRAYSIZE(knownVersions); i++) {
 		if (version.equals(knownVersions[i])) {
 			known = true;

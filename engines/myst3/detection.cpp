@@ -46,12 +46,12 @@ static const char *directoryGlobs[] = {
 };
 
 // SafeDisk keys
-static const SafeDiskKey sdKeyUnk = { 0x00000000, 0x00000000, 0x00000000, 0x00000000 };
+static const SafeDiskKey sdKey100 = { 0xE3A2EB02, 0x190158D2, 0xD5E10A26, 0x6DF705D2 };
 static const SafeDiskKey sdKey120 = { 0x8D792101, 0x42AF4572, 0x5581B0CE, 0x984525B4 };
 static const SafeDiskKey sdKey122 = { 0x9D15D040, 0x10A5F8C7, 0x3A37C5B2, 0x95516FC0 };
 
 // Executable versions and associated offsets
-static const ExecutableVersion v100win = { "1.0 Windows",    kFlagVersion10, "M3.exe",                        0,        0,        0,        0,        &sdKeyUnk };
+static const ExecutableVersion v100win = { "1.0 Windows",    kFlagVersion10, "M3.exe",                        0x400000, 0x77108,  0x77040,  0x771D0,  &sdKey100 };
 static const ExecutableVersion v100mac = { "1.0 Macintosh",  kFlagVersion10, "Myst III Exile",                0,        0x10FD4,  0x10F10,  0x1109C,  0         };
 static const ExecutableVersion v120mjp = { "1.2 Macintosh",  kFlagNone,      "Myst3 Exile JP",                0,        0x11230,  0x1116C,  0x112F8,  0         };
 static const ExecutableVersion v120mac = { "1.2 Macintosh",  kFlagNone,      "Myst3",                         0,        0x112D0,  0x1120C,  0x11398,  0         };
