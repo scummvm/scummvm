@@ -124,34 +124,45 @@ void SoundManager::VERIF_SOUND() {
 }
 
 void SoundManager::LOAD_ANM_SOUND() {
-	if (SPECIAL_SOUND == 200)
-		VOICE_MIX(682, 1);
-	if (SPECIAL_SOUND == 199)
-		LOAD_WAV("SOUND22.WAV", 1);
-	if (SPECIAL_SOUND == 198)
-		LOAD_WAV("SOUND3.WAV", 1);
-	if (SPECIAL_SOUND == 16)
-		LOAD_WAV("SOUND16.WAV", 1);
-	if (SPECIAL_SOUND == 14)
-		LOAD_WAV("SOUND14.WAV", 1);
-	if (SPECIAL_SOUND == 208)
-		LOAD_WAV("SOUND77.WAV", 1);
-	if (SPECIAL_SOUND == 210)
-		LOAD_WAV("SOUND78.WAV", 1);
-	if (SPECIAL_SOUND == 211)
-		LOAD_WAV("SOUND78.WAV", 1);
-	if (SPECIAL_SOUND == 5)
-		LOAD_WAV("CRIE.WAV", 1);
-	if (SPECIAL_SOUND == 2) {
+	switch (SPECIAL_SOUND) {
+	case 2:
 		CHARGE_SAMPLE(5, "mitra1.wav");
 		CHARGE_SAMPLE(1, "tir2.wav");
 		CHARGE_SAMPLE(2, "sound6.wav");
 		CHARGE_SAMPLE(3, "sound5.WAV");
 		CHARGE_SAMPLE(4, "sound4.WAV");
-	}
-	if (SPECIAL_SOUND == 229) {
+		break;
+	case 5:
+		LOAD_WAV("CRIE.WAV", 1);
+		break;
+	case 14:
+		LOAD_WAV("SOUND14.WAV", 1);
+		break;
+	case 16:
+		LOAD_WAV("SOUND16.WAV", 1);
+		break;
+	case 198:
+		LOAD_WAV("SOUND3.WAV", 1);
+		break;
+	case 199:
+		LOAD_WAV("SOUND22.WAV", 1);
+		break;
+	case 200:
+		VOICE_MIX(682, 1);
+		break;
+	case 208:
+		LOAD_WAV("SOUND77.WAV", 1);
+		break;
+	case 210:
+		LOAD_WAV("SOUND78.WAV", 1);
+		break;
+	case 211:
+		LOAD_WAV("SOUND78.WAV", 1);
+		break;
+	case 229:
 		LOAD_WAV("SOUND80.WAV", 1);
 		LOAD_WAV("SOUND82.WAV", 2);
+		break;
 	}
 }
 
@@ -213,68 +224,103 @@ void SoundManager::WSOUND(int soundNumber) {
 	if (old_music != soundNumber || !MOD_FLAG) {
 		if (MOD_FLAG == 1)
 			WSOUND_OFF();
-		if (soundNumber == 1)
+
+		switch (soundNumber) {
+		case 1:
 			PLAY_MOD("appar");
-		if (soundNumber == 2)
+			break;
+		case 2:
 			PLAY_MOD("ville");
-		if (soundNumber == 3)
+			break;
+		case 3:
 			PLAY_MOD("Rock");
-		if (soundNumber == 4)
+			break;
+		case 4:
 			PLAY_MOD("polic");
-		if (soundNumber == 5)
+			break;
+		case 5:
 			PLAY_MOD("deep");
-		if (soundNumber == 6)
+			break;
+		case 6:
 			PLAY_MOD("purga");
-		if (soundNumber == 12)
-			PLAY_MOD("purg2");
-		if (soundNumber == 7)
+			break;
+		case 7:
 			PLAY_MOD("rivie");
-		if (soundNumber == 8)
+			break;
+		case 8:
 			PLAY_MOD("SUSPE");
-		if (soundNumber == 9)
+			break;
+		case 9:
 			PLAY_MOD("labo");
-		if (soundNumber == 10)
+			break;
+		case 10:
 			PLAY_MOD("cadav");
-		if (soundNumber == 11)
+			break;
+		case 11:
 			PLAY_MOD("caban");
-		if (soundNumber == 13)
+			break;
+		case 12:
+			PLAY_MOD("purg2");
+			break;
+		case 13:
 			PLAY_MOD("foret");
-		if (soundNumber == 14)
+			break;
+		case 14:
 			PLAY_MOD("ile");
-		if (soundNumber == 15)
+			break;
+		case 15:
 			PLAY_MOD("ile2");
-		if (soundNumber == 16)
+			break;
+		case 16:
 			PLAY_MOD("hopki");
-		if (soundNumber == 17)
+			break;
+		case 17:
 			PLAY_MOD("peur");
-		if (soundNumber == 18)
+			break;
+		case 18:
 			PLAY_MOD("peur");
-		if (soundNumber == 19)
+			break;
+		case 19:
 			PLAY_MOD("BASE");
-		if (soundNumber == 20)
+			break;
+		case 20:
 			PLAY_MOD("cada2");
-		if (soundNumber == 21)
+			break;
+		case 21:
 			PLAY_MOD("usine");
-		if (soundNumber == 22)
+			break;
+		case 22:
 			PLAY_MOD("chien");
-		if (soundNumber == 23)
+			break;
+		case 23:
 			PLAY_MOD("coeur");
-		if (soundNumber == 24)
+			break;
+		case 24:
 			PLAY_MOD("stand");
-		if (soundNumber == 25)
+			break;
+		case 25:
 			PLAY_MOD("ocean");
-		if (soundNumber == 26)
+			break;
+		case 26:
 			PLAY_MOD("base3");
-		if (soundNumber == 27)
+			break;
+		case 27:
 			PLAY_MOD("gloop");
-		if (soundNumber == 28)
+			break;
+		case 28:
 			PLAY_MOD("cant");
-		if (soundNumber == 29)
+			break;
+		case 29:
 			PLAY_MOD("feel");
-		if (soundNumber == 30)
+			break;
+		case 30:
 			PLAY_MOD("lost");
-		if (soundNumber == 31)
+			break;
+		case 31:
 			PLAY_MOD("tobac");
+			break;
+		}
+
 		old_music = soundNumber;
 	}
 }
