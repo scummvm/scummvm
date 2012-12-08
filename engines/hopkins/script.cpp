@@ -729,6 +729,8 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(3) != 100);
 			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_graphicsManager.FIN_VISU();
+			
+			// If uncensored, rip the throat of the hostage
 			if (!_vm->_globals.CENSURE) {
 				_vm->_soundManager.SPECIAL_SOUND = 16;
 				_vm->_graphicsManager.FADE_LINUX = 2;
