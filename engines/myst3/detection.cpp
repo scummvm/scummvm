@@ -47,15 +47,16 @@ static const char *directoryGlobs[] = {
 
 // SafeDisk keys
 static const SafeDiskKey sdKey100 = { 0xE3A2EB02, 0x190158D2, 0xD5E10A26, 0x6DF705D2 };
-static const SafeDiskKey sdKey120 = { 0x8D792101, 0x42AF4572, 0x5581B0CE, 0x984525B4 };
+static const SafeDiskKey sdKey110 = { 0x8D792101, 0x42AF4572, 0x5581B0CE, 0x984525B4 };
 static const SafeDiskKey sdKey122 = { 0x9D15D040, 0x10A5F8C7, 0x3A37C5B2, 0x95516FC0 };
 
 // Executable versions and associated offsets
 static const ExecutableVersion v100win = { "1.0 Windows",    kFlagVersion10, "M3.exe",                        0x400000, 0x77108,  0x77040,  0x771D0,  &sdKey100 };
 static const ExecutableVersion v100mac = { "1.0 Macintosh",  kFlagVersion10, "Myst III Exile",                0,        0x10FD4,  0x10F10,  0x1109C,  0         };
+static const ExecutableVersion v110win = { "1.1 Windows",    kFlagNone,      "M3.exe",                        0x400000, 0x78108,  0x78040,  0x781D0,  &sdKey110 };
 static const ExecutableVersion v120mjp = { "1.2 Macintosh",  kFlagNone,      "Myst3 Exile JP",                0,        0x11230,  0x1116C,  0x112F8,  0         };
 static const ExecutableVersion v120mac = { "1.2 Macintosh",  kFlagNone,      "Myst3",                         0,        0x112D0,  0x1120C,  0x11398,  0         };
-static const ExecutableVersion v120sd  = { "1.2 Windows",    kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  &sdKey120 };
+static const ExecutableVersion v120sd  = { "1.2 Windows",    kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  &sdKey110 };
 static const ExecutableVersion v122sd  = { "1.22 Windows",   kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  &sdKey122 };
 static const ExecutableVersion v12xwin = { "1.2x Windows",   kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  0         };
 static const ExecutableVersion v122osx = { "1.22 Mac OS X",  kFlagNone,      "Myst3 OS X US",                 0,        0x118C4,  0x11800,  0x1198C,  0         };
@@ -86,6 +87,7 @@ static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,      "SL
 
 static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "f8ab52da2815c1342eeb42b1bcad5441", &v100win) // 1.0
+	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "0f2b2703fc79be043007ab4e603d54b8", &v110win) // 1.1
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "314f4d2a3c9d22787719219419dcd480", &v120sd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "3510a29ba7db40fa7310e15aac807e8e", &v120sd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::JA_JPN, 0,     "M3.exe", "89f4ceb295420c01116bc4bee7bcd9c4", &v120sd ) // 1.2
