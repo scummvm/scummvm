@@ -136,6 +136,7 @@ public:
 	MusicItem Music;
 public:
 	SoundManager();
+	~SoundManager();
 	void setParent(HopkinsEngine *vm);
 
 	void WSOUND_INIT();

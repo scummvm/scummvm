@@ -57,6 +57,7 @@ EventsManager::EventsManager() {
 
 EventsManager::~EventsManager() {
 	_vm->_globals.dos_free2(Bufferobjet);
+	_vm->_globals.dos_free2(pointeur_souris);
 }
 
 void EventsManager::setParent(HopkinsEngine *vm) {

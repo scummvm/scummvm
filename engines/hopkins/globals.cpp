@@ -261,6 +261,8 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	free(ICONE);
+	dos_free2(TETE);
+	dos_free2(police);
 	dos_free2(BUF_ZONE);
 	dos_free2(CACHE_BANQUE[6]);
 	dos_free2(texte_tmp);
@@ -276,6 +278,8 @@ Globals::~Globals() {
 	dos_free2(Bufferdecor);
 	dos_free2(ADR_FICHIER_OBJ);
 	dos_free2(PERSO);
+
+	CLEAR_VBOB();
 
 	free(g_PTRNUL);
 }
@@ -474,6 +478,8 @@ void Globals::CLEAR_VBOB() {
 		VBob[idx].yp = 0;
 		VBob[idx].frameIndex = 0;
 		VBob[idx].fieldC = 0;
+		if (VBob[idx].surface != g_PTRNUL)
+			dos_free2(VBob[idx].surface);
 		VBob[idx].surface = g_PTRNUL;
 		VBob[idx].spriteData = g_PTRNUL;
 		VBob[idx].oldSpriteData = g_PTRNUL;

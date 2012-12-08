@@ -99,6 +99,12 @@ SoundManager::SoundManager() {
 	Common::fill((byte *)&Music, (byte *)&Music + sizeof(MusicItem), 0);
 }
 
+SoundManager::~SoundManager() {
+	STOP_MUSIC();
+	DEL_MUSIC();
+	MOD_FLAG = false;
+}
+
 void SoundManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 	SPECIAL_SOUND = 0;
