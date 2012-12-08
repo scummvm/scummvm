@@ -157,51 +157,54 @@ void SoundManager::LOAD_ANM_SOUND() {
 
 void SoundManager::PLAY_ANM_SOUND(int soundNumber) {
 	if (!_vm->_globals.CENSURE && SPECIAL_SOUND == 2) {
-		if (soundNumber == 20)
+		switch (soundNumber) {
+		case 20:
 			PLAY_SAMPLE2(5);
-		if (soundNumber == 57)
+			break;
+		case 57:
+		case 63:
+		case 69:
 			PLAY_SAMPLE2(1);
-		if (soundNumber == 63)
-			PLAY_SAMPLE2(1);
-		if (soundNumber == 69)
-			PLAY_SAMPLE2(1);
-		if (soundNumber == 75)
+			break;
+		case 75:
 			PLAY_SAMPLE2(2);
-		if (soundNumber == 109)
+			break;
+		case 109:
 			PLAY_SAMPLE2(3);
-		if (soundNumber == 122)
+			break;
+		case 122:
 			PLAY_SAMPLE2(4);
-	}
-	if (SPECIAL_SOUND == 1 && soundNumber == 17)
+			break;
+		}
+	} else if (SPECIAL_SOUND == 1 && soundNumber == 17)
 		PLAY_SOUND("SOUND42.WAV");
-	if (SPECIAL_SOUND == 199 && soundNumber == 72)
+	else if (SPECIAL_SOUND == 5 && soundNumber == 19)
 		PLAY_WAV(1);
-	if (SPECIAL_SOUND == 198 && soundNumber == 15)
+	else if (SPECIAL_SOUND == 14 && soundNumber == 625)
 		PLAY_WAV(1);
-	if (SPECIAL_SOUND == 16 && soundNumber == 25)
+	else if (SPECIAL_SOUND == 16 && soundNumber == 25)
 		PLAY_WAV(1);
-	if (SPECIAL_SOUND == 14 && soundNumber == 625)
-		PLAY_WAV(1);
-	if (SPECIAL_SOUND == 208 && soundNumber == 40)
-		PLAY_WAV(1);
-	if (SPECIAL_SOUND == 210 && soundNumber == 2)
-		PLAY_WAV(1);
-	if (SPECIAL_SOUND == 211 && soundNumber == 22)
-		PLAY_WAV(1);
-	if (SPECIAL_SOUND == 5 && soundNumber == 19)
-		PLAY_WAV(1);
-	if (SPECIAL_SOUND == 17) {
+	else if (SPECIAL_SOUND == 17) {
 		if (soundNumber == 6)
 			PLAY_SAMPLE2(1);
-		if (soundNumber == 14)
+		else if (soundNumber == 14)
 			PLAY_SAMPLE2(2);
-		if (soundNumber == 67)
+		else if (soundNumber == 67)
 			PLAY_SAMPLE2(3);
-	}
-	if (SPECIAL_SOUND == 229) {
+	} else if (SPECIAL_SOUND == 198 && soundNumber == 15)
+		PLAY_WAV(1);
+	else if (SPECIAL_SOUND == 199 && soundNumber == 72)
+		PLAY_WAV(1);
+	else if (SPECIAL_SOUND == 208 && soundNumber == 40)
+		PLAY_WAV(1);
+	else if (SPECIAL_SOUND == 210 && soundNumber == 2)
+		PLAY_WAV(1);
+	else if (SPECIAL_SOUND == 211 && soundNumber == 22)
+		PLAY_WAV(1);
+	else if (SPECIAL_SOUND == 229) {
 		if (soundNumber == 15)
 			PLAY_WAV(1);
-		if (soundNumber == 91)
+		else if (soundNumber == 91)
 			PLAY_WAV(2);
 	}
 }

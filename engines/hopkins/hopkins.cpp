@@ -161,7 +161,6 @@ bool HopkinsEngine::runWin95Demo() {
 	warning("TODO SPEEDJ = _globals.lItCounter;");
 	warning("TODO no_vsync = 0;");
 	warning("TODO TEST = 0;");
-//	printf_(v27, v26, (int)"\n speed=%d", SBYTE2(dword_452A26));
 //	if (SPEEDJ > 475)
 	if (_eventsManager.lItCounter > 475)
 		_globals.vitesse = 2;
@@ -184,263 +183,269 @@ bool HopkinsEngine::runWin95Demo() {
 		if (!ADULT())
 			return Common::kNoError;
 
-//	v37 = v35;
-LABEL_18:
-	if (_globals.SORTIE == 300)
-	  _globals.SORTIE = 0;
-
-	if (!_globals.SORTIE) {
-		_globals.SORTIE = _menuManager.MENU();
-		if (_globals.SORTIE == -1) {
-			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
-			REST_SYSTEM();
-			return false;
-		}
-	}
 	for (;;) {
-		for (;;) {
-			for (;;) {
-				for (;;) {
-					for (;;) {
-						if (g_system->getEventManager()->shouldQuit())
-							return false;
-
-						if (_globals.SORTIE == 300)
-							goto LABEL_18;
-						if (_globals.SORTIE != 1)
-							break;
-						_globals.Max_Propre = 50;
-						_globals.Max_Ligne_Long = 40;
-						_globals.Max_Propre_Gen = 20;
-						_globals.Max_Perso_Y = 435;
-						_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 2);
-					}
-					if (_globals.SORTIE != 3)
-						break;
-					if (!_globals.SAUVEGARDE->data[svField170]) {
-						_soundManager.WSOUND(3);
-						if (_globals.FR == 1)
-							_graphicsManager.LOAD_IMAGE("fondfr");
-						if (!_globals.FR)
-							_graphicsManager.LOAD_IMAGE("fondan");
-						_graphicsManager.FADE_INW();
-						_eventsManager.delay(500);
-						_graphicsManager.FADE_OUTW();
-						_globals.iRegul = 1;
-						_soundManager.SPECIAL_SOUND = 2;
-						_graphicsManager.DD_LOCK();
-						_graphicsManager.Cls_Video();
-						_graphicsManager.DD_UNLOCK();
-						_graphicsManager.Cls_Pal();
-						if (!_globals.CENSURE)
-							_animationManager.PLAY_ANM("BANQUE.ANM", 200, 28, 200);
-						else
-							_animationManager.PLAY_ANM("BANKUK.ANM", 200, 28, 200);
-						_soundManager.SPECIAL_SOUND = 0;
-						_soundManager.DEL_SAMPLE(1);
-						_soundManager.DEL_SAMPLE(2);
-						_soundManager.DEL_SAMPLE(3);
-						_soundManager.DEL_SAMPLE(4);
-						_graphicsManager.FADE_OUTW();
-						_globals.SAUVEGARDE->data[svField170] = 1;
-					}
-					_globals.Max_Propre = 5;
-					_globals.Max_Ligne_Long = 5;
-					_globals.Max_Propre_Gen = 5;
-					_globals.Max_Perso_Y = 450;
-					_globals.NOSPRECRAN = true;
-					_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
-				}
-				if (4 != _globals.SORTIE)
-				  break;
-				_globals.DESACTIVE_INVENT = true;
-				_objectsManager.PLAN_BETA();
-				_globals.DESACTIVE_INVENT = false;
-			}
-			if (_globals.SORTIE == 5)
-			  break;
-			switch (_globals.SORTIE) {
-			case 8:
-				_globals.Max_Propre = 15;
-				_globals.Max_Ligne_Long = 15;
-				_globals.Max_Propre_Gen = 10;
-				_globals.Max_Perso_Y = 450;
-				_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
-				break;
-			case 6:
-				_globals.Max_Propre = 15;
-				_globals.Max_Ligne_Long = 20;
-				_globals.Max_Propre_Gen = 10;
-				_globals.Max_Perso_Y = 460;
-				_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
-				break;
-			case 7:
-				if (_globals.SAUVEGARDE->data[svField220])
-					_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
-				else
-					_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
-				break;
-			case 9:
-				_globals.Max_Propre_Gen = 10;
-				_globals.Max_Propre = 15;
-				_globals.Max_Perso_Y = 440;
-				_globals.Max_Ligne_Long = 20;
-				if (_globals.SAUVEGARDE->data[svField225])
-				  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
-				else
-				  BOOM();
-				break;
-			case 10:
-				_globals.NOSPRECRAN = true;
-				_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
-				_globals.NOSPRECRAN = false;
-				break;
-			case 11:
-				_globals.NOSPRECRAN = true;
-				_globals.Max_Ligne_Long = 20;
-				_globals.Max_Propre_Gen = 10;
-				_globals.Max_Perso_Y = 450;
-				_globals.Max_Propre = 15;
-				_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
-				_globals.NOSPRECRAN = false;
-				break;
-			case 12:
-				_globals.Max_Propre_Gen = 10;
-				_globals.Max_Propre = 15;
-				_globals.Max_Perso_Y = 450;
-				_globals.Max_Ligne_Long = 20;
-				if (_globals.SAUVEGARDE->data[svField225]) {
-					if (_globals.FR == 1)
-						_graphicsManager.LOAD_IMAGE("ENDFR");
-					else if (!_globals.FR)
-						_graphicsManager.LOAD_IMAGE("ENDUK");
-					_graphicsManager.FADE_INW();
-					_eventsManager.MOUSE_ON();
-					do
-						_eventsManager.VBL();
-					while (_eventsManager.BMOUSE() != 1);
-					_graphicsManager.FADE_OUTW();
-					REST_SYSTEM();
-				}
-				BOOM();
-				break;
-			case 13:
-			case 14:
-			case 15:
-				NO_DISPO(11);
-				break;
-			default:
-				if (_globals.SORTIE == 16)
-					goto LABEL_52;
-				if (_globals.SORTIE == 17) {
-					NO_DISPO(1);
-				} else if (_globals.SORTIE != 24 && _globals.SORTIE != 25 && _globals.SORTIE != 33
-				        && _globals.SORTIE != 26 && _globals.SORTIE != 27 && _globals.SORTIE != 28
-				        && _globals.SORTIE != 29 && _globals.SORTIE != 30 && _globals.SORTIE != 31
-				        && _globals.SORTIE != 32 && _globals.SORTIE != 34 
-				        && (_globals.SORTIE <= 34 || _globals.SORTIE >= 100)) {
-					switch (_globals.SORTIE) {
-					case 111:
-						_globals.NOSPRECRAN = true;
-						_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
-						_globals.NOSPRECRAN = false;
-						break;
-					case 112:
-						_globals.NOSPRECRAN = true;
-						_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
-						_globals.NOSPRECRAN = false;
-						break;
-					case 113:
-						_globals.SORTIE = 0;
-						_globals.OLD_ECRAN = _globals.ECRAN;
-						_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
-						_globals.ECRAN = 113;
-						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
-						_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
-						_graphicsManager.MODE_VESA();
-						break;
-					case 114:
-						_globals.OLD_ECRAN = _globals.ECRAN;
-						_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
-						_globals.ECRAN = 114;
-						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
-						_globals.SORTIE = 0;
-						_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
-						_graphicsManager.MODE_VESA();
-						break;
-					case 115:
-						_globals.SORTIE = 0;
-						_globals.OLD_ECRAN = _globals.ECRAN;
-						_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
-						_globals.ECRAN = 115;
-						_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
-						_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
-						_graphicsManager.MODE_VESA();
-						break;
-					default:
-						if (_globals.SORTIE == 151) {
-							_soundManager.WSOUND(28);
-							_globals.iRegul = 4; // CHECKME!
-							_graphicsManager.DD_LOCK();
-							_graphicsManager.Cls_Video();
-							_graphicsManager.DD_UNLOCK();
-							_graphicsManager.Cls_Pal();
-							_graphicsManager.LOAD_IMAGE("njour3a");
-							_graphicsManager.FADE_INW();
-							_eventsManager.delay(5000);
-							_graphicsManager.FADE_OUTW();
-							_globals.SORTIE = 300;
-							_globals.iRegul = 0;
-						}
-						if (_globals.SORTIE == 150) {
-							_soundManager.WSOUND(28);
-							_globals.iRegul = 4; // CHECKME!
-							_graphicsManager.DD_LOCK();
-							_graphicsManager.Cls_Video();
-							_graphicsManager.DD_UNLOCK();
-							_graphicsManager.Cls_Pal();
-							_animationManager.PLAY_ANM("JOUR1A.anm", 12, 12, 2000);
-							_globals.iRegul = 0;
-							_globals.SORTIE = 300;
-						}
-						if (_globals.SORTIE == 152) {
-							_soundManager.WSOUND(28);
-							_globals.iRegul = 4; // CHECKME!
-							_graphicsManager.DD_LOCK();
-							_graphicsManager.Cls_Video();
-							_graphicsManager.DD_UNLOCK();
-							_graphicsManager.Cls_Pal();
-							_animationManager.PLAY_ANM("JOUR4A.anm", 12, 12, 2000);
-							_globals.iRegul = 0;
-							_globals.SORTIE = 300;
-						}
-						goto LABEL_18;
-					}
-				}
-				else
-				{
-LABEL_52:
-					NO_DISPO(4);
-				}
-				break;
+		if (_globals.SORTIE == 300)
+			_globals.SORTIE = 0;
+	
+		if (!_globals.SORTIE) {
+			_globals.SORTIE = _menuManager.MENU();
+			if (_globals.SORTIE == -1) {
+				_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+				REST_SYSTEM();
+				return false;
 			}
 		}
-		_globals.Max_Propre = 5;
-		_globals.Max_Ligne_Long = 5;
-		_globals.Max_Propre_Gen = 5;
-		_globals.NOSPRECRAN = true;
-		_globals.Max_Perso_Y = 455;
 
-		byte v1 = _globals.SAUVEGARDE->data[svField80];
-		if (v1) {
-			if (v1 == 1)
-				_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
-		} else {
-			_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
+		if (g_system->getEventManager()->shouldQuit())
+			return false;
+
+		switch (_globals.SORTIE) {
+		case 1:
+			_globals.Max_Propre = 50;
+			_globals.Max_Ligne_Long = 40;
+			_globals.Max_Propre_Gen = 20;
+			_globals.Max_Perso_Y = 435;
+			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 2);
+			break;
+
+		case 3:
+			if (!_globals.SAUVEGARDE->data[svField170]) {
+				_soundManager.WSOUND(3);
+				if (_globals.FR == 1)
+					_graphicsManager.LOAD_IMAGE("fondfr");
+				if (!_globals.FR)
+					_graphicsManager.LOAD_IMAGE("fondan");
+				_graphicsManager.FADE_INW();
+				_eventsManager.delay(500);
+				_graphicsManager.FADE_OUTW();
+				_globals.iRegul = 1;
+				_soundManager.SPECIAL_SOUND = 2;
+				_graphicsManager.DD_LOCK();
+				_graphicsManager.Cls_Video();
+				_graphicsManager.DD_UNLOCK();
+				_graphicsManager.Cls_Pal();
+				if (!_globals.CENSURE)
+					_animationManager.PLAY_ANM("BANQUE.ANM", 200, 28, 200);
+				else
+					_animationManager.PLAY_ANM("BANKUK.ANM", 200, 28, 200);
+				_soundManager.SPECIAL_SOUND = 0;
+				_soundManager.DEL_SAMPLE(1);
+				_soundManager.DEL_SAMPLE(2);
+				_soundManager.DEL_SAMPLE(3);
+				_soundManager.DEL_SAMPLE(4);
+				_graphicsManager.FADE_OUTW();
+				_globals.SAUVEGARDE->data[svField170] = 1;
+			}
+			_globals.Max_Propre = 5;
+			_globals.Max_Ligne_Long = 5;
+			_globals.Max_Propre_Gen = 5;
+			_globals.Max_Perso_Y = 450;
+			_globals.NOSPRECRAN = true;
+			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+			break;
+
+		case 4:
+			_globals.DESACTIVE_INVENT = true;
+			_objectsManager.PLAN_BETA();
+			_globals.DESACTIVE_INVENT = false;
+			break;
+
+		case 5:
+			_globals.Max_Propre = 5;
+			_globals.Max_Ligne_Long = 5;
+			_globals.Max_Propre_Gen = 5;
+			_globals.NOSPRECRAN = true;
+			_globals.Max_Perso_Y = 455;
+	
+			if (_globals.SAUVEGARDE->data[svField80]) {
+				if (_globals.SAUVEGARDE->data[svField80] == 1)
+					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
+			} else {
+				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
+			}
+	
+			_globals.NOSPRECRAN = false;
+			break;
+
+		case 6:
+			_globals.Max_Propre = 15;
+			_globals.Max_Ligne_Long = 20;
+			_globals.Max_Propre_Gen = 10;
+			_globals.Max_Perso_Y = 460;
+			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+			break;
+
+		case 7:
+			if (_globals.SAUVEGARDE->data[svField220])
+				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+			else
+				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+			break;
+
+		case 8:
+			_globals.Max_Propre = 15;
+			_globals.Max_Ligne_Long = 15;
+			_globals.Max_Propre_Gen = 10;
+			_globals.Max_Perso_Y = 450;
+			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+			break;
+
+		case 9:
+			_globals.Max_Propre_Gen = 10;
+			_globals.Max_Propre = 15;
+			_globals.Max_Perso_Y = 440;
+			_globals.Max_Ligne_Long = 20;
+			if (_globals.SAUVEGARDE->data[svField225])
+			  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+			else
+			  BOOM();
+			break;
+
+		case 10:
+			_globals.NOSPRECRAN = true;
+			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
+			_globals.NOSPRECRAN = false;
+			break;
+
+		case 11:
+			_globals.NOSPRECRAN = true;
+			_globals.Max_Ligne_Long = 20;
+			_globals.Max_Propre_Gen = 10;
+			_globals.Max_Perso_Y = 450;
+			_globals.Max_Propre = 15;
+			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
+			_globals.NOSPRECRAN = false;
+			break;
+
+		case 12:
+			_globals.Max_Propre_Gen = 10;
+			_globals.Max_Propre = 15;
+			_globals.Max_Perso_Y = 450;
+			_globals.Max_Ligne_Long = 20;
+			if (_globals.SAUVEGARDE->data[svField225]) {
+				if (_globals.FR == 1)
+					_graphicsManager.LOAD_IMAGE("ENDFR");
+				else if (!_globals.FR)
+					_graphicsManager.LOAD_IMAGE("ENDUK");
+				_graphicsManager.FADE_INW();
+				_eventsManager.MOUSE_ON();
+				do
+					_eventsManager.VBL();
+				while (_eventsManager.BMOUSE() != 1);
+				_graphicsManager.FADE_OUTW();
+				REST_SYSTEM();
+			}
+			BOOM();
+			break;
+
+		case 13:
+		case 14:
+		case 15:
+			NO_DISPO(11);
+			break;
+
+		case 16:
+		case 24:
+		case 25:
+		case 26:
+		case 27:
+		case 28:
+		case 29:
+		case 30:
+		case 31:
+		case 33:
+		case 32:
+		case 34: 
+			NO_DISPO(4);
+			break;
+
+		case 17:
+			NO_DISPO(1);
+			break;
+
+		case 111:
+			_globals.NOSPRECRAN = true;
+			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
+			_globals.NOSPRECRAN = false;
+			break;
+
+		case 112:
+			_globals.NOSPRECRAN = true;
+			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
+			_globals.NOSPRECRAN = false;
+			break;
+
+		case 113:
+			_globals.SORTIE = 0;
+			_globals.OLD_ECRAN = _globals.ECRAN;
+			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
+			_globals.ECRAN = 113;
+			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
+			_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
+			_graphicsManager.MODE_VESA();
+			break;
+
+		case 114:
+			_globals.OLD_ECRAN = _globals.ECRAN;
+			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
+			_globals.ECRAN = 114;
+			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
+			_globals.SORTIE = 0;
+			_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
+			_graphicsManager.MODE_VESA();
+			break;
+
+		case 115:
+			_globals.SORTIE = 0;
+			_globals.OLD_ECRAN = _globals.ECRAN;
+			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
+			_globals.ECRAN = 115;
+			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
+			_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
+			_graphicsManager.MODE_VESA();
+			break;
+
+		case 150:
+			_soundManager.WSOUND(28);
+			_globals.iRegul = 4; // CHECKME!
+			_graphicsManager.DD_LOCK();
+			_graphicsManager.Cls_Video();
+			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.Cls_Pal();
+			_animationManager.PLAY_ANM("JOUR1A.anm", 12, 12, 2000);
+			_globals.iRegul = 0;
+			_globals.SORTIE = 300;
+			break;
+
+		case 151:
+			_soundManager.WSOUND(28);
+			_globals.iRegul = 4; // CHECKME!
+			_graphicsManager.DD_LOCK();
+			_graphicsManager.Cls_Video();
+			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.Cls_Pal();
+			_graphicsManager.LOAD_IMAGE("njour3a");
+			_graphicsManager.FADE_INW();
+			_eventsManager.delay(5000);
+			_graphicsManager.FADE_OUTW();
+			_globals.SORTIE = 300;
+			_globals.iRegul = 0;
+			break;
+
+		case 152:
+			_soundManager.WSOUND(28);
+			_globals.iRegul = 4; // CHECKME!
+			_graphicsManager.DD_LOCK();
+			_graphicsManager.Cls_Video();
+			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.Cls_Pal();
+			_animationManager.PLAY_ANM("JOUR4A.anm", 12, 12, 2000);
+			_globals.iRegul = 0;
+			_globals.SORTIE = 300;
+			break;
 		}
-
-		_globals.NOSPRECRAN = false;
 	}
+	return true;
 }
 
 bool HopkinsEngine::runLinuxDemo() {
@@ -589,14 +594,6 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.NOSPRECRAN = false;
 			break;
        
-		case 8:
-			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
-			_globals.Max_Propre_Gen = 10;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
-			break;
-
 		case 6:
 			_globals.Max_Propre = 15;
 			_globals.Max_Ligne_Long = 20;
@@ -610,6 +607,14 @@ bool HopkinsEngine::runLinuxDemo() {
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+			break;
+
+		case 8:
+			_globals.Max_Propre = 15;
+			_globals.Max_Ligne_Long = 15;
+			_globals.Max_Propre_Gen = 10;
+			_globals.Max_Perso_Y = 450;
+			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
 			break;
 
 		case 9:
@@ -696,19 +701,19 @@ bool HopkinsEngine::runLinuxDemo() {
 			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30);
 			break;
 
-		case 33:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
-			_globals.NOSPRECRAN = false;
-			break;
-
 		case 26:
 			_globals.Max_Propre = 50;
 			_globals.Max_Ligne_Long = 40;
 			_globals.Max_Propre_Gen = 20;
 			_globals.Max_Perso_Y = 435;
 			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30);
-		
+
+		case 33:
+			_globals.NOSPRECRAN = true;
+			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
+			_globals.NOSPRECRAN = false;
+			break;
+
 		case 35:
 			ENDEMO();
 			break;
@@ -767,20 +772,6 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager.DD_Unlock();
 			break;
 
-		case 151:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-               
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
-			_graphicsManager.Cls_Pal();
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.PLAY_ANM("JOUR3A.anm", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals.SORTIE = 300;
-			break;
-
 		case 150:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
@@ -791,6 +782,20 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.PLAY_ANM("JOUR1A.anm", 12, 12, 2000);
+			_globals.iRegul = 0;
+			_globals.SORTIE = 300;
+			break;
+
+		case 151:
+			_soundManager.WSOUND(16);
+			_globals.iRegul = 1;
+               
+			_graphicsManager.DD_Lock();
+			_graphicsManager.Cls_Video();
+			_graphicsManager.DD_Unlock();
+			_graphicsManager.Cls_Pal();
+			_graphicsManager.FADE_LINUX = 2;
+			_animationManager.PLAY_ANM("JOUR3A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
 			break;
