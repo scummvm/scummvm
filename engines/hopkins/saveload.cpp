@@ -249,6 +249,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 		srcP += w;
 		destP += w;
 	}
+	thumb8.free();
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
