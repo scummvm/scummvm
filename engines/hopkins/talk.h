@@ -63,8 +63,8 @@ public:
 	void BOB_VISU_PARLE(int idx);
 	void CHERCHE_ANIM0(int a1, int a2);
 	void ANIM_PERSO_INIT();
-	void CLEAR_ANIM_PERSO();
-	bool RECHERCHE_ANIM_PERSO(int a1, const byte *a2, int a3, int a4);
+	void clearCharacterAnim();
+	bool searchCharacterAnim(int a1, const byte *a2, int a3, int a4);
 	void REPONSE(int a1, int a2);
 	void REPONSE2(int a1, int a2);
 	void OBJET_VIVANT(const Common::String &a2);

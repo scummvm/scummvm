@@ -34,13 +34,15 @@
 namespace Hopkins {
 
 AnimationManager::AnimationManager() {
-	CLS_ANM = false;
+	clearAnimationFl = false;
 	NO_SEQ = false;
 	NO_COUL = false;
 }
 
-// Play Anim
-void AnimationManager::PLAY_ANM(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
+/**
+ * Play Anim
+ */
+void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
 	int v4; 
 	bool hasScreenCopy; 
 	byte *screenCopy = NULL; 
@@ -70,7 +72,7 @@ LABEL_2:
 		f.skip(14);
 		f.read(v10, nbytes);
 
-		if (CLS_ANM == true) {
+		if (clearAnimationFl == true) {
 			_vm->_graphicsManager.DD_Lock();
 			_vm->_graphicsManager.Cls_Video();
 			_vm->_graphicsManager.DD_Unlock();
@@ -110,7 +112,7 @@ LABEL_2:
 		while (!_vm->shouldQuit()) {
 			if (_vm->_eventsManager.ESC_KEY == true)
 				goto LABEL_58;
-			if (REDRAW_ANIM() == true)
+			if (redrawAnim() == true)
 				break;
 			_vm->_eventsManager.CONTROLE_MES();
 			if (_vm->_eventsManager.lItCounter >= rate1)
@@ -132,7 +134,7 @@ LABEL_25:
 	v13 = 0;
 	while (!_vm->shouldQuit()) {
 		++v13;
-		_vm->_soundManager.PLAY_ANM_SOUND(v13);
+		_vm->_soundManager.playAnim_SOUND(v13);
 
 		if (f.read(ptr, 16) != 16)
 			v4 = -1;
@@ -169,7 +171,7 @@ LABEL_49:
 		if (v4 == -1) {
 			if (_vm->_globals.iRegul == 1) {
 				while (_vm->_eventsManager.ESC_KEY != true) {
-					if (REDRAW_ANIM() == true)
+					if (redrawAnim() == true)
 						goto LABEL_53;
 					_vm->_eventsManager.CONTROLE_MES();
 					_vm->_soundManager.VERIF_SOUND();
@@ -185,7 +187,7 @@ LABEL_57:
 		}
 	}
 	while (!_vm->shouldQuit() && _vm->_eventsManager.ESC_KEY != true) {
-		if (REDRAW_ANIM() == true) {
+		if (redrawAnim() == true) {
 			if (_vm->_graphicsManager.NOLOCK == true)
 				break;
 			_vm->_globals.dos_free2(ptr);
@@ -243,8 +245,10 @@ LABEL_58:
 	_vm->_graphicsManager.NOLOCK = false;
 }
 
-// Play Anim 2
-void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4) {
+/**
+ * Play Animation, type 2
+ */
+void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4) {
 	int v5; 
 	int v8; 
 	byte *ptr; 
@@ -335,7 +339,7 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 		for (;;) {
 			if (_vm->_eventsManager.ESC_KEY == true)
 				goto LABEL_114;
-			if (REDRAW_ANIM() == true)
+			if (redrawAnim() == true)
 				break;
 			_vm->_eventsManager.CONTROLE_MES();
 			if (_vm->_eventsManager.lItCounter >= a2)
@@ -405,7 +409,7 @@ LABEL_48:
 	v15 = 0;
 	for (;;) {
 		++v15;
-		_vm->_soundManager.PLAY_ANM_SOUND(v15);
+		_vm->_soundManager.playAnim_SOUND(v15);
 		memset(&buf, 0, 6u);
 		memset(v13, 0, 0x13u);
 		
@@ -444,7 +448,7 @@ LABEL_88:
 		if (v5 == -1) {
 			if (_vm->_globals.iRegul == 1) {
 				while (_vm->_eventsManager.ESC_KEY != true) {
-					if (REDRAW_ANIM() == true) {
+					if (redrawAnim() == true) {
 						if (_vm->_graphicsManager.NOLOCK == true)
 							goto LABEL_114;
 						if (v8 == 1)
@@ -508,7 +512,7 @@ LABEL_88:
 		}
 	}
 	while (_vm->_eventsManager.ESC_KEY != true) {
-		if (REDRAW_ANIM() == true) {
+		if (redrawAnim() == true) {
 			if (_vm->_graphicsManager.NOLOCK == true)
 				break;
 			if (v8 == 1)
@@ -667,12 +671,14 @@ LABEL_114:
 	_vm->_graphicsManager.DD_VBL();
 }
 
-bool AnimationManager::REDRAW_ANIM() {
+bool AnimationManager::redrawAnim() {
 	return false;
 }
 
-// Load Anim
-void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
+/**
+ * Load Animation
+ */
+void AnimationManager::loadAnim(const Common::String &animName) {
 	byte v20[15];
 	char header[10];
 	char filename1[15];
@@ -682,7 +688,7 @@ void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 	char filename5[15];
 	char filename6[15];
 
-	CLEAR_ANIM();
+	clearAnim();
 
 	Common::String filename = animName + ".ANI";
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
@@ -714,7 +720,7 @@ void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 			
 			if (!f.exists(_vm->_globals.NFICHIER))
 				error("File not found");
-			if (CHARGE_BANK_SPRITE1(idx, files[idx - 1]))
+			if (loadSpriteBank(idx, files[idx - 1]))
 				error("File not compatible with this soft.");
 		}
 	}
@@ -724,13 +730,16 @@ void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 	f.close();
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		RECHERCHE_ANIM(data, idx, nbytes);
+		searchAnim(data, idx, nbytes);
 	}
 
 	_vm->_globals.dos_free2(data);
 }
 
-void AnimationManager::CLEAR_ANIM() {
+/**
+ * Clear animation
+ */
+void AnimationManager::clearAnim() {
 	for (int idx = 0; idx < 35; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].data != g_PTRNUL)
 			_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.dos_free2(_vm->_globals.Bqe_Anim[idx].data);
@@ -747,8 +756,10 @@ void AnimationManager::CLEAR_ANIM() {
 	}
 }
 
-// Load Sprite Bank 1
-int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filename) {
+/**
+ * Load Sprite Bank
+ */
+int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	byte *v3;
 	byte *v4; 
 	byte *v13;
@@ -839,8 +850,10 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	return result;
 }
 
-// Search Anim
-void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count) {
+/** 
+ * Search Animation
+ */
+void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 	int v3;
 	const byte *v5; 
 	int v6; 
@@ -933,7 +946,10 @@ void AnimationManager::RECHERCHE_ANIM(const byte *data, int animIndex, int count
 	} while (v21 <= count && v3 != 1);
 }
 
-void AnimationManager::PLAY_SEQ(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
+/**
+ * Play sequence
+ */
+void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
 	bool readError; 
 	int v7; 
 	byte *ptr = NULL; 
@@ -1042,7 +1058,7 @@ void AnimationManager::PLAY_SEQ(const Common::String &file, uint32 rate1, uint32
 	soundNumber = 0;
 	do {
 		++soundNumber;
-		_vm->_soundManager.PLAY_ANM_SOUND(soundNumber);
+		_vm->_soundManager.playAnim_SOUND(soundNumber);
 		memset(v10, 0, 0x13u);
 		if (f.read(v10, 16) != 16)
 			readError = true;
@@ -1111,7 +1127,10 @@ LABEL_59:
 	_vm->_globals.dos_free2(v10);
 }
 
-void AnimationManager::PLAY_SEQ2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
+/**
+ * Play Sequence type 2
+ */
+void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
 	bool v4; 
 	int v7; 
 	byte *ptr = NULL; 
@@ -1183,7 +1202,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &file, uint32 rate1, uint3
 		while (!_vm->shouldQuit()) {
 			if (_vm->_eventsManager.ESC_KEY == true)
 				goto LABEL_54;
-			if (REDRAW_ANIM() == true)
+			if (redrawAnim() == true)
 				break;
 			_vm->_eventsManager.CONTROLE_MES();
 			_vm->_soundManager.VERIF_SOUND();
@@ -1203,7 +1222,7 @@ LABEL_23:
 	v4 = false;
 	v13 = 0;
 	while (!_vm->shouldQuit()) {
-		_vm->_soundManager.PLAY_ANM_SOUND(v13++);
+		_vm->_soundManager.playAnim_SOUND(v13++);
 
 		memset(v11, 0, 0x13u);
 		if (f.read(v11, 16) != 16)
@@ -1240,7 +1259,7 @@ LABEL_44:
 		if (v4) {
 			if (_vm->_globals.iRegul == 1) {
 				while (_vm->_eventsManager.ESC_KEY != true) {
-					if (REDRAW_ANIM() == true)
+					if (redrawAnim() == true)
 						goto LABEL_48;
 					_vm->_eventsManager.CONTROLE_MES();
 					_vm->_soundManager.VERIF_SOUND();
@@ -1256,7 +1275,7 @@ LABEL_53:
 	}
 	while (_vm->_eventsManager.ESC_KEY != true) {
 		_vm->_eventsManager.CONTROLE_MES();
-		if (REDRAW_ANIM() == true)
+		if (redrawAnim() == true)
 			goto LABEL_48;
 		if (_vm->_eventsManager.lItCounter >= rate2)
 			goto LABEL_33;

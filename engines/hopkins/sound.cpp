@@ -166,7 +166,7 @@ void SoundManager::LOAD_ANM_SOUND() {
 	}
 }
 
-void SoundManager::PLAY_ANM_SOUND(int soundNumber) {
+void SoundManager::playAnim_SOUND(int soundNumber) {
 	if (!_vm->_globals.CENSURE && SPECIAL_SOUND == 2) {
 		switch (soundNumber) {
 		case 20:

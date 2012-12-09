@@ -142,7 +142,7 @@ public:
 	void WSOUND_INIT();
 	void VERIF_SOUND();
 	void LOAD_ANM_SOUND();
-	void PLAY_ANM_SOUND(int soundNumber);
+	void playAnim_SOUND(int soundNumber);
 	void LOAD_WAV(const Common::String &file, int wavIndex);
 	void WSOUND(int soundNumber);
 	void WSOUND_OFF();

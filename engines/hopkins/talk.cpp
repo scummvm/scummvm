@@ -140,7 +140,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 			v7 = DIALOGUE_REP(v6++);
 		while (v7 != -1);
 	}
-	CLEAR_ANIM_PERSO();
+	clearCharacterAnim();
 	_vm->_globals.NOPARLE = false;
 	_vm->_globals.NECESSAIRE = true;
 	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
@@ -832,37 +832,37 @@ void TalkManager::ANIM_PERSO_INIT() {
 	v1 = BUFFERPERSO + 110;
 	v2 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
 	if (v2)
-		RECHERCHE_ANIM_PERSO(21, (BUFFERPERSO + 110), v2, TAILLEPERSO);
+		searchCharacterAnim(21, (BUFFERPERSO + 110), v2, TAILLEPERSO);
 	v4 = (int16)READ_LE_UINT16((uint16 *)v0 + 44);
 	if (v4)
-		RECHERCHE_ANIM_PERSO(22, v1, v4, TAILLEPERSO);
+		searchCharacterAnim(22, v1, v4, TAILLEPERSO);
 	v5 = (int16)READ_LE_UINT16((uint16 *)v0 + 45);
 	if (v5)
-		RECHERCHE_ANIM_PERSO(23, v1, v5, TAILLEPERSO);
+		searchCharacterAnim(23, v1, v5, TAILLEPERSO);
 	v6 = (int16)READ_LE_UINT16((uint16 *)v0 + 46);
 	if (v6)
-		RECHERCHE_ANIM_PERSO(24, v1, v6, TAILLEPERSO);
+		searchCharacterAnim(24, v1, v6, TAILLEPERSO);
 	v7 = (int16)READ_LE_UINT16((uint16 *)v0 + 47);
 	if (v7)
-		RECHERCHE_ANIM_PERSO(25, v1, v7, TAILLEPERSO);
+		searchCharacterAnim(25, v1, v7, TAILLEPERSO);
 	v8 = (int16)READ_LE_UINT16((uint16 *)v0 + 48);
 	if (v8)
-		RECHERCHE_ANIM_PERSO(26, v1, v8, TAILLEPERSO);
+		searchCharacterAnim(26, v1, v8, TAILLEPERSO);
 	v9 = (int16)READ_LE_UINT16((uint16 *)v0 + 49);
 	if (v9)
-		RECHERCHE_ANIM_PERSO(27, v1, v9, TAILLEPERSO);
+		searchCharacterAnim(27, v1, v9, TAILLEPERSO);
 	v10 = (int16)READ_LE_UINT16((uint16 *)v0 + 50);
 	if (v10)
-		RECHERCHE_ANIM_PERSO(28, v1, v10, TAILLEPERSO);
+		searchCharacterAnim(28, v1, v10, TAILLEPERSO);
 	v11 = (int16)READ_LE_UINT16((uint16 *)v0 + 51);
 	if (v11)
-		RECHERCHE_ANIM_PERSO(29, v1, v11, TAILLEPERSO);
+		searchCharacterAnim(29, v1, v11, TAILLEPERSO);
 	v12 = (int16)READ_LE_UINT16((uint16 *)v0 + 52);
 	if (v12)
-		RECHERCHE_ANIM_PERSO(30, v1, v12, TAILLEPERSO);
+		searchCharacterAnim(30, v1, v12, TAILLEPERSO);
 }
 
-void TalkManager::CLEAR_ANIM_PERSO() {
+void TalkManager::clearCharacterAnim() {
 	for (int idx = 21; idx <= 34; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].data != g_PTRNUL)
 			_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.dos_free2(_vm->_globals.Bqe_Anim[idx].data);
@@ -872,7 +872,7 @@ void TalkManager::CLEAR_ANIM_PERSO() {
 	}
 }
 
-bool TalkManager::RECHERCHE_ANIM_PERSO(int a1, const byte *bufPerso, int a3, int a4) {
+bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int a4) {
 	bool result; 
 	const byte *v5; 
 	int v6; 
@@ -1291,8 +1291,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	} while (!_vm->_globals.SORTIE);
 	FIN_VISU_PARLE();
 	FIN_VISU_WAIT();
-	CLEAR_ANIM_PERSO();
-	CLEAR_ANIM_PERSO();
+	clearCharacterAnim();
+	clearCharacterAnim();
 	_vm->_globals.NOPARLE = false;
 	_vm->_globals.NECESSAIRE = true;
 	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);

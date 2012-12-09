@@ -2572,7 +2572,7 @@ void ObjectsManager::PLAN_BETA() {
 	CHARGE_ZONE("PLAN.ZO2");
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "VOITURE.SPR");
 	sprite_ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-	_vm->_animationManager.CHARGE_ANIM("PLAN");
+	_vm->_animationManager.loadAnim("PLAN");
 	_vm->_graphicsManager.VISU_ALL();
 	_vm->_graphicsManager.INI_ECRAN2("PLAN");
 	v2 = 0;
@@ -2978,7 +2978,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	_vm->_fontManager.TEXTE_OFF(5);
 	_vm->_fontManager.TEXTE_OFF(9);
 	_vm->_globals.CLEAR_VBOB();
-	_vm->_animationManager.CLEAR_ANIM();
+	_vm->_animationManager.clearAnim();
 	_vm->_linesManager.CLEAR_ZONE();
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_globals.RESET_CACHE();
@@ -4205,8 +4205,8 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_soundManager.SPECIAL_SOUND = 198;
 					PERSO_ON = true;
 					_vm->_animationManager.NO_SEQ = true;
-					_vm->_animationManager.CLS_ANM = false;
-					_vm->_animationManager.PLAY_ANM("otage.ANM", 1, 24, 500);
+					_vm->_animationManager.clearAnimationFl = false;
+					_vm->_animationManager.playAnim("otage.ANM", 1, 24, 500);
 					_vm->_animationManager.NO_SEQ = false;
 					_vm->_soundManager.SPECIAL_SOUND = 0;
 					_vm->_globals.NECESSAIRE = true;
@@ -5460,7 +5460,7 @@ void ObjectsManager::TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6) 
 				}
 				if (_vm->_globals.SAUVEGARDE->data[v6] == 3) {
 					_vm->_graphicsManager.FADE_LINUX = 2;
-					_vm->_animationManager.PLAY_ANM("CREVE2.ANM", 100, 24, 500);
+					_vm->_animationManager.playAnim("CREVE2.ANM", 100, 24, 500);
 					_vm->_globals.SORTIE = 150;
 					_vm->_graphicsManager.NOFADE = true;
 					BOB_OFF(1);
@@ -5517,7 +5517,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (!linkFile.empty())
 		INILINK(linkFile);
 	if (!animFile.empty())
-		_vm->_animationManager.CHARGE_ANIM(animFile);
+		_vm->_animationManager.loadAnim(animFile);
 	_vm->_graphicsManager.VISU_ALL();
 	if (!s4.empty()) {
 		if (!_vm->_globals.NOSPRECRAN)
@@ -5546,7 +5546,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_globals.BPP_NOAFF = false;
 	_vm->_graphicsManager.FADE_INW();
 	if (_vm->_globals.ECRAN == 61) {
-		_vm->_animationManager.PLAY_SEQ("OUVRE.SEQ", 10, 4, 10);
+		_vm->_animationManager.playSequence("OUVRE.SEQ", 10, 4, 10);
 		BOBANIM_OFF(3);
 		_vm->_globals.NOT_VERIF = 1;
 		g_old_x = XSPR(0);
@@ -5620,7 +5620,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	if (!linkFile.empty())
 		INILINK(linkFile);
 	if (!animFile.empty()) {
-		_vm->_animationManager.CHARGE_ANIM(animFile);
+		_vm->_animationManager.loadAnim(animFile);
 		_vm->_graphicsManager.VISU_ALL();
 	}
 	if (!s4.empty()) {

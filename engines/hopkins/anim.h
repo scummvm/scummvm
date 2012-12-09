@@ -34,24 +34,24 @@ class HopkinsEngine;
 
 class AnimationManager {
 private:
-	int CHARGE_BANK_SPRITE1(int idx, const Common::String &filename);
+	int loadSpriteBank(int idx, const Common::String &filename);
 public:
 	HopkinsEngine *_vm;
-	bool CLS_ANM;
+	bool clearAnimationFl;
 	bool NO_SEQ;
 	bool NO_COUL;
 public:
 	AnimationManager();
 	void setParent(HopkinsEngine *vm) { _vm = vm; }
 
-	void PLAY_ANM(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
-	void PLAY_ANM2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4);
-	bool REDRAW_ANIM();
-	void CHARGE_ANIM(const Common::String &animName);
-	void CLEAR_ANIM();
-	void RECHERCHE_ANIM(const byte *data, int animIndex, int count);
-	void PLAY_SEQ(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
-	void PLAY_SEQ2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
+	void playAnim(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
+	void playAnim2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4);
+	bool redrawAnim();
+	void loadAnim(const Common::String &animName);
+	void clearAnim();
+	void searchAnim(const byte *data, int animIndex, int count);
+	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
+	void playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
 };
 
 } // End of namespace Hopkins
