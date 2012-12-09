@@ -193,11 +193,9 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_thumbnailWidth = _thumbnailHeight = 0;
 
 	_richSavedGames = false;
-	_savedGameExt = NULL;
-	BaseUtils::setString(&_savedGameExt, "dsv");
+	_savedGameExt = "dsv";
+	_localSaveDir = "saves";
 
-	_localSaveDir = NULL;
-	BaseUtils::setString(&_localSaveDir, "saves");
 	_saveDirChecked = false;
 
 	_loadingIcon = NULL;
@@ -255,9 +253,7 @@ BaseGame::~BaseGame() {
 
 	cleanup();
 
-	delete[] _localSaveDir;
 	delete[] _settingsGameFile;
-	delete[] _savedGameExt;
 
 	delete _cachedThumbnail;
 
@@ -276,9 +272,7 @@ BaseGame::~BaseGame() {
 	delete _stringTable;
 	delete _musicSystem;
 
-	_localSaveDir = NULL;
 	_settingsGameFile = NULL;
-	_savedGameExt = NULL;
 
 	_cachedThumbnail = NULL;
 
@@ -903,7 +897,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOCAL_SAVE_DIR:
-			BaseUtils::setString(&_localSaveDir, (char *)params);
+			_localSaveDir = (char *)params;
 			break;
 
 		case TOKEN_COMPAT_KILL_METHOD_THREADS:
@@ -3166,7 +3160,7 @@ bool BaseGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_SAVED_GAME_EXT:
-			BaseUtils::setString(&_savedGameExt, (char *)params);
+			_savedGameExt = (char *)params;
 			break;
 
 		case TOKEN_GUID:

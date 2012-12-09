@@ -273,10 +273,11 @@ private:
 	virtual bool invalidateDeviceObjects();
 	virtual bool restoreDeviceObjects();
 
-	char *_localSaveDir;
+	// TODO: This can probably be removed completely:
 	bool _saveDirChecked;
 	bool _richSavedGames;
-	char *_savedGameExt;
+	Common::String _localSaveDir;
+	Common::String _savedGameExt;
 
 	bool _reportTextureFormat;
 
