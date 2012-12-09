@@ -48,6 +48,9 @@ AdScaleLevel::~AdScaleLevel() {
 
 }
 
+float AdScaleLevel::getScale() {
+	return _scale;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScaleLevel::loadFile(const char *filename) {

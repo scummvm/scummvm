@@ -2277,11 +2277,11 @@ float AdScene::getScaleAt(int Y) {
 	}
 
 	int delta_y = next->_posY - prev->_posY;
-	float delta_scale = next->_scale - prev->_scale;
+	float delta_scale = next->getScale() - prev->getScale();
 	Y -= prev->_posY;
 
 	float percent = (float)Y / ((float)delta_y / 100.0f);
-	return prev->_scale + delta_scale / 100 * percent;
+	return prev->getScale() + delta_scale / 100 * percent;
 }
 
 
