@@ -536,6 +536,11 @@ void VideoManager::setVideoLooping(VideoHandle handle, bool loop) {
 	_videoStreams[handle].loop = loop;
 }
 
+Common::Rational VideoManager::getVideoRate(VideoHandle handle) const {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getRate();
+}
+
 void VideoManager::setVideoRate(VideoHandle handle, const Common::Rational &rate) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle]->setRate(rate);

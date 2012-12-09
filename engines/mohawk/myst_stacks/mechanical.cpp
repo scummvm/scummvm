@@ -41,6 +41,9 @@ Mechanical::Mechanical(MohawkEngine_Myst *vm) :
 
 	_mystStaircaseState = false;
 	_fortressPosition = 0;
+	_fortressRotationSpeed = 0;
+	_fortressSimulationSpeed = 0;
+	_gearsWereRunning = false;
 }
 
 Mechanical::~Mechanical() {
@@ -776,14 +779,67 @@ void Mechanical::o_elevatorRotation_init(uint16 op, uint16 var, uint16 argc, uin
 }
 
 void Mechanical::fortressRotation_run() {
-	// Used for Card 6156 (Fortress Rotation Controls)
-	// TODO: Fill in function...
+	VideoHandle gears = _fortressRotationGears->playMovie();
+
+	double oldRate = _vm->_video->getVideoRate(gears).toDouble();
+
+	uint32 moviePosition = Audio::Timestamp(_vm->_video->getTime(gears), 600).totalNumberOfFrames();
+
+	int32 positionInQuarter = 900 - (moviePosition + 900) % 1800;
+
+	// Are the gears moving?
+	if (oldRate >= 0.1 || ABS<int32>(positionInQuarter) >= 30 || _fortressRotationBrake) {
+
+		double newRate = oldRate;
+		if (_fortressRotationBrake && (double)_fortressRotationBrake * 0.2 > oldRate) {
+			newRate += 0.1;
+		}
+
+		// Don't let the gears get stuck between two fortress positions
+		if (ABS<double>(oldRate) <= 0.05) {
+			if (oldRate <= 0.0) {
+				newRate += oldRate;
+			} else {
+				newRate -= oldRate;
+			}
+		} else {
+			if (oldRate <= 0.0) {
+				newRate += 0.05;
+			} else {
+				newRate -= 0.05;
+			}
+		}
+
+		// Adjust speed accordingly to acceleration lever
+		newRate +=  (double) (positionInQuarter / 1500.0)
+				* (double) (9 - _fortressRotationSpeed) / 9.0;
+
+		newRate = CLIP<double>(newRate, -2.5, 2.5);
+
+		_vm->_video->setVideoRate(gears, Common::Rational(newRate * 1000.0, 1000));
+
+		_gearsWereRunning = true;
+	} else if (_gearsWereRunning) {
+		// The fortress has stopped. Set its new position
+		_fortressPosition = (moviePosition + 900) / 1800 % 4;
+
+		_vm->_video->setVideoRate(gears, 0);
+		_vm->_video->seekToTime(gears, Audio::Timestamp(0, 1800 * _fortressPosition, 600));
+		_vm->_sound->playSoundBlocking(_fortressRotationSounds[_fortressPosition]);
+
+		_gearsWereRunning = false;
+	}
 }
 
 void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Fortress rotation init", op);
 
 	_fortressRotationGears = static_cast<MystResourceType6 *>(_invokingResource);
+
+	VideoHandle gears = _fortressRotationGears->playMovie();
+	_vm->_video->setVideoLooping(gears, true);
+	_vm->_video->seekToTime(gears, Audio::Timestamp(0, 1800 * _fortressPosition, 600));
+	_vm->_video->setVideoRate(gears, 0);
 
 	_fortressRotationSounds[0] = argv[0];
 	_fortressRotationSounds[1] = argv[1];
@@ -793,11 +849,96 @@ void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uin
 	_fortressRotationBrake = 0;
 
 	_fortressRotationRunning = true;
+	_gearsWereRunning = false;
 }
 
 void Mechanical::fortressSimulation_run() {
-	// Used for Card 6044 (Fortress Rotation Simulator)
-	// TODO: Fill in function...
+	if (_fortressSimulationInit) {
+		// Init sequence
+		_vm->_sound->replaceBackgroundMyst(_fortressSimulationStartSound1, 65535);
+		_vm->skippableWait(5000);
+		_vm->_sound->replaceSoundMyst(_fortressSimulationStartSound2);
+
+		// Update movie while the sound is playing
+		VideoHandle startup = _fortressSimulationStartup->playMovie();
+		while (_vm->_sound->isPlaying(_fortressSimulationStartSound2)) {
+			if (_vm->_video->updateMovies())
+				_vm->_system->updateScreen();
+
+			_vm->_system->delayMillis(10);
+		}
+		_vm->_sound->replaceBackgroundMyst(_fortressSimulationStartSound1, 65535);
+		_vm->_video->waitUntilMovieEnds(startup);
+		_vm->_sound->stopBackgroundMyst();
+		_vm->_sound->replaceSoundMyst(_fortressSimulationStartSound2);
+
+
+		Common::Rect src = Common::Rect(0, 0, 176, 176);
+		Common::Rect dst = Common::Rect(187, 3, 363, 179);
+		_vm->_gfx->copyImageSectionToBackBuffer(6046, src, dst);
+		_vm->_gfx->copyBackBufferToScreen(dst);
+		_vm->_system->updateScreen();
+
+		_fortressSimulationStartup->pauseMovie(true);
+		VideoHandle holo = _fortressSimulationHolo->playMovie();
+		_vm->_video->setVideoLooping(holo, true);
+		_vm->_video->setVideoRate(holo, 0);
+
+		_vm->_cursor->showCursor();
+
+		_fortressSimulationInit = false;
+	} else {
+		VideoHandle holo = _fortressSimulationHolo->playMovie();
+
+		double oldRate = _vm->_video->getVideoRate(holo).toDouble();
+
+		uint32 moviePosition = Audio::Timestamp(_vm->_video->getTime(holo), 600).totalNumberOfFrames();
+
+		int32 positionInQuarter = 900 - (moviePosition + 900) % 1800;
+
+		// Are the gears moving?
+		if (oldRate >= 0.1 || ABS<int32>(positionInQuarter) >= 30 || _fortressSimulationBrake) {
+
+			double newRate = oldRate;
+			if (_fortressSimulationBrake && (double)_fortressSimulationBrake * 0.2 > oldRate) {
+				newRate += 0.1;
+			}
+
+			// Don't let the gears get stuck between two fortress positions
+			if (ABS<double>(oldRate) <= 0.05) {
+				if (oldRate <= 0.0) {
+					newRate += oldRate;
+				} else {
+					newRate -= oldRate;
+				}
+			} else {
+				if (oldRate <= 0.0) {
+					newRate += 0.05;
+				} else {
+					newRate -= 0.05;
+				}
+			}
+
+			// Adjust speed accordingly to acceleration lever
+			newRate +=  (double) (positionInQuarter / 1500.0)
+					* (double) (9 - _fortressSimulationSpeed) / 9.0;
+
+			newRate = CLIP<double>(newRate, -2.5, 2.5);
+
+			_vm->_video->setVideoRate(holo, Common::Rational(newRate * 1000.0, 1000));
+
+			_gearsWereRunning = true;
+		} else if (_gearsWereRunning) {
+			// The fortress has stopped. Set its new position
+			uint16 simulationPosition = (moviePosition + 900) / 1800 % 4;
+
+			_vm->_video->setVideoRate(holo, 0);
+			_vm->_video->seekToTime(holo, Audio::Timestamp(0, 1800 * simulationPosition, 600));
+			_vm->_sound->playSoundBlocking(	_fortressRotationSounds[simulationPosition]);
+
+			_gearsWereRunning = false;
+		}
+	}
 }
 
 void Mechanical::o_fortressSimulation_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -816,6 +957,10 @@ void Mechanical::o_fortressSimulation_init(uint16 op, uint16 var, uint16 argc, u
 	_fortressSimulationBrake = 0;
 
 	_fortressSimulationRunning = true;
+	_gearsWereRunning = false;
+	_fortressSimulationInit = true;
+
+	_vm->_cursor->hideCursor();
 }
 
 void Mechanical::o_fortressSimulationStartup_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

@@ -107,6 +107,7 @@ public:
 	void drawVideoFrame(VideoHandle handle, Audio::Timestamp time);
 	void seekToTime(VideoHandle handle, Audio::Timestamp time);
 	void setVideoLooping(VideoHandle handle, bool loop);
+	Common::Rational getVideoRate(VideoHandle handle) const;
 	void setVideoRate(VideoHandle handle, const Common::Rational &rate);
 	void waitUntilMovieEnds(VideoHandle videoHandle);
 	void delayUntilMovieEnds(VideoHandle videoHandle);

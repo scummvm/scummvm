@@ -104,6 +104,7 @@ private:
 	bool _mystStaircaseState; // 76
 
 	bool _fortressRotationRunning;
+	bool _gearsWereRunning;
 	uint16 _fortressRotationSpeed; // 78
 	uint16 _fortressRotationBrake; // 80
 	uint16 _fortressPosition; // 82
@@ -111,6 +112,7 @@ private:
 	MystResourceType6 *_fortressRotationGears; // 172
 
 	bool _fortressSimulationRunning;
+	bool _fortressSimulationInit; // 94
 	uint16 _fortressSimulationSpeed; // 96
 	uint16 _fortressSimulationBrake; // 98
 	uint16 _fortressSimulationStartSound1; // 102
