@@ -43,10 +43,10 @@ public:
 	bool loadBuffer(byte *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
-	bool hasDecoration();
-	bool isBlocked();
-	uint32 getAlpha();
-	float getZoom();
+	bool hasDecoration() const;
+	bool isBlocked() const;
+	uint32 getAlpha() const;
+	float getZoom() const;
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name);
 	virtual bool scSetProperty(const char *name, ScValue *value);

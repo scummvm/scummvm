@@ -51,19 +51,19 @@ AdRegion::AdRegion(BaseGame *inGame) : BaseRegion(inGame) {
 AdRegion::~AdRegion() {
 }
 
-uint32 AdRegion::getAlpha() {
+uint32 AdRegion::getAlpha() const {
 	return _alpha;
 }
 
-float AdRegion::getZoom() {
+float AdRegion::getZoom() const {
 	return _zoom;
 }
 
-bool AdRegion::isBlocked() {
+bool AdRegion::isBlocked() const {
 	return _blocked;
 }
 
-bool AdRegion::hasDecoration() {
+bool AdRegion::hasDecoration() const {
 	return _decoration;
 }
 
