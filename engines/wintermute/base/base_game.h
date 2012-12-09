@@ -46,6 +46,7 @@ class BaseFileManager;
 class BaseTransitionMgr;
 class ScEngine;
 class BaseFontStorage;
+class BaseGameMusic;
 class BaseStringTable;
 class BaseQuickMsg;
 class UIWindow;
@@ -58,8 +59,6 @@ class SXMath;
 class BaseKeyboardState;
 class VideoPlayer;
 class VideoTheoraPlayer;
-
-#define NUM_MUSIC_CHANNELS 5
 
 class BaseGame: public BaseObject {
 public:
@@ -292,31 +291,17 @@ private:
 	void *_engineLogCallbackData;
 
 	bool _videoSubtitles;
-	uint32 _musicStartTime[NUM_MUSIC_CHANNELS];
 	bool _compressedSavegames;
 
 	bool _personalizedSave;
 
 	void setWindowTitle();
 
-	bool resumeMusic(int channel);
-	bool setMusicStartTime(int channel, uint32 time);
-	bool pauseMusic(int channel);
-	bool stopMusic(int channel);
-	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
-	BaseSound *_music[NUM_MUSIC_CHANNELS];
-	bool _musicCrossfadeRunning;
-	bool _musicCrossfadeSwap;
-	uint32 _musicCrossfadeStartTime;
-	uint32 _musicCrossfadeLength;
-	int _musicCrossfadeChannel1;
-	int _musicCrossfadeChannel2;
-
 	BaseSprite *_cursorNoninteractive;
 	BaseKeyboardState *_keyboardState;
 
 	uint32 _fps;
-	bool updateMusicCrossfade();
+	BaseGameMusic *_musicSystem;
 
 	bool isVideoPlaying();
 	bool stopVideo();
