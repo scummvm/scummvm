@@ -1599,7 +1599,7 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 	}
 
 	for (uint32 i = 0; i < _sceneStates.size(); i++) {
-		if (scumm_stricmp(_sceneStates[i]->_filename, filenameCor) == 0) {
+		if (scumm_stricmp(_sceneStates[i]->getFilename(), filenameCor) == 0) {
 			delete[] filenameCor;
 			return _sceneStates[i];
 		}

@@ -72,6 +72,9 @@ void AdSceneState::setFilename(const char *filename) {
 	}
 }
 
+const char *AdSceneState::getFilename() const {
+	return _filename;
+}
 
 //////////////////////////////////////////////////////////////////////////
 AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
