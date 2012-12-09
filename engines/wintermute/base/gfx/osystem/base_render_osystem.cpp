@@ -420,7 +420,7 @@ void BaseRenderOSystem::drawTickets() {
 	// Note: We draw invalid tickets too, otherwise we wouldn't be honouring
 	// the draw request they obviously made BEFORE becoming invalid, either way
 	// we have a copy of their data, so their invalidness won't affect us.
-	int decrement = 0;
+	uint32 decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_wantsDraw == false) {
 			RenderTicket *ticket = *it;
