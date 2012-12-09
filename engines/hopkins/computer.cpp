@@ -786,6 +786,8 @@ void ComputerManager::PLAY_BRIQUE() {
 
 			// Play loop
 			do {
+				_vm->_soundManager.checkSounds();
+
 				RAQX = _vm->_eventsManager.XMOUSE();
 				if (_vm->_eventsManager.souris_x <= 4)
 					RAQX = 5;

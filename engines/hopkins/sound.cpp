@@ -840,6 +840,7 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 	int volume = (voiceIndex == 2) ? VOICEVOL * 255 / 16 : SOUNDVOL * 255 / 16;
 
 	// Start the voice playing
+	Swav[wavIndex]._audioStream->rewind();
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Swav[wavIndex]._soundHandle, 
 		Swav[wavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
 }
