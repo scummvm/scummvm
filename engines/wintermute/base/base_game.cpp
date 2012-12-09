@@ -40,7 +40,6 @@
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_quick_msg.h"
-#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_sub_frame.h"
@@ -1085,25 +1084,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 
 	else if (_musicSystem->scCallMethod(script, stack, thisStack, name) == STATUS_OK) {
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// GetSoundLength
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSoundLength") == 0) {
-		stack->correctParams(1);
-
-		int length = 0;
-		const char *filename = stack->pop()->getString();
-
-		BaseSound *sound = new BaseSound(_gameRef);
-		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
-			length = sound->getLength();
-			delete sound;
-			sound = NULL;
-		}
-		stack->pushInt(length);
 		return STATUS_OK;
 	}
 
