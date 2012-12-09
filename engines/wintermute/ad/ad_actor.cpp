@@ -963,7 +963,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			return STATUS_OK;
 		}
 		AdObject *obj = (AdObject *)val->getNative();
-		if (!obj || obj->_type != OBJECT_ENTITY) {
+		if (!obj || obj->getType() != OBJECT_ENTITY) {
 			script->runtimeError("actor.%s method accepts an entity refrence only", name);
 			stack->pushNULL();
 			return STATUS_OK;

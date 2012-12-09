@@ -2197,7 +2197,7 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	// free entities
 	buffer->putTextIndent(indent + 2, "; ----- free entities\n");
 	for (uint32 i = 0; i < _objects.size(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY) {
+		if (_objects[i]->getType() == OBJECT_ENTITY) {
 			_objects[i]->saveAsText(buffer, indent + 2);
 
 		}
@@ -2633,7 +2633,7 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 
 	// free entities
 	for (uint32 i = 0; i < _objects.size(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->getName())) {
+		if (_objects[i]->getType() == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->getName())) {
 			return _objects[i];
 		}
 	}
@@ -2717,7 +2717,7 @@ bool AdScene::persistState(bool saving) {
 		if (!_objects[i]->_saveState) {
 			continue;
 		}
-		if (_objects[i]->_type == OBJECT_ENTITY) {
+		if (_objects[i]->getType() == OBJECT_ENTITY) {
 			nodeState = state->getNodeState(_objects[i]->getName(), saving);
 			if (nodeState) {
 				nodeState->transferEntity((AdEntity *)_objects[i], _persistentStateSprites, saving);
@@ -2788,7 +2788,7 @@ bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 	}
 
 	for (uint32 i = 0; i < _objects.size(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY) {
+		if (_objects[i]->getType() == OBJECT_ENTITY) {
 			AdEntity *ent = (AdEntity *)_objects[i];
 			if (ent->getItemName() && strcmp(ent->getItemName(), itemName) == 0) {
 				ent->_active = show;

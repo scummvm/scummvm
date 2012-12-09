@@ -878,6 +878,9 @@ int AdObject::getHeight() {
 	}
 }
 
+TObjectType AdObject::getType() const {
+	return _type;
+}
 
 //////////////////////////////////////////////////////////////////////////
 void AdObject::talk(const char *text, const char *sound, uint32 duration, const char *stances, TTextAlign Align) {
