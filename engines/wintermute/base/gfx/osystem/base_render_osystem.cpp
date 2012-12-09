@@ -529,9 +529,10 @@ void BaseRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::R
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-
-	if (!_disableDirtyRects) {
+	static bool hasWarned = false; // TODO: Fix this, this only avoids spamming warnings for now.
+	if (!_disableDirtyRects && !hasWarned) {
 		warning("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
+		hasWarned = true;
 	}
 
 	byte r = RGBCOLGetR(color);
