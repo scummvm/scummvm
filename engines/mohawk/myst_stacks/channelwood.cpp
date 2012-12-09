@@ -476,9 +476,12 @@ void Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uint16 argc, uint16 
 	MystResourceType6 *movie = static_cast<MystResourceType6 *>(_invokingResource);
 
 	if (_state.stairsUpperDoorState) {
-		// TODO: Play backwards
+		// Close door, play the open movie backwards
+		movie->setDirection(-1);
 		movie->playMovie();
 	} else {
+		// Open door
+		movie->setDirection(1);
 		movie->playMovie();
 	}
 }
