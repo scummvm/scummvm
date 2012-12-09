@@ -96,6 +96,9 @@ AdResponseBox::~AdResponseBox() {
 	_waitingScript = NULL;
 }
 
+uint32 AdResponseBox::getNumResponses() const {
+	return _responses.size();
+}
 
 //////////////////////////////////////////////////////////////////////////
 void AdResponseBox::clearResponses() {
@@ -627,6 +630,30 @@ void AdResponseBox::setLastResponseText(const char *text, const char *textOrig) 
 	BaseUtils::setString(&_lastResponseTextOrig, textOrig);
 }
 
+const char *AdResponseBox::getLastResponseText() const {
+	return _lastResponseText;
+}
+
+const char *AdResponseBox::getLastResponseTextOrig() const {
+	return _lastResponseTextOrig;
+}
+
+UIWindow *AdResponseBox::getResponseWindow() {
+	return _window;
+}
+
+void AdResponseBox::addResponse(AdResponse *response) {
+	_responses.add(response);
+}
+
+int32 AdResponseBox::getIdForResponseNum(uint32 num) const {
+	assert(num < _responses.size());
+	return _responses[num]->_iD;
+}
+
+bool AdResponseBox::handleResponseNum(uint32 num) {
+	return handleResponse(_responses[num]);
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::handleResponse(AdResponse *response) {

@@ -44,10 +44,14 @@ public:
 	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
 	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
+	void addResponse(AdResponse* response);
 	bool handleResponse(AdResponse *response);
+	bool handleResponseNum(uint32 num);
+	int32 getIdForResponseNum(uint32 num) const;
 	void setLastResponseText(const char *text, const char *textOrig);
-	char *_lastResponseText;
-	char *_lastResponseTextOrig;
+	const char *getLastResponseText() const;
+	const char *getLastResponseTextOrig() const;
+
 	DECLARE_PERSISTENT(AdResponseBox, BaseObject)
 	ScScript *_waitingScript;
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
@@ -59,27 +63,35 @@ public:
 
 	bool weedResponses();
 	bool display();
-	int _spacing;
-	int _scrollOffset;
-	BaseFont *_fontHover;
-	BaseFont *_font;
+
 	bool createButtons();
 	bool invalidateButtons();
 	void clearButtons();
 	void clearResponses();
 	AdResponseBox(BaseGame *inGame);
 	virtual ~AdResponseBox();
-	BaseArray<AdResponse *> _responses;
-	BaseArray<UIButton *> _respButtons;
-	UIWindow *_window;
-	UIWindow *_shieldWindow;
+
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+
+	UIWindow *getResponseWindow();
+	uint32 getNumResponses() const;
+private:
+	int _spacing;
+	int _scrollOffset;
+	BaseFont *_fontHover;
+	BaseFont *_font;
 	bool _horizontal;
 	Rect32 _responseArea;
 	int _verticalAlign;
 	TTextAlign _align;
-	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	BaseArray<UIButton *> _respButtons;
+	BaseArray<AdResponse *> _responses;
+	UIWindow *_shieldWindow;
+	char *_lastResponseText;
+	char *_lastResponseTextOrig;
+	UIWindow *_window;
 };
 
 } // end of namespace Wintermute

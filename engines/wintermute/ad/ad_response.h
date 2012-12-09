@@ -43,7 +43,7 @@ public:
 	bool setIconHover(const char *filename);
 	bool setIconPressed(const char *filename);
 	void setText(const char *text);
-	int _iD;
+	int32 _iD;
 	BaseSprite *_icon;
 	BaseSprite *_iconHover;
 	BaseSprite *_iconPressed;
