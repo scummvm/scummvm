@@ -692,9 +692,9 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 		_vm->_sound->resumeBackgroundMyst();
 	} else {
 		// Valve opening
-		// TODO: Play backwards
 		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
-		_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 350, 600));
+		_vm->_video->seekToTime(valve, Audio::Timestamp(0, 350, 600));
+		_vm->_video->setVideoRate(valve, -1);
 		_vm->_video->waitUntilMovieEnds(valve);
 	}
 }
