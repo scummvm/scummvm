@@ -373,16 +373,13 @@ bool PartEmitter::sortParticlesByZ() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int PartEmitter::compareZ(const void *obj1, const void *obj2) {
-	const PartParticle *p1 = *(const PartParticle *const *)obj1;
-	const PartParticle *p2 = *(const PartParticle *const *)obj2;
-
+bool PartEmitter::compareZ(const PartParticle *p1, const PartParticle *p2) {
 	if (p1->_posZ < p2->_posZ) {
-		return -1;
+		return true;
 	} else if (p1->_posZ > p2->_posZ) {
-		return 1;
+		return false;
 	} else {
-		return 0;
+		return false;
 	}
 }
 
