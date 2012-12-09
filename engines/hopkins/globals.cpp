@@ -303,8 +303,10 @@ void Globals::setConfig() {
 	HOPSEQ = "SEQ";
 
 	// CHECKME: Should be in Globals() but it doesn't work
+	// The Polish version is a translation of the English version. The filenames are the same.
 	switch (_vm->getLanguage()) {
 	case Common::EN_ANY:
+	case Common::PL_POL:
 		FR = 0;
 		break;
 	case Common::FR_FRA:
@@ -314,7 +316,7 @@ void Globals::setConfig() {
 		FR = 2;
 		break;
 	default:
-		warning("Language initialization to be verified");
+		warning("Unknown language in internal language mapping");
 		break;
 	}
 
