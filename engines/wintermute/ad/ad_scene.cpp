@@ -2780,7 +2780,7 @@ bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 			if (layer->_nodes[j]->_type == OBJECT_ENTITY) {
 				AdEntity *ent = layer->_nodes[j]->_entity;
 
-				if (ent->_item && strcmp(ent->_item, itemName) == 0) {
+				if (ent->getItemName() && strcmp(ent->getItemName(), itemName) == 0) {
 					ent->_active = show;
 				}
 			}
@@ -2790,7 +2790,7 @@ bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 	for (uint32 i = 0; i < _objects.size(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
 			AdEntity *ent = (AdEntity *)_objects[i];
-			if (ent->_item && strcmp(ent->_item, itemName) == 0) {
+			if (ent->getItemName() && strcmp(ent->getItemName(), itemName) == 0) {
 				ent->_active = show;
 			}
 		}
