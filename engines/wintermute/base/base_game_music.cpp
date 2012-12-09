@@ -479,6 +479,25 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		
 		stack->pushBool(true);
 		return STATUS_OK;
+	} 
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetSoundLength
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetSoundLength") == 0) {
+		stack->correctParams(1);
+		
+		int length = 0;
+		const char *filename = stack->pop()->getString();
+		
+		BaseSound *sound = new BaseSound(_gameRef);
+		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
+			length = sound->getLength();
+			delete sound;
+			sound = NULL;
+		}
+		stack->pushInt(length);
+		return STATUS_OK;
 	} else {
 		return STATUS_FAILED;
 	}
