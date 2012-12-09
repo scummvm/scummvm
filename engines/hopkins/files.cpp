@@ -38,8 +38,10 @@ void FileManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-// Load INI File
-void FileManager::Chage_Inifile(Common::StringMap &iniParams) {
+/**
+ * Load INI File
+ */
+void FileManager::loadIniFile(Common::StringMap &iniParams) {
 	// TODO: Review whether we can do something cleaner with ScummVM initialisation than 
 	// just initialising the INI array as if it had read in the INI file
 
@@ -52,10 +54,10 @@ void FileManager::Chage_Inifile(Common::StringMap &iniParams) {
 	iniParams["SOUND"] = "YES";
 }
 
-// Load File
-byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
-	DMESS1();
-
+/**
+ * Load a file
+ */
+byte *FileManager::loadFile(const Common::String &file) {
 	Common::File f;
 	if (!f.open(file))
 		error("Error opening %s", file.c_str());
@@ -66,55 +68,27 @@ byte *FileManager::CHARGE_FICHIER(const Common::String &file) {
 	if (!data)
 		error("Error allocating space for file being loaded - %s", file.c_str());
 
-	bload_it(f, data, filesize);
+	readStream(f, data, filesize);
 	f.close();
   
 	return data;
 }
 
-// Load File 2
-void FileManager::CHARGE_FICHIER2(const Common::String &file, byte *buf) {
-	Common::File f;
-	size_t filesize;
-
-	DMESS1();
-	if (!f.open(file))
-		error("Error opening file - %s", file.c_str());
-
-	filesize = f.size();
-	_vm->_fileManager.bload_it(f, buf, filesize);
-	f.close();
-}
-
-// Guess: Debug Message
-void FileManager::DMESS() {
-	// No implementation in original
-}
-
-// Guess: Debug Message 1
-void FileManager::DMESS1() {
-	// No implementation in original
-}
-
-void FileManager::bload(const Common::String &file, byte *buf) {
-	Common::File f;
-	if (!f.open(file))
-		error("Error opening file - %s", file.c_str());
-	int32 filesize = f.size();
-	_vm->_fileManager.bload_it(f, buf, filesize);
-	f.close();
-}
-
-int FileManager::bload_it(Common::ReadStream &stream, void *buf, size_t nbytes) {
+/**
+ * Read a given number of bytes from a Stream into a pre-allocated buffer
+ */
+int FileManager::readStream(Common::ReadStream &stream, void *buf, size_t nbytes) {
 	return stream.read(buf, nbytes);
 }
 
-// Censorship
-void FileManager::F_Censure() {
+/**
+ * Initialize censorship based on blood.dat file
+ */
+void FileManager::initCensorship() {
 	_vm->_globals.CENSURE = false;
 
-	CONSTRUIT_SYSTEM("BLOOD.DAT");
-	char *data = (char *)CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	constructFilename(_vm->_globals.HOPSYSTEM, "BLOOD.DAT");
+	char *data = (char *)loadFile(_vm->_globals.NFICHIER);
 
 	if (*(data + 6) == 'u' && *(data + 7) == 'k')
 		_vm->_globals.CENSURE = true;
@@ -124,13 +98,12 @@ void FileManager::F_Censure() {
 	free(data);
 }
 
-// Build System
-int FileManager::CONSTRUIT_SYSTEM(const Common::String &file) {
-	_vm->_globals.NFICHIER = Common::String::format("system/%s", file.c_str());
-	return _vm->_globals.NFICHIER.size();
-}
-
-void FileManager::CONSTRUIT_FICHIER(const Common::String &folder, const Common::String &file) {
+/**
+ * Construct a filename based on a suggested folder and filename.
+ * @param folder		Folder to use. May be overriden for animations.
+ * @param file			Filename
+ */
+void FileManager::constructFilename(const Common::String &folder, const Common::String &file) {
 	Common::String folderToUse = folder;
 
 	// A lot of the code in the original engine based on COPIE_SEQ was used to determine
@@ -142,15 +115,15 @@ void FileManager::CONSTRUIT_FICHIER(const Common::String &folder, const Common::
 	if (folder == _vm->_globals.HOPANM) {
 		switch (_vm->_globals.SVGA) {
 		case 1:
-			if (TEST_REP(folderToUse, file))
+			if (fileExists(folderToUse, file))
 				folderToUse = _vm->_globals.HOPTSVGA;
 			break;
 		case 2:
-			if (TEST_REP(folderToUse, file))
+			if (fileExists(folderToUse, file))
 				folderToUse = _vm->_globals.HOPSVGA;
 			break;
 		case 3:
-			if (TEST_REP(folderToUse, file))
+			if (fileExists(folderToUse, file))
 				folderToUse = _vm->_globals.HOPVGA;
 			break;
 		default:
@@ -161,7 +134,18 @@ void FileManager::CONSTRUIT_FICHIER(const Common::String &folder, const Common::
 	_vm->_globals.NFICHIER = Common::String::format("%s/%s", folderToUse.c_str(), file.c_str());
 }
 
-bool FileManager::TEST_REP(const Common::String &folder, const Common::String &file) {
+/**
+ * Construct Linux filename
+ */
+Common::String FileManager::constructLinuxFilename(const Common::String &file) {
+	_vm->_globals.NFICHIER = file;
+	return file;
+}
+
+/**
+ * Check if a file is present in a given (optional) folder
+ */
+bool FileManager::fileExists(const Common::String &folder, const Common::String &file) {
 	Common::String filename = folder.empty() ? file : 
 		Common::String::format("%s/%s", folder.c_str(), file.c_str());
 
@@ -169,14 +153,10 @@ bool FileManager::TEST_REP(const Common::String &folder, const Common::String &f
 	return !f.exists(filename);
 }
 
-// Free File
-byte *FileManager::LIBERE_FICHIER(byte *ptr) {
-	free(ptr);
-	return g_PTRNUL;
-}
-
-// Search Cat
-byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
+/**
+ * Search file in Cat file
+ */
+byte *FileManager::searchCat(const Common::String &file, int a2) {
 	byte *ptr = NULL;
 	Common::File f;
 	
@@ -185,91 +165,91 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 
 	switch (a2) {
 	case 1:
-		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_INI.CAT");
+		constructFilename(_vm->_globals.HOPLINK, "RES_INI.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 		
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
-		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_INI.RES");
+		ptr = loadFile(_vm->_globals.NFICHIER);
+		constructFilename(_vm->_globals.HOPLINK, "RES_INI.RES");
 		break;
 
 	case 2:
-		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_REP.CAT");
+		constructFilename(_vm->_globals.HOPLINK, "RES_REP.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
-		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_REP.RES");
+		ptr = loadFile(_vm->_globals.NFICHIER);
+		constructFilename(_vm->_globals.HOPLINK, "RES_REP.RES");
 		break;
 
 	case 3:
-		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_LIN.CAT");
+		constructFilename(_vm->_globals.HOPLINK, "RES_LIN.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
-		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_LIN.RES");
+		ptr = loadFile(_vm->_globals.NFICHIER);
+		constructFilename(_vm->_globals.HOPLINK, "RES_LIN.RES");
 		break;
 
 	case 4:
-		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_ANI.CAT");
+		constructFilename(_vm->_globals.HOPANIM, "RES_ANI.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
-		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_ANI.RES");
+		ptr = loadFile(_vm->_globals.NFICHIER);
+		constructFilename(_vm->_globals.HOPANIM, "RES_ANI.RES");
 		break;
 
 	case 5:
-		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_PER.CAT");
+		constructFilename(_vm->_globals.HOPANIM, "RES_PER.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
-		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_PER.RES");
+		ptr = loadFile(_vm->_globals.NFICHIER);
+		constructFilename(_vm->_globals.HOPANIM, "RES_PER.RES");
 		break;
 
 	case 6:
-		CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, "PIC.CAT");
+		constructFilename(_vm->_globals.HOPIMAGE, "PIC.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals.NFICHIER);
 		break;
 
 	case 7:
-		CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, "RES_SAN.CAT");
+		constructFilename(_vm->_globals.HOPANIM, "RES_SAN.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals.NFICHIER);
 		break;
 
 	case 8:
-		CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.CAT");
+		constructFilename(_vm->_globals.HOPLINK, "RES_SLI.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals.NFICHIER);
 		break;
 
 	case 9:
 		switch (_vm->_globals.FR) {
 		case 0:
-			CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_VAN.CAT");
+			constructFilename(_vm->_globals.HOPLINK, "RES_VAN.CAT");
 			break;
 		case 1:
-			CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_VFR.CAT");
+			constructFilename(_vm->_globals.HOPLINK, "RES_VFR.CAT");
 			break;
 		case 2:
-			CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_VES.CAT");
+			constructFilename(_vm->_globals.HOPLINK, "RES_VES.CAT");
 			break;
 		}
 
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
 
-		ptr = CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals.NFICHIER);
 		break;
 		// Deliberate fall-through to
 	default:
@@ -313,7 +293,7 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 		if (catData == g_PTRNUL)
 			error("CHARGE_FICHIER");
 
-		bload_it(f, catData, _vm->_globals.CAT_TAILLE);
+		readStream(f, catData, _vm->_globals.CAT_TAILLE);
 		f.close();
 		result = catData;
 	} else {
@@ -323,8 +303,10 @@ byte *FileManager::RECHERCHE_CAT(const Common::String &file, int a2) {
 	return result;
 }
 
-// File Size
-uint32 FileManager::FLONG(const Common::String &filename) {
+/**
+ * Returns the size of a file. Throws an error if the file can't be found
+ */
+uint32 FileManager::fileSize(const Common::String &filename) {
 	Common::File f;
 	uint32 size;
 
@@ -335,12 +317,6 @@ uint32 FileManager::FLONG(const Common::String &filename) {
 	f.close();
 	
 	return size;
-}
-
-// Build Linux
-Common::String FileManager::CONSTRUIT_LINUX(const Common::String &file) {
-	_vm->_globals.NFICHIER = file;
-	return file;
 }
 
 } // End of namespace Hopkins

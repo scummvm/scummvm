@@ -344,7 +344,7 @@ void SoundManager::WSOUND_OFF() {
 
 void SoundManager::PLAY_MOD(const Common::String &file) {
 	if (!MUSICOFF) {
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPMUSIC, file);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPMUSIC, file);
 		if (MOD_FLAG) {
 			STOP_MUSIC();
 			DEL_MUSIC();
@@ -569,30 +569,30 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 
 	filename = Common::String::format("%s%d", prefix.c_str(), fileNumber);
 	
-	if (!_vm->_fileManager.RECHERCHE_CAT(filename + ".WAV", 9)) {
+	if (!_vm->_fileManager.searchCat(filename + ".WAV", 9)) {
 		if (_vm->_globals.FR == 1)
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VFR.RES");
-		if (!_vm->_globals.FR)
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VAN.RES");
-		if (_vm->_globals.FR == 2)
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VES.RES");
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
+		else if (!_vm->_globals.FR)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VAN.RES");
+		else if (_vm->_globals.FR == 2)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VES.RES");
 
 		catPos = _vm->_globals.CAT_POSI;
 		catLen = _vm->_globals.CAT_TAILLE;
-	} else if (!_vm->_fileManager.RECHERCHE_CAT(filename + ".APC", 9)) {
+	} else if (!_vm->_fileManager.searchCat(filename + ".APC", 9)) {
 		if (_vm->_globals.FR == 1)
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VFR.RES");
-		if (!_vm->_globals.FR)
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VAN.RES");
-		if (_vm->_globals.FR == 2)
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, "RES_VES.RES");
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
+		else if (!_vm->_globals.FR)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VAN.RES");
+		else if (_vm->_globals.FR == 2)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VES.RES");
 
 		catPos = _vm->_globals.CAT_POSI;
 		catLen = _vm->_globals.CAT_TAILLE;
 	} else {		
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, filename + ".WAV");
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".WAV");
 		if (!f.exists(_vm->_globals.NFICHIER)) {
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPVOICE, filename + ".APC");
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".APC");
 			if (!f.exists(_vm->_globals.NFICHIER))
 				return false;
 		}
@@ -671,7 +671,7 @@ void SoundManager::MODSetMusicVolume(int volume) {
 }
 
 void SoundManager::CHARGE_SAMPLE(int wavIndex, const Common::String &file) {
-	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSOUND, file);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSOUND, file);
 	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 0);
 	SOUND[wavIndex]._active = true;
 }
@@ -803,7 +803,7 @@ void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename
 }
 
 void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
-	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSOUND, file);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSOUND, file);
 	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 1);
 }
 

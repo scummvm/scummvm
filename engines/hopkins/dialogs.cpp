@@ -60,13 +60,13 @@ void DialogsManager::showOptionsDialog() {
 	_vm->_eventsManager.CHANGE_MOUSE(0);
 	_vm->_eventsManager.VBL();
 	if (_vm->_globals.FR == 1)
-		_vm->_fileManager.CONSTRUIT_SYSTEM("OPTIFR.SPR");
-	if (!_vm->_globals.FR)
-		_vm->_fileManager.CONSTRUIT_SYSTEM("OPTIAN.SPR");
-	if (_vm->_globals.FR == 2)
-		_vm->_fileManager.CONSTRUIT_SYSTEM("OPTIES.SPR");
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIFR.SPR");
+	else if (!_vm->_globals.FR)
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIAN.SPR");
+	else if (_vm->_globals.FR == 2)
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIES.SPR");
   
-	_vm->_globals.OPTION_SPR = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	_vm->_globals.OPTION_FLAG = true;
 
 	do {
@@ -322,13 +322,13 @@ LABEL_7:
 
 		switch (_vm->_globals.FR) {
 			case 0:
-				_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTAN.SPR");
+				_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTAN.SPR");
 				break;
 			case 1:
-				_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTFR.SPR");
+				_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTFR.SPR");
 				break;
 			case 2:
-				_vm->_fileManager.CONSTRUIT_SYSTEM("INVENTES.SPR");
+				_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTES.SPR");
 				break;
 		}
 
@@ -338,11 +338,11 @@ LABEL_7:
 
 		size_t filesize = f.size();
 		_vm->_dialogsManager.Winventaire = _vm->_globals.dos_malloc2(filesize);
-		_vm->_fileManager.bload_it(f, _vm->_dialogsManager.Winventaire, filesize);
+		_vm->_fileManager.readStream(f, _vm->_dialogsManager.Winventaire, filesize);
 		f.close();
 
-		_vm->_fileManager.CONSTRUIT_SYSTEM("INVENT2.SPR");
-		inventaire2 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENT2.SPR");
+		inventaire2 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 		int v19 = _vm->_graphicsManager.ofscroll + 152;
 		int v18 = _vm->_objectsManager.Get_Largeur(_vm->_dialogsManager.Winventaire, 0);
 		int v17 = _vm->_objectsManager.Get_Hauteur(_vm->_dialogsManager.Winventaire, 0);
@@ -624,18 +624,18 @@ void DialogsManager::LOAD_SAUVE(int a1) {
 
 	switch (_vm->_globals.FR) {
 	case 0:
-		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEAN.SPR");
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEAN.SPR");
 		break;
 	case 1:
-		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEFR.SPR");
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEFR.SPR");
 		break;
 	case 2:
-		_vm->_fileManager.CONSTRUIT_SYSTEM("SAVEES.SPR");
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEES.SPR");
 		break;
 	}
 
 	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
-	_vm->_fileManager.CONSTRUIT_SYSTEM("SAVE2.SPR");
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVE2.SPR");
 	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager.start_x + 483, 360, 0);
 

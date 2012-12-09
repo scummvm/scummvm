@@ -319,7 +319,6 @@ void EventsManager::VBL() {
 				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.ofscroll, 50, 0x280u, 340, 0, 50);
 			else
 				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.ofscroll, 20, 0x280u, 440, 0, 20);
-			_vm->_fileManager.DMESS();
 			--_vm->_graphicsManager.REDRAW;
 		}
 		_vm->_graphicsManager.DD_Unlock();

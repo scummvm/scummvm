@@ -190,7 +190,7 @@ void GraphicsManager::LOAD_IMAGEVGA(const Common::String &file) {
 	DD_Lock();
 	Cls_Video();
 	DD_Unlock();
-	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, file);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
 	A_PCX320(VESA_SCREEN, _vm->_globals.NFICHIER, Palette);
 	memcpy(VESA_BUFFER, VESA_SCREEN, 0xFA00u);
 	_vm->_eventsManager.souris_max();
@@ -209,14 +209,11 @@ void GraphicsManager::LOAD_IMAGEVGA(const Common::String &file) {
 
 // Load Screen
 void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
-	bool flag;
 	Common::File f;
 
-	_vm->_fileManager.DMESS1();
-
-	flag = true;
-	if (_vm->_fileManager.RECHERCHE_CAT(file, 6) == g_PTRNUL) {
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, file);
+	bool flag = true;
+	if (_vm->_fileManager.searchCat(file, 6) == g_PTRNUL) {
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("CHARGE_ECRAN - %s", file.c_str());
 
@@ -360,14 +357,14 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 
 	if (typeFlag) {
 		// Load PCX from within the PIC resource
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, "PIC.RES");
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, "PIC.RES");
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("(nom)Erreur en cours de lecture.");
 		f.seek(_vm->_globals.CAT_POSI);
 
 	} else {
 		// Load stand alone PCX file
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPIMAGE, file);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
 		if (!f.open(_vm->_globals.NFICHIER))
 		  error("(nom)Erreur en cours de lecture.");
 	}
@@ -2299,26 +2296,26 @@ void GraphicsManager::INI_ECRAN2(const Common::String &file) {
 
 void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 	Common::String filename = file + ".ini";
-	byte *ptr = _vm->_fileManager.RECHERCHE_CAT(filename, 1);
+	byte *ptr = _vm->_fileManager.searchCat(filename, 1);
 
 	if (ptr == g_PTRNUL) {
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
-		ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
+		ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	}
 	if (!mode) {
 		filename = file + ".spr";
 		if (g_PTRNUL != _vm->_globals.SPRITE_ECRAN)
-			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
+			_vm->_globals.SPRITE_ECRAN = _vm->_globals.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
 		if (!_vm->_globals.NOSPRECRAN) {
-			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.RECHERCHE_CAT(filename, 8);
+			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.searchCat(filename, 8);
 			if (_vm->_globals.SPRITE_ECRAN) {
 				_vm->_globals.CAT_FLAG = false;
-				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
+				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
 			} else {
 				_vm->_globals.CAT_FLAG = true;
-				_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "RES_SLI.RES");
+				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "RES_SLI.RES");
 			}
-			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 			_vm->_globals.CAT_FLAG = false;
 		}
 	}
@@ -2351,11 +2348,11 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 			_vm->_globals.COUCOU = _vm->_globals.dos_free2(_vm->_globals.COUCOU);
 		
 		filename = file + ".rep";
-		byte *dataP = _vm->_fileManager.RECHERCHE_CAT(filename, 2);
+		byte *dataP = _vm->_fileManager.searchCat(filename, 2);
 		_vm->_globals.COUCOU = dataP;
 		if (g_PTRNUL == dataP) {
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
-			dataP = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
+			dataP = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 			_vm->_globals.COUCOU = dataP;
 		}
 	}

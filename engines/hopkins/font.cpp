@@ -168,7 +168,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			TRIER_TEXT[v62++] = 0;
 		} while (v62 <= 19);
 		Txt[idx].textLoaded = true;
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, filename);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
 
 		file = _vm->_globals.NFICHIER;
 		if (strncmp(file.c_str(), oldname.c_str(), strlen(file.c_str())) != 0) {

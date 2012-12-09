@@ -360,6 +360,7 @@ public:
 	Common::String HOPSVGA;
 	Common::String HOPVGA;
 	Common::String HOPSEQ;
+	Common::String HOPSYSTEM;
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
 	Common::String NFICHIER;

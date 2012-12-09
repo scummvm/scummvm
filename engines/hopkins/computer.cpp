@@ -73,9 +73,9 @@ void ComputerManager::TEXT_MODE() {
 	//SET_MODE(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_vm->_graphicsManager.nbrligne = SCREEN_WIDTH;
-	_vm->_fileManager.CONSTRUIT_SYSTEM("STFONT.SPR");
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "STFONT.SPR");
 	_vm->_globals.police = _vm->_globals.dos_free2(_vm->_globals.police);
-	_vm->_globals.police = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	_vm->_globals.police_l = 8;
 	_vm->_globals.police_h = 8;
 	_vm->_graphicsManager.LOAD_IMAGE("WINTEXT");
@@ -300,8 +300,8 @@ void ComputerManager::COMPUT_HOPKINS(ComputerEnum mode) {
 }
 
 void ComputerManager::Charge_Menu() {
-	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "COMPUTAN.TXT");
-	byte *ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "COMPUTAN.TXT");
+	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	byte *tmpPtr = ptr;
 	int lineNum = 0;
 	int strPos;
@@ -473,8 +473,8 @@ void ComputerManager::outtext2(const Common::String &msg) {
 
 void ComputerManager::RESTORE_POLICE() {
 	_vm->_globals.police = _vm->_globals.dos_free2(_vm->_globals.police);
-	_vm->_fileManager.CONSTRUIT_SYSTEM("FONTE3.SPR");
-	_vm->_globals.police = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "FONTE3.SPR");
+	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 
 	_vm->_globals.police_l = 12;
 	_vm->_globals.police_h = 21;
@@ -499,14 +499,14 @@ void ComputerManager::LIT_TEXTE(int a1) {
 	_vm->_eventsManager.ESC_KEY = false;
 
 	if (_vm->_globals.FR == 0)
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "THOPKAN.TXT");
-	if (_vm->_globals.FR == 1)
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "THOPK.TXT");
-	if (_vm->_globals.FR == 2)
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPLINK, "THOPKES.TXT");
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKAN.TXT");
+	else if (_vm->_globals.FR == 1)
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPK.TXT");
+	else if (_vm->_globals.FR == 2)
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKES.TXT");
 
-	ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
-	v1 = _vm->_fileManager.FLONG(_vm->_globals.NFICHIER);
+	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	v1 = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
 	v2 = 0;
 	v3 = 0;
 	if (v1 > 0u) {
@@ -581,8 +581,8 @@ void ComputerManager::GAMES() {
 	_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND37.WAV");
 	_vm->_soundManager.CHARGE_SAMPLE(2, "SOUND38.WAV");
 	_vm->_soundManager.CHARGE_SAMPLE(3, "SOUND39.WAV");
-	_vm->_fileManager.CONSTRUIT_SYSTEM("CASSE.SPR");
-	CASSESPR = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "CASSE.SPR");
+	CASSESPR = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	CHARGE_SCORE();
 	MODE_VGA256();
 	NEWTAB();
@@ -612,7 +612,7 @@ void ComputerManager::CHARGE_SCORE() {
 	char nextChar; 
 	byte *ptr; 
 
-	_vm->_fileManager.CONSTRUIT_LINUX("HISCORE.DAT");
+	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
 	ptr = _vm->_globals.dos_malloc2(100);
 	_vm->_saveLoadManager.bload(_vm->_globals.NFICHIER, ptr);
 
@@ -642,7 +642,6 @@ void ComputerManager::MODE_VGA256() {
 	_vm->_graphicsManager.DD_Unlock();
 	_vm->_graphicsManager.Cls_Pal();
 	_vm->_graphicsManager.SCANLINE(0x140u);
-	_vm->_fileManager.DMESS();
 }
 
 void ComputerManager::NEWTAB() {
@@ -665,7 +664,7 @@ void ComputerManager::NEWTAB() {
 	while (!_vm->shouldQuit()) {
 		file = Common::String::format("TAB%d.TAB", NB_TABLE);
 
-		_vm->_fileManager.CONSTRUIT_SYSTEM(file);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, file);
 		if (f.open(_vm->_globals.NFICHIER))
 			break;
 
@@ -673,7 +672,7 @@ void ComputerManager::NEWTAB() {
 	}
 	f.close();
 
-	CASSETAB = (int16 *)_vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	CASSETAB = (int16 *)_vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	AFF_BRIQUES();
 	_vm->_objectsManager.SPRITE(CASSESPR, 150, 192, 0, 13, 0, 0, 0, 0);
 	_vm->_objectsManager.SPRITE(CASSESPR, 164, 187, 1, 14, 0, 0, 0, 0);
@@ -842,8 +841,8 @@ int ComputerManager::HIGHT_SCORE() {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	CHARGE_SCORE();
 	_vm->_graphicsManager.LOAD_IMAGEVGA("HISCORE.PCX");
-	_vm->_fileManager.CONSTRUIT_SYSTEM("ALPHA.SPR");
-	ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
+	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -894,8 +893,8 @@ void ComputerManager::NAME_SCORE() {
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	_vm->_fileManager.CONSTRUIT_SYSTEM("ALPHA.SPR");
-	ptr = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
+	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.FADE_IN_CASSE();
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		PRINT_HSCORE(ptr, 9 * strPos + 140, 78, 1);
@@ -1050,7 +1049,7 @@ void ComputerManager::SAUVE_SCORE() {
 		*(ptr + v9 + 9) = 0;
 	}
 
-	_vm->_fileManager.CONSTRUIT_LINUX("HISCORE.DAT");
+	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
 	_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, ptr, 0x64u);
 	_vm->_globals.dos_free2(ptr);
 }

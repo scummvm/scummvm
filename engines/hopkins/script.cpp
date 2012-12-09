@@ -554,7 +554,7 @@ LABEL_1141:
 				_vm->_graphicsManager.FADESPD = 1;
 				if (_vm->_globals.SVGA == 2)
 					_vm->_animationManager.PLAY_ANM("BOMBE1A.ANM", 100, 18, 100);
-				if (_vm->_globals.SVGA == 1)
+				else if (_vm->_globals.SVGA == 1)
 					_vm->_animationManager.PLAY_ANM("BOMBE1.ANM", 100, 18, 100);
 			}
 			_vm->_graphicsManager.LOAD_IMAGE("BOMBEB");
@@ -586,7 +586,7 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			if (_vm->_globals.SVGA == 1)
 				_vm->_animationManager.PLAY_ANM("BOMBE2.ANM", 50, 14, 500);
-			if (_vm->_globals.SVGA == 2)
+			else if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.PLAY_ANM("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
@@ -601,7 +601,7 @@ LABEL_1141:
 			_vm->_soundManager.SPECIAL_SOUND = 199;
 			if (_vm->_globals.SVGA == 1)
 				_vm->_animationManager.PLAY_ANM("BOMBE2.ANM", 50, 14, 500);
-			if (_vm->_globals.SVGA == 2)
+			else if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.PLAY_ANM("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.NOFADE = true;
@@ -618,7 +618,7 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			if (_vm->_globals.SVGA == 1)
 				_vm->_animationManager.PLAY_ANM("BOMBE2.ANM", 50, 14, 500);
-			if (_vm->_globals.SVGA == 2)
+			else if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.PLAY_ANM("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.NOFADE = true;
@@ -633,7 +633,7 @@ LABEL_1141:
 			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
 				if (_vm->_globals.SVGA == 1)
 					_vm->_animationManager.PLAY_ANM("BOMBE3.ANM", 50, 14, 500);
-				if (_vm->_globals.SVGA == 2)
+				else if (_vm->_globals.SVGA == 2)
 					_vm->_animationManager.PLAY_ANM("BOMBE3A.ANM", 50, 14, 500);
 				memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
 			}
@@ -1951,8 +1951,8 @@ LABEL_1141:
 			_vm->_globals.SAUVEGARDE->data[svField354] = 1;
 		}
 		if (v76 == 56) {
-			_vm->_fileManager.CONSTRUIT_SYSTEM("HOPFEM.SPR");
-			_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "HOPFEM.SPR");
+			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 			_vm->_globals.PERSO_TYPE = 1;
 			_vm->_globals.SAUVEGARDE->data[svField122] = 1;
 			_vm->_globals.HOPKINS_DATA();
@@ -1961,8 +1961,8 @@ LABEL_1141:
 			_vm->_objectsManager.VERIFTAILLE();
 		}
 		if (v76 == 57) {
-			_vm->_fileManager.CONSTRUIT_SYSTEM("PERSO.SPR");
-			_vm->_fileManager.CHARGE_FICHIER2(_vm->_globals.NFICHIER, _vm->_globals.PERSO);
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
+			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 			_vm->_globals.PERSO_TYPE = 0;
 			_vm->_globals.SAUVEGARDE->data[svField122] = 0;
 			_vm->_globals.HOPKINS_DATA();
@@ -2094,7 +2094,7 @@ LABEL_1141:
 			_vm->_globals.NOPARLE = false;
 			if (_vm->_globals.SVGA == 1)
 				_vm->_animationManager.PLAY_ANM2("T421.ANM", 100, 14, 500);
-			if (_vm->_globals.SVGA == 2)
+			else if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.PLAY_ANM2("T421a.ANM", 100, 14, 500);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();

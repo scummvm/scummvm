@@ -84,11 +84,11 @@ int MenuManager::MENU() {
     
 		_vm->_graphicsManager.FADE_INW();
 		if (_vm->_globals.FR == 0)
-			_vm->_fileManager.CONSTRUIT_SYSTEM("MENUAN.SPR");
-		if (_vm->_globals.FR == 1)
-			_vm->_fileManager.CONSTRUIT_SYSTEM("MENUFR.SPR");
-		if (_vm->_globals.FR == 2)
-			_vm->_fileManager.CONSTRUIT_SYSTEM("MENUES.SPR");
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUAN.SPR");
+		else if (_vm->_globals.FR == 1)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUFR.SPR");
+		else if (_vm->_globals.FR == 2)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUES.SPR");
     
 		spriteData = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 		_vm->_eventsManager.MOUSE_ON();

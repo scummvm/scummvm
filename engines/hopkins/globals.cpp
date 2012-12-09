@@ -301,6 +301,7 @@ void Globals::setConfig() {
 	HOPSVGA = "SVGA";
 	HOPVGA = "VGA";
 	HOPSEQ = "SEQ";
+	HOPSYSTEM = "SYSTEM";
 
 	// CHECKME: Should be in Globals() but it doesn't work
 	// The Polish version is a translation of the English version. The filenames are the same.
@@ -490,8 +491,8 @@ void Globals::CLEAR_VBOB() {
 
 // Load Object
 void Globals::CHARGE_OBJET() {
-	_vm->_fileManager.CONSTRUIT_SYSTEM("OBJET.DAT");
-	byte *data = _vm->_fileManager.CHARGE_FICHIER(NFICHIER);
+	_vm->_fileManager.constructFilename(HOPSYSTEM, "OBJET.DAT");
+	byte *data = _vm->_fileManager.loadFile(NFICHIER);
 	byte *srcP = data;
 
 	for (int idx = 0; idx < 300; ++idx) {
@@ -580,14 +581,14 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 	Common::File f;
 
 	RESET_CACHE();
-	_vm->_fileManager.CONSTRUIT_FICHIER(HOPLINK, file);
-	ptr = _vm->_fileManager.CHARGE_FICHIER(NFICHIER);
+	_vm->_fileManager.constructFilename(HOPLINK, file);
+	ptr = _vm->_fileManager.loadFile(NFICHIER);
 	v16 = Common::String((const char *)ptr);
 
-	_vm->_fileManager.CONSTRUIT_FICHIER(HOPLINK, v16);
+	_vm->_fileManager.constructFilename(HOPLINK, v16);
 	
 	if (f.exists(NFICHIER)) {
-		spriteData = _vm->_fileManager.CHARGE_FICHIER(NFICHIER);
+		spriteData = _vm->_fileManager.loadFile(NFICHIER);
 		CACHE_BANQUE[1] = spriteData;
 		int v15 = 60;
 		for (int i = 0; i <= 21; i++) {

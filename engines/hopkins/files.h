@@ -34,38 +34,23 @@ class HopkinsEngine;
 
 class FileManager {
 private:
-	bool TEST_REP(const Common::String &folder, const Common::String &file);
+	bool fileExists(const Common::String &folder, const Common::String &file);
 public:
 	HopkinsEngine *_vm;
 public:
 	FileManager();
 	void setParent(HopkinsEngine *vm);
 
-	void Chage_Inifile(Common::StringMap &iniParams);
-	byte *CHARGE_FICHIER(const Common::String &file);
-	void CHARGE_FICHIER2(const Common::String &file, byte *a2);
-	void DMESS();
-	void DMESS1();
-	void bload(const Common::String &file, byte *buf);
-	int bload_it(Common::ReadStream &stream, void *buf, size_t nbytes);
-	void F_Censure();
-	int CONSTRUIT_SYSTEM(const Common::String &file);
-	
-	/**
-	 * Construct a filename based on a suggested folder and filename.
-	 * @param folder		Folder to use. May be overriden for animations.
-	 * @param file			Filename
-	 */
-	void CONSTRUIT_FICHIER(const Common::String &folder, const Common::String &file);
+	void loadIniFile(Common::StringMap &iniParams);
+	byte *loadFile(const Common::String &file);
+	int readStream(Common::ReadStream &stream, void *buf, size_t nbytes);
+	void initCensorship();
+	void constructFilename(const Common::String &folder, const Common::String &file);
 
-	byte *LIBERE_FICHIER(byte *ptr);
-	byte *RECHERCHE_CAT(const Common::String &file, int a2);
-	Common::String CONSTRUIT_LINUX(const Common::String &file);
+	byte *searchCat(const Common::String &file, int a2);
+	Common::String constructLinuxFilename(const Common::String &file);
 
-	/**
-	 * Returns the size of a file. Throws an error if the file can't be found
-	 */
-	uint32 FLONG(const Common::String &filename);
+	uint32 fileSize(const Common::String &filename);
 };
 
 } // End of namespace Hopkins

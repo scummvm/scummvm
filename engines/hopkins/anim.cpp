@@ -59,7 +59,7 @@ LABEL_2:
 		v10 = _vm->_graphicsManager.VESA_SCREEN;
 		ptr = _vm->_globals.dos_malloc2(0x14u);
 
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANM, filename);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPANM, filename);
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("File not found - %s", _vm->_globals.NFICHIER.c_str());
 
@@ -263,18 +263,18 @@ void AnimationManager::PLAY_ANM2(const Common::String &filename, uint32 a2, uint
 	while (!_vm->shouldQuit()) {
 		memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 0x301u);
 
-		_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
+		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 
 		if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
-		if (_vm->_graphicsManager.nbrligne == 1280)
+		else if (_vm->_graphicsManager.nbrligne == 1280)
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
 		if (!_vm->_graphicsManager.nbrligne)
 			_vm->_graphicsManager.ofscroll = 0;
 
 		v12 = _vm->_graphicsManager.VESA_SCREEN;
 		v13 = _vm->_globals.dos_malloc2(0x14u);
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANM, filename);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPANM, filename);
 
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
@@ -685,7 +685,7 @@ void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 	CLEAR_ANIM();
 
 	Common::String filename = animName + ".ANI";
-	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, filename);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
 	
 	Common::File f;
 	if (!f.open(_vm->_globals.NFICHIER))
@@ -710,7 +710,7 @@ void AnimationManager::CHARGE_ANIM(const Common::String &animName) {
 
 	for (int idx = 1; idx <= 6; ++idx) {
 		if (files[idx - 1][0]) {
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, files[idx - 1]);
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, files[idx - 1]);
 			
 			if (!f.exists(_vm->_globals.NFICHIER))
 				error("File not found");
@@ -755,13 +755,13 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 	byte *ptr; 
 	byte *v19;
 	int result = 0;
-	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, filename);
-	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.FLONG(_vm->_globals.NFICHIER);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
+	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
 	_vm->_globals.Bank[idx].field4 = 1;
 	_vm->_globals.Bank[idx].filename1 = filename;
 	_vm->_globals.Bank[idx].filename2 = _vm->_globals.REP_SPR;
 
-	v3 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+	v3 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	v4 = v3;
 
 	_vm->_globals.Bank[idx].fileHeader = 0;
@@ -801,10 +801,10 @@ int AnimationManager::CHARGE_BANK_SPRITE1(int idx, const Common::String &filenam
 			} while (ch != '.');
 			ofsFilename += ".OFS";
 			
-			_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPANIM, ofsFilename);
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, ofsFilename);
 			Common::File f;
 			if (f.exists(_vm->_globals.NFICHIER)) {
-				v19 = _vm->_fileManager.CHARGE_FICHIER(_vm->_globals.NFICHIER);
+				v19 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 				v13 = v19;
 				
 				if (_vm->_globals.Bank[idx].field1A > 0) {
@@ -951,17 +951,17 @@ void AnimationManager::PLAY_SEQ(const Common::String &file, uint32 rate1, uint32
 	if (!NO_COUL) {
 		_vm->_eventsManager.VBL();
 
-		_vm->_fileManager.CONSTRUIT_LINUX("TEMP.SCR");
+		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 		if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
-		if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
+		else if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
 		if (!_vm->_graphicsManager.nbrligne)
 			_vm->_graphicsManager.ofscroll = 0;
 	}
 	v9 = _vm->_graphicsManager.VESA_SCREEN;
 	v10 = _vm->_globals.dos_malloc2(0x16u);
-	_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, file);
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPSEQ, file);
 	if (!f.open(_vm->_globals.NFICHIER))
 		error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
@@ -1129,7 +1129,7 @@ void AnimationManager::PLAY_SEQ2(const Common::String &file, uint32 rate1, uint3
 		_vm->_eventsManager.souris_flag = false;
 		v10 = _vm->_graphicsManager.VESA_SCREEN;
 		v11 = _vm->_globals.dos_malloc2(0x16u);
-		_vm->_fileManager.CONSTRUIT_FICHIER(_vm->_globals.HOPSEQ, file);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPSEQ, file);
 
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("File not found - %s", _vm->_globals.NFICHIER.c_str());
