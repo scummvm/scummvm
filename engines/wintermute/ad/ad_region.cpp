@@ -51,6 +51,21 @@ AdRegion::AdRegion(BaseGame *inGame) : BaseRegion(inGame) {
 AdRegion::~AdRegion() {
 }
 
+uint32 AdRegion::getAlpha() {
+	return _alpha;
+}
+
+float AdRegion::getZoom() {
+	return _zoom;
+}
+
+bool AdRegion::isBlocked() {
+	return _blocked;
+}
+
+bool AdRegion::hasDecoration() {
+	return _decoration;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdRegion::loadFile(const char *filename) {
