@@ -142,7 +142,10 @@ bool HopkinsEngine::runWin95Demo() {
 
 	_graphicsManager.LOAD_IMAGE("H2");
 	_graphicsManager.FADE_INW();
-	
+
+	if (!_eventsManager.ESC_KEY)
+		INTRORUN();
+
 	warning("TODO Fin_Interrupt()");
 	warning("TODO TEST = 1;");
 	warning("TODO no_vsync = 1;");
@@ -2688,6 +2691,10 @@ void HopkinsEngine::INIT_SYSTEM() {
 }
 
 void HopkinsEngine::INTRORUN() {
+	// Win95 EN demo doesn't include the intro
+	if ((getLanguage() == Common::EN_ANY) && (getPlatform() == Common::kPlatformWindows) && (getIsDemo()))
+		return;
+
 	byte paletteData[PALETTE_EXT_BLOCK_SIZE];
 	byte paletteData2[PALETTE_EXT_BLOCK_SIZE];
 
