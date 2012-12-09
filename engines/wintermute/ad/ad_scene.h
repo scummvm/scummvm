@@ -80,7 +80,7 @@ public:
 	DECLARE_PERSISTENT(AdScene, BaseObject)
 	bool displayRegionContent(AdRegion *region = NULL, bool display3DOnly = false);
 	bool displayRegionContentOld(AdRegion *region = NULL);
-	static int compareObjs(const void *obj1, const void *obj2);
+	static bool compareObjs(const AdObject *obj1, const AdObject *obj2);
 
 	bool updateFreeObjects();
 	bool traverseNodes(bool update = false);

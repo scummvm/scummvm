@@ -1140,14 +1140,14 @@ bool AdScene::updateFreeObjects() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 	AdGame *adGame = (AdGame *)_gameRef;
-	BaseArray<AdObject *> objects;
+	Common::Array<AdObject *> objects;
 	AdObject *obj;
 
 	// global objects
 	for (uint32 i = 0; i < adGame->_objects.size(); i++) {
 		obj = adGame->_objects[i];
 		if (obj->_active && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
-			objects.add(obj);
+			objects.push_back(obj);
 		}
 	}
 
@@ -1155,7 +1155,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 	for (uint32 i = 0; i < _objects.size(); i++) {
 		obj = _objects[i];
 		if (obj->_active && !obj->_editorOnly && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
-			objects.add(obj);
+			objects.push_back(obj);
 		}
 	}
 
@@ -1195,16 +1195,11 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int AdScene::compareObjs(const void *obj1, const void *obj2) {
-	const AdObject *object1 = *(const AdObject *const *)obj1;
-	const AdObject *object2 = *(const AdObject *const *)obj2;
-
-	if (object1->_posY < object2->_posY) {
-		return -1;
-	} else if (object1->_posY > object2->_posY) {
-		return 1;
+bool AdScene::compareObjs(const AdObject *obj1, const AdObject *obj2) {
+	if (obj1->_posY < obj2->_posY) {
+		return true;
 	} else {
-		return 0;
+		return false;
 	}
 }
 

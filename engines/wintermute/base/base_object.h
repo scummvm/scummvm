@@ -110,8 +110,8 @@ public:
 	bool _movable;
 	bool _zoomable;
 	bool _shadowable;
-	int _posY;
-	int _posX;
+	int32 _posY;
+	int32 _posX;
 	bool _registrable;
 	char *_caption[7];
 	bool _saveState;
