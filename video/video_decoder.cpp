@@ -418,7 +418,7 @@ void VideoDecoder::setRate(const Common::Rational &rate) {
 	_startTime = g_system->getMillis();
 
 	// Adjust start time if we've seeked to something besides zero time
-	if (_lastTimeChange.totalNumberOfFrames() != 0)
+	if (_lastTimeChange != 0)
 		_startTime -= (_lastTimeChange.msecs() / _playbackRate).toInt();
 
 	startAudio();
