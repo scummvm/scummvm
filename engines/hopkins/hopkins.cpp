@@ -384,7 +384,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 			_globals.ECRAN = 113;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
+			_computerManager.showComputer(COMPUTER_HOPKINS);
 			_graphicsManager.MODE_VESA();
 			break;
 
@@ -394,7 +394,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.ECRAN = 114;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_globals.SORTIE = 0;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
+			_computerManager.showComputer(COMPUTER_SAMANTHAS);
 			_graphicsManager.MODE_VESA();
 			break;
 
@@ -404,7 +404,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 			_globals.ECRAN = 115;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
+			_computerManager.showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.MODE_VESA();
 			break;
 
@@ -739,7 +739,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 			_globals.ECRAN = 113;
 			_globals.SAUVEGARDE->data[svField5] = 113;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
+			_computerManager.showComputer(COMPUTER_HOPKINS);
 
 			_graphicsManager.DD_Lock();
 			_graphicsManager.Cls_Video();
@@ -757,7 +757,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 			_globals.ECRAN = 114;
 			_globals.SAUVEGARDE->data[svField5] = 114;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
+			_computerManager.showComputer(COMPUTER_SAMANTHAS);
 			_graphicsManager.DD_Lock();
 			_graphicsManager.Cls_Video();
 			_graphicsManager.DD_Unlock();
@@ -769,7 +769,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 			_globals.ECRAN = 115;
 			_globals.SAUVEGARDE->data[svField5] = 115;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
+			_computerManager.showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.DD_Lock();
 			_graphicsManager.Cls_Video();
 			_graphicsManager.DD_Unlock();
@@ -1612,7 +1612,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.OLD_ECRAN;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_globals.SORTIE = 0;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
+			_computerManager.showComputer(COMPUTER_HOPKINS);
 			_graphicsManager.MODE_VESA();
 			break;
 
@@ -1622,7 +1622,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals.ECRAN = 114;
 			_globals.SAUVEGARDE->data[svField6] = _globals.OLD_ECRAN;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
+			_computerManager.showComputer(COMPUTER_SAMANTHAS);
 			_graphicsManager.MODE_VESA();
 			break;
 
@@ -1632,7 +1632,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.OLD_ECRAN;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_globals.SORTIE = 0;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
+			_computerManager.showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.MODE_VESA();
 			break;
 
@@ -2491,7 +2491,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 			_globals.ECRAN = 113;
 			_globals.SAUVEGARDE->data[svField5] = 113;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_HOPKINS);
+			_computerManager.showComputer(COMPUTER_HOPKINS);
 			_graphicsManager.DD_Lock();
 			_graphicsManager.Cls_Video();
 			_graphicsManager.DD_Unlock();
@@ -2508,7 +2508,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 			_globals.ECRAN = 114;
 			_globals.SAUVEGARDE->data[svField5] = 114;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_SAMANTHAS);
+			_computerManager.showComputer(COMPUTER_SAMANTHAS);
 			_graphicsManager.DD_Lock();
 			_graphicsManager.Cls_Video();
 			_graphicsManager.DD_Unlock();
@@ -2520,7 +2520,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.ECRAN;
 			_globals.ECRAN = 115;
 			_globals.SAUVEGARDE->data[svField5] = 115;
-			_computerManager.COMPUT_HOPKINS(COMPUTER_PUBLIC);
+			_computerManager.showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.DD_Lock();
 			_graphicsManager.Cls_Video();
 			_graphicsManager.DD_Unlock();
@@ -2704,7 +2704,7 @@ void HopkinsEngine::INTRORUN() {
 	_globals.iRegul = 1;
 	_eventsManager.VBL();
 	_soundManager.WSOUND(16);
-	_animationManager.clearAnimationFl = true;
+	_animationManager._clearAnimationFl = true;
 	_animationManager.playAnim("J1.anm", 12, 12, 50);
 	if (!_eventsManager.ESC_KEY) {
 		_soundManager.VOICE_MIX(1, 3);
@@ -2896,7 +2896,7 @@ void HopkinsEngine::INTRORUN() {
 
 							_graphicsManager.FADE_OUTW();
 							_graphicsManager.FIN_VISU();
-							_animationManager.clearAnimationFl = true;
+							_animationManager._clearAnimationFl = true;
 							_soundManager.WSOUND(3);
 							_soundManager.SPECIAL_SOUND = 1;
 							_animationManager.playAnim("INTRO1.anm", 10, 24, 18);
@@ -2916,7 +2916,7 @@ void HopkinsEngine::INTRORUN() {
 										return;
 
 									if (!_eventsManager.ESC_KEY) {
-										_animationManager.clearAnimationFl = false;
+										_animationManager._clearAnimationFl = false;
 										_graphicsManager.FADE_LINUX = 2;
 										_animationManager.playAnim("J4.anm", 12, 12, 1000);
 									}
@@ -3107,7 +3107,7 @@ void HopkinsEngine::BASE() {
 	_graphicsManager.Cls_Video();
 	_graphicsManager.DD_Unlock();
 	_graphicsManager.Cls_Pal();
-	_animationManager.clearAnimationFl = true;
+	_animationManager._clearAnimationFl = true;
 	_soundManager.WSOUND(25);
 	if (_globals.SVGA == 1) {
 		_animationManager.playAnim("base00.anm", 10, 18, 18);
@@ -3165,7 +3165,7 @@ void HopkinsEngine::BASE() {
 	}
 
 	_eventsManager.ESC_KEY = false;
-	_animationManager.clearAnimationFl = false;
+	_animationManager._clearAnimationFl = false;
 	_globals.SORTIE = 85;
 }
 
@@ -3372,7 +3372,7 @@ void HopkinsEngine::AVION() {
 	_graphicsManager.DD_Unlock();
 	_graphicsManager.Cls_Pal();
 
-	_animationManager.clearAnimationFl = false;
+	_animationManager._clearAnimationFl = false;
 	if (_globals.SVGA == 1) {
 		_animationManager.playAnim("aerop00.anm", 10, 18, 18);
 		if (!_eventsManager.ESC_KEY)
@@ -3440,7 +3440,7 @@ void HopkinsEngine::AVION() {
 	}
 
 	_eventsManager.ESC_KEY = 0;
-	_animationManager.clearAnimationFl = false;
+	_animationManager._clearAnimationFl = false;
 }
 
 int HopkinsEngine::PWBASE() {

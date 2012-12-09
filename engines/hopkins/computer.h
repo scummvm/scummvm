@@ -38,8 +38,8 @@ struct MenuItem {
 };
 
 struct ScoreItem {
-	Common::String name;
-	Common::String score;
+	Common::String _name;
+	Common::String _score;
 };
 
 enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHAS = 2, COMPUTER_PUBLIC = 3 };
@@ -47,134 +47,60 @@ enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHAS = 2, COMPUTER_PUBLI
 class ComputerManager {
 private:
 	HopkinsEngine *_vm;
-	MenuItem MenuText[50];
-	char Sup_string[200];
-	ScoreItem Score[6];
-	int TEXT_COL;
+	MenuItem _menuText[50];
+	char _inputBuf[200];
+	ScoreItem _score[6];
+	int _textColor;
 	Common::Point _textPosition;
-	Common::Point BALLE;
-	byte *CASSESPR;
-	int16 *CASSETAB;
-	bool FMOUSE;
-	int NBBRIQUES;
-
-	/**
-	 * Breakout score
-	 */
-	int CASSESCORE;
-
-	/**
-	 * Number of Breakout lives remaining
-	 */
-	int CASSEVIE;
-
-	/**
-	 * Breakout game speed
-	 */
-	int CASSESPEED;
-
-	/**
-	 * Breakout ball horizontal position
-	 */
-	int BALLEHORI;
-
-	/**
-	 * Breakout ball vertical position
-	 */
-	int BALLEVERTI;
-
-	int NB_TABLE;
+	Common::Point _ballPosition;
+	byte *_breakoutSpr;
+	int16 *_breakoutLevel;
+	int _breakoutBrickNbr;
+	int _breakoutScore;
+	int _breakoutLifes;
+	int _breakoutSpeed;
+	bool _ballRightFl;
+	bool _ballUpFl;
+	int _breakoutLevelNbr;
 	int RAQX;
-	int CASSE_HISCORE;
+	int _breakoutHiscore;
 	int CASSEP1;
 	int CASSEP2;
 	int CASSDER;
-	int Menu_lignes; // CHECKME: Useless variable
 
-	/**
-	 * Load the menu text
-	 */
-	void Charge_Menu();
+	void loadMenu();
+	void restoreFBIRoom();
+	void setVideoMode();
+	void setTextMode();
+	void clearScreen();
+	void setTextColor(int col);
+	void setTextPosition(int yp, int xp);
+	void outText(const Common::String &msg);
+	void outText2(const Common::String &msg);
+	void readText(int idx);
+	void loadHiscore();
+	void newLevel();
+	void setModeVGA256();
+	void displayLifes();
+	void displayBricks();
+	void displayGamesSubMenu();
+	void displayScore();
+	int  displayHiscores();
+	void displayHiscoreLine(byte *objectData, int x, int y, int a4);
+	void playBreakout();
+	void saveScore();
+	int moveBall();
+	void checkBallCollisions();
+	void getScoreName();
 
 	void TXT4(int xp, int yp, int textIdx);
 
-	/**
-	 * Restores the scene for the FBI headquarters room
-	 */
-	void RESTORE_POLICE();
-
-	/**
-	 * Sets up textual entry mode. Used by the code for Hopkins computer.
-	 */
-	void setvideomode();
-
-	/**
-	 * Sets up textual entry mode. Used by the code for Hopkins computer.
-	 */
-	void TEXT_MODE();
-
-	/**
-	 * Clear the screen
-	 */
-	void clearscreen();
-
-	/**
-	 * Sets the text mode color
-	 */
-	void settextcolor(int col);
-
-	/**
-	 * Sets the text position.
-	 * @param yp		Y position
-	 * @param xp		X position
-	 * @remarks		Yes, the reverse co-ordinate pair is really like that in the original game.
-	 */
-	void settextposition(int yp, int xp);
-
-	/**
-	 * Outputs a text string
-	 */
-	void outtext(const Common::String &msg);
-
-	/**
-	 * Outputs a text string
-	 */
-	void outtext2(const Common::String &msg);
-
-	void GAMES();
-	void LIT_TEXTE(int a1);
-	void CHARGE_SCORE();
-	void MODE_VGA256();
-	void NEWTAB();
-	void AFF_BRIQUES();
-	void AFF_VIE();
-
-	/**
-	 * Play the Breakout game
-	 */
-	void PLAY_BRIQUE();
-
-	/**
-	 * Show the high scores for the Breakout game
-	 * @return		The selected button index: 1 = Game, 2 = Quit
-	 */
-	int HIGHT_SCORE();
-	void NAME_SCORE();
 	void IMPSCORE(int a1, int a2);
-	void SAUVE_SCORE();
-	void PRINT_HSCORE(byte *objectData, int a2, int a3, int a4);
-	void IMPRIMESCORE();
-	int DEP_BALLE();
-	void VERIFBRIQUES();
+
 public:
 	ComputerManager();
 	void setParent(HopkinsEngine *vm);
-
-	/**
-	 * Show a computer in the FBI office
-	 * @param mode		Which computer to display
-	 */
-	void COMPUT_HOPKINS(ComputerEnum mode);
+	void showComputer(ComputerEnum mode);
 };
 
 } // End of namespace Hopkins

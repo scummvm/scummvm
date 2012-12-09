@@ -4205,7 +4205,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_soundManager.SPECIAL_SOUND = 198;
 					PERSO_ON = true;
 					_vm->_animationManager.NO_SEQ = true;
-					_vm->_animationManager.clearAnimationFl = false;
+					_vm->_animationManager._clearAnimationFl = false;
 					_vm->_animationManager.playAnim("otage.ANM", 1, 24, 500);
 					_vm->_animationManager.NO_SEQ = false;
 					_vm->_soundManager.SPECIAL_SOUND = 0;

@@ -34,7 +34,7 @@
 namespace Hopkins {
 
 AnimationManager::AnimationManager() {
-	clearAnimationFl = false;
+	_clearAnimationFl = false;
 	NO_SEQ = false;
 	NO_COUL = false;
 }
@@ -72,7 +72,7 @@ LABEL_2:
 		f.skip(14);
 		f.read(v10, nbytes);
 
-		if (clearAnimationFl == true) {
+		if (_clearAnimationFl) {
 			_vm->_graphicsManager.DD_Lock();
 			_vm->_graphicsManager.Cls_Video();
 			_vm->_graphicsManager.DD_Unlock();

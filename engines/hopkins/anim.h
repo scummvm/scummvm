@@ -37,7 +37,7 @@ private:
 	int loadSpriteBank(int idx, const Common::String &filename);
 public:
 	HopkinsEngine *_vm;
-	bool clearAnimationFl;
+	bool _clearAnimationFl;
 	bool NO_SEQ;
 	bool NO_COUL;
 public:
