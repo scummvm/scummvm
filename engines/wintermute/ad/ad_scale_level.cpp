@@ -48,7 +48,7 @@ AdScaleLevel::~AdScaleLevel() {
 
 }
 
-float AdScaleLevel::getScale() {
+float AdScaleLevel::getScale() const {
 	return _scale;
 }
 

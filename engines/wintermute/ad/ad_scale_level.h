@@ -42,7 +42,7 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	float getScale();
+	float getScale() const;
 private:
 	float _scale;
 };
