@@ -40,14 +40,18 @@ AnimationManager::AnimationManager() {
 }
 
 /**
- * Play Anim
+ * Play Animation
+ * @param filename		Filename of animation to play
+ * @param rate1			Delay amount before starting animation
+ * @param rate2			Delay amount between animation frames
+ * @param rate3			Delay amount after animation finishes
  */
 void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
-	int v4; 
+	bool breakFlag;
 	bool hasScreenCopy; 
 	byte *screenCopy = NULL; 
-	byte *v10 = NULL;
-	int v13;
+	byte *screenP = NULL;
+	int frameNumber;
 	byte *ptr = NULL;
 	size_t nbytes;
 	Common::File f;
@@ -56,153 +60,129 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		return;
 
 	hasScreenCopy = false;
-	while (!_vm->shouldQuit()) {
-LABEL_2:
-		v10 = _vm->_graphicsManager.VESA_SCREEN;
-		ptr = _vm->_globals.dos_malloc2(0x14u);
+	screenP = _vm->_graphicsManager.VESA_SCREEN;
+	ptr = _vm->_globals.dos_malloc2(0x14u);
 
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANM, filename);
-		if (!f.open(_vm->_globals.NFICHIER))
-			error("File not found - %s", _vm->_globals.NFICHIER.c_str());
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPANM, filename);
+	if (!f.open(_vm->_globals.NFICHIER))
+		error("File not found - %s", _vm->_globals.NFICHIER.c_str());
 
-		f.skip(6);
-		f.read(_vm->_graphicsManager.Palette, 0x320u);
-		f.skip(4);
-		nbytes = f.readUint32LE();
-		f.skip(14);
-		f.read(v10, nbytes);
+	f.skip(6);
+	f.read(_vm->_graphicsManager.Palette, 0x320u);
+	f.skip(4);
+	nbytes = f.readUint32LE();
+	f.skip(14);
+	f.read(screenP, nbytes);
 
-		if (_clearAnimationFl) {
-			_vm->_graphicsManager.DD_Lock();
-			_vm->_graphicsManager.Cls_Video();
-			_vm->_graphicsManager.DD_Unlock();
-		}
-		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
-			hasScreenCopy = true;
-			screenCopy = _vm->_globals.dos_malloc2(0x4B000u);
-			memcpy(screenCopy, v10, 0x4B000u);
-		}
-		if (NO_SEQ) {
-			if (hasScreenCopy)
-				memcpy(screenCopy, _vm->_graphicsManager.VESA_BUFFER, 0x4B000u);
-			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
-		} else {
-			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
-			_vm->_graphicsManager.DD_Lock();
-			if (_vm->_graphicsManager.Winbpp == 2) {
-				if (hasScreenCopy)
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll16(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-			if (_vm->_graphicsManager.Winbpp == 1) {
-				if (hasScreenCopy)
-					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll2(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-			_vm->_graphicsManager.DD_Unlock();
-			_vm->_graphicsManager.DD_VBL();
-		}
-		_vm->_eventsManager.lItCounter = 0;
-		_vm->_eventsManager.ESC_KEY = false;
-		_vm->_soundManager.LOAD_ANM_SOUND();
-		if (_vm->_globals.iRegul != 1)
-			break;
-		while (!_vm->shouldQuit()) {
-			if (_vm->_eventsManager.ESC_KEY == true)
-				goto LABEL_58;
-			if (redrawAnim() == true)
-				break;
-			_vm->_eventsManager.CONTROLE_MES();
-			if (_vm->_eventsManager.lItCounter >= rate1)
-				goto LABEL_25;
-		}
-LABEL_53:
-		if (_vm->_graphicsManager.NOLOCK == true)
-			goto LABEL_58;
-		_vm->_globals.dos_free2(ptr);
-		f.close();
-
-		if (hasScreenCopy == 1)
-LABEL_55:
-			screenCopy = _vm->_globals.dos_free2(screenCopy);
+	if (_clearAnimationFl) {
+		_vm->_graphicsManager.DD_Lock();
+		_vm->_graphicsManager.Cls_Video();
+		_vm->_graphicsManager.DD_Unlock();
 	}
-LABEL_25:
+	if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
+		hasScreenCopy = true;
+		screenCopy = _vm->_globals.dos_malloc2(0x4B000u);
+		memcpy(screenCopy, screenP, 0x4B000u);
+	}
+	if (NO_SEQ) {
+		if (hasScreenCopy)
+			memcpy(screenCopy, _vm->_graphicsManager.VESA_BUFFER, 0x4B000u);
+		_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+	} else {
+		_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+		_vm->_graphicsManager.DD_Lock();
+		if (_vm->_graphicsManager.Winbpp == 2) {
+			if (hasScreenCopy)
+				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			else
+				_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		}
+		if (_vm->_graphicsManager.Winbpp == 1) {
+			if (hasScreenCopy)
+				_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			else
+				_vm->_graphicsManager.m_scroll2(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		}
+		_vm->_graphicsManager.DD_Unlock();
+		_vm->_graphicsManager.DD_VBL();
+	}
 	_vm->_eventsManager.lItCounter = 0;
-	v4 = 0;
-	v13 = 0;
-	while (!_vm->shouldQuit()) {
-		++v13;
-		_vm->_soundManager.playAnim_SOUND(v13);
+	_vm->_eventsManager.ESC_KEY = false;
+	_vm->_soundManager.LOAD_ANM_SOUND();
 
+	if (_vm->_globals.iRegul == 1) {
+		// Do pre-animation delay
+		do {
+			if (_vm->_eventsManager.ESC_KEY == true)
+				goto EXIT;
+
+			_vm->_eventsManager.CONTROLE_MES();
+		} while (!_vm->shouldQuit() && _vm->_eventsManager.lItCounter < rate1);
+	}
+
+	_vm->_eventsManager.lItCounter = 0;
+	breakFlag = false;
+	frameNumber = 0;
+	while (!_vm->shouldQuit()) {
+		++frameNumber;
+		_vm->_soundManager.playAnim_SOUND(frameNumber);
+
+		// Read frame header
 		if (f.read(ptr, 16) != 16)
-			v4 = -1;
+			breakFlag = true;
 
 		if (strncmp((char *)ptr, "IMAGE=", 6))
-			v4 = -1;
-		if (v4)
-			goto LABEL_49;
-
-		f.read(v10, READ_LE_UINT32(ptr + 8));
-		if (_vm->_globals.iRegul == 1)
+			breakFlag = true;
+		if (breakFlag)
 			break;
-LABEL_38:
+
+		f.read(screenP, READ_LE_UINT32(ptr + 8));
+
+		if (_vm->_globals.iRegul == 1) {
+			do {
+				if (_vm->_eventsManager.ESC_KEY)
+					goto EXIT;
+
+				_vm->_eventsManager.CONTROLE_MES();
+				_vm->_soundManager.VERIF_SOUND();
+			} while (!_vm->shouldQuit() && _vm->_eventsManager.lItCounter < rate2);
+		}
+
 		_vm->_eventsManager.lItCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (hasScreenCopy) {
-			if (*v10 != kByteStop) {
-				_vm->_graphicsManager.Copy_WinScan_Vbe3(v10, screenCopy);
+			if (*screenP != kByteStop) {
+				_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
 				if (_vm->_graphicsManager.Winbpp == 2)
 					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				else
 					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
-		} else if (*v10 != kByteStop) {
+		} else if (*screenP != kByteStop) {
 			if (_vm->_graphicsManager.Winbpp == 1)
-				_vm->_graphicsManager.Copy_Video_Vbe3(v10);
+				_vm->_graphicsManager.Copy_Video_Vbe3(screenP);
 			if (_vm->_graphicsManager.Winbpp == 2)
-				_vm->_graphicsManager.Copy_Video_Vbe16(v10);
+				_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
 		}
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();
 		_vm->_soundManager.VERIF_SOUND();
-LABEL_49:
-		if (v4 == -1) {
-			if (_vm->_globals.iRegul == 1) {
-				while (_vm->_eventsManager.ESC_KEY != true) {
-					if (redrawAnim() == true)
-						goto LABEL_53;
-					_vm->_eventsManager.CONTROLE_MES();
-					_vm->_soundManager.VERIF_SOUND();
-					if (_vm->_eventsManager.lItCounter >= rate3)
-						goto LABEL_57;
-				}
-			} else {
-LABEL_57:
-				_vm->_eventsManager.lItCounter = 0;
-				_vm->_soundManager.VERIF_SOUND();
-			}
-			goto LABEL_58;
-		}
 	}
-	while (!_vm->shouldQuit() && _vm->_eventsManager.ESC_KEY != true) {
-		if (redrawAnim() == true) {
-			if (_vm->_graphicsManager.NOLOCK == true)
-				break;
-			_vm->_globals.dos_free2(ptr);
-			f.close();
 
-			if (1 /*hasScreenCopy <= SCREEN_WIDTH */)
-				goto LABEL_2;
-			goto LABEL_55;
-		}
-		_vm->_eventsManager.CONTROLE_MES();
-		_vm->_soundManager.VERIF_SOUND();
-		if (_vm->_eventsManager.lItCounter >= rate2)
-			goto LABEL_38;
+	if (_vm->_globals.iRegul == 1) {
+		// Do post-animation delay
+		do {
+			if (_vm->_eventsManager.ESC_KEY)
+				break;
+
+			_vm->_eventsManager.CONTROLE_MES();
+			_vm->_soundManager.VERIF_SOUND();
+		} while (_vm->_eventsManager.lItCounter < rate3);
 	}
-LABEL_58:
+
+	_vm->_eventsManager.lItCounter = 0;
+	_vm->_soundManager.VERIF_SOUND();
+EXIT:
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
 		screenCopy = _vm->_globals.dos_malloc2(0x4B000u);
 
@@ -212,28 +192,29 @@ LABEL_58:
 		f.skip(4);
 		nbytes = f.readUint32LE();
 		f.skip(14);
-		f.read(v10, nbytes);
+		f.read(screenP, nbytes);
 	
-		memcpy(screenCopy, v10, 0x4B000u);
+		memcpy(screenCopy, screenP, 0x4B000u);
 
-		int v5 = 0;
+		breakFlag = false;
 		do {
-			memset(ptr, 0, 0x13u);
-			if (f.read(ptr, 16) != 16)
-				v5 = -1;
+			memset(ptr, 0, 20);
 
+			if (f.read(ptr, 16) != 16)
+				breakFlag = true;
 			if (strncmp((char *)ptr, "IMAGE=", 6))
-				v5 = -1;
-			if (!v5) {
-				f.read(v10, READ_LE_UINT32(ptr + 8));
-				if (*v10 != kByteStop)
-					_vm->_graphicsManager.Copy_WinScan_Vbe3(v10, screenCopy);
+				breakFlag = true;
+			
+			if (!breakFlag) {
+				f.read(screenP, READ_LE_UINT32(ptr + 8));
+				if (*screenP != kByteStop)
+					_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
 			}
-		} while (v5 != -1);
+		} while (breakFlag);
 		_vm->_graphicsManager.FADE_OUTW_LINUX(screenCopy);
 		screenCopy = _vm->_globals.dos_free2(screenCopy);
 	}
-	if (hasScreenCopy == 1) {
+	if (hasScreenCopy) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
 			_vm->_graphicsManager.FADE_OUTW_LINUX(screenCopy);
 		_vm->_globals.dos_free2(screenCopy);
