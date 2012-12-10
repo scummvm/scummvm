@@ -268,7 +268,6 @@ static const int MSADPCMAdaptationTable[] = {
 	768, 614, 512, 409, 307, 230, 230, 230
 };
 
-
 int16 MS_ADPCMStream::decodeMS(ADPCMChannelStatus *c, byte code) {
 	int32 predictor;
 
@@ -290,40 +289,42 @@ int16 MS_ADPCMStream::decodeMS(ADPCMChannelStatus *c, byte code) {
 int MS_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
-	int i = 0;
+	int i;
 
-	samples = 0;
+	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
+		if (_decodedSampleCount == 0) {
+			if (_blockPos[0] == _blockAlign) {
+				// read block header
+				for (i = 0; i < _channels; i++) {
+					_status.ch[i].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
+					_status.ch[i].coeff1 = MSADPCMAdaptCoeff1[_status.ch[i].predictor];
+					_status.ch[i].coeff2 = MSADPCMAdaptCoeff2[_status.ch[i].predictor];
+				}
 
-	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos[0] == _blockAlign) {
-			// read block header
-			for (i = 0; i < _channels; i++) {
-				_status.ch[i].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
-				_status.ch[i].coeff1 = MSADPCMAdaptCoeff1[_status.ch[i].predictor];
-				_status.ch[i].coeff2 = MSADPCMAdaptCoeff2[_status.ch[i].predictor];
+				for (i = 0; i < _channels; i++)
+					_status.ch[i].delta = _stream->readSint16LE();
+
+				for (i = 0; i < _channels; i++)
+					_status.ch[i].sample1 = _stream->readSint16LE();
+
+				for (i = 0; i < _channels; i++)
+					_decodedSamples[_decodedSampleCount++] = _status.ch[i].sample2 = _stream->readSint16LE();
+
+				for (i = 0; i < _channels; i++)
+					_decodedSamples[_decodedSampleCount++] = _status.ch[i].sample1;
+
+				_blockPos[0] = _channels * 7;
+			} else {
+				data = _stream->readByte();
+				_blockPos[0]++;
+				_decodedSamples[_decodedSampleCount++] = decodeMS(&_status.ch[0], (data >> 4) & 0x0f);
+				_decodedSamples[_decodedSampleCount++] = decodeMS(&_status.ch[_channels - 1], data & 0x0f);
 			}
-
-			for (i = 0; i < _channels; i++)
-				_status.ch[i].delta = _stream->readSint16LE();
-
-			for (i = 0; i < _channels; i++)
-				_status.ch[i].sample1 = _stream->readSint16LE();
-
-			for (i = 0; i < _channels; i++)
-				buffer[samples++] = _status.ch[i].sample2 = _stream->readSint16LE();
-
-			for (i = 0; i < _channels; i++)
-				buffer[samples++] = _status.ch[i].sample1;
-
-			_blockPos[0] = _channels * 7;
 		}
 
-		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
-			data = _stream->readByte();
-			_blockPos[0]++;
-			buffer[samples] = decodeMS(&_status.ch[0], (data >> 4) & 0x0f);
-			buffer[samples + 1] = decodeMS(&_status.ch[_channels - 1], data & 0x0f);
-		}
+		// (1 - (count - 1)) ensures that _decodedSamples acts as a FIFO of depth 2
+		buffer[samples] = _decodedSamples[1 - (_decodedSampleCount - 1)];
+		_decodedSampleCount--;
 	}
 
 	return samples;
