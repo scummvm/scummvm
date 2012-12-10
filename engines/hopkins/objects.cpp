@@ -126,8 +126,8 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 		_vm->_globals.NUM_FICHIER_OBJ = val1;
 	}
 
-	int width = ObjectsManager::Get_Largeur(_vm->_globals.ADR_FICHIER_OBJ, val2);
-	int height = ObjectsManager::Get_Hauteur(_vm->_globals.ADR_FICHIER_OBJ, val2);
+	int width = ObjectsManager::getWidth(_vm->_globals.ADR_FICHIER_OBJ, val2);
+	int height = ObjectsManager::getHeight(_vm->_globals.ADR_FICHIER_OBJ, val2);
 	_vm->_globals.OBJL = width;
 	_vm->_globals.OBJH = height;
 
@@ -224,8 +224,10 @@ int ObjectsManager::get_offsety(const byte *spriteData, int spriteIndex, bool is
 	return result;
 }
 
-// Get Width
-int ObjectsManager::Get_Largeur(const byte *objectData, int idx) {
+/**
+ * Get Width
+ */
+int ObjectsManager::getWidth(const byte *objectData, int idx) {
 	const byte *rectP = objectData + 3;
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
@@ -233,8 +235,10 @@ int ObjectsManager::Get_Largeur(const byte *objectData, int idx) {
 	return (int16)READ_LE_UINT16(rectP + 4);
 }
 
-// Get height
-int ObjectsManager::Get_Hauteur(const byte *objectData, int idx) {
+/**
+ * Get height
+ */
+int ObjectsManager::getHeight(const byte *objectData, int idx) {
 	const byte *rectP = objectData + 3;
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
@@ -477,13 +481,13 @@ void ObjectsManager::AFF_SPRITES() {
 	}
   
 	_vm->_globals.NBTRI = 0;
-	if (_vm->_dialogsManager.AFFINVEN) {
-		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, _vm->_dialogsManager.inventairex, _vm->_dialogsManager.inventairey, _vm->_dialogsManager.inventairel, _vm->_dialogsManager.inventaireh);
+	if (_vm->_dialogsManager._inventDisplayedFl) {
+		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, _vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventHeight);
 		if (old_cadx && old_cady)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.inventaire2, old_cadx + 300, old_cady + 300, old_cadi + 1);
 		if (cadx && cady)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.inventaire2, cadx + 300, cady + 300, cadi);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_dialogsManager.inventairex, _vm->_dialogsManager.inventairey, _vm->_dialogsManager.inventairex + _vm->_dialogsManager.inventairel, _vm->_dialogsManager.inventairey + _vm->_dialogsManager.inventaireh);
+		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventX + _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventY + _vm->_dialogsManager._inventHeight);
 	}
   
 	if (SL_FLAG == true) {
@@ -842,8 +846,8 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		_vm->_globals.Liste2[idx].xp = v13;
 		_vm->_globals.Liste2[idx].yp = v14;
 
-		int width = Get_Largeur(_vm->_globals.Bob[idx].spriteData, _vm->_globals.Bob[idx].frameIndex);
-		int height = Get_Hauteur(_vm->_globals.Bob[idx].spriteData, _vm->_globals.Bob[idx].frameIndex);
+		int width = getWidth(_vm->_globals.Bob[idx].spriteData, _vm->_globals.Bob[idx].frameIndex);
+		int height = getHeight(_vm->_globals.Bob[idx].spriteData, _vm->_globals.Bob[idx].frameIndex);
 
 		if (v21) {
 			width = _vm->_graphicsManager.Reel_Zoom(width, v21);
@@ -1122,8 +1126,8 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 		_vm->_globals.Liste[v17].field0 = 1;
 		_vm->_globals.Liste[v17].field2 = v15;
 		_vm->_globals.Liste[v17].field4 = v16;
-		width = Get_Largeur(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
-		height = Get_Hauteur(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
+		width = getWidth(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
+		height = getHeight(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
 
 		if (zoomPercent) {
 			width = _vm->_graphicsManager.Reel_Zoom(width, zoomPercent);
@@ -1354,8 +1358,8 @@ void ObjectsManager::AFF_VBOB() {
 	int idx = 0;
 	do {
 		if (_vm->_globals.VBob[idx].field4 == 4) {
-			width = Get_Largeur(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
-			height = Get_Hauteur(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
+			width = getWidth(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
+			height = getHeight(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
 			
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN, 
 				_vm->_globals.VBob[idx].surface, _vm->_globals.VBob[idx].xp,
@@ -1386,8 +1390,8 @@ void ObjectsManager::AFF_VBOB() {
 		}
 
 		if (_vm->_globals.VBob[idx].field4 == 3) {
-			width = Get_Largeur(_vm->_globals.VBob[idx].oldSpriteData, _vm->_globals.VBob[idx].oldFrameIndex);
-			height = Get_Hauteur(_vm->_globals.VBob[idx].oldSpriteData, _vm->_globals.VBob[idx].oldFrameIndex);
+			width = getWidth(_vm->_globals.VBob[idx].oldSpriteData, _vm->_globals.VBob[idx].oldFrameIndex);
+			height = getHeight(_vm->_globals.VBob[idx].oldSpriteData, _vm->_globals.VBob[idx].oldFrameIndex);
       
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN,
 				_vm->_globals.VBob[idx].surface, _vm->_globals.VBob[idx].oldX,
@@ -1415,8 +1419,8 @@ void ObjectsManager::AFF_VBOB() {
 		}
 
 		if (_vm->_globals.VBob[idx].field4 == 1) {
-			width = Get_Largeur(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
-			height = Get_Hauteur(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
+			width = getWidth(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
+			height = getHeight(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
       
 			if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
 				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
@@ -1564,13 +1568,13 @@ void ObjectsManager::SPRITE_GEL(int idx) {
 int ObjectsManager::SXSPR(int idx) {
 	if (idx > 5)
 		error("request of the size of a sprite x > MAX_SPRITE.");
-	return Get_Largeur(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
+	return getWidth(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
 }
 
 int ObjectsManager::SYSPR(int idx) {
 	if (idx > 5)
 		error("request of the size of a sprite y > MAX_SPRITE.");
-	return Get_Hauteur(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
+	return getHeight(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
 }
 
 int ObjectsManager::POSISPR(int idx) {
@@ -4706,8 +4710,8 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				} else {
 					v12 = v8;
 					v13 = _vm->_globals.CACHE_BANQUE[1];
-					v14 = Get_Largeur(v13, v8);
-					v15 = Get_Hauteur(v13, v12);
+					v14 = getWidth(v13, v8);
+					v15 = getHeight(v13, v12);
 					_vm->_globals.Cache[v40].fieldC = v13;
 					_vm->_globals.Cache[v40].field6 = v14;
 					_vm->_globals.Cache[v40].field8 = v15;
@@ -5571,7 +5575,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		}
 		if (v9 == 2)
 			BTDROITE();
-		_vm->_dialogsManager.TestForDialogOpening();
+		_vm->_dialogsManager.testDialogOpening();
 		VERIFZONE();
 		if (_vm->_globals.GOACTION == 1)
 			PARADISE();
@@ -5718,7 +5722,7 @@ LABEL_70:
 			}
 		}
 		if (!_vm->_globals.SORTIE) {
-			_vm->_dialogsManager.TestForDialogOpening();
+			_vm->_dialogsManager.testDialogOpening();
 			VERIFZONE();
 			if (_vm->_globals.chemin == (int16 *)g_PTRNUL 
 					|| (GOHOME(), _vm->_globals.chemin == (int16 *)g_PTRNUL)) {

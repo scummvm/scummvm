@@ -192,7 +192,7 @@ int MenuManager::MENU() {
 				_vm->_eventsManager.delay(200);
         
 				_vm->_globals.SORTIE = -1;
-				_vm->_dialogsManager.CHARGE_PARTIE();
+				_vm->_dialogsManager.showLoadGame();
         
 				if (_vm->_globals.SORTIE != -1) {
 					result = _vm->_globals.SORTIE;

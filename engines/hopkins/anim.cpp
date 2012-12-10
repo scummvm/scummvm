@@ -790,8 +790,8 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 		int height; 
 		do {
 			ptr = v4;
-			width = _vm->_objectsManager.Get_Largeur(v4, v8);
-			height = _vm->_objectsManager.Get_Hauteur(ptr, v8);
+			width = _vm->_objectsManager.getWidth(v4, v8);
+			height = _vm->_objectsManager.getHeight(ptr, v8);
 			v4 = ptr;
 			if (!width && !height)
 				loopCond = true;

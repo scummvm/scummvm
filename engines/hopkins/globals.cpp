@@ -604,8 +604,8 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 			if (spriteData == g_PTRNUL) {
 				Cache[i].fieldA = 0;
 			} else {
-				int v8 = _vm->_objectsManager.Get_Largeur(spriteData, v11);
-				int v9 = _vm->_objectsManager.Get_Hauteur(spriteData, v11);
+				int v8 = _vm->_objectsManager.getWidth(spriteData, v11);
+				int v9 = _vm->_objectsManager.getHeight(spriteData, v11);
 				Cache[i].fieldC = spriteData;
 				Cache[i].field6 = v8;
 				Cache[i].field8 = v9;

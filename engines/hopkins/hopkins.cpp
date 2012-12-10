@@ -3603,7 +3603,7 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 		if (!curChar)
 			break;
 		if (curChar > 31)
-			strWidth += _objectsManager.Get_Largeur(_globals.police, curChar - 32);
+			strWidth += _objectsManager.getWidth(_globals.police, curChar - 32);
 	}
 	int startPosX = 320 - strWidth / 2;
 	int endPosX = strWidth + startPosX;
@@ -3630,7 +3630,7 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 			break;
 		if (curChar > 31) {
 			_graphicsManager.Affiche_Fonte(_graphicsManager.VESA_BUFFER, _globals.police, startPosX, startPosY, curChar - 32, colour);
-			startPosX += _objectsManager.Get_Largeur(_globals.police, curChar - 32);
+			startPosX += _objectsManager.getWidth(_globals.police, curChar - 32);
 		}
 	}
 }

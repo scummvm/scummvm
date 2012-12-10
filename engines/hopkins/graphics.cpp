@@ -1636,8 +1636,8 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx) {
 	int height, width;
 
-	width = _vm->_objectsManager.Get_Largeur(objectData, idx);
-	height = _vm->_objectsManager.Get_Hauteur(objectData, idx);
+	width = _vm->_objectsManager.getWidth(objectData, idx);
+	height = _vm->_objectsManager.getHeight(objectData, idx);
 	if (*objectData == 78) {
 		Affiche_Perfect(VESA_SCREEN, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
 		Affiche_Perfect(VESA_BUFFER, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
@@ -2161,8 +2161,8 @@ Aff_Zoom_Larg_Cont1:
 void GraphicsManager::AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex) {
 	int width, height;
 
-	width = _vm->_objectsManager.Get_Largeur(spriteData, spriteIndex);
-	height = _vm->_objectsManager.Get_Hauteur(spriteData, spriteIndex);
+	width = _vm->_objectsManager.getWidth(spriteData, spriteIndex);
+	height = _vm->_objectsManager.getHeight(spriteData, spriteIndex);
 	if (*spriteData == 78) {
 		Affiche_Perfect(VESA_SCREEN, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
 		Affiche_Perfect(VESA_BUFFER, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);

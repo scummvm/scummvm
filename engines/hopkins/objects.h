@@ -125,8 +125,8 @@ public:
 	byte *CAPTURE_OBJET(int objIndex, int mode);
 	void DELETE_OBJET(int objIndex);
 
-	int Get_Largeur(const byte *objectData, int idx);
-	int Get_Hauteur(const byte *objectData, int idx);
+	int getWidth(const byte *objectData, int idx);
+	int getHeight(const byte *objectData, int idx);
 	int sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	byte *DEL_FICHIER_OBJ();
 

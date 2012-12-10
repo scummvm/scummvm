@@ -254,7 +254,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 					byte v16 = *(v60 + v15);
 					if ((byte)v16 <= 0x1Fu)
 						v16 = 32;
-					_vm->_globals.largeur_boite += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, (byte)v16 - 32);
+					_vm->_globals.largeur_boite += _vm->_objectsManager.getWidth(_vm->_globals.police, (byte)v16 - 32);
 				}
 			}
 			_vm->_globals.largeur_boite += 2;
@@ -327,7 +327,7 @@ LABEL_57:
 							byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
 							if ((byte)v24 <= 0x1Fu)
 								v24 = 32;
-							ptrc += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, (byte)v24 - 32);
+							ptrc += _vm->_objectsManager.getWidth(_vm->_globals.police, (byte)v24 - 32);
 						}
 					}
 					TRIER_TEXT[i] = ptrc;
@@ -450,7 +450,7 @@ void FontManager::TEXT_NOW(int xp, int yp, const Common::String &message, int co
 			charIndex = currChar - 32;
 			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, 
 				currentX, yp, currChar - 32, col);
-			currentX += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, charIndex);
+			currentX += _vm->_objectsManager.getWidth(_vm->_globals.police, charIndex);
 		}
 	}
 
@@ -466,7 +466,7 @@ void FontManager::TEXT_NOW1(int xp, int yp, const Common::String &message, int c
 			int characterIndex = currentChar - 32;
 			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, 
 				xp, yp, characterIndex, col);
-			xp += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, characterIndex);
+			xp += _vm->_objectsManager.getWidth(_vm->_globals.police, characterIndex);
 		}
 	}
 }
@@ -497,8 +497,8 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 		if (v7 >= 32) {
 			v5 = v7 - 32;
 			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, v9, yp, v7 - 32, fontCol);
-			v9 += _vm->_objectsManager.Get_Largeur(_vm->_globals.police, v5);
-			v6 = _vm->_objectsManager.Get_Largeur(_vm->_globals.police, v5);
+			v9 += _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
+			v6 = _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v9 - v6, yp, v9, yp + 12);
 			if (_vm->_eventsManager.ESC_KEY) {
 				_vm->_globals.iRegul = 1;

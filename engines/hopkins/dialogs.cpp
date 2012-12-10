@@ -37,10 +37,10 @@ namespace Hopkins {
 
 DialogsManager::DialogsManager() {
 	INVENTFLAG = false;
-	AFFINVEN = false;
+	_inventDisplayedFl = false;
 	VIRE_INVENT = false;
-	inventairex = inventairey = 0;
-	inventairel = inventaireh = 0;
+	_inventX = _inventY = 0;
+	_inventWidth = _inventHeight = 0;
 	Winventaire = NULL;
 	inventaire2 = g_PTRNUL;
 }
@@ -302,7 +302,7 @@ void DialogsManager::showOptionsDialog() {
 }
 
 void DialogsManager::showInventory() {
-	if (!VIRE_INVENT && !AFFINVEN && !_vm->_globals.DESACTIVE_INVENT) {
+	if (!VIRE_INVENT && !_inventDisplayedFl && !_vm->_globals.DESACTIVE_INVENT) {
 		_vm->_graphicsManager.no_scroll = 1;
 		_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
 		_vm->_objectsManager.FLAG_VISIBLE = false;
@@ -343,13 +343,12 @@ LABEL_7:
 
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENT2.SPR");
 		inventaire2 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-		int v19 = _vm->_graphicsManager.ofscroll + 152;
-		int v18 = _vm->_objectsManager.Get_Largeur(_vm->_dialogsManager.Winventaire, 0);
-		int v17 = _vm->_objectsManager.Get_Hauteur(_vm->_dialogsManager.Winventaire, 0);
-		inventairex = v19;
-		inventairey = 114;
-		inventairel = v18;
-		inventaireh = v17;
+
+		int v19 = _inventX = _vm->_graphicsManager.ofscroll + 152;
+		_inventY = 114;
+		int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager.Winventaire, 0);
+		int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager.Winventaire, 0);
+
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, 
 			v19 + 300, 414, 0, 0, 0, 0);
 		int v15 = 0;
@@ -369,7 +368,7 @@ LABEL_7:
 			};
 			v15 += 38;
 		}
-		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, inventairex, inventairey, inventairel, inventaireh);
+		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, _inventX, _inventY, _inventWidth, _inventHeight);
 		_vm->_eventsManager.souris_bb = 0;
 		bool v20 = false;
 		int v13 = 0;
@@ -377,7 +376,7 @@ LABEL_7:
 		// Main loop to select an inventory item
 		while (!_vm->shouldQuit()) {
 			// Turn on drawing the inventory dialog in the event manager
-			AFFINVEN = true;
+			_inventDisplayedFl = true;
 
 			int v8 = _vm->_eventsManager.XMOUSE();
 			int v9 = _vm->_eventsManager.YMOUSE();
@@ -430,7 +429,7 @@ LABEL_7:
 							goto LABEL_7;
 						}
 					} else if (!v20) {
-						AFFINVEN = true;
+						_inventDisplayedFl = true;
 					}
 				}
 			}
@@ -443,8 +442,8 @@ LABEL_7:
 				_vm->_objectsManager.SPECIAL_JEU();
 		}
 		_vm->_fontManager.TEXTE_OFF(9);
-		if (AFFINVEN) {
-			AFFINVEN = false;
+		if (_inventDisplayedFl) {
+			_inventDisplayedFl = false;
 //			v9 = 114;
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v19, 114, v18, v17, _vm->_graphicsManager.VESA_BUFFER, v19, 114);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
@@ -456,10 +455,10 @@ LABEL_7:
 
 		if (_vm->_eventsManager.btsouris == 1)
 			showOptionsDialog();
-		if (_vm->_eventsManager.btsouris == 3)
-			_vm->_dialogsManager.CHARGE_PARTIE();
-		if (_vm->_eventsManager.btsouris == 2)
-			_vm->_dialogsManager.SAUVE_PARTIE();
+		else if (_vm->_eventsManager.btsouris == 3)
+			_vm->_dialogsManager.showLoadGame();
+		else if (_vm->_eventsManager.btsouris == 2)
+			_vm->_dialogsManager.showSaveGame();
 
 		_vm->_eventsManager.btsouris = 4;
 		_vm->_eventsManager.CHANGE_MOUSE(4);
@@ -515,7 +514,10 @@ void DialogsManager::INVENT_ANIM() {
 	}
 }
 
-void DialogsManager::TestForDialogOpening() {
+/**
+ * Test dialog opening
+ */
+void DialogsManager::testDialogOpening() {
 	if (_vm->_globals.PLAN_FLAG)
 		_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	
@@ -536,12 +538,12 @@ void DialogsManager::TestForDialogOpening() {
 				break;
 			case KEY_LOAD:
 				_vm->_graphicsManager.no_scroll = 1;
-				_vm->_dialogsManager.CHARGE_PARTIE();
+				_vm->_dialogsManager.showLoadGame();
 				_vm->_graphicsManager.no_scroll = 0;
 				break;
 			case KEY_SAVE:
 				_vm->_graphicsManager.no_scroll = 1;
-				_vm->_dialogsManager.SAUVE_PARTIE();
+				_vm->_dialogsManager.showSaveGame();
 				_vm->_graphicsManager.no_scroll = 0;
 				break;
 			default:
@@ -554,15 +556,17 @@ void DialogsManager::TestForDialogOpening() {
 	}
 }
 
-// Load Game
-void DialogsManager::CHARGE_PARTIE() {
+/**
+ * Load Game dialog
+ */
+void DialogsManager::showLoadGame() {
 	int slotNumber; 
 
 	_vm->_eventsManager.VBL();
-	LOAD_SAUVE(2);
+	showSaveLoad(2);
 	do {
 		do {
-			slotNumber = CHERCHE_PARTIE();
+			slotNumber = searchSavegames();
 			_vm->_eventsManager.VBL();
 		} while (_vm->_eventsManager.BMOUSE() != 1);
 	} while (!slotNumber);
@@ -582,17 +586,19 @@ void DialogsManager::CHARGE_PARTIE() {
 	_vm->_objectsManager.CHANGE_OBJET(14);
 }
 
-// Save Game
-void DialogsManager::SAUVE_PARTIE() {
+/**
+ * Save Game dialog
+ */
+void DialogsManager::showSaveGame() {
 	int slotNumber; 
 	Common::String saveName; 
 
 	_vm->_eventsManager.VBL();
 
-	LOAD_SAUVE(1);
+	showSaveLoad(1);
 	do {
 		do {
-			slotNumber = CHERCHE_PARTIE();
+			slotNumber = searchSavegames();
 			_vm->_eventsManager.VBL();
 		} while (!_vm->shouldQuit() && _vm->_eventsManager.BMOUSE() != 1);
 	} while (!_vm->shouldQuit() && !slotNumber);
@@ -615,9 +621,10 @@ void DialogsManager::SAUVE_PARTIE() {
 	}
 }
 
-
-// Load Save
-void DialogsManager::LOAD_SAUVE(int a1) {
+/**
+ * Load/Save dialog
+ */
+void DialogsManager::showSaveLoad(int a1) {
 	int slotNumber; 
 	hopkinsSavegameHeader header;
 	byte *thumb;
@@ -692,15 +699,13 @@ void DialogsManager::LOAD_SAUVE(int a1) {
 	_vm->_objectsManager.SL_Y = 0;
 }
 
-// Search Game
-int DialogsManager::CHERCHE_PARTIE() {
-	int slotNumber; 
-	int xp; 
-	int yp; 
-
-	slotNumber = 0;
-	xp = _vm->_eventsManager.XMOUSE();
-	yp = _vm->_eventsManager.YMOUSE();
+/**
+ * Search savegames
+ */
+int DialogsManager::searchSavegames() {
+	int slotNumber = 0;
+	int xp = _vm->_eventsManager.XMOUSE();
+	int yp = _vm->_eventsManager.YMOUSE();
 
 	_vm->_graphicsManager.ofscroll = _vm->_eventsManager.start_x;
 	if ((uint16)(yp - 112) <= 0x56u) {
