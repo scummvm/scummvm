@@ -233,12 +233,12 @@ Globals::Globals() {
 	CENSURE = false;
 	GESTE_FLAG = false;
 	BPP_NOAFF = false;
-	DESACTIVE_INVENT = false;
+	_disableInventFl = false;
 	FLAG_VISIBLE = false;
 	netscape = false;
 	NOMARCHE = false;
 	NO_VISU = false;
-	OPTION_FLAG = false;
+	_optionDialogFl = false;
 	CACHEFLAG = false;
 	NOPARLE = false;
 	couleur_40 = 50;
@@ -368,8 +368,8 @@ void Globals::clearAll() {
 	NUM_FICHIER_OBJ = 0;
 	Bufferdecor = g_PTRNUL;
 	_vm->_eventsManager.Bufferobjet = g_PTRNUL;
-	_vm->_dialogsManager.Winventaire = g_PTRNUL;
-	_vm->_dialogsManager.inventaire2 = g_PTRNUL;
+	_vm->_dialogsManager._inventWin1 = g_PTRNUL;
+	_vm->_dialogsManager._inventBuf2 = g_PTRNUL;
 	COUCOU = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
 	SAUVEGARDE = (Sauvegarde *)g_PTRNUL;

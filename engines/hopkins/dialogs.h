@@ -41,11 +41,11 @@ public:
 	int _inventX, _inventY;
 	int _inventWidth, _inventHeight;
 
-	bool INVENTFLAG;
+	bool _inventFl;
 	bool _inventDisplayedFl;
-	bool VIRE_INVENT;
-	byte *Winventaire;
-	byte *inventaire2;
+	bool _removeInventFl;
+	byte *_inventWin1;
+	byte *_inventBuf2;
 public:
 	DialogsManager();
 	~DialogsManager();
@@ -57,8 +57,7 @@ public:
 	void showInventory();
 	int  searchSavegames();
 	void testDialogOpening();
-
-	void INVENT_ANIM();
+	void inventAnim();
 };
 
 } // End of namespace Hopkins

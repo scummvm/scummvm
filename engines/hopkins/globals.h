@@ -428,14 +428,14 @@ public:
 	int Max_Propre_Gen;
 	int Max_Ligne_Long;
 	int Max_Perso_Y;
-	bool DESACTIVE_INVENT;
+	bool _disableInventFl;
 	bool FLAG_VISIBLE;
 	bool netscape; // CHECKME: Useless variable?
 	bool NOMARCHE;
 	int NBBLOC;
 	bool NO_VISU;
 	byte *OPTION_SPR;
-	bool OPTION_FLAG;
+	bool _optionDialogFl;
 	int opt_anm;
 	int opt_vitesse;
 	int opt_scrtype;

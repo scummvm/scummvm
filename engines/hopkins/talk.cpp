@@ -69,8 +69,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_fontManager.TEXTE_OFF(9);
 	_vm->_eventsManager.VBL();
 	_vm->_graphicsManager.no_scroll = 1;
-	bool old_DESACTIVE_INVENT = _vm->_globals.DESACTIVE_INVENT;
-	_vm->_globals.DESACTIVE_INVENT = true;
+	bool oldDisableInventFl = _vm->_globals._disableInventFl;
+	_vm->_globals._disableInventFl = true;
 	BUFFERPERSO = _vm->_fileManager.searchCat(filename, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
 	if (BUFFERPERSO == g_PTRNUL) {
@@ -185,7 +185,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	v8 = v8 + 2;
 	*v8 = *(v9 + 2);
 	v10 = v8 + 1;
-	_vm->_globals.DESACTIVE_INVENT = old_DESACTIVE_INVENT;
+	_vm->_globals._disableInventFl = oldDisableInventFl;
 	_vm->_graphicsManager.DD_VBL();
 	v11 = 0;
 	do {
@@ -198,8 +198,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_objectsManager.DESACTIVE_CURSOR = 1;
 	STATI = 1;
-	bool v7 = _vm->_globals.DESACTIVE_INVENT;
-	_vm->_globals.DESACTIVE_INVENT = 1;
+	bool v7 = _vm->_globals._disableInventFl;
+	_vm->_globals._disableInventFl = true;
 	BUFFERPERSO = _vm->_fileManager.searchCat(filename, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
 	if (BUFFERPERSO == g_PTRNUL) {
@@ -265,7 +265,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	_vm->_objectsManager.DESACTIVE_CURSOR = 0;
-	_vm->_globals.DESACTIVE_INVENT = v7;
+	_vm->_globals._disableInventFl = v7;
 	STATI = 0;
 }
 
@@ -1353,7 +1353,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	v14 = v14 + 2;
 	*v14 = *(v15 + 2);
 	v16 = v14 + 1;
-	_vm->_globals.DESACTIVE_INVENT = false;
+	_vm->_globals._disableInventFl = false;
 	_vm->_graphicsManager.DD_VBL();
 	v17 = 0;
 	do {

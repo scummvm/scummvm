@@ -482,11 +482,11 @@ void ObjectsManager::AFF_SPRITES() {
   
 	_vm->_globals.NBTRI = 0;
 	if (_vm->_dialogsManager._inventDisplayedFl) {
-		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, _vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventHeight);
+		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1, _vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventHeight);
 		if (old_cadx && old_cady)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.inventaire2, old_cadx + 300, old_cady + 300, old_cadi + 1);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventBuf2, old_cadx + 300, old_cady + 300, old_cadi + 1);
 		if (cadx && cady)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.inventaire2, cadx + 300, cady + 300, cadi);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventBuf2, cadx + 300, cady + 300, cadi);
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventX + _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventY + _vm->_dialogsManager._inventHeight);
 	}
   
@@ -499,7 +499,7 @@ void ObjectsManager::AFF_SPRITES() {
 	}
 
 	// If the Options dialog is activated, draw the elements
-	if (_vm->_globals.OPTION_FLAG) {
+	if (_vm->_globals._optionDialogFl) {
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
 			_vm->_eventsManager.start_x + 464, 407, 0);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
@@ -560,7 +560,7 @@ void ObjectsManager::AFF_SPRITES() {
 		}
 	}
   
-	_vm->_dialogsManager.INVENT_ANIM();
+	_vm->_dialogsManager.inventAnim();
 }
 
 void ObjectsManager::INIT_BOB() {
@@ -2553,7 +2553,7 @@ void ObjectsManager::PLAN_BETA() {
 	int v5;
 
 	v1 = 0;
-	_vm->_dialogsManager.INVENTFLAG = false;
+	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	_vm->_globals.Max_Propre = 1;
 	_vm->_globals.Max_Ligne_Long = 1;
@@ -2692,14 +2692,14 @@ void ObjectsManager::BTGAUCHE() {
 	destX = _vm->_eventsManager.XMOUSE();
 	destY = _vm->_eventsManager.YMOUSE();
 
-	if (!_vm->_dialogsManager.INVENTFLAG && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager.ofscroll - 30 && destX < _vm->_graphicsManager.ofscroll + 50 && (uint16)(destY + 29) <= 0x4Eu) {
+	if (!_vm->_dialogsManager._inventFl && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager.ofscroll - 30 && destX < _vm->_graphicsManager.ofscroll + 50 && (uint16)(destY + 29) <= 0x4Eu) {
 		v1 = _vm->_eventsManager.btsouris;
-		_vm->_dialogsManager.INVENTFLAG = true;
+		_vm->_dialogsManager._inventFl = true;
 		_vm->_dialogsManager.showInventory();
-		_vm->_dialogsManager.INVENTFLAG = false;
+		_vm->_dialogsManager._inventFl = false;
 		_vm->_eventsManager.GAME_KEY = KEY_NONE;
 		if (!_vm->_globals.SORTIE) {
-			_vm->_dialogsManager.INVENTFLAG = false;
+			_vm->_dialogsManager._inventFl = false;
 			_vm->_eventsManager.btsouris = v1;
 		}
 		return;
@@ -4259,7 +4259,7 @@ void ObjectsManager::SPECIAL_JEU() {
 		                               && YSPR(0) > 372
 		                               && YSPR(0) <= 398;
 	if (_vm->_globals.ECRAN == 57) {
-		_vm->_globals.DESACTIVE_INVENT = true;
+		_vm->_globals._disableInventFl = true;
 		if (_vm->_globals.SAUVEGARDE->data[svField261] == 1 && BOBPOSI(5) == 37) {
 			BOBANIM_OFF(5);
 			SET_BOBPOSI(5, 0);
@@ -4275,10 +4275,10 @@ void ObjectsManager::SPECIAL_JEU() {
 			ZONE_ON(14);
 			_vm->_globals.SAUVEGARDE->data[svField261] = 3;
 		}
-		_vm->_globals.DESACTIVE_INVENT = false;
+		_vm->_globals._disableInventFl = false;
 	}
 	if (_vm->_globals.ECRAN == 93 && !_vm->_globals.SAUVEGARDE->data[svField333]) {
-		_vm->_globals.DESACTIVE_INVENT = true;
+		_vm->_globals._disableInventFl = true;
 		do
 			_vm->_eventsManager.VBL();
 		while (BOBPOSI(8) != 3);
@@ -4286,7 +4286,7 @@ void ObjectsManager::SPECIAL_JEU() {
 		_vm->_talkManager.PARLER_PERSO("GM3.PE2");
 		BOBANIM_OFF(8);
 		_vm->_globals.SAUVEGARDE->data[svField333] = 1;
-		_vm->_globals.DESACTIVE_INVENT = false;
+		_vm->_globals._disableInventFl = false;
 	}
 }
 
@@ -4896,15 +4896,15 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 		_vm->_globals.BPP_NOAFF = false;
 		_vm->_graphicsManager.FADE_INW();
 		_vm->_globals.iRegul = 1;
-		_vm->_globals.DESACTIVE_INVENT = false;
+		_vm->_globals._disableInventFl = false;
 		_vm->_graphicsManager.NOFADE = true;
 		_vm->_globals.NOPARLE = true;
 		_vm->_talkManager.PARLER_PERSO("MAGE1.pe2");
 		_vm->_graphicsManager.NOFADE = true;
-		_vm->_globals.DESACTIVE_INVENT = false;
+		_vm->_globals._disableInventFl = false;
 	}
 	if (_vm->_globals.ECRAN == 17 && _vm->_globals.OLD_ECRAN == 20) {
-		_vm->_globals.DESACTIVE_INVENT = true;
+		_vm->_globals._disableInventFl = true;
 		_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 		_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 		_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -4950,7 +4950,7 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 			++v7;
 		} while (v7 <= 3);
 		_vm->_graphicsManager.NOFADE = true;
-		_vm->_globals.DESACTIVE_INVENT = false;
+		_vm->_globals._disableInventFl = false;
 	}
 }
 
@@ -5431,24 +5431,24 @@ void ObjectsManager::TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6) 
 			if (v7) {
 				if (v7 == 1) {
 					if (a6 == 1 && BOBPOSI(1) == 26) {
-						_vm->_dialogsManager.VIRE_INVENT = true;
+						_vm->_dialogsManager._removeInventFl = true;
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						_vm->_globals.SAUVEGARDE->data[v6] = 4;
 					}
 					if (a6 == 2 && BOBPOSI(2) == 26) {
-						_vm->_dialogsManager.VIRE_INVENT = true;
+						_vm->_dialogsManager._removeInventFl = true;
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						_vm->_globals.SAUVEGARDE->data[v6] = 4;
 					}
 					if (a6 == 3 && BOBPOSI(3) == 27) {
-						_vm->_dialogsManager.VIRE_INVENT = true;
+						_vm->_dialogsManager._removeInventFl = true;
 						_vm->_soundManager.PLAY_SAMPLE2(1);
 						_vm->_globals.SAUVEGARDE->data[v6] = 4;
 					}
 					if (a6 == 4 && BOBPOSI(4) == 27) {
-						_vm->_dialogsManager.VIRE_INVENT = true;
+						_vm->_dialogsManager._removeInventFl = true;
 						_vm->_soundManager.PLAY_SAMPLE2(1);
-						_vm->_dialogsManager.VIRE_INVENT = true;
+						_vm->_dialogsManager._removeInventFl = true;
 						_vm->_globals.SAUVEGARDE->data[v6] = 4;
 					}
 				}
@@ -5504,9 +5504,9 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	int v9; 
 
 	v5 = 0;
-	_vm->_dialogsManager.INVENTFLAG = false;
+	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager.GAME_KEY = KEY_NONE;
-	_vm->_dialogsManager.VIRE_INVENT = false;
+	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_graphicsManager.ofscroll = 0;
 	_vm->_globals.PLAN_FLAG = false;
 	_vm->_globals.iRegul = 1;
@@ -5604,12 +5604,12 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	bool breakFlag;
 	int xp, yp;
 
-	_vm->_dialogsManager.INVENTFLAG = false;
+	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	verbe = 4;
 	_vm->_globals.MAX_COMPTE = 6;
 	_vm->_graphicsManager.ofscroll = 0;
-	_vm->_dialogsManager.VIRE_INVENT = false;
+	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_globals.PLAN_FLAG = false;
 	_vm->_graphicsManager.NOFADE = false;
 	_vm->_globals.NOMARCHE = false;

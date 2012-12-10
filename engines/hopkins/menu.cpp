@@ -59,7 +59,7 @@ int MenuManager::MENU() {
 	while (!g_system->getEventManager()->shouldQuit()) {
 		_vm->_globals.FORET = false;
 		_vm->_eventsManager.CASSE = false;
-		_vm->_globals.DESACTIVE_INVENT = true;
+		_vm->_globals._disableInventFl = true;
 		_vm->_globals.FLAG_VISIBLE = false;
 		_vm->_globals.SORTIE = 0;
 
@@ -230,7 +230,7 @@ int MenuManager::MENU() {
 	}
   
 	_vm->_globals.LIBERE_FICHIER(spriteData);
-	_vm->_globals.DESACTIVE_INVENT = false;
+	_vm->_globals._disableInventFl = false;
 	_vm->_globals.FLAG_VISIBLE = false;
 	_vm->_graphicsManager.FADE_OUTW();
 	return result;

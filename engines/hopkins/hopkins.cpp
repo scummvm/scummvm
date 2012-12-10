@@ -248,9 +248,9 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 4:
-			_globals.DESACTIVE_INVENT = true;
+			_globals._disableInventFl = true;
 			_objectsManager.PLAN_BETA();
-			_globals.DESACTIVE_INVENT = false;
+			_globals._disableInventFl = false;
 			break;
 
 		case 5:
@@ -576,9 +576,9 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
         
 		case 4:
-			_globals.DESACTIVE_INVENT = true;
+			_globals._disableInventFl = true;
 			_objectsManager.PLAN_BETA();
-			_globals.DESACTIVE_INVENT = false;
+			_globals._disableInventFl = false;
 			break;
 
 		case 5:
@@ -919,9 +919,9 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 4:
-			_globals.DESACTIVE_INVENT = true;
+			_globals._disableInventFl = true;
 			_objectsManager.PLAN_BETA();
-			_globals.DESACTIVE_INVENT = false;
+			_globals._disableInventFl = false;
 			break;
 
 		case 5:
@@ -1230,7 +1230,7 @@ bool HopkinsEngine::runWin95full() {
 				_globals.Max_Propre = 50;
 				_globals.Max_Ligne_Long = 40;
 				_globals.Max_Perso_Y = 435;
-				_globals.DESACTIVE_INVENT = false;
+				_globals._disableInventFl = false;
 				_globals.FORET = true;
 				_globals.NOSPRECRAN = true;
 				Common::String im = Common::String::format("IM%d", _globals.SORTIE);
@@ -1800,9 +1800,9 @@ bool HopkinsEngine::runLinuxFull() {
 			break;
 
 		case 4:
-			_globals.DESACTIVE_INVENT = true;
+			_globals._disableInventFl = true;
 			_objectsManager.PLAN_BETA();
-			_globals.DESACTIVE_INVENT = false;
+			_globals._disableInventFl = false;
 			break;
 
 		case 5:
@@ -2109,7 +2109,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Ligne_Long = 40;
 			_globals.Max_Propre_Gen = 20;
 			_globals.Max_Perso_Y = 435;
-			_globals.DESACTIVE_INVENT = false;
+			_globals._disableInventFl = false;
 			_globals.FORET = true;
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals.SORTIE);
@@ -3036,7 +3036,7 @@ void HopkinsEngine::PUBQUIT() {
 	_graphicsManager.RESET_SEGMENT_VESA();
 	_globals.FORET = false;
 	_eventsManager.CASSE = false;
-	_globals.DESACTIVE_INVENT = true;
+	_globals._disableInventFl = true;
 	_globals.FLAG_VISIBLE = false;
 	_graphicsManager.LOAD_IMAGE("BOX");
 	_soundManager.WSOUND(28);
@@ -3067,7 +3067,7 @@ void HopkinsEngine::PUBQUIT() {
 }
 
 void HopkinsEngine::INCENDIE() {
-	_globals.DESACTIVE_INVENT = true;
+	_globals._disableInventFl = true;
 	_globals.iRegul = 1;
 	_graphicsManager.LOAD_IMAGE("IM71");
 	_animationManager.loadAnim("ANIM71");
@@ -3098,7 +3098,7 @@ void HopkinsEngine::INCENDIE() {
 	_graphicsManager.FADE_OUTW();
 	_graphicsManager.FIN_VISU();
 	_globals.SAUVEGARDE->data[svField312] = 1;
-	_globals.DESACTIVE_INVENT = false;
+	_globals._disableInventFl = false;
 }
 
 void HopkinsEngine::BASE() {
@@ -3178,7 +3178,7 @@ void HopkinsEngine::BASED() {
 	_animationManager.NO_SEQ = false;
 	_soundManager.WSOUND(26);
 	_globals.iRegul = 1;
-	_globals.DESACTIVE_INVENT = true;
+	_globals._disableInventFl = true;
 	_animationManager.NO_COUL = true;
 	_graphicsManager.FADE_LINUX = 2;
 	_animationManager.playSequence("abase.seq", 50, 15, 50);
@@ -3203,15 +3203,15 @@ void HopkinsEngine::BASED() {
 	_graphicsManager.FADE_OUTW();
 	_graphicsManager.FIN_VISU();
 	_globals.RESET_CACHE();
-	_globals.DESACTIVE_INVENT = false;
+	_globals._disableInventFl = false;
 	_globals.SORTIE = 93;
 	_globals.iRegul = 0;
 }
 
 void HopkinsEngine::JOUE_FIN() {
 	_globals.PERSO = _globals.dos_free2(_globals.PERSO);
-	_dialogsManager.VIRE_INVENT = true;
-	_globals.DESACTIVE_INVENT = true;
+	_dialogsManager._removeInventFl = true;
+	_globals._disableInventFl = true;
 	_graphicsManager.ofscroll = 0;
 	_globals.PLAN_FLAG = false;
 	_globals.iRegul = 1;
@@ -3249,7 +3249,7 @@ void HopkinsEngine::JOUE_FIN() {
 
 	_globals.NOPARLE = true;
 	_talkManager.PARLER_PERSO("GM4.PE2");
-	_globals.DESACTIVE_INVENT = true;
+	_globals._disableInventFl = true;
 	_objectsManager.BOBANIM_OFF(6);
 	_objectsManager.BOBANIM_OFF(10);
 	_objectsManager.BOBANIM_ON(9);
@@ -3268,7 +3268,7 @@ void HopkinsEngine::JOUE_FIN() {
 	_globals.NOPARLE = true;
 	_talkManager.PARLER_PERSO("DUELB4.PE2");
 	_eventsManager.MOUSE_OFF();
-	_globals.DESACTIVE_INVENT = true;
+	_globals._disableInventFl = true;
 
 	do
 		_eventsManager.VBL();
@@ -3324,8 +3324,8 @@ void HopkinsEngine::JOUE_FIN() {
 		Credits();
 		_globals.iRegul = 0;
 		_globals.SORTIE = 300;
-		_dialogsManager.VIRE_INVENT = false;
-		_globals.DESACTIVE_INVENT = false;
+		_dialogsManager._removeInventFl = false;
+		_globals._disableInventFl = false;
 	} else {
 		_soundManager.SPECIAL_SOUND = 200;
 		_soundManager.VBL_MERDE = true;
@@ -3334,7 +3334,7 @@ void HopkinsEngine::JOUE_FIN() {
 		_objectsManager.BOBANIM_ON(8);
 		_globals.NOPARLE = true;
 		_talkManager.PARLER_PERSO("GM5.PE2");
-		_globals.DESACTIVE_INVENT = true;
+		_globals._disableInventFl = true;
 
 		do
 			_eventsManager.VBL();
@@ -3352,8 +3352,8 @@ void HopkinsEngine::JOUE_FIN() {
 		_soundManager.WSOUND(16);
 		_globals.iRegul = 1;
 		_soundManager.SPECIAL_SOUND = 0;
-		_dialogsManager.VIRE_INVENT = false;
-		_globals.DESACTIVE_INVENT = false;
+		_dialogsManager._removeInventFl = false;
+		_globals._disableInventFl = false;
 		_animationManager.playAnim("JOUR4A.anm", 12, 12, 1000);
 		_globals.iRegul = 0;
 		_globals.SORTIE = 300;
@@ -3445,7 +3445,7 @@ void HopkinsEngine::AVION() {
 }
 
 int HopkinsEngine::PWBASE() {
-	_globals.DESACTIVE_INVENT = true;
+	_globals._disableInventFl = true;
 	_graphicsManager.LOAD_IMAGE("PBASE");
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -3496,7 +3496,7 @@ int HopkinsEngine::PWBASE() {
 			loopCond = true;
 	} while (!loopCond);
 
-	_globals.DESACTIVE_INVENT = false;
+	_globals._disableInventFl = false;
 	_graphicsManager.FADE_OUTW();
 
 	int result;
@@ -3904,7 +3904,7 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	_globals.SORTIE = 0;
 	_globals.AFFLI = false;
 	_globals.AFFIVBL = true;
-	_globals.DESACTIVE_INVENT = true;
+	_globals._disableInventFl = true;
 	_soundManager.WSOUND(a9);
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "VAISSEAU.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
@@ -4010,7 +4010,7 @@ bool HopkinsEngine::ADULT() {
 	_eventsManager.CASSE = false;
 	_globals.FORET = false;
 	_globals.FLAG_VISIBLE = false;
-	_globals.DESACTIVE_INVENT = true;
+	_globals._disableInventFl = true;
 	_globals.SORTIE = false;
 
 	_graphicsManager.LOAD_IMAGE("ADULT");
@@ -4033,7 +4033,7 @@ bool HopkinsEngine::ADULT() {
 		_eventsManager.VBL();
 	} while (!shouldQuit() && (buttonIndex == 0 || _eventsManager.BMOUSE() != 1));
 	
-	_globals.DESACTIVE_INVENT = false;
+	_globals._disableInventFl = false;
 	_globals.FLAG_VISIBLE = false;
 	_graphicsManager.FADE_OUTW();
 

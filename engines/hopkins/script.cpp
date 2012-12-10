@@ -691,7 +691,7 @@ LABEL_1141:
 			_vm->_talkManager.PARLER_PERSO("fjour.pe2");
 		if (v76 == 13) {
 			_vm->_eventsManager.souris_b = _vm->_eventsManager.souris_bb;
-			_vm->_globals.DESACTIVE_INVENT = true;
+			_vm->_globals._disableInventFl = true;
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.SPRITE_OFF(0);
@@ -766,7 +766,7 @@ LABEL_1141:
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
 				_vm->_graphicsManager.FADE_OUTW();
 
-			_vm->_globals.DESACTIVE_INVENT = false;
+			_vm->_globals._disableInventFl = false;
 			_vm->_globals.HELICO = 1;
 		}
 		if (v76 == 36) {
@@ -805,9 +805,9 @@ LABEL_1141:
 			_vm->_graphicsManager.NOFADE = true;
 		}
 		if (v76 == 29) {
-			_vm->_globals.DESACTIVE_INVENT = true;
+			_vm->_globals._disableInventFl = true;
 			_vm->_talkManager.OBJET_VIVANT("TELEP.pe2");
-			_vm->_globals.DESACTIVE_INVENT = false;
+			_vm->_globals._disableInventFl = false;
 		}
 		if (v76 == 22)
 			_vm->_talkManager.OBJET_VIVANT("CADAVRE1.pe2");
@@ -1521,7 +1521,7 @@ LABEL_1141:
 		if (v76 == 207)
 			_vm->_talkManager.OBJET_VIVANT("PANNEAU.PE2");
 		if (v76 == 208) {
-			_vm->_globals.DESACTIVE_INVENT = true;
+			_vm->_globals._disableInventFl = true;
 			if (_vm->_globals.SAUVEGARDE->data[svField6] != _vm->_globals.SAUVEGARDE->data[svField401]) {
 				_vm->_soundManager.SPECIAL_SOUND = 208;
 				_vm->_eventsManager.NOESC = true;
@@ -1545,7 +1545,7 @@ LABEL_1141:
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.SETANISPR(0, 64);
 			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField401];
-			_vm->_globals.DESACTIVE_INVENT = false;
+			_vm->_globals._disableInventFl = false;
 		}
 		if (v76 == 209) {
 			_vm->_objectsManager.SET_BOBPOSI(1, 0);

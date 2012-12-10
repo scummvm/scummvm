@@ -36,17 +36,17 @@
 namespace Hopkins {
 
 DialogsManager::DialogsManager() {
-	INVENTFLAG = false;
+	_inventFl = false;
 	_inventDisplayedFl = false;
-	VIRE_INVENT = false;
+	_removeInventFl = false;
 	_inventX = _inventY = 0;
 	_inventWidth = _inventHeight = 0;
-	Winventaire = NULL;
-	inventaire2 = g_PTRNUL;
+	_inventWin1 = g_PTRNUL;
+	_inventBuf2 = g_PTRNUL;
 }
 
 DialogsManager::~DialogsManager() {
-	_vm->_globals.dos_free2(Winventaire);
+	_vm->_globals.dos_free2(_inventWin1);
 }
 
 void DialogsManager::setParent(HopkinsEngine *vm) {
@@ -67,7 +67,7 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIES.SPR");
   
 	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-	_vm->_globals.OPTION_FLAG = true;
+	_vm->_globals._optionDialogFl = true;
 
 	do {
 		if (_vm->_eventsManager.BMOUSE()) {
@@ -298,26 +298,26 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_graphicsManager.ofscroll + 498, 320);
 
 	_vm->_globals.OPTION_SPR = _vm->_globals.dos_free2(_vm->_globals.OPTION_SPR);
-	_vm->_globals.OPTION_FLAG = false;
+	_vm->_globals._optionDialogFl = false;
 }
 
 void DialogsManager::showInventory() {
-	if (!VIRE_INVENT && !_inventDisplayedFl && !_vm->_globals.DESACTIVE_INVENT) {
+	if (!_removeInventFl && !_inventDisplayedFl && !_vm->_globals._disableInventFl) {
 		_vm->_graphicsManager.no_scroll = 1;
 		_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
 		_vm->_objectsManager.FLAG_VISIBLE = false;
 		for (int v1 = 0; v1 <= 1; v1++) {
-			INVENT_ANIM();
+			inventAnim();
 			_vm->_eventsManager.XMOUSE();
 			_vm->_eventsManager.YMOUSE();
 			_vm->_eventsManager.VBL();
 		}
-		_vm->_dialogsManager.Winventaire = g_PTRNUL;
+		_vm->_dialogsManager._inventWin1 = g_PTRNUL;
 
 LABEL_7:
 		_vm->_eventsManager.souris_bb = 0;
 		_vm->_eventsManager.souris_b = 0;
-		_vm->_globals.DESACTIVE_INVENT = true;
+		_vm->_globals._disableInventFl = true;
 		_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 
 		switch (_vm->_globals.FR) {
@@ -337,19 +337,19 @@ LABEL_7:
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
 		size_t filesize = f.size();
-		_vm->_dialogsManager.Winventaire = _vm->_globals.dos_malloc2(filesize);
-		_vm->_fileManager.readStream(f, _vm->_dialogsManager.Winventaire, filesize);
+		_vm->_dialogsManager._inventWin1 = _vm->_globals.dos_malloc2(filesize);
+		_vm->_fileManager.readStream(f, _vm->_dialogsManager._inventWin1, filesize);
 		f.close();
 
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENT2.SPR");
-		inventaire2 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_inventBuf2 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 
 		int v19 = _inventX = _vm->_graphicsManager.ofscroll + 152;
 		_inventY = 114;
-		int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager.Winventaire, 0);
-		int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager.Winventaire, 0);
+		int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
+		int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
 
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, 
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1, 
 			v19 + 300, 414, 0, 0, 0, 0);
 		int v15 = 0;
 		int v4 = 0;
@@ -368,7 +368,7 @@ LABEL_7:
 			};
 			v15 += 38;
 		}
-		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager.Winventaire, _inventX, _inventY, _inventWidth, _inventHeight);
+		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 		_vm->_eventsManager.souris_bb = 0;
 		bool v20 = false;
 		int v13 = 0;
@@ -423,9 +423,9 @@ LABEL_7:
 							v20 = true;
 						_vm->_globals.SORTIE = 0;
 						if (!v20) {
-							inventaire2 = _vm->_globals.dos_free2(inventaire2);
-							if (g_PTRNUL != _vm->_dialogsManager.Winventaire)
-								_vm->_dialogsManager.Winventaire = _vm->_globals.dos_free2(_vm->_dialogsManager.Winventaire);
+							_inventBuf2 = _vm->_globals.dos_free2(_inventBuf2);
+							if (g_PTRNUL != _vm->_dialogsManager._inventWin1)
+								_vm->_dialogsManager._inventWin1 = _vm->_globals.dos_free2(_vm->_dialogsManager._inventWin1);
 							goto LABEL_7;
 						}
 					} else if (!v20) {
@@ -433,7 +433,7 @@ LABEL_7:
 					}
 				}
 			}
-			if (VIRE_INVENT == true)
+			if (_removeInventFl == true)
 				v20 = true;
 			if (v20)
 				break;
@@ -449,9 +449,9 @@ LABEL_7:
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
 			_vm->_objectsManager.BOBTOUS = true;
 		}
-		if (_vm->_dialogsManager.Winventaire != g_PTRNUL)
-			_vm->_dialogsManager.Winventaire = _vm->_globals.dos_free2(_vm->_dialogsManager.Winventaire);
-		inventaire2 = _vm->_globals.dos_free2(inventaire2);
+		if (_vm->_dialogsManager._inventWin1 != g_PTRNUL)
+			_vm->_dialogsManager._inventWin1 = _vm->_globals.dos_free2(_vm->_dialogsManager._inventWin1);
+		_inventBuf2 = _vm->_globals.dos_free2(_inventBuf2);
 
 		if (_vm->_eventsManager.btsouris == 1)
 			showOptionsDialog();
@@ -466,13 +466,16 @@ LABEL_7:
 		_vm->_objectsManager.cady = 0;
 		_vm->_objectsManager.old_cadx = 0;
 		_vm->_objectsManager.cadx = 0;
-		_vm->_globals.DESACTIVE_INVENT = false;
+		_vm->_globals._disableInventFl = false;
 		_vm->_graphicsManager.no_scroll = 0;
 	}
 }
 
-void DialogsManager::INVENT_ANIM() {
-	if (!_vm->_globals.DESACTIVE_INVENT) {
+/**
+ * Inventory Animations
+ */
+void DialogsManager::inventAnim() {
+	if (!_vm->_globals._disableInventFl) {
 		if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager.FLAG_VISIBLE) {
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38, 
 				_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.I_old_x, 27);
@@ -522,10 +525,10 @@ void DialogsManager::testDialogOpening() {
 		_vm->_eventsManager.GAME_KEY = KEY_NONE;
 	
 	if (_vm->_eventsManager.GAME_KEY != KEY_NONE) {
-		if (!INVENTFLAG) {
+		if (!_inventFl) {
 			DIALOG_KEY key = _vm->_eventsManager.GAME_KEY;
 			_vm->_eventsManager.GAME_KEY = KEY_NONE;
-			INVENTFLAG = true;
+			_inventFl = true;
 
 			switch (key) {
 			case KEY_INVENTORY:
@@ -550,7 +553,7 @@ void DialogsManager::testDialogOpening() {
 				break;
 			}
 
-			INVENTFLAG = false;
+			_inventFl = false;
 			_vm->_eventsManager.GAME_KEY = KEY_NONE;
 		}
 	}
