@@ -57,7 +57,7 @@ private:
 	int16 *_breakoutLevel;
 	int _breakoutBrickNbr;
 	int _breakoutScore;
-	int _breakoutLifes;
+	int _breakoutLives;
 	int _breakoutSpeed;
 	bool _ballRightFl;
 	bool _ballUpFl;
@@ -81,7 +81,7 @@ private:
 	void loadHiscore();
 	void newLevel();
 	void setModeVGA256();
-	void displayLifes();
+	void displayLives();
 	void displayBricks();
 	void displayGamesSubMenu();
 	void displayScore();

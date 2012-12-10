@@ -44,7 +44,7 @@ ComputerManager::ComputerManager() {
 	_breakoutLevel = NULL;
 	_breakoutBrickNbr = 0;
 	_breakoutScore = 0;
-	_breakoutLifes = 0;
+	_breakoutLives = 0;
 	_breakoutSpeed = 0;
 	_ballRightFl = false;
 	_ballUpFl = false;
@@ -605,7 +605,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_breakoutLevel = (int16 *)g_PTRNUL;
 	_breakoutBrickNbr = 0;
 	_breakoutScore = 0;
-	_breakoutLifes = 5;
+	_breakoutLives = 5;
 	_breakoutSpeed = 1;
 	_ballRightFl = false;
 	_ballUpFl = false;
@@ -694,11 +694,11 @@ void ComputerManager::newLevel() {
 
 	_vm->_objectsManager.SPRITE_OFF(0);
 	_vm->_objectsManager.SPRITE_OFF(1);
-	++_breakoutLifes;
-	if (_breakoutLifes > 11)
-		_breakoutLifes = 11;
+	++_breakoutLives;
+	if (_breakoutLives > 11)
+		_breakoutLives = 11;
 	_vm->_graphicsManager.LOAD_IMAGEVGA("CASSEF.PCX");
-	displayLifes();
+	displayLives();
 	if (_breakoutLevel != (int16 *)g_PTRNUL) {
 		_vm->_globals.dos_free2((byte *)_breakoutLevel);
 		_breakoutLevel = (int16 *)g_PTRNUL;
@@ -772,13 +772,13 @@ void ComputerManager::displayBricks() {
 }
 
 /**
- * Display Lifes in breakout game
+ * Display Lives in breakout game
  */
-void ComputerManager::displayLifes() {
+void ComputerManager::displayLives() {
 	int v3; 
 	int v4; 
 
-	int v0 = _breakoutLifes - 1;
+	int v0 = _breakoutLives - 1;
 	int v1 = 10;
 
 	for (int i = 0; i <= 11; i++) {
@@ -851,11 +851,11 @@ void ComputerManager::playBreakout() {
 			if (v1 != 1)
 				break;
 			_vm->_graphicsManager.FADE_OUT_CASSE();
-			--_breakoutLifes;
+			--_breakoutLives;
 
-			if (_breakoutLifes) {
-				displayLifes();
-				if (_breakoutLifes)
+			if (_breakoutLives) {
+				displayLives();
+				if (_breakoutLives)
 					continue;
 			}
 			_vm->_eventsManager.MOUSE_ON1();
@@ -869,7 +869,7 @@ void ComputerManager::playBreakout() {
 
 			_breakoutBrickNbr = 0;
 			_breakoutScore = 0;
-			_breakoutLifes = 4;
+			_breakoutLives = 4;
 			_breakoutSpeed = 1;
 			_ballRightFl = false;
 			_ballUpFl = false;
