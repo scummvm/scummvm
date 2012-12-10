@@ -1717,11 +1717,12 @@ bool HopkinsEngine::runLinuxFull() {
 	_graphicsManager.LOAD_IMAGE("H2");
 	_graphicsManager.FADE_INW();
 	_eventsManager.delay(500);
+	_graphicsManager.FADE_OUTW();
 
 	_globals.vitesse = 2;
 	_globals.iRegul = 1;
 	_graphicsManager.FADE_LINUX = 2;
-	_graphicsManager.FADE_OUTW();
+	_animationManager.playAnim("MP.ANM", 10, 16, 200);
 
 	if (!_eventsManager.ESC_KEY)
 		INTRORUN();
