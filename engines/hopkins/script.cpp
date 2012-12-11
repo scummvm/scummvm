@@ -690,7 +690,7 @@ LABEL_1141:
 		if (v76 == 18)
 			_vm->_talkManager.PARLER_PERSO("fjour.pe2");
 		if (v76 == 13) {
-			_vm->_eventsManager.souris_b = _vm->_eventsManager.souris_bb;
+			_vm->_eventsManager._mouseButton = _vm->_eventsManager._curMouseButton;
 			_vm->_globals._disableInventFl = true;
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_globals.CACHE_OFF();

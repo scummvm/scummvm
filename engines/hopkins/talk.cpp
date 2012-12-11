@@ -120,8 +120,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	PLIGNE2 = v2 + 1;
 	PLIGNE3 = v2 + 2;	
 	PLIGNE4 = v2 + 3;
-	v14 = _vm->_eventsManager.btsouris;
-	_vm->_eventsManager.btsouris = 4;
+	v14 = _vm->_eventsManager._mouseCursorId;
+	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
 	if (!_vm->_globals.NOPARLE) {
 		v4 = v2 + 3;
@@ -152,7 +152,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
-	_vm->_eventsManager.btsouris = v14;
+	_vm->_eventsManager._mouseCursorId = v14;
 	
 	_vm->_eventsManager.changeMouseCursor(v14);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -234,8 +234,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	PLIGNE2 = v1 + 1;
 	PLIGNE3 = v1 + 2;
 	PLIGNE4 = v1 + 3;
-	int v8 = _vm->_eventsManager.btsouris;
-	_vm->_eventsManager.btsouris = 4;
+	int v8 = _vm->_eventsManager._mouseCursorId;
+	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
   
 	if (!_vm->_globals.NOPARLE) {
@@ -259,7 +259,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	}
 
 	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
-	_vm->_eventsManager.btsouris = v8;
+	_vm->_eventsManager._mouseCursorId = v8;
 
 	_vm->_eventsManager.changeMouseCursor(v8);
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
@@ -477,8 +477,8 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	}
 	if (!_vm->_soundManager.VOICE_MIX(v22, 1)) {
 		v14 = 0;
-		_vm->_eventsManager.souris_bb = false;
-		_vm->_eventsManager.souris_b = false;
+		_vm->_eventsManager._curMouseButton = 0;
+		_vm->_eventsManager._mouseButton = 0;
 
 		if (_vm->getIsDemo()) {
 			do {
@@ -490,7 +490,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 			do {
 				_vm->_eventsManager.VBL();
 				++v14;
-				if ( _vm->_eventsManager.souris_b || _vm->_eventsManager.souris_bb )
+				if (_vm->_eventsManager._mouseButton || _vm->_eventsManager._curMouseButton)
 					v14 = v6;
 				if (_vm->_eventsManager.getMouseButton()) {
 					i = 5;
@@ -1217,7 +1217,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		_vm->_globals.BOBZONE[v2++] = 0;
 	while (v2 <= 44);
 	_vm->_objectsManager.NUMZONE = -1;
-	_vm->_eventsManager.btsouris = 4;
+	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
 	BUFFERPERSO = _vm->_fileManager.searchCat(a2, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
@@ -1320,7 +1320,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
-	_vm->_eventsManager.btsouris = 4;
+	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 

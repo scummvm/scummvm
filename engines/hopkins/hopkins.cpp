@@ -149,7 +149,7 @@ bool HopkinsEngine::runWin95Demo() {
 	warning("TODO Fin_Interrupt()");
 	warning("TODO TEST = 1;");
 	warning("TODO no_vsync = 1;");
-	_eventsManager.lItCounter = 0;
+	_eventsManager._rateCounter = 0;
 	warning("TODO Init_Interrupt_();");
 
 	_globals.iRegul = 1;
@@ -161,14 +161,14 @@ bool HopkinsEngine::runWin95Demo() {
 	}
 
 	_globals.iRegul = 0;
-	warning("TODO SPEEDJ = _globals.lItCounter;");
+	warning("TODO SPEEDJ = _globals._rateCounter;");
 	warning("TODO no_vsync = 0;");
 	warning("TODO TEST = 0;");
 //	if (SPEEDJ > 475)
-	if (_eventsManager.lItCounter > 475)
+	if (_eventsManager._rateCounter > 475)
 		_globals.vitesse = 2;
 //	if (SPEEDJ > 700)
-	if (_eventsManager.lItCounter > 700)
+	if (_eventsManager._rateCounter > 700)
 		_globals.vitesse = 3;
 	warning("TODO Fin_Interrupt_();");
 	warning("TODO Init_Interrupt_();");
@@ -3026,7 +3026,7 @@ void HopkinsEngine::BOOM() {
 
 void HopkinsEngine::REST_SYSTEM() {
 	quitGame();
-	_eventsManager.CONTROLE_MES();
+	_eventsManager.refreshEvents();
 }
 
 void HopkinsEngine::PUBQUIT() {
@@ -3041,8 +3041,8 @@ void HopkinsEngine::PUBQUIT() {
 	_graphicsManager.FADE_INW();
 	_eventsManager.mouseOn();
 	_eventsManager.changeMouseCursor(0);
-	_eventsManager.btsouris = 0;
-	_eventsManager.souris_n = 0;
+	_eventsManager._mouseCursorId = 0;
+	_eventsManager._mouseSpriteId = 0;
 	_globals.netscape = true;
 
 	bool mouseClicked = false;
@@ -3297,11 +3297,11 @@ void HopkinsEngine::JOUE_FIN() {
 		_graphicsManager.LOAD_IMAGE("PLAN3");
 		_graphicsManager.FADE_INW();
 
-		_eventsManager.lItCounter = 0;
+		_eventsManager._rateCounter = 0;
 		if (!_eventsManager._escKeyFl) {
 			do
-				_eventsManager.CONTROLE_MES();
-			while (_eventsManager.lItCounter < 2000 / _globals.vitesse && !_eventsManager._escKeyFl);
+				_eventsManager.refreshEvents();
+			while (_eventsManager._rateCounter < 2000 / _globals.vitesse && !_eventsManager._escKeyFl);
 		}
 		_eventsManager._escKeyFl = false;
 		_graphicsManager.FADE_OUTW();
@@ -3698,7 +3698,7 @@ void HopkinsEngine::Credits() {
 
 void HopkinsEngine::BTOCEAN() {
 	_fontManager.TEXTE_OFF(9);
-	if (_eventsManager.btsouris == 16) {
+	if (_eventsManager._mouseCursorId == 16) {
 		_eventsManager.getMouseX();
 		if (_objectsManager.NUMZONE > 0) {
 			int oldPosX = _eventsManager.getMouseX();
@@ -4009,14 +4009,14 @@ bool HopkinsEngine::ADULT() {
 	_globals.FORET = false;
 	_globals.FLAG_VISIBLE = false;
 	_globals._disableInventFl = true;
-	_globals.SORTIE = false;
+	_globals.SORTIE = 0;
 
 	_graphicsManager.LOAD_IMAGE("ADULT");
 	_graphicsManager.FADE_INW();
 	_eventsManager.mouseOn();
 	_eventsManager.changeMouseCursor(0);
-	_eventsManager.btsouris = false;
-	_eventsManager.souris_n = false;
+	_eventsManager._mouseCursorId = 0;
+	_eventsManager._mouseSpriteId = 0;
 
 	do {
 		xp = _eventsManager.getMouseX();

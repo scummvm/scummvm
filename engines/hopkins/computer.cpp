@@ -236,7 +236,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 			bool numericFlag = false;
 			char v12;
 			do {
-				v12 = _vm->_eventsManager.keywin();
+				v12 = _vm->_eventsManager.waitKeyPress();
 				if (_vm->shouldQuit())
 					return;
 
@@ -366,7 +366,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 
 	_vm->_fontManager.TEXT_NOW(xp, yp, "_", -4);
 	do {
-		curChar = _vm->_eventsManager.keywin();
+		curChar = _vm->_eventsManager.waitKeyPress();
 		if (_vm->shouldQuit())
 			return;
 
@@ -581,7 +581,7 @@ void ComputerManager::readText(int idx) {
 		++v10;
 	} while (v4 != 37);
 
-	_vm->_eventsManager.keywin();
+	_vm->_eventsManager.waitKeyPress();
 	_vm->_globals.dos_free2(ptr);
 }
 
@@ -915,7 +915,7 @@ int ComputerManager::displayHiscores() {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	buttonIndex = 0;
 	do {
-		_vm->_eventsManager.CONTROLE_MES();
+		_vm->_eventsManager.refreshEvents();
 		xp = _vm->_eventsManager.getMouseX();
 		yp = _vm->_eventsManager.getMouseY();
 
@@ -951,7 +951,7 @@ void ComputerManager::getScoreName() {
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);
 
-		curChar = toupper(_vm->_eventsManager.keywin());
+		curChar = toupper(_vm->_eventsManager.waitKeyPress());
 		if ((curChar <= '/') || (curChar > 'Z'))
 			curChar = ' ';
 		if ((uint16)(curChar - ':') <= 6u)

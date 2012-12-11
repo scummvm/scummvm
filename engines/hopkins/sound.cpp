@@ -615,7 +615,7 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 			_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager.getMouseButton())
 			break;
-		_vm->_eventsManager.CONTROLE_MES();
+		_vm->_eventsManager.refreshEvents();
 		if (_vm->_eventsManager._escKeyFl)
 			break;
 		if (!VOICE_STAT(2))

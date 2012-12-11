@@ -93,8 +93,8 @@ int MenuManager::MENU() {
 		spriteData = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 		_vm->_eventsManager.mouseOn();
 		_vm->_eventsManager.changeMouseCursor(0);
-		_vm->_eventsManager.btsouris = 0;
-		_vm->_eventsManager.souris_n = 0;
+		_vm->_eventsManager._mouseCursorId = 0;
+		_vm->_eventsManager._mouseSpriteId = 0;
     
 		for (;;) {
 			for (;;) {

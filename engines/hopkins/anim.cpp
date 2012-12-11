@@ -106,7 +106,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();
 	}
-	_vm->_eventsManager.lItCounter = 0;
+	_vm->_eventsManager._rateCounter = 0;
 	_vm->_eventsManager._escKeyFl = false;
 	_vm->_soundManager.LOAD_ANM_SOUND();
 
@@ -116,11 +116,11 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 			if (_vm->_eventsManager._escKeyFl)
 				goto EXIT;
 
-			_vm->_eventsManager.CONTROLE_MES();
-		} while (!_vm->shouldQuit() && _vm->_eventsManager.lItCounter < rate1);
+			_vm->_eventsManager.refreshEvents();
+		} while (!_vm->shouldQuit() && _vm->_eventsManager._rateCounter < rate1);
 	}
 
-	_vm->_eventsManager.lItCounter = 0;
+	_vm->_eventsManager._rateCounter = 0;
 	breakFlag = false;
 	frameNumber = 0;
 	while (!_vm->shouldQuit()) {
@@ -143,12 +143,12 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 				if (_vm->_eventsManager._escKeyFl)
 					goto EXIT;
 
-				_vm->_eventsManager.CONTROLE_MES();
+				_vm->_eventsManager.refreshEvents();
 				_vm->_soundManager.VERIF_SOUND();
-			} while (!_vm->shouldQuit() && _vm->_eventsManager.lItCounter < rate2);
+			} while (!_vm->shouldQuit() && _vm->_eventsManager._rateCounter < rate2);
 		}
 
-		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager._rateCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (hasScreenCopy) {
 			if (*screenP != kByteStop) {
@@ -175,12 +175,12 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 			if (_vm->_eventsManager._escKeyFl)
 				break;
 
-			_vm->_eventsManager.CONTROLE_MES();
+			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.VERIF_SOUND();
-		} while (_vm->_eventsManager.lItCounter < rate3);
+		} while (_vm->_eventsManager._rateCounter < rate3);
 	}
 
-	_vm->_eventsManager.lItCounter = 0;
+	_vm->_eventsManager._rateCounter = 0;
 	_vm->_soundManager.VERIF_SOUND();
 EXIT:
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
@@ -312,7 +312,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.DD_VBL();
 		}
-		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul != 1)
@@ -322,8 +322,8 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 				goto LABEL_114;
 			if (redrawAnim() == true)
 				break;
-			_vm->_eventsManager.CONTROLE_MES();
-			if (_vm->_eventsManager.lItCounter >= a2)
+			_vm->_eventsManager.refreshEvents();
+			if (_vm->_eventsManager._rateCounter >= a2)
 				goto LABEL_48;
 		}
 		if (_vm->_graphicsManager.NOLOCK == true)
@@ -384,7 +384,7 @@ LABEL_112:
 		_vm->_graphicsManager.FADE_INS();
 	}
 LABEL_48:
-	_vm->_eventsManager.lItCounter = 0;
+	_vm->_eventsManager._rateCounter = 0;
 	v5 = 0;
 	v15 = 0;
 	for (;;) {
@@ -405,7 +405,7 @@ LABEL_48:
 		if (_vm->_globals.iRegul == 1)
 			break;
 LABEL_77:
-		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager._rateCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (v8) {
 			if (*v12 != kByteStop) {
@@ -481,9 +481,9 @@ LABEL_88:
 						}
 						goto LABEL_112;
 					}
-					_vm->_eventsManager.CONTROLE_MES();
+					_vm->_eventsManager.refreshEvents();
 					_vm->_soundManager.VERIF_SOUND();
-					if (_vm->_eventsManager.lItCounter >= a4)
+					if (_vm->_eventsManager._rateCounter >= a4)
 						goto LABEL_114;
 				}
 			}
@@ -544,9 +544,9 @@ LABEL_88:
 			}
 			goto LABEL_112;
 		}
-		_vm->_eventsManager.CONTROLE_MES();
+		_vm->_eventsManager.refreshEvents();
 		_vm->_soundManager.VERIF_SOUND();
-		if (_vm->_eventsManager.lItCounter >= a3)
+		if (_vm->_eventsManager._rateCounter >= a3)
 			goto LABEL_77;
 	}
 LABEL_114:
@@ -998,7 +998,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_graphicsManager.DD_VBL();
 	}
 	if (_vm->getIsDemo()) {
-		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul == 1) {
@@ -1008,14 +1008,14 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 						goto LABEL_59;
 					_vm->_eventsManager._escKeyFl = false;
 				}
-				_vm->_eventsManager.CONTROLE_MES();
+				_vm->_eventsManager.refreshEvents();
 				_vm->_soundManager.VERIF_SOUND();
-			} while (_vm->_eventsManager.lItCounter < rate1);
+			} while (_vm->_eventsManager._rateCounter < rate1);
 		}
 	} else {
 		if (NO_COUL)
 			_vm->_graphicsManager.FADE_INW_LINUX(v9);
-		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul == 1) {
@@ -1025,12 +1025,12 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 						goto LABEL_59;
 					_vm->_eventsManager._escKeyFl = false;
 				}
-				_vm->_eventsManager.CONTROLE_MES();
+				_vm->_eventsManager.refreshEvents();
 				_vm->_soundManager.VERIF_SOUND();
-			} while (_vm->_eventsManager.lItCounter < rate1);
+			} while (_vm->_eventsManager._rateCounter < rate1);
 		}
 	}
-	_vm->_eventsManager.lItCounter = 0;
+	_vm->_eventsManager._rateCounter = 0;
 	readError = false;
 	soundNumber = 0;
 	do {
@@ -1051,11 +1051,11 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 							goto LABEL_59;
 						_vm->_eventsManager._escKeyFl = false;
 					}
-					_vm->_eventsManager.CONTROLE_MES();
+					_vm->_eventsManager.refreshEvents();
 					_vm->_soundManager.VERIF_SOUND();
-				} while (_vm->_eventsManager.lItCounter < rate2);
+				} while (_vm->_eventsManager._rateCounter < rate2);
 			}
-			_vm->_eventsManager.lItCounter = 0;
+			_vm->_eventsManager._rateCounter = 0;
 			_vm->_graphicsManager.DD_Lock();
 			if (v7) {
 				if (*v9 != kByteStop) {
@@ -1084,11 +1084,11 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 					goto LABEL_59;
 				_vm->_eventsManager._escKeyFl = false;
 			}
-			_vm->_eventsManager.CONTROLE_MES();
+			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.VERIF_SOUND();
-		} while (_vm->_eventsManager.lItCounter < rate3);
+		} while (_vm->_eventsManager._rateCounter < rate3);
 	}
-	_vm->_eventsManager.lItCounter = 0;
+	_vm->_eventsManager._rateCounter = 0;
 LABEL_59:
 	_vm->_graphicsManager.NOLOCK = false;
 	f.close();
@@ -1171,7 +1171,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.DD_VBL();
 		}
-		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul != 1)
@@ -1181,9 +1181,9 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 				goto LABEL_54;
 			if (redrawAnim() == true)
 				break;
-			_vm->_eventsManager.CONTROLE_MES();
+			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.VERIF_SOUND();
-			if (_vm->_eventsManager.lItCounter >= rate1)
+			if (_vm->_eventsManager._rateCounter >= rate1)
 				goto LABEL_23;
 		}
 LABEL_48:
@@ -1195,7 +1195,7 @@ LABEL_48:
 		f.close();
 	}
 LABEL_23:
-	_vm->_eventsManager.lItCounter = 0;
+	_vm->_eventsManager._rateCounter = 0;
 	v4 = false;
 	v13 = 0;
 	while (!_vm->shouldQuit()) {
@@ -1213,7 +1213,7 @@ LABEL_23:
 		if (_vm->_globals.iRegul == 1)
 			break;
 LABEL_33:
-		_vm->_eventsManager.lItCounter = 0;
+		_vm->_eventsManager._rateCounter = 0;
 		_vm->_graphicsManager.DD_Lock();
 		if (v7) {
 			if (*v10 != kByteStop) {
@@ -1238,23 +1238,23 @@ LABEL_44:
 				while (_vm->_eventsManager._escKeyFl != true) {
 					if (redrawAnim() == true)
 						goto LABEL_48;
-					_vm->_eventsManager.CONTROLE_MES();
+					_vm->_eventsManager.refreshEvents();
 					_vm->_soundManager.VERIF_SOUND();
-					if (_vm->_eventsManager.lItCounter >= rate3)
+					if (_vm->_eventsManager._rateCounter >= rate3)
 						goto LABEL_53;
 				}
 			} else {
 LABEL_53:
-				_vm->_eventsManager.lItCounter = 0;
+				_vm->_eventsManager._rateCounter = 0;
 			}
 			goto LABEL_54;
 		}
 	}
 	while (_vm->_eventsManager._escKeyFl != true) {
-		_vm->_eventsManager.CONTROLE_MES();
+		_vm->_eventsManager.refreshEvents();
 		if (redrawAnim() == true)
 			goto LABEL_48;
-		if (_vm->_eventsManager.lItCounter >= rate2)
+		if (_vm->_eventsManager._rateCounter >= rate2)
 			goto LABEL_33;
 	}
 LABEL_54:

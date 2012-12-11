@@ -38,15 +38,15 @@ EventsManager::EventsManager() {
 	_mouseOffset.x = _mouseOffset.y = 0;
 	_startPos.x = _startPos.y = 0;
 	_breakoutFl = false;
-	souris_n = 0;
-	souris_bb = 0;
-	souris_b = 0;
+	_mouseSpriteId = 0;
+	_curMouseButton = 0;
+	_mouseButton = 0;
 	_mouseCursor = NULL;
 	_gameCounter = 0;
-	lItCounter = 0;
+	_rateCounter = 0;
 	_escKeyFl = false;
 	_gameKey = KEY_NONE;
-	btsouris = 0;
+	_mouseCursorId = 0;
 	_oldIconId = 0;
 	_objectBuf = NULL;
 
@@ -116,8 +116,8 @@ int EventsManager::getMouseY() {
  * Get Mouse Button
  */
 int EventsManager::getMouseButton() {
-	CONTROLE_MES();
-	return souris_bb;
+	refreshEvents();
+	return _curMouseButton;
 }
 
 /**
@@ -143,23 +143,25 @@ void EventsManager::mouseOn() {
 void EventsManager::changeMouseCursor(int id) {
 	int cursorId = id;
 
-	if (btsouris != 23) {
-		if (id == 4 && btsouris == 4 && _vm->_globals.NOMARCHE)
-			cursorId = 0;
-		if (cursorId == 25)
-			cursorId = 5;
+	if (_mouseCursorId != 23) {
+		if (id == 4 && _mouseCursorId == 4 && _vm->_globals.NOMARCHE)
+			_mouseCursorId = 0;
+		if (_mouseCursorId == 25)
+			_mouseCursorId = 5;
     
-		if (_oldIconId != cursorId || !cursorId) {
-			_oldIconId = cursorId;
-			souris_n = cursorId;
+		if (_oldIconId != _mouseCursorId || !_mouseCursorId) {
+			_oldIconId = _mouseCursorId;
+			_mouseCursorId = cursorId;
 
 			updateCursor();
 		}
 	}
 }
 
-// Check Events
-void EventsManager::CONTROLE_MES() {
+/**
+ * Check Events
+ */
+void EventsManager::refreshEvents() {
 	_vm->_soundManager.checkSounds();
 
 	pollEvents();
@@ -170,7 +172,7 @@ void EventsManager::checkForNextFrameCounter() {
 	uint32 milli = g_system->getMillis();
 	while ((milli - _priorCounterTime) >= 10) {
 		_priorCounterTime += 10;
-		lItCounter += 3;
+		_rateCounter += 3;
 	}
 
 	// Check for next game frame
@@ -211,14 +213,14 @@ void EventsManager::pollEvents() {
 			_keyState[(byte)toupper(event.kbd.ascii)] = false;
 			return;
 		case Common::EVENT_LBUTTONDOWN:
-			souris_b = 1;
+			_mouseButton = 1;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			souris_b = 2;
+			_mouseButton = 2;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			souris_b = 0;
+			_mouseButton = 0;
 			return;
 		default:
  			break;
@@ -253,7 +255,11 @@ void EventsManager::handleKey(Common::Event &event) {
 
 }
 
-int EventsManager::keywin() {
+/**
+ * Waits for a keypress, ignoring mouse events
+ * @return		Keypress, or -1 if game quit was requested
+ */
+int EventsManager::waitKeyPress() {
 	char foundChar = '\0';
 
 	while (!foundChar) {
@@ -334,7 +340,7 @@ void EventsManager::VBL() {
 		yp = _mousePos.y;
 		v14 = _mouseSizeX;
 		v13 = _mouseSizeY;
-		if (btsouris == 23) {
+		if (_mouseCursorId == 23) {
 			v14 = _vm->_globals.OBJL;
 			v13 = _vm->_globals.OBJH;
 			goto LABEL_35;
@@ -373,10 +379,10 @@ LABEL_35:
 		updateCursor();
 		goto LABEL_54;
 	}
-	if (btsouris == 23)
+	if (_mouseCursorId == 23)
 		goto LABEL_45;
 	if (yp >= _vm->_graphicsManager.max_y || v15 >= _vm->_graphicsManager.max_x || v14 <= 1 || v13 <= 1) {
-		if (btsouris != 23)
+		if (_mouseCursorId != 23)
 			goto LABEL_54;
 LABEL_45:
 		if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x) {
@@ -415,20 +421,20 @@ LABEL_54:
 
 				if (_breakoutFl != true)
 					goto LABEL_63;
-				if (lItCounter > 1)
+				if (_rateCounter > 1)
 					goto LABEL_65;
 			}
 			if (_vm->_globals.vitesse != 2)
 				break;
-			if (lItCounter > 9)
+			if (_rateCounter > 9)
 				goto LABEL_65;
 		}
 LABEL_63:
 		;
-	} while (!_vm->shouldQuit() && _vm->_globals.iRegul == 3 && lItCounter <= 15);
+	} while (!_vm->shouldQuit() && _vm->_globals.iRegul == 3 && _rateCounter <= 15);
 LABEL_65:
 	_vm->_globals.vitesse = 2;
-	lItCounter = 0;
+	_rateCounter = 0;
 	if (_vm->_graphicsManager.DOUBLE_ECRAN != true || _vm->_graphicsManager.no_scroll == 1) {
 		_vm->_graphicsManager.Affiche_Segment_Vesa();
 	} else {
@@ -495,8 +501,8 @@ LABEL_65:
 		_startPos.x = v4;
 		_vm->_graphicsManager.ofscroll = v4;
 	}
-	souris_bb = souris_b;
-	souris_b = 0;
+	_curMouseButton = _mouseButton;
+	_mouseButton = 0;
 #if 0
 	// Commented by Strangerke. Looks completely useless.
 
@@ -522,7 +528,7 @@ LABEL_65:
 LABEL_113:
 #endif
 	_vm->_soundManager.VERIF_SOUND();
-	CONTROLE_MES();
+	refreshEvents();
 }	
 
 void EventsManager::updateCursor() {
@@ -539,9 +545,9 @@ void EventsManager::updateCursor() {
 	byte *cursorSurface = new byte[_vm->_globals.OBJH * _vm->_globals.OBJL];
 	Common::fill(cursorSurface, cursorSurface + _vm->_globals.OBJH * _vm->_globals.OBJL, 0);
 
-	if (btsouris != 23) {
+	if (_mouseCursorId != 23) {
 		// Draw standard cursor
-		_vm->_graphicsManager.Sprite_Vesa(cursorSurface, _mouseCursor, 300, 300, souris_n);
+		_vm->_graphicsManager.Sprite_Vesa(cursorSurface, _mouseCursor, 300, 300, _mouseSpriteId);
 	} else {
 		// Draw the active inventory object
 		_vm->_graphicsManager.Affiche_Perfect(cursorSurface, _objectBuf, 300, 300, 0, 0, 0, 0);

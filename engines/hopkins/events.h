@@ -53,25 +53,24 @@ public:
 	Common::Point _mousePos;
 	bool _breakoutFl;
 	int _oldIconId;
-	int souris_n;
-	int souris_bb;
-	int souris_b;
+	int _mouseSpriteId;
+	int _curMouseButton;
+	int _mouseButton;
 	byte *_mouseCursor;
 	uint32 _gameCounter;
-	uint32 lItCounter;
+	uint32 _rateCounter;
 	uint32 _priorCounterTime;
 	uint32 _priorFrameTime;
 	bool _escKeyFl;
 	bool _disableEscKeyFl;
 	DIALOG_KEY _gameKey;
-	int btsouris;
+	int _mouseCursorId;
 	byte *_objectBuf;
 	bool _keyState[256];
 public:
 	EventsManager();
 	~EventsManager();
 	void setParent(HopkinsEngine *vm);
-
 	void setMouseOn();
 	void setMouseXY(int xp, int yp);
 	int getMouseX();
@@ -80,16 +79,11 @@ public:
 	void mouseOn();
 	void mouseOff();
 	void changeMouseCursor(int id);
-
-	void CONTROLE_MES();
+	void refreshEvents();
 	void delay(int delay);
-	void VBL();
+	int waitKeyPress();
 
-	/**
-	 * Waits for a keypress, ignoring mouse events
-	 * @return		Keypress, or -1 if game quit was requested
-	 */
-	int keywin();
+	void VBL();
 };
 
 } // End of namespace Hopkins

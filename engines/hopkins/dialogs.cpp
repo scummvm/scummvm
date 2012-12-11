@@ -315,8 +315,8 @@ void DialogsManager::showInventory() {
 		_vm->_dialogsManager._inventWin1 = g_PTRNUL;
 
 LABEL_7:
-		_vm->_eventsManager.souris_bb = 0;
-		_vm->_eventsManager.souris_b = 0;
+		_vm->_eventsManager._curMouseButton = 0;
+		_vm->_eventsManager._mouseButton = 0;
 		_vm->_globals._disableInventFl = true;
 		_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 
@@ -369,7 +369,7 @@ LABEL_7:
 			v15 += 38;
 		}
 		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
-		_vm->_eventsManager.souris_bb = 0;
+		_vm->_eventsManager._curMouseButton = 0;
 		bool v20 = false;
 		int v13 = 0;
 
@@ -386,29 +386,29 @@ LABEL_7:
 			v13 = v11;
 			if (v11 != v10)
 				_vm->_objectsManager.PARAMCADRE(v11);
-			if (_vm->_eventsManager.btsouris != 16) {
-				if ((uint16)(_vm->_eventsManager.btsouris - 1) > 1u) {
-					if (_vm->_eventsManager.btsouris != 3) {
+			if (_vm->_eventsManager._mouseCursorId != 16) {
+				if ((uint16)(_vm->_eventsManager._mouseCursorId - 1) > 1u) {
+					if (_vm->_eventsManager._mouseCursorId != 3) {
 						if (v12 == 2) {
 							_vm->_objectsManager.OBJETPLUS(v13);
-							if (_vm->_eventsManager.btsouris != 23)
-								_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager.btsouris);
+							if (_vm->_eventsManager._mouseCursorId != 23)
+								_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
 						}
 					}
 				}
 			}
 			if (v12 == 1) {
-				if (_vm->_eventsManager.btsouris == 1 || _vm->_eventsManager.btsouris == 16 || !_vm->_eventsManager.btsouris || (uint16)(_vm->_eventsManager.btsouris - 2) <= 1u)
+				if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId || (uint16)(_vm->_eventsManager._mouseCursorId - 2) <= 1u)
 					break;
 				v9 = v13;
 				_vm->_objectsManager.VALID_OBJET(_vm->_globals.INVENTAIRE[v13]);
-				if (_vm->_eventsManager.btsouris == 8)
+				if (_vm->_eventsManager._mouseCursorId == 8)
 					v20 = true;
 				if (!v20) {
 					_vm->_scriptManager.TRAVAILOBJET = 1;
 					_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals.OBJET_EN_COURS;
 					_vm->_globals.SAUVEGARDE->data[svField8] = _vm->_globals.INVENTAIRE[v13];
-					_vm->_globals.SAUVEGARDE->data[svField9] = _vm->_eventsManager.btsouris;
+					_vm->_globals.SAUVEGARDE->data[svField9] = _vm->_eventsManager._mouseCursorId;
 					_vm->_objectsManager.OPTI_OBJET();
 					_vm->_scriptManager.TRAVAILOBJET = 0;
 
@@ -453,14 +453,14 @@ LABEL_7:
 			_vm->_dialogsManager._inventWin1 = _vm->_globals.dos_free2(_vm->_dialogsManager._inventWin1);
 		_inventBuf2 = _vm->_globals.dos_free2(_inventBuf2);
 
-		if (_vm->_eventsManager.btsouris == 1)
+		if (_vm->_eventsManager._mouseCursorId == 1)
 			showOptionsDialog();
-		else if (_vm->_eventsManager.btsouris == 3)
+		else if (_vm->_eventsManager._mouseCursorId == 3)
 			_vm->_dialogsManager.showLoadGame();
-		else if (_vm->_eventsManager.btsouris == 2)
+		else if (_vm->_eventsManager._mouseCursorId == 2)
 			_vm->_dialogsManager.showSaveGame();
 
-		_vm->_eventsManager.btsouris = 4;
+		_vm->_eventsManager._mouseCursorId = 4;
 		_vm->_eventsManager.changeMouseCursor(4);
 		_vm->_objectsManager.old_cady = 0;
 		_vm->_objectsManager.cady = 0;
