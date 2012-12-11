@@ -102,7 +102,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	// read the length of the sample
-	uint32 sampleLen = _sampleStream.readUint32();
+	uint32 sampleLen = _sampleStream.readUint32LE();
 	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
@@ -257,7 +257,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	// read the length of the sample
-	uint32 sampleLen = _sampleStream.readUint32();
+	uint32 sampleLen = _sampleStream.readUint32LE();
 	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
@@ -270,12 +270,12 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 
 		// Skipping
 		for (int32 i = 0; i < sub; i++) {
-			sampleLen = _sampleStream.readUint32();
+			sampleLen = _sampleStream.readUint32LE();
 			_sampleStream.skip(sampleLen);
 			if (_sampleStream.eos() || _sampleStream.err())
 				error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 		}
-		sampleLen = _sampleStream.readUint32();
+		sampleLen = _sampleStream.readUint32LE();
 		if (_sampleStream.eos() || _sampleStream.err())
 			error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 	}
