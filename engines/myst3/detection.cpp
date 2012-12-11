@@ -46,20 +46,28 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ExecutableVersion v100win = { "1.0 Windows",    kFlagVersion10 | kFlagSafeDisc, "M3.exe",                        0,        0,        0,        0        };
-static const ExecutableVersion v100mac = { "1.0 Macintosh",  kFlagVersion10,                 "Myst III Exile",                0,        0x10FD4,  0x10F10,  0x1109C  };
-static const ExecutableVersion v120mjp = { "1.2 Macintosh",  kFlagNone,                      "Myst3 Exile JP",                0,        0x11230,  0x1116C,  0x112F8  };
-static const ExecutableVersion v120mac = { "1.2 Macintosh",  kFlagNone,                      "Myst3",                         0,        0x112D0,  0x1120C,  0x11398  };
-static const ExecutableVersion v12xsd  = { "1.2 Windows",    kFlagSafeDisc,                  "M3.exe",                        0,        0,        0,        0        };
-static const ExecutableVersion v12xwin = { "1.2x Windows",   kFlagNone,                      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0  };
-static const ExecutableVersion v122osx = { "1.22 Mac OS X",  kFlagNone,                      "Myst3 OS X US",                 0,        0x118C4,  0x11800,  0x1198C  };
-static const ExecutableVersion v124win = { "1.24 Windows",   kFlagNone,                      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861E8  };
-static const ExecutableVersion v127win = { "1.27 Windows",   kFlagDVD,                       "M3.exe",                        0x400000, 0x86110,  0x86040,  0x861F0  };
-static const ExecutableVersion v127mac = { "1.27 Macintosh", kFlagDVD,                       "Myst III Exile for Mac OS 8-9", 0,        0x11378,  0x112A8,  0x11454  };
-static const ExecutableVersion v127xcd = { "1.27 Mac OS X",  kFlagNone,                      "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10  };
-static const ExecutableVersion v127osx = { "1.27 Mac OS X",  kFlagDVD,                       "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10  };
-static const ExecutableVersion ps2ntsc = { "PS2 NTSC-U/C",   kFlagNone,                      "SLUS_204.34",                   0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0 };
-static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,                      "SLES_507.26",                   0xFFF00,  0x14ED10, 0x14EC10, 0x14EEA0 };
+// SafeDisk keys
+static const SafeDiskKey sdKey100 = { 0xE3A2EB02, 0x190158D2, 0xD5E10A26, 0x6DF705D2 };
+static const SafeDiskKey sdKey110 = { 0x8D792101, 0x42AF4572, 0x5581B0CE, 0x984525B4 };
+static const SafeDiskKey sdKey122 = { 0x9D15D040, 0x10A5F8C7, 0x3A37C5B2, 0x95516FC0 };
+
+// Executable versions and associated offsets
+static const ExecutableVersion v100win = { "1.0 Windows",    kFlagVersion10, "M3.exe",                        0x400000, 0x77108,  0x77040,  0x771D0,  &sdKey100 };
+static const ExecutableVersion v100mac = { "1.0 Macintosh",  kFlagVersion10, "Myst III Exile",                0,        0x10FD4,  0x10F10,  0x1109C,  0         };
+static const ExecutableVersion v110win = { "1.1 Windows",    kFlagNone,      "M3.exe",                        0x400000, 0x78108,  0x78040,  0x781D0,  &sdKey110 };
+static const ExecutableVersion v120mjp = { "1.2 Macintosh",  kFlagNone,      "Myst3 Exile JP",                0,        0x11230,  0x1116C,  0x112F8,  0         };
+static const ExecutableVersion v120mac = { "1.2 Macintosh",  kFlagNone,      "Myst3",                         0,        0x112D0,  0x1120C,  0x11398,  0         };
+static const ExecutableVersion v120sd  = { "1.2 Windows",    kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  &sdKey110 };
+static const ExecutableVersion v122sd  = { "1.22 Windows",   kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  &sdKey122 };
+static const ExecutableVersion v12xwin = { "1.2x Windows",   kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  0         };
+static const ExecutableVersion v122osx = { "1.22 Mac OS X",  kFlagNone,      "Myst3 OS X US",                 0,        0x118C4,  0x11800,  0x1198C,  0         };
+static const ExecutableVersion v124win = { "1.24 Windows",   kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861E8,  0         };
+static const ExecutableVersion v127win = { "1.27 Windows",   kFlagDVD,       "M3.exe",                        0x400000, 0x86110,  0x86040,  0x861F0,  0         };
+static const ExecutableVersion v127mac = { "1.27 Macintosh", kFlagDVD,       "Myst III Exile for Mac OS 8-9", 0,        0x11378,  0x112A8,  0x11454,  0         };
+static const ExecutableVersion v127xcd = { "1.27 Mac OS X",  kFlagNone,      "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10,  0         };
+static const ExecutableVersion v127osx = { "1.27 Mac OS X",  kFlagDVD,       "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10,  0         };
+static const ExecutableVersion ps2ntsc = { "PS2 NTSC-U/C",   kFlagNone,      "SLUS_204.34",                   0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0, 0         };
+static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,      "SLES_507.26",                   0xFFF00,  0x14ED10, 0x14EC10, 0x14EEA0, 0         };
 
 #define MYST3ENTRY(platform, lang, extra, exe, md5exe, version) 				\
 {																				\
@@ -80,11 +88,16 @@ static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,         
 
 static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "f8ab52da2815c1342eeb42b1bcad5441", &v100win) // 1.0
-	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "3510a29ba7db40fa7310e15aac807e8e", &v12xsd ) // 1.2
+	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "0f2b2703fc79be043007ab4e603d54b8", &v110win) // 1.1
+	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "314f4d2a3c9d22787719219419dcd480", &v120sd ) // 1.2
+	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "3510a29ba7db40fa7310e15aac807e8e", &v120sd ) // 1.2
+	MYST3ENTRY(Common::kPlatformWindows, Common::JA_JPN, 0,     "M3.exe", "89f4ceb295420c01116bc4bee7bcd9c4", &v120sd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "7a4eaea5f19f621e05e732d657c15fe3", &v12xwin) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "c8ca22d347f947cd52d95229d0f6a3f3", &v12xwin) // 1.22
+	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "9d76f2f836ef9382e45f354a532f042d", &v122sd ) // 1.22
 	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "f24da8790cf46e3b289569960299b0da", &v12xwin) // 1.22
 	MYST3ENTRY(Common::kPlatformWindows, Common::DE_DEU, 0,     "M3.exe", "9e26a4d1762b21fac7a35d7ee441fd75", &v12xwin) // 1.22
+	MYST3ENTRY(Common::kPlatformWindows, Common::DE_DEU, 0,     "M3.exe", "8ed262713e49eb07a03e0c4f148476e0", &v122sd ) // 1.22
 	MYST3ENTRY(Common::kPlatformWindows, Common::PL_POL, 0,     "M3.exe", "5d3dd344c27c07b6db63a5b58e1e2a25", &v12xwin) // 1.22
 	MYST3ENTRY(Common::kPlatformWindows, Common::ES_ESP, 0,     "M3.exe", "d6802549deccc2f7833c4859b210cf7d", &v12xwin) // 1.22
 	MYST3ENTRY(Common::kPlatformWindows, Common::JA_JPN, 0,     "M3.exe", "1a3a050413777adcdae967da7a188cc0", &v124win)

@@ -27,8 +27,10 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "gui/debugger.h"
+#include "gui/error.h"
 
 #include "engines/engine.h"
 
@@ -135,6 +137,11 @@ bool Myst3Engine::hasFeature(EngineFeature f) const {
 Common::Error Myst3Engine::run() {
 	const int w = 640;
 	const int h = 480;
+
+	if (!checkDatafiles()) {
+		// An error message has already been displayed
+		return Common::kUserCanceled;
+	}
 
 	_gfx = new Renderer(_system);
 	_sound = new Sound(this);
@@ -293,6 +300,24 @@ void Myst3Engine::closeArchives() {
 	for (uint i = 0; i < _archivesCommon.size(); i++)
 		delete _archivesCommon[i];
 	_archivesCommon.clear();
+}
+
+bool Myst3Engine::checkDatafiles() {
+#ifndef USE_SAFEDISC
+	if (getExecutableVersion()->safeDiskKey) {
+		static const char *safediscMessage =
+				_("This version of Myst III is encrypted with a copy-protection\n"
+				"preventing ResidualVM from reading required data.\n"
+				"Please replace your 'M3.exe' file with the one from the official update\n"
+				"corresponding to your game's language and redetect the game.\n"
+				"These updates don't contain the copy-protection and can be downloaded from\n"
+				"http://www.residualvm.org/downloads/");
+		warning(safediscMessage);
+		GUI::displayErrorDialog(safediscMessage);
+		return false;
+	}
+#endif // USE_SAFEDISC
+	return true;
 }
 
 HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {

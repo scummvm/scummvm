@@ -23,8 +23,9 @@
 #include "engines/myst3/database.h"
 #include "engines/myst3/myst3.h"
 
-#include "common/file.h"
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/hashmap.h"
 #include "common/md5.h"
 #include "common/memstream.h"
 #include "common/substream.h"
@@ -41,11 +42,6 @@ Database::Database(Myst3Engine *vm) :
 
 	if (_executableVersion != 0) {
 		debug("Initializing database from %s (Platform: %s) (%s)", _executableVersion->executable, getPlatformDescription(_vm->getPlatform()), _executableVersion->description);
-
-		if (_executableVersion->flags & kFlagSafeDisc) {
-			// TODO: SafeDisc encrypted binary
-			error("Unhandled SafeDisc encrypted executable");
-		}
 	} else {
 		error("Could not find any executable to load");
 	}
@@ -528,6 +524,25 @@ Common::SeekableSubReadStreamEndian *Database::openDatabaseFile() const {
 		delete stream;
 		stream = segment;
 		bigEndian = true;
+	} else if (_executableVersion->safeDiskKey) {
+#ifdef USE_SAFEDISC
+		SafeDisc sd;
+		sd.setKey(_executableVersion->safeDiskKey);
+		sd.setDecodingFunctions(&safeDiscDecode1, &safeDiscDecode2);
+
+		Common::SeekableReadStream *decrypted = sd.decrypt(stream);
+		delete stream;
+
+		if (!decrypted) {
+			error("Error while decrypting SafeDisc executable");
+		}
+
+		stream = decrypted;
+#else
+
+		error("Safedisc decryption is not enabled.");
+
+#endif // USE_SAFEDISC
 	}
 
 	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), bigEndian, DisposeAfterUse::YES);
@@ -690,6 +705,82 @@ Common::SeekableReadStream *Database::decompressPEFDataSegment(Common::SeekableR
 	return new Common::MemoryReadStream(data, unpackedSize, DisposeAfterUse::YES);
 }
 
+#define ROL32(x,b) (((x) << (b)) | ((x) >> (32 - (b))))
+#define ROR32(x,b) (((x) >> (b)) | ((x) << (32 - (b))))
+
+uint32 Database::safeDiscDecode1(uint32 data) {
+	data += 0x15770916;
+	data ^= 0x13932106;
+	data = ROL32(data, 0xE2 % 32);
+	data -= 0x407A1EF5;
+	data ^= 0x33784C64;
+	data -= 0x7BA359F3;
+	data = ROR32(data, 0xB1 % 32);
+	data += 0x0F5123F;
+//		data = ROR32(data, 0xE0 % 32); NOP
+	data += 0x50C52C7;
+	data -= 0x29256E14;
+	data ^= 0x64B95579;
+	data = ROL32(data, 0xC7 % 32);
+	data -= 0x4CF5171E;
+	data ^= 0x5A4D4CF1;
+	data = ROR32(data, 0x73 % 32);
+	data = ROL32(data, 0xE3 % 32);
+	data += 0x2D415B9B;
+	data = ROL32(data, 0x04 % 32);
+	data = ROL32(data, 0xC6 % 32);
+	data = ROL32(data, 0xD6 % 32);
+	data += 0x56A97DBD;
+	data += 0x714738B4;
+
+	return data;
+}
+
+uint32 Database::safeDiscDecode2(uint32 data) {
+	data--;
+	data++;
+	data = ROR32(data, 0xD2 % 32);
+	data = ROL32(data, 0xF3 % 32);
+	data = ROR32(data, 0x25 % 32);
+	data = ROL32(data, 0xDE % 32);
+	data++;
+	data = ROL32(data, 0xFF % 32);
+	data = ROR32(data, 0x6B % 32);
+	data--;
+	data = ROR32(data, 0x03 % 32);
+	data++;
+	data += 0x3824412A;
+	data -= 0x5C8137F7;
+	data++;
+	data -= 0x13932106;
+	data--;
+	data--;
+	data += 0x4C645056;
+	data = ROL32(data, 0xCC % 32);
+	data = ROL32(data, 0xB2 % 32);
+	data--;
+//		data = ROR32(data, 0xE0 % 32); NOP
+	data--;
+	data = ROR32(data, 0x14 % 32);
+	data = -data;
+	data = ROL32(data, 0xC7 % 32);
+	data -= 0x4CF5171E;
+	data--;
+	data = ROL32(data, 0x73 % 32);
+	data++;
+	data++;
+	data++;
+	data += 0x42C270B1;
+	data += 0x49A602E5;
+	data = ROL32(data, 0xA9 % 32);
+	data -= 0x714738B4;
+
+	return data;
+}
+
+#undef ROL32
+#undef ROR32
+
 void Database::loadSoundNames(Common::ReadStreamEndian *s) {
 	_soundNames.clear(false);
 
@@ -716,5 +807,167 @@ Common::String Database::getSoundName(uint32 id) {
 
 	return result;
 }
+
+#ifdef USE_SAFEDISC
+
+SafeDisc::SafeDisc() {
+	_decode1 = 0;
+	_decode2 = 0;
+}
+
+void SafeDisc::setKey(const SafeDiskKey *key) {
+	for (uint i = 0; i < 4; i++) {
+		_key[i] = (*key)[i];
+	}
+}
+
+void SafeDisc::setDecodingFunctions(DecodeFunc f1, DecodeFunc f2) {
+	_decode1 = f1;
+	_decode2 = f2;
+}
+
+Common::SeekableReadStream *SafeDisc::decrypt(Common::SeekableReadStream *stream) const {
+	if (!stream)
+		return 0;
+
+	// Check executable format
+	if (stream->readUint16BE() != MKTAG16('M', 'Z')) {
+		error("Not a valid Windows executable");
+	}
+
+	stream->skip(58);
+
+	uint32 peOffset = stream->readUint32LE();
+
+	if (!peOffset || peOffset >= (uint32)stream->size())
+		return 0;
+
+	stream->seek(peOffset);
+
+	if (stream->readUint32BE() != MKTAG('P','E',0,0)) {
+		error("Not a valid Windows executable");
+	}
+
+	stream->skip(2);
+	uint16 sectionCount = stream->readUint16LE();
+	stream->skip(12);
+	uint16 optionalHeaderSize = stream->readUint16LE();
+	stream->skip(optionalHeaderSize + 2);
+
+	Common::HashMap<Common::String, Section, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> sections;
+
+	// Read in all the sections
+	for (uint16 i = 0; i < sectionCount; i++) {
+		char sectionName[9];
+		stream->read(sectionName, 8);
+		sectionName[8] = 0;
+
+		Section section;
+		stream->skip(4);
+		section.virtualAddress = stream->readUint32LE();
+		section.size = stream->readUint32LE();
+		section.offset = stream->readUint32LE();
+		stream->skip(16);
+
+		sections[sectionName] = section;
+	}
+
+	//Check sections
+	static const char* sectionsToDecrypt[] = { ".text", ".data" };
+	for (uint i = 0; i < ARRAYSIZE(sectionsToDecrypt); i++) {
+		if (!sections.contains(sectionsToDecrypt[i])) {
+			error("Executable does not contain required section '%s'", sectionsToDecrypt[i]);
+		}
+	}
+
+	// Read SafeDisk version
+	Section &firstSection = sections[".text"];
+	stream->seek(firstSection.offset - 3 * sizeof(uint32));
+	uint32 maj = stream->readUint32LE();
+	uint32 min = stream->readUint32LE();
+	uint32 rev = stream->readUint32LE();
+	Common::String version = Common::String::format("v%d.%d.%d", maj, min, rev);
+
+	// Check SafeDisc version
+	bool known = false;
+	static const char* knownVersions[] = { "v2.10.30", "v2.30.31", "v2.40.10" };
+	for (uint i = 0; i < ARRAYSIZE(knownVersions); i++) {
+		if (version.equals(knownVersions[i])) {
+			known = true;
+			break;
+		}
+	}
+
+	if (!known) {
+		error("Unknown SafeDisk version %s", version.c_str());
+	}
+
+	// Initialize decrypted data buffer
+	uint32 dataSize = stream->size();
+	uint8 *data = new uint8[dataSize];
+	stream->seek(0);
+	stream->read(data, dataSize);
+
+	static const uint32 blockSize = 0x1000;
+
+	// Decrypt sections
+	for (uint i = 0; i < ARRAYSIZE(sectionsToDecrypt); i++) {
+		Section &section = sections[sectionsToDecrypt[i]];
+
+		// To ensure we can decrypt whole blocks
+		assert(section.size % blockSize == 0);
+		assert(section.offset + section.size < dataSize);
+
+		// Decrypt the section, by blocks
+		uint32 done = 0;
+		while (done < section.size) {
+			uint32 *block = (uint32*) &data[section.offset + done];
+			done += blockSize;
+
+			decryptBlock(block, blockSize >> 2);
+		}
+	}
+
+	return new Common::MemoryReadStream(data, dataSize, DisposeAfterUse::YES);
+}
+
+void SafeDisc::decryptBlock(uint32 *buffer, uint32 size) const {
+	assert(_decode1 && _decode2);
+
+	// Simple data modification decoding
+	for (uint32 i = 0; i < size; i++) {
+		uint32 data = buffer[i];
+		data ^= (i << 24 | i << 16 | i << 8 | i);
+		buffer[i] = _decode1(data);
+	}
+
+	// Another simple data modification decoding
+	for (uint32 i = 0; i < size; i++) {
+		uint32 data = buffer[i];
+		data ^= (i << 24 | i << 16 | i << 8 | i);
+		buffer[i] = _decode2(data);
+	}
+
+	// Tiny Encryption Algorithm decryption
+	static const uint32 teaMagic = 0x9E3779B9;
+	for (uint32 j = 0; j < size; j += 2) {
+		uint32 data1 = buffer[j    ];
+		uint32 data2 = buffer[j + 1];
+
+		uint32 sum = 32 * teaMagic;
+		for (uint32 i = 0; i < 32; i++)
+		{
+			data2 -= (_key[3] + (data1 >> 5)) ^ (sum + data1) ^ (_key[2] + (data1 << 4));
+			data1 -= (_key[1] + (data2 >> 5)) ^ (sum + data2) ^ (_key[0] + (data2 << 4));
+
+			sum -= teaMagic;
+		}
+
+		buffer[j    ] = data1;
+		buffer[j + 1] = data2;
+	}
+}
+
+#endif // USE_SAFEDISC
 
 } /* namespace Myst3 */
