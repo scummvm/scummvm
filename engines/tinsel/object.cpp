@@ -494,7 +494,7 @@ OBJECT *RectangleObject(SCNHANDLE hPal, int color, int width, int height) {
 	OBJECT *pRect = InitObject(&rectObj);
 
 	// allocate a palette for this object
-	pPalQ = AllocPalette(hPal);
+	pPalQ = AllocPalette(FROM_32(hPal));
 
 	// make sure palette allocated
 	assert(pPalQ != NULL);
