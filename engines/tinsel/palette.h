@@ -30,11 +30,11 @@ namespace Tinsel {
 
 typedef	uint32	COLORREF;
 
-#define TINSEL_RGB(r,g,b)	((COLORREF)TO_LE_32(((uint8)(r)|((uint16)(g)<<8))|(((uint32)(uint8)(b))<<16)))
+#define TINSEL_RGB(r,g,b)	((COLORREF)TO_32(((uint8)(r)|((uint16)(g)<<8))|(((uint32)(uint8)(b))<<16)))
 
-#define TINSEL_GetRValue(rgb)	((uint8)(FROM_LE_32(rgb)))
-#define TINSEL_GetGValue(rgb)	((uint8)(((uint16)(FROM_LE_32(rgb)))>>8))
-#define TINSEL_GetBValue(rgb)	((uint8)((FROM_LE_32(rgb))>>16))
+#define TINSEL_GetRValue(rgb)	((uint8)(FROM_32(rgb)))
+#define TINSEL_GetGValue(rgb)	((uint8)(((uint16)(FROM_32(rgb)))>>8))
+#define TINSEL_GetBValue(rgb)	((uint8)((FROM_32(rgb))>>16))
 
 #define TINSEL_PSX_RGB(r,g,b) ((uint16)(((uint8)(r))|((uint16)(g)<<5)|(((uint16)(b))<<10)))
 

@@ -154,13 +154,13 @@ public:
 	void setIndex(int index);
 
 
-	POLY_TYPE getType() const { return (POLY_TYPE)FROM_LE_32(type); }
-	int getNodecount() const { return (int)FROM_LE_32(nodecount); }
-	int getNodeX(int i) const { return (int)FROM_LE_32(nlistx[i]); }
-	int getNodeY(int i) const { return (int)FROM_LE_32(nlisty[i]); }
+	POLY_TYPE getType() const { return (POLY_TYPE)FROM_32(type); }
+	int getNodecount() const { return (int)FROM_32(nodecount); }
+	int getNodeX(int i) const { return (int)FROM_32(nlistx[i]); }
+	int getNodeY(int i) const { return (int)FROM_32(nlisty[i]); }
 
 	// get Inter-node line structure
-	const LINEINFO *getLineinfo(int i) const { return ((const LINEINFO *)(_pStart + (int)FROM_LE_32(plinelist))) + i; }
+	const LINEINFO *getLineinfo(int i) const { return ((const LINEINFO *)(_pStart + (int)FROM_32(plinelist))) + i; }
 
 protected:
 	POLY_TYPE type;		///< type of polygon
@@ -230,8 +230,8 @@ void Poly::nextPoly() {
 	const byte *pRecord = _pData;
 
 	int typeVal = nextLong(_pData);
-	if ((FROM_LE_32(typeVal) == 5) && TinselV2)
-		typeVal = TO_LE_32(6);
+	if ((FROM_32(typeVal) == 5) && TinselV2)
+		typeVal = TO_32(6);
 	type = (POLY_TYPE)typeVal;
 
 	for (int i = 0; i < 4; ++i)
@@ -275,8 +275,8 @@ void Poly::nextPoly() {
 	pnodelisty = nextLong(_pData);
 	plinelist = nextLong(_pData);
 
-	nlistx = (const int32 *)(_pStart + (int)FROM_LE_32(pnodelistx));
-	nlisty = (const int32 *)(_pStart + (int)FROM_LE_32(pnodelisty));
+	nlistx = (const int32 *)(_pStart + (int)FROM_32(pnodelistx));
+	nlisty = (const int32 *)(_pStart + (int)FROM_32(pnodelisty));
 
 	if (TinselV0)
 		// Skip to the last 4 bytes of the record for the hScript value
@@ -591,16 +591,16 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 	for (int i = 0; i < ptp.getNodecount() - 1; i++) {
 		const LINEINFO *line = ptp.getLineinfo(i);
 
-		const int32	a = (int)FROM_LE_32(line->a);
-		const int32	b = (int)FROM_LE_32(line->b);
-		const int32	c = (int)FROM_LE_32(line->c);
+		const int32	a = (int)FROM_32(line->a);
+		const int32	b = (int)FROM_32(line->b);
+		const int32	c = (int)FROM_32(line->c);
 
 #if 1
 		// TODO: If the comments of the LINEINFO struct are correct, then it contains mostly
 		// duplicate data, probably in an effort to safe CPU cycles. Even on the slowest devices
 		// we support, calculating a product of two ints is not an issue.
 		// So we can just load & endian convert a,b,c, then replace stuff like
-		//   (int)FROM_LE_32(line->ab)
+		//   (int)FROM_32(line->ab)
 		// by simply a*b, which makes it easier to understand what the code does, too.
 		// Just in case there is some bugged data, I leave this code here for verifying it.
 		// Let's leave it in for some time.
@@ -608,14 +608,14 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 		// One bad thing: We use sqrt to compute a square root. Might not be a good idea,
 		// speed wise. Maybe we should take Vicent's fp_sqroot. But that's a problem for later.
 
-		int32	a2 = (int)FROM_LE_32(line->a2);             ///< a squared
-		int32	b2 = (int)FROM_LE_32(line->b2);             ///< b squared
-		int32	a2pb2 = (int)FROM_LE_32(line->a2pb2);          ///< a squared + b squared
-		int32	ra2pb2 = (int)FROM_LE_32(line->ra2pb2);         ///< root(a squared + b squared)
+		int32	a2 = (int)FROM_32(line->a2);             ///< a squared
+		int32	b2 = (int)FROM_32(line->b2);             ///< b squared
+		int32	a2pb2 = (int)FROM_32(line->a2pb2);          ///< a squared + b squared
+		int32	ra2pb2 = (int)FROM_32(line->ra2pb2);         ///< root(a squared + b squared)
 
-		int32	ab = (int)FROM_LE_32(line->ab);
-		int32	ac = (int)FROM_LE_32(line->ac);
-		int32	bc = (int)FROM_LE_32(line->bc);
+		int32	ab = (int)FROM_32(line->ab);
+		int32	ac = (int)FROM_32(line->ac);
+		int32	bc = (int)FROM_32(line->bc);
 
 		assert(a*a == a2);
 		assert(b*b == b2);
@@ -676,9 +676,9 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 
 		// A point on a line is nearest
 		const LINEINFO *line = ptp.getLineinfo(nearestL);
-		const int32	a = (int)FROM_LE_32(line->a);
-		const int32	b = (int)FROM_LE_32(line->b);
-		const int32	c = (int)FROM_LE_32(line->c);
+		const int32	a = (int)FROM_32(line->a);
+		const int32	b = (int)FROM_32(line->b);
+		const int32	c = (int)FROM_32(line->c);
 		dropX = ((b*b * h) - (a*b * k) - a*c) / (a*a + b*b);
 		dropY = ((a*a * k) - (a*b * h) - b*c) / (a*a + b*b);
 		*x = dropX;
@@ -994,15 +994,15 @@ int GetScale(HPOLYGON hPath, int y) {
 	Poly ptp(LockMem(pHandle), Polys[hPath]->pIndex);
 
 	// Path is of a constant scale?
-	if (FROM_LE_32(ptp.scale2) == 0)
-		return FROM_LE_32(ptp.scale1);
+	if (FROM_32(ptp.scale2) == 0)
+		return FROM_32(ptp.scale1);
 
-	assert(FROM_LE_32(ptp.scale1) >= FROM_LE_32(ptp.scale2));
+	assert(FROM_32(ptp.scale1) >= FROM_32(ptp.scale2));
 
-	zones = FROM_LE_32(ptp.scale1) - FROM_LE_32(ptp.scale2) + 1;
+	zones = FROM_32(ptp.scale1) - FROM_32(ptp.scale2) + 1;
 	zlen = (Polys[hPath]->pbottom - Polys[hPath]->ptop) / zones;
 
-	scale = FROM_LE_32(ptp.scale1);
+	scale = FROM_32(ptp.scale1);
 	top = Polys[hPath]->ptop;
 
 	do {
@@ -1011,7 +1011,7 @@ int GetScale(HPOLYGON hPath, int y) {
 			return scale;
 	} while (--scale);
 
-	return FROM_LE_32(ptp.scale2);
+	return FROM_32(ptp.scale2);
 }
 
 /**
@@ -1033,15 +1033,15 @@ int GetBrightness(HPOLYGON hPath, int y) {
 	Poly ptp(LockMem(pHandle), Polys[hPath]->pIndex);
 
 	// Path is of a constant brightness?
-	if (FROM_LE_32(ptp.bright1) == FROM_LE_32(ptp.bright2))
-		return FROM_LE_32(ptp.bright1);
+	if (FROM_32(ptp.bright1) == FROM_32(ptp.bright2))
+		return FROM_32(ptp.bright1);
 
-	assert(FROM_LE_32(ptp.bright1) >= FROM_LE_32(ptp.bright2));
+	assert(FROM_32(ptp.bright1) >= FROM_32(ptp.bright2));
 
-	zones = FROM_LE_32(ptp.bright1) - FROM_LE_32(ptp.bright2) + 1;
+	zones = FROM_32(ptp.bright1) - FROM_32(ptp.bright2) + 1;
 	zlen = (Polys[hPath]->pbottom - Polys[hPath]->ptop) / zones;
 
-	brightness = FROM_LE_32(ptp.bright1);
+	brightness = FROM_32(ptp.bright1);
 	top = Polys[hPath]->ptop;
 
 	do {
@@ -1050,7 +1050,7 @@ int GetBrightness(HPOLYGON hPath, int y) {
 			return brightness;
 	} while (--brightness);
 
-	return FROM_LE_32(ptp.bright2);
+	return FROM_32(ptp.bright2);
 }
 
 
@@ -1079,9 +1079,9 @@ void GetTagTag(HPOLYGON hp, SCNHANDLE *hTagText, int *tagx, int *tagy) {
 
 	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
 
-	*tagx = (int)FROM_LE_32(ptp.tagx) + (TinselV2 ? volatileStuff[hp].xoff : 0);
-	*tagy = (int)FROM_LE_32(ptp.tagy) + (TinselV2 ? volatileStuff[hp].yoff : 0);
-	*hTagText = FROM_LE_32(ptp.hTagtext);
+	*tagx = (int)FROM_32(ptp.tagx) + (TinselV2 ? volatileStuff[hp].xoff : 0);
+	*tagy = (int)FROM_32(ptp.tagy) + (TinselV2 ? volatileStuff[hp].yoff : 0);
+	*hTagText = FROM_32(ptp.hTagtext);
 }
 
 /**
@@ -1092,7 +1092,7 @@ SCNHANDLE GetPolyFilm(HPOLYGON hp) {
 
 	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
 
-	return FROM_LE_32(ptp.hFilm);
+	return FROM_32(ptp.hFilm);
 }
 
 /**
@@ -1103,7 +1103,7 @@ SCNHANDLE GetPolyScript(HPOLYGON hp) {
 
 	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
 
-	return FROM_LE_32(ptp.hScript);
+	return FROM_32(ptp.hScript);
 }
 
 REEL GetPolyReelType(HPOLYGON hp) {
@@ -1115,7 +1115,7 @@ REEL GetPolyReelType(HPOLYGON hp) {
 
 	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
 
-	return (REEL)FROM_LE_32(ptp.reel);
+	return (REEL)FROM_32(ptp.reel);
 }
 
 int32 GetPolyZfactor(HPOLYGON hp) {
@@ -1124,7 +1124,7 @@ int32 GetPolyZfactor(HPOLYGON hp) {
 
 	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
 
-	return (int)FROM_LE_32(ptp.zFactor);
+	return (int)FROM_32(ptp.zFactor);
 }
 
 int numNodes(HPOLYGON hp) {
@@ -1319,11 +1319,11 @@ static bool MatchingLevels(PPOLYGON p1, PPOLYGON p2) {
 	Poly pp1(pps, p1->pIndex);	// This polygon 1
 	Poly pp2(pps, p2->pIndex);	// This polygon 2
 
-	assert((int32)FROM_LE_32(pp1.level1) <= (int32)FROM_LE_32(pp1.level2));
-	assert((int32)FROM_LE_32(pp2.level1) <= (int32)FROM_LE_32(pp2.level2));
+	assert((int32)FROM_32(pp1.level1) <= (int32)FROM_32(pp1.level2));
+	assert((int32)FROM_32(pp2.level1) <= (int32)FROM_32(pp2.level2));
 
-	for (int pl = (int32)FROM_LE_32(pp1.level1); pl <= (int32)FROM_LE_32(pp1.level2); pl++) {
-		if (pl >= (int32)FROM_LE_32(pp2.level1) && pl <= (int32)FROM_LE_32(pp2.level2))
+	for (int pl = (int32)FROM_32(pp1.level1); pl <= (int32)FROM_32(pp1.level2); pl++) {
+		if (pl >= (int32)FROM_32(pp2.level1) && pl <= (int32)FROM_32(pp2.level2))
 			return true;
 	}
 
@@ -1604,17 +1604,17 @@ static PPOLYGON CommonInits(PTYPE polyType, int pno, const Poly &ptp, bool bRest
 	p->pIndex = pno;
 
 	for (i = 0; i < 4; i++) {		// Polygon definition
-		p->cx[i] = (short)FROM_LE_32(ptp.x[i]);
-		p->cy[i] = (short)FROM_LE_32(ptp.y[i]);
+		p->cx[i] = (short)FROM_32(ptp.x[i]);
+		p->cy[i] = (short)FROM_32(ptp.y[i]);
 	}
 
 	if (!bRestart) {
 		hp = PolygonIndex(p);
-		volatileStuff[hp].xoff = (short)FROM_LE_32(ptp.xoff);
-		volatileStuff[hp].yoff = (short)FROM_LE_32(ptp.yoff);
+		volatileStuff[hp].xoff = (short)FROM_32(ptp.xoff);
+		volatileStuff[hp].yoff = (short)FROM_32(ptp.yoff);
 	}
 
-	p->polyID = FROM_LE_32(ptp.id);			// Identifier
+	p->polyID = FROM_32(ptp.id);			// Identifier
 
 	FiddlyBit(p);
 
@@ -1731,7 +1731,7 @@ static void InitEffect(const Poly &ptp, int pno, bool bRestart) {
 static void InitRefer(const Poly &ptp, int pno, bool bRestart) {
 	PPOLYGON p = CommonInits(REFER, pno, ptp, bRestart);
 
-	p->subtype = FROM_LE_32(ptp.reftype);	// Refer type
+	p->subtype = FROM_32(ptp.reftype);	// Refer type
 }
 
 
@@ -1990,8 +1990,8 @@ void GetPolyNode(HPOLYGON hp, int *pNodeX, int *pNodeY) {
 		*pNodeX = 480;
 		*pNodeY = 408;
 	} else {
-		*pNodeX = FROM_LE_32(ptp.nodex);
-		*pNodeY = FROM_LE_32(ptp.nodey);
+		*pNodeX = FROM_32(ptp.nodex);
+		*pNodeY = FROM_32(ptp.nodey);
 	}
 
 	if (TinselV2) {

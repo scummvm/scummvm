@@ -109,7 +109,7 @@ void RestoreSceneProcess(INT_CONTEXT *pic) {
 
 	pStruc = (PROCESS_STRUC *)LockMem(g_hSceneProcess);
 	for (i = 0; i < g_numSceneProcess; i++) {
-		if (FROM_LE_32(pStruc[i].hProcessCode) == pic->hCode) {
+		if (FROM_32(pStruc[i].hProcessCode) == pic->hCode) {
 			CoroScheduler.createProcess(PID_PROCESS + i, RestoredProcessProcess,
 					 &pic, sizeof(pic));
 			break;
@@ -137,11 +137,11 @@ void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait
 
 	_ctx->pStruc = (PROCESS_STRUC *)LockMem(g_hSceneProcess);
 	for (i = 0; i < g_numSceneProcess; i++) {
-		if (FROM_LE_32(_ctx->pStruc[i].processId) == procID) {
+		if (FROM_32(_ctx->pStruc[i].processId) == procID) {
 			assert(_ctx->pStruc[i].hProcessCode);		// Must have some code to run
 
 			_ctx->pic = InitInterpretContext(GS_PROCESS,
-				FROM_LE_32(_ctx->pStruc[i].hProcessCode),
+				FROM_32(_ctx->pStruc[i].hProcessCode),
 				event,
 				NOPOLY,			// No polygon
 				0,			// No actor
@@ -176,7 +176,7 @@ void KillSceneProcess(uint32 procID) {
 
 	pStruc = (PROCESS_STRUC *) LockMem(g_hSceneProcess);
 	for (i = 0; i < g_numSceneProcess; i++) {
-		if (FROM_LE_32(pStruc[i].processId) == procID) {
+		if (FROM_32(pStruc[i].processId) == procID) {
 			CoroScheduler.killMatchingProcess(PID_PROCESS + i, -1);
 			break;
 		}
@@ -293,8 +293,8 @@ void GlobalProcesses(uint32 numProcess, byte *pProcess) {
 	byte *p = pProcess;
 
 	for (uint i = 0; i < numProcess; ++i, p += 8) {
-		g_pGlobalProcess[i].processId = READ_LE_UINT32(p);
-		g_pGlobalProcess[i].hProcessCode = READ_LE_UINT32(p + 4);
+		g_pGlobalProcess[i].processId = READ_32(p);
+		g_pGlobalProcess[i].hProcessCode = READ_32(p + 4);
 	}
 }
 
