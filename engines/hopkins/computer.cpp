@@ -85,7 +85,7 @@ void ComputerManager::setTextMode() {
 	_vm->_graphicsManager.LOAD_IMAGE("WINTEXT");
 	_vm->_graphicsManager.FADE_INW();
 	loadMenu();
-	_vm->_eventsManager.souris_flag = false;
+	_vm->_eventsManager._mouseFl = false;
 }
 
 /**
@@ -124,13 +124,12 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	char s[12]; 
 	const char *s2;
 
-	_vm->_eventsManager.ESC_KEY = 0;
+	_vm->_eventsManager._escKeyFl = false;
 	passwordMatch = false;
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	setVideoMode();
 	setTextColor(4);
 
-	_vm->_eventsManager.videkey();
 	setTextPosition(2, 4);
 	if (mode == COMPUTER_HOPKINS)
 		outText(Common::String(_menuText[0]._line));
@@ -195,8 +194,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 
 	if (passwordMatch) {
 		while (!_vm->shouldQuit()) {
-			_vm->_eventsManager.ESC_KEY = false;
-			_vm->_eventsManager.videkey();
+			_vm->_eventsManager._escKeyFl = false;
 			clearScreen();
 			setTextColor(4);
 			setTextPosition(2, 4);
@@ -222,7 +220,6 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				setTextPosition(16, 25);
 				outText2(Common::String(_menuText[11]._line));
 			} else if (mode == COMPUTER_SAMANTHAS) {
-				_vm->_eventsManager.videkey();
 				setTextPosition(10, 25);
 //				outText2(Common::String(_menuText[0x95A])); <=== CHECKME: Unexpected value! replaced by the following line, for consistancy
 				outText2(Common::String(_menuText[12]._line));
@@ -254,7 +251,6 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 			if (v12 == '1') {
 				displayGamesSubMenu();
 			} else if (mode == COMPUTER_HOPKINS) {
-				_vm->_eventsManager.videkey();
 				clearScreen();
 				setTextColor(4);
 				setTextPosition(2, 4);
@@ -307,7 +303,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();
 		restoreFBIRoom();
-		_vm->_eventsManager.MOUSE_OFF();
+		_vm->_eventsManager.mouseOff();
 	}
 	if (mode == 1)
 		_vm->_globals.SORTIE = 13;
@@ -365,8 +361,8 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 	int x2 = 0;
 
 	int textIndex = 0;
-	bool oldMouseFlag = _vm->_eventsManager.souris_flag;
-	_vm->_eventsManager.souris_flag = false;
+	bool oldMouseFlag = _vm->_eventsManager._mouseFl;
+	_vm->_eventsManager._mouseFl = false;
 
 	_vm->_fontManager.TEXT_NOW(xp, yp, "_", -4);
 	do {
@@ -480,7 +476,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 	
 	_vm->_eventsManager.VBL();
 	_inputBuf[textIndex] = 0;
-	_vm->_eventsManager.souris_flag = oldMouseFlag;
+	_vm->_eventsManager._mouseFl = oldMouseFlag;
 }
 
 /**
@@ -507,7 +503,7 @@ void ComputerManager::restoreFBIRoom() {
 
 	_vm->_globals.police_l = 12;
 	_vm->_globals.police_h = 21;
-	_vm->_eventsManager.souris_flag = true;
+	_vm->_eventsManager._mouseFl = true;
 }
 
 /**
@@ -528,7 +524,7 @@ void ComputerManager::readText(int idx) {
 	Common::String numStr; 
 	int num;
 
-	_vm->_eventsManager.ESC_KEY = false;
+	_vm->_eventsManager._escKeyFl = false;
 
 	if (_vm->_globals.FR == 0)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKAN.TXT");
@@ -585,7 +581,6 @@ void ComputerManager::readText(int idx) {
 		++v10;
 	} while (v4 != 37);
 
-	_vm->_eventsManager.videkey();
 	_vm->_eventsManager.keywin();
 	_vm->_globals.dos_free2(ptr);
 }
@@ -598,10 +593,9 @@ void ComputerManager::displayGamesSubMenu() {
 	uint oldSpeed = _vm->_globals.vitesse;
 
 	_vm->_globals.vitesse = 1;
-	_vm->_eventsManager.CHANGE_MOUSE(0);
+	_vm->_eventsManager.changeMouseCursor(0);
 	_breakoutSpr = g_PTRNUL;
-	_vm->_eventsManager.CASSE = true;
-	_vm->_eventsManager.CASSE_SOURIS_ON();
+	_vm->_eventsManager._breakoutFl = true;
 	_breakoutLevel = (int16 *)g_PTRNUL;
 	_breakoutBrickNbr = 0;
 	_breakoutScore = 0;
@@ -633,8 +627,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_soundManager.DEL_SAMPLE(2);
 	_vm->_soundManager.DEL_SAMPLE(3);
 	_vm->_globals.vitesse = oldSpeed;
-	_vm->_eventsManager.CASSE = false;
-	_vm->_eventsManager.CASSE_SOURIS_OFF();
+	_vm->_eventsManager._breakoutFl = false;
 	setVideoMode();
 	setTextColor(15);
 	clearScreen();
@@ -724,7 +717,7 @@ void ComputerManager::newLevel() {
 	RAQX = 150;
 	_vm->_objectsManager.SPRITE_ON(0);
 	_vm->_objectsManager.SPRITE_ON(1);
-	_vm->_eventsManager.MOUSE_ON1();
+	_vm->_eventsManager.mouseOn();
 	_vm->_soundManager.PLAY_SAMPLE(3, 5);
 }
 
@@ -809,7 +802,7 @@ void ComputerManager::playBreakout() {
 	while (!_vm->shouldQuit()) {
 		while (!_vm->shouldQuit()) {
 			// Set up the racket and ball
-			_vm->_eventsManager.MOUSE_OFF();
+			_vm->_eventsManager.mouseOff();
 			_ballPosition = Common::Point(RAQX + 14, 187);
 			_vm->_objectsManager.SETYSPR(1, 187);
 			_vm->_objectsManager.SETXSPR(1, _ballPosition.x);
@@ -819,8 +812,8 @@ void ComputerManager::playBreakout() {
 
 			// Wait for mouse press to start playing
 			do {
-				RAQX = _vm->_eventsManager.XMOUSE();
-				if (_vm->_eventsManager.souris_x <= 4)
+				RAQX = _vm->_eventsManager.getMouseX();
+				if (_vm->_eventsManager._mousePos.x <= 4)
 					RAQX = 5;
 				if (RAQX > 282)
 					RAQX = 282;
@@ -828,7 +821,7 @@ void ComputerManager::playBreakout() {
 				_vm->_objectsManager.SETXSPR(1, RAQX + 14);
 				_vm->_objectsManager.SETYSPR(1, 187);
 				_vm->_eventsManager.VBL();
-			} while (!_vm->shouldQuit() && _vm->_eventsManager.BMOUSE() != 1);
+			} while (!_vm->shouldQuit() && _vm->_eventsManager.getMouseButton() != 1);
 
 			_breakoutSpeed = 1;
 			_ballPosition = Common::Point(RAQX + 14, 187);
@@ -839,8 +832,8 @@ void ComputerManager::playBreakout() {
 			do {
 				_vm->_soundManager.checkSounds();
 
-				RAQX = _vm->_eventsManager.XMOUSE();
-				if (_vm->_eventsManager.souris_x <= 4)
+				RAQX = _vm->_eventsManager.getMouseX();
+				if (_vm->_eventsManager._mousePos.x <= 4)
 					RAQX = 5;
 				if (RAQX > 282)
 					RAQX = 282;
@@ -858,7 +851,7 @@ void ComputerManager::playBreakout() {
 				if (_breakoutLives)
 					continue;
 			}
-			_vm->_eventsManager.MOUSE_ON1();
+			_vm->_eventsManager.mouseOn();
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.SPRITE_OFF(1);
 			if (_breakoutScore > _breakoutHiscore)
@@ -923,18 +916,18 @@ int ComputerManager::displayHiscores() {
 	buttonIndex = 0;
 	do {
 		_vm->_eventsManager.CONTROLE_MES();
-		xp = _vm->_eventsManager.XMOUSE();
-		yp = _vm->_eventsManager.YMOUSE();
+		xp = _vm->_eventsManager.getMouseX();
+		yp = _vm->_eventsManager.getMouseY();
 
-		if (_vm->_eventsManager.BMOUSE() == 1 && ABS(xp - 79) <= 33 && ABS(yp - 396) <= 13)
+		if (_vm->_eventsManager.getMouseButton() == 1 && ABS(xp - 79) <= 33 && ABS(yp - 396) <= 13)
 			buttonIndex = 1;
-		else if (_vm->_eventsManager.BMOUSE() == 1 && ABS(xp - 583) <= 32 && ABS(yp - 396) <= 13)
+		else if (_vm->_eventsManager.getMouseButton() == 1 && ABS(xp - 583) <= 32 && ABS(yp - 396) <= 13)
 			buttonIndex = 2;
 
 		_vm->_eventsManager.VBL();
 	} while (!buttonIndex && !_vm->shouldQuit());
 
-	_vm->_eventsManager.MOUSE_OFF();
+	_vm->_eventsManager.mouseOff();
 	_vm->_graphicsManager.FADE_OUT_CASSE();
 	_vm->_globals.LIBERE_FICHIER(ptr);
 	return buttonIndex;

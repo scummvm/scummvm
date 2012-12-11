@@ -122,7 +122,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	PLIGNE4 = v2 + 3;
 	v14 = _vm->_eventsManager.btsouris;
 	_vm->_eventsManager.btsouris = 4;
-	_vm->_eventsManager.CHANGE_MOUSE(0);
+	_vm->_eventsManager.changeMouseCursor(0);
 	if (!_vm->_globals.NOPARLE) {
 		v4 = v2 + 3;
 		do {
@@ -154,7 +154,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_objectsManager.PERSO_ON = false;
 	_vm->_eventsManager.btsouris = v14;
 	
-	_vm->_eventsManager.CHANGE_MOUSE(v14);
+	_vm->_eventsManager.changeMouseCursor(v14);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 
 	if (_vm->getIsDemo() == false)
@@ -165,15 +165,15 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_graphicsManager.DD_LOCK();
 	if (_vm->_graphicsManager.Winbpp == 2) {
 		if (_vm->_graphicsManager.SDL_ECHELLE)
-			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
-			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	if (_vm->_graphicsManager.Winbpp == 1) {
 		if (_vm->_graphicsManager.SDL_ECHELLE)
-			_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
-			_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsManager.DD_UNLOCK();
 	v8 = _vm->_graphicsManager.VESA_BUFFER;
@@ -236,7 +236,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	PLIGNE4 = v1 + 3;
 	int v8 = _vm->_eventsManager.btsouris;
 	_vm->_eventsManager.btsouris = 4;
-	_vm->_eventsManager.CHANGE_MOUSE(0);
+	_vm->_eventsManager.changeMouseCursor(0);
   
 	if (!_vm->_globals.NOPARLE) {
 		int v2 = v1 + 3;
@@ -261,7 +261,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
 	_vm->_eventsManager.btsouris = v8;
 
-	_vm->_eventsManager.CHANGE_MOUSE(v8);
+	_vm->_eventsManager.changeMouseCursor(v8);
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	_vm->_objectsManager.DESACTIVE_CURSOR = 0;
@@ -332,7 +332,7 @@ int TalkManager::DIALOGUE() {
 	v5 = -1;
 	v6 = 0;
   	do {
-		v7 = _vm->_eventsManager.YMOUSE();
+		v7 = _vm->_eventsManager.getMouseY();
 		if ((v4 - 20 * v19) < v7 && (v4 - 1) > v7) {
 			v8 = v7;
 			_vm->_fontManager.OPTI_COUL_TXT(6, 7, 8, 5);
@@ -357,7 +357,7 @@ int TalkManager::DIALOGUE() {
 		}
     
 		_vm->_eventsManager.VBL();
-		if (_vm->_eventsManager.BMOUSE())
+		if (_vm->_eventsManager.getMouseButton())
 			v6 = 1;
 		if (v5 == -1)
 			v6 = 0;
@@ -492,7 +492,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 				++v14;
 				if ( _vm->_eventsManager.souris_b || _vm->_eventsManager.souris_bb )
 					v14 = v6;
-				if (_vm->_eventsManager.BMOUSE()) {
+				if (_vm->_eventsManager.getMouseButton()) {
 					i = 5;
 					tmpVal = v6 / 5;
 				if (tmpVal < 0)
@@ -807,7 +807,7 @@ void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 		do {
 			v7 = (int16)READ_LE_UINT16(&v8[2 * v6 + 4]);
 			if (v7 && _vm->_globals.vitesse != 501)
-				_vm->_graphicsManager.AFFICHE_SPEED(PERSOSPR, _vm->_eventsManager.start_x + (int16)READ_LE_UINT16(&v8[2 * v6]),
+				_vm->_graphicsManager.AFFICHE_SPEED(PERSOSPR, _vm->_eventsManager._startPos.x + (int16)READ_LE_UINT16(&v8[2 * v6]),
 				    (int16)READ_LE_UINT16(&v8[2 * v6 + 2]), v9[2 * v6 + 8]);
 			v6 += 5;
 		} while (_vm->_globals.vitesse != 501 && v7);
@@ -1218,7 +1218,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	while (v2 <= 44);
 	_vm->_objectsManager.NUMZONE = -1;
 	_vm->_eventsManager.btsouris = 4;
-	_vm->_eventsManager.CHANGE_MOUSE(0);
+	_vm->_eventsManager.changeMouseCursor(0);
 	BUFFERPERSO = _vm->_fileManager.searchCat(a2, 5);
 	TAILLEPERSO = _vm->_globals.CAT_TAILLE;
 	if (BUFFERPERSO == g_PTRNUL) {
@@ -1277,7 +1277,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_objectsManager.FORCEZONE = 1;
 	_vm->_objectsManager.NUMZONE = -1;
 	do {
-		v12 = _vm->_eventsManager.BMOUSE();
+		v12 = _vm->_eventsManager.getMouseButton();
 		if (v12 == 1) {
 			_vm->_objectsManager.BTGAUCHE();
 			v12 = 1;
@@ -1321,7 +1321,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	_vm->_objectsManager.PERSO_ON = false;
 	_vm->_eventsManager.btsouris = 4;
-	_vm->_eventsManager.CHANGE_MOUSE(4);
+	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 
 	if (!_vm->getIsDemo())
@@ -1332,15 +1332,15 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_graphicsManager.DD_Lock();
 	if (_vm->_graphicsManager.Winbpp == 2) {
 		if (_vm->_graphicsManager.SDL_ECHELLE)
-			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
-			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	if (_vm->_graphicsManager.Winbpp == 1) {
 		if (_vm->_graphicsManager.SDL_ECHELLE)
-			_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
-			_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsManager.DD_Unlock();
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);

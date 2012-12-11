@@ -101,7 +101,7 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
 // Change Object
 byte *ObjectsManager::CHANGE_OBJET(int objIndex) {
 	byte *result = CAPTURE_OBJET(objIndex, 1);
-	_vm->_eventsManager.Bufferobjet = result;
+	_vm->_eventsManager._objectBuf = result;
 	_vm->_globals.Nouv_objet = 1;
 	_vm->_globals.OBJET_EN_COURS = objIndex;
 	return result;
@@ -141,8 +141,8 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 		break;
 
 	case 1:
-		sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_eventsManager.Bufferobjet, val2);
-		dataP = _vm->_eventsManager.Bufferobjet;
+		sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_eventsManager._objectBuf, val2);
+		dataP = _vm->_eventsManager._objectBuf;
 		break;
 
 	case 3:
@@ -491,32 +491,32 @@ void ObjectsManager::AFF_SPRITES() {
 	}
   
 	if (SL_FLAG == true) {
-		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, SL_SPR, _vm->_eventsManager.start_x + 183, 60, 0x112u, 353);
+		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 0x112u, 353);
 		if (SL_X && SL_Y)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, SL_SPR2, SL_X + _vm->_eventsManager.start_x + 300, SL_Y + 300, 0);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, SL_SPR2, SL_X + _vm->_eventsManager._startPos.x + 300, SL_Y + 300, 0);
     
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 183, 60, _vm->_eventsManager.start_x + 457, 413);
+		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
 	}
 
 	// If the Options dialog is activated, draw the elements
 	if (_vm->_globals._optionDialogFl) {
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
-			_vm->_eventsManager.start_x + 464, 407, 0);
+			_vm->_eventsManager._startPos.x + 464, 407, 0);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
-			_vm->_eventsManager.start_x + 657, 556, _vm->_globals.opt_vitesse);
+			_vm->_eventsManager._startPos.x + 657, 556, _vm->_globals.opt_vitesse);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
-			_vm->_eventsManager.start_x + 731, 495, _vm->_globals.opt_txt);
+			_vm->_eventsManager._startPos.x + 731, 495, _vm->_globals.opt_txt);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
-			_vm->_eventsManager.start_x + 731, 468, _vm->_globals.opt_voice);
+			_vm->_eventsManager._startPos.x + 731, 468, _vm->_globals.opt_voice);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
-			_vm->_eventsManager.start_x + 731, 441, _vm->_globals.opt_sound);
+			_vm->_eventsManager._startPos.x + 731, 441, _vm->_globals.opt_sound);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
-			_vm->_eventsManager.start_x + 731, 414, _vm->_globals.opt_music);
+			_vm->_eventsManager._startPos.x + 731, 414, _vm->_globals.opt_music);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
-			_vm->_eventsManager.start_x + 600, 522, _vm->_globals.opt_anm);
+			_vm->_eventsManager._startPos.x + 600, 522, _vm->_globals.opt_anm);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
-			_vm->_eventsManager.start_x + 611, 502, _vm->_globals.opt_scrspeed);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager.start_x + 164, 107, _vm->_eventsManager.start_x + 498, 320);
+			_vm->_eventsManager._startPos.x + 611, 502, _vm->_globals.opt_scrspeed);
+		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 164, 107, _vm->_eventsManager._startPos.x + 498, 320);
 	}
 
 	// Loop to draw any on-screen text
@@ -525,7 +525,7 @@ void ObjectsManager::AFF_SPRITES() {
 			if ((uint16)(_vm->_fontManager.Txt[idx].field3FC - 2) > 1)
 				_vm->_fontManager.BOITE(idx,
 					_vm->_fontManager.Txt[idx].messageId, _vm->_fontManager.Txt[idx].filename,
-					_vm->_eventsManager.start_x + _vm->_fontManager.Txt[idx].xp, _vm->_fontManager.Txt[idx].yp);
+					_vm->_eventsManager._startPos.x + _vm->_fontManager.Txt[idx].xp, _vm->_fontManager.Txt[idx].yp);
 			else
 				_vm->_fontManager.BOITE(
 				  idx,
@@ -536,7 +536,7 @@ void ObjectsManager::AFF_SPRITES() {
 			_vm->_fontManager.ListeTxt[idx].enabled = true;
 			
 			if ((uint16)(_vm->_fontManager.Txt[idx].field3FC - 2) > 1)
-				_vm->_fontManager.ListeTxt[idx].xp = _vm->_eventsManager.start_x + _vm->_fontManager.Txt[idx].xp;
+				_vm->_fontManager.ListeTxt[idx].xp = _vm->_eventsManager._startPos.x + _vm->_fontManager.Txt[idx].xp;
 			else
 				_vm->_fontManager.ListeTxt[idx].xp = _vm->_fontManager.Txt[idx].xp;
       
@@ -1216,7 +1216,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 				_vm->_globals.Bob[idx].xp = _vm->_globals.BL_ANIM[idx].v2;
 			if ( PERSO_ON == true && idx > 20 )
-				_vm->_globals.Bob[idx].xp += _vm->_eventsManager.start_x;
+				_vm->_globals.Bob[idx].xp += _vm->_eventsManager._startPos.x;
       
 			_vm->_globals.Bob[idx].yp = (int16)READ_LE_UINT16(v20 + 2 * v24 + 2);
 			_vm->_globals.Bob[idx].field12 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 4);
@@ -1257,7 +1257,7 @@ LABEL_38:
 					if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 						_vm->_globals.Bob[idx].xp = _vm->_globals.BL_ANIM[idx].v2;
 					if (PERSO_ON == true && idx > 20)
-						_vm->_globals.Bob[idx].xp += _vm->_eventsManager.start_x;
+						_vm->_globals.Bob[idx].xp += _vm->_eventsManager._startPos.x;
 
 					_vm->_globals.Bob[idx].yp = (int16)READ_LE_UINT16(v21 + 2);
 					_vm->_globals.Bob[idx].field12 = (int16)READ_LE_UINT16(v21 + 4);
@@ -1630,11 +1630,11 @@ void ObjectsManager::VERIFZONE() {
 	uint16 v3;
 	int v4;
 
-	v0 = _vm->_eventsManager.XMOUSE();
-	v1 = _vm->_eventsManager.YMOUSE();
+	v0 = _vm->_eventsManager.getMouseX();
+	v1 = _vm->_eventsManager.getMouseY();
 	v2 = v1;
 	if (_vm->_globals.PLAN_FLAG
-	        || _vm->_eventsManager.start_x >= v0
+	        || _vm->_eventsManager._startPos.x >= v0
 	        || (v1 = _vm->_graphicsManager.ofscroll + 54, v0 >= v1)
 	        || (v1 = v2 - 1, (uint16)(v2 - 1) > 0x3Bu)) {
 		if (FLAG_VISIBLE == true)
@@ -1663,7 +1663,7 @@ void ObjectsManager::VERIFZONE() {
 			if (_vm->_globals.old_zone_68 != v4) {
 				_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 				_vm->_eventsManager.btsouris = 4;
-				_vm->_eventsManager.CHANGE_MOUSE(4);
+				_vm->_eventsManager.changeMouseCursor(4);
 				if (_vm->_globals.zozo_73 == 1) {
 					_vm->_fontManager.TEXTE_OFF(5);
 					_vm->_globals.zozo_73 = 0;
@@ -1698,7 +1698,7 @@ LABEL_54:
 					if (_vm->_eventsManager.btsouris == 4) {
 						v1 = 5 * v4;
 						if (_vm->_globals.ZONEP[v4].field6 == 2) {
-							_vm->_eventsManager.CHANGE_MOUSE(16);
+							_vm->_eventsManager.changeMouseCursor(16);
 							_vm->_eventsManager.btsouris = 16;
 							verbe = 16;
 						}
@@ -1706,7 +1706,7 @@ LABEL_54:
 				} else {
 					_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 					_vm->_eventsManager.btsouris = 4;
-					_vm->_eventsManager.CHANGE_MOUSE(4);
+					_vm->_eventsManager.changeMouseCursor(4);
 				}
 			}
 			NUMZONE = v4;
@@ -1723,7 +1723,7 @@ LABEL_54:
 			if ((_vm->_globals.PLAN_FLAG == true && v4 == -1) || !v4) {
 				verbe = 0;
 				_vm->_eventsManager.btsouris = 0;
-				_vm->_eventsManager.CHANGE_MOUSE(0);
+				_vm->_eventsManager.changeMouseCursor(0);
 			}
 		}
 	}
@@ -2554,7 +2554,7 @@ void ObjectsManager::PLAN_BETA() {
 
 	v1 = 0;
 	_vm->_dialogsManager._inventFl = false;
-	_vm->_eventsManager.GAME_KEY = KEY_NONE;
+	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_globals.Max_Propre = 1;
 	_vm->_globals.Max_Ligne_Long = 1;
 	_vm->_globals.Max_Propre_Gen = 1;
@@ -2593,9 +2593,9 @@ void ObjectsManager::PLAN_BETA() {
 		_vm->_globals.PLANI = 1;
 	}
 	SPRITE(sprite_ptr, _vm->_globals.PLANX, _vm->_globals.PLANY, 0, _vm->_globals.PLANI, 0, 0, 5, 5);
-	_vm->_eventsManager.souris_xy(_vm->_globals.PLANX, _vm->_globals.PLANY);
+	_vm->_eventsManager.setMouseXY(_vm->_globals.PLANX, _vm->_globals.PLANY);
 	my_anim = 0;
-	_vm->_eventsManager.MOUSE_ON();
+	_vm->_eventsManager.mouseOn();
 	v3 = XSPR(0);
 	_vm->_graphicsManager.SCROLL_ECRAN(v3 - 320);
 	_vm->_graphicsManager.ofscroll = XSPR(0) - 320;
@@ -2616,11 +2616,11 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.BPP_NOAFF = false;
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.FADE_INW();
-	_vm->_eventsManager.CHANGE_MOUSE(4);
+	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_graphicsManager.NOFADE = false;
   
 	do {
-		v5 = _vm->_eventsManager.BMOUSE();
+		v5 = _vm->_eventsManager.getMouseButton();
 		if (v5) {
 			if (_vm->_globals.SAUVEGARDE->data[svField170] == 1 && !_vm->_globals.SAUVEGARDE->data[svField171]) {
 				_vm->_globals.SAUVEGARDE->data[svField171] = 1;
@@ -2689,15 +2689,15 @@ void ObjectsManager::BTGAUCHE() {
 	int v18;
 
 	_vm->_fontManager.TEXTE_OFF(9);
-	destX = _vm->_eventsManager.XMOUSE();
-	destY = _vm->_eventsManager.YMOUSE();
+	destX = _vm->_eventsManager.getMouseX();
+	destY = _vm->_eventsManager.getMouseY();
 
 	if (!_vm->_dialogsManager._inventFl && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager.ofscroll - 30 && destX < _vm->_graphicsManager.ofscroll + 50 && (uint16)(destY + 29) <= 0x4Eu) {
 		v1 = _vm->_eventsManager.btsouris;
 		_vm->_dialogsManager._inventFl = true;
 		_vm->_dialogsManager.showInventory();
 		_vm->_dialogsManager._inventFl = false;
-		_vm->_eventsManager.GAME_KEY = KEY_NONE;
+		_vm->_eventsManager._gameKey = KEY_NONE;
 		if (!_vm->_globals.SORTIE) {
 			_vm->_dialogsManager._inventFl = false;
 			_vm->_eventsManager.btsouris = v1;
@@ -2862,9 +2862,7 @@ void ObjectsManager::PARADISE() {
 	int v1;
 	char result;
 	int v3; 
-	uint16 v4;
 	int v5; 
-	uint16 v6;
 
 	v1 = 0;
 	ARRET_PERSO_FLAG = 0;
@@ -2875,15 +2873,15 @@ void ObjectsManager::PARADISE() {
 		if (!_vm->_globals.FORET || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
 			if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
 				_vm->_graphicsManager.no_scroll = 2;
-				if (_vm->_eventsManager.start_x >= XSPR(0) - 320)
+				if (_vm->_eventsManager._startPos.x >= XSPR(0) - 320)
 					goto LABEL_64;
-				v3 = _vm->_eventsManager.start_x + 320 - XSPR(0);
+				v3 = _vm->_eventsManager._startPos.x + 320 - XSPR(0);
 				if (v3 < 0)
 					v3 = -v3;
 				if (v3 <= 160) {
 LABEL_64:
-					if (_vm->_eventsManager.start_x > XSPR(0) - 320) {
-						v5 = _vm->_eventsManager.start_x + 320 - XSPR(0);
+					if (_vm->_eventsManager._startPos.x > XSPR(0) - 320) {
+						v5 = _vm->_eventsManager._startPos.x + 320 - XSPR(0);
 						if (v5 < 0)
 							v5 = -v5;
 						if (v5 > 160) {
@@ -2898,12 +2896,11 @@ LABEL_64:
 									_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
 									v1 = 1;
 								}
-								if (_vm->_eventsManager.XMOUSE() > _vm->_graphicsManager.SCROLL + 620) {
-									v6 = _vm->_eventsManager.YMOUSE();
-									_vm->_eventsManager.souris_xy(_vm->_eventsManager.souris_x - 4, v6);
-								}
+								if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager.SCROLL + 620)
+									_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x - 4, _vm->_eventsManager.getMouseY());
+
 								_vm->_eventsManager.VBL();
-							} while (v1 != 1 && _vm->_eventsManager.start_x > XSPR(0) - 320);
+							} while (v1 != 1 && _vm->_eventsManager._startPos.x > XSPR(0) - 320);
 						}
 					}
 				} else {
@@ -2917,17 +2914,16 @@ LABEL_64:
 							_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
 							v1 = 1;
 						}
-						if (_vm->_eventsManager.XMOUSE() < _vm->_graphicsManager.SCROLL + 10) {
-							v4 = _vm->_eventsManager.YMOUSE();
-							_vm->_eventsManager.souris_xy(_vm->_eventsManager.souris_x + 4, v4);
-						}
+						if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager.SCROLL + 10)
+							_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x + 4, _vm->_eventsManager.getMouseY());
+
 						_vm->_eventsManager.VBL();
-					} while (v1 != 1 && _vm->_eventsManager.start_x < XSPR(0) - 320);
+					} while (v1 != 1 && _vm->_eventsManager._startPos.x < XSPR(0) - 320);
 				}
-				if (_vm->_eventsManager.XMOUSE() > _vm->_graphicsManager.SCROLL + 620)
-					_vm->_eventsManager.souris_xy(_vm->_graphicsManager.SCROLL + 610, 0);
-				if (_vm->_eventsManager.XMOUSE() < _vm->_graphicsManager.SCROLL + 10)
-					_vm->_eventsManager.souris_xy(_vm->_graphicsManager.SCROLL + 10, 0);
+				if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager.SCROLL + 620)
+					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager.SCROLL + 610, 0);
+				if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager.SCROLL + 10)
+					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager.SCROLL + 10, 0);
 				_vm->_eventsManager.VBL();
 				_vm->_graphicsManager.no_scroll = 0;
 			}
@@ -2935,7 +2931,7 @@ LABEL_64:
 		} else {
 			_vm->_talkManager.REPONSE2(_vm->_globals.SAUVEGARDE->data[svField2], _vm->_globals.SAUVEGARDE->data[svField1]);
 		}
-		_vm->_eventsManager.CHANGE_MOUSE(4);
+		_vm->_eventsManager.changeMouseCursor(4);
 		if ((uint16)(NUMZONE + 1) > 1u && !_vm->_globals.ZONEP[NUMZONE].field16) {
 			NUMZONE = -1;
 			FORCEZONE = 1;
@@ -2953,14 +2949,14 @@ LABEL_64:
 				_vm->_eventsManager.btsouris = 4;
 		}
 		if (_vm->_eventsManager.btsouris != 23)
-			_vm->_eventsManager.CHANGE_MOUSE(_vm->_eventsManager.btsouris);
+			_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager.btsouris);
 		NUMZONE = 0;
 		_vm->_globals.SAUVEGARDE->data[svField1] = 0;
 		_vm->_globals.SAUVEGARDE->data[svField2] = 0;
 	}
 	if (_vm->_globals.PLAN_FLAG == true) {
 		_vm->_eventsManager.btsouris = 0;
-		_vm->_eventsManager.CHANGE_MOUSE(0);
+		_vm->_eventsManager.changeMouseCursor(0);
 	}
 	if (_vm->_globals.NOMARCHE == true) {
 		if (_vm->_eventsManager.btsouris == 4) {
@@ -3011,7 +3007,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 		_vm->_globals.COUCOU = _vm->_globals.LIBERE_FICHIER(_vm->_globals.COUCOU);
 	if (g_PTRNUL != _vm->_globals.SPRITE_ECRAN)
 		_vm->_globals.SPRITE_ECRAN = _vm->_globals.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
-	_vm->_eventsManager.start_x = 0;
+	_vm->_eventsManager._startPos.x = 0;
 	_vm->_eventsManager.souris_n = 0;
 	Vold_taille = 200;
 	_vm->_globals.SAUVEGARDE->data[svField1] = 0;
@@ -3820,7 +3816,7 @@ void ObjectsManager::BTDROITE() {
 	if ((uint16)(NUMZONE + 1) > 1u) {
 		VERBEPLUS();
 		if (_vm->_eventsManager.btsouris != 23)
-			_vm->_eventsManager.CHANGE_MOUSE(_vm->_eventsManager.btsouris);
+			_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager.btsouris);
 		verbe = _vm->_eventsManager.btsouris;
 	}
 }
@@ -3853,9 +3849,9 @@ int ObjectsManager::MZONE() {
 	v18 = 0;
 	v17 = 0;
 	v16 = 0;
-	xp = _vm->_eventsManager.souris_x + _vm->_eventsManager.ofset_souris_x;
-	yp = _vm->_eventsManager.souris_y + _vm->_eventsManager.ofset_souris_y;
-	if ((_vm->_eventsManager.souris_y + _vm->_eventsManager.ofset_souris_y) > 19) {
+	xp = _vm->_eventsManager._mousePos.x + _vm->_eventsManager._mouseOffset.x;
+	yp = _vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y;
+	if ((_vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y) > 19) {
 		v1 = 0;
 		do {
 			v2 = _vm->_globals.BOBZONE[v1];
@@ -4022,9 +4018,9 @@ void ObjectsManager::PARAMCADRE(int a1) {
 		cadi = 0;
 	}
 	if (_vm->_eventsManager.btsouris != 23)
-		_vm->_eventsManager.CHANGE_MOUSE(_vm->_eventsManager.btsouris);
-	_vm->_eventsManager.XMOUSE();
-	_vm->_eventsManager.YMOUSE();
+		_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager.btsouris);
+	_vm->_eventsManager.getMouseX();
+	_vm->_eventsManager.getMouseY();
 }
 
 void ObjectsManager::OBJETPLUS(int idx) {
@@ -4227,15 +4223,15 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_graphicsManager.DD_Lock();
 					if (_vm->_graphicsManager.Winbpp == 2) {
 						if (_vm->_graphicsManager.SDL_ECHELLE)
-							_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+							_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 						else
-							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					}
 					if (_vm->_graphicsManager.Winbpp == 1) {
 						if (_vm->_graphicsManager.SDL_ECHELLE)
-							_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+							_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 						else
-							_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager.start_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+							_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					}
 					_vm->_graphicsManager.DD_Unlock();
 					v2 = _vm->_graphicsManager.VESA_BUFFER;
@@ -5505,7 +5501,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 
 	v5 = 0;
 	_vm->_dialogsManager._inventFl = false;
-	_vm->_eventsManager.GAME_KEY = KEY_NONE;
+	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_graphicsManager.ofscroll = 0;
 	_vm->_globals.PLAN_FLAG = false;
@@ -5529,7 +5525,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		if (!s4.empty() && _vm->_globals.NOSPRECRAN)
 			_vm->_graphicsManager.INI_ECRAN2(s4);
 	}
-	_vm->_eventsManager.MOUSE_ON();
+	_vm->_eventsManager.mouseOn();
 	if (_vm->_globals.ECRAN == 61) {
 		SPRITE(_vm->_globals.PERSO, 330, 418, 0, 60, 0, 0, 34, 190);
 		SPRITE_ON(0);
@@ -5540,7 +5536,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	_vm->_eventsManager.CHANGE_MOUSE(4);
+	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_globals.BPP_NOAFF = true;
 	v6 = 0;
 	do {
@@ -5568,7 +5564,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		SETANISPR(0, 64);
 	}
 	do {
-		v9 = _vm->_eventsManager.BMOUSE();
+		v9 = _vm->_eventsManager.getMouseButton();
 		if (v9 == 1) {
 			BTGAUCHE();
 			v9 = 1;
@@ -5605,7 +5601,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	int xp, yp;
 
 	_vm->_dialogsManager._inventFl = false;
-	_vm->_eventsManager.GAME_KEY = KEY_NONE;
+	_vm->_eventsManager._gameKey = KEY_NONE;
 	verbe = 4;
 	_vm->_globals.MAX_COMPTE = 6;
 	_vm->_graphicsManager.ofscroll = 0;
@@ -5633,7 +5629,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		if (!s4.empty() && _vm->_globals.NOSPRECRAN)
 			_vm->_graphicsManager.INI_ECRAN2(s4);
 	}
-	_vm->_eventsManager.MOUSE_ON();
+	_vm->_eventsManager.mouseOn();
 	_vm->_eventsManager.btsouris = 4;
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -5666,7 +5662,7 @@ LABEL_70:
 		SPRITE(_vm->_globals.PERSO, PERX, PERY, 0, PERI, 0, 0, 28, 155);
 	if (_vm->_globals.PERSO_TYPE == 2)
 		SPRITE(_vm->_globals.PERSO, PERX, PERY, 0, PERI, 0, 0, 20, 127);
-	_vm->_eventsManager.souris_xy(PERX, PERY);
+	_vm->_eventsManager.setMouseXY(PERX, PERY);
 	if (_vm->_graphicsManager.DOUBLE_ECRAN == true)
 		_vm->_graphicsManager.SCROLL = (int16)XSPR(0) - 320;
 	VERIFTAILLE();
@@ -5691,19 +5687,19 @@ LABEL_70:
 	if (!_vm->_graphicsManager.NOFADE)
 		_vm->_graphicsManager.FADE_INW();
 	_vm->_graphicsManager.NOFADE = false;
-	_vm->_eventsManager.CHANGE_MOUSE(4);
+	_vm->_eventsManager.changeMouseCursor(4);
 
 	int xCheck = 0; 
 	int yCheck = 0; 
 
 	breakFlag = false;
 	while (!_vm->shouldQuit() && !breakFlag) {
-		mouseButtons = _vm->_eventsManager.BMOUSE();
+		mouseButtons = _vm->_eventsManager.getMouseButton();
 		if (mouseButtons) {
 			if (mouseButtons == 1) {
 				if (verbe == 16 && _vm->_eventsManager.btsouris == 16) {
-					xp = _vm->_eventsManager.XMOUSE();
-					yp = _vm->_eventsManager.YMOUSE();
+					xp = _vm->_eventsManager.getMouseX();
+					yp = _vm->_eventsManager.getMouseY();
 
 					if (xCheck == xp) {
 						if (yCheck == yp) {

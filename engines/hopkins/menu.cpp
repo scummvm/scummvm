@@ -58,7 +58,7 @@ int MenuManager::MENU() {
 	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
 		_vm->_globals.FORET = false;
-		_vm->_eventsManager.CASSE = false;
+		_vm->_eventsManager._breakoutFl = false;
 		_vm->_globals._disableInventFl = true;
 		_vm->_globals.FLAG_VISIBLE = false;
 		_vm->_globals.SORTIE = 0;
@@ -91,8 +91,8 @@ int MenuManager::MENU() {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUES.SPR");
     
 		spriteData = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
-		_vm->_eventsManager.MOUSE_ON();
-		_vm->_eventsManager.CHANGE_MOUSE(0);
+		_vm->_eventsManager.mouseOn();
+		_vm->_eventsManager.changeMouseCursor(0);
 		_vm->_eventsManager.btsouris = 0;
 		_vm->_eventsManager.souris_n = 0;
     
@@ -107,7 +107,7 @@ int MenuManager::MENU() {
 						return -1;
 
 					menuIndex = MENU_NONE;
-					mousePos = Common::Point(_vm->_eventsManager.XMOUSE(), _vm->_eventsManager.YMOUSE());
+					mousePos = Common::Point(_vm->_eventsManager.getMouseX(), _vm->_eventsManager.getMouseY());
           
 					if ((uint16)(mousePos.x - 232) <= 176) {
 						if ((uint16)(mousePos.y - 261) <= 23)
@@ -174,7 +174,7 @@ int MenuManager::MENU() {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, frame5Index + 8);
 					_vm->_eventsManager.VBL();
           
-					if (_vm->_eventsManager.BMOUSE() == 1 && menuIndex != MENU_NONE)
+					if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
 						selectionMade = 1;
 				} while (!selectionMade);
         

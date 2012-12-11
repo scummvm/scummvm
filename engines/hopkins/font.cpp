@@ -262,7 +262,7 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			if (v17 < 0)
 				v17 = -v17;
 			Txt[idx].xp = 320 - v17;
-			v73 = _vm->_eventsManager.start_x + 320 - v17;
+			v73 = _vm->_eventsManager._startPos.x + 320 - v17;
 			lineCount = 1;
 			if (v64 + 1 > 0) {
 				Txt[idx].lines[0] = Common::String((const char *)v60, v64);
@@ -351,10 +351,10 @@ LABEL_57:
 
 			if ((uint16)(Txt[idx].field3FC - 2) > 1u) {
 				int i;
-				for (i = xp - _vm->_eventsManager.start_x; _vm->_globals.largeur_boite + i > 638 && i > -2 && Txt[idx].field3FC; i -= 2)
+				for (i = xp - _vm->_eventsManager._startPos.x; _vm->_globals.largeur_boite + i > 638 && i > -2 && Txt[idx].field3FC; i -= 2)
 					;
 				Txt[idx].xp = i;
-				v73 = _vm->_eventsManager.start_x + i;
+				v73 = _vm->_eventsManager._startPos.x + i;
 			} else {
 				if (_vm->_globals.nbrligne == (SCREEN_WIDTH - 1)) {
 					while (_vm->_globals.largeur_boite + v73 > 638 && v73 > -2)
@@ -377,8 +377,8 @@ LABEL_57:
 			if (v27 < 0)
 				v27 = -v27;
 			Txt[idx].xp = 315 - v27;
-			int v28 = _vm->_eventsManager.start_x + 315 - v27;
-			v73 = _vm->_eventsManager.start_x + 315 - v27;
+			int v28 = _vm->_eventsManager._startPos.x + 315 - v27;
+			v73 = _vm->_eventsManager._startPos.x + 315 - v27;
 			Txt[idx].yp = 50;
 			v70 = 50;
 			v55 = 50;
@@ -500,7 +500,7 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 			v9 += _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
 			v6 = _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v9 - v6, yp, v9, yp + 12);
-			if (_vm->_eventsManager.ESC_KEY) {
+			if (_vm->_eventsManager._escKeyFl) {
 				_vm->_globals.iRegul = 1;
 				_vm->_eventsManager.VBL();
 			} else {

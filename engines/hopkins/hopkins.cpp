@@ -68,14 +68,14 @@ Common::String HopkinsEngine::generateSaveName(int slot) {
  * Returns true if it is currently okay to restore a game
  */
 bool HopkinsEngine::canLoadGameStateCurrently() {
-	return !_globals.SORTIE && !_globals.PLAN_FLAG && _eventsManager.souris_flag;
+	return !_globals.SORTIE && !_globals.PLAN_FLAG && _eventsManager._mouseFl;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool HopkinsEngine::canSaveGameStateCurrently() {
-	return !_globals.SORTIE && !_globals.PLAN_FLAG && _eventsManager.souris_flag;
+	return !_globals.SORTIE && !_globals.PLAN_FLAG && _eventsManager._mouseFl;
 }
 
 /**
@@ -143,7 +143,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_graphicsManager.LOAD_IMAGE("H2");
 	_graphicsManager.FADE_INW();
 
-	if (!_eventsManager.ESC_KEY)
+	if (!_eventsManager._escKeyFl)
 		INTRORUN();
 
 	warning("TODO Fin_Interrupt()");
@@ -331,10 +331,10 @@ bool HopkinsEngine::runWin95Demo() {
 				else if (!_globals.FR)
 					_graphicsManager.LOAD_IMAGE("ENDUK");
 				_graphicsManager.FADE_INW();
-				_eventsManager.MOUSE_ON();
+				_eventsManager.mouseOn();
 				do
 					_eventsManager.VBL();
-				while (_eventsManager.BMOUSE() != 1);
+				while (_eventsManager.getMouseButton() != 1);
 				_graphicsManager.FADE_OUTW();
 				REST_SYSTEM();
 			}
@@ -457,7 +457,7 @@ bool HopkinsEngine::runLinuxDemo() {
 	_objectsManager.AJOUTE_OBJET(14);
 
 	_globals.HELICO = 0;
-	_eventsManager.MOUSE_OFF();
+	_eventsManager.mouseOff();
 
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
@@ -478,7 +478,7 @@ bool HopkinsEngine::runLinuxDemo() {
 	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
 
-	if (!_eventsManager.ESC_KEY)
+	if (!_eventsManager._escKeyFl)
 		INTRORUN();
   
 	_globals.iRegul = 0;
@@ -842,7 +842,7 @@ bool HopkinsEngine::runWin95full() {
 
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
 	_graphicsManager.FADE_OUTW();
-	if (!_eventsManager.ESC_KEY)
+	if (!_eventsManager._escKeyFl)
 		INTRORUN();
 	_graphicsManager.LOAD_IMAGE("H2");
 	_graphicsManager.FADE_INW();
@@ -1708,7 +1708,7 @@ bool HopkinsEngine::runLinuxFull() {
 	_objectsManager.AJOUTE_OBJET(14);
 
 	_globals.HELICO = 0;
-	_eventsManager.MOUSE_OFF();
+	_eventsManager.mouseOff();
 
 	_graphicsManager.DD_Lock();
 	_graphicsManager.Cls_Video();
@@ -1724,7 +1724,7 @@ bool HopkinsEngine::runLinuxFull() {
 	_graphicsManager.FADE_LINUX = 2;
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
 
-	if (!_eventsManager.ESC_KEY)
+	if (!_eventsManager._escKeyFl)
 		INTRORUN();
   
 	_globals.iRegul = 0;
@@ -2623,19 +2623,19 @@ void HopkinsEngine::INIT_SYSTEM() {
 	_soundManager.syncSoundSettings();
 
 	if (getPlatform() == Common::kPlatformLinux)
-		_eventsManager.mouse_linux = true;
+		_eventsManager._mouseLinuxFl = true;
 	else
-		_eventsManager.mouse_linux = false;
+		_eventsManager._mouseLinuxFl = false;
 
 	switch (_globals.FR) {
 	case 0:
-		if (!_eventsManager.mouse_linux)
+		if (!_eventsManager._mouseLinuxFl)
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "SOUAN.SPR");
 		else 
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "LSOUAN.SPR");
 		break;
 	case 1:
-		if (!_eventsManager.mouse_linux)
+		if (!_eventsManager._mouseLinuxFl)
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "SOUFR.SPR");
 		else
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "LSOUFR.SPR");
@@ -2645,14 +2645,14 @@ void HopkinsEngine::INIT_SYSTEM() {
 		break;
 	}
   
-	if (_eventsManager.mouse_linux) {
-		_eventsManager.souris_sizex = 52;
-		_eventsManager.souris_sizey = 32;
+	if (_eventsManager._mouseLinuxFl) {
+		_eventsManager._mouseSizeX = 52;
+		_eventsManager._mouseSizeY = 32;
 	} else {
-		_eventsManager.souris_sizex = 34;
-		_eventsManager.souris_sizey = 20;
+		_eventsManager._mouseSizeX = 34;
+		_eventsManager._mouseSizeY = 20;
 	}
-	_eventsManager.pointeur_souris = _fileManager.loadFile(_globals.NFICHIER);
+	_eventsManager._mouseCursor = _fileManager.loadFile(_globals.NFICHIER);
 
 	_globals.clearAll();
 
@@ -2680,15 +2680,13 @@ void HopkinsEngine::INIT_SYSTEM() {
 		break;
 	}
 
-	_eventsManager.INSTALL_SOURIS();
-	_eventsManager.souris_on();
-	_eventsManager.souris_flag = false;
-	_eventsManager.souris_max();
+	_eventsManager.setMouseOn();
+	_eventsManager._mouseFl = false;
 
 	_globals.HOPKINS_DATA();
 
-	_eventsManager.ofset_souris_x = 0;
-	_eventsManager.ofset_souris_y = 0;
+	_eventsManager._mouseOffset.x = 0;
+	_eventsManager._mouseOffset.y = 0;
 }
 
 void HopkinsEngine::INTRORUN() {
@@ -2701,21 +2699,21 @@ void HopkinsEngine::INTRORUN() {
 
 	memset(&paletteData, 0, PALETTE_EXT_BLOCK_SIZE);
 	_eventsManager.VBL();
-	_eventsManager.souris_flag = false;
+	_eventsManager._mouseFl = false;
 	_globals.iRegul = 1;
 	_eventsManager.VBL();
 	_soundManager.WSOUND(16);
 	_animationManager._clearAnimationFl = true;
 	_animationManager.playAnim("J1.anm", 12, 12, 50);
-	if (!_eventsManager.ESC_KEY) {
+	if (!_eventsManager._escKeyFl) {
 		_soundManager.VOICE_MIX(1, 3);
 		_animationManager.playAnim("J2.anm", 12, 12, 50);
 
-		if (!_eventsManager.ESC_KEY) {
+		if (!_eventsManager._escKeyFl) {
 			_soundManager.VOICE_MIX(2, 3);
 			_animationManager.playAnim("J3.anm", 12, 12, 50);
 
-			if (!_eventsManager.ESC_KEY) {
+			if (!_eventsManager._escKeyFl) {
 				_soundManager.VOICE_MIX(3, 3);
 				_graphicsManager.DD_Lock();
 				_graphicsManager.Cls_Video();
@@ -2749,8 +2747,8 @@ void HopkinsEngine::INTRORUN() {
 							v3 = true;
 						}
             
-						if (_eventsManager.XMOUSE() < _graphicsManager.SCROLL + 10)
-							_eventsManager.souris_xy(_eventsManager.souris_x + 4, _eventsManager.YMOUSE());
+						if (_eventsManager.getMouseX() < _graphicsManager.SCROLL + 10)
+							_eventsManager.setMouseXY(_eventsManager._mousePos.x + 4, _eventsManager.getMouseY());
 						_eventsManager.VBL();
 					} while (!shouldQuit() && !v3 && _graphicsManager.SCROLL != SCREEN_WIDTH);
           
@@ -2810,7 +2808,7 @@ void HopkinsEngine::INTRORUN() {
 
 				_soundManager.SPECIAL_SOUND = 0;
         
-				if (!_eventsManager.ESC_KEY) {
+				if (!_eventsManager._escKeyFl) {
 					_graphicsManager.LOAD_IMAGE("intro2");
 					_graphicsManager.SCROLL_ECRAN(0);
 					_animationManager.loadAnim("INTRO2");
@@ -2834,7 +2832,7 @@ void HopkinsEngine::INTRORUN() {
 					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
 
 					int v9 = 0;
-					while (!shouldQuit() && !_eventsManager.ESC_KEY) {
+					while (!shouldQuit() && !_eventsManager._escKeyFl) {
 						if (v9 == 12) {
 							_objectsManager.BOBANIM_ON(3);
 							_eventsManager.VBL();
@@ -2906,17 +2904,17 @@ void HopkinsEngine::INTRORUN() {
 
 							_soundManager.SPECIAL_SOUND = 0;
 
-							if (!_eventsManager.ESC_KEY) {
+							if (!_eventsManager._escKeyFl) {
 								_animationManager.playAnim("INTRO2.anm", 10, 24, 18);
 								if (shouldQuit())
 									return;
                 
-								if (!_eventsManager.ESC_KEY) {
+								if (!_eventsManager._escKeyFl) {
 									_animationManager.playAnim("INTRO3.anm", 10, 24, 200);
 									if (shouldQuit())
 										return;
 
-									if (!_eventsManager.ESC_KEY) {
+									if (!_eventsManager._escKeyFl) {
 										_animationManager._clearAnimationFl = false;
 										_graphicsManager.FADE_LINUX = 2;
 										_animationManager.playAnim("J4.anm", 12, 12, 1000);
@@ -2931,7 +2929,7 @@ void HopkinsEngine::INTRORUN() {
 		}
 	}
   
-	_eventsManager.ESC_KEY = false;
+	_eventsManager._escKeyFl = false;
 }
 
 /** 
@@ -3005,7 +3003,7 @@ void HopkinsEngine::BOOM() {
   
 	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
-	_eventsManager.MOUSE_OFF();
+	_eventsManager.mouseOff();
 	
 	for (int idx = 0; idx < 20; ++idx) {
 		_eventsManager.VBL();
@@ -3035,14 +3033,14 @@ void HopkinsEngine::PUBQUIT() {
 	_globals.PUBEXIT = true;
 	_graphicsManager.RESET_SEGMENT_VESA();
 	_globals.FORET = false;
-	_eventsManager.CASSE = false;
+	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;
 	_globals.FLAG_VISIBLE = false;
 	_graphicsManager.LOAD_IMAGE("BOX");
 	_soundManager.WSOUND(28);
 	_graphicsManager.FADE_INW();
-	_eventsManager.MOUSE_ON();
-	_eventsManager.CHANGE_MOUSE(0);
+	_eventsManager.mouseOn();
+	_eventsManager.changeMouseCursor(0);
 	_eventsManager.btsouris = 0;
 	_eventsManager.souris_n = 0;
 	_globals.netscape = true;
@@ -3056,7 +3054,7 @@ void HopkinsEngine::PUBQUIT() {
 //		yp = _eventsManager.YMOUSE();
 		_eventsManager.VBL();
 		
-		if (_eventsManager.BMOUSE() == 1)
+		if (_eventsManager.getMouseButton() == 1)
 			mouseClicked = true;
 	} while (!mouseClicked && !g_system->getEventManager()->shouldQuit());
 
@@ -3112,60 +3110,60 @@ void HopkinsEngine::BASE() {
 	_soundManager.WSOUND(25);
 	if (_globals.SVGA == 1) {
 		_animationManager.playAnim("base00.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base05.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base10.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base20.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base30.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base40.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base50.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("OC00.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("OC05.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("OC10.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("OC20.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY) {
+		if (!_eventsManager._escKeyFl) {
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("OC30.anm", 10, 18, 18);
 		}
 	} else if (_globals.SVGA == 2) {
 		_animationManager.playAnim("base00a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base05a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base10a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base20a.anm", 10, 18, 18);
 		// CHECKME: The original code was doing the opposite test, which looks like a bug.
-		if (!_eventsManager.ESC_KEY) 
+		if (!_eventsManager._escKeyFl) 
 			_animationManager.playAnim("base30a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base40a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("base50a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("OC00a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("OC05a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("OC10a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("OC20a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY) {
+		if (!_eventsManager._escKeyFl) {
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("OC30a.anm", 10, 18, 18);
 		}
 	}
 
-	_eventsManager.ESC_KEY = false;
+	_eventsManager._escKeyFl = false;
 	_animationManager._clearAnimationFl = false;
 	_globals.SORTIE = 85;
 }
@@ -3225,7 +3223,7 @@ void HopkinsEngine::JOUE_FIN() {
 	_graphicsManager.LOAD_IMAGE("IM100");
 	_animationManager.loadAnim("ANIM100");
 	_graphicsManager.VISU_ALL();
-	_eventsManager.MOUSE_ON();
+	_eventsManager.mouseOn();
 	_objectsManager.BOBANIM_OFF(7);
 	_objectsManager.BOBANIM_OFF(8);
 	_objectsManager.BOBANIM_OFF(9);
@@ -3233,7 +3231,7 @@ void HopkinsEngine::JOUE_FIN() {
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	_eventsManager.CHANGE_MOUSE(0);
+	_eventsManager.changeMouseCursor(0);
 	_globals.BPP_NOAFF = true;
 
 	for (int cpt = 0; cpt <= 4; cpt++)
@@ -3267,7 +3265,7 @@ void HopkinsEngine::JOUE_FIN() {
 
 	_globals.NOPARLE = true;
 	_talkManager.PARLER_PERSO("DUELB4.PE2");
-	_eventsManager.MOUSE_OFF();
+	_eventsManager.mouseOff();
 	_globals._disableInventFl = true;
 
 	do
@@ -3300,12 +3298,12 @@ void HopkinsEngine::JOUE_FIN() {
 		_graphicsManager.FADE_INW();
 
 		_eventsManager.lItCounter = 0;
-		if (!_eventsManager.ESC_KEY) {
+		if (!_eventsManager._escKeyFl) {
 			do
 				_eventsManager.CONTROLE_MES();
-			while (_eventsManager.lItCounter < 2000 / _globals.vitesse && !_eventsManager.ESC_KEY);
+			while (_eventsManager.lItCounter < 2000 / _globals.vitesse && !_eventsManager._escKeyFl);
 		}
-		_eventsManager.ESC_KEY = false;
+		_eventsManager._escKeyFl = false;
 		_graphicsManager.FADE_OUTW();
 		_globals.iRegul = 1;
 		_soundManager.SPECIAL_SOUND = 0;
@@ -3376,71 +3374,71 @@ void HopkinsEngine::AVION() {
 	_animationManager._clearAnimationFl = false;
 	if (_globals.SVGA == 1) {
 		_animationManager.playAnim("aerop00.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop10.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop20.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop30.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop40.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop50.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop60.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop70.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans00.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans10.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans15.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans20.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans30.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans40.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY) {
+		if (!_eventsManager._escKeyFl) {
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("PARA00.anm", 9, 9, 9);
 		}
 	} else if (_globals.SVGA == 2) {
 		_animationManager.playAnim("aerop00a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("serop10a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop20a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop30a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop40a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop50a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop60a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("aerop70a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans00a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans10a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans15a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans20a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans30a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY)
+		if (!_eventsManager._escKeyFl)
 			_animationManager.playAnim("trans40a.anm", 10, 18, 18);
-		if (!_eventsManager.ESC_KEY) {
+		if (!_eventsManager._escKeyFl) {
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("PARA00a.anm", 9, 9, 9);
 		}
 	}
 
-	_eventsManager.ESC_KEY = 0;
+	_eventsManager._escKeyFl = false;
 	_animationManager._clearAnimationFl = false;
 }
 
@@ -3451,7 +3449,7 @@ int HopkinsEngine::PWBASE() {
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	_eventsManager.CHANGE_MOUSE(0);
+	_eventsManager.changeMouseCursor(0);
 	_graphicsManager.FADE_INW();
 	bool loopCond = false;
 	int zone;
@@ -3459,9 +3457,9 @@ int HopkinsEngine::PWBASE() {
 		if (shouldQuit())
 			return 0;
 
-		int mouseButton = _eventsManager.BMOUSE();
-		int posX = _eventsManager.XMOUSE();
-		int posY = _eventsManager.YMOUSE();
+		int mouseButton = _eventsManager.getMouseButton();
+		int posX = _eventsManager.getMouseX();
+		int posY = _eventsManager.getMouseY();
 		zone = 0;
 		if ((posX - 181 <= 16) && (posY - 66 <= 22) &&
 		    (posX - 181 >= 0) && (posY - 66 >= 0))
@@ -3482,13 +3480,13 @@ int HopkinsEngine::PWBASE() {
 		    (posX - 106 >= 0) && (posY - 267 >= 0))
 			zone = 6;
 		if (zone) {
-			_eventsManager.CHANGE_MOUSE(4);
+			_eventsManager.changeMouseCursor(4);
 			_globals.couleur_40 += 25;
 			if (_globals.couleur_40 > 100)
 				_globals.couleur_40 = 0;
 			_graphicsManager.SETCOLOR4(251, _globals.couleur_40, _globals.couleur_40, _globals.couleur_40);
 		} else {
-			_eventsManager.CHANGE_MOUSE(0);
+			_eventsManager.changeMouseCursor(0);
 			_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 		}
 		_eventsManager.VBL();
@@ -3642,7 +3640,7 @@ void HopkinsEngine::Credits() {
 	_graphicsManager.LOAD_IMAGE("GENERIC");
 	_graphicsManager.FADE_INW();
 	_soundManager.WSOUND(28);
-	_eventsManager.souris_flag = false;
+	_eventsManager._mouseFl = false;
 	_globals.iRegul = 3;
 	_globals.Credit_bx = _globals.Credit_bx1 = _globals.Credit_by = _globals.Credit_by1 = -1;
 	int soundId = 28;
@@ -3692,26 +3690,26 @@ void HopkinsEngine::Credits() {
 		_globals.Credit_bx1 = -1;
 		_globals.Credit_by = -1;
 		_globals.Credit_by1 = -1;
-	} while ((_eventsManager.BMOUSE() != 1) && (!g_system->getEventManager()->shouldQuit()));
+	} while ((_eventsManager.getMouseButton() != 1) && (!g_system->getEventManager()->shouldQuit()));
 	_graphicsManager.FADE_OUTW();
 	_globals.iRegul = 1;
-	_eventsManager.souris_flag = true;
+	_eventsManager._mouseFl = true;
 }
 
 void HopkinsEngine::BTOCEAN() {
 	_fontManager.TEXTE_OFF(9);
 	if (_eventsManager.btsouris == 16) {
-		_eventsManager.XMOUSE();
+		_eventsManager.getMouseX();
 		if (_objectsManager.NUMZONE > 0) {
-			int oldPosX = _eventsManager.XMOUSE();
-			int oldPosY = _eventsManager.YMOUSE();
+			int oldPosX = _eventsManager.getMouseX();
+			int oldPosY = _eventsManager.getMouseY();
 			bool displAnim = false;
 			if (_objectsManager.NUMZONE == 1) {
 				if (_globals.OCEAN_SENS == 3)
 					_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, 0);
-				if (_globals.OCEAN_SENS == 1)
+				else if (_globals.OCEAN_SENS == 1)
 					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, 0);
-				if (_globals.OCEAN_SENS == 5)
+				else if (_globals.OCEAN_SENS == 5)
 					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, 0);
 				_globals.OCEAN_SENS = 7;
 				_globals.SORTIE = 1;
@@ -3726,9 +3724,9 @@ void HopkinsEngine::BTOCEAN() {
 					_objectsManager.SETXSPR(0, oldX);
 					OCEAN_HOME();
 					_eventsManager.VBL();
-					if (_eventsManager.BMOUSE() == 1) {
-						if (oldPosX == _eventsManager.XMOUSE()) {
-							if (_eventsManager.YMOUSE() == oldPosY)
+					if (_eventsManager.getMouseButton() == 1) {
+						if (oldPosX == _eventsManager.getMouseX()) {
+							if (_eventsManager.getMouseY() == oldPosY)
 								break;
 						}
 					}
@@ -3741,9 +3739,9 @@ LABEL_22:
 			if (_objectsManager.NUMZONE == 2) {
 				if (_globals.OCEAN_SENS == 7)
 					_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
-				if (_globals.OCEAN_SENS == 1)
+				else if (_globals.OCEAN_SENS == 1)
 					_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
-				if (_globals.OCEAN_SENS == 5)
+				else if (_globals.OCEAN_SENS == 5)
 					_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, 0);
 				_globals.OCEAN_SENS = 3;
 				_globals.SORTIE = 2;
@@ -3758,9 +3756,9 @@ LABEL_22:
 					_objectsManager.SETXSPR(0, oldX);
 					OCEAN_HOME();
 					_eventsManager.VBL();
-					if (_eventsManager.BMOUSE() == 1) {
-						if (oldPosX == _eventsManager.XMOUSE()) {
-							if (_eventsManager.YMOUSE() == oldPosY)
+					if (_eventsManager.getMouseButton() == 1) {
+						if (oldPosX == _eventsManager.getMouseX()) {
+							if (_eventsManager.getMouseY() == oldPosY)
 								break;
 						}
 					}
@@ -3783,9 +3781,9 @@ LABEL_41:
 						_objectsManager.SETXSPR(0, oldX);
 						OCEAN_HOME();
 						_eventsManager.VBL();
-						if (_eventsManager.BMOUSE() == 1) {
-							if (oldPosX == _eventsManager.XMOUSE()) {
-								if (_eventsManager.YMOUSE() == oldPosY) {
+						if (_eventsManager.getMouseButton() == 1) {
+							if (oldPosX == _eventsManager.getMouseX()) {
+								if (_eventsManager.getMouseY() == oldPosY) {
 									displAnim = true;
 									goto LABEL_57;
 								}
@@ -3808,9 +3806,9 @@ LABEL_57:
 						_objectsManager.SETXSPR(0, oldX);
 						OCEAN_HOME();
 						_eventsManager.VBL();
-						if (_eventsManager.BMOUSE() == 1) {
-							if (oldPosX == _eventsManager.XMOUSE()) {
-								if (_eventsManager.YMOUSE() == oldPosY) {
+						if (_eventsManager.getMouseButton() == 1) {
+							if (oldPosX == _eventsManager.getMouseX()) {
+								if (_eventsManager.getMouseY() == oldPosY) {
 									displAnim = true;
 									goto LABEL_72;
 								}
@@ -3839,9 +3837,9 @@ LABEL_72:
 						_objectsManager.SETXSPR(0, oldX);
 						OCEAN_HOME();
 						_eventsManager.VBL();
-						if (_eventsManager.BMOUSE() == 1) {
-							if (oldPosX == _eventsManager.XMOUSE()) {
-								if (_eventsManager.YMOUSE() == oldPosY) {
+						if (_eventsManager.getMouseButton() == 1) {
+							if (oldPosX == _eventsManager.getMouseX()) {
+								if (_eventsManager.getMouseY() == oldPosY) {
 									displAnim = true;
 									goto LABEL_91;
 								}
@@ -3864,9 +3862,9 @@ LABEL_91:
 						_objectsManager.SETXSPR(0, oldX);
 						OCEAN_HOME();
 						_eventsManager.VBL();
-						if (_eventsManager.BMOUSE() == 1) {
-							if (oldPosX == _eventsManager.XMOUSE()) {
-								if (_eventsManager.YMOUSE() == oldPosY)
+						if (_eventsManager.getMouseButton() == 1) {
+							if (oldPosX == _eventsManager.getMouseX()) {
+								if (_eventsManager.getMouseY() == oldPosY)
 									break;
 							}
 						}
@@ -3953,8 +3951,8 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_objectsManager.SPRITE_ON(0);
 	_globals.chemin = (int16 *)g_PTRNUL;
-	_eventsManager.MOUSE_ON();
-	_eventsManager.CHANGE_MOUSE(4);
+	_eventsManager.mouseOn();
+	_eventsManager.changeMouseCursor(4);
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
@@ -3966,7 +3964,7 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 
 	bool loopCond = false;
 	do {
-		int mouseButton = _eventsManager.BMOUSE();
+		int mouseButton = _eventsManager.getMouseButton();
 		if (mouseButton && mouseButton == 1)
 			BTOCEAN();
 		_objectsManager.VERIFZONE();
@@ -4007,7 +4005,7 @@ bool HopkinsEngine::ADULT() {
 	_graphicsManager.min_y = 0;
 	_graphicsManager.max_x = SCREEN_WIDTH;
 	_graphicsManager.max_y = SCREEN_HEIGHT - 1;
-	_eventsManager.CASSE = false;
+	_eventsManager._breakoutFl = false;
 	_globals.FORET = false;
 	_globals.FLAG_VISIBLE = false;
 	_globals._disableInventFl = true;
@@ -4015,14 +4013,14 @@ bool HopkinsEngine::ADULT() {
 
 	_graphicsManager.LOAD_IMAGE("ADULT");
 	_graphicsManager.FADE_INW();
-	_eventsManager.MOUSE_ON();
-	_eventsManager.CHANGE_MOUSE(0);
+	_eventsManager.mouseOn();
+	_eventsManager.changeMouseCursor(0);
 	_eventsManager.btsouris = false;
 	_eventsManager.souris_n = false;
 
 	do {
-		xp = _eventsManager.XMOUSE();
-		yp = _eventsManager.YMOUSE();
+		xp = _eventsManager.getMouseX();
+		yp = _eventsManager.getMouseY();
 
 		buttonIndex = 0;
 		if (xp >= 37 && xp <= 169 && yp >= 406 && yp <= 445)
@@ -4031,7 +4029,7 @@ bool HopkinsEngine::ADULT() {
 			buttonIndex = 1;
 
 		_eventsManager.VBL();
-	} while (!shouldQuit() && (buttonIndex == 0 || _eventsManager.BMOUSE() != 1));
+	} while (!shouldQuit() && (buttonIndex == 0 || _eventsManager.getMouseButton() != 1));
 	
 	_globals._disableInventFl = false;
 	_globals.FLAG_VISIBLE = false;

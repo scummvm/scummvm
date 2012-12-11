@@ -613,10 +613,10 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 	do {
 		if (SPECIAL_SOUND != 4 && !VBL_MERDE)
 			_vm->_eventsManager.VBL();
-		if (_vm->_eventsManager.BMOUSE())
+		if (_vm->_eventsManager.getMouseButton())
 			break;
 		_vm->_eventsManager.CONTROLE_MES();
-		if (_vm->_eventsManager.ESC_KEY)
+		if (_vm->_eventsManager._escKeyFl)
 			break;
 		if (!VOICE_STAT(2))
 			breakFlag = true;
@@ -626,7 +626,7 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 	STOP_VOICE(2);
 	DEL_SAMPLE_SDL(20);
 	MUSICVOL = oldMusicVol;
-	_vm->_eventsManager.ESC_KEY = false;
+	_vm->_eventsManager._escKeyFl = false;
 	VBL_MERDE = 0;
 	return true;
 }

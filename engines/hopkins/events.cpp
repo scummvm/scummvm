@@ -32,115 +32,115 @@
 namespace Hopkins {
 
 EventsManager::EventsManager() {
-	souris_flag = false;
-	mouse_linux = false;
-	souris_sizex = souris_sizey = 0;
-	ofset_souris_x = ofset_souris_y = 0;
-	start_x = start_y = 0;
-	CASSE = false;
+	_mouseFl = false;
+	_mouseLinuxFl = false;
+	_mouseSizeX = _mouseSizeY = 0;
+	_mouseOffset.x = _mouseOffset.y = 0;
+	_startPos.x = _startPos.y = 0;
+	_breakoutFl = false;
 	souris_n = 0;
 	souris_bb = 0;
 	souris_b = 0;
-	pointeur_souris = NULL;
+	_mouseCursor = NULL;
 	_gameCounter = 0;
 	lItCounter = 0;
-	ESC_KEY = false;
-	GAME_KEY = KEY_NONE;
+	_escKeyFl = false;
+	_gameKey = KEY_NONE;
 	btsouris = 0;
-	OLD_ICONE = 0;
-	Bufferobjet = NULL;
+	_oldIconId = 0;
+	_objectBuf = NULL;
 
-	Common::fill(&keyState[0], &keyState[256], false);
+	Common::fill(&_keyState[0], &_keyState[256], false);
 	_priorCounterTime = 0;
 	_priorFrameTime = 0;
 }
 
 EventsManager::~EventsManager() {
-	_vm->_globals.dos_free2(Bufferobjet);
-	_vm->_globals.dos_free2(pointeur_souris);
+	_vm->_globals.dos_free2(_objectBuf);
+	_vm->_globals.dos_free2(_mouseCursor);
 }
 
 void EventsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-// Install Mouse
-void EventsManager::INSTALL_SOURIS() {
-	// No implementation in original
-}
-
 // Mouse On
-void EventsManager::souris_on() {
-	souris_flag = true;
+void EventsManager::setMouseOn() {
+	_mouseFl = true;
 
-	if (mouse_linux) {
-		souris_sizex = 52;
-		souris_sizey = 32;
+	if (_mouseLinuxFl) {
+		_mouseSizeX = 52;
+		_mouseSizeY = 32;
 	} else {
-		souris_sizex = 34;
-		souris_sizey = 20;
+		_mouseSizeX = 34;
+		_mouseSizeY = 20;
 	}
 
-	ofset_souris_x = 0;
-	ofset_souris_y = 0;
+	_mouseOffset.x = 0;
+	_mouseOffset.y = 0;
 
-	if (!CASSE)
-		souris_xy(300, 200);
+	if (!_breakoutFl)
+		setMouseXY(300, 200);
 	else
-		souris_xy(150, 100);
+		setMouseXY(150, 100);
 }
 
-// Set Mouse position
-void EventsManager::souris_xy(int xp, int yp) {
+/**
+ * Set Mouse position
+ */
+void EventsManager::setMouseXY(int xp, int yp) {
 	g_system->warpMouse(xp, yp);
 }
 
-// Mouse Max
-void EventsManager::souris_max() {
-	// No implementation in original
+/**
+ * Get Mouse X
+ */
+int EventsManager::getMouseX() {
+	_mousePos.x = _startPos.x + g_system->getEventManager()->getMousePos().x;
+	_mousePos.y = g_system->getEventManager()->getMousePos().y;
+
+	return _mousePos.x + _mouseOffset.x;
 }
 
-// Get Mouse X
-int EventsManager::XMOUSE() {
-	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
-	souris_y = g_system->getEventManager()->getMousePos().y;
+/**
+ * Get Mouse Y
+ */
+int EventsManager::getMouseY() {
+	_mousePos.x = _startPos.x + g_system->getEventManager()->getMousePos().x;
+	_mousePos.y = g_system->getEventManager()->getMousePos().y;
 
-	return souris_x + ofset_souris_x;
+	return _mousePos.y + _mouseOffset.y;
 }
 
-// Get Mouse Y
-int EventsManager::YMOUSE() {
-	souris_x = start_x + g_system->getEventManager()->getMousePos().x;
-	souris_y = g_system->getEventManager()->getMousePos().y;
-
-	return souris_y + ofset_souris_y;
-}
-
-// Get Mouse Button
-int EventsManager::BMOUSE() {
+/**
+ * Get Mouse Button
+ */
+int EventsManager::getMouseButton() {
 	CONTROLE_MES();
 	return souris_bb;
 }
 
-// Mouse Off
-void EventsManager::MOUSE_OFF() {
-	souris_flag = false;
+/**
+ * Mouse Off
+ */
+void EventsManager::mouseOff() {
+	_mouseFl = false;
 	CursorMan.showMouse(false);
 }
 
-// Mouse On
-void EventsManager::MOUSE_ON() {
-	souris_on();
-	souris_flag = true;
+/**
+ * Mouse On
+ */
+void EventsManager::mouseOn() {
+	setMouseOn();
+	_mouseFl = true;
 	CursorMan.showMouse(true);
 }
 
-void EventsManager::MOUSE_ON1() {
-	MOUSE_ON();	
-}
-
-// Change Mouse Cursor
-void EventsManager::CHANGE_MOUSE(int id) {
+/**
+ * Change Mouse Cursor
+ */
+void EventsManager::changeMouseCursor(int id) {
 	int cursorId = id;
 
 	if (btsouris != 23) {
@@ -149,8 +149,8 @@ void EventsManager::CHANGE_MOUSE(int id) {
 		if (cursorId == 25)
 			cursorId = 5;
     
-		if (OLD_ICONE != cursorId || !cursorId) {
-			OLD_ICONE = cursorId;
+		if (_oldIconId != cursorId || !cursorId) {
+			_oldIconId = cursorId;
 			souris_n = cursorId;
 
 			updateCursor();
@@ -204,11 +204,11 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			keyState[(byte)toupper(event.kbd.ascii)] = true;
+			_keyState[(byte)toupper(event.kbd.ascii)] = true;
 			handleKey(event);
 			return;
 		case Common::EVENT_KEYUP:
-			keyState[(byte)toupper(event.kbd.ascii)] = false;
+			_keyState[(byte)toupper(event.kbd.ascii)] = false;
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			souris_b = 1;
@@ -226,23 +226,23 @@ void EventsManager::pollEvents() {
 	}
 
 	for (char chr = 'A'; chr <= 'Z'; chr++)
-		keyState[(byte)chr] = false;
+		_keyState[(byte)chr] = false;
 
 	for (char chr = '0'; chr <= '9'; chr++)
-		keyState[(byte)chr] = false;
+		_keyState[(byte)chr] = false;
 }
 
 void EventsManager::handleKey(Common::Event &event) {
-	ESC_KEY = event.kbd.keycode == Common::KEYCODE_ESCAPE;
+	_escKeyFl = (event.kbd.keycode == Common::KEYCODE_ESCAPE);
 	
 	if (event.kbd.keycode == Common::KEYCODE_i || event.kbd.keycode == Common::KEYCODE_TAB)
-		GAME_KEY = KEY_INVENTORY;
+		_gameKey = KEY_INVENTORY;
 	else if (event.kbd.keycode == Common::KEYCODE_F5)
-		GAME_KEY = KEY_SAVE;
+		_gameKey = KEY_SAVE;
 	else if (event.kbd.keycode == Common::KEYCODE_F7)
-		GAME_KEY = KEY_LOAD;
+		_gameKey = KEY_LOAD;
 	else if (event.kbd.keycode == Common::KEYCODE_F1 || event.kbd.keycode == Common::KEYCODE_o)
-		GAME_KEY = KEY_OPTIONS;
+		_gameKey = KEY_OPTIONS;
 
 	// Check for debugger
 	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
@@ -261,35 +261,35 @@ int EventsManager::keywin() {
 			return -1;
 
 		for (char ch = 'A'; ch <= 'Z'; ++ch) {
-			if (keyState[(byte)ch]) {
+			if (_keyState[(byte)ch]) {
 				foundChar = ch;
 				break;
 			}
 		}
 
 		for (char ch = '0'; ch <= '9'; ++ch) {
-			if (keyState[(byte)ch]) {
+			if (_keyState[(byte)ch]) {
 				foundChar = ch;
 				break;
 			}
 		}
 
-		if (keyState[(byte)'.'])
+		if (_keyState[(byte)'.'])
 			foundChar = '.';
-		else if (keyState[8])
+		else if (_keyState[8])
 			// BACKSPACE
 			foundChar = 8;
-		else if (keyState[13])
+		else if (_keyState[13])
 			// ENTER
 			foundChar = 13;
-		else if (keyState[(byte)' '])
+		else if (_keyState[(byte)' '])
 			foundChar = ' ';
 
 		VBL();
 	}
 
 	// Wait for keypress release
-	while (keyState[(byte)foundChar] && !_vm->shouldQuit()) {
+	while (_keyState[(byte)foundChar] && !_vm->shouldQuit()) {
 		VBL();
 		g_system->delayMillis(10);
 	}
@@ -311,7 +311,7 @@ void EventsManager::VBL() {
 
 	if (_vm->_graphicsManager.REDRAW) {
 		_vm->_graphicsManager.DD_Lock();
-		if (CASSE) {
+		if (_breakoutFl) {
 			_vm->_graphicsManager.CopyAsm(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_graphicsManager.REDRAW = 0;
 		} else {
@@ -323,45 +323,45 @@ void EventsManager::VBL() {
 		}
 		_vm->_graphicsManager.DD_Unlock();
 	}
-	if (souris_flag == true) {
+	if (_mouseFl == true) {
 		v1 = 20;
-		if (!mouse_linux)
+		if (!_mouseLinuxFl)
 			v1 = 10;
 		v2 = 20;
-		if (!mouse_linux)
+		if (!_mouseLinuxFl)
 			v2 = 15;
-		v15 = souris_x - v1;
-		yp = souris_y;
-		v14 = souris_sizex;
-		v13 = souris_sizey;
+		v15 = _mousePos.x - v1;
+		yp = _mousePos.y;
+		v14 = _mouseSizeX;
+		v13 = _mouseSizeY;
 		if (btsouris == 23) {
 			v14 = _vm->_globals.OBJL;
 			v13 = _vm->_globals.OBJH;
 			goto LABEL_35;
 		}
-		if (CASSE) {
+		if (_breakoutFl) {
 			if (v15 < _vm->_graphicsManager.min_x)
 				v15 = _vm->_graphicsManager.min_x;
-			if (souris_y < _vm->_graphicsManager.min_y)
+			if (_mousePos.y < _vm->_graphicsManager.min_y)
 				yp = _vm->_graphicsManager.min_y;
-			if (souris_sizex + v15 >= _vm->_graphicsManager.max_x)
-				v14 = souris_sizex - (souris_sizex + v15 - _vm->_graphicsManager.max_x);
-			if (yp + souris_sizey < _vm->_graphicsManager.max_y)
+			if (_mouseSizeX + v15 >= _vm->_graphicsManager.max_x)
+				v14 = _mouseSizeX - (_mouseSizeX + v15 - _vm->_graphicsManager.max_x);
+			if (yp + _mouseSizeY < _vm->_graphicsManager.max_y)
 				goto LABEL_34;
-			v3 = yp + souris_sizey - _vm->_graphicsManager.max_y;
+			v3 = yp + _mouseSizeY - _vm->_graphicsManager.max_y;
 		} else {
 			if (v15 < _vm->_graphicsManager.min_x)
 				v15 = _vm->_graphicsManager.min_x - v1;
 			v2 = (int16)v2;
-			if (souris_y < _vm->_graphicsManager.min_y - (int16)v2)
+			if (_mousePos.y < _vm->_graphicsManager.min_y - (int16)v2)
 				yp = _vm->_graphicsManager.min_y - (int16)v2;
-			if (souris_sizex + v15 >= _vm->_graphicsManager.max_x)
-				v14 = souris_sizex - (souris_sizex + v15 - _vm->_graphicsManager.max_x - v1);
-			if (yp + souris_sizey < v2 + _vm->_graphicsManager.max_y)
+			if (_mouseSizeX + v15 >= _vm->_graphicsManager.max_x)
+				v14 = _mouseSizeX - (_mouseSizeX + v15 - _vm->_graphicsManager.max_x - v1);
+			if (yp + _mouseSizeY < v2 + _vm->_graphicsManager.max_y)
 				goto LABEL_34;
-			v3 = v2 + yp + souris_sizey - _vm->_graphicsManager.max_y;
+			v3 = v2 + yp + _mouseSizeY - _vm->_graphicsManager.max_y;
 		}
-		v13 = souris_sizey - v3;
+		v13 = _mouseSizeY - v3;
 LABEL_34:
 		v12 = v14 + v15;
 		v11 = yp + v13;
@@ -369,7 +369,7 @@ LABEL_34:
 LABEL_35:
 	if (!_vm->_globals.PUBEXIT)
 		_vm->_objectsManager.AFF_SPRITES();
-	if (souris_flag != true) {
+	if (_mouseFl != true) {
 		updateCursor();
 		goto LABEL_54;
 	}
@@ -410,10 +410,10 @@ LABEL_54:
 		while (!_vm->shouldQuit()) {
 			checkForNextFrameCounter();
 
-			while (CASSE || _vm->_globals.iRegul != 1) {
+			while (_breakoutFl || _vm->_globals.iRegul != 1) {
 				checkForNextFrameCounter();
 
-				if (CASSE != true)
+				if (_breakoutFl != true)
 					goto LABEL_63;
 				if (lItCounter > 1)
 					goto LABEL_65;
@@ -434,9 +434,9 @@ LABEL_65:
 	} else {
 		int v4; 
 		if (_vm->_graphicsManager.no_scroll != 2) {
-			if (XMOUSE() > _vm->_graphicsManager.SCROLL + 620)
+			if (getMouseX() > _vm->_graphicsManager.SCROLL + 620)
 				_vm->_graphicsManager.SCROLL += _vm->_graphicsManager.SPEED_SCROLL;
-			if (XMOUSE() < _vm->_graphicsManager.SCROLL + 10)
+			if (getMouseX() < _vm->_graphicsManager.SCROLL + 10)
 				_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager.SPEED_SCROLL;
 		}
 		if (_vm->_graphicsManager.SCROLL < 0)
@@ -487,12 +487,12 @@ LABEL_65:
 				}
 			}
 			_vm->_globals.NBBLOC = 0;
-			start_x = v4;
+			_startPos.x = v4;
 			_vm->_graphicsManager.ofscroll = v4;
 			_vm->_graphicsManager.SCROLL = v4;
 		}
 		_vm->_graphicsManager.OLD_SCROLL = v4;
-		start_x = v4;
+		_startPos.x = v4;
 		_vm->_graphicsManager.ofscroll = v4;
 	}
 	souris_bb = souris_b;
@@ -541,10 +541,10 @@ void EventsManager::updateCursor() {
 
 	if (btsouris != 23) {
 		// Draw standard cursor
-		_vm->_graphicsManager.Sprite_Vesa(cursorSurface, pointeur_souris, 300, 300, souris_n);
+		_vm->_graphicsManager.Sprite_Vesa(cursorSurface, _mouseCursor, 300, 300, souris_n);
 	} else {
 		// Draw the active inventory object
-		_vm->_graphicsManager.Affiche_Perfect(cursorSurface, Bufferobjet, 300, 300, 0, 0, 0, 0);
+		_vm->_graphicsManager.Affiche_Perfect(cursorSurface, _objectBuf, 300, 300, 0, 0, 0, 0);
 	}
 
 	// Reset the clipping bounds
@@ -572,7 +572,7 @@ void EventsManager::updateCursor() {
 	}
 
 	// Calculate the X offset within the pointer image to the actual cursor data
-	int xOffset = !mouse_linux ? 10 : 20;
+	int xOffset = !_mouseLinuxFl ? 10 : 20;
 
 	// Set the ScummVM cursor from the surface
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();

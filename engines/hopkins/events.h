@@ -45,44 +45,41 @@ private:
 	void checkForNextFrameCounter();
 	void updateCursor();
 public:
-	bool souris_flag;
-	bool mouse_linux;
-	int souris_sizex, souris_sizey;
-	int ofset_souris_x, ofset_souris_y;
-	int start_x, start_y;
-	int souris_x, souris_y;
-	bool CASSE;
-	int OLD_ICONE;
+	bool _mouseFl;
+	bool _mouseLinuxFl;
+	int _mouseSizeX, _mouseSizeY;
+	Common::Point _mouseOffset;
+	Common::Point _startPos;
+	Common::Point _mousePos;
+	bool _breakoutFl;
+	int _oldIconId;
 	int souris_n;
 	int souris_bb;
 	int souris_b;
-	byte *pointeur_souris;
+	byte *_mouseCursor;
 	uint32 _gameCounter;
 	uint32 lItCounter;
 	uint32 _priorCounterTime;
 	uint32 _priorFrameTime;
-	bool ESC_KEY;
-	bool NOESC;
-	DIALOG_KEY GAME_KEY;
+	bool _escKeyFl;
+	bool _disableEscKeyFl;
+	DIALOG_KEY _gameKey;
 	int btsouris;
-	byte *Bufferobjet;
-	bool keyState[256];
+	byte *_objectBuf;
+	bool _keyState[256];
 public:
 	EventsManager();
 	~EventsManager();
 	void setParent(HopkinsEngine *vm);
 
-	void INSTALL_SOURIS();
-	void souris_on();
-	void souris_xy(int xp, int yp);
-	void souris_max();
-	int XMOUSE();
-	int YMOUSE();
-	int BMOUSE();
-	void MOUSE_ON();
-	void MOUSE_ON1();
-	void MOUSE_OFF();
-	void CHANGE_MOUSE(int id);
+	void setMouseOn();
+	void setMouseXY(int xp, int yp);
+	int getMouseX();
+	int getMouseY();
+	int getMouseButton();
+	void mouseOn();
+	void mouseOff();
+	void changeMouseCursor(int id);
 
 	void CONTROLE_MES();
 	void delay(int delay);
@@ -93,21 +90,6 @@ public:
 	 * @return		Keypress, or -1 if game quit was requested
 	 */
 	int keywin();
-
-	/**
-	 * Unused by engine 
-	 */
-	void videkey() { }
-
-	/**
-	 * Unused by engine 
-	 */
-	void CASSE_SOURIS_ON() { }
-
-	/**
-	 * Unused by engine 
-	 */
-	void CASSE_SOURIS_OFF() { }
 };
 
 } // End of namespace Hopkins

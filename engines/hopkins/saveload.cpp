@@ -229,7 +229,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 	thumb8.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
 	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, (byte *)thumb8.pixels, 
-		_vm->_eventsManager.start_x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
+		_vm->_eventsManager._startPos.x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
 
 	// Convert the 8-bit pixel to 16 bit surface
 	s->create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));	

@@ -719,7 +719,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			}
 
-			_vm->_eventsManager.MOUSE_OFF();
+			_vm->_eventsManager.mouseOff();
 			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			do {
 				if (_vm->shouldQuit())
@@ -738,7 +738,7 @@ LABEL_1141:
 				_vm->_soundManager.SPECIAL_SOUND = 0;
 			}
 			_vm->_animationManager.loadAnim("ASCEN");
-			_vm->_eventsManager.MOUSE_OFF();
+			_vm->_eventsManager.mouseOff();
 			_vm->_graphicsManager.LOAD_IMAGE("ASCEN");
 			_vm->_graphicsManager.VISU_ALL();
 
@@ -749,7 +749,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			}
 
-			_vm->_eventsManager.MOUSE_OFF();
+			_vm->_eventsManager.mouseOff();
 			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_objectsManager.SCI_OPTI_ONE(1, 0, 17, 3);
 			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
@@ -1524,9 +1524,9 @@ LABEL_1141:
 			_vm->_globals._disableInventFl = true;
 			if (_vm->_globals.SAUVEGARDE->data[svField6] != _vm->_globals.SAUVEGARDE->data[svField401]) {
 				_vm->_soundManager.SPECIAL_SOUND = 208;
-				_vm->_eventsManager.NOESC = true;
+				_vm->_eventsManager._disableEscKeyFl = true;
 				_vm->_animationManager.playSequence("SORT.SEQ", 10, 4, 10);
-				_vm->_eventsManager.NOESC = false;
+				_vm->_eventsManager._disableEscKeyFl = false;
 				_vm->_soundManager.SPECIAL_SOUND = 0;
 			}
 			_vm->_globals.NOT_VERIF = 1;
@@ -1999,7 +1999,7 @@ LABEL_1141:
 			_vm->_graphicsManager.LOAD_IMAGE("IM20f");
 			_vm->_animationManager.loadAnim("ANIM20f");
 			_vm->_graphicsManager.VISU_ALL();
-			_vm->_eventsManager.MOUSE_OFF();
+			_vm->_eventsManager.mouseOff();
 			_vm->_graphicsManager.FADE_INW();
 			bool v52 = false;
 			_vm->_soundManager.LOAD_WAV("SOUND46.WAV", 1);
