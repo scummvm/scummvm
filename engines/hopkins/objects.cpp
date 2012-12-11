@@ -316,8 +316,6 @@ void ObjectsManager::AFF_SPRITES() {
 	int v11;
 	uint16 *v12;
 	int v13; 
-	int v20;
-	int v21;
 	int y1_1;
 	int y1_2;
 	int v25;
@@ -333,13 +331,13 @@ void ObjectsManager::AFF_SPRITES() {
 	// Handle copying any background areas that text are going to be drawn on
 	_vm->_globals.NBTRI = 0;
 	for (int idx = 0; idx <= 10; ++idx) {
-		if (_vm->_fontManager.ListeTxt[idx].enabled && _vm->_fontManager.Txt[idx].field3FC != 2) {
-			v1 = _vm->_fontManager.ListeTxt[idx].xp;
+		if (_vm->_fontManager._textList[idx]._enabledFl && _vm->_fontManager._text[idx]._textType != 2) {
+			v1 = _vm->_fontManager._textList[idx]._pos.x;
 			x1_1 = v1 - 2;
       
 			if ((int16)(v1 - 2) < _vm->_graphicsManager.min_x)
 				x1_1 = _vm->_graphicsManager.min_x;
-			v2 = _vm->_fontManager.ListeTxt[idx].yp;
+			v2 = _vm->_fontManager._textList[idx]._pos.y;
 			y1_1 = v2 - 2;
       
 			if ((int16)(v2 - 2) < _vm->_graphicsManager.min_y)
@@ -352,10 +350,10 @@ void ObjectsManager::AFF_SPRITES() {
 				destY = _vm->_graphicsManager.min_y;
 			
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, x1_1, y1_1,
-				_vm->_fontManager.ListeTxt[idx].width + 4, _vm->_fontManager.ListeTxt[idx].height + 4,
+				_vm->_fontManager._textList[idx]._width + 4, _vm->_fontManager._textList[idx]._height + 4,
 				_vm->_graphicsManager.VESA_BUFFER,
 				destX, destY);
-			_vm->_fontManager.ListeTxt[idx].enabled = false;
+			_vm->_fontManager._textList[idx]._enabledFl = false;
 		}
 	}
 
@@ -521,42 +519,39 @@ void ObjectsManager::AFF_SPRITES() {
 
 	// Loop to draw any on-screen text
 	for (int idx = 0; idx <= 10; ++idx) {
-		if (_vm->_fontManager.Txt[idx].textOn) {
-			if ((uint16)(_vm->_fontManager.Txt[idx].field3FC - 2) > 1)
-				_vm->_fontManager.BOITE(idx,
-					_vm->_fontManager.Txt[idx].messageId, _vm->_fontManager.Txt[idx].filename,
-					_vm->_eventsManager._startPos.x + _vm->_fontManager.Txt[idx].xp, _vm->_fontManager.Txt[idx].yp);
+		if (_vm->_fontManager._text[idx]._textOnFl) {
+			if (_vm->_fontManager._text[idx]._textType > 3)
+				_vm->_fontManager.box(idx,
+					_vm->_fontManager._text[idx]._messageId, _vm->_fontManager._text[idx]._filename,
+					_vm->_eventsManager._startPos.x + _vm->_fontManager._text[idx]._pos.x, _vm->_fontManager._text[idx]._pos.y);
 			else
-				_vm->_fontManager.BOITE(
-				  idx,
-				  _vm->_fontManager.Txt[idx].messageId,
-				  _vm->_fontManager.Txt[idx].filename,
-				  _vm->_fontManager.Txt[idx].xp,
-				  _vm->_fontManager.Txt[idx].yp);
-			_vm->_fontManager.ListeTxt[idx].enabled = true;
+				_vm->_fontManager.box(idx,
+					_vm->_fontManager._text[idx]._messageId, _vm->_fontManager._text[idx]._filename,
+					_vm->_fontManager._text[idx]._pos.x, _vm->_fontManager._text[idx]._pos.y);
+			_vm->_fontManager._textList[idx]._enabledFl = true;
 			
-			if ((uint16)(_vm->_fontManager.Txt[idx].field3FC - 2) > 1)
-				_vm->_fontManager.ListeTxt[idx].xp = _vm->_eventsManager._startPos.x + _vm->_fontManager.Txt[idx].xp;
+			if (_vm->_fontManager._text[idx]._textType > 3)
+				_vm->_fontManager._textList[idx]._pos.x = _vm->_eventsManager._startPos.x + _vm->_fontManager._text[idx]._pos.x;
 			else
-				_vm->_fontManager.ListeTxt[idx].xp = _vm->_fontManager.Txt[idx].xp;
+				_vm->_fontManager._textList[idx]._pos.x = _vm->_fontManager._text[idx]._pos.x;
       
-			_vm->_fontManager.ListeTxt[idx].yp = _vm->_fontManager.Txt[idx].yp;
-			_vm->_fontManager.ListeTxt[idx].width = _vm->_fontManager.Txt[idx].width;
-			_vm->_fontManager.ListeTxt[idx].height = _vm->_fontManager.Txt[idx].height;
+			_vm->_fontManager._textList[idx]._pos.y = _vm->_fontManager._text[idx]._pos.y;
+			_vm->_fontManager._textList[idx]._width = _vm->_fontManager._text[idx]._width;
+			_vm->_fontManager._textList[idx]._height = _vm->_fontManager._text[idx]._height;
 
-			if (_vm->_fontManager.ListeTxt[idx].xp < _vm->_graphicsManager.min_x)
-				_vm->_fontManager.ListeTxt[idx].xp = _vm->_graphicsManager.min_x - 1;
-			if (_vm->_fontManager.ListeTxt[idx].yp < _vm->_graphicsManager.min_y)
-				_vm->_fontManager.ListeTxt[idx].yp = _vm->_graphicsManager.min_y - 1;
+			if (_vm->_fontManager._textList[idx]._pos.x < _vm->_graphicsManager.min_x)
+				_vm->_fontManager._textList[idx]._pos.x = _vm->_graphicsManager.min_x - 1;
+			if (_vm->_fontManager._textList[idx]._pos.y < _vm->_graphicsManager.min_y)
+				_vm->_fontManager._textList[idx]._pos.y = _vm->_graphicsManager.min_y - 1;
 
-			v20 = _vm->_fontManager.ListeTxt[idx].xp;
-			if (_vm->_fontManager.ListeTxt[idx].width + v20 > _vm->_graphicsManager.max_x)
-				_vm->_fontManager.ListeTxt[idx].width = _vm->_graphicsManager.max_x - v20;
-			v21 = _vm->_fontManager.ListeTxt[idx].yp;
-			if (_vm->_fontManager.ListeTxt[idx].height + v21 > _vm->_graphicsManager.max_y)
-				_vm->_fontManager.ListeTxt[idx].height = _vm->_graphicsManager.max_y - v21;
-			if (_vm->_fontManager.ListeTxt[idx].width <= 0 || _vm->_fontManager.ListeTxt[idx].height <= 0)
-				_vm->_fontManager.ListeTxt[idx].enabled = false;
+			int posX = _vm->_fontManager._textList[idx]._pos.x;
+			if (_vm->_fontManager._textList[idx]._width + posX > _vm->_graphicsManager.max_x)
+				_vm->_fontManager._textList[idx]._width = _vm->_graphicsManager.max_x - posX;
+			int posY = _vm->_fontManager._textList[idx]._pos.y;
+			if (_vm->_fontManager._textList[idx]._height + posY > _vm->_graphicsManager.max_y)
+				_vm->_fontManager._textList[idx]._height = _vm->_graphicsManager.max_y - posY;
+			if (_vm->_fontManager._textList[idx]._width <= 0 || _vm->_fontManager._textList[idx]._height <= 0)
+				_vm->_fontManager._textList[idx]._enabledFl = false;
 		}
 	}
   
@@ -1665,7 +1660,7 @@ void ObjectsManager::VERIFZONE() {
 				_vm->_eventsManager._mouseCursorId = 4;
 				_vm->_eventsManager.changeMouseCursor(4);
 				if (_vm->_globals.zozo_73 == 1) {
-					_vm->_fontManager.TEXTE_OFF(5);
+					_vm->_fontManager.hideText(5);
 					_vm->_globals.zozo_73 = 0;
 					return;
 				}
@@ -1686,8 +1681,8 @@ LABEL_54:
 				            || _vm->_globals.ZONEP[v4].fieldE
 				            || _vm->_globals.ZONEP[v4].fieldF)) {
 					if (_vm->_globals.old_zone_68 != v4) {
-						_vm->_fontManager.DOS_TEXT(5, _vm->_globals.ZONEP[v4].field12, _vm->_globals.FICH_ZONE, 0, 430, 20, 25, 0, 0, 252);
-						_vm->_fontManager.TEXTE_ON(5);
+						_vm->_fontManager.initTextBuffers(5, _vm->_globals.ZONEP[v4].field12, _vm->_globals.FICH_ZONE, 0, 430, 20, 25, 0, 0, 252);
+						_vm->_fontManager.showText(5);
 						_vm->_globals.zozo_73 = 1;
 					}
 					_vm->_globals.force_to_data_0 += 25;
@@ -2688,7 +2683,7 @@ void ObjectsManager::BTGAUCHE() {
 	int v17;
 	int v18;
 
-	_vm->_fontManager.TEXTE_OFF(9);
+	_vm->_fontManager.hideText(9);
 	destX = _vm->_eventsManager.getMouseX();
 	destY = _vm->_eventsManager.getMouseY();
 
@@ -2841,7 +2836,7 @@ LABEL_65:
 		_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals.OBJET_EN_COURS;
 		_vm->_globals.GOACTION = 1;
 	}
-	_vm->_fontManager.TEXTE_OFF(5);
+	_vm->_fontManager.hideText(5);
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 	ARRET_PERSO_FLAG = 0;
 	if (_vm->_eventsManager._mouseCursorId == 21 && _vm->_globals.BOBZONE[NUMZONE]) {
@@ -2869,7 +2864,7 @@ void ObjectsManager::PARADISE() {
 	ARRET_PERSO_NUM = 0;
 	result = _vm->_globals.SAUVEGARDE->data[svField1];
 	if (result && _vm->_globals.SAUVEGARDE->data[svField2] && result != 4 && result > 3) {
-		_vm->_fontManager.TEXTE_OFF(5);
+		_vm->_fontManager.hideText(5);
 		if (!_vm->_globals.FORET || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
 			if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
 				_vm->_graphicsManager.no_scroll = 2;
@@ -2975,8 +2970,8 @@ void ObjectsManager::CLEAR_ECRAN() {
 
 	CLEAR_SPR();
 	_vm->_graphicsManager.FIN_VISU();
-	_vm->_fontManager.TEXTE_OFF(5);
-	_vm->_fontManager.TEXTE_OFF(9);
+	_vm->_fontManager.hideText(5);
+	_vm->_fontManager.hideText(9);
 	_vm->_globals.CLEAR_VBOB();
 	_vm->_animationManager.clearAnim();
 	_vm->_linesManager.CLEAR_ZONE();
@@ -4920,11 +4915,11 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 			++v5;
 		} while (v5 <= 4);
 		VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
-		_vm->_fontManager.TEXTE_OFF(9);
+		_vm->_fontManager.hideText(9);
 		if (!_vm->_soundManager.TEXTOFF) {
-			_vm->_fontManager.DOS_TEXT(9, 383, _vm->_globals.FICH_TEXTE, 220, 72, 20, 25, 6, 36, 253);
+			_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals.FICH_TEXTE, 220, 72, 20, 25, 6, 36, 253);
 			if (!_vm->_soundManager.TEXTOFF)
-				_vm->_fontManager.TEXTE_ON(9);
+				_vm->_fontManager.showText(9);
 		}
 		if (!_vm->_soundManager.VOICEOFF)
 			_vm->_soundManager.VOICE_MIX(383, 4);
@@ -4938,7 +4933,7 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 				++v6;
 			} while (v6 <= 199);
 		}
-		_vm->_fontManager.TEXTE_OFF(9);
+		_vm->_fontManager.hideText(9);
 		VBOB_OFF(5);
 		v7 = 0;
 		do {

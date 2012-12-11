@@ -42,90 +42,100 @@ void FontManager::setParent(HopkinsEngine *vm) {
 
 void FontManager::clearAll() {
 	for (int idx = 0; idx < 12; ++idx) {
-		Common::fill((byte *)&Txt[idx], (byte *)&Txt[idx] + sizeof(TxtItem), 0);
+		Common::fill((byte *)&_text[idx], (byte *)&_text[idx] + sizeof(TxtItem), 0);
 
-		ListeTxt[idx].enabled = false;
-		ListeTxt[idx].height = 0;
-		ListeTxt[idx].width = 0;
-		ListeTxt[idx].xp = 0;
-		ListeTxt[idx].yp = 0;
+		_textList[idx]._enabledFl = false;
+		_textList[idx]._height = 0;
+		_textList[idx]._width = 0;
+		_textList[idx]._pos.x = 0;
+		_textList[idx]._pos.y = 0;
 	}
 
 	for (int idx = 0; idx < 21; idx++)
-		TRIER_TEXT[idx] = 0;
+		_textSortArray[idx] = 0;
 
-	oldname = Common::String("");
-	nom_index = Common::String("");
+	_oldName = Common::String("");
+	_indexName = Common::String("");
 	
 	for (int idx = 0; idx < 4048; idx++)
-		Index[idx] = 0;
+		_index[idx] = 0;
 
-	texte_tmp = g_PTRNUL;
+	_tempText = g_PTRNUL;
 }
 
-// Text On
-void FontManager::TEXTE_ON(int idx) {
-	if ((idx - 5) > 11)
+/**
+ * Display Text
+ */
+void FontManager::showText(int idx) {
+	if ((idx - 5) > MAX_TEXT)
 		error("Attempted to display text > MAX_TEXT.");
   
-	TxtItem &txt = Txt[idx - 5];
-	txt.textOn = true;
-	txt.textLoaded = false;
+	TxtItem &txt = _text[idx - 5];
+	txt._textOnFl = true;
+	txt._textLoadedFl = false;
   
-	if (txt.textBlock != g_PTRNUL) {
-		_vm->_globals.dos_free2(txt.textBlock);
-		txt.textBlock = g_PTRNUL;
+	if (txt._textBlock != g_PTRNUL) {
+		_vm->_globals.dos_free2(txt._textBlock);
+		txt._textBlock = g_PTRNUL;
 	}
 }
 
-// Text Off
-void FontManager::TEXTE_OFF(int idx) {
-	if ((idx - 5) > 11)
+/**
+ * Hide text
+ */
+void FontManager::hideText(int idx) {
+	if ((idx - 5) > MAX_TEXT)
 			error("Attempted to display text > MAX_TEXT.");
   
-	TxtItem &txt = Txt[idx - 5];
-	txt.textOn = false;
-	txt.textLoaded = false;
+	TxtItem &txt = _text[idx - 5];
+	txt._textOnFl = false;
+	txt._textLoadedFl = false;
 
-	if (txt.textBlock != g_PTRNUL) {
-		_vm->_globals.dos_free2(txt.textBlock);
-		txt.textBlock = g_PTRNUL;
+	if (txt._textBlock != g_PTRNUL) {
+		_vm->_globals.dos_free2(txt._textBlock);
+		txt._textBlock = g_PTRNUL;
 	}
 }
 
-// Text Color
-void FontManager::COUL_TXT(int idx, byte colByte) {
-	Txt[idx - 5].colour = colByte;
+/**
+ * Set Text Color
+ */
+void FontManager::setTextColor(int idx, byte colByte) {
+	_text[idx - 5]._color = colByte;
 }
 
-// Text Optimal Color
-void FontManager::OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4) {
-	COUL_TXT(idx1, 255);
-	COUL_TXT(idx2, 255);
-	COUL_TXT(idx3, 255);
-	COUL_TXT(idx4, 253);
+/**
+ * Set Text Optimal Color
+ */
+void FontManager::setOptimalColor(int idx1, int idx2, int idx3, int idx4) {
+	setTextColor(idx1, 255);
+	setTextColor(idx2, 255);
+	setTextColor(idx3, 255);
+	setTextColor(idx4, 253);
 }
 
-// 
-void FontManager::DOS_TEXT(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int colour) {
-	if ((idx - 5) > 11)
+/**
+ * Init text structure
+ */
+void FontManager::initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int textType, int a9, int color) {
+	if ((idx - 5) > MAX_TEXT)
 		error("Attempted to display text > MAX_TEXT.");
   
-	TxtItem &txt = Txt[idx - 5];
-	txt.textOn = false;
-	txt.filename = filename;
-	txt.xp = xp;
-	txt.yp = yp;
-	txt.messageId = messageId;
-	txt.fieldE = a6;
-	txt.field10 = a7;
-	txt.field3FC = a8;
-	txt.field3FE = a9;
-	txt.colour = colour;
+	TxtItem &txt = _text[idx - 5];
+	txt._textOnFl = false;
+	txt._filename = filename;
+	txt._pos.x = xp;
+	txt._pos.y = yp;
+	txt._messageId = messageId;
+	txt._fieldE = a6; // Useless variable
+	txt._field10 = a7; // Useless variable
+	txt._textType = textType;
+	txt._field3FE = a9;
+	txt._color = color;
 }
 
 // Box
-void FontManager::BOITE(int idx, int messageId, const Common::String &filename, int xp, int yp) {
+void FontManager::box(int idx, int messageId, const Common::String &filename, int xp, int yp) {
 	byte *v9; 
 	byte *ptre; 
 	Common::String s; 
@@ -138,66 +148,66 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 		error("Bad number for text");
 	_vm->_globals.police_l = 11;
 
-	_vm->_globals.largeur_boite = 11 * Txt[idx].field3FE;
-	if (Txt[idx].textLoaded) {
-		int v34 = Txt[idx].field3FC;
-		if (v34 != 6 && v34 != 1 && v34 != 3 && v34 != 5) {
+	_vm->_globals.largeur_boite = 11 * _text[idx]._field3FE;
+	if (_text[idx]._textLoadedFl) {
+		int textType = _text[idx]._textType;
+		if (textType != 6 && textType != 1 && textType != 3 && textType != 5) {
 			int yCurrent = yp + 5;
-			if (Txt[idx].lineCount > 0) {
-				for (int lineNum = 0; lineNum < Txt[idx].lineCount; ++lineNum) {
-					TEXT_NOW1(xp + 5, yCurrent, Txt[idx].lines[lineNum], Txt[idx].colour);
+			if (_text[idx]._lineCount > 0) {
+				for (int lineNum = 0; lineNum < _text[idx]._lineCount; ++lineNum) {
+					displayText(xp + 5, yCurrent, _text[idx]._lines[lineNum], _text[idx]._color);
 					yCurrent += _vm->_globals.police_h + 1;
 				} 
 			}
 		} else {
-			int v36 = Txt[idx].height;
-			int v37 = Txt[idx].width;
+			int height = _text[idx]._height;
+			int width = _text[idx]._width;
 			_vm->_graphicsManager.Restore_Mem(
 				_vm->_graphicsManager.VESA_BUFFER,
-				Txt[idx].textBlock,
+				_text[idx]._textBlock,
 			    xp,
 			    yp,
-			    Txt[idx].width,
-			    Txt[idx].height);
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, xp + v37, yp + v36);
+			    _text[idx]._width,
+			    _text[idx]._height);
+			_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
 		}
 	} else {
 		int lineCount = 0;
 		int v62 = 0;
 		do {
-			TRIER_TEXT[v62++] = 0;
+			_textSortArray[v62++] = 0;
 		} while (v62 <= 19);
-		Txt[idx].textLoaded = true;
+		_text[idx]._textLoadedFl = true;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
 
 		file = _vm->_globals.NFICHIER;
-		if (strncmp(file.c_str(), oldname.c_str(), strlen(file.c_str())) != 0) {
+		if (strncmp(file.c_str(), _oldName.c_str(), strlen(file.c_str())) != 0) {
 			// Starting to access a new file, so read in the index file for the file
-			oldname = file;
-			nom_index = Common::String(file.c_str(), file.size() - 3);
-			nom_index += "IND";
+			_oldName = file;
+			_indexName = Common::String(file.c_str(), file.size() - 3);
+			_indexName += "IND";
 			
-			if (!f.open(nom_index))
-				error("Error opening file - %s", nom_index.c_str());
+			if (!f.open(_indexName))
+				error("Error opening file - %s", _indexName.c_str());
 			int filesize = f.size();
 			for (int i = 0; i < (filesize / 4); ++i)
-				Index[i] = f.readUint32LE();
+				_index[i] = f.readUint32LE();
 			f.close();
 		}
 		int v11, v69;
 		if (filename[0] != 'Z' || filename[1] != 'O') {
 			if (!f.open(file))
-				error("Error opening file - %s", nom_index.c_str());
+				error("Error opening file - %s", _indexName.c_str());
 
 			v69 = 2048;
-			f.seek(Index[messageId]);
+			f.seek(_index[messageId]);
 
-			texte_tmp = _vm->_globals.dos_malloc2(0x80Au);
-			if (texte_tmp == g_PTRNUL)
+			_tempText = _vm->_globals.dos_malloc2(0x80Au);
+			if (_tempText == g_PTRNUL)
 				error("Error allocating text");
 			
-			Common::fill(&texte_tmp[0], &texte_tmp[0x80a], 0);
-			f.read(texte_tmp, 0x800u);
+			Common::fill(&_tempText[0], &_tempText[0x80a], 0);
+			f.read(_tempText, 0x800u);
 			f.close();
 			_vm->_globals.texte_long = 2048;
 		} else {
@@ -206,13 +216,13 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			v9 = _vm->_globals.dos_malloc2(0x6Eu);
 			Common::fill(&v9[0], &v9[0x6e], 0);
 
-			texte_tmp = v9;
-			const byte *v10 = _vm->_globals.BUF_ZONE + Index[messageId];
+			_tempText = v9;
+			const byte *v10 = _vm->_globals.BUF_ZONE + _index[messageId];
 			memcpy(v9, v10, 0x60u);
 			v11 = 0;
 			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
 		}
-		byte *v59 = texte_tmp;
+		byte *v59 = _tempText;
 		byte *v60;
 		if (!v69)
 			goto LABEL_43;
@@ -232,21 +242,21 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			v59++;
 		};
 
-		v60 = texte_tmp;
+		v60 = _tempText;
 		if (v69) {
 			int v64 = 0;
 			for (;;) {
 				byte v14 = *(v60 + v64);
 				if (v14 == '\r' || v14 == '\n') {
 					*(v60 + v64) = 0;
-					if (!Txt[idx].field3FE)
+					if (!_text[idx]._field3FE)
 						break;
 				}
 				++v64;
 				if (v69 <= v64)
 					goto LABEL_43;
 			}
-			Txt[idx].field3FE = v64;
+			_text[idx]._field3FE = v64;
 			_vm->_globals.largeur_boite = 0;
 
 			if (v64 + 1 > 0) {
@@ -261,18 +271,18 @@ void FontManager::BOITE(int idx, int messageId, const Common::String &filename, 
 			int v17 = _vm->_globals.largeur_boite / 2;
 			if (v17 < 0)
 				v17 = -v17;
-			Txt[idx].xp = 320 - v17;
+			_text[idx]._pos.x = 320 - v17;
 			v73 = _vm->_eventsManager._startPos.x + 320 - v17;
 			lineCount = 1;
 			if (v64 + 1 > 0) {
-				Txt[idx].lines[0] = Common::String((const char *)v60, v64);
+				_text[idx]._lines[0] = Common::String((const char *)v60, v64);
 			}
 		} else {
 LABEL_43:
 			if (!_vm->_globals.largeur_boite)
 				_vm->_globals.largeur_boite = 240;
 			int v65 = 0;
-			byte *v61 = texte_tmp;
+			byte *v61 = _tempText;
 			int v21;
 			int lineSize;
 			do {
@@ -308,29 +318,29 @@ LABEL_57:
 				while (actualSize < lineSize && *(v61 + v65 + actualSize))
 					++actualSize;
 
-				Txt[idx].lines[v20] = Common::String((const char *)v61 + v65, actualSize);
-				TRIER_TEXT[lineCount++] = lineSize;
+				_text[idx]._lines[v20] = Common::String((const char *)v61 + v65, actualSize);
+				_textSortArray[lineCount++] = lineSize;
 
 				v65 += lineSize;
 				v11 = v21;
 			} while (v21 != 37);
 
 			for (int i = 0; i <= 19; i++) {
-				int v22 = TRIER_TEXT[i];
+				int v22 = _textSortArray[i];
 				if (v22 <= 0) {
-					TRIER_TEXT[i] = 0;
+					_textSortArray[i] = 0;
 				} else {
 					int ptrc = 0;
 					if (v22 - 1 > 0) {
-						for (int v23 = 0; v23 < TRIER_TEXT[i] - 1; v23++) {
-							Common::String &line = Txt[idx].lines[i];
+						for (int v23 = 0; v23 < _textSortArray[i] - 1; v23++) {
+							Common::String &line = _text[idx]._lines[i];
 							byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
 							if ((byte)v24 <= 0x1Fu)
 								v24 = 32;
 							ptrc += _vm->_objectsManager.getWidth(_vm->_globals.police, (byte)v24 - 32);
 						}
 					}
-					TRIER_TEXT[i] = ptrc;
+					_textSortArray[i] = ptrc;
 				}
 			}
 			for (int i = 0; i <= 19; i++) {
@@ -339,21 +349,21 @@ LABEL_57:
 					++v25;
 					if (v25 == 20)
 						v25 = 0;
-					if (TRIER_TEXT[i] < TRIER_TEXT[v25])
-						TRIER_TEXT[i] = 0;
+					if (_textSortArray[i] < _textSortArray[v25])
+						_textSortArray[i] = 0;
 				} while (v25 != i);
 			};
 
 			for (int i = 0; i <= 19; i++) {
-				if (TRIER_TEXT[i])
-					_vm->_globals.largeur_boite = TRIER_TEXT[i];
+				if (_textSortArray[i])
+					_vm->_globals.largeur_boite = _textSortArray[i];
 			}
 
-			if ((uint16)(Txt[idx].field3FC - 2) > 1u) {
+			if (_text[idx]._textType > 3) {
 				int i;
-				for (i = xp - _vm->_eventsManager._startPos.x; _vm->_globals.largeur_boite + i > 638 && i > -2 && Txt[idx].field3FC; i -= 2)
+				for (i = xp - _vm->_eventsManager._startPos.x; _vm->_globals.largeur_boite + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
 					;
-				Txt[idx].xp = i;
+				_text[idx]._pos.x = i;
 				v73 = _vm->_eventsManager._startPos.x + i;
 			} else {
 				if (_vm->_globals.nbrligne == (SCREEN_WIDTH - 1)) {
@@ -364,7 +374,7 @@ LABEL_57:
 					while (_vm->_globals.largeur_boite + v73 > 1278 && v73 > -2)
 						v73 -= 2;
 				}
-				Txt[idx].xp = v73;
+				_text[idx]._pos.x = v73;
 			}
 		}
 		_vm->_globals.hauteur_boite = (_vm->_globals.police_h + 1) * lineCount + 2;
@@ -372,20 +382,20 @@ LABEL_57:
 		int v55 = yp;
 		int v53 = _vm->_globals.largeur_boite + 10;
 		int v51 = (_vm->_globals.police_h + 1) * lineCount + 12;
-		if (Txt[idx].field3FC == 6) {
+		if (_text[idx]._textType == 6) {
 			int v27 = v53 / 2;
 			if (v27 < 0)
 				v27 = -v27;
-			Txt[idx].xp = 315 - v27;
+			_text[idx]._pos.x = 315 - v27;
 			int v28 = _vm->_eventsManager._startPos.x + 315 - v27;
 			v73 = _vm->_eventsManager._startPos.x + 315 - v27;
-			Txt[idx].yp = 50;
+			_text[idx]._pos.y = 50;
 			v70 = 50;
 			v55 = 50;
 			v56 = v28;
 		}
-		int v29 = Txt[idx].field3FC;
-		if (v29 == 1 || v29 == 3 || (uint16)(v29 - 5) <= 1u) {
+		int textType = _text[idx]._textType;
+		if (textType == 1 || textType == 3 || textType == 5 || textType == 6) {
 			int v49 = v51 * v53;
 			byte *ptrd = _vm->_globals.dos_malloc2(v49);
 			if (ptrd == g_PTRNUL) {
@@ -401,13 +411,13 @@ LABEL_57:
 			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v56, v70, v51, (byte)-2);
 			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v53 + v56, v70, v51, (byte)-2);
 		}
-		Txt[idx].lineCount = lineCount;
+		_text[idx]._lineCount = lineCount;
 		int v75 = v73 + 5;
 		int v71 = v70 + 5;
 
 		if (lineCount > 0) {
 			for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
-				TEXT_NOW1(v75, v71, Txt[idx].lines[lineNum], Txt[idx].colour);
+				displayText(v75, v71, _text[idx]._lines[lineNum], _text[idx]._color);
 				v71 += _vm->_globals.police_h + 1;
 			}
 		}
@@ -415,27 +425,29 @@ LABEL_57:
 		int blockWidth = v53 + 1;
 		int blockHeight = v51 + 1;
 		
-		Txt[idx].width = blockWidth;
-		Txt[idx].height = blockHeight;
-		int v32 = Txt[idx].field3FC;
-		if (v32 == 6 || v32 == 1 || v32 == 3 || v32 == 5) {
-			if (Txt[idx].textBlock != g_PTRNUL)
-				Txt[idx].textBlock = _vm->_globals.dos_free2(Txt[idx].textBlock);
+		_text[idx]._width = blockWidth;
+		_text[idx]._height = blockHeight;
+		textType = _text[idx]._textType;
+		if (textType == 6 || textType == 1 || textType == 3 || textType == 5) {
+			if (_text[idx]._textBlock != g_PTRNUL)
+				_text[idx]._textBlock = _vm->_globals.dos_free2(_text[idx]._textBlock);
 			int blockSize = blockHeight * blockWidth;
 			ptre = _vm->_globals.dos_malloc2(blockSize + 20);
 			if (ptre == g_PTRNUL)
 				error("Cutting a block for text box (%d)", blockSize);
 
-			Txt[idx].textBlock = ptre;
-			Txt[idx].width = blockWidth;
-			Txt[idx].height = blockHeight;
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, Txt[idx].textBlock, v56, v55, Txt[idx].width, blockHeight);
+			_text[idx]._textBlock = ptre;
+			_text[idx]._width = blockWidth;
+			_text[idx]._height = blockHeight;
+			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _text[idx]._textBlock, v56, v55, _text[idx]._width, blockHeight);
 		}
-		texte_tmp = _vm->_globals.dos_free2(texte_tmp);
+		_tempText = _vm->_globals.dos_free2(_tempText);
 	}
 }
-
-void FontManager::TEXT_NOW(int xp, int yp, const Common::String &message, int col) {
+/** 
+ * Directly display text
+ */
+void FontManager::displayTextVesa(int xp, int yp, const Common::String &message, int col) {
 	const char *srcP;
 	char currChar; 
 	int charIndex; 
@@ -458,7 +470,7 @@ void FontManager::TEXT_NOW(int xp, int yp, const Common::String &message, int co
 }
 
 
-void FontManager::TEXT_NOW1(int xp, int yp, const Common::String &message, int col) {
+void FontManager::displayText(int xp, int yp, const Common::String &message, int col) {
 	for (uint idx = 0; idx < message.size(); ++idx) {
 		char currentChar = message[idx];
 

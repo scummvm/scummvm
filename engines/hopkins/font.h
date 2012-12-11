@@ -24,66 +24,66 @@
 #define HOPKINS_FONT_H
 
 #include "common/scummsys.h"
+#include "common/events.h"
 #include "common/str.h"
 
 namespace Hopkins {
 
+#define MAX_TEXT 11
+
 class HopkinsEngine;
 
 struct TxtItem {
-	bool textOn;
-	int field2;
-	Common::String filename;
-	int16 xp;
-	int16 yp;
-	int messageId;
-	int fieldE;
-	int field10;
-	int lineCount;
-	Common::String lines[10];
-	int field3FC;
-	int field3FE;
-	byte *textBlock;
-	int16 width;
-	int16 height;
-	bool textLoaded;
-	int colour;
+	bool _textOnFl;
+//	int _field2; // Unused variable
+	Common::String _filename;
+	Common::Point _pos;
+	int _messageId;
+	int _fieldE; // Useless variable
+	int _field10; // Useless variable
+	int _lineCount;
+	Common::String _lines[10];
+	int _textType;
+	int _field3FE;
+	byte *_textBlock;
+	int16 _width;
+	int16 _height;
+	bool _textLoadedFl;
+	int _color;
 };
 
-struct ListeTxtItem {
-	bool enabled;
-	int16 xp;
-	int16 yp;
-	int16 width;
-	int16 height;
+struct TxtItemList {
+	bool _enabledFl;
+	Common::Point _pos;
+	int16 _width;
+	int16 _height;
 };
-
 
 class FontManager {
 private:
 	HopkinsEngine *_vm;
 public:
-	TxtItem Txt[12];
-	ListeTxtItem ListeTxt[12];
-	int TRIER_TEXT[21];
-	Common::String oldname;
-	Common::String nom_index;
-	int Index[4048];
-	byte *texte_tmp;
+	TxtItem _text[12];
+	TxtItemList _textList[12];
+	int _textSortArray[21];
+	Common::String _oldName;
+	Common::String _indexName;
+	int _index[4048];
+	byte *_tempText;
 public:
 	FontManager();
 	void setParent(HopkinsEngine *vm);
 	void clearAll();
 
-	void TEXTE_ON(int idx);
-	void TEXTE_OFF(int idx);
-	void COUL_TXT(int idx, byte colByte);
-	void OPTI_COUL_TXT(int idx1, int idx2, int idx3, int idx4);
-	void DOS_TEXT(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int a8, int a9, int a10);
-	void BOITE(int idx, int messageId, const Common::String &filename, int xp, int yp);
+	void showText(int idx);
+	void hideText(int idx);
+	void setTextColor(int idx, byte colByte);
+	void setOptimalColor(int idx1, int idx2, int idx3, int idx4);
+	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int textType, int a9, int a10);
+	void box(int idx, int messageId, const Common::String &filename, int xp, int yp);
 	
-	void TEXT_NOW(int xp, int yp, const Common::String &message, int col);
-	void TEXT_NOW1(int xp, int yp, const Common::String &message, int col);
+	void displayTextVesa(int xp, int yp, const Common::String &message, int col);
+	void displayText(int xp, int yp, const Common::String &message, int col);
 	void TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col);
 };
 

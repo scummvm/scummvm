@@ -364,7 +364,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 	bool oldMouseFlag = _vm->_eventsManager._mouseFl;
 	_vm->_eventsManager._mouseFl = false;
 
-	_vm->_fontManager.TEXT_NOW(xp, yp, "_", -4);
+	_vm->_fontManager.displayTextVesa(xp, yp, "_", -4);
 	do {
 		curChar = _vm->_eventsManager.waitKeyPress();
 		if (_vm->shouldQuit())
@@ -454,7 +454,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 			x2 = x1 + 2 * _vm->_globals.police_l;
 			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, 3 * _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, x1, yp);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(x1, yp, x2, yp + 12);
-			_vm->_fontManager.TEXT_NOW(x1, yp, "_", -4);
+			_vm->_fontManager.displayTextVesa(x1, yp, "_", -4);
 		}
 		if (mappedChar != '*') {
 			newChar = mappedChar;
@@ -463,7 +463,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 			_inputBuf[textIndex] = newChar;
 
 			charString = Common::String::format("%c_", newChar);
-			_vm->_fontManager.TEXT_NOW(x1, yp, charString, -4);
+			_vm->_fontManager.displayTextVesa(x1, yp, charString, -4);
 			++textIndex;
 			x1 += _vm->_globals.police_l;
 		}
@@ -490,7 +490,7 @@ void ComputerManager::outText(const Common::String &msg) {
  * Outputs a text string
  */
 void ComputerManager::outText2(const Common::String &msg) {
-	_vm->_fontManager.TEXT_NOW(_textPosition.x, _textPosition.y, msg, _textColor);
+	_vm->_fontManager.displayTextVesa(_textPosition.x, _textPosition.y, msg, _textColor);
 }
 
 /**

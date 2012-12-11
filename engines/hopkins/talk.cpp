@@ -65,8 +65,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	Common::String v16; 
 
 	v15 = 0;
-	_vm->_fontManager.TEXTE_OFF(5);
-	_vm->_fontManager.TEXTE_OFF(9);
+	_vm->_fontManager.hideText(5);
+	_vm->_fontManager.hideText(9);
 	_vm->_eventsManager.VBL();
 	_vm->_graphicsManager.no_scroll = 1;
 	bool oldDisableInventFl = _vm->_globals._disableInventFl;
@@ -320,14 +320,14 @@ int TalkManager::DIALOGUE() {
 	v21 = v20 - 20 * v3;
 	v18 = v20 - 20 * v3 - 1;
 	v4 = v20 - 20 * v3 - 20 * v2;
-	_vm->_fontManager.DOS_TEXT(5, PLIGNE1, FQUEST, 5, v4 - 20 * v19, 0, 0, 0, 65, 255);
-	_vm->_fontManager.DOS_TEXT(6, PLIGNE2, FQUEST, 5, v4, 0, 0, 0, 65, 255);
-	_vm->_fontManager.DOS_TEXT(7, PLIGNE3, FQUEST, 5, v21, 0, 0, 0, 65, 255);
-	_vm->_fontManager.DOS_TEXT(8, PLIGNE4, FQUEST, 5, v20, 0, 0, 0, 65, 255);
-	_vm->_fontManager.TEXTE_ON(5);
-	_vm->_fontManager.TEXTE_ON(6);
-	_vm->_fontManager.TEXTE_ON(7);
-	_vm->_fontManager.TEXTE_ON(8);
+	_vm->_fontManager.initTextBuffers(5, PLIGNE1, FQUEST, 5, v4 - 20 * v19, 0, 0, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(6, PLIGNE2, FQUEST, 5, v4, 0, 0, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(7, PLIGNE3, FQUEST, 5, v21, 0, 0, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(8, PLIGNE4, FQUEST, 5, v20, 0, 0, 0, 65, 255);
+	_vm->_fontManager.showText(5);
+	_vm->_fontManager.showText(6);
+	_vm->_fontManager.showText(7);
+	_vm->_fontManager.showText(8);
 
 	v5 = -1;
 	v6 = 0;
@@ -335,24 +335,24 @@ int TalkManager::DIALOGUE() {
 		v7 = _vm->_eventsManager.getMouseY();
 		if ((v4 - 20 * v19) < v7 && (v4 - 1) > v7) {
 			v8 = v7;
-			_vm->_fontManager.OPTI_COUL_TXT(6, 7, 8, 5);
+			_vm->_fontManager.setOptimalColor(6, 7, 8, 5);
 			v5 = PLIGNE1;
 			v7 = v8;
 		}
 		if (v7 > v4 && v18 > v7) {
 			v9 = v7;
-			_vm->_fontManager.OPTI_COUL_TXT(5, 7, 8, 6);
+			_vm->_fontManager.setOptimalColor(5, 7, 8, 6);
 			v5 = PLIGNE2;
 			v7 = v9;
 		}
 		if (v21 < v7 && (v20 - 1) > v7) {
 			v10 = v7;
-			_vm->_fontManager.OPTI_COUL_TXT(5, 6, 8, 7);
+			_vm->_fontManager.setOptimalColor(5, 6, 8, 7);
 			v5 = PLIGNE3;
 			v7 = v10;
 		}
 		if (v20 < v7 && v7 < 419) {
-			_vm->_fontManager.OPTI_COUL_TXT(5, 6, 7, 8);
+			_vm->_fontManager.setOptimalColor(5, 6, 7, 8);
 			v5 = PLIGNE4;
 		}
     
@@ -364,10 +364,10 @@ int TalkManager::DIALOGUE() {
 	} while (!_vm->shouldQuit() && v6 != 1);
   
 	_vm->_soundManager.VOICE_MIX(v5, 1);
-	_vm->_fontManager.TEXTE_OFF(5);
-	_vm->_fontManager.TEXTE_OFF(6);
-	_vm->_fontManager.TEXTE_OFF(7);
-	_vm->_fontManager.TEXTE_OFF(8);
+	_vm->_fontManager.hideText(5);
+	_vm->_fontManager.hideText(6);
+	_vm->_fontManager.hideText(7);
+	_vm->_fontManager.hideText(8);
   
 	if (STATI) {
 		v11 = BUFFERPERSO;
@@ -472,8 +472,8 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	}
 
 	if (!_vm->_soundManager.TEXTOFF) {
-		_vm->_fontManager.DOS_TEXT(9, v22, FREPON, v25, v24, 20, 25, 5, v23, 252);
-		_vm->_fontManager.TEXTE_ON(9);
+		_vm->_fontManager.initTextBuffers(9, v22, FREPON, v25, v24, 20, 25, 5, v23, 252);
+		_vm->_fontManager.showText(9);
 	}
 	if (!_vm->_soundManager.VOICE_MIX(v22, 1)) {
 		v14 = 0;
@@ -505,7 +505,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	}
 
 	if (!_vm->_soundManager.TEXTOFF)
-		_vm->_fontManager.TEXTE_OFF(9);
+		_vm->_fontManager.hideText(9);
 	if (STATI) {
 		v15 = BUFFERPERSO;
 		v16 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 43);
@@ -1205,8 +1205,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	Common::String v22; 
 	Common::String v23; 
 
-	_vm->_fontManager.TEXTE_OFF(5);
-	_vm->_fontManager.TEXTE_OFF(9);
+	_vm->_fontManager.hideText(5);
+	_vm->_fontManager.hideText(9);
 	_vm->_eventsManager.VBL();
 	_vm->_graphicsManager.no_scroll = 1;
 	_vm->_linesManager.CLEAR_ZONE();

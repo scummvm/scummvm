@@ -3697,7 +3697,7 @@ void HopkinsEngine::Credits() {
 }
 
 void HopkinsEngine::BTOCEAN() {
-	_fontManager.TEXTE_OFF(9);
+	_fontManager.hideText(9);
 	if (_eventsManager._mouseCursorId == 16) {
 		_eventsManager.getMouseX();
 		if (_objectsManager.NUMZONE > 0) {

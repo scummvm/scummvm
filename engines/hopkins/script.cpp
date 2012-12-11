@@ -134,37 +134,37 @@ int ScriptManager::Traduction(byte *a1) {
 				} while (_vm->_soundManager.SOUND_FLAG);
 			}
 			if (!_vm->_soundManager.TEXTOFF) {
-				_vm->_fontManager.DOS_TEXT(9, v3, _vm->_globals.FICH_TEXTE, 2 * v67, 2 * v65 + 40, 20, 25, 6, v2, 253);
+				_vm->_fontManager.initTextBuffers(9, v3, _vm->_globals.FICH_TEXTE, 2 * v67, 2 * v65 + 40, 20, 25, 6, v2, 253);
 				if (!_vm->_soundManager.TEXTOFF)
-					_vm->_fontManager.TEXTE_ON(9);
+					_vm->_fontManager.showText(9);
 			}
 			if (!_vm->_soundManager.VOICEOFF)
 				_vm->_soundManager.VOICE_MIX(v3, 4);
 		}
 		if (TRAVAILOBJET == 1) {
 			if (_vm->_globals.SAUVEGARDE->data[svField356]) {
-				_vm->_fontManager.DOS_TEXT(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, 20, 25, v69, 35, 253);
+				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, 20, 25, v69, 35, 253);
 				if (!_vm->_soundManager.TEXTOFF)
-					_vm->_fontManager.TEXTE_ON(9);
+					_vm->_fontManager.showText(9);
 				if (!_vm->_soundManager.VOICEOFF)
 					_vm->_soundManager.VOICE_MIX(635, 4);
 				goto LABEL_104;
 			}
 			if (_vm->_globals.FR == 1 && !_vm->_soundManager.TEXTOFF)
-				_vm->_fontManager.DOS_TEXT(9, v3, "OBJET1.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
-			if (!_vm->_globals.FR && !_vm->_soundManager.TEXTOFF)
-				_vm->_fontManager.DOS_TEXT(9, v3, "OBJETAN.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
-			if (_vm->_globals.FR == 2) {
+				_vm->_fontManager.initTextBuffers(9, v3, "OBJET1.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+			else if (!_vm->_globals.FR && !_vm->_soundManager.TEXTOFF)
+				_vm->_fontManager.initTextBuffers(9, v3, "OBJETAN.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+			else if (_vm->_globals.FR == 2) {
 				if (_vm->_soundManager.TEXTOFF) {
 LABEL_98:
 					if (!_vm->_soundManager.VOICEOFF)
 						_vm->_soundManager.VOICE_MIX(v3, 5);
 					goto LABEL_104;
 				}
-				_vm->_fontManager.DOS_TEXT(9, v3, "OBJETES.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+				_vm->_fontManager.initTextBuffers(9, v3, "OBJETES.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
 			}
 			if (!_vm->_soundManager.TEXTOFF)
-				_vm->_fontManager.TEXTE_ON(9);
+				_vm->_fontManager.showText(9);
 			goto LABEL_98;
 		}
 	}
@@ -543,7 +543,7 @@ LABEL_1141:
 			_vm->_objectsManager.OPTI_ONE(20, 0, 14, 4);
 		}
 		if (v76 == 12) {
-			_vm->_fontManager.TEXTE_OFF(9);
+			_vm->_fontManager.hideText(9);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();
 			_vm->_talkManager.PARLER_PERSO("bqetueur.pe2");
@@ -695,8 +695,8 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.SPRITE_OFF(0);
-			_vm->_fontManager.TEXTE_OFF(5);
-			_vm->_fontManager.TEXTE_OFF(9);
+			_vm->_fontManager.hideText(5);
+			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.FIN_VISU();
 			_vm->_objectsManager.CLEAR_ECRAN();
 
@@ -1927,10 +1927,10 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(1) != 32);
 			_vm->_objectsManager.BOBANIM_OFF(1);
 			_vm->_objectsManager.BOBANIM_ON(2);
-			_vm->_fontManager.TEXTE_OFF(9);
+			_vm->_fontManager.hideText(9);
 			if (!_vm->_soundManager.TEXTOFF) {
-				_vm->_fontManager.DOS_TEXT(9, 617, _vm->_globals.FICH_TEXTE, 91, 41, 20, 25, 3, 30, 253);
-				_vm->_fontManager.TEXTE_ON(9);
+				_vm->_fontManager.initTextBuffers(9, 617, _vm->_globals.FICH_TEXTE, 91, 41, 20, 25, 3, 30, 253);
+				_vm->_fontManager.showText(9);
 			}
 			if (!_vm->_soundManager.VOICEOFF)
 				_vm->_soundManager.VOICE_MIX(617, 4);
@@ -1993,8 +1993,8 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.SPRITE_OFF(0);
-			_vm->_fontManager.TEXTE_OFF(5);
-			_vm->_fontManager.TEXTE_OFF(9);
+			_vm->_fontManager.hideText(5);
+			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.FIN_VISU();
 			_vm->_graphicsManager.LOAD_IMAGE("IM20f");
 			_vm->_animationManager.loadAnim("ANIM20f");

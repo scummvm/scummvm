@@ -456,7 +456,7 @@ LABEL_65:
 		if (_vm->_graphicsManager.OLD_SCROLL == v4) {
 			_vm->_graphicsManager.Affiche_Segment_Vesa();
 		} else {
-			_vm->_fontManager.TEXTE_OFF(9);
+			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.DD_Lock();
 			if (_vm->_graphicsManager.SDL_ECHELLE) {
 				if (_vm->_graphicsManager.Winbpp == 2) {

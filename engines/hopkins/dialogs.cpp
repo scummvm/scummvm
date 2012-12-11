@@ -416,7 +416,7 @@ LABEL_7:
 						do
 							_vm->_eventsManager.VBL();
 						while (!_vm->_globals.SORTIE && _vm->_eventsManager.getMouseButton() != 1);
-						_vm->_fontManager.TEXTE_OFF(9);
+						_vm->_fontManager.hideText(9);
 					}
 					if (_vm->_globals.SORTIE) {
 						if (_vm->_globals.SORTIE == 2)
@@ -441,7 +441,7 @@ LABEL_7:
 			if ((uint16)(_vm->_globals.ECRAN - 35) <= 5u)
 				_vm->_objectsManager.SPECIAL_JEU();
 		}
-		_vm->_fontManager.TEXTE_OFF(9);
+		_vm->_fontManager.hideText(9);
 		if (_inventDisplayedFl) {
 			_inventDisplayedFl = false;
 //			v9 = 114;
