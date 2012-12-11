@@ -163,6 +163,8 @@ private:
 	static uint32 safeDiscDecode2(uint32 data);
 };
 
+#ifdef USE_SAFEDISC
+
 class SafeDisc
 {
 public:
@@ -193,6 +195,8 @@ private:
 
 	void decryptBlock(uint32 *buffer, uint32 size) const;
 };
+
+#endif // USE_SAFEDISC
 
 } /* namespace Myst3 */
 #endif /* DATABASE_H_ */

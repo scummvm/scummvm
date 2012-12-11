@@ -525,6 +525,7 @@ Common::SeekableSubReadStreamEndian *Database::openDatabaseFile() const {
 		stream = segment;
 		bigEndian = true;
 	} else if (_executableVersion->safeDiskKey) {
+#ifdef USE_SAFEDISC
 		SafeDisc sd;
 		sd.setKey(_executableVersion->safeDiskKey);
 		sd.setDecodingFunctions(&safeDiscDecode1, &safeDiscDecode2);
@@ -537,6 +538,11 @@ Common::SeekableSubReadStreamEndian *Database::openDatabaseFile() const {
 		}
 
 		stream = decrypted;
+#else
+
+		error("Safedisc decryption is not enabled.");
+
+#endif // USE_SAFEDISC
 	}
 
 	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), bigEndian, DisposeAfterUse::YES);
@@ -802,6 +808,8 @@ Common::String Database::getSoundName(uint32 id) {
 	return result;
 }
 
+#ifdef USE_SAFEDISC
+
 SafeDisc::SafeDisc() {
 	_decode1 = 0;
 	_decode2 = 0;
@@ -959,5 +967,7 @@ void SafeDisc::decryptBlock(uint32 *buffer, uint32 size) const {
 		buffer[j + 1] = data2;
 	}
 }
+
+#endif // USE_SAFEDISC
 
 } /* namespace Myst3 */
