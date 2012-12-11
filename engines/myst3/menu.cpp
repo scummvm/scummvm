@@ -39,15 +39,9 @@ Menu::Menu(Myst3Engine *vm) :
 	_saveLoadSpotItem(0),
 	_saveDrawCaret(false),
 	_saveCaretCounter(0) {
-	_saveThumb = new Graphics::Surface();
-	_saveThumb->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 }
 
 Menu::~Menu() {
-	if (_saveThumb) {
-		_saveThumb->free();
-		delete _saveThumb;
-	}
 }
 
 void Menu::updateMainMenu(uint16 action) {
@@ -139,7 +133,8 @@ void Menu::goToNode(uint16 node) {
 
 		// ... and capture the screen
 		Graphics::Surface *big = _vm->_gfx->getScreenshot();
-		createThumbnail(big, _saveThumb);
+		Graphics::Surface *thumb = createThumbnail(big);
+		_vm->_state->setSaveThumbnail(thumb);
 		big->free();
 		delete big;
 	}
@@ -302,13 +297,15 @@ void Menu::loadMenuSelect(uint16 item) {
 	// Extract the age to load from the savegame
 	GameState *gameState = new GameState(_vm);
 	gameState->load(filename);
-	_saveLoadAgeName = getAgeLabel(gameState);
-	delete gameState;
 
-	// Extract the thumbnail from the save
-	Common::InSaveFile *save = _vm->getSaveFileManager()->openForLoading(filename);
-	saveGameReadThumbnail(save);
-	delete save;
+	// Update the age name
+	_saveLoadAgeName = getAgeLabel(gameState);
+
+	// Update the save thumbnail
+	if (_saveLoadSpotItem)
+		_saveLoadSpotItem->updateData(gameState->getSaveThumbnail());
+
+	delete gameState;
 }
 
 void Menu::loadMenuLoad() {
@@ -344,8 +341,9 @@ void Menu::saveMenuOpen() {
 	saveLoadUpdateVars();
 
 	// Update the thumbnail to display
-	if (_saveLoadSpotItem && _saveThumb)
-		_saveLoadSpotItem->updateData(_saveThumb);
+	Graphics::Surface *saveThumb = _vm->_state->getSaveThumbnail();
+	if (_saveLoadSpotItem && saveThumb)
+		_saveLoadSpotItem->updateData(saveThumb);
 }
 
 void Menu::saveMenuSelect(uint16 item) {
@@ -389,8 +387,8 @@ void Menu::saveMenuSave() {
 
 	// Save the state and the thumbnail
 	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
+	_vm->_state->setSaveDescription(_saveName);
 	_vm->_state->save(save);
-	saveGameWriteThumbnail(save);
 	delete save;
 
 	// Do next action
@@ -535,35 +533,6 @@ Common::String Menu::getAgeLabel(GameState *gameState) {
 	return label;
 }
 
-void Menu::saveGameReadThumbnail(Common::InSaveFile *save) {
-	Graphics::Surface *thumbnail = GameState::loadThumbnail(save);
-
-	// Convert to RGBA
-	thumbnail->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-	if (_saveLoadSpotItem)
-		_saveLoadSpotItem->updateData(thumbnail);
-
-	thumbnail->free();
-	delete thumbnail;
-}
-
-void Menu::saveGameWriteThumbnail(Common::OutSaveFile *save) {
-	// The file expects BGRA data instead of RGBA
-	uint8 *src = (uint8 *)_saveThumb->pixels;
-	for (uint i = 0; i < kMiniatureSize; i++) {
-		uint8 r, g, b, a;
-		r = *src++;
-		g = *src++;
-		b = *src++;
-		a = *src++;
-		save->writeByte(b);
-		save->writeByte(g);
-		save->writeByte(r);
-		save->writeByte(a);
-	}
-}
-
 Common::String Menu::prepareSaveNameForDisplay(const Common::String &name) {
 	Common::String display = name;
 	display.toUppercase();
@@ -580,9 +549,11 @@ Common::String Menu::prepareSaveNameForDisplay(const Common::String &name) {
 	return display;
 }
 
-void Menu::createThumbnail(Graphics::Surface *big, Graphics::Surface *small) {
-	assert(big->format.bytesPerPixel == 4
-			&& small->format.bytesPerPixel == 4);
+Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
+	assert(big->format.bytesPerPixel == 4);
+
+	Graphics::Surface *small = new Graphics::Surface();
+	small->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	uint bigHeight = big->h - Renderer::kTopBorderHeight - Renderer::kBottomBorderHeight;
 	uint bigYOffset = Renderer::kBottomBorderHeight;
@@ -595,9 +566,14 @@ void Menu::createThumbnail(Graphics::Surface *big, Graphics::Surface *small) {
 			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY - 1);
 
 			// Copy RGBA pixel
-			*dst++ = *src++;
+			*dst++ = *src;
 		}
 	}
+
+	// The thumbnail is stored on disk in BGRA
+	small->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+
+	return small;
 }
 
 } /* namespace Myst3 */

@@ -316,6 +316,9 @@ void SpotItemFace::updateData(const Graphics::Surface *surface) {
 	_bitmap->free();
 	_bitmap->copyFrom(*surface);
 
+	// Ensure the pixel format is correct
+	_bitmap->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
 	_drawn = false;
 }
 

@@ -51,8 +51,6 @@ public:
 	bool load(const Common::String &file);
 	bool save(Common::OutSaveFile *save);
 
-	static Graphics::Surface *loadThumbnail(Common::InSaveFile *save);
-
 	int32 getVar(uint16 var);
 	void setVar(uint16 var, int32 value);
 	bool evaluate(int16 condition);
@@ -234,6 +232,11 @@ public:
 	float getMinHeading() { return _data.minHeading; }
 	float getMaxHeading() { return _data.maxHeading; }
 
+
+	Graphics::Surface *getSaveThumbnail() const;
+	void setSaveThumbnail(Graphics::Surface *thumb);
+	void setSaveDescription(const Common::String &description) { _data.saveDescription = description; }
+
 	Common::Array<uint16> getInventory();
 	void updateInventory(const Common::Array<uint16> &items);
 
@@ -267,6 +270,19 @@ public:
 		uint32 inventoryCount;
 		uint32 inventoryList[7];
 		int8 zipDestinations[256];
+
+		uint8 saveDay;
+		uint8 saveMonth;
+		uint16 saveYear;
+
+		uint8 saveHour;
+		uint8 saveMinute;
+
+		Common::String saveDescription;
+
+		Common::SharedPtr<Graphics::Surface> thumbnail;
+
+		StateData();
 	};
 
 	static void syncWithSaveGame(Common::Serializer &s, StateData &data);
@@ -274,7 +290,7 @@ public:
 private:
 	Myst3Engine *_vm;
 
-	static const uint32 kSaveVersion = 148;
+	static const uint32 kSaveVersion = 149;
 
 	StateData _data;
 
@@ -293,6 +309,10 @@ private:
 
 	int32 engineGet(uint16 var);
 	void engineSet(uint16 var, int32 value);
+
+	static void syncFloat(Common::Serializer &s, float &val,
+			Common::Serializer::Version minVersion = 0,
+			Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 };
 
 } /* namespace Myst3 */

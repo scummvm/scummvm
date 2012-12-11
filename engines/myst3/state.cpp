@@ -26,6 +26,54 @@
 
 namespace Myst3 {
 
+GameState::StateData::StateData() {
+	version = GameState::kSaveVersion;
+	gameRunning = true;
+	currentFrame = 0;
+	nextSecondsUpdate = 0;
+	secondsPlayed = 0;
+	dword_4C2C44 = 0;
+	dword_4C2C48 = 0;
+	dword_4C2C4C = 0;
+	dword_4C2C50 = 0;
+	dword_4C2C54 = 0;
+	dword_4C2C58 = 0;
+	dword_4C2C5C = 0;
+	dword_4C2C60 = 0;
+	currentNodeType = 0;
+	lookatPitch = 0;
+	lookatHeading = 0;
+	lookatFOV = 0;
+	pitchOffset = 0;
+	headingOffset = 0;
+	limitCubeCamera = 0;
+	minPitch = 0;
+	maxPitch = 0;
+	minHeading = 0;
+	maxHeading = 0;
+	dword_4C2C90 = 0;
+
+	for (uint i = 0; i < 2048; i++)
+		vars[i] = 0;
+
+	vars[0] = 0;
+	vars[1] = 1;
+
+	inventoryCount = 0;
+
+	for (uint i = 0; i < 7; i++)
+		inventoryList[i] = 0;
+
+	for (uint i = 0; i < 256; i++)
+		zipDestinations[i] = 0;
+
+	saveDay = 0;
+	saveMonth = 0;
+	saveYear = 0;
+	saveHour = 0;
+	saveMinute = 0;
+}
+
 GameState::GameState(Myst3Engine *vm):
 	_vm(vm) {
 
@@ -205,9 +253,23 @@ GameState::GameState(Myst3Engine *vm):
 GameState::~GameState() {
 }
 
+void GameState::syncFloat(Common::Serializer &s, float &val,
+		Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	static const float precision = 10000.0;
+
+	if (s.isLoading()) {
+		int32 saved;
+		s.syncAsSint32LE(saved, minVersion, maxVersion);
+		val = saved / precision;
+	} else {
+		int32 toSave = val * precision;
+		s.syncAsSint32LE(toSave, minVersion, maxVersion);
+	}
+}
+
 void GameState::syncWithSaveGame(Common::Serializer &s, StateData &data) {
 	if (!s.syncVersion(kSaveVersion))
-		error("This savegame (v%d) is too recent (max %d) please get a newer version of Residual", s.getVersion(), kSaveVersion);
+		error("This savegame (v%d) is too recent (max %d) please get a newer version of ResidualVM", s.getVersion(), kSaveVersion);
 
 	s.syncAsUint32LE(data.gameRunning);
 	s.syncAsUint32LE(data.currentFrame);
@@ -223,19 +285,36 @@ void GameState::syncWithSaveGame(Common::Serializer &s, StateData &data) {
 	s.syncAsUint32LE(data.dword_4C2C60);
 	s.syncAsUint32LE(data.currentNodeType);
 
-	// FIXME Syncing IEE754 data is not cross platform
-	// Increase the savegame version and save those as integers
-	s.syncBytes((byte*) &data.lookatPitch, sizeof(float));
-	s.syncBytes((byte*) &data.lookatHeading, sizeof(float));
-	s.syncBytes((byte*) &data.lookatFOV, sizeof(float));
-	s.syncBytes((byte*) &data.pitchOffset, sizeof(float));
-	s.syncBytes((byte*) &data.headingOffset, sizeof(float));
+	// The original engine (v148) saved the raw IEE754 data,
+	// we save decimal data as fixed point instead to be achieve portability
+	if (s.getVersion() < 149) {
+		s.syncBytes((byte*) &data.lookatPitch, sizeof(float));
+		s.syncBytes((byte*) &data.lookatHeading, sizeof(float));
+		s.syncBytes((byte*) &data.lookatFOV, sizeof(float));
+		s.syncBytes((byte*) &data.pitchOffset, sizeof(float));
+		s.syncBytes((byte*) &data.headingOffset, sizeof(float));
+	} else {
+		syncFloat(s, data.lookatPitch);
+		syncFloat(s, data.lookatHeading);
+		syncFloat(s, data.lookatFOV);
+		syncFloat(s, data.pitchOffset);
+		syncFloat(s, data.headingOffset);
+	}
 
 	s.syncAsUint32LE(data.limitCubeCamera);
-	s.syncBytes((byte*) &data.minPitch, sizeof(float));
-	s.syncBytes((byte*) &data.maxPitch, sizeof(float));
-	s.syncBytes((byte*) &data.minHeading, sizeof(float));
-	s.syncBytes((byte*) &data.maxHeading, sizeof(float));
+
+	if (s.getVersion() < 149) {
+		s.syncBytes((byte*) &data.minPitch, sizeof(float));
+		s.syncBytes((byte*) &data.maxPitch, sizeof(float));
+		s.syncBytes((byte*) &data.minHeading, sizeof(float));
+		s.syncBytes((byte*) &data.maxHeading, sizeof(float));
+	} else {
+		syncFloat(s, data.minPitch);
+		syncFloat(s, data.maxPitch);
+		syncFloat(s, data.minHeading);
+		syncFloat(s, data.maxHeading);
+	}
+
 	s.syncAsUint32LE(data.dword_4C2C90);
 
 	for (uint i = 0; i < 2048; i++)
@@ -248,15 +327,24 @@ void GameState::syncWithSaveGame(Common::Serializer &s, StateData &data) {
 
 	for (uint i = 0; i < 256; i++)
 		s.syncAsByte(data.zipDestinations[i]);
+
+	s.syncAsByte(data.saveDay, 149);
+	s.syncAsByte(data.saveMonth, 149);
+	s.syncAsUint16LE(data.saveYear, 149);
+	s.syncAsByte(data.saveHour, 149);
+	s.syncAsByte(data.saveMinute, 149);
+	s.syncString(data.saveDescription, 149);
+
+	if (s.isLoading()) {
+		Graphics::Surface *thumbnail = new Graphics::Surface();
+		thumbnail->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+		data.thumbnail = Common::SharedPtr<Graphics::Surface>(thumbnail, Graphics::SharedPtrSurfaceDeleter());
+	}
+	s.syncBytes((byte *)data.thumbnail->pixels, 240 * 135 * 4);
 }
 
 void GameState::newGame() {
-	memset(&_data, 0, sizeof(_data));
-
-	_data.version = kSaveVersion;
-	_data.gameRunning = true;
-	_data.vars[0] = 0;
-	_data.vars[1] = 1;
+	_data = StateData();
 }
 
 bool GameState::load(const Common::String &file) {
@@ -270,27 +358,34 @@ bool GameState::load(const Common::String &file) {
 	return true;
 }
 
-Graphics::Surface *GameState::loadThumbnail(Common::InSaveFile *save) {
-	// Start of thumbnail data
-	save->seek(8580);
-
-	Graphics::Surface *thumbnail = new Graphics::Surface();
-	thumbnail->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-
-	// Read BGRA
-	save->read(thumbnail->pixels, 240 * 135 * 4);
-
-	return thumbnail;
-}
-
 bool GameState::save(Common::OutSaveFile *saveFile) {
 	Common::Serializer s = Common::Serializer(0, saveFile);
+
+	// Update save creation info
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+	_data.saveYear = t.tm_year + 1900;
+	_data.saveMonth = t.tm_mon + 1;
+	_data.saveDay = t.tm_mday;
+	_data.saveHour = t.tm_hour;
+	_data.saveMinute = t.tm_min;
 
 	_data.gameRunning = false;
 	syncWithSaveGame(s, _data);
 	_data.gameRunning = true;
 
 	return true;
+}
+
+Graphics::Surface *GameState::getSaveThumbnail() const {
+	return _data.thumbnail.get();
+}
+
+void GameState::setSaveThumbnail(Graphics::Surface *thumb) {
+	if (_data.thumbnail.get() == thumb)
+		return;
+
+	_data.thumbnail = Common::SharedPtr<Graphics::Surface>(thumb, Graphics::SharedPtrSurfaceDeleter());
 }
 
 Common::Array<uint16> GameState::getInventory() {

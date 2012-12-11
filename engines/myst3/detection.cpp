@@ -167,8 +167,9 @@ public:
 			(f == kSupportsListSaves) ||
 			(f == kSupportsDeleteSave) ||
 			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSavesSupportThumbnail) ||
 			(f == kSavesSupportMetaInfo) ||
+			(f == kSavesSupportThumbnail) ||
+			(f == kSavesSupportCreationDate) ||
 			(f == kSavesSupportPlayTime);
 	}
 
@@ -224,17 +225,21 @@ public:
 		GameState::syncWithSaveGame(s, data);
 
 		// Read and resize the thumbnail
-		Graphics::Surface *thumbnail = GameState::loadThumbnail(saveFile);
 		Graphics::Surface *guiThumb = new Graphics::Surface();
 		guiThumb->create(160, 100, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-		resizeThumbnail(thumbnail, guiThumb);
+		resizeThumbnail(data.thumbnail.get(), guiThumb);
 
 		// Set metadata
 		saveInfos.setThumbnail(guiThumb);
 		saveInfos.setPlayTime(data.secondsPlayed * 1000);
 
-		thumbnail->free();
-		delete thumbnail;
+		if (data.saveYear != 0) {
+			saveInfos.setSaveDate(data.saveYear, data.saveMonth, data.saveDay);
+			saveInfos.setSaveTime(data.saveHour, data.saveMinute);
+		}
+
+		if (data.saveDescription != "")
+			saveInfos.setDescription(data.saveDescription);
 
 		delete saveFile;
 
