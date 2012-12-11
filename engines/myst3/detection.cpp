@@ -23,6 +23,7 @@
 #include "engines/advancedDetector.h"
 
 #include "engines/myst3/myst3.h"
+#include "engines/myst3/state.h"
 
 #include "common/savefile.h"
 
@@ -164,7 +165,11 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const {
 		return
 			(f == kSupportsListSaves) ||
-			(f == kSupportsLoadingDuringStartup);
+			(f == kSupportsDeleteSave) ||
+			(f == kSupportsLoadingDuringStartup) ||
+			(f == kSavesSupportThumbnail) ||
+			(f == kSavesSupportMetaInfo) ||
+			(f == kSavesSupportPlayTime);
 	}
 
 	virtual SaveStateList listSaves(const char *target) const {
@@ -175,6 +180,70 @@ public:
 			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
 
 		return saveList;
+	}
+
+	void resizeThumbnail(Graphics::Surface *big, Graphics::Surface *small) const {
+		assert(big->format.bytesPerPixel == 4
+				&& small->format.bytesPerPixel == 4);
+
+		uint32 *dst = (uint32 *)small->pixels;
+		for (uint i = 0; i < small->h; i++) {
+			for (uint j = 0; j < small->w; j++) {
+				uint32 srcX = big->w * j / small->w;
+				uint32 srcY = big->h * i / small->h;
+				uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
+
+				// Copy RGBA pixel
+				*dst++ = *src;
+			}
+		}
+	}
+
+	SaveStateDescriptor getSaveDescription(const char *target, int slot) const {
+		SaveStateList saves = listSaves(target);
+
+		SaveStateDescriptor description = SaveStateDescriptor();
+		for (uint32 i = 0; i < saves.size(); i++) {
+			if (saves[i].getSaveSlot() == slot) {
+				description = saves[i];
+			}
+		}
+
+		return description;
+	}
+
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
+
+		// Open save
+		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(saveInfos.getDescription());
+
+		// Read state data
+		Common::Serializer s = Common::Serializer(saveFile, 0);
+		GameState::StateData data;
+		GameState::syncWithSaveGame(s, data);
+
+		// Read and resize the thumbnail
+		Graphics::Surface *thumbnail = GameState::loadThumbnail(saveFile);
+		Graphics::Surface *guiThumb = new Graphics::Surface();
+		guiThumb->create(160, 100, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+		resizeThumbnail(thumbnail, guiThumb);
+
+		// Set metadata
+		saveInfos.setThumbnail(guiThumb);
+		saveInfos.setPlayTime(data.secondsPlayed * 1000);
+
+		thumbnail->free();
+		delete thumbnail;
+
+		delete saveFile;
+
+		return saveInfos;
+	}
+
+	void removeSaveState(const char *target, int slot) const {
+		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
+		g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription());
 	}
 
 	virtual int getMaximumSaveSlot() const {

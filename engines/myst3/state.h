@@ -51,6 +51,8 @@ public:
 	bool load(const Common::String &file);
 	bool save(Common::OutSaveFile *save);
 
+	static Graphics::Surface *loadThumbnail(Common::InSaveFile *save);
+
 	int32 getVar(uint16 var);
 	void setVar(uint16 var, int32 value);
 	bool evaluate(int16 condition);
@@ -235,11 +237,6 @@ public:
 	Common::Array<uint16> getInventory();
 	void updateInventory(const Common::Array<uint16> &items);
 
-private:
-	Myst3Engine *_vm;
-
-	static const uint32 kSaveVersion = 148;
-
 	struct StateData {
 		uint32 version;
 		uint32 gameRunning;
@@ -272,6 +269,13 @@ private:
 		int8 zipDestinations[256];
 	};
 
+	static void syncWithSaveGame(Common::Serializer &s, StateData &data);
+
+private:
+	Myst3Engine *_vm;
+
+	static const uint32 kSaveVersion = 148;
+
 	StateData _data;
 
 	struct Description {
@@ -284,8 +288,6 @@ private:
 	};
 
 	Common::HashMap<uint16, Description> _descriptions;
-
-	void syncWithSaveGame(Common::Serializer &s);
 
 	void checkRange(uint16 var);
 

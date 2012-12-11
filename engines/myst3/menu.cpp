@@ -536,14 +536,7 @@ Common::String Menu::getAgeLabel(GameState *gameState) {
 }
 
 void Menu::saveGameReadThumbnail(Common::InSaveFile *save) {
-	// Start of thumbnail data
-	save->seek(8580);
-
-	Graphics::Surface *thumbnail = new Graphics::Surface();
-	thumbnail->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-
-	// Read BGRA
-	save->read(thumbnail->pixels, kMiniatureSize * 4);
+	Graphics::Surface *thumbnail = GameState::loadThumbnail(save);
 
 	// Convert to RGBA
 	thumbnail->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));

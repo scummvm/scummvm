@@ -205,49 +205,49 @@ GameState::GameState(Myst3Engine *vm):
 GameState::~GameState() {
 }
 
-void GameState::syncWithSaveGame(Common::Serializer &s) {
+void GameState::syncWithSaveGame(Common::Serializer &s, StateData &data) {
 	if (!s.syncVersion(kSaveVersion))
 		error("This savegame (v%d) is too recent (max %d) please get a newer version of Residual", s.getVersion(), kSaveVersion);
 
-	s.syncAsUint32LE(_data.gameRunning);
-	s.syncAsUint32LE(_data.currentFrame);
-	s.syncAsUint32LE(_data.nextSecondsUpdate);
-	s.syncAsUint32LE(_data.secondsPlayed);
-	s.syncAsUint32LE(_data.dword_4C2C44);
-	s.syncAsUint32LE(_data.dword_4C2C48);
-	s.syncAsUint32LE(_data.dword_4C2C4C);
-	s.syncAsUint32LE(_data.dword_4C2C50);
-	s.syncAsUint32LE(_data.dword_4C2C54);
-	s.syncAsUint32LE(_data.dword_4C2C58);
-	s.syncAsUint32LE(_data.dword_4C2C5C);
-	s.syncAsUint32LE(_data.dword_4C2C60);
-	s.syncAsUint32LE(_data.currentNodeType);
+	s.syncAsUint32LE(data.gameRunning);
+	s.syncAsUint32LE(data.currentFrame);
+	s.syncAsUint32LE(data.nextSecondsUpdate);
+	s.syncAsUint32LE(data.secondsPlayed);
+	s.syncAsUint32LE(data.dword_4C2C44);
+	s.syncAsUint32LE(data.dword_4C2C48);
+	s.syncAsUint32LE(data.dword_4C2C4C);
+	s.syncAsUint32LE(data.dword_4C2C50);
+	s.syncAsUint32LE(data.dword_4C2C54);
+	s.syncAsUint32LE(data.dword_4C2C58);
+	s.syncAsUint32LE(data.dword_4C2C5C);
+	s.syncAsUint32LE(data.dword_4C2C60);
+	s.syncAsUint32LE(data.currentNodeType);
 
 	// FIXME Syncing IEE754 data is not cross platform
 	// Increase the savegame version and save those as integers
-	s.syncBytes((byte*) &_data.lookatPitch, sizeof(float));
-	s.syncBytes((byte*) &_data.lookatHeading, sizeof(float));
-	s.syncBytes((byte*) &_data.lookatFOV, sizeof(float));
-	s.syncBytes((byte*) &_data.pitchOffset, sizeof(float));
-	s.syncBytes((byte*) &_data.headingOffset, sizeof(float));
+	s.syncBytes((byte*) &data.lookatPitch, sizeof(float));
+	s.syncBytes((byte*) &data.lookatHeading, sizeof(float));
+	s.syncBytes((byte*) &data.lookatFOV, sizeof(float));
+	s.syncBytes((byte*) &data.pitchOffset, sizeof(float));
+	s.syncBytes((byte*) &data.headingOffset, sizeof(float));
 
-	s.syncAsUint32LE(_data.limitCubeCamera);
-	s.syncBytes((byte*) &_data.minPitch, sizeof(float));
-	s.syncBytes((byte*) &_data.maxPitch, sizeof(float));
-	s.syncBytes((byte*) &_data.minHeading, sizeof(float));
-	s.syncBytes((byte*) &_data.maxHeading, sizeof(float));
-	s.syncAsUint32LE(_data.dword_4C2C90);
+	s.syncAsUint32LE(data.limitCubeCamera);
+	s.syncBytes((byte*) &data.minPitch, sizeof(float));
+	s.syncBytes((byte*) &data.maxPitch, sizeof(float));
+	s.syncBytes((byte*) &data.minHeading, sizeof(float));
+	s.syncBytes((byte*) &data.maxHeading, sizeof(float));
+	s.syncAsUint32LE(data.dword_4C2C90);
 
 	for (uint i = 0; i < 2048; i++)
-		s.syncAsSint32LE(_data.vars[i]);
+		s.syncAsSint32LE(data.vars[i]);
 
-	s.syncAsUint32LE(_data.inventoryCount);
+	s.syncAsUint32LE(data.inventoryCount);
 
 	for (uint i = 0; i < 7; i++)
-		s.syncAsUint32LE(_data.inventoryList[i]);
+		s.syncAsUint32LE(data.inventoryList[i]);
 
 	for (uint i = 0; i < 256; i++)
-		s.syncAsByte(_data.zipDestinations[i]);
+		s.syncAsByte(data.zipDestinations[i]);
 }
 
 void GameState::newGame() {
@@ -262,7 +262,7 @@ void GameState::newGame() {
 bool GameState::load(const Common::String &file) {
 	Common::InSaveFile *saveFile = _vm->getSaveFileManager()->openForLoading(file);
 	Common::Serializer s = Common::Serializer(saveFile, 0);
-	syncWithSaveGame(s);
+	syncWithSaveGame(s, _data);
 	delete saveFile;
 
 	_data.gameRunning = true;
@@ -270,11 +270,24 @@ bool GameState::load(const Common::String &file) {
 	return true;
 }
 
+Graphics::Surface *GameState::loadThumbnail(Common::InSaveFile *save) {
+	// Start of thumbnail data
+	save->seek(8580);
+
+	Graphics::Surface *thumbnail = new Graphics::Surface();
+	thumbnail->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+
+	// Read BGRA
+	save->read(thumbnail->pixels, 240 * 135 * 4);
+
+	return thumbnail;
+}
+
 bool GameState::save(Common::OutSaveFile *saveFile) {
 	Common::Serializer s = Common::Serializer(0, saveFile);
 
 	_data.gameRunning = false;
-	syncWithSaveGame(s);
+	syncWithSaveGame(s, _data);
 	_data.gameRunning = true;
 
 	return true;
