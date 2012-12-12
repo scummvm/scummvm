@@ -78,7 +78,7 @@ enum TinselGameFeatures {
 /**
  * The following is the ScummVM definitions of the various Tinsel versions:
  * TINSEL_V0 - This was an early engine version that was only used in the Discworld 1
- *			demo. It is not currently supported.
+ *			demo.
  * TINSEL_V1 - This was the engine version used by Discworld 1. Note that there were two
  *			major releases: an earlier version that used *.gra files, and a later one that
  *			used *.scn files, and contained certain script and engine bugfixes. In ScummVM,
