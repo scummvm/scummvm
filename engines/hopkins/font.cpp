@@ -352,7 +352,7 @@ LABEL_57:
 					_vm->_globals.largeur_boite = _textSortArray[i];
 			}
 
-			if (_text[idx]._textType > 3) {
+			if ((_text[idx]._textType < 2) || (_text[idx]._textType > 3)) {
 				int i;
 				for (i = xp - _vm->_eventsManager._startPos.x; _vm->_globals.largeur_boite + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
 					;

@@ -517,7 +517,7 @@ void ObjectsManager::AFF_SPRITES() {
 	// Loop to draw any on-screen text
 	for (int idx = 0; idx <= 10; ++idx) {
 		if (_vm->_fontManager._text[idx]._textOnFl) {
-			if (_vm->_fontManager._text[idx]._textType > 3)
+			if ((_vm->_fontManager._text[idx]._textType < 2) || (_vm->_fontManager._text[idx]._textType > 3))
 				_vm->_fontManager.box(idx,
 					_vm->_fontManager._text[idx]._messageId, _vm->_fontManager._text[idx]._filename,
 					_vm->_eventsManager._startPos.x + _vm->_fontManager._text[idx]._pos.x, _vm->_fontManager._text[idx]._pos.y);
@@ -527,7 +527,7 @@ void ObjectsManager::AFF_SPRITES() {
 					_vm->_fontManager._text[idx]._pos.x, _vm->_fontManager._text[idx]._pos.y);
 			_vm->_fontManager._textList[idx]._enabledFl = true;
 			
-			if (_vm->_fontManager._text[idx]._textType > 3)
+			if ((_vm->_fontManager._text[idx]._textType < 2) || (_vm->_fontManager._text[idx]._textType > 3))
 				_vm->_fontManager._textList[idx]._pos.x = _vm->_eventsManager._startPos.x + _vm->_fontManager._text[idx]._pos.x;
 			else
 				_vm->_fontManager._textList[idx]._pos.x = _vm->_fontManager._text[idx]._pos.x;

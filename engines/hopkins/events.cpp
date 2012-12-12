@@ -145,13 +145,13 @@ void EventsManager::changeMouseCursor(int id) {
 
 	if (_mouseCursorId != 23) {
 		if (id == 4 && _mouseCursorId == 4 && _vm->_globals.NOMARCHE)
-			_mouseCursorId = 0;
-		if (_mouseCursorId == 25)
-			_mouseCursorId = 5;
+			cursorId = 0;
+		if (cursorId == 25)
+			cursorId = 5;
     
-		if (_oldIconId != _mouseCursorId || !_mouseCursorId) {
-			_oldIconId = _mouseCursorId;
-			_mouseCursorId = cursorId;
+		if (_oldIconId != cursorId || !cursorId) {
+			_oldIconId = cursorId;
+			_mouseSpriteId = cursorId;
 
 			updateCursor();
 		}
