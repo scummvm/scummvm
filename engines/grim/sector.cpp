@@ -304,8 +304,8 @@ bool Sector::isPointInSector(const Math::Vector3d &point) const {
 		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Math::Vector3d delta = point - _vertices[i];
 		Math::Vector3d cross = Math::Vector3d::crossProduct(edge, delta);
-		if (cross.dotProduct(_normal) < 0)
-			return false;
+		if (cross.dotProduct(_normal) < -0.001f) // not "< 0.f" here, since the value could be something like -7.45058e-09 and it
+			return false;						 // shuoldn't return. that was causing issue #610 (infinite loop in de.forklift_actor.dismount)
 	}
 	return true;
 }
