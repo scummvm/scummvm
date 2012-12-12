@@ -21,7 +21,6 @@
  */
 
 #include "engines/myst3/node.h"
-#include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
 #include "engines/myst3/subtitles.h"
@@ -29,21 +28,10 @@
 #include "common/debug.h"
 #include "common/rect.h"
 
-#include "graphics/yuv_to_rgb.h"
-
 namespace Myst3 {
 
-void Face::setTextureFromJPEG(Graphics::JPEGDecoder *jpeg) {
-	_bitmap = new Graphics::Surface();
-	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-	const byte *y = (const byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
-	const byte *u = (const byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
-	const byte *v = (const byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
-	
-	YUVToRGBMan.convert444(_bitmap, Graphics::YUVToRGBManager::kScaleFull, y, u, v,
-			_bitmap->w, _bitmap->h, jpeg->getComponent(1)->pitch, jpeg->getComponent(2)->pitch);
-
+void Face::setTextureFromJPEG(const DirectorySubEntry *jpegDesc) {
+	_bitmap = Myst3Engine::decodeJpeg(jpegDesc);
 	_texture = _vm->_gfx->createTexture(_bitmap);
 }
 
@@ -160,15 +148,7 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 				jpegDesc->getSpotItemData().u,
 				jpegDesc->getSpotItemData().v);
 
-		Common::MemoryReadStream *jpegStream = jpegDesc->getData();
-
-		Graphics::JPEGDecoder jpeg;
-		if (!jpeg.loadStream(*jpegStream))
-			error("Could not decode Myst III JPEG");
-		
-		spotItemFace->loadData(&jpeg);
-
-		delete jpegStream;
+		spotItemFace->loadData(jpegDesc);
 
 		spotItem->addFace(spotItemFace);
 	}
@@ -176,7 +156,7 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 	_spotItems.push_back(spotItem);
 }
 
-void Node::loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect) {
+SpotItemFace *Node::loadMenuSpotItem(uint16 condition, const Common::Rect &rect) {
 	SpotItem *spotItem = new SpotItem(_vm);
 
 	spotItem->setCondition(condition);
@@ -186,12 +166,11 @@ void Node::loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rec
 	SpotItemFace *spotItemFace = new SpotItemFace(_faces[0], rect.left, rect.top);
 	spotItemFace->initBlack(rect.width(), rect.height());
 
-	if (id == 1)
-		_vm->_menu->setSaveLoadSpotItem(spotItemFace);
-
 	spotItem->addFace(spotItemFace);
 
 	_spotItems.push_back(spotItem);
+
+	return spotItemFace;
 }
 
 void Node::loadSubtitles(uint32 id) {
@@ -295,17 +274,9 @@ void SpotItemFace::initBlack(uint16 width, uint16 height) {
 	initNotDrawn(width, height);
 }
 
-void SpotItemFace::loadData(Graphics::JPEGDecoder *jpeg) {
+void SpotItemFace::loadData(const DirectorySubEntry *jpegDesc) {
 	// Convert active SpotItem image to raw data
-	_bitmap = new Graphics::Surface();
-	_bitmap->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-	const byte *y = (const byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
-	const byte *u = (const byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
-	const byte *v = (const byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
-
-	YUVToRGBMan.convert444(_bitmap, Graphics::YUVToRGBManager::kScaleFull, y, u, v,
-			_bitmap->w, _bitmap->h, jpeg->getComponent(1)->pitch, jpeg->getComponent(2)->pitch);
+	_bitmap = Myst3Engine::decodeJpeg(jpegDesc);
 
 	initNotDrawn(_bitmap->w, _bitmap->h);
 }

@@ -1108,25 +1108,56 @@ void Puzzles::journalSaavedro(int16 move) {
 		}
 
 		uint16 nodeRight;
-		//uint16 nodeLeft;
+		uint16 nodeLeft;
 		if (page || !chapter) {
 			nodeRight = chapterStartNode + page;
-			//nodeLeft = chapterStartNode + page;
+			nodeLeft = chapterStartNode + page;
 		} else {
 			nodeRight = chapterStartNode + page;
-			/*uint16 chapterLeft = _journalSaavedroNextChapter(chapter, false);
+			uint16 chapterLeft = _journalSaavedroNextChapter(chapter, false);
 			if (chapterLeft > 0)
 				nodeLeft = _journalSaavedroGetNode(chapterLeft + 1);
 			else
-				nodeLeft = 2;*/
+				nodeLeft = 201;
 		}
 
 		_vm->_state->setJournalSaavedroClosed(closed);
 		_vm->_state->setJournalSaavedroOpen(opened);
 		_vm->_state->setJournalSaavedroLastPage(lastPage);
 
-		// TODO: Draw nodeLeft on the left part of the screen
 		_vm->loadNodeFrame(nodeRight);
+
+		// Does the left page need to be loaded from a different node?
+		if (nodeLeft != nodeRight) {
+			const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, nodeLeft, 0, DirectorySubEntry::kFrame);
+
+			if (!jpegDesc)
+				error("Frame %d does not exist", nodeLeft);
+
+			Graphics::Surface *bitmap = Myst3Engine::decodeJpeg(jpegDesc);
+
+			// Copy the left half of the node to a new surface
+			Graphics::Surface *leftBitmap = new Graphics::Surface();
+			leftBitmap->create(bitmap->w / 2, bitmap->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+			for (uint i = 0; i < bitmap->h; i++) {
+				memcpy(leftBitmap->getBasePtr(0, i),
+						bitmap->getBasePtr(0, i),
+						leftBitmap->w * 4);
+			}
+
+			bitmap->free();
+			delete bitmap;
+
+			// Create a spotitem covering the left half of the screen
+			// to display the left page
+			SpotItemFace *leftPage = _vm->addMenuSpotItem(999, 1, Common::Rect(0, 0, bitmap->w, bitmap->h));
+
+			leftPage->updateData(leftBitmap);
+
+			leftBitmap->free();
+			delete leftBitmap;
+		}
 	}
 }
 

@@ -50,6 +50,7 @@
 #include "graphics/decoders/jpeg.h"
 #include "graphics/conversion.h"
 #include "graphics/pixelbuffer.h"
+#include "graphics/yuv_to_rgb.h"
 
 #include "math/vector2d.h"
 
@@ -955,10 +956,15 @@ void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
 	_node->loadSpotItem(id, condition, fade);
 }
 
-void Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect) {
+SpotItemFace *Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect) {
 	assert(_node);
 
-	_node->loadMenuSpotItem(id, condition, rect);
+	SpotItemFace *face = _node->loadMenuSpotItem(condition, rect);
+
+	if (id == 1)
+		_menu->setSaveLoadSpotItem(face);
+
+	return face;
 }
 
 void Myst3Engine::loadNodeSubtitles(uint32 id) {
@@ -1018,6 +1024,27 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	s->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	return s;
+}
+
+Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
+	Common::MemoryReadStream *jpegStream = jpegDesc->getData();
+
+	Graphics::JPEGDecoder jpeg;
+	if (!jpeg.loadStream(*jpegStream))
+		error("Could not decode Myst III JPEG");
+	delete jpegStream;
+
+	Graphics::Surface *bitmap = new Graphics::Surface();
+	bitmap->create(jpeg.getComponent(1)->w, jpeg.getComponent(1)->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	const byte *y = (const byte *)jpeg.getComponent(1)->getBasePtr(0, 0);
+	const byte *u = (const byte *)jpeg.getComponent(2)->getBasePtr(0, 0);
+	const byte *v = (const byte *)jpeg.getComponent(3)->getBasePtr(0, 0);
+
+	YUVToRGBMan.convert444(bitmap, Graphics::YUVToRGBManager::kScaleFull, y, u, v,
+			bitmap->w, bitmap->h, jpeg.getComponent(1)->pitch, jpeg.getComponent(2)->pitch);
+
+	return bitmap;
 }
 
 int16 Myst3Engine::openDialog(uint16 id) {

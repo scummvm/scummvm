@@ -36,19 +36,9 @@ NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 		if (!jpegDesc)
 			error("Face %d does not exist", id);
 
-		Common::MemoryReadStream *jpegStream = jpegDesc->getData();
-
-		if (jpegStream) {
-			Graphics::JPEGDecoder jpeg;
-			if (!jpeg.loadStream(*jpegStream))
-				error("Could not decode Myst III JPEG");
-
-			_faces[i] = new Face(_vm);
-			_faces[i]->setTextureFromJPEG(&jpeg);
-			_faces[i]->markTextureDirty();
-
-			delete jpegStream;
-		}
+		_faces[i] = new Face(_vm);
+		_faces[i]->setTextureFromJPEG(jpegDesc);
+		_faces[i]->markTextureDirty();
 	}
 }
 

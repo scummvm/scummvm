@@ -41,19 +41,9 @@ NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 	if (!jpegDesc)
 		error("Frame %d does not exist", id);
 
-	Common::MemoryReadStream *jpegStream = jpegDesc->getData();
-
-	if (jpegStream) {
-		Graphics::JPEGDecoder jpeg;
-		if (!jpeg.loadStream(*jpegStream))
-			error("Could not decoder Myst III JPEG");
-
-		_faces[0] = new Face(_vm);
-		_faces[0]->setTextureFromJPEG(&jpeg);
-		_faces[0]->markTextureDirty();
-
-		delete jpegStream;
-	}
+	_faces[0] = new Face(_vm);
+	_faces[0]->setTextureFromJPEG(jpegDesc);
+	_faces[0]->markTextureDirty();
 }
 
 NodeFrame::~NodeFrame() {

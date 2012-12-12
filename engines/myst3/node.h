@@ -29,13 +29,13 @@
 #include "common/rect.h"
 
 #include "graphics/surface.h"
-#include "graphics/decoders/jpeg.h"
 
 namespace Myst3 {
 
 class Texture;
 class Myst3Engine;
 class Subtitles;
+class DirectorySubEntry;
 
 class Face {
 	public:
@@ -45,7 +45,7 @@ class Face {
 		Face(Myst3Engine *vm);
 		~Face();
 
-		void setTextureFromJPEG(Graphics::JPEGDecoder *jpeg);
+		void setTextureFromJPEG(const DirectorySubEntry *jpegDesc);
 
 		void markTextureDirty() { _textureDirty = true; }
 		void uploadTexture();
@@ -61,7 +61,7 @@ class SpotItemFace {
 		~SpotItemFace();
 
 		void initBlack(uint16 width, uint16 height);
-		void loadData(Graphics::JPEGDecoder *jpeg);
+		void loadData(const DirectorySubEntry *jpegDesc);
 		void updateData(const Graphics::Surface *surface);
 		void clear();
 
@@ -136,7 +136,7 @@ class Node : Drawable {
 		void drawOverlay();
 
 		void loadSpotItem(uint16 id, uint16 condition, bool fade);
-		void loadMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);
+		SpotItemFace *loadMenuSpotItem(uint16 condition, const Common::Rect &rect);
 
 		void loadSubtitles(uint32 id);
 		bool hasSubtitlesToDraw();
