@@ -1151,7 +1151,7 @@ void Puzzles::journalSaavedro(int16 move) {
 
 			// Create a spotitem covering the left half of the screen
 			// to display the left page
-			SpotItemFace *leftPage = _vm->addMenuSpotItem(999, 1, Common::Rect(0, 0, bitmap->w, bitmap->h));
+			SpotItemFace *leftPage = _vm->addMenuSpotItem(999, 1, Common::Rect(0, 0, leftBitmap->w, leftBitmap->h));
 
 			leftPage->updateData(leftBitmap);
 
