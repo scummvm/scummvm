@@ -100,7 +100,7 @@ Common::Error ToucheEngine::run() {
 
 	setupOpcodes();
 
-	_midiPlayer = new MidiPlayer;
+	initMusic();
 
 	// Setup mixer
 	syncSoundSettings();
@@ -120,7 +120,7 @@ Common::Error ToucheEngine::run() {
 }
 
 void ToucheEngine::restart() {
-	_midiPlayer->stop();
+	stopMusic();
 
 	_gameState = kGameStateGameLoop;
 	_displayQuitDialog = false;
@@ -216,7 +216,7 @@ void ToucheEngine::readConfigurationSettings() {
 			_talkTextMode = kTalkModeVoiceOnly;
 		}
 	}
-	_midiPlayer->setVolume(ConfMan.getInt("music_volume"));
+	setMusicVolume(ConfMan.getInt("music_volume"));
 }
 
 void ToucheEngine::writeConfigurationSettings() {
@@ -234,7 +234,7 @@ void ToucheEngine::writeConfigurationSettings() {
 		ConfMan.setBool("subtitles", true);
 		break;
 	}
-	ConfMan.setInt("music_volume", _midiPlayer->getVolume());
+	ConfMan.setInt("music_volume", getMusicVolume());
 	ConfMan.flushToDisk();
 }
 
@@ -3305,6 +3305,33 @@ bool ToucheEngine::canLoadGameStateCurrently() {
 
 bool ToucheEngine::canSaveGameStateCurrently() {
 	return _gameState == kGameStateGameLoop && _flagsTable[618] == 0 && !_hideInventoryTexts;
+}
+
+void ToucheEngine::initMusic() {
+	_midiPlayer = new MidiPlayer;
+}
+
+void ToucheEngine::startMusic(int num) {
+	uint32 size;
+	const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
+	_fData.seek(offs);
+	_midiPlayer->play(_fData, size, true);
+}
+
+void ToucheEngine::stopMusic() {
+	_midiPlayer->stop();
+}
+
+int ToucheEngine::getMusicVolume() {
+	return _midiPlayer->getVolume();
+}
+
+void ToucheEngine::setMusicVolume(int volume) {
+	_midiPlayer->setVolume(volume);
+}
+
+void ToucheEngine::adjustMusicVolume(int diff) {
+	_midiPlayer->adjustVolume(diff);
 }
 
 } // namespace Touche

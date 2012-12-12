@@ -646,6 +646,13 @@ protected:
 
 	MidiPlayer *_midiPlayer;
 
+	void initMusic();
+	void startMusic(int num);
+	void stopMusic();
+	int getMusicVolume();
+	void setMusicVolume(int volume);
+	void adjustMusicVolume(int diff);
+
 	Common::Language _language;
 	Common::RandomSource _rnd;
 
