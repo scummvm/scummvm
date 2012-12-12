@@ -174,8 +174,8 @@ void Puzzles::leversBall(int16 var) {
 	};
 
 	struct Move {
-		bool oldLeft;
-		bool oldRight;
+		int16 oldLeft;
+		int16 oldRight;
 		uint16 oldBallPosition;
 		NewPosition p[2];
 	};
