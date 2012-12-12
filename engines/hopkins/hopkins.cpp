@@ -193,7 +193,7 @@ bool HopkinsEngine::runWin95Demo() {
 		if (!_globals.SORTIE) {
 			_globals.SORTIE = _menuManager.MENU();
 			if (_globals.SORTIE == -1) {
-				_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				REST_SYSTEM();
 				return false;
 			}
@@ -499,7 +499,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			if (_globals.SORTIE == -1) {
 				if (!g_system->getEventManager()->shouldQuit())
 					PUBQUIT();
-				_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				REST_SYSTEM();
 			}
 		}
@@ -864,7 +864,7 @@ bool HopkinsEngine::runWin95full() {
 		if (!_globals.SORTIE) {
 			_globals.SORTIE = _menuManager.MENU();;
 			if (_globals.SORTIE == -1) {
-				_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				REST_SYSTEM();
 				return false;
 			}
@@ -1243,8 +1243,7 @@ bool HopkinsEngine::runWin95full() {
 				_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 				_globals.NOSPRECRAN = false;
 				if (_globals.SORTIE < 35 || _globals.SORTIE > 49) {
-					_globals.dos_free2(_globals.FORETSPR);
-					_globals.FORETSPR = g_PTRNUL;
+					_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
 					_globals.FORET = false;
 					_soundManager.DEL_SAMPLE(1);
 				}
@@ -1678,7 +1677,7 @@ bool HopkinsEngine::runWin95full() {
 		case 197:
 		case 198:
 		case 199:
-			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 			_globals.iRegul = 1;
 			_soundManager.WSOUND_OFF();
 			warning("TODO: heapshrink();");
@@ -1742,7 +1741,7 @@ bool HopkinsEngine::runLinuxFull() {
 		if (!_globals.SORTIE) {
 			_globals.SORTIE = _menuManager.MENU();
 			if (_globals.SORTIE == -1) {
-				_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				REST_SYSTEM();
 				return true;
 			}
@@ -2122,8 +2121,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 			_globals.NOSPRECRAN = false;
 			if (_globals.SORTIE < 35 || _globals.SORTIE > 49) {
-				_globals.dos_free2(_globals.FORETSPR);
-				_globals.FORETSPR = g_PTRNUL;
+				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
 				_globals.FORET = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
@@ -2572,7 +2570,7 @@ bool HopkinsEngine::runLinuxFull() {
 		case 197:
 		case 198:
 		case 199:
-			_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 			_globals.iRegul = 1;
 			_soundManager.WSOUND(23);
 			_globals.SORTIE = PWBASE();
@@ -3207,7 +3205,7 @@ void HopkinsEngine::BASED() {
 }
 
 void HopkinsEngine::JOUE_FIN() {
-	_globals.PERSO = _globals.dos_free2(_globals.PERSO);
+	_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 	_dialogsManager._removeInventFl = true;
 	_globals._disableInventFl = true;
 	_graphicsManager.ofscroll = 0;
@@ -3590,7 +3588,7 @@ void HopkinsEngine::Charge_Credits() {
 		while (v5 < _globals.Credit_lignes);
 	}
 */
-	_globals.dos_free2(bufPtr);
+	_globals.freeMemory(bufPtr);
 }
 
 void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {

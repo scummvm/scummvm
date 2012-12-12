@@ -133,7 +133,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 
 	switch (mode) {
 	case 0:
-		dataP = _vm->_globals.dos_malloc2(height * width);
+		dataP = _vm->_globals.allocMemory(height * width);
 		if (dataP == g_PTRNUL)
 			error("CAPTURE_OBJET");
 			
@@ -261,12 +261,9 @@ int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIn
 
 byte *ObjectsManager::DEL_FICHIER_OBJ() {
 	_vm->_globals.NUM_FICHIER_OBJ = 0;
-	if (_vm->_globals.ADR_FICHIER_OBJ != g_PTRNUL)
-		_vm->_globals.ADR_FICHIER_OBJ = _vm->_globals.LIBERE_FICHIER(_vm->_globals.ADR_FICHIER_OBJ);
+	_vm->_globals.ADR_FICHIER_OBJ = _vm->_globals.freeMemory(_vm->_globals.ADR_FICHIER_OBJ);
   
-	byte *result = g_PTRNUL;
-	_vm->_globals.ADR_FICHIER_OBJ = g_PTRNUL;
-	return result;
+	return g_PTRNUL;
 }
 
 // Load Sprite
@@ -1369,11 +1366,9 @@ void ObjectsManager::AFF_VBOB() {
 				_vm->_globals.VBob[idx].xp, _vm->_globals.VBob[idx].yp,
 				_vm->_globals.VBob[idx].xp + width, height + _vm->_globals.VBob[idx].yp);
       
-			if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
-				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
+			_vm->_globals.VBob[idx].surface = _vm->_globals.freeMemory(_vm->_globals.VBob[idx].surface);
       
 			_vm->_globals.VBob[idx].field4 = 0;
-			_vm->_globals.VBob[idx].surface = g_PTRNUL;
 			_vm->_globals.VBob[idx].spriteData = g_PTRNUL;
 			_vm->_globals.VBob[idx].xp = 0;
 			_vm->_globals.VBob[idx].yp = 0;
@@ -1404,10 +1399,8 @@ void ObjectsManager::AFF_VBOB() {
 			_vm->_globals.VBob[idx].field4 = 1;
 			_vm->_globals.VBob[idx].oldSpriteData = _vm->_globals.VBob[idx].spriteData;
       
-			if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
-				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
+			_vm->_globals.VBob[idx].surface = _vm->_globals.freeMemory(_vm->_globals.VBob[idx].surface);
       
-			_vm->_globals.VBob[idx].surface = g_PTRNUL;
 			_vm->_globals.VBob[idx].oldX = _vm->_globals.VBob[idx].xp;
 			_vm->_globals.VBob[idx].oldY = _vm->_globals.VBob[idx].yp;
 			_vm->_globals.VBob[idx].oldFrameIndex = _vm->_globals.VBob[idx].frameIndex;
@@ -1417,10 +1410,9 @@ void ObjectsManager::AFF_VBOB() {
 			width = getWidth(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
 			height = getHeight(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
       
-			if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
-				_vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
+			_vm->_globals.VBob[idx].surface = _vm->_globals.freeMemory(_vm->_globals.VBob[idx].surface);
       
-			byte *surface = _vm->_globals.dos_malloc2(height * width);
+			byte *surface = _vm->_globals.allocMemory(height * width);
 			_vm->_globals.VBob[idx].surface = surface;
       
 			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_SCREEN, surface, 
@@ -1551,9 +1543,7 @@ void ObjectsManager::SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, 
 
 void ObjectsManager::SPRITE_OFF(int idx) {
 	Sprite[idx].field0 = 3;
-	if (Sprite[idx].field1C != g_PTRNUL)
-		_vm->_globals.dos_free2(Sprite[idx].field1C);
-	Sprite[idx].field1C = g_PTRNUL;
+	Sprite[idx].field1C = _vm->_globals.freeMemory(Sprite[idx].field1C);
 }
 
 void ObjectsManager::SPRITE_GEL(int idx) {
@@ -2355,7 +2345,7 @@ void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
 		++v5;
 	} while (v1 != -1);
 	_vm->_linesManager.INIPARCOURS();
-	_vm->_globals.dos_free2(ptr);
+	_vm->_globals.freeMemory(ptr);
 }
 
 // Load Zone
@@ -2466,7 +2456,7 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 		_vm->_globals.ZONEP[v15++].field12 = READ_LE_UINT16(v13 + 2 * v14++);
 	while (v15 <= 100);
 
-	_vm->_globals.dos_free2(ptr);
+	_vm->_globals.freeMemory(ptr);
 	CARRE_ZONE();
 }
 
@@ -2656,7 +2646,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.PLANI = 1;
 	SPRITE_OFF(0);
 	_vm->_globals.AFFLI = false;
-	sprite_ptr = _vm->_globals.LIBERE_FICHIER(sprite_ptr);
+	sprite_ptr = _vm->_globals.freeMemory(sprite_ptr);
 	CLEAR_ECRAN();
 	_vm->_globals.NOSPRECRAN = false;
 	_vm->_globals.PLAN_FLAG = false;
@@ -2998,10 +2988,8 @@ void ObjectsManager::CLEAR_ECRAN() {
 	_vm->_linesManager.TOTAL_LIGNES = 0;
 	DERLIGNE = 0;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	if (_vm->_globals.COUCOU != g_PTRNUL)
-		_vm->_globals.COUCOU = _vm->_globals.LIBERE_FICHIER(_vm->_globals.COUCOU);
-	if (g_PTRNUL != _vm->_globals.SPRITE_ECRAN)
-		_vm->_globals.SPRITE_ECRAN = _vm->_globals.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
+	_vm->_globals.COUCOU = _vm->_globals.freeMemory(_vm->_globals.COUCOU);
+	_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
 	_vm->_eventsManager._startPos.x = 0;
 	_vm->_eventsManager._mouseSpriteId = 0;
 	Vold_taille = 200;
@@ -4143,7 +4131,7 @@ void ObjectsManager::OPTI_OBJET() {
 				v7 = 1;
 		} while (v7 != 1);
 	}
-	_vm->_globals.dos_free2(data);
+	_vm->_globals.freeMemory(data);
 }
 
 void ObjectsManager::SPECIAL_JEU() {
@@ -4189,7 +4177,7 @@ void ObjectsManager::SPECIAL_JEU() {
 				_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
 				_vm->_globals.NOPARLE = false;
 				if (!_vm->_globals.CENSURE) {
-					v1 = _vm->_globals.dos_malloc2(0x3E8u);
+					v1 = _vm->_globals.allocMemory(0x3E8u);
 					memcpy(v1, _vm->_graphicsManager.Palette, 0x301u);
 
 					_vm->_saveLoadManager.SAUVE_FICHIER("TEMP1.SCR", _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
@@ -4214,7 +4202,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					PERSO_ON = false;
 					memcpy(_vm->_graphicsManager.Palette, v1, 0x301u);
 					_vm->_graphicsManager.SHOW_PALETTE();
-					_vm->_globals.dos_free2(v1);
+					_vm->_globals.freeMemory(v1);
 					_vm->_graphicsManager.DD_Lock();
 					if (_vm->_graphicsManager.Winbpp == 2) {
 						if (_vm->_graphicsManager.SDL_ECHELLE)
@@ -4315,8 +4303,7 @@ void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 		_vm->_globals.VBob[idx].oldFrameIndex = frameIndex;
 		_vm->_globals.VBob[idx].spriteData = src;
 		_vm->_globals.VBob[idx].oldSpriteData = src;
-		if (_vm->_globals.VBob[idx].surface != g_PTRNUL)
-			_vm->_globals.VBob[idx].surface = _vm->_globals.dos_free2(_vm->_globals.VBob[idx].surface);
+		_vm->_globals.VBob[idx].surface = _vm->_globals.freeMemory(_vm->_globals.VBob[idx].surface);
 	}
 	
 	int f4 = _vm->_globals.VBob[idx].field4;
@@ -4345,8 +4332,7 @@ void ObjectsManager::VBOB_OFF(int idx) {
 
 void ObjectsManager::ACTION_DOS(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 1) {
-		if (g_PTRNUL != _vm->_globals.GESTE)
-			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 1;
 
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "DOS.SPR");
@@ -4382,8 +4368,7 @@ void ObjectsManager::ACTION_DOS(int idx) {
 
 void ObjectsManager::ACTION_DROITE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 3) {
-		if (_vm->_globals.GESTE != g_PTRNUL)
-			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PROFIL.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
@@ -4412,8 +4397,7 @@ void ObjectsManager::ACTION_DROITE(int idx) {
 
 void ObjectsManager::Q_DROITE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 4) {
-		if (_vm->_globals.GESTE != g_PTRNUL)
-			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "3Q.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
@@ -4442,8 +4426,7 @@ void ObjectsManager::Q_DROITE(int idx) {
 
 void ObjectsManager::ACTION_FACE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 2) {
-		if (_vm->_globals.GESTE != g_PTRNUL)
-			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 2;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "FACE.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
@@ -4460,8 +4443,7 @@ void ObjectsManager::ACTION_FACE(int idx) {
 
 void ObjectsManager::Q_GAUCHE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 4) {
-		if (_vm->_globals.GESTE != g_PTRNUL)
-			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "3Q.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
@@ -4490,8 +4472,7 @@ void ObjectsManager::Q_GAUCHE(int idx) {
 
 void ObjectsManager::ACTION_GAUCHE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 3) {
-		if (_vm->_globals.GESTE != g_PTRNUL)
-			_vm->_globals.GESTE = _vm->_globals.dos_free2(_vm->_globals.GESTE);
+		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PROFIL.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
@@ -4654,7 +4635,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
 		nbytes = f.size();
-		ptr = _vm->_globals.dos_malloc2(nbytes);
+		ptr = _vm->_globals.allocMemory(nbytes);
 		if (g_PTRNUL == ptr)
 			error("INILINK");
 		_vm->_fileManager.readStream(f, ptr, nbytes);
@@ -4833,7 +4814,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			} while (nbytes > v42);
 		}
 	}
-	_vm->_globals.dos_free2(ptr);	
+	_vm->_globals.freeMemory(ptr);	
 }
 
 void ObjectsManager::SPECIAL_INI(const Common::String &a1) {

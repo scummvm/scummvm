@@ -64,7 +64,7 @@ byte *FileManager::loadFile(const Common::String &file) {
 
 	// Allocate space for the file contents
 	size_t filesize = f.size();
-	byte *data = _vm->_globals.dos_malloc2(filesize);
+	byte *data = _vm->_globals.allocMemory(filesize);
 	if (!data)
 		error("Error allocating space for file being loaded - %s", file.c_str());
 
@@ -273,14 +273,14 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		}
 
 		if (name == "FINIS") {
-			_vm->_globals.dos_free2(ptr);
+			_vm->_globals.freeMemory(ptr);
 			return g_PTRNUL;
 		}
     
 		offsetVal += 23;
 	}
 
-	_vm->_globals.dos_free2(ptr);
+	_vm->_globals.freeMemory(ptr);
 
 	// TODO: Double check whether this really should be an unsigned int comparison
 	if ((uint16)(a2 - 6) > 1 && (uint16)(a2 - 8) > 1) {
@@ -289,7 +289,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 
 		f.seek(_vm->_globals.CAT_POSI);
 
-		byte *catData = _vm->_globals.dos_malloc2(_vm->_globals.CAT_TAILLE);
+		byte *catData = _vm->_globals.allocMemory(_vm->_globals.CAT_TAILLE);
 		if (catData == g_PTRNUL)
 			error("CHARGE_FICHIER");
 

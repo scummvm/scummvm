@@ -132,10 +132,8 @@ int LinesManager::OPTI_ZONE(int a1, int a2, int a3) {
 void LinesManager::RETIRE_LIGNE_ZONE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
-	if (_vm->_linesManager.LigneZone[idx].zoneData != (int16 *)g_PTRNUL)
-		_vm->_globals.dos_free2((byte *)_vm->_linesManager.LigneZone[idx].zoneData);
 
-	_vm->_linesManager.LigneZone[idx].zoneData = (int16 *)g_PTRNUL;
+	_vm->_linesManager.LigneZone[idx].zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_vm->_linesManager.LigneZone[idx].zoneData);
 }
 
 // Add Line Zone
@@ -146,8 +144,8 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 		if (idx > 400)
 			error("Attempting to add a line obstacle > MAX_LIGNE.");
 
-		if (LigneZone[idx].zoneData != (int16 *)g_PTRNUL)
-			LigneZone[idx].zoneData = (int16 *)_vm->_globals.dos_free2((byte *)LigneZone[idx].zoneData);
+		LigneZone[idx].zoneData = (int16 *)_vm->_globals.freeMemory((byte *)LigneZone[idx].zoneData);
+
 		int v8 = a2 - a4;
 		if (a2 - a4 < 0)
 			v8 = -v8;
@@ -162,7 +160,7 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 		else
 			v20 += v19;
 
-		zoneData = (int16 *)_vm->_globals.dos_malloc2(2 * sizeof(int16) * v20 + (4 * sizeof(int16)));
+		zoneData = (int16 *)_vm->_globals.allocMemory(2 * sizeof(int16) * v20 + (4 * sizeof(int16)));
 		int v11 = idx;
 		LigneZone[v11].zoneData = zoneData;
 		if (zoneData == (int16 *)g_PTRNUL)
@@ -214,9 +212,7 @@ void LinesManager::RESET_OBSTACLE() {
 void LinesManager::RETIRE_LIGNE(int idx) {
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
-	if (Ligne[idx].lineData != (int16 *)g_PTRNUL)
-		_vm->_globals.dos_free2((byte *)Ligne[idx].lineData);
-	Ligne[idx].lineData = (int16 *)g_PTRNUL;
+	Ligne[idx].lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx].lineData);
 }
 
 // Add Line
@@ -249,8 +245,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	if (TOTAL_LIGNES < idx)
 		TOTAL_LIGNES = idx;
 
-	if (Ligne[idx].lineData != (int16 *)g_PTRNUL)
-		_vm->_globals.dos_free2((byte *)Ligne[idx].lineData);
+	Ligne[idx].lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx].lineData);
 	v7 = a3 - a5;
 	if (a3 - a5 < 0)
 		v7 = -v7;
@@ -263,7 +258,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	if (v8 > (int)(v9 + 1))
 		v34 = v8;
 	
-	v10 = _vm->_globals.dos_malloc2(4 * v34 + 8);
+	v10 = _vm->_globals.allocMemory(4 * v34 + 8);
 	if (v10 == g_PTRNUL)
 		error("AJOUTE LIGNE OBSTACLE");
 

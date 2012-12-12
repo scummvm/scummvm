@@ -80,8 +80,8 @@ GraphicsManager::GraphicsManager() {
 }
 
 GraphicsManager::~GraphicsManager() {
-	_vm->_globals.dos_free2(VESA_SCREEN);
-	_vm->_globals.dos_free2(VESA_BUFFER);
+	_vm->_globals.freeMemory(VESA_SCREEN);
+	_vm->_globals.freeMemory(VESA_BUFFER);
 }
 
 void GraphicsManager::setParent(HopkinsEngine *vm) {
@@ -135,8 +135,8 @@ void GraphicsManager::SET_MODE(int width, int height) {
 		}
 
 		// Init surfaces
-		VESA_SCREEN = _vm->_globals.dos_malloc2(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
-		VESA_BUFFER = _vm->_globals.dos_malloc2(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		VESA_SCREEN = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		VESA_BUFFER = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 		VideoPtr = NULL;
 		XSCREEN = width;
@@ -410,7 +410,7 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 
 	f.read(surface, 0x80u);
 	v4 = filesize - 896;
-	ptr = _vm->_globals.dos_malloc2(0xFE00u);
+	ptr = _vm->_globals.allocMemory(0xFE00u);
 	if (v4 >= 0xFA00) {
 		v15 = v4 / 0xFA00 + 1;
 		v17 = 64000 * (v4 / 0xFA00) - v4;
@@ -465,7 +465,7 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 	f.read(palette, 0x300u);
 	f.close();
 
-	_vm->_globals.dos_free2(ptr);
+	_vm->_globals.freeMemory(ptr);
 }
 
 // Clear Palette
@@ -2302,8 +2302,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 	}
 	if (!mode) {
 		filename = file + ".spr";
-		if (g_PTRNUL != _vm->_globals.SPRITE_ECRAN)
-			_vm->_globals.SPRITE_ECRAN = _vm->_globals.LIBERE_FICHIER(_vm->_globals.SPRITE_ECRAN);
+		_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
 		if (!_vm->_globals.NOSPRECRAN) {
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.searchCat(filename, 8);
 			if (_vm->_globals.SPRITE_ECRAN) {
@@ -2340,10 +2339,9 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 				doneFlag = true;
 		} while (!doneFlag);
 	}
-	_vm->_globals.dos_free2(ptr);
+	_vm->_globals.freeMemory(ptr);
 	if (mode != 1) {
-		if (g_PTRNUL != _vm->_globals.COUCOU)
-			_vm->_globals.COUCOU = _vm->_globals.dos_free2(_vm->_globals.COUCOU);
+		_vm->_globals.COUCOU = _vm->_globals.freeMemory(_vm->_globals.COUCOU);
 		
 		filename = file + ".rep";
 		byte *dataP = _vm->_fileManager.searchCat(filename, 2);

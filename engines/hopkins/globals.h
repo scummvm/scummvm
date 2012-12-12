@@ -499,9 +499,8 @@ public:
 	void INIT_VBOB();
 	void CLEAR_VBOB();
 	void CHARGE_OBJET();
-	byte *dos_malloc2(int count);
-	byte *dos_free2(byte *p);
-	byte *LIBERE_FICHIER(byte *p);
+	byte *allocMemory(int count);
+	byte *freeMemory(byte *p);
 
 	void RESET_CACHE();
 	void CACHE_ON(); 

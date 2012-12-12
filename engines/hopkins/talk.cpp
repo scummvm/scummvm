@@ -143,8 +143,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	clearCharacterAnim();
 	_vm->_globals.NOPARLE = false;
 	_vm->_globals.NECESSAIRE = true;
-	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
-	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
+	BUFFERPERSO = _vm->_globals.freeMemory(BUFFERPERSO);
+	PERSOSPR = _vm->_globals.freeMemory(PERSOSPR);
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = false;
 
@@ -258,7 +258,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		while (v5 != -1);
 	}
 
-	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
+	BUFFERPERSO = _vm->_globals.freeMemory(BUFFERPERSO);
 	_vm->_eventsManager._mouseCursorId = v8;
 
 	_vm->_eventsManager.changeMouseCursor(v8);
@@ -670,7 +670,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 		error("Error opening file - %s", dest.c_str());
 
 	f.seek(indexData[idx]);
-	ptr = _vm->_globals.dos_malloc2(2058);
+	ptr = _vm->_globals.allocMemory(2058);
 	if (ptr == g_PTRNUL)
 		error("temporary TEXT");
 	f.read(ptr, 2048);
@@ -864,10 +864,7 @@ void TalkManager::ANIM_PERSO_INIT() {
 
 void TalkManager::clearCharacterAnim() {
 	for (int idx = 21; idx <= 34; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].data != g_PTRNUL)
-			_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.dos_free2(_vm->_globals.Bqe_Anim[idx].data);
-
-		_vm->_globals.Bqe_Anim[idx].data = g_PTRNUL;
+		_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx].data);
 		_vm->_globals.Bqe_Anim[idx].field4 = 0;
 	}
 }
@@ -919,7 +916,7 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 				++v6;
 				++v5;
 			} while (v7 != 1);
-			_vm->_globals.Bqe_Anim[v20].data = _vm->_globals.dos_malloc2(v6 + 50);
+			_vm->_globals.Bqe_Anim[v20].data = _vm->_globals.allocMemory(v6 + 50);
 			_vm->_globals.Bqe_Anim[a1].field4 = 1;
 			memcpy(_vm->_globals.Bqe_Anim[v20].data, (const byte *)(v22 + bufPerso + 5), 20);
 			v8 = _vm->_globals.Bqe_Anim[v20].data;
@@ -1007,7 +1004,7 @@ LABEL_2:
 				v5 = v5 + 1;
 			if (v15 == 1) {
 				v6 = v5 + 5;
-				ptr = _vm->_globals.dos_malloc2(620);
+				ptr = _vm->_globals.allocMemory(620);
 				if (g_PTRNUL == ptr)
 					error("TRADUC");
 				memset(ptr, 0, 620);
@@ -1061,13 +1058,13 @@ LABEL_2:
 					if (!v10 || v10 == 5)
 						v17 = 1;
 					if (v10 == 6) {
-						_vm->_globals.dos_free2(ptr);
+						_vm->_globals.freeMemory(ptr);
 						v2 = _vm->_objectsManager.NVZONE;
 						v3 = _vm->_objectsManager.NVVERBE;
 						goto LABEL_2;
 					}
 				} while (v17 != 1);
-				_vm->_globals.dos_free2(ptr);
+				_vm->_globals.freeMemory(ptr);
 				_vm->_globals.SAUVEGARDE->data[svField2] = 0;
 				return;
 			}
@@ -1295,8 +1292,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	clearCharacterAnim();
 	_vm->_globals.NOPARLE = false;
 	_vm->_globals.NECESSAIRE = true;
-	BUFFERPERSO = _vm->_globals.LIBERE_FICHIER(BUFFERPERSO);
-	PERSOSPR = _vm->_globals.LIBERE_FICHIER(PERSOSPR);
+	BUFFERPERSO = _vm->_globals.freeMemory(BUFFERPERSO);
+	PERSOSPR = _vm->_globals.freeMemory(PERSOSPR);
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = false;
 	_vm->_linesManager.CLEAR_ZONE();
@@ -1306,7 +1303,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	do
 		_vm->_globals.BOBZONE[v13++] = 0;
 	while (v13 <= 44);
-	_vm->_globals.LIBERE_FICHIER(_vm->_globals.COUCOU);
+	_vm->_globals.freeMemory(_vm->_globals.COUCOU);
 	_vm->_globals.COUCOU = v11;
 	_vm->_objectsManager.DESACTIVE = true;
 	_vm->_objectsManager.INILINK(v20);

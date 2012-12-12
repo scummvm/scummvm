@@ -261,23 +261,23 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	free(ICONE);
-	dos_free2(TETE);
-	dos_free2(police);
-	dos_free2(BUF_ZONE);
-	dos_free2(CACHE_BANQUE[6]);
-	dos_free2(texte_tmp);
-	dos_free2(SPRITE_ECRAN);
-	dos_free2((byte *)SAUVEGARDE);
-	dos_free2(BUFFERTAPE);
-	dos_free2(inventaire2);
-	dos_free2(GESTE);
-	dos_free2(INVENTAIRE_OBJET);
-	dos_free2(FORETSPR);
-	dos_free2(COUCOU);
-	dos_free2(cache_souris);
-	dos_free2(Bufferdecor);
-	dos_free2(ADR_FICHIER_OBJ);
-	dos_free2(PERSO);
+	freeMemory(TETE);
+	freeMemory(police);
+	freeMemory(BUF_ZONE);
+	freeMemory(CACHE_BANQUE[6]);
+	freeMemory(texte_tmp);
+	freeMemory(SPRITE_ECRAN);
+	freeMemory((byte *)SAUVEGARDE);
+	freeMemory(BUFFERTAPE);
+	freeMemory(inventaire2);
+	freeMemory(GESTE);
+	freeMemory(INVENTAIRE_OBJET);
+	freeMemory(FORETSPR);
+	freeMemory(COUCOU);
+	freeMemory(cache_souris);
+	freeMemory(Bufferdecor);
+	freeMemory(ADR_FICHIER_OBJ);
+	freeMemory(PERSO);
 
 	CLEAR_VBOB();
 
@@ -406,7 +406,7 @@ void Globals::clearAll() {
 
 	texte_long = 0;
 	texte_tmp = g_PTRNUL;
-	BUFFERTAPE = dos_malloc2(85000);
+	BUFFERTAPE = allocMemory(85000);
 
 	SAUVEGARDE = (Sauvegarde *)malloc(sizeof(Sauvegarde));
 	memset(SAUVEGARDE, 0, sizeof(Sauvegarde));
@@ -418,14 +418,14 @@ void Globals::clearAll() {
 	largeur_boite = 240;
 	TEXTE_FORMATE = 300;
 
-	_vm->_eventsManager._objectBuf = dos_malloc2(2500);
-	INVENTAIRE_OBJET = dos_malloc2(2500);
+	_vm->_eventsManager._objectBuf = allocMemory(2500);
+	INVENTAIRE_OBJET = allocMemory(2500);
 
 	ADR_FICHIER_OBJ = g_PTRNUL;
 	FORETSPR = g_PTRNUL;
 	FORET = false;
 
-	cache_souris = dos_malloc2(2500);
+	cache_souris = allocMemory(2500);
 	GESTE = g_PTRNUL;
 	GESTE_FLAG = false;
 }
@@ -481,9 +481,7 @@ void Globals::CLEAR_VBOB() {
 		VBob[idx].yp = 0;
 		VBob[idx].frameIndex = 0;
 		VBob[idx].fieldC = 0;
-		if (VBob[idx].surface != g_PTRNUL)
-			dos_free2(VBob[idx].surface);
-		VBob[idx].surface = g_PTRNUL;
+		VBob[idx].surface = freeMemory(VBob[idx].surface);
 		VBob[idx].spriteData = g_PTRNUL;
 		VBob[idx].oldSpriteData = g_PTRNUL;
 	} 
@@ -509,34 +507,24 @@ void Globals::CHARGE_OBJET() {
 	free(data);
 }
 
-byte *Globals::dos_malloc2(int count) {
+byte *Globals::allocMemory(int count) {
 	byte *result = (byte *)malloc(count);
 	if (!result)
 		result = g_PTRNUL;
 	return result;
 }
 
-byte *Globals::dos_free2(byte *p) {
+byte *Globals::freeMemory(byte *p) {
 	if (p != g_PTRNUL)
 		free(p);
 	return g_PTRNUL;
 }
 
-// Free File
-byte *Globals::LIBERE_FICHIER(byte *p) {
-	dos_free2(p);
-	return g_PTRNUL;
-}
-
 // Reset Cache
 void Globals::RESET_CACHE() {
-	byte *dataP;
 
 	for (int idx = 1; idx <= 5; ++idx) {
-		dataP = CACHE_BANQUE[idx];
-		if (dataP != g_PTRNUL && dataP)
-			CACHE_BANQUE[idx] = dos_free2(CACHE_BANQUE[idx]);
-		CACHE_BANQUE[idx] = g_PTRNUL;
+		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
 	}
 
 	for (int idx = 0; idx <= 20; ++idx) {
@@ -619,7 +607,7 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 		CACHE_ON();
 		v2 = ptr;
 	}
-	dos_free2(v2);
+	freeMemory(v2);
 }
 
 void Globals::B_CACHE_OFF(int idx) {

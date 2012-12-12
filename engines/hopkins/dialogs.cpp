@@ -46,7 +46,7 @@ DialogsManager::DialogsManager() {
 }
 
 DialogsManager::~DialogsManager() {
-	_vm->_globals.dos_free2(_inventWin1);
+	_vm->_globals.freeMemory(_inventWin1);
 }
 
 void DialogsManager::setParent(HopkinsEngine *vm) {
@@ -297,7 +297,7 @@ void DialogsManager::showOptionsDialog() {
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_graphicsManager.ofscroll + 164, 107, 
 		_vm->_graphicsManager.ofscroll + 498, 320);
 
-	_vm->_globals.OPTION_SPR = _vm->_globals.dos_free2(_vm->_globals.OPTION_SPR);
+	_vm->_globals.OPTION_SPR = _vm->_globals.freeMemory(_vm->_globals.OPTION_SPR);
 	_vm->_globals._optionDialogFl = false;
 }
 
@@ -337,7 +337,7 @@ LABEL_7:
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
 		size_t filesize = f.size();
-		_vm->_dialogsManager._inventWin1 = _vm->_globals.dos_malloc2(filesize);
+		_vm->_dialogsManager._inventWin1 = _vm->_globals.allocMemory(filesize);
 		_vm->_fileManager.readStream(f, _vm->_dialogsManager._inventWin1, filesize);
 		f.close();
 
@@ -362,7 +362,7 @@ LABEL_7:
 					byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(v6, 0);
 					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v7, v19 + v16 + 6, 
 						v15 + 120, _vm->_globals.OBJL, _vm->_globals.OBJH);
-					_vm->_globals.dos_free2(v7);
+					_vm->_globals.freeMemory(v7);
 				}
 				v16 += 54;
 			};
@@ -423,9 +423,8 @@ LABEL_7:
 							v20 = true;
 						_vm->_globals.SORTIE = 0;
 						if (!v20) {
-							_inventBuf2 = _vm->_globals.dos_free2(_inventBuf2);
-							if (g_PTRNUL != _vm->_dialogsManager._inventWin1)
-								_vm->_dialogsManager._inventWin1 = _vm->_globals.dos_free2(_vm->_dialogsManager._inventWin1);
+							_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
+							_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
 							goto LABEL_7;
 						}
 					} else if (!v20) {
@@ -449,9 +448,9 @@ LABEL_7:
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
 			_vm->_objectsManager.BOBTOUS = true;
 		}
-		if (_vm->_dialogsManager._inventWin1 != g_PTRNUL)
-			_vm->_dialogsManager._inventWin1 = _vm->_globals.dos_free2(_vm->_dialogsManager._inventWin1);
-		_inventBuf2 = _vm->_globals.dos_free2(_inventBuf2);
+
+		_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
+		_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
 
 		if (_vm->_eventsManager._mouseCursorId == 1)
 			showOptionsDialog();
@@ -577,8 +576,8 @@ void DialogsManager::showLoadGame() {
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x + 183, 60);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 183, 60, 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
-	_vm->_objectsManager.SL_SPR = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR);
-	_vm->_objectsManager.SL_SPR2 = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR2);
+	_vm->_objectsManager.SL_SPR = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR);
+	_vm->_objectsManager.SL_SPR2 = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR2);
 	_vm->_objectsManager.SL_X = 0;
 	_vm->_objectsManager.SL_Y = 0;
 
@@ -610,8 +609,8 @@ void DialogsManager::showSaveGame() {
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x + 183, 60);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
-	_vm->_objectsManager.SL_SPR = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR);
-	_vm->_objectsManager.SL_SPR2 = _vm->_globals.dos_free2(_vm->_objectsManager.SL_SPR2);
+	_vm->_objectsManager.SL_SPR = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR);
+	_vm->_objectsManager.SL_SPR2 = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR2);
 	_vm->_objectsManager.SL_X = 0;
 	_vm->_objectsManager.SL_Y = 0;
 

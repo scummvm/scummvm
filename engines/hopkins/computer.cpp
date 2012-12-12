@@ -78,7 +78,7 @@ void ComputerManager::setTextMode() {
 
 	_vm->_graphicsManager.nbrligne = SCREEN_WIDTH;
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "STFONT.SPR");
-	_vm->_globals.police = _vm->_globals.dos_free2(_vm->_globals.police);
+	_vm->_globals.police = _vm->_globals.freeMemory(_vm->_globals.police);
 	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	_vm->_globals.police_l = 8;
 	_vm->_globals.police_h = 8;
@@ -348,7 +348,7 @@ void ComputerManager::loadMenu() {
 	LABEL_13:
 		tmpPtr = tmpPtr + 1;
 	} while (!loopCond);
-	_vm->_globals.dos_free2(ptr);
+	ptr = _vm->_globals.freeMemory(ptr);
 }
 
 void ComputerManager::TXT4(int xp, int yp, int textIdx) {
@@ -497,7 +497,7 @@ void ComputerManager::outText2(const Common::String &msg) {
  * Restores the scene for the FBI headquarters room
  */
 void ComputerManager::restoreFBIRoom() {
-	_vm->_globals.police = _vm->_globals.dos_free2(_vm->_globals.police);
+	_vm->_globals.police = _vm->_globals.freeMemory(_vm->_globals.police);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "FONTE3.SPR");
 	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 
@@ -582,7 +582,7 @@ void ComputerManager::readText(int idx) {
 	} while (v4 != 37);
 
 	_vm->_eventsManager.waitKeyPress();
-	_vm->_globals.dos_free2(ptr);
+	ptr = _vm->_globals.freeMemory(ptr);
 }
 
 /**
@@ -618,9 +618,8 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	playBreakout();
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
-	_breakoutSpr = _vm->_globals.LIBERE_FICHIER(_breakoutSpr);
-	_vm->_globals.dos_free2((byte *)_breakoutLevel);
-	_breakoutLevel = (int16 *)g_PTRNUL;
+	_breakoutSpr = _vm->_globals.freeMemory(_breakoutSpr);
+	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
 	_vm->_objectsManager.Sprite[0].spriteData = v1;
 
 	_vm->_soundManager.DEL_SAMPLE(1);
@@ -644,7 +643,7 @@ void ComputerManager::loadHiscore() {
 	byte *ptr; 
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
-	ptr = _vm->_globals.dos_malloc2(100);
+	ptr = _vm->_globals.allocMemory(100);
 	_vm->_saveLoadManager.bload(_vm->_globals.NFICHIER, ptr);
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
@@ -663,7 +662,7 @@ void ComputerManager::loadHiscore() {
 		} 
 	} 
 
-	_vm->_globals.dos_free2(ptr);
+	_vm->_globals.freeMemory(ptr);
 	_breakoutHiscore = atol(_score[5]._score.c_str());
 }
 
@@ -692,10 +691,7 @@ void ComputerManager::newLevel() {
 		_breakoutLives = 11;
 	_vm->_graphicsManager.LOAD_IMAGEVGA("CASSEF.PCX");
 	displayLives();
-	if (_breakoutLevel != (int16 *)g_PTRNUL) {
-		_vm->_globals.dos_free2((byte *)_breakoutLevel);
-		_breakoutLevel = (int16 *)g_PTRNUL;
-	}
+	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
 
 	++_breakoutLevelNbr;
 	while (!_vm->shouldQuit()) {
@@ -929,7 +925,7 @@ int ComputerManager::displayHiscores() {
 
 	_vm->_eventsManager.mouseOff();
 	_vm->_graphicsManager.FADE_OUT_CASSE();
-	_vm->_globals.LIBERE_FICHIER(ptr);
+	_vm->_globals.freeMemory(ptr);
 	return buttonIndex;
 }
 
@@ -978,7 +974,7 @@ void ComputerManager::getScoreName() {
 			break;
 	}
 	_vm->_graphicsManager.FADE_OUT_CASSE();
-	_vm->_globals.dos_free2(ptr);
+	_vm->_globals.freeMemory(ptr);
 	saveScore();
 }
 
@@ -1081,7 +1077,7 @@ void ComputerManager::saveScore() {
 		} while (!v3);
 	}
 
-	ptr = _vm->_globals.dos_malloc2(0x64u);
+	ptr = _vm->_globals.allocMemory(0x64u);
 	memset(ptr, 0, 0x63u);
 	for (int v5 = 0; v5 <= 5; v5++) {
 		v6 = 16 * v5;
@@ -1107,7 +1103,7 @@ void ComputerManager::saveScore() {
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
 	_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, ptr, 0x64u);
-	_vm->_globals.dos_free2(ptr);
+	_vm->_globals.freeMemory(ptr);
 }
 
 /**

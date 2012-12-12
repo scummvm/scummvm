@@ -74,10 +74,7 @@ void FontManager::showText(int idx) {
 	txt._textOnFl = true;
 	txt._textLoadedFl = false;
   
-	if (txt._textBlock != g_PTRNUL) {
-		_vm->_globals.dos_free2(txt._textBlock);
-		txt._textBlock = g_PTRNUL;
-	}
+	txt._textBlock = _vm->_globals.freeMemory(txt._textBlock);
 }
 
 /**
@@ -90,11 +87,7 @@ void FontManager::hideText(int idx) {
 	TxtItem &txt = _text[idx - 5];
 	txt._textOnFl = false;
 	txt._textLoadedFl = false;
-
-	if (txt._textBlock != g_PTRNUL) {
-		_vm->_globals.dos_free2(txt._textBlock);
-		txt._textBlock = g_PTRNUL;
-	}
+	txt._textBlock = _vm->_globals.freeMemory(txt._textBlock);
 }
 
 /**
@@ -202,7 +195,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			v69 = 2048;
 			f.seek(_index[messageId]);
 
-			_tempText = _vm->_globals.dos_malloc2(0x80Au);
+			_tempText = _vm->_globals.allocMemory(0x80Au);
 			if (_tempText == g_PTRNUL)
 				error("Error allocating text");
 			
@@ -213,7 +206,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		} else {
 			v69 = 100;
 			_vm->_globals.texte_long = 100;
-			v9 = _vm->_globals.dos_malloc2(0x6Eu);
+			v9 = _vm->_globals.allocMemory(0x6Eu);
 			Common::fill(&v9[0], &v9[0x6e], 0);
 
 			_tempText = v9;
@@ -397,14 +390,14 @@ LABEL_57:
 		int textType = _text[idx]._textType;
 		if (textType == 1 || textType == 3 || textType == 5 || textType == 6) {
 			int v49 = v51 * v53;
-			byte *ptrd = _vm->_globals.dos_malloc2(v49);
+			byte *ptrd = _vm->_globals.allocMemory(v49);
 			if (ptrd == g_PTRNUL) {
 				error("Cutting a block for text box (%d)", v49);
 			}
 			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, ptrd, v56, v55, v53, v51);
 			_vm->_graphicsManager.Trans_bloc2(ptrd, _vm->_graphicsManager.TABLE_COUL, v49);
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, ptrd, v56, v55, v53, v51);
-			_vm->_globals.dos_free2(ptrd);
+			_vm->_globals.freeMemory(ptrd);
 			
 			_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, v55, v53, (byte)-2);
 			_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, v51 + v55, v53, (byte)-2);
@@ -429,10 +422,9 @@ LABEL_57:
 		_text[idx]._height = blockHeight;
 		textType = _text[idx]._textType;
 		if (textType == 6 || textType == 1 || textType == 3 || textType == 5) {
-			if (_text[idx]._textBlock != g_PTRNUL)
-				_text[idx]._textBlock = _vm->_globals.dos_free2(_text[idx]._textBlock);
+			_text[idx]._textBlock = _vm->_globals.freeMemory(_text[idx]._textBlock);
 			int blockSize = blockHeight * blockWidth;
-			ptre = _vm->_globals.dos_malloc2(blockSize + 20);
+			ptre = _vm->_globals.allocMemory(blockSize + 20);
 			if (ptre == g_PTRNUL)
 				error("Cutting a block for text box (%d)", blockSize);
 
@@ -441,11 +433,12 @@ LABEL_57:
 			_text[idx]._height = blockHeight;
 			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _text[idx]._textBlock, v56, v55, _text[idx]._width, blockHeight);
 		}
-		_tempText = _vm->_globals.dos_free2(_tempText);
+		_tempText = _vm->_globals.freeMemory(_tempText);
 	}
 }
+
 /** 
- * Directly display text
+ * Directly display text (using a VESA segment)
  */
 void FontManager::displayTextVesa(int xp, int yp, const Common::String &message, int col) {
 	const char *srcP;
@@ -469,7 +462,9 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, currentX, yp + 12);
 }
 
-
+/** 
+ * Directly display text
+ */
 void FontManager::displayText(int xp, int yp, const Common::String &message, int col) {
 	for (uint idx = 0; idx < message.size(); ++idx) {
 		char currentChar = message[idx];
