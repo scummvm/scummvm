@@ -72,7 +72,6 @@ private:
 	int32 _saveCaretCounter;
 
 	static const uint kCaretSpeed = 25;
-	static const uint kMiniatureSize = 240 * 135;
 
 	void saveLoadUpdateVars();
 

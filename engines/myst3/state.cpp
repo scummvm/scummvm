@@ -267,80 +267,81 @@ void GameState::syncFloat(Common::Serializer &s, float &val,
 	}
 }
 
-void GameState::syncWithSaveGame(Common::Serializer &s, StateData &data) {
+void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	if (!s.syncVersion(kSaveVersion))
 		error("This savegame (v%d) is too recent (max %d) please get a newer version of ResidualVM", s.getVersion(), kSaveVersion);
 
-	s.syncAsUint32LE(data.gameRunning);
-	s.syncAsUint32LE(data.currentFrame);
-	s.syncAsUint32LE(data.nextSecondsUpdate);
-	s.syncAsUint32LE(data.secondsPlayed);
-	s.syncAsUint32LE(data.dword_4C2C44);
-	s.syncAsUint32LE(data.dword_4C2C48);
-	s.syncAsUint32LE(data.dword_4C2C4C);
-	s.syncAsUint32LE(data.dword_4C2C50);
-	s.syncAsUint32LE(data.dword_4C2C54);
-	s.syncAsUint32LE(data.dword_4C2C58);
-	s.syncAsUint32LE(data.dword_4C2C5C);
-	s.syncAsUint32LE(data.dword_4C2C60);
-	s.syncAsUint32LE(data.currentNodeType);
+	s.syncAsUint32LE(gameRunning);
+	s.syncAsUint32LE(currentFrame);
+	s.syncAsUint32LE(nextSecondsUpdate);
+	s.syncAsUint32LE(secondsPlayed);
+	s.syncAsUint32LE(dword_4C2C44);
+	s.syncAsUint32LE(dword_4C2C48);
+	s.syncAsUint32LE(dword_4C2C4C);
+	s.syncAsUint32LE(dword_4C2C50);
+	s.syncAsUint32LE(dword_4C2C54);
+	s.syncAsUint32LE(dword_4C2C58);
+	s.syncAsUint32LE(dword_4C2C5C);
+	s.syncAsUint32LE(dword_4C2C60);
+	s.syncAsUint32LE(currentNodeType);
 
 	// The original engine (v148) saved the raw IEE754 data,
 	// we save decimal data as fixed point instead to be achieve portability
 	if (s.getVersion() < 149) {
-		s.syncBytes((byte*) &data.lookatPitch, sizeof(float));
-		s.syncBytes((byte*) &data.lookatHeading, sizeof(float));
-		s.syncBytes((byte*) &data.lookatFOV, sizeof(float));
-		s.syncBytes((byte*) &data.pitchOffset, sizeof(float));
-		s.syncBytes((byte*) &data.headingOffset, sizeof(float));
+		s.syncBytes((byte*) &lookatPitch, sizeof(float));
+		s.syncBytes((byte*) &lookatHeading, sizeof(float));
+		s.syncBytes((byte*) &lookatFOV, sizeof(float));
+		s.syncBytes((byte*) &pitchOffset, sizeof(float));
+		s.syncBytes((byte*) &headingOffset, sizeof(float));
 	} else {
-		syncFloat(s, data.lookatPitch);
-		syncFloat(s, data.lookatHeading);
-		syncFloat(s, data.lookatFOV);
-		syncFloat(s, data.pitchOffset);
-		syncFloat(s, data.headingOffset);
+		syncFloat(s, lookatPitch);
+		syncFloat(s, lookatHeading);
+		syncFloat(s, lookatFOV);
+		syncFloat(s, pitchOffset);
+		syncFloat(s, headingOffset);
 	}
 
-	s.syncAsUint32LE(data.limitCubeCamera);
+	s.syncAsUint32LE(limitCubeCamera);
 
 	if (s.getVersion() < 149) {
-		s.syncBytes((byte*) &data.minPitch, sizeof(float));
-		s.syncBytes((byte*) &data.maxPitch, sizeof(float));
-		s.syncBytes((byte*) &data.minHeading, sizeof(float));
-		s.syncBytes((byte*) &data.maxHeading, sizeof(float));
+		s.syncBytes((byte*) &minPitch, sizeof(float));
+		s.syncBytes((byte*) &maxPitch, sizeof(float));
+		s.syncBytes((byte*) &minHeading, sizeof(float));
+		s.syncBytes((byte*) &maxHeading, sizeof(float));
 	} else {
-		syncFloat(s, data.minPitch);
-		syncFloat(s, data.maxPitch);
-		syncFloat(s, data.minHeading);
-		syncFloat(s, data.maxHeading);
+		syncFloat(s, minPitch);
+		syncFloat(s, maxPitch);
+		syncFloat(s, minHeading);
+		syncFloat(s, maxHeading);
 	}
 
-	s.syncAsUint32LE(data.dword_4C2C90);
+	s.syncAsUint32LE(dword_4C2C90);
 
 	for (uint i = 0; i < 2048; i++)
-		s.syncAsSint32LE(data.vars[i]);
+		s.syncAsSint32LE(vars[i]);
 
-	s.syncAsUint32LE(data.inventoryCount);
+	s.syncAsUint32LE(inventoryCount);
 
 	for (uint i = 0; i < 7; i++)
-		s.syncAsUint32LE(data.inventoryList[i]);
+		s.syncAsUint32LE(inventoryList[i]);
 
 	for (uint i = 0; i < 256; i++)
-		s.syncAsByte(data.zipDestinations[i]);
+		s.syncAsByte(zipDestinations[i]);
 
-	s.syncAsByte(data.saveDay, 149);
-	s.syncAsByte(data.saveMonth, 149);
-	s.syncAsUint16LE(data.saveYear, 149);
-	s.syncAsByte(data.saveHour, 149);
-	s.syncAsByte(data.saveMinute, 149);
-	s.syncString(data.saveDescription, 149);
+	s.syncAsByte(saveDay, 149);
+	s.syncAsByte(saveMonth, 149);
+	s.syncAsUint16LE(saveYear, 149);
+	s.syncAsByte(saveHour, 149);
+	s.syncAsByte(saveMinute, 149);
+	s.syncString(saveDescription, 149);
 
 	if (s.isLoading()) {
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		thumbnail->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-		data.thumbnail = Common::SharedPtr<Graphics::Surface>(thumbnail, Graphics::SharedPtrSurfaceDeleter());
+		thumbnail = Common::SharedPtr<Graphics::Surface>(new Graphics::Surface(), Graphics::SharedPtrSurfaceDeleter());
+		thumbnail->create(kThumbnailWidth, kThumbnailHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 	}
-	s.syncBytes((byte *)data.thumbnail->pixels, 240 * 135 * 4);
+	assert(thumbnail && thumbnail->w == kThumbnailWidth && thumbnail->h == kThumbnailHeight);
+
+	s.syncBytes((byte *)thumbnail->pixels, kThumbnailWidth * kThumbnailHeight * 4);
 }
 
 void GameState::newGame() {
@@ -350,7 +351,7 @@ void GameState::newGame() {
 bool GameState::load(const Common::String &file) {
 	Common::InSaveFile *saveFile = _vm->getSaveFileManager()->openForLoading(file);
 	Common::Serializer s = Common::Serializer(saveFile, 0);
-	syncWithSaveGame(s, _data);
+	_data.syncWithSaveGame(s);
 	delete saveFile;
 
 	_data.gameRunning = true;
@@ -371,7 +372,7 @@ bool GameState::save(Common::OutSaveFile *saveFile) {
 	_data.saveMinute = t.tm_min;
 
 	_data.gameRunning = false;
-	syncWithSaveGame(s, _data);
+	_data.syncWithSaveGame(s);
 	_data.gameRunning = true;
 
 	return true;

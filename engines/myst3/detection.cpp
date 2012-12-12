@@ -27,6 +27,8 @@
 
 #include "common/savefile.h"
 
+#include "graphics/scaler.h"
+
 namespace Myst3 {
 
 struct Myst3GameDescription {
@@ -235,11 +237,11 @@ public:
 		// Read state data
 		Common::Serializer s = Common::Serializer(saveFile, 0);
 		GameState::StateData data;
-		GameState::syncWithSaveGame(s, data);
+		data.syncWithSaveGame(s);
 
 		// Read and resize the thumbnail
 		Graphics::Surface *guiThumb = new Graphics::Surface();
-		guiThumb->create(160, 100, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+		guiThumb->create(kThumbnailWidth, kThumbnailHeight1, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 		resizeThumbnail(data.thumbnail.get(), guiThumb);
 
 		// Set metadata

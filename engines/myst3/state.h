@@ -283,9 +283,12 @@ public:
 		Common::SharedPtr<Graphics::Surface> thumbnail;
 
 		StateData();
+		void syncWithSaveGame(Common::Serializer &s);
 	};
 
-	static void syncWithSaveGame(Common::Serializer &s, StateData &data);
+
+	static const uint kThumbnailWidth = 240;
+	static const uint kThumbnailHeight = 135;
 
 private:
 	Myst3Engine *_vm;

@@ -553,7 +553,8 @@ Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
 	assert(big->format.bytesPerPixel == 4);
 
 	Graphics::Surface *small = new Graphics::Surface();
-	small->create(240, 135, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	small->create(GameState::kThumbnailWidth, GameState::kThumbnailHeight,
+			Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	uint bigHeight = big->h - Renderer::kTopBorderHeight - Renderer::kBottomBorderHeight;
 	uint bigYOffset = Renderer::kBottomBorderHeight;
