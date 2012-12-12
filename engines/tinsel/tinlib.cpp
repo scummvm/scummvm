@@ -3684,7 +3684,7 @@ static void TranslucentIndex(unsigned index) {
 }
 
 /**
- * Play a sample.
+ * Play a sample (DW1 only).
  */
 static void TryPlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
