@@ -131,7 +131,7 @@ protected:
 	};
 
 	// Common::QuickTimeParser API
-	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format);
+	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize);
 
 	void init();
 

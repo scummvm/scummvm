@@ -30,6 +30,7 @@
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "audio/midiparser_qt.h"
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -76,23 +77,39 @@ void MusicDriver::play(SagaEngine *vm, ByteArray *buffer, bool loop) {
 	}
 
 	// Check if the game is using XMIDI or SMF music
-	if (vm->getGameId() == GID_IHNM && vm->isMacResources()) {
-		// Just set an XMIDI parser for Mac IHNM for now
+	if (!memcmp(buffer->getBuffer(), "FORM", 4)) {
 		_parser = MidiParser::createParser_XMIDI();
+		// ITE had MT32 mapped instruments
+		_isGM = (vm->getGameId() != GID_ITE);
 	} else {
-		if (!memcmp(buffer->getBuffer(), "FORM", 4)) {
-			_parser = MidiParser::createParser_XMIDI();
-			// ITE had MT32 mapped instruments
-			_isGM = (vm->getGameId() != GID_ITE);
-		} else {
-			_parser = MidiParser::createParser_SMF();
-			// ITE with standalone MIDI files is General MIDI
-			_isGM = (vm->getGameId() == GID_ITE);
-		}
+		_parser = MidiParser::createParser_SMF();
+		// ITE with standalone MIDI files is General MIDI
+		_isGM = (vm->getGameId() == GID_ITE);
 	}
 
 	if (!_parser->loadMusic(buffer->getBuffer(), buffer->size()))
 		error("Music::play() wrong music resource");
+
+	_parser->setTrack(0);
+	_parser->setMidiDriver(this);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+
+	// Handle music looping
+	_parser->property(MidiParser::mpAutoLoop, loop);
+//	_isLooping = loop;
+
+	_isPlaying = true;
+}
+
+void MusicDriver::playQuickTime(const Common::String &musicName, bool loop) {
+	// IHNM Mac uses QuickTime MIDI
+	_parser = MidiParser::createParser_QT();
+	_isGM = true;
+
+	if (!((MidiParser_QT *)_parser)->loadFromContainerFile(musicName))
+		error("MusicDriver::playQuickTime(): Failed to load file '%s'", musicName.c_str());
 
 	_parser->setTrack(0);
 	_parser->setMidiDriver(this);
@@ -343,31 +360,19 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	// Load MIDI/XMI resource data
 	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
-		// Load the external music file for Mac IHNM
-#if 0
-		Common::File musicFile;
-		char musicFileName[40];
-		sprintf(musicFileName, "Music/Music%02x", resourceId);
-		musicFile.open(musicFileName);
-		resourceSize = musicFile.size();
-		resourceData = new byte[resourceSize];
-		musicFile.read(resourceData, resourceSize);
-		musicFile.close();
-
-		// TODO: The Mac music format is unsupported (QuickTime MIDI)
-		// so stop here
-#endif
-		return;
+		// Load the external music file for Mac IHNM		
+		_player->playQuickTime(Common::String::format("Music/Music%02x", resourceId), flags & MUSIC_LOOP);
 	} else {
 		if (_currentMusicBuffer == &_musicBuffer[1]) {
 			_currentMusicBuffer = &_musicBuffer[0];
 		} else {
 			_currentMusicBuffer = &_musicBuffer[1];
 		}
+
 		_vm->_resource->loadResource(_musicContext, resourceId, *_currentMusicBuffer);
+		_player->play(_vm, _currentMusicBuffer, (flags & MUSIC_LOOP));
 	}
 
-	_player->play(_vm, _currentMusicBuffer, (flags & MUSIC_LOOP));
 	setVolume(_vm->_musicVolume);
 }
 

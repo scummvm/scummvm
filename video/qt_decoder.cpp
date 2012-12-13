@@ -110,7 +110,7 @@ const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	return frame;
 }
 
-Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format) {
+Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize) {
 	if (track->codecType == CODEC_TYPE_VIDEO) {
 		debug(0, "Video Codec FourCC: \'%s\'", tag2str(format));
 
@@ -205,7 +205,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 	}
 
 	// Pass it on up
-	return Audio::QuickTimeAudioDecoder::readSampleDesc(track, format);
+	return Audio::QuickTimeAudioDecoder::readSampleDesc(track, format, descSize);
 }
 
 void QuickTimeDecoder::init() {

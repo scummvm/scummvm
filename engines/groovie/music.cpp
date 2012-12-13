@@ -678,9 +678,9 @@ void MusicPlayerXMI::setTimbreMT(byte channel, const Timbre &timbre) {
 }
 
 
-// MusicPlayerMac
+// MusicPlayerMac_t7g
 
-MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
+MusicPlayerMac_t7g::MusicPlayerMac_t7g(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	// Create the parser
 	_midiParser = MidiParser::createParser_SMF();
 
@@ -701,7 +701,7 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	assert(_vm->_macResFork);
 }
 
-bool MusicPlayerMac::load(uint32 fileref, bool loop) {
+bool MusicPlayerMac_t7g::load(uint32 fileref, bool loop) {
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
 
 	// First try for compressed MIDI
@@ -722,7 +722,7 @@ bool MusicPlayerMac::load(uint32 fileref, bool loop) {
 	return loadParser(file, loop);
 }
 
-Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadStream *stream) {
+Common::SeekableReadStream *MusicPlayerMac_t7g::decompressMidi(Common::SeekableReadStream *stream) {
 	// Initialize an output buffer of the given size
 	uint32 size = stream->readUint32BE();
 	byte *output = (byte *)malloc(size);
@@ -766,6 +766,52 @@ Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadS
 
 	// Return the output buffer wrapped in a MemoryReadStream
 	return new Common::MemoryReadStream(output, size, DisposeAfterUse::YES);
+}
+
+// MusicPlayerMac_v2
+
+MusicPlayerMac_v2::MusicPlayerMac_v2(GroovieEngine *vm) : MusicPlayerMidi(vm) {
+	// Create the parser
+	_midiParser = MidiParser::createParser_QT();
+
+	// Create the driver
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+
+	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
+
+	// Set the parser's driver
+	_midiParser->setMidiDriver(this);
+
+	// Set the timer rate
+	_midiParser->setTimerRate(_driver->getBaseTempo());
+}
+
+bool MusicPlayerMac_v2::load(uint32 fileref, bool loop) {
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
+
+	// Find correct filename
+	ResInfo info;
+	_vm->_resMan->getResInfo(fileref, info);
+	uint len = info.filename.size();
+	if (len < 4)
+		return false;	// This shouldn't actually occur
+
+	// Remove the extension and add ".mov"
+	info.filename.deleteLastChar();
+	info.filename.deleteLastChar();
+	info.filename.deleteLastChar();
+	info.filename += "mov";
+
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(info.filename);
+
+	if (!file) {
+		warning("Could not find file '%s'", info.filename.c_str());
+		return false;
+	}
+
+	return loadParser(file, loop);
 }
 
 MusicPlayerIOS::MusicPlayerIOS(GroovieEngine *vm) : MusicPlayer(vm) {
