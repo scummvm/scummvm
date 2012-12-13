@@ -200,9 +200,7 @@ const char *BaseKeyboardState::scToString() {
 bool BaseKeyboardState::readKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	_currentCharCode = keyCodeToVKey(event);
-	if ((_currentCharCode <= Common::KEYCODE_z && _currentCharCode >= Common::KEYCODE_a) ||
-	        (_currentCharCode <= Common::KEYCODE_9 && _currentCharCode >= Common::KEYCODE_0) ||
-			(_currentCharCode == Common::KEYCODE_SPACE)) {
+	if ((_currentCharCode <= 0x7E && _currentCharCode >= 0x20) || (_currentCharCode <= 0xFF && _currentCharCode >= 0x1F)) {
 		_currentPrintable = true;
 	} else {
 		_currentPrintable = false;
@@ -272,7 +270,7 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 	case Common::KEYCODE_KP_ENTER:
 		return Common::KEYCODE_RETURN;
 	default:
-		return (uint32)event->kbd.keycode;
+		return (uint32)event->kbd.ascii;
 	}
 }
 
