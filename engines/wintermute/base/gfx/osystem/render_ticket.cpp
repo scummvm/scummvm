@@ -83,7 +83,19 @@ bool RenderTicket::operator==(RenderTicket &t) {
 	return true;
 }
 
-void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect) {
+// Replacement for SDL2's SDL_RenderCopy
+void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) {
+	TransparentSurface src(*getSurface(), false);
+
+	Common::Rect clipRect;
+	clipRect.setWidth(getSurface()->w);
+	clipRect.setHeight(getSurface()->h);
+
+	src._enableAlphaBlit = _hasAlpha;
+	src.blit(*_targetSurface, _dstRect.left, _dstRect.top, _mirror, &clipRect, _colorMod, clipRect.width(), clipRect.height());
+}
+
+void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) {
 	TransparentSurface src(*getSurface(), false);
 	bool doDelete = false;
 	if (!clipRect) {
@@ -92,7 +104,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 		clipRect->setWidth(getSurface()->w);
 		clipRect->setHeight(getSurface()->h);
 	}
-	
+
 	src._enableAlphaBlit = _hasAlpha;
 	src.blit(*_targetSurface, dstRect->left, dstRect->top, _mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
 	if (doDelete) {

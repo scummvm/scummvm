@@ -36,18 +36,18 @@ namespace Wintermute {
 
 class BaseSurfaceOSystem;
 class RenderTicket {
-	Graphics::Surface *_surface;
 public:
 	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false, bool disableAlpha = false);
 	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
 	~RenderTicket();
 	const Graphics::Surface *getSurface() { return _surface; }
-	void drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect);
-	Common::Rect _srcRect;
+	// Non-dirty-rects:
+	void drawToSurface(Graphics::Surface *_targetSurface);
+	// Dirty-rects:
+	void drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect);
+
 	Common::Rect _dstRect;
-	uint32 _mirror;
 	uint32 _batchNum;
-	bool _hasAlpha;
 
 	bool _isValid;
 	bool _wantsDraw;
@@ -56,6 +56,11 @@ public:
 
 	BaseSurfaceOSystem *_owner;
 	bool operator==(RenderTicket &a);
+private:
+	Graphics::Surface *_surface;
+	Common::Rect _srcRect;
+	bool _hasAlpha;
+	uint32 _mirror;
 };
 
 } // end of namespace Wintermute

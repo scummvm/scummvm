@@ -277,7 +277,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
 				compareTicket->_colorMod = _colorMod;
 				if (_disableDirtyRects) {
-					drawFromSurface(compareTicket, NULL);
+					drawFromSurface(compareTicket);
 				} else {
 					drawFromTicket(compareTicket);
 				}
@@ -292,7 +292,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	} else {
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
-		drawFromSurface(ticket, NULL);
+		drawFromSurface(ticket);
 	}
 }
 
@@ -426,7 +426,7 @@ void BaseRenderOSystem::drawTickets() {
 			dstClip.translate(-offsetX, -offsetY);
 
 			_colorMod = ticket->_colorMod;
-			drawFromSurface(ticket, &ticket->_srcRect, &pos, &dstClip);
+			drawFromSurface(ticket, &pos, &dstClip);
 			_needsFlip = true;
 		}
 		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
@@ -456,24 +456,12 @@ void BaseRenderOSystem::drawTickets() {
 }
 
 // Replacement for SDL2's SDL_RenderCopy
-void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *clipRect) {
-	TransparentSurface src(*ticket->getSurface(), false);
-	bool doDelete = false;
-	if (!clipRect) {
-		doDelete = true;
-		clipRect = new Common::Rect();
-		clipRect->setWidth(ticket->getSurface()->w);
-		clipRect->setHeight(ticket->getSurface()->h);
-	}
-
-	src._enableAlphaBlit = ticket->_hasAlpha;
-	src.blit(*_renderSurface, ticket->_dstRect.left, ticket->_dstRect.top, ticket->_mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
-	if (doDelete) {
-		delete clipRect;
-	}
+void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket) {
+	ticket->drawToSurface(_renderSurface);
 }
-void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect) {
-	ticket->drawToSurface(_renderSurface, srcRect, dstRect, clipRect);
+
+void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstRect, Common::Rect *clipRect) {
+	ticket->drawToSurface(_renderSurface, dstRect, clipRect);
 }
 
 //////////////////////////////////////////////////////////////////////////
