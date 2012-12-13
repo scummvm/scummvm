@@ -318,7 +318,7 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 	// Also reset our start time
 	if (isPlaying()) {
 		startAudio();
-		_startTime = g_system->getMillis() - time.msecs();
+		_startTime = g_system->getMillis() - (time.msecs() / _playbackRate).toInt();
 	}
 
 	resetPauseStartTime();
