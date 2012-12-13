@@ -47,6 +47,11 @@ List of fixed bugs in GF scripts:
 	As Manny shows, you can lock an open door, and while it is simbolically compelling,
 	it doesn't close it. :)
 
+	-Fix bug #672 "Meche's line "I'm sorry I let you down Manny" is played as Manny
+	walks into the hallway." - mo.lua.patchr
+	mo.ha_door.walkOut doesn't wait for Meche has finished speaking to move Manny outside
+	his office. This patch adds a wait_for_message() to prevent this.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
