@@ -150,7 +150,7 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 		Common::MemoryReadStream thumbStream(_thumbnailData, _thumbnailDataSize);
 		Graphics::BitmapDecoder bmpDecoder;
 		if (bmpDecoder.loadStream(thumbStream)) {
-			Graphics::Surface *surf = new Graphics::Surface;
+			Graphics::Surface *surf = NULL;
 			surf = bmpDecoder.getSurface()->convertTo(g_system->getOverlayFormat());
 			TransparentSurface *scaleableSurface = new TransparentSurface(*surf, false);
 			Graphics::Surface *scaled = scaleableSurface->scale(kThumbnailWidth, kThumbnailHeight2);
