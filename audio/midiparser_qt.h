@@ -30,7 +30,20 @@
 #include "common/quicktime.h"
 
 /**
- * The QuickTime MIDI version of MidiParser.
+ * The QuickTime Music version of MidiParser.
+ *
+ * QuickTime Music is actually a superset of MIDI. It has its own custom
+ * instruments and supports more than 15 non-percussion channels. It also
+ * has custom control changes and a more advanced pitch bend (which we
+ * convert to GM pitch bend as best as possible). We then use the fallback
+ * GM instrument that each QuickTime instrument definition has to provide.
+ *
+ * Furthermore, Apple's documentation on this is terrible. You know
+ * documentation is bad when it contradicts itself three times on the same
+ * subject (like about setting the GM instrument field to percussion).
+ *
+ * This is as close to a proper QuickTime Music parser as we can currently
+ * implement using our MidiParser interface.
  */
 class MidiParser_QT : public MidiParser, public Common::QuickTimeParser {
 public:
