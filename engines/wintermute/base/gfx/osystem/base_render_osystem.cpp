@@ -83,8 +83,8 @@ bool RenderTicket::operator==(RenderTicket &t) {
 	        (t._hasAlpha != _hasAlpha) ||
 	        (t._mirror != _mirror) ||
 			(t._colorMod != _colorMod) ||
-	        (t._srcRect != _srcRect) ||
-	        (t._dstRect != _dstRect)) {
+	        (t._dstRect != _dstRect) ||
+	        (t._srcRect != _srcRect)) {
 		return false;
 	}
 	return true;
@@ -312,13 +312,18 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
 		compare._colorMod = _colorMod;
 		RenderQueueIterator it;
-		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
-			if ((*it)->_owner == owner && *(*it) == compare && (*it)->_isValid) {
-				(*it)->_colorMod = _colorMod;
+		// Avoid calling end() and operator* every time, when potentially going through
+		// LOTS of tickets.
+		RenderQueueIterator endIterator = _renderQueue.end();
+		RenderTicket *compareTicket = NULL;
+		for (it = _renderQueue.begin(); it != endIterator; ++it) {
+			compareTicket = *it;
+			if (compareTicket->_owner == owner && *(compareTicket) == compare && compareTicket->_isValid) {
+				compareTicket->_colorMod = _colorMod;
 				if (_disableDirtyRects) {
-					drawFromSurface(*it, NULL);
+					drawFromSurface(compareTicket, NULL);
 				} else {
-					drawFromTicket(*it);
+					drawFromTicket(compareTicket);
 				}
 				return;
 			}
