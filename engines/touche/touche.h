@@ -31,6 +31,7 @@
 #include "common/util.h"
 
 #include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 #include "engines/engine.h"
 
@@ -645,6 +646,10 @@ protected:
 	Common::Point getMousePos() const;
 
 	MidiPlayer *_midiPlayer;
+
+	int _musicVolume;
+	Audio::SoundHandle _musicHandle;
+	Audio::SeekableAudioStream *_musicStream;
 
 	void initMusic();
 	void startMusic(int num);

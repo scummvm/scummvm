@@ -32,6 +32,9 @@
 #include "common/keyboard.h"
 #include "common/textconsole.h"
 
+#include "audio/mixer.h"
+#include "audio/decoders/vorbis.h"
+
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -57,6 +60,9 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	clearDirtyRects();
 
 	_playSoundCounter = 0;
+
+	_musicVolume = 0;
+	_musicStream = 0;
 
 	_processRandomPaletteCounter = 0;
 
@@ -91,6 +97,7 @@ ToucheEngine::~ToucheEngine() {
 	delete _console;
 
 	delete _midiPlayer;
+	delete _musicStream;
 }
 
 Common::Error ToucheEngine::run() {
@@ -3308,30 +3315,77 @@ bool ToucheEngine::canSaveGameStateCurrently() {
 }
 
 void ToucheEngine::initMusic() {
-	_midiPlayer = new MidiPlayer;
+	// Detect External Music Files
+	bool extMusic = true;
+	for (int num = 0; num < 26; num++) {
+		Common::String extMusicFilename = Common::String::format("track%02d.ogg", num+1);
+		Common::File extMusicFile;
+		if (!extMusicFile.open(extMusicFilename))
+			extMusic = false;
+		extMusicFile.close();
+	}
+
+	if (!extMusic) {
+		_midiPlayer = new MidiPlayer;
+		debug(1, "initMusic(): Using midi music!");
+	} else
+		debug(1, "initMusic(): Using external digital music!");
 }
 
 void ToucheEngine::startMusic(int num) {
+	debug(1, "startMusic(%d)", num);
 	uint32 size;
-	const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
-	_fData.seek(offs);
-	_midiPlayer->play(_fData, size, true);
+	if (_midiPlayer) {
+		const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
+		_fData.seek(offs);
+		_midiPlayer->play(_fData, size, true);
+	} else {
+		Common::File extMusicFile;
+		Common::String extMusicFilename = Common::String::format("track%02d.ogg", num);
+		if (!extMusicFile.open(extMusicFilename)) {
+			error("Unable to open %s for reading", extMusicFilename.c_str());
+		}
+		delete _musicStream;
+		_musicStream = Audio::makeVorbisStream(&extMusicFile, DisposeAfterUse::NO);
+		Audio::LoopingAudioStream loopStream(_musicStream, 0);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, &loopStream);
+		_mixer->setChannelVolume(_musicHandle, _musicVolume);
+		extMusicFile.close();
+	}
 }
 
 void ToucheEngine::stopMusic() {
-	_midiPlayer->stop();
+	if (_midiPlayer)
+		_midiPlayer->stop();
+	else {
+		_mixer->stopHandle(_speechHandle);
+	}
 }
 
 int ToucheEngine::getMusicVolume() {
-	return _midiPlayer->getVolume();
+	if (_midiPlayer)
+		_musicVolume = _midiPlayer->getVolume();
+	return _musicVolume;
 }
 
 void ToucheEngine::setMusicVolume(int volume) {
-	_midiPlayer->setVolume(volume);
+	_musicVolume = CLIP(volume, 0, 255);
+
+	if (_midiPlayer)
+		_midiPlayer->setVolume(_musicVolume);
+	else {
+		_mixer->setChannelVolume(_musicHandle, _musicVolume);
+	}
 }
 
 void ToucheEngine::adjustMusicVolume(int diff) {
-	_midiPlayer->adjustVolume(diff);
+	_musicVolume = CLIP(_musicVolume + diff, 0, 255);
+
+	if (_midiPlayer)
+		_midiPlayer->adjustVolume(diff);
+	else {
+		_mixer->setChannelVolume(_musicHandle, _musicVolume);
+	}
 }
 
 } // namespace Touche
