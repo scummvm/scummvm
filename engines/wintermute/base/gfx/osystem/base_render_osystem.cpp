@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+#include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/math/math_util.h"
@@ -39,58 +40,6 @@
 #include "common/config-manager.h"
 
 namespace Wintermute {
-
-RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) : _owner(owner),
-	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(!disableAlpha) {
-	_colorMod = 0;
-	_batchNum = 0;
-	_mirror = TransparentSurface::FLIP_NONE;
-	if (mirrorX) {
-		_mirror |= TransparentSurface::FLIP_V;
-	}
-	if (mirrorY) {
-		_mirror |= TransparentSurface::FLIP_H;
-	}
-	if (surf) {
-		_surface = new Graphics::Surface();
-		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
-		assert(_surface->format.bytesPerPixel == 4);
-		// Get a clipped copy of the surface
-		for (int i = 0; i < _surface->h; i++) {
-			memcpy(_surface->getBasePtr(0, i), surf->getBasePtr(srcRect->left, srcRect->top + i), srcRect->width() * _surface->format.bytesPerPixel);
-		}
-		// Then scale it if necessary
-		if (dstRect->width() != srcRect->width() || dstRect->height() != srcRect->height()) {
-			TransparentSurface src(*_surface, false);
-			Graphics::Surface *temp = src.scale(dstRect->width(), dstRect->height());
-			_surface->free();
-			delete _surface;
-			_surface = temp;
-		}
-	} else {
-		_surface = NULL;
-	}
-}
-
-RenderTicket::~RenderTicket() {
-	if (_surface) {
-		_surface->free();
-		delete _surface;
-	}
-}
-
-bool RenderTicket::operator==(RenderTicket &t) {
-	if ((t._owner != _owner) ||
-			(t._batchNum != t._batchNum) ||
-	        (t._hasAlpha != _hasAlpha) ||
-	        (t._mirror != _mirror) ||
-			(t._colorMod != _colorMod) ||
-	        (t._dstRect != _dstRect) ||
-	        (t._srcRect != _srcRect)) {
-		return false;
-	}
-	return true;
-}
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
 	return new BaseRenderOSystem(inGame);
@@ -524,20 +473,7 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *clip
 	}
 }
 void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect) {
-	TransparentSurface src(*ticket->getSurface(), false);
-	bool doDelete = false;
-	if (!clipRect) {
-		doDelete = true;
-		clipRect = new Common::Rect();
-		clipRect->setWidth(ticket->getSurface()->w);
-		clipRect->setHeight(ticket->getSurface()->h);
-	}
-
-	src._enableAlphaBlit = ticket->_hasAlpha;
-	src.blit(*_renderSurface, dstRect->left, dstRect->top, ticket->_mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
-	if (doDelete) {
-		delete clipRect;
-	}
+	ticket->drawToSurface(_renderSurface, srcRect, dstRect, clipRect);
 }
 
 //////////////////////////////////////////////////////////////////////////
