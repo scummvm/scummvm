@@ -200,7 +200,8 @@ const char *BaseKeyboardState::scToString() {
 bool BaseKeyboardState::readKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	_currentCharCode = keyCodeToVKey(event);
-	if ((_currentCharCode <= 0x7E && _currentCharCode >= 0x20) || (_currentCharCode <= 0xFF && _currentCharCode >= 0x1F)) {
+	// Verify that this is a printable ISO-8859-character (including the upper charset)
+	if ((_currentCharCode <= 0x7E && _currentCharCode >= 0x20) || (_currentCharCode <= 0xFF && _currentCharCode >= 0xA0)) {
 		_currentPrintable = true;
 	} else {
 		_currentPrintable = false;
