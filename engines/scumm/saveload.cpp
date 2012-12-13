@@ -1477,9 +1477,13 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	}
 
 
-	// Save/load FM-Towns audio status
-	if (_townsPlayer)
-		_townsPlayer->saveLoadWithSerializer(s);
+	//
+	// Save/load music engine status
+	//
+	if (_musicEngine) {
+		_musicEngine->saveLoadWithSerializer(s);
+	}
+
 
 	//
 	// Save/load the charset renderer state
