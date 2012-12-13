@@ -43,6 +43,7 @@ namespace Wintermute {
 RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) : _owner(owner),
 	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(!disableAlpha) {
 	_colorMod = 0;
+	_batchNum = 0;
 	_mirror = TransparentSurface::FLIP_NONE;
 	if (mirrorX) {
 		_mirror |= TransparentSurface::FLIP_V;
@@ -80,6 +81,7 @@ RenderTicket::~RenderTicket() {
 
 bool RenderTicket::operator==(RenderTicket &t) {
 	if ((t._owner != _owner) ||
+			(t._batchNum != t._batchNum) ||
 	        (t._hasAlpha != _hasAlpha) ||
 	        (t._mirror != _mirror) ||
 			(t._colorMod != _colorMod) ||
@@ -100,6 +102,8 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_blankSurface = new Graphics::Surface();
 	_drawNum = 1;
 	_needsFlip = true;
+	_spriteBatch = false;
+	_batchNum = 0;
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
@@ -310,6 +314,9 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 
 	if (owner) { // Fade-tickets are owner-less
 		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
+		compare._batchNum = _batchNum;
+		if (_spriteBatch)
+			_batchNum++;
 		compare._colorMod = _colorMod;
 		RenderQueueIterator it;
 		// Avoid calling end() and operator* every time, when potentially going through
@@ -318,7 +325,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		RenderTicket *compareTicket = NULL;
 		for (it = _renderQueue.begin(); it != endIterator; ++it) {
 			compareTicket = *it;
-			if (compareTicket->_owner == owner && *(compareTicket) == compare && compareTicket->_isValid) {
+			if (*(compareTicket) == compare && compareTicket->_isValid) {
 				compareTicket->_colorMod = _colorMod;
 				if (_disableDirtyRects) {
 					drawFromSurface(compareTicket, NULL);
@@ -645,6 +652,18 @@ void BaseRenderOSystem::endSaveLoad() {
 		delete ticket;
 	}
 	_drawNum = 1;
+}
+
+bool BaseRenderOSystem::startSpriteBatch() {
+	_spriteBatch = true;
+	_batchNum = 1;
+	return STATUS_OK;
+}
+
+bool BaseRenderOSystem::endSpriteBatch() {
+	_spriteBatch = false;
+	_batchNum = 0;
+	return STATUS_OK;
 }
 
 } // end of namespace Wintermute

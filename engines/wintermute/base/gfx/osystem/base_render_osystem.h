@@ -46,6 +46,7 @@ public:
 	Common::Rect _srcRect;
 	Common::Rect _dstRect;
 	uint32 _mirror;
+	uint32 _batchNum;
 	bool _hasAlpha;
 
 	bool _isValid;
@@ -97,6 +98,8 @@ public:
 	float getScaleRatioY() const {
 		return _ratioY;
 	}
+	virtual bool startSpriteBatch();
+	virtual bool endSpriteBatch();
 	void endSaveLoad();
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false);
 	BaseSurface *createSurface();
@@ -120,6 +123,8 @@ private:
 	int _borderBottom;
 
 	bool _disableDirtyRects;
+	bool _spriteBatch;
+	uint32 _batchNum;
 	float _ratioX;
 	float _ratioY;
 	uint32 _colorMod;
