@@ -79,12 +79,12 @@ RenderTicket::~RenderTicket() {
 }
 
 bool RenderTicket::operator==(RenderTicket &t) {
-	if ((t._srcRect != _srcRect) ||
-	        (t._dstRect != _dstRect) ||
-	        (t._mirror != _mirror) ||
-	        (t._owner != _owner) ||
+	if ((t._owner != _owner) ||
 	        (t._hasAlpha != _hasAlpha) ||
-	        (t._colorMod != _colorMod)) {
+	        (t._mirror != _mirror) ||
+			(t._colorMod != _colorMod) ||
+	        (t._srcRect != _srcRect) ||
+	        (t._dstRect != _dstRect)) {
 		return false;
 	}
 	return true;
