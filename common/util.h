@@ -165,6 +165,17 @@ bool isSpace(int c);
  */
 bool isUpper(int c);
 
-}	// End of namespace Common
+/**
+ * Test whether the given character is printable. This includes the space
+ * character (' ').
+ *
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is printable, false otherwise.
+ */
+bool isPrint(int c);
+} // End of namespace Common
 
 #endif

@@ -103,7 +103,7 @@ struct MenuData {
 	void addCharToDescription(int slot, char chr) {
 		char *description = saveLoadDescriptionsTable[slot];
 		int descriptionLen = strlen(description);
-		if (descriptionLen < 32 && isprint(static_cast<unsigned char>(chr))) {
+		if (descriptionLen < 32 && Common::isPrint(chr)) {
 			description[descriptionLen] = chr;
 			description[descriptionLen + 1] = 0;
 		}

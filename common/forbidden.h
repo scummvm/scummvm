@@ -358,6 +358,11 @@
 	#define isupper(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 	#endif
 
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isprint
+	#undef isprint
+	#define isprint(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_ctype_h
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_mkdir

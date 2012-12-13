@@ -764,7 +764,7 @@ String tag2string(uint32 tag) {
 	str[4] = '\0';
 	// Replace non-printable chars by dot
 	for (int i = 0; i < 4; ++i) {
-		if (!isprint((unsigned char)str[i]))
+		if (!Common::isPrint(str[i]))
 			str[i] = '.';
 	}
 	return String(str);

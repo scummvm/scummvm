@@ -559,7 +559,7 @@ void Journal::updateTextField(uint16 ascii, int keycode) {
 		}
 		break;
 	default:
-		if (isprint((char)ascii) &&
+		if (Common::isPrint((char)ascii) &&
 			_textField.textCharsCount < (sizeof(_textField.text) - 1) &&
 			_vm->display()->textWidth(_textField.text) < _textField.w) {
 			_textField.text[_textField.textCharsCount] = (char)ascii;
