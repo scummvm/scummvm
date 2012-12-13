@@ -477,7 +477,7 @@ void BaseRenderOSystem::drawTickets() {
 			dstClip.translate(-offsetX, -offsetY);
 
 			_colorMod = ticket->_colorMod;
-			drawFromSurface(ticket->getSurface(), &ticket->_srcRect, &pos, &dstClip, ticket->_mirror);
+			drawFromSurface(ticket, &ticket->_srcRect, &pos, &dstClip);
 			_needsFlip = true;
 		}
 		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
@@ -523,17 +523,18 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *clip
 		delete clipRect;
 	}
 }
-void BaseRenderOSystem::drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror) {
-	TransparentSurface src(*surf, false);
+void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect) {
+	TransparentSurface src(*ticket->getSurface(), false);
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;
 		clipRect = new Common::Rect();
-		clipRect->setWidth(surf->w);
-		clipRect->setHeight(surf->h);
+		clipRect->setWidth(ticket->getSurface()->w);
+		clipRect->setHeight(ticket->getSurface()->h);
 	}
 
-	src.blit(*_renderSurface, dstRect->left, dstRect->top, mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
+	src._enableAlphaBlit = ticket->_hasAlpha;
+	src.blit(*_renderSurface, dstRect->left, dstRect->top, ticket->_mirror, clipRect, _colorMod, clipRect->width(), clipRect->height());
 	if (doDelete) {
 		delete clipRect;
 	}

@@ -106,8 +106,10 @@ public:
 private:
 	void addDirtyRect(const Common::Rect &rect);
 	void drawTickets();
+	// Non-dirty-rects:
 	void drawFromSurface(RenderTicket *ticket, Common::Rect *clipRect);
-	void drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror);
+	// Dirty-rects:
+	void drawFromSurface(RenderTicket *ticket, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect);
 	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicket *> _renderQueue;
