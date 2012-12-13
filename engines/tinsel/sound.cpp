@@ -510,7 +510,7 @@ void SoundManager::showSoundError(const char *errorMsg, const char *soundFile) {
 	GUI::MessageDialog dialog(msg, "OK");
 	dialog.runModal();
 
-	error(msg.c_str());
+	error("%s", msg.c_str());
 }
 
 /**
