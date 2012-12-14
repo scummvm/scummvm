@@ -100,7 +100,7 @@ SaveGame::~SaveGame() {
 }
 
 bool SaveGame::isCompatible() const {
-	return _majorVersion == SAVEGAME_MAJOR_VERSION;
+	return _majorVersion == SAVEGAME_MAJOR_VERSION && _minorVersion <= SAVEGAME_MINOR_VERSION;
 }
 
 uint SaveGame::saveMajorVersion() const {
