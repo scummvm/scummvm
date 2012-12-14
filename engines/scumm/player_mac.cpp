@@ -346,7 +346,7 @@ int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 					_channel[i]._remaining = samplesLeft;
 				}
 			}
-			generated = MIN(_channel[i]._remaining, samplesLeft);
+			generated = MIN<uint32>(_channel[i]._remaining, samplesLeft);
 			if (_channel[i]._velocity != 0) {
 				_channel[i]._instrument.generateSamples(ptr, _channel[i]._pitchModifier, _channel[i]._velocity, generated, _channel[i]._remaining, _fadeNoteEnds);
 			}
