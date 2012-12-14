@@ -156,7 +156,7 @@ public:
 	void Copy_Video_Vbe16(const byte *srcData);
 	void Copy_Video_Vbe16a(const byte *srcData);
 	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height);
-	
+
 	/**
 	 * Draws a sprite onto the screen
 	 * @param surface		Destination surface

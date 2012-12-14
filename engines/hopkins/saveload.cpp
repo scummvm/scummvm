@@ -49,7 +49,7 @@ bool SaveLoadManager::bsave(const Common::String &file, const void *buf, size_t 
 		delete f;
 
 		return bytesWritten == n;
-	} else 
+	} else
 		return false;
 }
 
@@ -62,7 +62,7 @@ void SaveLoadManager::initSaves() {
 	Common::String dataFilename = "HISCORE.DAT";
 	byte data[100];
 	Common::fill(&data[0], &data[100], 0);
-	
+
 	SAUVE_FICHIER(dataFilename, data, 100);
 }
 
@@ -195,7 +195,7 @@ Common::Error SaveLoadManager::restore(int slot) {
 	delete saveFile;
 
 	// Unpack the inventory
-	for (int i = 0; i < 35; ++i) 
+	for (int i = 0; i < 35; ++i)
 		_vm->_globals.INVENTAIRE[i] = _vm->_globals.SAUVEGARDE->inventory[i];
 
 	// Set variables from loaded data as necessary
@@ -223,16 +223,16 @@ bool SaveLoadManager::readSavegameHeader(int slot, hopkinsSavegameHeader &header
 
 void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 	int w = _vm->_graphicsManager.Reel_Reduc(SCREEN_WIDTH, REDUCE_AMOUNT);
-	int h = _vm->_graphicsManager.Reel_Reduc(SCREEN_HEIGHT - 40, REDUCE_AMOUNT); 
+	int h = _vm->_graphicsManager.Reel_Reduc(SCREEN_HEIGHT - 40, REDUCE_AMOUNT);
 
 	Graphics::Surface thumb8;
 	thumb8.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
-	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, (byte *)thumb8.pixels, 
+	_vm->_graphicsManager.Reduc_Ecran(_vm->_graphicsManager.VESA_BUFFER, (byte *)thumb8.pixels,
 		_vm->_eventsManager._startPos.x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
 
 	// Convert the 8-bit pixel to 16 bit surface
-	s->create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));	
+	s->create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	const byte *srcP = (const byte *)thumb8.pixels;
 	uint16 *destP = (uint16 *)s->pixels;
@@ -294,7 +294,7 @@ void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Su
 			for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex) {
 				byte rCurrent, gCurrent, bCurrent;
 				pixelFormat16.colorToRGB(palette[palIndex], rCurrent, gCurrent, bCurrent);
-				
+
 				int diff = ABS((int)r - (int)rCurrent) + ABS((int)g - (int)gCurrent) + ABS((int)b - (int)bCurrent);
 				if (diff < difference) {
 					difference = diff;

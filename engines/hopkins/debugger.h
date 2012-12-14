@@ -33,7 +33,7 @@ class HopkinsEngine;
 class Debugger : public GUI::Debugger {
 private:
 	HopkinsEngine *_vm;
-	
+
 public:
 	Debugger();
 	virtual ~Debugger() {}

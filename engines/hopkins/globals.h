@@ -503,9 +503,9 @@ public:
 	byte *freeMemory(byte *p);
 
 	void RESET_CACHE();
-	void CACHE_ON(); 
+	void CACHE_ON();
 	void CACHE_OFF(int v1 = 0);
-	void CACHE_SUB(int idx); 
+	void CACHE_SUB(int idx);
 	void CACHE_ADD(int idx);
 	void CHARGE_CACHE(const Common::String &file);
 	void B_CACHE_OFF(int idx);

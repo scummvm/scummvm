@@ -86,7 +86,7 @@ int LinesManager::ZONE_OBJET(int a1, int a2) {
 }
 
 int LinesManager::OPTI_ZONE(int a1, int a2, int a3) {
-	int v3; 
+	int v3;
 	signed int v4;
 
 	v3 = a2;
@@ -190,7 +190,7 @@ void LinesManager::AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, in
 		}
 		*dataP++ = -1;
 		*dataP++ = -1;
-		
+
 		LigneZone[idx].count = v20;
 		LigneZone[idx].field2 = a6;
 	} else {
@@ -217,11 +217,11 @@ void LinesManager::RETIRE_LIGNE(int idx) {
 
 // Add Line
 void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7) {
-	int v7; 
-	int v8; 
-	int v9; 
-	byte *v10; 
-	int v11; 
+	int v7;
+	int v8;
+	int v9;
+	byte *v10;
+	int v11;
 	int v12;
 	int v13;
 	int v24;
@@ -257,7 +257,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	v33 = v9 + 1;
 	if (v8 > (int)(v9 + 1))
 		v34 = v8;
-	
+
 	v10 = _vm->_globals.allocMemory(4 * v34 + 8);
 	if (v10 == g_PTRNUL)
 		error("AJOUTE LIGNE OBSTACLE");
@@ -362,7 +362,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	v27 = v32 + 2;
 	v27[0] = -1;
 	v27[1] = -1;
-	
+
 	Ligne[idx].field0 = v35 + 1;
 	Ligne[idx].field2 = a7;
 	Ligne[idx].field4 = a2;
@@ -371,9 +371,9 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 // Line Collision 2
 // TODO: Should return a bool
 int LinesManager::colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
-	int16 *v7; 
-	int16 *v13; 
-	int result; 
+	int16 *v7;
+	int16 *v13;
+	int result;
 
 	int v24 = a5;
 	int v6 = a5;
@@ -430,7 +430,7 @@ LABEL_28:
 		}
 		for (;;) {
 			int v12 = v7[0];
-			
+
 			v13 = v7 + 1;
 			int v14 = v13[0];
 			v7 = v13 + 1;
@@ -451,7 +451,7 @@ LABEL_28:
 }
 
 int LinesManager::Scolision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
-	int16 *v7; 
+	int16 *v7;
 	int16 *v13;
 	int result;
 
@@ -550,16 +550,16 @@ LABEL_46:
 
 // Init route
 void LinesManager::INIPARCOURS() {
-	int v0; 
-	int v1; 
-	int v2; 
-	int16 *v3; 
-	int v4; 
-	int v5; 
-	int v6; 
-	int16 *v7; 
-	int v8; 
-	int v9; 
+	int v0;
+	int v1;
+	int v2;
+	int16 *v3;
+	int v4;
+	int v5;
+	int v6;
+	int16 *v7;
+	int v8;
+	int v9;
 	int v11;
 	int v12;
 	int v13;
@@ -577,7 +577,7 @@ void LinesManager::INIPARCOURS() {
 
 		v4 = v3[2 * v2 - 2];
 		v5 = v3[2 * v2 - 1];
-		if (_vm->_graphicsManager.max_x == v4 || _vm->_graphicsManager.max_y == v5 || _vm->_graphicsManager.min_x == v4 
+		if (_vm->_graphicsManager.max_x == v4 || _vm->_graphicsManager.max_y == v5 || _vm->_graphicsManager.min_x == v4
 				|| _vm->_graphicsManager.min_y == v5)
 			v1 = 1;
 		if (v15 == v4 && v14 == v5)
@@ -622,7 +622,7 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 			int16 *v10 = Ligne[a1].lineData;
 			int v11 = v10[2 * i];
 			v50 = v10[2 * i + 1];
-			
+
 			int v12 = v8;
 			a6[v12] = v11;
 			a6[v12 + 1] = v50;
@@ -655,7 +655,7 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 			int16 *v18 = Ligne[v36].lineData;
 			int v19 = v18[2 * j];
 			v50 = v18[2 * j + 1];
-			
+
 			int v20 = v8;
 			a6[v20] = v19;
 			a6[v20 + 1] = v50;
@@ -746,7 +746,7 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 					a6[v19 + 1] = v50;
 					a6[v19 + 2] = Ligne[v15].field6;
 					v40 += a7;
-	
+
 				}
 			}
 			++v15;
@@ -825,52 +825,52 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 }
 
 int LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	int v9;
 	int v10;
-	int i; 
+	int i;
 	int v12;
 	int v13;
-	int j; 
+	int j;
 	int v15;
 	int v16;
-	int k; 
+	int k;
 	int v18;
 	int v19;
-	int l; 
+	int l;
 	int v21;
-	int v22; 
-	int v23; 
-	int v24; 
+	int v22;
+	int v23;
+	int v24;
 	int v25;
 	int v26;
-	int v27; 
+	int v27;
 	int v28;
 	int v29;
-	int v30; 
+	int v30;
 	int v31;
 	int v32;
-	int v33; 
-	int v35 = 0; 
-	int v36 = 0; 
-	int v37; 
-	int v38; 
-	int v39; 
-	int v40; 
-	int v41; 
-	int v42 = 0; 
-	int v43 = 0; 
-	int v44 = 0; 
-	int v45 = 0; 
-	int v46 = 0; 
-	int v47 = 0; 
-	int v48 = 0; 
-	int v49 = 0; 
-	int v50; 
-	int v51; 
+	int v33;
+	int v35 = 0;
+	int v36 = 0;
+	int v37;
+	int v38;
+	int v39;
+	int v40;
+	int v41;
+	int v42 = 0;
+	int v43 = 0;
+	int v44 = 0;
+	int v45 = 0;
+	int v46 = 0;
+	int v47 = 0;
+	int v48 = 0;
+	int v49 = 0;
+	int v50;
+	int v51;
 
 	v5 = a1;
 	v6 = a2;
@@ -1490,12 +1490,12 @@ LABEL_17:
 
 // Avoid 2
 int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
+	int v4;
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	int v9;
 	int v10;
 	int v11;
 	int v12;
@@ -1516,7 +1516,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	int v28;
 	int v29;
 	int v31;
-	int v34; 
+	int v34;
 	int v35;
 	int v36;
 	int v37;
@@ -1557,32 +1557,32 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	int v72;
 	int j;
 	int16 *v74;
-	int v75; 
-	int v76; 
-	int v77; 
-	int v78; 
-	int v79; 
-	int v80; 
+	int v75;
+	int v76;
+	int v77;
+	int v78;
+	int v79;
+	int v80;
 	int16 *v81;
-	int v82; 
-	int v83; 
-	int16 *v84; 
-	int v85; 
-	int v86; 
-	int v87; 
-	int v88; 
-	int v89; 
+	int v82;
+	int v83;
+	int16 *v84;
+	int v85;
+	int v86;
+	int v87;
+	int v88;
+	int v89;
 	int v90;
-	int16 *v91; 
+	int16 *v91;
 	int v92;
-	int v93; 
+	int v93;
 	int v94;
-	int16 *v95; 
+	int16 *v95;
 	int v96;
-	int v97; 
-	int v98; 
-	int v99; 
-	int v100; 
+	int v97;
+	int v98;
+	int v99;
+	int v100;
 	int v101;
 	int v102;
 	int v103;
@@ -1591,23 +1591,23 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	int v106;
 	int v107;
 	int v108;
-	int v109; 
-	int v110; 
-	int v111; 
-	int v112; 
+	int v109;
+	int v110;
+	int v111;
+	int v112;
 	int v113;
-	int v114; 
-	int v115; 
-	int v116; 
-	int v117; 
-	int v118; 
-	int v119; 
-	int v120; 
-	int v121; 
-	int v122; 
-	int v123; 
-	int v124; 
-	int v125; 
+	int v114;
+	int v115;
+	int v116;
+	int v117;
+	int v118;
+	int v119;
+	int v120;
+	int v121;
+	int v122;
+	int v123;
+	int v124;
+	int v125;
 	int v126[9];
 	int v131[9];
 	int v136[9];
@@ -1683,7 +1683,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 		if (v11 <= 3)
 			return (int16 *)g_PTRNUL;
 	}
-	
+
 	for (v12 = 0; v12 <= 8; ++v12) {
 		v141[v12] = -1;
 		v136[v12] = 0;
@@ -1817,13 +1817,13 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 			v121 = v141[7];
 			v120 = v136[7];
 		}
-		
+
 		for (v12 = 0; v12 <= 8; ++v12) {
 			v141[v12] = -1;
 			v136[v12] = 0;
 			v131[v12] = 1300;
 			v126[v12] = 1300;
-		} 
+		}
 
 		v34 = 0;
 		v35 = srcY;
@@ -2311,29 +2311,29 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v73;
 	int v74;
 	int v76;
-	int16 *v77; 
-	int16 *v78; 
-	int v79; 
-	int16 *v80; 
-	int v81; 
-	int16 *v82; 
-	int v83; 
-	int16 *v84; 
-	int v85; 
-	int16 *v86; 
-	int v87; 
-	int16 *v88; 
-	int v89; 
-	int v90; 
-	int v91; 
-	int v92; 
-	int v93; 
-	int v94; 
-	int v95; 
-	int v96; 
-	int v97; 
-	int v98; 
-	int v99; 
+	int16 *v77;
+	int16 *v78;
+	int v79;
+	int16 *v80;
+	int v81;
+	int16 *v82;
+	int v83;
+	int16 *v84;
+	int v85;
+	int16 *v86;
+	int v87;
+	int16 *v88;
+	int v89;
+	int v90;
+	int v91;
+	int v92;
+	int v93;
+	int v94;
+	int v95;
+	int v96;
+	int v97;
+	int v98;
+	int v99;
 	int v100;
 	int v101;
 	int v102;
@@ -2374,11 +2374,11 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v137;
 	int v138;
 	int v139;
-	int v140; 
-	int v141; 
-	int v142; 
-	int v143; 
-	int v144; 
+	int v140;
+	int v141;
+	int v142;
+	int v143;
+	int v144;
 	int v145;
 	int colResult = 0;
 
@@ -2661,7 +2661,7 @@ LABEL_157:
 	v32[v31] = -1;
 	v32[v31 + 1] = -1;
 	v32[v31 + 2] = -1;
-	
+
 	v117 = 0;
 	v33 = v98;
 	v92 = v97;
@@ -3085,20 +3085,20 @@ LABEL_248:
 }
 
 int LinesManager::VERIF_SMOOTH(int a1, int a2, int a3, int a4) {
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
-	int v11; 
-	int v12; 
-	int v13; 
-	int v14; 
+	int v4;
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	int v9;
+	int v11;
+	int v12;
+	int v13;
+	int v14;
 	int v15;
 	int v16;
-	int v17; 
-	int v18; 
+	int v17;
+	int v18;
 
 	v4 = a1 - a3;
 	if (a1 - a3 < 0)
@@ -3140,27 +3140,27 @@ int LinesManager::VERIF_SMOOTH(int a1, int a2, int a3, int a4) {
 }
 
 int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
+	int v6;
+	int v7;
+	int v8;
+	int v9;
 	int v10;
 	int v11;
 	int v12;
-	int v13; 
-	int v14; 
-	int v15; 
+	int v13;
+	int v14;
+	int v15;
 	int v16;
 	int v17;
 	int v18;
 	int v19;
 	int v20;
 	int v21;
-	int v22; 
-	int v23; 
-	int v24; 
-	int v25; 
-	int v26; 
+	int v22;
+	int v23;
+	int v24;
+	int v25;
+	int v26;
 	int v27;
 	int v28;
 	int v29;
@@ -3169,33 +3169,33 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 	int v32;
 	int v33;
 	int v34;
-	int v35; 
-	int v37; 
-	int v38; 
-	int v39; 
-	int v40; 
-	int v41; 
-	int v42; 
-	int v43; 
-	int v44; 
-	int v45; 
-	int v46; 
-	int v47; 
-	int v48; 
-	int v49 = 0; 
-	int v50; 
-	int v51; 
-	int v52; 
-	int v53; 
-	int v54; 
-	int v55; 
-	int v56; 
-	int v57; 
-	int v58; 
-	int v59; 
-	int v60; 
-	int v61; 
-	int v62; 
+	int v35;
+	int v37;
+	int v38;
+	int v39;
+	int v40;
+	int v41;
+	int v42;
+	int v43;
+	int v44;
+	int v45;
+	int v46;
+	int v47;
+	int v48;
+	int v49 = 0;
+	int v50;
+	int v51;
+	int v52;
+	int v53;
+	int v54;
+	int v55;
+	int v56;
+	int v57;
+	int v58;
+	int v59;
+	int v60;
+	int v61;
+	int v62;
 	int v63;
 
 	v62 = a3;
@@ -3408,53 +3408,53 @@ LABEL_85:
 }
 
 int LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
-	int v10; 
-	int v11; 
-	int v12; 
-	int v13; 
-	int v14; 
-	int16 *v15; 
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
-	int16 *v20; 
-	int v21; 
-	int v22; 
-	int v23; 
-	int16 *v25; 
-	int16 *v26; 
-	int v27; 
-	int v28; 
-	int v29; 
-	int v30; 
-	int v31; 
-	int v32; 
-	int v33 = 0; 
-	int v34 = 0; 
-	int v35; 
-	int v36; 
-	int v37; 
-	int v38; 
-	int v39; 
-	int v40; 
-	int v41; 
-	int v42; 
-	int v43; 
-	int v44; 
-	int v45; 
-	int v46; 
-	int v47; 
-	int v48; 
-	int v49; 
-	int v50; 
-	int v51; 
-	int v52; 
-	int v53; 
+	int v6;
+	int v7;
+	int v8;
+	int v9;
+	int v10;
+	int v11;
+	int v12;
+	int v13;
+	int v14;
+	int16 *v15;
+	int v16;
+	int v17;
+	int v18;
+	int v19;
+	int16 *v20;
+	int v21;
+	int v22;
+	int v23;
+	int16 *v25;
+	int16 *v26;
+	int v27;
+	int v28;
+	int v29;
+	int v30;
+	int v31;
+	int v32;
+	int v33 = 0;
+	int v34 = 0;
+	int v35;
+	int v36;
+	int v37;
+	int v38;
+	int v39;
+	int v40;
+	int v41;
+	int v42;
+	int v43;
+	int v44;
+	int v45;
+	int v46;
+	int v47;
+	int v48;
+	int v49;
+	int v50;
+	int v51;
+	int v52;
+	int v53;
 
 	v41 = a3;
 	v40 = TEST_LIGNE(a1, a2 - 2, &v42, &v50, &v46);
@@ -3620,30 +3620,30 @@ LABEL_60:
 
 // Test line
 int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5) {
-	int i; 
-	int v6; 
-	int16 *v7; 
-	int v8; 
-	int v9; 
-	int v10; 
-	int v11; 
-	int16 *v12; 
-	int v13; 
-	int v14; 
-	int v15; 
-	int v16; 
-	int16 *v17; 
-	int v18; 
-	int v19; 
-	int v20; 
-	int v21; 
-	int result; 
-	int v23; 
-	int v24 = 0; 
-	int v25; 
-	int v26; 
-	int v27; 
-	int v28; 
+	int i;
+	int v6;
+	int16 *v7;
+	int v8;
+	int v9;
+	int v10;
+	int v11;
+	int16 *v12;
+	int v13;
+	int v14;
+	int v15;
+	int v16;
+	int16 *v17;
+	int v18;
+	int v19;
+	int v20;
+	int v21;
+	int result;
+	int v23;
+	int v24 = 0;
+	int v25;
+	int v26;
+	int v27;
+	int v28;
 
 	v26 = 0;
 	v25 = _vm->_objectsManager.DERLIGNE + 1;

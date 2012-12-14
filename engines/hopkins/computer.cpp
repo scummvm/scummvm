@@ -119,9 +119,9 @@ void ComputerManager::setTextPosition(int yp, int xp) {
  * @param mode		Which computer to display
  */
 void ComputerManager::showComputer(ComputerEnum mode) {
-	bool passwordMatch; 
-	char *v3; 
-	char s[12]; 
+	bool passwordMatch;
+	char *v3;
+	char s[12];
 	const char *s2;
 
 	_vm->_eventsManager._escKeyFl = false;
@@ -309,7 +309,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_globals.SORTIE = 13;
 	if ((uint16)(mode - 2) <= 1u)
 		_vm->_globals.SORTIE = 14;
-	
+
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 }
 
@@ -470,10 +470,10 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 		_vm->_eventsManager.VBL();
 	} while (textIndex != textIdx && curChar != 13);
 
-	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, _vm->_globals.police_l, 
+	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, _vm->_globals.police_l,
 		12, _vm->_graphicsManager.VESA_BUFFER, x1, yp);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(x1, yp, _vm->_globals.police_l + x1, yp + 12);
-	
+
 	_vm->_eventsManager.VBL();
 	_inputBuf[textIndex] = 0;
 	_vm->_eventsManager._mouseFl = oldMouseFlag;
@@ -510,18 +510,18 @@ void ComputerManager::restoreFBIRoom() {
  * Display texts for the given menu entry
  */
 void ComputerManager::readText(int idx) {
-	uint16 v1; 
-	int v2; 
-	uint16 v3; 
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	uint16 v10; 
-	byte *ptr; 
-	Common::String v12; 
-	Common::String numStr; 
+	uint16 v1;
+	int v2;
+	uint16 v3;
+	int v4;
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	uint16 v10;
+	byte *ptr;
+	Common::String v12;
+	Common::String numStr;
 	int num;
 
 	_vm->_eventsManager._escKeyFl = false;
@@ -554,7 +554,7 @@ void ComputerManager::readText(int idx) {
 	v4 = v3;
 	if (v3 > v1 - 1)
 		error("Error with Hopkins computer file");
-		
+
 	v10 = v3 + 3;
 	v5 = 1;
 	v6 = 5;
@@ -639,8 +639,8 @@ void ComputerManager::displayGamesSubMenu() {
  * Load Highscore from file
  */
 void ComputerManager::loadHiscore() {
-	char nextChar; 
-	byte *ptr; 
+	char nextChar;
+	byte *ptr;
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
 	ptr = _vm->_globals.allocMemory(100);
@@ -652,21 +652,21 @@ void ComputerManager::loadHiscore() {
 			if (!nextChar)
 				nextChar = ' ';
 			_score[scoreIndex]._name += nextChar;
-		} 
+		}
 
 		for (int i = 0; i < 9; ++i) {
 			nextChar = *(ptr + i + scoreIndex * 16 + 6);
 			if (!nextChar)
 				nextChar = '0';
 			_score[scoreIndex]._score += nextChar;
-		} 
-	} 
+		}
+	}
 
 	_vm->_globals.freeMemory(ptr);
 	_breakoutHiscore = atol(_score[5]._score.c_str());
 }
 
-/** 
+/**
  * VGA 256 col
  */
 void ComputerManager::setModeVGA256() {
@@ -721,11 +721,11 @@ void ComputerManager::newLevel() {
  * Display bricks in breakout game
  */
 void ComputerManager::displayBricks() {
-	int xp; 
-	int yp; 
-	int v2; 
-	uint16 v3; 
-	int16 *v4; 
+	int xp;
+	int yp;
+	int v2;
+	uint16 v3;
+	int16 *v4;
 
 	_breakoutBrickNbr = 0;
 	_breakoutSpeed = 1;
@@ -738,7 +738,7 @@ void ComputerManager::displayBricks() {
 		if (xp != -1) {
 			if (v2 <= 6)
 				++_breakoutBrickNbr;
-			
+
 			if (v2 == 3)
 				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, yp, 17);
 			else if (v2 == 6)
@@ -764,8 +764,8 @@ void ComputerManager::displayBricks() {
  * Display Lives in breakout game
  */
 void ComputerManager::displayLives() {
-	int v3; 
-	int v4; 
+	int v3;
+	int v4;
 
 	int v0 = _breakoutLives - 1;
 	int v1 = 10;
@@ -792,8 +792,8 @@ void ComputerManager::displayLives() {
  * Main function for breakout game
  */
 void ComputerManager::playBreakout() {
-	int v1 = 0; 
-	int v; 
+	int v1 = 0;
+	int v;
 
 	while (!_vm->shouldQuit()) {
 		while (!_vm->shouldQuit()) {
@@ -878,10 +878,10 @@ void ComputerManager::playBreakout() {
  * @return		The selected button index: 1 = Game, 2 = Quit
  */
 int ComputerManager::displayHiscores() {
-	int yp; 
-	int buttonIndex; 
-	int xp; 
-	byte *ptr; 
+	int yp;
+	int buttonIndex;
+	int xp;
+	byte *ptr;
 
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	loadHiscore();
@@ -933,8 +933,8 @@ int ComputerManager::displayHiscores() {
  * Display a screen to enter player name in the case of a new hiscore
  */
 void ComputerManager::getScoreName() {
-	char curChar; 
-	byte *ptr; 
+	char curChar;
+	byte *ptr;
 
 	_vm->_graphicsManager.LOAD_IMAGEVGA("NAME.PCX");
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -961,7 +961,7 @@ void ComputerManager::getScoreName() {
 	}
 	_score[5]._score = "         ";
 
-	char score[16]; 
+	char score[16];
 	sprintf(score, "%d", _breakoutScore);
 	int scoreLen = 0;
 	do
@@ -982,10 +982,10 @@ void ComputerManager::getScoreName() {
  * Display current score
  */
 void ComputerManager::displayScore() {
-	int16 v0; 
-	int16 v1; 
-	int16 i; 
-	char s[40]; 
+	int16 v0;
+	int16 v1;
+	int16 i;
+	char s[40];
 
 	sprintf(s, "%d", _breakoutScore);
 	v0 = 0;
@@ -1041,17 +1041,17 @@ void ComputerManager::IMPSCORE(int a1, int a2) {
  * Save Hiscore in file
  */
 void ComputerManager::saveScore() {
-	int v1; 
-	int v2; 
-	int v4; 
-	int v6; 
-	char v8; 
-	int v9; 
-	char v11; 
-	int v14; 
-	byte *ptr; 
-	int v16[6]; 
-	int v17[6]; 
+	int v1;
+	int v2;
+	int v4;
+	int v6;
+	char v8;
+	int v9;
+	char v11;
+	int v14;
+	byte *ptr;
+	int v16[6];
+	int v17[6];
 
 	for (int v0 = 0; v0 <= 5; v0++) {
 		v1 = atol(_score[v0]._score.c_str());
@@ -1065,7 +1065,7 @@ void ComputerManager::saveScore() {
 		bool v3 = false;
 		do {
 			v4 = v17[v2];
-			if (v4 && v17[0] <= v4 && v17[1] <= v4 && v17[2] <= v4 && v17[3] <= v4 
+			if (v4 && v17[0] <= v4 && v17[1] <= v4 && v17[2] <= v4 && v17[3] <= v4
 					&& v17[4] <= v4 && v17[5] <= v4)
 				v3 = true;
 			if (v3) {
@@ -1110,8 +1110,8 @@ void ComputerManager::saveScore() {
  * Display parts of the hiscore line
  */
 void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int a4) {
-	char v4; 
-	int v5; 
+	char v4;
+	int v5;
 
 	v4 = a4;
 	v5 = 36;
@@ -1134,11 +1134,11 @@ void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int a4)
  * Handle ball moves
  */
 int ComputerManager::moveBall() {
-	int16 v1; 
+	int16 v1;
 	int16 v4 = 0;
 	//(signed int)(6.0 * (long double)_vm->getRandomNumber( rand() / 2147483648.0) + 1;
 	// TODO: Figure out random number
-	int v0 = _vm->getRandomNumber(6); 
+	int v0 = _vm->getRandomNumber(6);
 	if (_breakoutSpeed == 1) {
 		CASSEP1 = 1;
 		CASSEP2 = 1;
@@ -1166,7 +1166,7 @@ int ComputerManager::moveBall() {
 
 	if (_ballRightFl)
 		_ballPosition.x += v1;
-	else 
+	else
 		_ballPosition.x -= v1;
 
 	CASSDER = v1;
@@ -1222,12 +1222,12 @@ int ComputerManager::moveBall() {
  * Check ball collision with bricks
  */
 void ComputerManager::checkBallCollisions() {
-	int v1; 
-	int v2; 
-	int v3; 
-	int v4; 
-	int v10; 
-	int v11; 
+	int v1;
+	int v2;
+	int v3;
+	int v4;
+	int v10;
+	int v11;
 
 	int v7 = 0;
 	//v6 = (signed int)(6.0 * (long double)rand() / 2147483648.0) + 1;

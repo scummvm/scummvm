@@ -334,7 +334,7 @@ void SoundManager::WSOUND_OFF() {
 
 	for (int i = 1; i <= 48; ++i)
 		DEL_SAMPLE_SDL(i);
-		
+
 	if (MOD_FLAG) {
 		STOP_MUSIC();
 		DEL_MUSIC();
@@ -450,12 +450,12 @@ void SoundManager::checkMusic() {
 		if (mwavIndex == -1) {
 			Music._currentIndex = 0;
 			mwavIndex = Music._mwavIndexes[Music._currentIndex];
-		}			
+		}
 
 		int volume = MUSICVOL * 255 / 16;
 
 		Mwav[mwavIndex]._audioStream->rewind();
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Mwav[mwavIndex]._soundHandle, 
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Mwav[mwavIndex]._soundHandle,
 			Mwav[mwavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
 	}
 }
@@ -501,9 +501,9 @@ void SoundManager::DEL_MSAMPLE(int mwavIndex) {
 }
 
 bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
-	int fileNumber; 
-	int oldMusicVol; 
-	bool breakFlag; 
+	int fileNumber;
+	int oldMusicVol;
+	bool breakFlag;
 	Common::String prefix;
 	Common::String filename;
 	Common::File f;
@@ -553,7 +553,7 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 	            || voiceId == 632
 	            || voiceId == 645))
 		fileNumber = 684;
-	
+
 	if ((unsigned int)(voiceMode - 1) <= 1) {
 		prefix = "DF";
 	}
@@ -568,7 +568,7 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 	}
 
 	filename = Common::String::format("%s%d", prefix.c_str(), fileNumber);
-	
+
 	if (!_vm->_fileManager.searchCat(filename + ".WAV", 9)) {
 		if (_vm->_globals.FR == 1)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
@@ -589,7 +589,7 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 
 		catPos = _vm->_globals.CAT_POSI;
 		catLen = _vm->_globals.CAT_TAILLE;
-	} else {		
+	} else {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".WAV");
 		if (!f.exists(_vm->_globals.NFICHIER)) {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".APC");
@@ -751,7 +751,7 @@ void SoundManager::SDL_LVOICE(size_t filePosition, size_t entryLength) {
 
 	Swav[20]._active = true;
 }
-	
+
 void SoundManager::PLAY_VOICE_SDL() {
 	if (!Swav[20]._active)
 		error("Bad handle");
@@ -836,12 +836,12 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 	Voice[voiceIndex]._status = 1;
 	Voice[voiceIndex].field14 = 4;
 	Voice[voiceIndex]._wavIndex = wavIndex;
-	
+
 	int volume = (voiceIndex == 2) ? VOICEVOL * 255 / 16 : SOUNDVOL * 255 / 16;
 
 	// Start the voice playing
 	Swav[wavIndex]._audioStream->rewind();
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Swav[wavIndex]._soundHandle, 
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Swav[wavIndex]._soundHandle,
 		Swav[wavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
 }
 
@@ -889,9 +889,9 @@ void SoundManager::updateScummVMSoundSettings() {
 
 Audio::RewindableAudioStream *SoundManager::makeSoundStream(Common::SeekableReadStream *stream) {
 	if (_vm->getPlatform() == Common::kPlatformWindows)
-		return Audio::makeAPCStream(stream, DisposeAfterUse::YES);	
+		return Audio::makeAPCStream(stream, DisposeAfterUse::YES);
 	else
-		return Audio::makeWAVStream(stream, DisposeAfterUse::YES);	
+		return Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 }
 
 // Blatant rip from gob engine. Hi DrMcCoy!

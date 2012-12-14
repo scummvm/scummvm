@@ -56,7 +56,7 @@ void FontManager::clearAll() {
 
 	_oldName = Common::String("");
 	_indexName = Common::String("");
-	
+
 	for (int idx = 0; idx < 4048; idx++)
 		_index[idx] = 0;
 
@@ -69,11 +69,11 @@ void FontManager::clearAll() {
 void FontManager::showText(int idx) {
 	if ((idx - 5) > MAX_TEXT)
 		error("Attempted to display text > MAX_TEXT.");
-  
+
 	TxtItem &txt = _text[idx - 5];
 	txt._textOnFl = true;
 	txt._textLoadedFl = false;
-  
+
 	txt._textBlock = _vm->_globals.freeMemory(txt._textBlock);
 }
 
@@ -83,7 +83,7 @@ void FontManager::showText(int idx) {
 void FontManager::hideText(int idx) {
 	if ((idx - 5) > MAX_TEXT)
 			error("Attempted to display text > MAX_TEXT.");
-  
+
 	TxtItem &txt = _text[idx - 5];
 	txt._textOnFl = false;
 	txt._textLoadedFl = false;
@@ -113,7 +113,7 @@ void FontManager::setOptimalColor(int idx1, int idx2, int idx3, int idx4) {
 void FontManager::initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int textType, int a9, int color) {
 	if ((idx - 5) > MAX_TEXT)
 		error("Attempted to display text > MAX_TEXT.");
-  
+
 	TxtItem &txt = _text[idx - 5];
 	txt._textOnFl = false;
 	txt._filename = filename;
@@ -129,10 +129,10 @@ void FontManager::initTextBuffers(int idx, int messageId, const Common::String &
 
 // Box
 void FontManager::box(int idx, int messageId, const Common::String &filename, int xp, int yp) {
-	byte *v9; 
-	byte *ptre; 
-	Common::String s; 
-	Common::String file; 
+	byte *v9;
+	byte *ptre;
+	Common::String s;
+	Common::String file;
 	Common::File f;
 
 	int v73 = xp;
@@ -150,7 +150,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				for (int lineNum = 0; lineNum < _text[idx]._lineCount; ++lineNum) {
 					displayText(xp + 5, yCurrent, _text[idx]._lines[lineNum], _text[idx]._color);
 					yCurrent += _vm->_globals.police_h + 1;
-				} 
+				}
 			}
 		} else {
 			int height = _text[idx]._height;
@@ -179,7 +179,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_oldName = file;
 			_indexName = Common::String(file.c_str(), file.size() - 3);
 			_indexName += "IND";
-			
+
 			if (!f.open(_indexName))
 				error("Error opening file - %s", _indexName.c_str());
 			int filesize = f.size();
@@ -198,7 +198,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_tempText = _vm->_globals.allocMemory(0x80Au);
 			if (_tempText == g_PTRNUL)
 				error("Error allocating text");
-			
+
 			Common::fill(&_tempText[0], &_tempText[0x80a], 0);
 			f.read(_tempText, 0x800u);
 			f.close();
@@ -398,7 +398,7 @@ LABEL_57:
 			_vm->_graphicsManager.Trans_bloc2(ptrd, _vm->_graphicsManager.TABLE_COUL, v49);
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, ptrd, v56, v55, v53, v51);
 			_vm->_globals.freeMemory(ptrd);
-			
+
 			_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, v55, v53, (byte)-2);
 			_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, v51 + v55, v53, (byte)-2);
 			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v56, v70, v51, (byte)-2);
@@ -417,7 +417,7 @@ LABEL_57:
 
 		int blockWidth = v53 + 1;
 		int blockHeight = v51 + 1;
-		
+
 		_text[idx]._width = blockWidth;
 		_text[idx]._height = blockHeight;
 		textType = _text[idx]._textType;
@@ -437,13 +437,13 @@ LABEL_57:
 	}
 }
 
-/** 
+/**
  * Directly display text (using a VESA segment)
  */
 void FontManager::displayTextVesa(int xp, int yp, const Common::String &message, int col) {
 	const char *srcP;
-	char currChar; 
-	int charIndex; 
+	char currChar;
+	int charIndex;
 	int currentX = xp;
 
 	srcP = message.c_str();
@@ -453,7 +453,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 			break;
 		if (currChar >= 32) {
 			charIndex = currChar - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, 
+			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police,
 				currentX, yp, currChar - 32, col);
 			currentX += _vm->_objectsManager.getWidth(_vm->_globals.police, charIndex);
 		}
@@ -462,7 +462,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, currentX, yp + 12);
 }
 
-/** 
+/**
  * Directly display text
  */
 void FontManager::displayText(int xp, int yp, const Common::String &message, int col) {
@@ -471,7 +471,7 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, 
+			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police,
 				xp, yp, characterIndex, col);
 			xp += _vm->_objectsManager.getWidth(_vm->_globals.police, characterIndex);
 		}
@@ -479,12 +479,12 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 }
 
 void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col) {
-	const char *srcP; 
-	int v5; 
-	int v6; 
-	byte v7; 
-	int fontCol; 
-	int v9; 
+	const char *srcP;
+	int v5;
+	int v6;
+	byte v7;
+	int fontCol;
+	int v9;
 
 	srcP = msg.c_str();
 	v9 = xp;

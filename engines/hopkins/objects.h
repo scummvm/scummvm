@@ -73,7 +73,7 @@ public:
 	byte *SL_SPR;
 	byte *SL_SPR2;
 	byte *sprite_ptr;
-	const byte *S_old_spr; 
+	const byte *S_old_spr;
 	bool PERSO_ON;
 	bool SL_FLAG;
 	int SL_MODE;
@@ -112,7 +112,7 @@ public:
 	int OBSSEUL;
 	int NVVERBE;
 	int NVZONE;
-	int S_old_ani; 
+	int S_old_ani;
 	int S_old_ret;
 	int nouveau_x, nouveau_y;
 	int nouveau_sens;
@@ -188,7 +188,7 @@ public:
 	void BTGAUCHE();
 	void PARADISE();
 	void CLEAR_ECRAN();
-	
+
 	/**
 	 * Change the currently active player
 	 * @param oldCharacter		Previously played character
@@ -247,13 +247,13 @@ public:
 	/**
 	 * Game scene control method
 	 */
-	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile, 
+	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 			const Common::String &animFile, const Common::String &s4, int v);
 
 	/**
 	 * Game scene control method
 	 */
-	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile, 
+	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
 			const Common::String &animFile, const Common::String &s4, int v);
 };
 

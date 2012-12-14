@@ -91,7 +91,7 @@ void GraphicsManager::setParent(HopkinsEngine *vm) {
 		if (_vm->getPlatform() == Common::kPlatformLinux)
 		// CHECKME: Should be 0?
 			MANU_SCROLL = 1;
-		else 
+		else
 			MANU_SCROLL = 0;
 		SPEED_SCROLL = 16;
 	} else {
@@ -114,7 +114,7 @@ void GraphicsManager::SET_MODE(int width, int height) {
 			SDL_ECHELLE = 75;
 		if (_vm->_globals.XSETMODE == 5)
 			SDL_ECHELLE = _vm->_globals.XZOOM;
-		
+
 		int bpp = 8;
 		if (_vm->_globals.XFORCE8 == true)
 			bpp = 8;
@@ -202,7 +202,7 @@ void GraphicsManager::LOAD_IMAGEVGA(const Common::String &file) {
 	if (Winbpp == 2)
 		CopyAsm16(VESA_BUFFER);
 	DD_Unlock();
-	
+
 	FADE_IN_CASSE();
 }
 
@@ -241,7 +241,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 		} else if (Winbpp == 1) {
 			if (!SDL_ECHELLE)
 				m_scroll2(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else 
+			else
 				m_scroll2A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		}
 
@@ -278,7 +278,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 void GraphicsManager::INIT_TABLE(int minIndex, int maxIndex, byte *palette) {
 	for (int idx = 0; idx < 256; ++idx)
 		TABLE_COUL[idx] = idx;
-  
+
 	Trans_bloc(TABLE_COUL, palette, 256, minIndex, maxIndex);
 
 	for (int idx = 0; idx < 256; ++idx) {
@@ -320,7 +320,7 @@ void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int m
 			col2 += minThreshold;
 			if (col2 < col1)
 				continue;
-			
+
 			col2 -= maxThreshold;
 			if (col2 > col1)
 				continue;
@@ -332,9 +332,9 @@ void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int m
 }
 
 void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
-	byte *dataP; 
-	int count; 
-	byte dataVal; 
+	byte *dataP;
+	int count;
+	byte dataVal;
 
 	dataP = surface;
 	count = size - 1;
@@ -372,7 +372,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 		error("Error decoding PCX %s", file.c_str());
 
 	const Graphics::Surface *s = pcxDecoder.getSurface();
-	
+
 	// Copy out the dimensions and pixels of the decoded surface
 	DOUBLE_ECRAN = s->w > SCREEN_WIDTH;
 	PCX_L = s->w;
@@ -382,28 +382,28 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 	// Copy out the palette
 	const byte *palSrc = pcxDecoder.getPalette();
 	Common::copy((const byte *)palSrc, (const byte *)palSrc + PALETTE_BLOCK_SIZE, palette);
-  
+
 	f.close();
 }
 
 void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *palette) {
-	size_t filesize; 
-	int v4; 
-	size_t v5; 
-	int v6; 
-	size_t v7; 
-	int v8; 
-	byte v9; 
-	int v10; 
-	int v11; 
-	char v12; 
-	int v15; 
-	int v16; 
-	int32 v17; 
-	byte *ptr; 
-	Common::File f; 
+	size_t filesize;
+	int v4;
+	size_t v5;
+	int v6;
+	size_t v7;
+	int v8;
+	byte v9;
+	int v10;
+	int v11;
+	char v12;
+	int v15;
+	int v16;
+	int32 v17;
+	byte *ptr;
+	Common::File f;
 
-	if (!f.open(file)) 
+	if (!f.open(file))
 		error("File not found - %s", file.c_str());
 
 	filesize = f.size();
@@ -562,7 +562,7 @@ void GraphicsManager::m_scroll2A(const byte *surface, int xs, int ys, int width,
 				}
 				--xCtr;
 			} while ( xCtr );
-	      
+
 			srcP = srcCopyP;
 			destP = WinScan + destCopyP;
 			if (Agr_Flag_y)
@@ -648,7 +648,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 					*(uint16 *)destP = pixelWord;
 					destP += 2;
 				}
-        
+
 				--xCtr;
 			} while (xCtr);
 
@@ -657,12 +657,12 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			destP = WinScan + destCopyP;
 			if (Agr_Flag_y == 1)
 				break;
-			
+
 			Agr_y += SDL_ECHELLE;
-			
+
 			if ((unsigned int)Agr_y < 100)
 				break;
-      
+
 			Agr_y -= 100;
 			Agr_Flag_y = 1;
 		}
@@ -679,18 +679,18 @@ void GraphicsManager::Copy_Vga(const byte *surface, int xp, int yp, int width, i
 	int yCount;
 	int xCount;
 	byte srcByte;
-	byte *loopDestP; 
-	byte *loopSrcP; 
-	byte *loopSrc2P; 
-	byte *tempDestP; 
-	const byte *tempSrcP; 
-	int yCtr; 
+	byte *loopDestP;
+	byte *loopSrcP;
+	byte *loopSrc2P;
+	byte *tempDestP;
+	const byte *tempSrcP;
+	int yCtr;
 
 	assert(VideoPtr);
 	srcP = xp + 320 * yp + surface;
 	destP = 30 * WinScan + destX + destX + WinScan * 2 * destY + (byte *)VideoPtr->pixels;
 	yCount = height;
-  
+
 	do {
 		yCtr = yCount;
 		xCount = width;
@@ -709,7 +709,7 @@ void GraphicsManager::Copy_Vga(const byte *surface, int xp, int yp, int width, i
 			destP = loopSrc2P - WinScan + 1;
 			--xCount;
 		} while (xCount);
-    
+
 		destP = WinScan + WinScan + tempDestP;
 		srcP = tempSrcP + 320;
 		yCount = yCtr - 1;
@@ -717,9 +717,9 @@ void GraphicsManager::Copy_Vga(const byte *surface, int xp, int yp, int width, i
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
-	const byte *srcP; 
-	uint16 *destP; 
-	int yCount; 
+	const byte *srcP;
+	uint16 *destP;
+	int yCount;
 	int xCount;
 	int xCtr;
 	const byte *palette;
@@ -736,7 +736,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 	destP = (uint16 *)(30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY + (byte *)VideoPtr->pixels);
 	yCount = height;
 	xCount = width;
-  
+
 	do {
 		yCtr = yCount;
 		xCtr = xCount;
@@ -744,13 +744,13 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		loopDestP = destP;
 		savedXCount = xCount;
 		palette = PAL_PIXELS;
-		
+
 		do {
 			tempSrcP = (uint16 *)(palette + 2 * *srcP);
 			srcByte = *tempSrcP;
 			*destP = *tempSrcP;
 			*(destP + 1) = srcByte;
-			
+
 			tempDestP = (uint16 *)((byte *)destP + WinScan);
 			*tempDestP = srcByte;
 			*(tempDestP + 1) = srcByte;
@@ -758,7 +758,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 			destP = (uint16 *)((byte *)tempDestP - WinScan + 4);
 			--xCtr;
 		} while (xCtr);
-    
+
 		xCount = savedXCount;
 		destP = (uint16 *)((byte *)loopDestP + WinScan * 2);
 		srcP = loopSrcP + 320;
@@ -776,7 +776,7 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 
 	// Set current palette to black
 	setpal_vga256(palData2);
-  
+
 	// Loop through fading in the palette
 	uint16 *pTemp1 = &palData1[1];
 	for (int fadeIndex = 0; fadeIndex < FADESPD; ++fadeIndex) {
@@ -791,14 +791,14 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 
 			if (palData2[palOffset + 1] < palette[palOffset + 1]) {
 				uint16 *pDest = &pTemp1[palOffset];
-				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest; 
+				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest;
 				*pDest = v;
 				palData2[palOffset + 1] = (v >> 8) & 0xff;
 			}
 
 			if (palData2[palOffset + 2] < palette[palOffset + 2]) {
 				uint16 *pDest = &pTemp2[palOffset];
-				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest; 
+				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest;
 				*pDest = v;
 				palData2[palOffset + 2] = (v >> 8) & 0xff;
 			}
@@ -843,7 +843,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 			tempPalette[palDataIndex] = palByte;
 			palData[palDataIndex] = *(palIndex++ + palette);
 		} while (palIndex < PALETTE_BLOCK_SIZE);
-    
+
 		setpal_vga256(palData);
 		if (Winbpp == 2) {
 			if (SDL_ECHELLE)
@@ -852,7 +852,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			DD_VBL();
 		}
-	
+
 		int palCtr3 = 0;
 		if (palMax > 0) {
 			do {
@@ -864,14 +864,14 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 					palData[palCtr5] = (palValue >> 8) & 0xff;
 					++palCtr4;
 				} while (palCtr4 < (PALETTE_BLOCK_SIZE));
-				
+
 				setpal_vga256(palData);
 				if (Winbpp == 2) {
 					if (SDL_ECHELLE)
 						m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					else
 						m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			
+
 					DD_VBL();
 				}
 				++palCtr3;
@@ -882,7 +882,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 			palData[i] = 0;
 
 		setpal_vga256(palData);
-    
+
 		if (Winbpp == 2) {
 			if (!SDL_ECHELLE) {
 				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -934,13 +934,13 @@ void GraphicsManager::setpal_vga256(const byte *palette) {
 
 void GraphicsManager::setpal_vga256_linux(const byte *palette, const byte *surface) {
 	CHANGE_PALETTE(palette);
-  
+
 	if (Winbpp == 2) {
 		if (SDL_ECHELLE)
 			m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
 			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		
+
 		DD_VBL();
 	}
 }
@@ -949,7 +949,7 @@ void GraphicsManager::SETCOLOR(int palIndex, int r, int g, int b) {
 	Palette[palIndex * 3] = 255 * r / 100;
 	Palette[palIndex * 3 + 1] = 255 * g / 100;
 	Palette[palIndex * 3 + 2] = 255 * b / 100;
-	
+
 	setpal_vga256(Palette);
 }
 
@@ -965,8 +965,8 @@ void GraphicsManager::SETCOLOR3(int palIndex, int r, int g, int b) {
 
 void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
 	int rv, gv, bv;
-	int palOffset; 
-	int v8; 
+	int palOffset;
+	int v8;
 
 	rv = 255 * r / 100;
 	gv = 255 * g / 100;
@@ -980,9 +980,9 @@ void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
 	cmap[v8] = rv;
 	cmap[v8 + 1] = gv;
 	cmap[v8 + 2] = bv;
-	
+
 	WRITE_LE_UINT16(&SD_PIXELS[2 * palIndex], MapRGB(rv, gv, bv));
-	
+
 	if (Winbpp == 1)
 		g_system->getPaletteManager()->setPalette(cmap, palIndex, 1);
 }
@@ -1057,13 +1057,13 @@ void GraphicsManager::FADE_OUT_CASSE() {
 
 void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) {
 	int rleValue;
-	int destOffset; 
-	const byte *srcP; 
+	int destOffset;
+	const byte *srcP;
 	byte srcByte;
 	byte destLen1;
-	byte *destSlice1P; 
-	byte destLen2; 
-	byte *destSlice2P; 
+	byte *destSlice1P;
+	byte destLen2;
+	byte *destSlice2P;
 
 	rleValue = 0;
 	destOffset = 0;
@@ -1133,7 +1133,7 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *srcData) {
 		srcByte = *srcP;
 		if (*srcP < 222)
 			goto Video_Cont3_Vbe;
-    
+
 		if (srcByte == kByteStop)
 			return;
 		if (srcByte < kSetOffset) {
@@ -1243,9 +1243,9 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 }
 
 void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
-	int destOffset; 
-	const byte *srcP; 
-	byte pixelIndex; 
+	int destOffset;
+	const byte *srcP;
+	byte pixelIndex;
 
 	destOffset = 0;
 	srcP = srcData;
@@ -1278,9 +1278,9 @@ Video_Cont_Vbe16a:
 void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height) {
 	const byte *srcP;
 	byte *destP;
-	int rowCount; 
+	int rowCount;
 	int i;
-	int rowCount2; 
+	int rowCount2;
 
 	// TODO: This code in the original is potentially dangerous, as it doesn't clip the area to within
 	// the screen, and so thus can read areas outside of the allocated surface buffer
@@ -1323,7 +1323,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	int width = READ_LE_UINT16(spriteP);
 	spriteP += 2;
 	int height = READ_LE_UINT16(spriteP);
-	
+
 	// Clip X
 	clip_x1 = width;
 	if ((xp + width) <= (min_x + 300))
@@ -1377,7 +1377,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 	// Set up surface destination
 	byte *destP = surface + (yp - 300) * nbrligne2 + (xp - 300);
-	
+
 	// Handling for clipped versus non-clipped
 	if (clip_flag) {
 		// Clipped version
@@ -1424,7 +1424,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 					Common::copy(spriteP, spriteP + width, tempDestP);
 					spriteP += width;
 				}
-				
+
 				tempDestP += width;
 			}
 
@@ -1468,7 +1468,7 @@ void GraphicsManager::RESET_SEGMENT_VESA() {
 	if (_vm->_globals.NBBLOC > 0) {
 		for (int idx = 0; idx != _vm->_globals.NBBLOC; idx++)
 			_vm->_globals.BLOC[idx].field0 = 0;
-    
+
 		_vm->_globals.NBBLOC = 0;
 	}
 }
@@ -1497,7 +1497,7 @@ void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 		do {
 			BlocItem &bloc = _vm->_globals.BLOC[blocIndex];
 
-			if (bloc.field0 == 1 
+			if (bloc.field0 == 1
 					&& tempX >= bloc.x1 && x2 <= bloc.x2
 					&& y1 >= bloc.y1 && y2 <= bloc.y2)
 				addFlag = false;
@@ -1505,7 +1505,7 @@ void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 			blocCount = blocIndex;
 		} while (_vm->_globals.NBBLOC + 1 != blocIndex);
 	}
-	
+
 	if (addFlag) {
 		assert(_vm->_globals.NBBLOC < 250);
 		BlocItem &bloc = _vm->_globals.BLOC[++_vm->_globals.NBBLOC];
@@ -1527,7 +1527,7 @@ int GraphicsManager::Magic_Number(signed int v) {
 		++result;
 	if (result & 2)
 		result += 2;
-  
+
 	return result;
 }
 
@@ -1544,14 +1544,14 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 		Common::Rect &dstRect = dstrect[idx - 1];
 		if (bloc.field0 != 1)
 			continue;
-	
+
 		if (_vm->_eventsManager._breakoutFl) {
 			if (Winbpp == 1) {
 				Copy_Vga(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1, bloc.y1);
 			} else if (Winbpp == 2) {
 				Copy_Vga16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1, bloc.y1);
 			}
-			
+
 			dstRect.left = bloc.x1 * 2;
 			dstRect.top = bloc.y1 * 2 + 30;
 			dstRect.setWidth((bloc.x2 - bloc.x1) * 2);
@@ -1561,7 +1561,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 				bloc.x1 = _vm->_eventsManager._startPos.x;
 			if (bloc.x2 > (_vm->_eventsManager._startPos.x + SCREEN_WIDTH))
 				bloc.x2 = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
-			
+
 			if (SDL_ECHELLE) {
 				// Calculate the bounds
 				int xp = Magic_Number(bloc.x1) - 4;
@@ -1586,10 +1586,10 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 				DD_Lock();
 
 				if (Winbpp == 2) {
-					m_scroll16A(VESA_BUFFER, xp, yp, width, height, 
+					m_scroll16A(VESA_BUFFER, xp, yp, width, height,
 						Reel_Zoom(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), Reel_Zoom(yp, SDL_ECHELLE));
 				} else {
-					m_scroll2A(VESA_BUFFER, xp, yp, width, height, 
+					m_scroll2A(VESA_BUFFER, xp, yp, width, height,
 						Reel_Zoom(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), Reel_Zoom(yp, SDL_ECHELLE));
 				}
 
@@ -1619,7 +1619,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 				DD_Unlock();
 			}
 		}
-		
+
 		_vm->_globals.BLOC[idx].field0 = 0;
 	}
 
@@ -1650,13 +1650,13 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 void GraphicsManager::CopyAsm(const byte *surface) {
 	const byte *srcP;
 	byte srcByte;
-	byte *destP; 
+	byte *destP;
 	int yCtr;
 	int xCtr;
-	byte *dest1P; 
-	byte *dest2P; 
-	byte *dest3P; 
-	byte *destPitch; 
+	byte *dest1P;
+	byte *dest2P;
+	byte *dest3P;
+	byte *destPitch;
 	const byte *srcPitch;
 
 	assert(VideoPtr);
@@ -1668,7 +1668,7 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 		srcPitch = srcP;
 		destPitch = destP;
 		xCtr = 320;
-    
+
 		do {
 			srcByte = *srcP;
 			*destP = *srcP;
@@ -1682,7 +1682,7 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 			++srcP;
 			--xCtr;
 		} while (xCtr);
-		
+
 		srcP = srcPitch + 320;
 		destP = WinScan + WinScan + destPitch;
 		--yCtr;
@@ -1690,17 +1690,17 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 }
 
 void GraphicsManager::CopyAsm16(const byte *surface) {
-	const byte *v1; 
-	byte *v2; 
-	int v3; 
-	signed int v4; 
-	byte *v5; 
-	uint16 *v6; 
-	int v; 
-	uint16 *v8; 
-	int v9; 
-	byte *v10; 
-	const byte *v11; 
+	const byte *v1;
+	byte *v2;
+	int v3;
+	signed int v4;
+	byte *v5;
+	uint16 *v6;
+	int v;
+	uint16 *v8;
+	int v9;
+	byte *v10;
+	const byte *v11;
 
 	assert(VideoPtr);
 	v1 = surface;
@@ -1770,7 +1770,7 @@ int GraphicsManager::Reel_Zoom(int v, int percentage) {
 int GraphicsManager::Asm_Zoom(int v, int percentage) {
 	if (v)
 		v += percentage * (long int)v / 100;
-  
+
 	return v;
 }
 
@@ -1781,22 +1781,22 @@ int GraphicsManager::Reel_Reduc(int v, int percentage) {
 int GraphicsManager::Asm_Reduc(int v, int percentage) {
 	if (v)
 		v -= percentage * (long int)v / 100;
-  
+
 	return v;
 }
- 
-// Display 'Perfect?' 
+
+// Display 'Perfect?'
 void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, int modeFlag) {
-	const byte *spriteStartP; 
-	int i; 
+	const byte *spriteStartP;
+	int i;
 	const byte *spriteSizeP;
-	const byte *spritePixelsP; 
-	byte *dest1P; 
-	byte *dest2P; 
-	byte *v29; 
-	byte *v40; 
-	const byte *v45; 
-	const byte *v46; 
+	const byte *spritePixelsP;
+	byte *dest1P;
+	byte *dest2P;
+	byte *v29;
+	byte *v40;
+	const byte *v45;
+	const byte *v46;
 
 	spriteStartP = srcData + 3;
 	for (i = frameIndex; i; --i)
@@ -2173,18 +2173,18 @@ void GraphicsManager::AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int 
 }
 
 void GraphicsManager::SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {
-	int top; 
-	int croppedWidth; 
+	int top;
+	int croppedWidth;
 	int croppedHeight;
-	int xRight; 
-	int top2; 
+	int xRight;
+	int top2;
 	int left;
 
 	left = x1;
 	top = y1;
 	croppedWidth = width;
 	croppedHeight = height;
-  
+
 	if (x1 < min_x) {
 		croppedWidth = width - (min_x - x1);
 		left = min_x;
@@ -2208,13 +2208,13 @@ void GraphicsManager::SCOPY(const byte *surface, int x1, int y1, int width, int 
 }
 
 void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY) {
-	const byte *srcP; 
-	byte *destP; 
+	const byte *srcP;
+	byte *destP;
 	int yp;
 	int yCurrent;
 	byte *dest2P;
 	const byte *src2P;
-	unsigned int pitch; 
+	unsigned int pitch;
 
 	srcP = x1 + nbrligne2 * y1 + srcSurface;
 	destP = destX + nbrligne2 * destY + destSurface;
@@ -2233,16 +2233,16 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned 
 }
 
 // Display Font
-void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp, 
+void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp,
 									int characterIndex, int colour) {
 	const byte *spriteDataP;
-	int i; 
-	const byte *spriteSizeP; 
-	int spriteWidth; 
+	int i;
+	const byte *spriteSizeP;
+	int spriteWidth;
 	int spriteHeight;
 	const byte *spritePixelsP;
 	byte *destP;
-	int xCtr; 
+	int xCtr;
 	byte destByte;
 	byte *destLineP;
 	int yCtr;
@@ -2272,7 +2272,7 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 					destByte = colour;
 				*destP = destByte;
 			}
-	      
+
 			++destP;
 			++spritePixelsP;
 			--xCtr;
@@ -2342,7 +2342,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 	_vm->_globals.freeMemory(ptr);
 	if (mode != 1) {
 		_vm->_globals.COUCOU = _vm->_globals.freeMemory(_vm->_globals.COUCOU);
-		
+
 		filename = file + ".rep";
 		byte *dataP = _vm->_fileManager.searchCat(filename, 2);
 		_vm->_globals.COUCOU = dataP;
@@ -2357,7 +2357,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 }
 
 void GraphicsManager::NB_SCREEN() {
-	byte *destP; 
+	byte *destP;
 	const byte *srcP;
 
 	if (!_vm->_globals.NECESSAIRE)
@@ -2380,7 +2380,7 @@ void GraphicsManager::NB_SCREEN() {
 			m_scroll2(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	DD_Unlock();
-	
+
 	destP = VESA_SCREEN;
 	srcP = VESA_BUFFER;
 	memcpy(VESA_SCREEN, VESA_BUFFER, 0x95FFCu);
@@ -2400,10 +2400,10 @@ void GraphicsManager::videkey() {
 }
 
 void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
-	int result; 
-	int destOffset; 
-	const byte *srcPtr; 
-	byte byteVal; 
+	int result;
+	int destOffset;
+	const byte *srcPtr;
+	byte byteVal;
 
 	result = 0;
 	destOffset = 0;
@@ -2435,10 +2435,10 @@ Video_Cont_wVbe:
 }
 
 void GraphicsManager::Copy_Video_Vbe(const byte *src) {
-	int destOffset; 
-	const byte *srcP; 
-	byte byteVal; 
-	
+	int destOffset;
+	const byte *srcP;
+	byte byteVal;
+
 	assert(VideoPtr);
 	destOffset = 0;
 	srcP = src;
@@ -2470,8 +2470,8 @@ Video_Cont_Vbe:
 
 // Reduce Screen
 void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int xp, int yp, int width, int height, int zoom) {
-	const byte *srcP; 
-	byte *destP; 
+	const byte *srcP;
+	byte *destP;
 
 	srcP = xp + nbrligne2 * yp + srcSurface;
 	destP = destSurface;

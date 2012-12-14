@@ -215,7 +215,7 @@ LABEL_1141:
 					if (_vm->_globals.SAUVEGARDE->data[svField354] == 1
 							&& _vm->_globals.SAUVEGARDE->cloneHopkins.xp && _vm->_globals.SAUVEGARDE->cloneHopkins.yp
 							&& _vm->_globals.SAUVEGARDE->cloneHopkins.field2 && _vm->_globals.SAUVEGARDE->cloneHopkins.location) {
-						
+
 						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->cloneHopkins.xp;
 						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->cloneHopkins.yp;
 						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->cloneHopkins.field2;
@@ -235,7 +235,7 @@ LABEL_1141:
 						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->realHopkins.field2;
 					}
 				}
-				if (_vm->_globals.SAUVEGARDE->data[svField356] == 1 
+				if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
 						&& _vm->_globals.SAUVEGARDE->realHopkins.location == _vm->_globals.ECRAN) {
 					_vm->_objectsManager.SPRITE(
 					    _vm->_globals.TETE,
@@ -700,7 +700,7 @@ LABEL_1141:
 			_vm->_graphicsManager.FIN_VISU();
 			_vm->_objectsManager.CLEAR_ECRAN();
 
-			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) { 
+			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) {
 				_vm->_graphicsManager.FADE_OUTW();
 			} else {
 				_vm->_soundManager.PLAY_SOUND("SOUND17.WAV");
@@ -729,7 +729,7 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(3) != 100);
 			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
 			_vm->_graphicsManager.FIN_VISU();
-			
+
 			// If uncensored, rip the throat of the hostage
 			if (!_vm->_globals.CENSURE) {
 				_vm->_soundManager.SPECIAL_SOUND = 16;
@@ -2306,7 +2306,7 @@ LABEL_1141:
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'U') {
 		int v60 = (int16)READ_LE_UINT16(a1 + 5);
-		
+
 		Common::String file = Common::String::format("SOUND%d.WAV", v60);
 		_vm->_soundManager.PLAY_SOUND(file);
 		v1 = 1;
@@ -2328,24 +2328,24 @@ int ScriptManager::Control_Goto(const byte *dataP) {
 }
 
 int ScriptManager::Control_If(const byte *dataP, int a2) {
-	int v2; 
-	int v3; 
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
-	const byte *v8; 
-	int v9; 
-	int v10; 
-	int v11; 
-	int v12; 
-	int v14; 
-	int v15; 
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
-	int v20; 
+	int v2;
+	int v3;
+	int v4;
+	int v5;
+	int v6;
+	int v7;
+	const byte *v8;
+	int v9;
+	int v10;
+	int v11;
+	int v12;
+	int v14;
+	int v15;
+	int v16;
+	int v17;
+	int v18;
+	int v19;
+	int v20;
 
 	v2 = a2;
 LABEL_2:
@@ -2445,7 +2445,7 @@ LABEL_63:
 }
 
 int ScriptManager::Traduction2(const byte *dataP) {
-	int16 result; 
+	int16 result;
 
 	result = 0;
 	if (*dataP != 'F' || *(dataP + 1) != 'C') {

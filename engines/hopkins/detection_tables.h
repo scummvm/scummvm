@@ -170,6 +170,24 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+
+	{
+		// Hopkins FBI BeOS, provided by Strangerke
+		{
+			"hopkins",
+			0,
+			{
+				{"ENG_VOI.RES", 0, "fa5789d1d8c19d160bce44a33e742fdf", 66860711},
+				{"Hopkins_ FBI", 0, "8940ce2e618c42691b66aad5d6c223b0", 757936},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformBeOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 

@@ -42,7 +42,7 @@ void FileManager::setParent(HopkinsEngine *vm) {
  * Load INI File
  */
 void FileManager::loadIniFile(Common::StringMap &iniParams) {
-	// TODO: Review whether we can do something cleaner with ScummVM initialisation than 
+	// TODO: Review whether we can do something cleaner with ScummVM initialisation than
 	// just initialising the INI array as if it had read in the INI file
 
 	iniParams["FULLSCREEN"] = "NO";
@@ -70,7 +70,7 @@ byte *FileManager::loadFile(const Common::String &file) {
 
 	readStream(f, data, filesize);
 	f.close();
-  
+
 	return data;
 }
 
@@ -146,7 +146,7 @@ Common::String FileManager::constructLinuxFilename(const Common::String &file) {
  * Check if a file is present in a given (optional) folder
  */
 bool FileManager::fileExists(const Common::String &folder, const Common::String &file) {
-	Common::String filename = folder.empty() ? file : 
+	Common::String filename = folder.empty() ? file :
 		Common::String::format("%s/%s", folder.c_str(), file.c_str());
 
 	Common::File f;
@@ -159,7 +159,7 @@ bool FileManager::fileExists(const Common::String &folder, const Common::String 
 byte *FileManager::searchCat(const Common::String &file, int a2) {
 	byte *ptr = NULL;
 	Common::File f;
-	
+
 	Common::String filename = file;
 	filename.toUppercase();
 
@@ -168,7 +168,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		constructFilename(_vm->_globals.HOPLINK, "RES_INI.CAT");
 		if (!f.exists(_vm->_globals.NFICHIER))
 			return g_PTRNUL;
-		
+
 		ptr = loadFile(_vm->_globals.NFICHIER);
 		constructFilename(_vm->_globals.HOPLINK, "RES_INI.RES");
 		break;
@@ -260,10 +260,10 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 	byte *result;
 	bool matchFlag = false;
 	int offsetVal = 0;
-	
+
 	while (!matchFlag) {
 		Common::String name = (const char *)ptr + offsetVal;
-    
+
 		if (name == filename) {
 			// Found entry for file, so get it's details from the catalogue entry
 			const byte *pData = ptr + offsetVal;
@@ -276,7 +276,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 			_vm->_globals.freeMemory(ptr);
 			return g_PTRNUL;
 		}
-    
+
 		offsetVal += 23;
 	}
 
@@ -315,7 +315,7 @@ uint32 FileManager::fileSize(const Common::String &filename) {
 
 	size = f.size();
 	f.close();
-	
+
 	return size;
 }
 

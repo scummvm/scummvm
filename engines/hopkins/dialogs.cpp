@@ -65,7 +65,7 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIAN.SPR");
 	else if (_vm->_globals.FR == 2)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIES.SPR");
-  
+
 	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	_vm->_globals._optionDialogFl = true;
 
@@ -74,13 +74,13 @@ void DialogsManager::showOptionsDialog() {
 			Common::Point mousePos(_vm->_eventsManager.getMouseX(), _vm->_eventsManager.getMouseY());
 			mousePos.x = _vm->_eventsManager.getMouseX();
 			mousePos.y = _vm->_eventsManager.getMouseY();
-	      
+
 			if (!_vm->_soundManager.MUSICOFF) {
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 138) {
 					// Change the music volume
 					++_vm->_soundManager.MUSICVOL;
 					_vm->_soundManager.OLD_MUSICVOL = _vm->_soundManager.MUSICVOL;
-	          
+
 					if (_vm->_soundManager.MUSICVOL <= 12)
 						_vm->_soundManager.PLAY_SOUND("bruit2.wav");
 					else
@@ -89,14 +89,14 @@ void DialogsManager::showOptionsDialog() {
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
-	        
+
 				if (!_vm->_soundManager.MUSICOFF && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 138) {
 					--_vm->_soundManager.MUSICVOL;
 					if (_vm->_soundManager.MUSICVOL >= 0)
 						_vm->_soundManager.PLAY_SOUND("bruit2.wav");
 					else
 						_vm->_soundManager.MUSICVOL = 0;
-				
+
 					_vm->_soundManager.OLD_MUSICVOL = _vm->_soundManager.MUSICVOL;
 					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager.MUSICVOL);
 
@@ -115,7 +115,7 @@ void DialogsManager::showOptionsDialog() {
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
-	        
+
 				if (!_vm->_soundManager.SOUNDOFF && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 165) {
 					--_vm->_soundManager.SOUNDVOL;
 					if (_vm->_soundManager.SOUNDVOL >= 0)
@@ -128,11 +128,11 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 			}
-	      
+
 			if (!_vm->_soundManager.VOICEOFF) {
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 192) {
 					++_vm->_soundManager.VOICEVOL;
-	          
+
 					if (_vm->_soundManager.VOICEVOL <= 16)
 						_vm->_soundManager.PLAY_SOUND("bruit2.wav");
 					else
@@ -142,7 +142,7 @@ void DialogsManager::showOptionsDialog() {
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
-	        
+
 				if (!_vm->_soundManager.VOICEOFF && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 192) {
 					--_vm->_soundManager.VOICEVOL;
 					if (_vm->_soundManager.VOICEVOL >= 0)
@@ -155,7 +155,7 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 			}
-	      
+
 			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
 				if (mousePos.y > 194 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 219)
 					_vm->_soundManager.TEXTOFF = _vm->_soundManager.TEXTOFF != 1;
@@ -178,7 +178,7 @@ void DialogsManager::showOptionsDialog() {
 
 							_vm->_soundManager.updateScummVMSoundSettings();
 						}
-	        
+
 						if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 165) {
 							_vm->_soundManager.SOUNDOFF = _vm->_soundManager.SOUNDOFF != 1;
 
@@ -187,7 +187,7 @@ void DialogsManager::showOptionsDialog() {
 					}
 				}
 			}
-	      
+
 			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 175 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager.ofscroll + 281 && mousePos.y <= 310) {
 				_vm->_globals.SORTIE = 300;
 				doneFlag = true;
@@ -256,7 +256,7 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_globals.opt_voice = !_vm->_soundManager.VOICEOFF ? 7 : 8;
 		_vm->_globals.opt_sound = !_vm->_soundManager.SOUNDOFF ? 7 : 8;
 		_vm->_globals.opt_music = !_vm->_soundManager.MUSICOFF ? 7 : 8;
-			
+
 		if (_vm->_globals.SVGA == 1)
 			_vm->_globals.opt_anm = 10;
 		else if (_vm->_globals.SVGA == 2)
@@ -292,9 +292,9 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_eventsManager.VBL();
 	} while (!doneFlag);
 
-	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_graphicsManager.ofscroll + 164, 
+	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_graphicsManager.ofscroll + 164,
 		107, 335, 215, _vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.ofscroll + 164, 107);
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_graphicsManager.ofscroll + 164, 107, 
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_graphicsManager.ofscroll + 164, 107,
 		_vm->_graphicsManager.ofscroll + 498, 320);
 
 	_vm->_globals.OPTION_SPR = _vm->_globals.freeMemory(_vm->_globals.OPTION_SPR);
@@ -349,7 +349,7 @@ LABEL_7:
 		int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
 		int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
 
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1, 
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1,
 			v19 + 300, 414, 0, 0, 0, 0);
 		int v15 = 0;
 		int v4 = 0;
@@ -360,7 +360,7 @@ LABEL_7:
 				int v6 = _vm->_globals.INVENTAIRE[v4];
 				if (v6 && v4 <= 29) {
 					byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(v6, 0);
-					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v7, v19 + v16 + 6, 
+					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v7, v19 + v16 + 6,
 						v15 + 120, _vm->_globals.OBJL, _vm->_globals.OBJH);
 					_vm->_globals.freeMemory(v7);
 				}
@@ -476,18 +476,18 @@ LABEL_7:
 void DialogsManager::inventAnim() {
 	if (!_vm->_globals._disableInventFl) {
 		if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager.FLAG_VISIBLE) {
-			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38, 
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38,
 				_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.I_old_x, 27);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
 			--_vm->_objectsManager.FLAG_VISIBLE_EFFACE;
 		}
-    
+
 		if (_vm->_objectsManager.FLAG_VISIBLE) {
 			if (_vm->_objectsManager.I_old_x <= 1)
 				_vm->_objectsManager.I_old_x = 2;
-			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38, 
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38,
 				_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.I_old_x, 27);
-      
+
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
 			int v0 = _vm->_graphicsManager.ofscroll + 2;
 			int v1 = _vm->_graphicsManager.ofscroll + 2;
@@ -495,7 +495,7 @@ void DialogsManager::inventAnim() {
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v1, 27, v1 + 45, 62);
 			_vm->_objectsManager.I_old_x = v0;
 		}
-    
+
 		if (_vm->_globals.SAUVEGARDE->data[svField357] == 1) {
 			if (_vm->_globals.SAUVEGARDE->data[svField353] == 1)
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
@@ -522,7 +522,7 @@ void DialogsManager::inventAnim() {
 void DialogsManager::testDialogOpening() {
 	if (_vm->_globals.PLAN_FLAG)
 		_vm->_eventsManager._gameKey = KEY_NONE;
-	
+
 	if (_vm->_eventsManager._gameKey != KEY_NONE) {
 		if (!_inventFl) {
 			DIALOG_KEY key = _vm->_eventsManager._gameKey;
@@ -562,7 +562,7 @@ void DialogsManager::testDialogOpening() {
  * Load Game dialog
  */
 void DialogsManager::showLoadGame() {
-	int slotNumber; 
+	int slotNumber;
 
 	_vm->_eventsManager.VBL();
 	showSaveLoad(2);
@@ -584,7 +584,7 @@ void DialogsManager::showLoadGame() {
 	if (slotNumber != 7) {
 		_vm->_saveLoadManager.restore(slotNumber);
 	}
-	
+
 	_vm->_objectsManager.CHANGE_OBJET(14);
 }
 
@@ -592,8 +592,8 @@ void DialogsManager::showLoadGame() {
  * Save Game dialog
  */
 void DialogsManager::showSaveGame() {
-	int slotNumber; 
-	Common::String saveName; 
+	int slotNumber;
+	Common::String saveName;
 
 	_vm->_eventsManager.VBL();
 
@@ -627,7 +627,7 @@ void DialogsManager::showSaveGame() {
  * Load/Save dialog
  */
 void DialogsManager::showSaveLoad(int a1) {
-	int slotNumber; 
+	int slotNumber;
 	hopkinsSavegameHeader header;
 	byte *thumb;
 
@@ -687,7 +687,7 @@ void DialogsManager::showSaveLoad(int a1) {
 				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, thumb, _vm->_eventsManager._startPos.x + 323, 294, 0x80u, 87);
 				break;
 			}
-			
+
 			thumb8.free();
 			header.thumbnail->free();
 			delete header.thumbnail;

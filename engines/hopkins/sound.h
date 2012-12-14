@@ -164,7 +164,7 @@ public:
 	void PLAY_SAMPLE(int wavIndex, int voiceMode);
 	void PLAY_SAMPLE2(int idx);
 	void PLAY_WAV(int wavIndex);
-	
+
 	void syncSoundSettings();
 	void updateScummVMSoundSettings();
 	void checkSounds();

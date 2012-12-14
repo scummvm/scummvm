@@ -50,19 +50,19 @@ void TalkManager::setParent(HopkinsEngine *vm) {
 }
 
 void TalkManager::PARLER_PERSO(const Common::String &filename) {
-	int v2; 
-	int v3; 
-	int v4; 
+	int v2;
+	int v3;
+	int v4;
 	int v5;
 	int v6;
 	int v7;
-	byte *v8; 
-	byte *v9; 
+	byte *v8;
+	byte *v9;
 	byte *v10;
 	int v11;
 	int v14;
 	int v15;
-	Common::String v16; 
+	Common::String v16;
 
 	v15 = 0;
 	_vm->_fontManager.hideText(5);
@@ -118,7 +118,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	ANIM_PERSO_INIT();
 	PLIGNE1 = v2;
 	PLIGNE2 = v2 + 1;
-	PLIGNE3 = v2 + 2;	
+	PLIGNE3 = v2 + 2;
 	PLIGNE4 = v2 + 3;
 	v14 = _vm->_eventsManager._mouseCursorId;
 	_vm->_eventsManager._mouseCursorId = 4;
@@ -153,7 +153,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 
 	_vm->_objectsManager.PERSO_ON = false;
 	_vm->_eventsManager._mouseCursorId = v14;
-	
+
 	_vm->_eventsManager.changeMouseCursor(v14);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 
@@ -237,7 +237,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	int v8 = _vm->_eventsManager._mouseCursorId;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
-  
+
 	if (!_vm->_globals.NOPARLE) {
 		int v2 = v1 + 3;
 		int v3;
@@ -274,7 +274,7 @@ void TalkManager::RENVOIE_FICHIER(int srcStart, Common::String &dest, const char
 }
 
 int TalkManager::DIALOGUE() {
-	byte *v0; 
+	byte *v0;
 	int v1;
 	int v2;
 	int v3;
@@ -285,13 +285,13 @@ int TalkManager::DIALOGUE() {
 	int v8;
 	int v9;
 	int v10;
-	byte *v11; 
+	byte *v11;
 	int v12;
 	int v13;
 	int v14;
 	int v15;
 	int v16;
-	int v18; 
+	int v18;
 	int v19;
 	int v20;
 	int v21;
@@ -312,7 +312,7 @@ int TalkManager::DIALOGUE() {
 	} else {
 		VISU_WAIT();
 	}
-	
+
 	v19 = VERIF_BOITE(PLIGNE1, FQUEST, 65);
 	v2 = VERIF_BOITE(PLIGNE2, FQUEST, 65);
 	v3 = VERIF_BOITE(PLIGNE3, FQUEST, 65);
@@ -355,20 +355,20 @@ int TalkManager::DIALOGUE() {
 			_vm->_fontManager.setOptimalColor(5, 6, 7, 8);
 			v5 = PLIGNE4;
 		}
-    
+
 		_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager.getMouseButton())
 			v6 = 1;
 		if (v5 == -1)
 			v6 = 0;
 	} while (!_vm->shouldQuit() && v6 != 1);
-  
+
 	_vm->_soundManager.VOICE_MIX(v5, 1);
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(6);
 	_vm->_fontManager.hideText(7);
 	_vm->_fontManager.hideText(8);
-  
+
 	if (STATI) {
 		v11 = BUFFERPERSO;
 		v12 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 48);
@@ -389,7 +389,7 @@ int TalkManager::DIALOGUE() {
 	} else {
 		FIN_VISU_WAIT();
 	}
-  
+
 	_vm->_eventsManager.VBL();
   return v5;
 }
@@ -398,28 +398,28 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	int v1;
 	int v2;
 	byte *v3;
-	int i; 
+	int i;
 	int v6;
 	int v7;
 	byte *v8;
-	int v9; 
+	int v9;
 	int v10;
 	int v11;
 	int v12;
 	int v13;
 	int v14;
 	void *v15;
-	int v16; 
-	int v17; 
-	int v18; 
-	int v19; 
-	int v20; 
-	int v21; 
-	int v22; 
-	int v23; 
-	int v24; 
-	int v25; 
-	
+	int v16;
+	int v17;
+	int v18;
+	int v19;
+	int v20;
+	int v21;
+	int v22;
+	int v23;
+	int v24;
+	int v25;
+
 	v1 = 0;
 	v2 = 0;
 	v3 = BUFFERPERSO + 110;
@@ -444,7 +444,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	PLIGNE3 = (int16)READ_LE_UINT16((uint16 *)v3 + 7);
 	v6 = (int16)READ_LE_UINT16((uint16 *)v3 + 8);
 	v7 = (int16)READ_LE_UINT16((uint16 *)v3 + 9);
-  
+
 	if (v7)
 		_vm->_globals.SAUVEGARDE->data[svField4] = v7;
 
@@ -535,16 +535,16 @@ int TalkManager::DIALOGUE_REP(int idx) {
 
 void TalkManager::CHERCHE_PAL(int a1, int a2) {
 	int v2;
-	size_t v4; 
+	size_t v4;
 	unsigned int v5;
-	byte *palette; 
-	int v8; 
+	byte *palette;
+	int v8;
 
 	v2 = 0;
 	v8 = 0;
 	v4 = a1;
 	for (;;) {
-		if ( *(BUFFERPERSO + v4) == 'P' 
+		if ( *(BUFFERPERSO + v4) == 'P'
 				&& *(BUFFERPERSO + v4 + 1) == 'A'
 				&& *(BUFFERPERSO + v4 + 2) == 'L') {
 			v8 = 1;
@@ -556,7 +556,7 @@ void TalkManager::CHERCHE_PAL(int a1, int a2) {
 		if (TAILLEPERSO == v4)
 			return;
 	}
-  
+
 	v5 = v2 + 5;
 	palette = BUFFERPERSO + v5;
 	PALPERSO = BUFFERPERSO + v5;
@@ -588,7 +588,7 @@ void TalkManager::CHERCHE_PAL(int a1, int a2) {
 		*(palette + 763) = 0;
 		*(palette + 764) = 0;
 	}
-  
+
 	_vm->_graphicsManager.setpal_vga256(palette);
 	_vm->_graphicsManager.INIT_TABLE(145, 150, palette);
 }
@@ -617,10 +617,10 @@ void TalkManager::FIN_VISU_PARLE() {
 		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
 			_vm->_objectsManager.BOB_OFF(idx);
 	}
-  
+
 	_vm->_eventsManager.VBL();
 	_vm->_eventsManager.VBL();
-	
+
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
 			_vm->_objectsManager.BOB_ZERO(idx);
@@ -630,17 +630,17 @@ void TalkManager::FIN_VISU_PARLE() {
 int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	int v6;
 	int v7;
-	char v8; 
+	char v8;
 	int v9;
 	int v10;
-	char v11; 
-	char v13; 
-	char v14; 
+	char v11;
+	char v13;
+	char v14;
 	int v15;
-	byte *ptr; 
+	byte *ptr;
 	int v17;
 	int v18;
-	byte *v19; 
+	byte *v19;
 	uint32 indexData[4047];
 	Common::String filename;
 	Common::String dest;
@@ -650,7 +650,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	v18 = 0;
 	_vm->_globals.police_l = 11;
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
-	
+
 	// Build up the filename
 	filename = dest = _vm->_globals.NFICHIER;
 	while (filename.lastChar() != '.')
@@ -660,7 +660,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	if (!f.open(filename))
 		error("Could not open file - %s", filename.c_str());
 	filesize = f.size();
-	assert(filesize < 16188);	
+	assert(filesize < 16188);
 
 	for (int i = 0; i < (filesize / 4); ++i)
 		indexData[i] = f.readUint32LE();
@@ -694,7 +694,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 		v19 = v19 + 1;
 		++v6;
 	} while ((unsigned int)v6 < 0x800);
-  
+
 	v7 = 0;
 	do {
 		v8 = *(ptr + v7);
@@ -772,13 +772,13 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 
 void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 	size_t v2;
-	int v3; 
+	int v3;
 	size_t v4;
 	unsigned int v5;
 	unsigned int v6;
 	int v7;
-	byte *v8; 
-	byte *v9; 
+	byte *v8;
+	byte *v9;
 
 	v2 = 0;
 	v3 = 0;
@@ -816,14 +816,14 @@ void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 
 void TalkManager::ANIM_PERSO_INIT() {
 	byte *v0;
-	byte *v1; 
+	byte *v1;
 	int v2;
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
+	int v4;
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	int v9;
 	int v10;
 	int v11;
 	int v12;
@@ -870,26 +870,26 @@ void TalkManager::clearCharacterAnim() {
 }
 
 bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int a4) {
-	bool result; 
-	const byte *v5; 
-	int v6; 
+	bool result;
+	const byte *v5;
+	int v6;
 	int v7;
-	byte *v8; 
-	byte *v9; 
+	byte *v8;
+	byte *v9;
 	int v10;
 	int v11;
 	int v12;
-	char v13; 
+	char v13;
 	int v14;
 	int v15;
 	int v16;
-	char v17; 
-	int v18; 
+	char v17;
+	int v18;
 	int v19;
-	int v20; 
-	int v22; 
+	int v20;
+	int v22;
 	int v23;
-	const byte *v24; 
+	const byte *v24;
 
 	v22 = 0;
 	result = false;
@@ -964,22 +964,22 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 }
 
 void TalkManager::REPONSE(int a1, int a2) {
-	byte v2; 
-	byte v3; 
-	byte *v5; 
-	byte *v6; 
-	uint16 v7; 
-	byte *v8; 
-	int v9; 
-	int v10; 
-	uint16 v11; 
-	int v12; 
-	int v13; 
-	int v14; 
-	int v15; 
-	int v16; 
-	int v17; 
-	byte *ptr; 
+	byte v2;
+	byte v3;
+	byte *v5;
+	byte *v6;
+	uint16 v7;
+	byte *v8;
+	int v9;
+	int v10;
+	uint16 v11;
+	int v12;
+	int v13;
+	int v14;
+	int v15;
+	int v16;
+	int v17;
+	byte *ptr;
 
 	v2 = a1;
 	v3 = a2;
@@ -1073,15 +1073,15 @@ LABEL_2:
 }
 
 void TalkManager::REPONSE2(int a1, int a2) {
-	signed int v3; 
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
-	int v10; 
-	int v11; 
+	signed int v3;
+	int v4;
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	int v9;
+	int v10;
+	int v11;
 
 	v3 = 0;
 	if (a2 == 5 && _vm->_globals.SAUVEGARDE->data[svField3] == 4) {
@@ -1185,22 +1185,22 @@ void TalkManager::REPONSE2(int a1, int a2) {
 }
 
 void TalkManager::OBJET_VIVANT(const Common::String &a2) {
-	int v2; 
-	const char *v4; 
-	int v5; 
+	int v2;
+	const char *v4;
+	int v5;
 	bool v6;
-	int v10; 
-	byte *v11; 
-	int v12; 
-	int v13; 
-	byte *v14; 
-	byte *v15; 
-	byte *v16; 
-	int v17; 
+	int v10;
+	byte *v11;
+	int v12;
+	int v13;
+	byte *v14;
+	byte *v15;
+	byte *v16;
+	int v17;
 	Common::String s;
-	Common::String v20; 
-	Common::String v22; 
-	Common::String v23; 
+	Common::String v20;
+	Common::String v22;
+	Common::String v23;
 
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);

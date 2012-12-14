@@ -81,7 +81,7 @@ public:
 	void setOptimalColor(int idx1, int idx2, int idx3, int idx4);
 	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int textType, int a9, int a10);
 	void box(int idx, int messageId, const Common::String &filename, int xp, int yp);
-	
+
 	void displayTextVesa(int xp, int yp, const Common::String &message, int col);
 	void displayText(int xp, int yp, const Common::String &message, int col);
 	void TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col);

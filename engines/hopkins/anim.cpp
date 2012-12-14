@@ -48,8 +48,8 @@ AnimationManager::AnimationManager() {
  */
 void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
 	bool breakFlag;
-	bool hasScreenCopy; 
-	byte *screenCopy = NULL; 
+	bool hasScreenCopy;
+	byte *screenCopy = NULL;
 	byte *screenP = NULL;
 	int frameNumber;
 	byte *ptr = NULL;
@@ -193,7 +193,7 @@ EXIT:
 		nbytes = f.readUint32LE();
 		f.skip(14);
 		f.read(screenP, nbytes);
-	
+
 		memcpy(screenCopy, screenP, 0x4B000u);
 
 		breakFlag = false;
@@ -204,7 +204,7 @@ EXIT:
 				breakFlag = true;
 			if (strncmp((char *)ptr, "IMAGE=", 6))
 				breakFlag = true;
-			
+
 			if (!breakFlag) {
 				f.read(screenP, READ_LE_UINT32(ptr + 8));
 				if (*screenP != kByteStop)
@@ -219,7 +219,7 @@ EXIT:
 			_vm->_graphicsManager.FADE_OUTW_LINUX(screenCopy);
 		screenCopy = _vm->_globals.freeMemory(screenCopy);
 	}
-	
+
 	_vm->_graphicsManager.FADE_LINUX = 0;
 	f.close();
 	ptr = _vm->_globals.freeMemory(ptr);
@@ -230,15 +230,15 @@ EXIT:
  * Play Animation, type 2
  */
 void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4) {
-	int v5; 
-	int v8; 
-	byte *ptr; 
-	int v11; 
-	byte *v12; 
-	byte *v13; 
-	int v15; 
-	size_t nbytes; 
-	byte buf[6]; 
+	int v5;
+	int v8;
+	byte *ptr;
+	int v11;
+	byte *v12;
+	byte *v13;
+	int v15;
+	size_t nbytes;
+	byte buf[6];
 	Common::File f;
 
 	if (_vm->shouldQuit())
@@ -268,7 +268,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
 		f.read(&buf, 4);
 		nbytes = f.readUint32LE();
-		f.readUint32LE();		
+		f.readUint32LE();
 		f.readUint16LE();
 		f.readUint16LE();
 		f.readUint16LE();
@@ -276,7 +276,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		f.readUint16LE();
 
 		f.read(v12, nbytes);
-	
+
 		_vm->_graphicsManager.Cls_Pal();
 		v11 = _vm->_graphicsManager.SCROLL;
 		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
@@ -392,7 +392,7 @@ LABEL_48:
 		_vm->_soundManager.playAnim_SOUND(v15);
 		memset(&buf, 0, 6u);
 		memset(v13, 0, 0x13u);
-		
+
 		if (f.read(v13, 0x10) != 0x10)
 			v5 = -1;
 
@@ -554,9 +554,9 @@ LABEL_114:
 	f.close();
 
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v8) {
-		byte *ptra; 
+		byte *ptra;
 		ptra = _vm->_globals.allocMemory(0x4B000u);
-		
+
 		f.seek(0);
 		f.read(&buf, 6);
 		f.read(_vm->_graphicsManager.Palette, 0x320u);
@@ -669,11 +669,11 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 
 	Common::String filename = animName + ".ANI";
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
-	
+
 	Common::File f;
 	if (!f.open(_vm->_globals.NFICHIER))
 		error("Failed to open %s", _vm->_globals.NFICHIER.c_str());
-	
+
 	int filesize = f.size();
 	int nbytes = filesize - 115;
 	f.read(header, 10);
@@ -694,7 +694,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	for (int idx = 1; idx <= 6; ++idx) {
 		if (files[idx - 1][0]) {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, files[idx - 1]);
-			
+
 			if (!f.exists(_vm->_globals.NFICHIER))
 				error("File not found");
 			if (loadSpriteBank(idx, files[idx - 1]))
@@ -736,9 +736,9 @@ void AnimationManager::clearAnim() {
  */
 int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	byte *v3;
-	byte *v4; 
+	byte *v4;
 	byte *v13;
-	byte *ptr; 
+	byte *ptr;
 	byte *v19;
 	int result = 0;
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
@@ -755,14 +755,14 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	    _vm->_globals.Bank[idx].fileHeader = 1;
 	if (*(v3 + 1) == 'O' && *(v3 + 2) == 'R')
 		_vm->_globals.Bank[idx].fileHeader = 2;
-	
+
 	if (_vm->_globals.Bank[idx].fileHeader) {
 		_vm->_globals.Bank[idx].data = v3;
 
 		bool loopCond = false;
 		int v8 = 0;
-		int width; 
-		int height; 
+		int width;
+		int height;
 		do {
 			ptr = v4;
 			width = _vm->_objectsManager.getWidth(v4, v8);
@@ -775,10 +775,10 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 			if (v8 > 249)
 				loopCond = true;
 		} while (!loopCond);
-    
+
 		if (v8 <= 249) {
 			_vm->_globals.Bank[idx].field1A = v8;
-			
+
 			Common::String ofsFilename = _vm->_globals.Bank[idx].filename1;
 			char ch;
 			do {
@@ -786,13 +786,13 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 				ofsFilename.deleteLastChar();
 			} while (ch != '.');
 			ofsFilename += ".OFS";
-			
+
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, ofsFilename);
 			Common::File f;
 			if (f.exists(_vm->_globals.NFICHIER)) {
 				v19 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 				v13 = v19;
-				
+
 				if (_vm->_globals.Bank[idx].field1A > 0) {
 					for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx].field1A; ++objIdx) {
 						int x1 = (int16)READ_LE_UINT16(v13);
@@ -806,10 +806,10 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 							_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx].data, objIdx, x2, y2, 1);
 					}
 				}
-			
+
 				_vm->_globals.freeMemory(v19);
 			}
-      
+
 			result = 0;
 		} else {
 			_vm->_globals.freeMemory(ptr);
@@ -825,28 +825,28 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	return result;
 }
 
-/** 
+/**
  * Search Animation
  */
 void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 	int v3;
-	const byte *v5; 
-	int v6; 
-	int v7; 
+	const byte *v5;
+	int v6;
+	int v7;
 	int v8;
-	byte *v9; 
+	byte *v9;
 	int v10;
 	int v11;
 	int v12;
-	int v13; 
-	int v15; 
-	int v16; 
-	int v17; 
-	int v19; 
+	int v13;
+	int v15;
+	int v16;
+	int v17;
+	int v19;
 	int v20;
-	int v21; 
+	int v21;
 	int v22;
-	const byte *v23; 
+	const byte *v23;
 	int v;
 
 	v21 = 0;
@@ -925,13 +925,13 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
  * Play sequence
  */
 void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
-	bool readError; 
-	int v7; 
-	byte *ptr = NULL; 
-	byte *v9; 
-	byte *v10; 
+	bool readError;
+	int v7;
+	byte *ptr = NULL;
+	byte *v9;
+	byte *v10;
 	int soundNumber;
-	size_t nbytes; 
+	size_t nbytes;
 	Common::File f;
 
 	if (_vm->shouldQuit())
@@ -1106,13 +1106,13 @@ LABEL_59:
  * Play Sequence type 2
  */
 void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
-	bool v4; 
-	int v7; 
-	byte *ptr = NULL; 
-	byte *v10; 
-	byte *v11 = NULL; 
-	int v13; 
-	size_t nbytes; 
+	bool v4;
+	int v7;
+	byte *ptr = NULL;
+	byte *v10;
+	byte *v11 = NULL;
+	int v13;
+	size_t nbytes;
 	Common::File f;
 
 	v7 = 0;
@@ -1258,7 +1258,7 @@ LABEL_53:
 LABEL_54:
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v7) {
 		byte *ptra = _vm->_globals.allocMemory(0x4B000u);
-		
+
 		f.seek(0);
 		f.skip(6);
 		f.read(_vm->_graphicsManager.Palette, 0x320u);

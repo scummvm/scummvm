@@ -42,7 +42,7 @@ void MenuManager::setParent(HopkinsEngine *vm) {
 enum MenuSelection { MENU_NONE = 0, PLAY_GAME = 1, LOAD_GAME = 2, OPTIONS = 3, INTRODUCTION = 4, QUIT = 5 };
 
 int MenuManager::MENU() {
-	byte *spriteData = NULL; 
+	byte *spriteData = NULL;
 	MenuSelection menuIndex;
 	Common::Point mousePos;
 	signed int result;
@@ -65,7 +65,7 @@ int MenuManager::MENU() {
 
 		for (int idx = 0; idx < 31; ++idx)
 			_vm->_globals.INVENTAIRE[idx] = 0;
-    
+
 		memset(_vm->_globals.SAUVEGARDE, 0, 2000);
 		_vm->_objectsManager.AJOUTE_OBJET(14);
 		frame5Index = 0;
@@ -81,7 +81,7 @@ int MenuManager::MENU() {
 			_vm->_graphicsManager.LOAD_IMAGE("MENUFR");
 		else if (_vm->_globals.FR == 2)
 			_vm->_graphicsManager.LOAD_IMAGE("MENUES");
-    
+
 		_vm->_graphicsManager.FADE_INW();
 		if (_vm->_globals.FR == 0)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUAN.SPR");
@@ -89,13 +89,13 @@ int MenuManager::MENU() {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUFR.SPR");
 		else if (_vm->_globals.FR == 2)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUES.SPR");
-    
+
 		spriteData = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
 		_vm->_eventsManager.mouseOn();
 		_vm->_eventsManager.changeMouseCursor(0);
 		_vm->_eventsManager._mouseCursorId = 0;
 		_vm->_eventsManager._mouseSpriteId = 0;
-    
+
 		for (;;) {
 			for (;;) {
 				_vm->_soundManager.WSOUND(28);
@@ -108,7 +108,7 @@ int MenuManager::MENU() {
 
 					menuIndex = MENU_NONE;
 					mousePos = Common::Point(_vm->_eventsManager.getMouseX(), _vm->_eventsManager.getMouseY());
-          
+
 					if ((uint16)(mousePos.x - 232) <= 176) {
 						if ((uint16)(mousePos.y - 261) <= 23)
 							menuIndex = PLAY_GAME;
@@ -118,11 +118,11 @@ int MenuManager::MENU() {
 							menuIndex = OPTIONS;
 						if ((uint16)(mousePos.y - 356) <= 23)
 							menuIndex = INTRODUCTION;
-            
+
 						if ((uint16)(mousePos.y - 388) <= 23)
 							menuIndex = QUIT;
 					}
-          
+
 					switch (menuIndex) {
 					case MENU_NONE:
 						frame1Index = 0;
@@ -166,18 +166,18 @@ int MenuManager::MENU() {
 						frame4Index = 0;
 						frame5Index = 1;
 					}
-          
+
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, frame1Index);
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, frame2Index + 2);
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, frame3Index + 4);
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, frame4Index + 6);
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, frame5Index + 8);
 					_vm->_eventsManager.VBL();
-          
+
 					if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
 						selectionMade = 1;
 				} while (!selectionMade);
-        
+
 				if (menuIndex == PLAY_GAME) {
 					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, 10);
 					_vm->_eventsManager.VBL();
@@ -190,20 +190,20 @@ int MenuManager::MENU() {
 				_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, 11);
 				_vm->_eventsManager.VBL();
 				_vm->_eventsManager.delay(200);
-        
+
 				_vm->_globals.SORTIE = -1;
 				_vm->_dialogsManager.showLoadGame();
-        
+
 				if (_vm->_globals.SORTIE != -1) {
 					result = _vm->_globals.SORTIE;
 					break;
 				}
 				_vm->_globals.SORTIE = 0;
 			}
-      
+
 			if (menuIndex != OPTIONS)
 				break;
-      
+
 			// Options menu item selected
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, 12);
 			_vm->_eventsManager.VBL();
@@ -228,7 +228,7 @@ int MenuManager::MENU() {
 		}
 		break;
 	}
-  
+
 	_vm->_globals.freeMemory(spriteData);
 	_vm->_globals._disableInventFl = false;
 	_vm->_globals.FLAG_VISIBLE = false;

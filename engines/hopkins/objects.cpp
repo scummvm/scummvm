@@ -87,7 +87,7 @@ ObjectsManager::ObjectsManager() {
 	OBSSEUL = 0;
 	NVVERBE = 0;
 	NVZONE = 0;
-	S_old_ani = 0; 
+	S_old_ani = 0;
 	S_old_ret = 0;
 	nouveau_x = nouveau_y = 0;
 	nouveau_sens = 0;
@@ -136,7 +136,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 		dataP = _vm->_globals.allocMemory(height * width);
 		if (dataP == g_PTRNUL)
 			error("CAPTURE_OBJET");
-			
+
 		capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, dataP, val2);
 		break;
 
@@ -184,7 +184,7 @@ void ObjectsManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSi
 	byte *startP = data + 3;
 	for (int i = idx; i; --i)
 		startP += READ_LE_UINT32(startP) + 16;
-	
+
 	byte *rectP = startP + 8;
 	if (isSize == 1) {
 		// Set size
@@ -202,7 +202,7 @@ int ObjectsManager::get_offsetx(const byte *spriteData, int spriteIndex, bool is
 	const byte *v3 = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
 		v3 += READ_LE_UINT32(v3) + 16;
-  
+
 	const byte *v5 = v3 + 8;
 	int result = (int16)READ_LE_UINT16(v5);
 	if (isSize)
@@ -215,7 +215,7 @@ int ObjectsManager::get_offsety(const byte *spriteData, int spriteIndex, bool is
 	const byte *v3 = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
 		v3 += READ_LE_UINT32(v3) + 16;
-  
+
 	const byte *v5 = v3 + 10;
 	int result = (int16)READ_LE_UINT16(v5);
 	if (isSize)
@@ -231,7 +231,7 @@ int ObjectsManager::getWidth(const byte *objectData, int idx) {
 	const byte *rectP = objectData + 3;
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
-	
+
 	return (int16)READ_LE_UINT16(rectP + 4);
 }
 
@@ -242,7 +242,7 @@ int ObjectsManager::getHeight(const byte *objectData, int idx) {
 	const byte *rectP = objectData + 3;
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
-	
+
 	return (int16)READ_LE_UINT16(rectP + 6);
 }
 
@@ -262,7 +262,7 @@ int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIn
 byte *ObjectsManager::DEL_FICHIER_OBJ() {
 	_vm->_globals.NUM_FICHIER_OBJ = 0;
 	_vm->_globals.ADR_FICHIER_OBJ = _vm->_globals.freeMemory(_vm->_globals.ADR_FICHIER_OBJ);
-  
+
 	return g_PTRNUL;
 }
 
@@ -295,7 +295,7 @@ int ObjectsManager::AJOUTE_OBJET(int objIndex) {
 		if (arrIndex == 32)
 			flag = true;
 	} while (!flag);
-  
+
 	_vm->_globals.INVENTAIRE[arrIndex] = objIndex;
 	return arrIndex;
 }
@@ -312,7 +312,7 @@ void ObjectsManager::AFF_SPRITES() {
 	int v9;
 	int v11;
 	uint16 *v12;
-	int v13; 
+	int v13;
 	int y1_1;
 	int y1_2;
 	int v25;
@@ -331,12 +331,12 @@ void ObjectsManager::AFF_SPRITES() {
 		if (_vm->_fontManager._textList[idx]._enabledFl && _vm->_fontManager._text[idx]._textType != 2) {
 			v1 = _vm->_fontManager._textList[idx]._pos.x;
 			x1_1 = v1 - 2;
-      
+
 			if ((int16)(v1 - 2) < _vm->_graphicsManager.min_x)
 				x1_1 = _vm->_graphicsManager.min_x;
 			v2 = _vm->_fontManager._textList[idx]._pos.y;
 			y1_1 = v2 - 2;
-      
+
 			if ((int16)(v2 - 2) < _vm->_graphicsManager.min_y)
 				y1_1 = _vm->_graphicsManager.min_y;
 			destX = v1 - 2;
@@ -345,7 +345,7 @@ void ObjectsManager::AFF_SPRITES() {
 			destY = v2 - 2;
 			if (destY < _vm->_graphicsManager.min_y)
 				destY = _vm->_graphicsManager.min_y;
-			
+
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, x1_1, y1_1,
 				_vm->_fontManager._textList[idx]._width + 4, _vm->_fontManager._textList[idx]._height + 4,
 				_vm->_graphicsManager.VESA_BUFFER,
@@ -371,15 +371,15 @@ void ObjectsManager::AFF_SPRITES() {
 				v9 = v7 - 2;
 				if (v9 < _vm->_graphicsManager.min_y)
 					v9 = _vm->_graphicsManager.min_y;
-	        
-				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, x1_2, y1_2, 
-					_vm->_globals.Liste[idx].width + 4, _vm->_globals.Liste[idx].height + 4, 
+
+				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, x1_2, y1_2,
+					_vm->_globals.Liste[idx].width + 4, _vm->_globals.Liste[idx].height + 4,
 					_vm->_graphicsManager.VESA_BUFFER, v8, v9);
 				_vm->_globals.Liste[idx].field0 = 0;
 			}
-		} 
+		}
 	}
-  
+
 	AFF_BOB_ANIM();
 	AFF_VBOB();
 
@@ -392,19 +392,19 @@ void ObjectsManager::AFF_SPRITES() {
 				if (Sprite[idx].field2A == 1)
 					AvantTri(TRI_SPRITE, idx, Sprite[idx].field32 + Sprite[idx].field2E);
 			}
-		} 
-    
+		}
+
 		if (_vm->_globals.CACHEFLAG)
 			VERIFCACHE();
 	}
-  
+
 	if (PRIORITY == 1 && _vm->_globals.NBTRI) {
 		v33 = 1;
 		do {
 			arr[v33] = v33;
 			++v33;
 		} while (v33 <= 48);
-    
+
 		v25 = _vm->_globals.NBTRI;
 		do {
 			v27 = 0;
@@ -424,7 +424,7 @@ void ObjectsManager::AFF_SPRITES() {
 				} while (v34 < v26);
 			}
 		} while (v27);
-    
+
 		v35 = 1;
 		if (_vm->_globals.NBTRI + 1 > 1) {
 			do {
@@ -474,7 +474,7 @@ void ObjectsManager::AFF_SPRITES() {
 		_vm->_globals.Tri[idx].priority = 0;
 		_vm->_globals.Tri[idx].unused = 0;
 	}
-  
+
 	_vm->_globals.NBTRI = 0;
 	if (_vm->_dialogsManager._inventDisplayedFl) {
 		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1, _vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventHeight);
@@ -484,32 +484,32 @@ void ObjectsManager::AFF_SPRITES() {
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventBuf2, cadx + 300, cady + 300, cadi);
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventX + _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventY + _vm->_dialogsManager._inventHeight);
 	}
-  
+
 	if (SL_FLAG == true) {
 		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 0x112u, 353);
 		if (SL_X && SL_Y)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, SL_SPR2, SL_X + _vm->_eventsManager._startPos.x + 300, SL_Y + 300, 0);
-    
+
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
 	}
 
 	// If the Options dialog is activated, draw the elements
 	if (_vm->_globals._optionDialogFl) {
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 464, 407, 0);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 657, 556, _vm->_globals.opt_vitesse);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 731, 495, _vm->_globals.opt_txt);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 731, 468, _vm->_globals.opt_voice);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 731, 441, _vm->_globals.opt_sound);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 731, 414, _vm->_globals.opt_music);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 600, 522, _vm->_globals.opt_anm);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR, 
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 611, 502, _vm->_globals.opt_scrspeed);
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 164, 107, _vm->_eventsManager._startPos.x + 498, 320);
 	}
@@ -526,12 +526,12 @@ void ObjectsManager::AFF_SPRITES() {
 					_vm->_fontManager._text[idx]._messageId, _vm->_fontManager._text[idx]._filename,
 					_vm->_fontManager._text[idx]._pos.x, _vm->_fontManager._text[idx]._pos.y);
 			_vm->_fontManager._textList[idx]._enabledFl = true;
-			
+
 			if ((_vm->_fontManager._text[idx]._textType < 2) || (_vm->_fontManager._text[idx]._textType > 3))
 				_vm->_fontManager._textList[idx]._pos.x = _vm->_eventsManager._startPos.x + _vm->_fontManager._text[idx]._pos.x;
 			else
 				_vm->_fontManager._textList[idx]._pos.x = _vm->_fontManager._text[idx]._pos.x;
-      
+
 			_vm->_fontManager._textList[idx]._pos.y = _vm->_fontManager._text[idx]._pos.y;
 			_vm->_fontManager._textList[idx]._width = _vm->_fontManager._text[idx]._width;
 			_vm->_fontManager._textList[idx]._height = _vm->_fontManager._text[idx]._height;
@@ -551,7 +551,7 @@ void ObjectsManager::AFF_SPRITES() {
 				_vm->_fontManager._textList[idx]._enabledFl = false;
 		}
 	}
-  
+
 	_vm->_dialogsManager.inventAnim();
 }
 
@@ -604,10 +604,10 @@ void ObjectsManager::DEF_BOB(int idx) {
 		int yp = _vm->_globals.Bob[idx].oldY;
 
 		if (_vm->_globals.Bob[idx].isSprite)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bob[idx].spriteData, 
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.Bob[idx].spriteData,
 				xp + 300, yp + 300, _vm->_globals.Bob[idx].frameIndex);
 		else
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, 
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER,
 				_vm->_globals.Bob[idx].spriteData, xp + 300, yp + 300, _vm->_globals.Bob[idx].frameIndex,
 				_vm->_globals.Bob[idx].field4A, _vm->_globals.Bob[idx].oldY2,
 				_vm->_globals.Bob[idx].field38);
@@ -615,7 +615,7 @@ void ObjectsManager::DEF_BOB(int idx) {
 		_vm->_globals.Liste2[idx].field0 = 1;
 		_vm->_globals.Liste2[idx].xp = xp;
 		_vm->_globals.Liste2[idx].yp = yp;
-		
+
 		_vm->_globals.Liste2[idx].width = _vm->_globals.Bob[idx].oldWidth;
 		_vm->_globals.Liste2[idx].height = _vm->_globals.Bob[idx].oldHeight;
 
@@ -625,21 +625,21 @@ void ObjectsManager::DEF_BOB(int idx) {
 			_vm->_globals.Liste2[idx].width -= _vm->_graphicsManager.min_x - v5;
 			_vm->_globals.Liste2[idx].xp = v6;
 		}
-    
+
 		int v7 = _vm->_globals.Liste2[idx].yp;
 		int v8 = _vm->_graphicsManager.min_y;
 		if (v7 < _vm->_graphicsManager.min_y) {
 			_vm->_globals.Liste2[idx].height -= _vm->_graphicsManager.min_y - v7;
 			_vm->_globals.Liste2[idx].yp = v8;
 		}
-    
+
 		int v9 = _vm->_globals.Liste2[idx].xp;
 		if (_vm->_globals.Liste2[idx].width + v9 > _vm->_graphicsManager.max_x)
 			_vm->_globals.Liste2[idx].width = _vm->_graphicsManager.max_x - v9;
 		int v10 = _vm->_globals.Liste2[idx].yp;
 		if (_vm->_globals.Liste2[idx].height + v10 > _vm->_graphicsManager.max_y)
 			_vm->_globals.Liste2[idx].height = _vm->_graphicsManager.max_y - v10;
-    
+
 		if (_vm->_globals.Liste2[idx].width <= 0 || _vm->_globals.Liste2[idx].height <= 0)
 		_vm->_globals.Liste2[idx].field0 = 0;
 
@@ -670,10 +670,10 @@ void ObjectsManager::BOB_VISU(int idx) {
 					v9 = 1;
 				if (!v6)
 					v6 = -1;
-			
+
 				if ((int16)READ_LE_UINT16(data + 24)) {
 					_vm->_globals.Bob[idx].isSprite = false;
-          
+
 					if (_vm->_globals.Bank[v1].fileHeader == 1) {
 						_vm->_globals.Bob[idx].isSprite = true;
 						_vm->_globals.Bob[idx].field36 = 0;
@@ -726,7 +726,7 @@ void ObjectsManager::SCBOB(int idx) {
 			int v4 =_vm->_globals.Cache[idx].field4;
 			int v7 =_vm->_globals.Cache[idx].field6 + v3;
 			int v1 =_vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx].field8 + v4;
-          
+
 			if ((v6 > v4) && (v6 < v1)) {
 				v1 = 0;
 				if (v9 >= v3 && v9 <= (_vm->_globals.Cache[idx].field6 + v3)) {
@@ -764,7 +764,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		_vm->_globals.Bob[idx].field38 = 0;
 		_vm->_globals.Bob[idx].field36 = 0;
 	}
-  
+
 	int result = _vm->_globals.Bob[idx].frameIndex;
 	if (result != 250) {
 		int v5, v15, v22;
@@ -775,13 +775,13 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 			v22 = v15 = get_offsetx(_vm->_globals.Bob[idx].spriteData, result, 0);
 			v5 = get_offsety(_vm->_globals.Bob[idx].spriteData, _vm->_globals.Bob[idx].frameIndex, 0);
 		}
-    
+
 		int v17 = v5;
 		int v6 = v5;
 		int v21 = 0;
 		int v20 = 0;
 		int v7 = _vm->_globals.Bob[idx].field36;
-		
+
 		if (v7 < 0) {
 			v7 = -v7;
 			v20 = v7;
@@ -808,7 +808,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 				v17 = -_vm->_graphicsManager.Reel_Zoom(v9, v21);
 			}
 		}
-    
+
 		if (v20) {
 			if (v15 >= 0) {
 				v22 = _vm->_graphicsManager.Reel_Reduc(v15, v20);
@@ -825,7 +825,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 				v17 = -_vm->_graphicsManager.Reel_Reduc(v11, v20);
 			}
 		}
-    
+
 		int v13 = _vm->_globals.Bob[idx].xp - v22;
 		int v14 = _vm->_globals.Bob[idx].yp - v17;
 		_vm->_globals.Bob[idx].isActive = true;
@@ -849,7 +849,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 			height = _vm->_graphicsManager.Reel_Reduc(height, v20);
 			width = _vm->_graphicsManager.Reel_Reduc(width, v20);
 		}
-		
+
 		_vm->_globals.Liste2[idx].width = width;
 		_vm->_globals.Liste2[idx].height = height;
 		_vm->_globals.Bob[idx].oldWidth = width;
@@ -862,11 +862,11 @@ void ObjectsManager::VERIFCACHE() {
 	int v2;
 	int v3;
 	int v4;
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	int v9;
 	int v10;
 	int v11;
 
@@ -884,7 +884,7 @@ void ObjectsManager::VERIFCACHE() {
 						v6 = _vm->_globals.Cache[v8].field0;
 						v3 = _vm->_globals.Cache[v8].field4;
 						v9 = _vm->_globals.Cache[v8].field6 + v6;
-            
+
 						if (v2 > v3) {
 							if (v2 < (_vm->_globals.Cache[v8].field14 + _vm->_globals.Cache[v8].field8 + v3)) {
 								v4 = 0;
@@ -916,10 +916,10 @@ void ObjectsManager::VERIFCACHE() {
 						}
 					}
 				}
-			
+
 				++v10;
 			} while (v10 <= 4);
-      
+
 			SCBOB(v8);
 			if (_vm->_globals.Cache[v8].fieldA == v7) {
 				if (_vm->_globals.Cache[v8].field10 == 1) {
@@ -927,11 +927,11 @@ void ObjectsManager::VERIFCACHE() {
 					_vm->_globals.Cache[v8].fieldA = 1;
 				}
 			} else {
-				v5 = _vm->_globals.Cache[v8].field14 + _vm->_globals.Cache[v8].field8 + 
+				v5 = _vm->_globals.Cache[v8].field14 + _vm->_globals.Cache[v8].field8 +
 					_vm->_globals.Cache[v8].field4;
 				if (v5 > 440)
 					v5 = 500;
-				
+
 				AvantTri(TRI_CACHE, v8, v5);
 				_vm->_globals.Cache[v8].fieldA = 1;
 				_vm->_globals.Cache[v8].field10 = 1;
@@ -942,28 +942,28 @@ void ObjectsManager::VERIFCACHE() {
 }
 
 void ObjectsManager::DEF_SPRITE(int idx) {
-	int v2; 
+	int v2;
 	int v3;
 	int v4;
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	int v9;
 	int v10;
 	int v11;
 	int v12;
-	int v13; 
+	int v13;
 
 	v2 = idx;
 	if (Sprite[v2].field2A) {
 		v3 = Sprite[v2].field2C;
 		v4 = Sprite[v2].field2E;
 		if (Sprite[v2].field28)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData, 
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData,
 			v3 + 300, v4 + 300, Sprite[v2].spriteIndex);
 		else
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData, 
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData,
 				v3 + 300, v4 + 300,  Sprite[v2].spriteIndex, Sprite[v2].field36, Sprite[v2].field34, Sprite[v2].fieldE);
 
 		v5 = idx;
@@ -972,7 +972,7 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		_vm->_globals.Liste[v5].height = Sprite[v6].field32;
 		v7 = _vm->_globals.Liste[v5].field2;
 		v8 = _vm->_graphicsManager.min_x;
-		
+
 		if (v7 < _vm->_graphicsManager.min_x) {
 			_vm->_globals.Liste[v5].width -= _vm->_graphicsManager.min_x - v7;
 			_vm->_globals.Liste[v5].field2 = v8;
@@ -1007,9 +1007,9 @@ void ObjectsManager::DEF_CACHE(int idx) {
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.CACHE_BANQUE[1],
 		_vm->_globals.Cache[idx].field0 + 300, _vm->_globals.Cache[idx].field4 + 300,
 		_vm->_globals.Cache[idx].field2);
-  
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.Cache[idx].field0, 
-			_vm->_globals.Cache[idx].field4, 
+
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.Cache[idx].field0,
+			_vm->_globals.Cache[idx].field4,
 			_vm->_globals.Cache[idx].field0 + _vm->_globals.Cache[idx].field6,
            _vm->_globals.Cache[idx].field4 + _vm->_globals.Cache[idx].field8);
 }
@@ -1023,14 +1023,14 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 	int v6;
 	int v7;
 	int v8;
-	int v9; 
-	int v10; 
-	int v11; 
-	int v12; 
-	int v13; 
+	int v9;
+	int v10;
+	int v11;
+	int v12;
+	int v13;
 	int v15;
 	int v16;
-	int v17; 
+	int v17;
 	int v22;
 
 	Sprite[idx].field2A = 0;
@@ -1047,13 +1047,13 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 			v4 = Sprite[idx].field12 + v3;
 			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].spriteIndex, 0);
 		}
-    
+
 		v9 = Sprite[idx].field14 + v6;
 		v7 = v9;
 		v8 = v9;
 		int zoomPercent = 0;
 		int reducePercent = 0;
-    
+
 		v9 = Sprite[idx].fieldC;
 		if (v9 < 0) {
 			v9 = -v9;
@@ -1063,19 +1063,19 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 		}
 		if (Sprite[idx].fieldC > 0)
 			zoomPercent = Sprite[idx].fieldC;
-    
+
 		if (zoomPercent) {
 			if (v4 >= 0) {
 				v22 = _vm->_graphicsManager.Reel_Zoom(v4, zoomPercent);
 			} else {
 				v10 = v4;
-        
+
 				if (v4 < 0)
 					v10 = -v4;
 				v4 = v10;
 				v22 = -_vm->_graphicsManager.Reel_Zoom(v10, zoomPercent);
 			}
-      
+
 			if (v8 >= 0) {
 				v7 = _vm->_graphicsManager.Reel_Zoom(v8, zoomPercent);
 			} else {
@@ -1105,7 +1105,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 				v7 = -_vm->_graphicsManager.Reel_Reduc(v13, reducePercent);
 			}
 		}
-    
+
 		v15 = Sprite[idx].spritePos.x - v22;
 		v16 = Sprite[idx].spritePos.y - v7;
 		Sprite[idx].field2C = v15;
@@ -1113,7 +1113,7 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 		Sprite[idx].field2A = 1;
 		Sprite[idx].field34 = zoomPercent;
 		Sprite[idx].field36 = reducePercent;
-	
+
 		v17 = idx;
 		_vm->_globals.Liste[v17].field0 = 1;
 		_vm->_globals.Liste[v17].field2 = v15;
@@ -1125,12 +1125,12 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 			width = _vm->_graphicsManager.Reel_Zoom(width, zoomPercent);
 			height = _vm->_graphicsManager.Reel_Zoom(height, zoomPercent);
 		}
-    
+
 		if (reducePercent) {
 			height = _vm->_graphicsManager.Reel_Reduc(height, reducePercent);
 			width = _vm->_graphicsManager.Reel_Reduc(width, reducePercent);
 		}
-    
+
 		Sprite[idx].field30 = width;
 		Sprite[idx].field32 = height;
 	}
@@ -1143,12 +1143,12 @@ int ObjectsManager::AvantTri(TriMode triMode, int index, int priority) {
 	++_vm->_globals.NBTRI;
 	if (_vm->_globals.NBTRI > 48)
 		error("NBTRI too high");
-  
+
 	result = _vm->_globals.NBTRI;
 	_vm->_globals.Tri[result].triMode = triMode;
 	_vm->_globals.Tri[result].index = index;
 	_vm->_globals.Tri[result].priority = priority;
-  
+
 	return result;
 }
 
@@ -1162,14 +1162,14 @@ void ObjectsManager::AFF_BOB_ANIM() {
 	int v8;
 	int v10;
 	int v11;
-	int v12; 
-	int v13; 
+	int v12;
+	int v13;
 	int v14;
 	int v18;
 	int v19;
-	byte *v20; 
-	byte *v21; 
-	int v22; 
+	byte *v20;
+	byte *v21;
+	int v22;
 	int v24;
 	int v26;
 	int v27;
@@ -1182,7 +1182,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			_vm->_globals.Bob[idx].field1C = 0;
 			continue;
 		}
-    
+
 		if (_vm->_globals.Bob[idx].field0 == 10) {
 			_vm->_globals.Bob[idx].field1C = 0;
 			v1 = _vm->_globals.Bob[idx].field20;
@@ -1190,7 +1190,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 				v1 = 50;
 			if (_vm->_globals.Bob[idx].animData == g_PTRNUL || _vm->_globals.Bob[idx].field16 || v1 <= 0)
 				goto LABEL_38;
-      
+
 			v2 = _vm->_globals.Bob[idx].field14;
 			if (_vm->_globals.Bob[idx].field12 == v2) {
 				_vm->_globals.Bob[idx].field1C = 1;
@@ -1198,10 +1198,10 @@ void ObjectsManager::AFF_BOB_ANIM() {
 				_vm->_globals.Bob[idx].field14 = v2 + 1;
 				_vm->_globals.Bob[idx].field1C = 0;
 			}
-      
+
 			if (_vm->_globals.Bob[idx].field1C != 1)
 				goto LABEL_38;
-      
+
 			v20 = _vm->_globals.Bob[idx].animData + 20;
 			v24 = _vm->_globals.Bob[idx].field10;
 			_vm->_globals.Bob[idx].xp = (int16)READ_LE_UINT16(v20 + 2 * v24);
@@ -1209,7 +1209,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 				_vm->_globals.Bob[idx].xp = _vm->_globals.BL_ANIM[idx].v2;
 			if ( PERSO_ON == true && idx > 20 )
 				_vm->_globals.Bob[idx].xp += _vm->_eventsManager._startPos.x;
-      
+
 			_vm->_globals.Bob[idx].yp = (int16)READ_LE_UINT16(v20 + 2 * v24 + 2);
 			_vm->_globals.Bob[idx].field12 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 4);
 			_vm->_globals.Bob[idx].field36 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 6);
@@ -1217,7 +1217,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			_vm->_globals.Bob[idx].field38 = *(v20 + 2 * v24 + 9);
 			_vm->_globals.Bob[idx].field10 += 5;
 			v5 = _vm->_globals.Bob[idx].field12;
-			
+
 			if (v5 > 0) {
 				v6 = v5 / _vm->_globals.vitesse;
 				_vm->_globals.Bob[idx].field12 = v5 / _vm->_globals.vitesse;
@@ -1226,12 +1226,12 @@ LABEL_37:
 					_vm->_globals.Bob[idx].field14 = 1;
 LABEL_38:
 					v12 = idx;
-          
+
 					if ((unsigned int)(_vm->_globals.Bob[v12].field1E - 1) <= 1u)
 						_vm->_globals.Bob[v12].field1C = 1;
 					continue;
 				}
-        
+
 				_vm->_globals.Bob[idx].field12 = 1;
 			}
 			if (!_vm->_globals.Bob[idx].field12) {
@@ -1245,7 +1245,7 @@ LABEL_38:
 					_vm->_globals.Bob[idx].field10 = 0;
 					v21 = _vm->_globals.Bob[idx].animData + 20;
 					_vm->_globals.Bob[idx].xp = (int16)READ_LE_UINT16(v21);
-					
+
 					if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 						_vm->_globals.Bob[idx].xp = _vm->_globals.BL_ANIM[idx].v2;
 					if (PERSO_ON == true && idx > 20)
@@ -1258,7 +1258,7 @@ LABEL_38:
 					_vm->_globals.Bob[idx].field38 = *(v21 + 9);
 					_vm->_globals.Bob[idx].field10 += 5;
 					v10 = _vm->_globals.Bob[idx].field12;
-			
+
 					if (v10 > 0) {
 						v11 = v10 / _vm->_globals.vitesse;
 						_vm->_globals.Bob[idx].field12 = v10 / _vm->_globals.vitesse;
@@ -1268,7 +1268,7 @@ LABEL_38:
 					}
 				}
 			}
-			
+
 			goto LABEL_37;
 		}
 	} while (idx != 35);
@@ -1282,17 +1282,17 @@ LABEL_38:
 			++v26;
 		} while (v26 != 35);
 	}
-  
+
 	BOBTOUS = false;
 	v27 = 0;
-  
+
 	do {
 		++v27;
 		if (v27 > 20 || PERSO_ON != true) {
 			if (_vm->_globals.Bob[v27].field0 == 10) {
 				if (_vm->_globals.Bob[v27].field1C == 1) {
 					v14 = _vm->_globals.Bob[v27].field1E;
-          
+
 					if (v14 != 2) {
 						if (v14 != 4) {
 							if (_vm->_globals.Liste2[v27].field0) {
@@ -1307,7 +1307,7 @@ LABEL_38:
 					}
 				}
 			}
-      
+
 			v22 = v27;
 			if (_vm->_globals.Bob[v22].field0 == 11) {
 				if (_vm->_globals.Liste2[v27].field0) {
@@ -1318,12 +1318,12 @@ LABEL_38:
 						_vm->_globals.Liste2[v27].xp, _vm->_globals.Liste2[v27].yp);
 					_vm->_globals.Liste2[v27].field0 = 0;
 				}
-        
+
 				_vm->_globals.Bob[v22].field0 = 0;
 			}
 		}
 	} while (v27 != 35);
-  
+
 	v28 = 0;
 	do {
 		++v28;
@@ -1333,7 +1333,7 @@ LABEL_38:
 			CALCUL_BOB(v28);
 			int v = _vm->_globals.Bob[v18].oldHeight + _vm->_globals.Bob[v18].oldY;
 			v19 = _vm->_globals.Bob[v18].oldX2 + v;
-		
+
 			if (v19 > 450)
 				v19 = 600;
 
@@ -1345,18 +1345,18 @@ LABEL_38:
 
 // Display VBOB
 void ObjectsManager::AFF_VBOB() {
-	int width, height; 
+	int width, height;
 
 	int idx = 0;
 	do {
 		if (_vm->_globals.VBob[idx].field4 == 4) {
 			width = getWidth(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
 			height = getHeight(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
-			
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN, 
+
+			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN,
 				_vm->_globals.VBob[idx].surface, _vm->_globals.VBob[idx].xp,
 				_vm->_globals.VBob[idx].yp, width, height);
-      
+
 			_vm->_graphicsManager.Restore_Mem(
 				_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.VBob[idx].surface,
 				_vm->_globals.VBob[idx].xp, _vm->_globals.VBob[idx].yp,
@@ -1365,9 +1365,9 @@ void ObjectsManager::AFF_VBOB() {
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(
 				_vm->_globals.VBob[idx].xp, _vm->_globals.VBob[idx].yp,
 				_vm->_globals.VBob[idx].xp + width, height + _vm->_globals.VBob[idx].yp);
-      
+
 			_vm->_globals.VBob[idx].surface = _vm->_globals.freeMemory(_vm->_globals.VBob[idx].surface);
-      
+
 			_vm->_globals.VBob[idx].field4 = 0;
 			_vm->_globals.VBob[idx].spriteData = g_PTRNUL;
 			_vm->_globals.VBob[idx].xp = 0;
@@ -1382,25 +1382,25 @@ void ObjectsManager::AFF_VBOB() {
 		if (_vm->_globals.VBob[idx].field4 == 3) {
 			width = getWidth(_vm->_globals.VBob[idx].oldSpriteData, _vm->_globals.VBob[idx].oldFrameIndex);
 			height = getHeight(_vm->_globals.VBob[idx].oldSpriteData, _vm->_globals.VBob[idx].oldFrameIndex);
-      
+
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_SCREEN,
 				_vm->_globals.VBob[idx].surface, _vm->_globals.VBob[idx].oldX,
 				_vm->_globals.VBob[idx].oldY,
 				width, height);
-      
+
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER,
 				_vm->_globals.VBob[idx].surface, _vm->_globals.VBob[idx].oldX,
 				_vm->_globals.VBob[idx].oldY, width, height);
-      
+
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.VBob[idx].oldX,
 				_vm->_globals.VBob[idx].oldY, _vm->_globals.VBob[idx].oldX + width,
 				_vm->_globals.VBob[idx].oldY + height);
-      
+
 			_vm->_globals.VBob[idx].field4 = 1;
 			_vm->_globals.VBob[idx].oldSpriteData = _vm->_globals.VBob[idx].spriteData;
-      
+
 			_vm->_globals.VBob[idx].surface = _vm->_globals.freeMemory(_vm->_globals.VBob[idx].surface);
-      
+
 			_vm->_globals.VBob[idx].oldX = _vm->_globals.VBob[idx].xp;
 			_vm->_globals.VBob[idx].oldY = _vm->_globals.VBob[idx].yp;
 			_vm->_globals.VBob[idx].oldFrameIndex = _vm->_globals.VBob[idx].frameIndex;
@@ -1409,22 +1409,22 @@ void ObjectsManager::AFF_VBOB() {
 		if (_vm->_globals.VBob[idx].field4 == 1) {
 			width = getWidth(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
 			height = getHeight(_vm->_globals.VBob[idx].spriteData, _vm->_globals.VBob[idx].frameIndex);
-      
+
 			_vm->_globals.VBob[idx].surface = _vm->_globals.freeMemory(_vm->_globals.VBob[idx].surface);
-      
+
 			byte *surface = _vm->_globals.allocMemory(height * width);
 			_vm->_globals.VBob[idx].surface = surface;
-      
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_SCREEN, surface, 
+
+			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_SCREEN, surface,
 				_vm->_globals.VBob[idx].xp, _vm->_globals.VBob[idx].yp, width, height);
-      
+
 			byte *v10 = _vm->_globals.VBob[idx].spriteData;
 			if (*v10 == 78) {
-				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_SCREEN, v10, 
+				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_SCREEN, v10,
 					_vm->_globals.VBob[idx].xp + 300, _vm->_globals.VBob[idx].yp + 300,
 					_vm->_globals.VBob[idx].frameIndex,
 					0, 0, 0);
-        
+
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER,
 					_vm->_globals.VBob[idx].spriteData,
 					_vm->_globals.VBob[idx].xp + 300, _vm->_globals.VBob[idx].yp + 300,
@@ -1434,12 +1434,12 @@ void ObjectsManager::AFF_VBOB() {
 				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER,
 					v10, _vm->_globals.VBob[idx].xp + 300, _vm->_globals.VBob[idx].yp + 300,
 					_vm->_globals.VBob[idx].frameIndex);
-        
+
 				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_SCREEN, _vm->_globals.VBob[idx].spriteData,
 					_vm->_globals.VBob[idx].xp + 300, _vm->_globals.VBob[idx].yp + 300,
 					_vm->_globals.VBob[idx].frameIndex);
 			}
-      
+
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_globals.VBob[idx].xp,
 				_vm->_globals.VBob[idx].yp , _vm->_globals.VBob[idx].xp + width,
 				_vm->_globals.VBob[idx].yp + height);
@@ -1491,7 +1491,7 @@ void ObjectsManager::CLEAR_SPR() {
 void ObjectsManager::SPRITE_ON(int idx) {
 	if (idx > 5)
 		error("Attempt to display a sprite > MAX_SPRITE.");
-  
+
 	Sprite[idx].field0 = 1;
 }
 
@@ -1595,7 +1595,7 @@ void ObjectsManager::SETYSPR(int idx, int yp) {
 void ObjectsManager::SETTAILLESPR(int idx, int a2) {
 	if (idx > 5)
 		error("Set the Coord. there a sprite> MAX_SPRITE.");
-  
+
 	if (Sprite[idx].field28 != 1)
 		Sprite[idx].fieldC = a2;
 }
@@ -1610,7 +1610,7 @@ void ObjectsManager::SETFLIPSPR(int idx, int a2) {
 
 void ObjectsManager::VERIFZONE() {
 	int v0;
-	int v1; 
+	int v1;
 	int v2;
 	uint16 v3;
 	int v4;
@@ -1678,7 +1678,7 @@ LABEL_54:
 					_vm->_globals.force_to_data_0 += 25;
 					if (_vm->_globals.force_to_data_0 > 100)
 						_vm->_globals.force_to_data_0 = 0;
-					_vm->_graphicsManager.SETCOLOR4(251, _vm->_globals.force_to_data_0, _vm->_globals.force_to_data_0, 
+					_vm->_graphicsManager.SETCOLOR4(251, _vm->_globals.force_to_data_0, _vm->_globals.force_to_data_0,
 						_vm->_globals.force_to_data_0);
 					if (_vm->_eventsManager._mouseCursorId == 4) {
 						v1 = 5 * v4;
@@ -1715,60 +1715,60 @@ LABEL_54:
 }
 
 void ObjectsManager::GOHOME() {
-	int16 v0; 
-	int16 v1; 
-	int16 v3; 
-	int16 v4; 
+	int16 v0;
+	int16 v1;
+	int16 v3;
+	int16 v4;
 	unsigned int v5;
 	unsigned int v6;
 	unsigned int v7;
 	unsigned int v8;
-	int16 v9; 
+	int16 v9;
 	int16 v10;
 	unsigned int v11;
 	unsigned int v12;
 	unsigned int v13;
 	unsigned int v14;
-	int v15; 
-	int16 v16; 
-	unsigned int v17; 
-	unsigned int v18; 
-	int v19; 
-	int16 v20; 
-	unsigned int v21; 
-	unsigned int v22; 
-	int16 v23; 
-	int16 v24; 
-	unsigned int v25; 
-	unsigned int v26; 
-	unsigned int v27; 
-	unsigned int v28; 
-	int16 v29; 
-	int16 v30; 
+	int v15;
+	int16 v16;
+	unsigned int v17;
+	unsigned int v18;
+	int v19;
+	int16 v20;
+	unsigned int v21;
+	unsigned int v22;
+	int16 v23;
+	int16 v24;
+	unsigned int v25;
+	unsigned int v26;
+	unsigned int v27;
+	unsigned int v28;
+	int16 v29;
+	int16 v30;
 	unsigned int v31;
 	unsigned int v32;
 	unsigned int v33;
-	unsigned int v34; 
+	unsigned int v34;
 	int16 v35;
 	int16 v36;
 	unsigned int v37;
 	unsigned int v38;
 	unsigned int v39;
 	unsigned int v40;
-	int16 v41; 
-	int16 v42; 
+	int16 v41;
+	int16 v42;
 	unsigned int v43;
 	unsigned int v44;
 	unsigned int v45;
 	unsigned int v46;
 	int16 v47;
-	int16 v48; 
-	int16 v49; 
-	int v50; 
+	int16 v48;
+	int16 v49;
+	int v50;
 	int16 v51;
 	int16 v52;
 	int16 v54;
-	int v55; 
+	int v55;
 	int16 v56;
 	int16 v57;
 	int16 v58;
@@ -2250,7 +2250,7 @@ LABEL_153:
 }
 
 void ObjectsManager::GOHOME2() {
-	int16 v2; 
+	int16 v2;
 
 	if (_vm->_globals.chemin != (int16 *)g_PTRNUL) {
 		int v0 = 2;
@@ -2289,7 +2289,7 @@ void ObjectsManager::GOHOME2() {
 				SETANISPR(0, 2);
 			if (_vm->_globals.last_sens == 7)
 				SETANISPR(0, 3);
-			
+
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			my_anim = 0;
 			A_ANIM = 0;
@@ -2316,10 +2316,10 @@ LABEL_19:
 
 // Load Obstacle
 void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
-	int16 v1; 
-	byte *ptr; 
-	int16 v4; 
-	int16 v5; 
+	int16 v1;
+	byte *ptr;
+	int16 v4;
+	int16 v5;
 
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_linesManager.TOTAL_LIGNES = 0;
@@ -2350,24 +2350,24 @@ void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
 
 // Load Zone
 void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
-	signed int v1; 
-	int v2; 
-	int v3; 
-	int v4; 
-	int v5; 
-	int v6; 
-	int16 v7; 
-	int v8; 
-	byte *v9; 
-	int v10; 
-	signed int v11; 
-	int v12; 
-	byte *v13; 
-	int v14; 
-	signed int v15; 
-	int16 v17; 
-	int16 v18; 
-	byte *ptr; 
+	signed int v1;
+	int v2;
+	int v3;
+	int v4;
+	int v5;
+	int v6;
+	int16 v7;
+	int v8;
+	byte *v9;
+	int v10;
+	signed int v11;
+	int v12;
+	byte *v13;
+	int v14;
+	signed int v15;
+	int16 v17;
+	int16 v18;
+	byte *ptr;
 
 	v1 = 1;
 	do {
@@ -2391,7 +2391,7 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 	} while (v1 <= 100);
 
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
-	
+
 	Common::File f;
 	if (!f.exists(_vm->_globals.NFICHIER))
 		error("File not found : %s", _vm->_globals.NFICHIER.c_str());
@@ -2463,14 +2463,14 @@ void ObjectsManager::CHARGE_ZONE(const Common::String &file) {
 // Square Zone
 void ObjectsManager::CARRE_ZONE() {
 	int16 *dataP;
-	int v4; 
-	int v5; 
-	int v7; 
-	int v8; 
-	int v10; 
-	int v11; 
-	int v12; 
-	int v13; 
+	int v4;
+	int v5;
+	int v7;
+	int v8;
+	int v10;
+	int v11;
+	int v12;
+	int v13;
 	int v14;
 
 	for (int idx = 0; idx < 100; ++idx) {
@@ -2571,7 +2571,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.CACHE_OFF(19);
 	_vm->_globals.CACHE_OFF(20);
 	_vm->_globals.CACHE_ON();
-	
+
 	if (!_vm->_globals.PLANX && !_vm->_globals.PLANY) {
 		_vm->_globals.PLANX = 900;
 		_vm->_globals.PLANY = 319;
@@ -2591,19 +2591,19 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_vm->_globals.BPP_NOAFF = true;
-	
+
 	v4 = 0;
 	do {
 		_vm->_eventsManager.VBL();
 		++v4;
 	} while (v4 <= 4);
-  
+
 	_vm->_globals.BPP_NOAFF = false;
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.FADE_INW();
 	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_graphicsManager.NOFADE = false;
-  
+
 	do {
 		v5 = _vm->_eventsManager.getMouseButton();
 		if (v5) {
@@ -2625,14 +2625,14 @@ void ObjectsManager::PLAN_BETA() {
 			if (v5 == 1)
 				BTGAUCHE();
 		}
-    
+
 		VERIFZONE();
 		GOHOME2();
-		
+
 		if (_vm->_globals.chemin == (int16 *)g_PTRNUL && _vm->_globals.GOACTION == 1)
 			PARADISE();
 		_vm->_eventsManager.VBL();
-    
+
 		if (_vm->_globals.SORTIE)
 			v1 = 1;
 	} while (!_vm->shouldQuit() && v1 != 1);
@@ -2650,7 +2650,7 @@ void ObjectsManager::PLAN_BETA() {
 	CLEAR_ECRAN();
 	_vm->_globals.NOSPRECRAN = false;
 	_vm->_globals.PLAN_FLAG = false;
-}	
+}
 
 // Left Button
 void ObjectsManager::BTGAUCHE() {
@@ -2658,18 +2658,18 @@ void ObjectsManager::BTGAUCHE() {
 	int destX, destY;
 	int v1;
 	int v2;
-	int16 *v3; 
-	int16 *v4; 
-	int16 *v5; 
-	int zoneCount; 
+	int16 *v3;
+	int16 *v4;
+	int16 *v5;
+	int zoneCount;
 	int zoneX;
 	int zoneY;
-	int16 *v9; 
+	int16 *v9;
 	int v10;
 	int v11;
 	int v12;
-	int16 *v13; 
-	int16 *v16; 
+	int16 *v13;
+	int16 *v16;
 	int v17;
 	int v18;
 
@@ -2833,8 +2833,8 @@ LABEL_65:
 		ARRET_PERSO_FLAG = 1;
 		ARRET_PERSO_NUM = _vm->_globals.BOBZONE[NUMZONE];
 	}
-	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField132] == 1 
-				&& _vm->_globals.OBJET_EN_COURS == 20 && NUMZONE == 12 
+	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField132] == 1
+				&& _vm->_globals.OBJET_EN_COURS == 20 && NUMZONE == 12
 				&& _vm->_eventsManager._mouseCursorId == 23) {
 		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -2846,8 +2846,8 @@ LABEL_65:
 void ObjectsManager::PARADISE() {
 	int v1;
 	char result;
-	int v3; 
-	int v5; 
+	int v3;
+	int v5;
 
 	v1 = 0;
 	ARRET_PERSO_FLAG = 0;
@@ -3013,7 +3013,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 
 // Change Face/Head
 void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter newCharacter) {
-	CharacterLocation *loc; 
+	CharacterLocation *loc;
 
 	CH_TETE = 1;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, 532, 25, 65, 40, _vm->_graphicsManager.VESA_BUFFER, 532, 25);
@@ -3021,7 +3021,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 	_vm->_globals.NOT_VERIF = 1;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 
-	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS 
+	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
 		&& _vm->_globals.SAUVEGARDE->realHopkins.location == _vm->_globals.ECRAN) {
 		CH_TETE = 0;
 		loc = &_vm->_globals.SAUVEGARDE->samantha;
@@ -3048,7 +3048,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 		SPRITE(_vm->_globals.PERSO, loc->xp, loc->yp, 0, 64, loc->field4, 0, 34, 190);
 		SPRITE_ON(0);
 		_vm->_globals.HOPKINS_DATA();
-	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA 
+	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
 			&& _vm->_globals.SAUVEGARDE->samantha.location == _vm->_globals.ECRAN) {
 		CH_TETE = 0;
 		loc = &_vm->_globals.SAUVEGARDE->realHopkins;
@@ -3057,7 +3057,7 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 		loc->field2 = 64;
 		loc->location = _vm->_globals.ECRAN;
 		loc->field4 = Sprite[0].fieldC;
-		
+
 		SPRITE_OFF(1);
 		SPRITE(_vm->_globals.TETE, loc->xp, loc->yp, 1, 2, loc->field4, 0, 34, 190);
 		SPRITE_ON(1);
@@ -3153,9 +3153,9 @@ void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 	int v4;
 	int v5;
 	int v6;
-	int v7; 
-	int v8; 
-	int v9; 
+	int v7;
+	int v8;
+	int v9;
 	int v10;
 	int v11;
 	int v12;
@@ -3230,59 +3230,59 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v10;
 	int v11;
 	int v12;
-	int v13; 
-	int v14; 
-	int v15; 
+	int v13;
+	int v14;
+	int v15;
 	int v16;
-	int v17; 
-	int v18; 
-	int v19; 
+	int v17;
+	int v18;
+	int v19;
 	int v20;
-	int v21; 
+	int v21;
 	int16 *result;
 	int v23;
-	int v24; 
-	int v25; 
+	int v24;
+	int v25;
 	int v26;
-	int v27; 
+	int v27;
 	int v28;
 	int v29;
-	int v30; 
-	int v31; 
-	int v32; 
+	int v30;
+	int v31;
+	int v32;
 	int16 *v33;
-	int v34; 
-	int v35; 
-	int i; 
-	int16 *v37; 
-	int v39; 
+	int v34;
+	int v35;
+	int i;
+	int16 *v37;
+	int v39;
 	int v40;
-	int16 *v41; 
-	int v43; 
+	int16 *v41;
+	int v43;
 	int k;
-	int16 *v45; 
-	int v47; 
-	int v48; 
+	int16 *v45;
+	int v47;
+	int v48;
 	int v49;
-	int16 *v50; 
-	int v52; 
+	int16 *v50;
+	int v52;
 	int v53;
-	int16 *v54; 
-	int v56; 
+	int16 *v54;
+	int v56;
 	int v57;
-	int16 *v58; 
-	int v60; 
-	int v61; 
+	int16 *v58;
+	int v60;
+	int v61;
 	int v62;
 	int v63;
 	int v64;
 	int v65;
-	int v66; 
-	int v67; 
-	int v68; 
-	int v69; 
-	int j; 
-	int l; 
+	int v66;
+	int v67;
+	int v68;
+	int v69;
+	int j;
+	int l;
 	int v72;
 	int v73;
 	int v74;
@@ -3808,19 +3808,19 @@ int ObjectsManager::MZONE() {
 	signed int result;
 	int16 v1;
 	int16 v2;
-	int v3; 
+	int v3;
 	int16 v4;
 	int16 v5;
-	int v6; 
+	int v6;
 	int16 v7;
-	int v8; 
-	int v9; 
+	int v8;
+	int v9;
 	int16 yCurrent;
 	int16 v11;
-	int16 j; 
-	int16 k; 
-	int16 xCurrent; 
-	int v15; 
+	int16 j;
+	int16 k;
+	int16 xCurrent;
+	int v15;
 	int16 v16;
 	int16 v17;
 	int16 v18;
@@ -4097,7 +4097,7 @@ void ObjectsManager::VALID_OBJET(int a1) {
 }
 
 void ObjectsManager::OPTI_OBJET() {
-	byte *data; 
+	byte *data;
 	Common::String file;
 	int v0 = 1;
 	int v5;
@@ -4109,7 +4109,7 @@ void ObjectsManager::OPTI_OBJET() {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
 		data = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	}
-	
+
 	if ((data == g_PTRNUL) || *data != 'I' || *(data + 1) != 'N' || *(data + 2) != 'I') {
 		error("Not an INI file");
 	} else {
@@ -4195,7 +4195,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_globals.NECESSAIRE = true;
 					_vm->_graphicsManager.NB_SCREEN();
 					_vm->_globals.NECESSAIRE = false;
-					
+
 					_vm->_saveLoadManager.bload("TEMP1.SCR", _vm->_graphicsManager.VESA_SCREEN);
 					g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
 
@@ -4272,8 +4272,8 @@ void ObjectsManager::SPECIAL_JEU() {
 void ObjectsManager::BOB_VIVANT(int idx) {
 	int v1;
 	int v2;
-	int v3; 
-	int v4; 
+	int v3;
+	int v4;
 
 	v1 = 5 * idx;
 	v2 = (int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1);
@@ -4281,8 +4281,8 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	v4 = *(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8);
 	if ((int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 4)) {
 		if (!_vm->_globals.NO_OFFSET)
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager.PERSOSPR, 
-				_vm->_graphicsManager.ofscroll + v2, v3, 
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager.PERSOSPR,
+				_vm->_graphicsManager.ofscroll + v2, v3,
 				*(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8));
 		if (_vm->_globals.NO_OFFSET)
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager.PERSOSPR, v2, v3, v4);
@@ -4292,7 +4292,7 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
-	
+
 	if (_vm->_globals.VBob[idx].field4 <= 1) {
 		_vm->_globals.VBob[idx].field4 = 1;
 		_vm->_globals.VBob[idx].xp = xp;
@@ -4305,7 +4305,7 @@ void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 		_vm->_globals.VBob[idx].oldSpriteData = src;
 		_vm->_globals.VBob[idx].surface = _vm->_globals.freeMemory(_vm->_globals.VBob[idx].surface);
 	}
-	
+
 	int f4 = _vm->_globals.VBob[idx].field4;
 	if (f4 == 2 || f4 == 4) {
 		_vm->_globals.VBob[idx].field4 = 3;
@@ -4323,7 +4323,7 @@ void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 void ObjectsManager::VBOB_OFF(int idx) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
-	
+
 	if (_vm->_globals.VBob[idx].field4 <= 1)
 		_vm->_globals.VBob[idx].field4 = 0;
 	else
@@ -4529,7 +4529,7 @@ void ObjectsManager::OPTI_ONE(int idx, int a2, int a3, int a4) {
 	if (!a4)
 		BOBANIM_OFF(idx);
 	if (a4 == 4) {
-		_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.Bob[idx].spriteData, 
+		_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.Bob[idx].spriteData,
 			_vm->_globals.Bob[idx].oldX, _vm->_globals.Bob[idx].oldY, _vm->_globals.Bob[idx].frameIndex);
 		BOBANIM_OFF(idx);
 		_vm->_eventsManager.VBL();
@@ -4585,8 +4585,8 @@ int ObjectsManager::BOBA(int idx) {
 void ObjectsManager::INILINK(const Common::String &file) {
 	int v1;
 	int v2;
-	int v8; 
-	int v9; 
+	int v8;
+	int v9;
 	int v10;
 	int v11;
 	int v12;
@@ -4618,7 +4618,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	size_t v41;
 	size_t v42;
 	size_t nbytes;
-	byte *ptr; 
+	byte *ptr;
 	Common::String filename, filename2;
 	Common::File f;
 
@@ -4630,7 +4630,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	nbytes = _vm->_globals.CAT_TAILLE;
 	if (ptr == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
-		
+
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
@@ -4646,11 +4646,11 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			_vm->_globals.STAILLE[idx] = (int16)READ_LE_UINT16((uint16 *)ptr + idx);
 
 		_vm->_globals.RESET_CACHE();
-		
+
 		filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.searchCat(filename2, 8);
-			
+
 			if (_vm->_globals.CACHE_BANQUE[1] || _vm->_globals.CACHE_BANQUE[1] == g_PTRNUL) {
 				_vm->_globals.CAT_FLAG = false;
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename2);
@@ -4676,7 +4676,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				_vm->_globals.Cache[v11].field0 = v9;
 				_vm->_globals.Cache[v11].field4 = v10;
 				_vm->_globals.Cache[v11].field12 = 1;
-				
+
 				if (!_vm->_globals.CACHE_BANQUE[1]) {
 					_vm->_globals.Cache[v40].fieldA = 0;
 				} else {
@@ -4689,7 +4689,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					_vm->_globals.Cache[v40].field8 = v15;
 					_vm->_globals.Cache[v40].fieldA = 1;
 				}
-				if (!_vm->_globals.Cache[v40].field0 && !_vm->_globals.Cache[v40].field4 
+				if (!_vm->_globals.Cache[v40].field0 && !_vm->_globals.Cache[v40].field4
 							&& !_vm->_globals.Cache[v40].field2)
 					_vm->_globals.Cache[v40].fieldA = 0;
 
@@ -4814,16 +4814,16 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			} while (nbytes > v42);
 		}
 	}
-	_vm->_globals.freeMemory(ptr);	
+	_vm->_globals.freeMemory(ptr);
 }
 
 void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
-	int v2; 
-	int v3; 
-	int v4; 
-	int v5; 
-	int v6; 
-	int v7; 
+	int v2;
+	int v3;
+	int v4;
+	int v5;
+	int v6;
+	int v7;
 
 	if (_vm->_globals.ECRAN == 73 && !_vm->_globals.SAUVEGARDE->data[svField318]) {
 		_vm->_globals.CACHE_SUB(0);
@@ -5086,10 +5086,10 @@ void ObjectsManager::VERBE_ON(int idx, int a2) {
 }
 
 int ObjectsManager::CALC_PROPRE(int idx) {
-	int v1; 
-	int v2; 
-	int v3; 
-	int v4; 
+	int v1;
+	int v2;
+	int v3;
+	int v4;
 
 	v1 = 25;
 	v2 = _vm->_globals.STAILLE[idx];
@@ -5164,19 +5164,19 @@ int ObjectsManager::colision(int xp, int yp) {
 }
 
 void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int a5, int a6) {
-	int v6; 
-	int v7; 
-	char v8; 
-	int v9; 
-	int v10; 
-	int v11; 
-	int v13; 
-	const byte *v14; 
-	char v15; 
-	int v16; 
-	int spriteIndex; 
-	int v18; 
-	Common::String v19; 
+	int v6;
+	int v7;
+	char v8;
+	int v9;
+	int v10;
+	int v11;
+	int v13;
+	const byte *v14;
+	char v15;
+	int v16;
+	int spriteIndex;
+	int v18;
+	Common::String v19;
 
 	v18 = 0;
 	v6 = 0;
@@ -5237,14 +5237,14 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 }
 
 void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int a5, int a6) {
-	int v6; 
-	char v8; 
-	int v9; 
-	int16 v10; 
-	int v11; 
-	int spriteIndex; 
-	char v14; 
-	Common::String v16; 
+	int v6;
+	char v8;
+	int v9;
+	int16 v10;
+	int v11;
+	int spriteIndex;
+	char v14;
+	Common::String v16;
 
 	v6 = 0;
 	spriteIndex = 0;
@@ -5300,16 +5300,16 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 }
 
 void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5) {
-	int v5; 
-	int v6; 
-	char v7; 
-	int v8; 
-	int v9; 
-	int v10; 
-	int spriteIndex; 
-	int v13; 
-	int v14; 
-	Common::String v15; 
+	int v5;
+	int v6;
+	char v7;
+	int v8;
+	int v9;
+	int v10;
+	int spriteIndex;
+	int v13;
+	int v14;
+	Common::String v15;
 	int v16;
 
 	v14 = 0;
@@ -5365,8 +5365,8 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 }
 
 void ObjectsManager::TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6) {
-	signed int v6; 
-	char v7; 
+	signed int v6;
+	char v7;
 
 	v6 = a1;
 	if (_vm->_globals.ECRAN == a1) {
@@ -5467,13 +5467,13 @@ void ObjectsManager::BLOQUE_ANIMX(int idx, int a2) {
 	_vm->_globals.BL_ANIM[idx].v2 = a2;
 }
 
-void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile, 
+void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 							   const Common::String &animFile, const Common::String &s4, int v) {
-	int v5; 
-	int v6; 
-	int v7; 
-	int v8; 
-	int v9; 
+	int v5;
+	int v6;
+	int v7;
+	int v8;
+	int v9;
 
 	v5 = 0;
 	_vm->_dialogsManager._inventFl = false;
@@ -5570,7 +5570,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_globals.iRegul = 0;
 }
 
-void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile, 
+void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
 								const Common::String &animFile, const Common::String &s4, int v) {
 	int mouseButtons;
 	bool breakFlag;
@@ -5665,8 +5665,8 @@ LABEL_70:
 	_vm->_graphicsManager.NOFADE = false;
 	_vm->_eventsManager.changeMouseCursor(4);
 
-	int xCheck = 0; 
-	int yCheck = 0; 
+	int xCheck = 0;
+	int yCheck = 0;
 
 	breakFlag = false;
 	while (!_vm->shouldQuit() && !breakFlag) {
@@ -5696,7 +5696,7 @@ LABEL_70:
 		if (!_vm->_globals.SORTIE) {
 			_vm->_dialogsManager.testDialogOpening();
 			VERIFZONE();
-			if (_vm->_globals.chemin == (int16 *)g_PTRNUL 
+			if (_vm->_globals.chemin == (int16 *)g_PTRNUL
 					|| (GOHOME(), _vm->_globals.chemin == (int16 *)g_PTRNUL)) {
 				if (_vm->_globals.GOACTION == 1)
 					PARADISE();

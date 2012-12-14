@@ -37,26 +37,26 @@ byte *g_PTRNUL;
 // Default data for the Hopkins array
 
 const int HOPKINS_PERSO_0[] = {
-		0, -2, 0, -3, 0, -6, 0, -1, 0, -3, 0, -3, 0, -5, 0, -3, 0, -6, 0, -3, 0, -3, 0, -3, 
-		9, -4, 8, -4, 6, -2, 9, -2, 9, -3, 9, -3, 9, -4, 9, -2, 9, -2, 8, -2, 9, -3, 9, -2, 
-		13, 0, 13, 0, 13, 0, 13, 0, 14, 0, 13, 0, 13, 0, 12, 0, 12, 0, 14, 0, 13, 0, 14, 0, 
-		10, 3, 9, 3, 10, 4, 8, 2, 7, 1, 10, 2, 9, 2, 7, 4, 7, 3, 8, 0, 9, 1, 9, 1, 0, 4, 0, 
+		0, -2, 0, -3, 0, -6, 0, -1, 0, -3, 0, -3, 0, -5, 0, -3, 0, -6, 0, -3, 0, -3, 0, -3,
+		9, -4, 8, -4, 6, -2, 9, -2, 9, -3, 9, -3, 9, -4, 9, -2, 9, -2, 8, -2, 9, -3, 9, -2,
+		13, 0, 13, 0, 13, 0, 13, 0, 14, 0, 13, 0, 13, 0, 12, 0, 12, 0, 14, 0, 13, 0, 14, 0,
+		10, 3, 9, 3, 10, 4, 8, 2, 7, 1, 10, 2, 9, 2, 7, 4, 7, 3, 8, 0, 9, 1, 9, 1, 0, 4, 0,
 		4, 0, 6, 0, 3, 0, 4, 0, 3, 0, 4, 0, 4, 0, 6, 0, 3, 0, 3, 0, 3
 };
 
 const int HOPKINS_PERSO_1[] = {
-		0, -2, 0, -2, 0, -5, 0, -1, 0, -2, 0, -2, 0, -4, 0, -2, 0, -5, 0, -2, 0, -2, 0, -2, 
-		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0, 
-		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0, 
-		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0, 
+		0, -2, 0, -2, 0, -5, 0, -1, 0, -2, 0, -2, 0, -4, 0, -2, 0, -5, 0, -2, 0, -2, 0, -2,
+		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0,
+		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0,
+		11, 0, 10, 0, 11, 0, 11, 0, 11, 0, 11, 0, 12, 0, 11, 0, 9, 0, 10, 0, 11, 0, 11, 0,
 		0, 3, 0, 3, 0, 5, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 5, 0, 3, 0, 3, 0, 3
 };
 
 const int HOPKINS_PERSO_2[] = {
-		0, -2, 0, 0, 0, -3, 0, -2, 0, -2, 0, -1, 0, -2, 0, -1, 0, -3, 0, -2, 0, -2, 0, -2, 
-		8, 0, 9, 0, 5, 0, 9, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 8, 0, 9, 0, 
-		5, 0, 9, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 8, 0, 9, 0, 5, 0, 9, 0, 
-		7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0, 2, 0, 2, 
+		0, -2, 0, 0, 0, -3, 0, -2, 0, -2, 0, -1, 0, -2, 0, -1, 0, -3, 0, -2, 0, -2, 0, -2,
+		8, 0, 9, 0, 5, 0, 9, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 8, 0, 9, 0,
+		5, 0, 9, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 8, 0, 9, 0, 5, 0, 9, 0,
+		7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 7, 0, 6, 0, 9, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0, 2, 0, 2,
 		0, 2, 0, 2, 0, 2, 0, 1, 0, 2, 0, 2
 };
 
@@ -346,13 +346,13 @@ void Globals::setConfig() {
 void Globals::clearAll() {
 	// TODO: The original allocated an explicit memory block for the null pointer
 	// to point to. For now, we're seeing if the NULL value will do as well
-	
+
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = g_PTRNUL;
 
 	nbrligne = 80;
 	INIT_ANIM();
-  
+
 	texte_tmp = g_PTRNUL;
 	texte_long = 0;
 	police = g_PTRNUL;
@@ -360,7 +360,7 @@ void Globals::clearAll() {
 	police_l = 0;
 	hauteur_boite = 0;
 	largeur_boite = 0;
-	
+
 	_vm->_fontManager.clearAll();
 
 	INIT_VBOB();
@@ -374,7 +374,7 @@ void Globals::clearAll() {
 	SPRITE_ECRAN = g_PTRNUL;
 	SAUVEGARDE = (Sauvegarde *)g_PTRNUL;
 	OBJET_EN_COURS = 0;
-  
+
 	for (int idx = 0; idx < 105; ++idx) {
 		ZONEP[idx].destX = 0;
 		ZONEP[idx].destY = 0;
@@ -484,7 +484,7 @@ void Globals::CLEAR_VBOB() {
 		VBob[idx].surface = freeMemory(VBob[idx].surface);
 		VBob[idx].spriteData = g_PTRNUL;
 		VBob[idx].oldSpriteData = g_PTRNUL;
-	} 
+	}
 }
 
 // Load Object
@@ -563,8 +563,8 @@ void Globals::CACHE_ADD(int idx) {
 // Load Cache
 void Globals::CHARGE_CACHE(const Common::String &file) {
 	byte *v2 = g_PTRNUL;
-	byte *spriteData; 
-	byte *ptr; 
+	byte *spriteData;
+	byte *ptr;
 	Common::String v16;
 	Common::File f;
 
@@ -574,7 +574,7 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 	v16 = Common::String((const char *)ptr);
 
 	_vm->_fileManager.constructFilename(HOPLINK, v16);
-	
+
 	if (f.exists(NFICHIER)) {
 		spriteData = _vm->_fileManager.loadFile(NFICHIER);
 		CACHE_BANQUE[1] = spriteData;
@@ -599,7 +599,7 @@ void Globals::CHARGE_CACHE(const Common::String &file) {
 				Cache[i].field8 = v9;
 				Cache[i].fieldA = 1;
 			}
-      
+
 			if ( !Cache[i].field0 && !Cache[i].field4 && !Cache[i].field2)
 				Cache[i].fieldA = 0;
 			v15 += 5;

@@ -148,7 +148,7 @@ void EventsManager::changeMouseCursor(int id) {
 			cursorId = 0;
 		if (cursorId == 25)
 			cursorId = 5;
-    
+
 		if (_oldIconId != cursorId || !cursorId) {
 			_oldIconId = cursorId;
 			_mouseSpriteId = cursorId;
@@ -191,7 +191,7 @@ void EventsManager::delay(int totalMilli) {
 
 	while (!g_system->getEventManager()->shouldQuit() && g_system->getMillis() < delayEnd) {
 		g_system->delayMillis(10);
-	}	
+	}
 }
 
 void EventsManager::pollEvents() {
@@ -236,7 +236,7 @@ void EventsManager::pollEvents() {
 
 void EventsManager::handleKey(Common::Event &event) {
 	_escKeyFl = (event.kbd.keycode == Common::KEYCODE_ESCAPE);
-	
+
 	if (event.kbd.keycode == Common::KEYCODE_i || event.kbd.keycode == Common::KEYCODE_TAB)
 		_gameKey = KEY_INVENTORY;
 	else if (event.kbd.keycode == Common::KEYCODE_F5)
@@ -306,13 +306,13 @@ int EventsManager::waitKeyPress() {
 
 void EventsManager::VBL() {
 	int v1;
-	int v2; 
-	int v3; 
+	int v2;
+	int v3;
 	signed int v11 = 0;
 	signed int v12 = 0;
-	int v13 = 0; 
-	unsigned int v14 = 0; 
-	int v15 = 0; 
+	int v13 = 0;
+	unsigned int v14 = 0;
+	int v15 = 0;
 	int yp = 0;
 
 	if (_vm->_graphicsManager.REDRAW) {
@@ -438,7 +438,7 @@ LABEL_65:
 	if (_vm->_graphicsManager.DOUBLE_ECRAN != true || _vm->_graphicsManager.no_scroll == 1) {
 		_vm->_graphicsManager.Affiche_Segment_Vesa();
 	} else {
-		int v4; 
+		int v4;
 		if (_vm->_graphicsManager.no_scroll != 2) {
 			if (getMouseX() > _vm->_graphicsManager.SCROLL + 620)
 				_vm->_graphicsManager.SCROLL += _vm->_graphicsManager.SPEED_SCROLL;
@@ -529,7 +529,7 @@ LABEL_113:
 #endif
 	_vm->_soundManager.VERIF_SOUND();
 	refreshEvents();
-}	
+}
 
 void EventsManager::updateCursor() {
 	// Backup the current sprite clipping bounds and reset them
@@ -559,7 +559,7 @@ void EventsManager::updateCursor() {
 	_vm->_graphicsManager.max_x = clipBounds.right;
 	_vm->_graphicsManager.max_y = clipBounds.bottom;
 	_vm->_graphicsManager.nbrligne2 = pitch;
-	
+
 	// Convert the cursor to the pixel format. At the moment, it's hardcoded
 	// to expect the game to be in 16-bit mode
 	uint16 *cursorPixels = new uint16[_vm->_globals.OBJH * _vm->_globals.OBJL];
@@ -585,7 +585,7 @@ void EventsManager::updateCursor() {
 	CursorMan.replaceCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
 		xOffset, 0, *((uint16 *)cursorPixels), true, &pixelFormat);
 
-	// Delete the cursor surface 
+	// Delete the cursor surface
 	delete[] cursorPixels;
 	delete[] cursorSurface;
 }
