@@ -3358,7 +3358,7 @@ void ToucheEngine::stopMusic() {
 	if (_midiPlayer)
 		_midiPlayer->stop();
 	else {
-		_mixer->stopHandle(_speechHandle);
+		_mixer->stopHandle(_musicHandle);
 	}
 }
 
