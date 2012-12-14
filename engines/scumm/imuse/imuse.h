@@ -62,7 +62,7 @@ public:
 public:
 	virtual void on_timer(MidiDriver *midi) = 0;
 	virtual void pause(bool paused) = 0;
-	virtual int save_or_load(Serializer *ser, ScummEngine *scumm) = 0;
+	virtual int save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAfterLoad = true) = 0;
 	virtual bool get_sound_active(int sound) const = 0;
 	virtual int32 doCommand(int numargs, int args[]) = 0;
 	virtual int clear_queue() = 0;
