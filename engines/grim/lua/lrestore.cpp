@@ -47,7 +47,12 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 			{
 				object->value.ud.id = savedState->readLESint32();
 				object->value.ud.tag = savedState->readLESint32();
+				if (savedState->saveMinorVersion() == 0) {
+					savedState->readLEUint32();
+					savedState->readLEUint32();
+				}
 			}
+			break;
 		case LUA_T_STRING:
 			{
 				PointerId ptr;

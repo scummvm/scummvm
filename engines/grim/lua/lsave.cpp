@@ -90,6 +90,7 @@ static void saveObjectValue(TObject *object, SaveGame *savedState) {
 				savedState->writeLESint32(object->value.ud.id);
 				savedState->writeLESint32(object->value.ud.tag);
 			}
+			break;
 		case LUA_T_STRING:
 			{
 				savedState->writeLEUint32(makeIdFromPointer(object->value.ts).low);
