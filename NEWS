@@ -32,6 +32,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented Monkey Island 2 Macintosh's audio driver. Now we properly
      support its sample based audio output. The same output is also used for
      the m68k Macintosh version of Indiana Jones and the Fate of Atlantis.
+   - Improved music support for the Macintosh version of Monkey Island 1. It
+     now uses the original instruments, rather than approximating them with
+     General MIDI instruments, and should sound a lot closer to the original.
+   - Added sound and music support for the Macintosh version of Loom.
 
 1.5.0 (2012-07-27)
  New Games:
