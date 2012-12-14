@@ -34,7 +34,7 @@ namespace Grim {
 #define SAVEGAME_FOOTERTAG	'ESAV'
 
 uint SaveGame::SAVEGAME_MAJOR_VERSION = 22;
-uint SaveGame::SAVEGAME_MINOR_VERSION = 1;
+uint SaveGame::SAVEGAME_MINOR_VERSION = 2;
 
 SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 	Common::InSaveFile *inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
