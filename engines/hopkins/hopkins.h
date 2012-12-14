@@ -120,6 +120,7 @@ private:
 	bool runLinuxDemo();
 	bool runWin95full();
 	bool runLinuxFull();
+	bool runBeOSFull();
 
 	/**
 	 * Show warning screen about the game being adults only.
