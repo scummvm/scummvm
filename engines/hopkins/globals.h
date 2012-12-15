@@ -343,8 +343,6 @@ public:
 	bool XFULLSCREEN;
 	int XSETMODE;
 	int XZOOM;
-	bool XFORCE16;
-	bool XFORCE8;
 	int PERSO_TYPE;
 	uint vitesse;
 	int INSTALL_TYPE;

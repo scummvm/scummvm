@@ -39,7 +39,6 @@ GraphicsManager::GraphicsManager() {
 	SDL_ECHELLE = 0;
 	XSCREEN = YSCREEN = 0;
 	WinScan = 0;
-	Winbpp = 0;
 	PAL_PIXELS = NULL;
 	nbrligne = 0;
 	Linear = false;
@@ -115,24 +114,13 @@ void GraphicsManager::SET_MODE(int width, int height) {
 		if (_vm->_globals.XSETMODE == 5)
 			SDL_ECHELLE = _vm->_globals.XZOOM;
 
-		int bpp = 8;
-		if (_vm->_globals.XFORCE8 == true)
-			bpp = 8;
-		if (_vm->_globals.XFORCE16 == true)
-			bpp = 16;
-
 		if (SDL_ECHELLE) {
 			width = zoomIn(width, SDL_ECHELLE);
 			height = zoomIn(height, SDL_ECHELLE);
 		}
 
 		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
-
-		if (bpp == 8) {
-			initGraphics(width, height, true);
-		} else {
-			initGraphics(width, height, true, &pixelFormat16);
-		}
+		initGraphics(width, height, true, &pixelFormat16);
 
 		// Init surfaces
 		VESA_SCREEN = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
@@ -143,8 +131,7 @@ void GraphicsManager::SET_MODE(int width, int height) {
 		YSCREEN = height;
 
 		Linear = true;
-		Winbpp = bpp / 8;
-		WinScan = width * Winbpp;
+		WinScan = width * 2; // Refactor me
 
 		PAL_PIXELS = SD_PIXELS;
 		nbrligne = width;
@@ -197,10 +184,7 @@ void GraphicsManager::LOAD_IMAGEVGA(const Common::String &file) {
 	max_x = 320;
 
 	DD_Lock();
-	if (Winbpp == 1)
-		CopyAsm(VESA_BUFFER);
-	if (Winbpp == 2)
-		CopyAsm16(VESA_BUFFER);
+	CopyAsm16(VESA_BUFFER);
 	DD_Unlock();
 
 	FADE_IN_CASSE();
@@ -233,17 +217,10 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 		max_x = SCREEN_WIDTH;
 		DD_Lock();
 		Cls_Video();
-		if (Winbpp == 2) {
-			if (SDL_ECHELLE)
-				m_scroll16A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		} else if (Winbpp == 1) {
-			if (!SDL_ECHELLE)
-				m_scroll2(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				m_scroll2A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
+		if (SDL_ECHELLE)
+			m_scroll16A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		else
+			m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
 		DD_Unlock();
 	} else {
@@ -255,19 +232,10 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 
 		if (MANU_SCROLL == 1) {
 			DD_Lock();
-			if (Winbpp == 2) {
-				if (SDL_ECHELLE)
-					m_scroll16A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-			if (Winbpp == 1) {
-				if (!SDL_ECHELLE)
-					m_scroll2(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					m_scroll2A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-
+			if (SDL_ECHELLE)
+				m_scroll16A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			else
+				m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			DD_Unlock();
 		}
 	}
@@ -472,10 +440,6 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 void GraphicsManager::Cls_Pal() {
 	Common::fill(&cmap[0], &cmap[PALETTE_BLOCK_SIZE], 0);
 	SD_PIXELS[0] = 0;
-
-	if (Winbpp == 1) {
-		g_system->getPaletteManager()->setPalette(cmap, 0, 256);
-	}
 }
 
 void GraphicsManager::SCANLINE(int pitch) {
@@ -506,80 +470,6 @@ void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, i
 		srcP = src2P + widthRemaining + nbrligne2 - width;
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
-}
-
-void GraphicsManager::m_scroll2(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
-	const byte *srcP;
-	byte *destP;
-	int destPitch;
-	int srcPitch;
-	int yCtr;
-
-	assert(VideoPtr);
-	srcP = xs + nbrligne2 * ys + surface;
-	destP = destX + WinScan * destY + (byte *)VideoPtr->pixels;
-	destPitch = WinScan - SCREEN_WIDTH;
-	srcPitch = nbrligne2 - SCREEN_WIDTH;
-	yCtr = height;
-
-	do {
-		memcpy(destP, srcP, SCREEN_WIDTH);
-		destP = destP + destPitch + SCREEN_WIDTH;
-		srcP = srcP + srcPitch + SCREEN_WIDTH;
-		--yCtr;
-	} while (yCtr);
-}
-
-void GraphicsManager::m_scroll2A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
-	const byte *srcP;
-	byte *destP;
-	int yCtr;
-	int xCtr;
-	byte srcByte;
-	const byte *srcCopyP;
-	byte *destCopyP;
-
-	assert(VideoPtr);
-	srcP = xs + nbrligne2 * ys + surface;
-	destP = destX + WinScan * destY + (byte *)VideoPtr->pixels;
-	yCtr = height;
-	Agr_x = 0;
-	Agr_y = 0;
-	Agr_Flag_y = 0;
-	do {
-		for (;;) {
-			destCopyP = destP;
-			srcCopyP = srcP;
-			xCtr = width;
-			Agr_x = 0;
-			do {
-				srcByte = *srcP;
-				*destP++ = *srcP++;
-				Agr_x += SDL_ECHELLE;
-				if ((unsigned int)Agr_x >= 100) {
-					Agr_x -= 100;
-					*destP++ = srcByte;
-				}
-				--xCtr;
-			} while ( xCtr );
-
-			srcP = srcCopyP;
-			destP = WinScan + destCopyP;
-			if (Agr_Flag_y)
-				break;
-
-			Agr_y += SDL_ECHELLE;
-			if ((unsigned int)Agr_y < 100)
-				break;
-
-			Agr_y -= 100;
-			Agr_Flag_y = 1;
-		}
-
-		Agr_Flag_y = 0;
-		srcP = nbrligne2 + srcCopyP;
-		--yCtr;
-	} while (yCtr);
 }
 
 /**
@@ -805,26 +695,22 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 		}
 
 		setpal_vga256(palData2);
-		if (Winbpp == 2) {
-			if (SDL_ECHELLE)
-				m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			DD_VBL();
-		}
-	}
-
-	// Set the final palette
-	setpal_vga256(palette);
-
-	// Refresh the screen
-	if (Winbpp == 2) {
 		if (SDL_ECHELLE)
 			m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
 			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_VBL();
 	}
+
+	// Set the final palette
+	setpal_vga256(palette);
+
+	// Refresh the screen
+	if (SDL_ECHELLE)
+		m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	else
+		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	DD_VBL();
 }
 
 void GraphicsManager::fade_out(const byte *palette, int step, const byte *surface) {
@@ -845,13 +731,11 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 		} while (palIndex < PALETTE_BLOCK_SIZE);
 
 		setpal_vga256(palData);
-		if (Winbpp == 2) {
-			if (SDL_ECHELLE)
-				m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			DD_VBL();
-		}
+		if (SDL_ECHELLE)
+			m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		else
+			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		DD_VBL();
 
 		int palCtr3 = 0;
 		if (palMax > 0) {
@@ -866,14 +750,12 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 				} while (palCtr4 < (PALETTE_BLOCK_SIZE));
 
 				setpal_vga256(palData);
-				if (Winbpp == 2) {
-					if (SDL_ECHELLE)
-						m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					else
-						m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				if (SDL_ECHELLE)
+					m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				else
+					m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
-					DD_VBL();
-				}
+				DD_VBL();
 				++palCtr3;
 			} while (palMax > palCtr3);
 		}
@@ -883,28 +765,24 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 
 		setpal_vga256(palData);
 
-		if (Winbpp == 2) {
-			if (!SDL_ECHELLE) {
-				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				return DD_VBL();
-			}
-			goto LABEL_28;
+		if (!SDL_ECHELLE) {
+			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			return DD_VBL();
 		}
+		goto LABEL_28;
 	} else {
 		for (int i = 0; i < PALETTE_BLOCK_SIZE; i++)
 			palData[i] = 0;
 
 		setpal_vga256(palData);
-		if (Winbpp == 2) {
-			if (!SDL_ECHELLE) {
-				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				return DD_VBL();
-			}
-
-LABEL_28:
-			m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		if (!SDL_ECHELLE) {
+			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			return DD_VBL();
 		}
+
+LABEL_28:
+		m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		return DD_VBL();
 	}
 }
 
@@ -934,15 +812,11 @@ void GraphicsManager::setpal_vga256(const byte *palette) {
 
 void GraphicsManager::setpal_vga256_linux(const byte *palette, const byte *surface) {
 	CHANGE_PALETTE(palette);
-
-	if (Winbpp == 2) {
-		if (SDL_ECHELLE)
-			m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		else
-			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-
-		DD_VBL();
-	}
+	if (SDL_ECHELLE)
+		m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	else
+		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	DD_VBL();
 }
 
 void GraphicsManager::SETCOLOR(int palIndex, int r, int g, int b) {
@@ -982,9 +856,6 @@ void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
 	cmap[v8 + 2] = bv;
 
 	WRITE_LE_UINT16(&SD_PIXELS[2 * palIndex], MapRGB(rv, gv, bv));
-
-	if (Winbpp == 1)
-		g_system->getPaletteManager()->setPalette(cmap, palIndex, 1);
 }
 
 void GraphicsManager::CHANGE_PALETTE(const byte *palette) {
@@ -999,21 +870,14 @@ void GraphicsManager::CHANGE_PALETTE(const byte *palette) {
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
 		*(uint16 *)&SD_PIXELS[2 * idx] = MapRGB(*srcP, *(srcP + 1), *(srcP + 2));
 	}
-
-	if (Winbpp == 1)
-		g_system->getPaletteManager()->setPalette(cmap, 0, PALETTE_SIZE);
 }
 
 uint16 GraphicsManager::MapRGB(byte r, byte g, byte b) {
-	if (Winbpp == 1) {
-		error("TODO: Support in 8-bit graphics mode");
-	} else {
-		Graphics::PixelFormat format = g_system->getScreenFormat();
+	Graphics::PixelFormat format = g_system->getScreenFormat();
 
-		return (r >> format.rLoss) << format.rShift
-				| (g >> format.gLoss) << format.gShift
-				| (b >> format.bLoss) << format.bShift;
-	}
+	return (r >> format.rLoss) << format.rShift
+			| (g >> format.gLoss) << format.gShift
+			| (b >> format.bLoss) << format.bShift;
 }
 
 void GraphicsManager::DD_VBL() {
@@ -1033,11 +897,9 @@ void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
 
 void GraphicsManager::FADE_IN_CASSE() {
 	setpal_vga256(Palette);
-	if (Winbpp == 2) {
-		DD_Lock();
-		CopyAsm16(VESA_BUFFER);
-		DD_Unlock();
-	}
+	DD_Lock();
+	CopyAsm16(VESA_BUFFER);
+	DD_Unlock();
 	DD_VBL();
 }
 
@@ -1047,11 +909,9 @@ void GraphicsManager::FADE_OUT_CASSE() {
 	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
 	setpal_vga256(palette);
 
-	if (Winbpp == 2) {
-		DD_Lock();
-		CopyAsm16(VESA_BUFFER);
-		DD_Unlock();
-	}
+	DD_Lock();
+	CopyAsm16(VESA_BUFFER);
+	DD_Unlock();
 	DD_VBL();
 }
 
@@ -1546,12 +1406,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 			continue;
 
 		if (_vm->_eventsManager._breakoutFl) {
-			if (Winbpp == 1) {
-				Copy_Vga(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1, bloc.y1);
-			} else if (Winbpp == 2) {
-				Copy_Vga16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1, bloc.y1);
-			}
-
+			Copy_Vga16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1, bloc.y1);
 			dstRect.left = bloc.x1 * 2;
 			dstRect.top = bloc.y1 * 2 + 30;
 			dstRect.setWidth((bloc.x2 - bloc.x1) * 2);
@@ -1584,15 +1439,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 
 				// WORKAROUND: Original didn't lock the screen for access
 				DD_Lock();
-
-				if (Winbpp == 2) {
-					m_scroll16A(VESA_BUFFER, xp, yp, width, height,
-						zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), zoomIn(yp, SDL_ECHELLE));
-				} else {
-					m_scroll2A(VESA_BUFFER, xp, yp, width, height,
-						zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), zoomIn(yp, SDL_ECHELLE));
-				}
-
+				m_scroll16A(VESA_BUFFER, xp, yp, width, height, zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), zoomIn(yp, SDL_ECHELLE));
 				DD_Unlock();
 
 				dstRect.left = zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE);
@@ -1602,14 +1449,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 			} else {
 				// WORKAROUND: Original didn't lock the screen for access
 				DD_Lock();
-
-				if (Winbpp == 2) {
-					m_scroll16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1,
-						bloc.x1 - _vm->_eventsManager._startPos.x, bloc.y1);
-				} else {
-					m_scroll(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1,
-						bloc.x1 - _vm->_eventsManager._startPos.x, bloc.y1);
-				}
+				m_scroll16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1 - _vm->_eventsManager._startPos.x, bloc.y1);
 
 				dstRect.left = bloc.x1 - _vm->_eventsManager._startPos.x;
 				dstRect.top = bloc.y1;
@@ -2365,18 +2205,10 @@ void GraphicsManager::NB_SCREEN() {
 	if (nbrligne == 1280)
 		Trans_bloc2(VESA_BUFFER, TABLE_COUL, 614400);
 	DD_Lock();
-	if (Winbpp == 2) {
-		if (SDL_ECHELLE)
-			m_scroll16A(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		else
-			m_scroll16(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	}
-	if (Winbpp == 1) {
-		if (SDL_ECHELLE)
-			m_scroll2A(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		else
-			m_scroll2(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	}
+	if (SDL_ECHELLE)
+		m_scroll16A(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	else
+		m_scroll16(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	DD_Unlock();
 
 	destP = VESA_SCREEN;

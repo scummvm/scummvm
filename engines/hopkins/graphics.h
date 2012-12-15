@@ -59,7 +59,6 @@ public:
 	int XSCREEN;
 	int YSCREEN;
 	int WinScan;
-	int Winbpp;
 	byte SD_PIXELS[PALETTE_SIZE * 2];
 	byte *PAL_PIXELS;
 	int nbrligne;
@@ -124,8 +123,6 @@ public:
 	void Cls_Pal();
 	void SCANLINE(int pitch);
 	void m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
-	void m_scroll2(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
-	void m_scroll2A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void Copy_Vga(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);

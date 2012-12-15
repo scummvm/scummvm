@@ -459,23 +459,15 @@ LABEL_65:
 			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.DD_Lock();
 			if (_vm->_graphicsManager.SDL_ECHELLE) {
-				if (_vm->_graphicsManager.Winbpp == 2) {
-					int v5 = _vm->_graphicsManager.zoomIn(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
-					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, v5);
-				} else {
-					int v6 = _vm->_graphicsManager.zoomIn(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
-					_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, v6);
-				}
+				int v5 = _vm->_graphicsManager.zoomIn(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
+				_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, v5);
 				_vm->_graphicsManager.DD_Unlock();
 				_vm->_graphicsManager.dstrect[0].left = _vm->_graphicsManager.zoomIn(0, _vm->_graphicsManager.SDL_ECHELLE);
 				_vm->_graphicsManager.dstrect[0].top = _vm->_graphicsManager.zoomIn(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
 				_vm->_graphicsManager.dstrect[0].setWidth(_vm->_graphicsManager.zoomIn(0x280u, _vm->_graphicsManager.SDL_ECHELLE));
 				_vm->_graphicsManager.dstrect[0].setHeight(_vm->_graphicsManager.zoomIn(0x1B8u, _vm->_graphicsManager.SDL_ECHELLE));
 			} else {
-				if (_vm->_graphicsManager.Winbpp == 2)
-					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, 20);
-				else
-					_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, 20);
+				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, 20);
 				_vm->_graphicsManager.DD_Unlock();
 				_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
 			}

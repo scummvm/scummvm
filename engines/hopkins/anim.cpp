@@ -79,7 +79,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		_vm->_graphicsManager.Cls_Video();
 		_vm->_graphicsManager.DD_Unlock();
 	}
-	if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
+	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
 		screenCopy = _vm->_globals.allocMemory(0x4B000u);
 		memcpy(screenCopy, screenP, 0x4B000u);
@@ -91,18 +91,10 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	} else {
 		_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 		_vm->_graphicsManager.DD_Lock();
-		if (_vm->_graphicsManager.Winbpp == 2) {
-			if (hasScreenCopy)
-				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
-		if (_vm->_graphicsManager.Winbpp == 1) {
-			if (hasScreenCopy)
-				_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll2(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
+		if (hasScreenCopy)
+			_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		else
+			_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();
 	}
@@ -153,16 +145,10 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		if (hasScreenCopy) {
 			if (*screenP != kByteStop) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
-				if (_vm->_graphicsManager.Winbpp == 2)
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll2A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 		} else if (*screenP != kByteStop) {
-			if (_vm->_graphicsManager.Winbpp == 1)
-				_vm->_graphicsManager.Copy_Video_Vbe3(screenP);
-			if (_vm->_graphicsManager.Winbpp == 2)
-				_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
+			_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
 		}
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();
@@ -285,7 +271,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.Cls_Video();
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
-		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
+		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 			v8 = 1;
 			ptr = _vm->_globals.allocMemory(0x4B000u);
 			memcpy(ptr, v12, 0x4B000u);
@@ -297,18 +283,10 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		} else {
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 			_vm->_graphicsManager.DD_Lock();
-			if (_vm->_graphicsManager.Winbpp == 2) {
-				if (v8)
-					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll16(v12, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-			if (_vm->_graphicsManager.Winbpp == 1) {
-				if (v8)
-					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll2(v12, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
+			if (v8)
+				_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			else
+				_vm->_graphicsManager.m_scroll16(v12, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.DD_VBL();
 		}
@@ -347,36 +325,19 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 			_vm->_graphicsManager.SCANLINE(0x500u);
 			_vm->_graphicsManager.max_x = 1280;
 			_vm->_graphicsManager.DD_Lock();
-			if (_vm->_graphicsManager.Winbpp == 2) {
-				if (_vm->_graphicsManager.SDL_ECHELLE)
-					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-			if (_vm->_graphicsManager.Winbpp == 1) {
-				if (_vm->_graphicsManager.SDL_ECHELLE)
-					_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
+			if (_vm->_graphicsManager.SDL_ECHELLE)
+				_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			else
+				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		} else {
 			_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
 			_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 			_vm->_graphicsManager.DD_Lock();
 			_vm->_graphicsManager.Cls_Video();
-			if (_vm->_graphicsManager.Winbpp == 2) {
-				if (_vm->_graphicsManager.SDL_ECHELLE)
-					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-			if (_vm->_graphicsManager.Winbpp == 1) {
-				if (_vm->_graphicsManager.SDL_ECHELLE)
-LABEL_111:
-					_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
+			if (_vm->_graphicsManager.SDL_ECHELLE)
+				_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			else
+				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		}
 LABEL_112:
 		_vm->_graphicsManager.DD_Unlock();
@@ -410,16 +371,10 @@ LABEL_77:
 		if (v8) {
 			if (*v12 != kByteStop) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe3(v12, ptr);
-				if (_vm->_graphicsManager.Winbpp == 2)
-					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 		} else if (*v12 != kByteStop) {
-			if (_vm->_graphicsManager.Winbpp == 1)
-				_vm->_graphicsManager.Copy_Video_Vbe3(v12);
-			if (_vm->_graphicsManager.Winbpp == 2)
-				_vm->_graphicsManager.Copy_Video_Vbe16(v12);
+			_vm->_graphicsManager.Copy_Video_Vbe16(v12);
 		}
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();
@@ -450,34 +405,19 @@ LABEL_88:
 							_vm->_graphicsManager.SCANLINE(0x500u);
 							_vm->_graphicsManager.max_x = 1280;
 							_vm->_graphicsManager.DD_Lock();
-							if (_vm->_graphicsManager.Winbpp == 2) {
-								if (_vm->_graphicsManager.SDL_ECHELLE)
-									_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-								else
-									_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-							}
-							if (_vm->_graphicsManager.Winbpp == 1) {
-								if (_vm->_graphicsManager.SDL_ECHELLE)
-									_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-								else
-									_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-							}
+							if (_vm->_graphicsManager.SDL_ECHELLE)
+								_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+							else
+								_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 						} else {
 							_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
 							_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 							_vm->_graphicsManager.DD_Lock();
 							_vm->_graphicsManager.Cls_Video();
-							if (_vm->_graphicsManager.Winbpp == 2) {
-								if (_vm->_graphicsManager.SDL_ECHELLE)
-									_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-								else
-									_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-							}
-							if (_vm->_graphicsManager.Winbpp == 1) {
-								if (_vm->_graphicsManager.SDL_ECHELLE)
-									goto LABEL_111;
-								_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-							}
+							if (_vm->_graphicsManager.SDL_ECHELLE)
+								_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+							else
+								_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 						}
 						goto LABEL_112;
 					}
@@ -513,34 +453,19 @@ LABEL_88:
 				_vm->_graphicsManager.SCANLINE(0x500u);
 				_vm->_graphicsManager.max_x = 1280;
 				_vm->_graphicsManager.DD_Lock();
-				if (_vm->_graphicsManager.Winbpp == 2) {
-					if (_vm->_graphicsManager.SDL_ECHELLE)
-						_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					else
-						_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				}
-				if (_vm->_graphicsManager.Winbpp == 1) {
-					if (_vm->_graphicsManager.SDL_ECHELLE)
-						_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					else
-						_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				}
+				if (_vm->_graphicsManager.SDL_ECHELLE)
+					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				else
+					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			} else {
 				_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
 				_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 				_vm->_graphicsManager.DD_Lock();
 				_vm->_graphicsManager.Cls_Video();
-				if (_vm->_graphicsManager.Winbpp == 2) {
-					if (_vm->_graphicsManager.SDL_ECHELLE)
-						_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					else
-						_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				}
-				if (_vm->_graphicsManager.Winbpp == 1) {
-					if (_vm->_graphicsManager.SDL_ECHELLE)
-						goto LABEL_111;
-					_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				}
+				if (_vm->_graphicsManager.SDL_ECHELLE)
+					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				else
+					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 			goto LABEL_112;
 		}
@@ -613,35 +538,19 @@ LABEL_114:
 		_vm->_graphicsManager.SCANLINE(0x500u);
 		_vm->_graphicsManager.max_x = 1280;
 		_vm->_graphicsManager.DD_Lock();
-		if (_vm->_graphicsManager.Winbpp == 2) {
-			if (_vm->_graphicsManager.SDL_ECHELLE)
-				_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
-		if (_vm->_graphicsManager.Winbpp == 1) {
-			if (_vm->_graphicsManager.SDL_ECHELLE)
-				_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
+		if (_vm->_graphicsManager.SDL_ECHELLE)
+			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		else
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
 		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
 		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 		_vm->_graphicsManager.DD_Lock();
 		_vm->_graphicsManager.Cls_Video();
-		if (_vm->_graphicsManager.Winbpp == 2) {
-			if (_vm->_graphicsManager.SDL_ECHELLE)
-				_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
-		if (_vm->_graphicsManager.Winbpp == 1) {
-			if (_vm->_graphicsManager.SDL_ECHELLE)
-				_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
+		if (_vm->_graphicsManager.SDL_ECHELLE)
+			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		else
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsManager.DD_Unlock();
 	_vm->_graphicsManager.FADE_INS();
@@ -963,7 +872,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	f.skip(14);
 	f.read(v9, nbytes);
 
-	if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
+	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 		v7 = 1;
 		ptr = _vm->_globals.allocMemory(0x4B000u);
 		memcpy(ptr, v9, 0x4B000u);
@@ -980,18 +889,10 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	} else {
 		_vm->_graphicsManager.DD_Lock();
-		if (_vm->_graphicsManager.Winbpp == 2) {
-			if (v7)
-				_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll16(v9, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
-		if (_vm->_graphicsManager.Winbpp == 1) {
-			if (v7)
-				_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll2(v9, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		}
+		if (v7)
+			_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		else
+			_vm->_graphicsManager.m_scroll16(v9, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();
 	}
@@ -1058,16 +959,10 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			if (v7) {
 				if (*v9 != kByteStop) {
 					_vm->_graphicsManager.Copy_WinScan_Vbe(v9, ptr);
-					if (_vm->_graphicsManager.Winbpp == 2)
-						_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					else
-						_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				}
 			} else if (*v9 != kByteStop) {
-				if (_vm->_graphicsManager.Winbpp == 1)
-					_vm->_graphicsManager.Copy_Video_Vbe(v9);
-				if (_vm->_graphicsManager.Winbpp == 2)
-					_vm->_graphicsManager.Copy_Video_Vbe16a(v9);
+				_vm->_graphicsManager.Copy_Video_Vbe16a(v9);
 			}
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.DD_VBL();
@@ -1140,7 +1035,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		f.readUint16LE();
 		f.read(v10, nbytes);
 
-		if (_vm->_graphicsManager.WinScan / _vm->_graphicsManager.Winbpp > SCREEN_WIDTH) {
+		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 			v7 = 1;
 			ptr = _vm->_globals.allocMemory(0x4B000u);
 			memcpy((void *)ptr, v10, 0x4B000u);
@@ -1154,18 +1049,10 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		} else {
 			_vm->_graphicsManager.DD_Lock();
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
-			if (_vm->_graphicsManager.Winbpp == 2) {
-				if (v7)
-					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll16(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-			if (_vm->_graphicsManager.Winbpp == 1) {
-				if (v7)
-					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll2(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
+			if (v7)
+				_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			else
+				_vm->_graphicsManager.m_scroll16(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.DD_VBL();
 		}
@@ -1216,16 +1103,10 @@ LABEL_33:
 		if (v7) {
 			if (*v10 != kByteStop) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptr);
-				if (_vm->_graphicsManager.Winbpp == 2)
-					_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll2A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 		} else if (*v10 != kByteStop) {
-			if (_vm->_graphicsManager.Winbpp == 1)
-				_vm->_graphicsManager.Copy_Video_Vbe(v10);
-			if (_vm->_graphicsManager.Winbpp == 2)
-				_vm->_graphicsManager.Copy_Video_Vbe16a(v10);
+			_vm->_graphicsManager.Copy_Video_Vbe16a(v10);
 		}
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.DD_VBL();

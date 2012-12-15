@@ -225,8 +225,6 @@ Globals::Globals() {
 	SOUNDOFF = false;
 	VOICEOFF = false;
 	XFULLSCREEN = false;
-	XFORCE16 = false;
-	XFORCE8 = false;
 	SOUNDOFF = false;
 	MUSICOFF = false;
 	VOICEOFF = false;

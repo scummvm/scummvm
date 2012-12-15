@@ -3457,9 +3457,6 @@ void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
 		int zoom = atoi(iniParams["ZOOM"].c_str());
 		_globals.XZOOM = CLIP(zoom, 25, 100);
 	}
-
-	_globals.XFORCE16 = iniParams["FORCE16BITS"] == "YES";
-	_globals.XFORCE8 = iniParams["FORCE8BITS"] == "YES";
 }
 
 void HopkinsEngine::INIT_SYSTEM() {

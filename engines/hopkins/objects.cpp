@@ -4204,18 +4204,10 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_graphicsManager.SHOW_PALETTE();
 					_vm->_globals.freeMemory(v1);
 					_vm->_graphicsManager.DD_Lock();
-					if (_vm->_graphicsManager.Winbpp == 2) {
-						if (_vm->_graphicsManager.SDL_ECHELLE)
-							_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-						else
-							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					}
-					if (_vm->_graphicsManager.Winbpp == 1) {
-						if (_vm->_graphicsManager.SDL_ECHELLE)
-							_vm->_graphicsManager.m_scroll2A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-						else
-							_vm->_graphicsManager.m_scroll2(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					}
+					if (_vm->_graphicsManager.SDL_ECHELLE)
+						_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					else
+						_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					_vm->_graphicsManager.DD_Unlock();
 					v2 = _vm->_graphicsManager.VESA_BUFFER;
 					v3 = _vm->_graphicsManager.VESA_SCREEN;
