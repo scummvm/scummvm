@@ -62,7 +62,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_playSoundCounter = 0;
 
 	_musicVolume = 0;
-	_musicStream = 0;
 
 	_processRandomPaletteCounter = 0;
 
@@ -96,8 +95,9 @@ ToucheEngine::~ToucheEngine() {
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 
+	stopMusic();
+	_extMusicFile.close();
 	delete _midiPlayer;
-	delete _musicStream;
 }
 
 Common::Error ToucheEngine::run() {
@@ -3340,21 +3340,20 @@ void ToucheEngine::startMusic(int num) {
 		_fData.seek(offs);
 		_midiPlayer->play(_fData, size, true);
 	} else {
-		Common::File extMusicFile;
+		_extMusicFile.close();
 		Common::String extMusicFilename = Common::String::format("track%02d.ogg", num);
-		if (!extMusicFile.open(extMusicFilename)) {
+		if (!_extMusicFile.open(extMusicFilename)) {
 			error("Unable to open %s for reading", extMusicFilename.c_str());
 		}
-		delete _musicStream;
-		_musicStream = Audio::makeVorbisStream(&extMusicFile, DisposeAfterUse::NO);
-		Audio::LoopingAudioStream loopStream(_musicStream, 0);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, &loopStream);
+		Audio::SeekableAudioStream *musicStream = Audio::makeVorbisStream(&_extMusicFile, DisposeAfterUse::NO);
+		Audio::LoopingAudioStream *loopStream = new Audio::LoopingAudioStream(musicStream, 0);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream);
 		_mixer->setChannelVolume(_musicHandle, _musicVolume);
-		extMusicFile.close();
 	}
 }
 
 void ToucheEngine::stopMusic() {
+	debug(1, "stopMusic()");
 	if (_midiPlayer)
 		_midiPlayer->stop();
 	else {
@@ -3369,6 +3368,7 @@ int ToucheEngine::getMusicVolume() {
 }
 
 void ToucheEngine::setMusicVolume(int volume) {
+	debug(1, "setMusicVolume(%d)", volume);
 	_musicVolume = CLIP(volume, 0, 255);
 
 	if (_midiPlayer)
@@ -3379,6 +3379,7 @@ void ToucheEngine::setMusicVolume(int volume) {
 }
 
 void ToucheEngine::adjustMusicVolume(int diff) {
+	debug(1, "adjustMusicVolume(%d)", diff);
 	_musicVolume = CLIP(_musicVolume + diff, 0, 255);
 
 	if (_midiPlayer)

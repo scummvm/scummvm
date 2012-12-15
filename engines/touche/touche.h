@@ -649,7 +649,7 @@ protected:
 
 	int _musicVolume;
 	Audio::SoundHandle _musicHandle;
-	Audio::SeekableAudioStream *_musicStream;
+	Common::File _extMusicFile;
 
 	void initMusic();
 	void startMusic(int num);
