@@ -215,16 +215,12 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
  * Straight rendering with transparency support, Mac variant
  */
 static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
-	// TODO: Finish off clipping
+	int yClip = 0;
 
 	if (applyClipping) {
 		// Adjust the height down to skip any bottom clipping
 		pObj->height -= pObj->botClip;
-
-		// Make adjustment for the top clipping row
-		srcP += sizeof(uint16) * ((pObj->width + 3) >> 2) * (pObj->topClip >> 2);
-		pObj->height -= pObj->topClip;
-		pObj->topClip %= 4;
+		yClip = pObj->topClip;
 	}
 
 	// Simple RLE-like scheme: the two first bytes of each data chunk determine
@@ -234,32 +230,61 @@ static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 
 	// Vertical loop
 	for (int y = 0; y < pObj->height; ++y) {
+		// Get the start of the next line output
+		uint8 *tempDest = destP;
+
+		int leftClip = applyClipping ? pObj->leftClip : 0;
+		int rightClip = applyClipping ? pObj->rightClip : 0;
+
 		// Horizontal loop
 		for (int x = 0; x < pObj->width; ) {
 			byte repeatBytes = *srcP++;
-			if (repeatBytes > 0) {
-				byte fillColor = *srcP++;
-				if (fillColor > 0)	// color 0 is transparent
-					memset(destP, fillColor, repeatBytes);
-				destP += repeatBytes;
-				x += repeatBytes;
-			} else {
-				byte copyBytes = *srcP++;
-				for (int z = 0; z < copyBytes; ++z) {
-					if (*srcP > 0)	// color 0 is transparent
-						*destP = *srcP;
-					srcP++;
-					destP++;
+
+			if (repeatBytes) {
+				uint clipAmount = MIN<int>(repeatBytes, leftClip);
+				leftClip -= clipAmount;
+				x += clipAmount;
+
+				// Repeat of a given color
+				byte color = *srcP++;
+				int runLength = repeatBytes - clipAmount;
+
+				int rptLength = MAX(MIN(runLength, pObj->width - rightClip - x), 0);
+				if (yClip == 0) {
+					if (color != 0)
+						memset(tempDest, color, rptLength);
+					tempDest += rptLength;
 				}
-				// Round up to the next even number
-				if (copyBytes % 2)
-					srcP++;
-				x += copyBytes;
+
+				x += runLength;
+			} else {
+				// Copy a specified sequence length of pixels
+				byte copyBytes = *srcP++;
+
+				uint clipAmount = MIN<int>(copyBytes, leftClip);
+				leftClip -= clipAmount;
+				x += clipAmount;
+
+				srcP += clipAmount;
+
+				int runLength = copyBytes - clipAmount;
+				int rptLength = MAX(MIN(runLength, pObj->width - rightClip - x), 0);
+				if (yClip == 0) {
+					memmove(tempDest, srcP, rptLength);
+					tempDest += rptLength;
+				}
+
+				int overflow = (copyBytes % 2) == 0 ? 0 : 2 - (copyBytes % 2);
+				x += runLength;
+				srcP += runLength + overflow;
 			}
 		}	// horizontal loop
 
 		// Move to next line
-		destP += (SCREEN_WIDTH - pObj->width);
+		if (yClip > 0)
+			--yClip;
+		else
+			destP += SCREEN_WIDTH;
 	}	// vertical loop
 }
 
