@@ -29,6 +29,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      protection, this extra line can be toggled by the ScummVM copy protection
      command line option.
 
+  SAGA:
+   - Added music support for the Macintosh version of I Have No Mouth and, I
+     Must Scream.
+
   SCUMM:
    - Implemented Monkey Island 2 Macintosh's audio driver. Now we properly
      support its sample based audio output. The same output is also used for
