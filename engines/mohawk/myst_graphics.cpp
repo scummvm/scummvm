@@ -209,14 +209,14 @@ void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 	_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
 }
 
-void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {
+void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 steps, uint16 delay) {
 
 	// Do not artificially delay during transitions
 	int oldEnableDrawingTimeSimulation = _enableDrawingTimeSimulation;
 	_enableDrawingTimeSimulation = 0;
 
 	switch (type) {
-	case 0:	{
+	case kTransitionLeftToRight:	{
 			debugC(kDebugScript, "Left to Right");
 
 			uint16 step = (rect.right - rect.left) / steps;
@@ -239,7 +239,7 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 			}
 		}
 		break;
-	case 1:	{
+	case kTransitionRightToLeft:	{
 			debugC(kDebugScript, "Right to Left");
 
 			uint16 step = (rect.right - rect.left) / steps;
@@ -262,7 +262,16 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 			}
 		}
 		break;
-	case 5:	{
+	case kTransitionDissolve: {
+			debugC(kDebugScript, "Dissolve");
+
+			for (int16 step = 0; step < 8; step++) {
+				simulatePreviousDrawDelay(rect);
+				transitionDissolve(rect, step);
+			}
+		}
+		break;
+	case kTransitionTopToBottom:	{
 			debugC(kDebugScript, "Top to Bottom");
 
 			uint16 step = (rect.bottom - rect.top) / steps;
@@ -285,7 +294,7 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 			}
 		}
 		break;
-	case 6:	{
+	case kTransitionBottomToTop:	{
 			debugC(kDebugScript, "Bottom to Top");
 
 			uint16 step = (rect.bottom - rect.top) / steps;
@@ -308,16 +317,153 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 			}
 		}
 		break;
-	default:
-		warning("Unknown Update Direction");
+	case kTransitionPartToRight: {
+			debugC(kDebugScript, "Partial left to right");
 
+			transitionPartialToRight(rect, 75, 3);
+		}
+		break;
+	case kTransitionPartToLeft: {
+			debugC(kDebugScript, "Partial right to left");
+
+			transitionPartialToLeft(rect, 75, 3);
+		}
+		break;
+	default:
 		//TODO: Replace minimal implementation
+		warning("Unknown transition %d", type);
+		// Fallthrough
+	case kTransitionCopy:
 		copyBackBufferToScreen(rect);
 		_vm->_system->updateScreen();
 		break;
 	}
 
 	_enableDrawingTimeSimulation = oldEnableDrawingTimeSimulation;
+}
+
+
+void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
+	static const bool pattern[][4][4] = {
+		{
+			{ true,  false, false, false },
+			{ false, false, false, false },
+			{ false, false, true,  false },
+			{ false, false, false, false }
+		},
+		{
+			{ false, false, true,  false },
+			{ false, false, false, false },
+			{ true,  false, false, false },
+			{ false, false, false, false }
+		},
+		{
+			{ false, false, false, false },
+			{ false, true,  false, false },
+			{ false, false, false, false },
+			{ false, false, false, true  }
+		},
+		{
+			{ false, false, false, false },
+			{ false, false, false, true  },
+			{ false, false, false, false },
+			{ false, true,  false, false }
+		},
+		{
+			{ false, false, false, false },
+			{ false, false, true,  false },
+			{ false, true,  false, false },
+			{ false, false, false, false }
+		},
+		{
+			{ false, true,  false, false },
+			{ false, false, false, false },
+			{ false, false, false, false },
+			{ false, false, true,  false }
+		},
+		{
+			{ false, false, false, false },
+			{ true,  false, false, false },
+			{ false, false, false, true  },
+			{ false, false, false, false }
+		},
+		{
+			{ false, false, false, true  },
+			{ false, false, false, false },
+			{ false, false, false, false },
+			{ true,  false, false, false }
+		}
+	};
+
+	rect.clip(_viewport);
+
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+
+	for (uint16 y = rect.top; y < rect.bottom; y++) {
+		const bool *linePattern = pattern[step][y % 4];
+
+		if (!linePattern[0] && !linePattern[1] && !linePattern[2] && !linePattern[3])
+			continue;
+
+		for (uint16 x = rect.left; x < rect.right; x++) {
+			if (linePattern[x % 4]) {
+				if (_pixelFormat.bytesPerPixel == 2) {
+					uint16 *dst = (uint16 *)screen->getBasePtr(x, y);
+					*dst = *(const uint16 *)_backBuffer->getBasePtr(x, y);
+				} else {
+					uint32 *dst = (uint32 *)screen->getBasePtr(x, y);
+					*dst = *(const uint32 *)_backBuffer->getBasePtr(x, y);
+				}
+			}
+		}
+	}
+
+	_vm->_system->unlockScreen();
+	_vm->_system->updateScreen();
+}
+
+void MystGraphics::transitionPartialToRight(Common::Rect rect, uint32 width, uint32 steps)
+{
+	rect.clip(_viewport);
+
+	uint32 stepWidth = width / steps;
+	Common::Rect srcRect = Common::Rect(rect.right, rect.top, rect.right, rect.bottom);
+	Common::Rect dstRect = Common::Rect(rect.left, rect.top, rect.left, rect.bottom);
+
+	for (uint step = 1; step <= steps; step++) {
+		dstRect.right = dstRect.left + step * stepWidth;
+		srcRect.left = srcRect.right - step * stepWidth;
+
+		simulatePreviousDrawDelay(dstRect);
+		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
+				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->_system->updateScreen();
+	}
+
+	copyBackBufferToScreen(rect);
+	_vm->_system->updateScreen();
+}
+
+void MystGraphics::transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps)
+{
+	rect.clip(_viewport);
+
+	uint32 stepWidth = width / steps;
+	Common::Rect srcRect = Common::Rect(rect.left, rect.top, rect.left, rect.bottom);
+	Common::Rect dstRect = Common::Rect(rect.right, rect.top, rect.right, rect.bottom);
+
+	for (uint step = 1; step <= steps; step++) {
+		dstRect.left = dstRect.right - step * stepWidth;
+		srcRect.right = srcRect.left + step * stepWidth;
+
+		simulatePreviousDrawDelay(dstRect);
+		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
+				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->_system->updateScreen();
+	}
+
+	copyBackBufferToScreen(rect);
+	_vm->_system->updateScreen();
 }
 
 void MystGraphics::drawRect(Common::Rect rect, RectState state) {

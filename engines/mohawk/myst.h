@@ -75,6 +75,20 @@ enum {
 	kStoneshipStack			// Stoneship Age
 };
 
+// Transitions
+enum TransitionType {
+	kTransitionLeftToRight	= 0,
+	kTransitionRightToLeft	= 1,
+	kTransitionUnk2			= 2,
+	kTransitionDissolve		= 4,
+	kTransitionTopToBottom	= 5,
+	kTransitionBottomToTop	= 6,
+	kTransitionPartToRight	= 9,
+	kTransitionPartToLeft	= 10,
+	kTransitionCopy			= 11,
+	kNoTransition			= 999
+};
+
 const uint16 kMasterpieceOnly = 0xFFFF;
 
 struct MystCondition {
@@ -154,7 +168,7 @@ public:
 	void reloadSaveList();
 
 	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
-	void changeToCard(uint16 card, bool updateScreen);
+	void changeToCard(uint16 card, TransitionType transition);
 	uint16 getCurCard() { return _curCard; }
 	uint16 getCurStack() { return _curStack; }
 	void setMainCursor(uint16 cursor);

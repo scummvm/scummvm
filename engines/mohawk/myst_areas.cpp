@@ -70,10 +70,30 @@ MystResource::~MystResource() {
 }
 
 void MystResource::handleMouseUp() {
-	if (_dest != 0)
-		_vm->changeToCard(_dest, true);
-	else
+	if (_dest == 0) {
 		warning("Movement type resource with null destination at position (%d, %d), (%d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
+		return;
+	}
+
+	uint16 opcode;
+
+	switch (type) {
+	case kMystForwardArea:
+		opcode = 6;
+		break;
+	case kMystLeftArea:
+		opcode = 8;
+		break;
+	case kMystRightArea:
+		opcode = 7;
+		break;
+	default:
+		opcode = 48;
+		break;
+	}
+
+	_vm->_scriptParser->setInvokingResource(this);
+	_vm->_scriptParser->runOpcode(opcode, 0);
 }
 
 bool MystResource::canBecomeActive() {

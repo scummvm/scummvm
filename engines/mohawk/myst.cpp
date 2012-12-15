@@ -523,7 +523,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 			_video->playMovieBlockingCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
 	}
 
-	changeToCard(card, true);
+	changeToCard(card, kTransitionCopy);
 
 	if (linkDstSound)
 		_sound->playSoundBlocking(linkDstSound);
@@ -549,7 +549,7 @@ void MohawkEngine_Myst::drawCardBackground() {
 	_gfx->copyImageToBackBuffer(getCardBackgroundId(), Common::Rect(0, 0, 544, 332));
 }
 
-void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
+void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	debug(2, "changeToCard(%d)", card);
 
 	_scriptParser->disablePersistentScripts();
@@ -629,9 +629,11 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 	}
 
 	// Make sure the screen is updated
-	if (updateScreen) {
-		_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-		_system->updateScreen();
+	if (transition != kNoTransition) {
+		if (!_gameState->_globals.transitions)
+			transition = kTransitionCopy;
+
+		_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
 	}
 
 	// Make sure we have the right cursor showing

@@ -1043,7 +1043,7 @@ void Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	// No page or white page
 	if (!_globals.heldPage || _globals.heldPage == 13) {
-		_vm->changeToCard(cardIdBookCover, true);
+		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
 		return;
 	}
 
@@ -1085,7 +1085,7 @@ void Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	// Wrong book
 	if (bookVar != var) {
-		_vm->changeToCard(cardIdBookCover, true);
+		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
 		return;
 	}
 
@@ -1111,9 +1111,9 @@ void Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 		else
 			_globals.currentAge = 10;
 
-		_vm->changeToCard(cardIdLose, true);
+		_vm->changeToCard(cardIdLose, kTransitionDissolve);
 	} else {
-		_vm->changeToCard(cardIdBookCover, true);
+		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
 	}
 }
 
@@ -1300,7 +1300,7 @@ void Myst::imagerValidation_run() {
 
 		if (_imagerValidationStep == 11) {
 			_imagerValidationStep = 0;
-			_vm->changeToCard(_imagerValidationCard, true);
+			_vm->changeToCard(_imagerValidationCard, kTransitionBottomToTop);
 		} else {
 			_startTime = time + 100;
 		}
@@ -1475,10 +1475,10 @@ void Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			if (soundId)
 				_vm->_sound->replaceSoundMyst(soundId);
 
-			_vm->changeToCard(4103, false);
+			_vm->changeToCard(4103, kNoTransition);
 
 			Common::Rect screenRect = Common::Rect(544, 333);
-			_vm->_gfx->runTransition(0, screenRect, 2, 5);
+			_vm->_gfx->runTransition(kTransitionLeftToRight, screenRect, 2, 5);
 		}
 		_tempVar = 1;
 	} else {
@@ -3296,7 +3296,7 @@ void Myst::libraryBookcaseTransform_run(void) {
 
 		if (_state.libraryBookcaseDoor) {
 			_vm->_gfx->copyImageSectionToBackBuffer(11179, Common::Rect(0, 0, 106, 81), Common::Rect(0, 72, 106, 153));
-			_vm->_gfx->runTransition(6, Common::Rect(0, 72, 106, 153), 5, 10);
+			_vm->_gfx->runTransition(kTransitionBottomToTop, Common::Rect(0, 72, 106, 153), 5, 10);
 			_vm->_sound->playSoundBlocking(7348);
 			_vm->_sound->replaceBackgroundMyst(4348, 16384);
 		} else {

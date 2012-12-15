@@ -341,7 +341,7 @@ void Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 a
 	_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
 	_vm->_system->updateScreen();
 
-	_vm->changeToCard(cardId, true);
+	_vm->changeToCard(cardId, kTransitionPartToLeft);
 
 	if (argc == 3) {
 		uint16 volume = argv[2];
