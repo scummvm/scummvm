@@ -44,6 +44,10 @@ Mechanical::Mechanical(MohawkEngine_Myst *vm) :
 	_fortressRotationSpeed = 0;
 	_fortressSimulationSpeed = 0;
 	_gearsWereRunning = false;
+
+	_fortressRotationShortMovieWorkaround = false;
+	_fortressRotationShortMovieCount = 0;
+	_fortressRotationShortMovieLast = 0;
 }
 
 Mechanical::~Mechanical() {
@@ -785,6 +789,20 @@ void Mechanical::fortressRotation_run() {
 
 	uint32 moviePosition = Audio::Timestamp(_vm->_video->getTime(gears), 600).totalNumberOfFrames();
 
+	// Myst ME short movie workaround, explained in o_fortressRotation_init
+	if (_fortressRotationShortMovieWorkaround) {
+		// Detect if we just looped
+		if (ABS<int32>(_fortressRotationShortMovieLast - 3680) < 50
+				&& ABS<int32>(moviePosition) < 50) {
+			_fortressRotationShortMovieCount++;
+		}
+
+		_fortressRotationShortMovieLast = moviePosition;
+
+		// Simulate longer movie
+		moviePosition += 3600 * _fortressRotationShortMovieCount;
+	}
+
 	int32 positionInQuarter = 900 - (moviePosition + 900) % 1800;
 
 	// Are the gears moving?
@@ -824,7 +842,13 @@ void Mechanical::fortressRotation_run() {
 		_fortressPosition = (moviePosition + 900) / 1800 % 4;
 
 		_vm->_video->setVideoRate(gears, 0);
-		_vm->_video->seekToTime(gears, Audio::Timestamp(0, 1800 * _fortressPosition, 600));
+
+		if (!_fortressRotationShortMovieWorkaround) {
+			_vm->_video->seekToTime(gears, Audio::Timestamp(0, 1800 * _fortressPosition, 600));
+		} else {
+			_vm->_video->seekToTime(gears, Audio::Timestamp(0, 1800 * (_fortressPosition % 2), 600));
+		}
+
 		_vm->_sound->playSoundBlocking(_fortressRotationSounds[_fortressPosition]);
 
 		_gearsWereRunning = false;
@@ -847,6 +871,22 @@ void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uin
 	_fortressRotationSounds[3] = argv[3];
 
 	_fortressRotationBrake = 0;
+
+	// WORKAROUND for the tower rotation bug in Myst ME.
+	// The original engine only allowed to visit two out of the three small islands,
+	// preventing the game from being fully completable.
+	// The fortress rotation is computed from the current position in the movie
+	// hcgears.mov. The version of this movie that shipped with the ME edition is
+	// too short to allow to visit all the islands.
+	// ScummVM simulates a longer movie by counting the number of times the movie
+	// looped and adding that time to the current movie position.
+	// Hence allowing the fortress position to be properly computed.
+	uint32 movieDuration = _vm->_video->getDuration(gears).convertToFramerate(600).totalNumberOfFrames();
+	if (movieDuration == 3680) {
+		_fortressRotationShortMovieWorkaround = true;
+		_fortressRotationShortMovieCount = 0;
+		_fortressRotationShortMovieLast = 0;
+	}
 
 	_fortressRotationRunning = true;
 	_gearsWereRunning = false;

@@ -111,6 +111,10 @@ private:
 	uint16 _fortressRotationSounds[4]; // 86 to 92
 	MystResourceType6 *_fortressRotationGears; // 172
 
+	bool _fortressRotationShortMovieWorkaround;
+	uint32 _fortressRotationShortMovieCount;
+	uint32 _fortressRotationShortMovieLast;
+
 	bool _fortressSimulationRunning;
 	bool _fortressSimulationInit; // 94
 	uint16 _fortressSimulationSpeed; // 96
