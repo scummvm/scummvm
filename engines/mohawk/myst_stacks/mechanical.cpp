@@ -81,9 +81,9 @@ void Mechanical::setupOpcodes() {
 	OPCODE(121, o_elevatorWindowMovie);
 	OPCODE(122, o_elevatorGoMiddle);
 	OPCODE(123, o_elevatorTopMovie);
-	OPCODE(124, opcode_124);
+	OPCODE(124, o_fortressRotationSetPosition);
 	OPCODE(125, o_mystStaircaseMovie);
-	OPCODE(126, opcode_126);
+	OPCODE(126, o_elevatorWaitTimeout);
 	OPCODE(127, o_crystalEnterYellow);
 	OPCODE(128, o_crystalLeaveYellow);
 	OPCODE(129, o_crystalEnterGreen);
@@ -110,7 +110,6 @@ void Mechanical::setupOpcodes() {
 void Mechanical::disablePersistentScripts() {
 	_fortressSimulationRunning = false;
 	_elevatorRotationLeverMoving = false;
-	_elevatorGoingMiddle = false;
 	_birdSinging = false;
 	_fortressRotationRunning = false;
 }
@@ -606,30 +605,33 @@ void Mechanical::elevatorGoMiddle_run() {
 				_vm->_gfx->copyBackBufferToScreen(Common::Rect(10, 137, 61, 165));
 				_vm->_system->updateScreen();
 			 }
-		} else if (_elevatorInCabin) {
+		} else {
 			_elevatorTooLate = true;
-
-			// Elevator going to middle animation
-			_vm->_cursor->hideCursor();
-			_vm->_sound->playSoundBlocking(11120);
-			_vm->_gfx->copyImageToBackBuffer(6118, Common::Rect(544, 333));
-			_vm->_sound->replaceSoundMyst(12120);
-			_vm->_gfx->runTransition(2, Common::Rect(177, 0, 370, 333), 25, 0);
-			_vm->_sound->playSoundBlocking(13120);
-			_vm->_sound->replaceSoundMyst(8120);
-			_vm->_gfx->copyImageToBackBuffer(6327, Common::Rect(544, 333));
-			_vm->_system->delayMillis(500);
-			_vm->_sound->replaceSoundMyst(9120);
-			static uint16 moviePos[2] = { 3540, 5380 };
-			o_elevatorWindowMovie(121, 0, 2, moviePos);
-			_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-			_vm->_sound->replaceSoundMyst(10120);
-			_vm->_cursor->showCursor();
-
 			_elevatorGoingMiddle = false;
-			_elevatorPosition = 1;
 
-			_vm->changeToCard(6327, true);
+			if (_elevatorInCabin) {
+
+				// Elevator going to middle animation
+				_vm->_cursor->hideCursor();
+				_vm->_sound->playSoundBlocking(11120);
+				_vm->_gfx->copyImageToBackBuffer(6118, Common::Rect(544, 333));
+				_vm->_sound->replaceSoundMyst(12120);
+				_vm->_gfx->runTransition(2, Common::Rect(177, 0, 370, 333), 25, 0);
+				_vm->_sound->playSoundBlocking(13120);
+				_vm->_sound->replaceSoundMyst(8120);
+				_vm->_gfx->copyImageToBackBuffer(6327, Common::Rect(544, 333));
+				_vm->_system->delayMillis(500);
+				_vm->_sound->replaceSoundMyst(9120);
+				static uint16 moviePos[2] = { 3540, 5380 };
+				o_elevatorWindowMovie(121, 0, 2, moviePos);
+				_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+				_vm->_sound->replaceSoundMyst(10120);
+				_vm->_cursor->showCursor();
+
+				_elevatorPosition = 1;
+
+				_vm->changeToCard(6327, true);
+			}
 		}
 	}
 }
@@ -645,16 +647,18 @@ void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *
 	_vm->_video->waitUntilMovieEnds(window);
 }
 
-void Mechanical::opcode_124(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Set fortress position", op);
 
-	if (argc == 0) {
-		// Used by Card 6156 (Fortress Rotation Controls)
-		// Called when Red Exit Button Pressed to raise Elevator
+	VideoHandle gears = _fortressRotationGears->playMovie();
+	uint32 moviePosition = Audio::Timestamp(_vm->_video->getTime(gears), 600).totalNumberOfFrames();
 
-		// TODO: Fill in Code...
-	} else
-		unknown(op, var, argc, argv);
+	// Myst ME short movie workaround, explained in o_fortressRotation_init
+	if (_fortressRotationShortMovieWorkaround) {
+		moviePosition += 3600 * _fortressRotationShortMovieCount;
+	}
+
+	_fortressPosition = (moviePosition + 900) / 1800 % 4;
 }
 
 void Mechanical::o_mystStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -663,17 +667,14 @@ void Mechanical::o_mystStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16
 	_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("sstairs", kMechanicalStack), 199, 108);
 }
 
-void Mechanical::opcode_126(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Mechanical::o_elevatorWaitTimeout(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Wait for the elevator to go middle", op);
 
-	if (argc == 0) {
-		// Used by Card 6120 (Fortress Elevator)
-		// Called when Red Exit Button Pressed to raise Elevator and
-		// exit is clicked...
-
-		// TODO: Fill in Code...
-	} else
-		unknown(op, var, argc, argv);
+	// Wait while the elevator times out
+	while (_elevatorGoingMiddle) {
+		runPersistentScripts();
+		_vm->skippableWait(10);
+	}
 }
 
 void Mechanical::o_crystalEnterYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
