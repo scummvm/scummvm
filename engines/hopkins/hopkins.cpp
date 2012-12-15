@@ -1774,9 +1774,9 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 5:
-			_globals.Max_Propre = _globals.SORTIE;
-			_globals.Max_Ligne_Long = _globals.SORTIE;
-			_globals.Max_Propre_Gen = _globals.SORTIE;
+			_globals.Max_Propre = 5;
+			_globals.Max_Ligne_Long = 5;
+			_globals.Max_Propre_Gen = 5;
 			_globals.NOSPRECRAN = true;
 			_globals.Max_Perso_Y = 455;
 			if (_globals.SAUVEGARDE->data[svField80]) {
