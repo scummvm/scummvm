@@ -36,7 +36,6 @@ namespace Hopkins {
 GraphicsManager::GraphicsManager() {
 	_lockCtr = 0;
 	SDL_MODEYES = false;
-	SDL_ECHELLE = 0;
 	XSCREEN = YSCREEN = 0;
 	WinScan = 0;
 	PAL_PIXELS = NULL;
@@ -101,24 +100,6 @@ void GraphicsManager::setParent(HopkinsEngine *vm) {
 
 void GraphicsManager::SET_MODE(int width, int height) {
 	if (!SDL_MODEYES) {
-		SDL_ECHELLE = 0;
-
-		if (_vm->_globals.XSETMODE == 1)
-			SDL_ECHELLE = 0;
-		if (_vm->_globals.XSETMODE == 2)
-			SDL_ECHELLE = 25;
-		if (_vm->_globals.XSETMODE == 3)
-			SDL_ECHELLE = 50;
-		if (_vm->_globals.XSETMODE == 4)
-			SDL_ECHELLE = 75;
-		if (_vm->_globals.XSETMODE == 5)
-			SDL_ECHELLE = _vm->_globals.XZOOM;
-
-		if (SDL_ECHELLE) {
-			width = zoomIn(width, SDL_ECHELLE);
-			height = zoomIn(height, SDL_ECHELLE);
-		}
-
 		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		initGraphics(width, height, true, &pixelFormat16);
 
@@ -217,11 +198,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 		max_x = SCREEN_WIDTH;
 		DD_Lock();
 		Cls_Video();
-		if (SDL_ECHELLE)
-			m_scroll16A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		else
-			m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-
+		m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_Unlock();
 	} else {
 		SCANLINE(SCREEN_WIDTH * 2);
@@ -232,10 +209,7 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 
 		if (MANU_SCROLL == 1) {
 			DD_Lock();
-			if (SDL_ECHELLE)
-				m_scroll16A(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			DD_Unlock();
 		}
 	}
@@ -532,7 +506,6 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 				*(uint16 *)destP = pixelWord;
 				++srcP;
 				destP += 2;
-				Agr_x += SDL_ECHELLE;
 				if ((unsigned int)Agr_x >= 100) {
 					Agr_x -= 100;
 					*(uint16 *)destP = pixelWord;
@@ -547,8 +520,6 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			destP = WinScan + destCopyP;
 			if (Agr_Flag_y == 1)
 				break;
-
-			Agr_y += SDL_ECHELLE;
 
 			if ((unsigned int)Agr_y < 100)
 				break;
@@ -695,10 +666,7 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 		}
 
 		setpal_vga256(palData2);
-		if (SDL_ECHELLE)
-			m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		else
-			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_VBL();
 	}
 
@@ -706,10 +674,7 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 	setpal_vga256(palette);
 
 	// Refresh the screen
-	if (SDL_ECHELLE)
-		m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	else
-		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	DD_VBL();
 }
 
@@ -731,10 +696,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 		} while (palIndex < PALETTE_BLOCK_SIZE);
 
 		setpal_vga256(palData);
-		if (SDL_ECHELLE)
-			m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		else
-			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_VBL();
 
 		int palCtr3 = 0;
@@ -750,11 +712,7 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 				} while (palCtr4 < (PALETTE_BLOCK_SIZE));
 
 				setpal_vga256(palData);
-				if (SDL_ECHELLE)
-					m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-
+				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				DD_VBL();
 				++palCtr3;
 			} while (palMax > palCtr3);
@@ -765,23 +723,14 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 
 		setpal_vga256(palData);
 
-		if (!SDL_ECHELLE) {
-			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			return DD_VBL();
-		}
-		goto LABEL_28;
+		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		return DD_VBL();
 	} else {
 		for (int i = 0; i < PALETTE_BLOCK_SIZE; i++)
 			palData[i] = 0;
 
 		setpal_vga256(palData);
-		if (!SDL_ECHELLE) {
-			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			return DD_VBL();
-		}
-
-LABEL_28:
-		m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		return DD_VBL();
 	}
 }
@@ -812,10 +761,7 @@ void GraphicsManager::setpal_vga256(const byte *palette) {
 
 void GraphicsManager::setpal_vga256_linux(const byte *palette, const byte *surface) {
 	CHANGE_PALETTE(palette);
-	if (SDL_ECHELLE)
-		m_scroll16A(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	else
-		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	DD_VBL();
 }
 
@@ -1378,19 +1324,6 @@ void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 	}
 }
 
-int GraphicsManager::Magic_Number(signed int v) {
-	int result = v;
-
-	if (!v)
-		result = 4;
-	if (result & 1)
-		++result;
-	if (result & 2)
-		result += 2;
-
-	return result;
-}
-
 // Display VESA Segment
 void GraphicsManager::Affiche_Segment_Vesa() {
 	if (_vm->_globals.NBBLOC == 0)
@@ -1417,47 +1350,16 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 			if (bloc.x2 > (_vm->_eventsManager._startPos.x + SCREEN_WIDTH))
 				bloc.x2 = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
 
-			if (SDL_ECHELLE) {
-				// Calculate the bounds
-				int xp = Magic_Number(bloc.x1) - 4;
-				if (xp < _vm->_eventsManager._startPos.x)
-					xp = _vm->_eventsManager._startPos.x;
-				int yp = Magic_Number(bloc.y1) - 4;
-				if (yp < 0)
-					yp = 0;
-				int width = Magic_Number(bloc.x2) + 4 - xp;
-				if (width < 4)
-					width = 4;
-				int height = Magic_Number(bloc.y2) + 4 - yp;
-				if (height < 4)
-					height = 4;
+			// WORKAROUND: Original didn't lock the screen for access
+			DD_Lock();
+			m_scroll16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1 - _vm->_eventsManager._startPos.x, bloc.y1);
 
-				if ((xp - _vm->_eventsManager._startPos.x + width) > SCREEN_WIDTH)
-					xp -= 4;
-				if ((height - yp) > (SCREEN_HEIGHT - 40))
-					yp -= 4;
+			dstRect.left = bloc.x1 - _vm->_eventsManager._startPos.x;
+			dstRect.top = bloc.y1;
+			dstRect.setWidth(bloc.x2 - bloc.x1);
+			dstRect.setHeight(bloc.y2 - bloc.y1);
 
-				// WORKAROUND: Original didn't lock the screen for access
-				DD_Lock();
-				m_scroll16A(VESA_BUFFER, xp, yp, width, height, zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), zoomIn(yp, SDL_ECHELLE));
-				DD_Unlock();
-
-				dstRect.left = zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE);
-				dstRect.top = zoomIn(yp, SDL_ECHELLE);
-				dstRect.setWidth(zoomIn(width, SDL_ECHELLE));
-				dstRect.setHeight(zoomIn(height, SDL_ECHELLE));
-			} else {
-				// WORKAROUND: Original didn't lock the screen for access
-				DD_Lock();
-				m_scroll16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1 - _vm->_eventsManager._startPos.x, bloc.y1);
-
-				dstRect.left = bloc.x1 - _vm->_eventsManager._startPos.x;
-				dstRect.top = bloc.y1;
-				dstRect.setWidth(bloc.x2 - bloc.x1);
-				dstRect.setHeight(bloc.y2 - bloc.y1);
-
-				DD_Unlock();
-			}
+			DD_Unlock();
 		}
 
 		_vm->_globals.BLOC[idx].field0 = 0;
@@ -2205,10 +2107,7 @@ void GraphicsManager::NB_SCREEN() {
 	if (nbrligne == 1280)
 		Trans_bloc2(VESA_BUFFER, TABLE_COUL, 614400);
 	DD_Lock();
-	if (SDL_ECHELLE)
-		m_scroll16A(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	else
-		m_scroll16(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	m_scroll16(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	DD_Unlock();
 
 	destP = VESA_SCREEN;

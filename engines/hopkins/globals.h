@@ -340,9 +340,6 @@ public:
 	int SVGA;
 	bool internet;
 	bool PUBEXIT;
-	bool XFULLSCREEN;
-	int XSETMODE;
-	int XZOOM;
 	int PERSO_TYPE;
 	uint vitesse;
 	int INSTALL_TYPE;

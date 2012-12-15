@@ -2856,7 +2856,7 @@ void ObjectsManager::PARADISE() {
 	if (result && _vm->_globals.SAUVEGARDE->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.hideText(5);
 		if (!_vm->_globals.FORET || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
-			if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
+			if (_vm->_graphicsManager.DOUBLE_ECRAN) {
 				_vm->_graphicsManager.no_scroll = 2;
 				if (_vm->_eventsManager._startPos.x >= XSPR(0) - 320)
 					goto LABEL_64;
@@ -4204,10 +4204,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_graphicsManager.SHOW_PALETTE();
 					_vm->_globals.freeMemory(v1);
 					_vm->_graphicsManager.DD_Lock();
-					if (_vm->_graphicsManager.SDL_ECHELLE)
-						_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					else
-						_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					_vm->_graphicsManager.DD_Unlock();
 					v2 = _vm->_graphicsManager.VESA_BUFFER;
 					v3 = _vm->_graphicsManager.VESA_SCREEN;
@@ -5631,7 +5628,7 @@ LABEL_70:
 	if (_vm->_globals.PERSO_TYPE == 2)
 		SPRITE(_vm->_globals.PERSO, PERX, PERY, 0, PERI, 0, 0, 20, 127);
 	_vm->_eventsManager.setMouseXY(PERX, PERY);
-	if (_vm->_graphicsManager.DOUBLE_ECRAN == true)
+	if (_vm->_graphicsManager.DOUBLE_ECRAN)
 		_vm->_graphicsManager.SCROLL = (int16)XSPR(0) - 320;
 	VERIFTAILLE();
 	SPRITE_ON(0);

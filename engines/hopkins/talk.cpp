@@ -163,10 +163,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.DD_LOCK();
-	if (_vm->_graphicsManager.SDL_ECHELLE)
-		_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	else
-		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.DD_UNLOCK();
 	v8 = _vm->_graphicsManager.VESA_BUFFER;
 	v9 = _vm->_graphicsManager.VESA_SCREEN;
@@ -1319,10 +1316,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.DD_Lock();
-	if (_vm->_graphicsManager.SDL_ECHELLE)
-		_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	else
-		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.DD_Unlock();
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	v14 = _vm->_graphicsManager.VESA_BUFFER;

@@ -95,10 +95,6 @@ Common::Error HopkinsEngine::saveGameState(int slot, const Common::String &desc)
 Common::Error HopkinsEngine::run() {
 	_saveLoadManager.initSaves();
 
-	Common::StringMap iniParams;
-	_fileManager.loadIniFile(iniParams);
-	processIniParams(iniParams);
-
 	_globals.setConfig();
 	_fileManager.initCensorship();
 	INIT_SYSTEM();
@@ -3443,22 +3439,6 @@ int HopkinsEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void HopkinsEngine::processIniParams(Common::StringMap &iniParams) {
-	_globals.XFULLSCREEN = iniParams["FULLSCREEN"] == "YES";
-
-	_globals.XSETMODE = 1;
-	if (iniParams.contains("SETMODE")) {
-		int setMode = atoi(iniParams["SETMODE"].c_str());
-		_globals.XSETMODE = CLIP(setMode, 1, 5);
-	}
-
-	_globals.XZOOM = 0;
-	if (_globals.XSETMODE == 5 && iniParams.contains("ZOOM")) {
-		int zoom = atoi(iniParams["ZOOM"].c_str());
-		_globals.XZOOM = CLIP(zoom, 25, 100);
-	}
-}
-
 void HopkinsEngine::INIT_SYSTEM() {
 	// Set graphics mode
 	_graphicsManager.SET_MODE(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -3579,7 +3559,7 @@ void HopkinsEngine::INTRORUN() {
 				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
-				if (_graphicsManager.DOUBLE_ECRAN == true) {
+				if (_graphicsManager.DOUBLE_ECRAN) {
 					_graphicsManager.no_scroll = 2;
 					bool v3 = false;
 					_graphicsManager.SCROLL = 0;

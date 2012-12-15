@@ -41,7 +41,6 @@ public:
 	FileManager();
 	void setParent(HopkinsEngine *vm);
 
-	void loadIniFile(Common::StringMap &iniParams);
 	byte *loadFile(const Common::String &file);
 	int readStream(Common::ReadStream &stream, void *buf, size_t nbytes);
 	void initCensorship();

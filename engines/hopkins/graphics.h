@@ -55,7 +55,6 @@ private:
 public:
 	int _lockCtr;
 	bool SDL_MODEYES;
-	int SDL_ECHELLE;
 	int XSCREEN;
 	int YSCREEN;
 	int WinScan;
@@ -166,7 +165,6 @@ public:
 	void VISU_ALL();
 	void RESET_SEGMENT_VESA();
 	void Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2);
-	int Magic_Number(int v);
 	void Affiche_Segment_Vesa();
 	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx);
 	void CopyAsm(const byte *surface);

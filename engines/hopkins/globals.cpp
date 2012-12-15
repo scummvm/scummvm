@@ -124,8 +124,6 @@ Globals::Globals() {
 	MUSICVOL = 6;
 	SOUNDVOL = 6;
 	VOICEVOL = 6;
-	XSETMODE = 0;
-	XZOOM = 0;
 	g_old_anim = 0;
 	g_old_sens = 0;
 	g_old_sens2 = 0;
@@ -224,7 +222,6 @@ Globals::Globals() {
 	MUSICOFF = false;
 	SOUNDOFF = false;
 	VOICEOFF = false;
-	XFULLSCREEN = false;
 	SOUNDOFF = false;
 	MUSICOFF = false;
 	VOICEOFF = false;

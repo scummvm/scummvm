@@ -39,22 +39,6 @@ void FileManager::setParent(HopkinsEngine *vm) {
 }
 
 /**
- * Load INI File
- */
-void FileManager::loadIniFile(Common::StringMap &iniParams) {
-	// TODO: Review whether we can do something cleaner with ScummVM initialisation than
-	// just initialising the INI array as if it had read in the INI file
-
-	iniParams["FULLSCREEN"] = "NO";
-	iniParams["SETMODE"] = "1";		// 640x480
-	iniParams["ZOOM"] = "100";		// No zooming
-	iniParams["VIDEOMEM"] = "YES";
-	iniParams["FORCE8BITS"] = "NO";
-	iniParams["FORCE16BITS"] = "YES";
-	iniParams["SOUND"] = "YES";
-}
-
-/**
  * Load a file
  */
 byte *FileManager::loadFile(const Common::String &file) {

@@ -321,23 +321,17 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.DD_Unlock();
 		_vm->_graphicsManager.SCROLL = v11;
 		_vm->_graphicsManager.SCROLL_ECRAN(v11);
-		if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
+		if (_vm->_graphicsManager.DOUBLE_ECRAN) {
 			_vm->_graphicsManager.SCANLINE(0x500u);
 			_vm->_graphicsManager.max_x = 1280;
 			_vm->_graphicsManager.DD_Lock();
-			if (_vm->_graphicsManager.SDL_ECHELLE)
-				_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		} else {
 			_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
 			_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 			_vm->_graphicsManager.DD_Lock();
 			_vm->_graphicsManager.Cls_Video();
-			if (_vm->_graphicsManager.SDL_ECHELLE)
-				_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		}
 LABEL_112:
 		_vm->_graphicsManager.DD_Unlock();
@@ -401,23 +395,17 @@ LABEL_88:
 						_vm->_graphicsManager.DD_Unlock();
 						_vm->_graphicsManager.SCROLL = v11;
 						_vm->_graphicsManager.SCROLL_ECRAN(v11);
-						if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
+						if (_vm->_graphicsManager.DOUBLE_ECRAN) {
 							_vm->_graphicsManager.SCANLINE(0x500u);
 							_vm->_graphicsManager.max_x = 1280;
 							_vm->_graphicsManager.DD_Lock();
-							if (_vm->_graphicsManager.SDL_ECHELLE)
-								_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-							else
-								_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 						} else {
 							_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
 							_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 							_vm->_graphicsManager.DD_Lock();
 							_vm->_graphicsManager.Cls_Video();
-							if (_vm->_graphicsManager.SDL_ECHELLE)
-								_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-							else
-								_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 						}
 						goto LABEL_112;
 					}
@@ -449,23 +437,17 @@ LABEL_88:
 			_vm->_graphicsManager.DD_Unlock();
 			_vm->_graphicsManager.SCROLL = v11;
 			_vm->_graphicsManager.SCROLL_ECRAN(v11);
-			if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
+			if (_vm->_graphicsManager.DOUBLE_ECRAN) {
 				_vm->_graphicsManager.SCANLINE(0x500u);
 				_vm->_graphicsManager.max_x = 1280;
 				_vm->_graphicsManager.DD_Lock();
-				if (_vm->_graphicsManager.SDL_ECHELLE)
-					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			} else {
 				_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
 				_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 				_vm->_graphicsManager.DD_Lock();
 				_vm->_graphicsManager.Cls_Video();
-				if (_vm->_graphicsManager.SDL_ECHELLE)
-					_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				else
-					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			}
 			goto LABEL_112;
 		}
@@ -534,23 +516,17 @@ LABEL_114:
 	_vm->_graphicsManager.DD_Unlock();
 	_vm->_graphicsManager.SCROLL = v11;
 	_vm->_graphicsManager.SCROLL_ECRAN(v11);
-	if (_vm->_graphicsManager.DOUBLE_ECRAN == true) {
+	if (_vm->_graphicsManager.DOUBLE_ECRAN) {
 		_vm->_graphicsManager.SCANLINE(0x500u);
 		_vm->_graphicsManager.max_x = 1280;
 		_vm->_graphicsManager.DD_Lock();
-		if (_vm->_graphicsManager.SDL_ECHELLE)
-			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		else
-			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
 		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
 		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 		_vm->_graphicsManager.DD_Lock();
 		_vm->_graphicsManager.Cls_Video();
-		if (_vm->_graphicsManager.SDL_ECHELLE)
-			_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		else
-			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsManager.DD_Unlock();
 	_vm->_graphicsManager.FADE_INS();

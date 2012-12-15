@@ -435,10 +435,9 @@ LABEL_63:
 LABEL_65:
 	_vm->_globals.vitesse = 2;
 	_rateCounter = 0;
-	if (_vm->_graphicsManager.DOUBLE_ECRAN != true || _vm->_graphicsManager.no_scroll == 1) {
+	if (!_vm->_graphicsManager.DOUBLE_ECRAN || _vm->_graphicsManager.no_scroll == 1) {
 		_vm->_graphicsManager.Affiche_Segment_Vesa();
 	} else {
-		int v4;
 		if (_vm->_graphicsManager.no_scroll != 2) {
 			if (getMouseX() > _vm->_graphicsManager.SCROLL + 620)
 				_vm->_graphicsManager.SCROLL += _vm->_graphicsManager.SPEED_SCROLL;
@@ -449,33 +448,14 @@ LABEL_65:
 			_vm->_graphicsManager.SCROLL = 0;
 		if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH)
 			_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
-		if (_vm->_graphicsManager.SDL_ECHELLE)
-			v4 = _vm->_graphicsManager.Magic_Number(_vm->_graphicsManager.SCROLL);
-		else
-			v4 = _vm->_graphicsManager.SCROLL;
-		if (_vm->_graphicsManager.OLD_SCROLL == v4) {
+		if (_vm->_graphicsManager.OLD_SCROLL == _vm->_graphicsManager.SCROLL) {
 			_vm->_graphicsManager.Affiche_Segment_Vesa();
 		} else {
 			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.DD_Lock();
-			if (_vm->_graphicsManager.SDL_ECHELLE) {
-				int v5 = _vm->_graphicsManager.zoomIn(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
-				_vm->_graphicsManager.m_scroll16A(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, v5);
-				_vm->_graphicsManager.DD_Unlock();
-				_vm->_graphicsManager.dstrect[0].left = _vm->_graphicsManager.zoomIn(0, _vm->_graphicsManager.SDL_ECHELLE);
-				_vm->_graphicsManager.dstrect[0].top = _vm->_graphicsManager.zoomIn(0x14u, _vm->_graphicsManager.SDL_ECHELLE);
-				_vm->_graphicsManager.dstrect[0].setWidth(_vm->_graphicsManager.zoomIn(0x280u, _vm->_graphicsManager.SDL_ECHELLE));
-				_vm->_graphicsManager.dstrect[0].setHeight(_vm->_graphicsManager.zoomIn(0x1B8u, _vm->_graphicsManager.SDL_ECHELLE));
-			} else {
-				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, v4, 20, SCREEN_WIDTH, 440, 0, 20);
-				_vm->_graphicsManager.DD_Unlock();
-				_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
-			}
-
-			// CHECKME: Useless?
-			// if (!_vm->_globals.BPP_NOAFF) {
-			//	// SDL_UpdateRects(LinuxScr, 1, dstrect);
-			// }
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.SCROLL, 20, SCREEN_WIDTH, 440, 0, 20);
+			_vm->_graphicsManager.DD_Unlock();
+			_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
 
 			if (_vm->_globals.NBBLOC) {
 				int v10 = _vm->_globals.NBBLOC + 1;
@@ -485,40 +465,16 @@ LABEL_65:
 				}
 			}
 			_vm->_globals.NBBLOC = 0;
-			_startPos.x = v4;
-			_vm->_graphicsManager.ofscroll = v4;
-			_vm->_graphicsManager.SCROLL = v4;
+			_startPos.x = _vm->_graphicsManager.SCROLL;
+			_vm->_graphicsManager.ofscroll = _vm->_graphicsManager.SCROLL;
+			_vm->_graphicsManager.SCROLL = _vm->_graphicsManager.SCROLL;
 		}
-		_vm->_graphicsManager.OLD_SCROLL = v4;
-		_startPos.x = v4;
-		_vm->_graphicsManager.ofscroll = v4;
+		_vm->_graphicsManager.OLD_SCROLL = _vm->_graphicsManager.SCROLL;
+		_startPos.x = _vm->_graphicsManager.SCROLL;
+		_vm->_graphicsManager.ofscroll = _vm->_graphicsManager.SCROLL;
 	}
 	_curMouseButton = _mouseButton;
 	_mouseButton = 0;
-#if 0
-	// Commented by Strangerke. Looks completely useless.
-
-	if (souris_flag == true) {
-		if (btsouris != 23) {
-			if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
-/* Commented out in favour of using ScummVM cursor display
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
-				_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v12, v11);
-*/
-				goto LABEL_113;
-			}
-			if (btsouris != 23)
-				goto LABEL_113;
-		}
-		if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x && v14 > 1 && v13 > 1) {
-/* Commented out in favour of using ScummVM cursor display
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.cache_souris, v15, yp, v14, v13);
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v14 + v15, yp + v13);
-*/
-		}
-	}
-LABEL_113:
-#endif
 	_vm->_soundManager.VERIF_SOUND();
 	refreshEvents();
 }
