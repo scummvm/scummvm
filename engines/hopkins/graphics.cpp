@@ -122,8 +122,8 @@ void GraphicsManager::SET_MODE(int width, int height) {
 			bpp = 16;
 
 		if (SDL_ECHELLE) {
-			width = Reel_Zoom(width, SDL_ECHELLE);
-			height = Reel_Zoom(height, SDL_ECHELLE);
+			width = zoomIn(width, SDL_ECHELLE);
+			height = zoomIn(height, SDL_ECHELLE);
 		}
 
 		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
@@ -1587,18 +1587,18 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 
 				if (Winbpp == 2) {
 					m_scroll16A(VESA_BUFFER, xp, yp, width, height,
-						Reel_Zoom(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), Reel_Zoom(yp, SDL_ECHELLE));
+						zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), zoomIn(yp, SDL_ECHELLE));
 				} else {
 					m_scroll2A(VESA_BUFFER, xp, yp, width, height,
-						Reel_Zoom(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), Reel_Zoom(yp, SDL_ECHELLE));
+						zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE), zoomIn(yp, SDL_ECHELLE));
 				}
 
 				DD_Unlock();
 
-				dstRect.left = Reel_Zoom(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE);
-				dstRect.top = Reel_Zoom(yp, SDL_ECHELLE);
-				dstRect.setWidth(Reel_Zoom(width, SDL_ECHELLE));
-				dstRect.setHeight(Reel_Zoom(height, SDL_ECHELLE));
+				dstRect.left = zoomIn(xp - _vm->_eventsManager._startPos.x, SDL_ECHELLE);
+				dstRect.top = zoomIn(yp, SDL_ECHELLE);
+				dstRect.setWidth(zoomIn(width, SDL_ECHELLE));
+				dstRect.setHeight(zoomIn(height, SDL_ECHELLE));
 			} else {
 				// WORKAROUND: Original didn't lock the screen for access
 				DD_Lock();
@@ -1763,22 +1763,20 @@ void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, in
 	} while (yCtr != 1);
 }
 
-int GraphicsManager::Reel_Zoom(int v, int percentage) {
-	return Asm_Zoom(v, percentage);
-}
-
-int GraphicsManager::Asm_Zoom(int v, int percentage) {
+/**
+ * Compute the value of a parameter plus a given percentage
+ */
+int GraphicsManager::zoomIn( int v, int percentage ) {
 	if (v)
 		v += percentage * (long int)v / 100;
 
 	return v;
 }
 
-int GraphicsManager::Reel_Reduc(int v, int percentage) {
-	return Asm_Reduc(v, percentage);
-}
-
-int GraphicsManager::Asm_Reduc(int v, int percentage) {
+/**
+ * Compute the value of a parameter minus a given percentage
+ */
+int GraphicsManager::zoomOut(int v, int percentage) {
 	if (v)
 		v -= percentage * (long int)v / 100;
 
@@ -1830,8 +1828,8 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 						Agr_Flag_y = 0;
 						Agr_Flag_x = 0;
 						Largeur = spriteWidth;
-						int v20 = Asm_Zoom(spriteWidth, zoom2);
-						int v22 = Asm_Zoom(spriteHeight1, zoom2);
+						int v20 = zoomIn(spriteWidth, zoom2);
+						int v22 = zoomIn(spriteHeight1, zoom2);
 						if (modeFlag) {
 							v29 = v20 + dest1P;
 							if (clip_y) {
@@ -1841,7 +1839,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								int v52 = v20;
 								int v30 = 0;
 								int v31 = (uint16)clip_y;
-								while (Asm_Zoom(v30 + 1, zoom2) < v31)
+								while (zoomIn(v30 + 1, zoom2) < v31)
 									;
 								v20 = v52;
 								spritePixelsP += Largeur * v30;
@@ -1860,7 +1858,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								v29 -= v32;
 								int v62 = v22;
 								int v33 = 0;
-								while (Asm_Zoom(v33 + 1, zoom2) < v32)
+								while (zoomIn(v33 + 1, zoom2) < v32)
 									;
 								int v34 = v33;
 								v22 = v62;
@@ -1922,7 +1920,7 @@ R_Aff_Zoom_Larg_Cont1:
 								int v49 = v20;
 								int v23 = 0;
 								int v24 = (uint16)clip_y;
-								while (Asm_Zoom(v23 + 1, zoom2) < v24)
+								while (zoomIn(v23 + 1, zoom2) < v24)
 									;
 								v20 = v49;
 								spritePixelsP += Largeur * v23;
@@ -1938,7 +1936,7 @@ R_Aff_Zoom_Larg_Cont1:
 								int v50 = v20;
 								int v25 = (uint16)clip_x;
 								int v26 = 0;
-								while (Asm_Zoom(v26 + 1, zoom2) < v25)
+								while (zoomIn(v26 + 1, zoom2) < v25)
 									;
 								int v27 = v26;
 								v22 = v59;
@@ -2003,7 +2001,7 @@ Aff_Zoom_Larg_Cont1:
 						Largeur = spriteWidth;
 						Red = zoom1;
 						if (zoom1 < 100) {
-							int v37 = Asm_Reduc(spriteWidth, Red);
+							int v37 = zoomOut(spriteWidth, Red);
 							if (modeFlag) {
 								v40 = v37 + dest1P;
 								do {
@@ -2480,8 +2478,8 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 	Red_x = 0;
 	Red_y = 0;
 	if (zoom < 100) {
-		Reduc_Ecran_L = Asm_Reduc(width, Red);
-		Reduc_Ecran_H = Asm_Reduc(height, Red);
+		Reduc_Ecran_L = zoomOut(width, Red);
+		Reduc_Ecran_H = zoomOut(height, Red);
 
 		for (int yCtr = 0; yCtr < height; ++yCtr, srcP += nbrligne2) {
 			Red_y += Red;

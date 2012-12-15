@@ -52,8 +52,6 @@ private:
 	HopkinsEngine *_vm;
 
 	void CHARGE_ECRAN(const Common::String &file);
-	int Asm_Zoom(int v, int percentage);
-	int Asm_Reduc(int v, int percentage);
 public:
 	int _lockCtr;
 	bool SDL_MODEYES;
@@ -177,8 +175,8 @@ public:
 	void CopyAsm(const byte *surface);
 	void CopyAsm16(const byte *surface);
 	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
-	int Reel_Zoom(int v, int percentage);
-	int Reel_Reduc(int v, int percentage);
+	int zoomIn(int v, int percentage);
+	int zoomOut(int v, int percentage);
 	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, int modeFlag);
 	void AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex);
 	void SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);

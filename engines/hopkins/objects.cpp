@@ -792,37 +792,37 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 			v21 = _vm->_globals.Bob[idx].field36;
 		if (v21) {
 			if (v15 >= 0) {
-				v22 = _vm->_graphicsManager.Reel_Zoom(v15, v21);
+				v22 = _vm->_graphicsManager.zoomIn(v15, v21);
 			} else {
 				if (v15 < 0)
 					v15 = -v15;
-				v22 = -_vm->_graphicsManager.Reel_Zoom(v15, v21);
+				v22 = -_vm->_graphicsManager.zoomIn(v15, v21);
 			}
 			if (v6 >= 0) {
-				v17 = _vm->_graphicsManager.Reel_Zoom(v6, v21);
+				v17 = _vm->_graphicsManager.zoomIn(v6, v21);
 			} else {
 				int v9 = v15;
 				if (v15 < 0)
 					v9 = -v15;
 				v6 = v9;
-				v17 = -_vm->_graphicsManager.Reel_Zoom(v9, v21);
+				v17 = -_vm->_graphicsManager.zoomIn(v9, v21);
 			}
 		}
 
 		if (v20) {
 			if (v15 >= 0) {
-				v22 = _vm->_graphicsManager.Reel_Reduc(v15, v20);
+				v22 = _vm->_graphicsManager.zoomOut(v15, v20);
 			} else {
 				v15 = -v15;
-				v22 = -_vm->_graphicsManager.Reel_Reduc(v15, v20);
+				v22 = -_vm->_graphicsManager.zoomOut(v15, v20);
 			}
 			if (v6 >= 0) {
-				v17 = _vm->_graphicsManager.Reel_Reduc(v6, v20);
+				v17 = _vm->_graphicsManager.zoomOut(v6, v20);
 			} else {
 				int v11 = v15;
 				if (v15 < 0)
 					v11 = -v15;
-				v17 = -_vm->_graphicsManager.Reel_Reduc(v11, v20);
+				v17 = -_vm->_graphicsManager.zoomOut(v11, v20);
 			}
 		}
 
@@ -842,12 +842,12 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		int height = getHeight(_vm->_globals.Bob[idx].spriteData, _vm->_globals.Bob[idx].frameIndex);
 
 		if (v21) {
-			width = _vm->_graphicsManager.Reel_Zoom(width, v21);
-			height = _vm->_graphicsManager.Reel_Zoom(height, v21);
+			width = _vm->_graphicsManager.zoomIn(width, v21);
+			height = _vm->_graphicsManager.zoomIn(height, v21);
 		}
 		if (v20) {
-			height = _vm->_graphicsManager.Reel_Reduc(height, v20);
-			width = _vm->_graphicsManager.Reel_Reduc(width, v20);
+			height = _vm->_graphicsManager.zoomOut(height, v20);
+			width = _vm->_graphicsManager.zoomOut(width, v20);
 		}
 
 		_vm->_globals.Liste2[idx].width = width;
@@ -1066,43 +1066,43 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 
 		if (zoomPercent) {
 			if (v4 >= 0) {
-				v22 = _vm->_graphicsManager.Reel_Zoom(v4, zoomPercent);
+				v22 = _vm->_graphicsManager.zoomIn(v4, zoomPercent);
 			} else {
 				v10 = v4;
 
 				if (v4 < 0)
 					v10 = -v4;
 				v4 = v10;
-				v22 = -_vm->_graphicsManager.Reel_Zoom(v10, zoomPercent);
+				v22 = -_vm->_graphicsManager.zoomIn(v10, zoomPercent);
 			}
 
 			if (v8 >= 0) {
-				v7 = _vm->_graphicsManager.Reel_Zoom(v8, zoomPercent);
+				v7 = _vm->_graphicsManager.zoomIn(v8, zoomPercent);
 			} else {
 				v11 = v4;
 				if (v4 < 0)
 					v11 = -v4;
 				v8 = v11;
-				v7 = -_vm->_graphicsManager.Reel_Zoom(v11, zoomPercent);
+				v7 = -_vm->_graphicsManager.zoomIn(v11, zoomPercent);
 			}
 		}
 		if (reducePercent) {
 			if (v4 >= 0) {
-				v22 = _vm->_graphicsManager.Reel_Reduc(v4, reducePercent);
+				v22 = _vm->_graphicsManager.zoomOut(v4, reducePercent);
 			} else {
 				v12 = v4;
 				if (v4 < 0)
 					v12 = -v4;
 				v4 = v12;
-				v22 = -_vm->_graphicsManager.Reel_Reduc(v12, reducePercent);
+				v22 = -_vm->_graphicsManager.zoomOut(v12, reducePercent);
 			}
 			if (v8 >= 0) {
-				v7 = _vm->_graphicsManager.Reel_Reduc(v8, reducePercent);
+				v7 = _vm->_graphicsManager.zoomOut(v8, reducePercent);
 			} else {
 				v13 = v4;
 				if (v4 < 0)
 					v13 = -v4;
-				v7 = -_vm->_graphicsManager.Reel_Reduc(v13, reducePercent);
+				v7 = -_vm->_graphicsManager.zoomOut(v13, reducePercent);
 			}
 		}
 
@@ -1122,13 +1122,13 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 		height = getHeight(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
 
 		if (zoomPercent) {
-			width = _vm->_graphicsManager.Reel_Zoom(width, zoomPercent);
-			height = _vm->_graphicsManager.Reel_Zoom(height, zoomPercent);
+			width = _vm->_graphicsManager.zoomIn(width, zoomPercent);
+			height = _vm->_graphicsManager.zoomIn(height, zoomPercent);
 		}
 
 		if (reducePercent) {
-			height = _vm->_graphicsManager.Reel_Reduc(height, reducePercent);
-			width = _vm->_graphicsManager.Reel_Reduc(width, reducePercent);
+			height = _vm->_graphicsManager.zoomOut(height, reducePercent);
+			width = _vm->_graphicsManager.zoomOut(width, reducePercent);
 		}
 
 		Sprite[idx].field30 = width;
@@ -1853,21 +1853,21 @@ LABEL_241:
 				v5 = Sprite[0].fieldC;
 				if (Sprite[0].fieldC < 0)
 					v5 = -Sprite[0].fieldC;
-				v3 = _vm->_graphicsManager.Reel_Reduc(v3, v5);
+				v3 = _vm->_graphicsManager.zoomOut(v3, v5);
 				v6 = Sprite[0].fieldC;
 				if (Sprite[0].fieldC < 0)
 					v6 = -Sprite[0].fieldC;
-				v4 = _vm->_graphicsManager.Reel_Reduc(v4, v6);
+				v4 = _vm->_graphicsManager.zoomOut(v4, v6);
 			}
 			if (Sprite[0].fieldC > 0) {
 				v7 = Sprite[0].fieldC;
 				if (Sprite[0].fieldC < 0)
 					v7 = -Sprite[0].fieldC;
-				v3 = _vm->_graphicsManager.Reel_Zoom(v3, v7);
+				v3 = _vm->_graphicsManager.zoomIn(v3, v7);
 				v8 = Sprite[0].fieldC;
 				if (Sprite[0].fieldC < 0)
 					v8 = -Sprite[0].fieldC;
-				v4 = _vm->_graphicsManager.Reel_Zoom(v4, v8);
+				v4 = _vm->_graphicsManager.zoomIn(v4, v8);
 			}
 			v0 = v3 + g_old_x;
 			v58 = g_old_y + v4;
@@ -1891,21 +1891,21 @@ LABEL_23:
 			v11 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v11 = -Sprite[0].fieldC;
-			v9 = _vm->_graphicsManager.Reel_Reduc(v9, v11);
+			v9 = _vm->_graphicsManager.zoomOut(v9, v11);
 			v12 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v12 = -Sprite[0].fieldC;
-			v10 = _vm->_graphicsManager.Reel_Reduc(v10, v12);
+			v10 = _vm->_graphicsManager.zoomOut(v10, v12);
 		}
 		if (Sprite[0].fieldC > 0) {
 			v13 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v13 = -Sprite[0].fieldC;
-			v9 = _vm->_graphicsManager.Reel_Zoom(v9, v13);
+			v9 = _vm->_graphicsManager.zoomIn(v9, v13);
 			v14 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v14 = -Sprite[0].fieldC;
-			v10 = _vm->_graphicsManager.Reel_Zoom(v10, v14);
+			v10 = _vm->_graphicsManager.zoomIn(v10, v14);
 		}
 		v0 = g_old_x - v9;
 		v58 = g_old_y - v10;
@@ -1931,13 +1931,13 @@ LABEL_43:
 			v17 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v17 = -Sprite[0].fieldC;
-			v16 = _vm->_graphicsManager.Reel_Reduc(v16, v17);
+			v16 = _vm->_graphicsManager.zoomOut(v16, v17);
 		}
 		if (Sprite[0].fieldC > 0) {
 			v18 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v18 = -Sprite[0].fieldC;
-			v16 = _vm->_graphicsManager.Reel_Zoom(v16, v18);
+			v16 = _vm->_graphicsManager.zoomIn(v16, v18);
 		}
 		v0 = g_old_x;
 		v58 = g_old_y - v16;
@@ -1963,13 +1963,13 @@ LABEL_60:
 			v21 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v21 = -Sprite[0].fieldC;
-			v20 = _vm->_graphicsManager.Reel_Reduc(v20, v21);
+			v20 = _vm->_graphicsManager.zoomOut(v20, v21);
 		}
 		if (Sprite[0].fieldC > 0) {
 			v22 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v22 = -Sprite[0].fieldC;
-			v20 = _vm->_graphicsManager.Reel_Zoom(v20, v22);
+			v20 = _vm->_graphicsManager.zoomIn(v20, v22);
 		}
 		v0 = g_old_x;
 		v58 = v20 + g_old_y;
@@ -1993,21 +1993,21 @@ LABEL_77:
 			v25 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v25 = -Sprite[0].fieldC;
-			v23 = _vm->_graphicsManager.Reel_Reduc(v23, v25);
+			v23 = _vm->_graphicsManager.zoomOut(v23, v25);
 			v26 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v26 = -Sprite[0].fieldC;
-			v24 = _vm->_graphicsManager.Reel_Reduc(v24, v26);
+			v24 = _vm->_graphicsManager.zoomOut(v24, v26);
 		}
 		if (Sprite[0].fieldC > 0) {
 			v27 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v27 = -Sprite[0].fieldC;
-			v23 = _vm->_graphicsManager.Reel_Zoom(v23, v27);
+			v23 = _vm->_graphicsManager.zoomIn(v23, v27);
 			v28 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v28 = -Sprite[0].fieldC;
-			v24 = _vm->_graphicsManager.Reel_Zoom(v24, v28);
+			v24 = _vm->_graphicsManager.zoomIn(v24, v28);
 		}
 		v0 = v23 + g_old_x;
 		v58 = g_old_y + v24;
@@ -2031,21 +2031,21 @@ LABEL_96:
 			v31 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v31 = -Sprite[0].fieldC;
-			v29 = _vm->_graphicsManager.Reel_Reduc(v29, v31);
+			v29 = _vm->_graphicsManager.zoomOut(v29, v31);
 			v32 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v32 = -Sprite[0].fieldC;
-			v30 = _vm->_graphicsManager.Reel_Reduc(v30, v32);
+			v30 = _vm->_graphicsManager.zoomOut(v30, v32);
 		}
 		if (Sprite[0].fieldC > 0) {
 			v33 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v33 = -Sprite[0].fieldC;
-			v29 = _vm->_graphicsManager.Reel_Zoom(v29, v33);
+			v29 = _vm->_graphicsManager.zoomIn(v29, v33);
 			v34 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v34 = -Sprite[0].fieldC;
-			v30 = _vm->_graphicsManager.Reel_Zoom(v30, v34);
+			v30 = _vm->_graphicsManager.zoomIn(v30, v34);
 		}
 		v0 = g_old_x - v29;
 		v58 = g_old_y + v30;
@@ -2069,21 +2069,21 @@ LABEL_115:
 			v37 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v37 = -Sprite[0].fieldC;
-			v35 = _vm->_graphicsManager.Reel_Reduc(v35, v37);
+			v35 = _vm->_graphicsManager.zoomOut(v35, v37);
 			v38 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v38 = -Sprite[0].fieldC;
-			v36 = _vm->_graphicsManager.Reel_Reduc(v36, v38);
+			v36 = _vm->_graphicsManager.zoomOut(v36, v38);
 		}
 		if (Sprite[0].fieldC > 0) {
 			v39 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v39 = -Sprite[0].fieldC;
-			v35 = _vm->_graphicsManager.Reel_Zoom(v35, v39);
+			v35 = _vm->_graphicsManager.zoomIn(v35, v39);
 			v40 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v40 = -Sprite[0].fieldC;
-			v36 = _vm->_graphicsManager.Reel_Zoom(v36, v40);
+			v36 = _vm->_graphicsManager.zoomIn(v36, v40);
 		}
 		v0 = v35 + g_old_x;
 		v58 = g_old_y + v36;
@@ -2107,21 +2107,21 @@ LABEL_134:
 			v43 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v43 = -Sprite[0].fieldC;
-			v41 = _vm->_graphicsManager.Reel_Reduc(v41, v43);
+			v41 = _vm->_graphicsManager.zoomOut(v41, v43);
 			v44 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v44 = -Sprite[0].fieldC;
-			v42 = _vm->_graphicsManager.Reel_Reduc(v42, v44);
+			v42 = _vm->_graphicsManager.zoomOut(v42, v44);
 		}
 		if (Sprite[0].fieldC > 0) {
 			v45 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v45 = -Sprite[0].fieldC;
-			v41 = _vm->_graphicsManager.Reel_Zoom(v41, v45);
+			v41 = _vm->_graphicsManager.zoomIn(v41, v45);
 			v46 = Sprite[0].fieldC;
 			if (Sprite[0].fieldC < 0)
 				v46 = -Sprite[0].fieldC;
-			v42 = _vm->_graphicsManager.Reel_Zoom(v42, v46);
+			v42 = _vm->_graphicsManager.zoomIn(v42, v46);
 		}
 		v0 = g_old_x - v41;
 		v58 = g_old_y + v42;
@@ -5106,9 +5106,9 @@ int ObjectsManager::CALC_PROPRE(int idx) {
 		v2 = 20 * (5 * v4 - 165) / -67;
 	}
 	if (v2 < 0)
-		return _vm->_graphicsManager.Reel_Reduc(0x19u, -v2);
+		return _vm->_graphicsManager.zoomOut(0x19u, -v2);
 	if (v2 > 0)
-		return _vm->_graphicsManager.Reel_Zoom(0x19u, v2);
+		return _vm->_graphicsManager.zoomIn(0x19u, v2);
 
 	return v1;
 }

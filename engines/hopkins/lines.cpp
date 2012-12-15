@@ -3218,11 +3218,11 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 								v28 = -v26;
 							v48 = _vm->_globals.STAILLE[v63];
 							v45 = v63;
-							v25 = _vm->_graphicsManager.Reel_Reduc(v25, v28);
+							v25 = _vm->_graphicsManager.zoomOut(v25, v28);
 							v29 = v27;
 							if ((v27 & 0x80000000u) != 0)
 								v29 = -v27;
-							v40 = _vm->_graphicsManager.Reel_Reduc(v40, v29);
+							v40 = _vm->_graphicsManager.zoomOut(v40, v29);
 							v63 = v45;
 							v26 = v48;
 						}
@@ -3232,11 +3232,11 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 							if (v26 < 0)
 								v31 = -v26;
 							v46 = v63;
-							v25 = _vm->_graphicsManager.Reel_Zoom(v25, v31);
+							v25 = _vm->_graphicsManager.zoomIn(v25, v31);
 							v32 = v30;
 							if ((v30 & 0x80000000u) != 0)
 								v32 = -v30;
-							v40 = _vm->_graphicsManager.Reel_Zoom(v40, v32);
+							v40 = _vm->_graphicsManager.zoomIn(v40, v32);
 							v63 = v46;
 						}
 						v33 = v63 + v40;
@@ -3281,11 +3281,11 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 							v17 = -v15;
 						v47 = _vm->_globals.STAILLE[v63];
 						v43 = v63;
-						v14 = _vm->_graphicsManager.Reel_Reduc(v14, v17);
+						v14 = _vm->_graphicsManager.zoomOut(v14, v17);
 						v18 = v16;
 						if ((v16 & 0x80000000u) != 0)
 							v18 = -v16;
-						v39 = _vm->_graphicsManager.Reel_Reduc(v39, v18);
+						v39 = _vm->_graphicsManager.zoomOut(v39, v18);
 						v63 = v43;
 						v15 = v47;
 					}
@@ -3295,11 +3295,11 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 						if (v15 < 0)
 							v20 = -v15;
 						v44 = v63;
-						v14 = _vm->_graphicsManager.Reel_Zoom(v14, v20);
+						v14 = _vm->_graphicsManager.zoomIn(v14, v20);
 						v21 = v19;
 						if ((v19 & 0x80000000u) != 0)
 							v21 = -v19;
-						v39 = _vm->_graphicsManager.Reel_Zoom(v39, v21);
+						v39 = _vm->_graphicsManager.zoomIn(v39, v21);
 						v63 = v44;
 					}
 					v22 = v63 + v39;
@@ -3336,8 +3336,8 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 			do {
 				v10 = _vm->_globals.Hopkins[v51].field2;
 				v42 = v63;
-				v11 = _vm->_graphicsManager.Reel_Reduc(_vm->_globals.Hopkins[v51].field0, 0x19u);
-				v38 = _vm->_graphicsManager.Reel_Reduc(v10, 0x19u);
+				v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field0, 0x19u);
+				v38 = _vm->_graphicsManager.zoomOut(v10, 0x19u);
 				v63 = v42;
 				v12 = 0;
 				if (v11 > 0) {
@@ -3372,8 +3372,8 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 		do {
 			v6 = _vm->_globals.Hopkins[v50].field2;
 			v41 = v63;
-			v7 = _vm->_graphicsManager.Reel_Reduc(_vm->_globals.Hopkins[v50].field0, 0x19u);
-			v37 = _vm->_graphicsManager.Reel_Reduc(v6, 0x19u);
+			v7 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v50].field0, 0x19u);
+			v37 = _vm->_graphicsManager.zoomOut(v6, 0x19u);
 			v63 = v41;
 			v8 = 0;
 			if (v7 > 0) {

@@ -222,8 +222,8 @@ bool SaveLoadManager::readSavegameHeader(int slot, hopkinsSavegameHeader &header
 #define REDUCE_AMOUNT 80
 
 void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
-	int w = _vm->_graphicsManager.Reel_Reduc(SCREEN_WIDTH, REDUCE_AMOUNT);
-	int h = _vm->_graphicsManager.Reel_Reduc(SCREEN_HEIGHT - 40, REDUCE_AMOUNT);
+	int w = _vm->_graphicsManager.zoomOut(SCREEN_WIDTH, REDUCE_AMOUNT);
+	int h = _vm->_graphicsManager.zoomOut(SCREEN_HEIGHT - 40, REDUCE_AMOUNT);
 
 	Graphics::Surface thumb8;
 	thumb8.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
