@@ -52,6 +52,11 @@ List of fixed bugs in GF scripts:
 	mo.ha_door.walkOut doesn't wait for Meche has finished speaking to move Manny outside
 	his office. This patch adds a wait_for_message() to prevent this.
 
+	-Fix bug #687 "GRIM: Getting down the conveyour-belt is very difficult." - cy.lua.patchr
+	The function cy.climb_chain_box.walkOut checks if the chain is down and makes manny float
+	if it is. But the chain may be down but not on the belt if the direction of movement
+	of it is from the sea to the crane. This patch adds that missing check.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
