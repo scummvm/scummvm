@@ -124,7 +124,6 @@ public:
 	void m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
-	void Copy_Vga(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
 	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
 	void fade_in(const byte *palette, int step, const byte *surface);
 	void fade_out(const byte *palette, int step, const byte *surface);

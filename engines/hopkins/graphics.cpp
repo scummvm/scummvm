@@ -534,49 +534,6 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 	} while (yCtr != 1);
 }
 
-void GraphicsManager::Copy_Vga(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
-	const byte *srcP;
-	byte *destP;
-	int yCount;
-	int xCount;
-	byte srcByte;
-	byte *loopDestP;
-	byte *loopSrcP;
-	byte *loopSrc2P;
-	byte *tempDestP;
-	const byte *tempSrcP;
-	int yCtr;
-
-	assert(VideoPtr);
-	srcP = xp + 320 * yp + surface;
-	destP = 30 * WinScan + destX + destX + WinScan * 2 * destY + (byte *)VideoPtr->pixels;
-	yCount = height;
-
-	do {
-		yCtr = yCount;
-		xCount = width;
-		tempSrcP = srcP;
-		tempDestP = destP;
-		do {
-			srcByte = *srcP;
-			*destP = *srcP;
-			loopDestP = WinScan + destP;
-			*loopDestP = srcByte;
-			loopSrcP = loopDestP - WinScan + 1;
-			*loopSrcP = srcByte;
-			loopSrc2P = WinScan + loopSrcP;
-			*loopSrc2P = srcByte;
-			++srcP;
-			destP = loopSrc2P - WinScan + 1;
-			--xCount;
-		} while (xCount);
-
-		destP = WinScan + WinScan + tempDestP;
-		srcP = tempSrcP + 320;
-		yCount = yCtr - 1;
-	} while (yCtr != 1);
-}
-
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
 	const byte *srcP;
 	uint16 *destP;
@@ -2092,8 +2049,8 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 			_vm->_globals.COUCOU = dataP;
 		}
 	}
-	_vm->_objectsManager.FORCEZONE = 1;
-	_vm->_objectsManager.CHANGEVERBE = 0;
+	_vm->_objectsManager._forceZoneFl = true;
+	_vm->_objectsManager._changeVerbFl = false;
 }
 
 void GraphicsManager::NB_SCREEN() {

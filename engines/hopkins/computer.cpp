@@ -589,7 +589,7 @@ void ComputerManager::readText(int idx) {
  * Display breakout when Games sub-menu is selected
  */
 void ComputerManager::displayGamesSubMenu() {
-	const byte *v1 = _vm->_objectsManager.Sprite[0]._spriteData;
+	const byte *v1 = _vm->_objectsManager._sprite[0]._spriteData;
 	uint oldSpeed = _vm->_globals.vitesse;
 
 	_vm->_globals.vitesse = 1;
@@ -620,7 +620,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	_breakoutSpr = _vm->_globals.freeMemory(_breakoutSpr);
 	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
-	_vm->_objectsManager.Sprite[0]._spriteData = v1;
+	_vm->_objectsManager._sprite[0]._spriteData = v1;
 
 	_vm->_soundManager.DEL_SAMPLE(1);
 	_vm->_soundManager.DEL_SAMPLE(2);

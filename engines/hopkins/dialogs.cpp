@@ -305,7 +305,7 @@ void DialogsManager::showInventory() {
 	if (!_removeInventFl && !_inventDisplayedFl && !_vm->_globals._disableInventFl) {
 		_vm->_graphicsManager.no_scroll = 1;
 		_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
-		_vm->_objectsManager.FLAG_VISIBLE = false;
+		_vm->_objectsManager._visibleFl = false;
 		for (int v1 = 0; v1 <= 1; v1++) {
 			inventAnim();
 			_vm->_eventsManager.getMouseX();
@@ -385,7 +385,7 @@ LABEL_7:
 			int v11 = _vm->_linesManager.ZONE_OBJET(v8, v9);
 			v13 = v11;
 			if (v11 != v10)
-				_vm->_objectsManager.PARAMCADRE(v11);
+				_vm->_objectsManager.initBorder(v11);
 			if (_vm->_eventsManager._mouseCursorId != 16) {
 				if ((uint16)(_vm->_eventsManager._mouseCursorId - 1) > 1u) {
 					if (_vm->_eventsManager._mouseCursorId != 3) {
@@ -461,10 +461,8 @@ LABEL_7:
 
 		_vm->_eventsManager._mouseCursorId = 4;
 		_vm->_eventsManager.changeMouseCursor(4);
-		_vm->_objectsManager.old_cady = 0;
-		_vm->_objectsManager.cady = 0;
-		_vm->_objectsManager.old_cadx = 0;
-		_vm->_objectsManager.cadx = 0;
+		_vm->_objectsManager._oldBorderPos = Common::Point(0, 0);
+		_vm->_objectsManager._borderPos = Common::Point(0, 0);
 		_vm->_globals._disableInventFl = false;
 		_vm->_graphicsManager.no_scroll = 0;
 	}
@@ -475,14 +473,14 @@ LABEL_7:
  */
 void DialogsManager::inventAnim() {
 	if (!_vm->_globals._disableInventFl) {
-		if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager.FLAG_VISIBLE) {
+		if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager._visibleFl) {
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38,
 				_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.I_old_x, 27);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
 			--_vm->_objectsManager.FLAG_VISIBLE_EFFACE;
 		}
 
-		if (_vm->_objectsManager.FLAG_VISIBLE) {
+		if (_vm->_objectsManager._visibleFl) {
 			if (_vm->_objectsManager.I_old_x <= 1)
 				_vm->_objectsManager.I_old_x = 2;
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38,

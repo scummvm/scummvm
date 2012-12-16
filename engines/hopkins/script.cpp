@@ -1954,8 +1954,8 @@ LABEL_1141:
 			_vm->_globals.PERSO_TYPE = 1;
 			_vm->_globals.SAUVEGARDE->data[svField122] = 1;
 			_vm->_globals.HOPKINS_DATA();
-			_vm->_objectsManager.Sprite[0].field12 = 28;
-			_vm->_objectsManager.Sprite[0].field14 = 155;
+			_vm->_objectsManager._sprite[0].field12 = 28;
+			_vm->_objectsManager._sprite[0].field14 = 155;
 			_vm->_objectsManager.VERIFTAILLE();
 		}
 		if (v76 == 57) {
@@ -1964,8 +1964,8 @@ LABEL_1141:
 			_vm->_globals.PERSO_TYPE = 0;
 			_vm->_globals.SAUVEGARDE->data[svField122] = 0;
 			_vm->_globals.HOPKINS_DATA();
-			_vm->_objectsManager.Sprite[0].field12 = 34;
-			_vm->_objectsManager.Sprite[0].field14 = 190;
+			_vm->_objectsManager._sprite[0].field12 = 34;
+			_vm->_objectsManager._sprite[0].field14 = 190;
 			_vm->_objectsManager.VERIFTAILLE();
 		}
 		if (v76 == 25)

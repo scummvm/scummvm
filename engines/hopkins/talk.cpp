@@ -185,7 +185,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 }
 
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
-	_vm->_objectsManager.DESACTIVE_CURSOR = 1;
+	_vm->_objectsManager._disableCursorFl = true;
 	STATI = 1;
 	bool v7 = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
@@ -253,7 +253,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_eventsManager.changeMouseCursor(v8);
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
-	_vm->_objectsManager.DESACTIVE_CURSOR = 0;
+	_vm->_objectsManager._disableCursorFl = false;
 	_vm->_globals._disableInventFl = v7;
 	STATI = 0;
 }
@@ -736,7 +736,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 	int v4;
 	byte *v5;
 
-	_vm->_objectsManager.PRIORITY = 1;
+	_vm->_objectsManager._priorityFl = true;
 	if (!_vm->_globals.Bob[idx].field0) {
 		_vm->_objectsManager.BOB_ZERO(idx);
 		v5 = _vm->_globals.Bqe_Anim[idx].data;
@@ -1260,7 +1260,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	VISU_WAIT();
 	_vm->_graphicsManager.INI_ECRAN2(v22);
 	_vm->_globals.NOMARCHE = true;
-	_vm->_objectsManager.FORCEZONE = 1;
+	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager.NUMZONE = -1;
 	do {
 		v12 = _vm->_eventsManager.getMouseButton();
