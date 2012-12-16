@@ -353,6 +353,17 @@ public:
 	 */
 	void setDefaultHighColorFormat(const Graphics::PixelFormat &format) { _defaultHighColorFormat = format; }
 
+	/**
+	 * Set the video to decode frames in reverse.
+	 *
+	 * By default, VideoDecoder will decode forward.
+	 *
+	 * @note This is used by setRate()
+	 * @note This will not work if an audio track is present
+	 * @param reverse true for reverse, false for forward
+	 * @return true on success, false otherwise
+	 */
+	bool setReverse(bool reverse);
 
 	/////////////////////////////////////////
 	// Audio Control
@@ -551,6 +562,21 @@ protected:
 		 * should only be used by VideoDecoder::seekToFrame().
 		 */
 		virtual Audio::Timestamp getFrameTime(uint frame) const;
+
+		/**
+		 * Set the video track to play in reverse or forward.
+		 *
+		 * By default, a VideoTrack must decode forward.
+		 *
+		 * @param reverse true for reverse, false for forward
+		 * @return true for success, false for failure
+		 */
+		virtual bool setReverse(bool reverse) { return !reverse; }
+
+		/**
+		 * Is the video track set to play in reverse?
+		 */
+		virtual bool isReversed() const { return false; }
 	};
 
 	/**
