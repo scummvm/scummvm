@@ -144,7 +144,7 @@ Common::Error SaveLoadManager::save(int slot, const Common::String &saveName) {
 
 	// Set up the inventory
 	for (int i = 0; i < 35; ++i)
-		_vm->_globals.SAUVEGARDE->inventory[i] = _vm->_globals._inventory[i];
+		_vm->_globals.SAUVEGARDE->_inventory[i] = _vm->_globals._inventory[i];
 
 	/* Create the savegame */
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
@@ -196,7 +196,7 @@ Common::Error SaveLoadManager::restore(int slot) {
 
 	// Unpack the inventory
 	for (int i = 0; i < 35; ++i)
-		_vm->_globals._inventory[i] = _vm->_globals.SAUVEGARDE->inventory[i];
+		_vm->_globals._inventory[i] = _vm->_globals.SAUVEGARDE->_inventory[i];
 
 	// Set variables from loaded data as necessary
 	_vm->_globals.SAUVEGARDE->data[svField10] = slot;
@@ -254,12 +254,12 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
 	s.syncBytes(&_vm->_globals.SAUVEGARDE->data[0], 0x802);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->cloneHopkins);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->realHopkins);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->samantha);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_cloneHopkins);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_realHopkins);
+	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_samantha);
 
 	for (int i = 0; i < 35; ++i)
-		s.syncAsSint16LE(_vm->_globals.SAUVEGARDE->inventory[i]);
+		s.syncAsSint16LE(_vm->_globals.SAUVEGARDE->_inventory[i]);
 }
 
 void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLocation &item) {

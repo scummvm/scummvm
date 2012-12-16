@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "hopkins/globals.h"
 
+#define MAX_SPRITE 5
 namespace Hopkins {
 
 struct SpriteItem {
@@ -44,7 +45,7 @@ struct SpriteItem {
 	int field22;
 	int field24;
 	int field26;
-	int field28;
+	bool field28;
 	int field2A;
 	int field2C;
 	int field2E;
@@ -128,7 +129,7 @@ public:
 	int getWidth(const byte *objectData, int idx);
 	int getHeight(const byte *objectData, int idx);
 	int sprite_alone(const byte *objectData, byte *sprite, int objIndex);
-	byte *DEL_FICHIER_OBJ();
+	void DEL_FICHIER_OBJ();
 
 	byte *loadSprite(const Common::String &file);
 	void set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize);
@@ -158,8 +159,8 @@ public:
 	void AFF_BOB_ANIM();
 	void AFF_VBOB();
 
-	int XSPR(int idx);
-	int YSPR(int idx);
+	int getSpriteX(int idx);
+	int getSpriteY(int idx);
 	void SPRITE_NOW(const byte *spriteData, int a2, int a3, int a4, int a5, int a6, int a7, int a8);
 
 	void CLEAR_SPR();
@@ -172,9 +173,9 @@ public:
 	int SYSPR(int idx);
 	int POSISPR(int idx);
 	void SETPOSISPR(int idx, int a2);
-	void SETXSPR(int idx, int xp);
-	void SETANISPR(int idx, int spriteIndex);
-	void SETYSPR(int idx, int yp);
+	void setSpriteX(int idx, int xp);
+	void setSpriteIndex(int idx, int spriteIndex);
+	void setSpriteY(int idx, int yp);
 	void SETTAILLESPR(int idx, int a2);
 	void SETFLIPSPR(int idx, int a2);
 
@@ -194,7 +195,7 @@ public:
 	 * @param oldCharacter		Previously played character
 	 * @param newCharacter		New character to play
 	 */
-	void CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
+	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
 
 	void VERIFTAILLE();
 	void PACOURS_PROPRE(int16 *a1);

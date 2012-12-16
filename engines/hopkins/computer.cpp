@@ -800,8 +800,8 @@ void ComputerManager::playBreakout() {
 			// Set up the racket and ball
 			_vm->_eventsManager.mouseOff();
 			_ballPosition = Common::Point(RAQX + 14, 187);
-			_vm->_objectsManager.SETYSPR(1, 187);
-			_vm->_objectsManager.SETXSPR(1, _ballPosition.x);
+			_vm->_objectsManager.setSpriteY(1, 187);
+			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
 			_vm->_graphicsManager.RESET_SEGMENT_VESA();
 			_vm->_eventsManager.VBL();
 			_vm->_graphicsManager.FADE_IN_CASSE();
@@ -813,9 +813,9 @@ void ComputerManager::playBreakout() {
 					RAQX = 5;
 				if (RAQX > 282)
 					RAQX = 282;
-				_vm->_objectsManager.SETXSPR(0, RAQX);
-				_vm->_objectsManager.SETXSPR(1, RAQX + 14);
-				_vm->_objectsManager.SETYSPR(1, 187);
+				_vm->_objectsManager.setSpriteX(0, RAQX);
+				_vm->_objectsManager.setSpriteX(1, RAQX + 14);
+				_vm->_objectsManager.setSpriteY(1, 187);
 				_vm->_eventsManager.VBL();
 			} while (!_vm->shouldQuit() && _vm->_eventsManager.getMouseButton() != 1);
 
@@ -833,7 +833,7 @@ void ComputerManager::playBreakout() {
 					RAQX = 5;
 				if (RAQX > 282)
 					RAQX = 282;
-				_vm->_objectsManager.SETXSPR(0, RAQX);
+				_vm->_objectsManager.setSpriteX(0, RAQX);
 				v1 = moveBall();
 				_vm->_eventsManager.VBL();
 			} while (!_vm->shouldQuit() && !v1);
@@ -1211,8 +1211,8 @@ int ComputerManager::moveBall() {
 	if (_ballPosition.y > 194)
 		v4 = 1;
 	checkBallCollisions();
-	_vm->_objectsManager.SETXSPR(1, _ballPosition.x);
-	_vm->_objectsManager.SETYSPR(1, _ballPosition.y);
+	_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
+	_vm->_objectsManager.setSpriteY(1, _ballPosition.y);
 	if (!_breakoutBrickNbr)
 		v4 = 2;
 	return v4;

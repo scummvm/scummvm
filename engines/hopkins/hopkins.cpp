@@ -4537,7 +4537,7 @@ void HopkinsEngine::BTOCEAN() {
 					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, 0);
 				_globals.OCEAN_SENS = 7;
 				_globals.SORTIE = 1;
-				int oldX = _objectsManager.XSPR(0);
+				int oldX = _objectsManager.getSpriteX(0);
 				for (;;) {
 					if (_globals.vitesse == 1)
 						oldX -= 2;
@@ -4545,7 +4545,7 @@ void HopkinsEngine::BTOCEAN() {
 						oldX -= 4;
 					else if (_globals.vitesse == 3)
 						oldX -= 6;
-					_objectsManager.SETXSPR(0, oldX);
+					_objectsManager.setSpriteX(0, oldX);
 					OCEAN_HOME();
 					_eventsManager.VBL();
 					if (_eventsManager.getMouseButton() == 1) {
@@ -4569,7 +4569,7 @@ LABEL_22:
 					_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, 0);
 				_globals.OCEAN_SENS = 3;
 				_globals.SORTIE = 2;
-				int oldX = _objectsManager.XSPR(0);
+				int oldX = _objectsManager.getSpriteX(0);
 				for (;;) {
 					if (_globals.vitesse == 1)
 						oldX += 2;
@@ -4577,7 +4577,7 @@ LABEL_22:
 						oldX += 4;
 					else if (_globals.vitesse == 3)
 						oldX += 6;
-					_objectsManager.SETXSPR(0, oldX);
+					_objectsManager.setSpriteX(0, oldX);
 					OCEAN_HOME();
 					_eventsManager.VBL();
 					if (_eventsManager.getMouseButton() == 1) {
@@ -4594,7 +4594,7 @@ LABEL_22:
 LABEL_41:
 			if (_objectsManager.NUMZONE == 3) {
 				if (_globals.OCEAN_SENS == 3) {
-					int oldX = _objectsManager.XSPR(0);
+					int oldX = _objectsManager.getSpriteX(0);
 					do {
 						if (_globals.vitesse == 1)
 							oldX += 2;
@@ -4602,7 +4602,7 @@ LABEL_41:
 							oldX += 4;
 						else if (_globals.vitesse == 3)
 							oldX += 6;
-						_objectsManager.SETXSPR(0, oldX);
+						_objectsManager.setSpriteX(0, oldX);
 						OCEAN_HOME();
 						_eventsManager.VBL();
 						if (_eventsManager.getMouseButton() == 1) {
@@ -4619,7 +4619,7 @@ LABEL_41:
 				}
 LABEL_57:
 				if (_globals.OCEAN_SENS == 7) {
-					int oldX = _objectsManager.XSPR(0);
+					int oldX = _objectsManager.getSpriteX(0);
 					do {
 						if (_globals.vitesse == 1)
 							oldX -= 2;
@@ -4627,7 +4627,7 @@ LABEL_57:
 							oldX -= 4;
 						else if (_globals.vitesse == 3)
 							oldX -= 6;
-						_objectsManager.SETXSPR(0, oldX);
+						_objectsManager.setSpriteX(0, oldX);
 						OCEAN_HOME();
 						_eventsManager.VBL();
 						if (_eventsManager.getMouseButton() == 1) {
@@ -4650,7 +4650,7 @@ LABEL_72:
 			}
 			if (_objectsManager.NUMZONE == 4) {
 				if (_globals.OCEAN_SENS == 3) {
-					int oldX = _objectsManager.XSPR(0);
+					int oldX = _objectsManager.getSpriteX(0);
 					do {
 						if (_globals.vitesse == 1)
 							oldX += 2;
@@ -4658,7 +4658,7 @@ LABEL_72:
 							oldX += 4;
 						else if (_globals.vitesse == 3)
 							oldX += 6;
-						_objectsManager.SETXSPR(0, oldX);
+						_objectsManager.setSpriteX(0, oldX);
 						OCEAN_HOME();
 						_eventsManager.VBL();
 						if (_eventsManager.getMouseButton() == 1) {
@@ -4675,7 +4675,7 @@ LABEL_72:
 				}
 LABEL_91:
 				if (_globals.OCEAN_SENS == 7) {
-					int oldX = _objectsManager.XSPR(0);
+					int oldX = _objectsManager.getSpriteX(0);
 					for (;;) {
 						if (_globals.vitesse == 1)
 							oldX -= 2;
@@ -4683,7 +4683,7 @@ LABEL_91:
 							oldX -= 4;
 						else if (_globals.vitesse == 3)
 							oldX -= 6;
-						_objectsManager.SETXSPR(0, oldX);
+						_objectsManager.setSpriteX(0, oldX);
 						OCEAN_HOME();
 						_eventsManager.VBL();
 						if (_eventsManager.getMouseButton() == 1) {
@@ -4710,13 +4710,13 @@ LABEL_91:
 
 void HopkinsEngine::OCEAN_HOME() {
 	if (_globals.OCEAN_SENS == 3)
-		_objectsManager.SETANISPR(0, 0);
+		_objectsManager.setSpriteIndex(0, 0);
 	if (_globals.OCEAN_SENS == 7)
-		_objectsManager.SETANISPR(0, 18);
+		_objectsManager.setSpriteIndex(0, 18);
 	if (_globals.OCEAN_SENS == 1)
-		_objectsManager.SETANISPR(0, 27);
+		_objectsManager.setSpriteIndex(0, 27);
 	if (_globals.OCEAN_SENS == 5)
-		_objectsManager.SETANISPR(0, 9);
+		_objectsManager.setSpriteIndex(0, 9);
 }
 
 void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 a9) {

@@ -449,8 +449,8 @@ LABEL_65:
 			if (_vm->_globals.NBBLOC) {
 				int v10 = _vm->_globals.NBBLOC + 1;
 				for (int i = 1; i != v10; i++) {
-					if (_vm->_globals.BLOC[i].field0 == 1)
-						_vm->_globals.BLOC[i].field0 = 0;
+					if (_vm->_globals.BLOC[i]._activeFl)
+						_vm->_globals.BLOC[i]._activeFl = false;
 				}
 			}
 			_vm->_globals.NBBLOC = 0;

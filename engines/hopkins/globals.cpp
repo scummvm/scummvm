@@ -371,8 +371,8 @@ void Globals::clearAll() {
 	_curObjectIndex = 0;
 
 	for (int idx = 0; idx < 105; ++idx) {
-		ZONEP[idx].destX = 0;
-		ZONEP[idx].destY = 0;
+		ZONEP[idx]._destX = 0;
+		ZONEP[idx]._destY = 0;
 		ZONEP[idx].field4 = 0;
 	}
 
@@ -442,43 +442,42 @@ void Globals::HOPKINS_DATA() {
 
 void Globals::INIT_ANIM() {
 	for (int idx = 0; idx < 35; ++idx) {
-		Bqe_Anim[idx].data = g_PTRNUL;
+		Bqe_Anim[idx]._data = g_PTRNUL;
 		Bqe_Anim[idx].field4 = 0;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		Bank[idx].data = g_PTRNUL;
+		Bank[idx]._data = g_PTRNUL;
 		Bank[idx].field4 = 0;
-		Bank[idx].filename1 = "";
-		Bank[idx].fileHeader = 0;
+		Bank[idx]._filename = "";
+		Bank[idx]._fileHeader = 0;
 		Bank[idx].field1C = 0;
-		Bank[idx].filename2 = "";
 	}
 }
 
 void Globals::INIT_VBOB() {
 	for (int idx = 0; idx < 30; ++idx) {
 		VBob[idx].field4 = 0;
-		VBob[idx].xp = 0;
-		VBob[idx].yp = 0;
-		VBob[idx].frameIndex = 0;
+		VBob[idx]._xp = 0;
+		VBob[idx]._yp = 0;
+		VBob[idx]._frameIndex = 0;
 		VBob[idx].fieldC = 0;
-		VBob[idx].surface = g_PTRNUL;
+		VBob[idx]._surface = g_PTRNUL;
 		VBob[idx].spriteData = g_PTRNUL;
-		VBob[idx].oldSpriteData = g_PTRNUL;
+		VBob[idx]._oldSpriteData = g_PTRNUL;
 	}
 }
 
 void Globals::CLEAR_VBOB() {
 	for (int idx = 0; idx < 30; ++idx) {
 		VBob[idx].field4 = 0;
-		VBob[idx].xp = 0;
-		VBob[idx].yp = 0;
-		VBob[idx].frameIndex = 0;
+		VBob[idx]._xp = 0;
+		VBob[idx]._yp = 0;
+		VBob[idx]._frameIndex = 0;
 		VBob[idx].fieldC = 0;
-		VBob[idx].surface = freeMemory(VBob[idx].surface);
+		VBob[idx]._surface = freeMemory(VBob[idx]._surface);
 		VBob[idx].spriteData = g_PTRNUL;
-		VBob[idx].oldSpriteData = g_PTRNUL;
+		VBob[idx]._oldSpriteData = g_PTRNUL;
 	}
 }
 

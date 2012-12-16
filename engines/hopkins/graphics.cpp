@@ -1230,7 +1230,7 @@ void GraphicsManager::VISU_ALL() {
 void GraphicsManager::RESET_SEGMENT_VESA() {
 	if (_vm->_globals.NBBLOC > 0) {
 		for (int idx = 0; idx != _vm->_globals.NBBLOC; idx++)
-			_vm->_globals.BLOC[idx].field0 = 0;
+			_vm->_globals.BLOC[idx]._activeFl = false;
 
 		_vm->_globals.NBBLOC = 0;
 	}
@@ -1260,9 +1260,8 @@ void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 		do {
 			BlocItem &bloc = _vm->_globals.BLOC[blocIndex];
 
-			if (bloc.field0 == 1
-					&& tempX >= bloc.x1 && x2 <= bloc.x2
-					&& y1 >= bloc.y1 && y2 <= bloc.y2)
+			if (bloc._activeFl && tempX >= bloc._x1 && x2 <= bloc._x2
+					&& y1 >= bloc._y1 && y2 <= bloc._y2)
 				addFlag = false;
 			++blocIndex;
 			blocCount = blocIndex;
@@ -1273,11 +1272,11 @@ void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 		assert(_vm->_globals.NBBLOC < 250);
 		BlocItem &bloc = _vm->_globals.BLOC[++_vm->_globals.NBBLOC];
 
-		bloc.field0 = 1;
-		bloc.x1 = tempX;
-		bloc.x2 = x2;
-		bloc.y1 = y1;
-		bloc.y2 = y2;
+		bloc._activeFl = true;
+		bloc._x1 = tempX;
+		bloc._x2 = x2;
+		bloc._y1 = y1;
+		bloc._y2 = y2;
 	}
 }
 
@@ -1292,34 +1291,34 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 	for (int idx = 1; idx <= _vm->_globals.NBBLOC; ++idx) {
 		BlocItem &bloc = _vm->_globals.BLOC[idx];
 		Common::Rect &dstRect = dstrect[idx - 1];
-		if (bloc.field0 != 1)
+		if (!bloc._activeFl)
 			continue;
 
 		if (_vm->_eventsManager._breakoutFl) {
-			Copy_Vga16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1, bloc.y1);
-			dstRect.left = bloc.x1 * 2;
-			dstRect.top = bloc.y1 * 2 + 30;
-			dstRect.setWidth((bloc.x2 - bloc.x1) * 2);
-			dstRect.setHeight((bloc.y2 - bloc.y1) * 2);
-		} else if (bloc.x2 > _vm->_eventsManager._startPos.x && bloc.x1 < (_vm->_eventsManager._startPos.x + SCREEN_WIDTH)) {
-			if (bloc.x1 < _vm->_eventsManager._startPos.x)
-				bloc.x1 = _vm->_eventsManager._startPos.x;
-			if (bloc.x2 > (_vm->_eventsManager._startPos.x + SCREEN_WIDTH))
-				bloc.x2 = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
+			Copy_Vga16(VESA_BUFFER, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1, bloc._y1);
+			dstRect.left = bloc._x1 * 2;
+			dstRect.top = bloc._y1 * 2 + 30;
+			dstRect.setWidth((bloc._x2 - bloc._x1) * 2);
+			dstRect.setHeight((bloc._y2 - bloc._y1) * 2);
+		} else if (bloc._x2 > _vm->_eventsManager._startPos.x && bloc._x1 < (_vm->_eventsManager._startPos.x + SCREEN_WIDTH)) {
+			if (bloc._x1 < _vm->_eventsManager._startPos.x)
+				bloc._x1 = _vm->_eventsManager._startPos.x;
+			if (bloc._x2 > (_vm->_eventsManager._startPos.x + SCREEN_WIDTH))
+				bloc._x2 = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
 
 			// WORKAROUND: Original didn't lock the screen for access
 			DD_Lock();
-			m_scroll16(VESA_BUFFER, bloc.x1, bloc.y1, bloc.x2 - bloc.x1, bloc.y2 - bloc.y1, bloc.x1 - _vm->_eventsManager._startPos.x, bloc.y1);
+			m_scroll16(VESA_BUFFER, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1 - _vm->_eventsManager._startPos.x, bloc._y1);
 
-			dstRect.left = bloc.x1 - _vm->_eventsManager._startPos.x;
-			dstRect.top = bloc.y1;
-			dstRect.setWidth(bloc.x2 - bloc.x1);
-			dstRect.setHeight(bloc.y2 - bloc.y1);
+			dstRect.left = bloc._x1 - _vm->_eventsManager._startPos.x;
+			dstRect.top = bloc._y1;
+			dstRect.setWidth(bloc._x2 - bloc._x1);
+			dstRect.setHeight(bloc._y2 - bloc._y1);
 
 			DD_Unlock();
 		}
 
-		_vm->_globals.BLOC[idx].field0 = 0;
+		_vm->_globals.BLOC[idx]._activeFl = false;
 	}
 
 	_vm->_globals.NBBLOC = 0;

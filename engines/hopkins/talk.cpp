@@ -739,18 +739,18 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 	_vm->_objectsManager._priorityFl = true;
 	if (!_vm->_globals.Bob[idx].field0) {
 		_vm->_objectsManager.BOB_ZERO(idx);
-		v5 = _vm->_globals.Bqe_Anim[idx].data;
+		v5 = _vm->_globals.Bqe_Anim[idx]._data;
 		v4 = (int16)READ_LE_UINT16(v5 + 2);
 		if (!v4)
 			v4 = 1;
 		if ((int16)READ_LE_UINT16(v5 + 24)) {
-			_vm->_globals.Bob[idx].isSprite = true;
+			_vm->_globals.Bob[idx]._isSpriteFl = true;
 			_vm->_globals.Bob[idx].field36 = 0;
 			_vm->_globals.Bob[idx].field38 = 0;
-			_vm->_globals.Bob[idx].animData = _vm->_globals.Bqe_Anim[idx].data;
+			_vm->_globals.Bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
 			_vm->_globals.Bob[idx].field0 = 10;
 			v5 = PERSOSPR;
-			_vm->_globals.Bob[idx].spriteData = PERSOSPR;
+			_vm->_globals.Bob[idx]._spriteData = PERSOSPR;
 			_vm->_globals.Bob[idx].field1E = v4;
 			_vm->_globals.Bob[idx].field20 = -1;
 			_vm->_globals.Bob[idx].field22 = 0;
@@ -853,7 +853,7 @@ void TalkManager::ANIM_PERSO_INIT() {
 
 void TalkManager::clearCharacterAnim() {
 	for (int idx = 21; idx <= 34; ++idx) {
-		_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx].data);
+		_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx]._data);
 		_vm->_globals.Bqe_Anim[idx].field4 = 0;
 	}
 }
@@ -899,16 +899,16 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 				if (v18 > a4) {
 					_vm->_globals.Bqe_Anim[a1].field4 = 0;
 					result = g_PTRNUL;
-					_vm->_globals.Bqe_Anim[v20].data = g_PTRNUL;
+					_vm->_globals.Bqe_Anim[v20]._data = g_PTRNUL;
 				}
 				++v18;
 				++v6;
 				++v5;
 			} while (v7 != 1);
-			_vm->_globals.Bqe_Anim[v20].data = _vm->_globals.allocMemory(v6 + 50);
+			_vm->_globals.Bqe_Anim[v20]._data = _vm->_globals.allocMemory(v6 + 50);
 			_vm->_globals.Bqe_Anim[a1].field4 = 1;
-			memcpy(_vm->_globals.Bqe_Anim[v20].data, (const byte *)(v22 + bufPerso + 5), 20);
-			v8 = _vm->_globals.Bqe_Anim[v20].data;
+			memcpy(_vm->_globals.Bqe_Anim[v20]._data, (const byte *)(v22 + bufPerso + 5), 20);
+			v8 = _vm->_globals.Bqe_Anim[v20]._data;
 
 			v9 = v8 + 20;
 			v24 = v22 + bufPerso + 25;
@@ -1076,7 +1076,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 	if (a2 == 5 && _vm->_globals.SAUVEGARDE->data[svField3] == 4) {
 		if ((uint16)(a1 - 22) <= 1u) {
 			_vm->_objectsManager.SETFLIPSPR(0, 0);
-			_vm->_objectsManager.SETANISPR(0, 62);
+			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
 			if (a1 == 22) {
 				v4 = _vm->_objectsManager.BOBX(3);
@@ -1124,7 +1124,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 		}
 		if ((uint16)(a1 - 20) <= 1u) {
 			_vm->_objectsManager.SETFLIPSPR(0, 1);
-			_vm->_objectsManager.SETANISPR(0, 62);
+			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
 			if (a1 == 20) {
 				v8 = _vm->_objectsManager.BOBX(1);

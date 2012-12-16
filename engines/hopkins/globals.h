@@ -30,8 +30,8 @@
 namespace Hopkins {
 
 struct ZonePItem {
-	int destX;
-	int destY;
+	int _destX;
+	int _destY;
 	int field4;
 	int field6;
 	int field7;
@@ -60,49 +60,48 @@ struct CarreZoneItem {
 };
 
 struct BqeAnimItem {
-	byte *data;
+	byte *_data;
 	int field4;
 };
 
 struct BankItem {
-	byte *data;
+	byte *_data;
 	int8 field4;
-	Common::String filename1;
-	int fileHeader;
+	Common::String _filename;
+	int _fileHeader;
 	int field1A;
 	uint32 field1C;
-	Common::String filename2;
 };
 
 struct ListeItem {
 	int field0;
 	int field2;
 	int field4;
-	int width;
-	int height;
+	int _width;
+	int _height;
 	int fieldA;
 };
 
 struct Liste2Item {
-	int field0;
-	int xp;
-	int yp;
-	int width;
-	int height;
+	bool _visibleFl;
+	int _xp;
+	int _yp;
+	int _width;
+	int _height;
 };
 
 struct BobItem {
 	int field0;
-	byte *spriteData;
-	int xp;
-	int yp;
-	int frameIndex;
+	byte *_spriteData;
+	int _xp;
+	int _yp;
+	int _frameIndex;
 	int fieldE;
 	int field10;
 	int field12;
 	int field14;
 	int field16;
-	byte *animData;
+	byte *_animData;
 	int field1C;
 	int field1E;
 	int field20;
@@ -116,14 +115,14 @@ struct BobItem {
 	int field34;
 	int field36;
 	int field38;
-	bool isSprite;
-	bool isActive;
-	int oldX;
-	int oldY;
-	int oldWidth;
-	int oldHeight;
-	int oldX2;
-	int oldY2;
+	bool _isSpriteFl;
+	bool _activeFl;
+	int _oldX;
+	int _oldY;
+	int _oldWidth;
+	int _oldHeight;
+	int _oldX2;
+	int _oldY2;
 	int field4A;
 };
 
@@ -135,16 +134,16 @@ struct BlAnimItem {
 struct VBobItem {
 	byte *spriteData;
 	int field4;
-	int xp;
-	int yp;
-	int frameIndex;
+	int _xp;
+	int _yp;
+	int _frameIndex;
 	int fieldC;
 	int fieldE;
-	byte *surface;
-	int oldX;
-	int oldY;
-	int oldFrameIndex;
-	byte *oldSpriteData;
+	byte *_surface;
+	int _oldX;
+	int _oldY;
+	int _oldFrameIndex;
+	byte *_oldSpriteData;
 };
 
 struct ObjetWItem {
@@ -159,11 +158,11 @@ struct ObjetWItem {
 };
 
 struct BlocItem {
-	uint16 field0;
-	int x1;
-	int y1;
-	int x2;
-	int y2;
+	uint16 _activeFl;
+	int _x1;
+	int _y1;
+	int _x2;
+	int _y2;
 };
 
 /**
@@ -289,11 +288,11 @@ enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARA
 
 // TODO: Sauvegrade1 fields should really be mapped into data array
 struct Sauvegarde {
-	byte data[0x802];
-	CharacterLocation cloneHopkins;
-	CharacterLocation realHopkins;
-	CharacterLocation samantha;
-	int16 inventory[35];	// Originally at offset 1300 of data array
+	byte data[2050];
+	CharacterLocation _cloneHopkins;
+	CharacterLocation _realHopkins;
+	CharacterLocation _samantha;
+	int16 _inventory[35];	// Originally at offset 1300 of data array
 };
 
 struct CreditItem {
@@ -358,7 +357,6 @@ public:
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
 	Common::String NFICHIER;
-	Common::String REP_SPR;
 	int SOUNDVOL;
 	int MUSICVOL;
 	int VOICEVOL;

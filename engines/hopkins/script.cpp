@@ -213,36 +213,36 @@ LABEL_1141:
 				_vm->_objectsManager.PERI = v5;
 				if (_vm->_objectsManager.CH_TETE == 1) {
 					if (_vm->_globals.SAUVEGARDE->data[svField354] == 1
-							&& _vm->_globals.SAUVEGARDE->cloneHopkins._pos.x && _vm->_globals.SAUVEGARDE->cloneHopkins._pos.y
-							&& _vm->_globals.SAUVEGARDE->cloneHopkins.field2 && _vm->_globals.SAUVEGARDE->cloneHopkins._location) {
+							&& _vm->_globals.SAUVEGARDE->_cloneHopkins._pos.x && _vm->_globals.SAUVEGARDE->_cloneHopkins._pos.y
+							&& _vm->_globals.SAUVEGARDE->_cloneHopkins.field2 && _vm->_globals.SAUVEGARDE->_cloneHopkins._location) {
 
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->cloneHopkins._pos.x;
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->cloneHopkins._pos.y;
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->cloneHopkins.field2;
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->_cloneHopkins._pos.x;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->_cloneHopkins._pos.y;
+						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->_cloneHopkins.field2;
 					}
 					if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
-							&& _vm->_globals.SAUVEGARDE->samantha._pos.x && _vm->_globals.SAUVEGARDE->samantha._pos.y
-							&& _vm->_globals.SAUVEGARDE->samantha.field2 && _vm->_globals.SAUVEGARDE->samantha._location) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->samantha._pos.x;
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->samantha._pos.y;
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->samantha.field2;
+							&& _vm->_globals.SAUVEGARDE->_samantha._pos.x && _vm->_globals.SAUVEGARDE->_samantha._pos.y
+							&& _vm->_globals.SAUVEGARDE->_samantha.field2 && _vm->_globals.SAUVEGARDE->_samantha._location) {
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->_samantha._pos.x;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->_samantha._pos.y;
+						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->_samantha.field2;
 					}
 					if (_vm->_globals.SAUVEGARDE->data[svField357] == 1
-							&& _vm->_globals.SAUVEGARDE->realHopkins._pos.x && _vm->_globals.SAUVEGARDE->realHopkins._pos.y
-							&& _vm->_globals.SAUVEGARDE->realHopkins.field2 && _vm->_globals.SAUVEGARDE->realHopkins._location) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->realHopkins._pos.x;
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->realHopkins._pos.y;
-						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->realHopkins.field2;
+							&& _vm->_globals.SAUVEGARDE->_realHopkins._pos.x && _vm->_globals.SAUVEGARDE->_realHopkins._pos.y
+							&& _vm->_globals.SAUVEGARDE->_realHopkins.field2 && _vm->_globals.SAUVEGARDE->_realHopkins._location) {
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->_realHopkins._pos.x;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->_realHopkins._pos.y;
+						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->_realHopkins.field2;
 					}
 				}
 				if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
-						&& _vm->_globals.SAUVEGARDE->realHopkins._location == _vm->_globals.ECRAN) {
+						&& _vm->_globals.SAUVEGARDE->_realHopkins._location == _vm->_globals.ECRAN) {
 					_vm->_objectsManager.SPRITE(
 					    _vm->_globals.TETE,
-					    _vm->_globals.SAUVEGARDE->realHopkins._pos,
+					    _vm->_globals.SAUVEGARDE->_realHopkins._pos,
 					    1,
 					    2,
-					    _vm->_globals.SAUVEGARDE->realHopkins.field4,
+					    _vm->_globals.SAUVEGARDE->_realHopkins.field4,
 					    0,
 					    34,
 					    190);
@@ -251,13 +251,13 @@ LABEL_1141:
 				}
 				if (_vm->_globals.SAUVEGARDE->data[svField357] == 1
 				        && _vm->_globals.SAUVEGARDE->data[svField355] == 1
-				        && _vm->_globals.SAUVEGARDE->samantha._location == _vm->_globals.ECRAN) {
+				        && _vm->_globals.SAUVEGARDE->_samantha._location == _vm->_globals.ECRAN) {
 					_vm->_objectsManager.SPRITE(
 					    _vm->_globals.TETE,
-					    _vm->_globals.SAUVEGARDE->samantha._pos,
+					    _vm->_globals.SAUVEGARDE->_samantha._pos,
 					    1,
 					    3,
-					    _vm->_globals.SAUVEGARDE->samantha.field4,
+					    _vm->_globals.SAUVEGARDE->_samantha.field4,
 					    0,
 					    20,
 					    127);
@@ -827,8 +827,8 @@ LABEL_1141:
 		if (v76 == 46) {
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			int v13 = _vm->_objectsManager.YSPR(0);
-			int v14 = _vm->_objectsManager.XSPR(0);
+			int v13 = _vm->_objectsManager.getSpriteY(0);
+			int v14 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v14, v13, 564, 420);
 			_vm->_objectsManager.NUMZONE = -1;
 			do {
@@ -900,12 +900,12 @@ LABEL_1141:
 		}
 		if (v76 == 59) {
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.g_old_x = _vm->_objectsManager.XSPR(0);
+			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			int v16 = _vm->_objectsManager.YSPR(0);
-			int v17 = _vm->_objectsManager.XSPR(0);
+			int v16 = _vm->_objectsManager.getSpriteY(0);
+			int v17 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v17, v16, 445, 332);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
@@ -941,7 +941,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(3) != 48);
 			_vm->_soundManager.DEL_SAMPLE(1);
-			_vm->_objectsManager.SETANISPR(0, 62);
+			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_objectsManager.BOBANIM_ON(6);
 			_vm->_objectsManager.BOBANIM_OFF(7);
@@ -1032,12 +1032,12 @@ LABEL_1141:
 		}
 		if (v76 == 81) {
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.g_old_x = _vm->_objectsManager.XSPR(0);
+			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			int v22 = _vm->_objectsManager.YSPR(0);
-			int v23 = _vm->_objectsManager.XSPR(0);
+			int v22 = _vm->_objectsManager.getSpriteY(0);
+			int v23 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v23, v22, 119, 268);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
@@ -1278,23 +1278,23 @@ LABEL_1141:
 			_vm->_talkManager.OBJET_VIVANT("ScCADA.pe2");
 		if (v76 == 105) {
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.g_old_x = _vm->_objectsManager.XSPR(0);
+			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
-				int v27 = _vm->_objectsManager.YSPR(0);
-				int v28 = _vm->_objectsManager.XSPR(0);
+				int v27 = _vm->_objectsManager.getSpriteY(0);
+				int v28 = _vm->_objectsManager.getSpriteX(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v28, v27, 201, 294);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 2) {
-				int v29 = _vm->_objectsManager.YSPR(0);
-				int v30 = _vm->_objectsManager.XSPR(0);
+				int v29 = _vm->_objectsManager.getSpriteY(0);
+				int v30 = _vm->_objectsManager.getSpriteX(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v30, v29, 158, 338);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] > 2) {
-				int v31 = _vm->_objectsManager.YSPR(0);
-				int v32 = _vm->_objectsManager.XSPR(0);
+				int v31 = _vm->_objectsManager.getSpriteY(0);
+				int v32 = _vm->_objectsManager.getSpriteX(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v32, v31, 211, 393);
 			}
 			_vm->_globals.NOT_VERIF = 1;
@@ -1306,7 +1306,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.SPRITE_OFF(0);
-			_vm->_objectsManager.SETANISPR(0, 60);
+			_vm->_objectsManager.setSpriteIndex(0, 60);
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND63.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField253] > 2) {
 				_vm->_objectsManager.BOBANIM_ON(4);
@@ -1529,8 +1529,8 @@ LABEL_1141:
 			}
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			int v37 = _vm->_objectsManager.YSPR(0);
-			int v38 = _vm->_objectsManager.XSPR(0);
+			int v37 = _vm->_objectsManager.getSpriteY(0);
+			int v38 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v38, v37, 330, 418);
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = 0;
@@ -1541,14 +1541,14 @@ LABEL_1141:
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
-			_vm->_objectsManager.SETANISPR(0, 64);
+			_vm->_objectsManager.setSpriteIndex(0, 64);
 			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField401];
 			_vm->_globals._disableInventFl = false;
 		}
 		if (v76 == 209) {
 			_vm->_objectsManager.SET_BOBPOSI(1, 0);
 			_vm->_objectsManager.SET_BOBPOSI(2, 0);
-			_vm->_objectsManager.SETANISPR(0, 60);
+			_vm->_objectsManager.setSpriteIndex(0, 60);
 			_vm->_objectsManager.BOBANIM_OFF(4);
 			_vm->_objectsManager.BOBANIM_ON(1);
 			do {
@@ -1561,8 +1561,8 @@ LABEL_1141:
 			_vm->_globals.NO_VISU = true;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			int v39 = _vm->_objectsManager.YSPR(0);
-			int v40 = _vm->_objectsManager.XSPR(0);
+			int v39 = _vm->_objectsManager.getSpriteY(0);
+			int v40 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v40, v39, 330, 314);
 			_vm->_objectsManager.NUMZONE = 0;
 			_vm->_globals.NOT_VERIF = 1;
@@ -1573,7 +1573,7 @@ LABEL_1141:
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
-			_vm->_objectsManager.SETANISPR(0, 64);
+			_vm->_objectsManager.setSpriteIndex(0, 64);
 			_vm->_objectsManager.BOBANIM_ON(2);
 			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
 			do {
@@ -1653,7 +1653,7 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 175) {
-			_vm->_objectsManager.SETANISPR(0, 55);
+			_vm->_objectsManager.setSpriteIndex(0, 55);
 			_vm->_objectsManager.SPRITE_OFF(0);
 			_vm->_objectsManager.BOBANIM_ON(9);
 			_vm->_objectsManager.BOBANIM_ON(10);
@@ -1710,13 +1710,13 @@ LABEL_1141:
 			_vm->_objectsManager.OBSSEUL = 0;
 			_vm->_globals.CACHE_ON();
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.g_old_x = _vm->_objectsManager.XSPR(0);
+			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			int v43 = _vm->_objectsManager.YSPR(0);
-			int v44 = _vm->_objectsManager.XSPR(0);
+			int v43 = _vm->_objectsManager.getSpriteY(0);
+			int v44 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v44, v43, 488, 280);
 			_vm->_globals.NOT_VERIF = 1;
 			do {
@@ -1740,8 +1740,8 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(7) != 15);
 			_vm->_objectsManager.BOBANIM_OFF(7);
-			_vm->_objectsManager.SETXSPR(0, 476);
-			_vm->_objectsManager.SETYSPR(0, 278);
+			_vm->_objectsManager.setSpriteX(0, 476);
+			_vm->_objectsManager.setSpriteY(0, 278);
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 337, 154, 3);
 			_vm->_objectsManager.OBSSEUL = 1;
@@ -1938,9 +1938,9 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			}
-			CharacterLocation *v51 = &_vm->_globals.SAUVEGARDE->realHopkins;
-			v51->_pos.x = _vm->_objectsManager.XSPR(0);
-			v51->_pos.y = _vm->_objectsManager.YSPR(0);
+			CharacterLocation *v51 = &_vm->_globals.SAUVEGARDE->_realHopkins;
+			v51->_pos.x = _vm->_objectsManager.getSpriteX(0);
+			v51->_pos.y = _vm->_objectsManager.getSpriteY(0);
 			v51->field2 = 57;
 			v51->_location = 97;
 			_vm->_globals.SAUVEGARDE->data[svField121] = 1;
@@ -2166,7 +2166,7 @@ LABEL_1141:
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.playSequence("RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager.NO_SEQ = false;
-			CharacterLocation *v53 = &_vm->_globals.SAUVEGARDE->samantha;
+			CharacterLocation *v53 = &_vm->_globals.SAUVEGARDE->_samantha;
 			v53->_pos.x = 404;
 			v53->_pos.y = 395;
 			v53->field2 = 64;
@@ -2189,7 +2189,7 @@ LABEL_1141:
 		if (v76 == 245) {
 			_vm->_soundManager.PLAY_SOUND("SOUND89.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 6, 0);
-			_vm->_globals.ZONEP[4].destX = 276;
+			_vm->_globals.ZONEP[4]._destX = 276;
 			_vm->_objectsManager.VERBE_ON(4, 19);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
 			_vm->_globals.SAUVEGARDE->data[svField399] = 1;
@@ -2222,13 +2222,13 @@ LABEL_1141:
 			_vm->_talkManager.PARLER_PERSO("gred1.pe2");
 			_vm->_globals.NOPARLE = false;
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.g_old_x = _vm->_objectsManager.XSPR(0);
+			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			int v55 = _vm->_objectsManager.YSPR(0);
-			int v56 = _vm->_objectsManager.XSPR(0);
+			int v55 = _vm->_objectsManager.getSpriteY(0);
+			int v56 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v56, v55, 361, 325);
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = -1;
@@ -2246,13 +2246,13 @@ LABEL_1141:
 			_vm->_talkManager.PARLER_PERSO("gbleu1.pe2");
 			_vm->_globals.NOPARLE = false;
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.g_old_x = _vm->_objectsManager.XSPR(0);
+			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			int v57 = _vm->_objectsManager.YSPR(0);
-			int v58 = _vm->_objectsManager.XSPR(0);
+			int v57 = _vm->_objectsManager.getSpriteY(0);
+			int v58 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v58, v57, 361, 325);
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.NUMZONE = -1;

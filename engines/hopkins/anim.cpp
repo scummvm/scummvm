@@ -603,15 +603,15 @@ void AnimationManager::loadAnim(const Common::String &animName) {
  */
 void AnimationManager::clearAnim() {
 	for (int idx = 0; idx < 35; ++idx) {
-		_vm->_globals.Bqe_Anim[idx].data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx].data);
+		_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx]._data);
 		_vm->_globals.Bqe_Anim[idx].field4 = 0;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		_vm->_globals.Bank[idx].data = _vm->_globals.freeMemory(_vm->_globals.Bank[idx].data);
+		_vm->_globals.Bank[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bank[idx]._data);
 		_vm->_globals.Bank[idx].field4 = 0;
-		_vm->_globals.Bank[idx].filename1 = "";
-		_vm->_globals.Bank[idx].fileHeader = 0;
+		_vm->_globals.Bank[idx]._filename = "";
+		_vm->_globals.Bank[idx]._fileHeader = 0;
 		_vm->_globals.Bank[idx].field1C = 0;
 	}
 }
@@ -629,20 +629,19 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
 	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
 	_vm->_globals.Bank[idx].field4 = 1;
-	_vm->_globals.Bank[idx].filename1 = filename;
-	_vm->_globals.Bank[idx].filename2 = _vm->_globals.REP_SPR;
+	_vm->_globals.Bank[idx]._filename = filename;
 
 	v3 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	v4 = v3;
 
-	_vm->_globals.Bank[idx].fileHeader = 0;
+	_vm->_globals.Bank[idx]._fileHeader = 0;
 	if (*(v3 + 1) == 'L' && *(v3 + 2) == 'E')
-	    _vm->_globals.Bank[idx].fileHeader = 1;
+	    _vm->_globals.Bank[idx]._fileHeader = 1;
 	if (*(v3 + 1) == 'O' && *(v3 + 2) == 'R')
-		_vm->_globals.Bank[idx].fileHeader = 2;
+		_vm->_globals.Bank[idx]._fileHeader = 2;
 
-	if (_vm->_globals.Bank[idx].fileHeader) {
-		_vm->_globals.Bank[idx].data = v3;
+	if (_vm->_globals.Bank[idx]._fileHeader) {
+		_vm->_globals.Bank[idx]._data = v3;
 
 		bool loopCond = false;
 		int v8 = 0;
@@ -664,7 +663,7 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 		if (v8 <= 249) {
 			_vm->_globals.Bank[idx].field1A = v8;
 
-			Common::String ofsFilename = _vm->_globals.Bank[idx].filename1;
+			Common::String ofsFilename = _vm->_globals.Bank[idx]._filename;
 			char ch;
 			do {
 				ch = ofsFilename.lastChar();
@@ -686,9 +685,9 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 						int y2 = (int16)READ_LE_UINT16(v13 + 6);
 						v13 += 8;
 
-						_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx].data, objIdx, x1, y1, 0);
-						if (_vm->_globals.Bank[idx].fileHeader == 2)
-							_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx].data, objIdx, x2, y2, 1);
+						_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
+						if (_vm->_globals.Bank[idx]._fileHeader == 2)
+							_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
 					}
 				}
 
@@ -753,18 +752,18 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 						v8 = 1;
 					if (count < v6) {
 						_vm->_globals.Bqe_Anim[animIndex].field4 = 0;
-						_vm->_globals.Bqe_Anim[v19].data = g_PTRNUL;
+						_vm->_globals.Bqe_Anim[v19]._data = g_PTRNUL;
 						return;
 					}
 					++v6;
 					++v7;
 					++v5;
 				} while (v8 != 1);
-				_vm->_globals.Bqe_Anim[v19].data = _vm->_globals.allocMemory(v7 + 50);
+				_vm->_globals.Bqe_Anim[v19]._data = _vm->_globals.allocMemory(v7 + 50);
 				_vm->_globals.Bqe_Anim[animIndex].field4 = 1;
-				memcpy(_vm->_globals.Bqe_Anim[v19].data, v21 + data + 5, 0x14u);
+				memcpy(_vm->_globals.Bqe_Anim[v19]._data, v21 + data + 5, 0x14u);
 
-				byte *dataP = _vm->_globals.Bqe_Anim[v19].data;
+				byte *dataP = _vm->_globals.Bqe_Anim[v19]._data;
 				v9 = dataP + 20;
 				v23 = v21 + data + 25;
 				v10 = READ_LE_UINT16(v21 + data + 25);
