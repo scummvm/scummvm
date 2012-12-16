@@ -652,8 +652,10 @@ protected:
 	Common::File _extMusicFile;
 
 	void initMusic();
+public: // To allow access from console
 	void startMusic(int num);
 	void stopMusic();
+protected:
 	int getMusicVolume();
 	void setMusicVolume(int volume);
 	void adjustMusicVolume(int diff);
