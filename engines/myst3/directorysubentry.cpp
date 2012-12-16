@@ -44,7 +44,7 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_face = inStream.readByte();
 	_type = static_cast<ResourceType>(inStream.readByte());
 
-	if (_type == kSpotItem || _type == kMenuSpotItem) {
+	if (_type == kSpotItem || _type == kLocalizedSpotItem) {
 		_spotItemData.u = inStream.readUint32LE();
 		_spotItemData.v = inStream.readUint32LE();
 	} else if (_type == kMovie || _type == kMultitrackMovie) {
@@ -87,7 +87,7 @@ void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, const c
 			return; // These types are pure metadata and can't be extracted
 		case kCubeFace:
 		case kSpotItem:
-		case kMenuSpotItem:
+		case kLocalizedSpotItem:
 		case kFrame:
 			sprintf(fileName, "dump/%s-%d-%d.jpg", room, index, _face);
 			break;

@@ -136,10 +136,10 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 	spotItem->setFadeVar(abs(condition));
 
 	for (int i = 0; i < 6; i++) {
-		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, id, i + 1, DirectorySubEntry::kSpotItem);
+		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, id, i + 1, DirectorySubEntry::kLocalizedSpotItem);
 
 		if (!jpegDesc)
-			jpegDesc = _vm->getFileDescription(0, id, i + 1, DirectorySubEntry::kMenuSpotItem);
+			jpegDesc = _vm->getFileDescription(0, id, i + 1, DirectorySubEntry::kSpotItem);
 
 		if (!jpegDesc) continue;
 

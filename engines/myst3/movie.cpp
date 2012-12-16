@@ -42,16 +42,16 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_force2d(false),
 	_subtitles(0) {
 
-	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
+	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
+
+	if (!binkDesc)
+		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kDialogMovie);
 
 	if (!binkDesc)
 		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kStillMovie);
 
 	if (!binkDesc)
-		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
-
-	if (!binkDesc)
-		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kDialogMovie);
+		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
 
 	if (!binkDesc)
 		error("Movie %d does not exist", id);

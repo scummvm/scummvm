@@ -59,8 +59,8 @@ class DirectorySubEntry {
 			kText = 11,
 			kTextMetadata = 12,
 			kNumMetadata = 13,
-			kMenuSpotItem = 69,
-			kMenuFrame = 70,
+			kLocalizedSpotItem = 69,
+			kLocalizedFrame = 70,
 			kMultitrackMovie = 72,
 			kDialogMovie = 74
 		};
