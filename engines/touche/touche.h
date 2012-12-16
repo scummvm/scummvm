@@ -31,6 +31,7 @@
 #include "common/util.h"
 
 #include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 #include "engines/engine.h"
 
@@ -645,6 +646,17 @@ protected:
 	Common::Point getMousePos() const;
 
 	MidiPlayer *_midiPlayer;
+
+	int _musicVolume;
+	Audio::SoundHandle _musicHandle;
+	Common::File _extMusicFile;
+
+	void initMusic();
+	void startMusic(int num);
+	void stopMusic();
+	int getMusicVolume();
+	void setMusicVolume(int volume);
+	void adjustMusicVolume(int diff);
 
 	Common::Language _language;
 	Common::RandomSource _rnd;
