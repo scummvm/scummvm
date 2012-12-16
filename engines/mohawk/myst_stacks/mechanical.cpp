@@ -39,6 +39,8 @@ Mechanical::Mechanical(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_mechanical) {
 	setupOpcodes();
 
+	_elevatorGoingMiddle = false;
+
 	_mystStaircaseState = false;
 	_fortressPosition = 0;
 	_fortressRotationSpeed = 0;
