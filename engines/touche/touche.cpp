@@ -3342,13 +3342,12 @@ void ToucheEngine::startMusic(int num) {
 		_midiPlayer->play(_fData, size, true);
 	} else {
 		Common::String extMusicFilename = Common::String::format("track%02d", num);
-		_extMusicFileStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
-		if (!_extMusicFileStream) {
+		Audio::SeekableAudioStream *extMusicFileStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
+		if (!extMusicFileStream) {
 			error("Unable to open %s for reading", extMusicFilename.c_str());
 		}
-		Audio::LoopingAudioStream *loopStream = new Audio::LoopingAudioStream(_extMusicFileStream, 0);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream);
-		_mixer->setChannelVolume(_musicHandle, _musicVolume);
+		Audio::LoopingAudioStream *loopStream = new Audio::LoopingAudioStream(extMusicFileStream, 0);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream, -1, _musicVolume);
 	}
 }
 
