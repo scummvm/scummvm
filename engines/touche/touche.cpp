@@ -3335,12 +3335,14 @@ void ToucheEngine::initMusic() {
 void ToucheEngine::startMusic(int num) {
 	debug(1, "startMusic(%d)", num);
 	uint32 size;
+
+	stopMusic();
+
 	if (_midiPlayer) {
 		const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
 		_fData.seek(offs);
 		_midiPlayer->play(_fData, size, true);
 	} else {
-		_extMusicFile.close();
 		Common::String extMusicFilename = Common::String::format("track%02d.ogg", num);
 		if (!_extMusicFile.open(extMusicFilename)) {
 			error("Unable to open %s for reading", extMusicFilename.c_str());
@@ -3358,6 +3360,7 @@ void ToucheEngine::stopMusic() {
 		_midiPlayer->stop();
 	else {
 		_mixer->stopHandle(_musicHandle);
+		_extMusicFile.close();
 	}
 }
 
