@@ -610,6 +610,8 @@ uint16 Myst::getVar(uint16 var) {
 		return 1;
 	case 302: // Green Book Opened Before Flag
 		return _state.greenBookOpenedBefore;
+	case 303: // Library Bookcase status changed
+		return _libraryBookcaseChanged;
 	case 304: // Tower Rotation Map Initialized
 		return _towerRotationMapInitialized;
 	case 305: // Cabin Boiler Lit

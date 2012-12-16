@@ -43,7 +43,7 @@ public:
 	virtual void disablePersistentScripts();
 	virtual void runPersistentScripts();
 
-private:
+protected:
 	void setupOpcodes();
 	uint16 getVar(uint16 var);
 	void toggleVar(uint16 var);
@@ -52,7 +52,7 @@ private:
 	virtual uint16 getMap() { return 9934; }
 
 	void towerRotationMap_run();
-	void libraryBookcaseTransform_run();
+	virtual void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();
 	void opcode_212_run();
 	void libraryCombinationBook_run();

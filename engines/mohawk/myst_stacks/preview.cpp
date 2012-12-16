@@ -60,6 +60,7 @@ void Preview::setupOpcodes() {
 	OVERRIDE_OPCODE(199, o_speechStop);
 
 	// "Init" Opcodes
+	OVERRIDE_OPCODE(209, o_libraryBookcaseTransformDemo_init);
 	OPCODE(298, o_speech_init);
 	OPCODE(299, o_library_init);
 }
@@ -240,6 +241,23 @@ void Preview::o_library_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 3002 (Myst Island Overview)
 	_library = static_cast<MystResourceType8 *>(_invokingResource);
 }
+
+void Preview::o_libraryBookcaseTransformDemo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	if (_libraryBookcaseChanged) {
+		MystResourceType7 *resource = static_cast<MystResourceType7 *>(_invokingResource);
+		_libraryBookcaseMovie = static_cast<MystResourceType6 *>(resource->getSubResource(getVar(303)));
+		_libraryBookcaseSoundId = argv[0];
+		_libraryBookcaseMoving = true;
+	}
+}
+
+void Preview::libraryBookcaseTransform_run() {
+	if (_libraryBookcaseChanged)
+		_state.libraryBookcaseDoor = !_state.libraryBookcaseDoor;
+
+	Myst::libraryBookcaseTransform_run();
+}
+
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk
