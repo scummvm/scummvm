@@ -374,7 +374,7 @@ LABEL_34:
 	}
 LABEL_35:
 	if (!_vm->_globals.PUBEXIT)
-		_vm->_objectsManager.AFF_SPRITES();
+		_vm->_objectsManager.displaySprite();
 	if (_mouseFl != true) {
 		updateCursor();
 		goto LABEL_54;

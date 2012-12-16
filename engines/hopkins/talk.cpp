@@ -100,7 +100,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_vm->_globals.CAT_FLAG = true;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
 	}
-	PERSOSPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+	PERSOSPR = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 	_vm->_globals.CAT_FLAG = false;
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
@@ -1230,7 +1230,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		_vm->_globals.CAT_FLAG = true;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
 	}
-	PERSOSPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+	PERSOSPR = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 	_vm->_globals.CAT_FLAG = false;
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");

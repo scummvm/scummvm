@@ -109,7 +109,7 @@ Globals::Globals() {
 		Common::fill((byte *)&Hopkins[i], (byte *)&Hopkins[i] + sizeof(HopkinsItem), 0);
 
 	for (int i = 0; i < 36; ++i)
-		INVENTAIRE[i] = 0;
+		_inventory[i] = 0;
 	for (int i = 0; i < 51; ++i)
 		Common::fill((byte *)&Tri[i], (byte *)&Tri[i] + sizeof(TriItem), 0);
 
@@ -132,7 +132,7 @@ Globals::Globals() {
 	TETE = NULL;
 	texte_long = 0;
 	TEXTE_FORMATE = 0;
-	OBJET_EN_COURS = 0;
+	_curObjectIndex = 0;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
 	largeur_boite = 0;
@@ -142,7 +142,7 @@ Globals::Globals() {
 	HELICO = 0;
 	CAT_POSI = 0;
 	CAT_TAILLE = 0;
-	Nouv_objet = 0;
+	_newObjectFl = false;
 	iRegul = 0;
 	SORTIE = 0;
 	PLANX = PLANY = 0;
@@ -368,7 +368,7 @@ void Globals::clearAll() {
 	COUCOU = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
 	SAUVEGARDE = (Sauvegarde *)g_PTRNUL;
-	OBJET_EN_COURS = 0;
+	_curObjectIndex = 0;
 
 	for (int idx = 0; idx < 105; ++idx) {
 		ZONEP[idx].destX = 0;

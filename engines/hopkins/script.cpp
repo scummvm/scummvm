@@ -493,11 +493,11 @@ LABEL_1141:
 	if (*(a1 + 2) == 'O') {
 		if (*(a1 + 3) == 'B' && *(a1 + 4) == 'P') {
 			v1 = 1;
-			_vm->_objectsManager.AJOUTE_OBJET((int16)READ_LE_UINT16(a1 + 5));
+			_vm->_objectsManager.addObject((int16)READ_LE_UINT16(a1 + 5));
 		}
 		if (*(a1 + 2) == 'O' && *(a1 + 3) == 'B' && *(a1 + 4) == 'M') {
 			v1 = 1;
-			_vm->_objectsManager.DELETE_OBJET((int16)READ_LE_UINT16(a1 + 5));
+			_vm->_objectsManager.removeObject((int16)READ_LE_UINT16(a1 + 5));
 		}
 	}
 	if (*(a1 + 2) == 'G' && *(a1 + 3) == 'O' && *(a1 + 4) == 'T')

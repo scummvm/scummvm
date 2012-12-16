@@ -357,7 +357,7 @@ LABEL_7:
 			int v16 = 0;
 			for (int v5 = 1; v5 <= 6; v5++) {
 				++v4;
-				int v6 = _vm->_globals.INVENTAIRE[v4];
+				int v6 = _vm->_globals._inventory[v4];
 				if (v6 && v4 <= 29) {
 					byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(v6, 0);
 					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v7, v19 + v16 + 6,
@@ -401,13 +401,13 @@ LABEL_7:
 				if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId || (uint16)(_vm->_eventsManager._mouseCursorId - 2) <= 1u)
 					break;
 				v9 = v13;
-				_vm->_objectsManager.VALID_OBJET(_vm->_globals.INVENTAIRE[v13]);
+				_vm->_objectsManager.VALID_OBJET(_vm->_globals._inventory[v13]);
 				if (_vm->_eventsManager._mouseCursorId == 8)
 					v20 = true;
 				if (!v20) {
 					_vm->_scriptManager.TRAVAILOBJET = 1;
-					_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals.OBJET_EN_COURS;
-					_vm->_globals.SAUVEGARDE->data[svField8] = _vm->_globals.INVENTAIRE[v13];
+					_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals._curObjectIndex;
+					_vm->_globals.SAUVEGARDE->data[svField8] = _vm->_globals._inventory[v13];
 					_vm->_globals.SAUVEGARDE->data[svField9] = _vm->_eventsManager._mouseCursorId;
 					_vm->_objectsManager.OPTI_OBJET();
 					_vm->_scriptManager.TRAVAILOBJET = 0;
@@ -583,7 +583,7 @@ void DialogsManager::showLoadGame() {
 		_vm->_saveLoadManager.restore(slotNumber);
 	}
 
-	_vm->_objectsManager.CHANGE_OBJET(14);
+	_vm->_objectsManager.changeObject(14);
 }
 
 /**
@@ -641,9 +641,9 @@ void DialogsManager::showSaveLoad(int a1) {
 		break;
 	}
 
-	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVE2.SPR");
-	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 483, 360, 0);
 
 	if (_vm->_globals.FR) {

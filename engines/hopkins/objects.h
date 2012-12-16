@@ -121,23 +121,23 @@ public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
 
-	byte *CHANGE_OBJET(int objIndex);
+	void changeObject(int objIndex);
 	byte *CAPTURE_OBJET(int objIndex, int mode);
-	void DELETE_OBJET(int objIndex);
+	void removeObject(int objIndex);
 
 	int getWidth(const byte *objectData, int idx);
 	int getHeight(const byte *objectData, int idx);
 	int sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	byte *DEL_FICHIER_OBJ();
 
-	byte *CHARGE_SPRITE(const Common::String &file);
+	byte *loadSprite(const Common::String &file);
 	void set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize);
 	int get_offsetx(const byte *spriteData, int spriteIndex, bool isSize);
 	int get_offsety(const byte *spriteData, int spriteIndex, bool isSize);
-	void AFF_SPRITES();
+	void displaySprite();
 
 	int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
-	int AJOUTE_OBJET(int objIndex);
+	int addObject(int objIndex);
 
 	void INIT_BOB();
 	void BOB_ZERO(int idx);

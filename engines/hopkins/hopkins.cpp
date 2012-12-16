@@ -129,8 +129,8 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals.SVGA = 1;
 
 	_globals.CHARGE_OBJET();
-	_objectsManager.CHANGE_OBJET(14);
-	_objectsManager.AJOUTE_OBJET(14);
+	_objectsManager.changeObject(14);
+	_objectsManager.addObject(14);
 
 	_globals.HELICO = 0;
 	_globals.iRegul = 1;
@@ -455,8 +455,8 @@ bool HopkinsEngine::runWin95Demo() {
 
 bool HopkinsEngine::runLinuxDemo() {
 	_globals.CHARGE_OBJET();
-	_objectsManager.CHANGE_OBJET(14);
-	_objectsManager.AJOUTE_OBJET(14);
+	_objectsManager.changeObject(14);
+	_objectsManager.addObject(14);
 
 	_globals.HELICO = 0;
 	_eventsManager.mouseOff();
@@ -828,8 +828,8 @@ bool HopkinsEngine::runBeOSFull() {
 
 	warning("TODO: Init_Interrupt()");
 	_globals.CHARGE_OBJET();
-	_objectsManager.CHANGE_OBJET(14);
-	_objectsManager.AJOUTE_OBJET(14);
+	_objectsManager.changeObject(14);
+	_objectsManager.addObject(14);
 	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
 	_globals.iRegul = 1;
@@ -1216,7 +1216,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_soundManager.WSOUND(13);
 			if (_globals.FORETSPR == g_PTRNUL) {
 				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
-				_globals.FORETSPR = _objectsManager.CHARGE_SPRITE(_globals.NFICHIER);
+				_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
 				_soundManager.CHARGE_SAMPLE(1, "SOUND41.WAV");
 			}
 
@@ -1673,8 +1673,8 @@ bool HopkinsEngine::runWin95full() {
 	warning("TODO: Init_Interrupt_()");
 
 	_globals.CHARGE_OBJET();
-	_objectsManager.CHANGE_OBJET(14);
-	_objectsManager.AJOUTE_OBJET(14);
+	_objectsManager.changeObject(14);
+	_objectsManager.addObject(14);
 	_globals.HELICO = 0;
 	_globals.iRegul = 1;
 
@@ -2082,7 +2082,7 @@ bool HopkinsEngine::runWin95full() {
 				_soundManager.WSOUND(13);
 				if (_globals.FORETSPR == g_PTRNUL) {
 					_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
-					_globals.FORETSPR = _objectsManager.CHARGE_SPRITE(_globals.NFICHIER);
+					_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
 					_soundManager.CHARGE_SAMPLE(1, "SOUND41.WAV");
 				}
 				_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
@@ -2548,8 +2548,8 @@ bool HopkinsEngine::runLinuxFull() {
 	_soundManager.WSOUND(16);
 
 	_globals.CHARGE_OBJET();
-	_objectsManager.CHANGE_OBJET(14);
-	_objectsManager.AJOUTE_OBJET(14);
+	_objectsManager.changeObject(14);
+	_objectsManager.addObject(14);
 
 	_globals.HELICO = 0;
 	_eventsManager.mouseOff();
@@ -2960,7 +2960,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_soundManager.WSOUND(13);
 			if (_globals.FORETSPR == g_PTRNUL) {
 				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
-				_globals.FORETSPR = _objectsManager.CHARGE_SPRITE(_globals.NFICHIER);
+				_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
 				_soundManager.CHARGE_SAMPLE(1, "SOUND41.WAV");
 			}
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);

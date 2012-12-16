@@ -333,7 +333,7 @@ public:
 	int16 super_parcours[32002];
 	int Param[2100];
 	HopkinsItem Hopkins[70];
-	int INVENTAIRE[36];
+	int _inventory[36];
 	TriItem Tri[51];
 	int FR;
 	int SVGA;
@@ -386,7 +386,7 @@ public:
 	int16 *essai2;
 	byte *inventaire2;
 	byte *GESTE;
-	int OBJET_EN_COURS;
+	int _curObjectIndex;
 	int NUM_FICHIER_OBJ;
 	int nbrligne;
 	int largeur_boite;
@@ -403,7 +403,7 @@ public:
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;
 	int OBJL, OBJH;
-	int Nouv_objet;
+	bool _newObjectFl;
 	int HELICO;
 	uint32 CAT_POSI;
 	uint32 CAT_TAILLE;

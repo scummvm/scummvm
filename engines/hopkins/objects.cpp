@@ -99,13 +99,13 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-// Change Object
-byte *ObjectsManager::CHANGE_OBJET(int objIndex) {
-	byte *result = CAPTURE_OBJET(objIndex, 1);
-	_vm->_eventsManager._objectBuf = result;
-	_vm->_globals.Nouv_objet = 1;
-	_vm->_globals.OBJET_EN_COURS = objIndex;
-	return result;
+/**
+ * Change Object
+ */
+void ObjectsManager::changeObject(int objIndex) {
+	_vm->_eventsManager._objectBuf = CAPTURE_OBJET(objIndex, 1);
+	_vm->_globals._newObjectFl = true;
+	_vm->_globals._curObjectIndex = objIndex;
 }
 
 byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
@@ -122,7 +122,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 			ObjectsManager::DEL_FICHIER_OBJ();
 		if (val1 == 1) {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OBJET1.SPR");
-			_vm->_globals.ADR_FICHIER_OBJ = ObjectsManager::CHARGE_SPRITE(_vm->_globals.NFICHIER);
+			_vm->_globals.ADR_FICHIER_OBJ = ObjectsManager::loadSprite(_vm->_globals.NFICHIER);
 		}
 		_vm->_globals.NUM_FICHIER_OBJ = val1;
 	}
@@ -158,26 +158,25 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 	return dataP;
 }
 
-// Delete Object
-void ObjectsManager::DELETE_OBJET(int objIndex) {
-	byte lookCond = false;
-	int v2 = 0;
-	do {
-		++v2;
-		if (_vm->_globals.INVENTAIRE[v2] == objIndex)
-			lookCond = true;
-		if (v2 > 32)
-			lookCond = true;
-	} while (!lookCond);
-	if (v2 <= 32) {
-		if (v2 == 32) {
-			_vm->_globals.INVENTAIRE[32] = 0;
+/**
+ * Remove an Object from the inventory
+ */
+void ObjectsManager::removeObject(int objIndex) {
+	int idx;
+	for (idx = 1; idx <= 32; ++idx) {
+		if (_vm->_globals._inventory[idx] == objIndex)
+			break;
+	}
+
+	if (idx <= 32) {
+		if (idx == 32) {
+			_vm->_globals._inventory[32] = 0;
 		} else {
-			for (int i = v2; i < 32; ++i)
-				_vm->_globals.INVENTAIRE[i] = _vm->_globals.INVENTAIRE[i + 1];
+			for (int i = idx; i < 32; ++i)
+				_vm->_globals._inventory[i] = _vm->_globals._inventory[i + 1];
 		}
 	}
-	CHANGE_OBJET(14);
+	changeObject(14);
 
 }
 
@@ -267,8 +266,10 @@ byte *ObjectsManager::DEL_FICHIER_OBJ() {
 	return g_PTRNUL;
 }
 
-// Load Sprite
-byte *ObjectsManager::CHARGE_SPRITE(const Common::String &file) {
+/**
+ * Load Sprite from file
+ */
+byte *ObjectsManager::loadSprite(const Common::String &file) {
 	return _vm->_fileManager.loadFile(file);
 }
 
@@ -285,24 +286,28 @@ int ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, int
 	return result;
 }
 
-// Add Object
-int ObjectsManager::AJOUTE_OBJET(int objIndex) {
+/**
+ * Add Object
+ */
+int ObjectsManager::addObject(int objIndex) {
 	bool flag = false;
 	int arrIndex = 0;
 	do {
 		++arrIndex;
-		if (!_vm->_globals.INVENTAIRE[arrIndex])
+		if (!_vm->_globals._inventory[arrIndex])
 			flag = true;
 		if (arrIndex == 32)
 			flag = true;
 	} while (!flag);
 
-	_vm->_globals.INVENTAIRE[arrIndex] = objIndex;
+	_vm->_globals._inventory[arrIndex] = objIndex;
 	return arrIndex;
 }
 
-// Display Sprite
-void ObjectsManager::AFF_SPRITES() {
+/**
+ * Display Sprite
+ */
+void ObjectsManager::displaySprite() {
 	int v1;
 	int v2;
 	int destX;
@@ -865,13 +870,11 @@ void ObjectsManager::VERIFCACHE() {
 	int v5;
 	int v6;
 	int v7;
-	int v8;
 	int v9;
 	int v10;
 	int v11;
 
-	v8 = 0;
-	do {
+	for (int v8 = 0; v8 <= 19; v8++) {
 		if (_vm->_globals.Cache[v8].fieldA > 0) {
 			v7 = _vm->_globals.Cache[v8].fieldA;
 			v10 = 0;
@@ -937,8 +940,7 @@ void ObjectsManager::VERIFCACHE() {
 				_vm->_globals.Cache[v8].field10 = 1;
 			}
 		}
-		++v8;
-	} while (v8 <= 19);
+	}
 }
 
 void ObjectsManager::DEF_SPRITE(int idx) {
@@ -2823,7 +2825,7 @@ LABEL_65:
 		if (_vm->_globals.PLAN_FLAG == true)
 			_vm->_globals.SAUVEGARDE->data[svField1] = 6;
 		_vm->_globals.SAUVEGARDE->data[svField2] = NUMZONE;
-		_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals.OBJET_EN_COURS;
+		_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals._curObjectIndex;
 		_vm->_globals.GOACTION = 1;
 	}
 	_vm->_fontManager.hideText(5);
@@ -2834,7 +2836,7 @@ LABEL_65:
 		ARRET_PERSO_NUM = _vm->_globals.BOBZONE[NUMZONE];
 	}
 	if (_vm->_globals.ECRAN == 20 && _vm->_globals.SAUVEGARDE->data[svField132] == 1
-				&& _vm->_globals.OBJET_EN_COURS == 20 && NUMZONE == 12
+				&& _vm->_globals._curObjectIndex == 20 && NUMZONE == 12
 				&& _vm->_eventsManager._mouseCursorId == 23) {
 		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -3994,7 +3996,7 @@ void ObjectsManager::initBorder(int a1) {
 		_vm->_eventsManager._mouseCursorId = 8;
 	if (a1 == 29)
 		_vm->_eventsManager._mouseCursorId = 1;
-	if ((uint16)(a1 - 1) <= 0x1Bu && !_vm->_globals.INVENTAIRE[a1]) {
+	if ((uint16)(a1 - 1) <= 0x1Bu && !_vm->_globals._inventory[a1]) {
 		_vm->_eventsManager._mouseCursorId = 0;
 		_borderPos = Common::Point(0, 0);
 		_borderSpriteIndex = 0;
@@ -4043,12 +4045,12 @@ void ObjectsManager::OBJETPLUS(int idx) {
 			do {
 				_vm->_eventsManager._mouseCursorId = 6;
 LABEL_24:
-				if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field2 == 1)
+				if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field2 == 1)
 					break;
 				++_vm->_eventsManager._mouseCursorId;
 				if (_vm->_eventsManager._mouseCursorId == 7) {
 LABEL_26:
-					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field3 == 1)
+					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field3 == 1)
 						return;
 				}
 				v3 = _vm->_eventsManager._mouseCursorId++;
@@ -4057,42 +4059,42 @@ LABEL_26:
 				_vm->_eventsManager._mouseCursorId = v3 + 3;
 				if (v3 == 7) {
 LABEL_29:
-					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field7 == 1)
+					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field7 == 1)
 						return;
 				}
 				++_vm->_eventsManager._mouseCursorId;
 				if (_vm->_eventsManager._mouseCursorId == 11) {
 LABEL_31:
-					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field4 == 1)
+					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field4 == 1)
 						return;
 				}
 				_vm->_eventsManager._mouseCursorId += 2;
 				if (_vm->_eventsManager._mouseCursorId == 13) {
 LABEL_33:
-					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field5 == 1)
+					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field5 == 1)
 						return;
 				}
 				_vm->_eventsManager._mouseCursorId += 2;
 				if (_vm->_eventsManager._mouseCursorId == 15) {
 LABEL_35:
-					if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field6 == 1)
+					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 1)
 						return;
 				}
 				_vm->_eventsManager._mouseCursorId = 23;
 LABEL_37:
-				if (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field6 == 2)
+				if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 2)
 					break;
 				_vm->_eventsManager._mouseCursorId = 25;
 LABEL_39:
 				;
-			} while (_vm->_globals.ObjetW[_vm->_globals.INVENTAIRE[idx]].field7 != 2);
+			} while (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field7 != 2);
 		}
 	}
 }
 
 void ObjectsManager::VALID_OBJET(int a1) {
 	if (_vm->_eventsManager._mouseCursorId == 8)
-		CHANGE_OBJET(a1);
+		changeObject(a1);
 }
 
 void ObjectsManager::OPTI_OBJET() {

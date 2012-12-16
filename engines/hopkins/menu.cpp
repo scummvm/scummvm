@@ -64,10 +64,10 @@ int MenuManager::MENU() {
 		_vm->_globals.SORTIE = 0;
 
 		for (int idx = 0; idx < 31; ++idx)
-			_vm->_globals.INVENTAIRE[idx] = 0;
+			_vm->_globals._inventory[idx] = 0;
 
 		memset(_vm->_globals.SAUVEGARDE, 0, 2000);
-		_vm->_objectsManager.AJOUTE_OBJET(14);
+		_vm->_objectsManager.addObject(14);
 		frame5Index = 0;
 		frame4Index = 0;
 		frame3Index = 0;
@@ -90,7 +90,7 @@ int MenuManager::MENU() {
 		else if (_vm->_globals.FR == 2)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUES.SPR");
 
-		spriteData = _vm->_objectsManager.CHARGE_SPRITE(_vm->_globals.NFICHIER);
+		spriteData = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 		_vm->_eventsManager.mouseOn();
 		_vm->_eventsManager.changeMouseCursor(0);
 		_vm->_eventsManager._mouseCursorId = 0;

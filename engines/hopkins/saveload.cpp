@@ -144,7 +144,7 @@ Common::Error SaveLoadManager::save(int slot, const Common::String &saveName) {
 
 	// Set up the inventory
 	for (int i = 0; i < 35; ++i)
-		_vm->_globals.SAUVEGARDE->inventory[i] = _vm->_globals.INVENTAIRE[i];
+		_vm->_globals.SAUVEGARDE->inventory[i] = _vm->_globals._inventory[i];
 
 	/* Create the savegame */
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
@@ -196,7 +196,7 @@ Common::Error SaveLoadManager::restore(int slot) {
 
 	// Unpack the inventory
 	for (int i = 0; i < 35; ++i)
-		_vm->_globals.INVENTAIRE[i] = _vm->_globals.SAUVEGARDE->inventory[i];
+		_vm->_globals._inventory[i] = _vm->_globals.SAUVEGARDE->inventory[i];
 
 	// Set variables from loaded data as necessary
 	_vm->_globals.SAUVEGARDE->data[svField10] = slot;
