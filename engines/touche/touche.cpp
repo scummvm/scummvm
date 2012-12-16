@@ -33,7 +33,6 @@
 #include "common/textconsole.h"
 
 #include "audio/mixer.h"
-#include "audio/decoders/vorbis.h"
 
 #include "engines/util.h"
 #include "graphics/cursorman.h"
@@ -96,7 +95,6 @@ ToucheEngine::~ToucheEngine() {
 	delete _console;
 
 	stopMusic();
-	_extMusicFile.close();
 	delete _midiPlayer;
 }
 
@@ -3317,12 +3315,12 @@ bool ToucheEngine::canSaveGameStateCurrently() {
 void ToucheEngine::initMusic() {
 	// Detect External Music Files
 	bool extMusic = true;
-	for (int num = 0; num < 26; num++) {
-		Common::String extMusicFilename = Common::String::format("track%02d.ogg", num+1);
-		Common::File extMusicFile;
-		if (!extMusicFile.open(extMusicFilename))
+	for (int num = 0; num < 26 && extMusic; num++) {
+		Common::String extMusicFilename = Common::String::format("track%02d", num+1);
+		Audio::SeekableAudioStream *musicStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
+		if (!musicStream)
 			extMusic = false;
-		extMusicFile.close();
+		delete musicStream;
 	}
 
 	if (!extMusic) {
@@ -3343,12 +3341,12 @@ void ToucheEngine::startMusic(int num) {
 		_fData.seek(offs);
 		_midiPlayer->play(_fData, size, true);
 	} else {
-		Common::String extMusicFilename = Common::String::format("track%02d.ogg", num);
-		if (!_extMusicFile.open(extMusicFilename)) {
+		Common::String extMusicFilename = Common::String::format("track%02d", num);
+		_extMusicFileStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
+		if (!_extMusicFileStream) {
 			error("Unable to open %s for reading", extMusicFilename.c_str());
 		}
-		Audio::SeekableAudioStream *musicStream = Audio::makeVorbisStream(&_extMusicFile, DisposeAfterUse::NO);
-		Audio::LoopingAudioStream *loopStream = new Audio::LoopingAudioStream(musicStream, 0);
+		Audio::LoopingAudioStream *loopStream = new Audio::LoopingAudioStream(_extMusicFileStream, 0);
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream);
 		_mixer->setChannelVolume(_musicHandle, _musicVolume);
 	}
@@ -3360,7 +3358,6 @@ void ToucheEngine::stopMusic() {
 		_midiPlayer->stop();
 	else {
 		_mixer->stopHandle(_musicHandle);
-		_extMusicFile.close();
 	}
 }
 
