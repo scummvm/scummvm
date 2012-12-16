@@ -1,6 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "common/bitstream.h"
+#include "common/memstream.h"
 
 class BitStreamTestSuite : public CxxTest::TestSuite
 {
