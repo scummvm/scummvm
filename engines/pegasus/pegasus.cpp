@@ -1428,6 +1428,10 @@ void PegasusEngine::switchGameMode(const GameMode newMode, const GameMode oldMod
 }
 
 bool PegasusEngine::canSwitchGameMode(const GameMode newMode, const GameMode oldMode) {
+	// WORKAROUND: Don't allow game mode switches when the interface is not set up.
+	// Prevents segfaults when pressing 'i' when in the space chase.
+	if (!g_interface)
+		return false;
 	if (newMode == kModeInventoryPick && oldMode == kModeBiochipPick)
 		return false;
 	if (newMode == kModeBiochipPick && oldMode == kModeInventoryPick)
