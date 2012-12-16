@@ -184,7 +184,7 @@ void Mouse::on() {
 		step(0);
 		if (_busy)
 			_busy->step(0);
-    }
+	}
 }
 
 void Mouse::off() {

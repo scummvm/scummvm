@@ -177,7 +177,7 @@ Common::Error MohawkEngine_Riven::run() {
 		}
 	} else {
 		// Otherwise, start us off at aspit's card 1 (the main menu)
-        changeToStack(aspit);
+		changeToStack(aspit);
 		changeToCard(1);
 	}
 
