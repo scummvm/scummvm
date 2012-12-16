@@ -61,6 +61,10 @@ protected:
 	void simulatePreviousDrawDelay(const Common::Rect &dest);
 	void copyBackBufferToScreenWithSaturation(int16 saturation);
 	void transitionDissolve(Common::Rect rect, uint step);
+	void transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToRight(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToBottom(Common::Rect rect, uint16 steps, uint16 delay);
 	void transitionPartialToRight(Common::Rect rect, uint32 width, uint32 steps);
 	void transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps);
 private:

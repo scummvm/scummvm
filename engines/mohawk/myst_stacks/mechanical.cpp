@@ -616,7 +616,7 @@ void Mechanical::elevatorGoMiddle_run() {
 				_vm->_sound->playSoundBlocking(11120);
 				_vm->_gfx->copyImageToBackBuffer(6118, Common::Rect(544, 333));
 				_vm->_sound->replaceSoundMyst(12120);
-				_vm->_gfx->runTransition(kTransitionUnk2, Common::Rect(177, 0, 370, 333), 25, 0);
+				_vm->_gfx->runTransition(kTransitionSlideToLeft, Common::Rect(177, 0, 370, 333), 25, 0);
 				_vm->_sound->playSoundBlocking(13120);
 				_vm->_sound->replaceSoundMyst(8120);
 				_vm->_gfx->copyImageToBackBuffer(6327, Common::Rect(544, 333));
