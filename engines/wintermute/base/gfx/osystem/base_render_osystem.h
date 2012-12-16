@@ -92,6 +92,8 @@ private:
 	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicket *> _renderQueue;
+	RenderQueueIterator _lastAddedTicket;
+
 	bool _needsFlip;
 	uint32 _drawNum;
 	Common::Rect _renderRect;

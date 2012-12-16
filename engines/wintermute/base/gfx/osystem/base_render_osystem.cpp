@@ -260,6 +260,11 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	if ((dstRect->left < 0 && dstRect->right < 0) || (dstRect->top < 0 && dstRect->bottom < 0)) {
 		return;
 	}
+	// Start searching from the beginning for the first and second items (since it's empty the first time around
+	// then keep incrementing the start-position, to avoid comparing against already used tickets.
+	if (_drawNum == 0 || _drawNum == 1) {
+		_lastAddedTicket = _renderQueue.begin();
+	}
 
 	if (owner) { // Fade-tickets are owner-less
 		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
@@ -272,7 +277,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		// LOTS of tickets.
 		RenderQueueIterator endIterator = _renderQueue.end();
 		RenderTicket *compareTicket = NULL;
-		for (it = _renderQueue.begin(); it != endIterator; ++it) {
+		for (it = _lastAddedTicket; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
 				compareTicket->_colorMod = _colorMod;
@@ -280,6 +285,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 					drawFromSurface(compareTicket);
 				} else {
 					drawFromTicket(compareTicket);
+					_lastAddedTicket++;
 				}
 				return;
 			}
@@ -289,10 +295,11 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	ticket->_colorMod = _colorMod;
 	if (!_disableDirtyRects) {
 		drawFromTicket(ticket);
+		drawFromSurface(ticket);
+		_lastAddedTicket++;
 	} else {
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
-		drawFromSurface(ticket);
 	}
 }
 
