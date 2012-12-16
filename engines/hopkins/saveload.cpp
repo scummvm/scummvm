@@ -263,10 +263,10 @@ void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
 }
 
 void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLocation &item) {
-	s.syncAsSint16LE(item.xp);
-	s.syncAsSint16LE(item.yp);
+	s.syncAsSint16LE(item._pos.x);
+	s.syncAsSint16LE(item._pos.y);
 	s.syncAsSint16LE(item.field2);
-	s.syncAsSint16LE(item.location);
+	s.syncAsSint16LE(item._location);
 	s.syncAsSint16LE(item.field4);
 }
 

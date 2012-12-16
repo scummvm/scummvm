@@ -32,12 +32,11 @@ namespace Hopkins {
 
 struct SpriteItem {
 	int field0;
-	const byte *spriteData;
-	Common::Point spritePos;
-	int spriteY;
+	const byte *_spriteData;
+	Common::Point _spritePos;
 	int fieldC;
 	int fieldE;
-	int spriteIndex;
+	int _spriteIndex;
 	int field12;
 	int field14;
 	byte *field1C;
@@ -164,7 +163,7 @@ public:
 
 	void CLEAR_SPR();
 	void SPRITE_ON(int idx);
-	void SPRITE(const byte *spriteData, int xp, int yp, int idx, int spriteIndex, int a6, int a7, int a8, int a9);
+	void SPRITE(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9);
 	void SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, int a5);
 	void SPRITE_OFF(int idx);
 	void SPRITE_GEL(int idx);

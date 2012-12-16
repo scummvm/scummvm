@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/events.h"
 
 namespace Hopkins {
 
@@ -174,10 +175,9 @@ enum TriMode { TRI_NONE = 0, TRI_BOB = 1, TRI_SPRITE = 2, TRI_CACHE = 3 };
  * Structure to represent a pending display of either a Bob, Sprite, or Cache Item.
  */
 struct TriItem {
-	TriMode triMode;
-	int index;
-	int priority;
-	int unused;
+	TriMode _triMode;
+	int _index;
+	int _priority;
 };
 
 struct CacheItem {
@@ -205,10 +205,9 @@ struct HopkinsItem {
 };
 
 struct CharacterLocation {
-	int xp;
-	int yp;
+	Common::Point _pos;
 	int field2;
-	int location;
+	int _location;
 	int field4;
 };
 

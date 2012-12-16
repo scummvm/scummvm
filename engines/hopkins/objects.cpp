@@ -415,7 +415,7 @@ void ObjectsManager::AFF_SPRITES() {
 				do {
 					v11 = arr[v34];
 					v12 = &arr[v34 + 1];
-					if (_vm->_globals.Tri[arr[v34]].priority > _vm->_globals.Tri[*v12].priority) {
+					if (_vm->_globals.Tri[arr[v34]]._priority > _vm->_globals.Tri[*v12]._priority) {
 						arr[v34] = *v12;
 						*v12 = v11;
 						++v27;
@@ -429,50 +429,49 @@ void ObjectsManager::AFF_SPRITES() {
 		if (_vm->_globals.NBTRI + 1 > 1) {
 			do {
 				v13 = arr[v35];
-				switch (_vm->_globals.Tri[v13].triMode) {
+				switch (_vm->_globals.Tri[v13]._triMode) {
 				case TRI_BOB:
-					DEF_BOB(_vm->_globals.Tri[v13].index);
+					DEF_BOB(_vm->_globals.Tri[v13]._index);
 					break;
 				case TRI_SPRITE:
-					DEF_SPRITE(_vm->_globals.Tri[v13].index);
+					DEF_SPRITE(_vm->_globals.Tri[v13]._index);
 					break;
 				case TRI_CACHE:
-					DEF_CACHE(_vm->_globals.Tri[v13].index);
+					DEF_CACHE(_vm->_globals.Tri[v13]._index);
 					break;
 				default:
 					break;
 				}
-				_vm->_globals.Tri[v13].triMode = TRI_NONE;
+				_vm->_globals.Tri[v13]._triMode = TRI_NONE;
 				++v35;
 			} while (v35 < _vm->_globals.NBTRI + 1);
 		}
 	} else {
 		if (_vm->_globals.NBTRI + 1 > 1) {
 			for (int idx = 1; idx < (_vm->_globals.NBTRI + 1); ++idx) {
-				switch (_vm->_globals.Tri[idx].triMode) {
+				switch (_vm->_globals.Tri[idx]._triMode) {
 				case TRI_BOB:
-					DEF_BOB(_vm->_globals.Tri[idx].index);
+					DEF_BOB(_vm->_globals.Tri[idx]._index);
 					break;
 				case TRI_SPRITE:
-					DEF_SPRITE(_vm->_globals.Tri[idx].index);
+					DEF_SPRITE(_vm->_globals.Tri[idx]._index);
 					break;
 				case TRI_CACHE:
-					DEF_CACHE(_vm->_globals.Tri[idx].index);
+					DEF_CACHE(_vm->_globals.Tri[idx]._index);
 					break;
 				default:
 					break;
 				}
-				_vm->_globals.Tri[idx].triMode = TRI_NONE;
+				_vm->_globals.Tri[idx]._triMode = TRI_NONE;
 			}
 		}
 	}
 
 	// Reset the Tri array
 	for (int idx = 0; idx < 50; ++idx) {
-		_vm->_globals.Tri[idx].triMode = TRI_NONE;
-		_vm->_globals.Tri[idx].index = 0;
-		_vm->_globals.Tri[idx].priority = 0;
-		_vm->_globals.Tri[idx].unused = 0;
+		_vm->_globals.Tri[idx]._triMode = TRI_NONE;
+		_vm->_globals.Tri[idx]._index = 0;
+		_vm->_globals.Tri[idx]._priority = 0;
 	}
 
 	_vm->_globals.NBTRI = 0;
@@ -877,7 +876,7 @@ void ObjectsManager::VERIFCACHE() {
 			v10 = 0;
 			do {
 				if (Sprite[v10].field0 == 1) {
-					if (Sprite[v10].spriteIndex != 250) {
+					if (Sprite[v10]._spriteIndex != 250) {
 						v1 = Sprite[v10].field2C;
 						v11 = Sprite[v10].field30 + v1;
 						v2 = Sprite[v10].field32 + Sprite[v10].field2E;
@@ -960,11 +959,11 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		v3 = Sprite[v2].field2C;
 		v4 = Sprite[v2].field2E;
 		if (Sprite[v2].field28)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData,
-			v3 + 300, v4 + 300, Sprite[v2].spriteIndex);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2]._spriteData,
+			v3 + 300, v4 + 300, Sprite[v2]._spriteIndex);
 		else
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2].spriteData,
-				v3 + 300, v4 + 300,  Sprite[v2].spriteIndex, Sprite[v2].field36, Sprite[v2].field34, Sprite[v2].fieldE);
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, Sprite[v2]._spriteData,
+				v3 + 300, v4 + 300,  Sprite[v2]._spriteIndex, Sprite[v2].field36, Sprite[v2].field34, Sprite[v2].fieldE);
 
 		v5 = idx;
 		v6 = idx;
@@ -1034,18 +1033,18 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 	int v22;
 
 	Sprite[idx].field2A = 0;
-	int spriteIndex = Sprite[idx].spriteIndex;
+	int spriteIndex = Sprite[idx]._spriteIndex;
 	if (spriteIndex != 250) {
 		if (Sprite[idx].fieldE) {
-			v5 = get_offsetx(Sprite[idx].spriteData, spriteIndex, 1);
+			v5 = get_offsetx(Sprite[idx]._spriteData, spriteIndex, 1);
 			v22 = Sprite[idx].field12 + v5;
 			v4 = Sprite[idx].field12 + v5;
-			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].spriteIndex, 1);
+			v6 = get_offsety(Sprite[idx]._spriteData, Sprite[idx]._spriteIndex, 1);
 		} else {
-			v3 = get_offsetx(Sprite[idx].spriteData, spriteIndex, 0);
+			v3 = get_offsetx(Sprite[idx]._spriteData, spriteIndex, 0);
 			v22 = Sprite[idx].field12 + v3;
 			v4 = Sprite[idx].field12 + v3;
-			v6 = get_offsety(Sprite[idx].spriteData, Sprite[idx].spriteIndex, 0);
+			v6 = get_offsety(Sprite[idx]._spriteData, Sprite[idx]._spriteIndex, 0);
 		}
 
 		v9 = Sprite[idx].field14 + v6;
@@ -1106,8 +1105,8 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 			}
 		}
 
-		v15 = Sprite[idx].spritePos.x - v22;
-		v16 = Sprite[idx].spritePos.y - v7;
+		v15 = Sprite[idx]._spritePos.x - v22;
+		v16 = Sprite[idx]._spritePos.y - v7;
 		Sprite[idx].field2C = v15;
 		Sprite[idx].field2E = v16;
 		Sprite[idx].field2A = 1;
@@ -1118,8 +1117,8 @@ void ObjectsManager::CALCUL_SPRITE(int idx) {
 		_vm->_globals.Liste[v17].field0 = 1;
 		_vm->_globals.Liste[v17].field2 = v15;
 		_vm->_globals.Liste[v17].field4 = v16;
-		width = getWidth(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
-		height = getHeight(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
+		width = getWidth(Sprite[idx]._spriteData, Sprite[idx]._spriteIndex);
+		height = getHeight(Sprite[idx]._spriteData, Sprite[idx]._spriteIndex);
 
 		if (zoomPercent) {
 			width = _vm->_graphicsManager.zoomIn(width, zoomPercent);
@@ -1145,9 +1144,9 @@ int ObjectsManager::AvantTri(TriMode triMode, int index, int priority) {
 		error("NBTRI too high");
 
 	result = _vm->_globals.NBTRI;
-	_vm->_globals.Tri[result].triMode = triMode;
-	_vm->_globals.Tri[result].index = index;
-	_vm->_globals.Tri[result].priority = priority;
+	_vm->_globals.Tri[result]._triMode = triMode;
+	_vm->_globals.Tri[result]._index = index;
+	_vm->_globals.Tri[result]._priority = priority;
 
 	return result;
 }
@@ -1452,13 +1451,13 @@ void ObjectsManager::AFF_VBOB() {
 int ObjectsManager::XSPR(int idx) {
 	if (idx > 5)
 		error("request of the Coord. x a sprite > MAX_SPRITE.");
-	return Sprite[idx].spritePos.x;
+	return Sprite[idx]._spritePos.x;
 }
 
 int ObjectsManager::YSPR(int idx) {
 	if (idx > 5)
 		error("request of the Coord. y a sprite > MAX_SPRITE.");
-	return Sprite[idx].spritePos.y;
+	return Sprite[idx]._spritePos.y;
 }
 
 void ObjectsManager::SPRITE_NOW(const byte *spriteData, int a2, int a3, int a4, int a5, int a6, int a7, int a8) {
@@ -1471,7 +1470,7 @@ void ObjectsManager::CLEAR_SPR() {
 	idx = 0;
 	do {
 		Sprite[idx].field1C = g_PTRNUL;
-		Sprite[idx].spriteData = g_PTRNUL;
+		Sprite[idx]._spriteData = g_PTRNUL;
 		Sprite[idx].field0 = 0;
 		++idx;
 	} while (idx <= 4);
@@ -1495,12 +1494,12 @@ void ObjectsManager::SPRITE_ON(int idx) {
 	Sprite[idx].field0 = 1;
 }
 
-void ObjectsManager::SPRITE(const byte *spriteData, int xp, int yp, int idx, int spriteIndex, int a6, int a7, int a8, int a9) {
+void ObjectsManager::SPRITE(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9) {
 	if (idx > 5)
 		error("Attempt to display a sprite > MAX_SPRITE.");
-	Sprite[idx].spriteData = spriteData;
-	Sprite[idx].spritePos = Common::Point(xp, yp);
-	Sprite[idx].spriteIndex = spriteIndex;
+	Sprite[idx]._spriteData = spriteData;
+	Sprite[idx]._spritePos = pos;
+	Sprite[idx]._spriteIndex = spriteIndex;
 	Sprite[idx].fieldC = a6;
 	Sprite[idx].field12 = a8;
 	Sprite[idx].field14 = a9;
@@ -1522,7 +1521,7 @@ void ObjectsManager::SPRITE(const byte *spriteData, int xp, int yp, int idx, int
 }
 
 void ObjectsManager::SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, int a5) {
-	Sprite[idx].spriteData = spriteData;
+	Sprite[idx]._spriteData = spriteData;
 	Sprite[idx].field1C = a3;
 	Sprite[idx].field20 = a4;
 	Sprite[idx].field24 = 0;
@@ -1553,13 +1552,13 @@ void ObjectsManager::SPRITE_GEL(int idx) {
 int ObjectsManager::SXSPR(int idx) {
 	if (idx > 5)
 		error("request of the size of a sprite x > MAX_SPRITE.");
-	return getWidth(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
+	return getWidth(Sprite[idx]._spriteData, Sprite[idx]._spriteIndex);
 }
 
 int ObjectsManager::SYSPR(int idx) {
 	if (idx > 5)
 		error("request of the size of a sprite y > MAX_SPRITE.");
-	return getHeight(Sprite[idx].spriteData, Sprite[idx].spriteIndex);
+	return getHeight(Sprite[idx]._spriteData, Sprite[idx]._spriteIndex);
 }
 
 int ObjectsManager::POSISPR(int idx) {
@@ -1575,20 +1574,20 @@ void ObjectsManager::SETPOSISPR(int idx, int a2) {
 void ObjectsManager::SETXSPR(int idx, int xp) {
 	if (idx > 5)
 		error("Set the Coord. x a sprite> MAX_SPRITE.");
-	Sprite[idx].spritePos.x = xp;
+	Sprite[idx]._spritePos.x = xp;
 }
 
 void ObjectsManager::SETANISPR(int idx, int spriteIndex) {
 	if (idx > 5)
 		error("Set the Coord. x a sprite> MAX_SPRITE.");
 
-	Sprite[idx].spriteIndex = spriteIndex;
+	Sprite[idx]._spriteIndex = spriteIndex;
 }
 
 void ObjectsManager::SETYSPR(int idx, int yp) {
 	if ( idx > 5 )
 		error("Set the Coord. y a sprite> MAX_SPRITE.");
-	Sprite[idx].spritePos.y = yp;
+	Sprite[idx]._spritePos.y = yp;
 }
 
 // Set Sprite Size
@@ -2577,7 +2576,7 @@ void ObjectsManager::PLAN_BETA() {
 		_vm->_globals.PLANY = 319;
 		_vm->_globals.PLANI = 1;
 	}
-	SPRITE(sprite_ptr, _vm->_globals.PLANX, _vm->_globals.PLANY, 0, _vm->_globals.PLANI, 0, 0, 5, 5);
+	SPRITE(sprite_ptr, Common::Point(_vm->_globals.PLANX, _vm->_globals.PLANY), 0, _vm->_globals.PLANI, 0, 0, 5, 5);
 	_vm->_eventsManager.setMouseXY(_vm->_globals.PLANX, _vm->_globals.PLANY);
 	my_anim = 0;
 	_vm->_eventsManager.mouseOn();
@@ -3022,17 +3021,17 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 
 	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
-		&& _vm->_globals.SAUVEGARDE->realHopkins.location == _vm->_globals.ECRAN) {
+		&& _vm->_globals.SAUVEGARDE->realHopkins._location == _vm->_globals.ECRAN) {
 		CH_TETE = 0;
 		loc = &_vm->_globals.SAUVEGARDE->samantha;
-		loc->xp = XSPR(0);
-		loc->yp = YSPR(0);
+		loc->_pos.x = XSPR(0);
+		loc->_pos.y = YSPR(0);
 		loc->field2 = 64;
-		loc->location = _vm->_globals.ECRAN;
+		loc->_location = _vm->_globals.ECRAN;
 		loc->field4 = Sprite[0].field0;
 
 		SPRITE_OFF(1);
-		SPRITE(_vm->_globals.TETE, loc->xp, loc->yp, 1, 3, loc->field4, 0, 20, 127);
+		SPRITE(_vm->_globals.TETE, loc->_pos, 1, 3, loc->field4, 0, 20, 127);
 		SPRITE_ON(1);
 		SPRITE_OFF(0);
 
@@ -3045,21 +3044,21 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 		_vm->_globals.PERSO_TYPE = 0;
-		SPRITE(_vm->_globals.PERSO, loc->xp, loc->yp, 0, 64, loc->field4, 0, 34, 190);
+		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 34, 190);
 		SPRITE_ON(0);
 		_vm->_globals.HOPKINS_DATA();
 	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
-			&& _vm->_globals.SAUVEGARDE->samantha.location == _vm->_globals.ECRAN) {
+			&& _vm->_globals.SAUVEGARDE->samantha._location == _vm->_globals.ECRAN) {
 		CH_TETE = 0;
 		loc = &_vm->_globals.SAUVEGARDE->realHopkins;
-		loc->xp = XSPR(0);
-		loc->yp = YSPR(0);
+		loc->_pos.x = XSPR(0);
+		loc->_pos.y = YSPR(0);
 		loc->field2 = 64;
-		loc->location = _vm->_globals.ECRAN;
+		loc->_location = _vm->_globals.ECRAN;
 		loc->field4 = Sprite[0].fieldC;
 
 		SPRITE_OFF(1);
-		SPRITE(_vm->_globals.TETE, loc->xp, loc->yp, 1, 2, loc->field4, 0, 34, 190);
+		SPRITE(_vm->_globals.TETE, loc->_pos, 1, 2, loc->field4, 0, 34, 190);
 		SPRITE_ON(1);
 		SPRITE_OFF(0);
 
@@ -3071,33 +3070,33 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PSAMAN.SPR");
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 		_vm->_globals.PERSO_TYPE = 2;
-		SPRITE(_vm->_globals.PERSO, loc->xp, loc->yp, 0, 64, loc->field4, 0, 20, 127);
+		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 20, 127);
 		SPRITE_ON(0);
 		_vm->_globals.HOPKINS_DATA();
 	} else {
 		switch (oldCharacter) {
 		case CHARACTER_HOPKINS:
 			loc = &_vm->_globals.SAUVEGARDE->realHopkins;
-			loc->xp = XSPR(0);
-			loc->yp = YSPR(0);
+			loc->_pos.x = XSPR(0);
+			loc->_pos.y = YSPR(0);
 			loc->field2 = 64;
-			loc->location = _vm->_globals.ECRAN;
+			loc->_location = _vm->_globals.ECRAN;
 			loc->field4 = Sprite[0].fieldC;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
 			loc = &_vm->_globals.SAUVEGARDE->cloneHopkins;
-			loc->xp = XSPR(0);
-			loc->yp = YSPR(0);
+			loc->_pos.x = XSPR(0);
+			loc->_pos.y = YSPR(0);
 			loc->field2 = 64;
-			loc->location = _vm->_globals.ECRAN;
+			loc->_location = _vm->_globals.ECRAN;
 			loc->field4 = Sprite[0].fieldC;
 			break;
 		case CHARACTER_SAMANTHA:
 			loc = &_vm->_globals.SAUVEGARDE->samantha;
-			loc->xp = XSPR(0);
-			loc->yp = YSPR(0);
+			loc->_pos.x = XSPR(0);
+			loc->_pos.y = YSPR(0);
 			loc->field2 = 64;
-			loc->location = _vm->_globals.ECRAN;
+			loc->_location = _vm->_globals.ECRAN;
 			loc->field4 = Sprite[0].fieldC;
 			break;
 		default:
@@ -3110,21 +3109,21 @@ void ObjectsManager::CHANGE_TETE(PlayerCharacter oldCharacter, PlayerCharacter n
 			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField356] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField357] = 1;
-			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->realHopkins.location;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->realHopkins._location;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
 			_vm->_globals.SAUVEGARDE->data[svField121] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField354] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField356] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField357] = 0;
-			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->cloneHopkins.location;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->cloneHopkins._location;
 			break;
 		case CHARACTER_SAMANTHA:
 			_vm->_globals.SAUVEGARDE->data[svField121] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField354] = 0;
 			_vm->_globals.SAUVEGARDE->data[svField356] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField357] = 0;
-			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->samantha.location;
+			_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->samantha._location;
 			break;
 		}
 	}
@@ -5176,8 +5175,8 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 		v15 = a5 / 2;
 	else if (_vm->_globals.vitesse == 3)
 		v15 = a5 / 3;
-	v14 = Sprite[0].spriteData;
-	spriteIndex = Sprite[0].spriteIndex;
+	v14 = Sprite[0]._spriteData;
+	spriteIndex = Sprite[0]._spriteIndex;
 	v16 = Sprite[0].fieldE;
 	Sprite[0].field12 += a3;
 	Sprite[0].field14 += a4;
@@ -5200,14 +5199,14 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 		++v18;
 		if (v7 == 1) {
 			if (v13 == -1) {
-				Sprite[0].spriteData = v14;
-				Sprite[0].spriteIndex = spriteIndex;
+				Sprite[0]._spriteData = v14;
+				Sprite[0]._spriteIndex = spriteIndex;
 				Sprite[0].field12 -= a3;
 				Sprite[0].field14 -= a4;
 				Sprite[0].fieldE = v16;
 			} else {
-				Sprite[0].spriteData = spriteData;
-				Sprite[0].spriteIndex = v13;
+				Sprite[0]._spriteData = spriteData;
+				Sprite[0]._spriteIndex = v13;
 			}
 			v10 = 0;
 			v9 = v15;
@@ -5243,8 +5242,8 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 		v14 = a5 / 2;
 	else if (_vm->_globals.vitesse == 3)
 		v14 = a5 / 3;
-	S_old_spr = Sprite[0].spriteData;
-	S_old_ani = Sprite[0].spriteIndex;
+	S_old_spr = Sprite[0]._spriteData;
+	S_old_ani = Sprite[0]._spriteIndex;
 	S_old_ret = Sprite[0].fieldE;
 	Sprite[0].field12 += a3;
 	Sprite[0].field14 += a4;
@@ -5272,8 +5271,8 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 			++strPos;
 		} while (!loopCond);
 		if (spriteIndex != -1) {
-			Sprite[0].spriteData = a1;
-			Sprite[0].spriteIndex = spriteIndex;
+			Sprite[0]._spriteData = a1;
+			Sprite[0]._spriteIndex = spriteIndex;
 		}
 		v10 = 0;
 		v9 = v14;
@@ -5327,14 +5326,14 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 		++v14;
 		if (v6 == 1) {
 			if (spriteIndex == -1) {
-				Sprite[0].spriteData = S_old_spr;
-				Sprite[0].spriteIndex = S_old_ani;
+				Sprite[0]._spriteData = S_old_spr;
+				Sprite[0]._spriteIndex = S_old_ani;
 				Sprite[0].field12 -= a3;
 				Sprite[0].field14 -= a4;
 				Sprite[0].fieldE = S_old_ret;
 			} else {
-				Sprite[0].spriteData = a1;
-				Sprite[0].spriteIndex = spriteIndex;
+				Sprite[0]._spriteData = a1;
+				Sprite[0]._spriteIndex = spriteIndex;
 			}
 
 			v9 = 0;
@@ -5492,7 +5491,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	}
 	_vm->_eventsManager.mouseOn();
 	if (_vm->_globals.ECRAN == 61) {
-		SPRITE(_vm->_globals.PERSO, 330, 418, 0, 60, 0, 0, 34, 190);
+		SPRITE(_vm->_globals.PERSO, Common::Point(330, 418), 0, 60, 0, 0, 34, 190);
 		SPRITE_ON(0);
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		VERIFTAILLE();
@@ -5622,11 +5621,11 @@ LABEL_70:
 	}
 	_vm->_globals.HOPKINS_DATA();
 	if (!_vm->_globals.PERSO_TYPE)
-		SPRITE(_vm->_globals.PERSO, PERX, PERY, 0, PERI, 0, 0, 34, 190);
+		SPRITE(_vm->_globals.PERSO, Common::Point(PERX, PERY), 0, PERI, 0, 0, 34, 190);
 	if (_vm->_globals.PERSO_TYPE == 1)
-		SPRITE(_vm->_globals.PERSO, PERX, PERY, 0, PERI, 0, 0, 28, 155);
+		SPRITE(_vm->_globals.PERSO, Common::Point(PERX, PERY), 0, PERI, 0, 0, 28, 155);
 	if (_vm->_globals.PERSO_TYPE == 2)
-		SPRITE(_vm->_globals.PERSO, PERX, PERY, 0, PERI, 0, 0, 20, 127);
+		SPRITE(_vm->_globals.PERSO, Common::Point(PERX, PERY), 0, PERI, 0, 0, 20, 127);
 	_vm->_eventsManager.setMouseXY(PERX, PERY);
 	if (_vm->_graphicsManager.DOUBLE_ECRAN)
 		_vm->_graphicsManager.SCROLL = (int16)XSPR(0) - 320;

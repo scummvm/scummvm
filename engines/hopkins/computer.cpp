@@ -589,7 +589,7 @@ void ComputerManager::readText(int idx) {
  * Display breakout when Games sub-menu is selected
  */
 void ComputerManager::displayGamesSubMenu() {
-	const byte *v1 = _vm->_objectsManager.Sprite[0].spriteData;
+	const byte *v1 = _vm->_objectsManager.Sprite[0]._spriteData;
 	uint oldSpeed = _vm->_globals.vitesse;
 
 	_vm->_globals.vitesse = 1;
@@ -620,7 +620,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	_breakoutSpr = _vm->_globals.freeMemory(_breakoutSpr);
 	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
-	_vm->_objectsManager.Sprite[0].spriteData = v1;
+	_vm->_objectsManager.Sprite[0]._spriteData = v1;
 
 	_vm->_soundManager.DEL_SAMPLE(1);
 	_vm->_soundManager.DEL_SAMPLE(2);
@@ -707,8 +707,8 @@ void ComputerManager::newLevel() {
 
 	_breakoutLevel = (int16 *)_vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	displayBricks();
-	_vm->_objectsManager.SPRITE(_breakoutSpr, 150, 192, 0, 13, 0, 0, 0, 0);
-	_vm->_objectsManager.SPRITE(_breakoutSpr, 164, 187, 1, 14, 0, 0, 0, 0);
+	_vm->_objectsManager.SPRITE(_breakoutSpr, Common::Point(150, 192), 0, 13, 0, 0, 0, 0);
+	_vm->_objectsManager.SPRITE(_breakoutSpr, Common::Point(164, 187), 1, 14, 0, 0, 0, 0);
 	_ballPosition = Common::Point(164, 187);
 	RAQX = 150;
 	_vm->_objectsManager.SPRITE_ON(0);

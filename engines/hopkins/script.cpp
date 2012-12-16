@@ -213,34 +213,33 @@ LABEL_1141:
 				_vm->_objectsManager.PERI = v5;
 				if (_vm->_objectsManager.CH_TETE == 1) {
 					if (_vm->_globals.SAUVEGARDE->data[svField354] == 1
-							&& _vm->_globals.SAUVEGARDE->cloneHopkins.xp && _vm->_globals.SAUVEGARDE->cloneHopkins.yp
-							&& _vm->_globals.SAUVEGARDE->cloneHopkins.field2 && _vm->_globals.SAUVEGARDE->cloneHopkins.location) {
+							&& _vm->_globals.SAUVEGARDE->cloneHopkins._pos.x && _vm->_globals.SAUVEGARDE->cloneHopkins._pos.y
+							&& _vm->_globals.SAUVEGARDE->cloneHopkins.field2 && _vm->_globals.SAUVEGARDE->cloneHopkins._location) {
 
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->cloneHopkins.xp;
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->cloneHopkins.yp;
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->cloneHopkins._pos.x;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->cloneHopkins._pos.y;
 						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->cloneHopkins.field2;
 					}
 					if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
-							&& _vm->_globals.SAUVEGARDE->samantha.xp && _vm->_globals.SAUVEGARDE->samantha.yp
-							&& _vm->_globals.SAUVEGARDE->samantha.field2 && _vm->_globals.SAUVEGARDE->samantha.location) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->samantha.xp;
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->samantha.yp;
+							&& _vm->_globals.SAUVEGARDE->samantha._pos.x && _vm->_globals.SAUVEGARDE->samantha._pos.y
+							&& _vm->_globals.SAUVEGARDE->samantha.field2 && _vm->_globals.SAUVEGARDE->samantha._location) {
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->samantha._pos.x;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->samantha._pos.y;
 						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->samantha.field2;
 					}
 					if (_vm->_globals.SAUVEGARDE->data[svField357] == 1
-							&& _vm->_globals.SAUVEGARDE->realHopkins.xp && _vm->_globals.SAUVEGARDE->realHopkins.yp
-							&& _vm->_globals.SAUVEGARDE->realHopkins.field2 && _vm->_globals.SAUVEGARDE->realHopkins.location) {
-						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->realHopkins.xp;
-						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->realHopkins.yp;
+							&& _vm->_globals.SAUVEGARDE->realHopkins._pos.x && _vm->_globals.SAUVEGARDE->realHopkins._pos.y
+							&& _vm->_globals.SAUVEGARDE->realHopkins.field2 && _vm->_globals.SAUVEGARDE->realHopkins._location) {
+						_vm->_objectsManager.PERX = _vm->_globals.SAUVEGARDE->realHopkins._pos.x;
+						_vm->_objectsManager.PERY = _vm->_globals.SAUVEGARDE->realHopkins._pos.y;
 						_vm->_objectsManager.PERI = _vm->_globals.SAUVEGARDE->realHopkins.field2;
 					}
 				}
 				if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
-						&& _vm->_globals.SAUVEGARDE->realHopkins.location == _vm->_globals.ECRAN) {
+						&& _vm->_globals.SAUVEGARDE->realHopkins._location == _vm->_globals.ECRAN) {
 					_vm->_objectsManager.SPRITE(
 					    _vm->_globals.TETE,
-					    _vm->_globals.SAUVEGARDE->realHopkins.xp,
-					    _vm->_globals.SAUVEGARDE->realHopkins.yp,
+					    _vm->_globals.SAUVEGARDE->realHopkins._pos,
 					    1,
 					    2,
 					    _vm->_globals.SAUVEGARDE->realHopkins.field4,
@@ -252,11 +251,10 @@ LABEL_1141:
 				}
 				if (_vm->_globals.SAUVEGARDE->data[svField357] == 1
 				        && _vm->_globals.SAUVEGARDE->data[svField355] == 1
-				        && _vm->_globals.SAUVEGARDE->samantha.location == _vm->_globals.ECRAN) {
+				        && _vm->_globals.SAUVEGARDE->samantha._location == _vm->_globals.ECRAN) {
 					_vm->_objectsManager.SPRITE(
 					    _vm->_globals.TETE,
-					    _vm->_globals.SAUVEGARDE->samantha.xp,
-					    _vm->_globals.SAUVEGARDE->samantha.yp,
+					    _vm->_globals.SAUVEGARDE->samantha._pos,
 					    1,
 					    3,
 					    _vm->_globals.SAUVEGARDE->samantha.field4,
@@ -1941,10 +1939,10 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			}
 			CharacterLocation *v51 = &_vm->_globals.SAUVEGARDE->realHopkins;
-			v51->xp = _vm->_objectsManager.XSPR(0);
-			v51->yp = _vm->_objectsManager.YSPR(0);
+			v51->_pos.x = _vm->_objectsManager.XSPR(0);
+			v51->_pos.y = _vm->_objectsManager.YSPR(0);
 			v51->field2 = 57;
-			v51->location = 97;
+			v51->_location = 97;
 			_vm->_globals.SAUVEGARDE->data[svField121] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField352] = 1;
 			_vm->_globals.SAUVEGARDE->data[svField353] = 1;
@@ -2169,10 +2167,10 @@ LABEL_1141:
 			_vm->_animationManager.playSequence("RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager.NO_SEQ = false;
 			CharacterLocation *v53 = &_vm->_globals.SAUVEGARDE->samantha;
-			v53->xp = 404;
-			v53->yp = 395;
+			v53->_pos.x = 404;
+			v53->_pos.y = 395;
 			v53->field2 = 64;
-			v53->location = _vm->_globals.ECRAN;
+			v53->_location = _vm->_globals.ECRAN;
 
 			int v54 = _vm->_globals.STAILLE[790 / 2];
 			if (_vm->_globals.STAILLE[790 / 2] < 0)
@@ -2185,7 +2183,7 @@ LABEL_1141:
 			_vm->_globals.SAUVEGARDE->data[svField355] = 1;
 			_vm->_objectsManager.DEUXPERSO = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
-			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->xp, v53->yp, 1, 3, v53->field4, 0, 20, 127);
+			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->_pos, 1, 3, v53->field4, 0, 20, 127);
 			_vm->_objectsManager.SPRITE_ON(1);
 		}
 		if (v76 == 245) {

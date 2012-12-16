@@ -4768,7 +4768,7 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 		_objectsManager.PERX = -20;
 		_objectsManager.PERI = 0;
 	}
-	_objectsManager.SPRITE(_globals.PERSO, _objectsManager.PERX, 110, 0, _objectsManager.PERI, 0, 0, 0, 0);
+	_objectsManager.SPRITE(_globals.PERSO, Common::Point(_objectsManager.PERX, 110), 0, _objectsManager.PERI, 0, 0, 0, 0);
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
