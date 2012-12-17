@@ -1756,7 +1756,7 @@ Math::Quaternion Actor::getRotationQuat() const {
 		}
 		return ret;
 	} else {
-		return Math::Quaternion::fromEuler(_pitch, _roll, -_yaw);
+		return Math::Quaternion::fromEuler(_roll, -_pitch, -_yaw);
 	}
 }
 
