@@ -106,7 +106,7 @@ void MystCursorManager::hideCursor() {
 void MystCursorManager::setCursor(uint16 id) {
 	// Zero means empty cursor
 	if (id == 0) {
-		static const byte emptyCursor[4];
+		static const byte emptyCursor[4] = { 0, 0, 0, 0 };
 		CursorMan.replaceCursor(&emptyCursor, 2, 2, 0, 0, 0);
 		return;
 	}
