@@ -300,6 +300,25 @@ bool SimpleMovie::update() {
 		_bink.seekToFrame(_startFrame - 1);
 	}
 
+	uint16 scriptStartFrame = _vm->_state->getMovieScriptStartFrame();
+	if (scriptStartFrame && _bink.getCurFrame() > scriptStartFrame) {
+		uint16 script = _vm->_state->getMovieScript();
+
+		// The control variables are reset before running the script because
+		// some scripts set up another movie triggered script
+		_vm->_state->setMovieScriptStartFrame(0);
+		_vm->_state->setMovieScript(0);
+
+		_vm->runScriptsFromNode(script);
+	}
+
+	uint16 ambiantStartFrame = _vm->_state->getMovieAmbiantScriptStartFrame();
+	if (ambiantStartFrame && _bink.getCurFrame() > ambiantStartFrame) {
+		_vm->runAmbientScripts(_vm->_state->getMovieAmbiantScript());
+		_vm->_state->setMovieAmbiantScriptStartFrame(0);
+		_vm->_state->setMovieAmbiantScript(0);
+	}
+
 	if (!_synchronized) {
 		// Play the movie according to the bink file framerate
 		if (_bink.needsUpdate()) {

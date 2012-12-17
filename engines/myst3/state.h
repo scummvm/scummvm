@@ -129,6 +129,10 @@ public:
 
 	DECLARE_VAR(178, MovieUseBackground)
 	DECLARE_VAR(179, CameraSkipAnimation)
+	DECLARE_VAR(180, MovieAmbiantScriptStartFrame)
+	DECLARE_VAR(181, MovieAmbiantScript)
+	DECLARE_VAR(182, MovieScriptStartFrame)
+	DECLARE_VAR(183, MovieScript)
 
 	DECLARE_VAR(185, CameraMoveSpeed)
 

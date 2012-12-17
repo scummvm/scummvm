@@ -162,6 +162,10 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(178, MovieUseBackground, false)
 	VAR(179, CameraSkipAnimation, true)
+	VAR(180, MovieAmbiantScriptStartFrame, false)
+	VAR(181, MovieAmbiantScript, false)
+	VAR(182, MovieScriptStartFrame, false)
+	VAR(183, MovieScript, false)
 
 	VAR(185, CameraMoveSpeed, false)
 
