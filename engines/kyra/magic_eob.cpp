@@ -179,7 +179,7 @@ void EoBCoreEngine::castSpell(int spell, int weaponSlot) {
 
 	if ((s->flags & 0x100) && (c->effectFlags & 0x40))
 		// remove invisibility effect
-		removeCharacterEffect(10, _openBookChar, 1);
+		removeCharacterEffect(_flags.gameID == GI_EOB1 ? 8 : 10, _openBookChar, 1);
 
 	int ci = _openBookChar;
 	if (ci > 3)
