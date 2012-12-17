@@ -38,7 +38,7 @@ public:
 	Common::String FREPON;
 	byte *BUFFERPERSO;
 	byte *PALPERSO;
-	byte *PERSOSPR;
+	byte *_characterSprite;
 	byte *ADR_ANIM;
 	size_t TAILLEPERSO;
 	int STATI;
@@ -62,7 +62,7 @@ public:
 	void VISU_PARLE();
 	void BOB_VISU_PARLE(int idx);
 	void CHERCHE_ANIM0(int a1, int a2);
-	void ANIM_PERSO_INIT();
+	void initCharacterAnim();
 	void clearCharacterAnim();
 	bool searchCharacterAnim(int a1, const byte *a2, int a3, int a4);
 	void REPONSE(int a1, int a2);

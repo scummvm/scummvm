@@ -116,10 +116,10 @@ Globals::Globals() {
 	// Initialise fields
 	FR = 0;
 	SVGA = 2;
-	internet = true;
+	_internetFl = true;
 
 	PUBEXIT = false;
-	vitesse = 1;
+	_speed = 1;
 	INSTALL_TYPE = 1;
 	MUSICVOL = 6;
 	SOUNDVOL = 6;
@@ -317,9 +317,9 @@ void Globals::setConfig() {
 	}
 
 	if (_vm->getIsDemo())
-		internet = true;
+		_internetFl = true;
 	else
-		internet = false;
+		_internetFl = false;
 	// End of CHECKME
 
 	switch (FR) {

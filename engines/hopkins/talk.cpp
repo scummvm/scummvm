@@ -36,7 +36,7 @@ namespace Hopkins {
 TalkManager::TalkManager() {
 	BUFFERPERSO = NULL;
 	PALPERSO = NULL;
-	PERSOSPR = NULL;
+	_characterSprite = NULL;
 	ADR_ANIM = NULL;
 	TAILLEPERSO = 0;
 	STATI = 0;
@@ -54,12 +54,10 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	int v3;
 	int v4;
 	int v5;
-	int v6;
 	int v7;
 	byte *v8;
 	byte *v9;
 	byte *v10;
-	int v11;
 	int v14;
 	int v15;
 	Common::String v16;
@@ -92,15 +90,15 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	v2 = (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 40);
 	v3 = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
 	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)BUFFERPERSO + 42) + 110;
-	PERSOSPR = _vm->_fileManager.searchCat(v16, 7);
-	if (PERSOSPR) {
+	_characterSprite = _vm->_fileManager.searchCat(v16, 7);
+	if (_characterSprite) {
 		_vm->_globals.CAT_FLAG = false;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, v16);
 	} else {
 		_vm->_globals.CAT_FLAG = true;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
 	}
-	PERSOSPR = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
+	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 	_vm->_globals.CAT_FLAG = false;
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
@@ -115,7 +113,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_objectsManager.PERSO_ON = true;
 	CHERCHE_PAL(v3, 0);
 	CHERCHE_ANIM0(v3, 0);
-	ANIM_PERSO_INIT();
+	initCharacterAnim();
 	PLIGNE1 = v2;
 	PLIGNE2 = v2 + 1;
 	PLIGNE3 = v2 + 2;
@@ -135,7 +133,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		} while (v5 != v4);
 	}
 	if (_vm->_globals.NOPARLE == true) {
-		v6 = 1;
+		int v6 = 1;
 		do
 			v7 = DIALOGUE_REP(v6++);
 		while (v7 != -1);
@@ -144,7 +142,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_globals.NOPARLE = false;
 	_vm->_globals.NECESSAIRE = true;
 	BUFFERPERSO = _vm->_globals.freeMemory(BUFFERPERSO);
-	PERSOSPR = _vm->_globals.freeMemory(PERSOSPR);
+	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = false;
 
@@ -176,11 +174,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	v10 = v8 + 1;
 	_vm->_globals._disableInventFl = oldDisableInventFl;
 	_vm->_graphicsManager.DD_VBL();
-	v11 = 0;
-	do {
+	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager.VBL();
-		++v11;
-	} while (v11 <= 4);
 	_vm->_graphicsManager.no_scroll = 0;
 }
 
@@ -617,8 +612,6 @@ void TalkManager::FIN_VISU_PARLE() {
 }
 
 int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
-	int v6;
-	int v7;
 	char v8;
 	int v9;
 	int v10;
@@ -666,8 +659,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	f.close();
 
 	v19 = ptr;
-	v6 = 0;
-	do {
+	for (int i = 0; i < 2048; i++) {
 		v13 = *v19;
 		if ((byte)(*v19 + 46) > 0x1Bu) {
 			if ((byte)(v13 + 80) > 0x1Bu) {
@@ -681,16 +673,13 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 		}
 		*v19 = v13;
 		v19 = v19 + 1;
-		++v6;
-	} while ((unsigned int)v6 < 0x800);
+	}
 
-	v7 = 0;
-	do {
-		v8 = *(ptr + v7);
+	for (int i = 0; i < 2048; i++) {
+		v8 = ptr[i];
 		if ( v8 == 10 || v8 == 13 )
-			*(ptr + v7) = 0;
-		++v7;
-	} while ((unsigned int)v7 < 0x800);
+			ptr[i] = 0;
+	}
 
 	v9 = 0;
 	v15 = (11 * a3) - 4;
@@ -703,6 +692,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 				v14 = v11;
 				++v10;
 			} while (v11 != 32 && v11 != 37);
+
 			if (v10 >= v15 / _vm->_globals.police_l)
 				break;
 			if (v11 == 37) {
@@ -749,8 +739,8 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 			_vm->_globals.Bob[idx].field38 = 0;
 			_vm->_globals.Bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
 			_vm->_globals.Bob[idx].field0 = 10;
-			v5 = PERSOSPR;
-			_vm->_globals.Bob[idx]._spriteData = PERSOSPR;
+			v5 = _characterSprite;
+			_vm->_globals.Bob[idx]._spriteData = _characterSprite;
 			_vm->_globals.Bob[idx].field1E = v4;
 			_vm->_globals.Bob[idx].field20 = -1;
 			_vm->_globals.Bob[idx].field22 = 0;
@@ -795,15 +785,18 @@ void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 		v6 = 0;
 		do {
 			v7 = (int16)READ_LE_UINT16(&v8[2 * v6 + 4]);
-			if (v7 && _vm->_globals.vitesse != 501)
-				_vm->_graphicsManager.AFFICHE_SPEED(PERSOSPR, _vm->_eventsManager._startPos.x + (int16)READ_LE_UINT16(&v8[2 * v6]),
+			if (v7 && _vm->_globals._speed != 501)
+				_vm->_graphicsManager.AFFICHE_SPEED(_characterSprite, _vm->_eventsManager._startPos.x + (int16)READ_LE_UINT16(&v8[2 * v6]),
 				    (int16)READ_LE_UINT16(&v8[2 * v6 + 2]), v9[2 * v6 + 8]);
 			v6 += 5;
-		} while (_vm->_globals.vitesse != 501 && v7);
+		} while (_vm->_globals._speed != 501 && v7);
 	}
 }
 
-void TalkManager::ANIM_PERSO_INIT() {
+/**
+ * Initialize character animation
+ */
+void TalkManager::initCharacterAnim() {
 	byte *v0;
 	byte *v1;
 	int v2;
@@ -874,7 +867,6 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 	int v16;
 	char v17;
 	int v18;
-	int v19;
 	int v20;
 	int v22;
 	int v23;
@@ -923,8 +915,7 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 			WRITE_LE_UINT16(v8 + 24, v23);
 			WRITE_LE_UINT16(v8 + 26, v12);
 			*(v8 + 28) = v13;
-			v19 = 1;
-			do {
+			for (int i = 1; i < 5000; i++) {
 				v9 += 10;
 				v24 += 10;
 				if (!v23)
@@ -940,8 +931,7 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 				WRITE_LE_UINT16(v9 + 4, v23);
 				WRITE_LE_UINT16(v9 + 6, v16);
 				*(v9 + 8) = v17;
-				++v19;
-			} while (v19 <= 4999);
+			}
 			result = 1;
 		}
 		if (*(bufPerso + v22) == 'F' && *(bufPerso + v22 + 1) == 'I' && *(bufPerso + v22 + 2) == 'N')
@@ -977,15 +967,9 @@ LABEL_2:
 	if (_vm->_globals.COUCOU != g_PTRNUL) {
 		v5 = _vm->_globals.COUCOU;
 		for (;;) {
-			if (*v5 == 'C') {
-				if (*(v5 + 1) == 'O') {
-					if (*(v5 + 2) == 'D') {
-						if (*(v5 + 3) == v2) {
-							if (*(v5 + 4) == v3)
-								v15 = 1;
-						}
-					}
-				}
+			if ((*v5 == 'C') && (*(v5 + 1) == 'O') && (*(v5 + 2) == 'D')) {
+				if ((*(v5 + 3) == v2) && (*(v5 + 4) == v3))
+					v15 = 1;
 			}
 			if (*v5 == 'F' && *(v5 + 1) == 'I' && *(v5 + 2) == 'N')
 				break;
@@ -1174,18 +1158,15 @@ void TalkManager::REPONSE2(int a1, int a2) {
 }
 
 void TalkManager::OBJET_VIVANT(const Common::String &a2) {
-	int v2;
 	const char *v4;
 	int v5;
 	bool v6;
 	int v10;
 	byte *v11;
 	int v12;
-	int v13;
 	byte *v14;
 	byte *v15;
 	byte *v16;
-	int v17;
 	Common::String s;
 	Common::String v20;
 	Common::String v22;
@@ -1198,10 +1179,10 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_linesManager.CLEAR_ZONE();
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_globals.RESET_CACHE();
-	v2 = 0;
-	do
-		_vm->_globals.BOBZONE[v2++] = 0;
-	while (v2 <= 44);
+	
+	for (int i = 0; i <= 44; i++)
+		_vm->_globals.BOBZONE[i] = 0;
+
 	_vm->_objectsManager.NUMZONE = -1;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
@@ -1222,15 +1203,15 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (!v6) {
 		v20 = Common::String::format("IM%d", _vm->_globals.ECRAN);
 	}
-	PERSOSPR = _vm->_fileManager.searchCat(v23, 7);
-	if (PERSOSPR) {
+	_characterSprite = _vm->_fileManager.searchCat(v23, 7);
+	if (_characterSprite) {
 		_vm->_globals.CAT_FLAG = false;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, v23);
 	} else {
 		_vm->_globals.CAT_FLAG = true;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
 	}
-	PERSOSPR = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
+	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 	_vm->_globals.CAT_FLAG = false;
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
@@ -1255,7 +1236,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_objectsManager.PERSO_ON = true;
 	_vm->_globals.GOACTION = 0;
 	_vm->_objectsManager.NUMZONE = -1;
-	ANIM_PERSO_INIT();
+	initCharacterAnim();
 	VISU_PARLE();
 	VISU_WAIT();
 	_vm->_graphicsManager.INI_ECRAN2(v22);
@@ -1282,16 +1263,15 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.NOPARLE = false;
 	_vm->_globals.NECESSAIRE = true;
 	BUFFERPERSO = _vm->_globals.freeMemory(BUFFERPERSO);
-	PERSOSPR = _vm->_globals.freeMemory(PERSOSPR);
+	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = false;
 	_vm->_linesManager.CLEAR_ZONE();
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_globals.RESET_CACHE();
-	v13 = 0;
-	do
-		_vm->_globals.BOBZONE[v13++] = 0;
-	while (v13 <= 44);
+	for (int i = 0; i <= 44; i++)
+		_vm->_globals.BOBZONE[i] = 0;
+
 	_vm->_globals.freeMemory(_vm->_globals.COUCOU);
 	_vm->_globals.COUCOU = v11;
 	_vm->_objectsManager.DESACTIVE = true;
@@ -1330,11 +1310,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	v16 = v14 + 1;
 	_vm->_globals._disableInventFl = false;
 	_vm->_graphicsManager.DD_VBL();
-	v17 = 0;
-	do {
+	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager.VBL();
-		++v17;
-	} while (v17 <= 4);
 	_vm->_graphicsManager.no_scroll = 0;
 }
 

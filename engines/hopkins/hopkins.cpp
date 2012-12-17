@@ -155,7 +155,7 @@ bool HopkinsEngine::runWin95Demo() {
 	warning("TODO Init_Interrupt_();");
 
 	_globals.iRegul = 1;
-	_globals.vitesse = 1;
+	_globals._speed = 1;
 
 	for (int i = 1; i < 50; i++) {
 		_graphicsManager.SCOPY(_graphicsManager.VESA_SCREEN, 0, 0, 640, 440, _graphicsManager.VESA_BUFFER, 0, 0);
@@ -168,10 +168,10 @@ bool HopkinsEngine::runWin95Demo() {
 	warning("TODO TEST = 0;");
 //	if (SPEEDJ > 475)
 	if (_eventsManager._rateCounter > 475)
-		_globals.vitesse = 2;
+		_globals._speed = 2;
 //	if (SPEEDJ > 700)
 	if (_eventsManager._rateCounter > 700)
-		_globals.vitesse = 3;
+		_globals._speed = 3;
 	warning("TODO Fin_Interrupt_();");
 	warning("TODO Init_Interrupt_();");
 	_graphicsManager.FADE_OUTW();
@@ -470,7 +470,7 @@ bool HopkinsEngine::runLinuxDemo() {
 	_eventsManager.delay(1500);
 	_graphicsManager.FADE_OUTW();
 
-	if (!_globals.internet) {
+	if (!_globals._internetFl) {
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.playAnim("MP.ANM", 10, 16, 200);
 	}
@@ -2563,7 +2563,7 @@ bool HopkinsEngine::runLinuxFull() {
 	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
 
-	_globals.vitesse = 2;
+	_globals._speed = 2;
 	_globals.iRegul = 1;
 	_graphicsManager.FADE_LINUX = 2;
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
@@ -3606,7 +3606,7 @@ void HopkinsEngine::INTRORUN() {
 				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
-				for (uint i = 0; i < 200 / _globals.vitesse; ++i)
+				for (uint i = 0; i < 200 / _globals._speed; ++i)
 					_eventsManager.VBL();
 
 				_objectsManager.BOBANIM_ON(3);
@@ -3691,24 +3691,24 @@ void HopkinsEngine::INTRORUN() {
 						v9 += 2;
 						if (v9 > 15) {
 							_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
-							for (uint j = 1; j < 100 / _globals.vitesse; ++j)
+							for (uint j = 1; j < 100 / _globals._speed; ++j)
 								_eventsManager.VBL();
 
 							_objectsManager.BOBANIM_ON(3);
 							_soundManager.VOICE_MIX(7, 3);
 							_objectsManager.BOBANIM_OFF(3);
 
-							for (uint k = 1; k < 60 / _globals.vitesse; ++k)
+							for (uint k = 1; k < 60 / _globals._speed; ++k)
 								_eventsManager.VBL();
 							_objectsManager.BOBANIM_ON(5);
-							for (uint l = 0; l < 20 / _globals.vitesse; ++l)
+							for (uint l = 0; l < 20 / _globals._speed; ++l)
 								_eventsManager.VBL();
 
 							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
 							_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
 
-							for (uint m = 0; m < 50 / _globals.vitesse; ++m) {
-								if (m == 30 / _globals.vitesse) {
+							for (uint m = 0; m < 50 / _globals._speed; ++m) {
+								if (m == 30 / _globals._speed) {
 									_objectsManager.BOBANIM_ON(3);
 									_soundManager.VOICE_MIX(8, 3);
 									_objectsManager.BOBANIM_OFF(3);
@@ -4125,7 +4125,7 @@ void HopkinsEngine::JOUE_FIN() {
 		if (!_eventsManager._escKeyFl) {
 			do
 				_eventsManager.refreshEvents();
-			while (_eventsManager._rateCounter < 2000 / _globals.vitesse && !_eventsManager._escKeyFl);
+			while (_eventsManager._rateCounter < 2000 / _globals._speed && !_eventsManager._escKeyFl);
 		}
 		_eventsManager._escKeyFl = false;
 		_graphicsManager.FADE_OUTW();
@@ -4539,11 +4539,11 @@ void HopkinsEngine::BTOCEAN() {
 				_globals.SORTIE = 1;
 				int oldX = _objectsManager.getSpriteX(0);
 				for (;;) {
-					if (_globals.vitesse == 1)
+					if (_globals._speed == 1)
 						oldX -= 2;
-					else if (_globals.vitesse == 2)
+					else if (_globals._speed == 2)
 						oldX -= 4;
-					else if (_globals.vitesse == 3)
+					else if (_globals._speed == 3)
 						oldX -= 6;
 					_objectsManager.setSpriteX(0, oldX);
 					OCEAN_HOME();
@@ -4571,11 +4571,11 @@ LABEL_22:
 				_globals.SORTIE = 2;
 				int oldX = _objectsManager.getSpriteX(0);
 				for (;;) {
-					if (_globals.vitesse == 1)
+					if (_globals._speed == 1)
 						oldX += 2;
-					else if (_globals.vitesse == 2)
+					else if (_globals._speed == 2)
 						oldX += 4;
-					else if (_globals.vitesse == 3)
+					else if (_globals._speed == 3)
 						oldX += 6;
 					_objectsManager.setSpriteX(0, oldX);
 					OCEAN_HOME();
@@ -4596,11 +4596,11 @@ LABEL_41:
 				if (_globals.OCEAN_SENS == 3) {
 					int oldX = _objectsManager.getSpriteX(0);
 					do {
-						if (_globals.vitesse == 1)
+						if (_globals._speed == 1)
 							oldX += 2;
-						else if (_globals.vitesse == 2)
+						else if (_globals._speed == 2)
 							oldX += 4;
-						else if (_globals.vitesse == 3)
+						else if (_globals._speed == 3)
 							oldX += 6;
 						_objectsManager.setSpriteX(0, oldX);
 						OCEAN_HOME();
@@ -4621,11 +4621,11 @@ LABEL_57:
 				if (_globals.OCEAN_SENS == 7) {
 					int oldX = _objectsManager.getSpriteX(0);
 					do {
-						if (_globals.vitesse == 1)
+						if (_globals._speed == 1)
 							oldX -= 2;
-						else if (_globals.vitesse == 2)
+						else if (_globals._speed == 2)
 							oldX -= 4;
-						else if (_globals.vitesse == 3)
+						else if (_globals._speed == 3)
 							oldX -= 6;
 						_objectsManager.setSpriteX(0, oldX);
 						OCEAN_HOME();
@@ -4652,11 +4652,11 @@ LABEL_72:
 				if (_globals.OCEAN_SENS == 3) {
 					int oldX = _objectsManager.getSpriteX(0);
 					do {
-						if (_globals.vitesse == 1)
+						if (_globals._speed == 1)
 							oldX += 2;
-						else if (_globals.vitesse == 2)
+						else if (_globals._speed == 2)
 							oldX += 4;
-						else if (_globals.vitesse == 3)
+						else if (_globals._speed == 3)
 							oldX += 6;
 						_objectsManager.setSpriteX(0, oldX);
 						OCEAN_HOME();
@@ -4677,11 +4677,11 @@ LABEL_91:
 				if (_globals.OCEAN_SENS == 7) {
 					int oldX = _objectsManager.getSpriteX(0);
 					for (;;) {
-						if (_globals.vitesse == 1)
+						if (_globals._speed == 1)
 							oldX -= 2;
-						else if (_globals.vitesse == 2)
+						else if (_globals._speed == 2)
 							oldX -= 4;
-						else if (_globals.vitesse == 3)
+						else if (_globals._speed == 3)
 							oldX -= 6;
 						_objectsManager.setSpriteX(0, oldX);
 						OCEAN_HOME();

@@ -336,10 +336,10 @@ public:
 	TriItem Tri[51];
 	int FR;
 	int SVGA;
-	bool internet;
+	bool _internetFl;
 	bool PUBEXIT;
 	int PERSO_TYPE;
-	uint vitesse;
+	uint _speed;
 	int INSTALL_TYPE;
 	Common::String HOPIMAGE;
 	Common::String HOPANIM;

@@ -400,7 +400,7 @@ LABEL_45:
 	_vm->_eventsManager.updateCursor();
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v12, v11);
 LABEL_54:
-	_vm->_globals.vitesse = 2;
+	_vm->_globals._speed = 2;
 	do {
 		while (!_vm->shouldQuit()) {
 			checkForNextFrameCounter();
@@ -413,7 +413,7 @@ LABEL_54:
 				if (_rateCounter > 1)
 					goto LABEL_65;
 			}
-			if (_vm->_globals.vitesse != 2)
+			if (_vm->_globals._speed != 2)
 				break;
 			if (_rateCounter > 9)
 				goto LABEL_65;
@@ -422,7 +422,7 @@ LABEL_63:
 		;
 	} while (!_vm->shouldQuit() && _vm->_globals.iRegul == 3 && _rateCounter <= 15);
 LABEL_65:
-	_vm->_globals.vitesse = 2;
+	_vm->_globals._speed = 2;
 	_rateCounter = 0;
 	if (!_vm->_graphicsManager.DOUBLE_ECRAN || _vm->_graphicsManager.no_scroll == 1) {
 		_vm->_graphicsManager.Affiche_Segment_Vesa();

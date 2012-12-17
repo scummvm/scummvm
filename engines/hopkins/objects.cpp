@@ -1217,8 +1217,8 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			v5 = _vm->_globals.Bob[idx].field12;
 
 			if (v5 > 0) {
-				v6 = v5 / _vm->_globals.vitesse;
-				_vm->_globals.Bob[idx].field12 = v5 / _vm->_globals.vitesse;
+				v6 = v5 / _vm->_globals._speed;
+				_vm->_globals.Bob[idx].field12 = v5 / _vm->_globals._speed;
 				if (v6 > 0) {
 LABEL_37:
 					_vm->_globals.Bob[idx].field14 = 1;
@@ -1258,8 +1258,8 @@ LABEL_38:
 					v10 = _vm->_globals.Bob[idx].field12;
 
 					if (v10 > 0) {
-						v11 = v10 / _vm->_globals.vitesse;
-						_vm->_globals.Bob[idx].field12 = v10 / _vm->_globals.vitesse;
+						v11 = v10 / _vm->_globals._speed;
+						_vm->_globals.Bob[idx].field12 = v10 / _vm->_globals._speed;
 						// Original code. It can't be negative, so the check is on == 0
 						if (v11 <= 0)
 							_vm->_globals.Bob[idx].field12 = 1;
@@ -1870,7 +1870,7 @@ LABEL_241:
 		}
 		v1 = 24;
 LABEL_23:
-		_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals.g_old_sens != 7)
 		goto LABEL_43;
@@ -1908,7 +1908,7 @@ LABEL_23:
 	}
 	v1 = 24;
 LABEL_42:
-	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_43:
 	if (_vm->_globals.g_old_sens != 1)
 		goto LABEL_60;
@@ -1940,7 +1940,7 @@ LABEL_43:
 	}
 	v1 = 0;
 LABEL_59:
-	_vm->_globals.Compteur = 4 / _vm->_globals.vitesse;
+	_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 LABEL_60:
 	if (_vm->_globals.g_old_sens != 5)
 		goto LABEL_77;
@@ -1972,7 +1972,7 @@ LABEL_60:
 	}
 	v1 = 48;
 LABEL_76:
-	_vm->_globals.Compteur = 4 / _vm->_globals.vitesse;
+	_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 LABEL_77:
 	if (_vm->_globals.g_old_sens != 2)
 		goto LABEL_96;
@@ -2010,7 +2010,7 @@ LABEL_77:
 	}
 	v1 = 12;
 LABEL_95:
-	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_96:
 	if (_vm->_globals.g_old_sens != 8)
 		goto LABEL_115;
@@ -2048,7 +2048,7 @@ LABEL_96:
 	}
 	v1 = 12;
 LABEL_114:
-	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_115:
 	if (_vm->_globals.g_old_sens != 4)
 		goto LABEL_134;
@@ -2086,7 +2086,7 @@ LABEL_115:
 	}
 	v1 = 36;
 LABEL_133:
-	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_134:
 	if (_vm->_globals.g_old_sens != 6)
 		goto LABEL_153;
@@ -2124,7 +2124,7 @@ LABEL_134:
 	}
 	v1 = 36;
 LABEL_152:
-	_vm->_globals.Compteur = 5 / _vm->_globals.vitesse;
+	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_153:
 	v47 = 0;
 	do {
@@ -2247,9 +2247,9 @@ void ObjectsManager::GOHOME2() {
 
 	if (_vm->_globals.chemin != (int16 *)g_PTRNUL) {
 		int v0 = 2;
-		if (_vm->_globals.vitesse == 2)
+		if (_vm->_globals._speed == 2)
 			v0 = 4;
-		else if (_vm->_globals.vitesse == 3)
+		else if (_vm->_globals._speed == 3)
 			v0 = 6;
 		_vm->_globals.j_104 = 0;
 		if (v0) {
@@ -4264,11 +4264,11 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	v4 = *(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8);
 	if ((int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 4)) {
 		if (!_vm->_globals.NO_OFFSET)
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager.PERSOSPR,
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager._characterSprite,
 				_vm->_graphicsManager.ofscroll + v2, v3,
 				*(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8));
 		if (_vm->_globals.NO_OFFSET)
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager.PERSOSPR, v2, v3, v4);
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager._characterSprite, v2, v3, v4);
 	}
 }
 
@@ -5165,9 +5165,9 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 	v13 = 0;
 	v15 = a5;
 	v19 = "     ";
-	if (_vm->_globals.vitesse == 2)
+	if (_vm->_globals._speed == 2)
 		v15 = a5 / 2;
-	else if (_vm->_globals.vitesse == 3)
+	else if (_vm->_globals._speed == 3)
 		v15 = a5 / 3;
 	v14 = _sprite[0]._spriteData;
 	spriteIndex = _sprite[0]._spriteIndex;
@@ -5232,9 +5232,9 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 	spriteIndex = 0;
 	v16 = "     ";
 	v14 = a5;
-	if (_vm->_globals.vitesse == 2)
+	if (_vm->_globals._speed == 2)
 		v14 = a5 / 2;
-	else if (_vm->_globals.vitesse == 3)
+	else if (_vm->_globals._speed == 3)
 		v14 = a5 / 3;
 	S_old_spr = _sprite[0]._spriteData;
 	S_old_ani = _sprite[0]._spriteIndex;
@@ -5299,9 +5299,9 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 	spriteIndex = 0;
 	v15 = "     ";
 	v13 = a5;
-	if (_vm->_globals.vitesse == 2)
+	if (_vm->_globals._speed == 2)
 		v13 = a5 / 2;
-	else if (_vm->_globals.vitesse == 3)
+	else if (_vm->_globals._speed == 3)
 		v13 = a5 / 3;
 	for (;;) {
 		v6 = 0;

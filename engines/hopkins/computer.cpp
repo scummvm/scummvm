@@ -579,7 +579,7 @@ void ComputerManager::readText(int idx) {
 			++v7;
 		}
 		++v10;
-	} while (v4 != 37);
+	} while (v4 != '%');
 
 	_vm->_eventsManager.waitKeyPress();
 	ptr = _vm->_globals.freeMemory(ptr);
@@ -590,9 +590,9 @@ void ComputerManager::readText(int idx) {
  */
 void ComputerManager::displayGamesSubMenu() {
 	const byte *v1 = _vm->_objectsManager._sprite[0]._spriteData;
-	uint oldSpeed = _vm->_globals.vitesse;
+	uint oldSpeed = _vm->_globals._speed;
 
-	_vm->_globals.vitesse = 1;
+	_vm->_globals._speed = 1;
 	_vm->_eventsManager.changeMouseCursor(0);
 	_breakoutSpr = g_PTRNUL;
 	_vm->_eventsManager._breakoutFl = true;
@@ -625,7 +625,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_soundManager.DEL_SAMPLE(1);
 	_vm->_soundManager.DEL_SAMPLE(2);
 	_vm->_soundManager.DEL_SAMPLE(3);
-	_vm->_globals.vitesse = oldSpeed;
+	_vm->_globals._speed = oldSpeed;
 	_vm->_eventsManager._breakoutFl = false;
 	setVideoMode();
 	setTextColor(15);

@@ -185,7 +185,7 @@ LABEL_104:
 					goto LABEL_1141;
 				_vm->_objectsManager.VBOB(_vm->_globals.SPRITE_ECRAN, v72, v68, v66, v70);
 				if (v4)
-					v4 /= _vm->_globals.vitesse;
+					v4 /= _vm->_globals._speed;
 				if (v4 > 1) {
 					do {
 						if (_vm->shouldQuit())
@@ -477,7 +477,7 @@ LABEL_1141:
 	if (*(a1 + 2) == 'M' && *(a1 + 3) == 'U' && *(a1 + 4) == 'S')
 		v1 = 1;
 	if (*(a1 + 2) == 'W' && *(a1 + 3) == 'A' && *(a1 + 4) == 'I') {
-		uint v74 = READ_LE_UINT16(a1 + 5) / _vm->_globals.vitesse;
+		uint v74 = READ_LE_UINT16(a1 + 5) / _vm->_globals._speed;
 		if (!v74)
 			v74 = 1;
 		if (v74 + 1 > 0) {
@@ -547,7 +547,7 @@ LABEL_1141:
 			_vm->_talkManager.PARLER_PERSO("bqetueur.pe2");
 		}
 		if (v76 == 600) {
-			if (!_vm->_globals.internet) {
+			if (!_vm->_globals._internetFl) {
 				_vm->_graphicsManager.FADE_LINUX = 2;
 				_vm->_graphicsManager.FADESPD = 1;
 				if (_vm->_globals.SVGA == 2)
@@ -638,7 +638,7 @@ LABEL_1141:
 			_vm->_globals.SORTIE = 6;
 		}
 		if (v76 == 607) {
-			if (!_vm->_globals.internet) {
+			if (!_vm->_globals._internetFl) {
 				memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 0x301u);
 				v1 = _vm->_graphicsManager.OLD_PAL[769];
 				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);

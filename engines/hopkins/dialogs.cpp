@@ -233,7 +233,7 @@ void DialogsManager::showOptionsDialog() {
 			}
 
 			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 348 && mousePos.y > 248 && mousePos.x <= _vm->_graphicsManager.ofscroll + 394 && mousePos.y <= 273)
-				_vm->_globals.vitesse = 2;
+				_vm->_globals._speed = 2;
 			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 221 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 246)
 				_vm->_globals.SVGA = 2;
 			if (mousePos.x < _vm->_graphicsManager.ofscroll + 165 || mousePos.x > _vm->_graphicsManager.ofscroll + 496 || (uint)(mousePos.y - 107) > 0xD3u)
@@ -245,11 +245,11 @@ void DialogsManager::showOptionsDialog() {
 		else if (_vm->_graphicsManager.MANU_SCROLL == 1)
 			_vm->_globals.opt_scrtype = 1;
 
-		if (_vm->_globals.vitesse == 1)
+		if (_vm->_globals._speed == 1)
 			_vm->_globals.opt_vitesse = 6;
-		else if (_vm->_globals.vitesse == 2)
+		else if (_vm->_globals._speed == 2)
 			_vm->_globals.opt_vitesse = 5;
-		else if (_vm->_globals.vitesse == 3)
+		else if (_vm->_globals._speed == 3)
 			_vm->_globals.opt_vitesse = 4;
 
 		_vm->_globals.opt_txt = !_vm->_soundManager.TEXTOFF ? 7 : 8;
