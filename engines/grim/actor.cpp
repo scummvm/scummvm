@@ -651,24 +651,24 @@ void Actor::walkForward() {
 
 	int tries = 0;
 	while (dist > 0.0f) {
-		Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
-			_moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
-
-		// EMI: Y is up-down, sectors use an X-Z plane for movement
-		if (g_grim->getGameType() == GType_MONKEY4) {
-			float temp = forwardVec.z();
-			forwardVec.z() = forwardVec.y();
-			forwardVec.y() = temp;
-		}
-
-		if (backwards)
-			forwardVec = -forwardVec;
-
 		Sector *currSector = NULL, *prevSector = NULL, *startSector = NULL;
 		Sector::ExitInfo ei;
 
 		g_grim->getCurrSet()->findClosestSector(_pos, &currSector, &_pos);
 		if (!currSector) { // Shouldn't happen...
+			Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
+									  _moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
+
+			// EMI: Y is up-down, sectors use an X-Z plane for movement
+			if (g_grim->getGameType() == GType_MONKEY4) {
+				float temp = forwardVec.z();
+				forwardVec.z() = forwardVec.y();
+				forwardVec.y() = temp;
+			}
+
+			if (backwards)
+				forwardVec = -forwardVec;
+
 			moveTo(_pos + forwardVec * dist);
 			_walkedCur = true;
 			return;
@@ -678,6 +678,28 @@ void Actor::walkForward() {
 		float oldDist = dist;
 		while (currSector) {
 			prevSector = currSector;
+			Math::Vector3d forwardVec;
+			if (g_grim->getGameType() == GType_GRIM) {
+				Math::Angle ax = Math::Vector2d(currSector->getNormal().x(), currSector->getNormal().z()).getAngle();
+				Math::Angle ay = Math::Vector2d(currSector->getNormal().y(), currSector->getNormal().z()).getAngle();
+
+				float z1 = -_moveYaw.getCosine() * (ay -_pitch).getCosine();
+				float z2 = _moveYaw.getSine() * (ax -_pitch).getCosine();
+				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(),
+										_moveYaw.getCosine() * ay.getSine() * _pitch.getCosine(), z1 + z2);
+			} else {
+				Math::Angle ax = Math::Vector2d(currSector->getNormal().x(), currSector->getNormal().y()).getAngle();
+				Math::Angle az = Math::Vector2d(currSector->getNormal().z(), currSector->getNormal().y()).getAngle();
+
+				float y1 = -_moveYaw.getCosine() * (az -_pitch).getCosine();
+				float y2 = _moveYaw.getSine() * (ax -_pitch).getCosine();
+				forwardVec = Math::Vector3d(_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(), y1 + y2,
+											-_moveYaw.getCosine() * az.getSine() * _pitch.getCosine());
+			}
+
+			if (backwards)
+				forwardVec = -forwardVec;
+
 			Math::Vector3d puckVec = currSector->getProjectionToPuckVector(forwardVec);
 			puckVec /= puckVec.getMagnitude();
 			currSector->getExitInfo(_pos, puckVec, &ei);
