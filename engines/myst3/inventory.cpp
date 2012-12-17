@@ -63,8 +63,8 @@ void Inventory::draw() {
 	for (ItemList::const_iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		int32 state = _vm->_state->getVar(it->var);
 
-		// Don't draw if the item is being dragged
-		if (state == -1)
+		// Don't draw if the item is being dragged or is hidden
+		if (state == -1 || state == 0)
 			continue;
 
 		const ItemData &item = getData(it->var);
