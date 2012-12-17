@@ -327,9 +327,6 @@ void ObjectsManager::displaySprite() {
 	int v27;
 	int x1_1;
 	int x1_2;
-	int v33;
-	int v34;
-	int v35;
 	uint16 arr[50];
 
 	// Handle copying any background areas that text are going to be drawn on
@@ -406,20 +403,16 @@ void ObjectsManager::displaySprite() {
 	}
 
 	if (_priorityFl && _vm->_globals.NBTRI) {
-		v33 = 1;
-		do {
+		for (int v33 = 1; v33 <= 48; v33++) 
 			arr[v33] = v33;
-			++v33;
-		} while (v33 <= 48);
 
 		v25 = _vm->_globals.NBTRI;
 		do {
 			v27 = 0;
-			v34 = 1;
 			if (v25 > 1) {
 				v26 = _vm->_globals.NBTRI;
 
-				do {
+				for (int v34 = 1; v34 < v26; v34++) {
 					v11 = arr[v34];
 					v12 = &arr[v34 + 1];
 					if (_vm->_globals.Tri[arr[v34]]._priority > _vm->_globals.Tri[*v12]._priority) {
@@ -427,14 +420,12 @@ void ObjectsManager::displaySprite() {
 						*v12 = v11;
 						++v27;
 					}
-					++v34;
-				} while (v34 < v26);
+				}
 			}
 		} while (v27);
 
-		v35 = 1;
 		if (_vm->_globals.NBTRI + 1 > 1) {
-			do {
+			for (int v35 = 1; v35 < _vm->_globals.NBTRI + 1; v35++) {
 				v13 = arr[v35];
 				switch (_vm->_globals.Tri[v13]._triMode) {
 				case TRI_BOB:
@@ -450,8 +441,7 @@ void ObjectsManager::displaySprite() {
 					break;
 				}
 				_vm->_globals.Tri[v13]._triMode = TRI_NONE;
-				++v35;
-			} while (v35 < _vm->_globals.NBTRI + 1);
+			}
 		}
 	} else {
 		if (_vm->_globals.NBTRI + 1 > 1) {
@@ -1161,7 +1151,6 @@ void ObjectsManager::AFF_BOB_ANIM() {
 	int v10;
 	int v11;
 	int v12;
-	int v13;
 	int v14;
 	int v18;
 	int v19;
@@ -1169,7 +1158,6 @@ void ObjectsManager::AFF_BOB_ANIM() {
 	byte *v21;
 	int v22;
 	int v24;
-	int v26;
 	int v27;
 	int v28;
 
@@ -1272,13 +1260,10 @@ LABEL_38:
 	} while (idx != 35);
 
 	if (!PERSO_ON && BOBTOUS == true) {
-		v26 = 0;
-		do {
-			v13 = v26;
-			if (_vm->_globals.Bob[v13].field0 == 10 && !_vm->_globals.Bob[v13].field16)
-				_vm->_globals.Bob[v13].field1C = 1;
-			++v26;
-		} while (v26 != 35);
+		for (int v26 = 0; v26 != 35; v26++) {
+			if (_vm->_globals.Bob[v26].field0 == 10 && !_vm->_globals.Bob[v26].field16)
+				_vm->_globals.Bob[v26].field1C = 1;
+		}
 	}
 
 	BOBTOUS = false;

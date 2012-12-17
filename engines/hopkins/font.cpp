@@ -166,10 +166,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		}
 	} else {
 		int lineCount = 0;
-		int v62 = 0;
-		do {
-			_textSortArray[v62++] = 0;
-		} while (v62 <= 19);
+		for (int v62 = 0; v62 <= 19; v62++)
+			_textSortArray[v62] = 0;
+
 		_text[idx]._textLoadedFl = true;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
 
@@ -285,7 +284,7 @@ LABEL_43:
 					lineSize = v19;
 					do
 						v11 = *(v61 + v65 + v19++);
-					while (v11 != 32 && v11 != 37);
+					while (v11 != ' ' && v11 != '%');
 					if (v19 >= ptrb / _vm->_globals.police_l)
 						break;
 					if (v11 == '%') {
@@ -296,7 +295,7 @@ LABEL_43:
 				}
 				if (v11 != '%')
 					goto LABEL_57;
-				v11 = 32;
+				v11 = ' ';
 LABEL_55:
 				if (v11 == '%')
 					lineSize = v19;
@@ -316,7 +315,7 @@ LABEL_57:
 
 				v65 += lineSize;
 				v11 = v21;
-			} while (v21 != 37);
+			} while (v21 != '%');
 
 			for (int i = 0; i <= 19; i++) {
 				int v22 = _textSortArray[i];
@@ -328,8 +327,8 @@ LABEL_57:
 						for (int v23 = 0; v23 < _textSortArray[i] - 1; v23++) {
 							Common::String &line = _text[idx]._lines[i];
 							byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
-							if ((byte)v24 <= 0x1Fu)
-								v24 = 32;
+							if (v24 <= 32)
+								v24 = ' ';
 							ptrc += _vm->_objectsManager.getWidth(_vm->_globals.police, (byte)v24 - 32);
 						}
 					}
@@ -399,10 +398,10 @@ LABEL_57:
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, ptrd, v56, v55, v53, v51);
 			_vm->_globals.freeMemory(ptrd);
 
-			_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, v55, v53, (byte)-2);
-			_vm->_graphicsManager.Plot_Hline(_vm->_graphicsManager.VESA_BUFFER, v56, v51 + v55, v53, (byte)-2);
-			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v56, v70, v51, (byte)-2);
-			_vm->_graphicsManager.Plot_Vline(_vm->_graphicsManager.VESA_BUFFER, v53 + v56, v70, v51, (byte)-2);
+			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager.VESA_BUFFER, v56, v55, v53, (byte)-2);
+			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager.VESA_BUFFER, v56, v51 + v55, v53, (byte)-2);
+			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager.VESA_BUFFER, v56, v70, v51, (byte)-2);
+			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager.VESA_BUFFER, v53 + v56, v70, v51, (byte)-2);
 		}
 		_text[idx]._lineCount = lineCount;
 		int v75 = v73 + 5;

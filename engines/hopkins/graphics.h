@@ -95,7 +95,7 @@ public:
 	int SDL_NBLOCS;
 	int Red_x, Red_y;
 	int Red;
-	int Largeur;
+	int _width;
 	int Compteur_y;
 	int spec_largeur;
 	bool NOFADE;
@@ -185,8 +185,8 @@ public:
 	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
 	void Copy_Video_Vbe(const byte *src);
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
-	void Plot_Hline(byte *surface, int xp, int yp, unsigned int width, byte col);
-	void Plot_Vline(byte *surface, int xp, int yp, int height, byte col);
+	void drawHorizontalLine(byte *surface, int xp, int yp, unsigned int width, byte col);
+	void drawVerticalLine(byte *surface, int xp, int yp, int height, byte col);
 	void MODE_VESA();
 };
 

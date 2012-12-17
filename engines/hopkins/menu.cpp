@@ -175,7 +175,7 @@ int MenuManager::MENU() {
 					_vm->_eventsManager.VBL();
 
 					if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
-						selectionMade = 1;
+						selectionMade = true;
 				} while (!selectionMade);
 
 				if (menuIndex == PLAY_GAME) {

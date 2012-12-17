@@ -66,7 +66,7 @@ GraphicsManager::GraphicsManager() {
 	SDL_NBLOCS = 0;
 	Red_x = Red_y = 0;
 	Red = 0;
-	Largeur = 0;
+	_width = 0;
 	Compteur_y = 0;
 	spec_largeur = 0;
 
@@ -274,17 +274,13 @@ void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int m
 }
 
 void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
-	byte *dataP;
-	int count;
 	byte dataVal;
 
-	dataP = surface;
-	count = size - 1;
-	do {
+	byte *dataP = surface;
+	for (int count = size - 1; count; count--){
 		dataVal = *dataP++;
 		*(dataP - 1) = *(dataVal + col);
-		--count;
-	} while (count);
+	}
 }
 
 // TODO: See if it's feasible and/or desirable to change this to use the Common PCX decoder
@@ -332,12 +328,9 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 	size_t filesize;
 	int v4;
 	size_t v5;
-	int v6;
 	size_t v7;
-	int v8;
 	byte v9;
 	int v10;
-	int v11;
 	char v12;
 	int v15;
 	int v16;
@@ -367,18 +360,17 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 		v5 = v4;
 	}
 	v16 = v15 - 1;
-	v6 = 0;
 	v7 = 0;
-	do {
+	for (int i = 0; i < 64000; i++) {
 		if (v7 == v5) {
 			v7 = 0;
 			--v16;
 			v5 = 64000;
 			if (!v16)
 				v5 = v17;
-			v8 = v6;
+//			v8 = i;
 			f.read(ptr, v5);
-			v6 = v8;
+//			i = v8;
 		}
 		v9 = *(ptr + v7++);
 		if (v9 > 0xC0u) {
@@ -389,22 +381,22 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 				v5 = 64000;
 				if (v16 == 1)
 					v5 = v17;
-				v11 = v6;
+//				v11 = i;
 				f.read(ptr, v5);
-				v6 = v11;
+//				i = v11;
 			}
 			v12 = *(ptr + v7++);
 			do {
-				*(surface + v6++) = v12;
+				*(surface + i++) = v12;
 				--v10;
 			} while (v10);
 		} else {
-			*(surface + v6++) = v9;
+			*(surface + i++) = v9;
 		}
-	} while (v6 <= 0xF9FF);
+	}
 
 	f.seek(filesize - 768);
-	f.read(palette, 0x300u);
+	f.read(palette, 768);
 	f.close();
 
 	_vm->_globals.freeMemory(ptr);
@@ -643,36 +635,31 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 
 	palMax = palByte = FADESPD;
 	if (palette) {
-		int palIndex = 0;
-		do {
+		for (int palIndex = 0; palIndex < PALETTE_BLOCK_SIZE; palIndex++) {
 			int palDataIndex = palIndex;
-			palByte = *(palIndex + palette);
+			palByte = palette[palIndex];
 			palByte <<= 8;
 			tempPalette[palDataIndex] = palByte;
-			palData[palDataIndex] = *(palIndex++ + palette);
-		} while (palIndex < PALETTE_BLOCK_SIZE);
+			palData[palDataIndex] = palette[palIndex];
+		}
 
 		setpal_vga256(palData);
 		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_VBL();
 
-		int palCtr3 = 0;
 		if (palMax > 0) {
-			do {
-				int palCtr4 = 0;
-				do {
+			for (int palCtr3 = 0; palCtr3 < palMax; palCtr3++) {
+				for (int palCtr4 = 0; palCtr4 < PALETTE_BLOCK_SIZE; palCtr4++) {
 					int palCtr5 = palCtr4;
-					int palValue = tempPalette[palCtr4] - (*(palCtr4 + palette) << 8) / palMax;
+					int palValue = tempPalette[palCtr4] - (palette[palCtr4] << 8) / palMax;
 					tempPalette[palCtr5] = palValue;
 					palData[palCtr5] = (palValue >> 8) & 0xff;
-					++palCtr4;
-				} while (palCtr4 < (PALETTE_BLOCK_SIZE));
+				}
 
 				setpal_vga256(palData);
 				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				DD_VBL();
-				++palCtr3;
-			} while (palMax > palCtr3);
+			}
 		}
 
 		for (int i = 0; i < PALETTE_BLOCK_SIZE; i++)
@@ -1349,8 +1336,6 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 	const byte *srcP;
 	byte srcByte;
 	byte *destP;
-	int yCtr;
-	int xCtr;
 	byte *dest1P;
 	byte *dest2P;
 	byte *dest3P;
@@ -1361,13 +1346,10 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 	srcP = surface;
 	srcByte = 30 * WinScan;
 	destP = (byte *)VideoPtr->pixels + 30 * WinScan;
-	yCtr = 200;
-	do {
+	for (int yCtr = 200; yCtr != 0; yCtr--) {
 		srcPitch = srcP;
 		destPitch = destP;
-		xCtr = 320;
-
-		do {
+		for (int xCtr = 320; xCtr != 0; xCtr--) {
 			srcByte = *srcP;
 			*destP = *srcP;
 			dest1P = WinScan + destP;
@@ -1378,20 +1360,17 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 			*dest3P = srcByte;
 			destP = dest3P - WinScan + 1;
 			++srcP;
-			--xCtr;
-		} while (xCtr);
+		}
 
 		srcP = srcPitch + 320;
 		destP = WinScan + WinScan + destPitch;
-		--yCtr;
-	} while (yCtr);
+	}
 }
 
 void GraphicsManager::CopyAsm16(const byte *surface) {
 	const byte *v1;
 	byte *v2;
 	int v3;
-	signed int v4;
 	byte *v5;
 	uint16 *v6;
 	int v;
@@ -1407,10 +1386,9 @@ void GraphicsManager::CopyAsm16(const byte *surface) {
 	do {
 		v11 = v1;
 		v10 = v2;
-		v4 = 320;
 		v9 = v3;
 		v5 = PAL_PIXELS;
-		do {
+		for (int v4 = 320; v4; v4--) {
 			v = 2 * *v1;
 			v6 = (uint16 *)(v5 + 2 * *v1);
 			v = *v6;
@@ -1421,8 +1399,7 @@ void GraphicsManager::CopyAsm16(const byte *surface) {
 			*(v8 + 1) = v;
 			++v1;
 			v2 = (byte *)v8 - WinScan + 4;
-			--v4;
-		} while (v4);
+		}
 		v1 = v11 + 320;
 		v2 = WinScan * 2 + v10;
 		v3 = v9 - 1;
@@ -1525,7 +1502,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 						Agr_y = 0;
 						Agr_Flag_y = 0;
 						Agr_Flag_x = 0;
-						Largeur = spriteWidth;
+						_width = spriteWidth;
 						int v20 = zoomIn(spriteWidth, zoom2);
 						int v22 = zoomIn(spriteHeight1, zoom2);
 						if (modeFlag) {
@@ -1540,7 +1517,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								while (zoomIn(v30 + 1, zoom2) < v31)
 									;
 								v20 = v52;
-								spritePixelsP += Largeur * v30;
+								spritePixelsP += _width * v30;
 								v29 += nbrligne2 * (uint16)clip_y;
 								v22 = v61 - (uint16)clip_y;
 							}
@@ -1571,8 +1548,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 									v46 = spritePixelsP;
 									Agr_Flag_x = 0;
 									Agr_x = 0;
-									int v35 = v20;
-									do {
+									for (int v35 = v20; v35; v35--) {
 										for (;;) {
 											if (*spritePixelsP)
 												*v29 = *spritePixelsP;
@@ -1590,10 +1566,9 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 												goto R_Aff_Zoom_Larg_Cont1;
 										}
 										Agr_Flag_x = 0;
-										--v35;
-									} while (v35);
+									}
 R_Aff_Zoom_Larg_Cont1:
-									spritePixelsP = Largeur + v46;
+									spritePixelsP = _width + v46;
 									v29 = nbrligne2 + v53;
 									++Compteur_y;
 									if (!Agr_Flag_y)
@@ -1621,7 +1596,7 @@ R_Aff_Zoom_Larg_Cont1:
 								while (zoomIn(v23 + 1, zoom2) < v24)
 									;
 								v20 = v49;
-								spritePixelsP += Largeur * v23;
+								spritePixelsP += _width * v23;
 								dest1P += nbrligne2 * (uint16)clip_y;
 								v22 = v58 - (uint16)clip_y;
 							}
@@ -1675,7 +1650,7 @@ R_Aff_Zoom_Larg_Cont1:
 										--v28;
 									} while (v28);
 Aff_Zoom_Larg_Cont1:
-									spritePixelsP = Largeur + v45;
+									spritePixelsP = _width + v45;
 									dest1P = nbrligne2 + v51;
 									if (!Agr_Flag_y)
 										Agr_y = zoom2 + Agr_y;
@@ -1696,7 +1671,7 @@ Aff_Zoom_Larg_Cont1:
 						Compteur_y = 0;
 						Red_x = 0;
 						Red_y = 0;
-						Largeur = spriteWidth;
+						_width = spriteWidth;
 						Red = zoom1;
 						if (zoom1 < 100) {
 							int v37 = zoomOut(spriteWidth, Red);
@@ -1708,9 +1683,8 @@ Aff_Zoom_Larg_Cont1:
 									Red_y = Red + Red_y;
 									if ((uint16)Red_y < 0x64u) {
 										Red_x = 0;
-										int v41 = Largeur;
 										int v42 = v37;
-										do {
+										for (int v41 = _width; v41; v41--) {
 											Red_x = Red + Red_x;
 											if ((uint16)Red_x < 0x64u) {
 												if (v42 >= clip_x && v42 < clip_x1 && *spritePixelsP)
@@ -1722,13 +1696,12 @@ Aff_Zoom_Larg_Cont1:
 												Red_x = Red_x - 100;
 												++spritePixelsP;
 											}
-											--v41;
-										} while (v41);
+										}
 										spriteHeight2 = v65;
 										v40 = nbrligne2 + v55;
 									} else {
 										Red_y = Red_y - 100;
-										spritePixelsP += Largeur;
+										spritePixelsP += _width;
 									}
 									--spriteHeight2;
 								} while (spriteHeight2);
@@ -1739,9 +1712,8 @@ Aff_Zoom_Larg_Cont1:
 									Red_y = Red + Red_y;
 									if ((uint16)Red_y < 0x64u) {
 										Red_x = 0;
-										int v38 = Largeur;
 										int v39 = 0;
-										do {
+										for (int v38 = _width; v38; v38--) {
 											Red_x = Red + Red_x;
 											if ((uint16)Red_x < 0x64u) {
 												if (v39 >= clip_x && v39 < clip_x1 && *spritePixelsP)
@@ -1753,20 +1725,19 @@ Aff_Zoom_Larg_Cont1:
 												Red_x = Red_x - 100;
 												++spritePixelsP;
 											}
-											--v38;
-										} while (v38);
+										}
 										spriteHeight2 = v64;
 										dest1P = nbrligne2 + v54;
 									} else {
 										Red_y = Red_y - 100;
-										spritePixelsP += Largeur;
+										spritePixelsP += _width;
 									}
 									--spriteHeight2;
 								} while (spriteHeight2);
 							}
 						}
 					} else {
-						Largeur = spriteWidth;
+						_width = spriteWidth;
 						Compteur_y = 0;
 						if (modeFlag) {
 							dest2P = spriteWidth + dest1P;
@@ -1938,7 +1909,6 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 	int spriteHeight;
 	const byte *spritePixelsP;
 	byte *destP;
-	int xCtr;
 	byte destByte;
 	byte *destLineP;
 	int yCtr;
@@ -1955,13 +1925,12 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 	spriteHeight = (int16)READ_LE_UINT16(spriteSizeP);
 	spritePixelsP = spriteSizeP + 10;
 	destP = surface + xp + nbrligne2 * yp;
-	Largeur = spriteWidth;
+	_width = spriteWidth;
 
 	do {
 		yCtr = spriteHeight;
 		destLineP = destP;
-		xCtr = spriteWidth;
-		do {
+		for (int xCtr = spriteWidth; xCtr; xCtr--) {
 			destByte = *spritePixelsP;
 			if (*spritePixelsP) {
 				if (destByte == (byte)-4)
@@ -1971,8 +1940,7 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 
 			++destP;
 			++spritePixelsP;
-			--xCtr;
-		} while (xCtr);
+		}
 		destP = nbrligne2 + destLineP;
 		spriteHeight = yCtr - 1;
 	} while (yCtr != 1);
@@ -2161,7 +2129,7 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 	srcP = xp + nbrligne2 * yp + srcSurface;
 	destP = destSurface;
 	Red = zoom;
-	Largeur = width;
+	_width = width;
 	Red_x = 0;
 	Red_y = 0;
 	if (zoom < 100) {
@@ -2174,7 +2142,7 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 				Red_x = 0;
 				const byte *lineSrcP = srcP;
 
-				for (int xCtr = 0; xCtr < Largeur; ++xCtr) {
+				for (int xCtr = 0; xCtr < _width; ++xCtr) {
 					Red_x += Red;
 					if (Red_x < 100) {
 						*destP++ = *lineSrcP++;
@@ -2190,21 +2158,23 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 	}
 }
 
-void GraphicsManager::Plot_Hline(byte *surface, int xp, int yp, unsigned int width, byte col) {
+/**
+ * Draw horizontal line
+ */
+void GraphicsManager::drawHorizontalLine(byte *surface, int xp, int yp, unsigned int width, byte col) {
 	memset(surface + xp + nbrligne2 * yp, col, width);
 }
 
-void GraphicsManager::Plot_Vline(byte *surface, int xp, int yp, int height, byte col) {
-	byte *destP;
-	int yCtr;
+/**
+ * Draw vertical line
+ */
+void GraphicsManager::drawVerticalLine(byte *surface, int xp, int yp, int height, byte col) {
+	byte *destP = surface + xp + nbrligne2 * yp;
 
-	destP = surface + xp + nbrligne2 * yp;
-	yCtr = height;
-	do {
+	for (int yCtr = height; yCtr; yCtr--) {
 		*destP = col;
 		destP += nbrligne2;
-		--yCtr;
-	} while (yCtr);
+	}
 }
 
 void GraphicsManager::MODE_VESA() {
