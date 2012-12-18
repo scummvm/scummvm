@@ -248,7 +248,6 @@ static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 				// Repeat of a given color
 				byte color = *srcP++;
 				int runLength = repeatBytes - clipAmount;
-
 				int rptLength = MAX(MIN(runLength, pObj->width - rightClip - x), 0);
 				if (yClip == 0) {
 					if (color != 0)
@@ -264,7 +263,6 @@ static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 				uint clipAmount = MIN<int>(copyBytes, leftClip);
 				leftClip -= clipAmount;
 				x += clipAmount;
-
 				srcP += clipAmount;
 
 				int runLength = copyBytes - clipAmount;
