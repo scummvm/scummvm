@@ -4807,7 +4807,7 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	if (_globals.SORTIE == 4)
 		_globals.SORTIE = exit4;
 	_graphicsManager.FADE_OUTW();
-	_objectsManager.SPRITE_OFF(0);
+	_objectsManager.removeSprite(0);
 	_globals.AFFLI = false;
 	_objectsManager.CLEAR_ECRAN();
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");

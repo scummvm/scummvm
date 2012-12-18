@@ -32,7 +32,7 @@
 namespace Hopkins {
 
 struct SpriteItem {
-	int field0;
+	int _animationType;
 	const byte *_spriteData;
 	Common::Point _spritePos;
 	int fieldC;
@@ -163,16 +163,11 @@ public:
 	int getSpriteY(int idx);
 	void SPRITE_NOW(const byte *spriteData, int a2, int a3, int a4, int a5, int a6, int a7, int a8);
 
-	void CLEAR_SPR();
+	void clearSprite();
 	void SPRITE_ON(int idx);
 	void SPRITE(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9);
 	void SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, int a5);
-	void SPRITE_OFF(int idx);
-	void SPRITE_GEL(int idx);
-	int SXSPR(int idx);
-	int SYSPR(int idx);
-	int POSISPR(int idx);
-	void SETPOSISPR(int idx, int a2);
+	void removeSprite(int idx);
 	void setSpriteX(int idx, int xp);
 	void setSpriteIndex(int idx, int spriteIndex);
 	void setSpriteY(int idx, int yp);

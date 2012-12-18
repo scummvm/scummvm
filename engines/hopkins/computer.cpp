@@ -684,8 +684,8 @@ void ComputerManager::newLevel() {
 	Common::String file;
 	Common::File f;
 
-	_vm->_objectsManager.SPRITE_OFF(0);
-	_vm->_objectsManager.SPRITE_OFF(1);
+	_vm->_objectsManager.removeSprite(0);
+	_vm->_objectsManager.removeSprite(1);
 	++_breakoutLives;
 	if (_breakoutLives > 11)
 		_breakoutLives = 11;
@@ -848,8 +848,8 @@ void ComputerManager::playBreakout() {
 					continue;
 			}
 			_vm->_eventsManager.mouseOn();
-			_vm->_objectsManager.SPRITE_OFF(0);
-			_vm->_objectsManager.SPRITE_OFF(1);
+			_vm->_objectsManager.removeSprite(0);
+			_vm->_objectsManager.removeSprite(1);
 			if (_breakoutScore > _breakoutHiscore)
 				getScoreName();
 			v = displayHiscores();
