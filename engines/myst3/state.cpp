@@ -266,7 +266,7 @@ void GameState::syncFloat(Common::Serializer &s, float &val,
 		s.syncAsSint32LE(saved, minVersion, maxVersion);
 		val = saved / precision;
 	} else {
-		int32 toSave = val * precision;
+		int32 toSave = static_cast<int32>(val * precision);
 		s.syncAsSint32LE(toSave, minVersion, maxVersion);
 	}
 }
