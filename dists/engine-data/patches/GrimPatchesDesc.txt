@@ -63,6 +63,11 @@ List of fixed bugs in GF scripts:
 	the inventory is open. This patch adds another check (with inInventorySet()) and waits
 	the close of the inventory before starting the cutscene.
 
+	-Fix bug #81 "Year 1 - Bone disappears from spider web - Glitch" - sp.lua.patchr
+	In the sp set, the variable sp.web.has_bone is used to signal if there is a bone in the web,
+	but it's not cleaned after that the Glottis' hearts has been launched.
+	This patch set this variable to FALSE after that event (in the function sp.manny_hook_n_fling_web)
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
