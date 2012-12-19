@@ -644,7 +644,7 @@ void ComputerManager::loadHiscore() {
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
 	ptr = _vm->_globals.allocMemory(100);
-	_vm->_saveLoadManager.bload(_vm->_globals.NFICHIER, ptr);
+	_vm->_saveLoadManager.load(_vm->_globals.NFICHIER, ptr);
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
 		for (int i = 0; i < 5; ++i) {
@@ -1102,7 +1102,7 @@ void ComputerManager::saveScore() {
 	}
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
-	_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, ptr, 0x64u);
+	_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, ptr, 0x64u);
 	_vm->_globals.freeMemory(ptr);
 }
 

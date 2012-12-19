@@ -40,7 +40,7 @@ void SaveLoadManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-bool SaveLoadManager::bsave(const Common::String &file, const void *buf, size_t n) {
+bool SaveLoadManager::save(const Common::String &file, const void *buf, size_t n) {
 	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(file);
 
 	if (f) {
@@ -54,8 +54,8 @@ bool SaveLoadManager::bsave(const Common::String &file, const void *buf, size_t 
 }
 
 // Save File
-bool SaveLoadManager::SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n) {
-	return bsave(file, buf, n);
+bool SaveLoadManager::saveFile(const Common::String &file, const void *buf, size_t n) {
+	return save(file, buf, n);
 }
 
 void SaveLoadManager::initSaves() {
@@ -63,10 +63,10 @@ void SaveLoadManager::initSaves() {
 	byte data[100];
 	Common::fill(&data[0], &data[100], 0);
 
-	SAUVE_FICHIER(dataFilename, data, 100);
+	saveFile(dataFilename, data, 100);
 }
 
-void SaveLoadManager::bload(const Common::String &file, byte *buf) {
+void SaveLoadManager::load(const Common::String &file, byte *buf) {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(file);
 	if (f == NULL)
 		error("Error openinig file - %s", file.c_str());
@@ -78,34 +78,34 @@ void SaveLoadManager::bload(const Common::String &file, byte *buf) {
 
 bool SaveLoadManager::readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
-	header.thumbnail = NULL;
+	header._thumbnail = NULL;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
 	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
 		return false;
 
-	header.version = in->readByte();
-	if (header.version > HOPKINS_SAVEGAME_VERSION)
+	header._version = in->readByte();
+	if (header._version > HOPKINS_SAVEGAME_VERSION)
 		return false;
 
 	// Read in the string
-	header.saveName.clear();
+	header._saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	header._thumbnail = Graphics::loadThumbnail(*in);
+	if (!header._thumbnail)
 		return false;
 
 	// Read in save date/time
-	header.saveYear = in->readSint16LE();
-	header.saveMonth = in->readSint16LE();
-	header.saveDay = in->readSint16LE();
-	header.saveHour = in->readSint16LE();
-	header.saveMinutes = in->readSint16LE();
-	header.totalFrames = in->readUint32LE();
+	header._year = in->readSint16LE();
+	header._month = in->readSint16LE();
+	header._day = in->readSint16LE();
+	header._hour = in->readSint16LE();
+	header._minute = in->readSint16LE();
+	header._totalFrames = in->readUint32LE();
 
 	return true;
 }
@@ -117,7 +117,7 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 	out->writeByte(HOPKINS_SAVEGAME_VERSION);
 
 	// Write savegame name
-	out->write(header.saveName.c_str(), header.saveName.size() + 1);
+	out->write(header._saveName.c_str(), header._saveName.size() + 1);
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
@@ -137,7 +137,7 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 	out->writeUint32LE(_vm->_eventsManager._gameCounter);
 }
 
-Common::Error SaveLoadManager::save(int slot, const Common::String &saveName) {
+Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName) {
 	/* Pack any necessary data into the savegame data structure */
 	// Set the selected slot number
 	_vm->_globals.SAUVEGARDE->data[svField10] = slot;
@@ -157,8 +157,8 @@ Common::Error SaveLoadManager::save(int slot, const Common::String &saveName) {
 
 	// Write out the savegame header
 	hopkinsSavegameHeader header;
-	header.saveName = saveName;
-	header.version = HOPKINS_SAVEGAME_VERSION;
+	header._saveName = saveName;
+	header._version = HOPKINS_SAVEGAME_VERSION;
 	writeSavegameHeader(saveFile, header);
 
 	// Write out the savegame data
@@ -171,7 +171,7 @@ Common::Error SaveLoadManager::save(int slot, const Common::String &saveName) {
 	return Common::kNoError;
 }
 
-Common::Error SaveLoadManager::restore(int slot) {
+Common::Error SaveLoadManager::loadGame(int slot) {
 	// Try and open the save file for reading
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 		_vm->generateSaveName(slot));
@@ -184,9 +184,9 @@ Common::Error SaveLoadManager::restore(int slot) {
 	// Read in the savegame header
 	hopkinsSavegameHeader header;
 	readSavegameHeader(saveFile, header);
-	if (header.thumbnail)
-		header.thumbnail->free();
-	delete header.thumbnail;
+	if (header._thumbnail)
+		header._thumbnail->free();
+	delete header._thumbnail;
 
 	// Read in the savegame data
 	syncSavegameData(serializer);

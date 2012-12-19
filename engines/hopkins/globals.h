@@ -96,25 +96,20 @@ struct BobItem {
 	int _xp;
 	int _yp;
 	int _frameIndex;
-	int fieldE;
-	int field10;
+	int field10; // BOBPOSI ?
 	int field12;
 	int field14;
-	int field16;
+	bool field16; // set to true in BOBANIM_OFF()
 	byte *_animData;
-	int field1C;
+	bool field1C;
 	int field1E;
 	int field20;
 	int field22;
-	int offsetY;
-	int field26;
-	int field28;
-	int field2A;
-	int field2C;
+	int _offsetY; // Unused variable?
 	byte *field30;
-	int field34;
+	bool field34; // Set to true in B_CACHE_OFF()
 	int field36;
-	int field38;
+	int _modeFlag;
 	bool _isSpriteFl;
 	bool _activeFl;
 	int _oldX;
@@ -132,13 +127,11 @@ struct BlAnimItem {
 };
 
 struct VBobItem {
-	byte *spriteData;
+	byte *_spriteData;
 	int field4;
 	int _xp;
 	int _yp;
 	int _frameIndex;
-	int fieldC;
-	int fieldE;
 	byte *_surface;
 	int _oldX;
 	int _oldY;
@@ -148,7 +141,7 @@ struct VBobItem {
 
 struct ObjetWItem {
 	byte field0;
-	byte field1;
+	byte _idx;
 	byte field2;
 	byte field3;
 	byte field4;
@@ -180,15 +173,14 @@ struct TriItem {
 };
 
 struct CacheItem {
-	int field0;
-	int field2;
-	int field4;
-	int field6;
-	int field8;
+	int _x;
+	int _spriteIndex;
+	int _y;
+	int _width;
+	int _height;
 	int fieldA;
-	byte *fieldC;
-	int field10;
-	int field12;
+	byte *_spriteData;
+	bool field10;
 	int field14;
 };
 

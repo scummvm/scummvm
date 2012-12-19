@@ -82,14 +82,14 @@ bool HopkinsEngine::canSaveGameStateCurrently() {
  * Load the savegame at the specified slot index
  */
 Common::Error HopkinsEngine::loadGameState(int slot) {
-	return _saveLoadManager.restore(slot);
+	return _saveLoadManager.loadGame(slot);
 }
 
 /**
  * Save the game to the given slot index, and with the given name
  */
 Common::Error HopkinsEngine::saveGameState(int slot, const Common::String &desc) {
-	return _saveLoadManager.save(slot, desc);
+	return _saveLoadManager.saveGame(slot, desc);
 }
 
 Common::Error HopkinsEngine::run() {

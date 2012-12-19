@@ -36,12 +36,12 @@ class HopkinsEngine;
 #define HOPKINS_SAVEGAME_VERSION 1
 
 struct hopkinsSavegameHeader {
-	uint8 version;
-	Common::String saveName;
-	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
-	int totalFrames;
+	uint8 _version;
+	Common::String _saveName;
+	Graphics::Surface *_thumbnail;
+	int _year, _month, _day;
+	int _hour, _minute;
+	int _totalFrames;
 };
 
 class SaveLoadManager {
@@ -55,15 +55,15 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	void initSaves();
-	bool bsave(const Common::String &file, const void *buf, size_t n);
-	bool SAUVE_FICHIER(const Common::String &file, const void *buf, size_t n);
-	void bload(const Common::String &file, byte *buf);
+	bool save(const Common::String &file, const void *buf, size_t n);
+	bool saveFile(const Common::String &file, const void *buf, size_t n);
+	void load(const Common::String &file, byte *buf);
 
 	static bool readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header);
 	void writeSavegameHeader(Common::OutSaveFile *out, hopkinsSavegameHeader &header);
 	static bool readSavegameHeader(int slot, hopkinsSavegameHeader &header);
-	Common::Error save(int slot, const Common::String &saveName);
-	Common::Error restore(int slot);
+	Common::Error saveGame(int slot, const Common::String &saveName);
+	Common::Error loadGame(int slot);
 
 	/**
 	 * Converts a 16-bit thumbnail to 8 bit paletted using the currently active palette.

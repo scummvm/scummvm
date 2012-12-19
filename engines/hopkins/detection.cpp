@@ -140,10 +140,10 @@ SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {
 
 			if (in) {
 				if (Hopkins::SaveLoadManager::readSavegameHeader(in, header)) {
-					saveList.push_back(SaveStateDescriptor(slot, header.saveName));
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
-					header.thumbnail->free();
-					delete header.thumbnail;
+					header._thumbnail->free();
+					delete header._thumbnail;
 				}
 
 				delete in;
@@ -173,11 +173,11 @@ SaveStateDescriptor HopkinsMetaEngine::querySaveMetaInfos(const char *target, in
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header.saveName);
-		desc.setThumbnail(header.thumbnail);
-		desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-		desc.setSaveTime(header.saveHour, header.saveMinutes);
-		desc.setPlayTime(header.totalFrames * GAME_FRAME_TIME);
+		SaveStateDescriptor desc(slot, header._saveName);
+		desc.setThumbnail(header._thumbnail);
+		desc.setSaveDate(header._year, header._month, header._day);
+		desc.setSaveTime(header._hour, header._minute);
+		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
 
 		return desc;
 	}

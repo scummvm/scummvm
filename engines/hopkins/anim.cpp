@@ -237,9 +237,9 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 
 		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
+			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
 		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
+			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager.ofscroll = 0;
 
@@ -311,7 +311,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_globals.freeMemory(v13);
 		f.close();
 
-		_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+		_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 		memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
@@ -385,7 +385,7 @@ LABEL_88:
 						_vm->_globals.freeMemory(v13);
 						f.close();
 
-						_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+						_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 						g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 						memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
@@ -427,7 +427,7 @@ LABEL_88:
 			_vm->_globals.freeMemory(v13);
 			f.close();
 
-			_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+			_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 			g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 			memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
@@ -506,7 +506,7 @@ LABEL_114:
 	_vm->_graphicsManager.FADE_LINUX = 0;
 	_vm->_globals.freeMemory(v13);
 
-	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
@@ -828,9 +828,9 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
+			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
 		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
+			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager.ofscroll = 0;
 	}
@@ -962,7 +962,7 @@ LABEL_59:
 	f.close();
 
 	if (!NO_COUL) {
-		_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+		_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 		_vm->_eventsManager._mouseFl = true;

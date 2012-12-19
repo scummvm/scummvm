@@ -461,9 +461,8 @@ void Globals::INIT_VBOB() {
 		VBob[idx]._xp = 0;
 		VBob[idx]._yp = 0;
 		VBob[idx]._frameIndex = 0;
-		VBob[idx].fieldC = 0;
 		VBob[idx]._surface = g_PTRNUL;
-		VBob[idx].spriteData = g_PTRNUL;
+		VBob[idx]._spriteData = g_PTRNUL;
 		VBob[idx]._oldSpriteData = g_PTRNUL;
 	}
 }
@@ -474,9 +473,8 @@ void Globals::CLEAR_VBOB() {
 		VBob[idx]._xp = 0;
 		VBob[idx]._yp = 0;
 		VBob[idx]._frameIndex = 0;
-		VBob[idx].fieldC = 0;
 		VBob[idx]._surface = freeMemory(VBob[idx]._surface);
-		VBob[idx].spriteData = g_PTRNUL;
+		VBob[idx]._spriteData = g_PTRNUL;
 		VBob[idx]._oldSpriteData = g_PTRNUL;
 	}
 }
@@ -489,7 +487,7 @@ void Globals::CHARGE_OBJET() {
 
 	for (int idx = 0; idx < 300; ++idx) {
 		ObjetW[idx].field0 = *srcP++;
-		ObjetW[idx].field1 = *srcP++;
+		ObjetW[idx]._idx = *srcP++;
 		ObjetW[idx].field2 = *srcP++;
 		ObjetW[idx].field3 = *srcP++;
 		ObjetW[idx].field4 = *srcP++;
@@ -522,15 +520,14 @@ void Globals::RESET_CACHE() {
 	}
 
 	for (int idx = 0; idx <= 20; ++idx) {
-		Cache[idx].fieldC = g_PTRNUL;
-		Cache[idx].field0 = 0;
-		Cache[idx].field4 = 0;
-		Cache[idx].field2 = 0;
+		Cache[idx]._spriteData = g_PTRNUL;
+		Cache[idx]._x = 0;
+		Cache[idx]._y = 0;
+		Cache[idx]._spriteIndex = 0;
 		Cache[idx].fieldA = 0;
-		Cache[idx].field6 = 0;
-		Cache[idx].field8 = 0;
-		Cache[idx].field10 = 0;
-		Cache[idx].field12 = 0;
+		Cache[idx]._width = 0;
+		Cache[idx]._height = 0;
+		Cache[idx].field10 = false;
 		Cache[idx].field14 = 0;
 	}
 
@@ -579,22 +576,21 @@ void Globals::loadCache(const Common::String &file) {
 			int v5 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
 			int v6 = i;
 			Cache[v6].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 4);
-			Cache[v6].field2 = v11;
-			Cache[v6].field0 = v4;
-			Cache[v6].field4 = v5;
-			Cache[v6].field12 = 1;
+			Cache[v6]._spriteIndex = v11;
+			Cache[v6]._x = v4;
+			Cache[v6]._y = v5;
 			if (spriteData == g_PTRNUL) {
 				Cache[i].fieldA = 0;
 			} else {
 				int v8 = _vm->_objectsManager.getWidth(spriteData, v11);
 				int v9 = _vm->_objectsManager.getHeight(spriteData, v11);
-				Cache[i].fieldC = spriteData;
-				Cache[i].field6 = v8;
-				Cache[i].field8 = v9;
+				Cache[i]._spriteData = spriteData;
+				Cache[i]._width = v8;
+				Cache[i]._height = v9;
 				Cache[i].fieldA = 1;
 			}
 
-			if ( !Cache[i].field0 && !Cache[i].field4 && !Cache[i].field2)
+			if ( !Cache[i]._x && !Cache[i]._y && !Cache[i]._spriteIndex)
 				Cache[i].fieldA = 0;
 			v15 += 5;
 		}
@@ -605,7 +601,7 @@ void Globals::loadCache(const Common::String &file) {
 }
 
 void Globals::B_CACHE_OFF(int idx) {
-	Bob[idx].field34 = 1;
+	Bob[idx].field34 = true;
 }
 
 

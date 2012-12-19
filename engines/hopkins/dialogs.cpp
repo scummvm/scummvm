@@ -580,7 +580,7 @@ void DialogsManager::showLoadGame() {
 	_vm->_objectsManager.SL_Y = 0;
 
 	if (slotNumber != 7) {
-		_vm->_saveLoadManager.restore(slotNumber);
+		_vm->_saveLoadManager.loadGame(slotNumber);
 	}
 
 	_vm->_objectsManager.changeObject(14);
@@ -617,7 +617,7 @@ void DialogsManager::showSaveGame() {
 		saveName = Common::String::format("Save #%d", slotNumber);
 
 		// Save the game
-		_vm->_saveLoadManager.save(slotNumber, saveName);
+		_vm->_saveLoadManager.saveGame(slotNumber, saveName);
 	}
 }
 
@@ -661,7 +661,7 @@ void DialogsManager::showSaveLoad(int a1) {
 	for (slotNumber = 1; slotNumber <= 6; ++slotNumber) {
 		if (_vm->_saveLoadManager.readSavegameHeader(slotNumber, header)) {
 			Graphics::Surface thumb8;
-			_vm->_saveLoadManager.convertThumb16To8(header.thumbnail, &thumb8);
+			_vm->_saveLoadManager.convertThumb16To8(header._thumbnail, &thumb8);
 
 			thumb = (byte *)thumb8.pixels;
 
@@ -687,8 +687,8 @@ void DialogsManager::showSaveLoad(int a1) {
 			}
 
 			thumb8.free();
-			header.thumbnail->free();
-			delete header.thumbnail;
+			header._thumbnail->free();
+			delete header._thumbnail;
 		}
 	}
 

@@ -100,9 +100,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 	if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
+		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
 	else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
+		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
 
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager.ofscroll = 0;
@@ -143,7 +143,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = false;
 
-	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
@@ -733,7 +733,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 		if ((int16)READ_LE_UINT16(v5 + 24)) {
 			_vm->_globals.Bob[idx]._isSpriteFl = true;
 			_vm->_globals.Bob[idx].field36 = 0;
-			_vm->_globals.Bob[idx].field38 = 0;
+			_vm->_globals.Bob[idx]._modeFlag = 0;
 			_vm->_globals.Bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
 			_vm->_globals.Bob[idx].field0 = 10;
 			v5 = _characterSprite;
@@ -741,7 +741,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 			_vm->_globals.Bob[idx].field1E = v4;
 			_vm->_globals.Bob[idx].field20 = -1;
 			_vm->_globals.Bob[idx].field22 = 0;
-			_vm->_globals.Bob[idx].offsetY = 0;
+			_vm->_globals.Bob[idx]._offsetY = 0;
 		}
 	}
 }
@@ -946,15 +946,13 @@ void TalkManager::REPONSE(int a1, int a2) {
 	byte *v6;
 	uint16 v7;
 	byte *v8;
-	int v9;
 	int v10;
 	uint16 v11;
 	int v12;
 	int v13;
-	int v14;
 	int v15;
 	int v16;
-	int v17;
+	bool loopCond;
 	byte *ptr;
 
 	v2 = a1;
@@ -964,11 +962,11 @@ LABEL_2:
 	if (_vm->_globals.COUCOU != g_PTRNUL) {
 		v5 = _vm->_globals.COUCOU;
 		for (;;) {
-			if ((*v5 == 'C') && (*(v5 + 1) == 'O') && (*(v5 + 2) == 'D')) {
-				if ((*(v5 + 3) == v2) && (*(v5 + 4) == v3))
+			if (v5[0] == 'C' && v5[1] == 'O' && v5[2] == 'D') {
+				if (v5[3] == v2 && v5[4] == v3)
 					v15 = 1;
 			}
-			if (*v5 == 'F' && *(v5 + 1) == 'I' && *(v5 + 2) == 'N')
+			if (v5[0] == 'F' && v5[1] == 'I' && v5[2] == 'N')
 				break;
 			if (!v15)
 				v5 = v5 + 1;
@@ -980,10 +978,10 @@ LABEL_2:
 				memset(ptr, 0, 620);
 				v7 = 0;
 				v12 = 0;
-				v14 = 0;
+				loopCond = false;
 				do {
 					v16 = 0;
-					if (*(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'C') {
+					if (v6[v7] == 'F' && v6[v7 + 1] == 'C') {
 						++v12;
 						assert(v12 < (620 / 20));
 
@@ -991,26 +989,25 @@ LABEL_2:
 						v11 = 0;
 						do {
 							assert(v11 < 20);
-							*(v11++ + v8) = *(v7++ + v6);
-							if (*(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'F') {
+							*(v11++ + v8) = v6[v7++];
+							if (v6[v7] == 'F' && v6[v7] == 'F') {
 								v16 = 1;
-								v9 = v11;
-								*(v9 + v8) = 'F';
-								*(v8 + v9 + 1) = 'F';
+								v8[v11] = 'F';
+								v8[v11 + 1] = 'F';
 								++v7;
 							}
 						} while (v16 != 1);
 					}
 					if (v16 != 1) {
-						if (*(v7 + v6) == 'C' && *(v6 + v7 + 1) == 'O' && *(v6 + v7 + 2) == 'D')
-							v14 = 1;
-						if (v16 != 1 && *(v7 + v6) == 'F' && *(v6 + v7 + 1) == 'I' && *(v6 + v7 + 2) == 'N')
-							v14 = 1;
+						if (v6[v7] == 'C' && v6[v7 + 1] == 'O' && v6[v7 + 2] == 'D')
+							loopCond = true;
+						if (v16 != 1 && v6[v7] == 'F' && v6[v7 + 1] == 'I' && v6[v7 + 2] == 'N')
+							loopCond = true;
 					}
 					v6 += v7 + 1;
 					v7 = 0;
-				} while (v14 != 1);
-				v17 = 0;
+				} while (!loopCond);
+				loopCond = false;
 				v13 = 1;
 				do {
 					v10 =  _vm->_scriptManager.Traduction(ptr + 20 * v13);
@@ -1019,21 +1016,23 @@ LABEL_2:
 
 					if (v10 == 2)
 						v13 =  _vm->_scriptManager.Control_Goto(ptr + 20 * v13);
-					if (v10 == 3)
+					else if (v10 == 3)
 						v13 =  _vm->_scriptManager.Control_If(ptr, v13);
+
 					if (v13 == -1)
 						error("Invalid IFF function");
+
 					if (v10 == 1 || v10 == 4)
 						++v13;
-					if (!v10 || v10 == 5)
-						v17 = 1;
-					if (v10 == 6) {
+					else if (!v10 || v10 == 5)
+						loopCond = true;
+					else if (v10 == 6) {
 						_vm->_globals.freeMemory(ptr);
 						v2 = _vm->_objectsManager.NVZONE;
 						v3 = _vm->_objectsManager.NVVERBE;
 						goto LABEL_2;
 					}
-				} while (v17 != 1);
+				} while (!loopCond);
 				_vm->_globals.freeMemory(ptr);
 				_vm->_globals.SAUVEGARDE->data[svField2] = 0;
 				return;
@@ -1043,37 +1042,18 @@ LABEL_2:
 }
 
 void TalkManager::REPONSE2(int a1, int a2) {
-	signed int v3;
-	int v4;
-	int v5;
-	int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v10;
-	int v11;
-
-	v3 = 0;
+	int indx = 0;
 	if (a2 == 5 && _vm->_globals.SAUVEGARDE->data[svField3] == 4) {
-		if ((uint16)(a1 - 22) <= 1u) {
+		if (a1 == 22 || a1 == 23) {
 			_vm->_objectsManager.setFlipSprite(0, false);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
 			if (a1 == 22) {
-				v4 = _vm->_objectsManager.BOBX(3);
-				_vm->_objectsManager.BLOQUE_ANIMX(6, v4);
-			}
-			if (a1 == 23) {
-				v5 = _vm->_objectsManager.BOBX(4);
-				_vm->_objectsManager.BLOQUE_ANIMX(6, v5);
-			}
-			if (a1 == 22) {
-				v6 = _vm->_objectsManager.BOBX(3);
-				_vm->_objectsManager.BLOQUE_ANIMX(8, v6);
-			}
-			if (a1 == 23) {
-				v7 = _vm->_objectsManager.BOBX(4);
-				_vm->_objectsManager.BLOQUE_ANIMX(8, v7);
+				_vm->_objectsManager.BLOQUE_ANIMX(6, _vm->_objectsManager.BOBX(3));
+				_vm->_objectsManager.BLOQUE_ANIMX(8, _vm->_objectsManager.BOBX(3));
+			} else { // a1 == 23
+				_vm->_objectsManager.BLOQUE_ANIMX(6, _vm->_objectsManager.BOBX(4));
+				_vm->_objectsManager.BLOQUE_ANIMX(8, _vm->_objectsManager.BOBX(4));
 			}
 			_vm->_objectsManager.BOBANIM_OFF(3);
 			_vm->_objectsManager.BOBANIM_OFF(4);
@@ -1082,46 +1062,46 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			_vm->_objectsManager.SPACTION1(_vm->_globals.FORETSPR, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 			do
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(6) <= 12 && _vm->_objectsManager.BOBPOSI(6) != 12);
+			while (_vm->_objectsManager.BOBPOSI(6) < 12);
 			_vm->_objectsManager.BOBANIM_OFF(6);
 			_vm->_objectsManager.BOBANIM_ON(8);
-			if (_vm->_globals.ECRAN == 35)
-				v3 = 201;
-			if (_vm->_globals.ECRAN == 36)
-				v3 = 203;
-			if (_vm->_globals.ECRAN == 37)
-				v3 = 205;
-			if (_vm->_globals.ECRAN == 38)
-				v3 = 207;
-			if (_vm->_globals.ECRAN == 39)
-				v3 = 209;
-			if (_vm->_globals.ECRAN == 40)
-				v3 = 211;
-			if (_vm->_globals.ECRAN == 41)
-				v3 = 213;
-			_vm->_globals.SAUVEGARDE->data[v3] = 2;
+			
+			switch (_vm->_globals.ECRAN) {
+			case 35:
+				indx = 201;
+				break;
+			case 36:
+				indx = 203;
+				break;
+			case 37:
+				indx = 205;
+				break;
+			case 38:
+				indx = 207;
+				break;
+			case 39:
+				indx = 209;
+				break;
+			case 40:
+				indx = 211;
+				break;
+			case 41:
+				indx = 213;
+				break;
+			}
+			_vm->_globals.SAUVEGARDE->data[indx] = 2;
 			_vm->_objectsManager.ZONE_OFF(22);
 			_vm->_objectsManager.ZONE_OFF(23);
-		}
-		if ((uint16)(a1 - 20) <= 1u) {
+		} else if (a1 == 20 || a1 == 21) {
 			_vm->_objectsManager.setFlipSprite(0, true);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
 			if (a1 == 20) {
-				v8 = _vm->_objectsManager.BOBX(1);
-				_vm->_objectsManager.BLOQUE_ANIMX(5, v8);
-			}
-			if (a1 == 21) {
-				v9 = _vm->_objectsManager.BOBX(2);
-				_vm->_objectsManager.BLOQUE_ANIMX(5, v9);
-			}
-			if (a1 == 20) {
-				v10 = _vm->_objectsManager.BOBX(1);
-				_vm->_objectsManager.BLOQUE_ANIMX(7, v10);
-			}
-			if (a1 == 21) {
-				v11 = _vm->_objectsManager.BOBX(2);
-				_vm->_objectsManager.BLOQUE_ANIMX(7, v11);
+				_vm->_objectsManager.BLOQUE_ANIMX(5, _vm->_objectsManager.BOBX(1));
+				_vm->_objectsManager.BLOQUE_ANIMX(7, _vm->_objectsManager.BOBX(1));
+			} else { // a1 == 21
+				_vm->_objectsManager.BLOQUE_ANIMX(5, _vm->_objectsManager.BOBX(2));
+				_vm->_objectsManager.BLOQUE_ANIMX(7, _vm->_objectsManager.BOBX(2));
 			}
 			_vm->_objectsManager.BOBANIM_OFF(1);
 			_vm->_objectsManager.BOBANIM_OFF(2);
@@ -1130,24 +1110,33 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			_vm->_objectsManager.SPACTION1(_vm->_globals.FORETSPR, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 			do
 				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(5) <= 12 && _vm->_objectsManager.BOBPOSI(5) != 12);
+			while (_vm->_objectsManager.BOBPOSI(5) < 12);
 			_vm->_objectsManager.BOBANIM_OFF(5);
 			_vm->_objectsManager.BOBANIM_ON(7);
-			if (_vm->_globals.ECRAN == 35)
-				v3 = 200;
-			if (_vm->_globals.ECRAN == 36)
-				v3 = 202;
-			if (_vm->_globals.ECRAN == 37)
-				v3 = 204;
-			if (_vm->_globals.ECRAN == 38)
-				v3 = 206;
-			if (_vm->_globals.ECRAN == 39)
-				v3 = 208;
-			if (_vm->_globals.ECRAN == 40)
-				v3 = 210;
-			if (_vm->_globals.ECRAN == 41)
-				v3 = 212;
-			_vm->_globals.SAUVEGARDE->data[v3] = 2;
+			switch (_vm->_globals.ECRAN) {
+			case 35:
+				indx = 200;
+				break;
+			case 36:
+				indx = 202;
+				break;
+			case 37:
+				indx = 204;
+				break;
+			case 38:
+				indx = 206;
+				break;
+			case 39:
+				indx = 208;
+				break;
+			case 40:
+				indx = 210;
+				break;
+			case 41:
+				indx = 212;
+				break;
+			}
+			_vm->_globals.SAUVEGARDE->data[indx] = 2;
 			_vm->_objectsManager.ZONE_OFF(21);
 			_vm->_objectsManager.ZONE_OFF(20);
 		}
@@ -1206,9 +1195,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 	if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
+		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
 	else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
+		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
 
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager.ofscroll = 0;
@@ -1272,7 +1261,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (_vm->_globals.SORTIE == 101)
 		_vm->_globals.SORTIE = 0;
 
-	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
