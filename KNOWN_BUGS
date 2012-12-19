@@ -1,4 +1,4 @@
-Known issues in ResidualVM 0.1.0pre:
+Known bugs in ResidualVM 0.1.0pre:
 * Switching full-screen/windowed with alt-enter might crash ResidualVM
 * Loading savegames from sets with movies in them will show the movies
   as garbage for the first few frames
