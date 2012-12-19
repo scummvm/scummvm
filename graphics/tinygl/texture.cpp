@@ -115,11 +115,19 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	switch (format) {
 		case TGL_RGBA:
 		case TGL_RGB:
+#if defined(SCUMM_BIG_ENDIAN)
+			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+#elif defined(SCUMM_LITTLE_ENDIAN)
 			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
 			break;
 		case TGL_BGRA:
 		case TGL_BGR:
+#if defined(SCUMM_BIG_ENDIAN)
+			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#elif defined(SCUMM_LITTLE_ENDIAN)
 			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+#endif
 			break;
 		default:
 			break;
