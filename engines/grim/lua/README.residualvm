@@ -6,7 +6,7 @@ The major changes made from the original version of Lua 3.1 are:
 * Revamped the way function calls and returns are handled in order to
   facilitate implementing GrimE's cooperative multithreading model.
 * Added several internal functions which implement this multithreading.
-* Added save/restore Lua state.
+* Added save/restore Lua state in the files: lsave.cpp and lrestore.cpp.
 * Unified types like int -> int32 and similiars.
 * Removed few unused library functions by games.
 * Formatting code.

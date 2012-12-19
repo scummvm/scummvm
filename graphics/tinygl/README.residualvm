@@ -10,7 +10,7 @@ The changes made from the original version of TinyGL 0.4 are:
 * Removed unneeded code.
 * Introduced second 32-bit z-buffer for 3d objects only,
   and kept 16-bit only for static z-buffer bitmaps.
-* Added support for drawing in shadow mode (generate mask and polygon shadow).
+* Added support for drawing in shadow mode (generate mask and polygon shadow - ztriangle_shadow.cpp file).
 * Added support for reading in RGB/BGR-textures, although the only internal format is still RGB565
 * Added TGL_BGR/TGL_RGB definitions to gl.h, verifying against SDL_opengl.h that the values are ok.
 * Added additional functions missing, like glColor4ub. (To make the code similar with the GL-code we use)
