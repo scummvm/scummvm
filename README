@@ -146,13 +146,15 @@ some of them might make ResidualVM crash, or behave in weird ways.
 |------------|-------------|-----------------------------------------------------|
 
 
----------------------------------
-6. Troubleshooting / Known Issues
----------------------------------
-Grim Fandango had a few issues when it came out, and a few new and exciting 
-issues when you try to run it on newer hardware. ResidualVM also has a few issues
-that we know about, look here for help with them, and if you can't find help here
-try either the forums at our homepage, or IRC: #residualvm at freenode
+---------------------------------------
+6. Troubleshooting / Known Bugs, Issues
+---------------------------------------
+Grim Fandango had a few issues when it came out, and a few new and exciting
+issues when you try to run it on newer hardware.
+ResidualVM itself also has a few issues that we know about:
+http://github.com/residualvm/residualvm/blob/master/KNOWN_BUGS
+Look here for help with them, and if you can't find help here
+try either the forums at our homepage, or IRC: #residualvm at freenode.
 
 6.1 - The game runs really slow!
 --------------------------------
