@@ -1133,6 +1133,14 @@ void GrimEngine::setMovieSubtitle(TextObject *to) {
 	}
 }
 
+void GrimEngine::setMode(EngineMode mode) {
+	if (_mode == SmushMode)
+		setMovieSubtitle(NULL);
+
+	_mode = mode;
+	invalidateActiveActorsList();
+}
+
 void GrimEngine::clearEventQueue() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {

@@ -97,7 +97,7 @@ public:
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
 
-	void setMode(EngineMode mode) { _mode = mode; invalidateActiveActorsList(); }
+	void setMode(EngineMode mode);
 	EngineMode getMode() { return _mode; }
 	void setPreviousMode(EngineMode mode) { _previousMode = mode; }
 	EngineMode getPreviousMode() { return _previousMode; }
