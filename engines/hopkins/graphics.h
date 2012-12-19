@@ -60,7 +60,7 @@ public:
 	int WinScan;
 	byte SD_PIXELS[PALETTE_SIZE * 2];
 	byte *PAL_PIXELS;
-	int nbrligne;
+	int _lineNbr;
 	byte TABLE_COUL[PALETTE_EXT_BLOCK_SIZE];
 	byte cmap[PALETTE_BLOCK_SIZE];
 	byte Palette[PALETTE_EXT_BLOCK_SIZE];
@@ -77,7 +77,7 @@ public:
 	int OLD_SCROLL;
 	bool MANU_SCROLL;
 	int SPEED_SCROLL;
-	int nbrligne2;
+	int _lineNbr2;
 	int Agr_x, Agr_y;
 	int Agr_Flag_x, Agr_Flag_y;
 	int FADESPD;
@@ -185,7 +185,7 @@ public:
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 	void drawHorizontalLine(byte *surface, int xp, int yp, unsigned int width, byte col);
 	void drawVerticalLine(byte *surface, int xp, int yp, int height, byte col);
-	void MODE_VESA();
+	void setModeVesa();
 };
 
 } // End of namespace Hopkins

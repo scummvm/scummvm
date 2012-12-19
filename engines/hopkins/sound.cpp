@@ -577,8 +577,8 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 		else if (_vm->_globals.FR == 2)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VES.RES");
 
-		catPos = _vm->_globals.CAT_POSI;
-		catLen = _vm->_globals.CAT_TAILLE;
+		catPos = _vm->_globals._catalogPos;
+		catLen = _vm->_globals._catalogSize;
 	} else if (!_vm->_fileManager.searchCat(filename + ".APC", 9)) {
 		if (_vm->_globals.FR == 1)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
@@ -587,8 +587,8 @@ bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
 		else if (_vm->_globals.FR == 2)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VES.RES");
 
-		catPos = _vm->_globals.CAT_POSI;
-		catLen = _vm->_globals.CAT_TAILLE;
+		catPos = _vm->_globals._catalogPos;
+		catLen = _vm->_globals._catalogSize;
 	} else {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".WAV");
 		if (!f.exists(_vm->_globals.NFICHIER)) {

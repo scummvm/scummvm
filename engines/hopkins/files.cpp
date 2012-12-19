@@ -251,8 +251,8 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		if (name == filename) {
 			// Found entry for file, so get it's details from the catalogue entry
 			const byte *pData = ptr + offsetVal;
-			_vm->_globals.CAT_POSI = READ_LE_UINT32(pData + 15);
-			_vm->_globals.CAT_TAILLE = READ_LE_UINT32(pData + 19);
+			_vm->_globals._catalogPos = READ_LE_UINT32(pData + 15);
+			_vm->_globals._catalogSize = READ_LE_UINT32(pData + 19);
 			matchFlag = true;
 		}
 
@@ -271,13 +271,13 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("CHARGE_FICHIER");
 
-		f.seek(_vm->_globals.CAT_POSI);
+		f.seek(_vm->_globals._catalogPos);
 
-		byte *catData = _vm->_globals.allocMemory(_vm->_globals.CAT_TAILLE);
+		byte *catData = _vm->_globals.allocMemory(_vm->_globals._catalogSize);
 		if (catData == g_PTRNUL)
 			error("CHARGE_FICHIER");
 
-		readStream(f, catData, _vm->_globals.CAT_TAILLE);
+		readStream(f, catData, _vm->_globals._catalogSize);
 		f.close();
 		result = catData;
 	} else {

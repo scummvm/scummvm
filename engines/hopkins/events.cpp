@@ -341,8 +341,8 @@ void EventsManager::VBL() {
 		v14 = _mouseSizeX;
 		v13 = _mouseSizeY;
 		if (_mouseCursorId == 23) {
-			v14 = _vm->_globals.OBJL;
-			v13 = _vm->_globals.OBJH;
+			v14 = _vm->_globals._objectWidth;
+			v13 = _vm->_globals._objectHeight;
 			goto LABEL_35;
 		}
 		if (_breakoutFl) {
@@ -473,14 +473,14 @@ void EventsManager::updateCursor() {
 	Common::Rect clipBounds(_vm->_graphicsManager.min_x, _vm->_graphicsManager.min_y,
 		_vm->_graphicsManager.max_x, _vm->_graphicsManager.max_y);
 	_vm->_graphicsManager.min_x = _vm->_graphicsManager.min_y = 0;
-	_vm->_graphicsManager.max_x = _vm->_globals.OBJL;
-	_vm->_graphicsManager.max_y = _vm->_globals.OBJH;
-	int pitch = _vm->_graphicsManager.nbrligne2;
-	_vm->_graphicsManager.nbrligne2 = _vm->_globals.OBJL;
+	_vm->_graphicsManager.max_x = _vm->_globals._objectWidth;
+	_vm->_graphicsManager.max_y = _vm->_globals._objectHeight;
+	int pitch = _vm->_graphicsManager._lineNbr2;
+	_vm->_graphicsManager._lineNbr2 = _vm->_globals._objectWidth;
 
 	// Create the temporary cursor surface
-	byte *cursorSurface = new byte[_vm->_globals.OBJH * _vm->_globals.OBJL];
-	Common::fill(cursorSurface, cursorSurface + _vm->_globals.OBJH * _vm->_globals.OBJL, 0);
+	byte *cursorSurface = new byte[_vm->_globals._objectHeight * _vm->_globals._objectWidth];
+	Common::fill(cursorSurface, cursorSurface + _vm->_globals._objectHeight * _vm->_globals._objectWidth, 0);
 
 	if (_mouseCursorId != 23) {
 		// Draw standard cursor
@@ -495,23 +495,23 @@ void EventsManager::updateCursor() {
 	_vm->_graphicsManager.min_y = clipBounds.top;
 	_vm->_graphicsManager.max_x = clipBounds.right;
 	_vm->_graphicsManager.max_y = clipBounds.bottom;
-	_vm->_graphicsManager.nbrligne2 = pitch;
+	_vm->_graphicsManager._lineNbr2 = pitch;
 
 	// Convert the cursor to the pixel format. At the moment, it's hardcoded
 	// to expect the game to be in 16-bit mode
-	uint16 *cursorPixels = new uint16[_vm->_globals.OBJH * _vm->_globals.OBJL];
+	uint16 *cursorPixels = new uint16[_vm->_globals._objectHeight * _vm->_globals._objectWidth];
 	const byte *srcP = cursorSurface;
 	uint16 *destP = cursorPixels;
 
-	for (int yp = 0; yp < _vm->_globals.OBJH; ++yp) {
+	for (int yp = 0; yp < _vm->_globals._objectHeight; ++yp) {
 		const byte *lineSrcP = srcP;
 		uint16 *lineDestP = destP;
 
-		for (int xp = 0; xp < _vm->_globals.OBJL; ++xp)
+		for (int xp = 0; xp < _vm->_globals._objectWidth; ++xp)
 			*lineDestP++ = *(uint16 *)&_vm->_graphicsManager.PAL_PIXELS[*lineSrcP++ * 2];
 
-		srcP += _vm->_globals.OBJL;
-		destP += _vm->_globals.OBJL;
+		srcP += _vm->_globals._objectWidth;
+		destP += _vm->_globals._objectWidth;
 	}
 
 	// Calculate the X offset within the pointer image to the actual cursor data
@@ -519,7 +519,7 @@ void EventsManager::updateCursor() {
 
 	// Set the ScummVM cursor from the surface
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-	CursorMan.replaceCursor(cursorPixels, _vm->_globals.OBJL, _vm->_globals.OBJH,
+	CursorMan.replaceCursor(cursorPixels, _vm->_globals._objectWidth, _vm->_globals._objectHeight,
 		xOffset, 0, *((uint16 *)cursorPixels), true, &pixelFormat);
 
 	// Delete the cursor surface

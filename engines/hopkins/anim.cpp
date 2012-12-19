@@ -236,11 +236,11 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 
 		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 
-		if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
+		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
-		else if (_vm->_graphicsManager.nbrligne == 1280)
+		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
-		if (!_vm->_graphicsManager.nbrligne)
+		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager.ofscroll = 0;
 
 		v12 = _vm->_graphicsManager._vesaScreen;
@@ -827,11 +827,11 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_eventsManager.VBL();
 
 		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
-		if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
+		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
-		else if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
+		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
 			_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
-		if (!_vm->_graphicsManager.nbrligne)
+		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager.ofscroll = 0;
 	}
 	v9 = _vm->_graphicsManager._vesaScreen;

@@ -138,10 +138,10 @@ Globals::Globals() {
 	largeur_boite = 0;
 	hauteur_boite = 0;
 	FORET = false;
-	OBJL = OBJH = 0;
+	_objectWidth = _objectHeight = 0;
 	HELICO = 0;
-	CAT_POSI = 0;
-	CAT_TAILLE = 0;
+	_catalogPos = 0;
+	_catalogSize = 0;
 	_newObjectFl = false;
 	iRegul = 0;
 	SORTIE = 0;

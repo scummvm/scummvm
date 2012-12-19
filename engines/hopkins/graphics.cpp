@@ -39,7 +39,7 @@ GraphicsManager::GraphicsManager() {
 	XSCREEN = YSCREEN = 0;
 	WinScan = 0;
 	PAL_PIXELS = NULL;
-	nbrligne = 0;
+	_lineNbr = 0;
 	Linear = false;
 	_videoPtr = NULL;
 	ofscroll = 0;
@@ -48,7 +48,7 @@ GraphicsManager::GraphicsManager() {
 	DOUBLE_ECRAN = false;
 	OLD_SCROLL = 0;
 
-	nbrligne2 = 0;
+	_lineNbr2 = 0;
 	Agr_x = Agr_y = 0;
 	Agr_Flag_x = Agr_Flag_y = 0;
 	FADESPD = 15;
@@ -115,7 +115,7 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		WinScan = width * 2; // Refactor me
 
 		PAL_PIXELS = SD_PIXELS;
-		nbrligne = width;
+		_lineNbr = width;
 
 		Common::fill(&cmap[0], &cmap[256 * 3], 0);
 		SDL_MODEYES = true;
@@ -311,7 +311,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, "PIC.RES");
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("(nom)Erreur en cours de lecture.");
-		f.seek(_vm->_globals.CAT_POSI);
+		f.seek(_vm->_globals._catalogPos);
 
 	} else {
 		// Load stand alone PCX file
@@ -424,7 +424,7 @@ void GraphicsManager::Cls_Pal() {
 }
 
 void GraphicsManager::SCANLINE(int pitch) {
-	nbrligne = nbrligne2 = pitch;
+	_lineNbr = _lineNbr2 = pitch;
 }
 
 void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
@@ -437,7 +437,7 @@ void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, i
 	unsigned int widthRemaining;
 
 	assert(_videoPtr);
-	srcP = xs + nbrligne2 * ys + surface;
+	srcP = xs + _lineNbr2 * ys + surface;
 	destP = destX + WinScan * destY + (byte *)_videoPtr->pixels;
 	yNext = height;
 	do {
@@ -448,7 +448,7 @@ void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, i
 		widthRemaining = width - 4 * (width >> 2);
 		memcpy(dest2P, src2P, widthRemaining);
 		destP = dest2P + widthRemaining + WinScan - width;
-		srcP = src2P + widthRemaining + nbrligne2 - width;
+		srcP = src2P + widthRemaining + _lineNbr2 - width;
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
 }
@@ -460,7 +460,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 	lockScreen();
 
 	assert(_videoPtr);
-	const byte *srcP = xs + nbrligne2 * ys + surface;
+	const byte *srcP = xs + _lineNbr2 * ys + surface;
 	uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destX * 2 + WinScan * destY);
 
 	for (int yp = 0; yp < height; ++yp) {
@@ -472,7 +472,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 			*lineDestP++ = *(uint16 *)&PAL_PIXELS[*lineSrcP++ * 2];
 
 		// Move to the start of the next line
-		srcP += nbrligne2;
+		srcP += _lineNbr2;
 		destP += WinScan / 2;
 	}
 
@@ -492,7 +492,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 	const byte *destCopyP;
 
 	assert(_videoPtr);
-	srcP = xs + nbrligne2 * ys + surface;
+	srcP = xs + _lineNbr2 * ys + surface;
 	destP = destX + destX + WinScan * destY + (byte *)_videoPtr->pixels;
 	yNext = height;
 	Agr_x = 0;
@@ -536,7 +536,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 		}
 
 		Agr_Flag_y = 0;
-		srcP = nbrligne2 + srcCopyP;
+		srcP = _lineNbr2 + srcCopyP;
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
 }
@@ -1049,7 +1049,7 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 
 	// TODO: This code in the original is potentially dangerous, as it doesn't clip the area to within
 	// the screen, and so thus can read areas outside of the allocated surface buffer
-	srcP = xs + nbrligne2 * ys + srcSurface;
+	srcP = xs + _lineNbr2 * ys + srcSurface;
 	destP = destSurface;
 	rowCount = height;
 	do {
@@ -1069,7 +1069,7 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 			srcP += 4 * (width >> 2);
 			destP += 4 * (width >> 2);
 		}
-		srcP = nbrligne2 + srcP - width;
+		srcP = _lineNbr2 + srcP - width;
 		rowCount = rowCount2 - 1;
 	} while (rowCount2 != 1);
 }
@@ -1141,12 +1141,12 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	spriteP += srcOffset;
 
 	// Set up surface destination
-	byte *destP = surface + (yp - 300) * nbrligne2 + (xp - 300);
+	byte *destP = surface + (yp - 300) * _lineNbr2 + (xp - 300);
 
 	// Handling for clipped versus non-clipped
 	if (clip_flag) {
 		// Clipped version
-		for (int yc = 0; yc < height; ++yc, destP += nbrligne2) {
+		for (int yc = 0; yc < height; ++yc, destP += _lineNbr2) {
 			byte *tempDestP = destP;
 			byte byteVal;
 			int xc = 0;
@@ -1175,7 +1175,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 		}
 	} else {
 		// Non-clipped
-		for (int yc = 0; yc < height; ++yc, destP += nbrligne2) {
+		for (int yc = 0; yc < height; ++yc, destP += _lineNbr2) {
 			byte *tempDestP = destP;
 			byte byteVal;
 
@@ -1428,7 +1428,7 @@ void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, in
 	int i;
 	int yCtr;
 
-	destP = xp + nbrligne2 * yp + destSurface;
+	destP = xp + _lineNbr2 * yp + destSurface;
 	yNext = height;
 	srcP = src;
 	do {
@@ -1448,7 +1448,7 @@ void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, in
 			srcP += 4 * (width >> 2);
 			destP += 4 * (width >> 2);
 		}
-		destP = nbrligne2 + destP - width;
+		destP = _lineNbr2 + destP - width;
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
 }
@@ -1510,7 +1510,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				clip_x1 = max_x + 300 - xp300;
 				if ((uint16)yp300 < (uint16)(max_y + 300)) {
 					clip_y1 = max_y + 300 - yp300;
-					dest1P = xp300 + nbrligne2 * (yp300 - 300) - 300 + surface;
+					dest1P = xp300 + _lineNbr2 * (yp300 - 300) - 300 + surface;
 					if (zoom2) {
 						Compteur_y = 0;
 						Agr_x = 0;
@@ -1533,7 +1533,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 									;
 								v20 = v52;
 								spritePixelsP += _width * v30;
-								v29 += nbrligne2 * (uint16)clip_y;
+								v29 += _lineNbr2 * (uint16)clip_y;
 								v22 = v61 - (uint16)clip_y;
 							}
 							if (v22 > (uint16)clip_y1)
@@ -1584,7 +1584,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 									}
 R_Aff_Zoom_Larg_Cont1:
 									spritePixelsP = _width + v46;
-									v29 = nbrligne2 + v53;
+									v29 = _lineNbr2 + v53;
 									++Compteur_y;
 									if (!Agr_Flag_y)
 										Agr_y = zoom2 + Agr_y;
@@ -1612,7 +1612,7 @@ R_Aff_Zoom_Larg_Cont1:
 									;
 								v20 = v49;
 								spritePixelsP += _width * v23;
-								dest1P += nbrligne2 * (uint16)clip_y;
+								dest1P += _lineNbr2 * (uint16)clip_y;
 								v22 = v58 - (uint16)clip_y;
 							}
 							if (v22 > (uint16)clip_y1)
@@ -1666,7 +1666,7 @@ R_Aff_Zoom_Larg_Cont1:
 									} while (v28);
 Aff_Zoom_Larg_Cont1:
 									spritePixelsP = _width + v45;
-									dest1P = nbrligne2 + v51;
+									dest1P = _lineNbr2 + v51;
 									if (!Agr_Flag_y)
 										Agr_y = zoom2 + Agr_y;
 									if ((uint16)Agr_y < 0x64u)
@@ -1713,7 +1713,7 @@ Aff_Zoom_Larg_Cont1:
 											}
 										}
 										spriteHeight2 = v65;
-										v40 = nbrligne2 + v55;
+										v40 = _lineNbr2 + v55;
 									} else {
 										Red_y = Red_y - 100;
 										spritePixelsP += _width;
@@ -1742,7 +1742,7 @@ Aff_Zoom_Larg_Cont1:
 											}
 										}
 										spriteHeight2 = v64;
-										dest1P = nbrligne2 + v54;
+										dest1P = _lineNbr2 + v54;
 									} else {
 										Red_y = Red_y - 100;
 										spritePixelsP += _width;
@@ -1761,7 +1761,7 @@ Aff_Zoom_Larg_Cont1:
 								if ((uint16)clip_y >= (unsigned int)spriteHeight1)
 									return;
 								spritePixelsP += spriteWidth * (uint16)clip_y;
-								dest2P += nbrligne2 * (uint16)clip_y;
+								dest2P += _lineNbr2 * (uint16)clip_y;
 								spriteHeight1 -= (uint16)clip_y;
 							}
 							int xLeft = (uint16)clip_y1;
@@ -1791,7 +1791,7 @@ Aff_Zoom_Larg_Cont1:
 									--dest2P;
 								}
 								spritePixelsP = spec_largeur + spritePixelsCopy2P;
-								dest2P = nbrligne2 + destCopy2P;
+								dest2P = _lineNbr2 + destCopy2P;
 								spriteHeight1 = yCtr2 - 1;
 							} while (yCtr2 != 1);
 						} else {
@@ -1800,7 +1800,7 @@ Aff_Zoom_Larg_Cont1:
 								if ((uint16)clip_y >= (unsigned int)spriteHeight1)
 									return;
 								spritePixelsP += spriteWidth * (uint16)clip_y;
-								dest1P += nbrligne2 * (uint16)clip_y;
+								dest1P += _lineNbr2 * (uint16)clip_y;
 								spriteHeight1 -= (uint16)clip_y;
 							}
 							if (spriteHeight1 > clip_y1)
@@ -1826,7 +1826,7 @@ Aff_Zoom_Larg_Cont1:
 									++spritePixelsP;
 								}
 								spritePixelsP = spec_largeur + spritePixelsCopyP;
-								dest1P = nbrligne2 + dest1CopyP;
+								dest1P = _lineNbr2 + dest1CopyP;
 								spriteHeight1 = yCtr1 - 1;
 							} while (yCtr1 != 1);
 						}
@@ -1898,8 +1898,8 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned 
 	const byte *src2P;
 	unsigned int pitch;
 
-	srcP = x1 + nbrligne2 * y1 + srcSurface;
-	destP = destX + nbrligne2 * destY + destSurface;
+	srcP = x1 + _lineNbr2 * y1 + srcSurface;
+	destP = destX + _lineNbr2 * destY + destSurface;
 	yp = height;
 	do {
 		yCurrent = yp;
@@ -1908,8 +1908,8 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned 
 		dest2P = (destP + 4 * (width >> 2));
 		pitch = width - 4 * (width >> 2);
 		memcpy(dest2P, src2P, pitch);
-		destP = (dest2P + pitch + nbrligne2 - width);
-		srcP = (src2P + pitch + nbrligne2 - width);
+		destP = (dest2P + pitch + _lineNbr2 - width);
+		srcP = (src2P + pitch + _lineNbr2 - width);
 		yp = yCurrent - 1;
 	} while (yCurrent != 1);
 }
@@ -1939,7 +1939,7 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 	spriteSizeP += 2;
 	spriteHeight = (int16)READ_LE_UINT16(spriteSizeP);
 	spritePixelsP = spriteSizeP + 10;
-	destP = surface + xp + nbrligne2 * yp;
+	destP = surface + xp + _lineNbr2 * yp;
 	_width = spriteWidth;
 
 	do {
@@ -1956,7 +1956,7 @@ void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int x
 			++destP;
 			++spritePixelsP;
 		}
-		destP = nbrligne2 + destLineP;
+		destP = _lineNbr2 + destLineP;
 		spriteHeight = yCtr - 1;
 	} while (yCtr != 1);
 }
@@ -1985,14 +1985,11 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 		if (!_vm->_globals.NOSPRECRAN) {
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.searchCat(filename, 8);
 			if (_vm->_globals.SPRITE_ECRAN) {
-				_vm->_globals.CAT_FLAG = false;
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
 			} else {
-				_vm->_globals.CAT_FLAG = true;
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "RES_SLI.RES");
 			}
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-			_vm->_globals.CAT_FLAG = false;
 		}
 	}
 	if (*ptr != 'I' || *(ptr + 1) != 'N' || *(ptr + 2) != 'I') {
@@ -2041,9 +2038,9 @@ void GraphicsManager::NB_SCREEN() {
 
 	if (!_vm->_globals.NECESSAIRE)
 		INIT_TABLE(50, 65, Palette);
-	if (nbrligne == SCREEN_WIDTH)
+	if (_lineNbr == SCREEN_WIDTH)
 		Trans_bloc2(_vesaBuffer, TABLE_COUL, 307200);
-	if (nbrligne == 1280)
+	else if (_lineNbr == (SCREEN_WIDTH * 2))
 		Trans_bloc2(_vesaBuffer, TABLE_COUL, 614400);
 	lockScreen();
 	m_scroll16(_vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -2113,23 +2110,25 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 	for (;;) {
 		byteVal = *srcP;
 		if (*srcP < kByteStop)
-			goto Video_Cont_Vbe;
-		if (byteVal == kByteStop)
-			return;
-		if (byteVal == k8bVal) {
-			destOffset += *(srcP + 1);
-			byteVal = *(srcP + 2);
-			srcP += 2;
-		} else if (byteVal == k16bVal) {
-			destOffset += READ_LE_UINT16(srcP + 1);
-			byteVal = *(srcP + 3);
-			srcP += 3;
-		} else {
-			destOffset += READ_LE_UINT32(srcP + 1);
-			byteVal = *(srcP + 5);
-			srcP += 5;
+			break;
+		else {
+			if (byteVal == kByteStop)
+				return;
+			if (byteVal == k8bVal) {
+				destOffset += *(srcP + 1);
+				byteVal = *(srcP + 2);
+				srcP += 2;
+			} else if (byteVal == k16bVal) {
+				destOffset += READ_LE_UINT16(srcP + 1);
+				byteVal = *(srcP + 3);
+				srcP += 3;
+			} else {
+				destOffset += READ_LE_UINT32(srcP + 1);
+				byteVal = *(srcP + 5);
+				srcP += 5;
+			}
 		}
-Video_Cont_Vbe:
+
 		*((byte *)_videoPtr->pixels + destOffset) = byteVal;
 		++srcP;
 		++destOffset;
@@ -2141,7 +2140,7 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 	const byte *srcP;
 	byte *destP;
 
-	srcP = xp + nbrligne2 * yp + srcSurface;
+	srcP = xp + _lineNbr2 * yp + srcSurface;
 	destP = destSurface;
 	Red = zoom;
 	_width = width;
@@ -2151,7 +2150,7 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 		Reduc_Ecran_L = zoomOut(width, Red);
 		Reduc_Ecran_H = zoomOut(height, Red);
 
-		for (int yCtr = 0; yCtr < height; ++yCtr, srcP += nbrligne2) {
+		for (int yCtr = 0; yCtr < height; ++yCtr, srcP += _lineNbr2) {
 			Red_y += Red;
 			if (Red_y < 100) {
 				Red_x = 0;
@@ -2177,22 +2176,22 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
  * Draw horizontal line
  */
 void GraphicsManager::drawHorizontalLine(byte *surface, int xp, int yp, unsigned int width, byte col) {
-	memset(surface + xp + nbrligne2 * yp, col, width);
+	memset(surface + xp + _lineNbr2 * yp, col, width);
 }
 
 /**
  * Draw vertical line
  */
 void GraphicsManager::drawVerticalLine(byte *surface, int xp, int yp, int height, byte col) {
-	byte *destP = surface + xp + nbrligne2 * yp;
+	byte *destP = surface + xp + _lineNbr2 * yp;
 
 	for (int yCtr = height; yCtr; yCtr--) {
 		*destP = col;
-		destP += nbrligne2;
+		destP += _lineNbr2;
 	}
 }
 
-void GraphicsManager::MODE_VESA() {
+void GraphicsManager::setModeVesa() {
 	setGraphicalMode(640, 480);
 }
 

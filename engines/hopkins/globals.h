@@ -400,12 +400,11 @@ public:
 	byte *Bufferdecor;
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;
-	int OBJL, OBJH;
+	int _objectWidth, _objectHeight;
 	bool _newObjectFl;
 	int HELICO;
-	uint32 CAT_POSI;
-	uint32 CAT_TAILLE;
-	bool CAT_FLAG;
+	uint32 _catalogPos;
+	uint32 _catalogSize;
 	int iRegul;
 	bool BPP_NOAFF;
 	int SORTIE;

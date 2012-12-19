@@ -129,8 +129,8 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 
 	int width = ObjectsManager::getWidth(_vm->_globals.ADR_FICHIER_OBJ, val2);
 	int height = ObjectsManager::getHeight(_vm->_globals.ADR_FICHIER_OBJ, val2);
-	_vm->_globals.OBJL = width;
-	_vm->_globals.OBJH = height;
+	_vm->_globals._objectWidth = width;
+	_vm->_globals._objectHeight = height;
 
 	switch (mode) {
 	case 0:
@@ -4058,7 +4058,7 @@ void ObjectsManager::SPECIAL_JEU() {
 
 					_vm->_saveLoadManager.SAUVE_FICHIER("TEMP1.SCR", _vm->_graphicsManager._vesaScreen, 0x4B000u);
 
-					if (!_vm->_graphicsManager.nbrligne)
+					if (!_vm->_graphicsManager._lineNbr)
 						_vm->_graphicsManager.ofscroll = 0;
 					_vm->_graphicsManager.NB_SCREEN();
 					_vm->_soundManager.SPECIAL_SOUND = 198;
@@ -4481,7 +4481,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 	filename = file + ".LNK";
 	ptr = _vm->_fileManager.searchCat(filename, 3);
-	nbytes = _vm->_globals.CAT_TAILLE;
+	nbytes = _vm->_globals._catalogSize;
 	if (ptr == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
 
@@ -4506,15 +4506,12 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.searchCat(filename2, 8);
 
 			if (_vm->_globals.CACHE_BANQUE[1] || _vm->_globals.CACHE_BANQUE[1] == g_PTRNUL) {
-				_vm->_globals.CAT_FLAG = false;
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename2);
 			} else {
-				_vm->_globals.CAT_FLAG = true;
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "RES_SLI.RES");
 			}
 
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-			_vm->_globals.CAT_FLAG = false;
 			v36 = 60;
 			v37 = ptr + 1000;
 			for (int v40 = 0; v40 <= 21; v40++) {

@@ -361,7 +361,7 @@ LABEL_7:
 				if (v6 && v4 <= 29) {
 					byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(v6, 0);
 					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, v7, v19 + v16 + 6,
-						v15 + 120, _vm->_globals.OBJL, _vm->_globals.OBJH);
+						v15 + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
 					_vm->_globals.freeMemory(v7);
 				}
 				v16 += 54;

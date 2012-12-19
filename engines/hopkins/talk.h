@@ -34,13 +34,13 @@ class TalkManager {
 private:
 	HopkinsEngine *_vm;
 public:
-	Common::String FQUEST;
-	Common::String FREPON;
-	byte *BUFFERPERSO;
-	byte *PALPERSO;
+	Common::String _questionsFilename;
+	Common::String _answersFilename;
+	byte *_characterBuffer;
+	byte *_characterPalette;
 	byte *_characterSprite;
 	byte *ADR_ANIM;
-	size_t TAILLEPERSO;
+	size_t _characterSize;
 	int STATI;
 	int PLIGNE1, PLIGNE2;
 	int PLIGNE3, PLIGNE4;

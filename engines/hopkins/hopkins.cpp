@@ -387,7 +387,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.ECRAN = 113;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 114:
@@ -397,7 +397,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_globals.SORTIE = 0;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 115:
@@ -407,7 +407,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.ECRAN = 115;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 150:
@@ -1592,7 +1592,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.ECRAN = 113;
 			_globals.SAUVEGARDE->data[svField5] = 113;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 114:
@@ -1602,7 +1602,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.ECRAN = 114;
 			_globals.SAUVEGARDE->data[svField5] = 114;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 115:
@@ -1612,7 +1612,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.ECRAN = 115;
 			_globals.SAUVEGARDE->data[svField5] = 115;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 150:
@@ -2457,7 +2457,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_globals.SORTIE = 0;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 114:
@@ -2467,7 +2467,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals.SAUVEGARDE->data[svField6] = _globals.OLD_ECRAN;
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 115:
@@ -2477,7 +2477,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals.SAUVEGARDE->data[svField5] = _globals.ECRAN;
 			_globals.SORTIE = 0;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.MODE_VESA();
+			_graphicsManager.setModeVesa();
 			break;
 
 		case 150:
@@ -2534,8 +2534,8 @@ bool HopkinsEngine::runWin95full() {
 			_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
-			_graphicsManager.nbrligne = SCREEN_WIDTH;
-			_graphicsManager.MODE_VESA();
+			_graphicsManager._lineNbr = SCREEN_WIDTH;
+			_graphicsManager.setModeVesa();
 			if (_globals.SORTIE == -1)
 				error("FIN BASE SOUS MARINE");
 			break;
@@ -3424,7 +3424,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
-			_graphicsManager.nbrligne = SCREEN_WIDTH;
+			_graphicsManager._lineNbr = SCREEN_WIDTH;
 			break;
 		}
 	}
@@ -3799,7 +3799,7 @@ void HopkinsEngine::ENDEMO() {
 }
 
 void HopkinsEngine::BOOM() {
-	_graphicsManager.nbrligne = SCREEN_WIDTH;
+	_graphicsManager._lineNbr = SCREEN_WIDTH;
 	_graphicsManager.SCANLINE(SCREEN_WIDTH);
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
@@ -3925,7 +3925,7 @@ void HopkinsEngine::INCENDIE() {
 
 void HopkinsEngine::BASE() {
 	_globals.iRegul = 1;
-	_graphicsManager.nbrligne = SCREEN_WIDTH;
+	_graphicsManager._lineNbr = SCREEN_WIDTH;
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();

@@ -76,7 +76,7 @@ void ComputerManager::setTextMode() {
 	_vm->_graphicsManager.unlockScreen();
 	//SET_MODE(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	_vm->_graphicsManager.nbrligne = SCREEN_WIDTH;
+	_vm->_graphicsManager._lineNbr = SCREEN_WIDTH;
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "STFONT.SPR");
 	_vm->_globals.police = _vm->_globals.freeMemory(_vm->_globals.police);
 	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
