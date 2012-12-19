@@ -3,6 +3,7 @@ f 0644 root sys usr/ResidualVM/COPYING.LGPL COPYING.LGPL residualvm.man.readme
 f 0644 root sys usr/ResidualVM/COPYING.BSD COPYING.BSD residualvm.man.readme
 f 0644 root sys usr/ResidualVM/COPYING.FREEFONT COPYING.FREEFONT residualvm.man.readme
 f 0644 root sys usr/ResidualVM/COPYRIGHT COPYRIGHT residualvm.man.readme
+f 0644 root sys usr/ResidualVM/KNOWN_BUGS KNOWN_BUGS residualvm.man.readme
 f 0644 root sys usr/ResidualVM/NEWS NEWS residualvm.man.readme
 f 0644 root sys usr/ResidualVM/README README residualvm.man.readme
 f 0755 root sys usr/ResidualVM/residualvm residualvm residualvm.sw.eoe tag('0x5260dbec')

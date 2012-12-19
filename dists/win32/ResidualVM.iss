@@ -32,6 +32,7 @@ Name: {group}\Copying.FREEFONT; Filename: {app}\COPYING.FREEFONT.txt; WorkingDir
 Name: {group}\Copying.BSD; Filename: {app}\COPYING.BSD.txt; WorkingDir: {app}; Comment: COPYING.BSD; Flags: createonlyiffileexists
 Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
+Name: {group}\KnownBugs; Filename: {app}\KNOWN_BUGS.txt; WorkingDir: {app}; Comment: KNOWN_BUGS; Flags: createonlyiffileexists
 ;NEWS
 Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists
 ;QUICKSTART
@@ -58,6 +59,7 @@ Source: COPYING.FREEFONT.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.BSD.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
+Source: KNOWN_BUGS.txt; DestDir: {app}; Flags: ignoreversion
 ;NEWS
 Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion
 ;QUICKSTART

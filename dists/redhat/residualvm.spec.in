@@ -75,7 +75,7 @@ fi
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc AUTHORS README NEWS COPYING COPYING.LGPL COPYING.BSD COPYING.FREEFONT COPYRIGHT
+%doc AUTHORS README KNOWN_BUGS NEWS COPYING COPYING.LGPL COPYING.BSD COPYING.FREEFONT COPYRIGHT
 %attr(0755,root,root)%{_bindir}/residualvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/residualvm.xpm

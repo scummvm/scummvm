@@ -1192,6 +1192,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/COPYING.BSD");
 		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
+		in.push_back(setup.srcDir + "/KNOWN_BUGS");
 		in.push_back(setup.srcDir + "/NEWS");
 		in.push_back(setup.srcDir + "/README");
 		in.push_back(setup.srcDir + "/TODO");

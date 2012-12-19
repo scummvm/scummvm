@@ -187,6 +187,7 @@ osxsnap: bundle
 	cp $(srcdir)/COPYING.FREEFONT ./ResidualVM-snapshot/License\ \(FREEFONT\)
 	cp $(srcdir)/COPYING.ISC ./ResidualVM-snapshot/License\ \(ISC\)
 	cp $(srcdir)/COPYRIGHT ./ResidualVM-snapshot/Copyright\ Holders
+	cp $(srcdir)/KNOWN_BUGS ./ResidualVM-snapshot/Known Bugs
 	cp $(srcdir)/NEWS ./ResidualVM-snapshot/News
 	cp $(srcdir)/README ./ResidualVM-snapshot/ResidualVM\ ReadMe
 	mkdir ResidualVM-snapshot/doc
@@ -226,6 +227,7 @@ endif
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
+	cp $(srcdir)/KNOWN_BUGS $(WIN32PATH)/KNOWN_BUGS.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
@@ -292,6 +294,7 @@ endif
 	cp $(srcdir)/COPYING.FREEFONT ResidualVMWin32/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYING.ISC ResidualVMWin32/COPYING.ISC.txt
 	cp $(srcdir)/COPYRIGHT ResidualVMWin32/COPYRIGHT.txt
+	cp $(srcdir)/KNOWN_BUGS ResidualVMWin32/KNOWN_BUGS.txt
 	cp $(srcdir)/NEWS ResidualVMWin32/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVMWin32/doc/QuickStart.txt
 	cp $(srcdir)/README ResidualVMWin32/README.txt
@@ -336,6 +339,7 @@ endif
 	cp $(srcdir)/COPYING.FREEFONT ResidualVM/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYING.ISC ResidualVM/COPYING.ISC.txt
 	cp $(srcdir)/COPYRIGHT ResidualVM/COPYRIGHT.txt
+	cp $(srcdir)/KNOWN_BUGS ResidualVM/KNOWN_BUGS.txt
 	cp $(srcdir)/NEWS ResidualVM/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt
 	cp $(srcdir)/README ResidualVM/README.txt
