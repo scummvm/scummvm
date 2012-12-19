@@ -171,7 +171,7 @@ Globals::Globals() {
 	AFFIVBL = false;
 	NOT_VERIF = 0;
 	PERSO_TYPE = 0;
-	GOACTION = 0;
+	GOACTION = false;
 	NECESSAIRE = false;
 	Compteur = 0;
 	ACTION_SENS = 0;
@@ -555,7 +555,7 @@ void Globals::CACHE_ADD(int idx) {
 }
 
 // Load Cache
-void Globals::CHARGE_CACHE(const Common::String &file) {
+void Globals::loadCache(const Common::String &file) {
 	byte *v2 = g_PTRNUL;
 	byte *spriteData;
 	byte *ptr;

@@ -240,10 +240,10 @@ void DialogsManager::showOptionsDialog() {
 				doneFlag = true;
 		}
 
-		if (!_vm->_graphicsManager.MANU_SCROLL)
-			_vm->_globals.opt_scrtype = 2;
-		else if (_vm->_graphicsManager.MANU_SCROLL == 1)
+		if (_vm->_graphicsManager.MANU_SCROLL)
 			_vm->_globals.opt_scrtype = 1;
+		else
+			_vm->_globals.opt_scrtype = 2;
 
 		if (_vm->_globals._speed == 1)
 			_vm->_globals.opt_vitesse = 6;
@@ -292,8 +292,8 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_eventsManager.VBL();
 	} while (!doneFlag);
 
-	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_graphicsManager.ofscroll + 164,
-		107, 335, 215, _vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.ofscroll + 164, 107);
+	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_graphicsManager.ofscroll + 164,
+		107, 335, 215, _vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll + 164, 107);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_graphicsManager.ofscroll + 164, 107,
 		_vm->_graphicsManager.ofscroll + 498, 320);
 
@@ -349,7 +349,7 @@ LABEL_7:
 		int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
 		int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
 
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1,
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1,
 			v19 + 300, 414, 0, 0, 0, 0);
 		int v15 = 0;
 		int v4 = 0;
@@ -360,7 +360,7 @@ LABEL_7:
 				int v6 = _vm->_globals._inventory[v4];
 				if (v6 && v4 <= 29) {
 					byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(v6, 0);
-					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, v7, v19 + v16 + 6,
+					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, v7, v19 + v16 + 6,
 						v15 + 120, _vm->_globals.OBJL, _vm->_globals.OBJH);
 					_vm->_globals.freeMemory(v7);
 				}
@@ -368,7 +368,7 @@ LABEL_7:
 			};
 			v15 += 38;
 		}
-		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
+		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 		_vm->_eventsManager._curMouseButton = 0;
 		bool v20 = false;
 		int v13 = 0;
@@ -444,7 +444,7 @@ LABEL_7:
 		if (_inventDisplayedFl) {
 			_inventDisplayedFl = false;
 //			v9 = 114;
-			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, v19, 114, v18, v17, _vm->_graphicsManager.VESA_BUFFER, v19, 114);
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, v19, 114, v18, v17, _vm->_graphicsManager._vesaBuffer, v19, 114);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
 			_vm->_objectsManager.BOBTOUS = true;
 		}
@@ -474,8 +474,8 @@ LABEL_7:
 void DialogsManager::inventAnim() {
 	if (!_vm->_globals._disableInventFl) {
 		if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager._visibleFl) {
-			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38,
-				_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.I_old_x, 27);
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager.I_old_x, 27, 48, 38,
+				_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.I_old_x, 27);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
 			--_vm->_objectsManager.FLAG_VISIBLE_EFFACE;
 		}
@@ -483,32 +483,32 @@ void DialogsManager::inventAnim() {
 		if (_vm->_objectsManager._visibleFl) {
 			if (_vm->_objectsManager.I_old_x <= 1)
 				_vm->_objectsManager.I_old_x = 2;
-			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_objectsManager.I_old_x, 27, 48, 38,
-				_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.I_old_x, 27);
+			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager.I_old_x, 27, 48, 38,
+				_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.I_old_x, 27);
 
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
 			int v0 = _vm->_graphicsManager.ofscroll + 2;
 			int v1 = _vm->_graphicsManager.ofscroll + 2;
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.ICONE, v1 + 300, 327, 0);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.ICONE, v1 + 300, 327, 0);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v1, 27, v1 + 45, 62);
 			_vm->_objectsManager.I_old_x = v0;
 		}
 
 		if (_vm->_globals.SAUVEGARDE->data[svField357] == 1) {
 			if (_vm->_globals.SAUVEGARDE->data[svField353] == 1)
-				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
 			if (_vm->_globals.SAUVEGARDE->data[svField355] == 1)
-				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 866, 325, 1, 0, 0, 0);
+				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 866, 325, 1, 0, 0, 0);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(566, 25, 594, 60);
 		}
 		if (_vm->_globals.SAUVEGARDE->data[svField356] == 1) {
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
 		}
 
 		if (_vm->_globals.SAUVEGARDE->data[svField354] == 1) {
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
 		}
 	}
@@ -571,7 +571,7 @@ void DialogsManager::showLoadGame() {
 		} while (_vm->_eventsManager.getMouseButton() != 1);
 	} while (!slotNumber);
 	_vm->_objectsManager.SL_FLAG = false;
-	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x + 183, 60);
+	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x + 183, 60);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 183, 60, 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
 	_vm->_objectsManager.SL_SPR = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR);
@@ -604,7 +604,7 @@ void DialogsManager::showSaveGame() {
 	} while (!_vm->shouldQuit() && !slotNumber);
 
 	_vm->_objectsManager.SL_FLAG = false;
-	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager.VESA_BUFFER, _vm->_eventsManager._startPos.x + 183, 60);
+	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x + 183, 60);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
 	_vm->_objectsManager.SL_SPR = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR);
@@ -644,18 +644,18 @@ void DialogsManager::showSaveLoad(int a1) {
 	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVE2.SPR");
 	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
-	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 483, 360, 0);
+	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 483, 360, 0);
 
 	if (_vm->_globals.FR) {
 		if (a1 == 1)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 525, 375, 1);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 525, 375, 1);
 		if (a1 == 2)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 515, 375, 2);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 515, 375, 2);
 	} else {
 		if (a1 == 1)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 535, 372, 1);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 535, 372, 1);
 		if (a1 == 2)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 539, 372, 2);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 539, 372, 2);
 	}
 
 	for (slotNumber = 1; slotNumber <= 6; ++slotNumber) {
@@ -667,22 +667,22 @@ void DialogsManager::showSaveLoad(int a1) {
 
 			switch (slotNumber) {
 			case 1:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, thumb, _vm->_eventsManager._startPos.x + 190, 112, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 112, 0x80u, 87);
 				break;
 			case 2:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, thumb, _vm->_eventsManager._startPos.x + 323, 112, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 112, 0x80u, 87);
 				break;
 			case 3:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, thumb, _vm->_eventsManager._startPos.x + 190, 203, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 203, 0x80u, 87);
 				break;
 			case 4:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, thumb, _vm->_eventsManager._startPos.x + 323, 203, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 203, 0x80u, 87);
 				break;
 			case 5:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, thumb, _vm->_eventsManager._startPos.x + 190, 294, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 294, 0x80u, 87);
 				break;
 			case 6:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, thumb, _vm->_eventsManager._startPos.x + 323, 294, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 294, 0x80u, 87);
 				break;
 			}
 
@@ -692,7 +692,7 @@ void DialogsManager::showSaveLoad(int a1) {
 		}
 	}
 
-	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 0x112u, 353);
+	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 0x112u, 353);
 	_vm->_objectsManager.SL_FLAG = true;
 	_vm->_objectsManager.SL_MODE = a1;
 	_vm->_objectsManager.SL_X = 0;

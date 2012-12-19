@@ -172,16 +172,16 @@ public:
 	void setSpriteIndex(int idx, int spriteIndex);
 	void setSpriteY(int idx, int yp);
 	void SETTAILLESPR(int idx, int a2);
-	void SETFLIPSPR(int idx, int a2);
+	void setFlipSprite(int idx, bool flip);
 
 	void VERIFZONE();
 	void GOHOME();
 	void GOHOME2();
 	void CHARGE_OBSTACLE(const Common::String &file);
-	void CHARGE_ZONE(const Common::String &file);
+	void loadZone(const Common::String &file);
 	void CARRE_ZONE();
 	void PLAN_BETA();
-	void BTGAUCHE();
+	void handleLeftButton();
 	void PARADISE();
 	void CLEAR_ECRAN();
 
@@ -196,7 +196,7 @@ public:
 	void PACOURS_PROPRE(int16 *a1);
 	int16 *PARC_VOITURE(int a1, int a2, int a3, int a4);
 	void VERBEPLUS();
-	void BTDROITE();
+	void handleRightButton();
 	int MZONE();
 	void initBorder(int a1);
 	void OBJETPLUS(int a1);

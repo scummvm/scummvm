@@ -103,9 +103,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 	if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
-		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
 	else if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
 
 	if (!_vm->_graphicsManager.nbrligne)
 		_vm->_graphicsManager.ofscroll = 0;
@@ -146,7 +146,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_globals.NECESSAIRE = false;
 
-	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
@@ -160,12 +160,12 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
-	_vm->_graphicsManager.DD_LOCK();
-	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	_vm->_graphicsManager.DD_UNLOCK();
-	v8 = _vm->_graphicsManager.VESA_BUFFER;
-	v9 = _vm->_graphicsManager.VESA_SCREEN;
-	memcpy(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.VESA_SCREEN, 0x95FFCu);
+	_vm->_graphicsManager.lockScreen();
+	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager.unlockScreen();
+	v8 = _vm->_graphicsManager._vesaBuffer;
+	v9 = _vm->_graphicsManager._vesaScreen;
+	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 0x95FFCu);
 	v9 = v9 + 614396;
 	v8 = v8 + 614396;
 	*v8 = *v9;
@@ -1059,7 +1059,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 	v3 = 0;
 	if (a2 == 5 && _vm->_globals.SAUVEGARDE->data[svField3] == 4) {
 		if ((uint16)(a1 - 22) <= 1u) {
-			_vm->_objectsManager.SETFLIPSPR(0, 0);
+			_vm->_objectsManager.setFlipSprite(0, false);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
 			if (a1 == 22) {
@@ -1107,7 +1107,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			_vm->_objectsManager.ZONE_OFF(23);
 		}
 		if ((uint16)(a1 - 20) <= 1u) {
-			_vm->_objectsManager.SETFLIPSPR(0, 1);
+			_vm->_objectsManager.setFlipSprite(0, true);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
 			if (a1 == 20) {
@@ -1216,9 +1216,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 	if (_vm->_graphicsManager.nbrligne == SCREEN_WIDTH)
-		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x4B000u);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
 	if (_vm->_graphicsManager.nbrligne == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager.VESA_SCREEN, 0x96000u);
+		_vm->_saveLoadManager.SAUVE_FICHIER(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
 
 	if (!_vm->_graphicsManager.nbrligne)
 		_vm->_graphicsManager.ofscroll = 0;
@@ -1234,7 +1234,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager.INILINK(v22);
 	_vm->_objectsManager.PERSO_ON = true;
-	_vm->_globals.GOACTION = 0;
+	_vm->_globals.GOACTION = false;
 	_vm->_objectsManager.NUMZONE = -1;
 	initCharacterAnim();
 	VISU_PARLE();
@@ -1246,13 +1246,13 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	do {
 		v12 = _vm->_eventsManager.getMouseButton();
 		if (v12 == 1) {
-			_vm->_objectsManager.BTGAUCHE();
+			_vm->_objectsManager.handleLeftButton();
 			v12 = 1;
 		}
 		if (v12 == 2)
-			_vm->_objectsManager.BTDROITE();
+			_vm->_objectsManager.handleRightButton();
 		_vm->_objectsManager.VERIFZONE();
-		if (_vm->_globals.GOACTION == 1)
+		if (_vm->_globals.GOACTION)
 			_vm->_objectsManager.PARADISE();
 		_vm->_eventsManager.VBL();
 	} while (!_vm->_globals.SORTIE);
@@ -1282,7 +1282,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (_vm->_globals.SORTIE == 101)
 		_vm->_globals.SORTIE = 0;
 
-	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager.VESA_SCREEN);
+	_vm->_saveLoadManager.bload("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
@@ -1295,13 +1295,13 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
-	_vm->_graphicsManager.DD_Lock();
-	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_SCREEN, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	_vm->_graphicsManager.DD_Unlock();
+	_vm->_graphicsManager.lockScreen();
+	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
-	v14 = _vm->_graphicsManager.VESA_BUFFER;
-	v15 = _vm->_graphicsManager.VESA_SCREEN;
-	memcpy(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.VESA_SCREEN, 0x95FFCu);
+	v14 = _vm->_graphicsManager._vesaBuffer;
+	v15 = _vm->_graphicsManager._vesaScreen;
+	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 0x95FFCu);
 	v15 = v15 + 614396;
 	v14 = v14 + 614396;
 	WRITE_LE_UINT16(v14, (int16)READ_LE_UINT16(v15));

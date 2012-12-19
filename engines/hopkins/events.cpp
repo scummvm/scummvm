@@ -316,18 +316,18 @@ void EventsManager::VBL() {
 	int yp = 0;
 
 	if (_vm->_graphicsManager.REDRAW) {
-		_vm->_graphicsManager.DD_Lock();
+		_vm->_graphicsManager.lockScreen();
 		if (_breakoutFl) {
-			_vm->_graphicsManager.CopyAsm(_vm->_graphicsManager.VESA_BUFFER);
+			_vm->_graphicsManager.CopyAsm(_vm->_graphicsManager._vesaBuffer);
 			_vm->_graphicsManager.REDRAW = 0;
 		} else {
 			if (_vm->_globals.iRegul == 3)
-				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.ofscroll, 50, 0x280u, 340, 0, 50);
+				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll, 50, 0x280u, 340, 0, 50);
 			else
-				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.ofscroll, 20, 0x280u, 440, 0, 20);
+				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll, 20, 0x280u, 440, 0, 20);
 			--_vm->_graphicsManager.REDRAW;
 		}
-		_vm->_graphicsManager.DD_Unlock();
+		_vm->_graphicsManager.unlockScreen();
 	}
 	if (_mouseFl == true) {
 		v1 = 20;
@@ -441,9 +441,9 @@ LABEL_65:
 			_vm->_graphicsManager.Affiche_Segment_Vesa();
 		} else {
 			_vm->_fontManager.hideText(9);
-			_vm->_graphicsManager.DD_Lock();
-			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager.VESA_BUFFER, _vm->_graphicsManager.SCROLL, 20, SCREEN_WIDTH, 440, 0, 20);
-			_vm->_graphicsManager.DD_Unlock();
+			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.SCROLL, 20, SCREEN_WIDTH, 440, 0, 20);
+			_vm->_graphicsManager.unlockScreen();
 			_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
 
 			if (_vm->_globals.NBBLOC) {

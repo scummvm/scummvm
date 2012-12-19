@@ -555,7 +555,7 @@ LABEL_1141:
 				else if (_vm->_globals.SVGA == 1)
 					_vm->_animationManager.playAnim("BOMBE1.ANM", 100, 18, 100);
 			}
-			_vm->_graphicsManager.LOAD_IMAGE("BOMBEB");
+			_vm->_graphicsManager.loadImage("BOMBEB");
 			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -587,7 +587,7 @@ LABEL_1141:
 			else if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 0x96000u);
 			_vm->_graphicsManager.NOFADE = true;
 			_vm->_globals.SORTIE = 151;
 		}
@@ -603,7 +603,7 @@ LABEL_1141:
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.NOFADE = true;
-			memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 0x96000u);
 			_vm->_globals.SORTIE = 151;
 		}
 		if (v76 == 605) {
@@ -620,7 +620,7 @@ LABEL_1141:
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.NOFADE = true;
-			memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 0x96000u);
 			_vm->_globals.SORTIE = 151;
 		}
 		if (v76 == 606) {
@@ -633,7 +633,7 @@ LABEL_1141:
 					_vm->_animationManager.playAnim("BOMBE3.ANM", 50, 14, 500);
 				else if (_vm->_globals.SVGA == 2)
 					_vm->_animationManager.playAnim("BOMBE3A.ANM", 50, 14, 500);
-				memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x96000u);
+				memset(_vm->_graphicsManager._vesaBuffer, 0, 0x96000u);
 			}
 			_vm->_globals.SORTIE = 6;
 		}
@@ -707,7 +707,7 @@ LABEL_1141:
 			}
 
 			_vm->_animationManager.loadAnim("otage");
-			_vm->_graphicsManager.LOAD_IMAGE("IM05");
+			_vm->_graphicsManager.loadImage("IM05");
 			_vm->_graphicsManager.VISU_ALL();
 
 			for (int i = 0; i <= 4; i++) {
@@ -718,14 +718,14 @@ LABEL_1141:
 			}
 
 			_vm->_eventsManager.mouseOff();
-			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
+			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager._vesaBuffer);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(3) != 100);
-			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
+			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager._vesaBuffer);
 			_vm->_graphicsManager.FIN_VISU();
 
 			// If uncensored, rip the throat of the hostage
@@ -737,7 +737,7 @@ LABEL_1141:
 			}
 			_vm->_animationManager.loadAnim("ASCEN");
 			_vm->_eventsManager.mouseOff();
-			_vm->_graphicsManager.LOAD_IMAGE("ASCEN");
+			_vm->_graphicsManager.loadImage("ASCEN");
 			_vm->_graphicsManager.VISU_ALL();
 
 			for (int i = 0; i <= 4; i++) {
@@ -748,9 +748,9 @@ LABEL_1141:
 			}
 
 			_vm->_eventsManager.mouseOff();
-			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
+			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager._vesaBuffer);
 			_vm->_objectsManager.SCI_OPTI_ONE(1, 0, 17, 3);
-			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager.VESA_BUFFER);
+			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager._vesaBuffer);
 			_vm->_graphicsManager.FIN_VISU();
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
@@ -1994,7 +1994,7 @@ LABEL_1141:
 			_vm->_fontManager.hideText(5);
 			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.FIN_VISU();
-			_vm->_graphicsManager.LOAD_IMAGE("IM20f");
+			_vm->_graphicsManager.loadImage("IM20f");
 			_vm->_animationManager.loadAnim("ANIM20f");
 			_vm->_graphicsManager.VISU_ALL();
 			_vm->_eventsManager.mouseOff();

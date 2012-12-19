@@ -51,9 +51,9 @@ class GraphicsManager {
 private:
 	HopkinsEngine *_vm;
 
-	void CHARGE_ECRAN(const Common::String &file);
+	void loadScreen(const Common::String &file);
 public:
-	int _lockCtr;
+	int _lockCounter;
 	bool SDL_MODEYES;
 	int XSCREEN;
 	int YSCREEN;
@@ -66,16 +66,16 @@ public:
 	byte Palette[PALETTE_EXT_BLOCK_SIZE];
 	byte OLD_PAL[PALETTE_EXT_BLOCK_SIZE];
 	bool Linear;
-	Graphics::Surface *VideoPtr;
-	byte *VESA_SCREEN;
-	byte *VESA_BUFFER;
+	Graphics::Surface *_videoPtr;
+	byte *_vesaScreen;
+	byte *_vesaBuffer;
 	int ofscroll;
 	int SCROLL;
 	byte HEADER_PCX[128];
 	int PCX_L, PCX_H;
 	bool DOUBLE_ECRAN;
 	int OLD_SCROLL;
-	int MANU_SCROLL;
+	bool MANU_SCROLL;
 	int SPEED_SCROLL;
 	int nbrligne2;
 	int Agr_x, Agr_y;
@@ -83,7 +83,7 @@ public:
 	int FADESPD;
 	byte PALPCX[PALETTE_EXT_BLOCK_SIZE];
 	int FADE_LINUX;
-	bool NOLOCK;
+	bool _skipVideoLockFl;
 	int no_scroll;
 	Common::Rect dstrect[50];
 	int REDRAW;
@@ -105,16 +105,14 @@ public:
 	~GraphicsManager();
 	void setParent(HopkinsEngine *vm);
 
-	void SET_MODE(int width, int height);
-	void DD_Lock();
-	void DD_Unlock();
-	void DD_LOCK() { DD_Lock(); }
-	void DD_UNLOCK() { DD_Unlock(); }
-	void Cls_Video();
-	void LOAD_IMAGE(const Common::String &file);
-	void LOAD_IMAGEVGA(const Common::String &file);
+	void setGraphicalMode(int width, int height);
+	void lockScreen();
+	void unlockScreen();
+	void clearScreen();
+	void loadImage(const Common::String &file);
+	void loadVgaImage(const Common::String &file);
 	void INIT_TABLE(int minIndex, int maxIndex, byte *palette);
-	int SCROLL_ECRAN(int amount);
+	void scrollScreen(int amount);
 	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag);

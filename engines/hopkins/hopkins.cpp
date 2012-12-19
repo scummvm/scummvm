@@ -137,12 +137,12 @@ bool HopkinsEngine::runWin95Demo() {
 
 	warning("TODO Affiche_Version(1)");
 
-	_graphicsManager.DD_LOCK();
-	_graphicsManager.Cls_Video();
-	_graphicsManager.DD_UNLOCK();
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
 	_graphicsManager.Cls_Pal();
 
-	_graphicsManager.LOAD_IMAGE("H2");
+	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
 
 	if (!_eventsManager._escKeyFl)
@@ -158,7 +158,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals._speed = 1;
 
 	for (int i = 1; i < 50; i++) {
-		_graphicsManager.SCOPY(_graphicsManager.VESA_SCREEN, 0, 0, 640, 440, _graphicsManager.VESA_BUFFER, 0, 0);
+		_graphicsManager.SCOPY(_graphicsManager._vesaScreen, 0, 0, 640, 440, _graphicsManager._vesaBuffer, 0, 0);
 		_eventsManager.VBL();
 	}
 
@@ -217,17 +217,17 @@ bool HopkinsEngine::runWin95Demo() {
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
 				if (_globals.FR == 1)
-					_graphicsManager.LOAD_IMAGE("fondfr");
+					_graphicsManager.loadImage("fondfr");
 				if (!_globals.FR)
-					_graphicsManager.LOAD_IMAGE("fondan");
+					_graphicsManager.loadImage("fondan");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(500);
 				_graphicsManager.FADE_OUTW();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
-				_graphicsManager.DD_LOCK();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_UNLOCK();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				if (!_globals.CENSURE)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
@@ -329,9 +329,9 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.Max_Ligne_Long = 20;
 			if (_globals.SAUVEGARDE->data[svField225]) {
 				if (_globals.FR == 1)
-					_graphicsManager.LOAD_IMAGE("ENDFR");
+					_graphicsManager.loadImage("ENDFR");
 				else if (!_globals.FR)
-					_graphicsManager.LOAD_IMAGE("ENDUK");
+					_graphicsManager.loadImage("ENDUK");
 				_graphicsManager.FADE_INW();
 				_eventsManager.mouseOn();
 				do
@@ -413,9 +413,9 @@ bool HopkinsEngine::runWin95Demo() {
 		case 150:
 			_soundManager.WSOUND(28);
 			_globals.iRegul = 4; // CHECKME!
-			_graphicsManager.DD_LOCK();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -425,11 +425,11 @@ bool HopkinsEngine::runWin95Demo() {
 		case 151:
 			_soundManager.WSOUND(28);
 			_globals.iRegul = 4; // CHECKME!
-			_graphicsManager.DD_LOCK();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
-			_graphicsManager.LOAD_IMAGE("njour3a");
+			_graphicsManager.loadImage("njour3a");
 			_graphicsManager.FADE_INW();
 			_eventsManager.delay(5000);
 			_graphicsManager.FADE_OUTW();
@@ -440,9 +440,9 @@ bool HopkinsEngine::runWin95Demo() {
 		case 152:
 			_soundManager.WSOUND(28);
 			_globals.iRegul = 4; // CHECKME!
-			_graphicsManager.DD_LOCK();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -461,11 +461,11 @@ bool HopkinsEngine::runLinuxDemo() {
 	_globals.HELICO = 0;
 	_eventsManager.mouseOff();
 
-	_graphicsManager.DD_Lock();
-	_graphicsManager.Cls_Video();
-	_graphicsManager.DD_Unlock();
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
 
-	_graphicsManager.LOAD_IMAGE("LINUX");
+	_graphicsManager.loadImage("LINUX");
 	_graphicsManager.FADE_INW();
 	_eventsManager.delay(1500);
 	_graphicsManager.FADE_OUTW();
@@ -475,7 +475,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		_animationManager.playAnim("MP.ANM", 10, 16, 200);
 	}
 
-	_graphicsManager.LOAD_IMAGE("H2");
+	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
 	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
@@ -540,20 +540,20 @@ bool HopkinsEngine::runLinuxDemo() {
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
 				if (_globals.FR == 1)
-					_graphicsManager.LOAD_IMAGE("fondfr");
+					_graphicsManager.loadImage("fondfr");
 				if (!_globals.FR)
-					_graphicsManager.LOAD_IMAGE("fondan");
+					_graphicsManager.loadImage("fondan");
 				if (_globals.FR == 2)
-					_graphicsManager.LOAD_IMAGE("fondes");
+					_graphicsManager.loadImage("fondes");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(500);
 				_graphicsManager.FADE_OUTW();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
 
-				_graphicsManager.DD_Lock();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_Unlock();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_graphicsManager.FADE_LINUX = 2;
 
@@ -743,12 +743,12 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.SAUVEGARDE->data[svField5] = 113;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
 
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.DD_VBL();
-			memset(_graphicsManager.VESA_BUFFER, 0, 0x4B000u);
-			memset(_graphicsManager.VESA_SCREEN, 0, 0x4B000u);
+			memset(_graphicsManager._vesaBuffer, 0, 0x4B000u);
+			memset(_graphicsManager._vesaScreen, 0, 0x4B000u);
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
@@ -760,9 +760,9 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.ECRAN = 114;
 			_globals.SAUVEGARDE->data[svField5] = 114;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 115:
@@ -772,18 +772,18 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.ECRAN = 115;
 			_globals.SAUVEGARDE->data[svField5] = 115;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 150:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
 
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
@@ -795,9 +795,9 @@ bool HopkinsEngine::runLinuxDemo() {
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
 
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR3A.anm", 12, 12, 2000);
@@ -809,9 +809,9 @@ bool HopkinsEngine::runLinuxDemo() {
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
 
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
@@ -833,14 +833,14 @@ bool HopkinsEngine::runBeOSFull() {
 	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
 	_globals.iRegul = 1;
-	_graphicsManager.Cls_Video();
+	_graphicsManager.clearScreen();
 	_graphicsManager.Cls_Pal();
 	_animationManager.playAnim("MP.ANM", 10, 0, 200);
 	_graphicsManager.FADE_OUTW();
 	if (!_eventsManager._escKeyFl)
 		INTRORUN();
 	_graphicsManager.FADE_OUTS();
-	_graphicsManager.LOAD_IMAGE("H2");
+	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
 	_graphicsManager.FADE_OUTW();
 	_globals.iRegul = 0;
@@ -878,13 +878,13 @@ bool HopkinsEngine::runBeOSFull() {
 		case 3:
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
-				_graphicsManager.LOAD_IMAGE("FOND");
+				_graphicsManager.loadImage("FOND");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(5000);
 				_graphicsManager.FADE_OUTW();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
-				_graphicsManager.Cls_Video();
+				_graphicsManager.clearScreen();
 				_graphicsManager.Cls_Pal();
 				_animationManager.playAnim("BANQUE.ANM", 200, 12, 200);
 				_soundManager.SPECIAL_SOUND = 0;
@@ -1032,7 +1032,7 @@ bool HopkinsEngine::runBeOSFull() {
 			}
 			if (_globals.SORTIE == 18) {
 				_globals.iRegul = 1;
-				_graphicsManager.Cls_Video();
+				_graphicsManager.clearScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
@@ -1075,7 +1075,7 @@ bool HopkinsEngine::runBeOSFull() {
 			if (_globals.SORTIE == 17) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
-				_graphicsManager.Cls_Video();
+				_graphicsManager.clearScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
@@ -1540,7 +1540,7 @@ bool HopkinsEngine::runBeOSFull() {
 			if (_globals.SORTIE == 18) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
-				_graphicsManager.Cls_Video();
+				_graphicsManager.clearScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
@@ -1618,7 +1618,7 @@ bool HopkinsEngine::runBeOSFull() {
 		case 150:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.Cls_Video();
+			_graphicsManager.clearScreen();
 			_graphicsManager.Cls_Pal();
 			_animationManager.playAnim("JOUR1A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -1628,7 +1628,7 @@ bool HopkinsEngine::runBeOSFull() {
 		case 151:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.Cls_Video();
+			_graphicsManager.clearScreen();
 			_graphicsManager.Cls_Pal();
 			_animationManager.playAnim("JOUR3A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -1638,7 +1638,7 @@ bool HopkinsEngine::runBeOSFull() {
 		case 152:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.Cls_Video();
+			_graphicsManager.clearScreen();
 			_graphicsManager.Cls_Pal();
 			_animationManager.playAnim("JOUR4A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -1680,16 +1680,16 @@ bool HopkinsEngine::runWin95full() {
 
 	warning("TODO: Affiche_Version();");
 
-	_graphicsManager.DD_LOCK();
-	_graphicsManager.Cls_Video();
-	_graphicsManager.DD_UNLOCK();
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
 	_graphicsManager.Cls_Pal();
 
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
 	_graphicsManager.FADE_OUTW();
 	if (!_eventsManager._escKeyFl)
 		INTRORUN();
-	_graphicsManager.LOAD_IMAGE("H2");
+	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
 	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
@@ -1731,17 +1731,17 @@ bool HopkinsEngine::runWin95full() {
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
 				if (_globals.FR == 1)
-					_graphicsManager.LOAD_IMAGE("fondfr");
+					_graphicsManager.loadImage("fondfr");
 				else if (!_globals.FR)
-					_graphicsManager.LOAD_IMAGE("fondan");
+					_graphicsManager.loadImage("fondan");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(500);
 				_graphicsManager.FADE_OUTW();
 				_soundManager.SPECIAL_SOUND = 2;
 				_globals.iRegul = 1;
-				_graphicsManager.DD_LOCK();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_UNLOCK();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				if (!_globals.CENSURE)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
@@ -1894,9 +1894,9 @@ bool HopkinsEngine::runWin95full() {
 			}
 			if (_globals.SORTIE == 18) {
 				_globals.iRegul = 1;
-				_graphicsManager.DD_LOCK();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_UNLOCK();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(29);
@@ -1938,9 +1938,9 @@ bool HopkinsEngine::runWin95full() {
 			if (_globals.SORTIE == 17) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
-				_graphicsManager.DD_LOCK();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_UNLOCK();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
@@ -2404,9 +2404,9 @@ bool HopkinsEngine::runWin95full() {
 			if (_globals.SORTIE == 18) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
-				_graphicsManager.DD_LOCK();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_UNLOCK();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
@@ -2483,9 +2483,9 @@ bool HopkinsEngine::runWin95full() {
 		case 150:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.DD_LOCK();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -2495,9 +2495,9 @@ bool HopkinsEngine::runWin95full() {
 		case 151:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.DD_LOCK();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_animationManager.playAnim("JOUR3A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -2507,9 +2507,9 @@ bool HopkinsEngine::runWin95full() {
 		case 152:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.DD_LOCK();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_UNLOCK();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -2554,11 +2554,11 @@ bool HopkinsEngine::runLinuxFull() {
 	_globals.HELICO = 0;
 	_eventsManager.mouseOff();
 
-	_graphicsManager.DD_Lock();
-	_graphicsManager.Cls_Video();
-	_graphicsManager.DD_Unlock();
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
 
-	_graphicsManager.LOAD_IMAGE("H2");
+	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
 	_eventsManager.delay(500);
 	_graphicsManager.FADE_OUTW();
@@ -2608,19 +2608,19 @@ bool HopkinsEngine::runLinuxFull() {
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
 				if (_globals.FR == 1)
-					_graphicsManager.LOAD_IMAGE("fondfr");
+					_graphicsManager.loadImage("fondfr");
 				else if (!_globals.FR)
-					_graphicsManager.LOAD_IMAGE("fondan");
+					_graphicsManager.loadImage("fondan");
 				else if (_globals.FR == 2)
-					_graphicsManager.LOAD_IMAGE("fondes");
+					_graphicsManager.loadImage("fondes");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(500);
 				_graphicsManager.FADE_OUTW();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
-				_graphicsManager.DD_Lock();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_Unlock();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_graphicsManager.FADE_LINUX = 2;
 				if (!_globals.CENSURE)
@@ -2772,9 +2772,9 @@ bool HopkinsEngine::runLinuxFull() {
 			}
 			if (_globals.SORTIE == 18) {
 				_globals.iRegul = 1;
-				_graphicsManager.DD_Lock();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_Unlock();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(29);
@@ -2815,9 +2815,9 @@ bool HopkinsEngine::runLinuxFull() {
 			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6);
 			if (_globals.SORTIE == 17) {
 				_globals.iRegul = 1;
-				_graphicsManager.DD_Lock();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_Unlock();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
@@ -3283,9 +3283,9 @@ bool HopkinsEngine::runLinuxFull() {
 			if (_globals.SORTIE == 18) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
-				_graphicsManager.DD_Lock();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_Unlock();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
@@ -3336,12 +3336,12 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.ECRAN = 113;
 			_globals.SAUVEGARDE->data[svField5] = 113;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.DD_VBL();
-			memset(_graphicsManager.VESA_BUFFER, 0, 0x4B000u);
-			memset(_graphicsManager.VESA_SCREEN, 0, 0x4B000u);
+			memset(_graphicsManager._vesaBuffer, 0, 0x4B000u);
+			memset(_graphicsManager._vesaScreen, 0, 0x4B000u);
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
@@ -3353,9 +3353,9 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.ECRAN = 114;
 			_globals.SAUVEGARDE->data[svField5] = 114;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 115:
@@ -3365,17 +3365,17 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.ECRAN = 115;
 			_globals.SAUVEGARDE->data[svField5] = 115;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 150:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
@@ -3386,9 +3386,9 @@ bool HopkinsEngine::runLinuxFull() {
 		case 151:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR3A.anm", 12, 12, 2000);
@@ -3399,9 +3399,9 @@ bool HopkinsEngine::runLinuxFull() {
 		case 152:
 			_soundManager.WSOUND(16);
 			_globals.iRegul = 1;
-			_graphicsManager.DD_Lock();
-			_graphicsManager.Cls_Video();
-			_graphicsManager.DD_Unlock();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
@@ -3441,7 +3441,7 @@ int HopkinsEngine::getRandomNumber(int maxNumber) {
 
 void HopkinsEngine::INIT_SYSTEM() {
 	// Set graphics mode
-	_graphicsManager.SET_MODE(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_graphicsManager.setGraphicalMode(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Synchronise the sound settings from ScummVM
 	_soundManager.syncSoundSettings();
@@ -3539,14 +3539,14 @@ void HopkinsEngine::INTRORUN() {
 
 			if (!_eventsManager._escKeyFl) {
 				_soundManager.VOICE_MIX(3, 3);
-				_graphicsManager.DD_Lock();
-				_graphicsManager.Cls_Video();
-				_graphicsManager.DD_Unlock();
+				_graphicsManager.lockScreen();
+				_graphicsManager.clearScreen();
+				_graphicsManager.unlockScreen();
 				_graphicsManager.Cls_Pal();
 				_graphicsManager.DD_VBL();
 				_soundManager.WSOUND(11);
-				_graphicsManager.LOAD_IMAGE("intro1");
-				_graphicsManager.SCROLL_ECRAN(0);
+				_graphicsManager.loadImage("intro1");
+				_graphicsManager.scrollScreen(0);
 				_graphicsManager.ofscroll = 0;
 				_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -3586,8 +3586,8 @@ void HopkinsEngine::INTRORUN() {
 				_soundManager.VOICE_MIX(4, 3);
 				_graphicsManager.FADE_OUTW();
 				_graphicsManager.no_scroll = 0;
-				_graphicsManager.LOAD_IMAGE("intro2");
-				_graphicsManager.SCROLL_ECRAN(0);
+				_graphicsManager.loadImage("intro2");
+				_graphicsManager.scrollScreen(0);
 				_animationManager.loadAnim("INTRO2");
 				_graphicsManager.VISU_ALL();
 				_soundManager.WSOUND(23);
@@ -3618,7 +3618,7 @@ void HopkinsEngine::INTRORUN() {
 				// CHECKME: Useless variables?
 				// v21 = *(uint16 *)&_graphicsManager.Palette[796];
 				// v22 = _graphicsManager.Palette[798];
-				_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
+				_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager._vesaBuffer);
 				_graphicsManager.FIN_VISU();
 
 				if (shouldQuit())
@@ -3633,8 +3633,8 @@ void HopkinsEngine::INTRORUN() {
 				_soundManager.SPECIAL_SOUND = 0;
 
 				if (!_eventsManager._escKeyFl) {
-					_graphicsManager.LOAD_IMAGE("intro2");
-					_graphicsManager.SCROLL_ECRAN(0);
+					_graphicsManager.loadImage("intro2");
+					_graphicsManager.scrollScreen(0);
 					_animationManager.loadAnim("INTRO2");
 					_graphicsManager.VISU_ALL();
 					_soundManager.WSOUND(23);
@@ -3653,7 +3653,7 @@ void HopkinsEngine::INTRORUN() {
 
 					_globals.BPP_NOAFF = false;
 					_globals.iRegul = 1;
-					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
+					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager._vesaBuffer);
 
 					int v9 = 0;
 					while (!shouldQuit() && !_eventsManager._escKeyFl) {
@@ -3674,7 +3674,7 @@ void HopkinsEngine::INTRORUN() {
 								_graphicsManager.Palette[i] -= v12;
 						}
 
-						_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
+						_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager._vesaBuffer);
 
 
 						if (2 * v9 > 1) {
@@ -3682,7 +3682,7 @@ void HopkinsEngine::INTRORUN() {
 								_eventsManager.VBL();
 						}
 
-						_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager.VESA_BUFFER);
+						_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager._vesaBuffer);
 						if (20 - v9 > 1) {
 							for (int i = 1; i < 20 - v9; i++)
 								_eventsManager.VBL();
@@ -3690,7 +3690,7 @@ void HopkinsEngine::INTRORUN() {
 
 						v9 += 2;
 						if (v9 > 15) {
-							_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager.VESA_BUFFER);
+							_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager._vesaBuffer);
 							for (uint j = 1; j < 100 / _globals._speed; ++j)
 								_eventsManager.VBL();
 
@@ -3705,7 +3705,7 @@ void HopkinsEngine::INTRORUN() {
 								_eventsManager.VBL();
 
 							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
-							_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager.VESA_BUFFER);
+							_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager._vesaBuffer);
 
 							for (uint m = 0; m < 50 / _globals._speed; ++m) {
 								if (m == 30 / _globals._speed) {
@@ -3764,9 +3764,9 @@ void HopkinsEngine::PASS() {
 		return;
 
 	if (_globals.FR == 1)
-		_graphicsManager.LOAD_IMAGE("ndfr");
+		_graphicsManager.loadImage("ndfr");
 	else
-		_graphicsManager.LOAD_IMAGE("nduk");
+		_graphicsManager.loadImage("nduk");
 
 	_graphicsManager.FADE_INW();
 	if (_soundManager.VOICEOFF)
@@ -3788,9 +3788,9 @@ void HopkinsEngine::NO_DISPO(int sortie) {
 void HopkinsEngine::ENDEMO() {
 	_soundManager.WSOUND(28);
 	if (_globals.FR == 1)
-		_graphicsManager.LOAD_IMAGE("endfr");
+		_graphicsManager.loadImage("endfr");
 	else
-	    _graphicsManager.LOAD_IMAGE("enduk");
+	    _graphicsManager.loadImage("enduk");
 
 	_graphicsManager.FADE_INW();
 	_eventsManager.delay(1500);
@@ -3801,9 +3801,9 @@ void HopkinsEngine::ENDEMO() {
 void HopkinsEngine::BOOM() {
 	_graphicsManager.nbrligne = SCREEN_WIDTH;
 	_graphicsManager.SCANLINE(SCREEN_WIDTH);
-	_graphicsManager.DD_Lock();
-	_graphicsManager.Cls_Video();
-	_graphicsManager.DD_Unlock();
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
 	_graphicsManager.Cls_Pal();
 
 	_globals.iRegul = 1;
@@ -3815,7 +3815,7 @@ void HopkinsEngine::BOOM() {
 		_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 
 	_soundManager.SPECIAL_SOUND = 0;
-	_graphicsManager.LOAD_IMAGE("IM15");
+	_graphicsManager.loadImage("IM15");
 	_animationManager.loadAnim("ANIM15");
 	_graphicsManager.VISU_ALL();
 	_objectsManager.BOBANIM_OFF(7);
@@ -3860,7 +3860,7 @@ void HopkinsEngine::PUBQUIT() {
 	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;
 	_globals.FLAG_VISIBLE = false;
-	_graphicsManager.LOAD_IMAGE("BOX");
+	_graphicsManager.loadImage("BOX");
 	_soundManager.WSOUND(28);
 	_graphicsManager.FADE_INW();
 	_eventsManager.mouseOn();
@@ -3891,7 +3891,7 @@ void HopkinsEngine::PUBQUIT() {
 void HopkinsEngine::INCENDIE() {
 	_globals._disableInventFl = true;
 	_globals.iRegul = 1;
-	_graphicsManager.LOAD_IMAGE("IM71");
+	_graphicsManager.loadImage("IM71");
 	_animationManager.loadAnim("ANIM71");
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -3926,9 +3926,9 @@ void HopkinsEngine::INCENDIE() {
 void HopkinsEngine::BASE() {
 	_globals.iRegul = 1;
 	_graphicsManager.nbrligne = SCREEN_WIDTH;
-	_graphicsManager.DD_Lock();
-	_graphicsManager.Cls_Video();
-	_graphicsManager.DD_Unlock();
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
 	_graphicsManager.Cls_Pal();
 	_animationManager._clearAnimationFl = true;
 	_soundManager.WSOUND(25);
@@ -3993,9 +3993,9 @@ void HopkinsEngine::BASE() {
 }
 
 void HopkinsEngine::BASED() {
-	_graphicsManager.DD_Lock();
-	_graphicsManager.Cls_Video();
-	_graphicsManager.DD_Unlock();
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
 	_graphicsManager.Cls_Pal();
 	_animationManager.NO_SEQ = false;
 	_soundManager.WSOUND(26);
@@ -4005,7 +4005,7 @@ void HopkinsEngine::BASED() {
 	_graphicsManager.FADE_LINUX = 2;
 	_animationManager.playSequence("abase.seq", 50, 15, 50);
 	_animationManager.NO_COUL = false;
-	_graphicsManager.LOAD_IMAGE("IM92");
+	_graphicsManager.loadImage("IM92");
 	_animationManager.loadAnim("ANIM92");
 	_graphicsManager.VISU_ALL();
 	_objectsManager.INILINK("IM92");
@@ -4044,7 +4044,7 @@ void HopkinsEngine::JOUE_FIN() {
 	_globals.AFFLI = false;
 	_globals.AFFIVBL = false;
 	_soundManager.CHARGE_SAMPLE(1, "SOUND90.WAV");
-	_graphicsManager.LOAD_IMAGE("IM100");
+	_graphicsManager.loadImage("IM100");
 	_animationManager.loadAnim("ANIM100");
 	_graphicsManager.VISU_ALL();
 	_eventsManager.mouseOn();
@@ -4118,7 +4118,7 @@ void HopkinsEngine::JOUE_FIN() {
 		_animationManager.playAnim("BERM.ANM", 100, 24, 300);
 		_graphicsManager.FIN_VISU();
 		_soundManager.DEL_SAMPLE(1);
-		_graphicsManager.LOAD_IMAGE("PLAN3");
+		_graphicsManager.loadImage("PLAN3");
 		_graphicsManager.FADE_INW();
 
 		_eventsManager._rateCounter = 0;
@@ -4134,9 +4134,9 @@ void HopkinsEngine::JOUE_FIN() {
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.playAnim("JOUR2A.anm", 12, 12, 1000);
 		_soundManager.WSOUND(11);
-		_graphicsManager.DD_Lock();
-		_graphicsManager.Cls_Video();
-		_graphicsManager.DD_Unlock();
+		_graphicsManager.lockScreen();
+		_graphicsManager.clearScreen();
+		_graphicsManager.unlockScreen();
 		_graphicsManager.Cls_Pal();
 		_animationManager.playAnim("FF1a.anm", 18, 18, 9);
 		_animationManager.playAnim("FF1a.anm", 9, 18, 9);
@@ -4190,9 +4190,9 @@ void HopkinsEngine::AVION() {
 	_soundManager.WSOUND(28);
 	_globals.iRegul = 1;
 	_globals.nbrligne = SCREEN_WIDTH;
-	_graphicsManager.DD_Lock();
-	_graphicsManager.Cls_Video();
-	_graphicsManager.DD_Unlock();
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
 	_graphicsManager.Cls_Pal();
 
 	_animationManager._clearAnimationFl = false;
@@ -4268,7 +4268,7 @@ void HopkinsEngine::AVION() {
 
 int HopkinsEngine::PWBASE() {
 	_globals._disableInventFl = true;
-	_graphicsManager.LOAD_IMAGE("PBASE");
+	_graphicsManager.loadImage("PBASE");
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -4452,7 +4452,7 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 		if (!curChar)
 			break;
 		if (curChar > 31) {
-			_graphicsManager.Affiche_Fonte(_graphicsManager.VESA_BUFFER, _globals.police, startPosX, startPosY, curChar - 32, colour);
+			_graphicsManager.Affiche_Fonte(_graphicsManager._vesaBuffer, _globals.police, startPosX, startPosY, curChar - 32, colour);
 			startPosX += _objectsManager.getWidth(_globals.police, curChar - 32);
 		}
 	}
@@ -4461,7 +4461,7 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 void HopkinsEngine::Credits() {
 	Charge_Credits();
 	_globals.Credit_y = 436;
-	_graphicsManager.LOAD_IMAGE("GENERIC");
+	_graphicsManager.loadImage("GENERIC");
 	_graphicsManager.FADE_INW();
 	_soundManager.WSOUND(28);
 	_eventsManager._mouseFl = false;
@@ -4499,7 +4499,7 @@ void HopkinsEngine::Credits() {
 		--_globals.Credit_y;
 		if (_globals.Credit_bx != -1 || _globals.Credit_bx1 != -1 || _globals.Credit_by != -1 || _globals.Credit_by1 != -1) {
 			_eventsManager.VBL();
-			_graphicsManager.SCOPY(_graphicsManager.VESA_SCREEN, 60, 50, 520, 380, _graphicsManager.VESA_BUFFER, 60, 50);
+			_graphicsManager.SCOPY(_graphicsManager._vesaScreen, 60, 50, 520, 380, _graphicsManager._vesaBuffer, 60, 50);
 		} else {
 			_eventsManager.VBL();
 		}
@@ -4731,7 +4731,7 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "VAISSEAU.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
 	if (a2.size())
-		_graphicsManager.LOAD_IMAGE(a2);
+		_graphicsManager.loadImage(a2);
 
 	if ((a1 != 77) && (a1 != 84) && (a1 != 91))
 		_objectsManager.INILINK("ocean");
@@ -4835,7 +4835,7 @@ bool HopkinsEngine::ADULT() {
 	_globals._disableInventFl = true;
 	_globals.SORTIE = 0;
 
-	_graphicsManager.LOAD_IMAGE("ADULT");
+	_graphicsManager.loadImage("ADULT");
 	_graphicsManager.FADE_INW();
 	_eventsManager.mouseOn();
 	_eventsManager.changeMouseCursor(0);

@@ -156,7 +156,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			int height = _text[idx]._height;
 			int width = _text[idx]._width;
 			_vm->_graphicsManager.Restore_Mem(
-				_vm->_graphicsManager.VESA_BUFFER,
+				_vm->_graphicsManager._vesaBuffer,
 				_text[idx]._textBlock,
 			    xp,
 			    yp,
@@ -393,15 +393,15 @@ LABEL_57:
 			if (ptrd == g_PTRNUL) {
 				error("Cutting a block for text box (%d)", v49);
 			}
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, ptrd, v56, v55, v53, v51);
+			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, v56, v55, v53, v51);
 			_vm->_graphicsManager.Trans_bloc2(ptrd, _vm->_graphicsManager.TABLE_COUL, v49);
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager.VESA_BUFFER, ptrd, v56, v55, v53, v51);
+			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, v56, v55, v53, v51);
 			_vm->_globals.freeMemory(ptrd);
 
-			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager.VESA_BUFFER, v56, v55, v53, (byte)-2);
-			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager.VESA_BUFFER, v56, v51 + v55, v53, (byte)-2);
-			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager.VESA_BUFFER, v56, v70, v51, (byte)-2);
-			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager.VESA_BUFFER, v53 + v56, v70, v51, (byte)-2);
+			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager._vesaBuffer, v56, v55, v53, (byte)-2);
+			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager._vesaBuffer, v56, v51 + v55, v53, (byte)-2);
+			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager._vesaBuffer, v56, v70, v51, (byte)-2);
+			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager._vesaBuffer, v53 + v56, v70, v51, (byte)-2);
 		}
 		_text[idx]._lineCount = lineCount;
 		int v75 = v73 + 5;
@@ -430,7 +430,7 @@ LABEL_57:
 			_text[idx]._textBlock = ptre;
 			_text[idx]._width = blockWidth;
 			_text[idx]._height = blockHeight;
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager.VESA_BUFFER, _text[idx]._textBlock, v56, v55, _text[idx]._width, blockHeight);
+			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _text[idx]._textBlock, v56, v55, _text[idx]._width, blockHeight);
 		}
 		_tempText = _vm->_globals.freeMemory(_tempText);
 	}
@@ -452,7 +452,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 			break;
 		if (currChar >= 32) {
 			charIndex = currChar - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police,
+			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police,
 				currentX, yp, currChar - 32, col);
 			currentX += _vm->_objectsManager.getWidth(_vm->_globals.police, charIndex);
 		}
@@ -470,7 +470,7 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police,
+			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police,
 				xp, yp, characterIndex, col);
 			xp += _vm->_objectsManager.getWidth(_vm->_globals.police, characterIndex);
 		}
@@ -502,7 +502,7 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 			break;
 		if (v7 >= 32) {
 			v5 = v7 - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager.VESA_BUFFER, _vm->_globals.police, v9, yp, v7 - 32, fontCol);
+			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police, v9, yp, v7 - 32, fontCol);
 			v9 += _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
 			v6 = _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v9 - v6, yp, v9, yp + 12);

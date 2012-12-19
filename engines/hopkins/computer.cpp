@@ -71,9 +71,9 @@ void ComputerManager::setVideoMode() {
  */
 void ComputerManager::setTextMode() {
 	_vm->_graphicsManager.Cls_Pal();
-	_vm->_graphicsManager.DD_Lock();
-	_vm->_graphicsManager.Cls_Video();
-	_vm->_graphicsManager.DD_Unlock();
+	_vm->_graphicsManager.lockScreen();
+	_vm->_graphicsManager.clearScreen();
+	_vm->_graphicsManager.unlockScreen();
 	//SET_MODE(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_vm->_graphicsManager.nbrligne = SCREEN_WIDTH;
@@ -82,7 +82,7 @@ void ComputerManager::setTextMode() {
 	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	_vm->_globals.police_l = 8;
 	_vm->_globals.police_h = 8;
-	_vm->_graphicsManager.LOAD_IMAGE("WINTEXT");
+	_vm->_graphicsManager.loadImage("WINTEXT");
 	_vm->_graphicsManager.FADE_INW();
 	loadMenu();
 	_vm->_eventsManager._mouseFl = false;
@@ -92,7 +92,7 @@ void ComputerManager::setTextMode() {
  * Clear the screen
  */
 void ComputerManager::clearScreen() {
-	_vm->_graphicsManager.LOAD_IMAGE("WINTEXT");
+	_vm->_graphicsManager.loadImage("WINTEXT");
 	_vm->_graphicsManager.FADE_INW();
 }
 
@@ -284,9 +284,9 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				}
 			}
 		}
-		_vm->_graphicsManager.DD_Lock();
-		_vm->_graphicsManager.Cls_Video();
-		_vm->_graphicsManager.DD_Unlock();
+		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.clearScreen();
+		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager.DD_VBL();
 		restoreFBIRoom();
 	} else {
@@ -297,10 +297,10 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_eventsManager.VBL();
 		_vm->_eventsManager.delay(1000);
 
-		memset(_vm->_graphicsManager.VESA_BUFFER, 0, 0x4AFFFu);
-		_vm->_graphicsManager.DD_Lock();
-		_vm->_graphicsManager.Cls_Video();
-		_vm->_graphicsManager.DD_Unlock();
+		memset(_vm->_graphicsManager._vesaBuffer, 0, 0x4AFFFu);
+		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.clearScreen();
+		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager.DD_VBL();
 		restoreFBIRoom();
 		_vm->_eventsManager.mouseOff();
@@ -452,13 +452,13 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 			_inputBuf[textIndex--] = 0;
 			x1 -= _vm->_globals.police_l;
 			x2 = x1 + 2 * _vm->_globals.police_l;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, 3 * _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, x1, yp);
+			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, 3 * _vm->_globals.police_l, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(x1, yp, x2, yp + 12);
 			_vm->_fontManager.displayTextVesa(x1, yp, "_", -4);
 		}
 		if (mappedChar != '*') {
 			newChar = mappedChar;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, _vm->_globals.police_l, 12, _vm->_graphicsManager.VESA_BUFFER, x1, yp);
+			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_globals.police_l, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(x1, yp, _vm->_globals.police_l + x1, yp + 12);
 			_inputBuf[textIndex] = newChar;
 
@@ -470,8 +470,8 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 		_vm->_eventsManager.VBL();
 	} while (textIndex != textIdx && curChar != 13);
 
-	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager.VESA_SCREEN, x1, yp, _vm->_globals.police_l,
-		12, _vm->_graphicsManager.VESA_BUFFER, x1, yp);
+	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_globals.police_l,
+		12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(x1, yp, _vm->_globals.police_l + x1, yp + 12);
 
 	_vm->_eventsManager.VBL();
@@ -670,9 +670,9 @@ void ComputerManager::loadHiscore() {
  * VGA 256 col
  */
 void ComputerManager::setModeVGA256() {
-	_vm->_graphicsManager.DD_Lock();
-	_vm->_graphicsManager.Cls_Video();
-	_vm->_graphicsManager.DD_Unlock();
+	_vm->_graphicsManager.lockScreen();
+	_vm->_graphicsManager.clearScreen();
+	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.Cls_Pal();
 	_vm->_graphicsManager.SCANLINE(0x140u);
 }
@@ -689,7 +689,7 @@ void ComputerManager::newLevel() {
 	++_breakoutLives;
 	if (_breakoutLives > 11)
 		_breakoutLives = 11;
-	_vm->_graphicsManager.LOAD_IMAGEVGA("CASSEF.PCX");
+	_vm->_graphicsManager.loadVgaImage("CASSEF.PCX");
 	displayLives();
 	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
 
@@ -885,7 +885,7 @@ int ComputerManager::displayHiscores() {
 
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	loadHiscore();
-	_vm->_graphicsManager.LOAD_IMAGEVGA("HISCORE.PCX");
+	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
 	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -936,7 +936,7 @@ void ComputerManager::getScoreName() {
 	char curChar;
 	byte *ptr;
 
-	_vm->_graphicsManager.LOAD_IMAGEVGA("NAME.PCX");
+	_vm->_graphicsManager.loadVgaImage("NAME.PCX");
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);

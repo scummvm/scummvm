@@ -34,14 +34,14 @@
 namespace Hopkins {
 
 GraphicsManager::GraphicsManager() {
-	_lockCtr = 0;
+	_lockCounter = 0;
 	SDL_MODEYES = false;
 	XSCREEN = YSCREEN = 0;
 	WinScan = 0;
 	PAL_PIXELS = NULL;
 	nbrligne = 0;
 	Linear = false;
-	VideoPtr = NULL;
+	_videoPtr = NULL;
 	ofscroll = 0;
 	SCROLL = 0;
 	PCX_L = PCX_H = 0;
@@ -53,7 +53,7 @@ GraphicsManager::GraphicsManager() {
 	Agr_Flag_x = Agr_Flag_y = 0;
 	FADESPD = 15;
 	FADE_LINUX = 0;
-	NOLOCK = false;
+	_skipVideoLockFl = false;
 	no_scroll = 0;
 	REDRAW = false;
 	min_x = 0;
@@ -78,8 +78,8 @@ GraphicsManager::GraphicsManager() {
 }
 
 GraphicsManager::~GraphicsManager() {
-	_vm->_globals.freeMemory(VESA_SCREEN);
-	_vm->_globals.freeMemory(VESA_BUFFER);
+	_vm->_globals.freeMemory(_vesaScreen);
+	_vm->_globals.freeMemory(_vesaBuffer);
 }
 
 void GraphicsManager::setParent(HopkinsEngine *vm) {
@@ -88,26 +88,26 @@ void GraphicsManager::setParent(HopkinsEngine *vm) {
 	if (_vm->getIsDemo()) {
 		if (_vm->getPlatform() == Common::kPlatformLinux)
 		// CHECKME: Should be 0?
-			MANU_SCROLL = 1;
+			MANU_SCROLL = true;
 		else
-			MANU_SCROLL = 0;
+			MANU_SCROLL = false;
 		SPEED_SCROLL = 16;
 	} else {
-		MANU_SCROLL = 0;
+		MANU_SCROLL = false;
 		SPEED_SCROLL = 32;
 	}
 }
 
-void GraphicsManager::SET_MODE(int width, int height) {
+void GraphicsManager::setGraphicalMode(int width, int height) {
 	if (!SDL_MODEYES) {
 		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		initGraphics(width, height, true, &pixelFormat16);
 
 		// Init surfaces
-		VESA_SCREEN = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
-		VESA_BUFFER = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_vesaScreen = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_vesaBuffer = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
-		VideoPtr = NULL;
+		_videoPtr = NULL;
 		XSCREEN = width;
 		YSCREEN = height;
 
@@ -124,70 +124,84 @@ void GraphicsManager::SET_MODE(int width, int height) {
 	}
 }
 
-void GraphicsManager::DD_Lock() {
-	if (!NOLOCK) {
-		if (_lockCtr++ == 0)
-			VideoPtr = g_system->lockScreen();
+/**
+ * (try to) Lock Screen
+ */
+void GraphicsManager::lockScreen() {
+	if (!_skipVideoLockFl) {
+		if (_lockCounter++ == 0)
+			_videoPtr = g_system->lockScreen();
 	}
 }
 
-void GraphicsManager::DD_Unlock() {
-	assert(VideoPtr);
-	if (--_lockCtr == 0) {
+/**
+ * (try to) Unlock Screen
+ */
+void GraphicsManager::unlockScreen() {
+	assert(_videoPtr);
+	if (--_lockCounter == 0) {
 		g_system->unlockScreen();
-		VideoPtr = NULL;
+		_videoPtr = NULL;
 	}
 }
 
-// Clear Screen
-void GraphicsManager::Cls_Video() {
-	assert(VideoPtr);
-
-	VideoPtr->fillRect(Common::Rect(0, 0, XSCREEN, YSCREEN), 0);
+/**
+ * Clear Screen
+ */
+void GraphicsManager::clearScreen() {
+	assert(_videoPtr);
+	_videoPtr->fillRect(Common::Rect(0, 0, XSCREEN, YSCREEN), 0);
 }
 
-void GraphicsManager::LOAD_IMAGE(const Common::String &file) {
+/**
+ * Load Image
+ */
+void GraphicsManager::loadImage(const Common::String &file) {
 	Common::String filename	= Common::String::format("%s.PCX", file.c_str());
-	CHARGE_ECRAN(filename);
+	loadScreen(filename);
 	INIT_TABLE(165, 170, Palette);
 }
 
-
-void GraphicsManager::LOAD_IMAGEVGA(const Common::String &file) {
+/**
+ * Load VGA Image
+ */
+void GraphicsManager::loadVgaImage(const Common::String &file) {
 	SCANLINE(SCREEN_WIDTH);
-	DD_Lock();
-	Cls_Video();
-	DD_Unlock();
+	lockScreen();
+	clearScreen();
+	unlockScreen();
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
-	A_PCX320(VESA_SCREEN, _vm->_globals.NFICHIER, Palette);
-	memcpy(VESA_BUFFER, VESA_SCREEN, 0xFA00u);
+	A_PCX320(_vesaScreen, _vm->_globals.NFICHIER, Palette);
+	memcpy(_vesaBuffer, _vesaScreen, 0xFA00u);
 	SCANLINE(320);
 	max_x = 320;
 
-	DD_Lock();
-	CopyAsm16(VESA_BUFFER);
-	DD_Unlock();
+	lockScreen();
+	CopyAsm16(_vesaBuffer);
+	unlockScreen();
 
 	FADE_IN_CASSE();
 }
 
-// Load Screen
-void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
+/**
+ * Load Screen
+ */
+void GraphicsManager::loadScreen(const Common::String &file) {
 	Common::File f;
 
 	bool flag = true;
 	if (_vm->_fileManager.searchCat(file, 6) == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
 		if (!f.open(_vm->_globals.NFICHIER))
-			error("CHARGE_ECRAN - %s", file.c_str());
+			error("loadScreen - %s", file.c_str());
 
 		f.seek(0, SEEK_END);
 		f.close();
 		flag = false;
 	}
 
-	SCROLL_ECRAN(0);
-	A_PCX640_480((byte *)VESA_SCREEN, file, Palette, flag);
+	scrollScreen(0);
+	A_PCX640_480((byte *)_vesaScreen, file, Palette, flag);
 
 	SCROLL = 0;
 	OLD_SCROLL = 0;
@@ -196,25 +210,25 @@ void GraphicsManager::CHARGE_ECRAN(const Common::String &file) {
 	if (!DOUBLE_ECRAN) {
 		SCANLINE(SCREEN_WIDTH);
 		max_x = SCREEN_WIDTH;
-		DD_Lock();
-		Cls_Video();
-		m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		DD_Unlock();
+		lockScreen();
+		clearScreen();
+		m_scroll16(_vesaScreen, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		unlockScreen();
 	} else {
 		SCANLINE(SCREEN_WIDTH * 2);
 		max_x = SCREEN_WIDTH * 2;
-		DD_Lock();
-		Cls_Video();
-		DD_Unlock();
+		lockScreen();
+		clearScreen();
+		unlockScreen();
 
-		if (MANU_SCROLL == 1) {
-			DD_Lock();
-			m_scroll16(VESA_SCREEN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			DD_Unlock();
+		if (MANU_SCROLL) {
+			lockScreen();
+			m_scroll16(_vesaScreen, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			unlockScreen();
 		}
 	}
 
-	memcpy(VESA_BUFFER, VESA_SCREEN, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memcpy(_vesaBuffer, _vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 }
 
 void GraphicsManager::INIT_TABLE(int minIndex, int maxIndex, byte *palette) {
@@ -234,13 +248,14 @@ void GraphicsManager::INIT_TABLE(int minIndex, int maxIndex, byte *palette) {
 	TABLE_COUL[0] = 1;
 }
 
-// Scroll Screen
-int GraphicsManager::SCROLL_ECRAN(int amount) {
+/**
+ * Scroll Screen
+ */
+void GraphicsManager::scrollScreen(int amount) {
 	int result = CLIP(amount, 0, SCREEN_WIDTH);
 	_vm->_eventsManager._startPos.x = result;
 	ofscroll = result;
 	SCROLL = result;
-	return result;
 }
 
 void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold) {
@@ -421,9 +436,9 @@ void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, i
 	const byte *src2P;
 	unsigned int widthRemaining;
 
-	assert(VideoPtr);
+	assert(_videoPtr);
 	srcP = xs + nbrligne2 * ys + surface;
-	destP = destX + WinScan * destY + (byte *)VideoPtr->pixels;
+	destP = destX + WinScan * destY + (byte *)_videoPtr->pixels;
 	yNext = height;
 	do {
 		yCtr = yNext;
@@ -442,11 +457,11 @@ void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, i
  * Copies data from a 8-bit palette surface into the 16-bit screen
  */
 void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
-	DD_Lock();
+	lockScreen();
 
-	assert(VideoPtr);
+	assert(_videoPtr);
 	const byte *srcP = xs + nbrligne2 * ys + surface;
-	uint16 *destP = (uint16 *)((byte *)VideoPtr->pixels + destX * 2 + WinScan * destY);
+	uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destX * 2 + WinScan * destY);
 
 	for (int yp = 0; yp < height; ++yp) {
 		// Copy over the line, using the source pixels as lookups into the pixels palette
@@ -461,7 +476,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 		destP += WinScan / 2;
 	}
 
-	DD_Unlock();
+	unlockScreen();
 }
 
 // TODO: See if PAL_PIXELS can be converted to a uint16 array
@@ -476,9 +491,9 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 	const byte *srcCopyP;
 	const byte *destCopyP;
 
-	assert(VideoPtr);
+	assert(_videoPtr);
 	srcP = xs + nbrligne2 * ys + surface;
-	destP = destX + destX + WinScan * destY + (byte *)VideoPtr->pixels;
+	destP = destX + destX + WinScan * destY + (byte *)_videoPtr->pixels;
 	yNext = height;
 	Agr_x = 0;
 	Agr_y = 0;
@@ -541,9 +556,9 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 	const byte *loopSrcP;
 	int yCtr;
 
-	assert(VideoPtr);
+	assert(_videoPtr);
 	srcP = xp + 320 * yp + surface;
-	destP = (uint16 *)(30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY + (byte *)VideoPtr->pixels);
+	destP = (uint16 *)(30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY + (byte *)_videoPtr->pixels);
 	yCount = height;
 	xCount = width;
 
@@ -681,22 +696,22 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 
 void GraphicsManager::FADE_INS() {
 	FADESPD = 1;
-	fade_in(Palette, 1, (const byte *)VESA_BUFFER);
+	fade_in(Palette, 1, (const byte *)_vesaBuffer);
 }
 
 void GraphicsManager::FADE_OUTS() {
   FADESPD = 1;
-  fade_out(Palette, 1, (const byte *)VESA_BUFFER);
+  fade_out(Palette, 1, (const byte *)_vesaBuffer);
 }
 
 void GraphicsManager::FADE_INW() {
 	FADESPD = 15;
-	fade_in(Palette, 20, (const byte *)VESA_BUFFER);
+	fade_in(Palette, 20, (const byte *)_vesaBuffer);
 }
 
 void GraphicsManager::FADE_OUTW() {
 	FADESPD = 15;
-	fade_out(Palette, 20, (const byte *)VESA_BUFFER);
+	fade_out(Palette, 20, (const byte *)_vesaBuffer);
 }
 
 void GraphicsManager::setpal_vga256(const byte *palette) {
@@ -787,9 +802,9 @@ void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
 
 void GraphicsManager::FADE_IN_CASSE() {
 	setpal_vga256(Palette);
-	DD_Lock();
-	CopyAsm16(VESA_BUFFER);
-	DD_Unlock();
+	lockScreen();
+	CopyAsm16(_vesaBuffer);
+	unlockScreen();
 	DD_VBL();
 }
 
@@ -799,9 +814,9 @@ void GraphicsManager::FADE_OUT_CASSE() {
 	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
 	setpal_vga256(palette);
 
-	DD_Lock();
-	CopyAsm16(VESA_BUFFER);
-	DD_Unlock();
+	lockScreen();
+	CopyAsm16(_vesaBuffer);
+	unlockScreen();
 	DD_VBL();
 }
 
@@ -875,7 +890,7 @@ void GraphicsManager::Copy_Video_Vbe3(const byte *srcData) {
 	int destLen2;
 	byte *destSlice2P;
 
-	assert(VideoPtr);
+	assert(_videoPtr);
 	rleValue = 0;
 	destOffset = 0;
 	srcP = srcData;
@@ -907,20 +922,20 @@ Video_Cont3_Vbe:
 			if (srcByte == 211) {
 				destLen1 = *(srcP + 1);
 				rleValue = *(srcP + 2);
-				destSlice1P = destOffset + (byte *)VideoPtr->pixels;
+				destSlice1P = destOffset + (byte *)_videoPtr->pixels;
 				destOffset += destLen1;
 				memset(destSlice1P, rleValue, destLen1);
 				srcP += 3;
 			} else {
 				destLen2 = (byte)(*srcP + 45);
 				rleValue = *(srcP + 1);
-				destSlice2P = (byte *)(destOffset + (byte *)VideoPtr->pixels);
+				destSlice2P = (byte *)(destOffset + (byte *)_videoPtr->pixels);
 				destOffset += destLen2;
 				memset(destSlice2P, rleValue, destLen2);
 				srcP += 2;
 			}
 		} else {
-			*(destOffset + (byte *)VideoPtr->pixels) = srcByte;
+			*(destOffset + (byte *)_videoPtr->pixels) = srcByte;
 			++srcP;
 			++destOffset;
 		}
@@ -930,7 +945,7 @@ Video_Cont3_Vbe:
 void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 	const byte *srcP = srcData;
 	int destOffset = 0;
-	assert(VideoPtr);
+	assert(_videoPtr);
 
 	for (;;) {
 		byte srcByte = *srcP;
@@ -964,7 +979,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 			if (srcByte == 211) {
 				int pixelCount = *(srcP + 1);
 				int pixelIndex = *(srcP + 2);
-				uint16 *destP = (uint16 *)((byte *)VideoPtr->pixels + destOffset * 2);
+				uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destOffset * 2);
 				uint16 pixelValue = *(uint16 *)(PAL_PIXELS + 2 * pixelIndex);
 				destOffset += pixelCount;
 
@@ -975,7 +990,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 			} else {
 				int pixelCount = srcByte - 211;
 				int pixelIndex = *(srcP + 1);
-				uint16 *destP = (uint16 *)((byte *)VideoPtr->pixels + destOffset * 2);
+				uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destOffset * 2);
 				uint16 pixelValue = *(uint16 *)(PAL_PIXELS + 2 * pixelIndex);
 				destOffset += pixelCount;
 
@@ -985,7 +1000,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 				srcP += 2;
 			}
 		} else {
-			*((uint16 *)VideoPtr->pixels + destOffset) = *(uint16 *)(PAL_PIXELS + 2 * srcByte);
+			*((uint16 *)_videoPtr->pixels + destOffset) = *(uint16 *)(PAL_PIXELS + 2 * srcByte);
 			++srcP;
 			++destOffset;
 		}
@@ -1019,7 +1034,7 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
 			srcP += 5;
 		}
 Video_Cont_Vbe16a:
-		WRITE_LE_UINT16((byte *)VideoPtr->pixels + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * pixelIndex));
+		WRITE_LE_UINT16((byte *)_videoPtr->pixels + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * pixelIndex));
 		++srcP;
 		++destOffset;
 	}
@@ -1273,7 +1288,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 		return;
 
 	SDL_NBLOCS = _vm->_globals.NBBLOC;
-	DD_Lock();
+	lockScreen();
 
 	for (int idx = 1; idx <= _vm->_globals.NBBLOC; ++idx) {
 		BlocItem &bloc = _vm->_globals.BLOC[idx];
@@ -1282,7 +1297,7 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 			continue;
 
 		if (_vm->_eventsManager._breakoutFl) {
-			Copy_Vga16(VESA_BUFFER, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1, bloc._y1);
+			Copy_Vga16(_vesaBuffer, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1, bloc._y1);
 			dstRect.left = bloc._x1 * 2;
 			dstRect.top = bloc._y1 * 2 + 30;
 			dstRect.setWidth((bloc._x2 - bloc._x1) * 2);
@@ -1294,22 +1309,22 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 				bloc._x2 = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
 
 			// WORKAROUND: Original didn't lock the screen for access
-			DD_Lock();
-			m_scroll16(VESA_BUFFER, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1 - _vm->_eventsManager._startPos.x, bloc._y1);
+			lockScreen();
+			m_scroll16(_vesaBuffer, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1 - _vm->_eventsManager._startPos.x, bloc._y1);
 
 			dstRect.left = bloc._x1 - _vm->_eventsManager._startPos.x;
 			dstRect.top = bloc._y1;
 			dstRect.setWidth(bloc._x2 - bloc._x1);
 			dstRect.setHeight(bloc._y2 - bloc._y1);
 
-			DD_Unlock();
+			unlockScreen();
 		}
 
 		_vm->_globals.BLOC[idx]._activeFl = false;
 	}
 
 	_vm->_globals.NBBLOC = 0;
-	DD_Unlock();
+	unlockScreen();
 	if (!_vm->_globals.BPP_NOAFF) {
 //		SDL_UpdateRects(LinuxScr, SDL_NBLOCS, dstrect);
 	}
@@ -1322,11 +1337,11 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 	width = _vm->_objectsManager.getWidth(objectData, idx);
 	height = _vm->_objectsManager.getHeight(objectData, idx);
 	if (*objectData == 78) {
-		Affiche_Perfect(VESA_SCREEN, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
-		Affiche_Perfect(VESA_BUFFER, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
+		Affiche_Perfect(_vesaScreen, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
+		Affiche_Perfect(_vesaBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
 	} else {
-		Sprite_Vesa(VESA_BUFFER, objectData, xp + 300, yp + 300, idx);
-		Sprite_Vesa(VESA_SCREEN, objectData, xp + 300, yp + 300, idx);
+		Sprite_Vesa(_vesaBuffer, objectData, xp + 300, yp + 300, idx);
+		Sprite_Vesa(_vesaScreen, objectData, xp + 300, yp + 300, idx);
 	}
 	if (!_vm->_globals.NO_VISU)
 		Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
@@ -1342,10 +1357,10 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 	byte *destPitch;
 	const byte *srcPitch;
 
-	assert(VideoPtr);
+	assert(_videoPtr);
 	srcP = surface;
 	srcByte = 30 * WinScan;
-	destP = (byte *)VideoPtr->pixels + 30 * WinScan;
+	destP = (byte *)_videoPtr->pixels + 30 * WinScan;
 	for (int yCtr = 200; yCtr != 0; yCtr--) {
 		srcPitch = srcP;
 		destPitch = destP;
@@ -1379,9 +1394,9 @@ void GraphicsManager::CopyAsm16(const byte *surface) {
 	byte *v10;
 	const byte *v11;
 
-	assert(VideoPtr);
+	assert(_videoPtr);
 	v1 = surface;
-	v2 = 30 * WinScan + (byte *)VideoPtr->pixels;
+	v2 = 30 * WinScan + (byte *)_videoPtr->pixels;
 	v3 = 200;
 	do {
 		v11 = v1;
@@ -1829,11 +1844,11 @@ void GraphicsManager::AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int 
 	width = _vm->_objectsManager.getWidth(spriteData, spriteIndex);
 	height = _vm->_objectsManager.getHeight(spriteData, spriteIndex);
 	if (*spriteData == 78) {
-		Affiche_Perfect(VESA_SCREEN, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
-		Affiche_Perfect(VESA_BUFFER, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
+		Affiche_Perfect(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
+		Affiche_Perfect(_vesaBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
 	} else {
-		Sprite_Vesa(VESA_BUFFER, spriteData, xp + 300, yp + 300, spriteIndex);
-		Sprite_Vesa(VESA_SCREEN, spriteData, xp + 300, yp + 300, spriteIndex);
+		Sprite_Vesa(_vesaBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
+		Sprite_Vesa(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex);
 	}
 	if (!_vm->_globals.NO_VISU)
 		Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
@@ -2027,16 +2042,16 @@ void GraphicsManager::NB_SCREEN() {
 	if (!_vm->_globals.NECESSAIRE)
 		INIT_TABLE(50, 65, Palette);
 	if (nbrligne == SCREEN_WIDTH)
-		Trans_bloc2(VESA_BUFFER, TABLE_COUL, 307200);
+		Trans_bloc2(_vesaBuffer, TABLE_COUL, 307200);
 	if (nbrligne == 1280)
-		Trans_bloc2(VESA_BUFFER, TABLE_COUL, 614400);
-	DD_Lock();
-	m_scroll16(VESA_BUFFER, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	DD_Unlock();
+		Trans_bloc2(_vesaBuffer, TABLE_COUL, 614400);
+	lockScreen();
+	m_scroll16(_vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	unlockScreen();
 
-	destP = VESA_SCREEN;
-	srcP = VESA_BUFFER;
-	memcpy(VESA_SCREEN, VESA_BUFFER, 0x95FFCu);
+	destP = _vesaScreen;
+	srcP = _vesaBuffer;
+	memcpy(_vesaScreen, _vesaBuffer, 0x95FFCu);
 	srcP = srcP + 614396;
 	destP = destP + 614396;
 	*destP = *srcP;
@@ -2092,7 +2107,7 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 	const byte *srcP;
 	byte byteVal;
 
-	assert(VideoPtr);
+	assert(_videoPtr);
 	destOffset = 0;
 	srcP = src;
 	for (;;) {
@@ -2115,7 +2130,7 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 			srcP += 5;
 		}
 Video_Cont_Vbe:
-		*((byte *)VideoPtr->pixels + destOffset) = byteVal;
+		*((byte *)_videoPtr->pixels + destOffset) = byteVal;
 		++srcP;
 		++destOffset;
 	}
@@ -2178,7 +2193,7 @@ void GraphicsManager::drawVerticalLine(byte *surface, int xp, int yp, int height
 }
 
 void GraphicsManager::MODE_VESA() {
-	SET_MODE(640, 480);
+	setGraphicalMode(640, 480);
 }
 
 } // End of namespace Hopkins

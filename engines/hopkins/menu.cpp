@@ -76,11 +76,11 @@ int MenuManager::MENU() {
 
 
 		if (_vm->_globals.FR == 0)
-			_vm->_graphicsManager.LOAD_IMAGE("MENUAN");
+			_vm->_graphicsManager.loadImage("MENUAN");
 		else if (_vm->_globals.FR == 1)
-			_vm->_graphicsManager.LOAD_IMAGE("MENUFR");
+			_vm->_graphicsManager.loadImage("MENUFR");
 		else if (_vm->_globals.FR == 2)
-			_vm->_graphicsManager.LOAD_IMAGE("MENUES");
+			_vm->_graphicsManager.loadImage("MENUES");
 
 		_vm->_graphicsManager.FADE_INW();
 		if (_vm->_globals.FR == 0)

@@ -444,7 +444,7 @@ public:
 	bool NOPARLE;
 	bool PLAN_FLAG;
 	bool NECESSAIRE;
-	int GOACTION;
+	bool GOACTION;
 	int Compteur;
 	int ACTION_SENS;
 	int SegmentEnCours;
@@ -499,7 +499,7 @@ public:
 	void CACHE_OFF(int v1 = 0);
 	void CACHE_SUB(int idx);
 	void CACHE_ADD(int idx);
-	void CHARGE_CACHE(const Common::String &file);
+	void loadCache(const Common::String &file);
 	void B_CACHE_OFF(int idx);
 };
 
