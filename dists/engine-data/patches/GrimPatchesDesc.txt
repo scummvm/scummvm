@@ -57,6 +57,12 @@ List of fixed bugs in GF scripts:
 	if it is. But the chain may be down but not on the belt if the direction of movement
 	of it is from the sea to the crane. This patch adds that missing check.
 
+	-Fix bug #688 "GRIM: If Charlie removes sheet while in inventory, Manny gets stuck" - ly.lua.patchr
+	The function ly.charlie_get_up_timer checks if the game is playing a cutscene,
+	before launching the scene when Charlie removes the sheet, but it doesn't check if
+	the inventory is open. This patch adds another check (with inInventorySet()) and waits
+	the close of the inventory before starting the cutscene.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
