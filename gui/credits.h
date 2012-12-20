@@ -2,8 +2,9 @@
 static const char *credits[] = {
 "C1""ResidualVM",
 "",
-"C1""Project Leader",
+"C1""Project Leaders",
 "C0""Pawel Kolodziejski",
+"C0""Einar Johan T. S\370m\345en",
 "",
 "C1""Teams",
 "C1""Grim Team",

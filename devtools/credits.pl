@@ -448,9 +448,10 @@ sub add_paragraph {
 
 begin_credits("Credits");
     begin_section("ResidualVM");
-	begin_section("Project Leader");
+	begin_section("Project Leaders");
 	    begin_persons();
 		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 	    end_persons();
 	end_section();
 
