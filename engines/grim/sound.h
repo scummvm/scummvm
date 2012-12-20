@@ -35,7 +35,7 @@ public:
 	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
 	bool getSoundStatus(const char *soundName);
 	void stopSound(const char *soundName);
-	int32 getPosIn60HzTicks(const char *soundName);	
+	int32 getPosIn16msTicks(const char *soundName);
 	
 	void setVolume(const char *soundName, int volume);
 	void setPan(const char *soundName, int pan);

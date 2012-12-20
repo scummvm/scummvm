@@ -106,7 +106,7 @@ public:
 	int getCurMusicPan();
 	int getCurMusicVol();
 	bool getSoundStatus(const char *soundName);
-	int32 getPosIn60HzTicks(const char *soundName);
+	int32 getPosIn16msTicks(const char *soundName);
 };
 
 extern Imuse *g_imuse;

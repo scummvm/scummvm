@@ -1246,10 +1246,10 @@ void Actor::update(uint frameTime) {
 	if (_lipSync) {
 		int posSound;
 
-		// While getPosIn60HzTicks will return "-1" to indicate that the
+		// While getPosIn16msTicks will return "-1" to indicate that the
 		// sound is no longer playing, it is more appropriate to check first
 		if (g_grim->getSpeechMode() != GrimEngine::TextOnly && g_sound->getSoundStatus(_talkSoundName.c_str()))
-			posSound = g_sound->getPosIn60HzTicks(_talkSoundName.c_str());
+			posSound = g_sound->getPosIn16msTicks(_talkSoundName.c_str());
 		else
 			posSound = -1;
 		if (posSound != -1) {

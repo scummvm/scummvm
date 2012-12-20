@@ -89,9 +89,6 @@ LipSync::~LipSync() {
 int LipSync::getAnim(int pos) {
 	int frame1, frame2;
 
-	// tune a bit to prevent internal imuse drift
-	pos += 5;
-
 	for (int i = 0; i < _numEntries; i++) {
 		frame1 = _entries[i].frame;
 		if ((i + 1) < _numEntries) {
@@ -100,7 +97,7 @@ int LipSync::getAnim(int pos) {
 			frame2 = (unsigned int)-1L;
 		}
 		if ((pos >= frame1) && (pos < frame2)) {
-			//printf("frame1: %d, frame2: %d, pos: %d, i: %d, num: %d\n", frame1, frame2, pos, i, _numEntries -1);
+// 			debug("frame1: %d, frame2: %d, pos: %d, i: %d, num: %d\n", frame1, frame2, pos, i, _numEntries -1);
 			return _entries[i].anim;
 		}
 	}

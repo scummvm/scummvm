@@ -115,10 +115,10 @@ void EMISound::stopSound(const char *soundName) {
 	freeChannel(channel);
 }
 
-int32 EMISound::getPosIn60HzTicks(const char *soundName) {	
+int32 EMISound::getPosIn16msTicks(const char *soundName) {
 	int32 channel = getChannelByName(soundName);
 	assert(channel != -1);
-	return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle());
+	return 1.041666667 * g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle());
 }
 	
 void EMISound::setVolume(const char *soundName, int volume) {

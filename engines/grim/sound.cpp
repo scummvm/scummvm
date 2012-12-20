@@ -64,11 +64,11 @@ void SoundPlayer::stopSound(const char *soundName) {
 	}
 }
 
-int32 SoundPlayer::getPosIn60HzTicks(const char *soundName) {
+int32 SoundPlayer::getPosIn16msTicks(const char *soundName) {
 	if (g_grim->getGameType() == GType_GRIM)
-		return g_imuse->getPosIn60HzTicks(soundName);
+		return g_imuse->getPosIn16msTicks(soundName);
 	else
-		return _emiSound->getPosIn60HzTicks(soundName);
+		return _emiSound->getPosIn16msTicks(soundName);
 }
 	
 void SoundPlayer::setVolume(const char *soundName, int volume) {

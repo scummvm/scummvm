@@ -95,7 +95,7 @@ void Imuse::startSfx(const char *soundName, int priority) {
 	startSound(soundName, IMUSE_VOLGRP_SFX, 0, 127, 0, priority, NULL);
 }
 
-int32 Imuse::getPosIn60HzTicks(const char *soundName) {
+int32 Imuse::getPosIn16msTicks(const char *soundName) {
 	Common::StackLock lock(_mutex);
 	Track *getTrack = NULL;
 
@@ -106,7 +106,7 @@ int32 Imuse::getPosIn60HzTicks(const char *soundName) {
 		return false;
 	}
 
-	int32 pos = (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->feedSize / 12);
+	int32 pos = 1.041666667 * (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->feedSize / 12);
 	return pos;
 }
 
