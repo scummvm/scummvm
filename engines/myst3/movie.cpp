@@ -110,7 +110,11 @@ void Movie::draw2d() {
 		screenRect.translate(0, Renderer::kTopBorderHeight);
 
 	Common::Rect textureRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
-	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture, 0.99f);
+
+	if (_forceOpaque)
+		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture);
+	else
+		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture, 0.99f);
 }
 
 void Movie::draw3d() {

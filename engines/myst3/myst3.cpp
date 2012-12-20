@@ -892,6 +892,7 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 
 	if (fullframe) {
 		movie.setForce2d(_state->getViewType() == kCube);
+		movie.setForceOpaque(true);
 		movie.setPosU(0);
 		movie.setPosV(0);
 	}

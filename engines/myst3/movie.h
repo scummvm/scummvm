@@ -48,6 +48,7 @@ public:
 	void setPosU(int32 v) { _posU = v; }
 	void setPosV(int32 v) { _posV = v; }
 	void setForce2d(bool b) { _force2d = b; }
+	void setForceOpaque(bool b) { _forceOpaque = b; }
 	void setStartFrame(int32 v) { _startFrame = v; }
 	void setEndFrame(int32 v) { _endFrame = v; }
 
@@ -63,6 +64,7 @@ protected:
 	Math::Vector3d _pTopRight;
 
 	bool _force2d;
+	bool _forceOpaque;
 	int32 _posU;
 	int32 _posV;
 
