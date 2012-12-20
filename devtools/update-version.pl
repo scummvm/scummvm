@@ -33,7 +33,6 @@ print "Setting version to '$VERSION'\n";
 my @subs_files = qw(
 	base/internal_version.h
 	dists/redhat/residualvm.spec
-	dists/redhat/residualvm-tools.spec
 	dists/residualvm.rc
 	dists/slackware/residualvm.SlackBuild
 	dists/macosx/Info.plist
