@@ -52,7 +52,7 @@ void Ambient::playCurrentNode(uint32 volume, uint32 fadeOutDelay) {
 
 void Ambient::scaleVolume(uint32 volume) {
 	for (uint i = 0; i < _sounds.size(); i++)
-		_sounds[i].volume = _sounds[i].volume * 100 / volume;
+		_sounds[i].volume = _sounds[i].volume * volume / 100;
 }
 
 void Ambient::loadNode(uint32 node, uint32 room, uint32 age) {
