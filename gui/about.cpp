@@ -110,16 +110,16 @@ AboutDialog::AboutDialog()
 	const EnginePlugin::List &plugins = EngineMan.getPlugins();
 	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
-	  Common::String str;
-	  str = "C0";
-	  str += (**iter).getName();
-	  addLine(str.c_str());
+		Common::String str;
+		str = "C0";
+		str += (**iter).getName();
+		addLine(str.c_str());
 
-	  str = "C2";
-	  str += (**iter)->getOriginalCopyright();
-	  addLine(str.c_str());
+		str = "C2";
+		str += (**iter)->getOriginalCopyright();
+		addLine(str.c_str());
 
-	  //addLine("");
+		//addLine("");
 	}
 
 	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
