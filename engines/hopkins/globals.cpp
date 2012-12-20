@@ -77,7 +77,7 @@ Globals::Globals() {
 	for (int i = 0; i < 8; ++i)
 		Common::fill((byte *)&Bank[i], (byte *)&Bank[i] + sizeof(BankItem), 0);
 	for (int i = 0; i < 36; ++i)
-		Common::fill((byte *)&Bob[i], (byte *)&Bob[i] + sizeof(BobItem), 0);
+		Common::fill((byte *)&_bob[i], (byte *)&_bob[i] + sizeof(BobItem), 0);
 	for (int i = 0; i < 6; ++i)
 		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
 	for (int i = 0; i < 35; ++i)
@@ -601,7 +601,7 @@ void Globals::loadCache(const Common::String &file) {
 }
 
 void Globals::B_CACHE_OFF(int idx) {
-	Bob[idx].field34 = true;
+	_bob[idx].field34 = true;
 }
 
 

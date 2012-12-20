@@ -281,15 +281,15 @@ int TalkManager::DIALOGUE() {
 		v0 = _characterBuffer;
 		v1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 48);
 		if (v1)
-			_vm->_objectsManager.BOBANIM_ON(v1);
+			_vm->_objectsManager.setBobAnimation(v1);
 		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 1)
-			_vm->_objectsManager.BOBANIM_ON((int16)READ_LE_UINT16((uint16 *)v0 + 49));
+			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 49));
 		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 2)
-			_vm->_objectsManager.BOBANIM_ON((int16)READ_LE_UINT16((uint16 *)v0 + 50));
+			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 50));
 		if ( (int16)READ_LE_UINT16((uint16 *)v0 + 48) != 3)
-			_vm->_objectsManager.BOBANIM_ON((int16)READ_LE_UINT16((uint16 *)v0 + 51));
+			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 51));
 		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 4)
-			_vm->_objectsManager.BOBANIM_ON((int16)READ_LE_UINT16((uint16 *)v0 + 52));
+			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 52));
 	} else {
 		VISU_WAIT();
 	}
@@ -354,19 +354,19 @@ int TalkManager::DIALOGUE() {
 		v11 = _characterBuffer;
 		v12 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 48);
 		if (v12)
-			_vm->_objectsManager.BOBANIM_OFF(v12);
+			_vm->_objectsManager.stopBobAnimation(v12);
 		v13 = (int16)READ_LE_UINT16((uint16 *)v11 + 49);
 		if (v13 != 1)
-			_vm->_objectsManager.BOBANIM_OFF(v13);
+			_vm->_objectsManager.stopBobAnimation(v13);
 		v14 = (int16)READ_LE_UINT16((uint16 *)v11 + 50);
 		if (v14 != 2)
-			_vm->_objectsManager.BOBANIM_OFF(v14);
+			_vm->_objectsManager.stopBobAnimation(v14);
 		v15 = (int16)READ_LE_UINT16((uint16 *)v11 + 51);
 		if (v15 != 3)
-			_vm->_objectsManager.BOBANIM_OFF(v15);
+			_vm->_objectsManager.stopBobAnimation(v15);
 		v16 = (int16)READ_LE_UINT16((uint16 *)v11 + 52);
 		if (v16 != 4)
-			_vm->_objectsManager.BOBANIM_OFF(v16);
+			_vm->_objectsManager.stopBobAnimation(v16);
 	} else {
 		FIN_VISU_WAIT();
 	}
@@ -435,19 +435,19 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		v8 = _characterBuffer;
 		v9 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 43);
 		if (v9)
-			_vm->_objectsManager.BOBANIM_ON(v9);
+			_vm->_objectsManager.setBobAnimation(v9);
 		v10 = (int16)READ_LE_UINT16((uint16 *)v8 + 44);
 		if (v10)
-			_vm->_objectsManager.BOBANIM_ON(v10);
+			_vm->_objectsManager.setBobAnimation(v10);
 		v11 = (int16)READ_LE_UINT16((uint16 *)v8 + 45);
 		if (v11)
-			_vm->_objectsManager.BOBANIM_ON(v11);
+			_vm->_objectsManager.setBobAnimation(v11);
 		v12 = (int16)READ_LE_UINT16((uint16 *)v8 + 46);
 		if (v12)
-			_vm->_objectsManager.BOBANIM_ON(v12);
+			_vm->_objectsManager.setBobAnimation(v12);
 		v13 = (int16)READ_LE_UINT16((uint16 *)v8 + 47);
 		if (v13)
-			_vm->_objectsManager.BOBANIM_ON(v13);
+			_vm->_objectsManager.setBobAnimation(v13);
 	} else {
 		VISU_PARLE();
 	}
@@ -491,19 +491,19 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		v15 = _characterBuffer;
 		v16 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 43);
 		if (v16)
-			_vm->_objectsManager.BOBANIM_OFF(v16);
+			_vm->_objectsManager.stopBobAnimation(v16);
 		v17 = (int16)READ_LE_UINT16((uint16 *)v15 + 44);
 		if (v17)
-			_vm->_objectsManager.BOBANIM_OFF(v17);
+			_vm->_objectsManager.stopBobAnimation(v17);
 		v18 = (int16)READ_LE_UINT16((uint16 *)v15 + 45);
 		if (v18)
-			_vm->_objectsManager.BOBANIM_OFF(v18);
+			_vm->_objectsManager.stopBobAnimation(v18);
 		v19 = (int16)READ_LE_UINT16((uint16 *)v15 + 46);
 		if (v19)
-			_vm->_objectsManager.BOBANIM_OFF(v19);
+			_vm->_objectsManager.stopBobAnimation(v19);
 		v20 = (int16)READ_LE_UINT16((uint16 *)v15 + 47);
 		if (v20)
-			_vm->_objectsManager.BOBANIM_OFF(v20);
+			_vm->_objectsManager.stopBobAnimation(v20);
 	} else {
 		FIN_VISU_PARLE();
 	}
@@ -525,9 +525,7 @@ void TalkManager::CHERCHE_PAL(int a1, int a2) {
 	v8 = 0;
 	v4 = a1;
 	for (;;) {
-		if ( *(_characterBuffer + v4) == 'P'
-				&& *(_characterBuffer + v4 + 1) == 'A'
-				&& *(_characterBuffer + v4 + 2) == 'L') {
+		if (_characterBuffer[v4] == 'P' && _characterBuffer[v4 + 1] == 'A' && _characterBuffer[v4 + 2] == 'L') {
 			v8 = 1;
 			v2 = v4;
 		}
@@ -724,24 +722,24 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 	byte *v5;
 
 	_vm->_objectsManager._priorityFl = true;
-	if (!_vm->_globals.Bob[idx].field0) {
+	if (!_vm->_globals._bob[idx].field0) {
 		_vm->_objectsManager.BOB_ZERO(idx);
 		v5 = _vm->_globals.Bqe_Anim[idx]._data;
 		v4 = (int16)READ_LE_UINT16(v5 + 2);
 		if (!v4)
 			v4 = 1;
 		if ((int16)READ_LE_UINT16(v5 + 24)) {
-			_vm->_globals.Bob[idx]._isSpriteFl = true;
-			_vm->_globals.Bob[idx].field36 = 0;
-			_vm->_globals.Bob[idx]._modeFlag = 0;
-			_vm->_globals.Bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
-			_vm->_globals.Bob[idx].field0 = 10;
+			_vm->_globals._bob[idx]._isSpriteFl = true;
+			_vm->_globals._bob[idx].field36 = 0;
+			_vm->_globals._bob[idx]._modeFlag = 0;
+			_vm->_globals._bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
+			_vm->_globals._bob[idx].field0 = 10;
 			v5 = _characterSprite;
-			_vm->_globals.Bob[idx]._spriteData = _characterSprite;
-			_vm->_globals.Bob[idx].field1E = v4;
-			_vm->_globals.Bob[idx].field20 = -1;
-			_vm->_globals.Bob[idx].field22 = 0;
-			_vm->_globals.Bob[idx]._offsetY = 0;
+			_vm->_globals._bob[idx]._spriteData = _characterSprite;
+			_vm->_globals._bob[idx].field1E = v4;
+			_vm->_globals._bob[idx].field20 = -1;
+			_vm->_globals._bob[idx].field22 = 0;
+			_vm->_globals._bob[idx]._offsetY = 0;
 		}
 	}
 }
@@ -760,11 +758,7 @@ void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 	v3 = 0;
 	v4 = a1;
 	for (;;) {
-		if (*(_characterBuffer + v4) == 'A'
-		        && *(_characterBuffer + v4 + 1) == 'N'
-		        && *(_characterBuffer + v4 + 2) == 'I'
-		        && *(_characterBuffer + v4 + 3) == 'M'
-		        && *(_characterBuffer + v4 + 4) == 1) {
+		if (_characterBuffer[v4] == 'A' && _characterBuffer[v4 + 1] == 'N' && _characterBuffer[v4 + 2] == 'I' && _characterBuffer[v4 + 3] == 'M' && _characterBuffer[v4 + 4] == 1) {
 			v3 = 1;
 			v2 = v4;
 		}
@@ -990,7 +984,7 @@ LABEL_2:
 						do {
 							assert(v11 < 20);
 							*(v11++ + v8) = v6[v7++];
-							if (v6[v7] == 'F' && v6[v7] == 'F') {
+							if (v6[v7] == 'F' && v6[v7 + 1] == 'F') {
 								v16 = 1;
 								v8[v11] = 'F';
 								v8[v11 + 1] = 'F';
@@ -1049,22 +1043,22 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
 			if (a1 == 22) {
-				_vm->_objectsManager.BLOQUE_ANIMX(6, _vm->_objectsManager.BOBX(3));
-				_vm->_objectsManager.BLOQUE_ANIMX(8, _vm->_objectsManager.BOBX(3));
+				_vm->_objectsManager.BLOQUE_ANIMX(6, _vm->_objectsManager.getBobPosX(3));
+				_vm->_objectsManager.BLOQUE_ANIMX(8, _vm->_objectsManager.getBobPosX(3));
 			} else { // a1 == 23
-				_vm->_objectsManager.BLOQUE_ANIMX(6, _vm->_objectsManager.BOBX(4));
-				_vm->_objectsManager.BLOQUE_ANIMX(8, _vm->_objectsManager.BOBX(4));
+				_vm->_objectsManager.BLOQUE_ANIMX(6, _vm->_objectsManager.getBobPosX(4));
+				_vm->_objectsManager.BLOQUE_ANIMX(8, _vm->_objectsManager.getBobPosX(4));
 			}
-			_vm->_objectsManager.BOBANIM_OFF(3);
-			_vm->_objectsManager.BOBANIM_OFF(4);
-			_vm->_objectsManager.BOBANIM_ON(6);
+			_vm->_objectsManager.stopBobAnimation(3);
+			_vm->_objectsManager.stopBobAnimation(4);
+			_vm->_objectsManager.setBobAnimation(6);
 			_vm->_soundManager.PLAY_SAMPLE2(1);
 			_vm->_objectsManager.SPACTION1(_vm->_globals.FORETSPR, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(6) < 12);
-			_vm->_objectsManager.BOBANIM_OFF(6);
-			_vm->_objectsManager.BOBANIM_ON(8);
+			_vm->_objectsManager.stopBobAnimation(6);
+			_vm->_objectsManager.setBobAnimation(8);
 			
 			switch (_vm->_globals.ECRAN) {
 			case 35:
@@ -1097,22 +1091,22 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals.FORETSPR, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
 			if (a1 == 20) {
-				_vm->_objectsManager.BLOQUE_ANIMX(5, _vm->_objectsManager.BOBX(1));
-				_vm->_objectsManager.BLOQUE_ANIMX(7, _vm->_objectsManager.BOBX(1));
+				_vm->_objectsManager.BLOQUE_ANIMX(5, _vm->_objectsManager.getBobPosX(1));
+				_vm->_objectsManager.BLOQUE_ANIMX(7, _vm->_objectsManager.getBobPosX(1));
 			} else { // a1 == 21
-				_vm->_objectsManager.BLOQUE_ANIMX(5, _vm->_objectsManager.BOBX(2));
-				_vm->_objectsManager.BLOQUE_ANIMX(7, _vm->_objectsManager.BOBX(2));
+				_vm->_objectsManager.BLOQUE_ANIMX(5, _vm->_objectsManager.getBobPosX(2));
+				_vm->_objectsManager.BLOQUE_ANIMX(7, _vm->_objectsManager.getBobPosX(2));
 			}
-			_vm->_objectsManager.BOBANIM_OFF(1);
-			_vm->_objectsManager.BOBANIM_OFF(2);
-			_vm->_objectsManager.BOBANIM_ON(5);
+			_vm->_objectsManager.stopBobAnimation(1);
+			_vm->_objectsManager.stopBobAnimation(2);
+			_vm->_objectsManager.setBobAnimation(5);
 			_vm->_soundManager.PLAY_SAMPLE2(1);
 			_vm->_objectsManager.SPACTION1(_vm->_globals.FORETSPR, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 			do
 				_vm->_eventsManager.VBL();
 			while (_vm->_objectsManager.BOBPOSI(5) < 12);
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_ON(7);
+			_vm->_objectsManager.stopBobAnimation(5);
+			_vm->_objectsManager.setBobAnimation(7);
 			switch (_vm->_globals.ECRAN) {
 			case 35:
 				indx = 200;

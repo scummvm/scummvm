@@ -99,7 +99,7 @@ struct BobItem {
 	int field10; // BOBPOSI ?
 	int field12;
 	int field14;
-	bool field16; // set to true in BOBANIM_OFF()
+	bool _disabledAnimationFl;
 	byte *_animData;
 	bool field1C;
 	int field1E;
@@ -309,7 +309,7 @@ public:
 	CarreZoneItem CarreZone[101];
 	BqeAnimItem Bqe_Anim[35];
 	BankItem Bank[8];
-	BobItem Bob[36];
+	BobItem _bob[36];
 	ListeItem Liste[6];
 	Liste2Item Liste2[35];
 	BlAnimItem BL_ANIM[30];

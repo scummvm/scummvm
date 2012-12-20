@@ -525,9 +525,9 @@ LABEL_1141:
 	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'N' && *(a1 + 4) == 'I') {
 		int v75 = (int16)READ_LE_UINT16(a1 + 5);
 		if (v75 <= 100)
-			_vm->_objectsManager.BOBANIM_ON(v75);
+			_vm->_objectsManager.setBobAnimation(v75);
 		else
-			_vm->_objectsManager.BOBANIM_OFF(v75 - 100);
+			_vm->_objectsManager.stopBobAnimation(v75 - 100);
 		v1 = 1;
 	}
 	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'P' && *(a1 + 4) == 'E') {
@@ -646,36 +646,36 @@ LABEL_1141:
 			_vm->_globals.NBBLOC = 0;
 		}
 		if (v76 == 608) {
-			_vm->_objectsManager.BOBANIM_OFF(2);
-			_vm->_objectsManager.BOBANIM_OFF(3);
-			_vm->_objectsManager.BOBANIM_OFF(4);
-			_vm->_objectsManager.BOBANIM_OFF(6);
-			_vm->_objectsManager.BOBANIM_OFF(11);
-			_vm->_objectsManager.BOBANIM_OFF(10);
+			_vm->_objectsManager.stopBobAnimation(2);
+			_vm->_objectsManager.stopBobAnimation(3);
+			_vm->_objectsManager.stopBobAnimation(4);
+			_vm->_objectsManager.stopBobAnimation(6);
+			_vm->_objectsManager.stopBobAnimation(11);
+			_vm->_objectsManager.stopBobAnimation(10);
 		}
 		if (v76 == 609) {
-			_vm->_objectsManager.BOBANIM_ON(2);
-			_vm->_objectsManager.BOBANIM_ON(3);
-			_vm->_objectsManager.BOBANIM_ON(4);
-			_vm->_objectsManager.BOBANIM_ON(6);
-			_vm->_objectsManager.BOBANIM_ON(11);
-			_vm->_objectsManager.BOBANIM_ON(10);
+			_vm->_objectsManager.setBobAnimation(2);
+			_vm->_objectsManager.setBobAnimation(3);
+			_vm->_objectsManager.setBobAnimation(4);
+			_vm->_objectsManager.setBobAnimation(6);
+			_vm->_objectsManager.setBobAnimation(11);
+			_vm->_objectsManager.setBobAnimation(10);
 		}
 		if (v76 == 611) {
-			_vm->_objectsManager.BOBANIM_ON(5);
-			_vm->_objectsManager.BOBANIM_ON(7);
-			_vm->_objectsManager.BOBANIM_ON(8);
-			_vm->_objectsManager.BOBANIM_ON(9);
-			_vm->_objectsManager.BOBANIM_ON(12);
-			_vm->_objectsManager.BOBANIM_ON(13);
+			_vm->_objectsManager.setBobAnimation(5);
+			_vm->_objectsManager.setBobAnimation(7);
+			_vm->_objectsManager.setBobAnimation(8);
+			_vm->_objectsManager.setBobAnimation(9);
+			_vm->_objectsManager.setBobAnimation(12);
+			_vm->_objectsManager.setBobAnimation(13);
 		}
 		if (v76 == 610) {
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_OFF(7);
-			_vm->_objectsManager.BOBANIM_OFF(8);
-			_vm->_objectsManager.BOBANIM_OFF(9);
-			_vm->_objectsManager.BOBANIM_OFF(12);
-			_vm->_objectsManager.BOBANIM_OFF(13);
+			_vm->_objectsManager.stopBobAnimation(5);
+			_vm->_objectsManager.stopBobAnimation(7);
+			_vm->_objectsManager.stopBobAnimation(8);
+			_vm->_objectsManager.stopBobAnimation(9);
+			_vm->_objectsManager.stopBobAnimation(12);
+			_vm->_objectsManager.stopBobAnimation(13);
 		}
 		if (v76 == 10)
 			_vm->_talkManager.PARLER_PERSO("bqeflic1.pe2");
@@ -893,8 +893,8 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(9) != 36);
 			_vm->_objectsManager.SPRITE_ON(0);
-			_vm->_objectsManager.BOBANIM_OFF(9);
-			_vm->_objectsManager.BOBANIM_OFF(10);
+			_vm->_objectsManager.stopBobAnimation(9);
+			_vm->_objectsManager.stopBobAnimation(10);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			_vm->_soundManager.DEL_SAMPLE(2);
 		}
@@ -916,7 +916,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(7);
+			_vm->_objectsManager.setBobAnimation(7);
 			_vm->_objectsManager.SET_BOBPOSI(7, 0);
 			int v18 = 0;
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
@@ -937,15 +937,15 @@ LABEL_1141:
 				if (_vm->_objectsManager.BOBPOSI(7) == 19)
 					v18 = 0;
 				if (_vm->_objectsManager.BOBPOSI(7) == 19)
-					_vm->_objectsManager.BOBANIM_ON(3);
+					_vm->_objectsManager.setBobAnimation(3);
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(3) != 48);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPRITE_ON(0);
-			_vm->_objectsManager.BOBANIM_ON(6);
-			_vm->_objectsManager.BOBANIM_OFF(7);
-			_vm->_objectsManager.BOBANIM_OFF(3);
+			_vm->_objectsManager.setBobAnimation(6);
+			_vm->_objectsManager.stopBobAnimation(7);
+			_vm->_objectsManager.stopBobAnimation(3);
 		}
 		if (v76 == 50) {
 			_vm->_soundManager.PLAY_SOUND("SOUND46.WAv");
@@ -985,14 +985,14 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(9) != v19);
 			if (v19 == 12) {
 				_vm->_objectsManager.SPRITE_ON(0);
-				_vm->_objectsManager.BOBANIM_OFF(9);
+				_vm->_objectsManager.stopBobAnimation(9);
 			}
 			_vm->_globals.CACHE_ON();
 		}
 		if (v76 == 80) {
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(12);
-			_vm->_objectsManager.BOBANIM_ON(13);
+			_vm->_objectsManager.setBobAnimation(12);
+			_vm->_objectsManager.setBobAnimation(13);
 			_vm->_objectsManager.SET_BOBPOSI(12, 0);
 			_vm->_objectsManager.SET_BOBPOSI(13, 0);
 			int v21 = 0;
@@ -1015,16 +1015,16 @@ LABEL_1141:
 				if (_vm->_objectsManager.BOBPOSI(4) == 6)
 					v21 = 0;
 				if (_vm->_objectsManager.BOBPOSI(13) == 8) {
-					_vm->_objectsManager.BOBANIM_OFF(13);
-					_vm->_objectsManager.BOBANIM_OFF(3);
-					_vm->_objectsManager.BOBANIM_ON(4);
+					_vm->_objectsManager.stopBobAnimation(13);
+					_vm->_objectsManager.stopBobAnimation(3);
+					_vm->_objectsManager.setBobAnimation(4);
 					_vm->_objectsManager.SET_BOBPOSI(4, 0);
 					_vm->_objectsManager.SET_BOBPOSI(13, 0);
 				}
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(4) != 16);
-			_vm->_objectsManager.BOBANIM_OFF(12);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.stopBobAnimation(12);
+			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM27a");
@@ -1048,8 +1048,8 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(11);
-			_vm->_objectsManager.BOBANIM_ON(8);
+			_vm->_objectsManager.setBobAnimation(11);
+			_vm->_objectsManager.setBobAnimation(8);
 			_vm->_objectsManager.SET_BOBPOSI(11, 0);
 			_vm->_objectsManager.SET_BOBPOSI(8, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND44.WAV", 1);
@@ -1076,10 +1076,10 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(8) != 32);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
 			_vm->_objectsManager.SPRITE_ON(0);
-			_vm->_objectsManager.BOBANIM_OFF(11);
-			_vm->_objectsManager.BOBANIM_OFF(8);
-			_vm->_objectsManager.BOBANIM_ON(5);
-			_vm->_objectsManager.BOBANIM_ON(6);
+			_vm->_objectsManager.stopBobAnimation(11);
+			_vm->_objectsManager.stopBobAnimation(8);
+			_vm->_objectsManager.setBobAnimation(5);
+			_vm->_objectsManager.setBobAnimation(6);
 			_vm->_objectsManager.SET_BOBPOSI(5, 0);
 			_vm->_objectsManager.SET_BOBPOSI(6, 0);
 			_vm->_soundManager.PLAY_WAV(3);
@@ -1089,15 +1089,15 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(5) != 74);
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_OFF(6);
-			_vm->_objectsManager.BOBANIM_ON(9);
-			_vm->_objectsManager.BOBANIM_ON(7);
+			_vm->_objectsManager.stopBobAnimation(5);
+			_vm->_objectsManager.stopBobAnimation(6);
+			_vm->_objectsManager.setBobAnimation(9);
+			_vm->_objectsManager.setBobAnimation(7);
 		}
 		if (v76 == 95) {
-			_vm->_objectsManager.BOBANIM_ON(9);
-			_vm->_objectsManager.BOBANIM_ON(10);
-			_vm->_objectsManager.BOBANIM_ON(12);
+			_vm->_objectsManager.setBobAnimation(9);
+			_vm->_objectsManager.setBobAnimation(10);
+			_vm->_objectsManager.setBobAnimation(12);
 			_vm->_objectsManager.SET_BOBPOSI(9, 0);
 			_vm->_objectsManager.SET_BOBPOSI(10, 0);
 			_vm->_objectsManager.SET_BOBPOSI(12, 0);
@@ -1108,7 +1108,7 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(9) != 15);
-			_vm->_objectsManager.BOBANIM_OFF(9);
+			_vm->_objectsManager.stopBobAnimation(9);
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_soundManager.PLAY_SOUND("SOUND50.WAV");
 			do {
@@ -1118,13 +1118,13 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 117);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
-			_vm->_objectsManager.BOBANIM_OFF(12);
-			_vm->_objectsManager.BOBANIM_OFF(10);
-			_vm->_objectsManager.BOBANIM_ON(11);
+			_vm->_objectsManager.stopBobAnimation(12);
+			_vm->_objectsManager.stopBobAnimation(10);
+			_vm->_objectsManager.setBobAnimation(11);
 		}
 		if (v76 == 85) {
-			_vm->_objectsManager.BOBANIM_OFF(3);
-			_vm->_objectsManager.BOBANIM_ON(5);
+			_vm->_objectsManager.stopBobAnimation(3);
+			_vm->_objectsManager.setBobAnimation(5);
 			_vm->_objectsManager.SET_BOBPOSI(5, 0);
 			do {
 				if (_vm->shouldQuit())
@@ -1132,8 +1132,8 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(5) != 6);
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_ON(6);
+			_vm->_objectsManager.stopBobAnimation(5);
+			_vm->_objectsManager.setBobAnimation(6);
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM24a");
 			_vm->_objectsManager.OBSSEUL = 0;
@@ -1142,8 +1142,8 @@ LABEL_1141:
 			if (_vm->_globals.SAUVEGARDE->data[svField183] == 1) {
 				_vm->_objectsManager.SET_BOBPOSI(1, 0);
 				_vm->_objectsManager.SET_BOBPOSI(2, 0);
-				_vm->_objectsManager.BOBANIM_ON(1);
-				_vm->_objectsManager.BOBANIM_ON(2);
+				_vm->_objectsManager.setBobAnimation(1);
+				_vm->_objectsManager.setBobAnimation(2);
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				int v25 = 0;
 				do {
@@ -1176,16 +1176,16 @@ LABEL_1141:
 						v25 = 0;
 					_vm->_eventsManager.VBL();
 				} while (_vm->_objectsManager.BOBPOSI(1) != 9);
-				_vm->_objectsManager.BOBANIM_OFF(1);
-				_vm->_objectsManager.BOBANIM_OFF(2);
+				_vm->_objectsManager.stopBobAnimation(1);
+				_vm->_objectsManager.stopBobAnimation(2);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField183] == 2) {
 				_vm->_objectsManager.SET_BOBPOSI(1, 0);
 				_vm->_objectsManager.SET_BOBPOSI(3, 0);
-				_vm->_objectsManager.BOBANIM_ON(1);
-				_vm->_objectsManager.BOBANIM_ON(3);
+				_vm->_objectsManager.setBobAnimation(1);
+				_vm->_objectsManager.setBobAnimation(3);
 				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
 				int v26 = 0;
 				do {
@@ -1218,8 +1218,8 @@ LABEL_1141:
 						v26 = 0;
 					_vm->_eventsManager.VBL();
 				} while (_vm->_objectsManager.BOBPOSI(1) != 9);
-				_vm->_objectsManager.BOBANIM_OFF(1);
-				_vm->_objectsManager.BOBANIM_OFF(3);
+				_vm->_objectsManager.stopBobAnimation(1);
+				_vm->_objectsManager.stopBobAnimation(3);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
@@ -1309,7 +1309,7 @@ LABEL_1141:
 			_vm->_objectsManager.setSpriteIndex(0, 60);
 			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND63.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField253] > 2) {
-				_vm->_objectsManager.BOBANIM_ON(4);
+				_vm->_objectsManager.setBobAnimation(4);
 				int v33 = 0;
 				do {
 					if (_vm->shouldQuit())
@@ -1335,10 +1335,10 @@ LABEL_1141:
 						v33 = 0;
 					_vm->_eventsManager.VBL();
 				} while (_vm->_objectsManager.BOBPOSI(4) != 72);
-				_vm->_objectsManager.BOBANIM_OFF(4);
+				_vm->_objectsManager.stopBobAnimation(4);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 1) {
-				_vm->_objectsManager.BOBANIM_ON(6);
+				_vm->_objectsManager.setBobAnimation(6);
 				int v34 = 0;
 				do {
 					if (_vm->shouldQuit())
@@ -1364,10 +1364,10 @@ LABEL_1141:
 						v34 = 0;
 					_vm->_eventsManager.VBL();
 				} while (_vm->_objectsManager.BOBPOSI(6) != 72);
-				_vm->_objectsManager.BOBANIM_OFF(6);
+				_vm->_objectsManager.stopBobAnimation(6);
 			}
 			if (_vm->_globals.SAUVEGARDE->data[svField253] == 2) {
-				_vm->_objectsManager.BOBANIM_ON(5);
+				_vm->_objectsManager.setBobAnimation(5);
 				int v35 = 0;
 				do {
 					if (_vm->shouldQuit())
@@ -1393,7 +1393,7 @@ LABEL_1141:
 						v35 = 0;
 					_vm->_eventsManager.VBL();
 				} while (_vm->_objectsManager.BOBPOSI(5) != 72);
-				_vm->_objectsManager.BOBANIM_OFF(5);
+				_vm->_objectsManager.stopBobAnimation(5);
 			}
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_objectsManager.ACTION_DOS(1);
@@ -1401,7 +1401,7 @@ LABEL_1141:
 		}
 		if (v76 == 106) {
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			_vm->_objectsManager.setBobAnimation(4);
 			_vm->_objectsManager.SET_BOBPOSI(4, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND62.WAV", 2);
@@ -1433,12 +1433,12 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(4) != 77);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 107) {
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(5);
+			_vm->_objectsManager.setBobAnimation(5);
 			_vm->_objectsManager.SET_BOBPOSI(5, 0);
 			_vm->_soundManager.LOAD_WAV("SOUND61.WAV", 1);
 			_vm->_soundManager.LOAD_WAV("SOUND62.WAV", 2);
@@ -1470,7 +1470,7 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(5) != 53);
-			_vm->_objectsManager.BOBANIM_OFF(5);
+			_vm->_objectsManager.stopBobAnimation(5);
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 210) {
@@ -1479,7 +1479,7 @@ LABEL_1141:
 			_vm->_animationManager.playSequence2("SECRET1.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
-			_vm->_objectsManager.BOBANIM_ON(9);
+			_vm->_objectsManager.setBobAnimation(9);
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM73a");
 			_vm->_objectsManager.OBSSEUL = 0;
@@ -1549,15 +1549,15 @@ LABEL_1141:
 			_vm->_objectsManager.SET_BOBPOSI(1, 0);
 			_vm->_objectsManager.SET_BOBPOSI(2, 0);
 			_vm->_objectsManager.setSpriteIndex(0, 60);
-			_vm->_objectsManager.BOBANIM_OFF(4);
-			_vm->_objectsManager.BOBANIM_ON(1);
+			_vm->_objectsManager.stopBobAnimation(4);
+			_vm->_objectsManager.setBobAnimation(1);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(1) != 9);
-			_vm->_objectsManager.BOBANIM_OFF(1);
+			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_globals.NO_VISU = true;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
@@ -1574,7 +1574,7 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.setSpriteIndex(0, 64);
-			_vm->_objectsManager.BOBANIM_ON(2);
+			_vm->_objectsManager.setBobAnimation(2);
 			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
 			do {
 				if (_vm->shouldQuit())
@@ -1582,24 +1582,24 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(2) != 10);
-			_vm->_objectsManager.BOBANIM_OFF(2);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			_vm->_objectsManager.stopBobAnimation(2);
+			_vm->_objectsManager.setBobAnimation(4);
 		}
 		if (v76 == 201) {
-			_vm->_objectsManager.BOBANIM_ON(3);
+			_vm->_objectsManager.setBobAnimation(3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(3) != 18);
-			_vm->_objectsManager.BOBANIM_OFF(3);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			_vm->_objectsManager.stopBobAnimation(3);
+			_vm->_objectsManager.setBobAnimation(4);
 		}
 		if (v76 == 203) {
 			_vm->_globals.NO_VISU = true;
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			_vm->_objectsManager.setBobAnimation(4);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1608,13 +1608,13 @@ LABEL_1141:
 				if (_vm->_objectsManager.BOBPOSI(4) == 18)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
 			} while (_vm->_objectsManager.BOBPOSI(4) != 26);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 204) {
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(3);
+			_vm->_objectsManager.setBobAnimation(3);
 			_vm->_soundManager.LOAD_WAV("SOUND67.WAV", 1);
 			int v41 = 0;
 			do {
@@ -1629,12 +1629,12 @@ LABEL_1141:
 					v41 = 0;
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(3) != 50);
-			_vm->_objectsManager.BOBANIM_OFF(3);
+			_vm->_objectsManager.stopBobAnimation(3);
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 205) {
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(4);
+			_vm->_objectsManager.setBobAnimation(4);
 			_vm->_soundManager.LOAD_WAV("SOUND69.WAV", 1);
 			int v42 = 0;
 			do {
@@ -1649,14 +1649,14 @@ LABEL_1141:
 					v42 = 0;
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(4) != 24);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 175) {
 			_vm->_objectsManager.setSpriteIndex(0, 55);
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(9);
-			_vm->_objectsManager.BOBANIM_ON(10);
+			_vm->_objectsManager.setBobAnimation(9);
+			_vm->_objectsManager.setBobAnimation(10);
 			_vm->_objectsManager.BOB_OFFSET(10, 300);
 			_vm->_soundManager.PLAY_SOUND("SOUND44.WAV");
 			do {
@@ -1665,8 +1665,8 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(10) != 7);
-			_vm->_objectsManager.BOBANIM_ON(6);
-			_vm->_objectsManager.BOBANIM_OFF(3);
+			_vm->_objectsManager.setBobAnimation(6);
+			_vm->_objectsManager.stopBobAnimation(3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1674,16 +1674,16 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(6) != 10);
 			_vm->_soundManager.PLAY_SOUND("SOUND71.WAV");
-			_vm->_objectsManager.BOBANIM_ON(7);
-			_vm->_objectsManager.BOBANIM_OFF(4);
+			_vm->_objectsManager.setBobAnimation(7);
+			_vm->_objectsManager.stopBobAnimation(4);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(7) != 15);
-			_vm->_objectsManager.BOBANIM_OFF(5);
-			_vm->_objectsManager.BOBANIM_ON(8);
+			_vm->_objectsManager.stopBobAnimation(5);
+			_vm->_objectsManager.setBobAnimation(8);
 			_vm->_soundManager.PLAY_SOUND("SOUND70.WAV");
 			do {
 				if (_vm->shouldQuit())
@@ -1691,11 +1691,11 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(8) != 76);
-			_vm->_objectsManager.BOBANIM_OFF(6);
-			_vm->_objectsManager.BOBANIM_OFF(7);
-			_vm->_objectsManager.BOBANIM_OFF(8);
-			_vm->_objectsManager.BOBANIM_OFF(9);
-			_vm->_objectsManager.BOBANIM_OFF(10);
+			_vm->_objectsManager.stopBobAnimation(6);
+			_vm->_objectsManager.stopBobAnimation(7);
+			_vm->_objectsManager.stopBobAnimation(8);
+			_vm->_objectsManager.stopBobAnimation(9);
+			_vm->_objectsManager.stopBobAnimation(10);
 			_vm->_objectsManager.SPRITE_ON(0);
 		}
 		if (v76 == 229) {
@@ -1728,7 +1728,7 @@ LABEL_1141:
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			int v45 = 0;
-			_vm->_objectsManager.BOBANIM_ON(7);
+			_vm->_objectsManager.setBobAnimation(7);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1739,7 +1739,7 @@ LABEL_1141:
 				}
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(7) != 15);
-			_vm->_objectsManager.BOBANIM_OFF(7);
+			_vm->_objectsManager.stopBobAnimation(7);
 			_vm->_objectsManager.setSpriteX(0, 476);
 			_vm->_objectsManager.setSpriteY(0, 278);
 			_vm->_objectsManager.SPRITE_ON(0);
@@ -1752,7 +1752,7 @@ LABEL_1141:
 		if (v76 == 231) {
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(12);
+			_vm->_objectsManager.setBobAnimation(12);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1769,13 +1769,13 @@ LABEL_1141:
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 12);
 			_vm->_objectsManager.SPRITE_ON(0);
-			_vm->_objectsManager.BOBANIM_OFF(12);
+			_vm->_objectsManager.stopBobAnimation(12);
 			_vm->_globals.CACHE_ON();
 		}
 		if (v76 == 233) {
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.BOBANIM_ON(11);
+			_vm->_objectsManager.setBobAnimation(11);
 			int v46 = 0;
 			do {
 				if (_vm->shouldQuit())
@@ -1785,9 +1785,9 @@ LABEL_1141:
 				if (_vm->_objectsManager.BOBPOSI(11) == 10 && !v46)
 					v46 = 1;
 			} while (_vm->_objectsManager.BOBPOSI(11) != 13);
-			_vm->_objectsManager.BOBANIM_OFF(11);
+			_vm->_objectsManager.stopBobAnimation(11);
 			_vm->_globals.CACHE_ON();
-			_vm->_objectsManager.BOBANIM_ON(13);
+			_vm->_objectsManager.setBobAnimation(13);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1798,7 +1798,7 @@ LABEL_1141:
 			_vm->_talkManager.PARLER_PERSO("HRADIO.PE2");
 			_vm->_globals.NOPARLE = false;
 			_vm->_graphicsManager.FADE_OUTW();
-			_vm->_objectsManager.BOBANIM_OFF(13);
+			_vm->_objectsManager.stopBobAnimation(13);
 			_vm->_graphicsManager.NOFADE = true;
 			_vm->_globals.SORTIE = 94;
 		}
@@ -1903,7 +1903,7 @@ LABEL_1141:
 			_vm->_objectsManager.OPTI_ONE(16, 0, 10, 0);
 		}
 		if (v76 == 240) {
-			_vm->_objectsManager.BOBANIM_ON(1);
+			_vm->_objectsManager.setBobAnimation(1);
 			bool soundFlag = false;
 			do {
 				if (_vm->shouldQuit())
@@ -1923,8 +1923,8 @@ LABEL_1141:
 				if (_vm->_objectsManager.BOBPOSI(1) == 25)
 					soundFlag = false;
 			} while (_vm->_objectsManager.BOBPOSI(1) != 32);
-			_vm->_objectsManager.BOBANIM_OFF(1);
-			_vm->_objectsManager.BOBANIM_ON(2);
+			_vm->_objectsManager.stopBobAnimation(1);
+			_vm->_objectsManager.setBobAnimation(2);
 			_vm->_fontManager.hideText(9);
 			if (!_vm->_soundManager.TEXTOFF) {
 				_vm->_fontManager.initTextBuffers(9, 617, _vm->_globals.FICH_TEXTE, 91, 41, 20, 25, 3, 30, 253);
@@ -2011,7 +2011,7 @@ LABEL_1141:
 				}
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 34);
-			_vm->_objectsManager.BOBANIM_OFF(2);
+			_vm->_objectsManager.stopBobAnimation(2);
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_graphicsManager.NOFADE = true;
 			_vm->_globals.SORTIE = 20;
@@ -2208,9 +2208,9 @@ LABEL_1141:
 			_vm->_globals.SORTIE = 100;
 		}
 		if (v76 == 55) {
-			_vm->_objectsManager.BOBANIM_OFF(1);
+			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_objectsManager.OPTI_ONE(15, 0, 12, 0);
-			_vm->_objectsManager.BOBANIM_OFF(15);
+			_vm->_objectsManager.stopBobAnimation(15);
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM19a");
 			_vm->_objectsManager.OBSSEUL = 0;

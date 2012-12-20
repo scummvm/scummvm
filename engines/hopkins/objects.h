@@ -218,10 +218,10 @@ public:
 	void OPTI_ONE(int a1, int a2, int a3, int a4);
 	void AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img);
 	int BOBPOSI(int idx);
-	void BOBANIM_ON(int idx);
-	void BOBANIM_OFF(int idx);
+	void setBobAnimation(int idx);
+	void stopBobAnimation(int idx);
 	void SET_BOBPOSI(int idx, int a2);
-	int BOBX(int idx);
+	int getBobPosX(int idx);
 	int BOBY(int idx);
 	int BOBA(int idx);
 
