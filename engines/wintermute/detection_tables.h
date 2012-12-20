@@ -35,7 +35,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"julia",           "J.U.L.I.A."},
 	{"mirage",          "Mirage"},
 	{"pigeons",         "Pigeons in the Park"},
-	{"reversion",       "Reversion"},
+	{"reversion1",      "Reversion: The Escape"},
 	{"rosemary",        "Rosemary"},
 	{"thebox",          "The Box"},
 	{"twc",             "the white chamber"},
@@ -229,12 +229,90 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	// Reversion
+	// Reversion: The Escape Version 1.0
 	{
-		"reversion",
-		"",
+		"reversion1",
+		"Version 1.0",
 		AD_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531),
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.1 (Chinese)
+	{
+		"reversion1",
+		"Version 1.1",
+		{
+			{"chinese.dcp", 0, "cf97150739499a4c15f51dc534ff85a1", 6330561},
+		AD_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+		},
+		Common::ZH_CNA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.1 (English)
+	{
+		"reversion1",
+		"Version 1.1",
+		{
+			{"english.dcp", 0, "7b2f061d7c91365c5d04605f1de032b3", 5702699},
+		AD_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.1 (French)
+	{
+		"reversion1",
+		"Version 1.1",
+		{
+			{"french.dcp", 0, "214204b6022c5ed67fada44557690faf", 6327400},
+		AD_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.1 (German)
+	{
+		"reversion1",
+		"Version 1.1",
+		{
+			{"german.dcp", 0, "96677823b36d580a4a29e3659071071c", 6340699},
+		AD_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.1 (Italian)
+	{
+		"reversion1",
+		"Version 1.1",
+		{
+			{"italian.dcp", 0, "9ce80c1835108f10170a02969f71efe1", 6301836},
+		AD_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.1 (Portuguese)
+	{
+		"reversion1",
+		"Version 1.1",
+		{
+			{"portugues.dcp", 0, "8772501afa2c630a7c697eb99e9c7bda", 5053303},
+		AD_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+		},
+		Common::PT_BRA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
@@ -273,3 +351,4 @@ static const ADGameDescription gameDescriptions[] = {
 };
 
 } // End of namespace Wintermute
+
