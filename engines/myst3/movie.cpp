@@ -40,6 +40,7 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_endFrame(0),
 	_texture(0),
 	_force2d(false),
+	_forceOpaque(false),
 	_subtitles(0) {
 
 	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
