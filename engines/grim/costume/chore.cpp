@@ -87,14 +87,16 @@ Component *Chore::getComponentForTrack(int i) const {
 		return _owner->_components[_tracks[i].compID];
 }
 
-void Chore::stop() {
+void Chore::stop(bool reset) {
 	_playing = false;
 	_hasPlayed = false;
 
-	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = getComponentForTrack(i);
-		if (comp)
-			comp->reset();
+	if (reset) {
+		for (int i = 0; i < _numTracks; i++) {
+			Component *comp = getComponentForTrack(i);
+			if (comp)
+				comp->reset();
+		}
 	}
 }
 
