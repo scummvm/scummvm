@@ -91,10 +91,11 @@ void Chore::stop(bool reset) {
 	_playing = false;
 	_hasPlayed = false;
 
-	if (reset) {
-		for (int i = 0; i < _numTracks; i++) {
-			Component *comp = getComponentForTrack(i);
-			if (comp)
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = getComponentForTrack(i);
+		if (comp) {
+			comp->stop();
+			if (reset)
 				comp->reset();
 		}
 	}

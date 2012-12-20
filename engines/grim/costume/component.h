@@ -50,6 +50,7 @@ public:
 	virtual void animate() { }
 	virtual void setupTexture() { }
 	virtual void draw() { }
+	virtual void stop() { }
 	virtual void reset() { }
 	virtual void resetColormap() { }
 	virtual void saveState(SaveGame *) { }
