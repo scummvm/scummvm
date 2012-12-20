@@ -24,6 +24,10 @@ A software renderer is also included for machines without hardware OpenGL.
 ------------------------------
 2. Current state of ResidualVM
 ------------------------------
+At this point ResidualVM is fit for normal use, when playing supported
+games, it is however worth noting that you should still save early, and
+save often, as problems or dead-ends might still exist. (Grim Fandango
+itself originally had a few unintentional ways to get the game stuck).
 
 2.1 - Which games does ResidualVM support?
 ------------------------------------------
@@ -53,9 +57,9 @@ http://wiki.residualvm.org/
 ---------------------
 
 3.1 - Required files
---------------------
-You will need the data files for Grim Fandango, as well as the patch,
-if your game is an older release.
+-----------------------------------
+You will need the data files for Grim Fandango, as well as the official
+patch (gfupd101.exe).
 
 Specifically you need these files from your Grim CDs:
 *.LAB
@@ -75,6 +79,7 @@ Simply download it and put gfupd101.exe in the same folder as the .LAB-files,
 and you are good to go.
 
 If you want to play with software-rendering, see the configuration-section below.
+(or use the ingame settings to disable 3D Acceleration)
 
 
 -----------------------------
@@ -150,10 +155,10 @@ some of them might make ResidualVM crash, or behave in weird ways.
 6. Troubleshooting / Known Bugs, Issues
 ---------------------------------------
 Grim Fandango had a few issues when it came out, and a few new and exciting
-issues when you try to run it on newer hardware.
-ResidualVM itself also has a few issues that we know about:
+issues when you try to run it on newer hardware. Some of these have been
+fixed in ResidualVM, but ResidualVM itself also has a few new issues that we know about:
 http://github.com/residualvm/residualvm/blob/master/KNOWN_BUGS
-Look here for help with them, and if you can't find help here
+Look below for help with them, and if you can't find help here
 try either the forums at our homepage, or IRC: #residualvm at freenode.
 
 6.1 - The game runs really slow!
