@@ -747,8 +747,8 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 			_graphicsManager.DD_VBL();
-			memset(_graphicsManager._vesaBuffer, 0, 0x4B000u);
-			memset(_graphicsManager._vesaScreen, 0, 0x4B000u);
+			memset(_graphicsManager._vesaBuffer, 0, 307200);
+			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
@@ -848,7 +848,7 @@ bool HopkinsEngine::runBeOSFull() {
 	_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
-	memset(_globals.SAUVEGARDE, 0, 0x7CCu);
+	memset(_globals.SAUVEGARDE, 0, 1996);
 	_globals.SORTIE = 0;
 
 	for (;;) {
@@ -3340,8 +3340,8 @@ bool HopkinsEngine::runLinuxFull() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 			_graphicsManager.DD_VBL();
-			memset(_graphicsManager._vesaBuffer, 0, 0x4B000u);
-			memset(_graphicsManager._vesaScreen, 0, 0x4B000u);
+			memset(_graphicsManager._vesaBuffer, 0, 307200);
+			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.Cls_Pal();
 			_graphicsManager.RESET_SEGMENT_VESA();
 			break;

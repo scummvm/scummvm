@@ -172,7 +172,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 	unlockScreen();
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
 	A_PCX320(_vesaScreen, _vm->_globals.NFICHIER, Palette);
-	memcpy(_vesaBuffer, _vesaScreen, 0xFA00u);
+	memcpy(_vesaBuffer, _vesaScreen, 64000);
 	SCANLINE(320);
 	max_x = 320;
 
@@ -358,15 +358,15 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 
 	filesize = f.size();
 
-	f.read(surface, 0x80u);
+	f.read(surface, 128);
 	v4 = filesize - 896;
-	ptr = _vm->_globals.allocMemory(0xFE00u);
-	if (v4 >= 0xFA00) {
-		v15 = v4 / 0xFA00 + 1;
-		v17 = 64000 * (v4 / 0xFA00) - v4;
-		if (((uint32)v17 & 0x80000000u) != 0)
+	ptr = _vm->_globals.allocMemory(65024);
+	if (v4 >= 64000) {
+		v15 = v4 / 64000 + 1;
+		v17 = 64000 * (v4 / 64000) - v4;
+		if (v17 < 0)
 			v17 = -v17;
-		f.read(ptr, 0xFA00u);
+		f.read(ptr, 64000);
 		v5 = 64000;
 	} else {
 		v15 = 1;
@@ -388,7 +388,7 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 //			i = v8;
 		}
 		v9 = *(ptr + v7++);
-		if (v9 > 0xC0u) {
+		if (v9 > 192) {
 			v10 = v9 - 192;
 			if (v7 == v5) {
 				v7 = 0;
@@ -835,7 +835,7 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) 
 	srcP = srcData;
 	for (;;) {
 		srcByte = *srcP;
-		if (*srcP < 0xDEu)
+		if (*srcP < 222)
 			goto Video_Cont3_wVbe;
 		if (srcByte == kByteStop)
 			return;
@@ -857,7 +857,7 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) 
 			srcP += 5;
 		}
 Video_Cont3_wVbe:
-		if (srcByte > 0xD2u) {
+		if (srcByte > 210) {
 			if (srcByte == (byte)-45) {
 				destLen1 = *(srcP + 1);
 				rleValue = *(srcP + 2);
@@ -1571,7 +1571,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 											++spritePixelsP;
 											if (!Agr_Flag_x)
 												Agr_x = zoom2 + Agr_x;
-											if ((uint16)Agr_x < 0x64u)
+											if ((uint16)Agr_x < 100)
 												break;
 											Agr_x = Agr_x - 100;
 											--spritePixelsP;
@@ -1588,7 +1588,7 @@ R_Aff_Zoom_Larg_Cont1:
 									++Compteur_y;
 									if (!Agr_Flag_y)
 										Agr_y = zoom2 + Agr_y;
-									if ((uint16)Agr_y < 0x64u)
+									if ((uint16)Agr_y < 100)
 										break;
 									Agr_y = Agr_y - 100;
 									spritePixelsP = v46;
@@ -1652,7 +1652,7 @@ R_Aff_Zoom_Larg_Cont1:
 											++spritePixelsP;
 											if (!Agr_Flag_x)
 												Agr_x = zoom2 + Agr_x;
-											if ((uint16)Agr_x < 0x64u)
+											if ((uint16)Agr_x < 100)
 												break;
 											Agr_x = Agr_x - 100;
 											--spritePixelsP;
@@ -1669,7 +1669,7 @@ Aff_Zoom_Larg_Cont1:
 									dest1P = _lineNbr2 + v51;
 									if (!Agr_Flag_y)
 										Agr_y = zoom2 + Agr_y;
-									if ((uint16)Agr_y < 0x64u)
+									if ((uint16)Agr_y < 100)
 										break;
 									Agr_y = Agr_y - 100;
 									spritePixelsP = v45;
@@ -1696,12 +1696,12 @@ Aff_Zoom_Larg_Cont1:
 									int v65 = spriteHeight2;
 									byte *v55 = v40;
 									Red_y = Red + Red_y;
-									if ((uint16)Red_y < 0x64u) {
+									if ((uint16)Red_y < 100) {
 										Red_x = 0;
 										int v42 = v37;
 										for (int v41 = _width; v41; v41--) {
 											Red_x = Red + Red_x;
-											if ((uint16)Red_x < 0x64u) {
+											if ((uint16)Red_x < 100) {
 												if (v42 >= clip_x && v42 < clip_x1 && *spritePixelsP)
 													*v40 = *spritePixelsP;
 												--v40;
@@ -1725,12 +1725,12 @@ Aff_Zoom_Larg_Cont1:
 									int v64 = spriteHeight2;
 									byte *v54 = dest1P;
 									Red_y = Red + Red_y;
-									if ((uint16)Red_y < 0x64u) {
+									if ((uint16)Red_y < 100) {
 										Red_x = 0;
 										int v39 = 0;
 										for (int v38 = _width; v38; v38--) {
 											Red_x = Red + Red_x;
-											if ((uint16)Red_x < 0x64u) {
+											if ((uint16)Red_x < 100) {
 												if (v39 >= clip_x && v39 < clip_x1 && *spritePixelsP)
 													*dest1P = *spritePixelsP;
 												++dest1P;
@@ -2038,17 +2038,19 @@ void GraphicsManager::NB_SCREEN() {
 
 	if (!_vm->_globals.NECESSAIRE)
 		INIT_TABLE(50, 65, Palette);
+
 	if (_lineNbr == SCREEN_WIDTH)
-		Trans_bloc2(_vesaBuffer, TABLE_COUL, 307200);
+		Trans_bloc2(_vesaBuffer, TABLE_COUL, SCREEN_WIDTH * SCREEN_HEIGHT);
 	else if (_lineNbr == (SCREEN_WIDTH * 2))
-		Trans_bloc2(_vesaBuffer, TABLE_COUL, 614400);
+		Trans_bloc2(_vesaBuffer, TABLE_COUL, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
+
 	lockScreen();
 	m_scroll16(_vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	unlockScreen();
 
 	destP = _vesaScreen;
 	srcP = _vesaBuffer;
-	memcpy(_vesaScreen, _vesaBuffer, 0x95FFCu);
+	memcpy(_vesaScreen, _vesaBuffer, 614396);
 	srcP = srcP + 614396;
 	destP = destP + 614396;
 	*destP = *srcP;

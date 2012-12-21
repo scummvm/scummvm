@@ -587,7 +587,7 @@ LABEL_1141:
 			else if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			memset(_vm->_graphicsManager._vesaBuffer, 0, 0x96000u);
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			_vm->_graphicsManager.NOFADE = true;
 			_vm->_globals.SORTIE = 151;
 		}
@@ -603,7 +603,7 @@ LABEL_1141:
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.NOFADE = true;
-			memset(_vm->_graphicsManager._vesaBuffer, 0, 0x96000u);
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			_vm->_globals.SORTIE = 151;
 		}
 		if (v76 == 605) {
@@ -620,7 +620,7 @@ LABEL_1141:
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.NOFADE = true;
-			memset(_vm->_graphicsManager._vesaBuffer, 0, 0x96000u);
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			_vm->_globals.SORTIE = 151;
 		}
 		if (v76 == 606) {
@@ -633,13 +633,13 @@ LABEL_1141:
 					_vm->_animationManager.playAnim("BOMBE3.ANM", 50, 14, 500);
 				else if (_vm->_globals.SVGA == 2)
 					_vm->_animationManager.playAnim("BOMBE3A.ANM", 50, 14, 500);
-				memset(_vm->_graphicsManager._vesaBuffer, 0, 0x96000u);
+				memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			}
 			_vm->_globals.SORTIE = 6;
 		}
 		if (v76 == 607) {
 			if (!_vm->_globals._internetFl) {
-				memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 0x301u);
+				memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 769);
 				v1 = _vm->_graphicsManager.OLD_PAL[769];
 				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
 			}

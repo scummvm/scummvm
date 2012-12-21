@@ -1555,7 +1555,7 @@ void ObjectsManager::VERIFZONE() {
 	if (_vm->_globals.PLAN_FLAG
 	        || _vm->_eventsManager._startPos.x >= v0
 	        || (v1 = _vm->_graphicsManager.ofscroll + 54, v0 >= v1)
-	        || (v1 = v2 - 1, (uint16)(v2 - 1) > 0x3Bu)) {
+	        || (v1 = v2 - 1, (uint16)(v2 - 1) > 59)) {
 		if (_visibleFl == true)
 			FLAG_VISIBLE_EFFACE = 4;
 		_visibleFl = false;
@@ -1776,7 +1776,7 @@ LABEL_241:
 		return;
 	}
 	if (_vm->_globals.g_old_sens == 3) {
-		if ((uint16)(_vm->_globals.g_old_anim - 24) > 0xBu) {
+		if ((uint16)(_vm->_globals.g_old_anim - 24) > 11) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 		} else {
@@ -1815,7 +1815,7 @@ LABEL_23:
 	}
 	if (_vm->_globals.g_old_sens != 7)
 		goto LABEL_43;
-	if ((uint16)(_vm->_globals.g_old_anim - 24) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 24) > 11) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -1885,7 +1885,7 @@ LABEL_59:
 LABEL_60:
 	if (_vm->_globals.g_old_sens != 5)
 		goto LABEL_77;
-	if ((uint16)(_vm->_globals.g_old_anim - 48) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 48) > 11) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -1917,7 +1917,7 @@ LABEL_76:
 LABEL_77:
 	if (_vm->_globals.g_old_sens != 2)
 		goto LABEL_96;
-	if ((uint16)(_vm->_globals.g_old_anim - 12) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 12) > 11) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -1955,7 +1955,7 @@ LABEL_95:
 LABEL_96:
 	if (_vm->_globals.g_old_sens != 8)
 		goto LABEL_115;
-	if ((uint16)(_vm->_globals.g_old_anim - 12) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 12) > 11) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -1993,7 +1993,7 @@ LABEL_114:
 LABEL_115:
 	if (_vm->_globals.g_old_sens != 4)
 		goto LABEL_134;
-	if ((uint16)(_vm->_globals.g_old_anim - 36) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 36) > 11) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2031,7 +2031,7 @@ LABEL_133:
 LABEL_134:
 	if (_vm->_globals.g_old_sens != 6)
 		goto LABEL_153;
-	if ((uint16)(_vm->_globals.g_old_anim - 36) > 0xBu) {
+	if ((uint16)(_vm->_globals.g_old_anim - 36) > 11) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2581,7 +2581,7 @@ void ObjectsManager::handleLeftButton() {
 	destX = _vm->_eventsManager.getMouseX();
 	destY = _vm->_eventsManager.getMouseY();
 
-	if (!_vm->_dialogsManager._inventFl && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager.ofscroll - 30 && destX < _vm->_graphicsManager.ofscroll + 50 && (uint16)(destY + 29) <= 0x4Eu) {
+	if (!_vm->_dialogsManager._inventFl && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager.ofscroll - 30 && destX < _vm->_graphicsManager.ofscroll + 50 && (uint16)(destY + 29) <= 78) {
 		v1 = _vm->_eventsManager._mouseCursorId;
 		_vm->_dialogsManager._inventFl = true;
 		_vm->_dialogsManager.showInventory();
@@ -2595,30 +2595,30 @@ void ObjectsManager::handleLeftButton() {
 	}
 	if (_vm->_globals.SAUVEGARDE->data[svField354] == 1
 	        && !_vm->_globals.PLAN_FLAG
-	        && (uint16)(destX - 533) <= 0x1Au
-	        && (uint16)(destY - 26) <= 0x21u) {
+	        && (uint16)(destX - 533) <= 26
+	        && (uint16)(destY - 26) <= 33) {
 		changeCharacterHead(CHARACTER_HOPKINS_CLONE, CHARACTER_HOPKINS);
 		return;
 	}
 	if (_vm->_globals.SAUVEGARDE->data[svField356] == 1
 	        && !_vm->_globals.PLAN_FLAG
-	        && (uint16)(destX - 533) <= 0x1Au
-	        && (uint16)(destY - 26) <= 0x21u) {
+	        && (uint16)(destX - 533) <= 26
+	        && (uint16)(destY - 26) <= 22) {
 		changeCharacterHead(CHARACTER_SAMANTHA, CHARACTER_HOPKINS);
 		return;
 	}
 	if (_vm->_globals.SAUVEGARDE->data[svField357] == 1) {
 		if (_vm->_globals.SAUVEGARDE->data[svField353] == 1
 		        && !_vm->_globals.PLAN_FLAG
-		        && (uint16)(destX - 533) <= 0x1Au
-		        && (uint16)(destY - 26) <= 0x21u) {
+		        && (uint16)(destX - 533) <= 26
+		        && (uint16)(destY - 26) <= 33) {
 			changeCharacterHead(CHARACTER_HOPKINS, CHARACTER_HOPKINS_CLONE);
 			return;
 		}
 		if (_vm->_globals.SAUVEGARDE->data[svField355] == 1
 		        && !_vm->_globals.PLAN_FLAG
-		        && (uint16)(destX - 567) <= 0x1Au
-		        && (uint16)(destY - 26) <= 0x21u) {
+		        && (uint16)(destX - 567) <= 26
+		        && (uint16)(destY - 26) <= 33) {
 			changeCharacterHead(CHARACTER_HOPKINS, CHARACTER_SAMANTHA);
 			return;
 		}
@@ -3836,9 +3836,9 @@ void ObjectsManager::initBorder(int a1) {
 		_borderPos.x = _vm->_graphicsManager.ofscroll + 374;
 	if (a1 == 6 || a1 == 12 || a1 == 18 || a1 == 24 || (uint16)(a1 - 30) <= 1u)
 		_borderPos.x = _vm->_graphicsManager.ofscroll + 428;
-	if ((uint16)(a1 - 1) <= 0x1Cu)
+	if ((uint16)(a1 - 1) <= 28)
 		_borderSpriteIndex = 0;
-	if ((uint16)(a1 - 30) <= 1u)
+	if ((uint16)(a1 - 30) <= 1)
 		_borderSpriteIndex = 2;
 	if (a1 == 30)
 		_borderPos.y = 272;
@@ -3856,11 +3856,11 @@ void ObjectsManager::initBorder(int a1) {
 		_vm->_eventsManager._mouseCursorId = 2;
 	if (a1 == 31)
 		_vm->_eventsManager._mouseCursorId = 3;
-	if ((uint16)(a1 - 1) <= 0x1Cu)
+	if ((uint16)(a1 - 1) <= 28)
 		_vm->_eventsManager._mouseCursorId = 8;
 	if (a1 == 29)
 		_vm->_eventsManager._mouseCursorId = 1;
-	if ((uint16)(a1 - 1) <= 0x1Bu && !_vm->_globals._inventory[a1]) {
+	if ((uint16)(a1 - 1) <= 27 && !_vm->_globals._inventory[a1]) {
 		_vm->_eventsManager._mouseCursorId = 0;
 		_borderPos = Common::Point(0, 0);
 		_borderSpriteIndex = 0;
@@ -4042,10 +4042,10 @@ void ObjectsManager::SPECIAL_JEU() {
 				_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
 				_vm->_globals.NOPARLE = false;
 				if (!_vm->_globals.CENSURE) {
-					v1 = _vm->_globals.allocMemory(0x3E8u);
-					memcpy(v1, _vm->_graphicsManager.Palette, 0x301u);
+					v1 = _vm->_globals.allocMemory(1000);
+					memcpy(v1, _vm->_graphicsManager.Palette, 769);
 
-					_vm->_saveLoadManager.saveFile("TEMP1.SCR", _vm->_graphicsManager._vesaScreen, 0x4B000u);
+					_vm->_saveLoadManager.saveFile("TEMP1.SCR", _vm->_graphicsManager._vesaScreen, 307200);
 
 					if (!_vm->_graphicsManager._lineNbr)
 						_vm->_graphicsManager.ofscroll = 0;
@@ -4065,7 +4065,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
 
 					PERSO_ON = false;
-					memcpy(_vm->_graphicsManager.Palette, v1, 0x301u);
+					memcpy(_vm->_graphicsManager.Palette, v1, 769);
 					_vm->_graphicsManager.SHOW_PALETTE();
 					_vm->_globals.freeMemory(v1);
 					_vm->_graphicsManager.lockScreen();
@@ -4073,7 +4073,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					_vm->_graphicsManager.unlockScreen();
 					v2 = _vm->_graphicsManager._vesaBuffer;
 					v3 = _vm->_graphicsManager._vesaScreen;
-					memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 0x95FFCu);
+					memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);
 					v3 = v3 + 614396;
 					v2 = v2 + 614396;
 					*v2 = *v3;
@@ -4910,9 +4910,9 @@ int ObjectsManager::CALC_PROPRE(int idx) {
 		v2 = 20 * (5 * v4 - 165) / -67;
 	}
 	if (v2 < 0)
-		return _vm->_graphicsManager.zoomOut(0x19u, -v2);
+		return _vm->_graphicsManager.zoomOut(25, -v2);
 	if (v2 > 0)
-		return _vm->_graphicsManager.zoomIn(0x19u, v2);
+		return _vm->_graphicsManager.zoomIn(25, v2);
 
 	return v1;
 }

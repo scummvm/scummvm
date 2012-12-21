@@ -100,9 +100,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 	if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
+		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 307200);
 	else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
+		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 614400);
 
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager.ofscroll = 0;
@@ -162,11 +162,11 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_graphicsManager.unlockScreen();
 	v8 = _vm->_graphicsManager._vesaBuffer;
 	v9 = _vm->_graphicsManager._vesaScreen;
-	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 0x95FFCu);
+	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);
 	v9 = v9 + 614396;
 	v8 = v8 + 614396;
 	*v8 = *v9;
-	v8 = v8 + 2;
+	v8 += 2;
 	*v8 = *(v9 + 2);
 	v10 = v8 + 1;
 	_vm->_globals._disableInventFl = oldDisableInventFl;
@@ -543,23 +543,23 @@ void TalkManager::CHERCHE_PAL(int a1, int a2) {
 		*(palette + 762) = 0;
 		*(palette + 763) = 0;
 		*(palette + 764) = 0;
-		*(palette + 765) = 0xe0;
-		*(palette + 766) = 0xe0;
-		*(palette + 767) = 0xff;
-		*(palette + 759) = 0xff;
-		*(palette + 760) = 0xff;
+		*(palette + 765) = 224;
+		*(palette + 766) = 224;
+		*(palette + 767) = 255;
+		*(palette + 759) = 255;
+		*(palette + 760) = 255;
 		*(palette + 761) = 86;
 		*palette = 0;
 		*(palette + 1) = 0;
 		*(palette + 2) = 0;
 	}
 	if (a2 == 1) {
-		*(palette + 765) = 0xe0;
-		*(palette + 766) = 0xe0;
-		*(palette + 767) = 0xff;
-		*(palette + 759) = 0xff;
-		*(palette + 760) = 0xff;
-		*(palette + 761) = 0xff;
+		*(palette + 765) = 224;
+		*(palette + 766) = 224;
+		*(palette + 767) = 255;
+		*(palette + 759) = 255;
+		*(palette + 760) = 255;
+		*(palette + 761) = 255;
 		*palette = 0;
 		*(palette + 1) = 0;
 		*(palette + 2) = 0;
@@ -656,9 +656,9 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	v19 = ptr;
 	for (int i = 0; i < 2048; i++) {
 		v13 = *v19;
-		if ((byte)(*v19 + 46) > 0x1Bu) {
-			if ((byte)(v13 + 80) > 0x1Bu) {
-				if ((byte)(v13 - 65) <= 0x19u || (byte)(v13 - 97) <= 0x19u)
+		if ((byte)(*v19 + 46) > 27) {
+			if ((byte)(v13 + 80) > 27) {
+				if ((byte)(v13 - 65) <= 25 || (byte)(v13 - 97) <= 25)
 					v13 = 32;
 			} else {
 				v13 -= 79;
@@ -1004,7 +1004,7 @@ LABEL_2:
 				loopCond = false;
 				v13 = 1;
 				do {
-					v10 =  _vm->_scriptManager.Traduction(ptr + 20 * v13);
+					v10 = _vm->_scriptManager.Traduction(ptr + 20 * v13);
 					if (_vm->shouldQuit())
 						return;
 
@@ -1189,9 +1189,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 	if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
+		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 307200);
 	else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
+		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 614400);
 
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager.ofscroll = 0;
@@ -1274,7 +1274,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	v14 = _vm->_graphicsManager._vesaBuffer;
 	v15 = _vm->_graphicsManager._vesaScreen;
-	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 0x95FFCu);
+	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);
 	v15 = v15 + 614396;
 	v14 = v14 + 614396;
 	WRITE_LE_UINT16(v14, (int16)READ_LE_UINT16(v15));
