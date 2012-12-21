@@ -53,7 +53,8 @@ namespace {
 #define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, true, Kyra::GI_LOL)
-#define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, false, true, true, false, false, Kyra::GI_LOL)
+#define LOL_PC9801_FLAGS FLAGS(false, false, false, false, true, true, false, false, Kyra::GI_LOL)
+#define LOL_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, false, false, Kyra::GI_LOL)
 #define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
@@ -1462,7 +1463,24 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIPC98, GUIO_RENDERPC9801, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
 		},
-		LOL_PC98_SJIS_FLAGS
+		LOL_PC9801_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			0,
+			{
+				{ "GENERAL.PAK", 0, "2e4d4ce54bac9162e11fcba6907b576e", -1 },
+				{ "TMUS.PAK", 0, "5543dae575164e51856f5a49cfd6b368", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::JA_JPN,
+			Common::kPlatformFMTowns,
+			ADGF_NO_FLAGS,
+			GUIO5(GUIO_NOSPEECH, GUIO_MIDITOWNS, GUIO_RENDERFMTOWNS, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FMTOWNS_FLAGS
 	},
 
 	{
