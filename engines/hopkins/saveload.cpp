@@ -253,7 +253,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
-	s.syncBytes(&_vm->_globals.SAUVEGARDE->data[0], 0x802);
+	s.syncBytes(&_vm->_globals.SAUVEGARDE->data[0], 2050);
 	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_cloneHopkins);
 	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_realHopkins);
 	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_samantha);

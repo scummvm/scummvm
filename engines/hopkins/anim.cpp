@@ -61,14 +61,14 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 	hasScreenCopy = false;
 	screenP = _vm->_graphicsManager._vesaScreen;
-	ptr = _vm->_globals.allocMemory(0x14u);
+	ptr = _vm->_globals.allocMemory(20);
 
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPANM, filename);
 	if (!f.open(_vm->_globals.NFICHIER))
 		error("File not found - %s", _vm->_globals.NFICHIER.c_str());
 
 	f.skip(6);
-	f.read(_vm->_graphicsManager.Palette, 0x320u);
+	f.read(_vm->_graphicsManager.Palette, 800);
 	f.skip(4);
 	nbytes = f.readUint32LE();
 	f.skip(14);
@@ -81,12 +81,12 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	}
 	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
-		screenCopy = _vm->_globals.allocMemory(0x4B000u);
-		memcpy(screenCopy, screenP, 0x4B000u);
+		screenCopy = _vm->_globals.allocMemory(307200);
+		memcpy(screenCopy, screenP, 307200);
 	}
 	if (NO_SEQ) {
 		if (hasScreenCopy)
-			memcpy(screenCopy, _vm->_graphicsManager._vesaBuffer, 0x4B000u);
+			memcpy(screenCopy, _vm->_graphicsManager._vesaBuffer, 307200);
 		_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 	} else {
 		_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
@@ -170,17 +170,17 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	_vm->_soundManager.VERIF_SOUND();
 EXIT:
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
-		screenCopy = _vm->_globals.allocMemory(0x4B000u);
+		screenCopy = _vm->_globals.allocMemory(307200);
 
 		f.seek(0);
 		f.skip(6);
-		f.read(_vm->_graphicsManager.Palette, 0x320u);
+		f.read(_vm->_graphicsManager.Palette, 800);
 		f.skip(4);
 		nbytes = f.readUint32LE();
 		f.skip(14);
 		f.read(screenP, nbytes);
 
-		memcpy(screenCopy, screenP, 0x4B000u);
+		memcpy(screenCopy, screenP, 307200);
 
 		breakFlag = false;
 		do {
@@ -232,26 +232,26 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 
 	v8 = 0;
 	while (!_vm->shouldQuit()) {
-		memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 0x301u);
+		memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 769);
 
 		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 
 		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
+			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 307200);
 		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
+			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 614400);
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager.ofscroll = 0;
 
 		v12 = _vm->_graphicsManager._vesaScreen;
-		v13 = _vm->_globals.allocMemory(0x14u);
+		v13 = _vm->_globals.allocMemory(20);
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANM, filename);
 
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
 		f.read(&buf, 6);
-		f.read(_vm->_graphicsManager.Palette, 0x320u);
+		f.read(_vm->_graphicsManager.Palette, 800);
 		f.read(&buf, 4);
 		nbytes = f.readUint32LE();
 		f.readUint32LE();
@@ -273,12 +273,12 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
 		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 			v8 = 1;
-			ptr = _vm->_globals.allocMemory(0x4B000u);
-			memcpy(ptr, v12, 0x4B000u);
+			ptr = _vm->_globals.allocMemory(307200);
+			memcpy(ptr, v12, 307200);
 		}
 		if (_vm->_animationManager.NO_SEQ) {
 			if (v8 == 1)
-				memcpy(ptr, _vm->_graphicsManager._vesaBuffer, 0x4B000u);
+				memcpy(ptr, _vm->_graphicsManager._vesaBuffer, 307200);
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 		} else {
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
@@ -314,7 +314,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-		memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
+		memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 769);
 		_vm->_graphicsManager.Cls_Pal();
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
@@ -322,7 +322,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.SCROLL = v11;
 		_vm->_graphicsManager.scrollScreen(v11);
 		if (_vm->_graphicsManager.DOUBLE_ECRAN) {
-			_vm->_graphicsManager.SCANLINE(0x500u);
+			_vm->_graphicsManager.SCANLINE(1280);
 			_vm->_graphicsManager.max_x = 1280;
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -345,10 +345,10 @@ LABEL_48:
 	for (;;) {
 		++v15;
 		_vm->_soundManager.playAnim_SOUND(v15);
-		memset(&buf, 0, 6u);
-		memset(v13, 0, 0x13u);
+		memset(&buf, 0, 6);
+		memset(v13, 0, 19);
 
-		if (f.read(v13, 0x10) != 0x10)
+		if (f.read(v13, 16) != 16)
 			v5 = -1;
 
 		if (strncmp((const char *)v13, "IMAGE=", 6))
@@ -388,7 +388,7 @@ LABEL_88:
 						_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 						g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-						memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
+						memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 769);
 						_vm->_graphicsManager.Cls_Pal();
 						_vm->_graphicsManager.lockScreen();
 						_vm->_graphicsManager.clearScreen();
@@ -396,7 +396,7 @@ LABEL_88:
 						_vm->_graphicsManager.SCROLL = v11;
 						_vm->_graphicsManager.scrollScreen(v11);
 						if (_vm->_graphicsManager.DOUBLE_ECRAN) {
-							_vm->_graphicsManager.SCANLINE(0x500u);
+							_vm->_graphicsManager.SCANLINE(1280);
 							_vm->_graphicsManager.max_x = 1280;
 							_vm->_graphicsManager.lockScreen();
 							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -430,7 +430,7 @@ LABEL_88:
 			_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 			g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-			memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
+			memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 769);
 			_vm->_graphicsManager.Cls_Pal();
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.clearScreen();
@@ -438,7 +438,7 @@ LABEL_88:
 			_vm->_graphicsManager.SCROLL = v11;
 			_vm->_graphicsManager.scrollScreen(v11);
 			if (_vm->_graphicsManager.DOUBLE_ECRAN) {
-				_vm->_graphicsManager.SCANLINE(0x500u);
+				_vm->_graphicsManager.SCANLINE(1280);
 				_vm->_graphicsManager.max_x = 1280;
 				_vm->_graphicsManager.lockScreen();
 				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -462,12 +462,12 @@ LABEL_114:
 
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v8) {
 		byte *ptra;
-		ptra = _vm->_globals.allocMemory(0x4B000u);
+		ptra = _vm->_globals.allocMemory(307200);
 
 		f.seek(0);
 		f.read(&buf, 6);
-		f.read(_vm->_graphicsManager.Palette, 0x320u);
-		f.read(&buf, 4u);
+		f.read(_vm->_graphicsManager.Palette, 800);
+		f.read(&buf, 4);
 		nbytes = f.readUint32LE();
 
 		f.readUint32LE();
@@ -478,12 +478,12 @@ LABEL_114:
 		f.readUint16LE();
 
 		f.read(v12, nbytes);
-		memcpy(ptra, v12, 0x4B000u);
+		memcpy(ptra, v12, 307200);
 
 		int v6 = 0;
 		do {
-			memset(&buf, 0, 6u);
-			memset(v13, 0, 0x13u);
+			memset(&buf, 0, 6);
+			memset(v13, 0, 19);
 			if (f.read(v13, 16) != 16)
 				v6 = -1;
 			if (strncmp((const char *)v13, "IMAGE=", 6))
@@ -509,7 +509,7 @@ LABEL_114:
 	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 0x301u);
+	memcpy(_vm->_graphicsManager.Palette, _vm->_graphicsManager.OLD_PAL, 769);
 	_vm->_graphicsManager.Cls_Pal();
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.clearScreen();
@@ -517,7 +517,7 @@ LABEL_114:
 	_vm->_graphicsManager.SCROLL = v11;
 	_vm->_graphicsManager.scrollScreen(v11);
 	if (_vm->_graphicsManager.DOUBLE_ECRAN) {
-		_vm->_graphicsManager.SCANLINE(0x500u);
+		_vm->_graphicsManager.SCANLINE(1280);
 		_vm->_graphicsManager.max_x = 1280;
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -761,7 +761,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 				} while (v8 != 1);
 				_vm->_globals.Bqe_Anim[v19]._data = _vm->_globals.allocMemory(v7 + 50);
 				_vm->_globals.Bqe_Anim[animIndex].field4 = 1;
-				memcpy(_vm->_globals.Bqe_Anim[v19]._data, v21 + data + 5, 0x14u);
+				memcpy(_vm->_globals.Bqe_Anim[v19]._data, v21 + data + 5, 20);
 
 				byte *dataP = _vm->_globals.Bqe_Anim[v19]._data;
 				v9 = dataP + 20;
@@ -828,20 +828,20 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x4B000u);
+			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 307200);
 		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 0x96000u);
+			_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 614400);
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager.ofscroll = 0;
 	}
 	v9 = _vm->_graphicsManager._vesaScreen;
-	v10 = _vm->_globals.allocMemory(0x16u);
+	v10 = _vm->_globals.allocMemory(22);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSEQ, file);
 	if (!f.open(_vm->_globals.NFICHIER))
 		error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
 
 	f.skip(6);
-	f.read(_vm->_graphicsManager.Palette, 0x320u);
+	f.read(_vm->_graphicsManager.Palette, 800);
 	f.skip(4);
 	nbytes = f.readUint32LE();
 	f.skip(14);
@@ -849,12 +849,12 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 		v7 = 1;
-		ptr = _vm->_globals.allocMemory(0x4B000u);
-		memcpy(ptr, v9, 0x4B000u);
+		ptr = _vm->_globals.allocMemory(307200);
+		memcpy(ptr, v9, 307200);
 	}
 	if (_vm->_animationManager.NO_SEQ) {
 		if (v7 == 1)
-			memcpy(ptr, _vm->_graphicsManager._vesaBuffer, 0x4B000u);
+			memcpy(ptr, _vm->_graphicsManager._vesaBuffer, 307200);
 		if (!_vm->getIsDemo()) {
 			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -910,7 +910,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	do {
 		++soundNumber;
 		_vm->_soundManager.playAnim_SOUND(soundNumber);
-		memset(v10, 0, 0x13u);
+		memset(v10, 0, 19);
 		if (f.read(v10, 16) != 16)
 			readError = true;
 
@@ -992,14 +992,14 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 		_vm->_eventsManager._mouseFl = false;
 		v10 = _vm->_graphicsManager._vesaScreen;
-		v11 = _vm->_globals.allocMemory(0x16u);
+		v11 = _vm->_globals.allocMemory(22);
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSEQ, file);
 
 		if (!f.open(_vm->_globals.NFICHIER))
 			error("File not found - %s", _vm->_globals.NFICHIER.c_str());
 
 		f.skip(6);
-		f.read(_vm->_graphicsManager.Palette, 0x320u);
+		f.read(_vm->_graphicsManager.Palette, 800);
 		f.skip(4);
 		nbytes = f.readUint32LE();
 		f.readUint32LE();
@@ -1012,13 +1012,13 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 			v7 = 1;
-			ptr = _vm->_globals.allocMemory(0x4B000u);
-			memcpy((void *)ptr, v10, 0x4B000u);
+			ptr = _vm->_globals.allocMemory(307200);
+			memcpy((void *)ptr, v10, 307200);
 		}
 		if (_vm->_animationManager.NO_SEQ) {
 			if (v7 == 1) {
 				assert(ptr != NULL);
-				memcpy((void *)ptr, _vm->_graphicsManager._vesaBuffer, 0x4B000u);
+				memcpy((void *)ptr, _vm->_graphicsManager._vesaBuffer, 307200);
 			}
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
 		} else {
@@ -1061,7 +1061,7 @@ LABEL_23:
 	while (!_vm->shouldQuit()) {
 		_vm->_soundManager.playAnim_SOUND(v13++);
 
-		memset(v11, 0, 0x13u);
+		memset(v11, 0, 19);
 		if (f.read(v11, 16) != 16)
 			v4 = true;
 
@@ -1113,11 +1113,11 @@ LABEL_53:
 	}
 LABEL_54:
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v7) {
-		byte *ptra = _vm->_globals.allocMemory(0x4B000u);
+		byte *ptra = _vm->_globals.allocMemory(307200);
 
 		f.seek(0);
 		f.skip(6);
-		f.read(_vm->_graphicsManager.Palette, 0x320u);
+		f.read(_vm->_graphicsManager.Palette, 800);
 		f.skip(4);
 		nbytes = f.readUint32LE();
 
@@ -1130,10 +1130,10 @@ LABEL_54:
 
 		f.read(v10, nbytes);
 
-		memcpy(ptra, v10, 0x4B000u);
+		memcpy(ptra, v10, 307200);
 		bool v5 = false;
 		do {
-			memset(v11, 0, 0x13u);
+			memset(v11, 0, 19);
 			if (f.read(v11, 16) != 16)
 				v5 = true;
 

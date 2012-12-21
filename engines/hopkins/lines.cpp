@@ -64,23 +64,23 @@ int LinesManager::ZONE_OBJET(int a1, int a2) {
 	int v2;
 
 	v2 = 0;
-	if ((uint)(a2 - 120) <= 0x21u)
+	if ((uint)(a2 - 120) <= 33)
 		v2 = OPTI_ZONE(a1, 1, 0);
-	if ((uint)(a2 - 154) <= 0x25u)
+	if ((uint)(a2 - 154) <= 37)
 		v2 = OPTI_ZONE(a1, 7, 0);
-	if ((uint)(a2 - 192) <= 0x25u)
+	if ((uint)(a2 - 192) <= 37)
 		v2 = OPTI_ZONE(a1, 13, 0);
-	if ((uint)(a2 - 230) <= 0x25u)
+	if ((uint)(a2 - 230) <= 37)
 		v2 = OPTI_ZONE(a1, 19, 0);
-	if ((uint)(a2 - 268) <= 0x25u)
+	if ((uint)(a2 - 268) <= 37)
 		v2 = OPTI_ZONE(a1, 25, 1);
-	if ((uint)(a2 - 268) <= 0x14u && a1 >= _vm->_graphicsManager.ofscroll + 424 && a1 <= _vm->_graphicsManager.ofscroll + 478)
+	if ((uint)(a2 - 268) <= 20 && a1 >= _vm->_graphicsManager.ofscroll + 424 && a1 <= _vm->_graphicsManager.ofscroll + 478)
 		v2 = 30;
-	if ((uint)(a2 - 290) <= 0x10u && a1 >= _vm->_graphicsManager.ofscroll + 424 && a1 <= _vm->_graphicsManager.ofscroll + 478)
+	if ((uint)(a2 - 290) <= 16 && a1 >= _vm->_graphicsManager.ofscroll + 424 && a1 <= _vm->_graphicsManager.ofscroll + 478)
 		v2 = 31;
 	if (a1 < _vm->_graphicsManager.ofscroll + 152 || a1 > _vm->_graphicsManager.ofscroll + 484)
 		v2 = 32;
-	if ((uint)(a2 - 114) > 0xC0u)
+	if ((uint)(a2 - 114) > 192)
 		v2 = 32;
 	return v2;
 }
@@ -313,15 +313,15 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 			Ligne[idx].field8 = 4;
 		}
 	}
-	if (v11 == 1 && (unsigned int)(v37 - 251) <= 0x2EC) {
+	if (v11 == 1 && (unsigned int)(v37 - 251) <= 748) {
 		Ligne[idx].field6 = 4;
 		Ligne[idx].field8 = 8;
 	}
-	if (v11 == -1 && (unsigned int)(v37 - 251) <= 0x2EC) {
+	if (v11 == -1 && (unsigned int)(v37 - 251) <= 748) {
 		Ligne[idx].field6 = 6;
 		Ligne[idx].field8 = 2;
 	}
-	if (v11 == 1 && (unsigned int)(v37 + 999) <= 0x2EC) {
+	if (v11 == 1 && (unsigned int)(v37 + 999) <= 748) {
 		Ligne[idx].field6 = 2;
 		Ligne[idx].field8 = 6;
 	}
@@ -2458,27 +2458,27 @@ LABEL_150:
 		v13 = (int16)v101 / 1000;
 		v94 = (int16)v99 / 1000;
 		v91 = -1;
-		if ((int16)v99 / 1000 == -1 && (unsigned int)v101 <= 0x96)
+		if ((int16)v99 / 1000 == -1 && (unsigned int)v101 <= 150)
 			v91 = 1;
 		if (v13 == 1) {
-			if ((unsigned int)(v99 + 1) <= 0x97)
+			if ((unsigned int)(v99 + 1) <= 151)
 				v91 = 3;
-			if ((unsigned int)v99 <= 0x96)
+			if ((unsigned int)v99 <= 150)
 				v91 = 3;
 		}
 		if (v94 == 1) {
-			if ((unsigned int)v101 <= 0x96)
+			if ((unsigned int)v101 <= 150)
 				v91 = 5;
-			if ((unsigned int)(v101 + 150) <= 0x96)
+			if ((unsigned int)(v101 + 150) <= 150)
 				v91 = 5;
 		}
 		if (v13 == -1) {
-			if ((unsigned int)v99 <= 0x96)
+			if ((unsigned int)v99 <= 150)
 				v91 = 7;
-			if ((unsigned int)(v99 + 150) <= 0x96)
+			if ((unsigned int)(v99 + 150) <= 150)
 				v91 = 7;
 		}
-		if (v94 == -1 && (unsigned int)(v101 + 150) <= 0x96)
+		if (v94 == -1 && (unsigned int)(v101 + 150) <= 150)
 			v91 = 1;
 		if (v91 == -1 && !VERIF_SMOOTH(v7, v109, a3, a4) && SMOOTH_MOVE(v7, v109, a3, a4) != -1)
 			break;
@@ -2530,47 +2530,47 @@ LABEL_72:
 			v91 = 8;
 LABEL_103:
 			if (v96 == -1) {
-				if ((unsigned int)v102 <= 0x1FE)
+				if ((unsigned int)v102 <= 510)
 					v91 = 1;
-				if ((unsigned int)(v102 - 510) <= 0x1EA)
+				if ((unsigned int)(v102 - 510) <= 490)
 					v91 = 2;
 			}
 		}
 		if (v22 == 1) {
-			if ((unsigned int)(v100 + 1) <= 0x1FF)
+			if ((unsigned int)(v100 + 1) <= 511)
 				v91 = 2;
-			if ((unsigned int)(v100 + 510) <= 0x1FE)
+			if ((unsigned int)(v100 + 510) <= 510)
 				v91 = 3;
-			if ((unsigned int)v100 <= 0x1FE)
+			if ((unsigned int)v100 <= 510)
 				v91 = 3;
-			if ((unsigned int)(v100 - 510) <= 0x1EA)
+			if ((unsigned int)(v100 - 510) <= 490)
 				v91 = 4;
 		}
 		if (v96 == 1) {
-			if ((unsigned int)(v102 - 510) <= 0x1EA)
+			if ((unsigned int)(v102 - 510) <= 490)
 				v91 = 4;
-			if ((unsigned int)v102 <= 0x1FE)
+			if ((unsigned int)v102 <= 510)
 				v91 = 5;
 			// CHECKME: The two conditions on v102 are not compatible!
 			if (v102 >= -1 && v102 <= -510)
 				v91 = 6;
-			if ((unsigned int)(v102 + 510) <= 0x1FE)
+			if ((unsigned int)(v102 + 510) <= 510)
 				v91 = 5;
 		}
 		if (v22 == -1) {
-			if ((unsigned int)(v100 - 510) <= 0x1EA)
+			if ((unsigned int)(v100 - 510) <= 490)
 				v91 = 6;
-			if ((unsigned int)v100 <= 0x1FE)
+			if ((unsigned int)v100 <= 510)
 				v91 = 7;
-			if ((unsigned int)(v100 + 1000) <= 0x1EA)
+			if ((unsigned int)(v100 + 1000) <= 490)
 				v91 = 8;
-			if ((unsigned int)(v100 + 510) <= 0x1FE)
+			if ((unsigned int)(v100 + 510) <= 510)
 				v91 = 7;
 		}
 		if (v96 == -1) {
-			if ((unsigned int)(v102 + 1000) <= 0x1EA)
+			if ((unsigned int)(v102 + 1000) <= 490)
 				v91 = 8;
-			if ((unsigned int)(v102 + 510) <= 0x1FE)
+			if ((unsigned int)(v102 + 510) <= 510)
 				v91 = 1;
 		}
 		v23 = 0;
@@ -3133,10 +3133,8 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 	int v15;
 	int v16;
 	int v17;
-	int v18;
 	int v19;
 	int v20;
-	int v21;
 	int v22;
 	int v23;
 	int v24;
@@ -3144,10 +3142,8 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 	int v26;
 	int v27;
 	int v28;
-	int v29;
 	int v30;
 	int v31;
-	int v32;
 	int v33;
 	int v34;
 	int v35;
@@ -3200,10 +3196,9 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 							v48 = _vm->_globals.STAILLE[v63];
 							v45 = v63;
 							v25 = _vm->_graphicsManager.zoomOut(v25, v28);
-							v29 = v27;
-							if ((v27 & 0x80000000u) != 0)
-								v29 = -v27;
-							v40 = _vm->_graphicsManager.zoomOut(v40, v29);
+							if (v27 < 0)
+								v27 = -v27;
+							v40 = _vm->_graphicsManager.zoomOut(v40, v27);
 							v63 = v45;
 							v26 = v48;
 						}
@@ -3214,10 +3209,9 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 								v31 = -v26;
 							v46 = v63;
 							v25 = _vm->_graphicsManager.zoomIn(v25, v31);
-							v32 = v30;
-							if ((v30 & 0x80000000u) != 0)
-								v32 = -v30;
-							v40 = _vm->_graphicsManager.zoomIn(v40, v32);
+							if (v30 < 0)
+								v30 = -v30;
+							v40 = _vm->_graphicsManager.zoomIn(v40, v30);
 							v63 = v46;
 						}
 						v33 = v63 + v40;
@@ -3263,10 +3257,9 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 						v47 = _vm->_globals.STAILLE[v63];
 						v43 = v63;
 						v14 = _vm->_graphicsManager.zoomOut(v14, v17);
-						v18 = v16;
-						if ((v16 & 0x80000000u) != 0)
-							v18 = -v16;
-						v39 = _vm->_graphicsManager.zoomOut(v39, v18);
+						if (v16 < 0)
+							v16 = -v16;
+						v39 = _vm->_graphicsManager.zoomOut(v39, v16);
 						v63 = v43;
 						v15 = v47;
 					}
@@ -3277,10 +3270,9 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 							v20 = -v15;
 						v44 = v63;
 						v14 = _vm->_graphicsManager.zoomIn(v14, v20);
-						v21 = v19;
-						if ((v19 & 0x80000000u) != 0)
-							v21 = -v19;
-						v39 = _vm->_graphicsManager.zoomIn(v39, v21);
+						if (v19 < 0)
+							v19 = -v19;
+						v39 = _vm->_graphicsManager.zoomIn(v39, v19);
 						v63 = v44;
 					}
 					v22 = v63 + v39;
@@ -3317,8 +3309,8 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 			do {
 				v10 = _vm->_globals.Hopkins[v51].field2;
 				v42 = v63;
-				v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field0, 0x19u);
-				v38 = _vm->_graphicsManager.zoomOut(v10, 0x19u);
+				v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field0, 25);
+				v38 = _vm->_graphicsManager.zoomOut(v10, 25);
 				v63 = v42;
 				v12 = 0;
 				if (v11 > 0) {
@@ -3353,8 +3345,8 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 		do {
 			v6 = _vm->_globals.Hopkins[v50].field2;
 			v41 = v63;
-			v7 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v50].field0, 0x19u);
-			v37 = _vm->_graphicsManager.zoomOut(v6, 0x19u);
+			v7 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v50].field0, 25);
+			v37 = _vm->_graphicsManager.zoomOut(v6, 25);
 			v63 = v41;
 			v8 = 0;
 			if (v7 > 0) {

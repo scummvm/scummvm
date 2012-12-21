@@ -236,7 +236,7 @@ void DialogsManager::showOptionsDialog() {
 				_vm->_globals._speed = 2;
 			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 221 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 246)
 				_vm->_globals.SVGA = 2;
-			if (mousePos.x < _vm->_graphicsManager.ofscroll + 165 || mousePos.x > _vm->_graphicsManager.ofscroll + 496 || (uint)(mousePos.y - 107) > 0xD3u)
+			if (mousePos.x < _vm->_graphicsManager.ofscroll + 165 || mousePos.x > _vm->_graphicsManager.ofscroll + 496 || (uint)(mousePos.y - 107) > 211)
 				doneFlag = true;
 		}
 
@@ -667,22 +667,22 @@ void DialogsManager::showSaveLoad(int a1) {
 
 			switch (slotNumber) {
 			case 1:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 112, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 112, 128, 87);
 				break;
 			case 2:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 112, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 112, 128, 87);
 				break;
 			case 3:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 203, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 203, 128, 87);
 				break;
 			case 4:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 203, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 203, 128, 87);
 				break;
 			case 5:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 294, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 294, 128, 87);
 				break;
 			case 6:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 294, 0x80u, 87);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 294, 128, 87);
 				break;
 			}
 
@@ -692,7 +692,7 @@ void DialogsManager::showSaveLoad(int a1) {
 		}
 	}
 
-	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 0x112u, 353);
+	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
 	_vm->_objectsManager.SL_FLAG = true;
 	_vm->_objectsManager.SL_MODE = a1;
 	_vm->_objectsManager.SL_X = 0;
@@ -708,25 +708,25 @@ int DialogsManager::searchSavegames() {
 	int yp = _vm->_eventsManager.getMouseY();
 
 	_vm->_graphicsManager.ofscroll = _vm->_eventsManager._startPos.x;
-	if ((uint16)(yp - 112) <= 0x56u) {
+	if ((uint16)(yp - 112) <= 86) {
 		if (xp > _vm->_eventsManager._startPos.x + 189 && xp < _vm->_eventsManager._startPos.x + 318)
 			slotNumber = 1;
-		if ((uint16)(yp - 112) <= 0x56u && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
+		if ((uint16)(yp - 112) <= 86 && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
 			slotNumber = 2;
 	}
-	if ((uint16)(yp - 203) <= 0x56u) {
+	if ((uint16)(yp - 203) <= 86) {
 		if (xp > _vm->_graphicsManager.ofscroll + 189 && xp < _vm->_graphicsManager.ofscroll + 318)
 			slotNumber = 3;
-		if ((uint16)(yp - 203) <= 0x56u && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
+		if ((uint16)(yp - 203) <= 86 && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
 			slotNumber = 4;
 	}
-	if ((uint16)(yp - 294) <= 0x56u) {
+	if ((uint16)(yp - 294) <= 86) {
 		if (xp > _vm->_graphicsManager.ofscroll + 189 && xp < _vm->_graphicsManager.ofscroll + 318)
 			slotNumber = 5;
-		if ((uint16)(yp - 294) <= 0x56u && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
+		if ((uint16)(yp - 294) <= 86 && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
 			slotNumber = 6;
 	}
-	if ((uint16)(yp - 388) <= 0x10u && xp > _vm->_graphicsManager.ofscroll + 273 && xp < _vm->_graphicsManager.ofscroll + 355)
+	if ((uint16)(yp - 388) <= 16 && xp > _vm->_graphicsManager.ofscroll + 273 && xp < _vm->_graphicsManager.ofscroll + 355)
 		slotNumber = 7;
 
 	switch (slotNumber) {

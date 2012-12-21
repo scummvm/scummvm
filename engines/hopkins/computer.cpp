@@ -297,7 +297,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_eventsManager.VBL();
 		_vm->_eventsManager.delay(1000);
 
-		memset(_vm->_graphicsManager._vesaBuffer, 0, 0x4AFFFu);
+		memset(_vm->_graphicsManager._vesaBuffer, 0, 307199);
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
@@ -674,7 +674,7 @@ void ComputerManager::setModeVGA256() {
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.Cls_Pal();
-	_vm->_graphicsManager.SCANLINE(0x140u);
+	_vm->_graphicsManager.SCANLINE(320);
 }
 
 /**
@@ -1077,8 +1077,8 @@ void ComputerManager::saveScore() {
 		} while (!v3);
 	}
 
-	ptr = _vm->_globals.allocMemory(0x64u);
-	memset(ptr, 0, 0x63u);
+	ptr = _vm->_globals.allocMemory(100);
+	memset(ptr, 0, 99);
 	for (int v5 = 0; v5 <= 5; v5++) {
 		v6 = 16 * v5;
 		v14 = v16[v5];
@@ -1102,7 +1102,7 @@ void ComputerManager::saveScore() {
 	}
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
-	_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, ptr, 0x64u);
+	_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, ptr, 100);
 	_vm->_globals.freeMemory(ptr);
 }
 
@@ -1121,7 +1121,7 @@ void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int a4)
 		v5 = 0;
 	if ((byte)(v4 - 48) <= 9u)
 		v5 = (byte)v4 - 48;
-	if ((byte)(v4 - 65) <= 0x19u)
+	if ((byte)(v4 - 65) <= 25)
 		v5 = (byte)v4 - 55;
 	if (v4 == 32)
 		v5 = 36;

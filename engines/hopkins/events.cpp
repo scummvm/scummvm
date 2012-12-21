@@ -322,9 +322,9 @@ void EventsManager::VBL() {
 			_vm->_graphicsManager.REDRAW = 0;
 		} else {
 			if (_vm->_globals.iRegul == 3)
-				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll, 50, 0x280u, 340, 0, 50);
+				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll, 50, 640, 340, 0, 50);
 			else
-				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll, 20, 0x280u, 440, 0, 20);
+				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll, 20, 640, 440, 0, 20);
 			--_vm->_graphicsManager.REDRAW;
 		}
 		_vm->_graphicsManager.unlockScreen();

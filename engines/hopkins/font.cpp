@@ -194,23 +194,23 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			v69 = 2048;
 			f.seek(_index[messageId]);
 
-			_tempText = _vm->_globals.allocMemory(0x80Au);
+			_tempText = _vm->_globals.allocMemory(2058);
 			if (_tempText == g_PTRNUL)
 				error("Error allocating text");
 
-			Common::fill(&_tempText[0], &_tempText[0x80a], 0);
-			f.read(_tempText, 0x800u);
+			Common::fill(&_tempText[0], &_tempText[2058], 0);
+			f.read(_tempText, 2048);
 			f.close();
 			_vm->_globals.texte_long = 2048;
 		} else {
 			v69 = 100;
 			_vm->_globals.texte_long = 100;
-			v9 = _vm->_globals.allocMemory(0x6Eu);
-			Common::fill(&v9[0], &v9[0x6e], 0);
+			v9 = _vm->_globals.allocMemory(110);
+			Common::fill(&v9[0], &v9[110], 0);
 
 			_tempText = v9;
 			const byte *v10 = _vm->_globals.BUF_ZONE + _index[messageId];
-			memcpy(v9, v10, 0x60u);
+			memcpy(v9, v10, 96);
 			v11 = 0;
 			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
 		}
@@ -220,9 +220,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			goto LABEL_43;
 		for (int v63 = 0; v63 < v69; v63++) {
 			byte v13 = *v59;
-			if ((byte)(*v59 + 46) > 0x1Bu) {
-				if ((byte)(v13 + 80) > 0x1Bu) {
-					if ((byte)(v13 - 65) <= 0x19u || (byte)(v13 - 97) <= 0x19u)
+			if ((byte)(*v59 + 46) > 27) {
+				if ((byte)(v13 + 80) > 27) {
+					if ((byte)(v13 - 65) <= 25 || (byte)(v13 - 97) <= 25)
 						v13 = 32;
 				} else {
 					v13 -= 79;
@@ -254,9 +254,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			if (v64 + 1 > 0) {
 				for (int v15 = 0; v15 < v64 + 1; v15++) {
 					byte v16 = *(v60 + v15);
-					if ((byte)v16 <= 0x1Fu)
+					if (v16 <= 31)
 						v16 = 32;
-					_vm->_globals.largeur_boite += _vm->_objectsManager.getWidth(_vm->_globals.police, (byte)v16 - 32);
+					_vm->_globals.largeur_boite += _vm->_objectsManager.getWidth(_vm->_globals.police, v16 - 32);
 				}
 			}
 			_vm->_globals.largeur_boite += 2;
