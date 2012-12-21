@@ -2371,7 +2371,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	}
 	v13 = v9 + 1010;
 	for (int v14 = 0; v14 < 100; v14++)
-		_vm->_globals.ZONEP[v14].field12 = READ_LE_UINT16(v13 + 2 * v14);
+		_vm->_globals.ZONEP[v14 + 1].field12 = READ_LE_UINT16(v13 + 2 * v14);
 
 	_vm->_globals.freeMemory(ptr);
 	CARRE_ZONE();
@@ -5292,7 +5292,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_globals.BPP_NOAFF = true;
-	for (int v6 = 0; v6 < 4; v6++)
+	for (int v6 = 0; v6 <= 4; v6++)
 		_vm->_eventsManager.VBL();
 	_vm->_globals.BPP_NOAFF = false;
 	_vm->_graphicsManager.FADE_INW();
