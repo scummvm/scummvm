@@ -211,7 +211,7 @@ int16 Dialog::update() {
 	while (_vm->getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			// Compute local mouse coordinates
-			_vm->_cursor->updatePosition(event.relMouse);
+			_vm->_cursor->updatePosition(event.mouse);
 			Common::Rect position = getPosition();
 			Common::Point localMouse = _vm->_cursor->getPosition();
 			localMouse.x -= position.left;

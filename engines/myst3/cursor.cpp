@@ -122,15 +122,21 @@ void Cursor::changeCursor(uint32 index) {
 void Cursor::lockPosition(bool lock) {
 	_lockedAtCenter = lock;
 
+	g_system->lockMouse(lock);
+
 	if (_lockedAtCenter) {
+		// Locking, just mouve the cursor at the center of the screen
 		_position.x = 320;
 		_position.y = 210;
+	} else {
+		// Unlocking, warp the actual mouse position to the cursor
+		g_system->warpMouse(320, 210);
 	}
 }
 
 void Cursor::updatePosition(Common::Point &mouse) {
 	if (!_lockedAtCenter) {
-		_position += mouse;
+		_position = mouse;
 
 		_position.x = CLIP<int16>(_position.x, 0, Renderer::kOriginalWidth);
 		_position.y = CLIP<int16>(_position.y, 0, Renderer::kOriginalHeight);

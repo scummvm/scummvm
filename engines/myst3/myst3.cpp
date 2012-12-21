@@ -158,7 +158,6 @@ Common::Error Myst3Engine::run() {
 
 	_system->setupScreen(w, h, false, true);
 	_system->showMouse(false);
-	_system->lockMouse(true);
 
 	openArchives();
 
@@ -198,6 +197,7 @@ Common::Error Myst3Engine::run() {
 
 	_archiveNode->close();
 
+	// Make sure the mouse is unlocked
 	_system->lockMouse(false);
 
 	return Common::kNoError;
@@ -399,7 +399,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 				_scene->updateCamera(event.relMouse);
 			}
 
-			_cursor->updatePosition(event.relMouse);
+			_cursor->updatePosition(event.mouse);
 
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 			// Skip the event when in look only mode
@@ -463,7 +463,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 					_system->lockMouse(false);
 					_console->attach();
 					_console->onFrame();
-					_system->lockMouse(true);
+					_system->lockMouse(_cursor->isPositionLocked());
 				}
 				break;
 			default:
@@ -909,7 +909,7 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 				if (_state->getViewType() == kCube)
 					_scene->updateCamera(event.relMouse);
 
-				_cursor->updatePosition(event.relMouse);
+				_cursor->updatePosition(event.mouse);
 
 			} else if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_SPACE
