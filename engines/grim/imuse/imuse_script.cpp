@@ -106,7 +106,7 @@ int32 Imuse::getPosIn16msTicks(const char *soundName) {
 		return false;
 	}
 
-	int32 pos = (62.5 / 60) * (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->feedSize / 12); // 16ms is 62.5 Hz
+	int32 pos = (62.5 / 60.0) * (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->feedSize / 12); // 16ms is 62.5 Hz
 	return pos;
 }
 
