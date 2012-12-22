@@ -67,7 +67,6 @@ static const PlainGameDescriptor hopkinsGames[] = {
 #include "hopkins/detection_tables.h"
 
 const static char *directoryGlobs[] = {
-	"hopdata",
 	"voice",
 	0
 };
