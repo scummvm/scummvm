@@ -662,19 +662,17 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_VBL();
 
-		if (palMax > 0) {
-			for (int palCtr3 = 0; palCtr3 < palMax; palCtr3++) {
-				for (int palCtr4 = 0; palCtr4 < PALETTE_BLOCK_SIZE; palCtr4++) {
-					int palCtr5 = palCtr4;
-					int palValue = tempPalette[palCtr4] - (palette[palCtr4] << 8) / palMax;
-					tempPalette[palCtr5] = palValue;
-					palData[palCtr5] = (palValue >> 8) & 0xff;
-				}
-
-				setpal_vga256(palData);
-				m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-				DD_VBL();
+		for (int palCtr3 = 0; palCtr3 < palMax; palCtr3++) {
+			for (int palCtr4 = 0; palCtr4 < PALETTE_BLOCK_SIZE; palCtr4++) {
+				int palCtr5 = palCtr4;
+				int palValue = tempPalette[palCtr4] - (palette[palCtr4] << 8) / palMax;
+				tempPalette[palCtr5] = palValue;
+				palData[palCtr5] = (palValue >> 8) & 0xff;
 			}
+
+			setpal_vga256(palData);
+			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			DD_VBL();
 		}
 
 		for (int i = 0; i < PALETTE_BLOCK_SIZE; i++)

@@ -4386,15 +4386,13 @@ void HopkinsEngine::Charge_Credits() {
 			_globals.Credit[idxLines]._colour = curPtr[1];
 			_globals.Credit[idxLines]._actvFl = true;
 			_globals.Credit[idxLines]._linePosY = _globals.Credit_y + idxLines * _globals.Credit_step;
+
 			int idxBuf = 0;
-			for (;;) {
+			for(; idxBuf < 49; idxBuf++) {
 				byte curChar = curPtr[idxBuf + 3];
 				if (curChar == '%' || curChar == 10)
 					break;
 				_globals.Credit[idxLines]._line[idxBuf] = curChar;
-				idxBuf++;
-				if (idxBuf >= 49)
-					break;
 			}
 			_globals.Credit[idxLines]._line[idxBuf] = 0;
 			_globals.Credit[idxLines]._lineSize = idxBuf - 1;

@@ -146,11 +146,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		int textType = _text[idx]._textType;
 		if (textType != 6 && textType != 1 && textType != 3 && textType != 5) {
 			int yCurrent = yp + 5;
-			if (_text[idx]._lineCount > 0) {
-				for (int lineNum = 0; lineNum < _text[idx]._lineCount; ++lineNum) {
-					displayText(xp + 5, yCurrent, _text[idx]._lines[lineNum], _text[idx]._color);
-					yCurrent += _vm->_globals.police_h + 1;
-				}
+			for (int lineNum = 0; lineNum < _text[idx]._lineCount; ++lineNum) {
+				displayText(xp + 5, yCurrent, _text[idx]._lines[lineNum], _text[idx]._color);
+				yCurrent += _vm->_globals.police_h + 1;
 			}
 		} else {
 			int height = _text[idx]._height;
@@ -251,14 +249,13 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_text[idx]._field3FE = v64;
 			_vm->_globals.largeur_boite = 0;
 
-			if (v64 + 1 > 0) {
-				for (int v15 = 0; v15 < v64 + 1; v15++) {
-					byte v16 = *(v60 + v15);
-					if (v16 <= 31)
-						v16 = 32;
-					_vm->_globals.largeur_boite += _vm->_objectsManager.getWidth(_vm->_globals.police, v16 - 32);
-				}
+			for (int v15 = 0; v15 < v64 + 1; v15++) {
+				byte v16 = *(v60 + v15);
+				if (v16 <= 31)
+					v16 = 32;
+				_vm->_globals.largeur_boite += _vm->_objectsManager.getWidth(_vm->_globals.police, v16 - 32);
 			}
+
 			_vm->_globals.largeur_boite += 2;
 			int v17 = _vm->_globals.largeur_boite / 2;
 			if (v17 < 0)
@@ -318,32 +315,25 @@ LABEL_57:
 			} while (v21 != '%');
 
 			for (int i = 0; i <= 19; i++) {
-				int v22 = _textSortArray[i];
-				if (v22 <= 0) {
+				if (_textSortArray[i] <= 0) {
 					_textSortArray[i] = 0;
 				} else {
 					int ptrc = 0;
-					if (v22 - 1 > 0) {
-						for (int v23 = 0; v23 < _textSortArray[i] - 1; v23++) {
-							Common::String &line = _text[idx]._lines[i];
-							byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
-							if (v24 <= 32)
-								v24 = ' ';
-							ptrc += _vm->_objectsManager.getWidth(_vm->_globals.police, (byte)v24 - 32);
-						}
+					for (int v23 = 0; v23 < _textSortArray[i] - 1; v23++) {
+						Common::String &line = _text[idx]._lines[i];
+						byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
+						if (v24 <= 32)
+							v24 = ' ';
+						ptrc += _vm->_objectsManager.getWidth(_vm->_globals.police, (byte)v24 - 32);
 					}
 					_textSortArray[i] = ptrc;
 				}
 			}
 			for (int i = 0; i <= 19; i++) {
-				int v25 = i;
-				do {
-					++v25;
-					if (v25 == 20)
-						v25 = 0;
+				for (int v25 = i + 1; v25 != i; v25 = (v25 + 1) % 20) {
 					if (_textSortArray[i] < _textSortArray[v25])
 						_textSortArray[i] = 0;
-				} while (v25 != i);
+				}
 			};
 
 			for (int i = 0; i <= 19; i++) {
@@ -407,11 +397,9 @@ LABEL_57:
 		int v75 = v73 + 5;
 		int v71 = v70 + 5;
 
-		if (lineCount > 0) {
-			for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
-				displayText(v75, v71, _text[idx]._lines[lineNum], _text[idx]._color);
-				v71 += _vm->_globals.police_h + 1;
-			}
+		for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
+			displayText(v75, v71, _text[idx]._lines[lineNum], _text[idx]._color);
+			v71 += _vm->_globals.police_h + 1;
 		}
 
 		int blockWidth = v53 + 1;

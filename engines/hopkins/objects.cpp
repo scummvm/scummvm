@@ -323,7 +323,6 @@ void ObjectsManager::displaySprite() {
 	int y1_1;
 	int y1_2;
 	int v25;
-	int v26;
 	int v27;
 	int x1_1;
 	int x1_2;
@@ -410,9 +409,7 @@ void ObjectsManager::displaySprite() {
 		do {
 			v27 = 0;
 			if (v25 > 1) {
-				v26 = _vm->_globals.NBTRI;
-
-				for (int v34 = 1; v34 < v26; v34++) {
+				for (int v34 = 1; v34 < _vm->_globals.NBTRI; v34++) {
 					v11 = arr[v34];
 					v12 = &arr[v34 + 1];
 					if (_vm->_globals.Tri[arr[v34]]._priority > _vm->_globals.Tri[*v12]._priority) {
@@ -424,43 +421,39 @@ void ObjectsManager::displaySprite() {
 			}
 		} while (v27);
 
-		if (_vm->_globals.NBTRI + 1 > 1) {
-			for (int v35 = 1; v35 < _vm->_globals.NBTRI + 1; v35++) {
-				v13 = arr[v35];
-				switch (_vm->_globals.Tri[v13]._triMode) {
-				case TRI_BOB:
-					DEF_BOB(_vm->_globals.Tri[v13]._index);
-					break;
-				case TRI_SPRITE:
-					DEF_SPRITE(_vm->_globals.Tri[v13]._index);
-					break;
-				case TRI_CACHE:
-					DEF_CACHE(_vm->_globals.Tri[v13]._index);
-					break;
-				default:
-					break;
-				}
-				_vm->_globals.Tri[v13]._triMode = TRI_NONE;
+		for (int v35 = 1; v35 < _vm->_globals.NBTRI + 1; v35++) {
+			v13 = arr[v35];
+			switch (_vm->_globals.Tri[v13]._triMode) {
+			case TRI_BOB:
+				DEF_BOB(_vm->_globals.Tri[v13]._index);
+				break;
+			case TRI_SPRITE:
+				DEF_SPRITE(_vm->_globals.Tri[v13]._index);
+				break;
+			case TRI_CACHE:
+				DEF_CACHE(_vm->_globals.Tri[v13]._index);
+				break;
+			default:
+				break;
 			}
+			_vm->_globals.Tri[v13]._triMode = TRI_NONE;
 		}
 	} else {
-		if (_vm->_globals.NBTRI + 1 > 1) {
-			for (int idx = 1; idx < (_vm->_globals.NBTRI + 1); ++idx) {
-				switch (_vm->_globals.Tri[idx]._triMode) {
-				case TRI_BOB:
-					DEF_BOB(_vm->_globals.Tri[idx]._index);
-					break;
-				case TRI_SPRITE:
-					DEF_SPRITE(_vm->_globals.Tri[idx]._index);
-					break;
-				case TRI_CACHE:
-					DEF_CACHE(_vm->_globals.Tri[idx]._index);
-					break;
-				default:
-					break;
-				}
-				_vm->_globals.Tri[idx]._triMode = TRI_NONE;
+		for (int idx = 1; idx < (_vm->_globals.NBTRI + 1); ++idx) {
+			switch (_vm->_globals.Tri[idx]._triMode) {
+			case TRI_BOB:
+				DEF_BOB(_vm->_globals.Tri[idx]._index);
+				break;
+			case TRI_SPRITE:
+				DEF_SPRITE(_vm->_globals.Tri[idx]._index);
+				break;
+			case TRI_CACHE:
+				DEF_CACHE(_vm->_globals.Tri[idx]._index);
+				break;
+			default:
+				break;
 			}
+			_vm->_globals.Tri[idx]._triMode = TRI_NONE;
 		}
 	}
 
@@ -3090,11 +3083,9 @@ void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 				}
 				if (v12 < v10) {
 					v7 = v11;
-					if (v12 > 0) {
-						for (int v8 = 0; v8 < v12; v8++) {
-							a1[v7 + 2] = v14;
-							v7 += 4;
-						}
+					for (int v8 = 0; v8 < v12; v8++) {
+						a1[v7 + 2] = v14;
+						v7 += 4;
 					}
 					v15 = v14;
 				}
@@ -3413,16 +3404,14 @@ LABEL_88:
 				        0) == 1)
 					goto LABEL_88;
 				
-				if ((_vm->_linesManager.Ligne[v48].field0 - 2) > 0) {
-					for (int v49 = _vm->_linesManager.Ligne[v48].field0 - 2; v49 > 0; v49 --) {
-						v50 = _vm->_linesManager.Ligne[l].lineData;
-						v52 = v67;
-						_vm->_globals.super_parcours[v52] = v50[2 * v49];
-						_vm->_globals.super_parcours[v52 + 1] = v50[2 * v49 + 1];
-						_vm->_globals.super_parcours[v52 + 2] = _vm->_linesManager.Ligne[l].field8;
-						_vm->_globals.super_parcours[v52 + 3] = 0;
-						v67 += 4;
-					}
+				for (int v49 = _vm->_linesManager.Ligne[v48].field0 - 2; v49 > 0; v49 --) {
+					v50 = _vm->_linesManager.Ligne[l].lineData;
+					v52 = v67;
+					_vm->_globals.super_parcours[v52] = v50[2 * v49];
+					_vm->_globals.super_parcours[v52 + 1] = v50[2 * v49 + 1];
+					_vm->_globals.super_parcours[v52 + 2] = _vm->_linesManager.Ligne[l].field8;
+					_vm->_globals.super_parcours[v52 + 3] = 0;
+					v67 += 4;
 				}
 			}
 			v68 = _vm->_linesManager.Ligne[v73].field0 - 1;
@@ -3430,15 +3419,13 @@ LABEL_88:
 		}
 		if (v69 == v73) {
 			if (v68 <= v72) {
-				if (v68 < v72) {
-					for (int v57 = v68; v57 < v72; v57++) {
-						v58 = _vm->_linesManager.Ligne[v73].lineData;
-						_vm->_globals.super_parcours[v67] = v58[2 * v57];
-						_vm->_globals.super_parcours[v67 + 1] = v58[2 * v57 + 1];
-						_vm->_globals.super_parcours[v67 + 2] = _vm->_linesManager.Ligne[v73].field6;
-						_vm->_globals.super_parcours[v67 + 3] = 0;
-						v67 += 4;
-					}
+				for (int v57 = v68; v57 < v72; v57++) {
+					v58 = _vm->_linesManager.Ligne[v73].lineData;
+					_vm->_globals.super_parcours[v67] = v58[2 * v57];
+					_vm->_globals.super_parcours[v67 + 1] = v58[2 * v57 + 1];
+					_vm->_globals.super_parcours[v67 + 2] = _vm->_linesManager.Ligne[v73].field6;
+					_vm->_globals.super_parcours[v67 + 3] = 0;
+					v67 += 4;
 				}
 			} else {
 				for (int v53 = v68; v53 > v72; v53--) {
@@ -4544,101 +4531,98 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	}
 
 	_vm->_linesManager.RESET_OBSTACLE();
-	if (nbytes) {
-		for (size_t v41 = 0; v41 < nbytes; v41++) {
-			if (*(ptr + v41) == 'O' && *(ptr + v41 + 1) == 'B' && *(ptr + v41 + 2) == '2') {
-				v16 = ptr + v41 + 4;
-				v32 = 0;
-				v34 = 0;
-				_vm->_linesManager.TOTAL_LIGNES = 0;
-				do {
-					v27 = (int16)READ_LE_UINT16(v16 + 2 * v32);
-					if (v27 != -1) {
-						_vm->_linesManager.AJOUTE_LIGNE(
-						    v34,
-						    v27,
-						    (int16)READ_LE_UINT16(v16 + 2 * v32 + 2),
-						    (int16)READ_LE_UINT16(v16 + 2 * v32 + 4),
-						    (int16)READ_LE_UINT16(v16 + 2 * v32 + 6),
-						    (int16)READ_LE_UINT16(v16 + 2 * v32 + 8),
-						    1);
-						++_vm->_linesManager.TOTAL_LIGNES;
-					}
-					v32 += 5;
-					++v34;
-				} while (v27 != -1);
-				_vm->_linesManager.INIPARCOURS();
-			}
+	for (size_t v41 = 0; v41 < nbytes; v41++) {
+		if (*(ptr + v41) == 'O' && *(ptr + v41 + 1) == 'B' && *(ptr + v41 + 2) == '2') {
+			v16 = ptr + v41 + 4;
+			v32 = 0;
+			v34 = 0;
+			_vm->_linesManager.TOTAL_LIGNES = 0;
+			do {
+				v27 = (int16)READ_LE_UINT16(v16 + 2 * v32);
+				if (v27 != -1) {
+					_vm->_linesManager.AJOUTE_LIGNE(
+					    v34,
+					    v27,
+					    (int16)READ_LE_UINT16(v16 + 2 * v32 + 2),
+					    (int16)READ_LE_UINT16(v16 + 2 * v32 + 4),
+					    (int16)READ_LE_UINT16(v16 + 2 * v32 + 6),
+					    (int16)READ_LE_UINT16(v16 + 2 * v32 + 8),
+					    1);
+					++_vm->_linesManager.TOTAL_LIGNES;
+				}
+				v32 += 5;
+				++v34;
+			} while (v27 != -1);
+			_vm->_linesManager.INIPARCOURS();
 		}
 	}
+
 	if (!OBSSEUL) {
-		if (nbytes) {
-			for (size_t v42 = 0; v42 < nbytes; v42++) {
-				if (*(ptr + v42) == 'Z' && *(ptr + v42 + 1) == 'O' && *(ptr + v42 + 2) == '2') {
-					v17 = ptr + v42 + 4;
-					v33 = 0;
-					v35 = 0;
-					for (int v18 = 1; v18 <= 100; v18++) {
-						_vm->_globals.ZONEP[v18]._destX = 0;
-						_vm->_globals.ZONEP[v18]._destY = 0;
-						_vm->_globals.ZONEP[v18].field4 = 0;
-						_vm->_globals.ZONEP[v18].field6 = 0;
-						_vm->_globals.ZONEP[v18].field7 = 0;
-						_vm->_globals.ZONEP[v18].field8 = 0;
-						_vm->_globals.ZONEP[v18].field9 = 0;
-						_vm->_globals.ZONEP[v18].fieldA = 0;
-						_vm->_globals.ZONEP[v18].fieldB = 0;
-						_vm->_globals.ZONEP[v18].fieldC = 0;
-						_vm->_globals.ZONEP[v18].fieldD = 0;
-						_vm->_globals.ZONEP[v18].fieldE = 0;
-						_vm->_globals.ZONEP[v18].fieldF = 0;
-						_vm->_globals.ZONEP[v18].field12 = 0;
-					}
-
-					v31 = 0;
-					do {
-						v28 = (int16)READ_LE_UINT16(v17 + 2 * v33);
-						if (v28 != -1) {
-							_vm->_linesManager.AJOUTE_LIGNE_ZONE(
-							    v35,
-							    (int16)READ_LE_UINT16(v17 + 2 * v33 + 2),
-							    (int16)READ_LE_UINT16(v17 + 2 * v33 + 4),
-							    (int16)READ_LE_UINT16(v17 + 2 * v33 + 6),
-							    (int16)READ_LE_UINT16(v17 + 2 * v33 + 8),
-							    v28);
-							_vm->_globals.ZONEP[v28].field10 = 1;
-						}
-						v33 += 5;
-						++v35;
-						++v31;
-					} while (v28 != -1);
-					for (int v21 = 1; v21 <= 100; v21++) {
-						_vm->_globals.ZONEP[v21]._destX = (int16)READ_LE_UINT16(v17 + 2 * v33);
-						_vm->_globals.ZONEP[v21]._destY = (int16)READ_LE_UINT16(v17 + 2 * v33 + 2);
-						_vm->_globals.ZONEP[v21].field4 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 4);
-						v33 += 3;
-					}
-
-					v22 = ptr + v42 + (10 * v31 + 606) + 4;
-					v29 = 0;
-					for (int v24 = 1; v24 <= 100; v24++) {
-						_vm->_globals.ZONEP[v24].field6 = *(v29 + v22);
-						_vm->_globals.ZONEP[v24].field7 = *(v22 + v29 + 1);
-						_vm->_globals.ZONEP[v24].field8 = *(v22 + v29 + 2);
-						_vm->_globals.ZONEP[v24].field9 = *(v22 + v29 + 3);
-						_vm->_globals.ZONEP[v24].fieldA = *(v22 + v29 + 4);
-						_vm->_globals.ZONEP[v24].fieldB = *(v22 + v29 + 5);
-						_vm->_globals.ZONEP[v24].fieldC = *(v22 + v29 + 6);
-						_vm->_globals.ZONEP[v24].fieldD = *(v22 + v29 + 7);
-						_vm->_globals.ZONEP[v24].fieldE = *(v22 + v29 + 8);
-						_vm->_globals.ZONEP[v24].fieldF = *(v22 + v29 + 9);
-						v29 += 10;
-					}
-					v30 = 0;
-					for (int v25 = 1; v25 <= 100; v25++)
-						_vm->_globals.ZONEP[v25].field12 = (int16)READ_LE_UINT16(v22 + 1010 + 2 * v30++);
-					CARRE_ZONE();
+		for (size_t v42 = 0; v42 < nbytes; v42++) {
+			if (*(ptr + v42) == 'Z' && *(ptr + v42 + 1) == 'O' && *(ptr + v42 + 2) == '2') {
+				v17 = ptr + v42 + 4;
+				v33 = 0;
+				v35 = 0;
+				for (int v18 = 1; v18 <= 100; v18++) {
+					_vm->_globals.ZONEP[v18]._destX = 0;
+					_vm->_globals.ZONEP[v18]._destY = 0;
+					_vm->_globals.ZONEP[v18].field4 = 0;
+					_vm->_globals.ZONEP[v18].field6 = 0;
+					_vm->_globals.ZONEP[v18].field7 = 0;
+					_vm->_globals.ZONEP[v18].field8 = 0;
+					_vm->_globals.ZONEP[v18].field9 = 0;
+					_vm->_globals.ZONEP[v18].fieldA = 0;
+					_vm->_globals.ZONEP[v18].fieldB = 0;
+					_vm->_globals.ZONEP[v18].fieldC = 0;
+					_vm->_globals.ZONEP[v18].fieldD = 0;
+					_vm->_globals.ZONEP[v18].fieldE = 0;
+					_vm->_globals.ZONEP[v18].fieldF = 0;
+					_vm->_globals.ZONEP[v18].field12 = 0;
 				}
+
+				v31 = 0;
+				do {
+					v28 = (int16)READ_LE_UINT16(v17 + 2 * v33);
+					if (v28 != -1) {
+						_vm->_linesManager.AJOUTE_LIGNE_ZONE(
+						    v35,
+						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 2),
+						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 4),
+						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 6),
+						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 8),
+						    v28);
+						_vm->_globals.ZONEP[v28].field10 = 1;
+					}
+					v33 += 5;
+					++v35;
+					++v31;
+				} while (v28 != -1);
+				for (int v21 = 1; v21 <= 100; v21++) {
+					_vm->_globals.ZONEP[v21]._destX = (int16)READ_LE_UINT16(v17 + 2 * v33);
+					_vm->_globals.ZONEP[v21]._destY = (int16)READ_LE_UINT16(v17 + 2 * v33 + 2);
+					_vm->_globals.ZONEP[v21].field4 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 4);
+					v33 += 3;
+				}
+
+				v22 = ptr + v42 + (10 * v31 + 606) + 4;
+				v29 = 0;
+				for (int v24 = 1; v24 <= 100; v24++) {
+					_vm->_globals.ZONEP[v24].field6 = *(v29 + v22);
+					_vm->_globals.ZONEP[v24].field7 = *(v22 + v29 + 1);
+					_vm->_globals.ZONEP[v24].field8 = *(v22 + v29 + 2);
+					_vm->_globals.ZONEP[v24].field9 = *(v22 + v29 + 3);
+					_vm->_globals.ZONEP[v24].fieldA = *(v22 + v29 + 4);
+					_vm->_globals.ZONEP[v24].fieldB = *(v22 + v29 + 5);
+					_vm->_globals.ZONEP[v24].fieldC = *(v22 + v29 + 6);
+					_vm->_globals.ZONEP[v24].fieldD = *(v22 + v29 + 7);
+					_vm->_globals.ZONEP[v24].fieldE = *(v22 + v29 + 8);
+					_vm->_globals.ZONEP[v24].fieldF = *(v22 + v29 + 9);
+					v29 += 10;
+				}
+				v30 = 0;
+				for (int v25 = 1; v25 <= 100; v25++)
+					_vm->_globals.ZONEP[v25].field12 = (int16)READ_LE_UINT16(v22 + 1010 + 2 * v30++);
+				CARRE_ZONE();
 			}
 		}
 	}
@@ -5022,10 +5006,8 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 				_sprite[0]._spriteData = spriteData;
 				_sprite[0]._spriteIndex = v13;
 			}
-			if (v15 > 0) {
-				for (int v10 = 0; v10 < v15; v10++)
-					_vm->_eventsManager.VBL();
-			}
+			for (int v10 = 0; v10 < v15; v10++)
+				_vm->_eventsManager.VBL();
 			if (v13 == -1)
 				break;
 		}
@@ -5080,10 +5062,8 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 			_sprite[0]._spriteData = a1;
 			_sprite[0]._spriteIndex = spriteIndex;
 		}
-		if (v14 > 0) {
-			for (int v10 = 0; v10 < v14; v10++)
-				_vm->_eventsManager.VBL();
-		}
+		for (int v10 = 0; v10 < v14; v10++)
+			_vm->_eventsManager.VBL();
 	} while (spriteIndex != -1);
 }
 

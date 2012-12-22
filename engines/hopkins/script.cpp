@@ -480,13 +480,11 @@ LABEL_1141:
 		uint v74 = READ_LE_UINT16(a1 + 5) / _vm->_globals._speed;
 		if (!v74)
 			v74 = 1;
-		if (v74 + 1 > 0) {
-			for (uint v10 = 0; v10 < v74 + 1; v10++) {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+		for (uint v10 = 0; v10 < v74 + 1; v10++) {
+			if (_vm->shouldQuit())
+				return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
-			}
+			_vm->_eventsManager.VBL();
 		}
 		v1 = 1;
 	}

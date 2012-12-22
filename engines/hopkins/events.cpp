@@ -446,13 +446,11 @@ LABEL_65:
 			_vm->_graphicsManager.unlockScreen();
 			_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
 
-			if (_vm->_globals.NBBLOC) {
-				int v10 = _vm->_globals.NBBLOC + 1;
-				for (int i = 1; i != v10; i++) {
-					if (_vm->_globals.BLOC[i]._activeFl)
-						_vm->_globals.BLOC[i]._activeFl = false;
-				}
+			for (int i = 1; i < _vm->_globals.NBBLOC + 1; i++) {
+				if (_vm->_globals.BLOC[i]._activeFl)
+					_vm->_globals.BLOC[i]._activeFl = false;
 			}
+
 			_vm->_globals.NBBLOC = 0;
 			_startPos.x = _vm->_graphicsManager.SCROLL;
 			_vm->_graphicsManager.ofscroll = _vm->_graphicsManager.SCROLL;

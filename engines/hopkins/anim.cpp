@@ -576,13 +576,13 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	const char *files[6] = { &filename1[0], &filename2[0], &filename3[0], &filename4[0],
 			&filename5[0], &filename6[0] };
 
-	for (int idx = 1; idx <= 6; ++idx) {
-		if (files[idx - 1][0]) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, files[idx - 1]);
+	for (int idx = 0; idx <= 5; ++idx) {
+		if (files[idx][0]) {
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, files[idx]);
 
 			if (!f.exists(_vm->_globals.NFICHIER))
 				error("File not found");
-			if (loadSpriteBank(idx, files[idx - 1]))
+			if (loadSpriteBank(idx + 1, files[idx]))
 				error("File not compatible with this soft.");
 		}
 	}
@@ -591,9 +591,8 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	f.read(data, nbytes);
 	f.close();
 
-	for (int idx = 1; idx <= 20; ++idx) {
+	for (int idx = 1; idx <= 20; ++idx)
 		searchAnim(data, idx, nbytes);
-	}
 
 	_vm->_globals.freeMemory(data);
 }
@@ -676,19 +675,15 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 			if (f.exists(_vm->_globals.NFICHIER)) {
 				v19 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 				v13 = v19;
+				for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx].field1A; ++objIdx, v13 += 8) {
+					int x1 = (int16)READ_LE_UINT16(v13);
+					int y1 = (int16)READ_LE_UINT16(v13 + 2);
+					int x2 = (int16)READ_LE_UINT16(v13 + 4);
+					int y2 = (int16)READ_LE_UINT16(v13 + 6);
 
-				if (_vm->_globals.Bank[idx].field1A > 0) {
-					for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx].field1A; ++objIdx) {
-						int x1 = (int16)READ_LE_UINT16(v13);
-						int y1 = (int16)READ_LE_UINT16(v13 + 2);
-						int x2 = (int16)READ_LE_UINT16(v13 + 4);
-						int y2 = (int16)READ_LE_UINT16(v13 + 6);
-						v13 += 8;
-
-						_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
-						if (_vm->_globals.Bank[idx]._fileHeader == 2)
-							_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
-					}
+					_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
+					if (_vm->_globals.Bank[idx]._fileHeader == 2)
+						_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
 				}
 
 				_vm->_globals.freeMemory(v19);
