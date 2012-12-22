@@ -585,6 +585,9 @@ void lua_Restore(SaveGame *savedState) {
 			state->Cblocks[i].num = savedState->readLESint32();
 		}
 
+		if (savedState->saveMinorVersion() >= 3) {
+			state->sleepFor = savedState->readLEUint32();
+		}
 		state->id = savedState->readLEUint32();
 		restoreObjectValue(&state->taskFunc, savedState);
 		if (state->taskFunc.ttype == LUA_T_PROTO || state->taskFunc.ttype == LUA_T_CPROTO)

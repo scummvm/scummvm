@@ -401,6 +401,7 @@ void lua_Save(SaveGame *savedState) {
 			savedState->writeLESint32(state->Cblocks[i].num);
 		}
 
+		savedState->writeLEUint32(state->sleepFor);
 		savedState->writeLEUint32(state->id);
 		saveObjectValue(&state->taskFunc, savedState);
 
