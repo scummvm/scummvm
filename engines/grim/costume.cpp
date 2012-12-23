@@ -464,7 +464,7 @@ int Costume::update(uint time) {
 
 void Costume::animate() {
 	for (int i = 0; i < _numComponents; i++) {
-		if (_components[i] && _components[i]->isVisible()) {
+		if (_components[i]) {
 			_components[i]->animate();
 		}
 	}
