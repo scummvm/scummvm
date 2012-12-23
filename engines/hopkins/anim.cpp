@@ -232,7 +232,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 
 	v8 = 0;
 	while (!_vm->shouldQuit()) {
-		memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager._palette, 769);
+		memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
 
 		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 
@@ -314,7 +314,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-		memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager.OLD_PAL, 769);
+		memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager._oldPalette, 769);
 		_vm->_graphicsManager.clearPalette();
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
@@ -388,7 +388,7 @@ LABEL_88:
 						_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 						g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-						memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager.OLD_PAL, 769);
+						memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager._oldPalette, 769);
 						_vm->_graphicsManager.clearPalette();
 						_vm->_graphicsManager.lockScreen();
 						_vm->_graphicsManager.clearScreen();
@@ -430,7 +430,7 @@ LABEL_88:
 			_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 			g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-			memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager.OLD_PAL, 769);
+			memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager._oldPalette, 769);
 			_vm->_graphicsManager.clearPalette();
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.clearScreen();
@@ -509,7 +509,7 @@ LABEL_114:
 	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager.OLD_PAL, 769);
+	memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager._oldPalette, 769);
 	_vm->_graphicsManager.clearPalette();
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.clearScreen();

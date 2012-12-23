@@ -637,8 +637,8 @@ LABEL_1141:
 		}
 		if (v76 == 607) {
 			if (!_vm->_globals._internetFl) {
-				memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager._palette, 769);
-				v1 = _vm->_graphicsManager.OLD_PAL[769];
+				memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
+				v1 = _vm->_graphicsManager._oldPalette[769];
 				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
 			}
 			_vm->_globals.NBBLOC = 0;

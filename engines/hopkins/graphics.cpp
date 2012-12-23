@@ -40,7 +40,6 @@ GraphicsManager::GraphicsManager() {
 	WinScan = 0;
 	PAL_PIXELS = NULL;
 	_lineNbr = 0;
-	Linear = false;
 	_videoPtr = NULL;
 	ofscroll = 0;
 	SCROLL = 0;
@@ -71,9 +70,9 @@ GraphicsManager::GraphicsManager() {
 	spec_largeur = 0;
 
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
-	Common::fill(&TABLE_COUL[0], &TABLE_COUL[PALETTE_EXT_BLOCK_SIZE], 0);
+	Common::fill(&_colorTable[0], &_colorTable[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_palette[0], &_palette[PALETTE_EXT_BLOCK_SIZE], 0);
-	Common::fill(&OLD_PAL[0], &OLD_PAL[PALETTE_EXT_BLOCK_SIZE], 0);
+	Common::fill(&_oldPalette[0], &_oldPalette[PALETTE_EXT_BLOCK_SIZE], 0);
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -110,7 +109,6 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		XSCREEN = width;
 		YSCREEN = height;
 
-		Linear = true;
 		WinScan = width * 2; // Refactor me
 
 		PAL_PIXELS = SD_PIXELS;
@@ -157,7 +155,7 @@ void GraphicsManager::clearScreen() {
 void GraphicsManager::loadImage(const Common::String &file) {
 	Common::String filename	= Common::String::format("%s.PCX", file.c_str());
 	loadScreen(filename);
-	INIT_TABLE(165, 170, _palette);
+	initColorTable(165, 170, _palette);
 }
 
 /**
@@ -229,21 +227,21 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	memcpy(_vesaBuffer, _vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 }
 
-void GraphicsManager::INIT_TABLE(int minIndex, int maxIndex, byte *palette) {
+void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) {
 	for (int idx = 0; idx < 256; ++idx)
-		TABLE_COUL[idx] = idx;
+		_colorTable[idx] = idx;
 
-	Trans_bloc(TABLE_COUL, palette, 256, minIndex, maxIndex);
+	Trans_bloc(_colorTable, palette, 256, minIndex, maxIndex);
 
 	for (int idx = 0; idx < 256; ++idx) {
-		byte v = TABLE_COUL[idx];
+		byte v = _colorTable[idx];
 		if (v > 27)
-			TABLE_COUL[idx] = 0;
+			_colorTable[idx] = 0;
 		if (!v)
-			TABLE_COUL[idx] = 0;
+			_colorTable[idx] = 0;
 	}
 
-	TABLE_COUL[0] = 1;
+	_colorTable[0] = 1;
 }
 
 /**
@@ -588,7 +586,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 	} while (yCtr != 1);
 }
 
-void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface) {
+void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface) {
 	uint16 palData1[PALETTE_BLOCK_SIZE * 2];
 	byte palData2[PALETTE_BLOCK_SIZE];
 
@@ -639,7 +637,7 @@ void GraphicsManager::fade_in(const byte *palette, int step, const byte *surface
 	DD_VBL();
 }
 
-void GraphicsManager::fade_out(const byte *palette, int step, const byte *surface) {
+void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface) {
 	int palByte;
 	uint16 palMax;
 	byte palData[PALETTE_BLOCK_SIZE];
@@ -691,30 +689,30 @@ void GraphicsManager::fade_out(const byte *palette, int step, const byte *surfac
 
 void GraphicsManager::FADE_INS() {
 	FADESPD = 1;
-	fade_in(_palette, 1, (const byte *)_vesaBuffer);
+	fadeIn(_palette, 1, (const byte *)_vesaBuffer);
 }
 
 void GraphicsManager::FADE_OUTS() {
-  FADESPD = 1;
-  fade_out(_palette, 1, (const byte *)_vesaBuffer);
+	FADESPD = 1;
+	fadeOut(_palette, 1, (const byte *)_vesaBuffer);
 }
 
 void GraphicsManager::FADE_INW() {
 	FADESPD = 15;
-	fade_in(_palette, 20, (const byte *)_vesaBuffer);
+	fadeIn(_palette, 20, (const byte *)_vesaBuffer);
 }
 
 void GraphicsManager::FADE_OUTW() {
 	FADESPD = 15;
-	fade_out(_palette, 20, (const byte *)_vesaBuffer);
+	fadeOut(_palette, 20, (const byte *)_vesaBuffer);
 }
 
 void GraphicsManager::setpal_vga256(const byte *palette) {
-	CHANGE_PALETTE(palette);
+	changePalette(palette);
 }
 
 void GraphicsManager::setpal_vga256_linux(const byte *palette, const byte *surface) {
-	CHANGE_PALETTE(palette);
+	changePalette(palette);
 	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	DD_VBL();
 }
@@ -739,7 +737,7 @@ void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
 	WRITE_LE_UINT16(&SD_PIXELS[2 * palIndex], MapRGB(rv, gv, bv));
 }
 
-void GraphicsManager::CHANGE_PALETTE(const byte *palette) {
+void GraphicsManager::changePalette(const byte *palette) {
 	const byte *srcP = &palette[0];
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
 		*(uint16 *)&SD_PIXELS[2 * idx] = MapRGB(*srcP, *(srcP + 1), *(srcP + 2));
@@ -761,12 +759,12 @@ void GraphicsManager::DD_VBL() {
 
 void GraphicsManager::FADE_OUTW_LINUX(const byte *surface) {
 	assert(surface);
-	fade_out(_palette, FADESPD, surface);
+	fadeOut(_palette, FADESPD, surface);
 }
 
 void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
 	assert(surface);
-	fade_in(_palette, FADESPD, surface);
+	fadeIn(_palette, FADESPD, surface);
 }
 
 void GraphicsManager::FADE_IN_CASSE() {
@@ -2006,12 +2004,12 @@ void GraphicsManager::NB_SCREEN() {
 	const byte *srcP;
 
 	if (!_vm->_globals.NECESSAIRE)
-		INIT_TABLE(50, 65, _palette);
+		initColorTable(50, 65, _palette);
 
 	if (_lineNbr == SCREEN_WIDTH)
-		Trans_bloc2(_vesaBuffer, TABLE_COUL, SCREEN_WIDTH * SCREEN_HEIGHT);
+		Trans_bloc2(_vesaBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT);
 	else if (_lineNbr == (SCREEN_WIDTH * 2))
-		Trans_bloc2(_vesaBuffer, TABLE_COUL, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
+		Trans_bloc2(_vesaBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 
 	lockScreen();
 	m_scroll16(_vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);

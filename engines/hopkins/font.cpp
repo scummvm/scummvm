@@ -384,7 +384,7 @@ LABEL_57:
 				error("Cutting a block for text box (%d)", v49);
 			}
 			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, v56, v55, v53, v51);
-			_vm->_graphicsManager.Trans_bloc2(ptrd, _vm->_graphicsManager.TABLE_COUL, v49);
+			_vm->_graphicsManager.Trans_bloc2(ptrd, _vm->_graphicsManager._colorTable, v49);
 			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, v56, v55, v53, v51);
 			_vm->_globals.freeMemory(ptrd);
 

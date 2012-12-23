@@ -61,10 +61,9 @@ public:
 	byte SD_PIXELS[PALETTE_SIZE * 2];
 	byte *PAL_PIXELS;
 	int _lineNbr;
-	byte TABLE_COUL[PALETTE_EXT_BLOCK_SIZE];
+	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
 	byte _palette[PALETTE_EXT_BLOCK_SIZE];
-	byte OLD_PAL[PALETTE_EXT_BLOCK_SIZE];
-	bool Linear;
+	byte _oldPalette[PALETTE_EXT_BLOCK_SIZE];
 	Graphics::Surface *_videoPtr;
 	byte *_vesaScreen;
 	byte *_vesaBuffer;
@@ -109,7 +108,7 @@ public:
 	void clearScreen();
 	void loadImage(const Common::String &file);
 	void loadVgaImage(const Common::String &file);
-	void INIT_TABLE(int minIndex, int maxIndex, byte *palette);
+	void initColorTable(int minIndex, int maxIndex, byte *palette);
 	void scrollScreen(int amount);
 	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void Trans_bloc2(byte *surface, byte *col, int size);
@@ -121,8 +120,8 @@ public:
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
-	void fade_in(const byte *palette, int step, const byte *surface);
-	void fade_out(const byte *palette, int step, const byte *surface);
+	void fadeIn(const byte *palette, int step, const byte *surface);
+	void fadeOut(const byte *palette, int step, const byte *surface);
 	void FADE_INS();
 	void FADE_OUTS();
 	void FADE_INW();
@@ -135,7 +134,7 @@ public:
 	void setpal_vga256_linux(const byte *palette, const byte *surface);
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
-	void CHANGE_PALETTE(const byte *palette);
+	void changePalette(const byte *palette);
 	uint16 MapRGB(byte r, byte g, byte b);
 	void DD_VBL();
 	void Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface);

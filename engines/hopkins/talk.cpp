@@ -155,7 +155,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	if (_vm->getIsDemo() == false)
 		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
-	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager._palette);
+	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -243,7 +243,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_eventsManager._mouseCursorId = v8;
 
 	_vm->_eventsManager.changeMouseCursor(v8);
-	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager._palette);
+	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
 	_vm->_objectsManager._disableCursorFl = false;
 	_vm->_globals._disableInventFl = v7;
@@ -569,7 +569,7 @@ void TalkManager::CHERCHE_PAL(int a1, int a2) {
 	}
 
 	_vm->_graphicsManager.setpal_vga256(palette);
-	_vm->_graphicsManager.INIT_TABLE(145, 150, palette);
+	_vm->_graphicsManager.initColorTable(145, 150, palette);
 }
 
 void TalkManager::VISU_WAIT() {
@@ -1266,7 +1266,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (!_vm->getIsDemo())
 		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
-	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager._palette);
+	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
