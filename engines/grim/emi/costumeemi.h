@@ -54,7 +54,7 @@ public:
 	EMIMeshComponent *_emiMesh;
 	Common::List<Material *> _materials;
 private:
-	Component *loadComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
+	Component *loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
 	
 	friend class Chore;
 };

@@ -87,7 +87,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 					prevComponent = NULL;
 			}
 			// Actually load the appropriate component
-			Component *component = loadComponent(parentID < 0 ? NULL : components[parentID], parentID, componentName, prevComponent);
+			Component *component = loadEMIComponent(parentID < 0 ? NULL : components[parentID], parentID, componentName, prevComponent);
 			if (component) {
 				component->setCostume(this);
 				component->init();
@@ -144,7 +144,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 	}
 }
 
-Component *EMICostume::loadComponent(Component *parent, int parentID, const char *name, Component *prevComponent) {
+Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent) {
 	// some have an exclimation mark, this could mean something.
 	// for now, return 0 otherwise it will just crash in some other part.
 	//return 0;
