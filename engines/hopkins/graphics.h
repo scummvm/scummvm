@@ -62,8 +62,7 @@ public:
 	byte *PAL_PIXELS;
 	int _lineNbr;
 	byte TABLE_COUL[PALETTE_EXT_BLOCK_SIZE];
-	byte cmap[PALETTE_BLOCK_SIZE];
-	byte Palette[PALETTE_EXT_BLOCK_SIZE];
+	byte _palette[PALETTE_EXT_BLOCK_SIZE];
 	byte OLD_PAL[PALETTE_EXT_BLOCK_SIZE];
 	bool Linear;
 	Graphics::Surface *_videoPtr;
@@ -81,7 +80,6 @@ public:
 	int Agr_x, Agr_y;
 	int Agr_Flag_x, Agr_Flag_y;
 	int FADESPD;
-	byte PALPCX[PALETTE_EXT_BLOCK_SIZE];
 	int FADE_LINUX;
 	bool _skipVideoLockFl;
 	int no_scroll;
@@ -117,7 +115,7 @@ public:
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
 	void A_PCX320(byte *surface, const Common::String &file, byte *palette);
-	void Cls_Pal();
+	void clearPalette();
 	void SCANLINE(int pitch);
 	void m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
@@ -135,8 +133,6 @@ public:
 	void FADE_OUT_CASSE();
 	void setpal_vga256(const byte *palette);
 	void setpal_vga256_linux(const byte *palette, const byte *surface);
-	void SETCOLOR(int palIndex, int r, int g, int b);
-	void SETCOLOR2(int palIndex, int r, int g, int b);
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void CHANGE_PALETTE(const byte *palette);

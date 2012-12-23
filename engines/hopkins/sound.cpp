@@ -148,7 +148,7 @@ void SoundManager::LOAD_ANM_SOUND() {
 		LOAD_WAV("SOUND22.WAV", 1);
 		break;
 	case 200:
-		VOICE_MIX(682, 1);
+		mixVoice(682, 1);
 		break;
 	case 208:
 		LOAD_WAV("SOUND77.WAV", 1);
@@ -500,7 +500,7 @@ void SoundManager::DEL_MSAMPLE(int mwavIndex) {
 	}
 }
 
-bool SoundManager::VOICE_MIX(int voiceId, int voiceMode) {
+bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	int fileNumber;
 	int oldMusicVol;
 	bool breakFlag;

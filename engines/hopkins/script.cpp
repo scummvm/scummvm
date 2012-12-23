@@ -139,7 +139,7 @@ int ScriptManager::Traduction(byte *a1) {
 					_vm->_fontManager.showText(9);
 			}
 			if (!_vm->_soundManager.VOICEOFF)
-				_vm->_soundManager.VOICE_MIX(v3, 4);
+				_vm->_soundManager.mixVoice(v3, 4);
 		}
 		if (TRAVAILOBJET == 1) {
 			if (_vm->_globals.SAUVEGARDE->data[svField356]) {
@@ -147,7 +147,7 @@ int ScriptManager::Traduction(byte *a1) {
 				if (!_vm->_soundManager.TEXTOFF)
 					_vm->_fontManager.showText(9);
 				if (!_vm->_soundManager.VOICEOFF)
-					_vm->_soundManager.VOICE_MIX(635, 4);
+					_vm->_soundManager.mixVoice(635, 4);
 				goto LABEL_104;
 			}
 			if (_vm->_globals.FR == 1 && !_vm->_soundManager.TEXTOFF)
@@ -158,7 +158,7 @@ int ScriptManager::Traduction(byte *a1) {
 				if (_vm->_soundManager.TEXTOFF) {
 LABEL_98:
 					if (!_vm->_soundManager.VOICEOFF)
-						_vm->_soundManager.VOICE_MIX(v3, 5);
+						_vm->_soundManager.mixVoice(v3, 5);
 					goto LABEL_104;
 				}
 				_vm->_fontManager.initTextBuffers(9, v3, "OBJETES.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
@@ -637,7 +637,7 @@ LABEL_1141:
 		}
 		if (v76 == 607) {
 			if (!_vm->_globals._internetFl) {
-				memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager.Palette, 769);
+				memcpy(_vm->_graphicsManager.OLD_PAL, _vm->_graphicsManager._palette, 769);
 				v1 = _vm->_graphicsManager.OLD_PAL[769];
 				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
 			}
@@ -1929,7 +1929,7 @@ LABEL_1141:
 				_vm->_fontManager.showText(9);
 			}
 			if (!_vm->_soundManager.VOICEOFF)
-				_vm->_soundManager.VOICE_MIX(617, 4);
+				_vm->_soundManager.mixVoice(617, 4);
 			for (int i = 0; i <= 29; i++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game

@@ -143,13 +143,13 @@ bool HopkinsEngine::runWin95Demo() {
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
-	_graphicsManager.Cls_Pal();
+	_graphicsManager.clearPalette();
 
 	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
 
 	if (!_eventsManager._escKeyFl)
-		INTRORUN();
+		playIntro();
 
 	warning("TODO Fin_Interrupt()");
 	warning("TODO TEST = 1;");
@@ -231,7 +231,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				if (!_globals.CENSURE)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				else
@@ -419,7 +419,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -431,7 +431,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.loadImage("njour3a");
 			_graphicsManager.FADE_INW();
 			_eventsManager.delay(5000);
@@ -446,7 +446,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -484,7 +484,7 @@ bool HopkinsEngine::runLinuxDemo() {
 	_graphicsManager.FADE_OUTW();
 
 	if (!_eventsManager._escKeyFl)
-		INTRORUN();
+		playIntro();
 
 	_globals.iRegul = 0;
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
@@ -557,7 +557,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_graphicsManager.FADE_LINUX = 2;
 
 				if (!_globals.CENSURE)
@@ -752,7 +752,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager.DD_VBL();
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
 
@@ -787,7 +787,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -801,7 +801,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR3A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -815,7 +815,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -843,11 +843,11 @@ bool HopkinsEngine::runOS2Full() {
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
 
-	_graphicsManager.Cls_Pal();
+	_graphicsManager.clearPalette();
 	_animationManager.playAnim("MP.ANM", 10, 0, 200);
 	_graphicsManager.FADE_OUTW();
 	if (!_eventsManager._escKeyFl)
-		INTRORUN();
+		playIntro();
 	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
 	_globals.iRegul = 0;
@@ -893,7 +893,7 @@ bool HopkinsEngine::runOS2Full() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_animationManager.playAnim("BANQUE.ANM", 200, 12, 200);
 				_soundManager.SPECIAL_SOUND = 0;
 				_soundManager.DEL_SAMPLE(1);
@@ -1048,7 +1048,7 @@ bool HopkinsEngine::runOS2Full() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 //				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
@@ -1095,7 +1095,7 @@ bool HopkinsEngine::runOS2Full() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
 					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
@@ -1565,7 +1565,7 @@ bool HopkinsEngine::runOS2Full() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
@@ -1647,7 +1647,7 @@ bool HopkinsEngine::runOS2Full() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR1A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -1662,7 +1662,7 @@ bool HopkinsEngine::runOS2Full() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR3A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -1677,7 +1677,7 @@ bool HopkinsEngine::runOS2Full() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR4A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -1726,11 +1726,11 @@ bool HopkinsEngine::runBeOSFull() {
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
 
-	_graphicsManager.Cls_Pal();
+	_graphicsManager.clearPalette();
 	_animationManager.playAnim("MP.ANM", 10, 0, 200);
 	_graphicsManager.FADE_OUTW();
 	if (!_eventsManager._escKeyFl)
-		INTRORUN();
+		playIntro();
 	_graphicsManager.FADE_OUTS();
 	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
@@ -1782,7 +1782,7 @@ bool HopkinsEngine::runBeOSFull() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_animationManager.playAnim("BANQUE.ANM", 200, 12, 200);
 				_soundManager.SPECIAL_SOUND = 0;
 				_soundManager.DEL_SAMPLE(1);
@@ -1935,7 +1935,7 @@ bool HopkinsEngine::runBeOSFull() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
@@ -1983,7 +1983,7 @@ bool HopkinsEngine::runBeOSFull() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
 					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
@@ -2453,7 +2453,7 @@ bool HopkinsEngine::runBeOSFull() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
@@ -2536,7 +2536,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR1A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -2551,7 +2551,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR3A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -2566,7 +2566,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR4A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -2610,12 +2610,12 @@ bool HopkinsEngine::runWin95full() {
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
-	_graphicsManager.Cls_Pal();
+	_graphicsManager.clearPalette();
 
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
 	_graphicsManager.FADE_OUTW();
 	if (!_eventsManager._escKeyFl)
-		INTRORUN();
+		playIntro();
 	_graphicsManager.loadImage("H2");
 	_graphicsManager.FADE_INW();
 	_eventsManager.delay(500);
@@ -2669,7 +2669,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				if (!_globals.CENSURE)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				else
@@ -2824,7 +2824,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(29);
 				if (_globals.SVGA == 2)
@@ -2868,7 +2868,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
 					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
@@ -3334,7 +3334,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
@@ -3413,7 +3413,7 @@ bool HopkinsEngine::runWin95full() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -3425,7 +3425,7 @@ bool HopkinsEngine::runWin95full() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR3A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -3437,7 +3437,7 @@ bool HopkinsEngine::runWin95full() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals.SORTIE = 300;
@@ -3496,7 +3496,7 @@ bool HopkinsEngine::runLinuxFull() {
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
 
 	if (!_eventsManager._escKeyFl)
-		INTRORUN();
+		playIntro();
 
 	_globals.iRegul = 0;
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
@@ -3548,7 +3548,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_graphicsManager.FADE_LINUX = 2;
 				if (!_globals.CENSURE)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
@@ -3702,7 +3702,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(29);
 				_graphicsManager.FADE_LINUX = 2;
@@ -3745,7 +3745,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
 				_graphicsManager.FADE_LINUX = 2;
@@ -4213,7 +4213,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
 				if (_globals.SVGA == 2)
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
@@ -4269,7 +4269,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_graphicsManager.DD_VBL();
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
 
@@ -4303,7 +4303,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -4316,7 +4316,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR3A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -4329,7 +4329,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.Cls_Pal();
+			_graphicsManager.clearPalette();
 			_graphicsManager.FADE_LINUX = 2;
 			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals.iRegul = 0;
@@ -4440,7 +4440,10 @@ void HopkinsEngine::INIT_SYSTEM() {
 	_eventsManager._mouseOffset.y = 0;
 }
 
-void HopkinsEngine::INTRORUN() {
+/**
+ * Play the intro of the game
+ */
+void HopkinsEngine::playIntro() {
 	// Win95 EN demo doesn't include the intro
 	if ((getLanguage() == Common::EN_ANY) && (getPlatform() == Common::kPlatformWindows) && (getIsDemo()))
 		return;
@@ -4457,19 +4460,19 @@ void HopkinsEngine::INTRORUN() {
 	_animationManager._clearAnimationFl = true;
 	_animationManager.playAnim("J1.anm", 12, 12, 50);
 	if (!_eventsManager._escKeyFl) {
-		_soundManager.VOICE_MIX(1, 3);
+		_soundManager.mixVoice(1, 3);
 		_animationManager.playAnim("J2.anm", 12, 12, 50);
 
 		if (!_eventsManager._escKeyFl) {
-			_soundManager.VOICE_MIX(2, 3);
+			_soundManager.mixVoice(2, 3);
 			_animationManager.playAnim("J3.anm", 12, 12, 50);
 
 			if (!_eventsManager._escKeyFl) {
-				_soundManager.VOICE_MIX(3, 3);
+				_soundManager.mixVoice(3, 3);
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
-				_graphicsManager.Cls_Pal();
+				_graphicsManager.clearPalette();
 				_graphicsManager.DD_VBL();
 				_soundManager.WSOUND(11);
 				_graphicsManager.loadImage("intro1");
@@ -4510,7 +4513,7 @@ void HopkinsEngine::INTRORUN() {
 						return;
 				}
 
-				_soundManager.VOICE_MIX(4, 3);
+				_soundManager.mixVoice(4, 3);
 				_graphicsManager.FADE_OUTW();
 				_graphicsManager.no_scroll = 0;
 				_graphicsManager.loadImage("intro2");
@@ -4537,10 +4540,10 @@ void HopkinsEngine::INTRORUN() {
 					_eventsManager.VBL();
 
 				_objectsManager.setBobAnimation(3);
-				_soundManager.VOICE_MIX(5, 3);
+				_soundManager.mixVoice(5, 3);
 				_objectsManager.stopBobAnimation(3);
 				_eventsManager.VBL();
-				memcpy(&paletteData2, _graphicsManager.Palette, 796);
+				memcpy(&paletteData2, _graphicsManager._palette, 796);
 
 				// CHECKME: Useless variables?
 				// v21 = *(uint16 *)&_graphicsManager.Palette[796];
@@ -4587,21 +4590,21 @@ void HopkinsEngine::INTRORUN() {
 						if (v9 == 12) {
 							_objectsManager.setBobAnimation(3);
 							_eventsManager.VBL();
-							_soundManager.VOICE_MIX(6, 3);
+							_soundManager.mixVoice(6, 3);
 							_eventsManager.VBL();
 							_objectsManager.stopBobAnimation(3);
 						}
 
-						Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
+						Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
 
 
 
 						for (int i = 1, v12 = 4 * v9; i <= PALETTE_BLOCK_SIZE; i++) {
-							if (_graphicsManager.Palette[i] > v12)
-								_graphicsManager.Palette[i] -= v12;
+							if (_graphicsManager._palette[i] > v12)
+								_graphicsManager._palette[i] -= v12;
 						}
 
-						_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager._vesaBuffer);
+						_graphicsManager.setpal_vga256_linux(_graphicsManager._palette, _graphicsManager._vesaBuffer);
 
 
 						if (2 * v9 > 1) {
@@ -4622,7 +4625,7 @@ void HopkinsEngine::INTRORUN() {
 								_eventsManager.VBL();
 
 							_objectsManager.setBobAnimation(3);
-							_soundManager.VOICE_MIX(7, 3);
+							_soundManager.mixVoice(7, 3);
 							_objectsManager.stopBobAnimation(3);
 
 							for (uint k = 1; k < 60 / _globals._speed; ++k)
@@ -4631,13 +4634,13 @@ void HopkinsEngine::INTRORUN() {
 							for (uint l = 0; l < 20 / _globals._speed; ++l)
 								_eventsManager.VBL();
 
-							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager.Palette[0]);
-							_graphicsManager.setpal_vga256_linux(_graphicsManager.Palette, _graphicsManager._vesaBuffer);
+							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
+							_graphicsManager.setpal_vga256_linux(_graphicsManager._palette, _graphicsManager._vesaBuffer);
 
 							for (uint m = 0; m < 50 / _globals._speed; ++m) {
 								if (m == 30 / _globals._speed) {
 									_objectsManager.setBobAnimation(3);
-									_soundManager.VOICE_MIX(8, 3);
+									_soundManager.mixVoice(8, 3);
 									_objectsManager.stopBobAnimation(3);
 								}
 
@@ -4699,7 +4702,7 @@ void HopkinsEngine::PASS() {
 	if (_soundManager.VOICEOFF)
 		_eventsManager.delay(500);
 	else
-		_soundManager.VOICE_MIX(628, 4);
+		_soundManager.mixVoice(628, 4);
 
 	_graphicsManager.FADE_OUTW();
 	_globals.SORTIE = 4;
@@ -4731,7 +4734,7 @@ void HopkinsEngine::BOOM() {
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
-	_graphicsManager.Cls_Pal();
+	_graphicsManager.clearPalette();
 
 	_globals.iRegul = 1;
 	_soundManager.SPECIAL_SOUND = 199;
@@ -4856,7 +4859,7 @@ void HopkinsEngine::BASE() {
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
-	_graphicsManager.Cls_Pal();
+	_graphicsManager.clearPalette();
 	_animationManager._clearAnimationFl = true;
 	_soundManager.WSOUND(25);
 	if (_globals.SVGA == 1) {
@@ -4923,7 +4926,7 @@ void HopkinsEngine::BASED() {
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
-	_graphicsManager.Cls_Pal();
+	_graphicsManager.clearPalette();
 	_animationManager.NO_SEQ = false;
 	_soundManager.WSOUND(26);
 	_globals.iRegul = 1;
@@ -5064,7 +5067,7 @@ void HopkinsEngine::JOUE_FIN() {
 		_graphicsManager.lockScreen();
 		_graphicsManager.clearScreen();
 		_graphicsManager.unlockScreen();
-		_graphicsManager.Cls_Pal();
+		_graphicsManager.clearPalette();
 		_animationManager.playAnim("FF1a.anm", 18, 18, 9);
 		_animationManager.playAnim("FF1a.anm", 9, 18, 9);
 		_animationManager.playAnim("FF1a.anm", 9, 18, 18);
@@ -5120,7 +5123,7 @@ void HopkinsEngine::AVION() {
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
-	_graphicsManager.Cls_Pal();
+	_graphicsManager.clearPalette();
 
 	_animationManager._clearAnimationFl = false;
 	if (_globals.SVGA == 1) {

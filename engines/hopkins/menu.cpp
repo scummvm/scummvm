@@ -216,7 +216,7 @@ int MenuManager::MENU() {
 			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, 13);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.delay(200);
-			_vm->INTRORUN();
+			_vm->playIntro();
 			continue;
 		}
 

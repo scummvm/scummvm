@@ -155,8 +155,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	if (_vm->getIsDemo() == false)
 		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
-	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
-	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager._palette);
+	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
@@ -243,8 +243,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_eventsManager._mouseCursorId = v8;
 
 	_vm->_eventsManager.changeMouseCursor(v8);
-	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
-	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager._palette);
+	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
 	_vm->_objectsManager._disableCursorFl = false;
 	_vm->_globals._disableInventFl = v7;
 	STATI = 0;
@@ -344,7 +344,7 @@ int TalkManager::DIALOGUE() {
 			v6 = 0;
 	} while (!_vm->shouldQuit() && v6 != 1);
 
-	_vm->_soundManager.VOICE_MIX(v5, 1);
+	_vm->_soundManager.mixVoice(v5, 1);
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(6);
 	_vm->_fontManager.hideText(7);
@@ -456,7 +456,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		_vm->_fontManager.initTextBuffers(9, v22, _answersFilename, v25, v24, 20, 25, 5, v23, 252);
 		_vm->_fontManager.showText(9);
 	}
-	if (!_vm->_soundManager.VOICE_MIX(v22, 1)) {
+	if (!_vm->_soundManager.mixVoice(v22, 1)) {
 		v14 = 0;
 		_vm->_eventsManager._curMouseButton = 0;
 		_vm->_eventsManager._mouseButton = 0;
@@ -1266,12 +1266,12 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (!_vm->getIsDemo())
 		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
-	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager.Palette);
-	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.INIT_TABLE(145, 150, _vm->_graphicsManager._palette);
+	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager.Palette);
+	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
 	v14 = _vm->_graphicsManager._vesaBuffer;
 	v15 = _vm->_graphicsManager._vesaScreen;
 	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);

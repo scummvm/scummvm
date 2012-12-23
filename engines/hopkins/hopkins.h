@@ -167,7 +167,7 @@ public:
 	/**
 	 * Run the introduction sequence
 	 */
-	void INTRORUN();
+	void playIntro();
 
 	/**
 	 * Synchronises the sound settings from ScummVM into the engine

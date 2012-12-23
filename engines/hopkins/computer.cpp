@@ -70,7 +70,7 @@ void ComputerManager::setVideoMode() {
  * Sets up Textual entry mode
  */
 void ComputerManager::setTextMode() {
-	_vm->_graphicsManager.Cls_Pal();
+	_vm->_graphicsManager.clearPalette();
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
@@ -673,7 +673,7 @@ void ComputerManager::setModeVGA256() {
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.Cls_Pal();
+	_vm->_graphicsManager.clearPalette();
 	_vm->_graphicsManager.SCANLINE(320);
 }
 

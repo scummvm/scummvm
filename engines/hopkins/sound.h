@@ -153,7 +153,7 @@ public:
 	void DEL_MUSIC();
 
 
-	bool VOICE_MIX(int voiceId, int voiceMode);
+	bool mixVoice(int voiceId, int voiceMode);
 	void DEL_SAMPLE(int soundIndex);
 	void PLAY_SOUND(const Common::String &file);
 	void PLAY_SOUND2(const Common::String &file2);

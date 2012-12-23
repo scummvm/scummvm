@@ -4030,7 +4030,7 @@ void ObjectsManager::SPECIAL_JEU() {
 				_vm->_globals.NOPARLE = false;
 				if (!_vm->_globals.CENSURE) {
 					v1 = _vm->_globals.allocMemory(1000);
-					memcpy(v1, _vm->_graphicsManager.Palette, 769);
+					memcpy(v1, _vm->_graphicsManager._palette, 769);
 
 					_vm->_saveLoadManager.saveFile("TEMP1.SCR", _vm->_graphicsManager._vesaScreen, 307200);
 
@@ -4052,7 +4052,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
 
 					PERSO_ON = false;
-					memcpy(_vm->_graphicsManager.Palette, v1, 769);
+					memcpy(_vm->_graphicsManager._palette, v1, 769);
 					_vm->_graphicsManager.SHOW_PALETTE();
 					_vm->_globals.freeMemory(v1);
 					_vm->_graphicsManager.lockScreen();
@@ -4697,7 +4697,7 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 				_vm->_fontManager.showText(9);
 		}
 		if (!_vm->_soundManager.VOICEOFF)
-			_vm->_soundManager.VOICE_MIX(383, 4);
+			_vm->_soundManager.mixVoice(383, 4);
 		_vm->_globals.SAUVEGARDE->data[svField270] = 1;
 		_vm->_globals.SAUVEGARDE->data[svField300] = 1;
 		_vm->_globals.SAUVEGARDE->data[svField320] = 1;
