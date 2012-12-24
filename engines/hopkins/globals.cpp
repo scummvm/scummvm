@@ -139,7 +139,7 @@ Globals::Globals() {
 	hauteur_boite = 0;
 	forest = false;
 	_objectWidth = _objectHeight = 0;
-	HELICO = 0;
+	_helicopterFl = false;
 	_catalogPos = 0;
 	_catalogSize = 0;
 	_newObjectFl = false;
@@ -174,8 +174,8 @@ Globals::Globals() {
 	GOACTION = false;
 	NECESSAIRE = false;
 	Compteur = 0;
-	ACTION_SENS = 0;
-	ACTION_SENS = 0;
+	_actionDirection = 0;
+	_actionDirection = 0;
 	SegmentEnCours = 0;
 	STOP_BUG = 0;
 	MAX_COMPTE = 0;

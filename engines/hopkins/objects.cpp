@@ -77,8 +77,8 @@ ObjectsManager::ObjectsManager() {
 	MAX_DEPA1 = 0;
 	CH_TETE = 0;
 	T_RECTIF = 0;
-	DESACTIVE = false;
-	DEUXPERSO = false;
+	_disableFl = false;
+	_twoCharactersFl = false;
 	PERX = PERY = 0;
 	PERI = 0;
 	RECALL = 0;
@@ -1733,7 +1733,7 @@ void ObjectsManager::GOHOME() {
 			g_old_y = nouveau_y;
 		} else {
 			setSpriteIndex(0, _vm->_globals.g_old_sens + 59);
-			_vm->_globals.ACTION_SENS = 0;
+			_vm->_globals._actionDirection = 0;
 			if (_vm->_globals.GOACTION)
 				v54 = _vm->_globals._saveData->data[svField2];
 			else
@@ -1757,7 +1757,7 @@ void ObjectsManager::GOHOME() {
 								_vm->_globals.ZONEP[v55].field4 = 0;
 							} else {
 								setSpriteIndex(0, v57);
-								_vm->_globals.ACTION_SENS = _vm->_globals.ZONEP[v55].field4 - 59;
+								_vm->_globals._actionDirection = _vm->_globals.ZONEP[v55].field4 - 59;
 							}
 						}
 					}
@@ -2080,7 +2080,7 @@ LABEL_153:
 			else
 				v49 = NUMZONE;
 			setSpriteIndex(0, _vm->_globals.g_old_sens + 59);
-			_vm->_globals.ACTION_SENS = 0;
+			_vm->_globals._actionDirection = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			VERIFTAILLE();
 			setFlipSprite(0, false);
@@ -2102,7 +2102,7 @@ LABEL_153:
 								_vm->_globals.ZONEP[v50].field4 = 0;
 							} else {
 								setSpriteIndex(0, v52);
-								_vm->_globals.ACTION_SENS = _vm->_globals.ZONEP[v50].field4 - 59;
+								_vm->_globals._actionDirection = _vm->_globals.ZONEP[v50].field4 - 59;
 							}
 						}
 					}
@@ -2682,7 +2682,7 @@ LABEL_64:
 		}
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		setSpriteIndex(0, _vm->_globals.g_old_sens2 + 59);
-		_vm->_globals.ACTION_SENS = 0;
+		_vm->_globals._actionDirection = 0;
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		VERIFTAILLE();
 		setFlipSprite(0, false);
@@ -5464,21 +5464,21 @@ LABEL_70:
 		breakFlag = true;
 	}
 
-	if (_vm->_globals._exitId != 8 || _vm->_globals._screenId != 5 || _vm->_globals.HELICO != 1) {
+	if (_vm->_globals._exitId != 8 || _vm->_globals._screenId != 5 || !_vm->_globals._helicopterFl) {
 		if (!_vm->_graphicsManager.NOFADE)
 			_vm->_graphicsManager.FADE_OUTW();
 		_vm->_graphicsManager.NOFADE = false;
 		removeSprite(0);
 		_vm->_globals.AFFLI = false;
-		if (DEUXPERSO == true) {
+		if (_twoCharactersFl) {
 			removeSprite(1);
-			DEUXPERSO = false;
+			_twoCharactersFl = false;
 		}
 		if (!animFile.empty())
 			_vm->_graphicsManager.FIN_VISU();
 		CLEAR_ECRAN();
 	} else {
-		_vm->_globals.HELICO = 0;
+		_vm->_globals._helicopterFl = false;
 	}
 	_vm->_globals.iRegul = 0;
 }

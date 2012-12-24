@@ -1247,10 +1247,10 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	_vm->_globals.freeMemory(_vm->_globals.COUCOU);
 	_vm->_globals.COUCOU = v11;
-	_vm->_objectsManager.DESACTIVE = true;
+	_vm->_objectsManager._disableFl = true;
 	_vm->_objectsManager.INILINK(v20);
 	_vm->_graphicsManager.INI_ECRAN2(v20);
-	_vm->_objectsManager.DESACTIVE = false;
+	_vm->_objectsManager._disableFl = false;
 	_vm->_globals.NOMARCHE = false;
 	if (_vm->_globals._exitId == 101)
 		_vm->_globals._exitId = 0;

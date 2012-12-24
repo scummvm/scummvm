@@ -164,7 +164,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 		}
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'B') {
-		if (_vm->_objectsManager.DESACTIVE != true) {
+		if (!_vm->_objectsManager._disableFl) {
 			int v72 = *(dataP + 5);
 			v70 = *(dataP + 6);
 			int v4 = *(dataP + 7);
@@ -196,8 +196,8 @@ LABEL_1141:
 		}
 		opcodeType = 1;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'P') {
-			if (!_vm->_objectsManager.DESACTIVE) {
-				_vm->_objectsManager.DEUXPERSO = false;
+			if (!_vm->_objectsManager._disableFl) {
+				_vm->_objectsManager._twoCharactersFl = false;
 				int v5 = *(dataP + 5);
 				int v6 = (int16)READ_LE_UINT16(dataP + 8);
 				_vm->_objectsManager.PERX = (int16)READ_LE_UINT16(dataP + 6);
@@ -239,7 +239,7 @@ LABEL_1141:
 					    34,
 					    190);
 					_vm->_objectsManager.SPRITE_ON(1);
-					_vm->_objectsManager.DEUXPERSO = true;
+					_vm->_objectsManager._twoCharactersFl = true;
 				}
 				if (_vm->_globals._saveData->data[svField357] == 1
 				        && _vm->_globals._saveData->data[svField355] == 1
@@ -254,13 +254,13 @@ LABEL_1141:
 					    20,
 					    127);
 					_vm->_objectsManager.SPRITE_ON(1);
-					_vm->_objectsManager.DEUXPERSO = true;
+					_vm->_objectsManager._twoCharactersFl = true;
 				}
 			}
 			opcodeType = 1;
 			_vm->_objectsManager.CH_TETE = 0;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'E') {
-		if (_vm->_objectsManager.DESACTIVE != true) {
+		if (!_vm->_objectsManager._disableFl) {
 			int v7 = *(dataP + 5);
 			v70 = *(dataP + 6);
 			int v8 = *(dataP + 7);
@@ -276,7 +276,7 @@ LABEL_1141:
 		}
 		opcodeType = 1;
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') {
-		if (_vm->_objectsManager.DESACTIVE != true)
+		if (!_vm->_objectsManager._disableFl)
 			_vm->_objectsManager.VBOB_OFF((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
 	} else if (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') {
@@ -285,179 +285,177 @@ LABEL_1141:
 			v70 = 0;
 			if ((int16)READ_LE_UINT16(dataP + 5) == 14)
 				v73 = 1;
-			if (v73 == 17)
-				v73 = 7;
-			if (v73 == 18)
-				v73 = 8;
-			if (v73 == 19)
-				v73 = 4;
-			if (v73 == 15)
-				v73 = 11;
-			if (v73 == 16)
-				v73 = 12;
-			if (v73 == 1) {
-				if (_vm->_globals.ACTION_SENS == 1)
+
+			switch (v73) {
+			case 1:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(4);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(4);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(4);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(4);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(4);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(4);
-			}
-			if (v73 == 2) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 2:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(7);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(7);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(7);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(7);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(7);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(7);
-				if (_vm->_globals.ACTION_SENS == 1)
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(8);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(8);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(8);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(8);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(8);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(8);
-			}
-			if (v73 == 4) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 19:
+			case 4:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(1);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(1);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(1);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(1);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(1);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(1);
-			}
-			if (v73 == 5) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 5:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(5);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(5);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(5);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(5);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(5);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(5);
-				if (_vm->_globals.ACTION_SENS == 1)
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(6);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(6);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(6);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(6);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(6);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(6);
-			}
-			if (v73 == 7) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 17:
+			case 7:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(2);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(2);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(2);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(2);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(2);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(2);
-			}
-			if (v73 == 8) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 18:
+			case 8:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(3);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(3);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(3);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(3);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(3);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(3);
-			}
-			if (v73 == 9) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 9:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(5);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(5);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(5);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(5);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(5);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(5);
-			}
-			if (v73 == 10) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 10:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(6);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(6);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(6);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(6);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(6);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(6);
-			}
-			if (v73 == 11) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 15:
+			case 11:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(7);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(7);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(7);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(7);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(7);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(7);
-			}
-			if (v73 == 12) {
-				if (_vm->_globals.ACTION_SENS == 1)
+				break;
+			case 16:
+			case 12:
+				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(8);
-				if (_vm->_globals.ACTION_SENS == 3)
+				if (_vm->_globals._actionDirection == 3)
 					_vm->_objectsManager.ACTION_DROITE(8);
-				if (_vm->_globals.ACTION_SENS == 2)
+				if (_vm->_globals._actionDirection == 2)
 					_vm->_objectsManager.Q_DROITE(8);
-				if (_vm->_globals.ACTION_SENS == 5)
+				if (_vm->_globals._actionDirection == 5)
 					_vm->_objectsManager.ACTION_FACE(8);
-				if (_vm->_globals.ACTION_SENS == 8)
+				if (_vm->_globals._actionDirection == 8)
 					_vm->_objectsManager.Q_GAUCHE(8);
-				if (_vm->_globals.ACTION_SENS == 7)
+				if (_vm->_globals._actionDirection == 7)
 					_vm->_objectsManager.ACTION_GAUCHE(8);
+				break;
 			}
 		}
 		opcodeType = 1;
@@ -611,7 +609,7 @@ LABEL_1141:
 				_vm->_graphicsManager.FADE_OUTW();
 
 			_vm->_globals._disableInventFl = false;
-			_vm->_globals.HELICO = 1;
+			_vm->_globals._helicopterFl = true;
 			break;
 
 		case 16:
@@ -2240,7 +2238,7 @@ LABEL_1141:
 			_vm->_globals._saveData->data[svField354] = 0;
 			_vm->_globals._saveData->data[svField356] = 0;
 			_vm->_globals._saveData->data[svField355] = 1;
-			_vm->_objectsManager.DEUXPERSO = true;
+			_vm->_objectsManager._twoCharactersFl = true;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
 			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->_pos, 1, 3, v53->field4, 0, 20, 127);
 			_vm->_objectsManager.SPRITE_ON(1);

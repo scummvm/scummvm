@@ -102,8 +102,8 @@ public:
 	int MAX_DEPA1;
 	int CH_TETE;
 	int T_RECTIF;
-	bool DESACTIVE;
-	bool DEUXPERSO;
+	bool _disableFl;
+	bool _twoCharactersFl;
 	int PERX, PERY;
 	int PERI;
 	int RECALL;

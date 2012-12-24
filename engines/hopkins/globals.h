@@ -396,7 +396,7 @@ public:
 	byte *PERSO;
 	int _objectWidth, _objectHeight;
 	bool _newObjectFl;
-	int HELICO;
+	bool _helicopterFl;
 	uint32 _catalogPos;
 	uint32 _catalogSize;
 	int iRegul;
@@ -439,7 +439,7 @@ public:
 	bool NECESSAIRE;
 	bool GOACTION;
 	int Compteur;
-	int ACTION_SENS;
+	int _actionDirection;
 	int SegmentEnCours;
 	int couleur_40;
 

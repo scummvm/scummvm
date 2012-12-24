@@ -135,7 +135,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 
-	_globals.HELICO = 0;
+	_globals._helicopterFl = false;
 	_globals.iRegul = 1;
 
 	warning("TODO Affiche_Version(1)");
@@ -463,7 +463,7 @@ bool HopkinsEngine::runLinuxDemo() {
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 
-	_globals.HELICO = 0;
+	_globals._helicopterFl = false;
 	_eventsManager.mouseOff();
 
 	_graphicsManager.lockScreen();
@@ -2604,7 +2604,7 @@ bool HopkinsEngine::runWin95full() {
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
-	_globals.HELICO = 0;
+	_globals._helicopterFl = false;
 	_globals.iRegul = 1;
 
 	warning("TODO: Affiche_Version();");
@@ -3482,7 +3482,7 @@ bool HopkinsEngine::runLinuxFull() {
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 
-	_globals.HELICO = 0;
+	_globals._helicopterFl = false;
 	_eventsManager.mouseOff();
 
 	_graphicsManager.lockScreen();
