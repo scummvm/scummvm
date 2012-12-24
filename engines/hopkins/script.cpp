@@ -2402,7 +2402,7 @@ int ScriptManager::Traduction2(const byte *dataP) {
 	if (dataP[0] != 'F' || dataP[1] != 'C') {
 		result = 0;
 	} else {
-		if (*(dataP + 'T') == 84 && *(dataP + 3) == 'X' && *(dataP + 4) == 'T')
+		if (*(dataP + 2) == 'T' && *(dataP + 3) == 'X' && *(dataP + 4) == 'T')
 			result = 1;
 		if (*(dataP + 2) == 'B') {
 			if (*(dataP + 3) == 'O' && *(dataP + 4) == 'B')
