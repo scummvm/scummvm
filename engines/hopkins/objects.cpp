@@ -3967,7 +3967,7 @@ void ObjectsManager::OPTI_OBJET() {
 	} else {
 		v7 = 0;
 		do {
-			v5 = _vm->_scriptManager.Traduction(data + 20 * v0);
+			v5 = _vm->_scriptManager.handleOpcode(data + 20 * v0);
 			if (_vm->shouldQuit())
 				return;
 

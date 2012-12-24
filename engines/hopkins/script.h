@@ -39,8 +39,8 @@ public:
 	ScriptManager();
 	void setParent(HopkinsEngine *vm);
 
-	int Traduction(byte *a1);
-	int checkSignature(const byte *dataP);
+	int handleOpcode(byte *dataP);
+	int checkOpcode(const byte *dataP);
 	int handleGoto(const byte *dataP);
 	int handleIf(const byte *dataP, int a2);
 };

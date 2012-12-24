@@ -1004,7 +1004,7 @@ LABEL_2:
 				loopCond = false;
 				v13 = 1;
 				do {
-					v10 = _vm->_scriptManager.Traduction(ptr + 20 * v13);
+					v10 = _vm->_scriptManager.handleOpcode(ptr + 20 * v13);
 					if (_vm->shouldQuit())
 						return;
 

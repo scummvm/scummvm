@@ -1966,7 +1966,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 		int dataOffset = 1;
 
 		do {
-			int dataVal1 = _vm->_scriptManager.Traduction(ptr + 20 * dataOffset);
+			int dataVal1 = _vm->_scriptManager.handleOpcode(ptr + 20 * dataOffset);
 			if (_vm->shouldQuit())
 				return;
 

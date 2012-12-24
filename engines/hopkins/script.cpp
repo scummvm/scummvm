@@ -42,19 +42,20 @@ void ScriptManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-int ScriptManager::Traduction(byte *a1) {
-	int v1 = 0;
-	int v70 = 0;
-	if (*a1 != 'F' || *(a1 + 1) != 'C')
+int ScriptManager::handleOpcode(byte *dataP) {
+	if (dataP[0] != 'F' || dataP[1] != 'C')
 		return 0;
-	if (*(a1 + 2) == 'T' && *(a1 + 3) == 'X' && *(a1 + 4) == 'T') {
-		v70 = *(a1 + 6);
-		int v2 = *(a1 + 7);
-		int v69 = *(a1 + 8);
-		int v67 = (int16)READ_LE_UINT16(a1 + 9);
-		int v65 = (int16)READ_LE_UINT16(a1 + 11);
-		int mesgId = (int16)READ_LE_UINT16(a1 + 13);
-		v1 = 1;
+
+	int opcodeType = 0;
+	int v70 = 0;
+	if (dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') {
+		v70 = *(dataP + 6);
+		byte v2 = dataP[7];
+		byte v69 = dataP[8];
+		int v67 = (int16)READ_LE_UINT16(dataP + 9);
+		int v65 = (int16)READ_LE_UINT16(dataP + 11);
+		int mesgId = (int16)READ_LE_UINT16(dataP + 13);
+		opcodeType = 1;
 		if (!TRAVAILOBJET) {
 			if (_vm->_globals._saveData->data[svField356] == 1) {
 				if (mesgId == 53)
@@ -162,17 +163,15 @@ int ScriptManager::Traduction(byte *a1) {
 					_vm->_soundManager.mixVoice(mesgId, 5);
 			}
 		}
-	}
-
-	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'B') {
+	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'B') {
 		if (_vm->_objectsManager.DESACTIVE != true) {
-			int v72 = *(a1 + 5);
-			v70 = *(a1 + 6);
-			int v4 = *(a1 + 7);
-			int v68 = (int16)READ_LE_UINT16(a1 + 8);
-			int v66 = (int16)READ_LE_UINT16(a1 + 10);
+			int v72 = *(dataP + 5);
+			v70 = *(dataP + 6);
+			int v4 = *(dataP + 7);
+			int v68 = (int16)READ_LE_UINT16(dataP + 8);
+			int v66 = (int16)READ_LE_UINT16(dataP + 10);
 			if (v72 == 52) {
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, v68, (int16)READ_LE_UINT16(a1 + 10), v70);
+				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, v68, (int16)READ_LE_UINT16(dataP + 10), v70);
 			} else if (v72 == 51) {
 				_vm->_objectsManager.BOB_VIVANT(v70);
 			} else {
@@ -195,15 +194,13 @@ LABEL_1141:
 					_vm->_objectsManager.AFFICHE_SPEED1(_vm->_globals.SPRITE_ECRAN, v68, v66, v70);
 			}
 		}
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'S') {
-		if (*(a1 + 3) == 'T' && *(a1 + 4) == 'P') {
-			if (_vm->_objectsManager.DESACTIVE != true) {
+		opcodeType = 1;
+	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'P') {
+			if (!_vm->_objectsManager.DESACTIVE) {
 				_vm->_objectsManager.DEUXPERSO = false;
-				int v5 = *(a1 + 5);
-				int v6 = (int16)READ_LE_UINT16(a1 + 8);
-				_vm->_objectsManager.PERX = (int16)READ_LE_UINT16(a1 + 6);
+				int v5 = *(dataP + 5);
+				int v6 = (int16)READ_LE_UINT16(dataP + 8);
+				_vm->_objectsManager.PERX = (int16)READ_LE_UINT16(dataP + 6);
 				_vm->_objectsManager.PERY = v6;
 				_vm->_objectsManager.PERI = v5;
 				if (_vm->_objectsManager.CH_TETE == 1) {
@@ -260,37 +257,33 @@ LABEL_1141:
 					_vm->_objectsManager.DEUXPERSO = true;
 				}
 			}
-			v1 = 1;
+			opcodeType = 1;
 			_vm->_objectsManager.CH_TETE = 0;
+	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'E') {
+		if (_vm->_objectsManager.DESACTIVE != true) {
+			int v7 = *(dataP + 5);
+			v70 = *(dataP + 6);
+			int v8 = *(dataP + 7);
+			int v9 = *(dataP + 8);
+			_vm->_objectsManager.RECALL = 0;
+			_vm->_globals.OLD_ECRAN = _vm->_globals._screenId;
+			_vm->_globals._saveData->data[svField6] = _vm->_globals._screenId;
+			_vm->_globals._screenId = v7;
+			_vm->_globals._saveData->data[svField5] = v7;
+			_vm->_objectsManager.PTAILLE = v70;
+			_vm->_objectsManager.PEROFX = v8;
+			_vm->_objectsManager.PEROFY = v9;
 		}
-		if (*(a1 + 2) == 'S' && *(a1 + 3) == 'T' && *(a1 + 4) == 'E') {
-			if (_vm->_objectsManager.DESACTIVE != true) {
-				int v7 = *(a1 + 5);
-				v70 = *(a1 + 6);
-				int v8 = *(a1 + 7);
-				int v9 = *(a1 + 8);
-				_vm->_objectsManager.RECALL = 0;
-				_vm->_globals.OLD_ECRAN = _vm->_globals._screenId;
-				_vm->_globals._saveData->data[svField6] = _vm->_globals._screenId;
-				_vm->_globals._screenId = v7;
-				_vm->_globals._saveData->data[svField5] = v7;
-				_vm->_objectsManager.PTAILLE = v70;
-				_vm->_objectsManager.PEROFX = v8;
-				_vm->_objectsManager.PEROFY = v9;
-			}
-			v1 = 1;
-		}
-	}
-	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
+		opcodeType = 1;
+	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') {
 		if (_vm->_objectsManager.DESACTIVE != true)
-			_vm->_objectsManager.VBOB_OFF((int16)READ_LE_UINT16(a1 + 5));
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'P' && *(a1 + 3) == 'E' && *(a1 + 4) == 'R') {
-		int v73 = (int16)READ_LE_UINT16(a1 + 5);
+			_vm->_objectsManager.VBOB_OFF((int16)READ_LE_UINT16(dataP + 5));
+		opcodeType = 1;
+	} else if (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') {
+		int v73 = (int16)READ_LE_UINT16(dataP + 5);
 		if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
 			v70 = 0;
-			if ((int16)READ_LE_UINT16(a1 + 5) == 14)
+			if ((int16)READ_LE_UINT16(dataP + 5) == 14)
 				v73 = 1;
 			if (v73 == 17)
 				v73 = 7;
@@ -467,12 +460,11 @@ LABEL_1141:
 					_vm->_objectsManager.ACTION_GAUCHE(8);
 			}
 		}
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'M' && *(a1 + 3) == 'U' && *(a1 + 4) == 'S')
-		v1 = 1;
-	if (*(a1 + 2) == 'W' && *(a1 + 3) == 'A' && *(a1 + 4) == 'I') {
-		uint v74 = READ_LE_UINT16(a1 + 5) / _vm->_globals._speed;
+		opcodeType = 1;
+	} else if (dataP[2] == 'M' && dataP[3] == 'U' && dataP[4] == 'S') {
+		opcodeType = 1;
+	} else if (dataP[2] == 'W' && dataP[3] == 'A' && dataP[4] == 'I') {
+		uint v74 = READ_LE_UINT16(dataP + 5) / _vm->_globals._speed;
 		if (!v74)
 			v74 = 1;
 		for (uint v10 = 0; v10 < v74 + 1; v10++) {
@@ -481,206 +473,67 @@ LABEL_1141:
 
 			_vm->_eventsManager.VBL();
 		}
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'O') {
-		if (*(a1 + 3) == 'B' && *(a1 + 4) == 'P') {
-			v1 = 1;
-			_vm->_objectsManager.addObject((int16)READ_LE_UINT16(a1 + 5));
-		}
-		if (*(a1 + 2) == 'O' && *(a1 + 3) == 'B' && *(a1 + 4) == 'M') {
-			v1 = 1;
-			_vm->_objectsManager.removeObject((int16)READ_LE_UINT16(a1 + 5));
-		}
-	}
-	if (*(a1 + 2) == 'G' && *(a1 + 3) == 'O' && *(a1 + 4) == 'T')
-		v1 = 2;
-	if (*(a1 + 2) == 'Z') {
-		if (*(a1 + 3) == 'O' && *(a1 + 4) == 'N') {
-			_vm->_objectsManager.ZONE_ON((int16)READ_LE_UINT16(a1 + 5));
-			v1 = 1;
-		}
-		if (*(a1 + 2) == 'Z' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
-			_vm->_objectsManager.ZONE_OFF((int16)READ_LE_UINT16(a1 + 5));
-			v1 = 1;
-		}
-	}
-	if (*(a1 + 2) == 'E' && *(a1 + 3) == 'X' && *(a1 + 4) == 'I')
-		v1 = 5;
-	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'R') {
-		_vm->_globals._exitId = (int16)READ_LE_UINT16(a1 + 5);
-		v1 = 5;
-	}
-	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'C' && *(a1 + 4) == 'A') {
-		_vm->_globals.CACHE_OFF((int16)READ_LE_UINT16(a1 + 5));
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'N' && *(a1 + 4) == 'I') {
-		int v75 = (int16)READ_LE_UINT16(a1 + 5);
+		opcodeType = 1;
+	} else if (dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'P') {
+		opcodeType = 1;
+		_vm->_objectsManager.addObject((int16)READ_LE_UINT16(dataP + 5));
+	} else if (dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'M') {
+		opcodeType = 1;
+		_vm->_objectsManager.removeObject((int16)READ_LE_UINT16(dataP + 5));
+	} else if (dataP[2] == 'G' && dataP[3] == 'O' && dataP[4] == 'T') {
+		opcodeType = 2;
+	} else if (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'N') {
+		_vm->_objectsManager.ZONE_ON((int16)READ_LE_UINT16(dataP + 5));
+		opcodeType = 1;
+	} else if (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'F') {
+		_vm->_objectsManager.ZONE_OFF((int16)READ_LE_UINT16(dataP + 5));
+		opcodeType = 1;
+	} else if (dataP[2] == 'E' && dataP[3] == 'X' && dataP[4] == 'I') {
+		opcodeType = 5;
+	} else if (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'R') {
+		_vm->_globals._exitId = (int16)READ_LE_UINT16(dataP + 5);
+		opcodeType = 5;
+	} else if (dataP[2] == 'B' && dataP[3] == 'C' && dataP[4] == 'A') {
+		_vm->_globals.CACHE_OFF((int16)READ_LE_UINT16(dataP + 5));
+		opcodeType = 1;
+	} else if (dataP[2] == 'A' && dataP[3] == 'N' && dataP[4] == 'I') {
+		int v75 = (int16)READ_LE_UINT16(dataP + 5);
 		if (v75 <= 100)
 			_vm->_objectsManager.setBobAnimation(v75);
 		else
 			_vm->_objectsManager.stopBobAnimation(v75 - 100);
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'P' && *(a1 + 4) == 'E') {
-		int v76 = (int16)READ_LE_UINT16(a1 + 5);
-		if (v76 == 7)
-			_vm->_talkManager.PARLER_PERSO("rueh1.pe2");
-		if (v76 == 8)
-			_vm->_talkManager.PARLER_PERSO("ruef1.pe2");
-		if (v76 == 6) {
+		opcodeType = 1;
+	} else if (dataP[2] == 'S' && dataP[3] == 'P' && dataP[4] == 'E') {
+		switch ((int16)READ_LE_UINT16(dataP + 5)) {
+		case 6:
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.OPTI_ONE(20, 0, 14, 4);
-		}
-		if (v76 == 12) {
+			break;
+
+		case 7:
+			_vm->_talkManager.PARLER_PERSO("rueh1.pe2");
+			break;
+
+		case 8:
+			_vm->_talkManager.PARLER_PERSO("ruef1.pe2");
+			break;
+
+		case 10:
+			_vm->_talkManager.PARLER_PERSO("bqeflic1.pe2");
+			break;
+
+		case 11:
+			_vm->_talkManager.PARLER_PERSO("bqeflic2.pe2");
+			break;
+
+		case 12:
 			_vm->_fontManager.hideText(9);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();
 			_vm->_talkManager.PARLER_PERSO("bqetueur.pe2");
-		}
-		if (v76 == 600) {
-			if (!_vm->_globals._internetFl) {
-				_vm->_graphicsManager.FADE_LINUX = 2;
-				_vm->_graphicsManager.FADESPD = 1;
-				if (_vm->_globals.SVGA == 2)
-					_vm->_animationManager.playAnim("BOMBE1A.ANM", 100, 18, 100);
-				else if (_vm->_globals.SVGA == 1)
-					_vm->_animationManager.playAnim("BOMBE1.ANM", 100, 18, 100);
-			}
-			_vm->_graphicsManager.loadImage("BOMBEB");
-			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-			_vm->_graphicsManager.OPTI_INI("BOMBE", 2);
-			_vm->_graphicsManager.FADE_INS();
-		}
-		if (v76 == 601) {
-			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = false;
-			_vm->_objectsManager.OPTI_ONE(2, 0, 16, 4);
-		}
-		if (v76 == 602) {
-			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = false;
-			_vm->_objectsManager.OPTI_ONE(4, 0, 16, 4);
-		}
-		if (v76 == 603) {
-			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = false;
-			_vm->_objectsManager.OPTI_ONE(3, 0, 16, 4);
-			_vm->_soundManager.SPECIAL_SOUND = 199;
-			_vm->_graphicsManager.FADE_LINUX = 2;
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
-			else if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
-			_vm->_soundManager.SPECIAL_SOUND = 0;
-			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
-			_vm->_graphicsManager.NOFADE = true;
-			_vm->_globals._exitId = 151;
-		}
-		if (v76 == 604) {
-			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = false;
-			_vm->_objectsManager.OPTI_ONE(1, 0, 16, 4);
-			_vm->_soundManager.SPECIAL_SOUND = 199;
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
-			else if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
-			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.NOFADE = true;
-			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
-			_vm->_globals._exitId = 151;
-		}
-		if (v76 == 605) {
-			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = false;
-			_vm->_objectsManager.OPTI_ONE(5, 0, 16, 4);
-			_vm->_graphicsManager.FADE_OUTS();
-			_vm->_soundManager.SPECIAL_SOUND = 199;
-			_vm->_graphicsManager.FADE_LINUX = 2;
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
-			else if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
-			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.NOFADE = true;
-			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
-			_vm->_globals._exitId = 151;
-		}
-		if (v76 == 606) {
-			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
-			_vm->_globals.NO_VISU = false;
-			_vm->_objectsManager.OPTI_ONE(6, 0, 16, 4);
-			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
-				if (_vm->_globals.SVGA == 1)
-					_vm->_animationManager.playAnim("BOMBE3.ANM", 50, 14, 500);
-				else if (_vm->_globals.SVGA == 2)
-					_vm->_animationManager.playAnim("BOMBE3A.ANM", 50, 14, 500);
-				memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
-			}
-			_vm->_globals._exitId = 6;
-		}
-		if (v76 == 607) {
-			if (!_vm->_globals._internetFl) {
-				memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
-				v1 = _vm->_graphicsManager._oldPalette[769];
-				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
-			}
-			_vm->_globals.NBBLOC = 0;
-		}
-		if (v76 == 608) {
-			_vm->_objectsManager.stopBobAnimation(2);
-			_vm->_objectsManager.stopBobAnimation(3);
-			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_objectsManager.stopBobAnimation(6);
-			_vm->_objectsManager.stopBobAnimation(11);
-			_vm->_objectsManager.stopBobAnimation(10);
-		}
-		if (v76 == 609) {
-			_vm->_objectsManager.setBobAnimation(2);
-			_vm->_objectsManager.setBobAnimation(3);
-			_vm->_objectsManager.setBobAnimation(4);
-			_vm->_objectsManager.setBobAnimation(6);
-			_vm->_objectsManager.setBobAnimation(11);
-			_vm->_objectsManager.setBobAnimation(10);
-		}
-		if (v76 == 611) {
-			_vm->_objectsManager.setBobAnimation(5);
-			_vm->_objectsManager.setBobAnimation(7);
-			_vm->_objectsManager.setBobAnimation(8);
-			_vm->_objectsManager.setBobAnimation(9);
-			_vm->_objectsManager.setBobAnimation(12);
-			_vm->_objectsManager.setBobAnimation(13);
-		}
-		if (v76 == 610) {
-			_vm->_objectsManager.stopBobAnimation(5);
-			_vm->_objectsManager.stopBobAnimation(7);
-			_vm->_objectsManager.stopBobAnimation(8);
-			_vm->_objectsManager.stopBobAnimation(9);
-			_vm->_objectsManager.stopBobAnimation(12);
-			_vm->_objectsManager.stopBobAnimation(13);
-		}
-		if (v76 == 10)
-			_vm->_talkManager.PARLER_PERSO("bqeflic1.pe2");
-		if (v76 == 11)
-			_vm->_talkManager.PARLER_PERSO("bqeflic2.pe2");
-		if (v76 == 16)
-			_vm->_talkManager.PARLER_PERSO("ftoubib.pe2");
-		if (v76 == 17)
-			_vm->_talkManager.PARLER_PERSO("flic2b.pe2");
-		if (v76 == 18)
-			_vm->_talkManager.PARLER_PERSO("fjour.pe2");
-		if (v76 == 13) {
+			break;
+
+		case 13:
 			_vm->_eventsManager._mouseButton = _vm->_eventsManager._curMouseButton;
 			_vm->_globals._disableInventFl = true;
 			_vm->_graphicsManager.FADE_OUTW();
@@ -759,8 +612,74 @@ LABEL_1141:
 
 			_vm->_globals._disableInventFl = false;
 			_vm->_globals.HELICO = 1;
-		}
-		if (v76 == 36) {
+			break;
+
+		case 16:
+			_vm->_talkManager.PARLER_PERSO("ftoubib.pe2");
+			break;
+
+		case 17:
+			_vm->_talkManager.PARLER_PERSO("flic2b.pe2");
+			break;
+
+		case 18:
+			_vm->_talkManager.PARLER_PERSO("fjour.pe2");
+			break;
+
+		case 20:
+			_vm->_talkManager.PARLER_PERSO("PUNK.pe2");
+			break;
+
+		case 21:
+			_vm->_talkManager.PARLER_PERSO("MEDLEG.pe2");
+			break;
+
+		case 22:
+			_vm->_talkManager.OBJET_VIVANT("CADAVRE1.pe2");
+			break;
+
+		case 23:
+			_vm->_talkManager.PARLER_PERSO2("CHERCHE1.pe2");
+			break;
+
+		case 25:
+			_vm->_talkManager.PARLER_PERSO("AGENT1.pe2");
+			break;
+
+		case 26:
+			_vm->_talkManager.PARLER_PERSO("AGENT2.pe2");
+			break;
+
+		case 27:
+			if (_vm->_globals._saveData->data[svField94] != 1 || _vm->_globals._saveData->data[svField95] != 1)
+				_vm->_talkManager.PARLER_PERSO("STANDAR.pe2");
+			else
+				_vm->_talkManager.PARLER_PERSO("STANDAR1.pe2");
+			break;
+
+		case 29:
+			_vm->_globals._disableInventFl = true;
+			_vm->_talkManager.OBJET_VIVANT("TELEP.pe2");
+			_vm->_globals._disableInventFl = false;
+			break;
+
+		case 32:
+			_vm->_talkManager.PARLER_PERSO("SAMAN.pe2");
+			break;
+
+		case 35:
+			if (!_vm->_soundManager.SOUNDOFF) {
+				do {
+					if (_vm->shouldQuit())
+						return -1; // Exiting game
+
+					_vm->_eventsManager.VBL();
+				} while (_vm->_soundManager.SOUND_FLAG);
+			}
+			_vm->_talkManager.PARLER_PERSO("PTLAB.pe2");
+			break;
+
+		case 36:
 			if (_vm->_globals._saveData->data[svField270] == 2 && _vm->_globals._saveData->data[svField94] == 1 && _vm->_globals._saveData->data[svField95] == 1)
 				_vm->_globals._saveData->data[svField270] = 3;
 			if (!_vm->_globals._saveData->data[svField270])
@@ -775,13 +694,15 @@ LABEL_1141:
 				_vm->_talkManager.PARLER_PERSO2("PATRON4.pe2");
 				_vm->_globals._saveData->data[svField270] = 5;
 			}
-		}
-		if (v76 == 37) {
+			break;
+
+		case 37:
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			_vm->_animationManager.playSequence2("corde.SEQ", 32, 32, 100);
 			_vm->_graphicsManager.NOFADE = true;
-		}
-		if (v76 == 38) {
+			break;
+
+		case 38:
 			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
 			_vm->_soundManager.loadSample(2, "SOUND42.WAV");
 			_vm->_soundManager.loadSample(3, "SOUND41.WAV");
@@ -794,30 +715,33 @@ LABEL_1141:
 			_vm->_soundManager.DEL_SAMPLE(2);
 			_vm->_soundManager.DEL_SAMPLE(3);
 			_vm->_graphicsManager.NOFADE = true;
-		}
-		if (v76 == 29) {
-			_vm->_globals._disableInventFl = true;
-			_vm->_talkManager.OBJET_VIVANT("TELEP.pe2");
-			_vm->_globals._disableInventFl = false;
-		}
-		if (v76 == 22)
-			_vm->_talkManager.OBJET_VIVANT("CADAVRE1.pe2");
-		if (v76 == 20)
-			_vm->_talkManager.PARLER_PERSO("PUNK.pe2");
-		if (v76 == 23)
-			_vm->_talkManager.PARLER_PERSO2("CHERCHE1.pe2");
-		if (v76 == 35) {
-			if (!_vm->_soundManager.SOUNDOFF) {
-				do {
-					if (_vm->shouldQuit())
-						return -1; // Exiting game
+			break;
 
-					_vm->_eventsManager.VBL();
-				} while (_vm->_soundManager.SOUND_FLAG);
-			}
-			_vm->_talkManager.PARLER_PERSO("PTLAB.pe2");
-		}
-		if (v76 == 46) {
+		case 40:
+			_vm->_talkManager.PARLER_PERSO("MAGE.pe2");
+			break;
+
+		case 41:
+			_vm->_talkManager.PARLER_PERSO("MORT3.pe2");
+			break;
+
+		case 42:
+			_vm->_talkManager.PARLER_PERSO("MORT2.pe2");
+			break;
+
+		case 43:
+			_vm->_talkManager.PARLER_PERSO("MORT1.pe2");
+			break;
+
+		case 44:
+			_vm->_talkManager.PARLER_PERSO("MORT3A.pe2");
+			break;
+
+		case 45:
+			_vm->_talkManager.PARLER_PERSO("FEM3.pe2");
+			break;
+
+		case 46: {
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			int v13 = _vm->_objectsManager.getSpriteY(0);
@@ -836,47 +760,47 @@ LABEL_1141:
 			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
 			_vm->_soundManager.loadSample(2, "SOUND45.WAV");
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
-			int v15 = 0;
+			bool v15 = false;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				if (_vm->_objectsManager.BOBPOSI(9) == 4 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
-					v15 = 1;
+					v15 = true;
 				}
 				if (_vm->_objectsManager.BOBPOSI(9) == 5)
-					v15 = 0;
+					v15 = false;
 				if (_vm->_objectsManager.BOBPOSI(9) == 16 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
-					v15 = 1;
+					v15 = true;
 				}
 				if (_vm->_objectsManager.BOBPOSI(9) == 17)
-					v15 = 0;
+					v15 = false;
 				if (_vm->_objectsManager.BOBPOSI(9) == 28 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(1);
-					v15 = 1;
+					v15 = true;
 				}
 				if (_vm->_objectsManager.BOBPOSI(9) == 29)
-					v15 = 0;
+					v15 = false;
 				if (_vm->_objectsManager.BOBPOSI(10) == 10 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
-					v15 = 1;
+					v15 = true;
 				}
 				if (_vm->_objectsManager.BOBPOSI(10) == 11)
-					v15 = 0;
+					v15 = false;
 				if (_vm->_objectsManager.BOBPOSI(10) == 22 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
-					v15 = 1;
+					v15 = true;
 				}
 				if (_vm->_objectsManager.BOBPOSI(10) == 23)
-					v15 = 0;
+					v15 = false;
 				if (_vm->_objectsManager.BOBPOSI(10) == 33 && !v15) {
 					_vm->_soundManager.PLAY_SAMPLE2(2);
-					v15 = 1;
+					v15 = true;
 				}
 				if (_vm->_objectsManager.BOBPOSI(10) == 34)
-					v15 = 0;
+					v15 = false;
 				if (_vm->_objectsManager.BOBPOSI(10) == 12)
 					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 1);
 				if (_vm->_objectsManager.BOBPOSI(10) == 23)
@@ -890,8 +814,147 @@ LABEL_1141:
 			_vm->_objectsManager.stopBobAnimation(10);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			_vm->_soundManager.DEL_SAMPLE(2);
-		}
-		if (v76 == 59) {
+			break;
+			}
+
+		case 47:
+			_vm->_talkManager.PARLER_PERSO("BARMAN.pe2");
+			break;
+
+		case 48:
+			_vm->_talkManager.PARLER_PERSO("SAMAN2.pe2");
+			break;
+
+		case 49: {
+			_vm->_globals.CACHE_OFF();
+			_vm->_objectsManager.removeSprite(0);
+			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
+			int v19 = 12;
+			if (_vm->_globals._saveData->data[svField133] == 1)
+				v19 = 41;
+			int v20 = 0;
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				if (_vm->_objectsManager.BOBPOSI(9) == 4 && !v20) {
+					_vm->_soundManager.PLAY_SOUND2("SOUND44.WAV");
+					v20 = 1;
+				}
+				if (_vm->_objectsManager.BOBPOSI(9) == 5)
+					v20 = 0;
+				if (_vm->_objectsManager.BOBPOSI(9) == 18 && !v20) {
+					_vm->_soundManager.PLAY_SOUND2("SOUND46.WAV");
+					v20 = 1;
+				}
+				if (_vm->_objectsManager.BOBPOSI(9) == 19)
+					v20 = 0;
+				if (_vm->_objectsManager.BOBPOSI(10) == 11 && !v20) {
+					_vm->_soundManager.PLAY_SOUND2("SOUND45.WAV");
+					v20 = 1;
+				}
+				if (_vm->_objectsManager.BOBPOSI(10) == 12)
+					v20 = 0;
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(9) != v19);
+			if (v19 == 12) {
+				_vm->_objectsManager.SPRITE_ON(0);
+				_vm->_objectsManager.stopBobAnimation(9);
+			}
+			_vm->_globals.CACHE_ON();
+			break;
+			}
+
+		case 50:
+			_vm->_soundManager.PLAY_SOUND("SOUND46.WAv");
+			_vm->_objectsManager.OPTI_ONE(11, 0, 23, 0);
+			break;
+
+		case 51: {
+			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_globals.CACHE_OFF();
+			_vm->_objectsManager.removeSprite(0);
+			_vm->_fontManager.hideText(5);
+			_vm->_fontManager.hideText(9);
+			_vm->_graphicsManager.FIN_VISU();
+			_vm->_graphicsManager.loadImage("IM20f");
+			_vm->_animationManager.loadAnim("ANIM20f");
+			_vm->_graphicsManager.VISU_ALL();
+			_vm->_eventsManager.mouseOff();
+			_vm->_graphicsManager.FADE_INW();
+			bool v52 = false;
+			_vm->_soundManager.LOAD_WAV("SOUND46.WAV", 1);
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				if (_vm->_objectsManager.BOBPOSI(12) == 5 && !v52) {
+					_vm->_soundManager.PLAY_WAV(1);
+					v52 = true;
+				}
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(12) != 34);
+			_vm->_objectsManager.stopBobAnimation(2);
+			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_graphicsManager.NOFADE = true;
+			_vm->_globals._exitId = 20;
+			break;
+			}
+
+		case 52:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("GARDE.PE2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 53:
+			_vm->_talkManager.PARLER_PERSO("GARDE1.pe2");
+			break;
+
+		case 54:
+			_vm->_talkManager.PARLER_PERSO("GARDE2.pe2");
+			break;
+
+		case 55:
+			_vm->_objectsManager.stopBobAnimation(1);
+			_vm->_objectsManager.OPTI_ONE(15, 0, 12, 0);
+			_vm->_objectsManager.stopBobAnimation(15);
+			_vm->_objectsManager.OBSSEUL = 1;
+			_vm->_objectsManager.INILINK("IM19a");
+			_vm->_objectsManager.OBSSEUL = 0;
+			break;
+
+		case 56:
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "HOPFEM.SPR");
+			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+			_vm->_globals.PERSO_TYPE = 1;
+			_vm->_globals._saveData->data[svField122] = 1;
+			_vm->_globals.HOPKINS_DATA();
+			_vm->_objectsManager._sprite[0].field12 = 28;
+			_vm->_objectsManager._sprite[0].field14 = 155;
+			_vm->_objectsManager.VERIFTAILLE();
+			break;
+
+		case 57:
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
+			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+			_vm->_globals.PERSO_TYPE = 0;
+			_vm->_globals._saveData->data[svField122] = 0;
+			_vm->_globals.HOPKINS_DATA();
+			_vm->_objectsManager._sprite[0].field12 = 34;
+			_vm->_objectsManager._sprite[0].field14 = 190;
+			_vm->_objectsManager.VERIFTAILLE();
+			break;
+
+		case 58:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("Gm1.PE2");
+			_vm->_globals._saveData->data[svField176] = 1;
+			_vm->_globals._saveData->data[svField270] = 2;
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 59: {
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
@@ -939,50 +1002,18 @@ LABEL_1141:
 			_vm->_objectsManager.setBobAnimation(6);
 			_vm->_objectsManager.stopBobAnimation(7);
 			_vm->_objectsManager.stopBobAnimation(3);
-		}
-		if (v76 == 50) {
-			_vm->_soundManager.PLAY_SOUND("SOUND46.WAv");
-			_vm->_objectsManager.OPTI_ONE(11, 0, 23, 0);
-		}
-		if (v76 == 49) {
-			_vm->_globals.CACHE_OFF();
-			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
-			int v19 = 12;
-			if (_vm->_globals._saveData->data[svField133] == 1)
-				v19 = 41;
-			int v20 = 0;
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
-
-				if (_vm->_objectsManager.BOBPOSI(9) == 4 && !v20) {
-					_vm->_soundManager.PLAY_SOUND2("SOUND44.WAV");
-					v20 = 1;
-				}
-				if (_vm->_objectsManager.BOBPOSI(9) == 5)
-					v20 = 0;
-				if (_vm->_objectsManager.BOBPOSI(9) == 18 && !v20) {
-					_vm->_soundManager.PLAY_SOUND2("SOUND46.WAV");
-					v20 = 1;
-				}
-				if (_vm->_objectsManager.BOBPOSI(9) == 19)
-					v20 = 0;
-				if (_vm->_objectsManager.BOBPOSI(10) == 11 && !v20) {
-					_vm->_soundManager.PLAY_SOUND2("SOUND45.WAV");
-					v20 = 1;
-				}
-				if (_vm->_objectsManager.BOBPOSI(10) == 12)
-					v20 = 0;
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(9) != v19);
-			if (v19 == 12) {
-				_vm->_objectsManager.SPRITE_ON(0);
-				_vm->_objectsManager.stopBobAnimation(9);
+			break;
 			}
-			_vm->_globals.CACHE_ON();
-		}
-		if (v76 == 80) {
+
+		case 62:
+			_vm->_talkManager.OBJET_VIVANT("SBCADA.pe2");
+			break;
+
+		case 65:
+			_vm->_talkManager.OBJET_VIVANT("ScCADA.pe2");
+			break;
+
+		case 80: {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(12);
 			_vm->_objectsManager.setBobAnimation(13);
@@ -1022,8 +1053,10 @@ LABEL_1141:
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM27a");
 			_vm->_objectsManager.OBSSEUL = 0;
-		}
-		if (v76 == 81) {
+			break;
+			}
+
+		case 81: {
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
@@ -1086,36 +1119,20 @@ LABEL_1141:
 			_vm->_objectsManager.stopBobAnimation(6);
 			_vm->_objectsManager.setBobAnimation(9);
 			_vm->_objectsManager.setBobAnimation(7);
-		}
-		if (v76 == 95) {
-			_vm->_objectsManager.setBobAnimation(9);
-			_vm->_objectsManager.setBobAnimation(10);
-			_vm->_objectsManager.setBobAnimation(12);
-			_vm->_objectsManager.SET_BOBPOSI(9, 0);
-			_vm->_objectsManager.SET_BOBPOSI(10, 0);
-			_vm->_objectsManager.SET_BOBPOSI(12, 0);
-			_vm->_objectsManager.removeSprite(0);
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+			break;
+			}
 
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(9) != 15);
-			_vm->_objectsManager.stopBobAnimation(9);
-			_vm->_objectsManager.SPRITE_ON(0);
-			_vm->_soundManager.PLAY_SOUND("SOUND50.WAV");
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+		case 83:
+			_vm->_talkManager.PARLER_PERSO("CVIGIL.pe2");
+			break;
 
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(12) != 117);
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
-			_vm->_objectsManager.stopBobAnimation(12);
-			_vm->_objectsManager.stopBobAnimation(10);
-			_vm->_objectsManager.setBobAnimation(11);
-		}
-		if (v76 == 85) {
+		case 84:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("CVIGIL1.PE2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 85:
 			_vm->_objectsManager.stopBobAnimation(3);
 			_vm->_objectsManager.setBobAnimation(5);
 			_vm->_objectsManager.SET_BOBPOSI(5, 0);
@@ -1130,8 +1147,26 @@ LABEL_1141:
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM24a");
 			_vm->_objectsManager.OBSSEUL = 0;
-		}
-		if (v76 == 88) {
+			break;
+
+		case 86:
+			if (_vm->_globals._saveData->data[svField231] == 1) {
+				_vm->_talkManager.PARLER_PERSO("chotess1.pe2");
+			} else {
+				_vm->_globals.NOPARLE = true;
+				_vm->_talkManager.PARLER_PERSO("chotesse.pe2");
+				_vm->_globals.NOPARLE = false;
+			}
+			break;
+
+		case 87:
+			if (_vm->_globals._saveData->data[svField188])
+				_vm->_talkManager.PARLER_PERSO("stand2.pe2");
+			else
+				_vm->_talkManager.PARLER_PERSO("stand1.pe2");
+			break;
+
+		case 88:
 			if (_vm->_globals._saveData->data[svField183] == 1) {
 				_vm->_objectsManager.SET_BOBPOSI(1, 0);
 				_vm->_objectsManager.SET_BOBPOSI(2, 0);
@@ -1216,8 +1251,9 @@ LABEL_1141:
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
-		}
-		if (v76 == 90) {
+			break;
+
+		case 90:
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals._saveData->data[svField186]) {
 				_vm->_animationManager.playSequence("CIB5A.SEQ", 1, 12, 1);
@@ -1228,8 +1264,9 @@ LABEL_1141:
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 329, 87, 2);
 			}
-		}
-		if (v76 == 91) {
+			break;
+
+		case 91:
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals._saveData->data[svField186]) {
 				_vm->_animationManager.playSequence("CIB5B.SEQ", 1, 12, 1);
@@ -1240,8 +1277,9 @@ LABEL_1141:
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
 			}
-		}
-		if (v76 == 92) {
+			break;
+
+		case 92:
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals._saveData->data[svField184]) {
 				_vm->_animationManager.playSequence("CIB6A.SEQ", 1, 12, 1);
@@ -1252,8 +1290,9 @@ LABEL_1141:
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 293, 139, 3);
 			}
-		}
-		if (v76 == 93) {
+			break;
+
+		case 93:
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals._saveData->data[svField184]) {
 				_vm->_animationManager.playSequence("CIB6B.SEQ", 1, 12, 1);
@@ -1264,12 +1303,81 @@ LABEL_1141:
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
 			}
-		}
-		if (v76 == 62)
-			_vm->_talkManager.OBJET_VIVANT("SBCADA.pe2");
-		if (v76 == 65)
-			_vm->_talkManager.OBJET_VIVANT("ScCADA.pe2");
-		if (v76 == 105) {
+			break;
+
+		case 94:
+			if (!_vm->_globals._saveData->data[svField228])
+				_vm->_talkManager.PARLER_PERSO("flicn.pe2");
+			if (_vm->_globals._saveData->data[svField228] == 1)
+				_vm->_talkManager.PARLER_PERSO("flicn1.pe2");
+			break;
+
+		case 95:
+			_vm->_objectsManager.setBobAnimation(9);
+			_vm->_objectsManager.setBobAnimation(10);
+			_vm->_objectsManager.setBobAnimation(12);
+			_vm->_objectsManager.SET_BOBPOSI(9, 0);
+			_vm->_objectsManager.SET_BOBPOSI(10, 0);
+			_vm->_objectsManager.SET_BOBPOSI(12, 0);
+			_vm->_objectsManager.removeSprite(0);
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(9) != 15);
+			_vm->_objectsManager.stopBobAnimation(9);
+			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_soundManager.PLAY_SOUND("SOUND50.WAV");
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(12) != 117);
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
+			_vm->_objectsManager.stopBobAnimation(12);
+			_vm->_objectsManager.stopBobAnimation(10);
+			_vm->_objectsManager.setBobAnimation(11);
+			break;
+
+		case 98:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("CVIGIL2.PE2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 100:
+			_vm->_talkManager.PARLER_PERSO("tourist.pe2");
+			break;
+
+		case 101:
+			_vm->_talkManager.PARLER_PERSO("tahi1.pe2");
+			break;
+
+		case 103:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("tourist1.pe2");
+			_vm->_globals.NOPARLE = false;
+			if (_vm->_globals.SVGA == 1)
+				_vm->_animationManager.playAnim2("T421.ANM", 100, 14, 500);
+			else if (_vm->_globals.SVGA == 2)
+				_vm->_animationManager.playAnim2("T421a.ANM", 100, 14, 500);
+			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.VBL();
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("tourist2.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 104:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("tourist3.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 105:
 			_vm->_globals.NOT_VERIF = 1;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
@@ -1391,8 +1499,9 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_objectsManager.ACTION_DOS(1);
 			_vm->_soundManager.DEL_SAMPLE(1);
-		}
-		if (v76 == 106) {
+			break;
+
+		case 106:
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(4);
 			_vm->_objectsManager.SET_BOBPOSI(4, 0);
@@ -1428,8 +1537,9 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(4) != 77);
 			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.SPRITE_ON(0);
-		}
-		if (v76 == 107) {
+			break;
+
+		case 107:
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(5);
 			_vm->_objectsManager.SET_BOBPOSI(5, 0);
@@ -1465,68 +1575,73 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(5) != 53);
 			_vm->_objectsManager.stopBobAnimation(5);
 			_vm->_objectsManager.SPRITE_ON(0);
-		}
-		if (v76 == 210) {
-			_vm->_animationManager.NO_SEQ = true;
-			_vm->_soundManager.SPECIAL_SOUND = 210;
-			_vm->_animationManager.playSequence2("SECRET1.SEQ", 1, 12, 1);
-			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
-			_vm->_objectsManager.setBobAnimation(9);
-			_vm->_objectsManager.OBSSEUL = 1;
-			_vm->_objectsManager.INILINK("IM73a");
-			_vm->_objectsManager.OBSSEUL = 0;
-			_vm->_globals.CACHE_ON();
-			_vm->_animationManager.NO_SEQ = false;
-			_vm->_globals.CACHE_ADD(0);
-			_vm->_globals.CACHE_ADD(1);
-			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR4(253, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR4(254, 0, 0, 0);
-		}
-		if (v76 == 211) {
-			_vm->_objectsManager.removeSprite(0);
-			_vm->_globals.CACHE_OFF();
-			_vm->_animationManager.NO_SEQ = true;
-			_vm->_globals.NO_VISU = false;
-			_vm->_soundManager.SPECIAL_SOUND = 211;
-			_vm->_animationManager.playSequence("SECRET2.SEQ", 1, 12, 100);
-			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_animationManager.NO_SEQ = false;
-			_vm->_graphicsManager.NOFADE = true;
-			_vm->_graphicsManager.FADE_OUTW();
+			break;
 
-			for (int i = 1; i <= 39; i++) {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+		case 108:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("peche1.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
 
-				_vm->_eventsManager.VBL();
-			}
+		case 109:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("peche2.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
 
-			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR4(253, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR4(254, 0, 0, 0);
-		}
-		if (v76 == 207)
-			_vm->_talkManager.OBJET_VIVANT("PANNEAU.PE2");
-		if (v76 == 208) {
-			_vm->_globals._disableInventFl = true;
-			if (_vm->_globals._saveData->data[svField6] != _vm->_globals._saveData->data[svField401]) {
-				_vm->_soundManager.SPECIAL_SOUND = 208;
-				_vm->_eventsManager._disableEscKeyFl = true;
-				_vm->_animationManager.playSequence("SORT.SEQ", 10, 4, 10);
-				_vm->_eventsManager._disableEscKeyFl = false;
-				_vm->_soundManager.SPECIAL_SOUND = 0;
-			}
+		case 110:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("peche3.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 111:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("peche4.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 112:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("teint1.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 113:
+			_vm->_talkManager.PARLER_PERSO("teint.pe2");
+			break;
+
+		case 114:
+			_vm->_talkManager.PARLER_PERSO("tahibar.pe2");
+			break;
+
+		case 115:
+			_vm->_talkManager.PARLER_PERSO("ilebar.pe2");
+			break;
+
+		case 116:
+			_vm->_talkManager.PARLER_PERSO("Profred.pe2");
+			break;
+
+		case 170:
+			_vm->_talkManager.PARLER_PERSO("GRED.pe2");
+			break;
+
+		case 171: {
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("gred1.pe2");
+			_vm->_globals.NOPARLE = false;
 			_vm->_globals.NOT_VERIF = 1;
+			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
+			_vm->_globals.g_old_sens = -1;
+			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			int v37 = _vm->_objectsManager.getSpriteY(0);
-			int v38 = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v38, v37, 330, 418);
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.NUMZONE = 0;
+			int v55 = _vm->_objectsManager.getSpriteY(0);
+			int v56 = _vm->_objectsManager.getSpriteX(0);
+			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v56, v55, 361, 325);
+			_vm->_globals.NOT_VERIF = 1;
+			_vm->_objectsManager.NUMZONE = -1;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1534,31 +1649,29 @@ LABEL_1141:
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
-			_vm->_objectsManager.setSpriteIndex(0, 64);
-			_vm->_globals._exitId = _vm->_globals._saveData->data[svField401];
-			_vm->_globals._disableInventFl = false;
-		}
-		if (v76 == 209) {
-			_vm->_objectsManager.SET_BOBPOSI(1, 0);
-			_vm->_objectsManager.SET_BOBPOSI(2, 0);
-			_vm->_objectsManager.setSpriteIndex(0, 60);
-			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_objectsManager.setBobAnimation(1);
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+			_vm->_globals._exitId = 59;
+			break;
+			}
 
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(1) != 9);
-			_vm->_objectsManager.stopBobAnimation(1);
-			_vm->_globals.NO_VISU = true;
+		case 172:
+			_vm->_talkManager.PARLER_PERSO("GBLEU.pe2");
+			break;
+
+		case 173: {
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("gbleu1.pe2");
+			_vm->_globals.NOPARLE = false;
+			_vm->_globals.NOT_VERIF = 1;
+			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
+			_vm->_globals.g_old_sens = -1;
+			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = 1;
-			int v39 = _vm->_objectsManager.getSpriteY(0);
-			int v40 = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v40, v39, 330, 314);
-			_vm->_objectsManager.NUMZONE = 0;
+			int v57 = _vm->_objectsManager.getSpriteY(0);
+			int v58 = _vm->_objectsManager.getSpriteX(0);
+			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v58, v57, 361, 325);
 			_vm->_globals.NOT_VERIF = 1;
+			_vm->_objectsManager.NUMZONE = -1;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1566,86 +1679,15 @@ LABEL_1141:
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
-			_vm->_objectsManager.setSpriteIndex(0, 64);
-			_vm->_objectsManager.setBobAnimation(2);
-			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+			_vm->_globals._exitId = 59;
+			break;
+			}
 
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(2) != 10);
-			_vm->_objectsManager.stopBobAnimation(2);
-			_vm->_objectsManager.setBobAnimation(4);
-		}
-		if (v76 == 201) {
-			_vm->_objectsManager.setBobAnimation(3);
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+		case 174:
+			_vm->_talkManager.PARLER_PERSO("Profbl.pe2");
+			break;
 
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(3) != 18);
-			_vm->_objectsManager.stopBobAnimation(3);
-			_vm->_objectsManager.setBobAnimation(4);
-		}
-		if (v76 == 203) {
-			_vm->_globals.NO_VISU = true;
-			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.setBobAnimation(4);
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
-
-				_vm->_eventsManager.VBL();
-				if (_vm->_objectsManager.BOBPOSI(4) == 18)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
-			} while (_vm->_objectsManager.BOBPOSI(4) != 26);
-			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_globals.NO_VISU = false;
-			_vm->_objectsManager.SPRITE_ON(0);
-		}
-		if (v76 == 204) {
-			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.setBobAnimation(3);
-			_vm->_soundManager.LOAD_WAV("SOUND67.WAV", 1);
-			int v41 = 0;
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
-
-				if (_vm->_objectsManager.BOBPOSI(3) == 10 && !v41) {
-					_vm->_soundManager.PLAY_WAV(1);
-					v41 = 1;
-				}
-				if (_vm->_objectsManager.BOBPOSI(3) == 11)
-					v41 = 0;
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(3) != 50);
-			_vm->_objectsManager.stopBobAnimation(3);
-			_vm->_objectsManager.SPRITE_ON(0);
-		}
-		if (v76 == 205) {
-			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.setBobAnimation(4);
-			_vm->_soundManager.LOAD_WAV("SOUND69.WAV", 1);
-			int v42 = 0;
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
-
-				if (_vm->_objectsManager.BOBPOSI(4) == 10 && !v42) {
-					_vm->_soundManager.PLAY_WAV(1);
-					v42 = 1;
-				}
-				if (_vm->_objectsManager.BOBPOSI(4) == 11)
-					v42 = 0;
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(4) != 24);
-			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_objectsManager.SPRITE_ON(0);
-		}
-		if (v76 == 175) {
+		case 175:
 			_vm->_objectsManager.setSpriteIndex(0, 55);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(9);
@@ -1690,14 +1732,245 @@ LABEL_1141:
 			_vm->_objectsManager.stopBobAnimation(9);
 			_vm->_objectsManager.stopBobAnimation(10);
 			_vm->_objectsManager.SPRITE_ON(0);
-		}
-		if (v76 == 229) {
+			break;
+
+		case 176:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("gred2.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 177:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("gbleu2.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 200:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("Gm2.PE2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 201:
+			_vm->_objectsManager.setBobAnimation(3);
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(3) != 18);
+			_vm->_objectsManager.stopBobAnimation(3);
+			_vm->_objectsManager.setBobAnimation(4);
+			break;
+
+		case 202:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("SVGARD2.PE2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 203:
+			_vm->_globals.NO_VISU = true;
+			_vm->_objectsManager.removeSprite(0);
+			_vm->_objectsManager.setBobAnimation(4);
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_eventsManager.VBL();
+				if (_vm->_objectsManager.BOBPOSI(4) == 18)
+					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
+			} while (_vm->_objectsManager.BOBPOSI(4) != 26);
+			_vm->_objectsManager.stopBobAnimation(4);
+			_vm->_globals.NO_VISU = false;
+			_vm->_objectsManager.SPRITE_ON(0);
+			break;
+
+		case 204: {
+			_vm->_objectsManager.removeSprite(0);
+			_vm->_objectsManager.setBobAnimation(3);
+			_vm->_soundManager.LOAD_WAV("SOUND67.WAV", 1);
+			int v41 = 0;
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				if (_vm->_objectsManager.BOBPOSI(3) == 10 && !v41) {
+					_vm->_soundManager.PLAY_WAV(1);
+					v41 = 1;
+				}
+				if (_vm->_objectsManager.BOBPOSI(3) == 11)
+					v41 = 0;
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(3) != 50);
+			_vm->_objectsManager.stopBobAnimation(3);
+			_vm->_objectsManager.SPRITE_ON(0);
+			break;
+			}
+
+		case 205: {
+			_vm->_objectsManager.removeSprite(0);
+			_vm->_objectsManager.setBobAnimation(4);
+			_vm->_soundManager.LOAD_WAV("SOUND69.WAV", 1);
+			int v42 = 0;
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				if (_vm->_objectsManager.BOBPOSI(4) == 10 && !v42) {
+					_vm->_soundManager.PLAY_WAV(1);
+					v42 = 1;
+				}
+				if (_vm->_objectsManager.BOBPOSI(4) == 11)
+					v42 = 0;
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(4) != 24);
+			_vm->_objectsManager.stopBobAnimation(4);
+			_vm->_objectsManager.SPRITE_ON(0);
+			break;
+			}
+
+		case 207:
+			_vm->_talkManager.OBJET_VIVANT("PANNEAU.PE2");
+			break;
+
+		case 208: {
+			_vm->_globals._disableInventFl = true;
+			if (_vm->_globals._saveData->data[svField6] != _vm->_globals._saveData->data[svField401]) {
+				_vm->_soundManager.SPECIAL_SOUND = 208;
+				_vm->_eventsManager._disableEscKeyFl = true;
+				_vm->_animationManager.playSequence("SORT.SEQ", 10, 4, 10);
+				_vm->_eventsManager._disableEscKeyFl = false;
+				_vm->_soundManager.SPECIAL_SOUND = 0;
+			}
+			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
+			int v37 = _vm->_objectsManager.getSpriteY(0);
+			int v38 = _vm->_objectsManager.getSpriteX(0);
+			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v38, v37, 330, 418);
+			_vm->_globals.NOT_VERIF = 1;
+			_vm->_objectsManager.NUMZONE = 0;
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_objectsManager.GOHOME();
+				_vm->_eventsManager.VBL();
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
+			_vm->_objectsManager.setSpriteIndex(0, 64);
+			_vm->_globals._exitId = _vm->_globals._saveData->data[svField401];
+			_vm->_globals._disableInventFl = false;
+			break;
+			}
+
+		case 209: {
+			_vm->_objectsManager.SET_BOBPOSI(1, 0);
+			_vm->_objectsManager.SET_BOBPOSI(2, 0);
+			_vm->_objectsManager.setSpriteIndex(0, 60);
+			_vm->_objectsManager.stopBobAnimation(4);
+			_vm->_objectsManager.setBobAnimation(1);
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(1) != 9);
+			_vm->_objectsManager.stopBobAnimation(1);
+			_vm->_globals.NO_VISU = true;
+			_vm->_globals.chemin = (int16 *)g_PTRNUL;
+			_vm->_globals.NOT_VERIF = 1;
+			int v39 = _vm->_objectsManager.getSpriteY(0);
+			int v40 = _vm->_objectsManager.getSpriteX(0);
+			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v40, v39, 330, 314);
+			_vm->_objectsManager.NUMZONE = 0;
+			_vm->_globals.NOT_VERIF = 1;
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_objectsManager.GOHOME();
+				_vm->_eventsManager.VBL();
+			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
+			_vm->_objectsManager.setSpriteIndex(0, 64);
+			_vm->_objectsManager.setBobAnimation(2);
+			_vm->_soundManager.PLAY_SOUND("SOUND66.WAV");
+			do {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_eventsManager.VBL();
+			} while (_vm->_objectsManager.BOBPOSI(2) != 10);
+			_vm->_objectsManager.stopBobAnimation(2);
+			_vm->_objectsManager.setBobAnimation(4);
+			break;
+			}
+
+		case 210:
+			_vm->_animationManager.NO_SEQ = true;
+			_vm->_soundManager.SPECIAL_SOUND = 210;
+			_vm->_animationManager.playSequence2("SECRET1.SEQ", 1, 12, 1);
+			_vm->_soundManager.SPECIAL_SOUND = 0;
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
+			_vm->_objectsManager.setBobAnimation(9);
+			_vm->_objectsManager.OBSSEUL = 1;
+			_vm->_objectsManager.INILINK("IM73a");
+			_vm->_objectsManager.OBSSEUL = 0;
+			_vm->_globals.CACHE_ON();
+			_vm->_animationManager.NO_SEQ = false;
+			_vm->_globals.CACHE_ADD(0);
+			_vm->_globals.CACHE_ADD(1);
+			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR4(253, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR4(254, 0, 0, 0);
+			break;
+
+		case 211:
+			_vm->_objectsManager.removeSprite(0);
+			_vm->_globals.CACHE_OFF();
+			_vm->_animationManager.NO_SEQ = true;
+			_vm->_globals.NO_VISU = false;
+			_vm->_soundManager.SPECIAL_SOUND = 211;
+			_vm->_animationManager.playSequence("SECRET2.SEQ", 1, 12, 100);
+			_vm->_soundManager.SPECIAL_SOUND = 0;
+			_vm->_animationManager.NO_SEQ = false;
+			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager.FADE_OUTW();
+
+			for (int i = 1; i <= 39; i++) {
+				if (_vm->shouldQuit())
+					return -1; // Exiting game
+
+				_vm->_eventsManager.VBL();
+			}
+
+			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR4(253, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR4(254, 0, 0, 0);
+			break;
+
+		case 215:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("aviat.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 216:
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("aviat1.pe2");
+			_vm->_globals.NOPARLE = false;
+			break;
+
+		case 229:
 			_vm->_soundManager.SPECIAL_SOUND = 229;
 			_vm->_animationManager.playSequence("MUR.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 340, 157, 2);
-		}
-		if (v76 == 230) {
+			break;
+
+		case 230: {
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM93a");
 			_vm->_objectsManager.OBSSEUL = 0;
@@ -1741,8 +2014,10 @@ LABEL_1141:
 			_vm->_objectsManager.INILINK("IM93c");
 			_vm->_objectsManager.OBSSEUL = 0;
 			_vm->_globals.CACHE_ON();
-		}
-		if (v76 == 231) {
+			break;
+			}
+
+		case 231:
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(12);
@@ -1764,8 +2039,9 @@ LABEL_1141:
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_objectsManager.stopBobAnimation(12);
 			_vm->_globals.CACHE_ON();
-		}
-		if (v76 == 233) {
+			break;
+
+		case 233: {
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(11);
@@ -1794,19 +2070,10 @@ LABEL_1141:
 			_vm->_objectsManager.stopBobAnimation(13);
 			_vm->_graphicsManager.NOFADE = true;
 			_vm->_globals._exitId = 94;
-		}
-		if (v76 == 52) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("GARDE.PE2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 53)
-			_vm->_talkManager.PARLER_PERSO("GARDE1.pe2");
-		if (v76 == 54)
-			_vm->_talkManager.PARLER_PERSO("GARDE2.pe2");
-		if (v76 == 40)
-			_vm->_talkManager.PARLER_PERSO("MAGE.pe2");
-		if (v76 == 236) {
+			break;
+			}
+
+		case 236: {
 			char v47 = _vm->_globals._saveData->data[svField341];
 			if (v47) {
 				if (v47 == 2)
@@ -1833,8 +2100,10 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(6, 0, 23, 0);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 1);
-		}
-		if (v76 == 237) {
+			break;
+			}
+
+		case 237: {
 			char v48 = _vm->_globals._saveData->data[svField341];
 			if (v48) {
 				if (v48 == 2)
@@ -1861,8 +2130,10 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 23, 0);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 145, 166, 3);
-		}
-		if (v76 == 238) {
+			break;
+			}
+
+		case 238: {
 			char v49 = _vm->_globals._saveData->data[svField341];
 			if (v49) {
 				if (v49 == 2)
@@ -1889,13 +2160,16 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(4, 0, 23, 0);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 296, 212, 5);
-		}
-		if (v76 == 239) {
+			break;
+			}
+
+		case 239:
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_soundManager.PLAY_SOUND("SOUND84.WAV");
 			_vm->_objectsManager.OPTI_ONE(16, 0, 10, 0);
-		}
-		if (v76 == 240) {
+			break;
+
+		case 240: {
 			_vm->_objectsManager.setBobAnimation(1);
 			bool soundFlag = false;
 			do {
@@ -1940,221 +2214,14 @@ LABEL_1141:
 			_vm->_globals._saveData->data[svField352] = 1;
 			_vm->_globals._saveData->data[svField353] = 1;
 			_vm->_globals._saveData->data[svField354] = 1;
-		}
-		if (v76 == 56) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "HOPFEM.SPR");
-			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-			_vm->_globals.PERSO_TYPE = 1;
-			_vm->_globals._saveData->data[svField122] = 1;
-			_vm->_globals.HOPKINS_DATA();
-			_vm->_objectsManager._sprite[0].field12 = 28;
-			_vm->_objectsManager._sprite[0].field14 = 155;
-			_vm->_objectsManager.VERIFTAILLE();
-		}
-		if (v76 == 57) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
-			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-			_vm->_globals.PERSO_TYPE = 0;
-			_vm->_globals._saveData->data[svField122] = 0;
-			_vm->_globals.HOPKINS_DATA();
-			_vm->_objectsManager._sprite[0].field12 = 34;
-			_vm->_objectsManager._sprite[0].field14 = 190;
-			_vm->_objectsManager.VERIFTAILLE();
-		}
-		if (v76 == 25)
-			_vm->_talkManager.PARLER_PERSO("AGENT1.pe2");
-		if (v76 == 26)
-			_vm->_talkManager.PARLER_PERSO("AGENT2.pe2");
-		if (v76 == 87) {
-			if (_vm->_globals._saveData->data[svField188])
-				_vm->_talkManager.PARLER_PERSO("stand2.pe2");
-			else
-				_vm->_talkManager.PARLER_PERSO("stand1.pe2");
-		}
-		if (v76 == 86) {
-			if (_vm->_globals._saveData->data[svField231] == 1) {
-				_vm->_talkManager.PARLER_PERSO("chotess1.pe2");
-			} else {
-				_vm->_globals.NOPARLE = true;
-				_vm->_talkManager.PARLER_PERSO("chotesse.pe2");
-				_vm->_globals.NOPARLE = false;
+			break;
 			}
-		}
-		if (v76 == 51) {
-			_vm->_graphicsManager.FADE_OUTW();
-			_vm->_globals.CACHE_OFF();
-			_vm->_objectsManager.removeSprite(0);
-			_vm->_fontManager.hideText(5);
-			_vm->_fontManager.hideText(9);
-			_vm->_graphicsManager.FIN_VISU();
-			_vm->_graphicsManager.loadImage("IM20f");
-			_vm->_animationManager.loadAnim("ANIM20f");
-			_vm->_graphicsManager.VISU_ALL();
-			_vm->_eventsManager.mouseOff();
-			_vm->_graphicsManager.FADE_INW();
-			bool v52 = false;
-			_vm->_soundManager.LOAD_WAV("SOUND46.WAV", 1);
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
 
-				if (_vm->_objectsManager.BOBPOSI(12) == 5 && !v52) {
-					_vm->_soundManager.PLAY_WAV(1);
-					v52 = true;
-				}
-				_vm->_eventsManager.VBL();
-			} while (_vm->_objectsManager.BOBPOSI(12) != 34);
-			_vm->_objectsManager.stopBobAnimation(2);
-			_vm->_graphicsManager.FADE_OUTW();
-			_vm->_graphicsManager.NOFADE = true;
-			_vm->_globals._exitId = 20;
-		}
-		if (v76 == 41)
-			_vm->_talkManager.PARLER_PERSO("MORT3.pe2");
-		if (v76 == 44)
-			_vm->_talkManager.PARLER_PERSO("MORT3A.pe2");
-		if (v76 == 42)
-			_vm->_talkManager.PARLER_PERSO("MORT2.pe2");
-		if (v76 == 43)
-			_vm->_talkManager.PARLER_PERSO("MORT1.pe2");
-		if (v76 == 47)
-			_vm->_talkManager.PARLER_PERSO("BARMAN.pe2");
-		if (v76 == 45)
-			_vm->_talkManager.PARLER_PERSO("FEM3.pe2");
-		if (v76 == 48)
-			_vm->_talkManager.PARLER_PERSO("SAMAN2.pe2");
-		if (v76 == 21)
-			_vm->_talkManager.PARLER_PERSO("MEDLEG.pe2");
-		if (v76 == 94) {
-			if (!_vm->_globals._saveData->data[svField228])
-				_vm->_talkManager.PARLER_PERSO("flicn.pe2");
-			if (_vm->_globals._saveData->data[svField228] == 1)
-				_vm->_talkManager.PARLER_PERSO("flicn1.pe2");
-		}
-		if (v76 == 27) {
-			if (_vm->_globals._saveData->data[svField94] != 1 || _vm->_globals._saveData->data[svField95] != 1)
-				_vm->_talkManager.PARLER_PERSO("STANDAR.pe2");
-			else
-				_vm->_talkManager.PARLER_PERSO("STANDAR1.pe2");
-		}
-		if (v76 == 58) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("Gm1.PE2");
-			_vm->_globals._saveData->data[svField176] = 1;
-			_vm->_globals._saveData->data[svField270] = 2;
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 200) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("Gm2.PE2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 84) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("CVIGIL1.PE2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 98) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("CVIGIL2.PE2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 83)
-			_vm->_talkManager.PARLER_PERSO("CVIGIL.pe2");
-		if (v76 == 32)
-			_vm->_talkManager.PARLER_PERSO("SAMAN.pe2");
-		if (v76 == 215) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("aviat.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 216) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("aviat1.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 170)
-			_vm->_talkManager.PARLER_PERSO("GRED.pe2");
-		if (v76 == 172)
-			_vm->_talkManager.PARLER_PERSO("GBLEU.pe2");
-		if (v76 == 100)
-			_vm->_talkManager.PARLER_PERSO("tourist.pe2");
-		if (v76 == 103) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("tourist1.pe2");
-			_vm->_globals.NOPARLE = false;
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.playAnim2("T421.ANM", 100, 14, 500);
-			else if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.playAnim2("T421a.ANM", 100, 14, 500);
-			_vm->_eventsManager.VBL();
-			_vm->_eventsManager.VBL();
-			_vm->_eventsManager.VBL();
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("tourist2.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 104) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("tourist3.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 108) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("peche1.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 109) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("peche2.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 110) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("peche3.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 111) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("peche4.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 112) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("teint1.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 176) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("gred2.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 177) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("gbleu2.pe2");
-			_vm->_globals.NOPARLE = false;
-		}
-		if (v76 == 113)
-			_vm->_talkManager.PARLER_PERSO("teint.pe2");
-		if (v76 == 114)
-			_vm->_talkManager.PARLER_PERSO("tahibar.pe2");
-		if (v76 == 115)
-			_vm->_talkManager.PARLER_PERSO("ilebar.pe2");
-		if (v76 == 116)
-			_vm->_talkManager.PARLER_PERSO("Profred.pe2");
-		if (v76 == 101)
-			_vm->_talkManager.PARLER_PERSO("tahi1.pe2");
-		if (v76 == 243) {
-			_vm->_soundManager.PLAY_SOUND("SOUND88.WAV");
-			if (_vm->_globals._saveData->data[svField341] == 2) {
-				_vm->_animationManager.NO_SEQ = true;
-				_vm->_animationManager.playSequence("RESU.SEQ", 2, 24, 2);
-				_vm->_animationManager.NO_SEQ = false;
-			} else {
-				_vm->_objectsManager.OPTI_ONE(7, 0, 14, 0);
-			}
-		}
-		if (v76 == 242) {
+		case 241:
+			_vm->_talkManager.PARLER_PERSO("RECEP.PE2");
+			break;
+
+		case 242: {
 			_vm->_soundManager.PLAY_SOUND("SOUND87.WAV");
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.playSequence("RESUF.SEQ", 1, 24, 1);
@@ -2168,8 +2235,7 @@ LABEL_1141:
 			int v54 = _vm->_globals.STAILLE[790 / 2];
 			if (_vm->_globals.STAILLE[790 / 2] < 0)
 				v54 = -_vm->_globals.STAILLE[790 / 2];
-			v76 = -(100 * (67 - (100 - v54)) / 67);
-			v53->field4 = v76;
+			v53->field4 = 242 - (100 * (67 - (100 - v54)) / 67);
 			_vm->_globals._saveData->data[svField357] = 1;
 			_vm->_globals._saveData->data[svField354] = 0;
 			_vm->_globals._saveData->data[svField356] = 0;
@@ -2178,16 +2244,30 @@ LABEL_1141:
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
 			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->_pos, 1, 3, v53->field4, 0, 20, 127);
 			_vm->_objectsManager.SPRITE_ON(1);
-		}
-		if (v76 == 245) {
+			break;
+			}
+
+		case 243:
+			_vm->_soundManager.PLAY_SOUND("SOUND88.WAV");
+			if (_vm->_globals._saveData->data[svField341] == 2) {
+				_vm->_animationManager.NO_SEQ = true;
+				_vm->_animationManager.playSequence("RESU.SEQ", 2, 24, 2);
+				_vm->_animationManager.NO_SEQ = false;
+			} else {
+				_vm->_objectsManager.OPTI_ONE(7, 0, 14, 0);
+			}
+			break;
+
+		case 245:
 			_vm->_soundManager.PLAY_SOUND("SOUND89.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 6, 0);
 			_vm->_globals.ZONEP[4]._destX = 276;
 			_vm->_objectsManager.VERBE_ON(4, 19);
 			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
 			_vm->_globals._saveData->data[svField399] = 1;
-		}
-		if (v76 == 246) {
+			break;
+
+		case 246:
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.OPTI_ONE(6, 0, 15, 0);
 			_vm->_objectsManager.PERSO_ON = true;
@@ -2199,118 +2279,188 @@ LABEL_1141:
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_objectsManager.PERSO_ON = false;
 			_vm->_globals._exitId = 100;
-		}
-		if (v76 == 55) {
-			_vm->_objectsManager.stopBobAnimation(1);
-			_vm->_objectsManager.OPTI_ONE(15, 0, 12, 0);
-			_vm->_objectsManager.stopBobAnimation(15);
-			_vm->_objectsManager.OBSSEUL = 1;
-			_vm->_objectsManager.INILINK("IM19a");
-			_vm->_objectsManager.OBSSEUL = 0;
-		}
-		if (v76 == 241)
-			_vm->_talkManager.PARLER_PERSO("RECEP.PE2");
-		if (v76 == 171) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("gred1.pe2");
-			_vm->_globals.NOPARLE = false;
-			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.g_old_sens = -1;
-			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			_vm->_globals.NOT_VERIF = 1;
-			int v55 = _vm->_objectsManager.getSpriteY(0);
-			int v56 = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v56, v55, 361, 325);
-			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.NUMZONE = -1;
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+			break;
 
-				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
-			_vm->_globals._exitId = 59;
-		}
-		if (v76 == 173) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("gbleu1.pe2");
-			_vm->_globals.NOPARLE = false;
-			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.g_old_sens = -1;
-			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			_vm->_globals.NOT_VERIF = 1;
-			int v57 = _vm->_objectsManager.getSpriteY(0);
-			int v58 = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v58, v57, 361, 325);
-			_vm->_globals.NOT_VERIF = 1;
-			_vm->_objectsManager.NUMZONE = -1;
-			do {
-				if (_vm->shouldQuit())
-					return -1; // Exiting game
+		case 600:
+			if (!_vm->_globals._internetFl) {
+				_vm->_graphicsManager.FADE_LINUX = 2;
+				_vm->_graphicsManager.FADESPD = 1;
+				if (_vm->_globals.SVGA == 2)
+					_vm->_animationManager.playAnim("BOMBE1A.ANM", 100, 18, 100);
+				else if (_vm->_globals.SVGA == 1)
+					_vm->_animationManager.playAnim("BOMBE1.ANM", 100, 18, 100);
+			}
+			_vm->_graphicsManager.loadImage("BOMBEB");
+			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+			_vm->_graphicsManager.OPTI_INI("BOMBE", 2);
+			_vm->_graphicsManager.FADE_INS();
+			break;
 
-				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
-			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
-			_vm->_globals._exitId = 59;
+		case 601:
+			_vm->_globals.NO_VISU = true;
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_globals.NO_VISU = false;
+			_vm->_objectsManager.OPTI_ONE(2, 0, 16, 4);
+			break;
+
+		case 602:
+			_vm->_globals.NO_VISU = true;
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_globals.NO_VISU = false;
+			_vm->_objectsManager.OPTI_ONE(4, 0, 16, 4);
+			break;
+
+		case 603:
+			_vm->_globals.NO_VISU = true;
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_globals.NO_VISU = false;
+			_vm->_objectsManager.OPTI_ONE(3, 0, 16, 4);
+			_vm->_soundManager.SPECIAL_SOUND = 199;
+			_vm->_graphicsManager.FADE_LINUX = 2;
+			if (_vm->_globals.SVGA == 1)
+				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
+			else if (_vm->_globals.SVGA == 2)
+				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_soundManager.SPECIAL_SOUND = 0;
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
+			_vm->_graphicsManager.NOFADE = true;
+			_vm->_globals._exitId = 151;
+			break;
+
+		case 604:
+			_vm->_globals.NO_VISU = true;
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_globals.NO_VISU = false;
+			_vm->_objectsManager.OPTI_ONE(1, 0, 16, 4);
+			_vm->_soundManager.SPECIAL_SOUND = 199;
+			if (_vm->_globals.SVGA == 1)
+				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
+			else if (_vm->_globals.SVGA == 2)
+				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_soundManager.SPECIAL_SOUND = 0;
+			_vm->_graphicsManager.NOFADE = true;
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
+			_vm->_globals._exitId = 151;
+			break;
+
+		case 605:
+			_vm->_globals.NO_VISU = true;
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_globals.NO_VISU = false;
+			_vm->_objectsManager.OPTI_ONE(5, 0, 16, 4);
+			_vm->_graphicsManager.FADE_OUTS();
+			_vm->_soundManager.SPECIAL_SOUND = 199;
+			_vm->_graphicsManager.FADE_LINUX = 2;
+			if (_vm->_globals.SVGA == 1)
+				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
+			else if (_vm->_globals.SVGA == 2)
+				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_soundManager.SPECIAL_SOUND = 0;
+			_vm->_graphicsManager.NOFADE = true;
+			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
+			_vm->_globals._exitId = 151;
+			break;
+
+		case 606:
+			_vm->_globals.NO_VISU = true;
+			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_globals.NO_VISU = false;
+			_vm->_objectsManager.OPTI_ONE(6, 0, 16, 4);
+			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
+				if (_vm->_globals.SVGA == 1)
+					_vm->_animationManager.playAnim("BOMBE3.ANM", 50, 14, 500);
+				else if (_vm->_globals.SVGA == 2)
+					_vm->_animationManager.playAnim("BOMBE3A.ANM", 50, 14, 500);
+				memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
+			}
+			_vm->_globals._exitId = 6;
+			break;
+
+		case 607:
+			if (!_vm->_globals._internetFl) {
+				memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
+				_vm->_graphicsManager._oldPalette[769];
+				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
+			}
+			_vm->_globals.NBBLOC = 0;
+			break;
+
+		case 608:
+			_vm->_objectsManager.stopBobAnimation(2);
+			_vm->_objectsManager.stopBobAnimation(3);
+			_vm->_objectsManager.stopBobAnimation(4);
+			_vm->_objectsManager.stopBobAnimation(6);
+			_vm->_objectsManager.stopBobAnimation(11);
+			_vm->_objectsManager.stopBobAnimation(10);
+			break;
+
+		case 609:
+			_vm->_objectsManager.setBobAnimation(2);
+			_vm->_objectsManager.setBobAnimation(3);
+			_vm->_objectsManager.setBobAnimation(4);
+			_vm->_objectsManager.setBobAnimation(6);
+			_vm->_objectsManager.setBobAnimation(11);
+			_vm->_objectsManager.setBobAnimation(10);
+			break;
+
+		case 610:
+			_vm->_objectsManager.stopBobAnimation(5);
+			_vm->_objectsManager.stopBobAnimation(7);
+			_vm->_objectsManager.stopBobAnimation(8);
+			_vm->_objectsManager.stopBobAnimation(9);
+			_vm->_objectsManager.stopBobAnimation(12);
+			_vm->_objectsManager.stopBobAnimation(13);
+			break;
+
+		case 611:
+			_vm->_objectsManager.setBobAnimation(5);
+			_vm->_objectsManager.setBobAnimation(7);
+			_vm->_objectsManager.setBobAnimation(8);
+			_vm->_objectsManager.setBobAnimation(9);
+			_vm->_objectsManager.setBobAnimation(12);
+			_vm->_objectsManager.setBobAnimation(13);
+			break;
 		}
-		if (v76 == 174)
-			_vm->_talkManager.PARLER_PERSO("Profbl.pe2");
-		if (v76 == 202) {
-			_vm->_globals.NOPARLE = true;
-			_vm->_talkManager.PARLER_PERSO("SVGARD2.PE2");
-			_vm->_globals.NOPARLE = false;
-		}
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'E' && *(a1 + 3) == 'I' && *(a1 + 4) == 'F')
-		v1 = 4;
-	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'A' && *(a1 + 4) == 'L') {
-		v1 = 1;
-		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(a1 + 5)] = (int16)READ_LE_UINT16(a1 + 7);
-	}
-	if (*(a1 + 2) == 'A' && *(a1 + 3) == 'D' && *(a1 + 4) == 'D') {
-		v1 = 1;
-		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(a1 + 5)] += *(a1 + 7);
-	}
-	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'S') {
-		v1 = 1;
-		_vm->_objectsManager.BOB_OFFSET((int16)READ_LE_UINT16(a1 + 5), (int16)READ_LE_UINT16(a1 + 7));
-	}
-	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'O' && *(a1 + 4) == 'N') {
-		_vm->_objectsManager.VERBE_ON((int16)READ_LE_UINT16(a1 + 5), (int16)READ_LE_UINT16(a1 + 7));
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'Z' && *(a1 + 3) == 'C' && *(a1 + 4) == 'H') {
-		_vm->_globals.ZONEP[(int16)READ_LE_UINT16(a1 + 5)].field12 = (int16)READ_LE_UINT16(a1 + 7);
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'J' && *(a1 + 3) == 'U' && *(a1 + 4) == 'M') {
-		int v59 = (int16)READ_LE_UINT16(a1 + 7);
-		_vm->_objectsManager.NVZONE = (int16)READ_LE_UINT16(a1 + 5);
+		opcodeType = 1;
+	} else if (dataP[2] == 'E' && dataP[3] == 'I' && dataP[4] == 'F') {
+		opcodeType = 4;
+	} else if (dataP[2] == 'V' && dataP[3] == 'A' && dataP[4] == 'L') {
+		opcodeType = 1;
+		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(dataP + 5)] = (int16)READ_LE_UINT16(dataP + 7);
+	} else if (dataP[2] == 'A' && dataP[3] == 'D' && dataP[4] == 'D') {
+		opcodeType = 1;
+		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(dataP + 5)] += *(dataP + 7);
+	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'S') {
+		opcodeType = 1;
+		_vm->_objectsManager.BOB_OFFSET((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
+	} else if (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'N') {
+		_vm->_objectsManager.VERBE_ON((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
+		opcodeType = 1;
+	} else if (dataP[2] == 'Z' && dataP[3] == 'C' && dataP[4] == 'H') {
+		_vm->_globals.ZONEP[(int16)READ_LE_UINT16(dataP + 5)].field12 = (int16)READ_LE_UINT16(dataP + 7);
+		opcodeType = 1;
+	} else if (dataP[2] == 'J' && dataP[3] == 'U' && dataP[4] == 'M') {
+		int v59 = (int16)READ_LE_UINT16(dataP + 7);
+		_vm->_objectsManager.NVZONE = (int16)READ_LE_UINT16(dataP + 5);
 		_vm->_objectsManager.NVVERBE = v59;
-		v1 = 6;
-	}
-	if (*(a1 + 2) == 'S' && *(a1 + 3) == 'O' && *(a1 + 4) == 'U') {
-		int v60 = (int16)READ_LE_UINT16(a1 + 5);
+		opcodeType = 6;
+	} else if (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'U') {
+		int v60 = (int16)READ_LE_UINT16(dataP + 5);
 
 		Common::String file = Common::String::format("SOUND%d.WAV", v60);
 		_vm->_soundManager.PLAY_SOUND(file);
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'V' && *(a1 + 3) == 'O' && *(a1 + 4) == 'F') {
-		_vm->_objectsManager.VERBE_OFF((int16)READ_LE_UINT16(a1 + 5), (int16)READ_LE_UINT16(a1 + 7));
-		v1 = 1;
-	}
-	if (*(a1 + 2) == 'I' && *(a1 + 3) == 'I' && *(a1 + 4) == 'F') {
-		v1 = 3;
+		opcodeType = 1;
+	} else if (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'F') {
+		_vm->_objectsManager.VERBE_OFF((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
+		opcodeType = 1;
+	} else if (dataP[2] == 'I' && dataP[3] == 'I' && dataP[4] == 'F') {
+		opcodeType = 3;
 	}
 
-	return v1;
+	return opcodeType;
 }
 
 
@@ -2334,7 +2484,7 @@ LABEL_2:
 			return 0; // Exiting game
 
 		++v3;
-		v4 = checkSignature(dataP + 20 * v3);
+		v4 = checkOpcode(dataP + 20 * v3);
 		if (v3 > 400)
 			error("Control if failed");
 	} while (v4 != 4); // EIF
@@ -2346,7 +2496,7 @@ LABEL_2:
 			return 0; // Exiting game
 
 		++v6;
-		if (checkSignature(dataP + 20 * v6) == 3) // IIF
+		if (checkOpcode(dataP + 20 * v6) == 3) // IIF
 			v7 = true;
 		if (v6 > 400)
 			error("Control if failed ");
@@ -2395,7 +2545,7 @@ LABEL_2:
 	return (v20 + 1);
 }
 
-int ScriptManager::checkSignature(const byte *dataP) {
+int ScriptManager::checkOpcode(const byte *dataP) {
 	if (dataP[0] != 'F' || dataP[1] != 'C') {
 		return 0;
 	} 
@@ -2403,23 +2553,23 @@ int ScriptManager::checkSignature(const byte *dataP) {
 	int result = 0;
 
 	if ((dataP[2] == 'A' && dataP[3] == 'N' && dataP[4] == 'I') ||
-        (dataP[2] == 'B' && dataP[3] == 'C' && dataP[4] == 'A') ||
+	    (dataP[2] == 'B' && dataP[3] == 'C' && dataP[4] == 'A') ||
 	    (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'B') ||
 	    (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') ||
-		(dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'S') ||
-		(dataP[2] == 'M' && dataP[3] == 'U' && dataP[4] == 'S') ||
-		(dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'M') ||
-		(dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'P') ||
+	    (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'S') ||
+	    (dataP[2] == 'M' && dataP[3] == 'U' && dataP[4] == 'S') ||
+	    (dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'M') ||
+	    (dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'P') ||
 	    (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') ||
 	    (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'U') ||
-		(dataP[2] == 'S' && dataP[3] == 'P' && dataP[4] == 'E') ||
-		(dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') ||
+	    (dataP[2] == 'S' && dataP[3] == 'P' && dataP[4] == 'E') ||
+	    (dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') ||
 	    (dataP[2] == 'V' && dataP[3] == 'A' && dataP[4] == 'L') ||
-		(dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'F') ||
+	    (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'F') ||
 	    (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'N') ||
-		(dataP[2] == 'Z' && dataP[3] == 'C' && dataP[4] == 'H') ||
-		(dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'F') ||
-		(dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'N'))
+	    (dataP[2] == 'Z' && dataP[3] == 'C' && dataP[4] == 'H') ||
+	    (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'F') ||
+	    (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'N'))
 		result = 1;
 
 	if (dataP[2] == 'G' && dataP[3] == 'O' && dataP[4] == 'T')
