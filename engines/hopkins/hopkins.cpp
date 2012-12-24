@@ -131,7 +131,7 @@ Common::Error HopkinsEngine::run() {
 bool HopkinsEngine::runWin95Demo() {
 	_globals.SVGA = 1;
 
-	_globals.CHARGE_OBJET();
+	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 
@@ -188,7 +188,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals.PASSWORD = true;
 
 	if (getLanguage() != Common::PL_POL)
-		if (!ADULT())
+		if (!displayAdultDisclaimer())
 			return Common::kNoError;
 
 	for (;;) {
@@ -199,7 +199,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.SORTIE = _menuManager.MENU();
 			if (_globals.SORTIE == -1) {
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-				REST_SYSTEM();
+				restoreSystem();
 				return false;
 			}
 		}
@@ -306,7 +306,7 @@ bool HopkinsEngine::runWin95Demo() {
 			if (_globals.SAUVEGARDE->data[svField225])
 			  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 			else
-			  BOOM();
+			  bombExplosion();
 			break;
 
 		case 10:
@@ -341,9 +341,9 @@ bool HopkinsEngine::runWin95Demo() {
 					_eventsManager.VBL();
 				while (_eventsManager.getMouseButton() != 1);
 				_graphicsManager.FADE_OUTW();
-				REST_SYSTEM();
+				restoreSystem();
 			}
-			BOOM();
+			bombExplosion();
 			break;
 
 		case 13:
@@ -457,7 +457,7 @@ bool HopkinsEngine::runWin95Demo() {
 }
 
 bool HopkinsEngine::runLinuxDemo() {
-	_globals.CHARGE_OBJET();
+	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 
@@ -505,7 +505,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				if (!g_system->getEventManager()->shouldQuit())
 					PUBQUIT();
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-				REST_SYSTEM();
+				restoreSystem();
 			}
 		}
 
@@ -632,7 +632,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.Max_Perso_Y = 440;
 
 			if (!_globals.SAUVEGARDE->data[svField225])
-				BOOM();
+				bombExplosion();
 
 			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 			break;
@@ -662,7 +662,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_globals.NOSPRECRAN = true;
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 			} else {
-				BOOM();
+				bombExplosion();
 			}
 			break;
 
@@ -723,7 +723,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 35:
-			ENDEMO();
+			displayEndDemo();
 			break;
 
 		case 111:
@@ -829,7 +829,7 @@ bool HopkinsEngine::runLinuxDemo() {
 bool HopkinsEngine::runOS2Full() {
 	_globals.SVGA = 2;
 
-	_globals.CHARGE_OBJET();
+	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 	warning("_graphicsManager.loadImage(\"VERSW\");");
@@ -963,7 +963,7 @@ bool HopkinsEngine::runOS2Full() {
 			if (_globals.SAUVEGARDE->data[225])
 				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 			else
-				BOOM();
+				bombExplosion();
 			break;
 
 		case 10:
@@ -991,7 +991,7 @@ bool HopkinsEngine::runOS2Full() {
 				_globals.NOSPRECRAN = true;
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 			} else
-				BOOM();
+				bombExplosion();
 			break;
 
 		case 13:
@@ -1236,7 +1236,7 @@ bool HopkinsEngine::runOS2Full() {
 			if (_globals.FORETSPR == g_PTRNUL) {
 				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
 				_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
-				_soundManager.CHARGE_SAMPLE(1, "SOUND41.WAV");
+				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 			_globals.NOSPRECRAN = false;
@@ -1249,7 +1249,7 @@ bool HopkinsEngine::runOS2Full() {
 			}
 
 		case 50:
-			AVION();
+			displayPlane();
 			_globals.SORTIE = 51;
 			break;
 
@@ -1593,7 +1593,7 @@ bool HopkinsEngine::runOS2Full() {
 			break;
 
 		case 100:
-			JOUE_FIN();
+			playEnding();
 			break;
 
 		case 111:
@@ -1693,7 +1693,7 @@ bool HopkinsEngine::runOS2Full() {
 			_globals.iRegul = 1;
 			// _soundManager.WSOUND_OFF();
 			_soundManager.WSOUND(23);
-			_globals.SORTIE = PWBASE();
+			_globals.SORTIE = handleBaseMap();
 			// _soundManager.WSOUND_OFF();
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
 			_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
@@ -1706,7 +1706,7 @@ bool HopkinsEngine::runOS2Full() {
 	warning("sub_33C70(v18);");
 	warning("sub_39460(v19);");
 	warning("sub_44134();");
-	REST_SYSTEM();
+	restoreSystem();
 	return true;
 }
 
@@ -1714,7 +1714,7 @@ bool HopkinsEngine::runBeOSFull() {
 	_globals.SVGA = 2;
 
 	warning("TODO: Init_Interrupt()");
-	_globals.CHARGE_OBJET();
+	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 	_eventsManager.delay(500);
@@ -1751,7 +1751,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.SORTIE = _menuManager.MENU();
 			if (_globals.SORTIE == -1) {
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-				REST_SYSTEM();
+				restoreSystem();
 			}
 		}
 
@@ -1850,7 +1850,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.Max_Propre_Gen = 10;
 			_globals.Max_Perso_Y = 440;
 			if (!_globals.SAUVEGARDE->data[svField225])
-				BOOM();
+				bombExplosion();
 			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 			break;
 
@@ -1879,7 +1879,7 @@ bool HopkinsEngine::runBeOSFull() {
 				_globals.NOSPRECRAN = true;
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 			} else {
-				BOOM();
+				bombExplosion();
 			}
 			break;
 
@@ -2124,7 +2124,7 @@ bool HopkinsEngine::runBeOSFull() {
 			if (_globals.FORETSPR == g_PTRNUL) {
 				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
 				_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
-				_soundManager.CHARGE_SAMPLE(1, "SOUND41.WAV");
+				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
@@ -2138,7 +2138,7 @@ bool HopkinsEngine::runBeOSFull() {
 			}
 
 		case 50:
-			AVION();
+			displayPlane();
 			_globals.SORTIE = 51;
 			break;
 
@@ -2482,7 +2482,7 @@ bool HopkinsEngine::runBeOSFull() {
 			break;
 
 		case 100:
-			JOUE_FIN();
+			playEnding();
 			break;
 
 		case 111:
@@ -2582,7 +2582,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.iRegul = 1;
 			_soundManager.WSOUND_OFF();
 			_soundManager.WSOUND(23);
-			_globals.SORTIE = PWBASE();
+			_globals.SORTIE = handleBaseMap();
 			_soundManager.WSOUND_OFF();
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
 			_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
@@ -2599,7 +2599,7 @@ bool HopkinsEngine::runWin95full() {
 
 	warning("TODO: Init_Interrupt_()");
 
-	_globals.CHARGE_OBJET();
+	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 	_globals.HELICO = 0;
@@ -2637,7 +2637,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals.SORTIE = _menuManager.MENU();
 			if (_globals.SORTIE == -1) {
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-				REST_SYSTEM();
+				restoreSystem();
 				return false;
 			}
 		}
@@ -2743,7 +2743,7 @@ bool HopkinsEngine::runWin95full() {
 			if (_globals.SAUVEGARDE->data[svField225])
 				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 			else
-				BOOM();
+				bombExplosion();
 			break;
 
 		case 10:
@@ -2771,7 +2771,7 @@ bool HopkinsEngine::runWin95full() {
 				_globals.NOSPRECRAN = true;
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 			} else {
-				BOOM();
+				bombExplosion();
 			}
 			break;
 
@@ -3010,7 +3010,7 @@ bool HopkinsEngine::runWin95full() {
 				if (_globals.FORETSPR == g_PTRNUL) {
 					_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
 					_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
-					_soundManager.CHARGE_SAMPLE(1, "SOUND41.WAV");
+					_soundManager.loadSample(1, "SOUND41.WAV");
 				}
 				_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 				_globals.NOSPRECRAN = false;
@@ -3022,7 +3022,7 @@ bool HopkinsEngine::runWin95full() {
 				break;
 				}
 		case 50:
-			AVION();
+			displayPlane();
 			_globals.SORTIE = 51;
 			break;
 
@@ -3362,7 +3362,7 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 100:
-			JOUE_FIN();
+			playEnding();
 			break;
 
 		case 111:
@@ -3474,7 +3474,7 @@ bool HopkinsEngine::runWin95full() {
 bool HopkinsEngine::runLinuxFull() {
 	_soundManager.WSOUND(16);
 
-	_globals.CHARGE_OBJET();
+	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 
@@ -3514,7 +3514,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.SORTIE = _menuManager.MENU();
 			if (_globals.SORTIE == -1) {
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-				REST_SYSTEM();
+				restoreSystem();
 				return true;
 			}
 		}
@@ -3620,7 +3620,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Propre_Gen = 10;
 			_globals.Max_Perso_Y = 440;
 			if (!_globals.SAUVEGARDE->data[svField225])
-				BOOM();
+				bombExplosion();
 			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
 			break;
 
@@ -3649,7 +3649,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_globals.NOSPRECRAN = true;
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
 			} else {
-				BOOM();
+				bombExplosion();
 			}
 			break;
 
@@ -3888,7 +3888,7 @@ bool HopkinsEngine::runLinuxFull() {
 			if (_globals.FORETSPR == g_PTRNUL) {
 				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
 				_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
-				_soundManager.CHARGE_SAMPLE(1, "SOUND41.WAV");
+				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 			_globals.NOSPRECRAN = false;
@@ -3901,7 +3901,7 @@ bool HopkinsEngine::runLinuxFull() {
 			}
 
 		case 50:
-			AVION();
+			displayPlane();
 			_globals.SORTIE = 51;
 			break;
 
@@ -4241,7 +4241,7 @@ bool HopkinsEngine::runLinuxFull() {
 			break;
 
 		case 100:
-			JOUE_FIN();
+			playEnding();
 			break;
 
 		case 111:
@@ -4345,7 +4345,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 			_globals.iRegul = 1;
 			_soundManager.WSOUND(23);
-			_globals.SORTIE = PWBASE();
+			_globals.SORTIE = handleBaseMap();
 			_soundManager.WSOUND_OFF();
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
 			_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
@@ -4715,7 +4715,7 @@ void HopkinsEngine::NO_DISPO(int sortie) {
 	_globals.SORTIE = sortie;
 }
 
-void HopkinsEngine::ENDEMO() {
+void HopkinsEngine::displayEndDemo() {
 	_soundManager.WSOUND(28);
 	if (_globals.FR == 1)
 		_graphicsManager.loadImage("endfr");
@@ -4728,7 +4728,7 @@ void HopkinsEngine::ENDEMO() {
 	_globals.SORTIE = 0;
 }
 
-void HopkinsEngine::BOOM() {
+void HopkinsEngine::bombExplosion() {
 	_graphicsManager._lineNbr = SCREEN_WIDTH;
 	_graphicsManager.SCANLINE(SCREEN_WIDTH);
 	_graphicsManager.lockScreen();
@@ -4778,7 +4778,7 @@ void HopkinsEngine::BOOM() {
 	_globals.SORTIE = 151;
 }
 
-void HopkinsEngine::REST_SYSTEM() {
+void HopkinsEngine::restoreSystem() {
 	quitGame();
 	_eventsManager.refreshEvents();
 }
@@ -4960,7 +4960,7 @@ void HopkinsEngine::BASED() {
 	_globals.iRegul = 0;
 }
 
-void HopkinsEngine::JOUE_FIN() {
+void HopkinsEngine::playEnding() {
 	_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 	_dialogsManager._removeInventFl = true;
 	_globals._disableInventFl = true;
@@ -4973,7 +4973,7 @@ void HopkinsEngine::JOUE_FIN() {
 	_globals.SORTIE = 0;
 	_globals.AFFLI = false;
 	_globals.AFFIVBL = false;
-	_soundManager.CHARGE_SAMPLE(1, "SOUND90.WAV");
+	_soundManager.loadSample(1, "SOUND90.WAV");
 	_graphicsManager.loadImage("IM100");
 	_animationManager.loadAnim("ANIM100");
 	_graphicsManager.VISU_ALL();
@@ -5073,7 +5073,7 @@ void HopkinsEngine::JOUE_FIN() {
 		_animationManager.playAnim("FF1a.anm", 9, 18, 18);
 		_animationManager.playAnim("FF1a.anm", 9, 18, 9);
 		_animationManager.playAnim("FF2a.anm", 24, 24, 100);
-		Credits();
+		displayCredits();
 		_globals.iRegul = 0;
 		_globals.SORTIE = 300;
 		_dialogsManager._removeInventFl = false;
@@ -5116,7 +5116,7 @@ void HopkinsEngine::JOUE_FIN() {
 	_globals.iRegul = 0;
 }
 
-void HopkinsEngine::AVION() {
+void HopkinsEngine::displayPlane() {
 	_soundManager.WSOUND(28);
 	_globals.iRegul = 1;
 	_globals.nbrligne = SCREEN_WIDTH;
@@ -5196,7 +5196,7 @@ void HopkinsEngine::AVION() {
 	_animationManager._clearAnimationFl = false;
 }
 
-int HopkinsEngine::PWBASE() {
+int HopkinsEngine::handleBaseMap() {
 	_globals._disableInventFl = true;
 	_graphicsManager.loadImage("PBASE");
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -5283,7 +5283,7 @@ int HopkinsEngine::WBASE() {
 	return 300;
 }
 
-void HopkinsEngine::Charge_Credits() {
+void HopkinsEngine::loadCredits() {
 	_globals.Credit_y = 440;
 	_globals.Credit_l = 10;
 	_globals.Credit_h = 40;
@@ -5345,7 +5345,7 @@ void HopkinsEngine::Charge_Credits() {
 	_globals.freeMemory(bufPtr);
 }
 
-void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
+void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char colour) {
 	byte *bufPtr = buffer;
 	int strWidth = 0;
 	byte curChar;
@@ -5380,14 +5380,14 @@ void HopkinsEngine::CREDIT_AFFICHE(int startPosY, byte *buffer, char colour) {
 		if (!curChar)
 			break;
 		if (curChar > 31) {
-			_graphicsManager.Affiche_Fonte(_graphicsManager._vesaBuffer, _globals.police, startPosX, startPosY, curChar - 32, colour);
+			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _globals.police, startPosX, startPosY, curChar - 32, colour);
 			startPosX += _objectsManager.getWidth(_globals.police, curChar - 32);
 		}
 	}
 }
 
-void HopkinsEngine::Credits() {
-	Charge_Credits();
+void HopkinsEngine::displayCredits() {
+	loadCredits();
 	_globals.Credit_y = 436;
 	_graphicsManager.loadImage("GENERIC");
 	_graphicsManager.FADE_INW();
@@ -5420,7 +5420,7 @@ void HopkinsEngine::Credits() {
 						break;
 					}
 					if (_globals.Credit[i]._lineSize != -1)
-						CREDIT_AFFICHE(nextY, _globals.Credit[i]._line, col);
+						displayCredits(nextY, _globals.Credit[i]._line, col);
 				}
 			}
 		}
@@ -5749,7 +5749,7 @@ void HopkinsEngine::syncSoundSettings() {
 	_soundManager.syncSoundSettings();
 }
 
-bool HopkinsEngine::ADULT() {
+bool HopkinsEngine::displayAdultDisclaimer() {
 	int xp, yp;
 	int buttonIndex;
 

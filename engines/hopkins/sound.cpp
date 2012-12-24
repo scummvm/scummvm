@@ -126,11 +126,11 @@ void SoundManager::VERIF_SOUND() {
 void SoundManager::LOAD_ANM_SOUND() {
 	switch (SPECIAL_SOUND) {
 	case 2:
-		CHARGE_SAMPLE(5, "mitra1.wav");
-		CHARGE_SAMPLE(1, "tir2.wav");
-		CHARGE_SAMPLE(2, "sound6.wav");
-		CHARGE_SAMPLE(3, "sound5.WAV");
-		CHARGE_SAMPLE(4, "sound4.WAV");
+		loadSample(5, "mitra1.wav");
+		loadSample(1, "tir2.wav");
+		loadSample(2, "sound6.wav");
+		loadSample(3, "sound5.WAV");
+		loadSample(4, "sound4.WAV");
 		break;
 	case 5:
 		LOAD_WAV("CRIE.WAV", 1);
@@ -670,7 +670,7 @@ void SoundManager::MODSetMusicVolume(int volume) {
 	// No implementatoin needed
 }
 
-void SoundManager::CHARGE_SAMPLE(int wavIndex, const Common::String &file) {
+void SoundManager::loadSample(int wavIndex, const Common::String &file) {
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSOUND, file);
 	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 0);
 	SOUND[wavIndex]._active = true;

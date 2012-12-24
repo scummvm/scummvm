@@ -607,9 +607,9 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_graphicsManager.min_y = 0;
 	_vm->_graphicsManager.max_x = 320;
 	_vm->_graphicsManager.max_y = 200;
-	_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND37.WAV");
-	_vm->_soundManager.CHARGE_SAMPLE(2, "SOUND38.WAV");
-	_vm->_soundManager.CHARGE_SAMPLE(3, "SOUND39.WAV");
+	_vm->_soundManager.loadSample(1, "SOUND37.WAV");
+	_vm->_soundManager.loadSample(2, "SOUND38.WAV");
+	_vm->_soundManager.loadSample(3, "SOUND39.WAV");
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "CASSE.SPR");
 	_breakoutSpr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 	loadHiscore();

@@ -787,9 +787,9 @@ LABEL_1141:
 			_vm->_graphicsManager.NOFADE = true;
 		}
 		if (v76 == 38) {
-			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND44.WAV");
-			_vm->_soundManager.CHARGE_SAMPLE(2, "SOUND42.WAV");
-			_vm->_soundManager.CHARGE_SAMPLE(3, "SOUND41.WAV");
+			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
+			_vm->_soundManager.loadSample(2, "SOUND42.WAV");
+			_vm->_soundManager.loadSample(3, "SOUND41.WAV");
 			_vm->_soundManager.SPECIAL_SOUND = 17;
 			_vm->_animationManager.playSequence("grenade.SEQ", 1, 32, 100);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
@@ -838,8 +838,8 @@ LABEL_1141:
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_globals.NOT_VERIF = 1;
-			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND44.WAV");
-			_vm->_soundManager.CHARGE_SAMPLE(2, "SOUND45.WAV");
+			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
+			_vm->_soundManager.loadSample(2, "SOUND45.WAV");
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
 			int v15 = 0;
 			do {
@@ -917,7 +917,7 @@ LABEL_1141:
 			_vm->_objectsManager.setBobAnimation(7);
 			_vm->_objectsManager.SET_BOBPOSI(7, 0);
 			int v18 = 0;
-			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
+			_vm->_soundManager.loadSample(1, "SOUND40.WAV");
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1142,7 +1142,7 @@ LABEL_1141:
 				_vm->_objectsManager.SET_BOBPOSI(2, 0);
 				_vm->_objectsManager.setBobAnimation(1);
 				_vm->_objectsManager.setBobAnimation(2);
-				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
+				_vm->_soundManager.loadSample(1, "SOUND40.WAV");
 				int v25 = 0;
 				do {
 					if (_vm->shouldQuit())
@@ -1184,7 +1184,7 @@ LABEL_1141:
 				_vm->_objectsManager.SET_BOBPOSI(3, 0);
 				_vm->_objectsManager.setBobAnimation(1);
 				_vm->_objectsManager.setBobAnimation(3);
-				_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND40.WAV");
+				_vm->_soundManager.loadSample(1, "SOUND40.WAV");
 				int v26 = 0;
 				do {
 					if (_vm->shouldQuit())
@@ -1305,7 +1305,7 @@ LABEL_1141:
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setSpriteIndex(0, 60);
-			_vm->_soundManager.CHARGE_SAMPLE(1, "SOUND63.WAV");
+			_vm->_soundManager.loadSample(1, "SOUND63.WAV");
 			if (_vm->_globals.SAUVEGARDE->data[svField253] > 2) {
 				_vm->_objectsManager.setBobAnimation(4);
 				int v33 = 0;

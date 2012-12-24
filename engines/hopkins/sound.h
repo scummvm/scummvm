@@ -160,7 +160,7 @@ public:
 	void MODSetSampleVolume();
 	void MODSetVoiceVolume();
 	void MODSetMusicVolume(int volume);
-	void CHARGE_SAMPLE(int wavIndex, const Common::String &file);
+	void loadSample(int wavIndex, const Common::String &file);
 	void PLAY_SAMPLE(int wavIndex, int voiceMode);
 	void PLAY_SAMPLE2(int idx);
 	void PLAY_WAV(int wavIndex);

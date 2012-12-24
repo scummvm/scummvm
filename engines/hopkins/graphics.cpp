@@ -1882,7 +1882,7 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned 
 }
 
 // Display Font
-void GraphicsManager::Affiche_Fonte(byte *surface, const byte *spriteData, int xp, int yp,
+void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp, int yp,
 									int characterIndex, int colour) {
 	const byte *spriteDataP;
 	int i;

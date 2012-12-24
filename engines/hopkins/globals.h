@@ -481,7 +481,7 @@ public:
 	void INIT_ANIM();
 	void INIT_VBOB();
 	void CLEAR_VBOB();
-	void CHARGE_OBJET();
+	void loadObjects();
 	byte *allocMemory(int count);
 	byte *freeMemory(byte *p);
 

@@ -440,7 +440,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 			break;
 		if (currChar >= 32) {
 			charIndex = currChar - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police,
+			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police,
 				currentX, yp, currChar - 32, col);
 			currentX += _vm->_objectsManager.getWidth(_vm->_globals.police, charIndex);
 		}
@@ -458,7 +458,7 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police,
+			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police,
 				xp, yp, characterIndex, col);
 			xp += _vm->_objectsManager.getWidth(_vm->_globals.police, characterIndex);
 		}
@@ -490,7 +490,7 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 			break;
 		if (v7 >= 32) {
 			v5 = v7 - 32;
-			_vm->_graphicsManager.Affiche_Fonte(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police, v9, yp, v7 - 32, fontCol);
+			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police, v9, yp, v7 - 32, fontCol);
 			v9 += _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
 			v6 = _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v9 - v6, yp, v9, yp + 12);

@@ -83,20 +83,20 @@ private:
 	void INIT_SYSTEM();
 
 	void PASS();
-	void REST_SYSTEM();
+	void restoreSystem();
 	void PUBQUIT();
-	void ENDEMO();
-	void BOOM();
+	void displayEndDemo();
+	void bombExplosion();
 	void INCENDIE();
 	void BASE();
 	void BASED();
-	void JOUE_FIN();
-	void AVION();
+	void playEnding();
+	void displayPlane();
 
 	/**
 	 * Displays the map screen in the underground base.
 	 */
-	int  PWBASE();
+	int  handleBaseMap();
 
 	/**
 	 * Runs the Wolf3D-like in the underground base.
@@ -106,9 +106,9 @@ private:
 	void BTOCEAN();
 	void OCEAN_HOME();
 	void OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 a9);
-	void Charge_Credits();
-	void CREDIT_AFFICHE(int startPosY, byte *buffer, char colour);
-	void Credits();
+	void loadCredits();
+	void displayCredits(int startPosY, byte *buffer, char colour);
+	void displayCredits();
 	void NO_DISPO(int sortie);
 
 	bool runWin95Demo();
@@ -121,7 +121,7 @@ private:
 	/**
 	 * Show warning screen about the game being adults only.
 	 */
-	bool ADULT();
+	bool displayAdultDisclaimer();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

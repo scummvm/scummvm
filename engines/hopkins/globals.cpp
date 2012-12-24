@@ -480,7 +480,7 @@ void Globals::CLEAR_VBOB() {
 }
 
 // Load Object
-void Globals::CHARGE_OBJET() {
+void Globals::loadObjects() {
 	_vm->_fileManager.constructFilename(HOPSYSTEM, "OBJET.DAT");
 	byte *data = _vm->_fileManager.loadFile(NFICHIER);
 	byte *srcP = data;
