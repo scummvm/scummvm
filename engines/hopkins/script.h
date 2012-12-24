@@ -40,7 +40,7 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	int Traduction(byte *a1);
-	int Traduction2(const byte *dataP);
+	int checkSignature(const byte *dataP);
 	int handleGoto(const byte *dataP);
 	int handleIf(const byte *dataP, int a2);
 };

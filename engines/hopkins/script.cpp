@@ -2334,10 +2334,10 @@ LABEL_2:
 			return 0; // Exiting game
 
 		++v3;
-		v4 = Traduction2(dataP + 20 * v3);
+		v4 = checkSignature(dataP + 20 * v3);
 		if (v3 > 400)
 			error("Control if failed");
-	} while (v4 != 4);
+	} while (v4 != 4); // EIF
 	v20 = v3;
 	v6 = v2;
 	v7 = false;
@@ -2346,7 +2346,7 @@ LABEL_2:
 			return 0; // Exiting game
 
 		++v6;
-		if (Traduction2(dataP + 20 * v6) == 3)
+		if (checkSignature(dataP + 20 * v6) == 3) // IIF
 			v7 = true;
 		if (v6 > 400)
 			error("Control if failed ");
@@ -2395,76 +2395,49 @@ LABEL_2:
 	return (v20 + 1);
 }
 
-int ScriptManager::Traduction2(const byte *dataP) {
-	int16 result;
-
-	result = 0;
+int ScriptManager::checkSignature(const byte *dataP) {
 	if (dataP[0] != 'F' || dataP[1] != 'C') {
-		result = 0;
-	} else {
-		if (*(dataP + 2) == 'T' && *(dataP + 3) == 'X' && *(dataP + 4) == 'T')
-			result = 1;
-		if (*(dataP + 2) == 'B') {
-			if (*(dataP + 3) == 'O' && *(dataP + 4) == 'B')
-				result = 1;
-			if (*(dataP + 2) == 'B' && *(dataP + 3) == 'O' && *(dataP + 4) == 'F')
-				result = 1;
-		}
-		if (*(dataP + 2) == 'P' && *(dataP + 3) == 'E' && *(dataP + 4) == 'R')
-			result = 1;
-		if (*(dataP + 2) == 'S' && *(dataP + 3) == 'O' && *(dataP + 4) == 'U')
-			result = 1;
-		if (*(dataP + 2) == 'M' && *(dataP + 3) == 'U' && *(dataP + 4) == 'S')
-			result = 1;
-		if (*(dataP + 2) == 'O') {
-			if (*(dataP + 3) == 'B' && *(dataP + 4) == 'P')
-				result = 1;
-			if (*(dataP + 2) == 'O' && *(dataP + 3) == 'B' && *(dataP + 4) == 'M')
-				result = 1;
-		}
-		if (*(dataP + 2) == 'G' && *(dataP + 3) == 'O' && *(dataP + 4) == 'T')
-			result = 2;
-		if (*(dataP + 2) == 'Z') {
-			if (*(dataP + 3) == 'O' && *(dataP + 4) == 'N')
-				result = 1;
-			if (*(dataP + 2) == 'Z' && *(dataP + 3) == 'O' && *(dataP + 4) == 'F')
-				result = 1;
-		}
-		if (*(dataP + 2) == 'E' && *(dataP + 3) == 'X' && *(dataP + 4) == 'I')
-			result = 5;
-		if (*(dataP + 2) == 'S' && *(dataP + 3) == 'O' && *(dataP + 4) == 'R')
-			result = 5;
-		if (*(dataP + 2) == 'A' && *(dataP + 3) == 'N' && *(dataP + 4) == 'I')
-			result = 1;
-		if (*(dataP + 2) == 'S' && *(dataP + 3) == 'P' && *(dataP + 4) == 'E')
-			result = 1;
-		if (*(dataP + 2) == 'E' && *(dataP + 3) == 'I' && *(dataP + 4) == 'F')
-			result = 4;
-		if (*(dataP + 2) == 'V') {
-			if (*(dataP + 3) == 'A' && *(dataP + 4) == 'L')
-				result = 1;
-			if (*(dataP + 2) == 'V') {
-				if (*(dataP + 3) == 'O' && *(dataP + 4) == 'N')
-					result = 1;
-				if (*(dataP + 2) == 'V' && *(dataP + 3) == 'O' && *(dataP + 4) == 'F')
-					result = 1;
-			}
-		}
-		if (*(dataP + 2) == 'I' && *(dataP + 3) == 'I' && *(dataP + 4) == 'F')
-			result = 3;
-		if (*(dataP + 2) == 'J' && *(dataP + 3) == 'U' && *(dataP + 4) == 'M')
-			result = 6;
-		if (*(dataP + 2) == 'B') {
-			if (*(dataP + 3) == 'C' && *(dataP + 4) == 'A')
-				result = 1;
-			if (*(dataP + 2) == 'B' && *(dataP + 3) == 'O' && *(dataP + 4) == 'S')
-				result = 1;
-		}
-		if (*(dataP + 2) == 'Z' && *(dataP + 3) == 'C') {
-			if (*(dataP + 4) == 'H')
-				result = 1;
-		}
-	}
+		return 0;
+	} 
+
+	int result = 0;
+
+	if ((dataP[2] == 'A' && dataP[3] == 'N' && dataP[4] == 'I') ||
+        (dataP[2] == 'B' && dataP[3] == 'C' && dataP[4] == 'A') ||
+	    (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'B') ||
+	    (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') ||
+		(dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'S') ||
+		(dataP[2] == 'M' && dataP[3] == 'U' && dataP[4] == 'S') ||
+		(dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'M') ||
+		(dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'P') ||
+	    (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') ||
+	    (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'U') ||
+		(dataP[2] == 'S' && dataP[3] == 'P' && dataP[4] == 'E') ||
+		(dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') ||
+	    (dataP[2] == 'V' && dataP[3] == 'A' && dataP[4] == 'L') ||
+		(dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'F') ||
+	    (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'N') ||
+		(dataP[2] == 'Z' && dataP[3] == 'C' && dataP[4] == 'H') ||
+		(dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'F') ||
+		(dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'N'))
+		result = 1;
+
+	if (dataP[2] == 'G' && dataP[3] == 'O' && dataP[4] == 'T')
+		result = 2;
+
+	if (dataP[2] == 'I' && dataP[3] == 'I' && dataP[4] == 'F')
+		result = 3;
+
+	if (dataP[2] == 'E' && dataP[3] == 'I' && dataP[4] == 'F')
+		result = 4;
+
+	if ((dataP[2] == 'E' && dataP[3] == 'X' && dataP[4] == 'I') ||
+	    (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'R'))
+		result = 5;
+
+	if (dataP[2] == 'J' && dataP[3] == 'U' && dataP[4] == 'M')
+		result = 6;
+
 	return result;
 }
 
