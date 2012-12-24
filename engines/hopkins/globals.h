@@ -354,9 +354,6 @@ public:
 	int SOUNDVOL;
 	int MUSICVOL;
 	int VOICEVOL;
-	bool SOUNDOFF;
-	bool MUSICOFF;
-	bool VOICEOFF;
 	bool CENSURE;
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;
@@ -369,7 +366,6 @@ public:
 	byte *BUF_ZONE;
 	byte *texte_tmp;
 	int texte_long;
-	int TEXTE_FORMATE;
 	byte *SPRITE_ECRAN;
 	Sauvegarde *_saveData;
 	byte *BUFFERTAPE;

@@ -131,7 +131,6 @@ Globals::Globals() {
 	police_l = police_h = 0;
 	TETE = NULL;
 	texte_long = 0;
-	TEXTE_FORMATE = 0;
 	_curObjectIndex = 0;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
@@ -219,12 +218,6 @@ Globals::Globals() {
 	OPTION_SPR = NULL;
 
 	// Reset flags
-	MUSICOFF = false;
-	SOUNDOFF = false;
-	VOICEOFF = false;
-	SOUNDOFF = false;
-	MUSICOFF = false;
-	VOICEOFF = false;
 	CENSURE = false;
 	GESTE_FLAG = false;
 	BPP_NOAFF = false;
@@ -411,7 +404,6 @@ void Globals::clearAll() {
 	essai2 = (int16 *)(BUFFERTAPE + 50000);
 	BufLig = (int16 *)(BUFFERTAPE + 75000);
 	largeur_boite = 240;
-	TEXTE_FORMATE = 300;
 
 	_vm->_eventsManager._objectBuf = allocMemory(2500);
 	INVENTAIRE_OBJET = allocMemory(2500);
