@@ -60,7 +60,6 @@ int MenuManager::MENU() {
 		_vm->_globals.forest = false;
 		_vm->_eventsManager._breakoutFl = false;
 		_vm->_globals._disableInventFl = true;
-		_vm->_globals.FLAG_VISIBLE = false;
 		_vm->_globals._exitId = 0;
 
 		for (int idx = 0; idx < 31; ++idx)
@@ -231,7 +230,6 @@ int MenuManager::MENU() {
 
 	_vm->_globals.freeMemory(spriteData);
 	_vm->_globals._disableInventFl = false;
-	_vm->_globals.FLAG_VISIBLE = false;
 	_vm->_graphicsManager.FADE_OUTW();
 	return result;
 }

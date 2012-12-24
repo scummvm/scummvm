@@ -222,7 +222,6 @@ Globals::Globals() {
 	GESTE_FLAG = false;
 	BPP_NOAFF = false;
 	_disableInventFl = false;
-	FLAG_VISIBLE = false;
 	netscape = false;
 	NOMARCHE = false;
 	NO_VISU = false;

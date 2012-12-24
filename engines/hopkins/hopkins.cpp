@@ -4793,7 +4793,6 @@ void HopkinsEngine::PUBQUIT() {
 	_globals.forest = false;
 	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;
-	_globals.FLAG_VISIBLE = false;
 	_graphicsManager.loadImage("BOX");
 	_soundManager.WSOUND(28);
 	_graphicsManager.FADE_INW();
@@ -5763,7 +5762,6 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	_graphicsManager.max_y = SCREEN_HEIGHT - 1;
 	_eventsManager._breakoutFl = false;
 	_globals.forest = false;
-	_globals.FLAG_VISIBLE = false;
 	_globals._disableInventFl = true;
 	_globals._exitId = 0;
 
@@ -5788,7 +5786,6 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	} while (!shouldQuit() && (buttonIndex == 0 || _eventsManager.getMouseButton() != 1));
 
 	_globals._disableInventFl = false;
-	_globals.FLAG_VISIBLE = false;
 	_graphicsManager.FADE_OUTW();
 
 	if (buttonIndex != 2) {

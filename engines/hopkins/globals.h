@@ -410,7 +410,6 @@ public:
 	int Max_Ligne_Long;
 	int Max_Perso_Y;
 	bool _disableInventFl;
-	bool FLAG_VISIBLE;
 	bool netscape; // CHECKME: Useless variable?
 	bool NOMARCHE;
 	int NBBLOC;
