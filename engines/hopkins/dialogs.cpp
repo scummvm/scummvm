@@ -59,11 +59,11 @@ void DialogsManager::showOptionsDialog() {
 	doneFlag = false;
 	_vm->_eventsManager.changeMouseCursor(0);
 	_vm->_eventsManager.VBL();
-	if (_vm->_globals.FR == 1)
+	if (_vm->_globals._language == LANG_FR)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIFR.SPR");
-	else if (!_vm->_globals.FR)
+	else if (_vm->_globals._language == LANG_EN)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIAN.SPR");
-	else if (_vm->_globals.FR == 2)
+	else if (_vm->_globals._language == LANG_SP)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIES.SPR");
 
 	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
@@ -129,7 +129,7 @@ void DialogsManager::showOptionsDialog() {
 				}
 			}
 
-			if (!_vm->_soundManager.VOICEOFF) {
+			if (!_vm->_soundManager._voiceOffFl) {
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 192) {
 					++_vm->_soundManager.VOICEVOL;
 
@@ -143,7 +143,7 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
-				if (!_vm->_soundManager.VOICEOFF && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 192) {
+				if (!_vm->_soundManager._voiceOffFl && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 192) {
 					--_vm->_soundManager.VOICEVOL;
 					if (_vm->_soundManager.VOICEVOL >= 0)
 						_vm->_soundManager.PLAY_SOUND("bruit2.wav");
@@ -158,11 +158,11 @@ void DialogsManager::showOptionsDialog() {
 
 			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
 				if (mousePos.y > 194 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 219)
-					_vm->_soundManager.TEXTOFF = _vm->_soundManager.TEXTOFF != 1;
+					_vm->_soundManager._textOffFl = !_vm->_soundManager._textOffFl;
 
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
 					if (mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 192) {
-						_vm->_soundManager.VOICEOFF = _vm->_soundManager.VOICEOFF != 1;
+						_vm->_soundManager._voiceOffFl = !_vm->_soundManager._voiceOffFl;
 
 						_vm->_soundManager.updateScummVMSoundSettings();
 					}
@@ -252,8 +252,8 @@ void DialogsManager::showOptionsDialog() {
 		else if (_vm->_globals._speed == 3)
 			_vm->_globals.opt_vitesse = 4;
 
-		_vm->_globals.opt_txt = !_vm->_soundManager.TEXTOFF ? 7 : 8;
-		_vm->_globals.opt_voice = !_vm->_soundManager.VOICEOFF ? 7 : 8;
+		_vm->_globals.opt_txt = !_vm->_soundManager._textOffFl ? 7 : 8;
+		_vm->_globals.opt_voice = !_vm->_soundManager._voiceOffFl ? 7 : 8;
 		_vm->_globals.opt_sound = !_vm->_soundManager.SOUNDOFF ? 7 : 8;
 		_vm->_globals.opt_music = !_vm->_soundManager.MUSICOFF ? 7 : 8;
 
@@ -320,14 +320,14 @@ LABEL_7:
 		_vm->_globals._disableInventFl = true;
 		_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 
-		switch (_vm->_globals.FR) {
-			case 0:
+		switch (_vm->_globals._language) {
+			case LANG_EN:
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTAN.SPR");
 				break;
-			case 1:
+			case LANG_FR:
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTFR.SPR");
 				break;
-			case 2:
+			case LANG_SP:
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTES.SPR");
 				break;
 		}
@@ -405,14 +405,14 @@ LABEL_7:
 				if (_vm->_eventsManager._mouseCursorId == 8)
 					v20 = true;
 				if (!v20) {
-					_vm->_scriptManager.TRAVAILOBJET = 1;
+					_vm->_scriptManager.TRAVAILOBJET = true;
 					_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals._curObjectIndex;
 					_vm->_globals.SAUVEGARDE->data[svField8] = _vm->_globals._inventory[v13];
 					_vm->_globals.SAUVEGARDE->data[svField9] = _vm->_eventsManager._mouseCursorId;
 					_vm->_objectsManager.OPTI_OBJET();
-					_vm->_scriptManager.TRAVAILOBJET = 0;
+					_vm->_scriptManager.TRAVAILOBJET = false;
 
-					if (_vm->_soundManager.VOICEOFF == 1) {
+					if (_vm->_soundManager._voiceOffFl) {
 						do
 							_vm->_eventsManager.VBL();
 						while (!_vm->_globals.SORTIE && _vm->_eventsManager.getMouseButton() != 1);
@@ -629,14 +629,14 @@ void DialogsManager::showSaveLoad(int a1) {
 	hopkinsSavegameHeader header;
 	byte *thumb;
 
-	switch (_vm->_globals.FR) {
-	case 0:
+	switch (_vm->_globals._language) {
+	case LANG_EN:
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEAN.SPR");
 		break;
-	case 1:
+	case LANG_FR:
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEFR.SPR");
 		break;
-	case 2:
+	case LANG_SP:
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEES.SPR");
 		break;
 	}
@@ -646,7 +646,7 @@ void DialogsManager::showSaveLoad(int a1) {
 	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 483, 360, 0);
 
-	if (_vm->_globals.FR) {
+	if (_vm->_globals._language == LANG_FR) {
 		if (a1 == 1)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 525, 375, 1);
 		if (a1 == 2)

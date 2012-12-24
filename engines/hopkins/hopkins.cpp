@@ -97,7 +97,7 @@ Common::Error HopkinsEngine::run() {
 
 	_globals.setConfig();
 	_fileManager.initCensorship();
-	INIT_SYSTEM();
+	initializeSystem();
 
 	_soundManager.WSOUND_INIT();
 
@@ -219,10 +219,12 @@ bool HopkinsEngine::runWin95Demo() {
 		case 3:
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
-				if (_globals.FR == 1)
+				if (_globals._language == LANG_FR)
 					_graphicsManager.loadImage("fondfr");
-				if (!_globals.FR)
+				else if (_globals._language == LANG_EN)
 					_graphicsManager.loadImage("fondan");
+				else if (_globals._language == LANG_SP)
+					_graphicsManager.loadImage("fondes");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(500);
 				_graphicsManager.FADE_OUTW();
@@ -331,9 +333,9 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.Max_Perso_Y = 450;
 			_globals.Max_Ligne_Long = 20;
 			if (_globals.SAUVEGARDE->data[svField225]) {
-				if (_globals.FR == 1)
+				if (_globals._language == LANG_FR)
 					_graphicsManager.loadImage("ENDFR");
-				else if (!_globals.FR)
+				else
 					_graphicsManager.loadImage("ENDUK");
 				_graphicsManager.FADE_INW();
 				_eventsManager.mouseOn();
@@ -542,11 +544,11 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 3:
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
-				if (_globals.FR == 1)
+				if (_globals._language == LANG_FR)
 					_graphicsManager.loadImage("fondfr");
-				if (!_globals.FR)
+				else if (_globals._language == LANG_EN)
 					_graphicsManager.loadImage("fondan");
-				if (_globals.FR == 2)
+				else if (_globals._language == LANG_SP)
 					_graphicsManager.loadImage("fondes");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(500);
@@ -1229,7 +1231,7 @@ bool HopkinsEngine::runOS2Full() {
 			_globals.Max_Propre_Gen = 20;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
-			_globals.FORET = 1;
+			_globals.forest = true;
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals.SORTIE);
 			_soundManager.WSOUND(13);
@@ -1242,7 +1244,7 @@ bool HopkinsEngine::runOS2Full() {
 			_globals.NOSPRECRAN = false;
 			if (_globals.SORTIE < 35 || _globals.SORTIE > 49 ) {
 				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
-				_globals.FORET = false;
+				_globals.forest = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
 			break;
@@ -2117,7 +2119,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.Max_Propre_Gen = 20;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
-			_globals.FORET = true;
+			_globals.forest = true;
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals.SORTIE);
 			_soundManager.WSOUND(13);
@@ -2131,7 +2133,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.NOSPRECRAN = false;
 			if ((_globals.SORTIE  < 35) || (_globals.SORTIE > 49)) {
 				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
-				_globals.FORET = false;
+				_globals.forest = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
 			break;
@@ -2657,10 +2659,12 @@ bool HopkinsEngine::runWin95full() {
 		case 3:
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
-				if (_globals.FR == 1)
+				if (_globals._language == LANG_FR)
 					_graphicsManager.loadImage("fondfr");
-				else if (!_globals.FR)
+				else if (_globals._language == LANG_EN)
 					_graphicsManager.loadImage("fondan");
+				else if (_globals._language == LANG_SP)
+					_graphicsManager.loadImage("fondes");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(500);
 				_graphicsManager.FADE_OUTW();
@@ -3003,7 +3007,7 @@ bool HopkinsEngine::runWin95full() {
 				_globals.Max_Ligne_Long = 40;
 				_globals.Max_Perso_Y = 435;
 				_globals._disableInventFl = false;
-				_globals.FORET = true;
+				_globals.forest = true;
 				_globals.NOSPRECRAN = true;
 				Common::String im = Common::String::format("IM%d", _globals.SORTIE);
 				_soundManager.WSOUND(13);
@@ -3016,7 +3020,7 @@ bool HopkinsEngine::runWin95full() {
 				_globals.NOSPRECRAN = false;
 				if (_globals.SORTIE < 35 || _globals.SORTIE > 49) {
 					_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
-					_globals.FORET = false;
+					_globals.forest = false;
 					_soundManager.DEL_SAMPLE(1);
 				}
 				break;
@@ -3534,11 +3538,11 @@ bool HopkinsEngine::runLinuxFull() {
 		case 3:
 			if (!_globals.SAUVEGARDE->data[svField170]) {
 				_soundManager.WSOUND(3);
-				if (_globals.FR == 1)
+				if (_globals._language == LANG_FR)
 					_graphicsManager.loadImage("fondfr");
-				else if (!_globals.FR)
+				else if (_globals._language == LANG_EN)
 					_graphicsManager.loadImage("fondan");
-				else if (_globals.FR == 2)
+				else if (_globals._language == LANG_SP)
 					_graphicsManager.loadImage("fondes");
 				_graphicsManager.FADE_INW();
 				_eventsManager.delay(500);
@@ -3881,7 +3885,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Propre_Gen = 20;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
-			_globals.FORET = true;
+			_globals.forest = true;
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals.SORTIE);
 			_soundManager.WSOUND(13);
@@ -3894,7 +3898,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.NOSPRECRAN = false;
 			if (_globals.SORTIE < 35 || _globals.SORTIE > 49) {
 				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
-				_globals.FORET = false;
+				_globals.forest = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
 			break;
@@ -4366,7 +4370,7 @@ int HopkinsEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void HopkinsEngine::INIT_SYSTEM() {
+void HopkinsEngine::initializeSystem() {
 	// Set graphics mode
 	_graphicsManager.setGraphicalMode(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -4378,20 +4382,20 @@ void HopkinsEngine::INIT_SYSTEM() {
 	else
 		_eventsManager._mouseLinuxFl = false;
 
-	switch (_globals.FR) {
-	case 0:
+	switch (_globals._language) {
+	case LANG_EN:
 		if (!_eventsManager._mouseLinuxFl)
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "SOUAN.SPR");
 		else
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "LSOUAN.SPR");
 		break;
-	case 1:
+	case LANG_FR:
 		if (!_eventsManager._mouseLinuxFl)
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "SOUFR.SPR");
 		else
 			_fileManager.constructFilename(_globals.HOPSYSTEM, "LSOUFR.SPR");
 		break;
-	case 2:
+	case LANG_SP:
 		_fileManager.constructFilename(_globals.HOPSYSTEM, "SOUES.SPR");
 		break;
 	}
@@ -4416,16 +4420,16 @@ void HopkinsEngine::INIT_SYSTEM() {
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "TETE.SPR");
 	_globals.TETE = _fileManager.loadFile(_globals.NFICHIER);
 
-	switch (_globals.FR) {
-	case 0:
+	switch (_globals._language) {
+	case LANG_EN:
 		_fileManager.constructFilename(_globals.HOPLINK, "ZONEAN.TXT");
 		_globals.BUF_ZONE = _fileManager.loadFile(_globals.NFICHIER);
 		break;
-	case 1:
+	case LANG_FR:
 		_fileManager.constructFilename(_globals.HOPLINK, "ZONE01.TXT");
 		_globals.BUF_ZONE = _fileManager.loadFile(_globals.NFICHIER);
 		break;
-	case 2:
+	case LANG_SP:
 		_fileManager.constructFilename(_globals.HOPLINK, "ZONEES.TXT");
 		_globals.BUF_ZONE = _fileManager.loadFile(_globals.NFICHIER);
 		break;
@@ -4693,13 +4697,13 @@ void HopkinsEngine::PASS() {
 	if (!getIsDemo())
 		return;
 
-	if (_globals.FR == 1)
+	if (_globals._language == LANG_FR)
 		_graphicsManager.loadImage("ndfr");
 	else
 		_graphicsManager.loadImage("nduk");
 
 	_graphicsManager.FADE_INW();
-	if (_soundManager.VOICEOFF)
+	if (_soundManager._voiceOffFl)
 		_eventsManager.delay(500);
 	else
 		_soundManager.mixVoice(628, 4);
@@ -4717,7 +4721,7 @@ void HopkinsEngine::NO_DISPO(int sortie) {
 
 void HopkinsEngine::displayEndDemo() {
 	_soundManager.WSOUND(28);
-	if (_globals.FR == 1)
+	if (_globals._language == LANG_FR)
 		_graphicsManager.loadImage("endfr");
 	else
 	    _graphicsManager.loadImage("enduk");
@@ -4786,7 +4790,7 @@ void HopkinsEngine::restoreSystem() {
 void HopkinsEngine::PUBQUIT() {
 	_globals.PUBEXIT = true;
 	_graphicsManager.RESET_SEGMENT_VESA();
-	_globals.FORET = false;
+	_globals.forest = false;
 	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;
 	_globals.FLAG_VISIBLE = false;
@@ -5288,18 +5292,18 @@ void HopkinsEngine::loadCredits() {
 	_globals.Credit_l = 10;
 	_globals.Credit_h = 40;
 	_globals.Credit_step = 45;
-	switch (_globals.FR) {
-	case 0:
+	switch (_globals._language) {
+	case LANG_EN:
 		_fileManager.constructFilename(_globals.HOPLINK, "CREAN.TXT");
 		break;
-	case 1:
+	case LANG_FR:
 		_fileManager.constructFilename(_globals.HOPLINK, "CREFR.TXT");
 		break;
-	case 2:
+	case LANG_SP:
 		_fileManager.constructFilename(_globals.HOPLINK, "CREES.TXT");
 		break;
 	default:
-		error("Charge_Credits(): Unhandled language");
+		error("Unhandled language");
 		break;
 	}
 
@@ -5758,7 +5762,7 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	_graphicsManager.max_x = SCREEN_WIDTH;
 	_graphicsManager.max_y = SCREEN_HEIGHT - 1;
 	_eventsManager._breakoutFl = false;
-	_globals.FORET = false;
+	_globals.forest = false;
 	_globals.FLAG_VISIBLE = false;
 	_globals._disableInventFl = true;
 	_globals.SORTIE = 0;

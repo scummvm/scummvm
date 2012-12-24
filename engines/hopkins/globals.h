@@ -295,6 +295,8 @@ struct CreditItem {
 	byte _line[50];
 };
 
+enum Language { LANG_EN = 0, LANG_FR = 1, LANG_SP = 2};
+
 class HopkinsEngine;
 
 /**
@@ -326,7 +328,7 @@ public:
 	HopkinsItem Hopkins[70];
 	int _inventory[36];
 	TriItem Tri[51];
-	int FR;
+	Language _language;
 	int SVGA;
 	bool _internetFl;
 	bool PUBEXIT;
@@ -384,7 +386,7 @@ public:
 	int hauteur_boite;
 	int GESTE_FLAG;
 	byte *FORETSPR;
-	bool FORET;
+	bool forest;
 	byte *COUCOU;
 	int16 *chemin;
 	byte *cache_souris;

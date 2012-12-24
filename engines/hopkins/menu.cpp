@@ -57,7 +57,7 @@ int MenuManager::MENU() {
 
 	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
-		_vm->_globals.FORET = false;
+		_vm->_globals.forest = false;
 		_vm->_eventsManager._breakoutFl = false;
 		_vm->_globals._disableInventFl = true;
 		_vm->_globals.FLAG_VISIBLE = false;
@@ -75,19 +75,19 @@ int MenuManager::MENU() {
 		frame1Index = 0;
 
 
-		if (_vm->_globals.FR == 0)
+		if (_vm->_globals._language == LANG_EN)
 			_vm->_graphicsManager.loadImage("MENUAN");
-		else if (_vm->_globals.FR == 1)
+		else if (_vm->_globals._language == LANG_FR)
 			_vm->_graphicsManager.loadImage("MENUFR");
-		else if (_vm->_globals.FR == 2)
+		else if (_vm->_globals._language == LANG_SP)
 			_vm->_graphicsManager.loadImage("MENUES");
 
 		_vm->_graphicsManager.FADE_INW();
-		if (_vm->_globals.FR == 0)
+		if (_vm->_globals._language == LANG_EN)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUAN.SPR");
-		else if (_vm->_globals.FR == 1)
+		else if (_vm->_globals._language == LANG_FR)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUFR.SPR");
-		else if (_vm->_globals.FR == 2)
+		else if (_vm->_globals._language == LANG_SP)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUES.SPR");
 
 		spriteData = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);

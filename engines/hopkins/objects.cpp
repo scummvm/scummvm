@@ -2661,7 +2661,7 @@ LABEL_38:
 	_vm->_globals.GOACTION = false;
 	v9 = _vm->_globals.chemin;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	if (_vm->_globals.FORET && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
+	if (_vm->_globals.forest && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
 		if (getSpriteY(0) <= 374 || getSpriteY(0) > 410) {
 			v10 = getSpriteX(0);
 			v11 = getSpriteY(0);
@@ -2752,7 +2752,7 @@ void ObjectsManager::PARADISE() {
 	result = _vm->_globals.SAUVEGARDE->data[svField1];
 	if (result && _vm->_globals.SAUVEGARDE->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.hideText(5);
-		if (!_vm->_globals.FORET || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
+		if (!_vm->_globals.forest || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
 			if (_vm->_graphicsManager.DOUBLE_ECRAN) {
 				_vm->_graphicsManager.no_scroll = 2;
 				if (_vm->_eventsManager._startPos.x >= getSpriteX(0) - 320)
@@ -4691,17 +4691,17 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 			_vm->_eventsManager.VBL();
 		VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
 		_vm->_fontManager.hideText(9);
-		if (!_vm->_soundManager.TEXTOFF) {
+		if (!_vm->_soundManager._textOffFl) {
 			_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals.FICH_TEXTE, 220, 72, 20, 25, 6, 36, 253);
-			if (!_vm->_soundManager.TEXTOFF)
+			if (!_vm->_soundManager._textOffFl)
 				_vm->_fontManager.showText(9);
 		}
-		if (!_vm->_soundManager.VOICEOFF)
+		if (!_vm->_soundManager._voiceOffFl)
 			_vm->_soundManager.mixVoice(383, 4);
 		_vm->_globals.SAUVEGARDE->data[svField270] = 1;
 		_vm->_globals.SAUVEGARDE->data[svField300] = 1;
 		_vm->_globals.SAUVEGARDE->data[svField320] = 1;
-		if (_vm->_soundManager.VOICEOFF == 1) {
+		if (_vm->_soundManager._voiceOffFl) {
 			for (int v6 = 0; v6 <= 199; v6++)
 				_vm->_eventsManager.VBL();
 		}

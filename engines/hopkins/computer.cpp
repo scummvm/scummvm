@@ -526,11 +526,11 @@ void ComputerManager::readText(int idx) {
 
 	_vm->_eventsManager._escKeyFl = false;
 
-	if (_vm->_globals.FR == 0)
+	if (_vm->_globals._language == LANG_EN)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKAN.TXT");
-	else if (_vm->_globals.FR == 1)
+	else if (_vm->_globals._language == LANG_FR)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPK.TXT");
-	else if (_vm->_globals.FR == 2)
+	else if (_vm->_globals._language == LANG_SP)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKES.TXT");
 
 	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);

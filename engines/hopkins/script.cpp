@@ -35,7 +35,7 @@
 namespace Hopkins {
 
 ScriptManager::ScriptManager() {
-	TRAVAILOBJET = 0;
+	TRAVAILOBJET = false;
 }
 
 void ScriptManager::setParent(HopkinsEngine *vm) {
@@ -53,78 +53,76 @@ int ScriptManager::Traduction(byte *a1) {
 		int v69 = *(a1 + 8);
 		int v67 = (int16)READ_LE_UINT16(a1 + 9);
 		int v65 = (int16)READ_LE_UINT16(a1 + 11);
-		int v3 = (int16)READ_LE_UINT16(a1 + 13);
+		int mesgId = (int16)READ_LE_UINT16(a1 + 13);
 		v1 = 1;
 		if (!TRAVAILOBJET) {
 			if (_vm->_globals.SAUVEGARDE->data[svField356] == 1) {
-				if (v3 == 53)
-					v3 = 644;
-				if (v3 == 624)
-					v3 = 639;
-				if (v3 == 627)
-					v3 = 630;
-				if (v3 == 625)
-					v3 = 639;
-				if (v3 == 8)
-					v3 = 637;
-				if (v3 == 53)
-					v3 = 644;
-				if (v3 == 557)
-					v3 = 636;
-				if (v3 == 51)
-					v3 = 644;
-				if (v3 == 287)
-					v3 = 636;
-				if (v3 == 619)
-					v3 = 633;
-				if (v3 == 620)
-					v3 = 634;
-				if (v3 == 622)
-					v3 = 644;
-				if (v3 == 297)
-					v3 = 636;
-				if (v3 == 612)
-					v3 = 636;
-				if ((uint16)(v3 - 613) <= 1u || v3 == 134)
-					v3 = 636;
-				if (v3 == 615)
-					v3 = 635;
-				if (v3 == 618)
-					v3 = 632;
-				if (v3 == 611)
-					v3 = 642;
-				if (v3 == 610)
-					v3 = 641;
-				if (v3 == 18)
-					v3 = 643;
-				if (v3 == 602)
-					v3 = 645;
-				if (v3 == 603)
-					v3 = 646;
-				if (v3 == 604)
-					v3 = 647;
-				if (v3 == 51)
-					v3 = 644;
-				if (v3 == 607)
-					v3 = 650;
-				if (v3 == 605)
-					v3 = 648;
-				if (v3 == 606)
-					v3 = 649;
-				if (v3 == 601)
-					v3 = 652;
-				if (v3 == 37)
-					v3 = 636;
-				if (v3 == 595)
-					v3 = 633;
-				if (v3 == 596)
-					v3 = 634;
-				if (v3 == 532)
-					v3 = 636;
-				if (v3 == 599)
-					v3 = 636;
-				if (v3 == 363)
-					v3 = 636;
+				if (mesgId == 53)
+					mesgId = 644;
+				if (mesgId == 624)
+					mesgId = 639;
+				if (mesgId == 627)
+					mesgId = 630;
+				if (mesgId == 625)
+					mesgId = 639;
+				if (mesgId == 8)
+					mesgId = 637;
+				if (mesgId == 53)
+					mesgId = 644;
+				if (mesgId == 557)
+					mesgId = 636;
+				if (mesgId == 51)
+					mesgId = 644;
+				if (mesgId == 287)
+					mesgId = 636;
+				if (mesgId == 619)
+					mesgId = 633;
+				if (mesgId == 620)
+					mesgId = 634;
+				if (mesgId == 622)
+					mesgId = 644;
+				if (mesgId == 297)
+					mesgId = 636;
+				if (mesgId == 612 || mesgId == 613 || mesgId == 614 || mesgId == 134)
+					mesgId = 636;
+				if (mesgId == 615)
+					mesgId = 635;
+				if (mesgId == 618)
+					mesgId = 632;
+				if (mesgId == 611)
+					mesgId = 642;
+				if (mesgId == 610)
+					mesgId = 641;
+				if (mesgId == 18)
+					mesgId = 643;
+				if (mesgId == 602)
+					mesgId = 645;
+				if (mesgId == 603)
+					mesgId = 646;
+				if (mesgId == 604)
+					mesgId = 647;
+				if (mesgId == 51)
+					mesgId = 644;
+				if (mesgId == 607)
+					mesgId = 650;
+				if (mesgId == 605)
+					mesgId = 648;
+				if (mesgId == 606)
+					mesgId = 649;
+				if (mesgId == 601)
+					mesgId = 652;
+				if (mesgId == 37)
+					mesgId = 636;
+				if (mesgId == 595)
+					mesgId = 633;
+				if (mesgId == 596)
+					mesgId = 634;
+				if (mesgId == 532)
+					mesgId = 636;
+				if (mesgId == 599)
+					mesgId = 636;
+				if (mesgId == 363)
+					mesgId = 636;
 			}
 			if (!_vm->_soundManager.SOUNDOFF && _vm->_soundManager.SOUND_FLAG == 1) {
 				do {
@@ -133,42 +131,39 @@ int ScriptManager::Traduction(byte *a1) {
 					_vm->_eventsManager.VBL();
 				} while (_vm->_soundManager.SOUND_FLAG);
 			}
-			if (!_vm->_soundManager.TEXTOFF) {
-				_vm->_fontManager.initTextBuffers(9, v3, _vm->_globals.FICH_TEXTE, 2 * v67, 2 * v65 + 40, 20, 25, 6, v2, 253);
-				if (!_vm->_soundManager.TEXTOFF)
+			if (!_vm->_soundManager._textOffFl) {
+				_vm->_fontManager.initTextBuffers(9, mesgId, _vm->_globals.FICH_TEXTE, 2 * v67, 2 * v65 + 40, 20, 25, 6, v2, 253);
+				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
 			}
-			if (!_vm->_soundManager.VOICEOFF)
-				_vm->_soundManager.mixVoice(v3, 4);
+			if (!_vm->_soundManager._voiceOffFl)
+				_vm->_soundManager.mixVoice(mesgId, 4);
 		}
-		if (TRAVAILOBJET == 1) {
+		if (TRAVAILOBJET) {
 			if (_vm->_globals.SAUVEGARDE->data[svField356]) {
 				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, 20, 25, v69, 35, 253);
-				if (!_vm->_soundManager.TEXTOFF)
+				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
-				if (!_vm->_soundManager.VOICEOFF)
+				if (!_vm->_soundManager._voiceOffFl)
 					_vm->_soundManager.mixVoice(635, 4);
-				goto LABEL_104;
-			}
-			if (_vm->_globals.FR == 1 && !_vm->_soundManager.TEXTOFF)
-				_vm->_fontManager.initTextBuffers(9, v3, "OBJET1.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
-			else if (!_vm->_globals.FR && !_vm->_soundManager.TEXTOFF)
-				_vm->_fontManager.initTextBuffers(9, v3, "OBJETAN.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
-			else if (_vm->_globals.FR == 2) {
-				if (_vm->_soundManager.TEXTOFF) {
-LABEL_98:
-					if (!_vm->_soundManager.VOICEOFF)
-						_vm->_soundManager.mixVoice(v3, 5);
-					goto LABEL_104;
+			} else {
+				if (_vm->_globals._language == LANG_FR && !_vm->_soundManager._textOffFl)
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+				else if (_vm->_globals._language == LANG_EN && !_vm->_soundManager._textOffFl)
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+				else if (_vm->_globals._language == LANG_SP && !_vm->_soundManager._textOffFl) {
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
 				}
-				_vm->_fontManager.initTextBuffers(9, v3, "OBJETES.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+
+				if (!_vm->_soundManager._textOffFl)
+					_vm->_fontManager.showText(9);
+
+				if (!_vm->_soundManager._voiceOffFl)
+					_vm->_soundManager.mixVoice(mesgId, 5);
 			}
-			if (!_vm->_soundManager.TEXTOFF)
-				_vm->_fontManager.showText(9);
-			goto LABEL_98;
 		}
 	}
-LABEL_104:
+
 	if (*(a1 + 2) == 'B' && *(a1 + 3) == 'O' && *(a1 + 4) == 'B') {
 		if (_vm->_objectsManager.DESACTIVE != true) {
 			int v72 = *(a1 + 5);
@@ -1924,11 +1919,11 @@ LABEL_1141:
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_objectsManager.setBobAnimation(2);
 			_vm->_fontManager.hideText(9);
-			if (!_vm->_soundManager.TEXTOFF) {
+			if (!_vm->_soundManager._textOffFl) {
 				_vm->_fontManager.initTextBuffers(9, 617, _vm->_globals.FICH_TEXTE, 91, 41, 20, 25, 3, 30, 253);
 				_vm->_fontManager.showText(9);
 			}
-			if (!_vm->_soundManager.VOICEOFF)
+			if (!_vm->_soundManager._voiceOffFl)
 				_vm->_soundManager.mixVoice(617, 4);
 			for (int i = 0; i <= 29; i++) {
 				if (_vm->shouldQuit())

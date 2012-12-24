@@ -80,11 +80,11 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	RENVOIE_FICHIER(40, v16, (const char *)_characterBuffer);
 	RENVOIE_FICHIER(0, _questionsFilename, (const char *)_characterBuffer);
 	RENVOIE_FICHIER(20, _answersFilename, (const char *)_characterBuffer);
-	if (_vm->_globals.FR == 1) {
+	if (_vm->_globals._language == LANG_FR) {
 		_answersFilename = _questionsFilename = "RUE.TXT";
-	} else if (!_vm->_globals.FR) {
+	} else if (_vm->_globals._language == LANG_EN) {
 		_answersFilename = _questionsFilename = "RUEAN.TXT";
-	} else if (_vm->_globals.FR == 2) {
+	} else if (_vm->_globals._language == LANG_SP) {
 		_answersFilename = _questionsFilename = "RUEES.TXT";
 	}
 	v2 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
@@ -193,16 +193,16 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	RENVOIE_FICHIER(0, _questionsFilename, (const char *)_characterBuffer);
 	RENVOIE_FICHIER(20, _answersFilename, (const char *)_characterBuffer);
 
-	switch (_vm->_globals.FR) {
-	case 0:
+	switch (_vm->_globals._language) {
+	case LANG_EN:
 		_questionsFilename = "RUEAN.TXT";
 		_answersFilename = "RUEAN.TXT";
 		break;
-	case 1:
+	case LANG_FR:
 		_questionsFilename = "RUE.TXT";
 		_answersFilename = "RUE.TXT";
 		break;
-	case 2:
+	case LANG_SP:
 		_questionsFilename = "RUEES.TXT";
 		_answersFilename = "RUEES.TXT";
 		break;
@@ -452,7 +452,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		VISU_PARLE();
 	}
 
-	if (!_vm->_soundManager.TEXTOFF) {
+	if (!_vm->_soundManager._textOffFl) {
 		_vm->_fontManager.initTextBuffers(9, v22, _answersFilename, v25, v24, 20, 25, 5, v23, 252);
 		_vm->_fontManager.showText(9);
 	}
@@ -485,7 +485,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		}
 	}
 
-	if (!_vm->_soundManager.TEXTOFF)
+	if (!_vm->_soundManager._textOffFl)
 		_vm->_fontManager.hideText(9);
 	if (STATI) {
 		v15 = _characterBuffer;

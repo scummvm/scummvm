@@ -34,7 +34,7 @@ class ScriptManager {
 private:
 	HopkinsEngine *_vm;
 public:
-	int TRAVAILOBJET;
+	bool TRAVAILOBJET;
 public:
 	ScriptManager();
 	void setParent(HopkinsEngine *vm);

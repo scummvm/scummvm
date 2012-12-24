@@ -221,14 +221,14 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		break;
 
 	case 9:
-		switch (_vm->_globals.FR) {
-		case 0:
+		switch (_vm->_globals._language) {
+		case LANG_EN:
 			constructFilename(_vm->_globals.HOPLINK, "RES_VAN.CAT");
 			break;
-		case 1:
+		case LANG_FR:
 			constructFilename(_vm->_globals.HOPLINK, "RES_VFR.CAT");
 			break;
-		case 2:
+		case LANG_SP:
 			constructFilename(_vm->_globals.HOPLINK, "RES_VES.CAT");
 			break;
 		}

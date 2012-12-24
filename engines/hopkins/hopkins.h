@@ -80,7 +80,7 @@ private:
 	const HopkinsGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
-	void INIT_SYSTEM();
+	void initializeSystem();
 
 	void PASS();
 	void restoreSystem();

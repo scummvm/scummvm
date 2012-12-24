@@ -80,8 +80,8 @@ SoundManager::SoundManager() {
 	OLD_VOICEVOL = 0;
 	SOUNDOFF = true;
 	MUSICOFF = true;
-	VOICEOFF = true;
-	TEXTOFF = false;
+	_voiceOffFl = true;
+	_textOffFl = false;
 	SOUND_FLAG = false;
 	VBL_MERDE = false;
 	SOUND_NUM = 0;
@@ -510,7 +510,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	size_t catPos, catLen;
 
 	fileNumber = voiceId;
-	if (VOICEOFF == 1)
+	if (_voiceOffFl)
 		return false;
 
 	if ((unsigned int)(voiceMode - 1) <= 1
@@ -570,21 +570,21 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	filename = Common::String::format("%s%d", prefix.c_str(), fileNumber);
 
 	if (!_vm->_fileManager.searchCat(filename + ".WAV", 9)) {
-		if (_vm->_globals.FR == 1)
+		if (_vm->_globals._language == LANG_FR)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
-		else if (!_vm->_globals.FR)
+		else if (_vm->_globals._language == LANG_EN)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VAN.RES");
-		else if (_vm->_globals.FR == 2)
+		else if (_vm->_globals._language == LANG_SP)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VES.RES");
 
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
 	} else if (!_vm->_fileManager.searchCat(filename + ".APC", 9)) {
-		if (_vm->_globals.FR == 1)
+		if (_vm->_globals._language == LANG_FR)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
-		else if (!_vm->_globals.FR)
+		else if (_vm->_globals._language == LANG_EN)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VAN.RES");
-		else if (_vm->_globals.FR == 2)
+		else if (_vm->_globals._language == LANG_SP)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VES.RES");
 
 		catPos = _vm->_globals._catalogPos;
@@ -853,7 +853,7 @@ void SoundManager::syncSoundSettings() {
 	// Update the mute settings
 	MUSICOFF = muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
 	SOUNDOFF = muteAll || (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute"));
-	VOICEOFF = muteAll || (ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute"));
+	_voiceOffFl = muteAll || (ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute"));
 
 	// Update the volume levels
 	MUSICVOL = MIN(255, ConfMan.getInt("music_volume")) * 16 / 255;
@@ -875,10 +875,10 @@ void SoundManager::syncSoundSettings() {
 }
 
 void SoundManager::updateScummVMSoundSettings() {
-	ConfMan.setBool("mute", MUSICOFF && SOUNDOFF && VOICEOFF);
+	ConfMan.setBool("mute", MUSICOFF && SOUNDOFF && _voiceOffFl);
 	ConfMan.setBool("music_mute", MUSICOFF);
 	ConfMan.setBool("sfx_mute", SOUNDOFF);
-	ConfMan.setBool("speech_mute", VOICEOFF);
+	ConfMan.setBool("speech_mute", _voiceOffFl);
 
 	ConfMan.setInt("music_volume", MUSICVOL * 255 / 16);
 	ConfMan.setInt("sfx_volume", SOUNDVOL * 255 / 16);

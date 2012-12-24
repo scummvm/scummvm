@@ -114,7 +114,7 @@ Globals::Globals() {
 		Common::fill((byte *)&Tri[i], (byte *)&Tri[i] + sizeof(TriItem), 0);
 
 	// Initialise fields
-	FR = 0;
+	_language = LANG_EN;
 	SVGA = 2;
 	_internetFl = true;
 
@@ -137,7 +137,7 @@ Globals::Globals() {
 	nbrligne = 0;
 	largeur_boite = 0;
 	hauteur_boite = 0;
-	FORET = false;
+	forest = false;
 	_objectWidth = _objectHeight = 0;
 	HELICO = 0;
 	_catalogPos = 0;
@@ -303,13 +303,13 @@ void Globals::setConfig() {
 	switch (_vm->getLanguage()) {
 	case Common::EN_ANY:
 	case Common::PL_POL:
-		FR = 0;
+		_language = LANG_EN;
 		break;
 	case Common::FR_FRA:
-		FR = 1;
+		_language = LANG_FR;
 		break;
 	case Common::ES_ESP:
-		FR = 2;
+		_language = LANG_SP;
 		break;
 	default:
 		warning("Unknown language in internal language mapping");
@@ -322,16 +322,16 @@ void Globals::setConfig() {
 		_internetFl = false;
 	// End of CHECKME
 
-	switch (FR) {
-	case 0:
+	switch (_language) {
+	case LANG_EN:
 		FICH_ZONE = "ZONEAN.TXT";
 		FICH_TEXTE = "TEXTEAN.TXT";
 		break;
-	case 1:
+	case LANG_FR:
 		FICH_ZONE = "ZONE01.TXT";
 		FICH_TEXTE = "TEXTE01.TXT";
 		break;
-	case 2:
+	case LANG_SP:
 		FICH_ZONE = "ZONEES.TXT";
 		FICH_TEXTE = "TEXTEES.TXT";
 		break;
@@ -418,7 +418,7 @@ void Globals::clearAll() {
 
 	ADR_FICHIER_OBJ = g_PTRNUL;
 	FORETSPR = g_PTRNUL;
-	FORET = false;
+	forest = false;
 
 	cache_souris = allocMemory(2500);
 	GESTE = g_PTRNUL;

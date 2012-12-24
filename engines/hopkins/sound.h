@@ -121,8 +121,8 @@ public:
 	int OLD_VOICEVOL;
 	bool SOUNDOFF;
 	bool MUSICOFF;
-	bool VOICEOFF;
-	bool TEXTOFF;
+	bool _voiceOffFl;
+	bool _textOffFl;
 	bool SOUND_FLAG;
 	bool VBL_MERDE;
 	int SOUND_NUM;
