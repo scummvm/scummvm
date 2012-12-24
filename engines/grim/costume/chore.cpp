@@ -185,6 +185,9 @@ void Chore::fadeOut(uint msecs) {
 	// Note: It doesn't matter whether the chore is playing or not. The keyframe
 	// components should fade out in either case.
 	fade(Animation::FadeOut, msecs);
+
+	// Stop the chore, but do not alter the components state.
+	_playing = false;
 }
 
 void Chore::saveState(SaveGame *state) const {
