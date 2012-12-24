@@ -144,12 +144,12 @@ Globals::Globals() {
 	_catalogSize = 0;
 	_newObjectFl = false;
 	iRegul = 0;
-	SORTIE = 0;
+	_exitId = 0;
 	PLANX = PLANY = 0;
 	PLANI = 0;
 	PERSO = 0;
 	PASSWORD = false;
-	ECRAN = 0;
+	_screenId = 0;
 	NOSPRECRAN = false;
 	OLD_ECRAN = 0;
 	Max_Propre_Gen = 0;
@@ -199,7 +199,7 @@ Globals::Globals() {
 	CACHE_BANQUE[6] = NULL;
 	texte_tmp = NULL;
 	SPRITE_ECRAN = NULL;
-	SAUVEGARDE = NULL;
+	_saveData = NULL;
 	BUFFERTAPE = NULL;
 	essai0 = NULL;
 	essai1 = NULL;
@@ -262,7 +262,7 @@ Globals::~Globals() {
 	freeMemory(CACHE_BANQUE[6]);
 	freeMemory(texte_tmp);
 	freeMemory(SPRITE_ECRAN);
-	freeMemory((byte *)SAUVEGARDE);
+	freeMemory((byte *)_saveData);
 	freeMemory(BUFFERTAPE);
 	freeMemory(inventaire2);
 	freeMemory(GESTE);
@@ -367,7 +367,7 @@ void Globals::clearAll() {
 	_vm->_dialogsManager._inventBuf2 = g_PTRNUL;
 	COUCOU = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
-	SAUVEGARDE = (Sauvegarde *)g_PTRNUL;
+	_saveData = (Sauvegarde *)g_PTRNUL;
 	_curObjectIndex = 0;
 
 	for (int idx = 0; idx < 105; ++idx) {
@@ -403,8 +403,8 @@ void Globals::clearAll() {
 	texte_tmp = g_PTRNUL;
 	BUFFERTAPE = allocMemory(85000);
 
-	SAUVEGARDE = (Sauvegarde *)malloc(sizeof(Sauvegarde));
-	memset(SAUVEGARDE, 0, sizeof(Sauvegarde));
+	_saveData = (Sauvegarde *)malloc(sizeof(Sauvegarde));
+	memset(_saveData, 0, sizeof(Sauvegarde));
 
 	essai0 = (int16 *)BUFFERTAPE;
 	essai1 = (int16 *)(BUFFERTAPE + 25000);

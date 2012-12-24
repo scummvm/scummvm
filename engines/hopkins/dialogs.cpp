@@ -189,7 +189,7 @@ void DialogsManager::showOptionsDialog() {
 			}
 
 			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 175 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager.ofscroll + 281 && mousePos.y <= 310) {
-				_vm->_globals.SORTIE = 300;
+				_vm->_globals._exitId = 300;
 				doneFlag = true;
 			}
 			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 355 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager.ofscroll + 490 && mousePos.y <= 310)
@@ -406,22 +406,22 @@ LABEL_7:
 					v20 = true;
 				if (!v20) {
 					_vm->_scriptManager.TRAVAILOBJET = true;
-					_vm->_globals.SAUVEGARDE->data[svField3] = _vm->_globals._curObjectIndex;
-					_vm->_globals.SAUVEGARDE->data[svField8] = _vm->_globals._inventory[v13];
-					_vm->_globals.SAUVEGARDE->data[svField9] = _vm->_eventsManager._mouseCursorId;
+					_vm->_globals._saveData->data[svField3] = _vm->_globals._curObjectIndex;
+					_vm->_globals._saveData->data[svField8] = _vm->_globals._inventory[v13];
+					_vm->_globals._saveData->data[svField9] = _vm->_eventsManager._mouseCursorId;
 					_vm->_objectsManager.OPTI_OBJET();
 					_vm->_scriptManager.TRAVAILOBJET = false;
 
 					if (_vm->_soundManager._voiceOffFl) {
 						do
 							_vm->_eventsManager.VBL();
-						while (!_vm->_globals.SORTIE && _vm->_eventsManager.getMouseButton() != 1);
+						while (!_vm->_globals._exitId && _vm->_eventsManager.getMouseButton() != 1);
 						_vm->_fontManager.hideText(9);
 					}
-					if (_vm->_globals.SORTIE) {
-						if (_vm->_globals.SORTIE == 2)
+					if (_vm->_globals._exitId) {
+						if (_vm->_globals._exitId == 2)
 							v20 = true;
-						_vm->_globals.SORTIE = 0;
+						_vm->_globals._exitId = 0;
 						if (!v20) {
 							_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
 							_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
@@ -437,13 +437,12 @@ LABEL_7:
 			if (v20)
 				break;
 			_vm->_eventsManager.VBL();
-			if ((uint16)(_vm->_globals.ECRAN - 35) <= 5u)
+			if ((uint16)(_vm->_globals._screenId - 35) <= 5u)
 				_vm->_objectsManager.SPECIAL_JEU();
 		}
 		_vm->_fontManager.hideText(9);
 		if (_inventDisplayedFl) {
 			_inventDisplayedFl = false;
-//			v9 = 114;
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, v19, 114, v18, v17, _vm->_graphicsManager._vesaBuffer, v19, 114);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
 			_vm->_objectsManager.BOBTOUS = true;
@@ -494,20 +493,20 @@ void DialogsManager::inventAnim() {
 			_vm->_objectsManager.I_old_x = v0;
 		}
 
-		if (_vm->_globals.SAUVEGARDE->data[svField357] == 1) {
-			if (_vm->_globals.SAUVEGARDE->data[svField353] == 1)
+		if (_vm->_globals._saveData->data[svField357] == 1) {
+			if (_vm->_globals._saveData->data[svField353] == 1)
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
-			if (_vm->_globals.SAUVEGARDE->data[svField355] == 1)
+			if (_vm->_globals._saveData->data[svField355] == 1)
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 866, 325, 1, 0, 0, 0);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(566, 25, 594, 60);
 		}
-		if (_vm->_globals.SAUVEGARDE->data[svField356] == 1) {
+		if (_vm->_globals._saveData->data[svField356] == 1) {
 			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
 		}
 
-		if (_vm->_globals.SAUVEGARDE->data[svField354] == 1) {
+		if (_vm->_globals._saveData->data[svField354] == 1) {
 			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
 		}

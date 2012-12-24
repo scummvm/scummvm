@@ -61,12 +61,12 @@ int MenuManager::MENU() {
 		_vm->_eventsManager._breakoutFl = false;
 		_vm->_globals._disableInventFl = true;
 		_vm->_globals.FLAG_VISIBLE = false;
-		_vm->_globals.SORTIE = 0;
+		_vm->_globals._exitId = 0;
 
 		for (int idx = 0; idx < 31; ++idx)
 			_vm->_globals._inventory[idx] = 0;
 
-		memset(_vm->_globals.SAUVEGARDE, 0, 2000);
+		memset(_vm->_globals._saveData, 0, 2000);
 		_vm->_objectsManager.addObject(14);
 		frame5Index = 0;
 		frame4Index = 0;
@@ -191,14 +191,14 @@ int MenuManager::MENU() {
 				_vm->_eventsManager.VBL();
 				_vm->_eventsManager.delay(200);
 
-				_vm->_globals.SORTIE = -1;
+				_vm->_globals._exitId = -1;
 				_vm->_dialogsManager.showLoadGame();
 
-				if (_vm->_globals.SORTIE != -1) {
-					result = _vm->_globals.SORTIE;
+				if (_vm->_globals._exitId != -1) {
+					result = _vm->_globals._exitId;
 					break;
 				}
-				_vm->_globals.SORTIE = 0;
+				_vm->_globals._exitId = 0;
 			}
 
 			if (menuIndex != OPTIONS)

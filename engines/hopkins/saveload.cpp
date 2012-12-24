@@ -140,11 +140,11 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName) {
 	/* Pack any necessary data into the savegame data structure */
 	// Set the selected slot number
-	_vm->_globals.SAUVEGARDE->data[svField10] = slot;
+	_vm->_globals._saveData->data[svField10] = slot;
 
 	// Set up the inventory
 	for (int i = 0; i < 35; ++i)
-		_vm->_globals.SAUVEGARDE->_inventory[i] = _vm->_globals._inventory[i];
+		_vm->_globals._saveData->_inventory[i] = _vm->_globals._inventory[i];
 
 	/* Create the savegame */
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
@@ -196,13 +196,13 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 
 	// Unpack the inventory
 	for (int i = 0; i < 35; ++i)
-		_vm->_globals._inventory[i] = _vm->_globals.SAUVEGARDE->_inventory[i];
+		_vm->_globals._inventory[i] = _vm->_globals._saveData->_inventory[i];
 
 	// Set variables from loaded data as necessary
-	_vm->_globals.SAUVEGARDE->data[svField10] = slot;
-	_vm->_globals.SORTIE = _vm->_globals.SAUVEGARDE->data[svField5];
-	_vm->_globals.SAUVEGARDE->data[svField6] = 0;
-	_vm->_globals.ECRAN = 0;
+	_vm->_globals._saveData->data[svField10] = slot;
+	_vm->_globals._exitId = _vm->_globals._saveData->data[svField5];
+	_vm->_globals._saveData->data[svField6] = 0;
+	_vm->_globals._screenId = 0;
 
 	return Common::kNoError;
 }
@@ -253,13 +253,13 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
-	s.syncBytes(&_vm->_globals.SAUVEGARDE->data[0], 2050);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_cloneHopkins);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_realHopkins);
-	syncCharacterLocation(s, _vm->_globals.SAUVEGARDE->_samantha);
+	s.syncBytes(&_vm->_globals._saveData->data[0], 2050);
+	syncCharacterLocation(s, _vm->_globals._saveData->_cloneHopkins);
+	syncCharacterLocation(s, _vm->_globals._saveData->_realHopkins);
+	syncCharacterLocation(s, _vm->_globals._saveData->_samantha);
 
 	for (int i = 0; i < 35; ++i)
-		s.syncAsSint16LE(_vm->_globals.SAUVEGARDE->_inventory[i]);
+		s.syncAsSint16LE(_vm->_globals._saveData->_inventory[i]);
 }
 
 void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLocation &item) {

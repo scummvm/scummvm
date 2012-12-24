@@ -41,8 +41,8 @@ public:
 
 	int Traduction(byte *a1);
 	int Traduction2(const byte *dataP);
-	int Control_Goto(const byte *dataP);
-	int Control_If(const byte *dataP, int a2);
+	int handleGoto(const byte *dataP);
+	int handleIf(const byte *dataP, int a2);
 };
 
 } // End of namespace Hopkins

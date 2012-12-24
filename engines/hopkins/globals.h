@@ -371,7 +371,7 @@ public:
 	int texte_long;
 	int TEXTE_FORMATE;
 	byte *SPRITE_ECRAN;
-	Sauvegarde *SAUVEGARDE;
+	Sauvegarde *_saveData;
 	byte *BUFFERTAPE;
 	int16 *essai0;
 	int16 *essai1;
@@ -401,12 +401,12 @@ public:
 	uint32 _catalogSize;
 	int iRegul;
 	bool BPP_NOAFF;
-	int SORTIE;
+	int _exitId;
 	int PLANX, PLANY;
 	int PLANI;
 	bool PASSWORD; // CHECKME: Useless variable?
 	bool NOSPRECRAN;
-	int ECRAN;
+	int _screenId;
 	int OLD_ECRAN;
 	int fmusic;
 	int Max_Propre;

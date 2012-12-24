@@ -280,7 +280,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 					readText(9);
 				if (v12 == 54) {
 					readText(10);
-					_vm->_globals.SAUVEGARDE->data[svField270] = 4;
+					_vm->_globals._saveData->data[svField270] = 4;
 				}
 			}
 		}
@@ -306,9 +306,9 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_eventsManager.mouseOff();
 	}
 	if (mode == 1)
-		_vm->_globals.SORTIE = 13;
+		_vm->_globals._exitId = 13;
 	if ((uint16)(mode - 2) <= 1u)
-		_vm->_globals.SORTIE = 14;
+		_vm->_globals._exitId = 14;
 
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 }

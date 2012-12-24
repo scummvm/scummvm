@@ -76,7 +76,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
 	}
-	_vm->_globals.SAUVEGARDE->data[svField4] = 0;
+	_vm->_globals._saveData->data[svField4] = 0;
 	RENVOIE_FICHIER(40, v16, (const char *)_characterBuffer);
 	RENVOIE_FICHIER(0, _questionsFilename, (const char *)_characterBuffer);
 	RENVOIE_FICHIER(20, _answersFilename, (const char *)_characterBuffer);
@@ -189,7 +189,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
 	}
 
-	_vm->_globals.SAUVEGARDE->data[svField4] = 0;
+	_vm->_globals._saveData->data[svField4] = 0;
 	RENVOIE_FICHIER(0, _questionsFilename, (const char *)_characterBuffer);
 	RENVOIE_FICHIER(20, _answersFilename, (const char *)_characterBuffer);
 
@@ -427,7 +427,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	v7 = (int16)READ_LE_UINT16((uint16 *)v3 + 9);
 
 	if (v7)
-		_vm->_globals.SAUVEGARDE->data[svField4] = v7;
+		_vm->_globals._saveData->data[svField4] = v7;
 
 	if (!v6)
 		v6 = 10;
@@ -1009,9 +1009,9 @@ LABEL_2:
 						return;
 
 					if (v10 == 2)
-						v13 =  _vm->_scriptManager.Control_Goto(ptr + 20 * v13);
+						v13 =  _vm->_scriptManager.handleGoto(ptr + 20 * v13);
 					else if (v10 == 3)
-						v13 =  _vm->_scriptManager.Control_If(ptr, v13);
+						v13 =  _vm->_scriptManager.handleIf(ptr, v13);
 
 					if (v13 == -1)
 						error("Invalid IFF function");
@@ -1028,7 +1028,7 @@ LABEL_2:
 					}
 				} while (!loopCond);
 				_vm->_globals.freeMemory(ptr);
-				_vm->_globals.SAUVEGARDE->data[svField2] = 0;
+				_vm->_globals._saveData->data[svField2] = 0;
 				return;
 			}
 		}
@@ -1037,7 +1037,7 @@ LABEL_2:
 
 void TalkManager::REPONSE2(int a1, int a2) {
 	int indx = 0;
-	if (a2 == 5 && _vm->_globals.SAUVEGARDE->data[svField3] == 4) {
+	if (a2 == 5 && _vm->_globals._saveData->data[svField3] == 4) {
 		if (a1 == 22 || a1 == 23) {
 			_vm->_objectsManager.setFlipSprite(0, false);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
@@ -1060,7 +1060,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			_vm->_objectsManager.stopBobAnimation(6);
 			_vm->_objectsManager.setBobAnimation(8);
 			
-			switch (_vm->_globals.ECRAN) {
+			switch (_vm->_globals._screenId) {
 			case 35:
 				indx = 201;
 				break;
@@ -1083,7 +1083,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 				indx = 213;
 				break;
 			}
-			_vm->_globals.SAUVEGARDE->data[indx] = 2;
+			_vm->_globals._saveData->data[indx] = 2;
 			_vm->_objectsManager.ZONE_OFF(22);
 			_vm->_objectsManager.ZONE_OFF(23);
 		} else if (a1 == 20 || a1 == 21) {
@@ -1107,7 +1107,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			while (_vm->_objectsManager.BOBPOSI(5) < 12);
 			_vm->_objectsManager.stopBobAnimation(5);
 			_vm->_objectsManager.setBobAnimation(7);
-			switch (_vm->_globals.ECRAN) {
+			switch (_vm->_globals._screenId) {
 			case 35:
 				indx = 200;
 				break;
@@ -1130,7 +1130,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 				indx = 212;
 				break;
 			}
-			_vm->_globals.SAUVEGARDE->data[indx] = 2;
+			_vm->_globals._saveData->data[indx] = 2;
 			_vm->_objectsManager.ZONE_OFF(21);
 			_vm->_objectsManager.ZONE_OFF(20);
 		}
@@ -1177,7 +1177,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	v5 = 5;
 
 	if (v20 == "NULL")
-		v20 = Common::String::format("IM%d", _vm->_globals.ECRAN);
+		v20 = Common::String::format("IM%d", _vm->_globals._screenId);
 
 	_characterSprite = _vm->_fileManager.searchCat(v23, 7);
 	if (_characterSprite)
@@ -1228,7 +1228,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		if (_vm->_globals.GOACTION)
 			_vm->_objectsManager.PARADISE();
 		_vm->_eventsManager.VBL();
-	} while (!_vm->_globals.SORTIE);
+	} while (!_vm->_globals._exitId);
 	FIN_VISU_PARLE();
 	FIN_VISU_WAIT();
 	clearCharacterAnim();
@@ -1252,8 +1252,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_graphicsManager.INI_ECRAN2(v20);
 	_vm->_objectsManager.DESACTIVE = false;
 	_vm->_globals.NOMARCHE = false;
-	if (_vm->_globals.SORTIE == 101)
-		_vm->_globals.SORTIE = 0;
+	if (_vm->_globals._exitId == 101)
+		_vm->_globals._exitId = 0;
 
 	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");

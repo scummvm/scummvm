@@ -1971,9 +1971,9 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 				return;
 
 			if (dataVal1 == 2)
-				dataOffset =  _vm->_scriptManager.Control_Goto((ptr + 20 * dataOffset));
+				dataOffset =  _vm->_scriptManager.handleGoto((ptr + 20 * dataOffset));
 			if (dataVal1 == 3)
-				dataOffset =  _vm->_scriptManager.Control_If(ptr, dataOffset);
+				dataOffset =  _vm->_scriptManager.handleIf(ptr, dataOffset);
 			if (dataOffset == -1)
 				error("Error, defective IFF");
 			if (dataVal1 == 1 || dataVal1 == 4)
