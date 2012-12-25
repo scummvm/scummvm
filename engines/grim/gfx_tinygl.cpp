@@ -925,12 +925,12 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw)
 				uint32 ntex = data->_verts[i]._pos * 4;
 				uint32 numRects = data->_verts[i]._verts / 4;
 				while (numRects-- > 0) {
-					int dx1 = round((texc[ntex+0] + 1) * _screenWidth) / 2;
-					int dy1 = round((1 - texc[ntex+1]) * _screenHeight) / 2;
-					int dx2 = round((texc[ntex+8] + 1) * _screenWidth) / 2;
-					int dy2 = round((1 - texc[ntex+9]) * _screenHeight) / 2;
-					int srcX = round(texc[ntex+2] * bitmap->getWidth());
-					int srcY = round(texc[ntex+3] * bitmap->getHeight());
+					int dx1 = ((texc[ntex+0] + 1) * _screenWidth) / 2;
+					int dy1 = ((1 - texc[ntex+1]) * _screenHeight) / 2;
+					int dx2 = ((texc[ntex+8] + 1) * _screenWidth) / 2;
+					int dy2 = ((1 - texc[ntex+9]) * _screenHeight) / 2;
+					int srcX = texc[ntex+2] * bitmap->getWidth();
+					int srcY = texc[ntex+3] * bitmap->getHeight();
 
 					blit(bitmap->getPixelFormat(texId), &b[texId], _zb->pbuf.getRawBuffer(), bitmap->getData(texId).getRawBuffer(),
 							x + dx1, y + dy1, srcX, srcY, dx2 - dx1, dy2 - dy1, b[texId]._width, b[texId]._height, !initialDraw);
