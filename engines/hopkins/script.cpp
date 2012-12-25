@@ -171,7 +171,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v68 = (int16)READ_LE_UINT16(dataP + 8);
 			int v66 = (int16)READ_LE_UINT16(dataP + 10);
 			if (v72 == 52) {
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, v68, (int16)READ_LE_UINT16(dataP + 10), v70);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, v68, (int16)READ_LE_UINT16(dataP + 10), v70);
 			} else if (v72 == 51) {
 				_vm->_objectsManager.BOB_VIVANT(v70);
 			} else {
@@ -800,11 +800,11 @@ LABEL_1141:
 				if (_vm->_objectsManager.BOBPOSI(10) == 34)
 					v15 = false;
 				if (_vm->_objectsManager.BOBPOSI(10) == 12)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 1);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 1);
 				if (_vm->_objectsManager.BOBPOSI(10) == 23)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 2);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 2);
 				if (_vm->_objectsManager.BOBPOSI(10) == 34)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 249, 3);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 3);
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(9) != 36);
 			_vm->_objectsManager.SPRITE_ON(0);
@@ -1098,7 +1098,7 @@ LABEL_1141:
 					v24 = 0;
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(8) != 32);
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
 			_vm->_objectsManager.SPRITE_ON(0);
 			_vm->_objectsManager.stopBobAnimation(11);
 			_vm->_objectsManager.stopBobAnimation(8);
@@ -1204,7 +1204,7 @@ LABEL_1141:
 				} while (_vm->_objectsManager.BOBPOSI(1) != 9);
 				_vm->_objectsManager.stopBobAnimation(1);
 				_vm->_objectsManager.stopBobAnimation(2);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
 			if (_vm->_globals._saveData->data[svField183] == 2) {
@@ -1246,7 +1246,7 @@ LABEL_1141:
 				} while (_vm->_objectsManager.BOBPOSI(1) != 9);
 				_vm->_objectsManager.stopBobAnimation(1);
 				_vm->_objectsManager.stopBobAnimation(3);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
 			break;
@@ -1255,12 +1255,12 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals._saveData->data[svField186]) {
 				_vm->_animationManager.playSequence("CIB5A.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 			}
 			if (_vm->_globals._saveData->data[svField186] == 1) {
 				_vm->_animationManager.playSequence("CIB5C.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 329, 87, 2);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 329, 87, 2);
 			}
 			break;
 
@@ -1268,12 +1268,12 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals._saveData->data[svField186]) {
 				_vm->_animationManager.playSequence("CIB5B.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 			}
 			if (_vm->_globals._saveData->data[svField186] == 1) {
 				_vm->_animationManager.playSequence("CIB5D.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
 			}
 			break;
 
@@ -1281,12 +1281,12 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals._saveData->data[svField184]) {
 				_vm->_animationManager.playSequence("CIB6A.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 			}
 			if (_vm->_globals._saveData->data[svField184] == 1) {
 				_vm->_animationManager.playSequence("CIB6C.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 293, 139, 3);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 293, 139, 3);
 			}
 			break;
 
@@ -1294,12 +1294,12 @@ LABEL_1141:
 			_vm->_soundManager.PLAY_SOUND("SOUND52.WAV");
 			if (!_vm->_globals._saveData->data[svField184]) {
 				_vm->_animationManager.playSequence("CIB6B.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 			}
 			if (_vm->_globals._saveData->data[svField184] == 1) {
 				_vm->_animationManager.playSequence("CIB6D.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
-				_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
 			}
 			break;
 
@@ -1333,7 +1333,7 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 117);
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
 			_vm->_objectsManager.stopBobAnimation(12);
 			_vm->_objectsManager.stopBobAnimation(10);
 			_vm->_objectsManager.setBobAnimation(11);
@@ -1778,7 +1778,7 @@ LABEL_1141:
 
 				_vm->_eventsManager.VBL();
 				if (_vm->_objectsManager.BOBPOSI(4) == 18)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 18, 334, 0);
 			} while (_vm->_objectsManager.BOBPOSI(4) != 26);
 			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_globals.NO_VISU = false;
@@ -1909,7 +1909,7 @@ LABEL_1141:
 			_vm->_soundManager.SPECIAL_SOUND = 210;
 			_vm->_animationManager.playSequence2("SECRET1.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
 			_vm->_objectsManager.setBobAnimation(9);
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM73a");
@@ -1965,7 +1965,7 @@ LABEL_1141:
 			_vm->_soundManager.SPECIAL_SOUND = 229;
 			_vm->_animationManager.playSequence("MUR.SEQ", 1, 12, 1);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 340, 157, 2);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 340, 157, 2);
 			break;
 
 		case 230: {
@@ -2007,7 +2007,7 @@ LABEL_1141:
 			_vm->_objectsManager.setSpriteX(0, 476);
 			_vm->_objectsManager.setSpriteY(0, 278);
 			_vm->_objectsManager.SPRITE_ON(0);
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 337, 154, 3);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 337, 154, 3);
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM93c");
 			_vm->_objectsManager.OBSSEUL = 0;
@@ -2083,11 +2083,11 @@ LABEL_1141:
 				_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
 				if (_vm->_globals._saveData->data[svField341] == 1)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
 				if (_vm->_globals._saveData->data[svField341] == 2)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
 				if (_vm->_globals._saveData->data[svField341] == 3)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
 				if (_vm->_globals._saveData->data[svField341] == 1)
 					_vm->_globals._saveData->data[svField338] = 0;
 				if (_vm->_globals._saveData->data[svField341] == 2)
@@ -2097,7 +2097,7 @@ LABEL_1141:
 			}
 			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(6, 0, 23, 0);
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 1);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 1);
 			break;
 			}
 
@@ -2113,11 +2113,11 @@ LABEL_1141:
 				_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
 				if (_vm->_globals._saveData->data[svField341] == 1)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
 				if (_vm->_globals._saveData->data[svField341] == 2)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
 				if (_vm->_globals._saveData->data[svField341] == 3)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
 				if (_vm->_globals._saveData->data[svField341] == 1)
 					_vm->_globals._saveData->data[svField338] = 0;
 				if (_vm->_globals._saveData->data[svField341] == 2)
@@ -2127,7 +2127,7 @@ LABEL_1141:
 			}
 			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 23, 0);
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 145, 166, 3);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 3);
 			break;
 			}
 
@@ -2143,11 +2143,11 @@ LABEL_1141:
 				_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
 				if (_vm->_globals._saveData->data[svField341] == 1)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
 				if (_vm->_globals._saveData->data[svField341] == 2)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
 				if (_vm->_globals._saveData->data[svField341] == 3)
-					_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
 				if (_vm->_globals._saveData->data[svField341] == 1)
 					_vm->_globals._saveData->data[svField338] = 0;
 				if (_vm->_globals._saveData->data[svField341] == 2)
@@ -2157,7 +2157,7 @@ LABEL_1141:
 			}
 			_vm->_soundManager.PLAY_SOUND("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(4, 0, 23, 0);
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 296, 212, 5);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 5);
 			break;
 			}
 
@@ -2239,7 +2239,7 @@ LABEL_1141:
 			_vm->_globals._saveData->data[svField356] = 0;
 			_vm->_globals._saveData->data[svField355] = 1;
 			_vm->_objectsManager._twoCharactersFl = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
 			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->_pos, 1, 3, v53->field4, 0, 20, 127);
 			_vm->_objectsManager.SPRITE_ON(1);
 			break;
@@ -2261,7 +2261,7 @@ LABEL_1141:
 			_vm->_objectsManager.OPTI_ONE(5, 0, 6, 0);
 			_vm->_globals.ZONEP[4]._destX = 276;
 			_vm->_objectsManager.VERBE_ON(4, 19);
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
 			_vm->_globals._saveData->data[svField399] = 1;
 			break;
 
@@ -2299,21 +2299,21 @@ LABEL_1141:
 
 		case 601:
 			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(2, 0, 16, 4);
 			break;
 
 		case 602:
 			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(4, 0, 16, 4);
 			break;
 
 		case 603:
 			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(3, 0, 16, 4);
 			_vm->_soundManager.SPECIAL_SOUND = 199;
@@ -2330,7 +2330,7 @@ LABEL_1141:
 
 		case 604:
 			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(1, 0, 16, 4);
 			_vm->_soundManager.SPECIAL_SOUND = 199;
@@ -2346,7 +2346,7 @@ LABEL_1141:
 
 		case 605:
 			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(5, 0, 16, 4);
 			_vm->_graphicsManager.FADE_OUTS();
@@ -2364,7 +2364,7 @@ LABEL_1141:
 
 		case 606:
 			_vm->_globals.NO_VISU = true;
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(6, 0, 16, 4);
 			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {

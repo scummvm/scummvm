@@ -2661,7 +2661,7 @@ LABEL_38:
 	_vm->_globals.GOACTION = false;
 	v9 = _vm->_globals.chemin;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	if (_vm->_globals.forest && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
+	if (_vm->_globals._forestFl && ((uint16)(NUMZONE - 20) <= 1u || (uint16)(NUMZONE - 22) <= 1u)) {
 		if (getSpriteY(0) <= 374 || getSpriteY(0) > 410) {
 			v10 = getSpriteX(0);
 			v11 = getSpriteY(0);
@@ -2752,7 +2752,7 @@ void ObjectsManager::PARADISE() {
 	result = _vm->_globals._saveData->data[svField1];
 	if (result && _vm->_globals._saveData->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.hideText(5);
-		if (!_vm->_globals.forest || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
+		if (!_vm->_globals._forestFl || ((uint16)(NUMZONE - 20) > 1u && (uint16)(NUMZONE - 22) > 1u)) {
 			if (_vm->_graphicsManager.DOUBLE_ECRAN) {
 				_vm->_graphicsManager.no_scroll = 2;
 				if (_vm->_eventsManager._startPos.x >= getSpriteX(0) - 320)
@@ -4122,11 +4122,11 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	v4 = *(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8);
 	if ((int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 4)) {
 		if (!_vm->_globals.NO_OFFSET)
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager._characterSprite,
+			_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite,
 				_vm->_graphicsManager.ofscroll + v2, v3,
 				*(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8));
 		if (_vm->_globals.NO_OFFSET)
-			_vm->_graphicsManager.AFFICHE_SPEED(_vm->_talkManager._characterSprite, v2, v3, v4);
+			_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, v2, v3, v4);
 	}
 }
 
@@ -4369,7 +4369,7 @@ void ObjectsManager::OPTI_ONE(int idx, int fromPosi, int destPosi, int a4) {
 	if (!a4)
 		stopBobAnimation(idx);
 	else if (a4 == 4) {
-		_vm->_graphicsManager.AFFICHE_SPEED(_vm->_globals._bob[idx]._spriteData,
+		_vm->_graphicsManager.fastDisplay(_vm->_globals._bob[idx]._spriteData,
 			_vm->_globals._bob[idx]._oldX, _vm->_globals._bob[idx]._oldY, _vm->_globals._bob[idx]._frameIndex);
 		stopBobAnimation(idx);
 		_vm->_eventsManager.VBL();

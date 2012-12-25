@@ -41,7 +41,7 @@ void MenuManager::setParent(HopkinsEngine *vm) {
 
 enum MenuSelection { MENU_NONE = 0, PLAY_GAME = 1, LOAD_GAME = 2, OPTIONS = 3, INTRODUCTION = 4, QUIT = 5 };
 
-int MenuManager::MENU() {
+int MenuManager::menu() {
 	byte *spriteData = NULL;
 	MenuSelection menuIndex;
 	Common::Point mousePos;
@@ -57,7 +57,7 @@ int MenuManager::MENU() {
 
 	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
-		_vm->_globals.forest = false;
+		_vm->_globals._forestFl = false;
 		_vm->_eventsManager._breakoutFl = false;
 		_vm->_globals._disableInventFl = true;
 		_vm->_globals._exitId = 0;
@@ -166,11 +166,11 @@ int MenuManager::MENU() {
 						frame5Index = 1;
 					}
 
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, frame1Index);
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, frame2Index + 2);
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, frame3Index + 4);
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, frame4Index + 6);
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, frame5Index + 8);
+					_vm->_graphicsManager.fastDisplay(spriteData, 230, 259, frame1Index);
+					_vm->_graphicsManager.fastDisplay(spriteData, 230, 291, frame2Index + 2);
+					_vm->_graphicsManager.fastDisplay(spriteData, 230, 322, frame3Index + 4);
+					_vm->_graphicsManager.fastDisplay(spriteData, 230, 354, frame4Index + 6);
+					_vm->_graphicsManager.fastDisplay(spriteData, 230, 386, frame5Index + 8);
 					_vm->_eventsManager.VBL();
 
 					if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
@@ -178,7 +178,7 @@ int MenuManager::MENU() {
 				} while (!selectionMade);
 
 				if (menuIndex == PLAY_GAME) {
-					_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 259, 10);
+					_vm->_graphicsManager.fastDisplay(spriteData, 230, 259, 10);
 					_vm->_eventsManager.VBL();
 					_vm->_eventsManager.delay(200);
 					result = 1;
@@ -186,7 +186,7 @@ int MenuManager::MENU() {
 				if (menuIndex != LOAD_GAME)
 					break;
 
-				_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 291, 11);
+				_vm->_graphicsManager.fastDisplay(spriteData, 230, 291, 11);
 				_vm->_eventsManager.VBL();
 				_vm->_eventsManager.delay(200);
 
@@ -204,7 +204,7 @@ int MenuManager::MENU() {
 				break;
 
 			// Options menu item selected
-			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 322, 12);
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 322, 12);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.delay(200);
 
@@ -212,7 +212,7 @@ int MenuManager::MENU() {
 			_vm->_dialogsManager.showOptionsDialog();
 		}
 		if (menuIndex == INTRODUCTION) {
-			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 354, 13);
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 354, 13);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.delay(200);
 			_vm->playIntro();
@@ -220,7 +220,7 @@ int MenuManager::MENU() {
 		}
 
 		if ( menuIndex == QUIT) {
-			_vm->_graphicsManager.AFFICHE_SPEED(spriteData, 230, 386, 14);
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 386, 14);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.delay(200);
 			result = -1;
@@ -233,7 +233,5 @@ int MenuManager::MENU() {
 	_vm->_graphicsManager.FADE_OUTW();
 	return result;
 }
-
-
 
 } // End of namespace Hopkins

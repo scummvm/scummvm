@@ -777,7 +777,7 @@ void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
 		do {
 			v7 = (int16)READ_LE_UINT16(&v8[2 * v6 + 4]);
 			if (v7 && _vm->_globals._speed != 501)
-				_vm->_graphicsManager.AFFICHE_SPEED(_characterSprite, _vm->_eventsManager._startPos.x + (int16)READ_LE_UINT16(&v8[2 * v6]),
+				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager._startPos.x + (int16)READ_LE_UINT16(&v8[2 * v6]),
 				    (int16)READ_LE_UINT16(&v8[2 * v6 + 2]), v9[2 * v6 + 8]);
 			v6 += 5;
 		} while (_vm->_globals._speed != 501 && v7);

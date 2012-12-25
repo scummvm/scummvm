@@ -382,7 +382,7 @@ public:
 	int hauteur_boite;
 	int GESTE_FLAG;
 	byte *FORETSPR;
-	bool forest;
+	bool _forestFl;
 	byte *COUCOU;
 	int16 *chemin;
 	byte *cache_souris;

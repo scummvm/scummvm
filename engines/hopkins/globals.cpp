@@ -136,7 +136,7 @@ Globals::Globals() {
 	nbrligne = 0;
 	largeur_boite = 0;
 	hauteur_boite = 0;
-	forest = false;
+	_forestFl = false;
 	_objectWidth = _objectHeight = 0;
 	_helicopterFl = false;
 	_catalogPos = 0;
@@ -409,7 +409,7 @@ void Globals::clearAll() {
 
 	ADR_FICHIER_OBJ = g_PTRNUL;
 	FORETSPR = g_PTRNUL;
-	forest = false;
+	_forestFl = false;
 
 	cache_souris = allocMemory(2500);
 	GESTE = g_PTRNUL;

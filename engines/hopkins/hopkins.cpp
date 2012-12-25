@@ -196,7 +196,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._exitId = 0;
 
 		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.MENU();
+			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				restoreSystem();
@@ -502,7 +502,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals._exitId = 0;
 
 		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.MENU();
+			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
 				if (!g_system->getEventManager()->shouldQuit())
 					PUBQUIT();
@@ -863,7 +863,7 @@ bool HopkinsEngine::runOS2Full() {
 		if (_globals._exitId == 300)
 			_globals._exitId = 0;
 		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.MENU();
+			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1)
 				break;
 		}
@@ -1231,7 +1231,7 @@ bool HopkinsEngine::runOS2Full() {
 			_globals.Max_Propre_Gen = 20;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
-			_globals.forest = true;
+			_globals._forestFl = true;
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
@@ -1244,7 +1244,7 @@ bool HopkinsEngine::runOS2Full() {
 			_globals.NOSPRECRAN = false;
 			if (_globals._exitId < 35 || _globals._exitId > 49 ) {
 				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
-				_globals.forest = false;
+				_globals._forestFl = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
 			break;
@@ -1750,7 +1750,7 @@ bool HopkinsEngine::runBeOSFull() {
 		if (_globals._exitId == 300)
 			_globals._exitId = 0;
 		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.MENU();
+			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				restoreSystem();
@@ -2119,7 +2119,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.Max_Propre_Gen = 20;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
-			_globals.forest = true;
+			_globals._forestFl = true;
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
@@ -2133,7 +2133,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.NOSPRECRAN = false;
 			if ((_globals._exitId  < 35) || (_globals._exitId > 49)) {
 				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
-				_globals.forest = false;
+				_globals._forestFl = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
 			break;
@@ -2636,7 +2636,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals._exitId = 0;
 
 		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.MENU();
+			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				restoreSystem();
@@ -3007,7 +3007,7 @@ bool HopkinsEngine::runWin95full() {
 				_globals.Max_Ligne_Long = 40;
 				_globals.Max_Perso_Y = 435;
 				_globals._disableInventFl = false;
-				_globals.forest = true;
+				_globals._forestFl = true;
 				_globals.NOSPRECRAN = true;
 				Common::String im = Common::String::format("IM%d", _globals._exitId);
 				_soundManager.WSOUND(13);
@@ -3020,7 +3020,7 @@ bool HopkinsEngine::runWin95full() {
 				_globals.NOSPRECRAN = false;
 				if (_globals._exitId < 35 || _globals._exitId > 49) {
 					_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
-					_globals.forest = false;
+					_globals._forestFl = false;
 					_soundManager.DEL_SAMPLE(1);
 				}
 				break;
@@ -3515,7 +3515,7 @@ bool HopkinsEngine::runLinuxFull() {
 		if (_globals._exitId == 300)
 			_globals._exitId = 0;
 		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.MENU();
+			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				restoreSystem();
@@ -3885,7 +3885,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Propre_Gen = 20;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
-			_globals.forest = true;
+			_globals._forestFl = true;
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
@@ -3898,7 +3898,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.NOSPRECRAN = false;
 			if (_globals._exitId < 35 || _globals._exitId > 49) {
 				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
-				_globals.forest = false;
+				_globals._forestFl = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
 			break;
@@ -4790,7 +4790,7 @@ void HopkinsEngine::restoreSystem() {
 void HopkinsEngine::PUBQUIT() {
 	_globals.PUBEXIT = true;
 	_graphicsManager.RESET_SEGMENT_VESA();
-	_globals.forest = false;
+	_globals._forestFl = false;
 	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;
 	_graphicsManager.loadImage("BOX");
@@ -5761,7 +5761,7 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	_graphicsManager.max_x = SCREEN_WIDTH;
 	_graphicsManager.max_y = SCREEN_HEIGHT - 1;
 	_eventsManager._breakoutFl = false;
-	_globals.forest = false;
+	_globals._forestFl = false;
 	_globals._disableInventFl = true;
 	_globals._exitId = 0;
 

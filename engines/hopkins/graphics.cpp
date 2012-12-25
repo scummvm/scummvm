@@ -1805,7 +1805,7 @@ Aff_Zoom_Larg_Cont1:
 }
 
 // Display Speed
-void GraphicsManager::AFFICHE_SPEED(const byte *spriteData, int xp, int yp, int spriteIndex) {
+void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex) {
 	int width, height;
 
 	width = _vm->_objectsManager.getWidth(spriteData, spriteIndex);

@@ -35,11 +35,10 @@ class MenuManager {
 private:
 	HopkinsEngine *_vm;
 
-	byte MenuTxt[10600];
 public:
 	void setParent(HopkinsEngine *vm);
 
-	int MENU();
+	int menu();
 };
 
 } // End of namespace Hopkins
