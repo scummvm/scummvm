@@ -28,6 +28,8 @@
 #include "hopkins/sound.h"
 #include "hopkins/globals.h"
 #include "hopkins/hopkins.h"
+#include "audio/audiostream.h"
+#include "audio/mods/protracker.h"
 
 namespace Audio {
 
@@ -75,9 +77,6 @@ SoundManager::SoundManager() {
 	SOUNDVOL = 0;
 	VOICEVOL = 0;
 	MUSICVOL = 0;
-	OLD_SOUNDVOL = 0;
-	OLD_MUSICVOL = 0;
-	OLD_VOICEVOL = 0;
 	_soundOffFl = true;
 	_musicOff = true;
 	_voiceOffFl = true;
@@ -102,6 +101,7 @@ SoundManager::SoundManager() {
 SoundManager::~SoundManager() {
 	stopMusic();
 	delMusic();
+	_vm->_mixer->stopHandle(_modHandle);
 	MOD_FLAG = false;
 }
 
@@ -227,7 +227,10 @@ void SoundManager::WSOUND(int soundNumber) {
 
 		switch (soundNumber) {
 		case 1:
-			PLAY_MOD("appar");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("appart");
+			else
+				PLAY_MOD("appar");
 			break;
 		case 2:
 			PLAY_MOD("ville");
@@ -236,31 +239,52 @@ void SoundManager::WSOUND(int soundNumber) {
 			PLAY_MOD("Rock");
 			break;
 		case 4:
-			PLAY_MOD("polic");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("police");
+			else
+				PLAY_MOD("polic");
 			break;
 		case 5:
 			PLAY_MOD("deep");
 			break;
 		case 6:
-			PLAY_MOD("purga");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("purgat");
+			else
+				PLAY_MOD("purga");
 			break;
 		case 7:
-			PLAY_MOD("rivie");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("riviere");
+			else
+				PLAY_MOD("rivie");
 			break;
 		case 8:
-			PLAY_MOD("SUSPE");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("SUSPENS");
+			else
+				PLAY_MOD("SUSPE");
 			break;
 		case 9:
 			PLAY_MOD("labo");
 			break;
 		case 10:
-			PLAY_MOD("cadav");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("cadavre");
+			else
+				PLAY_MOD("cadav");
 			break;
 		case 11:
-			PLAY_MOD("caban");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("cabane");
+			else
+				PLAY_MOD("caban");
 			break;
 		case 12:
-			PLAY_MOD("purg2");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("purgat2");
+			else
+				PLAY_MOD("purg2");
 			break;
 		case 13:
 			PLAY_MOD("foret");
@@ -272,19 +296,28 @@ void SoundManager::WSOUND(int soundNumber) {
 			PLAY_MOD("ile2");
 			break;
 		case 16:
-			PLAY_MOD("hopki");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("hopkins");
+			else
+				PLAY_MOD("hopki");
 			break;
 		case 17:
 			PLAY_MOD("peur");
 			break;
 		case 18:
-			PLAY_MOD("peur");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("URAVOLGA");
+			else
+				PLAY_MOD("peur");
 			break;
 		case 19:
 			PLAY_MOD("BASE");
 			break;
 		case 20:
-			PLAY_MOD("cada2");
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				PLAY_MOD("cadavre2");
+			else
+				PLAY_MOD("cada2");
 			break;
 		case 21:
 			PLAY_MOD("usine");
@@ -362,37 +395,48 @@ void SoundManager::loadMusic(const Common::String &file) {
 		delMusic();
 
 	Common::File f;
-	Common::String filename = Common::String::format("%s.TWA", file.c_str());
+	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
+		Common::String filename = Common::String::format("%s.MOD", file.c_str());
 
-	if (!f.open(filename))
-		error("Error opening file %s", filename.c_str());
+		if (!f.open(filename))
+			error("Error opening file %s", filename.c_str());
 
-	char s[8];
-	int destIndex = 0;
-	int mwavIndex;
+		Audio::AudioStream *modStream = Audio::makeProtrackerStream(&f);
+		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modHandle, modStream);
 
-	bool breakFlag = false;
-	do {
-		f.read(&s[0], 3);
+	} else {
+		Common::String filename = Common::String::format("%s.TWA", file.c_str());
 
-		if (s[0] == 'x') {
-			// End of list reached
-			Music._mwavIndexes[destIndex] = -1;
-			breakFlag = true;
-		} else {
-			// Convert two digits to a number
-			s[2] = '\0';
-			mwavIndex = atol(&s[0]);
+		if (!f.open(filename))
+			error("Error opening file %s", filename.c_str());
 
-			filename = Common::String::format("%s_%s.%s", file.c_str(), &s[0],
-				(_vm->getPlatform() == Common::kPlatformWindows) ? "APC" : "WAV");
-			LOAD_MSAMPLE(mwavIndex, filename);
+		char s[8];
+		int destIndex = 0;
+		int mwavIndex;
 
-			assert(destIndex < MUSIC_WAVE_COUNT);
-			Music._mwavIndexes[destIndex++] = mwavIndex;
-		}
-	} while (!breakFlag);
-	f.close();
+		bool breakFlag = false;
+		do {
+			f.read(&s[0], 3);
+
+			if (s[0] == 'x') {
+				// End of list reached
+				Music._mwavIndexes[destIndex] = -1;
+				breakFlag = true;
+			} else {
+				// Convert two digits to a number
+				s[2] = '\0';
+				mwavIndex = atol(&s[0]);
+
+				filename = Common::String::format("%s_%s.%s", file.c_str(), &s[0],
+					(_vm->getPlatform() == Common::kPlatformWindows) ? "APC" : "WAV");
+				LOAD_MSAMPLE(mwavIndex, filename);
+
+				assert(destIndex < MUSIC_WAVE_COUNT);
+				Music._mwavIndexes[destIndex++] = mwavIndex;
+			}
+		} while (!breakFlag);
+		f.close();
+	}
 
 	Music._active = true;
 	Music._isPlaying = false;
@@ -428,6 +472,9 @@ void SoundManager::checkSounds() {
 }
 
 void SoundManager::checkMusic() {
+	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+		return;
+
 	if (Music._active && Music._isPlaying) {
 		int mwavIndex = Music._mwavIndexes[Music._currentIndex];
 		if (mwavIndex == -1)

@@ -79,7 +79,6 @@ void DialogsManager::showOptionsDialog() {
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 138) {
 					// Change the music volume
 					++_vm->_soundManager.MUSICVOL;
-					_vm->_soundManager.OLD_MUSICVOL = _vm->_soundManager.MUSICVOL;
 
 					if (_vm->_soundManager.MUSICVOL <= 12)
 						_vm->_soundManager.playSound("bruit2.wav");
@@ -97,7 +96,6 @@ void DialogsManager::showOptionsDialog() {
 					else
 						_vm->_soundManager.MUSICVOL = 0;
 
-					_vm->_soundManager.OLD_MUSICVOL = _vm->_soundManager.MUSICVOL;
 					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager.MUSICVOL);
 
 					_vm->_soundManager.updateScummVMSoundSettings();
@@ -110,7 +108,6 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
 						_vm->_soundManager.SOUNDVOL = 16;
-					_vm->_soundManager.OLD_SOUNDVOL = _vm->_soundManager.SOUNDVOL;
 					_vm->_soundManager.MODSetSampleVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
@@ -122,7 +119,6 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
 						_vm->_soundManager.SOUNDVOL = 0;
-					_vm->_soundManager.OLD_SOUNDVOL = _vm->_soundManager.SOUNDVOL;
 					_vm->_soundManager.MODSetSampleVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
@@ -137,7 +133,6 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
 						_vm->_soundManager.VOICEVOL = 16;
-					_vm->_soundManager.OLD_VOICEVOL = _vm->_soundManager.VOICEVOL;
 					_vm->_soundManager.MODSetVoiceVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
@@ -149,7 +144,6 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
 						_vm->_soundManager.VOICEVOL = 0;
-					_vm->_soundManager.OLD_VOICEVOL = _vm->_soundManager.VOICEVOL;
 					_vm->_soundManager.MODSetVoiceVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();

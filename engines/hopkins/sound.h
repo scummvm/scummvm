@@ -112,13 +112,11 @@ private:
 	 */
 	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
 public:
+	Audio::SoundHandle _modHandle;
 	int SPECIAL_SOUND;
 	int SOUNDVOL;
 	int VOICEVOL;
 	int MUSICVOL;
-	int OLD_SOUNDVOL;
-	int OLD_MUSICVOL;
-	int OLD_VOICEVOL;
 	bool _soundOffFl;
 	bool _musicOff;
 	bool _voiceOffFl;
