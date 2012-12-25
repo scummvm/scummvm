@@ -117,7 +117,7 @@ void SoundManager::WSOUND_INIT() {
 void SoundManager::VERIF_SOUND() {
 	if (!_soundOffFl && _soundFl) {
 		if (!VOICE_STAT(1)) {
-			STOP_VOICE(1);
+			stopVoice(1);
 			DEL_NWAV(SOUND_NUM);
 		}
 	}
@@ -359,9 +359,9 @@ void SoundManager::WSOUND(int soundNumber) {
 }
 
 void SoundManager::WSOUND_OFF() {
-	STOP_VOICE(0);
-	STOP_VOICE(1);
-	STOP_VOICE(2);
+	stopVoice(0);
+	stopVoice(1);
+	stopVoice(2);
 	if (_vm->_soundManager._soundFl)
 		DEL_NWAV(SOUND_NUM);
 
@@ -472,6 +472,7 @@ void SoundManager::checkSounds() {
 }
 
 void SoundManager::checkMusic() {
+	// OS2 and BeOS versions use MOD files. 
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 		return;
 
@@ -616,7 +617,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	filename = Common::String::format("%s%d", prefix.c_str(), fileNumber);
 
 	if (!_vm->_fileManager.searchCat(filename + ".WAV", 9)) {
-		if (_vm->_globals._language == LANG_FR)
+		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "ENG_VOI.RES");
+		// Win95 and Linux versions uses another set of names
+		else if (_vm->_globals._language == LANG_FR)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
 		else if (_vm->_globals._language == LANG_EN)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VAN.RES");
@@ -626,7 +630,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
 	} else if (!_vm->_fileManager.searchCat(filename + ".APC", 9)) {
-		if (_vm->_globals._language == LANG_FR)
+		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "ENG_VOI.RES");
+		// Win95 and Linux versions uses another set of names
+		else if (_vm->_globals._language == LANG_FR)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
 		else if (_vm->_globals._language == LANG_EN)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VAN.RES");
@@ -669,7 +676,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	} while (!_vm->shouldQuit() && !breakFlag);
 
 
-	STOP_VOICE(2);
+	stopVoice(2);
 	DEL_SAMPLE_SDL(20);
 	MUSICVOL = oldMusicVol;
 	_vm->_eventsManager._escKeyFl = false;
@@ -679,11 +686,11 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 void SoundManager::DEL_SAMPLE(int soundIndex) {
 	if (VOICE_STAT(1) == 1)
-		STOP_VOICE(1);
+		stopVoice(1);
 	if (VOICE_STAT(2) == 2)
-		STOP_VOICE(2);
+		stopVoice(2);
 	if (VOICE_STAT(3) == 3)
-		STOP_VOICE(3);
+		stopVoice(3);
 	DEL_SAMPLE_SDL(soundIndex);
 	SOUND[soundIndex]._active = false;
 }
@@ -728,22 +735,22 @@ void SoundManager::PLAY_SAMPLE(int wavIndex, int voiceMode) {
 			DEL_NWAV(SOUND_NUM);
 		if (voiceMode == 5) {
 			if (VOICE_STAT(1) == 1)
-				STOP_VOICE(1);
+				stopVoice(1);
 			PLAY_SAMPLE_SDL(1, wavIndex);
 		}
 		if (voiceMode == 6) {
 			if (VOICE_STAT(2) == 1)
-				STOP_VOICE(1);
+				stopVoice(1);
 			PLAY_SAMPLE_SDL(2, wavIndex);
 		}
 		if (voiceMode == 7) {
 			if (VOICE_STAT(3) == 1)
-				STOP_VOICE(1);
+				stopVoice(1);
 			PLAY_SAMPLE_SDL(3, wavIndex);
 		}
 		if (voiceMode == 8) {
 			if (VOICE_STAT(1) == 1)
-				STOP_VOICE(1);
+				stopVoice(1);
 			PLAY_SAMPLE_SDL(1, wavIndex);
 		}
 	}
@@ -754,7 +761,7 @@ void SoundManager::PLAY_SAMPLE2(int idx) {
 		if (_soundFl)
 			DEL_NWAV(SOUND_NUM);
 		if (VOICE_STAT(1) == 1)
-			STOP_VOICE(1);
+			stopVoice(1);
 		PLAY_SAMPLE_SDL(1, idx);
 	}
 }
@@ -771,13 +778,13 @@ int SoundManager::VOICE_STAT(int voiceIndex) {
 	if (Voice[voiceIndex]._status) {
 		int wavIndex = Voice[voiceIndex]._wavIndex;
 		if (Swav[wavIndex]._audioStream != NULL && Swav[wavIndex]._audioStream->endOfStream())
-			STOP_VOICE(voiceIndex);
+			stopVoice(voiceIndex);
 	}
 
 	return Voice[voiceIndex]._status;
 }
 
-void SoundManager::STOP_VOICE(int voiceIndex) {
+void SoundManager::stopVoice(int voiceIndex) {
 	if (Voice[voiceIndex]._status) {
 		Voice[voiceIndex]._status = 0;
 		int wavIndex = Voice[voiceIndex]._wavIndex;
@@ -864,7 +871,7 @@ void SoundManager::PLAY_NWAV(int wavIndex) {
 void SoundManager::DEL_NWAV(int wavIndex) {
 	if (DEL_SAMPLE_SDL(wavIndex)) {
 		if (VOICE_STAT(1) == 1)
-			STOP_VOICE(1);
+			stopVoice(1);
 
 		SOUND_NUM = 0;
 		_soundFl = false;

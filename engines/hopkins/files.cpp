@@ -221,16 +221,21 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		break;
 
 	case 9:
-		switch (_vm->_globals._language) {
-		case LANG_EN:
-			constructFilename(_vm->_globals.HOPLINK, "RES_VAN.CAT");
-			break;
-		case LANG_FR:
-			constructFilename(_vm->_globals.HOPLINK, "RES_VFR.CAT");
-			break;
-		case LANG_SP:
-			constructFilename(_vm->_globals.HOPLINK, "RES_VES.CAT");
-			break;
+		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "ENG_VOI.RES");
+		// Win95 and Linux versions uses another set of names
+		else {
+			switch (_vm->_globals._language) {
+			case LANG_EN:
+				constructFilename(_vm->_globals.HOPLINK, "RES_VAN.CAT");
+				break;
+			case LANG_FR:
+				constructFilename(_vm->_globals.HOPLINK, "RES_VFR.CAT");
+				break;
+			case LANG_SP:
+				constructFilename(_vm->_globals.HOPLINK, "RES_VES.CAT");
+				break;
+			}
 		}
 
 		if (!f.exists(_vm->_globals.NFICHIER))

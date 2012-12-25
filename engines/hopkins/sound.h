@@ -83,7 +83,7 @@ private:
 	HopkinsEngine *_vm;
 
 	int VOICE_STAT(int voiceIndex);
-	void STOP_VOICE(int voiceIndex);
+	void stopVoice(int voiceIndex);
 	void SDL_LVOICE(size_t filePosition, size_t entryLength);
 	void PLAY_VOICE_SDL();
 	bool DEL_SAMPLE_SDL(int wavIndex);
