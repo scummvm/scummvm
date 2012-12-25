@@ -35,7 +35,7 @@ private:
 	Bit32u delayRight;
 	Bit32u delayFeedback;
 
-	float fade;
+	float amp;
 	float feedback;
 
 	void recalcParameters();

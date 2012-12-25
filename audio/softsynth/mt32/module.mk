@@ -2,6 +2,7 @@ MODULE := audio/softsynth/mt32
 
 MODULE_OBJS := \
 	AReverbModel.o \
+	BReverbModel.o \
 	DelayReverb.o \
 	FreeverbModel.o \
 	LA32Ramp.o \

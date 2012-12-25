@@ -179,6 +179,13 @@ enum MemoryRegionType {
 	MR_PatchTemp, MR_RhythmTemp, MR_TimbreTemp, MR_Patches, MR_Timbres, MR_System, MR_Display, MR_Reset
 };
 
+enum ReverbMode {
+	REVERB_MODE_ROOM,
+	REVERB_MODE_HALL,
+	REVERB_MODE_PLATE,
+	REVERB_MODE_TAP_DELAY
+};
+
 class MemoryRegion {
 private:
 	Synth *synth;
@@ -315,7 +322,7 @@ private:
 	const ControlROMMap *controlROMMap;
 	Bit8u controlROMData[CONTROL_ROM_SIZE];
 	float *pcmROMData;
-	int pcmROMSize; // This is in 16-bit samples, therefore half the number of bytes in the ROM
+	unsigned int pcmROMSize; // This is in 16-bit samples, therefore half the number of bytes in the ROM
 
 	Bit8s chantable[32];
 

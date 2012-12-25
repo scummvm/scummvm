@@ -22,7 +22,7 @@
 
 namespace MT32Emu {
 
-// CONFIRMED: The values below are found via analysis of digital samples. Checked with all time and level combinations.
+// CONFIRMED: The values below are found via analysis of digital samples and tracing reverb RAM address / data lines. Checked with all time and level combinations.
 // Obviously:
 // rightDelay = (leftDelay - 2) * 2 + 2
 // echoDelay = rightDelay - 1
@@ -39,10 +39,11 @@ static const Bit32u REVERB_TIMINGS[8][3]= {
 	{8002, 16002, 16001}
 };
 
-static const float REVERB_FADE[8] = {0.0f, -0.049400051f, -0.08220577f, -0.131861118f, -0.197344907f, -0.262956344f, -0.345162114f, -0.509508615f};
-const float REVERB_FEEDBACK67 = -0.629960524947437f; // = -EXP2F(-2 / 3)
-const float REVERB_FEEDBACK = -0.682034520443118f; // = -EXP2F(-53 / 96)
-const float LPF_VALUE = 0.594603558f; // = EXP2F(-0.75f)
+// Reverb amp is found as dryAmp * wetAmp
+static const Bit32u REVERB_AMP[8] = {0x20*0x18, 0x50*0x18, 0x50*0x28, 0x50*0x40, 0x50*0x60, 0x50*0x80, 0x50*0xA8, 0x50*0xF8};
+static const Bit32u REVERB_FEEDBACK67 = 0x60;
+static const Bit32u REVERB_FEEDBACK = 0x68;
+static const float LPF_VALUE = 0x68 / 256.0f;
 
 DelayReverb::DelayReverb() {
 	buf = NULL;
@@ -97,20 +98,18 @@ void DelayReverb::recalcParameters() {
 	// Number of samples between a response and that response feeding back/echoing
 	delayFeedback = REVERB_TIMINGS[time][2] * sampleRate / 32000;
 
-	if (time < 6) {
-		feedback = REVERB_FEEDBACK;
+	if (level < 3 || time < 6) {
+		feedback = REVERB_FEEDBACK / 256.0f;
 	} else {
-		feedback = REVERB_FEEDBACK67;
+		feedback = REVERB_FEEDBACK67 / 256.0f;
 	}
 
-	// Fading speed, i.e. amplitude ratio of neighbor responses
-	fade = REVERB_FADE[level];
+	// Overall output amp
+	amp = (level == 0 && time == 0) ? 0.0f : REVERB_AMP[level] / 65536.0f;
 }
 
 void DelayReverb::process(const float *inLeft, const float *inRight, float *outLeft, float *outRight, unsigned long numSamples) {
-	if (buf == NULL) {
-		return;
-	}
+	if (buf == NULL) return;
 
 	for (unsigned int sampleIx = 0; sampleIx < numSamples; sampleIx++) {
 		// The ring buffer write index moves backwards; reads are all done with positive offsets.
@@ -120,10 +119,10 @@ void DelayReverb::process(const float *inLeft, const float *inRight, float *outL
 		Bit32u bufIxFeedback = (bufIx + delayFeedback) % bufSize;
 
 		// Attenuated input samples and feedback response are directly added to the current ring buffer location
-		float sample = fade * (inLeft[sampleIx] + inRight[sampleIx]) + feedback * buf[bufIxFeedback];
+		float lpfIn = amp * (inLeft[sampleIx] + inRight[sampleIx]) + feedback * buf[bufIxFeedback];
 
 		// Single-pole IIR filter found on real devices
-		buf[bufIx] = buf[bufIxPrev] + (sample - buf[bufIxPrev]) * LPF_VALUE;
+		buf[bufIx] = buf[bufIxPrev] * LPF_VALUE - lpfIn;
 
 		outLeft[sampleIx] = buf[bufIxLeft];
 		outRight[sampleIx] = buf[bufIxRight];
@@ -133,17 +132,13 @@ void DelayReverb::process(const float *inLeft, const float *inRight, float *outL
 }
 
 bool DelayReverb::isActive() const {
-	// Quick hack: Return true iff all samples in the left buffer are the same and
-	// all samples in the right buffers are the same (within the sample output threshold).
-	if (buf == NULL) {
-		return false;
-	}
-	float last = buf[0] * 8192.0f;
-	for (unsigned int i = 1; i < bufSize; i++) {
-		float s = (buf[i] * 8192.0f);
-		if (fabs(s - last) > 1.0f) {
-			return true;
-		}
+	if (buf == NULL) return false;
+
+	float *b = buf;
+	float max = 0.001f;
+	for (Bit32u i = 0; i < bufSize; i++) {
+		if ((*b < -max) || (*b > max)) return true;
+		b++;
 	}
 	return false;
 }

@@ -27,8 +27,10 @@
 #include "mmath.h"
 #include "PartialManager.h"
 
-#if MT32EMU_USE_AREVERBMODEL == 1
+#if MT32EMU_USE_REVERBMODEL == 1
 #include "AReverbModel.h"
+#elif MT32EMU_USE_REVERBMODEL == 2
+#include "BReverbModel.h"
 #else
 #include "FreeverbModel.h"
 #endif
@@ -145,17 +147,23 @@ Synth::Synth() {
 	reverbEnabled = true;
 	reverbOverridden = false;
 
-#if MT32EMU_USE_AREVERBMODEL == 1
-	reverbModels[0] = new AReverbModel(&AReverbModel::REVERB_MODE_0_SETTINGS);
-	reverbModels[1] = new AReverbModel(&AReverbModel::REVERB_MODE_1_SETTINGS);
-	reverbModels[2] = new AReverbModel(&AReverbModel::REVERB_MODE_2_SETTINGS);
+#if MT32EMU_USE_REVERBMODEL == 1
+	reverbModels[REVERB_MODE_ROOM] = new AReverbModel(REVERB_MODE_ROOM);
+	reverbModels[REVERB_MODE_HALL] = new AReverbModel(REVERB_MODE_HALL);
+	reverbModels[REVERB_MODE_PLATE] = new AReverbModel(REVERB_MODE_PLATE);
+	reverbModels[REVERB_MODE_TAP_DELAY] = new DelayReverb();
+#elif MT32EMU_USE_REVERBMODEL == 2
+	reverbModels[REVERB_MODE_ROOM] = new BReverbModel(REVERB_MODE_ROOM);
+	reverbModels[REVERB_MODE_HALL] = new BReverbModel(REVERB_MODE_HALL);
+	reverbModels[REVERB_MODE_PLATE] = new BReverbModel(REVERB_MODE_PLATE);
+	reverbModels[REVERB_MODE_TAP_DELAY] = new BReverbModel(REVERB_MODE_TAP_DELAY);
 #else
-	reverbModels[0] = new FreeverbModel(0.76f, 0.687770909f, 0.63f, 0, 0.5f);
-	reverbModels[1] = new FreeverbModel(2.0f, 0.712025098f, 0.86f, 1, 0.5f);
-	reverbModels[2] = new FreeverbModel(0.4f, 0.939522749f, 0.38f, 2, 0.05f);
+	reverbModels[REVERB_MODE_ROOM] = new FreeverbModel(0.76f, 0.687770909f, 0.63f, 0, 0.5f);
+	reverbModels[REVERB_MODE_HALL] = new FreeverbModel(2.0f, 0.712025098f, 0.86f, 1, 0.5f);
+	reverbModels[REVERB_MODE_PLATE] = new FreeverbModel(0.4f, 0.939522749f, 0.38f, 2, 0.05f);
+	reverbModels[REVERB_MODE_TAP_DELAY] = new DelayReverb();
 #endif
 
-	reverbModels[3] = new DelayReverb();
 	reverbModel = NULL;
 	setDACInputMode(DACInputMode_NICE);
 	setOutputGain(1.0f);
@@ -315,7 +323,7 @@ LoadResult Synth::loadPCMROM(const char *filename) {
 		return LoadResult_Unreadable;
 	}
 	LoadResult rc = LoadResult_OK;
-	for (int i = 0; i < pcmROMSize; i++) {
+	for (unsigned int i = 0; i < pcmROMSize; i++) {
 		Bit8u s = file->readByte();
 		Bit8u c = file->readByte();
 
@@ -350,7 +358,7 @@ LoadResult Synth::loadPCMROM(const char *filename) {
 bool Synth::initPCMList(Bit16u mapAddress, Bit16u count) {
 	ControlROMPCMStruct *tps = (ControlROMPCMStruct *)&controlROMData[mapAddress];
 	for (int i = 0; i < count; i++) {
-		int rAddr = tps[i].pos * 0x800;
+		unsigned int rAddr = tps[i].pos * 0x800;
 		int rLenExp = (tps[i].len & 0x70) >> 4;
 		int rLen = 0x800 << rLenExp;
 		if (rAddr + rLen > pcmROMSize) {
