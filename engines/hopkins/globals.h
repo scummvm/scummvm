@@ -376,12 +376,12 @@ public:
 	byte *GESTE;
 	int _curObjectIndex;
 	int NUM_FICHIER_OBJ;
-	int nbrligne;
-	int largeur_boite;
-	byte *INVENTAIRE_OBJET;
+	int nbrligne; // Useless variable?
+	int _boxWidth;
+	byte *_inventoryObject;
 	int hauteur_boite;
 	int GESTE_FLAG;
-	byte *FORETSPR;
+	byte *_forestSprite;
 	bool _forestFl;
 	byte *COUCOU;
 	int16 *chemin;
@@ -400,7 +400,6 @@ public:
 	int _exitId;
 	int PLANX, PLANY;
 	int PLANI;
-	bool PASSWORD; // CHECKME: Useless variable?
 	bool NOSPRECRAN;
 	int _screenId;
 	int OLD_ECRAN;

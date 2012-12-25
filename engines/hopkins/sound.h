@@ -119,11 +119,11 @@ public:
 	int OLD_SOUNDVOL;
 	int OLD_MUSICVOL;
 	int OLD_VOICEVOL;
-	bool SOUNDOFF;
-	bool MUSICOFF;
+	bool _soundOffFl;
+	bool _musicOff;
 	bool _voiceOffFl;
 	bool _textOffFl;
-	bool SOUND_FLAG;
+	bool _soundFl;
 	bool VBL_MERDE;
 	int SOUND_NUM;
 	bool MOD_FLAG;
@@ -147,15 +147,15 @@ public:
 	void WSOUND(int soundNumber);
 	void WSOUND_OFF();
 	void PLAY_MOD(const Common::String &file);
-	void LOAD_MUSIC(const Common::String &file);
-	void PLAY_MUSIC();
-	void STOP_MUSIC();
-	void DEL_MUSIC();
+	void loadMusic(const Common::String &file);
+	void playMusic();
+	void stopMusic();
+	void delMusic();
 
 
 	bool mixVoice(int voiceId, int voiceMode);
 	void DEL_SAMPLE(int soundIndex);
-	void PLAY_SOUND(const Common::String &file);
+	void playSound(const Common::String &file);
 	void PLAY_SOUND2(const Common::String &file2);
 	void MODSetSampleVolume();
 	void MODSetVoiceVolume();
@@ -163,7 +163,7 @@ public:
 	void loadSample(int wavIndex, const Common::String &file);
 	void PLAY_SAMPLE(int wavIndex, int voiceMode);
 	void PLAY_SAMPLE2(int idx);
-	void PLAY_WAV(int wavIndex);
+	void playWav(int wavIndex);
 
 	void syncSoundSettings();
 	void updateScummVMSoundSettings();

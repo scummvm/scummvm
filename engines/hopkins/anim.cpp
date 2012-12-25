@@ -805,7 +805,6 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
  */
 void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
 	bool readError;
-	int v7;
 	byte *ptr = NULL;
 	byte *v9;
 	byte *v10;
@@ -816,7 +815,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	if (_vm->shouldQuit())
 		return;
 
-	v7 = 0;
+	bool v7 = false;
 	_vm->_eventsManager._mouseFl = false;
 	if (!NO_COUL) {
 		_vm->_eventsManager.VBL();
@@ -843,12 +842,12 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	f.read(v9, nbytes);
 
 	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
-		v7 = 1;
+		v7 = true;
 		ptr = _vm->_globals.allocMemory(307200);
 		memcpy(ptr, v9, 307200);
 	}
 	if (_vm->_animationManager.NO_SEQ) {
-		if (v7 == 1)
+		if (v7)
 			memcpy(ptr, _vm->_graphicsManager._vesaBuffer, 307200);
 		if (!_vm->getIsDemo()) {
 			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -962,7 +961,7 @@ LABEL_59:
 
 		_vm->_eventsManager._mouseFl = true;
 	}
-	if (v7 == 1)
+	if (v7)
 		_vm->_globals.freeMemory(ptr);
 	_vm->_globals.freeMemory(v10);
 }

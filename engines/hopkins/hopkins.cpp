@@ -185,7 +185,6 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals.PLANX = _globals.PLANY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
-	_globals.PASSWORD = true;
 
 	if (getLanguage() != Common::PL_POL)
 		if (!displayAdultDisclaimer())
@@ -495,7 +494,6 @@ bool HopkinsEngine::runLinuxDemo() {
 	_globals.PLANX = _globals.PLANY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
-	_globals.PASSWORD = true;
 
 	for (;;) {
 		if (_globals._exitId == 300)
@@ -1235,15 +1233,15 @@ bool HopkinsEngine::runOS2Full() {
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
-			if (_globals.FORETSPR == g_PTRNUL) {
+			if (_globals._forestSprite == g_PTRNUL) {
 				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
-				_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
+				_globals._forestSprite = _objectsManager.loadSprite(_globals.NFICHIER);
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 			_globals.NOSPRECRAN = false;
 			if (_globals._exitId < 35 || _globals._exitId > 49 ) {
-				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
+				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
 				_globals._forestFl = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
@@ -1336,7 +1334,7 @@ bool HopkinsEngine::runOS2Full() {
 
 		case 61:
 			if (_globals._saveData->data[311] == 1 && !_globals._saveData->data[312] )
-				INCENDIE();
+				handleConflagration();
 			_globals.NOSPRECRAN = true;
 			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
 			break;
@@ -2123,16 +2121,16 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
-			if (_globals.FORETSPR == g_PTRNUL) {
+			if (_globals._forestSprite == g_PTRNUL) {
 				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
-				_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
+				_globals._forestSprite = _objectsManager.loadSprite(_globals.NFICHIER);
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 			_globals.NOSPRECRAN = false;
 			if ((_globals._exitId  < 35) || (_globals._exitId > 49)) {
-				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
+				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
 				_globals._forestFl = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
@@ -2225,7 +2223,7 @@ bool HopkinsEngine::runBeOSFull() {
 
 		case 61:
 			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
-				INCENDIE();
+				handleConflagration();
 			_globals.NOSPRECRAN = true;
 			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
 			break;
@@ -2630,7 +2628,6 @@ bool HopkinsEngine::runWin95full() {
 	_globals.PLANX = _globals.PLANY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
-	_globals.PASSWORD = true;
 	for (;;) {
 		if (_globals._exitId == 300)
 			_globals._exitId = 0;
@@ -3011,15 +3008,15 @@ bool HopkinsEngine::runWin95full() {
 				_globals.NOSPRECRAN = true;
 				Common::String im = Common::String::format("IM%d", _globals._exitId);
 				_soundManager.WSOUND(13);
-				if (_globals.FORETSPR == g_PTRNUL) {
+				if (_globals._forestSprite == g_PTRNUL) {
 					_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
-					_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
+					_globals._forestSprite = _objectsManager.loadSprite(_globals.NFICHIER);
 					_soundManager.loadSample(1, "SOUND41.WAV");
 				}
 				_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 				_globals.NOSPRECRAN = false;
 				if (_globals._exitId < 35 || _globals._exitId > 49) {
-					_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
+					_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
 					_globals._forestFl = false;
 					_soundManager.DEL_SAMPLE(1);
 				}
@@ -3111,7 +3108,7 @@ bool HopkinsEngine::runWin95full() {
 
 		case 61:
 			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
-				INCENDIE();
+				handleConflagration();
 			_globals.NOSPRECRAN = true;
 			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
 			break;
@@ -3509,7 +3506,6 @@ bool HopkinsEngine::runLinuxFull() {
 	_globals.PLANX = _globals.PLANY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
-	_globals.PASSWORD = false;
 
 	for (;;) {
 		if (_globals._exitId == 300)
@@ -3889,15 +3885,15 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
-			if (_globals.FORETSPR == g_PTRNUL) {
+			if (_globals._forestSprite == g_PTRNUL) {
 				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
-				_globals.FORETSPR = _objectsManager.loadSprite(_globals.NFICHIER);
+				_globals._forestSprite = _objectsManager.loadSprite(_globals.NFICHIER);
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
 			_globals.NOSPRECRAN = false;
 			if (_globals._exitId < 35 || _globals._exitId > 49) {
-				_globals.FORETSPR = _globals.freeMemory(_globals.FORETSPR);
+				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
 				_globals._forestFl = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
@@ -3990,7 +3986,7 @@ bool HopkinsEngine::runLinuxFull() {
 
 		case 61:
 			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
-				INCENDIE();
+				handleConflagration();
 			_globals.NOSPRECRAN = true;
 			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
 			break;
@@ -4821,7 +4817,7 @@ void HopkinsEngine::PUBQUIT() {
 	_graphicsManager.FADE_OUTW();
 }
 
-void HopkinsEngine::INCENDIE() {
+void HopkinsEngine::handleConflagration() {
 	_globals._disableInventFl = true;
 	_globals.iRegul = 1;
 	_graphicsManager.loadImage("IM71");

@@ -141,7 +141,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		error("Bad number for text");
 	_vm->_globals.police_l = 11;
 
-	_vm->_globals.largeur_boite = 11 * _text[idx]._field3FE;
+	_vm->_globals._boxWidth = 11 * _text[idx]._field3FE;
 	if (_text[idx]._textLoadedFl) {
 		int textType = _text[idx]._textType;
 		if (textType != 6 && textType != 1 && textType != 3 && textType != 5) {
@@ -247,17 +247,17 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 					goto LABEL_43;
 			}
 			_text[idx]._field3FE = v64;
-			_vm->_globals.largeur_boite = 0;
+			_vm->_globals._boxWidth = 0;
 
 			for (int v15 = 0; v15 < v64 + 1; v15++) {
 				byte v16 = *(v60 + v15);
 				if (v16 <= 31)
 					v16 = 32;
-				_vm->_globals.largeur_boite += _vm->_objectsManager.getWidth(_vm->_globals.police, v16 - 32);
+				_vm->_globals._boxWidth += _vm->_objectsManager.getWidth(_vm->_globals.police, v16 - 32);
 			}
 
-			_vm->_globals.largeur_boite += 2;
-			int v17 = _vm->_globals.largeur_boite / 2;
+			_vm->_globals._boxWidth += 2;
+			int v17 = _vm->_globals._boxWidth / 2;
 			if (v17 < 0)
 				v17 = -v17;
 			_text[idx]._pos.x = 320 - v17;
@@ -268,15 +268,15 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			}
 		} else {
 LABEL_43:
-			if (!_vm->_globals.largeur_boite)
-				_vm->_globals.largeur_boite = 240;
+			if (!_vm->_globals._boxWidth)
+				_vm->_globals._boxWidth = 240;
 			int v65 = 0;
 			byte *v61 = _tempText;
 			int v21;
 			int lineSize;
 			do {
 				int v19 = 0;
-				int ptrb = _vm->_globals.largeur_boite - 4;
+				int ptrb = _vm->_globals._boxWidth - 4;
 				for (;;) {
 					lineSize = v19;
 					do
@@ -338,22 +338,22 @@ LABEL_57:
 
 			for (int i = 0; i <= 19; i++) {
 				if (_textSortArray[i])
-					_vm->_globals.largeur_boite = _textSortArray[i];
+					_vm->_globals._boxWidth = _textSortArray[i];
 			}
 
 			if ((_text[idx]._textType < 2) || (_text[idx]._textType > 3)) {
 				int i;
-				for (i = xp - _vm->_eventsManager._startPos.x; _vm->_globals.largeur_boite + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
+				for (i = xp - _vm->_eventsManager._startPos.x; _vm->_globals._boxWidth + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
 					;
 				_text[idx]._pos.x = i;
 				v73 = _vm->_eventsManager._startPos.x + i;
 			} else {
 				if (_vm->_globals.nbrligne == (SCREEN_WIDTH - 1)) {
-					while (_vm->_globals.largeur_boite + v73 > 638 && v73 > -2)
+					while (_vm->_globals._boxWidth + v73 > 638 && v73 > -2)
 						v73 -= 2;
 				}
 				if (_vm->_globals.nbrligne == (SCREEN_WIDTH * 2)) {
-					while (_vm->_globals.largeur_boite + v73 > 1278 && v73 > -2)
+					while (_vm->_globals._boxWidth + v73 > 1278 && v73 > -2)
 						v73 -= 2;
 				}
 				_text[idx]._pos.x = v73;
@@ -362,7 +362,7 @@ LABEL_57:
 		_vm->_globals.hauteur_boite = (_vm->_globals.police_h + 1) * lineCount + 2;
 		int v56 = v73;
 		int v55 = yp;
-		int v53 = _vm->_globals.largeur_boite + 10;
+		int v53 = _vm->_globals._boxWidth + 10;
 		int v51 = (_vm->_globals.police_h + 1) * lineCount + 12;
 		if (_text[idx]._textType == 6) {
 			int v27 = v53 / 2;

@@ -78,11 +78,11 @@ SoundManager::SoundManager() {
 	OLD_SOUNDVOL = 0;
 	OLD_MUSICVOL = 0;
 	OLD_VOICEVOL = 0;
-	SOUNDOFF = true;
-	MUSICOFF = true;
+	_soundOffFl = true;
+	_musicOff = true;
 	_voiceOffFl = true;
 	_textOffFl = false;
-	SOUND_FLAG = false;
+	_soundFl = false;
 	VBL_MERDE = false;
 	SOUND_NUM = 0;
 	old_music = 0;
@@ -100,8 +100,8 @@ SoundManager::SoundManager() {
 }
 
 SoundManager::~SoundManager() {
-	STOP_MUSIC();
-	DEL_MUSIC();
+	stopMusic();
+	delMusic();
 	MOD_FLAG = false;
 }
 
@@ -115,7 +115,7 @@ void SoundManager::WSOUND_INIT() {
 }
 
 void SoundManager::VERIF_SOUND() {
-	if (!SOUNDOFF && SOUND_FLAG) {
+	if (!_soundOffFl && _soundFl) {
 		if (!VOICE_STAT(1)) {
 			STOP_VOICE(1);
 			DEL_NWAV(SOUND_NUM);
@@ -188,13 +188,13 @@ void SoundManager::playAnim_SOUND(int soundNumber) {
 			break;
 		}
 	} else if (SPECIAL_SOUND == 1 && soundNumber == 17)
-		PLAY_SOUND("SOUND42.WAV");
+		playSound("SOUND42.WAV");
 	else if (SPECIAL_SOUND == 5 && soundNumber == 19)
-		PLAY_WAV(1);
+		playWav(1);
 	else if (SPECIAL_SOUND == 14 && soundNumber == 625)
-		PLAY_WAV(1);
+		playWav(1);
 	else if (SPECIAL_SOUND == 16 && soundNumber == 25)
-		PLAY_WAV(1);
+		playWav(1);
 	else if (SPECIAL_SOUND == 17) {
 		if (soundNumber == 6)
 			PLAY_SAMPLE2(1);
@@ -203,26 +203,26 @@ void SoundManager::playAnim_SOUND(int soundNumber) {
 		else if (soundNumber == 67)
 			PLAY_SAMPLE2(3);
 	} else if (SPECIAL_SOUND == 198 && soundNumber == 15)
-		PLAY_WAV(1);
+		playWav(1);
 	else if (SPECIAL_SOUND == 199 && soundNumber == 72)
-		PLAY_WAV(1);
+		playWav(1);
 	else if (SPECIAL_SOUND == 208 && soundNumber == 40)
-		PLAY_WAV(1);
+		playWav(1);
 	else if (SPECIAL_SOUND == 210 && soundNumber == 2)
-		PLAY_WAV(1);
+		playWav(1);
 	else if (SPECIAL_SOUND == 211 && soundNumber == 22)
-		PLAY_WAV(1);
+		playWav(1);
 	else if (SPECIAL_SOUND == 229) {
 		if (soundNumber == 15)
-			PLAY_WAV(1);
+			playWav(1);
 		else if (soundNumber == 91)
-			PLAY_WAV(2);
+			playWav(2);
 	}
 }
 
 void SoundManager::WSOUND(int soundNumber) {
 	if (old_music != soundNumber || !MOD_FLAG) {
-		if (MOD_FLAG == 1)
+		if (MOD_FLAG)
 			WSOUND_OFF();
 
 		switch (soundNumber) {
@@ -329,37 +329,37 @@ void SoundManager::WSOUND_OFF() {
 	STOP_VOICE(0);
 	STOP_VOICE(1);
 	STOP_VOICE(2);
-	if (_vm->_soundManager.SOUND_FLAG)
+	if (_vm->_soundManager._soundFl)
 		DEL_NWAV(SOUND_NUM);
 
 	for (int i = 1; i <= 48; ++i)
 		DEL_SAMPLE_SDL(i);
 
 	if (MOD_FLAG) {
-		STOP_MUSIC();
-		DEL_MUSIC();
+		stopMusic();
+		delMusic();
 		MOD_FLAG = false;
 	}
 }
 
 void SoundManager::PLAY_MOD(const Common::String &file) {
-	if (!MUSICOFF) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPMUSIC, file);
-		if (MOD_FLAG) {
-			STOP_MUSIC();
-			DEL_MUSIC();
-			MOD_FLAG = false;
-		}
-
-		LOAD_MUSIC(_vm->_globals.NFICHIER);
-		PLAY_MUSIC();
-		MOD_FLAG = true;
+	if (_musicOff)
+		return;
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPMUSIC, file);
+	if (MOD_FLAG) {
+		stopMusic();
+		delMusic();
+		MOD_FLAG = false;
 	}
+
+	loadMusic(_vm->_globals.NFICHIER);
+	playMusic();
+	MOD_FLAG = true;
 }
 
-void SoundManager::LOAD_MUSIC(const Common::String &file) {
+void SoundManager::loadMusic(const Common::String &file) {
 	if (Music._active)
-		DEL_MUSIC();
+		delMusic();
 
 	Common::File f;
 	Common::String filename = Common::String::format("%s.TWA", file.c_str());
@@ -392,7 +392,6 @@ void SoundManager::LOAD_MUSIC(const Common::String &file) {
 			Music._mwavIndexes[destIndex++] = mwavIndex;
 		}
 	} while (!breakFlag);
-
 	f.close();
 
 	Music._active = true;
@@ -400,17 +399,17 @@ void SoundManager::LOAD_MUSIC(const Common::String &file) {
 	Music._currentIndex = -1;
 }
 
-void SoundManager::PLAY_MUSIC() {
+void SoundManager::playMusic() {
 	if (Music._active)
 		Music._isPlaying = true;
 }
 
-void SoundManager::STOP_MUSIC() {
+void SoundManager::stopMusic() {
 	if (Music._active)
 		Music._isPlaying = false;
 }
 
-void SoundManager::DEL_MUSIC() {
+void SoundManager::delMusic() {
 	if (Music._active) {
 		for (int i = 0; i < 50; ++i) {
 			DEL_MSAMPLE(i);
@@ -468,8 +467,8 @@ void SoundManager::checkVoices() {
 		hasActiveVoice |= Voice[i]._status != 0;
 	}
 
-	if (!hasActiveVoice && SOUND_FLAG) {
-		SOUND_FLAG = false;
+	if (!hasActiveVoice && _soundFl) {
+		_soundFl = false;
 		SOUND_NUM = 0;
 	}
 }
@@ -603,7 +602,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 	SDL_LVOICE(catPos, catLen);
 	oldMusicVol = MUSICVOL;
-	if (!MUSICOFF && MUSICVOL > 2)
+	if (!_musicOff && MUSICVOL > 2)
 		MUSICVOL = (signed int)((long double)MUSICVOL - (long double)MUSICVOL / 100.0 * 45.0);
 
 	PLAY_VOICE_SDL();
@@ -642,9 +641,9 @@ void SoundManager::DEL_SAMPLE(int soundIndex) {
 	SOUND[soundIndex]._active = false;
 }
 
-void SoundManager::PLAY_SOUND(const Common::String &file) {
-	if (!SOUNDOFF) {
-		if (SOUND_FLAG)
+void SoundManager::playSound(const Common::String &file) {
+	if (!_soundOffFl) {
+		if (_soundFl)
 			DEL_NWAV(SOUND_NUM);
 		LOAD_NWAV(file, 1);
 		PLAY_NWAV(1);
@@ -652,7 +651,7 @@ void SoundManager::PLAY_SOUND(const Common::String &file) {
 }
 
 void SoundManager::PLAY_SOUND2(const Common::String &file) {
-	if (!SOUNDOFF) {
+	if (!_soundOffFl) {
 		LOAD_NWAV(file, 1);
 		PLAY_NWAV(1);
 	}
@@ -677,8 +676,8 @@ void SoundManager::loadSample(int wavIndex, const Common::String &file) {
 }
 
 void SoundManager::PLAY_SAMPLE(int wavIndex, int voiceMode) {
-	if (!SOUNDOFF && SOUND[wavIndex]._active) {
-		if (SOUND_FLAG)
+	if (!_soundOffFl && SOUND[wavIndex]._active) {
+		if (_soundFl)
 			DEL_NWAV(SOUND_NUM);
 		if (voiceMode == 5) {
 			if (VOICE_STAT(1) == 1)
@@ -704,8 +703,8 @@ void SoundManager::PLAY_SAMPLE(int wavIndex, int voiceMode) {
 }
 
 void SoundManager::PLAY_SAMPLE2(int idx) {
-	if (!SOUNDOFF && SOUND[idx]._active) {
-		if (SOUND_FLAG)
+	if (!_soundOffFl && SOUND[idx]._active) {
+		if (_soundFl)
 			DEL_NWAV(SOUND_NUM);
 		if (VOICE_STAT(1) == 1)
 			STOP_VOICE(1);
@@ -717,7 +716,7 @@ void SoundManager::LOAD_WAV(const Common::String &file, int wavIndex) {
 	LOAD_NWAV(file, wavIndex);
 }
 
-void SoundManager::PLAY_WAV(int wavIndex) {
+void SoundManager::playWav(int wavIndex) {
 	PLAY_NWAV(wavIndex);
 }
 
@@ -808,8 +807,8 @@ void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
 }
 
 void SoundManager::PLAY_NWAV(int wavIndex) {
-	if (!SOUND_FLAG && !SOUNDOFF) {
-		SOUND_FLAG = true;
+	if (!_soundFl && !_soundOffFl) {
+		_soundFl = true;
 		SOUND_NUM = wavIndex;
 		PLAY_SAMPLE_SDL(1, wavIndex);
 	}
@@ -821,7 +820,7 @@ void SoundManager::DEL_NWAV(int wavIndex) {
 			STOP_VOICE(1);
 
 		SOUND_NUM = 0;
-		SOUND_FLAG = false;
+		_soundFl = false;
 	}
 }
 
@@ -851,8 +850,8 @@ void SoundManager::syncSoundSettings() {
 		muteAll = ConfMan.getBool("mute");
 
 	// Update the mute settings
-	MUSICOFF = muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
-	SOUNDOFF = muteAll || (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute"));
+	_musicOff = muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
+	_soundOffFl = muteAll || (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute"));
 	_voiceOffFl = muteAll || (ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute"));
 
 	// Update the volume levels
@@ -875,9 +874,9 @@ void SoundManager::syncSoundSettings() {
 }
 
 void SoundManager::updateScummVMSoundSettings() {
-	ConfMan.setBool("mute", MUSICOFF && SOUNDOFF && _voiceOffFl);
-	ConfMan.setBool("music_mute", MUSICOFF);
-	ConfMan.setBool("sfx_mute", SOUNDOFF);
+	ConfMan.setBool("mute", _musicOff && _soundOffFl && _voiceOffFl);
+	ConfMan.setBool("music_mute", _musicOff);
+	ConfMan.setBool("sfx_mute", _soundOffFl);
 	ConfMan.setBool("speech_mute", _voiceOffFl);
 
 	ConfMan.setInt("music_volume", MUSICVOL * 255 / 16);

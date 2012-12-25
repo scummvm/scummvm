@@ -87,7 +87,7 @@ private:
 	void PUBQUIT();
 	void displayEndDemo();
 	void bombExplosion();
-	void INCENDIE();
+	void handleConflagration();
 	void BASE();
 	void BASED();
 	void playEnding();

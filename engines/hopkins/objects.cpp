@@ -147,8 +147,8 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 		break;
 
 	case 3:
-		capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, _vm->_globals.INVENTAIRE_OBJET, val2);
-		dataP = _vm->_globals.INVENTAIRE_OBJET;
+		capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, _vm->_globals._inventoryObject, val2);
+		dataP = _vm->_globals._inventoryObject;
 		break;
 
 	default:
@@ -4086,7 +4086,7 @@ void ObjectsManager::SPECIAL_JEU() {
 			setBobAnimation(6);
 			_vm->_globals._saveData->data[svField261] = 2;
 			ZONE_OFF(15);
-			_vm->_soundManager.PLAY_SOUND("SOUND75.WAV");
+			_vm->_soundManager.playSound("SOUND75.WAV");
 		}
 		if (_vm->_globals._saveData->data[svField261] == 2 && BOBPOSI(6) == 6) {
 			stopBobAnimation(6);

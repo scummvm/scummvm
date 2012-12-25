@@ -134,7 +134,7 @@ Globals::Globals() {
 	_curObjectIndex = 0;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
-	largeur_boite = 0;
+	_boxWidth = 0;
 	hauteur_boite = 0;
 	_forestFl = false;
 	_objectWidth = _objectHeight = 0;
@@ -147,7 +147,6 @@ Globals::Globals() {
 	PLANX = PLANY = 0;
 	PLANI = 0;
 	PERSO = 0;
-	PASSWORD = false;
 	_screenId = 0;
 	NOSPRECRAN = false;
 	OLD_ECRAN = 0;
@@ -205,8 +204,8 @@ Globals::Globals() {
 	essai2 = NULL;
 	inventaire2 = NULL;
 	GESTE = NULL;
-	INVENTAIRE_OBJET = NULL;
-	FORETSPR = NULL;
+	_inventoryObject = NULL;
+	_forestSprite = NULL;
 	COUCOU = NULL;
 	chemin = NULL;
 	cache_souris = NULL;
@@ -219,7 +218,7 @@ Globals::Globals() {
 
 	// Reset flags
 	CENSURE = false;
-	GESTE_FLAG = false;
+	GESTE_FLAG = 0;
 	BPP_NOAFF = false;
 	_disableInventFl = false;
 	netscape = false;
@@ -258,8 +257,8 @@ Globals::~Globals() {
 	freeMemory(BUFFERTAPE);
 	freeMemory(inventaire2);
 	freeMemory(GESTE);
-	freeMemory(INVENTAIRE_OBJET);
-	freeMemory(FORETSPR);
+	freeMemory(_inventoryObject);
+	freeMemory(_forestSprite);
 	freeMemory(COUCOU);
 	freeMemory(cache_souris);
 	freeMemory(Bufferdecor);
@@ -346,7 +345,7 @@ void Globals::clearAll() {
 	police_h = 0;
 	police_l = 0;
 	hauteur_boite = 0;
-	largeur_boite = 0;
+	_boxWidth = 0;
 
 	_vm->_fontManager.clearAll();
 
@@ -402,18 +401,18 @@ void Globals::clearAll() {
 	essai1 = (int16 *)(BUFFERTAPE + 25000);
 	essai2 = (int16 *)(BUFFERTAPE + 50000);
 	BufLig = (int16 *)(BUFFERTAPE + 75000);
-	largeur_boite = 240;
+	_boxWidth = 240;
 
 	_vm->_eventsManager._objectBuf = allocMemory(2500);
-	INVENTAIRE_OBJET = allocMemory(2500);
+	_inventoryObject = allocMemory(2500);
 
 	ADR_FICHIER_OBJ = g_PTRNUL;
-	FORETSPR = g_PTRNUL;
+	_forestSprite = g_PTRNUL;
 	_forestFl = false;
 
 	cache_souris = allocMemory(2500);
 	GESTE = g_PTRNUL;
-	GESTE_FLAG = false;
+	GESTE_FLAG = 0;
 }
 
 void Globals::HOPKINS_DATA() {
