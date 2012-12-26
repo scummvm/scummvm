@@ -5357,7 +5357,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	if (!s4.empty()) {
 		if (!_vm->_globals.NOSPRECRAN)
 			_vm->_graphicsManager.INI_ECRAN(s4);
-		if (!s4.empty() && _vm->_globals.NOSPRECRAN)
+		else
 			_vm->_graphicsManager.INI_ECRAN2(s4);
 	}
 	_vm->_eventsManager.mouseOn();
@@ -5366,15 +5366,14 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	if (!_vm->_globals.PERSO_TYPE)
-		goto LABEL_70;
-	if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
-		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-		_vm->_globals.PERSO_TYPE = 0;
+	if (_vm->_globals.PERSO_TYPE) {
+		if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
+			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+			_vm->_globals.PERSO_TYPE = 0;
+		}
 	}
 	if (!_vm->_globals.PERSO_TYPE) {
-LABEL_70:
 		if (_vm->_globals._saveData->data[svField122] == 1) {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "HOPFEM.SPR");
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
@@ -5387,12 +5386,17 @@ LABEL_70:
 		_vm->_globals.PERSO_TYPE = 2;
 	}
 	_vm->_globals.HOPKINS_DATA();
-	if (!_vm->_globals.PERSO_TYPE)
+	switch (_vm->_globals.PERSO_TYPE) {
+	case 0:
 		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 34, 190);
-	if (_vm->_globals.PERSO_TYPE == 1)
+		break;
+	case 1:
 		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 28, 155);
-	if (_vm->_globals.PERSO_TYPE == 2)
+		break;
+	case 2:
 		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 20, 127);
+		break;
+	}
 	_vm->_eventsManager.setMouseXY(_characterPos);
 	if (_vm->_graphicsManager.DOUBLE_ECRAN)
 		_vm->_graphicsManager.SCROLL = (int16)getSpriteX(0) - 320;
@@ -5409,9 +5413,8 @@ LABEL_70:
 	_vm->_globals.Compteur = 0;
 	_vm->_globals.BPP_NOAFF = true;
 
-	for (int idx = 0; idx < 5; ++idx) {
+	for (int idx = 0; idx < 5; ++idx)
 		_vm->_eventsManager.VBL();
-	}
 
 	_vm->_globals.BPP_NOAFF = false;
 	_vm->_globals.iRegul = 1;
@@ -5432,13 +5435,11 @@ LABEL_70:
 					xp = _vm->_eventsManager.getMouseX();
 					yp = _vm->_eventsManager.getMouseY();
 
-					if (xCheck == xp) {
-						if (yCheck == yp) {
-							_vm->_globals.chemin = (int16 *)g_PTRNUL;
-							PARADISE();
-							if (_vm->_globals._exitId)
-								breakFlag = true;
-						}
+					if ((xCheck == xp) && (yCheck == yp)) {
+						_vm->_globals.chemin = (int16 *)g_PTRNUL;
+						PARADISE();
+						if (_vm->_globals._exitId)
+							breakFlag = true;
 					}
 					xCheck = xp;
 					yCheck = yp;

@@ -51,7 +51,7 @@ public:
 
 	void PARLER_PERSO2(const Common::String &filename);
 	void PARLER_PERSO(const Common::String &filename);
-	void RENVOIE_FICHIER(int srcStart, Common::String &dest, const char *srcData);
+	void getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData);
 	int DIALOGUE();
 	int DIALOGUE_REP(int idx);
 	void CHERCHE_PAL(int a1, int a2);

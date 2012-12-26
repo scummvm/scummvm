@@ -50,19 +50,15 @@ void TalkManager::setParent(HopkinsEngine *vm) {
 }
 
 void TalkManager::PARLER_PERSO(const Common::String &filename) {
-	int v2;
-	int v3;
-	int v4;
 	int v5;
 	int v7;
 	byte *v8;
 	byte *v9;
 	byte *v10;
 	int v14;
-	int v15;
-	Common::String v16;
+	Common::String spriteFilename;
 
-	v15 = 0;
+	int answer = 0;
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
 	_vm->_eventsManager.VBL();
@@ -77,9 +73,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
 	}
 	_vm->_globals._saveData->data[svField4] = 0;
-	RENVOIE_FICHIER(40, v16, (const char *)_characterBuffer);
-	RENVOIE_FICHIER(0, _questionsFilename, (const char *)_characterBuffer);
-	RENVOIE_FICHIER(20, _answersFilename, (const char *)_characterBuffer);
+	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
+	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
+	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
 	if (_vm->_globals._language == LANG_FR) {
 		_answersFilename = _questionsFilename = "RUE.TXT";
 	} else if (_vm->_globals._language == LANG_EN) {
@@ -87,12 +83,11 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	} else if (_vm->_globals._language == LANG_SP) {
 		_answersFilename = _questionsFilename = "RUEES.TXT";
 	}
-	v2 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
-	v3 = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
+	PLIGNE1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
 	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
-	_characterSprite = _vm->_fileManager.searchCat(v16, 7);
+	_characterSprite = _vm->_fileManager.searchCat(spriteFilename, 7);
 	if (_characterSprite) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, v16);
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, spriteFilename);
 	} else {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
 	}
@@ -108,28 +103,26 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_vm->_graphicsManager.ofscroll = 0;
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_objectsManager.PERSO_ON = true;
-	CHERCHE_PAL(v3, 0);
-	CHERCHE_ANIM0(v3, 0);
+	CHERCHE_PAL(PCHERCHE, 0);
+	CHERCHE_ANIM0(PCHERCHE, 0);
 	initCharacterAnim();
-	PLIGNE1 = v2;
-	PLIGNE2 = v2 + 1;
-	PLIGNE3 = v2 + 2;
-	PLIGNE4 = v2 + 3;
+	PLIGNE2 = PLIGNE1 + 1;
+	PLIGNE3 = PLIGNE1 + 2;
+	PLIGNE4 = PLIGNE1 + 3;
 	v14 = _vm->_eventsManager._mouseCursorId;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
 	if (!_vm->_globals.NOPARLE) {
-		v4 = v2 + 3;
 		do {
 			v5 = DIALOGUE();
-			if (v5 != v4)
-				v15 = DIALOGUE_REP(v5);
-			if (v15 == -1)
-				v5 = v2 + 3;
+			if (v5 != PLIGNE4)
+				answer = DIALOGUE_REP(v5);
+			if (answer == -1)
+				v5 = PLIGNE4;
 			_vm->_eventsManager.VBL();
-		} while (v5 != v4);
+		} while (v5 != PLIGNE4);
 	}
-	if (_vm->_globals.NOPARLE == true) {
+	if (_vm->_globals.NOPARLE) {
 		int v6 = 1;
 		do
 			v7 = DIALOGUE_REP(v6++);
@@ -190,8 +183,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	}
 
 	_vm->_globals._saveData->data[svField4] = 0;
-	RENVOIE_FICHIER(0, _questionsFilename, (const char *)_characterBuffer);
-	RENVOIE_FICHIER(20, _answersFilename, (const char *)_characterBuffer);
+	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
+	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
 
 	switch (_vm->_globals._language) {
 	case LANG_EN:
@@ -208,27 +201,25 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		break;
 	}
 
-	int v1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
+	PLIGNE1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
 	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
 	CHERCHE_PAL(PCHERCHE, 0);
-	PLIGNE1 = v1;
-	PLIGNE2 = v1 + 1;
-	PLIGNE3 = v1 + 2;
-	PLIGNE4 = v1 + 3;
+	PLIGNE2 = PLIGNE1 + 1;
+	PLIGNE3 = PLIGNE1 + 2;
+	PLIGNE4 = PLIGNE1 + 3;
 	int v8 = _vm->_eventsManager._mouseCursorId;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
 
 	if (!_vm->_globals.NOPARLE) {
-		int v2 = v1 + 3;
 		int v3;
 		do {
 			v3 = DIALOGUE();
-			if (v3 != v2) {
+			if (v3 != PLIGNE4) {
 				if (DIALOGUE_REP(v3) == -1)
-					v3 = v1 + 3;
+					v3 = PLIGNE4;
 			}
-		} while (v3 != v2);
+		} while (v3 != PLIGNE4);
 	}
 
 	if (_vm->_globals.NOPARLE) {
@@ -250,7 +241,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	STATI = 0;
 }
 
-void TalkManager::RENVOIE_FICHIER(int srcStart, Common::String &dest, const char *srcData) {
+void TalkManager::getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData) {
 	dest = Common::String(srcData + srcStart);
 }
 
@@ -1141,10 +1132,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	int v5;
 	int v10;
 	byte *v11;
-	int v12;
 	byte *v14;
 	byte *v15;
-	byte *v16;
 	Common::String s;
 	Common::String v20;
 	Common::String v22;
@@ -1171,9 +1160,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
 	}
-	RENVOIE_FICHIER(40, v23, (const char *)_characterBuffer);
-	RENVOIE_FICHIER(0, v22, (const char *)_characterBuffer);
-	RENVOIE_FICHIER(20, v20, (const char *)_characterBuffer);
+	getStringFromBuffer(40, v23, (const char *)_characterBuffer);
+	getStringFromBuffer(0, v22, (const char *)_characterBuffer);
+	getStringFromBuffer(20, v20, (const char *)_characterBuffer);
 	v5 = 5;
 
 	if (v20 == "NULL")
@@ -1217,13 +1206,12 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager.NUMZONE = -1;
 	do {
-		v12 = _vm->_eventsManager.getMouseButton();
-		if (v12 == 1) {
+		int mouseButton = _vm->_eventsManager.getMouseButton();
+		if (mouseButton == 1)
 			_vm->_objectsManager.handleLeftButton();
-			v12 = 1;
-		}
-		if (v12 == 2)
+		else if (mouseButton == 2)
 			_vm->_objectsManager.handleRightButton();
+
 		_vm->_objectsManager.checkZone();
 		if (_vm->_globals.GOACTION)
 			_vm->_objectsManager.PARADISE();
@@ -1280,7 +1268,6 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	WRITE_LE_UINT16(v14, (int16)READ_LE_UINT16(v15));
 	v14 = v14 + 2;
 	*v14 = *(v15 + 2);
-	v16 = v14 + 1;
 	_vm->_globals._disableInventFl = false;
 	_vm->_graphicsManager.DD_VBL();
 	for (int i = 0; i <= 4; i++)

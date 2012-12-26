@@ -844,7 +844,9 @@ bool HopkinsEngine::runOS2Full() {
 	_graphicsManager.unlockScreen();
 
 	_graphicsManager.clearPalette();
-	_animationManager.playAnim("MP.ANM", 10, 0, 200);
+
+	// Add 16ms delay in order to match the Linux and Win95 versions
+	_animationManager.playAnim("MP.ANM", 10, 16, 200);
 	_graphicsManager.FADE_OUTW();
 	if (!_eventsManager._escKeyFl)
 		playIntro();
@@ -1727,7 +1729,9 @@ bool HopkinsEngine::runBeOSFull() {
 	_graphicsManager.unlockScreen();
 
 	_graphicsManager.clearPalette();
-	_animationManager.playAnim("MP.ANM", 10, 0, 200);
+
+	// Add 16ms delay in order to match the Linux and Win95 versions
+	_animationManager.playAnim("MP.ANM", 10, 16, 200);
 	_graphicsManager.FADE_OUTW();
 	if (!_eventsManager._escKeyFl)
 		playIntro();
