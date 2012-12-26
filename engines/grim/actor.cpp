@@ -1025,7 +1025,9 @@ void Actor::shutUp() {
 			_talkChore[_talkAnim].stop();
 		_lipSync = NULL;
 		stopTalking();
-	} else if (stopMumbleChore()) {
+	}
+	// having a lipsync is no guarantee the mumble chore is no running. the talk chores may be -1 (domino in do)
+	if (stopMumbleChore()) {
 		stopTalking();
 	}
 
