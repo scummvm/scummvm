@@ -89,7 +89,7 @@ struct ILBMDecoder {
 	 * The caller controls how data should be packed by choosing mode from
 	 * the enum above.
 	 */
-	void loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stream);
+	void loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stream, uint32 outPitch = 0);
 
 	/**
 	 * Converts from bitplanar to chunky representation. Intended for internal
