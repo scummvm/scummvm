@@ -45,9 +45,10 @@ static const Bit32u REVERB_FEEDBACK67 = 0x60;
 static const Bit32u REVERB_FEEDBACK = 0x68;
 static const float LPF_VALUE = 0x68 / 256.0f;
 
+static const Bit32u BUFFER_SIZE = 16384;
+
 DelayReverb::DelayReverb() {
 	buf = NULL;
-	sampleRate = 0;
 	setParameters(0, 0);
 }
 
@@ -55,27 +56,22 @@ DelayReverb::~DelayReverb() {
 	delete[] buf;
 }
 
-void DelayReverb::open(unsigned int newSampleRate) {
-	if (newSampleRate != sampleRate || buf == NULL) {
-		sampleRate = newSampleRate;
-
+void DelayReverb::open() {
+	if (buf == NULL) {
 		delete[] buf;
 
-		// If we ever need a speedup, set bufSize to EXP2F(ceil(log2(bufSize))) and use & instead of % to find buf indexes
-		bufSize = 16384 * sampleRate / 32000;
-		buf = new float[bufSize];
+		buf = new float[BUFFER_SIZE];
 
 		recalcParameters();
 
 		// mute buffer
 		bufIx = 0;
 		if (buf != NULL) {
-			for (unsigned int i = 0; i < bufSize; i++) {
+			for (unsigned int i = 0; i < BUFFER_SIZE; i++) {
 				buf[i] = 0.0f;
 			}
 		}
 	}
-	// FIXME: IIR filter value depends on sample rate as well
 }
 
 void DelayReverb::close() {
@@ -92,11 +88,11 @@ void DelayReverb::setParameters(Bit8u newTime, Bit8u newLevel) {
 
 void DelayReverb::recalcParameters() {
 	// Number of samples between impulse and eventual appearance on the left channel
-	delayLeft = REVERB_TIMINGS[time][0] * sampleRate / 32000;
+	delayLeft = REVERB_TIMINGS[time][0];
 	// Number of samples between impulse and eventual appearance on the right channel
-	delayRight = REVERB_TIMINGS[time][1] * sampleRate / 32000;
+	delayRight = REVERB_TIMINGS[time][1];
 	// Number of samples between a response and that response feeding back/echoing
-	delayFeedback = REVERB_TIMINGS[time][2] * sampleRate / 32000;
+	delayFeedback = REVERB_TIMINGS[time][2];
 
 	if (level < 3 || time < 6) {
 		feedback = REVERB_FEEDBACK / 256.0f;
@@ -113,10 +109,10 @@ void DelayReverb::process(const float *inLeft, const float *inRight, float *outL
 
 	for (unsigned int sampleIx = 0; sampleIx < numSamples; sampleIx++) {
 		// The ring buffer write index moves backwards; reads are all done with positive offsets.
-		Bit32u bufIxPrev = (bufIx + 1) % bufSize;
-		Bit32u bufIxLeft = (bufIx + delayLeft) % bufSize;
-		Bit32u bufIxRight = (bufIx + delayRight) % bufSize;
-		Bit32u bufIxFeedback = (bufIx + delayFeedback) % bufSize;
+		Bit32u bufIxPrev = (bufIx + 1) % BUFFER_SIZE;
+		Bit32u bufIxLeft = (bufIx + delayLeft) % BUFFER_SIZE;
+		Bit32u bufIxRight = (bufIx + delayRight) % BUFFER_SIZE;
+		Bit32u bufIxFeedback = (bufIx + delayFeedback) % BUFFER_SIZE;
 
 		// Attenuated input samples and feedback response are directly added to the current ring buffer location
 		float lpfIn = amp * (inLeft[sampleIx] + inRight[sampleIx]) + feedback * buf[bufIxFeedback];
@@ -127,7 +123,7 @@ void DelayReverb::process(const float *inLeft, const float *inRight, float *outL
 		outLeft[sampleIx] = buf[bufIxLeft];
 		outRight[sampleIx] = buf[bufIxRight];
 
-		bufIx = (bufSize + bufIx - 1) % bufSize;
+		bufIx = (BUFFER_SIZE + bufIx - 1) % BUFFER_SIZE;
 	}
 }
 
@@ -136,7 +132,7 @@ bool DelayReverb::isActive() const {
 
 	float *b = buf;
 	float max = 0.001f;
-	for (Bit32u i = 0; i < bufSize; i++) {
+	for (Bit32u i = 0; i < BUFFER_SIZE; i++) {
 		if ((*b < -max) || (*b > max)) return true;
 		b++;
 	}

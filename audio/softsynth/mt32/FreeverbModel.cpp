@@ -35,9 +35,7 @@ FreeverbModel::~FreeverbModel() {
 	delete freeverb;
 }
 
-void FreeverbModel::open(unsigned int /*sampleRate*/) {
-	// FIXME: scaleTuning must be multiplied by sample rate to 32000Hz ratio
-	// IIR filter values depend on sample rate as well
+void FreeverbModel::open() {
 	if (freeverb == NULL) {
 		freeverb = new revmodel(scaleTuning);
 	}

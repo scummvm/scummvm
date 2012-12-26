@@ -85,6 +85,7 @@ void Partial::deactivate() {
 			pair->pair = NULL;
 		}
 	}
+	synth->partialStateChanged(this, tva->getPhase(), TVA_PHASE_DEAD);
 #if MT32EMU_MONITOR_PARTIALS > 2
 	synth->printDebug("[+%lu] [Partial %d] Deactivated", sampleNum, debugPartialNum);
 	synth->printPartialUsage(sampleNum);
@@ -232,12 +233,12 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 
 #if MT32EMU_ACCURATE_WG == 1
 		float amp = EXP2F((32772 - ampRampVal / 2048) / -2048.0f);
-		float freq = EXP2F(pitch / 4096.0f - 16.0f) * 32000.0f;
+		float freq = EXP2F(pitch / 4096.0f - 16.0f) * SAMPLE_RATE;
 #else
 		static const float ampFactor = EXP2F(32772 / -2048.0f);
 		float amp = EXP2I(ampRampVal >> 10) * ampFactor;
 
-		static const float freqFactor = EXP2F(-16.0f) * 32000.0f;
+		static const float freqFactor = EXP2F(-16.0f) * SAMPLE_RATE;
 		float freq = EXP2I(pitch) * freqFactor;
 #endif
 
@@ -251,7 +252,7 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 				break;
 			}
 			Bit32u pcmAddr = pcmWave->addr;
-			float positionDelta = freq * 2048.0f / synth->myProp.sampleRate;
+			float positionDelta = freq * 2048.0f / SAMPLE_RATE;
 
 			// Linear interpolation
 			float firstSample = synth->pcmROMData[pcmAddr + intPCMPosition];
@@ -296,7 +297,7 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 			}
 
 			// Wave length in samples
-			float waveLen = synth->myProp.sampleRate / freq;
+			float waveLen = SAMPLE_RATE / freq;
 
 			// Init cosineLen
 			float cosineLen = 0.5f * waveLen;

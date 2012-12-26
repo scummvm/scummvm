@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	Partial.o \
 	PartialManager.o \
 	Poly.o \
+	ROMInfo.o \
 	Synth.o \
 	TVA.o \
 	TVF.o \

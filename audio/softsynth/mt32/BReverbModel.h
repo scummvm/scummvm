@@ -100,7 +100,7 @@ class BReverbModel : public ReverbModel {
 public:
 	BReverbModel(const ReverbMode mode);
 	~BReverbModel();
-	void open(unsigned int sampleRate);
+	void open();
 	void close();
 	void setParameters(Bit8u time, Bit8u level);
 	void process(const float *inLeft, const float *inRight, float *outLeft, float *outRight, unsigned long numSamples);

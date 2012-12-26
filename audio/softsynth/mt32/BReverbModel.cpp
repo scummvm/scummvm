@@ -241,9 +241,7 @@ BReverbModel::~BReverbModel() {
 	close();
 }
 
-void BReverbModel::open(unsigned int /*sampleRate*/) {
-	// FIXME: filter sizes must be multiplied by sample rate to 32000Hz ratio
-	// IIR filter values depend on sample rate as well
+void BReverbModel::open() {
 	if (currentSettings.numberOfAllpasses > 0) {
 		allpasses = new AllpassFilter*[currentSettings.numberOfAllpasses];
 		for (Bit32u i = 0; i < currentSettings.numberOfAllpasses; i++) {

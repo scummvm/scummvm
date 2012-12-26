@@ -75,7 +75,7 @@ class AReverbModel : public ReverbModel {
 public:
 	AReverbModel(const ReverbMode mode);
 	~AReverbModel();
-	void open(unsigned int sampleRate);
+	void open();
 	void close();
 	void setParameters(Bit8u time, Bit8u level);
 	void process(const float *inLeft, const float *inRight, float *outLeft, float *outRight, unsigned long numSamples);

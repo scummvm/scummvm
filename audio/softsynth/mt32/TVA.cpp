@@ -34,6 +34,9 @@ TVA::TVA(const Partial *usePartial, LA32Ramp *useAmpRamp) :
 }
 
 void TVA::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
+	if (newPhase != phase) {
+		partial->getSynth()->partialStateChanged(partial, phase, newPhase);
+	}
 	target = newTarget;
 	phase = newPhase;
 	ampRamp->startRamp(newTarget, newIncrement);
@@ -43,6 +46,9 @@ void TVA::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
 }
 
 void TVA::end(int newPhase) {
+	if (newPhase != phase) {
+		partial->getSynth()->partialStateChanged(partial, phase, newPhase);
+	}
 	phase = newPhase;
 	playing = false;
 #if MT32EMU_MONITOR_TVA >= 1

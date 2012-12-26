@@ -142,10 +142,18 @@ Bit8u Synth::calcSysexChecksum(const Bit8u *data, Bit32u len, Bit8u checksum) {
 	return checksum;
 }
 
-Synth::Synth() {
+Synth::Synth(ReportHandler *useReportHandler) {
 	isOpen = false;
 	reverbEnabled = true;
 	reverbOverridden = false;
+
+	if (useReportHandler == NULL) {
+		reportHandler = new ReportHandler;
+		isDefaultReportHandler = true;
+	} else {
+		reportHandler = useReportHandler;
+		isDefaultReportHandler = false;
+	}
 
 #if MT32EMU_USE_REVERBMODEL == 1
 	reverbModels[REVERB_MODE_ROOM] = new AReverbModel(REVERB_MODE_ROOM);
@@ -178,31 +186,49 @@ Synth::~Synth() {
 	for (int i = 0; i < 4; i++) {
 		delete reverbModels[i];
 	}
-}
-
-int Synth::report(ReportType type, const void *data) {
-	if (myProp.report != NULL) {
-		return myProp.report(myProp.userData, type, data);
+	if (isDefaultReportHandler) {
+		delete reportHandler;
 	}
-	return 0;
 }
 
-unsigned int Synth::getSampleRate() const {
-	return myProp.sampleRate;
+void ReportHandler::showLCDMessage(const char *data) {
+	printf("WRITE-LCD: %s", data);
+	printf("\n");
+}
+
+void ReportHandler::printDebug(const char *fmt, va_list list) {
+		vprintf(fmt, list);
+		printf("\n");
+}
+
+void Synth::partStateChanged(int partNum, bool isPartActive) {
+	reportHandler->onPartStateChanged(partNum, isPartActive);
+}
+
+void Synth::polyStateChanged(int partNum) {
+	reportHandler->onPolyStateChanged(partNum);
+}
+
+void Synth::partialStateChanged(const Partial * const partial, int oldPartialPhase, int newPartialPhase) {
+	for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
+		if (getPartial(i) == partial) {
+			reportHandler->onPartialStateChanged(i, oldPartialPhase, newPartialPhase);
+			break;
+		}
+	}
+}
+
+void Synth::newTimbreSet(int partNum, char patchName[]) {
+	reportHandler->onProgramChanged(partNum, patchName);
 }
 
 void Synth::printDebug(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	if (myProp.printDebug != NULL) {
-		myProp.printDebug(myProp.userData, fmt, ap);
-	} else {
 #if MT32EMU_DEBUG_SAMPLESTAMPS > 0
-		printf("[%u] ", renderedSampleCount);
+	reportHandler->printDebug("[%u] ", renderedSampleCount);
 #endif
-		vprintf(fmt, ap);
-		printf("\n");
-	}
+	reportHandler->printDebug(fmt, ap);
 	va_end(ap);
 }
 
@@ -252,80 +278,60 @@ void Synth::setReverbOutputGain(float newReverbOutputGain) {
 	reverbOutputGain = newReverbOutputGain;
 }
 
-Common::File *Synth::openFile(const char *filename) {
-	if (myProp.openFile != NULL) {
-		return myProp.openFile(myProp.userData, filename);
+bool Synth::loadControlROM(const ROMImage &controlROMImage) {
+	if (&controlROMImage == NULL) return false;
+	Common::File *file = controlROMImage.getFile();
+	const ROMInfo *controlROMInfo = controlROMImage.getROMInfo();
+	if ((controlROMInfo == NULL)
+			|| (controlROMInfo->type != ROMInfo::Control)
+			|| (controlROMInfo->pairType != ROMInfo::Full)) {
+		return false;
 	}
-	char pathBuf[2048];
-	if (myProp.baseDir != NULL) {
-		strcpy(&pathBuf[0], myProp.baseDir);
-		strcat(&pathBuf[0], filename);
-		filename = pathBuf;
-	}
-	Common::File *file = new Common::File();
-	if (!file->open(filename)) {
-		delete file;
-		return NULL;
-	}
-	return file;
-}
-
-void Synth::closeFile(Common::File *file) {
-	if (myProp.closeFile != NULL) {
-		myProp.closeFile(myProp.userData, file);
-	} else {
-		file->close();
-		delete file;
-	}
-}
-
-LoadResult Synth::loadControlROM(const char *filename) {
-	Common::File *file = openFile(filename); // ROM File
-	if (file == NULL) {
-		return LoadResult_NotFound;
-	}
-	size_t fileSize = file->size();
-	if (fileSize != CONTROL_ROM_SIZE) {
-		printDebug("Control ROM file %s size mismatch: %i", filename, fileSize);
-	}
+#if MT32EMU_MONITOR_INIT
+	printDebug("Found Control ROM: %s, %s", controlROMInfo->shortName, controlROMInfo->description);
+#endif
 	file->read(controlROMData, CONTROL_ROM_SIZE);
-	if (file->err()) {
-		closeFile(file);
-		return LoadResult_Unreadable;
-	}
-	closeFile(file);
 
 	// Control ROM successfully loaded, now check whether it's a known type
 	controlROMMap = NULL;
 	for (unsigned int i = 0; i < sizeof(ControlROMMaps) / sizeof(ControlROMMaps[0]); i++) {
 		if (memcmp(&controlROMData[ControlROMMaps[i].idPos], ControlROMMaps[i].idBytes, ControlROMMaps[i].idLen) == 0) {
 			controlROMMap = &ControlROMMaps[i];
-			return LoadResult_OK;
+			return true;
 		}
 	}
-	printDebug("%s does not match a known control ROM type", filename);
-	return LoadResult_Invalid;
+#if MT32EMU_MONITOR_INIT
+	printDebug("Control ROM failed to load");
+#endif
+	return false;
 }
 
-LoadResult Synth::loadPCMROM(const char *filename) {
-	Common::File *file = openFile(filename); // ROM File
-	if (file == NULL) {
-		return LoadResult_NotFound;
+bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
+	if (&pcmROMImage == NULL) return false;
+	Common::File *file = pcmROMImage.getFile();
+	const ROMInfo *pcmROMInfo = pcmROMImage.getROMInfo();
+	if ((pcmROMInfo == NULL)
+			|| (pcmROMInfo->type != ROMInfo::PCM)
+			|| (pcmROMInfo->pairType != ROMInfo::Full)) {
+		return false;
 	}
+#if MT32EMU_MONITOR_INIT
+	printDebug("Found PCM ROM: %s, %s", pcmROMInfo->shortName, pcmROMInfo->description);
+#endif
 	size_t fileSize = file->size();
-	if (fileSize < (size_t)(2 * pcmROMSize)) {
-		printDebug("PCM ROM file is too short (expected %d, got %d)", 2 * pcmROMSize, fileSize);
-		closeFile(file);
-		return LoadResult_Invalid;
+	if (fileSize != (2 * pcmROMSize)) {
+#if MT32EMU_MONITOR_INIT
+		printDebug("PCM ROM file has wrong size (expected %d, got %d)", 2 * pcmROMSize, fileSize);
+#endif
+		return false;
 	}
-	if (file->err()) {
-		closeFile(file);
-		return LoadResult_Unreadable;
-	}
-	LoadResult rc = LoadResult_OK;
-	for (unsigned int i = 0; i < pcmROMSize; i++) {
-		Bit8u s = file->readByte();
-		Bit8u c = file->readByte();
+
+	byte *buffer = new byte[file->size()];
+	file->read(buffer, file->size());
+	const byte *fileData = buffer;
+	for (size_t i = 0; i < pcmROMSize; i++) {
+		Bit8u s = *(fileData++);
+		Bit8u c = *(fileData++);
 
 		int order[16] = {0, 9, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 8};
 
@@ -351,16 +357,18 @@ LoadResult Synth::loadPCMROM(const char *filename) {
 
 		pcmROMData[i] = lin;
 	}
-	closeFile(file);
-	return rc;
+
+	delete[] buffer;
+
+	return true;
 }
 
 bool Synth::initPCMList(Bit16u mapAddress, Bit16u count) {
 	ControlROMPCMStruct *tps = (ControlROMPCMStruct *)&controlROMData[mapAddress];
 	for (int i = 0; i < count; i++) {
-		unsigned int rAddr = tps[i].pos * 0x800;
-		int rLenExp = (tps[i].len & 0x70) >> 4;
-		int rLen = 0x800 << rLenExp;
+		size_t rAddr = tps[i].pos * 0x800;
+		size_t rLenExp = (tps[i].len & 0x70) >> 4;
+		size_t rLen = 0x800 << rLenExp;
 		if (rAddr + rLen > pcmROMSize) {
 			printDebug("Control ROM error: Wave map entry %d points to invalid PCM address 0x%04X, length 0x%04X", i, rAddr, rLen);
 			return false;
@@ -422,12 +430,11 @@ bool Synth::initTimbres(Bit16u mapAddress, Bit16u offset, int count, int startTi
 	return true;
 }
 
-bool Synth::open(SynthProperties &useProp) {
+bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage) {
 	if (isOpen) {
 		return false;
 	}
 	prerenderReadIx = prerenderWriteIx = 0;
-	myProp = useProp;
 #if MT32EMU_MONITOR_INIT
 	printDebug("Initialising Constant Tables");
 #endif
@@ -436,11 +443,6 @@ bool Synth::open(SynthProperties &useProp) {
 		reverbModels[i]->open(useProp.sampleRate);
 	}
 #endif
-	if (useProp.baseDir != NULL) {
-		char *baseDirCopy = new char[strlen(useProp.baseDir) + 1];
-		strcpy(baseDirCopy, useProp.baseDir);
-		myProp.baseDir = baseDirCopy;
-	}
 
 	// This is to help detect bugs
 	memset(&mt32ram, '?', sizeof(mt32ram));
@@ -448,12 +450,10 @@ bool Synth::open(SynthProperties &useProp) {
 #if MT32EMU_MONITOR_INIT
 	printDebug("Loading Control ROM");
 #endif
-	if (loadControlROM("CM32L_CONTROL.ROM") != LoadResult_OK) {
-		if (loadControlROM("MT32_CONTROL.ROM") != LoadResult_OK) {
-			printDebug("Init Error - Missing or invalid MT32_CONTROL.ROM");
-			//report(ReportType_errorControlROM, &errno);
-			return false;
-		}
+	if (!loadControlROM(controlROMImage)) {
+		printDebug("Init Error - Missing or invalid Control ROM image");
+		reportHandler->onErrorControlROM();
+		return false;
 	}
 
 	initMemoryRegions();
@@ -467,12 +467,10 @@ bool Synth::open(SynthProperties &useProp) {
 #if MT32EMU_MONITOR_INIT
 	printDebug("Loading PCM ROM");
 #endif
-	if (loadPCMROM("CM32L_PCM.ROM") != LoadResult_OK) {
-		if (loadPCMROM("MT32_PCM.ROM") != LoadResult_OK) {
-			printDebug("Init Error - Missing MT32_PCM.ROM");
-			//report(ReportType_errorPCMROM, &errno);
-			return false;
-		}
+	if (!loadPCMROM(pcmROMImage)) {
+		printDebug("Init Error - Missing PCM ROM image");
+		reportHandler->onErrorPCMROM();
+		return false;
 	}
 
 #if MT32EMU_MONITOR_INIT
@@ -600,9 +598,6 @@ void Synth::close() {
 		delete parts[i];
 		parts[i] = NULL;
 	}
-
-	delete[] myProp.baseDir;
-	myProp.baseDir = NULL;
 
 	delete[] pcmWaves;
 	delete[] pcmROMData;
@@ -1190,7 +1185,7 @@ void Synth::writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u le
 	case MR_System:
 		region->write(0, off, data, len);
 
-		report(ReportType_devReconfig, NULL);
+		reportHandler->onDeviceReconfig();
 		// FIXME: We haven't properly confirmed any of this behaviour
 		// In particular, we tend to reset things such as reverb even if the write contained
 		// the same parameters as were already set, which may be wrong.
@@ -1228,7 +1223,7 @@ void Synth::writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u le
 #if MT32EMU_MONITOR_SYSEX > 0
 		printDebug("WRITE-LCD: %s", buf);
 #endif
-		report(ReportType_lcdMessage, buf);
+		reportHandler->showLCDMessage(buf);
 		break;
 	case MR_Reset:
 		reset();
@@ -1256,9 +1251,9 @@ void Synth::refreshSystemReverbParameters() {
 #endif
 		return;
 	}
-	report(ReportType_newReverbMode,  &mt32ram.system.reverbMode);
-	report(ReportType_newReverbTime,  &mt32ram.system.reverbTime);
-	report(ReportType_newReverbLevel, &mt32ram.system.reverbLevel);
+	reportHandler->onNewReverbMode(mt32ram.system.reverbMode);
+	reportHandler->onNewReverbTime(mt32ram.system.reverbTime);
+	reportHandler->onNewReverbLevel(mt32ram.system.reverbLevel);
 
 	ReverbModel *newReverbModel = reverbModels[mt32ram.system.reverbMode];
 #if MT32EMU_REDUCE_REVERB_MEMORY
@@ -1266,7 +1261,7 @@ void Synth::refreshSystemReverbParameters() {
 		if (reverbModel != NULL) {
 			reverbModel->close();
 		}
-		newReverbModel->open(myProp.sampleRate);
+		newReverbModel->open();
 	}
 #endif
 	reverbModel = newReverbModel;
@@ -1321,7 +1316,7 @@ void Synth::reset() {
 #if MT32EMU_MONITOR_SYSEX > 0
 	printDebug("RESET");
 #endif
-	report(ReportType_devReset, NULL);
+	reportHandler->onDeviceReset();
 	partialManager->deactivateAll();
 	mt32ram = mt32default;
 	for (int i = 0; i < 9; i++) {

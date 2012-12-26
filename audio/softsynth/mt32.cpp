@@ -25,6 +25,7 @@
 #ifdef USE_MT32EMU
 
 #include "audio/softsynth/mt32/mt32emu.h"
+#include "audio/softsynth/mt32/ROMInfo.h"
 
 #include "audio/softsynth/emumidi.h"
 #include "audio/musicplugin.h"
@@ -47,6 +48,57 @@
 #include "graphics/palette.h"
 #include "graphics/font.h"
 
+#include "gui/message.h"
+
+static void drawMessage(int offset, const Common::String &text);
+
+namespace MT32Emu {
+
+class ReportHandlerScummVM : public ReportHandler {
+friend class Synth;
+
+public:
+	virtual ~ReportHandlerScummVM() {}
+
+protected:
+
+	// Callback for debug messages, in vprintf() format
+	void printDebug(const char *fmt, va_list list) {
+		char buf[512];
+
+		vsnprintf(buf, 512, fmt, list);
+		buf[70] = 0; // Truncate to a reasonable length
+
+		drawMessage(1, buf);
+	}
+
+	// Callbacks for reporting various errors and information
+	void onErrorControlROM() {
+		GUI::MessageDialog dialog("MT32emu: Init Error - Missing or invalid Control ROM image", "OK");
+		dialog.runModal();
+		error("MT32emu: Init Error - Missing or invalid Control ROM image");
+	}
+	void onErrorPCMROM() {
+		GUI::MessageDialog dialog("MT32emu: Init Error - Missing PCM ROM image", "OK");
+		dialog.runModal();
+		error("MT32emu: Init Error - Missing PCM ROM image");
+	}
+	void showLCDMessage(const char *message) {
+		g_system->displayMessageOnOSD(message);
+	}
+	void onDeviceReset() {}
+	void onDeviceReconfig() {}
+	void onNewReverbMode(Bit8u /* mode */) {}
+	void onNewReverbTime(Bit8u /* time */) {}
+	void onNewReverbLevel(Bit8u /* level */) {}
+	void onPartStateChanged(int /* partNum */, bool /* isActive */) {}
+	void onPolyStateChanged(int /* partNum */) {}
+	void onPartialStateChanged(int /* partialNum */, int /* oldPartialPhase */, int /* newPartialPhase */) {}
+	void onProgramChanged(int /* partNum */, char * /* patchName */) {}
+};
+
+}	// end of namespace MT32Emu
+
 class MidiChannel_MT32 : public MidiChannel_MPU401 {
 	void effectLevel(byte value) { }
 	void chorusLevel(byte value) { }
@@ -57,6 +109,9 @@ private:
 	MidiChannel_MT32 _midiChannels[16];
 	uint16 _channelMask;
 	MT32Emu::Synth *_synth;
+	MT32Emu::ReportHandlerScummVM *_reportHandler;
+	const MT32Emu::ROMImage *_controlROM;
+	const MT32Emu::ROMImage *_pcmROM;
 
 	int _outputRate;
 
@@ -83,59 +138,6 @@ public:
 	bool isStereo() const { return true; }
 	int getRate() const { return _outputRate; }
 };
-
-static int eatSystemEvents() {
-	Common::Event event;
-	Common::EventManager *eventMan = g_system->getEventManager();
-	while (eventMan->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-			return 1;
-		default:
-			break;
-		}
-	}
-	return 0;
-}
-
-static void drawProgress(float progress) {
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
-	Graphics::Surface *screen = g_system->lockScreen();
-
-	assert(screen);
-	assert(screen->pixels);
-
-	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
-
-	int16 w = g_system->getWidth() / 7 * 5;
-	int16 h = font.getFontHeight();
-	int16 x = g_system->getWidth() / 7;
-	int16 y = g_system->getHeight() / 2 - h / 2;
-
-	Common::Rect r(x, y, x + w, y + h);
-
-	uint32 col;
-
-	if (screenFormat.bytesPerPixel > 1)
-		col = screenFormat.RGBToColor(0, 171, 0);
-	else
-		col = 1;
-
-	screen->frameRect(r, col);
-
-	r.grow(-1);
-	r.setWidth(uint16(progress * w));
-
-	if (screenFormat.bytesPerPixel > 1)
-		col = screenFormat.RGBToColor(171, 0, 0);
-	else
-		col = 2;
-
-	screen->fillRect(r, col);
-
-	g_system->unlockScreen();
-	g_system->updateScreen();
-}
 
 static void drawMessage(int offset, const Common::String &text) {
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
@@ -170,63 +172,6 @@ static void drawMessage(int offset, const Common::String &text) {
 	g_system->updateScreen();
 }
 
-static Common::File *MT32_OpenFile(void *userData, const char *filename) {
-	Common::File *file = new Common::File();
-	if (!file->open(filename)) {
-		delete file;
-		return NULL;
-	}
-	return file;
-}
-
-static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
-	if (((MidiDriver_MT32 *)userData)->_initializing) {
-		char buf[512];
-
-		vsnprintf(buf, 512, fmt, list);
-		buf[70] = 0; // Truncate to a reasonable length
-
-		drawMessage(1, buf);
-	}
-
-	//vdebug(0, fmt, list); // FIXME: Use a higher debug level
-}
-
-static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *reportData) {
-	switch (type) {
-	case MT32Emu::ReportType_lcdMessage:
-		g_system->displayMessageOnOSD((const char *)reportData);
-		break;
-	case MT32Emu::ReportType_errorControlROM:
-		error("Failed to load MT32_CONTROL.ROM");
-		break;
-	case MT32Emu::ReportType_errorPCMROM:
-		error("Failed to load MT32_PCM.ROM");
-		break;
-	case MT32Emu::ReportType_progressInit:
-		if (((MidiDriver_MT32 *)userData)->_initializing) {
-			drawProgress(*((const float *)reportData));
-			return eatSystemEvents();
-		}
-		break;
-	case MT32Emu::ReportType_availableSSE:
-		debug(1, "MT32emu: SSE is available");
-		break;
-	case MT32Emu::ReportType_usingSSE:
-		debug(1, "MT32emu: using SSE");
-		break;
-	case MT32Emu::ReportType_available3DNow:
-		debug(1, "MT32emu: 3DNow! is available");
-		break;
-	case MT32Emu::ReportType_using3DNow:
-		debug(1, "MT32emu: using 3DNow!");
-		break;
-	default:
-		break;
-	}
-	return 0;
-}
-
 ////////////////////////////////////////
 //
 // MidiDriver_MT32
@@ -239,6 +184,7 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 	for (i = 0; i < ARRAYSIZE(_midiChannels); ++i) {
 		_midiChannels[i].init(this, i);
 	}
+	_reportHandler = NULL;
 	_synth = NULL;
 	// A higher baseFreq reduces the length used in generateSamples(),
 	// and means that the timer callback will be called more often.
@@ -253,29 +199,18 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 
 MidiDriver_MT32::~MidiDriver_MT32() {
 	delete _synth;
+	delete _reportHandler;
+	MT32Emu::ROMImage::freeROMImage(_controlROM);
+	MT32Emu::ROMImage::freeROMImage(_pcmROM);
 }
 
 int MidiDriver_MT32::open() {
-	MT32Emu::SynthProperties prop;
-
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
 	MidiDriver_Emulated::open();
-
-	memset(&prop, 0, sizeof(prop));
-	prop.sampleRate = getRate();
-	prop.useReverb = true;
-	prop.useDefaultReverb = false;
-	prop.reverbType = 0;
-	prop.reverbTime = 5;
-	prop.reverbLevel = 3;
-	prop.userData = this;
-	prop.printDebug = MT32_PrintDebug;
-	prop.report = MT32_Report;
-	prop.openFile = MT32_OpenFile;
-
-	_synth = new MT32Emu::Synth();
+	_reportHandler = new MT32Emu::ReportHandlerScummVM();
+	_synth = new MT32Emu::Synth(_reportHandler);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 
@@ -291,7 +226,15 @@ int MidiDriver_MT32::open() {
 
 	_initializing = true;
 	drawMessage(-1, _s("Initializing MT-32 Emulator"));
-	if (!_synth->open(prop))
+	Common::File *controlFile = new Common::File();
+	if (!controlFile->open("MT32_CONTROL.ROM"))
+		error("Error opening MT32_CONTROL.ROM");
+	Common::File *pcmFile = new Common::File();
+	if (!pcmFile->open("MT32_PCM.ROM"))
+		error("Error opening MT32_PCM.ROM");
+	_controlROM = MT32Emu::ROMImage::makeROMImage(controlFile);
+	_pcmROM = MT32Emu::ROMImage::makeROMImage(pcmFile);
+	if (!_synth->open(*_controlROM, *_pcmROM))
 		return MERR_DEVICE_NOT_AVAILABLE;
 
 	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
@@ -354,6 +297,10 @@ void MidiDriver_MT32::close() {
 	_synth->close();
 	delete _synth;
 	_synth = NULL;
+	delete _reportHandler;
+	_reportHandler = NULL;
+	MT32Emu::ROMImage::freeROMImage(_controlROM);
+	MT32Emu::ROMImage::freeROMImage(_pcmROM);
 }
 
 void MidiDriver_MT32::generateSamples(int16 *data, int len) {

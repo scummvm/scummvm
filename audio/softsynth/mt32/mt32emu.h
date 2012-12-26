@@ -71,8 +71,6 @@
 // 1: Use precise float math. Use this setting to achieve more accurate wave generator. If your system performs better with this setting, it is really notable. :)
 #define MT32EMU_ACCURATE_WG 0
 
-#define MT32EMU_USE_EXTINT 0
-
 // Configuration
 // The maximum number of partials playing simultaneously
 #define MT32EMU_MAX_PARTIALS 32
@@ -117,6 +115,7 @@ const unsigned int MAX_PRERENDER_SAMPLES = 1024;
 #include "TVF.h"
 #include "Partial.h"
 #include "Part.h"
+#include "ROMInfo.h"
 #include "Synth.h"
 
 #endif

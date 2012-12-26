@@ -48,7 +48,7 @@ static const Bit32u MODE_0_COMB_FEEDBACK[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00
                                               0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98,
                                               0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98,
                                               0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98};
-static const Bit32u MODE_0_LEVELS[] = {0, 10*3, 10*5, 10*7, 11*9, 11*12, 11*15, 13*15};
+static const Bit32u MODE_0_LEVELS[] = {10*1, 10*3, 10*5, 10*7, 11*9, 11*12, 11*15, 13*15};
 static const Bit32u MODE_0_LPF_AMP = 6;
 
 static const Bit32u MODE_1_ALLPASSES[] = {1324, 809, 176};
@@ -60,7 +60,7 @@ static const Bit32u MODE_1_COMB_FEEDBACK[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 											  0x28, 0x48, 0x60, 0x70, 0x78, 0x80, 0x90, 0x98,
 											  0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98,
 											  0x28, 0x48, 0x60, 0x78, 0x80, 0x88, 0x90, 0x98};
-static const Bit32u MODE_1_LEVELS[] = {0, 10*3, 11*5, 11*7, 11*9, 11*12, 11*15, 14*15};
+static const Bit32u MODE_1_LEVELS[] = {10*1, 10*3, 11*5, 11*7, 11*9, 11*12, 11*15, 14*15};
 static const Bit32u MODE_1_LPF_AMP = 6;
 
 static const Bit32u MODE_2_ALLPASSES[] = {969, 644, 157};
@@ -72,7 +72,7 @@ static const Bit32u MODE_2_COMB_FEEDBACK[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00
                                               0x30, 0x58, 0x78, 0x88, 0xA0, 0xB8, 0xC0, 0xD0,
                                               0x30, 0x58, 0x78, 0x88, 0xA0, 0xB8, 0xC0, 0xD0,
                                               0x30, 0x58, 0x78, 0x88, 0xA0, 0xB8, 0xC0, 0xD0};
-static const Bit32u MODE_2_LEVELS[] = {0, 10*3, 11*5, 11*7, 11*9, 11*12, 12*15, 14*15};
+static const Bit32u MODE_2_LEVELS[] = {10*1, 10*3, 11*5, 11*7, 11*9, 11*12, 12*15, 14*15};
 static const Bit32u MODE_2_LPF_AMP = 8;
 
 static const AReverbSettings REVERB_MODE_0_SETTINGS = {MODE_0_ALLPASSES, MODE_0_COMBS, MODE_0_OUTL, MODE_0_OUTR, MODE_0_COMB_FACTOR, MODE_0_COMB_FEEDBACK, MODE_0_LEVELS, MODE_0_LPF_AMP};
@@ -165,9 +165,7 @@ AReverbModel::~AReverbModel() {
 	close();
 }
 
-void AReverbModel::open(unsigned int /*sampleRate*/) {
-	// FIXME: filter sizes must be multiplied by sample rate to 32000Hz ratio
-	// IIR filter values depend on sample rate as well
+void AReverbModel::open() {
 	allpasses = new AllpassFilter*[NUM_ALLPASSES];
 	for (Bit32u i = 0; i < NUM_ALLPASSES; i++) {
 		allpasses[i] = new AllpassFilter(currentSettings.allpassSizes[i]);
@@ -218,10 +216,12 @@ void AReverbModel::setParameters(Bit8u time, Bit8u level) {
 // FIXME: wetLevel definitely needs ramping when changed
 // Although, most games don't set reverb level during MIDI playback
 	if (combs == NULL) return;
+	level &= 7;
+	time &= 7;
 	for (Bit32u i = 0; i < NUM_COMBS; i++) {
-		combs[i]->setFeedbackFactor(currentSettings.decayTimes[(i << 3) + (time & 7)] / 256.0f);
+		combs[i]->setFeedbackFactor(currentSettings.decayTimes[(i << 3) + time] / 256.0f);
 	}
-	wetLevel = 0.5f * lpfAmp * currentSettings.wetLevels[(level & 7)] / 256.0f;
+	wetLevel = (level == 0 && time == 0) ? 0.0f : 0.5f * lpfAmp * currentSettings.wetLevels[level] / 256.0f;
 }
 
 bool AReverbModel::isActive() const {
