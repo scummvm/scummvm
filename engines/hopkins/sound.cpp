@@ -221,6 +221,11 @@ void SoundManager::playAnim_SOUND(int soundNumber) {
 }
 
 void SoundManager::WSOUND(int soundNumber) {
+	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
+		if (soundNumber > 27)
+			return;
+	}
+
 	if (old_music != soundNumber || !MOD_FLAG) {
 		if (MOD_FLAG)
 			WSOUND_OFF();

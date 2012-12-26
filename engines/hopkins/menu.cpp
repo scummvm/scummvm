@@ -73,8 +73,9 @@ int MenuManager::menu() {
 		frame2Index = 0;
 		frame1Index = 0;
 
-
-		if (_vm->_globals._language == LANG_EN)
+		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+			_vm->_graphicsManager.loadImage("MENU");
+		else if (_vm->_globals._language == LANG_EN)
 			_vm->_graphicsManager.loadImage("MENUAN");
 		else if (_vm->_globals._language == LANG_FR)
 			_vm->_graphicsManager.loadImage("MENUFR");
@@ -82,7 +83,10 @@ int MenuManager::menu() {
 			_vm->_graphicsManager.loadImage("MENUES");
 
 		_vm->_graphicsManager.FADE_INW();
-		if (_vm->_globals._language == LANG_EN)
+
+		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENU.SPR");
+		else if (_vm->_globals._language == LANG_EN)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUAN.SPR");
 		else if (_vm->_globals._language == LANG_FR)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUFR.SPR");
