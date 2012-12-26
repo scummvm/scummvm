@@ -474,7 +474,7 @@ void ObjectsManager::displaySprite() {
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventX + _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventY + _vm->_dialogsManager._inventHeight);
 	}
 
-	if (SL_FLAG == true) {
+	if (SL_FLAG) {
 		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
 		if (SL_X && SL_Y)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, SL_SPR2, SL_X + _vm->_eventsManager._startPos.x + 300, SL_Y + 300, 0);
@@ -1145,7 +1145,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 	int idx = 0;
 	do {
 		++idx;
-		if (idx <= 20 && PERSO_ON == true) {
+		if (idx <= 20 && PERSO_ON) {
 			_vm->_globals._bob[idx].field1C = false;
 			continue;
 		}
@@ -1173,7 +1173,7 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(v20 + 2 * v24);
 			if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 				_vm->_globals._bob[idx]._xp = _vm->_globals.BL_ANIM[idx].v2;
-			if ( PERSO_ON == true && idx > 20 )
+			if ( PERSO_ON && idx > 20 )
 				_vm->_globals._bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
 			_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(v20 + 2 * v24 + 2);
@@ -1212,7 +1212,7 @@ LABEL_38:
 
 					if (_vm->_globals.BL_ANIM[idx].v1 == 1)
 						_vm->_globals._bob[idx]._xp = _vm->_globals.BL_ANIM[idx].v2;
-					if (PERSO_ON == true && idx > 20)
+					if (PERSO_ON && idx > 20)
 						_vm->_globals._bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
 					_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(v21 + 2);
@@ -1237,7 +1237,7 @@ LABEL_38:
 		}
 	} while (idx != 35);
 
-	if (!PERSO_ON && BOBTOUS == true) {
+	if (!PERSO_ON && BOBTOUS) {
 		for (int v26 = 0; v26 != 35; v26++) {
 			if (_vm->_globals._bob[v26].field0 == 10 && !_vm->_globals._bob[v26]._disabledAnimationFl)
 				_vm->_globals._bob[v26].field1C = true;
@@ -1247,7 +1247,7 @@ LABEL_38:
 	BOBTOUS = false;
 
 	for (int v27 = 1; v27 < 35; v27++) {
-		if (v27 > 20 || PERSO_ON != true) {
+		if (v27 > 20 || !PERSO_ON) {
 			if ((_vm->_globals._bob[v27].field0 == 10) && (_vm->_globals._bob[v27].field1C)) {
 				v14 = _vm->_globals._bob[v27].field1E;
 
@@ -1549,7 +1549,7 @@ void ObjectsManager::checkZone() {
 	        || _vm->_eventsManager._startPos.x >= v0
 	        || (v1 = _vm->_graphicsManager.ofscroll + 54, v0 >= v1)
 	        || (v1 = v2 - 1, (uint16)(v2 - 1) > 59)) {
-		if (_visibleFl == true)
+		if (_visibleFl)
 			FLAG_VISIBLE_EFFACE = 4;
 		_visibleFl = false;
 	} else {
@@ -1625,14 +1625,14 @@ LABEL_54:
 			_vm->_globals.old_x_69 = v0;
 			_vm->_globals.old_y_70 = v2;
 			_vm->_globals.old_zone_68 = v4;
-			if (_vm->_globals.NOMARCHE == true) {
+			if (_vm->_globals.NOMARCHE) {
 				if (_vm->_eventsManager._mouseCursorId == 4) {
 					v1 = v4 + 1;
 					if ((uint16)(v4 + 1) > 1u)
 						handleRightButton();
 				}
 			}
-			if ((_vm->_globals.PLAN_FLAG == true && v4 == -1) || !v4) {
+			if ((_vm->_globals.PLAN_FLAG && v4 == -1) || !v4) {
 				_verb = 0;
 				_vm->_eventsManager._mouseCursorId = 0;
 				_vm->_eventsManager.changeMouseCursor(0);
@@ -2208,13 +2208,13 @@ void ObjectsManager::GOHOME2() {
 				if (_vm->_globals.j_104 >= v0)
 					goto LABEL_19;
 			}
-			if (_vm->_globals.last_sens == 1)
+			if (_vm->_globals._lastDirection == 1)
 				setSpriteIndex(0, 0);
-			if (_vm->_globals.last_sens == 3)
+			if (_vm->_globals._lastDirection == 3)
 				setSpriteIndex(0, 1);
-			if (_vm->_globals.last_sens == 5)
+			if (_vm->_globals._lastDirection == 5)
 				setSpriteIndex(0, 2);
-			if (_vm->_globals.last_sens == 7)
+			if (_vm->_globals._lastDirection == 7)
 				setSpriteIndex(0, 3);
 
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -2223,16 +2223,16 @@ void ObjectsManager::GOHOME2() {
 			A_DEPA = 0;
 		} else {
 LABEL_19:
-			_vm->_globals.last_sens = nouveau_sens;
+			_vm->_globals._lastDirection = nouveau_sens;
 			setSpriteX(0, nouveau_x);
 			setSpriteY(0, nouveau_y);
-			if (_vm->_globals.last_sens == 1)
+			if (_vm->_globals._lastDirection == 1)
 				setSpriteIndex(0, 4);
-			if (_vm->_globals.last_sens == 3)
+			if (_vm->_globals._lastDirection == 3)
 				setSpriteIndex(0, 5);
-			if (_vm->_globals.last_sens == 5)
+			if (_vm->_globals._lastDirection == 5)
 				setSpriteIndex(0, 6);
-			if (_vm->_globals.last_sens == 7)
+			if (_vm->_globals._lastDirection == 7)
 				setSpriteIndex(0, 7);
 
 			if (my_anim++ > 1)
@@ -2446,7 +2446,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.Max_Perso_Y = 440;
 	_vm->_globals.NOSPRECRAN = true;
 	_vm->_globals.PLAN_FLAG = true;
-	_vm->_graphicsManager.NOFADE = false;
+	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.NOMARCHE = false;
 	_spritePtr = g_PTRNUL;
 	_vm->_globals._exitId = 0;
@@ -2497,7 +2497,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.FADE_INW();
 	_vm->_eventsManager.changeMouseCursor(4);
-	_vm->_graphicsManager.NOFADE = false;
+	_vm->_graphicsManager._noFadingFl = false;
 
 	do {
 		v5 = _vm->_eventsManager.getMouseButton();
@@ -2532,10 +2532,10 @@ void ObjectsManager::PLAN_BETA() {
 			v1 = 1;
 	} while (!_vm->shouldQuit() && v1 != 1);
 
-	if (!_vm->_graphicsManager.NOFADE)
+	if (!_vm->_graphicsManager._noFadingFl)
 		_vm->_graphicsManager.FADE_OUTW();
 	_vm->_globals.iRegul = 0;
-	_vm->_graphicsManager.NOFADE = false;
+	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.PLANX = getSpriteX(0);
 	_vm->_globals.PLANY = getSpriteY(0);
 	_vm->_globals.PLANI = 1;
@@ -2616,7 +2616,7 @@ void ObjectsManager::handleLeftButton() {
 			return;
 		}
 	}
-	if (_vm->_globals.PLAN_FLAG == true) {
+	if (_vm->_globals.PLAN_FLAG) {
 		if (!_vm->_globals.GOACTION)
 			goto LABEL_38;
 		checkZone();
@@ -2643,7 +2643,7 @@ void ObjectsManager::handleLeftButton() {
 		_vm->_globals._saveData->data[svField2] = 0;
 	}
 LABEL_38:
-	if (_vm->_globals.PLAN_FLAG == true && (_vm->_eventsManager._mouseCursorId != 4 || NUMZONE <= 0))
+	if (_vm->_globals.PLAN_FLAG && (_vm->_eventsManager._mouseCursorId != 4 || NUMZONE <= 0))
 		return;
 	if ((uint16)(NUMZONE + 1) > 1u) {
 		zoneCount = NUMZONE;
@@ -2674,7 +2674,6 @@ LABEL_38:
 			g_old_y = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
 			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || v9 == _vm->_globals.chemin) {
-LABEL_64:
 				_vm->_globals.g_old_sens = -1;
 				goto LABEL_65;
 			}
@@ -2702,12 +2701,13 @@ LABEL_64:
 			g_old_y = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
 			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || v9 == _vm->_globals.chemin)
-				goto LABEL_64;
+				_vm->_globals.g_old_sens = -1;
+			else
 LABEL_63:
-			_vm->_globals.chemin = v9;
+				_vm->_globals.chemin = v9;
 		}
 LABEL_65:
-		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG == true) {
+		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG) {
 			v17 = getSpriteY(0);
 			v18 = getSpriteX(0);
 			_vm->_globals.chemin = PARC_VOITURE(v18, v17, destX, destY);
@@ -2717,7 +2717,7 @@ LABEL_65:
 		// TODO: Reformat the weird if statement generated by the decompiler
 		if (_vm->_eventsManager._mouseCursorId == 23 || (_vm->_globals._saveData->data[svField1] = _vm->_eventsManager._mouseCursorId, _vm->_eventsManager._mouseCursorId == 23))
 			_vm->_globals._saveData->data[svField1] = 5;
-		if (_vm->_globals.PLAN_FLAG == true)
+		if (_vm->_globals.PLAN_FLAG)
 			_vm->_globals._saveData->data[svField1] = 6;
 		_vm->_globals._saveData->data[svField2] = NUMZONE;
 		_vm->_globals._saveData->data[svField3] = _vm->_globals._curObjectIndex;
@@ -2836,11 +2836,11 @@ LABEL_64:
 		_vm->_globals._saveData->data[svField1] = 0;
 		_vm->_globals._saveData->data[svField2] = 0;
 	}
-	if (_vm->_globals.PLAN_FLAG == true) {
+	if (_vm->_globals.PLAN_FLAG) {
 		_vm->_eventsManager._mouseCursorId = 0;
 		_vm->_eventsManager.changeMouseCursor(0);
 	}
-	if (_vm->_globals.NOMARCHE == true) {
+	if (_vm->_globals.NOMARCHE) {
 		if (_vm->_eventsManager._mouseCursorId == 4) {
 			result = NUMZONE + 1;
 			if ((uint16)(NUMZONE + 1) > 1u)
@@ -3026,15 +3026,13 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 void ObjectsManager::VERIFTAILLE() {
 	int v0 = _vm->_globals.STAILLE[getSpriteY(0)];
 	if (_vm->_globals.PERSO_TYPE == 1) {
-		int v1 = v0;
 		if (v0 < 0)
-			v1 = -v0;
-		v0 = 20 * (5 * v1 - 100) / -80;
+			v0 = -v0;
+		v0 = 20 * (5 * v0 - 100) / -80;
 	} else if (_vm->_globals.PERSO_TYPE == 2) {
-		int v2 = v0;
 		if (v0 < 0)
-			v2 = -v0;
-		v0 = 20 * (5 * v2 - 165) / -67;
+			v0 = -v0;
+		v0 = 20 * (5 * v0 - 165) / -67;
 	}
 	SETTAILLESPR(0, v0);
 }
@@ -3502,7 +3500,7 @@ void ObjectsManager::VERBEPLUS() {
 		do {
 			_vm->_eventsManager._mouseCursorId = 4;
 LABEL_24:
-			if (_vm->_globals.NOMARCHE != true || (v = NUMZONE + 1, (uint16)(NUMZONE + 1) <= 1u)) {
+			if (!_vm->_globals.NOMARCHE || (v = NUMZONE + 1, (uint16)(NUMZONE + 1) <= 1u)) {
 				if (_vm->_eventsManager._mouseCursorId == 4)
 					return;
 			} else {
@@ -4669,10 +4667,10 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 		_vm->_graphicsManager.FADE_INW();
 		_vm->_globals.iRegul = 1;
 		_vm->_globals._disableInventFl = false;
-		_vm->_graphicsManager.NOFADE = true;
+		_vm->_graphicsManager._noFadingFl = true;
 		_vm->_globals.NOPARLE = true;
 		_vm->_talkManager.PARLER_PERSO("MAGE1.pe2");
-		_vm->_graphicsManager.NOFADE = true;
+		_vm->_graphicsManager._noFadingFl = true;
 		_vm->_globals._disableInventFl = false;
 	}
 	if (_vm->_globals._screenId == 17 && _vm->_globals.OLD_ECRAN == 20) {
@@ -4709,7 +4707,7 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 		VBOB_OFF(5);
 		for (int v7 = 0; v7 <= 3; v7++)
 			_vm->_eventsManager.VBL();
-		_vm->_graphicsManager.NOFADE = true;
+		_vm->_graphicsManager._noFadingFl = true;
 		_vm->_globals._disableInventFl = false;
 	}
 }
@@ -5197,7 +5195,7 @@ void ObjectsManager::TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6) 
 					_vm->_graphicsManager.FADE_LINUX = 2;
 					_vm->_animationManager.playAnim("CREVE2.ANM", 100, 24, 500);
 					_vm->_globals._exitId = 150;
-					_vm->_graphicsManager.NOFADE = true;
+					_vm->_graphicsManager._noFadingFl = true;
 					BOB_OFF(1);
 					BOB_OFF(2);
 					BOB_OFF(3);
@@ -5338,7 +5336,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager.ofscroll = 0;
 	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_globals.PLAN_FLAG = false;
-	_vm->_graphicsManager.NOFADE = false;
+	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.NOMARCHE = false;
 	_vm->_globals._exitId = 0;
 	_vm->_globals.AFFLI = false;
@@ -5418,9 +5416,9 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 
 	_vm->_globals.BPP_NOAFF = false;
 	_vm->_globals.iRegul = 1;
-	if (!_vm->_graphicsManager.NOFADE)
+	if (!_vm->_graphicsManager._noFadingFl)
 		_vm->_graphicsManager.FADE_INW();
-	_vm->_graphicsManager.NOFADE = false;
+	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_eventsManager.changeMouseCursor(4);
 
 	int xCheck = 0;
@@ -5466,9 +5464,9 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	}
 
 	if (_vm->_globals._exitId != 8 || _vm->_globals._screenId != 5 || !_vm->_globals._helicopterFl) {
-		if (!_vm->_graphicsManager.NOFADE)
+		if (!_vm->_graphicsManager._noFadingFl)
 			_vm->_graphicsManager.FADE_OUTW();
-		_vm->_graphicsManager.NOFADE = false;
+		_vm->_graphicsManager._noFadingFl = false;
 		removeSprite(0);
 		_vm->_globals.AFFLI = false;
 		if (_twoCharactersFl) {

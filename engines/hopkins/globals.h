@@ -357,7 +357,7 @@ public:
 	bool CENSURE;
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;
-	int last_sens;
+	int _lastDirection;
 	byte *police;
 	int police_l;
 	int police_h;
@@ -465,7 +465,7 @@ public:
 	int Credit_l;
 	int Credit_h;
 
-	int OCEAN_SENS;
+	int _oceanDirection;
 
 	Globals();
 	~Globals();

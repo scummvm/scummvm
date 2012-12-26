@@ -5460,13 +5460,13 @@ void HopkinsEngine::BTOCEAN() {
 			int oldPosY = _eventsManager.getMouseY();
 			bool displAnim = false;
 			if (_objectsManager.NUMZONE == 1) {
-				if (_globals.OCEAN_SENS == 3)
+				if (_globals._oceanDirection == 3)
 					_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, 0);
-				else if (_globals.OCEAN_SENS == 1)
+				else if (_globals._oceanDirection == 1)
 					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, 0);
-				else if (_globals.OCEAN_SENS == 5)
+				else if (_globals._oceanDirection == 5)
 					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, 0);
-				_globals.OCEAN_SENS = 7;
+				_globals._oceanDirection = 7;
 				_globals._exitId = 1;
 				int oldX = _objectsManager.getSpriteX(0);
 				for (;;) {
@@ -5492,13 +5492,13 @@ void HopkinsEngine::BTOCEAN() {
 			}
 LABEL_22:
 			if (_objectsManager.NUMZONE == 2) {
-				if (_globals.OCEAN_SENS == 7)
+				if (_globals._oceanDirection == 7)
 					_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
-				else if (_globals.OCEAN_SENS == 1)
+				else if (_globals._oceanDirection == 1)
 					_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
-				else if (_globals.OCEAN_SENS == 5)
+				else if (_globals._oceanDirection == 5)
 					_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, 0);
-				_globals.OCEAN_SENS = 3;
+				_globals._oceanDirection = 3;
 				_globals._exitId = 2;
 				int oldX = _objectsManager.getSpriteX(0);
 				for (;;) {
@@ -5524,7 +5524,7 @@ LABEL_22:
 			}
 LABEL_41:
 			if (_objectsManager.NUMZONE == 3) {
-				if (_globals.OCEAN_SENS == 3) {
+				if (_globals._oceanDirection == 3) {
 					int oldX = _objectsManager.getSpriteX(0);
 					do {
 						if (_globals._speed == 1)
@@ -5549,7 +5549,7 @@ LABEL_41:
 						_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, 0);
 				}
 LABEL_57:
-				if (_globals.OCEAN_SENS == 7) {
+				if (_globals._oceanDirection == 7) {
 					int oldX = _objectsManager.getSpriteX(0);
 					do {
 						if (_globals._speed == 1)
@@ -5574,13 +5574,13 @@ LABEL_57:
 						_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, 0);
 				}
 LABEL_72:
-				if (_globals.OCEAN_SENS == 5)
+				if (_globals._oceanDirection == 5)
 					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, 0);
-				_globals.OCEAN_SENS = 1;
+				_globals._oceanDirection = 1;
 				_globals._exitId = 3;
 			}
 			if (_objectsManager.NUMZONE == 4) {
-				if (_globals.OCEAN_SENS == 3) {
+				if (_globals._oceanDirection == 3) {
 					int oldX = _objectsManager.getSpriteX(0);
 					do {
 						if (_globals._speed == 1)
@@ -5605,7 +5605,7 @@ LABEL_72:
 						_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, 0);
 				}
 LABEL_91:
-				if (_globals.OCEAN_SENS == 7) {
+				if (_globals._oceanDirection == 7) {
 					int oldX = _objectsManager.getSpriteX(0);
 					for (;;) {
 						if (_globals._speed == 1)
@@ -5630,9 +5630,9 @@ LABEL_91:
 						}
 					}
 				}
-				if (_globals.OCEAN_SENS == 1)
+				if (_globals._oceanDirection == 1)
 					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, 0);
-				_globals.OCEAN_SENS = 5;
+				_globals._oceanDirection = 5;
 				_globals._exitId = 4;
 			}
 		}
@@ -5640,19 +5640,19 @@ LABEL_91:
 }
 
 void HopkinsEngine::OCEAN_HOME() {
-	if (_globals.OCEAN_SENS == 3)
+	if (_globals._oceanDirection == 3)
 		_objectsManager.setSpriteIndex(0, 0);
-	if (_globals.OCEAN_SENS == 7)
+	else if (_globals._oceanDirection == 7)
 		_objectsManager.setSpriteIndex(0, 18);
-	if (_globals.OCEAN_SENS == 1)
+	else if (_globals._oceanDirection == 1)
 		_objectsManager.setSpriteIndex(0, 27);
-	if (_globals.OCEAN_SENS == 5)
+	else if (_globals._oceanDirection == 5)
 		_objectsManager.setSpriteIndex(0, 9);
 }
 
 void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, int16 defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
 	_globals.PLAN_FLAG = false;
-	_graphicsManager.NOFADE = false;
+	_graphicsManager._noFadingFl = false;
 	_globals.NOMARCHE = false;
 	_globals._exitId = 0;
 	_globals.AFFLI = false;
@@ -5682,10 +5682,10 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	if (!exit4)
 		_objectsManager.disableZone(4);
 
-	if (!_globals.OCEAN_SENS)
-		_globals.OCEAN_SENS = defaultDirection;
+	if (!_globals._oceanDirection)
+		_globals._oceanDirection = defaultDirection;
 
-	switch (_globals.OCEAN_SENS) {
+	switch (_globals._oceanDirection) {
 	case 1:
 		_objectsManager._characterPos.x = 236;
 		_objectsManager.PERI = 27;
@@ -5717,9 +5717,9 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
 
-	if (!_graphicsManager.NOFADE)
+	if (!_graphicsManager._noFadingFl)
 		_graphicsManager.FADE_INW();
-	_graphicsManager.NOFADE = false;
+	_graphicsManager._noFadingFl = false;
 	_globals.iRegul = 1;
 
 	bool loopCond = false;

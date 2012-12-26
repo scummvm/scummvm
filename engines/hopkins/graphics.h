@@ -95,7 +95,7 @@ public:
 	int _width;
 	int Compteur_y;
 	int spec_largeur;
-	bool NOFADE;
+	bool _noFadingFl;
 public:
 	GraphicsManager();
 	~GraphicsManager();

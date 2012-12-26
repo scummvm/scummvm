@@ -336,7 +336,7 @@ void EventsManager::VBL() {
 		}
 		_vm->_graphicsManager.unlockScreen();
 	}
-	if (_mouseFl == true) {
+	if (_mouseFl) {
 		v1 = 20;
 		if (!_mouseLinuxFl)
 			v1 = 10;
@@ -382,7 +382,7 @@ LABEL_34:
 LABEL_35:
 	if (!_vm->_globals.PUBEXIT)
 		_vm->_objectsManager.displaySprite();
-	if (_mouseFl != true) {
+	if (!_mouseFl) {
 		updateCursor();
 		goto LABEL_54;
 	}
@@ -415,7 +415,7 @@ LABEL_54:
 			while (_breakoutFl || _vm->_globals.iRegul != 1) {
 				checkForNextFrameCounter();
 
-				if (_breakoutFl != true)
+				if (!_breakoutFl)
 					goto LABEL_63;
 				if (_rateCounter > 1)
 					goto LABEL_65;

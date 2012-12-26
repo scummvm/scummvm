@@ -296,15 +296,15 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		if (_vm->_globals.iRegul != 1)
 			break;
 		for (;;) {
-			if (_vm->_eventsManager._escKeyFl == true)
+			if (_vm->_eventsManager._escKeyFl)
 				goto LABEL_114;
-			if (redrawAnim() == true)
+			if (redrawAnim())
 				break;
 			_vm->_eventsManager.refreshEvents();
 			if (_vm->_eventsManager._rateCounter >= a2)
 				goto LABEL_48;
 		}
-		if (_vm->_graphicsManager._skipVideoLockFl == true)
+		if (_vm->_graphicsManager._skipVideoLockFl)
 			goto LABEL_114;
 		if (v8 == 1)
 			ptr = _vm->_globals.freeMemory(ptr);
@@ -376,9 +376,9 @@ LABEL_77:
 LABEL_88:
 		if (v5 == -1) {
 			if (_vm->_globals.iRegul == 1) {
-				while (_vm->_eventsManager._escKeyFl != true) {
-					if (redrawAnim() == true) {
-						if (_vm->_graphicsManager._skipVideoLockFl == true)
+				while (!_vm->_eventsManager._escKeyFl) {
+					if (redrawAnim()) {
+						if (_vm->_graphicsManager._skipVideoLockFl)
 							goto LABEL_114;
 						if (v8 == 1)
 							ptr = _vm->_globals.freeMemory(ptr);
@@ -418,9 +418,9 @@ LABEL_88:
 			goto LABEL_114;
 		}
 	}
-	while (_vm->_eventsManager._escKeyFl != true) {
-		if (redrawAnim() == true) {
-			if (_vm->_graphicsManager._skipVideoLockFl == true)
+	while (!_vm->_eventsManager._escKeyFl) {
+		if (redrawAnim()) {
+			if (_vm->_graphicsManager._skipVideoLockFl)
 				break;
 			if (v8 == 1)
 				ptr = _vm->_globals.freeMemory(ptr);
@@ -871,7 +871,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_soundManager.LOAD_ANM_SOUND();
 		if (_vm->_globals.iRegul == 1) {
 			do {
-				if (_vm->_eventsManager._escKeyFl == true) {
+				if (_vm->_eventsManager._escKeyFl) {
 					if (!_vm->_eventsManager._disableEscKeyFl)
 						goto LABEL_59;
 					_vm->_eventsManager._escKeyFl = false;
@@ -914,7 +914,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			f.read(v9, READ_LE_UINT32(v10 + 8));
 			if (_vm->_globals.iRegul == 1) {
 				do {
-					if (_vm->_eventsManager._escKeyFl == true) {
+					if (_vm->_eventsManager._escKeyFl) {
 						if (!_vm->_eventsManager._disableEscKeyFl)
 							goto LABEL_59;
 						_vm->_eventsManager._escKeyFl = false;
@@ -941,7 +941,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 	if (_vm->_globals.iRegul == 1) {
 		do {
-			if (_vm->_eventsManager._escKeyFl == true) {
+			if (_vm->_eventsManager._escKeyFl) {
 				if (!_vm->_eventsManager._disableEscKeyFl)
 					goto LABEL_59;
 				_vm->_eventsManager._escKeyFl = false;
@@ -1031,9 +1031,9 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		if (_vm->_globals.iRegul != 1)
 			break;
 		while (!_vm->shouldQuit()) {
-			if (_vm->_eventsManager._escKeyFl == true)
+			if (_vm->_eventsManager._escKeyFl)
 				goto LABEL_54;
-			if (redrawAnim() == true)
+			if (redrawAnim())
 				break;
 			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.VERIF_SOUND();
@@ -1041,7 +1041,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 				goto LABEL_23;
 		}
 LABEL_48:
-		if (_vm->_graphicsManager._skipVideoLockFl == true)
+		if (_vm->_graphicsManager._skipVideoLockFl)
 			goto LABEL_54;
 		if (v7 == 1)
 			ptr = _vm->_globals.freeMemory(ptr);
@@ -1083,8 +1083,8 @@ LABEL_33:
 LABEL_44:
 		if (v4) {
 			if (_vm->_globals.iRegul == 1) {
-				while (_vm->_eventsManager._escKeyFl != true) {
-					if (redrawAnim() == true)
+				while (!_vm->_eventsManager._escKeyFl) {
+					if (redrawAnim())
 						goto LABEL_48;
 					_vm->_eventsManager.refreshEvents();
 					_vm->_soundManager.VERIF_SOUND();
@@ -1098,9 +1098,9 @@ LABEL_53:
 			goto LABEL_54;
 		}
 	}
-	while (_vm->_eventsManager._escKeyFl != true) {
+	while (!_vm->_eventsManager._escKeyFl) {
 		_vm->_eventsManager.refreshEvents();
-		if (redrawAnim() == true)
+		if (redrawAnim())
 			goto LABEL_48;
 		if (_vm->_eventsManager._rateCounter >= rate2)
 			goto LABEL_33;

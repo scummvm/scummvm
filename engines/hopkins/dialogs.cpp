@@ -426,7 +426,7 @@ LABEL_7:
 					}
 				}
 			}
-			if (_removeInventFl == true)
+			if (_removeInventFl)
 				v20 = true;
 			if (v20)
 				break;

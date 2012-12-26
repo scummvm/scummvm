@@ -127,7 +127,7 @@ Globals::Globals() {
 	g_old_anim = 0;
 	g_old_sens = 0;
 	g_old_sens2 = 0;
-	last_sens = 0;
+	_lastDirection = 0;
 	police_l = police_h = 0;
 	TETE = NULL;
 	texte_long = 0;
@@ -189,7 +189,7 @@ Globals::Globals() {
 	Credit_l = 0;
 	Credit_h = 0;
 
-	OCEAN_SENS = 0;
+	_oceanDirection = 0;
 
 	// Initialise pointers
 	ICONE = NULL;

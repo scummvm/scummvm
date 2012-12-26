@@ -694,7 +694,7 @@ LABEL_1141:
 		case 37:
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			_vm->_animationManager.playSequence2("corde.SEQ", 32, 32, 100);
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			break;
 
 		case 38:
@@ -709,7 +709,7 @@ LABEL_1141:
 			_vm->_soundManager.DEL_SAMPLE(1);
 			_vm->_soundManager.DEL_SAMPLE(2);
 			_vm->_soundManager.DEL_SAMPLE(3);
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			break;
 
 		case 40:
@@ -891,7 +891,7 @@ LABEL_1141:
 			} while (_vm->_objectsManager.BOBPOSI(12) != 34);
 			_vm->_objectsManager.stopBobAnimation(2);
 			_vm->_graphicsManager.FADE_OUTW();
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._exitId = 20;
 			break;
 			}
@@ -1930,7 +1930,7 @@ LABEL_1141:
 			_vm->_animationManager.playSequence("SECRET2.SEQ", 1, 12, 100);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_animationManager.NO_SEQ = false;
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_graphicsManager.FADE_OUTW();
 
 			for (int i = 1; i <= 39; i++) {
@@ -2063,7 +2063,7 @@ LABEL_1141:
 			_vm->_globals.NOPARLE = false;
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_objectsManager.stopBobAnimation(13);
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._exitId = 94;
 			break;
 			}
@@ -2270,7 +2270,7 @@ LABEL_1141:
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.playSequence2("TUNNEL.SEQ", 1, 18, 20);
 			_vm->_animationManager.NO_SEQ = false;
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_graphicsManager.FADE_OUTW();
 			_vm->_objectsManager.PERSO_ON = false;
 			_vm->_globals._exitId = 100;
@@ -2321,7 +2321,7 @@ LABEL_1141:
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._exitId = 151;
 			break;
 
@@ -2336,7 +2336,7 @@ LABEL_1141:
 			else if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			_vm->_globals._exitId = 151;
 			break;
@@ -2354,7 +2354,7 @@ LABEL_1141:
 			else if (_vm->_globals.SVGA == 2)
 				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
-			_vm->_graphicsManager.NOFADE = true;
+			_vm->_graphicsManager._noFadingFl = true;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			_vm->_globals._exitId = 151;
 			break;
