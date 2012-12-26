@@ -176,7 +176,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 	CopyAsm16(_vesaBuffer);
 	unlockScreen();
 
-	FADE_IN_CASSE();
+	fadeInBreakout();
 }
 
 /**
@@ -734,17 +734,17 @@ void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
 	_palette[palOffset + 1] = gv;
 	_palette[palOffset + 2] = bv;
 
-	WRITE_LE_UINT16(&SD_PIXELS[2 * palIndex], MapRGB(rv, gv, bv));
+	WRITE_LE_UINT16(&SD_PIXELS[2 * palIndex], mapRGB(rv, gv, bv));
 }
 
 void GraphicsManager::changePalette(const byte *palette) {
 	const byte *srcP = &palette[0];
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
-		*(uint16 *)&SD_PIXELS[2 * idx] = MapRGB(*srcP, *(srcP + 1), *(srcP + 2));
+		*(uint16 *)&SD_PIXELS[2 * idx] = mapRGB(*srcP, *(srcP + 1), *(srcP + 2));
 	}
 }
 
-uint16 GraphicsManager::MapRGB(byte r, byte g, byte b) {
+uint16 GraphicsManager::mapRGB(byte r, byte g, byte b) {
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 
 	return (r >> format.rLoss) << format.rShift
@@ -767,7 +767,7 @@ void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
 	fadeIn(_palette, FADESPD, surface);
 }
 
-void GraphicsManager::FADE_IN_CASSE() {
+void GraphicsManager::fadeInBreakout() {
 	setpal_vga256(_palette);
 	lockScreen();
 	CopyAsm16(_vesaBuffer);
@@ -775,7 +775,7 @@ void GraphicsManager::FADE_IN_CASSE() {
 	DD_VBL();
 }
 
-void GraphicsManager::FADE_OUT_CASSE() {
+void GraphicsManager::fateOutBreakout() {
 	byte palette[PALETTE_EXT_BLOCK_SIZE];
 
 	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
@@ -842,67 +842,6 @@ Video_Cont3_wVbe:
 			}
 		} else {
 			*(destOffset + destSurface) = srcByte;
-			++srcP;
-			++destOffset;
-		}
-	}}
-
-void GraphicsManager::Copy_Video_Vbe3(const byte *srcData) {
-	int rleValue;
-	int destOffset;
-	const byte *srcP;
-	uint8 srcByte;
-	int destLen1;
-	byte *destSlice1P;
-	int destLen2;
-	byte *destSlice2P;
-
-	assert(_videoPtr);
-	rleValue = 0;
-	destOffset = 0;
-	srcP = srcData;
-	for (;;) {
-		srcByte = *srcP;
-		if (*srcP < 222)
-			goto Video_Cont3_Vbe;
-
-		if (srcByte == kByteStop)
-			return;
-		if (srcByte < kSetOffset) {
-			destOffset += *srcP + 35;
-			srcByte = *(srcP++ + 1);
-		} else if (srcByte == k8bVal) {
-			destOffset += *(srcP + 1);
-			srcByte = *(srcP + 2);
-			srcP += 2;
-		} else if (srcByte == k16bVal) {
-			destOffset += READ_LE_UINT16(srcP + 1);
-			srcByte = *(srcP + 3);
-			srcP += 3;
-		} else {
-			destOffset += READ_LE_UINT32(srcP + 1);
-			srcByte = *(srcP + 5);
-			srcP += 5;
-		}
-Video_Cont3_Vbe:
-		if (srcByte > 210) {
-			if (srcByte == 211) {
-				destLen1 = *(srcP + 1);
-				rleValue = *(srcP + 2);
-				destSlice1P = destOffset + (byte *)_videoPtr->pixels;
-				destOffset += destLen1;
-				memset(destSlice1P, rleValue, destLen1);
-				srcP += 3;
-			} else {
-				destLen2 = (byte)(*srcP + 45);
-				rleValue = *(srcP + 1);
-				destSlice2P = (byte *)(destOffset + (byte *)_videoPtr->pixels);
-				destOffset += destLen2;
-				memset(destSlice2P, rleValue, destLen2);
-				srcP += 2;
-			}
-		} else {
-			*(destOffset + (byte *)_videoPtr->pixels) = srcByte;
 			++srcP;
 			++destOffset;
 		}
@@ -2029,10 +1968,6 @@ void GraphicsManager::SHOW_PALETTE() {
 	setpal_vga256(_palette);
 }
 
-void GraphicsManager::videkey() {
-	// Empty in original
-}
-
 void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
 	int result;
 	int destOffset;
@@ -2116,9 +2051,6 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 	Red_x = 0;
 	Red_y = 0;
 	if (zoom < 100) {
-		Reduc_Ecran_L = zoomOut(width, Red);
-		Reduc_Ecran_H = zoomOut(height, Red);
-
 		for (int yCtr = 0; yCtr < height; ++yCtr, srcP += _lineNbr2) {
 			Red_y += Red;
 			if (Red_y < 100) {

@@ -105,7 +105,7 @@ private:
 
 	void BTOCEAN();
 	void OCEAN_HOME();
-	void OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId);
+	void OCEAN(int16 curExitId, Common::String backgroundFilename, int16 defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId);
 	void loadCredits();
 	void displayCredits(int startPosY, byte *buffer, char colour);
 	void displayCredits();

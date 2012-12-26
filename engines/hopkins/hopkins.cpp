@@ -1453,55 +1453,55 @@ bool HopkinsEngine::runOS2Full() {
 			break;
 
 		case 77:
-			OCEAN(77, "OCEAN01", "OCEAN01", 3, 0, 84, 0, 0, 25);
+			OCEAN(77, "OCEAN01", 3, 0, 84, 0, 0, 25);
 			break;
 
 		case 78:
-			OCEAN(78, "OCEAN02", "OCEAN01", 1, 0, 91, 84, 0, 25);
+			OCEAN(78, "OCEAN02", 1, 0, 91, 84, 0, 25);
 			break;
 
 		case 79:
-			OCEAN(79, "OCEAN03", "OCEAN01", 7, 87, 0, 0, 83, 25);
+			OCEAN(79, "OCEAN03", 7, 87, 0, 0, 83, 25);
 			break;
 
 		case 80:
-			OCEAN(80, "OCEAN04", "OCEAN01", 1, 86, 88, 0, 81, 25);
+			OCEAN(80, "OCEAN04", 1, 86, 88, 0, 81, 25);
 			break;
 
 		case 81:
-			OCEAN(81, "OCEAN05", "OCEAN01", 1, 91, 82, 80, 85, 25);
+			OCEAN(81, "OCEAN05", 1, 91, 82, 80, 85, 25);
 			break;
 
 		case 82:
-			OCEAN(82, "OCEAN06", "OCEAN01", 7, 81, 0, 88, 0, 25);
+			OCEAN(82, "OCEAN06", 7, 81, 0, 88, 0, 25);
 			break;
 
 		case 83:
-			OCEAN(83, "OCEAN07", "OCEAN01", 1, 89, 0, 79, 88, 25);
+			OCEAN(83, "OCEAN07", 1, 89, 0, 79, 88, 25);
 			break;
 
 		case 84:
-			OCEAN(84, "OCEAN08", "OCEAN01", 1, 77, 0, 0, 78, 25);
+			OCEAN(84, "OCEAN08", 1, 77, 0, 0, 78, 25);
 			break;
 
 		case 85:
-			OCEAN(85, "OCEAN09", "OCEAN01", 1, 0, 0, 81, 0, 25);
+			OCEAN(85, "OCEAN09", 1, 0, 0, 81, 0, 25);
 			break;
 
 		case 86:
-			OCEAN(86, "OCEAN10", "OCEAN01", 1, 0, 80, 0, 91, 25);
+			OCEAN(86, "OCEAN10", 1, 0, 80, 0, 91, 25);
 			break;
 
 		case 87:
-			OCEAN(87, "OCEAN11", "OCEAN01", 3, 0, 79, 90, 0, 25);
+			OCEAN(87, "OCEAN11", 3, 0, 79, 90, 0, 25);
 			break;
 
 		case 88:
-			OCEAN(88, "OCEAN12", "OCEAN01", 1, 80, 0, 83, 82, 25);
+			OCEAN(88, "OCEAN12", 1, 80, 0, 83, 82, 25);
 			break;
 
 		case 89:
-			OCEAN(89, "OCEAN13", "OCEAN01", 3, 0, 83, 0, 0, 25);
+			OCEAN(89, "OCEAN13", 3, 0, 83, 0, 0, 25);
 			break;
 
 		case 90:
@@ -1509,7 +1509,7 @@ bool HopkinsEngine::runOS2Full() {
 			break;
 
 		case 91:
-			OCEAN(91, "OCEAN15", "OCEAN01", 3, 78, 81, 86, 0, 25);
+			OCEAN(91, "OCEAN15", 3, 78, 81, 86, 0, 25);
 			break;
 
 		case 93:
@@ -2341,55 +2341,55 @@ bool HopkinsEngine::runBeOSFull() {
 			break;
 
 		case 77:
-			OCEAN(77, "OCEAN01", "OCEAN1", 3, 0, 84, 0, 0, 25);
+			OCEAN(77, "OCEAN01", 3, 0, 84, 0, 0, 25);
 			break;
 
 		case 78:
-			OCEAN(78, "OCEAN02", "OCEAN1", 1, 0, 91, 84, 0, 25);
+			OCEAN(78, "OCEAN02", 1, 0, 91, 84, 0, 25);
 			break;
 
 		case 79:
-			OCEAN(79, "OCEAN03", "OCEAN1", 7, 87, 0, 0, 83, 25);
+			OCEAN(79, "OCEAN03", 7, 87, 0, 0, 83, 25);
 			break;
 
 		case 80:
-			OCEAN(80, "OCEAN04", "OCEAN1", 1, 86, 88, 0, 81, 25);
+			OCEAN(80, "OCEAN04", 1, 86, 88, 0, 81, 25);
 			break;
 
 		case 81:
-			OCEAN(81, "OCEAN05", "OCEAN1", 1, 91, 82, 80, 85, 25);
+			OCEAN(81, "OCEAN05", 1, 91, 82, 80, 85, 25);
 			break;
 
 		case 82:
-			OCEAN(82, "OCEAN06", "OCEAN1", 7, 81, 0, 88, 0, 25);
+			OCEAN(82, "OCEAN06", 7, 81, 0, 88, 0, 25);
 			break;
 
 		case 83:
-			OCEAN(83, "OCEAN07", "OCEAN1", 1, 89, 0, 79, 88, 25);
+			OCEAN(83, "OCEAN07", 1, 89, 0, 79, 88, 25);
 			break;
 
 		case 84:
-			OCEAN(84, "OCEAN08", "OCEAN1", 1, 77, 0, 0, 78, 25);
+			OCEAN(84, "OCEAN08", 1, 77, 0, 0, 78, 25);
 			break;
 
 		case 85:
-			OCEAN(85, "OCEAN09", "OCEAN1", 1, 0, 0, 81, 0, 25);
+			OCEAN(85, "OCEAN09", 1, 0, 0, 81, 0, 25);
 			break;
 
 		case 86:
-			OCEAN(86, "OCEAN10", "OCEAN1", 1, 0, 80, 0, 91, 25);
+			OCEAN(86, "OCEAN10", 1, 0, 80, 0, 91, 25);
 			break;
 
 		case 87:
-			OCEAN(87, "OCEAN11", "OCEAN1", 3, 0, 79, 90, 0, 25);
+			OCEAN(87, "OCEAN11", 3, 0, 79, 90, 0, 25);
 			break;
 
 		case 88:
-			OCEAN(88, "OCEAN12", "OCEAN1", 1, 80, 0, 83, 82, 25);
+			OCEAN(88, "OCEAN12", 1, 80, 0, 83, 82, 25);
 			break;
 
 		case 89:
-			OCEAN(89, "OCEAN13", "OCEAN1", 3, 0, 83, 0, 0, 25);
+			OCEAN(89, "OCEAN13", 3, 0, 83, 0, 0, 25);
 			break;
 
 		case 90:
@@ -2397,7 +2397,7 @@ bool HopkinsEngine::runBeOSFull() {
 			break;
 
 		case 91:
-			OCEAN(91, "OCEAN15", "OCEAN1", 3, 78, 81, 86, 0, 25);
+			OCEAN(91, "OCEAN15", 3, 78, 81, 86, 0, 25);
 			break;
 
 		case 93:
@@ -3226,55 +3226,55 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 77:
-			OCEAN(77, "OCEAN01", "OCEAN1", 3, 0, 84, 0, 0, 25);
+			OCEAN(77, "OCEAN01", 3, 0, 84, 0, 0, 25);
 			break;
 
 		case 78:
-			OCEAN(78, "OCEAN02", "OCEAN1", 1, 0, 91, 84, 0, 25);
+			OCEAN(78, "OCEAN02", 1, 0, 91, 84, 0, 25);
 			break;
 
 		case 79:
-			OCEAN(79, "OCEAN03", "OCEAN1", 7, 87, 0, 0, 83, 25);
+			OCEAN(79, "OCEAN03", 7, 87, 0, 0, 83, 25);
 			break;
 
 		case 80:
-			OCEAN(80, "OCEAN04", "OCEAN1", 1, 86, 88, 0, 81, 25);
+			OCEAN(80, "OCEAN04", 1, 86, 88, 0, 81, 25);
 			break;
 
 		case 81:
-			OCEAN(81, "OCEAN05", "OCEAN1", 1, 91, 82, 80, 85, 25);
+			OCEAN(81, "OCEAN05", 1, 91, 82, 80, 85, 25);
 			break;
 
 		case 82:
-			OCEAN(82, "OCEAN06", "OCEAN1", 7, 81, 0, 88, 0, 25);
+			OCEAN(82, "OCEAN06", 7, 81, 0, 88, 0, 25);
 			break;
 
 		case 83:
-			OCEAN(83, "OCEAN07", "OCEAN1", 1, 89, 0, 79, 88, 25);
+			OCEAN(83, "OCEAN07", 1, 89, 0, 79, 88, 25);
 			break;
 
 		case 84:
-			OCEAN(84, "OCEAN08", "OCEAN1", 1, 77, 0, 0, 78, 25);
+			OCEAN(84, "OCEAN08", 1, 77, 0, 0, 78, 25);
 			break;
 
 		case 85:
-			OCEAN(85, "OCEAN09", "OCEAN1", 1, 0, 0, 81, 0, 25);
+			OCEAN(85, "OCEAN09", 1, 0, 0, 81, 0, 25);
 			break;
 
 		case 86:
-			OCEAN(86, "OCEAN10", "OCEAN1", 1, 0, 80, 0, 91, 25);
+			OCEAN(86, "OCEAN10", 1, 0, 80, 0, 91, 25);
 			break;
 
 		case 87:
-			OCEAN(87, "OCEAN11", "OCEAN1", 3, 0, 79, 90, 0, 25);
+			OCEAN(87, "OCEAN11", 3, 0, 79, 90, 0, 25);
 			break;
 
 		case 88:
-			OCEAN(88, "OCEAN12", "OCEAN1", 1, 80, 0, 83, 82, 25);
+			OCEAN(88, "OCEAN12", 1, 80, 0, 83, 82, 25);
 			break;
 
 		case 89:
-			OCEAN(89, "OCEAN13", "OCEAN1", 3, 0, 83, 0, 0, 25);
+			OCEAN(89, "OCEAN13", 3, 0, 83, 0, 0, 25);
 			break;
 
 		case 90:
@@ -3282,7 +3282,7 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 91:
-			OCEAN(91, "OCEAN15", "OCEAN1", 3, 78, 81, 86, 0, 25);
+			OCEAN(91, "OCEAN15", 3, 78, 81, 86, 0, 25);
 			break;
 
 		case 93:
@@ -4104,63 +4104,63 @@ bool HopkinsEngine::runLinuxFull() {
 			break;
 
 		case 77:
-			OCEAN(77, "OCEAN01", "OCEAN1", 3, 0, 84, 0, 0, 25);
+			OCEAN(77, "OCEAN01", 3, 0, 84, 0, 0, 25);
 			break;
 
 		case 78:
-			OCEAN(78, "OCEAN02", "OCEAN1", 1, 0, 91, 84, 0, 25);
+			OCEAN(78, "OCEAN02", 1, 0, 91, 84, 0, 25);
 			break;
 
 		case 79:
-			OCEAN(79, "OCEAN03", "OCEAN1", 7, 87, 0, 0, 83, 25);
+			OCEAN(79, "OCEAN03", 7, 87, 0, 0, 83, 25);
 			break;
 
 		case 80:
-			OCEAN(80, "OCEAN04", "OCEAN1", 1, 86, 88, 0, 81, 25);
+			OCEAN(80, "OCEAN04", 1, 86, 88, 0, 81, 25);
 			break;
 
 		case 81:
-			OCEAN(81, "OCEAN05", "OCEAN1", 1, 91, 82, 80, 85, 25);
+			OCEAN(81, "OCEAN05", 1, 91, 82, 80, 85, 25);
 			break;
 
 		case 82:
-			OCEAN(82, "OCEAN06", "OCEAN1", 7, 81, 0, 88, 0, 25);
+			OCEAN(82, "OCEAN06", 7, 81, 0, 88, 0, 25);
 			break;
 
 		case 83:
-			OCEAN(83, "OCEAN07", "OCEAN1", 1, 89, 0, 79, 88, 25);
+			OCEAN(83, "OCEAN07", 1, 89, 0, 79, 88, 25);
 			break;
 
 		case 84:
-			OCEAN(84, "OCEAN08", "OCEAN1", 1, 77, 0, 0, 78, 25);
+			OCEAN(84, "OCEAN08", 1, 77, 0, 0, 78, 25);
 			break;
 
 		case 85:
-			OCEAN(85, "OCEAN09", "OCEAN1", 1, 0, 0, 81, 0, 25);
+			OCEAN(85, "OCEAN09", 1, 0, 0, 81, 0, 25);
 			break;
 
 		case 86:
-			OCEAN(86, "OCEAN10", "OCEAN1", 1, 0, 80, 0, 91, 25);
+			OCEAN(86, "OCEAN10", 1, 0, 80, 0, 91, 25);
 			break;
 
 		case 87:
-			OCEAN(87, "OCEAN11", "OCEAN1", 3, 0, 79, 90, 0, 25);
+			OCEAN(87, "OCEAN11", 3, 0, 79, 90, 0, 25);
 			break;
 
 		case 88:
-			OCEAN(88, "OCEAN12", "OCEAN1", 1, 80, 0, 83, 82, 25);
+			OCEAN(88, "OCEAN12", 1, 80, 0, 83, 82, 25);
 			break;
 
 		case 89:
-			OCEAN(89, "OCEAN13", "OCEAN1", 3, 0, 83, 0, 0, 25);
-			break;
-
-		case 91:
-			OCEAN(91, "OCEAN15", "OCEAN1", 3, 78, 81, 86, 0, 25);
+			OCEAN(89, "OCEAN13", 3, 0, 83, 0, 0, 25);
 			break;
 
 		case 90:
 			BASED();
+			break;
+
+		case 91:
+			OCEAN(91, "OCEAN15", 3, 78, 81, 86, 0, 25);
 			break;
 
 		case 93:
@@ -5646,7 +5646,7 @@ void HopkinsEngine::OCEAN_HOME() {
 		_objectsManager.setSpriteIndex(0, 9);
 }
 
-void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
+void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, int16 defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
 	_globals.PLAN_FLAG = false;
 	_graphicsManager.NOFADE = false;
 	_globals.NOMARCHE = false;
@@ -5657,16 +5657,16 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	_soundManager.WSOUND(soundId);
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "VAISSEAU.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
-	if (a2.size())
-		_graphicsManager.loadImage(a2);
+	if (backgroundFilename.size())
+		_graphicsManager.loadImage(backgroundFilename);
 
-	if ((a1 != 77) && (a1 != 84) && (a1 != 91))
+	if ((curExitId != 77) && (curExitId != 84) && (curExitId != 91))
 		_objectsManager.INILINK("ocean");
-	else if (a1 == 77)
+	else if (curExitId == 77)
 		_objectsManager.INILINK("IM77");
-	else if (a1 == 84)
+	else if (curExitId == 84)
 		_objectsManager.INILINK("IM84");
-	else if (a1 == 91)
+	else if (curExitId == 91)
 		_objectsManager.INILINK("IM91");
 
 	if (!exit1)
@@ -5677,24 +5677,29 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 		_objectsManager.disableZone(3);
 	if (!exit4)
 		_objectsManager.disableZone(4);
+
 	if (!_globals.OCEAN_SENS)
-		_globals.OCEAN_SENS = a4;
-	if (_globals.OCEAN_SENS == 5) {
-		_objectsManager._characterPos.x = 236;
-		_objectsManager.PERI = 9;
-	}
-	if (_globals.OCEAN_SENS == 1) {
+		_globals.OCEAN_SENS = defaultDirection;
+
+	switch (_globals.OCEAN_SENS) {
+	case 1:
 		_objectsManager._characterPos.x = 236;
 		_objectsManager.PERI = 27;
-	}
-	if (_globals.OCEAN_SENS == 7) {
-		_objectsManager._characterPos.x = 415;
-		_objectsManager.PERI = 18;
-	}
-	if (_globals.OCEAN_SENS == 3) {
+		break;
+	case 3:
 		_objectsManager._characterPos.x = -20;
 		_objectsManager.PERI = 0;
+		break;
+	case 5:
+		_objectsManager._characterPos.x = 236;
+		_objectsManager.PERI = 9;
+		break;
+	case 7:
+		_objectsManager._characterPos.x = 415;
+		_objectsManager.PERI = 18;
+		break;
 	}
+
 	_objectsManager.SPRITE(_globals.PERSO, Common::Point(_objectsManager._characterPos.x, 110), 0, _objectsManager.PERI, 0, 0, 0, 0);
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);

@@ -96,7 +96,6 @@ public:
 	int Compteur_y;
 	int spec_largeur;
 	bool NOFADE;
-	int Reduc_Ecran_L, Reduc_Ecran_H;
 public:
 	GraphicsManager();
 	~GraphicsManager();
@@ -128,17 +127,16 @@ public:
 	void FADE_OUTW();
 	void FADE_OUTW_LINUX(const byte *surface);
 	void FADE_INW_LINUX(const byte *surface);
-	void FADE_IN_CASSE();
-	void FADE_OUT_CASSE();
+	void fadeInBreakout();
+	void fateOutBreakout();
 	void setpal_vga256(const byte *palette);
 	void setpal_vga256_linux(const byte *palette, const byte *surface);
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void changePalette(const byte *palette);
-	uint16 MapRGB(byte r, byte g, byte b);
+	uint16 mapRGB(byte r, byte g, byte b);
 	void DD_VBL();
 	void Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface);
-	void Copy_Video_Vbe3(const byte *srcData);
 	void Copy_Video_Vbe16(const byte *srcData);
 	void Copy_Video_Vbe16a(const byte *srcData);
 	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height);
@@ -174,7 +172,6 @@ public:
 	void OPTI_INI(const Common::String &file, int mode);
 	void NB_SCREEN();
 	void SHOW_PALETTE();
-	void videkey();
 	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
 	void Copy_Video_Vbe(const byte *src);
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);

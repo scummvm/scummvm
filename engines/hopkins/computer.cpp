@@ -804,7 +804,7 @@ void ComputerManager::playBreakout() {
 			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
 			_vm->_graphicsManager.RESET_SEGMENT_VESA();
 			_vm->_eventsManager.VBL();
-			_vm->_graphicsManager.FADE_IN_CASSE();
+			_vm->_graphicsManager.fadeInBreakout();
 
 			// Wait for mouse press to start playing
 			do {
@@ -839,7 +839,7 @@ void ComputerManager::playBreakout() {
 			} while (!_vm->shouldQuit() && !v1);
 			if (v1 != 1)
 				break;
-			_vm->_graphicsManager.FADE_OUT_CASSE();
+			_vm->_graphicsManager.fateOutBreakout();
 			--_breakoutLives;
 
 			if (_breakoutLives) {
@@ -868,7 +868,7 @@ void ComputerManager::playBreakout() {
 		}
 		if (v1 != 2)
 			return;
-		_vm->_graphicsManager.FADE_OUT_CASSE();
+		_vm->_graphicsManager.fateOutBreakout();
 		newLevel();
 	}
 }
@@ -907,7 +907,7 @@ int ComputerManager::displayHiscores() {
 			displayHiscoreLine(ptr, 9 * i + 199, yp, _score[scoreIndex]._score[i]);
 	}
 
-	_vm->_graphicsManager.FADE_IN_CASSE();
+	_vm->_graphicsManager.fadeInBreakout();
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	buttonIndex = 0;
 	do {
@@ -924,7 +924,7 @@ int ComputerManager::displayHiscores() {
 	} while (!buttonIndex && !_vm->shouldQuit());
 
 	_vm->_eventsManager.mouseOff();
-	_vm->_graphicsManager.FADE_OUT_CASSE();
+	_vm->_graphicsManager.fateOutBreakout();
 	_vm->_globals.freeMemory(ptr);
 	return buttonIndex;
 }
@@ -943,7 +943,7 @@ void ComputerManager::getScoreName() {
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
 	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-	_vm->_graphicsManager.FADE_IN_CASSE();
+	_vm->_graphicsManager.fadeInBreakout();
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);
 
@@ -973,7 +973,7 @@ void ComputerManager::getScoreName() {
 		if (i <= -1)
 			break;
 	}
-	_vm->_graphicsManager.FADE_OUT_CASSE();
+	_vm->_graphicsManager.fateOutBreakout();
 	_vm->_globals.freeMemory(ptr);
 	saveScore();
 }
