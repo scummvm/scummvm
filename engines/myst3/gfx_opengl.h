@@ -36,10 +36,10 @@ public:
 	OpenGLRenderer(OSystem *_system);
 	virtual ~OpenGLRenderer();
 
-	virtual void init(Graphics::PixelBuffer &screenBuffer) override;
+	virtual void init() override;
 
 	virtual void clear() override;
-	virtual void setupCameraOrtho2D() override;
+	virtual void setupCameraOrtho2D(bool noScaling) override;
 	virtual void setupCameraPerspective(float pitch, float heading, float fov) override;
 
 	Texture *createTexture(const Graphics::Surface *surface) override;

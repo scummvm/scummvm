@@ -51,11 +51,11 @@ protected:
 class Renderer {
 	public:
 	virtual ~Renderer() {}
-	virtual void init(Graphics::PixelBuffer &screenBuffer) = 0;
+	virtual void init() = 0;
 	virtual void initFont(const Graphics::Surface *surface) = 0;
 
 	virtual void clear() = 0;
-	virtual void setupCameraOrtho2D() = 0;
+	virtual void setupCameraOrtho2D(bool noScaling) = 0;
 	virtual void setupCameraPerspective(float pitch, float heading, float fov) = 0;
 
 	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
@@ -74,6 +74,10 @@ class Renderer {
 	virtual Graphics::Surface *getScreenshot() = 0;
 
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) = 0;
+
+	virtual Common::Rect viewport() const = 0;
+	virtual Common::Rect frameViewport() const = 0;
+	virtual Common::Point frameCenter() const = 0;
 
 	/**
 	 *  Swap the buffers, making the drawn screen visible
@@ -98,11 +102,18 @@ public:
 	virtual void init(Graphics::PixelBuffer &screenBuffer);
 	virtual void initFont(const Graphics::Surface *surface);
 
+	Common::Rect viewport() const override;
+	Common::Rect frameViewport() const override;
+	Common::Point frameCenter() const override;
+
 protected:
 	OSystem *_system;
 	Texture *_font;
 
+	Common::Rect _screenViewport;
+
 	Common::Rect getFontCharacterRect(uint8 character);
+	void computeScreenViewport();
 };
 
 Renderer *CreateGfxOpenGL(OSystem *system);

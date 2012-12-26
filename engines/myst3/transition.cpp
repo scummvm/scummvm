@@ -85,7 +85,8 @@ void Transition::draw() {
 	// Create the temporary surface and texture for the transition
 	Graphics::Surface *frame = new Graphics::Surface();
 	frame->create(target->w, target->h, target->format);
-	Common::Rect frameRect = Common::Rect(frame->w, frame->h);
+	Common::Rect textureRect = Common::Rect(frame->w, frame->h);
+	Common::Rect screenRect = _vm->_gfx->viewport();
 
 	Texture *frameTexture = _vm->_gfx->createTexture(frame);
 
@@ -105,7 +106,7 @@ void Transition::draw() {
 		drawStep(targetPtr, target->pitch, sourcePtr, _sourceScreenshot->pitch, framePtr, frame->pitch, frame->h, completion);
 
 		frameTexture->update(frame);
-		_vm->_gfx->drawTexturedRect2D(frameRect, frameRect, frameTexture);
+		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, frameTexture);
 		
 		_vm->_gfx->flipBuffer();
 		g_system->updateScreen();
@@ -123,6 +124,8 @@ void Transition::draw() {
 }
 
 void Transition::drawStep(uint32 *target, uint targetPitch, uint32 *source, uint sourcePitch, uint32 *destination, uint destinationPitch, uint destinationHeight, uint completion) {
+	Common::Rect viewport = _vm->_gfx->viewport();
+
 	switch (_type) {
 	case kTransitionNone:
 		break;
@@ -135,7 +138,7 @@ void Transition::drawStep(uint32 *target, uint targetPitch, uint32 *source, uint
 				uint32 *targetPtr = target + (destinationHeight - y - 1) * (targetPitch / 4);
 				uint32 *destinationPtr = destination;
 
-				for (uint x = 0; x < 640; x++) {
+				for (int16 x = 0; x < viewport.width(); x++) {
 					byte sourceR, sourceG, sourceB;
 					byte targetR, targetG, targetB;
 					byte destR, destG, destB;
@@ -157,19 +160,19 @@ void Transition::drawStep(uint32 *target, uint targetPitch, uint32 *source, uint
 		break;
 
 	case kTransitionLeftToRight: {
-			uint transitionX = (640 * 100 - 640 * completion) / 100;
+			int16 transitionX = (viewport.width() * 100 - viewport.width() * completion) / 100;
 			for (uint y = 0; y < destinationHeight; y++) {
 				uint32 *sourcePtr = source + (destinationHeight - y - 1) * (sourcePitch / 4);
 				uint32 *destinationPtr = destination;
 
-				for (uint x = 0; x < transitionX; x++) {
+				for (int16 x = 0; x < transitionX; x++) {
 					*destinationPtr = *sourcePtr;
 					destinationPtr++;
 					sourcePtr++;
 				}
 
 				uint32 *targetPtr = target + (destinationHeight - y - 1) * (targetPitch / 4) + transitionX;
-				for (uint x = transitionX; x < 640; x++) {
+				for (int16 x = transitionX; x < viewport.width(); x++) {
 					*destinationPtr = *targetPtr;
 					destinationPtr++;
 					targetPtr++;
@@ -181,19 +184,19 @@ void Transition::drawStep(uint32 *target, uint targetPitch, uint32 *source, uint
 		break;
 
 	case kTransitionRightToLeft: {
-			uint transitionX = 640 * completion / 100;
+			int16 transitionX = viewport.width() * completion / 100;
 			for (uint y = 0; y < destinationHeight; y++) {
 				uint32 *targetPtr = target + (destinationHeight - y - 1) * (targetPitch / 4);
 				uint32 *destinationPtr = destination;
 
-				for (uint x = 0; x < transitionX; x++) {
+				for (int16 x = 0; x < transitionX; x++) {
 					*destinationPtr = *targetPtr;
 					destinationPtr++;
 					targetPtr++;
 				}
 
 				uint32 *sourcePtr = source + (destinationHeight - y - 1) * (sourcePitch / 4) + transitionX;
-				for (uint x = transitionX; x < 640; x++) {
+				for (int16 x = transitionX; x < viewport.width(); x++) {
 					*destinationPtr = *sourcePtr;
 					destinationPtr++;
 					sourcePtr++;

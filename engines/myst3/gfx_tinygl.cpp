@@ -26,6 +26,7 @@
 #undef ARRAYSIZE
 #endif
 
+#include "common/config-manager.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
@@ -105,8 +106,12 @@ void TinyGLRenderer::freeTexture(Texture *texture) {
 	delete glTexture;
 }
 
-void TinyGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
+void TinyGLRenderer::init() {
 	debug("Initializing Software 3D Renderer");
+
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	Graphics::PixelBuffer screenBuffer = _system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, false);
+	computeScreenViewport();
 
 	_nonPowerOfTwoTexSupport = true;
 
@@ -129,7 +134,7 @@ void TinyGLRenderer::clear() {
 	tglColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void TinyGLRenderer::setupCameraOrtho2D() {
+void TinyGLRenderer::setupCameraOrtho2D(bool noScaling) {
 	tglViewport(0, 0, kOriginalWidth, kOriginalHeight);
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();

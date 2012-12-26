@@ -38,7 +38,7 @@ public:
 	bool isPositionLocked() { return _lockedAtCenter; }
 	void lockPosition(bool lock);
 
-	Common::Point getPosition() { return _position; }
+	Common::Point getPosition();
 	void updatePosition(Common::Point &mouse);
 
 	void getDirection(float &pitch, float &heading);

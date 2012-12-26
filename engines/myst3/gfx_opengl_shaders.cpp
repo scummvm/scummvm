@@ -42,14 +42,17 @@
 #undef ARRAYSIZE
 #endif
 
+#include "common/config-manager.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "graphics/colormasks.h"
+#include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
 
+#include "math/glmath.h"
 #include "math/vector2d.h"
 #include "math/rect2d.h"
 #include "math/quat.h"
@@ -116,15 +119,15 @@ void ShaderRenderer::setupQuadEBO() {
 	_quadEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
 }
 
-static Math::Vector2d scaled(float x, float y) {
-	return Math::Vector2d(x / Renderer::kOriginalWidth, y / Renderer::kOriginalHeight);
+Math::Vector2d ShaderRenderer::scaled(float x, float y) const {
+	return Math::Vector2d(x / _currentViewport.getWidth(), y / _currentViewport.getHeight());
 }
 
 ShaderRenderer::ShaderRenderer(OSystem *system) :
 		BaseRenderer(system),
 		_prevText(""),
 		_prevTextPosition(0,0),
-		_viewport(Math::Vector2d(0.0, 0.0), Math::Vector2d(kOriginalWidth, kOriginalHeight)),
+		_currentViewport(Math::Vector2d(0.0, 0.0), Math::Vector2d(kOriginalWidth, kOriginalHeight)),
 		_box_shader(nullptr),
 		_cube_shader(nullptr),
 		_rect3d_shader(nullptr),
@@ -158,8 +161,12 @@ void ShaderRenderer::freeTexture(Texture *texture) {
 	delete glTexture;
 }
 
-void ShaderRenderer::init(Graphics::PixelBuffer &screenBuffer) {
+void ShaderRenderer::init() {
 	debug("Initializing OpenGL Renderer with shaders");
+
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
+	computeScreenViewport();
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
@@ -192,9 +199,14 @@ void ShaderRenderer::clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void ShaderRenderer::setupCameraOrtho2D() {
-	glViewport(0, 0, kOriginalWidth, kOriginalHeight);
-	_viewport = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(kOriginalWidth, kOriginalHeight));
+void ShaderRenderer::setupCameraOrtho2D(bool noScaling) {
+	if (noScaling) {
+		glViewport(0, 0, _system->getWidth(), _system->getHeight());
+		_currentViewport = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(_system->getWidth(), _system->getHeight()));
+	} else {
+		glViewport(_screenViewport.left, _screenViewport.top, _screenViewport.width(), _screenViewport.height());
+		_currentViewport = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(kOriginalWidth, kOriginalHeight));
+	}
 }
 
 void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
@@ -205,30 +217,10 @@ void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fo
 	else if (fov > 59.0 && fov < 61.0)
 		glFOV = 36.0; // Somewhat good value for fov == 60
 
-	glViewport(0, kBottomBorderHeight, kOriginalWidth, kFrameHeight);
+	Common::Rect frame = frameViewport();
+	glViewport(frame.left, frame.top, frame.width(), frame.height());
 
-	const Math::Vector2d topLeft = Math::Vector2d(0, kBottomBorderHeight + kFrameHeight);
-	const Math::Vector2d bottomRight = Math::Vector2d(kOriginalWidth, kBottomBorderHeight);
-	_viewport = Math::Rect2d(topLeft, bottomRight);
-
-	float nclip = 1.0, fclip = 10000.0;
-	float aspect = _viewport.getWidth() / _viewport.getHeight();
-
-	float range = nclip * tan(glFOV / 2 * (LOCAL_PI / 180));
-	float left = -range * aspect;
-	float right = range * aspect;
-	float bottom = -range;
-	float top = range;
-
-	Math::Matrix4 proj;
-	proj(0,0) = (2.0f * nclip) / (right - left);
-	proj(1,1) = (2.0f * nclip) / (top - bottom);
-	proj(2,0) = (right + left) / (right - left);
-	proj(2,1) = 0.0f; // (top + bottom) / (top - bottom);
-	proj(2,2) = -(fclip + nclip) / (fclip - nclip);
-	proj(2,3) = -1.0f;
-	proj(3,2) = -(2.0f * fclip * nclip) / (fclip - nclip);
-	proj(3,3) = 0.0f;
+	Math::Matrix4 proj = Math::makePerspectiveMatrix(glFOV, kOriginalWidth / (double)kFrameHeight, 1.0, 10000.0);
 	proj.transpose();
 
 	Math::Matrix4 model(180.0f - heading, pitch, 0.0f, Math::EO_YXZ);
@@ -325,16 +317,16 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
 		_prevText = textToDraw;
 		_prevTextPosition = position;
 
-		float x = position.x / _viewport.getWidth();
-		float y = position.y / _viewport.getHeight();
+		float x = position.x / _currentViewport.getWidth();
+		float y = position.y / _currentViewport.getHeight();
 
 		float *bufData = new float[16 * textToDraw.size()];
 		float *cur = bufData;
 
 		for (uint i = 0; i < textToDraw.size(); i++) {
 			Common::Rect textureRect = getFontCharacterRect(textToDraw[i]);
-			float w = textureRect.width() / _viewport.getWidth();
-			float h = textureRect.height() / _viewport.getHeight();
+			float w = textureRect.width() / _currentViewport.getWidth();
+			float h = textureRect.height() / _currentViewport.getHeight();
 
 			float cw = textureRect.width() / (float)glFont->internalWidth;
 			float ch = textureRect.height() / (float)glFont->internalHeight;
@@ -351,7 +343,7 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
 			memcpy(cur, charData, 16 * sizeof(float));
 			cur += 16;
 
-			x += (textureRect.width() - 3) / _viewport.getWidth();
+			x += (textureRect.width() - 3) / _currentViewport.getWidth();
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, _textVBO);
@@ -440,10 +432,12 @@ void ShaderRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 }
 
 Graphics::Surface *ShaderRenderer::getScreenshot() {
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	Common::Rect screen = viewport();
 
-	glReadPixels(0, 0, kOriginalWidth, kOriginalHeight, GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(screen.width(), screen.height(), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
 
 	return s;
 }
@@ -452,12 +446,13 @@ void ShaderRenderer::screenPosToDirection(const Common::Point screen, float &pit
 	double x, y, z;
 
 	x = screen.x;
-	y = kOriginalHeight - screen.y;
+	y = _system->getHeight() - screen.y;
 	z = 0.9f;
 
-	const Math::Vector2d tl = _viewport.getTopLeft();
-	x = 2 * double(x - tl.getX()) / _viewport.getWidth() - 1.0f;
-	y = 2 * double(y - tl.getY()) / _viewport.getHeight() - 1.0f;
+	Common::Rect frame = frameViewport();
+
+	x = 2 * double(x - frame.left) / frame.width() - 1.0f;
+	y = 2 * double(y - frame.top) / frame.height() - 1.0f;
 	z = 2 * z - 1.0f;
 
 	// Screen coords to 3D coords

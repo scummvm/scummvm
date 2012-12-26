@@ -67,4 +67,37 @@ Common::Rect BaseRenderer::getFontCharacterRect(uint8 character) {
 	return Common::Rect(16 * index, 0, 16 * (index + 1), 32);
 }
 
+Common::Rect BaseRenderer::viewport() const {
+	return _screenViewport;
+}
+
+Common::Rect BaseRenderer::frameViewport() const {
+	Common::Rect screen = viewport();
+
+	Common::Rect frame = Common::Rect(screen.width(), screen.height() * kFrameHeight / kOriginalHeight);
+	frame.translate(screen.left, screen.top + screen.height() * kBottomBorderHeight / kOriginalHeight);
+
+	return frame;
+}
+
+void BaseRenderer::computeScreenViewport() {
+	int32 screenWidth = _system->getWidth();
+	int32 screenHeight = _system->getHeight();
+
+	// Aspect ratio correction
+	int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * kOriginalWidth / kOriginalHeight);
+	int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * kOriginalHeight / kOriginalWidth);
+	_screenViewport = Common::Rect(viewportWidth, viewportHeight);
+
+	// Pillarboxing
+	_screenViewport.translate((screenWidth - viewportWidth) / 2,
+	    (screenHeight - viewportHeight) / 2);
+}
+
+Common::Point BaseRenderer::frameCenter() const {
+	Common::Rect screen = viewport();
+	Common::Rect frame = frameViewport();
+	return Common::Point((frame.left + frame.right) / 2, screen.top + screen.bottom - (frame.top + frame.bottom) / 2);
+}
+
 } // End of namespace Myst3

@@ -52,7 +52,6 @@
 #include "image/jpeg.h"
 
 #include "graphics/conversion.h"
-#include "graphics/pixelbuffer.h"
 #include "graphics/yuv_to_rgb.h"
 
 #include "math/vector2d.h"
@@ -141,9 +140,6 @@ bool Myst3Engine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error Myst3Engine::run() {
-	const int w = 640;
-	const int h = 480;
-
 	if (!checkDatafiles()) {
 		// An error message has already been displayed
 		return Common::kUserCanceled;
@@ -173,13 +169,11 @@ Common::Error Myst3Engine::run() {
 	_menu = new Menu(this);
 	_archiveNode = new Archive();
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	Graphics::PixelBuffer screenBuffer = _system->setupScreen(w, h, fullscreen, softRenderer == false);
 	_system->showMouse(false);
 
 	openArchives();
 
-	_gfx->init(screenBuffer);
+	_gfx->init();
 
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
@@ -365,22 +359,14 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 		}
 	} else {
 		Common::Point mouse = _cursor->getPosition();
-		Common::Point scaledMouse;
 
-		if (_state->getViewType() == kMenu)  {
-			scaledMouse = Common::Point(
-					mouse.x * Renderer::kOriginalWidth / _system->getWidth(),
-					CLIP<uint>(mouse.y * Renderer::kOriginalHeight / _system->getHeight(),
-							0, Renderer::kOriginalHeight));
-		} else {
-			scaledMouse = Common::Point(
-					mouse.x * Renderer::kOriginalWidth / _system->getWidth(),
-					CLIP<uint>(mouse.y * Renderer::kOriginalHeight / _system->getHeight()
-							- Renderer::kTopBorderHeight, 0, Renderer::kFrameHeight));
+		if (_state->getViewType() == kFrame)  {
+			mouse.y -= Renderer::kTopBorderHeight;
+			mouse.y = CLIP<uint>(mouse.y, 0, Renderer::kFrameHeight);
 		}
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-			int32 hitRect = nodeData->hotspots[j].isPointInRectsFrame(_state, scaledMouse);
+			int32 hitRect = nodeData->hotspots[j].isPointInRectsFrame(_state, mouse);
 			if (hitRect >= 0 && nodeData->hotspots[j].isEnabled(_state, var)) {
 				if (nodeData->hotspots[j].rects.size() > 1) {
 					_state->setHotspotHovered(true);
@@ -545,7 +531,7 @@ void Myst3Engine::drawFrame(bool noSwap) {
 
 		_gfx->setupCameraPerspective(pitch, heading, fov);
 	} else {
-		_gfx->setupCameraOrtho2D();
+		_gfx->setupCameraOrtho2D(false);
 	}
 
 	if (_node) {
@@ -567,7 +553,7 @@ void Myst3Engine::drawFrame(bool noSwap) {
 	}
 
 	if (_state->getViewType() == kCube) {
-		_gfx->setupCameraOrtho2D();
+		_gfx->setupCameraOrtho2D(false);
 	}
 
 	if (_state->getViewType() != kMenu) {
@@ -597,6 +583,8 @@ void Myst3Engine::drawFrame(bool noSwap) {
 		_node->drawOverlay();
 	}
 
+	// The cursor is drawn unscaled
+	_gfx->setupCameraOrtho2D(true);
 	if (_cursor->isVisible())
 		_cursor->draw();
 

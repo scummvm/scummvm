@@ -57,7 +57,7 @@ static CursorData availableCursors[13] = {
 
 Cursor::Cursor(Myst3Engine *vm) :
 	_vm(vm),
-	_position(320, 210),
+	_position(vm->_gfx->frameCenter()),
 	_hideLevel(0),
 	_lockedAtCenter(false) {
 
@@ -127,23 +127,35 @@ void Cursor::lockPosition(bool lock) {
 
 	g_system->lockMouse(lock);
 
+	Common::Point center = _vm->_gfx->frameCenter();
 	if (_lockedAtCenter) {
 		// Locking, just mouve the cursor at the center of the screen
-		_position.x = 320;
-		_position.y = 210;
+		_position = center;
 	} else {
 		// Unlocking, warp the actual mouse position to the cursor
-		g_system->warpMouse(320, 210);
+		g_system->warpMouse(center.x, center.y);
 	}
 }
 
 void Cursor::updatePosition(Common::Point &mouse) {
 	if (!_lockedAtCenter) {
 		_position = mouse;
-
-		_position.x = CLIP<int16>(_position.x, 0, Renderer::kOriginalWidth);
-		_position.y = CLIP<int16>(_position.y, 0, Renderer::kOriginalHeight);
 	}
+}
+
+Common::Point Cursor::getPosition() {
+	Common::Rect viewport = _vm->_gfx->viewport();
+
+	// The rest of the engine expects 640x480 coordinates
+	Common::Point scaledPosition = _position;
+	scaledPosition.x -= viewport.left;
+	scaledPosition.y -= viewport.top;
+	scaledPosition.x = CLIP<int16>(scaledPosition.x, 0, viewport.width());
+	scaledPosition.y = CLIP<int16>(scaledPosition.y, 0, viewport.height());
+	scaledPosition.x *= Renderer::kOriginalWidth / (float)viewport.width();
+	scaledPosition.y *= Renderer::kOriginalHeight / (float)viewport.height();
+
+	return scaledPosition;
 }
 
 void Cursor::draw() {

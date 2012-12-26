@@ -26,12 +26,14 @@
 #undef ARRAYSIZE
 #endif
 
+#include "common/config-manager.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
 #if defined(USE_OPENGL) && !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
 
 #include "graphics/colormasks.h"
+#include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
 
 #include "math/vector2d.h"
@@ -105,8 +107,12 @@ void OpenGLRenderer::freeTexture(Texture *texture) {
 	delete glTexture;
 }
 
-void OpenGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
+void OpenGLRenderer::init() {
 	debug("Initializing OpenGL Renderer");
+
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
+	computeScreenViewport();
 
 	// Check the available OpenGL extensions
 	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
@@ -131,11 +137,21 @@ void OpenGLRenderer::clear() {
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void OpenGLRenderer::setupCameraOrtho2D() {
-	glViewport(0, 0, kOriginalWidth, kOriginalHeight);
+void OpenGLRenderer::setupCameraOrtho2D(bool noScaling) {
+	if (noScaling) {
+		glViewport(0, 0, _system->getWidth(), _system->getHeight());
+	} else {
+		glViewport(_screenViewport.left, _screenViewport.top, _screenViewport.width(), _screenViewport.height());
+	}
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
+
+	if (noScaling) {
+		glOrtho(0.0, _system->getWidth(), _system->getHeight(), 0.0, -1.0, 1.0);
+	} else {
+		glOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
+	}
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -149,7 +165,8 @@ void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 	else if (fov > 59.0 && fov < 61.0)
 		glFOV = 36.0; // Somewhat good value for fov == 60
 
-	glViewport(0, kBottomBorderHeight, kOriginalWidth, kFrameHeight);
+	Common::Rect frame = frameViewport();
+	glViewport(frame.left, frame.top, frame.width(), frame.height());
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	Math::Matrix4 m = Math::makePerspectiveMatrix(glFOV, (GLfloat)kOriginalWidth / (GLfloat)kFrameHeight, 1.0, 10000.0);
@@ -346,10 +363,12 @@ void OpenGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 }
 
 Graphics::Surface *OpenGLRenderer::getScreenshot() {
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	Common::Rect screen = viewport();
 
-	glReadPixels(0, 0, kOriginalWidth, kOriginalHeight, GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(screen.width(), screen.height(), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
 
 	return s;
 }
@@ -357,7 +376,7 @@ Graphics::Surface *OpenGLRenderer::getScreenshot() {
 void OpenGLRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
 	// Screen coords to 3D coords
 	Math::Vector3d obj;
-	Math::gluMathUnProject<double, int>(Math::Vector3d(screen.x, kOriginalHeight - screen.y, 0.9),
+	Math::gluMathUnProject<double, int>(Math::Vector3d(screen.x, _system->getHeight() - screen.y, 0.9),
 		_cubeModelViewMatrix, _cubeProjectionMatrix, _cubeViewport, obj);
 
 	// 3D coords to polar coords

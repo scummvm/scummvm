@@ -37,10 +37,10 @@ public:
 	ShaderRenderer(OSystem *_system);
 	virtual ~ShaderRenderer();
 
-	virtual void init(Graphics::PixelBuffer &screenBuffer) override;
+	virtual void init() override;
 
 	virtual void clear() override;
-	virtual void setupCameraOrtho2D() override;
+	virtual void setupCameraOrtho2D(bool noScaling) override;
 	virtual void setupCameraPerspective(float pitch, float heading, float fov) override;
 
 	virtual Texture *createTexture(const Graphics::Surface *surface) override;
@@ -62,6 +62,7 @@ public:
 
 private:
 	void setupQuadEBO();
+	Math::Vector2d scaled(float x, float y) const;
 
 	Graphics::Shader *_box_shader;
 	Graphics::Shader *_cube_shader;
@@ -75,7 +76,7 @@ private:
 	GLuint _quadEBO;
 
 	Math::Matrix4 _mvpMatrix;
-	Math::Rect2d _viewport;
+	Math::Rect2d _currentViewport;
 
 	Common::String _prevText;
 	Common::Point _prevTextPosition;

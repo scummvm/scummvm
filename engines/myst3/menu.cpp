@@ -582,14 +582,14 @@ Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
 	small->create(GameState::kThumbnailWidth, GameState::kThumbnailHeight,
 			Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-	uint bigHeight = big->h - Renderer::kTopBorderHeight - Renderer::kBottomBorderHeight;
-	uint bigYOffset = Renderer::kBottomBorderHeight;
+	// The portion of the screenshot to keep
+	Common::Rect frame = _vm->_gfx->frameViewport();
 
 	uint32 *dst = (uint32 *)small->getPixels();
 	for (uint i = 0; i < small->h; i++) {
 		for (uint j = 0; j < small->w; j++) {
 			uint32 srcX = big->w * j / small->w;
-			uint32 srcY = bigYOffset + bigHeight - bigHeight * i / small->h;
+			uint32 srcY = frame.top + frame.height() - frame.height() * i / small->h;
 			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY - 1);
 
 			// Copy RGBA pixel

@@ -42,9 +42,14 @@ void Scene::updateCamera(Common::Point &mouse) {
 	float heading = _vm->_state->getLookAtHeading();
 
 	if (!_vm->_state->getCursorLocked()) {
-		float speed = (200 - _mouseSpeed) / 25.0;
-		pitch -= mouse.y / speed;
-		heading += mouse.x / speed;
+		float speed = 25 / (float)(200 - _mouseSpeed);
+
+		// Adjust the speed according to the resolution
+		Common::Rect screen = _vm->_gfx->viewport();
+		speed *= Renderer::kOriginalHeight / (float) screen.height();
+
+		pitch -= mouse.y * speed;
+		heading += mouse.x * speed;
 	}
 
 	// Keep heading within allowed values
