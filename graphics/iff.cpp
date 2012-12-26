@@ -50,7 +50,7 @@ void ILBMDecoder::loadHeader(Common::ReadStream *stream) {
 void ILBMDecoder::loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stream) {
 	assert(stream);
 	uint32 numPlanes = MIN(mode & ILBM_UNPACK_PLANES, (uint32)_header.depth);
-	assert(numPlanes == 1 || numPlanes == 2 || numPlanes == 3 || numPlanes == 4 || numPlanes == 5 || numPlanes == 8);
+	assert(numPlanes >= 1 && numPlanes <= 8 && numPlanes != 7);
 
 	bool packPixels = (mode & ILBM_PACK_PLANES) != 0;
 	if (numPlanes != 1 && numPlanes != 2 && numPlanes != 4) {
