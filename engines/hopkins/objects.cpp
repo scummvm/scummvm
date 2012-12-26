@@ -79,7 +79,7 @@ ObjectsManager::ObjectsManager() {
 	T_RECTIF = 0;
 	_disableFl = false;
 	_twoCharactersFl = false;
-	PERX = PERY = 0;
+	_characterPos = Common::Point(0, 0);
 	PERI = 0;
 	RECALL = 0;
 	PTAILLE = 0;
@@ -1535,7 +1535,7 @@ void ObjectsManager::setFlipSprite(int idx, bool flip) {
 	}
 }
 
-void ObjectsManager::VERIFZONE() {
+void ObjectsManager::checkZone() {
 	int v0;
 	int v1;
 	int v2;
@@ -2521,7 +2521,7 @@ void ObjectsManager::PLAN_BETA() {
 				handleLeftButton();
 		}
 
-		VERIFZONE();
+		checkZone();
 		GOHOME2();
 
 		if (_vm->_globals.chemin == (int16 *)g_PTRNUL && _vm->_globals.GOACTION)
@@ -2619,7 +2619,7 @@ void ObjectsManager::handleLeftButton() {
 	if (_vm->_globals.PLAN_FLAG == true) {
 		if (!_vm->_globals.GOACTION)
 			goto LABEL_38;
-		VERIFZONE();
+		checkZone();
 		if (NUMZONE <= 0)
 			return;
 		v2 = 0;
@@ -2637,7 +2637,7 @@ void ObjectsManager::handleLeftButton() {
 		v5[v2 + 3] = -1;
 	}
 	if (_vm->_globals.GOACTION) {
-		VERIFZONE();
+		checkZone();
 		_vm->_globals.GOACTION = false;
 		_vm->_globals._saveData->data[svField1] = 0;
 		_vm->_globals._saveData->data[svField2] = 0;
@@ -4085,7 +4085,7 @@ void ObjectsManager::SPECIAL_JEU() {
 			SET_BOBPOSI(5, 0);
 			setBobAnimation(6);
 			_vm->_globals._saveData->data[svField261] = 2;
-			ZONE_OFF(15);
+			disableZone(15);
 			_vm->_soundManager.playSound("SOUND75.WAV");
 		}
 		if (_vm->_globals._saveData->data[svField261] == 2 && BOBPOSI(6) == 6) {
@@ -4345,7 +4345,7 @@ void ObjectsManager::ZONE_ON(int idx) {
 	}
 }
 
-void ObjectsManager::ZONE_OFF(int idx) {
+void ObjectsManager::disableZone(int idx) {
 	if (_vm->_globals.BOBZONE[idx]) {
 		_vm->_globals.BOBZONE_FLAG[idx] = false;
 	} else {
@@ -5303,7 +5303,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		if (v9 == 2)
 			handleRightButton();
 		_vm->_dialogsManager.testDialogOpening();
-		VERIFZONE();
+		checkZone();
 		if (_vm->_globals.GOACTION)
 			PARADISE();
 		if (!_vm->_globals._exitId) {
@@ -5388,12 +5388,12 @@ LABEL_70:
 	}
 	_vm->_globals.HOPKINS_DATA();
 	if (!_vm->_globals.PERSO_TYPE)
-		SPRITE(_vm->_globals.PERSO, Common::Point(PERX, PERY), 0, PERI, 0, 0, 34, 190);
+		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 34, 190);
 	if (_vm->_globals.PERSO_TYPE == 1)
-		SPRITE(_vm->_globals.PERSO, Common::Point(PERX, PERY), 0, PERI, 0, 0, 28, 155);
+		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 28, 155);
 	if (_vm->_globals.PERSO_TYPE == 2)
-		SPRITE(_vm->_globals.PERSO, Common::Point(PERX, PERY), 0, PERI, 0, 0, 20, 127);
-	_vm->_eventsManager.setMouseXY(PERX, PERY);
+		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 20, 127);
+	_vm->_eventsManager.setMouseXY(_characterPos);
 	if (_vm->_graphicsManager.DOUBLE_ECRAN)
 		_vm->_graphicsManager.SCROLL = (int16)getSpriteX(0) - 320;
 	VERIFTAILLE();
@@ -5403,8 +5403,8 @@ LABEL_70:
 	VERIFTAILLE();
 	SPECIAL_INI(linkFile);
 	_vm->_eventsManager._mouseSpriteId = 4;
-	g_old_x = PERX;
-	g_old_y = PERY;
+	g_old_x = _characterPos.x;
+	g_old_y = _characterPos.y;
 	_vm->_globals.g_old_sens = -1;
 	_vm->_globals.Compteur = 0;
 	_vm->_globals.BPP_NOAFF = true;
@@ -5450,7 +5450,7 @@ LABEL_70:
 		}
 		if (!_vm->_globals._exitId) {
 			_vm->_dialogsManager.testDialogOpening();
-			VERIFZONE();
+			checkZone();
 			if (_vm->_globals.chemin == (int16 *)g_PTRNUL
 					|| (GOHOME(), _vm->_globals.chemin == (int16 *)g_PTRNUL)) {
 				if (_vm->_globals.GOACTION)

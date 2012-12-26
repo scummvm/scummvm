@@ -104,7 +104,7 @@ public:
 	int T_RECTIF;
 	bool _disableFl;
 	bool _twoCharactersFl;
-	int PERX, PERY;
+	Common::Point _characterPos;
 	int PERI;
 	int RECALL;
 	int PTAILLE;
@@ -174,7 +174,7 @@ public:
 	void SETTAILLESPR(int idx, int a2);
 	void setFlipSprite(int idx, bool flip);
 
-	void VERIFZONE();
+	void checkZone();
 	void GOHOME();
 	void GOHOME2();
 	void CHARGE_OBSTACLE(const Common::String &file);
@@ -214,7 +214,7 @@ public:
 	void ACTION_GAUCHE(int idx);
 
 	void ZONE_ON(int idx);
-	void ZONE_OFF(int idx);
+	void disableZone(int idx);
 	void OPTI_ONE(int a1, int a2, int a3, int a4);
 	void AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img);
 	int BOBPOSI(int idx);

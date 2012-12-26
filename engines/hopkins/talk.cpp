@@ -1084,8 +1084,8 @@ void TalkManager::REPONSE2(int a1, int a2) {
 				break;
 			}
 			_vm->_globals._saveData->data[indx] = 2;
-			_vm->_objectsManager.ZONE_OFF(22);
-			_vm->_objectsManager.ZONE_OFF(23);
+			_vm->_objectsManager.disableZone(22);
+			_vm->_objectsManager.disableZone(23);
 		} else if (a1 == 20 || a1 == 21) {
 			_vm->_objectsManager.setFlipSprite(0, true);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
@@ -1131,8 +1131,8 @@ void TalkManager::REPONSE2(int a1, int a2) {
 				break;
 			}
 			_vm->_globals._saveData->data[indx] = 2;
-			_vm->_objectsManager.ZONE_OFF(21);
-			_vm->_objectsManager.ZONE_OFF(20);
+			_vm->_objectsManager.disableZone(21);
+			_vm->_objectsManager.disableZone(20);
 		}
 	}
 }
@@ -1224,7 +1224,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		}
 		if (v12 == 2)
 			_vm->_objectsManager.handleRightButton();
-		_vm->_objectsManager.VERIFZONE();
+		_vm->_objectsManager.checkZone();
 		if (_vm->_globals.GOACTION)
 			_vm->_objectsManager.PARADISE();
 		_vm->_eventsManager.VBL();

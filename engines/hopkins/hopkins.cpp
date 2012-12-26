@@ -5646,7 +5646,7 @@ void HopkinsEngine::OCEAN_HOME() {
 		_objectsManager.setSpriteIndex(0, 9);
 }
 
-void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 a9) {
+void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 a4, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
 	_globals.PLAN_FLAG = false;
 	_graphicsManager.NOFADE = false;
 	_globals.NOMARCHE = false;
@@ -5654,7 +5654,7 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 	_globals.AFFLI = false;
 	_globals.AFFIVBL = true;
 	_globals._disableInventFl = true;
-	_soundManager.WSOUND(a9);
+	_soundManager.WSOUND(soundId);
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "VAISSEAU.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals.NFICHIER);
 	if (a2.size())
@@ -5670,32 +5670,32 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 		_objectsManager.INILINK("IM91");
 
 	if (!exit1)
-		_objectsManager.ZONE_OFF(1);
+		_objectsManager.disableZone(1);
 	if (!exit2)
-		_objectsManager.ZONE_OFF(2);
+		_objectsManager.disableZone(2);
 	if (!exit3)
-		_objectsManager.ZONE_OFF(3);
+		_objectsManager.disableZone(3);
 	if (!exit4)
-		_objectsManager.ZONE_OFF(4);
+		_objectsManager.disableZone(4);
 	if (!_globals.OCEAN_SENS)
 		_globals.OCEAN_SENS = a4;
 	if (_globals.OCEAN_SENS == 5) {
-		_objectsManager.PERX = 236;
+		_objectsManager._characterPos.x = 236;
 		_objectsManager.PERI = 9;
 	}
 	if (_globals.OCEAN_SENS == 1) {
-		_objectsManager.PERX = 236;
+		_objectsManager._characterPos.x = 236;
 		_objectsManager.PERI = 27;
 	}
 	if (_globals.OCEAN_SENS == 7) {
-		_objectsManager.PERX = 415;
+		_objectsManager._characterPos.x = 415;
 		_objectsManager.PERI = 18;
 	}
 	if (_globals.OCEAN_SENS == 3) {
-		_objectsManager.PERX = -20;
+		_objectsManager._characterPos.x = -20;
 		_objectsManager.PERI = 0;
 	}
-	_objectsManager.SPRITE(_globals.PERSO, Common::Point(_objectsManager.PERX, 110), 0, _objectsManager.PERI, 0, 0, 0, 0);
+	_objectsManager.SPRITE(_globals.PERSO, Common::Point(_objectsManager._characterPos.x, 110), 0, _objectsManager.PERI, 0, 0, 0, 0);
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -5718,7 +5718,7 @@ void HopkinsEngine::OCEAN(int16 a1, Common::String a2, Common::String a3, int16 
 		int mouseButton = _eventsManager.getMouseButton();
 		if (mouseButton && mouseButton == 1)
 			BTOCEAN();
-		_objectsManager.VERIFZONE();
+		_objectsManager.checkZone();
 		OCEAN_HOME();
 		_eventsManager.VBL();
 		if (_globals._exitId)

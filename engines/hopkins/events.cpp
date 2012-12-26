@@ -88,6 +88,13 @@ void EventsManager::setMouseOn() {
 /**
  * Set Mouse position
  */
+void EventsManager::setMouseXY(Common::Point pos) {
+	g_system->warpMouse(pos.x, pos.y);
+}
+
+/**
+ * Set Mouse position
+ */
 void EventsManager::setMouseXY(int xp, int yp) {
 	g_system->warpMouse(xp, yp);
 }

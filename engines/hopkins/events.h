@@ -72,6 +72,7 @@ public:
 	~EventsManager();
 	void setParent(HopkinsEngine *vm);
 	void setMouseOn();
+	void setMouseXY(Common::Point pos);
 	void setMouseXY(int xp, int yp);
 	int getMouseX();
 	int getMouseY();

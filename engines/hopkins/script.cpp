@@ -200,30 +200,27 @@ LABEL_1141:
 				_vm->_objectsManager._twoCharactersFl = false;
 				int v5 = *(dataP + 5);
 				int v6 = (int16)READ_LE_UINT16(dataP + 8);
-				_vm->_objectsManager.PERX = (int16)READ_LE_UINT16(dataP + 6);
-				_vm->_objectsManager.PERY = v6;
+				_vm->_objectsManager._characterPos.x = (int16)READ_LE_UINT16(dataP + 6);
+				_vm->_objectsManager._characterPos.y = v6;
 				_vm->_objectsManager.PERI = v5;
 				if (_vm->_objectsManager.CH_TETE == 1) {
 					if (_vm->_globals._saveData->data[svField354] == 1
 							&& _vm->_globals._saveData->_cloneHopkins._pos.x && _vm->_globals._saveData->_cloneHopkins._pos.y
 							&& _vm->_globals._saveData->_cloneHopkins.field2 && _vm->_globals._saveData->_cloneHopkins._location) {
 
-						_vm->_objectsManager.PERX = _vm->_globals._saveData->_cloneHopkins._pos.x;
-						_vm->_objectsManager.PERY = _vm->_globals._saveData->_cloneHopkins._pos.y;
+						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_cloneHopkins._pos;
 						_vm->_objectsManager.PERI = _vm->_globals._saveData->_cloneHopkins.field2;
 					}
 					if (_vm->_globals._saveData->data[svField356] == 1
 							&& _vm->_globals._saveData->_samantha._pos.x && _vm->_globals._saveData->_samantha._pos.y
 							&& _vm->_globals._saveData->_samantha.field2 && _vm->_globals._saveData->_samantha._location) {
-						_vm->_objectsManager.PERX = _vm->_globals._saveData->_samantha._pos.x;
-						_vm->_objectsManager.PERY = _vm->_globals._saveData->_samantha._pos.y;
+						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_samantha._pos;
 						_vm->_objectsManager.PERI = _vm->_globals._saveData->_samantha.field2;
 					}
 					if (_vm->_globals._saveData->data[svField357] == 1
 							&& _vm->_globals._saveData->_realHopkins._pos.x && _vm->_globals._saveData->_realHopkins._pos.y
 							&& _vm->_globals._saveData->_realHopkins.field2 && _vm->_globals._saveData->_realHopkins._location) {
-						_vm->_objectsManager.PERX = _vm->_globals._saveData->_realHopkins._pos.x;
-						_vm->_objectsManager.PERY = _vm->_globals._saveData->_realHopkins._pos.y;
+						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_realHopkins._pos;
 						_vm->_objectsManager.PERI = _vm->_globals._saveData->_realHopkins.field2;
 					}
 				}
@@ -484,7 +481,7 @@ LABEL_1141:
 		_vm->_objectsManager.ZONE_ON((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
 	} else if (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'F') {
-		_vm->_objectsManager.ZONE_OFF((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_objectsManager.disableZone((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
 	} else if (dataP[2] == 'E' && dataP[3] == 'X' && dataP[4] == 'I') {
 		opcodeType = 5;
