@@ -64,6 +64,26 @@ void ILBMDecoder::loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stre
 	byte *out = buffer;
 
 	switch (_header.pack) {
+	case 0: {	// non-compressed bitmap
+		// setup a buffer to hold enough data to build a line in the output
+		uint32 scanlineWidth = ((_header.width + 15) / 16) << 1;
+		byte *scanline = new byte[scanlineWidth * _header.depth];
+
+		for (uint i = 0; i < _header.height; ++i) {
+			byte *s = scanline;
+			for (uint32 j = 0; j < _header.depth; ++j) {
+				stream->read(s, scanlineWidth);
+				s += scanlineWidth;
+			}
+
+			planarToChunky(out, outPitch, scanline, scanlineWidth, numPlanes, packPixels);
+			out += outPitch;
+		}
+
+		delete[] scanline;
+		break;
+	}
+
 	case 1: {	// PackBits compressed bitmap
 		Graphics::PackBitsReadStream packStream(*stream);
 
@@ -88,7 +108,7 @@ void ILBMDecoder::loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stre
 
 	default:
 		// implement other compression types here!
-		error("only RLE compressed ILBM files are supported");
+		error("only uncompressed and RLE compressed ILBM files are supported");
 		break;
 	}
 }
