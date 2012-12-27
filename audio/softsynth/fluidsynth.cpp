@@ -127,29 +127,39 @@ int MidiDriver_FluidSynth::open() {
 
 	_synth = new_fluid_synth(_settings);
 
-	int chorusNr = ConfMan.getInt("fluidsynth_chorus_nr");
-	double chorusLevel = (double)ConfMan.getInt("fluidsynth_chorus_level") / 100.0;
-	double chorusSpeed = (double)ConfMan.getInt("fluidsynth_chorus_speed") / 100.0;
-	double chorusDepthMs = (double)ConfMan.getInt("fluidsynth_chorus_depth") / 100.0;
+	if (ConfMan.getBool("fluidsynth_chorus_activate")) {
+		fluid_synth_set_chorus_on(_synth, 1);
 
-	Common::String chorusWaveForm = ConfMan.get("fluidsynth_chorus_waveform");
-	int chorusType = FLUID_CHORUS_MOD_SINE;
-	if (chorusWaveForm == "sine") {
-		chorusType = FLUID_CHORUS_MOD_SINE;
+		int chorusNr = ConfMan.getInt("fluidsynth_chorus_nr");
+		double chorusLevel = (double)ConfMan.getInt("fluidsynth_chorus_level") / 100.0;
+		double chorusSpeed = (double)ConfMan.getInt("fluidsynth_chorus_speed") / 100.0;
+		double chorusDepthMs = (double)ConfMan.getInt("fluidsynth_chorus_depth") / 10.0;
+
+		Common::String chorusWaveForm = ConfMan.get("fluidsynth_chorus_waveform");
+		int chorusType = FLUID_CHORUS_MOD_SINE;
+		if (chorusWaveForm == "sine") {
+			chorusType = FLUID_CHORUS_MOD_SINE;
+		} else {
+			chorusType = FLUID_CHORUS_MOD_TRIANGLE;
+		}
+
+		fluid_synth_set_chorus(_synth, chorusNr, chorusLevel, chorusSpeed, chorusDepthMs, chorusType);
 	} else {
-		chorusType = FLUID_CHORUS_MOD_TRIANGLE;
+		fluid_synth_set_chorus_on(_synth, 0);
 	}
 
-	fluid_synth_set_chorus_on(_synth, 1);
-	fluid_synth_set_chorus(_synth, chorusNr, chorusLevel, chorusSpeed, chorusDepthMs, chorusType);
+	if (ConfMan.getBool("fluidsynth_reverb_activate")) {
+		fluid_synth_set_reverb_on(_synth, 1);
 
-	double reverbRoomSize = (double)ConfMan.getInt("fluidsynth_reverb_roomsize") / 100.0;
-	double reverbDamping = (double)ConfMan.getInt("fluidsynth_reverb_damping") / 100.0;
-	double reverbWidth = (double)ConfMan.getInt("fluidsynth_reverb_width") / 10.0;
-	double reverbLevel = (double)ConfMan.getInt("fluidsynth_reverb_level") / 100.0;
+		double reverbRoomSize = (double)ConfMan.getInt("fluidsynth_reverb_roomsize") / 100.0;
+		double reverbDamping = (double)ConfMan.getInt("fluidsynth_reverb_damping") / 100.0;
+		int reverbWidth = ConfMan.getInt("fluidsynth_reverb_width");
+		double reverbLevel = (double)ConfMan.getInt("fluidsynth_reverb_level") / 100.0;
 
-	fluid_synth_set_reverb_on(_synth, 1);
-	fluid_synth_set_reverb(_synth, reverbRoomSize, reverbDamping, reverbWidth, reverbLevel);
+		fluid_synth_set_reverb(_synth, reverbRoomSize, reverbDamping, reverbWidth, reverbLevel);
+	} else {
+		fluid_synth_set_reverb_on(_synth, 0);
+	}
 
 	Common::String interpolation = ConfMan.get("fluidsynth_misc_interpolation");
 	int interpMethod = FLUID_INTERP_4THORDER;

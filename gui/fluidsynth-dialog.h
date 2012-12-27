@@ -50,7 +50,7 @@ private:
 
 	TabWidget *_tabWidget;
 
-	CheckboxWidget *_chorusOverride;
+	CheckboxWidget *_chorusActivate;
 
 	StaticTextWidget *_chorusVoiceCountDesc;
 	SliderWidget *_chorusVoiceCountSlider;
@@ -71,7 +71,7 @@ private:
 	StaticTextWidget *_chorusWaveFormTypePopUpDesc;
 	PopUpWidget *_chorusWaveFormTypePopUp;
 
-	CheckboxWidget *_reverbOverride;
+	CheckboxWidget *_reverbActivate;
 
 	StaticTextWidget *_reverbRoomSizeDesc;
 	SliderWidget *_reverbRoomSizeSlider;
