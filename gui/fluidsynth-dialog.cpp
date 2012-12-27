@@ -20,6 +20,7 @@
  */
 
 #include "gui/fluidsynth-dialog.h"
+#include "gui/message.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
 
@@ -40,7 +41,9 @@ enum {
 	kReverbRoomSizeChangedCmd	= 'rrsc',
 	kReverbDampingChangedCmd	= 'rdac',
 	kReverbWidthChangedCmd		= 'rwic',
-	kReverbLevelChangedCmd		= 'rlec'
+	kReverbLevelChangedCmd		= 'rlec',
+
+	kResetSettingsCmd		= 'rese'
 };
 
 enum {
@@ -141,6 +144,8 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 	_miscInterpolationPopUp->appendEntry(_("Fourth-order"), kInterpolation4thOrder);
 	_miscInterpolationPopUp->appendEntry(_("Seventh-order"), kInterpolation7thOrder);
 
+	new ButtonWidget(_tabWidget, "FluidSynthSettings_Misc.ResetSettings", _("Reset"), _("Reset all FluidSynth settings to their default values."), kResetSettingsCmd);
+
 	_tabWidget->setActiveTab(0);
 
 	new ButtonWidget(this, "FluidSynthSettings.Cancel", _("Cancel"), 0, kCloseCmd);
@@ -156,86 +161,12 @@ void FluidSynthSettingsDialog::open() {
 	// Reset result value
 	setResult(0);
 
-	_chorusVoiceCountSlider->setValue(ConfMan.getInt("fluidsynth_chorus_nr", _domain));
-	_chorusVoiceCountLabel->setLabel(Common::String::format("%d", _chorusVoiceCountSlider->getValue()));
-	_chorusLevelSlider->setValue(ConfMan.getInt("fluidsynth_chorus_level", _domain));
-	_chorusLevelLabel->setLabel(Common::String::format("%d", _chorusLevelSlider->getValue()));
-	_chorusSpeedSlider->setValue(ConfMan.getInt("fluidsynth_chorus_speed", _domain));
-	_chorusSpeedLabel->setLabel(Common::String::format("%d", _chorusSpeedSlider->getValue()));
-	_chorusDepthSlider->setValue(ConfMan.getInt("fluidsynth_chorus_depth", _domain));
-	_chorusDepthLabel->setLabel(Common::String::format("%d", _chorusDepthSlider->getValue()));
-
-	Common::String waveForm = ConfMan.get("fluidsynth_chorus_waveform", _domain);
-	if (waveForm == "sine") {
-		_chorusWaveFormTypePopUp->setSelectedTag(kWaveFormTypeSine);
-	} else if (waveForm == "triangle") {
-		_chorusWaveFormTypePopUp->setSelectedTag(kWaveFormTypeTriangle);
-	}
-
-	_reverbRoomSizeSlider->setValue(ConfMan.getInt("fluidsynth_reverb_roomsize", _domain));
-	_reverbRoomSizeLabel->setLabel(Common::String::format("%d", _reverbRoomSizeSlider->getValue()));
-	_reverbDampingSlider->setValue(ConfMan.getInt("fluidsynth_reverb_damping", _domain));
-	_reverbDampingLabel->setLabel(Common::String::format("%d", _reverbDampingSlider->getValue()));
-	_reverbWidthSlider->setValue(ConfMan.getInt("fluidsynth_reverb_width", _domain));
-	_reverbWidthLabel->setLabel(Common::String::format("%d", _reverbWidthSlider->getValue()));
-	_reverbLevelSlider->setValue(ConfMan.getInt("fluidsynth_reverb_level", _domain));
-	_reverbLevelLabel->setLabel(Common::String::format("%d", _reverbLevelSlider->getValue()));
-
-	Common::String interpolation = ConfMan.get("fluidsynth_misc_interpolation", _domain);
-	if (interpolation == "none") {
-		_miscInterpolationPopUp->setSelectedTag(kInterpolationNone);
-	} else if (interpolation == "linear") {
-		_miscInterpolationPopUp->setSelectedTag(kInterpolationLinear);
-	} else if (interpolation == "4th") {
-		_miscInterpolationPopUp->setSelectedTag(kInterpolation4thOrder);
-	} else if (interpolation == "7th") {
-		_miscInterpolationPopUp->setSelectedTag(kInterpolation7thOrder);
-	}
-
-	// This may trigger redrawing, so don't do it until all sliders have
-	// their proper values. Otherwise, the dialog may crash because of
-	// invalid slider values.
-	_chorusActivate->setState(ConfMan.getBool("fluidsynth_chorus_activate", _domain));
-	_reverbActivate->setState(ConfMan.getBool("fluidsynth_reverb_activate", _domain));
+	readSettings();
 }
 
 void FluidSynthSettingsDialog::close() {
 	if (getResult()) {
-		ConfMan.setBool("fluidsynth_chorus_activate", _chorusActivate->getState());
-		ConfMan.setInt("fluidsynth_chorus_nr", _chorusVoiceCountSlider->getValue(), _domain);
-		ConfMan.setInt("fluidsynth_chorus_level", _chorusLevelSlider->getValue(), _domain);
-		ConfMan.setInt("fluidsynth_chorus_speed", _chorusSpeedSlider->getValue(), _domain);
-		ConfMan.setInt("fluidsynth_chorus_depth", _chorusDepthSlider->getValue(), _domain);
-
-		uint32 waveForm = _chorusWaveFormTypePopUp->getSelectedTag();
-		if (waveForm == kWaveFormTypeSine) {
-			ConfMan.set("fluidsynth_chorus_waveform", "sine", _domain);
-		} else if (waveForm == kWaveFormTypeTriangle) {
-			ConfMan.set("fluidsynth_chorus_waveform", "triangle", _domain);
-		} else {
-			ConfMan.removeKey("fluidsynth_chorus_waveform", _domain);
-		}
-
-		ConfMan.setBool("fluidsynth_reverb_activate", _reverbActivate->getState());
-		ConfMan.setInt("fluidsynth_reverb_roomsize", _reverbRoomSizeSlider->getValue(), _domain);
-		ConfMan.setInt("fluidsynth_reverb_damping", _reverbDampingSlider->getValue(), _domain);
-		ConfMan.setInt("fluidsynth_reverb_width", _reverbWidthSlider->getValue(), _domain);
-		ConfMan.setInt("fluidsynth_reverb_level", _reverbLevelSlider->getValue(), _domain);
-
-		uint32 interpolation = _miscInterpolationPopUp->getSelectedTag();
-		if (interpolation == kInterpolationNone) {
-			ConfMan.set("fluidsynth_misc_interpolation", "none", _domain);
-		} else if (interpolation == kInterpolationLinear) {
-			ConfMan.set("fluidsynth_misc_interpolation", "linear", _domain);
-		} else if (interpolation == kInterpolation4thOrder) {
-			ConfMan.set("fluidsynth_misc_interpolation", "4th", _domain);
-		} else if (interpolation == kInterpolation7thOrder) {
-			ConfMan.set("fluidsynth_misc_interpolation", "7th", _domain);
-		} else {
-			ConfMan.removeKey("fluidsynth_misc_interpolation", _domain);
-		}
-
-		// The main options dialog is responsible for writing the config file.
+		writeSettings();
 	}
 
 	Dialog::close();
@@ -281,6 +212,15 @@ void FluidSynthSettingsDialog::handleCommand(CommandSender *sender, uint32 cmd, 
 		_reverbLevelLabel->setLabel(Common::String::format("%d", _reverbLevelSlider->getValue()));
 		_reverbLevelLabel->draw();
 		break;
+	case kResetSettingsCmd: {
+		MessageDialog alert(_("Do you really want to reset all FluidSynth settings to their default values?"), _("Yes"), _("No"));
+		if (alert.runModal() == GUI::kMessageOK) {
+			resetSettings();
+			readSettings();
+			draw();
+		}
+		break;
+	}
 	case kOKCmd:
 		setResult(1);
 		close();
@@ -321,6 +261,106 @@ void FluidSynthSettingsDialog::setReverbSettingsState(bool enabled) {
 	_reverbLevelDesc->setEnabled(enabled);
 	_reverbLevelSlider->setEnabled(enabled);
 	_reverbLevelLabel->setEnabled(enabled);
+}
+
+void FluidSynthSettingsDialog::readSettings() {
+	_chorusVoiceCountSlider->setValue(ConfMan.getInt("fluidsynth_chorus_nr", _domain));
+	_chorusVoiceCountLabel->setLabel(Common::String::format("%d", _chorusVoiceCountSlider->getValue()));
+	_chorusLevelSlider->setValue(ConfMan.getInt("fluidsynth_chorus_level", _domain));
+	_chorusLevelLabel->setLabel(Common::String::format("%d", _chorusLevelSlider->getValue()));
+	_chorusSpeedSlider->setValue(ConfMan.getInt("fluidsynth_chorus_speed", _domain));
+	_chorusSpeedLabel->setLabel(Common::String::format("%d", _chorusSpeedSlider->getValue()));
+	_chorusDepthSlider->setValue(ConfMan.getInt("fluidsynth_chorus_depth", _domain));
+	_chorusDepthLabel->setLabel(Common::String::format("%d", _chorusDepthSlider->getValue()));
+
+	Common::String waveForm = ConfMan.get("fluidsynth_chorus_waveform", _domain);
+	if (waveForm == "sine") {
+		_chorusWaveFormTypePopUp->setSelectedTag(kWaveFormTypeSine);
+	} else if (waveForm == "triangle") {
+		_chorusWaveFormTypePopUp->setSelectedTag(kWaveFormTypeTriangle);
+	}
+
+	_reverbRoomSizeSlider->setValue(ConfMan.getInt("fluidsynth_reverb_roomsize", _domain));
+	_reverbRoomSizeLabel->setLabel(Common::String::format("%d", _reverbRoomSizeSlider->getValue()));
+	_reverbDampingSlider->setValue(ConfMan.getInt("fluidsynth_reverb_damping", _domain));
+	_reverbDampingLabel->setLabel(Common::String::format("%d", _reverbDampingSlider->getValue()));
+	_reverbWidthSlider->setValue(ConfMan.getInt("fluidsynth_reverb_width", _domain));
+	_reverbWidthLabel->setLabel(Common::String::format("%d", _reverbWidthSlider->getValue()));
+	_reverbLevelSlider->setValue(ConfMan.getInt("fluidsynth_reverb_level", _domain));
+	_reverbLevelLabel->setLabel(Common::String::format("%d", _reverbLevelSlider->getValue()));
+
+	Common::String interpolation = ConfMan.get("fluidsynth_misc_interpolation", _domain);
+	if (interpolation == "none") {
+		_miscInterpolationPopUp->setSelectedTag(kInterpolationNone);
+	} else if (interpolation == "linear") {
+		_miscInterpolationPopUp->setSelectedTag(kInterpolationLinear);
+	} else if (interpolation == "4th") {
+		_miscInterpolationPopUp->setSelectedTag(kInterpolation4thOrder);
+	} else if (interpolation == "7th") {
+		_miscInterpolationPopUp->setSelectedTag(kInterpolation7thOrder);
+	}
+
+	// This may trigger redrawing, so don't do it until all sliders have
+	// their proper values. Otherwise, the dialog may crash because of
+	// invalid slider values.
+	_chorusActivate->setState(ConfMan.getBool("fluidsynth_chorus_activate", _domain));
+	_reverbActivate->setState(ConfMan.getBool("fluidsynth_reverb_activate", _domain));
+}
+
+void FluidSynthSettingsDialog::writeSettings() {
+	ConfMan.setBool("fluidsynth_chorus_activate", _chorusActivate->getState());
+	ConfMan.setInt("fluidsynth_chorus_nr", _chorusVoiceCountSlider->getValue(), _domain);
+	ConfMan.setInt("fluidsynth_chorus_level", _chorusLevelSlider->getValue(), _domain);
+	ConfMan.setInt("fluidsynth_chorus_speed", _chorusSpeedSlider->getValue(), _domain);
+	ConfMan.setInt("fluidsynth_chorus_depth", _chorusDepthSlider->getValue(), _domain);
+
+	uint32 waveForm = _chorusWaveFormTypePopUp->getSelectedTag();
+	if (waveForm == kWaveFormTypeSine) {
+		ConfMan.set("fluidsynth_chorus_waveform", "sine", _domain);
+	} else if (waveForm == kWaveFormTypeTriangle) {
+		ConfMan.set("fluidsynth_chorus_waveform", "triangle", _domain);
+	} else {
+		ConfMan.removeKey("fluidsynth_chorus_waveform", _domain);
+	}
+
+	ConfMan.setBool("fluidsynth_reverb_activate", _reverbActivate->getState());
+	ConfMan.setInt("fluidsynth_reverb_roomsize", _reverbRoomSizeSlider->getValue(), _domain);
+	ConfMan.setInt("fluidsynth_reverb_damping", _reverbDampingSlider->getValue(), _domain);
+	ConfMan.setInt("fluidsynth_reverb_width", _reverbWidthSlider->getValue(), _domain);
+	ConfMan.setInt("fluidsynth_reverb_level", _reverbLevelSlider->getValue(), _domain);
+
+	uint32 interpolation = _miscInterpolationPopUp->getSelectedTag();
+	if (interpolation == kInterpolationNone) {
+		ConfMan.set("fluidsynth_misc_interpolation", "none", _domain);
+	} else if (interpolation == kInterpolationLinear) {
+		ConfMan.set("fluidsynth_misc_interpolation", "linear", _domain);
+	} else if (interpolation == kInterpolation4thOrder) {
+		ConfMan.set("fluidsynth_misc_interpolation", "4th", _domain);
+	} else if (interpolation == kInterpolation7thOrder) {
+		ConfMan.set("fluidsynth_misc_interpolation", "7th", _domain);
+	} else {
+		ConfMan.removeKey("fluidsynth_misc_interpolation", _domain);
+	}
+
+	// The main options dialog is responsible for writing the config file.
+	// That's why we don't actually flush the settings to the file here.
+}
+
+void FluidSynthSettingsDialog::resetSettings() {
+	ConfMan.removeKey("fluidsynth_chorus_activate", _domain);
+	ConfMan.removeKey("fluidsynth_chorus_nr", _domain);
+	ConfMan.removeKey("fluidsynth_chorus_level", _domain);
+	ConfMan.removeKey("fluidsynth_chorus_speed", _domain);
+	ConfMan.removeKey("fluidsynth_chorus_depth", _domain);
+	ConfMan.removeKey("fluidsynth_chorus_waveform", _domain);
+
+	ConfMan.removeKey("fluidsynth_reverb_activate", _domain);
+	ConfMan.removeKey("fluidsynth_reverb_roomsize", _domain);
+	ConfMan.removeKey("fluidsynth_reverb_damping", _domain);
+	ConfMan.removeKey("fluidsynth_reverb_width", _domain);
+	ConfMan.removeKey("fluidsynth_reverb_level", _domain);
+
+	ConfMan.removeKey("fluidsynth_misc_interpolation", _domain);
 }
 
 } // End of namespace GUI

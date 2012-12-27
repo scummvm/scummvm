@@ -943,6 +943,9 @@
 					type = 'PopUp'
 				/>
 			</layout>
+			<widget name = 'ResetSettings'
+				type = 'Button'
+			/>
 		</layout>
 	</dialog>
 
