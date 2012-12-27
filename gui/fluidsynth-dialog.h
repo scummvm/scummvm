@@ -40,10 +40,16 @@ public:
 
 	void open();
 	void close();
-	void handleCommand(CommandSender *sender,  uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
+protected:
 	void setChorusSettingsState(bool enabled);
 	void setReverbSettingsState(bool enabled);
+
+	void readSettings();
+	void writeSettings();
+
+	void resetSettings();
 
 private:
 	Common::String _domain;
