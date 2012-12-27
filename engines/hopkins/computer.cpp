@@ -119,17 +119,10 @@ void ComputerManager::setTextPosition(int yp, int xp) {
  * @param mode		Which computer to display
  */
 void ComputerManager::showComputer(ComputerEnum mode) {
-	bool passwordMatch;
-	char *v3;
-	char s[12];
-	const char *s2;
-
 	_vm->_eventsManager._escKeyFl = false;
-	passwordMatch = false;
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	setVideoMode();
 	setTextColor(4);
-
 	setTextPosition(2, 4);
 	if (mode == COMPUTER_HOPKINS)
 		outText(Common::String(_menuText[0]._line));
@@ -147,48 +140,16 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	outText(Common::String(_menuText[4]._line));
 	setTextPosition(14, 35);
 
-	memset(s, 0, 12);
 	TXT4(280, 224, 8);
-	strcpy(s, _inputBuf);
-	v3 = &s[0];
-
+	bool passwordMatch = false;
 	if (mode == COMPUTER_HOPKINS) {
-		s2 = "HOPKINS";
-		int v4 = 8;
-		char v5 = 1;
-		do {
-			if (!v4)
-				break;
-			v5 = *v3++ == *s2++;
-			--v4;
-		} while (v5);
-		if (v5)
+		if (!strcmp(_inputBuf, "HOPKINS"))
 			passwordMatch = true;
 	} else if (mode == COMPUTER_SAMANTHAS) {
-		char *v6 = &s[0];
-		s2 = "328MHZA";
-		int v7 = 8;
-		bool v8 = true;
-		do {
-			if (!v7)
-				break;
-			v8 = (*v6++ == *s2++);
-			--v7;
-		} while (v8);
-		if (v8)
+		if (!strcmp(_inputBuf, "328MHZA"))
 			passwordMatch = true;
 	} else if (mode == COMPUTER_PUBLIC) {
-		char *v9 = &s[0];
-		s2 = "ALLFREE";
-		int v10 = 8;
-		bool v11 = true;
-		do {
-			if (!v10)
-				break;
-			v11 = (*v9++ == *s2++);
-			--v10;
-		} while (v11);
-		if (v11)
+		if (!strcmp(_inputBuf, "ALLFREE"))
 			passwordMatch = true;
 	}
 
@@ -234,21 +195,21 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 			}
 
 			bool numericFlag = false;
-			char v12;
+			char keyPressed;
 			do {
-				v12 = _vm->_eventsManager.waitKeyPress();
+				keyPressed = _vm->_eventsManager.waitKeyPress();
 				if (_vm->shouldQuit())
 					return;
 
-				if ((uint16)(v12 - 48) <= 8u)
+				if ((keyPressed >= '0') && (keyPressed <= '9'))
 					numericFlag = true;
 			} while (!numericFlag);
 
 			// 0 - Quit
-			if (v12 == '0')
+			if (keyPressed == '0')
 				break;
 			// 1 - Games
-			if (v12 == '1') {
+			if (keyPressed == '1') {
 				displayGamesSubMenu();
 			} else if (mode == COMPUTER_HOPKINS) {
 				clearScreen();
@@ -256,31 +217,43 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				setTextPosition(2, 4);
 				outText(Common::String(_menuText[0]._line));
 				setTextColor(15);
-				if (v12 == 50)
+				switch (keyPressed) {
+				case '2':
 					readText(1);
-				if (v12 == 51)
+					break;
+				case '3':
 					readText(2);
-				if (v12 == 52)
+					break;
+				case '4':
 					readText(3);
-				if (v12 == 53)
+					break;
+				case '5':
 					readText(4);
+					break;
+				}
 			} else if (mode == COMPUTER_SAMANTHAS) {
 				clearScreen();
 				setTextColor(4);
 				setTextPosition(2, 4);
 				outText(Common::String(_menuText[1]._line));
 				setTextColor(15);
-				if (v12 == 50)
+				switch (keyPressed) {
+				case '2':
 					readText(6);
-				if (v12 == 51)
+				break;
+				case '3':
 					readText(7);
-				if (v12 == 52)
+					break;
+				case '4':
 					readText(8);
-				if (v12 == 53)
+					break;
+				case '5':
 					readText(9);
-				if (v12 == 54) {
+					break;
+				case '6':
 					readText(10);
 					_vm->_globals._saveData->data[svField270] = 4;
+					break;
 				}
 			}
 		}

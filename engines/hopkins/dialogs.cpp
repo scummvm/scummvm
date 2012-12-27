@@ -75,50 +75,50 @@ void DialogsManager::showOptionsDialog() {
 			mousePos.x = _vm->_eventsManager.getMouseX();
 			mousePos.y = _vm->_eventsManager.getMouseY();
 
-			if (!_vm->_soundManager._musicOff) {
+			if (!_vm->_soundManager._musicOffFl) {
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 138) {
 					// Change the music volume
-					++_vm->_soundManager.MUSICVOL;
+					++_vm->_soundManager._musicVolume;
 
-					if (_vm->_soundManager.MUSICVOL <= 12)
+					if (_vm->_soundManager._musicVolume <= 12)
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
-						_vm->_soundManager.MUSICVOL = 12;
-					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager.MUSICVOL);
+						_vm->_soundManager._musicVolume = 12;
+					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
-				if (!_vm->_soundManager._musicOff && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 138) {
-					--_vm->_soundManager.MUSICVOL;
-					if (_vm->_soundManager.MUSICVOL >= 0)
+				if (!_vm->_soundManager._musicOffFl && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 138) {
+					--_vm->_soundManager._musicVolume;
+					if (_vm->_soundManager._musicVolume >= 0)
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
-						_vm->_soundManager.MUSICVOL = 0;
+						_vm->_soundManager._musicVolume = 0;
 
-					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager.MUSICVOL);
+					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 			}
 			if (!_vm->_soundManager._soundOffFl) {
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 165) {
-					++_vm->_soundManager.SOUNDVOL;
-					if (_vm->_soundManager.SOUNDVOL <= 16)
+					++_vm->_soundManager._soundVolume;
+					if (_vm->_soundManager._soundVolume <= 16)
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
-						_vm->_soundManager.SOUNDVOL = 16;
+						_vm->_soundManager._soundVolume = 16;
 					_vm->_soundManager.MODSetSampleVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
 				if (!_vm->_soundManager._soundOffFl && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 165) {
-					--_vm->_soundManager.SOUNDVOL;
-					if (_vm->_soundManager.SOUNDVOL >= 0)
+					--_vm->_soundManager._soundVolume;
+					if (_vm->_soundManager._soundVolume >= 0)
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
-						_vm->_soundManager.SOUNDVOL = 0;
+						_vm->_soundManager._soundVolume = 0;
 					_vm->_soundManager.MODSetSampleVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
@@ -127,23 +127,23 @@ void DialogsManager::showOptionsDialog() {
 
 			if (!_vm->_soundManager._voiceOffFl) {
 				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 192) {
-					++_vm->_soundManager.VOICEVOL;
+					++_vm->_soundManager._voiceVolume;
 
-					if (_vm->_soundManager.VOICEVOL <= 16)
+					if (_vm->_soundManager._voiceVolume <= 16)
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
-						_vm->_soundManager.VOICEVOL = 16;
+						_vm->_soundManager._voiceVolume = 16;
 					_vm->_soundManager.MODSetVoiceVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
 				if (!_vm->_soundManager._voiceOffFl && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 192) {
-					--_vm->_soundManager.VOICEVOL;
-					if (_vm->_soundManager.VOICEVOL >= 0)
+					--_vm->_soundManager._voiceVolume;
+					if (_vm->_soundManager._voiceVolume >= 0)
 						_vm->_soundManager.playSound("bruit2.wav");
 					else
-						_vm->_soundManager.VOICEVOL = 0;
+						_vm->_soundManager._voiceVolume = 0;
 					_vm->_soundManager.MODSetVoiceVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
@@ -162,11 +162,11 @@ void DialogsManager::showOptionsDialog() {
 					}
 					if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
 						if (mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 138) {
-							if (_vm->_soundManager._musicOff) {
-								_vm->_soundManager._musicOff = false;
-								_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager.MUSICVOL);
+							if (_vm->_soundManager._musicOffFl) {
+								_vm->_soundManager._musicOffFl = false;
+								_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
 							} else {
-								_vm->_soundManager._musicOff = true;
+								_vm->_soundManager._musicOffFl = true;
 								_vm->_soundManager.MODSetMusicVolume(0);
 							}
 
@@ -249,7 +249,7 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_globals.opt_txt = !_vm->_soundManager._textOffFl ? 7 : 8;
 		_vm->_globals.opt_voice = !_vm->_soundManager._voiceOffFl ? 7 : 8;
 		_vm->_globals.opt_sound = !_vm->_soundManager._soundOffFl ? 7 : 8;
-		_vm->_globals.opt_music = !_vm->_soundManager._musicOff ? 7 : 8;
+		_vm->_globals.opt_music = !_vm->_soundManager._musicOffFl ? 7 : 8;
 
 		if (_vm->_globals.SVGA == 1)
 			_vm->_globals.opt_anm = 10;

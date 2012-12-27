@@ -74,11 +74,11 @@ namespace Hopkins {
 
 SoundManager::SoundManager() {
 	SPECIAL_SOUND = 0;
-	SOUNDVOL = 0;
-	VOICEVOL = 0;
-	MUSICVOL = 0;
+	_soundVolume = 0;
+	_voiceVolume = 0;
+	_musicVolume = 0;
 	_soundOffFl = true;
-	_musicOff = true;
+	_musicOffFl = true;
 	_voiceOffFl = true;
 	_textOffFl = false;
 	_soundFl = false;
@@ -381,7 +381,7 @@ void SoundManager::WSOUND_OFF() {
 }
 
 void SoundManager::PLAY_MOD(const Common::String &file) {
-	if (_musicOff)
+	if (_musicOffFl)
 		return;
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPMUSIC, file);
 	if (MOD_FLAG) {
@@ -507,7 +507,7 @@ void SoundManager::checkMusic() {
 			mwavIndex = Music._mwavIndexes[Music._currentIndex];
 		}
 
-		int volume = MUSICVOL * 255 / 16;
+		int volume = _musicVolume * 255 / 16;
 
 		Mwav[mwavIndex]._audioStream->rewind();
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Mwav[mwavIndex]._soundHandle,
@@ -663,9 +663,9 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	}
 
 	SDL_LVOICE(catPos, catLen);
-	oldMusicVol = MUSICVOL;
-	if (!_musicOff && MUSICVOL > 2)
-		MUSICVOL = (signed int)((long double)MUSICVOL - (long double)MUSICVOL / 100.0 * 45.0);
+	oldMusicVol = _musicVolume;
+	if (!_musicOffFl && _musicVolume > 2)
+		_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
 
 	PLAY_VOICE_SDL();
 
@@ -686,7 +686,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 	stopVoice(2);
 	DEL_SAMPLE_SDL(20);
-	MUSICVOL = oldMusicVol;
+	_musicVolume = oldMusicVol;
 	_vm->_eventsManager._escKeyFl = false;
 	VBL_MERDE = 0;
 	return true;
@@ -898,7 +898,7 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 	Voice[voiceIndex].field14 = 4;
 	Voice[voiceIndex]._wavIndex = wavIndex;
 
-	int volume = (voiceIndex == 2) ? VOICEVOL * 255 / 16 : SOUNDVOL * 255 / 16;
+	int volume = (voiceIndex == 2) ? _voiceVolume * 255 / 16 : _soundVolume * 255 / 16;
 
 	// Start the voice playing
 	Swav[wavIndex]._audioStream->rewind();
@@ -912,38 +912,38 @@ void SoundManager::syncSoundSettings() {
 		muteAll = ConfMan.getBool("mute");
 
 	// Update the mute settings
-	_musicOff = muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
+	_musicOffFl = muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
 	_soundOffFl = muteAll || (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute"));
 	_voiceOffFl = muteAll || (ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute"));
 
 	// Update the volume levels
-	MUSICVOL = MIN(255, ConfMan.getInt("music_volume")) * 16 / 255;
-	SOUNDVOL = MIN(255, ConfMan.getInt("sfx_volume")) * 16 / 255;
-	VOICEVOL = MIN(255, ConfMan.getInt("speech_volume")) * 16 / 255;
+	_musicVolume = MIN(255, ConfMan.getInt("music_volume")) * 16 / 255;
+	_soundVolume = MIN(255, ConfMan.getInt("sfx_volume")) * 16 / 255;
+	_voiceVolume = MIN(255, ConfMan.getInt("speech_volume")) * 16 / 255;
 
 	// Update any active sounds
 	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
 		if (Swav[idx]._active) {
-			int volume = (idx == 20) ? (VOICEVOL * 255 / 16) : (SOUNDVOL * 255 / 16);
+			int volume = (idx == 20) ? (_voiceVolume * 255 / 16) : (_soundVolume * 255 / 16);
 			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
 		}
 	}
 	for (int idx = 0; idx < MWAV_COUNT; ++idx) {
 		if (Mwav[idx]._active) {
-			_vm->_mixer->setChannelVolume(Mwav[idx]._soundHandle, MUSICVOL * 255 / 16);
+			_vm->_mixer->setChannelVolume(Mwav[idx]._soundHandle, _musicVolume * 255 / 16);
 		}
 	}
 }
 
 void SoundManager::updateScummVMSoundSettings() {
-	ConfMan.setBool("mute", _musicOff && _soundOffFl && _voiceOffFl);
-	ConfMan.setBool("music_mute", _musicOff);
+	ConfMan.setBool("mute", _musicOffFl && _soundOffFl && _voiceOffFl);
+	ConfMan.setBool("music_mute", _musicOffFl);
 	ConfMan.setBool("sfx_mute", _soundOffFl);
 	ConfMan.setBool("speech_mute", _voiceOffFl);
 
-	ConfMan.setInt("music_volume", MUSICVOL * 255 / 16);
-	ConfMan.setInt("sfx_volume", SOUNDVOL * 255 / 16);
-	ConfMan.setInt("speech_volume", VOICEVOL * 255 / 16);
+	ConfMan.setInt("music_volume", _musicVolume * 255 / 16);
+	ConfMan.setInt("sfx_volume", _soundVolume * 255 / 16);
+	ConfMan.setInt("speech_volume", _voiceVolume * 255 / 16);
 
 	ConfMan.flushToDisk();
 }

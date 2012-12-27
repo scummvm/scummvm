@@ -114,11 +114,11 @@ private:
 public:
 	Audio::SoundHandle _modHandle;
 	int SPECIAL_SOUND;
-	int SOUNDVOL;
-	int VOICEVOL;
-	int MUSICVOL;
+	int _soundVolume;
+	int _voiceVolume;
+	int _musicVolume;
 	bool _soundOffFl;
-	bool _musicOff;
+	bool _musicOffFl;
 	bool _voiceOffFl;
 	bool _textOffFl;
 	bool _soundFl;
