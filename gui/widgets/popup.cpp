@@ -406,6 +406,7 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 	if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
 		(newSelection != _selectedItem)) {
 		_selectedItem = newSelection;
+		sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
 		draw();
 	}
 }
