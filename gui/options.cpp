@@ -125,9 +125,6 @@ void OptionsDialog::init() {
 	_midiGainDesc = 0;
 	_midiGainSlider = 0;
 	_midiGainLabel = 0;
-#ifdef USE_FLUIDSYNTH
-	_fluidSynthSettings = 0;
-#endif
 	_enableMT32Settings = false;
 	_mt32Checkbox = 0;
 	_mt32DevicePopUp = 0;
@@ -873,7 +870,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
 
 #ifdef USE_FLUIDSYNTH
-	_fluidSynthSettings = new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
+	new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
 #endif
 
 	_enableMIDISettings = true;

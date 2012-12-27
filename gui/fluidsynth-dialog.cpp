@@ -66,7 +66,7 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_tabWidget->addTab(_("Reverb"));
 
-	_reverbActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Reverb.EnableTabCheckbox", _("Activate"), 0, kActivateReverbCmd);
+	_reverbActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Reverb.EnableTabCheckbox", _("Active"), 0, kActivateReverbCmd);
 
 	_reverbRoomSizeDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeText", _("Room:"));
 	_reverbRoomSizeSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeSlider", 0, kReverbRoomSizeChangedCmd);
