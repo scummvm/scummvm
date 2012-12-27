@@ -1093,7 +1093,6 @@ void TalkManager::REPONSE2(int a1, int a2) {
 
 void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	int v5;
-	int v10;
 	byte *v11;
 	byte *v14;
 	byte *v15;
