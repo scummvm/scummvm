@@ -15,6 +15,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Galician translation.
    - Added Finnish translation.
    - Added Belarusian translation.
+   - Using the mouse wheel on a slider widget now changes the value by the
+     smallest possible amount. This is more predictable than the old behaviour,
+     which was to change the value by "one pixel" which would sometimes not
+     change it at all.
 
   Cine:
    - Improved audio support for Amiga and AtariST versions of Future Wars.
