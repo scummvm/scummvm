@@ -18,3 +18,181 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
+
+#include "common/stream.h"
+#include "common/util.h"
+
+#include "graphics/decoders/ilbm.h"
+
+namespace Graphics {
+
+	ILBMDecoder2::ILBMDecoder2() {
+		_surface = 0;
+		_palette = 0;
+		memset(&_header, 0, sizeof(BMHD));
+		_paletteColorCount = 0;
+		_outPitch = 0;
+		_packedPixels = false;
+	}
+
+	ILBMDecoder2::~ILBMDecoder2() {
+		destroy();
+	}
+
+	void ILBMDecoder2::destroy() {
+		if (_surface) {
+			_surface->free();
+			delete _surface; _surface = 0;
+		}
+
+		if (_palette) {
+			delete[] _palette; _palette = 0;
+		}
+	}
+
+	bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
+		destroy();
+
+		const uint32 form = stream.readUint32BE();
+
+		if (form != CHUNK_FORM)
+			return false;
+
+		stream.skip(8);
+
+		while (1)
+		{
+			const uint32 type = stream.readUint32BE();
+			const uint32 size = stream.readUint32BE();
+
+			if (stream.eos())
+				break;
+
+			switch (type) {
+				case CHUNK_BMHD: {
+					_header.width = stream.readUint16BE();
+					_header.height = stream.readUint16BE();
+					_header.x = stream.readUint16BE();
+					_header.y = stream.readUint16BE();
+					_header.numPlanes = stream.readByte();
+					_header.masking = stream.readByte();
+					_header.compression = stream.readByte();
+					_header.flags = stream.readByte();
+					_header.transparentColor = stream.readUint16BE();
+					_header.xAspect = stream.readByte();
+					_header.yAspect = stream.readByte();
+					_header.pageWidth = stream.readUint16BE();
+					_header.pageHeight = stream.readUint16BE();
+
+					assert(_header.width >= 1);
+					assert(_header.height >= 1);
+					assert(_header.numPlanes >= 1 && _header.numPlanes <= 8 && _header.numPlanes != 7);
+					break;
+				}
+
+				case CHUNK_CMAP: {
+					_palette = new byte[size];
+					stream.read(_palette, size);
+					_paletteColorCount = size / 3;
+					break;
+				}
+
+				case CHUNK_BODY: {
+					if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4) {
+						_packedPixels = false;
+					}
+					if (_outPitch == 0) {
+						_outPitch = _header.width;
+					}
+					if (_packedPixels) {
+						_outPitch /= (8 / _header.numPlanes);
+					}
+
+					_surface = new Graphics::Surface();
+					_surface->create(_outPitch, _header.height, Graphics::PixelFormat::createFormatCLUT8());
+
+					uint32 scanlinePitch = ((_header.width + 15) >> 4) << 1;
+					byte *scanlines = new byte[scanlinePitch * _header.numPlanes];
+					byte *data = (byte *)_surface->pixels;
+
+					for (uint16 i = 0; i < _header.height; ++i) {
+						byte *s = scanlines;
+						for (uint16 j = 0; j < _header.numPlanes; ++j) {
+							uint16 left = scanlinePitch;
+							while (left > 0 && !stream.eos() ) {
+								uint16 length = scanlinePitch;
+								if (_header.compression) {
+									uint16 code = stream.readByte();
+									if (code != 0x80) {
+										if (code <= 0x7f) { // literal run
+											code++;
+											length = MIN(code, left);
+											stream.read(s, length);
+											if(code > length)
+												stream.skip(code - length);
+										} else { // expand run
+											byte value = stream.readByte();
+											code = (256 - code) + 1;
+											length = MIN(code, left);
+											memset(s, value, length);
+										}
+									}
+								} else {
+									stream.read(s, length);
+								}
+
+								s += length;
+								left -= length;
+							}
+
+							uint32 numPixels = _outPitch;
+							if (_packedPixels) {
+								numPixels *= (8 / _header.numPlanes);
+							}
+
+							for (uint32 x = 0; x < numPixels; ++x) {
+								byte *s = scanlines;
+								byte pixel = 0;
+								byte offset = x >> 3;
+								byte bit = 0x80 >> (x & 7);
+
+								// first build a pixel by scanning all the usable planes in the input
+								for (uint32 plane = 0; plane < _header.numPlanes; ++plane) {
+									if (s[offset] & bit) {
+										pixel |= (1 << plane);
+									}
+									s += scanlinePitch;
+								}
+
+								// then output the pixel according to the requested packing
+								if (!_packedPixels) {
+									data[x] = pixel;
+								} else if (_header.numPlanes == 1) {
+									data[x / 8] |= (pixel << (x & 7));
+								} else if (_header.numPlanes == 2) {
+									data[x / 4] |= (pixel << ((x & 3) << 1));
+								} else if (_header.numPlanes == 4) {
+									data[x / 2] |= (pixel << ((x & 1) << 2));
+								}
+							}
+						}
+
+						data += _outPitch;
+					}
+
+					delete[] scanlines;
+
+					break;
+				}
+			
+				default: {
+					stream.skip(size);
+					break;
+				}
+			}
+		}
+
+		return true;
+	}
+
+} // End of namespace Graphics
