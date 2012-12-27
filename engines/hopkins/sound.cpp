@@ -456,6 +456,9 @@ void SoundManager::playMusic() {
 void SoundManager::stopMusic() {
 	if (Music._active)
 		Music._isPlaying = false;
+	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+		_vm->_mixer->stopHandle(_modHandle);
+
 }
 
 void SoundManager::delMusic() {
