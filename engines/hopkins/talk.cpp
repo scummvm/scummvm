@@ -37,12 +37,12 @@ TalkManager::TalkManager() {
 	_characterBuffer = NULL;
 	_characterPalette = NULL;
 	_characterSprite = NULL;
-	ADR_ANIM = NULL;
+	_characterAnim = NULL;
 	_characterSize = 0;
 	STATI = 0;
 	PLIGNE1 = PLIGNE2 = 0;
 	PLIGNE3 = PLIGNE4 = 0;
-	PCHERCHE = 0;
+	_paletteBufferIdx = 0;
 }
 
 void TalkManager::setParent(HopkinsEngine *vm) {
@@ -84,7 +84,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_answersFilename = _questionsFilename = "RUEES.TXT";
 	}
 	PLIGNE1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
-	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
+	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
 	_characterSprite = _vm->_fileManager.searchCat(spriteFilename, 7);
 	if (_characterSprite) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, spriteFilename);
@@ -103,8 +103,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_vm->_graphicsManager.ofscroll = 0;
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_objectsManager.PERSO_ON = true;
-	CHERCHE_PAL(PCHERCHE, 0);
-	CHERCHE_ANIM0(PCHERCHE, 0);
+	searchCharacterPalette(_paletteBufferIdx, false);
+	startCharacterAnim0(_paletteBufferIdx, false);
 	initCharacterAnim();
 	PLIGNE2 = PLIGNE1 + 1;
 	PLIGNE3 = PLIGNE1 + 2;
@@ -202,8 +202,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	}
 
 	PLIGNE1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
-	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
-	CHERCHE_PAL(PCHERCHE, 0);
+	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
+	searchCharacterPalette(_paletteBufferIdx, false);
 	PLIGNE2 = PLIGNE1 + 1;
 	PLIGNE3 = PLIGNE1 + 2;
 	PLIGNE4 = PLIGNE1 + 3;
@@ -505,62 +505,39 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	return v21;
 }
 
-void TalkManager::CHERCHE_PAL(int a1, int a2) {
-	int v2;
-	size_t v4;
-	unsigned int v5;
-	byte *palette;
-	int v8;
-
-	v2 = 0;
-	v8 = 0;
-	v4 = a1;
+void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
+	int palettePos = 0;
+	size_t curIdx = startIdx;
 	for (;;) {
-		if (_characterBuffer[v4] == 'P' && _characterBuffer[v4 + 1] == 'A' && _characterBuffer[v4 + 2] == 'L') {
-			v8 = 1;
-			v2 = v4;
-		}
-		++v4;
-		if (v8 == 1)
+		if (_characterBuffer[curIdx] == 'P' && _characterBuffer[curIdx + 1] == 'A' && _characterBuffer[curIdx + 2] == 'L') {
+			palettePos = curIdx;
 			break;
-		if (_characterSize == v4)
+		}
+		++curIdx;
+		if (_characterSize == curIdx)
 			return;
 	}
 
-	v5 = v2 + 5;
-	palette = _characterBuffer + v5;
-	_characterPalette = _characterBuffer + v5;
-	if (a2 == 0) {
-		*(palette + 762) = 0;
-		*(palette + 763) = 0;
-		*(palette + 764) = 0;
-		*(palette + 765) = 224;
-		*(palette + 766) = 224;
-		*(palette + 767) = 255;
-		*(palette + 759) = 255;
-		*(palette + 760) = 255;
-		*(palette + 761) = 86;
-		*palette = 0;
-		*(palette + 1) = 0;
-		*(palette + 2) = 0;
-	}
-	if (a2 == 1) {
-		*(palette + 765) = 224;
-		*(palette + 766) = 224;
-		*(palette + 767) = 255;
-		*(palette + 759) = 255;
-		*(palette + 760) = 255;
-		*(palette + 761) = 255;
-		*palette = 0;
-		*(palette + 1) = 0;
-		*(palette + 2) = 0;
-		*(palette + 762) = 0;
-		*(palette + 763) = 0;
-		*(palette + 764) = 0;
-	}
+	_characterPalette = _characterBuffer + palettePos + 5;
+	_characterPalette[0] = 0;
+	_characterPalette[1] = 0;
+	_characterPalette[2] = 0;
+	_characterPalette[759] = 255;
+	_characterPalette[760] = 255;
+	_characterPalette[762] = 0;
+	_characterPalette[763] = 0;
+	_characterPalette[764] = 0;
+	_characterPalette[765] = 224;
+	_characterPalette[766] = 224;
+	_characterPalette[767] = 255;
 
-	_vm->_graphicsManager.setpal_vga256(palette);
-	_vm->_graphicsManager.initColorTable(145, 150, palette);
+	if (!dark)
+		_characterPalette[761] = 86;
+	else
+		_characterPalette[761] = 255;
+
+	_vm->_graphicsManager.setpal_vga256(_characterPalette);
+	_vm->_graphicsManager.initColorTable(145, 150, _characterPalette);
 }
 
 void TalkManager::VISU_WAIT() {
@@ -735,42 +712,28 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 	}
 }
 
-void TalkManager::CHERCHE_ANIM0(int a1, int a2) {
-	size_t v2;
-	int v3;
-	size_t v4;
-	unsigned int v5;
-	unsigned int v6;
-	int v7;
-	byte *v8;
-	byte *v9;
-
-	v2 = 0;
-	v3 = 0;
-	v4 = a1;
+void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
+	int animIdx = 0;
+	size_t curIdx = startIdx;
 	for (;;) {
-		if (_characterBuffer[v4] == 'A' && _characterBuffer[v4 + 1] == 'N' && _characterBuffer[v4 + 2] == 'I' && _characterBuffer[v4 + 3] == 'M' && _characterBuffer[v4 + 4] == 1) {
-			v3 = 1;
-			v2 = v4;
-		}
-		++v4;
-		if (v3 == 1)
+		if (_characterBuffer[curIdx] == 'A' && _characterBuffer[curIdx + 1] == 'N' && _characterBuffer[curIdx + 2] == 'I' && _characterBuffer[curIdx + 3] == 'M' && _characterBuffer[curIdx + 4] == 1) {
+			animIdx = curIdx;
 			break;
-		if (_characterSize == v4)
+		}
+		++curIdx;
+		if (_characterSize == curIdx)
 			return;
 	}
-	v5 = v2 + 25;
-	v9 = _characterBuffer + v5;
-	v8 = _characterBuffer + v5;
-	ADR_ANIM = _characterBuffer + v5;
-	if (!a2) {
-		v6 = 0;
+	_characterAnim = _characterBuffer + animIdx + 25;
+	if (!readOnlyFl) {
+		int idx = 0;
+		int v7;
 		do {
-			v7 = (int16)READ_LE_UINT16(&v8[2 * v6 + 4]);
+			v7 = (int16)READ_LE_UINT16(&_characterAnim[2 * idx + 4]);
 			if (v7 && _vm->_globals._speed != 501)
-				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager._startPos.x + (int16)READ_LE_UINT16(&v8[2 * v6]),
-				    (int16)READ_LE_UINT16(&v8[2 * v6 + 2]), v9[2 * v6 + 8]);
-			v6 += 5;
+				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager._startPos.x + (int16)READ_LE_UINT16(&_characterAnim[2 * idx]),
+				    (int16)READ_LE_UINT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
+			idx += 5;
 		} while (_vm->_globals._speed != 501 && v7);
 	}
 }
@@ -1185,12 +1148,11 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager.ofscroll = 0;
 	_vm->_graphicsManager.NB_SCREEN();
-	v10 = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
-	PCHERCHE = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
+	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_objectsManager.PERSO_ON = true;
-	CHERCHE_PAL(v10, 1);
-	CHERCHE_ANIM0(v10, 0);
+	searchCharacterPalette(_paletteBufferIdx, true);
+	startCharacterAnim0(_paletteBufferIdx, false);
 	v11 = _vm->_globals.COUCOU;
 	_vm->_globals.COUCOU = g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;

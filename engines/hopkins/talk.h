@@ -39,12 +39,12 @@ public:
 	byte *_characterBuffer;
 	byte *_characterPalette;
 	byte *_characterSprite;
-	byte *ADR_ANIM;
+	byte *_characterAnim;
 	size_t _characterSize;
 	int STATI;
 	int PLIGNE1, PLIGNE2;
 	int PLIGNE3, PLIGNE4;
-	int PCHERCHE;
+	int _paletteBufferIdx;
 public:
 	TalkManager();
 	void setParent(HopkinsEngine *vm);
@@ -54,14 +54,14 @@ public:
 	void getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData);
 	int DIALOGUE();
 	int DIALOGUE_REP(int idx);
-	void CHERCHE_PAL(int a1, int a2);
+	void searchCharacterPalette(int startIdx, bool dark);
 	void VISU_WAIT();
 	void FIN_VISU_WAIT();
 	void FIN_VISU_PARLE();
 	int VERIF_BOITE(int a1, const Common::String &a2, int a3);
 	void VISU_PARLE();
 	void BOB_VISU_PARLE(int idx);
-	void CHERCHE_ANIM0(int a1, int a2);
+	void startCharacterAnim0(int startIndedx, bool readOnlyFl);
 	void initCharacterAnim();
 	void clearCharacterAnim();
 	bool searchCharacterAnim(int a1, const byte *a2, int a3, int a4);

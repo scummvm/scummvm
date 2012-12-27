@@ -4115,14 +4115,14 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	int v4;
 
 	v1 = 5 * idx;
-	v2 = (int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1);
-	v3 = (int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 2);
-	v4 = *(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8);
-	if ((int16)READ_LE_UINT16(_vm->_talkManager.ADR_ANIM + 2 * v1 + 4)) {
+	v2 = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + 2 * v1);
+	v3 = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + 2 * v1 + 2);
+	v4 = *(_vm->_talkManager._characterAnim + 2 * v1 + 8);
+	if ((int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + 2 * v1 + 4)) {
 		if (!_vm->_globals.NO_OFFSET)
 			_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite,
 				_vm->_graphicsManager.ofscroll + v2, v3,
-				*(_vm->_talkManager.ADR_ANIM + 2 * v1 + 8));
+				*(_vm->_talkManager._characterAnim + 2 * v1 + 8));
 		if (_vm->_globals.NO_OFFSET)
 			_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, v2, v3, v4);
 	}
