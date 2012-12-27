@@ -239,6 +239,24 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("gui_saveload_chooser", "grid");
 	ConfMan.registerDefault("gui_saveload_last_pos", "0");
+
+#ifdef USE_FLUIDSYNTH
+	// FluidSynth settings. All multiplied by 100, except reverb width
+	// which is multiplied by 10, and chorus number which is an integer
+	// to begin with.
+	ConfMan.registerDefault("fluidsynth_chorus_nr", 3);
+	ConfMan.registerDefault("fluidsynth_chorus_level", 200);
+	ConfMan.registerDefault("fluidsynth_chorus_speed", 30);
+	ConfMan.registerDefault("fluidsynth_chorus_depth", 800);
+	ConfMan.registerDefault("fluidsynth_chorus_waveform", "sine");
+
+	ConfMan.registerDefault("fluidsynth_reverb_roomsize", 20);
+	ConfMan.registerDefault("fluidsynth_reverb_damping", 0);
+	ConfMan.registerDefault("fluidsynth_reverb_width", 5);
+	ConfMan.registerDefault("fluidsynth_reverb_level", 90);
+
+	ConfMan.registerDefault("fluidsynth_misc_interpolation", "4th");
+#endif
 }
 
 //
