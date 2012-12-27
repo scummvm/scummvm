@@ -61,6 +61,38 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_tabWidget = new TabWidget(this, "FluidSynthSettings.TabWidget");
 
+	_tabWidget->addTab(_("Reverb"));
+
+	_reverbActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Reverb.EnableTabCheckbox", _("Activate"), 0, kActivateReverbCmd);
+
+	_reverbRoomSizeDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeText", _("Room:"));
+	_reverbRoomSizeSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeSlider", 0, kReverbRoomSizeChangedCmd);
+	// 0.00 - 1.20, Default: 0.20
+	_reverbRoomSizeSlider->setMinValue(0);
+	_reverbRoomSizeSlider->setMaxValue(120);
+	_reverbRoomSizeLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeLabel", "20");
+
+	_reverbDampingDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingText", _("Damp:"));
+	_reverbDampingSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingSlider", 0, kReverbDampingChangedCmd);
+	// 0.00 - 1.00, Default: 0.00
+	_reverbDampingSlider->setMinValue(0);
+	_reverbDampingSlider->setMaxValue(100);
+	_reverbDampingLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingLabel", "0");
+
+	_reverbWidthDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthText", _("Width:"));
+	_reverbWidthSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthSlider", 0, kReverbWidthChangedCmd);
+	// 0 - 100, Default: 1
+	_reverbWidthSlider->setMinValue(0);
+	_reverbWidthSlider->setMaxValue(100);
+	_reverbWidthLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthLabel", "1");
+
+	_reverbLevelDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelText", _("Level:"));
+	_reverbLevelSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelSlider", 0, kReverbLevelChangedCmd);
+	// 0.00 - 1.00, Default: 0.90
+	_reverbLevelSlider->setMinValue(0);
+	_reverbLevelSlider->setMaxValue(100);
+	_reverbLevelLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelLabel", "90");
+
 	_tabWidget->addTab(_("Chorus"));
 
 	_chorusActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Chorus.EnableTabCheckbox", _("Active"), 0, kActivateChorusCmd);
@@ -98,38 +130,6 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_chorusWaveFormTypePopUp->appendEntry(_("Sine"), kWaveFormTypeSine);
 	_chorusWaveFormTypePopUp->appendEntry(_("Triangle"), kWaveFormTypeTriangle);
-
-	_tabWidget->addTab(_("Reverb"));
-
-	_reverbActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Reverb.EnableTabCheckbox", _("Activate"), 0, kActivateReverbCmd);
-
-	_reverbRoomSizeDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeText", _("Room:"));
-	_reverbRoomSizeSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeSlider", 0, kReverbRoomSizeChangedCmd);
-	// 0.00 - 1.20, Default: 0.20
-	_reverbRoomSizeSlider->setMinValue(0);
-	_reverbRoomSizeSlider->setMaxValue(120);
-	_reverbRoomSizeLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeLabel", "20");
-
-	_reverbDampingDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingText", _("Damp:"));
-	_reverbDampingSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingSlider", 0, kReverbDampingChangedCmd);
-	// 0.00 - 1.00, Default: 0.00
-	_reverbDampingSlider->setMinValue(0);
-	_reverbDampingSlider->setMaxValue(100);
-	_reverbDampingLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingLabel", "0");
-
-	_reverbWidthDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthText", _("Width:"));
-	_reverbWidthSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthSlider", 0, kReverbWidthChangedCmd);
-	// 0 - 100, Default: 1
-	_reverbWidthSlider->setMinValue(0);
-	_reverbWidthSlider->setMaxValue(100);
-	_reverbWidthLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthLabel", "1");
-
-	_reverbLevelDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelText", _("Level:"));
-	_reverbLevelSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelSlider", 0, kReverbLevelChangedCmd);
-	// 0.00 - 1.00, Default: 0.90
-	_reverbLevelSlider->setMinValue(0);
-	_reverbLevelSlider->setMaxValue(100);
-	_reverbLevelLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelLabel", "90");
 
 	_tabWidget->addTab(_("Misc"));
 
