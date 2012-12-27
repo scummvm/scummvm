@@ -282,7 +282,7 @@ int TalkManager::DIALOGUE() {
 		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 4)
 			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 52));
 	} else {
-		VISU_WAIT();
+		dialogWait();
 	}
 
 	v19 = VERIF_BOITE(PLIGNE1, _questionsFilename, 65);
@@ -359,7 +359,7 @@ int TalkManager::DIALOGUE() {
 		if (v16 != 4)
 			_vm->_objectsManager.stopBobAnimation(v16);
 	} else {
-		FIN_VISU_WAIT();
+		dialogTalk();
 	}
 
 	_vm->_eventsManager.VBL();
@@ -496,7 +496,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		if (v20)
 			_vm->_objectsManager.stopBobAnimation(v20);
 	} else {
-		FIN_VISU_PARLE();
+		dialogEndTalk();
 	}
 	v21 = 0;
 	if (!PLIGNE1)
@@ -540,14 +540,14 @@ void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
 	_vm->_graphicsManager.initColorTable(145, 150, _characterPalette);
 }
 
-void TalkManager::VISU_WAIT() {
+void TalkManager::dialogWait() {
 	for (int idx = 26; idx <= 30; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
 			BOB_VISU_PARLE(idx);
 	}
 }
 
-void TalkManager::FIN_VISU_WAIT() {
+void TalkManager::dialogTalk() {
 	for (int idx = 26; idx <= 30; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
 			_vm->_objectsManager.BOB_OFF(idx);
@@ -559,7 +559,7 @@ void TalkManager::FIN_VISU_WAIT() {
 	}
 }
 
-void TalkManager::FIN_VISU_PARLE() {
+void TalkManager::dialogEndTalk() {
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
 			_vm->_objectsManager.BOB_OFF(idx);
@@ -1161,7 +1161,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_objectsManager.NUMZONE = -1;
 	initCharacterAnim();
 	VISU_PARLE();
-	VISU_WAIT();
+	dialogWait();
 	_vm->_graphicsManager.INI_ECRAN2(v22);
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager._forceZoneFl = true;
@@ -1178,8 +1178,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 			_vm->_objectsManager.PARADISE();
 		_vm->_eventsManager.VBL();
 	} while (!_vm->_globals._exitId);
-	FIN_VISU_PARLE();
-	FIN_VISU_WAIT();
+	dialogEndTalk();
+	dialogTalk();
 	clearCharacterAnim();
 	clearCharacterAnim();
 	_vm->_globals.NOPARLE = false;

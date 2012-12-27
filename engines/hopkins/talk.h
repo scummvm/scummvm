@@ -55,9 +55,9 @@ public:
 	int DIALOGUE();
 	int DIALOGUE_REP(int idx);
 	void searchCharacterPalette(int startIdx, bool dark);
-	void VISU_WAIT();
-	void FIN_VISU_WAIT();
-	void FIN_VISU_PARLE();
+	void dialogWait();
+	void dialogTalk();
+	void dialogEndTalk();
 	int VERIF_BOITE(int a1, const Common::String &a2, int a3);
 	void VISU_PARLE();
 	void BOB_VISU_PARLE(int idx);
