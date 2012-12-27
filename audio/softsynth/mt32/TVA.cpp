@@ -30,7 +30,7 @@ namespace MT32Emu {
 static Bit8u biasLevelToAmpSubtractionCoeff[13] = {255, 187, 137, 100, 74, 54, 40, 29, 21, 15, 10, 5, 0};
 
 TVA::TVA(const Partial *usePartial, LA32Ramp *useAmpRamp) :
-	partial(usePartial), ampRamp(useAmpRamp), system_(&usePartial->getSynth()->mt32ram.system) {
+	partial(usePartial), ampRamp(useAmpRamp), system_(&usePartial->getSynth()->mt32ram.system), phase(TVA_PHASE_DEAD) {
 }
 
 void TVA::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
