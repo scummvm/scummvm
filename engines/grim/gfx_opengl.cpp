@@ -562,9 +562,12 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void GfxOpenGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
+void GfxOpenGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 	// Support transparency in actor objects, such as the message tube
 	// in Manny's Office
+	float *vertices = mesh->_vertices;
+	float *vertNormals = mesh->_vertNormals;
+	float *textureVerts = mesh->_textureVerts;
 	glAlphaFunc(GL_GREATER, 0.5);
 	glEnable(GL_ALPHA_TEST);
 	glNormal3fv(face->_normal.getData());

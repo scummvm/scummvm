@@ -692,7 +692,10 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnable(TGL_ALPHA_TEST);
 }
 
-void GfxTinyGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
+void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
+	float *vertices = mesh->_vertices;
+	float *vertNormals = mesh->_vertNormals;
+	float *textureVerts = mesh->_textureVerts;
 	tglNormal3fv(const_cast<float *>(face->_normal.getData()));
 	tglBegin(TGL_POLYGON);
 	for (int i = 0; i < face->_numVertices; i++) {

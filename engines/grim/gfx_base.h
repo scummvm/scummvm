@@ -134,7 +134,7 @@ public:
 	virtual void translateViewpointFinish() = 0;
 
 	virtual void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) = 0;
-	virtual void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
+	virtual void drawModelFace(const Mesh *mesh, const MeshFace *face) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
 
 	virtual void enableLights() = 0;
