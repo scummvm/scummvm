@@ -388,6 +388,7 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		if (newSel != -1 && _selectedItem != newSel) {
 			_selectedItem = newSel;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
+			draw();
 		}
 	}
 }
