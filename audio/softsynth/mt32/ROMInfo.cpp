@@ -96,7 +96,6 @@ const ROMImage* ROMImage::makeROMImage(Common::File *file) {
 
 void ROMImage::freeROMImage(const ROMImage *romImage) {
 	ROMInfo::freeROMInfo(romImage->romInfo);
-	delete (romImage->file);
 	delete romImage;
 }
 

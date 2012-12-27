@@ -110,8 +110,9 @@ private:
 	uint16 _channelMask;
 	MT32Emu::Synth *_synth;
 	MT32Emu::ReportHandlerScummVM *_reportHandler;
-	const MT32Emu::ROMImage *_controlROM;
-	const MT32Emu::ROMImage *_pcmROM;
+	const MT32Emu::ROMImage *_controlROM, *_pcmROM;
+	Common::File *_controlFile, *_pcmFile;
+	void deleteMuntStructures();
 
 	int _outputRate;
 
@@ -198,10 +199,26 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
+	deleteMuntStructures();
+}
+
+void MidiDriver_MT32::deleteMuntStructures() {
 	delete _synth;
+	_synth = NULL;
 	delete _reportHandler;
-	MT32Emu::ROMImage::freeROMImage(_controlROM);
-	MT32Emu::ROMImage::freeROMImage(_pcmROM);
+	_reportHandler = NULL;
+
+	if (_controlROM)
+		MT32Emu::ROMImage::freeROMImage(_controlROM);
+	_controlROM = NULL;
+	if (_pcmROM)
+		MT32Emu::ROMImage::freeROMImage(_pcmROM);
+	_pcmROM = NULL;
+
+	delete _controlFile;
+	_controlFile = NULL;
+	delete _pcmFile;
+	_pcmFile = NULL;
 }
 
 int MidiDriver_MT32::open() {
@@ -226,14 +243,14 @@ int MidiDriver_MT32::open() {
 
 	_initializing = true;
 	drawMessage(-1, _s("Initializing MT-32 Emulator"));
-	Common::File *controlFile = new Common::File();
-	if (!controlFile->open("MT32_CONTROL.ROM"))
+	_controlFile = new Common::File();
+	if (!_controlFile->open("MT32_CONTROL.ROM"))
 		error("Error opening MT32_CONTROL.ROM");
-	Common::File *pcmFile = new Common::File();
-	if (!pcmFile->open("MT32_PCM.ROM"))
+	_pcmFile = new Common::File();
+	if (!_pcmFile->open("MT32_PCM.ROM"))
 		error("Error opening MT32_PCM.ROM");
-	_controlROM = MT32Emu::ROMImage::makeROMImage(controlFile);
-	_pcmROM = MT32Emu::ROMImage::makeROMImage(pcmFile);
+	_controlROM = MT32Emu::ROMImage::makeROMImage(_controlFile);
+	_pcmROM = MT32Emu::ROMImage::makeROMImage(_pcmFile);
 	if (!_synth->open(*_controlROM, *_pcmROM))
 		return MERR_DEVICE_NOT_AVAILABLE;
 
@@ -295,12 +312,7 @@ void MidiDriver_MT32::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
 	_synth->close();
-	delete _synth;
-	_synth = NULL;
-	delete _reportHandler;
-	_reportHandler = NULL;
-	MT32Emu::ROMImage::freeROMImage(_controlROM);
-	MT32Emu::ROMImage::freeROMImage(_pcmROM);
+	deleteMuntStructures();
 }
 
 void MidiDriver_MT32::generateSamples(int16 *data, int len) {
