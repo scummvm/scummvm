@@ -75,6 +75,12 @@ enum {
 };
 #endif
 
+#ifdef USE_FLUIDSYNTH
+enum {
+	kFluidSynthSettingsCmd		= 'flst'
+};
+#endif
+
 static const char *savePeriodLabels[] = { _s("Never"), _s("every 5 mins"), _s("every 10 mins"), _s("every 15 mins"), _s("every 30 mins"), 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
@@ -119,6 +125,9 @@ void OptionsDialog::init() {
 	_midiGainDesc = 0;
 	_midiGainSlider = 0;
 	_midiGainLabel = 0;
+#ifdef USE_FLUIDSYNTH
+	_fluidSynthSettings = 0;
+#endif
 	_enableMT32Settings = false;
 	_mt32Checkbox = 0;
 	_mt32DevicePopUp = 0;
@@ -863,6 +872,10 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	_midiGainSlider->setMaxValue(1000);
 	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
 
+#ifdef USE_FLUIDSYNTH
+	_fluidSynthSettings = new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
+#endif
+
 	_enableMIDISettings = true;
 }
 
@@ -1231,11 +1244,19 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #ifdef SMALL_SCREEN_DEVICE
 	_keysDialog = new KeysDialog();
 #endif
+
+#ifdef USE_FLUIDSYNTH
+	_fluidSynthSettingsDialog = new FluidSynthSettingsDialog();
+#endif
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
 #ifdef SMALL_SCREEN_DEVICE
 	delete _keysDialog;
+#endif
+
+#ifdef USE_FLUIDSYNTH
+	delete _fluidSynthSettingsDialog;
 #endif
 }
 
@@ -1464,6 +1485,11 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef SMALL_SCREEN_DEVICE
 	case kChooseKeyMappingCmd:
 		_keysDialog->runModal();
+		break;
+#endif
+#ifdef USE_FLUIDSYNTH
+	case kFluidSynthSettingsCmd:
+		_fluidSynthSettingsDialog->runModal();
 		break;
 #endif
 	default:

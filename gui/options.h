@@ -32,6 +32,10 @@
 #include "gui/KeysDialog.h"
 #endif
 
+#ifdef USE_FLUIDSYNTH
+#include "gui/fluidsynth-dialog.h"
+#endif
+
 namespace GUI {
 
 class CheckboxWidget;
@@ -131,6 +135,9 @@ private:
 	StaticTextWidget *_midiGainDesc;
 	SliderWidget *_midiGainSlider;
 	StaticTextWidget *_midiGainLabel;
+#ifdef USE_FLUIDSYNTH
+	ButtonWidget *_fluidSynthSettings;
+#endif
 
 	//
 	// MT-32 controls
@@ -207,6 +214,9 @@ public:
 protected:
 #ifdef SMALL_SCREEN_DEVICE
 	KeysDialog *_keysDialog;
+#endif
+#ifdef USE_FLUIDSYNTH
+	FluidSynthSettingsDialog *_fluidSynthSettingsDialog;
 #endif
 	StaticTextWidget *_savePath;
 	ButtonWidget	 *_savePathClearButton;
