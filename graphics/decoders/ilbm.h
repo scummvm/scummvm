@@ -43,19 +43,7 @@ struct Surface;
 
 class ILBMDecoder2 : public ImageDecoder {
 public:
-	ILBMDecoder2();
-	virtual ~ILBMDecoder2();
-
-	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
-	void setOutPitch(const uint16 outPitch) { _outPitch = outPitch; }
-	void setPackedPixels(const bool packedPixels) { _packedPixels = packedPixels; }
-private:
-	struct BMHD {
+	struct Header {
 		uint16 width, height;
 		uint16 x, y;
 		byte numPlanes;
@@ -67,22 +55,46 @@ private:
 		uint16 pageWidth, pageHeight;
 	};
 
+	struct PaletteRange {
+		int16  timer, step, flags;
+		byte first, last;
+	};
+
+	ILBMDecoder2();
+	virtual ~ILBMDecoder2();
+
+	// ImageDecoder API
+	void destroy();
+	virtual bool loadStream(Common::SeekableReadStream &stream);
+	virtual const Surface *getSurface() const { return _surface; }
+	const byte *getPalette() const { return _palette; }
+	const PaletteRange *getPaletteRanges() const { return _paletteRanges; }
+	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	uint16 getPaletteRangeCount() const { return _paletteRangeCount; }
+	void setOutPitch(const uint16 outPitch) { _outPitch = outPitch; }
+	void setPackedPixels(const bool packedPixels) { _packedPixels = packedPixels; }
+private:
+
 	enum {
 		CHUNK_FORM = MKTAG('F','O','R','M'),
 		CHUNK_BMHD = MKTAG('B','M','H','D'),
 		CHUNK_CMAP = MKTAG('C','M','A','P'),
+		CHUNK_CRNG = MKTAG('C','R','N','G'),
 		CHUNK_BODY = MKTAG('B','O','D','Y')
 	};
 
+	Header _header;
 	Surface *_surface;
 	byte *_palette;
-	BMHD _header;
-	int16 _paletteColorCount;
+	PaletteRange* _paletteRanges;
+	uint16 _paletteColorCount;
+	uint16 _paletteRangeCount;
 	uint16 _outPitch;
 	bool _packedPixels;
 
 	void loadHeader(Common::SeekableReadStream &stream);
 	void loadPalette(Common::SeekableReadStream &stream, const uint32 size);
+	void loadPaletteRange(Common::SeekableReadStream &stream, const uint32 size);
 	void loadBitmap(Common::SeekableReadStream &stream);
 	void decompressRLE(Common::SeekableReadStream &stream, byte *scanline, uint16 &length, const uint16 left);
 	void unpackPixels(byte *scanlines, byte *data, const uint16 scanlinePitch);

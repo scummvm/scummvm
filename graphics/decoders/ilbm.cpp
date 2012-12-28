@@ -27,10 +27,12 @@
 namespace Graphics {
 
 ILBMDecoder2::ILBMDecoder2() {
+	memset(&_header, 0, sizeof(Header));
 	_surface = 0;
 	_palette = 0;
-	memset(&_header, 0, sizeof(BMHD));
+	_paletteRanges = 0;
 	_paletteColorCount = 0;
+	_paletteRangeCount = 0;
 	_outPitch = 0;
 	_packedPixels = false;
 }
@@ -49,6 +51,11 @@ void ILBMDecoder2::destroy() {
 	if (_palette) {
 		delete[] _palette;
 		_palette = 0;
+	}
+
+	if (_paletteRanges) {
+		delete[] _paletteRanges;
+		_paletteRanges = 0;
 	}
 }
 
@@ -75,6 +82,9 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 			break;
 		case CHUNK_CMAP:
 			loadPalette(stream, size);
+			break;
+		case CHUNK_CRNG:
+			loadPaletteRange(stream, size);
 			break;
 		case CHUNK_BODY:
 			loadBitmap(stream);
@@ -111,6 +121,22 @@ void ILBMDecoder2::loadPalette(Common::SeekableReadStream &stream, const uint32 
 	_palette = new byte[size];
 	stream.read(_palette, size);
 	_paletteColorCount = size / 3;
+}
+
+void ILBMDecoder2::loadPaletteRange(Common::SeekableReadStream &stream, const uint32 size) {
+	if (_paletteRanges)
+		delete[] _paletteRanges;
+
+	_paletteRanges = new PaletteRange[_paletteRangeCount + 1];
+	PaletteRange &range = _paletteRanges[_paletteRangeCount];
+
+	range.timer = stream.readSint16BE();
+	range.step = stream.readSint16BE();
+	range.flags = stream.readSint16BE();
+	range.first = stream.readByte();
+	range.last = stream.readByte();
+
+	++_paletteRangeCount;
 }
 
 void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
