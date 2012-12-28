@@ -965,12 +965,13 @@ bool extractPaddedStrings(PAKFile &out, const ExtractInformation *info, const by
 			src++;
 		while (*src && src < fin)
 			*dst++ = *src++;
-
-		*dst++ = '\0';
+		if (src < fin)
+			*dst++ = *src++;
 		entries++;
 	}
 
 	WRITE_BE_UINT32(buffer, entries);
+
 	outsize = dst - buffer;
 
 	return out.addFile(filename, buffer, outsize);
