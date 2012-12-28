@@ -80,6 +80,12 @@ private:
 	int16 _paletteColorCount;
 	uint16 _outPitch;
 	bool _packedPixels;
+
+	void loadHeader(Common::SeekableReadStream &stream);
+	void loadPalette(Common::SeekableReadStream &stream, const uint32 size);
+	void loadBitmap(Common::SeekableReadStream &stream);
+	void decompressRLE(Common::SeekableReadStream &stream, byte *scanline, uint16 &length, const uint16 left);
+	void unpackPixels(byte *scanlines, byte *data, const uint16 scanlinePitch);
 };
 
 } // End of namespace Graphics

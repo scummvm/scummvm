@@ -69,119 +69,15 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 		if (stream.eos())
 			break;
 
-		uint32 scanlinePitch;
-		byte *scanlines;
-		byte *data;
-
 		switch (type) {
 		case CHUNK_BMHD:
-			_header.width = stream.readUint16BE();
-			_header.height = stream.readUint16BE();
-			_header.x = stream.readUint16BE();
-			_header.y = stream.readUint16BE();
-			_header.numPlanes = stream.readByte();
-			_header.masking = stream.readByte();
-			_header.compression = stream.readByte();
-			_header.flags = stream.readByte();
-			_header.transparentColor = stream.readUint16BE();
-			_header.xAspect = stream.readByte();
-			_header.yAspect = stream.readByte();
-			_header.pageWidth = stream.readUint16BE();
-			_header.pageHeight = stream.readUint16BE();
-
-			assert(_header.width >= 1);
-			assert(_header.height >= 1);
-			assert(_header.numPlanes >= 1 && _header.numPlanes <= 8 && _header.numPlanes != 7);
+			loadHeader(stream);
 			break;
 		case CHUNK_CMAP:
-			_palette = new byte[size];
-			stream.read(_palette, size);
-			_paletteColorCount = size / 3;
+			loadPalette(stream, size);
 			break;
 		case CHUNK_BODY:
-			if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4) {
-				_packedPixels = false;
-			}
-			if (_outPitch == 0) {
-				_outPitch = _header.width;
-			}
-			if (_packedPixels) {
-				_outPitch /= (8 / _header.numPlanes);
-			}
-
-			_surface = new Graphics::Surface();
-			_surface->create(_outPitch, _header.height, Graphics::PixelFormat::createFormatCLUT8());
-
-			scanlinePitch = ((_header.width + 15) >> 4) << 1;
-			scanlines = new byte[scanlinePitch * _header.numPlanes];
-			data = (byte *)_surface->pixels;
-
-			for (uint16 i = 0; i < _header.height; ++i) {
-				byte *s = scanlines;
-				for (uint16 j = 0; j < _header.numPlanes; ++j) {
-					uint16 left = scanlinePitch;
-					while (left > 0 && !stream.eos() ) {
-						uint16 length = scanlinePitch;
-						if (_header.compression) {
-							uint16 code = stream.readByte();
-							if (code != 0x80) {
-								if (code <= 0x7f) { // literal run
-									code++;
-									length = MIN(code, left);
-									stream.read(s, length);
-									if(code > length)
-										stream.skip(code - length);
-								} else { // expand run
-									byte value = stream.readByte();
-									code = (256 - code) + 1;
-									length = MIN(code, left);
-									memset(s, value, length);
-								}
-							}
-						} else {
-							stream.read(s, length);
-						}
-
-						s += length;
-						left -= length;
-					}
-
-					uint32 numPixels = _outPitch;
-					if (_packedPixels) {
-						numPixels *= (8 / _header.numPlanes);
-					}
-
-					for (uint32 x = 0; x < numPixels; ++x) {
-						byte *s = scanlines;
-						byte pixel = 0;
-						byte offset = x >> 3;
-						byte bit = 0x80 >> (x & 7);
-
-						// first build a pixel by scanning all the usable planes in the input
-						for (uint32 plane = 0; plane < _header.numPlanes; ++plane) {
-							if (s[offset] & bit) {
-								pixel |= (1 << plane);
-							}
-							s += scanlinePitch;
-						}
-
-						// then output the pixel according to the requested packing
-						if (!_packedPixels) {
-							data[x] = pixel;
-						} else if (_header.numPlanes == 1) {
-							data[x / 8] |= (pixel << (x & 7));
-						} else if (_header.numPlanes == 2) {
-							data[x / 4] |= (pixel << ((x & 3) << 1));
-						} else if (_header.numPlanes == 4) {
-							data[x / 2] |= (pixel << ((x & 1) << 2));
-						}
-					}
-				}
-
-				data += _outPitch;
-			}
-
-			delete[] scanlines;
+			loadBitmap(stream);
 			break;
 		default:
 			stream.skip(size);
@@ -189,6 +85,131 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	return true;
+}
+
+void ILBMDecoder2::loadHeader(Common::SeekableReadStream &stream) {
+	_header.width = stream.readUint16BE();
+	_header.height = stream.readUint16BE();
+	_header.x = stream.readUint16BE();
+	_header.y = stream.readUint16BE();
+	_header.numPlanes = stream.readByte();
+	_header.masking = stream.readByte();
+	_header.compression = stream.readByte();
+	_header.flags = stream.readByte();
+	_header.transparentColor = stream.readUint16BE();
+	_header.xAspect = stream.readByte();
+	_header.yAspect = stream.readByte();
+	_header.pageWidth = stream.readUint16BE();
+	_header.pageHeight = stream.readUint16BE();
+
+	assert(_header.width >= 1);
+	assert(_header.height >= 1);
+	assert(_header.numPlanes >= 1 && _header.numPlanes <= 8 && _header.numPlanes != 7);
+}
+
+void ILBMDecoder2::loadPalette(Common::SeekableReadStream &stream, const uint32 size) {
+	_palette = new byte[size];
+	stream.read(_palette, size);
+	_paletteColorCount = size / 3;
+}
+
+void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
+	if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4) {
+		_packedPixels = false;
+	}
+
+	if (_outPitch == 0) {
+		_outPitch = _header.width;
+	}
+
+	if (_packedPixels) {
+		_outPitch /= (8 / _header.numPlanes);
+	}
+
+	_surface = new Graphics::Surface();
+	_surface->create(_outPitch, _header.height, Graphics::PixelFormat::createFormatCLUT8());
+
+	uint32 scanlinePitch = ((_header.width + 15) >> 4) << 1;
+	byte *scanlines = new byte[scanlinePitch * _header.numPlanes];
+	byte *data = (byte *)_surface->pixels;
+
+	for (uint16 i = 0; i < _header.height; ++i) {
+		byte *scanline = scanlines;
+
+		for (uint16 j = 0; j < _header.numPlanes; ++j) {
+			uint16 left = scanlinePitch;
+
+			while (left > 0 && !stream.eos() ) {
+				uint16 length = scanlinePitch;
+
+				if (_header.compression) {
+					decompressRLE(stream, scanline, length, left);
+				} else {
+					stream.read(scanline, length);
+				}
+
+				scanline += length;
+				left -= length;
+			}
+
+			unpackPixels(scanlines, data, scanlinePitch);
+		}
+
+		data += _outPitch;
+	}
+
+	delete[] scanlines;
+}
+
+void ILBMDecoder2::decompressRLE(Common::SeekableReadStream &stream, byte *scanline, uint16 &length, const uint16 left) {
+	uint16 code = stream.readByte();
+	if (code != 0x80) {
+		if (code <= 0x7f) { // literal run
+			code++;
+			length = MIN(code, left);
+			stream.read(scanline, length);
+			if(code > length)
+				stream.skip(code - length);
+		} else { // expand run
+			byte value = stream.readByte();
+			code = (256 - code) + 1;
+			length = MIN(code, left);
+			memset(scanline, value, length);
+		}
+	}
+}
+
+void ILBMDecoder2::unpackPixels(byte *scanlines, byte *data, const uint16 scanlinePitch) {
+	uint32 numPixels = _outPitch;
+	if (_packedPixels) {
+		numPixels *= (8 / _header.numPlanes);
+	}
+
+	for (uint32 x = 0; x < numPixels; ++x) {
+		byte *scanline = scanlines;
+		byte pixel = 0;
+		byte offset = x >> 3;
+		byte bit = 0x80 >> (x & 7);
+
+		// first build a pixel by scanning all the usable planes in the input
+		for (uint32 plane = 0; plane < _header.numPlanes; ++plane) {
+			if (scanline[offset] & bit) {
+				pixel |= (1 << plane);
+			}
+			scanline += scanlinePitch;
+		}
+
+		// then output the pixel according to the requested packing
+		if (!_packedPixels) {
+			data[x] = pixel;
+		} else if (_header.numPlanes == 1) {
+			data[x / 8] |= (pixel << (x & 7));
+		} else if (_header.numPlanes == 2) {
+			data[x / 4] |= (pixel << ((x & 3) << 1));
+		} else if (_header.numPlanes == 4) {
+			data[x / 2] |= (pixel << ((x & 1) << 2));
+		}
+	}
 }
 
 } // End of namespace Graphics
