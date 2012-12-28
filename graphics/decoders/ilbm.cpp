@@ -88,15 +88,15 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 			assert(_header.width >= 1);
 			assert(_header.height >= 1);
 			assert(_header.numPlanes >= 1 && _header.numPlanes <= 8 && _header.numPlanes != 7);
+			break;
 		}
-		break;
 
 		case CHUNK_CMAP: {
 			_palette = new byte[size];
 			stream.read(_palette, size);
 			_paletteColorCount = size / 3;
+			break;
 		}
-		break;
 
 		case CHUNK_BODY: {
 			if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4) {
@@ -182,13 +182,13 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 			}
 
 			delete[] scanlines;
+			break;
 		}
-		break;
-	
+
 		default: {
 			stream.skip(size);
+			break;
 		}
-		break;
 		}
 	}
 
