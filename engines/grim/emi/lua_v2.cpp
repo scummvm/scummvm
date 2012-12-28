@@ -334,7 +334,7 @@ void Lua_V2::GetSectorName() {
 	Set *set = g_grim->getCurrSet();
 	Sector *sector = set->findPointSector(pos, Sector::NoneType);
 	if (sector) {
-		lua_pushstring(sector->getName());
+		lua_pushstring(sector->getName().c_str());
 	}
 }
 

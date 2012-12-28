@@ -62,7 +62,7 @@ public:
 	void shrink(float radius);
 	void unshrink();
 
-	const char *getName() const { return _name.c_str(); }
+	Common::String getName() const { return _name; }
 	int getSectorId() const { return _id; }
 	SectorType getType() const { return _type; } // FIXME: Implement type de-masking
 	bool isVisible() const { return _visible && !_invalid; }

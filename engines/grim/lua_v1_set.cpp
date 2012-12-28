@@ -60,7 +60,7 @@ void Lua_V1::GetPointSector() {
 	Sector *result = g_grim->getCurrSet()->findPointSector(point, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
-		lua_pushstring(result->getName());
+		lua_pushstring(result->getName().c_str());
 		lua_pushnumber(result->getType());
 	} else {
 		lua_pushnil();
@@ -82,7 +82,7 @@ void Lua_V1::GetActorSector() {
 	Sector *result = g_grim->getCurrSet()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
-		lua_pushstring(result->getName());
+		lua_pushstring(result->getName().c_str());
 		lua_pushnumber(result->getType());
 	} else {
 		lua_pushnil();
@@ -105,7 +105,7 @@ void Lua_V1::IsActorInSector() {
 	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name, actor->getPos());
 	if (sector) {
 		lua_pushnumber(sector->getSectorId());
-		lua_pushstring(sector->getName());
+		lua_pushstring(sector->getName().c_str());
 		lua_pushnumber(sector->getType());
 	} else {
 		lua_pushnil();
@@ -133,7 +133,7 @@ void Lua_V1::IsPointInSector() {
 
 	if (sector && sector->isPointInSector(pos)) {
 		lua_pushnumber(sector->getSectorId());
-		lua_pushstring(sector->getName());
+		lua_pushstring(sector->getName().c_str());
 		lua_pushnumber(sector->getType());
 	} else {
 		lua_pushnil();
