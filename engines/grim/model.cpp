@@ -57,6 +57,7 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 	for (int i = 0; i < _numHierNodes; ++i) {
 		ModelNode &node = _rootHierNode[i];
 		if (node._mesh) {
+			g_driver->createModel(node._mesh);
 			Mesh &mesh = *node._mesh;
 			Math::Vector3d p = mesh._matrix.getPosition();
 			float x = p.x();

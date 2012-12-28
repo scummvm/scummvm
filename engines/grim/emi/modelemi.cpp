@@ -286,6 +286,7 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_boneNames = NULL;
 
 	loadMesh(data);
+	g_driver->createEMIModel(this);
 }
 
 EMIModel::~EMIModel() {
