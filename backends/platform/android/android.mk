@@ -50,7 +50,7 @@ JAVACFLAGS = -source 1.5 -target 1.5
 
 ANDROID_JAR = $(ANDROID_SDK)/platforms/android-14/android.jar
 
-PATH_BUILD = build.tmp
+PATH_BUILD = ./build.tmp
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
 PATH_BUILD_CLASSES_MAIN_TOP = $(PATH_BUILD)/classes.main
 PATH_BUILD_CLASSES_PLUGIN_TOP = $(PATH_BUILD)/classes.plugin
@@ -128,7 +128,7 @@ $(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR) $(DIST_FILE
 	work_dir=`pwd`; \
 	for i in $(PATH_BUILD_ASSETS)/*.zip; do \
 		echo "recompress $$i"; \
-		cd $$work_dir; \
+		cd "$$work_dir"; \
 		$(RM) -rf $(PATH_BUILD_ASSETS)/tmp; \
 		$(MKDIR) $(PATH_BUILD_ASSETS)/tmp; \
 		unzip -q $$i -d $(PATH_BUILD_ASSETS)/tmp; \
