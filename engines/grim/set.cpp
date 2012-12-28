@@ -708,20 +708,30 @@ Sector *Set::getSectorBase(int id) {
 		return NULL;
 }
 
-Sector *Set::getSector(const Common::String &name) {
+Sector *Set::getSectorByName(const Common::String &name) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		if (strstr(sector->getName(), name.c_str())) {
+		if (sector->getName() == name) {
 			return sector;
 		}
 	}
 	return NULL;
 }
 
-Sector *Set::getSector(const Common::String &name, const Math::Vector3d &pos) {
+Sector *Set::getSectorBySubstring(const Common::String &str) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		if (strstr(sector->getName(), name.c_str()) && sector->isPointInSector(pos)) {
+		if (strstr(sector->getName(), str.c_str())) {
+			return sector;
+		}
+	}
+	return NULL;
+}
+
+Sector *Set::getSectorBySubstring(const Common::String &str, const Math::Vector3d &pos) {
+	for (int i = 0; i < _numSectors; i++) {
+		Sector *sector = _sectors[i];
+		if (strstr(sector->getName(), str.c_str()) && sector->isPointInSector(pos)) {
 			return sector;
 		}
 	}

@@ -102,7 +102,7 @@ void Lua_V1::IsActorInSector() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	Sector *sector = g_grim->getCurrSet()->getSector(name, actor->getPos());
+	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name, actor->getPos());
 	if (sector) {
 		lua_pushnumber(sector->getSectorId());
 		lua_pushstring(sector->getName());
@@ -129,7 +129,7 @@ void Lua_V1::IsPointInSector() {
 	float z = lua_getnumber(zObj);
 	Math::Vector3d pos(x, y, z);
 
-	Sector *sector = g_grim->getCurrSet()->getSector(name);
+	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name);
 
 	if (sector && sector->isPointInSector(pos)) {
 		lua_pushnumber(sector->getSectorId());
@@ -155,7 +155,7 @@ void Lua_V1::GetSectorOppositeEdge() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	Sector *sector = g_grim->getCurrSet()->getSector(name);
+	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name);
 	if (sector) {
 		if (sector->getNumVertices() != 4)
 			warning("GetSectorOppositeEdge(): cheat box with %d (!= 4) edges!", sector->getNumVertices());
@@ -193,7 +193,9 @@ void Lua_V1::MakeSectorActive() {
 
 	if (lua_isstring(sectorObj)) {
 		const char *name = lua_getstring(sectorObj);
-		Sector *sector = g_grim->getCurrSet()->getSector(name);
+		// a search by name here is needed for set bv, since it calls MakeSectorActive with sectors
+		// "bw_gone" and "bw_gone2", and a substring search would return "bw_gone2" for both.
+		Sector *sector = g_grim->getCurrSet()->getSectorByName(name);
 		if (sector) {
 			sector->setVisible(visible);
 		}
