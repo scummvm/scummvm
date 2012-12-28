@@ -49,7 +49,7 @@ ComputerManager::ComputerManager() {
 	_ballRightFl = false;
 	_ballUpFl = false;
 	_breakoutLevelNbr = 0;
-	RAQX = 0;
+	_padPositionX = 0;
 	CASSEP1 = 0;
 	CASSEP2 = 0;
 	CASSDER = 0;
@@ -683,7 +683,7 @@ void ComputerManager::newLevel() {
 	_vm->_objectsManager.SPRITE(_breakoutSpr, Common::Point(150, 192), 0, 13, 0, 0, 0, 0);
 	_vm->_objectsManager.SPRITE(_breakoutSpr, Common::Point(164, 187), 1, 14, 0, 0, 0, 0);
 	_ballPosition = Common::Point(164, 187);
-	RAQX = 150;
+	_padPositionX = 150;
 	_vm->_objectsManager.SPRITE_ON(0);
 	_vm->_objectsManager.SPRITE_ON(1);
 	_vm->_eventsManager.mouseOn();
@@ -772,7 +772,7 @@ void ComputerManager::playBreakout() {
 		while (!_vm->shouldQuit()) {
 			// Set up the racket and ball
 			_vm->_eventsManager.mouseOff();
-			_ballPosition = Common::Point(RAQX + 14, 187);
+			_ballPosition = Common::Point(_padPositionX + 14, 187);
 			_vm->_objectsManager.setSpriteY(1, 187);
 			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
 			_vm->_graphicsManager.RESET_SEGMENT_VESA();
@@ -781,32 +781,32 @@ void ComputerManager::playBreakout() {
 
 			// Wait for mouse press to start playing
 			do {
-				RAQX = _vm->_eventsManager.getMouseX();
+				_padPositionX = _vm->_eventsManager.getMouseX();
 				if (_vm->_eventsManager._mousePos.x <= 4)
-					RAQX = 5;
-				if (RAQX > 282)
-					RAQX = 282;
-				_vm->_objectsManager.setSpriteX(0, RAQX);
-				_vm->_objectsManager.setSpriteX(1, RAQX + 14);
+					_padPositionX = 5;
+				if (_padPositionX > 282)
+					_padPositionX = 282;
+				_vm->_objectsManager.setSpriteX(0, _padPositionX);
+				_vm->_objectsManager.setSpriteX(1, _padPositionX + 14);
 				_vm->_objectsManager.setSpriteY(1, 187);
 				_vm->_eventsManager.VBL();
 			} while (!_vm->shouldQuit() && _vm->_eventsManager.getMouseButton() != 1);
 
 			_breakoutSpeed = 1;
-			_ballPosition = Common::Point(RAQX + 14, 187);
-			_ballRightFl = (RAQX > 135);
+			_ballPosition = Common::Point(_padPositionX + 14, 187);
+			_ballRightFl = (_padPositionX > 135);
 			_ballUpFl = false;
 
 			// Play loop
 			do {
 				_vm->_soundManager.checkSounds();
 
-				RAQX = _vm->_eventsManager.getMouseX();
+				_padPositionX = _vm->_eventsManager.getMouseX();
 				if (_vm->_eventsManager._mousePos.x <= 4)
-					RAQX = 5;
-				if (RAQX > 282)
-					RAQX = 282;
-				_vm->_objectsManager.setSpriteX(0, RAQX);
+					_padPositionX = 5;
+				if (_padPositionX > 282)
+					_padPositionX = 282;
+				_vm->_objectsManager.setSpriteX(0, _padPositionX);
 				v1 = moveBall();
 				_vm->_eventsManager.VBL();
 			} while (!_vm->shouldQuit() && !v1);
@@ -1107,28 +1107,30 @@ void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int a4)
  * Handle ball moves
  */
 int ComputerManager::moveBall() {
-	int16 v1;
-	int16 v4 = 0;
+	int16 retVal = 0;
 	//(signed int)(6.0 * (long double)_vm->getRandomNumber( rand() / 2147483648.0) + 1;
 	// TODO: Figure out random number
-	int v0 = _vm->getRandomNumber(6);
-	if (_breakoutSpeed == 1) {
+	int randVal = _vm->getRandomNumber(6);
+	switch (_breakoutSpeed) {
+	case 1:
 		CASSEP1 = 1;
 		CASSEP2 = 1;
-	}
-	if (_breakoutSpeed == 2) {
+		break;
+	case 2:
 		CASSEP1 = 1;
 		CASSEP2 = 2;
-	}
-	if (_breakoutSpeed == 3) {
+		break;
+	case 3:
 		CASSEP1 = 2;
 		CASSEP2 = 2;
-	}
-	if (_breakoutSpeed == 4) {
+		break;
+	case 4:
 		CASSEP1 = 3;
 		CASSEP2 = 2;
+		break;
 	}
-	v1 = CASSEP1;
+
+	int v1 = CASSEP1;
 	if (CASSDER == CASSEP1)
 		v1 = CASSEP2;
 
@@ -1145,50 +1147,50 @@ int ComputerManager::moveBall() {
 	CASSDER = v1;
 	if (_ballPosition.x <= 6) {
 		_vm->_soundManager.PLAY_SAMPLE(2, 6);
-		_ballPosition.x = v0 + 6;
+		_ballPosition.x = randVal + 6;
 		_ballRightFl = !_ballRightFl;
 	}
 	if (_ballPosition.x > 307) {
 		_vm->_soundManager.PLAY_SAMPLE(2, 6);
-		_ballPosition.x = 307 - v0;
+		_ballPosition.x = 307 - randVal;
 		_ballRightFl = !_ballRightFl;
 	}
 	if (_ballPosition.y <= 6) {
 		_vm->_soundManager.PLAY_SAMPLE(2, 6);
-		_ballPosition.y = v0 + 7;
+		_ballPosition.y = randVal + 7;
 		_ballUpFl = !_ballUpFl;
 	}
 	if ((uint16)(_ballPosition.y - 186) <= 8u) {
 		_vm->_soundManager.PLAY_SAMPLE(2, 6);
-		if (_ballPosition.x > RAQX - 2) {
+		if (_ballPosition.x > _padPositionX - 2) {
 			int v2 = _ballPosition.x + 6;
-			if (v2 < RAQX + 36) {
+			if (v2 < _padPositionX + 36) {
 				_ballUpFl = false;
-				if (v2 <= RAQX + 15) {
+				if (v2 <= _padPositionX + 15) {
 					_ballRightFl = false;
-					if (_ballPosition.x >= RAQX && v2 <= RAQX + 5)
+					if (_ballPosition.x >= _padPositionX && v2 <= _padPositionX + 5)
 						_ballPosition.x -= 4;
-					if (_ballPosition.x >= RAQX + 5 && _ballPosition.x + 6 <= RAQX + 10)
+					if (_ballPosition.x >= _padPositionX + 5 && _ballPosition.x + 6 <= _padPositionX + 10)
 						_ballPosition.x -= 2;
 				}
-				if (_ballPosition.x >= RAQX + 19 && _ballPosition.x + 6 <= RAQX + 36) {
+				if (_ballPosition.x >= _padPositionX + 19 && _ballPosition.x + 6 <= _padPositionX + 36) {
 					_ballRightFl = true;
-					if (_ballPosition.x >= RAQX + 29)
+					if (_ballPosition.x >= _padPositionX + 29)
 						_ballPosition.x += 4;
-					if (_ballPosition.x >= RAQX + 24 && _ballPosition.x + 6 <= RAQX + 29)
+					if (_ballPosition.x >= _padPositionX + 24 && _ballPosition.x + 6 <= _padPositionX + 29)
 						_ballPosition.x += 2;
 				}
 			}
 		}
 	}
 	if (_ballPosition.y > 194)
-		v4 = 1;
+		retVal = 1;
 	checkBallCollisions();
 	_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
 	_vm->_objectsManager.setSpriteY(1, _ballPosition.y);
 	if (!_breakoutBrickNbr)
-		v4 = 2;
-	return v4;
+		retVal = 2;
+	return retVal;
 }
 
 /**

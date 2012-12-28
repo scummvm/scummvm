@@ -276,7 +276,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 			ptr = _vm->_globals.allocMemory(307200);
 			memcpy(ptr, v12, 307200);
 		}
-		if (_vm->_animationManager.NO_SEQ) {
+		if (NO_SEQ) {
 			if (v8 == 1)
 				memcpy(ptr, _vm->_graphicsManager._vesaBuffer, 307200);
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
@@ -708,11 +708,8 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
  * Search Animation
  */
 void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
-	int v3;
-	const byte *v5;
 	int v6;
 	int v7;
-	int v8;
 	byte *v9;
 	int v10;
 	int v11;
@@ -720,58 +717,49 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 	int v13;
 	int v15;
 	int v16;
-	int v17;
-	int v19;
-	int v20;
 	int v21;
 	int v22;
 	const byte *v23;
 	int v;
 
 	v21 = 0;
-	v3 = 0;
-	v19 = animIndex;
+	bool loopCond = false;
 	do {
-		v20 = *(v21 + data);
-		if (v20 == 'A' && *(data + v21 + 1) == 'N' && *(data + v21 + 2) == 'I' && *(data + v21 + 3) == 'M') {
-			int entryIndex = *(data + v21 + 4);
+		if (data[v21] == 'A' && data[v21 + 1] == 'N' && data[v21 + 2] == 'I' && data[v21 + 3] == 'M') {
+			int entryIndex = data[v21 + 4];
 			if (animIndex == entryIndex) {
-				v5 = v21 + data + 5;
 				v6 = v21 + 5;
 				v7 = 0;
-				v8 = 0;
+				bool innerLoopCond = false;
 				do {
-					if (*v5 == 'A' && *(v5 + 1) == 'N' && *(v5 + 2) == 'I' && *(v5 + 3) == 'M')
-						v8 = 1;
-					if (*v5 == 'F' && *(v5 + 1) == 'I' && *(v5 + 2) == 'N')
-						v8 = 1;
+					if ((data[v6] == 'A' && data[v6 + 1] == 'N' && data[v6 + 2] == 'I' && data[v6 + 3] == 'M') ||
+					    (data[v6] == 'F' && data[v6 + 1] == 'I' && data[v6 + 2] == 'N'))
+						innerLoopCond = true;
 					if (count < v6) {
 						_vm->_globals.Bqe_Anim[animIndex].field4 = 0;
-						_vm->_globals.Bqe_Anim[v19]._data = g_PTRNUL;
+						_vm->_globals.Bqe_Anim[animIndex]._data = g_PTRNUL;
 						return;
 					}
 					++v6;
 					++v7;
-					++v5;
-				} while (v8 != 1);
-				_vm->_globals.Bqe_Anim[v19]._data = _vm->_globals.allocMemory(v7 + 50);
+				} while (!innerLoopCond);
+				_vm->_globals.Bqe_Anim[animIndex]._data = _vm->_globals.allocMemory(v7 + 50);
 				_vm->_globals.Bqe_Anim[animIndex].field4 = 1;
-				memcpy(_vm->_globals.Bqe_Anim[v19]._data, v21 + data + 5, 20);
+				memcpy(_vm->_globals.Bqe_Anim[animIndex]._data, v21 + data + 5, 20);
 
-				byte *dataP = _vm->_globals.Bqe_Anim[v19]._data;
+				byte *dataP = _vm->_globals.Bqe_Anim[animIndex]._data;
 				v9 = dataP + 20;
 				v23 = v21 + data + 25;
 				v10 = READ_LE_UINT16(v21 + data + 25);
 				v11 = READ_LE_UINT16(v21 + data + 27);
 				v22 = READ_LE_UINT16(v21 + data + 29);
 				v12 = READ_LE_UINT16(v21 + data + 31);
-				v13 = *(v21 + data + 33);
-				*(dataP + 29) = *(v21 + data + 34);
 				WRITE_LE_UINT16(dataP + 20, v10);
 				WRITE_LE_UINT16(dataP + 22, v11);
 				WRITE_LE_UINT16(dataP + 24, v22);
 				WRITE_LE_UINT16(dataP + 26, v12);
-				*(dataP + 28) = v13;
+				*(dataP + 28) = *(v21 + data + 33);
+				*(dataP + 29) = *(v21 + data + 34);
 
 				for (int v14 = 1; v14 <= 4999; v14++) {
 					v9 += 10;
@@ -783,21 +771,20 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 					v15 = READ_LE_UINT16(v23 + 2);
 					v22 = READ_LE_UINT16(v23 + 4);
 					v16 = READ_LE_UINT16(v23 + 6);
-					v17 = *(v23 + 8);
-					*(v9 + 9) = *(v23 + 9);
 					WRITE_LE_UINT16(v9, v);
 					WRITE_LE_UINT16(v9 + 2, v15);
 					WRITE_LE_UINT16(v9 + 4, v22);
 					WRITE_LE_UINT16(v9 + 6, v16);
-					*(v9 + 8) = v17;
+					*(v9 + 8) = *(v23 + 8);
+					*(v9 + 9) = *(v23 + 9);
 				}
-				v3 = 1;
+				loopCond = true;
 			}
 		}
-		if (v20 == 'F' && *(data + v21 + 1) == 'I' && *(data + v21 + 2) == 'N')
-			v3 = 1;
+		if (data[v21] == 'F' && data[v21 + 1] == 'I' && data[v21 + 2] == 'N')
+			loopCond = true;
 		++v21;
-	} while (v21 <= count && v3 != 1);
+	} while (v21 <= count && !loopCond);
 }
 
 /**
@@ -846,7 +833,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		ptr = _vm->_globals.allocMemory(307200);
 		memcpy(ptr, v9, 307200);
 	}
-	if (_vm->_animationManager.NO_SEQ) {
+	if (NO_SEQ) {
 		if (v7)
 			memcpy(ptr, _vm->_graphicsManager._vesaBuffer, 307200);
 		if (!_vm->getIsDemo()) {
@@ -1009,7 +996,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			ptr = _vm->_globals.allocMemory(307200);
 			memcpy((void *)ptr, v10, 307200);
 		}
-		if (_vm->_animationManager.NO_SEQ) {
+		if (NO_SEQ) {
 			if (v7 == 1) {
 				assert(ptr != NULL);
 				memcpy((void *)ptr, _vm->_graphicsManager._vesaBuffer, 307200);

@@ -62,7 +62,7 @@ private:
 	bool _ballRightFl;
 	bool _ballUpFl;
 	int _breakoutLevelNbr;
-	int RAQX;
+	int _padPositionX;
 	int _breakoutHiscore;
 	int CASSEP1;
 	int CASSEP2;
