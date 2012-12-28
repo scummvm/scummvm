@@ -69,7 +69,9 @@ void ObjectState::draw() {
 
 	assert(_bitmap);
 	_bitmap->draw();
-	if (_zbitmap)
+	// The only OBJSTATE_UNDERLAY which has a zbuffer is the bonewagon in set bv. Original doesn't draw that zbuffer,
+	// so we don't either, otherwise this bug will appear: https://github.com/residualvm/residualvm/issues/143
+	if (_zbitmap && _pos != OBJSTATE_UNDERLAY)
 		_zbitmap->draw();
 }
 
