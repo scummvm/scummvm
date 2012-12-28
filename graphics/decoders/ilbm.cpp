@@ -34,7 +34,8 @@ ILBMDecoder2::ILBMDecoder2() {
 	_paletteColorCount = 0;
 	_paletteRangeCount = 0;
 	_outPitch = 0;
-	_packedPixels = false;
+	_numRelevantPlanes = 8;
+	_packPixels = false;
 }
 
 ILBMDecoder2::~ILBMDecoder2() {
@@ -140,14 +141,16 @@ void ILBMDecoder2::loadPaletteRange(Common::SeekableReadStream &stream, const ui
 }
 
 void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
+	_numRelevantPlanes = MIN(_numRelevantPlanes, _header.numPlanes);
+
 	if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4)
-		_packedPixels = false;
+		_packPixels = false;
 
 	if (_outPitch == 0)
 		_outPitch = _header.width;
 
-	if (_packedPixels)
-		_outPitch /= (8 / _header.numPlanes);
+	if (_packPixels)
+		_outPitch /= (8 / _numRelevantPlanes);
 
 	_surface = new Graphics::Surface();
 	_surface->create(_outPitch, _header.height, Graphics::PixelFormat::createFormatCLUT8());
@@ -174,7 +177,7 @@ void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
 				left -= length;
 			}
 
-			unpackPixels(scanlines, data, scanlinePitch);
+			packPixels(scanlines, data, scanlinePitch);
 		}
 
 		data += _outPitch;
@@ -203,11 +206,11 @@ void ILBMDecoder2::decompressRLE(Common::SeekableReadStream &stream, byte *scanl
 	}
 }
 
-void ILBMDecoder2::unpackPixels(byte *scanlines, byte *data, const uint16 scanlinePitch) {
+void ILBMDecoder2::packPixels(byte *scanlines, byte *data, const uint16 scanlinePitch) {
 	uint32 numPixels = _outPitch;
 
-	if (_packedPixels)
-		numPixels *= (8 / _header.numPlanes);
+	if (_packPixels)
+		numPixels *= (8 / _numRelevantPlanes);
 
 	for (uint32 x = 0; x < numPixels; ++x) {
 		byte *scanline = scanlines;
@@ -216,7 +219,7 @@ void ILBMDecoder2::unpackPixels(byte *scanlines, byte *data, const uint16 scanli
 		byte bit = 0x80 >> (x & 7);
 
 		// first build a pixel by scanning all the usable planes in the input
-		for (uint32 plane = 0; plane < _header.numPlanes; ++plane) {
+		for (uint32 plane = 0; plane < _numRelevantPlanes; ++plane) {
 			if (scanline[offset] & bit)
 				pixel |= (1 << plane);
 
@@ -224,13 +227,13 @@ void ILBMDecoder2::unpackPixels(byte *scanlines, byte *data, const uint16 scanli
 		}
 
 		// then output the pixel according to the requested packing
-		if (!_packedPixels)
+		if (!_packPixels)
 			data[x] = pixel;
-		else if (_header.numPlanes == 1)
+		else if (_numRelevantPlanes == 1)
 			data[x / 8] |= (pixel << (x & 7));
-		else if (_header.numPlanes == 2)
+		else if (_numRelevantPlanes == 2)
 			data[x / 4] |= (pixel << ((x & 3) << 1));
-		else if (_header.numPlanes == 4)
+		else if (_numRelevantPlanes == 4)
 			data[x / 2] |= (pixel << ((x & 1) << 2));
 	}
 }

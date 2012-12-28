@@ -72,7 +72,8 @@ public:
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 	uint16 getPaletteRangeCount() const { return _paletteRangeCount; }
 	void setOutPitch(const uint16 outPitch) { _outPitch = outPitch; }
-	void setPackedPixels(const bool packedPixels) { _packedPixels = packedPixels; }
+	void setNumRelevantPlanes(const uint8 numRelevantPlanes) { _numRelevantPlanes = numRelevantPlanes; }
+	void setPackPixels(const bool packPixels) { _packPixels = packPixels; }
 private:
 
 	enum {
@@ -90,14 +91,15 @@ private:
 	uint16 _paletteColorCount;
 	uint16 _paletteRangeCount;
 	uint16 _outPitch;
-	bool _packedPixels;
+	uint8 _numRelevantPlanes;
+	bool _packPixels;
 
 	void loadHeader(Common::SeekableReadStream &stream);
 	void loadPalette(Common::SeekableReadStream &stream, const uint32 size);
 	void loadPaletteRange(Common::SeekableReadStream &stream, const uint32 size);
 	void loadBitmap(Common::SeekableReadStream &stream);
 	void decompressRLE(Common::SeekableReadStream &stream, byte *scanline, uint16 &length, const uint16 left);
-	void unpackPixels(byte *scanlines, byte *data, const uint16 scanlinePitch);
+	void packPixels(byte *scanlines, byte *data, const uint16 scanlinePitch);
 };
 
 } // End of namespace Graphics
