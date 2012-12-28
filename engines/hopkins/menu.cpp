@@ -93,7 +93,7 @@ int MenuManager::menu() {
 		else if (_vm->_globals._language == LANG_SP)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENUES.SPR");
 
-		spriteData = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
+		spriteData = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 		_vm->_eventsManager.mouseOn();
 		_vm->_eventsManager.changeMouseCursor(0);
 		_vm->_eventsManager._mouseCursorId = 0;

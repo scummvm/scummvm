@@ -122,7 +122,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 			ObjectsManager::DEL_FICHIER_OBJ();
 		if (val1 == 1) {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OBJET1.SPR");
-			_vm->_globals.ADR_FICHIER_OBJ = ObjectsManager::loadSprite(_vm->_globals.NFICHIER);
+			_vm->_globals.ADR_FICHIER_OBJ = ObjectsManager::loadSprite(_vm->_globals._curFilename);
 		}
 		_vm->_globals.NUM_FICHIER_OBJ = val1;
 	}
@@ -2252,7 +2252,7 @@ void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
 	_vm->_linesManager.TOTAL_LIGNES = 0;
 	DERLIGNE = 0;
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
-	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	v4 = 0;
 	v5 = 0;
 	do {
@@ -2311,10 +2311,10 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
 
 	Common::File f;
-	if (!f.exists(_vm->_globals.NFICHIER))
-		error("File not found : %s", _vm->_globals.NFICHIER.c_str());
+	if (!f.exists(_vm->_globals._curFilename))
+		error("File not found : %s", _vm->_globals._curFilename.c_str());
 
-	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	v4 = 0;
 	v18 = 0;
 	v17 = 0;
@@ -2460,7 +2460,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.loadCache("PLAN.CA2");
 	loadZone("PLAN.ZO2");
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "VOITURE.SPR");
-	_spritePtr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	_spritePtr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_animationManager.loadAnim("PLAN");
 	_vm->_graphicsManager.VISU_ALL();
 	_vm->_graphicsManager.INI_ECRAN2("PLAN");
@@ -2935,7 +2935,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 		loc = &_vm->_globals._saveData->_realHopkins;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
-		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_vm->_globals.PERSO_TYPE = 0;
 		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 34, 190);
 		SPRITE_ON(0);
@@ -2961,7 +2961,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 		loc = &_vm->_globals._saveData->_samantha;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PSAMAN.SPR");
-		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_vm->_globals.PERSO_TYPE = 2;
 		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 20, 127);
 		SPRITE_ON(0);
@@ -3957,7 +3957,7 @@ void ObjectsManager::OPTI_OBJET() {
 	data = _vm->_fileManager.searchCat(file, 1);
 	if (data == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
-		data = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		data = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 
 	if ((data == g_PTRNUL) || *data != 'I' || *(data + 1) != 'N' || *(data + 2) != 'I') {
@@ -4172,7 +4172,7 @@ void ObjectsManager::ACTION_DOS(int idx) {
 		_vm->_globals.GESTE_FLAG = 1;
 
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "DOS.SPR");
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
@@ -4207,7 +4207,7 @@ void ObjectsManager::ACTION_DROITE(int idx) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PROFIL.SPR");
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, 0);
@@ -4236,7 +4236,7 @@ void ObjectsManager::Q_DROITE(int idx) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "3Q.SPR");
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
@@ -4265,7 +4265,7 @@ void ObjectsManager::ACTION_FACE(int idx) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 2;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "FACE.SPR");
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
@@ -4282,7 +4282,7 @@ void ObjectsManager::Q_GAUCHE(int idx) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "3Q.SPR");
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 1);
@@ -4311,7 +4311,7 @@ void ObjectsManager::ACTION_GAUCHE(int idx) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PROFIL.SPR");
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
 		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, 1);
@@ -4466,8 +4466,8 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	if (ptr == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
 
-		if (!f.open(_vm->_globals.NFICHIER))
-			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
+		if (!f.open(_vm->_globals._curFilename))
+			error("Error opening file - %s", _vm->_globals._curFilename.c_str());
 
 		nbytes = f.size();
 		ptr = _vm->_globals.allocMemory(nbytes);
@@ -4492,7 +4492,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "RES_SLI.RES");
 			}
 
-			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			v36 = 60;
 			v37 = ptr + 1000;
 			for (int v40 = 0; v40 <= 21; v40++) {
@@ -5367,20 +5367,20 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	if (_vm->_globals.PERSO_TYPE) {
 		if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
-			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.PERSO_TYPE = 0;
 		}
 	}
 	if (!_vm->_globals.PERSO_TYPE) {
 		if (_vm->_globals._saveData->data[svField122] == 1) {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "HOPFEM.SPR");
-			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.PERSO_TYPE = 1;
 		}
 	}
 	if (_vm->_globals.PERSO_TYPE != 2 && _vm->_globals._saveData->data[svField356] == 1) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PSAMAN.SPR");
-		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_vm->_globals.PERSO_TYPE = 2;
 	}
 	_vm->_globals.HOPKINS_DATA();

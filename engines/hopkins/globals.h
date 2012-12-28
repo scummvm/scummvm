@@ -350,7 +350,7 @@ public:
 	Common::String HOPSYSTEM;
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
-	Common::String NFICHIER;
+	Common::String _curFilename;
 	int SOUNDVOL;
 	int MUSICVOL;
 	int VOICEVOL;

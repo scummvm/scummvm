@@ -472,7 +472,7 @@ void Globals::CLEAR_VBOB() {
 // Load Object
 void Globals::loadObjects() {
 	_vm->_fileManager.constructFilename(HOPSYSTEM, "OBJET.DAT");
-	byte *data = _vm->_fileManager.loadFile(NFICHIER);
+	byte *data = _vm->_fileManager.loadFile(_curFilename);
 	byte *srcP = data;
 
 	for (int idx = 0; idx < 300; ++idx) {
@@ -551,13 +551,13 @@ void Globals::loadCache(const Common::String &file) {
 
 	RESET_CACHE();
 	_vm->_fileManager.constructFilename(HOPLINK, file);
-	ptr = _vm->_fileManager.loadFile(NFICHIER);
+	ptr = _vm->_fileManager.loadFile(_curFilename);
 	v16 = Common::String((const char *)ptr);
 
 	_vm->_fileManager.constructFilename(HOPLINK, v16);
 
-	if (f.exists(NFICHIER)) {
-		spriteData = _vm->_fileManager.loadFile(NFICHIER);
+	if (f.exists(_curFilename)) {
+		spriteData = _vm->_fileManager.loadFile(_curFilename);
 		CACHE_BANQUE[1] = spriteData;
 		int v15 = 60;
 		for (int i = 0; i <= 21; i++) {

@@ -390,7 +390,7 @@ void SoundManager::PLAY_MOD(const Common::String &file) {
 		MOD_FLAG = false;
 	}
 
-	loadMusic(_vm->_globals.NFICHIER);
+	loadMusic(_vm->_globals._curFilename);
 	playMusic();
 	MOD_FLAG = true;
 }
@@ -652,9 +652,9 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 		catLen = _vm->_globals._catalogSize;
 	} else {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".WAV");
-		if (!f.exists(_vm->_globals.NFICHIER)) {
+		if (!f.exists(_vm->_globals._curFilename)) {
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".APC");
-			if (!f.exists(_vm->_globals.NFICHIER))
+			if (!f.exists(_vm->_globals._curFilename))
 				return false;
 		}
 
@@ -733,7 +733,7 @@ void SoundManager::MODSetMusicVolume(int volume) {
 
 void SoundManager::loadSample(int wavIndex, const Common::String &file) {
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSOUND, file);
-	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 0);
+	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals._curFilename, 0);
 	SOUND[wavIndex]._active = true;
 }
 
@@ -807,8 +807,8 @@ void SoundManager::stopVoice(int voiceIndex) {
 }
 
 void SoundManager::SDL_LVOICE(size_t filePosition, size_t entryLength) {
-	if (!SDL_LoadVoice(_vm->_globals.NFICHIER, filePosition, entryLength, Swav[20]))
-		error("Couldn't load the sample %s", _vm->_globals.NFICHIER.c_str());
+	if (!SDL_LoadVoice(_vm->_globals._curFilename, filePosition, entryLength, Swav[20]))
+		error("Couldn't load the sample %s", _vm->_globals._curFilename.c_str());
 
 	Swav[20]._active = true;
 }
@@ -865,7 +865,7 @@ void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename
 
 void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSOUND, file);
-	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals.NFICHIER, 1);
+	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals._curFilename, 1);
 }
 
 void SoundManager::PLAY_NWAV(int wavIndex) {

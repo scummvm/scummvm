@@ -170,7 +170,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		_text[idx]._textLoadedFl = true;
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
 
-		file = _vm->_globals.NFICHIER;
+		file = _vm->_globals._curFilename;
 		if (strncmp(file.c_str(), _oldName.c_str(), strlen(file.c_str())) != 0) {
 			// Starting to access a new file, so read in the index file for the file
 			_oldName = file;

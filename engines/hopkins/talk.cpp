@@ -69,8 +69,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
-		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-		_characterSize = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
+		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
 	_vm->_globals._saveData->data[svField4] = 0;
 	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
@@ -91,13 +91,13 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	} else {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
 	}
-	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
+	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 	if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 307200);
+		_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 307200);
 	else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 614400);
+		_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 614400);
 
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager.ofscroll = 0;
@@ -178,8 +178,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
-		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-		_characterSize = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
+		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
 
 	_vm->_globals._saveData->data[svField4] = 0;
@@ -597,7 +597,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
 
 	// Build up the filename
-	filename = dest = _vm->_globals.NFICHIER;
+	filename = dest = _vm->_globals._curFilename;
 	while (filename.lastChar() != '.')
 		filename.deleteLastChar();
 	filename += "IND";
@@ -1119,8 +1119,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, a2);
-		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-		_characterSize = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
+		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
 	getStringFromBuffer(40, v23, (const char *)_characterBuffer);
 	getStringFromBuffer(0, v22, (const char *)_characterBuffer);
@@ -1136,13 +1136,13 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	else
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
 
-	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
+	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 
 	_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 	if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 307200);
+		_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 307200);
 	else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, _vm->_graphicsManager._vesaScreen, 614400);
+		_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 614400);
 
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager.ofscroll = 0;

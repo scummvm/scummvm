@@ -79,7 +79,7 @@ void ComputerManager::setTextMode() {
 	_vm->_graphicsManager._lineNbr = SCREEN_WIDTH;
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "STFONT.SPR");
 	_vm->_globals.police = _vm->_globals.freeMemory(_vm->_globals.police);
-	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_globals.police_l = 8;
 	_vm->_globals.police_h = 8;
 	_vm->_graphicsManager.loadImage("WINTEXT");
@@ -291,7 +291,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
  */
 void ComputerManager::loadMenu() {
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "COMPUTAN.TXT");
-	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	byte *tmpPtr = ptr;
 	int lineNum = 0;
 	int strPos;
@@ -472,7 +472,7 @@ void ComputerManager::outText2(const Common::String &msg) {
 void ComputerManager::restoreFBIRoom() {
 	_vm->_globals.police = _vm->_globals.freeMemory(_vm->_globals.police);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "FONTE3.SPR");
-	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 
 	_vm->_globals.police_l = 12;
 	_vm->_globals.police_h = 21;
@@ -506,8 +506,8 @@ void ComputerManager::readText(int idx) {
 	else if (_vm->_globals._language == LANG_SP)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKES.TXT");
 
-	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
-	v1 = _vm->_fileManager.fileSize(_vm->_globals.NFICHIER);
+	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+	v1 = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	v2 = 0;
 	v3 = 0;
 	if (v1 > 0u) {
@@ -584,7 +584,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_soundManager.loadSample(2, "SOUND38.WAV");
 	_vm->_soundManager.loadSample(3, "SOUND39.WAV");
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "CASSE.SPR");
-	_breakoutSpr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	_breakoutSpr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	loadHiscore();
 	setModeVGA256();
 	newLevel();
@@ -617,7 +617,7 @@ void ComputerManager::loadHiscore() {
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
 	ptr = _vm->_globals.allocMemory(100);
-	_vm->_saveLoadManager.load(_vm->_globals.NFICHIER, ptr);
+	_vm->_saveLoadManager.load(_vm->_globals._curFilename, ptr);
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
 		for (int i = 0; i < 5; ++i) {
@@ -671,14 +671,14 @@ void ComputerManager::newLevel() {
 		file = Common::String::format("TAB%d.TAB", _breakoutLevelNbr);
 
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, file);
-		if (f.open(_vm->_globals.NFICHIER))
+		if (f.open(_vm->_globals._curFilename))
 			break;
 
 		_breakoutLevelNbr = 1;
 	}
 	f.close();
 
-	_breakoutLevel = (int16 *)_vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	_breakoutLevel = (int16 *)_vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	displayBricks();
 	_vm->_objectsManager.SPRITE(_breakoutSpr, Common::Point(150, 192), 0, 13, 0, 0, 0, 0);
 	_vm->_objectsManager.SPRITE(_breakoutSpr, Common::Point(164, 187), 1, 14, 0, 0, 0, 0);
@@ -860,7 +860,7 @@ int ComputerManager::displayHiscores() {
 	loadHiscore();
 	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
-	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -915,7 +915,7 @@ void ComputerManager::getScoreName() {
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
-	ptr = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_graphicsManager.fadeInBreakout();
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);
@@ -1075,7 +1075,7 @@ void ComputerManager::saveScore() {
 	}
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");
-	_vm->_saveLoadManager.saveFile(_vm->_globals.NFICHIER, ptr, 100);
+	_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, ptr, 100);
 	_vm->_globals.freeMemory(ptr);
 }
 

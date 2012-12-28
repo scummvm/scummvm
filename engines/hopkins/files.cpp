@@ -74,7 +74,7 @@ void FileManager::initCensorship() {
 	// If file doesn't exist, fallback to uncensored
 	if (!fileExists(_vm->_globals.HOPSYSTEM, "BLOOD.DAT")) {
 		constructFilename(_vm->_globals.HOPSYSTEM, "BLOOD.DAT");
-		char *data = (char *)loadFile(_vm->_globals.NFICHIER);
+		char *data = (char *)loadFile(_vm->_globals._curFilename);
 
 		if (*(data + 6) == 'u' && *(data + 7) == 'k')
 			_vm->_globals.CENSURE = true;
@@ -118,14 +118,14 @@ void FileManager::constructFilename(const Common::String &folder, const Common::
 		}
 	}
 
-	_vm->_globals.NFICHIER = Common::String::format("%s/%s", folderToUse.c_str(), file.c_str());
+	_vm->_globals._curFilename = Common::String::format("%s/%s", folderToUse.c_str(), file.c_str());
 }
 
 /**
  * Construct Linux filename
  */
 Common::String FileManager::constructLinuxFilename(const Common::String &file) {
-	_vm->_globals.NFICHIER = file;
+	_vm->_globals._curFilename = file;
 	return file;
 }
 
@@ -153,71 +153,71 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 	switch (a2) {
 	case 1:
 		constructFilename(_vm->_globals.HOPLINK, "RES_INI.CAT");
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		constructFilename(_vm->_globals.HOPLINK, "RES_INI.RES");
 		break;
 
 	case 2:
 		constructFilename(_vm->_globals.HOPLINK, "RES_REP.CAT");
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		constructFilename(_vm->_globals.HOPLINK, "RES_REP.RES");
 		break;
 
 	case 3:
 		constructFilename(_vm->_globals.HOPLINK, "RES_LIN.CAT");
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		constructFilename(_vm->_globals.HOPLINK, "RES_LIN.RES");
 		break;
 
 	case 4:
 		constructFilename(_vm->_globals.HOPANIM, "RES_ANI.CAT");
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		constructFilename(_vm->_globals.HOPANIM, "RES_ANI.RES");
 		break;
 
 	case 5:
 		constructFilename(_vm->_globals.HOPANIM, "RES_PER.CAT");
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		constructFilename(_vm->_globals.HOPANIM, "RES_PER.RES");
 		break;
 
 	case 6:
 		constructFilename(_vm->_globals.HOPIMAGE, "PIC.CAT");
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		break;
 
 	case 7:
 		constructFilename(_vm->_globals.HOPANIM, "RES_SAN.CAT");
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		break;
 
 	case 8:
 		constructFilename(_vm->_globals.HOPLINK, "RES_SLI.CAT");
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		break;
 
 	case 9:
@@ -238,10 +238,10 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 			}
 		}
 
-		if (!f.exists(_vm->_globals.NFICHIER))
+		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
-		ptr = loadFile(_vm->_globals.NFICHIER);
+		ptr = loadFile(_vm->_globals._curFilename);
 		break;
 		// Deliberate fall-through to
 	default:
@@ -276,7 +276,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 
 	// TODO: Double check whether this really should be an unsigned int comparison
 	if ((uint16)(a2 - 6) > 1 && (uint16)(a2 - 8) > 1) {
-		if (!f.open(_vm->_globals.NFICHIER))
+		if (!f.open(_vm->_globals._curFilename))
 			error("CHARGE_FICHIER");
 
 		f.seek(_vm->_globals._catalogPos);

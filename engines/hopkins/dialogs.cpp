@@ -66,7 +66,7 @@ void DialogsManager::showOptionsDialog() {
 	else if (_vm->_globals._language == LANG_SP)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIES.SPR");
 
-	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_globals._optionDialogFl = true;
 
 	do {
@@ -327,8 +327,8 @@ LABEL_7:
 		}
 
 		Common::File f;
-		if (!f.open(_vm->_globals.NFICHIER))
-			error("Error opening file - %s", _vm->_globals.NFICHIER.c_str());
+		if (!f.open(_vm->_globals._curFilename))
+			error("Error opening file - %s", _vm->_globals._curFilename.c_str());
 
 		size_t filesize = f.size();
 		_vm->_dialogsManager._inventWin1 = _vm->_globals.allocMemory(filesize);
@@ -336,7 +336,7 @@ LABEL_7:
 		f.close();
 
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENT2.SPR");
-		_inventBuf2 = _vm->_fileManager.loadFile(_vm->_globals.NFICHIER);
+		_inventBuf2 = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 
 		int v19 = _inventX = _vm->_graphicsManager.ofscroll + 152;
 		_inventY = 114;
@@ -634,9 +634,9 @@ void DialogsManager::showSaveLoad(int a1) {
 		break;
 	}
 
-	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
+	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVE2.SPR");
-	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite(_vm->_globals.NFICHIER);
+	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 483, 360, 0);
 
 	if (_vm->_globals._language == LANG_FR) {
