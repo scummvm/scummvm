@@ -70,7 +70,7 @@ private:
 	enum {
 		CHUNK_FORM = MKTAG('F','O','R','M'),
 		CHUNK_BMHD = MKTAG('B','M','H','D'),
-	    CHUNK_CMAP = MKTAG('C','M','A','P'),
+		CHUNK_CMAP = MKTAG('C','M','A','P'),
 		CHUNK_BODY = MKTAG('B','O','D','Y')
 	};
 
