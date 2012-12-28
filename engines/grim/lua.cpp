@@ -387,7 +387,7 @@ void LuaBase::dummyHandler() {
 }
 
 bool LuaBase::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
-	*costume = actor->getCurrentCostume(); // should be root of list I think
+	*costume = NULL;
 	if (lua_isnil(costumeObj))
 		return true;
 	if (lua_isnumber(costumeObj)) {

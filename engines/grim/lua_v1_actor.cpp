@@ -832,6 +832,9 @@ void Lua_V1::PlayActorChore() {
 	int chore = (int)lua_getnumber(choreObj);
 
 	if (!costume) {
+		costume = actor->getCurrentCostume();
+	}
+	if (!costume) {
 		lua_pushnil();
 		return;
 	}
@@ -860,6 +863,9 @@ void Lua_V1::CompleteActorChore() {
 	}
 	int chore = (int)lua_getnumber(choreObj);
 
+	if (!costume) {
+		costume = actor->getCurrentCostume();
+	}
 	if (!costume) {
 		lua_pushnil();
 		return;
@@ -890,6 +896,9 @@ void Lua_V1::PlayActorChoreLooping() {
 	int chore = (int)lua_getnumber(choreObj);
 
 	if (!costume) {
+		costume = actor->getCurrentCostume();
+	}
+	if (!costume) {
 		lua_pushnil();
 		return;
 	}
@@ -912,6 +921,9 @@ void Lua_V1::SetActorChoreLooping() {
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
+	if (!costume) {
+		costume = actor->getCurrentCostume();
+	}
 	if (!costume)
 		return;
 
@@ -937,6 +949,9 @@ void Lua_V1::StopActorChore() {
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
+	if (!costume) {
+		costume = actor->getCurrentCostume();
+	}
 	if (!costume)
 		return;
 
@@ -963,6 +978,9 @@ void Lua_V1::FadeOutChore() {
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
+	if (!costume) {
+		costume = actor->getCurrentCostume();
+	}
 	if (!costume)
 		return;
 
@@ -989,6 +1007,9 @@ void Lua_V1::FadeInChore() {
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
+	if (!costume) {
+		costume = actor->getCurrentCostume();
+	}
 	if (!costume)
 		return;
 
@@ -1014,6 +1035,9 @@ void Lua_V1::IsActorChoring() {
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
+	if (!costume) {
+		costume = actor->getCurrentCostume();
+	}
 	if (!costume) {
 		lua_pushnil();
 		return;
