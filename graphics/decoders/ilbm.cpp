@@ -114,17 +114,14 @@ void ILBMDecoder2::loadPalette(Common::SeekableReadStream &stream, const uint32 
 }
 
 void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
-	if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4) {
+	if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4)
 		_packedPixels = false;
-	}
 
-	if (_outPitch == 0) {
+	if (_outPitch == 0)
 		_outPitch = _header.width;
-	}
 
-	if (_packedPixels) {
+	if (_packedPixels)
 		_outPitch /= (8 / _header.numPlanes);
-	}
 
 	_surface = new Graphics::Surface();
 	_surface->create(_outPitch, _header.height, Graphics::PixelFormat::createFormatCLUT8());
@@ -142,11 +139,10 @@ void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
 			while (left > 0 && !stream.eos() ) {
 				uint16 length = scanlinePitch;
 
-				if (_header.compression) {
+				if (_header.compression)
 					decompressRLE(stream, scanline, length, left);
-				} else {
+				else
 					stream.read(scanline, length);
-				}
 
 				scanline += length;
 				left -= length;
@@ -163,11 +159,13 @@ void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
 
 void ILBMDecoder2::decompressRLE(Common::SeekableReadStream &stream, byte *scanline, uint16 &length, const uint16 left) {
 	uint16 code = stream.readByte();
+
 	if (code != 0x80) {
 		if (code <= 0x7f) { // literal run
 			code++;
 			length = MIN(code, left);
 			stream.read(scanline, length);
+
 			if(code > length)
 				stream.skip(code - length);
 		} else { // expand run
@@ -181,9 +179,9 @@ void ILBMDecoder2::decompressRLE(Common::SeekableReadStream &stream, byte *scanl
 
 void ILBMDecoder2::unpackPixels(byte *scanlines, byte *data, const uint16 scanlinePitch) {
 	uint32 numPixels = _outPitch;
-	if (_packedPixels) {
+
+	if (_packedPixels)
 		numPixels *= (8 / _header.numPlanes);
-	}
 
 	for (uint32 x = 0; x < numPixels; ++x) {
 		byte *scanline = scanlines;
@@ -193,22 +191,21 @@ void ILBMDecoder2::unpackPixels(byte *scanlines, byte *data, const uint16 scanli
 
 		// first build a pixel by scanning all the usable planes in the input
 		for (uint32 plane = 0; plane < _header.numPlanes; ++plane) {
-			if (scanline[offset] & bit) {
+			if (scanline[offset] & bit)
 				pixel |= (1 << plane);
-			}
+
 			scanline += scanlinePitch;
 		}
 
 		// then output the pixel according to the requested packing
-		if (!_packedPixels) {
+		if (!_packedPixels)
 			data[x] = pixel;
-		} else if (_header.numPlanes == 1) {
+		else if (_header.numPlanes == 1)
 			data[x / 8] |= (pixel << (x & 7));
-		} else if (_header.numPlanes == 2) {
+		else if (_header.numPlanes == 2)
 			data[x / 4] |= (pixel << ((x & 3) << 1));
-		} else if (_header.numPlanes == 4) {
+		else if (_header.numPlanes == 4)
 			data[x / 2] |= (pixel << ((x & 1) << 2));
-		}
 	}
 }
 
