@@ -76,8 +76,8 @@ void KyraRpgEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32
 		screen()->fillRect(x + t, y, x + w - 1, y + h, col2);
 }
 
-void KyraRpgEngine::gui_initButtonsFromList(const int16 *list) {
-	while (*list != -1)
+void KyraRpgEngine::gui_initButtonsFromList(const uint8 *list) {
+	while (*list != 0xFF)
 		gui_initButton(*list++);
 }
 

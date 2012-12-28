@@ -261,7 +261,10 @@ void LoLEngine::initStaticResource() {
 	_charDefsKieran = _staticres->loadRawDataBe16(kLoLCharDefsKieran, tempSize);
 	_charDefsAkshel = _staticres->loadRawDataBe16(kLoLCharDefsAkshel, tempSize);
 	_expRequirements = (const int32 *)_staticres->loadRawDataBe32(kLoLExpRequirements, tempSize);
-	_monsterModifiers = _staticres->loadRawDataBe16(kLoLMonsterModifiers, tempSize);
+	_monsterModifiers1 = _staticres->loadRawDataBe16(kLoLMonsterModifiers1, tempSize);
+	_monsterModifiers2 = _staticres->loadRawDataBe16(kLoLMonsterModifiers2, tempSize);
+	_monsterModifiers3 = _staticres->loadRawDataBe16(kLoLMonsterModifiers3, tempSize);
+	_monsterModifiers4 = _staticres->loadRawDataBe16(kLoLMonsterModifiers4, tempSize);
 	_monsterShiftOffs = (const int8 *)_staticres->loadRawData(kLoLMonsterShiftOffsets, tempSize);
 	_monsterDirFlags = _staticres->loadRawData(kLoLMonsterDirFlags, tempSize);
 	_monsterScaleX = _staticres->loadRawData(kLoLMonsterScaleX, tempSize);
@@ -304,14 +307,14 @@ void LoLEngine::initStaticResource() {
 	}
 
 	_buttonData = _staticres->loadButtonDefs(kLoLButtonDefs, tempSize);
-	_buttonList1 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList1, tempSize);
-	_buttonList2 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList2, tempSize);
-	_buttonList3 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList3, tempSize);
-	_buttonList4 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList4, tempSize);
-	_buttonList5 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList5, tempSize);
-	_buttonList6 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList6, tempSize);
-	_buttonList7 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList7, tempSize);
-	_buttonList8 = (const int16 *)_staticres->loadRawDataBe16(kLoLButtonList8, tempSize);
+	_buttonList1 = _staticres->loadRawData(kLoLButtonList1, tempSize);
+	_buttonList2 = _staticres->loadRawData(kLoLButtonList2, tempSize);
+	_buttonList3 = _staticres->loadRawData(kLoLButtonList3, tempSize);
+	_buttonList4 = _staticres->loadRawData(kLoLButtonList4, tempSize);
+	_buttonList5 = _staticres->loadRawData(kLoLButtonList5, tempSize);
+	_buttonList6 = _staticres->loadRawData(kLoLButtonList6, tempSize);
+	_buttonList7 = _staticres->loadRawData(kLoLButtonList7, tempSize);
+	_buttonList8 = _staticres->loadRawData(kLoLButtonList8, tempSize);
 
 	_autoMapStrings = _staticres->loadRawDataBe16(kLoLMapStringId, tempSize);
 

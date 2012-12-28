@@ -547,7 +547,7 @@ void LoLEngine::restoreTempDataAdjustMonsterStrength(int index) {
 	if (_lvlTempData[index]->monsterDifficulty == _monsterDifficulty)
 		return;
 
-	uint16 d = (_monsterModifiers[_lvlTempData[index]->monsterDifficulty] << 8) / _monsterModifiers[_monsterDifficulty];
+	uint16 d = (_monsterModifiers1[_lvlTempData[index]->monsterDifficulty] << 8) / _monsterModifiers1[_monsterDifficulty];
 
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].mode >= 14 || _monsters[i].block == 0 || _monsters[i].hitPoints <= 0)

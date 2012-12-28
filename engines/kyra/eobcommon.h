@@ -722,21 +722,21 @@ protected:
 	void gui_processWeaponSlotClickRight(int charIndex, int slotIndex);
 	void gui_processInventorySlotClick(int slot);
 
-	static const int16 _buttonList1[];
+	static const uint8 _buttonList1[];
 	int _buttonList1Size;
-	static const int16 _buttonList2[];
+	static const uint8 _buttonList2[];
 	int _buttonList2Size;
-	static const int16 _buttonList3[];
+	static const uint8 _buttonList3[];
 	int _buttonList3Size;
-	static const int16 _buttonList4[];
+	static const uint8 _buttonList4[];
 	int _buttonList4Size;
-	static const int16 _buttonList5[];
+	static const uint8 _buttonList5[];
 	int _buttonList5Size;
-	static const int16 _buttonList6[];
+	static const uint8 _buttonList6[];
 	int _buttonList6Size;
-	static const int16 _buttonList7[];
+	static const uint8 _buttonList7[];
 	int _buttonList7Size;
-	static const int16 _buttonList8[];
+	static const uint8 _buttonList8[];
 	int _buttonList8Size;
 
 	const EoBGuiButtonDef *_buttonDefs;

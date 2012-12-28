@@ -481,19 +481,8 @@ int LoLEngine::calcMonsterSkillLevel(int id, int a) {
 	const uint16 *c = getCharacterOrMonsterStats(id);
 	int r = (a << 8) / c[4];
 
-	/*
-	if (!(id & 0x8000))
-		r = (r * _monsterModifiers[3 + _monsterDifficulty]) >> 8;
-
-	id &= 0x7FFF;
-
-	if (_characters[id].skillLevels[1] <= 3)
-		return r;
-	else if (_characters[id].skillLevels[1] <= 7)
-		return (r- (r >> 2));*/
-
 	if (id & 0x8000) {
-		r = (r * _monsterModifiers[3 + _monsterDifficulty]) >> 8;
+		r = (r * _monsterModifiers2[3 + _monsterDifficulty]) >> 8;
 	} else {
 		if (_characters[id].skillLevels[1] > 7)
 			r = (r - (r >> 1));
@@ -708,7 +697,9 @@ int LoLEngine::getMonsterCurFrame(LoLMonster *m, uint16 dirFlags) {
 		break;
 	case 1:
 		// monsters whose outward appearance reflects the damage they have taken
-		tmp = (m->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
+		tmp = m->properties->hitPoints;
+		if (_flags.isTalkie)
+			tmp = (tmp * _monsterModifiers1[_monsterDifficulty]) >> 8;
 		if (m->hitPoints > (tmp >> 1))
 			tmp = 0;
 		else if (m->hitPoints > (tmp >> 2))
@@ -1127,7 +1118,7 @@ void LoLEngine::updateMonster(LoLMonster *monster) {
 		// first recovery phase after delivering an attack
 		if (++monster->fightCurTick > 2) {
 			setMonsterMode(monster, 5);
-			monster->fightCurTick = (int8)((((8 << 8) / monster->properties->fightingStats[4]) * _monsterModifiers[6 + _monsterDifficulty]) >> 8);
+			monster->fightCurTick = (int8)((((8 << 8) / monster->properties->fightingStats[4]) * _monsterModifiers3[_monsterDifficulty]) >> 8);
 		}
 		checkSceneUpdateNeed(monster->block);
 		break;

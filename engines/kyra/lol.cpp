@@ -3356,7 +3356,9 @@ int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
 	}
 
 	if (target & 0x8000) {
-		evadeChanceModifier = (_monsterModifiers[9 + _monsterDifficulty] * _monsters[target & 0x7FFF].properties->fightingStats[3]) >> 8;
+		evadeChanceModifier = _monsters[target & 0x7FFF].properties->fightingStats[3];
+		if (_monsterModifiers4)
+			evadeChanceModifier = (evadeChanceModifier * _monsterModifiers4[_monsterDifficulty]) >> 8;
 		_monsters[target & 0x7FFF].flags |= 0x10;
 	} else {
 		evadeChanceModifier = _characters[target].defaultModifiers[3];

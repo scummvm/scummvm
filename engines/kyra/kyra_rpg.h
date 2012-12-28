@@ -283,7 +283,7 @@ protected:
 	void removeInputTop();
 	void gui_drawBox(int x, int y, int w, int h, int frameColor1, int frameColor2, int fillColor);
 	virtual void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2);
-	void gui_initButtonsFromList(const int16 *list);
+	void gui_initButtonsFromList(const uint8 *list);
 	virtual void gui_initButton(int index, int x = -1, int y = -1, int val = -1) = 0;
 	void gui_resetButtonList();
 	void gui_notifyButtonListChanged();

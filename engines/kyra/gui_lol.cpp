@@ -322,7 +322,7 @@ void LoLEngine::gui_changeCharacterStats(int charNum) {
 
 void LoLEngine::gui_drawCharInventoryItem(int itemIndex) {
 	static const uint8 slotShapes[] = { 0x30, 0x34, 0x30, 0x34, 0x2E, 0x2F, 0x32, 0x33, 0x31, 0x35, 0x35 };
-
+	//2Eh, 32h, 2Eh, 32h, 2Ch, 2Dh, 30h, 31h, 2Fh, 33h, 33h
 	const uint8 *coords = &_charInvDefs[_charInvIndex[_characters[_selectedCharacter].raceClassSex] * 22 + itemIndex * 2];
 	uint8 x = *coords++;
 	uint8 y = *coords;

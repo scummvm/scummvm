@@ -145,7 +145,12 @@ void LoLEngine::setupPrologueData(bool load) {
 	static const char *const fileListFloppy[] = {
 		"INTRO.PAK", "INTROVOC.PAK", 0
 	};
-	const char *const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
+
+	static const char *const fileListTowns[] = {
+		"INTRO.PAK", "TINTROVO.PAK", 0
+	};
+
+	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 
 	char filename[32];
 	for (uint i = 0; fileList[i]; ++i) {
@@ -1015,7 +1020,11 @@ void LoLEngine::setupEpilogueData(bool load) {
 		"GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
 	};
 
-	const char *const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
+	static const char *const fileListTowns[] = {
+		"GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "TFINALE2.PAK", 0
+	};
+
+	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 	assert(fileList);
 
 	char filename[32];

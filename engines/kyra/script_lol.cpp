@@ -823,7 +823,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->type = stackPos(4);
 		l->properties = &_monsterProperties[l->type];
 		l->direction = l->facing << 1;
-		l->hitPoints = (l->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
+		l->hitPoints = (l->properties->hitPoints * _monsterModifiers1[_monsterDifficulty]) >> 8;
 
 		if (_currentLevel != 12 || l->type != 2)
 			l->hitPoints = (l->hitPoints * (rollDice(1, 128) + 192)) >> 8;

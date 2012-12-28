@@ -124,6 +124,9 @@ const Game lolGames[] = {
 	// PC98 (no language specifc strings)
 	{ kLoL, { JA_JPN, -1, -1 }, kPlatformPC98, kNoSpecial, { "6d5bd4a2f5ce433365734ca6b7a8d984", "1b0a457c48ae6908da301b656fe0aab4" } },
 
+	// FM-Towns (no language specifc strings)
+	{ kLoL, { JA_JPN, -1, -1 }, kPlatformFMTowns, kNoSpecial, { "a281c7143bf2b6c5d4daa107a4b0427e", "34b4cecce179990e3bcaaa2d31484a90"} },
+
 	// DOS CD (multi language version, with no language specific strings)
 	{ kLoL, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "263998ec600afca1cc7b935c473df670" } },
 	{ kLoL, { IT_ITA, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "f2af366e00f79dbf832fa19701d71ed9" } }, // Italian fan translation
@@ -800,7 +803,9 @@ const int lolFloppyNeed[] = {
 	kLoLCharDefsKieran,
 	kLoLCharDefsAkshel,
 	kLoLExpRequirements,
-	kLoLMonsterModifiers,
+	kLoLMonsterModifiers1,
+	kLoLMonsterModifiers2,
+	kLoLMonsterModifiers3,
 	kLoLMonsterShiftOffsets,
 	kLoLMonsterDirFlags,
 	kLoLMonsterScaleY,
@@ -843,7 +848,6 @@ const int lolFloppyNeed[] = {
 	kLoLScrollYBottom,
 
 	kLoLButtonDefs,
-	kLoLButtonList1,
 	kLoLButtonList1,
 	kLoLButtonList2,
 	kLoLButtonList3,
@@ -882,7 +886,9 @@ const int lolPC98Need[] = {
 	kLoLCharDefsKieran,
 	kLoLCharDefsAkshel,
 	kLoLExpRequirements,
-	kLoLMonsterModifiers,
+	kLoLMonsterModifiers1,
+	kLoLMonsterModifiers2,
+	kLoLMonsterModifiers3,
 	kLoLMonsterShiftOffsets,
 	kLoLMonsterDirFlags,
 	kLoLMonsterScaleY,
@@ -926,6 +932,89 @@ const int lolPC98Need[] = {
 
 	kLoLButtonDefs,
 	kLoLButtonList1,
+	kLoLButtonList2,
+	kLoLButtonList3,
+	kLoLButtonList4,
+	kLoLButtonList5,
+	kLoLButtonList6,
+	kLoLButtonList7,
+	kLoLButtonList8,
+
+	kLoLLegendData,
+	kLoLMapStringId,
+
+	kLoLSpellbookAnim,
+	kLoLSpellbookCoords,
+	kLoLHealShapeFrames,
+	kLoLLightningDefs,
+	kLoLFireballCoords,
+
+	kLoLCredits,
+
+	-1
+};
+
+const int lolFMTownsNeed[] = {
+	kLoLIngamePakFiles,
+
+	kLoLCharacterDefs,
+	kLoLIngameSfxFiles,
+	kLoLIngameSfxIndex,
+	kLoLSpellProperties,
+	kLoLGameShapeMap,
+	kLoLSceneItemOffs,
+	kLoLCharInvIndex,
+	kLoLCharInvDefs,
+	kLoLCharDefsMan,
+	kLoLCharDefsWoman,
+	kLoLCharDefsKieran,
+	kLoLCharDefsAkshel,
+	kLoLExpRequirements,
+	kLoLMonsterModifiers1,
+	kLoLMonsterModifiers2,
+	kLoLMonsterModifiers3,
+	kLoLMonsterShiftOffsets,
+	kLoLMonsterDirFlags,
+	kLoLMonsterScaleY,
+	kLoLMonsterScaleX,
+	kLoLMonsterScaleWH,
+	kLoLFlyingObjectShp,
+	kLoLInventoryDesc,
+
+	kLoLLevelShpList,
+	kLoLLevelDatList,
+	kLoLCompassDefs,
+	kLoLStashSetup,
+	kLoLDscWalls,
+	kRpgCommonDscShapeIndex,
+	kLoLDscOvlMap,
+	kLoLDscScaleWidthData,
+	kLoLDscScaleHeightData,
+	kRpgCommonDscX,
+	kLoLDscY,
+	kRpgCommonDscTileIndex,
+	kRpgCommonDscUnk2,
+	kRpgCommonDscDoorShapeIndex,
+	kRpgCommonDscDimData1,
+	kRpgCommonDscDimData2,
+	kRpgCommonDscBlockMap,
+	kRpgCommonDscDimMap,
+	kLoLDscOvlIndex,
+	kRpgCommonDscBlockIndex,
+	kRpgCommonDscDoorY2,
+	kRpgCommonDscDoorFrameY1,
+	kRpgCommonDscDoorFrameY2,
+	kLoLDscDoorScale,
+	kLoLDscDoor4,
+	kLoLDscDoorX,
+	kLoLDscDoorY,
+
+	kLoLScrollXTop,
+	kLoLScrollYTop,
+	kLoLScrollXBottom,
+	kLoLScrollYBottom,
+
+	kLoLButtonDefs,
 	kLoLButtonList1,
 	kLoLButtonList2,
 	kLoLButtonList3,
@@ -968,7 +1057,10 @@ const int lolCDNeed[] = {
 	kLoLCharDefsKieran,
 	kLoLCharDefsAkshel,
 	kLoLExpRequirements,
-	kLoLMonsterModifiers,
+	kLoLMonsterModifiers1,
+	kLoLMonsterModifiers2,
+	kLoLMonsterModifiers3,
+	kLoLMonsterModifiers4,
 	kLoLMonsterShiftOffsets,
 	kLoLMonsterDirFlags,
 	kLoLMonsterScaleY,
@@ -1012,7 +1104,6 @@ const int lolCDNeed[] = {
 	kLoLScrollYBottom,
 
 	kLoLButtonDefs,
-	kLoLButtonList1,
 	kLoLButtonList1,
 	kLoLButtonList2,
 	kLoLButtonList3,
@@ -1695,6 +1786,7 @@ const GameNeed gameNeedTable[] = {
 
 	{ kLoL, kPlatformPC, kNoSpecial, lolFloppyNeed },
 	{ kLoL, kPlatformPC98, kNoSpecial, lolPC98Need },
+	{ kLoL, kPlatformFMTowns, kNoSpecial, lolFMTownsNeed },
 
 	{ kLoL, kPlatformPC, kTalkieVersion, lolCDNeed },
 
