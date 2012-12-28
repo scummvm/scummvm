@@ -69,8 +69,12 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 		if (stream.eos())
 			break;
 
+		uint32 scanlinePitch;
+		byte *scanlines;
+		byte *data;
+
 		switch (type) {
-		case CHUNK_BMHD: {
+		case CHUNK_BMHD:
 			_header.width = stream.readUint16BE();
 			_header.height = stream.readUint16BE();
 			_header.x = stream.readUint16BE();
@@ -89,16 +93,12 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 			assert(_header.height >= 1);
 			assert(_header.numPlanes >= 1 && _header.numPlanes <= 8 && _header.numPlanes != 7);
 			break;
-		}
-
-		case CHUNK_CMAP: {
+		case CHUNK_CMAP:
 			_palette = new byte[size];
 			stream.read(_palette, size);
 			_paletteColorCount = size / 3;
 			break;
-		}
-
-		case CHUNK_BODY: {
+		case CHUNK_BODY:
 			if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4) {
 				_packedPixels = false;
 			}
@@ -112,9 +112,9 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 			_surface = new Graphics::Surface();
 			_surface->create(_outPitch, _header.height, Graphics::PixelFormat::createFormatCLUT8());
 
-			uint32 scanlinePitch = ((_header.width + 15) >> 4) << 1;
-			byte *scanlines = new byte[scanlinePitch * _header.numPlanes];
-			byte *data = (byte *)_surface->pixels;
+			scanlinePitch = ((_header.width + 15) >> 4) << 1;
+			scanlines = new byte[scanlinePitch * _header.numPlanes];
+			data = (byte *)_surface->pixels;
 
 			for (uint16 i = 0; i < _header.height; ++i) {
 				byte *s = scanlines;
@@ -183,12 +183,8 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 
 			delete[] scanlines;
 			break;
-		}
-
-		default: {
+		default:
 			stream.skip(size);
-			break;
-		}
 		}
 	}
 
