@@ -983,7 +983,7 @@ void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
 	}
 
 	Graphics::ILBMDecoder2 decoder;
-	decoder.setNumRelevantPlanes(2);
+	decoder.setNumRelevantPlanes(1);
 	decoder.setPackPixels(true);
 	decoder.loadStream(*s);
 
