@@ -547,7 +547,7 @@ void Inter_v7::o7_loadLBMPalette() {
 		return;
 	}
 
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	decoder.loadStream(*lbmFile);
 	if (!decoder.getPalette() || decoder.getPaletteColorCount() != 256) {
 		warning("o7_loadLBMPalette(): Failed reading palette from LBM \"%s\"", file.c_str());

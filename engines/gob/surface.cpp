@@ -808,7 +808,7 @@ bool Surface::loadTGA(Common::SeekableReadStream &stream) {
 }
 
 bool Surface::loadLBM(Common::SeekableReadStream &stream) {
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	decoder.loadStream(stream);
 
 	if (!decoder.getSurface())
