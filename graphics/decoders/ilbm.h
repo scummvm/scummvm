@@ -40,7 +40,6 @@ class SeekableReadStream;
 
 namespace Graphics {
 
-struct PixelFormat;
 struct Surface;
 
 class ILBMDecoder : public ImageDecoder {
