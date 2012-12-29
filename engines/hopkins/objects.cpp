@@ -116,7 +116,8 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 	int val2 = _vm->_globals.ObjetW[objIndex]._idx;
 
 	if (mode == 1)
-	    ++val2;
+		++val2;
+
 	if (val1 != _vm->_globals.NUM_FICHIER_OBJ) {
 		if (_vm->_globals.ADR_FICHIER_OBJ != g_PTRNUL)
 			ObjectsManager::DEL_FICHIER_OBJ();
@@ -201,7 +202,7 @@ void ObjectsManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSi
 	}
 }
 
-int ObjectsManager::get_offsetx(const byte *spriteData, int spriteIndex, bool isSize) {
+int ObjectsManager::getOffsetX(const byte *spriteData, int spriteIndex, bool isSize) {
 	const byte *v3 = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
 		v3 += READ_LE_UINT32(v3) + 16;
@@ -214,7 +215,7 @@ int ObjectsManager::get_offsetx(const byte *spriteData, int spriteIndex, bool is
 	return result;
 }
 
-int ObjectsManager::get_offsety(const byte *spriteData, int spriteIndex, bool isSize) {
+int ObjectsManager::getOffsetY(const byte *spriteData, int spriteIndex, bool isSize) {
 	const byte *v3 = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
 		v3 += READ_LE_UINT32(v3) + 16;
@@ -378,7 +379,7 @@ void ObjectsManager::displaySprite() {
 				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, x1_2, y1_2,
 					_vm->_globals.Liste[idx]._width + 4, _vm->_globals.Liste[idx]._height + 4,
 					_vm->_graphicsManager._vesaBuffer, v8, v9);
-				_vm->_globals.Liste[idx].field0 = 0;
+				_vm->_globals.Liste[idx].field0 = false;
 			}
 		}
 	}
@@ -389,11 +390,11 @@ void ObjectsManager::displaySprite() {
 	if (!PERSO_ON) {
 		// Handle drawing characters on the screen
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
-			_vm->_globals.Liste[idx].field0 = 0;
+			_vm->_globals.Liste[idx].field0 = false;
 			if (_sprite[idx]._animationType == 1) {
-				CALCUL_SPRITE(idx);
-				if (_sprite[idx].field2A == 1)
-					AvantTri(TRI_SPRITE, idx, _sprite[idx].field32 + _sprite[idx].field2E);
+				computeSprite(idx);
+				if (_sprite[idx].field2A)
+					AvantTri(TRI_SPRITE, idx, _sprite[idx]._height + _sprite[idx].field2E);
 			}
 		}
 
@@ -583,56 +584,53 @@ void ObjectsManager::BOB_ZERO(int idx) {
 }
 
 void ObjectsManager::DEF_BOB(int idx) {
-	if (_vm->_globals._bob[idx]._activeFl) {
-		int xp = _vm->_globals._bob[idx]._oldX;
-		int yp = _vm->_globals._bob[idx]._oldY;
+	if (!_vm->_globals._bob[idx]._activeFl)
+		return;
 
-		if (_vm->_globals._bob[idx]._isSpriteFl)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._bob[idx]._spriteData,
-				xp + 300, yp + 300, _vm->_globals._bob[idx]._frameIndex);
-		else
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer,
-				_vm->_globals._bob[idx]._spriteData, xp + 300, yp + 300, _vm->_globals._bob[idx]._frameIndex,
-				_vm->_globals._bob[idx].field4A, _vm->_globals._bob[idx]._oldY2,
-				_vm->_globals._bob[idx]._modeFlag);
+	int xp = _vm->_globals._bob[idx]._oldX;
+	int yp = _vm->_globals._bob[idx]._oldY;
 
-		_vm->_globals.Liste2[idx]._visibleFl = true;
-		_vm->_globals.Liste2[idx]._xp = xp;
-		_vm->_globals.Liste2[idx]._yp = yp;
+	if (_vm->_globals._bob[idx]._isSpriteFl)
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._bob[idx]._spriteData,
+			xp + 300, yp + 300, _vm->_globals._bob[idx]._frameIndex);
+	else
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer,
+			_vm->_globals._bob[idx]._spriteData, xp + 300, yp + 300, _vm->_globals._bob[idx]._frameIndex,
+			_vm->_globals._bob[idx].field4A, _vm->_globals._bob[idx]._oldY2,
+			_vm->_globals._bob[idx]._modeFlag);
 
-		_vm->_globals.Liste2[idx]._width = _vm->_globals._bob[idx]._oldWidth;
-		_vm->_globals.Liste2[idx]._height = _vm->_globals._bob[idx]._oldHeight;
+	_vm->_globals.Liste2[idx]._visibleFl = true;
+	_vm->_globals.Liste2[idx]._xp = xp;
+	_vm->_globals.Liste2[idx]._yp = yp;
 
-		int v5 = _vm->_globals.Liste2[idx]._xp;
-		if (v5 < _vm->_graphicsManager.min_x) {
-			_vm->_globals.Liste2[idx]._width -= _vm->_graphicsManager.min_x - v5;
-			_vm->_globals.Liste2[idx]._xp = _vm->_graphicsManager.min_x;
-		}
+	_vm->_globals.Liste2[idx]._width = _vm->_globals._bob[idx]._oldWidth;
+	_vm->_globals.Liste2[idx]._height = _vm->_globals._bob[idx]._oldHeight;
 
-		int v7 = _vm->_globals.Liste2[idx]._yp;
-		if (v7 < _vm->_graphicsManager.min_y) {
-			_vm->_globals.Liste2[idx]._height -= _vm->_graphicsManager.min_y - v7;
-			_vm->_globals.Liste2[idx]._yp = _vm->_graphicsManager.min_y;
-		}
-
-		int v9 = _vm->_globals.Liste2[idx]._xp;
-		if (_vm->_globals.Liste2[idx]._width + v9 > _vm->_graphicsManager.max_x)
-			_vm->_globals.Liste2[idx]._width = _vm->_graphicsManager.max_x - v9;
-
-		int v10 = _vm->_globals.Liste2[idx]._yp;
-		if (_vm->_globals.Liste2[idx]._height + v10 > _vm->_graphicsManager.max_y)
-			_vm->_globals.Liste2[idx]._height = _vm->_graphicsManager.max_y - v10;
-
-		if (_vm->_globals.Liste2[idx]._width <= 0 || _vm->_globals.Liste2[idx]._height <= 0)
-			_vm->_globals.Liste2[idx]._visibleFl = false;
-
-		if (_vm->_globals.Liste2[idx]._visibleFl)
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(
-                 _vm->_globals.Liste2[idx]._xp,
-                 _vm->_globals.Liste2[idx]._yp,
-                 _vm->_globals.Liste2[idx]._xp + _vm->_globals.Liste2[idx]._width,
-                 _vm->_globals.Liste2[idx]._yp + _vm->_globals.Liste2[idx]._height);
+	if (_vm->_globals.Liste2[idx]._xp < _vm->_graphicsManager.min_x) {
+		_vm->_globals.Liste2[idx]._width -= _vm->_graphicsManager.min_x - _vm->_globals.Liste2[idx]._xp;
+		_vm->_globals.Liste2[idx]._xp = _vm->_graphicsManager.min_x;
 	}
+
+	if (_vm->_globals.Liste2[idx]._yp < _vm->_graphicsManager.min_y) {
+		_vm->_globals.Liste2[idx]._height -= _vm->_graphicsManager.min_y - _vm->_globals.Liste2[idx]._yp;
+		_vm->_globals.Liste2[idx]._yp = _vm->_graphicsManager.min_y;
+	}
+
+	if (_vm->_globals.Liste2[idx]._width + _vm->_globals.Liste2[idx]._xp > _vm->_graphicsManager.max_x)
+		_vm->_globals.Liste2[idx]._width = _vm->_graphicsManager.max_x - _vm->_globals.Liste2[idx]._xp;
+
+	if (_vm->_globals.Liste2[idx]._height + _vm->_globals.Liste2[idx]._yp > _vm->_graphicsManager.max_y)
+		_vm->_globals.Liste2[idx]._height = _vm->_graphicsManager.max_y - _vm->_globals.Liste2[idx]._yp;
+
+	if (_vm->_globals.Liste2[idx]._width <= 0 || _vm->_globals.Liste2[idx]._height <= 0)
+		_vm->_globals.Liste2[idx]._visibleFl = false;
+
+	if (_vm->_globals.Liste2[idx]._visibleFl)
+		_vm->_graphicsManager.Ajoute_Segment_Vesa(
+             _vm->_globals.Liste2[idx]._xp,
+             _vm->_globals.Liste2[idx]._yp,
+             _vm->_globals.Liste2[idx]._xp + _vm->_globals.Liste2[idx]._width,
+             _vm->_globals.Liste2[idx]._yp + _vm->_globals.Liste2[idx]._height);
 }
 
 void ObjectsManager::BOB_VISU(int idx) {
@@ -648,7 +646,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 		int16 offsetY = (int16)READ_LE_UINT16(data + 6);
 		int16 v6 = (int16)READ_LE_UINT16(data + 8);
 		if ((int16)READ_LE_UINT16(data)) {
-			if (_vm->_globals.Bank[v1].field4) {
+			if (_vm->_globals.Bank[v1]._loadedFl) {
 				if (!v9)
 					v9 = 1;
 				if (!v6)
@@ -752,11 +750,11 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	if (result != 250) {
 		int v5, v15, v22;
 		if (_vm->_globals._bob[idx]._modeFlag) {
-			v22 = v15 = get_offsetx(_vm->_globals._bob[idx]._spriteData, result, 1);
-			v5 = get_offsety(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, 1);
+			v22 = v15 = getOffsetX(_vm->_globals._bob[idx]._spriteData, result, 1);
+			v5 = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, 1);
 		} else {
-			v22 = v15 = get_offsetx(_vm->_globals._bob[idx]._spriteData, result, 0);
-			v5 = get_offsety(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, 0);
+			v22 = v15 = getOffsetX(_vm->_globals._bob[idx]._spriteData, result, 0);
+			v5 = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, 0);
 		}
 
 		int v17 = v5;
@@ -858,8 +856,8 @@ void ObjectsManager::VERIFCACHE() {
 				if (_sprite[v10]._animationType == 1) {
 					if (_sprite[v10]._spriteIndex != 250) {
 						v1 = _sprite[v10].field2C;
-						v11 = _sprite[v10].field30 + v1;
-						v2 = _sprite[v10].field32 + _sprite[v10].field2E;
+						v11 = _sprite[v10]._width + v1;
+						v2 = _sprite[v10]._height + _sprite[v10].field2E;
 						v6 = _vm->_globals.Cache[v8]._x;
 						v3 = _vm->_globals.Cache[v8]._y;
 						v9 = _vm->_globals.Cache[v8]._width + v6;
@@ -918,65 +916,44 @@ void ObjectsManager::VERIFCACHE() {
 }
 
 void ObjectsManager::DEF_SPRITE(int idx) {
-	int v2;
-	int v3;
-	int v4;
-	int v5;
-	int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v10;
-	int v11;
-	int v12;
-	int v13;
+	if (!_sprite[idx].field2A)
+		return;
 
-	v2 = idx;
-	if (_sprite[v2].field2A) {
-		v3 = _sprite[v2].field2C;
-		v4 = _sprite[v2].field2E;
-		if (_sprite[v2].field28)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _sprite[v2]._spriteData,
-			v3 + 300, v4 + 300, _sprite[v2]._spriteIndex);
+		if (_sprite[idx]._rleFl)
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _sprite[idx]._spriteData,
+			    _sprite[idx].field2C + 300, _sprite[idx].field2E + 300, _sprite[idx]._spriteIndex);
 		else
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _sprite[v2]._spriteData,
-				v3 + 300, v4 + 300,  _sprite[v2]._spriteIndex, _sprite[v2].field36, _sprite[v2].field34, _sprite[v2].fieldE);
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _sprite[idx]._spriteData,
+				_sprite[idx].field2C + 300, _sprite[idx].field2E + 300,  _sprite[idx]._spriteIndex, _sprite[idx]._reducePct, _sprite[idx]._zoomPct, _sprite[idx].fieldE);
 
-		v5 = idx;
-		v6 = idx;
-		_vm->_globals.Liste[v5]._width = _sprite[v6].field30;
-		_vm->_globals.Liste[v5]._height = _sprite[v6].field32;
-		v7 = _vm->_globals.Liste[v5].field2;
-		v8 = _vm->_graphicsManager.min_x;
+		_vm->_globals.Liste[idx]._width = _sprite[idx]._width;
+		_vm->_globals.Liste[idx]._height = _sprite[idx]._height;
 
-		if (v7 < _vm->_graphicsManager.min_x) {
-			_vm->_globals.Liste[v5]._width -= _vm->_graphicsManager.min_x - v7;
-			_vm->_globals.Liste[v5].field2 = v8;
+		if (_vm->_globals.Liste[idx].field2 < _vm->_graphicsManager.min_x) {
+			_vm->_globals.Liste[idx]._width -= _vm->_graphicsManager.min_x - _vm->_globals.Liste[idx].field2;
+			_vm->_globals.Liste[idx].field2 = _vm->_graphicsManager.min_x;
 		}
 
-		v9 = _vm->_globals.Liste[v5].field4;
-		v10 = _vm->_graphicsManager.min_y;
-		if (v9 < _vm->_graphicsManager.min_y) {
-			_vm->_globals.Liste[v5]._height -= _vm->_graphicsManager.min_y - v9;
-			_vm->_globals.Liste[v5].field4 = v10;
+		if (_vm->_globals.Liste[idx].field4 < _vm->_graphicsManager.min_y) {
+			_vm->_globals.Liste[idx]._height -= _vm->_graphicsManager.min_y - _vm->_globals.Liste[idx].field4;
+			_vm->_globals.Liste[idx].field4 = _vm->_graphicsManager.min_y;
 		}
-		v11 = _vm->_globals.Liste[v5].field2;
-		if (_vm->_globals.Liste[v5]._width + v11 > _vm->_graphicsManager.max_x)
-			_vm->_globals.Liste[v5]._width = _vm->_graphicsManager.max_x - v11;
-		v12 = _vm->_globals.Liste[v5].field4;
-		if ( _vm->_globals.Liste[v5]._height + v12 > _vm->_graphicsManager.max_y)
-			_vm->_globals.Liste[v5]._height = _vm->_graphicsManager.max_y - v12;
-		if ( _vm->_globals.Liste[v5]._width <= 0 || _vm->_globals.Liste[v5]._height <= 0)
-			_vm->_globals.Liste[v5].field0 = 0;
 
-		v13 = idx;
-		if (_vm->_globals.Liste[v13].field0 == 1)
+		if (_vm->_globals.Liste[idx]._width + _vm->_globals.Liste[idx].field2 > _vm->_graphicsManager.max_x)
+			_vm->_globals.Liste[idx]._width = _vm->_graphicsManager.max_x - _vm->_globals.Liste[idx].field2;
+
+		if ( _vm->_globals.Liste[idx]._height + _vm->_globals.Liste[idx].field4 > _vm->_graphicsManager.max_y)
+			_vm->_globals.Liste[idx]._height = _vm->_graphicsManager.max_y - _vm->_globals.Liste[idx].field4;
+
+		if ( _vm->_globals.Liste[idx]._width <= 0 || _vm->_globals.Liste[idx]._height <= 0)
+			_vm->_globals.Liste[idx].field0 = false;
+
+		if (_vm->_globals.Liste[idx].field0)
 			_vm->_graphicsManager.Ajoute_Segment_Vesa(
-			_vm->_globals.Liste[v13].field2,
-				_vm->_globals.Liste[v13].field4,
-				_vm->_globals.Liste[v13].field2 + _vm->_globals.Liste[v13]._width,
-				_vm->_globals.Liste[v13].field4 + _vm->_globals.Liste[v13]._height);
-	}
+			    _vm->_globals.Liste[idx].field2,
+				_vm->_globals.Liste[idx].field4,
+				_vm->_globals.Liste[idx].field2 + _vm->_globals.Liste[idx]._width,
+				_vm->_globals.Liste[idx].field4 + _vm->_globals.Liste[idx]._height);
 }
 
 void ObjectsManager::DEF_CACHE(int idx) {
@@ -991,125 +968,95 @@ void ObjectsManager::DEF_CACHE(int idx) {
 }
 
 // Compute Sprite
-void ObjectsManager::CALCUL_SPRITE(int idx) {
-	int width, height;
-	int v3;
-	int v4;
-	int v5;
-	int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v10;
-	int v11;
-	int v12;
-	int v13;
-	int v15;
-	int v16;
-	int v17;
-	int v22;
-
-	_sprite[idx].field2A = 0;
+void ObjectsManager::computeSprite(int idx) {
+	_sprite[idx].field2A = false;
 	int spriteIndex = _sprite[idx]._spriteIndex;
-	if (spriteIndex != 250) {
-		if (_sprite[idx].fieldE) {
-			v5 = get_offsetx(_sprite[idx]._spriteData, spriteIndex, 1);
-			v22 = _sprite[idx].field12 + v5;
-			v4 = _sprite[idx].field12 + v5;
-			v6 = get_offsety(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, 1);
-		} else {
-			v3 = get_offsetx(_sprite[idx]._spriteData, spriteIndex, 0);
-			v22 = _sprite[idx].field12 + v3;
-			v4 = _sprite[idx].field12 + v3;
-			v6 = get_offsety(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, 0);
-		}
+	if (spriteIndex == 250)
+		return;
 
-		v9 = _sprite[idx].field14 + v6;
-		v7 = v9;
-		v8 = v9;
-		int zoomPercent = 0;
-		int reducePercent = 0;
-
-		v9 = _sprite[idx].fieldC;
-		if (v9 < 0) {
-			v9 = -v9;
-			reducePercent = v9;
-			if (v9 > 95)
-				reducePercent = 95;
-		}
-		if (_sprite[idx].fieldC > 0)
-			zoomPercent = _sprite[idx].fieldC;
-
-		if (zoomPercent) {
-			if (v4 >= 0) {
-				v22 = _vm->_graphicsManager.zoomIn(v4, zoomPercent);
-			} else {
-				v10 = v4;
-
-				if (v4 < 0)
-					v10 = -v4;
-				v4 = v10;
-				v22 = -_vm->_graphicsManager.zoomIn(v10, zoomPercent);
-			}
-
-			if (v8 >= 0) {
-				v7 = _vm->_graphicsManager.zoomIn(v8, zoomPercent);
-			} else {
-				v11 = v4;
-				if (v4 < 0)
-					v11 = -v4;
-				v8 = v11;
-				v7 = -_vm->_graphicsManager.zoomIn(v11, zoomPercent);
-			}
-		}
-		if (reducePercent) {
-			if (v4 >= 0) {
-				v22 = _vm->_graphicsManager.zoomOut(v4, reducePercent);
-			} else {
-				v12 = v4;
-				if (v4 < 0)
-					v12 = -v4;
-				v4 = v12;
-				v22 = -_vm->_graphicsManager.zoomOut(v12, reducePercent);
-			}
-			if (v8 >= 0) {
-				v7 = _vm->_graphicsManager.zoomOut(v8, reducePercent);
-			} else {
-				v13 = v4;
-				if (v4 < 0)
-					v13 = -v4;
-				v7 = -_vm->_graphicsManager.zoomOut(v13, reducePercent);
-			}
-		}
-
-		v15 = _sprite[idx]._spritePos.x - v22;
-		v16 = _sprite[idx]._spritePos.y - v7;
-		_sprite[idx].field2C = v15;
-		_sprite[idx].field2E = v16;
-		_sprite[idx].field2A = 1;
-		_sprite[idx].field34 = zoomPercent;
-		_sprite[idx].field36 = reducePercent;
-
-		v17 = idx;
-		_vm->_globals.Liste[v17].field0 = 1;
-		_vm->_globals.Liste[v17].field2 = v15;
-		_vm->_globals.Liste[v17].field4 = v16;
-		width = getWidth(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex);
-		height = getHeight(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex);
-
-		if (zoomPercent) {
-			width = _vm->_graphicsManager.zoomIn(width, zoomPercent);
-			height = _vm->_graphicsManager.zoomIn(height, zoomPercent);
-		}
-
-		if (reducePercent) {
-			height = _vm->_graphicsManager.zoomOut(height, reducePercent);
-			width = _vm->_graphicsManager.zoomOut(width, reducePercent);
-		}
-
-		_sprite[idx].field30 = width;
-		_sprite[idx].field32 = height;
+	int offX;
+	int offY;
+	if (_sprite[idx].fieldE) {
+		offX = getOffsetX(_sprite[idx]._spriteData, spriteIndex, 1);
+		offY = getOffsetY(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, 1);
+	} else {
+		offX = getOffsetX(_sprite[idx]._spriteData, spriteIndex, 0);
+		offY = getOffsetY(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, 0);
 	}
+
+	int tmpX = _sprite[idx].field12 + offX;
+	int deltaX = tmpX;
+	int tmpY = _sprite[idx].field14 + offY;
+	int deltaY = tmpY;
+	int zoomPercent = 0;
+	int reducePercent = 0;
+
+	if (_sprite[idx].fieldC < 0) {
+		reducePercent = -_sprite[idx].fieldC;
+		if (reducePercent > 95)
+			reducePercent = 95;
+	} else 
+		zoomPercent = _sprite[idx].fieldC;
+
+	if (zoomPercent) {
+		if (tmpX >= 0)
+			deltaX = _vm->_graphicsManager.zoomIn(tmpX, zoomPercent);
+		else
+			deltaX = -_vm->_graphicsManager.zoomIn(-tmpX, zoomPercent);
+
+		if (tmpY >= 0) {
+			deltaY = _vm->_graphicsManager.zoomIn(tmpY, zoomPercent);
+		} else {
+			if (tmpX < 0)
+				tmpY = -tmpX;
+			else
+				tmpY = tmpX;
+
+			deltaY = -_vm->_graphicsManager.zoomIn(tmpY, zoomPercent);
+		}
+	} else if (reducePercent) {
+		if (tmpX >= 0)
+			deltaX = _vm->_graphicsManager.zoomOut(tmpX, reducePercent);
+		else
+			deltaX = -_vm->_graphicsManager.zoomOut(-tmpX, reducePercent);
+
+		if (tmpY >= 0) {
+			deltaY = _vm->_graphicsManager.zoomOut(tmpY, reducePercent);
+		} else {
+			if (tmpX < 0)
+				tmpY = -tmpX;
+			else
+				tmpY = tmpX;
+
+			deltaY = -_vm->_graphicsManager.zoomOut(tmpY, reducePercent);
+		}
+	}
+
+	int v15 = _sprite[idx]._spritePos.x - deltaX;
+	int v16 = _sprite[idx]._spritePos.y - deltaY;
+	_sprite[idx].field2C = v15;
+	_sprite[idx].field2E = v16;
+	_sprite[idx].field2A = true;
+	_sprite[idx]._zoomPct = zoomPercent;
+	_sprite[idx]._reducePct = reducePercent;
+
+	_vm->_globals.Liste[idx].field0 = true;
+	_vm->_globals.Liste[idx].field2 = v15;
+	_vm->_globals.Liste[idx].field4 = v16;
+
+	int width = getWidth(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex);
+	int height = getHeight(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex);
+
+	if (zoomPercent) {
+		width = _vm->_graphicsManager.zoomIn(width, zoomPercent);
+		height = _vm->_graphicsManager.zoomIn(height, zoomPercent);
+	} else if (reducePercent) {
+		height = _vm->_graphicsManager.zoomOut(height, reducePercent);
+		width = _vm->_graphicsManager.zoomOut(width, reducePercent);
+	}
+
+	_sprite[idx]._width = width;
+	_sprite[idx]._height = height;
 }
 
 // Before Sort
@@ -1155,8 +1102,13 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			v1 = _vm->_globals._bob[idx].field20;
 			if (v1 == -1)
 				v1 = 50;
-			if (_vm->_globals._bob[idx]._animData == g_PTRNUL || _vm->_globals._bob[idx]._disabledAnimationFl || v1 <= 0)
-				goto LABEL_38;
+			if (_vm->_globals._bob[idx]._animData == g_PTRNUL || _vm->_globals._bob[idx]._disabledAnimationFl || v1 <= 0) {
+				v12 = idx;
+
+				if (_vm->_globals._bob[v12].field1E == 1 || _vm->_globals._bob[v12].field1E == 2)
+					_vm->_globals._bob[v12].field1C = true;
+				continue;
+			}
 
 			if (_vm->_globals._bob[idx].field12 == _vm->_globals._bob[idx].field14) {
 				_vm->_globals._bob[idx].field1C = true;
@@ -1165,8 +1117,13 @@ void ObjectsManager::AFF_BOB_ANIM() {
 				_vm->_globals._bob[idx].field1C = false;
 			}
 
-			if (!_vm->_globals._bob[idx].field1C)
-				goto LABEL_38;
+			if (!_vm->_globals._bob[idx].field1C) {
+				v12 = idx;
+
+				if (_vm->_globals._bob[v12].field1E == 1 || _vm->_globals._bob[v12].field1E == 2)
+					_vm->_globals._bob[v12].field1C = true;
+				continue;
+			}
 
 			v20 = _vm->_globals._bob[idx]._animData + 20;
 			v24 = _vm->_globals._bob[idx].field10;
@@ -1179,8 +1136,8 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(v20 + 2 * v24 + 2);
 			_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 4);
 			_vm->_globals._bob[idx].field36 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 6);
-			_vm->_globals._bob[idx]._frameIndex = *(v20 + 2 * v24 + 8);
-			_vm->_globals._bob[idx]._modeFlag = *(v20 + 2 * v24 + 9);
+			_vm->_globals._bob[idx]._frameIndex = v20[2 * v24 + 8];
+			_vm->_globals._bob[idx]._modeFlag = v20[2 * v24 + 9];
 			_vm->_globals._bob[idx].field10 += 5;
 			v5 = _vm->_globals._bob[idx].field12;
 
@@ -1188,12 +1145,10 @@ void ObjectsManager::AFF_BOB_ANIM() {
 				v6 = v5 / _vm->_globals._speed;
 				_vm->_globals._bob[idx].field12 = v5 / _vm->_globals._speed;
 				if (v6 > 0) {
-LABEL_37:
 					_vm->_globals._bob[idx].field14 = 1;
-LABEL_38:
 					v12 = idx;
 
-					if ((unsigned int)(_vm->_globals._bob[v12].field1E - 1) <= 1u)
+					if (_vm->_globals._bob[v12].field1E == 1 || _vm->_globals._bob[v12].field1E == 2)
 						_vm->_globals._bob[v12].field1C = true;
 					continue;
 				}
@@ -1233,7 +1188,12 @@ LABEL_38:
 				}
 			}
 
-			goto LABEL_37;
+			_vm->_globals._bob[idx].field14 = 1;
+			v12 = idx;
+
+			if (_vm->_globals._bob[v12].field1E == 1 || _vm->_globals._bob[v12].field1E == 2)
+				_vm->_globals._bob[v12].field1C = true;
+			continue;
 		}
 	} while (idx != 35);
 
@@ -1429,7 +1389,7 @@ void ObjectsManager::clearSprite() {
 	}
 
 	for (int idx = 0; idx < MAX_SPRITE; idx++) {
-		_vm->_globals.Liste[idx].field0 = 0;
+		_vm->_globals.Liste[idx].field0 = false;
 		_vm->_globals.Liste[idx].field2 = 0;
 		_vm->_globals.Liste[idx].field4 = 0;
 		_vm->_globals.Liste[idx]._width = 0;
@@ -1449,6 +1409,7 @@ void ObjectsManager::SPRITE(const byte *spriteData, Common::Point pos, int idx, 
 	_sprite[idx]._spritePos = pos;
 	_sprite[idx]._spriteIndex = spriteIndex;
 	_sprite[idx].fieldC = a6;
+	_sprite[idx].fieldE = a7;
 	_sprite[idx].field12 = a8;
 	_sprite[idx].field14 = a9;
 	_sprite[idx].field1C = g_PTRNUL;
@@ -1457,12 +1418,10 @@ void ObjectsManager::SPRITE(const byte *spriteData, Common::Point pos, int idx, 
 	_sprite[idx].field26 = 0;
 	_sprite[idx].field22 = 0;
 	_sprite[idx]._animationType = 0;
-	_sprite[idx].field28 = false;
-	_sprite[idx].fieldE = a7;
-	if (*spriteData == 'R' && *(spriteData + 1) == 'L' && *(spriteData + 2) == 'E')
-		_sprite[idx].field28 = true;
 
-	if (_sprite[idx].field28) {
+	_sprite[idx]._rleFl = false;
+	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E') {
+		_sprite[idx]._rleFl = true;
 		_sprite[idx].fieldC = 0;
 		_sprite[idx].fieldE = 0;
 	}
@@ -1479,12 +1438,10 @@ void ObjectsManager::SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, 
 	_sprite[idx]._animationType = 1;
 	_sprite[idx].field22 = 0;
 	_sprite[idx].field14 = a5;
-	if (*spriteData == 'R' && *(spriteData + 1) == 'L' && *(spriteData + 2) == 'E')
-		_sprite[idx].field28 = true;
 
-	if (_sprite[idx].field28) {
-		_sprite[idx].fieldC = 0;
-		_sprite[idx].fieldE = 0;
+	_sprite[idx]._rleFl = false;
+	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E') {
+		_sprite[idx]._rleFl = true;
 	}
 }
 
@@ -1524,12 +1481,12 @@ void ObjectsManager::setSpriteIndex(int idx, int spriteIndex) {
 // Set Sprite Size
 void ObjectsManager::SETTAILLESPR(int idx, int a2) {
 	assert (idx  <= MAX_SPRITE);
-	if (!_sprite[idx].field28)
+	if (!_sprite[idx]._rleFl)
 		_sprite[idx].fieldC = a2;
 }
 
 void ObjectsManager::setFlipSprite(int idx, bool flip) {
-	if (!_sprite[idx].field28) {
+	if (!_sprite[idx]._rleFl) {
 		assert (idx  <= MAX_SPRITE);
 		_sprite[idx].fieldE = flip;
 	}

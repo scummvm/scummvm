@@ -438,7 +438,7 @@ void Globals::INIT_ANIM() {
 
 	for (int idx = 0; idx < 8; ++idx) {
 		Bank[idx]._data = g_PTRNUL;
-		Bank[idx].field4 = 0;
+		Bank[idx]._loadedFl = false;
 		Bank[idx]._filename = "";
 		Bank[idx]._fileHeader = 0;
 		Bank[idx].field1C = 0;

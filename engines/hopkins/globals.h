@@ -66,7 +66,7 @@ struct BqeAnimItem {
 
 struct BankItem {
 	byte *_data;
-	int8 field4;
+	bool _loadedFl;
 	Common::String _filename;
 	int _fileHeader;
 	int field1A;
@@ -74,7 +74,7 @@ struct BankItem {
 };
 
 struct ListeItem {
-	int field0;
+	bool field0;
 	int field2;
 	int field4;
 	int _width;

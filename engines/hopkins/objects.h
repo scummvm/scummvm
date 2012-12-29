@@ -45,14 +45,14 @@ struct SpriteItem {
 	int field22;
 	int field24;
 	int field26;
-	bool field28;
-	int field2A;
+	bool _rleFl;
+	bool field2A;
 	int field2C;
 	int field2E;
-	int field30;
-	int field32;
-	int field34;
-	int field36;
+	int _width;
+	int _height;
+	int _zoomPct;
+	int _reducePct;
 };
 
 class HopkinsEngine;
@@ -133,8 +133,8 @@ public:
 
 	byte *loadSprite(const Common::String &file);
 	void set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize);
-	int get_offsetx(const byte *spriteData, int spriteIndex, bool isSize);
-	int get_offsety(const byte *spriteData, int spriteIndex, bool isSize);
+	int getOffsetX(const byte *spriteData, int spriteIndex, bool isSize);
+	int getOffsetY(const byte *spriteData, int spriteIndex, bool isSize);
 	void displaySprite();
 
 	int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
@@ -154,7 +154,7 @@ public:
 	void VERIFCACHE();
 	void DEF_SPRITE(int idx);
 	void DEF_CACHE(int idx);
-	void CALCUL_SPRITE(int idx);
+	void computeSprite(int idx);
 	int AvantTri(TriMode triMode, int index, int priority);
 	void AFF_BOB_ANIM();
 	void AFF_VBOB();

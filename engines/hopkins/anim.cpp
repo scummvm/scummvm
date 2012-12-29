@@ -608,7 +608,7 @@ void AnimationManager::clearAnim() {
 
 	for (int idx = 0; idx < 8; ++idx) {
 		_vm->_globals.Bank[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bank[idx]._data);
-		_vm->_globals.Bank[idx].field4 = 0;
+		_vm->_globals.Bank[idx]._loadedFl = false;
 		_vm->_globals.Bank[idx]._filename = "";
 		_vm->_globals.Bank[idx]._fileHeader = 0;
 		_vm->_globals.Bank[idx].field1C = 0;
@@ -619,41 +619,35 @@ void AnimationManager::clearAnim() {
  * Load Sprite Bank
  */
 int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
-	byte *v3;
-	byte *v4;
 	byte *v13;
-	byte *ptr;
 	byte *v19;
 	int result = 0;
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
 	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
-	_vm->_globals.Bank[idx].field4 = 1;
+	_vm->_globals.Bank[idx]._loadedFl = true;
 	_vm->_globals.Bank[idx]._filename = filename;
 
-	v3 = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
-	v4 = v3;
+	byte *fileDataPtr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 
 	_vm->_globals.Bank[idx]._fileHeader = 0;
-	if (*(v3 + 1) == 'L' && *(v3 + 2) == 'E')
+	if (fileDataPtr[1] == 'L' && fileDataPtr[2] == 'E')
 	    _vm->_globals.Bank[idx]._fileHeader = 1;
-	if (*(v3 + 1) == 'O' && *(v3 + 2) == 'R')
+	else if (fileDataPtr[1] == 'O' && fileDataPtr[2] == 'R')
 		_vm->_globals.Bank[idx]._fileHeader = 2;
 
 	if (_vm->_globals.Bank[idx]._fileHeader) {
-		_vm->_globals.Bank[idx]._data = v3;
+		_vm->_globals.Bank[idx]._data = fileDataPtr;
 
 		bool loopCond = false;
 		int v8 = 0;
 		int width;
 		int height;
 		do {
-			ptr = v4;
-			width = _vm->_objectsManager.getWidth(v4, v8);
-			height = _vm->_objectsManager.getHeight(ptr, v8);
-			v4 = ptr;
+			width = _vm->_objectsManager.getWidth(fileDataPtr, v8);
+			height = _vm->_objectsManager.getHeight(fileDataPtr, v8);
 			if (!width && !height)
 				loopCond = true;
-			if (!loopCond)
+			else
 				++v8;
 			if (v8 > 249)
 				loopCond = true;
@@ -691,13 +685,13 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 
 			result = 0;
 		} else {
-			_vm->_globals.freeMemory(ptr);
-			_vm->_globals.Bank[idx].field4 = 0;
+			_vm->_globals.freeMemory(fileDataPtr);
+			_vm->_globals.Bank[idx]._loadedFl = false;
 			result = -2;
 		}
 	} else {
-		_vm->_globals.freeMemory(v3);
-		_vm->_globals.Bank[idx].field4 = 0;
+		_vm->_globals.freeMemory(fileDataPtr);
+		_vm->_globals.Bank[idx]._loadedFl = false;
 		result = -1;
 	}
 
