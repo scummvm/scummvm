@@ -27,7 +27,15 @@
 namespace Graphics {
 
 ILBMDecoder2::ILBMDecoder2() {
-	destroy();
+	memset(&_header, 0, sizeof(Header));
+	_surface = 0;
+	_palette = 0;
+	_paletteRanges = 0;
+	_paletteColorCount = 0;
+	_paletteRangeCount = 0;
+	_outPitch = 0;
+	_numRelevantPlanes = 8;
+	_packPixels = false;
 }
 
 ILBMDecoder2::~ILBMDecoder2() {
@@ -38,25 +46,18 @@ void ILBMDecoder2::destroy() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
+		_surface = 0;
 	}
 
 	if (_palette) {
 		delete[] _palette;
+		_palette = 0;
 	}
 
 	if (_paletteRanges) {
 		delete[] _paletteRanges;
+		_paletteRanges = 0;
 	}
-
-	memset(&_header, 0, sizeof(Header));
-	_surface = 0;
-	_palette = 0;
-	_paletteRanges = 0;
-	_paletteColorCount = 0;
-	_paletteRangeCount = 0;
-	_outPitch = 0;
-	_numRelevantPlanes = 8;
-	_packPixels = false;
 }
 
 bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
@@ -175,10 +176,9 @@ void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
 				scanline += length;
 				left -= length;
 			}
-
-			packPixels(scanlines, data, scanlinePitch);
 		}
 
+		packPixels(scanlines, data, scanlinePitch);
 		data += _outPitch;
 	}
 
@@ -186,6 +186,7 @@ void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
 }
 
 void ILBMDecoder2::decompressRLE(Common::SeekableReadStream &stream, byte *scanline, uint16 &length, const uint16 left) {
+	length = 0;
 	uint16 code = stream.readByte();
 
 	if (code != 0x80) {
