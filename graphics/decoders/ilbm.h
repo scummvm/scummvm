@@ -22,6 +22,8 @@
 /**
  * @file
  * Image decoder used in engines:
+ *  - gob
+ *  - parallaction
  */
 
 #ifndef GRAPHICS_DECODERS_ILBM_H
