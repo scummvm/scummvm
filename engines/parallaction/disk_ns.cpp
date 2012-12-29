@@ -916,7 +916,7 @@ void AmigaDisk_ns::buildMask(byte* buf) {
 
 void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 	Common::SeekableReadStream *s = openFile(name);
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	decoder.loadStream(*s);
 
 	info.bg.copyFrom(*decoder.getSurface());
@@ -952,7 +952,7 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing mask files: not every location has one
 	}
 
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	decoder.setNumRelevantPlanes(2);
 	decoder.setPackPixels(true);
 	decoder.loadStream(*s);
@@ -982,7 +982,7 @@ void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing path files: not every location has one
 	}
 
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	decoder.setNumRelevantPlanes(1);
 	decoder.setPackPixels(true);
 	decoder.loadStream(*s);

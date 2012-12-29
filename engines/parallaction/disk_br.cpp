@@ -460,7 +460,7 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	byte r,g,b;
 	const byte *p;
 	Common::SeekableReadStream *stream;
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	uint i;
 
 	stream = tryOpenFile("backs/" + Common::String(filename), ".ap");
@@ -544,7 +544,7 @@ MaskBuffer *AmigaDisk_br::loadMask(const char *name, uint32 w, uint32 h) {
 		return 0;
 	}
 
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	decoder.setNumRelevantPlanes(2);
 	decoder.setPackPixels(true);
 	decoder.loadStream(*stream);
@@ -582,7 +582,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 
 	Common::String sName = name;
 	Common::SeekableReadStream *stream = openFile("ras/" + sName, ".ras");
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	decoder.loadStream(*stream);
 
 	Graphics::Surface *surf = new Graphics::Surface;
@@ -719,7 +719,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::SeekableReadStream *stream = openFile(name);
-	Graphics::ILBMDecoder2 decoder;
+	Graphics::ILBMDecoder decoder;
 	decoder.loadStream(*stream);
 
 	uint16 max = objectsMax[part];
