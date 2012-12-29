@@ -143,7 +143,7 @@ void ILBMDecoder2::loadPaletteRange(Common::SeekableReadStream &stream, const ui
 void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
 	_numRelevantPlanes = MIN(_numRelevantPlanes, _header.numPlanes);
 
-	if (_header.numPlanes != 1 && _header.numPlanes != 2 && _header.numPlanes != 4)
+	if (_numRelevantPlanes != 1 && _numRelevantPlanes != 2 && _numRelevantPlanes != 4)
 		_packPixels = false;
 
 	if (_outPitch == 0)
