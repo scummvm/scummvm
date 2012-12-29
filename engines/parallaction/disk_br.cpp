@@ -20,10 +20,10 @@
  *
  */
 
-#include "graphics/decoders/ilbm.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
+#include "graphics/decoders/ilbm.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 
