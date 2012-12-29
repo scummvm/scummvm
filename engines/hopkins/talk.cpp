@@ -542,26 +542,26 @@ void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
 
 void TalkManager::dialogWait() {
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			BOB_VISU_PARLE(idx);
 	}
 }
 
 void TalkManager::dialogTalk() {
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			_vm->_objectsManager.BOB_OFF(idx);
 	}
 
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			_vm->_objectsManager.BOB_ZERO(idx);
 	}
 }
 
 void TalkManager::dialogEndTalk() {
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			_vm->_objectsManager.BOB_OFF(idx);
 	}
 
@@ -569,7 +569,7 @@ void TalkManager::dialogEndTalk() {
 	_vm->_eventsManager.VBL();
 
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			_vm->_objectsManager.BOB_ZERO(idx);
 	}
 }
@@ -680,7 +680,7 @@ LABEL_33:
 
 void TalkManager::VISU_PARLE() {
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			BOB_VISU_PARLE(idx);
 	}
 }
@@ -792,11 +792,11 @@ void TalkManager::initCharacterAnim() {
 void TalkManager::clearCharacterAnim() {
 	for (int idx = 21; idx <= 34; ++idx) {
 		_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx]._data);
-		_vm->_globals.Bqe_Anim[idx].field4 = 0;
+		_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
 	}
 }
 
-bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int a4) {
+bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int a3, int a4) {
 	bool result;
 	const byte *v5;
 	int v6;
@@ -812,7 +812,6 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 	int v16;
 	char v17;
 	int v18;
-	int v20;
 	int v22;
 	int v23;
 	const byte *v24;
@@ -820,32 +819,29 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 	v22 = 0;
 	result = false;
 
-	v20 = a1;
 	do {
-		if (*(v22 + bufPerso) == 'A' && *(bufPerso + v22 + 1) == 'N' && *(bufPerso + v22 + 2) == 'I' && *(bufPerso + v22 + 3) == 'M'
-		        && *(bufPerso + v22 + 4) == a3) {
+		if (bufPerso[v22] == 'A' && bufPerso[v22 + 1] == 'N' && bufPerso[v22 + 2] == 'I' && bufPerso[v22 + 3] == 'M' && bufPerso[v22 + 4] == a3) {
 			v5 = v22 + bufPerso + 5;
 			v18 = v22 + 5;
 			v6 = 0;
 			v7 = 0;
 			do {
-				if (*v5 == 'A' && *(v5 + 1) == 'N' && *(v5 + 2) == 'I' && *(v5 + 3) == 'M')
-					v7 = 1;
-				if (*v5 == 'F' && *(v5 + 1) == 'I' && *(v5 + 2) == 'N')
+				if ((v5[0] == 'A' && v5[1] == 'N' && v5[2] == 'I' && v5[3] == 'M') ||
+				    (v5[0] == 'F' && v5[1] == 'I' && v5[2] == 'N'))
 					v7 = 1;
 				if (v18 > a4) {
-					_vm->_globals.Bqe_Anim[a1].field4 = 0;
-					result = g_PTRNUL;
-					_vm->_globals.Bqe_Anim[v20]._data = g_PTRNUL;
+					_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
+					result = false;
+					_vm->_globals.Bqe_Anim[idx]._data = g_PTRNUL;
 				}
 				++v18;
 				++v6;
 				++v5;
 			} while (v7 != 1);
-			_vm->_globals.Bqe_Anim[v20]._data = _vm->_globals.allocMemory(v6 + 50);
-			_vm->_globals.Bqe_Anim[a1].field4 = 1;
-			memcpy(_vm->_globals.Bqe_Anim[v20]._data, (const byte *)(v22 + bufPerso + 5), 20);
-			v8 = _vm->_globals.Bqe_Anim[v20]._data;
+			_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.allocMemory(v6 + 50);
+			_vm->_globals.Bqe_Anim[idx]._enabledFl = true;
+			memcpy(_vm->_globals.Bqe_Anim[idx]._data, (const byte *)(v22 + bufPerso + 5), 20);
+			v8 = _vm->_globals.Bqe_Anim[idx]._data;
 
 			v9 = v8 + 20;
 			v24 = v22 + bufPerso + 25;
@@ -853,13 +849,12 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 			v11 = (int16)READ_LE_UINT16(v22 + bufPerso + 27);
 			v23 = (int16)READ_LE_UINT16(v22 + bufPerso + 29);
 			v12 = (int16)READ_LE_UINT16(v22 + bufPerso + 31);
-			v13 = *(v22 + bufPerso + 33);
-			*(v8 + 29) = *(v22 + bufPerso + 34);
+			v8[28] = bufPerso[v22 + 33];
+			v8[29] = bufPerso[v22 + 34];
 			WRITE_LE_UINT16(v8 + 20, v10);
 			WRITE_LE_UINT16(v8 + 22, v11);
 			WRITE_LE_UINT16(v8 + 24, v23);
 			WRITE_LE_UINT16(v8 + 26, v12);
-			*(v8 + 28) = v13;
 			for (int i = 1; i < 5000; i++) {
 				v9 += 10;
 				v24 += 10;
@@ -869,20 +864,19 @@ bool TalkManager::searchCharacterAnim(int a1, const byte *bufPerso, int a3, int 
 				v15 = (int16)READ_LE_UINT16(v24 + 2);
 				v23 = (int16)READ_LE_UINT16(v24 + 4);
 				v16 = (int16)READ_LE_UINT16(v24 + 6);
-				v17 = *(v24 + 8);
-				*(v9 + 9) = *(v24 + 9);
+				v9[8] = v24[8];
+				v9[9] = v24[9];
 				WRITE_LE_UINT16(v9, v14);
 				WRITE_LE_UINT16(v9 + 2, v15);
 				WRITE_LE_UINT16(v9 + 4, v23);
 				WRITE_LE_UINT16(v9 + 6, v16);
-				*(v9 + 8) = v17;
 			}
-			result = 1;
+			result = true;
 		}
-		if (*(bufPerso + v22) == 'F' && *(bufPerso + v22 + 1) == 'I' && *(bufPerso + v22 + 2) == 'N')
+		if (bufPerso[v22] == 'F' && bufPerso[v22 + 1] == 'I' && bufPerso[v22 + 2] == 'N')
 			result = true;
 		++v22;
-	} while (v22 <= a4 && result != 1);
+	} while (v22 <= a4 && !result);
 
 	return result;
 }
@@ -997,11 +991,11 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
 			if (a1 == 22) {
-				_vm->_objectsManager.BLOQUE_ANIMX(6, _vm->_objectsManager.getBobPosX(3));
-				_vm->_objectsManager.BLOQUE_ANIMX(8, _vm->_objectsManager.getBobPosX(3));
+				_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(3));
+				_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(3));
 			} else { // a1 == 23
-				_vm->_objectsManager.BLOQUE_ANIMX(6, _vm->_objectsManager.getBobPosX(4));
-				_vm->_objectsManager.BLOQUE_ANIMX(8, _vm->_objectsManager.getBobPosX(4));
+				_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(4));
+				_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(4));
 			}
 			_vm->_objectsManager.stopBobAnimation(3);
 			_vm->_objectsManager.stopBobAnimation(4);
@@ -1045,11 +1039,11 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			_vm->_objectsManager.setSpriteIndex(0, 62);
 			_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
 			if (a1 == 20) {
-				_vm->_objectsManager.BLOQUE_ANIMX(5, _vm->_objectsManager.getBobPosX(1));
-				_vm->_objectsManager.BLOQUE_ANIMX(7, _vm->_objectsManager.getBobPosX(1));
+				_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(1));
+				_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(1));
 			} else { // a1 == 21
-				_vm->_objectsManager.BLOQUE_ANIMX(5, _vm->_objectsManager.getBobPosX(2));
-				_vm->_objectsManager.BLOQUE_ANIMX(7, _vm->_objectsManager.getBobPosX(2));
+				_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(2));
+				_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(2));
 			}
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_objectsManager.stopBobAnimation(2);

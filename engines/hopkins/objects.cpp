@@ -1171,8 +1171,8 @@ void ObjectsManager::AFF_BOB_ANIM() {
 			v20 = _vm->_globals._bob[idx]._animData + 20;
 			v24 = _vm->_globals._bob[idx].field10;
 			_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(v20 + 2 * v24);
-			if (_vm->_globals.BL_ANIM[idx].v1 == 1)
-				_vm->_globals._bob[idx]._xp = _vm->_globals.BL_ANIM[idx].v2;
+			if (_vm->_globals._lockedAnims[idx]._enableFl)
+				_vm->_globals._bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
 			if ( PERSO_ON && idx > 20 )
 				_vm->_globals._bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
@@ -1210,8 +1210,8 @@ LABEL_38:
 					v21 = _vm->_globals._bob[idx]._animData + 20;
 					_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(v21);
 
-					if (_vm->_globals.BL_ANIM[idx].v1 == 1)
-						_vm->_globals._bob[idx]._xp = _vm->_globals.BL_ANIM[idx].v2;
+					if (_vm->_globals._lockedAnims[idx]._enableFl)
+						_vm->_globals._bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
 					if (PERSO_ON && idx > 20)
 						_vm->_globals._bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
@@ -4712,39 +4712,39 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 	}
 }
 
-void ObjectsManager::OPTI_BOBON(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
-	if (a1 != -1)
-		setBobAnimation(a1);
-	if (a2 != -1)
-		setBobAnimation(a2);
-	if (a3 != -1)
-		setBobAnimation(a3);
+void ObjectsManager::OPTI_BOBON(int idx1, int idx2, int idx3, int a4, int a5, int a6, int a7) {
+	if (idx1 != -1)
+		setBobAnimation(idx1);
+	if (idx2 != -1)
+		setBobAnimation(idx2);
+	if (idx3 != -1)
+		setBobAnimation(idx3);
 	if (!a7) {
-		if (a1 != -1)
-			SET_BOBPOSI(a1, a4);
-		if (a2 != -1)
-			SET_BOBPOSI(a2, a5);
-		if (a3 != -1)
-			SET_BOBPOSI(a3, a6);
+		if (idx1 != -1)
+			SET_BOBPOSI(idx1, a4);
+		if (idx2 != -1)
+			SET_BOBPOSI(idx2, a5);
+		if (idx3 != -1)
+			SET_BOBPOSI(idx3, a6);
 	}
 }
 
-void ObjectsManager::SCI_OPTI_ONE(int a1, int a2, int a3, int a4) {
+void ObjectsManager::SCI_OPTI_ONE(int idx, int a2, int a3, int a4) {
 	_vm->_eventsManager._curMouseButton = 0;
 	_vm->_eventsManager._mouseButton = 0;
 
 	if (a4 != 3) {
-		setBobAnimation(a1);
-		SET_BOBPOSI(a1, a2);
+		setBobAnimation(idx);
+		SET_BOBPOSI(idx, a2);
 	}
 
 	do {
 		_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager._curMouseButton)
 			break;
-	} while (a3 != BOBPOSI(a1));
+	} while (a3 != BOBPOSI(idx));
 	if (!a4)
-		stopBobAnimation(a1);
+		stopBobAnimation(idx);
 }
 
 void ObjectsManager::VERBE_OFF(int idx, int a2) {
@@ -5121,107 +5121,102 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 	}
 }
 
-void ObjectsManager::TEST_FORET(int a1, int a2, int a3, int a4, int a5, int a6) {
-	signed int v6;
-	char v7;
+void ObjectsManager::TEST_FORET(int screenId, int minX, int maxX, int minY, int maxY, int a6) {
+	int v6 = screenId;
+	if (_vm->_globals._screenId != screenId)
+		return;
 
-	v6 = a1;
-	if (_vm->_globals._screenId == a1) {
-		if (a1 == 35) {
-			if (a6 > 2 || (v6 = 200, a6 > 2))
-				v6 = 201;
-		}
-		if (_vm->_globals._screenId == 36) {
-			if (a6 > 2 || (v6 = 202, a6 > 2))
-				v6 = 203;
-		}
-		if (_vm->_globals._screenId == 37) {
-			if (a6 > 2 || (v6 = 204, a6 > 2))
-				v6 = 205;
-		}
-		if (_vm->_globals._screenId == 38) {
-			if (a6 > 2 || (v6 = 206, a6 > 2))
-				v6 = 207;
-		}
-		if (_vm->_globals._screenId == 39) {
-			if (a6 > 2 || (v6 = 208, a6 > 2))
-				v6 = 209;
-		}
-		if (_vm->_globals._screenId == 40) {
-			if (a6 > 2 || (v6 = 210, a6 > 2))
-				v6 = 211;
-		}
-		if (_vm->_globals._screenId == 41) {
-			if (a6 > 2 || (v6 = 212, a6 > 2))
-				v6 = 213;
-		}
-		v7 = _vm->_globals._saveData->data[v6];
-		if (v7 != 2) {
-			if (v7) {
-				if (v7 == 1) {
-					if (a6 == 1 && BOBPOSI(1) == 26) {
-						_vm->_dialogsManager._removeInventFl = true;
-						_vm->_soundManager.PLAY_SAMPLE2(1);
-						_vm->_globals._saveData->data[v6] = 4;
-					}
-					if (a6 == 2 && BOBPOSI(2) == 26) {
-						_vm->_dialogsManager._removeInventFl = true;
-						_vm->_soundManager.PLAY_SAMPLE2(1);
-						_vm->_globals._saveData->data[v6] = 4;
-					}
-					if (a6 == 3 && BOBPOSI(3) == 27) {
-						_vm->_dialogsManager._removeInventFl = true;
-						_vm->_soundManager.PLAY_SAMPLE2(1);
-						_vm->_globals._saveData->data[v6] = 4;
-					}
-					if (a6 == 4 && BOBPOSI(4) == 27) {
-						_vm->_dialogsManager._removeInventFl = true;
-						_vm->_soundManager.PLAY_SAMPLE2(1);
-						_vm->_dialogsManager._removeInventFl = true;
-						_vm->_globals._saveData->data[v6] = 4;
-					}
-				}
-				if (_vm->_globals._saveData->data[v6] == 4) {
-					if (a6 == 1 && (signed int)BOBPOSI(1) > 30)
-						_vm->_globals._saveData->data[v6] = 3;
-					if (a6 == 2 && (signed int)BOBPOSI(2) > 30)
-						_vm->_globals._saveData->data[v6] = 3;
-					if (a6 == 3 && (signed int)BOBPOSI(3) > 30)
-						_vm->_globals._saveData->data[v6] = 3;
-					if (a6 == 4 && (signed int)BOBPOSI(4) > 30)
-						_vm->_globals._saveData->data[v6] = 3;
-				}
-				if (_vm->_globals._saveData->data[v6] == 3) {
-					_vm->_graphicsManager.FADE_LINUX = 2;
-					_vm->_animationManager.playAnim("CREVE2.ANM", 100, 24, 500);
-					_vm->_globals._exitId = 150;
-					_vm->_graphicsManager._noFadingFl = true;
-					BOB_OFF(1);
-					BOB_OFF(2);
-					BOB_OFF(3);
-					BOB_OFF(4);
-				}
-			} else if (a2 < getSpriteX(0)
-			           && a3 > getSpriteX(0)
-			           && a4 < getSpriteY(0)
-			           && a5 > getSpriteY(0)) {
-				if (a6 == 1)
-					setBobAnimation(1);
-				if (a6 == 2)
-					setBobAnimation(2);
-				if (a6 == 3)
-					setBobAnimation(3);
-				if (a6 == 4)
-					setBobAnimation(4);
-				_vm->_globals._saveData->data[v6] = 1;
+	switch (_vm->_globals._screenId) {
+	case 35:
+		if (a6 > 2)
+			v6 = 201;
+		else
+			v6 = 200;
+		break;
+	case 36:
+		if (a6 > 2)
+			v6 = 203;
+		else 
+			v6 = 202;
+		break;
+	case 37:
+		if (a6 > 2)
+			v6 = 205;
+		else
+			v6 = 204;
+		break;
+	case 38:
+		if (a6 > 2)
+			v6 = 207;
+		else
+			v6 = 206;
+		break;
+	case 39:
+		if (a6 > 2)
+			v6 = 209;
+		else
+			v6 = 208;
+		break;
+	case 40:
+		if (a6 > 2)
+			v6 = 211;
+		else
+			v6 = 210;
+		break;
+	case 41:
+		if (a6 > 2)
+			v6 = 213;
+		else
+			v6 = 212;
+		break;
+	}
+
+	if (_vm->_globals._saveData->data[v6] == 2)
+		return;
+
+	if (_vm->_globals._saveData->data[v6]) {
+		if (_vm->_globals._saveData->data[v6] == 1) {
+			if ((a6 == 1 && BOBPOSI(1) == 26) || (a6 == 2 && BOBPOSI(2) == 26) ||
+			    (a6 == 3 && BOBPOSI(3) == 27) || (a6 == 4 && BOBPOSI(4) == 27)) {
+				_vm->_dialogsManager._removeInventFl = true;
+				_vm->_soundManager.PLAY_SAMPLE2(1);
+				_vm->_globals._saveData->data[v6] = 4;
 			}
 		}
+		if (_vm->_globals._saveData->data[v6] == 4) {
+			if ((a6 == 1 && BOBPOSI(1) > 30) || (a6 == 2 && BOBPOSI(2) > 30) ||
+			    (a6 == 3 && BOBPOSI(3) > 30) || (a6 == 4 && BOBPOSI(4) > 30))
+				_vm->_globals._saveData->data[v6] = 3;
+		}
+		if (_vm->_globals._saveData->data[v6] == 3) {
+			_vm->_graphicsManager.FADE_LINUX = 2;
+			_vm->_animationManager.playAnim("CREVE2.ANM", 100, 24, 500);
+			_vm->_globals._exitId = 150;
+			_vm->_graphicsManager._noFadingFl = true;
+			BOB_OFF(1);
+			BOB_OFF(2);
+			BOB_OFF(3);
+			BOB_OFF(4);
+		}
+	} else if (minX < getSpriteX(0)
+	           && maxX > getSpriteX(0)
+	           && minY < getSpriteY(0)
+	           && maxY > getSpriteY(0)) {
+		if (a6 == 1)
+			setBobAnimation(1);
+		else if (a6 == 2)
+			setBobAnimation(2);
+		else if (a6 == 3)
+			setBobAnimation(3);
+		else if (a6 == 4)
+			setBobAnimation(4);
+		_vm->_globals._saveData->data[v6] = 1;
 	}
 }
 
-void ObjectsManager::BLOQUE_ANIMX(int idx, int a2) {
-	_vm->_globals.BL_ANIM[idx].v1 = 1;
-	_vm->_globals.BL_ANIM[idx].v2 = a2;
+void ObjectsManager::lockAnimX(int idx, int a2) {
+	_vm->_globals._lockedAnims[idx]._enableFl;
+	_vm->_globals._lockedAnims[idx]._posX = a2;
 }
 
 void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,

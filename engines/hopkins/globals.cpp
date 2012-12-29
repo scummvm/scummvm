@@ -83,7 +83,7 @@ Globals::Globals() {
 	for (int i = 0; i < 35; ++i)
 		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(Liste2Item), 0);
 	for (int i = 0; i < 30; ++i)
-		Common::fill((byte *)&BL_ANIM[i], (byte *)&BL_ANIM[i] + sizeof(BlAnimItem), 0);
+		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
 	for (int i = 0; i < 30; ++i)
 		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
 	for (int i = 0; i < 300; ++i)
@@ -433,7 +433,7 @@ void Globals::HOPKINS_DATA() {
 void Globals::INIT_ANIM() {
 	for (int idx = 0; idx < 35; ++idx) {
 		Bqe_Anim[idx]._data = g_PTRNUL;
-		Bqe_Anim[idx].field4 = 0;
+		Bqe_Anim[idx]._enabledFl = false;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {

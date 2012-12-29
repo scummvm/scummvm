@@ -603,7 +603,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 void AnimationManager::clearAnim() {
 	for (int idx = 0; idx < 35; ++idx) {
 		_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx]._data);
-		_vm->_globals.Bqe_Anim[idx].field4 = 0;
+		_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
@@ -736,7 +736,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 					    (data[v6] == 'F' && data[v6 + 1] == 'I' && data[v6 + 2] == 'N'))
 						innerLoopCond = true;
 					if (count < v6) {
-						_vm->_globals.Bqe_Anim[animIndex].field4 = 0;
+						_vm->_globals.Bqe_Anim[animIndex]._enabledFl = false;
 						_vm->_globals.Bqe_Anim[animIndex]._data = g_PTRNUL;
 						return;
 					}
@@ -744,7 +744,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 					++v7;
 				} while (!innerLoopCond);
 				_vm->_globals.Bqe_Anim[animIndex]._data = _vm->_globals.allocMemory(v7 + 50);
-				_vm->_globals.Bqe_Anim[animIndex].field4 = 1;
+				_vm->_globals.Bqe_Anim[animIndex]._enabledFl = true;
 				memcpy(_vm->_globals.Bqe_Anim[animIndex]._data, v21 + data + 5, 20);
 
 				byte *dataP = _vm->_globals.Bqe_Anim[animIndex]._data;

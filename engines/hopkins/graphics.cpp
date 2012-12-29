@@ -1107,7 +1107,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 void GraphicsManager::FIN_VISU() {
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			_vm->_objectsManager.BOB_OFF(idx);
 	}
 
@@ -1115,22 +1115,22 @@ void GraphicsManager::FIN_VISU() {
 	_vm->_eventsManager.VBL();
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			_vm->_objectsManager.BOB_ZERO(idx);
 	}
 
 	for (int idx = 1; idx <= 29; ++idx) {
-		_vm->_globals.BL_ANIM[idx].v1 = 0;
+		_vm->_globals._lockedAnims[idx]._enableFl = false;
 	}
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		_vm->_globals.Bqe_Anim[idx].field4 = 0;
+		_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
 	}
 }
 
 void GraphicsManager::VISU_ALL() {
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx].field4 == 1)
+		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
 			_vm->_objectsManager.BOB_VISU(idx);
 	}
 }

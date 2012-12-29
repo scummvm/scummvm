@@ -61,7 +61,7 @@ struct CarreZoneItem {
 
 struct BqeAnimItem {
 	byte *_data;
-	int field4;
+	bool _enabledFl;
 };
 
 struct BankItem {
@@ -121,9 +121,9 @@ struct BobItem {
 	int field4A;
 };
 
-struct BlAnimItem {
-	uint32 v1;
-	uint32 v2;
+struct LockAnimItem {
+	bool _enableFl;
+	int _posX;
 };
 
 struct VBobItem {
@@ -314,7 +314,7 @@ public:
 	BobItem _bob[36];
 	ListeItem Liste[6];
 	Liste2Item Liste2[35];
-	BlAnimItem BL_ANIM[30];
+	LockAnimItem _lockedAnims[30];
 	VBobItem VBob[30];
 	ObjetWItem ObjetW[300];
 	BlocItem BLOC[250];
