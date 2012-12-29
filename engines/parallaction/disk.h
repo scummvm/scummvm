@@ -34,7 +34,6 @@ namespace Common {
 class FSDirectory;
 class ReadStream;
 class SeekableReadStream;
-struct IFFChunk;
 }
 
 namespace Graphics {
@@ -85,8 +84,6 @@ public:
 	virtual MaskBuffer *loadMask(const char *name, uint32 w, uint32 h) { return 0; }
 	virtual PathBuffer *loadPath(const char *name, uint32 w, uint32 h) { return 0; }
 };
-
-struct PaletteFxRange;
 
 class Disk_ns : public Disk {
 
