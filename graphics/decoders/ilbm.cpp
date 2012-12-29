@@ -27,15 +27,7 @@
 namespace Graphics {
 
 ILBMDecoder2::ILBMDecoder2() {
-	memset(&_header, 0, sizeof(Header));
-	_surface = 0;
-	_palette = 0;
-	_paletteRanges = 0;
-	_paletteColorCount = 0;
-	_paletteRangeCount = 0;
-	_outPitch = 0;
-	_numRelevantPlanes = 8;
-	_packPixels = false;
+	destroy();
 }
 
 ILBMDecoder2::~ILBMDecoder2() {
@@ -46,18 +38,25 @@ void ILBMDecoder2::destroy() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = 0;
 	}
 
 	if (_palette) {
 		delete[] _palette;
-		_palette = 0;
 	}
 
 	if (_paletteRanges) {
 		delete[] _paletteRanges;
-		_paletteRanges = 0;
 	}
+
+	memset(&_header, 0, sizeof(Header));
+	_surface = 0;
+	_palette = 0;
+	_paletteRanges = 0;
+	_paletteColorCount = 0;
+	_paletteRangeCount = 0;
+	_outPitch = 0;
+	_numRelevantPlanes = 8;
+	_packPixels = false;
 }
 
 bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
