@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
+#include "graphics/decoders/ilbm.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 
@@ -914,17 +915,15 @@ void AmigaDisk_ns::buildMask(byte* buf) {
 
 
 void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
-	PaletteFxRange ranges[6];
-	byte pal[768];
-
 	Common::SeekableReadStream *s = openFile(name);
-	ILBMLoader loader(&info.bg, pal, ranges);
-	loader.load(s, true);
+	Graphics::ILBMDecoder2 decoder;
+	decoder.loadStream(*s);
 
+	info.bg.copyFrom(*decoder.getSurface());
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
-	byte *p = pal;
+	const byte *p = decoder.getPalette();
 	for (uint i = 0; i < 32; i++) {
 		byte r = *p >> 2;
 		p++;
@@ -935,7 +934,8 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 		info.palette.setEntry(i, r, g, b);
 	}
 
-	for (uint j = 0; j < 6; j++) {
+	PaletteFxRange *ranges = (PaletteFxRange *)decoder.getPaletteRanges();
+	for (uint j = 0; j < 6 && j < decoder.getPaletteRangeCount(); j++) {
 		info.setPaletteRange(j, ranges[j]);
 	}
 }
@@ -952,19 +952,24 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing mask files: not every location has one
 	}
 
-	byte pal[768];
-	ILBMLoader loader(ILBMLoader::BODYMODE_MASKBUFFER, pal);
-	loader.load(s, true);
+	Graphics::ILBMDecoder2 decoder;
+	decoder.setNumRelevantPlanes(2);
+	decoder.setPackPixels(true);
+	decoder.loadStream(*s);
 
+	const byte *p = decoder.getPalette();
 	byte r, g, b;
 	for (uint i = 0; i < 4; i++) {
-		r = pal[i*3];
-		g = pal[i*3+1];
-		b = pal[i*3+2];
+		r = p[i*3];
+		g = p[i*3+1];
+		b = p[i*3+2];
 		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
 	}
 
-	info._mask = loader._maskBuffer;
+	info._mask = new MaskBuffer;
+	info._mask->create(decoder.getHeader()->width, decoder.getHeader()->height);
+	memcpy(info._mask->data, decoder.getSurface()->pixels, info._mask->size);
+	info._mask->bigEndian = true;
 }
 
 void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
@@ -977,9 +982,14 @@ void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing path files: not every location has one
 	}
 
-	ILBMLoader loader(ILBMLoader::BODYMODE_PATHBUFFER);
-	loader.load(s, true);
-	info._path = loader._pathBuffer;
+	Graphics::ILBMDecoder2 decoder;
+	decoder.setNumRelevantPlanes(2);
+	decoder.setPackPixels(true);
+	decoder.loadStream(*s);
+
+	info._path = new PathBuffer;
+	info._path->create(decoder.getHeader()->width, decoder.getHeader()->height);
+	memcpy(info._path->data, decoder.getSurface()->pixels, info._path->size);
 	info._path->bigEndian = true;
 }
 
