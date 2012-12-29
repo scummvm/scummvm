@@ -36,7 +36,7 @@ enum {
 
 TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(engine), _screen(scr),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
-	_numCharsLeft(0), _numCharsPrinted(0), _sjisLineBreakFlag(false), _waitButtonMode(1) {
+	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1) {
 
 	_dialogueBuffer = new char[kEoBTextBufferSize];
 	memset(_dialogueBuffer, 0, kEoBTextBufferSize);
@@ -102,8 +102,6 @@ void TextDisplayer_rpg::removePageBreakFlag() {
 }
 
 void TextDisplayer_rpg::displayText(char *str, ...) {
-	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
-
 	_printFlag = false;
 
 	_lineWidth = 0;
@@ -125,7 +123,9 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
 
-	bool pc98PrintFlag = (isPc98 && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
+	bool sjisTextMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
+	int sjisOffs = sjisTextMode ? 8 : 9;
+	
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);
 
 	while (c) {
@@ -146,15 +146,25 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			c = parseCommand();
 		}
 
-		if (isPc98) {
+		if (_vm->gameFlags().lang == Common::JA_JPN) {
 			uint8 cu = (uint8) c;
 			if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
-				_currentLine[_numCharsLeft++] = c;
-				_currentLine[_numCharsLeft++] = parseCommand();
-				_currentLine[_numCharsLeft] = '\0';
-				_lineWidth += 8;
-				if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
+				if (sjisTextMode) {
+					_currentLine[_numCharsLeft++] = c;
+					_currentLine[_numCharsLeft++] = parseCommand();
+					_currentLine[_numCharsLeft] = '\0';
+				}
+
+				if ((_textDimData[sdx].column + _lineWidth + sjisOffs) > (sd->w << 3))
 					printLine(_currentLine);
+
+				if (!sjisTextMode) {
+					_currentLine[_numCharsLeft++] = c;
+					_currentLine[_numCharsLeft++] = parseCommand();
+					_currentLine[_numCharsLeft] = '\0';
+				}
+
+				_lineWidth += sjisOffs;
 				c = parseCommand();
 				continue;
 			}
@@ -189,10 +199,10 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			break;
 
 		case 12:
-			if (isPc98)
-				_sjisLineBreakFlag = true;
+			if (sjisTextMode)
+				_sjisTextModeLineBreak = true;
 			printLine(_currentLine);
-			_sjisLineBreakFlag = false;
+			_sjisTextModeLineBreak = false;
 			_lineCount++;
 			_textDimData[sdx].column = 0;
 			_textDimData[sdx].line++;
@@ -208,7 +218,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 		default:
 			if (_vm->game() == GI_LOL || (unsigned char)c > 30) {
-				_lineWidth += (pc98PrintFlag ? 4 : _screen->getCharWidth((uint8)c));
+				_lineWidth += (sjisTextMode ? 4 : (_screen->_currentFont == Screen::FID_SJIS_FNT ? 9 : _screen->getCharWidth((uint8)c)));
 				_currentLine[_numCharsLeft++] = c;
 				_currentLine[_numCharsLeft] = 0;
 
@@ -280,10 +290,9 @@ void TextDisplayer_rpg::readNextPara() {
 }
 
 void TextDisplayer_rpg::printLine(char *str) {
-	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
-	bool pc98PrintFlag = (isPc98 && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
+	bool sjisTextMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
 
 	int fh = (_screen->_currentFont == Screen::FID_SJIS_FNT) ? 9 : (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
@@ -307,13 +316,15 @@ void TextDisplayer_rpg::printLine(char *str) {
 	}
 
 	int x1 = (sd->sx << 3) + _textDimData[sdx].column;
-	int y = sd->sy + (pc98PrintFlag ? (_textDimData[sdx].line << 3) : (fh * _textDimData[sdx].line));
+	int y = sd->sy + (sjisTextMode ? (_textDimData[sdx].line << 3) : (fh * _textDimData[sdx].line));
 	int w = sd->w << 3;
 	int lw = _lineWidth;
 	int s = _numCharsLeft;
 	char c = 0;
+	uint8 twoByteCharOffs = 0;
 
-	if (pc98PrintFlag) {
+	
+	if (sjisTextMode) {
 		bool ct = true;
 
 		if ((lw + _textDimData[sdx].column) > w) {
@@ -321,7 +332,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 				// cut off line to leave space for "MORE" button
 				w -= _vm->guiSettings()->buttons.waitReserve;
 		} else {
-			if (!_sjisLineBreakFlag || (_lineCount + 1 < lines - 1))
+			if (!_sjisTextModeLineBreak || (_lineCount + 1 < lines - 1))
 				ct = false;
 			else
 				// cut off line to leave space for "MORE" button
@@ -344,41 +355,88 @@ void TextDisplayer_rpg::printLine(char *str) {
 			s = n2;
 		}
 	} else {
-		if ((lw + _textDimData[sdx].column) > w) {
+		if (_vm->gameFlags().lang == Common::JA_JPN) {
+			for (int i = 0; i < s; ++i) {
+				uint8 cu = (uint8) str[i];
+				if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0))
+					twoByteCharOffs = 8;
+			}
+		}
+
+		if ((lw + _textDimData[sdx].column) >= w) {
 			if ((lines - 1) <= _lineCount && _allowPageBreak)
 				// cut off line to leave space for "MORE" button
 				w -= _vm->guiSettings()->buttons.waitReserve;
 
 			w -= _textDimData[sdx].column;
 
-			int n2 = 0;
-			int n1 = s - 1;
+			int lineLastCharPos = 0;
+			int strPos = s - 1;
 
-			while (n1 > 0) {
-				//cut off line after last space
-				c = str[n1];
+			if (twoByteCharOffs) {
+				lw = 0;
+				int prevStrPos = 0;
+				c = str[0];
 
-				lw -= _screen->getCharWidth((uint8)c);
+				for (strPos = 0; strPos < s; ++strPos) {
+					uint8 cu = (uint8) str[strPos];
+					if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
+						lw += 9;
+						strPos++;
+					} else {
+						lw += _screen->getCharWidth((uint8)c);
+					}
 
-				if (!n2 && lw <= w)
-					n2 = n1;
+					if (!lineLastCharPos && w < lw + twoByteCharOffs)
+						lineLastCharPos = prevStrPos;
 
-				if (n2 && c == ' ') {
-					s = n1;
-					_printFlag = false;
-					break;
+					if (lineLastCharPos && c == ' ') {
+						s = strPos;
+						_printFlag = false;
+						break;
+					}
+					prevStrPos = strPos;
+					c = (char) cu;
 				}
-				n1--;
-			}
 
-			if (!n1) {
+				if (!lineLastCharPos) {
+					lineLastCharPos = s - 1;
+					if (lineLastCharPos && str[lineLastCharPos] == ' ') {
+						s = strPos;
+						_printFlag = false;
+					}
+				}
+
+				lw = _lineWidth;
+
+			} else {
+				while (strPos > 0) {
+					//cut off line after last space
+					c = str[strPos];
+
+					lw -= _screen->getCharWidth((uint8)c);
+
+					if (!lineLastCharPos && lw <= w)
+						lineLastCharPos = strPos;
+
+					if (lineLastCharPos && c == ' ') {
+						s = strPos;
+						_printFlag = false;
+						break;
+					}
+					strPos--;
+				}
+			}
+			
+			if (!strPos) {
 				if (_textDimData[sdx].column && !_printFlag) {
 					s = lw = 0;
 					_printFlag = true;
 				} else {
-					s = n2;
+					s = lineLastCharPos;
 				}
 			}
+			
 		}
 	}
 
@@ -386,7 +444,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	str[s] = 0;
 
 	uint8 col = _textDimData[sdx].color1;
-	if (isPc98 && (sdx == 2 || sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) {
+	if (sjisTextMode && (sdx == 2 || sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) {
 		switch (_textDimData[sdx].color1) {
 		case 0x88:
 			col = 0x41;
@@ -413,6 +471,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 		_screen->printText(str, x1 & ~3, (y + 8) & ~7, col, 0);
 	} else {
 		_screen->printText(str, x1, y, col, _textDimData[sdx].color2);
+		_screen->updateScreen();
 	}
 
 	_textDimData[sdx].column += lw;
@@ -432,9 +491,9 @@ void TextDisplayer_rpg::printLine(char *str) {
 	str[len] = 0;
 
 	_numCharsLeft = strlen(str);
-	_lineWidth = pc98PrintFlag ? (_numCharsLeft << 2) : _screen->getTextWidth(str);
+	_lineWidth = sjisTextMode ? (_numCharsLeft << 2) : (_screen->_currentFont == Screen::FID_SJIS_FNT ? _numCharsLeft * 9: _screen->getTextWidth(str));
 
-	if (!_numCharsLeft && _textDimData[sdx].column < (sd->w << 3))
+	if (!_numCharsLeft && (_textDimData[sdx].column + twoByteCharOffs) <= (sd->w << 3))
 		return;
 
 	_textDimData[sdx].column = 0;
