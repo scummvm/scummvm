@@ -20,8 +20,7 @@
  *
  */
 
-#include "graphics/iff.h"
-
+#include "graphics/decoders/ilbm.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
@@ -459,8 +458,9 @@ void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int transparentColo
 
 void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	byte r,g,b;
-	byte *p;
+	const byte *p;
 	Common::SeekableReadStream *stream;
+	Graphics::ILBMDecoder2 decoder;
 	uint i;
 
 	stream = tryOpenFile("backs/" + Common::String(filename), ".ap");
@@ -488,15 +488,16 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	}
 
 	stream = openFile("backs/" + Common::String(filename), ".bkg");
+	decoder.loadStream(*stream);
 
-	byte pal[768];
-	ILBMLoader loader(&info.bg, pal);
-	loader.load(stream, true);
-
+	info.bg.copyFrom(*decoder.getSurface());
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
-	p = pal;
+	// Overwrite the first color (transparent key) in the palette
+	p = decoder.getPalette();
+	info.palette.setEntry(0, p[0] >> 2, p[1] >> 2, p[2] >> 0);
+
 	for (i = 16; i < 32; i++) {
 		r = *p >> 2;
 		p++;
@@ -506,9 +507,6 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 		p++;
 		info.palette.setEntry(i, r, g, b);
 	}
-
-	// Overwrite the first color (transparent key) in the palette
-	info.palette.setEntry(0, pal[0] >> 2, pal[1] >> 2, pal[2] >> 0);
 
 	// background data is drawn used the upper portion of the palette
 	adjustForPalette(info.bg);
@@ -546,10 +544,14 @@ MaskBuffer *AmigaDisk_br::loadMask(const char *name, uint32 w, uint32 h) {
 		return 0;
 	}
 
-	ILBMLoader loader(ILBMLoader::BODYMODE_MASKBUFFER);
-	loader.load(stream, true);
+	Graphics::ILBMDecoder2 decoder;
+	decoder.setNumRelevantPlanes(2);
+	decoder.setPackPixels(true);
+	decoder.loadStream(*stream);
 
-	MaskBuffer *buffer = loader._maskBuffer;
+	MaskBuffer *buffer = new MaskBuffer;
+	buffer->create(decoder.getHeader()->width, decoder.getHeader()->height);
+	memcpy(buffer->data, decoder.getSurface()->pixels, buffer->size);
 	buffer->bigEndian = true;
 	finalpass(buffer->data, buffer->size);
 	return buffer;
@@ -580,12 +582,12 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 
 	Common::String sName = name;
 	Common::SeekableReadStream *stream = openFile("ras/" + sName, ".ras");
+	Graphics::ILBMDecoder2 decoder;
+	decoder.loadStream(*stream);
 
-	ILBMLoader loader(ILBMLoader::BODYMODE_SURFACE);
-	loader.load(stream, true);
-
-	Graphics::Surface* surf = loader._surf;
+	Graphics::Surface *surf = new Graphics::Surface;
 	assert(surf);
+	surf->copyFrom(*decoder.getSurface());
 
 	// Static pictures are drawn used the upper half of the palette: this must be
 	// done before shadow mask is applied. This way, only really transparent pixels
@@ -717,16 +719,16 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::SeekableReadStream *stream = openFile(name);
-	ILBMLoader loader(ILBMLoader::BODYMODE_SURFACE);
-	loader.load(stream, true);
+	Graphics::ILBMDecoder2 decoder;
+	decoder.loadStream(*stream);
 
 	uint16 max = objectsMax[part];
 	if (_vm->getFeatures() & GF_DEMO)
 		max = 72;
 
 	byte *data = new byte[max * 2601];
-	byte *srcPtr = (byte *)loader._surf->getBasePtr(0,0);
-	int w = loader._surf->w;
+	byte *srcPtr = (byte *)decoder.getSurface()->getBasePtr(0,0);
+	int w = decoder.getSurface()->w;
 
 	// Convert to the expected display format
 	for (int i = 0; i < max; i++) {
@@ -741,7 +743,6 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 			dst += 51;
 		}
 	}
-	delete loader._surf;
 
 	return new GfxObj(0, new Cnv(max, 51, 51, data, true));
 }
