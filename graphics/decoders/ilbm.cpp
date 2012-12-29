@@ -26,7 +26,7 @@
 
 namespace Graphics {
 
-ILBMDecoder2::ILBMDecoder2() {
+ILBMDecoder::ILBMDecoder() {
 	memset(&_header, 0, sizeof(Header));
 	_surface = 0;
 	_palette = 0;
@@ -38,11 +38,11 @@ ILBMDecoder2::ILBMDecoder2() {
 	_packPixels = false;
 }
 
-ILBMDecoder2::~ILBMDecoder2() {
+ILBMDecoder::~ILBMDecoder() {
 	destroy();
 }
 
-void ILBMDecoder2::destroy() {
+void ILBMDecoder::destroy() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
@@ -60,7 +60,7 @@ void ILBMDecoder2::destroy() {
 	}
 }
 
-bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
+bool ILBMDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
 	const uint32 form = stream.readUint32BE();
@@ -98,7 +98,7 @@ bool ILBMDecoder2::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-void ILBMDecoder2::loadHeader(Common::SeekableReadStream &stream) {
+void ILBMDecoder::loadHeader(Common::SeekableReadStream &stream) {
 	_header.width = stream.readUint16BE();
 	_header.height = stream.readUint16BE();
 	_header.x = stream.readUint16BE();
@@ -118,13 +118,13 @@ void ILBMDecoder2::loadHeader(Common::SeekableReadStream &stream) {
 	assert(_header.numPlanes >= 1 && _header.numPlanes <= 8 && _header.numPlanes != 7);
 }
 
-void ILBMDecoder2::loadPalette(Common::SeekableReadStream &stream, const uint32 size) {
+void ILBMDecoder::loadPalette(Common::SeekableReadStream &stream, const uint32 size) {
 	_palette = new byte[size];
 	stream.read(_palette, size);
 	_paletteColorCount = size / 3;
 }
 
-void ILBMDecoder2::loadPaletteRange(Common::SeekableReadStream &stream, const uint32 size) {
+void ILBMDecoder::loadPaletteRange(Common::SeekableReadStream &stream, const uint32 size) {
 	if (_paletteRanges)
 		delete[] _paletteRanges;
 
@@ -140,7 +140,7 @@ void ILBMDecoder2::loadPaletteRange(Common::SeekableReadStream &stream, const ui
 	++_paletteRangeCount;
 }
 
-void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
+void ILBMDecoder::loadBitmap(Common::SeekableReadStream &stream) {
 	_numRelevantPlanes = MIN(_numRelevantPlanes, _header.numPlanes);
 
 	if (_numRelevantPlanes != 1 && _numRelevantPlanes != 2 && _numRelevantPlanes != 4)
@@ -185,7 +185,7 @@ void ILBMDecoder2::loadBitmap(Common::SeekableReadStream &stream) {
 	delete[] scanlines;
 }
 
-void ILBMDecoder2::decompressRLE(Common::SeekableReadStream &stream, byte *scanline, uint16 &length, const uint16 left) {
+void ILBMDecoder::decompressRLE(Common::SeekableReadStream &stream, byte *scanline, uint16 &length, const uint16 left) {
 	length = 0;
 	uint16 code = stream.readByte();
 
@@ -206,7 +206,7 @@ void ILBMDecoder2::decompressRLE(Common::SeekableReadStream &stream, byte *scanl
 	}
 }
 
-void ILBMDecoder2::packPixels(byte *scanlines, byte *data, const uint16 scanlinePitch) {
+void ILBMDecoder::packPixels(byte *scanlines, byte *data, const uint16 scanlinePitch) {
 	uint32 numPixels = _outPitch;
 
 	if (_packPixels)

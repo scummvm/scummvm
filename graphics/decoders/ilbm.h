@@ -41,7 +41,7 @@ namespace Graphics {
 struct PixelFormat;
 struct Surface;
 
-class ILBMDecoder2 : public ImageDecoder {
+class ILBMDecoder : public ImageDecoder {
 public:
 	struct Header {
 		uint16 width, height;
@@ -60,8 +60,8 @@ public:
 		byte first, last;
 	};
 
-	ILBMDecoder2();
-	virtual ~ILBMDecoder2();
+	ILBMDecoder();
+	virtual ~ILBMDecoder();
 
 	// ImageDecoder API
 	void destroy();
