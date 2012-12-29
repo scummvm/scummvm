@@ -714,7 +714,6 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 	int v10;
 	int v11;
 	int v12;
-	int v13;
 	int v15;
 	int v16;
 	int v21;

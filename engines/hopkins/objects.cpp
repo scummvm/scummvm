@@ -4443,8 +4443,6 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	byte *v22;
 	int16 v27;
 	int16 v28;
-	int v29;
-	int v30;
 	int v31;
 	int v32;
 	int v33;
@@ -4529,9 +4527,9 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	}
 
 	_vm->_linesManager.RESET_OBSTACLE();
-	for (size_t v41 = 0; v41 < nbytes; v41++) {
-		if (*(ptr + v41) == 'O' && *(ptr + v41 + 1) == 'B' && *(ptr + v41 + 2) == '2') {
-			v16 = ptr + v41 + 4;
+	for (size_t idx = 0; idx < nbytes; idx++) {
+		if (ptr[idx] == 'O' && ptr[idx + 1] == 'B' && ptr[idx + 2] == '2') {
+			v16 = ptr + idx + 4;
 			v32 = 0;
 			v34 = 0;
 			_vm->_linesManager.TOTAL_LIGNES = 0;
@@ -4556,26 +4554,26 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	}
 
 	if (!OBSSEUL) {
-		for (size_t v42 = 0; v42 < nbytes; v42++) {
-			if (*(ptr + v42) == 'Z' && *(ptr + v42 + 1) == 'O' && *(ptr + v42 + 2) == '2') {
-				v17 = ptr + v42 + 4;
+		for (size_t idx = 0; idx < nbytes; idx++) {
+			if (ptr[idx] == 'Z' && ptr[idx + 1] == 'O' && ptr[idx + 2] == '2') {
+				v17 = &ptr[idx + 4];
 				v33 = 0;
 				v35 = 0;
-				for (int v18 = 1; v18 <= 100; v18++) {
-					_vm->_globals.ZONEP[v18]._destX = 0;
-					_vm->_globals.ZONEP[v18]._destY = 0;
-					_vm->_globals.ZONEP[v18].field4 = 0;
-					_vm->_globals.ZONEP[v18].field6 = 0;
-					_vm->_globals.ZONEP[v18].field7 = 0;
-					_vm->_globals.ZONEP[v18].field8 = 0;
-					_vm->_globals.ZONEP[v18].field9 = 0;
-					_vm->_globals.ZONEP[v18].fieldA = 0;
-					_vm->_globals.ZONEP[v18].fieldB = 0;
-					_vm->_globals.ZONEP[v18].fieldC = 0;
-					_vm->_globals.ZONEP[v18].fieldD = 0;
-					_vm->_globals.ZONEP[v18].fieldE = 0;
-					_vm->_globals.ZONEP[v18].fieldF = 0;
-					_vm->_globals.ZONEP[v18].field12 = 0;
+				for (int i = 1; i <= 100; i++) {
+					_vm->_globals.ZONEP[i]._destX = 0;
+					_vm->_globals.ZONEP[i]._destY = 0;
+					_vm->_globals.ZONEP[i].field4 = 0;
+					_vm->_globals.ZONEP[i].field6 = 0;
+					_vm->_globals.ZONEP[i].field7 = 0;
+					_vm->_globals.ZONEP[i].field8 = 0;
+					_vm->_globals.ZONEP[i].field9 = 0;
+					_vm->_globals.ZONEP[i].fieldA = 0;
+					_vm->_globals.ZONEP[i].fieldB = 0;
+					_vm->_globals.ZONEP[i].fieldC = 0;
+					_vm->_globals.ZONEP[i].fieldD = 0;
+					_vm->_globals.ZONEP[i].fieldE = 0;
+					_vm->_globals.ZONEP[i].fieldF = 0;
+					_vm->_globals.ZONEP[i].field12 = 0;
 				}
 
 				v31 = 0;
@@ -4595,31 +4593,32 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					++v35;
 					++v31;
 				} while (v28 != -1);
-				for (int v21 = 1; v21 <= 100; v21++) {
-					_vm->_globals.ZONEP[v21]._destX = (int16)READ_LE_UINT16(v17 + 2 * v33);
-					_vm->_globals.ZONEP[v21]._destY = (int16)READ_LE_UINT16(v17 + 2 * v33 + 2);
-					_vm->_globals.ZONEP[v21].field4 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 4);
+				for (int i = 1; i <= 100; i++) {
+					_vm->_globals.ZONEP[i]._destX = (int16)READ_LE_UINT16(v17 + 2 * v33);
+					_vm->_globals.ZONEP[i]._destY = (int16)READ_LE_UINT16(v17 + 2 * v33 + 2);
+					_vm->_globals.ZONEP[i].field4 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 4);
 					v33 += 3;
 				}
 
-				v22 = ptr + v42 + (10 * v31 + 606) + 4;
-				v29 = 0;
-				for (int v24 = 1; v24 <= 100; v24++) {
-					_vm->_globals.ZONEP[v24].field6 = *(v29 + v22);
-					_vm->_globals.ZONEP[v24].field7 = *(v22 + v29 + 1);
-					_vm->_globals.ZONEP[v24].field8 = *(v22 + v29 + 2);
-					_vm->_globals.ZONEP[v24].field9 = *(v22 + v29 + 3);
-					_vm->_globals.ZONEP[v24].fieldA = *(v22 + v29 + 4);
-					_vm->_globals.ZONEP[v24].fieldB = *(v22 + v29 + 5);
-					_vm->_globals.ZONEP[v24].fieldC = *(v22 + v29 + 6);
-					_vm->_globals.ZONEP[v24].fieldD = *(v22 + v29 + 7);
-					_vm->_globals.ZONEP[v24].fieldE = *(v22 + v29 + 8);
-					_vm->_globals.ZONEP[v24].fieldF = *(v22 + v29 + 9);
-					v29 += 10;
+				v22 = ptr + idx + (10 * v31 + 606) + 4;
+				for (int i = 1; i <= 100; i++) {
+					int j = (i - 1) * 10;
+					_vm->_globals.ZONEP[i].field6 = v22[j];
+					_vm->_globals.ZONEP[i].field7 = v22[j + 1];
+					_vm->_globals.ZONEP[i].field8 = v22[j + 2];
+					_vm->_globals.ZONEP[i].field9 = v22[j + 3];
+					_vm->_globals.ZONEP[i].fieldA = v22[j + 4];
+					_vm->_globals.ZONEP[i].fieldB = v22[j + 5];
+					_vm->_globals.ZONEP[i].fieldC = v22[j + 6];
+					_vm->_globals.ZONEP[i].fieldD = v22[j + 7];
+					_vm->_globals.ZONEP[i].fieldE = v22[j + 8];
+					_vm->_globals.ZONEP[i].fieldF = v22[j + 9];
 				}
-				v30 = 0;
-				for (int v25 = 1; v25 <= 100; v25++)
-					_vm->_globals.ZONEP[v25].field12 = (int16)READ_LE_UINT16(v22 + 1010 + 2 * v30++);
+				int dep = 1010;
+				for (int i = 1; i <= 100; i++) {
+					_vm->_globals.ZONEP[i].field12 = (int16)READ_LE_UINT16(v22 + dep);
+					dep += 2;
+				}
 				CARRE_ZONE();
 			}
 		}
@@ -4627,12 +4626,73 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	_vm->_globals.freeMemory(ptr);
 }
 
-void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
-	if (_vm->_globals._screenId == 73 && !_vm->_globals._saveData->data[svField318]) {
-		_vm->_globals.CACHE_SUB(0);
-		_vm->_globals.CACHE_SUB(1);
-	}
-	if ((uint16)(_vm->_globals._screenId - 35) <= 6u) {
+void ObjectsManager::SPECIAL_INI() {
+	switch (_vm->_globals._screenId) {
+	case 17:
+		if (_vm->_globals.OLD_ECRAN == 20) {
+			_vm->_globals._disableInventFl = true;
+			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+			_vm->_globals.BPP_NOAFF = true;
+			for (int i = 0; i <= 4; i++)
+				_vm->_eventsManager.VBL();
+			_vm->_globals.BPP_NOAFF = false;
+			_vm->_graphicsManager.FADE_INW();
+			SPRITE_ON(0);
+			for (int i = 0; i <= 4; i++)
+				_vm->_eventsManager.VBL();
+			VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
+			_vm->_fontManager.hideText(9);
+			if (!_vm->_soundManager._textOffFl) {
+				_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals.FICH_TEXTE, 220, 72, 20, 25, 6, 36, 253);
+				if (!_vm->_soundManager._textOffFl)
+					_vm->_fontManager.showText(9);
+			}
+			if (!_vm->_soundManager._voiceOffFl)
+				_vm->_soundManager.mixVoice(383, 4);
+			_vm->_globals._saveData->data[svField270] = 1;
+			_vm->_globals._saveData->data[svField300] = 1;
+			_vm->_globals._saveData->data[svField320] = 1;
+			if (_vm->_soundManager._voiceOffFl) {
+				for (int i = 0; i <= 199; i++)
+					_vm->_eventsManager.VBL();
+			}
+			_vm->_fontManager.hideText(9);
+			VBOB_OFF(5);
+			for (int i = 0; i <= 3; i++)
+				_vm->_eventsManager.VBL();
+			_vm->_graphicsManager._noFadingFl = true;
+			_vm->_globals._disableInventFl = false;
+		}
+		break;
+
+	case 18:
+		if (_vm->_globals.OLD_ECRAN == 17) {
+			_vm->_eventsManager._mouseSpriteId = 4;
+			_vm->_globals.BPP_NOAFF = true;
+			for (int i = 0; i <= 4; i++)
+				_vm->_eventsManager.VBL();
+			_vm->_globals.BPP_NOAFF = false;
+			_vm->_graphicsManager.FADE_INW();
+			_vm->_globals.iRegul = 1;
+			_vm->_globals._disableInventFl = false;
+			_vm->_graphicsManager._noFadingFl = true;
+			_vm->_globals.NOPARLE = true;
+			_vm->_talkManager.PARLER_PERSO("MAGE1.pe2");
+			_vm->_graphicsManager._noFadingFl = true;
+			_vm->_globals._disableInventFl = false;
+		}
+		break;
+
+	case 35:
+	case 36:
+	case 37:
+	case 38:
+	case 39:
+	case 40:
+	case 41:
 		_vm->_globals.BOBZONE[20] = 1;
 		_vm->_globals.BOBZONE[21] = 2;
 		_vm->_globals.BOBZONE[22] = 3;
@@ -4641,74 +4701,31 @@ void ObjectsManager::SPECIAL_INI(const Common::String &a1) {
 		_vm->_globals.BOBZONE_FLAG[21] = true;
 		_vm->_globals.BOBZONE_FLAG[22] = true;
 		_vm->_globals.BOBZONE_FLAG[23] = true;
-		VERBE_ON(20, 5);
-		VERBE_ON(21, 5);
-		VERBE_ON(22, 5);
-		VERBE_ON(23, 5);
+		enableVerb(20, 5);
+		enableVerb(21, 5);
+		enableVerb(22, 5);
+		enableVerb(23, 5);
 		_vm->_globals.ZONEP[20].field12 = 30;
 		_vm->_globals.ZONEP[21].field12 = 30;
 		_vm->_globals.ZONEP[22].field12 = 30;
 		_vm->_globals.ZONEP[23].field12 = 30;
-		for (int v2 = 200; v2 <= 214; v2++) {
-			if (_vm->_globals._saveData->data[v2] != 2)
-				_vm->_globals._saveData->data[v2] = 0;
+		for (int i = 200; i <= 214; i++) {
+			if (_vm->_globals._saveData->data[i] != 2)
+				_vm->_globals._saveData->data[i] = 0;
 		}
-	}
-	if (_vm->_globals._screenId == 93) {
+		break;
+
+	case 73:
+		if (!_vm->_globals._saveData->data[svField318]) {
+			_vm->_globals.CACHE_SUB(0);
+			_vm->_globals.CACHE_SUB(1);
+		}
+		break;
+
+	case 93:
 		if (!_vm->_globals._saveData->data[svField333])
 			setBobAnimation(8);
-	}
-	if (_vm->_globals._screenId == 18 && _vm->_globals.OLD_ECRAN == 17) {
-		_vm->_eventsManager._mouseSpriteId = 4;
-		_vm->_globals.BPP_NOAFF = true;
-		for (int v3 = 0; v3 <= 4; v3++)
-			_vm->_eventsManager.VBL();
-		_vm->_globals.BPP_NOAFF = false;
-		_vm->_graphicsManager.FADE_INW();
-		_vm->_globals.iRegul = 1;
-		_vm->_globals._disableInventFl = false;
-		_vm->_graphicsManager._noFadingFl = true;
-		_vm->_globals.NOPARLE = true;
-		_vm->_talkManager.PARLER_PERSO("MAGE1.pe2");
-		_vm->_graphicsManager._noFadingFl = true;
-		_vm->_globals._disableInventFl = false;
-	}
-	if (_vm->_globals._screenId == 17 && _vm->_globals.OLD_ECRAN == 20) {
-		_vm->_globals._disableInventFl = true;
-		_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-		_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-		_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-		_vm->_globals.BPP_NOAFF = true;
-		for (int v4 = 0; v4 <= 4; v4++)
-			_vm->_eventsManager.VBL();
-		_vm->_globals.BPP_NOAFF = false;
-		_vm->_graphicsManager.FADE_INW();
-		SPRITE_ON(0);
-		for (int v5 = 0; v5 <= 4; v5++)
-			_vm->_eventsManager.VBL();
-		VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
-		_vm->_fontManager.hideText(9);
-		if (!_vm->_soundManager._textOffFl) {
-			_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals.FICH_TEXTE, 220, 72, 20, 25, 6, 36, 253);
-			if (!_vm->_soundManager._textOffFl)
-				_vm->_fontManager.showText(9);
-		}
-		if (!_vm->_soundManager._voiceOffFl)
-			_vm->_soundManager.mixVoice(383, 4);
-		_vm->_globals._saveData->data[svField270] = 1;
-		_vm->_globals._saveData->data[svField300] = 1;
-		_vm->_globals._saveData->data[svField320] = 1;
-		if (_vm->_soundManager._voiceOffFl) {
-			for (int v6 = 0; v6 <= 199; v6++)
-				_vm->_eventsManager.VBL();
-		}
-		_vm->_fontManager.hideText(9);
-		VBOB_OFF(5);
-		for (int v7 = 0; v7 <= 3; v7++)
-			_vm->_eventsManager.VBL();
-		_vm->_graphicsManager._noFadingFl = true;
-		_vm->_globals._disableInventFl = false;
+		break;
 	}
 }
 
@@ -4747,156 +4764,135 @@ void ObjectsManager::SCI_OPTI_ONE(int idx, int a2, int a3, int a4) {
 		stopBobAnimation(idx);
 }
 
-void ObjectsManager::VERBE_OFF(int idx, int a2) {
-	if (a2 == 6) {
+void ObjectsManager::disableVerb(int idx, int a2) {
+	switch (a2) {
+	case 6:
+	case 16:
 		_vm->_globals.ZONEP[idx].field6 = 0;
-	}
-	if (a2 == 7) {
+		break;
+	case 7:
 		_vm->_globals.ZONEP[idx].field7 = 0;
-	}
-	if (a2 == 8) {
+		break;
+	case 5:
+	case 8:
 		_vm->_globals.ZONEP[idx].field8 = 0;
-	}
-	if (a2 == 9) {
+		break;
+	case 9:
+	case 17:
+	case 24:
 		_vm->_globals.ZONEP[idx].field9 = 0;
-	}
-	if (a2 == 10) {
+		break;
+	case 10:
+	case 18:
 		_vm->_globals.ZONEP[idx].fieldA = 0;
-	}
-	if (a2 == 11) {
+		break;
+	case 11:
+	case 19:
 		_vm->_globals.ZONEP[idx].fieldB = 0;
-	}
-	if (a2 == 12) {
+		break;
+	case 12:
+	case 20:
 		_vm->_globals.ZONEP[idx].fieldC = 0;
-	}
-	if (a2 == 13) {
+		break;
+	case 13:
+	case 22:
 		_vm->_globals.ZONEP[idx].fieldD = 0;
-	}
-	if (a2 == 14 || a2 == 25) {
+	case 14:
+	case 21:
+	case 25:
 		_vm->_globals.ZONEP[idx].fieldE = 0;
-	}
-	if (a2 == 15) {
+		break;
+	case 15:
 		_vm->_globals.ZONEP[idx].fieldF = 0;
-	}
-	if (a2 == 16) {
-		_vm->_globals.ZONEP[idx].field6 = 0;
-	}
-	if (a2 == 5) {
-		_vm->_globals.ZONEP[idx].field8 = 0;
-	}
-	if (a2 == 17) {
-		_vm->_globals.ZONEP[idx].field9 = 0;
-	}
-	if (a2 == 18) {
-		_vm->_globals.ZONEP[idx].fieldA = 0;
-	}
-	if (a2 == 19) {
-		_vm->_globals.ZONEP[idx].fieldB = 0;
-	}
-	if (a2 == 20) {
-		_vm->_globals.ZONEP[idx].fieldC = 0;
-	}
-	if (a2 == 22) {
-		_vm->_globals.ZONEP[idx].fieldD = 0;
-	}
-	if (a2 == 21) {
-		_vm->_globals.ZONEP[idx].fieldE = 0;
-	}
-	if (a2 == 24) {
-		_vm->_globals.ZONEP[idx].field9 = 0;
+		break;
 	}
 	_changeVerbFl = true;
 }
 
-void ObjectsManager::VERBE_ON(int idx, int a2) {
-	if (a2 == 6) {
-		_vm->_globals.ZONEP[idx].field6 = 1;
-	}
-	if (a2 == 7) {
-		_vm->_globals.ZONEP[idx].field7 = 1;
-	}
-	if (a2 == 8) {
-		_vm->_globals.ZONEP[idx].field8 = 1;
-	}
-	if (a2 == 9) {
-		_vm->_globals.ZONEP[idx].field9 = 1;
-	}
-	if (a2 == 10) {
-		_vm->_globals.ZONEP[idx].fieldA = 1;
-	}
-	if (a2 == 11) {
-		_vm->_globals.ZONEP[idx].fieldB = 1;
-	}
-	if (a2 == 12) {
-		_vm->_globals.ZONEP[idx].fieldC = 1;
-	}
-	if (a2 == 13) {
-		_vm->_globals.ZONEP[idx].fieldD = 1;
-	}
-	if (a2 == 14) {
-		_vm->_globals.ZONEP[idx].fieldD = 1;
-	}
-	if (a2 == 15) {
-		_vm->_globals.ZONEP[idx].fieldE = 1;
-	}
-	if (a2 == 16) {
-		_vm->_globals.ZONEP[idx].field6 = 2;
-	}
-	if (a2 == 5) {
+void ObjectsManager::enableVerb(int idx, int a2) {
+	switch (a2) {
+	case 5:
 		_vm->_globals.ZONEP[idx].field8 = 2;
-	}
-	if (a2 == 17) {
+		break;
+	case 6:
+		_vm->_globals.ZONEP[idx].field6 = 1;
+		break;
+	case 7:
+		_vm->_globals.ZONEP[idx].field7 = 1;
+		break;
+	case 8:
+		_vm->_globals.ZONEP[idx].field8 = 1;
+		break;
+	case 9:
+		_vm->_globals.ZONEP[idx].field9 = 1;
+		break;
+	case 10:
+		_vm->_globals.ZONEP[idx].fieldA = 1;
+		break;
+	case 11:
+		_vm->_globals.ZONEP[idx].fieldB = 1;
+		break;
+	case 12:
+		_vm->_globals.ZONEP[idx].fieldC = 1;
+		break;
+	case 13:
+		_vm->_globals.ZONEP[idx].fieldD = 1;
+		break;
+	case 14:
+		_vm->_globals.ZONEP[idx].fieldD = 1;
+		break;
+	case 15:
+		_vm->_globals.ZONEP[idx].fieldE = 1;
+		break;
+	case 16:
+		_vm->_globals.ZONEP[idx].field6 = 2;
+		break;
+	case 17:
 		_vm->_globals.ZONEP[idx].field9 = 2;
-	}
-	if (a2 == 18) {
+		break;
+	case 18:
 		_vm->_globals.ZONEP[idx].fieldA = 2;
-	}
-	if (a2 == 19) {
+		break;
+	case 19:
 		_vm->_globals.ZONEP[idx].fieldB = 2;
-	}
-	if (a2 == 20) {
+		break;
+	case 20:
 		_vm->_globals.ZONEP[idx].fieldC = 2;
-	}
-	if (a2 == 22) {
+		break;
+	case 21:
+		_vm->_globals.ZONEP[idx].fieldE = 2;
+		break;
+	case 22:
 		_vm->_globals.ZONEP[idx].fieldD = 2;
-	}
-	if (a2 == 21) {
-		_vm->_globals.ZONEP[idx].fieldE = 2;
-	}
-	if (a2 == 24) {
+		break;
+	case 24:
 		_vm->_globals.ZONEP[idx].field9 = 3;
-	}
-	if (a2 == 25) {
+		break;
+	case 25:
 		_vm->_globals.ZONEP[idx].fieldE = 2;
+		break;
 	}
 }
 
 int ObjectsManager::CALC_PROPRE(int idx) {
-	int v1;
-	int v2;
-	int v3;
-	int v4;
-
-	v1 = 25;
-	v2 = _vm->_globals.STAILLE[idx];
+	int retVal = 25;
+	int size = _vm->_globals.STAILLE[idx];
 	if (_vm->_globals.PERSO_TYPE == 1) {
-		v3 = _vm->_globals.STAILLE[idx];
-		if (v2 < 0)
-			v3 = -v2;
-		v2 = 20 * (5 * v3 - 100) / -80;
+		if (size < 0)
+			size = -size;
+		size = 20 * (5 * size - 100) / -80;
+	} else if (_vm->_globals.PERSO_TYPE == 2) {
+		if (size < 0)
+			size = -size;
+		size = 20 * (5 * size - 165) / -67;
 	}
-	if (_vm->_globals.PERSO_TYPE == 2) {
-		v4 = v2;
-		if (v2 < 0)
-			v4 = -v2;
-		v2 = 20 * (5 * v4 - 165) / -67;
-	}
-	if (v2 < 0)
-		return _vm->_graphicsManager.zoomOut(25, -v2);
-	if (v2 > 0)
-		return _vm->_graphicsManager.zoomIn(25, v2);
 
-	return v1;
+	if (size < 0)
+		retVal = _vm->_graphicsManager.zoomOut(25, -size);
+	else if (size > 0)
+		retVal = _vm->_graphicsManager.zoomIn(25, size);
+
+	return retVal;
 }
 
 int ObjectsManager::colision(int xp, int yp) {
@@ -5121,74 +5117,72 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 	}
 }
 
-void ObjectsManager::TEST_FORET(int screenId, int minX, int maxX, int minY, int maxY, int a6) {
-	int v6 = screenId;
+void ObjectsManager::TEST_FORET(int screenId, int minX, int maxX, int minY, int maxY, int idx) {
+	int savegameIdx = screenId;
 	if (_vm->_globals._screenId != screenId)
 		return;
 
 	switch (_vm->_globals._screenId) {
 	case 35:
-		if (a6 > 2)
-			v6 = 201;
+		if (idx > 2)
+			savegameIdx = 201;
 		else
-			v6 = 200;
+			savegameIdx = 200;
 		break;
 	case 36:
-		if (a6 > 2)
-			v6 = 203;
+		if (idx > 2)
+			savegameIdx = 203;
 		else 
-			v6 = 202;
+			savegameIdx = 202;
 		break;
 	case 37:
-		if (a6 > 2)
-			v6 = 205;
+		if (idx > 2)
+			savegameIdx = 205;
 		else
-			v6 = 204;
+			savegameIdx = 204;
 		break;
 	case 38:
-		if (a6 > 2)
-			v6 = 207;
+		if (idx > 2)
+			savegameIdx = 207;
 		else
-			v6 = 206;
+			savegameIdx = 206;
 		break;
 	case 39:
-		if (a6 > 2)
-			v6 = 209;
+		if (idx > 2)
+			savegameIdx = 209;
 		else
-			v6 = 208;
+			savegameIdx = 208;
 		break;
 	case 40:
-		if (a6 > 2)
-			v6 = 211;
+		if (idx > 2)
+			savegameIdx = 211;
 		else
-			v6 = 210;
+			savegameIdx = 210;
 		break;
 	case 41:
-		if (a6 > 2)
-			v6 = 213;
+		if (idx > 2)
+			savegameIdx = 213;
 		else
-			v6 = 212;
+			savegameIdx = 212;
 		break;
 	}
 
-	if (_vm->_globals._saveData->data[v6] == 2)
+	if (_vm->_globals._saveData->data[savegameIdx] == 2)
 		return;
 
-	if (_vm->_globals._saveData->data[v6]) {
-		if (_vm->_globals._saveData->data[v6] == 1) {
-			if ((a6 == 1 && BOBPOSI(1) == 26) || (a6 == 2 && BOBPOSI(2) == 26) ||
-			    (a6 == 3 && BOBPOSI(3) == 27) || (a6 == 4 && BOBPOSI(4) == 27)) {
+	if (_vm->_globals._saveData->data[savegameIdx]) {
+		if (_vm->_globals._saveData->data[savegameIdx] == 1) {
+			if (((idx == 1 || idx == 2) && BOBPOSI(idx) == 26) || ((idx == 3 || idx == 4) && BOBPOSI(idx) == 27)) {
 				_vm->_dialogsManager._removeInventFl = true;
 				_vm->_soundManager.PLAY_SAMPLE2(1);
-				_vm->_globals._saveData->data[v6] = 4;
+				_vm->_globals._saveData->data[savegameIdx] = 4;
 			}
 		}
-		if (_vm->_globals._saveData->data[v6] == 4) {
-			if ((a6 == 1 && BOBPOSI(1) > 30) || (a6 == 2 && BOBPOSI(2) > 30) ||
-			    (a6 == 3 && BOBPOSI(3) > 30) || (a6 == 4 && BOBPOSI(4) > 30))
-				_vm->_globals._saveData->data[v6] = 3;
+		if (_vm->_globals._saveData->data[savegameIdx] == 4) {
+			if (idx >= 1 && idx <= 4 && BOBPOSI(idx) > 30)
+				_vm->_globals._saveData->data[savegameIdx] = 3;
 		}
-		if (_vm->_globals._saveData->data[v6] == 3) {
+		if (_vm->_globals._saveData->data[savegameIdx] == 3) {
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			_vm->_animationManager.playAnim("CREVE2.ANM", 100, 24, 500);
 			_vm->_globals._exitId = 150;
@@ -5202,15 +5196,9 @@ void ObjectsManager::TEST_FORET(int screenId, int minX, int maxX, int minY, int 
 	           && maxX > getSpriteX(0)
 	           && minY < getSpriteY(0)
 	           && maxY > getSpriteY(0)) {
-		if (a6 == 1)
-			setBobAnimation(1);
-		else if (a6 == 2)
-			setBobAnimation(2);
-		else if (a6 == 3)
-			setBobAnimation(3);
-		else if (a6 == 4)
-			setBobAnimation(4);
-		_vm->_globals._saveData->data[v6] = 1;
+		if (idx >= 1 && idx <= 4)
+			setBobAnimation(idx);
+		_vm->_globals._saveData->data[savegameIdx] = 1;
 	}
 }
 
@@ -5398,7 +5386,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_globals.CACHE_ON();
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	VERIFTAILLE();
-	SPECIAL_INI(linkFile);
+	SPECIAL_INI();
 	_vm->_eventsManager._mouseSpriteId = 4;
 	g_old_x = _characterPos.x;
 	g_old_y = _characterPos.y;

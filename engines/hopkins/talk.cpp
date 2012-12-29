@@ -806,11 +806,9 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int a3, int
 	int v10;
 	int v11;
 	int v12;
-	char v13;
 	int v14;
 	int v15;
 	int v16;
-	char v17;
 	int v18;
 	int v22;
 	int v23;

@@ -2257,7 +2257,7 @@ LABEL_1141:
 			_vm->_soundManager.playSound("SOUND89.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 6, 0);
 			_vm->_globals.ZONEP[4]._destX = 276;
-			_vm->_objectsManager.VERBE_ON(4, 19);
+			_vm->_objectsManager.enableVerb(4, 19);
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
 			_vm->_globals._saveData->data[svField399] = 1;
 			break;
@@ -2432,7 +2432,7 @@ LABEL_1141:
 		opcodeType = 1;
 		_vm->_objectsManager.BOB_OFFSET((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
 	} else if (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'N') {
-		_vm->_objectsManager.VERBE_ON((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
+		_vm->_objectsManager.enableVerb((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
 		opcodeType = 1;
 	} else if (dataP[2] == 'Z' && dataP[3] == 'C' && dataP[4] == 'H') {
 		_vm->_globals.ZONEP[(int16)READ_LE_UINT16(dataP + 5)].field12 = (int16)READ_LE_UINT16(dataP + 7);
@@ -2449,7 +2449,7 @@ LABEL_1141:
 		_vm->_soundManager.playSound(file);
 		opcodeType = 1;
 	} else if (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'F') {
-		_vm->_objectsManager.VERBE_OFF((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
+		_vm->_objectsManager.disableVerb((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
 		opcodeType = 1;
 	} else if (dataP[2] == 'I' && dataP[3] == 'I' && dataP[4] == 'F') {
 		opcodeType = 3;
