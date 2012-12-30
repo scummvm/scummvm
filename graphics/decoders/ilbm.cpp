@@ -207,10 +207,10 @@ void ILBMDecoder::decompressRLE(Common::SeekableReadStream &stream, byte *scanli
 }
 
 void ILBMDecoder::packPixels(byte *scanlines, byte *data, const uint16 scanlinePitch) {
-	uint32 numPixels = _outPitch;
+	uint32 numPixels = _header.width;
 
 	if (_packPixels)
-		numPixels *= (8 / _numRelevantPlanes);
+		numPixels = _outPitch * (8 / _numRelevantPlanes);
 
 	for (uint32 x = 0; x < numPixels; ++x) {
 		byte *scanline = scanlines;
