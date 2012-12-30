@@ -376,11 +376,11 @@ LABEL_7:
 		// Turn on drawing the inventory dialog in the event manager
 		_inventDisplayedFl = true;
 
-		int v8 = _vm->_eventsManager.getMouseX();
-		int v9 = _vm->_eventsManager.getMouseY();
+		int mousePosX = _vm->_eventsManager.getMouseX();
+		int mousePosY = _vm->_eventsManager.getMouseY();
 		int v12 = _vm->_eventsManager.getMouseButton();
 		int v10 = v13;
-		int v11 = _vm->_linesManager.ZONE_OBJET(v8, v9);
+		int v11 = _vm->_linesManager.ZONE_OBJET(mousePosX, mousePosY);
 		v13 = v11;
 		if (v11 != v10)
 			_vm->_objectsManager.initBorder(v11);
@@ -398,7 +398,6 @@ LABEL_7:
 		if (v12 == 1) {
 			if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId || (uint16)(_vm->_eventsManager._mouseCursorId - 2) <= 1u)
 				break;
-			v9 = v13;
 			_vm->_objectsManager.VALID_OBJET(_vm->_globals._inventory[v13]);
 			if (_vm->_eventsManager._mouseCursorId == 8)
 				v20 = true;

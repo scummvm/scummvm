@@ -233,7 +233,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
-				if (!_globals.CENSURE)
+				if (!_globals._censorshipFl)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				else
 					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
@@ -560,7 +560,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_graphicsManager.clearPalette();
 				_graphicsManager.FADE_LINUX = 2;
 
-				if (!_globals.CENSURE)
+				if (!_globals._censorshipFl)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				else
 					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
@@ -2675,7 +2675,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
-				if (!_globals.CENSURE)
+				if (!_globals._censorshipFl)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				else
 					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
@@ -3554,7 +3554,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
 				_graphicsManager.FADE_LINUX = 2;
-				if (!_globals.CENSURE)
+				if (!_globals._censorshipFl)
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				else
 					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
@@ -4438,7 +4438,7 @@ void HopkinsEngine::initializeSystem() {
 	_eventsManager.setMouseOn();
 	_eventsManager._mouseFl = false;
 
-	_globals.HOPKINS_DATA();
+	_globals.loadCharacterData();
 
 	_eventsManager._mouseOffset.x = 0;
 	_eventsManager._mouseOffset.y = 0;

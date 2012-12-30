@@ -217,7 +217,7 @@ Globals::Globals() {
 	OPTION_SPR = NULL;
 
 	// Reset flags
-	CENSURE = false;
+	_censorshipFl = false;
 	GESTE_FLAG = 0;
 	BPP_NOAFF = false;
 	_disableInventFl = false;
@@ -330,9 +330,6 @@ void Globals::setConfig() {
 }
 
 void Globals::clearAll() {
-	// TODO: The original allocated an explicit memory block for the null pointer
-	// to point to. For now, we're seeing if the NULL value will do as well
-
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = g_PTRNUL;
 
@@ -381,9 +378,9 @@ void Globals::clearAll() {
 		_vm->_linesManager.Ligne[idx].field8 = 0;
 		_vm->_linesManager.Ligne[idx].lineData = (int16 *)g_PTRNUL;
 
-		_vm->_linesManager.LigneZone[idx].count = 0;
-		_vm->_linesManager.LigneZone[idx].field2 = 0;
-		_vm->_linesManager.LigneZone[idx].zoneData = (int16 *)g_PTRNUL;
+		_vm->_linesManager._zoneLine[idx].count = 0;
+		_vm->_linesManager._zoneLine[idx].field2 = 0;
+		_vm->_linesManager._zoneLine[idx].zoneData = (int16 *)g_PTRNUL;
 	}
 
 	for (int idx = 0; idx < 100; ++idx) {
@@ -415,7 +412,7 @@ void Globals::clearAll() {
 	GESTE_FLAG = 0;
 }
 
-void Globals::HOPKINS_DATA() {
+void Globals::loadCharacterData() {
 	assert(PERSO_TYPE >= 0 && PERSO_TYPE <= 2);
 
 	const int *srcList[] = { HOPKINS_PERSO_0, HOPKINS_PERSO_1, HOPKINS_PERSO_2 };

@@ -69,17 +69,15 @@ int FileManager::readStream(Common::ReadStream &stream, void *buf, size_t nbytes
  * Initialize censorship based on blood.dat file
  */
 void FileManager::initCensorship() {
-	_vm->_globals.CENSURE = false;
+	_vm->_globals._censorshipFl = false;
 
 	// If file doesn't exist, fallback to uncensored
 	if (!fileExists(_vm->_globals.HOPSYSTEM, "BLOOD.DAT")) {
 		constructFilename(_vm->_globals.HOPSYSTEM, "BLOOD.DAT");
 		char *data = (char *)loadFile(_vm->_globals._curFilename);
 
-		if (*(data + 6) == 'u' && *(data + 7) == 'k')
-			_vm->_globals.CENSURE = true;
-		if (*(data + 6) == 'U' && *(data + 7) == 'K')
-			_vm->_globals.CENSURE = true;
+		if ((data[6] == 'u' && data[7] == 'k') || (data[6] == 'U' && data[7] == 'K'))
+			_vm->_globals._censorshipFl = true;
 
 		free(data);
 	}

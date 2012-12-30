@@ -292,10 +292,10 @@ int TalkManager::DIALOGUE() {
 	v21 = v20 - 20 * v3;
 	v18 = v20 - 20 * v3 - 1;
 	v4 = v20 - 20 * v3 - 20 * v2;
-	_vm->_fontManager.initTextBuffers(5, PLIGNE1, _questionsFilename, 5, v4 - 20 * v19, 0, 0, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(6, PLIGNE2, _questionsFilename, 5, v4, 0, 0, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(7, PLIGNE3, _questionsFilename, 5, v21, 0, 0, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(8, PLIGNE4, _questionsFilename, 5, v20, 0, 0, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(5, PLIGNE1, _questionsFilename, 5, v4 - 20 * v19, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(6, PLIGNE2, _questionsFilename, 5, v4, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(7, PLIGNE3, _questionsFilename, 5, v21, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(8, PLIGNE4, _questionsFilename, 5, v20, 0, 65, 255);
 	_vm->_fontManager.showText(5);
 	_vm->_fontManager.showText(6);
 	_vm->_fontManager.showText(7);
@@ -444,7 +444,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	}
 
 	if (!_vm->_soundManager._textOffFl) {
-		_vm->_fontManager.initTextBuffers(9, v22, _answersFilename, v25, v24, 20, 25, 5, v23, 252);
+		_vm->_fontManager.initTextBuffers(9, v22, _answersFilename, v25, v24, 5, v23, 252);
 		_vm->_fontManager.showText(9);
 	}
 	if (!_vm->_soundManager.mixVoice(v22, 1)) {

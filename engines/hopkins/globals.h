@@ -354,7 +354,7 @@ public:
 	int SOUNDVOL;
 	int MUSICVOL;
 	int VOICEVOL;
-	bool CENSURE;
+	bool _censorshipFl;
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;
 	int _lastDirection;
@@ -473,7 +473,7 @@ public:
 
 	void setConfig();
 	void clearAll();
-	void HOPKINS_DATA();
+	void loadCharacterData();
 	void INIT_ANIM();
 	void INIT_VBOB();
 	void CLEAR_VBOB();

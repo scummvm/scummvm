@@ -110,7 +110,7 @@ void FontManager::setOptimalColor(int idx1, int idx2, int idx3, int idx4) {
 /**
  * Init text structure
  */
-void FontManager::initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int textType, int a9, int color) {
+void FontManager::initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int a9, int color) {
 	if ((idx - 5) > MAX_TEXT)
 		error("Attempted to display text > MAX_TEXT.");
 
@@ -120,8 +120,6 @@ void FontManager::initTextBuffers(int idx, int messageId, const Common::String &
 	txt._pos.x = xp;
 	txt._pos.y = yp;
 	txt._messageId = messageId;
-	txt._fieldE = a6; // Useless variable
-	txt._field10 = a7; // Useless variable
 	txt._textType = textType;
 	txt._field3FE = a9;
 	txt._color = color;
@@ -236,9 +234,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		if (v69) {
 			int v64 = 0;
 			for (;;) {
-				byte v14 = *(v60 + v64);
+				byte v14 = v60[v64];
 				if (v14 == '\r' || v14 == '\n') {
-					*(v60 + v64) = 0;
+					v60[v64] = 0;
 					if (!_text[idx]._field3FE)
 						break;
 				}
@@ -250,9 +248,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_vm->_globals._boxWidth = 0;
 
 			for (int v15 = 0; v15 < v64 + 1; v15++) {
-				byte v16 = *(v60 + v15);
+				byte v16 = v60[v15];
 				if (v16 <= 31)
-					v16 = 32;
+					v16 = ' ';
 				_vm->_globals._boxWidth += _vm->_objectsManager.getWidth(_vm->_globals.police, v16 - 32);
 			}
 
@@ -272,7 +270,6 @@ LABEL_43:
 				_vm->_globals._boxWidth = 240;
 			int v65 = 0;
 			byte *v61 = _tempText;
-			int v21;
 			int lineSize;
 			do {
 				int v19 = 0;
@@ -280,7 +277,7 @@ LABEL_43:
 				for (;;) {
 					lineSize = v19;
 					do
-						v11 = *(v61 + v65 + v19++);
+						v11 = v61[v65 + v19++];
 					while (v11 != ' ' && v11 != '%');
 					if (v19 >= ptrb / _vm->_globals.police_l)
 						break;
@@ -298,21 +295,19 @@ LABEL_55:
 					lineSize = v19;
 LABEL_57:
 				int v20 = lineCount;
-				v21 = v11;
 
 				// WORKAROUND: Perhaps due to the usage of ScummVM strings here, recalculate what the
 				// actual length of the line to be copied will be. Otherwise, you can see artifacts,
 				// such as a single character beyond the end of string NULL.
 				int actualSize = 0;
-				while (actualSize < lineSize && *(v61 + v65 + actualSize))
+				while (actualSize < lineSize && v61[v65 + actualSize])
 					++actualSize;
 
 				_text[idx]._lines[v20] = Common::String((const char *)v61 + v65, actualSize);
 				_textSortArray[lineCount++] = lineSize;
 
 				v65 += lineSize;
-				v11 = v21;
-			} while (v21 != '%');
+			} while (v11 != '%');
 
 			for (int i = 0; i <= 19; i++) {
 				if (_textSortArray[i] <= 0) {

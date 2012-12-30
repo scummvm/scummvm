@@ -54,7 +54,7 @@ class LinesManager {
 private:
 	HopkinsEngine *_vm;
 public:
-	LigneZoneItem LigneZone[401];
+	LigneZoneItem _zoneLine[401];
 	LigneItem Ligne[400];
 	SmoothItem SMOOTH[4000];
 	int next_ligne;
@@ -71,14 +71,14 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	void CLEAR_ZONE();
-	int ZONE_OBJET(int a1, int a2);
-	int OPTI_ZONE(int a1, int a2, int a3);
-	void RETIRE_LIGNE_ZONE(int idx);
-	void AJOUTE_LIGNE_ZONE(int idx, int a2, int a3, int a4, int a5, int a6);
+	int ZONE_OBJET(int posX, int posY);
+	int OPTI_ZONE(int posX, int minZoneNum, bool lastRow);
+	void removeZoneLine(int idx);
+	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
 	void RESET_OBSTACLE();
 	void RETIRE_LIGNE(int idx);
 	void AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
-	int colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6);
+	bool colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6);
 	int Scolision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6);
 	void INIPARCOURS();
 	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9);

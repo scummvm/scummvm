@@ -39,8 +39,6 @@ struct TxtItem {
 	Common::String _filename;
 	Common::Point _pos;
 	int _messageId;
-	int _fieldE; // Useless variable
-	int _field10; // Useless variable
 	int _lineCount;
 	Common::String _lines[10];
 	int _textType;
@@ -79,7 +77,7 @@ public:
 	void hideText(int idx);
 	void setTextColor(int idx, byte colByte);
 	void setOptimalColor(int idx1, int idx2, int idx3, int idx4);
-	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int a6, int a7, int textType, int a9, int a10);
+	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int a9, int color);
 	void box(int idx, int messageId, const Common::String &filename, int xp, int yp);
 
 	void displayTextVesa(int xp, int yp, const Common::String &message, int col);

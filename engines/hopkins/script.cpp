@@ -133,7 +133,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				} while (_vm->_soundManager._soundFl);
 			}
 			if (!_vm->_soundManager._textOffFl) {
-				_vm->_fontManager.initTextBuffers(9, mesgId, _vm->_globals.FICH_TEXTE, 2 * v67, 2 * v65 + 40, 20, 25, 6, v2, 253);
+				_vm->_fontManager.initTextBuffers(9, mesgId, _vm->_globals.FICH_TEXTE, 2 * v67, 2 * v65 + 40, 6, v2, 253);
 				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
 			}
@@ -142,18 +142,18 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		}
 		if (TRAVAILOBJET) {
 			if (_vm->_globals._saveData->data[svField356]) {
-				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, 20, 25, v69, 35, 253);
+				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, v69, 35, 253);
 				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
 				if (!_vm->_soundManager._voiceOffFl)
 					_vm->_soundManager.mixVoice(635, 4);
 			} else {
 				if (_vm->_globals._language == LANG_FR && !_vm->_soundManager._textOffFl)
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * v67, 60, 6, v2, 253);
 				else if (_vm->_globals._language == LANG_EN && !_vm->_soundManager._textOffFl)
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * v67, 60, 6, v2, 253);
 				else if (_vm->_globals._language == LANG_SP && !_vm->_soundManager._textOffFl) {
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * v67, 60, 20, 25, 6, v2, 253);
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * v67, 60, 6, v2, 253);
 				}
 
 				if (!_vm->_soundManager._textOffFl)
@@ -570,7 +570,7 @@ LABEL_1141:
 			_vm->_graphicsManager.FIN_VISU();
 
 			// If uncensored, rip the throat of the hostage
-			if (!_vm->_globals.CENSURE) {
+			if (!_vm->_globals._censorshipFl) {
 				_vm->_soundManager.SPECIAL_SOUND = 16;
 				_vm->_graphicsManager.FADE_LINUX = 2;
 				_vm->_animationManager.playAnim("EGORGE.ANM", 50, 28, 500);
@@ -924,7 +924,7 @@ LABEL_1141:
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.PERSO_TYPE = 1;
 			_vm->_globals._saveData->data[svField122] = 1;
-			_vm->_globals.HOPKINS_DATA();
+			_vm->_globals.loadCharacterData();
 			_vm->_objectsManager._sprite[0].field12 = 28;
 			_vm->_objectsManager._sprite[0].field14 = 155;
 			_vm->_objectsManager.VERIFTAILLE();
@@ -935,7 +935,7 @@ LABEL_1141:
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.PERSO_TYPE = 0;
 			_vm->_globals._saveData->data[svField122] = 0;
-			_vm->_globals.HOPKINS_DATA();
+			_vm->_globals.loadCharacterData();
 			_vm->_objectsManager._sprite[0].field12 = 34;
 			_vm->_objectsManager._sprite[0].field14 = 190;
 			_vm->_objectsManager.VERIFTAILLE();
@@ -2189,7 +2189,7 @@ LABEL_1141:
 			_vm->_objectsManager.setBobAnimation(2);
 			_vm->_fontManager.hideText(9);
 			if (!_vm->_soundManager._textOffFl) {
-				_vm->_fontManager.initTextBuffers(9, 617, _vm->_globals.FICH_TEXTE, 91, 41, 20, 25, 3, 30, 253);
+				_vm->_fontManager.initTextBuffers(9, 617, _vm->_globals.FICH_TEXTE, 91, 41, 3, 30, 253);
 				_vm->_fontManager.showText(9);
 			}
 			if (!_vm->_soundManager._voiceOffFl)

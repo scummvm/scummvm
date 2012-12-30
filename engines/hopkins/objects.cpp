@@ -1538,7 +1538,7 @@ void ObjectsManager::checkZone() {
 			    _vm->_globals.ZONEP[v4].fieldC || _vm->_globals.ZONEP[v4].fieldD ||
 			    _vm->_globals.ZONEP[v4].fieldE || _vm->_globals.ZONEP[v4].fieldF) {
 				if (_vm->_globals.old_zone_68 != v4) {
-					_vm->_fontManager.initTextBuffers(5, _vm->_globals.ZONEP[v4].field12, _vm->_globals.FICH_ZONE, 0, 430, 20, 25, 0, 0, 252);
+					_vm->_fontManager.initTextBuffers(5, _vm->_globals.ZONEP[v4].field12, _vm->_globals.FICH_ZONE, 0, 430, 0, 0, 252);
 					_vm->_fontManager.showText(5);
 					_vm->_globals.zozo_73 = 1;
 				}
@@ -2230,7 +2230,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 		if (v3 != -1) {
 			v5 = v3;
 			v6 = v3;
-			_vm->_linesManager.AJOUTE_LIGNE_ZONE(
+			_vm->_linesManager.addZoneLine(
 			    v18,
 			    READ_LE_UINT16((uint16 *)ptr + v4 + 1),
 			    READ_LE_UINT16((uint16 *)ptr + v4 + 2),
@@ -2299,16 +2299,16 @@ void ObjectsManager::CARRE_ZONE() {
 	}
 
 	for (int idx = 0; idx < 400; ++idx) {
-		dataP = _vm->_linesManager.LigneZone[idx].zoneData;
+		dataP = _vm->_linesManager._zoneLine[idx].zoneData;
 		if (dataP != (int16 *)g_PTRNUL) {
-			v4 = _vm->_linesManager.LigneZone[idx].field2;
+			v4 = _vm->_linesManager._zoneLine[idx].field2;
 			_vm->_globals.CarreZone[v4].field0 = 1;
 			if (_vm->_globals.CarreZone[v4].fieldC < idx)
 				_vm->_globals.CarreZone[v4].fieldC = idx;
 			if (_vm->_globals.CarreZone[v4].fieldA > idx)
 				_vm->_globals.CarreZone[v4].fieldA = idx;
 
-			v12 = _vm->_linesManager.LigneZone[idx].count;
+			v12 = _vm->_linesManager._zoneLine[idx].count;
 			if (v12 > 0) {
 				for (int v13 = 0; v13 < v12; v13++) {
 					v5 = *dataP++;
@@ -2846,7 +2846,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals.PERSO_TYPE = 0;
 		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 34, 190);
 		SPRITE_ON(0);
-		_vm->_globals.HOPKINS_DATA();
+		_vm->_globals.loadCharacterData();
 	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
 			&& _vm->_globals._saveData->_samantha._location == _vm->_globals._screenId) {
 		CH_TETE = 0;
@@ -2872,7 +2872,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals.PERSO_TYPE = 2;
 		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 20, 127);
 		SPRITE_ON(0);
-		_vm->_globals.HOPKINS_DATA();
+		_vm->_globals.loadCharacterData();
 	} else {
 		switch (oldCharacter) {
 		case CHARACTER_HOPKINS:
@@ -3019,26 +3019,20 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v6;
 	int v7;
 	int v8;
-	int v9;
 	int v10;
 	int v11;
 	int v12;
-	int v13;
 	int v14;
 	int v15;
 	int v16;
-	int v17;
 	int v18;
 	int v19;
 	int v20;
-	int v21;
 	int16 *result;
 	int v23;
-	int v26;
 	int v27;
 	int v28;
 	int v29;
-	int v31;
 	int v32;
 	int16 *v33;
 	int v34;
@@ -3093,9 +3087,8 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v8 = 5;
 		do {
 			v62 = v8;
-			v9 = _vm->_linesManager.colision2_ligne(v75, v7, &v82[5], &v87[5], 0, DERLIGNE);
 			v8 = v62;
-			if (v9 == 1 && v87[v62] <= DERLIGNE)
+			if (_vm->_linesManager.colision2_ligne(v75, v7, &v82[5], &v87[5], 0, DERLIGNE) && v87[v62] <= DERLIGNE)
 				break;
 			v82[v62] = 0;
 			v87[v62] = -1;
@@ -3110,9 +3103,8 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v12 = 1;
 		do {
 			v63 = v12;
-			v13 = _vm->_linesManager.colision2_ligne(v75, v11, &v82[1], &v87[1], 0, DERLIGNE);
 			v12 = v63;
-			if (v13 == 1 && v87[v63] <= DERLIGNE)
+			if (_vm->_linesManager.colision2_ligne(v75, v11, &v82[1], &v87[1], 0, DERLIGNE) && v87[v63] <= DERLIGNE)
 				break;
 			v82[v63] = 0;
 			v87[v63] = -1;
@@ -3131,9 +3123,8 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v16 = 3;
 		do {
 			v64 = v16;
-			v17 = _vm->_linesManager.colision2_ligne(v15, v74, &v82[3], &v87[3], 0, DERLIGNE);
 			v16 = v64;
-			if (v17 == 1 && v87[v64] <= DERLIGNE)
+			if (_vm->_linesManager.colision2_ligne(v15, v74, &v82[3], &v87[3], 0, DERLIGNE) && v87[v64] <= DERLIGNE)
 				break;
 			v82[v64] = 0;
 			v87[v64] = -1;
@@ -3154,9 +3145,8 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v20 = 7;
 		do {
 			v65 = v20;
-			v21 = _vm->_linesManager.colision2_ligne(v19, v74, &v82[7], &v87[7], 0, DERLIGNE);
 			v20 = v65;
-			if (v21 == 1 && v87[v65] <= DERLIGNE)
+			if (_vm->_linesManager.colision2_ligne(v19, v74, &v82[7], &v87[7], 0, DERLIGNE) && v87[v65] <= DERLIGNE)
 				break;
 			v82[v65] = 0;
 			v87[v65] = -1;
@@ -3208,20 +3198,18 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 			v77[v24] = 1300;
 			v76[v24] = 1300;
 		}
-		v26 = _vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, DERLIGNE);
-		if (v26 == 1) {
+		if (_vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, DERLIGNE)) {
 			v69 = v87[1];
 			v68 = v82[1];
-		} else if (!v26) {
-			if (_vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, _vm->_linesManager.TOTAL_LIGNES) == 1) {
+		} else {
+			if (_vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, _vm->_linesManager.TOTAL_LIGNES)) {
 				v27 = 0;
 				for (;;) {
 					v28 = _vm->_globals.essai2[v27];
 					v29 = _vm->_globals.essai2[v27 + 1];
 					v66 = _vm->_globals.essai2[v27 + 2];
 					v27 += 4;
-					v31 = _vm->_linesManager.colision2_ligne(v28, v29, &v82[1], &v87[1], 0, DERLIGNE);
-					if (v31)
+					if (_vm->_linesManager.colision2_ligne(v28, v29, &v82[1], &v87[1], 0, DERLIGNE))
 						break;
 					v32 = v67;
 					_vm->_globals.super_parcours[v32] = v28;
@@ -3645,7 +3633,7 @@ int ObjectsManager::MZONE() {
 					        && _vm->_globals.CarreZone[v7].field6 <= yp
 					        && _vm->_globals.CarreZone[v7].field8 >= yp) {
 								if (_vm->_globals.CarreZone[v7].fieldE == 1) {
-									_vm->_globals.oldzone_46 = _vm->_linesManager.LigneZone[_vm->_globals.CarreZone[v7].fieldA].field2;
+									_vm->_globals.oldzone_46 = _vm->_linesManager._zoneLine[_vm->_globals.CarreZone[v7].fieldA].field2;
 							return _vm->_globals.oldzone_46;
 						}
 						v9 = _vm->_globals.SegmentEnCours;
@@ -3934,7 +3922,7 @@ void ObjectsManager::SPECIAL_JEU() {
 				_vm->_globals.NOPARLE = true;
 				_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
 				_vm->_globals.NOPARLE = false;
-				if (!_vm->_globals.CENSURE) {
+				if (!_vm->_globals._censorshipFl) {
 					v1 = _vm->_globals.allocMemory(1000);
 					memcpy(v1, _vm->_graphicsManager._palette, 769);
 
@@ -4488,7 +4476,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				do {
 					v28 = (int16)READ_LE_UINT16(v17 + 2 * v33);
 					if (v28 != -1) {
-						_vm->_linesManager.AJOUTE_LIGNE_ZONE(
+						_vm->_linesManager.addZoneLine(
 						    v35,
 						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 2),
 						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 4),
@@ -4554,7 +4542,7 @@ void ObjectsManager::SPECIAL_INI() {
 			VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
 			_vm->_fontManager.hideText(9);
 			if (!_vm->_soundManager._textOffFl) {
-				_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals.FICH_TEXTE, 220, 72, 20, 25, 6, 36, 253);
+				_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals.FICH_TEXTE, 220, 72, 6, 36, 253);
 				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
 			}
@@ -4819,9 +4807,9 @@ int ObjectsManager::colision(int xp, int yp) {
 		int yMin = yp - 4;
 
 		do {
-			int16 *dataP = _vm->_linesManager.LigneZone[field2].zoneData;
+			int16 *dataP = _vm->_linesManager._zoneLine[field2].zoneData;
 			if (dataP != (int16 *)g_PTRNUL) {
-				int count = _vm->_linesManager.LigneZone[field2].count;
+				int count = _vm->_linesManager._zoneLine[field2].count;
 				int v1 = *dataP;
 				int v2 = *(dataP + 1);
 				int v3 = *(dataP + count * 2 - 2);
@@ -4837,13 +4825,13 @@ int ObjectsManager::colision(int xp, int yp) {
 				if (v2 >= v4 && (yMin > v2 || yMax < v4))
 					flag = false;
 
-				if (flag && _vm->_linesManager.LigneZone[field2].count > 0) {
+				if (flag && _vm->_linesManager._zoneLine[field2].count > 0) {
 					for (int v5 = 0; v5 < count; ++v5) {
 						int xCheck = *dataP++;
 						int yCheck = *dataP++;
 
 						if ((xp == xCheck || (xp + 1) == xCheck) && (yp == yCheck))
-							return _vm->_linesManager.LigneZone[field2].field2;
+							return _vm->_linesManager._zoneLine[field2].field2;
 					}
 				}
 			}
@@ -5274,7 +5262,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_vm->_globals.PERSO_TYPE = 2;
 	}
-	_vm->_globals.HOPKINS_DATA();
+	_vm->_globals.loadCharacterData();
 	switch (_vm->_globals.PERSO_TYPE) {
 	case 0:
 		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 34, 190);
