@@ -24,6 +24,7 @@
  * Image decoder used in engines:
  *  - gob
  *  - parallaction
+ *  - queen
  */
 
 #ifndef GRAPHICS_DECODERS_ILBM_H
