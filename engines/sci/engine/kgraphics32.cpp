@@ -338,7 +338,8 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 		// TODO: argv[3] is font
 		// TODO: argv[4] is color
 		// TODO: argv[5] is alignment (0 = left, 1 = center, 2 = right)
-		// TODO: argv[6] is an optional unknown bool (default 1 if not present)
+		// TODO: argv[6] is an optional bool, defaulting to true if not present.
+		//       If true, the old contents are scrolled out of view.
 		g_sci->_gfxFrameout->addScrollTextEntry(text, kWindow, x, y, (op == 14));
 		}
 		break;
@@ -383,7 +384,7 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 		kStub(s, argc, argv);
 		break;
 	case 12: // Insert, called by ScrollableWindow::insertString
-		// 3 extra parameters here
+		// 5 extra parameters here.
 		// TODO
 		kStub(s, argc, argv);
 		break;
