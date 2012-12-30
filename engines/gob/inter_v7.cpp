@@ -27,6 +27,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
+#include "graphics/decoders/ilbm.h"
 
 #include "gob/gob.h"
 #include "gob/global.h"
@@ -546,14 +547,14 @@ void Inter_v7::o7_loadLBMPalette() {
 		return;
 	}
 
-	byte palette[768];
-
-	LBMLoader lbm(*lbmFile);
-	if (!lbm.loadPalette(palette)) {
+	Graphics::ILBMDecoder decoder;
+	decoder.loadStream(*lbmFile);
+	if (!decoder.getPalette() || decoder.getPaletteColorCount() != 256) {
 		warning("o7_loadLBMPalette(): Failed reading palette from LBM \"%s\"", file.c_str());
 		return;
 	}
 
+	byte *palette = (byte *)decoder.getPalette();
 	memset(palette      , 0x00, 3);
 	memset(palette + 765, 0xFF, 3);
 	for (int i = 0; i < 768; i++)

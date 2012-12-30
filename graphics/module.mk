@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	wincursor.o \
 	yuv_to_rgb.o \
 	decoders/bmp.o \
+	decoders/ilbm.o \
 	decoders/jpeg.o \
 	decoders/pcx.o \
 	decoders/pict.o \
