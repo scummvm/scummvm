@@ -370,14 +370,16 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 		kStub(s, argc, argv);
 		break;
 	case 10: // Where, called by ScrollableWindow::where
-		// TODO
-		// argv[2] is an unknown integer
+		// TODO:
+		// Gives the current relative scroll location as a fraction
+		// with argv[2] as the denominator. (Return value is the numerator.)
 		// Silenced the warnings because of the high amount of console spam
 		//kStub(s, argc, argv);
 		break;
 	case 11: // Go, called by ScrollableWindow::scrollTo
-		// 2 extra parameters here
-		// TODO
+		// TODO:
+		// Two arguments provide a fraction: argv[2] is num., argv[3] is denom.
+		// Scrolls to the relative location given by the fraction.
 		kStub(s, argc, argv);
 		break;
 	case 12: // Insert, called by ScrollableWindow::insertString
