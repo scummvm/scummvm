@@ -29,11 +29,10 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 #include "gui/about.h"
-#include "gui/onscreendialog.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
-#include "gui/EventRecorder.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"

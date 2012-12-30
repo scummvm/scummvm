@@ -30,7 +30,7 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
-#include "gui/EventRecorder.h"
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 

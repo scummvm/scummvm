@@ -46,16 +46,20 @@
 #include "backends/saves/default/default-saves.h"
 
 
-#define g_eventRec (GUI::EventRecorder::instance())
+#define g_eventRec (Backends::EventRecorder::EventRecorder::instance())
 
-namespace GUI {
-	class OnScreenDialog;
+class OnScreenDialog;
+
+namespace Common {
+    class RandomSource;
+    class SeekableReadStream;
+    class WriteStream;
 }
 
-namespace GUI {
-class RandomSource;
-class SeekableReadStream;
-class WriteStream;
+
+namespace Backends {
+namespace EventRecorder {
+
 
 
 /**
@@ -167,7 +171,7 @@ private:
 #ifdef SDL_BACKEND
 	RecorderSaveFileManager _fakeSaveManager;
 	NullSdlMixerManager *_fakeMixerManager;
-	GUI::OnScreenDialog *controlPanel;
+	OnScreenDialog *_controlPanel;
 	Common::RecorderEvent _nextEvent;
 
 	void setFileHeader();
@@ -206,6 +210,7 @@ private:
 #endif
 };
 
-} // End of namespace Common
+} // End of namespace EventRecorder
+} // End of namespace Backends
 
 #endif

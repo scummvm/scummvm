@@ -20,7 +20,7 @@
  *
  */
 
-#include "gui/EventRecorder.h"
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 
 #include "common/util.h"
 #include "common/system.h"

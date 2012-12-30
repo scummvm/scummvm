@@ -26,9 +26,7 @@
 #include "gui/dialog.h"
 #include "gui/widget.h"
 
-namespace GUI {
-
-class OnScreenDialog : public Dialog {
+class OnScreenDialog : public GUI::Dialog {
 private:
 	uint32 lastTime;
 	bool _enableDrag;
@@ -44,13 +42,12 @@ public:
 	virtual void close();
 	virtual bool isVisible() const;
 	virtual void reflowLayout();
-
 	void setReplayedTime(uint32 newTime);
 
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 	bool isMouseOver();
 	bool isEditDlgVisible();
@@ -58,7 +55,5 @@ public:
 protected:
 	virtual void	releaseFocus();
 };
-
-} // End of namespace GUI
 
 #endif

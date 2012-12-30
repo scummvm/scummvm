@@ -21,7 +21,7 @@
  */
 
 
-#include "gui/EventRecorder.h"
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 #include "common/debug-channels.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
@@ -30,7 +30,7 @@
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
 #ifdef SDL_BACKEND
-#include "gui/onscreendialog.h"
+#include "backends/platform/sdl/eventrecorder/onscreendialog.h"
 #endif
 #include "common/random.h"
 #include "common/savefile.h"
@@ -40,11 +40,11 @@
 #include "graphics/scaler.h"
 
 namespace Common {
-DECLARE_SINGLETON(GUI::EventRecorder);
+DECLARE_SINGLETON(Backends::EventRecorder::EventRecorder);
 }
 
-namespace GUI {
-
+namespace Backends {
+namespace EventRecorder {
 
 const int kMaxRecordsNames = 0x64;
 const int kDefaultScreenshotPeriod = 60000;
@@ -99,8 +99,8 @@ void EventRecorder::deinit() {
 	_recordMode = kPassthrough;
 	delete _fakeMixerManager;
 	_fakeMixerManager = NULL;
-	controlPanel->close();
-	delete controlPanel;
+	_controlPanel->close();
+	delete _controlPanel;
 	debugC(1, kDebugLevelEventRec, "playback:action=stopplayback");
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
 	_recordMode = kPassthrough;
@@ -132,7 +132,7 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 		millisDelay = millis - _lastMillis;
 		_lastMillis = millis;
 		_fakeTimer += millisDelay;
-		controlPanel->setReplayedTime(_fakeTimer);
+		_controlPanel->setReplayedTime(_fakeTimer);
 		timerEvent.recordedtype = Common::kRecorderEventTypeTimer;
 		timerEvent.time = _fakeTimer;
 		_playbackFile->writeEvent(timerEvent);
@@ -155,7 +155,7 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 			}
 		}
 		millis = _fakeTimer;
-		controlPanel->setReplayedTime(_fakeTimer);
+		_controlPanel->setReplayedTime(_fakeTimer);
 		break;
 	case kRecorderPlaybackPause:
 		millis = _fakeTimer;
@@ -220,12 +220,12 @@ void EventRecorder::togglePause() {
 	case kRecorderRecord:
 		oldState = _recordMode;
 		_recordMode = kRecorderPlaybackPause;
-		controlPanel->runModal();
+		_controlPanel->runModal();
 		_recordMode = oldState;
 		_initialized = true;
 		break;
 	case kRecorderPlaybackPause:
-		controlPanel->close();
+		_controlPanel->close();
 		break;
 	default:
 		break;
@@ -302,7 +302,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 		return;
 	}
 	if (_recordMode != kPassthrough) {
-		controlPanel = new GUI::OnScreenDialog(_recordMode == kRecorderRecord);
+		_controlPanel = new OnScreenDialog(_recordMode == kRecorderRecord);
 	}
 	if (_recordMode == kRecorderPlayback) {
 		applyPlaybackSettings();
@@ -478,8 +478,8 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 		return Common::DefaultEventMapper::mapEvent(ev, source);
 		break;
 	case kRecorderRecord:
-		g_gui.processEvent(evt, controlPanel);
-		if (((evt.type == Common::EVENT_LBUTTONDOWN) || (evt.type == Common::EVENT_LBUTTONUP) || (evt.type == Common::EVENT_MOUSEMOVE)) && controlPanel->isMouseOver()) {
+		g_gui.processEvent(evt, _controlPanel);
+		if (((evt.type == Common::EVENT_LBUTTONDOWN) || (evt.type == Common::EVENT_LBUTTONUP) || (evt.type == Common::EVENT_MOUSEMOVE)) && _controlPanel->isMouseOver()) {
 			return Common::List<Common::Event>();
 		} else {
 			Common::RecorderEvent e;
@@ -492,13 +492,13 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 		break;
 	case kRecorderPlaybackPause: {
 		Common::Event dialogEvent;
-		if (controlPanel->isEditDlgVisible()) {
+		if (_controlPanel->isEditDlgVisible()) {
 			dialogEvent = ev;
 		} else {
 			dialogEvent = evt;
 		}
-		g_gui.processEvent(dialogEvent, controlPanel->getActiveDlg());
-		if (((dialogEvent.type == Common::EVENT_LBUTTONDOWN) || (dialogEvent.type == Common::EVENT_LBUTTONUP) || (dialogEvent.type == Common::EVENT_MOUSEMOVE)) && controlPanel->isMouseOver()) {
+		g_gui.processEvent(dialogEvent, _controlPanel->getActiveDlg());
+		if (((dialogEvent.type == Common::EVENT_LBUTTONDOWN) || (dialogEvent.type == Common::EVENT_LBUTTONUP) || (dialogEvent.type == Common::EVENT_MOUSEMOVE)) && _controlPanel->isMouseOver()) {
 			return Common::List<Common::Event>();
 		}
 		return Common::DefaultEventMapper::mapEvent(dialogEvent, source);
@@ -602,7 +602,7 @@ void EventRecorder::preDrawOverlayGui() {
 		g_system->showOverlay();
 		g_gui.theme()->clearAll();
 		g_gui.theme()->openDialog(true, GUI::ThemeEngine::kShadingNone);
-		controlPanel->drawDialog();
+		_controlPanel->drawDialog();
 		g_gui.theme()->finishBuffering();
 		g_gui.theme()->updateScreen();
 		_recordMode = oldMode;
@@ -750,4 +750,5 @@ void EventRecorder::deleteTemporarySave() {
 	_temporarySlot = -1;
 }
 #endif
-} // End of namespace Common
+} // End of namespace EventRecorder
+} // End of namespace Backends

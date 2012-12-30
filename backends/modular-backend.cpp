@@ -26,7 +26,7 @@
 
 #include "backends/graphics/graphics.h"
 #include "backends/mutex/mutex.h"
-#include "gui/EventRecorder.h"
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 
 #include "audio/mixer.h"
 #include "graphics/pixelformat.h"

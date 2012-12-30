@@ -21,7 +21,7 @@
  */
 
 #include "backends/saves/recorder/recorder-saves.h"
-#include "gui/EventRecorder.h"
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 #include "common/savefile.h"
 
 Common::InSaveFile *RecorderSaveFileManager::openForLoading(const Common::String &filename) {

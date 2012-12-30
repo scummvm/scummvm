@@ -216,6 +216,8 @@ endif
 
 ifdef SDL_BACKEND
 MODULE_OBJS += \
+	platform/sdl/eventrecorder/EventRecorder.o \
+	platform/sdl/eventrecorder/onscreendialog.o \
 	mixer/nullmixer/nullsdl-mixer.o \
 	saves/recorder/recorder-saves.o
 endif

@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
 #ifdef SDL_BACKEND
 
 #include "onscreendialog.h"
@@ -27,8 +28,9 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "gui/editrecorddialog.h"
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 
-namespace GUI {
+using namespace GUI;
 
 bool OnScreenDialog::isVisible() const {
 	return true;
@@ -49,7 +51,7 @@ void OnScreenDialog::releaseFocus() {
 }
 
 OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog(0, 0, 210, 40) {
-	GUI::PicButtonWidget *btn;
+	PicButtonWidget *btn;
 	int textWidth = 50;
 	int buttonWidth = 32;
 	int buttonHeight = 32;
@@ -75,7 +77,7 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog(0, 0, 210, 40) {
 		btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplaybtn));
 		buttonX += buttonHeight + buttonDistance;
 	}
-	text = new GUI::StaticTextWidget(this, buttonX, buttonY, textWidth, buttonHeight, "00:00:00", Graphics::kTextAlignLeft);
+	text = new StaticTextWidget(this, buttonX, buttonY, textWidth, buttonHeight, "00:00:00", Graphics::kTextAlignLeft);
 	_enableDrag = false;
 	_mouseOver = false;
 	_editDlgShown = false;
@@ -190,5 +192,4 @@ bool OnScreenDialog::isEditDlgVisible() {
 	return _editDlgShown;
 }
 
-}
 #endif

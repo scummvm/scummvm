@@ -30,7 +30,7 @@
 #include "common/taskbar.h"
 #include "common/updates.h"
 #include "common/textconsole.h"
-#include "gui/EventRecorder.h"
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"

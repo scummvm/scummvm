@@ -21,7 +21,7 @@
 
 #include "common/random.h"
 #include "common/system.h"
-#include "gui/EventRecorder.h"
+#include "backends/platform/sdl/eventrecorder/EventRecorder.h"
 
 
 namespace Common {
