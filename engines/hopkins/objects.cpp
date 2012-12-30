@@ -2086,8 +2086,6 @@ LABEL_153:
 }
 
 void ObjectsManager::GOHOME2() {
-	int16 v2;
-
 	if (_vm->_globals.chemin == (int16 *)g_PTRNUL)
 		return;
 
@@ -2098,58 +2096,56 @@ void ObjectsManager::GOHOME2() {
 		v0 = 6;
 
 	_vm->_globals.j_104 = 0;
-	if (v0) {
-		for (;;) {
-			nouveau_x = *_vm->_globals.chemin;
-			_vm->_globals.chemin++;
 
-			v2 = *_vm->_globals.chemin;
-			nouveau_y = *_vm->_globals.chemin;
-			_vm->_globals.chemin++;
+	for (;;) {
+		nouveau_x = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
 
-			nouveau_sens = *_vm->_globals.chemin;
-			_vm->_globals.chemin++;
-			nouveau_anim = *_vm->_globals.chemin;
-			_vm->_globals.chemin++;
+		nouveau_y = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
 
-			if (nouveau_x == -1) {
-				if (v2 == -1)
-					break;
-			}
-			++_vm->_globals.j_104;
-			if (_vm->_globals.j_104 >= v0)
-				goto LABEL_19;
+		nouveau_sens = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
+		nouveau_anim = *_vm->_globals.chemin;
+		_vm->_globals.chemin++;
+
+		if ((nouveau_x == -1) && (nouveau_y == -1))
+			break;
+
+		++_vm->_globals.j_104;
+		if (_vm->_globals.j_104 >= v0) {
+			_vm->_globals._lastDirection = nouveau_sens;
+			setSpriteX(0, nouveau_x);
+			setSpriteY(0, nouveau_y);
+			if (_vm->_globals._lastDirection == 1)
+				setSpriteIndex(0, 4);
+			else if (_vm->_globals._lastDirection == 3)
+				setSpriteIndex(0, 5);
+			else if (_vm->_globals._lastDirection == 5)
+				setSpriteIndex(0, 6);
+			else if (_vm->_globals._lastDirection == 7)
+				setSpriteIndex(0, 7);
+
+			if (my_anim++ > 1)
+				my_anim = 0;
+
+			return;
 		}
-		if (_vm->_globals._lastDirection == 1)
-			setSpriteIndex(0, 0);
-		else if (_vm->_globals._lastDirection == 3)
-			setSpriteIndex(0, 1);
-		else if (_vm->_globals._lastDirection == 5)
-			setSpriteIndex(0, 2);
-		else if (_vm->_globals._lastDirection == 7)
-			setSpriteIndex(0, 3);
-
-		_vm->_globals.chemin = (int16 *)g_PTRNUL;
-		my_anim = 0;
-		A_ANIM = 0;
-		A_DEPA = 0;
-	} else {
-LABEL_19:
-		_vm->_globals._lastDirection = nouveau_sens;
-		setSpriteX(0, nouveau_x);
-		setSpriteY(0, nouveau_y);
-		if (_vm->_globals._lastDirection == 1)
-			setSpriteIndex(0, 4);
-		if (_vm->_globals._lastDirection == 3)
-			setSpriteIndex(0, 5);
-		if (_vm->_globals._lastDirection == 5)
-			setSpriteIndex(0, 6);
-		if (_vm->_globals._lastDirection == 7)
-			setSpriteIndex(0, 7);
-
-		if (my_anim++ > 1)
-			my_anim = 0;
 	}
+	if (_vm->_globals._lastDirection == 1)
+		setSpriteIndex(0, 0);
+	else if (_vm->_globals._lastDirection == 3)
+		setSpriteIndex(0, 1);
+	else if (_vm->_globals._lastDirection == 5)
+		setSpriteIndex(0, 2);
+	else if (_vm->_globals._lastDirection == 7)
+		setSpriteIndex(0, 3);
+
+	_vm->_globals.chemin = (int16 *)g_PTRNUL;
+	my_anim = 0;
+	A_ANIM = 0;
+	A_DEPA = 0;
 }
 
 // Load Obstacle
@@ -2968,50 +2964,51 @@ void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 	v14 = -1;
 	v2 = a1[1];
 	v15 = a1[2];
-	if (a1[0] != -1 || v2 != -1) {
-		for (;;) {
-			if (v14 != -1 && v15 != v14) {
-				v11 = v1;
-				v12 = 0;
-				v10 = CALC_PROPRE(v2);
+	if (a1[0] == -1 && v2 == -1)
+		return;
+
+	for (;;) {
+		if (v14 != -1 && v15 != v14) {
+			v11 = v1;
+			v12 = 0;
+			v10 = CALC_PROPRE(v2);
+			v4 = a1[v1];
+			v9 = a1[v1];
+			v5 = a1[v1 + 1];
+			v6 = 0;
+			while (v4 != -1 || v5 != -1) {
+				int idx = v1;
+				v1 += 4;
+				++v12;
+				if (a1[idx + 2] != v15)
+					v6 = 1;
+				if (v6 == 1)
+					break;
 				v4 = a1[v1];
 				v9 = a1[v1];
 				v5 = a1[v1 + 1];
-				v6 = 0;
-				while (v4 != -1 || v5 != -1) {
-					int idx = v1;
-					v1 += 4;
-					++v12;
-					if (a1[idx + 2] != v15)
-						v6 = 1;
-					if (v6 == 1)
-						break;
-					v4 = a1[v1];
-					v9 = a1[v1];
-					v5 = a1[v1 + 1];
-				}
-				if (v12 < v10) {
-					v7 = v11;
-					for (int v8 = 0; v8 < v12; v8++) {
-						a1[v7 + 2] = v14;
-						v7 += 4;
-					}
-					v15 = v14;
-				}
-				v1 = v11;
-				if (v9 == -1 && v5 == -1)
-					v13 = 1;
 			}
-			v1 += 4;
-			if (v13 == 1)
+			if (v12 < v10) {
+				v7 = v11;
+				for (int v8 = 0; v8 < v12; v8++) {
+					a1[v7 + 2] = v14;
+					v7 += 4;
+				}
+				v15 = v14;
+			}
+			v1 = v11;
+			if (v9 == -1 && v5 == -1)
+				v13 = 1;
+		}
+		v1 += 4;
+		if (v13 == 1)
+			break;
+		v14 = v15;
+		v2 = a1[v1 + 1];
+		v15 = a1[v1 + 2];
+		if (a1[v1] == -1) {
+			if (v2 == -1)
 				break;
-			v14 = v15;
-			v2 = a1[v1 + 1];
-			v15 = a1[v1 + 2];
-			if (a1[v1] == -1) {
-				if (v2 == -1)
-					break;
-			}
 		}
 	}
 }
