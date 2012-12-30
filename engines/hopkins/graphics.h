@@ -83,7 +83,6 @@ public:
 	bool _skipVideoLockFl;
 	int no_scroll;
 	Common::Rect dstrect[50];
-	int REDRAW;
 	int min_x, min_y;
 	int max_x, max_y;
 	int clip_x, clip_y;

@@ -150,18 +150,19 @@ void EventsManager::mouseOn() {
 void EventsManager::changeMouseCursor(int id) {
 	int cursorId = id;
 
-	if (_mouseCursorId != 23) {
-		if (id == 4 && _mouseCursorId == 4 && _vm->_globals.NOMARCHE)
-			cursorId = 0;
-		if (cursorId == 25)
-			cursorId = 5;
+	if (_mouseCursorId == 23)
+		return;
 
-		if (_oldIconId != cursorId || !cursorId) {
-			_oldIconId = cursorId;
-			_mouseSpriteId = cursorId;
+	if (id == 4 && _mouseCursorId == 4 && _vm->_globals.NOMARCHE)
+		cursorId = 0;
+	if (cursorId == 25)
+		cursorId = 5;
 
-			updateCursor();
-		}
+	if (_oldIconId != cursorId || !cursorId) {
+		_oldIconId = cursorId;
+		_mouseSpriteId = cursorId;
+
+		updateCursor();
 	}
 }
 
@@ -322,20 +323,6 @@ void EventsManager::VBL() {
 	int v15 = 0;
 	int yp = 0;
 
-	if (_vm->_graphicsManager.REDRAW) {
-		_vm->_graphicsManager.lockScreen();
-		if (_breakoutFl) {
-			_vm->_graphicsManager.CopyAsm(_vm->_graphicsManager._vesaBuffer);
-			_vm->_graphicsManager.REDRAW = 0;
-		} else {
-			if (_vm->_globals.iRegul == 3)
-				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll, 50, 640, 340, 0, 50);
-			else
-				_vm->_graphicsManager.m_scroll(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll, 20, 640, 440, 0, 20);
-			--_vm->_graphicsManager.REDRAW;
-		}
-		_vm->_graphicsManager.unlockScreen();
-	}
 	if (_mouseFl) {
 		v1 = 20;
 		if (!_mouseLinuxFl)

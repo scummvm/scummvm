@@ -54,7 +54,6 @@ GraphicsManager::GraphicsManager() {
 	FADE_LINUX = 0;
 	_skipVideoLockFl = false;
 	no_scroll = 0;
-	REDRAW = false;
 	min_x = 0;
 	min_y = 20;
 	max_x = SCREEN_WIDTH * 2;
