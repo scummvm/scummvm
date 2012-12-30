@@ -77,6 +77,7 @@ void SmushDecoder::close() {
 	_audioTrack = NULL;
 	_videoTrack = NULL;
 	_videoLooping = false;
+	_startPos = 0;
 	if (_file) {
 		delete _file;
 		_file = NULL;
@@ -274,6 +275,7 @@ void SmushDecoder::handleFrame() {
 		}
 		delete[] anno;
 		tag = _file->readUint32BE();
+		size = _file->readUint32BE();
 	}
 
 	assert(tag == MKTAG('F', 'R', 'M', 'E'));
