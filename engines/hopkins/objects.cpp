@@ -488,19 +488,19 @@ void ObjectsManager::displaySprite() {
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
 			_vm->_eventsManager._startPos.x + 464, 407, 0);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
-			_vm->_eventsManager._startPos.x + 657, 556, _vm->_globals.opt_vitesse);
+			_vm->_eventsManager._startPos.x + 657, 556, _vm->_globals._menuSpeed);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
-			_vm->_eventsManager._startPos.x + 731, 495, _vm->_globals.opt_txt);
+			_vm->_eventsManager._startPos.x + 731, 495, _vm->_globals._menuTextOff);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
-			_vm->_eventsManager._startPos.x + 731, 468, _vm->_globals.opt_voice);
+			_vm->_eventsManager._startPos.x + 731, 468, _vm->_globals._menuVoiceOff);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
-			_vm->_eventsManager._startPos.x + 731, 441, _vm->_globals.opt_sound);
+			_vm->_eventsManager._startPos.x + 731, 441, _vm->_globals._menuSoundOff);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
-			_vm->_eventsManager._startPos.x + 731, 414, _vm->_globals.opt_music);
+			_vm->_eventsManager._startPos.x + 731, 414, _vm->_globals._menuMusicOff);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
-			_vm->_eventsManager._startPos.x + 600, 522, _vm->_globals.opt_anm);
+			_vm->_eventsManager._startPos.x + 600, 522, _vm->_globals._menuDisplayType);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
-			_vm->_eventsManager._startPos.x + 611, 502, _vm->_globals.opt_scrspeed);
+			_vm->_eventsManager._startPos.x + 611, 502, _vm->_globals._menuScrollSpeed);
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 164, 107, _vm->_eventsManager._startPos.x + 498, 320);
 	}
 
@@ -2676,7 +2676,7 @@ LABEL_64:
 						if (v5 > 160) {
 							_vm->_graphicsManager.no_scroll = 2;
 							do {
-								_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager.SPEED_SCROLL;
+								_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager._scrollSpeed;
 								if (_vm->_graphicsManager.SCROLL < 0) {
 									_vm->_graphicsManager.SCROLL = 0;
 									v1 = 1;
@@ -2694,7 +2694,7 @@ LABEL_64:
 					}
 				} else {
 					do {
-						_vm->_graphicsManager.SCROLL += _vm->_graphicsManager.SPEED_SCROLL;
+						_vm->_graphicsManager.SCROLL += _vm->_graphicsManager._scrollSpeed;
 						if (_vm->_graphicsManager.SCROLL < 0) {
 							_vm->_graphicsManager.SCROLL = 0;
 							v1 = 1;

@@ -74,7 +74,7 @@ public:
 	bool DOUBLE_ECRAN;
 	int OLD_SCROLL;
 	bool MANU_SCROLL;
-	int SPEED_SCROLL;
+	int _scrollSpeed;
 	int _lineNbr2;
 	int Agr_x, Agr_y;
 	int Agr_Flag_x, Agr_Flag_y;

@@ -89,10 +89,10 @@ void GraphicsManager::setParent(HopkinsEngine *vm) {
 			MANU_SCROLL = true;
 		else
 			MANU_SCROLL = false;
-		SPEED_SCROLL = 16;
+		_scrollSpeed = 16;
 	} else {
 		MANU_SCROLL = false;
-		SPEED_SCROLL = 32;
+		_scrollSpeed = 32;
 	}
 }
 

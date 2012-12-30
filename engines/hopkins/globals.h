@@ -415,14 +415,14 @@ public:
 	bool NO_VISU;
 	byte *OPTION_SPR;
 	bool _optionDialogFl;
-	int opt_anm;
-	int opt_vitesse;
-	int opt_scrtype;
-	int opt_scrspeed;
-	int opt_sound;
-	int opt_voice;
-	int opt_music;
-	int opt_txt;
+	int _menuDisplayType;
+	int _menuSpeed;
+	int _menuScrollType;
+	int _menuScrollSpeed;
+	int _menuSoundOff;
+	int _menuVoiceOff;
+	int _menuMusicOff;
+	int _menuTextOff;
 	int NBTRI;
 	bool AFFLI; // CHECKME: Useless variable?
 	bool AFFIVBL; // CHECKME: Useless variable?

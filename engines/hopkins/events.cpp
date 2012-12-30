@@ -436,9 +436,9 @@ LABEL_65:
 	} else {
 		if (_vm->_graphicsManager.no_scroll != 2) {
 			if (getMouseX() > _vm->_graphicsManager.SCROLL + 620)
-				_vm->_graphicsManager.SCROLL += _vm->_graphicsManager.SPEED_SCROLL;
+				_vm->_graphicsManager.SCROLL += _vm->_graphicsManager._scrollSpeed;
 			if (getMouseX() < _vm->_graphicsManager.SCROLL + 10)
-				_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager.SPEED_SCROLL;
+				_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager._scrollSpeed;
 		}
 		if (_vm->_graphicsManager.SCROLL < 0)
 			_vm->_graphicsManager.SCROLL = 0;
