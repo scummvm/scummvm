@@ -263,7 +263,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_graphicsManager.DD_VBL();
 		restoreFBIRoom();
 	} else {
-		// Access Denied
+		// Password doesn't match - Access Denied
 		setTextColor(4);
 		setTextPosition(16, 25);
 		outText(Common::String(_menuText[5]._line));
@@ -301,24 +301,22 @@ void ComputerManager::loadMenu() {
 		if (tmpPtr[0] == '%') {
 			if (tmpPtr[1] == '%') {
 				loopCond = true;
-				goto LABEL_13;
+				break;
 			}
 			_menuText[lineNum]._actvFl = 1;
 			strPos = 0;
-			for (;;) {
+			while (strPos <= 89) {
 				byte curChar = tmpPtr[strPos + 2];
 				if (curChar == '%' || curChar == 10)
 					break;
 				_menuText[lineNum]._line[strPos++] = curChar;
-				if (strPos > 89)
-					goto LABEL_11;
 			}
-			_menuText[lineNum]._line[strPos] = 0;
-			_menuText[lineNum]._lineSize = strPos - 1;
-	LABEL_11:
+			if (strPos <= 89) {
+				_menuText[lineNum]._line[strPos] = 0;
+				_menuText[lineNum]._lineSize = strPos - 1;
+			}
 			++lineNum;
 		}
-	LABEL_13:
 		tmpPtr = tmpPtr + 1;
 	} while (!loopCond);
 	ptr = _vm->_globals.freeMemory(ptr);
@@ -737,27 +735,16 @@ void ComputerManager::displayBricks() {
  * Display Lives in breakout game
  */
 void ComputerManager::displayLives() {
-	int v3;
-	int v4;
-
-	int v0 = _breakoutLives - 1;
-	int v1 = 10;
-
+	int xp = 10;
 	for (int i = 0; i <= 11; i++) {
-		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, v1, 10, 15);
-		v1 += 7;
+		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 15);
+		xp += 7;
 	}
 
-	if (v0) {
-		v3 = 10;
-		v4 = 0;
-		if (v0 > 0) {
-			do {
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, v3, 10, 14);
-				v3 += 7;
-				++v4;
-			} while (v4 < v0);
-		}
+	xp = 10;
+	for (int i = 0; i < _breakoutLives - 1; i++) {
+		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 14);
+		xp += 7;
 	}
 }
 
@@ -974,40 +961,41 @@ void ComputerManager::displayScore() {
 }
 
 void ComputerManager::IMPSCORE(int a1, int a2) {
-	int16 v2 = 203;
-	int16 v3 = 3;
+	int16 xp = 203;
+	int16 idx = 3;
 
 	if (a1 == 1)
-		v2 = 193;
-	if (a1 == 2)
-		v2 = 183;
-	if (a1 == 3)
-		v2 = 170;
-	if (a1 == 4)
-		v2 = 160;
-	if (a1 == 5)
-		v2 = 150;
-	if (a1 == 9)
-		v2 = 137;
+		xp = 193;
+	else if (a1 == 2)
+		xp = 183;
+	else if (a1 == 3)
+		xp = 170;
+	else if (a1 == 4)
+		xp = 160;
+	else if (a1 == 5)
+		xp = 150;
+	else if (a1 == 9)
+		xp = 137;
+
 	if (a2 == 49)
-		v3 = 4;
-	if (a2 == 50)
-		v3 = 5;
-	if (a2 == 51)
-		v3 = 6;
-	if (a2 == 52)
-		v3 = 7;
-	if (a2 == 53)
-		v3 = 8;
-	if (a2 == 54)
-		v3 = 9;
-	if (a2 == 55)
-		v3 = 10;
-	if (a2 == 56)
-		v3 = 11;
-	if (a2 == 57)
-		v3 = 12;
-	_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, v2 - 3, 11, v3);
+		idx = 4;
+	else if (a2 == 50)
+		idx = 5;
+	else if (a2 == 51)
+		idx = 6;
+	else if (a2 == 52)
+		idx = 7;
+	else if (a2 == 53)
+		idx = 8;
+	else if (a2 == 54)
+		idx = 9;
+	else if (a2 == 55)
+		idx = 10;
+	else if (a2 == 56)
+		idx = 11;
+	else if (a2 == 57)
+		idx = 12;
+	_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp - 3, 11, idx);
 }
 
 /**
