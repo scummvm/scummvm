@@ -333,9 +333,12 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 		// with 6 when Roger speaks
 		{
 		Common::String text = s->_segMan->getString(argv[2]);
-		uint16 x = 0;//argv[3].toUint16();	// TODO: can't be x (values are all wrong)
-		uint16 y = 0;//argv[4].toUint16();	// TODO: can't be y (values are all wrong)
-		// TODO: argv[5] is an optional unknown parameter (an integer set to 0)
+		uint16 x = 0;
+		uint16 y = 0;
+		// TODO: argv[3] is font
+		// TODO: argv[4] is color
+		// TODO: argv[5] is alignment (0 = left, 1 = center, 2 = right)
+		// TODO: argv[6] is an optional unknown bool (default 1 if not present)
 		g_sci->_gfxFrameout->addScrollTextEntry(text, kWindow, x, y, (op == 14));
 		}
 		break;
