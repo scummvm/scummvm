@@ -427,7 +427,7 @@ public:
 	bool AFFLI; // CHECKME: Useless variable?
 	bool AFFIVBL; // CHECKME: Useless variable?
 	int NOT_VERIF;
-	bool CACHEFLAG;
+	bool _cacheFl;
 	bool NOPARLE;
 	bool PLAN_FLAG;
 	bool NECESSAIRE;

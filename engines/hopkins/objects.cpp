@@ -398,7 +398,7 @@ void ObjectsManager::displaySprite() {
 			}
 		}
 
-		if (_vm->_globals.CACHEFLAG)
+		if (_vm->_globals._cacheFl)
 			VERIFCACHE();
 	}
 

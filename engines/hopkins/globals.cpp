@@ -82,10 +82,10 @@ Globals::Globals() {
 		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
 	for (int i = 0; i < 35; ++i)
 		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(Liste2Item), 0);
-	for (int i = 0; i < 30; ++i)
+	for (int i = 0; i < 30; ++i) {
 		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
-	for (int i = 0; i < 30; ++i)
 		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
+	}
 	for (int i = 0; i < 300; ++i)
 		Common::fill((byte *)&ObjetW[i], (byte *)&ObjetW[i] + sizeof(ObjetWItem), 0);
 	for (int i = 0; i < 250; ++i)
@@ -225,7 +225,7 @@ Globals::Globals() {
 	NOMARCHE = false;
 	NO_VISU = false;
 	_optionDialogFl = false;
-	CACHEFLAG = false;
+	_cacheFl = false;
 	NOPARLE = false;
 	couleur_40 = 50;
 
@@ -521,16 +521,16 @@ void Globals::RESET_CACHE() {
 		Cache[idx].field14 = 0;
 	}
 
-	CACHEFLAG = false;
+	_cacheFl = false;
 }
 
 void Globals::CACHE_ON() {
-	CACHEFLAG = true;
+	_cacheFl = true;
 }
 
 // TODO: Find why some calls have a parameter value
 void Globals::CACHE_OFF(int v1) {
-	CACHEFLAG = false;
+	_cacheFl = false;
 }
 
 void Globals::CACHE_SUB(int idx) {
@@ -556,37 +556,38 @@ void Globals::loadCache(const Common::String &file) {
 
 	_vm->_fileManager.constructFilename(HOPLINK, v16);
 
-	if (f.exists(_curFilename)) {
-		spriteData = _vm->_fileManager.loadFile(_curFilename);
-		CACHE_BANQUE[1] = spriteData;
-		int v15 = 60;
-		for (int i = 0; i <= 21; i++) {
-			int v11 = (int16)READ_LE_UINT16((uint16 *)ptr + v15);
-			int v4 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 1);
-			int v5 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
-			int v6 = i;
-			Cache[v6].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 4);
-			Cache[v6]._spriteIndex = v11;
-			Cache[v6]._x = v4;
-			Cache[v6]._y = v5;
-			if (spriteData == g_PTRNUL) {
-				Cache[i].fieldA = 0;
-			} else {
-				int v8 = _vm->_objectsManager.getWidth(spriteData, v11);
-				int v9 = _vm->_objectsManager.getHeight(spriteData, v11);
-				Cache[i]._spriteData = spriteData;
-				Cache[i]._width = v8;
-				Cache[i]._height = v9;
-				Cache[i].fieldA = 1;
-			}
+	if (!f.exists(_curFilename))
+		return;
 
-			if ( !Cache[i]._x && !Cache[i]._y && !Cache[i]._spriteIndex)
-				Cache[i].fieldA = 0;
-			v15 += 5;
+	spriteData = _vm->_fileManager.loadFile(_curFilename);
+	CACHE_BANQUE[1] = spriteData;
+	int v15 = 60;
+	for (int i = 0; i <= 21; i++) {
+		int v11 = (int16)READ_LE_UINT16((uint16 *)ptr + v15);
+		int v4 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 1);
+		int v5 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
+		int v6 = i;
+		Cache[v6].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 4);
+		Cache[v6]._spriteIndex = v11;
+		Cache[v6]._x = v4;
+		Cache[v6]._y = v5;
+		if (spriteData == g_PTRNUL) {
+			Cache[i].fieldA = 0;
+		} else {
+			int v8 = _vm->_objectsManager.getWidth(spriteData, v11);
+			int v9 = _vm->_objectsManager.getHeight(spriteData, v11);
+			Cache[i]._spriteData = spriteData;
+			Cache[i]._width = v8;
+			Cache[i]._height = v9;
+			Cache[i].fieldA = 1;
 		}
-		CACHE_ON();
-		v2 = ptr;
+
+		if ( !Cache[i]._x && !Cache[i]._y && !Cache[i]._spriteIndex)
+			Cache[i].fieldA = 0;
+		v15 += 5;
 	}
+	CACHE_ON();
+	v2 = ptr;
 	freeMemory(v2);
 }
 

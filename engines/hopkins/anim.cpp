@@ -298,8 +298,6 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		for (;;) {
 			if (_vm->_eventsManager._escKeyFl)
 				goto LABEL_114;
-			if (redrawAnim())
-				break;
 			_vm->_eventsManager.refreshEvents();
 			if (_vm->_eventsManager._rateCounter >= a2)
 				goto LABEL_48;
@@ -333,7 +331,6 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 			_vm->_graphicsManager.clearScreen();
 			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		}
-LABEL_112:
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_eventsManager.VBL();
 		_vm->_graphicsManager.FADE_INS();
@@ -377,38 +374,6 @@ LABEL_88:
 		if (v5 == -1) {
 			if (_vm->_globals.iRegul == 1) {
 				while (!_vm->_eventsManager._escKeyFl) {
-					if (redrawAnim()) {
-						if (_vm->_graphicsManager._skipVideoLockFl)
-							goto LABEL_114;
-						if (v8 == 1)
-							ptr = _vm->_globals.freeMemory(ptr);
-						_vm->_globals.freeMemory(v13);
-						f.close();
-
-						_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
-						g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
-
-						memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager._oldPalette, 769);
-						_vm->_graphicsManager.clearPalette();
-						_vm->_graphicsManager.lockScreen();
-						_vm->_graphicsManager.clearScreen();
-						_vm->_graphicsManager.unlockScreen();
-						_vm->_graphicsManager.SCROLL = v11;
-						_vm->_graphicsManager.scrollScreen(v11);
-						if (_vm->_graphicsManager.DOUBLE_ECRAN) {
-							_vm->_graphicsManager.SCANLINE(1280);
-							_vm->_graphicsManager.max_x = 1280;
-							_vm->_graphicsManager.lockScreen();
-							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-						} else {
-							_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
-							_vm->_graphicsManager.max_x = SCREEN_WIDTH;
-							_vm->_graphicsManager.lockScreen();
-							_vm->_graphicsManager.clearScreen();
-							_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-						}
-						goto LABEL_112;
-					}
 					_vm->_eventsManager.refreshEvents();
 					_vm->_soundManager.VERIF_SOUND();
 					if (_vm->_eventsManager._rateCounter >= a4)
@@ -419,38 +384,6 @@ LABEL_88:
 		}
 	}
 	while (!_vm->_eventsManager._escKeyFl) {
-		if (redrawAnim()) {
-			if (_vm->_graphicsManager._skipVideoLockFl)
-				break;
-			if (v8 == 1)
-				ptr = _vm->_globals.freeMemory(ptr);
-			_vm->_globals.freeMemory(v13);
-			f.close();
-
-			_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
-			g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
-
-			memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager._oldPalette, 769);
-			_vm->_graphicsManager.clearPalette();
-			_vm->_graphicsManager.lockScreen();
-			_vm->_graphicsManager.clearScreen();
-			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.SCROLL = v11;
-			_vm->_graphicsManager.scrollScreen(v11);
-			if (_vm->_graphicsManager.DOUBLE_ECRAN) {
-				_vm->_graphicsManager.SCANLINE(1280);
-				_vm->_graphicsManager.max_x = 1280;
-				_vm->_graphicsManager.lockScreen();
-				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			} else {
-				_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
-				_vm->_graphicsManager.max_x = SCREEN_WIDTH;
-				_vm->_graphicsManager.lockScreen();
-				_vm->_graphicsManager.clearScreen();
-				_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-			goto LABEL_112;
-		}
 		_vm->_eventsManager.refreshEvents();
 		_vm->_soundManager.VERIF_SOUND();
 		if (_vm->_eventsManager._rateCounter >= a3)
@@ -531,10 +464,6 @@ LABEL_114:
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.FADE_INS();
 	_vm->_graphicsManager.DD_VBL();
-}
-
-bool AnimationManager::redrawAnim() {
-	return false;
 }
 
 /**
@@ -1013,14 +942,11 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		while (!_vm->shouldQuit()) {
 			if (_vm->_eventsManager._escKeyFl)
 				goto LABEL_54;
-			if (redrawAnim())
-				break;
 			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.VERIF_SOUND();
 			if (_vm->_eventsManager._rateCounter >= rate1)
 				goto LABEL_23;
 		}
-LABEL_48:
 		if (_vm->_graphicsManager._skipVideoLockFl)
 			goto LABEL_54;
 		if (v7 == 1)
@@ -1064,15 +990,14 @@ LABEL_44:
 		if (v4) {
 			if (_vm->_globals.iRegul == 1) {
 				while (!_vm->_eventsManager._escKeyFl) {
-					if (redrawAnim())
-						goto LABEL_48;
 					_vm->_eventsManager.refreshEvents();
 					_vm->_soundManager.VERIF_SOUND();
-					if (_vm->_eventsManager._rateCounter >= rate3)
-						goto LABEL_53;
+					if (_vm->_eventsManager._rateCounter >= rate3) {
+						_vm->_eventsManager._rateCounter = 0;
+						break;
+					}
 				}
 			} else {
-LABEL_53:
 				_vm->_eventsManager._rateCounter = 0;
 			}
 			goto LABEL_54;
@@ -1080,8 +1005,6 @@ LABEL_53:
 	}
 	while (!_vm->_eventsManager._escKeyFl) {
 		_vm->_eventsManager.refreshEvents();
-		if (redrawAnim())
-			goto LABEL_48;
 		if (_vm->_eventsManager._rateCounter >= rate2)
 			goto LABEL_33;
 	}
