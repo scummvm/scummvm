@@ -1,6 +1,6 @@
-/* ScummVM - Graphic Adventure Engine
+/* Cabal - Legacy Game Implementations
  *
- * ScummVM is the legal property of its developers, whose names
+ * Cabal is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -20,29 +20,20 @@
  *
  */
 
-#ifndef PLATFORM_SDL_MACOSX_H
-#define PLATFORM_SDL_MACOSX_H
+#ifndef BACKENDS_AUDIOCD_MACOSX_H
+#define BACKENDS_AUDIOCD_MACOSX_H
 
-#include "backends/platform/sdl/posix/posix.h"
+#include "common/scummsys.h"
 
-class OSystem_MacOSX : public OSystem_POSIX {
-public:
-	OSystem_MacOSX();
+#ifdef MACOSX
 
-	virtual bool hasFeature(Feature f);
+class AudioCDManager;
 
-	virtual bool displayLogFile();
-
-	virtual Common::String getSystemLanguage() const;
-
-	virtual void init();
-	virtual void initBackend();
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-
-protected:
-	// Override createAudioCDManager() to get our Mac-specific
-	// version.
-	virtual AudioCDManager *createAudioCDManager();
-};
+/**
+ * Create an audio CD manager for Mac OS X
+ */
+AudioCDManager *createMacOSXAudioCDManager();
 
 #endif
+
+#endif // 
