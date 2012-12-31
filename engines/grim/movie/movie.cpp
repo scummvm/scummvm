@@ -234,7 +234,7 @@ public:
 		_videoFinished = true; // Rigs all movies to be completed.
 	}
 	~NullPlayer() {}
-	bool play(Common::String filename, bool looping, int x, int y) {return true;}
+	bool play(Common::String filename, bool looping, int x, int y, bool start = true) { return true; }
 	bool loadFile(Common::String filename) { return true; }
 	void stop() {}
 	void pause(bool p) {}
