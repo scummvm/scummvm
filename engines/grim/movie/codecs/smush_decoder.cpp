@@ -344,8 +344,8 @@ bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be o
 		_file->seek(_startPos, SEEK_SET);
 	}
 
-	int curFrame = 0;
-	while (curFrame < wantedFrame) {
+	int curFrame = -1;
+	while (curFrame < wantedFrame - 1) {
 		tag = _file->readUint32BE();
 		if (tag == MKTAG('A', 'N', 'N', 'O')) {
 			size = _file->readUint32BE();
