@@ -46,7 +46,9 @@ public:
 	int getX() const { return _videoTrack->_x; }
 	int getY() const { return _videoTrack->_y; }
 	void setLooping(bool l);
+	bool isRewindable() const { return true; }
 	bool isSeekable() const { return true; }
+	bool rewind();
 	bool seek(const Audio::Timestamp &time);
 	bool loadStream(Common::SeekableReadStream *stream);
 protected:

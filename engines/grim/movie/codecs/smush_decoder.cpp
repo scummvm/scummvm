@@ -323,10 +323,16 @@ void SmushDecoder::handleFRME(Common::SeekableReadStream *stream, uint32 size) {
 	delete memStream;
 }
 
+bool SmushDecoder::rewind() {
+	return seekToFrame(0);
+}
+
 bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be off by a second or two right now.
 	int32 wantedFrame = (uint32)((time.msecs() / 1000.0f) * _videoTrack->getFrameRate().toDouble());
-	warning("Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
-	warning("Current frame: %d", _videoTrack->getCurFrame());
+	if (wantedFrame != 0) {
+		warning("Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
+		warning("Current frame: %d", _videoTrack->getCurFrame());
+	}
 	uint32 tag;
 	int32 size;
 
@@ -338,7 +344,7 @@ bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be o
 		_file->seek(_startPos, SEEK_SET);
 	}
 
-	int curFrame = -1;
+	int curFrame = 0;
 	while (curFrame < wantedFrame) {
 		tag = _file->readUint32BE();
 		if (tag == MKTAG('A', 'N', 'N', 'O')) {
@@ -592,7 +598,6 @@ void SmushDecoder::SmushAudioTrack::handleIACT(Common::SeekableReadStream *strea
 bool SmushDecoder::SmushAudioTrack::seek(const Audio::Timestamp &time) {
 	return true;
 }
-
 
 
 } // end of namespace Grim

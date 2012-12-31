@@ -65,6 +65,7 @@ void SmushPlayer::handleFrame() {
 			return;
 		} else {
  			_smushDecoder->rewind(); // This doesnt handle if looping fails.
+			_smushDecoder->start();
 		}
 	}
 }
