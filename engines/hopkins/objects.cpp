@@ -4952,38 +4952,33 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 	} while (spriteIndex != -1);
 }
 
-void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a4, int a5) {
-	int v5;
+void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int a5) {
 	int v6;
 	char v7;
-	int v8;
-	int spriteIndex;
-	int v13;
-	int v14;
-	Common::String v15;
 
-	v14 = 0;
-	v5 = 0;
-	spriteIndex = 0;
-	v15 = "     ";
-	v13 = a5;
+	int v14 = 0;
+	int v5 = 0;
+	int spriteIndex = 0;
+	Common::String tmpStr = "     ";
+	int v13;
 	if (_vm->_globals._speed == 2)
 		v13 = a5 / 2;
 	else if (_vm->_globals._speed == 3)
 		v13 = a5 / 3;
+	else
+		v13 = a5;
+
 	for (;;) {
 		v6 = 0;
-		v7 = a2[v14];
-		if (v7 == 44) {
-			v8 = atoi(v15.c_str());
-			spriteIndex = v8;
+		v7 = animString[v14];
+		if (v7 == ',') {
+			spriteIndex = atoi(tmpStr.c_str());
 			v5 = 0;
-			v15 = "     ";
+			tmpStr = "     ";
 			v6 = 1;
 		} else {
-			v8 = v5;
-			v15.setChar(v7, v5);
-			v5 = v5 + 1;
+			tmpStr.setChar(v7, v5);
+			v5++;
 		}
 		++v14;
 		if (v6 == 1) {
@@ -4994,14 +4989,13 @@ void ObjectsManager::SPACTION1(byte *a1, const Common::String &a2, int a3, int a
 				_sprite[0].field14 -= a4;
 				_sprite[0].fieldE = S_old_ret;
 			} else {
-				_sprite[0]._spriteData = a1;
+				_sprite[0]._spriteData = spriteData;
 				_sprite[0]._spriteIndex = spriteIndex;
 			}
 
-			if (v13 > 0) {
-				for (int v9 = 0; v9 < v8; v9++)
-					_vm->_eventsManager.VBL();
-			}
+			for (int v9 = 0; v9 < v13; v9++)
+				_vm->_eventsManager.VBL();
+
 			if (spriteIndex == -1)
 				break;
 		}
