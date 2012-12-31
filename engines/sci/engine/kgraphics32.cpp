@@ -323,14 +323,17 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 	uint16 op = argv[0].toUint16();
 	switch (op) {
 	case 0:	// Init
+		// TODO: Init reads the nsLeft, nsTop, nsRight, nsBottom,
+		//       borderColor, fore, back, mode, font, plane selectors
+		//       from the window in argv[1].
 		g_sci->_gfxFrameout->initScrollText(argv[2].toUint16());	// maxItems
 		g_sci->_gfxFrameout->clearScrollTexts();
 		return argv[1];	// kWindow
 	case 1: // Show message, called by ScrollableWindow::addString
 	case 14: // Modify message, called by ScrollableWindow::modifyString
-		// 5 or 6 parameters
-		// Seems to be called with 5 parameters when the narrator speaks, and
-		// with 6 when Roger speaks
+		// TODO: The parameters in Modify are shifted by one: the first
+		//       argument is the handle of the text to modify. The others
+		//       are as Add.
 		{
 		Common::String text = s->_segMan->getString(argv[2]);
 		uint16 x = 0;
@@ -338,8 +341,11 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 		// TODO: argv[3] is font
 		// TODO: argv[4] is color
 		// TODO: argv[5] is alignment (0 = left, 1 = center, 2 = right)
+		//       font,color,alignment may also be -1. (Maybe same as previous?)
 		// TODO: argv[6] is an optional bool, defaulting to true if not present.
 		//       If true, the old contents are scrolled out of view.
+		// TODO: Return a handle of the inserted text. (Used for modify/insert)
+		//       This handle looks like it should also be usable by kString.
 		g_sci->_gfxFrameout->addScrollTextEntry(text, kWindow, x, y, (op == 14));
 		}
 		break;
@@ -367,7 +373,8 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_gfxFrameout->lastScrollText();
 		break;
 	case 9: // Resize, called by ScrollableWindow::resize and ScrollerWindow::resize
-		// TODO
+		// TODO: This reads the nsLeft, nsTop, nsRight, nsBottom
+		//       selectors from the SCI object passed in argv[2].
 		kStub(s, argc, argv);
 		break;
 	case 10: // Where, called by ScrollableWindow::where
@@ -384,7 +391,9 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 		kStub(s, argc, argv);
 		break;
 	case 12: // Insert, called by ScrollableWindow::insertString
-		// 5 extra parameters here.
+		// 5 extra parameters here:
+		// handle of insert location (new string takes that position).
+		// text, font, color, alignment
 		// TODO
 		kStub(s, argc, argv);
 		break;
