@@ -75,7 +75,7 @@ ObjectsManager::ObjectsManager() {
 	A_DEPA = 0;
 	MAX_DEPA = 0;
 	MAX_DEPA1 = 0;
-	CH_TETE = 0;
+	CH_TETE = false;
 	T_RECTIF = 0;
 	_disableFl = false;
 	_twoCharactersFl = false;
@@ -109,9 +109,7 @@ void ObjectsManager::changeObject(int objIndex) {
 }
 
 byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
-	byte *dataP;
-
-	dataP = NULL;
+	byte *dataP = NULL;
 	int val1 = _vm->_globals.ObjetW[objIndex].field0;
 	int val2 = _vm->_globals.ObjetW[objIndex]._idx;
 
@@ -2186,10 +2184,8 @@ void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
  * Load Zone
  */
 void ObjectsManager::loadZone(const Common::String &file) {
-	int v3;
+	int bobZoneIdx;
 	int v4;
-	int v5;
-	int v6;
 	byte *v9;
 	int v10;
 	byte *v13;
@@ -2197,22 +2193,22 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	int16 v18;
 	byte *ptr;
 
-	for (int v1 = 1; v1 <= 100; v1++) {
-		_vm->_globals.ZONEP[v1]._destX = 0;
-		_vm->_globals.ZONEP[v1]._destY = 0;
-		_vm->_globals.ZONEP[v1].field4 = 0;
-		_vm->_globals.ZONEP[v1].field6 = 0;
-		_vm->_globals.ZONEP[v1].field7 = 0;
-		_vm->_globals.ZONEP[v1].field8 = 0;
-		_vm->_globals.ZONEP[v1].field9 = 0;
-		_vm->_globals.ZONEP[v1].fieldA = 0;
-		_vm->_globals.ZONEP[v1].fieldB = 0;
-		_vm->_globals.ZONEP[v1].fieldC = 0;
-		_vm->_globals.ZONEP[v1].fieldD = 0;
-		_vm->_globals.ZONEP[v1].fieldE = 0;
-		_vm->_globals.ZONEP[v1].fieldF = 0;
-		_vm->_globals.ZONEP[v1].field12 = 0;
-		_vm->_globals.ZONEP[v1].field10 = 0;
+	for (int i = 1; i <= 100; i++) {
+		_vm->_globals.ZONEP[i]._destX = 0;
+		_vm->_globals.ZONEP[i]._destY = 0;
+		_vm->_globals.ZONEP[i].field4 = 0;
+		_vm->_globals.ZONEP[i].field6 = 0;
+		_vm->_globals.ZONEP[i].field7 = 0;
+		_vm->_globals.ZONEP[i].field8 = 0;
+		_vm->_globals.ZONEP[i].field9 = 0;
+		_vm->_globals.ZONEP[i].fieldA = 0;
+		_vm->_globals.ZONEP[i].fieldB = 0;
+		_vm->_globals.ZONEP[i].fieldC = 0;
+		_vm->_globals.ZONEP[i].fieldD = 0;
+		_vm->_globals.ZONEP[i].fieldE = 0;
+		_vm->_globals.ZONEP[i].fieldF = 0;
+		_vm->_globals.ZONEP[i].field12 = 0;
+		_vm->_globals.ZONEP[i].field10 = 0;
 	}
 
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
@@ -2226,46 +2222,43 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	v18 = 0;
 	v17 = 0;
 	do {
-		v3 = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
-		if (v3 != -1) {
-			v5 = v3;
-			v6 = v3;
+		bobZoneIdx = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
+		if (bobZoneIdx != -1) {
 			_vm->_linesManager.addZoneLine(
 			    v18,
-			    READ_LE_UINT16((uint16 *)ptr + v4 + 1),
+			    READ_LE_UINT16((uint16 *)ptr + v4 + 1), // CHECKME: Shouldn't it be a byte?
 			    READ_LE_UINT16((uint16 *)ptr + v4 + 2),
 			    READ_LE_UINT16((uint16 *)ptr + v4 + 3),
 			    READ_LE_UINT16((uint16 *)ptr + v4 + 4),
-			    v3);
-			_vm->_globals.ZONEP[v5].field10 = 1;
-			v3 = v6;
+			    bobZoneIdx);
+			_vm->_globals.ZONEP[bobZoneIdx].field10 = 1;
 		}
 		v4 += 5;
 		++v18;
 		++v17;
-	} while (v3 != -1);
+	} while (bobZoneIdx != -1);
 
-	for (int v7 = 1; v7 <= 100; v7++) {
-		// CHECKME: Shouldn't it be READ_LE_UINT8?
-		_vm->_globals.ZONEP[v7]._destX = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
-		_vm->_globals.ZONEP[v7]._destY = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1);
-		_vm->_globals.ZONEP[v7].field4 = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2);
+	for (int i = 1; i <= 100; i++) {
+		 // CHECKME: Shouldn't it be a byte?
+		_vm->_globals.ZONEP[i]._destX = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
+		_vm->_globals.ZONEP[i]._destY = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1);
+		_vm->_globals.ZONEP[i].field4 = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2);
 		v4 += 3;
 	}
 
 	v9 = (ptr + 10 * v17 + 606);
 	v10 = 0;
-	for (int v11 = 1; v11 <= 100; v11++) {
-		_vm->_globals.ZONEP[v11].field6 = v9[v10];
-		_vm->_globals.ZONEP[v11].field7 = v9[v10 + 1];
-		_vm->_globals.ZONEP[v11].field8 = v9[v10 + 2];
-		_vm->_globals.ZONEP[v11].field9 = v9[v10 + 3];
-		_vm->_globals.ZONEP[v11].fieldA = v9[v10 + 4];
-		_vm->_globals.ZONEP[v11].fieldB = v9[v10 + 5];
-		_vm->_globals.ZONEP[v11].fieldC = v9[v10 + 6];
-		_vm->_globals.ZONEP[v11].fieldD = v9[v10 + 7];
-		_vm->_globals.ZONEP[v11].fieldE = v9[v10 + 8];
-		_vm->_globals.ZONEP[v11].fieldF = v9[v10 + 9];
+	for (int i = 1; i <= 100; i++) {
+		_vm->_globals.ZONEP[i].field6 = v9[v10];
+		_vm->_globals.ZONEP[i].field7 = v9[v10 + 1];
+		_vm->_globals.ZONEP[i].field8 = v9[v10 + 2];
+		_vm->_globals.ZONEP[i].field9 = v9[v10 + 3];
+		_vm->_globals.ZONEP[i].fieldA = v9[v10 + 4];
+		_vm->_globals.ZONEP[i].fieldB = v9[v10 + 5];
+		_vm->_globals.ZONEP[i].fieldC = v9[v10 + 6];
+		_vm->_globals.ZONEP[i].fieldD = v9[v10 + 7];
+		_vm->_globals.ZONEP[i].fieldE = v9[v10 + 8];
+		_vm->_globals.ZONEP[i].fieldF = v9[v10 + 9];
 
 		v10 += 10;
 	}
@@ -2814,7 +2807,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter) {
 	CharacterLocation *loc;
 
-	CH_TETE = 1;
+	CH_TETE = true;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, 532, 25, 65, 40, _vm->_graphicsManager._vesaBuffer, 532, 25);
 	_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 597, 65);
 	_vm->_globals.NOT_VERIF = 1;
@@ -2822,7 +2815,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
 		&& _vm->_globals._saveData->_realHopkins._location == _vm->_globals._screenId) {
-		CH_TETE = 0;
+		CH_TETE = false;
 		loc = &_vm->_globals._saveData->_samantha;
 		loc->_pos.x = getSpriteX(0);
 		loc->_pos.y = getSpriteY(0);
@@ -2849,7 +2842,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals.loadCharacterData();
 	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
 			&& _vm->_globals._saveData->_samantha._location == _vm->_globals._screenId) {
-		CH_TETE = 0;
+		CH_TETE = false;
 		loc = &_vm->_globals._saveData->_realHopkins;
 		loc->_pos.x = getSpriteX(0);
 		loc->_pos.y = getSpriteY(0);
@@ -3847,36 +3840,37 @@ void ObjectsManager::OPTI_OBJET() {
 	Common::String file;
 	int v0 = 1;
 	int v5;
-	int v7;
 
 	file = "OBJET1.ini";
 	data = _vm->_fileManager.searchCat(file, 1);
 	if (data == g_PTRNUL) {
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
 		data = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+		if (data == g_PTRNUL)
+			error("INI file %s not found", file.c_str());
 	}
 
-	if ((data == g_PTRNUL) || *data != 'I' || *(data + 1) != 'N' || *(data + 2) != 'I') {
-		error("Not an INI file");
-	} else {
-		v7 = 0;
-		do {
-			v5 = _vm->_scriptManager.handleOpcode(data + 20 * v0);
-			if (_vm->shouldQuit())
-				return;
+	if (data[0] != 'I' || data[1] != 'N' || data[2] != 'I')
+		error("File %s is not an INI file");
 
-			if (v5 == 2)
-				v0 = _vm->_scriptManager.handleGoto(data + 20 * v0);
-			if (v5 == 3)
-				v0 = _vm->_scriptManager.handleIf(data, v0);
-			if (v0 == -1)
-				error("defective IFF function");
-			if (v5 == 1 || v5 == 4)
-				++v0;
-			if (!v5 || v5 == 5)
-				v7 = 1;
-		} while (v7 != 1);
-	}
+	bool v7 = false;
+	do {
+		v5 = _vm->_scriptManager.handleOpcode(data + 20 * v0);
+		if (_vm->shouldQuit())
+			return;
+
+		if (v5 == 2)
+			v0 = _vm->_scriptManager.handleGoto(data + 20 * v0);
+		if (v5 == 3)
+			v0 = _vm->_scriptManager.handleIf(data, v0);
+		if (v0 == -1)
+			error("defective IFF function");
+		if (v5 == 1 || v5 == 4)
+			++v0;
+		if (!v5 || v5 == 5)
+			v7 = true;
+	} while (!v7);
+
 	_vm->_globals.freeMemory(data);
 }
 
@@ -3959,7 +3953,7 @@ void ObjectsManager::SPECIAL_JEU() {
 					v2 = v2 + 614396;
 					*v2 = *v3;
 					v2 = v2 + 2;
-					*v2 = *(v3 + 2);
+					*v2 = v3[2];
 
 					_vm->_graphicsManager.no_scroll = 0;
 					_vm->_graphicsManager.DD_VBL();
@@ -4010,15 +4004,15 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	int v3;
 	int v4;
 
-	v1 = 5 * idx;
-	v2 = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + 2 * v1);
-	v3 = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + 2 * v1 + 2);
-	v4 = *(_vm->_talkManager._characterAnim + 2 * v1 + 8);
-	if ((int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + 2 * v1 + 4)) {
+	v1 = 10 * idx;
+	v2 = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + v1);
+	v3 = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + v1 + 2);
+	v4 = _vm->_talkManager._characterAnim[v1 + 8];
+	if ((int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + v1 + 4)) {
 		if (!_vm->_globals.NO_OFFSET)
 			_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite,
 				_vm->_graphicsManager.ofscroll + v2, v3,
-				*(_vm->_talkManager._characterAnim + 2 * v1 + 8));
+				_vm->_talkManager._characterAnim[v1 + 8]);
 		if (_vm->_globals.NO_OFFSET)
 			_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, v2, v3, v4);
 	}
@@ -4286,13 +4280,14 @@ int ObjectsManager::BOBPOSI(int idx) {
  * Set Hopkins animation
  */
 void ObjectsManager::setBobAnimation(int idx) {
-	if (_vm->_globals._bob[idx]._disabledAnimationFl) {
-		_vm->_globals._bob[idx]._disabledAnimationFl = false;
-		_vm->_globals._bob[idx].field10 = 5;
-		_vm->_globals._bob[idx]._frameIndex = 250;
-		_vm->_globals._bob[idx].field12 = 0;
-		_vm->_globals._bob[idx].field14 = 0;
-	}
+	if (!_vm->_globals._bob[idx]._disabledAnimationFl)
+		return;
+
+	_vm->_globals._bob[idx]._disabledAnimationFl = false;
+	_vm->_globals._bob[idx].field10 = 5;
+	_vm->_globals._bob[idx]._frameIndex = 250;
+	_vm->_globals._bob[idx].field12 = 0;
+	_vm->_globals._bob[idx].field14 = 0;
 }
 
 /**

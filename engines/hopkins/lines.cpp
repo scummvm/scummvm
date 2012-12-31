@@ -425,108 +425,8 @@ LABEL_28:
 	return true;
 }
 
-int LinesManager::Scolision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
-	int16 *v7;
-	int16 *v13;
-	int result;
-
-	int v24 = a5;
-	int v6 = a5;
-
-	if (a5 >= a6 + 1) {
-LABEL_47:
-		result = 0;
-	} else {
-		int v22 = a1 + 10;
-		int v21 = a1 - 10;
-		int v20 = a2 + 10;
-		int v19 = a2 - 10;
-		int v11, v18;
-		for (;;) {
-			v7 = Ligne[v6].lineData;
-
-			if (v7 != (int16 *)g_PTRNUL) {
-				int v23 = 1;
-				int v8 = 2 * Ligne[v6].field0;
-				int v9 = v7[0];
-				int v15 = v7[1];
-				int v10 = v7[v8 - 2];
-				int v17 = v7[v8 - 1];
-				if (v7[0] >= v10)
-					goto LABEL_50;
-				if (v22 < v9 || v21 > v10)
-					v23 = 0;
-				if (v9 >= v10) {
-LABEL_50:
-					if (v21 > v9 || v22 < v10)
-						v23 = 0;
-				}
-				if (v15 >= v17)
-					goto LABEL_51;
-				if (v20 < v15 || v19 > v17)
-					v23 = 0;
-				if (v15 >= v17) {
-LABEL_51:
-					if (v19 > v15 || v20 < v17)
-						v23 = 0;
-				}
-				if (v23 == 1) {
-					v11 = 0;
-					v18 = Ligne[v24].field0;
-					if (v18 > 0)
-						break;
-				}
-			}
-LABEL_46:
-			++v24;
-			v6 = v24;
-			if (v24 >= a6 + 1)
-				goto LABEL_47;
-		}
-		for (;;) {
-			int v12 = v7[0];
-			v13 = v7 + 1;
-			int v16 = v13[0];
-			v7 = v13 + 1;
-			if (a1 == v12
-			        || v12 == a1 + 1
-			        || v12 == a1 + 2
-			        || v12 == a1 + 3
-			        || v12 == a1 + 4
-			        || v12 == a1 + 5
-			        || v12 == a1 + 6
-			        || v12 == a1 + 7
-			        || v12 == a1 + 8
-			        || v12 == a1 + 9
-			        || a1 + 10 == v12) {
-				if (v16 == a2
-				        || v16 == a2 + 1
-				        || v16 == a2 + 2
-				        || v16 == a2 + 3
-				        || v16 == a2 + 4
-				        || v16 == a2 + 5
-				        || v16 == a2 + 6
-				        || v16 == a2 + 7
-				        || v16 == a2 + 8
-				        || v16 == a2 + 9
-				        || a2 + 10 == v16)
-					break;
-			}
-			++v11;
-			if (v18 <= v11)
-				goto LABEL_46;
-		}
-		*a3 = v11;
-		*a4 = v24;
-		result = 1;
-	}
-	return result;
-}
-
 // Init route
 void LinesManager::INIPARCOURS() {
-	int v0;
-	int v1;
 	int v2;
 	int16 *v3;
 	int v4;
@@ -536,14 +436,12 @@ void LinesManager::INIPARCOURS() {
 	int v11;
 	int v12;
 	int v13;
-	int v14;
-	int v15;
 
-	v15 = Ligne[0].lineData[0];
-	v14 = Ligne[0].lineData[1];
+	int v15 = Ligne[0].lineData[0];
+	int v14 = Ligne[0].lineData[1];
 
-	v0 = 1;
-	v1 = 0;
+	int v0 = 1;
+	bool v1 = false;
 	do {
 		v2 = Ligne[v0].field0;
 		v3 = Ligne[v0].lineData;
@@ -552,20 +450,18 @@ void LinesManager::INIPARCOURS() {
 		v5 = v3[2 * v2 - 1];
 		if (_vm->_graphicsManager.max_x == v4 || _vm->_graphicsManager.max_y == v5 || _vm->_graphicsManager.min_x == v4
 				|| _vm->_graphicsManager.min_y == v5)
-			v1 = 1;
+			v1 = true;
 		if (v15 == v4 && v14 == v5)
-			v1 = 1;
-		if (v0 == 400) {
-//			v6 = v1;
+			v1 = true;
+		if (v0 == 400)
 			error("ERROR - LAST LINE NOT FOUND");
-//			v1 = v6;
-		}
+
 		v7 = Ligne[v0 + 1].lineData;
 		if (v7[0] != v4 && v7[1] != v5)
-			v1 = 1;
+			v1 = true;
 		if (!v1)
 			++v0;
-	} while (v1 != 1);
+	} while (!v1);
 
 	_vm->_objectsManager.DERLIGNE = v0;
 	v13 = _vm->_globals.Max_Ligne_Long;

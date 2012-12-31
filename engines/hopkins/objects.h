@@ -100,7 +100,7 @@ public:
 	int A_DEPA;
 	int MAX_DEPA;
 	int MAX_DEPA1;
-	int CH_TETE;
+	bool CH_TETE;
 	int T_RECTIF;
 	bool _disableFl;
 	bool _twoCharactersFl;

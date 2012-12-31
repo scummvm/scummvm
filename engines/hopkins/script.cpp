@@ -203,7 +203,7 @@ LABEL_1141:
 				_vm->_objectsManager._characterPos.x = (int16)READ_LE_UINT16(dataP + 6);
 				_vm->_objectsManager._characterPos.y = v6;
 				_vm->_objectsManager.PERI = v5;
-				if (_vm->_objectsManager.CH_TETE == 1) {
+				if (_vm->_objectsManager.CH_TETE) {
 					if (_vm->_globals._saveData->data[svField354] == 1
 							&& _vm->_globals._saveData->_cloneHopkins._pos.x && _vm->_globals._saveData->_cloneHopkins._pos.y
 							&& _vm->_globals._saveData->_cloneHopkins.field2 && _vm->_globals._saveData->_cloneHopkins._location) {
@@ -255,7 +255,7 @@ LABEL_1141:
 				}
 			}
 			opcodeType = 1;
-			_vm->_objectsManager.CH_TETE = 0;
+			_vm->_objectsManager.CH_TETE = false;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'E') {
 		if (!_vm->_objectsManager._disableFl) {
 			int v7 = *(dataP + 5);
