@@ -48,7 +48,6 @@ void Component::setColormap(CMap *c) {
 	if (c)
 		_cmap = c;
 	if (getCMap()) {
-		resetColormap();
 		resetHierCMap();
 	}
 }
