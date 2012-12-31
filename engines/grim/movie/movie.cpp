@@ -86,8 +86,9 @@ bool MoviePlayer::prepareFrame() {
 		_videoFinished = true;
 	}
 
-	if (_videoPause)
+	if (_videoPause) {
 		return false;
+	}
 
 	if (_videoFinished) {
 		if (g_grim->getMode() == GrimEngine::SmushMode) {
@@ -101,9 +102,10 @@ bool MoviePlayer::prepareFrame() {
 		return false;
 
 	handleFrame();
-
 	_internalSurface = _videoDecoder->decodeNextFrame();
-	_updateNeeded = true;
+	if (_frame != _videoDecoder->getCurFrame()) {
+		_updateNeeded = true;
+	}
 
 	_movieTime = _videoDecoder->getTime();
 	_frame = _videoDecoder->getCurFrame();

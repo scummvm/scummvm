@@ -56,7 +56,8 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::handleFrame() {
-	if (_videoDecoder->endOfVideo()) {
+	// Force the last frame to stay in place for it's duration:
+	if (_videoDecoder->endOfVideo() && _videoDecoder->getTime() >= _videoDecoder->getDuration().msecs()) {
 		// If we're not supposed to loop (or looping fails) then end the video
 		if (!_videoLooping ) {
 			_videoFinished = true;

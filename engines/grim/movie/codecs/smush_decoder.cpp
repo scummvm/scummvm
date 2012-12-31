@@ -221,6 +221,11 @@ bool SmushDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 const Graphics::Surface *SmushDecoder::decodeNextFrame() {
 	handleFrame();
+
+	// We might be interested in getting the last frame even after the video ends:
+	if (endOfVideo()) {
+		return _videoTrack->decodeNextFrame();
+	}
 	return VideoDecoder::decodeNextFrame();
 }
 
