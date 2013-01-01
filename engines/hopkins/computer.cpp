@@ -966,7 +966,7 @@ void ComputerManager::IMPSCORE(int charPos, int charDisp) {
 		xp = 134;
 
 	if (charDisp >= 48 && charDisp <= 57)
-	    idx = charDisp - 45
+	    idx = charDisp - 45;
 
 	_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 11, idx);
 }
@@ -1008,7 +1008,7 @@ void ComputerManager::saveScore() {
 		} while (!v3);
 	}
 
-	ptr = _vm->_globals.allocMemory(100);
+	byte *ptr = _vm->_globals.allocMemory(100);
 	memset(ptr, 0, 99);
 	for (int v5 = 0; v5 <= 5; v5++) {
 		v6 = 16 * v5;
