@@ -355,12 +355,12 @@ LABEL_57:
 			}
 		}
 		_vm->_globals.hauteur_boite = (_vm->_globals.police_h + 1) * lineCount + 2;
-		int v56 = v73;
-		int v55 = yp;
-		int v53 = _vm->_globals._boxWidth + 10;
-		int v51 = (_vm->_globals.police_h + 1) * lineCount + 12;
+		int posX = v73;
+		int posY = yp;
+		int saveWidth = _vm->_globals._boxWidth + 10;
+		int saveHeight = (_vm->_globals.police_h + 1) * lineCount + 12;
 		if (_text[idx]._textType == 6) {
-			int v27 = v53 / 2;
+			int v27 = saveWidth / 2;
 			if (v27 < 0)
 				v27 = -v27;
 			_text[idx]._pos.x = 315 - v27;
@@ -368,37 +368,36 @@ LABEL_57:
 			v73 = _vm->_eventsManager._startPos.x + 315 - v27;
 			_text[idx]._pos.y = 50;
 			v70 = 50;
-			v55 = 50;
-			v56 = v28;
+			posY = 50;
+			posX = v28;
 		}
 		int textType = _text[idx]._textType;
 		if (textType == 1 || textType == 3 || textType == 5 || textType == 6) {
-			int v49 = v51 * v53;
-			byte *ptrd = _vm->_globals.allocMemory(v49);
-			if (ptrd == g_PTRNUL) {
-				error("Cutting a block for text box (%d)", v49);
-			}
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, v56, v55, v53, v51);
-			_vm->_graphicsManager.Trans_bloc2(ptrd, _vm->_graphicsManager._colorTable, v49);
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, v56, v55, v53, v51);
+			int size = saveHeight * saveWidth;
+			byte *ptrd = _vm->_globals.allocMemory(size);
+			if (ptrd == g_PTRNUL)
+				error("Cutting a block for text box (%d)", size);
+
+			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, posX, posY, saveWidth, saveHeight);
+			_vm->_graphicsManager.Trans_bloc2(ptrd, _vm->_graphicsManager._colorTable, size);
+			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, posX, posY, saveWidth, saveHeight);
 			_vm->_globals.freeMemory(ptrd);
 
-			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager._vesaBuffer, v56, v55, v53, (byte)-2);
-			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager._vesaBuffer, v56, v51 + v55, v53, (byte)-2);
-			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager._vesaBuffer, v56, v70, v51, (byte)-2);
-			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager._vesaBuffer, v53 + v56, v70, v51, (byte)-2);
+			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager._vesaBuffer, posX, posY, saveWidth, (byte)-2);
+			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager._vesaBuffer, posX, saveHeight + posY, saveWidth, (byte)-2);
+			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager._vesaBuffer, posX, posY, saveHeight, (byte)-2);
+			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager._vesaBuffer, saveWidth + posX, posY, saveHeight, (byte)-2);
 		}
 		_text[idx]._lineCount = lineCount;
-		int v75 = v73 + 5;
-		int v71 = v70 + 5;
+		int v71 = posY + 5;
 
 		for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
-			displayText(v75, v71, _text[idx]._lines[lineNum], _text[idx]._color);
+			displayText(v73 + 5, v71, _text[idx]._lines[lineNum], _text[idx]._color);
 			v71 += _vm->_globals.police_h + 1;
 		}
 
-		int blockWidth = v53 + 1;
-		int blockHeight = v51 + 1;
+		int blockWidth = saveWidth + 1;
+		int blockHeight = saveHeight + 1;
 
 		_text[idx]._width = blockWidth;
 		_text[idx]._height = blockHeight;
@@ -413,7 +412,7 @@ LABEL_57:
 			_text[idx]._textBlock = ptre;
 			_text[idx]._width = blockWidth;
 			_text[idx]._height = blockHeight;
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _text[idx]._textBlock, v56, v55, _text[idx]._width, blockHeight);
+			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _text[idx]._textBlock, posX, posY, _text[idx]._width, blockHeight);
 		}
 		_tempText = _vm->_globals.freeMemory(_tempText);
 	}
@@ -423,12 +422,11 @@ LABEL_57:
  * Directly display text (using a VESA segment)
  */
 void FontManager::displayTextVesa(int xp, int yp, const Common::String &message, int col) {
-	const char *srcP;
 	char currChar;
 	int charIndex;
 	int currentX = xp;
 
-	srcP = message.c_str();
+	const char *srcP = message.c_str();
 	for (;;) {
 		currChar = *srcP++;
 		if (!currChar)

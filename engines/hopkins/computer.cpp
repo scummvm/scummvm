@@ -240,7 +240,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				switch (keyPressed) {
 				case '2':
 					readText(6);
-				break;
+					break;
 				case '3':
 					readText(7);
 					break;
@@ -482,8 +482,7 @@ void ComputerManager::restoreFBIRoom() {
  */
 void ComputerManager::readText(int idx) {
 	uint16 v1;
-	int v2;
-	uint16 v3;
+	bool foundFl;
 	int v4;
 	int v5;
 	int v6;
@@ -506,21 +505,18 @@ void ComputerManager::readText(int idx) {
 
 	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	v1 = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
-	v2 = 0;
-	v3 = 0;
-	if (v1 > 0u) {
-		do {
-			if (*(ptr + v3) == '%') {
-				numStr = Common::String::format("%c%c", *(ptr + v3 + 1), *(ptr + v3 + 2));
-				num	= atol(numStr.c_str());
+	foundFl = false;
+	int v3;
+	for (v3 = 0; v3 < v1; v3++) {
+		if (ptr[v3] == '%') {
+			numStr = Common::String::format("%c%c", ptr[v3 + 1], ptr[v3 + 2]);
+			num	= atol(numStr.c_str());
 
-				if (num == idx)
-					v2 = 1;
-			}
-			if (v2 == 1)
-				break;
-			++v3;
-		} while (v3 < v1);
+			if (num == idx)
+				foundFl = true;
+		}
+		if (foundFl)
+			break;
 	}
 	v4 = v3;
 	if (v3 > v1 - 1)
@@ -531,10 +527,8 @@ void ComputerManager::readText(int idx) {
 	v6 = 5;
 	v7 = 0;
 	do {
-		v4 = *(ptr + v10);
+		v4 = ptr[v10];
 		if (v4 == 13) {
-//			v12[v7] = 0;
-//			v7 = 0;
 			v8 = v4;
 			setTextPosition(v6, v5);
 			outText(v12);
@@ -545,7 +539,6 @@ void ComputerManager::readText(int idx) {
 			v4 = v8;
 			v12 = "";
 		} else if (v4 != '%') {
-			//v12[v7++] = v4;
 			v12 += v4;
 			++v7;
 		}
@@ -619,14 +612,14 @@ void ComputerManager::loadHiscore() {
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
 		for (int i = 0; i < 5; ++i) {
-			nextChar = *(ptr + i + (16 * scoreIndex));
+			nextChar = ptr[i + (16 * scoreIndex)];
 			if (!nextChar)
 				nextChar = ' ';
 			_score[scoreIndex]._name += nextChar;
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			nextChar = *(ptr + i + scoreIndex * 16 + 6);
+			nextChar = ptr[i + scoreIndex * 16 + 6];
 			if (!nextChar)
 				nextChar = '0';
 			_score[scoreIndex]._score += nextChar;
@@ -1047,19 +1040,19 @@ void ComputerManager::saveScore() {
 			v8 = _score[v14]._name[v7];
 			if (!v8)
 				v8 = 32;
-			*(ptr + (16 * v5) + v7) = v8;
+			ptr[(16 * v5) + v7] = v8;
 		};
 
-		*(ptr + v6 + 5) = 0;
+		ptr[v6 + 5] = 0;
 		v9 = v6 + 6;
 
 		for (int v10 = 0; v10 <= 8; v10++) {
 			v11 = _score[v14]._score[v10];
 			if (!v11)
 				v11 = 48;
-			*(ptr + v9 + v10) = v11;
+			ptr[v9 + v10] = v11;
 		};
-		*(ptr + v9 + 9) = 0;
+		ptr[v9 + 9] = 0;
 	}
 
 	_vm->_fileManager.constructLinuxFilename("HISCORE.DAT");

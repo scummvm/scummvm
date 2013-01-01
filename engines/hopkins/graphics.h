@@ -70,8 +70,7 @@ public:
 	int _scrollOffset;
 	int SCROLL;
 	byte HEADER_PCX[128];
-	int PCX_L, PCX_H;
-	bool DOUBLE_ECRAN;
+	bool _largeScreenFl;
 	int OLD_SCROLL;
 	bool MANU_SCROLL;
 	int _scrollSpeed;
@@ -114,7 +113,6 @@ public:
 	void A_PCX320(byte *surface, const Common::String &file, byte *palette);
 	void clearPalette();
 	void SCANLINE(int pitch);
-	void m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);

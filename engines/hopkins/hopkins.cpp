@@ -4493,7 +4493,7 @@ void HopkinsEngine::playIntro() {
 				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
-				if (_graphicsManager.DOUBLE_ECRAN) {
+				if (_graphicsManager._largeScreenFl) {
 					_graphicsManager.no_scroll = 2;
 					bool v3 = false;
 					_graphicsManager.SCROLL = 0;
@@ -4549,9 +4549,6 @@ void HopkinsEngine::playIntro() {
 				_eventsManager.VBL();
 				memcpy(&paletteData2, _graphicsManager._palette, 796);
 
-				// CHECKME: Useless variables?
-				// v21 = *(uint16 *)&_graphicsManager.Palette[796];
-				// v22 = _graphicsManager.Palette[798];
 				_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager._vesaBuffer);
 				_graphicsManager.FIN_VISU();
 

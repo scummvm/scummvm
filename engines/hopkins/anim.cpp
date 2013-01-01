@@ -319,7 +319,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager.SCROLL = v11;
 		_vm->_graphicsManager.scrollScreen(v11);
-		if (_vm->_graphicsManager.DOUBLE_ECRAN) {
+		if (_vm->_graphicsManager._largeScreenFl) {
 			_vm->_graphicsManager.SCANLINE(1280);
 			_vm->_graphicsManager.max_x = 1280;
 			_vm->_graphicsManager.lockScreen();
@@ -449,7 +449,7 @@ LABEL_114:
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.SCROLL = v11;
 	_vm->_graphicsManager.scrollScreen(v11);
-	if (_vm->_graphicsManager.DOUBLE_ECRAN) {
+	if (_vm->_graphicsManager._largeScreenFl) {
 		_vm->_graphicsManager.SCANLINE(1280);
 		_vm->_graphicsManager.max_x = 1280;
 		_vm->_graphicsManager.lockScreen();
@@ -680,8 +680,8 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 				WRITE_LE_UINT16(dataP + 22, v11);
 				WRITE_LE_UINT16(dataP + 24, v22);
 				WRITE_LE_UINT16(dataP + 26, v12);
-				*(dataP + 28) = *(v21 + data + 33);
-				*(dataP + 29) = *(v21 + data + 34);
+				dataP[28] = data[v21 + 33];
+				dataP[29] = data[v21 + 34];
 
 				for (int v14 = 1; v14 <= 4999; v14++) {
 					v9 += 10;
@@ -697,8 +697,8 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 					WRITE_LE_UINT16(v9 + 2, v15);
 					WRITE_LE_UINT16(v9 + 4, v22);
 					WRITE_LE_UINT16(v9 + 6, v16);
-					*(v9 + 8) = *(v23 + 8);
-					*(v9 + 9) = *(v23 + 9);
+					v9[8] = v23[8];
+					v9[9] = v23[9];
 				}
 				loopCond = true;
 			}

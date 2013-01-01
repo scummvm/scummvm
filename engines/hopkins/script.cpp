@@ -49,7 +49,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 	int opcodeType = 0;
 	int v70 = 0;
 	if (dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') {
-		v70 = *(dataP + 6);
+		v70 = dataP[6];
 		byte v2 = dataP[7];
 		byte v69 = dataP[8];
 		int v67 = (int16)READ_LE_UINT16(dataP + 9);
@@ -165,9 +165,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		}
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'B') {
 		if (!_vm->_objectsManager._disableFl) {
-			int v72 = *(dataP + 5);
-			v70 = *(dataP + 6);
-			int v4 = *(dataP + 7);
+			int v72 = dataP[5];
+			v70 = dataP[6];
+			int v4 = dataP[7];
 			int v68 = (int16)READ_LE_UINT16(dataP + 8);
 			int v66 = (int16)READ_LE_UINT16(dataP + 10);
 			if (v72 == 52) {
@@ -175,22 +175,20 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} else if (v72 == 51) {
 				_vm->_objectsManager.BOB_VIVANT(v70);
 			} else {
-				if (v72 == 50)
-					goto LABEL_1141;
-				_vm->_objectsManager.VBOB(_vm->_globals.SPRITE_ECRAN, v72, v68, v66, v70);
-				if (v4)
-					v4 /= _vm->_globals._speed;
-				if (v4 > 1) {
-					do {
-						if (_vm->shouldQuit())
-							return -1; // Exiting game
+				if (v72 != 50) {
+					_vm->_objectsManager.VBOB(_vm->_globals.SPRITE_ECRAN, v72, v68, v66, v70);
+					if (v4)
+						v4 /= _vm->_globals._speed;
+					if (v4 > 1) {
+						do {
+							if (_vm->shouldQuit())
+								return -1; // Exiting game
 
-						--v4;
-						_vm->_eventsManager.VBL();
-					} while (v4);
-				}
-				if (v72 == 50)
-LABEL_1141:
+							--v4;
+							_vm->_eventsManager.VBL();
+						} while (v4);
+					}
+				} else
 					_vm->_objectsManager.AFFICHE_SPEED1(_vm->_globals.SPRITE_ECRAN, v68, v66, v70);
 			}
 		}
@@ -198,7 +196,7 @@ LABEL_1141:
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'P') {
 			if (!_vm->_objectsManager._disableFl) {
 				_vm->_objectsManager._twoCharactersFl = false;
-				int v5 = *(dataP + 5);
+				int v5 = dataP[5];
 				int v6 = (int16)READ_LE_UINT16(dataP + 8);
 				_vm->_objectsManager._characterPos.x = (int16)READ_LE_UINT16(dataP + 6);
 				_vm->_objectsManager._characterPos.y = v6;
@@ -258,10 +256,10 @@ LABEL_1141:
 			_vm->_objectsManager.CH_TETE = false;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'E') {
 		if (!_vm->_objectsManager._disableFl) {
-			int v7 = *(dataP + 5);
-			v70 = *(dataP + 6);
-			int v8 = *(dataP + 7);
-			int v9 = *(dataP + 8);
+			int v7 = dataP[5];
+			v70 = dataP[6];
+			int v8 = dataP[7];
+			int v9 = dataP[8];
 			_vm->_objectsManager.RECALL = 0;
 			_vm->_globals._prevScreenId = _vm->_globals._screenId;
 			_vm->_globals._saveData->data[svField6] = _vm->_globals._screenId;
@@ -2427,7 +2425,7 @@ LABEL_1141:
 		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(dataP + 5)] = (int16)READ_LE_UINT16(dataP + 7);
 	} else if (dataP[2] == 'A' && dataP[3] == 'D' && dataP[4] == 'D') {
 		opcodeType = 1;
-		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(dataP + 5)] += *(dataP + 7);
+		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(dataP + 5)] += dataP[7];
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'S') {
 		opcodeType = 1;
 		_vm->_objectsManager.BOB_OFFSET((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));

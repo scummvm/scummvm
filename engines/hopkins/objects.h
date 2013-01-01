@@ -156,13 +156,11 @@ public:
 	void DEF_CACHE(int idx);
 	void computeSprite(int idx);
 	int AvantTri(TriMode triMode, int index, int priority);
-	void AFF_BOB_ANIM();
-	void AFF_VBOB();
+	void displayBobAnim();
+	void displayVBob();
 
 	int getSpriteX(int idx);
 	int getSpriteY(int idx);
-	void SPRITE_NOW(const byte *spriteData, int a2, int a3, int a4, int a5, int a6, int a7, int a8);
-
 	void clearSprite();
 	void SPRITE_ON(int idx);
 	void SPRITE(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9);

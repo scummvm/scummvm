@@ -50,12 +50,6 @@ void TalkManager::setParent(HopkinsEngine *vm) {
 }
 
 void TalkManager::PARLER_PERSO(const Common::String &filename) {
-	int v5;
-	int v7;
-	byte *v8;
-	byte *v9;
-	byte *v10;
-	int v14;
 	Common::String spriteFilename;
 
 	int answer = 0;
@@ -109,10 +103,11 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	PLIGNE2 = PLIGNE1 + 1;
 	PLIGNE3 = PLIGNE1 + 2;
 	PLIGNE4 = PLIGNE1 + 3;
-	v14 = _vm->_eventsManager._mouseCursorId;
+	int v14 = _vm->_eventsManager._mouseCursorId;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
 	if (!_vm->_globals.NOPARLE) {
+		int v5;
 		do {
 			v5 = DIALOGUE();
 			if (v5 != PLIGNE4)
@@ -124,6 +119,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	}
 	if (_vm->_globals.NOPARLE) {
 		int v6 = 1;
+		int v7;
 		do
 			v7 = DIALOGUE_REP(v6++);
 		while (v7 != -1);
@@ -153,15 +149,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
-	v8 = _vm->_graphicsManager._vesaBuffer;
-	v9 = _vm->_graphicsManager._vesaScreen;
-	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);
-	v9 = v9 + 614396;
-	v8 = v8 + 614396;
-	*v8 = *v9;
-	v8 += 2;
-	*v8 = *(v9 + 2);
-	v10 = v8 + 1;
+	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 	_vm->_globals._disableInventFl = oldDisableInventFl;
 	_vm->_graphicsManager.DD_VBL();
 	for (int i = 0; i <= 4; i++)
@@ -651,24 +639,24 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 		for (;;) {
 			v17 = v10;
 			do {
-				v11 = *(ptr + v9 + v10);
+				v11 = ptr[v9 + v10];
 				v14 = v11;
 				++v10;
-			} while (v11 != 32 && v11 != 37);
+			} while (v11 != ' ' && v11 != '%');
 
 			if (v10 >= v15 / _vm->_globals.police_l)
 				break;
-			if (v11 == 37) {
+			if (v11 == '%') {
 				if (v10 < v15 / _vm->_globals.police_l)
 					goto LABEL_31;
 				break;
 			}
 		}
-		if (v11 != 37)
+		if (v11 != '%')
 			goto LABEL_33;
-		v14 = 32;
+		v14 = ' ';
 LABEL_31:
-		if (v14 == 37)
+		if (v14 == '%')
 			v17 = v10;
 LABEL_33:
 		++v18;
@@ -929,7 +917,7 @@ LABEL_2:
 						v11 = 0;
 						do {
 							assert(v11 < 20);
-							*(v11++ + v8) = v6[v7++];
+							v8[v11++] = v6[v7++];
 							if (v6[v7] == 'F' && v6[v7 + 1] == 'F') {
 								v16 = 1;
 								v8[v11] = 'F';
@@ -939,9 +927,7 @@ LABEL_2:
 						} while (v16 != 1);
 					}
 					if (v16 != 1) {
-						if (v6[v7] == 'C' && v6[v7 + 1] == 'O' && v6[v7 + 2] == 'D')
-							loopCond = true;
-						if (v16 != 1 && v6[v7] == 'F' && v6[v7 + 1] == 'I' && v6[v7 + 2] == 'N')
+						if ((v6[v7] == 'C' && v6[v7 + 1] == 'O' && v6[v7 + 2] == 'D') || (v6[v7] == 'F' && v6[v7 + 1] == 'I' && v6[v7 + 2] == 'N'))
 							loopCond = true;
 					}
 					v6 += v7 + 1;
@@ -1086,8 +1072,6 @@ void TalkManager::REPONSE2(int a1, int a2) {
 void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	int v5;
 	byte *v11;
-	byte *v14;
-	byte *v15;
 	Common::String s;
 	Common::String v20;
 	Common::String v22;
@@ -1213,14 +1197,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
-	v14 = _vm->_graphicsManager._vesaBuffer;
-	v15 = _vm->_graphicsManager._vesaScreen;
-	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);
-	v15 = v15 + 614396;
-	v14 = v14 + 614396;
-	WRITE_LE_UINT16(v14, (int16)READ_LE_UINT16(v15));
-	v14 = v14 + 2;
-	*v14 = *(v15 + 2);
+	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 	_vm->_globals._disableInventFl = false;
 	_vm->_graphicsManager.DD_VBL();
 	for (int i = 0; i <= 4; i++)

@@ -43,8 +43,7 @@ GraphicsManager::GraphicsManager() {
 	_videoPtr = NULL;
 	_scrollOffset = 0;
 	SCROLL = 0;
-	PCX_L = PCX_H = 0;
-	DOUBLE_ECRAN = false;
+	_largeScreenFl = false;
 	OLD_SCROLL = 0;
 
 	_lineNbr2 = 0;
@@ -196,13 +195,13 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	}
 
 	scrollScreen(0);
-	A_PCX640_480((byte *)_vesaScreen, file, _palette, flag);
+	A_PCX640_480(_vesaScreen, file, _palette, flag);
 
 	SCROLL = 0;
 	OLD_SCROLL = 0;
 	clearPalette();
 
-	if (!DOUBLE_ECRAN) {
+	if (!_largeScreenFl) {
 		SCANLINE(SCREEN_WIDTH);
 		max_x = SCREEN_WIDTH;
 		lockScreen();
@@ -254,20 +253,19 @@ void GraphicsManager::scrollScreen(int amount) {
 }
 
 void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold) {
-	byte *destPosP;
 	int palIndex;
 	int srcOffset;
 	int col1, col2;
 
-	destPosP = destP;
+	byte *destPosP = destP;
 	for (int idx = 0; idx < count; ++idx) {
-		palIndex = *(byte *)destPosP++;
+		palIndex = *destPosP;
 		srcOffset = 3 * palIndex;
-		col1 = *(srcP + srcOffset) + *(srcP + srcOffset + 1) + *(srcP + srcOffset + 2);
+		col1 = srcP[srcOffset] + srcP[srcOffset + 1] + srcP[srcOffset + 2];
 
 		for (int idx2 = 0; idx2 < 38; ++idx2) {
 			srcOffset = 3 * idx2;
-			col2 = *(srcP + srcOffset) + *(srcP + srcOffset + 1) + *(srcP + srcOffset + 2);
+			col2 = srcP[srcOffset] + srcP[srcOffset + 1] + srcP[srcOffset + 2];
 
 			col2 += minThreshold;
 			if (col2 < col1)
@@ -277,9 +275,10 @@ void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int m
 			if (col2 > col1)
 				continue;
 
-			*(destPosP - 1) = (idx2 == 0) ? 1 : idx2;
+			*destPosP = (idx2 == 0) ? 1 : idx2;
 			break;
 		}
+		destPosP++;
 	}
 }
 
@@ -288,12 +287,12 @@ void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
 
 	byte *dataP = surface;
 	for (int count = size - 1; count; count--){
-		dataVal = *dataP++;
-		*(dataP - 1) = *(dataVal + col);
+		dataVal = *dataP;
+		*dataP = col[dataVal];
+		dataP++;
 	}
 }
 
-// TODO: See if it's feasible and/or desirable to change this to use the Common PCX decoder
 void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
 	Common::File f;
 	Graphics::PCXDecoder pcxDecoder;
@@ -322,9 +321,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 	const Graphics::Surface *s = pcxDecoder.getSurface();
 
 	// Copy out the dimensions and pixels of the decoded surface
-	DOUBLE_ECRAN = s->w > SCREEN_WIDTH;
-	PCX_L = s->w;
-	PCX_H = s->h;
+	_largeScreenFl = s->w > SCREEN_WIDTH;
 	Common::copy((byte *)s->pixels, (byte *)s->pixels + (s->pitch * s->h), surface);
 
 	// Copy out the palette
@@ -378,11 +375,9 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 			v5 = 64000;
 			if (!v16)
 				v5 = v17;
-//			v8 = i;
 			f.read(ptr, v5);
-//			i = v8;
 		}
-		v9 = *(ptr + v7++);
+		v9 = ptr[v7++];
 		if (v9 > 192) {
 			v10 = v9 - 192;
 			if (v7 == v5) {
@@ -391,17 +386,15 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 				v5 = 64000;
 				if (v16 == 1)
 					v5 = v17;
-//				v11 = i;
 				f.read(ptr, v5);
-//				i = v11;
 			}
-			v12 = *(ptr + v7++);
+			v12 = ptr[v7++];
 			do {
-				*(surface + i++) = v12;
+				surface[i++] = v12;
 				--v10;
 			} while (v10);
 		} else {
-			*(surface + i++) = v9;
+			surface[i++] = v9;
 		}
 	}
 
@@ -419,32 +412,6 @@ void GraphicsManager::clearPalette() {
 
 void GraphicsManager::SCANLINE(int pitch) {
 	_lineNbr = _lineNbr2 = pitch;
-}
-
-void GraphicsManager::m_scroll(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
-	const byte *srcP;
-	byte *destP;
-	int yNext;
-	int yCtr;
-	byte *dest2P;
-	const byte *src2P;
-	unsigned int widthRemaining;
-
-	assert(_videoPtr);
-	srcP = xs + _lineNbr2 * ys + surface;
-	destP = destX + WinScan * destY + (byte *)_videoPtr->pixels;
-	yNext = height;
-	do {
-		yCtr = yNext;
-		memcpy((byte *)destP, (const byte *)srcP, 4 * (width >> 2));
-		src2P = (const byte *)(srcP + 4 * (width >> 2));
-		dest2P = (byte *)(destP + 4 * (width >> 2));
-		widthRemaining = width - 4 * (width >> 2);
-		memcpy(dest2P, src2P, widthRemaining);
-		destP = dest2P + widthRemaining + WinScan - width;
-		srcP = src2P + widthRemaining + _lineNbr2 - width;
-		yNext = yCtr - 1;
-	} while (yCtr != 1);
 }
 
 /**
@@ -807,40 +774,41 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) 
 			return;
 
 		if (srcByte < kSetOffset) {
-			destOffset += (byte)(*srcP + 35);
-			srcByte = *(srcP++ + 1);
+			destOffset += srcP[35];
+			srcByte = srcP[1];
+			srcP++;
 		} else if (srcByte == k8bVal) {
-			destOffset += *(srcP + 1);
-			srcByte = *(srcP + 2);
+			destOffset += srcP[1];
+			srcByte = srcP[2];
 			srcP += 2;
 		} else if (srcByte == k16bVal) {
 			destOffset += READ_LE_UINT16(srcP + 1);
-			srcByte = *(srcP + 3);
+			srcByte = srcP[3];
 			srcP += 3;
 		} else {
 			destOffset += READ_LE_UINT32(srcP + 1);
-			srcByte = *(srcP + 5);
+			srcByte = srcP[5];
 			srcP += 5;
 		}
 Video_Cont3_wVbe:
 		if (srcByte > 210) {
-			if (srcByte == (byte)-45) {
-				destLen1 = *(srcP + 1);
-				rleValue = *(srcP + 2);
+			if (srcByte == -45) {
+				destLen1 = srcP[1];
+				rleValue = srcP[2];
 				destSlice1P = destOffset + destSurface;
 				destOffset += destLen1;
 				memset(destSlice1P, rleValue, destLen1);
 				srcP += 3;
 			} else {
-				destLen2 = (byte)(*srcP + 45);
-				rleValue = *(srcP + 1);
+				destLen2 = srcP[45];
+				rleValue = srcP[1];
 				destSlice2P = destOffset + destSurface;
 				destOffset += destLen2;
 				memset(destSlice2P, rleValue, destLen2);
 				srcP += 2;
 			}
 		} else {
-			*(destOffset + destSurface) = srcByte;
+			destSurface[destOffset] = srcByte;
 			++srcP;
 			++destOffset;
 		}
@@ -861,16 +829,16 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 				destOffset += srcByte - 221;
 				srcByte = *++srcP;
 			} else if (srcByte == k8bVal) {
-				destOffset += *(const byte *)(srcP + 1);
-				srcByte = *(const byte *)(srcP + 2);
+				destOffset += srcP[1];
+				srcByte = srcP[2];
 				srcP += 2;
 			} else if (srcByte == k16bVal) {
 				destOffset += READ_LE_UINT16(srcP + 1);
-				srcByte = *(const byte *)(srcP + 3);
+				srcByte = srcP[3];
 				srcP += 3;
 			} else {
 				destOffset += READ_LE_UINT32(srcP + 1);
-				srcByte = *(const byte *)(srcP + 5);
+				srcByte = srcP[5];
 				srcP += 5;
 			}
 		}
@@ -882,8 +850,8 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 
 		if (srcByte > 210) {
 			if (srcByte == 211) {
-				int pixelCount = *(srcP + 1);
-				int pixelIndex = *(srcP + 2);
+				int pixelCount = srcP[1];
+				int pixelIndex = srcP[2];
 				uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destOffset * 2);
 				uint16 pixelValue = *(uint16 *)(PAL_PIXELS + 2 * pixelIndex);
 				destOffset += pixelCount;
@@ -894,7 +862,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 				srcP += 3;
 			} else {
 				int pixelCount = srcByte - 211;
-				int pixelIndex = *(srcP + 1);
+				int pixelIndex = srcP[1];
 				uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destOffset * 2);
 				uint16 pixelValue = *(uint16 *)(PAL_PIXELS + 2 * pixelIndex);
 				destOffset += pixelCount;
@@ -926,16 +894,16 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
 		if (pixelIndex == kByteStop)
 			return;
 		if (pixelIndex == k8bVal) {
-			destOffset += *(srcP + 1);
-			pixelIndex = *(srcP + 2);
+			destOffset += srcP[1];
+			pixelIndex = srcP[2];
 			srcP += 2;
 		} else if (pixelIndex == k16bVal) {
 			destOffset += READ_LE_UINT16(srcP + 1);
-			pixelIndex = *(srcP + 3);
+			pixelIndex = srcP[3];
 			srcP += 3;
 		} else {
 			destOffset += READ_LE_UINT32(srcP + 1);
-			pixelIndex = *(srcP + 5);
+			pixelIndex = srcP[5];
 			srcP += 5;
 		}
 Video_Cont_Vbe16a:
@@ -1313,10 +1281,10 @@ void GraphicsManager::CopyAsm16(const byte *surface) {
 			v6 = (uint16 *)(v5 + 2 * *v1);
 			v = *v6;
 			*v2 = *v6;
-			*(v2 + 1) = v;
+			v2[1] = v;
 			v8 = (uint16 *)(WinScan + v2);
 			*v8 = v;
-			*(v8 + 1) = v;
+			v8[1] = v;
 			++v1;
 			v2 = (byte *)v8 - WinScan + 4;
 		}
@@ -1886,7 +1854,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		}
 	}
-	if (*ptr != 'I' || *(ptr + 1) != 'N' || *(ptr + 2) != 'I') {
+	if (ptr[0] != 'I' || ptr[1] != 'N' || ptr[2] != 'I') {
 		error("Error, file not ini");
 	} else {
 		bool doneFlag = false;
@@ -1927,9 +1895,6 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 }
 
 void GraphicsManager::NB_SCREEN() {
-	byte *destP;
-	const byte *srcP;
-
 	if (!_vm->_globals.NECESSAIRE)
 		initColorTable(50, 65, _palette);
 
@@ -1942,13 +1907,7 @@ void GraphicsManager::NB_SCREEN() {
 	m_scroll16(_vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	unlockScreen();
 
-	destP = _vesaScreen;
-	srcP = _vesaBuffer;
-	memcpy(_vesaScreen, _vesaBuffer, 614396);
-	srcP = srcP + 614396;
-	destP = destP + 614396;
-	*destP = *srcP;
-	*(destP + 2) = *(srcP + 2);
+	memcpy(_vesaScreen, _vesaBuffer, 614399);
 	DD_VBL();
 }
 
@@ -1972,20 +1931,20 @@ void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
 		if (byteVal == kByteStop)
 			return;
 		if (byteVal == k8bVal) {
-			destOffset += *(srcPtr + 1);
-			byteVal = *(srcPtr + 2);
+			destOffset += srcPtr[1];
+			byteVal = srcPtr[2];
 			srcPtr += 2;
 		} else if (byteVal == k16bVal) {
 			destOffset += READ_LE_UINT16(srcPtr + 1);
-			byteVal = *(srcPtr + 3);
+			byteVal = srcPtr[3];
 			srcPtr += 3;
 		} else {
 			destOffset += READ_LE_UINT32(srcPtr + 1);
-			byteVal = *(srcPtr + 5);
+			byteVal = srcPtr[5];
 			srcPtr += 5;
 		}
 Video_Cont_wVbe:
-		*(dest + destOffset) = byteVal;
+		dest[destOffset] = byteVal;
 		++srcPtr;
 		++destOffset;
 	}
@@ -2007,16 +1966,16 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 			if (byteVal == kByteStop)
 				return;
 			if (byteVal == k8bVal) {
-				destOffset += *(srcP + 1);
-				byteVal = *(srcP + 2);
+				destOffset += srcP[1];
+				byteVal = srcP[2];
 				srcP += 2;
 			} else if (byteVal == k16bVal) {
 				destOffset += READ_LE_UINT16(srcP + 1);
-				byteVal = *(srcP + 3);
+				byteVal = srcP[3];
 				srcP += 3;
 			} else {
 				destOffset += READ_LE_UINT32(srcP + 1);
-				byteVal = *(srcP + 5);
+				byteVal = srcP[5];
 				srcP += 5;
 			}
 		}
