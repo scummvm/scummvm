@@ -290,7 +290,7 @@ void DialogsManager::showOptionsDialog() {
 
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_graphicsManager._scrollOffset + 164,
 		107, 335, 215, _vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._scrollOffset + 164, 107);
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_graphicsManager._scrollOffset + 164, 107,
+	_vm->_graphicsManager.addVesaSegment(_vm->_graphicsManager._scrollOffset + 164, 107,
 		_vm->_graphicsManager._scrollOffset + 498, 320);
 
 	_vm->_globals.OPTION_SPR = _vm->_globals.freeMemory(_vm->_globals.OPTION_SPR);
@@ -437,7 +437,7 @@ LABEL_7:
 	if (_inventDisplayedFl) {
 		_inventDisplayedFl = false;
 		_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, v19, 114, v18, v17, _vm->_graphicsManager._vesaBuffer, v19, 114);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(v19, 114, v19 + v18, v18 + 114);
+		_vm->_graphicsManager.addVesaSegment(v19, 114, v19 + v18, v18 + 114);
 		_vm->_objectsManager.BOBTOUS = true;
 	}
 
@@ -469,7 +469,7 @@ void DialogsManager::inventAnim() {
 	if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager._visibleFl) {
 		_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager.I_old_x, 27, 48, 38,
 			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.I_old_x, 27);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
+		_vm->_graphicsManager.addVesaSegment(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
 		--_vm->_objectsManager.FLAG_VISIBLE_EFFACE;
 	}
 
@@ -479,11 +479,11 @@ void DialogsManager::inventAnim() {
 		_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager.I_old_x, 27, 48, 38,
 			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.I_old_x, 27);
 
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
+		_vm->_graphicsManager.addVesaSegment(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
 		int v0 = _vm->_graphicsManager._scrollOffset + 2;
 		int v1 = _vm->_graphicsManager._scrollOffset + 2;
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.ICONE, v1 + 300, 327, 0);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(v1, 27, v1 + 45, 62);
+		_vm->_graphicsManager.addVesaSegment(v1, 27, v1 + 45, 62);
 		_vm->_objectsManager.I_old_x = v0;
 	}
 
@@ -492,17 +492,17 @@ void DialogsManager::inventAnim() {
 			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
 		if (_vm->_globals._saveData->data[svField355] == 1)
 			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 866, 325, 1, 0, 0, 0);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(566, 25, 594, 60);
+		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
+		_vm->_graphicsManager.addVesaSegment(566, 25, 594, 60);
 	}
 	if (_vm->_globals._saveData->data[svField356] == 1) {
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
+		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 	}
 
 	if (_vm->_globals._saveData->data[svField354] == 1) {
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
-		_vm->_graphicsManager.Ajoute_Segment_Vesa(532, 25, 560, 60);
+		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 	}
 }
 
@@ -559,14 +559,14 @@ void DialogsManager::showLoadGame() {
 		slotNumber = searchSavegames();
 		_vm->_eventsManager.VBL();
 	} while (!_vm->shouldQuit() && (!slotNumber || _vm->_eventsManager.getMouseButton() != 1));
-	_vm->_objectsManager.SL_FLAG = false;
+	_vm->_objectsManager._saveLoadFl = false;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x + 183, 60);
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 183, 60, 457, 413);
+	_vm->_graphicsManager.addVesaSegment(_vm->_eventsManager._startPos.x + 183, 60, 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
 	_vm->_objectsManager.SL_SPR = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR);
 	_vm->_objectsManager.SL_SPR2 = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR2);
-	_vm->_objectsManager.SL_X = 0;
-	_vm->_objectsManager.SL_Y = 0;
+	_vm->_objectsManager._saveLoadX = 0;
+	_vm->_objectsManager._saveLoadY = 0;
 
 	if (slotNumber != 7) {
 		_vm->_saveLoadManager.loadGame(slotNumber);
@@ -590,14 +590,14 @@ void DialogsManager::showSaveGame() {
 		_vm->_eventsManager.VBL();
 	} while (!_vm->shouldQuit() && (!slotNumber || _vm->_eventsManager.getMouseButton() != 1));
 
-	_vm->_objectsManager.SL_FLAG = false;
+	_vm->_objectsManager._saveLoadFl = false;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x + 183, 60);
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
+	_vm->_graphicsManager.addVesaSegment(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
 	_vm->_objectsManager.SL_SPR = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR);
 	_vm->_objectsManager.SL_SPR2 = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR2);
-	_vm->_objectsManager.SL_X = 0;
-	_vm->_objectsManager.SL_Y = 0;
+	_vm->_objectsManager._saveLoadX = 0;
+	_vm->_objectsManager._saveLoadY = 0;
 
 	if (slotNumber != 7) {
 		// Since the original GUI doesn't support save names, use a default name
@@ -680,10 +680,10 @@ void DialogsManager::showSaveLoad(int a1) {
 	}
 
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
-	_vm->_objectsManager.SL_FLAG = true;
+	_vm->_objectsManager._saveLoadFl = true;
 	_vm->_objectsManager.SL_MODE = a1;
-	_vm->_objectsManager.SL_X = 0;
-	_vm->_objectsManager.SL_Y = 0;
+	_vm->_objectsManager._saveLoadX = 0;
+	_vm->_objectsManager._saveLoadY = 0;
 }
 
 /**
@@ -718,33 +718,33 @@ int DialogsManager::searchSavegames() {
 
 	switch (slotNumber) {
 	case 1:
-		_vm->_objectsManager.SL_X = 189;
-		_vm->_objectsManager.SL_Y = 111;
+		_vm->_objectsManager._saveLoadX = 189;
+		_vm->_objectsManager._saveLoadY = 111;
 		break;
 	case 2:
-		_vm->_objectsManager.SL_X = 322;
-		_vm->_objectsManager.SL_Y = 111;
+		_vm->_objectsManager._saveLoadX = 322;
+		_vm->_objectsManager._saveLoadY = 111;
 		break;
 	case 3:
-		_vm->_objectsManager.SL_X = 189;
-		_vm->_objectsManager.SL_Y = 202;
+		_vm->_objectsManager._saveLoadX = 189;
+		_vm->_objectsManager._saveLoadY = 202;
 		break;
 	case 4:
-		_vm->_objectsManager.SL_X = 322;
-		_vm->_objectsManager.SL_Y = 202;
+		_vm->_objectsManager._saveLoadX = 322;
+		_vm->_objectsManager._saveLoadY = 202;
 		break;
 	case 5:
-		_vm->_objectsManager.SL_X = 189;
-		_vm->_objectsManager.SL_Y = 293;
+		_vm->_objectsManager._saveLoadX = 189;
+		_vm->_objectsManager._saveLoadY = 293;
 		break;
 	case 6:
-		_vm->_objectsManager.SL_X = 322;
-		_vm->_objectsManager.SL_Y = 293;
+		_vm->_objectsManager._saveLoadX = 322;
+		_vm->_objectsManager._saveLoadY = 293;
 		break;
 	case 0:
 	case 7:
-		_vm->_objectsManager.SL_X = 0;
-		_vm->_objectsManager.SL_Y = 0;
+		_vm->_objectsManager._saveLoadX = 0;
+		_vm->_objectsManager._saveLoadY = 0;
 		break;
 	}
 	return slotNumber;

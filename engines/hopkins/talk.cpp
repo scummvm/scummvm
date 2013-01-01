@@ -1083,7 +1083,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_graphicsManager.no_scroll = 1;
 	_vm->_linesManager.CLEAR_ZONE();
 	_vm->_linesManager.RESET_OBSTACLE();
-	_vm->_globals.RESET_CACHE();
+	_vm->_globals.resetCache();
 	
 	for (int i = 0; i <= 44; i++)
 		_vm->_globals.BOBZONE[i] = 0;
@@ -1166,7 +1166,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.NECESSAIRE = false;
 	_vm->_linesManager.CLEAR_ZONE();
 	_vm->_linesManager.RESET_OBSTACLE();
-	_vm->_globals.RESET_CACHE();
+	_vm->_globals.resetCache();
 	for (int i = 0; i <= 44; i++)
 		_vm->_globals.BOBZONE[i] = 0;
 

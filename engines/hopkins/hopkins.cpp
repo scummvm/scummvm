@@ -4486,11 +4486,9 @@ void HopkinsEngine::playIntro() {
 				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-				_globals.BPP_NOAFF = true;
 				for (int i = 0; i <= 4; i++)
 					_eventsManager.VBL();
 
-				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
 				if (_graphicsManager._largeScreenFl) {
@@ -4532,12 +4530,10 @@ void HopkinsEngine::playIntro() {
 				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-				_globals.BPP_NOAFF = true;
 
 				for (int i = 0; i <= 4; i++)
 					_eventsManager.VBL();
 
-				_globals.BPP_NOAFF = false;
 				_globals.iRegul = 1;
 				_graphicsManager.FADE_INW();
 				for (uint i = 0; i < 200 / _globals._speed; ++i)
@@ -4577,12 +4573,10 @@ void HopkinsEngine::playIntro() {
 					_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 					_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 					_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-					_globals.BPP_NOAFF = true;
 
 					for (int i = 0; i <= 3; i++)
 						_eventsManager.VBL();
 
-					_globals.BPP_NOAFF = false;
 					_globals.iRegul = 1;
 					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager._vesaBuffer);
 
@@ -4750,13 +4744,11 @@ void HopkinsEngine::bombExplosion() {
 	_animationManager.loadAnim("ANIM15");
 	_graphicsManager.VISU_ALL();
 	_objectsManager.stopBobAnimation(7);
-	_globals.BPP_NOAFF = true;
 
 	for (int idx = 0; idx < 5; ++idx) {
 		_eventsManager.VBL();
 	}
 
-	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
 	_eventsManager.mouseOff();
 
@@ -4797,15 +4789,10 @@ void HopkinsEngine::PUBQUIT() {
 	_eventsManager.changeMouseCursor(0);
 	_eventsManager._mouseCursorId = 0;
 	_eventsManager._mouseSpriteId = 0;
-	_globals.netscape = true;
 
 	bool mouseClicked = false;
 
-	// CHECKME: Useless variables ?
-	// int xp, yp;
 	do {
-//		xp = _eventsManager.XMOUSE();
-//		yp = _eventsManager.YMOUSE();
 		_eventsManager.VBL();
 
 		if (_eventsManager.getMouseButton() == 1)
@@ -4813,7 +4800,7 @@ void HopkinsEngine::PUBQUIT() {
 	} while (!mouseClicked && !g_system->getEventManager()->shouldQuit());
 
 	// Original tried to open a web browser link here. Since ScummVM doesn't support
-	// that, it's being skipped in favour of simply exitting
+	// that, it's being skipped in favor of simply exiting
 
 	_graphicsManager.FADE_OUTW();
 }
@@ -4828,12 +4815,10 @@ void HopkinsEngine::handleConflagration() {
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_graphicsManager.VISU_ALL();
-	_globals.BPP_NOAFF = true;
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
 
-	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
 	_globals.iRegul = 1;
 
@@ -4939,12 +4924,10 @@ void HopkinsEngine::BASED() {
 	_animationManager.loadAnim("ANIM92");
 	_graphicsManager.VISU_ALL();
 	_objectsManager.INILINK("IM92");
-	_globals.BPP_NOAFF = true;
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
 
-	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
 	_globals.CACHE_ON();
 
@@ -4954,7 +4937,7 @@ void HopkinsEngine::BASED() {
 
 	_graphicsManager.FADE_OUTW();
 	_graphicsManager.FIN_VISU();
-	_globals.RESET_CACHE();
+	_globals.resetCache();
 	_globals._disableInventFl = false;
 	_globals._exitId = 93;
 	_globals.iRegul = 0;
@@ -4971,8 +4954,6 @@ void HopkinsEngine::playEnding() {
 	_globals.chemin = (int16 *)g_PTRNUL;
 	_globals.NOMARCHE = true;
 	_globals._exitId = 0;
-	_globals.AFFLI = false;
-	_globals.AFFIVBL = false;
 	_soundManager.loadSample(1, "SOUND90.WAV");
 	_graphicsManager.loadImage("IM100");
 	_animationManager.loadAnim("ANIM100");
@@ -4986,12 +4967,10 @@ void HopkinsEngine::playEnding() {
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_eventsManager.changeMouseCursor(0);
-	_globals.BPP_NOAFF = true;
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
 
-	_globals.BPP_NOAFF = false;
 	_graphicsManager.FADE_INW();
 	_globals.iRegul = 1;
 
@@ -5652,8 +5631,6 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	_graphicsManager._noFadingFl = false;
 	_globals.NOMARCHE = false;
 	_globals._exitId = 0;
-	_globals.AFFLI = false;
-	_globals.AFFIVBL = true;
 	_globals._disableInventFl = true;
 	_soundManager.WSOUND(soundId);
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "VAISSEAU.SPR");
@@ -5741,7 +5718,6 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		_globals._exitId = exit4;
 	_graphicsManager.FADE_OUTW();
 	_objectsManager.removeSprite(0);
-	_globals.AFFLI = false;
 	_objectsManager.CLEAR_ECRAN();
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);

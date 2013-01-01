@@ -58,7 +58,7 @@ public:
 	LigneItem Ligne[400];
 	SmoothItem SMOOTH[4000];
 	int next_ligne;
-	int TOTAL_LIGNES;
+	int _linesNumb;
 	int NV_LIGNEDEP;
 	int NV_LIGNEOFS;
 	int NV_POSI;

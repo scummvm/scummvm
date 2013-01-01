@@ -111,7 +111,7 @@ Globals::Globals() {
 	for (int i = 0; i < 36; ++i)
 		_inventory[i] = 0;
 	for (int i = 0; i < 51; ++i)
-		Common::fill((byte *)&Tri[i], (byte *)&Tri[i] + sizeof(TriItem), 0);
+		Common::fill((byte *)&_sortedDisplay[i], (byte *)&_sortedDisplay[i] + sizeof(SortItem), 0);
 
 	// Initialise fields
 	_language = LANG_EN;
@@ -164,10 +164,8 @@ Globals::Globals() {
 	_menuMusicOff = 0;
 	_menuTextOff = 0;
 	_menuDisplayType = 0;
-	NBTRI = 0;
-	AFFLI = false;
-	AFFIVBL = false;
-	NOT_VERIF = 0;
+	_sortedDisplayCount = 0;
+	NOT_VERIF = false;
 	PERSO_TYPE = 0;
 	GOACTION = false;
 	NECESSAIRE = false;
@@ -219,9 +217,7 @@ Globals::Globals() {
 	// Reset flags
 	_censorshipFl = false;
 	GESTE_FLAG = 0;
-	BPP_NOAFF = false;
 	_disableInventFl = false;
-	netscape = false;
 	NOMARCHE = false;
 	NO_VISU = false;
 	_optionDialogFl = false;
@@ -500,7 +496,7 @@ byte *Globals::freeMemory(byte *p) {
 }
 
 // Reset Cache
-void Globals::RESET_CACHE() {
+void Globals::resetCache() {
 
 	for (int idx = 1; idx <= 5; ++idx) {
 		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
@@ -546,7 +542,7 @@ void Globals::loadCache(const Common::String &file) {
 	Common::String v16;
 	Common::File f;
 
-	RESET_CACHE();
+	resetCache();
 	_vm->_fileManager.constructFilename(HOPLINK, file);
 	ptr = _vm->_fileManager.loadFile(_curFilename);
 	v16 = Common::String((const char *)ptr);

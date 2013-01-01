@@ -159,15 +159,15 @@ struct BlocItem {
 };
 
 /**
- * Mode for TriItem records
+ * Mode for SortItem records
  */
-enum TriMode { TRI_NONE = 0, TRI_BOB = 1, TRI_SPRITE = 2, TRI_CACHE = 3 };
+enum SortMode { SORT_NONE = 0, SORT_BOB = 1, SORT_SPRITE = 2, SORT_CACHE = 3 };
 
 /**
  * Structure to represent a pending display of either a Bob, Sprite, or Cache Item.
  */
-struct TriItem {
-	TriMode _triMode;
+struct SortItem {
+	SortMode _sortMode;
 	int _index;
 	int _priority;
 };
@@ -327,7 +327,7 @@ public:
 	int Param[2100];
 	HopkinsItem Hopkins[70];
 	int _inventory[36];
-	TriItem Tri[51];
+	SortItem _sortedDisplay[51];
 	Language _language;
 	int SVGA;
 	bool _internetFl;
@@ -396,7 +396,6 @@ public:
 	uint32 _catalogPos;
 	uint32 _catalogSize;
 	int iRegul;
-	bool BPP_NOAFF;
 	int _exitId;
 	int PLANX, PLANY;
 	int PLANI;
@@ -409,7 +408,6 @@ public:
 	int Max_Ligne_Long;
 	int Max_Perso_Y;
 	bool _disableInventFl;
-	bool netscape; // CHECKME: Useless variable?
 	bool NOMARCHE;
 	int NBBLOC;
 	bool NO_VISU;
@@ -423,10 +421,8 @@ public:
 	int _menuVoiceOff;
 	int _menuMusicOff;
 	int _menuTextOff;
-	int NBTRI;
-	bool AFFLI; // CHECKME: Useless variable?
-	bool AFFIVBL; // CHECKME: Useless variable?
-	int NOT_VERIF;
+	int _sortedDisplayCount;
+	bool NOT_VERIF;
 	bool _cacheFl;
 	bool NOPARLE;
 	bool PLAN_FLAG;
@@ -481,7 +477,7 @@ public:
 	byte *allocMemory(int count);
 	byte *freeMemory(byte *p);
 
-	void RESET_CACHE();
+	void resetCache();
 	void CACHE_ON();
 	void CACHE_OFF(int v1 = 0);
 	void CACHE_SUB(int idx);

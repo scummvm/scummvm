@@ -60,7 +60,6 @@ GraphicsManager::GraphicsManager() {
 	clip_x = clip_y = 0;
 	clip_x1 = clip_y1 = 0;
 	clip_flag = false;
-	SDL_NBLOCS = 0;
 	Red_x = Red_y = 0;
 	Red = 0;
 	_width = 0;
@@ -1112,7 +1111,7 @@ void GraphicsManager::RESET_SEGMENT_VESA() {
 }
 
 // Add VESA Segment
-void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
+void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 	int tempX;
 	int blocCount;
 	bool addFlag;
@@ -1156,11 +1155,10 @@ void GraphicsManager::Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2) {
 }
 
 // Display VESA Segment
-void GraphicsManager::Affiche_Segment_Vesa() {
+void GraphicsManager::displayVesaSegment() {
 	if (_vm->_globals.NBBLOC == 0)
 		return;
 
-	SDL_NBLOCS = _vm->_globals.NBBLOC;
 	lockScreen();
 
 	for (int idx = 1; idx <= _vm->_globals.NBBLOC; ++idx) {
@@ -1198,10 +1196,6 @@ void GraphicsManager::Affiche_Segment_Vesa() {
 
 	_vm->_globals.NBBLOC = 0;
 	unlockScreen();
-	if (!_vm->_globals.BPP_NOAFF) {
-//		SDL_UpdateRects(LinuxScr, SDL_NBLOCS, dstrect);
-	}
-	SDL_NBLOCS = 0;
 }
 
 void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx) {
@@ -1217,7 +1211,7 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 		Sprite_Vesa(_vesaScreen, objectData, xp + 300, yp + 300, idx);
 	}
 	if (!_vm->_globals.NO_VISU)
-		Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
+		addVesaSegment(xp, yp, xp + width, yp + height);
 }
 
 void GraphicsManager::CopyAsm(const byte *surface) {
@@ -1713,7 +1707,7 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 		Sprite_Vesa(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex);
 	}
 	if (!_vm->_globals.NO_VISU)
-		Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
+		addVesaSegment(xp, yp, xp + width, yp + height);
 }
 
 void GraphicsManager::SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {
@@ -1747,7 +1741,7 @@ void GraphicsManager::SCOPY(const byte *surface, int x1, int y1, int width, int 
 	if (croppedWidth > 0 && croppedHeight > 0) {
 		int height2 = croppedHeight;
 		Copy_Mem(surface, left, top2, croppedWidth, croppedHeight, destSurface, destX, destY);
-		Ajoute_Segment_Vesa(left, top2, left + croppedWidth, top2 + height2);
+		addVesaSegment(left, top2, left + croppedWidth, top2 + height2);
 	}
 }
 

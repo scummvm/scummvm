@@ -87,7 +87,6 @@ public:
 	int clip_x, clip_y;
 	int clip_x1, clip_y1;
 	bool clip_flag;
-	int SDL_NBLOCS;
 	int Red_x, Red_y;
 	int Red;
 	int _width;
@@ -151,8 +150,8 @@ public:
 	void FIN_VISU();
 	void VISU_ALL();
 	void RESET_SEGMENT_VESA();
-	void Ajoute_Segment_Vesa(int x1, int y1, int x2, int y2);
-	void Affiche_Segment_Vesa();
+	void addVesaSegment(int x1, int y1, int x2, int y2);
+	void displayVesaSegment();
 	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx);
 	void CopyAsm(const byte *surface);
 	void CopyAsm16(const byte *surface);

@@ -158,7 +158,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			    yp,
 			    _text[idx]._width,
 			    _text[idx]._height);
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, xp + width, yp + height);
+			_vm->_graphicsManager.addVesaSegment(xp, yp, xp + width, yp + height);
 		}
 	} else {
 		int lineCount = 0;
@@ -439,7 +439,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 		}
 	}
 
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(xp, yp, currentX, yp + 12);
+	_vm->_graphicsManager.addVesaSegment(xp, yp, currentX, yp + 12);
 }
 
 /**
@@ -486,7 +486,7 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police, v9, yp, v7 - 32, fontCol);
 			v9 += _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
 			v6 = _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
-			_vm->_graphicsManager.Ajoute_Segment_Vesa(v9 - v6, yp, v9, yp + 12);
+			_vm->_graphicsManager.addVesaSegment(v9 - v6, yp, v9, yp + 12);
 			if (_vm->_eventsManager._escKeyFl) {
 				_vm->_globals.iRegul = 1;
 				_vm->_eventsManager.VBL();

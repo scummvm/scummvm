@@ -735,7 +735,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 46: {
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			int v13 = _vm->_objectsManager.getSpriteY(0);
 			int v14 = _vm->_objectsManager.getSpriteX(0);
@@ -749,7 +749,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
 			_vm->_soundManager.loadSample(2, "SOUND45.WAV");
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
@@ -948,7 +948,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 59: {
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
@@ -956,7 +956,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v16 = _vm->_objectsManager.getSpriteY(0);
 			int v17 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v17, v16, 445, 332);
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1050,7 +1050,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 81: {
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
@@ -1058,7 +1058,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v22 = _vm->_objectsManager.getSpriteY(0);
 			int v23 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v23, v22, 119, 268);
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1371,7 +1371,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 105:
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
@@ -1391,7 +1391,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				int v32 = _vm->_objectsManager.getSpriteX(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v32, v31, 211, 393);
 			}
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1624,16 +1624,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("gred1.pe2");
 			_vm->_globals.NOPARLE = false;
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			int v55 = _vm->_objectsManager.getSpriteY(0);
 			int v56 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v56, v55, 361, 325);
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.NUMZONE = -1;
 			do {
 				if (_vm->shouldQuit())
@@ -1654,16 +1654,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("gbleu1.pe2");
 			_vm->_globals.NOPARLE = false;
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			int v57 = _vm->_objectsManager.getSpriteY(0);
 			int v58 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v58, v57, 361, 325);
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.NUMZONE = -1;
 			do {
 				if (_vm->shouldQuit())
@@ -1837,12 +1837,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager._disableEscKeyFl = false;
 				_vm->_soundManager.SPECIAL_SOUND = 0;
 			}
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			int v37 = _vm->_objectsManager.getSpriteY(0);
 			int v38 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v38, v37, 330, 418);
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.NUMZONE = 0;
 			do {
 				if (_vm->shouldQuit())
@@ -1872,12 +1872,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_globals.NO_VISU = true;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			int v39 = _vm->_objectsManager.getSpriteY(0);
 			int v40 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v40, v39, 330, 314);
 			_vm->_objectsManager.NUMZONE = 0;
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1968,16 +1968,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.INILINK("IM93a");
 			_vm->_objectsManager.OBSSEUL = 0;
 			_vm->_globals.CACHE_ON();
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.g_old_sens = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			int v43 = _vm->_objectsManager.getSpriteY(0);
 			int v44 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v44, v43, 488, 280);
-			_vm->_globals.NOT_VERIF = 1;
+			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game

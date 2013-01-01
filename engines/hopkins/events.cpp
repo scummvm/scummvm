@@ -392,7 +392,7 @@ LABEL_45:
 	}
 
 	_vm->_eventsManager.updateCursor();
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(v15, yp, v12, v11);
+	_vm->_graphicsManager.addVesaSegment(v15, yp, v12, v11);
 LABEL_54:
 	_vm->_globals._speed = 2;
 	do {
@@ -419,7 +419,7 @@ LABEL_65:
 	_vm->_globals._speed = 2;
 	_rateCounter = 0;
 	if (!_vm->_graphicsManager._largeScreenFl || _vm->_graphicsManager.no_scroll == 1) {
-		_vm->_graphicsManager.Affiche_Segment_Vesa();
+		_vm->_graphicsManager.displayVesaSegment();
 	} else {
 		if (_vm->_graphicsManager.no_scroll != 2) {
 			if (getMouseX() > _vm->_graphicsManager.SCROLL + 620)
@@ -432,7 +432,7 @@ LABEL_65:
 		if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH)
 			_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
 		if (_vm->_graphicsManager.OLD_SCROLL == _vm->_graphicsManager.SCROLL) {
-			_vm->_graphicsManager.Affiche_Segment_Vesa();
+			_vm->_graphicsManager.displayVesaSegment();
 		} else {
 			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.lockScreen();

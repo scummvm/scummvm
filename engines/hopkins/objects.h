@@ -68,7 +68,7 @@ public:
 	int _oldBorderSpriteIndex;
 	Common::Point _borderPos;
 	int _borderSpriteIndex;
-	int SL_X, SL_Y;
+	int _saveLoadX, _saveLoadY;
 	int I_old_x, I_old_y;
 	int g_old_x, g_old_y;
 	int FLAG_VISIBLE_EFFACE;
@@ -77,15 +77,13 @@ public:
 	byte *_spritePtr;
 	const byte *S_old_spr;
 	bool PERSO_ON;
-	bool SL_FLAG;
+	bool _saveLoadFl;
 	int SL_MODE;
 	bool _visibleFl;
 	bool _disableCursorFl;
 	bool BOBTOUS;
 	int my_anim;
 	int NUMZONE;
-	int ARRET_PERSO_FLAG;
-	int ARRET_PERSO_NUM;
 	bool _forceZoneFl;
 	bool _changeVerbFl;
 	int _verb;
@@ -93,7 +91,7 @@ public:
 	int SPEED_X, SPEED_Y;
 	int SPEED_IMAGE;
 	byte *SPEED_PTR;
-	int DERLIGNE;
+	int _lastLine;
 	int A_ANIM;
 	int MA_ANIM;
 	int MA_ANIM1;
@@ -151,11 +149,11 @@ public:
 	void SCBOB(int idx);
 	void CALCUL_BOB(int idx);
 
-	void VERIFCACHE();
+	void checkCache();
 	void DEF_SPRITE(int idx);
 	void DEF_CACHE(int idx);
 	void computeSprite(int idx);
-	int AvantTri(TriMode triMode, int index, int priority);
+	int beforeSort(SortMode triMode, int index, int priority);
 	void displayBobAnim();
 	void displayVBob();
 
