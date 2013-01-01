@@ -64,9 +64,9 @@ private:
 	int _breakoutLevelNbr;
 	int _padPositionX;
 	int _breakoutHiscore;
-	int CASSEP1;
-	int CASSEP2;
-	int CASSDER;
+	int _minBreakoutMoveSpeed;
+	int _maxBreakoutMoveSpeed;
+	int _lastBreakoutMoveSpeed;
 
 	void loadMenu();
 	void restoreFBIRoom();
@@ -86,7 +86,7 @@ private:
 	void displayGamesSubMenu();
 	void displayScore();
 	int  displayHiscores();
-	void displayHiscoreLine(byte *objectData, int x, int y, int a4);
+	void displayHiscoreLine(byte *objectData, int x, int y, int curChar);
 	void playBreakout();
 	void saveScore();
 	int moveBall();
@@ -95,7 +95,7 @@ private:
 
 	void TXT4(int xp, int yp, int textIdx);
 
-	void IMPSCORE(int a1, int a2);
+	void IMPSCORE(int charPos, int charDisp);
 
 public:
 	ComputerManager();

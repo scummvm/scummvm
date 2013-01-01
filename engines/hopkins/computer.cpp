@@ -50,9 +50,9 @@ ComputerManager::ComputerManager() {
 	_ballUpFl = false;
 	_breakoutLevelNbr = 0;
 	_padPositionX = 0;
-	CASSEP1 = 0;
-	CASSEP2 = 0;
-	CASSDER = 0;
+	_minBreakoutMoveSpeed = 0;
+	_maxBreakoutMoveSpeed = 0;
+	_lastBreakoutMoveSpeed = 0;
 }
 
 void ComputerManager::setParent(HopkinsEngine *vm) {
@@ -678,7 +678,7 @@ void ComputerManager::newLevel() {
 	_vm->_objectsManager.SPRITE_ON(0);
 	_vm->_objectsManager.SPRITE_ON(1);
 	_vm->_eventsManager.mouseOn();
-	_vm->_soundManager.PLAY_SAMPLE(3, 5);
+	_vm->_soundManager.playSample(3, 5);
 }
 
 /**
@@ -935,60 +935,40 @@ void ComputerManager::getScoreName() {
  * Display current score
  */
 void ComputerManager::displayScore() {
-	int16 v0;
-	int16 v1;
-	int16 i;
 	char s[40];
 
 	sprintf(s, "%d", _breakoutScore);
-	v0 = 0;
+	int v0 = 0;
 	do
 		++v0;
 	while (s[v0]);
-	v1 = 0;
-	for (i = v0; ; IMPSCORE(v1++, (byte)s[i])) {
-		--i;
-		if (i <= -1)
-			break;
+	int v1 = 0;
+	for (int i = v0; i > -1; i--) {
+		IMPSCORE(v1++, (byte)s[i]);
 	}
 }
 
-void ComputerManager::IMPSCORE(int a1, int a2) {
-	int16 xp = 203;
+void ComputerManager::IMPSCORE(int charPos, int charDisp) {
+	int16 xp = 200;
 	int16 idx = 3;
 
-	if (a1 == 1)
-		xp = 193;
-	else if (a1 == 2)
-		xp = 183;
-	else if (a1 == 3)
-		xp = 170;
-	else if (a1 == 4)
-		xp = 160;
-	else if (a1 == 5)
-		xp = 150;
-	else if (a1 == 9)
-		xp = 137;
+	if (charPos == 1)
+		xp = 190;
+	else if (charPos == 2)
+		xp = 180;
+	else if (charPos == 3)
+		xp = 167;
+	else if (charPos == 4)
+		xp = 157;
+	else if (charPos == 5)
+		xp = 147;
+	else if (charPos == 9)
+		xp = 134;
 
-	if (a2 == 49)
-		idx = 4;
-	else if (a2 == 50)
-		idx = 5;
-	else if (a2 == 51)
-		idx = 6;
-	else if (a2 == 52)
-		idx = 7;
-	else if (a2 == 53)
-		idx = 8;
-	else if (a2 == 54)
-		idx = 9;
-	else if (a2 == 55)
-		idx = 10;
-	else if (a2 == 56)
-		idx = 11;
-	else if (a2 == 57)
-		idx = 12;
-	_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp - 3, 11, idx);
+	if (charDisp >= 48 && charDisp <= 57)
+	    idx = charDisp - 45
+
+	_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 11, idx);
 }
 
 /**
@@ -999,11 +979,8 @@ void ComputerManager::saveScore() {
 	int v2;
 	int v4;
 	int v6;
-	char v8;
 	int v9;
-	char v11;
 	int v14;
-	byte *ptr;
 	int v16[6];
 	int v17[6];
 
@@ -1036,21 +1013,21 @@ void ComputerManager::saveScore() {
 	for (int v5 = 0; v5 <= 5; v5++) {
 		v6 = 16 * v5;
 		v14 = v16[v5];
-		for (int v7 = 0; v7 <= 4; v7++) {
-			v8 = _score[v14]._name[v7];
-			if (!v8)
-				v8 = 32;
-			ptr[(16 * v5) + v7] = v8;
+		for (int namePos = 0; namePos <= 4; namePos++) {
+			char curChar = _score[v14]._name[namePos];
+			if (!curChar)
+				curChar = ' ';
+			ptr[v6 + namePos] = curChar;
 		};
 
 		ptr[v6 + 5] = 0;
 		v9 = v6 + 6;
 
-		for (int v10 = 0; v10 <= 8; v10++) {
-			v11 = _score[v14]._score[v10];
-			if (!v11)
-				v11 = 48;
-			ptr[v9 + v10] = v11;
+		for (int scorePos = 0; scorePos <= 8; scorePos++) {
+			char curChar = _score[v14]._score[scorePos];
+			if (!curChar)
+				curChar = '0';
+			ptr[v9 + scorePos] = curChar;
 		};
 		ptr[v9 + 9] = 0;
 	}
@@ -1063,25 +1040,18 @@ void ComputerManager::saveScore() {
 /**
  * Display parts of the hiscore line
  */
-void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int a4) {
-	char v4;
-	int v5;
+void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int curChar) {
+	int idx = 36;
 
-	v4 = a4;
-	v5 = 36;
-	if (!a4)
-		v4 = 32;
-	if (v4 == 100)
-		v5 = 0;
-	if ((byte)(v4 - 48) <= 9u)
-		v5 = (byte)v4 - 48;
-	if ((byte)(v4 - 65) <= 25)
-		v5 = (byte)v4 - 55;
-	if (v4 == 32)
-		v5 = 36;
-	if (v4 == 1)
-		v5 = 37;
-	_vm->_graphicsManager.AFFICHE_SPEEDVGA(objectData, x, y, v5);
+	if (curChar == 100)
+		idx = 0;
+	else if (curChar >= '0' && curChar <= '9')
+		idx = curChar - '0';
+	else if (curChar >= 'A' && curChar <= 'Z')
+		idx = curChar - 'A' + 10;
+	else if (curChar == 1)
+		idx = 37;
+	_vm->_graphicsManager.AFFICHE_SPEEDVGA(objectData, x, y, idx);
 }
 
 /**
@@ -1094,55 +1064,55 @@ int ComputerManager::moveBall() {
 	int randVal = _vm->getRandomNumber(6);
 	switch (_breakoutSpeed) {
 	case 1:
-		CASSEP1 = 1;
-		CASSEP2 = 1;
+		_minBreakoutMoveSpeed = 1;
+		_maxBreakoutMoveSpeed = 1;
 		break;
 	case 2:
-		CASSEP1 = 1;
-		CASSEP2 = 2;
+		_minBreakoutMoveSpeed = 1;
+		_maxBreakoutMoveSpeed = 2;
 		break;
 	case 3:
-		CASSEP1 = 2;
-		CASSEP2 = 2;
+		_minBreakoutMoveSpeed = 2;
+		_maxBreakoutMoveSpeed = 2;
 		break;
 	case 4:
-		CASSEP1 = 3;
-		CASSEP2 = 2;
+		_minBreakoutMoveSpeed = 3;
+		_maxBreakoutMoveSpeed = 2;
 		break;
 	}
 
-	int v1 = CASSEP1;
-	if (CASSDER == CASSEP1)
-		v1 = CASSEP2;
+	int moveSpeed = _minBreakoutMoveSpeed;
+	if (_lastBreakoutMoveSpeed == _minBreakoutMoveSpeed)
+		moveSpeed = _maxBreakoutMoveSpeed;
 
 	if (_ballUpFl)
-		_ballPosition.y += v1;
+		_ballPosition.y += moveSpeed;
 	else
-		_ballPosition.y -= v1;
+		_ballPosition.y -= moveSpeed;
 
 	if (_ballRightFl)
-		_ballPosition.x += v1;
+		_ballPosition.x += moveSpeed;
 	else
-		_ballPosition.x -= v1;
+		_ballPosition.x -= moveSpeed;
 
-	CASSDER = v1;
+	_lastBreakoutMoveSpeed = moveSpeed;
 	if (_ballPosition.x <= 6) {
-		_vm->_soundManager.PLAY_SAMPLE(2, 6);
+		_vm->_soundManager.playSample(2, 6);
 		_ballPosition.x = randVal + 6;
 		_ballRightFl = !_ballRightFl;
 	}
 	if (_ballPosition.x > 307) {
-		_vm->_soundManager.PLAY_SAMPLE(2, 6);
+		_vm->_soundManager.playSample(2, 6);
 		_ballPosition.x = 307 - randVal;
 		_ballRightFl = !_ballRightFl;
 	}
 	if (_ballPosition.y <= 6) {
-		_vm->_soundManager.PLAY_SAMPLE(2, 6);
+		_vm->_soundManager.playSample(2, 6);
 		_ballPosition.y = randVal + 7;
 		_ballUpFl = !_ballUpFl;
 	}
-	if ((uint16)(_ballPosition.y - 186) <= 8u) {
-		_vm->_soundManager.PLAY_SAMPLE(2, 6);
+	if (_ballPosition.y >= 186 && _ballPosition.y <= 194) {
+		_vm->_soundManager.playSample(2, 6);
 		if (_ballPosition.x > _padPositionX - 2) {
 			int v2 = _ballPosition.x + 6;
 			if (v2 < _padPositionX + 36) {
@@ -1178,140 +1148,136 @@ int ComputerManager::moveBall() {
  * Check ball collision with bricks
  */
 void ComputerManager::checkBallCollisions() {
-	int v1;
-	int v2;
-	int v3;
-	int v4;
-	int v10;
-	int v11;
+	int cellLeft;
+	int cellRight;
+	int cellType;
+	bool collisionFl;
+	int cellBottom;
+	int cellUp;
 
-	int v7 = 0;
-	//v6 = (signed int)(6.0 * (long double)rand() / 2147483648.0) + 1;
+	bool v7 = false;
 	// TODO: Check if correct
-	int v6 = _vm->getRandomNumber(6) + 1;
-	int v0 = _ballPosition.x;
-	int v13 = _ballPosition.y;
-	int v5 = _ballPosition.x + 6;
-	int v12 = _ballPosition.y + 6;
-	int16 *v9 = _breakoutLevel;
+	int randVal = _vm->getRandomNumber(6) + 1;
+	int ballLeft = _ballPosition.x;
+	int ballTop = _ballPosition.y;
+	int ballRight = _ballPosition.x + 6;
+	int ballBottom = _ballPosition.y + 6;
+	int16 *level = _breakoutLevel;
 	uint16 v8 = 0;
 	do {
-		v1 = v9[v8];
-		v11 = v9[v8 + 1];
-		v2 = v9[v8 + 2];
-		v10 = v9[v8 + 3];
-		v3 = v9[v8 + 4];
-		if (v9[v8 + 5] != 1 || v1 == -1)
-			goto LABEL_60;
-		v4 = 0;
-		if (v13 <= v10 && v12 >= v10) {
-			if (v0 >= v1 && v5 <= v2) {
-				v4 = 1;
-				_ballUpFl = true;
-			}
-			if (v5 >= v1) {
-				if (v0 <= v1) {
-					++v4;
+		cellLeft = level[v8];
+		cellUp = level[v8 + 1];
+		cellRight = level[v8 + 2];
+		cellBottom = level[v8 + 3];
+		cellType = level[v8 + 4];
+		if (level[v8 + 5] == 1 && cellLeft != -1) {
+			collisionFl = false;
+			if (ballTop <= cellBottom && ballBottom >= cellBottom) {
+				if (ballLeft >= cellLeft && ballRight <= cellRight) {
+					collisionFl = true;
 					_ballUpFl = true;
-					_ballRightFl = false;
-					if (v3 == 31)
-						_ballPosition.x -= v6;
 				}
-			}
-			if (v0 <= v2) {
-				if (v5 >= v2) {
-					++v4;
-					_ballUpFl = true;
-					_ballRightFl = true;
-					if (v3 == 31)
-						_ballPosition.x += v6;
-				}
-			}
-		}
-		if (v12 >= v11) {
-			if (v13 > v11)
-				goto LABEL_31;
-			if (v0 >= v1 && v5 <= v2) {
-				++v4;
-				_ballUpFl = false;
-			}
-			if (v5 >= v1) {
-				if (v0 <= v1) {
-					++v4;
-					_ballUpFl = false;
-					_ballRightFl = false;
-					if (v3 == 31)
-						_ballPosition.x -= 2;
-				}
-			}
-			if (v0 <= v2) {
-				if (v5 >= v2) {
-					++v4;
-					_ballUpFl = false;
-					_ballRightFl = true;
-					if (v3 == 31)
-						_ballPosition.x += v6;
-				}
-			}
-		}
-		if (v13 >= v11) {
-LABEL_31:
-			if (v12 <= v10) {
-				if (v5 >= v1) {
-					if (v0 <= v1) {
-						++v4;
+				if (ballRight >= cellLeft) {
+					if (ballLeft <= cellLeft) {
+						collisionFl = true;
+						_ballUpFl = true;
 						_ballRightFl = false;
-						if (v3 == 31)
-							_ballPosition.x -= v6;
+						if (cellType == 31)
+							_ballPosition.x -= randVal;
 					}
 				}
-				if (v0 <= v2) {
-					if (v5 >= v2) {
-						++v4;
+				if (ballLeft <= cellRight) {
+					if (ballRight >= cellRight) {
+						collisionFl = true;
+						_ballUpFl = true;
 						_ballRightFl = true;
-						if (v3 == 31)
-							_ballPosition.x += v6;
+						if (cellType == 31)
+							_ballPosition.x += randVal;
 					}
 				}
 			}
-		}
-		if (v4) {
-			if (v3 == 31) {
-				_vm->_soundManager.PLAY_SAMPLE(2, 6);
-			} else {
-				_vm->_soundManager.PLAY_SAMPLE(1, 5);
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, v1, v11, 16);
-				if (v3 == 1)
-					_breakoutScore += 10;
-				if (v3 == 2)
-					_breakoutScore += 5;
-				if (v3 == 3) {
-					_breakoutScore += 50;
-					if (_breakoutSpeed <= 1)
-						_breakoutSpeed = 2;
-					if (_breakoutBrickNbr <= 19)
-						_breakoutSpeed = 3;
+			if (ballBottom >= cellUp && ballTop <= cellUp) {
+				if (ballLeft >= cellLeft && ballRight <= cellRight) {
+					collisionFl = true;
+					_ballUpFl = false;
 				}
-				if (v3 == 4)
-					_breakoutScore += 20;
-				if (v3 == 5) {
-					_breakoutScore += 30;
-					if (_breakoutSpeed <= 1)
-						_breakoutSpeed = 2;
+				if (ballRight >= cellLeft) {
+					if (ballLeft <= cellLeft) {
+						collisionFl = true;
+						_ballUpFl = false;
+						_ballRightFl = false;
+						if (cellType == 31)
+							_ballPosition.x -= 2;
+					}
 				}
-				if (v3 == 6)
-					_breakoutScore += 40;
-				displayScore();
-				--_breakoutBrickNbr;
-				*((uint16 *)v9 + v8 + 5) = 0;
-				v7 = 1;
+				if (ballLeft <= cellRight) {
+					if (ballRight >= cellRight) {
+						collisionFl = true;
+						_ballUpFl = false;
+						_ballRightFl = true;
+						if (cellType == 31)
+							_ballPosition.x += randVal;
+					}
+				}
+			}
+			if (ballTop >= cellUp) {
+				if (ballBottom <= cellBottom) {
+					if (ballRight >= cellLeft) {
+						if (ballLeft <= cellLeft) {
+							collisionFl = true;
+							_ballRightFl = false;
+							if (cellType == 31)
+								_ballPosition.x -= randVal;
+						}
+					}
+					if (ballLeft <= cellRight) {
+						if (ballRight >= cellRight) {
+							collisionFl = true;
+							_ballRightFl = true;
+							if (cellType == 31)
+								_ballPosition.x += randVal;
+						}
+					}
+				}
+			}
+			if (collisionFl) {
+				if (cellType == 31) {
+					_vm->_soundManager.playSample(2, 6);
+				} else {
+					_vm->_soundManager.playSample(1, 5);
+					_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellUp, 16);
+					if (cellType == 1)
+						_breakoutScore += 10;
+					if (cellType == 2)
+						_breakoutScore += 5;
+					if (cellType == 3) {
+						_breakoutScore += 50;
+						if (_breakoutSpeed <= 1)
+							_breakoutSpeed = 2;
+						if (_breakoutBrickNbr <= 19)
+							_breakoutSpeed = 3;
+					}
+					if (cellType == 4)
+						_breakoutScore += 20;
+					if (cellType == 5) {
+						_breakoutScore += 30;
+						if (_breakoutSpeed <= 1)
+							_breakoutSpeed = 2;
+					}
+					if (cellType == 6)
+						_breakoutScore += 40;
+					displayScore();
+					--_breakoutBrickNbr;
+					*((uint16 *)level + v8 + 5) = 0;
+					v7 = true;
+				}
 			}
 		}
-LABEL_60:
-		if (v7 == 1)
-			v1 = -1;
+
+		if (v7)
+			cellLeft = -1;
 		v8 += 6;
-	} while (v1 != -1);
+	} while (cellLeft != -1);
 }
 
 } // End of namespace Hopkins

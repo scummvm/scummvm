@@ -737,7 +737,7 @@ void SoundManager::loadSample(int wavIndex, const Common::String &file) {
 	SOUND[wavIndex]._active = true;
 }
 
-void SoundManager::PLAY_SAMPLE(int wavIndex, int voiceMode) {
+void SoundManager::playSample(int wavIndex, int voiceMode) {
 	if (!_soundOffFl && SOUND[wavIndex]._active) {
 		if (_soundFl)
 			DEL_NWAV(SOUND_NUM);
