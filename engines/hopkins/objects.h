@@ -132,7 +132,7 @@ public:
 	void DEL_FICHIER_OBJ();
 
 	byte *loadSprite(const Common::String &file);
-	void set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize);
+	void setOffsetXY(byte *data, int idx, int xp, int yp, bool isSize);
 	int getOffsetX(const byte *spriteData, int spriteIndex, bool isSize);
 	int getOffsetY(const byte *spriteData, int spriteIndex, bool isSize);
 	void displaySprite();
@@ -202,7 +202,7 @@ public:
 	void OBJETPLUS(int a1);
 	void VALID_OBJET(int a1);
 	void OPTI_OBJET();
-	void SPECIAL_JEU();
+	void handleSpecialGames();
 	void BOB_VIVANT(int a1);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
 	void VBOB_OFF(int idx);
@@ -234,10 +234,10 @@ public:
 	int CALC_PROPRE(int idx);
 	int colision(int xp, int yp);
 
-	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int a5, int a6);
-	void SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int a5, int a6);
-	void SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int a5);
-	void TEST_FORET(int screenId, int minX, int maxX, int minY, int maxY, int idx);
+	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, int a6);
+	void SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int speed, int a6);
+	void SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int speed);
+	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 	void lockAnimX(int idx, int a2);
 
 	/**

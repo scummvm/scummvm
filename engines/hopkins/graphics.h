@@ -67,7 +67,7 @@ public:
 	Graphics::Surface *_videoPtr;
 	byte *_vesaScreen;
 	byte *_vesaBuffer;
-	int ofscroll;
+	int _scrollOffset;
 	int SCROLL;
 	byte HEADER_PCX[128];
 	int PCX_L, PCX_H;

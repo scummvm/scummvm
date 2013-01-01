@@ -72,11 +72,11 @@ int LinesManager::ZONE_OBJET(int posX, int posY) {
 		v2 = OPTI_ZONE(posX, 19, false);
 	if ((uint)(posY - 268) <= 37)
 		v2 = OPTI_ZONE(posX, 25, true);
-	if ((uint)(posY - 268) <= 20 && posX >= _vm->_graphicsManager.ofscroll + 424 && posX <= _vm->_graphicsManager.ofscroll + 478)
+	if ((uint)(posY - 268) <= 20 && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478)
 		v2 = 30;
-	if ((uint)(posY - 290) <= 16 && posX >= _vm->_graphicsManager.ofscroll + 424 && posX <= _vm->_graphicsManager.ofscroll + 478)
+	if ((uint)(posY - 290) <= 16 && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478)
 		v2 = 31;
-	if (posX < _vm->_graphicsManager.ofscroll + 152 || posX > _vm->_graphicsManager.ofscroll + 484)
+	if (posX < _vm->_graphicsManager._scrollOffset + 152 || posX > _vm->_graphicsManager._scrollOffset + 484)
 		v2 = 32;
 	if ((uint)(posY - 114) > 192)
 		v2 = 32;
@@ -85,30 +85,30 @@ int LinesManager::ZONE_OBJET(int posX, int posY) {
 
 int LinesManager::OPTI_ZONE(int posX, int minZoneNum, bool lastRow) {
 	int result = minZoneNum;
-	if (posX >= _vm->_graphicsManager.ofscroll + 158 && posX <= _vm->_graphicsManager.ofscroll + 208)
+	if (posX >= _vm->_graphicsManager._scrollOffset + 158 && posX <= _vm->_graphicsManager._scrollOffset + 208)
 		return result;
 
-	if (posX >= _vm->_graphicsManager.ofscroll + 208 && posX <= _vm->_graphicsManager.ofscroll + 266) {
+	if (posX >= _vm->_graphicsManager._scrollOffset + 208 && posX <= _vm->_graphicsManager._scrollOffset + 266) {
 		result += 1;
 		return result;
 	}
 
-	if (posX >= _vm->_graphicsManager.ofscroll + 266 && posX <= _vm->_graphicsManager.ofscroll + 320) {
+	if (posX >= _vm->_graphicsManager._scrollOffset + 266 && posX <= _vm->_graphicsManager._scrollOffset + 320) {
 		result += 2;
 		return result;
 	}
 
-	if (posX >= _vm->_graphicsManager.ofscroll + 320 && posX <= _vm->_graphicsManager.ofscroll + 370) {
+	if (posX >= _vm->_graphicsManager._scrollOffset + 320 && posX <= _vm->_graphicsManager._scrollOffset + 370) {
 		result += 3;
 		return result;
 	}
 
-	if (posX >= _vm->_graphicsManager.ofscroll + 370 && posX <= _vm->_graphicsManager.ofscroll + 424) {
+	if (posX >= _vm->_graphicsManager._scrollOffset + 370 && posX <= _vm->_graphicsManager._scrollOffset + 424) {
 		result += 4;
 		return result;
 	}
 
-	if (!lastRow && posX >= _vm->_graphicsManager.ofscroll + 424 && posX <= _vm->_graphicsManager.ofscroll + 478) {
+	if (!lastRow && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478) {
 		result += 5;
 		return result;
 	}

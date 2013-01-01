@@ -100,7 +100,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 614400);
 
 	if (!_vm->_graphicsManager._lineNbr)
-		_vm->_graphicsManager.ofscroll = 0;
+		_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_graphicsManager.NB_SCREEN();
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, false);
@@ -1137,7 +1137,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 614400);
 
 	if (!_vm->_graphicsManager._lineNbr)
-		_vm->_graphicsManager.ofscroll = 0;
+		_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_graphicsManager.NB_SCREEN();
 	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
 	_vm->_graphicsManager.NB_SCREEN();

@@ -182,7 +182,7 @@ void ObjectsManager::removeObject(int objIndex) {
 /**
  * Set Offset XY
  */
-void ObjectsManager::set_offsetxy(byte *data, int idx, int xp, int yp, bool isSize) {
+void ObjectsManager::setOffsetXY(byte *data, int idx, int xp, int yp, bool isSize) {
 	byte *startP = data + 3;
 	for (int i = idx; i; --i)
 		startP += READ_LE_UINT32(startP) + 16;
@@ -1491,7 +1491,7 @@ void ObjectsManager::checkZone() {
 	v2 = v1;
 	if (_vm->_globals.PLAN_FLAG
 	        || _vm->_eventsManager._startPos.x >= v0
-	        || (v1 = _vm->_graphicsManager.ofscroll + 54, v0 >= v1)
+	        || (v1 = _vm->_graphicsManager._scrollOffset + 54, v0 >= v1)
 	        || (v1 = v2 - 1, (uint16)(v2 - 1) > 59)) {
 		if (_visibleFl)
 			FLAG_VISIBLE_EFFACE = 4;
@@ -2381,7 +2381,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_eventsManager.mouseOn();
 	v3 = getSpriteX(0);
 	_vm->_graphicsManager.scrollScreen(v3 - 320);
-	_vm->_graphicsManager.ofscroll = getSpriteX(0) - 320;
+	_vm->_graphicsManager._scrollOffset = getSpriteX(0) - 320;
 	SPRITE_ON(0);
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -2474,7 +2474,7 @@ void ObjectsManager::handleLeftButton() {
 	destX = _vm->_eventsManager.getMouseX();
 	destY = _vm->_eventsManager.getMouseY();
 
-	if (!_vm->_dialogsManager._inventFl && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager.ofscroll - 30 && destX < _vm->_graphicsManager.ofscroll + 50 && (uint16)(destY + 29) <= 78) {
+	if (!_vm->_dialogsManager._inventFl && !_vm->_globals.PLAN_FLAG && destX > _vm->_graphicsManager._scrollOffset - 30 && destX < _vm->_graphicsManager._scrollOffset + 50 && (uint16)(destY + 29) <= 78) {
 		v1 = _vm->_eventsManager._mouseCursorId;
 		_vm->_dialogsManager._inventFl = true;
 		_vm->_dialogsManager.showInventory();
@@ -3699,17 +3699,17 @@ void ObjectsManager::initBorder(int a1) {
 	if ((uint16)(a1 - 25) <= 4u)
 		_borderPos.y = 272;
 	if (a1 == 1 || a1 == 7 || a1 == 13 || a1 == 19 || a1 == 25)
-		_borderPos.x = _vm->_graphicsManager.ofscroll + 158;
+		_borderPos.x = _vm->_graphicsManager._scrollOffset + 158;
 	if (a1 == 2 || a1 == 8 || a1 == 14 || a1 == 20 || a1 == 26)
-		_borderPos.x = _vm->_graphicsManager.ofscroll + 212;
+		_borderPos.x = _vm->_graphicsManager._scrollOffset + 212;
 	if (a1 == 3 || a1 == 9 || a1 == 15 || a1 == 21 || a1 == 27)
-		_borderPos.x = _vm->_graphicsManager.ofscroll + 266;
+		_borderPos.x = _vm->_graphicsManager._scrollOffset + 266;
 	if (a1 == 4 || a1 == 10 || a1 == 16 || a1 == 22 || a1 == 28)
-		_borderPos.x = _vm->_graphicsManager.ofscroll + 320;
+		_borderPos.x = _vm->_graphicsManager._scrollOffset + 320;
 	if (a1 == 5 || a1 == 11 || a1 == 17 || a1 == 23 || a1 == 29)
-		_borderPos.x = _vm->_graphicsManager.ofscroll + 374;
+		_borderPos.x = _vm->_graphicsManager._scrollOffset + 374;
 	if (a1 == 6 || a1 == 12 || a1 == 18 || a1 == 24 || (uint16)(a1 - 30) <= 1u)
-		_borderPos.x = _vm->_graphicsManager.ofscroll + 428;
+		_borderPos.x = _vm->_graphicsManager._scrollOffset + 428;
 	if ((uint16)(a1 - 1) <= 28)
 		_borderSpriteIndex = 0;
 	if ((uint16)(a1 - 30) <= 1)
@@ -3874,99 +3874,111 @@ void ObjectsManager::OPTI_OBJET() {
 	_vm->_globals.freeMemory(data);
 }
 
-void ObjectsManager::SPECIAL_JEU() {
-	byte *v1;
+void ObjectsManager::handleSpecialGames() {
+	byte *oldPalette;
 	byte *v2;
 	byte *v3;
 
-	if ((uint16)(_vm->_globals._screenId - 35) <= 6u) {
-		if (_vm->_globals.OLD_ECRAN == 16 && _vm->_globals._screenId == 35)
-			TEST_FORET(35, 500, 555, 100, 440, 1);
-		if (_vm->_globals.OLD_ECRAN == 36 && _vm->_globals._screenId == 35)
-			TEST_FORET(35, 6, 84, 100, 440, 4);
-		if (_vm->_globals.OLD_ECRAN == 35 && _vm->_globals._screenId == 36)
-			TEST_FORET(36, 551, 633, 100, 440, 2);
-		if (_vm->_globals.OLD_ECRAN == 37 && _vm->_globals._screenId == 36)
-			TEST_FORET(36, 6, 84, 100, 440, 4);
-		if (_vm->_globals.OLD_ECRAN == 36 && _vm->_globals._screenId == 37)
-			TEST_FORET(37, 551, 633, 100, 440, 1);
-		if (_vm->_globals.OLD_ECRAN == 38 && _vm->_globals._screenId == 37)
-			TEST_FORET(37, 392, 529, 100, 440, 2);
-		if (_vm->_globals.OLD_ECRAN == 37 && _vm->_globals._screenId == 38)
-			TEST_FORET(38, 133, 252, 100, 440, 4);
-		if (_vm->_globals.OLD_ECRAN == 39 && _vm->_globals._screenId == 38)
-			TEST_FORET(38, 6, 84, 100, 440, 3);
-		if (_vm->_globals.OLD_ECRAN == 38 && _vm->_globals._screenId == 39)
-			TEST_FORET(39, 551, 633, 100, 440, 2);
-		if (_vm->_globals.OLD_ECRAN == 40 && _vm->_globals._screenId == 39)
-			TEST_FORET(39, 6, 84, 100, 440, 3);
-		if (_vm->_globals.OLD_ECRAN == 39 && _vm->_globals._screenId == 40)
-			TEST_FORET(40, 133, 252, 100, 440, 4);
-		if (_vm->_globals.OLD_ECRAN == 41 && _vm->_globals._screenId == 40)
-			TEST_FORET(40, 392, 529, 100, 440, 2);
-		if (_vm->_globals.OLD_ECRAN == 40 && _vm->_globals._screenId == 41)
-			TEST_FORET(41, 551, 633, 100, 440, 1);
-		if (_vm->_globals.OLD_ECRAN == 17 && _vm->_globals._screenId == 41)
-			TEST_FORET(41, 6, 84, 100, 440, 3);
-	}
-	if (_vm->_globals._screenId == 5) {
-		if (getSpriteY(0) <= 399) {
-			if (!_vm->_globals._saveData->data[svField173]) {
-				_vm->_globals._saveData->data[svField173] = 1;
-				_vm->_globals.NOPARLE = true;
-				_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
-				_vm->_globals.NOPARLE = false;
-				if (!_vm->_globals._censorshipFl) {
-					v1 = _vm->_globals.allocMemory(1000);
-					memcpy(v1, _vm->_graphicsManager._palette, 769);
+	switch (_vm->_globals._screenId) {
+	case 5:
+		if ((getSpriteY(0) > 399) || _vm->_globals._saveData->data[svField173])
+			break;
 
-					_vm->_saveLoadManager.saveFile("TEMP1.SCR", _vm->_graphicsManager._vesaScreen, 307200);
+		_vm->_globals._saveData->data[svField173] = 1;
+		_vm->_globals.NOPARLE = true;
+		_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
+		_vm->_globals.NOPARLE = false;
 
-					if (!_vm->_graphicsManager._lineNbr)
-						_vm->_graphicsManager.ofscroll = 0;
-					_vm->_graphicsManager.NB_SCREEN();
-					_vm->_soundManager.SPECIAL_SOUND = 198;
-					PERSO_ON = true;
-					_vm->_animationManager.NO_SEQ = true;
-					_vm->_animationManager._clearAnimationFl = false;
-					_vm->_animationManager.playAnim("otage.ANM", 1, 24, 500);
-					_vm->_animationManager.NO_SEQ = false;
-					_vm->_soundManager.SPECIAL_SOUND = 0;
-					_vm->_globals.NECESSAIRE = true;
-					_vm->_graphicsManager.NB_SCREEN();
-					_vm->_globals.NECESSAIRE = false;
+		if (_vm->_globals._censorshipFl)
+			break;
 
-					_vm->_saveLoadManager.load("TEMP1.SCR", _vm->_graphicsManager._vesaScreen);
-					g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
+		oldPalette = _vm->_globals.allocMemory(1000);
+		memcpy(oldPalette, _vm->_graphicsManager._palette, 769);
 
-					PERSO_ON = false;
-					memcpy(_vm->_graphicsManager._palette, v1, 769);
-					_vm->_graphicsManager.SHOW_PALETTE();
-					_vm->_globals.freeMemory(v1);
-					_vm->_graphicsManager.lockScreen();
-					_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					_vm->_graphicsManager.unlockScreen();
-					v2 = _vm->_graphicsManager._vesaBuffer;
-					v3 = _vm->_graphicsManager._vesaScreen;
-					memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);
-					v3 = v3 + 614396;
-					v2 = v2 + 614396;
-					*v2 = *v3;
-					v2 = v2 + 2;
-					*v2 = v3[2];
+		_vm->_saveLoadManager.saveFile("TEMP1.SCR", _vm->_graphicsManager._vesaScreen, 307200);
 
-					_vm->_graphicsManager.no_scroll = 0;
-					_vm->_graphicsManager.DD_VBL();
-				}
-			}
-		}
-	}
-	if (_vm->_globals._screenId == 20)
-		_vm->_globals._saveData->data[svField132] = getSpriteX(0) > 65
-		                               && getSpriteX(0) <= 124
-		                               && getSpriteY(0) > 372
-		                               && getSpriteY(0) <= 398;
-	if (_vm->_globals._screenId == 57) {
+		if (!_vm->_graphicsManager._lineNbr)
+			_vm->_graphicsManager._scrollOffset = 0;
+		_vm->_graphicsManager.NB_SCREEN();
+		_vm->_soundManager.SPECIAL_SOUND = 198;
+		PERSO_ON = true;
+		_vm->_animationManager.NO_SEQ = true;
+		_vm->_animationManager._clearAnimationFl = false;
+		_vm->_animationManager.playAnim("otage.ANM", 1, 24, 500);
+		_vm->_animationManager.NO_SEQ = false;
+		_vm->_soundManager.SPECIAL_SOUND = 0;
+		_vm->_globals.NECESSAIRE = true;
+		_vm->_graphicsManager.NB_SCREEN();
+		_vm->_globals.NECESSAIRE = false;
+
+		_vm->_saveLoadManager.load("TEMP1.SCR", _vm->_graphicsManager._vesaScreen);
+		g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
+
+		PERSO_ON = false;
+		memcpy(_vm->_graphicsManager._palette, oldPalette, 769);
+		_vm->_graphicsManager.SHOW_PALETTE();
+		_vm->_globals.freeMemory(oldPalette);
+		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager.unlockScreen();
+		v2 = _vm->_graphicsManager._vesaBuffer;
+		v3 = _vm->_graphicsManager._vesaScreen;
+		memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);
+		v3 = v3 + 614396;
+		v2 = v2 + 614396;
+		*v2 = *v3;
+		v2 = v2 + 2;
+		*v2 = v3[2];
+
+		_vm->_graphicsManager.no_scroll = 0;
+		_vm->_graphicsManager.DD_VBL();
+		break;
+	case 20:
+		_vm->_globals._saveData->data[svField132] = (getSpriteX(0) > 65 && getSpriteX(0) <= 124 && getSpriteY(0) > 372 && getSpriteY(0) <= 398) ? 1 : 0;
+		break;
+	case 35:
+		if (_vm->_globals._prevScreenId == 16)
+			handleForest(35, 500, 555, 100, 440, 1);
+		else if (_vm->_globals._prevScreenId == 36)
+			handleForest(35, 6, 84, 100, 440, 4);
+		break;
+	case 36:
+		if (_vm->_globals._prevScreenId == 35)
+			handleForest(36, 551, 633, 100, 440, 2);
+		else if (_vm->_globals._prevScreenId == 37)
+			handleForest(36, 6, 84, 100, 440, 4);
+		break;
+	case 37:
+		if (_vm->_globals._prevScreenId == 36)
+			handleForest(37, 551, 633, 100, 440, 1);
+		else if (_vm->_globals._prevScreenId == 38)
+			handleForest(37, 392, 529, 100, 440, 2);
+		break;
+	case 38:
+		if (_vm->_globals._prevScreenId == 37)
+			handleForest(38, 133, 252, 100, 440, 4);
+		else if (_vm->_globals._prevScreenId == 39)
+			handleForest(38, 6, 84, 100, 440, 3);
+		break;
+	case 39:
+		if (_vm->_globals._prevScreenId == 38)
+			handleForest(39, 551, 633, 100, 440, 2);
+		else if (_vm->_globals._prevScreenId == 40)
+			handleForest(39, 6, 84, 100, 440, 3);
+		break;
+	case 40:
+		if (_vm->_globals._prevScreenId == 39)
+			handleForest(40, 133, 252, 100, 440, 4);
+		else if (_vm->_globals._prevScreenId == 41)
+			handleForest(40, 392, 529, 100, 440, 2);
+		break;
+	case 41:
+		if (_vm->_globals._prevScreenId == 40)
+			handleForest(41, 551, 633, 100, 440, 1);
+		else if (_vm->_globals._prevScreenId == 17)
+			handleForest(41, 6, 84, 100, 440, 3);
+		break;
+	case 57:
 		_vm->_globals._disableInventFl = true;
 		if (_vm->_globals._saveData->data[svField261] == 1 && BOBPOSI(5) == 37) {
 			stopBobAnimation(5);
@@ -3984,8 +3996,11 @@ void ObjectsManager::SPECIAL_JEU() {
 			_vm->_globals._saveData->data[svField261] = 3;
 		}
 		_vm->_globals._disableInventFl = false;
-	}
-	if (_vm->_globals._screenId == 93 && !_vm->_globals._saveData->data[svField333]) {
+		break;
+	case 93:
+		if (_vm->_globals._saveData->data[svField333])
+			break;
+
 		_vm->_globals._disableInventFl = true;
 		do
 			_vm->_eventsManager.VBL();
@@ -3995,27 +4010,23 @@ void ObjectsManager::SPECIAL_JEU() {
 		stopBobAnimation(8);
 		_vm->_globals._saveData->data[svField333] = 1;
 		_vm->_globals._disableInventFl = false;
+		break;
 	}
 }
 
 void ObjectsManager::BOB_VIVANT(int idx) {
-	int v1;
-	int v2;
-	int v3;
-	int v4;
+	int startPos = 10 * idx;
+	if (!READ_LE_UINT16(_vm->_talkManager._characterAnim + startPos + 4))
+		return;
 
-	v1 = 10 * idx;
-	v2 = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + v1);
-	v3 = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + v1 + 2);
-	v4 = _vm->_talkManager._characterAnim[v1 + 8];
-	if ((int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + v1 + 4)) {
-		if (!_vm->_globals.NO_OFFSET)
-			_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite,
-				_vm->_graphicsManager.ofscroll + v2, v3,
-				_vm->_talkManager._characterAnim[v1 + 8]);
-		if (_vm->_globals.NO_OFFSET)
-			_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, v2, v3, v4);
-	}
+	int xp = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + startPos);
+	int yp = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + startPos + 2);
+	int spriteIndex = _vm->_talkManager._characterAnim[startPos + 8];
+
+	if (!_vm->_globals.NO_OFFSET)
+		_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, _vm->_graphicsManager._scrollOffset + xp, yp, spriteIndex);
+	else
+		_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, xp, yp, spriteIndex);
 }
 
 void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
@@ -4520,7 +4531,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 void ObjectsManager::SPECIAL_INI() {
 	switch (_vm->_globals._screenId) {
 	case 17:
-		if (_vm->_globals.OLD_ECRAN == 20) {
+		if (_vm->_globals._prevScreenId == 20) {
 			_vm->_globals._disableInventFl = true;
 			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -4560,7 +4571,7 @@ void ObjectsManager::SPECIAL_INI() {
 		break;
 
 	case 18:
-		if (_vm->_globals.OLD_ECRAN == 17) {
+		if (_vm->_globals._prevScreenId == 17) {
 			_vm->_eventsManager._mouseSpriteId = 4;
 			_vm->_globals.BPP_NOAFF = true;
 			for (int i = 0; i <= 4; i++)
@@ -4836,85 +4847,67 @@ int ObjectsManager::colision(int xp, int yp) {
 	return -1;
 }
 
-void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int a5, int a6) {
-	int v6;
-	int v7;
-	char v8;
-	int v9;
-	int v13;
-	const byte *v14;
-	char v15;
-	int v16;
+void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, int a6) {
+	bool tokenCompleteFl;
+	char curChar;
 	int spriteIndex;
-	int v18;
-	Common::String v19;
 
-	v18 = 0;
-	v6 = 0;
-	v13 = 0;
-	v15 = a5;
-	v19 = "     ";
+	int strPos = 0;
+	int idx = 0;
+	Common::String tmpStr = "";
+	int realSpeed = speed;
 	if (_vm->_globals._speed == 2)
-		v15 = a5 / 2;
+		realSpeed = speed / 2;
 	else if (_vm->_globals._speed == 3)
-		v15 = a5 / 3;
-	v14 = _sprite[0]._spriteData;
+		realSpeed = speed / 3;
+	const byte *oldSpriteData = _sprite[0]._spriteData;
 	spriteIndex = _sprite[0]._spriteIndex;
-	v16 = _sprite[0].fieldE;
+	int oldFieldE = _sprite[0].fieldE;
 	_sprite[0].field12 += a3;
 	_sprite[0].field14 += a4;
 	_sprite[0].fieldE = a6;
 
 	for (;;) {
-		v7 = 0;
-		v8 = a2[v18];
-		if (v8 == ',') {
-			v9 = atoi(v19.c_str());
-			v13 = v9;
-			v6 = 0;
-			v19 = "     ";
-			v7 = 1;
+		tokenCompleteFl = false;
+		curChar = a2[strPos];
+		if (curChar == ',') {
+			idx = atoi(tmpStr.c_str());
+			tmpStr = "";
+			tokenCompleteFl = true;
 		} else {
-			v9 = v6;
-			v19 += v8;
-			v6 = v6 + 1;
+			tmpStr += curChar;
 		}
-		++v18;
-		if (v7 == 1) {
-			if (v13 == -1) {
-				_sprite[0]._spriteData = v14;
+		++strPos;
+
+		if (tokenCompleteFl) {
+			if (idx == -1) {
+				_sprite[0]._spriteData = oldSpriteData;
 				_sprite[0]._spriteIndex = spriteIndex;
 				_sprite[0].field12 -= a3;
 				_sprite[0].field14 -= a4;
-				_sprite[0].fieldE = v16;
+				_sprite[0].fieldE = oldFieldE;
 			} else {
 				_sprite[0]._spriteData = spriteData;
-				_sprite[0]._spriteIndex = v13;
+				_sprite[0]._spriteIndex = idx;
 			}
-			for (int v10 = 0; v10 < v15; v10++)
+			for (int v10 = 0; v10 < realSpeed; v10++)
 				_vm->_eventsManager.VBL();
-			if (v13 == -1)
+			if (idx == -1)
 				break;
 		}
 	}
 }
 
-void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int a5, int a6) {
-	int v6;
-	char v8;
-	int v9;
-	int spriteIndex;
-	char v14;
-	Common::String v16;
+void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int speed, int a6) {
+	int spriteIndex = 0;
+	Common::String tmpStr = "";
 
-	v6 = 0;
-	spriteIndex = 0;
-	v16 = "     ";
-	v14 = a5;
+	int realSpeed = speed;
 	if (_vm->_globals._speed == 2)
-		v14 = a5 / 2;
+		realSpeed = speed / 2;
 	else if (_vm->_globals._speed == 3)
-		v14 = a5 / 3;
+		realSpeed = speed / 3;
+
 	S_old_spr = _sprite[0]._spriteData;
 	S_old_ani = _sprite[0]._spriteIndex;
 	S_old_ret = _sprite[0].fieldE;
@@ -4923,65 +4916,61 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 	_sprite[0].fieldE = a6;
 
 	uint strPos = 0;
+	char nextChar;
 	do {
-		bool loopCond = false;
+		bool completeTokenFl = false;
 		do {
-			v8 = animationSeq[strPos];
+			nextChar = animationSeq[strPos];
 			if ((animationSeq[strPos] == ',') || (strPos == animationSeq.size() - 1)) {
 				// Safeguard: if the sequence doesn't end with a coma, simulate it's present.
 				if (animationSeq[strPos] != ',')
-					v16.setChar(v8, v6);
-				v9 = atoi(v16.c_str());
-				spriteIndex = v9;
-				v6 = 0;
-				v16 = "     ";
-				loopCond = true;
+					tmpStr += nextChar;
+				spriteIndex = atoi(tmpStr.c_str());
+				tmpStr = "";
+				completeTokenFl = true;
 			} else {
-				v9 = v6;
-				v16.setChar(v8, v6);
-				v6 = v6 + 1;
+				tmpStr += nextChar;
 			}
 			++strPos;
-		} while (!loopCond);
+		} while (!completeTokenFl);
+
 		if (spriteIndex != -1) {
 			_sprite[0]._spriteData = a1;
 			_sprite[0]._spriteIndex = spriteIndex;
 		}
-		for (int v10 = 0; v10 < v14; v10++)
+		for (int i = 0; i < realSpeed; i++)
 			_vm->_eventsManager.VBL();
 	} while (spriteIndex != -1);
 }
 
-void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int a5) {
-	int v6;
-	char v7;
-
-	int v14 = 0;
-	int v5 = 0;
-	int spriteIndex = 0;
-	Common::String tmpStr = "     ";
-	int v13;
+void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int speed) {
+	Common::String tmpStr = "";
+	int realSpeed;
 	if (_vm->_globals._speed == 2)
-		v13 = a5 / 2;
+		realSpeed = speed / 2;
 	else if (_vm->_globals._speed == 3)
-		v13 = a5 / 3;
+		realSpeed = speed / 3;
 	else
-		v13 = a5;
+		realSpeed = speed;
+
+	int idx = 0;
+	int spriteIndex = 0;
+	bool completeTokenFl;
+	char nextChar;
 
 	for (;;) {
-		v6 = 0;
-		v7 = animString[v14];
-		if (v7 == ',') {
+		completeTokenFl = false;
+		nextChar = animString[idx];
+		if (nextChar == ',') {
 			spriteIndex = atoi(tmpStr.c_str());
-			v5 = 0;
-			tmpStr = "     ";
-			v6 = 1;
+			tmpStr = "";
+			completeTokenFl = true;
 		} else {
-			tmpStr.setChar(v7, v5);
-			v5++;
+			tmpStr += nextChar;
 		}
-		++v14;
-		if (v6 == 1) {
+		++idx;
+
+		if (completeTokenFl) {
 			if (spriteIndex == -1) {
 				_sprite[0]._spriteData = S_old_spr;
 				_sprite[0]._spriteIndex = S_old_ani;
@@ -4993,7 +4982,7 @@ void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animStrin
 				_sprite[0]._spriteIndex = spriteIndex;
 			}
 
-			for (int v9 = 0; v9 < v13; v9++)
+			for (int i = 0; i < realSpeed; i++)
 				_vm->_eventsManager.VBL();
 
 			if (spriteIndex == -1)
@@ -5002,7 +4991,7 @@ void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animStrin
 	}
 }
 
-void ObjectsManager::TEST_FORET(int screenId, int minX, int maxX, int minY, int maxY, int idx) {
+void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx) {
 	int savegameIdx = screenId;
 	if (_vm->_globals._screenId != screenId)
 		return;
@@ -5103,7 +5092,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_dialogsManager._removeInventFl = false;
-	_vm->_graphicsManager.ofscroll = 0;
+	_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_globals.PLAN_FLAG = false;
 	_vm->_globals.iRegul = 1;
 	_vm->_soundManager.WSOUND(v);
@@ -5201,7 +5190,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_verb = 4;
 	_vm->_globals.MAX_COMPTE = 6;
-	_vm->_graphicsManager.ofscroll = 0;
+	_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_globals.PLAN_FLAG = false;
 	_vm->_graphicsManager._noFadingFl = false;
@@ -5323,7 +5312,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 				if (_vm->_globals.GOACTION)
 					PARADISE();
 			}
-			SPECIAL_JEU();
+			handleSpecialGames();
 			_vm->_eventsManager.VBL();
 			if (!_vm->_globals._exitId)
 				continue;

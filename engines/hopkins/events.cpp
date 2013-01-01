@@ -447,12 +447,12 @@ LABEL_65:
 
 			_vm->_globals.NBBLOC = 0;
 			_startPos.x = _vm->_graphicsManager.SCROLL;
-			_vm->_graphicsManager.ofscroll = _vm->_graphicsManager.SCROLL;
+			_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager.SCROLL;
 			_vm->_graphicsManager.SCROLL = _vm->_graphicsManager.SCROLL;
 		}
 		_vm->_graphicsManager.OLD_SCROLL = _vm->_graphicsManager.SCROLL;
 		_startPos.x = _vm->_graphicsManager.SCROLL;
-		_vm->_graphicsManager.ofscroll = _vm->_graphicsManager.SCROLL;
+		_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager.SCROLL;
 	}
 	_curMouseButton = _mouseButton;
 	_mouseButton = 0;

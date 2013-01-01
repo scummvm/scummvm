@@ -41,7 +41,7 @@ GraphicsManager::GraphicsManager() {
 	PAL_PIXELS = NULL;
 	_lineNbr = 0;
 	_videoPtr = NULL;
-	ofscroll = 0;
+	_scrollOffset = 0;
 	SCROLL = 0;
 	PCX_L = PCX_H = 0;
 	DOUBLE_ECRAN = false;
@@ -249,7 +249,7 @@ void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) 
 void GraphicsManager::scrollScreen(int amount) {
 	int result = CLIP(amount, 0, SCREEN_WIDTH);
 	_vm->_eventsManager._startPos.x = result;
-	ofscroll = result;
+	_scrollOffset = result;
 	SCROLL = result;
 }
 

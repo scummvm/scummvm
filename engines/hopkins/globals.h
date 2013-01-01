@@ -402,7 +402,7 @@ public:
 	int PLANI;
 	bool NOSPRECRAN;
 	int _screenId;
-	int OLD_ECRAN;
+	int _prevScreenId;
 	int fmusic;
 	int Max_Propre;
 	int Max_Propre_Gen;

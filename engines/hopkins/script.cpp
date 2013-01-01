@@ -263,7 +263,7 @@ LABEL_1141:
 			int v8 = *(dataP + 7);
 			int v9 = *(dataP + 8);
 			_vm->_objectsManager.RECALL = 0;
-			_vm->_globals.OLD_ECRAN = _vm->_globals._screenId;
+			_vm->_globals._prevScreenId = _vm->_globals._screenId;
 			_vm->_globals._saveData->data[svField6] = _vm->_globals._screenId;
 			_vm->_globals._screenId = v7;
 			_vm->_globals._saveData->data[svField5] = v7;

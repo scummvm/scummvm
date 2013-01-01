@@ -149,7 +149,7 @@ Globals::Globals() {
 	PERSO = 0;
 	_screenId = 0;
 	NOSPRECRAN = false;
-	OLD_ECRAN = 0;
+	_prevScreenId = 0;
 	Max_Propre_Gen = 0;
 	Max_Ligne_Long = 0;
 	Max_Perso_Y = 0;

@@ -76,7 +76,7 @@ void DialogsManager::showOptionsDialog() {
 			mousePos.y = _vm->_eventsManager.getMouseY();
 
 			if (!_vm->_soundManager._musicOffFl) {
-				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 138) {
+				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 327 && mousePos.y <= 138) {
 					// Change the music volume
 					++_vm->_soundManager._musicVolume;
 
@@ -89,7 +89,7 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
-				if (!_vm->_soundManager._musicOffFl && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 138) {
+				if (!_vm->_soundManager._musicOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 138) {
 					--_vm->_soundManager._musicVolume;
 					if (_vm->_soundManager._musicVolume >= 0)
 						_vm->_soundManager.playSound("bruit2.wav");
@@ -102,7 +102,7 @@ void DialogsManager::showOptionsDialog() {
 				}
 			}
 			if (!_vm->_soundManager._soundOffFl) {
-				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 165) {
+				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 327 && mousePos.y <= 165) {
 					++_vm->_soundManager._soundVolume;
 					if (_vm->_soundManager._soundVolume <= 16)
 						_vm->_soundManager.playSound("bruit2.wav");
@@ -113,7 +113,7 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
-				if (!_vm->_soundManager._soundOffFl && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 165) {
+				if (!_vm->_soundManager._soundOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 165) {
 					--_vm->_soundManager._soundVolume;
 					if (_vm->_soundManager._soundVolume >= 0)
 						_vm->_soundManager.playSound("bruit2.wav");
@@ -126,7 +126,7 @@ void DialogsManager::showOptionsDialog() {
 			}
 
 			if (!_vm->_soundManager._voiceOffFl) {
-				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 327 && mousePos.y <= 192) {
+				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 327 && mousePos.y <= 192) {
 					++_vm->_soundManager._voiceVolume;
 
 					if (_vm->_soundManager._voiceVolume <= 16)
@@ -138,7 +138,7 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
-				if (!_vm->_soundManager._voiceOffFl && mousePos.x >= _vm->_graphicsManager.ofscroll + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 192) {
+				if (!_vm->_soundManager._voiceOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 192) {
 					--_vm->_soundManager._voiceVolume;
 					if (_vm->_soundManager._voiceVolume >= 0)
 						_vm->_soundManager.playSound("bruit2.wav");
@@ -150,18 +150,18 @@ void DialogsManager::showOptionsDialog() {
 				}
 			}
 
-			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
-				if (mousePos.y > 194 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 219)
+			if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 431) {
+				if (mousePos.y > 194 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 219)
 					_vm->_soundManager._textOffFl = !_vm->_soundManager._textOffFl;
 
-				if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
-					if (mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 192) {
+				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 431) {
+					if (mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 192) {
 						_vm->_soundManager._voiceOffFl = !_vm->_soundManager._voiceOffFl;
 
 						_vm->_soundManager.updateScummVMSoundSettings();
 					}
-					if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431) {
-						if (mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 138) {
+					if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 431) {
+						if (mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 138) {
 							if (_vm->_soundManager._musicOffFl) {
 								_vm->_soundManager._musicOffFl = false;
 								_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
@@ -173,7 +173,7 @@ void DialogsManager::showOptionsDialog() {
 							_vm->_soundManager.updateScummVMSoundSettings();
 						}
 
-						if (mousePos.x >= _vm->_graphicsManager.ofscroll + 431 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager.ofscroll + 489 && mousePos.y <= 165) {
+						if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 431 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 165) {
 							_vm->_soundManager._soundOffFl = !_vm->_soundManager._soundOffFl;
 
 							_vm->_soundManager.updateScummVMSoundSettings();
@@ -182,13 +182,13 @@ void DialogsManager::showOptionsDialog() {
 				}
 			}
 
-			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 175 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager.ofscroll + 281 && mousePos.y <= 310) {
+			if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 175 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 281 && mousePos.y <= 310) {
 				_vm->_globals._exitId = 300;
 				doneFlag = true;
 			}
-			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 355 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager.ofscroll + 490 && mousePos.y <= 310)
+			if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 355 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 490 && mousePos.y <= 310)
 				doneFlag = true;
-			if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 194 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 219) {
+			if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 194 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 219) {
 				switch (_vm->_graphicsManager._scrollSpeed) {
 				case 1:
 					_vm->_graphicsManager._scrollSpeed = 2;
@@ -232,7 +232,7 @@ void DialogsManager::showOptionsDialog() {
 			//if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 221 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 246)
 			//	_vm->_globals.SVGA = 2;
 
-			if (mousePos.x < _vm->_graphicsManager.ofscroll + 165 || mousePos.x > _vm->_graphicsManager.ofscroll + 496 || (uint)(mousePos.y - 107) > 211)
+			if (mousePos.x < _vm->_graphicsManager._scrollOffset + 165 || mousePos.x > _vm->_graphicsManager._scrollOffset + 496 || (uint)(mousePos.y - 107) > 211)
 				doneFlag = true;
 		}
 
@@ -288,10 +288,10 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_eventsManager.VBL();
 	} while (!doneFlag);
 
-	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_graphicsManager.ofscroll + 164,
-		107, 335, 215, _vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.ofscroll + 164, 107);
-	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_graphicsManager.ofscroll + 164, 107,
-		_vm->_graphicsManager.ofscroll + 498, 320);
+	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_graphicsManager._scrollOffset + 164,
+		107, 335, 215, _vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._scrollOffset + 164, 107);
+	_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_graphicsManager._scrollOffset + 164, 107,
+		_vm->_graphicsManager._scrollOffset + 498, 320);
 
 	_vm->_globals.OPTION_SPR = _vm->_globals.freeMemory(_vm->_globals.OPTION_SPR);
 	_vm->_globals._optionDialogFl = false;
@@ -342,7 +342,7 @@ LABEL_7:
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENT2.SPR");
 	_inventBuf2 = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 
-	int v19 = _inventX = _vm->_graphicsManager.ofscroll + 152;
+	int v19 = _inventX = _vm->_graphicsManager._scrollOffset + 152;
 	_inventY = 114;
 	int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
 	int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
@@ -378,25 +378,21 @@ LABEL_7:
 
 		int mousePosX = _vm->_eventsManager.getMouseX();
 		int mousePosY = _vm->_eventsManager.getMouseY();
-		int v12 = _vm->_eventsManager.getMouseButton();
+		int mouseButton = _vm->_eventsManager.getMouseButton();
 		int v10 = v13;
 		int v11 = _vm->_linesManager.ZONE_OBJET(mousePosX, mousePosY);
 		v13 = v11;
 		if (v11 != v10)
 			_vm->_objectsManager.initBorder(v11);
-		if (_vm->_eventsManager._mouseCursorId != 16) {
-			if ((uint16)(_vm->_eventsManager._mouseCursorId - 1) > 1u) {
-				if (_vm->_eventsManager._mouseCursorId != 3) {
-					if (v12 == 2) {
-						_vm->_objectsManager.OBJETPLUS(v13);
-						if (_vm->_eventsManager._mouseCursorId != 23)
-							_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
-					}
-				}
+		if (_vm->_eventsManager._mouseCursorId != 1 && _vm->_eventsManager._mouseCursorId != 2 && _vm->_eventsManager._mouseCursorId != 3 && _vm->_eventsManager._mouseCursorId != 16) {
+			if (mouseButton == 2) {
+				_vm->_objectsManager.OBJETPLUS(v13);
+				if (_vm->_eventsManager._mouseCursorId != 23)
+					_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
 			}
 		}
-		if (v12 == 1) {
-			if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId || (uint16)(_vm->_eventsManager._mouseCursorId - 2) <= 1u)
+		if (mouseButton == 1) {
+			if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 2 || _vm->_eventsManager._mouseCursorId == 3 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId)
 				break;
 			_vm->_objectsManager.VALID_OBJET(_vm->_globals._inventory[v13]);
 			if (_vm->_eventsManager._mouseCursorId == 8)
@@ -434,8 +430,8 @@ LABEL_7:
 		if (v20)
 			break;
 		_vm->_eventsManager.VBL();
-		if ((uint16)(_vm->_globals._screenId - 35) <= 5u)
-			_vm->_objectsManager.SPECIAL_JEU();
+		if (_vm->_globals._screenId >= 35 && _vm->_globals._screenId <= 40)
+			_vm->_objectsManager.handleSpecialGames();
 	}
 	_vm->_fontManager.hideText(9);
 	if (_inventDisplayedFl) {
@@ -484,8 +480,8 @@ void DialogsManager::inventAnim() {
 			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.I_old_x, 27);
 
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
-		int v0 = _vm->_graphicsManager.ofscroll + 2;
-		int v1 = _vm->_graphicsManager.ofscroll + 2;
+		int v0 = _vm->_graphicsManager._scrollOffset + 2;
+		int v1 = _vm->_graphicsManager._scrollOffset + 2;
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.ICONE, v1 + 300, 327, 0);
 		_vm->_graphicsManager.Ajoute_Segment_Vesa(v1, 27, v1 + 45, 62);
 		_vm->_objectsManager.I_old_x = v0;
@@ -698,26 +694,26 @@ int DialogsManager::searchSavegames() {
 	int xp = _vm->_eventsManager.getMouseX();
 	int yp = _vm->_eventsManager.getMouseY();
 
-	_vm->_graphicsManager.ofscroll = _vm->_eventsManager._startPos.x;
+	_vm->_graphicsManager._scrollOffset = _vm->_eventsManager._startPos.x;
 	if ((uint16)(yp - 112) <= 86) {
 		if (xp > _vm->_eventsManager._startPos.x + 189 && xp < _vm->_eventsManager._startPos.x + 318)
 			slotNumber = 1;
-		if ((uint16)(yp - 112) <= 86 && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
+		if ((uint16)(yp - 112) <= 86 && xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452)
 			slotNumber = 2;
 	}
 	if ((uint16)(yp - 203) <= 86) {
-		if (xp > _vm->_graphicsManager.ofscroll + 189 && xp < _vm->_graphicsManager.ofscroll + 318)
+		if (xp > _vm->_graphicsManager._scrollOffset + 189 && xp < _vm->_graphicsManager._scrollOffset + 318)
 			slotNumber = 3;
-		if ((uint16)(yp - 203) <= 86 && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
+		if ((uint16)(yp - 203) <= 86 && xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452)
 			slotNumber = 4;
 	}
 	if ((uint16)(yp - 294) <= 86) {
-		if (xp > _vm->_graphicsManager.ofscroll + 189 && xp < _vm->_graphicsManager.ofscroll + 318)
+		if (xp > _vm->_graphicsManager._scrollOffset + 189 && xp < _vm->_graphicsManager._scrollOffset + 318)
 			slotNumber = 5;
-		if ((uint16)(yp - 294) <= 86 && xp > _vm->_graphicsManager.ofscroll + 322 && xp < _vm->_graphicsManager.ofscroll + 452)
+		if ((uint16)(yp - 294) <= 86 && xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452)
 			slotNumber = 6;
 	}
-	if ((uint16)(yp - 388) <= 16 && xp > _vm->_graphicsManager.ofscroll + 273 && xp < _vm->_graphicsManager.ofscroll + 355)
+	if ((uint16)(yp - 388) <= 16 && xp > _vm->_graphicsManager._scrollOffset + 273 && xp < _vm->_graphicsManager._scrollOffset + 355)
 		slotNumber = 7;
 
 	switch (slotNumber) {

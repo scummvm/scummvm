@@ -241,7 +241,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
 			_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 614400);
 		if (!_vm->_graphicsManager._lineNbr)
-			_vm->_graphicsManager.ofscroll = 0;
+			_vm->_graphicsManager._scrollOffset = 0;
 
 		v12 = _vm->_graphicsManager._vesaScreen;
 		v13 = _vm->_globals.allocMemory(20);
@@ -604,9 +604,9 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 					int x2 = (int16)READ_LE_UINT16(v13 + 4);
 					int y2 = (int16)READ_LE_UINT16(v13 + 6);
 
-					_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
+					_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
 					if (_vm->_globals.Bank[idx]._fileHeader == 2)
-						_vm->_objectsManager.set_offsetxy(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
+						_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
 				}
 
 				_vm->_globals.freeMemory(v19);
@@ -735,7 +735,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
 			_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 614400);
 		if (!_vm->_graphicsManager._lineNbr)
-			_vm->_graphicsManager.ofscroll = 0;
+			_vm->_graphicsManager._scrollOffset = 0;
 	}
 	v9 = _vm->_graphicsManager._vesaScreen;
 	v10 = _vm->_globals.allocMemory(22);
