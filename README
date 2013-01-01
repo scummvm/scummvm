@@ -2161,10 +2161,11 @@ keywords:
 
 The 7th Guest adds the following non-standard keyword:
 
-    t7g_speed          string   Video playback speed (normal, tweaked,
-                                im_an_ios)
-
-
+    movie_speed        number   Video playback speed: 0 is normal, 1 plays the
+                                'teeth' animations normally and the rest of the
+                                videos at an increased speed, 2 plays all videos
+                                at an increased speed, matching the iOS version
+								
 8.2) Custom game options that can be toggled via the GUI
 ---- ---------------------------------------------------
 A lot of the custom game options in the previous section can be toggled via the
