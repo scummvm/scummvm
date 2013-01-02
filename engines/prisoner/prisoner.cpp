@@ -54,6 +54,9 @@
 namespace Prisoner {
 
 PrisonerEngine::PrisonerEngine(OSystem *syst, const PrisonerGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "e_video");
+
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
