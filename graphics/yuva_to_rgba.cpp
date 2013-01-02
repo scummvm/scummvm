@@ -83,143 +83,138 @@
 // BASIS, AND BROWN UNIVERSITY HAS NO OBLIGATION TO PROVIDE MAINTENANCE,
 // SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-#include "common/scummsys.h"
-#include "common/singleton.h"
-#include "common/textconsole.h"
-
 #include "graphics/surface.h"
+#include "graphics/yuva_to_rgba.h"
+
+namespace Common {
+DECLARE_SINGLETON(Graphics::YUVAToRGBAManager);
+}
 
 namespace Graphics {
 
 class YUVAToRGBALookup {
 public:
-	YUVAToRGBALookup(Graphics::PixelFormat format);
-	~YUVAToRGBALookup();
+	YUVAToRGBALookup(Graphics::PixelFormat format, YUVAToRGBAManager::LuminanceScale scale);
 
-	int16 *_colorTab;
-	uint32 *_rgbToPix;
-	uint32 *_alphaToPix;
+	Graphics::PixelFormat getFormat() const { return _format; }
+	YUVAToRGBAManager::LuminanceScale getScale() const { return _scale; }
+	const uint32 *getRGBToPix() const { return _rgbToPix; }
+	const uint32 *getAlphaToPix() const { return _alphaToPix; }
+
+private:
+	Graphics::PixelFormat _format;
+	YUVAToRGBAManager::LuminanceScale _scale;
+	uint32 _rgbToPix[3 * 768]; // 9216 bytes
+	uint32 _alphaToPix[256];   // 958 bytes
 };
 
-YUVAToRGBALookup::YUVAToRGBALookup(Graphics::PixelFormat format) {
-	_colorTab = new int16[4 * 256]; // 2048 bytes
+YUVAToRGBALookup::YUVAToRGBALookup(Graphics::PixelFormat format, YUVAToRGBAManager::LuminanceScale scale) {
+	_format = format;
+	_scale = scale;
+
+	uint32 *r_2_pix_alloc = &_rgbToPix[0 * 768];
+	uint32 *g_2_pix_alloc = &_rgbToPix[1 * 768];
+	uint32 *b_2_pix_alloc = &_rgbToPix[2 * 768];
+
+	if (scale == YUVAToRGBAManager::kScaleFull) {
+		// Set up entries 0-255 in rgb-to-pixel value tables.
+		for (int i = 0; i < 256; i++) {
+			r_2_pix_alloc[i + 256] = format.ARGBToColor(0, i, 0, 0);
+			g_2_pix_alloc[i + 256] = format.ARGBToColor(0, 0, i, 0);
+			b_2_pix_alloc[i + 256] = format.ARGBToColor(0, 0, 0, i);
+		}
+
+		// Spread out the values we have to the rest of the array so that we do
+		// not need to check for overflow.
+		for (int i = 0; i < 256; i++) {
+			r_2_pix_alloc[i] = r_2_pix_alloc[256];
+			r_2_pix_alloc[i + 512] = r_2_pix_alloc[511];
+			g_2_pix_alloc[i] = g_2_pix_alloc[256];
+			g_2_pix_alloc[i + 512] = g_2_pix_alloc[511];
+			b_2_pix_alloc[i] = b_2_pix_alloc[256];
+			b_2_pix_alloc[i + 512] = b_2_pix_alloc[511];
+		}
+	} else {
+		// Set up entries 16-235 in rgb-to-pixel value tables
+		for (int i = 16; i < 236; i++) {
+			int scaledValue = (i - 16) * 255 / 219;
+			r_2_pix_alloc[i + 256] = format.ARGBToColor(0, scaledValue, 0, 0);
+			g_2_pix_alloc[i + 256] = format.ARGBToColor(0, 0, scaledValue, 0);
+			b_2_pix_alloc[i + 256] = format.ARGBToColor(0, 0, 0, scaledValue);
+		}
+
+		// Spread out the values we have to the rest of the array so that we do
+		// not need to check for overflow. We have to do it here in two steps.
+		for (int i = 0; i < 256 + 16; i++) {
+			r_2_pix_alloc[i] = r_2_pix_alloc[256 + 16];
+			g_2_pix_alloc[i] = g_2_pix_alloc[256 + 16];
+			b_2_pix_alloc[i] = b_2_pix_alloc[256 + 16];
+		}
+
+		for (int i = 256 + 236; i < 768; i++) {
+			r_2_pix_alloc[i] = r_2_pix_alloc[256 + 236 - 1];
+			g_2_pix_alloc[i] = g_2_pix_alloc[256 + 236 - 1];
+			b_2_pix_alloc[i] = b_2_pix_alloc[256 + 236 - 1];
+		}
+	}
+
+	// Set up entries 0-255 in alpha-to-pixel value table.
+	for (int i = 0; i < 256; i++) {
+		_alphaToPix[i] = format.ARGBToColor(i, 0, 0, 0);
+	}
+}
+
+YUVAToRGBAManager::YUVAToRGBAManager() {
+	_lookup = 0;
 
 	int16 *Cr_r_tab = &_colorTab[0 * 256];
 	int16 *Cr_g_tab = &_colorTab[1 * 256];
 	int16 *Cb_g_tab = &_colorTab[2 * 256];
 	int16 *Cb_b_tab = &_colorTab[3 * 256];
 
-	_rgbToPix = new uint32[3 * 768]; // 9216 bytes
-
-	uint32 *r_2_pix_alloc = &_rgbToPix[0 * 768];
-	uint32 *g_2_pix_alloc = &_rgbToPix[1 * 768];
-	uint32 *b_2_pix_alloc = &_rgbToPix[2 * 768];
-
-	_alphaToPix = new uint32[256]; // 958 bytes
-
-	int16 CR, CB;
-	int i;
-
 	// Generate the tables for the display surface
 
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		// Gamma correction (luminescence table) and chroma correction
 		// would be done here. See the Berkeley mpeg_play sources.
 
-		CR = CB = (i - 128);
+		int16 CR = (i - 128), CB = CR;
 		Cr_r_tab[i] = (int16) ( (0.419 / 0.299) * CR) + 0 * 768 + 256;
 		Cr_g_tab[i] = (int16) (-(0.299 / 0.419) * CR) + 1 * 768 + 256;
 		Cb_g_tab[i] = (int16) (-(0.114 / 0.331) * CB);
 		Cb_b_tab[i] = (int16) ( (0.587 / 0.331) * CB) + 2 * 768 + 256;
 	}
-
-	// Set up entries 0-255 in rgb-to-pixel value tables.
-	for (i = 0; i < 256; i++) {
-		r_2_pix_alloc[i + 256] = format.ARGBToColor(0, i, 0, 0);
-		g_2_pix_alloc[i + 256] = format.ARGBToColor(0, 0, i, 0);
-		b_2_pix_alloc[i + 256] = format.ARGBToColor(0, 0, 0, i);
-	}
-
-	// Set up entries 0-255 in alpha-to-pixel value table.
-	for (i = 0; i < 256; i++) {
-		_alphaToPix[i] = format.ARGBToColor(i, 0, 0, 0);
-	}
-
-	// Spread out the values we have to the rest of the array so that we do
-	// not need to check for overflow.
-	for (i = 0; i < 256; i++) {
-		r_2_pix_alloc[i] = r_2_pix_alloc[256];
-		r_2_pix_alloc[i + 512] = r_2_pix_alloc[511];
-		g_2_pix_alloc[i] = g_2_pix_alloc[256];
-		g_2_pix_alloc[i + 512] = g_2_pix_alloc[511];
-		b_2_pix_alloc[i] = b_2_pix_alloc[256];
-		b_2_pix_alloc[i + 512] = b_2_pix_alloc[511];
-	}
-}
-
-YUVAToRGBALookup::~YUVAToRGBALookup() {
-	delete[] _rgbToPix;
-	delete[] _colorTab;
-	delete[] _alphaToPix;
-}
-
-class YUVAToRGBAManager : public Common::Singleton<YUVAToRGBAManager> {
-public:
-	const YUVAToRGBALookup *getLookup(Graphics::PixelFormat format);
-
-private:
-	friend class Common::Singleton<SingletonBaseType>;
-	YUVAToRGBAManager();
-	~YUVAToRGBAManager();
-
-	Graphics::PixelFormat _lastFormat;
-	YUVAToRGBALookup *_lookup;
-};
-
-YUVAToRGBAManager::YUVAToRGBAManager() {
-	_lookup = 0;
 }
 
 YUVAToRGBAManager::~YUVAToRGBAManager() {
 	delete _lookup;
 }
 
-const YUVAToRGBALookup *YUVAToRGBAManager::getLookup(Graphics::PixelFormat format) {
-	if (_lastFormat == format)
+const YUVAToRGBALookup *YUVAToRGBAManager::getLookup(Graphics::PixelFormat format, YUVAToRGBAManager::LuminanceScale scale) {
+	if (_lookup && _lookup->getFormat() == format && _lookup->getScale() == scale)
 		return _lookup;
 
 	delete _lookup;
-	_lookup = new YUVAToRGBALookup(format);
-	_lastFormat = format;
+	_lookup = new YUVAToRGBALookup(format, scale);
 	return _lookup;
 }
-
-} // End of namespace Graphics
-
-namespace Common {
-DECLARE_SINGLETON(Graphics::YUVAToRGBAManager);
-}
-
-#define YUVAToRGBAMan (Graphics::YUVAToRGBAManager::instance())
-
-namespace Graphics {
 
 #define PUT_PIXELA(s, a, d) \
 	L = &rgbToPix[(s)]; \
 	*((PixelInt *)(d)) = (L[cr_r] | L[crb_g] | L[cb_b] | aToPix[a])
 
 template<typename PixelInt>
-void convertYUVA420ToRGBA(byte *dstPtr, int dstPitch, const YUVAToRGBALookup *lookup, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+void convertYUVA420ToRGBA(byte *dstPtr, int dstPitch, const YUVAToRGBALookup *lookup, int16 *colorTab, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	int halfHeight = yHeight >> 1;
 	int halfWidth = yWidth >> 1;
 
 	// Keep the tables in pointers here to avoid a dereference on each pixel
-	const int16 *Cr_r_tab = lookup->_colorTab;
+	const int16 *Cr_r_tab = colorTab;
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->_rgbToPix;
-	const uint32 *aToPix = lookup->_alphaToPix;
+	const uint32 *rgbToPix = lookup->getRGBToPix();
+	const uint32 *aToPix = lookup->getAlphaToPix();
 
 	for (int h = 0; h < halfHeight; h++) {
 		for (int w = 0; w < halfWidth; w++) {
@@ -241,7 +236,6 @@ void convertYUVA420ToRGBA(byte *dstPtr, int dstPitch, const YUVAToRGBALookup *lo
 			ySrc++;
 			aSrc++;
 			dstPtr += sizeof(PixelInt);
-
 		}
 
 		dstPtr += dstPitch;
@@ -252,23 +246,21 @@ void convertYUVA420ToRGBA(byte *dstPtr, int dstPitch, const YUVAToRGBALookup *lo
 	}
 }
 
-void convertYUVA420ToRGBA(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+void YUVAToRGBAManager::convert420(Graphics::Surface *dst, YUVAToRGBAManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
 	assert(dst && dst->pixels);
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
-	assert(ySrc && uSrc && vSrc && aSrc);
+	assert(ySrc && uSrc && vSrc);
 	assert((yWidth & 1) == 0);
+	assert((yHeight & 1) == 0);
 
-	if (yHeight & 1) // Odd height, the last line won't be converted
-		warning("Decoding YUV420 data with an odd height %d", yHeight);
-
-	const YUVAToRGBALookup *lookup = YUVAToRGBAMan.getLookup(dst->format);
+	const YUVAToRGBALookup *lookup = getLookup(dst->format, scale);
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)
-		convertYUVA420ToRGBA<uint16>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUVA420ToRGBA<uint16>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
 	else
-		convertYUVA420ToRGBA<uint32>((byte *)dst->pixels, dst->pitch, lookup, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUVA420ToRGBA<uint32>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
 } // End of namespace Graphics

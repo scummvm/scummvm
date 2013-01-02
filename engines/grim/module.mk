@@ -73,8 +73,8 @@ MODULE_OBJS := \
 	movie/codecs/smush_decoder.o \
 	movie/bink.o \
 	movie/mpeg.o \
-	movie/smush.o \
 	movie/movie.o \
+	movie/smush.o \
 	update/packfile.o \
 	update/mscab.o \
 	update/lang_filter.o \

@@ -22,7 +22,6 @@
 
 #include "engines/grim/movie/codecs/smush_decoder.h"
 #include "engines/grim/movie/smush.h"
-#include "engines/grim/movie/codecs/vima.h"
 
 #include "engines/grim/resource.h"
 #include "engines/grim/grim.h"
@@ -36,7 +35,7 @@ MoviePlayer *CreateSmushPlayer(bool demo) {
 SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_smushDecoder = new SmushDecoder();
 	_videoDecoder = _smushDecoder;
-	_smushDecoder->setDemo(_demo);
+	//_smushDecoder->setDemo(_demo);
 }
 
 bool SmushPlayer::loadFile(Common::String filename) {
@@ -57,7 +56,8 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::handleFrame() {
-	if (_videoDecoder->endOfVideo()) {
+	// Force the last frame to stay in place for it's duration:
+	if (_videoDecoder->endOfVideo() && _videoDecoder->getTime() >= _videoDecoder->getDuration().msecs()) {
 		// If we're not supposed to loop (or looping fails) then end the video
 		if (!_videoLooping ) {
 			_videoFinished = true;
@@ -65,7 +65,8 @@ void SmushPlayer::handleFrame() {
 			deinit();
 			return;
 		} else {
-// 			getDecoder()->rewind(); // This doesnt handle if looping fails.
+ 			_smushDecoder->rewind(); // This doesnt handle if looping fails.
+			_smushDecoder->start();
 		}
 	}
 }
@@ -79,8 +80,11 @@ void SmushPlayer::postHandleFrame() {
 
 void SmushPlayer::restoreState(SaveGame *state) {
 	MoviePlayer::restoreState(state);
+	Common::StackLock lock(_frameMutex);
 	if (isPlaying()) {
-		_smushDecoder->seekToTime((uint32)_movieTime); // Currently not fully working (out of synch)
+	//	_smushDecoder->seek((uint32)_movieTime); // Currently not fully working (out of synch)
+		_smushDecoder->start();
+		timerCallback(this);
 	}
 }
 

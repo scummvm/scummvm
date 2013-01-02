@@ -29,7 +29,7 @@
 
 #include "engines/myst3/gfx.h"
 
-#include "video/bink_decoder_seek.h"
+#include "video/bink_decoder.h"
 
 namespace Myst3 {
 
@@ -97,7 +97,7 @@ private:
 	Myst3Engine *_vm;
 
 	Common::MemoryReadStream *_movieStream;
-	Video::SeekableBinkDecoder _bink;
+	Video::BinkDecoder _bink;
 
 	uint16 _frame;
 	Texture *_texture;

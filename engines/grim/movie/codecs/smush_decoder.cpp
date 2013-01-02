@@ -20,12 +20,16 @@
  *
  */
 
+// License note: This might be covered by GPLv2 (As additions by somaen was produced from
+// https://raw.github.com/clone2727/smushplay/master/smushvideo.cpp
+
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/rational.h"
 #include "common/system.h"
 #include "common/timer.h"
+#include "common/memstream.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -44,105 +48,215 @@ namespace Grim {
 #define BUFFER_SIZE 16385
 #define SMUSH_SPEED 66667
 
+bool SmushDecoder::_demo = false;
+
 static uint16 smushDestTable[5786];
 
 SmushDecoder::SmushDecoder() {
-	// Set colour-format statically here for SMUSH (5650), to allow for differing
-	// PixelFormat in engine and renderer (and conversion from Surface there)
-	// Which means 16 bpp, 565, shift of 11, 5, 0, 0 for RGBA
-	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	_nbframes = 0;
 	_file = 0;
-	_width = 0;
-	_height = 0;
-	_channels = -1;
-	_freq = 22050;
+
 	_videoLooping = false;
 	_startPos = 0;
-	_x = 0;
-	_y = 0;
-	_blocky8 = new Blocky8();
-	_blocky16 = new Blocky16();
-	_stream = NULL;
+
+	_videoTrack = NULL;
+	_audioTrack = NULL;
 }
 
 SmushDecoder::~SmushDecoder() {
-	delete _blocky8;
-	delete _blocky16;
+	delete _videoTrack;
+	delete _audioTrack;
 }
 
 void SmushDecoder::init() {
-	_IACTpos = 0;
-	_curFrame = -1;
-	_videoPause = false;
-
-	if (!_demo) {
-		_surface.create(_width, _height, _format);
-		vimaInit(smushDestTable);
-	}
+	_videoTrack->init();
+	_audioTrack->init();
 }
 
 void SmushDecoder::close() {
-	_surface.free();
-	if (_stream) {
-		_stream->finish();
-		_stream = NULL;
-		g_system->getMixer()->stopHandle(_soundHandle);
-	}
+	VideoDecoder::close();
+	_audioTrack = NULL;
+	_videoTrack = NULL;
 	_videoLooping = false;
-	_videoPause = true;
+	_startPos = 0;
 	if (_file) {
 		delete _file;
 		_file = NULL;
 	}
 }
 
-void SmushDecoder::handleWave(const byte *src, uint32 size) {
-	int16 *dst = (int16 *) malloc(size * _channels * sizeof(int16));
-	decompressVima(src, dst, size * _channels * 2, smushDestTable);
 
-	int flags = Audio::FLAG_16BITS;
-	if (_channels == 2)
-		flags |= Audio::FLAG_STEREO;
-
-	if (!_stream) {
-		_stream = Audio::makeQueuingAudioStream(_freq, (_channels == 2));
-		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
+bool SmushDecoder::readHeader() {
+	if (!_file) {
+		return false;
 	}
-	if (g_system->getMixer()->isReady()) {
-		_stream->queueBuffer((byte *)dst, size * _channels * 2, DisposeAfterUse::YES, flags);
+
+	uint32 mainTag = _file->readUint32BE();
+	uint32 pos = _file->pos();
+	uint32 expectedTag = 0;
+	uint32 size = _file->readUint32BE(); // file-size
+
+	// Verify that we have the correct combination of headers.
+	if (mainTag == MKTAG('A', 'N', 'I', 'M')) { // Demo
+		expectedTag = MKTAG('A', 'H', 'D', 'R');
+	} else if (mainTag == MKTAG('S', 'A', 'N', 'M')) { // Retail
+		expectedTag = MKTAG('S', 'H', 'D', 'R');
 	} else {
-		free(dst);
+		error("Invalid SMUSH-header");
+	}
+
+	uint32 tag = _file->readUint32BE();
+	size = _file->readUint32BE();
+	pos = _file->pos();
+	uint32 version = 0;
+
+	assert(tag == expectedTag);
+
+	if (tag == MKTAG('A', 'H', 'D', 'R')) { // Demo
+		version = _file->readUint16LE();
+		uint16 nbFrames = _file->readUint16LE();
+		_file->readUint16BE(); // unknown
+
+		int width = -1;
+		int height = -1;
+		_videoLooping = false;
+		_startPos = 0;
+
+		_videoTrack = new SmushVideoTrack(width, height, SMUSH_SPEED, nbFrames, false);
+		_videoTrack->_x = -1;
+		_videoTrack->_y = -1;
+		addTrack(_videoTrack);
+		_file->read(_videoTrack->getPal(), 0x300);
+
+		int audioRate = 11025;
+		if (version == 2) {
+
+			_file->readUint32LE(); // framerate
+			_file->readUint32LE();
+			audioRate = _file->readUint32LE();
+		}
+
+		_file->readUint32BE();
+		_file->readUint32BE();
+		_audioTrack = new SmushAudioTrack(false, audioRate, 2);
+		return true;
+
+	} else if (tag == MKTAG('S', 'H', 'D', 'R')) { // Retail
+		_file->readUint16LE();
+		uint16 nbFrames = _file->readUint32LE();
+		_file->readUint16LE();
+		int width = _file->readUint16LE();
+		int height = _file->readUint16LE();
+		_file->readUint16LE();
+		int frameRate = _file->readUint32LE();
+
+		int16 flags = _file->readUint16LE();
+		// Output information for checking out the flags
+		if (Debug::isChannelEnabled(Debug::Movie | Debug::Info)) {
+			warning("SMUSH Flags:");
+			for (int i = 0; i < 16; i++) {
+				warning(" %d", (flags & (1 << i)) != 0);
+			}
+		}
+
+		_file->seek(pos + size + (size & 1), SEEK_SET);
+
+		_videoLooping = true;
+		// If the video is NOT looping, setLooping will set the speed to the proper value
+		_videoTrack = new SmushVideoTrack(width, height, frameRate, nbFrames, true);
+		addTrack(_videoTrack);
+		return handleFramesHeader();
+	}
+	return false;
+}
+
+bool SmushDecoder::handleFramesHeader() {
+	uint32 tag;
+	int32 size;
+	int pos = 0;
+	int freq = 0;
+	int channels = 0;
+
+	tag = _file->readUint32BE();
+	if (tag != MKTAG('F', 'L', 'H', 'D')) {
+		return false;
+	}
+	size = _file->readUint32BE();
+	byte *f_header = new byte[size];
+	_file->read(f_header, size);
+
+	do {
+		if (READ_BE_UINT32(f_header + pos) == MKTAG('B', 'l', '1', '6')) {
+			pos += READ_BE_UINT32(f_header + pos + 4) + 8;
+		} else if (READ_BE_UINT32(f_header + pos) == MKTAG('W', 'a', 'v', 'e')) {
+			freq = READ_LE_UINT32(f_header + pos + 8);
+			channels = READ_LE_UINT32(f_header + pos + 12);
+			pos += 20;
+		} else {
+			error("SmushDecoder::handleFramesHeader() unknown tag");
+		}
+	} while (pos < size);
+	delete[] f_header;
+
+	_audioTrack = new SmushAudioTrack(true, freq, channels);
+	addTrack(_audioTrack);
+	return true;
+}
+
+bool SmushDecoder::loadStream(Common::SeekableReadStream *stream) {
+	close();
+
+	_file = stream;
+
+	// Load the video
+	if (!readHeader()) {
+		warning("Failure loading SMUSH-file");
+		return false;
+	}
+
+	_startPos = _file->pos();
+
+	init();
+	return true;
+}
+
+const Graphics::Surface *SmushDecoder::decodeNextFrame() {
+	handleFrame();
+
+	// We might be interested in getting the last frame even after the video ends:
+	if (endOfVideo()) {
+		return _videoTrack->decodeNextFrame();
+	}
+	return VideoDecoder::decodeNextFrame();
+}
+
+void SmushDecoder::setLooping(bool l) {
+	_videoLooping = l;
+
+	if (!_videoLooping) {
+		_videoTrack->setMsPerFrame(SMUSH_SPEED);
 	}
 }
 
 void SmushDecoder::handleFrame() {
 	uint32 tag;
 	int32 size;
-	int pos = 0;
 
-	if (_videoLooping && _curFrame == _nbframes - 1) {
-		_file->seek(_startPos, SEEK_SET);
-		_curFrame = -1;
+	if (isPaused()) {
+		return;
 	}
 
-	if (_curFrame == -1)
-		_startTime = g_system->getMillis();
-
-	if (_videoPause)
-		return;
-
-	if (endOfVideo()) { // Looping is handled outside, by rewinding the video.
-		_videoPause = true;
+	if (_videoTrack->endOfTrack()) { // Looping is handled outside, by rewinding the video.
+		_audioTrack->stop(); // HACK: Avoids the movie playing past the last frame
+		//  pauseVideo(true);
 		return;
 	}
 
 	tag = _file->readUint32BE();
-	if (tag == MKTAG('A','N','N','O')) {
+	size = _file->readUint32BE();
+	if (tag == MKTAG('A', 'N', 'N', 'O')) {
 		char *anno;
 		byte *data;
 
-		size = _file->readUint32BE();
 		data = new byte[size];
 		_file->read(data, size);
 		anno = (char *)data;
@@ -166,31 +280,182 @@ void SmushDecoder::handleFrame() {
 		}
 		delete[] anno;
 		tag = _file->readUint32BE();
+		size = _file->readUint32BE();
 	}
 
-	assert(tag == MKTAG('F','R','M','E'));
-	size = _file->readUint32BE();
-	byte *frame = new byte[size];
-	_file->read(frame, size);
+	assert(tag == MKTAG('F', 'R', 'M', 'E'));
+	handleFRME(_file, size);
 
-	do {
-		if (READ_BE_UINT32(frame + pos) == MKTAG('B','l','1','6')) {
-			_blocky16->decode((byte *)_surface.pixels, frame + pos + 8);
-			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else if (READ_BE_UINT32(frame + pos) == MKTAG('W','a','v','e')) {
-			int decompressed_size = READ_BE_UINT32(frame + pos + 8);
-			if (decompressed_size < 0)
-				handleWave(frame + pos + 8 + 4 + 8, READ_BE_UINT32(frame + pos + 8 + 8));
-			else
-				handleWave(frame + pos + 8 + 4, decompressed_size);
-			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else {
+	_videoTrack->finishFrame();
+}
+
+void SmushDecoder::handleFRME(Common::SeekableReadStream *stream, uint32 size) {
+	int blockSize = size;
+
+	byte *block = new byte[size];
+	stream->read(block, size);
+
+	Common::MemoryReadStream *memStream = new Common::MemoryReadStream(block, size, DisposeAfterUse::YES);
+	while (size > 0) {
+		uint32 subType = memStream->readUint32BE();
+		uint32 subSize = memStream->readUint32BE();
+		uint32 subPos = memStream->pos();
+
+		switch (subType) {
+			// Retail only:
+		case MKTAG('B', 'l', '1', '6'):
+			_videoTrack->handleBlocky16(memStream, subSize);
+			break;
+		case MKTAG('W', 'a', 'v', 'e'):
+			_audioTrack->handleVIMA(memStream, blockSize);
+			break;
+			// Demo only:
+		case MKTAG('F', 'O', 'B', 'J'):
+			_videoTrack->handleFrameObject(memStream, subSize);
+			break;
+		case MKTAG('I', 'A', 'C', 'T'):
+			_audioTrack->handleIACT(memStream, subSize);
+			break;
+		case MKTAG('X', 'P', 'A', 'L'):
+			_videoTrack->handleDeltaPalette(memStream, subSize);
+			break;
+		default:
 			Debug::error(Debug::Movie, "SmushDecoder::handleFrame() unknown tag");
 		}
-	} while (pos < size);
-	delete[] frame;
+		size -= subSize + 8 + (subSize & 1);
+		memStream->seek(subPos + subSize + (subSize & 1), SEEK_SET);
+	}
+	delete memStream;
+}
 
-	++_curFrame;
+bool SmushDecoder::rewind() {
+	return seekToFrame(0);
+}
+
+bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be off by a second or two right now.
+	int32 wantedFrame = (uint32)((time.msecs() / 1000.0f) * _videoTrack->getFrameRate().toDouble());
+	if (wantedFrame != 0) {
+		warning("Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
+		warning("Current frame: %d", _videoTrack->getCurFrame());
+	}
+	uint32 tag;
+	int32 size;
+
+	if (wantedFrame > _videoTrack->getFrameCount()) {
+		return false;
+	}
+
+	if (wantedFrame < _videoTrack->getCurFrame()) {
+		_file->seek(_startPos, SEEK_SET);
+	}
+
+	int curFrame = -1;
+	while (curFrame < wantedFrame - 1) {
+		tag = _file->readUint32BE();
+		if (tag == MKTAG('A', 'N', 'N', 'O')) {
+			size = _file->readUint32BE();
+			_file->seek(size, SEEK_CUR);
+			tag = _file->readUint32BE();
+
+		}
+		assert(tag == MKTAG('F', 'R', 'M', 'E'));
+		size = _file->readUint32BE();
+		_file->seek(size, SEEK_CUR);
+		curFrame++;
+	}
+	_videoTrack->setCurFrame(curFrame);
+	VideoDecoder::seek(time);
+	return true;
+}
+
+SmushDecoder::SmushVideoTrack::SmushVideoTrack(int width, int height, int fps, int numFrames, bool is16Bit) {
+	// Set color-format statically here for SMUSH (5650), to allow for differing
+	// PixelFormat in engine and renderer (and conversion from Surface there)
+	// Which means 16 bpp, 565, shift of 11, 5, 0, 0 for RGBA
+	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	if (!is16Bit) { // Demo
+		_blocky8 = new Blocky8();
+		_blocky16 = 0;
+	} else {
+		_blocky8 = 0;
+		_blocky16 = new Blocky16();
+		_blocky16->init(width, height);
+	}
+	_width = width;
+	_height = height;
+	_nbframes = numFrames;
+	_is16Bit = is16Bit;
+	_x = 0;
+	_y = 0;
+	setMsPerFrame(fps);
+}
+
+SmushDecoder::SmushVideoTrack::~SmushVideoTrack() {
+	delete _blocky8;
+	delete _blocky16;
+	_surface.free();
+}
+
+void SmushDecoder::SmushVideoTrack::init() {
+	_curFrame = -1;
+	if (_is16Bit) { // Retail only
+		_surface.create(_width, _height, _format);
+	}
+}
+
+void SmushDecoder::SmushVideoTrack::finishFrame() {
+	if (!_is16Bit) {
+		convertDemoFrame();
+	}
+	_curFrame++;
+}
+
+void SmushDecoder::SmushVideoTrack::convertDemoFrame() {
+	Graphics::Surface conversion;
+	conversion.create(0, 0, _format); // Avoid issues with copyFrom, by creating an empty surface.
+	conversion.copyFrom(_surface);
+
+	uint16 *d = (uint16 *)_surface.pixels;
+	for (int l = 0; l < _width * _height; l++) {
+		int index = ((byte *)conversion.pixels)[l];
+		d[l] = ((_pal[(index * 3) + 0] & 0xF8) << 8) | ((_pal[(index * 3) + 1] & 0xFC) << 3) | (_pal[(index * 3) + 2] >> 3);
+	}
+	conversion.free();
+}
+
+void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *stream, uint32 size) {
+	assert(_is16Bit);
+	byte *ptr = new byte[size];
+	stream->read(ptr, size);
+
+	_blocky16->decode((byte *)_surface.pixels, ptr);
+	delete ptr;
+}
+
+void SmushDecoder::SmushVideoTrack::handleFrameObject(Common::SeekableReadStream *stream, uint32 size) {
+	assert(!_is16Bit);
+	assert(size >= 14);
+	byte codec = stream->readByte();
+	assert(codec == 47);
+	/* byte codecParam = */ stream->readByte();
+	_x = stream->readSint16LE();
+	_y = stream->readSint16LE();
+	uint16 width = stream->readUint16LE();
+	uint16 height = stream->readUint16LE();
+	if (width != _width || height != _height) {
+		_width = width;
+		_height = height;
+		_surface.create(_width, _height, _format);
+		_blocky8->init(_width, _height);
+	}
+	stream->readUint16LE();
+	stream->readUint16LE();
+
+	size -= 14;
+	byte *ptr = new byte[size];
+	stream->read(ptr, size);
+	_blocky8->decode((byte *)_surface.pixels, ptr);
+	delete ptr;
 }
 
 static byte delta_color(byte org_color, int16 delta_color) {
@@ -198,20 +463,77 @@ static byte delta_color(byte org_color, int16 delta_color) {
 	return CLIP(t, 0, 255);
 }
 
-void SmushDecoder::handleDeltaPalette(byte *src, int32 size) {
+void SmushDecoder::SmushVideoTrack::handleDeltaPalette(Common::SeekableReadStream *stream, int32 size) {
 	if (size == 0x300 * 3 + 4) {
-		for (int i = 0; i < 0x300; i++)
-			_deltaPal[i] = READ_LE_UINT16(src + (i * 2) + 4);
-		memcpy(_pal, src + 0x600 + 4, 0x300);
+		stream->seek(4, SEEK_CUR);
+		for (int i = 0; i < 0x300; i++) {
+			_deltaPal[i] = stream->readUint16LE();
+		}
+		stream->read(_pal, 0x300);
 	} else if (size == 6) {
-		for (int i = 0; i < 0x300; i++)
+		for (int i = 0; i < 0x300; i++) {
 			_pal[i] = delta_color(_pal[i], _deltaPal[i]);
+		}
 	} else {
 		error("SmushDecoder::handleDeltaPalette() Wrong size for DeltaPalette");
 	}
 }
 
-void SmushDecoder::handleIACT(const byte *src, int32 size) {
+Graphics::Surface *SmushDecoder::SmushVideoTrack::decodeNextFrame() {
+	return &_surface;
+}
+
+void SmushDecoder::SmushVideoTrack::setMsPerFrame(int ms) {
+	_frameRate = Common::Rational(1000000, ms);
+}
+SmushDecoder::SmushAudioTrack::SmushAudioTrack(bool isVima, int freq, int channels) {
+	_isVima = isVima;
+	_channels = channels;
+	_freq = freq;
+	_queueStream = Audio::makeQueuingAudioStream(_freq, (_channels == 2));
+}
+
+SmushDecoder::SmushAudioTrack::~SmushAudioTrack() {
+
+}
+
+void SmushDecoder::SmushAudioTrack::init() {
+	_IACTpos = 0;
+
+	if (_isVima) {
+		vimaInit(smushDestTable);
+	}
+}
+
+void SmushDecoder::SmushAudioTrack::handleVIMA(Common::SeekableReadStream *stream, uint32 size) {
+	int decompressedSize = stream->readUint32BE();
+	if (decompressedSize < 0) {
+		stream->readUint32BE();
+		decompressedSize = stream->readUint32BE();
+	}
+
+	byte *src = new byte[size];
+	stream->read(src, size);
+
+	int16 *dst = new int16[decompressedSize * _channels];
+	decompressVima(src, dst, decompressedSize * _channels * 2, smushDestTable);
+
+	int flags = Audio::FLAG_16BITS;
+	if (_channels == 2) {
+		flags |= Audio::FLAG_STEREO;
+	}
+
+	if (!_queueStream) {
+		_queueStream = Audio::makeQueuingAudioStream(_freq, (_channels == 2));
+	}
+	_queueStream->queueBuffer((byte *)dst, decompressedSize * _channels * 2, DisposeAfterUse::YES, flags);
+	delete src;
+}
+
+void SmushDecoder::SmushAudioTrack::handleIACT(Common::SeekableReadStream *stream, int32 size) {
+	byte *src = new byte[size];
+	stream->read(src, size);
+
 	int32 bsize = size - 18;
 	const byte *d_src = src + 18;
 
@@ -255,11 +577,10 @@ void SmushDecoder::handleIACT(const byte *src, int32 size) {
 					}
 				} while (--count);
 
-				if (!_stream) {
-					_stream = Audio::makeQueuingAudioStream(22050, true);
-					g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _stream);
+				if (!_queueStream) {
+					_queueStream = Audio::makeQueuingAudioStream(22050, true);
 				}
-				_stream->queueBuffer(output_data, 0x1000, DisposeAfterUse::YES, Audio::FLAG_STEREO | Audio::FLAG_16BITS);
+				_queueStream->queueBuffer(output_data, 0x1000, DisposeAfterUse::YES, Audio::FLAG_STEREO | Audio::FLAG_16BITS);
 
 				bsize -= len;
 				d_src += len;
@@ -276,291 +597,12 @@ void SmushDecoder::handleIACT(const byte *src, int32 size) {
 			bsize--;
 		}
 	}
+	delete src;
 }
 
-void SmushDecoder::handleFrameDemo() {
-	uint32 tag;
-	int32 size;
-	int pos = 0;
-
-	if (_videoPause)
-		return;
-
-	if (endOfVideo()) {
-		_videoPause = true;
-		return;
-	}
-
-	if (_curFrame == -1)
-		_startTime = g_system->getMillis();
-
-	tag = _file->readUint32BE();
-	assert(tag == MKTAG('F','R','M','E'));
-	size = _file->readUint32BE();
-	byte *frame = new byte[size];
-	_file->read(frame, size);
-
-	do {
-		if (READ_BE_UINT32(frame + pos) == MKTAG('F','O','B','J')) {
-			_x = READ_LE_UINT16(frame + pos + 10);
-			_y = READ_LE_UINT16(frame + pos + 12);
-			int width = READ_LE_UINT16(frame + pos + 14);
-			int height = READ_LE_UINT16(frame + pos + 16);
-			if (width != _width || height != _height) {
-				_width = width;
-				_height = height;
-				_surface.create(_width, _height, _format);
-				_blocky8->init(_width, _height);
-			}
-			_blocky8->decode((byte *)_surface.pixels, frame + pos + 8 + 14);
-			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else if (READ_BE_UINT32(frame + pos) == MKTAG('I','A','C','T')) {
-			handleIACT(frame + pos + 8, READ_BE_UINT32(frame + pos + 4));
-			int offset = READ_BE_UINT32(frame + pos + 4) + 8;
-			if (offset & 1)
-				offset += 1;
-			pos += offset;
-		} else if (READ_BE_UINT32(frame + pos) == MKTAG('X','P','A','L')) {
-			handleDeltaPalette(frame + pos + 8, READ_BE_UINT32(frame + pos + 4));
-			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else {
-			error("SmushDecoder::handleFrame() unknown tag");
-		}
-	} while (pos < size);
-	delete[] frame;
-
-	Graphics::Surface conversion;
-	conversion.create(0, 0, _format); // Avoid issues with copyFrom, by creating an empty surface.
-	conversion.copyFrom(_surface);
-
-	uint16 *d = (uint16 *)_surface.pixels;
-	for (int l = 0; l < _width * _height; l++) {
-		int index = ((byte *)conversion.pixels)[l];
-		d[l] = ((_pal[(index * 3) + 0] & 0xF8) << 8) | ((_pal[(index * 3) + 1] & 0xFC) << 3) | (_pal[(index * 3) + 2] >> 3);
-	}
-	conversion.free();
-
-	_curFrame++;
-}
-
-void SmushDecoder::handleFramesHeader() {
-	uint32 tag;
-	int32 size;
-	int pos = 0;
-
-	tag = _file->readUint32BE();
-	assert(tag == MKTAG('F','L','H','D'));
-	size = _file->readUint32BE();
-	byte *f_header = new byte[size];
-	_file->read(f_header, size);
-
-	do {
-		if (READ_BE_UINT32(f_header + pos) == MKTAG('B','l','1','6')) {
-			pos += READ_BE_UINT32(f_header + pos + 4) + 8;
-		} else if (READ_BE_UINT32(f_header + pos) == MKTAG('W','a','v','e')) {
-			_freq = READ_LE_UINT32(f_header + pos + 8);
-			_channels = READ_LE_UINT32(f_header + pos + 12);
-			pos += 20;
-		} else {
-			error("SmushDecoder::handleFramesHeader() unknown tag");
-		}
-	} while (pos < size);
-	delete[] f_header;
-}
-
-bool SmushDecoder::setupAnimDemo() {
-	uint32 tag;
-
-	tag = _file->readUint32BE();
-	assert(tag == MKTAG('A','N','I','M'));
-	_file->readUint32BE();
-
-	tag = _file->readUint32BE();
-	assert(tag == MKTAG('A','H','D','R'));
-	_file->readUint32BE();
-
-	_file->readUint16BE(); // version
-	_nbframes = _file->readUint16LE();
-	_file->readUint16BE(); // unknown
-
-	for (int l = 0; l < 0x300; l++) {
-		_pal[l] = _file->readByte();
-	}
-	_file->readUint32BE();
-	_file->readUint32BE();
-	_file->readUint32BE();
-	_file->readUint32BE();
-	_file->readUint32BE();
-
-	_x = -1;
-	_y = -1;
-	_width = -1;
-	_height = -1;
-	_videoLooping = false;
-	_startPos = 0;
-
-	setMsPerFrame(SMUSH_SPEED);
+bool SmushDecoder::SmushAudioTrack::seek(const Audio::Timestamp &time) {
 	return true;
 }
 
-bool SmushDecoder::setupAnim() {
-	uint32 tag;
-	int32 size;
-	int16 flags;
-
-	if (!_file)
-		return false;
-
-	tag = _file->readUint32BE();
-	assert(tag == MKTAG('S','A','N','M'));
-	size = _file->readUint32BE();
-
-	tag = _file->readUint32BE();
-	assert(tag == MKTAG('S','H','D','R'));
-	size = _file->readUint32BE();
-	byte *s_header = new byte[size];
-	_file->read(s_header, size);
-	_nbframes = READ_LE_UINT32(s_header + 2);
-	int width = READ_LE_UINT16(s_header + 8);
-	int height = READ_LE_UINT16(s_header + 10);
-	if (_width != width || _height != height) {
-		_blocky16->init(width, height);
-	}
-
-	_width = width;
-	_height = height;
-
-	// If the video is NOT looping, setLooping will set the speed to the proper value
-	setMsPerFrame(READ_LE_UINT32(s_header + 14));
-
-	flags = READ_LE_UINT16(s_header + 18);
-	// Output information for checking out the flags
-	if (Debug::isChannelEnabled(Debug::Movie | Debug::Info)) {
-		warning("SMUSH Flags:");
-		for (int i = 0; i < 16; i++)
-			warning(" %d", (flags & (1 << i)) != 0);
-		//printf("\n");
-	}
-	_videoLooping = true;
-
-	delete[] s_header;
-
-	return true;
-}
-
-bool SmushDecoder::loadStream(Common::SeekableReadStream *stream) {
-	close();
-
-	_file = stream;
-
-	// Load the video
-	if (_demo) {
-		if (!setupAnimDemo())
-			return false;
-	} else {
-		if (!setupAnim())
-			return false;
-
-		handleFramesHeader();
-	}
-
-	_startPos = _file->pos();
-
-	init();
-	if (!_demo)
-		_surface.create(_width, _height, _format);
-	return true;
-}
-
-const Graphics::Surface *SmushDecoder::decodeNextFrame() {
-	if (_demo)
-		handleFrameDemo();
-	else
-		handleFrame();
-
-	return &_surface;
-}
-
-void SmushDecoder::setLooping(bool l) {
-	_videoLooping = l;
-
-	if (!_videoLooping)
-		setMsPerFrame(SMUSH_SPEED);
-}
-
-void SmushDecoder::pauseVideoIntern(bool p) {
-	g_system->getMixer()->pauseHandle(_soundHandle, p);
-}
-
-uint32 SmushDecoder::getFrameCount() const {
-	return _nbframes;
-}
-
-void SmushDecoder::setMsPerFrame(int ms) {
-	_frameRate = Common::Rational(1000000, ms);
-}
-
-void SmushDecoder::seekToTime(const Audio::Timestamp &time) { // FIXME: This will be off by a second or two right now.
-	int32 wantedFrame = (uint32) ((time.msecs() / 1000.0f) * getFrameRate().toDouble());
-	warning("Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
-	warning("Current frame: %d", _curFrame);
-	uint32 tag;
-	int32 size;
-
-	if (_stream) {
-		_stream->finish();
-		_stream = NULL;
-	}
-
-	if (wantedFrame > _nbframes)
-		return;
-
-	if (wantedFrame < _curFrame) {
-		_file->seek(_startPos, SEEK_SET);
-	}
-
-	_videoPause = true;
-	_startTime = g_system->getMillis() - time.msecs(); // This won't be correct, as we should round off to the frame-start.
-
-	while(_curFrame < wantedFrame) {
-		tag = _file->readUint32BE();
-		if (tag == MKTAG('A','N','N','O')) {
-			size = _file->readUint32BE();
-			_file->seek(size, SEEK_CUR);
-			tag = _file->readUint32BE();
-
-		}
-		assert(tag == MKTAG('F','R','M','E'));
-		size = _file->readUint32BE();
-		_file->seek(size, SEEK_CUR);
-		_curFrame++;
-	}
-
-	warning("Seek complete");
-	_videoPause = false;
-}
-
-uint32 SmushDecoder::getDuration() const {
-	return (uint32) (getFrameCount() / getFrameRate().toDouble());
-}
-
-uint32 SmushDecoder::getTimeToNextFrame() const {
-	if (endOfVideo()) { //handle looping
-		uint32 elapsedTime = getTime();
-
-		Common::Rational beginTime = (_curFrame + 1) * 1000;
-		beginTime /= getFrameRate();
-		uint32 nextFrameStartTime = beginTime.toInt();
-
-		// If the time that the next frame should be shown has past
-		// the frame should be shown ASAP.
-		if (nextFrameStartTime <= elapsedTime)
-			return 0;
-
-		return nextFrameStartTime - elapsedTime;
-	} else {
-		return FixedRateVideoDecoder::getTimeToNextFrame();
-	}
-}
 
 } // end of namespace Grim

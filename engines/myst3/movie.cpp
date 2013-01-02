@@ -60,13 +60,14 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	loadPosition(binkDesc->getVideoData());
 
 	Common::MemoryReadStream *binkStream = binkDesc->getData();
-	_bink.loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	uint language = ConfMan.getInt("audio_language");
+	_bink.loadStream(binkStream);
+	_bink.setAudioTrack(language);
+	_bink.start();
 
 	if (ConfMan.getBool("subtitles"))
 		_subtitles = Subtitles::create(_vm, id);
-
-	uint language = ConfMan.getInt("audio_language");
-	_bink.setAudioTrack(language);
 }
 
 void Movie::loadPosition(const VideoData &videoData) {
@@ -146,10 +147,12 @@ void Movie::drawOverlay() {
 void Movie::drawNextFrameToTexture() {
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
 
-	if (_texture)
-		_texture->update(frame);
-	else
-		_texture = _vm->_gfx->createTexture(frame);
+	if (frame) {
+		if (_texture)
+			_texture->update(frame);
+		else
+			_texture = _vm->_gfx->createTexture(frame);
+	}
 }
 
 Movie::~Movie() {
@@ -227,6 +230,7 @@ void ScriptedMovie::update() {
 					|| _bink.getCurFrame() < _startFrame
 					|| _bink.endOfVideo()) {
 				_bink.seekToFrame(_startFrame);
+				_isLastFrame = false;
 			}
 
 			if (!_scriptDriven)
@@ -243,10 +247,15 @@ void ScriptedMovie::update() {
 		if (_nextFrameReadVar) {
 			int32 nextFrame = _vm->_state->getVar(_nextFrameReadVar);
 			if (nextFrame > 0 && nextFrame <= (int32)_bink.getFrameCount()) {
+				// Are we changing frame?
 				if (_bink.getCurFrame() != nextFrame - 1) {
-					_bink.seekToFrame(nextFrame - 1);
+					// Don't seek if we just want to display the next frame
+					if (_bink.getCurFrame() + 1 != nextFrame - 1) {
+						_bink.seekToFrame(nextFrame - 1);
+					}
 					drawNextFrameToTexture();
 				}
+
 				_vm->_state->setVar(_nextFrameReadVar, 0);
 				_isLastFrame = false;
 			}
@@ -257,7 +266,7 @@ void ScriptedMovie::update() {
 			bool complete = false;
 
 			if (_isLastFrame) {
-				_isLastFrame = 0;
+				_isLastFrame = false;
 
 				if (_loop) {
 					_bink.seekToFrame(_startFrame);

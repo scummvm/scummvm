@@ -20,28 +20,14 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/timer.h"
-#include "common/file.h"
-#include "common/events.h"
+
 #include "common/system.h"
-#include "common/textconsole.h"
-
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
-
-#include "graphics/surface.h"
-
+#include "video/mpegps_decoder.h"
 #include "engines/grim/movie/mpeg.h"
-
-#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 
-#ifdef USE_MPEG2
 
-#define MWIDTH 640
-#define MHEIGHT 400
+#ifdef USE_MPEG2
 
 namespace Grim {
 
@@ -49,71 +35,23 @@ MoviePlayer *CreateMpegPlayer() {
 	return new MpegPlayer();
 }
 
-class MpegHandler : public Video::BaseAnimationState {
-public:
-	MpegHandler(MpegPlayer *vid, OSystem *sys, int width, int height) : BaseAnimationState(sys, width, height) {
-		_mpeg = vid;
-	}
-protected:
-	MpegPlayer *_mpeg;
-	virtual void drawYUV(int width, int height, byte *const *dat) {
-		plotYUV(MWIDTH, MHEIGHT, dat);
-		_mpeg->deliverFrameFromDecode(width, height, _overlay);
-	}
-};
-
 MpegPlayer::MpegPlayer() : MoviePlayer() {
-	g_movie = this;
-	_speed = 50;
-	_videoBase = new MpegHandler(this, g_system, MWIDTH, MHEIGHT);
-}
-
-void MpegPlayer::init() {
-	MoviePlayer::init();
-
-	// FIXME, deal with pixelformat differently when we get this properly tested.
-	Graphics::PixelFormat format = Graphics::PixelFormat(16, 5, 6, 5, 0, 11, 5, 0, 0);
-	_externalSurface->create(MWIDTH, MHEIGHT, format);
-
-	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, this, "mpeg loop");
-}
-
-void MpegPlayer::deinit() {
-	g_system->getTimerManager()->removeTimerProc(&timerCallback);
-
-	if (_stream) {
-		_stream->finish();
-		_stream = NULL;
-		g_system->getMixer()->stopHandle(_soundHandle);
-	}
-	_videoLooping = false;
-	_videoPause = true;
-}
-
-void MpegPlayer::handleFrame() {
-	if (_videoPause)
-		return;
-
-	if (!_videoBase->decodeFrame()) {
-		_videoFinished = true;
-		g_grim->setMode(GrimEngine::NormalMode);
-		return;
-	}
-	//else
-	//bas->updateScreen();
-}
-
-void MpegPlayer::deliverFrameFromDecode(int width, int height, uint16 *dat) {
-	memcpy(_externalSurface->pixels, dat, _externalSurface->w * _externalSurface->h * 2);
-	_frame++;
-	_updateNeeded = true;
+	_videoDecoder = new Video::MPEGPSDecoder();
 }
 
 bool MpegPlayer::loadFile(Common::String filename) {
-	_videoBase->init(_fname.c_str());
-	return true; // FIXME
-}
+	_fname = filename + ".pss";
 
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_fname);
+	if (!stream)
+		return false;
+
+	_videoDecoder->loadStream(stream);
+	_videoDecoder->start();
+
+	return true;
+}
+	
 } // end of namespace Grim
 
 #endif // USE_MPEG2

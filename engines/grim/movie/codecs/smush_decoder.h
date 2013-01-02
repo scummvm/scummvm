@@ -23,16 +23,14 @@
 #ifndef GRIM_SMUSH_DECODER_H
 #define GRIM_SMUSH_DECODER_H
 
-#include "common/rational.h"
-
-#include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 #include "video/video_decoder.h"
 
 #include "graphics/surface.h"
 
 namespace Audio {
-	class QueuingAudioStream;
+class QueuingAudioStream;
 }
 
 namespace Grim {
@@ -40,77 +38,100 @@ namespace Grim {
 class Blocky8;
 class Blocky16;
 
-class SmushDecoder : public virtual Video::SeekableVideoDecoder, public virtual Video::FixedRateVideoDecoder {
-private:
-	int32 _nbframes;
-	int _width, _height;
-	int _x, _y;
-	Blocky8 *_blocky8;
-	Blocky16 *_blocky16;
-	Common::SeekableReadStream *_file;
-	Common::Rational _frameRate;
-	Graphics::Surface _surface;
-	Graphics::PixelFormat _format;
-
-	byte _pal[0x300];
-	int16 _deltaPal[0x300];
-	byte _IACToutput[4096];
-	int32 _IACTpos;
-
-	Audio::SoundHandle _soundHandle;
-	Audio::QueuingAudioStream *_stream;
-
-	uint32 _startPos;
-	int _channels;
-	int _freq;
-	bool _videoPause;
-	bool _videoLooping;
-	bool _demo;
-
+class SmushDecoder : public Video::VideoDecoder {
 public:
 	SmushDecoder();
 	~SmushDecoder();
 
-	int getX() { return _x; }
-	int getY() { return _y; }
+	int getX() const { return _videoTrack->_x; }
+	int getY() const { return _videoTrack->_y; }
 	void setLooping(bool l);
-	void setDemo(bool demo) { _demo = demo; }
-
-	uint16 getWidth() const { return _width; }
-	uint16 getHeight() const { return _height; }
-
-	Graphics::PixelFormat getPixelFormat() const { return _surface.format; }
-	bool isVideoLoaded() const { return _file != 0; }
-
+	bool isRewindable() const { return true; }
+	bool isSeekable() const { return true; }
+	bool rewind();
+	bool seek(const Audio::Timestamp &time);
 	bool loadStream(Common::SeekableReadStream *stream);
-	const Graphics::Surface *decodeNextFrame();
-
-	uint32 getFrameCount() const;
-	void close();
-
-	// Seekable
-	void seekToTime(const Audio::Timestamp &time);
-	uint32 getDuration() const;
-
-	uint32 getTimeToNextFrame() const;
-
-private:
-	void pauseVideoIntern(bool p);
-	void parseNextFrame();
-	void init();
-	void handleDeltaPalette(byte *src, int32 size);
-	void handleFramesHeader();
+protected:
+	bool readHeader();
 	void handleFrameDemo();
 	void handleFrame();
-	void handleBlocky16(byte *src);
-	void handleWave(const byte *src, uint32 size);
-	void handleIACT(const byte *src, int32 size);
-	bool setupAnim();
-	bool setupAnimDemo();
-	void setMsPerFrame(int ms);
-protected:
-// Fixed Rate:
-	Common::Rational getFrameRate() const {	return _frameRate; }
+	bool handleFramesHeader();
+	void handleFRME(Common::SeekableReadStream *stream, uint32 size);
+	void init();
+	void close();
+	const Graphics::Surface *decodeNextFrame();
+	class SmushVideoTrack : public FixedRateVideoTrack {
+	public:
+		SmushVideoTrack(int width, int height, int fps, int numFrames, bool is16Bit);
+		~SmushVideoTrack();
+
+		uint16 getWidth() const { return _width; }
+		uint16 getHeight() const { return _height; }
+		Graphics::PixelFormat getPixelFormat() const { return _format; }
+		int getCurFrame() const { return _curFrame; }
+		void setCurFrame(int frame) { _curFrame = frame; }
+		int getFrameCount() const {	return _nbframes; }
+		Common::Rational getFrameRate() const { return _frameRate; }
+		void setMsPerFrame(int ms);
+
+		void finishFrame();
+		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time) { return true; }
+
+		void handleBlocky16(Common::SeekableReadStream *stream, uint32 size);
+		void handleFrameObject(Common::SeekableReadStream *stream, uint32 size);
+		void handleDeltaPalette(Common::SeekableReadStream *stream, int32 size);
+		void init();
+		Graphics::Surface *decodeNextFrame();
+
+		byte *getPal() { return _pal; }
+		int _x, _y;
+	private:
+		void convertDemoFrame();
+		bool _is16Bit;
+		int32 _curFrame;
+		byte _pal[0x300];
+		int16 _deltaPal[0x300];
+		int _width, _height;
+		Graphics::Surface _surface;
+		Graphics::PixelFormat _format;
+		Common::Rational _frameRate;
+		Blocky8 *_blocky8;
+		Blocky16 *_blocky16;
+		int32 _nbframes;
+	};
+
+	class SmushAudioTrack : public AudioTrack {
+	public:
+		SmushAudioTrack(bool isVima, int freq = 22050, int channels = -1);
+		~SmushAudioTrack();
+
+		Audio::AudioStream *getAudioStream() const { return _queueStream; }
+		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time);
+
+		void handleVIMA(Common::SeekableReadStream *stream, uint32 size);
+		void handleIACT(Common::SeekableReadStream *stream, int32 size);
+		void init();
+	private:
+		bool _isVima;
+		byte _IACToutput[4096];
+		int32 _IACTpos;
+		int _channels;
+		int _freq;
+		Audio::QueuingAudioStream *_queueStream;
+	};
+private:
+	SmushAudioTrack *_audioTrack;
+	SmushVideoTrack *_videoTrack;
+
+	Common::SeekableReadStream *_file;
+
+	uint32 _startPos;
+
+	bool _videoPause;
+	bool _videoLooping;
+	static bool _demo;
 };
 
 } // end of namespace Grim

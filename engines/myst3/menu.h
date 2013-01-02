@@ -31,7 +31,7 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 
-#include "video/bink_decoder_seek.h"
+#include "video/bink_decoder.h"
 
 namespace Myst3 {
 
@@ -94,7 +94,7 @@ private:
 	Myst3Engine *_vm;
 
 	Common::MemoryReadStream *_movieStream;
-	Video::SeekableBinkDecoder _bink;
+	Video::BinkDecoder _bink;
 	uint16 _previousframe;
 	uint16 _frameToDisplay;
 

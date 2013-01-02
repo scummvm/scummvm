@@ -86,8 +86,9 @@ bool MoviePlayer::prepareFrame() {
 		_videoFinished = true;
 	}
 
-	if (_videoPause)
+	if (_videoPause) {
 		return false;
+	}
 
 	if (_videoFinished) {
 		if (g_grim->getMode() == GrimEngine::SmushMode) {
@@ -101,9 +102,10 @@ bool MoviePlayer::prepareFrame() {
 		return false;
 
 	handleFrame();
-
 	_internalSurface = _videoDecoder->decodeNextFrame();
-	_updateNeeded = true;
+	if (_frame != _videoDecoder->getCurFrame()) {
+		_updateNeeded = true;
+	}
 
 	_movieTime = _videoDecoder->getTime();
 	_frame = _videoDecoder->getCurFrame();
@@ -147,7 +149,7 @@ void MoviePlayer::deinit() {
 	_videoFinished = true;
 }
 
-bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
+bool MoviePlayer::play(Common::String filename, bool looping, int x, int y, bool start) {
 	Common::StackLock lock(_frameMutex);
 	deinit();
 	_x = x;
@@ -163,8 +165,12 @@ bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 	init();
 	_internalSurface = NULL;
 
-	// Get the first frame immediately
-	timerCallback(this);
+	if (start) {
+		_videoDecoder->start();
+
+		// Get the first frame immediately
+		timerCallback(this);
+	}
 
 	return true;
 }
@@ -203,7 +209,7 @@ void MoviePlayer::restoreState(SaveGame *state) {
 	int y = state->readLESint32();
 
 	if (!videoFinished && !_fname.empty()) {
-		play(_fname.c_str(), videoLooping, x, y);
+		play(_fname.c_str(), videoLooping, x, y, false);
 	}
 	_frame = frame;
 	_movieTime = movieTime;
@@ -212,6 +218,11 @@ void MoviePlayer::restoreState(SaveGame *state) {
 }
 
 #if !defined(USE_MPEG2) || !defined(USE_BINK)
+#define NEED_NULLPLAYER
+#endif
+
+// Temporary fix while reworking codecs:
+#ifndef NEED_NULLPLAYER
 #define NEED_NULLPLAYER
 #endif
 
@@ -225,7 +236,7 @@ public:
 		_videoFinished = true; // Rigs all movies to be completed.
 	}
 	~NullPlayer() {}
-	bool play(Common::String filename, bool looping, int x, int y) {return true;}
+	bool play(Common::String filename, bool looping, int x, int y, bool start = true) { return true; }
 	bool loadFile(Common::String filename) { return true; }
 	void stop() {}
 	void pause(bool p) {}
