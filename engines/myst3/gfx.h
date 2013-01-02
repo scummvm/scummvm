@@ -89,6 +89,8 @@ protected:
 	double _cubeProjectionMatrix[16];
 	double _cubeModelViewMatrix[16];
 
+	bool _nonPowerOfTwoTexSupport;
+
 	Common::Rect getFontCharacterRect(uint8 character);
 };
 

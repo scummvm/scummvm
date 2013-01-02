@@ -47,7 +47,7 @@ namespace Myst3 {
 
 class OpenGLTexture : public Texture {
 public:
-	OpenGLTexture(const Graphics::Surface *surface);
+	OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport);
 	virtual ~OpenGLTexture();
 
 	void update(const Graphics::Surface *surface);
@@ -72,13 +72,19 @@ static uint32 upperPowerOfTwo(uint32 v)
     return v;
 }
 
-OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
+OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) {
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
 
-	internalHeight = upperPowerOfTwo(height);
-	internalWidth = upperPowerOfTwo(width);
+	// Pad the textures if non power of two support is unavailable
+	if (nonPoTSupport) {
+		internalHeight = height;
+		internalWidth = width;
+	} else {
+		internalHeight = upperPowerOfTwo(height);
+		internalWidth = upperPowerOfTwo(width);
+	}
 
 	if (format.bytesPerPixel == 4) {
 		internalFormat = GL_RGBA;
@@ -92,8 +98,13 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// TODO: If non power of two textures are unavailable this clamping
+	// has no effect on the padded sides (resulting in white lines on the edges)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	update(surface);
 }
@@ -109,7 +120,8 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 
 Renderer::Renderer(OSystem *system) :
 	_system(system),
-	_font(0) {
+	_font(0),
+	_nonPowerOfTwoTexSupport(false) {
 }
 
 Renderer::~Renderer() {
@@ -118,7 +130,7 @@ Renderer::~Renderer() {
 }
 
 Texture *Renderer::createTexture(const Graphics::Surface *surface) {
-	return new OpenGLTexture(surface);
+	return new OpenGLTexture(surface, _nonPowerOfTwoTexSupport);
 }
 
 void Renderer::freeTexture(Texture *texture) {
@@ -127,6 +139,13 @@ void Renderer::freeTexture(Texture *texture) {
 }
 
 void Renderer::init() {
+	// Check the available OpenGL extensions
+	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+	if (strstr(extensions, "GL_ARB_texture_non_power_of_two"))
+		_nonPowerOfTwoTexSupport = true;
+	else
+		warning("GL_ARB_texture_non_power_of_two is not available.");
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
