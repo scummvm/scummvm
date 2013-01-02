@@ -2161,8 +2161,11 @@ keywords:
 
 The 7th Guest adds the following non-standard keyword:
 
-    t7g_speed          string   Video playback speed (normal, tweaked,
-                                im_an_ios)
+    fast_movie_speed   bool     If true, movies are played at an increased
+                                speed, matching the speed of the iOS version.
+                                Movies without sound are still played at their
+                                normal speed, to avoid music synchronization
+                                issues
 
 
 8.2) Custom game options that can be toggled via the GUI
