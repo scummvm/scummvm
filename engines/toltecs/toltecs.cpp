@@ -340,7 +340,7 @@ void ToltecsEngine::updateInput() {
 				break;
 			case Common::KEYCODE_SPACE:
 				// Skip current dialog line, if a dialog is active
-				if (_screen->getTalkTextDuration() > 0) {
+				if (!_moviePlayer->isPlaying() && _screen->getTalkTextDuration() > 0) {
 					_sound->stopSpeech();
 					_screen->finishTalkTextItems();
 					_keyState.reset();	// event consumed

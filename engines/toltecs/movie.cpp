@@ -45,7 +45,7 @@ enum ChunkTypes {
 	kChunkStopSubtitles = 8
 };
 
-MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm) {
+MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm), _isPlaying(false) {
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -62,6 +62,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	int16 savedGuiHeight = _vm->_guiHeight;
 	byte moviePalette[768];
 
+	_isPlaying = true;
 	_vm->_isSaveAllowed = false;
 
 	memset(moviePalette, 0, sizeof(moviePalette));
@@ -200,6 +201,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_guiHeight = savedGuiHeight;
 
 	_vm->_isSaveAllowed = true;
+	_isPlaying = false;
 }
 
 void MoviePlayer::fetchAudioChunks() {
