@@ -33,6 +33,13 @@ For a more comprehensive changelog of the latest experimental code, see:
      protection, this extra line can be toggled by the ScummVM copy protection
      command line option.
 
+  Groovie:
+   - Simplified the movie speed options, and added a custom option for The 7th
+     Guest. Movie options are now "normal" and "fast", with the latter changing
+     the movie speed in T7G to match the faster movie speed of the iOS version.
+     The game entry might need to be readded in the launcher for the new setting
+     to appear.
+
   SAGA:
    - Added music support for the Macintosh version of I Have No Mouth and, I
      Must Scream.
