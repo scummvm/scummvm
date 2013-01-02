@@ -685,20 +685,37 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 
 	tglDisable(TGL_LIGHTING);
 
-	float halfWidth = (sprite->_width / 2) * _scaleW;
-	float halfHeight = (sprite->_height / 2) * _scaleH;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		float halfWidth = (sprite->_width / 2) * _scaleW;
+		float halfHeight = (sprite->_height / 2) * _scaleH;
 
+		tglBegin(TGL_POLYGON);
+		tglTexCoord2f(0.0f, 1.0f);
+		tglVertex3f(-halfWidth, -halfHeight, 0.0f);
+		tglTexCoord2f(0.0f, 0.0f);
+		tglVertex3f(-halfWidth, +halfHeight, 0.0f);
+		tglTexCoord2f(1.0f, 0.0f);
+		tglVertex3f(+halfWidth, +halfHeight, 0.0f);
+		tglTexCoord2f(1.0f, 1.0f);
+		tglVertex3f(+halfWidth, -halfHeight, 0.0f);
+		tglEnd();
+	} else {
+		// In Grim, the bottom edge of the sprite is at y=0 and
+		// the texture is flipped along the X-axis.
+		float halfWidth = (sprite->_width / 2) * _scaleW;
+		float height = sprite->_height * _scaleH;
 
-	tglBegin(TGL_POLYGON);
-	tglTexCoord2f(0.0f, 1.0f);
-	tglVertex3f(-halfWidth, -halfHeight, 0.0f);
-	tglTexCoord2f(0.0f, 0.0f);
-	tglVertex3f(-halfWidth, +halfHeight, 0.0f);
-	tglTexCoord2f(1.0f, 0.0f);
-	tglVertex3f(+halfWidth, +halfHeight, 0.0f);
-	tglTexCoord2f(1.0f, 1.0f);
-	tglVertex3f(+halfWidth, -halfHeight, 0.0f);
-	tglEnd();
+		tglBegin(TGL_POLYGON);
+		tglTexCoord2f(0.0f, 1.0f);
+		tglVertex3f(+halfWidth, 0.0f, 0.0f);
+		tglTexCoord2f(0.0f, 0.0f);
+		tglVertex3f(+halfWidth, +height, 0.0f);
+		tglTexCoord2f(1.0f, 0.0f);
+		tglVertex3f(-halfWidth, +height, 0.0f);
+		tglTexCoord2f(1.0f, 1.0f);
+		tglVertex3f(-halfWidth, 0.0f, 0.0f);
+		tglEnd();
+	}
 
 	tglEnable(TGL_LIGHTING);
 

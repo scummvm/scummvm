@@ -595,19 +595,37 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glEnable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
 
-	float halfWidth = (sprite->_width / 2) * _scaleW;
-	float halfHeight = (sprite->_height / 2) * _scaleH;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		float halfWidth = (sprite->_width / 2) * _scaleW;
+		float halfHeight = (sprite->_height / 2) * _scaleH;
 
-	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-halfWidth, -halfHeight, 0.0f);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-halfWidth, +halfHeight, 0.0f);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(+halfWidth, +halfHeight, 0.0f);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(+halfWidth, -halfHeight, 0.0f);
-	glEnd();
+		glBegin(GL_POLYGON);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-halfWidth, -halfHeight, 0.0f);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-halfWidth, +halfHeight, 0.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(+halfWidth, +halfHeight, 0.0f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(+halfWidth, -halfHeight, 0.0f);
+		glEnd();
+	} else {
+		// In Grim, the bottom edge of the sprite is at y=0 and
+		// the texture is flipped along the X-axis.
+		float halfWidth = (sprite->_width / 2) * _scaleW;
+		float height = sprite->_height * _scaleH;
+
+		glBegin(GL_POLYGON);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(+halfWidth, 0.0f, 0.0f);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(+halfWidth, +height, 0.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(-halfWidth, +height, 0.0f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(-halfWidth, 0.0f, 0.0f);
+		glEnd();
+	}
 
 	glEnable(GL_LIGHTING);
 	glDisable(GL_ALPHA_TEST);
