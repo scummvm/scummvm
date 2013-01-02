@@ -19,6 +19,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      smallest possible amount. This is more predictable than the old behaviour,
      which was to change the value by "one pixel" which would sometimes not
      change it at all.
+   - Updated MT-32 emulation code to latest munt project snapshot.
 
   Cine:
    - Improved audio support for Amiga and AtariST versions of Future Wars.
