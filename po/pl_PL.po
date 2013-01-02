@@ -1,7 +1,7 @@
 # Polish translation for ScummVM.
-# Copyright (C) 2010-2012 ScummVM Team
+# Copyright (C) 2010-2013 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Grajpopolsku.pl <grajpopolsku@gmail.com>, 2011-2012.
+# Grajpopolsku.pl <grajpopolsku@gmail.com>, 2011-2013.
 #
 msgid ""
 msgstr ""
