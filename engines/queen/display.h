@@ -116,8 +116,8 @@ public:
 	//! decode PCX picture data
 	void decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd);
 
-	//! decode ILBM picture data
-	void decodeLBM(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase = 0);
+	//! decode IFF picture data
+	void decodeIFF(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase = 0);
 
 	void horizontalScrollUpdate(int16 xCamera);
 	void horizontalScroll(int16 scroll);

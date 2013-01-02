@@ -29,6 +29,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+#include "graphics/decoders/iff.h"
 #include "graphics/decoders/pcx.h"
 
 #include "queen/display.h"
@@ -701,7 +702,7 @@ void Display::setupPanel() {
 	uint8 *data = _vm->resource()->loadFile(dataName, 0, &dataSize);
 
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
-		decodeLBM(data, dataSize, _panelBuf, PANEL_W, &panelWidth, &panelHeight, _pal.panel, 0, 32, 144);
+		decodeIFF(data, dataSize, _panelBuf, PANEL_W, &panelWidth, &panelHeight, _pal.panel, 0, 32, 144);
 	} else {
 		WRITE_LE_UINT16(data + 14, PANEL_H - 10);
 		decodePCX(data, dataSize, _panelBuf + PANEL_W * 10, PANEL_W, &panelWidth, &panelHeight, _pal.panel, 144, 256);
@@ -720,7 +721,7 @@ void Display::setupNewRoom(const char *name, uint16 room) {
 	uint8 *data = _vm->resource()->loadFile(dataName, 0, &dataSize);
 
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
-		decodeLBM(data, dataSize, _backdropBuf, BACKDROP_W, &_bdWidth, &_bdHeight, _pal.room, 0, 32);
+		decodeIFF(data, dataSize, _backdropBuf, BACKDROP_W, &_bdWidth, &_bdHeight, _pal.room, 0, 32);
 		if (_bdHeight < BACKDROP_H) {
 			memset(_backdropBuf + _bdHeight * BACKDROP_W, 0, (BACKDROP_H - _bdHeight) * BACKDROP_W);
 		}
@@ -828,73 +829,22 @@ void Display::decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dst
 		memcpy(dst + y * dstPitch, pcxSurface->getBasePtr(0, y), pcxSurface->w);
 }
 
-void Display::decodeLBM(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase) {
-	int planeCount = 0, planePitch = 0;
-	const uint8 *srcEnd = src + srcSize;
-	src += 12;
-	while (src < srcEnd) {
-		uint32 type = READ_BE_UINT32(src);
-		uint32 size = READ_BE_UINT32(src + 4);
-		src += 8;
-		switch (type) {
-		case MKTAG('B','M','H','D'): {
-				*w = READ_BE_UINT16(src + 0);
-				*h = READ_BE_UINT16(src + 2);
-				planeCount = src[8];
-				planePitch = ((*w + 15) >> 4) * 2;
-			}
-			break;
-		case MKTAG('C','M','A','P'): {
-				assert(palStart <= palEnd && palEnd <= size / 3);
-				memcpy(pal, src + palStart * 3, (palEnd - palStart) * 3);
-			}
-			break;
-		case MKTAG('B','O','D','Y'): {
-				uint32 planarSize = (*h) * planeCount * planePitch;
-				uint8 *planarBuf = new uint8[planarSize];
-				uint8 *dstPlanar = planarBuf;
-				for (int y = 0; y < *h; ++y) {
-					for (int p = 0; p < planeCount; ++p) {
-						const uint8 *end = dstPlanar + planePitch;
-						while (dstPlanar < end) {
-							int code = (int8)*src++;
-							if (code != -128) {
-								if (code < 0) {
-									code = -code + 1;
-									memset(dstPlanar, *src++, code);
-								} else {
-									++code;
-									memcpy(dstPlanar, src, code);
-									src += code;
-								}
-								dstPlanar += code;
-							}
-						}
-					}
-				}
-				src = planarBuf;
-				for (int y = 0; y < *h; ++y) {
-					for (int x = 0; x < *w / 8; ++x) {
-						for (int b = 0; b < 8; ++b) {
-							const uint8 mask = (1 << (7 - b));
-							uint8 color = 0;
-							for (int p = 0; p < planeCount; ++p) {
-								if (src[planePitch * p + x] & mask) {
-									color |= 1 << p;
-								}
-							}
-							dst[x * 8 + b] = colorBase + color;
-						}
-					}
-					src += planeCount * planePitch;
-					dst += dstPitch;
-				}
-				delete[] planarBuf;
-			}
-			return;
-		}
-		src += size;
-	}
+void Display::decodeIFF(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase) {
+	Common::MemoryReadStream str(src, srcSize);
+
+	::Graphics::IFFDecoder iff;
+	if (!iff.loadStream(str))
+		error("Error while reading IFF image");
+
+	const ::Graphics::Surface *iffSurface = iff.getSurface();
+	*w	= iffSurface->w;
+	*h	= iffSurface->h;
+
+	assert(palStart <= palEnd && palEnd <= 256);
+	memcpy(pal, iff.getPalette() + palStart * 3, (palEnd - palStart) * 3);
+	for (uint16 y = 0; y < iffSurface->h; y++)
+		for(uint16 x = 0; x < iffSurface->w; x++)
+			dst[(y * dstPitch) + x] = *(const byte *)iffSurface->getBasePtr(x, y) + colorBase;
 }
 
 void Display::horizontalScrollUpdate(int16 xCamera) {
