@@ -1437,8 +1437,8 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	int v115;
 	int v116;
 	int v117;
-	int v118;
-	int v119;
+	int v118 = 0;
+	int v119 = 0;
 	int v120;
 	int v121;
 	int v122;

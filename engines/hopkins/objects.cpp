@@ -2939,11 +2939,9 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int16 *v33;
 	int v34;
 	int v35;
-	int i;
 	int16 *v37;
 	int v39;
 	int16 *v41;
-	int k;
 	int16 *v45;
 	int v47;
 	int v48;
@@ -2957,12 +2955,11 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v65;
 	int v66;
 	int v67;
-	int v68;
-	int v69;
+	int v68 = 0;
+	int v69 = 0;
 	int j;
-	int l;
-	int v72;
-	int v73;
+	int v72 = 0;
+	int v73 = 0;
 	int v74;
 	int v75;
 	int v77[10];
@@ -3123,10 +3120,12 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 				v33[v32 + 3] = 0;
 				v67 += 4;
 				if (v28 == -1)
-					goto LABEL_90;
+					break;;
 			}
-			v69 = v87[1];
-			v68 = v82[1];
+			if (v28 != -1) {
+				v69 = v87[1];
+				v68 = v82[1];
+			}
 		} else {
 			v69 = 1;
 			v68 = 1;
@@ -3136,7 +3135,7 @@ LABEL_90:
 		if (v69 < v73) {
 			v34 = v68;
 			v35 = v68;
-			for (i = _vm->_linesManager.Ligne[v69].field0; v35 < i - 2; i = _vm->_linesManager.Ligne[v69].field0) {
+			for (int i = _vm->_linesManager.Ligne[v69].field0; v35 < i - 2; i = _vm->_linesManager.Ligne[v69].field0) {
 				v37 = _vm->_linesManager.Ligne[v69].lineData;
 				v39 = v67;
 				_vm->_globals.super_parcours[v39] = v37[2 * v35];
@@ -3176,7 +3175,7 @@ LABEL_88:
 			v69 = v73;
 		}
 		if (v69 > v73) {
-			for (k = v68; k > 0; --k) {
+			for (int k = v68; k > 0; --k) {
 				v45 = _vm->_linesManager.Ligne[v69].lineData;
 				v47 = v67;
 				_vm->_globals.super_parcours[v47] = v45[2 * k];
@@ -3185,7 +3184,7 @@ LABEL_88:
 				_vm->_globals.super_parcours[v47 + 3] = 0;
 				v67 += 4;
 			}
-			for (l = v69 - 1; l > v73; --l) {
+			for (int l = v69 - 1; l > v73; --l) {
 				v48 = l;
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[l].lineData[2 * _vm->_linesManager.Ligne[v48].field0 - 2],

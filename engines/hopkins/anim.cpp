@@ -219,7 +219,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 	int v5;
 	int v8;
 	byte *ptr = NULL;
-	int oldScrollVal;
+	int oldScrollVal = 0;
 	byte *v12 = NULL;
 	byte *v13 = NULL;
 	int v15;

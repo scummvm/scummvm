@@ -705,7 +705,7 @@ void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
 void GraphicsManager::changePalette(const byte *palette) {
 	const byte *srcP = &palette[0];
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
-		*(uint16 *)&SD_PIXELS[2 * idx] = mapRGB(*srcP, *(srcP + 1), *(srcP + 2));
+		WRITE_LE_UINT16(&SD_PIXELS[2 * idx], mapRGB(*srcP, *(srcP + 1), *(srcP + 2)));
 	}
 }
 
@@ -791,7 +791,7 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) 
 		}
 Video_Cont3_wVbe:
 		if (srcByte > 210) {
-			if (srcByte == -45) {
+			if (srcByte == 211) {
 				destLen1 = srcP[1];
 				rleValue = srcP[2];
 				destSlice1P = destOffset + destSurface;
@@ -1113,7 +1113,6 @@ void GraphicsManager::RESET_SEGMENT_VESA() {
 // Add VESA Segment
 void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 	int tempX;
-	int blocCount;
 	bool addFlag;
 
 	tempX = x1;
@@ -1127,9 +1126,7 @@ void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 	if (y1 < min_y)
 		y1 = min_y;
 
-	blocCount = _vm->_globals.NBBLOC;
 	if (_vm->_globals.NBBLOC > 1) {
-
 		int16 blocIndex = 0;
 		do {
 			BlocItem &bloc = _vm->_globals.BLOC[blocIndex];
@@ -1138,7 +1135,6 @@ void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 					&& y1 >= bloc._y1 && y2 <= bloc._y2)
 				addFlag = false;
 			++blocIndex;
-			blocCount = blocIndex;
 		} while (_vm->_globals.NBBLOC + 1 != blocIndex);
 	}
 
@@ -1910,12 +1906,10 @@ void GraphicsManager::SHOW_PALETTE() {
 }
 
 void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
-	int result;
 	int destOffset;
 	const byte *srcPtr;
 	byte byteVal;
 
-	result = 0;
 	destOffset = 0;
 	srcPtr = src;
 	for (;;) {
