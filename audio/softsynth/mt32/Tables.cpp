@@ -72,21 +72,9 @@ Tables::Tables() {
 		//synth->printDebug("%d: %d", i, pulseWidth100To255[i]);
 	}
 
-	// Ratio of negative segment to wave length
-	for (int i = 0; i < 128; i++) {
-		// Formula determined from sample analysis.
-		float pt = 0.5f / 127.0f * i;
-		pulseLenFactor[i] = (1.241857812f - pt) * pt;    // seems to be 2 ^ (5 / 16) = 1.241857812f
-	}
-
 	// The LA32 chip presumably has such a table inside as the internal computaions seem to be performed using fixed point math with 12-bit fractions
 	for (int i = 0; i < 4096; i++) {
 		exp2[i] = EXP2F(i / 4096.0f);
-	}
-
-	// found from sample analysis
-	for (int i = 0; i < 32; i++) {
-		resAmpMax[i] = EXP2F(1.0f - (32 - i) / 4.0f);
 	}
 
 	// found from sample analysis
