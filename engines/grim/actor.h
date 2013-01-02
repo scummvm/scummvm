@@ -589,7 +589,7 @@ private:
 	void setYaw(const Math::Angle &yaw);
 
 	Chore *getTurnChore(int dir) {
-		return (dir > 0 ? &_rightTurnChore : &_leftTurnChore);
+		return (dir > 0 ? &_leftTurnChore : &_rightTurnChore);
 	}
 
 	void freeCostumeChore(Costume *toFree, Chore *chore);
