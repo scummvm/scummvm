@@ -170,7 +170,6 @@ void ScriptInterpreter::setupScriptFunctions() {
 }
 
 void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
-
 	delete[] _slots[slotIndex].data;
 
  	_slots[slotIndex].resIndex = resIndex;
@@ -178,7 +177,6 @@ void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
 	_slots[slotIndex].size = scriptResource->size;
  	_slots[slotIndex].data = new byte[_slots[slotIndex].size];
  	memcpy(_slots[slotIndex].data, scriptResource->data, _slots[slotIndex].size);
-
 }
 
 void ScriptInterpreter::setMainScript(uint slotIndex) {
@@ -244,10 +242,9 @@ int16 ScriptInterpreter::readInt16() {
 }
 
 void ScriptInterpreter::execOpcode(byte opcode) {
-
 	int16 ofs;
 
-	debug(1, "opcode = %d", opcode);
+	debug(2, "opcode = %d", opcode);
 
 	switch (opcode) {
 	case 0:
@@ -255,9 +252,9 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		// ok
 		_subCode = _code;
 		byte length = readByte();
-		debug(1, "length = %d", length);
+		debug(2, "length = %d", length);
 		uint16 index = readInt16();
-		debug(1, "callScriptFunction %d", index);
+		debug(2, "callScriptFunction %d", index);
 		execScriptFunction(index);
 		_code += length - 2;
 		break;
@@ -478,15 +475,14 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 }
 
 void ScriptInterpreter::execScriptFunction(uint16 index) {
-	debug(4, "execScriptFunction(%d)", index);
 	if (index >= _scriptFuncs.size())
 		error("ScriptInterpreter::execScriptFunction() Invalid script function index %d", index);
-	debug(4, "%s", _scriptFuncNames[index]);
+	debug(1, "execScriptFunction %s (%d)", _scriptFuncNames[index], index);
 	(*_scriptFuncs[index])();
 }
 
 int16 ScriptInterpreter::getGameVar(uint variable) {
-	debug(0, "ScriptInterpreter::getGameVar(%d{%s})", variable, varNames[variable]);
+	debug(2, "ScriptInterpreter::getGameVar(%d{%s})", variable, varNames[variable]);
 
 	switch (variable) {
 	case  0: return _vm->_mouseDisabled;
@@ -518,7 +514,7 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 }
 
 void ScriptInterpreter::setGameVar(uint variable, int16 value) {
-	debug(0, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, varNames[variable], value);
+	debug(2, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, varNames[variable], value);
 
 	switch (variable) {
 	case 0:
@@ -609,27 +605,27 @@ int16 ScriptInterpreter::popInt16() {
 }
 
 void ScriptInterpreter::localWrite8(int16 offset, byte value) {
-	//debug(1, "localWrite8(%d, %d)", offset, value);
+	//debug(2, "localWrite8(%d, %d)", offset, value);
 	_localData[offset] = value;
 }
 
 byte ScriptInterpreter::localRead8(int16 offset) {
-	//debug(1, "localRead8(%d) -> %d", offset, _localData[offset]);
+	//debug(2, "localRead8(%d) -> %d", offset, _localData[offset]);
 	return _localData[offset];
 }
 
 void ScriptInterpreter::localWrite16(int16 offset, int16 value) {
-	//debug(1, "localWrite16(%d, %d)", offset, value);
+	//debug(2, "localWrite16(%d, %d)", offset, value);
 	WRITE_LE_UINT16(&_localData[offset], value);
 }
 
 int16 ScriptInterpreter::localRead16(int16 offset) {
-	//debug(1, "localRead16(%d) -> %d", offset, (int16)READ_LE_UINT16(&_localData[offset]));
+	//debug(2, "localRead16(%d) -> %d", offset, (int16)READ_LE_UINT16(&_localData[offset]));
 	return (int16)READ_LE_UINT16(&_localData[offset]);
 }
 
 byte *ScriptInterpreter::localPtr(int16 offset) {
-	//debug(1, "localPtr(%d)", offset);
+	//debug(2, "localPtr(%d)", offset);
 	return &_localData[offset];
 }
 
@@ -941,7 +937,8 @@ void ScriptInterpreter::sfStopShakeScreen() {
 
 void ScriptInterpreter::sfStartSequence() {
 	int16 sequenceResIndex = arg16(3);
-	//debug("ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
+	debug(1, "ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
+
 	if (sequenceResIndex >= 0) {
 		//_vm->_arc->dump(sequenceResIndex, "music");	// DEBUG: Dump music so we know what's in there
 
@@ -950,7 +947,6 @@ void ScriptInterpreter::sfStartSequence() {
 }
 
 void ScriptInterpreter::sfEndSequence() {
-	//debug("ScriptInterpreter::sfEndSequence");
 	_vm->_music->stopSequence();
 }
 
