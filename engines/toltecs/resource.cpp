@@ -61,16 +61,11 @@ uint32 ArchiveReader::getResourceSize(uint resIndex) {
 	return _offsets[resIndex + 1] - _offsets[resIndex];
 }
 
-void ArchiveReader::dump(uint resIndex, const char *prefix) {
+void ArchiveReader::dump(uint resIndex) {
 	int32 resourceSize = getResourceSize(resIndex);
 	byte *data = new byte[resourceSize];
 
-	Common::String fn;
-
-	if (prefix)
-		fn = Common::String::format("%s_%04X.0", prefix, resIndex);
-	else
-		fn = Common::String::format("%04X.0", resIndex);
+	Common::String fn = Common::String::format("toltecs_res.%03d", resIndex);
 
 	openResource(resIndex);
 	read(data, resourceSize);

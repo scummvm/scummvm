@@ -18,68 +18,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *
  */
 
-#ifndef TOLTECS_RESOURCE_H
-#define TOLTECS_RESOURCE_H
+#ifndef TOLTECS_CONSOLE_H
+#define TOLTECS_CONSOLE_H
 
-#include "common/file.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-
-#include "engines/engine.h"
+#include "gui/debugger.h"
 
 namespace Toltecs {
 
-const uint kMaxCacheItems = 1024;
-const uint kMaxCacheSize = 8 * 1024 * 1024; // 8 MB
+class ToltecsEngine;
 
-
-class ArchiveReader : public Common::File {
+class Console : public GUI::Debugger {
 public:
-	ArchiveReader();
-	~ArchiveReader();
+	Console(ToltecsEngine *vm);
+	virtual ~Console(void);
 
-	void openArchive(const char *filename);
-
-	// Returns the size of the opened resource
-	uint32 openResource(uint resIndex);
-	// Closes the resource
-	void closeResource();
-	// Returns the size of the resource
-	uint32 getResourceSize(uint resIndex);
-
-	void dump(uint resIndex);
-
-protected:
-	uint32 *_offsets;
-
-};
-
-struct Resource {
-	uint32 size;
-	byte *data;
-};
-
-class ResourceCache {
-public:
-	ResourceCache(ToltecsEngine *vm);
-	~ResourceCache();
-
-	Resource *load(uint resIndex);
-	void purgeCache();
-
-protected:
-	typedef Common::HashMap<uint, Resource *> ResourceMap;
-
+private:
 	ToltecsEngine *_vm;
 
-	ResourceMap _cache;
-
+	bool Cmd_Dump(int argc, const char **argv);
+	bool Cmd_Room(int argc, const char **argv);
 };
 
-
 } // End of namespace Toltecs
-
-#endif /* TOLTECS_H */
+#endif
