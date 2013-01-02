@@ -32,6 +32,8 @@ namespace Toltecs {
 Palette::Palette(ToltecsEngine *vm) : _vm(vm) {
 	clearFragments();
 
+	memset(_mainPalette, 0, sizeof(_mainPalette));
+	memset(_animPalette, 0, sizeof(_animPalette));
 	memset(_colorTransTable, 0, sizeof(_colorTransTable));
 }
 
