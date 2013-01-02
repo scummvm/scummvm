@@ -41,9 +41,6 @@ MenuSystem::~MenuSystem() {
 }
 
 int MenuSystem::run(MenuID menuId) {
-
-	//debug("MenuSystem::run()");
-
 	_background = new Graphics::Surface();
 	_background->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -62,13 +59,12 @@ int MenuSystem::run(MenuID menuId) {
 
 	_needRedraw = false;
 
-	// TODO: buildColorTransTable2
 	_vm->_palette->buildColorTransTable(0, 16, 7);
 
 	_vm->_screen->_renderQueue->clear();
 	// Draw the menu background and frame
 	_vm->_screen->blastSprite(0x140 + _vm->_cameraX, 0x175 + _vm->_cameraY, 0, 1, 0x4000);
-	shadeRect(60, 39, 520, 246, 30, 94);
+	shadeRect(60, 39, 520, 246, 225, 229);
 
 	memcpy(_background->pixels, _vm->_screen->_frontScreen, 640 * 400);
 
@@ -91,7 +87,6 @@ int MenuSystem::run(MenuID menuId) {
 }
 
 void MenuSystem::update() {
-
 	if (_currMenuID != _newMenuID) {
 		_currMenuID = _newMenuID;
 		//debug("_currMenuID = %d", _currMenuID);
@@ -103,16 +98,13 @@ void MenuSystem::update() {
 	if (_needRedraw) {
 		//_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
 		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, _top, 640, 400 - _top);
-		//debug("redraw");
 		_needRedraw = false;
 	}
 
 	_vm->_system->delayMillis(5);
-
 }
 
 void MenuSystem::handleEvents() {
-
 	Common::Event event;
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
@@ -133,7 +125,6 @@ void MenuSystem::handleEvents() {
 			break;
 		}
 	}
-
 }
 
 void MenuSystem::addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const char *caption, byte defaultColor, byte activeColor) {
@@ -237,13 +228,13 @@ void MenuSystem::initMenu(MenuID menuID) {
 	switch (menuID) {
 	case kMenuIdMain:
 		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrWhatCanIDoForYou));
-		addClickTextItem(kItemIdLoad, 0, 115, 320, 0, _vm->getSysString(kStrLoad), 229, 255);
-		addClickTextItem(kItemIdSave, 0, 135, 320, 0, _vm->getSysString(kStrSave), 229, 255);
-		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, _vm->getSysString(_vm->_cfgText ? kStrTextOn : kStrTextOff), 229, 255);
-		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, _vm->getSysString(_vm->_cfgVoices ? kStrVoicesOn : kStrVoicesOff), 229, 255);
-		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, _vm->getSysString(kStrVolume), 229, 255);
-		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, _vm->getSysString(kStrPlay), 229, 255);
-		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, _vm->getSysString(kStrQuit), 229, 255);
+		addClickTextItem(kItemIdLoad, 0, 115, 320, 0, _vm->getSysString(kStrLoad), 253, 255);
+		addClickTextItem(kItemIdSave, 0, 135, 320, 0, _vm->getSysString(kStrSave), 253, 255);
+		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, _vm->getSysString(_vm->_cfgText ? kStrTextOn : kStrTextOff), 253, 255);
+		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, _vm->getSysString(_vm->_cfgVoices ? kStrVoicesOn : kStrVoicesOff), 253, 255);
+		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, _vm->getSysString(kStrVolume), 253, 255);
+		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, _vm->getSysString(kStrPlay), 253, 255);
+		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, _vm->getSysString(kStrQuit), 253, 255);
 		break;
 	case kMenuIdLoad:
 		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrLoadGame));
@@ -574,7 +565,6 @@ void MenuSystem::drawVolumeBar(ItemID itemID) {
 	text[volume] = 0;
 
 	drawString(0, y, w, 0, 246, text);
-
 }
 
 void MenuSystem::changeVolumeBar(ItemID itemID, int delta) {
