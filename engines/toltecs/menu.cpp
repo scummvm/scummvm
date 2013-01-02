@@ -238,9 +238,9 @@ void MenuSystem::initMenu(MenuID menuID) {
 		break;
 	case kMenuIdLoad:
 		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrLoadGame));
-		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 255, 253);
-		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
+		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 253, 255);
+		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 253, 255);
+		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 253, 255);
 		for (int i = 1; i <= 7; i++) {
 			Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
 			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
@@ -250,9 +250,9 @@ void MenuSystem::initMenu(MenuID menuID) {
 		break;
 	case kMenuIdSave:
 		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrSaveGame));
-		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 255, 253);
-		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
+		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 253, 255);
+		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 253, 255);
+		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 253, 255);
 		for (int i = 1; i <= 7; i++) {
 			Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
 			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
