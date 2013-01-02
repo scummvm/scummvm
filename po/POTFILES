@@ -56,6 +56,8 @@ engines/sword2/animation.cpp
 engines/sword2/sword2.cpp
 engines/teenagent/resources.cpp
 engines/tinsel/saveload.cpp
+engines/toltecs/detection.cpp
+engines/toltecs/menu.cpp
 engines/parallaction/saveload.cpp
 
 audio/fmopl.cpp
