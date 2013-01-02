@@ -1096,7 +1096,6 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	getStringFromBuffer(40, v23, (const char *)_characterBuffer);
 	getStringFromBuffer(0, v22, (const char *)_characterBuffer);
 	getStringFromBuffer(20, v20, (const char *)_characterBuffer);
-	v5 = 5;
 
 	if (v20 == "NULL")
 		v20 = Common::String::format("IM%d", _vm->_globals._screenId);
