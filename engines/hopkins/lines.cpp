@@ -225,6 +225,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 
 	if (idx > 400)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
+
 	if (_linesNumb < idx)
 		_linesNumb = idx;
 
@@ -297,19 +298,20 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 			Ligne[idx].field8 = 4;
 		}
 	}
-	if (v11 == 1 && (unsigned int)(v37 - 251) <= 748) {
+	if (v11 == 1 && v37 > 250 && v37 <= 999) {
 		Ligne[idx].field6 = 4;
 		Ligne[idx].field8 = 8;
 	}
-	if (v11 == -1 && (unsigned int)(v37 - 251) <= 748) {
+	if (v11 == -1 && v37 > 250 && v37 <= 999) {
 		Ligne[idx].field6 = 6;
 		Ligne[idx].field8 = 2;
 	}
-	if (v11 == 1 && (unsigned int)(v37 + 999) <= 748) {
+	if (v11 == 1 && v37 < -250 && v37 > -1000) {
 		Ligne[idx].field6 = 2;
 		Ligne[idx].field8 = 6;
 	}
-	// CHECKME: v37 conditions are impossible to meet!
+	// This copndition is impossible to meet!
+	// Code present in the Linux and BeOS executables
 	if (v11 == -1 && v37 <= 249 && v37 > 1000) {
 		Ligne[idx].field6 = 8;
 		Ligne[idx].field8 = 4;
@@ -348,7 +350,6 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 }
 
 // Line Collision 2
-// TODO: Should return a bool
 bool LinesManager::colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6) {
 	int16 *v7;
 	int16 *v13;
@@ -374,24 +375,29 @@ bool LinesManager::colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int
 			int v16 = v7[1];
 			int v10 = v7[v8 - 2];
 			int v18 = v7[v8 - 1];
-			if (v7[0] >= v10)
-				goto LABEL_32;
-			if (v22 < v9 || v21 > v10)
-				v23 = 0;
-			if (v9 >= v10) {
-LABEL_32:
+			if (v7[0] >= v10) {
 				if (v21 > v9 || v22 < v10)
 					v23 = 0;
+			} else {
+				if (v22 < v9 || v21 > v10)
+					v23 = 0;
+				if (v9 >= v10) {
+					if (v21 > v9 || v22 < v10)
+						v23 = 0;
+				}
 			}
-			if (v16 >= v18)
-				goto LABEL_33;
-			if (v20 < v16 || v19 > v18)
-				v23 = 0;
 			if (v16 >= v18) {
-LABEL_33:
 				if (v19 > v16 || v20 < v18)
 					v23 = 0;
+			} else {
+				if (v20 < v16 || v19 > v18)
+					v23 = 0;
+				if (v16 >= v18) {
+					if (v19 > v16 || v20 < v18)
+						v23 = 0;
+				}
 			}
+
 			if (v23 == 1) {
 				v11 = 0;
 				v17 = Ligne[v24].field0;
