@@ -24,6 +24,8 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+
+#include "common/translation.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
@@ -154,6 +156,13 @@ static const ToltecsGameDescription gameDescriptions[] = {
 
 } // End of namespace Toltecs
 
+static const ExtraGuiOption toltecsExtraGuiOption = {
+	_s("Use original save/load screens"),
+	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	"originalsaveload",
+	false
+};
+
 class ToltecsMetaEngine : public AdvancedMetaEngine {
 public:
 	ToltecsMetaEngine() : AdvancedMetaEngine(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
@@ -170,6 +179,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
@@ -200,6 +210,12 @@ bool ToltecsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 		*engine = new Toltecs::ToltecsEngine(syst, gd);
 	}
 	return gd != 0;
+}
+
+const ExtraGuiOptions ToltecsMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	options.push_back(toltecsExtraGuiOption);
+	return options;
 }
 
 SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {

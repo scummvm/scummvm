@@ -22,9 +22,12 @@
  */
 
 #include "audio/mixer.h"
-#include "common/savefile.h"
 
+#include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
+
+#include "gui/saveload.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/menu.h"
@@ -118,7 +121,7 @@ void MenuSystem::handleEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			handleMouseMove(event.mouse.x, event.mouse.y);
 			break;
-		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
 			handleMouseClick(event.mouse.x, event.mouse.y);
 			break;
 		default:
@@ -237,29 +240,55 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, _vm->getSysString(kStrQuit), 253, 255);
 		break;
 	case kMenuIdLoad:
-		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrLoadGame));
-		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 253, 255);
-		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 253, 255);
-		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 253, 255);
-		for (int i = 1; i <= 7; i++) {
-			Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
-			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
+		if (ConfMan.getBool("originalsaveload")) {
+			drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrLoadGame));
+			addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 253, 255);
+			addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 253, 255);
+			addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 253, 255);
+			for (int i = 1; i <= 7; i++) {
+				Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
+				addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
+			}
+			loadSavegamesList();
+			setSavegameCaptions();
+		} else {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			int slot = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (slot >= 0)
+				_vm->requestLoadgame(slot);
+
+			_running = false;
 		}
-		loadSavegamesList();
-		setSavegameCaptions();
 		break;
 	case kMenuIdSave:
-		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrSaveGame));
-		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 253, 255);
-		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 253, 255);
-		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 253, 255);
-		for (int i = 1; i <= 7; i++) {
-			Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
-			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
+		if (ConfMan.getBool("originalsaveload")) {
+			drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrSaveGame));
+			addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 253, 255);
+			addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 253, 255);
+			addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 253, 255);
+			for (int i = 1; i <= 7; i++) {
+				Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
+				addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
+			}
+			newSlotNum = loadSavegamesList() + 1;
+			_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %03d", _savegames.size() + 1)));
+			setSavegameCaptions();
+		} else {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			int slot = dialog->runModalWithCurrentTarget();
+			Common::String desc = dialog->getResultString();
+			if (desc.empty()) {
+				// Create our own description for the saved game, the user didn't enter one
+				desc = dialog->createDefaultSaveDescription(slot);
+			}
+
+			if (slot >= 0)
+				_vm->requestSavegame(slot, desc);
+
+			_running = false;
 		}
-		newSlotNum = loadSavegamesList() + 1;
-		_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %03d", _savegames.size() + 1)));
-		setSavegameCaptions();
 		break;
 	case kMenuIdVolumes:
 		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrAdjustVolume));
@@ -431,7 +460,6 @@ void MenuSystem::drawString(int16 x, int16 y, int w, uint fontNum, byte color, c
 }
 
 int MenuSystem::loadSavegamesList() {
-
 	int maxSlotNum = -1;
 
 	_savegameListTopIndex = 0;
