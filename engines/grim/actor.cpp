@@ -1217,7 +1217,9 @@ void Actor::update(uint frameTime) {
 		} else {
 			setYaw(_yaw - turnAmt);
 		}
-		_currTurnDir = (dyaw > 0 ? 1 : -1);
+		if (dyaw != 0) {
+			_currTurnDir = (dyaw > 0 ? 1 : -1);
+		}
 	}
 
 	if (_walking) {
