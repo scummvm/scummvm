@@ -60,13 +60,8 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MIDI");
 
 	_modeSpeed = kGroovieSpeedNormal;
-	if (ConfMan.hasKey("t7g_speed")) {
-		Common::String speed = ConfMan.get("t7g_speed");
-		if (speed.equals("im_an_ios"))
-			_modeSpeed = kGroovieSpeediOS;
-		else if (speed.equals("tweaked"))
-			_modeSpeed = kGroovieSpeedTweaked;
-	}
+	if (ConfMan.hasKey("fast_movie_speed") && ConfMan.getBool("fast_movie_speed"))
+		_modeSpeed = kGroovieSpeedFast;
 
 	// Initialize the custom debug levels
 	DebugMan.addDebugChannel(kGroovieDebugAll, "All", "Debug everything");

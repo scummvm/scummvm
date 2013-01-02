@@ -74,15 +74,14 @@ enum DebugLevels {
 
 /**
  * This enum reflects the available movie speed settings:
- * - Normal:  both movies and 'teeth' animations are played at a normal speed
- * - Tweaked: movies are played at a normal speed, 'teeth' animations at
-              increased speed
- * - iOS:     both movies and 'teeth' animations are played at increased speed
+ * - Normal:  play videos at a normal speed
+ * - Fast:    play videos with audio at a fast speed. Videos without audio,
+ *            like teeth animations, are played at their regular speed to avoid
+ *            audio sync issues
  */
 enum GameSpeed {
 	kGroovieSpeedNormal,
-	kGroovieSpeediOS,
-	kGroovieSpeedTweaked
+	kGroovieSpeedFast
 };
 
 struct GroovieGameDescription;

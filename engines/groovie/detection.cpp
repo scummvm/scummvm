@@ -25,8 +25,11 @@
 #include "groovie/saveload.h"
 
 #include "common/system.h"
+#include "common/translation.h"
 
 namespace Groovie {
+
+#define GAMEOPTION_T7G_FAST_MOVIE_SPEED  GUIO_GAMEOPTIONS1
 
 static const PlainGameDescriptor groovieGames[] = {
 	// Games
@@ -52,7 +55,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -63,7 +66,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "acdc4a58dd3f007f65e99b99d78e0bce", 1814029),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -79,7 +82,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "6bdee8d0f9eef6d58d02fcd7deec3fb2", 1830783),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -90,7 +93,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "0d595d4b44ae1814082938d051e5174e", 1830783),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -106,7 +109,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::RU_RUS, Common::kPlatformPC, ADGF_NO_FLAGS,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -120,7 +123,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY, Common::kPlatformIOS, ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -302,9 +305,23 @@ static const char *directoryGlobs[] = {
 	0
 };
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_T7G_FAST_MOVIE_SPEED,
+		{
+			_s("Fast movie speed"),
+			_s("Play movies at an increased speed"),
+			"fast_movie_speed",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
-	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
+	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames, optionsList) {
 		_singleid = "groovie";
 
 		// Use kADFlagUseExtraAsHint in order to distinguish the 11th hour from
