@@ -358,7 +358,6 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	int v1;
 	int v2;
 	byte *v3;
-	int i;
 	int v6;
 	int v7;
 	byte *v8;
@@ -383,13 +382,12 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	v1 = 0;
 	v2 = 0;
 	v3 = _characterBuffer + 110;
-	for (i = idx; (int16)READ_LE_UINT16(v3) != idx; v3 = _characterBuffer + 20 * v1 + 110) {
+	for (; (int16)READ_LE_UINT16(v3) != idx; v3 = _characterBuffer + 20 * v1 + 110) {
 		++v1;
 		if ((int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) < v1)
 			v2 = 1;
 		if (v2 == 1)
 			return -1;
-//		HIWORD(i) = HIWORD(BUFFERPERSO);
 	}
 	if (v2 == 1)
 		return -1;
@@ -397,7 +395,6 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	v22 = (int16)READ_LE_UINT16((uint16 *)v3 + 1);
 	v25 = (int16)READ_LE_UINT16((uint16 *)v3 + 2);
 	v24 = (int16)READ_LE_UINT16((uint16 *)v3 + 3);
-	i = (int16)READ_LE_UINT16((uint16 *)v3 + 4);
 	v23 = (int16)READ_LE_UINT16((uint16 *)v3 + 4);
 	PLIGNE1 = (int16)READ_LE_UINT16((uint16 *)v3 + 5);
 	PLIGNE2 = (int16)READ_LE_UINT16((uint16 *)v3 + 6);
@@ -453,7 +450,6 @@ int TalkManager::DIALOGUE_REP(int idx) {
 				if (_vm->_eventsManager._mouseButton || _vm->_eventsManager._curMouseButton)
 					v14 = v6;
 				if (_vm->_eventsManager.getMouseButton()) {
-					i = 5;
 					tmpVal = v6 / 5;
 				if (tmpVal < 0)
 					tmpVal = -tmpVal;
@@ -1070,7 +1066,6 @@ void TalkManager::REPONSE2(int a1, int a2) {
 }
 
 void TalkManager::OBJET_VIVANT(const Common::String &a2) {
-	int v5;
 	byte *v11;
 	Common::String s;
 	Common::String v20;

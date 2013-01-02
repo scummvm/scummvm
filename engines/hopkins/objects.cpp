@@ -732,7 +732,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		if (deltaY >= 0) {
 			deltaY = _vm->_graphicsManager.zoomIn(deltaY, v21);
 		} else {
-			int deltaY = deltaX;
+			deltaY = deltaX;
 			if (deltaX < 0)
 				deltaY = -deltaX;
 			deltaY = -_vm->_graphicsManager.zoomIn(deltaY, v21);
@@ -2965,7 +2965,6 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v73;
 	int v74;
 	int v75;
-	int v76[10];
 	int v77[10];
 	int v82[10];
 	int v87[10];
@@ -3098,43 +3097,40 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 			v87[v24] = -1;
 			v82[v24] = 0;
 			v77[v24] = 1300;
-			v76[v24] = 1300;
 		}
 		if (_vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, _lastLine)) {
 			v69 = v87[1];
 			v68 = v82[1];
-		} else {
-			if (_vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, _vm->_linesManager._linesNumb)) {
-				v27 = 0;
-				for (;;) {
-					v28 = _vm->_globals.essai2[v27];
-					v29 = _vm->_globals.essai2[v27 + 1];
-					v66 = _vm->_globals.essai2[v27 + 2];
-					v27 += 4;
-					if (_vm->_linesManager.colision2_ligne(v28, v29, &v82[1], &v87[1], 0, _lastLine))
-						break;
-					v32 = v67;
-					_vm->_globals.super_parcours[v32] = v28;
-					_vm->_globals.super_parcours[v32 + 1] = v29;
-					_vm->_globals.super_parcours[v32 + 2] = v66;
-					_vm->_globals.super_parcours[v32 + 3] = 0;
+		} else if (_vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, _vm->_linesManager._linesNumb)) {
+			v27 = 0;
+			for (;;) {
+				v28 = _vm->_globals.essai2[v27];
+				v29 = _vm->_globals.essai2[v27 + 1];
+				v66 = _vm->_globals.essai2[v27 + 2];
+				v27 += 4;
+				if (_vm->_linesManager.colision2_ligne(v28, v29, &v82[1], &v87[1], 0, _lastLine))
+					break;
+				v32 = v67;
+				_vm->_globals.super_parcours[v32] = v28;
+				_vm->_globals.super_parcours[v32 + 1] = v29;
+				_vm->_globals.super_parcours[v32 + 2] = v66;
+				_vm->_globals.super_parcours[v32 + 3] = 0;
 
-					v33 = _vm->_globals.essai0;
-					_vm->_globals.essai0[v32] = v28;
-					v33[v32 + 1] = v29;
-					v33[v32 + 2] = v66;
-					v33[v32 + 3] = 0;
-					v67 += 4;
-					if (v28 == -1)
-						goto LABEL_90;
-				}
-				v69 = v87[1];
-				v68 = v82[1];
-			} else {
-				v69 = 1;
-				v68 = 1;
-				v67 = 0;
+				v33 = _vm->_globals.essai0;
+				_vm->_globals.essai0[v32] = v28;
+				v33[v32 + 1] = v29;
+				v33[v32 + 2] = v66;
+				v33[v32 + 3] = 0;
+				v67 += 4;
+				if (v28 == -1)
+					goto LABEL_90;
 			}
+			v69 = v87[1];
+			v68 = v82[1];
+		} else {
+			v69 = 1;
+			v68 = 1;
+			v67 = 0;
 		}
 LABEL_90:
 		if (v69 < v73) {
@@ -3760,7 +3756,7 @@ void ObjectsManager::OPTI_OBJET() {
 	}
 
 	if (data[0] != 'I' || data[1] != 'N' || data[2] != 'I')
-		error("File %s is not an INI file");
+		error("File %s is not an INI file", file.c_str());
 
 	bool v7 = false;
 	do {
@@ -4233,8 +4229,6 @@ int ObjectsManager::BOBA(int idx) {
 }
 
 void ObjectsManager::INILINK(const Common::String &file) {
-	int v1;
-	int v2;
 	int v8;
 	int v9;
 	int v10;
@@ -4259,9 +4253,6 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	byte *ptr;
 	Common::String filename, filename2;
 	Common::File f;
-
-	v1 = 0;
-	v2 = 0;
 
 	filename = file + ".LNK";
 	ptr = _vm->_fileManager.searchCat(filename, 3);
@@ -4976,7 +4967,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 }
 
 void ObjectsManager::lockAnimX(int idx, int a2) {
-	_vm->_globals._lockedAnims[idx]._enableFl;
+	_vm->_globals._lockedAnims[idx]._enableFl = true;
 	_vm->_globals._lockedAnims[idx]._posX = a2;
 }
 

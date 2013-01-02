@@ -134,7 +134,6 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 	Common::File f;
 
 	int v73 = xp;
-	int v70 = yp;
 	if (idx < 0)
 		error("Bad number for text");
 	_vm->_globals.police_l = 11;
@@ -367,7 +366,6 @@ LABEL_57:
 			int v28 = _vm->_eventsManager._startPos.x + 315 - v27;
 			v73 = _vm->_eventsManager._startPos.x + 315 - v27;
 			_text[idx]._pos.y = 50;
-			v70 = 50;
 			posY = 50;
 			posX = v28;
 		}

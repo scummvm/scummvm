@@ -192,7 +192,8 @@ Globals::Globals() {
 	// Initialise pointers
 	ICONE = NULL;
 	BUF_ZONE = NULL;
-	CACHE_BANQUE[6] = NULL;
+	for (int idx = 0; idx < 6; ++idx)
+		CACHE_BANQUE[idx] = NULL;
 	texte_tmp = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
@@ -246,7 +247,8 @@ Globals::~Globals() {
 	freeMemory(TETE);
 	freeMemory(police);
 	freeMemory(BUF_ZONE);
-	freeMemory(CACHE_BANQUE[6]);
+	for (int idx = 0; idx < 6; ++idx)
+		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
 	freeMemory(texte_tmp);
 	freeMemory(SPRITE_ECRAN);
 	freeMemory((byte *)_saveData);

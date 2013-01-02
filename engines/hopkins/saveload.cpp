@@ -147,43 +147,42 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 		_vm->_globals._saveData->_inventory[i] = _vm->_globals._inventory[i];
 
 	/* Create the savegame */
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
-		_vm->generateSaveName(slot));
-	if (!saveFile)
+	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
+	if (!savefile)
 		return Common::kCreatingFileFailed;
 
 	// Set up the serializer
-	Common::Serializer serializer(NULL, saveFile);
+	Common::Serializer serializer(NULL, savefile);
 
 	// Write out the savegame header
 	hopkinsSavegameHeader header;
 	header._saveName = saveName;
 	header._version = HOPKINS_SAVEGAME_VERSION;
-	writeSavegameHeader(saveFile, header);
+	writeSavegameHeader(savefile, header);
 
 	// Write out the savegame data
 	syncSavegameData(serializer);
 
 	// Save file complete
-	saveFile->finalize();
-	delete saveFile;
+	savefile->finalize();
+	delete savefile;
 
 	return Common::kNoError;
 }
 
 Common::Error SaveLoadManager::loadGame(int slot) {
 	// Try and open the save file for reading
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(
 		_vm->generateSaveName(slot));
-	if (!saveFile)
+	if (!savefile)
 		return Common::kReadingFailed;
 
 	// Set up the serializer
-	Common::Serializer serializer(saveFile, NULL);
+	Common::Serializer serializer(savefile, NULL);
 
 	// Read in the savegame header
 	hopkinsSavegameHeader header;
-	readSavegameHeader(saveFile, header);
+	readSavegameHeader(savefile, header);
 	if (header._thumbnail)
 		header._thumbnail->free();
 	delete header._thumbnail;
@@ -192,7 +191,7 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 	syncSavegameData(serializer);
 
 	// Loading save file complete
-	delete saveFile;
+	delete savefile;
 
 	// Unpack the inventory
 	for (int i = 0; i < 35; ++i)

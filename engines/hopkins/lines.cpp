@@ -310,8 +310,9 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 		Ligne[idx].field6 = 2;
 		Ligne[idx].field8 = 6;
 	}
-	// This copndition is impossible to meet!
+	// This condition is impossible to meet!
 	// Code present in the Linux and BeOS executables
+	// CHECKME: maybe it should be checking negative values?
 	if (v11 == -1 && v37 <= 249 && v37 > 1000) {
 		Ligne[idx].field6 = 8;
 		Ligne[idx].field8 = 4;

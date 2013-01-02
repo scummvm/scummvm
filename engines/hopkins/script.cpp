@@ -2375,7 +2375,6 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 607:
 			if (!_vm->_globals._internetFl) {
 				memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
-				_vm->_graphicsManager._oldPalette[769];
 				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
 			}
 			_vm->_globals.NBBLOC = 0;

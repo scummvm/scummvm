@@ -218,10 +218,10 @@ EXIT:
 void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4) {
 	int v5;
 	int v8;
-	byte *ptr;
-	int v11;
-	byte *v12;
-	byte *v13;
+	byte *ptr = NULL;
+	int oldScrollVal;
+	byte *v12 = NULL;
+	byte *v13 = NULL;
 	int v15;
 	size_t nbytes;
 	byte buf[6];
@@ -264,7 +264,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		f.read(v12, nbytes);
 
 		_vm->_graphicsManager.clearPalette();
-		v11 = _vm->_graphicsManager.SCROLL;
+		oldScrollVal = _vm->_graphicsManager.SCROLL;
 		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
 		_vm->_graphicsManager.scrollScreen(0);
 		_vm->_graphicsManager.lockScreen();
@@ -317,8 +317,8 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.SCROLL = v11;
-		_vm->_graphicsManager.scrollScreen(v11);
+		_vm->_graphicsManager.SCROLL = oldScrollVal;
+		_vm->_graphicsManager.scrollScreen(oldScrollVal);
 		if (_vm->_graphicsManager._largeScreenFl) {
 			_vm->_graphicsManager.SCANLINE(1280);
 			_vm->_graphicsManager.max_x = 1280;
@@ -447,8 +447,8 @@ LABEL_114:
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.SCROLL = v11;
-	_vm->_graphicsManager.scrollScreen(v11);
+	_vm->_graphicsManager.SCROLL = oldScrollVal;
+	_vm->_graphicsManager.scrollScreen(oldScrollVal);
 	if (_vm->_graphicsManager._largeScreenFl) {
 		_vm->_graphicsManager.SCANLINE(1280);
 		_vm->_graphicsManager.max_x = 1280;
