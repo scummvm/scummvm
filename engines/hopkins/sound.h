@@ -47,23 +47,9 @@ public:
 	bool freeSample;
 };
 
-class MwavItem {
-public:
-	bool _active;
-	Audio::RewindableAudioStream *_audioStream;
-	Audio::SoundHandle _soundHandle;
-};
-
-#define MUSIC_WAVE_COUNT 50
-
 class MusicItem {
 public:
 	bool _active;
-	bool _isPlaying;
-	Common::String _string;
-	int _mwavIndexes[MUSIC_WAVE_COUNT];
-	byte unused_mb[100];
-	int _currentIndex;
 };
 
 class SoundItem {
@@ -73,7 +59,6 @@ public:
 
 #define VOICE_COUNT 3
 #define SWAV_COUNT 50
-#define MWAV_COUNT 50
 #define SOUND_COUNT 10
 
 class HopkinsEngine;
@@ -93,14 +78,6 @@ private:
 	void PLAY_NWAV(int wavIndex);
 	void DEL_NWAV(int wavIndex);
 	void PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex);
-	void LOAD_MSAMPLE(int mwavIndex, const Common::String &file);
-	void DEL_MSAMPLE(int mwavIndex);
-
-	/**
-	 * Checks the music structure to see if music playback is active, and whether
-	 * it needs to move to the next WAV file
-	 */
-	void checkMusic();
 
 	/**
 	 * Checks voices to see if they're finished
@@ -112,7 +89,7 @@ private:
 	 */
 	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
 public:
-	Audio::SoundHandle _modHandle;
+	Audio::SoundHandle _musicHandle;
 	int SPECIAL_SOUND;
 	int _soundVolume;
 	int _voiceVolume;
@@ -129,7 +106,6 @@ public:
 
 	VoiceItem Voice[VOICE_COUNT];
 	SwavItem Swav[SWAV_COUNT];
-	MwavItem Mwav[MWAV_COUNT];
 	SoundItem SOUND[SOUND_COUNT];
 	MusicItem Music;
 public:

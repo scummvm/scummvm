@@ -66,6 +66,106 @@ Audio::RewindableAudioStream *makeAPCStream(Common::SeekableReadStream *stream, 
 	return new APC_ADPCMStream(stream, disposeAfterUse, rate, stereo ? 2 : 1);
 }
 
+class TwaAudioStream : public AudioStream {
+public:
+	TwaAudioStream(Common::String name, Common::SeekableReadStream *stream) {
+		_name = name;
+		_cueSheet.clear();
+		_cueStream = NULL;
+		_cue = 0;
+
+		for (;;) {
+			char buf[3];
+			stream->read(buf, 3);
+
+			if (buf[0] == 'x' || stream->eos())
+				break;
+
+			_cueSheet.push_back(atol(buf));
+		}
+
+		for (_cue = 0; _cue < _cueSheet.size(); _cue++) {
+			if (loadCue(_cue))
+				break;
+		}
+	}
+
+	~TwaAudioStream() {
+		delete _cueStream;
+		_cueStream = NULL;
+	}
+
+	virtual bool isStereo() const {
+		return _cueStream ? _cueStream->isStereo() : true;
+	}
+
+	virtual int getRate() const {
+		return _cueStream ? _cueStream->getRate() : 22050;
+	}
+
+	virtual bool endOfData() const {
+		return _cueStream == NULL;
+	}
+
+	virtual int readBuffer(int16 *buffer, const int numSamples) {
+		if (!_cueStream)
+			return 0;
+
+		int16 *buf = buffer;
+		int samplesLeft = numSamples;
+
+		while (samplesLeft) {
+			if (_cueStream) {
+				int readSamples = _cueStream->readBuffer(buf, samplesLeft);
+				buf += readSamples;
+				samplesLeft -= readSamples;
+			}
+
+			if (samplesLeft > 0) {
+				if (++_cue >= _cueSheet.size()) {
+					_cue = 0;
+				}
+				loadCue(_cue);
+			}
+		}
+
+		return numSamples;
+	}
+
+protected:
+	bool loadCue(int nr) {
+		delete _cueStream;
+		_cueStream = NULL;
+
+		Common::String filename = Common::String::format("%s_%02d", _name.c_str(), _cueSheet[nr]);
+		Common::File *file = new Common::File();
+
+		if (file->open(filename + ".APC")) {
+			_cueStream = Audio::makeAPCStream(file, DisposeAfterUse::NO);
+			return true;
+		}
+
+		if (file->open(filename + ".WAV")) {
+			_cueStream = Audio::makeWAVStream(file, DisposeAfterUse::NO);
+			return true;
+		}
+
+		warning("TwaAudioStream::loadCue: Missing cue %d (%s)", nr, filename.c_str());
+		delete file;
+		return false;
+	}
+
+private:
+	Common::String _name;
+	Common::Array<int> _cueSheet;
+	Audio::AudioStream *_cueStream;
+	uint _cue;
+};
+
+Audio::AudioStream *makeTwaStream(Common::String name, Common::SeekableReadStream *stream) {
+	return new TwaAudioStream(name, stream);
+}
+
 }
 
 /*------------------------------------------------------------------------*/
@@ -91,8 +191,6 @@ SoundManager::SoundManager() {
 		Common::fill((byte *)&Voice[i], (byte *)&Voice[i] + sizeof(VoiceItem), 0);
 	for (int i = 0; i < SWAV_COUNT; ++i)
 		Common::fill((byte *)&Swav[i], (byte *)&Swav[i] + sizeof(SwavItem), 0);
-	for (int i = 0; i < MWAV_COUNT; ++i)
-		Common::fill((byte *)&Mwav[i], (byte *)&Mwav[i] + sizeof(MwavItem), 0);
 	for (int i = 0; i < SOUND_COUNT; ++i)
 		Common::fill((byte *)&SOUND[i], (byte *)&SOUND[i] + sizeof(SoundItem), 0);
 	Common::fill((byte *)&Music, (byte *)&Music + sizeof(MusicItem), 0);
@@ -101,7 +199,7 @@ SoundManager::SoundManager() {
 SoundManager::~SoundManager() {
 	stopMusic();
 	delMusic();
-	_vm->_mixer->stopHandle(_modHandle);
+	_vm->_mixer->stopHandle(_musicHandle);
 	MOD_FLAG = false;
 }
 
@@ -407,7 +505,7 @@ void SoundManager::loadMusic(const Common::String &file) {
 			error("Error opening file %s", filename.c_str());
 
 		Audio::AudioStream *modStream = Audio::makeProtrackerStream(&f);
-		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modHandle, modStream);
+		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, modStream);
 
 	} else {
 		Common::String filename = Common::String::format("%s.TWA", file.c_str());
@@ -415,104 +513,27 @@ void SoundManager::loadMusic(const Common::String &file) {
 		if (!f.open(filename))
 			error("Error opening file %s", filename.c_str());
 
-		char s[8];
-		int destIndex = 0;
-		int mwavIndex;
-
-		bool breakFlag = false;
-		do {
-			f.read(&s[0], 3);
-
-			if (s[0] == 'x') {
-				// End of list reached
-				Music._mwavIndexes[destIndex] = -1;
-				breakFlag = true;
-			} else {
-				// Convert two digits to a number
-				s[2] = '\0';
-				mwavIndex = atol(&s[0]);
-
-				filename = Common::String::format("%s_%s.%s", file.c_str(), &s[0],
-					(_vm->getPlatform() == Common::kPlatformWindows) ? "APC" : "WAV");
-				LOAD_MSAMPLE(mwavIndex, filename);
-
-				assert(destIndex < MUSIC_WAVE_COUNT);
-				Music._mwavIndexes[destIndex++] = mwavIndex;
-			}
-		} while (!breakFlag);
+		Audio::AudioStream *twaStream = Audio::makeTwaStream(file.c_str(), &f);
+		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, twaStream);
 		f.close();
 	}
 
 	Music._active = true;
-	Music._isPlaying = false;
-	Music._currentIndex = -1;
 }
 
 void SoundManager::playMusic() {
-	if (Music._active)
-		Music._isPlaying = true;
 }
 
 void SoundManager::stopMusic() {
-	if (Music._active)
-		Music._isPlaying = false;
-	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-		_vm->_mixer->stopHandle(_modHandle);
-
+	_vm->_mixer->stopHandle(_musicHandle);
 }
 
 void SoundManager::delMusic() {
-	if (Music._active) {
-		for (int i = 0; i < 50; ++i) {
-			DEL_MSAMPLE(i);
-		}
-	}
-
 	Music._active = false;
-	Music._isPlaying = false;
-	Music._string = "     ";
-	Music._currentIndex = -1;
 }
 
 void SoundManager::checkSounds() {
-	checkMusic();
 	checkVoices();
-}
-
-void SoundManager::checkMusic() {
-	// OS2 and BeOS versions use MOD files. 
-	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-		return;
-
-	if (Music._active && Music._isPlaying) {
-		int mwavIndex = Music._mwavIndexes[Music._currentIndex];
-		if (mwavIndex == -1)
-			return;
-
-		if (Music._currentIndex >= 0 && Music._currentIndex < MWAV_COUNT) {
-			if (mwavIndex != -1 && !Mwav[mwavIndex]._audioStream->endOfStream())
-				// Currently playing wav has not finished, so exit
-				return;
-
-			_vm->_mixer->stopHandle(Mwav[mwavIndex]._soundHandle);
-		}
-
-		// Time to move to the next index
-		if (++Music._currentIndex >= MWAV_COUNT)
-			return;
-
-		mwavIndex = Music._mwavIndexes[Music._currentIndex];
-		if (mwavIndex == -1) {
-			Music._currentIndex = 0;
-			mwavIndex = Music._mwavIndexes[Music._currentIndex];
-		}
-
-		int volume = _musicVolume * 255 / 16;
-
-		Mwav[mwavIndex]._audioStream->rewind();
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Mwav[mwavIndex]._soundHandle,
-			Mwav[mwavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
-	}
 }
 
 void SoundManager::checkVoices() {
@@ -526,32 +547,6 @@ void SoundManager::checkVoices() {
 	if (!hasActiveVoice && _soundFl) {
 		_soundFl = false;
 		SOUND_NUM = 0;
-	}
-}
-
-void SoundManager::LOAD_MSAMPLE(int mwavIndex, const Common::String &file) {
-	if (!Mwav[mwavIndex]._active) {
-		Common::File f;
-		if (!f.open(file)) {
-			// Fallback from WAV to APC...
-			if (!f.open(setExtension(file, ".APC")))
-				error("Could not open %s for reading", file.c_str());
-		}
-
-		Mwav[mwavIndex]._audioStream = makeSoundStream(f.readStream(f.size()));
-		Mwav[mwavIndex]._active = true;
-
-		f.close();
-	}
-}
-
-void SoundManager::DEL_MSAMPLE(int mwavIndex) {
-	if (Mwav[mwavIndex]._active) {
-		Mwav[mwavIndex]._active = false;
-		_vm->_mixer->stopHandle(Mwav[mwavIndex]._soundHandle);
-
-		delete Mwav[mwavIndex]._audioStream;
-		Mwav[mwavIndex]._audioStream = NULL;
 	}
 }
 
@@ -928,10 +923,8 @@ void SoundManager::syncSoundSettings() {
 			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
 		}
 	}
-	for (int idx = 0; idx < MWAV_COUNT; ++idx) {
-		if (Mwav[idx]._active) {
-			_vm->_mixer->setChannelVolume(Mwav[idx]._soundHandle, _musicVolume * 255 / 16);
-		}
+	if (_vm->_mixer->isSoundHandleActive(_musicHandle)) {
+		_vm->_mixer->setChannelVolume(_musicHandle, _musicVolume * 255 / 16);
 	}
 }
 
