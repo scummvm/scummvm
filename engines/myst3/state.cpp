@@ -112,6 +112,15 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(92, HotspotActiveRect, false)
 
+	VAR(93, WaterEffectPaused, true)
+	VAR(94, WaterEffectActive, true)
+	VAR(95, WaterEffectSpeed, true)
+	VAR(96, WaterEffectAttenuation, true)
+	VAR(97, WaterEffectFrequency, true)
+	VAR(98, WaterEffectAmpl, true)
+	VAR(99, WaterEffectMaxStep, true)
+	VAR(100, WaterEffectAmplOffset, true)
+
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)
 	VAR(117, SunspotRadius, false)

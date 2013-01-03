@@ -122,6 +122,9 @@ private:
 	DECLARE_OPCODE(movieRemoveAll);
 	DECLARE_OPCODE(movieSetLooping);
 	DECLARE_OPCODE(movieSetNotLooping);
+	DECLARE_OPCODE(waterEffectSetSpeed);
+	DECLARE_OPCODE(waterEffectSetAttenuation);
+	DECLARE_OPCODE(waterEffectSetWave);
 	DECLARE_OPCODE(sunspotAdd);
 	DECLARE_OPCODE(sunspotAddIntensity);
 	DECLARE_OPCODE(sunspotAddVarIntensity);

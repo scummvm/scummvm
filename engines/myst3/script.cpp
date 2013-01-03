@@ -72,6 +72,9 @@ Script::Script(Myst3Engine *vm):
 	OP_0( 28, movieRemoveAll																			);
 	OP_1( 29, movieSetLooping,				kValue														);
 	OP_1( 30, movieSetNotLooping,			kValue														);
+	OP_1( 31, waterEffectSetSpeed,			kValue														);
+	OP_1( 32, waterEffectSetAttenuation,	kValue														);
+	OP_2( 33, waterEffectSetWave,			kValue,		kValue											);
 	OP_2( 35, sunspotAdd,					kValue,		kValue											);
 	OP_3( 36, sunspotAddIntensity,			kValue,		kValue,		kValue								);
 	OP_4( 37, sunspotAddVarIntensity,		kValue,		kValue,		kValue,		kVar					);
@@ -598,6 +601,28 @@ void Script::movieSetNotLooping(Context &c, const Opcode &cmd) {
 			cmd.op, cmd.args[0]);
 
 	_vm->setMovieLooping(cmd.args[0], false);
+}
+
+void Script::waterEffectSetSpeed(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set water effect speed to %d",
+			cmd.op, cmd.args[0]);
+
+	_vm->_state->setWaterEffectSpeed(cmd.args[0]);
+}
+
+void Script::waterEffectSetAttenuation(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set water effect attenuation to %d",
+			cmd.op, cmd.args[0]);
+
+	_vm->_state->setWaterEffectAttenuation(cmd.args[0]);
+}
+
+void Script::waterEffectSetWave(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set water effect frequency to %d and amplitude to %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_state->setWaterEffectFrequency(cmd.args[0]);
+	_vm->_state->setWaterEffectAmpl(cmd.args[1]);
 }
 
 void Script::sunspotAdd(Context &c, const Opcode &cmd) {

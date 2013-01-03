@@ -92,6 +92,15 @@ public:
 
 	DECLARE_VAR(92, HotspotActiveRect)
 
+	DECLARE_VAR(93, WaterEffectPaused)
+	DECLARE_VAR(94, WaterEffectActive)
+	DECLARE_VAR(95, WaterEffectSpeed)
+	DECLARE_VAR(96, WaterEffectAttenuation)
+	DECLARE_VAR(97, WaterEffectFrequency)
+	DECLARE_VAR(98, WaterEffectAmpl)
+	DECLARE_VAR(99, WaterEffectMaxStep)
+	DECLARE_VAR(100, WaterEffectAmplOffset)
+
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)
 	DECLARE_VAR(117, SunspotRadius)
