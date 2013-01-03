@@ -837,7 +837,7 @@ void Mechanical::fortressRotation_run() {
 
 		newRate = CLIP<double>(newRate, -2.5, 2.5);
 
-		_vm->_video->setVideoRate(gears, Common::Rational(newRate * 1000.0, 1000));
+		_vm->_video->setVideoRate(gears, Common::Rational((int)(newRate * 1000.0), 1000));
 
 		_gearsWereRunning = true;
 	} else if (_gearsWereRunning) {
@@ -968,7 +968,7 @@ void Mechanical::fortressSimulation_run() {
 
 			newRate = CLIP<double>(newRate, -2.5, 2.5);
 
-			_vm->_video->setVideoRate(holo, Common::Rational(newRate * 1000.0, 1000));
+			_vm->_video->setVideoRate(holo, Common::Rational((int)(newRate * 1000.0), 1000));
 
 			_gearsWereRunning = true;
 		} else if (_gearsWereRunning) {
