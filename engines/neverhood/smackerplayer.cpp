@@ -62,6 +62,28 @@ void SmackerDoubleSurface::draw() {
 		_vm->_screen->drawDoubleSurface2(_smackerFrame, _drawRect);
 }
 
+void NeverhoodSmackerDecoder::forceSeekToFrame(uint frame) {
+	if (!isVideoLoaded())
+		return;
+	
+	if (frame >= getFrameCount())
+		error("Can't force Smacker seek to invalid frame %d", frame);
+	
+	if (_header.audioInfo[0].hasAudio)
+		error("Can't force Smacker frame seek with audio");
+	if (!rewind())
+		error("Failed to rewind");
+	
+	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
+	uint32 offset = 0;
+	for (uint32 i = 0; i < frame; i++) {
+		videoTrack->increaseCurFrame();
+		offset += _frameSizes[i] & ~3;
+	}
+	
+	_fileStream->seek(offset, SEEK_CUR);
+}
+
 // SmackerPlayer
 
 SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag, bool paused)
@@ -95,7 +117,7 @@ void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 
 	_stream = _vm->_res->createStream(fileHash);
 
-	_smackerDecoder = new Video::SmackerDecoder();
+	_smackerDecoder = new NeverhoodSmackerDecoder();
 	_smackerDecoder->loadStream(_stream);
 	
 	_palette = new Palette(_vm);
@@ -120,12 +142,9 @@ void SmackerPlayer::close() {
 }
 
 void SmackerPlayer::gotoFrame(int frameNumber) {
-	// NOTE Slow as hell but only used in Scene2802
-	if (frameNumber != _smackerDecoder->getCurFrame()) {
-		if (frameNumber < _smackerDecoder->getCurFrame())
-			rewind();
-		while (_smackerDecoder->getCurFrame() != frameNumber)
-			_smackerDecoder->decodeNextFrame();
+	if (_smackerDecoder) {
+		_smackerDecoder->forceSeekToFrame(frameNumber);
+		_smackerDecoder->decodeNextFrame();
 	}
 }
 
@@ -156,7 +175,6 @@ void SmackerPlayer::rewind() {
 }
 
 void SmackerPlayer::update() {
-	debug(8, "SmackerPlayer::update()");
 
 	if (!_smackerDecoder)
 		return;

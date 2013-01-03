@@ -362,7 +362,7 @@ void GameModule::startup() {
 	setGlobalVar(V_SHRINK_LIGHTS_ON, 0);
 	// <<<DEBUG
 
-#if 1
+#if 0
 	/*
 	//DEBUG>>>
 	createScene(_vm->gameState().sceneNum, _vm->gameState().which);
@@ -417,8 +417,8 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 1;
 	createModule(2700, -1);
 #endif
-#if 0
-	_vm->gameState().sceneNum = 2;
+#if 1
+	_vm->gameState().sceneNum = 1;
 	createModule(2800, -1);
 #endif
 #if 0

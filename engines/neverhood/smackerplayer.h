@@ -47,6 +47,11 @@ public:
 	virtual void draw();
 };
 
+class NeverhoodSmackerDecoder : public Video::SmackerDecoder {
+public:
+	void forceSeekToFrame(uint frame);
+};
+
 class SmackerPlayer : public Entity {
 public:
 	SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag, bool paused = false);
@@ -61,11 +66,11 @@ public:
 	void setDrawPos(int16 x, int16 y);
 	void rewind();
 	bool isDone() { return getFrameNumber() + 1 == getFrameCount(); }
-	Video::SmackerDecoder *getSmackerDecoder() const { return _smackerDecoder; }
+	NeverhoodSmackerDecoder *getSmackerDecoder() const { return _smackerDecoder; }
 protected:
 	Scene *_scene;
 	Palette *_palette;
-	Video::SmackerDecoder *_smackerDecoder;
+	NeverhoodSmackerDecoder *_smackerDecoder;
 	SmackerSurface *_smackerSurface;
 	uint32 _fileHash;
 	bool _smackerFirst;

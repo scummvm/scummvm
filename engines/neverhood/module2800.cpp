@@ -540,6 +540,9 @@ Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse435(0x008810A8, 20, 620);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x8284C100, true, true, true));
 	_currRadioMusicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
+	// Need to go to the first frame first to load up the palette
+	_smackerPlayer->gotoFrame(0);
+	// Now we can actually set the current radio frame
 	_smackerPlayer->gotoFrame(_currRadioMusicIndex);
 	_vm->_soundMan->addSound(0x04360A18, 0x422630C2);
 	_vm->_soundMan->addSound(0x04360A18, 0x00632252);
