@@ -1217,7 +1217,9 @@ void Actor::update(uint frameTime) {
 		} else {
 			setYaw(_yaw - turnAmt);
 		}
-		_currTurnDir = (dyaw > 0 ? 1 : -1);
+		if (dyaw != 0) {
+			_currTurnDir = (dyaw > 0 ? 1 : -1);
+		}
 	}
 
 	if (_walking) {
@@ -1263,6 +1265,19 @@ void Actor::update(uint frameTime) {
 		}
 		if (_currTurnDir != 0 && _currTurnDir != _lastTurnDir) {
 			getTurnChore(_currTurnDir)->playLooping(true, 500);
+			if (_currTurnDir == 1) {
+				// When turning to the left, ensure that the components of the right turn chore
+				// are fading out (or stopped).
+				// This is necessary because the left turn chore typically contains both the
+				// left turn and right turn keyframe components. The above call to playLooping
+				// will thus start fading in both of the components, overriding the right turn's
+				// fade out that was started before.
+				// The left turn chore's keys will eventually stop the right turn keyframe from
+				// playing, but the stopping will be instantaneous. To get a smooth transition,
+				// we want to keep fading out the right turn. The chore's "stop" key will be
+				// ignored when the keyframe is fading out (see KeyframeComponent::stop()).
+				_rightTurnChore.stop(true);
+			}
 		}
 	} else {
 		_currTurnDir = 0;
