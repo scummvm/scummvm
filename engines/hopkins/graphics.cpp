@@ -552,46 +552,28 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 }
 
 void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface) {
-	uint16 palData1[PALETTE_BLOCK_SIZE * 2];
 	byte palData2[PALETTE_BLOCK_SIZE];
 
 	// Initialise temporary palettes
-	Common::fill(&palData1[0], &palData1[PALETTE_BLOCK_SIZE], 0);
 	Common::fill(&palData2[0], &palData2[PALETTE_BLOCK_SIZE], 0);
 
 	// Set current palette to black
 	setpal_vga256(palData2);
 
 	// Loop through fading in the palette
-	uint16 *pTemp1 = &palData1[1];
 	for (int fadeIndex = 0; fadeIndex < FADESPD; ++fadeIndex) {
-		uint16 *pTemp2 = &palData1[2];
-
 		for (int palOffset = 0; palOffset < PALETTE_BLOCK_SIZE; palOffset += 3) {
-			if (palData2[palOffset] < palette[palOffset]) {
-				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD;
-				palData1[palOffset] = v;
-				palData2[palOffset] = (v >> 8) & 0xff;
-			}
-
-			if (palData2[palOffset + 1] < palette[palOffset + 1]) {
-				uint16 *pDest = &pTemp1[palOffset];
-				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest;
-				*pDest = v;
-				palData2[palOffset + 1] = (v >> 8) & 0xff;
-			}
-
-			if (palData2[palOffset + 2] < palette[palOffset + 2]) {
-				uint16 *pDest = &pTemp2[palOffset];
-				uint16 v = (palette[palOffset] & 0xff) * 256 / FADESPD + *pDest;
-				*pDest = v;
-				palData2[palOffset + 2] = (v >> 8) & 0xff;
-			}
+			palData2[palOffset + 0] = fadeIndex * palette[palOffset + 0] / (FADESPD - 1);
+			palData2[palOffset + 1] = fadeIndex * palette[palOffset + 1] / (FADESPD - 1);
+			palData2[palOffset + 2] = fadeIndex * palette[palOffset + 2] / (FADESPD - 1);
 		}
 
 		setpal_vga256(palData2);
 		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_VBL();
+
+		// Added a delay in order to see the fading
+		_vm->_eventsManager.delay(20);
 	}
 
 	// Set the final palette
