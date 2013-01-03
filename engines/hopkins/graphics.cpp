@@ -604,34 +604,28 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 		fadeStep = 2;
 
 	if (palette) {
-		for (int f = 0; f < fadeStep; f++) {
-			for (int32 i = 0; i < 256; i++) {
-				palData[i * 3 + 0] = (fadeStep - f - 1) * palette[i * 3 + 0] / (fadeStep - 1);
-				palData[i * 3 + 1] = (fadeStep - f - 1) * palette[i * 3 + 1] / (fadeStep - 1);
-				palData[i * 3 + 2] = (fadeStep - f - 1) * palette[i * 3 + 2] / (fadeStep - 1);
+		for (int fadeIndex = 0; fadeIndex < fadeStep; fadeIndex++) {
+			for (int palOffset = 0; palOffset < PALETTE_BLOCK_SIZE; palOffset += 3) {
+				palData[palOffset + 0] = (fadeStep - fadeIndex - 1) * palette[palOffset + 0] / (fadeStep - 1);
+				palData[palOffset + 1] = (fadeStep - fadeIndex - 1) * palette[palOffset + 1] / (fadeStep - 1);
+				palData[palOffset + 2] = (fadeStep - fadeIndex - 1) * palette[palOffset + 2] / (fadeStep - 1);
 			}
 
 			setpal_vga256(palData);
 			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			DD_VBL();
 
-			_vm->_eventsManager.delay(100);
+			_vm->_eventsManager.delay(20);
 		}
-
-		for (int i = 0; i < PALETTE_BLOCK_SIZE; i++)
-			palData[i] = 0;
-
-		setpal_vga256(palData);
-		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		return DD_VBL();
-	} else {
-		for (int i = 0; i < PALETTE_BLOCK_SIZE; i++)
-			palData[i] = 0;
-
-		setpal_vga256(palData);
-		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		return DD_VBL();
 	}
+
+	// No initial palette, or end of fading
+	for (int i = 0; i < PALETTE_BLOCK_SIZE; i++)
+		palData[i] = 0;
+
+	setpal_vga256(palData);
+	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	return DD_VBL();
 }
 
 /** 
