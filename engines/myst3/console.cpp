@@ -39,6 +39,7 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("extract",			WRAP_METHOD(Console, Cmd_Extract));
 	DCmd_Register("fillInventory",		WRAP_METHOD(Console, Cmd_FillInventory));
 	DCmd_Register("dumpArchive",		WRAP_METHOD(Console, Cmd_DumpArchive));
+	DCmd_Register("dumpMasks",			WRAP_METHOD(Console, Cmd_DumpMasks));
 }
 
 Console::~Console() {
@@ -317,6 +318,43 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 
 	archive.dumpToFiles();
 	archive.close();
+
+	return true;
+}
+
+bool Console::Cmd_DumpMasks(int argc, const char **argv) {
+	if (argc != 1 && argc != 2) {
+		DebugPrintf("Extract the masks of the faces of a cube node.\n");
+		DebugPrintf("The destination folder, named 'dump', must exist.\n");
+		DebugPrintf("Usage :\n");
+		DebugPrintf("dumpMasks [node]\n");
+		return true;
+	}
+
+	uint16 nodeId = _vm->_state->getLocationNode();
+
+	if (argc >= 2) {
+		nodeId = atoi(argv[1]);
+	}
+
+	DebugPrintf("Extracting masks for node %d:\n", nodeId);
+
+	for (uint i = 0; i < 6; i++) {
+		bool water = _vm->_node->dumpFaceMask(nodeId, i, DirectorySubEntry::kWaterEffectMask);
+		if (water)
+			DebugPrintf("Face %d: water OK\n", i);
+
+		bool effect2 = _vm->_node->dumpFaceMask(nodeId, i, DirectorySubEntry::kEffect2Mask);
+		if (effect2)
+			DebugPrintf("Face %d: effect 2 OK\n", i);
+
+		bool magnet = _vm->_node->dumpFaceMask(nodeId, i, DirectorySubEntry::kMagneticEffectMask);
+		if (magnet)
+			DebugPrintf("Face %d: magnet OK\n", i);
+
+		if (!water && !effect2 && !magnet)
+			DebugPrintf("Face %d: No mask found\n", i);
+	}
 
 	return true;
 }

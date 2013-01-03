@@ -91,7 +91,7 @@ void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, const c
 		case kFrame:
 			sprintf(fileName, "dump/%s-%d-%d.jpg", room, index, _face);
 			break;
-		case kFaceMask:
+		case kWaterEffectMask:
 			sprintf(fileName, "dump/%s-%d-%d.mask", room, index, _face);
 			break;
 		case kMovie:

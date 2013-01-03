@@ -24,6 +24,7 @@
 #define MYST3_ROOM_H
 
 #include "engines/myst3/gfx.h"
+#include "engines/myst3/directorysubentry.h"
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -35,7 +36,6 @@ namespace Myst3 {
 class Texture;
 class Myst3Engine;
 class Subtitles;
-class DirectorySubEntry;
 
 class Face {
 	public:
@@ -141,7 +141,7 @@ class Node : Drawable {
 		void loadSubtitles(uint32 id);
 		bool hasSubtitlesToDraw();
 
-		void dumpFaceMask(uint16 index, int face);
+		bool dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceType type);
 };
 
 } // end of namespace Myst3

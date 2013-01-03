@@ -65,7 +65,7 @@ Node::Node(Myst3Engine *vm, uint16 id) :
 		_faces[i] = 0;
 }
 
-void Node::dumpFaceMask(uint16 index, int face) {
+bool Node::dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceType type) {
 	static const int32 kMaskSize = 640 * 640;
 
 	byte *mask = new byte[kMaskSize];
@@ -73,10 +73,10 @@ void Node::dumpFaceMask(uint16 index, int face) {
 	uint32 headerOffset = 0;
 	uint32 dataOffset = 0;
 
-	const DirectorySubEntry *maskDesc = _vm->getFileDescription(0, index, face, DirectorySubEntry::kFaceMask);
+	const DirectorySubEntry *maskDesc = _vm->getFileDescription(0, index, face, type);
 
 	if (!maskDesc)
-		return;
+		return false;
 
 	Common::MemoryReadStream *maskStream = maskDesc->getData();
 
@@ -109,10 +109,12 @@ void Node::dumpFaceMask(uint16 index, int face) {
 	delete maskStream;
 
 	Common::DumpFile outFile;
-	outFile.open("dump/1-1.masku");
+	outFile.open(Common::String::format("dump/%d-%d.masku_%d", index, face, type));
 	outFile.write(mask, kMaskSize);
 	outFile.close();
 	delete[] mask;
+
+	return true;
 }
 
 Node::~Node() {
