@@ -77,7 +77,7 @@ public:
 	int _lineNbr2;
 	int Agr_x, Agr_y;
 	int Agr_Flag_x, Agr_Flag_y;
-	int FADESPD;
+	int _fadeDefaultSpeed;
 	int FADE_LINUX;
 	bool _skipVideoLockFl;
 	int no_scroll;
@@ -117,12 +117,12 @@ public:
 	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
 	void fadeIn(const byte *palette, int step, const byte *surface);
 	void fadeOut(const byte *palette, int step, const byte *surface);
-	void FADE_INS();
-	void FADE_OUTS();
-	void FADE_INW();
-	void FADE_OUTW();
-	void FADE_OUTW_LINUX(const byte *surface);
-	void FADE_INW_LINUX(const byte *surface);
+	void fadeInShort();
+	void fadeOutShort();
+	void fadeInLong();
+	void fadeOutLong();
+	void fadeOutDefaultLength(const byte *surface);
+	void fadeInDefaultLength(const byte *surface);
 	void fadeInBreakout();
 	void fateOutBreakout();
 	void setpal_vga256(const byte *palette);

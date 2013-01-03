@@ -146,7 +146,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_graphicsManager.clearPalette();
 
 	_graphicsManager.loadImage("H2");
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 
 	if (!_eventsManager._escKeyFl)
 		playIntro();
@@ -177,7 +177,7 @@ bool HopkinsEngine::runWin95Demo() {
 		_globals._speed = 3;
 	warning("TODO Fin_Interrupt_();");
 	warning("TODO Init_Interrupt_();");
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
@@ -224,9 +224,9 @@ bool HopkinsEngine::runWin95Demo() {
 					_graphicsManager.loadImage("fondan");
 				else if (_globals._language == LANG_SP)
 					_graphicsManager.loadImage("fondes");
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				_eventsManager.delay(500);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
 				_graphicsManager.lockScreen();
@@ -242,7 +242,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
 				_soundManager.DEL_SAMPLE(4);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals._saveData->data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
@@ -336,12 +336,12 @@ bool HopkinsEngine::runWin95Demo() {
 					_graphicsManager.loadImage("ENDFR");
 				else
 					_graphicsManager.loadImage("ENDUK");
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				_eventsManager.mouseOn();
 				do
 					_eventsManager.VBL();
 				while (_eventsManager.getMouseButton() != 1);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				restoreSystem();
 			}
 			bombExplosion();
@@ -434,9 +434,9 @@ bool HopkinsEngine::runWin95Demo() {
 			_graphicsManager.unlockScreen();
 			_graphicsManager.clearPalette();
 			_graphicsManager.loadImage("njour3a");
-			_graphicsManager.FADE_INW();
+			_graphicsManager.fadeInLong();
 			_eventsManager.delay(5000);
-			_graphicsManager.FADE_OUTW();
+			_graphicsManager.fadeOutLong();
 			_globals._exitId = 300;
 			_globals.iRegul = 0;
 			break;
@@ -470,9 +470,9 @@ bool HopkinsEngine::runLinuxDemo() {
 	_graphicsManager.unlockScreen();
 
 	_graphicsManager.loadImage("LINUX");
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_eventsManager.delay(1500);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 
 	if (!_globals._internetFl) {
 		_graphicsManager.FADE_LINUX = 2;
@@ -480,9 +480,9 @@ bool HopkinsEngine::runLinuxDemo() {
 	}
 
 	_graphicsManager.loadImage("H2");
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_eventsManager.delay(500);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 
 	if (!_eventsManager._escKeyFl)
 		playIntro();
@@ -548,9 +548,9 @@ bool HopkinsEngine::runLinuxDemo() {
 					_graphicsManager.loadImage("fondan");
 				else if (_globals._language == LANG_SP)
 					_graphicsManager.loadImage("fondes");
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				_eventsManager.delay(500);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
 
@@ -835,7 +835,7 @@ bool HopkinsEngine::runOS2Full() {
 	warning("_graphicsManager.loadImage(\"VERSW\");");
 	warning("_graphicsManager.FADE_INW();");
 	_eventsManager.delay(500);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
 
 	// Added lock and unlock to avoid crash
@@ -847,11 +847,11 @@ bool HopkinsEngine::runOS2Full() {
 
 	// Add 16ms delay in order to match the Linux and Win95 versions
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	if (!_eventsManager._escKeyFl)
 		playIntro();
 	_graphicsManager.loadImage("H2");
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_globals.iRegul = 0;
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
@@ -884,9 +884,9 @@ bool HopkinsEngine::runOS2Full() {
 			if (!_globals._saveData->data[170]) {
 				_soundManager.WSOUND(3);
 				_graphicsManager.loadImage("fond");
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				_eventsManager.delay(5000);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
 
@@ -902,7 +902,7 @@ bool HopkinsEngine::runOS2Full() {
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
 				_soundManager.DEL_SAMPLE(4);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals._saveData->data[170] = 1;
 			}
 			_globals.Max_Propre = 5;
@@ -1057,7 +1057,7 @@ bool HopkinsEngine::runOS2Full() {
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -1103,7 +1103,7 @@ bool HopkinsEngine::runOS2Full() {
 					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -1573,7 +1573,7 @@ bool HopkinsEngine::runOS2Full() {
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -1720,7 +1720,7 @@ bool HopkinsEngine::runBeOSFull() {
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
 	_eventsManager.delay(500);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
 
 	// Added lock and unlock to avoid crash
@@ -1732,13 +1732,13 @@ bool HopkinsEngine::runBeOSFull() {
 
 	// Add 16ms delay in order to match the Linux and Win95 versions
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	if (!_eventsManager._escKeyFl)
 		playIntro();
-	_graphicsManager.FADE_OUTS();
+	_graphicsManager.fadeOutShort();
 	_graphicsManager.loadImage("H2");
-	_graphicsManager.FADE_INW();
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeInLong();
+	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 0;
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
@@ -1775,9 +1775,9 @@ bool HopkinsEngine::runBeOSFull() {
 			if (!_globals._saveData->data[svField170]) {
 				_soundManager.WSOUND(3);
 				_graphicsManager.loadImage("FOND");
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				_eventsManager.delay(5000);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
 
@@ -1793,7 +1793,7 @@ bool HopkinsEngine::runBeOSFull() {
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
 				_soundManager.DEL_SAMPLE(4);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals._saveData->data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
@@ -1947,7 +1947,7 @@ bool HopkinsEngine::runBeOSFull() {
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
 
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -1993,7 +1993,7 @@ bool HopkinsEngine::runBeOSFull() {
 					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -2464,7 +2464,7 @@ bool HopkinsEngine::runBeOSFull() {
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
 
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -2617,13 +2617,13 @@ bool HopkinsEngine::runWin95full() {
 	_graphicsManager.clearPalette();
 
 	_animationManager.playAnim("MP.ANM", 10, 16, 200);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	if (!_eventsManager._escKeyFl)
 		playIntro();
 	_graphicsManager.loadImage("H2");
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_eventsManager.delay(500);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 0;
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
 
@@ -2666,9 +2666,9 @@ bool HopkinsEngine::runWin95full() {
 					_graphicsManager.loadImage("fondan");
 				else if (_globals._language == LANG_SP)
 					_graphicsManager.loadImage("fondes");
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				_eventsManager.delay(500);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_soundManager.SPECIAL_SOUND = 2;
 				_globals.iRegul = 1;
 				_graphicsManager.lockScreen();
@@ -2684,7 +2684,7 @@ bool HopkinsEngine::runWin95full() {
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
 				_soundManager.DEL_SAMPLE(4);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals._saveData->data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
@@ -2836,7 +2836,7 @@ bool HopkinsEngine::runWin95full() {
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -2879,7 +2879,7 @@ bool HopkinsEngine::runWin95full() {
 					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -3345,7 +3345,7 @@ bool HopkinsEngine::runWin95full() {
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -3491,9 +3491,9 @@ bool HopkinsEngine::runLinuxFull() {
 	_graphicsManager.unlockScreen();
 
 	_graphicsManager.loadImage("H2");
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_eventsManager.delay(500);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 
 	_globals._speed = 2;
 	_globals.iRegul = 1;
@@ -3544,9 +3544,9 @@ bool HopkinsEngine::runLinuxFull() {
 					_graphicsManager.loadImage("fondan");
 				else if (_globals._language == LANG_SP)
 					_graphicsManager.loadImage("fondes");
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				_eventsManager.delay(500);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_globals.iRegul = 1;
 				_soundManager.SPECIAL_SOUND = 2;
 				_graphicsManager.lockScreen();
@@ -4223,7 +4223,7 @@ bool HopkinsEngine::runLinuxFull() {
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				else if (_globals.SVGA == 1)
 					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-				_graphicsManager.FADE_OUTS();
+				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -4490,7 +4490,7 @@ void HopkinsEngine::playIntro() {
 					_eventsManager.VBL();
 
 				_globals.iRegul = 1;
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				if (_graphicsManager._largeScreenFl) {
 					_graphicsManager.no_scroll = 2;
 					bool v3 = false;
@@ -4516,7 +4516,7 @@ void HopkinsEngine::playIntro() {
 				}
 
 				_soundManager.mixVoice(4, 3);
-				_graphicsManager.FADE_OUTW();
+				_graphicsManager.fadeOutLong();
 				_graphicsManager.no_scroll = 0;
 				_graphicsManager.loadImage("intro2");
 				_graphicsManager.scrollScreen(0);
@@ -4535,7 +4535,7 @@ void HopkinsEngine::playIntro() {
 					_eventsManager.VBL();
 
 				_globals.iRegul = 1;
-				_graphicsManager.FADE_INW();
+				_graphicsManager.fadeInLong();
 				for (uint i = 0; i < 200 / _globals._speed; ++i)
 					_eventsManager.VBL();
 
@@ -4642,7 +4642,7 @@ void HopkinsEngine::playIntro() {
 								_eventsManager.VBL();
 							}
 
-							_graphicsManager.FADE_OUTW();
+							_graphicsManager.fadeOutLong();
 							_graphicsManager.FIN_VISU();
 							_animationManager._clearAnimationFl = true;
 							_soundManager.WSOUND(3);
@@ -4693,13 +4693,13 @@ void HopkinsEngine::PASS() {
 	else
 		_graphicsManager.loadImage("nduk");
 
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	if (_soundManager._voiceOffFl)
 		_eventsManager.delay(500);
 	else
 		_soundManager.mixVoice(628, 4);
 
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_globals._exitId = 4;
 }
 
@@ -4717,9 +4717,9 @@ void HopkinsEngine::displayEndDemo() {
 	else
 	    _graphicsManager.loadImage("enduk");
 
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_eventsManager.delay(1500);
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_globals._exitId = 0;
 }
 
@@ -4749,7 +4749,7 @@ void HopkinsEngine::bombExplosion() {
 		_eventsManager.VBL();
 	}
 
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_eventsManager.mouseOff();
 
 	for (int idx = 0; idx < 20; ++idx) {
@@ -4765,7 +4765,7 @@ void HopkinsEngine::bombExplosion() {
 		_eventsManager.VBL();
 	}
 
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_graphicsManager.FIN_VISU();
 	_globals.iRegul = 0;
 	_globals._exitId = 151;
@@ -4784,7 +4784,7 @@ void HopkinsEngine::PUBQUIT() {
 	_globals._disableInventFl = true;
 	_graphicsManager.loadImage("BOX");
 	_soundManager.WSOUND(28);
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_eventsManager.mouseOn();
 	_eventsManager.changeMouseCursor(0);
 	_eventsManager._mouseCursorId = 0;
@@ -4802,7 +4802,7 @@ void HopkinsEngine::PUBQUIT() {
 	// Original tried to open a web browser link here. Since ScummVM doesn't support
 	// that, it's being skipped in favor of simply exiting
 
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 }
 
 void HopkinsEngine::handleConflagration() {
@@ -4819,7 +4819,7 @@ void HopkinsEngine::handleConflagration() {
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
 
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_globals.iRegul = 1;
 
 	for (int cpt = 0; cpt <= 249; cpt++)
@@ -4832,7 +4832,7 @@ void HopkinsEngine::handleConflagration() {
 	for (int cpt = 0; cpt <= 49; cpt++)
 		_eventsManager.VBL();
 
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_graphicsManager.FIN_VISU();
 	_globals._saveData->data[svField312] = 1;
 	_globals._disableInventFl = false;
@@ -4928,14 +4928,14 @@ void HopkinsEngine::BASED() {
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
 
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_globals.CACHE_ON();
 
 	do
 		_eventsManager.VBL();
 	while (_objectsManager.BOBPOSI(8) != 22);
 
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_graphicsManager.FIN_VISU();
 	_globals.resetCache();
 	_globals._disableInventFl = false;
@@ -4971,7 +4971,7 @@ void HopkinsEngine::playEnding() {
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
 
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_globals.iRegul = 1;
 
 	do
@@ -5028,7 +5028,7 @@ void HopkinsEngine::playEnding() {
 		_graphicsManager.FIN_VISU();
 		_soundManager.DEL_SAMPLE(1);
 		_graphicsManager.loadImage("PLAN3");
-		_graphicsManager.FADE_INW();
+		_graphicsManager.fadeInLong();
 
 		_eventsManager._rateCounter = 0;
 		if (!_eventsManager._escKeyFl) {
@@ -5037,7 +5037,7 @@ void HopkinsEngine::playEnding() {
 			while (_eventsManager._rateCounter < 2000 / _globals._speed && !_eventsManager._escKeyFl);
 		}
 		_eventsManager._escKeyFl = false;
-		_graphicsManager.FADE_OUTW();
+		_graphicsManager.fadeOutLong();
 		_globals.iRegul = 1;
 		_soundManager.SPECIAL_SOUND = 0;
 		_graphicsManager.FADE_LINUX = 2;
@@ -5077,7 +5077,7 @@ void HopkinsEngine::playEnding() {
 			_eventsManager.VBL();
 		while (_objectsManager.BOBPOSI(8) != 21);
 
-		_graphicsManager.FADE_OUTW();
+		_graphicsManager.fadeOutLong();
 		_graphicsManager.FIN_VISU();
 		_soundManager.DEL_SAMPLE(1);
 		_soundManager.WSOUND(16);
@@ -5183,7 +5183,7 @@ int HopkinsEngine::handleBaseMap() {
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_eventsManager.changeMouseCursor(0);
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	bool loopCond = false;
 	int zone;
 	do {
@@ -5228,7 +5228,7 @@ int HopkinsEngine::handleBaseMap() {
 	} while (!loopCond);
 
 	_globals._disableInventFl = false;
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 
 	int result;
 	switch (zone) {
@@ -5369,7 +5369,7 @@ void HopkinsEngine::displayCredits() {
 	loadCredits();
 	_globals.Credit_y = 436;
 	_graphicsManager.loadImage("GENERIC");
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_soundManager.WSOUND(28);
 	_eventsManager._mouseFl = false;
 	_globals.iRegul = 3;
@@ -5422,7 +5422,7 @@ void HopkinsEngine::displayCredits() {
 		_globals.Credit_by = -1;
 		_globals.Credit_by1 = -1;
 	} while ((_eventsManager.getMouseButton() != 1) && (!g_system->getEventManager()->shouldQuit()));
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
 	_eventsManager._mouseFl = true;
 }
@@ -5692,7 +5692,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		_eventsManager.VBL();
 
 	if (!_graphicsManager._noFadingFl)
-		_graphicsManager.FADE_INW();
+		_graphicsManager.fadeInLong();
 	_graphicsManager._noFadingFl = false;
 	_globals.iRegul = 1;
 
@@ -5716,7 +5716,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		_globals._exitId = exit3;
 	if (_globals._exitId == 4)
 		_globals._exitId = exit4;
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 	_objectsManager.removeSprite(0);
 	_objectsManager.CLEAR_ECRAN();
 	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
@@ -5744,7 +5744,7 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	_globals._exitId = 0;
 
 	_graphicsManager.loadImage("ADULT");
-	_graphicsManager.FADE_INW();
+	_graphicsManager.fadeInLong();
 	_eventsManager.mouseOn();
 	_eventsManager.changeMouseCursor(0);
 	_eventsManager._mouseCursorId = 0;
@@ -5764,7 +5764,7 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	} while (!shouldQuit() && (buttonIndex == 0 || _eventsManager.getMouseButton() != 1));
 
 	_globals._disableInventFl = false;
-	_graphicsManager.FADE_OUTW();
+	_graphicsManager.fadeOutLong();
 
 	if (buttonIndex != 2) {
 		// Quit game

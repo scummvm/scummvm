@@ -2312,7 +2312,7 @@ void ObjectsManager::PLAN_BETA() {
 		_vm->_eventsManager.VBL();
 
 	_vm->_globals.iRegul = 1;
-	_vm->_graphicsManager.FADE_INW();
+	_vm->_graphicsManager.fadeInLong();
 	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_graphicsManager._noFadingFl = false;
 
@@ -2350,7 +2350,7 @@ void ObjectsManager::PLAN_BETA() {
 	} while (!_vm->shouldQuit() && v1 != 1);
 
 	if (!_vm->_graphicsManager._noFadingFl)
-		_vm->_graphicsManager.FADE_OUTW();
+		_vm->_graphicsManager.fadeOutLong();
 	_vm->_globals.iRegul = 0;
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.PLANX = getSpriteX(0);
@@ -4432,7 +4432,7 @@ void ObjectsManager::SPECIAL_INI() {
 			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager.VBL();
-			_vm->_graphicsManager.FADE_INW();
+			_vm->_graphicsManager.fadeInLong();
 			SPRITE_ON(0);
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager.VBL();
@@ -4466,7 +4466,7 @@ void ObjectsManager::SPECIAL_INI() {
 			_vm->_eventsManager._mouseSpriteId = 4;
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager.VBL();
-			_vm->_graphicsManager.FADE_INW();
+			_vm->_graphicsManager.fadeInLong();
 			_vm->_globals.iRegul = 1;
 			_vm->_globals._disableInventFl = false;
 			_vm->_graphicsManager._noFadingFl = true;
@@ -5015,7 +5015,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_eventsManager.changeMouseCursor(4);
 	for (int v6 = 0; v6 <= 4; v6++)
 		_vm->_eventsManager.VBL();
-	_vm->_graphicsManager.FADE_INW();
+	_vm->_graphicsManager.fadeInLong();
 	if (_vm->_globals._screenId == 61) {
 		_vm->_animationManager.playSequence("OUVRE.SEQ", 10, 4, 10);
 		stopBobAnimation(3);
@@ -5056,7 +5056,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (_vm->shouldQuit())
 		return;
 
-	_vm->_graphicsManager.FADE_OUTW();
+	_vm->_graphicsManager.fadeOutLong();
 	if (!animFile.empty())
 		_vm->_graphicsManager.FIN_VISU();
 	if (_vm->_globals._screenId == 61)
@@ -5155,7 +5155,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 
 	_vm->_globals.iRegul = 1;
 	if (!_vm->_graphicsManager._noFadingFl)
-		_vm->_graphicsManager.FADE_INW();
+		_vm->_graphicsManager.fadeInLong();
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_eventsManager.changeMouseCursor(4);
 
@@ -5203,7 +5203,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 
 	if (_vm->_globals._exitId != 8 || _vm->_globals._screenId != 5 || !_vm->_globals._helicopterFl) {
 		if (!_vm->_graphicsManager._noFadingFl)
-			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_graphicsManager.fadeOutLong();
 		_vm->_graphicsManager._noFadingFl = false;
 		removeSprite(0);
 		if (_twoCharactersFl) {

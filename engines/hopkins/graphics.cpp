@@ -49,7 +49,7 @@ GraphicsManager::GraphicsManager() {
 	_lineNbr2 = 0;
 	Agr_x = Agr_y = 0;
 	Agr_Flag_x = Agr_Flag_y = 0;
-	FADESPD = 15;
+	_fadeDefaultSpeed = 15;
 	FADE_LINUX = 0;
 	_skipVideoLockFl = false;
 	no_scroll = 0;
@@ -553,21 +553,26 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 
 void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface) {
 	byte palData2[PALETTE_BLOCK_SIZE];
-
-	// Initialise temporary palettes
+	int fadeStep;
+	if (step > 1)
+		fadeStep = step;
+	else
+		fadeStep = 2;
+	// Initialize temporary palette
 	Common::fill(&palData2[0], &palData2[PALETTE_BLOCK_SIZE], 0);
 
 	// Set current palette to black
 	setpal_vga256(palData2);
 
 	// Loop through fading in the palette
-	for (int fadeIndex = 0; fadeIndex < FADESPD; ++fadeIndex) {
+	for (int fadeIndex = 0; fadeIndex < fadeStep; ++fadeIndex) {
 		for (int palOffset = 0; palOffset < PALETTE_BLOCK_SIZE; palOffset += 3) {
-			palData2[palOffset + 0] = fadeIndex * palette[palOffset + 0] / (FADESPD - 1);
-			palData2[palOffset + 1] = fadeIndex * palette[palOffset + 1] / (FADESPD - 1);
-			palData2[palOffset + 2] = fadeIndex * palette[palOffset + 2] / (FADESPD - 1);
+			palData2[palOffset + 0] = fadeIndex * palette[palOffset + 0] / (fadeStep - 1);
+			palData2[palOffset + 1] = fadeIndex * palette[palOffset + 1] / (fadeStep - 1);
+			palData2[palOffset + 2] = fadeIndex * palette[palOffset + 2] / (fadeStep - 1);
 		}
 
+		// Set the transition palette and refresh the screen
 		setpal_vga256(palData2);
 		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		DD_VBL();
@@ -590,7 +595,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 	byte palData[PALETTE_BLOCK_SIZE];
 	int tempPalette[PALETTE_BLOCK_SIZE];
 
-	palMax = palByte = FADESPD;
+	palMax = palByte = _fadeDefaultSpeed;
 	if (palette) {
 		for (int palIndex = 0; palIndex < PALETTE_BLOCK_SIZE; palIndex++) {
 			int palDataIndex = palIndex;
@@ -634,24 +639,54 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 	}
 }
 
-void GraphicsManager::FADE_INS() {
-	FADESPD = 1;
+void GraphicsManager::fadeInShort() {
+	_fadeDefaultSpeed = 1;
 	fadeIn(_palette, 1, (const byte *)_vesaBuffer);
 }
 
-void GraphicsManager::FADE_OUTS() {
-	FADESPD = 1;
+void GraphicsManager::fadeOutShort() {
+	_fadeDefaultSpeed = 1;
 	fadeOut(_palette, 1, (const byte *)_vesaBuffer);
 }
 
-void GraphicsManager::FADE_INW() {
-	FADESPD = 15;
+void GraphicsManager::fadeInLong() {
+	_fadeDefaultSpeed = 15;
 	fadeIn(_palette, 20, (const byte *)_vesaBuffer);
 }
 
-void GraphicsManager::FADE_OUTW() {
-	FADESPD = 15;
+void GraphicsManager::fadeOutLong() {
+	_fadeDefaultSpeed = 15;
 	fadeOut(_palette, 20, (const byte *)_vesaBuffer);
+}
+
+void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
+	assert(surface);
+	fadeOut(_palette, _fadeDefaultSpeed, surface);
+}
+
+void GraphicsManager::fadeInDefaultLength(const byte *surface) {
+	assert(surface);
+	fadeIn(_palette, _fadeDefaultSpeed, surface);
+}
+
+void GraphicsManager::fadeInBreakout() {
+	setpal_vga256(_palette);
+	lockScreen();
+	CopyAsm16(_vesaBuffer);
+	unlockScreen();
+	DD_VBL();
+}
+
+void GraphicsManager::fateOutBreakout() {
+	byte palette[PALETTE_EXT_BLOCK_SIZE];
+
+	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
+	setpal_vga256(palette);
+
+	lockScreen();
+	CopyAsm16(_vesaBuffer);
+	unlockScreen();
+	DD_VBL();
 }
 
 void GraphicsManager::setpal_vga256(const byte *palette) {
@@ -702,36 +737,6 @@ uint16 GraphicsManager::mapRGB(byte r, byte g, byte b) {
 void GraphicsManager::DD_VBL() {
 	// TODO: Is this okay here?
 	g_system->updateScreen();
-}
-
-void GraphicsManager::FADE_OUTW_LINUX(const byte *surface) {
-	assert(surface);
-	fadeOut(_palette, FADESPD, surface);
-}
-
-void GraphicsManager::FADE_INW_LINUX(const byte *surface) {
-	assert(surface);
-	fadeIn(_palette, FADESPD, surface);
-}
-
-void GraphicsManager::fadeInBreakout() {
-	setpal_vga256(_palette);
-	lockScreen();
-	CopyAsm16(_vesaBuffer);
-	unlockScreen();
-	DD_VBL();
-}
-
-void GraphicsManager::fateOutBreakout() {
-	byte palette[PALETTE_EXT_BLOCK_SIZE];
-
-	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
-	setpal_vga256(palette);
-
-	lockScreen();
-	CopyAsm16(_vesaBuffer);
-	unlockScreen();
-	DD_VBL();
 }
 
 void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) {

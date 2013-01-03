@@ -197,12 +197,12 @@ EXIT:
 					_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
 			}
 		} while (breakFlag);
-		_vm->_graphicsManager.FADE_OUTW_LINUX(screenCopy);
+		_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
 		screenCopy = _vm->_globals.freeMemory(screenCopy);
 	}
 	if (hasScreenCopy) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
-			_vm->_graphicsManager.FADE_OUTW_LINUX(screenCopy);
+			_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
 		screenCopy = _vm->_globals.freeMemory(screenCopy);
 	}
 
@@ -333,7 +333,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		}
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_eventsManager.VBL();
-		_vm->_graphicsManager.FADE_INS();
+		_vm->_graphicsManager.fadeInShort();
 	}
 LABEL_48:
 	_vm->_eventsManager._rateCounter = 0;
@@ -428,12 +428,12 @@ LABEL_114:
 					_vm->_graphicsManager.Copy_WinScan_Vbe3(v12, ptra);
 			}
 		} while (v6 != -1);
-		_vm->_graphicsManager.FADE_OUTW_LINUX(ptra);
+		_vm->_graphicsManager.fadeOutDefaultLength(ptra);
 		ptra = _vm->_globals.freeMemory(ptra);
 	}
 	if (v8 == 1) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
-			_vm->_graphicsManager.FADE_OUTW_LINUX(ptr);
+			_vm->_graphicsManager.fadeOutDefaultLength(ptr);
 		_vm->_globals.freeMemory(ptr);
 	}
 	_vm->_graphicsManager.FADE_LINUX = 0;
@@ -462,7 +462,7 @@ LABEL_114:
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.FADE_INS();
+	_vm->_graphicsManager.fadeInShort();
 	_vm->_graphicsManager.DD_VBL();
 }
 
@@ -791,7 +791,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		}
 	} else {
 		if (NO_COUL)
-			_vm->_graphicsManager.FADE_INW_LINUX(v9);
+			_vm->_graphicsManager.fadeInDefaultLength(v9);
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
 		_vm->_soundManager.LOAD_ANM_SOUND();
@@ -1042,12 +1042,12 @@ LABEL_54:
 					_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptra);
 			}
 		} while (!v5);
-		_vm->_graphicsManager.FADE_OUTW_LINUX(ptra);
+		_vm->_graphicsManager.fadeOutDefaultLength(ptra);
 		ptra = _vm->_globals.freeMemory(ptra);
 	}
 	if (v7 == 1) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
-			_vm->_graphicsManager.FADE_OUTW_LINUX(ptr);
+			_vm->_graphicsManager.fadeOutDefaultLength(ptr);
 		_vm->_globals.freeMemory(ptr);
 	}
 	_vm->_graphicsManager.FADE_LINUX = 0;

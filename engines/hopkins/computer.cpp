@@ -83,7 +83,7 @@ void ComputerManager::setTextMode() {
 	_vm->_globals.police_l = 8;
 	_vm->_globals.police_h = 8;
 	_vm->_graphicsManager.loadImage("WINTEXT");
-	_vm->_graphicsManager.FADE_INW();
+	_vm->_graphicsManager.fadeInLong();
 	loadMenu();
 	_vm->_eventsManager._mouseFl = false;
 }
@@ -93,7 +93,7 @@ void ComputerManager::setTextMode() {
  */
 void ComputerManager::clearScreen() {
 	_vm->_graphicsManager.loadImage("WINTEXT");
-	_vm->_graphicsManager.FADE_INW();
+	_vm->_graphicsManager.fadeInLong();
 }
 
 /**

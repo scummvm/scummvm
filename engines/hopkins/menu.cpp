@@ -82,7 +82,7 @@ int MenuManager::menu() {
 		else if (_vm->_globals._language == LANG_SP)
 			_vm->_graphicsManager.loadImage("MENUES");
 
-		_vm->_graphicsManager.FADE_INW();
+		_vm->_graphicsManager.fadeInLong();
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "MENU.SPR");
@@ -234,7 +234,7 @@ int MenuManager::menu() {
 
 	_vm->_globals.freeMemory(spriteData);
 	_vm->_globals._disableInventFl = false;
-	_vm->_graphicsManager.FADE_OUTW();
+	_vm->_graphicsManager.fadeOutLong();
 	return result;
 }
 

@@ -529,7 +529,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 13:
 			_vm->_eventsManager._mouseButton = _vm->_eventsManager._curMouseButton;
 			_vm->_globals._disableInventFl = true;
-			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_graphicsManager.fadeOutLong();
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_fontManager.hideText(5);
@@ -538,7 +538,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.CLEAR_ECRAN();
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) {
-				_vm->_graphicsManager.FADE_OUTW();
+				_vm->_graphicsManager.fadeOutLong();
 			} else {
 				_vm->_soundManager.playSound("SOUND17.WAV");
 				_vm->_graphicsManager.FADE_LINUX = 2;
@@ -557,14 +557,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 			_vm->_eventsManager.mouseOff();
-			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager._vesaBuffer);
+			_vm->_graphicsManager.fadeInDefaultLength(_vm->_graphicsManager._vesaBuffer);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(3) != 100);
-			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager._vesaBuffer);
+			_vm->_graphicsManager.fadeOutDefaultLength(_vm->_graphicsManager._vesaBuffer);
 			_vm->_graphicsManager.FIN_VISU();
 
 			// If uncensored, rip the throat of the hostage
@@ -587,9 +587,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 			_vm->_eventsManager.mouseOff();
-			_vm->_graphicsManager.FADE_INW_LINUX(_vm->_graphicsManager._vesaBuffer);
+			_vm->_graphicsManager.fadeInDefaultLength(_vm->_graphicsManager._vesaBuffer);
 			_vm->_objectsManager.SCI_OPTI_ONE(1, 0, 17, 3);
-			_vm->_graphicsManager.FADE_OUTW_LINUX(_vm->_graphicsManager._vesaBuffer);
+			_vm->_graphicsManager.fadeOutDefaultLength(_vm->_graphicsManager._vesaBuffer);
 			_vm->_graphicsManager.FIN_VISU();
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
@@ -601,7 +601,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
-				_vm->_graphicsManager.FADE_OUTW();
+				_vm->_graphicsManager.fadeOutLong();
 
 			_vm->_globals._disableInventFl = false;
 			_vm->_globals._helicopterFl = true;
@@ -864,7 +864,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 51: {
-			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_graphicsManager.fadeOutLong();
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_fontManager.hideText(5);
@@ -874,7 +874,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_animationManager.loadAnim("ANIM20f");
 			_vm->_graphicsManager.VISU_ALL();
 			_vm->_eventsManager.mouseOff();
-			_vm->_graphicsManager.FADE_INW();
+			_vm->_graphicsManager.fadeInLong();
 			bool v52 = false;
 			_vm->_soundManager.LOAD_WAV("SOUND46.WAV", 1);
 			do {
@@ -888,7 +888,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 34);
 			_vm->_objectsManager.stopBobAnimation(2);
-			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_graphicsManager.fadeOutLong();
 			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._exitId = 20;
 			break;
@@ -1929,7 +1929,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_animationManager.NO_SEQ = false;
 			_vm->_graphicsManager._noFadingFl = true;
-			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_graphicsManager.fadeOutLong();
 
 			for (int i = 1; i <= 39; i++) {
 				if (_vm->shouldQuit())
@@ -2059,7 +2059,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("HRADIO.PE2");
 			_vm->_globals.NOPARLE = false;
-			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_graphicsManager.fadeOutLong();
 			_vm->_objectsManager.stopBobAnimation(13);
 			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._exitId = 94;
@@ -2269,7 +2269,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_animationManager.playSequence2("TUNNEL.SEQ", 1, 18, 20);
 			_vm->_animationManager.NO_SEQ = false;
 			_vm->_graphicsManager._noFadingFl = true;
-			_vm->_graphicsManager.FADE_OUTW();
+			_vm->_graphicsManager.fadeOutLong();
 			_vm->_objectsManager.PERSO_ON = false;
 			_vm->_globals._exitId = 100;
 			break;
@@ -2277,7 +2277,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 600:
 			if (!_vm->_globals._internetFl) {
 				_vm->_graphicsManager.FADE_LINUX = 2;
-				_vm->_graphicsManager.FADESPD = 1;
+				_vm->_graphicsManager._fadeDefaultSpeed = 1;
 				if (_vm->_globals.SVGA == 2)
 					_vm->_animationManager.playAnim("BOMBE1A.ANM", 100, 18, 100);
 				else if (_vm->_globals.SVGA == 1)
@@ -2289,7 +2289,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 			_vm->_graphicsManager.OPTI_INI("BOMBE", 2);
-			_vm->_graphicsManager.FADE_INS();
+			_vm->_graphicsManager.fadeInShort();
 			break;
 
 		case 601:
@@ -2344,7 +2344,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7);
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(5, 0, 16, 4);
-			_vm->_graphicsManager.FADE_OUTS();
+			_vm->_graphicsManager.fadeOutShort();
 			_vm->_soundManager.SPECIAL_SOUND = 199;
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			if (_vm->_globals.SVGA == 1)
