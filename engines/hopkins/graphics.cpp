@@ -442,14 +442,14 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 // TODO: See if PAL_PIXELS can be converted to a uint16 array
 void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
 	const byte *srcP;
-	const byte *destP;
+	byte *destP;
 	int yNext;
 	int xCtr;
 	const byte *palette;
 	int pixelWord;
 	int yCtr;
 	const byte *srcCopyP;
-	const byte *destCopyP;
+	byte *destCopyP;
 
 	assert(_videoPtr);
 	srcP = xs + _lineNbr2 * ys + surface;
@@ -469,7 +469,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			Agr_x = 0;
 
 			do {
-				pixelWord = *(uint16 *)(palette + 2 * *srcP);
+				pixelWord = *(const uint16 *)(palette + 2 * *srcP);
 				*(uint16 *)destP = pixelWord;
 				++srcP;
 				destP += 2;
@@ -508,7 +508,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 	int xCount;
 	int xCtr;
 	const byte *palette;
-	uint16 *tempSrcP;
+	const uint16 *tempSrcP;
 	uint16 srcByte;
 	uint16 *tempDestP;
 	int savedXCount;
@@ -531,7 +531,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		palette = PAL_PIXELS;
 
 		do {
-			tempSrcP = (uint16 *)(palette + 2 * *srcP);
+			tempSrcP = (const uint16 *)(palette + 2 * *srcP);
 			srcByte = *tempSrcP;
 			*destP = *tempSrcP;
 			*(destP + 1) = srcByte;
@@ -932,7 +932,7 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 			destP += width;
 		} else if (width & 2) {
 			for (i = width >> 1; i; --i) {
-				*(uint16 *)destP = *(uint16 *)srcP;
+				*(uint16 *)destP = *(const uint16 *)srcP;
 				srcP += 2;
 				destP += 2;
 			}
@@ -1302,7 +1302,7 @@ void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, in
 			destP += width;
 		} else if (width & 2) {
 			for (i = width >> 1; i; --i) {
-				*(uint16 *)destP = *(uint16 *)srcP;
+				*(uint16 *)destP = *(const uint16 *)srcP;
 				srcP += 2;
 				destP += 2;
 			}
