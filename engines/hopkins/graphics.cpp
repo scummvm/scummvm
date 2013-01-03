@@ -551,6 +551,9 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 	} while (yCtr != 1);
 }
 
+/** 
+ * Fade in. the step number is determine by parameter.
+ */
 void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface) {
 	byte palData2[PALETTE_BLOCK_SIZE];
 	int fadeStep;
@@ -589,44 +592,36 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 	DD_VBL();
 }
 
+/** 
+ * Fade out. the step number is determine by parameter.
+ */
 void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface) {
-	int palByte;
-	uint16 palMax;
 	byte palData[PALETTE_BLOCK_SIZE];
-	int tempPalette[PALETTE_BLOCK_SIZE];
+	int fadeStep;
+	if (step > 1)
+		fadeStep = step;
+	else
+		fadeStep = 2;
 
-	palMax = palByte = _fadeDefaultSpeed;
 	if (palette) {
-		for (int palIndex = 0; palIndex < PALETTE_BLOCK_SIZE; palIndex++) {
-			int palDataIndex = palIndex;
-			palByte = palette[palIndex];
-			palByte <<= 8;
-			tempPalette[palDataIndex] = palByte;
-			palData[palDataIndex] = palette[palIndex];
-		}
-
-		setpal_vga256(palData);
-		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		DD_VBL();
-
-		for (int palCtr3 = 0; palCtr3 < palMax; palCtr3++) {
-			for (int palCtr4 = 0; palCtr4 < PALETTE_BLOCK_SIZE; palCtr4++) {
-				int palCtr5 = palCtr4;
-				int palValue = tempPalette[palCtr4] - (palette[palCtr4] << 8) / palMax;
-				tempPalette[palCtr5] = palValue;
-				palData[palCtr5] = (palValue >> 8) & 0xff;
+		for (int f = 0; f < fadeStep; f++) {
+			for (int32 i = 0; i < 256; i++) {
+				palData[i * 3 + 0] = (fadeStep - f - 1) * palette[i * 3 + 0] / (fadeStep - 1);
+				palData[i * 3 + 1] = (fadeStep - f - 1) * palette[i * 3 + 1] / (fadeStep - 1);
+				palData[i * 3 + 2] = (fadeStep - f - 1) * palette[i * 3 + 2] / (fadeStep - 1);
 			}
 
 			setpal_vga256(palData);
 			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			DD_VBL();
+
+			_vm->_eventsManager.delay(100);
 		}
 
 		for (int i = 0; i < PALETTE_BLOCK_SIZE; i++)
 			palData[i] = 0;
 
 		setpal_vga256(palData);
-
 		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		return DD_VBL();
 	} else {
@@ -639,36 +634,57 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 	}
 }
 
+/** 
+ * Short fade in. The step number is 1, the default step number is also set to 1.
+ */
 void GraphicsManager::fadeInShort() {
 	_fadeDefaultSpeed = 1;
 	fadeIn(_palette, 1, (const byte *)_vesaBuffer);
 }
 
+/** 
+ * Short fade out. The step number is 1, the default step number is also set to 1.
+ */
 void GraphicsManager::fadeOutShort() {
 	_fadeDefaultSpeed = 1;
 	fadeOut(_palette, 1, (const byte *)_vesaBuffer);
 }
 
+/** 
+ * Long fade in. The step number is 20, the default step number is also set to 15.
+ */
 void GraphicsManager::fadeInLong() {
 	_fadeDefaultSpeed = 15;
 	fadeIn(_palette, 20, (const byte *)_vesaBuffer);
 }
 
+/** 
+ * Long fade out. The step number is 20, the default step number is also set to 15.
+ */
 void GraphicsManager::fadeOutLong() {
 	_fadeDefaultSpeed = 15;
 	fadeOut(_palette, 20, (const byte *)_vesaBuffer);
 }
 
-void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
-	assert(surface);
-	fadeOut(_palette, _fadeDefaultSpeed, surface);
-}
-
+/** 
+ * Fade in. The step number used is the default step number.
+ */
 void GraphicsManager::fadeInDefaultLength(const byte *surface) {
 	assert(surface);
 	fadeIn(_palette, _fadeDefaultSpeed, surface);
 }
 
+/** 
+ * Fade out. The step number used is the default step number.
+ */
+void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
+	assert(surface);
+	fadeOut(_palette, _fadeDefaultSpeed, surface);
+}
+
+/** 
+ * Fade in used by for the breakout mini-game
+ */
 void GraphicsManager::fadeInBreakout() {
 	setpal_vga256(_palette);
 	lockScreen();
@@ -677,6 +693,9 @@ void GraphicsManager::fadeInBreakout() {
 	DD_VBL();
 }
 
+/** 
+ * Fade out used by for the breakout mini-game
+ */
 void GraphicsManager::fateOutBreakout() {
 	byte palette[PALETTE_EXT_BLOCK_SIZE];
 
