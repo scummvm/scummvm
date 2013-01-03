@@ -287,7 +287,6 @@ void Screen::blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uin
 }
 
 void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
-
 	debug(0, "Screen::updateVerbLine() _verbLineNum = %d; _verbLineX = %d; _verbLineY = %d; _verbLineWidth = %d; _verbLineCount = %d",
 		_verbLineNum, _verbLineX, _verbLineY, _verbLineWidth, _verbLineCount);
 
@@ -339,7 +338,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 			wrapState.len1 -= len;
 			wrapState.len2 = len + 1;
 
-			drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
+			drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y - 1, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 			wrapState.destString = wrapState.textBuffer;
 			wrapState.width = 0;
@@ -354,7 +353,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	wrapState.len1 -= len;
 	wrapState.len2 = len;
 
-	drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
+	drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y - 1, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 	_guiRefresh = true;
 
@@ -554,7 +553,7 @@ void Screen::drawGuiTextMulti(byte *textData) {
 			wrapState.width = 0;
 			wrapState.len1 = 0;
 			wrapState.len2 = wrapGuiText(_fontResIndexArray[1], 640, wrapState);
-			drawGuiText(x - wrapState.width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1], wrapState);
+			drawGuiText(x - wrapState.width / 2, y - 1, _fontColor1, _fontColor2, _fontResIndexArray[1], wrapState);
 		}
 	} while (*wrapState.sourceString != 0xFF);
 
@@ -593,7 +592,6 @@ void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uin
 
 	x = drawString(x + 1, y + _vm->_cameraHeight, fontColor1, fontResIndex, wrapState.textBuffer, wrapState.len1, &ywobble, false);
 	x = drawString(x, y + _vm->_cameraHeight, fontColor2, fontResIndex, wrapState.textBuffer + wrapState.len1, wrapState.len2, &ywobble, false);
-
 }
 
 int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const byte *text, int len, int16 *ywobble, bool outline) {
@@ -614,7 +612,7 @@ int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const 
 		if (ch <= 0x20) {
 			x += font.getWidth();
 		} else {
-			drawChar(font, _frontScreen, x, y - yadd, ch, color, outline);
+			drawChar(font, _frontScreen, x, y + yadd, ch, color, outline);
 			x += font.getCharWidth(ch) + font.getSpacing() - 1;
 			yadd = -yadd;
 		}
