@@ -173,7 +173,6 @@ public:
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 	void drawHorizontalLine(byte *surface, int xp, int yp, unsigned int width, byte col);
 	void drawVerticalLine(byte *surface, int xp, int yp, int height, byte col);
-	void setModeVesa();
 };
 
 } // End of namespace Hopkins

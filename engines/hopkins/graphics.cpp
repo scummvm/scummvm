@@ -2018,8 +2018,4 @@ void GraphicsManager::drawVerticalLine(byte *surface, int xp, int yp, int height
 	}
 }
 
-void GraphicsManager::setModeVesa() {
-	setGraphicalMode(640, 480);
-}
-
 } // End of namespace Hopkins

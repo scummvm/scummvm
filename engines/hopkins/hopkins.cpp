@@ -3511,7 +3511,6 @@ bool HopkinsEngine::runWin95full() {
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
 			_graphicsManager._lineNbr = SCREEN_WIDTH;
-			_graphicsManager.setModeVesa();
 			if (_globals._exitId == -1)
 				error("FIN BASE SOUS MARINE");
 			break;
