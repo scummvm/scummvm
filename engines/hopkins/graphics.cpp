@@ -766,50 +766,41 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) 
 	destOffset = 0;
 	srcP = srcData;
 	for (;;) {
-		srcByte = *srcP;
-		if (*srcP < 222)
-			goto Video_Cont3_wVbe;
+		srcByte = srcP[0];
 		if (srcByte == kByteStop)
 			return;
-
-		if (srcByte < kSetOffset) {
-			destOffset += (byte)(srcP[0] + 35);
-			srcByte = srcP[1];
-			srcP++;
-		} else if (srcByte == k8bVal) {
-			destOffset += srcP[1];
-			srcByte = srcP[2];
-			srcP += 2;
-		} else if (srcByte == k16bVal) {
-			destOffset += READ_LE_UINT16(srcP + 1);
-			srcByte = srcP[3];
+		if (srcByte == 211) {
+			destLen1 = srcP[1];
+			rleValue = srcP[2];
+			destSlice1P = destOffset + destSurface;
+			destOffset += destLen1;
+			memset(destSlice1P, rleValue, destLen1);
 			srcP += 3;
-		} else {
-			destOffset += READ_LE_UINT32(srcP + 1);
-			srcByte = srcP[5];
-			srcP += 5;
-		}
-Video_Cont3_wVbe:
-		if (srcByte > 210) {
-			if (srcByte == 211) {
-				destLen1 = srcP[1];
-				rleValue = srcP[2];
-				destSlice1P = destOffset + destSurface;
-				destOffset += destLen1;
-				memset(destSlice1P, rleValue, destLen1);
-				srcP += 3;
-			} else {
+		} else if (srcByte < 222) {
+			if (srcByte > 211) {
 				destLen2 = (byte)(srcP[0] + 45);
 				rleValue = srcP[1];
 				destSlice2P = destOffset + destSurface;
 				destOffset += destLen2;
 				memset(destSlice2P, rleValue, destLen2);
 				srcP += 2;
+			} else {
+				destSurface[destOffset] = srcByte;
+				++srcP;
+				++destOffset;
 			}
+		} else if (srcByte < kSetOffset) {
+			destOffset += (byte)(srcP[0] + 35);
+			srcP++;
+		} else if (srcByte == k8bVal) {
+			destOffset += srcP[1];
+			srcP += 2;
+		} else if (srcByte == k16bVal) {
+			destOffset += READ_LE_UINT16(srcP + 1);
+			srcP += 3;
 		} else {
-			destSurface[destOffset] = srcByte;
-			++srcP;
-			++destOffset;
+			destOffset += READ_LE_UINT32(srcP + 1);
+			srcP += 5;
 		}
 	}
 }
