@@ -773,7 +773,7 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) 
 			return;
 
 		if (srcByte < kSetOffset) {
-			destOffset += srcP[35];
+			destOffset += (byte)(srcP[0] + 35);
 			srcByte = srcP[1];
 			srcP++;
 		} else if (srcByte == k8bVal) {
@@ -799,7 +799,7 @@ Video_Cont3_wVbe:
 				memset(destSlice1P, rleValue, destLen1);
 				srcP += 3;
 			} else {
-				destLen2 = srcP[45];
+				destLen2 = (byte)(srcP[0] + 45);
 				rleValue = srcP[1];
 				destSlice2P = destOffset + destSurface;
 				destOffset += destLen2;
