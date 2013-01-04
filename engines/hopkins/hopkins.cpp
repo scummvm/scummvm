@@ -391,7 +391,14 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._screenId = 113;
 			_globals._saveData->data[svField5] = _globals._screenId;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
+			_graphicsManager.DD_VBL();
+			memset(_graphicsManager._vesaBuffer, 0, 307200);
+			memset(_graphicsManager._vesaScreen, 0, 307200);
+			_graphicsManager.clearPalette();
+			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
 
 		case 114:
@@ -401,7 +408,9 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._saveData->data[svField5] = _globals._screenId;
 			_globals._exitId = 0;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 115:
@@ -411,7 +420,9 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._screenId = 115;
 			_globals._saveData->data[svField5] = _globals._screenId;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 150:
@@ -1617,7 +1628,14 @@ bool HopkinsEngine::runOS2Full() {
 			_globals._screenId = 113;
 			_globals._saveData->data[5] = 113;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
+			_graphicsManager.DD_VBL();
+			memset(_graphicsManager._vesaBuffer, 0, 307200);
+			memset(_graphicsManager._vesaScreen, 0, 307200);
+			_graphicsManager.clearPalette();
+			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
 
 		case 114:
@@ -1627,7 +1645,9 @@ bool HopkinsEngine::runOS2Full() {
 			_globals._screenId = 114;
 			_globals._saveData->data[5] = 114;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 115:
@@ -1637,7 +1657,9 @@ bool HopkinsEngine::runOS2Full() {
 			_globals._screenId = 115;
 			_globals._saveData->data[5] = 115;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 150:
@@ -2508,7 +2530,14 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals._screenId = 113;
 			_globals._saveData->data[svField5] = 113;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
+			_graphicsManager.DD_VBL();
+			memset(_graphicsManager._vesaBuffer, 0, 307200);
+			memset(_graphicsManager._vesaScreen, 0, 307200);
+			_graphicsManager.clearPalette();
+			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
 
 		case 114:
@@ -2518,7 +2547,9 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals._screenId = 114;
 			_globals._saveData->data[svField5] = 114;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 115:
@@ -2528,7 +2559,9 @@ bool HopkinsEngine::runBeOSFull() {
 			_globals._screenId = 115;
 			_globals._saveData->data[svField5] = 115;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 150:
@@ -3389,7 +3422,14 @@ bool HopkinsEngine::runWin95full() {
 			_globals._saveData->data[svField5] = _globals._screenId;
 			_globals._exitId = 0;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
+			_graphicsManager.DD_VBL();
+			memset(_graphicsManager._vesaBuffer, 0, 307200);
+			memset(_graphicsManager._vesaScreen, 0, 307200);
+			_graphicsManager.clearPalette();
+			_graphicsManager.RESET_SEGMENT_VESA();
 			break;
 
 		case 114:
@@ -3399,7 +3439,9 @@ bool HopkinsEngine::runWin95full() {
 			_globals._saveData->data[svField6] = _globals._prevScreenId;
 			_globals._saveData->data[svField5] = _globals._screenId;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 115:
@@ -3409,7 +3451,9 @@ bool HopkinsEngine::runWin95full() {
 			_globals._saveData->data[svField5] = _globals._screenId;
 			_globals._exitId = 0;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.setModeVesa();
+			_graphicsManager.lockScreen();
+			_graphicsManager.clearScreen();
+			_graphicsManager.unlockScreen();
 			break;
 
 		case 150:
