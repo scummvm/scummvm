@@ -100,8 +100,9 @@ void MoviePlayer::playMovie(uint resIndex) {
 	byte *chunkBuffer = NULL;
 	uint32 chunkBufferSize = 0;
 	uint32 frame = 0;
+	bool abortMovie = false;
 
-	while (_chunkCount--) {
+	while (_chunkCount-- && !abortMovie) {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
 
@@ -137,7 +138,8 @@ void MoviePlayer::playMovie(uint resIndex) {
 				if (_vm->_screen->_shakeActive && _vm->_screen->updateShakeScreen()) {
 					_vm->_screen->_fullRefresh = true;
 				}
-				_vm->updateInput();
+				if (!handleInput())
+					abortMovie = true;
 				_vm->drawScreen();
 				// Note: drawScreen() calls delayMillis()
 			}
@@ -181,7 +183,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		}
 
 		if (!handleInput())
-			break;
+			abortMovie = true;
 	}
 
 	delete[] chunkBuffer;
@@ -274,6 +276,10 @@ bool MoviePlayer::handleInput() {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				return false;
+			if (event.kbd.keycode == Common::KEYCODE_F10) {
+				// TODO: The original would bring up a stripped down
+				// main menu dialog, without the save/restore options.
+			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
