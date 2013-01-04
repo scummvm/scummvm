@@ -315,7 +315,7 @@ int LoLEngine::chooseCharacter() {
 		_screen->_curPage = 2;
 
 		for (int i = 0; i < 4; ++i) {
-			_screen->printText((const char *)_charNamesPC98[i], _charPosXPC98[i], 168, 0xC1, 0x00);
+			_screen->printText(_charNamesJapanese[i], _charPosXPC98[i], 168, 0xC1, 0x00);
 
 			Screen::FontId old = _screen->setFont(Screen::FID_SJIS_FNT);
 			for (int j = 0; j < 3; ++j) {
@@ -329,7 +329,7 @@ int LoLEngine::chooseCharacter() {
 		_screen->printText(_tim->getCTableEntry(53), 72, 184, 0x81, 0x00);
 		_screen->printText(_tim->getCTableEntry(55), 72, 192, 0x81, 0x00);
 	} else {
-		const char *const *previewNames = (_flags.lang == Common::RU_RUS && !_flags.isTalkie) ? _charPreviewNamesRussianFloppy : _charPreviewNamesDefault;
+		const char *const *previewNames = (_flags.lang == Common::RU_RUS && !_flags.isTalkie) ? _charPreviewNamesRussianFloppy : (_flags.lang == Common::JA_JPN ? _charNamesJapanese : _charPreviewNamesDefault);
 		for (int i = 0; i < 4; ++i) {
 			_screen->fprintStringIntro("%s", _charPreviews[i].x + 16, _charPreviews[i].y + 36, 0xC0, 0x00, 0x9C, 0x120, previewNames[i]);
 			_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 48, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[0]);

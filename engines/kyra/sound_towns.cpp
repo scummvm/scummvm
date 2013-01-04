@@ -525,7 +525,9 @@ bool SoundTownsPC98_v2::init() {
 		TownsPC98_AudioDriver::kType86 : TownsPC98_AudioDriver::kTypeTowns);
 
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-		_vm->checkCD();
+		if (_resInfo[_currentResourceSet])
+			if (_resInfo[_currentResourceSet]->cdaTableSize)
+				_vm->checkCD();
 		// FIXME: While checking for 'track1.XXX(X)' looks like
 		// a good idea, we should definitely not be doing this
 		// here. Basically our filenaming scheme could change

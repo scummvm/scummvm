@@ -238,6 +238,15 @@ void LoLEngine::initStaticResource() {
 		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
 		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
+	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		static const char *const fileListIntro[] = { 0, "lore84.twn", "lore82.twn", 0, 0, 0, "lore83.twn", "lore81.twn" };
+		static const char *const fileListFinale[] = { 0, 0, "lore85.twn", "lore86.twn", "lore87.twn" };
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(fileListIntro, ARRAYSIZE(fileListIntro), 0, 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "lore%02d.twn", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(fileListFinale, ARRAYSIZE(fileListFinale), 0, 0, 0);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	}
 
 	if (_flags.isDemo)
@@ -662,11 +671,11 @@ const uint16 LoLEngine::_charPosXPC98[] = {
 	92, 152, 212, 268
 };
 
-const uint8 LoLEngine::_charNamesPC98[][11] = {
-	{ 0x83, 0x41, 0x83, 0x4E, 0x83, 0x56, 0x83, 0x46, 0x83, 0x8B, 0x00 },
-	{ 0x83, 0x7D, 0x83, 0x43, 0x83, 0x50, 0x83, 0x8B, 0x00, 0x00, 0x00 },
-	{ 0x83, 0x4C, 0x81, 0x5B, 0x83, 0x89, 0x83, 0x93, 0x00, 0x00, 0x00 },
-	{ 0x83, 0x52, 0x83, 0x93, 0x83, 0x89, 0x83, 0x62, 0x83, 0x68, 0x00 }
+const char *const LoLEngine::_charNamesJapanese[] = {
+	"\x83\x41\x83\x4E\x83\x56\x83\x46\x83\x8B\0",
+	"\x83\x7D\x83\x43\x83\x50\x83\x8B\x00\x00\0",
+	"\x83\x4C\x81\x5B\x83\x89\x83\x93\x00\x00\0",
+	"\x83\x52\x83\x93\x83\x89\x83\x62\x83\x68\0"
 };
 
 const uint8 LoLEngine::_chargenFrameTableTalkie[] = {

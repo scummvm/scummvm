@@ -336,9 +336,9 @@ private:
 	static const char *const _charPreviewNamesDefault[];
 	static const char *const _charPreviewNamesRussianFloppy[];
 
-	// PC98 specific data
+	// PC98/FM-TOWNS specific data
 	static const uint16 _charPosXPC98[];
-	static const uint8 _charNamesPC98[][11];
+	static const char *const _charNamesJapanese[];
 
 	WSAMovie_v2 *_chargenWSA;
 	static const uint8 _chargenFrameTableTalkie[];

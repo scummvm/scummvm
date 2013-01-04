@@ -933,7 +933,7 @@ void LoLEngine::writeSettings() {
 
 	case 0:
 	default:
-		if (_flags.platform == Common::kPlatformPC98)
+		if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformFMTowns)
 			_flags.lang = Common::JA_JPN;
 		else
 			_flags.lang = Common::EN_ANY;

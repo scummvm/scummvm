@@ -247,7 +247,7 @@ void LoLEngine::snd_playQueuedEffects() {
 
 void LoLEngine::snd_loadSoundFile(int track) {
 	if (_sound->musicEnabled()) {
-		if (_flags.platform != Common::kPlatformPC98) {
+		if (_flags.platform == Common::kPlatformPC) {
 			int t = (track - 250) * 3;
 			if (_curMusicFileIndex != _musicTrackMap[t] || _curMusicFileExt != (char)_musicTrackMap[t + 1]) {
 				snd_stopMusic();
@@ -269,12 +269,12 @@ int LoLEngine::snd_playTrack(int track) {
 	_lastMusicTrack = track;
 
 	if (_sound->musicEnabled()) {
-		if (_flags.platform == Common::kPlatformPC98) {
-			_sound->playTrack(track - 249);
-		} else {
+		if (_flags.platform == Common::kPlatformPC) {
 			snd_loadSoundFile(track);
 			int t = (track - 250) * 3;
 			_sound->playTrack(_musicTrackMap[t + 2]);
+		} else {			
+			_sound->playTrack(track - 249);
 		}
 	}
 
