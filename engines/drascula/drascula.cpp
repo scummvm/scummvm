@@ -87,6 +87,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_textmisc = 0;
 	_textd1 = 0;
 	_talkSequences = 0;
+	_currentSaveSlot = 0;
 
 	_color = 0;
 	blinking = 0;
@@ -187,6 +188,8 @@ Common::Error DrasculaEngine::run() {
 	if (!loadDrasculaDat())
 		return Common::kUnknownError;
 
+	checkForOldSaveGames();
+
 	setupRoomsTable();
 	loadArchives();
 
@@ -195,6 +198,13 @@ Common::Error DrasculaEngine::run() {
 
 	currentChapter = 1; // values from 1 to 6 will start each part of game
 	loadedDifferentChapter = 0;
+	setTotalPlayTime(0);
+
+	// Check if a save is loaded from the launcher
+	int directSaveSlotLoading = ConfMan.getInt("save_slot");
+	if (directSaveSlotLoading >= 0) {
+		loadGame(directSaveSlotLoading);
+	}
 
 	checkCD();
 
@@ -233,7 +243,6 @@ Common::Error DrasculaEngine::run() {
 		framesWithoutAction = 0;
 		term_int = 0;
 		musicStopped = 0;
-		selectionMade = 0;
 		globalSpeed = 0;
 		curExcuseLook = 0;
 		curExcuseAction = 0;
@@ -246,7 +255,6 @@ Common::Error DrasculaEngine::run() {
 		allocMemory();
 
 		_subtitlesDisabled = !ConfMan.getBool("subtitles");
-		selectionMade = 0;
 
 		if (currentChapter != 3)
 			loadPic(96, frontSurface, COMPLETE_PAL);
@@ -295,6 +303,7 @@ Common::Error DrasculaEngine::run() {
 			strcpy(iconName[i + 1], _textverbs[i]);
 
 		assignPalette(defaultPalette);
+
 		if (!runCurrentChapter()) {
 			endChapter();
 			break;
@@ -359,7 +368,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		trackProtagonist = 1;
 		objExit = 104;
 		if (loadedDifferentChapter != 0) {
-			if (!loadGame(saveName)) {
+			if (!loadGame(_currentSaveSlot)) {
 				return true;
 			}
 		} else {
@@ -375,7 +384,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (loadedDifferentChapter == 0)
 			enterRoom(14);
 		else {
-			if (!loadGame(saveName)) {
+			if (!loadGame(_currentSaveSlot)) {
 				return true;
 			}
 		}
@@ -393,7 +402,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (loadedDifferentChapter == 0)
 			enterRoom(20);
 		else {
-			if (!loadGame(saveName)) {
+			if (!loadGame(_currentSaveSlot)) {
 				return true;
 			}
 		}
@@ -410,7 +419,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			curX = 235;
 			curY = 164;
 		} else {
-			if (!loadGame(saveName)) {
+			if (!loadGame(_currentSaveSlot)) {
 				return true;
 			}
 		}
@@ -429,7 +438,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (loadedDifferentChapter == 0) {
 			enterRoom(45);
 		} else {
-			if (!loadGame(saveName)) {
+			if (!loadGame(_currentSaveSlot)) {
 				return true;
 			}
 		}
@@ -443,7 +452,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			enterRoom(58);
 			animation_1_6();
 		} else {
-			if (!loadGame(saveName)) {
+			if (!loadGame(_currentSaveSlot)) {
 				return true;
 			}
 			loadPic("auxdr.alg", drawSurface2);
@@ -596,13 +605,23 @@ bool DrasculaEngine::runCurrentChapter() {
 			selectVerb(kVerbTalk);
 		} else if (key == Common::KEYCODE_F6 && !_menuScreen) {
 			selectVerb(kVerbMove);
-		} else if (key == Common::KEYCODE_F9) {
-			volumeControls();
-		} else if (key == Common::KEYCODE_F10) {
-			if (!saveLoadScreen())
+		} else if (key == Common::KEYCODE_F7) {
+			// ScummVM load screen
+			if (!scummVMSaveLoadDialog(false))
 				return true;
 		} else if (key == Common::KEYCODE_F8) {
 			selectVerb(kVerbNone);
+		} else if (key == Common::KEYCODE_F9) {
+			volumeControls();
+		} else if (key == Common::KEYCODE_F10) {
+			if (!ConfMan.getBool("originalsaveload")) {
+				// ScummVM save screen
+				scummVMSaveLoadDialog(true);
+			} else {
+				// Original save/load screen
+				if (!saveLoadScreen())
+					return true;
+			}
 		} else if (key == Common::KEYCODE_v) {
 			_subtitlesDisabled = true;
 			ConfMan.setBool("subtitles", !_subtitlesDisabled);

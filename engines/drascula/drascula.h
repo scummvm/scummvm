@@ -36,6 +36,8 @@
 #include "common/system.h"
 #include "common/util.h"
 
+#include "engines/savestate.h"
+
 #include "audio/mixer.h"
 
 #include "engines/engine.h"
@@ -453,11 +455,9 @@ public:
 	int term_int;
 	int currentChapter;
 	int loadedDifferentChapter;
-	char saveName[13];
+	int _currentSaveSlot;
 	int _color;
 	int musicStopped;
-	char select[23];
-	int selectionMade;
 	int mouseX;
 	int mouseY;
 	int leftMouseButton;
@@ -494,9 +494,16 @@ public:
 	void selectVerb(int);
 	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
 	void volumeControls();
+
 	bool saveLoadScreen();
+	bool scummVMSaveLoadDialog(bool isSave);
+	Common::String enterName(Common::String &selectedName);
 	void loadSaveNames();
-	void saveSaveNames();
+	void saveGame(int slot, Common::String &desc);
+	bool loadGame(int slot);
+	void checkForOldSaveGames();
+	void convertSaveGame(int slot, Common::String &desc);
+
 	void print_abc(const char *, int, int);
 	void delay(int ms);
 	bool confirmExit();
@@ -550,7 +557,6 @@ public:
 	void updateMusic();
 	int musicStatus();
 	void updateRoom();
-	bool loadGame(const char *);
 	void updateDoor(int);
 	void setPaletteBase(int darkness);
 	void updateVisible();
@@ -568,7 +574,6 @@ public:
 	void showCursor();
 	void hideCursor();
 	bool isCursorVisible();
-	void enterName();
 	bool soundIsActive();
 	void waitFrameSSN();
 	void mixVideo(byte *OldScreen, byte *NewScreen, uint16 oldPitch);
@@ -589,7 +594,6 @@ public:
 	void quadrant_2();
 	void quadrant_3();
 	void quadrant_4();
-	void saveGame(const char *gameName);
 	void increaseFrameNum();
 	int whichObject();
 	bool checkMenuFlags();
@@ -778,7 +782,7 @@ private:
 	RoomUpdate *_roomPreUpdates, *_roomUpdates;
 	RoomTalkAction *_roomActions;
 	TalkSequenceCommand *_talkSequences;
-	char _saveNames[10][23];
+	Common::String _saveNames[10];
 
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);
