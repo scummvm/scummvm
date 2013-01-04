@@ -374,16 +374,16 @@ bool DrasculaEngine::room_8(int fl) {
 }
 
 bool DrasculaEngine::room_9(int fl) {
-	if (pickedObject == kVerbTalk && fl == 51 && flags[4] == 0)
+	// Talking with the blind man
+	if (pickedObject == kVerbTalk && fl == 51) {
 		animation_4_2();
-	else if (pickedObject == kVerbTalk && fl == 51 && flags[4] == 1)
-		animation_33_2();
-	else if (pickedObject == 7 && fl == 51) {
+	} else if (pickedObject == 7 && fl == 51) {
 		animation_6_2();
 		removeObject(kItemMoney);
-		pickObject(14);}
-	else
+		pickObject(14);
+	} else {
 		hasAnswer = 0;
+	}
 
 	return true;
 }
@@ -837,9 +837,9 @@ bool DrasculaEngine::room_35(int fl) {
 }
 
 bool DrasculaEngine::room_49(int fl) {
-	if (pickedObject == kVerbTalk && fl ==51)
+	if (pickedObject == kVerbTalk && fl == 51)
 		converse(9);
-	else if ((pickedObject == 8 && fl == 51) || (pickedObject == 8 && fl == 203))
+	else if (pickedObject == 8 && (fl == 51 || fl == 203))
 		animation_5_5();
 	else
 		hasAnswer = 0;
@@ -852,7 +852,13 @@ bool DrasculaEngine::room_53(int fl) {
 		pickObject(16);
 		visible[3] = 0;
 	} else if (pickedObject == kVerbMove && fl == 123) {
-		animation_11_5();
+		flags[9] = 1;
+		if (flags[2] == 1 && flags[3] == 1 && flags[4] == 1) {
+			animation_12_5();
+		} else {
+			flags[9] = 0;
+			talk(33);
+		}
 	} else if (pickedObject == 12 && fl == 52) {
 		flags[3] = 1;
 		talk(401);
@@ -1649,7 +1655,7 @@ bool DrasculaEngine::room(int rN, int fl) {
 			}
 		}
 
-		// We did not find any parser, let default one work
+		// We did not find any parser, let the default one work
 		hasAnswer = 0;
 	}
 

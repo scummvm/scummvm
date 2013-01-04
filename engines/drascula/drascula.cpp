@@ -269,7 +269,7 @@ Common::Error DrasculaEngine::run() {
 			loadPic(96, frontSurface);
 		} else if (currentChapter == 4) {
 			if (loadedDifferentChapter == 0)
-				animation_ray();
+				animation_castle();
 			loadPic(96, frontSurface);
 			clearRoom();
 		} else if (currentChapter == 5) {
@@ -377,6 +377,8 @@ bool DrasculaEngine::runCurrentChapter() {
 			curY = 56;
 			gotoObject(65, 145);
 		}
+
+		// REMINDER: This is a good place to debug animations
 	} else if (currentChapter == 2) {
 		addObject(kItemPhone);
 		trackProtagonist = 3;
@@ -647,17 +649,14 @@ bool DrasculaEngine::runCurrentChapter() {
 		}
 
 		if (leftMouseButton != 0 || rightMouseButton != 0 || key != 0)
-			if (currentChapter != 3)
-				framesWithoutAction = 0;
+			framesWithoutAction = 0;
 
 		if (framesWithoutAction == 15000) {
 			screenSaver();
-			if (currentChapter != 3)
-				framesWithoutAction = 0;
+			framesWithoutAction = 0;
 		}
 
-		if (currentChapter != 3)
-			framesWithoutAction++;
+		framesWithoutAction++;
 	}
 
 	return false;
