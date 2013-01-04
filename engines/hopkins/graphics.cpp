@@ -392,8 +392,9 @@ void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *
 				surface[i++] = v12;
 				--v10;
 			} while (v10);
+			--i;
 		} else {
-			surface[i++] = v9;
+			surface[i] = v9;
 		}
 	}
 
