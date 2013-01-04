@@ -290,9 +290,19 @@ void ComputerManager::showComputer(ComputerEnum mode) {
  * Load Menu data
  */
 void ComputerManager::loadMenu() {
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "COMPUTAN.TXT");
-	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
-	byte *tmpPtr = ptr;
+	char *ptr;
+	if (!_vm->_fileManager.fileExists(_vm->_globals.HOPLINK, "COMPUTAN.TXT")) {
+		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "COMPUTAN.TXT");
+		ptr = (char *)_vm->_fileManager.loadFile(_vm->_globals._curFilename);
+	} else if (_vm->_globals._language == LANG_FR) {
+		ptr = (char *)_vm->_globals.allocMemory(sizeof(_frenchText));
+		strcpy(ptr, _frenchText);
+	} else {
+		ptr = (char *)_vm->_globals.allocMemory(sizeof(_englishText));
+		strcpy(ptr, _englishText);
+	}
+
+	char *tmpPtr = ptr;
 	int lineNum = 0;
 	int strPos;
 	bool loopCond = false;
@@ -306,7 +316,7 @@ void ComputerManager::loadMenu() {
 			_menuText[lineNum]._actvFl = 1;
 			strPos = 0;
 			while (strPos <= 89) {
-				byte curChar = tmpPtr[strPos + 2];
+				char curChar = tmpPtr[strPos + 2];
 				if (curChar == '%' || curChar == 10)
 					break;
 				_menuText[lineNum]._line[strPos++] = curChar;
@@ -319,7 +329,7 @@ void ComputerManager::loadMenu() {
 		}
 		tmpPtr = tmpPtr + 1;
 	} while (!loopCond);
-	ptr = _vm->_globals.freeMemory(ptr);
+	_vm->_globals.freeMemory((byte *)ptr);
 }
 
 void ComputerManager::TXT4(int xp, int yp, int textIdx) {

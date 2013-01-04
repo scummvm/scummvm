@@ -33,14 +33,13 @@ namespace Hopkins {
 class HopkinsEngine;
 
 class FileManager {
-private:
-	bool fileExists(const Common::String &folder, const Common::String &file);
 public:
 	HopkinsEngine *_vm;
-public:
+
 	FileManager();
 	void setParent(HopkinsEngine *vm);
 
+	bool fileExists(const Common::String &folder, const Common::String &file);
 	byte *loadFile(const Common::String &file);
 	int readStream(Common::ReadStream &stream, void *buf, size_t nbytes);
 	void initCensorship();
