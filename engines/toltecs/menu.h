@@ -84,6 +84,7 @@ public:
 protected:
 
 	struct Item {
+		bool enabled;
 		Common::Rect rect;
 		ItemID id;
 		Common::String caption;
@@ -129,6 +130,9 @@ protected:
 	void setItemCaption(Item *item, const char *caption);
 
 	void initMenu(MenuID menuID);
+
+	void enableItem(ItemID id);
+	void disableItem(ItemID id);
 
 	void enterItem(ItemID id);
 	void leaveItem(ItemID id);

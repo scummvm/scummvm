@@ -132,6 +132,7 @@ void MenuSystem::handleEvents() {
 
 void MenuSystem::addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const char *caption, byte defaultColor, byte activeColor) {
 	Item item;
+	item.enabled = true;
 	item.id = id;
 	item.defaultColor = defaultColor;
 	item.activeColor = activeColor;
@@ -196,7 +197,7 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 
 ItemID MenuSystem::findItemAt(int x, int y) {
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
-		if ((*iter).rect.contains(x, y - _top))
+		if ((*iter).enabled && (*iter).rect.contains(x, y - _top))
 			return (*iter).id;
 	}
 	return kItemIdNone;
@@ -324,7 +325,29 @@ void MenuSystem::initMenu(MenuID menuID) {
 	}
 
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
-		drawItem((*iter).id, false);
+		if ((*iter).enabled)
+			drawItem((*iter).id, false);
+	}
+}
+
+void MenuSystem::enableItem(ItemID id) {
+	Item *item = getItem(id);
+	if (item) {
+		item->enabled = true;
+		drawItem(id, false);
+		Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
+		handleMouseMove(mousePos.x, mousePos.y);
+	}
+}
+
+void MenuSystem::disableItem(ItemID id) {
+	Item *item = getItem(id);
+	if (item) {
+		item->enabled = false;
+		restoreRect(item->rect.left, item->rect.top, item->rect.width(), item->rect.height());
+		if (_currItemID == id) {
+			_currItemID = kItemIdNone;
+		}
 	}
 }
 
@@ -512,6 +535,16 @@ void MenuSystem::setSavegameCaptions() {
 	uint index = _savegameListTopIndex;
 	for (int i = 1; i <= 7; i++)
 		setItemCaption(getItem((ItemID)(kItemIdSavegame1 + i - 1)), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+	if (_savegameListTopIndex == 0) {
+		disableItem(kItemIdSavegameUp);
+	} else {
+		enableItem(kItemIdSavegameUp);
+	}
+	if ((uint)_savegameListTopIndex + 7 > _savegames.size()) {
+		disableItem(kItemIdSavegameDown);
+	} else {
+		enableItem(kItemIdSavegameDown);
+	}
 }
 
 void MenuSystem::scrollSavegames(int delta) {
