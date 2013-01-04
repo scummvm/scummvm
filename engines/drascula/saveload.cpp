@@ -103,7 +103,7 @@ void DrasculaEngine::checkForOldSaveGames() {
 	_saveFileMan->removeSavefile(indexFileName);
 }
 
-SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot) {
+SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTime) {
 	uint32 sig = s->readUint32BE();
 	byte version = s->readByte();
 
@@ -134,6 +134,8 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot) {
 
 	uint32 playTime = s->readUint32LE();
 	desc.setPlayTime(playTime * 1000);
+	if (setPlayTime)
+		g_engine->setTotalPlayTime(playTime * 1000);
 
 	return desc;
 }
@@ -198,7 +200,7 @@ void DrasculaEngine::loadSaveNames() {
 	for (int n = 0; n < NUM_SAVES; n++) {
 		saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), n + 1);
 		if ((in = _saveFileMan->openForLoading(saveFileName))) {
-			SaveStateDescriptor desc = loadMetaData(in, n + 1);
+			SaveStateDescriptor desc = loadMetaData(in, n + 1, false);
 			_saveNames[n] = desc.getDescription();
 			delete in;
 		}
@@ -256,10 +258,8 @@ bool DrasculaEngine::loadGame(int slot) {
 		error("missing savegame file %s", saveFileName.c_str());
 	}
 
-	loadMetaData(in, slot);
-	int t = in->pos();
+	loadMetaData(in, slot, true);
 	Graphics::skipThumbnail(*in);
-	t = in->pos();
 
 	savedChapter = in->readSint32LE();
 	if (savedChapter != currentChapter) {

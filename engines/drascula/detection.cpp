@@ -273,7 +273,7 @@ static const ExtraGuiOption drasculaExtraGuiOption = {
 	false
 };
 
-SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot);
+SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTime);
 
 class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
@@ -334,7 +334,7 @@ SaveStateList DrasculaMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
-				SaveStateDescriptor desc = loadMetaData(in, slotNum);
+				SaveStateDescriptor desc = loadMetaData(in, slotNum, false);
 				if (desc.getSaveSlot() != slotNum) {
 					// invalid
 					delete in;
@@ -362,7 +362,7 @@ SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, i
 	desc.setWriteProtectedFlag(slot == 0);
 
 	if (in) {
-		desc = Drascula::loadMetaData(in, slot);
+		desc = Drascula::loadMetaData(in, slot, false);
 		if (desc.getSaveSlot() != slot) {
 			delete in;
 			return SaveStateDescriptor();
