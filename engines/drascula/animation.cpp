@@ -798,17 +798,22 @@ void DrasculaEngine::animation_16_2() {
 			return;
 		}
 
-		delay(3000);
-
-		if (i < 4) {
-			fadeToBlack(1);
-
+		uint32 now = _system->getMillis();
+		while (_system->getMillis() - now < 3000 * 2) {
+			delay(50);
 			if (getScan() != 0) {
 				asco();
 				return;
 			}
+		}
 
+		if (i < 4) {
+			fadeToBlack(1);
 			clearRoom();
+			if (getScan() != 0) {
+				asco();
+				return;
+			}
 		}
 	}
 
@@ -818,6 +823,7 @@ void DrasculaEngine::animation_16_2() {
 	for (int l = 1; l < 200; l++) {
 		copyBackground(0, 0, 0, l, 320, 200 - l, drawSurface3, screenSurface);
 		copyBackground(0, 200 - l, 0, 0, 320, l, bgSurface, screenSurface);
+		delay(10);
 		updateScreen();
 		if (getScan() != 0) {
 			asco();
