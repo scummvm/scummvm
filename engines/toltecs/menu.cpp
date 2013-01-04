@@ -328,6 +328,11 @@ void MenuSystem::initMenu(MenuID menuID) {
 		if ((*iter).enabled)
 			drawItem((*iter).id, false);
 	}
+
+	// Check if the mouse is already over an item
+	_currItemID = kItemIdNone;
+	Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
+	handleMouseMove(mousePos.x, mousePos.y);
 }
 
 void MenuSystem::enableItem(ItemID id) {
@@ -335,6 +340,7 @@ void MenuSystem::enableItem(ItemID id) {
 	if (item) {
 		item->enabled = true;
 		drawItem(id, false);
+		_currItemID = kItemIdNone;
 		Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
 		handleMouseMove(mousePos.x, mousePos.y);
 	}
