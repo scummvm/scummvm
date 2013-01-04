@@ -254,7 +254,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 				addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 116 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
 			}
 			loadSavegamesList();
-			setSavegameCaptions();
+			setSavegameCaptions(true);
 		} else {
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			int slot = dialog->runModalWithCurrentTarget();
@@ -279,7 +279,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 			}
 			newSlotNum = loadSavegamesList() + 1;
 			_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %04d", _savegames.size())));
-			setSavegameCaptions();
+			setSavegameCaptions(true);
 		} else {
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 			int slot = dialog->runModalWithCurrentTarget();
@@ -531,16 +531,21 @@ MenuSystem::SavegameItem *MenuSystem::getSavegameItemByID(ItemID id) {
 		return NULL;
 }
 
-void MenuSystem::setSavegameCaptions() {
-	uint index = _savegameListTopIndex;
+void MenuSystem::setSavegameCaptions(bool scrollToBottom) {
+	int size = _savegames.size();
+	if (scrollToBottom && size > 0) {
+		while (_savegameListTopIndex + 7 <= size)
+			_savegameListTopIndex += 6;
+	}
+	int index = _savegameListTopIndex;
 	for (int i = 1; i <= 7; i++)
-		setItemCaption(getItem((ItemID)(kItemIdSavegame1 + i - 1)), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+		setItemCaption(getItem((ItemID)(kItemIdSavegame1 + i - 1)), index < size ? _savegames[index++]._description.c_str() : "");
 	if (_savegameListTopIndex == 0) {
 		disableItem(kItemIdSavegameUp);
 	} else {
 		enableItem(kItemIdSavegameUp);
 	}
-	if ((uint)_savegameListTopIndex + 7 > _savegames.size()) {
+	if (_savegameListTopIndex + 7 > size) {
 		disableItem(kItemIdSavegameDown);
 	} else {
 		enableItem(kItemIdSavegameDown);
@@ -551,7 +556,7 @@ void MenuSystem::scrollSavegames(int delta) {
 	int newPos = CLIP<int>(_savegameListTopIndex + delta, 0, _savegames.size() - 1);
 	_savegameListTopIndex = newPos;
 	restoreRect(80, 92, 440, 140);
-	setSavegameCaptions();
+	setSavegameCaptions(false);
 	for (int i = 1; i <= 7; i++)
 		drawItem((ItemID)(kItemIdSavegame1 + i - 1), false);
 }

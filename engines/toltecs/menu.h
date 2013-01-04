@@ -145,7 +145,7 @@ protected:
 	SavegameItem *getSavegameItemByID(ItemID id);
 
 	int loadSavegamesList();
-	void setSavegameCaptions();
+	void setSavegameCaptions(bool scrollToBottom);
 	void scrollSavegames(int delta);
 	void clickSavegameItem(ItemID id);
 	void setCfgText(bool value, bool active);
