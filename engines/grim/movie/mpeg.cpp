@@ -40,7 +40,7 @@ MpegPlayer::MpegPlayer() : MoviePlayer() {
 }
 
 bool MpegPlayer::loadFile(Common::String filename) {
-	_fname = filename + ".pss";
+	_fname = Common::String("Video/") + filename + ".pss";
 
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_fname);
 	if (!stream)
