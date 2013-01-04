@@ -696,6 +696,7 @@ public:
 	void animation_1_5();		// John finds BJ
 	void animation_5_5();		// ???
 	void animation_12_5();		// Frankenstein comes to life
+	void animation_12_5_frankenstein();
 	void animation_14_5();		// John finds out that an object is empty
 	//
 	void animation_1_6();		// ???

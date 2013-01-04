@@ -91,12 +91,8 @@ void DrasculaEngine::animation_1_1() {
 
 		playFLI("scrollb.bin", 9);
 
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
 		clearRoom();
 		playSound(5);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
 		if (animate("scr2.bin", 17))
 			break;
 		stopSound();
@@ -193,8 +189,6 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
 			break;
 		talk_drascula(3);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
 		if (animate("lib.bin", 16))
 			break;
 		if (animate("lib2.bin", 16))
@@ -210,8 +204,6 @@ void DrasculaEngine::animation_1_1() {
 		loadPic("plan1.alg", screenSurface, HALF_PAL);
 		updateScreen();
 		talk_solo(_textd[5], "d5.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
 		if (animate("lib2.bin", 16))
 			break;
 		clearRoom();
@@ -219,8 +211,6 @@ void DrasculaEngine::animation_1_1() {
 		updateScreen();
 		pause(20);
 		talk_solo(_textd[6], "d6.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
 		if (animate("lib2.bin", 16))
 			break;
 		clearRoom();
@@ -254,8 +244,6 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		playMusic(11);
 		talk_drascula(10);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
 		if (animate("rayo1.bin", 16))
 			break;
 		playSound(5);
@@ -382,9 +370,6 @@ void DrasculaEngine::animation_2_1() {
 	term_int = 0;
 
 	while (!shouldQuit()) {
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
-
 		if (animate("ag.bin", 14))
 			break;
 
@@ -454,13 +439,8 @@ void DrasculaEngine::animation_2_1() {
 		curY = 95;
 		trackProtagonist = 1;
 		hare_se_ve = 1;
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
 
 		loadPic("97g.alg", extraSurface);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
-
 		if (animate("lev.bin", 15))
 			break;
 
@@ -518,8 +498,6 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		talk_bj(12);
 		gotoObject(157, 98 + curHeight);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
-			break;
 		if (animate("bes.bin", 16))
 			break;
 		playMusic(11);
@@ -879,6 +857,20 @@ void DrasculaEngine::animation_20_2() {
 void DrasculaEngine::animation_23_2() {
 	debug(4, "animation_23_2()");
 
+	int p_x, p_y;
+	int maxN;
+	int animX, animY;
+
+	// Animation offsets - without earplugs
+	int x1[] = {1, 38, 75, 112, 75, 112, 75, 112, 149, 112, 149, 112, 149, 186, 223, 260,
+				1, 38, 75, 112, 149, 112, 149, 112, 149, 112, 149, 186, 223, 260, 260, 260, 260, 223};
+	int y1[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 76, 76, 76, 76, 76, 76, 76,
+				76, 76, 76, 76, 76, 76, 76, 1, 1, 1, 1};
+
+	// Animation offsets - with earplugs
+	int x2[] = {1, 35, 69, 103, 137, 171, 205, 239, 273, 1, 35, 69, 103, 137};
+	int y2[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 73, 73, 73, 73, 73};
+
 	loadPic("an24.alg", frontSurface);
 
 	flags[21] = 1;
@@ -907,40 +899,36 @@ void DrasculaEngine::animation_23_2() {
 
 	if (flags[29] == 0)	{
 		// John isn't wearing earplugs
-		int p_x = curX + 2, p_y = curY - 3;
-		int x[] = {1, 38, 75, 112, 75, 112, 75, 112, 149, 112, 149, 112, 149, 186, 223, 260,
-					1, 38, 75, 112, 149, 112, 149, 112, 149, 112, 149, 186, 223, 260, 260, 260, 260, 223};
-		int y[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 76, 76, 76, 76, 76, 76, 76,
-					76, 76, 76, 76, 76, 76, 76, 1, 1, 1, 1};
+		p_x = curX + 2;
+		p_y = curY - 3;
+		maxN = 34;
+		animX = 36;
+		animY = 74;
 
 		loadPic("an23.alg", backSurface);
-
-		for (int n = 0; n < 34; n++) {
-			copyRect(p_x, p_y, p_x, p_y, 36, 74, bgSurface, screenSurface);
-			copyRect(x[n], y[n], p_x, p_y, 36, 74, backSurface, screenSurface);
-			updateRefresh();
-			updateScreen(p_x, p_y, p_x, p_y, 36, 74, screenSurface);
-			updateEvents();
-			pause(5);
-		}
 	} else {
 		// John is wearing earplugs
-		int p_x = curX + 4, p_y = curY;
-		int x[] = {1, 35, 69, 103, 137, 171, 205, 239, 273, 1, 35, 69, 103, 137};
-		int y[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 73, 73, 73, 73, 73};
+		p_x = curX + 4;
+		p_y = curY;
+		maxN = 14;
+		animX = 33;
+		animY = 71;
 
 		pause(50);
 
 		loadPic("an23_2.alg", backSurface);
+	}
 
-		for (int n = 0; n < 14; n++) {
-			copyRect(p_x, p_y, p_x, p_y, 33, 71, bgSurface, screenSurface);
-			copyRect(x[n], y[n], p_x, p_y, 33, 71, backSurface, screenSurface);
-			updateRefresh();
-			updateScreen(p_x,p_y, p_x,p_y, 33,71, screenSurface);
-			updateEvents();
-			pause(5);
-		}
+	for (int n = 0; n < maxN; n++) {
+		copyRect(p_x, p_y, p_x, p_y, animX, animY, bgSurface, screenSurface);
+		if (flags[29] == 0)
+			copyRect(x1[n], y1[n], p_x, p_y, animX, animY, backSurface, screenSurface);
+		else
+			copyRect(x2[n], y2[n], p_x, p_y, animX, animY, backSurface, screenSurface);
+		updateRefresh();
+		updateScreen(p_x, p_y, p_x, p_y, animX, animY, screenSurface);
+		updateEvents();
+		pause(5);
 	}
 
 	loadPic(99, backSurface);
@@ -1443,11 +1431,34 @@ void DrasculaEngine::animation_12_5() {
 
 	flags[1] = 1;
 
-	// Frankenstein walks to the left and destoys the wall - start
+	animation_12_5_frankenstein();
+
+	playSound(1);
+	hiccup(12);
+	finishSound();
+
+	loadPic(99, backSurface);
+
+	gotoObject(40, 169);
+	gotoObject(-14, 175);
+
+	doBreak = 1;
+	previousMusic = roomMusic;
+	hare_se_ve = 1;
+	clearRoom();
+	trackProtagonist = 1;
+	characterMoved = 0;
+	curX = -1;
+	objExit = 104;
+	selectVerb(kVerbNone);
+	enterRoom(57);
+}
+
+void DrasculaEngine::animation_12_5_frankenstein() {
 	int frank_x = 199;
 	int frus_x[] = {1, 46, 91, 136, 181, 226, 271};
 	int frus_y[] = {1, 1, 1, 1, 1, 1, 1, 89};
-	frame = 0;
+	int frame = 0;
 
 	loadPic("auxfr.alg", backSurface);
 
@@ -1473,27 +1484,6 @@ void DrasculaEngine::animation_12_5() {
 		updateEvents();
 		pause(6);
 	}
-	// Frankenstein walks to the left and destoys the wall - end
-
-	playSound(1);
-	hiccup(12);
-	finishSound();
-
-	loadPic(99, backSurface);
-
-	gotoObject(40, 169);
-	gotoObject(-14, 175);
-
-	doBreak = 1;
-	previousMusic = roomMusic;
-	hare_se_ve = 1;
-	clearRoom();
-	trackProtagonist = 1;
-	characterMoved = 0;
-	curX = -1;
-	objExit = 104;
-	selectVerb(kVerbNone);
-	enterRoom(57);
 }
 
 void DrasculaEngine::animation_14_5() {

@@ -668,7 +668,7 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	}
 	delete stream;
 
-	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE));
+	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit());
 }
 
 } // End of namespace Drascula
