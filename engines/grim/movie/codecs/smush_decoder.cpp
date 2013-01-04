@@ -20,9 +20,6 @@
  *
  */
 
-// License note: This might be covered by GPLv2 (As additions by somaen was produced from
-// https://raw.github.com/clone2727/smushplay/master/smushvideo.cpp
-
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
