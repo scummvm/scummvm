@@ -279,7 +279,6 @@ bool MoviePlayer::handleInput() {
 		case Common::EVENT_RBUTTONDOWN:
 			return false;
 		case Common::EVENT_QUIT:
-			_vm->quitGame();
 			return false;
 		default:
 			break;

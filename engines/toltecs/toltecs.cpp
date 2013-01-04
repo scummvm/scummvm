@@ -354,9 +354,6 @@ void ToltecsEngine::updateInput() {
 		case Common::EVENT_KEYUP:
 			_keyState.reset();
 			break;
-		case Common::EVENT_QUIT:
-			quitGame();
-			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
