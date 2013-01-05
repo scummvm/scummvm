@@ -389,80 +389,10 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 
 		mappedChar = '*';
 
-		if (curChar == '-')
-			mappedChar = 45;
-		else if (curChar == '0')
-			mappedChar = 48;
-		else if (curChar == '1')
-			mappedChar = 49;
-		else if (curChar == '2')
-			mappedChar = 50;
-		else if (curChar == '3')
-			mappedChar = 51;
-		else if (curChar == '4')
-			mappedChar = 52;
-		else if (curChar == '5')
-			mappedChar = 53;
-		else if (curChar == '6')
-			mappedChar = 54;
-		else if (curChar == '7')
-			mappedChar = 55;
-		else if (curChar == '8')
-			mappedChar = 56;
-		else if (curChar == '9')
-			mappedChar = 57;
-		else if (curChar == 'A' || curChar == 'a')
-			mappedChar = 65;
-		else if (curChar == 'B' || curChar == 'b')
-			mappedChar = 66;
-		else if (curChar == 'C' || curChar == 'c')
-			mappedChar = 67;
-		else if (curChar == 'D' || curChar == 'd')
-			mappedChar = 68;
-		else if (curChar == 'E' || curChar == 'e')
-			mappedChar = 69;
-		else if (curChar == 'F' || curChar == 'f')
-			mappedChar = 70;
-		else if (curChar == 'G' || curChar == 'g')
-			mappedChar = 71;
-		else if (curChar == 'H' || curChar == 'h')
-			mappedChar = 72;
-		else if (curChar == 'I' || curChar == 'i')
-			mappedChar = 73;
-		else if (curChar == 'J' || curChar == 'j')
-			mappedChar = 74;
-		else if (curChar == 'K' || curChar == 'k')
-			mappedChar = 75;
-		else if (curChar == 'L' || curChar == 'l')
-			mappedChar = 76;
-		else if (curChar == 'M' || curChar == 'm')
-			mappedChar = 77;
-		else if (curChar == 'N' || curChar == 'n')
-			mappedChar = 78;
-		else if (curChar == 'O' || curChar == 'o')
-			mappedChar = 79;
-		else if (curChar == 'P' || curChar == 'p')
-			mappedChar = 80;
-		else if (curChar == 'Q' || curChar == 'q')
-			mappedChar = 81;
-		else if (curChar == 'R' || curChar == 'r')
-			mappedChar = 82;
-		else if (curChar == 'S' || curChar == 's')
-			mappedChar = 83;
-		else if (curChar == 'T' || curChar == 't')
-			mappedChar = 84;
-		else if (curChar == 'U' || curChar == 'u')
-			mappedChar = 85;
-		else if (curChar == 'V' || curChar == 'v')
-			mappedChar = 86;
-		else if (curChar == 'W' || curChar == 'w')
-			mappedChar = 87;
-		else if (curChar == 'X' || curChar == 'x')
-			mappedChar = 88;
-		else if (curChar == 'Y' || curChar == 'y')
-			mappedChar = 89;
-		else if (curChar == 'Z' || curChar == 'z')
-			mappedChar = 90;
+		if ((curChar == '-') || ((curChar >= '0') && (curChar <= '9')) || ((curChar >= 'A') && (curChar <= 'Z')))
+			mappedChar = curChar;
+		else if ((curChar >= 'a') && (curChar <= 'z'))
+			mappedChar = curChar - 32;
 
 		// BackSpace
 		if (curChar == 8 && textIndex > 0) {
@@ -487,8 +417,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 		_vm->_eventsManager.VBL();
 	} while (textIndex != textIdx && curChar != 13);
 
-	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_globals.police_l,
-		12, _vm->_graphicsManager._vesaBuffer, x1, yp);
+	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_globals.police_l, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 	_vm->_graphicsManager.addVesaSegment(x1, yp, _vm->_globals.police_l + x1, yp + 12);
 
 	_vm->_eventsManager.VBL();
@@ -577,7 +506,7 @@ void ComputerManager::readText(int idx) {
  * Display breakout when Games sub-menu is selected
  */
 void ComputerManager::displayGamesSubMenu() {
-	const byte *v1 = _vm->_objectsManager._sprite[0]._spriteData;
+	const byte *oldSpriteData = _vm->_objectsManager._sprite[0]._spriteData;
 	uint oldSpeed = _vm->_globals._speed;
 
 	_vm->_globals._speed = 1;
@@ -608,7 +537,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	_breakoutSpr = _vm->_globals.freeMemory(_breakoutSpr);
 	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
-	_vm->_objectsManager._sprite[0]._spriteData = v1;
+	_vm->_objectsManager._sprite[0]._spriteData = oldSpriteData;
 
 	_vm->_soundManager.DEL_SAMPLE(1);
 	_vm->_soundManager.DEL_SAMPLE(2);
