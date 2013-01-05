@@ -170,7 +170,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 	max_x = 320;
 
 	lockScreen();
-	CopyAsm16(_vesaBuffer);
+	copy16bToSurfaceScaleX2(_vesaBuffer);
 	unlockScreen();
 
 	fadeInBreakout();
@@ -683,7 +683,7 @@ void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
 void GraphicsManager::fadeInBreakout() {
 	setpal_vga256(_palette);
 	lockScreen();
-	CopyAsm16(_vesaBuffer);
+	copy16bToSurfaceScaleX2(_vesaBuffer);
 	unlockScreen();
 	DD_VBL();
 }
@@ -698,7 +698,7 @@ void GraphicsManager::fateOutBreakout() {
 	setpal_vga256(palette);
 
 	lockScreen();
-	CopyAsm16(_vesaBuffer);
+	copy16bToSurfaceScaleX2(_vesaBuffer);
 	unlockScreen();
 	DD_VBL();
 }
@@ -1202,42 +1202,10 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 		addVesaSegment(xp, yp, xp + width, yp + height);
 }
 
-void GraphicsManager::CopyAsm(const byte *surface) {
-	const byte *srcP;
-	byte srcByte;
-	byte *destP;
-	byte *dest1P;
-	byte *dest2P;
-	byte *dest3P;
-	byte *destPitch;
-	const byte *srcPitch;
-
-	assert(_videoPtr);
-	srcP = surface;
-	srcByte = 30 * WinScan;
-	destP = (byte *)_videoPtr->pixels + 30 * WinScan;
-	for (int yCtr = 200; yCtr != 0; yCtr--) {
-		srcPitch = srcP;
-		destPitch = destP;
-		for (int xCtr = 320; xCtr != 0; xCtr--) {
-			srcByte = *srcP;
-			*destP = *srcP;
-			dest1P = WinScan + destP;
-			*dest1P = srcByte;
-			dest2P = dest1P - WinScan + 1;
-			*dest2P = srcByte;
-			dest3P = WinScan + dest2P;
-			*dest3P = srcByte;
-			destP = dest3P - WinScan + 1;
-			++srcP;
-		}
-
-		srcP = srcPitch + 320;
-		destP = WinScan + WinScan + destPitch;
-	}
-}
-
-void GraphicsManager::CopyAsm16(const byte *surface) {
+/**
+ * Copy to surface to video buffer, scale 2x.
+ */
+void GraphicsManager::copy16bToSurfaceScaleX2(const byte *surface) {
 	const byte *v1;
 	byte *v2;
 	byte *v6;
