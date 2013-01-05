@@ -273,7 +273,7 @@ int LoLEngine::snd_playTrack(int track) {
 			snd_loadSoundFile(track);
 			int t = (track - 250) * 3;
 			_sound->playTrack(_musicTrackMap[t + 2]);
-		} else {			
+		} else {
 			_sound->playTrack(track - 249);
 		}
 	}

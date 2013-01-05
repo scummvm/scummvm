@@ -125,7 +125,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 	bool sjisTextMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
 	int sjisOffs = sjisTextMode ? 8 : 9;
-	
+
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);
 
 	while (c) {
@@ -323,7 +323,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	char c = 0;
 	uint8 twoByteCharOffs = 0;
 
-	
+
 	if (sjisTextMode) {
 		bool ct = true;
 
@@ -427,7 +427,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 					strPos--;
 				}
 			}
-			
+
 			if (!strPos) {
 				if (_textDimData[sdx].column && !_printFlag) {
 					s = lw = 0;
@@ -436,7 +436,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 					s = lineLastCharPos;
 				}
 			}
-			
+
 		}
 	}
 
