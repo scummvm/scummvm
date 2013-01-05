@@ -128,7 +128,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		outText(Common::String(_menuText[0]._line));
 	else if (mode == COMPUTER_SAMANTHAS)
 		outText(Common::String(_menuText[1]._line));
-	else if (mode == COMPUTER_PUBLIC)
+	else // COMPUTER_PUBLIC
 		outText(Common::String(_menuText[2]._line));
 
 	setTextColor(1);
@@ -142,16 +142,12 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 
 	TXT4(280, 224, 8);
 	bool passwordMatch = false;
-	if (mode == COMPUTER_HOPKINS) {
-		if (!strcmp(_inputBuf, "HOPKINS"))
-			passwordMatch = true;
-	} else if (mode == COMPUTER_SAMANTHAS) {
-		if (!strcmp(_inputBuf, "328MHZA"))
-			passwordMatch = true;
-	} else if (mode == COMPUTER_PUBLIC) {
-		if (!strcmp(_inputBuf, "ALLFREE"))
-			passwordMatch = true;
-	}
+	if ((mode == COMPUTER_HOPKINS) && !strcmp(_inputBuf, "HOPKINS"))
+		passwordMatch = true;
+	else if ((mode == COMPUTER_SAMANTHAS) && !strcmp(_inputBuf, "328MHZA"))
+		passwordMatch = true;
+	else if ((mode == COMPUTER_PUBLIC) && !strcmp(_inputBuf, "ALLFREE"))
+		passwordMatch = true;
 
 	if (passwordMatch) {
 		while (!_vm->shouldQuit()) {
@@ -278,9 +274,10 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		restoreFBIRoom();
 		_vm->_eventsManager.mouseOff();
 	}
-	if (mode == 1)
+
+	if (mode == COMPUTER_HOPKINS)
 		_vm->_globals._exitId = 13;
-	if ((uint16)(mode - 2) <= 1u)
+	else // Free access or Samantha
 		_vm->_globals._exitId = 14;
 
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
@@ -530,19 +527,6 @@ void ComputerManager::restoreFBIRoom() {
  * Display texts for the given menu entry
  */
 void ComputerManager::readText(int idx) {
-	uint16 v1;
-	bool foundFl;
-	int v4;
-	int v5;
-	int v6;
-	int v7;
-	int v8;
-	uint16 v10;
-	byte *ptr;
-	Common::String v12;
-	Common::String numStr;
-	int num;
-
 	_vm->_eventsManager._escKeyFl = false;
 
 	if (_vm->_globals._language == LANG_EN)
@@ -552,47 +536,38 @@ void ComputerManager::readText(int idx) {
 	else if (_vm->_globals._language == LANG_SP)
 		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKES.TXT");
 
-	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
-	v1 = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
-	foundFl = false;
-	int v3;
-	for (v3 = 0; v3 < v1; v3++) {
-		if (ptr[v3] == '%') {
-			numStr = Common::String::format("%c%c", ptr[v3 + 1], ptr[v3 + 2]);
-			num	= atol(numStr.c_str());
-
-			if (num == idx)
-				foundFl = true;
+	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+	uint16 fileSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
+	int pos;
+	for (pos = 0; pos < fileSize; pos++) {
+		if (ptr[pos] == '%') {
+			Common::String numStr = Common::String::format("%c%c", ptr[pos + 1], ptr[pos + 2]);
+			if (idx == atol(numStr.c_str()))
+				break;
 		}
-		if (foundFl)
-			break;
 	}
-	v4 = v3;
-	if (v3 > v1 - 1)
+	if (pos > fileSize - 3)
 		error("Error with Hopkins computer file");
 
-	v10 = v3 + 3;
-	v5 = 1;
-	v6 = 5;
-	v7 = 0;
+	pos += 3;
+	int lineNum = 5;
+	Common::String curStr = "";
+	byte curChar;
 	do {
-		v4 = ptr[v10];
-		if (v4 == 13) {
-			v8 = v4;
-			setTextPosition(v6, v5);
-			outText(v12);
+		curChar = ptr[pos];
+		if (curChar == 13) {
+			setTextPosition(lineNum, 1);
+			outText(curStr);
 
-			++v6;
-			v5 = 1;
+			++lineNum;
 			_vm->_eventsManager.VBL();
-			v4 = v8;
-			v12 = "";
-		} else if (v4 != '%') {
-			v12 += v4;
-			++v7;
+			curStr = "";
+		} else if (curChar != '%') {
+			curStr += curChar;
 		}
-		++v10;
-	} while (v4 != '%');
+		++pos;
+		assert(pos <= fileSize);
+	} while (curChar != '%');
 
 	_vm->_eventsManager.waitKeyPress();
 	ptr = _vm->_globals.freeMemory(ptr);
