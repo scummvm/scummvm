@@ -141,12 +141,12 @@ protected:
 		Common::File *file = new Common::File();
 
 		if (file->open(filename + ".APC")) {
-			_cueStream = Audio::makeAPCStream(file, DisposeAfterUse::NO);
+			_cueStream = Audio::makeAPCStream(file, DisposeAfterUse::YES);
 			return true;
 		}
 
 		if (file->open(filename + ".WAV")) {
-			_cueStream = Audio::makeWAVStream(file, DisposeAfterUse::NO);
+			_cueStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 			return true;
 		}
 
