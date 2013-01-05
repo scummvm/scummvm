@@ -286,6 +286,45 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 }
 
+static char _englishText[] = 
+"% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
+"% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
+"% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
+"% PASSWORD IS: ALLFREE\n% ENTER CURRENT PASSWORD\n"
+"% ****** ACCES DENIED ******\n"
+"% 1) *** GAME ***\n"
+"% 0) QUIT COMPUTER\n"
+"% 2) STRANGE CADAVER\n"
+"% 3) STRANGE CADAVER\n"
+"% 4) SENATOR FERGUSSON\n"
+"% 5) DOG KILLER\n"
+"% 2) SCIENTIST KIDNAPPED.\n"
+"% 3) SCIENTIST KIDNAPPED (next).\n"
+"% 4) SCIENTIST KIDNAPPED (next).\n"
+"% 5) SCIENTIST KIDNAPPED (next).\n"
+"% 6) SCIENTIST KIDNAPPED (next).\n"
+"%% fin\n";
+
+static char _frenchText[] =  
+"% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
+"% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
+"% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
+"% PASSWORD IS: ALLFREE\n"
+"% ENTER CURRENT PASSWORD\n"
+"% ****** ACCES DENIED ******\n"
+"% 1) *** CASSE BRIQUE ***\n"
+"% 0) QUITTER L'ORDINATEUR\n"
+"% 2) CADAVRE SANS TETE\n"
+"% 3) CADAVRE SANS TETE\n"
+"% 4) AGRESSION DU SENATEUR\n"
+"% 5) LES CHIENS TUEURS\n"
+"% 2) DISPARITIONS DE CHERCHEURS.\n"
+"% 3) DISPARITIONS (suite).\n"
+"% 4) DISPARITIONS (suite).\n"
+"% 5) DISPARITIONS (suite).\n"
+"% 6) DISPARITIONS (suite).\n"
+"%% fin\n";
+
 /**
  * Load Menu data
  */
