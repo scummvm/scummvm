@@ -154,7 +154,7 @@ public:
 	void displayVesaSegment();
 	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx);
 	void CopyAsm(const byte *surface);
-	void copy16bToSurfaceScaleX2(const byte *surface);
+	void copy16bFromSurfaceScaleX2(const byte *surface);
 	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
 	int zoomIn(int v, int percentage);
 	int zoomOut(int v, int percentage);

@@ -170,7 +170,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 	max_x = 320;
 
 	lockScreen();
-	copy16bToSurfaceScaleX2(_vesaBuffer);
+	copy16bFromSurfaceScaleX2(_vesaBuffer);
 	unlockScreen();
 
 	fadeInBreakout();
@@ -683,7 +683,7 @@ void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
 void GraphicsManager::fadeInBreakout() {
 	setpal_vga256(_palette);
 	lockScreen();
-	copy16bToSurfaceScaleX2(_vesaBuffer);
+	copy16bFromSurfaceScaleX2(_vesaBuffer);
 	unlockScreen();
 	DD_VBL();
 }
@@ -698,7 +698,7 @@ void GraphicsManager::fateOutBreakout() {
 	setpal_vga256(palette);
 
 	lockScreen();
-	copy16bToSurfaceScaleX2(_vesaBuffer);
+	copy16bFromSurfaceScaleX2(_vesaBuffer);
 	unlockScreen();
 	DD_VBL();
 }
@@ -1203,29 +1203,26 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 }
 
 /**
- * Copy to surface to video buffer, scale 2x.
+ * Copy from surface to video buffer, scale 2x.
  */
-void GraphicsManager::copy16bToSurfaceScaleX2(const byte *surface) {
-	const byte *v1;
-	byte *v2;
-	byte *v6;
-	int v;
-	byte *v10;
+void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
+	byte *palPtr;
+	int curPixel;
 
 	assert(_videoPtr);
-	v1 = surface;
-	v2 = 30 * WinScan + (byte *)_videoPtr->pixels;
+	const byte *curSurface = surface;
+	byte *destPtr = 30 * WinScan + (byte *)_videoPtr->pixels;
 	for (int y = 200; y; y--) {
-		v10 = v2;
+		byte *oldDestPtr = destPtr;
 		for (int x = 320; x; x--) {
-			v = 2 * *v1;
-			v6 = PAL_PIXELS + v;
-			v2[0] = v2[2] = v2[WinScan] = v2[WinScan + 2] = v6[0];
-			v2[1] = v2[3] = v2[WinScan + 1] = v2[WinScan + 3] = v6[1];
-			++v1;
-			v2 += 4;
+			curPixel = 2 * *curSurface;
+			palPtr = PAL_PIXELS + curPixel;
+			destPtr[0] = destPtr[2] = destPtr[WinScan] = destPtr[WinScan + 2] = palPtr[0];
+			destPtr[1] = destPtr[3] = destPtr[WinScan + 1] = destPtr[WinScan + 3] = palPtr[1];
+			++curSurface;
+			destPtr += 4;
 		}
-		v2 = WinScan * 2 + v10;
+		destPtr = WinScan * 2 + oldDestPtr;
 	}
 }
 
