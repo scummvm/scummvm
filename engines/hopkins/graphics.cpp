@@ -1240,40 +1240,25 @@ void GraphicsManager::CopyAsm(const byte *surface) {
 void GraphicsManager::CopyAsm16(const byte *surface) {
 	const byte *v1;
 	byte *v2;
-	int v3;
-	byte *v5;
-	uint16 *v6;
+	byte *v6;
 	int v;
-	uint16 *v8;
-	int v9;
 	byte *v10;
-	const byte *v11;
 
 	assert(_videoPtr);
 	v1 = surface;
 	v2 = 30 * WinScan + (byte *)_videoPtr->pixels;
-	v3 = 200;
-	do {
-		v11 = v1;
+	for (int y = 200; y; y--) {
 		v10 = v2;
-		v9 = v3;
-		v5 = PAL_PIXELS;
-		for (int v4 = 320; v4; v4--) {
+		for (int x = 320; x; x--) {
 			v = 2 * *v1;
-			v6 = (uint16 *)(v5 + 2 * *v1);
-			v = *v6;
-			*v2 = *v6;
-			v2[1] = v;
-			v8 = (uint16 *)(WinScan + v2);
-			*v8 = v;
-			v8[1] = v;
+			v6 = PAL_PIXELS + v;
+			v2[0] = v2[2] = v2[WinScan] = v2[WinScan + 2] = v6[0];
+			v2[1] = v2[3] = v2[WinScan + 1] = v2[WinScan + 3] = v6[1];
 			++v1;
-			v2 = (byte *)v8 - WinScan + 4;
+			v2 += 4;
 		}
-		v1 = v11 + 320;
 		v2 = WinScan * 2 + v10;
-		v3 = v9 - 1;
-	} while (v9 != 1);
+	}
 }
 
 void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height) {
