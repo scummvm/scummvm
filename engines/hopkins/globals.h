@@ -434,7 +434,6 @@ public:
 	int couleur_40;
 
 	int STOP_BUG;
-	bool NO_OFFSET;
 	int MAX_COMPTE;
 
 	int force_to_data_0;

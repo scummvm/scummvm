@@ -3927,10 +3927,7 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	int yp = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + startPos + 2);
 	int spriteIndex = _vm->_talkManager._characterAnim[startPos + 8];
 
-	if (!_vm->_globals.NO_OFFSET)
-		_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, _vm->_graphicsManager._scrollOffset + xp, yp, spriteIndex);
-	else
-		_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, xp, yp, spriteIndex);
+	_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, xp, yp, spriteIndex);
 }
 
 void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
