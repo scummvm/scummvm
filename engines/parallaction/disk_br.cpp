@@ -728,7 +728,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 		max = 72;
 
 	byte *data = new byte[max * 2601];
-	byte *srcPtr = (byte *)decoder.getSurface()->getBasePtr(0,0);
+	const byte *srcPtr = (const byte *)decoder.getSurface()->getBasePtr(0,0);
 	int w = decoder.getSurface()->w;
 
 	// Convert to the expected display format
@@ -736,7 +736,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 		uint16 x = (i % 8) * 51;
 		uint16 y = (i / 8) * 51;
 
-		byte *src = srcPtr + y * w + x;
+		const byte *src = srcPtr + y * w + x;
 		byte *dst = data + i * 2601;
 		for (int h = 0; h < 51; h++) {
 			memcpy(dst, src, 51);
