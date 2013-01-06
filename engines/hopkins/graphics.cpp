@@ -422,19 +422,22 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 
 	assert(_videoPtr);
 	const byte *srcP = xs + _lineNbr2 * ys + surface;
-	uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destX * 2 + WinScan * destY);
+	byte *destP = (byte *)_videoPtr->pixels + destX * 2 + WinScan * destY;
 
 	for (int yp = 0; yp < height; ++yp) {
 		// Copy over the line, using the source pixels as lookups into the pixels palette
 		const byte *lineSrcP = srcP;
-		uint16 *lineDestP = destP;
+		byte *lineDestP = destP;
 
-		for (int xp = 0; xp < width; ++xp)
-			*lineDestP++ = *(uint16 *)&PAL_PIXELS[*lineSrcP++ * 2];
-
+		for (int xp = 0; xp < width; ++xp) {
+			lineDestP[0] = PAL_PIXELS[lineSrcP[0] * 2];
+			lineDestP[1] = PAL_PIXELS[(lineSrcP[0] * 2) + 1];
+			lineDestP += 2;
+			lineSrcP++;
+		}
 		// Move to the start of the next line
 		srcP += _lineNbr2;
-		destP += WinScan / 2;
+		destP += WinScan;
 	}
 
 	unlockScreen();

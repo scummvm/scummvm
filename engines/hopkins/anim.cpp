@@ -880,7 +880,6 @@ LABEL_59:
  */
 void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
 	bool v4;
-	int v7;
 	byte *ptr = NULL;
 	byte *v10;
 	byte *v11 = NULL;
@@ -888,7 +887,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 	size_t nbytes;
 	Common::File f;
 
-	v7 = 0;
+	bool multiScreenFl = false;
 	for (;;) {
 		if (_vm->shouldQuit())
 			return;
@@ -914,12 +913,12 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		f.read(v10, nbytes);
 
 		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
-			v7 = 1;
+			multiScreenFl = true;
 			ptr = _vm->_globals.allocMemory(307200);
 			memcpy((void *)ptr, v10, 307200);
 		}
 		if (NO_SEQ) {
-			if (v7 == 1) {
+			if (multiScreenFl) {
 				assert(ptr != NULL);
 				memcpy((void *)ptr, _vm->_graphicsManager._vesaBuffer, 307200);
 			}
@@ -927,7 +926,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		} else {
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
-			if (v7)
+			if (multiScreenFl)
 				_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else
 				_vm->_graphicsManager.m_scroll16(v10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -949,7 +948,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		}
 		if (_vm->_graphicsManager._skipVideoLockFl)
 			goto LABEL_54;
-		if (v7 == 1)
+		if (multiScreenFl)
 			ptr = _vm->_globals.freeMemory(ptr);
 		_vm->_globals.freeMemory(v11);
 		f.close();
@@ -975,7 +974,7 @@ LABEL_23:
 LABEL_33:
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_graphicsManager.lockScreen();
-		if (v7) {
+		if (multiScreenFl) {
 			if (*v10 != kByteStop) {
 				_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptr);
 				_vm->_graphicsManager.m_scroll16A(ptr, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -1009,7 +1008,7 @@ LABEL_44:
 			goto LABEL_33;
 	}
 LABEL_54:
-	if (_vm->_graphicsManager.FADE_LINUX == 2 && !v7) {
+	if (_vm->_graphicsManager.FADE_LINUX == 2 && !multiScreenFl) {
 		byte *ptra = _vm->_globals.allocMemory(307200);
 
 		f.seek(0);
@@ -1028,24 +1027,22 @@ LABEL_54:
 		f.read(v10, nbytes);
 
 		memcpy(ptra, v10, 307200);
-		bool v5 = false;
-		do {
+		for (;;) {
 			memset(v11, 0, 19);
 			if (f.read(v11, 16) != 16)
-				v5 = true;
+				break;
 
 			if (strncmp((const char *)v11, "IMAGE=", 6))
-				v5 = true;
-			if (!v5) {
-				f.read(v10, READ_LE_UINT32(v11 + 8));
-				if (*v10 != kByteStop)
-					_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptra);
-			}
-		} while (!v5);
+				break;
+
+			f.read(v10, READ_LE_UINT32(v11 + 8));
+			if (*v10 != kByteStop)
+				_vm->_graphicsManager.Copy_WinScan_Vbe(v10, ptra);
+		}
 		_vm->_graphicsManager.fadeOutDefaultLength(ptra);
 		ptra = _vm->_globals.freeMemory(ptra);
 	}
-	if (v7 == 1) {
+	if (multiScreenFl) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
 			_vm->_graphicsManager.fadeOutDefaultLength(ptr);
 		_vm->_globals.freeMemory(ptr);
