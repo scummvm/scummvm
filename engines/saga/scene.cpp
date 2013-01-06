@@ -41,8 +41,9 @@
 #include "saga/actor.h"
 #include "saga/resource.h"
 
-#include "graphics/iff.h"
 #include "common/util.h"
+
+#include "graphics/decoders/iff.h"
 
 namespace Saga {
 
@@ -450,11 +451,11 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 	debug(5, "Scene::changeScene(%d, %d, %d, %d)", sceneNumber, actorsEntrance, transitionType, chapter);
 
 	// This is used for latter ITE demos where all places on world map except
-	// Tent Faire are substituted with LBM picture and short description
+	// Tent Faire are substituted with IFF picture and short description
 	if (_vm->_hasITESceneSubstitutes) {
 		for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
 			if (sceneSubstitutes[i].sceneId == sceneNumber) {
-				byte *pal, colors[768];
+				const byte *pal;
 				Common::File file;
 				Rect rect;
 				PalEntry cPal[PAL_ENTRIES];
@@ -462,12 +463,12 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 				_vm->_interface->setMode(kPanelSceneSubstitute);
 
 				if (file.open(sceneSubstitutes[i].image)) {
-					Graphics::Surface bbmBuffer;
-					Graphics::decodePBM(file, bbmBuffer, colors);
-					pal = colors;
-					rect.setWidth(bbmBuffer.w);
-					rect.setHeight(bbmBuffer.h);
-					_vm->_gfx->drawRegion(rect, (const byte*)bbmBuffer.pixels);
+					Graphics::IFFDecoder decoder;
+					decoder.loadStream(file);
+					pal = decoder.getPalette();
+					rect.setWidth(decoder.getSurface()->w);
+					rect.setHeight(decoder.getSurface()->h);
+					_vm->_gfx->drawRegion(rect, (const byte *)decoder.getSurface()->pixels);
 					for (int j = 0; j < PAL_ENTRIES; j++) {
 						cPal[j].red = *pal++;
 						cPal[j].green = *pal++;
