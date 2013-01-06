@@ -862,14 +862,14 @@ void DrasculaEngine::animation_23_2() {
 	int animX, animY;
 
 	// Animation offsets - without earplugs
-	int x1[] = {1, 38, 75, 112, 75, 112, 75, 112, 149, 112, 149, 112, 149, 186, 223, 260,
-				1, 38, 75, 112, 149, 112, 149, 112, 149, 112, 149, 186, 223, 260, 260, 260, 260, 223};
-	int y1[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 76, 76, 76, 76, 76, 76, 76,
-				76, 76, 76, 76, 76, 76, 76, 1, 1, 1, 1};
+	int johnFrameX[] = {1, 38, 75, 112, 75, 112, 75, 112, 149, 112, 149, 112, 149, 186, 223, 260,
+						1, 38, 75, 112, 149, 112, 149, 112, 149, 112, 149, 186, 223, 260, 260, 260, 260, 223};
+	int johnFrameY[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 76, 76, 76, 76, 76, 76, 76,
+						76, 76, 76, 76, 76, 76, 76, 1, 1, 1, 1};
 
 	// Animation offsets - with earplugs
-	int x2[] = {1, 35, 69, 103, 137, 171, 205, 239, 273, 1, 35, 69, 103, 137};
-	int y2[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 73, 73, 73, 73, 73};
+	int john2FrameX[] = {1, 35, 69, 103, 137, 171, 205, 239, 273, 1, 35, 69, 103, 137};
+	int john2FrameY[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 73, 73, 73, 73, 73};
 
 	loadPic("an24.alg", frontSurface);
 
@@ -922,9 +922,9 @@ void DrasculaEngine::animation_23_2() {
 	for (int n = 0; n < maxN; n++) {
 		copyRect(p_x, p_y, p_x, p_y, animX, animY, bgSurface, screenSurface);
 		if (flags[29] == 0)
-			copyRect(x1[n], y1[n], p_x, p_y, animX, animY, backSurface, screenSurface);
+			copyRect(johnFrameX[n], johnFrameY[n], p_x, p_y, animX, animY, backSurface, screenSurface);
 		else
-			copyRect(x2[n], y2[n], p_x, p_y, animX, animY, backSurface, screenSurface);
+			copyRect(john2FrameX[n], john2FrameY[n], p_x, p_y, animX, animY, backSurface, screenSurface);
 		updateRefresh();
 		updateScreen(p_x, p_y, p_x, p_y, animX, animY, screenSurface);
 		updateEvents();

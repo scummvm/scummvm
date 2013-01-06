@@ -1712,10 +1712,10 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	for (l = 0; l < numRoomObjs; l++) {
 		p.parseInt(objectNum[l]);
 		p.parseString(objName[l]);
-		p.parseInt(x1[l]);
-		p.parseInt(y1[l]);
-		p.parseInt(x2[l]);
-		p.parseInt(y2[l]);
+		p.parseInt(_objectX1[l]);
+		p.parseInt(_objectY1[l]);
+		p.parseInt(_objectX2[l]);
+		p.parseInt(_objectY2[l]);
 		p.parseInt(roomObjX[l]);
 		p.parseInt(roomObjY[l]);
 		p.parseInt(trackObj[l]);

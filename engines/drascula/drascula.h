@@ -417,7 +417,7 @@ public:
 	int inventoryObjects[43];
 	char _targetSurface[40][20];
 	int _destX[40], _destY[40], trackCharacter_alkeva[40], roomExits[40];
-	int x1[40], y1[40], x2[40], y2[40];
+	int _objectX1[40], _objectY1[40], _objectX2[40], _objectY2[40];
 	int takeObject, pickedObject;
 	bool _subtitlesDisabled;
 	bool _menuBar, _menuScreen, _hasName;

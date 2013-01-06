@@ -167,8 +167,8 @@ void DrasculaEngine::showMap() {
 	_hasName = false;
 
 	for (int l = 0; l < numRoomObjs; l++) {
-		if (mouseX > x1[l] && mouseY > y1[l]
-				&& mouseX < x2[l] && mouseY < y2[l]
+		if (mouseX > _objectX1[l] && mouseY > _objectY1[l]
+				&& mouseX < _objectX2[l] && mouseY < _objectY2[l]
 				&& visible[l] == 1) {
 			strcpy(textName, objName[l]);
 			_hasName = true;
