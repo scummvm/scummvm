@@ -50,8 +50,6 @@
 
 #include "gui/message.h"
 
-static void drawMessage(int offset, const Common::String &text);
-
 namespace MT32Emu {
 
 class ReportHandlerScummVM : public ReportHandler {
@@ -64,16 +62,7 @@ protected:
 
 	// Callback for debug messages, in vprintf() format
 	void printDebug(const char *fmt, va_list list) {
-		// Only show MUNT debug messages for debug level 4 and above
-		if (gDebugLevel < 4)
-			return;
-
-		char buf[512];
-
-		vsnprintf(buf, 512, fmt, list);
-		buf[70] = 0; // Truncate to a reasonable length
-
-		drawMessage(1, buf);
+		debug(4, fmt, list);
 	}
 
 	// Callbacks for reporting various errors and information
@@ -144,39 +133,6 @@ public:
 	int getRate() const { return _outputRate; }
 };
 
-static void drawMessage(int offset, const Common::String &text) {
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
-	Graphics::Surface *screen = g_system->lockScreen();
-
-	assert(screen);
-	assert(screen->pixels);
-
-	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
-
-	uint16 h = font.getFontHeight();
-	uint16 y = g_system->getHeight() / 2 - h / 2 + offset * (h + 1);
-
-	uint32 col;
-
-	if (screenFormat.bytesPerPixel > 1)
-		col = screenFormat.RGBToColor(0, 0, 0);
-	else
-		col = 0;
-
-	Common::Rect r(0, y, screen->w, y + h);
-	screen->fillRect(r, col);
-
-	if (screenFormat.bytesPerPixel > 1)
-		col = screenFormat.RGBToColor(0, 171, 0);
-	else
-		col = 1;
-
-	font.drawString(screen, text, 0, y, screen->w, col, Graphics::kTextAlignCenter);
-
-	g_system->unlockScreen();
-	g_system->updateScreen();
-}
-
 ////////////////////////////////////////
 //
 // MidiDriver_MT32
@@ -246,7 +202,7 @@ int MidiDriver_MT32::open() {
 	}
 
 	_initializing = true;
-	drawMessage(-1, _s("Initializing MT-32 Emulator"));
+	debug(4, _s("Initializing MT-32 Emulator"));
 	_controlFile = new Common::File();
 	if (!_controlFile->open("MT32_CONTROL.ROM"))
 		error("Error opening MT32_CONTROL.ROM");
