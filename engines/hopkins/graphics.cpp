@@ -450,14 +450,13 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 	int yNext;
 	int xCtr;
 	const byte *palette;
-	int pixelWord;
 	int yCtr;
 	const byte *srcCopyP;
 	byte *destCopyP;
 
 	assert(_videoPtr);
 	srcP = xs + _lineNbr2 * ys + surface;
-	destP = destX + destX + WinScan * destY + (byte *)_videoPtr->pixels;
+	destP = (byte *)_videoPtr->pixels + destX + destX + WinScan * destY;
 	yNext = height;
 	Agr_x = 0;
 	Agr_y = 0;
@@ -473,16 +472,16 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			Agr_x = 0;
 
 			do {
-				pixelWord = *(const uint16 *)(palette + 2 * *srcP);
-				*(uint16 *)destP = pixelWord;
-				++srcP;
+				destP[0] = palette[2 * srcP[0]];
+				destP[1] = palette[(2 * srcP[0]) + 1];
 				destP += 2;
 				if ((unsigned int)Agr_x >= 100) {
 					Agr_x -= 100;
-					*(uint16 *)destP = pixelWord;
+					destP[0] = palette[2 * srcP[0]];
+					destP[1] = palette[(2 * srcP[0]) + 1];
 					destP += 2;
 				}
-
+				++srcP;
 				--xCtr;
 			} while (xCtr);
 
@@ -506,23 +505,18 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
-	const byte *srcP;
-	uint16 *destP;
 	int yCount;
 	int xCount;
 	int xCtr;
 	const byte *palette;
-	const uint16 *tempSrcP;
-	uint16 srcByte;
-	uint16 *tempDestP;
 	int savedXCount;
-	uint16 *loopDestP;
+	byte *loopDestP;
 	const byte *loopSrcP;
 	int yCtr;
 
 	assert(_videoPtr);
-	srcP = xp + 320 * yp + surface;
-	destP = (uint16 *)(30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY + (byte *)_videoPtr->pixels);
+	const byte *srcP = surface + xp + 320 * yp;
+	byte *destP = (byte *)_videoPtr->pixels + 30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY;
 	yCount = height;
 	xCount = width;
 
@@ -535,21 +529,15 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		palette = PAL_PIXELS;
 
 		do {
-			tempSrcP = (const uint16 *)(palette + 2 * *srcP);
-			srcByte = *tempSrcP;
-			*destP = *tempSrcP;
-			*(destP + 1) = srcByte;
-
-			tempDestP = (uint16 *)((byte *)destP + WinScan);
-			*tempDestP = srcByte;
-			*(tempDestP + 1) = srcByte;
+			destP[0] = destP[2] = destP[WinScan] = destP[WinScan + 2] = palette[2 * srcP[0]];
+			destP[1] = destP[3] = destP[WinScan + 1] = destP[WinScan + 3] = palette[(2 * srcP[0]) + 1];
 			++srcP;
-			destP = (uint16 *)((byte *)tempDestP - WinScan + 4);
+			destP += 4;
 			--xCtr;
 		} while (xCtr);
 
 		xCount = savedXCount;
-		destP = (uint16 *)((byte *)loopDestP + WinScan * 2);
+		destP = loopDestP + WinScan * 2;
 		srcP = loopSrcP + 320;
 		yCount = yCtr - 1;
 	} while (yCtr != 1);
