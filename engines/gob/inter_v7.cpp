@@ -554,18 +554,27 @@ void Inter_v7::o7_loadIFFPalette() {
 		return;
 	}
 
-	byte *palette = (byte *)decoder.getPalette();
-	memset(palette      , 0x00, 3);
-	memset(palette + 765, 0xFF, 3);
-	for (int i = 0; i < 768; i++)
-		palette[i] >>= 2;
-
-	int16 count = stopIndex - startIndex + 1;
+	const byte *palette = decoder.getPalette();
 
 	startIndex *= 3;
-	count      *= 3;
+	stopIndex  *= 3;
 
-	memcpy((char *)_vm->_draw->_vgaPalette + startIndex, palette + startIndex, count);
+	byte *dst = (byte *)_vm->_draw->_vgaPalette + startIndex;
+	const byte *src = palette + startIndex;
+	for (int i = startIndex; i <= stopIndex + 2; ++i) {
+		*dst++ = *src++ >> 2;
+	}
+
+	if (startIndex == 0) {
+		dst = (byte *)_vm->_draw->_vgaPalette;
+		dst[0] = dst[1] = dst[2] = 0x00 >> 2;
+	}
+
+	if (stopIndex == 765) {
+		dst = (byte *)_vm->_draw->_vgaPalette + 765;
+		dst[0] = dst[1] = dst[2] = 0xFF >> 2;
+	}
+
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
