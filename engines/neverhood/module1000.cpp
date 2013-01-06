@@ -95,9 +95,13 @@ void Module1000::updateScene() {
 		case 1:
 			if (_moduleResult == 1)
 				leaveModule(0);
-			else if (_moduleResult == 2)
-				createScene(3, 0);
-			else
+			else if (_moduleResult == 2) {
+				if (_vm->isDemo())
+					// Demo version returns to the same scene
+					createScene(1, 2);
+				else
+					createScene(3, 0);
+			} else
 				createScene(0, 1);
 			break;
 		case 2:

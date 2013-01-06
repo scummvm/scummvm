@@ -76,13 +76,19 @@ Common::Error NeverhoodEngine::run() {
 	_screen = new Screen(this);
 
 	_res = new ResourceMan();
-	_res->addArchive("a.blb");
-	_res->addArchive("c.blb");
-	_res->addArchive("hd.blb");
-	_res->addArchive("i.blb");
-	_res->addArchive("m.blb");
-	_res->addArchive("s.blb");
-	_res->addArchive("t.blb");
+	
+	if (isDemo()) {
+		_res->addArchive("a.blb");
+		_res->addArchive("nevdemo.blb");
+	} else {
+		_res->addArchive("a.blb");
+		_res->addArchive("c.blb");
+		_res->addArchive("hd.blb");
+		_res->addArchive("i.blb");
+		_res->addArchive("m.blb");
+		_res->addArchive("s.blb");
+		_res->addArchive("t.blb");
+	}
 
 	CursorMan.showMouse(true);
 
@@ -97,13 +103,42 @@ Common::Error NeverhoodEngine::run() {
 	// TODO Check if this can actually be false...
 	_isSaveAllowed = true;
 	
-	uint32 nextFrameTime = 0;
+	if (isDemo()) {
+		// Adjust some navigation lists for the demo version...
+		NavigationList *navigationList = _staticData->getNavigationList(0x004B67E8);
+		(*navigationList)[0].middleSmackerFileHash = 0;
+		(*navigationList)[0].middleFlag = 1;
+		(*navigationList)[2].middleSmackerFileHash = 0;
+		(*navigationList)[2].middleFlag = 1;
+		(*navigationList)[4].middleSmackerFileHash = 0;
+		(*navigationList)[4].middleFlag = 1;
+		(*navigationList)[5].middleSmackerFileHash = 0;
+		(*navigationList)[5].middleFlag = 1;
+	}
+	
+	mainLoop();
+	
+	delete _gameModule;
+	delete _collisionMan;
+	delete _soundMan;
+	delete _audioResourceMan;
 
-	// Preliminary main loop, needs some more work but works for testing
+	delete _res;
+	delete _screen;
+
+	delete _gameVars;
+	delete _staticData;
+	
+	debug("Ok.");
+
+	return Common::kNoError;
+}
+
+void NeverhoodEngine::mainLoop() {
+	uint32 nextFrameTime = 0;
 	while (!shouldQuit()) {
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
-	
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
@@ -134,7 +169,6 @@ Common::Error NeverhoodEngine::run() {
 				break;
 			}
 		}
-
 		if (_system->getMillis() >= nextFrameTime) {
 			_gameModule->checkMainMenu();
 			_gameModule->handleUpdate();
@@ -142,28 +176,11 @@ Common::Error NeverhoodEngine::run() {
 			_screen->update();
 			nextFrameTime = _screen->getNextFrameTime();
 		};
-		
 		_soundMan->update();
 		_audioResourceMan->update();
 		_system->updateScreen();
 		_system->delayMillis(10);
-		
 	}
-	
-	delete _gameModule;
-	delete _collisionMan;
-	delete _soundMan;
-	delete _audioResourceMan;
-
-	delete _res;
-	delete _screen;
-
-	delete _gameVars;
-	delete _staticData;
-	
-	debug("Ok.");
-
-	return Common::kNoError;
 }
 
 NPoint NeverhoodEngine::getMousePos() {
@@ -173,82 +190,4 @@ NPoint NeverhoodEngine::getMousePos() {
 	return pt;
 }
 
-void writeTga(const char *filename, byte *pixels, byte *palette, int16 width, int16 height) {
-	byte identsize = 0;
-	byte colourmaptype = 1;
-	byte imagetype = 1;
-	uint16 colourmapstart = 0;
-	uint16 colourmaplength = 256;
-	byte colourmapbits = 24;
-	uint16 xstart = 0;
-	uint16 ystart = 0;
-	byte bits = 8;
-	byte descriptor = 0x20;
-	Common::DumpFile tga;
-	tga.open(filename);
-	tga.writeByte(identsize);
-	tga.writeByte(colourmaptype);
-	tga.writeByte(imagetype);
-	tga.writeUint16LE(colourmapstart);
-	tga.writeUint16LE(colourmaplength);
-	tga.writeByte(colourmapbits);
-	tga.writeUint16LE(xstart);
-	tga.writeUint16LE(ystart);
-	tga.writeUint16LE(width);
-	tga.writeUint16LE(height);
-	tga.writeByte(bits);
-	tga.writeByte(descriptor);
-	tga.write(palette, 768);
-	tga.write(pixels, width * height);
-	tga.close();
-}
-
-void NeverhoodEngine::dumpAllResources() {
-#if 0
-	PaletteResource paletteResource(this);
-	byte *vgaPalette = new byte[768];
-	//paletteResource.load(0x4086520E);
-	paletteResource.load(0x12C23307);
-	byte *srcpalette = paletteResource.palette();
-	for (int i = 0; i < 256; i++) {
-		vgaPalette[i * 3 + 2] = srcpalette[i * 4 + 0];
-		vgaPalette[i * 3 + 1] = srcpalette[i * 4 + 1];
-		vgaPalette[i * 3 + 0] = srcpalette[i * 4 + 2];
-	}
-
-#if 0
-	for (int i = 0; i < 768; i++)
-		vgaPalette[i] <<= 2;
-#endif
-
-	uint entriesCount = _res->getEntryCount();
-	debug("%d entries", entriesCount);
-
-	for (uint i = 0; i < entriesCount; i++) {
-		const ResourceFileEntry &entry = _res->getEntry(i);
-		int type = _res->getResourceTypeByHash(entry.archiveEntry->fileHash);
-		debug("hash: %08X; type: %d", entry.archiveEntry->fileHash, type);
-		if (type == 4) {
-			AnimResource anim(this);
-			anim.load(entry.archiveEntry->fileHash);
-			for (uint frameIndex = 0; frameIndex < anim.getFrameCount(); frameIndex++) {
-				const AnimFrameInfo &frameInfo = anim.getFrameInfo(frameIndex);
-				int16 width = (frameInfo.drawOffset.width + 3) & 0xFFFC;
-				byte *pixels = new byte[width * frameInfo.drawOffset.height];
-				memset(pixels, 0, width * frameInfo.drawOffset.height);
-				anim.draw(frameIndex, pixels, width, false, false);
-				Common::String filename = 
-					frameInfo.frameHash != 0
-					? Common::String::format("%08X_%03d_%08X.tga", entry.archiveEntry->fileHash, frameIndex, frameInfo.frameHash) 
-					: Common::String::format("%08X_%03d.tga", entry.archiveEntry->fileHash, frameIndex);
-				writeTga(filename.c_str(), pixels, vgaPalette, width, frameInfo.drawOffset.height);
-				delete[] pixels;
-			}
-		}
-	}
-	
-	delete[] vgaPalette;
-#endif
-}
-	
 } // End of namespace Neverhood

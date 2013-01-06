@@ -106,7 +106,7 @@ void Scene1501::update() {
 			_vm->_screen->clear();
 			leaveScene(0);
 		}
-	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) || !isSoundPlaying(0)) {
+	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) || (_countdown2 == 0 && !isSoundPlaying(0))) {
 		_countdown1 = 12;
 		_palette->startFadeToBlack(11);
 	}

@@ -24,6 +24,7 @@
 #include "neverhood/navigationscene.h"
 #include "neverhood/smackerscene.h"
 #include "neverhood/module1000.h"
+#include "neverhood/module1500.h"
 
 namespace Neverhood {
 
@@ -96,6 +97,10 @@ void Module::createSmackerScene(const uint32 *fileHashList, bool doubleSurface, 
 
 void Module::createStaticScene(uint32 backgroundFileHash, uint32 cursorFileHash) {
 	_childObject = new StaticScene(_vm, this, backgroundFileHash, cursorFileHash);
+}
+
+void Module::createDemoScene() {
+	_childObject = new Scene1501(_vm, this, 0x0009B624, 0, 288, 0);
 }
 
 bool Module::updateChild() {

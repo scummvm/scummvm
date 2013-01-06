@@ -59,6 +59,7 @@ class NeverhoodEngine : public ::Engine {
 protected:
 
 	Common::Error run();
+	void mainLoop();
 
 public:
 	NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc);
@@ -71,6 +72,7 @@ public:
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	bool hasFeature(EngineFeature f) const;
+	bool isDemo() const;
 
 	Common::RandomSource *_rnd;
 
@@ -129,8 +131,6 @@ public:
 	int16 getMouseX() const { return _mouseX; }
 	int16 getMouseY() const { return _mouseY; }
 	NPoint getMousePos();
-
-	void dumpAllResources();
 
 public:
 

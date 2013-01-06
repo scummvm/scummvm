@@ -77,7 +77,7 @@ ResourceFileEntry *ResourceMan::findEntry(uint32 fileHash, ResourceFileEntry **f
 
 Common::SeekableReadStream *ResourceMan::createStream(uint32 fileHash) {
 	ResourceFileEntry *entry = findEntry(fileHash);
-	return entry->archive->createStream(entry->archiveEntry);
+	return entry ? entry->archive->createStream(entry->archiveEntry) : NULL;
 }
 
 void ResourceMan::queryResource(uint32 fileHash, ResourceHandle &resourceHandle) {

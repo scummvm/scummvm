@@ -124,6 +124,9 @@ void Module2600::createScene(int sceneNum, int which) {
 		else
 			createSmackerScene(0x42980941, true, true, false);
 		break;
+	case 9999:
+		createDemoScene();
+		break;
 	}
 	SetUpdateHandler(&Module2600::updateScene);
 	_childObject->handleUpdate();
@@ -151,8 +154,12 @@ void Module2600::updateScene() {
 		case 2:
 			if (_moduleResult == 0)
 				createScene(1, 0);
-			else if (_moduleResult == 1)
-				createScene(1002, -1);
+			else if (_moduleResult == 1) {
+				if (_vm->isDemo())
+					createScene(9999, -1);
+				else
+					createScene(1002, -1);
+			}
 			break;
 		case 3:
 			if (_moduleResult == 0) {
@@ -178,8 +185,12 @@ void Module2600::updateScene() {
 				createScene(3, 1);
 			break;
 		case 6:
-			if (_moduleResult == 0)
-				createScene(1006, -1);
+			if (_moduleResult == 0) {
+				if (_vm->isDemo())
+					createScene(9999, -1);
+				else
+					createScene(1006, -1);
+			}
 			else if (_moduleResult == 1)
 				createScene(1, 2);
 			break;
@@ -200,6 +211,9 @@ void Module2600::updateScene() {
 			break;
 		case 1008:
 			createScene(6, 0);
+			break;
+		case 9999:
+			createScene(_vm->gameState().sceneNum, -1);
 			break;
 		}
 	}

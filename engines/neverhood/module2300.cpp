@@ -105,6 +105,9 @@ void Module2300::createScene(int sceneNum, int which) {
 		_vm->_soundMan->setTwoSoundsPlayFlag(true);
 		createSmackerScene(0x20080A0B, true, true, false);
 		break;
+	case 9999:
+		createDemoScene();
+		break;
 	}
 	SetUpdateHandler(&Module2300::updateScene);
 	_childObject->handleUpdate();
@@ -122,6 +125,8 @@ void Module2300::updateScene() {
 		case 1:
 			if (_moduleResult == 1)
 				createScene(0, 0);
+			else if (_vm->isDemo())
+				createScene(9999, 0);
 			else if (_moduleResult == 2)
 				createScene(2, 1);
 			else if (_moduleResult == 3)
@@ -148,6 +153,9 @@ void Module2300::updateScene() {
 		case 4:
 			_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			createScene(1, 2);
+			break;
+		case 9999:
+			createScene(1, -1);
 			break;
 		}
 	} else {

@@ -149,7 +149,9 @@ void GameModule::handleKeyDown(Common::KeyCode keyCode) {
 }
 
 void GameModule::handleEscapeKey() {
-	if (!_prevChildObject /* && _canRequestMainMenu TODO?*/)
+	if (_vm->isDemo())
+		_vm->quitGame();
+	else if (!_prevChildObject /* && _canRequestMainMenu TODO?*/)
 		_mainMenuRequested = true;
 	else if (_childObject)
 		sendMessage(_childObject, 0x000C, 0);
@@ -316,8 +318,9 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 
 void GameModule::startup() {
 	// TODO: Displaying of error text probably not needed in ScummVM
-//	createModule(1500, 0); // Logos and intro video //Real
-
+#if 1
+	createModule(1500, 0); // Logos and intro video //Real
+#else
 	// DEBUG>>>
 	/*
 	setGlobalVar(V_SEEN_MUSIC_BOX, 1);
@@ -417,7 +420,7 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 1;
 	createModule(2700, -1);
 #endif
-#if 1
+#if 0
 	_vm->gameState().sceneNum = 1;
 	createModule(2800, -1);
 #endif
@@ -426,9 +429,11 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 0;
 	createModule(2500, -1);
 #endif
-#if 0
+#if 1
 	_vm->gameState().sceneNum = 1;
-	createModule(2400, -1);
+	createModule(2300, -1);
+#endif
+
 #endif
 }
 
@@ -527,6 +532,9 @@ void GameModule::createModule(int moduleNum, int which) {
 	case 3000:
 		setGlobalVar(V_MODULE_NAME, 0x81293110);
 		_childObject = new Module3000(_vm, this, which);
+		break;
+	case 9999:
+		createDemoScene();
 		break;
 	default:
 		error("GameModule::createModule() Could not create module %d", moduleNum);
@@ -689,17 +697,18 @@ void GameModule::updateModule() {
 			createModule(2300, 1);
 			break;
 		case 2300:
-			if (_moduleResult == 1) {
-				createModule(2200, 0);
-			} else if (_moduleResult == 2) {
+			if (_moduleResult == 2)
 				createModule(1200, 0);
-			} else if (_moduleResult == 3) {
-				createModule(2400, 0);
-			} else if (_moduleResult == 4) {
-				createModule(3000, 0);
-			} else {
+			else if (_moduleResult == 0)
 				createModule(1000, 1);
-			}
+			else if (_vm->isDemo())
+				createModule(9999, -1);
+			else if (_moduleResult == 1)
+				createModule(2200, 0);
+			else if (_moduleResult == 3)
+				createModule(2400, 0);
+			else if (_moduleResult == 4)
+				createModule(3000, 0);
 			break;
 		case 2400:
 			createModule(2300, 3);
@@ -708,21 +717,19 @@ void GameModule::updateModule() {
 			createModule(2600, 1);
 			break;
 		case 2600:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createModule(2500, 0);
-			} else {
+			else
 				createModule(1200, 1);
-			}
 			break;
 		case 2700:
 			createModule(1800, 2);
 			break;
 		case 2800:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createModule(2900, 5);
-			} else {
+			else
 				createModule(1800, 0);
-			}
 			break;
 		case 2900:
 			if (_moduleResult != 0xFFFFFFFF) {
@@ -785,6 +792,9 @@ void GameModule::updateModule() {
 			} else {
 				createModule(2300, 4);
 			}
+			break;
+		case 9999:
+			createModuleByHash(getGlobalVar(V_MODULE_NAME));
 			break;
 		}
 	}

@@ -55,6 +55,10 @@ uint16 NeverhoodEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
+bool NeverhoodEngine::isDemo() const {
+	return _gameDescription->desc.flags & ADGF_DEMO;
+}
+
 }
 
 static const PlainGameDescriptor neverhoodGames[] = {
@@ -76,6 +80,23 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Neverhood English demo version
+		{
+			"neverhood",
+			"Demo",
+			AD_ENTRY1s("nevdemo.blb", "05b735cfb1086892bec79b54dca5545b", 22564568),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
 		0,
