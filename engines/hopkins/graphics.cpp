@@ -1856,24 +1856,23 @@ void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
 	srcPtr = src;
 	for (;;) {
 		byteVal = *srcPtr;
-		if (*srcPtr < kByteStop)
-			goto Video_Cont_wVbe;
 		if (byteVal == kByteStop)
 			return;
-		if (byteVal == k8bVal) {
-			destOffset += srcPtr[1];
-			byteVal = srcPtr[2];
-			srcPtr += 2;
-		} else if (byteVal == k16bVal) {
-			destOffset += READ_LE_UINT16(srcPtr + 1);
-			byteVal = srcPtr[3];
-			srcPtr += 3;
-		} else {
-			destOffset += READ_LE_UINT32(srcPtr + 1);
-			byteVal = srcPtr[5];
-			srcPtr += 5;
+		if (*srcPtr > kByteStop) {
+			if (byteVal == k8bVal) {
+				destOffset += srcPtr[1];
+				byteVal = srcPtr[2];
+				srcPtr += 2;
+			} else if (byteVal == k16bVal) {
+				destOffset += READ_LE_UINT16(srcPtr + 1);
+				byteVal = srcPtr[3];
+				srcPtr += 3;
+			} else {
+				destOffset += READ_LE_UINT32(srcPtr + 1);
+				byteVal = srcPtr[5];
+				srcPtr += 5;
+			}
 		}
-Video_Cont_wVbe:
 		dest[destOffset] = byteVal;
 		++srcPtr;
 		++destOffset;
