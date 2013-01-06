@@ -64,6 +64,10 @@ protected:
 
 	// Callback for debug messages, in vprintf() format
 	void printDebug(const char *fmt, va_list list) {
+		// Only show MUNT debug messages for debug level 4 and above
+		if (gDebugLevel < 4)
+			return;
+
 		char buf[512];
 
 		vsnprintf(buf, 512, fmt, list);
