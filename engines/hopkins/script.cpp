@@ -2282,7 +2282,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-			_vm->_graphicsManager.OPTI_INI("BOMBE", 2);
+			_vm->_graphicsManager.OPTI_INI("BOMBE", 2, true);
 			_vm->_graphicsManager.fadeInShort();
 			break;
 

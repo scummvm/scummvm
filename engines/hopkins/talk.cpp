@@ -1130,7 +1130,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
-	_vm->_graphicsManager.INI_ECRAN2(v22);
+	_vm->_graphicsManager.INI_ECRAN2(v22, true);
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager.NUMZONE = -1;
@@ -1164,7 +1164,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.COUCOU = v11;
 	_vm->_objectsManager._disableFl = true;
 	_vm->_objectsManager.INILINK(v20);
-	_vm->_graphicsManager.INI_ECRAN2(v20);
+	_vm->_graphicsManager.INI_ECRAN2(v20, true);
 	_vm->_objectsManager._disableFl = false;
 	_vm->_globals.NOMARCHE = false;
 	if (_vm->_globals._exitId == 101)

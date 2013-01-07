@@ -163,9 +163,9 @@ public:
 	void SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY);
 	void displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour);
-	void INI_ECRAN(const Common::String &file);
-	void INI_ECRAN2(const Common::String &file);
-	void OPTI_INI(const Common::String &file, int mode);
+	void INI_ECRAN(const Common::String &file, bool initializeScreen);
+	void INI_ECRAN2(const Common::String &file, bool initializeScreen);
+	void OPTI_INI(const Common::String &file, int mode, bool initializeScreen);
 	void NB_SCREEN(bool initPalette);
 	void SHOW_PALETTE();
 	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);

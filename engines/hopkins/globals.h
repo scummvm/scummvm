@@ -377,7 +377,6 @@ public:
 	int _exitId;
 	int PLANX, PLANY;
 	int PLANI;
-	bool NOSPRECRAN;
 	int _screenId;
 	int _prevScreenId;
 	int Max_Propre;

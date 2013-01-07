@@ -140,7 +140,6 @@ Globals::Globals() {
 	PLANI = 0;
 	PERSO = 0;
 	_screenId = 0;
-	NOSPRECRAN = false;
 	_prevScreenId = 0;
 	_maxLineLength = 0;
 	Max_Perso_Y = 0;

@@ -2263,7 +2263,6 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.Max_Propre = 1;
 	_vm->_globals._maxLineLength = 1;
 	_vm->_globals.Max_Perso_Y = 440;
-	_vm->_globals.NOSPRECRAN = true;
 	_vm->_globals.PLAN_FLAG = true;
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.NOMARCHE = false;
@@ -2280,7 +2279,7 @@ void ObjectsManager::PLAN_BETA() {
 	_spritePtr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_animationManager.loadAnim("PLAN");
 	_vm->_graphicsManager.VISU_ALL();
-	_vm->_graphicsManager.INI_ECRAN2("PLAN");
+	_vm->_graphicsManager.INI_ECRAN2("PLAN", false);
 	for (int v2 = 0; v2 <= 15; v2++)
 		_vm->_globals.CACHE_OFF(v2);
 	_vm->_globals.CACHE_OFF(19);
@@ -2357,7 +2356,6 @@ void ObjectsManager::PLAN_BETA() {
 	removeSprite(0);
 	_spritePtr = _vm->_globals.freeMemory(_spritePtr);
 	CLEAR_ECRAN();
-	_vm->_globals.NOSPRECRAN = false;
 	_vm->_globals.PLAN_FLAG = false;
 }
 
@@ -2695,7 +2693,6 @@ void ObjectsManager::CLEAR_ECRAN() {
 	_vm->_globals.GOACTION = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
-	_vm->_globals.NOSPRECRAN = false;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_globals.g_old_sens = -1;
 	my_anim = 1;
@@ -4964,7 +4961,7 @@ void ObjectsManager::lockAnimX(int idx, int a2) {
 }
 
 void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
-							   const Common::String &animFile, const Common::String &s4, int v) {
+							   const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
 	int v5;
 	int v7;
 	int v8;
@@ -4989,10 +4986,10 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_animationManager.loadAnim(animFile);
 	_vm->_graphicsManager.VISU_ALL();
 	if (!s4.empty()) {
-		if (!_vm->_globals.NOSPRECRAN)
-			_vm->_graphicsManager.INI_ECRAN(s4);
-		if (!s4.empty() && _vm->_globals.NOSPRECRAN)
-			_vm->_graphicsManager.INI_ECRAN2(s4);
+		if (initializeScreen)
+			_vm->_graphicsManager.INI_ECRAN(s4, initializeScreen);
+		if (!s4.empty() && !initializeScreen)
+			_vm->_graphicsManager.INI_ECRAN2(s4, initializeScreen);
 	}
 	_vm->_eventsManager.mouseOn();
 	if (_vm->_globals._screenId == 61) {
@@ -5059,7 +5056,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 }
 
 void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
-								const Common::String &animFile, const Common::String &s4, int v) {
+								const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
 	int mouseButtons;
 	bool breakFlag;
 	int xp, yp;
@@ -5086,10 +5083,10 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		_vm->_graphicsManager.VISU_ALL();
 	}
 	if (!s4.empty()) {
-		if (!_vm->_globals.NOSPRECRAN)
-			_vm->_graphicsManager.INI_ECRAN(s4);
+		if (initializeScreen)
+			_vm->_graphicsManager.INI_ECRAN(s4, initializeScreen);
 		else
-			_vm->_graphicsManager.INI_ECRAN2(s4);
+			_vm->_graphicsManager.INI_ECRAN2(s4, initializeScreen);
 	}
 	_vm->_eventsManager.mouseOn();
 	_vm->_eventsManager._mouseCursorId = 4;

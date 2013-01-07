@@ -1753,16 +1753,16 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 }
 
 // Init Screen
-void GraphicsManager::INI_ECRAN(const Common::String &file) {
-	OPTI_INI(file, 0);
+void GraphicsManager::INI_ECRAN(const Common::String &file, bool initializeScreen) {
+	OPTI_INI(file, 0, initializeScreen);
 }
 
 // Init Screen 2
-void GraphicsManager::INI_ECRAN2(const Common::String &file) {
-	OPTI_INI(file, 2);
+void GraphicsManager::INI_ECRAN2(const Common::String &file, bool initializeScreen) {
+	OPTI_INI(file, 2, initializeScreen);
 }
 
-void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
+void GraphicsManager::OPTI_INI(const Common::String &file, int mode, bool initializeScreen) {
 	Common::String filename = file + ".ini";
 	byte *ptr = _vm->_fileManager.searchCat(filename, 1);
 
@@ -1773,7 +1773,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 	if (!mode) {
 		filename = file + ".spr";
 		_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
-		if (!_vm->_globals.NOSPRECRAN) {
+		if (initializeScreen) {
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.searchCat(filename, 8);
 			if (_vm->_globals.SPRITE_ECRAN) {
 				_vm->_fileManager.constructFilename("LINK", filename);
