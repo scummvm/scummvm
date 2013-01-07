@@ -72,7 +72,7 @@ void FileManager::initCensorship() {
 	_vm->_globals._censorshipFl = false;
 
 	// If file doesn't exist, fallback to uncensored
-	if (!fileExists("SYSTEM", "BLOOD.DAT")) {
+	if (fileExists("SYSTEM", "BLOOD.DAT")) {
 		constructFilename("SYSTEM", "BLOOD.DAT");
 		char *data = (char *)loadFile(_vm->_globals._curFilename);
 
@@ -117,8 +117,7 @@ bool FileManager::fileExists(const Common::String &folder, const Common::String 
 	Common::String filename = folder.empty() ? file :
 		Common::String::format("%s/%s", folder.c_str(), file.c_str());
 
-	Common::File f;
-	return !f.exists(filename);
+	return Common::File::exists(filename);
 }
 
 /**

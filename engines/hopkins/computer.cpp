@@ -328,7 +328,7 @@ static char _frenchText[] =
  */
 void ComputerManager::loadMenu() {
 	char *ptr;
-	if (!_vm->_fileManager.fileExists("LINK", "COMPUTAN.TXT")) {
+	if (_vm->_fileManager.fileExists("LINK", "COMPUTAN.TXT")) {
 		_vm->_fileManager.constructFilename("LINK", "COMPUTAN.TXT");
 		ptr = (char *)_vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	} else if (_vm->_globals._language == LANG_FR) {
