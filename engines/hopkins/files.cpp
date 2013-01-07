@@ -118,9 +118,8 @@ void FileManager::constructFilename(const Common::String &folder, const Common::
 /**
  * Construct Linux filename
  */
-Common::String FileManager::constructLinuxFilename(const Common::String &file) {
+void FileManager::constructLinuxFilename(const Common::String &file) {
 	_vm->_globals._curFilename = file;
-	return file;
 }
 
 /**
