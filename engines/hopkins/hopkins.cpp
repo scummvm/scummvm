@@ -105,24 +105,24 @@ Common::Error HopkinsEngine::run() {
 		if (getIsDemo())
 			runLinuxDemo();
 		else
-			runLinuxFull();
+			runFull();
 	} else if (getPlatform() == Common::kPlatformWindows) {
 		if (getIsDemo())
 			runWin95Demo();
 		else
-			runWin95full();
+			runFull();
 	} else if (getPlatform() == Common::kPlatformBeOS) {
 		if (getIsDemo()) {
 			warning("Unhandled version, switching to linux demo");
 			runLinuxDemo();
 		} else
-			runBeOSFull();
+			runFull();
 	} else {
 		if (getIsDemo()) {
 			warning("Unhandled version, switching to linux demo");
 			runLinuxDemo();
 		} else
-			runOS2Full();
+			runFull();
 	}
 
 	return Common::kNoError;
@@ -782,1595 +782,61 @@ bool HopkinsEngine::runLinuxDemo() {
 	return true;
 }
 
-bool HopkinsEngine::runOS2Full() {
+bool HopkinsEngine::runFull() {
+	//warning("TODO: Init_Interrupt()");					// BeOS / Windows
+	if (getPlatform() == Common::kPlatformLinux)
+		_soundManager.WSOUND(16);
+
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
-	warning("_graphicsManager.loadImage(\"VERSW\");");
-	warning("_graphicsManager.FADE_INW();");
-	_eventsManager.delay(500);
-	_graphicsManager.fadeOutLong();
-	_globals.iRegul = 1;
 
-	// Added lock and unlock to avoid crash
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-
-	_graphicsManager.clearPalette();
-
-	// Add 16ms delay in order to match the Linux and Win95 versions
-	_animationManager.playAnim("MP.ANM", 10, 16, 200);
-	_graphicsManager.fadeOutLong();
-	if (!_eventsManager._escKeyFl)
-		playIntro();
-	_graphicsManager.loadImage("H2");
-	_graphicsManager.fadeInLong();
-	_globals.iRegul = 0;
-	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
-	_globals.PERSO_TYPE = 0;
-	_globals.PLANX = _globals.PLANY = 0;
-	memset(_globals._saveData, 0, 1996);
-	_globals._exitId = 0;
-	for (;;) {
-		if (_globals._exitId == 300)
-			_globals._exitId = 0;
-		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.menu();
-			if (_globals._exitId == -1)
-				break;
-		}
-
-		if (g_system->getEventManager()->shouldQuit())
-			break;
-
-		switch (_globals._exitId) {
-		case 1:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
-			break;
-
-		case 3:
-			if (!_globals._saveData->data[170]) {
-				_soundManager.WSOUND(3);
-				_graphicsManager.loadImage("fond");
-				_graphicsManager.fadeInLong();
-				_eventsManager.delay(5000);
-				_graphicsManager.fadeOutLong();
-				_globals.iRegul = 1;
-				_soundManager.SPECIAL_SOUND = 2;
-
-				// Added lock and unlock to avoid crash
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-
-				_graphicsManager.clearPalette();
-				_animationManager.playAnim("BANQUE.ANM", 200, 12, 200);
-				_soundManager.SPECIAL_SOUND = 0;
-				_soundManager.DEL_SAMPLE(1);
-				_soundManager.DEL_SAMPLE(2);
-				_soundManager.DEL_SAMPLE(3);
-				_soundManager.DEL_SAMPLE(4);
-				_graphicsManager.fadeOutLong();
-				_globals._saveData->data[170] = 1;
-			}
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
-			break;
-
-		case 4:
-			_globals._disableInventFl = true;
-			_objectsManager.PLAN_BETA();
-			_globals._disableInventFl = false;
-			break;
-
-		case 5:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 455;
-			if (_globals._saveData->data[80]) {
-				if (_globals._saveData->data[80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
-			}
-			else
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
-			break;
-
-		case 6:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
-			break;
-
-		case 7:
-			if (_globals._saveData->data[220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
-			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
-			break;
-
-		case 8:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
-			break;
-
-		case 9:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[225])
-				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
-			else
-				bombExplosion();
-			break;
-
-		case 10:
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
-			break;
-
-		case 11:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
-			break;
-
-		case 12:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[225])
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
-			else
-				bombExplosion();
-			break;
-
-		case 13:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
-			break;
-
-		case 14:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
-			break;
-
-		case 15:
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18, false);
-			break;
-
-		case 16:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[113] == 1)
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM", "IM16", 7, true);
-			else {
-				if (!_globals._saveData->data[113])
-					_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
-			}
-			break;
-
-		case 17:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[117] == 1)
-				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
-			else {
-				if (!_globals._saveData->data[117])
-					_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
-			}
-			if (_globals._exitId == 18) {
-				_globals.iRegul = 1;
-
-				// Added lock and unlock to avoid crash
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-
-				_graphicsManager.clearPalette();
-//				_soundManager.WSOUND_OFF();
-				_soundManager.WSOUND(6);
-				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 18:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6, false);
-			break;
-
-		case 19:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[123])
-				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
-			else
-				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
-			break;
-
-		case 20:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 10;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
-			if (_globals._exitId == 17) {
-				_globals.iRegul = 1;
-				// _soundManager.WSOUND_OFF();
-
-				// Added lock and unlock to avoid crash
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-
-				_graphicsManager.clearPalette();
-				_soundManager.WSOUND(6);
-				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 22:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
-			break;
-
-		case 23:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
-			break;
-
-		case 24:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[181]) {
-				if (_globals._saveData->data[181] == 1 )
-					_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1, true);
-			} else
-				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
-			break;
-
-		case 25:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8, true);
-			break;
-
-		case 26:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8, true);
-			break;
-
-		case 27:
-			_globals.Max_Propre = 10;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[177] == 1)
-				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
-			else {
-				if (!_globals._saveData->data[177])
-					_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
-			}
-			break;
-
-		case 28:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[166] != 1 || _globals._saveData->data[167] != 1 )
-				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
-			else
-				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1, false);
-			break;
-
-		case 29:
-			_globals.Max_Propre = 60;
-			_globals._maxLineLength = 50;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
-			break;
-
-		case 30:
-			_globals.Max_Propre = 10;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
-			break;
-
-		case 31:
-			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
-			break;
-
-		case 32:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
-			break;
-
-		case 33:
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
-			break;
-
-		case 34:
-			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
-			break;
-
-		case 35:
-		case 36:
-		case 37:
-		case 38:
-		case 39:
-		case 40:
-		case 41: {
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 435;
-			_globals._disableInventFl = false;
-			_globals._forestFl = true;
-			Common::String im = Common::String::format("IM%d", _globals._exitId);
-			_soundManager.WSOUND(13);
-			if (_globals._forestSprite == g_PTRNUL) {
-				_fileManager.constructFilename("SYSTEM", "HOPDEG.SPR");
-				_globals._forestSprite = _objectsManager.loadSprite(_globals._curFilename);
-				_soundManager.loadSample(1, "SOUND41.WAV");
-			}
-			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
-			if (_globals._exitId < 35 || _globals._exitId > 49 ) {
-				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
-				_globals._forestFl = false;
-				_soundManager.DEL_SAMPLE(1);
-			}
-			break;
-			}
-
-		case 50:
-			displayPlane();
-			_globals._exitId = 51;
-			break;
-
-		case 51:
-			_globals.Max_Propre = 20;
-			_globals._maxLineLength = 10;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
-			break;
-
-		case 52:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
-			break;
-
-		case 54:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
-			break;
-
-		case 55:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
-			break;
-
-		case 56:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
-			break;
-
-		case 57:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
-			break;
-
-		case 58:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
-			break;
-
-		case 59:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
-			break;
-
-		case 60:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
-			break;
-
-		case 61:
-			if (_globals._saveData->data[311] == 1 && !_globals._saveData->data[312] )
-				handleConflagration();
-			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
-			break;
-
-		case 62:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
-			break;
-
-		case 63:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
-			break;
-
-		case 64:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
-			break;
-
-		case 65:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
-			break;
-
-		case 66:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
-			break;
-
-		case 67:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
-			break;
-
-		case 68:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
-			break;
-
-		case 69:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
-			break;
-
-		case 70:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
-			break;
-
-		case 71:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
-			break;
-
-		case 73:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[318] == 1)
-				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
-			else {
-				if (!_globals._saveData->data[318])
-					_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
-			}
-			break;
-
-		case 75:
-			BASE();
-			break;
-
-		case 77:
-			OCEAN(77, "OCEAN01", 3, 0, 84, 0, 0, 25);
-			break;
-
-		case 78:
-			OCEAN(78, "OCEAN02", 1, 0, 91, 84, 0, 25);
-			break;
-
-		case 79:
-			OCEAN(79, "OCEAN03", 7, 87, 0, 0, 83, 25);
-			break;
-
-		case 80:
-			OCEAN(80, "OCEAN04", 1, 86, 88, 0, 81, 25);
-			break;
-
-		case 81:
-			OCEAN(81, "OCEAN05", 1, 91, 82, 80, 85, 25);
-			break;
-
-		case 82:
-			OCEAN(82, "OCEAN06", 7, 81, 0, 88, 0, 25);
-			break;
-
-		case 83:
-			OCEAN(83, "OCEAN07", 1, 89, 0, 79, 88, 25);
-			break;
-
-		case 84:
-			OCEAN(84, "OCEAN08", 1, 77, 0, 0, 78, 25);
-			break;
-
-		case 85:
-			OCEAN(85, "OCEAN09", 1, 0, 0, 81, 0, 25);
-			break;
-
-		case 86:
-			OCEAN(86, "OCEAN10", 1, 0, 80, 0, 91, 25);
-			break;
-
-		case 87:
-			OCEAN(87, "OCEAN11", 3, 0, 79, 90, 0, 25);
-			break;
-
-		case 88:
-			OCEAN(88, "OCEAN12", 1, 80, 0, 83, 82, 25);
-			break;
-
-		case 89:
-			OCEAN(89, "OCEAN13", 3, 0, 83, 0, 0, 25);
-			break;
-
-		case 90:
-			BASED();
-			break;
-
-		case 91:
-			OCEAN(91, "OCEAN15", 3, 78, 81, 86, 0, 25);
-			break;
-
-		case 93:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[330])
-				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 26, true);
-			else
-				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26, true);
-			break;
-
-		case 94:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
-			break;
-
-		case 95:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
-			break;
-
-		case 96:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
-			break;
-
-		case 97:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
-			if (_globals._exitId == 18) {
-				_globals.iRegul = 1;
-				// _soundManager.WSOUND_OFF();
-
-				// Added lock and unlock to avoid crash
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-
-				_graphicsManager.clearPalette();
-				_soundManager.WSOUND(6);
-				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 98:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
-			break;
-
-		case 99:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
-			break;
-
-		case 100:
-			playEnding();
-			break;
-
-		case 111:
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
-			break;
-
-		case 112:
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
-			break;
-
-		case 113:
-			_globals._exitId = 0;
-			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[6] = _globals._screenId;
-			_globals._screenId = 113;
-			_globals._saveData->data[5] = 113;
-			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.DD_VBL();
-			memset(_graphicsManager._vesaBuffer, 0, 307200);
-			memset(_graphicsManager._vesaScreen, 0, 307200);
-			_graphicsManager.clearPalette();
-			_graphicsManager.RESET_SEGMENT_VESA();
-			break;
-
-		case 114:
-			_globals._exitId = 0;
-			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[6] = _globals._screenId;
-			_globals._screenId = 114;
-			_globals._saveData->data[5] = 114;
-			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			break;
-
-		case 115:
-			_globals._exitId = 0;
-			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[6] = _globals._screenId;
-			_globals._screenId = 115;
-			_globals._saveData->data[5] = 115;
-			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			break;
-
-		case 150:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-
-			// Added lock and unlock to avoid crash
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR1A.ANM", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 151:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-
-			// Added lock and unlock to avoid crash
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR3A.ANM", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 152:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-
-			// Added lock and unlock to avoid crash
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR4A.ANM", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 194:
-		case 195:
-		case 196:
-		case 197:
-		case 198:
-		case 199:
-			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-			_globals.iRegul = 1;
-			// _soundManager.WSOUND_OFF();
-			_soundManager.WSOUND(23);
-			_globals._exitId = handleBaseMap();
-			// _soundManager.WSOUND_OFF();
-			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
-			_globals.PERSO_TYPE = 0;
-			_globals.iRegul = 0;
-			break;
-		}
+	if (getPlatform() == Common::kPlatformLinux) {
+		_globals._helicopterFl = false;
+		_eventsManager.mouseOff();
+	} else if (getPlatform() == Common::kPlatformWindows) {
+		_globals._helicopterFl = false;
+		_globals.iRegul = 1;
+		// warning("TODO: Affiche_Version();");
+	} else {
+		//warning("_graphicsManager.loadImage(\"VERSW\");");	// OS/2
+		//warning("_graphicsManager.FADE_INW();");				// OS/2
+		_eventsManager.delay(500);
+		_graphicsManager.fadeOutLong();
+		_globals.iRegul = 1;
 	}
-	_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-	warning("sub_33C70(v18);");
-	warning("sub_39460(v19);");
-	warning("sub_44134();");
-	restoreSystem();
-	return true;
-}
 
-bool HopkinsEngine::runBeOSFull() {
-	warning("TODO: Init_Interrupt()");
-	_globals.loadObjects();
-	_objectsManager.changeObject(14);
-	_objectsManager.addObject(14);
-	_eventsManager.delay(500);
-	_graphicsManager.fadeOutLong();
-	_globals.iRegul = 1;
-
-	// Added lock and unlock to avoid crash
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
-
 	_graphicsManager.clearPalette();
 
-	// Add 16ms delay in order to match the Linux and Win95 versions
-	_animationManager.playAnim("MP.ANM", 10, 16, 200);
-	_graphicsManager.fadeOutLong();
-	if (!_eventsManager._escKeyFl)
-		playIntro();
-	_graphicsManager.fadeOutShort();
-	_graphicsManager.loadImage("H2");
-	_graphicsManager.fadeInLong();
-	_graphicsManager.fadeOutLong();
-	_globals.iRegul = 0;
-	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
-	_globals.PERSO_TYPE = 0;
-	_globals.PLANX = _globals.PLANY = 0;
-	memset(_globals._saveData, 0, 1996);
-	_globals._exitId = 0;
-
-	for (;;) {
-
-		if (_globals._exitId == 300)
-			_globals._exitId = 0;
-		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.menu();
-			if (_globals._exitId == -1) {
-				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-				restoreSystem();
-			}
-		}
-
-		if (g_system->getEventManager()->shouldQuit())
-			return false;
-
-		switch (_globals._exitId) {
-		case 1:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
-			break;
-
-		case 3:
-			if (!_globals._saveData->data[svField170]) {
-				_soundManager.WSOUND(3);
-				_graphicsManager.loadImage("FOND");
-				_graphicsManager.fadeInLong();
-				_eventsManager.delay(5000);
-				_graphicsManager.fadeOutLong();
-				_globals.iRegul = 1;
-				_soundManager.SPECIAL_SOUND = 2;
-
-				// Added lock and unlock to avoid crash
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-
-				_graphicsManager.clearPalette();
-				_animationManager.playAnim("BANQUE.ANM", 200, 12, 200);
-				_soundManager.SPECIAL_SOUND = 0;
-				_soundManager.DEL_SAMPLE(1);
-				_soundManager.DEL_SAMPLE(2);
-				_soundManager.DEL_SAMPLE(3);
-				_soundManager.DEL_SAMPLE(4);
-				_graphicsManager.fadeOutLong();
-				_globals._saveData->data[svField170] = 1;
-			}
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
-			break;
-
-		case 4:
-			_globals._disableInventFl = true;
-			_objectsManager.PLAN_BETA();
-			_globals._disableInventFl = false;
-			break;
-
-		case 5:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 455;
-			if (_globals._saveData->data[svField80]) {
-				if (_globals._saveData->data[svField80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
-			} else {
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
-			}
-			break;
-
-		case 6:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
-			break;
-
-		case 7:
-			if (_globals._saveData->data[svField220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
-			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
-			break;
-
-		case 8:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
-			break;
-
-		case 9:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 440;
-			if (!_globals._saveData->data[svField225])
-				bombExplosion();
-			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
-			break;
-
-		case 10:
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
-			break;
-
-		case 11:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
-			break;
-
-		case 12:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField225]) {
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
-			} else {
-				bombExplosion();
-			}
-			break;
-
-		case 13:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
-			break;
-
-		case 14:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
-			break;
-
-		case 15:
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18, false);
-			break;
-
-		case 16:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField113] == 1) {
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
-			} else if (!_globals._saveData->data[svField113]) {
-				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
-			}
-			break;
-
-		case 17:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField117] == 1) {
-				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
-			} else if (!_globals._saveData->data[svField117]) {
-				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
-			}
-			if (_globals._exitId == 18) {
-				_globals.iRegul = 1;
-
-				// Added lock and unlock to avoid crash
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-
-				_graphicsManager.clearPalette();
-				_soundManager.WSOUND_OFF();
-				_soundManager.WSOUND(6);
-				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 18:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6, false);
-			break;
-
-		case 19:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField123])
-				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
-			else
-				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
-			break;
-
-		case 20:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 10;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
-			if (_globals._exitId == 17) {
-				_globals.iRegul = 1;
-				_soundManager.WSOUND_OFF();
-
-				// Added lock and unlock to avoid crash
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-
-				_graphicsManager.clearPalette();
-				_soundManager.WSOUND(6);
-				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 22:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
-			break;
-
-		case 23:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
-			break;
-
-		case 24:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField181]) {
-				if (_globals._saveData->data[svField181] == 1)
-					_objectsManager.PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
-			} else {
-				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
-			}
-			break;
-
-		case 25:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8, true);
-			break;
-
-		case 26:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8, true);
-			break;
-
-		case 27:
-			_globals.Max_Propre = 10;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField177] == 1) {
-				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
-			} else if (!_globals._saveData->data[svField177]) {
-				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
-			}
-			break;
-
-		case 28:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField166] != 1 || _globals._saveData->data[svField167] != 1)
-				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
-			else
-				_objectsManager.PERSONAGE2("IM28A", "IM28", "ANIM28", "IM28", 1, false);
-			break;
-
-		case 29:
-			_globals.Max_Propre = 60;
-			_globals._maxLineLength = 50;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
-			break;
-
-		case 30:
-			_globals.Max_Propre = 10;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
-			break;
-
-		case 31:
-			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
-			break;
-
-		case 32:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
-			break;
-
-		case 33:
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
-			break;
-
-		case 34:
-			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
-			break;
-
-		case 35:
-		case 36:
-		case 37:
-		case 38:
-		case 39:
-		case 40:
-		case 41: {
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 435;
-			_globals._disableInventFl = false;
-			_globals._forestFl = true;
-			Common::String im = Common::String::format("IM%d", _globals._exitId);
-			_soundManager.WSOUND(13);
-			if (_globals._forestSprite == g_PTRNUL) {
-				_fileManager.constructFilename("SYSTEM", "HOPDEG.SPR");
-				_globals._forestSprite = _objectsManager.loadSprite(_globals._curFilename);
-				_soundManager.loadSample(1, "SOUND41.WAV");
-			}
-
-			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
-			if ((_globals._exitId  < 35) || (_globals._exitId > 49)) {
-				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
-				_globals._forestFl = false;
-				_soundManager.DEL_SAMPLE(1);
-			}
-			break;
-			}
-
-		case 50:
-			displayPlane();
-			_globals._exitId = 51;
-			break;
-
-		case 51:
-			_globals.Max_Propre = 20;
-			_globals._maxLineLength = 10;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
-			break;
-
-		case 52:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
-			break;
-
-		case 54:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
-			break;
-
-		case 55:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
-			break;
-
-		case 56:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
-			break;
-
-		case 57:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
-			break;
-
-		case 58:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
-			break;
-
-		case 59:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
-			break;
-
-		case 60:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
-			break;
-
-		case 61:
-			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
-				handleConflagration();
-			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
-			break;
-
-		case 62:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
-			break;
-
-		case 63:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
-			break;
-
-		case 64:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
-			break;
-
-		case 65:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
-			break;
-
-		case 66:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
-			break;
-
-		case 67:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
-			break;
-
-		case 68:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
-			break;
-
-		case 69:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
-			break;
-
-		case 70:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
-			break;
-
-		case 71:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
-			break;
-
-		case 73:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField318] == 1) {
-				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
-			} else if (!_globals._saveData->data[svField318]) {
-				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
-			}
-			break;
-
-		case 75:
-			BASE();
-			break;
-
-		case 77:
-			OCEAN(77, "OCEAN01", 3, 0, 84, 0, 0, 25);
-			break;
-
-		case 78:
-			OCEAN(78, "OCEAN02", 1, 0, 91, 84, 0, 25);
-			break;
-
-		case 79:
-			OCEAN(79, "OCEAN03", 7, 87, 0, 0, 83, 25);
-			break;
-
-		case 80:
-			OCEAN(80, "OCEAN04", 1, 86, 88, 0, 81, 25);
-			break;
-
-		case 81:
-			OCEAN(81, "OCEAN05", 1, 91, 82, 80, 85, 25);
-			break;
-
-		case 82:
-			OCEAN(82, "OCEAN06", 7, 81, 0, 88, 0, 25);
-			break;
-
-		case 83:
-			OCEAN(83, "OCEAN07", 1, 89, 0, 79, 88, 25);
-			break;
-
-		case 84:
-			OCEAN(84, "OCEAN08", 1, 77, 0, 0, 78, 25);
-			break;
-
-		case 85:
-			OCEAN(85, "OCEAN09", 1, 0, 0, 81, 0, 25);
-			break;
-
-		case 86:
-			OCEAN(86, "OCEAN10", 1, 0, 80, 0, 91, 25);
-			break;
-
-		case 87:
-			OCEAN(87, "OCEAN11", 3, 0, 79, 90, 0, 25);
-			break;
-
-		case 88:
-			OCEAN(88, "OCEAN12", 1, 80, 0, 83, 82, 25);
-			break;
-
-		case 89:
-			OCEAN(89, "OCEAN13", 3, 0, 83, 0, 0, 25);
-			break;
-
-		case 90:
-			BASED();
-			break;
-
-		case 91:
-			OCEAN(91, "OCEAN15", 3, 78, 81, 86, 0, 25);
-			break;
-
-		case 93:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField330])
-				_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 26, true);
-			else
-				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26, true);
-			break;
-
-		case 94:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
-			break;
-
-		case 95:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
-			break;
-
-		case 96:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
-			break;
-
-		case 97:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
-			if (_globals._exitId == 18) {
-				_globals.iRegul = 1;
-				_soundManager.WSOUND_OFF();
-
-				// Added lock and unlock to avoid crash
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-
-				_graphicsManager.clearPalette();
-				_soundManager.WSOUND(6);
-				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 98:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
-			break;
-
-		case 99:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
-			break;
-
-		case 100:
-			playEnding();
-			break;
-
-		case 111:
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
-			break;
-
-		case 112:
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
-			break;
-
-		case 113:
-			_globals._exitId = 0;
-			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
-			_globals._screenId = 113;
-			_globals._saveData->data[svField5] = 113;
-			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.DD_VBL();
-			memset(_graphicsManager._vesaBuffer, 0, 307200);
-			memset(_graphicsManager._vesaScreen, 0, 307200);
-			_graphicsManager.clearPalette();
-			_graphicsManager.RESET_SEGMENT_VESA();
-			break;
-
-		case 114:
-			_globals._exitId = 0;
-			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
-			_globals._screenId = 114;
-			_globals._saveData->data[svField5] = 114;
-			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			break;
-
-		case 115:
-			_globals._exitId = 0;
-			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
-			_globals._screenId = 115;
-			_globals._saveData->data[svField5] = 115;
-			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			break;
-
-		case 150:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-
-			// Added lock and unlock to avoid crash
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR1A.ANM", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 151:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-
-			// Added lock and unlock to avoid crash
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR3A.ANM", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 152:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-
-			// Added lock and unlock to avoid crash
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR4A.ANM", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 194:
-		case 195:
-		case 196:
-		case 197:
-		case 198:
-		case 199:
-			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-			_globals.iRegul = 1;
-			_soundManager.WSOUND_OFF();
-			_soundManager.WSOUND(23);
-			_globals._exitId = handleBaseMap();
-			_soundManager.WSOUND_OFF();
-			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
-			_globals.PERSO_TYPE = 0;
-			_globals.iRegul = 0;
-			break;
-		}
+	if (getPlatform() == Common::kPlatformLinux) {
+		_graphicsManager.loadImage("H2");
+		_graphicsManager.fadeInLong();
+		_eventsManager.delay(500);
+		_graphicsManager.fadeOutLong();
+
+		_globals._speed = 2;
+		_globals.iRegul = 1;
+		_graphicsManager.FADE_LINUX = 2;
+		_animationManager.playAnim("MP.ANM", 10, 16, 200);
+	} else {
+		_animationManager.playAnim("MP.ANM", 10, 16, 200);
+		_graphicsManager.fadeOutLong();
 	}
-	return true;
-}
 
-bool HopkinsEngine::runWin95full() {
-	warning("TODO: Init_Interrupt_()");
-
-	_globals.loadObjects();
-	_objectsManager.changeObject(14);
-	_objectsManager.addObject(14);
-	_globals._helicopterFl = false;
-	_globals.iRegul = 1;
-
-	warning("TODO: Affiche_Version();");
-
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-	_graphicsManager.clearPalette();
-
-	_animationManager.playAnim("MP.ANM", 10, 16, 200);
-	_graphicsManager.fadeOutLong();
 	if (!_eventsManager._escKeyFl)
 		playIntro();
-	_graphicsManager.loadImage("H2");
-	_graphicsManager.fadeInLong();
-	_eventsManager.delay(500);
-	_graphicsManager.fadeOutLong();
+	if (getPlatform() != Common::kPlatformLinux) {
+		_graphicsManager.fadeOutShort();
+		_graphicsManager.loadImage("H2");
+		_graphicsManager.fadeInLong();
+		_eventsManager.delay(500);
+		_graphicsManager.fadeOutLong();
+	}
 	_globals.iRegul = 0;
 	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
@@ -2379,7 +845,6 @@ bool HopkinsEngine::runWin95full() {
 	for (;;) {
 		if (_globals._exitId == 300)
 			_globals._exitId = 0;
-
 		if (!_globals._exitId) {
 			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
@@ -2412,22 +877,29 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.fadeInLong();
 				_eventsManager.delay(500);
 				_graphicsManager.fadeOutLong();
-				_soundManager.SPECIAL_SOUND = 2;
 				_globals.iRegul = 1;
+				_soundManager.SPECIAL_SOUND = 2;
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
-				if (!_globals._censorshipFl)
-					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
-				else
-					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
+				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows) {
+					if (getPlatform() == Common::kPlatformLinux)
+						_graphicsManager.FADE_LINUX = 2;
+					if (!_globals._censorshipFl)
+						_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
+					else
+						_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
+				} else {
+					_animationManager.playAnim("BANQUE.ANM", 200, 12, 200);
+				}
 				_soundManager.SPECIAL_SOUND = 0;
 				_soundManager.DEL_SAMPLE(1);
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
 				_soundManager.DEL_SAMPLE(4);
-				_graphicsManager.fadeOutLong();
+				if (getPlatform() != Common::kPlatformLinux)
+					_graphicsManager.fadeOutLong();
 				_globals._saveData->data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
@@ -2447,15 +919,15 @@ bool HopkinsEngine::runWin95full() {
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
 			if (_globals._saveData->data[svField80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+				_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			else
 				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
 
 		case 6:
 			_globals.Max_Propre = 15;
-			_globals.Max_Perso_Y = 460;
 			_globals._maxLineLength = 20;
+			_globals.Max_Perso_Y = 460;
 			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
@@ -2474,8 +946,8 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 9:
-			_globals._maxLineLength = 20;
 			_globals.Max_Propre = 15;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[svField225])
 				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
@@ -2488,16 +960,16 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 11:
-			_globals.Max_Perso_Y = 450;
 			_globals.Max_Propre = 15;
 			_globals._maxLineLength = 20;
+			_globals.Max_Perso_Y = 450;
 			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
+			_globals.Max_Propre = 15;
 			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			_globals.Max_Propre = 15;
 			if (_globals._saveData->data[svField225])
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
@@ -2519,776 +991,10 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 15:
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
-			break;
-
-		case 16:
-			_globals.Max_Perso_Y = 450;
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			if (_globals._saveData->data[svField113] == 1) {
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
-			} else if (!_globals._saveData->data[svField113]) {
-				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
-			}
-			break;
-
-		case 17:
-			_globals.Max_Propre = 50;
-			_globals.Max_Perso_Y = 440;
-			_globals._maxLineLength = 40;
-			if (_globals._saveData->data[svField117] == 1) {
-				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
-			} else if (!_globals._saveData->data[svField117]) {
-				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
-			}
-			if (_globals._exitId == 18) {
-				_globals.iRegul = 1;
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
-				_soundManager.WSOUND_OFF();
-				_soundManager.WSOUND(29);
-				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 18:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
-			break;
-
-		case 19:
-			_globals.Max_Perso_Y = 440;
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			if (_globals._saveData->data[svField123])
-				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
+			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
+				_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
 			else
-				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
-			break;
-
-		case 20:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 10;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
-			if (_globals._exitId == 17) {
-				_globals.iRegul = 1;
-				_soundManager.WSOUND_OFF();
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
-				_soundManager.WSOUND(6);
-				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 22:
-			_globals.Max_Propre = 15;
-			_globals.Max_Perso_Y = 445;
-			_globals._maxLineLength = 20;
-			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
-			break;
-
-		case 23:
-			_globals.Max_Propre = 15;
-			_globals.Max_Perso_Y = 440;
-			_globals._maxLineLength = 20;
-			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
-			break;
-
-		case 24:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField181] == 1)
-				_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1, true);
-			else
-				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
-			break;
-
-		case 25:
-			_globals.Max_Propre = 15;
-			_globals.Max_Perso_Y = 445;
-			_globals._maxLineLength = 20;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
-			break;
-
-		case 26:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
-			break;
-
-		case 27:
-			_globals.Max_Perso_Y = 440;
-			_globals._maxLineLength = 15;
-			_globals.Max_Propre = 10;
-			if (_globals._saveData->data[svField177] == 1)
-				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
-			else if (!_globals._saveData->data[svField177])
-				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
-			break;
-
-		case 28:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField166] != 1 || _globals._saveData->data[svField167] != 1)
-				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
-			else
-				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1, false);
-			break;
-
-		case 29:
-			_globals.Max_Propre = 60;
-			_globals._maxLineLength = 50;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
-			break;
-
-		case 30:
-			_globals.Max_Propre = 10;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
-			break;
-
-		case 31:
-			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
-			break;
-
-		case 32:
-			_globals.Max_Propre = 15;
-			_globals.Max_Perso_Y = 445;
-			_globals._maxLineLength = 20;
-			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
-			break;
-
-		case 33:
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
-			break;
-
-		case 34:
-			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
-			break;
-
-		case 35:
-		case 36:
-		case 37:
-		case 38:
-		case 39:
-		case 40:
-		case 41: {
-				_globals.Max_Propre = 50;
-				_globals._maxLineLength = 40;
-				_globals.Max_Perso_Y = 435;
-				_globals._disableInventFl = false;
-				_globals._forestFl = true;
-				Common::String im = Common::String::format("IM%d", _globals._exitId);
-				_soundManager.WSOUND(13);
-				if (_globals._forestSprite == g_PTRNUL) {
-					_fileManager.constructFilename("SYSTEM", "HOPDEG.SPR");
-					_globals._forestSprite = _objectsManager.loadSprite(_globals._curFilename);
-					_soundManager.loadSample(1, "SOUND41.WAV");
-				}
-				_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
-				if (_globals._exitId < 35 || _globals._exitId > 49) {
-					_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
-					_globals._forestFl = false;
-					_soundManager.DEL_SAMPLE(1);
-				}
-				break;
-				}
-		case 50:
-			displayPlane();
-			_globals._exitId = 51;
-			break;
-
-		case 51:
-			_globals._maxLineLength = 10;
-			_globals.Max_Perso_Y = 440;
-			_globals.Max_Propre = 20;
-			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
-			break;
-
-		case 52:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
-			break;
-
-		case 54:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
-			break;
-
-		case 55:
-			_globals.Max_Propre = 40;
-			_globals.Max_Perso_Y = 460;
-			_globals._maxLineLength = 30;
-			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
-			break;
-
-		case 56:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
-			break;
-
-		case 57:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
-			break;
-
-		case 58:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
-			break;
-
-		case 59:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
-			break;
-
-		case 60:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
-			break;
-
-		case 61:
-			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
-				handleConflagration();
-			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
-			break;
-
-		case 62:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
-			break;
-
-		case 63:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
-			break;
-
-		case 64:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
-			break;
-
-		case 65:
-			_globals.Max_Propre = 40;
-			_globals._maxLineLength = 30;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
-			break;
-
-		case 66:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
-			break;
-
-		case 67:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
-			break;
-
-		case 68:
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
-			break;
-
-		case 69:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
-			break;
-
-		case 70:
-			_globals.Max_Perso_Y = 435;
-			_globals.Max_Propre = 8;
-			_globals._maxLineLength = 8;
-			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
-			break;
-
-		case 71:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
-			break;
-
-		case 73:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField318] == 1)
-				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
-			else if (!_globals._saveData->data[svField318])
-				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
-			break;
-
-		case 75:
-			BASE();
-			break;
-
-		case 77:
-			OCEAN(77, "OCEAN01", 3, 0, 84, 0, 0, 25);
-			break;
-
-		case 78:
-			OCEAN(78, "OCEAN02", 1, 0, 91, 84, 0, 25);
-			break;
-
-		case 79:
-			OCEAN(79, "OCEAN03", 7, 87, 0, 0, 83, 25);
-			break;
-
-		case 80:
-			OCEAN(80, "OCEAN04", 1, 86, 88, 0, 81, 25);
-			break;
-
-		case 81:
-			OCEAN(81, "OCEAN05", 1, 91, 82, 80, 85, 25);
-			break;
-
-		case 82:
-			OCEAN(82, "OCEAN06", 7, 81, 0, 88, 0, 25);
-			break;
-
-		case 83:
-			OCEAN(83, "OCEAN07", 1, 89, 0, 79, 88, 25);
-			break;
-
-		case 84:
-			OCEAN(84, "OCEAN08", 1, 77, 0, 0, 78, 25);
-			break;
-
-		case 85:
-			OCEAN(85, "OCEAN09", 1, 0, 0, 81, 0, 25);
-			break;
-
-		case 86:
-			OCEAN(86, "OCEAN10", 1, 0, 80, 0, 91, 25);
-			break;
-
-		case 87:
-			OCEAN(87, "OCEAN11", 3, 0, 79, 90, 0, 25);
-			break;
-
-		case 88:
-			OCEAN(88, "OCEAN12", 1, 80, 0, 83, 82, 25);
-			break;
-
-		case 89:
-			OCEAN(89, "OCEAN13", 3, 0, 83, 0, 0, 25);
-			break;
-
-		case 90:
-			BASED();
-			break;
-
-		case 91:
-			OCEAN(91, "OCEAN15", 3, 78, 81, 86, 0, 25);
-			break;
-
-		case 93:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField330])
-				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 29, true);
-			else
-				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29, true);
-			break;
-
-		case 94:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
-			break;
-
-		case 95:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, true);
-			break;
-
-		case 96:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
-			break;
-
-		case 97:
-			_globals.Max_Perso_Y = 435;
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
-			if (_globals._exitId == 18) {
-				_globals.iRegul = 1;
-				_soundManager.WSOUND_OFF();
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
-				_soundManager.WSOUND(6);
-				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
-				_globals.iRegul = 0;
-			}
-			break;
-
-		case 98:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
-			break;
-
-		case 99:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
-			break;
-
-		case 100:
-			playEnding();
-			break;
-
-		case 111:
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
-			break;
-
-		case 112:
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
-			break;
-
-		case 113:
-			_globals._prevScreenId = _globals._screenId;
-			_globals._screenId = 113;
-			_globals._saveData->data[svField6] = _globals._prevScreenId;
-			_globals._saveData->data[svField5] = _globals._screenId;
-			_globals._exitId = 0;
-			_computerManager.showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.DD_VBL();
-			memset(_graphicsManager._vesaBuffer, 0, 307200);
-			memset(_graphicsManager._vesaScreen, 0, 307200);
-			_graphicsManager.clearPalette();
-			_graphicsManager.RESET_SEGMENT_VESA();
-			break;
-
-		case 114:
-			_globals._exitId = 0;
-			_globals._prevScreenId = _globals._screenId;
-			_globals._screenId = 114;
-			_globals._saveData->data[svField6] = _globals._prevScreenId;
-			_globals._saveData->data[svField5] = _globals._screenId;
-			_computerManager.showComputer(COMPUTER_SAMANTHAS);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			break;
-
-		case 115:
-			_globals._prevScreenId = _globals._screenId;
-			_globals._screenId = 115;
-			_globals._saveData->data[svField6] = _globals._prevScreenId;
-			_globals._saveData->data[svField5] = _globals._screenId;
-			_globals._exitId = 0;
-			_computerManager.showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			break;
-
-		case 150:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 151:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR3A.anm", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 152:
-			_soundManager.WSOUND(16);
-			_globals.iRegul = 1;
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
-			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
-			_globals.iRegul = 0;
-			_globals._exitId = 300;
-			break;
-
-		case 194:
-		case 195:
-		case 196:
-		case 197:
-		case 198:
-		case 199:
-			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-			_globals.iRegul = 1;
-			_soundManager.WSOUND_OFF();
-			warning("TODO: heapshrink();");
-			_soundManager.WSOUND(23);
-			_globals._exitId = WBASE();
-			_soundManager.WSOUND_OFF();
-			warning("TODO: heapshrink();");
-			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
-			_globals.PERSO_TYPE = 0;
-			_globals.iRegul = 0;
-			_graphicsManager._lineNbr = SCREEN_WIDTH;
-			if (_globals._exitId == -1)
-				error("FIN BASE SOUS MARINE");
-			break;
-		}
-	}
-	return true;
-}
-
-bool HopkinsEngine::runLinuxFull() {
-	_soundManager.WSOUND(16);
-
-	_globals.loadObjects();
-	_objectsManager.changeObject(14);
-	_objectsManager.addObject(14);
-
-	_globals._helicopterFl = false;
-	_eventsManager.mouseOff();
-
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-
-	_graphicsManager.loadImage("H2");
-	_graphicsManager.fadeInLong();
-	_eventsManager.delay(500);
-	_graphicsManager.fadeOutLong();
-
-	_globals._speed = 2;
-	_globals.iRegul = 1;
-	_graphicsManager.FADE_LINUX = 2;
-	_animationManager.playAnim("MP.ANM", 10, 16, 200);
-
-	if (!_eventsManager._escKeyFl)
-		playIntro();
-
-	_globals.iRegul = 0;
-	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
-	_globals.PERSO_TYPE = 0;
-	_globals.PLANX = _globals.PLANY = 0;
-	memset(_globals._saveData, 0, 2000);
-	_globals._exitId = 0;
-
-	for (;;) {
-		if (_globals._exitId == 300)
-			_globals._exitId = 0;
-		if (!_globals._exitId) {
-			_globals._exitId = _menuManager.menu();
-			if (_globals._exitId == -1) {
-				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-				restoreSystem();
-				return true;
-			}
-		}
-
-		if (g_system->getEventManager()->shouldQuit())
-			return false;
-
-		switch (_globals._exitId) {
-		case 1:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
-			break;
-
-		case 3:
-			if (!_globals._saveData->data[svField170]) {
-				_soundManager.WSOUND(3);
-				if (_globals._language == LANG_FR)
-					_graphicsManager.loadImage("fondfr");
-				else if (_globals._language == LANG_EN)
-					_graphicsManager.loadImage("fondan");
-				else if (_globals._language == LANG_SP)
-					_graphicsManager.loadImage("fondes");
-				_graphicsManager.fadeInLong();
-				_eventsManager.delay(500);
-				_graphicsManager.fadeOutLong();
-				_globals.iRegul = 1;
-				_soundManager.SPECIAL_SOUND = 2;
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
-				_graphicsManager.FADE_LINUX = 2;
-				if (!_globals._censorshipFl)
-					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
-				else
-					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
-				_soundManager.SPECIAL_SOUND = 0;
-				_soundManager.DEL_SAMPLE(1);
-				_soundManager.DEL_SAMPLE(2);
-				_soundManager.DEL_SAMPLE(3);
-				_soundManager.DEL_SAMPLE(4);
-				_globals._saveData->data[svField170] = 1;
-			}
-
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
-			break;
-
-		case 4:
-			_globals._disableInventFl = true;
-			_objectsManager.PLAN_BETA();
-			_globals._disableInventFl = false;
-			break;
-
-		case 5:
-			_globals.Max_Propre = 5;
-			_globals._maxLineLength = 5;
-			_globals.Max_Perso_Y = 455;
-			if (_globals._saveData->data[svField80]) {
-				if (_globals._saveData->data[svField80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
-			} else {
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
-			}
-			break;
-
-		case 6:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 460;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
-			break;
-
-		case 7:
-			if (_globals._saveData->data[svField220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
-			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
-			break;
-
-		case 8:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 15;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
-			break;
-
-		case 9:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 440;
-			if (!_globals._saveData->data[svField225])
-				bombExplosion();
-			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
-			break;
-
-		case 10:
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
-			break;
-
-		case 11:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
-			break;
-
-		case 12:
-			_globals.Max_Propre = 15;
-			_globals._maxLineLength = 20;
-			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField225]) {
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
-			} else {
-				bombExplosion();
-			}
-			break;
-
-		case 13:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
-			break;
-
-		case 14:
-			_globals.Max_Propre = 50;
-			_globals._maxLineLength = 40;
-			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
-			break;
-
-		case 15:
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
+				_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18, false);
 			break;
 
 		case 16:
@@ -3297,7 +1003,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Perso_Y = 450;
 			if (_globals._saveData->data[svField113] == 1)
 				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
-			else if (!_globals._saveData->data[svField113])
+			else
 				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			break;
 
@@ -3316,9 +1022,19 @@ bool HopkinsEngine::runLinuxFull() {
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
-				_soundManager.WSOUND(29);
-				_graphicsManager.FADE_LINUX = 2;
-				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
+				if (getPlatform() == Common::kPlatformLinux) {
+					_soundManager.WSOUND(29);
+					_graphicsManager.FADE_LINUX = 2;
+					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
+				} else if (getPlatform() == Common::kPlatformWindows) {
+					_soundManager.WSOUND(29);
+					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
+					_graphicsManager.fadeOutShort();
+				} else {
+					_soundManager.WSOUND(6);
+					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
+					_graphicsManager.fadeOutShort();
+				}
 				_globals.iRegul = 0;
 			}
 			break;
@@ -3327,7 +1043,10 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
+			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
+				_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
+			else
+				_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6, false);
 			break;
 
 		case 19:
@@ -3347,14 +1066,17 @@ bool HopkinsEngine::runLinuxFull() {
 			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals._exitId == 17) {
 				_globals.iRegul = 1;
+				_soundManager.WSOUND_OFF();
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
-				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
-				_graphicsManager.FADE_LINUX = 2;
+				if (getPlatform() == Common::kPlatformLinux)
+					_graphicsManager.FADE_LINUX = 2;
 				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
+				if (getPlatform() != Common::kPlatformLinux)
+					_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
@@ -3377,37 +1099,40 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField181]) {
-				if (_globals._saveData->data[svField181] == 1)
-					_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1, true);
-			} else {
+			if (_globals._saveData->data[svField181] == 1)
+				_objectsManager.PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
+			else
 				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
-			}
 			break;
 
 		case 25:
 			_globals.Max_Propre = 15;
 			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
+			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
+				_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
+			else
+				_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8, true);
 			break;
 
 		case 26:
 			_globals.Max_Propre = 50;
 			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
+			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
+				_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
+			else
+				_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8, true);
 			break;
 
 		case 27:
 			_globals.Max_Propre = 10;
 			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField177] == 1) {
+			if (_globals._saveData->data[svField177] == 1)
 				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
-			} else if (!_globals._saveData->data[svField177]) {
+			else
 				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
-			}
 			break;
 
 		case 28:
@@ -3417,7 +1142,7 @@ bool HopkinsEngine::runLinuxFull() {
 			if (_globals._saveData->data[svField166] != 1 || _globals._saveData->data[svField167] != 1)
 				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
 			else
-				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1, false);
+				_objectsManager.PERSONAGE2("IM28A", "IM28", "ANIM28", "IM28", 1, false);
 			break;
 
 		case 29:
@@ -3629,11 +1354,10 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Propre = 15;
 			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField318] == 1) {
+			if (_globals._saveData->data[svField318] == 1)
 				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
-			} else if (!_globals._saveData->data[svField318]) {
+			else
 				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
-			}
 			break;
 
 		case 75:
@@ -3704,10 +1428,17 @@ bool HopkinsEngine::runLinuxFull() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField330])
-				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 29, true);
-			else
-				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29, true);
+			if (_globals._saveData->data[svField330]) {
+				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
+					_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 29, true);
+				else
+					_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 26, true);
+			} else {
+				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
+					_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29, true);
+				else
+					_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26, true);
+			}
 			break;
 
 		case 94:
@@ -3777,11 +1508,11 @@ bool HopkinsEngine::runLinuxFull() {
 			break;
 
 		case 113:
-			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
 			_globals._screenId = 113;
-			_globals._saveData->data[svField5] = 113;
+			_globals._saveData->data[svField6] = _globals._prevScreenId;
+			_globals._saveData->data[svField5] = _globals._screenId;
+			_globals._exitId = 0;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -3796,9 +1527,9 @@ bool HopkinsEngine::runLinuxFull() {
 		case 114:
 			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
 			_globals._screenId = 114;
-			_globals._saveData->data[svField5] = 114;
+			_globals._saveData->data[svField6] = _globals._prevScreenId;
+			_globals._saveData->data[svField5] = _globals._screenId;
 			_computerManager.showComputer(COMPUTER_SAMANTHAS);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -3806,11 +1537,11 @@ bool HopkinsEngine::runLinuxFull() {
 			break;
 
 		case 115:
-			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
 			_globals._screenId = 115;
-			_globals._saveData->data[svField5] = 115;
+			_globals._saveData->data[svField6] = _globals._prevScreenId;
+			_globals._saveData->data[svField5] = _globals._screenId;
+			_globals._exitId = 0;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -3824,8 +1555,9 @@ bool HopkinsEngine::runLinuxFull() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 			_graphicsManager.clearPalette();
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("JOUR1A.anm", 12, 12, 2000);
+			if (getPlatform() == Common::kPlatformLinux)
+				_graphicsManager.FADE_LINUX = 2;
+			_animationManager.playAnim("JOUR1A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals._exitId = 300;
 			break;
@@ -3837,8 +1569,9 @@ bool HopkinsEngine::runLinuxFull() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 			_graphicsManager.clearPalette();
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("JOUR3A.anm", 12, 12, 2000);
+			if (getPlatform() == Common::kPlatformLinux)
+				_graphicsManager.FADE_LINUX = 2;
+			_animationManager.playAnim("JOUR3A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals._exitId = 300;
 			break;
@@ -3850,8 +1583,9 @@ bool HopkinsEngine::runLinuxFull() {
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
 			_graphicsManager.clearPalette();
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("JOUR4A.anm", 12, 12, 2000);
+			if (getPlatform() == Common::kPlatformLinux)
+				_graphicsManager.FADE_LINUX = 2;
+			_animationManager.playAnim("JOUR4A.ANM", 12, 12, 2000);
 			_globals.iRegul = 0;
 			_globals._exitId = 300;
 			break;
@@ -3864,17 +1598,28 @@ bool HopkinsEngine::runLinuxFull() {
 		case 199:
 			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 			_globals.iRegul = 1;
-			_soundManager.WSOUND(23);
-			_globals._exitId = handleBaseMap();
 			_soundManager.WSOUND_OFF();
+			//warning("TODO: heapshrink();");	// Windows
+			_soundManager.WSOUND(23);
+			_globals._exitId = handleBaseMap();	// Handles the base map (non-Windows)
+			//_globals._exitId = WBASE();	// Handles the 3D Doom level (Windows)
+			_soundManager.WSOUND_OFF();
+			//warning("TODO: heapshrink();");	// Windows
 			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
 			_graphicsManager._lineNbr = SCREEN_WIDTH;
+			//if (_globals._exitId == -1)
+			//	error("FIN BASE SOUS MARINE");
 			break;
 		}
 	}
+	_globals.PERSO = _globals.freeMemory(_globals.PERSO);
+	//warning("sub_33C70(v18);");	// OS/2
+	//warning("sub_39460(v19);");	// OS/2
+	//warning("sub_44134();");		// OS/2
+	restoreSystem();
 	return true;
 }
 
@@ -4705,11 +2450,6 @@ int HopkinsEngine::handleBaseMap() {
 		break;
 	}
 	return result;
-}
-
-int HopkinsEngine::WBASE() {
-	warning("STUB: WBASE()");
-	return 300;
 }
 
 void HopkinsEngine::loadCredits() {

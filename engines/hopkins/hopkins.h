@@ -98,11 +98,6 @@ private:
 	 */
 	int  handleBaseMap();
 
-	/**
-	 * Runs the Wolf3D-like in the underground base.
-	 */
-	int  WBASE();
-
 	void BTOCEAN();
 	void OCEAN_HOME();
 	void OCEAN(int16 curExitId, Common::String backgroundFilename, int16 defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId);
@@ -113,10 +108,7 @@ private:
 
 	bool runWin95Demo();
 	bool runLinuxDemo();
-	bool runWin95full();
-	bool runLinuxFull();
-	bool runBeOSFull();
-	bool runOS2Full();
+	bool runFull();
 
 	/**
 	 * Show warning screen about the game being adults only.
