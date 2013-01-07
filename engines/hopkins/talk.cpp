@@ -145,7 +145,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
-	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
+	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
@@ -223,7 +223,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 
 	_vm->_eventsManager.changeMouseCursor(v8);
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
-	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
+	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	_vm->_objectsManager._disableCursorFl = false;
 	_vm->_globals._disableInventFl = v7;
 	STATI = 0;
@@ -520,7 +520,7 @@ void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
 	else
 		_characterPalette[761] = 255;
 
-	_vm->_graphicsManager.setpal_vga256(_characterPalette);
+	_vm->_graphicsManager.setPaletteVGA256(_characterPalette);
 	_vm->_graphicsManager.initColorTable(145, 150, _characterPalette);
 }
 
@@ -1186,11 +1186,11 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
-	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
+	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.setpal_vga256(_vm->_graphicsManager._palette);
+	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 	_vm->_globals._disableInventFl = false;
 	_vm->_graphicsManager.DD_VBL();

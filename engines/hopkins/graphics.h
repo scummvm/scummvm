@@ -125,8 +125,8 @@ public:
 	void fadeInDefaultLength(const byte *surface);
 	void fadeInBreakout();
 	void fateOutBreakout();
-	void setpal_vga256(const byte *palette);
-	void setpal_vga256_linux(const byte *palette, const byte *surface);
+	void setPaletteVGA256(const byte *palette);
+	void setPaletteVGA256WithRefresh(const byte *palette, const byte *surface);
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void changePalette(const byte *palette);

@@ -4588,7 +4588,7 @@ void HopkinsEngine::playIntro() {
 				_eventsManager.VBL();
 				memcpy(&paletteData2, _graphicsManager._palette, 796);
 
-				_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager._vesaBuffer);
+				_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
 				_graphicsManager.FIN_VISU();
 
 				if (shouldQuit())
@@ -4621,7 +4621,7 @@ void HopkinsEngine::playIntro() {
 						_eventsManager.VBL();
 
 					_globals.iRegul = 1;
-					_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager._vesaBuffer);
+					_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
 
 					int v9 = 0;
 					while (!shouldQuit() && !_eventsManager._escKeyFl) {
@@ -4642,7 +4642,7 @@ void HopkinsEngine::playIntro() {
 								_graphicsManager._palette[i] -= v12;
 						}
 
-						_graphicsManager.setpal_vga256_linux(_graphicsManager._palette, _graphicsManager._vesaBuffer);
+						_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
 
 
 						if (2 * v9 > 1) {
@@ -4650,7 +4650,7 @@ void HopkinsEngine::playIntro() {
 								_eventsManager.VBL();
 						}
 
-						_graphicsManager.setpal_vga256_linux(paletteData2, _graphicsManager._vesaBuffer);
+						_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
 						if (20 - v9 > 1) {
 							for (int i = 1; i < 20 - v9; i++)
 								_eventsManager.VBL();
@@ -4658,7 +4658,7 @@ void HopkinsEngine::playIntro() {
 
 						v9 += 2;
 						if (v9 > 15) {
-							_graphicsManager.setpal_vga256_linux(paletteData, _graphicsManager._vesaBuffer);
+							_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
 							for (uint j = 1; j < 100 / _globals._speed; ++j)
 								_eventsManager.VBL();
 
@@ -4673,7 +4673,7 @@ void HopkinsEngine::playIntro() {
 								_eventsManager.VBL();
 
 							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
-							_graphicsManager.setpal_vga256_linux(_graphicsManager._palette, _graphicsManager._vesaBuffer);
+							_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
 
 							for (uint m = 0; m < 50 / _globals._speed; ++m) {
 								if (m == 30 / _globals._speed) {
