@@ -163,7 +163,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 	lockScreen();
 	clearScreen();
 	unlockScreen();
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
+	_vm->_fileManager.constructFilename("BUFFER", file);
 	A_PCX320(_vesaScreen, _vm->_globals._curFilename, _palette);
 	memcpy(_vesaBuffer, _vesaScreen, 64000);
 	SCANLINE(320);
@@ -184,7 +184,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 
 	bool flag = true;
 	if (_vm->_fileManager.searchCat(file, 6) == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
+		_vm->_fileManager.constructFilename("BUFFER", file);
 		if (!f.open(_vm->_globals._curFilename))
 			error("loadScreen - %s", file.c_str());
 
@@ -301,16 +301,16 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 
 	if (typeFlag) {
 		// Load PCX from within the PIC resource
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, "PIC.RES");
+		_vm->_fileManager.constructFilename("BUFFER", "PIC.RES");
 		if (!f.open(_vm->_globals._curFilename))
-			error("(nom)Erreur en cours de lecture.");
+			error("Error opening PIC.RES.");
 		f.seek(_vm->_globals._catalogPos);
 
 	} else {
 		// Load stand alone PCX file
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPIMAGE, file);
+		_vm->_fileManager.constructFilename("BUFFER", file);
 		if (!f.open(_vm->_globals._curFilename))
-		  error("(nom)Erreur en cours de lecture.");
+		  error("Error opening PCX %s.", file.c_str());
 	}
 
 	// Decode the PCX
@@ -1767,7 +1767,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 	byte *ptr = _vm->_fileManager.searchCat(filename, 1);
 
 	if (ptr == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
+		_vm->_fileManager.constructFilename("LINK", filename);
 		ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (!mode) {
@@ -1776,9 +1776,9 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 		if (!_vm->_globals.NOSPRECRAN) {
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.searchCat(filename, 8);
 			if (_vm->_globals.SPRITE_ECRAN) {
-				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
+				_vm->_fileManager.constructFilename("LINK", filename);
 			} else {
-				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "RES_SLI.RES");
+				_vm->_fileManager.constructFilename("LINK", "RES_SLI.RES");
 			}
 			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		}
@@ -1814,7 +1814,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 		byte *dataP = _vm->_fileManager.searchCat(filename, 2);
 		_vm->_globals.COUCOU = dataP;
 		if (g_PTRNUL == dataP) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
+			_vm->_fileManager.constructFilename("LINK", filename);
 			dataP = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.COUCOU = dataP;
 		}

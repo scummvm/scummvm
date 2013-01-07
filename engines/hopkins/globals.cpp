@@ -263,20 +263,6 @@ void Globals::setParent(HopkinsEngine *vm) {
 }
 
 void Globals::setConfig() {
-	HOPIMAGE = "BUFFER";
-	HOPANIM = "ANIM";
-	HOPLINK = "LINK";
-	HOPSAVE = "SAVE";
-	HOPSOUND = "SOUND";
-	HOPMUSIC = "MUSIC";
-	HOPVOICE = "VOICE";
-	HOPANM = "ANM";
-	HOPTSVGA = "TSVGA";
-	HOPSVGA = "SVGA";
-	HOPVGA = "VGA";
-	HOPSEQ = "SEQ";
-	HOPSYSTEM = "SYSTEM";
-
 	// CHECKME: Should be in Globals() but it doesn't work
 	// The Polish version is a translation of the English version. The filenames are the same.
 	switch (_vm->getLanguage()) {
@@ -451,7 +437,7 @@ void Globals::CLEAR_VBOB() {
 
 // Load Object
 void Globals::loadObjects() {
-	_vm->_fileManager.constructFilename(HOPSYSTEM, "OBJET.DAT");
+	_vm->_fileManager.constructFilename("SYSTEM", "OBJET.DAT");
 	byte *data = _vm->_fileManager.loadFile(_curFilename);
 	byte *srcP = data;
 
@@ -530,11 +516,11 @@ void Globals::loadCache(const Common::String &file) {
 	Common::File f;
 
 	resetCache();
-	_vm->_fileManager.constructFilename(HOPLINK, file);
+	_vm->_fileManager.constructFilename("LINK", file);
 	ptr = _vm->_fileManager.loadFile(_curFilename);
 	v16 = Common::String((const char *)ptr);
 
-	_vm->_fileManager.constructFilename(HOPLINK, v16);
+	_vm->_fileManager.constructFilename("LINK", v16);
 
 	if (!f.exists(_curFilename))
 		return;

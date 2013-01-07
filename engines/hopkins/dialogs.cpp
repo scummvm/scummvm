@@ -60,11 +60,11 @@ void DialogsManager::showOptionsDialog() {
 	_vm->_eventsManager.changeMouseCursor(0);
 	_vm->_eventsManager.VBL();
 	if (_vm->_globals._language == LANG_FR)
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIFR.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "OPTIFR.SPR");
 	else if (_vm->_globals._language == LANG_EN)
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIAN.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "OPTIAN.SPR");
 	else if (_vm->_globals._language == LANG_SP)
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OPTIES.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "OPTIES.SPR");
 
 	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_globals._optionDialogFl = true;
@@ -320,13 +320,13 @@ LABEL_7:
 
 	switch (_vm->_globals._language) {
 		case LANG_EN:
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTAN.SPR");
+			_vm->_fileManager.constructFilename("SYSTEM", "INVENTAN.SPR");
 			break;
 		case LANG_FR:
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTFR.SPR");
+			_vm->_fileManager.constructFilename("SYSTEM", "INVENTFR.SPR");
 			break;
 		case LANG_SP:
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENTES.SPR");
+			_vm->_fileManager.constructFilename("SYSTEM", "INVENTES.SPR");
 			break;
 	}
 
@@ -339,7 +339,7 @@ LABEL_7:
 	_vm->_fileManager.readStream(f, _vm->_dialogsManager._inventWin1, filesize);
 	f.close();
 
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "INVENT2.SPR");
+	_vm->_fileManager.constructFilename("SYSTEM", "INVENT2.SPR");
 	_inventBuf2 = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 
 	int v19 = _inventX = _vm->_graphicsManager._scrollOffset + 152;
@@ -618,18 +618,18 @@ void DialogsManager::showSaveLoad(int a1) {
 
 	switch (_vm->_globals._language) {
 	case LANG_EN:
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEAN.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "SAVEAN.SPR");
 		break;
 	case LANG_FR:
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEFR.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "SAVEFR.SPR");
 		break;
 	case LANG_SP:
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVEES.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "SAVEES.SPR");
 		break;
 	}
 
 	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "SAVE2.SPR");
+	_vm->_fileManager.constructFilename("SYSTEM", "SAVE2.SPR");
 	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 483, 360, 0);
 

@@ -62,7 +62,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_characterBuffer = _vm->_fileManager.searchCat(filename, 5);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
+		_vm->_fileManager.constructFilename("ANIM", filename);
 		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
@@ -81,9 +81,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
 	_characterSprite = _vm->_fileManager.searchCat(spriteFilename, 7);
 	if (_characterSprite) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, spriteFilename);
+		_vm->_fileManager.constructFilename("ANIM", spriteFilename);
 	} else {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
+		_vm->_fileManager.constructFilename("ANIM", "RES_SAN.RES");
 	}
 	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 
@@ -163,7 +163,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_characterBuffer = _vm->_fileManager.searchCat(filename, 5);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
+		_vm->_fileManager.constructFilename("ANIM", filename);
 		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
@@ -576,7 +576,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 
 	v18 = 0;
 	_vm->_globals.police_l = 11;
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
+	_vm->_fileManager.constructFilename("LINK", file);
 
 	// Build up the filename
 	filename = dest = _vm->_globals._curFilename;
@@ -1087,7 +1087,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_characterBuffer = _vm->_fileManager.searchCat(a2, 5);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, a2);
+		_vm->_fileManager.constructFilename("ANIM", a2);
 		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
@@ -1100,9 +1100,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	_characterSprite = _vm->_fileManager.searchCat(v23, 7);
 	if (_characterSprite)
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, v23);
+		_vm->_fileManager.constructFilename("ANIM", v23);
 	else
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
+		_vm->_fileManager.constructFilename("ANIM", "RES_SAN.RES");
 
 	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 

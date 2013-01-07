@@ -165,7 +165,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_textSortArray[v62] = 0;
 
 		_text[idx]._textLoadedFl = true;
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
+		_vm->_fileManager.constructFilename("LINK", filename);
 
 		file = _vm->_globals._curFilename;
 		if (strncmp(file.c_str(), _oldName.c_str(), strlen(file.c_str())) != 0) {
