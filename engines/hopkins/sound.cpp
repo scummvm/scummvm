@@ -614,15 +614,15 @@ void SoundManager::PLAY_SOUND2(const Common::String &file) {
 }
 
 void SoundManager::MODSetSampleVolume() {
-	// No implementatoin needed
+	// No implementation needed
 }
 
 void SoundManager::MODSetVoiceVolume() {
-	// No implementatoin needed
+	// No implementation needed
 }
 
 void SoundManager::MODSetMusicVolume(int volume) {
-	// No implementatoin needed
+	// No implementation needed
 }
 
 void SoundManager::loadSample(int wavIndex, const Common::String &file) {

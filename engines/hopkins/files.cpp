@@ -92,7 +92,7 @@ void FileManager::constructFilename(const Common::String &folder, const Common::
 	Common::String folderToUse = folder;
 
 	// A lot of the code in the original engine based on COPIE_SEQ was used to determine
-	// whether a file resided on the CD or hard disk. Since the ScummVM implementatoin
+	// whether a file resided on the CD or hard disk. Since the ScummVM implementation
 	// requires all the files in the same location, we only need to do a somewhat simpler
 	// check for animations that don't exist in the ANM folder, but rather in special
 	// sub-folders depending on the physical screen resolution being used.
