@@ -2263,7 +2263,6 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_globals.Max_Propre = 1;
 	_vm->_globals.Max_Ligne_Long = 1;
-	_vm->_globals.Max_Propre_Gen = 1;
 	_vm->_globals.Max_Perso_Y = 440;
 	_vm->_globals.NOSPRECRAN = true;
 	_vm->_globals.PLAN_FLAG = true;

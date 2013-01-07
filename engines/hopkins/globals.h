@@ -399,7 +399,6 @@ public:
 	int _prevScreenId;
 	int fmusic;
 	int Max_Propre;
-	int Max_Propre_Gen;
 	int Max_Ligne_Long;
 	int Max_Perso_Y;
 	bool _disableInventFl;

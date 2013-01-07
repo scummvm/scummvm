@@ -145,7 +145,6 @@ Globals::Globals() {
 	_screenId = 0;
 	NOSPRECRAN = false;
 	_prevScreenId = 0;
-	Max_Propre_Gen = 0;
 	Max_Ligne_Long = 0;
 	Max_Perso_Y = 0;
 	Max_Propre = 0;
