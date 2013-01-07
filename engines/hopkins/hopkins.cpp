@@ -129,8 +129,6 @@ Common::Error HopkinsEngine::run() {
 }
 
 bool HopkinsEngine::runWin95Demo() {
-	_globals.SVGA = 1;
-
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
@@ -817,8 +815,6 @@ bool HopkinsEngine::runLinuxDemo() {
 }
 
 bool HopkinsEngine::runOS2Full() {
-	_globals.SVGA = 2;
-
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
@@ -1031,10 +1027,7 @@ bool HopkinsEngine::runOS2Full() {
 				_graphicsManager.clearPalette();
 //				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -1074,10 +1067,7 @@ bool HopkinsEngine::runOS2Full() {
 
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -1508,10 +1498,7 @@ bool HopkinsEngine::runOS2Full() {
 
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -1661,8 +1648,6 @@ bool HopkinsEngine::runOS2Full() {
 }
 
 bool HopkinsEngine::runBeOSFull() {
-	_globals.SVGA = 2;
-
 	warning("TODO: Init_Interrupt()");
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
@@ -1878,11 +1863,7 @@ bool HopkinsEngine::runBeOSFull() {
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -1922,10 +1903,7 @@ bool HopkinsEngine::runBeOSFull() {
 
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -2356,11 +2334,7 @@ bool HopkinsEngine::runBeOSFull() {
 
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -2505,8 +2479,6 @@ bool HopkinsEngine::runBeOSFull() {
 }
 
 bool HopkinsEngine::runWin95full() {
-	_globals.SVGA = 2;
-
 	warning("TODO: Init_Interrupt_()");
 
 	_globals.loadObjects();
@@ -2726,10 +2698,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(29);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -2766,10 +2735,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -3196,10 +3162,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -3561,10 +3524,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(29);
 				_graphicsManager.FADE_LINUX = 2;
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_globals.iRegul = 0;
 			}
 			break;
@@ -3601,10 +3561,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
 				_graphicsManager.FADE_LINUX = 2;
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				_globals.iRegul = 0;
 			}
 			break;
@@ -4031,10 +3988,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -4544,11 +4498,7 @@ void HopkinsEngine::bombExplosion() {
 	_globals.iRegul = 1;
 	_soundManager.SPECIAL_SOUND = 199;
 	_graphicsManager.FADE_LINUX = 2;
-	if (_globals.SVGA == 1)
-		_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
-	else if (_globals.SVGA == 2)
-		_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
-
+	_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 	_soundManager.SPECIAL_SOUND = 0;
 	_graphicsManager.loadImage("IM15");
 	_animationManager.loadAnim("ANIM15");
@@ -4657,59 +4607,31 @@ void HopkinsEngine::BASE() {
 	_graphicsManager.clearPalette();
 	_animationManager._clearAnimationFl = true;
 	_soundManager.WSOUND(25);
-	if (_globals.SVGA == 1) {
-		_animationManager.playAnim("base00.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base05.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base10.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base20.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base30.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base40.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base50.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC00.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC05.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC10.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC20.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl) {
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("OC30.anm", 10, 18, 18);
-		}
-	} else if (_globals.SVGA == 2) {
-		_animationManager.playAnim("base00a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base05a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base10a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base20a.anm", 10, 18, 18);
-		// CHECKME: The original code was doing the opposite test, which looks like a bug.
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base30a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base40a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base50a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC00a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC05a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC10a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC20a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl) {
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("OC30a.anm", 10, 18, 18);
-		}
+	_animationManager.playAnim("base00a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base05a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base10a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base20a.anm", 10, 18, 18);
+	// CHECKME: The original code was doing the opposite test, which looks like a bug.
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base30a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base40a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base50a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("OC00a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("OC05a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("OC10a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("OC20a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl) {
+		_graphicsManager.FADE_LINUX = 2;
+		_animationManager.playAnim("OC30a.anm", 10, 18, 18);
 	}
 
 	_eventsManager._escKeyFl = false;
@@ -4915,70 +4837,36 @@ void HopkinsEngine::displayPlane() {
 	_graphicsManager.clearPalette();
 
 	_animationManager._clearAnimationFl = false;
-	if (_globals.SVGA == 1) {
-		_animationManager.playAnim("aerop00.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop10.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop20.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop30.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop40.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop50.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop60.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop70.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans00.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans10.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans15.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans20.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans30.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans40.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl) {
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("PARA00.anm", 9, 9, 9);
-		}
-	} else if (_globals.SVGA == 2) {
-		_animationManager.playAnim("aerop00a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("serop10a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop20a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop30a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop40a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop50a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop60a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop70a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans00a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans10a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans15a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans20a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans30a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans40a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl) {
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("PARA00a.anm", 9, 9, 9);
-		}
+	_animationManager.playAnim("aerop00a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("serop10a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop20a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop30a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop40a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop50a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop60a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop70a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans00a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans10a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans15a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans20a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans30a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans40a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl) {
+		_graphicsManager.FADE_LINUX = 2;
+		_animationManager.playAnim("PARA00a.anm", 9, 9, 9);
 	}
 
 	_eventsManager._escKeyFl = false;

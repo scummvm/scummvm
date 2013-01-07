@@ -58,7 +58,13 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	byte *screenP = _vm->_graphicsManager._vesaScreen;
 	byte *ptr = _vm->_globals.allocMemory(20);
 
-	_vm->_fileManager.constructFilename("ANM", filename);
+	// The Windows 95 demo only contains the interlaced version of the BOMBE1 and BOMBE2 videos
+	if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getIsDemo() && filename == "BOMBE1A.ANM")
+		_vm->_fileManager.constructFilename("ANM", "BOMBE1.ANM");
+	else if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getIsDemo() && filename == "BOMBE2A.ANM")
+		_vm->_fileManager.constructFilename("ANM", "BOMBE2.ANM");
+	else
+		_vm->_fileManager.constructFilename("ANM", filename);
 	if (!f.open(_vm->_globals._curFilename))
 		error("File not found - %s", _vm->_globals._curFilename.c_str());
 

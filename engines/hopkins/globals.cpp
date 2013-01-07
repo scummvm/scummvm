@@ -115,7 +115,6 @@ Globals::Globals() {
 
 	// Initialise fields
 	_language = LANG_EN;
-	SVGA = 2;
 	_internetFl = true;
 
 	PUBEXIT = false;

@@ -329,7 +329,6 @@ public:
 	int _inventory[36];
 	SortItem _sortedDisplay[51];
 	Language _language;
-	int SVGA;
 	bool _internetFl;
 	bool PUBEXIT;
 	int PERSO_TYPE;

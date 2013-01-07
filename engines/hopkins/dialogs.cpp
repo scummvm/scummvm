@@ -229,8 +229,6 @@ void DialogsManager::showOptionsDialog() {
 			// Values are blocked, thus handling the zone is useless
 			//if (mousePos.x >= _vm->_graphicsManager.ofscroll + 348 && mousePos.y > 248 && mousePos.x <= _vm->_graphicsManager.ofscroll + 394 && mousePos.y <= 273)
 			//	_vm->_globals._speed = 2;
-			//if (mousePos.x >= _vm->_graphicsManager.ofscroll + 300 && mousePos.y > 221 && mousePos.x <= _vm->_graphicsManager.ofscroll + 358 && mousePos.y <= 246)
-			//	_vm->_globals.SVGA = 2;
 
 			if (mousePos.x < _vm->_graphicsManager._scrollOffset + 165 || mousePos.x > _vm->_graphicsManager._scrollOffset + 496 || (uint)(mousePos.y - 107) > 211)
 				doneFlag = true;
@@ -253,12 +251,7 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_globals._menuSoundOff = !_vm->_soundManager._soundOffFl ? 7 : 8;
 		_vm->_globals._menuMusicOff = !_vm->_soundManager._musicOffFl ? 7 : 8;
 
-		if (_vm->_globals.SVGA == 1)
-			_vm->_globals._menuDisplayType = 10;
-		else if (_vm->_globals.SVGA == 2)
-			_vm->_globals._menuDisplayType = 9;
-		else if (_vm->_globals.SVGA == 3)
-			_vm->_globals._menuDisplayType = 11;
+		_vm->_globals._menuDisplayType = 9;
 
 		if (_vm->_graphicsManager._scrollSpeed == 1)
 			_vm->_globals._menuScrollSpeed = 12;

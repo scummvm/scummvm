@@ -97,20 +97,8 @@ void FileManager::constructFilename(const Common::String &folder, const Common::
 	// check for animations that don't exist in the ANM folder, but rather in special
 	// sub-folders depending on the physical screen resolution being used.
 
-	if (folder == "ANM") {
-		switch (_vm->_globals.SVGA) {
-		case 1:
-			if (fileExists(folderToUse, file))
-				folderToUse = "TSVGA";
-			break;
-		case 2:
-			if (fileExists(folderToUse, file))
-				folderToUse = "SVGA";
-			break;
-		default:
-			break;
-		}
-	}
+	if (folder == "ANM" && fileExists("SVGA", file))
+		folderToUse = "SVGA";
 
 	_vm->_globals._curFilename = Common::String::format("%s/%s", folderToUse.c_str(), file.c_str());
 }
