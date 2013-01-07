@@ -120,7 +120,6 @@ Globals::Globals() {
 
 	PUBEXIT = false;
 	_speed = 1;
-	INSTALL_TYPE = 1;
 	g_old_anim = 0;
 	g_old_sens = 0;
 	g_old_sens2 = 0;

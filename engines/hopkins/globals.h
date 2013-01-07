@@ -334,7 +334,6 @@ public:
 	bool PUBEXIT;
 	int PERSO_TYPE;
 	uint _speed;
-	int INSTALL_TYPE;
 	Common::String HOPIMAGE;
 	Common::String HOPANIM;
 	Common::String HOPLINK;
