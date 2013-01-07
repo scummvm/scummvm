@@ -100,16 +100,16 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
  * Change Object
  */
 void ObjectsManager::changeObject(int objIndex) {
-	_vm->_eventsManager._objectBuf = CAPTURE_OBJET(objIndex, 1);
+	_vm->_eventsManager._objectBuf = CAPTURE_OBJET(objIndex, true);
 	_vm->_globals._curObjectIndex = objIndex;
 }
 
-byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
+byte *ObjectsManager::CAPTURE_OBJET(int objIndex, bool mode) {
 	byte *dataP = NULL;
 	int val1 = _vm->_globals.ObjetW[objIndex].field0;
 	int val2 = _vm->_globals.ObjetW[objIndex]._idx;
 
-	if (mode == 1)
+	if (mode)
 		++val2;
 
 	if (val1 != _vm->_globals.NUM_FICHIER_OBJ) {
@@ -126,27 +126,15 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 	_vm->_globals._objectWidth = width;
 	_vm->_globals._objectHeight = height;
 
-	switch (mode) {
-	case 0:
+	if (mode) {
+		sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_eventsManager._objectBuf, val2);
+		dataP = _vm->_eventsManager._objectBuf;
+	} else { 
 		dataP = _vm->_globals.allocMemory(height * width);
 		if (dataP == g_PTRNUL)
 			error("CAPTURE_OBJET");
 
 		capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, dataP, val2);
-		break;
-
-	case 1:
-		sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_eventsManager._objectBuf, val2);
-		dataP = _vm->_eventsManager._objectBuf;
-		break;
-
-	case 3:
-		capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, _vm->_globals._inventoryObject, val2);
-		dataP = _vm->_globals._inventoryObject;
-		break;
-
-	default:
-		break;
 	}
 
 	return dataP;

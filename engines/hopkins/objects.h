@@ -120,7 +120,7 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	void changeObject(int objIndex);
-	byte *CAPTURE_OBJET(int objIndex, int mode);
+	byte *CAPTURE_OBJET(int objIndex, bool mode);
 	void removeObject(int objIndex);
 
 	int getWidth(const byte *objectData, int idx);

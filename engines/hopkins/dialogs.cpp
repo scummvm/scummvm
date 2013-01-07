@@ -298,7 +298,7 @@ void DialogsManager::showInventory() {
 	_vm->_graphicsManager.no_scroll = 1;
 	_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
 	_vm->_objectsManager._visibleFl = false;
-	for (int v1 = 0; v1 <= 1; v1++) {
+	for (int i = 0; i <= 1; i++) {
 		inventAnim();
 		_vm->_eventsManager.getMouseX();
 		_vm->_eventsManager.getMouseY();
@@ -344,14 +344,15 @@ LABEL_7:
 	_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1,
 		v19 + 300, 414, 0, 0, 0, 0);
 	int v15 = 0;
-	int v4 = 0;
-	for (int v14 = 1; v14 <= 5; v14++) {
+	int inventCount = 0;
+	for (int inventLine = 1; inventLine <= 5; inventLine++) {
 		int v16 = 0;
-		for (int v5 = 1; v5 <= 6; v5++) {
-			++v4;
-			int v6 = _vm->_globals._inventory[v4];
-			if (v6 && v4 <= 29) {
-				byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(v6, 0);
+		for (int inventCol = 1; inventCol <= 6; inventCol++) {
+			++inventCount;
+			int inventIdx = _vm->_globals._inventory[inventCount];
+			// The last two zones are not reserved for the inventory: Options and Save/Load
+			if (inventIdx && inventCount <= 29) {
+				byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(inventIdx, false);
 				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, v7, v19 + v16 + 6,
 					v15 + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
 				_vm->_globals.freeMemory(v7);
@@ -363,7 +364,7 @@ LABEL_7:
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 	_vm->_eventsManager._curMouseButton = 0;
 	bool v20 = false;
-	int v13 = 0;
+	int newInventoryItem = 0;
 
 	// Main loop to select an inventory item
 	while (!_vm->shouldQuit()) {
@@ -373,14 +374,13 @@ LABEL_7:
 		int mousePosX = _vm->_eventsManager.getMouseX();
 		int mousePosY = _vm->_eventsManager.getMouseY();
 		int mouseButton = _vm->_eventsManager.getMouseButton();
-		int v10 = v13;
-		int v11 = _vm->_linesManager.ZONE_OBJET(mousePosX, mousePosY);
-		v13 = v11;
-		if (v11 != v10)
-			_vm->_objectsManager.initBorder(v11);
+		int oldInventoryItem = newInventoryItem;
+		newInventoryItem = _vm->_linesManager.ZONE_OBJET(mousePosX, mousePosY);
+		if (newInventoryItem != oldInventoryItem)
+			_vm->_objectsManager.initBorder(newInventoryItem);
 		if (_vm->_eventsManager._mouseCursorId != 1 && _vm->_eventsManager._mouseCursorId != 2 && _vm->_eventsManager._mouseCursorId != 3 && _vm->_eventsManager._mouseCursorId != 16) {
 			if (mouseButton == 2) {
-				_vm->_objectsManager.OBJETPLUS(v13);
+				_vm->_objectsManager.OBJETPLUS(newInventoryItem);
 				if (_vm->_eventsManager._mouseCursorId != 23)
 					_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
 			}
@@ -388,13 +388,13 @@ LABEL_7:
 		if (mouseButton == 1) {
 			if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 2 || _vm->_eventsManager._mouseCursorId == 3 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId)
 				break;
-			_vm->_objectsManager.VALID_OBJET(_vm->_globals._inventory[v13]);
+			_vm->_objectsManager.VALID_OBJET(_vm->_globals._inventory[newInventoryItem]);
 			if (_vm->_eventsManager._mouseCursorId == 8)
 				v20 = true;
 			if (!v20) {
 				_vm->_scriptManager.TRAVAILOBJET = true;
 				_vm->_globals._saveData->data[svField3] = _vm->_globals._curObjectIndex;
-				_vm->_globals._saveData->data[svField8] = _vm->_globals._inventory[v13];
+				_vm->_globals._saveData->data[svField8] = _vm->_globals._inventory[newInventoryItem];
 				_vm->_globals._saveData->data[svField9] = _vm->_eventsManager._mouseCursorId;
 				_vm->_objectsManager.OPTI_OBJET();
 				_vm->_scriptManager.TRAVAILOBJET = false;
