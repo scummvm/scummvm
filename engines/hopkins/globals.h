@@ -351,9 +351,6 @@ public:
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
 	Common::String _curFilename;
-	int SOUNDVOL;
-	int MUSICVOL;
-	int VOICEVOL;
 	bool _censorshipFl;
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;
