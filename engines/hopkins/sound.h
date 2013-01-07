@@ -69,7 +69,7 @@ private:
 
 	int VOICE_STAT(int voiceIndex);
 	void stopVoice(int voiceIndex);
-	void SDL_LVOICE(size_t filePosition, size_t entryLength);
+	void SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength);
 	void PLAY_VOICE_SDL();
 	bool DEL_SAMPLE_SDL(int wavIndex);
 	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);

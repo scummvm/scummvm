@@ -85,15 +85,14 @@ int MenuManager::menu() {
 		_vm->_graphicsManager.fadeInLong();
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			_vm->_fileManager.constructFilename("SYSTEM", "MENU.SPR");
+			spriteData = _vm->_objectsManager.loadSprite("MENU.SPR");
 		else if (_vm->_globals._language == LANG_EN)
-			_vm->_fileManager.constructFilename("SYSTEM", "MENUAN.SPR");
+			spriteData = _vm->_objectsManager.loadSprite("MENUAN.SPR");
 		else if (_vm->_globals._language == LANG_FR)
-			_vm->_fileManager.constructFilename("SYSTEM", "MENUFR.SPR");
+			spriteData = _vm->_objectsManager.loadSprite("MENUFR.SPR");
 		else if (_vm->_globals._language == LANG_SP)
-			_vm->_fileManager.constructFilename("SYSTEM", "MENUES.SPR");
+			spriteData = _vm->_objectsManager.loadSprite("MENUES.SPR");
 
-		spriteData = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 		_vm->_eventsManager.mouseOn();
 		_vm->_eventsManager.changeMouseCursor(0);
 		_vm->_eventsManager._mouseCursorId = 0;

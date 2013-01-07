@@ -165,9 +165,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_textSortArray[v62] = 0;
 
 		_text[idx]._textLoadedFl = true;
-		_vm->_fileManager.constructFilename("LINK", filename);
-
-		file = _vm->_globals._curFilename;
+		file = filename;
 		if (strncmp(file.c_str(), _oldName.c_str(), strlen(file.c_str())) != 0) {
 			// Starting to access a new file, so read in the index file for the file
 			_oldName = file;

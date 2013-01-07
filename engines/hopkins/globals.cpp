@@ -433,8 +433,7 @@ void Globals::CLEAR_VBOB() {
 
 // Load Object
 void Globals::loadObjects() {
-	_vm->_fileManager.constructFilename("SYSTEM", "OBJET.DAT");
-	byte *data = _vm->_fileManager.loadFile(_curFilename);
+	byte *data = _vm->_fileManager.loadFile("OBJET.DAT");
 	byte *srcP = data;
 
 	for (int idx = 0; idx < 300; ++idx) {
@@ -512,16 +511,13 @@ void Globals::loadCache(const Common::String &file) {
 	Common::File f;
 
 	resetCache();
-	_vm->_fileManager.constructFilename("LINK", file);
-	ptr = _vm->_fileManager.loadFile(_curFilename);
+	ptr = _vm->_fileManager.loadFile(file);
 	v16 = Common::String((const char *)ptr);
 
-	_vm->_fileManager.constructFilename("LINK", v16);
-
-	if (!f.exists(_curFilename))
+	if (!f.exists(v16))
 		return;
 
-	spriteData = _vm->_fileManager.loadFile(_curFilename);
+	spriteData = _vm->_fileManager.loadFile(v16);
 	CACHE_BANQUE[1] = spriteData;
 	int v15 = 60;
 	for (int i = 0; i <= 21; i++) {

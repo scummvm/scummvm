@@ -59,14 +59,15 @@ void DialogsManager::showOptionsDialog() {
 	doneFlag = false;
 	_vm->_eventsManager.changeMouseCursor(0);
 	_vm->_eventsManager.VBL();
+	Common::String filename;
 	if (_vm->_globals._language == LANG_FR)
-		_vm->_fileManager.constructFilename("SYSTEM", "OPTIFR.SPR");
+		filename = "OPTIFR.SPR";
 	else if (_vm->_globals._language == LANG_EN)
-		_vm->_fileManager.constructFilename("SYSTEM", "OPTIAN.SPR");
+		filename = "OPTIAN.SPR";
 	else if (_vm->_globals._language == LANG_SP)
-		_vm->_fileManager.constructFilename("SYSTEM", "OPTIES.SPR");
+		filename = "OPTIES.SPR";
 
-	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(filename);
 	_vm->_globals._optionDialogFl = true;
 
 	do {
@@ -311,29 +312,29 @@ LABEL_7:
 	_vm->_globals._disableInventFl = true;
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 
+	Common::String filename;
 	switch (_vm->_globals._language) {
 		case LANG_EN:
-			_vm->_fileManager.constructFilename("SYSTEM", "INVENTAN.SPR");
+			filename = "INVENTAN.SPR";
 			break;
 		case LANG_FR:
-			_vm->_fileManager.constructFilename("SYSTEM", "INVENTFR.SPR");
+			filename = "INVENTFR.SPR";
 			break;
 		case LANG_SP:
-			_vm->_fileManager.constructFilename("SYSTEM", "INVENTES.SPR");
+			filename = "INVENTES.SPR";
 			break;
 	}
 
 	Common::File f;
-	if (!f.open(_vm->_globals._curFilename))
-		error("Error opening file - %s", _vm->_globals._curFilename.c_str());
+	if (!f.open(filename))
+		error("Error opening file - %s", filename.c_str());
 
 	size_t filesize = f.size();
 	_vm->_dialogsManager._inventWin1 = _vm->_globals.allocMemory(filesize);
 	_vm->_fileManager.readStream(f, _vm->_dialogsManager._inventWin1, filesize);
 	f.close();
 
-	_vm->_fileManager.constructFilename("SYSTEM", "INVENT2.SPR");
-	_inventBuf2 = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+	_inventBuf2 = _vm->_fileManager.loadFile("INVENT2.SPR");
 
 	int v19 = _inventX = _vm->_graphicsManager._scrollOffset + 152;
 	_inventY = 114;
@@ -609,21 +610,21 @@ void DialogsManager::showSaveLoad(int a1) {
 	hopkinsSavegameHeader header;
 	byte *thumb;
 
+	Common::String filename;
 	switch (_vm->_globals._language) {
 	case LANG_EN:
-		_vm->_fileManager.constructFilename("SYSTEM", "SAVEAN.SPR");
+		filename = "SAVEAN.SPR";
 		break;
 	case LANG_FR:
-		_vm->_fileManager.constructFilename("SYSTEM", "SAVEFR.SPR");
+		filename = "SAVEFR.SPR";
 		break;
 	case LANG_SP:
-		_vm->_fileManager.constructFilename("SYSTEM", "SAVEES.SPR");
+		filename = "SAVEES.SPR";
 		break;
 	}
 
-	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
-	_vm->_fileManager.constructFilename("SYSTEM", "SAVE2.SPR");
-	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
+	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.loadSprite(filename);
+	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite("SAVE2.SPR");
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 483, 360, 0);
 
 	if (_vm->_globals._language == LANG_FR) {

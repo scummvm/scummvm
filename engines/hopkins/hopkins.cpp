@@ -177,8 +177,7 @@ bool HopkinsEngine::runWin95Demo() {
 	warning("TODO Init_Interrupt_();");
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
-	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
+	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
 	memset(_globals._saveData, 0, 2000);
@@ -477,8 +476,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		playIntro();
 
 	_globals.iRegul = 0;
-	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
+	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
 	memset(_globals._saveData, 0, 2000);
@@ -836,8 +834,7 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager.fadeOutLong();
 	}
 	_globals.iRegul = 0;
-	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
+	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
 	memset(_globals._saveData, 0, 2000);
@@ -1193,8 +1190,7 @@ bool HopkinsEngine::runFull() {
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
 			if (_globals._forestSprite == g_PTRNUL) {
-				_fileManager.constructFilename("SYSTEM", "HOPDEG.SPR");
-				_globals._forestSprite = _objectsManager.loadSprite(_globals._curFilename);
+				_globals._forestSprite = _objectsManager.loadSprite("HOPDEG.SPR");
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
@@ -1605,8 +1601,7 @@ bool HopkinsEngine::runFull() {
 			//_globals._exitId = WBASE();	// Handles the 3D Doom level (Windows)
 			_soundManager.WSOUND_OFF();
 			//warning("TODO: heapshrink();");	// Windows
-			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
+			_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
 			_graphicsManager._lineNbr = SCREEN_WIDTH;
@@ -1638,28 +1633,25 @@ void HopkinsEngine::initializeSystem() {
 	// Synchronise the sound settings from ScummVM
 	_soundManager.syncSoundSettings();
 
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "SYSTEM");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "BUFFER");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "ANIM");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "ANM");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "BASE");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "LINK");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MUSIC");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "SEQ");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "SAVE");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "SOUND");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "SVGA");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "VOICE");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "TSVGA");
+
 	if (getPlatform() == Common::kPlatformLinux)
 		_eventsManager._mouseLinuxFl = true;
 	else
 		_eventsManager._mouseLinuxFl = false;
-
-	switch (_globals._language) {
-	case LANG_EN:
-		if (!_eventsManager._mouseLinuxFl)
-			_fileManager.constructFilename("SYSTEM", "SOUAN.SPR");
-		else
-			_fileManager.constructFilename("SYSTEM", "LSOUAN.SPR");
-		break;
-	case LANG_FR:
-		if (!_eventsManager._mouseLinuxFl)
-			_fileManager.constructFilename("SYSTEM", "SOUFR.SPR");
-		else
-			_fileManager.constructFilename("SYSTEM", "LSOUFR.SPR");
-		break;
-	case LANG_SP:
-		_fileManager.constructFilename("SYSTEM", "SOUES.SPR");
-		break;
-	}
 
 	if (_eventsManager._mouseLinuxFl) {
 		_eventsManager._mouseSizeX = 52;
@@ -1668,31 +1660,42 @@ void HopkinsEngine::initializeSystem() {
 		_eventsManager._mouseSizeX = 34;
 		_eventsManager._mouseSizeY = 20;
 	}
-	_eventsManager._mouseCursor = _fileManager.loadFile(_globals._curFilename);
-
-	_globals.clearAll();
-
-	_fileManager.constructFilename("SYSTEM", "FONTE3.SPR");
-	_globals.police = _fileManager.loadFile(_globals._curFilename);
-	_globals.police_l = 12;
-	_globals.police_h = 21;
-	_fileManager.constructFilename("SYSTEM", "ICONE.SPR");
-	_globals.ICONE = _fileManager.loadFile(_globals._curFilename);
-	_fileManager.constructFilename("SYSTEM", "TETE.SPR");
-	_globals.TETE = _fileManager.loadFile(_globals._curFilename);
 
 	switch (_globals._language) {
 	case LANG_EN:
-		_fileManager.constructFilename("LINK", "ZONEAN.TXT");
-		_globals.BUF_ZONE = _fileManager.loadFile(_globals._curFilename);
+		if (!_eventsManager._mouseLinuxFl)
+			_eventsManager._mouseCursor = _fileManager.loadFile("SOUAN.SPR");
+		else
+			_eventsManager._mouseCursor = _fileManager.loadFile("LSOUAN.SPR");
 		break;
 	case LANG_FR:
-		_fileManager.constructFilename("LINK", "ZONE01.TXT");
-		_globals.BUF_ZONE = _fileManager.loadFile(_globals._curFilename);
+		if (!_eventsManager._mouseLinuxFl)
+			_eventsManager._mouseCursor = _fileManager.loadFile("SOUFR.SPR");
+		else
+			_eventsManager._mouseCursor = _fileManager.loadFile("LSOUFR.SPR");
 		break;
 	case LANG_SP:
-		_fileManager.constructFilename("LINK", "ZONEES.TXT");
-		_globals.BUF_ZONE = _fileManager.loadFile(_globals._curFilename);
+		_eventsManager._mouseCursor = _fileManager.loadFile("SOUES.SPR");
+		break;
+	}
+
+	_globals.clearAll();
+
+	_globals.police = _fileManager.loadFile("FONTE3.SPR");
+	_globals.police_l = 12;
+	_globals.police_h = 21;
+	_globals.ICONE = _fileManager.loadFile("ICONE.SPR");
+	_globals.TETE = _fileManager.loadFile("TETE.SPR");
+
+	switch (_globals._language) {
+	case LANG_EN:
+		_globals.BUF_ZONE = _fileManager.loadFile("ZONEAN.TXT");
+		break;
+	case LANG_FR:
+		_globals.BUF_ZONE = _fileManager.loadFile("ZONE01.TXT");
+		break;
+	case LANG_SP:
+		_globals.BUF_ZONE = _fileManager.loadFile("ZONEES.TXT");
 		break;
 	}
 
@@ -2318,8 +2321,7 @@ void HopkinsEngine::playEnding() {
 		_globals.iRegul = 0;
 		_globals._exitId = 300;
 	}
-	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
+	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
 	_globals.iRegul = 0;
 }
@@ -2457,22 +2459,22 @@ void HopkinsEngine::loadCredits() {
 	_globals.Credit_l = 10;
 	_globals.Credit_h = 40;
 	_globals.Credit_step = 45;
+	byte *bufPtr;
 	switch (_globals._language) {
 	case LANG_EN:
-		_fileManager.constructFilename("LINK", "CREAN.TXT");
+		bufPtr = _fileManager.loadFile("CREAN.TXT");
 		break;
 	case LANG_FR:
-		_fileManager.constructFilename("LINK", "CREFR.TXT");
+		bufPtr = _fileManager.loadFile("CREFR.TXT");
 		break;
 	case LANG_SP:
-		_fileManager.constructFilename("LINK", "CREES.TXT");
+		bufPtr = _fileManager.loadFile("CREES.TXT");
 		break;
 	default:
 		error("Unhandled language");
 		break;
 	}
 
-	byte *bufPtr = _fileManager.loadFile(_globals._curFilename);
 	byte *curPtr = bufPtr;
 	int idxLines = 0;
 	bool loopCond = false;
@@ -2823,8 +2825,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	_globals._exitId = 0;
 	_globals._disableInventFl = true;
 	_soundManager.WSOUND(soundId);
-	_fileManager.constructFilename("SYSTEM", "VAISSEAU.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
+	_globals.PERSO = _fileManager.loadFile("VAISSEAU.SPR");
 	if (backgroundFilename.size())
 		_graphicsManager.loadImage(backgroundFilename);
 
@@ -2909,8 +2910,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	_graphicsManager.fadeOutLong();
 	_objectsManager.removeSprite(0);
 	_objectsManager.CLEAR_ECRAN();
-	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
-	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
+	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
 }
 

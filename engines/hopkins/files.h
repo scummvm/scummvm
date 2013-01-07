@@ -39,15 +39,11 @@ public:
 	FileManager();
 	void setParent(HopkinsEngine *vm);
 
-	bool fileExists(const Common::String &folder, const Common::String &file);
+	bool fileExists(const Common::String &file);
 	byte *loadFile(const Common::String &file);
 	int readStream(Common::ReadStream &stream, void *buf, size_t nbytes);
 	void initCensorship();
-	void constructFilename(const Common::String &folder, const Common::String &file);
-
 	byte *searchCat(const Common::String &file, int a2);
-	void constructLinuxFilename(const Common::String &file);
-
 	uint32 fileSize(const Common::String &filename);
 };
 

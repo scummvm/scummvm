@@ -335,7 +335,6 @@ public:
 	uint _speed;
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
-	Common::String _curFilename;
 	bool _censorshipFl;
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;

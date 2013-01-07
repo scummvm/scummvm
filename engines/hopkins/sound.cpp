@@ -380,14 +380,13 @@ void SoundManager::PLAY_MOD(const Common::String &file) {
 			modFile += "2";
 		}
 	}
-	_vm->_fileManager.constructFilename("MUSIC", modFile);
 	if (MOD_FLAG) {
 		stopMusic();
 		delMusic();
 		MOD_FLAG = false;
 	}
 
-	loadMusic(_vm->_globals._curFilename);
+	loadMusic(modFile);
 	playMusic();
 	MOD_FLAG = true;
 }
@@ -520,43 +519,43 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 	if (!_vm->_fileManager.searchCat(filename + ".WAV", 9)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			_vm->_fileManager.constructFilename("VOICE", "ENG_VOI.RES");
+			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
 		else if (_vm->_globals._language == LANG_FR)
-			_vm->_fileManager.constructFilename("VOICE", "RES_VFR.RES");
+			filename = "RES_VFR.RES";
 		else if (_vm->_globals._language == LANG_EN)
-			_vm->_fileManager.constructFilename("VOICE", "RES_VAN.RES");
+			filename = "RES_VAN.RES";
 		else if (_vm->_globals._language == LANG_SP)
-			_vm->_fileManager.constructFilename("VOICE", "RES_VES.RES");
+			filename = "RES_VES.RES";
 
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
 	} else if (!_vm->_fileManager.searchCat(filename + ".APC", 9)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			_vm->_fileManager.constructFilename("VOICE", "ENG_VOI.RES");
+			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
 		else if (_vm->_globals._language == LANG_FR)
-			_vm->_fileManager.constructFilename("VOICE", "RES_VFR.RES");
+			filename = "RES_VFR.RES";
 		else if (_vm->_globals._language == LANG_EN)
-			_vm->_fileManager.constructFilename("VOICE", "RES_VAN.RES");
+			filename = "RES_VAN.RES";
 		else if (_vm->_globals._language == LANG_SP)
-			_vm->_fileManager.constructFilename("VOICE", "RES_VES.RES");
+			filename = "RES_VES.RES";
 
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
 	} else {
-		_vm->_fileManager.constructFilename("VOICE", filename + ".WAV");
-		if (!f.exists(_vm->_globals._curFilename)) {
-			_vm->_fileManager.constructFilename("VOICE", filename + ".APC");
-			if (!f.exists(_vm->_globals._curFilename))
+		if (!f.exists(filename + ".WAV")) {
+			if (!f.exists(filename + ".APC"))
 				return false;
-		}
+			filename = filename + ".APC";
+		} else
+			filename = filename + ".WAV";
 
 		catPos = 0;
 		catLen = 0;
 	}
 
-	SDL_LVOICE(catPos, catLen);
+	SDL_LVOICE(filename, catPos, catLen);
 	oldMusicVol = _musicVolume;
 	if (!_musicOffFl && _musicVolume > 2)
 		_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
@@ -626,8 +625,7 @@ void SoundManager::MODSetMusicVolume(int volume) {
 }
 
 void SoundManager::loadSample(int wavIndex, const Common::String &file) {
-	_vm->_fileManager.constructFilename("SOUND", file);
-	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals._curFilename, 0);
+	LOAD_SAMPLE2_SDL(wavIndex, file, 0);
 	SOUND[wavIndex]._active = true;
 }
 
@@ -700,9 +698,9 @@ void SoundManager::stopVoice(int voiceIndex) {
 	Voice[voiceIndex].field14 = 0;
 }
 
-void SoundManager::SDL_LVOICE(size_t filePosition, size_t entryLength) {
-	if (!SDL_LoadVoice(_vm->_globals._curFilename, filePosition, entryLength, Swav[20]))
-		error("Couldn't load the sample %s", _vm->_globals._curFilename.c_str());
+void SoundManager::SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength) {
+	if (!SDL_LoadVoice(filename, filePosition, entryLength, Swav[20]))
+		error("Couldn't load the sample %s", filename.c_str());
 
 	Swav[20]._active = true;
 }
@@ -758,8 +756,7 @@ void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename
 }
 
 void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
-	_vm->_fileManager.constructFilename("SOUND", file);
-	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals._curFilename, 1);
+	LOAD_SAMPLE2_SDL(wavIndex, file, 1);
 }
 
 void SoundManager::PLAY_NWAV(int wavIndex) {

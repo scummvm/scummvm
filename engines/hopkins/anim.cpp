@@ -58,15 +58,16 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	byte *screenP = _vm->_graphicsManager._vesaScreen;
 	byte *ptr = _vm->_globals.allocMemory(20);
 
+	Common::String tmpStr;
 	// The Windows 95 demo only contains the interlaced version of the BOMBE1 and BOMBE2 videos
 	if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getIsDemo() && filename == "BOMBE1A.ANM")
-		_vm->_fileManager.constructFilename("ANM", "BOMBE1.ANM");
+		tmpStr = "BOMBE1.ANM";
 	else if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getIsDemo() && filename == "BOMBE2A.ANM")
-		_vm->_fileManager.constructFilename("ANM", "BOMBE2.ANM");
+		tmpStr = "BOMBE2.ANM";
 	else
-		_vm->_fileManager.constructFilename("ANM", filename);
-	if (!f.open(_vm->_globals._curFilename))
-		error("File not found - %s", _vm->_globals._curFilename.c_str());
+		tmpStr = filename;
+	if (!f.open(tmpStr))
+		error("File not found - %s", tmpStr.c_str());
 
 	f.skip(6);
 	f.read(_vm->_graphicsManager._palette, 800);
@@ -228,21 +229,18 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 	while (!_vm->shouldQuit()) {
 		memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
 
-		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
-
 		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 307200);
+			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 307200);
 		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 614400);
+			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 614400);
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager._scrollOffset = 0;
 
 		screenP = _vm->_graphicsManager._vesaScreen;
 		ptr = _vm->_globals.allocMemory(20);
-		_vm->_fileManager.constructFilename("ANM", filename);
 
-		if (!f.open(_vm->_globals._curFilename))
-			error("Error opening file - %s", _vm->_globals._curFilename.c_str());
+		if (!f.open(filename))
+			error("Error opening file - %s", filename.c_str());
 
 		f.read(&buf, 6);
 		f.read(_vm->_graphicsManager._palette, 800);
@@ -476,11 +474,9 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	clearAnim();
 
 	Common::String filename = animName + ".ANI";
-	_vm->_fileManager.constructFilename("ANIM", filename);
-
 	Common::File f;
-	if (!f.open(_vm->_globals._curFilename))
-		error("Failed to open %s", _vm->_globals._curFilename.c_str());
+	if (!f.open(filename))
+		error("Failed to open %s", filename.c_str());
 
 	int filesize = f.size();
 	int nbytes = filesize - 115;
@@ -501,9 +497,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 
 	for (int idx = 0; idx <= 5; ++idx) {
 		if (files[idx][0]) {
-			_vm->_fileManager.constructFilename("ANIM", files[idx]);
-
-			if (!f.exists(_vm->_globals._curFilename))
+			if (!f.exists(files[idx]))
 				error("File not found");
 			if (loadSpriteBank(idx + 1, files[idx]))
 				error("File not compatible with this soft.");
@@ -545,12 +539,11 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	byte *v13;
 	byte *v19;
 	int result = 0;
-	_vm->_fileManager.constructFilename("ANIM", filename);
-	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
+	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.fileSize(filename);
 	_vm->_globals.Bank[idx]._loadedFl = true;
 	_vm->_globals.Bank[idx]._filename = filename;
 
-	byte *fileDataPtr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+	byte *fileDataPtr = _vm->_fileManager.loadFile(filename);
 
 	_vm->_globals.Bank[idx]._fileHeader = 0;
 	if (fileDataPtr[1] == 'L' && fileDataPtr[2] == 'E')
@@ -587,10 +580,9 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 			} while (ch != '.');
 			ofsFilename += ".OFS";
 
-			_vm->_fileManager.constructFilename("ANIM", ofsFilename);
 			Common::File f;
-			if (f.exists(_vm->_globals._curFilename)) {
-				v19 = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+			if (f.exists(ofsFilename)) {
+				v19 = _vm->_fileManager.loadFile(ofsFilename);
 				v13 = v19;
 				for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx].field1A; ++objIdx, v13 += 8) {
 					int x1 = (int16)READ_LE_UINT16(v13);
@@ -723,19 +715,17 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	if (!NO_COUL) {
 		_vm->_eventsManager.VBL();
 
-		_vm->_fileManager.constructLinuxFilename("TEMP.SCR");
 		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 307200);
+			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 307200);
 		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.saveFile(_vm->_globals._curFilename, _vm->_graphicsManager._vesaScreen, 614400);
+			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 614400);
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager._scrollOffset = 0;
 	}
 	screenP = _vm->_graphicsManager._vesaScreen;
 	v10 = _vm->_globals.allocMemory(22);
-	_vm->_fileManager.constructFilename("SEQ", file);
-	if (!f.open(_vm->_globals._curFilename))
-		error("Error opening file - %s", _vm->_globals._curFilename.c_str());
+	if (!f.open(file))
+		error("Error opening file - %s", file.c_str());
 
 	f.skip(6);
 	f.read(_vm->_graphicsManager._palette, 800);
@@ -889,10 +879,9 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		_vm->_eventsManager._mouseFl = false;
 		screenP = _vm->_graphicsManager._vesaScreen;
 		v11 = _vm->_globals.allocMemory(22);
-		_vm->_fileManager.constructFilename("SEQ", file);
 
-		if (!f.open(_vm->_globals._curFilename))
-			error("File not found - %s", _vm->_globals._curFilename.c_str());
+		if (!f.open(file))
+			error("File not found - %s", file.c_str());
 
 		f.skip(6);
 		f.read(_vm->_graphicsManager._palette, 800);
