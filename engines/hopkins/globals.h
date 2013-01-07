@@ -360,8 +360,6 @@ public:
 	byte *TETE;
 	byte *ICONE;
 	byte *BUF_ZONE;
-	byte *texte_tmp;
-	int texte_long;
 	byte *SPRITE_ECRAN;
 	Sauvegarde *_saveData;
 	byte *BUFFERTAPE;

@@ -126,7 +126,6 @@ Globals::Globals() {
 	_lastDirection = 0;
 	police_l = police_h = 0;
 	TETE = NULL;
-	texte_long = 0;
 	_curObjectIndex = 0;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
@@ -187,7 +186,6 @@ Globals::Globals() {
 	BUF_ZONE = NULL;
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = NULL;
-	texte_tmp = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
 	BUFFERTAPE = NULL;
@@ -242,7 +240,6 @@ Globals::~Globals() {
 	freeMemory(BUF_ZONE);
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
-	freeMemory(texte_tmp);
 	freeMemory(SPRITE_ECRAN);
 	freeMemory((byte *)_saveData);
 	freeMemory(BUFFERTAPE);
@@ -327,8 +324,6 @@ void Globals::clearAll() {
 	nbrligne = 80;
 	INIT_ANIM();
 
-	texte_tmp = g_PTRNUL;
-	texte_long = 0;
 	police = g_PTRNUL;
 	police_h = 0;
 	police_l = 0;
@@ -377,8 +372,6 @@ void Globals::clearAll() {
 		CarreZone[idx].field0 = 0;
 	}
 
-	texte_long = 0;
-	texte_tmp = g_PTRNUL;
 	BUFFERTAPE = allocMemory(85000);
 
 	_saveData = (Sauvegarde *)malloc(sizeof(Sauvegarde));

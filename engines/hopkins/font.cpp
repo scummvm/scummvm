@@ -196,10 +196,8 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			Common::fill(&_tempText[0], &_tempText[2058], 0);
 			f.read(_tempText, 2048);
 			f.close();
-			_vm->_globals.texte_long = 2048;
 		} else {
 			v69 = 100;
-			_vm->_globals.texte_long = 100;
 			v9 = _vm->_globals.allocMemory(110);
 			Common::fill(&v9[0], &v9[110], 0);
 
