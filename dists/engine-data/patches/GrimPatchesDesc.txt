@@ -68,6 +68,12 @@ List of fixed bugs in GF scripts:
 	but it's not cleaned after that the Glottis' hearts has been launched.
 	This patch set this variable to FALSE after that event (in the function sp.manny_hook_n_fling_web)
 
+	-Fix the disappearing hat when opening the inventory with the nautical suit. -
+		_inventory.lua.patchr
+	The function open_inventory() stops the chore 'manny.hold_chore'. But that variable sometimes
+	is nil, and that causes all the chores to be stopped, included the chore which shows the hat.
+	This patch checks if 'manny.hold_chore' is not nil and only in that cases it stops it.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
