@@ -319,7 +319,7 @@ void SoundManager::playAnim_SOUND(int soundNumber) {
 }
 
 static const char *modSounds[] = {
-	"appart", "ville", "Rock", "police", "deep"
+	"appart", "ville", "Rock", "police", "deep",
 	"purgat", "riviere", "SUSPENS", "labo", "cadavre",
 	"cabane", "purgat2", "foret", "ile", "ile2",
 	"hopkins", "peur", "URAVOLGA", "BASE", "cadavre2",
