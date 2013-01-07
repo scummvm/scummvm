@@ -872,7 +872,9 @@ Costume *Actor::getTalkCostume(int index) const {
 }
 
 void Actor::setMumbleChore(int chore, Costume *cost) {
-	_mumbleChore.stop();
+	if (_mumbleChore.isPlaying()) {
+		_mumbleChore.stop();
+	}
 
 	if (!cost) {
 		cost = _mumbleChore._costume;
@@ -1055,16 +1057,15 @@ void Actor::shutUp() {
 		g_sound->stopSound(_talkSoundName.c_str());
 		_talkSoundName = "";
 	}
+
 	if (_lipSync) {
 		if (_talkAnim != -1)
 			_talkChore[_talkAnim].stop();
 		_lipSync = NULL;
-		stopTalking();
 	}
 	// having a lipsync is no guarantee the mumble chore is no running. the talk chores may be -1 (domino in do)
-	if (stopMumbleChore()) {
-		stopTalking();
-	}
+	stopMumbleChore();
+	stopTalking();
 
 	if (_sayLineText) {
 		delete TextObject::getPool().getObject(_sayLineText);
@@ -1567,7 +1568,7 @@ void Actor::freeCostumeChore(Costume *toFree, Chore *chore) {
 void Actor::stopTalking() {
 	// _talkChore[0] is *_stop_talk
 	// Don't playLooping it, or else manny's mouth will flicker when he smokes.
-	_talkChore[0].play();
+	_talkChore[0].setLastFrame();
 }
 
 bool Actor::stopMumbleChore() {
