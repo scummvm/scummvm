@@ -102,7 +102,6 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
  */
 void ObjectsManager::changeObject(int objIndex) {
 	_vm->_eventsManager._objectBuf = CAPTURE_OBJET(objIndex, 1);
-	_vm->_globals._newObjectFl = true;
 	_vm->_globals._curObjectIndex = objIndex;
 }
 
@@ -2262,7 +2261,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_globals.Max_Propre = 1;
-	_vm->_globals.Max_Ligne_Long = 1;
+	_vm->_globals._maxLineLength = 1;
 	_vm->_globals.Max_Perso_Y = 440;
 	_vm->_globals.NOSPRECRAN = true;
 	_vm->_globals.PLAN_FLAG = true;

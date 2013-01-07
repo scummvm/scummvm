@@ -370,7 +370,6 @@ public:
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;
 	int _objectWidth, _objectHeight;
-	bool _newObjectFl;
 	bool _helicopterFl;
 	uint32 _catalogPos;
 	uint32 _catalogSize;
@@ -381,9 +380,8 @@ public:
 	bool NOSPRECRAN;
 	int _screenId;
 	int _prevScreenId;
-	int fmusic;
 	int Max_Propre;
-	int Max_Ligne_Long;
+	int _maxLineLength;
 	int Max_Perso_Y;
 	bool _disableInventFl;
 	bool NOMARCHE;

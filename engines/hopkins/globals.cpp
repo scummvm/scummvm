@@ -134,7 +134,6 @@ Globals::Globals() {
 	_helicopterFl = false;
 	_catalogPos = 0;
 	_catalogSize = 0;
-	_newObjectFl = false;
 	iRegul = 0;
 	_exitId = 0;
 	PLANX = PLANY = 0;
@@ -143,10 +142,9 @@ Globals::Globals() {
 	_screenId = 0;
 	NOSPRECRAN = false;
 	_prevScreenId = 0;
-	Max_Ligne_Long = 0;
+	_maxLineLength = 0;
 	Max_Perso_Y = 0;
 	Max_Propre = 0;
-	fmusic = 0;
 	NBBLOC = 0;
 	_menuScrollType = 0;
 	_menuScrollSpeed = 0;
