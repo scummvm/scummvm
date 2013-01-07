@@ -4071,7 +4071,7 @@ void LoLEngine::displayAutomap() {
 			gui_notifyButtonListChanged();
 		}
 
-		if (f == 0x30) {
+		if (f == _keyMap[Common::KEYCODE_c]) {
 			for (int i = 0; i < 1024; i++)
 				_levelBlockProperties[i].flags |= 7;
 			_mapUpdateNeeded = true;
