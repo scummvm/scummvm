@@ -55,7 +55,6 @@ ObjectsManager::ObjectsManager() {
 	_saveLoadFl = false;
 	SL_MODE = false;
 	_visibleFl = false;
-	_disableCursorFl = false;
 	BOBTOUS = false;
 	my_anim = 0;
 	NUMZONE = 0;

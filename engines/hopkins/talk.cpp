@@ -156,7 +156,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 }
 
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
-	_vm->_objectsManager._disableCursorFl = true;
+	// TODO: The original disables the mouse cursor here
 	STATI = 1;
 	bool v7 = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
@@ -222,7 +222,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_eventsManager.changeMouseCursor(v8);
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-	_vm->_objectsManager._disableCursorFl = false;
+	// TODO: The original reenables the mouse cursor here
 	_vm->_globals._disableInventFl = v7;
 	STATI = 0;
 }

@@ -80,7 +80,6 @@ public:
 	bool _saveLoadFl;
 	int SL_MODE;
 	bool _visibleFl;
-	bool _disableCursorFl;
 	bool BOBTOUS;
 	int my_anim;
 	int NUMZONE;
