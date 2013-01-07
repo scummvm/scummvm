@@ -211,7 +211,7 @@ private:
  */
 class SJISFont : public Font {
 public:
-	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool outlineSize);
+	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing);
 	~SJISFont() { unload(); }
 
 	bool usesOverlay() const { return true; }
@@ -230,6 +230,12 @@ private:
 	Graphics::FontSJIS *_font;
 	const uint8 _invisColor;
 	const bool _is16Color;
+	const bool _drawOutline;
+	// We use this for cases where the font width returned by getWidth() or getCharWidth() does not match the original.
+	// The original Japanese game versions use hard coded sjis font widths of 8 or 9. However, this does not necessarily
+	// depend on whether an outline is used or not (neither LOL/PC-9801 nor LOL/FM-TOWNS use an outline, but the first
+	// version uses a font width of 8 where the latter uses a font width of 9).
+	const int _sjisWidthOffset;
 
 	int _sjisWidth, _asciiWidth;
 	int _fontHeight;
@@ -468,7 +474,7 @@ public:
 	int getFontWidth() const;
 
 	int getCharWidth(uint16 c) const;
-	int getTextWidth(const char *str) const;
+	int getTextWidth(const char *str);
 
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
 
@@ -581,6 +587,7 @@ protected:
 	Common::RenderMode _renderMode;
 
 	uint8 _sjisInvisibleColor;
+	bool _sjisMixedFontMode;
 
 	Palette *_screenPalette;
 	Common::Array<Palette *> _palettes;

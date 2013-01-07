@@ -297,20 +297,20 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 			memcpy(filename, text+1, end-1-text);
 	}
 
-	const bool isPC98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
+	const bool sjisMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode);
 	if (filename[0] && (_vm->speechEnabled() || !_vm->gameFlags().isTalkie))
 		_vm->sound()->voicePlay(filename, 0, 255, 255, !_vm->gameFlags().isTalkie);
 
 	if (text[0] == '$')
 		text = strchr(text + 1, '$') + 1;
 
-	if (!isPC98)
+	if (!_vm->gameFlags().use16ColorMode)
 		setupTextPalette((flags < 0) ? 1 : flags, 0);
 
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-		_screen->setFont(isPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+		_screen->setFont(sjisMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 		_screen->setTextColorMap(colorMap);
 		_screen->_charWidth = -2;
 	}
@@ -335,7 +335,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 		int width = _screen->getTextWidth(str);
 
 		if (flags >= 0) {
-			if (isPC98) {
+			if (_vm->gameFlags().use16ColorMode) {
 				static const uint8 colorMap[] = { 0xE1, 0xE1, 0xC1, 0xA1, 0x81, 0x61 };
 				_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, colorMap[flags], 0x00);
 			} else {
@@ -359,7 +359,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0x00, 0x00, 0x00, 0x00 };
 
-		_screen->setFont(isPC98 ? Screen::FID_SJIS_FNT : Screen::FID_INTRO_FNT);
+		_screen->setFont(sjisMode ? Screen::FID_SJIS_FNT : Screen::FID_INTRO_FNT);
 		_screen->setTextColorMap(colorMap);
 		_screen->_charWidth = 0;
 	}
@@ -377,7 +377,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 	if (flags == 255)
 		return;
 
-	_screen->setFont(_vm->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_INTRO_FNT);
+	_screen->setFont((_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_INTRO_FNT);
 
 	static const uint8 colorMap[] = { 0x00, 0xA0, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	_screen->setTextColorMap(colorMap);
