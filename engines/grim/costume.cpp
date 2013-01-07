@@ -85,9 +85,8 @@ namespace Grim {
 //                   costumes on screen need to get updated before any
 //                   drawing can start.
 // draw() -- actually draws the component onto the screen
-// stop() -- notifies the component that a chore controlling it
+// reset() -- notifies the component that a chore controlling it
 //            has stopped
-// reset() -- tell a component to reset to the initial state
 //
 // For the 3D objects, a model's component first initializes internal
 // state for the model's nodes in its update() method.  Then the
