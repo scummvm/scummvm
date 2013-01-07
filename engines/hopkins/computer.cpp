@@ -78,7 +78,7 @@ void ComputerManager::setTextMode() {
 	//SET_MODE(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_vm->_graphicsManager._lineNbr = SCREEN_WIDTH;
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "STFONT.SPR");
+	_vm->_fileManager.constructFilename("SYSTEM", "STFONT.SPR");
 	_vm->_globals.police = _vm->_globals.freeMemory(_vm->_globals.police);
 	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_globals.police_l = 8;
@@ -328,8 +328,8 @@ static char _frenchText[] =
  */
 void ComputerManager::loadMenu() {
 	char *ptr;
-	if (!_vm->_fileManager.fileExists(_vm->_globals.HOPLINK, "COMPUTAN.TXT")) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "COMPUTAN.TXT");
+	if (_vm->_fileManager.fileExists("LINK", "COMPUTAN.TXT")) {
+		_vm->_fileManager.constructFilename("LINK", "COMPUTAN.TXT");
 		ptr = (char *)_vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	} else if (_vm->_globals._language == LANG_FR) {
 		ptr = (char *)_vm->_globals.allocMemory(sizeof(_frenchText));
@@ -445,7 +445,7 @@ void ComputerManager::outText2(const Common::String &msg) {
  */
 void ComputerManager::restoreFBIRoom() {
 	_vm->_globals.police = _vm->_globals.freeMemory(_vm->_globals.police);
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "FONTE3.SPR");
+	_vm->_fileManager.constructFilename("SYSTEM", "FONTE3.SPR");
 	_vm->_globals.police = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 
 	_vm->_globals.police_l = 12;
@@ -460,11 +460,11 @@ void ComputerManager::readText(int idx) {
 	_vm->_eventsManager._escKeyFl = false;
 
 	if (_vm->_globals._language == LANG_EN)
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKAN.TXT");
+		_vm->_fileManager.constructFilename("LINK", "THOPKAN.TXT");
 	else if (_vm->_globals._language == LANG_FR)
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPK.TXT");
+		_vm->_fileManager.constructFilename("LINK", "THOPK.TXT");
 	else if (_vm->_globals._language == LANG_SP)
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "THOPKES.TXT");
+		_vm->_fileManager.constructFilename("LINK", "THOPKES.TXT");
 
 	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	uint16 fileSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
@@ -528,7 +528,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_soundManager.loadSample(1, "SOUND37.WAV");
 	_vm->_soundManager.loadSample(2, "SOUND38.WAV");
 	_vm->_soundManager.loadSample(3, "SOUND39.WAV");
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "CASSE.SPR");
+	_vm->_fileManager.constructFilename("SYSTEM", "CASSE.SPR");
 	_breakoutSpr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	loadHiscore();
 	setModeVGA256();
@@ -615,7 +615,7 @@ void ComputerManager::newLevel() {
 	while (!_vm->shouldQuit()) {
 		file = Common::String::format("TAB%d.TAB", _breakoutLevelNbr);
 
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, file);
+		_vm->_fileManager.constructFilename("SYSTEM", file);
 		if (f.open(_vm->_globals._curFilename))
 			break;
 
@@ -789,7 +789,7 @@ int ComputerManager::displayHiscores() {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	loadHiscore();
 	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
+	_vm->_fileManager.constructFilename("SYSTEM", "ALPHA.SPR");
 	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -841,7 +841,7 @@ void ComputerManager::getScoreName() {
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
+	_vm->_fileManager.constructFilename("SYSTEM", "ALPHA.SPR");
 	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_graphicsManager.fadeInBreakout();
 	for (int strPos = 0; strPos <= 4; strPos++) {

@@ -80,7 +80,6 @@ public:
 	bool _saveLoadFl;
 	int SL_MODE;
 	bool _visibleFl;
-	bool _disableCursorFl;
 	bool BOBTOUS;
 	int my_anim;
 	int NUMZONE;
@@ -240,13 +239,13 @@ public:
 	 * Game scene control method
 	 */
 	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
-			const Common::String &animFile, const Common::String &s4, int v);
+			const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
 
 	/**
 	 * Game scene control method
 	 */
 	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
-			const Common::String &animFile, const Common::String &s4, int v);
+			const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
 };
 
 } // End of namespace Hopkins

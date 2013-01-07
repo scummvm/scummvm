@@ -46,7 +46,7 @@ public:
 	void constructFilename(const Common::String &folder, const Common::String &file);
 
 	byte *searchCat(const Common::String &file, int a2);
-	Common::String constructLinuxFilename(const Common::String &file);
+	void constructLinuxFilename(const Common::String &file);
 
 	uint32 fileSize(const Common::String &filename);
 };

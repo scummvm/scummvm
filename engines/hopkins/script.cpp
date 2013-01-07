@@ -918,7 +918,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 56:
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "HOPFEM.SPR");
+			_vm->_fileManager.constructFilename("SYSTEM", "HOPFEM.SPR");
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.PERSO_TYPE = 1;
 			_vm->_globals._saveData->data[svField122] = 1;
@@ -929,7 +929,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 57:
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
+			_vm->_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.PERSO_TYPE = 0;
 			_vm->_globals._saveData->data[svField122] = 0;
@@ -1352,10 +1352,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("tourist1.pe2");
 			_vm->_globals.NOPARLE = false;
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.playAnim2("T421.ANM", 100, 14, 500);
-			else if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.playAnim2("T421a.ANM", 100, 14, 500);
+			_vm->_animationManager.playAnim2("T421.ANM", 100, 14, 500);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();
@@ -2278,17 +2275,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (!_vm->_globals._internetFl) {
 				_vm->_graphicsManager.FADE_LINUX = 2;
 				_vm->_graphicsManager._fadeDefaultSpeed = 1;
-				if (_vm->_globals.SVGA == 2)
-					_vm->_animationManager.playAnim("BOMBE1A.ANM", 100, 18, 100);
-				else if (_vm->_globals.SVGA == 1)
-					_vm->_animationManager.playAnim("BOMBE1.ANM", 100, 18, 100);
+				_vm->_animationManager.playAnim("BOMBE1A.ANM", 100, 18, 100);
 			}
 			_vm->_graphicsManager.loadImage("BOMBEB");
 			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-			_vm->_graphicsManager.OPTI_INI("BOMBE", 2);
+			_vm->_graphicsManager.OPTI_INI("BOMBE", 2, true);
 			_vm->_graphicsManager.fadeInShort();
 			break;
 
@@ -2313,10 +2307,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.OPTI_ONE(3, 0, 16, 4);
 			_vm->_soundManager.SPECIAL_SOUND = 199;
 			_vm->_graphicsManager.FADE_LINUX = 2;
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
-			else if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			_vm->_graphicsManager._noFadingFl = true;
@@ -2329,10 +2320,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(1, 0, 16, 4);
 			_vm->_soundManager.SPECIAL_SOUND = 199;
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
-			else if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager._noFadingFl = true;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
@@ -2347,10 +2335,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager.fadeOutShort();
 			_vm->_soundManager.SPECIAL_SOUND = 199;
 			_vm->_graphicsManager.FADE_LINUX = 2;
-			if (_vm->_globals.SVGA == 1)
-				_vm->_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
-			else if (_vm->_globals.SVGA == 2)
-				_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager._noFadingFl = true;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
@@ -2363,10 +2348,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NO_VISU = false;
 			_vm->_objectsManager.OPTI_ONE(6, 0, 16, 4);
 			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
-				if (_vm->_globals.SVGA == 1)
-					_vm->_animationManager.playAnim("BOMBE3.ANM", 50, 14, 500);
-				else if (_vm->_globals.SVGA == 2)
-					_vm->_animationManager.playAnim("BOMBE3A.ANM", 50, 14, 500);
+				_vm->_animationManager.playAnim("BOMBE3A.ANM", 50, 14, 500);
 				memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			}
 			_vm->_globals._exitId = 6;

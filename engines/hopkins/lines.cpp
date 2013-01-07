@@ -471,7 +471,7 @@ void LinesManager::INIPARCOURS() {
 	} while (!v1);
 
 	_vm->_objectsManager._lastLine = v0;
-	v13 = _vm->_globals.Max_Ligne_Long;
+	v13 = _vm->_globals._maxLineLength;
 	v9 = _vm->_objectsManager._lastLine + 1;
 	for (int v8 = 1; v8 != 400; v8++) {
 		v11 = v8;

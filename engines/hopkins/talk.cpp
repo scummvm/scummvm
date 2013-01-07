@@ -62,7 +62,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_characterBuffer = _vm->_fileManager.searchCat(filename, 5);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
+		_vm->_fileManager.constructFilename("ANIM", filename);
 		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
@@ -81,9 +81,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
 	_characterSprite = _vm->_fileManager.searchCat(spriteFilename, 7);
 	if (_characterSprite) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, spriteFilename);
+		_vm->_fileManager.constructFilename("ANIM", spriteFilename);
 	} else {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
+		_vm->_fileManager.constructFilename("ANIM", "RES_SAN.RES");
 	}
 	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 
@@ -156,14 +156,14 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 }
 
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
-	_vm->_objectsManager._disableCursorFl = true;
+	// TODO: The original disables the mouse cursor here
 	STATI = 1;
 	bool v7 = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
 	_characterBuffer = _vm->_fileManager.searchCat(filename, 5);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
+		_vm->_fileManager.constructFilename("ANIM", filename);
 		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
@@ -222,7 +222,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_eventsManager.changeMouseCursor(v8);
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-	_vm->_objectsManager._disableCursorFl = false;
+	// TODO: The original reenables the mouse cursor here
 	_vm->_globals._disableInventFl = v7;
 	STATI = 0;
 }
@@ -576,7 +576,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 
 	v18 = 0;
 	_vm->_globals.police_l = 11;
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
+	_vm->_fileManager.constructFilename("LINK", file);
 
 	// Build up the filename
 	filename = dest = _vm->_globals._curFilename;
@@ -1087,7 +1087,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_characterBuffer = _vm->_fileManager.searchCat(a2, 5);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, a2);
+		_vm->_fileManager.constructFilename("ANIM", a2);
 		_characterBuffer = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_characterSize = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	}
@@ -1100,9 +1100,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	_characterSprite = _vm->_fileManager.searchCat(v23, 7);
 	if (_characterSprite)
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, v23);
+		_vm->_fileManager.constructFilename("ANIM", v23);
 	else
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, "RES_SAN.RES");
+		_vm->_fileManager.constructFilename("ANIM", "RES_SAN.RES");
 
 	_characterSprite = _vm->_objectsManager.loadSprite(_vm->_globals._curFilename);
 
@@ -1130,7 +1130,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
-	_vm->_graphicsManager.INI_ECRAN2(v22);
+	_vm->_graphicsManager.INI_ECRAN2(v22, true);
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager.NUMZONE = -1;
@@ -1164,7 +1164,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.COUCOU = v11;
 	_vm->_objectsManager._disableFl = true;
 	_vm->_objectsManager.INILINK(v20);
-	_vm->_graphicsManager.INI_ECRAN2(v20);
+	_vm->_graphicsManager.INI_ECRAN2(v20, true);
 	_vm->_objectsManager._disableFl = false;
 	_vm->_globals.NOMARCHE = false;
 	if (_vm->_globals._exitId == 101)

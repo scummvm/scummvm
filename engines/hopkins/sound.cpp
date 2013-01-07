@@ -319,7 +319,7 @@ void SoundManager::playAnim_SOUND(int soundNumber) {
 }
 
 static const char *modSounds[] = {
-	"appart", "ville", "Rock", "police", "deep"
+	"appart", "ville", "Rock", "police", "deep",
 	"purgat", "riviere", "SUSPENS", "labo", "cadavre",
 	"cabane", "purgat2", "foret", "ile", "ile2",
 	"hopkins", "peur", "URAVOLGA", "BASE", "cadavre2",
@@ -380,7 +380,7 @@ void SoundManager::PLAY_MOD(const Common::String &file) {
 			modFile += "2";
 		}
 	}
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPMUSIC, modFile);
+	_vm->_fileManager.constructFilename("MUSIC", modFile);
 	if (MOD_FLAG) {
 		stopMusic();
 		delMusic();
@@ -520,34 +520,34 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 	if (!_vm->_fileManager.searchCat(filename + ".WAV", 9)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "ENG_VOI.RES");
+			_vm->_fileManager.constructFilename("VOICE", "ENG_VOI.RES");
 		// Win95 and Linux versions uses another set of names
 		else if (_vm->_globals._language == LANG_FR)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
+			_vm->_fileManager.constructFilename("VOICE", "RES_VFR.RES");
 		else if (_vm->_globals._language == LANG_EN)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VAN.RES");
+			_vm->_fileManager.constructFilename("VOICE", "RES_VAN.RES");
 		else if (_vm->_globals._language == LANG_SP)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VES.RES");
+			_vm->_fileManager.constructFilename("VOICE", "RES_VES.RES");
 
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
 	} else if (!_vm->_fileManager.searchCat(filename + ".APC", 9)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "ENG_VOI.RES");
+			_vm->_fileManager.constructFilename("VOICE", "ENG_VOI.RES");
 		// Win95 and Linux versions uses another set of names
 		else if (_vm->_globals._language == LANG_FR)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VFR.RES");
+			_vm->_fileManager.constructFilename("VOICE", "RES_VFR.RES");
 		else if (_vm->_globals._language == LANG_EN)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VAN.RES");
+			_vm->_fileManager.constructFilename("VOICE", "RES_VAN.RES");
 		else if (_vm->_globals._language == LANG_SP)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "RES_VES.RES");
+			_vm->_fileManager.constructFilename("VOICE", "RES_VES.RES");
 
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
 	} else {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".WAV");
+		_vm->_fileManager.constructFilename("VOICE", filename + ".WAV");
 		if (!f.exists(_vm->_globals._curFilename)) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, filename + ".APC");
+			_vm->_fileManager.constructFilename("VOICE", filename + ".APC");
 			if (!f.exists(_vm->_globals._curFilename))
 				return false;
 		}
@@ -626,7 +626,7 @@ void SoundManager::MODSetMusicVolume(int volume) {
 }
 
 void SoundManager::loadSample(int wavIndex, const Common::String &file) {
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSOUND, file);
+	_vm->_fileManager.constructFilename("SOUND", file);
 	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals._curFilename, 0);
 	SOUND[wavIndex]._active = true;
 }
@@ -758,7 +758,7 @@ void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename
 }
 
 void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSOUND, file);
+	_vm->_fileManager.constructFilename("SOUND", file);
 	LOAD_SAMPLE2_SDL(wavIndex, _vm->_globals._curFilename, 1);
 }
 

@@ -58,7 +58,13 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	byte *screenP = _vm->_graphicsManager._vesaScreen;
 	byte *ptr = _vm->_globals.allocMemory(20);
 
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPANM, filename);
+	// The Windows 95 demo only contains the interlaced version of the BOMBE1 and BOMBE2 videos
+	if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getIsDemo() && filename == "BOMBE1A.ANM")
+		_vm->_fileManager.constructFilename("ANM", "BOMBE1.ANM");
+	else if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getIsDemo() && filename == "BOMBE2A.ANM")
+		_vm->_fileManager.constructFilename("ANM", "BOMBE2.ANM");
+	else
+		_vm->_fileManager.constructFilename("ANM", filename);
 	if (!f.open(_vm->_globals._curFilename))
 		error("File not found - %s", _vm->_globals._curFilename.c_str());
 
@@ -233,7 +239,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 
 		screenP = _vm->_graphicsManager._vesaScreen;
 		ptr = _vm->_globals.allocMemory(20);
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPANM, filename);
+		_vm->_fileManager.constructFilename("ANM", filename);
 
 		if (!f.open(_vm->_globals._curFilename))
 			error("Error opening file - %s", _vm->_globals._curFilename.c_str());
@@ -470,7 +476,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	clearAnim();
 
 	Common::String filename = animName + ".ANI";
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
+	_vm->_fileManager.constructFilename("ANIM", filename);
 
 	Common::File f;
 	if (!f.open(_vm->_globals._curFilename))
@@ -495,7 +501,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 
 	for (int idx = 0; idx <= 5; ++idx) {
 		if (files[idx][0]) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, files[idx]);
+			_vm->_fileManager.constructFilename("ANIM", files[idx]);
 
 			if (!f.exists(_vm->_globals._curFilename))
 				error("File not found");
@@ -539,7 +545,7 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	byte *v13;
 	byte *v19;
 	int result = 0;
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, filename);
+	_vm->_fileManager.constructFilename("ANIM", filename);
 	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.fileSize(_vm->_globals._curFilename);
 	_vm->_globals.Bank[idx]._loadedFl = true;
 	_vm->_globals.Bank[idx]._filename = filename;
@@ -581,7 +587,7 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 			} while (ch != '.');
 			ofsFilename += ".OFS";
 
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPANIM, ofsFilename);
+			_vm->_fileManager.constructFilename("ANIM", ofsFilename);
 			Common::File f;
 			if (f.exists(_vm->_globals._curFilename)) {
 				v19 = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
@@ -727,7 +733,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	}
 	screenP = _vm->_graphicsManager._vesaScreen;
 	v10 = _vm->_globals.allocMemory(22);
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSEQ, file);
+	_vm->_fileManager.constructFilename("SEQ", file);
 	if (!f.open(_vm->_globals._curFilename))
 		error("Error opening file - %s", _vm->_globals._curFilename.c_str());
 
@@ -883,7 +889,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		_vm->_eventsManager._mouseFl = false;
 		screenP = _vm->_graphicsManager._vesaScreen;
 		v11 = _vm->_globals.allocMemory(22);
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSEQ, file);
+		_vm->_fileManager.constructFilename("SEQ", file);
 
 		if (!f.open(_vm->_globals._curFilename))
 			error("File not found - %s", _vm->_globals._curFilename.c_str());

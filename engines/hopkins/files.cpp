@@ -72,8 +72,8 @@ void FileManager::initCensorship() {
 	_vm->_globals._censorshipFl = false;
 
 	// If file doesn't exist, fallback to uncensored
-	if (!fileExists(_vm->_globals.HOPSYSTEM, "BLOOD.DAT")) {
-		constructFilename(_vm->_globals.HOPSYSTEM, "BLOOD.DAT");
+	if (fileExists("SYSTEM", "BLOOD.DAT")) {
+		constructFilename("SYSTEM", "BLOOD.DAT");
 		char *data = (char *)loadFile(_vm->_globals._curFilename);
 
 		if ((data[6] == 'u' && data[7] == 'k') || (data[6] == 'U' && data[7] == 'K'))
@@ -97,24 +97,8 @@ void FileManager::constructFilename(const Common::String &folder, const Common::
 	// check for animations that don't exist in the ANM folder, but rather in special
 	// sub-folders depending on the physical screen resolution being used.
 
-	if (folder == _vm->_globals.HOPANM) {
-		switch (_vm->_globals.SVGA) {
-		case 1:
-			if (fileExists(folderToUse, file))
-				folderToUse = _vm->_globals.HOPTSVGA;
-			break;
-		case 2:
-			if (fileExists(folderToUse, file))
-				folderToUse = _vm->_globals.HOPSVGA;
-			break;
-		case 3:
-			if (fileExists(folderToUse, file))
-				folderToUse = _vm->_globals.HOPVGA;
-			break;
-		default:
-			break;
-		}
-	}
+	if (folder == "ANM" && fileExists("SVGA", file))
+		folderToUse = "SVGA";
 
 	_vm->_globals._curFilename = Common::String::format("%s/%s", folderToUse.c_str(), file.c_str());
 }
@@ -122,9 +106,8 @@ void FileManager::constructFilename(const Common::String &folder, const Common::
 /**
  * Construct Linux filename
  */
-Common::String FileManager::constructLinuxFilename(const Common::String &file) {
+void FileManager::constructLinuxFilename(const Common::String &file) {
 	_vm->_globals._curFilename = file;
-	return file;
 }
 
 /**
@@ -134,8 +117,7 @@ bool FileManager::fileExists(const Common::String &folder, const Common::String 
 	Common::String filename = folder.empty() ? file :
 		Common::String::format("%s/%s", folder.c_str(), file.c_str());
 
-	Common::File f;
-	return !f.exists(filename);
+	return Common::File::exists(filename);
 }
 
 /**
@@ -150,52 +132,52 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 
 	switch (a2) {
 	case 1:
-		constructFilename(_vm->_globals.HOPLINK, "RES_INI.CAT");
+		constructFilename("LINK", "RES_INI.CAT");
 		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
 		ptr = loadFile(_vm->_globals._curFilename);
-		constructFilename(_vm->_globals.HOPLINK, "RES_INI.RES");
+		constructFilename("LINK", "RES_INI.RES");
 		break;
 
 	case 2:
-		constructFilename(_vm->_globals.HOPLINK, "RES_REP.CAT");
+		constructFilename("LINK", "RES_REP.CAT");
 		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
 		ptr = loadFile(_vm->_globals._curFilename);
-		constructFilename(_vm->_globals.HOPLINK, "RES_REP.RES");
+		constructFilename("LINK", "RES_REP.RES");
 		break;
 
 	case 3:
-		constructFilename(_vm->_globals.HOPLINK, "RES_LIN.CAT");
+		constructFilename("LINK", "RES_LIN.CAT");
 		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
 		ptr = loadFile(_vm->_globals._curFilename);
-		constructFilename(_vm->_globals.HOPLINK, "RES_LIN.RES");
+		constructFilename("LINK", "RES_LIN.RES");
 		break;
 
 	case 4:
-		constructFilename(_vm->_globals.HOPANIM, "RES_ANI.CAT");
+		constructFilename("ANIM", "RES_ANI.CAT");
 		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
 		ptr = loadFile(_vm->_globals._curFilename);
-		constructFilename(_vm->_globals.HOPANIM, "RES_ANI.RES");
+		constructFilename("ANIM", "RES_ANI.RES");
 		break;
 
 	case 5:
-		constructFilename(_vm->_globals.HOPANIM, "RES_PER.CAT");
+		constructFilename("ANIM", "RES_PER.CAT");
 		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
 		ptr = loadFile(_vm->_globals._curFilename);
-		constructFilename(_vm->_globals.HOPANIM, "RES_PER.RES");
+		constructFilename("ANIM", "RES_PER.RES");
 		break;
 
 	case 6:
-		constructFilename(_vm->_globals.HOPIMAGE, "PIC.CAT");
+		constructFilename("BUFFER", "PIC.CAT");
 		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
@@ -203,7 +185,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		break;
 
 	case 7:
-		constructFilename(_vm->_globals.HOPANIM, "RES_SAN.CAT");
+		constructFilename("ANIM", "RES_SAN.CAT");
 		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
@@ -211,7 +193,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		break;
 
 	case 8:
-		constructFilename(_vm->_globals.HOPLINK, "RES_SLI.CAT");
+		constructFilename("LINK", "RES_SLI.CAT");
 		if (!f.exists(_vm->_globals._curFilename))
 			return g_PTRNUL;
 
@@ -220,18 +202,18 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 
 	case 9:
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPVOICE, "ENG_VOI.RES");
+			_vm->_fileManager.constructFilename("VOICE", "ENG_VOI.RES");
 		// Win95 and Linux versions uses another set of names
 		else {
 			switch (_vm->_globals._language) {
 			case LANG_EN:
-				constructFilename(_vm->_globals.HOPLINK, "RES_VAN.CAT");
+				constructFilename("LINK", "RES_VAN.CAT");
 				break;
 			case LANG_FR:
-				constructFilename(_vm->_globals.HOPLINK, "RES_VFR.CAT");
+				constructFilename("LINK", "RES_VFR.CAT");
 				break;
 			case LANG_SP:
-				constructFilename(_vm->_globals.HOPLINK, "RES_VES.CAT");
+				constructFilename("LINK", "RES_VES.CAT");
 				break;
 			}
 		}

@@ -115,7 +115,6 @@ Globals::Globals() {
 
 	// Initialise fields
 	_language = LANG_EN;
-	SVGA = 2;
 	_internetFl = true;
 
 	PUBEXIT = false;
@@ -126,7 +125,6 @@ Globals::Globals() {
 	_lastDirection = 0;
 	police_l = police_h = 0;
 	TETE = NULL;
-	texte_long = 0;
 	_curObjectIndex = 0;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
@@ -136,19 +134,16 @@ Globals::Globals() {
 	_helicopterFl = false;
 	_catalogPos = 0;
 	_catalogSize = 0;
-	_newObjectFl = false;
 	iRegul = 0;
 	_exitId = 0;
 	PLANX = PLANY = 0;
 	PLANI = 0;
 	PERSO = 0;
 	_screenId = 0;
-	NOSPRECRAN = false;
 	_prevScreenId = 0;
-	Max_Ligne_Long = 0;
+	_maxLineLength = 0;
 	Max_Perso_Y = 0;
 	Max_Propre = 0;
-	fmusic = 0;
 	NBBLOC = 0;
 	_menuScrollType = 0;
 	_menuScrollSpeed = 0;
@@ -187,7 +182,6 @@ Globals::Globals() {
 	BUF_ZONE = NULL;
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = NULL;
-	texte_tmp = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
 	BUFFERTAPE = NULL;
@@ -242,7 +236,6 @@ Globals::~Globals() {
 	freeMemory(BUF_ZONE);
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
-	freeMemory(texte_tmp);
 	freeMemory(SPRITE_ECRAN);
 	freeMemory((byte *)_saveData);
 	freeMemory(BUFFERTAPE);
@@ -266,20 +259,6 @@ void Globals::setParent(HopkinsEngine *vm) {
 }
 
 void Globals::setConfig() {
-	HOPIMAGE = "BUFFER";
-	HOPANIM = "ANIM";
-	HOPLINK = "LINK";
-	HOPSAVE = "SAVE";
-	HOPSOUND = "SOUND";
-	HOPMUSIC = "MUSIC";
-	HOPVOICE = "VOICE";
-	HOPANM = "ANM";
-	HOPTSVGA = "TSVGA";
-	HOPSVGA = "SVGA";
-	HOPVGA = "VGA";
-	HOPSEQ = "SEQ";
-	HOPSYSTEM = "SYSTEM";
-
 	// CHECKME: Should be in Globals() but it doesn't work
 	// The Polish version is a translation of the English version. The filenames are the same.
 	switch (_vm->getLanguage()) {
@@ -327,8 +306,6 @@ void Globals::clearAll() {
 	nbrligne = 80;
 	INIT_ANIM();
 
-	texte_tmp = g_PTRNUL;
-	texte_long = 0;
 	police = g_PTRNUL;
 	police_h = 0;
 	police_l = 0;
@@ -377,8 +354,6 @@ void Globals::clearAll() {
 		CarreZone[idx].field0 = 0;
 	}
 
-	texte_long = 0;
-	texte_tmp = g_PTRNUL;
 	BUFFERTAPE = allocMemory(85000);
 
 	_saveData = (Sauvegarde *)malloc(sizeof(Sauvegarde));
@@ -458,7 +433,7 @@ void Globals::CLEAR_VBOB() {
 
 // Load Object
 void Globals::loadObjects() {
-	_vm->_fileManager.constructFilename(HOPSYSTEM, "OBJET.DAT");
+	_vm->_fileManager.constructFilename("SYSTEM", "OBJET.DAT");
 	byte *data = _vm->_fileManager.loadFile(_curFilename);
 	byte *srcP = data;
 
@@ -537,11 +512,11 @@ void Globals::loadCache(const Common::String &file) {
 	Common::File f;
 
 	resetCache();
-	_vm->_fileManager.constructFilename(HOPLINK, file);
+	_vm->_fileManager.constructFilename("LINK", file);
 	ptr = _vm->_fileManager.loadFile(_curFilename);
 	v16 = Common::String((const char *)ptr);
 
-	_vm->_fileManager.constructFilename(HOPLINK, v16);
+	_vm->_fileManager.constructFilename("LINK", v16);
 
 	if (!f.exists(_curFilename))
 		return;

@@ -129,8 +129,6 @@ Common::Error HopkinsEngine::run() {
 }
 
 bool HopkinsEngine::runWin95Demo() {
-	_globals.SVGA = 1;
-
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
@@ -179,7 +177,7 @@ bool HopkinsEngine::runWin95Demo() {
 	warning("TODO Init_Interrupt_();");
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
@@ -209,9 +207,9 @@ bool HopkinsEngine::runWin95Demo() {
 		switch (_globals._exitId) {
 		case 1:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 2);
+			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 2, true);
 			break;
 
 		case 3:
@@ -245,10 +243,9 @@ bool HopkinsEngine::runWin95Demo() {
 				_globals._saveData->data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -259,70 +256,63 @@ bool HopkinsEngine::runWin95Demo() {
 
 		case 5:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
-			_globals.NOSPRECRAN = true;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
 
 			if (_globals._saveData->data[svField80]) {
 				if (_globals._saveData->data[svField80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
+					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			} else {
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
+				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			}
-
-			_globals.NOSPRECRAN = false;
 			break;
 
 		case 6:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 460;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals._saveData->data[svField220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 440;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			if (_globals._saveData->data[svField225])
-			  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+			  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 			  bombExplosion();
 			break;
 
 		case 10:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
-			_globals.NOSPRECRAN = true;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
 			_globals.Max_Propre = 15;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 450;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			if (_globals._saveData->data[svField225]) {
 				if (_globals._language == LANG_FR)
 					_graphicsManager.loadImage("ENDFR");
@@ -365,15 +355,11 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 111:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -491,7 +477,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		playIntro();
 
 	_globals.iRegul = 0;
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
@@ -536,9 +522,9 @@ bool HopkinsEngine::runLinuxDemo() {
 
 		case 1:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
+			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -575,10 +561,9 @@ bool HopkinsEngine::runLinuxDemo() {
 			}
 
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -589,127 +574,112 @@ bool HopkinsEngine::runLinuxDemo() {
 
 		case 5:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
-			_globals.NOSPRECRAN = true;
-			if (_globals._saveData->data[svField80]) {
-				if (_globals._saveData->data[svField80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
-			} else {
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
-			}
-
-			_globals.NOSPRECRAN = false;
+			if (_globals._saveData->data[svField80] == 1)
+					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+			else
+				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
 
 		case 6:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 460;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals._saveData->data[svField220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
 
 			if (!_globals._saveData->data[svField225])
 				bombExplosion();
 
-			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			break;
 
 		case 10:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
-			_globals.NOSPRECRAN = true;
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField225]) {
-				_globals.NOSPRECRAN = true;
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
-			} else {
+			if (_globals._saveData->data[svField225])
+				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
+			else
 				bombExplosion();
-			}
 			break;
 
 		case 13:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1);
+			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
+			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
 			break;
 
 		case 16:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
 
 			if (_globals._saveData->data[svField113] == 1) {
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
+				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
 			} else if (!_globals._saveData->data[svField113]) {
-				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
+				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			}
 			break;
 
 		case 25:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30);
+			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
 			break;
 
 		case 26:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30);
+			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
 
 		case 33:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 35:
@@ -717,15 +687,11 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 111:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -817,8 +783,6 @@ bool HopkinsEngine::runLinuxDemo() {
 }
 
 bool HopkinsEngine::runOS2Full() {
-	_globals.SVGA = 2;
-
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
@@ -843,7 +807,7 @@ bool HopkinsEngine::runOS2Full() {
 	_graphicsManager.loadImage("H2");
 	_graphicsManager.fadeInLong();
 	_globals.iRegul = 0;
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
@@ -864,9 +828,9 @@ bool HopkinsEngine::runOS2Full() {
 		switch (_globals._exitId) {
 		case 1:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
+			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -895,10 +859,9 @@ bool HopkinsEngine::runOS2Full() {
 				_globals._saveData->data[170] = 1;
 			}
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -909,116 +872,107 @@ bool HopkinsEngine::runOS2Full() {
 
 		case 5:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
-			_globals.NOSPRECRAN = true;
 			if (_globals._saveData->data[80]) {
 				if (_globals._saveData->data[80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
+					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			}
 			else
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
-			_globals.NOSPRECRAN = false;
+				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
 
 		case 6:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals._saveData->data[220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[225])
-				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 				bombExplosion();
 			break;
 
 		case 10:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
-			_globals.NOSPRECRAN = true;
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[225]) {
-				_globals.NOSPRECRAN = true;
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
-			} else
+			if (_globals._saveData->data[225])
+				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
+			else
 				bombExplosion();
 			break;
 
 		case 13:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1);
+			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
+			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18, false);
 			break;
 
 		case 16:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
 			if (_globals._saveData->data[113] == 1)
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM", "IM16", 7);
+				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM", "IM16", 7, true);
 			else {
 				if (!_globals._saveData->data[113])
-					_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
+					_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			}
 			break;
 
 		case 17:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[117] == 1)
-				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11);
+				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
 			else {
 				if (!_globals._saveData->data[117])
-					_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11);
+					_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			}
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
@@ -1031,38 +985,34 @@ bool HopkinsEngine::runOS2Full() {
 				_graphicsManager.clearPalette();
 //				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
 
 		case 18:
-			_globals.NOSPRECRAN = true;
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6);
+			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6, false);
 			break;
 
 		case 19:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[123])
-				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6);
+				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
 			else
-				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6);
+				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
 			break;
 
 		case 20:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 10;
+			_globals._maxLineLength = 10;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6);
+			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals._exitId == 17) {
 				_globals.iRegul = 1;
 				// _soundManager.WSOUND_OFF();
@@ -1074,10 +1024,7 @@ bool HopkinsEngine::runOS2Full() {
 
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -1085,103 +1032,96 @@ bool HopkinsEngine::runOS2Full() {
 
 		case 22:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6);
+			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
 			break;
 
 		case 23:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6);
+			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
 			break;
 
 		case 24:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
 			if (_globals._saveData->data[181]) {
 				if (_globals._saveData->data[181] == 1 )
-					_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1);
+					_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1, true);
 			} else
-				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1);
+				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
 			break;
 
 		case 25:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8);
+			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8, true);
 			break;
 
 		case 26:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8);
+			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8, true);
 			break;
 
 		case 27:
 			_globals.Max_Propre = 10;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[177] == 1)
-				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27);
+				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
 			else {
 				if (!_globals._saveData->data[177])
-					_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27);
+					_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
 			}
 			break;
 
 		case 28:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
 			if (_globals._saveData->data[166] != 1 || _globals._saveData->data[167] != 1 )
-				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1);
+				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
 			else
-				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1);
+				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1, false);
 			break;
 
 		case 29:
 			_globals.Max_Propre = 60;
-			_globals.Max_Ligne_Long = 50;
+			_globals._maxLineLength = 50;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1);
+			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
 			break;
 
 		case 30:
 			_globals.Max_Propre = 10;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
 			break;
 
 		case 31:
-			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10);
+			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
 			break;
 
 		case 32:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2);
+			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
 			break;
 
 		case 33:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 34:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
 			break;
 
 		case 35:
@@ -1192,20 +1132,18 @@ bool HopkinsEngine::runOS2Full() {
 		case 40:
 		case 41: {
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
 			_globals._forestFl = true;
-			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
 			if (_globals._forestSprite == g_PTRNUL) {
-				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
+				_fileManager.constructFilename("SYSTEM", "HOPDEG.SPR");
 				_globals._forestSprite = _objectsManager.loadSprite(_globals._curFilename);
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
-			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
 			if (_globals._exitId < 35 || _globals._exitId > 49 ) {
 				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
 				_globals._forestFl = false;
@@ -1221,176 +1159,152 @@ bool HopkinsEngine::runOS2Full() {
 
 		case 51:
 			_globals.Max_Propre = 20;
-			_globals.Max_Ligne_Long = 10;
+			_globals._maxLineLength = 10;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14);
+			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
 			break;
 
 		case 52:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14);
+			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
 			break;
 
 		case 54:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14);
+			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
 			break;
 
 		case 55:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14);
+			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
 			break;
 
 		case 56:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14);
+			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
 			break;
 
 		case 57:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14);
+			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
 			break;
 
 		case 58:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14);
+			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
 			break;
 
 		case 59:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
 			break;
 
 		case 60:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
 			break;
 
 		case 61:
 			if (_globals._saveData->data[311] == 1 && !_globals._saveData->data[312] )
 				handleConflagration();
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
+			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
 			break;
 
 		case 62:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
 			break;
 
 		case 63:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
 			break;
 
 		case 64:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21);
+			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
 			break;
 
 		case 65:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
 			break;
 
 		case 66:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
 			break;
 
 		case 67:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
 			break;
 
 		case 68:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21);
+			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
 			break;
 
 		case 69:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
 			break;
 
 		case 70:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
 			break;
 
 		case 71:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
 			break;
 
 		case 73:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
 			if (_globals._saveData->data[318] == 1)
-				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21);
+				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
 			else {
 				if (!_globals._saveData->data[318])
-					_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21);
+					_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
 			}
 			break;
 
@@ -1460,43 +1374,40 @@ bool HopkinsEngine::runOS2Full() {
 
 		case 93:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
 			if (_globals._saveData->data[330])
-				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 26);
+				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 26, true);
 			else
-				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26);
+				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26, true);
 			break;
 
 		case 94:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19);
+			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
 			break;
 
 		case 95:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19);
+			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
 			break;
 
 		case 96:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19);
+			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
 			break;
 
 		case 97:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19);
+			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
 				// _soundManager.WSOUND_OFF();
@@ -1508,10 +1419,7 @@ bool HopkinsEngine::runOS2Full() {
 
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -1519,16 +1427,16 @@ bool HopkinsEngine::runOS2Full() {
 
 		case 98:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19);
+			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
 			break;
 
 		case 99:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19);
+			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
 			break;
 
 		case 100:
@@ -1536,15 +1444,11 @@ bool HopkinsEngine::runOS2Full() {
 			break;
 
 		case 111:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -1645,7 +1549,7 @@ bool HopkinsEngine::runOS2Full() {
 			_soundManager.WSOUND(23);
 			_globals._exitId = handleBaseMap();
 			// _soundManager.WSOUND_OFF();
-			_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
@@ -1661,8 +1565,6 @@ bool HopkinsEngine::runOS2Full() {
 }
 
 bool HopkinsEngine::runBeOSFull() {
-	_globals.SVGA = 2;
-
 	warning("TODO: Init_Interrupt()");
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
@@ -1688,7 +1590,7 @@ bool HopkinsEngine::runBeOSFull() {
 	_graphicsManager.fadeInLong();
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 0;
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
@@ -1713,9 +1615,9 @@ bool HopkinsEngine::runBeOSFull() {
 		switch (_globals._exitId) {
 		case 1:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
+			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -1744,10 +1646,9 @@ bool HopkinsEngine::runBeOSFull() {
 				_globals._saveData->data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -1758,70 +1659,63 @@ bool HopkinsEngine::runBeOSFull() {
 
 		case 5:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
-			_globals.NOSPRECRAN = true;
 			if (_globals._saveData->data[svField80]) {
 				if (_globals._saveData->data[svField80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
+					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			} else {
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
+				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			}
-			_globals.NOSPRECRAN = false;
 			break;
 
 		case 6:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals._saveData->data[svField220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
 			if (!_globals._saveData->data[svField225])
 				bombExplosion();
-			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			break;
 
 		case 10:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
-			_globals.NOSPRECRAN = true;
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
 			if (_globals._saveData->data[svField225]) {
-				_globals.NOSPRECRAN = true;
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
+				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			} else {
 				bombExplosion();
 			}
@@ -1829,43 +1723,41 @@ bool HopkinsEngine::runBeOSFull() {
 
 		case 13:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1);
+			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
+			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18, false);
 			break;
 
 		case 16:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
 			if (_globals._saveData->data[svField113] == 1) {
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
+				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
 			} else if (!_globals._saveData->data[svField113]) {
-				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
+				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			}
 			break;
 
 		case 17:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[svField117] == 1) {
-				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11);
+				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
 			} else if (!_globals._saveData->data[svField117]) {
-				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11);
+				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			}
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
@@ -1878,39 +1770,34 @@ bool HopkinsEngine::runBeOSFull() {
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
 			break;
 
 		case 18:
-			_globals.NOSPRECRAN = true;
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6);
+			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6, false);
 			break;
 
 		case 19:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[svField123])
-				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6);
+				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
 			else
-				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6);
+				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
 			break;
 
 		case 20:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 10;
+			_globals._maxLineLength = 10;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6);
+			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals._exitId == 17) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
@@ -1922,10 +1809,7 @@ bool HopkinsEngine::runBeOSFull() {
 
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -1933,103 +1817,96 @@ bool HopkinsEngine::runBeOSFull() {
 
 		case 22:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6);
+			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
 			break;
 
 		case 23:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6);
+			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
 			break;
 
 		case 24:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
 			if (_globals._saveData->data[svField181]) {
 				if (_globals._saveData->data[svField181] == 1)
-					_objectsManager.PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1);
+					_objectsManager.PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
 			} else {
-				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1);
+				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
 			}
 			break;
 
 		case 25:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8);
+			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8, true);
 			break;
 
 		case 26:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8);
+			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8, true);
 			break;
 
 		case 27:
 			_globals.Max_Propre = 10;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[svField177] == 1) {
-				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27);
+				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
 			} else if (!_globals._saveData->data[svField177]) {
-				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27);
+				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
 			}
 			break;
 
 		case 28:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
 			if (_globals._saveData->data[svField166] != 1 || _globals._saveData->data[svField167] != 1)
-				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1);
+				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
 			else
-				_objectsManager.PERSONAGE2("IM28A", "IM28", "ANIM28", "IM28", 1);
+				_objectsManager.PERSONAGE2("IM28A", "IM28", "ANIM28", "IM28", 1, false);
 			break;
 
 		case 29:
 			_globals.Max_Propre = 60;
-			_globals.Max_Ligne_Long = 50;
+			_globals._maxLineLength = 50;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1);
+			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
 			break;
 
 		case 30:
 			_globals.Max_Propre = 10;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
 			break;
 
 		case 31:
-			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10);
+			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
 			break;
 
 		case 32:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2);
+			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
 			break;
 
 		case 33:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 34:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
 			break;
 
 		case 35:
@@ -2040,21 +1917,19 @@ bool HopkinsEngine::runBeOSFull() {
 		case 40:
 		case 41: {
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
 			_globals._forestFl = true;
-			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
 			if (_globals._forestSprite == g_PTRNUL) {
-				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
+				_fileManager.constructFilename("SYSTEM", "HOPDEG.SPR");
 				_globals._forestSprite = _objectsManager.loadSprite(_globals._curFilename);
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 
-			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
 			if ((_globals._exitId  < 35) || (_globals._exitId > 49)) {
 				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
 				_globals._forestFl = false;
@@ -2070,175 +1945,151 @@ bool HopkinsEngine::runBeOSFull() {
 
 		case 51:
 			_globals.Max_Propre = 20;
-			_globals.Max_Ligne_Long = 10;
+			_globals._maxLineLength = 10;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14);
+			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
 			break;
 
 		case 52:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14);
+			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
 			break;
 
 		case 54:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14);
+			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
 			break;
 
 		case 55:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14);
+			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
 			break;
 
 		case 56:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14);
+			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
 			break;
 
 		case 57:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14);
+			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
 			break;
 
 		case 58:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14);
+			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
 			break;
 
 		case 59:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
 			break;
 
 		case 60:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
 			break;
 
 		case 61:
 			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
 				handleConflagration();
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
+			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
 			break;
 
 		case 62:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
 			break;
 
 		case 63:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
 			break;
 
 		case 64:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21);
+			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
 			break;
 
 		case 65:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
 			break;
 
 		case 66:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
 			break;
 
 		case 67:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
 			break;
 
 		case 68:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21);
+			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
 			break;
 
 		case 69:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
 			break;
 
 		case 70:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
 			break;
 
 		case 71:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
 			break;
 
 		case 73:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
 			if (_globals._saveData->data[svField318] == 1) {
-				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21);
+				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
 			} else if (!_globals._saveData->data[svField318]) {
-				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21);
+				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
 			}
 			break;
 
@@ -2308,43 +2159,40 @@ bool HopkinsEngine::runBeOSFull() {
 
 		case 93:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
 			if (_globals._saveData->data[svField330])
-				_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 26);
+				_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 26, true);
 			else
-				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26);
+				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26, true);
 			break;
 
 		case 94:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19);
+			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
 			break;
 
 		case 95:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19);
+			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
 			break;
 
 		case 96:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19);
+			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
 			break;
 
 		case 97:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19);
+			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
@@ -2356,11 +2204,7 @@ bool HopkinsEngine::runBeOSFull() {
 
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
-
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -2368,16 +2212,16 @@ bool HopkinsEngine::runBeOSFull() {
 
 		case 98:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19);
+			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
 			break;
 
 		case 99:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19);
+			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
 			break;
 
 		case 100:
@@ -2385,15 +2229,11 @@ bool HopkinsEngine::runBeOSFull() {
 			break;
 
 		case 111:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -2494,7 +2334,7 @@ bool HopkinsEngine::runBeOSFull() {
 			_soundManager.WSOUND(23);
 			_globals._exitId = handleBaseMap();
 			_soundManager.WSOUND_OFF();
-			_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
@@ -2505,8 +2345,6 @@ bool HopkinsEngine::runBeOSFull() {
 }
 
 bool HopkinsEngine::runWin95full() {
-	_globals.SVGA = 2;
-
 	warning("TODO: Init_Interrupt_()");
 
 	_globals.loadObjects();
@@ -2531,7 +2369,7 @@ bool HopkinsEngine::runWin95full() {
 	_eventsManager.delay(500);
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 0;
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
@@ -2557,9 +2395,9 @@ bool HopkinsEngine::runWin95full() {
 		switch (_globals._exitId) {
 		case 1:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
+			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -2593,10 +2431,9 @@ bool HopkinsEngine::runWin95full() {
 				_globals._saveData->data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
-			_globals.NOSPRECRAN = true;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -2607,116 +2444,103 @@ bool HopkinsEngine::runWin95full() {
 
 		case 5:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
-			_globals.NOSPRECRAN = true;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
-			if (_globals._saveData->data[svField80]) {
-				if (_globals._saveData->data[svField80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
-			} else {
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
-			}
-
-			_globals.NOSPRECRAN = false;
+			if (_globals._saveData->data[svField80] == 1)
+					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+			else
+				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
 
 		case 6:
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 460;
-			_globals.Max_Ligne_Long = 20;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+			_globals._maxLineLength = 20;
+			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals._saveData->data[svField220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[svField225])
-				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 				bombExplosion();
 			break;
 
 		case 10:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
-			_globals.NOSPRECRAN = true;
 			_globals.Max_Perso_Y = 450;
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
-			_globals.NOSPRECRAN = false;
+			_globals._maxLineLength = 20;
+			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
 			_globals.Max_Propre = 15;
-			if (_globals._saveData->data[svField225]) {
-				_globals.NOSPRECRAN = true;
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
-			} else {
+			if (_globals._saveData->data[svField225])
+				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
+			else
 				bombExplosion();
-			}
 			break;
 
 		case 13:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1);
+			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
+			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
 			break;
 
 		case 16:
 			_globals.Max_Perso_Y = 450;
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			if (_globals._saveData->data[svField113] == 1) {
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
+				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
 			} else if (!_globals._saveData->data[svField113]) {
-				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
+				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			}
 			break;
 
 		case 17:
 			_globals.Max_Propre = 50;
 			_globals.Max_Perso_Y = 440;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			if (_globals._saveData->data[svField117] == 1) {
-				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11);
+				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
 			} else if (!_globals._saveData->data[svField117]) {
-				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11);
+				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			}
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
@@ -2726,10 +2550,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(29);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -2737,27 +2558,26 @@ bool HopkinsEngine::runWin95full() {
 
 		case 18:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29);
+			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
 			break;
 
 		case 19:
 			_globals.Max_Perso_Y = 440;
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			if (_globals._saveData->data[svField123])
-				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6);
+				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
 			else
-				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6);
+				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
 			break;
 
 		case 20:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 10;
+			_globals._maxLineLength = 10;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6);
+			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals._exitId == 17) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
@@ -2766,10 +2586,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -2778,102 +2595,92 @@ bool HopkinsEngine::runWin95full() {
 		case 22:
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 445;
-			_globals.Max_Ligne_Long = 20;
-			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6);
+			_globals._maxLineLength = 20;
+			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
 			break;
 
 		case 23:
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 440;
-			_globals.Max_Ligne_Long = 20;
-			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6);
+			_globals._maxLineLength = 20;
+			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
 			break;
 
 		case 24:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField181]) {
-				if (_globals._saveData->data[svField181] == 1)
-					_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1);
-			} else {
-				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1);
-			}
+			if (_globals._saveData->data[svField181] == 1)
+				_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1, true);
+			else
+				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
 			break;
 
 		case 25:
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 445;
-			_globals.Max_Ligne_Long = 20;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30);
+			_globals._maxLineLength = 20;
+			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
 			break;
 
 		case 26:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30);
+			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
 			break;
 
 		case 27:
 			_globals.Max_Perso_Y = 440;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Propre = 10;
-			if (_globals._saveData->data[svField177] == 1) {
-				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27);
-			} else if (!_globals._saveData->data[svField177]) {
-				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27);
-			}
+			if (_globals._saveData->data[svField177] == 1)
+				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
+			else if (!_globals._saveData->data[svField177])
+				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
 			break;
 
 		case 28:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
 			if (_globals._saveData->data[svField166] != 1 || _globals._saveData->data[svField167] != 1)
-				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1);
+				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
 			else
-				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1);
+				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1, false);
 			break;
 
 		case 29:
 			_globals.Max_Propre = 60;
-			_globals.Max_Ligne_Long = 50;
+			_globals._maxLineLength = 50;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1);
+			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
 			break;
 
 		case 30:
 			_globals.Max_Propre = 10;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
 			break;
 
 		case 31:
-			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10);
+			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
 			break;
 
 		case 32:
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 445;
-			_globals.Max_Ligne_Long = 20;
-			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2);
+			_globals._maxLineLength = 20;
+			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
 			break;
 
 		case 33:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 34:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
 			break;
 
 		case 35:
@@ -2883,22 +2690,19 @@ bool HopkinsEngine::runWin95full() {
 		case 39:
 		case 40:
 		case 41: {
-					_globals.fmusic = 13;
 				_globals.Max_Propre = 50;
-				_globals.Max_Ligne_Long = 40;
+				_globals._maxLineLength = 40;
 				_globals.Max_Perso_Y = 435;
 				_globals._disableInventFl = false;
 				_globals._forestFl = true;
-				_globals.NOSPRECRAN = true;
 				Common::String im = Common::String::format("IM%d", _globals._exitId);
 				_soundManager.WSOUND(13);
 				if (_globals._forestSprite == g_PTRNUL) {
-					_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
+					_fileManager.constructFilename("SYSTEM", "HOPDEG.SPR");
 					_globals._forestSprite = _objectsManager.loadSprite(_globals._curFilename);
 					_soundManager.loadSample(1, "SOUND41.WAV");
 				}
-				_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
-				_globals.NOSPRECRAN = false;
+				_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
 				if (_globals._exitId < 35 || _globals._exitId > 49) {
 					_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
 					_globals._forestFl = false;
@@ -2912,177 +2716,152 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 51:
-			_globals.Max_Ligne_Long = 10;
+			_globals._maxLineLength = 10;
 			_globals.Max_Perso_Y = 440;
 			_globals.Max_Propre = 20;
-			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14);
+			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
 			break;
 
 		case 52:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14);
+			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
 			break;
 
 		case 54:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14);
+			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
 			break;
 
 		case 55:
 			_globals.Max_Propre = 40;
 			_globals.Max_Perso_Y = 460;
-			_globals.Max_Ligne_Long = 30;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14);
+			_globals._maxLineLength = 30;
+			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
 			break;
 
 		case 56:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14);
+			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
 			break;
 
 		case 57:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14);
+			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
 			break;
 
 		case 58:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14);
+			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
 			break;
 
 		case 59:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
 			break;
 
 		case 60:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
 			break;
 
 		case 61:
 			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
 				handleConflagration();
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
+			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
 			break;
 
 		case 62:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
 			break;
 
 		case 63:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
 			break;
 
 		case 64:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21);
+			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
 			break;
 
 		case 65:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
 			break;
 
 		case 66:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
 			break;
 
 		case 67:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
 			break;
 
 		case 68:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21);
+			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
 			break;
 
 		case 69:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
 			break;
 
 		case 70:
 			_globals.Max_Perso_Y = 435;
 			_globals.Max_Propre = 8;
-			_globals.NOSPRECRAN = true;
-			_globals.Max_Ligne_Long = 8;
-			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21);
-			_globals.NOSPRECRAN = false;
+			_globals._maxLineLength = 8;
+			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
 			break;
 
 		case 71:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
 			break;
 
 		case 73:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField318] == 1) {
-				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21);
-			} else if (!_globals._saveData->data[svField318]) {
-				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21);
-			}
+			if (_globals._saveData->data[svField318] == 1)
+				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
+			else if (!_globals._saveData->data[svField318])
+				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
 			break;
 
 		case 75:
@@ -3151,43 +2930,40 @@ bool HopkinsEngine::runWin95full() {
 
 		case 93:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
 			if (_globals._saveData->data[svField330])
-				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 29);
+				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 29, true);
 			else
-				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29);
+				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29, true);
 			break;
 
 		case 94:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19);
+			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
 			break;
 
 		case 95:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = false;
-			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19);
+			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, true);
 			break;
 
 		case 96:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
-			_globals.NOSPRECRAN = true;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19);
+			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
 			break;
 
 		case 97:
 			_globals.Max_Perso_Y = 435;
 			_globals.Max_Propre = 5;
-			_globals.NOSPRECRAN = true;
-			_globals.Max_Ligne_Long = 5;
-			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19);
+			_globals._maxLineLength = 5;
+			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
@@ -3196,10 +2972,7 @@ bool HopkinsEngine::runWin95full() {
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -3207,16 +2980,16 @@ bool HopkinsEngine::runWin95full() {
 
 		case 98:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19);
+			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
 			break;
 
 		case 99:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19);
+			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
 			break;
 
 		case 100:
@@ -3224,15 +2997,11 @@ bool HopkinsEngine::runWin95full() {
 			break;
 
 		case 111:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -3326,7 +3095,7 @@ bool HopkinsEngine::runWin95full() {
 			_globals._exitId = WBASE();
 			_soundManager.WSOUND_OFF();
 			warning("TODO: heapshrink();");
-			_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
@@ -3367,7 +3136,7 @@ bool HopkinsEngine::runLinuxFull() {
 		playIntro();
 
 	_globals.iRegul = 0;
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
 	_globals.PLANX = _globals.PLANY = 0;
@@ -3392,9 +3161,9 @@ bool HopkinsEngine::runLinuxFull() {
 		switch (_globals._exitId) {
 		case 1:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1);
+			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -3429,10 +3198,9 @@ bool HopkinsEngine::runLinuxFull() {
 			}
 
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2);
+			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -3443,70 +3211,63 @@ bool HopkinsEngine::runLinuxFull() {
 
 		case 5:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
-			_globals.NOSPRECRAN = true;
 			if (_globals._saveData->data[svField80]) {
 				if (_globals._saveData->data[svField80] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3);
+					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			} else {
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3);
+				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			}
-			_globals.NOSPRECRAN = false;
 			break;
 
 		case 6:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 460;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2);
+			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals._saveData->data[svField220])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2);
+				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2);
+			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
 			if (!_globals._saveData->data[svField225])
 				bombExplosion();
-			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10);
+			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			break;
 
 		case 10:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
-			_globals.NOSPRECRAN = true;
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
 			if (_globals._saveData->data[svField225]) {
-				_globals.NOSPRECRAN = true;
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1);
+				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			} else {
 				bombExplosion();
 			}
@@ -3514,44 +3275,40 @@ bool HopkinsEngine::runLinuxFull() {
 
 		case 13:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1);
+			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1);
+			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
 			break;
 
 		case 16:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField113] == 1) {
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7);
-			} else if (!_globals._saveData->data[svField113]) {
-				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7);
-			}
+			if (_globals._saveData->data[svField113] == 1)
+				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
+			else if (!_globals._saveData->data[svField113])
+				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			break;
 
 		case 17:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField117] == 1) {
-				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11);
-			} else if (!_globals._saveData->data[svField117]) {
-				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11);
-			}
+			if (_globals._saveData->data[svField117] == 1)
+				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
+			else if (!_globals._saveData->data[svField117])
+				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
 				_graphicsManager.lockScreen();
@@ -3561,37 +3318,33 @@ bool HopkinsEngine::runLinuxFull() {
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(29);
 				_graphicsManager.FADE_LINUX = 2;
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_globals.iRegul = 0;
 			}
 			break;
 
 		case 18:
-			_globals.NOSPRECRAN = true;
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29);
+			_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
 			break;
 
 		case 19:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[svField123])
-				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6);
+				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
 			else
-				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6);
+				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
 			break;
 
 		case 20:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 10;
+			_globals._maxLineLength = 10;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6);
+			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals._exitId == 17) {
 				_globals.iRegul = 1;
 				_graphicsManager.lockScreen();
@@ -3601,113 +3354,103 @@ bool HopkinsEngine::runLinuxFull() {
 				_soundManager.WSOUND_OFF();
 				_soundManager.WSOUND(6);
 				_graphicsManager.FADE_LINUX = 2;
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG2.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
 				_globals.iRegul = 0;
 			}
 			break;
 
 		case 22:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6);
+			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
 			break;
 
 		case 23:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6);
+			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
 			break;
 
 		case 24:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
 			if (_globals._saveData->data[svField181]) {
 				if (_globals._saveData->data[svField181] == 1)
-					_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1);
+					_objectsManager.PERSONAGE2("IM24", "IM24a", "ANIM24", "IM24", 1, true);
 			} else {
-				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1);
+				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
 			}
 			break;
 
 		case 25:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30);
+			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
 			break;
 
 		case 26:
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30);
+			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
 			break;
 
 		case 27:
 			_globals.Max_Propre = 10;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
 			if (_globals._saveData->data[svField177] == 1) {
-				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27);
+				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
 			} else if (!_globals._saveData->data[svField177]) {
-				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27);
+				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
 			}
 			break;
 
 		case 28:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			_globals.NOSPRECRAN = true;
 			if (_globals._saveData->data[svField166] != 1 || _globals._saveData->data[svField167] != 1)
-				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1);
+				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
 			else
-				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1);
+				_objectsManager.PERSONAGE2("IM28a", "IM28", "ANIM28", "IM28", 1, false);
 			break;
 
 		case 29:
 			_globals.Max_Propre = 60;
-			_globals.Max_Ligne_Long = 50;
+			_globals._maxLineLength = 50;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1);
+			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
 			break;
 
 		case 30:
 			_globals.Max_Propre = 10;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
 			break;
 
 		case 31:
-			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10);
+			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
 			break;
 
 		case 32:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 20;
+			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2);
+			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
 			break;
 
 		case 33:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 34:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
 			break;
 
 		case 35:
@@ -3717,22 +3460,19 @@ bool HopkinsEngine::runLinuxFull() {
 		case 39:
 		case 40:
 		case 41: {
-			_globals.fmusic = 13;
 			_globals.Max_Propre = 50;
-			_globals.Max_Ligne_Long = 40;
+			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 435;
 			_globals._disableInventFl = false;
 			_globals._forestFl = true;
-			_globals.NOSPRECRAN = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
 			if (_globals._forestSprite == g_PTRNUL) {
-				_fileManager.constructFilename(_globals.HOPSYSTEM, "HOPDEG.SPR");
+				_fileManager.constructFilename("SYSTEM", "HOPDEG.SPR");
 				_globals._forestSprite = _objectsManager.loadSprite(_globals._curFilename);
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
-			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
 			if (_globals._exitId < 35 || _globals._exitId > 49) {
 				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
 				_globals._forestFl = false;
@@ -3748,175 +3488,151 @@ bool HopkinsEngine::runLinuxFull() {
 
 		case 51:
 			_globals.Max_Propre = 20;
-			_globals.Max_Ligne_Long = 10;
+			_globals._maxLineLength = 10;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14);
+			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
 			break;
 
 		case 52:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
-			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14);
+			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
 			break;
 
 		case 54:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14);
+			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
 			break;
 
 		case 55:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 460;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14);
+			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
 			break;
 
 		case 56:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14);
+			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
 			break;
 
 		case 57:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14);
+			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
 			break;
 
 		case 58:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14);
+			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
 			break;
 
 		case 59:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
 			break;
 
 		case 60:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 440;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
 			break;
 
 		case 61:
 			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
 				handleConflagration();
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21);
+			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
 			break;
 
 		case 62:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
 			break;
 
 		case 63:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
 			break;
 
 		case 64:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21);
+			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
 			break;
 
 		case 65:
 			_globals.Max_Propre = 40;
-			_globals.Max_Ligne_Long = 30;
+			_globals._maxLineLength = 30;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
 			break;
 
 		case 66:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
 			break;
 
 		case 67:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
 			break;
 
 		case 68:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21);
+			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
 			break;
 
 		case 69:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
 			break;
 
 		case 70:
 			_globals.Max_Propre = 8;
-			_globals.Max_Ligne_Long = 8;
+			_globals._maxLineLength = 8;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
 			break;
 
 		case 71:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
 			break;
 
 		case 73:
 			_globals.Max_Propre = 15;
-			_globals.Max_Ligne_Long = 15;
+			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
 			if (_globals._saveData->data[svField318] == 1) {
-				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21);
+				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
 			} else if (!_globals._saveData->data[svField318]) {
-				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21);
+				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
 			}
 			break;
 
@@ -3986,43 +3702,40 @@ bool HopkinsEngine::runLinuxFull() {
 
 		case 93:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
 			if (_globals._saveData->data[svField330])
-				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 29);
+				_objectsManager.PERSONAGE2("IM93", "IM93c", "ANIM93", "IM93", 29, true);
 			else
-				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29);
+				_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29, true);
 			break;
 
 		case 94:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 440;
-			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19);
+			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
 			break;
 
 		case 95:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19);
+			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
 			break;
 
 		case 96:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19);
+			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
 			break;
 
 		case 97:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19);
+			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
 				_soundManager.WSOUND_OFF();
@@ -4031,10 +3744,7 @@ bool HopkinsEngine::runLinuxFull() {
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
 				_soundManager.WSOUND(6);
-				if (_globals.SVGA == 2)
-					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
-				else if (_globals.SVGA == 1)
-					_animationManager.playAnim("PURG1.ANM", 12, 18, 50);
+				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
 			}
@@ -4042,16 +3752,16 @@ bool HopkinsEngine::runLinuxFull() {
 
 		case 98:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19);
+			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
 			break;
 
 		case 99:
 			_globals.Max_Propre = 5;
-			_globals.Max_Ligne_Long = 5;
+			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 435;
-			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19);
+			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
 			break;
 
 		case 100:
@@ -4059,15 +3769,11 @@ bool HopkinsEngine::runLinuxFull() {
 			break;
 
 		case 111:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_globals.NOSPRECRAN = true;
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10);
-			_globals.NOSPRECRAN = false;
+			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -4161,7 +3867,7 @@ bool HopkinsEngine::runLinuxFull() {
 			_soundManager.WSOUND(23);
 			_globals._exitId = handleBaseMap();
 			_soundManager.WSOUND_OFF();
-			_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+			_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 			_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
@@ -4195,18 +3901,18 @@ void HopkinsEngine::initializeSystem() {
 	switch (_globals._language) {
 	case LANG_EN:
 		if (!_eventsManager._mouseLinuxFl)
-			_fileManager.constructFilename(_globals.HOPSYSTEM, "SOUAN.SPR");
+			_fileManager.constructFilename("SYSTEM", "SOUAN.SPR");
 		else
-			_fileManager.constructFilename(_globals.HOPSYSTEM, "LSOUAN.SPR");
+			_fileManager.constructFilename("SYSTEM", "LSOUAN.SPR");
 		break;
 	case LANG_FR:
 		if (!_eventsManager._mouseLinuxFl)
-			_fileManager.constructFilename(_globals.HOPSYSTEM, "SOUFR.SPR");
+			_fileManager.constructFilename("SYSTEM", "SOUFR.SPR");
 		else
-			_fileManager.constructFilename(_globals.HOPSYSTEM, "LSOUFR.SPR");
+			_fileManager.constructFilename("SYSTEM", "LSOUFR.SPR");
 		break;
 	case LANG_SP:
-		_fileManager.constructFilename(_globals.HOPSYSTEM, "SOUES.SPR");
+		_fileManager.constructFilename("SYSTEM", "SOUES.SPR");
 		break;
 	}
 
@@ -4221,26 +3927,26 @@ void HopkinsEngine::initializeSystem() {
 
 	_globals.clearAll();
 
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "FONTE3.SPR");
+	_fileManager.constructFilename("SYSTEM", "FONTE3.SPR");
 	_globals.police = _fileManager.loadFile(_globals._curFilename);
 	_globals.police_l = 12;
 	_globals.police_h = 21;
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "ICONE.SPR");
+	_fileManager.constructFilename("SYSTEM", "ICONE.SPR");
 	_globals.ICONE = _fileManager.loadFile(_globals._curFilename);
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "TETE.SPR");
+	_fileManager.constructFilename("SYSTEM", "TETE.SPR");
 	_globals.TETE = _fileManager.loadFile(_globals._curFilename);
 
 	switch (_globals._language) {
 	case LANG_EN:
-		_fileManager.constructFilename(_globals.HOPLINK, "ZONEAN.TXT");
+		_fileManager.constructFilename("LINK", "ZONEAN.TXT");
 		_globals.BUF_ZONE = _fileManager.loadFile(_globals._curFilename);
 		break;
 	case LANG_FR:
-		_fileManager.constructFilename(_globals.HOPLINK, "ZONE01.TXT");
+		_fileManager.constructFilename("LINK", "ZONE01.TXT");
 		_globals.BUF_ZONE = _fileManager.loadFile(_globals._curFilename);
 		break;
 	case LANG_SP:
-		_fileManager.constructFilename(_globals.HOPLINK, "ZONEES.TXT");
+		_fileManager.constructFilename("LINK", "ZONEES.TXT");
 		_globals.BUF_ZONE = _fileManager.loadFile(_globals._curFilename);
 		break;
 	}
@@ -4544,11 +4250,7 @@ void HopkinsEngine::bombExplosion() {
 	_globals.iRegul = 1;
 	_soundManager.SPECIAL_SOUND = 199;
 	_graphicsManager.FADE_LINUX = 2;
-	if (_globals.SVGA == 1)
-		_animationManager.playAnim("BOMBE2.ANM", 50, 14, 500);
-	else if (_globals.SVGA == 2)
-		_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
-
+	_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
 	_soundManager.SPECIAL_SOUND = 0;
 	_graphicsManager.loadImage("IM15");
 	_animationManager.loadAnim("ANIM15");
@@ -4657,59 +4359,31 @@ void HopkinsEngine::BASE() {
 	_graphicsManager.clearPalette();
 	_animationManager._clearAnimationFl = true;
 	_soundManager.WSOUND(25);
-	if (_globals.SVGA == 1) {
-		_animationManager.playAnim("base00.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base05.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base10.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base20.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base30.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base40.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base50.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC00.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC05.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC10.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC20.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl) {
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("OC30.anm", 10, 18, 18);
-		}
-	} else if (_globals.SVGA == 2) {
-		_animationManager.playAnim("base00a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base05a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base10a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base20a.anm", 10, 18, 18);
-		// CHECKME: The original code was doing the opposite test, which looks like a bug.
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base30a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base40a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("base50a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC00a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC05a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC10a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("OC20a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl) {
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("OC30a.anm", 10, 18, 18);
-		}
+	_animationManager.playAnim("base00a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base05a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base10a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base20a.anm", 10, 18, 18);
+	// CHECKME: The original code was doing the opposite test, which looks like a bug.
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base30a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base40a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("base50a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("OC00a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("OC05a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("OC10a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("OC20a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl) {
+		_graphicsManager.FADE_LINUX = 2;
+		_animationManager.playAnim("OC30a.anm", 10, 18, 18);
 	}
 
 	_eventsManager._escKeyFl = false;
@@ -4899,7 +4573,7 @@ void HopkinsEngine::playEnding() {
 		_globals.iRegul = 0;
 		_globals._exitId = 300;
 	}
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
 	_globals.iRegul = 0;
@@ -4915,70 +4589,36 @@ void HopkinsEngine::displayPlane() {
 	_graphicsManager.clearPalette();
 
 	_animationManager._clearAnimationFl = false;
-	if (_globals.SVGA == 1) {
-		_animationManager.playAnim("aerop00.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop10.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop20.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop30.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop40.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop50.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop60.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop70.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans00.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans10.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans15.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans20.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans30.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans40.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl) {
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("PARA00.anm", 9, 9, 9);
-		}
-	} else if (_globals.SVGA == 2) {
-		_animationManager.playAnim("aerop00a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("serop10a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop20a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop30a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop40a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop50a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop60a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("aerop70a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans00a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans10a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans15a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans20a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans30a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl)
-			_animationManager.playAnim("trans40a.anm", 10, 18, 18);
-		if (!_eventsManager._escKeyFl) {
-			_graphicsManager.FADE_LINUX = 2;
-			_animationManager.playAnim("PARA00a.anm", 9, 9, 9);
-		}
+	_animationManager.playAnim("aerop00a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("serop10a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop20a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop30a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop40a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop50a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop60a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("aerop70a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans00a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans10a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans15a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans20a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans30a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl)
+		_animationManager.playAnim("trans40a.anm", 10, 18, 18);
+	if (!_eventsManager._escKeyFl) {
+		_graphicsManager.FADE_LINUX = 2;
+		_animationManager.playAnim("PARA00a.anm", 9, 9, 9);
 	}
 
 	_eventsManager._escKeyFl = false;
@@ -5079,13 +4719,13 @@ void HopkinsEngine::loadCredits() {
 	_globals.Credit_step = 45;
 	switch (_globals._language) {
 	case LANG_EN:
-		_fileManager.constructFilename(_globals.HOPLINK, "CREAN.TXT");
+		_fileManager.constructFilename("LINK", "CREAN.TXT");
 		break;
 	case LANG_FR:
-		_fileManager.constructFilename(_globals.HOPLINK, "CREFR.TXT");
+		_fileManager.constructFilename("LINK", "CREFR.TXT");
 		break;
 	case LANG_SP:
-		_fileManager.constructFilename(_globals.HOPLINK, "CREES.TXT");
+		_fileManager.constructFilename("LINK", "CREES.TXT");
 		break;
 	default:
 		error("Unhandled language");
@@ -5443,7 +5083,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	_globals._exitId = 0;
 	_globals._disableInventFl = true;
 	_soundManager.WSOUND(soundId);
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "VAISSEAU.SPR");
+	_fileManager.constructFilename("SYSTEM", "VAISSEAU.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	if (backgroundFilename.size())
 		_graphicsManager.loadImage(backgroundFilename);
@@ -5529,7 +5169,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	_graphicsManager.fadeOutLong();
 	_objectsManager.removeSprite(0);
 	_objectsManager.CLEAR_ECRAN();
-	_fileManager.constructFilename(_globals.HOPSYSTEM, "PERSO.SPR");
+	_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 	_globals.PERSO = _fileManager.loadFile(_globals._curFilename);
 	_globals.PERSO_TYPE = 0;
 }

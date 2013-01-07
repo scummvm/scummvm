@@ -55,7 +55,6 @@ ObjectsManager::ObjectsManager() {
 	_saveLoadFl = false;
 	SL_MODE = false;
 	_visibleFl = false;
-	_disableCursorFl = false;
 	BOBTOUS = false;
 	my_anim = 0;
 	NUMZONE = 0;
@@ -102,7 +101,6 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
  */
 void ObjectsManager::changeObject(int objIndex) {
 	_vm->_eventsManager._objectBuf = CAPTURE_OBJET(objIndex, 1);
-	_vm->_globals._newObjectFl = true;
 	_vm->_globals._curObjectIndex = objIndex;
 }
 
@@ -118,7 +116,7 @@ byte *ObjectsManager::CAPTURE_OBJET(int objIndex, int mode) {
 		if (_vm->_globals.ADR_FICHIER_OBJ != g_PTRNUL)
 			ObjectsManager::DEL_FICHIER_OBJ();
 		if (val1 == 1) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "OBJET1.SPR");
+			_vm->_fileManager.constructFilename("SYSTEM", "OBJET1.SPR");
 			_vm->_globals.ADR_FICHIER_OBJ = ObjectsManager::loadSprite(_vm->_globals._curFilename);
 		}
 		_vm->_globals.NUM_FICHIER_OBJ = val1;
@@ -2077,7 +2075,7 @@ void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_linesManager._linesNumb = 0;
 	_lastLine = 0;
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
+	_vm->_fileManager.constructFilename("LINK", file);
 	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	v4 = 0;
 	v5 = 0;
@@ -2132,7 +2130,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 		_vm->_globals.ZONEP[i].field10 = 0;
 	}
 
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
+	_vm->_fileManager.constructFilename("LINK", file);
 
 	Common::File f;
 	if (!f.exists(_vm->_globals._curFilename))
@@ -2262,9 +2260,8 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_globals.Max_Propre = 1;
-	_vm->_globals.Max_Ligne_Long = 1;
+	_vm->_globals._maxLineLength = 1;
 	_vm->_globals.Max_Perso_Y = 440;
-	_vm->_globals.NOSPRECRAN = true;
 	_vm->_globals.PLAN_FLAG = true;
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.NOMARCHE = false;
@@ -2277,11 +2274,11 @@ void ObjectsManager::PLAN_BETA() {
 	CHARGE_OBSTACLE("PLAN.OB2");
 	_vm->_globals.loadCache("PLAN.CA2");
 	loadZone("PLAN.ZO2");
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "VOITURE.SPR");
+	_vm->_fileManager.constructFilename("SYSTEM", "VOITURE.SPR");
 	_spritePtr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_animationManager.loadAnim("PLAN");
 	_vm->_graphicsManager.VISU_ALL();
-	_vm->_graphicsManager.INI_ECRAN2("PLAN");
+	_vm->_graphicsManager.INI_ECRAN2("PLAN", false);
 	for (int v2 = 0; v2 <= 15; v2++)
 		_vm->_globals.CACHE_OFF(v2);
 	_vm->_globals.CACHE_OFF(19);
@@ -2358,7 +2355,6 @@ void ObjectsManager::PLAN_BETA() {
 	removeSprite(0);
 	_spritePtr = _vm->_globals.freeMemory(_spritePtr);
 	CLEAR_ECRAN();
-	_vm->_globals.NOSPRECRAN = false;
 	_vm->_globals.PLAN_FLAG = false;
 }
 
@@ -2696,7 +2692,6 @@ void ObjectsManager::CLEAR_ECRAN() {
 	_vm->_globals.GOACTION = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
-	_vm->_globals.NOSPRECRAN = false;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_globals.g_old_sens = -1;
 	my_anim = 1;
@@ -2742,7 +2737,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		T_RECTIF = 0;
 
 		loc = &_vm->_globals._saveData->_realHopkins;
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_vm->_globals.PERSO_TYPE = 0;
 		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 34, 190);
@@ -2768,7 +2763,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals._saveData->data[svField357] = 0;
 
 		loc = &_vm->_globals._saveData->_samantha;
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PSAMAN.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "PSAMAN.SPR");
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_vm->_globals.PERSO_TYPE = 2;
 		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 20, 127);
@@ -3747,7 +3742,7 @@ void ObjectsManager::OPTI_OBJET() {
 	file = "OBJET1.ini";
 	data = _vm->_fileManager.searchCat(file, 1);
 	if (data == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, file);
+		_vm->_fileManager.constructFilename("LINK", file);
 		data = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		if (data == g_PTRNUL)
 			error("INI file %s not found", file.c_str());
@@ -3970,7 +3965,7 @@ void ObjectsManager::ACTION_DOS(int idx) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 1;
 
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "DOS.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "DOS.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
@@ -3999,7 +3994,7 @@ void ObjectsManager::ACTION_DROITE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 3) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PROFIL.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "PROFIL.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
@@ -4028,7 +4023,7 @@ void ObjectsManager::Q_DROITE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 4) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "3Q.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "3Q.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
@@ -4057,7 +4052,7 @@ void ObjectsManager::ACTION_FACE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 2) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 2;
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "FACE.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "FACE.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
@@ -4074,7 +4069,7 @@ void ObjectsManager::Q_GAUCHE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 4) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 4;
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "3Q.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "3Q.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
@@ -4103,7 +4098,7 @@ void ObjectsManager::ACTION_GAUCHE(int idx) {
 	if (_vm->_globals.GESTE_FLAG != 3) {
 		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
 		_vm->_globals.GESTE_FLAG = 3;
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PROFIL.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "PROFIL.SPR");
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	}
 	if (idx == 1)
@@ -4251,7 +4246,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	ptr = _vm->_fileManager.searchCat(filename, 3);
 	nbytes = _vm->_globals._catalogSize;
 	if (ptr == g_PTRNUL) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename);
+		_vm->_fileManager.constructFilename("LINK", filename);
 
 		if (!f.open(_vm->_globals._curFilename))
 			error("Error opening file - %s", _vm->_globals._curFilename.c_str());
@@ -4274,9 +4269,9 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.searchCat(filename2, 8);
 
 			if (_vm->_globals.CACHE_BANQUE[1] || _vm->_globals.CACHE_BANQUE[1] == g_PTRNUL) {
-				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, filename2);
+				_vm->_fileManager.constructFilename("LINK", filename2);
 			} else {
-				_vm->_fileManager.constructFilename(_vm->_globals.HOPLINK, "RES_SLI.RES");
+				_vm->_fileManager.constructFilename("LINK", "RES_SLI.RES");
 			}
 
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
@@ -4965,7 +4960,7 @@ void ObjectsManager::lockAnimX(int idx, int a2) {
 }
 
 void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
-							   const Common::String &animFile, const Common::String &s4, int v) {
+							   const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
 	int v5;
 	int v7;
 	int v8;
@@ -4990,10 +4985,10 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_animationManager.loadAnim(animFile);
 	_vm->_graphicsManager.VISU_ALL();
 	if (!s4.empty()) {
-		if (!_vm->_globals.NOSPRECRAN)
-			_vm->_graphicsManager.INI_ECRAN(s4);
-		if (!s4.empty() && _vm->_globals.NOSPRECRAN)
-			_vm->_graphicsManager.INI_ECRAN2(s4);
+		if (initializeScreen)
+			_vm->_graphicsManager.INI_ECRAN(s4, initializeScreen);
+		if (!s4.empty() && !initializeScreen)
+			_vm->_graphicsManager.INI_ECRAN2(s4, initializeScreen);
 	}
 	_vm->_eventsManager.mouseOn();
 	if (_vm->_globals._screenId == 61) {
@@ -5060,7 +5055,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 }
 
 void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
-								const Common::String &animFile, const Common::String &s4, int v) {
+								const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
 	int mouseButtons;
 	bool breakFlag;
 	int xp, yp;
@@ -5087,10 +5082,10 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		_vm->_graphicsManager.VISU_ALL();
 	}
 	if (!s4.empty()) {
-		if (!_vm->_globals.NOSPRECRAN)
-			_vm->_graphicsManager.INI_ECRAN(s4);
+		if (initializeScreen)
+			_vm->_graphicsManager.INI_ECRAN(s4, initializeScreen);
 		else
-			_vm->_graphicsManager.INI_ECRAN2(s4);
+			_vm->_graphicsManager.INI_ECRAN2(s4, initializeScreen);
 	}
 	_vm->_eventsManager.mouseOn();
 	_vm->_eventsManager._mouseCursorId = 4;
@@ -5100,20 +5095,20 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	if (_vm->_globals.PERSO_TYPE) {
 		if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PERSO.SPR");
+			_vm->_fileManager.constructFilename("SYSTEM", "PERSO.SPR");
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.PERSO_TYPE = 0;
 		}
 	}
 	if (!_vm->_globals.PERSO_TYPE) {
 		if (_vm->_globals._saveData->data[svField122] == 1) {
-			_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "HOPFEM.SPR");
+			_vm->_fileManager.constructFilename("SYSTEM", "HOPFEM.SPR");
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 			_vm->_globals.PERSO_TYPE = 1;
 		}
 	}
 	if (_vm->_globals.PERSO_TYPE != 2 && _vm->_globals._saveData->data[svField356] == 1) {
-		_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "PSAMAN.SPR");
+		_vm->_fileManager.constructFilename("SYSTEM", "PSAMAN.SPR");
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 		_vm->_globals.PERSO_TYPE = 2;
 	}
