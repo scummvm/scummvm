@@ -1739,7 +1739,7 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 		for (int xCtr = spriteWidth; xCtr; xCtr--) {
 			destByte = *spritePixelsP;
 			if (*spritePixelsP) {
-				if (destByte == (byte)-4)
+				if (destByte == 252)
 					destByte = colour;
 				*destP = destByte;
 			}

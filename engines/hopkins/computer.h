@@ -24,8 +24,8 @@
 #define HOPKINS_COMPUTER_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
 #include "common/str.h"
+#include "common/rect.h"
 
 namespace Hopkins {
 
@@ -95,7 +95,7 @@ private:
 
 	void TXT4(int xp, int yp, int textIdx);
 
-	void IMPSCORE(int charPos, int charDisp);
+	void displayScoreChar(int charPos, int charDisp);
 
 public:
 	ComputerManager();

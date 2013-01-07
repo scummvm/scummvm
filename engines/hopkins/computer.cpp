@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "common/textconsole.h"
+#include "hopkins/computer.h"
 #include "hopkins/font.h"
 #include "hopkins/files.h"
 #include "hopkins/globals.h"
@@ -381,7 +382,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 	bool oldMouseFlag = _vm->_eventsManager._mouseFl;
 	_vm->_eventsManager._mouseFl = false;
 
-	_vm->_fontManager.displayTextVesa(xp, yp, "_", -4);
+	_vm->_fontManager.displayTextVesa(xp, yp, "_", 252);
 	do {
 		curChar = _vm->_eventsManager.waitKeyPress();
 		if (_vm->shouldQuit())
@@ -401,7 +402,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 			x2 = x1 + 2 * _vm->_globals.police_l;
 			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, 3 * _vm->_globals.police_l, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 			_vm->_graphicsManager.addVesaSegment(x1, yp, x2, yp + 12);
-			_vm->_fontManager.displayTextVesa(x1, yp, "_", -4);
+			_vm->_fontManager.displayTextVesa(x1, yp, "_", 252);
 		}
 		if (mappedChar != '*') {
 			newChar = mappedChar;
@@ -410,7 +411,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
 			_inputBuf[textIndex] = newChar;
 
 			charString = Common::String::format("%c_", newChar);
-			_vm->_fontManager.displayTextVesa(x1, yp, charString, -4);
+			_vm->_fontManager.displayTextVesa(x1, yp, charString, 252);
 			++textIndex;
 			x1 += _vm->_globals.police_l;
 		}
@@ -638,41 +639,39 @@ void ComputerManager::newLevel() {
  * Display bricks in breakout game
  */
 void ComputerManager::displayBricks() {
-	int xp;
-	int yp;
-	int v2;
-	uint16 v3;
-	int16 *v4;
-
 	_breakoutBrickNbr = 0;
 	_breakoutSpeed = 1;
-	v4 = _breakoutLevel;
-	v3 = 0;
+	int16 *level = _breakoutLevel;
+	int levelIdx = 0;
+
+	int cellLeft;
+	int cellTop;
+	int cellType;
 	do {
-		xp = v4[v3];
-		yp = v4[v3 + 1];
-		v2 = v4[v3 + 4];
-		if (xp != -1) {
-			if (v2 <= 6)
+		cellLeft = level[levelIdx];
+		cellTop = level[levelIdx + 1];
+		cellType = level[levelIdx + 4];
+		if (cellLeft != -1) {
+			if (cellType <= 6)
 				++_breakoutBrickNbr;
 
-			if (v2 == 3)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, yp, 17);
-			else if (v2 == 6)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, yp, 18);
-			else if (v2 == 5)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, yp, 19);
-			else if (v2 == 4)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, yp, 20);
-			else if (v2 == 1)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, yp, 21);
-			else if (v2 == 2)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, yp, 22);
-			else if (v2 == 31)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, yp, 23);
+			if (cellType == 3)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 17);
+			else if (cellType == 6)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 18);
+			else if (cellType == 5)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 19);
+			else if (cellType == 4)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 20);
+			else if (cellType == 1)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 21);
+			else if (cellType == 2)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 22);
+			else if (cellType == 31)
+				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 23);
 		}
-		v3 += 6;
-	} while (xp != -1);
+		levelIdx += 6;
+	} while (cellLeft != -1);
 
 	displayScore();
 }
@@ -785,15 +784,13 @@ void ComputerManager::playBreakout() {
  */
 int ComputerManager::displayHiscores() {
 	int yp;
-	int buttonIndex;
 	int xp;
-	byte *ptr;
 
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	loadHiscore();
 	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
-	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -815,7 +812,7 @@ int ComputerManager::displayHiscores() {
 
 	_vm->_graphicsManager.fadeInBreakout();
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
-	buttonIndex = 0;
+	int buttonIndex = 0;
 	do {
 		_vm->_eventsManager.refreshEvents();
 		xp = _vm->_eventsManager.getMouseX();
@@ -839,24 +836,21 @@ int ComputerManager::displayHiscores() {
  * Display a screen to enter player name in the case of a new hiscore
  */
 void ComputerManager::getScoreName() {
-	char curChar;
-	byte *ptr;
-
 	_vm->_graphicsManager.loadVgaImage("NAME.PCX");
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_vm->_fileManager.constructFilename(_vm->_globals.HOPSYSTEM, "ALPHA.SPR");
-	ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
+	byte *ptr = _vm->_fileManager.loadFile(_vm->_globals._curFilename);
 	_vm->_graphicsManager.fadeInBreakout();
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);
 
-		curChar = toupper(_vm->_eventsManager.waitKeyPress());
-		if ((curChar <= '/') || (curChar > 'Z'))
+		char curChar = toupper(_vm->_eventsManager.waitKeyPress());
+		if ((curChar < '0') && (curChar > 'Z'))
 			curChar = ' ';
-		if ((uint16)(curChar - ':') <= 6u)
+		if ((curChar > '9') && (curChar < 'A'))
 			curChar = ' ';
 
 		_score[5]._name.setChar(curChar, strPos);
@@ -888,20 +882,18 @@ void ComputerManager::getScoreName() {
  * Display current score
  */
 void ComputerManager::displayScore() {
-	char s[40];
-
-	sprintf(s, "%d", _breakoutScore);
-	int v0 = 0;
-	do
-		++v0;
-	while (s[v0]);
-	int v1 = 0;
-	for (int i = v0; i > -1; i--) {
-		IMPSCORE(v1++, (byte)s[i]);
+	Common::String scoreStr = Common::String::format("%d", _breakoutScore);
+	int strSize = scoreStr.size();
+	int idx = 0;
+	for (int i = strSize; i > -1; i--) {
+		displayScoreChar(idx++, scoreStr[i]);
 	}
 }
 
-void ComputerManager::IMPSCORE(int charPos, int charDisp) {
+/**
+ * Display a character of the score
+ */
+void ComputerManager::displayScoreChar(int charPos, int charDisp) {
 	int16 xp = 200;
 	int16 idx = 3;
 
@@ -918,7 +910,7 @@ void ComputerManager::IMPSCORE(int charPos, int charDisp) {
 	else if (charPos == 9)
 		xp = 134;
 
-	if (charDisp >= 48 && charDisp <= 57)
+	if (charDisp >= '0' && charDisp <= '9')
 	    idx = charDisp - 45;
 
 	_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 11, idx);
@@ -1108,7 +1100,7 @@ void ComputerManager::checkBallCollisions() {
 	int cellBottom;
 	int cellUp;
 
-	bool v7 = false;
+	bool brickDestroyedFl = false;
 	// TODO: Check if correct
 	int randVal = _vm->getRandomNumber(6) + 1;
 	int ballLeft = _ballPosition.x;
@@ -1116,37 +1108,33 @@ void ComputerManager::checkBallCollisions() {
 	int ballRight = _ballPosition.x + 6;
 	int ballBottom = _ballPosition.y + 6;
 	int16 *level = _breakoutLevel;
-	uint16 v8 = 0;
+	uint16 levelIdx = 0;
 	do {
-		cellLeft = level[v8];
-		cellUp = level[v8 + 1];
-		cellRight = level[v8 + 2];
-		cellBottom = level[v8 + 3];
-		cellType = level[v8 + 4];
-		if (level[v8 + 5] == 1 && cellLeft != -1) {
+		cellLeft = level[levelIdx];
+		cellUp = level[levelIdx + 1];
+		cellRight = level[levelIdx + 2];
+		cellBottom = level[levelIdx + 3];
+		cellType = level[levelIdx + 4];
+		if (level[levelIdx + 5] == 1 && cellLeft != -1) {
 			collisionFl = false;
 			if (ballTop <= cellBottom && ballBottom >= cellBottom) {
 				if (ballLeft >= cellLeft && ballRight <= cellRight) {
 					collisionFl = true;
 					_ballUpFl = true;
 				}
-				if (ballRight >= cellLeft) {
-					if (ballLeft <= cellLeft) {
-						collisionFl = true;
-						_ballUpFl = true;
-						_ballRightFl = false;
-						if (cellType == 31)
-							_ballPosition.x -= randVal;
-					}
+				if ((ballRight >= cellLeft) && (ballLeft <= cellLeft)) {
+					collisionFl = true;
+					_ballUpFl = true;
+					_ballRightFl = false;
+					if (cellType == 31)
+						_ballPosition.x -= randVal;
 				}
-				if (ballLeft <= cellRight) {
-					if (ballRight >= cellRight) {
-						collisionFl = true;
-						_ballUpFl = true;
-						_ballRightFl = true;
-						if (cellType == 31)
-							_ballPosition.x += randVal;
-					}
+				if ((ballLeft <= cellRight) && (ballRight >= cellRight)) {
+					collisionFl = true;
+					_ballUpFl = true;
+					_ballRightFl = true;
+					if (cellType == 31)
+						_ballPosition.x += randVal;
 				}
 			}
 			if (ballBottom >= cellUp && ballTop <= cellUp) {
@@ -1154,43 +1142,33 @@ void ComputerManager::checkBallCollisions() {
 					collisionFl = true;
 					_ballUpFl = false;
 				}
-				if (ballRight >= cellLeft) {
-					if (ballLeft <= cellLeft) {
-						collisionFl = true;
-						_ballUpFl = false;
-						_ballRightFl = false;
-						if (cellType == 31)
-							_ballPosition.x -= 2;
-					}
+				if ((ballRight >= cellLeft) && (ballLeft <= cellLeft)) {
+					collisionFl = true;
+					_ballUpFl = false;
+					_ballRightFl = false;
+					if (cellType == 31)
+						_ballPosition.x -= 2;
 				}
-				if (ballLeft <= cellRight) {
-					if (ballRight >= cellRight) {
-						collisionFl = true;
-						_ballUpFl = false;
-						_ballRightFl = true;
-						if (cellType == 31)
-							_ballPosition.x += randVal;
-					}
+				if ((ballLeft <= cellRight) && (ballRight >= cellRight)) {
+					collisionFl = true;
+					_ballUpFl = false;
+					_ballRightFl = true;
+					if (cellType == 31)
+						_ballPosition.x += randVal;
 				}
 			}
-			if (ballTop >= cellUp) {
-				if (ballBottom <= cellBottom) {
-					if (ballRight >= cellLeft) {
-						if (ballLeft <= cellLeft) {
-							collisionFl = true;
-							_ballRightFl = false;
-							if (cellType == 31)
-								_ballPosition.x -= randVal;
-						}
-					}
-					if (ballLeft <= cellRight) {
-						if (ballRight >= cellRight) {
-							collisionFl = true;
-							_ballRightFl = true;
-							if (cellType == 31)
-								_ballPosition.x += randVal;
-						}
-					}
+			if ((ballTop >= cellUp) && (ballBottom <= cellBottom)) {
+				if ((ballRight >= cellLeft) && (ballLeft <= cellLeft)) {
+					collisionFl = true;
+					_ballRightFl = false;
+					if (cellType == 31)
+						_ballPosition.x -= randVal;
+				}
+				if ((ballLeft <= cellRight) && (ballRight >= cellRight)) {
+					collisionFl = true;
+					_ballRightFl = true;
+					if (cellType == 31)
+						_ballPosition.x += randVal;
 				}
 			}
 			if (collisionFl) {
@@ -1199,37 +1177,43 @@ void ComputerManager::checkBallCollisions() {
 				} else {
 					_vm->_soundManager.playSample(1, 5);
 					_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellUp, 16);
-					if (cellType == 1)
+					switch (cellType) {
+					case 1:
 						_breakoutScore += 10;
-					if (cellType == 2)
+						break;
+					case 2:
 						_breakoutScore += 5;
-					if (cellType == 3) {
+						break;
+					case 3:
 						_breakoutScore += 50;
 						if (_breakoutSpeed <= 1)
 							_breakoutSpeed = 2;
 						if (_breakoutBrickNbr <= 19)
 							_breakoutSpeed = 3;
-					}
-					if (cellType == 4)
+						break;
+					case 4:
 						_breakoutScore += 20;
-					if (cellType == 5) {
+						break;
+					case 5:
 						_breakoutScore += 30;
 						if (_breakoutSpeed <= 1)
 							_breakoutSpeed = 2;
-					}
-					if (cellType == 6)
+						break;
+					case 6:
 						_breakoutScore += 40;
+						break;
+					}
 					displayScore();
 					--_breakoutBrickNbr;
-					level[v8 + 5] = 0;
-					v7 = true;
+					level[levelIdx + 5] = 0;
+					brickDestroyedFl = true;
 				}
 			}
 		}
 
-		if (v7)
+		if (brickDestroyedFl)
 			cellLeft = -1;
-		v8 += 6;
+		levelIdx += 6;
 	} while (cellLeft != -1);
 }
 

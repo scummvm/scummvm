@@ -449,8 +449,7 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
-			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police,
-				xp, yp, characterIndex, col);
+			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police, xp, yp, characterIndex, col);
 			xp += _vm->_objectsManager.getWidth(_vm->_globals.police, characterIndex);
 		}
 	}
