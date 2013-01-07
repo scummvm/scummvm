@@ -334,7 +334,6 @@ public:
 	bool PUBEXIT;
 	int PERSO_TYPE;
 	uint _speed;
-	int INSTALL_TYPE;
 	Common::String HOPIMAGE;
 	Common::String HOPANIM;
 	Common::String HOPLINK;
@@ -351,9 +350,6 @@ public:
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
 	Common::String _curFilename;
-	int SOUNDVOL;
-	int MUSICVOL;
-	int VOICEVOL;
 	bool _censorshipFl;
 	int g_old_anim;
 	int g_old_sens, g_old_sens2;
@@ -379,7 +375,6 @@ public:
 	int nbrligne; // Useless variable?
 	int _boxWidth;
 	byte *_inventoryObject;
-	int hauteur_boite;
 	int GESTE_FLAG;
 	byte *_forestSprite;
 	bool _forestFl;
@@ -404,7 +399,6 @@ public:
 	int _prevScreenId;
 	int fmusic;
 	int Max_Propre;
-	int Max_Propre_Gen;
 	int Max_Ligne_Long;
 	int Max_Perso_Y;
 	bool _disableInventFl;
@@ -426,7 +420,6 @@ public:
 	bool _cacheFl;
 	bool NOPARLE;
 	bool PLAN_FLAG;
-	bool NECESSAIRE;
 	bool GOACTION;
 	int Compteur;
 	int _actionDirection;

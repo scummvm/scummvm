@@ -120,10 +120,6 @@ Globals::Globals() {
 
 	PUBEXIT = false;
 	_speed = 1;
-	INSTALL_TYPE = 1;
-	MUSICVOL = 6;
-	SOUNDVOL = 6;
-	VOICEVOL = 6;
 	g_old_anim = 0;
 	g_old_sens = 0;
 	g_old_sens2 = 0;
@@ -135,7 +131,6 @@ Globals::Globals() {
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
 	_boxWidth = 0;
-	hauteur_boite = 0;
 	_forestFl = false;
 	_objectWidth = _objectHeight = 0;
 	_helicopterFl = false;
@@ -150,7 +145,6 @@ Globals::Globals() {
 	_screenId = 0;
 	NOSPRECRAN = false;
 	_prevScreenId = 0;
-	Max_Propre_Gen = 0;
 	Max_Ligne_Long = 0;
 	Max_Perso_Y = 0;
 	Max_Propre = 0;
@@ -168,7 +162,6 @@ Globals::Globals() {
 	NOT_VERIF = false;
 	PERSO_TYPE = 0;
 	GOACTION = false;
-	NECESSAIRE = false;
 	Compteur = 0;
 	_actionDirection = 0;
 	_actionDirection = 0;
@@ -339,7 +332,6 @@ void Globals::clearAll() {
 	police = g_PTRNUL;
 	police_h = 0;
 	police_l = 0;
-	hauteur_boite = 0;
 	_boxWidth = 0;
 
 	_vm->_fontManager.clearAll();

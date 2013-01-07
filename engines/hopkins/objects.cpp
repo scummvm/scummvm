@@ -2263,7 +2263,6 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_globals.Max_Propre = 1;
 	_vm->_globals.Max_Ligne_Long = 1;
-	_vm->_globals.Max_Propre_Gen = 1;
 	_vm->_globals.Max_Perso_Y = 440;
 	_vm->_globals.NOSPRECRAN = true;
 	_vm->_globals.PLAN_FLAG = true;
@@ -3803,7 +3802,7 @@ void ObjectsManager::handleSpecialGames() {
 
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager._scrollOffset = 0;
-		_vm->_graphicsManager.NB_SCREEN();
+		_vm->_graphicsManager.NB_SCREEN(true);
 		_vm->_soundManager.SPECIAL_SOUND = 198;
 		PERSO_ON = true;
 		_vm->_animationManager.NO_SEQ = true;
@@ -3811,9 +3810,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_animationManager.playAnim("otage.ANM", 1, 24, 500);
 		_vm->_animationManager.NO_SEQ = false;
 		_vm->_soundManager.SPECIAL_SOUND = 0;
-		_vm->_globals.NECESSAIRE = true;
-		_vm->_graphicsManager.NB_SCREEN();
-		_vm->_globals.NECESSAIRE = false;
+		_vm->_graphicsManager.NB_SCREEN(false);
 
 		_vm->_saveLoadManager.load("TEMP1.SCR", _vm->_graphicsManager._vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");

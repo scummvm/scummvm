@@ -318,6 +318,16 @@ void SoundManager::playAnim_SOUND(int soundNumber) {
 	}
 }
 
+static const char *modSounds[] = {
+	"appart", "ville", "Rock", "police", "deep"
+	"purgat", "riviere", "SUSPENS", "labo", "cadavre",
+	"cabane", "purgat2", "foret", "ile", "ile2",
+	"hopkins", "peur", "URAVOLGA", "BASE", "cadavre2",
+	"usine", "chien", "coeur", "stand", "ocean",
+	"base3", "gloop", "cant", "feel", "lost",
+	"tobac"
+};
+
 void SoundManager::WSOUND(int soundNumber) {
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 		if (soundNumber > 27)
@@ -328,135 +338,7 @@ void SoundManager::WSOUND(int soundNumber) {
 		if (MOD_FLAG)
 			WSOUND_OFF();
 
-		switch (soundNumber) {
-		case 1:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("appart");
-			else
-				PLAY_MOD("appar");
-			break;
-		case 2:
-			PLAY_MOD("ville");
-			break;
-		case 3:
-			PLAY_MOD("Rock");
-			break;
-		case 4:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("police");
-			else
-				PLAY_MOD("polic");
-			break;
-		case 5:
-			PLAY_MOD("deep");
-			break;
-		case 6:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("purgat");
-			else
-				PLAY_MOD("purga");
-			break;
-		case 7:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("riviere");
-			else
-				PLAY_MOD("rivie");
-			break;
-		case 8:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("SUSPENS");
-			else
-				PLAY_MOD("SUSPE");
-			break;
-		case 9:
-			PLAY_MOD("labo");
-			break;
-		case 10:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("cadavre");
-			else
-				PLAY_MOD("cadav");
-			break;
-		case 11:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("cabane");
-			else
-				PLAY_MOD("caban");
-			break;
-		case 12:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("purgat2");
-			else
-				PLAY_MOD("purg2");
-			break;
-		case 13:
-			PLAY_MOD("foret");
-			break;
-		case 14:
-			PLAY_MOD("ile");
-			break;
-		case 15:
-			PLAY_MOD("ile2");
-			break;
-		case 16:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("hopkins");
-			else
-				PLAY_MOD("hopki");
-			break;
-		case 17:
-			PLAY_MOD("peur");
-			break;
-		case 18:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("URAVOLGA");
-			else
-				PLAY_MOD("peur");
-			break;
-		case 19:
-			PLAY_MOD("BASE");
-			break;
-		case 20:
-			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-				PLAY_MOD("cadavre2");
-			else
-				PLAY_MOD("cada2");
-			break;
-		case 21:
-			PLAY_MOD("usine");
-			break;
-		case 22:
-			PLAY_MOD("chien");
-			break;
-		case 23:
-			PLAY_MOD("coeur");
-			break;
-		case 24:
-			PLAY_MOD("stand");
-			break;
-		case 25:
-			PLAY_MOD("ocean");
-			break;
-		case 26:
-			PLAY_MOD("base3");
-			break;
-		case 27:
-			PLAY_MOD("gloop");
-			break;
-		case 28:
-			PLAY_MOD("cant");
-			break;
-		case 29:
-			PLAY_MOD("feel");
-			break;
-		case 30:
-			PLAY_MOD("lost");
-			break;
-		case 31:
-			PLAY_MOD("tobac");
-			break;
-		}
-
+		PLAY_MOD(modSounds[soundNumber - 1]);
 		old_music = soundNumber;
 	}
 }
@@ -481,7 +363,24 @@ void SoundManager::WSOUND_OFF() {
 void SoundManager::PLAY_MOD(const Common::String &file) {
 	if (_musicOffFl)
 		return;
-	_vm->_fileManager.constructFilename(_vm->_globals.HOPMUSIC, file);
+	Common::String modFile = file;
+
+	// HACK
+	if (modFile == "URAVOLGA" && (_vm->getPlatform() == Common::kPlatformWindows || _vm->getPlatform() == Common::kPlatformLinux))
+		modFile = "peur";
+
+	// The Windows/Linux version chops off the music file names to 5 characters
+	if (modFile.size() > 5 && (_vm->getPlatform() == Common::kPlatformWindows || _vm->getPlatform() == Common::kPlatformLinux)) {
+		if (!modFile.hasSuffix("2")) {
+			while (modFile.size() > 5)
+				modFile.deleteLastChar();
+		} else {
+			while (modFile.size() > 4)
+				modFile.deleteLastChar();
+			modFile += "2";
+		}
+	}
+	_vm->_fileManager.constructFilename(_vm->_globals.HOPMUSIC, modFile);
 	if (MOD_FLAG) {
 		stopMusic();
 		delMusic();
@@ -715,15 +614,15 @@ void SoundManager::PLAY_SOUND2(const Common::String &file) {
 }
 
 void SoundManager::MODSetSampleVolume() {
-	// No implementatoin needed
+	// No implementation needed
 }
 
 void SoundManager::MODSetVoiceVolume() {
-	// No implementatoin needed
+	// No implementation needed
 }
 
 void SoundManager::MODSetMusicVolume(int volume) {
-	// No implementatoin needed
+	// No implementation needed
 }
 
 void SoundManager::loadSample(int wavIndex, const Common::String &file) {

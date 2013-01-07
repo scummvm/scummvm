@@ -166,7 +166,7 @@ public:
 	void INI_ECRAN(const Common::String &file);
 	void INI_ECRAN2(const Common::String &file);
 	void OPTI_INI(const Common::String &file, int mode);
-	void NB_SCREEN();
+	void NB_SCREEN(bool initPalette);
 	void SHOW_PALETTE();
 	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
 	void Copy_Video_Vbe(const byte *src);

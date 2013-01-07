@@ -95,7 +95,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager._scrollOffset = 0;
-	_vm->_graphicsManager.NB_SCREEN();
+	_vm->_graphicsManager.NB_SCREEN(true);
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, false);
 	startCharacterAnim0(_paletteBufferIdx, false);
@@ -126,11 +126,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	}
 	clearCharacterAnim();
 	_vm->_globals.NOPARLE = false;
-	_vm->_globals.NECESSAIRE = true;
 	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
-	_vm->_graphicsManager.NB_SCREEN();
-	_vm->_globals.NECESSAIRE = false;
+	_vm->_graphicsManager.NB_SCREEN(false);
 
 	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
@@ -1116,9 +1114,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager._scrollOffset = 0;
-	_vm->_graphicsManager.NB_SCREEN();
+	_vm->_graphicsManager.NB_SCREEN(true);
 	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
-	_vm->_graphicsManager.NB_SCREEN();
+	_vm->_graphicsManager.NB_SCREEN(true);
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
@@ -1153,11 +1151,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	clearCharacterAnim();
 	clearCharacterAnim();
 	_vm->_globals.NOPARLE = false;
-	_vm->_globals.NECESSAIRE = true;
 	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
-	_vm->_graphicsManager.NB_SCREEN();
-	_vm->_globals.NECESSAIRE = false;
+	_vm->_graphicsManager.NB_SCREEN(false);
 	_vm->_linesManager.CLEAR_ZONE();
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_globals.resetCache();
