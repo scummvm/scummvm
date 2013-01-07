@@ -353,7 +353,6 @@ LABEL_57:
 				_text[idx]._pos.x = v73;
 			}
 		}
-		_vm->_globals.hauteur_boite = (_vm->_globals.police_h + 1) * lineCount + 2;
 		int posX = v73;
 		int posY = yp;
 		int saveWidth = _vm->_globals._boxWidth + 10;

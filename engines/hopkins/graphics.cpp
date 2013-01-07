@@ -1823,8 +1823,8 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode) {
 	_vm->_objectsManager._changeVerbFl = false;
 }
 
-void GraphicsManager::NB_SCREEN() {
-	if (!_vm->_globals.NECESSAIRE)
+void GraphicsManager::NB_SCREEN(bool initPalette) {
+	if (initPalette)
 		initColorTable(50, 65, _palette);
 
 	if (_lineNbr == SCREEN_WIDTH)

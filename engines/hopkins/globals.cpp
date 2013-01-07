@@ -132,7 +132,6 @@ Globals::Globals() {
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
 	_boxWidth = 0;
-	hauteur_boite = 0;
 	_forestFl = false;
 	_objectWidth = _objectHeight = 0;
 	_helicopterFl = false;
@@ -165,7 +164,6 @@ Globals::Globals() {
 	NOT_VERIF = false;
 	PERSO_TYPE = 0;
 	GOACTION = false;
-	NECESSAIRE = false;
 	Compteur = 0;
 	_actionDirection = 0;
 	_actionDirection = 0;
@@ -336,7 +334,6 @@ void Globals::clearAll() {
 	police = g_PTRNUL;
 	police_h = 0;
 	police_l = 0;
-	hauteur_boite = 0;
 	_boxWidth = 0;
 
 	_vm->_fontManager.clearAll();

@@ -2264,7 +2264,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.OPTI_ONE(6, 0, 15, 0);
 			_vm->_objectsManager.PERSO_ON = true;
-			_vm->_graphicsManager.NB_SCREEN();
+			_vm->_graphicsManager.NB_SCREEN(true);
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.playSequence2("TUNNEL.SEQ", 1, 18, 20);
 			_vm->_animationManager.NO_SEQ = false;

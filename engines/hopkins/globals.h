@@ -376,7 +376,6 @@ public:
 	int nbrligne; // Useless variable?
 	int _boxWidth;
 	byte *_inventoryObject;
-	int hauteur_boite;
 	int GESTE_FLAG;
 	byte *_forestSprite;
 	bool _forestFl;
@@ -423,7 +422,6 @@ public:
 	bool _cacheFl;
 	bool NOPARLE;
 	bool PLAN_FLAG;
-	bool NECESSAIRE;
 	bool GOACTION;
 	int Compteur;
 	int _actionDirection;
