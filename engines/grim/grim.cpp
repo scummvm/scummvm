@@ -494,7 +494,7 @@ void GrimEngine::updateDisplayScene() {
 		// need to render underneath the animation or you can't see what's going on
 		// This should not occur on top of everything though or Manny gets covered
 		// up when he's next to Glottis's service room
-		if (g_movie->isPlaying()) {
+		if (g_movie->isPlaying() && _movieSetup == _currSet->getCurrSetup()->_name) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
 				g_driver->prepareMovieFrame(g_movie->getDstSurface());
@@ -1131,6 +1131,10 @@ void GrimEngine::setMovieSubtitle(TextObject *to) {
 		delete _movieSubtitle;
 		_movieSubtitle = to;
 	}
+}
+
+void GrimEngine::setMovieSetup() {
+	_movieSetup = _currSet->getCurrSetup()->_name;
 }
 
 void GrimEngine::setMode(EngineMode mode) {

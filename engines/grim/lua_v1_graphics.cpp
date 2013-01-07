@@ -27,6 +27,7 @@
 #include "engines/grim/primitives.h"
 #include "engines/grim/iris.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/set.h"
 
 #include "engines/grim/movie/movie.h"
 
@@ -107,6 +108,7 @@ void Lua_V1::StartMovie() {
 
 	bool looping = getbool(2);
 	bool result = g_movie->play(lua_getstring(name), looping, x, y);
+	g_grim->setMovieSetup();
 	if (!result)
 		g_grim->setMode(prevEngineMode);
 	pushbool(result);
