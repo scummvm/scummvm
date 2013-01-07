@@ -1221,7 +1221,7 @@ void ComputerManager::checkBallCollisions() {
 						_breakoutScore += 40;
 					displayScore();
 					--_breakoutBrickNbr;
-					*((uint16 *)level + v8 + 5) = 0;
+					level[v8 + 5] = 0;
 					v7 = true;
 				}
 			}

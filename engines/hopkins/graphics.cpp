@@ -727,7 +727,7 @@ void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
 void GraphicsManager::changePalette(const byte *palette) {
 	const byte *srcP = &palette[0];
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
-		WRITE_LE_UINT16(&SD_PIXELS[2 * idx], mapRGB(*srcP, *(srcP + 1), *(srcP + 2)));
+		WRITE_LE_UINT16(&SD_PIXELS[2 * idx], mapRGB(srcP[0], srcP[1], srcP[2]));
 	}
 }
 
@@ -803,7 +803,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 	assert(_videoPtr);
 
 	for (;;) {
-		byte srcByte = *srcP;
+		byte srcByte = srcP[0];
 		if (srcByte >= 222) {
 			if (srcByte == kByteStop)
 				return;
@@ -834,28 +834,34 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 			if (srcByte == 211) {
 				int pixelCount = srcP[1];
 				int pixelIndex = srcP[2];
-				uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destOffset * 2);
-				uint16 pixelValue = *(uint16 *)(PAL_PIXELS + 2 * pixelIndex);
+				byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
 				destOffset += pixelCount;
 
-				while (pixelCount--)
-					*destP++ = pixelValue;
+				while (pixelCount--) {
+					destP[0] = PAL_PIXELS[2 * pixelIndex];
+					destP[1] = PAL_PIXELS[(2 * pixelIndex) + 1];
+					destP += 2;
+				}
 
 				srcP += 3;
 			} else {
 				int pixelCount = srcByte - 211;
 				int pixelIndex = srcP[1];
-				uint16 *destP = (uint16 *)((byte *)_videoPtr->pixels + destOffset * 2);
-				uint16 pixelValue = *(uint16 *)(PAL_PIXELS + 2 * pixelIndex);
+				byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
 				destOffset += pixelCount;
 
-				while (pixelCount--)
-					*destP++ = pixelValue;
+				while (pixelCount--) {
+					destP[0] = PAL_PIXELS[2 * pixelIndex];
+					destP[1] = PAL_PIXELS[(2 * pixelIndex) + 1];
+					destP += 2;
+				}
 
 				srcP += 2;
 			}
 		} else {
-			*((uint16 *)_videoPtr->pixels + destOffset) = *(uint16 *)(PAL_PIXELS + 2 * srcByte);
+			byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
+			destP[0] = PAL_PIXELS[2 * srcByte];
+			destP[1] = PAL_PIXELS[(2 * srcByte) + 1];
 			++srcP;
 			++destOffset;
 		}
@@ -863,33 +869,31 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 }
 
 void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
-	int destOffset;
-	const byte *srcP;
-	byte pixelIndex;
+	byte srcByte;
+	int destOffset = 0;
+	const byte *srcP = srcData;
 
-	destOffset = 0;
-	srcP = srcData;
 	for (;;) {
-		pixelIndex = *srcP;
-		if (*srcP < kByteStop)
-			goto Video_Cont_Vbe16a;
-		if (pixelIndex == kByteStop)
+		srcByte = srcP[0];
+		if (srcByte == kByteStop)
 			return;
-		if (pixelIndex == k8bVal) {
-			destOffset += srcP[1];
-			pixelIndex = srcP[2];
-			srcP += 2;
-		} else if (pixelIndex == k16bVal) {
-			destOffset += READ_LE_UINT16(srcP + 1);
-			pixelIndex = srcP[3];
-			srcP += 3;
-		} else {
-			destOffset += READ_LE_UINT32(srcP + 1);
-			pixelIndex = srcP[5];
-			srcP += 5;
+		if (srcP[0] > kByteStop) {
+			if (srcByte == k8bVal) {
+				destOffset += srcP[1];
+				srcByte = srcP[2];
+				srcP += 2;
+			} else if (srcByte == k16bVal) {
+				destOffset += READ_LE_UINT16(srcP + 1);
+				srcByte = srcP[3];
+				srcP += 3;
+			} else {
+				destOffset += READ_LE_UINT32(srcP + 1);
+				srcByte = srcP[5];
+				srcP += 5;
+			}
 		}
-Video_Cont_Vbe16a:
-		WRITE_LE_UINT16((byte *)_videoPtr->pixels + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * pixelIndex));
+
+		WRITE_LE_UINT16((byte *)_videoPtr->pixels + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * srcByte));
 		++srcP;
 		++destOffset;
 	}
@@ -915,7 +919,8 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 			destP += width;
 		} else if (width & 2) {
 			for (i = width >> 1; i; --i) {
-				*(uint16 *)destP = *(const uint16 *)srcP;
+				destP[0] = srcP[0];
+				destP[1] = srcP[1];
 				srcP += 2;
 				destP += 2;
 			}
@@ -1235,7 +1240,8 @@ void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, in
 			destP += width;
 		} else if (width & 2) {
 			for (i = width >> 1; i; --i) {
-				*(uint16 *)destP = *(const uint16 *)srcP;
+				destP[0] = srcP[0];
+				destP[1] = srcP[1];
 				srcP += 2;
 				destP += 2;
 			}
