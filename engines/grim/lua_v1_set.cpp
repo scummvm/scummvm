@@ -281,14 +281,14 @@ void Lua_V1::GetCurrentSetup() {
 void Lua_V1::PreviousSetup() {
 	int num = g_grim->getCurrSet()->getSetup() - 1;
 	if (num < 0) {
-		num = g_grim->getCurrSet()->getNumSetups();
+		num = g_grim->getCurrSet()->getNumSetups() - 1;
 	}
 	g_grim->makeCurrentSetup(num);
 }
 
 void Lua_V1::NextSetup() {
 	int num = g_grim->getCurrSet()->getSetup() + 1;
-	if (num > g_grim->getCurrSet()->getNumSetups()) {
+	if (num >= g_grim->getCurrSet()->getNumSetups()) {
 		num = 0;
 	}
 	g_grim->makeCurrentSetup(num);
