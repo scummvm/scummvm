@@ -194,8 +194,8 @@ public:
 	void handleRightButton();
 	int MZONE();
 	void initBorder(int a1);
-	void OBJETPLUS(int a1);
-	void VALID_OBJET(int a1);
+	void nextObjectIcon(int idx);
+	void takeInventoryObject(int idx);
 	void OPTI_OBJET();
 	void handleSpecialGames();
 	void BOB_VIVANT(int a1);

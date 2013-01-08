@@ -273,15 +273,12 @@ int ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, int
  * Add Object
  */
 int ObjectsManager::addObject(int objIndex) {
-	bool flag = false;
 	int arrIndex = 0;
-	do {
+	for (;;) {
 		++arrIndex;
-		if (!_vm->_globals._inventory[arrIndex])
-			flag = true;
-		if (arrIndex == 32)
-			flag = true;
-	} while (!flag);
+		if ((!_vm->_globals._inventory[arrIndex]) || (arrIndex == 32))
+			break;;
+	}
 
 	_vm->_globals._inventory[arrIndex] = objIndex;
 	return arrIndex;
@@ -3624,94 +3621,74 @@ void ObjectsManager::initBorder(int a1) {
 	_vm->_eventsManager.getMouseY();
 }
 
-void ObjectsManager::OBJETPLUS(int idx) {
-	int v1;
-	int v2;
-	int v3;
-
-	v1 = _vm->_eventsManager._mouseCursorId;
-	if (_vm->_eventsManager._mouseCursorId && _vm->_eventsManager._mouseCursorId != 16 && (uint16)(_vm->_eventsManager._mouseCursorId - 2) > 1u) {
-		v2 = _vm->_eventsManager._mouseCursorId++ + 1;
-		if (v1 == 5)
-			goto LABEL_24;
-		if (v2 == 7)
-			goto LABEL_26;
-		if (v2 != 8) {
-			if (v2 == 9)
-				_vm->_eventsManager._mouseCursorId = 10;
-			if (_vm->_eventsManager._mouseCursorId == 10)
-				goto LABEL_29;
-			if (_vm->_eventsManager._mouseCursorId == 11)
-				goto LABEL_31;
-			if (_vm->_eventsManager._mouseCursorId == 12)
-				_vm->_eventsManager._mouseCursorId = 13;
-			if (_vm->_eventsManager._mouseCursorId == 13)
-				goto LABEL_33;
-			if (_vm->_eventsManager._mouseCursorId == 14)
-				_vm->_eventsManager._mouseCursorId = 15;
-			if (_vm->_eventsManager._mouseCursorId == 15)
-				goto LABEL_35;
-			if ((uint16)(_vm->_eventsManager._mouseCursorId - 16) <= 6u)
-				_vm->_eventsManager._mouseCursorId = 23;
-			if (_vm->_eventsManager._mouseCursorId == 23)
-				goto LABEL_37;
-			if (_vm->_eventsManager._mouseCursorId == 24)
-				_vm->_eventsManager._mouseCursorId = 25;
-			if (_vm->_eventsManager._mouseCursorId == 25)
-				goto LABEL_39;
-			do {
-				_vm->_eventsManager._mouseCursorId = 6;
-LABEL_24:
-				if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field2 == 1)
-					break;
-				++_vm->_eventsManager._mouseCursorId;
-				if (_vm->_eventsManager._mouseCursorId == 7) {
-LABEL_26:
-					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field3 == 1)
-						return;
-				}
-				v3 = _vm->_eventsManager._mouseCursorId++;
-				if (_vm->_eventsManager._mouseCursorId == 8)
-					break;
-				_vm->_eventsManager._mouseCursorId = v3 + 3;
-				if (v3 == 7) {
-LABEL_29:
-					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field7 == 1)
-						return;
-				}
-				++_vm->_eventsManager._mouseCursorId;
-				if (_vm->_eventsManager._mouseCursorId == 11) {
-LABEL_31:
-					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field4 == 1)
-						return;
-				}
-				_vm->_eventsManager._mouseCursorId += 2;
-				if (_vm->_eventsManager._mouseCursorId == 13) {
-LABEL_33:
-					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field5 == 1)
-						return;
-				}
-				_vm->_eventsManager._mouseCursorId += 2;
-				if (_vm->_eventsManager._mouseCursorId == 15) {
-LABEL_35:
-					if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 1)
-						return;
-				}
-				_vm->_eventsManager._mouseCursorId = 23;
-LABEL_37:
-				if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 2)
-					break;
-				_vm->_eventsManager._mouseCursorId = 25;
-LABEL_39:
-				;
-			} while (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field7 != 2);
+/**
+ * Get next icon for an object in the inventory
+ */
+void ObjectsManager::nextObjectIcon(int idx) {
+	if (_vm->_eventsManager._mouseCursorId == 0 || _vm->_eventsManager._mouseCursorId == 16 || _vm->_eventsManager._mouseCursorId == 3 ||
+	    _vm->_eventsManager._mouseCursorId == 2 || _vm->_eventsManager._mouseCursorId == 7)
+		return;
+		
+	int nextCursorId = _vm->_eventsManager._mouseCursorId + 1;
+	do {
+		if (nextCursorId == 6) {
+			_vm->_eventsManager._mouseCursorId = 6;
+			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field2 == 1)
+				return;
+			nextCursorId++;
 		}
-	}
+		if (nextCursorId == 7) {
+			_vm->_eventsManager._mouseCursorId = 7;
+			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field3 == 1)
+				return;
+			nextCursorId++;
+		}	
+		if (nextCursorId == 8) {
+			_vm->_eventsManager._mouseCursorId = 8;
+			return;
+		}
+		if (nextCursorId == 9 || nextCursorId == 10) {
+			_vm->_eventsManager._mouseCursorId = 10;
+			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field7 == 1)
+				return;
+			nextCursorId = 11;
+		}
+
+		if (nextCursorId == 11) {
+			_vm->_eventsManager._mouseCursorId = 11;
+			++_vm->_eventsManager._mouseCursorId;
+			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field4 == 1)
+				return;
+			nextCursorId++;
+		}
+
+		if (nextCursorId == 12 || nextCursorId == 13) {
+			_vm->_eventsManager._mouseCursorId = 13;
+			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field5 == 1)
+				return;
+			nextCursorId = 14;
+		}
+
+		if (nextCursorId == 14 || nextCursorId == 15) {
+			_vm->_eventsManager._mouseCursorId = 15;
+			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 1)
+				return;
+			nextCursorId = 23;
+		}
+
+		if (nextCursorId >= 16 && nextCursorId <= 23) {
+			_vm->_eventsManager._mouseCursorId = 23;
+			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 2)
+				return;
+		}
+		
+		nextCursorId = 6;
+	} while (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field7 != 2);
 }
 
-void ObjectsManager::VALID_OBJET(int a1) {
+void ObjectsManager::takeInventoryObject(int idx) {
 	if (_vm->_eventsManager._mouseCursorId == 8)
-		changeObject(a1);
+		changeObject(idx);
 }
 
 void ObjectsManager::OPTI_OBJET() {

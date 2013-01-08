@@ -380,7 +380,7 @@ LABEL_7:
 			_vm->_objectsManager.initBorder(newInventoryItem);
 		if (_vm->_eventsManager._mouseCursorId != 1 && _vm->_eventsManager._mouseCursorId != 2 && _vm->_eventsManager._mouseCursorId != 3 && _vm->_eventsManager._mouseCursorId != 16) {
 			if (mouseButton == 2) {
-				_vm->_objectsManager.OBJETPLUS(newInventoryItem);
+				_vm->_objectsManager.nextObjectIcon(newInventoryItem);
 				if (_vm->_eventsManager._mouseCursorId != 23)
 					_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
 			}
@@ -388,7 +388,7 @@ LABEL_7:
 		if (mouseButton == 1) {
 			if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 2 || _vm->_eventsManager._mouseCursorId == 3 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId)
 				break;
-			_vm->_objectsManager.VALID_OBJET(_vm->_globals._inventory[newInventoryItem]);
+			_vm->_objectsManager.takeInventoryObject(_vm->_globals._inventory[newInventoryItem]);
 			if (_vm->_eventsManager._mouseCursorId == 8)
 				v20 = true;
 			if (!v20) {
