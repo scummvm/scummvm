@@ -77,7 +77,6 @@ public:
 	Common::RandomSource *_rnd;
 
 	int16 _mouseX, _mouseY;
-	Common::KeyCode _keyState;
 	uint16 _buttonState;
 
 	GameState _gameState;

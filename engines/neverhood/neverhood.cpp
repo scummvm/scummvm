@@ -70,11 +70,8 @@ Common::Error NeverhoodEngine::run() {
 
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");
-
 	_gameVars = new GameVars();
-
 	_screen = new Screen(this);
-
 	_res = new ResourceMan();
 	
 	if (isDemo()) {
@@ -98,13 +95,11 @@ Common::Error NeverhoodEngine::run() {
 	_collisionMan = new CollisionMan(this);
 	_gameModule = new GameModule(this);
 	
-	_gameModule->startup();
-	
 	// TODO Check if this can actually be false...
 	_isSaveAllowed = true;
 	
 	if (isDemo()) {
-		// Adjust some navigation lists for the demo version...
+		// Adjust this navigation list for the demo version
 		NavigationList *navigationList = _staticData->getNavigationList(0x004B67E8);
 		(*navigationList)[0].middleSmackerFileHash = 0;
 		(*navigationList)[0].middleFlag = 1;
@@ -115,6 +110,8 @@ Common::Error NeverhoodEngine::run() {
 		(*navigationList)[5].middleSmackerFileHash = 0;
 		(*navigationList)[5].middleFlag = 1;
 	}
+	
+	_gameModule->startup();
 	
 	mainLoop();
 	
@@ -142,12 +139,10 @@ void NeverhoodEngine::mainLoop() {
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				_keyState = event.kbd.keycode;
 				_gameModule->handleKeyDown(event.kbd.keycode);
 				_gameModule->handleAsciiKey(event.kbd.ascii);
 				break;
 			case Common::EVENT_KEYUP:
-				_keyState = Common::KEYCODE_INVALID;
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
