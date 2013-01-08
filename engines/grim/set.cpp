@@ -100,7 +100,7 @@ void Set::loadText(TextSplitter &ts) {
 	ts.scanString(" numsetups %d", 1, &_numSetups);
 	_setups = new Setup[_numSetups];
 	for (int i = 0; i < _numSetups; i++)
-		_setups[i].load(ts);
+		_setups[i].load(this, i, ts);
 	_currSetup = _setups;
 
 	_numSectors = -1;
@@ -284,7 +284,7 @@ bool Set::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void Set::Setup::load(TextSplitter &ts) {
+void Set::Setup::load(Set *set, int id, TextSplitter &ts) {
 	char buf[256];
 
 	ts.scanString(" setup %256s", 1, buf);
@@ -319,12 +319,19 @@ void Set::Setup::load(TextSplitter &ts) {
 	ts.scanString(" nclip %f", 1, &_nclip);
 	ts.scanString(" fclip %f", 1, &_fclip);
 	for (;;) {
+		char name[256], zname[256];
+		char bitmap[256], zbitmap[256];
+		zbitmap[0] = '\0';
 		if (ts.checkString("object_art"))
-			ts.scanString(" object_art %256s", 1, buf);
+			ts.scanString(" object_art %256s %256s", 2, name, bitmap);
 		else
 			break;
 		if (ts.checkString("object_z"))
-			ts.scanString(" object_z %256s", 1, buf);
+			ts.scanString(" object_z %256s %256s", 2, zname, zbitmap);
+
+		if (strcmp(name, zname) == 0 || zbitmap[0] == '\0') {
+			set->addObjectState(id, ObjectState::OBJSTATE_BACKGROUND, bitmap, zbitmap, true);
+		}
 	}
 }
 

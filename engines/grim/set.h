@@ -110,7 +110,7 @@ public:
 	ObjectState *findState(const Common::String &filename);
 
 	struct Setup {		// Camera setup data
-		void load(TextSplitter &ts);
+		void load(Set *set, int id, TextSplitter &ts);
 		void loadBinary(Common::SeekableReadStream *data);
 		void setupCamera() const;
 		void saveState(SaveGame *savedState) const;
