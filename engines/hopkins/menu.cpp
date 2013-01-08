@@ -101,16 +101,16 @@ int MenuManager::menu() {
 			menuIndex = MENU_NONE;
 			mousePos = Common::Point(_vm->_eventsManager.getMouseX(), _vm->_eventsManager.getMouseY());
 
-			if ((uint16)(mousePos.x - 232) <= 176) {
-				if ((uint16)(mousePos.y - 261) <= 23)
+			if (mousePos.x >= 232 && mousePos.x <= 408) {
+				if (mousePos.y >= 261 && mousePos.y <= 284)
 					menuIndex = PLAY_GAME;
-				if ((uint16)(mousePos.y - 293) <= 23)
+				else if (mousePos.y >= 293 && mousePos.y <= 316)
 					menuIndex = LOAD_GAME;
-				if ((uint16)(mousePos.y - 325) <= 22)
+				else if (mousePos.y >= 325 && mousePos.y <= 347)
 					menuIndex = OPTIONS;
-				if ((uint16)(mousePos.y - 356) <= 23)
+				else if (mousePos.y >= 356 && mousePos.y <= 379)
 					menuIndex = INTRODUCTION;
-				if ((uint16)(mousePos.y - 388) <= 23)
+				else if (mousePos.y >= 388 && mousePos.y <= 411)
 					menuIndex = QUIT;
 			}
 
