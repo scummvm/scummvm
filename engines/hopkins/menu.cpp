@@ -46,11 +46,7 @@ int MenuManager::menu() {
 	MenuSelection menuIndex;
 	Common::Point mousePos;
 	signed int result;
-	int frame5Index;
-	int frame4Index;
-	int frame3Index;
-	int frame2Index;
-	int frame1Index;
+	int frameIndex[] = { 0, 0, 0, 0, 0 };
 
 	if (g_system->getEventManager()->shouldQuit())
 		return -1;
@@ -67,11 +63,7 @@ int MenuManager::menu() {
 
 		memset(_vm->_globals._saveData, 0, 2000);
 		_vm->_objectsManager.addObject(14);
-		frame5Index = 0;
-		frame4Index = 0;
-		frame3Index = 0;
-		frame2Index = 0;
-		frame1Index = 0;
+		memset(frameIndex, 0, sizeof(int) * ARRAYSIZE(frameIndex));
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			_vm->_graphicsManager.loadImage("MENU");
@@ -98,137 +90,68 @@ int MenuManager::menu() {
 		_vm->_eventsManager._mouseCursorId = 0;
 		_vm->_eventsManager._mouseSpriteId = 0;
 
-		for (;;) {
-			for (;;) {
-				_vm->_soundManager.WSOUND(28);
+		_vm->_soundManager.WSOUND(28);
 
-				// Loop to make menu selection
-				bool selectionMade = false;
-				do {
-					if (g_system->getEventManager()->shouldQuit())
-						return -1;
+		// Loop to make menu selection
+		bool selectionMade = false;
+		do {
+			if (g_system->getEventManager()->shouldQuit())
+				return -1;
 
-					menuIndex = MENU_NONE;
-					mousePos = Common::Point(_vm->_eventsManager.getMouseX(), _vm->_eventsManager.getMouseY());
+			menuIndex = MENU_NONE;
+			mousePos = Common::Point(_vm->_eventsManager.getMouseX(), _vm->_eventsManager.getMouseY());
 
-					if ((uint16)(mousePos.x - 232) <= 176) {
-						if ((uint16)(mousePos.y - 261) <= 23)
-							menuIndex = PLAY_GAME;
-						if ((uint16)(mousePos.y - 293) <= 23)
-							menuIndex = LOAD_GAME;
-						if ((uint16)(mousePos.y - 325) <= 22)
-							menuIndex = OPTIONS;
-						if ((uint16)(mousePos.y - 356) <= 23)
-							menuIndex = INTRODUCTION;
-
-						if ((uint16)(mousePos.y - 388) <= 23)
-							menuIndex = QUIT;
-					}
-
-					switch (menuIndex) {
-					case MENU_NONE:
-						frame1Index = 0;
-						frame2Index = 0;
-						frame3Index = 0;
-						frame4Index = 0;
-						frame5Index = 0;
-						break;
-					case PLAY_GAME:
-						frame1Index = 1;
-						frame2Index = 0;
-						frame3Index = 0;
-						frame4Index = 0;
-						frame5Index = 0;
-						break;
-					case LOAD_GAME:
-						frame1Index = 0;
-						frame2Index = 1;
-						frame3Index = 0;
-						frame4Index = 0;
-						frame5Index = 0;
-						break;
-					case OPTIONS:
-						frame1Index = 0;
-						frame2Index = 0;
-						frame3Index = 1;
-						frame4Index = 0;
-						frame5Index = 0;
-						break;
-					case INTRODUCTION:
-						frame1Index = 0;
-						frame2Index = 0;
-						frame3Index = 0;
-						frame4Index = 1;
-						frame5Index = 0;
-						break;
-					case QUIT:
-						frame1Index = 0;
-						frame2Index = 0;
-						frame3Index = 0;
-						frame4Index = 0;
-						frame5Index = 1;
-					}
-
-					_vm->_graphicsManager.fastDisplay(spriteData, 230, 259, frame1Index);
-					_vm->_graphicsManager.fastDisplay(spriteData, 230, 291, frame2Index + 2);
-					_vm->_graphicsManager.fastDisplay(spriteData, 230, 322, frame3Index + 4);
-					_vm->_graphicsManager.fastDisplay(spriteData, 230, 354, frame4Index + 6);
-					_vm->_graphicsManager.fastDisplay(spriteData, 230, 386, frame5Index + 8);
-					_vm->_eventsManager.VBL();
-
-					if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
-						selectionMade = true;
-				} while (!selectionMade);
-
-				if (menuIndex == PLAY_GAME) {
-					_vm->_graphicsManager.fastDisplay(spriteData, 230, 259, 10);
-					_vm->_eventsManager.VBL();
-					_vm->_eventsManager.delay(200);
-					result = 1;
-				}
-				if (menuIndex != LOAD_GAME)
-					break;
-
-				_vm->_graphicsManager.fastDisplay(spriteData, 230, 291, 11);
-				_vm->_eventsManager.VBL();
-				_vm->_eventsManager.delay(200);
-
-				_vm->_globals._exitId = -1;
-				_vm->_dialogsManager.showLoadGame();
-
-				if (_vm->_globals._exitId != -1) {
-					result = _vm->_globals._exitId;
-					break;
-				}
-				_vm->_globals._exitId = 0;
+			if ((uint16)(mousePos.x - 232) <= 176) {
+				if ((uint16)(mousePos.y - 261) <= 23)
+					menuIndex = PLAY_GAME;
+				if ((uint16)(mousePos.y - 293) <= 23)
+					menuIndex = LOAD_GAME;
+				if ((uint16)(mousePos.y - 325) <= 22)
+					menuIndex = OPTIONS;
+				if ((uint16)(mousePos.y - 356) <= 23)
+					menuIndex = INTRODUCTION;
+				if ((uint16)(mousePos.y - 388) <= 23)
+					menuIndex = QUIT;
 			}
 
-			if (menuIndex != OPTIONS)
+			memset(frameIndex, 0, sizeof(int) * ARRAYSIZE(frameIndex));
+			if (menuIndex > MENU_NONE)
+				frameIndex[menuIndex - 1] = 1;
+
+			for (int i = 0; i < 5; i++)
+				_vm->_graphicsManager.fastDisplay(spriteData, 230, 259 + 32 * i, frameIndex[i] + 2 * i);
+			_vm->_eventsManager.VBL();
+
+			if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
+				selectionMade = true;
+		} while (!selectionMade);
+
+		if (menuIndex > MENU_NONE) {
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 259 + 32 * (menuIndex - 1), 10 + (menuIndex - 1));
+			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.delay(200);
+		}
+
+		if (menuIndex == PLAY_GAME) {
+			result = 1;
+			break;
+		} else if (menuIndex == LOAD_GAME) {
+			_vm->_globals._exitId = -1;
+			_vm->_dialogsManager.showLoadGame();
+
+			if (_vm->_globals._exitId != -1) {
+				result = _vm->_globals._exitId;
 				break;
-
-			// Options menu item selected
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 322, 12);
-			_vm->_eventsManager.VBL();
-			_vm->_eventsManager.delay(200);
-
-			// Show the options dialog
+			}
+			_vm->_globals._exitId = 0;
+		} else if (menuIndex == OPTIONS) {
 			_vm->_dialogsManager.showOptionsDialog();
-		}
-		if (menuIndex == INTRODUCTION) {
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 354, 13);
-			_vm->_eventsManager.VBL();
-			_vm->_eventsManager.delay(200);
+		} else if (menuIndex == INTRODUCTION) {
 			_vm->playIntro();
-			continue;
-		}
-
-		if ( menuIndex == QUIT) {
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 386, 14);
-			_vm->_eventsManager.VBL();
-			_vm->_eventsManager.delay(200);
+		} else if (menuIndex == QUIT) {
 			result = -1;
+			break;
 		}
-		break;
 	}
 
 	_vm->_globals.freeMemory(spriteData);
