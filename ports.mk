@@ -356,7 +356,6 @@ endif
 	cp $(srcdir)/dists/ps3/PIC1.PNG ps3pkg/
 	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
 	pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ scummvm-ps3.pkg
-	package_finalize scummvm-ps3.pkg
 
 ps3run: $(EXECUTABLE)
 	$(STRIP) $(EXECUTABLE)
@@ -365,4 +364,4 @@ ps3run: $(EXECUTABLE)
 	ps3load $(EXECUTABLE).self
 
 # Mark special targets as phony
-.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg
+.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg ps3run
