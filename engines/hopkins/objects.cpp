@@ -1395,7 +1395,7 @@ void ObjectsManager::checkZone() {
 	if (_vm->_globals.PLAN_FLAG
 	        || _vm->_eventsManager._startPos.x >= v0
 	        || (v1 = _vm->_graphicsManager._scrollOffset + 54, v0 >= v1)
-	        || (v1 = v2 - 1, (uint16)(v2 - 1) > 59)) {
+	        || (v1 = v2 - 1, v1 < 0 || v1 > 59)) {
 		if (_visibleFl)
 			FLAG_VISIBLE_EFFACE = 4;
 		_visibleFl = false;
@@ -1609,7 +1609,7 @@ LABEL_241:
 		return;
 	}
 	if (_vm->_globals.g_old_sens == 3) {
-		if ((uint16)(_vm->_globals.g_old_anim - 24) > 11) {
+		if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 		} else {
@@ -1648,7 +1648,7 @@ LABEL_23:
 	}
 	if (_vm->_globals.g_old_sens != 7)
 		goto LABEL_43;
-	if ((uint16)(_vm->_globals.g_old_anim - 24) > 11) {
+	if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -1718,13 +1718,11 @@ LABEL_59:
 LABEL_60:
 	if (_vm->_globals.g_old_sens != 5)
 		goto LABEL_77;
-	if ((uint16)(_vm->_globals.g_old_anim - 48) > 11) {
+	if (_vm->_globals.g_old_anim < 48 || _vm->_globals.g_old_anim > 59) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
-		v19 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-		if (v19 < 0)
-			v19 = -v19;
+		v19 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
 		v20 = v19;
 		if (_sprite[0].fieldC < 0) {
 			v21 = _sprite[0].fieldC;
@@ -1750,7 +1748,7 @@ LABEL_76:
 LABEL_77:
 	if (_vm->_globals.g_old_sens != 2)
 		goto LABEL_96;
-	if ((uint16)(_vm->_globals.g_old_anim - 12) > 11) {
+	if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -1788,7 +1786,7 @@ LABEL_95:
 LABEL_96:
 	if (_vm->_globals.g_old_sens != 8)
 		goto LABEL_115;
-	if ((uint16)(_vm->_globals.g_old_anim - 12) > 11) {
+	if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -1826,7 +1824,7 @@ LABEL_114:
 LABEL_115:
 	if (_vm->_globals.g_old_sens != 4)
 		goto LABEL_134;
-	if ((uint16)(_vm->_globals.g_old_anim - 36) > 11) {
+	if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -1864,7 +1862,7 @@ LABEL_133:
 LABEL_134:
 	if (_vm->_globals.g_old_sens != 6)
 		goto LABEL_153;
-	if ((uint16)(_vm->_globals.g_old_anim - 36) > 11) {
+	if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
@@ -2594,7 +2592,7 @@ LABEL_64:
 			_vm->_talkManager.REPONSE2(_vm->_globals._saveData->data[svField2], _vm->_globals._saveData->data[svField1]);
 		}
 		_vm->_eventsManager.changeMouseCursor(4);
-		if ((uint16)(NUMZONE + 1) > 1u && !_vm->_globals.ZONEP[NUMZONE].field16) {
+		if (NUMZONE != -1 && NUMZONE != 0 && !_vm->_globals.ZONEP[NUMZONE].field16) {
 			NUMZONE = -1;
 			_forceZoneFl = true;
 		}
@@ -3261,7 +3259,7 @@ void ObjectsManager::VERBEPLUS() {
 		do {
 			_vm->_eventsManager._mouseCursorId = 4;
 LABEL_24:
-			if (!_vm->_globals.NOMARCHE || (v = NUMZONE + 1, (uint16)(NUMZONE + 1) <= 1u)) {
+			if (!_vm->_globals.NOMARCHE || (v = NUMZONE + 1, NUMZONE == -1 || NUMZONE == 0) {
 				if (_vm->_eventsManager._mouseCursorId == 4)
 					return;
 			} else {
