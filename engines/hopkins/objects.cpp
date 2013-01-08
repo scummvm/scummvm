@@ -3259,7 +3259,7 @@ void ObjectsManager::VERBEPLUS() {
 		do {
 			_vm->_eventsManager._mouseCursorId = 4;
 LABEL_24:
-			if (!_vm->_globals.NOMARCHE || (v = NUMZONE + 1, NUMZONE == -1 || NUMZONE == 0) {
+			if (!_vm->_globals.NOMARCHE || (v = NUMZONE + 1, NUMZONE == -1 || NUMZONE == 0)) {
 				if (_vm->_eventsManager._mouseCursorId == 4)
 					return;
 			} else {
