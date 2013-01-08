@@ -84,6 +84,7 @@ public:
 
 	void setSetup(int num);
 	int getSetup() const { return _currSetup - _setups; }
+	inline int getNumSetups() const { return _numSetups; }
 
 	// Sector access functions
 	int getSectorCount() { return _numSectors; }

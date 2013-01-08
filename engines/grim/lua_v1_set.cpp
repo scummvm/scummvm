@@ -278,6 +278,22 @@ void Lua_V1::GetCurrentSetup() {
 	lua_pushnumber(scene->getSetup());
 }
 
+void Lua_V1::PreviousSetup() {
+	int num = g_grim->getCurrSet()->getSetup() - 1;
+	if (num < 0) {
+		num = g_grim->getCurrSet()->getNumSetups();
+	}
+	g_grim->makeCurrentSetup(num);
+}
+
+void Lua_V1::NextSetup() {
+	int num = g_grim->getCurrSet()->getSetup() + 1;
+	if (num > g_grim->getCurrSet()->getNumSetups()) {
+		num = 0;
+	}
+	g_grim->makeCurrentSetup(num);
+}
+
 /* This function makes the walkplane sectors smaller by the
  * given size. This is used when manny is holding some big
  * thing, like his scythe, that is likely to clip with the
