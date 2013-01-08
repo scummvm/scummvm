@@ -1468,7 +1468,7 @@ void ObjectsManager::checkZone() {
 		_vm->_globals.old_zone_68 = v4;
 		if (_vm->_globals.NOMARCHE && (_vm->_eventsManager._mouseCursorId == 4)) {
 			v1 = v4 + 1;
-			if ((uint16)(v4 + 1) > 1u)
+			if (v4 != -1 && v4 != 0)
 				handleRightButton();
 		}
 		if ((_vm->_globals.PLAN_FLAG && v4 == -1) || !v4) {
@@ -2430,7 +2430,7 @@ void ObjectsManager::handleLeftButton() {
 LABEL_38:
 	if (_vm->_globals.PLAN_FLAG && (_vm->_eventsManager._mouseCursorId != 4 || NUMZONE <= 0))
 		return;
-	if ((uint16)(NUMZONE + 1) > 1u) {
+	if (NUMZONE != -1 && NUMZONE != 0) {
 		zoneCount = NUMZONE;
 		zoneX = _vm->_globals.ZONEP[zoneCount]._destX;
 		if (zoneX) {
@@ -2498,7 +2498,7 @@ LABEL_65:
 			_vm->_globals.chemin = PARC_VOITURE(v18, v17, destX, destY);
 		}
 	}
-	if (NUMZONE < -1 || NUMZONE > 0) {
+	if (NUMZONE != -1 && NUMZONE != 0) {
 		if (_vm->_eventsManager._mouseCursorId == 23)
 			_vm->_globals._saveData->data[svField1] = 5;
 		else 
@@ -2623,7 +2623,7 @@ LABEL_64:
 	if (_vm->_globals.NOMARCHE) {
 		if (_vm->_eventsManager._mouseCursorId == 4) {
 			result = NUMZONE + 1;
-			if (NUMZONE < -1 || NUMZONE > 0)
+			if (NUMZONE != -1 && NUMZONE != 0)
 				handleRightButton();
 		}
 	}
@@ -3413,7 +3413,7 @@ LABEL_67:
  * Handle Right button
  */
 void ObjectsManager::handleRightButton() {
-	if (NUMZONE < -1 || NUMZONE > 0) {
+	if (NUMZONE != -1 && NUMZONE != 0) {
 		VERBEPLUS();
 		if (_vm->_eventsManager._mouseCursorId != 23)
 			_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
