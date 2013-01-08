@@ -32,10 +32,11 @@ namespace Grim {
 
 BitmapComponent::BitmapComponent(Component *p, int parentID, const char *filename, tag32 t) :
 		Component(p, parentID, filename, t) {
+	_overlay = false;
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		_name = Common::String(filename, comma);
-		// = atoi(comma + 1); //maybe this is transparency?
+		_overlay = atoi(comma + 1) == 1;
 	}
 }
 
@@ -44,7 +45,8 @@ void BitmapComponent::setKey(int val) {
 
 	if (!state && (g_grim->getGameFlags() & ADGF_DEMO) && g_grim->getGameType() == GType_GRIM) {
 		Set *set = g_grim->getCurrSet();
-		state = set->addObjectState(set->getSetup(), ObjectState::OBJSTATE_OVERLAY, _name.c_str(), NULL, false);
+		state = set->addObjectState(set->getSetup(), (_overlay ? ObjectState::OBJSTATE_OVERLAY : ObjectState::OBJSTATE_UNDERLAY),
+									_name.c_str(), NULL, false);
 	}
 
 	if (state) {

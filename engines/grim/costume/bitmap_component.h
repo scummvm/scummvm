@@ -31,6 +31,9 @@ class BitmapComponent : public Component {
 public:
 	BitmapComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	void setKey(int val);
+
+private:
+	bool _overlay;
 };
 
 } // end of namespace Grim
