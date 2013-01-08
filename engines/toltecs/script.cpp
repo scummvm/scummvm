@@ -252,9 +252,12 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		// ok
 		_subCode = _code;
 		byte length = readByte();
+		if (length == 0) {
+			warning("Possible script bug detected - opcode length is 0 when calling script function");
+			return;
+		}
 		debug(2, "length = %d", length);
 		uint16 index = readInt16();
-		debug(2, "callScriptFunction %d", index);
 		execScriptFunction(index);
 		_code += length - 2;
 		break;
