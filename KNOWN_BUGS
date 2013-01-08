@@ -6,4 +6,3 @@ Known bugs in ResidualVM 0.2.0:
 * Shadows may have artifacts (especially Manny when holding specific items)
 * Subtitles will overlap when multiple characters are speaking
 * Some animations will show their initial state at the end
-* Glottis will be drawn incorrectly at the Beaver Dam
