@@ -1025,7 +1025,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule)
 
 	playSound(0, 0x40106542);
 	loadSound(1, 0x40005446);
-	loadSound(2, 0x40005446);
+	loadSound(2, 0x40005446); // Same sound as slot 1
 	loadSound(3, 0x68E25540);
 
 }
@@ -1049,6 +1049,7 @@ void Scene1202::update() {
 		playSound(3);
 		_isPuzzleSolved = true;
 	} else if (_clickedIndex >= 0 && _counter == 0) {
+		// Swap TNT positions
 		int destIndex = kScene1202Table[_clickedIndex];
 		sendMessage(_asTntItems[_clickedIndex], 0x2001, getSubVar(VA_TNT_POSITIONS, destIndex));
 		sendMessage(_asTntItems[destIndex], 0x2001, getSubVar(VA_TNT_POSITIONS, _clickedIndex));

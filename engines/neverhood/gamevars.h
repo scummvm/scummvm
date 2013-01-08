@@ -32,6 +32,8 @@ namespace Neverhood {
 enum {
 	// Misc
 	V_MODULE_NAME				= 0x91080831,			// Currently active module name hash
+	V_CURRENT_SCENE				= 0x108A4870,			// Current scene in the current module
+	V_CURRENT_SCENE_WHICH		= 0x82C80875,
 	V_DEBUG						= 0xA4014072,			// Original debug-flag, can probably be removed
 	V_SMACKER_CAN_ABORT			= 0x06C02850,			// Not set anywhere (yet), seems like a debug flag
 	V_KEY3_LOCATION				= 0x13382860,			// Location of the third key

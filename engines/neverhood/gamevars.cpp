@@ -41,6 +41,7 @@ void GameVars::loadState(Common::InSaveFile *in) {
 		var.value = in->readUint32LE();
 		var.firstIndex = in->readUint16LE();
 		var.nextIndex = in->readUint16LE();
+		_vars.push_back(var);
 	}
 }
 

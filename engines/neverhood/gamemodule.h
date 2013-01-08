@@ -33,6 +33,7 @@ public:
 	GameModule(NeverhoodEngine *vm);
 	virtual ~GameModule();
 	void startup();
+	void restoreGame();
 	void checkMainMenu();
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);

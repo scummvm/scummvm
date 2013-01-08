@@ -437,6 +437,15 @@ void GameModule::startup() {
 #endif
 }
 
+void GameModule::restoreGame() {
+	delete _childObject;
+	delete _prevChildObject;
+	_childObject = NULL;
+	_prevChildObject = NULL;
+	_prevModuleNum = 0;
+	createModuleByHash(getGlobalVar(V_MODULE_NAME));
+}
+
 void GameModule::checkMainMenu() {
 	if (_mainMenuRequested)
 		openMainMenu();
@@ -544,6 +553,7 @@ void GameModule::createModule(int moduleNum, int which) {
 }
 
 void GameModule::createModuleByHash(uint32 nameHash) {
+	debug("GameModule::createModuleByHash(%08X)", nameHash);
 	switch (nameHash) {
 	case 0x03294419:
 		createModule(1000, -1);
@@ -833,7 +843,7 @@ void GameModule::updateMenuModule() {
 		_moduleNum = _prevModuleNum;
 		SetUpdateHandler(&GameModule::updateModule);
 	} else if (_gameWasLoaded) {
-		debug("_gameWasLoaded!");
+#if 0 // TODO Handle this in some other way...
 		_gameWasLoaded = false;
 		delete _childObject;
 		delete _prevChildObject;
@@ -842,6 +852,7 @@ void GameModule::updateMenuModule() {
 		_prevModuleNum = 0;
 		// TODO Create module from savegame values...
 		 // TODO createModuleByHash(...);
+#endif
 	}
 }
 
