@@ -462,11 +462,6 @@ bool HopkinsEngine::runLinuxDemo() {
 	_eventsManager.delay(1500);
 	_graphicsManager.fadeOutLong();
 
-	if (!_globals._internetFl) {
-		_graphicsManager.FADE_LINUX = 2;
-		_animationManager.playAnim("MP.ANM", 10, 16, 200);
-	}
-
 	_graphicsManager.loadImage("H2");
 	_graphicsManager.fadeInLong();
 	_eventsManager.delay(500);
@@ -2505,14 +2500,6 @@ void HopkinsEngine::loadCredits() {
 		_globals.Credit_lignes = idxLines;
 	} while (!loopCond);
 
-/* Useless
-	v5 = 0;
-	if (_globals.Credit_lignes > 0) {
-		do
-			++v5;
-		while (v5 < _globals.Credit_lignes);
-	}
-*/
 	_globals.freeMemory(bufPtr);
 }
 

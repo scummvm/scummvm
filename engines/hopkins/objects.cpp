@@ -5010,7 +5010,6 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_verb = 4;
-	_vm->_globals.MAX_COMPTE = 6;
 	_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_globals.PLAN_FLAG = false;

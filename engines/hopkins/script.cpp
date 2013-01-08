@@ -2270,7 +2270,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 600:
-			if (!_vm->_globals._internetFl) {
+			if (!_vm->getIsDemo()) {
 				_vm->_graphicsManager.FADE_LINUX = 2;
 				_vm->_graphicsManager._fadeDefaultSpeed = 1;
 				_vm->_animationManager.playAnim("BOMBE1A.ANM", 100, 18, 100);
@@ -2353,7 +2353,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 607:
-			if (!_vm->_globals._internetFl) {
+			if (!_vm->getIsDemo()) {
 				memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
 				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
 			}

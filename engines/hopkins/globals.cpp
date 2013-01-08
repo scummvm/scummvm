@@ -115,7 +115,6 @@ Globals::Globals() {
 
 	// Initialise fields
 	_language = LANG_EN;
-	_internetFl = true;
 
 	PUBEXIT = false;
 	_speed = 1;
@@ -162,7 +161,6 @@ Globals::Globals() {
 	_actionDirection = 0;
 	SegmentEnCours = 0;
 	STOP_BUG = 0;
-	MAX_COMPTE = 0;
 
 	Credit_bx = -1;
 	Credit_bx1 = -1;
@@ -194,9 +192,7 @@ Globals::Globals() {
 	_forestSprite = NULL;
 	COUCOU = NULL;
 	chemin = NULL;
-	cache_souris = NULL;
 	BufLig = NULL;
-	Bufferdecor = NULL;
 	ADR_FICHIER_OBJ = NULL;
 	police = NULL;
 	PERSO = NULL;
@@ -244,8 +240,6 @@ Globals::~Globals() {
 	freeMemory(_inventoryObject);
 	freeMemory(_forestSprite);
 	freeMemory(COUCOU);
-	freeMemory(cache_souris);
-	freeMemory(Bufferdecor);
 	freeMemory(ADR_FICHIER_OBJ);
 	freeMemory(PERSO);
 
@@ -276,11 +270,6 @@ void Globals::setConfig() {
 		warning("Unknown language in internal language mapping");
 		break;
 	}
-
-	if (_vm->getIsDemo())
-		_internetFl = true;
-	else
-		_internetFl = false;
 	// End of CHECKME
 
 	switch (_language) {
@@ -316,7 +305,6 @@ void Globals::clearAll() {
 	INIT_VBOB();
 	ADR_FICHIER_OBJ = g_PTRNUL;
 	NUM_FICHIER_OBJ = 0;
-	Bufferdecor = g_PTRNUL;
 	_vm->_eventsManager._objectBuf = g_PTRNUL;
 	_vm->_dialogsManager._inventWin1 = g_PTRNUL;
 	_vm->_dialogsManager._inventBuf2 = g_PTRNUL;
@@ -372,7 +360,6 @@ void Globals::clearAll() {
 	_forestSprite = g_PTRNUL;
 	_forestFl = false;
 
-	cache_souris = allocMemory(2500);
 	GESTE = g_PTRNUL;
 	GESTE_FLAG = 0;
 }

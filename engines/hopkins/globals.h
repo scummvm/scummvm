@@ -329,7 +329,6 @@ public:
 	int _inventory[36];
 	SortItem _sortedDisplay[51];
 	Language _language;
-	bool _internetFl;
 	bool PUBEXIT;
 	int PERSO_TYPE;
 	uint _speed;
@@ -363,9 +362,7 @@ public:
 	bool _forestFl;
 	byte *COUCOU;
 	int16 *chemin;
-	byte *cache_souris;
 	int16 *BufLig;
-	byte *Bufferdecor;
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;
 	int _objectWidth, _objectHeight;
@@ -407,7 +404,6 @@ public:
 	int couleur_40;
 
 	int STOP_BUG;
-	int MAX_COMPTE;
 
 	int force_to_data_0;
 	int oldzone_46;
