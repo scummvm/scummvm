@@ -599,13 +599,12 @@ void Blocky16::decode2(byte *dst, const byte *src, int width, int height, const 
 	_d_src = src;
 	_paramPtr = param_ptr - 0xf9 - 0xf9;
 	_param6_7Ptr = param6_7_ptr;
-	int bw = (width + 7) / 8;
-	int bh = (height + 7) / 8;
+	int bh = _blocksHeight;
 	int next_line = width * 2 * 7;
 	_d_pitch = width * 2;
 
 	do {
-		int tmp_bw = bw;
+		int tmp_bw = _blocksWidth;
 		do {
 			level1(dst);
 			dst += 16;
@@ -621,12 +620,17 @@ void Blocky16::init(int width, int height) {
 	makeTablesInterpolation(4);
 	makeTablesInterpolation(8);
 
+	_blocksWidth = (width + 7) / 8;
+	_blocksHeight = (height + 7) / 8;
+
 	_frameSize = _width * _height * 2;
-	// workaround for read over buffer by increasing buffer
-	// 200 bytes is enough for smush anims:
-	// lol, byeruba, crushed, eldepot, heltrain, hostage
-	// but for tb_kitty.snm 5700 bytes is needed
-	_deltaSize = _frameSize * 3 + 5700;
+
+	// some animations, like tb_kitty.snm don't have a multiple of 8 width or height,
+	// so set the size of the buffer in _blocksWidth * 8 * _blocksHeight * 8, instead
+	// of using _frameSize.
+	int size = _blocksWidth * 8 * _blocksHeight * 8 * 2;
+	_offset = size - _frameSize;
+	_deltaSize = size * 3;
 	_deltaBuf = new byte[_deltaSize];
 	memset(_deltaBuf, 0, _deltaSize);
 	_deltaBufs[0] = _deltaBuf;
@@ -820,8 +824,8 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		} else if (src[19] == 2) {
 			tmp_ptr = _deltaBufs[0];
 			_deltaBufs[0] = _deltaBufs[1];
-			_deltaBufs[1] = _curBuf;
-			_curBuf = tmp_ptr;
+			_deltaBufs[1] = _curBuf - _offset; // subtract the offset here or else a black bar will appear
+			_curBuf = tmp_ptr;                 // on top of tb_kitty.snm.
 		}
 	}
 	_prevSeqNb = seq_nb;

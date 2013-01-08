@@ -43,7 +43,9 @@ private:
 	byte *_tableSmall;
 	int16 _table[256];
 	int32 _frameSize;
+	int _offset;
 	int _width, _height;
+	int _blocksWidth, _blocksHeight;
 
 	void makeTablesInterpolation(int param);
 	void makeTables47(int width);
