@@ -25,18 +25,31 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/set.h"
 
-#include "engines/grim/costume/bitmap_component.h"
+#include "engines/grim/costume/anim_component.h"
 
 namespace Grim {
 
 
-BitmapComponent::BitmapComponent(Component *p, int parentID, const char *filename, tag32 t) :
+AnimComponent::AnimComponent(Component *p, int parentID, const char *filename, tag32 t) :
 		Component(p, parentID, filename, t) {
-
+	_overlay = false;
+	_created = false;
+	const char *comma = strchr(filename, ',');
+	if (comma) {
+		_name = Common::String(filename, comma);
+		_overlay = atoi(comma + 1) == 1;
+	}
 }
 
-void BitmapComponent::setKey(int val) {
+void AnimComponent::setKey(int val) {
 	ObjectState *state = g_grim->getCurrSet()->findState(_name);
+
+	if (!state) {
+		Set *set = g_grim->getCurrSet();
+		state = set->addObjectState(set->getSetup(), (_overlay ? ObjectState::OBJSTATE_OVERLAY : ObjectState::OBJSTATE_UNDERLAY),
+									_name.c_str(), NULL, false);
+	}
+	_created = true;
 
 	if (state) {
 		state->setActiveImage(val);
@@ -60,6 +73,12 @@ void BitmapComponent::setKey(int val) {
 	g_grim->getCurrSet()->addObjectState(state);
 	state->setNumber(val);
 */
+}
+
+void AnimComponent::reset() {
+	if (_created) {
+		setKey(0);
+	}
 }
 
 } // end of namespace Grim

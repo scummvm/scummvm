@@ -44,6 +44,7 @@
 #include "engines/grim/costume/bitmap_component.h"
 #include "engines/grim/costume/material_component.h"
 #include "engines/grim/costume/sprite_component.h"
+#include "engines/grim/costume/anim_component.h"
 
 namespace Grim {
 
@@ -235,7 +236,7 @@ Component *Costume::loadComponent (tag32 tag, Component *parent, int parentID, c
 	else if (tag == MKTAG('S','P','R','T'))
 		return new SpriteComponent(parent, parentID, name, tag);
 	else if (tag == MKTAG('A','N','I','M')) //Used  in the demo
-		return new BitmapComponent(parent, parentID, name, tag);
+		return new AnimComponent(parent, parentID, name, tag);
 
 	char t[4];
 	memcpy(t, &tag, sizeof(tag32));
