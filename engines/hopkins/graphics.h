@@ -152,14 +152,14 @@ public:
 	void RESET_SEGMENT_VESA();
 	void addVesaSegment(int x1, int y1, int x2, int y2);
 	void displayVesaSegment();
-	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx);
+	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
 	void CopyAsm(const byte *surface);
 	void copy16bFromSurfaceScaleX2(const byte *surface);
 	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
 	int zoomIn(int v, int percentage);
 	int zoomOut(int v, int percentage);
 	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, int modeFlag);
-	void fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex);
+	void fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment = true);
 	void SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY);
 	void displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour);

@@ -381,7 +381,6 @@ public:
 	bool _disableInventFl;
 	bool NOMARCHE;
 	int NBBLOC;
-	bool NO_VISU;
 	byte *OPTION_SPR;
 	bool _optionDialogFl;
 	int _menuDisplayType;

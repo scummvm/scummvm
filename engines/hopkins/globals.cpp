@@ -203,7 +203,6 @@ Globals::Globals() {
 	GESTE_FLAG = 0;
 	_disableInventFl = false;
 	NOMARCHE = false;
-	NO_VISU = false;
 	_optionDialogFl = false;
 	_cacheFl = false;
 	NOPARLE = false;

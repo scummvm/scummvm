@@ -1177,7 +1177,7 @@ void GraphicsManager::displayVesaSegment() {
 	unlockScreen();
 }
 
-void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx) {
+void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
 	int height, width;
 
 	width = _vm->_objectsManager.getWidth(objectData, idx);
@@ -1189,7 +1189,7 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 		Sprite_Vesa(_vesaBuffer, objectData, xp + 300, yp + 300, idx);
 		Sprite_Vesa(_vesaScreen, objectData, xp + 300, yp + 300, idx);
 	}
-	if (!_vm->_globals.NO_VISU)
+	if (addSegment)
 		addVesaSegment(xp, yp, xp + width, yp + height);
 }
 
@@ -1625,7 +1625,7 @@ Aff_Zoom_Larg_Cont1:
 /**
  * Fast Display
  */
-void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex) {
+void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment) {
 	int width = _vm->_objectsManager.getWidth(spriteData, spriteIndex);
 	int height = _vm->_objectsManager.getHeight(spriteData, spriteIndex);
 
@@ -1636,7 +1636,7 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 		Sprite_Vesa(_vesaBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
 		Sprite_Vesa(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex);
 	}
-	if (!_vm->_globals.NO_VISU)
+	if (addSegment)
 		addVesaSegment(xp, yp, xp + width, yp + height);
 }
 
