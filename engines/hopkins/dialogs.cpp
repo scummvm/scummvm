@@ -689,58 +689,46 @@ int DialogsManager::searchSavegames() {
 	int yp = _vm->_eventsManager.getMouseY();
 
 	_vm->_graphicsManager._scrollOffset = _vm->_eventsManager._startPos.x;
-	if ((uint16)(yp - 112) <= 86) {
-		if (xp > _vm->_eventsManager._startPos.x + 189 && xp < _vm->_eventsManager._startPos.x + 318)
+	if (yp >= 112 && yp <= 198) {
+		if (xp > _vm->_eventsManager._startPos.x + 189 && xp < _vm->_eventsManager._startPos.x + 318) {
 			slotNumber = 1;
-		if ((uint16)(yp - 112) <= 86 && xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452)
+			_vm->_objectsManager._saveLoadX = 189;
+			_vm->_objectsManager._saveLoadY = 111;
+		} else if (xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452) {
 			slotNumber = 2;
-	}
-	if ((uint16)(yp - 203) <= 86) {
-		if (xp > _vm->_graphicsManager._scrollOffset + 189 && xp < _vm->_graphicsManager._scrollOffset + 318)
+			_vm->_objectsManager._saveLoadX = 322;
+			_vm->_objectsManager._saveLoadY = 111;
+		}
+	} else if (yp >= 203 && yp <= 289) {
+		if (xp > _vm->_graphicsManager._scrollOffset + 189 && xp < _vm->_graphicsManager._scrollOffset + 318) {
 			slotNumber = 3;
-		if ((uint16)(yp - 203) <= 86 && xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452)
+			_vm->_objectsManager._saveLoadX = 189;
+			_vm->_objectsManager._saveLoadY = 202;
+		} else if (xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452) {
 			slotNumber = 4;
-	}
-	if ((uint16)(yp - 294) <= 86) {
-		if (xp > _vm->_graphicsManager._scrollOffset + 189 && xp < _vm->_graphicsManager._scrollOffset + 318)
+			_vm->_objectsManager._saveLoadX = 322;
+			_vm->_objectsManager._saveLoadY = 202;
+		}
+	} else if (yp >= 294 && yp <= 380) {
+		if (xp > _vm->_graphicsManager._scrollOffset + 189 && xp < _vm->_graphicsManager._scrollOffset + 318) {
 			slotNumber = 5;
-		if ((uint16)(yp - 294) <= 86 && xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452)
+			_vm->_objectsManager._saveLoadX = 189;
+			_vm->_objectsManager._saveLoadY = 293;
+		} else if (xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452) {
 			slotNumber = 6;
-	}
-	if ((uint16)(yp - 388) <= 16 && xp > _vm->_graphicsManager._scrollOffset + 273 && xp < _vm->_graphicsManager._scrollOffset + 355)
+			_vm->_objectsManager._saveLoadX = 322;
+			_vm->_objectsManager._saveLoadY = 293;
+		}
+	} else if (yp >= 388 && yp <= 404 && xp > _vm->_graphicsManager._scrollOffset + 273 && xp < _vm->_graphicsManager._scrollOffset + 355) {
 		slotNumber = 7;
-
-	switch (slotNumber) {
-	case 1:
-		_vm->_objectsManager._saveLoadX = 189;
-		_vm->_objectsManager._saveLoadY = 111;
-		break;
-	case 2:
-		_vm->_objectsManager._saveLoadX = 322;
-		_vm->_objectsManager._saveLoadY = 111;
-		break;
-	case 3:
-		_vm->_objectsManager._saveLoadX = 189;
-		_vm->_objectsManager._saveLoadY = 202;
-		break;
-	case 4:
-		_vm->_objectsManager._saveLoadX = 322;
-		_vm->_objectsManager._saveLoadY = 202;
-		break;
-	case 5:
-		_vm->_objectsManager._saveLoadX = 189;
-		_vm->_objectsManager._saveLoadY = 293;
-		break;
-	case 6:
-		_vm->_objectsManager._saveLoadX = 322;
-		_vm->_objectsManager._saveLoadY = 293;
-		break;
-	case 0:
-	case 7:
 		_vm->_objectsManager._saveLoadX = 0;
 		_vm->_objectsManager._saveLoadY = 0;
-		break;
+	} else {
+		slotNumber = 0;
+		_vm->_objectsManager._saveLoadX = 0;
+		_vm->_objectsManager._saveLoadY = 0;
 	}
+
 	return slotNumber;
 }
 
