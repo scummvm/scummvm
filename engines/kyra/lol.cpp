@@ -690,13 +690,6 @@ int LoLEngine::mainMenu() {
 			{ 0x2C, 0x19, 0x48, 0x2C },
 			Screen::FID_9_FNT, 1
 		},
-		// 256 color SJIS mode
-		{
-			{ 0, 0, 0, 0, 0 },
-			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x3D, 0x9F },
-			{ 0x2C, 0x19, 0x48, 0x2C },
-			Screen::FID_9_FNT, 1
-		},
 		// 16 color SJIS mode
 		{
 			{ 0, 0, 0, 0, 0 },
@@ -706,7 +699,7 @@ int LoLEngine::mainMenu() {
 		}
 	};
 
-	int dataIndex = (_flags.lang == Common::JA_JPN) ? (_flags.use16ColorMode ? 2 : 1) : 0;
+	int dataIndex = _flags.use16ColorMode ? 1 : 0;
 
 	if (!_flags.isTalkie)
 		--data[dataIndex].menuTable[3];
