@@ -173,7 +173,6 @@ public:
 
 	virtual bool init();
 
-	virtual void process() {}
 	virtual void initAudioResourceInfo(int set, void *info);
 	virtual void selectAudioResourceSet(int set);
 	virtual bool hasSoundFile(uint file) const;
@@ -324,8 +323,6 @@ public:
 	virtual kType getMusicType() const { return kAmiga; } //FIXME
 
 	virtual bool init();
-
-	virtual void process() {}
 
 	virtual void initAudioResourceInfo(int set, void *info);
 	virtual void selectAudioResourceSet(int set);
