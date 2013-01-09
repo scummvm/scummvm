@@ -184,7 +184,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) { return -1; }
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) { return -1; }
 	void playSoundEffect(uint8 track, uint8 volume = 0xff);
 
 	void updateVolumeSettings();
@@ -337,7 +337,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) { return -1; }
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) { return -1; }
 	void playSoundEffect(uint8 track, uint8 volume = 0xff);
 
 protected:
