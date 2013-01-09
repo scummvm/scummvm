@@ -141,12 +141,8 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 
 		_zoneLine[idx].zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx].zoneData);
 
-		int v8 = a2 - a4;
-		if (a2 - a4 < 0)
-			v8 = -v8;
-		int v9 = a3 - a5;
-		if (a3 - a5 < 0)
-			v9 = -v9;
+		int v8 = abs(a2 - a4);
+		int v9 = abs(a3 - a5);
 		int v20 = 1;
 		if (v8 <= v9)
 			v20 += v9;
@@ -230,16 +226,12 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 		_linesNumb = idx;
 
 	Ligne[idx].lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx].lineData);
-	v7 = a3 - a5;
-	if (a3 - a5 < 0)
-		v7 = -v7;
+	v7 = abs(a3 - a5);
 	v8 = v7 + 1;
-	v9 = a4 - a6;
-	if (a4 - a6 < 0)
-		v9 = -v9;
+	v9 = abs(a4 - a6);
 	v34 = v9 + 1;
 	v33 = v9 + 1;
-	if (v8 > (int)(v9 + 1))
+	if (v8 > v34)
 		v34 = v8;
 
 	v10 = _vm->_globals.allocMemory(4 * v34 + 8);
@@ -1059,17 +1051,13 @@ LABEL_11:
 		v93 = v16[v65 - 1];
 	}
 LABEL_17:
-	int v18 = a3 - a5;
-	if (a3 - a5 < 0)
-		v18 = -v18;
+	int v18 = abs(a3 - a5);
 	int v58 = v18 + 1;
-	int v19 = a4 - a6;
-	if (a4 - a6 < 0)
-		v19 = -v19;
+	int v19 = abs(a4 - a6);
 	int v85 = v19 + 1;
 	int v20 = v19 + 1;
 	if (v58 > v20)
-		v85 = v18 + 1;
+		v85 = v58;
 	int v84 = 1000 * v58 / v85;
 	int v83 = 1000 * v20 / v85;
 	int v21 = 1000 * a3;
@@ -1222,9 +1210,7 @@ LABEL_17:
 		NVPX = v78;
 		NVPY = v79;
 		if (a1 < v80) {
-			int v40 = v80 - a1;
-			if (v40 < 0)
-				v40 = -v40;
+			int v40 = abs(v80 - a1);
 			int v41 = v40;
 			int v43 = 0;
 			int v52 = v92 - 1;
@@ -1239,15 +1225,9 @@ LABEL_17:
 			} while (v80 != v42);
 			if (v41 == v43) {
 				int v44 = Ligne[a1].field0 / 2;
-				int v54 = Ligne[a1].field0 / 2;
-				if (v44 < 0)
-					v54 = -v44;
+				int v54 = abs(v44);
 				if (a2 > v54) {
-					int v55 = Ligne[a1].field0 / 2;
-					if (v44 < 0)
-						v55 = -v44;
-					if (a2 >= v55)
-						v99 = CONTOURNE(a1, a2, a7, v80, v77, a8, a9);
+					v99 = CONTOURNE(a1, a2, a7, v80, v77, a8, a9);
 				} else {
 					v99 = CONTOURNE1(a1, a2, a7, v80, v77, a8, a9, v92, v91);
 				}
@@ -1258,9 +1238,7 @@ LABEL_17:
 				v99 = CONTOURNE1(a1, a2, v99, v80, v77, a8, a9, v92, v91);
 		}
 		if (a1 > v80) {
-			int v45 = a1 - v80;
-			if (v45 < 0)
-				v45 = -v45;
+			int v45 = abs(a1 - v80);
 			int v46 = v45;
 			int v47 = a1;
 			int v48 = 0;
@@ -1275,15 +1253,9 @@ LABEL_17:
 			} while (v80 != v47);
 			if (v46 == v48) {
 				int v49 = Ligne[a1].field0 / 2;
-				int v56 = Ligne[a1].field0 / 2;
-				if (v49 < 0)
-					v56 = -v49;
+				int v56 = abs(v49);
 				if (a2 > v56) {
-					int v57 = Ligne[a1].field0 / 2;
-					if (v49 < 0)
-						v57 = -v49;
-					if (a2 >= v57)
-						v99 = CONTOURNE1(a1, a2, v99, v80, v77, a8, a9, v92, v91);
+					v99 = CONTOURNE1(a1, a2, v99, v80, v77, a8, a9, v92, v91);
 				} else {
 					v99 = CONTOURNE(a1, a2, v99, v80, v77, a8, a9);
 				}
@@ -1461,33 +1433,21 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	if (destY <= 24)
 		v122 = 25;
 	if (!_vm->_globals.NOT_VERIF) {
-		v4 = srcX - _vm->_globals.old_x1_65;
-		if (v4 < 0)
-			v4 = -v4;
+		v4 = abs(srcX - _vm->_globals.old_x1_65);
 		if (v4 <= 4) {
-			v5 = srcY - _vm->_globals.old_y1_66;
-			if (v5 < 0)
-				v5 = -v5;
+			v5 = abs(srcY - _vm->_globals.old_y1_66);
 			if (v5 <= 4) {
-				v6 = _vm->_globals.old_x2_67 - destX;
-				if (v6 < 0)
-					v6 = -v6;
+				v6 = abs(_vm->_globals.old_x2_67 - destX);
 				if (v6 <= 4) {
-					v7 = _vm->_globals.old_y2_68 - v122;
-					if (v7 < 0)
-						v7 = -v7;
+					v7 = abs(_vm->_globals.old_y2_68 - v122);
 					if (v7 <= 4)
 						return (int16 *)g_PTRNUL;
 				}
 			}
 		}
-		v8 = srcX - destX;
-		if (v8 < 0)
-			v8 = -v8;
+		v8 = abs(srcX - destX);
 		if (v8 <= 4) {
-			v9 = srcY - v122;
-			if (v9 < 0)
-				v9 = -v9;
+			v9 = abs(srcY - v122);
 			if (v9 <= 4)
 				return (int16 *)g_PTRNUL;
 		}
@@ -1510,13 +1470,9 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 		v123 = _vm->_graphicsManager.max_x - 10;
 	if (v122 > _vm->_globals.Max_Perso_Y)
 		v122 = _vm->_globals.Max_Perso_Y;
-	v10 = srcX - v123;
-	if (v10 < 0)
-		v10 = -v10;
+	v10 = abs(srcX - v123);
 	if (v10 <= 3) {
-		v11 = srcY - v122;
-		if (v11 < 0)
-			v11 = -v11;
+		v11 = abs(srcY - v122);
 		if (v11 <= 3)
 			return (int16 *)g_PTRNUL;
 	}
@@ -1735,27 +1691,19 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 		}
 		v131[7] = v46 + 1;
 		if (v141[1] != -1) {
-			v50 = v141[1] - v121;
-			if (v50 < 0)
-				v50 = -v50;
+			v50 = abs(v141[1] - v121);
 			v126[1] = v50;
 		}
 		if (v141[3] != -1) {
-			v51 = v141[3] - v121;
-			if (v51 < 0)
-				v51 = -v51;
+			v51 = abs(v141[3] - v121);
 			v126[3] = v51;
 		}
 		if (v141[5] != -1) {
-			v52 = v141[5] - v121;
-			if (v52 < 0)
-				v52 = -v52;
+			v52 = abs(v141[5] - v121);
 			v126[5] = v52;
 		}
 		if (v141[7] != -1) {
-			v53 = v141[7] - v121;
-			if (v53 < 0)
-				v53 = -v53;
+			v53 = abs(v141[7] - v121);
 			v126[7] = v53;
 		}
 		if (v141[1] == -1 && v141[3] == -1 && v141[5] == -1 && v141[7] == -1)
@@ -1927,9 +1875,7 @@ LABEL_234:
 							v112 += 4;
 							v76 = Ligne[v110].field0;
 							if (v76 > 30) {
-								v77 = v76 / 2;
-								if (v77 < 0)
-									v77 = -v77;
+								v77 = abs(v76 / 2);
 								if (v72 == v77) {
 									v78 = PARC_PERS(v119, v118, v123, v122, v110, v121, v112);
 									if (v78 == 1)
@@ -1997,9 +1943,7 @@ LABEL_200:
 								v112 += 4;
 								v86 = Ligne[v109].field0;
 								if (v86 > 30) {
-									v87 = v86 / 2;
-									if (v87 < 0)
-										v87 = -v87;
+									v87 = abs(v86 / 2);
 									if (v83 == v87) {
 										v88 = PARC_PERS(v119, v118, v123, v122, v117, v121, v112);
 										if (v88 == 1)
@@ -2285,13 +2229,9 @@ LABEL_150:
 			}
 			goto LABEL_248;
 		}
-		v9 = v7 - a3;
-		if (v7 - a3 < 0)
-			v9 = -v9;
+		v9 = abs(v7 - a3);
 		v10 = v9 + 1;
-		v11 = v90 - a4;
-		if (v90 - a4 < 0)
-			v11 = -v11;
+		v11 = abs(v90 - a4);
 		v107 = v11 + 1;
 		if (v10 > (int16)(v11 + 1))
 			v107 = v10;
@@ -2330,13 +2270,9 @@ LABEL_150:
 		if (v91 == -1 && !VERIF_SMOOTH(v7, v109, a3, a4) && SMOOTH_MOVE(v7, v109, a3, a4) != -1)
 			break;
 LABEL_72:
-		v19 = v111 - a3;
-		if (v111 - a3 < 0)
-			v19 = -v19;
+		v19 = abs(v111 - a3);
 		v20 = v19 + 1;
-		v95 = v109 - a4;
-		if (v95 < 0)
-			v95 = -(v109 - a4);
+		v95 = abs(v109 - a4);
 		v108 = v95 + 1;
 		if (v20 > (int16)(v95 + 1))
 			v108 = v20;
@@ -2928,13 +2864,9 @@ int LinesManager::VERIF_SMOOTH(int a1, int a2, int a3, int a4) {
 	int v17;
 	int v18;
 
-	v4 = a1 - a3;
-	if (a1 - a3 < 0)
-		v4 = -v4;
+	v4 = abs(a1 - a3);
 	v5 = v4 + 1;
-	v11 = a2 - a4;
-	if (a2 - a4 < 0)
-		v11 = -(a2 - a4);
+	v11 = abs(a2 - a4);
 	v13 = v11 + 1;
 	if (v5 > (int)(v11 + 1))
 		v13 = v5;
@@ -3046,14 +2978,10 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 							v26 = v48;
 						}
 						if (v26 > 0) {
-							v30 = v26;
-							v31 = v26;
-							if (v26 < 0)
-								v31 = -v26;
+							v30 = abs(v26);
+							v31 = abs(v26);
 							v46 = v63;
 							v25 = _vm->_graphicsManager.zoomIn(v25, v31);
-							if (v30 < 0)
-								v30 = -v30;
 							v40 = _vm->_graphicsManager.zoomIn(v40, v30);
 							v63 = v46;
 						}
@@ -3089,28 +3017,20 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 					v39 = _vm->_globals.Hopkins[v52].field2;
 					v15 = _vm->_globals.STAILLE[v63];
 					if (v15 < 0) {
-						v16 = v15;
-						v17 = v15;
-						if (v15 < 0)
-							v17 = -v15;
+						v16 = abs(v15);
+						v17 = abs(v15);
 						v47 = _vm->_globals.STAILLE[v63];
 						v43 = v63;
 						v14 = _vm->_graphicsManager.zoomOut(v14, v17);
-						if (v16 < 0)
-							v16 = -v16;
 						v39 = _vm->_graphicsManager.zoomOut(v39, v16);
 						v63 = v43;
 						v15 = v47;
 					}
 					if (v15 > 0) {
-						v19 = v15;
-						v20 = v15;
-						if (v15 < 0)
-							v20 = -v15;
+						v19 = abs(v15);
+						v20 = abs(v15);
 						v44 = v63;
 						v14 = _vm->_graphicsManager.zoomIn(v14, v20);
-						if (v19 < 0)
-							v19 = -v19;
 						v39 = _vm->_graphicsManager.zoomIn(v39, v19);
 						v63 = v44;
 					}
@@ -3158,7 +3078,7 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 				if (v51 == 24)
 					v51 = 12;
 				++v55;
-				if (v62 <= a5 || a6 >= (int)v63)
+				if (v62 <= a5 || a6 >= v63)
 					v49 = 1;
 			} while (v49 != 1);
 			if (v55 > 5) {
@@ -3287,32 +3207,22 @@ int LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
 	v35 = 100;
 	v27 = 100;
 	v8 = 0;
-	v9 = a4 - a5;
-	if (a4 - a5 < 0)
-		v9 = -v9;
+	v9 = abs(a4 - a5);
 	v36 = v9;
 	if (v40 != -1) {
-		v10 = v50 - a5;
-		if (v50 - a5 < 0)
-			v10 = -v10;
+		v10 = abs(v50 - a5);
 		v28 = v10;
 	}
 	if (v39 != -1) {
-		v11 = v51 - a5;
-		if (v11 < 0)
-			v11 = -v11;
+		v11 = abs(v51 - a5);
 		v7 = v11;
 	}
 	if (v38 != -1) {
-		v12 = v52 - a5;
-		if (v12 < 0)
-			v12 = -v12;
+		v12 = abs(v52 - a5);
 		v35 = v12;
 	}
 	if (v37 != -1) {
-		v13 = v53 - a5;
-		if (v13 < 0)
-			v13 = -v13;
+		v13 = abs(v53 - a5);
 		v27 = v13;
 	}
 	if (v28 < v36 && v28 <= v7 && v28 <= v35 && v28 <= v27)

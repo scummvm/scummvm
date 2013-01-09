@@ -76,7 +76,7 @@ public:
 	int _scrollSpeed;
 	int _lineNbr2;
 	int Agr_x, Agr_y;
-	int Agr_Flag_x, Agr_Flag_y;
+	bool Agr_Flag_x, Agr_Flag_y;
 	int _fadeDefaultSpeed;
 	int FADE_LINUX;
 	bool _skipVideoLockFl;

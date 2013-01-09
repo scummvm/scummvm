@@ -48,7 +48,7 @@ GraphicsManager::GraphicsManager() {
 
 	_lineNbr2 = 0;
 	Agr_x = Agr_y = 0;
-	Agr_Flag_x = Agr_Flag_y = 0;
+	Agr_Flag_x = Agr_Flag_y = false;
 	_fadeDefaultSpeed = 15;
 	FADE_LINUX = 0;
 	_skipVideoLockFl = false;
@@ -455,7 +455,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 	yNext = height;
 	Agr_x = 0;
 	Agr_y = 0;
-	Agr_Flag_y = 0;
+	Agr_Flag_y = false;
 
 	do {
 		for (;;) {
@@ -483,17 +483,17 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			yNext = yCtr;
 			srcP = srcCopyP;
 			destP = WinScan + destCopyP;
-			if (Agr_Flag_y == 1)
+			if (Agr_Flag_y)
 				break;
 
 			if ((unsigned int)Agr_y < 100)
 				break;
 
 			Agr_y -= 100;
-			Agr_Flag_y = 1;
+			Agr_Flag_y = true;
 		}
 
-		Agr_Flag_y = 0;
+		Agr_Flag_y = false;
 		srcP = _lineNbr2 + srcCopyP;
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
@@ -1313,8 +1313,8 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 		Compteur_y = 0;
 		Agr_x = 0;
 		Agr_y = 0;
-		Agr_Flag_y = 0;
-		Agr_Flag_x = 0;
+		Agr_Flag_y = false;
+		Agr_Flag_x = false;
 		_width = spriteWidth;
 		int v20 = zoomIn(spriteWidth, zoom2);
 		int v22 = zoomIn(spriteHeight1, zoom2);
@@ -1340,12 +1340,10 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 			if (v20 > (uint16)clip_x1) {
 				int v32 = v20 - (uint16)clip_x1;
 				v29 -= v32;
-				int v62 = v22;
 				int v33 = 0;
 				while (zoomIn(v33 + 1, zoom2) < v32)
 					;
 				int v34 = v33;
-				v22 = v62;
 				spritePixelsP += v34;
 				v20 = (uint16)clip_x1;
 			}
@@ -1355,7 +1353,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 					v63 = v22;
 					byte *v53 = v29;
 					v46 = spritePixelsP;
-					Agr_Flag_x = 0;
+					Agr_Flag_x = false;
 					Agr_x = 0;
 					for (int v35 = v20; v35; v35--) {
 						for (;;) {
@@ -1367,14 +1365,14 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								Agr_x = zoom2 + Agr_x;
 							if ((uint16)Agr_x < 100)
 								break;
-							Agr_x = Agr_x - 100;
+							Agr_x -= 100;
 							--spritePixelsP;
-							Agr_Flag_x = 1;
+							Agr_Flag_x = true;
 							--v35;
 							if (!v35)
 								goto R_Aff_Zoom_Larg_Cont1;
 						}
-						Agr_Flag_x = 0;
+						Agr_Flag_x = false;
 					}
 R_Aff_Zoom_Larg_Cont1:
 					spritePixelsP = _width + v46;
@@ -1384,14 +1382,14 @@ R_Aff_Zoom_Larg_Cont1:
 						Agr_y = zoom2 + Agr_y;
 					if ((uint16)Agr_y < 100)
 						break;
-					Agr_y = Agr_y - 100;
+					Agr_y -= 100;
 					spritePixelsP = v46;
-					Agr_Flag_y = 1;
+					Agr_Flag_y = true;
 					v22 = v63 - 1;
 					if (v63 == 1)
 						return;
 				}
-				Agr_Flag_y = 0;
+				Agr_Flag_y = false;
 				v22 = v63 - 1;
 			} while (v63 != 1);
 		} else {
@@ -1431,7 +1429,7 @@ R_Aff_Zoom_Larg_Cont1:
 					byte *v51 = dest1P;
 					v45 = spritePixelsP;
 					int v28 = v20;
-					Agr_Flag_x = 0;
+					Agr_Flag_x = false;
 					Agr_x = 0;
 					do {
 						for (;;) {
@@ -1445,12 +1443,12 @@ R_Aff_Zoom_Larg_Cont1:
 								break;
 							Agr_x = Agr_x - 100;
 							--spritePixelsP;
-							Agr_Flag_x = 1;
+							Agr_Flag_x = true;
 							--v28;
 							if (!v28)
 								goto Aff_Zoom_Larg_Cont1;
 						}
-						Agr_Flag_x = 0;
+						Agr_Flag_x = false;
 						--v28;
 					} while (v28);
 Aff_Zoom_Larg_Cont1:
@@ -1462,12 +1460,12 @@ Aff_Zoom_Larg_Cont1:
 						break;
 					Agr_y = Agr_y - 100;
 					spritePixelsP = v45;
-					Agr_Flag_y = 1;
+					Agr_Flag_y = true;
 					v22 = v60 - 1;
 					if (v60 == 1)
 						return;
 				}
-				Agr_Flag_y = 0;
+				Agr_Flag_y = false;
 				v22 = v60 - 1;
 			} while (v60 != 1);
 		}
