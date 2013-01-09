@@ -444,8 +444,8 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	} else {
 		const MainMenu::StaticData data = {
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
-			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6 },
-			{ 0xd8, 0xda, 0xd9, 0xd8 },
+			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xD7, 0xD6 },
+			{ 0xD8, 0xDA, 0xD9, 0xD8 },
 			(_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT, 240
 		};
 
@@ -1137,7 +1137,7 @@ void SeqPlayer_HOF::startNestedAnimation(int animSlot, int sequenceID) {
 	_animSlots[animSlot].y = s.y;
 	_animSlots[animSlot].fadeInTransitionType = s.fadeInTransitionType;
 	_animSlots[animSlot].fadeOutTransitionType = s.fadeOutTransitionType;
-	_animSlots[animSlot].lastFrame = 0xffff;
+	_animSlots[animSlot].lastFrame = 0xFFFF;
 
 	doNestedFrameTransition(s.fadeInTransitionType, animSlot);
 
@@ -1258,7 +1258,7 @@ bool SeqPlayer_HOF::updateNestedAnimation(int animSlot) {
 	bool res = false;
 
 	if (currentFrame >= _animSlots[animSlot].endFrame) {
-		int sw = ((_animSlots[animSlot].flags & 0x1e) - 2);
+		int sw = ((_animSlots[animSlot].flags & 0x1E) - 2);
 		switch (sw) {
 		case 0:
 			res = true;
@@ -1488,7 +1488,7 @@ void SeqPlayer_HOF::playHoFTalkieCredits() {
 	_screen->fadeFromBlack();
 
 	_screen->_charWidth = -2;
-	uint8 *dataPtr = new uint8[0xafd];
+	uint8 *dataPtr = new uint8[0xAFD];
 	memcpy(dataPtr, talkieCredits, talkieCreditsSize);
 	_vm->staticres()->unloadId(k2SeqplayCredits);
 
@@ -1804,9 +1804,9 @@ int SeqPlayer_HOF::cbHOF_overview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_vm->sound()->playTrack(4);
 		frameEnd = _system->getMillis() + 60 * _vm->tickLength();
 
-		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xFF;
 		_screen->setTextColorMap(_textColorMap);
 
 		delayUntil(frameEnd);
@@ -1889,9 +1889,9 @@ int SeqPlayer_HOF::cbHOF_library(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 		assert(_screenHoF);
 		_screenHoF->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
-		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xFF;
 
 		_screen->setTextColorMap(_textColorMap);
 		break;
@@ -1959,9 +1959,9 @@ int SeqPlayer_HOF::cbHOF_hand(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 		assert(_screenHoF);
 		_screenHoF->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
-		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xFF;
 
 		_screen->setTextColorMap(_textColorMap);
 		break;
@@ -2032,9 +2032,9 @@ int SeqPlayer_HOF::cbHOF_point(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		_vm->sound()->playTrack(7);
 
-		_textColor[1] = 0xf7;
+		_textColor[1] = 0xF7;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xFF;
 		_screen->setTextColorMap(_textColorMap);
 		assert(_screenHoF);
 		_screenHoF->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
@@ -2063,9 +2063,9 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		_vm->sound()->playTrack(8);
 
-		_textColor[1] = 0xfd;
+		_textColor[1] = 0xFD;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColorMap[1] = _textColor[0] = _screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 255) & 0xFF;
 		_screen->setTextColorMap(_textColorMap);
 		break;
 
@@ -2229,9 +2229,9 @@ int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		_vm->sound()->playTrack(3);
 
-		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColor[0] = _textColorMap[1] = 0xff;
+		_textColor[0] = _textColorMap[1] = 0xFF;
 		_screen->setTextColorMap(_textColorMap);
 
 		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
@@ -2322,7 +2322,7 @@ int SeqPlayer_HOF::cbHOF_ferb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 0:
-		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
 		_textColor[0] = _textColorMap[1] = 255;
 		_screen->setTextColorMap(_textColorMap);
@@ -2404,9 +2404,9 @@ int SeqPlayer_HOF::cbHOF_fish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 0:
-		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColor[0] = _textColorMap[1] = 0xff;
+		_textColor[0] = _textColorMap[1] = 0xFF;
 		_screen->setTextColorMap(_textColorMap);
 		break;
 
@@ -2494,9 +2494,9 @@ int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 0:
-		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColor[0] = _textColorMap[1] = 0xff;
+		_textColor[0] = _textColorMap[1] = 0xFF;
 		_screen->setTextColorMap(_textColorMap);
 		break;
 
@@ -2570,9 +2570,9 @@ int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 0:
-		_textColor[1] = 1 + (_screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 254) & 0xff);
+		_textColor[1] = 1 + (_screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 254) & 0xFF);
 		memset(_textColorMap, _textColor[1], 16);
-		_textColorMap[1] = _textColor[0] = 1 + (_screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 254) & 0xff);
+		_textColorMap[1] = _textColor[0] = 1 + (_screen->findLeastDifferentColor(_textColorPresets + 3, _screen->getPalette(0), 1, 254) & 0xFF);
 		_screen->setTextColorMap(_textColorMap);
 		playSoundAndDisplaySubTitle(_vm->gameFlags().isTalkie ? 30 : 26);
 		break;
@@ -2643,10 +2643,10 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 0:
 		for (int i = 0; i < 0x300; i++)
-			_screen->getPalette(0)[i] &= 0x3f;
+			_screen->getPalette(0)[i] &= 0x3F;
 		_textColor[1] = 0xCf;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColor[0] = _textColorMap[1] = 0xfe;
+		_textColor[0] = _textColorMap[1] = 0xFE;
 
 		_screen->setTextColorMap(_textColorMap);
 		break;
@@ -2732,9 +2732,9 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 0:
-		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
-		_textColor[0] = _textColorMap[1] = 0xff;
+		_textColor[0] = _textColorMap[1] = 0xFF;
 		_screen->setTextColorMap(_textColorMap);
 		break;
 
@@ -2819,9 +2819,9 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		if (_callbackCurrentFrame == 1) {
 			_vm->sound()->playTrack(4);
-			_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xff;
+			_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 			memset(_textColorMap, _textColor[1], 16);
-			_textColor[0] = _textColorMap[1] = 0xff;
+			_textColor[0] = _textColorMap[1] = 0xFF;
 			_screen->setTextColorMap(_textColorMap);
 		}
 		_animDuration = 10;
@@ -3054,7 +3054,7 @@ int SeqPlayer_HOF::cbHOFDEMO_fisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 			startNestedAnimation(1, kNestedSequenceHoFDemoDig);
 		}
 
-		if (_scrollProgressCounter >= 0x18f && !_callbackCurrentFrame)
+		if (_scrollProgressCounter >= 0x18F && !_callbackCurrentFrame)
 			return 0;
 
 		if (!_callbackCurrentFrame) {
@@ -3067,15 +3067,15 @@ int SeqPlayer_HOF::cbHOFDEMO_fisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 
 		updateDemoAdText(24, 144);
 		_callbackCurrentFrame++;
-		if (_callbackCurrentFrame < 0x256 || _callbackCurrentFrame > 0x31c) {
-			if (_callbackCurrentFrame < 0x174 || _callbackCurrentFrame > 0x1d7) {
-				if (_callbackCurrentFrame < 0x84 || _callbackCurrentFrame > 0xe7) {
+		if (_callbackCurrentFrame < 0x256 || _callbackCurrentFrame > 0x31C) {
+			if (_callbackCurrentFrame < 0x174 || _callbackCurrentFrame > 0x1D7) {
+				if (_callbackCurrentFrame < 0x84 || _callbackCurrentFrame > 0xE7) {
 					_scrollProgressCounter++;
 				}
 			}
 		}
 
-		if (_callbackCurrentFrame > 0x31e) {
+		if (_callbackCurrentFrame > 0x31E) {
 			closeNestedAnimation(0);
 			closeNestedAnimation(1);
 			setCountDown(0);
@@ -3152,8 +3152,8 @@ int SeqPlayer_HOF::cbLOLDEMO_scene1(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 
 		for (int i = 3; i < 768; i++) {
 			tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
-			if (tmpPal[i] > 0x3f)
-				tmpPal[i] = 0x3f;
+			if (tmpPal[i] > 0x3F)
+				tmpPal[i] = 0x3F;
 		}
 
 		playSoundAndDisplaySubTitle(_vm->_rnd.getRandomBit());
@@ -3293,8 +3293,8 @@ int SeqPlayer_HOF::cbLOLDEMO_scene6(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 
 			for (int i = 3; i < 0x300; i++) {
 				tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
-				if (tmpPal[i] > 0x3f)
-					tmpPal[i] = 0x3f;
+				if (tmpPal[i] > 0x3F)
+					tmpPal[i] = 0x3F;
 			}
 
 			playSoundAndDisplaySubTitle(_vm->_rnd.getRandomBit());
@@ -3325,7 +3325,7 @@ int SeqPlayer_HOF::cbLOLDEMO_scene6(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 
 #undef CASE_ALT
 
-const uint8 SeqPlayer_HOF::_textColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
+const uint8 SeqPlayer_HOF::_textColorPresets[] = { 0x01, 0x01, 0x00, 0x3F, 0x3F, 0x3F };
 
 void KyraEngine_HoF::seq_showStarcraftLogo() {
 	WSAMovie_v2 *ci = new WSAMovie_v2(this);

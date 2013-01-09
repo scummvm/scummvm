@@ -126,8 +126,8 @@ void VQAMovie::decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsi
 
 	while (outsize > 0) {
 		input = *inbuf++ << 2;
-		code = (input >> 8) & 0xff;
-		count = (input & 0xff) >> 2;
+		code = (input >> 8) & 0xFF;
+		count = (input & 0xFF) >> 2;
 
 		switch (code) {
 		case 2:
@@ -149,7 +149,7 @@ void VQAMovie::decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsi
 			for (; count >= 0; count--) {
 				code = *inbuf++;
 
-				curSample += WSTable4Bit[code & 0x0f];
+				curSample += WSTable4Bit[code & 0x0F];
 				curSample = CLIP<int16>(curSample, 0, 255);
 				*outbuf++ = curSample;
 
@@ -264,7 +264,7 @@ bool VQAMovie::open(const char *filename) {
 			_frameInfo = new uint32[_header.numFrames];
 			_frame = new byte[_header.width * _header.height];
 
-			_codeBookSize = 0xf00 * _header.blockW * _header.blockH;
+			_codeBookSize = 0xF00 * _header.blockW * _header.blockH;
 			_codeBook = new byte[_codeBookSize];
 			_partialCodeBook = new byte[_codeBookSize];
 			memset(_codeBook, 0, _codeBookSize);

@@ -453,7 +453,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 
 		out->write(l->wallsXorData, 4096);
 		for (int ii = 0; ii < 1024; ii++)
-			out->writeByte(l->flags[ii] & 0xff);
+			out->writeByte(l->flags[ii] & 0xFF);
 
 		EoBMonsterInPlay *lm = (EoBMonsterInPlay *)_lvlTempData[i]->monsters;
 		EoBFlyingObject *lf = (EoBFlyingObject *)_lvlTempData[i]->flyingObjects;

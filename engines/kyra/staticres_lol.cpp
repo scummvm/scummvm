@@ -458,11 +458,11 @@ void LoLEngine::initStaticResource() {
 }
 
 void GUI_LoL::initStaticData() {
-	GUI_V2_BUTTON(_scrollUpButton, 20, 96, 0, 1, 1, 1, 0x4487, 0, 0, 0, 25, 16, 0xfe, 0x01, 0xfe, 0x01, 0xfe, 0x01, 0);
-	GUI_V2_BUTTON(_scrollDownButton, 21, 98, 0, 1, 1, 1, 0x4487, 0, 0, 0, 25, 16, 0xfe, 0x01, 0xfe, 0x01, 0xfe, 0x01, 0);
+	GUI_V2_BUTTON(_scrollUpButton, 20, 96, 0, 1, 1, 1, 0x4487, 0, 0, 0, 25, 16, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0);
+	GUI_V2_BUTTON(_scrollDownButton, 21, 98, 0, 1, 1, 1, 0x4487, 0, 0, 0, 25, 16, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0);
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i)
-		GUI_V2_BUTTON(_menuButtons[i], i, 0, 0, 0, 0, 0, 0x4487, 0, 0, 0, 0, 0, 0xfe, 0x01, 0xfe, 0x01, 0xfe, 0x01, 0);
+		GUI_V2_BUTTON(_menuButtons[i], i, 0, 0, 0, 0, 0, 0x4487, 0, 0, 0, 0, 0, 0xFE, 0x01, 0xFE, 0x01, 0xFE, 0x01, 0);
 
 	if (_vm->gameFlags().isTalkie)
 		GUI_LOL_MENU(_mainMenu, 9, 0x4000, 0, 7, -1, -1, -1, -1);
@@ -487,61 +487,61 @@ void GUI_LoL::initStaticData() {
 	for (int i = 0; i < _mainMenu.numberOfItems; ++i)
 		_mainMenu.item[i].callback = mainMenuFunctor;
 
-	GUI_LOL_MENU(_loadMenu, 10, 0x400e, 1, 5, 128, 20, 128, 118);
-	GUI_LOL_MENU_ITEM(_loadMenu.item[0], 0xfffe, 8, 39, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_loadMenu.item[1], 0xfffd, 8, 56, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_loadMenu.item[2], 0xfffc, 8, 73, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_loadMenu.item[3], 0xfffb, 8, 90, 256, 15, 0, 0);
+	GUI_LOL_MENU(_loadMenu, 10, 0x400E, 1, 5, 128, 20, 128, 118);
+	GUI_LOL_MENU_ITEM(_loadMenu.item[0], 0xFFFE, 8, 39, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_loadMenu.item[1], 0xFFFD, 8, 56, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_loadMenu.item[2], 0xFFFC, 8, 73, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_loadMenu.item[3], 0xFFFB, 8, 90, 256, 15, 0, 0);
 	GUI_LOL_MENU_ITEM(_loadMenu.item[4], 0x4011, 168, 118, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	Button::Callback loadMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedLoadMenu);
 	for (int i = 0; i < 5; ++i)
 		_loadMenu.item[i].callback = loadMenuFunctor;
 
-	GUI_LOL_MENU(_saveMenu, 10, 0x400d, 1, 5, 128, 20, 128, 118);
-	GUI_LOL_MENU_ITEM(_saveMenu.item[0], 0xfffe, 8, 39, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_saveMenu.item[1], 0xfffd, 8, 56, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_saveMenu.item[2], 0xfffc, 8, 73, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_saveMenu.item[3], 0xfffb, 8, 90, 256, 15, 0, 0);
+	GUI_LOL_MENU(_saveMenu, 10, 0x400D, 1, 5, 128, 20, 128, 118);
+	GUI_LOL_MENU_ITEM(_saveMenu.item[0], 0xFFFE, 8, 39, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_saveMenu.item[1], 0xFFFD, 8, 56, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_saveMenu.item[2], 0xFFFC, 8, 73, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_saveMenu.item[3], 0xFFFB, 8, 90, 256, 15, 0, 0);
 	GUI_LOL_MENU_ITEM(_saveMenu.item[4], 0x4011, 168, 118, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	Button::Callback saveMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedSaveMenu);
 	for (int i = 0; i < 5; ++i)
 		_saveMenu.item[i].callback = saveMenuFunctor;
 
-	GUI_LOL_MENU(_deleteMenu, 10, 0x400f, 1, 5, 128, 20, 128, 118);
-	GUI_LOL_MENU_ITEM(_deleteMenu.item[0], 0xfffe, 8, 39, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_deleteMenu.item[1], 0xfffd, 8, 56, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_deleteMenu.item[2], 0xfffc, 8, 73, 256, 15, 0, 0);
-	GUI_LOL_MENU_ITEM(_deleteMenu.item[3], 0xfffb, 8, 90, 256, 15, 0, 0);
+	GUI_LOL_MENU(_deleteMenu, 10, 0x400F, 1, 5, 128, 20, 128, 118);
+	GUI_LOL_MENU_ITEM(_deleteMenu.item[0], 0xFFFE, 8, 39, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_deleteMenu.item[1], 0xFFFD, 8, 56, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_deleteMenu.item[2], 0xFFFC, 8, 73, 256, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_deleteMenu.item[3], 0xFFFB, 8, 90, 256, 15, 0, 0);
 	GUI_LOL_MENU_ITEM(_deleteMenu.item[4], 0x4011, 168, 118, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	Button::Callback deleteMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedDeleteMenu);
 	for (int i = 0; i < 5; ++i)
 		_deleteMenu.item[i].callback = deleteMenuFunctor;
 
-	GUI_LOL_MENU(_gameOptions, 17, 0x400c, 0, 6, -1, -1, -1, -1);
+	GUI_LOL_MENU(_gameOptions, 17, 0x400C, 0, 6, -1, -1, -1, -1);
 	if (_vm->gameFlags().isTalkie) {
-		GUI_LOL_MENU_ITEM(_gameOptions.item[0], 0xfff7, 120, 22, 80, 15, 0x406e, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[1], 0xfff6, 120, 39, 80, 15, 0x406c, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[2], 0xfff5, 120, 56, 80, 15, 0x406d, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[3], 0xfff4, 120, 73, 80, 15, 0x42d5, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[4], 0xfff3, 120, 90, 80, 15, 0x42d2, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[0], 0xFFF7, 120, 22, 80, 15, 0x406E, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[1], 0xFFF6, 120, 39, 80, 15, 0x406C, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[2], 0xFFF5, 120, 56, 80, 15, 0x406D, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[3], 0xFFF4, 120, 73, 80, 15, 0x42D5, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[4], 0xFFF3, 120, 90, 80, 15, 0x42D2, 0);
 		GUI_LOL_MENU_ITEM(_gameOptions.item[5], 0x4072, 104, 110, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	} else {
-		GUI_LOL_MENU_ITEM(_gameOptions.item[0], 0xfff9, 120, 22, 80, 15, 0x406a, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[1], 0xfff8, 120, 39, 80, 15, 0x406b, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[2], 0xfff7, 120, 56, 80, 15, 0x406e, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[3], 0xfff6, 120, 73, 80, 15, 0x406c, 0);
-		GUI_LOL_MENU_ITEM(_gameOptions.item[4], 0xfff5, 120, 90, 80, 15, 0x406d, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[0], 0xFFF9, 120, 22, 80, 15, 0x406A, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[1], 0xFFF8, 120, 39, 80, 15, 0x406B, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[2], 0xFFF7, 120, 56, 80, 15, 0x406E, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[3], 0xFFF6, 120, 73, 80, 15, 0x406C, 0);
+		GUI_LOL_MENU_ITEM(_gameOptions.item[4], 0xFFF5, 120, 90, 80, 15, 0x406D, 0);
 		GUI_LOL_MENU_ITEM(_gameOptions.item[5], 0x4072, 104, 110, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
 	}
 	Button::Callback optionsMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedOptionsMenu);
 	for (int i = 0; i < _gameOptions.numberOfItems; ++i)
 		_gameOptions.item[i].callback = optionsMenuFunctor;
 
-	GUI_LOL_MENU(_audioOptions, 18, 0x42d9, 2, 1, -1, -1, -1, -1);
+	GUI_LOL_MENU(_audioOptions, 18, 0x42D9, 2, 1, -1, -1, -1, -1);
 	GUI_LOL_MENU_ITEM(_audioOptions.item[0], 0x4072, 152, 76, 96, 15, 0, _vm->_keyMap[Common::KEYCODE_ESCAPE]);
-	GUI_LOL_MENU_ITEM(_audioOptions.item[1], 3, 128, 22, 114, 14, 0x42db, 0);
-	GUI_LOL_MENU_ITEM(_audioOptions.item[2], 4, 128, 39, 114, 14, 0x42da, 0);
-	GUI_LOL_MENU_ITEM(_audioOptions.item[3], 5, 128, 56, 114, 14, 0x42dc, 0);
+	GUI_LOL_MENU_ITEM(_audioOptions.item[1], 3, 128, 22, 114, 14, 0x42DB, 0);
+	GUI_LOL_MENU_ITEM(_audioOptions.item[2], 4, 128, 39, 114, 14, 0x42DA, 0);
+	GUI_LOL_MENU_ITEM(_audioOptions.item[3], 5, 128, 56, 114, 14, 0x42DC, 0);
 	Button::Callback audioMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedAudioMenu);
 	for (int i = 0; i < 4; ++i)
 		_audioOptions.item[i].callback = audioMenuFunctor;

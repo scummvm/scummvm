@@ -180,7 +180,7 @@ Common::Error KyraRpgEngine::init() {
 
 	_vcnColTable = new uint8[128];
 	for (int i = 0; i < 128; i++)
-		_vcnColTable[i] = i & 0x0f;
+		_vcnColTable[i] = i & 0x0F;
 
 	_doorShapes = new uint8*[6];
 	memset(_doorShapes, 0, 6 * sizeof(uint8 *));
@@ -209,9 +209,9 @@ void KyraRpgEngine::drawDialogueButtons() {
 	for (int i = 0; i < _dialogueNumButtons; i++) {
 		int x = _dialogueButtonPosX[i];
 		if (gameFlags().use16ColorMode) {
-			gui_drawBox(x, ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1, 74, 10, 0xee, 0xcc, -1);
+			gui_drawBox(x, ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1, 74, 10, 0xEE, 0xCC, -1);
 			screen()->printText(_dialogueButtonString[i], (x + 37 - (screen()->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
-			                    ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2) & ~7, _dialogueHighlightedButton == i ? 0xc1 : 0xe1, 0);
+			                    ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2) & ~7, _dialogueHighlightedButton == i ? 0xC1 : 0xE1, 0);
 		} else {
 			gui_drawBox(x, (_dialogueButtonYoffs + _dialogueButtonPosY[i]), _dialogueButtonWidth, guiSettings()->buttons.height, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 			screen()->printText(_dialogueButtonString[i], x + (_dialogueButtonWidth >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,

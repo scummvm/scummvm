@@ -1061,7 +1061,7 @@ void EoBEngine::seq_playFinale() {
 	gui_drawBox(0, 0, 176, 175, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	_txt->printDialogueText(51, _moreStrings[0]);
 
-	if (!checkScriptFlags(0x1ffe)) {
+	if (!checkScriptFlags(0x1FFE)) {
 		_screen->fadeToBlack();
 		return;
 	}

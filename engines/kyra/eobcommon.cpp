@@ -364,7 +364,7 @@ void EoBCoreEngine::initKeymap() {
 }
 
 Common::Error EoBCoreEngine::init() {
-	// In EOB the timer proc is directly invoked via interrupt 0x1c, 18.2 times per second.
+	// In EOB the timer proc is directly invoked via interrupt 0x1C, 18.2 times per second.
 	// This makes a tick length of 54.94.
 	_tickLength = 55;
 
@@ -488,8 +488,8 @@ Common::Error EoBCoreEngine::init() {
 
 	_monsterFlashOverlay = new uint8[16];
 	_monsterStoneOverlay = new uint8[16];
-	memset(_monsterFlashOverlay, (_configRenderMode == Common::kRenderCGA) ? 0xff : 0x0f, 16 * sizeof(uint8));
-	memset(_monsterStoneOverlay, 0x0d, 16 * sizeof(uint8));
+	memset(_monsterFlashOverlay, (_configRenderMode == Common::kRenderCGA) ? 0xFF : 0x0F, 16 * sizeof(uint8));
+	memset(_monsterStoneOverlay, 0x0D, 16 * sizeof(uint8));
 	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
 	// Prevent autosave on game startup
@@ -985,7 +985,7 @@ void EoBCoreEngine::recalcArmorClass(int index) {
 
 		int tp = _items[itm].type;
 
-		if (!(_itemTypes[tp].allowedClasses & _classModifierFlags[c->cClass]) || (_itemTypes[tp].extraProperties & 0x7f) || (i >= 1 && i <= 2 && tp != 27 && !(_flags.gameID == GI_EOB2 && tp == 57)))
+		if (!(_itemTypes[tp].allowedClasses & _classModifierFlags[c->cClass]) || (_itemTypes[tp].extraProperties & 0x7F) || (i >= 1 && i <= 2 && tp != 27 && !(_flags.gameID == GI_EOB2 && tp == 57)))
 			continue;
 
 		c->armorClass += _itemTypes[tp].armorClass;
@@ -997,12 +997,12 @@ void EoBCoreEngine::recalcArmorClass(int index) {
 		int8 m2 = 0;
 
 		if (c->inventory[25]) {
-			if (!(_itemTypes[_items[c->inventory[25]].type].extraProperties & 0x7f))
+			if (!(_itemTypes[_items[c->inventory[25]].type].extraProperties & 0x7F))
 				m1 = _items[c->inventory[25]].value;
 		}
 
 		if (c->inventory[26]) {
-			if (!(_itemTypes[_items[c->inventory[26]].type].extraProperties & 0x7f))
+			if (!(_itemTypes[_items[c->inventory[26]].type].extraProperties & 0x7F))
 				m2 = _items[c->inventory[26]].value;
 		}
 
@@ -1054,7 +1054,7 @@ int EoBCoreEngine::validateWeaponSlotItem(int index, int slot) {
 	if (!itm2)
 		return 1;
 
-	int f = (_itemTypes[tp2].extraProperties & 0x7f);
+	int f = (_itemTypes[tp2].extraProperties & 0x7F);
 	if (f <= 0 || f > 3)
 		return r;
 
@@ -1269,12 +1269,12 @@ void EoBCoreEngine::removeCharacterFromParty(int charIndex) {
 		if (i == 16 || !c->inventory[i])
 			continue;
 
-		setItemPosition((Item *)&_levelBlockProperties[_currentBlock & 0x3ff].drawObjects, _currentBlock, c->inventory[i], _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
+		setItemPosition((Item *)&_levelBlockProperties[_currentBlock & 0x3FF].drawObjects, _currentBlock, c->inventory[i], _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
 		c->inventory[i] = 0;
 	}
 
 	while (c->inventory[16])
-		setItemPosition((Item *)&_levelBlockProperties[_currentBlock & 0x3ff].drawObjects, _currentBlock, getQueuedItem(&c->inventory[16], 0, -1), _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
+		setItemPosition((Item *)&_levelBlockProperties[_currentBlock & 0x3FF].drawObjects, _currentBlock, getQueuedItem(&c->inventory[16], 0, -1), _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
 
 	c->inventory[16] = 0;
 
@@ -1320,7 +1320,7 @@ void EoBCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 		_characters[charIndex].experience[i] += points;
 
 		uint32 er = getRequiredExperience(cl, i, _characters[charIndex].level[i] + 1);
-		if (er == 0xffffffff)
+		if (er == 0xFFFFFFFF)
 			continue;
 
 		if (_characters[charIndex].experience[i] >= er)
@@ -1331,7 +1331,7 @@ void EoBCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 uint32 EoBCoreEngine::getRequiredExperience(int cClass, int levelIndex, int level) {
 	cClass = getCharacterClassType(cClass, levelIndex);
 	if (cClass == -1)
-		return 0xffffffff;
+		return 0xFFFFFFFF;
 
 	const uint32 *tbl = _expRequirementTables[cClass];
 	return tbl[level - 1];
@@ -1619,7 +1619,7 @@ void EoBCoreEngine::displayParchment(int id) {
 		removeInputTop();
 		while (!shouldQuit()) {
 			delay(_tickLength);
-			if (checkInput(0, false, 0) & 0xff)
+			if (checkInput(0, false, 0) & 0xFF)
 				break;
 			removeInputTop();
 		}
@@ -1652,7 +1652,7 @@ int EoBCoreEngine::countResurrectionCandidates() {
 			if (!inv)
 				continue;
 
-			if ((_flags.gameID == GI_EOB1 && ((_itemTypes[_items[inv].type].extraProperties & 0x7f) != 8)) || (_flags.gameID == GI_EOB2 && _items[inv].type != 33))
+			if ((_flags.gameID == GI_EOB1 && ((_itemTypes[_items[inv].type].extraProperties & 0x7F) != 8)) || (_flags.gameID == GI_EOB2 && _items[inv].type != 33))
 				continue;
 
 			_rrNames[_rrCount] = _npcPreset[_items[inv].value - 1].name;
@@ -1661,7 +1661,7 @@ int EoBCoreEngine::countResurrectionCandidates() {
 	}
 
 	if (_itemInHand > 0) {
-		if ((_flags.gameID == GI_EOB1 && ((_itemTypes[_items[_itemInHand].type].extraProperties & 0x7f) == 8)) || (_flags.gameID == GI_EOB2 && _items[_itemInHand].type == 33)) {
+		if ((_flags.gameID == GI_EOB1 && ((_itemTypes[_items[_itemInHand].type].extraProperties & 0x7F) == 8)) || (_flags.gameID == GI_EOB2 && _items[_itemInHand].type == 33)) {
 			_rrNames[_rrCount] = _npcPreset[_items[_itemInHand].value - 1].name;
 			_rrId[_rrCount++] = -_items[_itemInHand].value;
 		}
@@ -1780,7 +1780,7 @@ void EoBCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
 	if (c->effectFlags & 0x40)
 		removeCharacterEffect(10, charIndex, 1); // remove invisibility effect
 
-	int ep = _itemTypes[tp].extraProperties & 0x7f;
+	int ep = _itemTypes[tp].extraProperties & 0x7F;
 	int8 inflict = 0;
 
 	if (ep == 1) {
@@ -1823,14 +1823,14 @@ int EoBCoreEngine::closeDistanceAttack(int charIndex, Item item) {
 
 	if (r == -1) {
 		uint8 w = _specialWallTypes[_levelBlockProperties[d].walls[_sceneDrawVarDown]];
-		if (w == 0xff) {
+		if (w == 0xFF) {
 			if (_flags.gameID == GI_EOB1) {
 				_levelBlockProperties[d].walls[_sceneDrawVarDown]++;
 				_levelBlockProperties[d].walls[_sceneDrawVarDown ^ 2]++;
 
 			} else {
 				for (int i = 0; i < 4; i++) {
-					if (_specialWallTypes[_levelBlockProperties[d].walls[i]] == 0xff)
+					if (_specialWallTypes[_levelBlockProperties[d].walls[i]] == 0xFF)
 						_levelBlockProperties[d].walls[i]++;
 				}
 			}
@@ -1921,7 +1921,7 @@ int EoBCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
 
 void EoBCoreEngine::inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool giveExperience) {
 	m->hitPointsCur -= damage;
-	m->flags = (m->flags & 0xf7) | 1;
+	m->flags = (m->flags & 0xF7) | 1;
 
 	if (_monsterProps[m->type].capsFlags & 0x2000) {
 		explodeMonster(m);
@@ -2027,7 +2027,7 @@ bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 	if (charIndex < 0)
 		return true;
 
-	int p = item ? (_flags.gameID == GI_EOB1 ? _items[item].type : (_itemTypes[_items[item].type].extraProperties & 0x7f)) : 0;
+	int p = item ? (_flags.gameID == GI_EOB1 ? _items[item].type : (_itemTypes[_items[item].type].extraProperties & 0x7F)) : 0;
 
 	if (_monsters[monsterIndex].flags & 0x20)
 		return true;// EOB 2 only ?
@@ -2206,7 +2206,7 @@ void EoBCoreEngine::statusAttack(int charIndex, int attackStatusFlags, const cha
 		c->flags |= attackStatusFlags;
 	}
 
-	if ((attackStatusFlags & 0x0c) && (_openBookChar == charIndex) && _updateFlags) {
+	if ((attackStatusFlags & 0x0C) && (_openBookChar == charIndex) && _updateFlags) {
 		Button b;
 		clickedSpellbookAbort(&b);
 	}
@@ -2312,7 +2312,7 @@ int EoBCoreEngine::getSaveThrowModifier(int hpModifier, int level, int type) {
 }
 
 bool EoBCoreEngine::calcDamageCheckItemType(int itemType) {
-	itemType = _itemTypes[itemType].extraProperties & 0x7f;
+	itemType = _itemTypes[itemType].extraProperties & 0x7F;
 	return (itemType == 2 || itemType == 3) ? true : false;
 }
 

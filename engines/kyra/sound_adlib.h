@@ -79,7 +79,7 @@ public:
 	virtual void haltTrack();
 	virtual bool isPlaying() const;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff);
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
 
 	virtual void beginFadeOut();
 

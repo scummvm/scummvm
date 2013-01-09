@@ -182,7 +182,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		case 8:
 			printLine(_currentLine);
 			dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charWidth);
-			dv = ((dv + 8) & 0xfff8) - 1;
+			dv = ((dv + 8) & 0xFFF8) - 1;
 			if (dv >= charsPerLine)
 				dv = 0;
 			_textDimData[sdx].column = (_screen->getFontWidth() + _screen->_charWidth) * dv;
@@ -266,7 +266,7 @@ void TextDisplayer_rpg::readNextPara() {
 	// versions depend on this code we'll have to look at this again.
 #if 0
 	if ((_vm->game() != GI_LOL) && (d & 0x80)) {
-		d &= 0x7f;
+		d &= 0x7F;
 		c = d & 7;
 		d = (d & 0x78) >> 3;
 		uint8 l = d;
@@ -394,14 +394,14 @@ void TextDisplayer_rpg::printLine(char *str) {
 		case 0x55:
 			col = 0x81;
 			break;
-		case 0xaa:
+		case 0xAA:
 			col = 0x21;
 			break;
 		case 0x99:
-			col = 0xa1;
+			col = 0xA1;
 			break;
 		case 0x33:
-			col = 0xe1;
+			col = 0xE1;
 			break;
 		case 0x18:
 			col = 0x61;
@@ -561,8 +561,8 @@ void TextDisplayer_rpg::textPageBreak() {
 	}
 
 	if (vm()->gameFlags().use16ColorMode) {
-		vm()->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xee, 0xcc, -1);
-		_screen->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xc1, 0);
+		vm()->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xEE, 0xCC, -1);
+		_screen->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xC1, 0);
 	} else {
 		vm()->gui_drawBox(x, y, w, vm()->guiSettings()->buttons.height, vm()->guiSettings()->colors.frame1, vm()->guiSettings()->colors.frame2, vm()->guiSettings()->colors.fill);
 		_screen->printText(_pageBreakString, x + (w >> 1) - (vm()->screen()->getTextWidth(_pageBreakString) >> 1), y + 2, vm()->_dialogueButtonLabelColor1, 0);

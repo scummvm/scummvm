@@ -117,11 +117,11 @@ void Screen_v2::applyOverlay(int x, int y, int w, int h, int pageNum, const uint
 }
 
 int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const Palette &pal, uint8 firstColor, uint16 numColors, bool skipSpecialColors) {
-	int m = 0x7fff;
+	int m = 0x7FFF;
 	int r = 0x101;
 
 	for (int i = 0; i < numColors; i++) {
-		if (skipSpecialColors && i >= 0xc0 && i <= 0xc3)
+		if (skipSpecialColors && i >= 0xC0 && i <= 0xC3)
 			continue;
 
 		int v = paletteEntry[0] - pal[(i + firstColor) * 3 + 0];
@@ -170,14 +170,14 @@ bool Screen_v2::timedPaletteFadeStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTim
 		uint8 out = 0;
 
 		if (elapsedTime < totalTime) {
-			int32 d = ((pal2[i] & 0x3f) - (pal1[i] & 0x3f));
+			int32 d = ((pal2[i] & 0x3F) - (pal1[i] & 0x3F));
 			if (d)
 				res = true;
 
 			int32 val = ((((d << 8) / (int32)totalTime) * (int32)elapsedTime) >> 8);
-			out = ((pal1[i] & 0x3f) + (int8)val);
+			out = ((pal1[i] & 0x3F) + (int8)val);
 		} else {
-			out = p1[i] = (pal2[i] & 0x3f);
+			out = p1[i] = (pal2[i] & 0x3F);
 			res = false;
 		}
 
@@ -311,13 +311,13 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 				if (w1 == 1) {
 					memset(dt, *s, w2);
 				} else {
-					t = ((((((w2 - w1 + 1) & 0xffff) << 8) / w1) + 0x100) & 0xffff) << 8;
+					t = ((((((w2 - w1 + 1) & 0xFFFF) << 8) / w1) + 0x100) & 0xFFFF) << 8;
 					int bp = 0;
 					for (int i = 0; i < w1; i++) {
 						int cnt = (t >> 16);
-						bp += (t & 0xffff);
-						if (bp > 0xffff) {
-							bp -= 0xffff;
+						bp += (t & 0xFFFF);
+						if (bp > 0xFFFF) {
+							bp -= 0xFFFF;
 							cnt++;
 						}
 						memset(dt, *s++, cnt);
@@ -328,13 +328,13 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 				if (w2 == 1) {
 					*dt = *s;
 				} else {
-					t = (((((w1 - w2) & 0xffff) << 8) / w2) & 0xffff) << 8;
+					t = (((((w1 - w2) & 0xFFFF) << 8) / w2) & 0xFFFF) << 8;
 					int bp = 0;
 					for (int i = 0; i < w2; i++) {
 						*dt++ = *s++;
-						bp += (t & 0xffff);
-						if (bp > 0xffff) {
-							bp -= 0xffff;
+						bp += (t & 0xFFFF);
+						if (bp > 0xFFFF) {
+							bp -= 0xFFFF;
 							s++;
 						}
 						s += (t >> 16);

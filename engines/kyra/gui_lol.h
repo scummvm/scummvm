@@ -36,9 +36,9 @@ namespace Kyra {
 		menu.width = (dim->w << 3); \
 		menu.height = (dim->h); \
 		if (_vm->gameFlags().use16ColorMode) { \
-		menu.bkgdColor = 0xcc; \
-		menu.color1 = 0xff; \
-		menu.color2 = 0xdd; \
+		menu.bkgdColor = 0xCC; \
+		menu.color1 = 0xFF; \
+		menu.color2 = 0xDD; \
 		} else { \
 		menu.bkgdColor = 225; \
 		menu.color1 = 223; \
@@ -49,7 +49,7 @@ namespace Kyra {
 		menu.numberOfItems = d; \
 		menu.titleX = (dim->sx << 3) + (dim->w << 2); \
 		menu.titleY = 6; \
-		menu.textColor = _vm->gameFlags().use16ColorMode ? 0xe1 : 254; \
+		menu.textColor = _vm->gameFlags().use16ColorMode ? 0xE1 : 254; \
 		menu.scrollUpButtonX = e; \
 		menu.scrollUpButtonY = f; \
 		menu.scrollDownButtonX = g; \
@@ -65,13 +65,13 @@ namespace Kyra {
 		item.y = c; \
 		item.width = d; \
 		item.height = e; \
-		item.textColor =  _vm->gameFlags().use16ColorMode ? 0xc1 : 204; \
-		item.highlightColor = _vm->gameFlags().use16ColorMode ? 0xe1 : 254; \
+		item.textColor =  _vm->gameFlags().use16ColorMode ? 0xC1 : 204; \
+		item.highlightColor = _vm->gameFlags().use16ColorMode ? 0xE1 : 254; \
 		item.titleX = -1; \
 		if (_vm->gameFlags().use16ColorMode) { \
-		item.bkgdColor = 0xcc; \
-		item.color1 = 0xff; \
-		item.color2 = 0xdd; \
+		item.bkgdColor = 0xCC; \
+		item.color1 = 0xFF; \
+		item.color2 = 0xDD; \
 		} else { \
 		item.bkgdColor = 225; \
 		item.color1 = 223; \

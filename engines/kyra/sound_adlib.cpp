@@ -683,14 +683,14 @@ void AdLibDriver::adjustSfxData(uint8 *ptr, int volume) {
 	_sfxVelocity = ptr[3];
 
 	// Adjust the values.
-	if (volume != 0xff) {
+	if (volume != 0xFF) {
 		if (_version >= 3) {
 			int newVal = ((((ptr[3]) + 63) * volume) >> 8) & 0xFF;
 			ptr[3] = -newVal + 63;
 			ptr[1] = ((ptr[1] * volume) >> 8) & 0xFF;
 		} else {
-			int newVal = ((_sfxVelocity << 2) ^ 0xff) * volume;
-			ptr[3] = (newVal >> 10) ^ 0x3f;
+			int newVal = ((_sfxVelocity << 2) ^ 0xFF) * volume;
+			ptr[3] = (newVal >> 10) ^ 0x3F;
 			ptr[1] = newVal >> 11;
 		}
 	}
@@ -2375,7 +2375,7 @@ void SoundAdLibPC::playTrack(uint8 track) {
 			_driver->setSyncJumpMask(0x000F);
 		else
 			_driver->setSyncJumpMask(0);
-		play(track, 0xff);
+		play(track, 0xFF);
 	}
 }
 
@@ -2409,7 +2409,7 @@ void SoundAdLibPC::play(uint8 track, uint8 volume) {
 }
 
 void SoundAdLibPC::beginFadeOut() {
-	play(_version > 2 ? 1 : 15, 0xff);
+	play(_version > 2 ? 1 : 15, 0xFF);
 }
 
 int SoundAdLibPC::checkTrigger() {

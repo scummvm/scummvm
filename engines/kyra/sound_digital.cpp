@@ -271,8 +271,8 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 
 			while (outSize > 0) {
 				input = _inBuffer[i++] << 2;
-				code = (input >> 8) & 0xff;
-				count = (input & 0xff) >> 2;
+				code = (input >> 8) & 0xFF;
+				count = (input & 0xFF) >> 2;
 
 				switch (code) {
 				case 2:
@@ -294,7 +294,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 					for (; count >= 0; count--) {
 						code = _inBuffer[i++];
 
-						curSample += WSTable4Bit[code & 0x0f];
+						curSample += WSTable4Bit[code & 0x0F];
 						curSample = clip8BitSample(curSample);
 						_outBuffer[j++] = curSample;
 

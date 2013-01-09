@@ -1490,7 +1490,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int scaleCounterV = 0;
 
-	const int drawFunc = flags & 0x0f;
+	const int drawFunc = flags & 0x0F;
 	_dsProcessMargin = dsMarginFunc[drawFunc];
 	_dsScaleSkip = dsSkipFunc[drawFunc];
 	_dsProcessLine = dsLineFunc[drawFunc];
@@ -1747,7 +1747,7 @@ int Screen::drawShapeMarginScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt)
 	_dsTmpWidth += cnt;
 
 	int i = (_dsOffscreenLeft - cnt) * _dsScaleW;
-	int res = i & 0xff;
+	int res = i & 0xFF;
 	i >>= 8;
 	i -= _dsOffscreenScaleVal2;
 	dst += i;
@@ -1773,7 +1773,7 @@ int Screen::drawShapeMarginScaleDownwind(uint8 *&dst, const uint8 *&src, int &cn
 	_dsTmpWidth += cnt;
 
 	int i = (_dsOffscreenLeft - cnt) * _dsScaleW;
-	int res = i & 0xff;
+	int res = i & 0xFF;
 	i >>= 8;
 	i -= _dsOffscreenScaleVal2;
 	dst -= i;
@@ -1862,7 +1862,7 @@ void Screen::drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int
 				int r = c * _dsScaleW + scaleState;
 				dst += (r >> 8);
 				cnt -= (r >> 8);
-				scaleState = r & 0xff;
+				scaleState = r & 0xFF;
 			}
 		} else if (scaleState) {
 			(this->*_dsPlot)(dst++, c);
@@ -1890,7 +1890,7 @@ void Screen::drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, i
 				int r = c * _dsScaleW + scaleState;
 				dst -= (r >> 8);
 				cnt -= (r >> 8);
-				scaleState = r & 0xff;
+				scaleState = r & 0xFF;
 			}
 		} else {
 			(this->*_dsPlot)(dst--, c);
@@ -1938,9 +1938,9 @@ void Screen::drawShapePlotType5(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType6(uint8 *dst, uint8 cmd) {
 	int t = _drawShapeVar4 + _drawShapeVar5;
-	if (t & 0xff00) {
+	if (t & 0xFF00) {
 		cmd = dst[_drawShapeVar3];
-		t &= 0xff;
+		t &= 0xFF;
 	} else {
 		cmd = _dsTable2[cmd];
 	}
@@ -1951,7 +1951,7 @@ void Screen::drawShapePlotType6(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType8(uint8 *dst, uint8 cmd) {
 	uint32 relOffs = dst - _dsDstPage;
-	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	int t = (_shapePages[0][relOffs] & 0x7F) & 0x87;
 	if (_dsDrawLayer < t)
 		cmd = _shapePages[1][relOffs];
 
@@ -1960,7 +1960,7 @@ void Screen::drawShapePlotType8(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType9(uint8 *dst, uint8 cmd) {
 	uint32 relOffs = dst - _dsDstPage;
-	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	int t = (_shapePages[0][relOffs] & 0x7F) & 0x87;
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
 	} else {
@@ -1974,7 +1974,7 @@ void Screen::drawShapePlotType9(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType11_15(uint8 *dst, uint8 cmd) {
 	uint32 relOffs = dst - _dsDstPage;
-	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	int t = (_shapePages[0][relOffs] & 0x7F) & 0x87;
 
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
@@ -1990,7 +1990,7 @@ void Screen::drawShapePlotType11_15(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType12(uint8 *dst, uint8 cmd) {
 	uint32 relOffs = dst - _dsDstPage;
-	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	int t = (_shapePages[0][relOffs] & 0x7F) & 0x87;
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
 	} else {
@@ -2002,7 +2002,7 @@ void Screen::drawShapePlotType12(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType13(uint8 *dst, uint8 cmd) {
 	uint32 relOffs = dst - _dsDstPage;
-	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	int t = (_shapePages[0][relOffs] & 0x7F) & 0x87;
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
 	} else {
@@ -2017,14 +2017,14 @@ void Screen::drawShapePlotType13(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType14(uint8 *dst, uint8 cmd) {
 	uint32 relOffs = dst - _dsDstPage;
-	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	int t = (_shapePages[0][relOffs] & 0x7F) & 0x87;
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
 	} else {
 		t = _drawShapeVar4 + _drawShapeVar5;
-		if (t & 0xff00) {
+		if (t & 0xFF00) {
 			cmd = dst[_drawShapeVar3];
-			t &= 0xff;
+			t &= 0xFF;
 		} else {
 			cmd = _dsTable2[cmd];
 		}
@@ -2118,7 +2118,7 @@ void Screen::decodeFrame1(const uint8 *src, uint8 *dst, uint32 size) {
 	uint8 nib = 0;
 
 	uint16 code = decodeEGAGetCode(src, nib);
-	uint8 last = code & 0xff;
+	uint8 last = code & 0xFF;
 
 	uint8 *dstPrev = dst;
 	uint16 count = 1;
@@ -2131,7 +2131,7 @@ void Screen::decodeFrame1(const uint8 *src, uint8 *dst, uint32 size) {
 		uint8 cmd = code >> 8;
 
 		if (cmd--) {
-			code = (cmd << 8) | (code & 0xff);
+			code = (cmd << 8) | (code & 0xFF);
 			uint8 *tmpDst = dst;
 
 			if (code < numPatterns) {
@@ -2159,7 +2159,7 @@ void Screen::decodeFrame1(const uint8 *src, uint8 *dst, uint32 size) {
 			count = countPrev;
 
 		} else {
-			*dst++ = last = (code & 0xff);
+			*dst++ = last = (code & 0xFF);
 
 			if (numPatterns < 3840) {
 				patterns[numPatterns].pos = dstPrev;
@@ -2180,7 +2180,7 @@ uint16 Screen::decodeEGAGetCode(const uint8 *&pos, uint8 &nib) {
 		res >>= 4;
 	} else {
 		pos++;
-		res &= 0xfff;
+		res &= 0xFFF;
 	}
 	return res;
 }
@@ -3643,7 +3643,7 @@ void Palette::loadVGAPalette(Common::ReadStream &stream, int startIndex, int col
 
 	uint8 *pos = _palData + startIndex * 3;
 	for (int i = 0 ; i < colors * 3; i++)
-		*pos++ = stream.readByte() & 0x3f;
+		*pos++ = stream.readByte() & 0x3F;
 }
 
 void Palette::loadEGAPalette(Common::ReadStream &stream, int startIndex, int colors) {

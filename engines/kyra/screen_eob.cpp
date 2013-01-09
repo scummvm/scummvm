@@ -94,7 +94,7 @@ bool Screen_EoB::init() {
 			_egaDitheringTable = new uint8[256];
 			_egaDitheringTempPage = new uint8[SCREEN_W * 2 * SCREEN_H * 2];
 			for (int i = 0; i < 256; i++)
-				_egaDitheringTable[i] = i & 0x0f;
+				_egaDitheringTable[i] = i & 0x0F;
 		} else if (_renderMode == Common::kRenderCGA) {
 			_cgaMappingDefault = _vm->staticres()->loadRawData(kEoB1CgaMappingDefault, temp);
 			_cgaDitheringTables[0] = new uint16[256];
@@ -105,7 +105,7 @@ bool Screen_EoB::init() {
 			_cgaScaleTable = new uint8[256];
 			memset(_cgaScaleTable, 0, 256 * sizeof(uint8));
 			for (int i = 0; i < 256; i++)
-				_cgaScaleTable[i] = ((i & 0xf0) >> 2) | (i & 0x03);
+				_cgaScaleTable[i] = ((i & 0xF0) >> 2) | (i & 0x03);
 		}
 
 		return true;
@@ -260,14 +260,14 @@ void Screen_EoB::convertPage(int srcPage, int dstPage, const uint8 *cgaMapping) 
 		for (int height = SCREEN_H; height; height--) {
 			const uint16 *table = _cgaDitheringTables[(tblSwitch++) & 1];
 			for (int width = SCREEN_W / 2; width; width--) {
-				WRITE_LE_UINT16(d++, table[((src[1] & 0x0f) << 4) | (src[0] & 0x0f)]);
+				WRITE_LE_UINT16(d++, table[((src[1] & 0x0F) << 4) | (src[0] & 0x0F)]);
 				src += 2;
 			}
 		}
 	} else if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering) {
 		uint32 len = SCREEN_W * SCREEN_H;
 		while (len--)
-			*dst++ = *src++ & 0x0f;
+			*dst++ = *src++ & 0x0F;
 	} else {
 		copyPage(srcPage, dstPage);
 	}
@@ -321,9 +321,9 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 		uint8 *dst = shp;
 
 		*dst++ = 4;
-		*dst++ = (h & 0xff);
-		*dst++ = (w & 0xff);
-		*dst++ = (h & 0xff);
+		*dst++ = (h & 0xFF);
+		*dst++ = (w & 0xFF);
+		*dst++ = (h & 0xFF);
 
 		uint8 *dst2 = dst + (h * (w << 1));
 
@@ -334,8 +334,8 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 			const uint16 *table = _cgaDitheringTables[(tblSwitch++) & 1];
 
 			while (w1--) {
-				uint16 p0 = table[((src[1] & 0x0f) << 4) | (src[0] & 0x0f)];
-				uint16 p1 = table[((src[3] & 0x0f) << 4) | (src[2] & 0x0f)];
+				uint16 p0 = table[((src[1] & 0x0F) << 4) | (src[0] & 0x0F)];
+				uint16 p1 = table[((src[3] & 0x0F) << 4) | (src[2] & 0x0F)];
 
 				*dst++ = ((p0 & 0x0003) << 6) | ((p0 & 0x0300) >> 4) | ((p1 & 0x0003) << 2) | ((p1 & 0x0300) >> 8);
 
@@ -380,9 +380,9 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 		uint8 *dst = shp;
 
 		*dst++ = 8;
-		*dst++ = (h & 0xff);
-		*dst++ = (w & 0xff);
-		*dst++ = (h & 0xff);
+		*dst++ = (h & 0xFF);
+		*dst++ = (w & 0xFF);
+		*dst++ = (h & 0xFF);
 
 		srcLineStart = getPagePtr(_curPage | 1) + y * 320 + (x << 3);
 		src = srcLineStart;
@@ -405,7 +405,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 						*dst++ = 0;
 						numZero -= 255;
 					}
-					val = numZero & 0xff;
+					val = numZero & 0xFF;
 				}
 				*dst++ = val;
 			} while (src != lineEnd);
@@ -420,7 +420,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 
 		if (_renderMode != Common::kRenderEGA || _useHiResEGADithering) {
 			colorMap = new uint8[0x100];
-			memset(colorMap, 0xff, 0x100);
+			memset(colorMap, 0xFF, 0x100);
 		}
 
 		shapesize = h * (w << 2) + 20;
@@ -429,12 +429,12 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 		uint8 *dst = shp;
 
 		*dst++ = 2;
-		*dst++ = (h & 0xff);
-		*dst++ = (w & 0xff);
-		*dst++ = (h & 0xff);
+		*dst++ = (h & 0xFF);
+		*dst++ = (w & 0xFF);
+		*dst++ = (h & 0xFF);
 
 		if (_renderMode != Common::kRenderEGA || _useHiResEGADithering) {
-			memset(dst, 0xff, 0x10);
+			memset(dst, 0xFF, 0x10);
 		} else {
 			for (int i = 0; i < 16; i++)
 				dst[i] = i;
@@ -449,10 +449,10 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 			uint16 w1 = w << 3;
 			while (w1--) {
 				uint8 s = *src++;
-				uint8 c = s & 0x0f;
+				uint8 c = s & 0x0F;
 				if (colorMap) {
 					c = colorMap[s];
-					if (c == 0xff) {
+					if (c == 0xFF) {
 						if (col < 0x10) {
 							*pal++ = s;
 							c = colorMap[s] = col++;
@@ -662,7 +662,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			pal = ovl ? ovl : src;
 			src += 16;
 		} else {
-			static const uint8 cgaDefOvl[] = { 0x00, 0x55, 0xaa, 0xff };
+			static const uint8 cgaDefOvl[] = { 0x00, 0x55, 0xAA, 0xFF };
 			pal = ovl ? ovl : cgaDefOvl;
 			for (int i = 0; i < 4; i++)
 				cgaPal[i] = pal[i] & 3;
@@ -817,7 +817,7 @@ const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 		else
 			i = -i;
 
-		_dsScaleTrans = (i << 4) | (i & 0x0f);
+		_dsScaleTrans = (i << 4) | (i & 0x0F);
 		for (int ii = 0; ii < 16; ii++)
 			*d++ = *shp++;
 	}
@@ -1193,14 +1193,14 @@ void Screen_EoB::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, ui
 
 	for (uint8 i = 1; i; i++) {
 		uint16 tmp = (uint16)((*src - r) * weight) << 1;
-		tr = *src++ - ((tmp >> 8) & 0xff);
+		tr = *src++ - ((tmp >> 8) & 0xFF);
 		tmp = (uint16)((*src - g) * weight) << 1;
-		tg = *src++ - ((tmp >> 8) & 0xff);
+		tg = *src++ - ((tmp >> 8) & 0xFF);
 		tmp = (uint16)((*src - b) * weight) << 1;
-		tb = *src++ - ((tmp >> 8) & 0xff);
+		tb = *src++ - ((tmp >> 8) & 0xFF);
 
 		uint8 *d = palData + 3;
-		uint16 v = 0xffff;
+		uint16 v = 0xFFFF;
 		uint8 col = rootColor;
 
 		for (uint8 ii = 1; ii; ii++) {
@@ -1261,7 +1261,7 @@ void Screen_EoB::ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW
 			if (in != colorKey) {
 				in = _egaDitheringTable[in];
 				*dst++ = *dst2++ = in >> 4;
-				*dst++ = *dst2++ = in & 0x0f;
+				*dst++ = *dst2++ = in & 0x0F;
 			} else {
 				dst[0] = dst[1] = dst2[0] = dst2[1] = colorKey;
 				dst += 2;
@@ -1297,9 +1297,9 @@ void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 void Screen_EoB::scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc) {
 	for (int i = 0; i < _dsDiv; i++) {
 		shpDst[0] = (_cgaScaleTable[shpSrc[0]] << 2) | (shpSrc[1] >> 6);
-		shpDst[1] = ((shpSrc[1] & 0x0f) << 4) | ((shpSrc[2] >> 2) & 0x0f);
+		shpDst[1] = ((shpSrc[1] & 0x0F) << 4) | ((shpSrc[2] >> 2) & 0x0F);
 		shpDst[transOffsetDst] = (_cgaScaleTable[shpSrc[transOffsetSrc]] << 2) | (shpSrc[transOffsetSrc + 1] >> 6);
-		shpDst[transOffsetDst + 1] = ((shpSrc[transOffsetSrc + 1] & 0x0f) << 4) | ((shpSrc[transOffsetSrc + 2] >> 2) & 0x0f);
+		shpDst[transOffsetDst + 1] = ((shpSrc[transOffsetSrc + 1] & 0x0F) << 4) | ((shpSrc[transOffsetSrc + 2] >> 2) & 0x0F);
 		shpSrc += 3;
 		shpDst += 2;
 	}
@@ -1308,15 +1308,15 @@ void Screen_EoB::scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc,
 		shpDst[0] = _cgaScaleTable[shpSrc[0]] << 2;
 		shpDst[1] = 0;
 		shpDst[transOffsetDst] = (_cgaScaleTable[shpSrc[transOffsetSrc]] << 2) | 3;
-		shpDst[transOffsetDst + 1] = 0xff;
+		shpDst[transOffsetDst + 1] = 0xFF;
 		shpSrc++;
 		shpDst += 2;
 
 	} else if (_dsRem == 2) {
 		shpDst[0] = (_cgaScaleTable[shpSrc[0]] << 2) | (shpSrc[1] >> 6);
-		shpDst[1] = (shpSrc[1] & 0x3f) << 2;
+		shpDst[1] = (shpSrc[1] & 0x3F) << 2;
 		shpDst[transOffsetDst] = (_cgaScaleTable[shpSrc[transOffsetSrc]] << 2) | (shpSrc[transOffsetSrc + 1] >> 6);
-		shpDst[transOffsetDst + 1] = ((shpSrc[transOffsetSrc + 1] & 0x3f) << 2) | 3;
+		shpDst[transOffsetDst + 1] = ((shpSrc[transOffsetSrc + 1] & 0x3F) << 2) | 3;
 		shpSrc += 2;
 		shpDst += 2;
 	}
@@ -1325,7 +1325,7 @@ void Screen_EoB::scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc,
 void Screen_EoB::scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src) {
 	for (int i = 0; i < _dsDiv; i++) {
 		*dst++ = *src++;
-		*dst++ = (READ_BE_UINT16(src) >> 4) & 0xff;
+		*dst++ = (READ_BE_UINT16(src) >> 4) & 0xFF;
 		src += 2;
 	}
 
@@ -1333,7 +1333,7 @@ void Screen_EoB::scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src) {
 		*dst++ = *src++;
 		*dst++ = _dsScaleTrans;
 	} else if (_dsRem == 2) {
-		*dst++ = (src[0] & 0xf0) | (src[1] >> 4);
+		*dst++ = (src[0] & 0xF0) | (src[1] >> 4);
 		src += 2;
 		*dst++ = _dsScaleTrans;
 		*dst++ = _dsScaleTrans;
@@ -1362,7 +1362,7 @@ void Screen_EoB::generateEGADitheringTable(const Palette &pal) {
 
 		for (int ii = 256; ii; ii--) {
 			const uint8 *palEntry = _egaMatchTable + (ii - 1) * 3;
-			if (*palEntry == 0xff)
+			if (*palEntry == 0xFF)
 				continue;
 
 			int e_r = palEntry[0] - r;
@@ -1382,8 +1382,8 @@ void Screen_EoB::generateEGADitheringTable(const Palette &pal) {
 
 void Screen_EoB::generateCGADitheringTables(const uint8 *mappingData) {
 	for (int i = 0; i < 256; i++) {
-		_cgaDitheringTables[0][i] = (mappingData[(i >> 4) + 16] << 8) | mappingData[i & 0x0f];
-		_cgaDitheringTables[1][i] = (mappingData[i >> 4] << 8) | mappingData[(i & 0x0f) + 16];
+		_cgaDitheringTables[0][i] = (mappingData[(i >> 4) + 16] << 8) | mappingData[i & 0x0F];
+		_cgaDitheringTables[1][i] = (mappingData[i >> 4] << 8) | mappingData[(i & 0x0F) + 16];
 	}
 }
 
@@ -1509,42 +1509,42 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	if (_width == 6) {
 		switch (c) {
 		case 0x81:
-		case 0x9a:
-			c = 0x5d;
+		case 0x9A:
+			c = 0x5D;
 			break;
 		case 0x84:
-		case 0x8e:
-			c = 0x5b;
+		case 0x8E:
+			c = 0x5B;
 			break;
 		case 0x94:
 		case 0x99:
 			c = 0x40;
-		case 0xe1:
+		case 0xE1:
 			// TODO: recheck this: no conversion for 'ß' ?
 			break;
 		}
 	} else if (_width == 8) {
 		switch (c) {
 		case 0x81:
-		case 0x9a:
-		case 0x5d:
-			c = 0x1d;
+		case 0x9A:
+		case 0x5D:
+			c = 0x1D;
 			break;
 		case 0x84:
-		case 0x5b:
-			c = 0x1e;
+		case 0x5B:
+			c = 0x1E;
 			break;
 		case 0x94:
 		case 0x40:
-			c = 0x1f;
+			c = 0x1F;
 			break;
-		case 0x8e:
-			c = 0x1b;
+		case 0x8E:
+			c = 0x1B;
 			break;
 		case 0x99:
-			c = 0x1c;
+			c = 0x1C;
 			break;
-		case 0xe1:
+		case 0xE1:
 			c = 0x19;
 			break;
 		}
@@ -1564,8 +1564,8 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	uint16 cgaMask2 = cgaColorMask[color2 & 3];
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA) {
-		color1 &= 0x0f;
-		color2 &= 0x0f;
+		color1 &= 0x0F;
+		color2 &= 0x0F;
 	}
 
 	int cH = _height;
@@ -1596,7 +1596,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 			uint8 sh = 6;
 			for (int i = 0; i < _width; i++) {
 				cDst |= ((dst[i] & 3) << sh);
-				sh = (sh - 2) & 0x0f;
+				sh = (sh - 2) & 0x0F;
 			}
 
 			uint16 out = (~(cmp1 | cmp2) & cDst) | (cmp1 & cgaMask1) | (cmp2 & cgaMask2);
@@ -1604,7 +1604,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 			sh = 6;
 			for (int i = 0; i < _width; i++) {
 				*dst++ = (out >> sh) & 3;
-				sh = (sh - 2) & 0x0f;
+				sh = (sh - 2) & 0x0F;
 			}
 
 			last = s;

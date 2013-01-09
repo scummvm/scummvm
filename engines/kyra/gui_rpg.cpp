@@ -107,7 +107,7 @@ bool KyraRpgEngine::clickedShape(int shapeIndex) {
 
 		uint16 s = _levelDecorationProperties[shapeIndex].shapeIndex[1];
 
-		if (s == 0xffff)
+		if (s == 0xFFFF)
 			continue;
 
 		int w = _flags.gameID == GI_LOL ? _levelDecorationShapes[s][3] : (_levelDecorationShapes[s][2] << 3);

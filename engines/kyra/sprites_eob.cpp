@@ -58,7 +58,7 @@ void EoBCoreEngine::releaseMonsterShapes(int first, int num) {
 
 const uint8 *EoBCoreEngine::loadMonsterProperties(const uint8 *data) {
 	uint8 cmd = *data++;
-	while (cmd != 0xff) {
+	while (cmd != 0xFF) {
 		EoBMonsterProperty *d = &_monsterProps[cmd];
 		d->armorClass = (int8)*data++;
 		d->hitChance = (int8)*data++;
@@ -90,7 +90,7 @@ const uint8 *EoBCoreEngine::loadMonsterProperties(const uint8 *data) {
 		d->sound2 = (int8)*data++;
 		d->numRemoteAttacks = *data++;
 
-		if (*data++ != 0xff) {
+		if (*data++ != 0xFF) {
 			d->remoteWeaponChangeMode = *data++;
 			d->numRemoteWeapons = *data++;
 
@@ -113,7 +113,7 @@ const uint8 *EoBCoreEngine::loadMonsterProperties(const uint8 *data) {
 }
 
 const uint8 *EoBCoreEngine::loadActiveMonsterData(const uint8 *data, int level) {
-	for (uint8 p = *data++; p != 0xff; p = *data++) {
+	for (uint8 p = *data++; p != 0xFF; p = *data++) {
 		uint8 v = *data++;
 		_timer->setCountdown(0x20 + (p << 1), v);
 		_timer->setCountdown(0x21 + (p << 1), v);
@@ -132,7 +132,7 @@ const uint8 *EoBCoreEngine::loadActiveMonsterData(const uint8 *data, int level) 
 	memset(_monsters, 0, 30 * sizeof(EoBMonsterInPlay));
 
 	for (int i = 0; i < 30; i++, data += 14) {
-		if (*data == 0xff)
+		if (*data == 0xFF)
 			continue;
 
 		initMonster(data[0], data[1], READ_LE_UINT16(&data[2]), data[4], (int8)data[5], data[6], data[7], data[8], data[9], READ_LE_UINT16(&data[10]), READ_LE_UINT16(&data[12]));
@@ -174,7 +174,7 @@ void EoBCoreEngine::initMonster(int index, int unit, uint16 block, int pos, int 
 }
 
 void EoBCoreEngine::placeMonster(EoBMonsterInPlay *m, uint16 block, int dir) {
-	if (block != 0xffff) {
+	if (block != 0xFFFF) {
 		checkSceneUpdateNeed(m->block);
 		if (_levelBlockProperties[m->block].flags & 7) {
 			_levelBlockProperties[m->block].flags--;
@@ -201,11 +201,11 @@ void EoBCoreEngine::killMonster(EoBMonsterInPlay *m, bool giveExperience) {
 
 	if (m->randItem) {
 		if (rollDice(1, 10, 0) == 1)
-			setItemPosition((Item *)&_levelBlockProperties[m->block & 0x3ff].drawObjects, m->block, duplicateItem(m->randItem), pos);
+			setItemPosition((Item *)&_levelBlockProperties[m->block & 0x3FF].drawObjects, m->block, duplicateItem(m->randItem), pos);
 	}
 
 	if (m->fixedItem)
-		setItemPosition((Item *)&_levelBlockProperties[m->block & 0x3ff].drawObjects, m->block, duplicateItem(m->fixedItem), pos);
+		setItemPosition((Item *)&_levelBlockProperties[m->block & 0x3FF].drawObjects, m->block, duplicateItem(m->fixedItem), pos);
 
 	if (giveExperience)
 		increasePartyExperience(_monsterProps[m->type].experience);
@@ -357,7 +357,7 @@ void EoBCoreEngine::flashMonsterShape(EoBMonsterInPlay *m) {
 	disableSysTimer(2);
 	_flashShapeTimer = 0;
 	drawScene(1);
-	m->flags &= 0xfd;
+	m->flags &= 0xFD;
 	_flashShapeTimer  = _system->getMillis() + _tickLength;
 	enableSysTimer(2);
 
@@ -536,7 +536,7 @@ void EoBCoreEngine::drawMonsters(int index) {
 		int h = shp[1];
 
 		x = x - (w >> 1) + (d->idleAnimState >> 4);
-		y = y - h + (d->idleAnimState & 0x0f);
+		y = y - h + (d->idleAnimState & 0x0F);
 
 		drawMonsterShape(shp, x, y, f >= 0 ? 0 : 1, d->flags, palIndex);
 

@@ -34,16 +34,16 @@ void Screen_HoF::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, 
 
 	for (int i = 0; i != lastColor; i++) {
 		if (flag) {
-			int v = ((((srcPal[3 * i] & 0x3f) + (srcPal[3 * i + 1] & 0x3f)
-				+ (srcPal[3 * i + 2] & 0x3f)) / 3) * factor) / 0x40;
-			tmpPal[3 * i] = tmpPal[3 * i + 1] = tmpPal[3 * i + 2] = v & 0xff;
+			int v = ((((srcPal[3 * i] & 0x3F) + (srcPal[3 * i + 1] & 0x3F)
+				+ (srcPal[3 * i + 2] & 0x3F)) / 3) * factor) / 0x40;
+			tmpPal[3 * i] = tmpPal[3 * i + 1] = tmpPal[3 * i + 2] = v & 0xFF;
 		} else {
-			int v = (((srcPal[3 * i] & 0x3f) * factor) / 0x40) + addR;
-			tmpPal[3 * i] = (v > 0x3f) ? 0x3f : v & 0xff;
-			v = (((srcPal[3 * i + 1] & 0x3f) * factor) / 0x40) + addG;
-			tmpPal[3 * i + 1] = (v > 0x3f) ? 0x3f : v & 0xff;
-			v = (((srcPal[3 * i + 2] & 0x3f) * factor) / 0x40) + addB;
-			tmpPal[3 * i + 2] = (v > 0x3f) ? 0x3f : v & 0xff;
+			int v = (((srcPal[3 * i] & 0x3F) * factor) / 0x40) + addR;
+			tmpPal[3 * i] = (v > 0x3F) ? 0x3F : v & 0xFF;
+			v = (((srcPal[3 * i + 1] & 0x3F) * factor) / 0x40) + addG;
+			tmpPal[3 * i + 1] = (v > 0x3F) ? 0x3F : v & 0xFF;
+			v = (((srcPal[3 * i + 2] & 0x3F) * factor) / 0x40) + addB;
+			tmpPal[3 * i + 2] = (v > 0x3F) ? 0x3F : v & 0xFF;
 		}
 	}
 

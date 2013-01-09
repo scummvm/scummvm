@@ -193,7 +193,7 @@ int LoLEngine::assignLevelDecorationShapes(int index) {
 
 	for (int i = 0; i < 10; i++) {
 		uint16 t = _levelDecorationProperties[o].shapeIndex[i];
-		if (t == 0xffff)
+		if (t == 0xFFFF)
 			continue;
 
 		uint16 pv = p1[t];
@@ -254,7 +254,7 @@ void LoLEngine::loadBlockProperties(const char *cmzFile) {
 		_levelBlockProperties[i].direction = 5;
 
 		if (_wllAutomapData[_levelBlockProperties[i].walls[0]] == 17) {
-			_levelBlockProperties[i].flags &= 0xef;
+			_levelBlockProperties[i].flags &= 0xEF;
 			_levelBlockProperties[i].flags |= 0x20;
 		}
 	}
@@ -315,9 +315,9 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		if (_lastSpecialColor == 1)
 			_lastSpecialColor = 0x44;
 		else if (_lastSpecialColor == 0x66)
-			_lastSpecialColor = scumm_stricmp(file, "YVEL2") ? 0xcc : 0x44;
-		else if (_lastSpecialColor == 0x6b)
-			_lastSpecialColor = 0xcc;
+			_lastSpecialColor = scumm_stricmp(file, "YVEL2") ? 0xCC : 0x44;
+		else if (_lastSpecialColor == 0x6B)
+			_lastSpecialColor = 0xCC;
 		else
 			_lastSpecialColor = 0x44;
 	}
@@ -431,17 +431,17 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		}
 
 		for (int ii = l; ii < 256; ii++)
-			levelOverlay[ii] = ii & 0xff;
+			levelOverlay[ii] = ii & 0xFF;
 	}
 
 	uint8 *levelOverlay = _screen->getLevelOverlay(7);
 	for (int i = 0; i < 256; i++)
-		levelOverlay[i] = i & 0xff;
+		levelOverlay[i] = i & 0xFF;
 
 	if (_flags.use16ColorMode) {
-		_screen->getLevelOverlay(6)[0xee] = 0xee;
+		_screen->getLevelOverlay(6)[0xEE] = 0xEE;
 		if (_lastSpecialColor == 0x44)
-			_screen->getLevelOverlay(5)[0xee] = 0xee;
+			_screen->getLevelOverlay(5)[0xEE] = 0xEE;
 
 		for (int i = 0; i < 7; i++)
 			memcpy(_screen->getLevelOverlay(i), _screen->getLevelOverlay(i + 1), 256);
@@ -505,14 +505,14 @@ void LoLEngine::resetBlockProperties() {
 	for (int i = 0; i < 1024; i++) {
 		LevelBlockProperty *l = &_levelBlockProperties[i];
 		if (l->flags & 0x10) {
-			l->flags &= 0xef;
+			l->flags &= 0xEF;
 			if (testWallInvisibility(i, 0) && testWallInvisibility(i, 1))
 				l->flags |= 0x40;
 		} else {
 			if (l->flags & 0x40)
-				l->flags &= 0xbf;
+				l->flags &= 0xBF;
 			else if (l->flags & 0x80)
-				l->flags &= 0x7f;
+				l->flags &= 0x7F;
 		}
 	}
 }
@@ -574,7 +574,7 @@ void LoLEngine::updateLampStatus() {
 				setPaletteBrightness(_screen->getPalette(0), _brightness, newLampEffect);
 			_lampStatusTimer = _system->getMillis() + (10 + rollDice(1, 30)) * _tickLength;
 		} else {
-			if ((_lampEffect & 0xfe) == (newLampEffect & 0xfe)) {
+			if ((_lampEffect & 0xFE) == (newLampEffect & 0xFE)) {
 				if (_system->getMillis() <= _lampStatusTimer) {
 					newLampEffect = _lampEffect;
 				} else {
@@ -702,7 +702,7 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 			runLevelScript(opos, 8);
 			runLevelScript(npos, 2);
 
-			if (_levelBlockProperties[npos].walls[0] == 0x1a)
+			if (_levelBlockProperties[npos].walls[0] == 0x1A)
 				memset(_levelBlockProperties[npos].walls, 0, 4);
 		}
 	}
@@ -711,12 +711,12 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 }
 
 uint16 LoLEngine::calcBlockIndex(uint16 x, uint16 y) {
-	return (((y & 0xff00) >> 3) | (x >> 8)) & 0x3ff;
+	return (((y & 0xFF00) >> 3) | (x >> 8)) & 0x3FF;
 }
 
 void LoLEngine::calcCoordinates(uint16 &x, uint16 &y, int block, uint16 xOffs, uint16 yOffs) {
-	x = (block & 0x1f) << 8 | xOffs;
-	y = ((block & 0xffe0) << 3) | yOffs;
+	x = (block & 0x1F) << 8 | xOffs;
+	y = ((block & 0xFFE0) << 3) | yOffs;
 }
 
 void LoLEngine::calcCoordinatesForSingleCharacter(int charNum, uint16 &x, uint16 &y) {
@@ -732,8 +732,8 @@ void LoLEngine::calcCoordinatesForSingleCharacter(int charNum, uint16 &x, uint16
 
 	calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
 
-	x |= (_partyPosX & 0xff00);
-	y |= (_partyPosY & 0xff00);
+	x |= (_partyPosX & 0xFF00);
+	y |= (_partyPosY & 0xFF00);
 }
 
 void LoLEngine::calcCoordinatesAddDirectionOffset(uint16 &x, uint16 &y, int direction) {
@@ -777,7 +777,7 @@ void LoLEngine::notifyBlockNotPassable(int scrollFlag) {
 		movePartySmoothScrollBlocked(2);
 
 	snd_stopSpeech(true);
-	_txt->printMessage(0x8002, "%s", getLangString(0x403f));
+	_txt->printMessage(0x8002, "%s", getLangString(0x403F));
 	snd_playSoundEffect(19, -1);
 }
 
@@ -804,7 +804,7 @@ int LoLEngine::clickedNiche(uint16 block, uint16 direction) {
 		return 0;
 
 	uint16 x = 0x80;
-	uint16 y = 0xff;
+	uint16 y = 0xFF;
 	calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
 	calcCoordinates(x, y, block, x, y);
 	setItemPosition(_itemInHand, x, y, 8, 1);
@@ -1180,7 +1180,7 @@ void LoLEngine::processGasExplosion(int soundId) {
 		memcpy(p2, p1, 768);
 
 		for (int i = 1; i < 128; i++)
-			p2[i * 3] = 0x3f;
+			p2[i * 3] = 0x3F;
 
 		uint32 ctime = _system->getMillis();
 		while (_screen->timedPaletteFadeStep(_screen->getPalette(0).getData(), p2, _system->getMillis() - ctime, 10))
@@ -1244,10 +1244,10 @@ void LoLEngine::setWallType(int block, int wall, int val) {
 		for (int i = 0; i < 4; i++)
 			_levelBlockProperties[block].walls[i] = val;
 		if (_wllAutomapData[val] == 17) {
-			_levelBlockProperties[block].flags &= 0xef;
+			_levelBlockProperties[block].flags &= 0xEF;
 			_levelBlockProperties[block].flags |= 0x20;
 		} else {
-			_levelBlockProperties[block].flags &= 0xdf;
+			_levelBlockProperties[block].flags &= 0xDF;
 		}
 	} else {
 		_levelBlockProperties[block].walls[wall] = val;
@@ -1491,7 +1491,7 @@ void LoLEngine::drawDecorations(int index) {
 						ov = 0;
 				}
 				ovl = _screen->getLevelOverlay(ov);
-			} else if (_levelDecorationProperties[l].shapeIndex[shpIx] != 0xffff) {
+			} else if (_levelDecorationProperties[l].shapeIndex[shpIx] != 0xFFFF) {
 				scaleW = scaleH = 0x100;
 				int ov = 7;
 				if (_flags.use16ColorMode) {
@@ -1504,7 +1504,7 @@ void LoLEngine::drawDecorations(int index) {
 				ovl = _screen->getLevelOverlay(ov);
 			}
 
-			if (_levelDecorationProperties[l].shapeIndex[shpIx] != 0xffff) {
+			if (_levelDecorationProperties[l].shapeIndex[shpIx] != 0xFFFF) {
 				shapeData = _levelDecorationShapes[_levelDecorationProperties[l].shapeIndex[shpIx]];
 				if (shapeData) {
 					if (ix < 0) {
@@ -1538,10 +1538,10 @@ void LoLEngine::drawDecorations(int index) {
 }
 
 void LoLEngine::drawBlockEffects(int index, int type) {
-	static const uint16 yOffs[] = { 0xff, 0xff, 0x80, 0x80 };
+	static const uint16 yOffs[] = { 0xFF, 0xFF, 0x80, 0x80 };
 	uint8 flg = _visibleBlocks[index]->flags;
 	// flags: 0x10 = ice wall, 0x20 = teleporter, 0x40 = blue slime spot, 0x80 = blood spot
-	if (!(flg & 0xf0))
+	if (!(flg & 0xF0))
 		return;
 
 	type = (type == 0) ? 2 : 0;
@@ -1562,8 +1562,8 @@ void LoLEngine::drawBlockEffects(int index, int type) {
 
 		calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
 
-		x |= ((_visibleBlockIndex[index] & 0x1f) << 8);
-		y |= ((_visibleBlockIndex[index] & 0xffe0) << 3);
+		x |= ((_visibleBlockIndex[index] & 0x1F) << 8);
+		y |= ((_visibleBlockIndex[index] & 0xFFE0) << 3);
 
 		drawItemOrMonster(_effectShapes[type], ovl, x, y, 0, (type == 1) ? -20 : 0, drawFlag, -1, false);
 	}

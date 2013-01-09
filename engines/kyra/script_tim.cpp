@@ -393,14 +393,14 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 	int y = 0;
 
 	if (_vm->gameFlags().use16ColorMode) {
-		if (color == 0xda)
-			color = 0xa1;
-		else if (color == 0xf2)
-			color = 0xe1;
+		if (color == 0xDA)
+			color = 0xA1;
+		else if (color == 0xF2)
+			color = 0xE1;
 		else if (flags < 0)
-			color = 0xe1;
+			color = 0xE1;
 		else
-			color = 0xc1;
+			color = 0xC1;
 	}
 
 	while (str[0]) {
@@ -1083,7 +1083,7 @@ int TIMInterpreter_LoL::cmd_dialogueBox(const uint16 *param) {
 	int cnt = 0;
 
 	for (int i = 1; i < 4; i++) {
-		if (param[i] != 0xffff) {
+		if (param[i] != 0xFFFF) {
 			tmpStr[i-1] = getTableString(param[i]);
 			cnt++;
 		} else {

@@ -29,7 +29,7 @@ namespace Kyra {
 
 LoLObject *LoLEngine::findObject(uint16 index) {
 	if (index & 0x8000)
-		return &_monsters[index & 0x7fff];
+		return &_monsters[index & 0x7FFF];
 	else
 		return &_itemsInPlay[index];
 }
@@ -221,7 +221,7 @@ Item LoLEngine::makeItem(int itemType, int curFrame, int flags) {
 	memset(&_itemsInPlay[slot], 0, sizeof(LoLItem));
 
 	_itemsInPlay[slot].itemPropertyIndex = itemType;
-	_itemsInPlay[slot].shpCurFrame_flg = (curFrame & 0x1fff) | flags;
+	_itemsInPlay[slot].shpCurFrame_flg = (curFrame & 0x1FFF) | flags;
 	_itemsInPlay[slot].level = -1;
 
 	return slot;
@@ -292,7 +292,7 @@ void LoLEngine::runItemScript(int charNum, Item item, int flags, int next, int r
 	memset(&scriptState, 0, sizeof(EMCState));
 
 	uint8 func = item ? _itemProperties[_itemsInPlay[item].itemPropertyIndex].itemScriptFunc : 3;
-	if (func == 0xff)
+	if (func == 0xFF)
 		return;
 
 	_emc->init(&scriptState, &_itemScript);
@@ -351,8 +351,8 @@ bool LoLEngine::itemEquipped(int charNum, uint16 itemType) {
 
 void LoLEngine::setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int moveable) {
 	if (!flyingHeight) {
-		x = (x & 0xffc0) | 0x40;
-		y = (y & 0xffc0) | 0x40;
+		x = (x & 0xFFC0) | 0x40;
+		y = (y & 0xFFC0) | 0x40;
 	}
 
 	uint16 block = calcBlockIndex(x, y);
@@ -364,7 +364,7 @@ void LoLEngine::setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight,
 	if (moveable)
 		_itemsInPlay[item].shpCurFrame_flg |= 0x4000;
 	else
-		_itemsInPlay[item].shpCurFrame_flg &= 0xbfff;
+		_itemsInPlay[item].shpCurFrame_flg &= 0xBFFF;
 
 
 	assignItemToBlock(&_levelBlockProperties[block].assignedObjects, item);
@@ -429,9 +429,9 @@ bool LoLEngine::launchObject(int objectType, Item item, int startX, int startY, 
 
 	if (attackerId != -1) {
 		if (attackerId & 0x8000) {
-			t->flags &= 0xfd;
+			t->flags &= 0xFD;
 		} else {
-			t->flags &= 0xfb;
+			t->flags &= 0xFB;
 			increaseExperience(attackerId, 1, 2);
 		}
 	}
@@ -455,8 +455,8 @@ void LoLEngine::endObjectFlight(FlyingObject *t, int x, int y, int collisionType
 
 	if (t->objectType == 0 || t->objectType == 1) {
 		objectFlightProcessHits(t, cx, cy, collisionType);
-		t->x = (cx & 0xffc0) | 0x40;
-		t->y = (cy & 0xffc0) | 0x40;
+		t->x = (cx & 0xFFC0) | 0x40;
+		t->y = (cy & 0xFFC0) | 0x40;
 		t->flyingHeight = 0;
 		updateObjectFlightPosition(t);
 	}

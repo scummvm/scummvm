@@ -193,7 +193,7 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 		}
 
 		if (inputFlag & 0x8000) {
-			inputFlag = (inputFlag & 0x0f) - 1;
+			inputFlag = (inputFlag & 0x0F) - 1;
 			if (inputFlag == 4) {
 				loop = false;
 			} else {
@@ -402,7 +402,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 		}
 
 		if (inputFlag & 0x8000) {
-			inputFlag = (inputFlag & 0x0f) - 1;
+			inputFlag = (inputFlag & 0x0F) - 1;
 			if (inputFlag == 4) {
 				res = 1;
 				loop = false;
@@ -524,7 +524,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 
 	while (res == -1 && !_vm->shouldQuit()) {
 		updateMagicShapes();
-		int in = getInput(0) & 0xff;
+		int in = getInput(0) & 0xFF;
 		Common::Point mp = _vm->getMousePos();
 
 		if (in == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_b]) {
@@ -572,7 +572,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 
 	while (res == -1 && !_vm->shouldQuit()) {
 		updateMagicShapes();
-		int in = getInput(0) & 0xff;
+		int in = getInput(0) & 0xFF;
 		Common::Point mp = _vm->getMousePos();
 
 		if (in == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_b]) {
@@ -658,14 +658,14 @@ void CharacterGenerator::generateStats(int index) {
 			sv[i] = _chargenMaxStats[i];
 	}
 
-	c->strengthCur = c->strengthMax = sv[0] & 0xff;
+	c->strengthCur = c->strengthMax = sv[0] & 0xFF;
 	c->strengthExtCur = c->strengthExtMax = sv[0] >> 8;
-	c->intelligenceCur = c->intelligenceMax = sv[1] & 0xff;
-	c->wisdomCur = c->wisdomMax = sv[2] & 0xff;
-	c->dexterityCur = c->dexterityMax = sv[3] & 0xff;
-	c->constitutionCur = c->constitutionMax = sv[4] & 0xff;
-	c->charismaCur = c->charismaMax = sv[5] & 0xff;
-	c->armorClass = 10 + _vm->getDexterityArmorClassModifier(sv[3] & 0xff);
+	c->intelligenceCur = c->intelligenceMax = sv[1] & 0xFF;
+	c->wisdomCur = c->wisdomMax = sv[2] & 0xFF;
+	c->dexterityCur = c->dexterityMax = sv[3] & 0xFF;
+	c->constitutionCur = c->constitutionMax = sv[4] & 0xFF;
+	c->charismaCur = c->charismaMax = sv[5] & 0xFF;
+	c->armorClass = 10 + _vm->getDexterityArmorClassModifier(sv[3] & 0xFF);
 	c->hitPointsCur = 0;
 
 	for (int l = 0; l < 3; l++) {
@@ -817,7 +817,7 @@ void CharacterGenerator::faceSelectMenu() {
 			} else if (in == _vm->_keyMap[Common::KEYCODE_RETURN] || in == _vm->_keyMap[Common::KEYCODE_KP5]) {
 				in = 3;
 			} else if (in & 0x8000) {
-				in &= 0xff;
+				in &= 0xFF;
 			} else {
 				in = 0;
 			}
@@ -1017,7 +1017,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			ci = -2;
 
 		} else if (inputFlag & 0x8000) {
-			inputFlag = (inputFlag & 0x0f) - 1;
+			inputFlag = (inputFlag & 0x0F) - 1;
 			if (index != inputFlag) {
 				ci = inputFlag;
 				loop = false;
@@ -1037,7 +1037,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 				v2--;
 			}
 
-			v1 = CLIP<uint8>(v1, _chargenMinStats[index], _chargenMaxStats[index] & 0xff);
+			v1 = CLIP<uint8>(v1, _chargenMinStats[index], _chargenMaxStats[index] & 0xFF);
 			v2 = (v1 == 18 && _chargenMaxStats[index] >= 19) ? CLIP<uint8>(v2, 0, 100) : 0;
 			if (s2)
 				*s2 = v2;
@@ -1614,7 +1614,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 	bool update = false;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
-		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
+		int inputFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 		_vm->removeInputTop();
 
 		if (inputFlag) {
@@ -1827,7 +1827,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 	itm2->flags = itm1->flags | 0x40;
 	itm2->icon = itm1->icon;
 	itm2->type = itm1->type;
-	itm2->level = 0xff;
+	itm2->level = 0xFF;
 
 	switch (itm2->type) {
 	case 35:
@@ -1850,7 +1850,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 			return 0;
 		}
 		itm2->value = itm1->value;
-		itm2->flags = ((itm1->flags & 0x3f) + 3) | 0x40;
+		itm2->flags = ((itm1->flags & 0x3F) + 3) | 0x40;
 		break;
 	case 18:
 		itm2->icon = 19;
@@ -1860,7 +1860,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 		break;
 	}
 
-	switch ((_vm->_itemTypes[itm2->type].extraProperties & 0x7f) - 1) {
+	switch ((_vm->_itemTypes[itm2->type].extraProperties & 0x7F) - 1) {
 	case 0:
 	case 1:
 	case 2:

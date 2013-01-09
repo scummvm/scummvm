@@ -716,7 +716,7 @@ void LoLEngine::showStarcraftLogo() {
 	_screen->fadeFromBlack();
 	int inputFlag = 0;
 	for (int i = 0; i < endframe; i++) {
-		inputFlag = checkInput(0) & 0xff;
+		inputFlag = checkInput(0) & 0xFF;
 		if (shouldQuit() || inputFlag)
 			break;
 		ci->displayFrame(i, 2, 32, 80, 0, 0, 0);
@@ -728,7 +728,7 @@ void LoLEngine::showStarcraftLogo() {
 	if (!(shouldQuit() || inputFlag)) {
 		_sound->voicePlay("star2", &_speechHandle);
 		while (_sound->voiceIsPlaying(&_speechHandle) && !(shouldQuit() || inputFlag)) {
-			inputFlag = checkInput(0) & 0xff;
+			inputFlag = checkInput(0) & 0xFF;
 			delay(_tickLength);
 		}
 	}

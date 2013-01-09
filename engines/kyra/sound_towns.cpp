@@ -174,8 +174,8 @@ void SoundTowns::playSoundEffect(uint8 track, uint8) {
 		}
 	}
 
-	uint8 *fileBody = _sfxFileData + 0x01b8;
-	int32 offset = (int32)READ_LE_UINT32(_sfxFileData + (track - 0x0b) * 4);
+	uint8 *fileBody = _sfxFileData + 0x01B8;
+	int32 offset = (int32)READ_LE_UINT32(_sfxFileData + (track - 0x0B) * 4);
 	if (offset == -1)
 		return;
 
@@ -214,10 +214,10 @@ void SoundTowns::playSoundEffect(uint8 track, uint8) {
 			sfx_WdTable_Number = READ_LE_UINT16(_sfxWDTable + sfx_WdTable_Offset);
 
 			sfx_BtTable_Offset += (int16)READ_LE_UINT16(_sfxWDTable + sfx_WdTable_Offset + 2);
-			*tgt++ = _sfxBTTable[((sfx_BtTable_Offset >> 2) & 0xff)];
+			*tgt++ = _sfxBTTable[((sfx_BtTable_Offset >> 2) & 0xFF)];
 
 			sfx_BtTable_Offset += (int16)READ_LE_UINT16(_sfxWDTable + sfx_WdTable_Offset + 4);
-			*tgt++ = _sfxBTTable[((sfx_BtTable_Offset >> 2) & 0xff)];
+			*tgt++ = _sfxBTTable[((sfx_BtTable_Offset >> 2) & 0xFF)];
 		}
 	}
 
@@ -293,7 +293,7 @@ void SoundTowns::beginFadeOut() {
 			for (int ii = 0; ii < 6; ii++)
 				_driver->chanVolume(ii, fadeVolCur[ii]);
 			for (int ii = 0x40; ii < 0x46; ii++)
-				_driver->chanVolume(ii, fadeVolCur[ii - 0x3a]);
+				_driver->chanVolume(ii, fadeVolCur[ii - 0x3A]);
 
 			for (int ii = 0; ii < 6; ii++) {
 				fadeVolCur[ii] -= fadeVolStep[ii];
@@ -694,7 +694,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 			cmd = ~cmd;
 		} else {
 			cmd |= 0x80;
-			if (cmd == 0xff)
+			if (cmd == 0xFF)
 				cmd--;
 		}
 		if (cmd < 0x80)

@@ -136,7 +136,7 @@ void DarkMoonEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 	if (itm->type == 48 || itm->type == 62) {
 		if (itm->value == 5)
 			return;
-		int charges = itm->flags & 0x3f;
+		int charges = itm->flags & 0x3F;
 		if (--charges)
 			--itm->flags;
 		else
@@ -450,7 +450,7 @@ void DarkMoonEngine::characterLevelGain(int charIndex) {
 	int s = _numLevelsPerClass[c->cClass];
 	for (int i = 0; i < s; i++) {
 		uint32 er = getRequiredExperience(c->cClass, i, c->level[i] + 1);
-		if (er == 0xffffffff)
+		if (er == 0xFFFFFFFF)
 			continue;
 
 		increaseCharacterExperience(charIndex, er - c->experience[i] + 1);

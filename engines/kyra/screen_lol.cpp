@@ -133,12 +133,12 @@ void Screen_LoL::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, 
 	Palette tmpPal(lastColor);
 
 	for (int i = 0; i != lastColor; i++) {
-		int v = (((srcPal[3 * i] & 0x3f) * factor) / 0x40) + addR;
-		tmpPal[3 * i] = (v > 0x3f) ? 0x3f : v & 0xff;
-		v = (((srcPal[3 * i + 1] & 0x3f) * factor) / 0x40) + addG;
-		tmpPal[3 * i + 1] = (v > 0x3f) ? 0x3f : v & 0xff;
-		v = (((srcPal[3 * i + 2] & 0x3f) * factor) / 0x40) + addB;
-		tmpPal[3 * i + 2] = (v > 0x3f) ? 0x3f : v & 0xff;
+		int v = (((srcPal[3 * i] & 0x3F) * factor) / 0x40) + addR;
+		tmpPal[3 * i] = (v > 0x3F) ? 0x3F : v & 0xFF;
+		v = (((srcPal[3 * i + 1] & 0x3F) * factor) / 0x40) + addG;
+		tmpPal[3 * i + 1] = (v > 0x3F) ? 0x3F : v & 0xFF;
+		v = (((srcPal[3 * i + 2] & 0x3F) * factor) / 0x40) + addB;
+		tmpPal[3 * i + 2] = (v > 0x3F) ? 0x3F : v & 0xFF;
 	}
 
 	for (int i = 0; i < lastColor; i++)
@@ -149,7 +149,7 @@ void Screen_LoL::createTransparencyTablesIntern(const uint8 *ovl, int a, const u
 	Palette screenPal(256);
 	screenPal.copy(fxPal2, 0, 256);
 
-	memset(outTable1, 0xff, 256);
+	memset(outTable1, 0xFF, 256);
 
 	for (int i = 0; i < a; i++)
 		outTable1[ovl[i]] = i;
@@ -268,7 +268,7 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 
 void Screen_LoL::backupSceneWindow(int srcPageNum, int dstPageNum) {
 	uint8 *src = getPagePtr(srcPageNum) + 112;
-	uint8 *dst = getPagePtr(dstPageNum) + 0xa500;
+	uint8 *dst = getPagePtr(dstPageNum) + 0xA500;
 
 	for (int h = 0; h < 120; h++) {
 		for (int w = 0; w < 176; w++)
@@ -278,7 +278,7 @@ void Screen_LoL::backupSceneWindow(int srcPageNum, int dstPageNum) {
 }
 
 void Screen_LoL::restoreSceneWindow(int srcPageNum, int dstPageNum) {
-	uint8 *src = getPagePtr(srcPageNum) + 0xa500;
+	uint8 *src = getPagePtr(srcPageNum) + 0xA500;
 	uint8 *dst = getPagePtr(dstPageNum) + 112;
 
 	for (int h = 0; h < 120; h++) {
@@ -292,7 +292,7 @@ void Screen_LoL::restoreSceneWindow(int srcPageNum, int dstPageNum) {
 }
 
 void Screen_LoL::clearGuiShapeMemory(int pageNum) {
-	uint8 *dst = getPagePtr(pageNum) + 0x79b0;
+	uint8 *dst = getPagePtr(pageNum) + 0x79B0;
 	for (int i = 0; i < 23; i++) {
 		memset(dst, 0, 176);
 		dst += 320;
@@ -300,7 +300,7 @@ void Screen_LoL::clearGuiShapeMemory(int pageNum) {
 }
 
 void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum,  int dstPageNum) {
-	uint8 *src = getPagePtr(srcPageNum) + 0x79c3;
+	uint8 *src = getPagePtr(srcPageNum) + 0x79C3;
 	uint8 *dst = getPagePtr(dstPageNum);
 
 	for (int i = 0; i < 23; i++) {
@@ -323,7 +323,7 @@ void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum,  int dstPageN
 
 void Screen_LoL::copyGuiShapeToSurface(int srcPageNum, int dstPageNum) {
 	uint8 *src = getPagePtr(srcPageNum);
-	uint8 *dst = getPagePtr(dstPageNum) + 0xe7c3;
+	uint8 *dst = getPagePtr(dstPageNum) + 0xE7C3;
 
 	for (int i = 0; i < 23; i++) {
 		uint8 v = *src++;
@@ -342,8 +342,8 @@ void Screen_LoL::copyGuiShapeToSurface(int srcPageNum, int dstPageNum) {
 }
 
 void Screen_LoL::smoothScrollZoomStepTop(int srcPageNum, int dstPageNum, int x, int y) {
-	uint8 *src = getPagePtr(srcPageNum) + 0xa500 + y * 176 + x;
-	uint8 *dst = getPagePtr(dstPageNum) + 0xa500;
+	uint8 *src = getPagePtr(srcPageNum) + 0xA500 + y * 176 + x;
+	uint8 *dst = getPagePtr(dstPageNum) + 0xA500;
 
 	x <<= 1;
 	uint16 width = 176 - x;
@@ -363,7 +363,7 @@ void Screen_LoL::smoothScrollZoomStepTop(int srcPageNum, int dstPageNum, int x, 
 		do {
 			scaleXc += scaleX;
 			int numbytes = cntW + (scaleXc >> 16);
-			scaleXc &= 0xffff;
+			scaleXc &= 0xFFFF;
 			memset(dst, *src++, numbytes);
 			dst += numbytes;
 		} while (--widthCnt);
@@ -385,8 +385,8 @@ void Screen_LoL::smoothScrollZoomStepTop(int srcPageNum, int dstPageNum, int x, 
 }
 
 void Screen_LoL::smoothScrollZoomStepBottom(int srcPageNum, int dstPageNum, int x, int y) {
-	uint8 *src = getPagePtr(srcPageNum) + 0xc4a0 + x;
-	uint8 *dst = getPagePtr(dstPageNum) + 0xc4a0;
+	uint8 *src = getPagePtr(srcPageNum) + 0xC4A0 + x;
+	uint8 *dst = getPagePtr(dstPageNum) + 0xC4A0;
 
 	x <<= 1;
 	uint16 width = 176 - x;
@@ -406,7 +406,7 @@ void Screen_LoL::smoothScrollZoomStepBottom(int srcPageNum, int dstPageNum, int 
 		do {
 			scaleXc += scaleX;
 			int numbytes = cntW + (scaleXc >> 16);
-			scaleXc &= 0xffff;
+			scaleXc &= 0xFFFF;
 			memset(dst, *src++, numbytes);
 			dst += numbytes;
 		} while (--widthCnt);
@@ -453,7 +453,7 @@ void Screen_LoL::smoothScrollHorizontalStep(int pageNum, int srcX, int dstX, int
 
 void Screen_LoL::smoothScrollTurnStep1(int srcPage1Num, int srcPage2Num, int dstPageNum) {
 	uint8 *s = getPagePtr(srcPage1Num) + 273;
-	uint8 *d = getPagePtr(dstPageNum) + 0xa500;
+	uint8 *d = getPagePtr(dstPageNum) + 0xA500;
 
 	for (int i = 0; i < 120; i++) {
 		uint8 a = *s++;
@@ -472,7 +472,7 @@ void Screen_LoL::smoothScrollTurnStep1(int srcPage1Num, int srcPage2Num, int dst
 	}
 
 	s = getPagePtr(srcPage2Num) + 112;
-	d = getPagePtr(dstPageNum)  + 0xa52c;
+	d = getPagePtr(dstPageNum)  + 0xA52C;
 
 	for (int i = 0; i < 120; i++) {
 		for (int ii = 0; ii < 33; ii++) {
@@ -490,7 +490,7 @@ void Screen_LoL::smoothScrollTurnStep1(int srcPage1Num, int srcPage2Num, int dst
 
 void Screen_LoL::smoothScrollTurnStep2(int srcPage1Num, int srcPage2Num, int dstPageNum) {
 	uint8 *s = getPagePtr(srcPage1Num) + 244;
-	uint8 *d = getPagePtr(dstPageNum) + 0xa500;
+	uint8 *d = getPagePtr(dstPageNum) + 0xA500;
 
 	for (int k = 0; k < 2; k++) {
 		for (int i = 0; i < 120; i++) {
@@ -505,13 +505,13 @@ void Screen_LoL::smoothScrollTurnStep2(int srcPage1Num, int srcPage2Num, int dst
 		}
 
 		s = getPagePtr(srcPage2Num) + 112;
-		d = getPagePtr(dstPageNum) + 0xa558;
+		d = getPagePtr(dstPageNum) + 0xA558;
 	}
 }
 
 void Screen_LoL::smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dstPageNum) {
 	uint8 *s = getPagePtr(srcPage1Num) + 189;
-	uint8 *d = getPagePtr(dstPageNum) + 0xa500;
+	uint8 *d = getPagePtr(dstPageNum) + 0xA500;
 
 	for (int i = 0; i < 120; i++) {
 		for (int ii = 0; ii < 33; ii++) {
@@ -527,7 +527,7 @@ void Screen_LoL::smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dst
 	}
 
 	s = getPagePtr(srcPage2Num) + 112;
-	d = getPagePtr(dstPageNum)  + 0xa584;
+	d = getPagePtr(dstPageNum)  + 0xA584;
 
 	for (int i = 0; i < 120; i++) {
 		for (int ii = 0; ii < 14; ii++) {
@@ -781,8 +781,8 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 
 	for (int i = 0; i < 3; i++) {
 		if (elapsedTicks < totalTicks) {
-			srcV = *src & 0x3f;
-			dstV = *dst & 0x3f;
+			srcV = *src & 0x3F;
+			dstV = *dst & 0x3F;
 
 			outV = srcV - dstV;
 			if (outV)
@@ -794,7 +794,7 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 			res = false;
 		}
 
-		tmpPalEntry[i] = outV & 0xff;
+		tmpPalEntry[i] = outV & 0xFF;
 		src++;
 		dst++;
 		p++;
