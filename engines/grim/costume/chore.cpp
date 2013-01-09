@@ -105,7 +105,7 @@ void Chore::setKeys(int startTime, int stopTime) {
 			continue;
 
 		for (int j = 0; j < _tracks[i].numKeys; j++) {
-			if (_tracks[i].keys[j].time > stopTime)
+			if (_tracks[i].keys[j].time > stopTime && stopTime != -1)
 				break;
 			if (_tracks[i].keys[j].time > startTime)
 				comp->setKey(_tracks[i].keys[j].value);
@@ -125,12 +125,16 @@ void Chore::setLastFrame() {
 	// Moreover, the choppy behaviour stated above happens with grim original too,
 	// meaning the bug is not in Residual but in the scripts or in GrimE design.
 
-	_currTime = _length;
+	_currTime = -1;
 	_playing = false;
 	_hasPlayed = true;
 	_looping = false;
-	setKeys(-1, _currTime);
-	_currTime = -1;
+
+	// In the demo, the chore 4 (stop_talk) of ms.cos, has length 67, and 4 keys,
+	// the last two of which are at time 133 and 200. We use -1 as stopTime here
+	// as a special value, instead of _length, to ensure all the keys are run.
+	// (failing to do so will result in manny's mouth not closing when he stops talking)
+	setKeys(-1, -1);
 }
 
 void Chore::update(uint time) {
