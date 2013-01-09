@@ -74,6 +74,18 @@ List of fixed bugs in GF scripts:
 	is nil, and that causes all the chores to be stopped, included the chore which shows the hat.
 	This patch checks if 'manny.hold_chore' is not nil and only in that cases it stops it.
 
+	-Fix a Lua error when speaking to Lupe with all the dialog options expired (#198) - dlg_lupe.lua.patchr
+	When there are no more dialog options the dialog system calls a 'abort' line (Dialog.display_lines,
+	in _dialog.lua) which should end the dialog, by setting the value of the 'node' variable to "exit_dialog".
+	The other way of ending a dialog is to choose an exit line which is not an abort line but which which
+	also sets that variable.
+	The line 'lu1.aborts.lun1' was making the dialog system call the exit line, instead of just calling
+	the say_line() needed, and that in turn resulted in the function Dialog.display_lines be called two
+	times with the node set as 'exit_dialog', and so the outro (lu1.outro) was called two times.
+	More importantly the function 'start_script(lupe.new_run_idle, lupe, "jump_back")' was called two times,
+	and that resulted in broken animation the next time Manny talked to Lupe.
+	This patch modifies 'lu1.aborts.lun1', by not relying on the exit line anymore.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
