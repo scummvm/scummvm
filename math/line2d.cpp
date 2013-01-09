@@ -32,8 +32,13 @@ Line2d::Line2d() :
 
 Line2d::Line2d(const Vector2d &direction, const Vector2d &point) {
 	Vector2d d = direction;
-	_a = d.getY() / d.getX();
-	_b = -1;
+	if (fabsf(d.getX()) > 0.0001f) {
+		_a = d.getY() / d.getX();
+		_b = -1;
+	} else {
+		_a = 1;
+		_b = 0;
+	}
 
 	if (_b == 0) {
 		_c = -point.getX();
@@ -76,23 +81,18 @@ bool Line2d::intersectsLine(const Line2d &line, Vector2d *pos) const {
 
 	float x, y;
 
-	if (d * b - a * e == 0 || a == 0) {
+	const float det = a * e - b * d;
+
+	if (fabsf(det) < 0.0001f) {
 		return false;
 	}
 
-	if (!pos) {
-		return true;
-	}
+	x = (-c * e + b * f) / det;
+	y = (-a * f + c * d) / det;
 
-	/*
-	 * {ax + by + c = 0 -> x = -(by + c) / a
-	 * {dx + ey + f = 0 -> y = (-dc + af) / (db - ae)
-	 */
+	if (pos)
+		*pos = Vector2d(x, y);
 
-	y = (-d * c + a * f) / (d * b - a * e);
-	x = -(b * y + c) / a;
-
-	*pos = Vector2d(x, y);
 	return true;
 }
 

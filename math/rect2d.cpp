@@ -129,9 +129,17 @@ bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
 	}
 }
 
+inline bool le(float a, float b) {
+	return (a < b || (fabsf(a - b) < 0.0001f));
+}
+
+inline bool ge(float a, float b) {
+	return (a > b || (fabsf(a - b) < 0.0001f));
+}
+
 bool Rect2d::containsPoint(const Vector2d &point) const {
-	return (point.getX() >= _topLeft.getX() && point.getX() <= _bottomRight.getX() &&
-	        point.getY() >= _topLeft.getY() && point.getY() <= _bottomRight.getY());
+	return ge(point.getX(), _topLeft.getX()) && le(point.getX(), _bottomRight.getX()) &&
+	       ge(point.getY(), _topLeft.getY()) && le(point.getY(), _bottomRight.getY());
 }
 
 Vector2d Rect2d::getCenter() const {
