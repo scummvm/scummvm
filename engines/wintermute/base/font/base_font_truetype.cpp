@@ -162,7 +162,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	// HACK: J.U.L.I.A. uses CP1252, we need to fix that,
 	// And we still don't have any UTF8-support.
 	if (_gameRef->_textEncoding != TEXT_UTF8) {
-		textStr = StringUtil::ansiToWide((char *)text);
+		textStr = StringUtil::ansiToWide((const char *)text);
 	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
