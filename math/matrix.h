@@ -460,8 +460,6 @@ bool operator==(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
 	return false;
 }
 
-}
-
 
 template<int r, int c>
 Common::Debug &operator<<(Common::Debug dbg, const Math::Matrix<r, c> &m) {
@@ -480,6 +478,7 @@ Common::Debug &operator<<(Common::Debug dbg, const Math::Matrix<r, c> &m) {
 	return dbg.space();
 }
 
+}
 
 #endif
 

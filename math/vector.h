@@ -128,7 +128,6 @@ void MatrixType<dim, 1>::readFromStream(Common::ReadStream *stream) {
 	}
 }
 
-}
 
 template<int dim>
 Common::Debug &operator<<(Common::Debug dbg, const Math::Matrix<dim, 1> &v) {
@@ -139,6 +138,8 @@ Common::Debug &operator<<(Common::Debug dbg, const Math::Matrix<dim, 1> &v) {
 	dbg << ")";
 
 	return dbg.space();
+}
+
 }
 
 #endif
