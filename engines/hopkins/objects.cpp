@@ -2602,7 +2602,7 @@ LABEL_64:
 		} else {
 			_vm->_eventsManager._mouseCursorId = _vm->_globals._saveData->data[svField1];
 			if (_changeVerbFl) {
-				VERBEPLUS();
+				nextVerbIcon();
 				_changeVerbFl = false;
 			}
 			if (_vm->_eventsManager._mouseCursorId == 5)
@@ -3206,204 +3206,154 @@ LABEL_88:
 	return result;
 }
 
-void ObjectsManager::VERBEPLUS() {
-	int v;
+/**
+ * Get next verb icon (or text)
+ */
+void ObjectsManager::nextVerbIcon() {
+	_vm->_eventsManager._mouseCursorId++;
 
-	v = _vm->_eventsManager._mouseCursorId + 1;
-	_vm->_eventsManager._mouseCursorId = v;
-	if (v == 4)
-		goto LABEL_24;
-	if (v == 5)
-		goto LABEL_28;
-	if (v == 6)
-		goto LABEL_29;
-	if (v == 7)
-		goto LABEL_31;
-	if (v == 8)
-		goto LABEL_33;
-	if (v == 9)
-		goto LABEL_35;
-	if (v == 10)
-		goto LABEL_37;
-	if (v == 11)
-		goto LABEL_39;
-	if (v == 12)
-		goto LABEL_41;
-	if (v == 13)
-		goto LABEL_43;
-	if (v == 14)
-		goto LABEL_45;
-	if (v == 15)
-		goto LABEL_47;
-	if (v == 16)
-		goto LABEL_49;
-	if (v == 17)
-		goto LABEL_51;
-	if (v == 18)
-		goto LABEL_53;
-	if (v == 19)
-		goto LABEL_55;
-	if (v == 20)
-		goto LABEL_57;
-	if (v == 21)
-		goto LABEL_59;
-	if (v == 22)
-		goto LABEL_61;
-	if (v == 23)
-		goto LABEL_63;
-	if (v == 24)
-		goto LABEL_65;
-	if (v == 25)
-		goto LABEL_67;
 	do {
-		do {
-			_vm->_eventsManager._mouseCursorId = 4;
-LABEL_24:
-			if (!_vm->_globals.NOMARCHE || (v = NUMZONE + 1, NUMZONE == -1 || NUMZONE == 0)) {
-				if (_vm->_eventsManager._mouseCursorId == 4)
-					return;
-			} else {
-				_vm->_eventsManager._mouseCursorId = 5;
-			}
-LABEL_28:
+		if (_vm->_eventsManager._mouseCursorId == 4) {
+			if (!_vm->_globals.NOMARCHE || NUMZONE == -1 || NUMZONE == 0)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 6) {
-LABEL_29:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].field6 == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 5 || _vm->_eventsManager._mouseCursorId == 6) {
+			_vm->_eventsManager._mouseCursorId = 6;
+			if (_vm->_globals.ZONEP[NUMZONE].field6 == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 7) {
-LABEL_31:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].field7 == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 7) {
+			if (_vm->_globals.ZONEP[NUMZONE].field7 == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 8) {
-LABEL_33:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].field8 == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 8) {
+			if (_vm->_globals.ZONEP[NUMZONE].field8 == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 9) {
-LABEL_35:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].field9 == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 9) {
+			if (_vm->_globals.ZONEP[NUMZONE].field9 == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 10) {
-LABEL_37:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldA == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 10) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldA == 1)
+				return;
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 11) {
-LABEL_39:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldB == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 11) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldB == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 12) {
-LABEL_41:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldC == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 12) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldC == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 13) {
-LABEL_43:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldD == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 13) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldD == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 14) {
-LABEL_45:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldE == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 14) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldE == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 15) {
-LABEL_47:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldF == 1)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 15) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldF == 1)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 16) {
-LABEL_49:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].field6 == 2)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 16) {
+			if (_vm->_globals.ZONEP[NUMZONE].field6 == 2)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 17) {
-LABEL_51:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].field9 == 2)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 17) {
+			if (_vm->_globals.ZONEP[NUMZONE].field9 == 2)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 18) {
-LABEL_53:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldA == 2)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 18) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldA == 2)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 19) {
-LABEL_55:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldB == 2)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 19) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldB == 2)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 20) {
-LABEL_57:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldC == 2)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 20) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldC == 2)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 21) {
-LABEL_59:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldF == 2)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 21) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldF == 2)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 22) {
-LABEL_61:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].fieldD == 2)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 22) {
+			if (_vm->_globals.ZONEP[NUMZONE].fieldD == 2)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 23) {
-LABEL_63:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].field8 == 2)
-					return;
-			}
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 23) {
+			if (_vm->_globals.ZONEP[NUMZONE].field8 == 2)
+				return;
+
 			++_vm->_eventsManager._mouseCursorId;
-			if (_vm->_eventsManager._mouseCursorId == 24) {
-LABEL_65:
-				v = 5 * NUMZONE;
-				if (_vm->_globals.ZONEP[NUMZONE].field9 == 3)
-					return;
-			}
-			v = _vm->_eventsManager._mouseCursorId + 1;
-			_vm->_eventsManager._mouseCursorId = v;
-		} while (v != 25);
-LABEL_67:
-		v = 5 * NUMZONE;
+		}
+
+		if (_vm->_eventsManager._mouseCursorId == 24) {
+			if (_vm->_globals.ZONEP[NUMZONE].field9 == 3)
+				return;
+
+			++_vm->_eventsManager._mouseCursorId;
+		}
+
+		_vm->_eventsManager._mouseCursorId = 4;
 	} while (_vm->_globals.ZONEP[NUMZONE].fieldE != 2);
 }
 
@@ -3412,7 +3362,7 @@ LABEL_67:
  */
 void ObjectsManager::handleRightButton() {
 	if (NUMZONE != -1 && NUMZONE != 0) {
-		VERBEPLUS();
+		nextVerbIcon();
 		if (_vm->_eventsManager._mouseCursorId != 23)
 			_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
 		_verb = _vm->_eventsManager._mouseCursorId;

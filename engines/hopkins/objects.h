@@ -190,7 +190,7 @@ public:
 	void VERIFTAILLE();
 	void PACOURS_PROPRE(int16 *a1);
 	int16 *PARC_VOITURE(int a1, int a2, int a3, int a4);
-	void VERBEPLUS();
+	void nextVerbIcon();
 	void handleRightButton();
 	int MZONE();
 	void initBorder(int a1);
