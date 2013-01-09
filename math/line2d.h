@@ -41,10 +41,14 @@ public:
 
 	float getYatX(float x) const;
 
+	friend Common::Debug &operator<<(Common::Debug dbg, const Line2d &line);
+
 private:
 	float _a, _b, _c;
 
 };
+
+Common::Debug &operator<<(Common::Debug dbg, const Line2d &line);
 
 class Segment2d {
 public:
