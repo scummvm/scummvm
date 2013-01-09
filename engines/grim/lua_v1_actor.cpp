@@ -194,9 +194,6 @@ void Lua_V1::SetActorTalkChore() {
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
-	if (!costume)
-		return;
-
 	actor->setTalkChore(index, chore, costume);
 }
 
@@ -220,9 +217,6 @@ void Lua_V1::SetActorMumblechore() {
 		chore = (int)lua_getnumber(choreObj);
 	}
 	if (!findCostume(costumeObj, actor, &costume))
-		return;
-
-	if (!costume)
 		return;
 
 	actor->setMumbleChore(chore, costume);
