@@ -179,7 +179,12 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	} else {
 		// Override global scaler with any game-specific define
 		if (ConfMan.hasKey("gfx_mode")) {
-			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+			Common::String gfxMode = ConfMan.get("gfx_mode");
+			g_system->setGraphicsMode(gfxMode.c_str());
+
+			// HACK: For OpenGL modes, we will still honor the graphics scale override
+			if (defaultTo1XScaler && (gfxMode.equalsIgnoreCase("gl1") || gfxMode.equalsIgnoreCase("gl2") || gfxMode.equalsIgnoreCase("gl4")))
+				g_system->resetGraphicsScale();
 		}
 	}
 
