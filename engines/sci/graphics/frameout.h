@@ -113,6 +113,7 @@ public:
 	void kernelAddPlane(reg_t object);
 	void kernelUpdatePlane(reg_t object);
 	void kernelDeletePlane(reg_t object);
+	void applyGlobalScaling(FrameoutEntry *itemEntry, Common::Rect planeRect, int16 celHeight);
 	void kernelAddScreenItem(reg_t object);
 	void kernelUpdateScreenItem(reg_t object);
 	void kernelDeleteScreenItem(reg_t object);
