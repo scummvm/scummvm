@@ -86,7 +86,7 @@ List of fixed bugs in GF scripts:
 	and that resulted in broken animation the next time Manny talked to Lupe.
 	This patch modifies 'lu1.aborts.lun1', by not relying on the exit line anymore.
 
-	Fix buf #237 "GRIM: The animation of when glottis gives manny the work order does not play correctly."
+	Fix bug #237 "GRIM: The animation of when glottis gives manny the work order does not play correctly."
 		- dlg_glottis.lua.patchr
 	gl1[220].response calls the function 'glottis.hand_work_order', which manages the animation and then
 	calls 'glottis:flip_ears(5)' after a 'wait_for_message()'. The flip_ears() call causes the chore
