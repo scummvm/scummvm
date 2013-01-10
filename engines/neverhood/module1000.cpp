@@ -335,7 +335,7 @@ uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &p
 }
 		
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _asDoor(NULL), _asWindow(NULL) {
+	: Scene(vm, parentModule), _asDoor(NULL), _asWindow(NULL) {
 
 	Sprite *tempSprite;
 
@@ -1156,7 +1156,7 @@ uint32 AsScene1002KlaymanPeekHand::handleMessage(int messageNum, const MessagePa
 }
 
 Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _isKlaymanFloor(false), _isClimbingLadder(false) {
+	: Scene(vm, parentModule), _isKlaymanFloor(false), _isClimbingLadder(false) {
 
 	NRect tempClipRect;
 	Sprite *tempSprite;
@@ -1243,7 +1243,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asDoorSpy = insertSprite<AsScene1002DoorSpy>(tempClipRect, this, _asDoor, tempSprite);
 	_ssPressButton = insertSprite<SsCommonPressButton>(this, 0x00412692, 0x140B60BE, 800, 0);
 	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klayman, false);
-	_vm->_collisionMan->addCollisionSprite(_asVenusFlyTrap);
+	addCollisionSprite(_asVenusFlyTrap);
 
 	sendEntityMessage(_klayman, 0x2007, _asVenusFlyTrap);
 
@@ -1389,7 +1389,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 // StaticScene
 
 StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	SetMessageHandler(&StaticScene::handleMessage);
 	
@@ -1442,7 +1442,7 @@ uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &pa
 }
 
 Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _paletteAreaStatus(-1) {
+	: Scene(vm, parentModule), _paletteAreaStatus(-1) {
 
 	Sprite *tempSprite;
 	
@@ -1542,7 +1542,7 @@ void Scene1004::updatePaletteArea() {
 // Scene1005
 
 Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene1005::handleMessage);
 

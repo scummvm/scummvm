@@ -316,7 +316,7 @@ void DiskplayerSlot::stop() {
 }
 
 DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int paletteIndex)
-	: Scene(vm, parentModule, true), _diskIndex(0), _appearCountdown(0), _tuneInCountdown(0),
+	: Scene(vm, parentModule), _diskIndex(0), _appearCountdown(0), _tuneInCountdown(0),
 	_hasAllDisks(false), _dropKey(false), _inputDisabled(true), _updateStatus(kUSStopped) { 
 
 	int availableDisksCount = 0;
@@ -325,7 +325,7 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	setPalette(kDiskplayerPaletteFileHashes[paletteIndex]);
 
 	_ssPlayButton = insertSprite<DiskplayerPlayButton>(this);
-	_vm->_collisionMan->addCollisionSprite(_ssPlayButton);
+	addCollisionSprite(_ssPlayButton);
 
 	_asKey = insertSprite<AsDiskplayerSceneKey>();
 

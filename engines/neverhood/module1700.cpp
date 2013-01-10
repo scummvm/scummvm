@@ -177,7 +177,7 @@ uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param,
 }
 
 Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _paletteArea(1) {
+	: Scene(vm, parentModule), _paletteArea(1) {
 
 	Sprite *tempSprite;
 	
@@ -200,7 +200,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 2)], 2);
 	_sprite = insertStaticSprite(0x31313A22, 1100);
 	_ssTape = insertSprite<SsScene1705Tape>(this, 15, 1100, 238, 439, 0x02363852);
-	_vm->_collisionMan->addCollisionSprite(_ssTape);
+	addCollisionSprite(_ssTape);
 
 	if (which < 0) {
 		// Restoring game

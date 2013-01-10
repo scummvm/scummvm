@@ -347,7 +347,7 @@ uint32 SsScene2901BigButton::handleMessage(int messageNum, const MessageParam &p
 }
 
 Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _currLocationButtonNum(which), _selectedButtonNum(which),
+	: Scene(vm, parentModule), _currLocationButtonNum(which), _selectedButtonNum(which),
 	_currWhirlButtonNum(0), _prevWhirlButtonNum(0), _countdown1(1), _skipCountdown(0), _blinkOn(0) {
 
 	_isButton2Broken = getGlobalVar(V_ENTRANCE_OPEN) != 0;
@@ -365,7 +365,7 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 	for (uint i = 0; i < 6; ++i) {
 		if (i != 2 || !_isButton2Broken) {
 			_ssLocationButtons[i] = insertSprite<SsScene2901LocationButton>(this, _currLocationButtonNum, i);
-			_vm->_collisionMan->addCollisionSprite(_ssLocationButtons[i]);
+			addCollisionSprite(_ssLocationButtons[i]);
 			_ssLocationButtonLights[i] = insertSprite<SsScene2901LocationButtonLight>(_currLocationButtonNum, i);
 		}
 	}
@@ -374,7 +374,7 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertSprite<SsScene2901BrokenButton>(_currLocationButtonNum);
 
 	_ssBigButton = insertSprite<SsScene2901BigButton>(this, _currLocationButtonNum);
-	_vm->_collisionMan->addCollisionSprite(_ssBigButton);
+	addCollisionSprite(_ssBigButton);
 
 	insertPuzzleMouse(kScene2901FileHashes2[_currLocationButtonNum], 20, 620);
 	

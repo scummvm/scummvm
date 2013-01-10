@@ -308,7 +308,7 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 }
 
 Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _isBusy(false) {
+	: Scene(vm, parentModule), _isBusy(false) {
 	
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene2609::handleMessage);
@@ -317,7 +317,7 @@ Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x51409A16);
 	_asWater = insertSprite<AsScene2609Water>();
 	_ssButton = insertSprite<SsScene2609Button>(this);
-	_vm->_collisionMan->addCollisionSprite(_ssButton);
+	addCollisionSprite(_ssButton);
 	insertPuzzleMouse(0x09A1251C, 20, 620);
 	insertStaticSprite(0x02138002, 1200);
 	insertStaticSprite(0x825E2827, 1200);

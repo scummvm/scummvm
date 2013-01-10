@@ -28,7 +28,6 @@
 #include "engines/util.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
-#include "neverhood/collisionman.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/gamevars.h"
 #include "neverhood/graphics.h"
@@ -92,7 +91,6 @@ Common::Error NeverhoodEngine::run() {
 	_soundMan = new SoundMan(this);
 	_audioResourceMan = new AudioResourceMan(this);
 	
-	_collisionMan = new CollisionMan(this);
 	_gameModule = new GameModule(this);
 	
 	// TODO Check if this can actually be false...
@@ -116,7 +114,6 @@ Common::Error NeverhoodEngine::run() {
 	mainLoop();
 	
 	delete _gameModule;
-	delete _collisionMan;
 	delete _soundMan;
 	delete _audioResourceMan;
 

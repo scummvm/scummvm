@@ -82,7 +82,7 @@ void Module1500::updateScene() {
 // Scene1501
 
 Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3)
-	: Scene(vm, parentModule, true), _countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _skip(false) {
+	: Scene(vm, parentModule), _countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _skip(false) {
 
 	SetUpdateHandler(&Scene1501::update);
 	SetMessageHandler(&Scene1501::handleMessage);

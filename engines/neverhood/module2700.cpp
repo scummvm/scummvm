@@ -614,7 +614,7 @@ void AsCommonCarTrackShadow::update() {
 }
 
 Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	Sprite *tempSprite;
 	
@@ -720,7 +720,7 @@ static const uint32 kScene2702Infos[2][3] = {
 
 
 Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _isInLight(true), _newTrackIndex(-1), _count(3) {
+	: Scene(vm, parentModule), _isInLight(true), _newTrackIndex(-1), _count(3) {
 	
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < 3; j++)
@@ -882,7 +882,7 @@ void Scene2702::changeTrack() {
 }
 
 Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(sceneInfoId);
 	
@@ -996,7 +996,7 @@ uint32 Scene2703::handleMessage(int messageNum, const MessageParam &param, Entit
 		
 Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
 	const uint32 *staticSprites, const NRect *clipRect)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(sceneInfoId);
 	
@@ -1101,7 +1101,7 @@ static const struct { const char *pointListName; int which1, which2; } kSceneInf
 };
 
 Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _newTrackIndex(-1) {
+	: Scene(vm, parentModule), _newTrackIndex(-1) {
 	
 	SetMessageHandler(&Scene2706::handleMessage);
 	
@@ -1218,7 +1218,7 @@ void Scene2706::changeTrack() {
 }
 
 Scene2732::Scene2732(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	Sprite *tempSprite;
 

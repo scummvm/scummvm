@@ -989,14 +989,14 @@ void AsCommonCarConnector::update() {
 }
 
 Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _asCar(NULL), _countdown1(0) {
+	: Scene(vm, parentModule), _asCar(NULL), _countdown1(0) {
 
 	setGlobalVar(V_CAR_DELTA_X, 1);
 	
 	SetMessageHandler(&Scene1608::hmLowerFloor);
 	
 	_asKey = insertSprite<AsCommonKey>(this, 1, 1100, 198, 220);
-	_vm->_collisionMan->addCollisionSprite(_asKey);
+	addCollisionSprite(_asKey);
 
 	if (which < 0) {
 		// Restoring game
@@ -1014,7 +1014,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 			setBackground(0x10080E01);
 			setPalette(0x10080E01);
 			_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
-			_vm->_collisionMan->addCollisionSprite(_asTape);
+			addCollisionSprite(_asTape);
 			_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 			SetUpdateHandler(&Scene1608::upLowerFloor);
 			insertScreenMouse(0x80E05108);
@@ -1031,7 +1031,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		setBackground(0x10080E01);
 		setPalette(0x10080E01);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
-		_vm->_collisionMan->addCollisionSprite(_asTape);
+		addCollisionSprite(_asTape);
 		insertScreenMouse(0x80E05108);
 		_sprite1 = insertStaticSprite(0x7D0404E8, 1100);
 		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
@@ -1072,7 +1072,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asIdleCarLower->setClipRect(_clipRect1);
 		_asIdleCarFull->setClipRect(_clipRect1);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
-		_vm->_collisionMan->addCollisionSprite(_asTape);
+		addCollisionSprite(_asTape);
 		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_clipRect1);
 		_klaymanInCar = false;
 		_carClipFlag = false;
@@ -1114,7 +1114,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asIdleCarLower->setClipRect(_clipRect1);
 		_asIdleCarFull->setClipRect(_clipRect1);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
-		// ... _vm->_collisionMan->addCollisionSprite(_asTape);
+		// ... addCollisionSprite(_asTape);
 		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_clipRect1);
 		_klaymanInCar = true;
 		_carClipFlag = true;
@@ -1303,7 +1303,7 @@ void Scene1608::updateKlaymanCliprect() {
 }
 
 Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule, true), _countdown1(1), _currentSymbolIndex(0), _symbolPosition(0), _changeCurrentSymbol(true), _isSolved(false) {
+	: Scene(vm, parentModule), _countdown1(1), _currentSymbolIndex(0), _symbolPosition(0), _changeCurrentSymbol(true), _isSolved(false) {
 
 	_vm->gameModule()->initCodeSymbolsPuzzle();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
@@ -1319,7 +1319,7 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule)
 		_asSymbols[symbolPosition] = insertSprite<AsScene3011Symbol>(symbolPosition, false);
 	
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
-	_vm->_collisionMan->addCollisionSprite(_ssButton);
+	addCollisionSprite(_ssButton);
 	loadSound(0, 0x68E25540);
 
 }

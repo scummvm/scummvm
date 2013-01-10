@@ -212,7 +212,7 @@ uint32 MenuButton::handleMessage(int messageNum, const MessageParam &param, Enti
 }
 
 MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	static const uint32 kMenuButtonFileHashes[] = {
 		0x36C62120,
@@ -251,7 +251,7 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	for (uint buttonIndex = 0; buttonIndex < 9; ++buttonIndex) {
 		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
 			kMenuButtonFileHashes[buttonIndex], kMenuButtonCollisionBounds[buttonIndex]);
-		_vm->_collisionMan->addCollisionSprite(menuButton);
+		addCollisionSprite(menuButton);
 	}
 	
 	SetUpdateHandler(&Scene::update);	
@@ -298,7 +298,7 @@ static const uint32 kCreditsSceneFileHashes[] = {
 };
 
 CreditsScene::CreditsScene(NeverhoodEngine *vm, Module *parentModule, bool canAbort)
-	: Scene(vm, parentModule, true), _canAbort(canAbort), _screenIndex(0), _ticksDuration(0),
+	: Scene(vm, parentModule), _canAbort(canAbort), _screenIndex(0), _ticksDuration(0),
 	_countdown(216) {
 
 	SetUpdateHandler(&CreditsScene::update);	
@@ -368,7 +368,7 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 }
 
 WidgetScene::WidgetScene(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule, true), _currWidget(NULL) {
+	: Scene(vm, parentModule), _currWidget(NULL) {
 }
 
 NPoint WidgetScene::getMousePos() {
@@ -466,7 +466,7 @@ TextLabelWidget::TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 it
 
 void TextLabelWidget::addSprite() {
 	_parentScene->addSprite(this);
-	_vm->_collisionMan->addCollisionSprite(this);
+	_parentScene->addCollisionSprite(this);
 }
 
 int16 TextLabelWidget::getWidth() {
@@ -544,7 +544,7 @@ void TextEditWidget::addSprite() {
 	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	refreshPosition();
 	_parentScene->addSprite(this);
-	_vm->_collisionMan->addCollisionSprite(this);
+	_parentScene->addCollisionSprite(this);
 	_surface->setVisible(true);
 	_textLabelWidget = new TextLabelWidget(_vm, _rect.x1, _rect.y1 + (_rect.y2 - _rect.y1 + 1 - _textSurface->getCharHeight()) / 2,
 		0, _parentScene, _baseObjectPriority + 1, _baseSurfacePriority + 1,
@@ -708,7 +708,7 @@ void SavegameListBox::addSprite() {
 	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	refreshPosition();
 	_parentScene->addSprite(this);
-	_vm->_collisionMan->addCollisionSprite(this);
+	_parentScene->addCollisionSprite(this);
 	_surface->setVisible(true);
 	buildItems();
 	_firstVisibleItem = 0;
@@ -826,7 +826,7 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArra
 	for (uint buttonIndex = 0; buttonIndex < 6; ++buttonIndex) {
 		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
 			kSaveGameMenuButtonFileHashes[buttonIndex], kSaveGameMenuButtonCollisionBounds[buttonIndex]);
-		_vm->_collisionMan->addCollisionSprite(menuButton);
+		addCollisionSprite(menuButton);
 	}
 
 

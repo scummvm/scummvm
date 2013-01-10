@@ -21,8 +21,8 @@
  */
 
 #include "neverhood/klayman.h"
-#include "neverhood/collisionman.h"
 #include "neverhood/resourceman.h"
+#include "neverhood/scene.h"
 #include "neverhood/staticdata.h"
 
 namespace Neverhood {
@@ -60,7 +60,7 @@ static const KlaymanIdleTableItem klaymanIdleTable1002[] = {
 
 // Klayman
 
-Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
+Klayman::Klayman(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
 	: AnimatedSprite(vm, objectPriority), _idleCounterMax(0), _idleCounter(0), _isMoveObjectRequested(false), _blinkCounterMax(0),
 	_isWalkingOpenDoorNotified(false), _countdown1(0), _tapesToInsert(0), _keysToInsert(0), /*_field118(0), */_status2(0), _acceptInput(true),
 	_attachedSprite(NULL), _isWalking(false), _status3(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false),
@@ -744,12 +744,12 @@ void Klayman::suSneaking() {
 	_deltaX = 0;				
 
 	if (_destX != _x) {
-		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
+		HitRect *hitRectPrev = _parentScene->findHitRectAtPos(_x, _y);
 		_x += xdiff;
 		if (_pathPoints) {
 			walkAlongPathPoints();
 		} else {
-			HitRect *hitRectNext = _vm->_collisionMan->findHitRectAtPos(_x, _y);
+			HitRect *hitRectNext = _parentScene->findHitRectAtPos(_x, _y);
 			if (hitRectNext->type == 0x5002) {
 				_y = MAX<int16>(hitRectNext->rect.y1, hitRectNext->rect.y2 - (hitRectNext->rect.x2 - _x) / 2);
 			} else if (hitRectNext->type == 0x5003) {
@@ -925,12 +925,12 @@ void Klayman::suWalkingTestExit() {
 		(_status3 == 3 && xdiff < 150 && _currFrameIndex >= 6)) {
 		sendMessage(this, 0x1019, 0);
 	} else {
-		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
+		HitRect *hitRectPrev = _parentScene->findHitRectAtPos(_x, _y);
 		_x += xdelta;
 		if (_pathPoints) {
 			walkAlongPathPoints();
 		} else {
-			HitRect *hitRectNext = _vm->_collisionMan->findHitRectAtPos(_x, _y);
+			HitRect *hitRectNext = _parentScene->findHitRectAtPos(_x, _y);
 			if (hitRectNext->type == 0x5002) {
 				_y = MAX<int16>(hitRectNext->rect.y1, hitRectNext->rect.y2 - (hitRectNext->rect.x2 - _x) / 2);
 			} else if (hitRectNext->type == 0x5003) {
@@ -1408,12 +1408,12 @@ void Klayman::suLargeStep() {
 	_deltaX = 0;
 	
 	if (_x != _destX) {
-		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
+		HitRect *hitRectPrev = _parentScene->findHitRectAtPos(_x, _y);
 		_x += xdiff;
 		if (_pathPoints) {
 			walkAlongPathPoints();
 		} else {
-			HitRect *hitRectNext = _vm->_collisionMan->findHitRectAtPos(_x, _y);
+			HitRect *hitRectNext = _parentScene->findHitRectAtPos(_x, _y);
 			if (hitRectNext->type == 0x5002) {
 				_y = MAX<int16>(hitRectNext->rect.y1, hitRectNext->rect.y2 - (hitRectNext->rect.x2 - _x) / 2);
 			} else if (hitRectNext->type == 0x5003) {
@@ -2868,13 +2868,13 @@ uint32 Klayman::hmJumpAndFall(int messageNum, const MessageParam &param, Entity 
 
 void Klayman::suFallDown() {
 	AnimatedSprite::updateDeltaXY();
-	HitRect *hitRect = _vm->_collisionMan->findHitRectAtPos(_x, _y + 10);
+	HitRect *hitRect = _parentScene->findHitRectAtPos(_x, _y + 10);
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
 		updateBounds();
 		sendMessage(this, 0x1019, 0);
 	}
-	_vm->_collisionMan->checkCollision(this, 0xFFFF, 0x4810, 0);
+	_parentScene->checkCollision(this, 0xFFFF, 0x4810, 0);
 }
 
 void Klayman::stJumpToRingVenusFlyTrap() {
@@ -3028,7 +3028,7 @@ void Klayman::evMoveVenusFlyTrapDone() {
 
 void Klayman::suFallSkipJump() {
 	updateDeltaXY();
-	HitRect *hitRect = _vm->_collisionMan->findHitRectAtPos(_x, _y + 10);
+	HitRect *hitRect = _parentScene->findHitRectAtPos(_x, _y + 10);
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
 		updateBounds();
@@ -3348,7 +3348,7 @@ void Klayman::stPeekInsideBlink() {
 
 // KmScene1001
 
-KmScene1001::KmScene1001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1001::KmScene1001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 }
 
@@ -3426,7 +3426,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 
 // KmScene1002
 
-KmScene1002::KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1002::KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	setKlaymanIdleTable1();
@@ -3548,7 +3548,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 
 // KmScene1004
 
-KmScene1004::KmScene1004(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1004::KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	_dataResource.load(0x01900A04);	
@@ -3614,7 +3614,7 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene1109::KmScene1109(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1109::KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	// Empty
@@ -3682,7 +3682,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 
 // KmScene1201
 
-KmScene1201::KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1201::KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	setKlaymanIdleTable(klaymanTable4, ARRAYSIZE(klaymanTable4));
@@ -3753,7 +3753,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene1303::KmScene1303(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1303::KmScene1303(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	// Empty
@@ -3774,7 +3774,7 @@ uint32 KmScene1303::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene1304::KmScene1304(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1304::KmScene1304(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	// Empty	
@@ -3828,7 +3828,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene1305::KmScene1305(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1305::KmScene1305(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	// Empty	
@@ -3854,7 +3854,7 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene1306::KmScene1306(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1306::KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 }
@@ -3980,7 +3980,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-KmScene1308::KmScene1308(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1308::KmScene1308(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	// Empty	
@@ -4056,7 +4056,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 
 // KmScene1401
 
-KmScene1401::KmScene1401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1401::KmScene1401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	// Empty	
@@ -4131,7 +4131,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 
 // KmScene1402
 
-KmScene1402::KmScene1402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1402::KmScene1402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	SetFilterY(&Sprite::defFilterY);	
@@ -4176,7 +4176,7 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 
 // KmScene1403
 
-KmScene1403::KmScene1403(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1403::KmScene1403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	setKlaymanIdleTable(klaymanTable4, ARRAYSIZE(klaymanTable4));
@@ -4236,7 +4236,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 
 // KmScene1404
 
-KmScene1404::KmScene1404(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1404::KmScene1404(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	// Empty	
@@ -4314,7 +4314,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene1608::KmScene1608(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1608::KmScene1608(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 }
 
@@ -4405,7 +4405,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 
 // KmScene1705
 
-KmScene1705::KmScene1705(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1705::KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	// Empty	
@@ -4498,7 +4498,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-KmScene1901::KmScene1901(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene1901::KmScene1901(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	// Empty	
@@ -4537,7 +4537,7 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2001::KmScene2001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2001::KmScene2001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	// Empty	
@@ -4603,7 +4603,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-KmScene2101::KmScene2101(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2101::KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	// Empty
@@ -4689,7 +4689,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;	
 }
 
-KmScene2201::KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
+KmScene2201::KmScene2201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	_surface->setClipRects(clipRects, clipRectsCount);
@@ -4763,7 +4763,7 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;	
 }
 
-KmScene2203::KmScene2203(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2203::KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -4835,7 +4835,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2205::KmScene2205(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2205::KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -4883,7 +4883,7 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2206::KmScene2206(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2206::KmScene2206(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	_walkResumeFrameIncr = 1;
@@ -4989,7 +4989,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2207::KmScene2207(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2207::KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5053,7 +5053,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2242::KmScene2242(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2242::KmScene2242(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5123,7 +5123,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmHallOfRecords::KmHallOfRecords(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmHallOfRecords::KmHallOfRecords(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5177,7 +5177,7 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 	return 0;
 }
 
-KmScene2247::KmScene2247(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2247::KmScene2247(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5231,7 +5231,7 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
   
-KmScene2401::KmScene2401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2401::KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5314,7 +5314,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-KmScene2402::KmScene2402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2402::KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5386,7 +5386,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-KmScene2403::KmScene2403(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2403::KmScene2403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5472,7 +5472,7 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 	
-KmScene2406::KmScene2406(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
+KmScene2406::KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	_surface->setClipRects(clipRects, clipRectsCount);
@@ -5565,7 +5565,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 	
-KmScene2501::KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2501::KmScene2501(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5616,7 +5616,7 @@ uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-KmScene2732::KmScene2732(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2732::KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5633,7 +5633,7 @@ uint32 KmScene2732::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2801::KmScene2801(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2801::KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5705,7 +5705,7 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2803::KmScene2803(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
+KmScene2803::KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	_surface->setClipRects(clipRects, clipRectsCount);
@@ -5769,7 +5769,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2803Small::KmScene2803Small(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2803Small::KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
 	_dataResource.load(0x81120132);
@@ -5822,7 +5822,7 @@ uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &para
 	return 0;
 }
 
-KmScene2805::KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2805::KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -5879,7 +5879,7 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 	return messageResult;
 }
 
-KmScene2806::KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+KmScene2806::KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 	bool flag, NRect *clipRects, uint clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
@@ -5940,7 +5940,7 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2809::KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+KmScene2809::KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 	bool flag, NRect *clipRects, uint clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
@@ -6001,7 +6001,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y) 
+KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y) 
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }
@@ -6051,7 +6051,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 	return 0;
 }
 
-KmScene2810::KmScene2810(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, uint clipRectsCount)
+KmScene2810::KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, uint clipRectsCount)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	_surface->setClipRects(clipRects, clipRectsCount);
@@ -6146,7 +6146,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene2812::KmScene2812(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+KmScene2812::KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	// Empty
 }

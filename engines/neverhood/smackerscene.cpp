@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool flag1, bool canAbort)
-	: Scene(vm, parentModule, true), _doubleSurface(doubleSurface), _flag1(flag1), _canAbort(canAbort), _videoPlayedBefore(false),
+	: Scene(vm, parentModule), _doubleSurface(doubleSurface), _flag1(flag1), _canAbort(canAbort), _videoPlayedBefore(false),
 	_fileHashListIndex(-1), _fileHashList(NULL), _playNextVideoFlag(false) {
 
 	debug("SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, flag1, canAbort);

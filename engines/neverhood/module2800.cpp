@@ -426,7 +426,7 @@ void Module2800::updateMusic(bool halfVolume) {
 }
 
 Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	Sprite *_sprite1;
 	Sprite *_sprite2;
@@ -470,7 +470,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x0066201C);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
-		_vm->_collisionMan->addCollisionSprite(_asTape); 
+		addCollisionSprite(_asTape); 
 	} else if (getGlobalVar(V_RADIO_ROOM_RIGHT_DOOR)) {
 		setRectList(0x004B6CD0);
 		setBackground(0x11E00684);
@@ -481,7 +481,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klayman->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x00680116);
 		_asTape = insertSprite<SsScene1705Tape>(this, 8, 1100, 302, 437, 0x01142428);
-		_vm->_collisionMan->addCollisionSprite(_asTape); 
+		addCollisionSprite(_asTape); 
 	} else {
 		setRectList(0x004B6CF0);
 		setBackground(0x030006E6);
@@ -492,7 +492,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klayman->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x006E2038);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
-		_vm->_collisionMan->addCollisionSprite(_asTape); 
+		addCollisionSprite(_asTape); 
 	}
 	
 	addEntity(_palette);
@@ -533,7 +533,7 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _currTuneStatus(0), _countdown1(0), _countdown2(0) {
+	: Scene(vm, parentModule), _currTuneStatus(0), _countdown1(0), _countdown2(0) {
 
 	SetMessageHandler(&Scene2802::handleMessage);
 	SetUpdateHandler(&Scene2802::update);
@@ -841,7 +841,7 @@ void AsScene2803Rope::stHide() {
 }
 
 Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _paletteArea(0) {
+	: Scene(vm, parentModule), _paletteArea(0) {
 	
 	static const uint32 kScene2803FileHashes1[] = {
 		0,
@@ -1108,7 +1108,7 @@ void Scene2803::updatePaletteArea() {
 }
 
 Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _paletteArea(0) {
+	: Scene(vm, parentModule), _paletteArea(0) {
 
 	static const uint32 kScene2803SmallFileHashes1[] = {
 		0, 0x081000F1, 0x08100171, 0x08100271
@@ -1731,7 +1731,7 @@ uint32 AsScene2804BeamTarget::handleMessage(int messageNum, const MessageParam &
 }
 
 Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown1(0), _countdown2(0), _countdown3(0),
+	: Scene(vm, parentModule), _countdown1(0), _countdown2(0), _countdown3(0),
 	_beamStatus(0), _isSolved(false), _isWorking(false) {
 
 	initCrystalColors();
@@ -1759,7 +1759,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	
 	_ssRedButton = insertSprite<SsScene2804RedButton>(this);
-	_vm->_collisionMan->addCollisionSprite(_ssRedButton);
+	addCollisionSprite(_ssRedButton);
 
 	for (uint crystalIndex = 0; crystalIndex < 5; crystalIndex++) {
 		AsScene2804CrystalWaves *asCrystalWaves = NULL;
@@ -1767,7 +1767,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 			asCrystalWaves = insertSprite<AsScene2804CrystalWaves>(crystalIndex);
 		_asCrystals[crystalIndex] = insertSprite<AsScene2804Crystal>(asCrystalWaves, crystalIndex);
 		_ssCrystalButtons[crystalIndex] = insertSprite<SsScene2804CrystalButton>(this, _asCrystals[crystalIndex], crystalIndex);
-		_vm->_collisionMan->addCollisionSprite(_ssCrystalButtons[crystalIndex]);
+		addCollisionSprite(_ssCrystalButtons[crystalIndex]);
 	}
 
 }
@@ -1882,7 +1882,7 @@ void Scene2804::initCrystalColors() {
 }
 
 Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	SetMessageHandler(&Scene2805::handleMessage);
 
@@ -1968,7 +1968,7 @@ uint32 AsScene2806Spew::handleMessage(int messageNum, const MessageParam &param,
 }
 	
 Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -2089,7 +2089,7 @@ void Scene2806::findClosestPoint() {
 }
 
 Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	SetMessageHandler(&Scene2807::handleMessage);
 
@@ -2422,7 +2422,7 @@ void AsScene2808LightEffect::update() {
 }
 
 Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown(0), _testTubeSetNum(which), _leaveResult(0), _isFlowing(false) {
+	: Scene(vm, parentModule), _countdown(0), _testTubeSetNum(which), _leaveResult(0), _isFlowing(false) {
 
 	Sprite *asHandle;
 
@@ -2438,16 +2438,16 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(kScene2808FileHashes1[which]);
 
 	asHandle = insertSprite<AsScene2808Handle>(this, which);
-	_vm->_collisionMan->addCollisionSprite(asHandle);
+	addCollisionSprite(asHandle);
 
 	_asFlow = insertSprite<AsScene2808Flow>(this, which);
 	insertSprite<AsScene2808LightEffect>(which);
 
 	for (int testTubeIndex = 0; testTubeIndex < 3; testTubeIndex++) {
 		SsScene2808Dispenser *ssDispenser = insertSprite<SsScene2808Dispenser>(this, which, testTubeIndex);
-		_vm->_collisionMan->addCollisionSprite(ssDispenser);
+		addCollisionSprite(ssDispenser);
 		_asTestTubes[testTubeIndex] = insertSprite<AsScene2808TestTube>(which, testTubeIndex, ssDispenser);
-		_vm->_collisionMan->addCollisionSprite(_asTestTubes[testTubeIndex]);
+		addCollisionSprite(_asTestTubes[testTubeIndex]);
 	}
 	
 	insertScreenMouse(kScene2808FileHashes2[which]);
@@ -2556,7 +2556,7 @@ uint32 AsScene2809Spew::handleMessage(int messageNum, const MessageParam &param,
 }
 
 Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 		
@@ -2703,7 +2703,7 @@ uint32 AsScene2810Rope::handleMessage(int messageNum, const MessageParam &param,
 }
 
 Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -2727,10 +2727,10 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_KLAYMAN_SMALL)) {
 		_asTape = insertSprite<AsScene1201Tape>(this, 0, 900, 245, 429, 0x9148A011);
-		_vm->_collisionMan->addCollisionSprite(_asTape);
+		addCollisionSprite(_asTape);
 	} else {
 		_asTape = insertSprite<AsScene1201Tape>(this, 0, 1100, 245, 429, 0x9148A011);
-		_vm->_collisionMan->addCollisionSprite(_asTape);
+		addCollisionSprite(_asTape);
 	}
 
 	_sprite1 = insertStaticSprite(0x430001C4, 1200);
@@ -2752,7 +2752,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004AE438);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
-			_vm->_collisionMan->removeCollisionSprite(_asTape);
+			removeCollisionSprite(_asTape);
 		} else {
 			insertKlayman<KmScene2810>(300, 424, _clipRects, 2);
 			setMessageList(0x004AE438);
@@ -2796,7 +2796,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004AE6D8);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
-			_vm->_collisionMan->removeCollisionSprite(_asTape);
+			removeCollisionSprite(_asTape);
 		} else {
 			insertKlaymanLadder();
 			if (getGlobalVar(V_LADDER_DOWN_ACTION)) {
@@ -2819,7 +2819,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004AE428);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
-			_vm->_collisionMan->removeCollisionSprite(_asTape);
+			removeCollisionSprite(_asTape);
 		} else {
 			insertKlayman<KmScene2810>(450, 424, _clipRects, 2);
 			setMessageList(0x004AE418);
@@ -2838,7 +2838,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004AE410);
 		setRectList(0x004AE810);
 		_isRopingDown = false;
-		_vm->_collisionMan->removeCollisionSprite(_asTape);
+		removeCollisionSprite(_asTape);
 	}
 
 }
@@ -3019,7 +3019,7 @@ uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &pa
 }
 
 Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _paletteArea(0) {
+	: Scene(vm, parentModule), _paletteArea(0) {
 	
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 3);
@@ -3039,11 +3039,11 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_KEY3_LOCATION) == 3) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 474, 437);
-		_vm->_collisionMan->addCollisionSprite(_asKey);
+		addCollisionSprite(_asKey);
 	}
 
 	_ssTape = insertSprite<SsScene1705Tape>(this, 6, 1100, 513, 437, 0xA1361863);
-	_vm->_collisionMan->addCollisionSprite(_ssTape);
+	addCollisionSprite(_ssTape);
 	
 	_asWinch = insertSprite<AsScene2812Winch>();
 	_asTrapDoor = insertSprite<AsScene2812TrapDoor>();
@@ -3173,7 +3173,7 @@ void Scene2812::updatePaletteArea(bool instantly) {
 }
 
 Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown(0), _scrollIndex(0) {
+	: Scene(vm, parentModule), _countdown(0), _scrollIndex(0) {
 
 	SetMessageHandler(&Scene2822::handleMessage);
 	SetUpdateHandler(&Scene2822::update);

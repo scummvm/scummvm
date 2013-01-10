@@ -21,12 +21,11 @@
  */
 
 #include "neverhood/scene.h"
-#include "neverhood/collisionman.h"
 
 namespace Neverhood {
 
-Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
-	: Entity(vm, 0), _parentModule(parentModule), _dataResource(vm) {
+Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
+	: Entity(vm, 0), _parentModule(parentModule), _dataResource(vm), _hitRects(NULL) {
 	
 	_isKlaymanBusy = false;
 	_doConvertMessages = false;
@@ -40,10 +39,8 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_mouseCursor = NULL;
 	_palette = NULL;
 	_background = NULL;
-	if (clearHitRects) {
-		_vm->_collisionMan->clearHitRects();
-		_vm->_collisionMan->clearCollisionSprites();
-	}
+	clearHitRects();
+	clearCollisionSprites();
 	_vm->_screen->setFps(24);
 	_vm->_screen->setSmackerDecoder(NULL);
 	_canAcceptInput = true;
@@ -160,7 +157,7 @@ void Scene::setSpriteSurfacePriority(Sprite *sprite, int priority) {
 }
 
 void Scene::deleteSprite(Sprite **sprite) {
-	_vm->_collisionMan->removeCollisionSprite(*sprite);
+	removeCollisionSprite(*sprite);
 	removeSurface((*sprite)->getSurface());
 	removeEntity(*sprite);
 	delete *sprite;
@@ -187,7 +184,11 @@ void Scene::setPalette(uint32 fileHash) {
 }
 
 void Scene::setHitRects(uint32 id) {
-	_vm->_collisionMan->setHitRects(id);
+	setHitRects(_vm->_staticData->getHitRectList(id));
+}
+
+void Scene::setHitRects(HitRectList *hitRects) {
+	_hitRects = hitRects;
 }
 
 Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
@@ -317,8 +318,8 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 }
 
 bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
-	for (uint i = 0; i < _vm->_collisionMan->getCollisionSpritesCount(); i++) {
-		Sprite *sprite = _vm->_collisionMan->getCollisionSprite(i);
+	for (uint i = 0; i < _collisionSprites.size(); i++) {
+		Sprite *sprite = _collisionSprites[i];
 		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) && 
 			sendPointMessage(sprite, 0x1011, _mouseClickPos) != 0) {
 			return true;
@@ -471,7 +472,7 @@ void Scene::loadHitRectList() {
 	HitRectList *hitRectList = _dataResource.getHitRectList();
 	if (hitRectList) {
 		_hitRectList = *hitRectList;
-		_vm->_collisionMan->setHitRects(&_hitRectList);
+		setHitRects(&_hitRectList);
 	}
 }
 
@@ -508,6 +509,56 @@ uint16 Scene::convertMessageNum(uint32 messageNum) {
 		return 0x101A;	
 	}
 	return 0x1000;
+}
+
+void Scene::clearHitRects() {
+	_hitRects = NULL;
+}
+
+HitRect *Scene::findHitRectAtPos(int16 x, int16 y) {
+	static HitRect kDefaultHitRect = {NRect(), 0x5000};
+	if (_hitRects)
+		for (HitRectList::iterator it = _hitRects->begin(); it != _hitRects->end(); it++)
+			if ((*it).rect.contains(x, y))
+				return &(*it);
+	return &kDefaultHitRect; 
+}
+
+void Scene::addCollisionSprite(Sprite *sprite) {
+	int index = 0, insertIndex = -1;
+	for (Common::Array<Sprite*>::iterator iter = _collisionSprites.begin(); iter != _collisionSprites.end(); iter++) {
+		if ((*iter)->getPriority() > sprite->getPriority()) {
+			insertIndex = index;
+			break;
+		}
+		index++;
+	}
+	if (insertIndex >= 0)
+		_collisionSprites.insert_at(insertIndex, sprite);
+	else
+		_collisionSprites.push_back(sprite);		
+}
+
+void Scene::removeCollisionSprite(Sprite *sprite) {
+	for (uint index = 0; index < _collisionSprites.size(); index++) {
+		if (_collisionSprites[index] == sprite) {
+			_collisionSprites.remove_at(index);
+			break;
+		}
+	}
+}
+
+void Scene::clearCollisionSprites() {
+	_collisionSprites.clear();
+}
+
+void Scene::checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam) {
+	for (Common::Array<Sprite*>::iterator iter = _collisionSprites.begin(); iter != _collisionSprites.end(); iter++) {
+		Sprite *collSprite = *iter;
+		if ((sprite->getFlags() & flags) && collSprite->checkCollision(sprite->getCollisionBounds())) {
+			sprite->sendMessage(collSprite, messageNum, messageParam);
+		}
+	}	
 }
 
 } // End of namespace Neverhood

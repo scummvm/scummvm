@@ -194,7 +194,7 @@ uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &pa
 }
 
 Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	Sprite *tempSprite;
 	
@@ -209,9 +209,9 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x78492010, 1100);
 	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x72427010, 0x32423010, 200, 0);
 	_asTape1 = insertSprite<AsScene1201Tape>(this, 18, 1100, 412, 443, 0x9148A011);
-	_vm->_collisionMan->addCollisionSprite(_asTape1);
+	addCollisionSprite(_asTape1);
 	_asTape2 = insertSprite<AsScene1201Tape>(this, 11, 1100, 441, 443, 0x9148A011);
-	_vm->_collisionMan->addCollisionSprite(_asTape2);
+	addCollisionSprite(_asTape2);
 	
 	if (which < 0) {
 		insertKlayman<KmScene2101>(380, 438);

@@ -712,9 +712,9 @@ AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene3009Symbol::handleMessage);
 	_ssArrowPrev = _parentScene->insertSprite<SsScene3009SymbolArrow>(this, _symbolPosition * 2 + 0);
-	_vm->_collisionMan->addCollisionSprite(_ssArrowPrev);
+	_parentScene->addCollisionSprite(_ssArrowPrev);
 	_ssArrowNext = _parentScene->insertSprite<SsScene3009SymbolArrow>(this, _symbolPosition * 2 + 1);
-	_vm->_collisionMan->addCollisionSprite(_ssArrowNext);
+	_parentScene->addCollisionSprite(_ssArrowNext);
 }
 
 uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -752,7 +752,7 @@ void AsScene3009Symbol::hide() {
 }
 
 Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _keepVideo(false), _moveCannonLeftFirst(false), 
+	: Scene(vm, parentModule), _keepVideo(false), _moveCannonLeftFirst(false), 
 	_isTurning(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
 
 	_cannonTargetStatus = getGlobalVar(V_CANNON_TARGET_STATUS);
@@ -769,13 +769,13 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertPuzzleMouse(0x04208D08, 20, 620);
 
 	_ssFireCannonButton = insertSprite<SsScene3009FireCannonButton>(this);
-	_vm->_collisionMan->addCollisionSprite(_ssFireCannonButton);
+	addCollisionSprite(_ssFireCannonButton);
 
 	_asVerticalIndicator = insertSprite<AsScene3009VerticalIndicator>(this, _cannonTargetStatus);
-	_vm->_collisionMan->addCollisionSprite(_asVerticalIndicator);
+	addCollisionSprite(_asVerticalIndicator);
 
 	_asHorizontalIndicator = insertSprite<AsScene3009HorizontalIndicator>(this, _cannonTargetStatus);
-	_vm->_collisionMan->addCollisionSprite(_asHorizontalIndicator);
+	addCollisionSprite(_asHorizontalIndicator);
 
 	if (_cannonTargetStatus != kCTSNull && _cannonTargetStatus != kCTSRightRobotNoTarget && _cannonTargetStatus != kCTSRightRobotIsTarget && _cannonTargetStatus != kCTSRightNoRobot) {
 		_keepVideo = true;
@@ -1220,7 +1220,7 @@ void AsScene3010DeadBolt::stDisabledMessage() {
 }
 
 Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
+	: Scene(vm, parentModule), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
 	
 	int initCountdown = 0;
 
@@ -1235,7 +1235,7 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	for (int i = 0; i < 3; i++) {
 		_asDeadBolts[i] = insertSprite<AsScene3010DeadBolt>(this, i, which == 1);//CHECKME
 		_ssDeadBoltButtons[i] = insertSprite<SsScene3010DeadBoltButton>(this, i, initCountdown, which == 1);//CHECKME
-		_vm->_collisionMan->addCollisionSprite(_ssDeadBoltButtons[i]);
+		addCollisionSprite(_ssDeadBoltButtons[i]);
 		if (getSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[i]))
 			initCountdown++;
 		_boltUnlocking[i] = false;
@@ -1448,7 +1448,7 @@ void AsScene3011Symbol::change(int symbolIndex, bool isNoisy) {
 }
 
 Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _updateStatus(0), _buttonClicked(false), _currentSymbolIndex(0) {
+	: Scene(vm, parentModule), _updateStatus(0), _buttonClicked(false), _currentSymbolIndex(0) {
 
 	_vm->gameModule()->initCodeSymbolsPuzzle();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
@@ -1466,7 +1466,7 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asSymbols[symbolIndex] = insertSprite<AsScene3011Symbol>(symbolIndex, true);
 
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
-	_vm->_collisionMan->addCollisionSprite(_ssButton);
+	addCollisionSprite(_ssButton);
 	
 }
 

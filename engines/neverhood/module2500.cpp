@@ -220,7 +220,7 @@ void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, con
 }
 
 Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	_sceneInfos[0] = _vm->_staticData->getSceneInfo2700(0x004B2628);
 	_sceneInfos[1] = _vm->_staticData->getSceneInfo2700(0x004B264C);
@@ -535,14 +535,14 @@ uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &para
 }
 
 Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	Sprite *ssButton;
 	
 	setBackground(0x90791B80);
 	setPalette(0x90791B80);
 	ssButton = insertSprite<SsScene2504Button>();
-	_vm->_collisionMan->addCollisionSprite(ssButton);
+	addCollisionSprite(ssButton);
 	insertPuzzleMouse(0x91B8490F, 20, 620);
 	SetMessageHandler(&Scene2504::handleMessage);
 	SetUpdateHandler(&Scene::update);

@@ -34,6 +34,7 @@ namespace Neverhood {
 // TODO Also the methods should probably rearranged and be grouped together more consistently
 
 class Klayman;
+class Scene;
 
 const uint32 kKlaymanSpeedUpHash = 0x004A2148;
 
@@ -48,7 +49,7 @@ struct KlaymanIdleTableItem {
 
 class Klayman : public AnimatedSprite {
 public:
-	Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority = 1000, int objectPriority = 1000, NRectArray *clipRects = NULL);
+	Klayman(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int surfacePriority = 1000, int objectPriority = 1000, NRectArray *clipRects = NULL);
 
 	void update();
 
@@ -385,7 +386,7 @@ public:
 	void stWaitLeverDown();
 
 protected:
-	Entity *_parentScene;
+	Scene *_parentScene;
 	Sprite *_attachedSprite;
 	int _ladderStatus;
 	bool _isWalking;
@@ -456,14 +457,14 @@ protected:
 
 class KmScene1001 : public Klayman {
 public:
-	KmScene1001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:	
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1002 : public Klayman {
 public:
-	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	void xUpdate();	
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -471,140 +472,140 @@ protected:
 
 class KmScene1004 : public Klayman {
 public:
-	KmScene1004(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1109 : public Klayman {
 public:
-	KmScene1109(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1201 : public Klayman {
 public:
-	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1303 : public Klayman {
 public:
-	KmScene1303(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1303(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1304 : public Klayman {
 public:
-	KmScene1304(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1304(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1305 : public Klayman {
 public:
-	KmScene1305(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1305(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1306 : public Klayman {
 public:
-	KmScene1306(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1308 : public Klayman {
 public:
-	KmScene1308(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1308(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1401 : public Klayman {
 public:
-	KmScene1401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1402 : public Klayman {
 public:
-	KmScene1402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1403 : public Klayman {
 public:
-	KmScene1403(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1404 : public Klayman {
 public:
-	KmScene1404(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1404(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1608 : public Klayman {
 public:
-	KmScene1608(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1608(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1705 : public Klayman {
 public:
-	KmScene1705(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1901 : public Klayman {
 public:
-	KmScene1901(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene1901(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2001 : public Klayman {
 public:
-	KmScene2001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2101 : public Klayman {
 public:
-	KmScene2101(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2201 : public Klayman {
 public:
-	KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
+	KmScene2201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2203 : public Klayman {
 public:
-	KmScene2203(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2205 : public Klayman {
 public:
-	KmScene2205(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -612,7 +613,7 @@ protected:
 
 class KmScene2206 : public Klayman {
 public:
-	KmScene2206(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2206(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 	~KmScene2206();
 protected:
 	void xUpdate();
@@ -621,14 +622,14 @@ protected:
 
 class KmScene2207 : public Klayman {
 public:
-	KmScene2207(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2242 : public Klayman {
 public:
-	KmScene2242(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2242(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -636,7 +637,7 @@ protected:
 
 class KmHallOfRecords : public Klayman {
 public:
-	KmHallOfRecords(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmHallOfRecords(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -644,7 +645,7 @@ protected:
 
 class KmScene2247 : public Klayman {
 public:
-	KmScene2247(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2247(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -652,77 +653,77 @@ protected:
 
 class KmScene2401 : public Klayman {
 public:
-	KmScene2401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2402 : public Klayman {
 public:
-	KmScene2402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2403 : public Klayman {
 public:
-	KmScene2403(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2406 : public Klayman {
 public:
-	KmScene2406(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
+	KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2501 : public Klayman {
 public:
-	KmScene2501(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2501(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2732 : public Klayman {
 public:
-	KmScene2732(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2801 : public Klayman {
 public:
-	KmScene2801(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2803 : public Klayman {
 public:
-	KmScene2803(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
+	KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2803Small : public Klayman {
 public:
-	KmScene2803Small(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2805 : public Klayman {
 public:
-	KmScene2805(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2806 : public Klayman {
 public:
-	KmScene2806(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+	KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 		bool flag, NRect *clipRects, uint clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -730,7 +731,7 @@ protected:
 
 class KmScene2809 : public Klayman {
 public:
-	KmScene2809(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+	KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 		bool flag, NRect *clipRects, uint clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -738,14 +739,14 @@ protected:
 
 class KmScene2810Small : public Klayman {
 public:
-	KmScene2810Small(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene2810 : public Klayman {
 public:
-	KmScene2810(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y,
+	KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 		NRect *clipRects, uint clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -753,7 +754,7 @@ protected:
 
 class KmScene2812 : public Klayman {
 public:
-	KmScene2812(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

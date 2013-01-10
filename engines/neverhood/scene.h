@@ -39,7 +39,7 @@ namespace Neverhood {
 
 class Scene : public Entity {
 public:
-	Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects);
+	Scene(NeverhoodEngine *vm, Module *parentModule);
 	virtual ~Scene();
 	virtual void draw();
 	void addEntity(Entity *entity);
@@ -67,6 +67,10 @@ public:
 	SmackerPlayer *addSmackerPlayer(SmackerPlayer *smackerPlayer);
 	void update();
 	void leaveScene(uint32 result);
+	HitRect *findHitRectAtPos(int16 x, int16 y);
+	void addCollisionSprite(Sprite *sprite);
+	void removeCollisionSprite(Sprite *sprite);
+	void checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam);
 	// Some crazy templated functions to make the logic code smaller/simpler (imo!)
 	// insertKlayman
 	template<class T> 
@@ -187,6 +191,9 @@ protected:
 
 	HitRectList _hitRectList;
 
+	HitRectList *_hitRects;
+	Common::Array<Sprite*> _collisionSprites;
+
 	void (Entity::*_savedUpdateHandlerCb)();
 	uint32 (Entity::*_savedMessageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);
 	int _messageValue;
@@ -205,6 +212,11 @@ protected:
 	void cancelMessageList();
 	void loadDataResource(uint32 fileHash);
 	uint16 convertMessageNum(uint32 messageNum);
+
+    void setHitRects(HitRectList *hitRects);
+	void clearHitRects();
+	void clearCollisionSprites();
+
 };
 
 } // End of namespace Neverhood

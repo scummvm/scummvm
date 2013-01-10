@@ -653,7 +653,7 @@ void AsScene1201LeftDoor::stCloseDoor() {
 }
 
 Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _creatureExploded(false), _asMatch(NULL), _asTntMan(NULL),
+	: Scene(vm, parentModule), _creatureExploded(false), _asMatch(NULL), _asTntMan(NULL),
 	_asCreature(NULL), _asTntManRope(NULL), _asLeftDoor(NULL), _asRightDoor(NULL), _asTape(NULL) {
 
 	int16 topY1, topY2, topY3, topY4;
@@ -674,7 +674,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertScreenMouse(0x9A2C0409);
 	
 	_asTape = insertSprite<AsScene1201Tape>(this, 3, 1100, 243, 340, 0x9148A011);
-	_vm->_collisionMan->addCollisionSprite(_asTape);
+	addCollisionSprite(_asTape);
 	
 	tempSprite = insertStaticSprite(0x03C82530, 100);
 	topY1 = tempSprite->getY() + tempSprite->getDrawRect().height; 
@@ -752,7 +752,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			_asTntMan = insertSprite<AsScene1201TntMan>(this, _asTntManRope, which == 1);
 			_asTntMan->setClipRect(x1, 0, x2, 480);
 			_asTntMan->setRepl(64, 0);
-			_vm->_collisionMan->addCollisionSprite(_asTntMan);
+			addCollisionSprite(_asTntMan);
 			tempSprite = insertSprite<AsScene1201TntManFlame>(_asTntMan);
 			tempSprite->setClipRect(x1, 0, x2, 480);
 		}
@@ -826,7 +826,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_MATCH_STATUS) < 3) {
 		_asMatch = insertSprite<AsScene1201Match>(this);
-		_vm->_collisionMan->addCollisionSprite(_asMatch);
+		addCollisionSprite(_asMatch);
 	}
 
 	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_CREATURE_EXPLODED) == 0) {
@@ -998,7 +998,7 @@ void AsScene1202TntItem::stChangePositionDone() {
 }
 
 Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule, true), _paletteResource(vm),  
+	: Scene(vm, parentModule), _paletteResource(vm),  
 	_soundToggle(true), _isPuzzleSolved(false), _counter(0), _clickedIndex(-1) {
 
 	SetMessageHandler(&Scene1202::handleMessage);
@@ -1015,7 +1015,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule)
 
 	for (int tntIndex = 0; tntIndex < 18; tntIndex++) {
 		_asTntItems[tntIndex] = insertSprite<AsScene1202TntItem>(this, tntIndex);
-		_vm->_collisionMan->addCollisionSprite(_asTntItems[tntIndex]);
+		addCollisionSprite(_asTntItems[tntIndex]);
 	}
 
 	insertStaticSprite(0x8E8419C1, 1100);

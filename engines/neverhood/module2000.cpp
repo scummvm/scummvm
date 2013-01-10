@@ -95,7 +95,7 @@ void Module2000::updateScene() {
 // Scene2001
 
 Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 

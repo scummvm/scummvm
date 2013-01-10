@@ -368,7 +368,7 @@ void AsScene2401Door::stDoorOpenFinished() {
 }
 
 Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown1(0), _countdown2(0), _unkFlag(false),
+	: Scene(vm, parentModule), _countdown1(0), _countdown2(0), _unkFlag(false),
 	_soundToggle(false), _asWaterSpitIndex(0) {
 
 	_vm->gameModule()->initWaterPipesPuzzle();
@@ -684,7 +684,7 @@ uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *
 }
 
 Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _countdown(0), _soundToggle(false) {
+	: Scene(vm, parentModule), _countdown(0), _soundToggle(false) {
 
 	Sprite *tempSprite;
 
@@ -696,7 +696,7 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x81660220);
 	insertScreenMouse(0x6022481E);
 	_asTape = insertSprite<AsScene1201Tape>(this, 9, 1100, 286, 409, 0x9148A011);
-	_vm->_collisionMan->addCollisionSprite(_asTape);
+	addCollisionSprite(_asTape);
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x15288120, 100, 0);
 	
 	if (which < 0) {
@@ -786,7 +786,7 @@ void Scene2402::playPipeSound(uint32 fileHash) {
 }
 
 Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	Sprite *tempSprite1, *tempSprite2, *tempSprite3;
 
@@ -796,7 +796,7 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addPalette(0x414364B0, 0, 65, 0);
 	insertScreenMouse(0x506080C8);
 	_asTape = insertSprite<AsScene1201Tape>(this, 2, 1100, 480, 454, 0x9148A011);
-	_vm->_collisionMan->addCollisionSprite(_asTape);
+	addCollisionSprite(_asTape);
 	_asLightCord = insertSprite<AsScene2803LightCord>(this, 0xA1095A10, 0x836D3813, 368, 200);
 	_asLightCord->setClipRect(0, 25, 640, 480);
 	
@@ -879,7 +879,7 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 
 	Sprite *tempSprite1, *tempSprite2;
 
@@ -893,11 +893,11 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_KEY3_LOCATION) == 2) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 560, 409);
-		_vm->_collisionMan->addCollisionSprite(_asKey);
+		addCollisionSprite(_asKey);
 	}
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 5, 1100, 456, 409, 0x9148A011);
-	_vm->_collisionMan->addCollisionSprite(_asTape);
+	addCollisionSprite(_asTape);
 	tempSprite2 = insertStaticSprite(0x19625293, 1100);
 	_clipRects[0].x1 = 0;
 	_clipRects[0].y1 = 0;

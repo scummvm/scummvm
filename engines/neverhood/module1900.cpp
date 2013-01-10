@@ -87,7 +87,7 @@ void Module1900::updateScene() {
 // Scene1901
 
 Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule) {
 	
 	Sprite *tempSprite;
 
@@ -358,8 +358,8 @@ void AsScene1907Symbol::stFallOffHitGround() {
 	playSound(1);
 	sendMessage(_parentScene, 0x1022, 1000 + _newPositionIndex);
 	Entity::_priority = 1000 - _newPositionIndex;
-	_vm->_collisionMan->removeCollisionSprite(this);
-	_vm->_collisionMan->addCollisionSprite(this);
+	_parentScene->removeCollisionSprite(this);
+	_parentScene->addCollisionSprite(this);
 	SetSpriteUpdate(&AsScene1907Symbol::suFallOffHitGround);
 	NextState(&AsScene1907Symbol::cbFallOffHitGroundEvent);
 	_newStickFrameIndex = 0;
@@ -516,7 +516,7 @@ void AsScene1907WaterHint::hide() {
 }
 
 Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)	
-	: Scene(vm, parentModule, true), _currMovingSymbolIndex(0), _pluggedInCount(0), 
+	: Scene(vm, parentModule), _currMovingSymbolIndex(0), _pluggedInCount(0), 
 	_moveDownCountdown(0), _moveUpCountdown(0), _countdown3(0), _hasPlugInFailed(false) {
 	
 	setBackground(0x20628E05);
@@ -527,11 +527,11 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)
 
 	for (int i = 0; i < 9; i++) {
 		_asSymbols[i] = insertSprite<AsScene1907Symbol>(this, i, getRandomPositionIndex());
-		_vm->_collisionMan->addCollisionSprite(_asSymbols[i]);
+		addCollisionSprite(_asSymbols[i]);
 	}
 	
 	_ssUpDownButton = insertSprite<SsScene1907UpDownButton>(this, _asSymbols[8]);
-	_vm->_collisionMan->addCollisionSprite(_ssUpDownButton);
+	addCollisionSprite(_ssUpDownButton);
 
 	_asWaterHint = insertSprite<AsScene1907WaterHint>();
 	

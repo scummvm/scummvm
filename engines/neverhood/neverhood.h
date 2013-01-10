@@ -40,7 +40,6 @@ enum NeverhoodGameFeatures {
 
 struct NeverhoodGameDescription;
 
-class CollisionMan;
 class GameModule;
 class GameVars;
 class ResourceMan;
@@ -85,7 +84,6 @@ public:
 	ResourceMan *_res;
 	GameModule *_gameModule;
 	StaticData *_staticData;
-	CollisionMan *_collisionMan;
 	
 	SoundMan *_soundMan;
 	AudioResourceMan *_audioResourceMan;

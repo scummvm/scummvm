@@ -429,7 +429,7 @@ uint32 SsScene1105OpenButton::handleMessage(int messageNum, const MessageParam &
 }
 
 Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule, true), _countdown(0), _isPanelOpen(false), _isActionButtonClicked(false), _doMoveTeddy(false),
+	: Scene(vm, parentModule), _countdown(0), _isPanelOpen(false), _isActionButtonClicked(false), _doMoveTeddy(false),
 	_isClosePanelDone(false), _leaveResult(0), _backgroundIndex(0) {
 	
 	Sprite *ssOpenButton;
@@ -444,7 +444,7 @@ Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule)
 	
 	_asTeddyBear = insertSprite<AsScene1105TeddyBear>(this);
 	ssOpenButton = insertSprite<SsScene1105OpenButton>(this);
-	_vm->_collisionMan->addCollisionSprite(ssOpenButton);
+	addCollisionSprite(ssOpenButton);
 	insertPuzzleMouse(0x10006208, 20, 620);
 	
 	loadSound(0, 0x48442057);
@@ -555,19 +555,19 @@ void Scene1105::createObjects() {
 	_ssSymbolDice[2] = insertSprite<SsScene1105SymbolDie>(2, 485, 304);
 
 	_ssSymbol1UpButton = insertSprite<SsScene1105Button>(this, 0x08002860, NRect(146, 362, 192, 403));
-	_vm->_collisionMan->addCollisionSprite(_ssSymbol1UpButton);
+	addCollisionSprite(_ssSymbol1UpButton);
 	_ssSymbol1DownButton = insertSprite<SsScene1105Button>(this, 0x42012460, NRect(147, 404, 191, 442));
-	_vm->_collisionMan->addCollisionSprite(_ssSymbol1DownButton);
+	addCollisionSprite(_ssSymbol1DownButton);
 	_ssSymbol2UpButton = insertSprite<SsScene1105Button>(this, 0x100030A0, NRect(308, 361, 355, 402));
-	_vm->_collisionMan->addCollisionSprite(_ssSymbol2UpButton);
+	addCollisionSprite(_ssSymbol2UpButton);
 	_ssSymbol2DownButton = insertSprite<SsScene1105Button>(this, 0x840228A0, NRect(306, 406, 352, 445));
-	_vm->_collisionMan->addCollisionSprite(_ssSymbol2DownButton);
+	addCollisionSprite(_ssSymbol2DownButton);
 	_ssSymbol3UpButton = insertSprite<SsScene1105Button>(this, 0x20000120, NRect(476, 358, 509, 394));
-	_vm->_collisionMan->addCollisionSprite(_ssSymbol3UpButton);
+	addCollisionSprite(_ssSymbol3UpButton);
 	_ssSymbol3DownButton = insertSprite<SsScene1105Button>(this, 0x08043121, NRect(463, 401, 508, 438));
-	_vm->_collisionMan->addCollisionSprite(_ssSymbol3DownButton);
+	addCollisionSprite(_ssSymbol3DownButton);
 	_ssActionButton = insertSprite<SsScene1105Button>(this, 0x8248AD35, NRect(280, 170, 354, 245));
-	_vm->_collisionMan->addCollisionSprite(_ssActionButton);
+	addCollisionSprite(_ssActionButton);
 	
 	_isPanelOpen = true;
 	
@@ -646,7 +646,7 @@ void Scene1105::update() {
 }
 
 Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, which) {
+	: Scene(vm, parentModule) {
 	
 	SetMessageHandler(&Scene1109::handleMessage);
 	

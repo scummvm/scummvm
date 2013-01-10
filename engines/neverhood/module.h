@@ -27,7 +27,6 @@
 
 #include "neverhood/neverhood.h"
 #include "neverhood/background.h"
-#include "neverhood/collisionman.h"
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
 #include "neverhood/mouse.h"
