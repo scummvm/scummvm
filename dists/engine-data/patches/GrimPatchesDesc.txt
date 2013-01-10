@@ -77,7 +77,7 @@ List of fixed bugs in GF scripts:
 	-Fix a Lua error when speaking to Lupe with all the dialog options expired (#198) - dlg_lupe.lua.patchr
 	When there are no more dialog options the dialog system calls a 'abort' line (Dialog.display_lines,
 	in _dialog.lua) which should end the dialog, by setting the value of the 'node' variable to "exit_dialog".
-	The other way of ending a dialog is to choose an exit line which is not an abort line but which which
+	The other way of ending a dialog is to choose an exit line which is not an abort line but which
 	also sets that variable.
 	The line 'lu1.aborts.lun1' was making the dialog system call the exit line, instead of just calling
 	the say_line() needed, and that in turn resulted in the function Dialog.display_lines be called two
