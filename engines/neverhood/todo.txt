@@ -6,10 +6,6 @@ else the game disasm and reimplemtation code become even more different
 
 TODOs which can be done any time:
 -----------------------------------
-- Give placeholder stuff (e.g. sub?????, _flag??? etc.) better fitting names
-- Use CursorMan for the mouse cursor (instead of using it like a normal sprite)
-	- This whould make it neccessary to call _system->updateScreen more often else 
-		the mouse movement would be choppy
 - Cleanup
 - Clean up staticdata structs to look more like the ones in create_neverhood
 	(e.g. by using template classes etc.)
@@ -17,15 +13,10 @@ TODOs which can be done any time:
 
 TODOs which should be done only after the game logic is finished:
 -------------------------------------------------------------------
-- Implement clever sprite redrawing code (dirty rectangles, microtiles etc.), only redraw what's neccessary
-- Rework the resource system
-	- The current system can be simplified a lot
-	- Also resource purging needs to be implemented
 - Implement game menus
 - Maybe rework organization of files (e.g. put ALL Sprites into one separate file, same with Modules and Scenes)
 	- This would solve the problem of how to organize stuff which is used several times, and less headers would have to be included
 	- The move special scenes (SmackerScene) into the scenes file
-- Maybe merge CollisionMan with Scene (since it's so far never used independently)
 
 DONE:
 -------
@@ -34,7 +25,15 @@ DONE:
 	- Play routine should fill the handle so it can be stopped/queried later
 	- Basically like ScummVM own sound handles
 - RE and implement yet unknown music/sound stuff
-
+- Implement clever sprite redrawing code (dirty rectangles, microtiles etc.), only redraw what's neccessary
+- Rework the resource system
+	- The current system can be simplified a lot
+	- Also resource purging needs to be implemented
+- Maybe merge CollisionMan with Scene (since it's so far never used independently)
+- Give placeholder stuff (e.g. sub?????, _flag??? etc.) better fitting names
+- Use CursorMan for the mouse cursor (instead of using it like a normal sprite)
+	- This whould make it neccessary to call _system->updateScreen more often else 
+		the mouse movement would be choppy
 
 TODOs which are experimental:
 -------------------------------
