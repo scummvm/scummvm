@@ -2076,7 +2076,7 @@ void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
 		v4 += 5;
 		++v5;
 	} while (v1 != -1);
-	_vm->_linesManager.INIPARCOURS();
+	_vm->_linesManager.initRoute();
 	_vm->_globals.freeMemory(ptr);
 }
 
@@ -2356,8 +2356,6 @@ void ObjectsManager::handleLeftButton() {
 	int v12;
 	int16 *v13;
 	int16 *v16;
-	int v17;
-	int v18;
 
 	_vm->_fontManager.hideText(9);
 	destX = _vm->_eventsManager.getMouseX();
@@ -2490,11 +2488,8 @@ LABEL_63:
 				_vm->_globals.chemin = v9;
 		}
 LABEL_65:
-		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG) {
-			v17 = getSpriteY(0);
-			v18 = getSpriteX(0);
-			_vm->_globals.chemin = PARC_VOITURE(v18, v17, destX, destY);
-		}
+		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG)
+			_vm->_globals.chemin = PARC_VOITURE(getSpriteX(0), getSpriteY(0), destX, destY);
 	}
 	if (NUMZONE != -1 && NUMZONE != 0) {
 		if (_vm->_eventsManager._mouseCursorId == 23)
@@ -2881,20 +2876,7 @@ void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 	}
 }
 
-int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
-	int v4;
-	int v5;
-	int v6;
-	int v7;
-	int v10;
-	int v11;
-	int v12;
-	int v14;
-	int v15;
-	int v16;
-	int v18;
-	int v19;
-	int v20;
+int16 *ObjectsManager::PARC_VOITURE(int x1, int y1, int x2, int y2) {
 	int16 *result;
 	int v23;
 	int v27;
@@ -2914,9 +2896,6 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v52;
 	int16 *v54;
 	int16 *v58;
-	int v63;
-	int v64;
-	int v65;
 	int v66;
 	int v67;
 	int v68 = 0;
@@ -2924,150 +2903,112 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int j;
 	int v72 = 0;
 	int v73 = 0;
-	int v74;
-	int v75;
-	int v77[10];
-	int v82[10];
-	int v87[10];
+	int arrDelta[10];
+	int arrDataIdx[10];
+	int arrLineIdx[10];
 
-	v4 = a3;
-	v5 = a4;
+	int clipX2 = x2;
+	int clipY2 = y2;
 	v67 = 0;
-	if (a3 <= 14)
-		v4 = 15;
-	if (a4 <= 14)
-		v5 = 15;
-	if (v4 > _vm->_graphicsManager.max_x - 10)
-		v4 = _vm->_graphicsManager.max_x - 10;
-	if (v5 > 445)
-		v5 = 440;
-	v75 = v4;
-	v74 = v5;
-	v7 = v74;
+	if (x2 <= 14)
+		clipX2 = 15;
+	if (y2 <= 14)
+		clipY2 = 15;
+	if (clipX2 > _vm->_graphicsManager.max_x - 10)
+		clipX2 = _vm->_graphicsManager.max_x - 10;
+	if (clipY2 > 445)
+		clipY2 = 440;
 
-	v6 = 0;
-	if (_vm->_graphicsManager.max_y > v74) {
-		do {
-			if (_vm->_linesManager.checkCollisionLine(v75, v7, &v82[5], &v87[5], 0, _lastLine) && v87[5] <= _lastLine)
-				break;
-			v82[5] = 0;
-			v87[5] = -1;
-			++v6;
-			++v7;
-		} while (_vm->_graphicsManager.max_y > v7);
+	int delta = 0;
+	for (delta = 0; clipY2 + delta < _vm->_graphicsManager.max_y; delta++) {
+		if (_vm->_linesManager.checkCollisionLine(clipX2, clipY2 + delta, &arrDataIdx[5], &arrLineIdx[5], 0, _lastLine) && arrLineIdx[5] <= _lastLine)
+			break;
+		arrDataIdx[5] = 0;
+		arrLineIdx[5] = -1;
 	}
-	v77[5] = v6;
-	v10 = 0;
-	v11 = v74;
-	if (_vm->_graphicsManager.min_y < v74) {
-		v12 = 1;
-		do {
-			v63 = v12;
-			v12 = v63;
-			if (_vm->_linesManager.checkCollisionLine(v75, v11, &v82[1], &v87[1], 0, _lastLine) && v87[v63] <= _lastLine)
-				break;
-			v82[v63] = 0;
-			v87[v63] = -1;
-			if (v77[5] < v10) {
-				if (v87[5] != -1)
-					break;
-			}
-			++v10;
-			--v11;
-		} while (_vm->_graphicsManager.min_y < v11);
+	arrDelta[5] = delta;
+
+	for (delta = 0; clipY2 - delta > _vm->_graphicsManager.min_y; delta++) {
+		if (_vm->_linesManager.checkCollisionLine(clipX2, clipY2 - delta , &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine) && arrLineIdx[1] <= _lastLine)
+			break;
+		arrDataIdx[1] = 0;
+		arrLineIdx[1] = -1;
+		if (arrDelta[5] < delta && arrLineIdx[5] != -1)
+			break;
 	}
-	v77[1] = v10;
-	v14 = 0;
-	v15 = v75;
-	if (_vm->_graphicsManager.max_x > v75) {
-		v16 = 3;
-		do {
-			v64 = v16;
-			v16 = v64;
-			if (_vm->_linesManager.checkCollisionLine(v15, v74, &v82[3], &v87[3], 0, _lastLine) && v87[v64] <= _lastLine)
-				break;
-			v82[v64] = 0;
-			v87[v64] = -1;
-			++v14;
-			if (v77[1] < v14) {
-				if (v87[1] != -1)
-					break;
-			}
-			if (v77[5] < v14 && v87[5] != -1)
-				break;
-			++v15;
-		} while (_vm->_graphicsManager.max_x > v15);
+	arrDelta[1] = delta;
+
+	for (delta = 0; clipX2 + delta < _vm->_graphicsManager.max_x; delta++) {
+		if (_vm->_linesManager.checkCollisionLine(clipX2 + delta, clipY2, &arrDataIdx[3], &arrLineIdx[3], 0, _lastLine) && arrLineIdx[3] <= _lastLine)
+			break;
+		arrDataIdx[3] = 0;
+		arrLineIdx[3] = -1;
+		if (arrDelta[1] <= delta && arrLineIdx[1] != -1)
+			break;
+		if (arrDelta[5] <= delta && arrLineIdx[5] != -1)
+			break;
 	}
-	v77[3] = v14;
-	v18 = 0;
-	v19 = v75;
-	if (_vm->_graphicsManager.min_x < v75) {
-		v20 = 7;
-		do {
-			v65 = v20;
-			v20 = v65;
-			if (_vm->_linesManager.checkCollisionLine(v19, v74, &v82[7], &v87[7], 0, _lastLine) && v87[v65] <= _lastLine)
-				break;
-			v82[v65] = 0;
-			v87[v65] = -1;
-			++v18;
-			if (v77[1] < v18) {
-				if (v87[1] != -1)
-					break;
-			}
-			if (v77[5] < v18 && v87[5] != -1)
-				break;
-			if (v77[3] < v18 && v87[3] != -1)
-				break;
-			--v19;
-		} while (_vm->_graphicsManager.min_x < v19);
+	arrDelta[3] = delta;
+
+	for (delta = 0; clipX2 - delta > _vm->_graphicsManager.min_x; delta++) {
+		if (_vm->_linesManager.checkCollisionLine(clipX2 - delta, clipY2, &arrDataIdx[7], &arrLineIdx[7], 0, _lastLine) && arrLineIdx[7] <= _lastLine)
+			break;
+		arrDataIdx[7] = 0;
+		arrLineIdx[7] = -1;
+		if (arrDelta[1] <= delta && arrLineIdx[1] != -1)
+			break;
+		if (arrDelta[5] <= delta && arrLineIdx[5] != -1)
+			break;
+		if (arrDelta[3] <= delta && arrLineIdx[3] != -1)
+			break;
 	}
-	v77[7] = v18;
-	if (v87[1] == -1)
-		v77[1] = 1300;
-	if (v87[3] == -1)
-		v77[3] = 1300;
-	if (v87[5] == -1)
-		v77[5] = 1300;
-	if (v87[7] == -1)
-		v77[7] = 1300;
-	if (v87[1] != -1 || v87[3] != -1 || v87[5] != -1 || v87[7] != -1) {
+	arrDelta[7] = delta;
+
+	if (arrLineIdx[1] == -1)
+		arrDelta[1] = 1300;
+	if (arrLineIdx[3] == -1)
+		arrDelta[3] = 1300;
+	if (arrLineIdx[5] == -1)
+		arrDelta[5] = 1300;
+	if (arrLineIdx[7] == -1)
+		arrDelta[7] = 1300;
+	if (arrLineIdx[1] != -1 || arrLineIdx[3] != -1 || arrLineIdx[5] != -1 || arrLineIdx[7] != -1) {
 		v23 = 0;
-		if (v87[5] != -1 && v77[1] >= v77[5] && v77[3] >= v77[5] && v77[7] >= v77[5]) {
-			v73 = v87[5];
-			v72 = v82[5];
+		if (arrLineIdx[5] != -1 && arrDelta[1] >= arrDelta[5] && arrDelta[3] >= arrDelta[5] && arrDelta[7] >= arrDelta[5]) {
+			v73 = arrLineIdx[5];
+			v72 = arrDataIdx[5];
 			v23 = 1;
 		}
-		if (v87[1] != -1 && !v23 && v77[5] >= v77[1] && v77[3] >= v77[1] && v77[7] >= v77[1]) {
-			v73 = v87[1];
-			v72 = v82[1];
+		if (arrLineIdx[1] != -1 && !v23 && arrDelta[5] >= arrDelta[1] && arrDelta[3] >= arrDelta[1] && arrDelta[7] >= arrDelta[1]) {
+			v73 = arrLineIdx[1];
+			v72 = arrDataIdx[1];
 			v23 = 1;
 		}
-		if (v87[3] != -1 && !v23 && v77[1] >= v77[3] && v77[5] >= v77[3] && v77[7] >= v77[3]) {
-			v73 = v87[3];
-			v72 = v82[3];
+		if (arrLineIdx[3] != -1 && !v23 && arrDelta[1] >= arrDelta[3] && arrDelta[5] >= arrDelta[3] && arrDelta[7] >= arrDelta[3]) {
+			v73 = arrLineIdx[3];
+			v72 = arrDataIdx[3];
 			v23 = 1;
 		}
-		if (v87[7] != -1 && !v23 && v77[5] >= v77[7] && v77[3] >= v77[7] && v77[1] >= v77[7]) {
-			v73 = v87[7];
-			v72 = v82[7];
+		if (arrLineIdx[7] != -1 && !v23 && arrDelta[5] >= arrDelta[7] && arrDelta[3] >= arrDelta[7] && arrDelta[1] >= arrDelta[7]) {
+			v73 = arrLineIdx[7];
+			v72 = arrDataIdx[7];
 		}
 		for (int v24 = 0; v24 <= 8; v24++) {
-			v87[v24] = -1;
-			v82[v24] = 0;
-			v77[v24] = 1300;
+			arrLineIdx[v24] = -1;
+			arrDataIdx[v24] = 0;
+			arrDelta[v24] = 1300;
 		}
-		if (_vm->_linesManager.checkCollisionLine(a1, a2, &v82[1], &v87[1], 0, _lastLine)) {
-			v69 = v87[1];
-			v68 = v82[1];
-		} else if (_vm->_linesManager.checkCollisionLine(a1, a2, &v82[1], &v87[1], 0, _vm->_linesManager._linesNumb)) {
+		if (_vm->_linesManager.checkCollisionLine(x1, y1, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine)) {
+			v69 = arrLineIdx[1];
+			v68 = arrDataIdx[1];
+		} else if (_vm->_linesManager.checkCollisionLine(x1, y1, &arrDataIdx[1], &arrLineIdx[1], 0, _vm->_linesManager._linesNumb)) {
 			v27 = 0;
 			for (;;) {
 				v28 = _vm->_globals.essai2[v27];
 				v29 = _vm->_globals.essai2[v27 + 1];
 				v66 = _vm->_globals.essai2[v27 + 2];
 				v27 += 4;
-				if (_vm->_linesManager.checkCollisionLine(v28, v29, &v82[1], &v87[1], 0, _lastLine))
+				if (_vm->_linesManager.checkCollisionLine(v28, v29, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine))
 					break;
 				v32 = v67;
 				_vm->_globals.super_parcours[v32] = v28;
@@ -3085,8 +3026,8 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 					break;;
 			}
 			if (v28 != -1) {
-				v69 = v87[1];
-				v68 = v82[1];
+				v69 = arrLineIdx[1];
+				v68 = arrDataIdx[1];
 			}
 		} else {
 			v69 = 1;
@@ -4225,7 +4166,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				v32 += 5;
 				++v34;
 			} while (v27 != -1);
-			_vm->_linesManager.INIPARCOURS();
+			_vm->_linesManager.initRoute();
 		}
 	}
 

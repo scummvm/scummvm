@@ -401,55 +401,38 @@ bool LinesManager::checkCollisionLine(int xp, int yp, int *foundDataIdx, int *fo
 	return false;
 }
 
-// Init route
-void LinesManager::INIPARCOURS() {
-	int v2;
-	int16 *v3;
-	int v4;
-	int v5;
-	int16 *v7;
-	int v9;
-	int v11;
-	int v12;
-	int v13;
+/**
+ * Init route
+ */
+void LinesManager::initRoute() {
+	int lineX = Ligne[0]._lineData[0];
+	int lineY = Ligne[0]._lineData[1];
 
-	int v15 = Ligne[0]._lineData[0];
-	int v14 = Ligne[0]._lineData[1];
+	int lineIdx = 1;
+	for (;;) {
+		int curDataIdx = Ligne[lineIdx]._lineDataEndIdx;
+		int16 *curLineData = Ligne[lineIdx]._lineData;
 
-	int v0 = 1;
-	bool v1 = false;
-	do {
-		v2 = Ligne[v0]._lineDataEndIdx;
-		v3 = Ligne[v0]._lineData;
-
-		v4 = v3[2 * v2 - 2];
-		v5 = v3[2 * v2 - 1];
-		if (_vm->_graphicsManager.max_x == v4 || _vm->_graphicsManager.max_y == v5 || _vm->_graphicsManager.min_x == v4
-				|| _vm->_graphicsManager.min_y == v5)
-			v1 = true;
-		if (v15 == v4 && v14 == v5)
-			v1 = true;
-		if (v0 == 400)
+		int curLineX = curLineData[2 * curDataIdx - 2];
+		int curLineY = curLineData[2 * curDataIdx - 1];
+		if (_vm->_graphicsManager.max_x == curLineX || _vm->_graphicsManager.max_y == curLineY || 
+			_vm->_graphicsManager.min_x == curLineX || _vm->_graphicsManager.min_y == curLineY ||
+			(lineX == curLineX && lineY == curLineY))
+			break;
+		if (lineIdx == 400)
 			error("ERROR - LAST LINE NOT FOUND");
 
-		v7 = Ligne[v0 + 1]._lineData;
-		if (v7[0] != v4 && v7[1] != v5)
-			v1 = true;
-		if (!v1)
-			++v0;
-	} while (!v1);
+		int16 *nextLineData = Ligne[lineIdx + 1]._lineData;
+		if (nextLineData[0] != curLineX && nextLineData[1] != curLineY)
+			break;
+		++lineIdx;
+	}
 
-	_vm->_objectsManager._lastLine = v0;
-	v13 = _vm->_globals._maxLineLength;
-	v9 = _vm->_objectsManager._lastLine + 1;
-	for (int v8 = 1; v8 != 400; v8++) {
-		v11 = v8;
-		if (Ligne[v11]._lineDataEndIdx < v13) {
-			if (v8 != v9) {
-				v12 = v8 - 1;
-				Ligne[v11].field6 = Ligne[v12].field6;
-				Ligne[v11].field8 = Ligne[v12].field8;
-			}
+	_vm->_objectsManager._lastLine = lineIdx + 1;
+	for (int idx = 1; idx < 400; idx++) {
+		if ((Ligne[idx]._lineDataEndIdx < _vm->_globals._maxLineLength) && (idx != _vm->_objectsManager._lastLine)) {
+			Ligne[idx].field6 = Ligne[idx - 1].field6;
+			Ligne[idx].field8 = Ligne[idx - 1].field8;
 		}
 	}
 }

@@ -79,7 +79,7 @@ public:
 	void RETIRE_LIGNE(int idx);
 	void AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
 	bool checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx);
-	void INIPARCOURS();
+	void initRoute();
 	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9);
 	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7);
 	int MIRACLE(int a1, int a2, int a3, int a4, int a5);
