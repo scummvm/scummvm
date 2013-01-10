@@ -80,6 +80,7 @@ public:
 	void queryResource(uint32 fileHash, ResourceHandle &resourceHandle);
 	void loadResource(ResourceHandle &resourceHandle);
 	void unloadResource(ResourceHandle &resourceHandle);
+	void purgeResources();
 protected:
 	typedef Common::HashMap<uint32, ResourceFileEntry> EntriesMap;
 	Common::Array<BlbArchive*> _archives;

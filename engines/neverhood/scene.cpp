@@ -70,6 +70,9 @@ Scene::~Scene() {
 		delete *iter;
 
 	// Don't delete surfaces since they always belong to an entity
+	
+	// Purge the resources after each scene
+	_vm->_res->purgeResources();
 
 }
 
