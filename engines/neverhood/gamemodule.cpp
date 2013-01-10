@@ -78,7 +78,6 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	_mainMenuRequested(false), _gameWasLoaded(false) {
 	
 	// Other initializations moved to actual engine class
-	// TODO
 	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
 	SetMessageHandler(&GameModule::handleMessage);
 }
@@ -88,9 +87,6 @@ GameModule::~GameModule() {
 	_vm->_soundMan->deleteSoundGroup(0x002D0031);
 	delete _childObject;
 	_childObject = NULL;
-	// TODO: Set palette to black but probably not neccessary
-	// TODO SoundMan_deinit();
-	// TODO Set debug vars (maybe)
 }
 
 void GameModule::handleMouseMove(int16 x, int16 y) {
@@ -176,7 +172,7 @@ void GameModule::initMemoryPuzzle() {
 		for (uint32 i = 0; i < 3; i++)
 			setSubVar(VA_CURR_DICE_NUMBERS, i, 1);
 		// Set special symbols
-		// Symbol 5 is always one the three special symbols
+		// Symbol 5 is always one of the three special symbols
 		setSubVar(VA_DICE_MEMORY_SYMBOLS, diceIndices.getNumber(), 5);
 		tileSymbols.removeNumber(5);
 		for (int i = 0; i < 2; i++)
