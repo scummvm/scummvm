@@ -39,16 +39,6 @@ void CollisionMan::setHitRects(uint32 id) {
 
 void CollisionMan::setHitRects(HitRectList *hitRects) {
 	_hitRects = hitRects;
-
-	// DEBUG
-	if (_hitRects) {
-		debug("CollisionMan::setHitRects() count = %d", _hitRects->size());
-		for (HitRectList::iterator it = _hitRects->begin(); it != _hitRects->end(); it++) {
-			HitRect *hitRect = &(*it);
-			debug("(%d, %d, %d, %d) -> %04X", hitRect->rect.x1, hitRect->rect.y1, hitRect->rect.x2, hitRect->rect.y2, hitRect->type);
-		}
-	}
-	
 }
 
 void CollisionMan::clearHitRects() {
@@ -63,9 +53,9 @@ HitRect *CollisionMan::findHitRectAtPos(int16 x, int16 y) {
 	return &defaultHitRect; 
 }
 
-void CollisionMan::addSprite(Sprite *sprite) {
+void CollisionMan::addCollisionSprite(Sprite *sprite) {
 	int index = 0, insertIndex = -1;
-	for (Common::Array<Sprite*>::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++) {
+	for (Common::Array<Sprite*>::iterator iter = _collisionSprites.begin(); iter != _collisionSprites.end(); iter++) {
 		if ((*iter)->getPriority() > sprite->getPriority()) {
 			insertIndex = index;
 			break;
@@ -73,39 +63,31 @@ void CollisionMan::addSprite(Sprite *sprite) {
 		index++;
 	}
 	if (insertIndex >= 0)
-		_sprites.insert_at(insertIndex, sprite);
+		_collisionSprites.insert_at(insertIndex, sprite);
 	else
-		_sprites.push_back(sprite);		
+		_collisionSprites.push_back(sprite);		
 }
 
-void CollisionMan::removeSprite(Sprite *sprite) {
-	for (uint index = 0; index < _sprites.size(); index++) {
-		if (_sprites[index] == sprite) {
-			_sprites.remove_at(index);
+void CollisionMan::removeCollisionSprite(Sprite *sprite) {
+	for (uint index = 0; index < _collisionSprites.size(); index++) {
+		if (_collisionSprites[index] == sprite) {
+			_collisionSprites.remove_at(index);
 			break;
 		}
 	}
 }
 
-void CollisionMan::clearSprites() {
-	_sprites.clear();
+void CollisionMan::clearCollisionSprites() {
+	_collisionSprites.clear();
 }
 
 void CollisionMan::checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam) {
-	for (Common::Array<Sprite*>::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++) {
+	for (Common::Array<Sprite*>::iterator iter = _collisionSprites.begin(); iter != _collisionSprites.end(); iter++) {
 		Sprite *collSprite = *iter;
 		if ((sprite->getFlags() & flags) && collSprite->checkCollision(sprite->getCollisionBounds())) {
 			sprite->sendMessage(collSprite, messageNum, messageParam);
 		}
 	}	
-}
-
-void CollisionMan::save() {
-	// TODO
-}
-
-void CollisionMan::restore() {
-	// TODO
 }
 
 } // End of namespace Neverhood

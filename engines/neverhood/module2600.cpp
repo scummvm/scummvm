@@ -317,8 +317,8 @@ Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x51409A16);
 	_asWater = insertSprite<AsScene2609Water>();
 	_ssButton = insertSprite<SsScene2609Button>(this);
-	_vm->_collisionMan->addSprite(_ssButton);
-	insertMouse435(0x09A1251C, 20, 620);
+	_vm->_collisionMan->addCollisionSprite(_ssButton);
+	insertPuzzleMouse(0x09A1251C, 20, 620);
 	insertStaticSprite(0x02138002, 1200);
 	insertStaticSprite(0x825E2827, 1200);
 }

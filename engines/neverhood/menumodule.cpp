@@ -240,7 +240,7 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	
 	setBackground(0x08C0020C);
 	setPalette(0x08C0020C);
-	insertMouse433(0x00208084);
+	insertScreenMouse(0x00208084);
 	
 	insertStaticSprite(0x41137051, 100);
 	insertStaticSprite(0xC10B2015, 100);
@@ -251,7 +251,7 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	for (uint buttonIndex = 0; buttonIndex < 9; ++buttonIndex) {
 		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
 			kMenuButtonFileHashes[buttonIndex], kMenuButtonCollisionBounds[buttonIndex]);
-		_vm->_collisionMan->addSprite(menuButton);
+		_vm->_collisionMan->addCollisionSprite(menuButton);
 	}
 	
 	SetUpdateHandler(&Scene::update);	
@@ -466,7 +466,7 @@ TextLabelWidget::TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 it
 
 void TextLabelWidget::addSprite() {
 	_parentScene->addSprite(this);
-	_vm->_collisionMan->addSprite(this);
+	_vm->_collisionMan->addCollisionSprite(this);
 }
 
 int16 TextLabelWidget::getWidth() {
@@ -544,7 +544,7 @@ void TextEditWidget::addSprite() {
 	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	refreshPosition();
 	_parentScene->addSprite(this);
-	_vm->_collisionMan->addSprite(this);
+	_vm->_collisionMan->addCollisionSprite(this);
 	_surface->setVisible(true);
 	_textLabelWidget = new TextLabelWidget(_vm, _rect.x1, _rect.y1 + (_rect.y2 - _rect.y1 + 1 - _textSurface->getCharHeight()) / 2,
 		0, _parentScene, _baseObjectPriority + 1, _baseSurfacePriority + 1,
@@ -708,7 +708,7 @@ void SavegameListBox::addSprite() {
 	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	refreshPosition();
 	_parentScene->addSprite(this);
-	_vm->_collisionMan->addSprite(this);
+	_vm->_collisionMan->addCollisionSprite(this);
 	_surface->setVisible(true);
 	buildItems();
 	_firstVisibleItem = 0;
@@ -809,7 +809,7 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArra
 	
 	setBackground(0x30084E25);
 	setPalette(0x30084E25);
-	insertMouse433(0x84E21308, &kMouseRect);
+	insertScreenMouse(0x84E21308, &kMouseRect);
 	insertStaticSprite(0x1340A5C2, 200);
 	insertStaticSprite(0x1301A7EA, 200);
 
@@ -826,7 +826,7 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArra
 	for (uint buttonIndex = 0; buttonIndex < 6; ++buttonIndex) {
 		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
 			kSaveGameMenuButtonFileHashes[buttonIndex], kSaveGameMenuButtonCollisionBounds[buttonIndex]);
-		_vm->_collisionMan->addSprite(menuButton);
+		_vm->_collisionMan->addCollisionSprite(menuButton);
 	}
 
 

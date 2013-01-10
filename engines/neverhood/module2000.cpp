@@ -103,7 +103,7 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0xA6417244);
 	setPalette(0xA6417244);
-	insertMouse433(0x17240A6C);
+	insertScreenMouse(0x17240A6C);
 
 	tempSprite = insertStaticSprite(0x0D641724, 1100);
 

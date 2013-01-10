@@ -203,15 +203,15 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	setBackground(0x44242305);
 	setPalette(0x44242305);
-	insertMouse433(0x4230144A);
+	insertScreenMouse(0x4230144A);
 
 	insertStaticSprite(0x00502330, 1100);
 	tempSprite = insertStaticSprite(0x78492010, 1100);
 	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x72427010, 0x32423010, 200, 0);
 	_asTape1 = insertSprite<AsScene1201Tape>(this, 18, 1100, 412, 443, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape1);
+	_vm->_collisionMan->addCollisionSprite(_asTape1);
 	_asTape2 = insertSprite<AsScene1201Tape>(this, 11, 1100, 441, 443, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape2);
+	_vm->_collisionMan->addCollisionSprite(_asTape2);
 	
 	if (which < 0) {
 		insertKlayman<KmScene2101>(380, 438);

@@ -232,7 +232,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x1B8E8115);
 	_palette->addPalette(0x00128842, 65, 31, 65);
 	_palette->addPalette("paKlayRed", 0, 64, 0);
-	insertMouse433(0xE81111B0);
+	insertScreenMouse(0xE81111B0);
 
 	_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(0x99BE9015); // Don't add this to the sprite list
 	addEntity(_ssTrackShadowBackground);
@@ -542,8 +542,8 @@ Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x90791B80);
 	setPalette(0x90791B80);
 	ssButton = insertSprite<SsScene2504Button>();
-	_vm->_collisionMan->addSprite(ssButton);
-	insertMouse435(0x91B8490F, 20, 620);
+	_vm->_collisionMan->addCollisionSprite(ssButton);
+	insertPuzzleMouse(0x91B8490F, 20, 620);
 	SetMessageHandler(&Scene2504::handleMessage);
 	SetUpdateHandler(&Scene::update);
 }

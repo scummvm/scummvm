@@ -344,7 +344,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	setHitRects(0x004B4860);
 	setBackground(0x4086520E);
 	setPalette(0x4086520E);
-	insertMouse433(0x6520A400);
+	insertScreenMouse(0x6520A400);
 	
 	if (which < 0) {
 		// Restoring game
@@ -1226,7 +1226,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_gameState.which = 0;
 	}
 
-	insertMouse433(0x23303124);
+	insertScreenMouse(0x23303124);
 
 	tempSprite = insertStaticSprite(0xB3242310, 825);
 	tempClipRect.set(tempSprite->getDrawRect().x, tempSprite->getDrawRect().y,
@@ -1243,7 +1243,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asDoorSpy = insertSprite<AsScene1002DoorSpy>(tempClipRect, this, _asDoor, tempSprite);
 	_ssPressButton = insertSprite<SsCommonPressButton>(this, 0x00412692, 0x140B60BE, 800, 0);
 	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klayman, false);
-	_vm->_collisionMan->addSprite(_asVenusFlyTrap);
+	_vm->_collisionMan->addCollisionSprite(_asVenusFlyTrap);
 
 	sendEntityMessage(_klayman, 0x2007, _asVenusFlyTrap);
 
@@ -1395,7 +1395,7 @@ StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backg
 	
 	setBackground(backgroundFileHash);
 	setPalette(backgroundFileHash);
-	insertMouse435(cursorFileHash, 20, 620);
+	insertPuzzleMouse(cursorFileHash, 20, 620);
 }
 
 uint32 StaticScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1460,7 +1460,7 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	addEntity(_palette);
 
-	insertMouse433(0x03001504);
+	insertScreenMouse(0x03001504);
 
 	if (which < 0) {
 		// Restoring game
@@ -1550,13 +1550,13 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 		setBackground(0x2800E011);
 		setPalette(0x2800E011);
 		insertStaticSprite(0x492D5AD7, 100);
-		insertMouse435(0x0E015288, 20, 620);
+		insertPuzzleMouse(0x0E015288, 20, 620);
 	} else {
 		setBackground(0x8870A546);
 		setPalette(0x8870A546);
 		insertStaticSprite(0x40D1E0A9, 100);
 		insertStaticSprite(0x149C00A6, 100);
-		insertMouse435(0x0A54288F, 20, 620);
+		insertPuzzleMouse(0x0A54288F, 20, 620);
 	}
 
 	drawTextToBackground();

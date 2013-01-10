@@ -37,18 +37,16 @@ public:
 	void setHitRects(HitRectList *hitRects);
 	void clearHitRects();
 	HitRect *findHitRectAtPos(int16 x, int16 y);
-	void addSprite(Sprite *sprite);
-	void removeSprite(Sprite *sprite);
-	void clearSprites();
+	void addCollisionSprite(Sprite *sprite);
+	void removeCollisionSprite(Sprite *sprite);
+	void clearCollisionSprites();
 	void checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam);
-	void save();
-	void restore();
-	uint getSpriteCount() const { return _sprites.size(); }
-	Sprite *getSprite(uint index) const { return _sprites[index]; }
+	uint getCollisionSpritesCount() const { return _collisionSprites.size(); }
+	Sprite *getCollisionSprite(uint index) const { return _collisionSprites[index]; }
 protected:
 	NeverhoodEngine *_vm;
 	HitRectList *_hitRects;
-	Common::Array<Sprite*> _sprites;
+	Common::Array<Sprite*> _collisionSprites;
 };
 
 

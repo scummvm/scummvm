@@ -325,7 +325,7 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	setPalette(kDiskplayerPaletteFileHashes[paletteIndex]);
 
 	_ssPlayButton = insertSprite<DiskplayerPlayButton>(this);
-	_vm->_collisionMan->addSprite(_ssPlayButton);
+	_vm->_collisionMan->addCollisionSprite(_ssPlayButton);
 
 	_asKey = insertSprite<AsDiskplayerSceneKey>();
 
@@ -351,7 +351,7 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	_finalDiskSlot = new DiskplayerSlot(_vm, this, 20, 0);
 	addEntity(_finalDiskSlot);
 
-	insertMouse435(0x000408A8, 20, 620);
+	insertPuzzleMouse(0x000408A8, 20, 620);
 	showMouse(false);
 
 	_diskSmackerPlayer = new SmackerPlayer(_vm, this, 0x08288103, false, true);
@@ -442,7 +442,6 @@ void DiskplayerScene::update() {
 }
 
 uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	if (!_inputDisabled) {
 		switch (messageNum) {
@@ -473,7 +472,7 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 			break;			
 		}
 	}
-	return messageResult;
+	return 0;
 }
 
 void DiskplayerScene::stop() {

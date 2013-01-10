@@ -548,10 +548,10 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	loadHitRectList();
 	setBackground(0x40008208);
 	setPalette(0x40008208);
-	insertMouse433(0x0820C408);
+	insertScreenMouse(0x0820C408);
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 7, 1100, 459, 432, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape); 
+	_vm->_collisionMan->addCollisionSprite(_asTape); 
 	_ssDoorButton = insertSprite<SsCommonPressButton>(this, 0xE4A43E29, 0xE4A43E29, 100, 0);
 	
 	for (uint32 cubeIndex = 0; cubeIndex < 9; cubeIndex++)
@@ -881,13 +881,13 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x08100A0C);
 	setPalette(0x08100A0C);
 	addEntity(_palette);
-	insertMouse435(0x00A08089, 20, 620);
+	insertPuzzleMouse(0x00A08089, 20, 620);
 
 	for (uint32 cubePosition = 0; cubePosition < 9; cubePosition++) {
 		int16 cubeSymbol = (int16)getSubVar(VA_CUBE_POSITIONS, cubePosition);
 		if (cubeSymbol >= 0) {
 			Sprite *puzzleCubeSprite = insertSprite<SsScene2202PuzzleCube>(this, cubePosition, cubeSymbol);
-			_vm->_collisionMan->addSprite(puzzleCubeSprite);
+			_vm->_collisionMan->addCollisionSprite(puzzleCubeSprite);
 		}
 	}
 
@@ -1094,17 +1094,17 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x82C80334);
 	setPalette(0x82C80334);
-	insertMouse433(0x80330824);
+	insertScreenMouse(0x80330824);
 	setHitRects(0x004B8320);
 	setRectList(0x004B8420);
 
 	if (getGlobalVar(V_KEY3_LOCATION) == 1) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 282, 432);
-		_vm->_collisionMan->addSprite(_asKey);
+		_vm->_collisionMan->addCollisionSprite(_asKey);
 	}
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 1, 1100, 435, 432, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape);
+	_vm->_collisionMan->addCollisionSprite(_asTape);
 	_asLeftDoor = insertSprite<AsScene2203Door>(this, 0);
 	_asRightDoor = insertSprite<AsScene2203Door>(this, 1);
 	_ssSmallLeftDoor = insertStaticSprite(0x542CC072, 1100);
@@ -1113,8 +1113,8 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 	_rightDoorClipRect.set(0, 0, _ssSmallRightDoor->getDrawRect().x2(), 480);
 	sendEntityMessage(_asLeftDoor, 0x2000, _asRightDoor);
 	sendEntityMessage(_asRightDoor, 0x2000, _asLeftDoor);
-	_vm->_collisionMan->addSprite(_asLeftDoor);
-	_vm->_collisionMan->addSprite(_asRightDoor);
+	_vm->_collisionMan->addCollisionSprite(_asLeftDoor);
+	_vm->_collisionMan->addCollisionSprite(_asRightDoor);
 
 	if (which < 0) {
 		// Restoring game
@@ -1227,14 +1227,14 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 		setBackground(0x0008028D);
 		setPalette(0x0008028D);
 		addEntity(_palette);
-		insertMouse433(0x80289008);
+		insertScreenMouse(0x80289008);
 		_ssLightSwitch = insertSprite<SsCommonPressButton>(this, 0x2D339030, 0x2D309030, 100, 0);
 	} else {
 		_isLightOn = false;
 		setBackground(0xD00A028D);
 		setPalette(0xD00A028D);
 		addEntity(_palette);
-		insertMouse433(0xA0289D08);
+		insertScreenMouse(0xA0289D08);
 		_ssLightSwitch = insertSprite<SsCommonPressButton>(this, 0x2D339030, 0xDAC86E84, 100, 0);
 	}
 	_palette->addBasePalette(0xD00A028D, 0, 256, 0);
@@ -1467,7 +1467,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asDoorSpikes->setClipRect(_sprite2->getDrawRect().x, 0, 640, 480);
 		setRectList(0x004B8AF8);
 		_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x0E038022, 100, 0);
-		insertMouse433(0x83212411);
+		insertScreenMouse(0x83212411);
 		_ssTestTube = insertSprite<SsScene2206TestTube>(this, 1100, /*464, 433, */0x5E00E262);
 		_asPlatform = insertSprite<AsScene2206Platform>(0x085E25E0);
 	} else {
@@ -1479,7 +1479,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asDoorSpikes->setClipRect(_sprite2->getDrawRect().x, 0, 640, 480);
 		setRectList(0x004B8B58);
 		_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x16882608, 100, 0);
-		insertMouse433(0x02A41E09);
+		insertScreenMouse(0x02A41E09);
 		_ssTestTube = insertSprite<SsScene2206TestTube>(this, 1100, /*464, 433, */0x52032563);
 		_asPlatform = insertSprite<AsScene2206Platform>(0x317831A0);
 	}
@@ -1491,7 +1491,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addBasePalette(fileHash, 0, 256, 0);
 	if (!getGlobalVar(V_LIGHTS_ON))
 		_palette->addPalette(0x0263D144, 0, 65, 0);
-	_vm->_collisionMan->addSprite(_ssTestTube);
+	_vm->_collisionMan->addCollisionSprite(_ssTestTube);
 	
 	if (which < 0) {
 		// Restoring game
@@ -1944,14 +1944,14 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		setBackground(0x88C00241);
 		setPalette(0x88C00241);
-		insertMouse433(0x00245884);
+		insertScreenMouse(0x00245884);
 		_ssMaskPart1 = insertStaticSprite(0xE20A28A0, 1200);
 		_ssMaskPart2 = insertStaticSprite(0x688F62A5, 1100);
 		_ssMaskPart3 = insertStaticSprite(0x0043B038, 1100);
 		_asTape = insertSprite<AsScene1201Tape>(this, 4, 1100, 277, 428, 0x9148A011);
-		_vm->_collisionMan->addSprite(_asTape); 
+		_vm->_collisionMan->addCollisionSprite(_asTape); 
 		_asLever = insertSprite<AsScene2207Lever>(this, 527, 333, 0);
-		_vm->_collisionMan->addSprite(_asLever);
+		_vm->_collisionMan->addCollisionSprite(_asLever);
 		_asWallRobotAnimation = insertSprite<AsScene2207WallRobotAnimation>(this);
 		_asWallCannonAnimation = insertSprite<AsScene2207WallCannonAnimation>();
 		_asWallRobotAnimation->setVisible(false);
@@ -1964,7 +1964,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 		setGlobalVar(V_SEEN_SYMBOLS_NO_LIGHT, 1);
 		setBackground(0x05C02A55);
 		setPalette(0x05C02A55);
-		insertMouse433(0x02A51054);
+		insertScreenMouse(0x02A51054);
 		_ssMaskPart1 = insertStaticSprite(0x980E46A4, 1200);
 		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_1, 0)], 0);
 		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_1, 1)], 1);
@@ -2134,7 +2134,7 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 	addBackground(_background);
 	setPalette(0x08100289);
 	addEntity(_palette);
-	insertMouse435(0x0028D089, 40, 600);
+	insertPuzzleMouse(0x0028D089, 40, 600);
 	
 	createFontSurface();
 	_backgroundSurface = new BaseSurface(_vm, 0, 640, 480);
@@ -2296,7 +2296,7 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		setBackground(0x11840E24);
 		setPalette(0x11840E24);
-		insertMouse433(0x40E20110);
+		insertScreenMouse(0x40E20110);
 		setRectList(0x004B3DC8);
 	} else {
 		setBackground(0x25848E24);
@@ -2304,12 +2304,12 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 		addEntity(_palette);
 		_palette->copyBasePalette(0, 256, 0);
 		_palette->addPalette(0x68033B1C, 0, 65, 0);
-		insertMouse433(0x48E20250);
+		insertScreenMouse(0x48E20250);
 		setRectList(0x004B3E18);
 	}
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 10, 1100, 464, 435, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape); 
+	_vm->_collisionMan->addCollisionSprite(_asTape); 
 
 	if (which < 0) {
 		// Restoring game
@@ -2418,12 +2418,12 @@ HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule
 		setRectList(0x004B2BF8);
 		setBackground(_hallOfRecordsInfo->bgFilename2);
 		setPalette(_hallOfRecordsInfo->bgFilename2);
-		insertMouse433(0x14320138);
+		insertScreenMouse(0x14320138);
 	} else {
 		setRectList(0x004B2BB8);
 		setBackground(_hallOfRecordsInfo->bgFilename1);
 		setPalette(_hallOfRecordsInfo->bgFilename1);
-		insertMouse433(0x63A40028);
+		insertScreenMouse(0x63A40028);
 	}
 
 	if (which < 0) {
@@ -2507,12 +2507,12 @@ Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B5588);
 		setBackground(0x40339414);
 		setPalette(0x40339414);
-		insertMouse433(0x3941040B);
+		insertScreenMouse(0x3941040B);
 	} else {
 		setRectList(0x004B55C8);
 		setBackground(0x071963E5);
 		setPalette(0x071963E5);
-		insertMouse433(0x14320138);
+		insertScreenMouse(0x14320138);
 	}
 
 	if (which < 0) {

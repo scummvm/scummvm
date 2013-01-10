@@ -637,7 +637,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B6758);
 	setBackground(0x08221FA5);
 	setPalette(0x08221FA5);
-	insertMouse433(0x21FA108A);
+	insertScreenMouse(0x21FA108A);
 	
 	_ssFloorButton = insertSprite<SsCommonFloorButton>(this, 0x980F3124, 0x12192892, 100, 0);
 	_asPipe = insertSprite<AsScene1401Pipe>();
@@ -678,7 +678,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 2) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, _asPipe);
-		_vm->_collisionMan->addSprite(_asProjector);
+		_vm->_collisionMan->addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 6) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
@@ -850,7 +850,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackgroundY(-10);
 	setPalette(0x231482F0);
 	_palette->addPalette(0x91D3A391, 0, 64, 0);
-	insertMouse433(0x482F4239);
+	insertScreenMouse(0x482F4239);
 
 	_ssBridgePart1 = insertSprite<SsScene1402BridgePart>(0x15402D64, 1100);
 	_ssBridgePart2 = insertSprite<SsScene1402BridgePart>(0x10A02120, 1100);
@@ -898,7 +898,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 1) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
-		_vm->_collisionMan->addSprite(_asProjector);
+		_vm->_collisionMan->addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
@@ -1227,7 +1227,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule)
 
 	setBackground(0x00442225);
 	setPalette(0x00442225);
-	insertMouse435(0x4222100C, 20, 620);
+	insertPuzzleMouse(0x4222100C, 20, 620);
 
 	_asMouse = insertSprite<AsScene1407Mouse>(this);
 	_ssResetButton = insertStaticSprite(0x12006600, 100);
@@ -1285,17 +1285,17 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B1FF8);
 	setBackground(0x2110A234);
 	setPalette(0x2110A234);
-	insertMouse433(0x0A230219);
+	insertScreenMouse(0x0A230219);
 
 	_sprite1 = insertStaticSprite(0x01102A33, 100);
 	_sprite1->setVisible(false);
 	_sprite2 = insertStaticSprite(0x04442520, 995);
 	_sprite3 = insertStaticSprite(0x08742271, 995);
 	_asTape1 = insertSprite<AsScene1201Tape>(this, 12, 1100, 201, 468, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape1);
+	_vm->_collisionMan->addCollisionSprite(_asTape1);
 	_asTape1->setRepl(64, 0);
 	_asTape2 = insertSprite<AsScene1201Tape>(this, 16, 1100, 498, 468, 0x9048A093);
-	_vm->_collisionMan->addSprite(_asTape2);
+	_vm->_collisionMan->addCollisionSprite(_asTape2);
 	_asTape2->setRepl(64, 0);
 
 	if (which < 0) {
@@ -1311,7 +1311,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 4) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
-		_vm->_collisionMan->addSprite(_asProjector);
+		_vm->_collisionMan->addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() + 100);
@@ -1393,16 +1393,16 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0xAC0B006F);
 	setPalette(0xAC0B006F);
 	_palette->addPalette(0x00801510, 0, 65, 0);
-	insertMouse433(0xB006BAC8);
+	insertScreenMouse(0xB006BAC8);
 
 	if (getGlobalVar(V_KEY3_LOCATION) == 5) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 267, 411);
-		_vm->_collisionMan->addSprite(_asKey);
+		_vm->_collisionMan->addCollisionSprite(_asKey);
 	}
 
 	_sprite1 = insertStaticSprite(0x1900A1F8, 1100);
 	_asTape = insertSprite<AsScene1201Tape>(this, 14, 1100, 281, 411, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape);
+	_vm->_collisionMan->addCollisionSprite(_asTape);
 
 	if (which < 0) {
 		// Restoring game
@@ -1429,7 +1429,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 3) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
-		_vm->_collisionMan->addSprite(_asProjector);
+		_vm->_collisionMan->addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
 			sendEntityMessage(_klayman, 0x1014, _asProjector);
 			_klayman->setX(_asProjector->getX() - 100);
@@ -1561,11 +1561,11 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule)
 
 	setBackground(0x0C0C007D);
 	setPalette(0x0C0C007D);
-	insertMouse435(0xC00790C8, 20, 620);
+	insertPuzzleMouse(0xC00790C8, 20, 620);
 	
 	for (uint32 tileIndex = 0; tileIndex < 48; tileIndex++) {
 		_tiles[tileIndex] = insertSprite<AsScene1405Tile>(this, tileIndex);
-		_vm->_collisionMan->addSprite(_tiles[tileIndex]);
+		_vm->_collisionMan->addCollisionSprite(_tiles[tileIndex]);
 		if (getSubVar(VA_IS_TILE_MATCH, tileIndex))
 			_tilesLeft--;
 	}

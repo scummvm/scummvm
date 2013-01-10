@@ -108,26 +108,6 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
-/**
- * The fallback game descriptor used by the Neverhood engine's fallbackDetector.
- * Contents of this struct are to be overwritten by the fallbackDetector.
- */
-static NeverhoodGameDescription g_fallbackDesc = {
-	{
-		"",
-		"",
-		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-		Common::UNK_LANG,
-		Common::kPlatformPC,
-		ADGF_NO_FLAGS,
-		GUIO_NONE
-	},
-	0,
-	0,
-	0,
-	0,
-};
-
 } // End of namespace Neverhood
 
 class NeverhoodMetaEngine : public AdvancedMetaEngine {
@@ -151,8 +131,6 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-
-	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 
 };
 
@@ -180,20 +158,6 @@ bool NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 		*engine = new Neverhood::NeverhoodEngine(syst, gd);
 	}
 	return gd != 0;
-}
-
-const ADGameDescription *NeverhoodMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
-	// Set the default values for the fallback descriptor's ADGameDescription part.
-	Neverhood::g_fallbackDesc.desc.language = Common::UNK_LANG;
-	Neverhood::g_fallbackDesc.desc.platform = Common::kPlatformPC;
-	Neverhood::g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
-
-	// Set default values for the fallback descriptor's NeverhoodGameDescription part.
-	Neverhood::g_fallbackDesc.gameID = 0;
-	Neverhood::g_fallbackDesc.features = 0;
-	Neverhood::g_fallbackDesc.version = 3;
-
-	return NULL;
 }
 
 SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {

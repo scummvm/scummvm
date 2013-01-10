@@ -626,7 +626,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(sceneInfo->bgFilename);
 	_palette->addPalette(calcHash("paPodFloor"), 65, 31, 65);
 	_palette->addPalette(calcHash("paKlayFloor"), 0, 65, 0);
-	insertMouse433(0x08B08180);
+	insertScreenMouse(0x08B08180);
 	
 	tempSprite = insertStaticSprite(0x1E086325, 1200);
 	clipRect.set(0, 0, 640, tempSprite->getDrawRect().y2());
@@ -734,7 +734,7 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addPalette(calcHash("paPodFloor"), 65, 31, 65);
 	_palette->addPalette(calcHash("paKlayFloor"), 0, 65, 0);
 	addEntity(_palette);
-	insertMouse433(0x08B04180);
+	insertScreenMouse(0x08B04180);
 
 	_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(0x12002035);
 	addEntity(_ssTrackShadowBackground);
@@ -894,7 +894,7 @@ Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 	_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
 	addEntity(_palette);
-	insertMouse433(sceneInfo->mouseCursorFilename);
+	insertScreenMouse(sceneInfo->mouseCursorFilename);
 	
 	_palStatus = 2;
 	
@@ -1015,7 +1015,7 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	while (staticSprites && *staticSprites)
 		insertStaticSprite(*staticSprites++, 1100);
 
-	insertMouse433(sceneInfo->mouseCursorFilename);
+	insertScreenMouse(sceneInfo->mouseCursorFilename);
 	
 	if (sceneInfo->bgShadowFilename) {
 		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->bgShadowFilename);
@@ -1111,7 +1111,7 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 	_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
 	
-	insertMouse433(0x08B8C180);
+	insertScreenMouse(0x08B8C180);
 
 	_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(0x18808B88);
 	addEntity(_ssTrackShadowBackground);
@@ -1224,7 +1224,7 @@ Scene2732::Scene2732(NeverhoodEngine *vm, Module *parentModule)
 
 	setBackground(0x0220C041);
 	setPalette(0x0220C041);
-	insertMouse433(0x0C04502A);
+	insertScreenMouse(0x0C04502A);
 	setRectList(0x004AE360);
 
 	insertKlayman<KmScene2732>(108, 331);

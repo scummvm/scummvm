@@ -382,7 +382,7 @@ Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 	addEntity(_palette);
 	_palette->addBasePalette(0x8C030206, 0, 256, 0);
 	_palette->addPalette(0x91D3A391, 0, 65, 0);
-	insertMouse433(0x302028C8);
+	insertScreenMouse(0x302028C8);
 
 	_sprite1 = insertStaticSprite(0x2E068A23, 200);
 	insertStaticSprite(0x401410A6, 200);
@@ -694,9 +694,9 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004AF900);
 	setBackground(0x81660220);
 	setPalette(0x81660220);
-	insertMouse433(0x6022481E);
+	insertScreenMouse(0x6022481E);
 	_asTape = insertSprite<AsScene1201Tape>(this, 9, 1100, 286, 409, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape);
+	_vm->_collisionMan->addCollisionSprite(_asTape);
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x15288120, 100, 0);
 	
 	if (which < 0) {
@@ -794,9 +794,9 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x0C05060C);
 	setPalette(0x0C05060C);
 	_palette->addPalette(0x414364B0, 0, 65, 0);
-	insertMouse433(0x506080C8);
+	insertScreenMouse(0x506080C8);
 	_asTape = insertSprite<AsScene1201Tape>(this, 2, 1100, 480, 454, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape);
+	_vm->_collisionMan->addCollisionSprite(_asTape);
 	_asLightCord = insertSprite<AsScene2803LightCord>(this, 0xA1095A10, 0x836D3813, 368, 200);
 	_asLightCord->setClipRect(0, 25, 640, 480);
 	
@@ -889,15 +889,15 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene2406::handleMessage);
 	
 	setRectList(0x004B78C8);
-	insertMouse433(0xB03001A8);
+	insertScreenMouse(0xB03001A8);
 
 	if (getGlobalVar(V_KEY3_LOCATION) == 2) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 560, 409);
-		_vm->_collisionMan->addSprite(_asKey);
+		_vm->_collisionMan->addCollisionSprite(_asKey);
 	}
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 5, 1100, 456, 409, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape);
+	_vm->_collisionMan->addCollisionSprite(_asTape);
 	tempSprite2 = insertStaticSprite(0x19625293, 1100);
 	_clipRects[0].x1 = 0;
 	_clipRects[0].y1 = 0;

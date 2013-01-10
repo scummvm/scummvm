@@ -42,7 +42,7 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_background = NULL;
 	if (clearHitRects) {
 		_vm->_collisionMan->clearHitRects();
-		_vm->_collisionMan->clearSprites();
+		_vm->_collisionMan->clearCollisionSprites();
 	}
 	_vm->_screen->setFps(24);
 	_vm->_screen->setSmackerDecoder(NULL);
@@ -160,7 +160,7 @@ void Scene::setSpriteSurfacePriority(Sprite *sprite, int priority) {
 }
 
 void Scene::deleteSprite(Sprite **sprite) {
-	_vm->_collisionMan->removeSprite(*sprite);
+	_vm->_collisionMan->removeCollisionSprite(*sprite);
 	removeSurface((*sprite)->getSurface());
 	removeEntity(*sprite);
 	delete *sprite;
@@ -194,7 +194,7 @@ Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
 	return addSprite(new StaticSprite(_vm, fileHash, surfacePriority));
 }
 
-void Scene::insertMouse433(uint32 fileHash, const NRect *mouseRect) {
+void Scene::insertScreenMouse(uint32 fileHash, const NRect *mouseRect) {
 	NRect rect(-1, -1, -1, -1);
 	if (mouseRect)
 		rect = *mouseRect;
@@ -202,7 +202,7 @@ void Scene::insertMouse433(uint32 fileHash, const NRect *mouseRect) {
 	addEntity(_mouseCursor);
 }
 
-void Scene::insertMouse435(uint32 fileHash, int16 x1, int16 x2) {
+void Scene::insertPuzzleMouse(uint32 fileHash, int16 x1, int16 x2) {
 	_mouseCursor = new Mouse(_vm, fileHash, x1, x2);
 	addEntity(_mouseCursor);
 }
@@ -317,8 +317,8 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 }
 
 bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
-	for (uint i = 0; i < _vm->_collisionMan->getSpriteCount(); i++) {
-		Sprite *sprite = _vm->_collisionMan->getSprite(i);
+	for (uint i = 0; i < _vm->_collisionMan->getCollisionSpritesCount(); i++) {
+		Sprite *sprite = _vm->_collisionMan->getCollisionSprite(i);
 		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) && 
 			sendPointMessage(sprite, 0x1011, _mouseClickPos) != 0) {
 			return true;

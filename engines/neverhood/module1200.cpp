@@ -671,10 +671,10 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			setSubVar(VA_TNT_POSITIONS, index, kScene1201InitArray[index]);
 	}
 
-	insertMouse433(0x9A2C0409);
+	insertScreenMouse(0x9A2C0409);
 	
 	_asTape = insertSprite<AsScene1201Tape>(this, 3, 1100, 243, 340, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape);
+	_vm->_collisionMan->addCollisionSprite(_asTape);
 	
 	tempSprite = insertStaticSprite(0x03C82530, 100);
 	topY1 = tempSprite->getY() + tempSprite->getDrawRect().height; 
@@ -752,7 +752,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			_asTntMan = insertSprite<AsScene1201TntMan>(this, _asTntManRope, which == 1);
 			_asTntMan->setClipRect(x1, 0, x2, 480);
 			_asTntMan->setRepl(64, 0);
-			_vm->_collisionMan->addSprite(_asTntMan);
+			_vm->_collisionMan->addCollisionSprite(_asTntMan);
 			tempSprite = insertSprite<AsScene1201TntManFlame>(_asTntMan);
 			tempSprite->setClipRect(x1, 0, x2, 480);
 		}
@@ -826,7 +826,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_MATCH_STATUS) < 3) {
 		_asMatch = insertSprite<AsScene1201Match>(this);
-		_vm->_collisionMan->addSprite(_asMatch);
+		_vm->_collisionMan->addCollisionSprite(_asMatch);
 	}
 
 	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_CREATURE_EXPLODED) == 0) {
@@ -1011,11 +1011,11 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule)
 	_paletteResource.load(0x60250EB5);
 	_paletteResource.copyPalette(_paletteData);
 
-	insertMouse435(0x10ED160A, 20, 620);
+	insertPuzzleMouse(0x10ED160A, 20, 620);
 
 	for (int tntIndex = 0; tntIndex < 18; tntIndex++) {
 		_asTntItems[tntIndex] = insertSprite<AsScene1202TntItem>(this, tntIndex);
-		_vm->_collisionMan->addSprite(_asTntItems[tntIndex]);
+		_vm->_collisionMan->addCollisionSprite(_asTntItems[tntIndex]);
 	}
 
 	insertStaticSprite(0x8E8419C1, 1100);

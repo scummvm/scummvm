@@ -427,7 +427,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B0A38);
 	setBackground(0x420643C4);
 	setPalette(0x420643C4);
-	insertMouse433(0x643C0428);
+	insertScreenMouse(0x643C0428);
 
 	_class595 = insertStaticSprite(0xB0420130, 1015);
 	_sprite1 = insertStaticSprite(0x942FC224, 300);
@@ -456,7 +456,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->setClipRect(0, 0, _sprite3->getDrawRect().x2(), 480);
 
 	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klayman, true);
-	_vm->_collisionMan->addSprite(_asVenusFlyTrap);
+	_vm->_collisionMan->addCollisionSprite(_asVenusFlyTrap);
 
 	sendEntityMessage(_klayman, 0x2007, _asVenusFlyTrap);
 	
@@ -637,11 +637,11 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
 	setRectList(0x004AF9E8);
 	setBackground(0x01581A9C);
 	setPalette(0x01581A9C);
-	insertMouse433(0x81A9801D);
+	insertScreenMouse(0x81A9801D);
 
 	if (!getGlobalVar(V_BALLOON_POPPED)) {
 		_asBalloon = insertSprite<AsScene1303Balloon>(this);
-		_vm->_collisionMan->addSprite(_asBalloon);
+		_vm->_collisionMan->addCollisionSprite(_asBalloon);
 	}
 	
 	_sprite1 = insertStaticSprite(0xA014216B, 1100);
@@ -699,18 +699,18 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B91A8);
 	setBackground(0x062C0214);
 	setPalette(0x062C0214);
-	insertMouse433(0xC021006A);
+	insertScreenMouse(0xC021006A);
 	
 	if (getGlobalVar(V_BALLOON_POPPED)) {
 		_asKey = insertSprite<AsCommonKey>(this, 0, 1100, 278, 347);
-		_vm->_collisionMan->addSprite(_asKey);
+		_vm->_collisionMan->addCollisionSprite(_asKey);
 	} else {
 		_asKey = insertSprite<AnimatedSprite>(0x80106018, 100, 279, 48);
 	}
 
 	if (!getGlobalVar(V_HAS_NEEDLE)) {
 		_asNeedle = insertSprite<AsScene1304Needle>(this, 1100, 278, 347);
-		_vm->_collisionMan->addSprite(_asNeedle);
+		_vm->_collisionMan->addCollisionSprite(_asNeedle);
 	}
 
 	_sprite1 = insertStaticSprite(0x0562E621, 1100);
@@ -763,7 +763,7 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B6E98);
 	setBackground(0x28801B64);
 	setPalette(0x28801B64);
-	insertMouse433(0x01B60280);
+	insertScreenMouse(0x01B60280);
 
 	if (which < 0) {
 		// Restoring game
@@ -876,11 +876,11 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x05303114);
 	setPalette(0x05303114);
-	insertMouse433(0x0311005B);
+	insertScreenMouse(0x0311005B);
 
 	if (getGlobalVar(V_KEY3_LOCATION) == 4) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 435, 445);
-		_vm->_collisionMan->addSprite(_asKey);
+		_vm->_collisionMan->addCollisionSprite(_asKey);
 	}
 
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x404A36A0, 100, 0x440C1000);
@@ -897,14 +897,14 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlayman<KmScene1306>(380, 440);
 		setMessageList(0x004AFAD0);
 		sendMessage(this, 0x2000, 0);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 	} else if (which == 1) {
 		// Klaymen teleporting in
 		insertKlayman<KmScene1306>(136, 440);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004AFAF0);
 		sendMessage(this, 0x2000, 1);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 	} else if (which == 2) {
 		// Klaymen returning from diskplayer
 		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
@@ -915,27 +915,27 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 		setMessageList(0x004AFBC8);
 		sendMessage(this, 0x2000, 0);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 	} else if (which == 3) {
 		// Klaymen returning from window
 		insertKlayman<KmScene1306>(534, 440);
 		setMessageList(0x004AFC30);
 		sendMessage(this, 0x2000, 0);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 	} else if (which == 4) {
 		// Klaymen teleporting out
 		insertKlayman<KmScene1306>(136, 440);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004AFC38);
 		sendMessage(this, 0x2000, 1);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 	} else if (which == 5) {
 		// Klaymen returning from teleporter
 		insertKlayman<KmScene1306>(136, 440);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004AFB00);
 		sendMessage(this, 0x2000, 1);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 	} else {
 		// Klaymen coming up in elevator
 		insertKlayman<KmScene1306>(286, 408);
@@ -1007,7 +1007,7 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 		setSurfacePriority(_asElevatorDoor->getSurface(), 90);
 		setSurfacePriority(_sprite1->getSurface(), 80);
 		sendMessage(this, 0x2000, 0);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 		break;
 	}
 	return 0;
@@ -1033,7 +1033,7 @@ uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param,
 		setSurfacePriority(_asElevatorDoor->getSurface(), 90);
 		setSurfacePriority(_sprite1->getSurface(), 80);
 		sendMessage(this, 0x2000, 0);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 		break;
 	}
 	return 0;
@@ -1246,7 +1246,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
 	setBackground(0xA8006200);
 	setPalette(0xA8006200);
 	addEntity(_palette);
-	insertMouse435(0x06204A88, 20, 620);
+	insertPuzzleMouse(0x06204A88, 20, 620);
 
 	tempSprite = insertStaticSprite(0x00A3621C, 800);
 	_clipRects[0].set(tempSprite->getDrawRect().x, 0, 640, 480);
@@ -1260,7 +1260,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
 	for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
 		if (getSubVar(VA_IS_KEY_INSERTED, keyIndex)) {
 			_asKeys[keyIndex] = insertSprite<AsScene1307Key>(this, keyIndex, _clipRects);
-			_vm->_collisionMan->addSprite(_asKeys[keyIndex]);
+			_vm->_collisionMan->addCollisionSprite(_asKeys[keyIndex]);
 		} else {
 			_asKeys[keyIndex] = NULL;
 		}
@@ -1527,10 +1527,10 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	setBackground(0x41024202);
 	setPalette(0x41024202);
-	insertMouse433(0x24206418);
+	insertScreenMouse(0x24206418);
 
 	_asTape = insertSprite<AsScene1201Tape>(this, 17, 1100, 502, 445, 0x9148A011);
-	_vm->_collisionMan->addSprite(_asTape);
+	_vm->_collisionMan->addCollisionSprite(_asTape);
 
 	if (getGlobalVar(V_MOUSE_SUCKED_IN)) {
 		insertSprite<AsScene1308Mouse>();
@@ -1603,7 +1603,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 4) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
-		_vm->_collisionMan->addSprite(_asProjector);
+		_vm->_collisionMan->addCollisionSprite(_asProjector);
 		_asProjector->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
 		_asProjector->setRepl(64, 0);
 	}
@@ -1701,7 +1701,7 @@ Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule)
 	
 	SetMessageHandler(&Scene1317::handleMessage);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08982841, true, false));
-	insertMouse433(0x08284011);
+	insertScreenMouse(0x08284011);
 	showMouse(false);
 	_smackerFileHash = 0;
 	_keepLastSmackerFrame = false;

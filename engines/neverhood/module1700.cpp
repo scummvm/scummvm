@@ -193,14 +193,14 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addBasePalette(0x91D3A391, 0, 64, 0);
 	_palette->copyBasePalette(0, 256, 0);
 	addEntity(_palette);
-	insertMouse433(0x18222039);
+	insertScreenMouse(0x18222039);
 
 	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 0)], 0);
 	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 1)], 1);
 	insertSprite<SsScene1705WallSymbol>(kScene1705FileHashes[getSubVar(VA_GOOD_CANNON_SYMBOLS_2, 2)], 2);
 	_sprite = insertStaticSprite(0x31313A22, 1100);
 	_ssTape = insertSprite<SsScene1705Tape>(this, 15, 1100, 238, 439, 0x02363852);
-	_vm->_collisionMan->addSprite(_ssTape);
+	_vm->_collisionMan->addCollisionSprite(_ssTape);
 
 	if (which < 0) {
 		// Restoring game

@@ -95,7 +95,7 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x01303227);
 	setPalette(0x01303227);
-	insertMouse433(0x0322301B);
+	insertScreenMouse(0x0322301B);
 
 	insertStaticSprite(0x42213133, 1100);
 	
@@ -358,8 +358,8 @@ void AsScene1907Symbol::stFallOffHitGround() {
 	playSound(1);
 	sendMessage(_parentScene, 0x1022, 1000 + _newPositionIndex);
 	Entity::_priority = 1000 - _newPositionIndex;
-	_vm->_collisionMan->removeSprite(this);
-	_vm->_collisionMan->addSprite(this);
+	_vm->_collisionMan->removeCollisionSprite(this);
+	_vm->_collisionMan->addCollisionSprite(this);
 	SetSpriteUpdate(&AsScene1907Symbol::suFallOffHitGround);
 	NextState(&AsScene1907Symbol::cbFallOffHitGroundEvent);
 	_newStickFrameIndex = 0;
@@ -527,15 +527,15 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)
 
 	for (int i = 0; i < 9; i++) {
 		_asSymbols[i] = insertSprite<AsScene1907Symbol>(this, i, getRandomPositionIndex());
-		_vm->_collisionMan->addSprite(_asSymbols[i]);
+		_vm->_collisionMan->addCollisionSprite(_asSymbols[i]);
 	}
 	
 	_ssUpDownButton = insertSprite<SsScene1907UpDownButton>(this, _asSymbols[8]);
-	_vm->_collisionMan->addSprite(_ssUpDownButton);
+	_vm->_collisionMan->addCollisionSprite(_ssUpDownButton);
 
 	_asWaterHint = insertSprite<AsScene1907WaterHint>();
 	
-	insertMouse435(0x28E0120E, 20, 620);
+	insertPuzzleMouse(0x28E0120E, 20, 620);
 
 	SetMessageHandler(&Scene1907::handleMessage);
 	SetUpdateHandler(&Scene1907::update);

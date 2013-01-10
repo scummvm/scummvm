@@ -468,9 +468,9 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_sprite1 = insertStaticSprite(0x100CA0A8, 1100);
 		_sprite2 = insertStaticSprite(0x287C21A4, 1100);
 		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
-		insertMouse433(0x0066201C);
+		insertScreenMouse(0x0066201C);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
-		_vm->_collisionMan->addSprite(_asTape); 
+		_vm->_collisionMan->addCollisionSprite(_asTape); 
 	} else if (getGlobalVar(V_RADIO_ROOM_RIGHT_DOOR)) {
 		setRectList(0x004B6CD0);
 		setBackground(0x11E00684);
@@ -479,9 +479,9 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette->addBasePalette(0x11E00684, 0, 256, 0);
 		_sprite2 = insertStaticSprite(0x061601C8, 1100);
 		_klayman->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
-		insertMouse433(0x00680116);
+		insertScreenMouse(0x00680116);
 		_asTape = insertSprite<SsScene1705Tape>(this, 8, 1100, 302, 437, 0x01142428);
-		_vm->_collisionMan->addSprite(_asTape); 
+		_vm->_collisionMan->addCollisionSprite(_asTape); 
 	} else {
 		setRectList(0x004B6CF0);
 		setBackground(0x030006E6);
@@ -490,9 +490,9 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette->addBasePalette(0x030006E6, 0, 256, 0);
 		_sprite2 = insertStaticSprite(0x273801CE, 1100);
 		_klayman->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
-		insertMouse433(0x006E2038);
+		insertScreenMouse(0x006E2038);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
-		_vm->_collisionMan->addSprite(_asTape); 
+		_vm->_collisionMan->addCollisionSprite(_asTape); 
 	}
 	
 	addEntity(_palette);
@@ -537,7 +537,7 @@ Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene2802::handleMessage);
 	SetUpdateHandler(&Scene2802::update);
-	insertMouse435(0x008810A8, 20, 620);
+	insertPuzzleMouse(0x008810A8, 20, 620);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x8284C100, true, true, true));
 	_currRadioMusicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
 	// Need to go to the first frame first to load up the palette
@@ -871,7 +871,7 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x412A423E);
 	addEntity(_palette);
 	
-	insertMouse433(0xA423A41A);
+	insertScreenMouse(0xA423A41A);
 	
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
 		_asTestTubeOne = (StaticSprite*)insertStaticSprite(0x66121222, 100);
@@ -1121,7 +1121,7 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 	SetMessageHandler(&Scene2803Small::handleMessage);
 
 	loadDataResource(0x81120132);
-	insertMouse433(0x00A05290);
+	insertScreenMouse(0x00A05290);
 
 	insertSprite<AsScene2803LightCord>(this, 0xAFAD591A, 0x276E321D, 578, 200);
 
@@ -1743,7 +1743,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 		setBackground(0xA1D03005);
 		setPalette(0xA1D03005);
 		addEntity(_palette);
-		insertMouse435(0x03001A15, 20, 620);
+		insertPuzzleMouse(0x03001A15, 20, 620);
 		_asCoil = insertSprite<SsScene2804LightCoil>();
 		_asTarget = insertSprite<SsScene2804LightTarget>();
 	} else {
@@ -1751,7 +1751,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 		setBackground(0x01C01414);
 		setPalette(0x01C01414);
 		addEntity(_palette);
-		insertMouse435(0x01410014, 20, 620);
+		insertPuzzleMouse(0x01410014, 20, 620);
 		ssBeamCoilBody = insertSprite<SsScene2804BeamCoilBody>();
 		_asCoil = insertSprite<AsScene2804BeamCoil>(this, ssBeamCoilBody);
 		_asTarget = insertSprite<AsScene2804BeamTarget>();
@@ -1759,7 +1759,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	
 	_ssRedButton = insertSprite<SsScene2804RedButton>(this);
-	_vm->_collisionMan->addSprite(_ssRedButton);
+	_vm->_collisionMan->addCollisionSprite(_ssRedButton);
 
 	for (uint crystalIndex = 0; crystalIndex < 5; crystalIndex++) {
 		AsScene2804CrystalWaves *asCrystalWaves = NULL;
@@ -1767,7 +1767,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 			asCrystalWaves = insertSprite<AsScene2804CrystalWaves>(crystalIndex);
 		_asCrystals[crystalIndex] = insertSprite<AsScene2804Crystal>(asCrystalWaves, crystalIndex);
 		_ssCrystalButtons[crystalIndex] = insertSprite<SsScene2804CrystalButton>(this, _asCrystals[crystalIndex], crystalIndex);
-		_vm->_collisionMan->addSprite(_ssCrystalButtons[crystalIndex]);
+		_vm->_collisionMan->addCollisionSprite(_ssCrystalButtons[crystalIndex]);
 	}
 
 }
@@ -1889,7 +1889,7 @@ Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x08021E04);
 	setPalette(0x08021E04);
 	_palette->addPalette(0x8A6B1F91, 0, 65, 0);
-	insertMouse433(0x21E00088);
+	insertScreenMouse(0x21E00088);
 
 	_sprite1 = insertStaticSprite(0x008261E7, 1100);
 	_sprite2 = insertStaticSprite(0x020CE421, 1100);
@@ -1982,7 +1982,7 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_pointList = _dataResource.getPointArray(0x3606A422);
 
-	insertMouse433(0x22114C13);	
+	insertScreenMouse(0x22114C13);	
 	setBackground(0xC1B22110);
 	setPalette(0xC1B22110);
 	
@@ -2119,7 +2119,7 @@ Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x3E049A95);
 	setPalette(0x3E049A95);
-	insertMouse435(0x49A913E8, 20, 620);
+	insertPuzzleMouse(0x49A913E8, 20, 620);
 
 }
 
@@ -2438,19 +2438,19 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(kScene2808FileHashes1[which]);
 
 	asHandle = insertSprite<AsScene2808Handle>(this, which);
-	_vm->_collisionMan->addSprite(asHandle);
+	_vm->_collisionMan->addCollisionSprite(asHandle);
 
 	_asFlow = insertSprite<AsScene2808Flow>(this, which);
 	insertSprite<AsScene2808LightEffect>(which);
 
 	for (int testTubeIndex = 0; testTubeIndex < 3; testTubeIndex++) {
 		SsScene2808Dispenser *ssDispenser = insertSprite<SsScene2808Dispenser>(this, which, testTubeIndex);
-		_vm->_collisionMan->addSprite(ssDispenser);
+		_vm->_collisionMan->addCollisionSprite(ssDispenser);
 		_asTestTubes[testTubeIndex] = insertSprite<AsScene2808TestTube>(which, testTubeIndex, ssDispenser);
-		_vm->_collisionMan->addSprite(_asTestTubes[testTubeIndex]);
+		_vm->_collisionMan->addCollisionSprite(_asTestTubes[testTubeIndex]);
 	}
 	
-	insertMouse433(kScene2808FileHashes2[which]);
+	insertScreenMouse(kScene2808FileHashes2[which]);
 
 }
 
@@ -2570,7 +2570,7 @@ Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0xB22116C5);
 	setPalette(0xB22116C5);
-	insertMouse433(0x116C1B2A);
+	insertScreenMouse(0x116C1B2A);
 
 	_sprite1 = insertStaticSprite(0x1FA2EB82, 1100);
 
@@ -2711,7 +2711,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	setBackground(0x26508804);
 	setPalette(0x26508804);
-	insertMouse433(0x0880026D);
+	insertScreenMouse(0x0880026D);
 
 	_sprite6 = insertStaticSprite(0x03615227, 1100);
 	_sprite5 = insertStaticSprite(0xE059A224, 1100);
@@ -2727,10 +2727,10 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_KLAYMAN_SMALL)) {
 		_asTape = insertSprite<AsScene1201Tape>(this, 0, 900, 245, 429, 0x9148A011);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 	} else {
 		_asTape = insertSprite<AsScene1201Tape>(this, 0, 1100, 245, 429, 0x9148A011);
-		_vm->_collisionMan->addSprite(_asTape);
+		_vm->_collisionMan->addCollisionSprite(_asTape);
 	}
 
 	_sprite1 = insertStaticSprite(0x430001C4, 1200);
@@ -2752,7 +2752,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004AE438);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
-			_vm->_collisionMan->removeSprite(_asTape);
+			_vm->_collisionMan->removeCollisionSprite(_asTape);
 		} else {
 			insertKlayman<KmScene2810>(300, 424, _clipRects, 2);
 			setMessageList(0x004AE438);
@@ -2796,7 +2796,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004AE6D8);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
-			_vm->_collisionMan->removeSprite(_asTape);
+			_vm->_collisionMan->removeCollisionSprite(_asTape);
 		} else {
 			insertKlaymanLadder();
 			if (getGlobalVar(V_LADDER_DOWN_ACTION)) {
@@ -2819,7 +2819,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004AE428);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
-			_vm->_collisionMan->removeSprite(_asTape);
+			_vm->_collisionMan->removeCollisionSprite(_asTape);
 		} else {
 			insertKlayman<KmScene2810>(450, 424, _clipRects, 2);
 			setMessageList(0x004AE418);
@@ -2838,7 +2838,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004AE410);
 		setRectList(0x004AE810);
 		_isRopingDown = false;
-		_vm->_collisionMan->removeSprite(_asTape);
+		_vm->_collisionMan->removeCollisionSprite(_asTape);
 	}
 
 }
@@ -3035,15 +3035,15 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addBasePalette(0x03600606, 0, 256, 0);
 
 	_sprite1 = insertStaticSprite(0x0C06C860, 1100);
-	insertMouse433(0x0060203E);
+	insertScreenMouse(0x0060203E);
 
 	if (getGlobalVar(V_KEY3_LOCATION) == 3) {
 		_asKey = insertSprite<AsCommonKey>(this, 2, 1100, 474, 437);
-		_vm->_collisionMan->addSprite(_asKey);
+		_vm->_collisionMan->addCollisionSprite(_asKey);
 	}
 
 	_ssTape = insertSprite<SsScene1705Tape>(this, 6, 1100, 513, 437, 0xA1361863);
-	_vm->_collisionMan->addSprite(_ssTape);
+	_vm->_collisionMan->addCollisionSprite(_ssTape);
 	
 	_asWinch = insertSprite<AsScene2812Winch>();
 	_asTrapDoor = insertSprite<AsScene2812TrapDoor>();
@@ -3181,7 +3181,7 @@ Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
 	addBackground(_background);
 	_background->getSurface()->getDrawRect().y = -10;
 	setPalette(0xD542022E);
-	insertMouse435(0x0028D089, 20, 620);
+	insertPuzzleMouse(0x0028D089, 20, 620);
 	_ssButton = insertStaticSprite(0x1A4D4120, 1100);
 	_ssButton->setVisible(false);
 	loadSound(2, 0x19044E72);
