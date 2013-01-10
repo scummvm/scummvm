@@ -428,9 +428,9 @@ void LinesManager::initRoute() {
 		++lineIdx;
 	}
 
-	_vm->_objectsManager._lastLine = lineIdx + 1;
+	_vm->_objectsManager._lastLine = lineIdx;
 	for (int idx = 1; idx < 400; idx++) {
-		if ((Ligne[idx]._lineDataEndIdx < _vm->_globals._maxLineLength) && (idx != _vm->_objectsManager._lastLine)) {
+		if ((Ligne[idx]._lineDataEndIdx < _vm->_globals._maxLineLength) && (idx != _vm->_objectsManager._lastLine + 1)) {
 			Ligne[idx].field6 = Ligne[idx - 1].field6;
 			Ligne[idx].field8 = Ligne[idx - 1].field8;
 		}
