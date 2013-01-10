@@ -325,12 +325,12 @@ void Globals::clearAll() {
 	chemin = (int16 *)g_PTRNUL;
 
 	for (int idx = 0; idx < 400; ++idx) {
-		_vm->_linesManager.Ligne[idx].field0 = 0;
+		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;
 		_vm->_linesManager.Ligne[idx].field2 = 0;
 		_vm->_linesManager.Ligne[idx].field4 = 0;
 		_vm->_linesManager.Ligne[idx].field6 = 0;
 		_vm->_linesManager.Ligne[idx].field8 = 0;
-		_vm->_linesManager.Ligne[idx].lineData = (int16 *)g_PTRNUL;
+		_vm->_linesManager.Ligne[idx]._lineData = (int16 *)g_PTRNUL;
 
 		_vm->_linesManager._zoneLine[idx].count = 0;
 		_vm->_linesManager._zoneLine[idx].field2 = 0;

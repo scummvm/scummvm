@@ -37,12 +37,12 @@ struct LigneZoneItem {
 };
 
 struct LigneItem {
-	int field0;
+	int _lineDataEndIdx;
 	int field2;
 	int field4;
 	int field6;
 	int field8;
-	int16 *lineData;
+	int16 *_lineData;
 };
 
 struct SmoothItem {
@@ -78,7 +78,7 @@ public:
 	void RESET_OBSTACLE();
 	void RETIRE_LIGNE(int idx);
 	void AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
-	bool colision2_ligne(int a1, int a2, int *a3, int *a4, int a5, int a6);
+	bool checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx);
 	void INIPARCOURS();
 	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9);
 	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7);

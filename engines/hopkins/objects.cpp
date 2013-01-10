@@ -2886,7 +2886,6 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v5;
 	int v6;
 	int v7;
-	int v8;
 	int v10;
 	int v11;
 	int v12;
@@ -2915,7 +2914,6 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 	int v52;
 	int16 *v54;
 	int16 *v58;
-	int v62;
 	int v63;
 	int v64;
 	int v65;
@@ -2945,17 +2943,15 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		v5 = 440;
 	v75 = v4;
 	v74 = v5;
-	v6 = 0;
 	v7 = v74;
+
+	v6 = 0;
 	if (_vm->_graphicsManager.max_y > v74) {
-		v8 = 5;
 		do {
-			v62 = v8;
-			v8 = v62;
-			if (_vm->_linesManager.colision2_ligne(v75, v7, &v82[5], &v87[5], 0, _lastLine) && v87[v62] <= _lastLine)
+			if (_vm->_linesManager.checkCollisionLine(v75, v7, &v82[5], &v87[5], 0, _lastLine) && v87[5] <= _lastLine)
 				break;
-			v82[v62] = 0;
-			v87[v62] = -1;
+			v82[5] = 0;
+			v87[5] = -1;
 			++v6;
 			++v7;
 		} while (_vm->_graphicsManager.max_y > v7);
@@ -2968,7 +2964,7 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		do {
 			v63 = v12;
 			v12 = v63;
-			if (_vm->_linesManager.colision2_ligne(v75, v11, &v82[1], &v87[1], 0, _lastLine) && v87[v63] <= _lastLine)
+			if (_vm->_linesManager.checkCollisionLine(v75, v11, &v82[1], &v87[1], 0, _lastLine) && v87[v63] <= _lastLine)
 				break;
 			v82[v63] = 0;
 			v87[v63] = -1;
@@ -2988,7 +2984,7 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		do {
 			v64 = v16;
 			v16 = v64;
-			if (_vm->_linesManager.colision2_ligne(v15, v74, &v82[3], &v87[3], 0, _lastLine) && v87[v64] <= _lastLine)
+			if (_vm->_linesManager.checkCollisionLine(v15, v74, &v82[3], &v87[3], 0, _lastLine) && v87[v64] <= _lastLine)
 				break;
 			v82[v64] = 0;
 			v87[v64] = -1;
@@ -3010,7 +3006,7 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 		do {
 			v65 = v20;
 			v20 = v65;
-			if (_vm->_linesManager.colision2_ligne(v19, v74, &v82[7], &v87[7], 0, _lastLine) && v87[v65] <= _lastLine)
+			if (_vm->_linesManager.checkCollisionLine(v19, v74, &v82[7], &v87[7], 0, _lastLine) && v87[v65] <= _lastLine)
 				break;
 			v82[v65] = 0;
 			v87[v65] = -1;
@@ -3061,17 +3057,17 @@ int16 *ObjectsManager::PARC_VOITURE(int a1, int a2, int a3, int a4) {
 			v82[v24] = 0;
 			v77[v24] = 1300;
 		}
-		if (_vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, _lastLine)) {
+		if (_vm->_linesManager.checkCollisionLine(a1, a2, &v82[1], &v87[1], 0, _lastLine)) {
 			v69 = v87[1];
 			v68 = v82[1];
-		} else if (_vm->_linesManager.colision2_ligne(a1, a2, &v82[1], &v87[1], 0, _vm->_linesManager._linesNumb)) {
+		} else if (_vm->_linesManager.checkCollisionLine(a1, a2, &v82[1], &v87[1], 0, _vm->_linesManager._linesNumb)) {
 			v27 = 0;
 			for (;;) {
 				v28 = _vm->_globals.essai2[v27];
 				v29 = _vm->_globals.essai2[v27 + 1];
 				v66 = _vm->_globals.essai2[v27 + 2];
 				v27 += 4;
-				if (_vm->_linesManager.colision2_ligne(v28, v29, &v82[1], &v87[1], 0, _lastLine))
+				if (_vm->_linesManager.checkCollisionLine(v28, v29, &v82[1], &v87[1], 0, _lastLine))
 					break;
 				v32 = v67;
 				_vm->_globals.super_parcours[v32] = v28;
@@ -3101,8 +3097,8 @@ LABEL_90:
 		if (v69 < v73) {
 			v34 = v68;
 			v35 = v68;
-			for (int i = _vm->_linesManager.Ligne[v69].field0; v35 < i - 2; i = _vm->_linesManager.Ligne[v69].field0) {
-				v37 = _vm->_linesManager.Ligne[v69].lineData;
+			for (int i = _vm->_linesManager.Ligne[v69]._lineDataEndIdx; v35 < i - 2; i = _vm->_linesManager.Ligne[v69]._lineDataEndIdx) {
+				v37 = _vm->_linesManager.Ligne[v69]._lineData;
 				v39 = v67;
 				_vm->_globals.super_parcours[v39] = v37[2 * v35];
 				_vm->_globals.super_parcours[v39 + 1] = v37[2 * v35 + 1];
@@ -3114,8 +3110,8 @@ LABEL_90:
 			}
 			for (j = v69 + 1; j < v73; ++j) {
 				if (_vm->_linesManager.PLAN_TEST(
-						_vm->_linesManager.Ligne[j].lineData[0],
-						_vm->_linesManager.Ligne[j].lineData[1],
+						_vm->_linesManager.Ligne[j]._lineData[0],
+						_vm->_linesManager.Ligne[j]._lineData[1],
 				        v67,
 				        j,
 				        v73,
@@ -3126,9 +3122,9 @@ LABEL_88:
 					v67 = _vm->_linesManager.NV_POSI;
 					goto LABEL_90;
 				}
-				if (_vm->_linesManager.Ligne[j].field0 - 2 > 0) {
-					for (int v40 = 0; v40 < _vm->_linesManager.Ligne[j].field0 - 2; v40++) {
-						v41 = _vm->_linesManager.Ligne[j].lineData;
+				if (_vm->_linesManager.Ligne[j]._lineDataEndIdx - 2 > 0) {
+					for (int v40 = 0; v40 < _vm->_linesManager.Ligne[j]._lineDataEndIdx - 2; v40++) {
+						v41 = _vm->_linesManager.Ligne[j]._lineData;
 						_vm->_globals.super_parcours[v67] = v41[2 * v40];
 						_vm->_globals.super_parcours[v67 + 1] = v41[2 * v40 + 1];
 						_vm->_globals.super_parcours[v67 + 2] = _vm->_linesManager.Ligne[j].field6;
@@ -3142,7 +3138,7 @@ LABEL_88:
 		}
 		if (v69 > v73) {
 			for (int k = v68; k > 0; --k) {
-				v45 = _vm->_linesManager.Ligne[v69].lineData;
+				v45 = _vm->_linesManager.Ligne[v69]._lineData;
 				v47 = v67;
 				_vm->_globals.super_parcours[v47] = v45[2 * k];
 				_vm->_globals.super_parcours[v47 + 1] = v45[2 * k + 1];
@@ -3153,16 +3149,16 @@ LABEL_88:
 			for (int l = v69 - 1; l > v73; --l) {
 				v48 = l;
 				if (_vm->_linesManager.PLAN_TEST(
-						_vm->_linesManager.Ligne[l].lineData[2 * _vm->_linesManager.Ligne[v48].field0 - 2],
-						_vm->_linesManager.Ligne[l].lineData[2 * _vm->_linesManager.Ligne[v48].field0 - 1],
+						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2],
+						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 1],
 				        v67,
 				        l,
 				        v73,
 				        0) == 1)
 					goto LABEL_88;
 				
-				for (int v49 = _vm->_linesManager.Ligne[v48].field0 - 2; v49 > 0; v49 --) {
-					v50 = _vm->_linesManager.Ligne[l].lineData;
+				for (int v49 = _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2; v49 > 0; v49 --) {
+					v50 = _vm->_linesManager.Ligne[l]._lineData;
 					v52 = v67;
 					_vm->_globals.super_parcours[v52] = v50[2 * v49];
 					_vm->_globals.super_parcours[v52 + 1] = v50[2 * v49 + 1];
@@ -3171,13 +3167,13 @@ LABEL_88:
 					v67 += 4;
 				}
 			}
-			v68 = _vm->_linesManager.Ligne[v73].field0 - 1;
+			v68 = _vm->_linesManager.Ligne[v73]._lineDataEndIdx - 1;
 			v69 = v73;
 		}
 		if (v69 == v73) {
 			if (v68 <= v72) {
 				for (int v57 = v68; v57 < v72; v57++) {
-					v58 = _vm->_linesManager.Ligne[v73].lineData;
+					v58 = _vm->_linesManager.Ligne[v73]._lineData;
 					_vm->_globals.super_parcours[v67] = v58[2 * v57];
 					_vm->_globals.super_parcours[v67 + 1] = v58[2 * v57 + 1];
 					_vm->_globals.super_parcours[v67 + 2] = _vm->_linesManager.Ligne[v73].field6;
@@ -3186,7 +3182,7 @@ LABEL_88:
 				}
 			} else {
 				for (int v53 = v68; v53 > v72; v53--) {
-					v54 = _vm->_linesManager.Ligne[v73].lineData;
+					v54 = _vm->_linesManager.Ligne[v73]._lineData;
 					_vm->_globals.super_parcours[v67] = v54[2 * v53];
 					_vm->_globals.super_parcours[v67 + 1] = v54[2 * v53 + 1];
 					_vm->_globals.super_parcours[v67 + 2] = _vm->_linesManager.Ligne[v73].field8;
