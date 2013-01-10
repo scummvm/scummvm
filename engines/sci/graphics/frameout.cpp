@@ -726,7 +726,12 @@ void GfxFrameout::kernelFrameout() {
 							continue;
 					}
 
-					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					// FIXME: We should not update the object's NS rect here.
+					// This breaks the sliders in the control panel screen in
+					// QFG4, but disabling it does not change any functionality,
+					// as the object(s) will be drawn on screen with the
+					// calculated coordinates.
+					//g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
 				// Don't attempt to draw sprites that are outside the visible
