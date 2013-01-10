@@ -59,51 +59,57 @@ void LinesManager::CLEAR_ZONE() {
 	next_ligne = 0;
 }
 
-// Object Zone
-int LinesManager::ZONE_OBJET(int posX, int posY) {
-	int v2 = 0;
-	if ((uint)(posY - 120) <= 33)
-		v2 = OPTI_ZONE(posX, 1, false);
-	if ((uint)(posY - 154) <= 37)
-		v2 = OPTI_ZONE(posX, 7, false);
-	if ((uint)(posY - 192) <= 37)
-		v2 = OPTI_ZONE(posX, 13, false);
-	if ((uint)(posY - 230) <= 37)
-		v2 = OPTI_ZONE(posX, 19, false);
-	if ((uint)(posY - 268) <= 37)
-		v2 = OPTI_ZONE(posX, 25, true);
-	if ((uint)(posY - 268) <= 20 && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478)
-		v2 = 30;
-	if ((uint)(posY - 290) <= 16 && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478)
-		v2 = 31;
-	if (posX < _vm->_graphicsManager._scrollOffset + 152 || posX > _vm->_graphicsManager._scrollOffset + 484)
-		v2 = 32;
-	if ((uint)(posY - 114) > 192)
-		v2 = 32;
-	return v2;
+/** 
+ * Check Hotspots in Inventory screen
+ * Returns the ID of the hotspot under mouse
+ */
+int LinesManager::checkInventoryHotspots(int posX, int posY) {
+	int hotspotId = 0;
+	if (posY >= 120 && posY <= 153)
+		hotspotId = checkInventoryHostpotsRow(posX, 1, false);
+	if (posY >= 154 && posY <= 191)
+		hotspotId = checkInventoryHostpotsRow(posX, 7, false);
+	if (posY >= 192 && posY <= 229)
+		hotspotId = checkInventoryHostpotsRow(posX, 13, false);
+	if (posY >= 230 && posY <= 267)
+		hotspotId = checkInventoryHostpotsRow(posX, 19, false);
+	if (posY >= 268 && posY <= 306)
+		hotspotId = checkInventoryHostpotsRow(posX, 25, true);
+	if (posY >= 268 && posY <= 288 && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478)
+		hotspotId = 30;
+	if (posY >= 290 && posY <= 306 && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478)
+		hotspotId = 31;
+	if (posY < 114 || posY > 306 || posX < _vm->_graphicsManager._scrollOffset + 152 || posX > _vm->_graphicsManager._scrollOffset + 484)
+		hotspotId = 32;
+
+	return hotspotId;
 }
 
-int LinesManager::OPTI_ZONE(int posX, int minZoneNum, bool lastRow) {
+/**
+ * Check the hotspots in an inventory line
+ * Returns the hotspot Id under the mouse, if any.
+ */
+int LinesManager::checkInventoryHostpotsRow(int posX, int minZoneNum, bool lastRow) {
 	int result = minZoneNum;
-	if (posX >= _vm->_graphicsManager._scrollOffset + 158 && posX <= _vm->_graphicsManager._scrollOffset + 208)
+	if (posX >= _vm->_graphicsManager._scrollOffset + 158 && posX < _vm->_graphicsManager._scrollOffset + 208)
 		return result;
 
-	if (posX >= _vm->_graphicsManager._scrollOffset + 208 && posX <= _vm->_graphicsManager._scrollOffset + 266) {
+	if (posX >= _vm->_graphicsManager._scrollOffset + 208 && posX < _vm->_graphicsManager._scrollOffset + 266) {
 		result += 1;
 		return result;
 	}
 
-	if (posX >= _vm->_graphicsManager._scrollOffset + 266 && posX <= _vm->_graphicsManager._scrollOffset + 320) {
+	if (posX >= _vm->_graphicsManager._scrollOffset + 266 && posX < _vm->_graphicsManager._scrollOffset + 320) {
 		result += 2;
 		return result;
 	}
 
-	if (posX >= _vm->_graphicsManager._scrollOffset + 320 && posX <= _vm->_graphicsManager._scrollOffset + 370) {
+	if (posX >= _vm->_graphicsManager._scrollOffset + 320 && posX < _vm->_graphicsManager._scrollOffset + 370) {
 		result += 3;
 		return result;
 	}
 
-	if (posX >= _vm->_graphicsManager._scrollOffset + 370 && posX <= _vm->_graphicsManager._scrollOffset + 424) {
+	if (posX >= _vm->_graphicsManager._scrollOffset + 370 && posX < _vm->_graphicsManager._scrollOffset + 424) {
 		result += 4;
 		return result;
 	}
@@ -178,7 +184,6 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 		_zoneLine[idx].field2 = bobZoneIdx;
 	}
 }
-
 
 void LinesManager::resetLines() {
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
