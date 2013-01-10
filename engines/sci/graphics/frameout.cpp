@@ -686,7 +686,13 @@ void GfxFrameout::kernelFrameout() {
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		_coordAdjuster->pictureSetDisplayArea(it->planeRect);
-		_palette->drewPicture(it->pictureId);
+		// Invoking drewPicture() with an invalid picture ID in SCI32 results in
+		// invalidating the palVary palette when a palVary effect is active. This
+		// is quite obvious in QFG4, where the day time palette is incorrectly
+		// shown when exiting the caves, and the correct night time palette
+		// flashes briefly each time that kPalVaryInit is called.
+		if (it->pictureId != 0xFFFF)
+			_palette->drewPicture(it->pictureId);
 
 		FrameoutList itemList;
 
