@@ -2049,33 +2049,21 @@ void ObjectsManager::GOHOME2() {
 
 // Load Obstacle
 void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
-	int16 v1;
-	byte *ptr;
-	int16 v4;
-	int16 v5;
-
 	_vm->_linesManager.RESET_OBSTACLE();
 	_vm->_linesManager._linesNumb = 0;
 	_lastLine = 0;
-	ptr = _vm->_fileManager.loadFile(file);
-	v4 = 0;
-	v5 = 0;
-	do {
-		v1 = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
-		if (v1 != -1) {
-			_vm->_linesManager.AJOUTE_LIGNE(
-			    v5,
-			    v1,
-			    (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1),
-			    (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2),
-			    (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 3),
-			    (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 4),
-			    1);
-			++_vm->_linesManager._linesNumb;
-		}
-		v4 += 5;
-		++v5;
-	} while (v1 != -1);
+	byte *ptr = _vm->_fileManager.loadFile(file);
+	for (int idx = 0; (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)) != -1; idx++) {
+		_vm->_linesManager.AJOUTE_LIGNE(
+		    idx,
+		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)),
+		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 1),
+		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 2),
+		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 3),
+		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 4),
+		    1);
+		++_vm->_linesManager._linesNumb;
+	}
 	_vm->_linesManager.initRoute();
 	_vm->_globals.freeMemory(ptr);
 }
