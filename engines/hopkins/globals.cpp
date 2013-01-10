@@ -324,7 +324,7 @@ void Globals::clearAll() {
 	BufLig = (int16 *)g_PTRNUL;
 	chemin = (int16 *)g_PTRNUL;
 
-	for (int idx = 0; idx < 400; ++idx) {
+	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;
 		_vm->_linesManager.Ligne[idx].field2 = 0;
 		_vm->_linesManager.Ligne[idx].field4 = 0;

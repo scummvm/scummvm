@@ -75,8 +75,8 @@ public:
 	int OPTI_ZONE(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);
 	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
-	void RESET_OBSTACLE();
-	void RETIRE_LIGNE(int idx);
+	void resetLines();
+	void removeLine(int idx);
 	void AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
 	bool checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx);
 	void initRoute();

@@ -29,7 +29,7 @@
 namespace Hopkins {
 
 LinesManager::LinesManager() {
-	for (int i = 0; i < 400; ++i) {
+	for (int i = 0; i < MAX_LINES; ++i) {
 		Common::fill((byte *)&_zoneLine[i], (byte *)&_zoneLine[i] + sizeof(LigneZoneItem), 0);
 		Common::fill((byte *)&Ligne[i], (byte *)&Ligne[i] + sizeof(LigneItem), 0);
 	}
@@ -53,7 +53,7 @@ void LinesManager::setParent(HopkinsEngine *vm) {
 }
 
 void LinesManager::CLEAR_ZONE() {
-	for (int idx = 0; idx < 400; ++idx)
+	for (int idx = 0; idx < MAX_LINES; ++idx)
 		removeZoneLine(idx);
 
 	next_ligne = 0;
@@ -120,7 +120,7 @@ int LinesManager::OPTI_ZONE(int posX, int minZoneNum, bool lastRow) {
  * Remove Zone Line
  */
 void LinesManager::removeZoneLine(int idx) {
-	if (idx > 400)
+	if (idx > MAX_LINES)
 		error("Attempting to remove a line obstacle > MAX_LIGNE.");
 
 	_vm->_linesManager._zoneLine[idx].zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_vm->_linesManager._zoneLine[idx].zoneData);
@@ -136,7 +136,7 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 		_vm->_globals.BOBZONE_FLAG[bobZoneIdx] = true;
 		_vm->_globals.BOBZONE[bobZoneIdx] = a3;
 	} else {
-		if (idx > 400)
+		if (idx > MAX_LINES)
 			error("Attempting to add a line obstacle > MAX_LIGNE.");
 
 		_zoneLine[idx].zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx].zoneData);
@@ -180,17 +180,17 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 }
 
 
-void LinesManager::RESET_OBSTACLE() {
-	for (int idx = 0; idx < 400; ++idx) {
-		RETIRE_LIGNE(idx);
+void LinesManager::resetLines() {
+	for (int idx = 0; idx < MAX_LINES; ++idx) {
+		removeLine(idx);
 		Ligne[idx]._lineDataEndIdx = 0;
 		Ligne[idx]._lineData = (int16 *)g_PTRNUL;
 	}
 }
 
 // Remove Line
-void LinesManager::RETIRE_LIGNE(int idx) {
-	if (idx > 400)
+void LinesManager::removeLine(int idx) {
+	if (idx > MAX_LINES)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
 	Ligne[idx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx]._lineData);
 }
@@ -219,7 +219,7 @@ void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6,
 	int v39;
 	int v40;
 
-	if (idx > 400)
+	if (idx > MAX_LINES)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
 
 	if (_linesNumb < idx)
@@ -419,7 +419,7 @@ void LinesManager::initRoute() {
 			_vm->_graphicsManager.min_x == curLineX || _vm->_graphicsManager.min_y == curLineY ||
 			(lineX == curLineX && lineY == curLineY))
 			break;
-		if (lineIdx == 400)
+		if (lineIdx == MAX_LINES)
 			error("ERROR - LAST LINE NOT FOUND");
 
 		int16 *nextLineData = Ligne[lineIdx + 1]._lineData;
@@ -429,7 +429,7 @@ void LinesManager::initRoute() {
 	}
 
 	_vm->_objectsManager._lastLine = lineIdx;
-	for (int idx = 1; idx < 400; idx++) {
+	for (int idx = 1; idx < MAX_LINES; idx++) {
 		if ((Ligne[idx]._lineDataEndIdx < _vm->_globals._maxLineLength) && (idx != _vm->_objectsManager._lastLine + 1)) {
 			Ligne[idx].field6 = Ligne[idx - 1].field6;
 			Ligne[idx].field8 = Ligne[idx - 1].field8;

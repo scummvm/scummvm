@@ -2049,7 +2049,7 @@ void ObjectsManager::GOHOME2() {
 
 // Load Obstacle
 void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
-	_vm->_linesManager.RESET_OBSTACLE();
+	_vm->_linesManager.resetLines();
 	_vm->_linesManager._linesNumb = 0;
 	_lastLine = 0;
 	byte *ptr = _vm->_fileManager.loadFile(file);
@@ -2177,7 +2177,7 @@ void ObjectsManager::CARRE_ZONE() {
 		_vm->_globals.CarreZone[idx].fieldC = 0;
 	}
 
-	for (int idx = 0; idx < 400; ++idx) {
+	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		dataP = _vm->_linesManager._zoneLine[idx].zoneData;
 		if (dataP != (int16 *)g_PTRNUL) {
 			v4 = _vm->_linesManager._zoneLine[idx].field2;
@@ -2620,7 +2620,7 @@ void ObjectsManager::CLEAR_ECRAN() {
 	_vm->_globals.CLEAR_VBOB();
 	_vm->_animationManager.clearAnim();
 	_vm->_linesManager.CLEAR_ZONE();
-	_vm->_linesManager.RESET_OBSTACLE();
+	_vm->_linesManager.resetLines();
 	_vm->_globals.resetCache();
 
 	for (int v1 = 0; v1 <= 48; v1++) {
@@ -4131,7 +4131,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 		}
 	}
 
-	_vm->_linesManager.RESET_OBSTACLE();
+	_vm->_linesManager.resetLines();
 	for (size_t idx = 0; idx < nbytes; idx++) {
 		if (ptr[idx] == 'O' && ptr[idx + 1] == 'B' && ptr[idx + 2] == '2') {
 			v16 = ptr + idx + 4;

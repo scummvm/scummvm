@@ -73,6 +73,8 @@ enum {
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
+#define MAX_LINES 400
+
 struct HopkinsGameDescription;
 
 class HopkinsEngine : public Engine {
