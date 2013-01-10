@@ -690,6 +690,12 @@ reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kPalVaryUnknown2(EngineState *s, int argc, reg_t *argv) {
 	// TODO: Unknown (seems to be SCI32 exclusive)
+	// It seems to be related to the day/night palette effects in QFG4, and
+	// accepts a palette resource ID. It is triggered right when the night
+	// effect is initially applied (when exiting the caves).
+	// In QFG4, there are two scene palettes: 790 for night, and 791 for day.
+	// Initially, the game starts at night time, but this is called with the
+	// ID of the day time palette (i.e. 791).
 	return kStub(s, argc, argv);
 }
 
