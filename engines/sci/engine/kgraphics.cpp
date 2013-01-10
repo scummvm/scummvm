@@ -722,11 +722,6 @@ reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
-	// Unknown (seems to be SCI32 exclusive)
-	return NULL_REG;
-}
-
 reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId paletteId = argv[0].toUint16();
 

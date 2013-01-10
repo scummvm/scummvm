@@ -683,6 +683,16 @@ reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
 	return kStub(s, argc, argv);
 }
 
+reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
+	// TODO: Unknown (seems to be SCI32 exclusive)
+	return kStub(s, argc, argv);
+}
+
+reg_t kPalVaryUnknown2(EngineState *s, int argc, reg_t *argv) {
+	// TODO: Unknown (seems to be SCI32 exclusive)
+	return kStub(s, argc, argv);
+}
+
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
 	// Examples: GK1 room 480 (Bayou ritual), LSL6 room 100 (title screen)
 
