@@ -292,7 +292,7 @@ void SmushDecoder::handleFRME(Common::SeekableReadStream *stream, uint32 size) {
 	byte *block = new byte[size];
 	stream->read(block, size);
 
-	Common::MemoryReadStream *memStream = new Common::MemoryReadStream(block, size, DisposeAfterUse::YES);
+	Common::MemoryReadStream *memStream = new Common::MemoryReadStream(block, size, DisposeAfterUse::NO);
 	while (size > 0) {
 		uint32 subType = memStream->readUint32BE();
 		uint32 subSize = memStream->readUint32BE();
@@ -323,6 +323,7 @@ void SmushDecoder::handleFRME(Common::SeekableReadStream *stream, uint32 size) {
 		memStream->seek(subPos + subSize + (subSize & 1), SEEK_SET);
 	}
 	delete memStream;
+	delete[] block;
 }
 
 bool SmushDecoder::rewind() {
@@ -426,7 +427,7 @@ void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *s
 	stream->read(ptr, size);
 
 	_blocky16->decode((byte *)_surface.pixels, ptr);
-	delete ptr;
+	delete[] ptr;
 }
 
 void SmushDecoder::SmushVideoTrack::handleFrameObject(Common::SeekableReadStream *stream, uint32 size) {
