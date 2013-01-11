@@ -3294,94 +3294,45 @@ LABEL_60:
 }
 
 // Test line
-int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5) {
-	int i;
-	int v6;
-	int16 *v7;
-	int v8;
-	int v9;
-	int v10;
-	int v11;
-	int16 *v12;
-	int v13;
-	int v14;
-	int v15;
-	int v16;
-	int16 *v17;
-	int v18;
-	int v19;
-	int v20;
-	int v21;
-	int result;
-	int v23;
-	int v24 = 0;
-	int v25;
-	int v27;
-	int v28;
+int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *foundLineIdx, int *foundDataIdx) {
+	int16 *lineData;
+	int lineDataEndIdx;
+	int collLineIdx;
+	int collDataIdx;
 
-	bool v26 = false;
-	v25 = _vm->_objectsManager._lastLine + 1;
-	for (i = (int)(_vm->_objectsManager._lastLine + 1); i < _vm->_linesManager._linesNumb + 1; i = v25) {
-		v6 = i;
-		v7 = Ligne[i]._lineData;
-		v8 = Ligne[v6]._lineDataEndIdx;
-		v23 = v7[2 * v8 - 2];
-		v9 = v7[2 * v8 - 1];
-		if (v7[0] == a1 && a2 == v7[1]) {
-			v24 = v25;
-			v26 = true;
+	for (int idx = _vm->_objectsManager._lastLine + 1; idx < _vm->_linesManager._linesNumb + 1; idx++) {
+		lineData = Ligne[idx]._lineData;
+		lineDataEndIdx = Ligne[idx]._lineDataEndIdx;
+		if (lineData[2 * (lineDataEndIdx - 1)] == a1 && lineData[1] == a2) {
 			*a3 = 1;
+			int posX = lineData[2 * (lineDataEndIdx - 1)];
+			int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
+			if (Ligne[idx].field6 == 5 || Ligne[idx].field6 == 1)
+				posY += 2;
+			if (Ligne[idx].field6 == 3 || Ligne[idx].field8 == 7)
+				posX += 2;
+			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _vm->_objectsManager._lastLine))
+				error("Error in test line");
+			*foundLineIdx = collLineIdx;
+			*foundDataIdx = collDataIdx;
+			return idx;
 		}
-		if (v23 == a1 && a2 == v9) {
-			v24 = v25;
-			v26 = true;
+		if (lineData[2 * (lineDataEndIdx - 1)] == a1 && lineData[2 * (lineDataEndIdx - 1) + 1] == a2) {
 			*a3 = 2;
+			int posX = lineData[0];
+			int posY = lineData[1];
+			if (Ligne[idx].field6 == 5 || Ligne[idx].field6 == 1)
+				posY -= 2;
+			if (Ligne[idx].field6 == 3 || Ligne[idx].field8 == 7)
+				posX -= 2;
+			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _vm->_objectsManager._lastLine))
+				error("Error in test line");
+			*foundLineIdx = collLineIdx;
+			*foundDataIdx = collDataIdx;
+			return idx;
 		}
-		if (v26)
-			goto LABEL_12;
-		++v25;
 	}
-	if (!v26)
-		goto LABEL_33;
-LABEL_12:
-	if (*a3 == 1) {
-		v10 = v24;
-		v11 = Ligne[v10]._lineDataEndIdx;
-		v12 = Ligne[v10]._lineData;
-		v13 = v12[2 * v11 - 2];
-		v14 = v12[2 * v11 - 1];
-		v15 = Ligne[v10].field6;
-		if (v15 == 5 || v15 == 1)
-			v14 += 2;
-		v16 = v24;
-		if (Ligne[v16].field6 == 3 || Ligne[v16].field8 == 7)
-			v13 += 2;
-		if (!checkCollisionLine(v13, v14, &v28, &v27, 0, _vm->_objectsManager._lastLine))
-			error("Error in test line");
-		*a4 = v27;
-		*a5 = v28;
-	}
-	if (v26 && *a3 == 2) {
-		v17 = Ligne[v25]._lineData;
-		v18 = v17[0];
-		v19 = v17[1];
-		v20 = Ligne[v24].field6;
-		if (v20 == 5 || v20 == 1)
-			v19 -= 2;
-		v21 = v24;
-		if (Ligne[v21].field6 == 3 || Ligne[v21].field8 == 7)
-			v18 -= 2;
-		if (!checkCollisionLine(v18, v19, &v28, &v27, 0, _vm->_objectsManager._lastLine))
-			error("Error in test line");
-		*a4 = v27;
-		*a5 = v28;
-	}
-LABEL_33:
-	if (v26)
-		result = v24;
-	else
-		result = -1;
-	return result;
+	return -1;
 }
 
 } // End of namespace Hopkins
