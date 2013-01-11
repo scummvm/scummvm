@@ -450,35 +450,31 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 	}
 }
 
-void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col) {
-	const char *srcP;
-	int v5;
-	int v6;
-	byte v7;
-	int fontCol;
-	int v9;
-
-	srcP = msg.c_str();
-	v9 = xp;
-	fontCol = col;
-	do {
-		v7 = *srcP++;
-		if (v7 == '&') {
+/**
+ * Compute character width and render text using variable width fonts
+ */
+void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, int col) {
+	const char *srcP = msg.c_str();
+	int charEndPosX = xp;
+	int fontCol = col;
+	byte curChar = *srcP++;
+	while (curChar) {
+		if (curChar == '&') {
 			fontCol = 2;
-			v7 = *srcP++;
+			curChar = *srcP++;
 		}
-		if (v7 == '$') {
+		if (curChar == '$') {
 			fontCol = 4;
-			v7 = *srcP++;
+			curChar = *srcP++;
 		}
-		if (!v7)
+		if (!curChar)
 			break;
-		if (v7 >= 32) {
-			v5 = v7 - 32;
-			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police, v9, yp, v7 - 32, fontCol);
-			v9 += _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
-			v6 = _vm->_objectsManager.getWidth(_vm->_globals.police, v5);
-			_vm->_graphicsManager.addVesaSegment(v9 - v6, yp, v9, yp + 12);
+		if (curChar >= 32) {
+			byte printChar = curChar - 32;
+			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police, charEndPosX, yp, printChar, fontCol);
+			charEndPosX += _vm->_objectsManager.getWidth(_vm->_globals.police, printChar);
+			int charWidth = _vm->_objectsManager.getWidth(_vm->_globals.police, printChar);
+			_vm->_graphicsManager.addVesaSegment(charEndPosX - charWidth, yp, charEndPosX, yp + 12);
 			if (_vm->_eventsManager._escKeyFl) {
 				_vm->_globals.iRegul = 1;
 				_vm->_eventsManager.VBL();
@@ -488,7 +484,8 @@ void FontManager::TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col
 				_vm->_globals.iRegul = 1;
 			}
 		}
-	} while (v7);
+		curChar = *srcP++;
+	}
 }
 
 } // End of namespace Hopkins

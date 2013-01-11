@@ -82,7 +82,7 @@ public:
 
 	void displayTextVesa(int xp, int yp, const Common::String &message, int col);
 	void displayText(int xp, int yp, const Common::String &message, int col);
-	void TEXT_COMPUT(int xp, int yp, const Common::String &msg, int col);
+	void renderTextDisplay(int xp, int yp, const Common::String &msg, int col);
 };
 
 } // End of namespace Hopkins

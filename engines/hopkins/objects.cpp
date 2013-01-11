@@ -2867,22 +2867,16 @@ int16 *ObjectsManager::PARC_VOITURE(int x1, int y1, int x2, int y2) {
 	int v27;
 	int v28;
 	int v29;
-	int v32;
-	int16 *v33;
 	int v34;
 	int v35;
 	int16 *v37;
-	int v39;
 	int16 *v41;
 	int16 *v45;
-	int v47;
 	int v48;
 	int16 *v50;
-	int v52;
 	int16 *v54;
 	int16 *v58;
 	int v66;
-	int v67;
 	int v68 = 0;
 	int v69 = 0;
 	int j;
@@ -2894,7 +2888,7 @@ int16 *ObjectsManager::PARC_VOITURE(int x1, int y1, int x2, int y2) {
 
 	int clipX2 = x2;
 	int clipY2 = y2;
-	v67 = 0;
+	int superRouteIdx = 0;
 	if (x2 <= 14)
 		clipX2 = 15;
 	if (y2 <= 14)
@@ -2993,20 +2987,20 @@ int16 *ObjectsManager::PARC_VOITURE(int x1, int y1, int x2, int y2) {
 				v29 = _vm->_globals.essai2[v27 + 1];
 				v66 = _vm->_globals.essai2[v27 + 2];
 				v27 += 4;
+
 				if (_vm->_linesManager.checkCollisionLine(v28, v29, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine))
 					break;
-				v32 = v67;
-				_vm->_globals.super_parcours[v32] = v28;
-				_vm->_globals.super_parcours[v32 + 1] = v29;
-				_vm->_globals.super_parcours[v32 + 2] = v66;
-				_vm->_globals.super_parcours[v32 + 3] = 0;
 
-				v33 = _vm->_globals.essai0;
-				_vm->_globals.essai0[v32] = v28;
-				v33[v32 + 1] = v29;
-				v33[v32 + 2] = v66;
-				v33[v32 + 3] = 0;
-				v67 += 4;
+				_vm->_globals.super_parcours[superRouteIdx] = v28;
+				_vm->_globals.super_parcours[superRouteIdx + 1] = v29;
+				_vm->_globals.super_parcours[superRouteIdx + 2] = v66;
+				_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+
+				_vm->_globals.essai0[superRouteIdx] = v28;
+				_vm->_globals.essai0[superRouteIdx + 1] = v29;
+				_vm->_globals.essai0[superRouteIdx + 2] = v66;
+				_vm->_globals.essai0[superRouteIdx + 3] = 0;
+				superRouteIdx += 4;
 				if (v28 == -1)
 					break;;
 			}
@@ -3017,7 +3011,7 @@ int16 *ObjectsManager::PARC_VOITURE(int x1, int y1, int x2, int y2) {
 		} else {
 			v69 = 1;
 			v68 = 1;
-			v67 = 0;
+			superRouteIdx = 0;
 		}
 LABEL_90:
 		if (v69 < v73) {
@@ -3025,12 +3019,11 @@ LABEL_90:
 			v35 = v68;
 			for (int i = _vm->_linesManager.Ligne[v69]._lineDataEndIdx; v35 < i - 2; i = _vm->_linesManager.Ligne[v69]._lineDataEndIdx) {
 				v37 = _vm->_linesManager.Ligne[v69]._lineData;
-				v39 = v67;
-				_vm->_globals.super_parcours[v39] = v37[2 * v35];
-				_vm->_globals.super_parcours[v39 + 1] = v37[2 * v35 + 1];
-				_vm->_globals.super_parcours[v39 + 2] = _vm->_linesManager.Ligne[v69].field6;
-				_vm->_globals.super_parcours[v39 + 3] = 0;
-				v67 += 4;
+				_vm->_globals.super_parcours[superRouteIdx] = v37[2 * v35];
+				_vm->_globals.super_parcours[superRouteIdx + 1] = v37[2 * v35 + 1];
+				_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[v69].field6;
+				_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+				superRouteIdx += 4;
 				++v34;
 				v35 = v34;
 			}
@@ -3038,20 +3031,20 @@ LABEL_90:
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[j]._lineData[0],
 						_vm->_linesManager.Ligne[j]._lineData[1],
-				        v67, j, v73)) {
+				        superRouteIdx, j, v73)) {
 					v69 = _vm->_linesManager.NV_LIGNEDEP;
 					v68 = _vm->_linesManager.NV_LIGNEOFS;
-					v67 = _vm->_linesManager.NV_POSI;
+					superRouteIdx = _vm->_linesManager.NV_POSI;
 					goto LABEL_90;
 				}
 				if (_vm->_linesManager.Ligne[j]._lineDataEndIdx - 2 > 0) {
 					for (int v40 = 0; v40 < _vm->_linesManager.Ligne[j]._lineDataEndIdx - 2; v40++) {
 						v41 = _vm->_linesManager.Ligne[j]._lineData;
-						_vm->_globals.super_parcours[v67] = v41[2 * v40];
-						_vm->_globals.super_parcours[v67 + 1] = v41[2 * v40 + 1];
-						_vm->_globals.super_parcours[v67 + 2] = _vm->_linesManager.Ligne[j].field6;
-						_vm->_globals.super_parcours[v67 + 3] = 0;
-						v67 += 4;
+						_vm->_globals.super_parcours[superRouteIdx] = v41[2 * v40];
+						_vm->_globals.super_parcours[superRouteIdx + 1] = v41[2 * v40 + 1];
+						_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[j].field6;
+						_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+						superRouteIdx += 4;
 					}
 				}
 			}
@@ -3061,33 +3054,31 @@ LABEL_90:
 		if (v69 > v73) {
 			for (int k = v68; k > 0; --k) {
 				v45 = _vm->_linesManager.Ligne[v69]._lineData;
-				v47 = v67;
-				_vm->_globals.super_parcours[v47] = v45[2 * k];
-				_vm->_globals.super_parcours[v47 + 1] = v45[2 * k + 1];
-				_vm->_globals.super_parcours[v47 + 2] = _vm->_linesManager.Ligne[v69].field8;
-				_vm->_globals.super_parcours[v47 + 3] = 0;
-				v67 += 4;
+				_vm->_globals.super_parcours[superRouteIdx] = v45[2 * k];
+				_vm->_globals.super_parcours[superRouteIdx + 1] = v45[2 * k + 1];
+				_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[v69].field8;
+				_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+				superRouteIdx += 4;
 			}
 			for (int l = v69 - 1; l > v73; --l) {
 				v48 = l;
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2],
 						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 1],
-						v67, l, v73)) {
+						superRouteIdx, l, v73)) {
 					v69 = _vm->_linesManager.NV_LIGNEDEP;
 					v68 = _vm->_linesManager.NV_LIGNEOFS;
-					v67 = _vm->_linesManager.NV_POSI;
+					superRouteIdx = _vm->_linesManager.NV_POSI;
 					goto LABEL_90;
 				}
 
 				for (int v49 = _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2; v49 > 0; v49 --) {
 					v50 = _vm->_linesManager.Ligne[l]._lineData;
-					v52 = v67;
-					_vm->_globals.super_parcours[v52] = v50[2 * v49];
-					_vm->_globals.super_parcours[v52 + 1] = v50[2 * v49 + 1];
-					_vm->_globals.super_parcours[v52 + 2] = _vm->_linesManager.Ligne[l].field8;
-					_vm->_globals.super_parcours[v52 + 3] = 0;
-					v67 += 4;
+					_vm->_globals.super_parcours[superRouteIdx] = v50[2 * v49];
+					_vm->_globals.super_parcours[superRouteIdx + 1] = v50[2 * v49 + 1];
+					_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[l].field8;
+					_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+					superRouteIdx += 4;
 				}
 			}
 			v68 = _vm->_linesManager.Ligne[v73]._lineDataEndIdx - 1;
@@ -3097,27 +3088,27 @@ LABEL_90:
 			if (v68 <= v72) {
 				for (int v57 = v68; v57 < v72; v57++) {
 					v58 = _vm->_linesManager.Ligne[v73]._lineData;
-					_vm->_globals.super_parcours[v67] = v58[2 * v57];
-					_vm->_globals.super_parcours[v67 + 1] = v58[2 * v57 + 1];
-					_vm->_globals.super_parcours[v67 + 2] = _vm->_linesManager.Ligne[v73].field6;
-					_vm->_globals.super_parcours[v67 + 3] = 0;
-					v67 += 4;
+					_vm->_globals.super_parcours[superRouteIdx] = v58[2 * v57];
+					_vm->_globals.super_parcours[superRouteIdx + 1] = v58[2 * v57 + 1];
+					_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[v73].field6;
+					_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+					superRouteIdx += 4;
 				}
 			} else {
 				for (int v53 = v68; v53 > v72; v53--) {
 					v54 = _vm->_linesManager.Ligne[v73]._lineData;
-					_vm->_globals.super_parcours[v67] = v54[2 * v53];
-					_vm->_globals.super_parcours[v67 + 1] = v54[2 * v53 + 1];
-					_vm->_globals.super_parcours[v67 + 2] = _vm->_linesManager.Ligne[v73].field8;
-					_vm->_globals.super_parcours[v67 + 3] = 0;
-					v67 += 4;
+					_vm->_globals.super_parcours[superRouteIdx] = v54[2 * v53];
+					_vm->_globals.super_parcours[superRouteIdx + 1] = v54[2 * v53 + 1];
+					_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[v73].field8;
+					_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+					superRouteIdx += 4;
 				}
 			}
 		}
-		_vm->_globals.super_parcours[v67] = -1;
-		_vm->_globals.super_parcours[v67 + 1] = -1;
-		_vm->_globals.super_parcours[v67 + 2] = -1;
-		_vm->_globals.super_parcours[v67 + 3] = -1;
+		_vm->_globals.super_parcours[superRouteIdx] = -1;
+		_vm->_globals.super_parcours[superRouteIdx + 1] = -1;
+		_vm->_globals.super_parcours[superRouteIdx + 2] = -1;
+		_vm->_globals.super_parcours[superRouteIdx + 3] = -1;
 		result = &_vm->_globals.super_parcours[0];
 	} else {
 		result = (int16 *)g_PTRNUL;

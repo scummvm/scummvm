@@ -3106,7 +3106,6 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5) {
 	int lineIdxTestLeft;
 	int lineIdxTestRight;
 
-	int v41 = a3;
 	int idxTestUp = TEST_LIGNE(paramX, paramY - 2, &v42, &lineIdxTestUp, &dataIdxTestUp);
 	int idxTestDown = TEST_LIGNE(paramX, paramY + 2, &v43, &lineIdxTestDown, &dataIdxTestDown);
 	int idxTestLeft = TEST_LIGNE(paramX - 2, paramY, &v44, &lineIdxTestLeft, &dataIdxTestLeft);
@@ -3181,25 +3180,26 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5) {
 		NV_LIGNEOFS = dataIdxTestRight;
 	}
 
+	int superRouteIdx = a3;
 	if (v33 == 1) {
 		_vm->_globals.essai0 = _vm->_globals.essai0;
 		for (int i = 0; i < Ligne[idxTest]._lineDataEndIdx; i++) {
-			_vm->_globals.super_parcours[v41] = Ligne[idxTest]._lineData[2 * i];
-			_vm->_globals.super_parcours[v41 + 1] = Ligne[idxTest]._lineData[2 * i + 1];
-			_vm->_globals.super_parcours[v41 + 2] = Ligne[idxTest].field6;
-			_vm->_globals.super_parcours[v41 + 3] = 0;
-			v41 += 4;
+			_vm->_globals.super_parcours[superRouteIdx] = Ligne[idxTest]._lineData[2 * i];
+			_vm->_globals.super_parcours[superRouteIdx + 1] = Ligne[idxTest]._lineData[2 * i + 1];
+			_vm->_globals.super_parcours[superRouteIdx + 2] = Ligne[idxTest].field6;
+			_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+			superRouteIdx += 4;
 		}
 	} else if (v33 == 2) {
 		for (int v19 = Ligne[idxTest]._lineDataEndIdx - 1; v19 > -1; v19--) {
-			_vm->_globals.super_parcours[v41] = Ligne[idxTest]._lineData[2 * v19];
-			_vm->_globals.super_parcours[v41 + 1] = Ligne[idxTest]._lineData[2 * v19 + 1];
-			_vm->_globals.super_parcours[v41 + 2] = Ligne[idxTest].field8;
-			_vm->_globals.super_parcours[v41 + 3] = 0;
-			v41 += 4;
+			_vm->_globals.super_parcours[superRouteIdx] = Ligne[idxTest]._lineData[2 * v19];
+			_vm->_globals.super_parcours[superRouteIdx + 1] = Ligne[idxTest]._lineData[2 * v19 + 1];
+			_vm->_globals.super_parcours[superRouteIdx + 2] = Ligne[idxTest].field8;
+			_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
+			superRouteIdx += 4;
 		}
 	}
-	NV_POSI = v41;
+	NV_POSI = superRouteIdx;
 	return true;
 }
 

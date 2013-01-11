@@ -428,7 +428,7 @@ void ComputerManager::TXT4(int xp, int yp, int textIdx) {
  * Outputs a text string
  */
 void ComputerManager::outText(const Common::String &msg) {
-	_vm->_fontManager.TEXT_COMPUT(_textPosition.x, _textPosition.y, msg, _textColor);
+	_vm->_fontManager.renderTextDisplay(_textPosition.x, _textPosition.y, msg, _textColor);
 }
 
 /**
