@@ -1107,6 +1107,12 @@ void Actor::shutUp() {
 }
 
 void Actor::pushCostume(const char *n) {
+	Costume *c = findCostume(n);
+	if (c) {
+		Debug::debug(Debug::Actors, "Trying to push a costume already in the stack. %s, %s", getName().c_str(), n);
+		return;
+	}
+
 	Costume *newCost = g_resourceloader->loadCostume(n, getCurrentCostume());
 
 	newCost->setColormap(NULL);
