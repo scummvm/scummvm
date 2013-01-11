@@ -2476,7 +2476,7 @@ LABEL_63:
 		}
 LABEL_65:
 		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG)
-			_vm->_globals.chemin = PARC_VOITURE(getSpriteX(0), getSpriteY(0), destX, destY);
+			_vm->_globals.chemin = cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
 	}
 	if (NUMZONE != -1 && NUMZONE != 0) {
 		if (_vm->_eventsManager._mouseCursorId == 23)
@@ -2861,7 +2861,7 @@ void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 	}
 }
 
-int16 *ObjectsManager::PARC_VOITURE(int x1, int y1, int x2, int y2) {
+int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	int16 *result;
 	int v23;
 	int v27;

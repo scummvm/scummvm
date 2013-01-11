@@ -189,7 +189,7 @@ public:
 
 	void computeAndSetSpriteSize();
 	void PACOURS_PROPRE(int16 *a1);
-	int16 *PARC_VOITURE(int x1, int y1, int x2, int y2);
+	int16 *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void nextVerbIcon();
 	void handleRightButton();
 	int MZONE();

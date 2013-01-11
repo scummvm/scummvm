@@ -66,15 +66,15 @@ void LinesManager::clearAllZones() {
 int LinesManager::checkInventoryHotspots(int posX, int posY) {
 	int hotspotId = 0;
 	if (posY >= 120 && posY <= 153)
-		hotspotId = checkInventoryHostpotsRow(posX, 1, false);
+		hotspotId = checkInventoryHotspotsRow(posX, 1, false);
 	if (posY >= 154 && posY <= 191)
-		hotspotId = checkInventoryHostpotsRow(posX, 7, false);
+		hotspotId = checkInventoryHotspotsRow(posX, 7, false);
 	if (posY >= 192 && posY <= 229)
-		hotspotId = checkInventoryHostpotsRow(posX, 13, false);
+		hotspotId = checkInventoryHotspotsRow(posX, 13, false);
 	if (posY >= 230 && posY <= 267)
-		hotspotId = checkInventoryHostpotsRow(posX, 19, false);
+		hotspotId = checkInventoryHotspotsRow(posX, 19, false);
 	if (posY >= 268 && posY <= 306)
-		hotspotId = checkInventoryHostpotsRow(posX, 25, true);
+		hotspotId = checkInventoryHotspotsRow(posX, 25, true);
 	if (posY >= 268 && posY <= 288 && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478)
 		hotspotId = 30;
 	if (posY >= 290 && posY <= 306 && posX >= _vm->_graphicsManager._scrollOffset + 424 && posX <= _vm->_graphicsManager._scrollOffset + 478)
@@ -89,7 +89,7 @@ int LinesManager::checkInventoryHotspots(int posX, int posY) {
  * Check the hotspots in an inventory line
  * Returns the hotspot Id under the mouse, if any.
  */
-int LinesManager::checkInventoryHostpotsRow(int posX, int minZoneNum, bool lastRow) {
+int LinesManager::checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow) {
 	int result = minZoneNum;
 	if (posX >= _vm->_graphicsManager._scrollOffset + 158 && posX < _vm->_graphicsManager._scrollOffset + 208)
 		return result;
@@ -2867,198 +2867,145 @@ int LinesManager::VERIF_SMOOTH(int a1, int a2, int a3, int a4) {
 int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 	int v6;
 	int v7;
-	int v9;
 	int v10;
 	int v11;
-	int v13;
 	int v14;
-	int v15;
+	int spriteSize;
 	int v16;
 	int v17;
 	int v19;
 	int v20;
 	int v22;
-	int v24;
 	int v25;
-	int v26;
-	int v27;
-	int v28;
-	int v30;
-	int v31;
 	int v33;
-	int v35;
 	int v37;
 	int v38;
 	int v39;
 	int v40;
 	int v41;
 	int v42;
-	int v43;
-	int v44;
-	int v45;
-	int v46;
 	int v47;
-	int v48;
-	int v49 = 0;
 	int v50;
 	int v51;
 	int v52;
-	int v53;
-	int v54;
-	int v55;
-	int v56;
-	int v57;
-	int v58;
-	int v59;
-	int v60;
-	int v61;
-	int v62;
-	int v63;
+	int hopkinsIdx;
+	int smoothIdx;
 
-	v62 = a3;
-	v63 = a4;
-	if (a3 >= a5 || a6 >= a4) {
-		if (a3 <= a5 || a6 >= a4) {
-			if (a3 >= a5 || a6 <= a4) {
-				if (a3 > a5 && a6 > a4) {
-					v53 = 36;
-					v61 = 0;
-					v57 = 0;
-					do {
-						v25 = _vm->_globals.Hopkins[v53].field0;
-						v40 = _vm->_globals.Hopkins[v53].field2;
-						v26 = _vm->_globals.STAILLE[v63];
-						if (v26 < 0) {
-							v27 = v26;
-							v28 = v26;
-							if (v26 < 0)
-								v28 = -v26;
-							v48 = _vm->_globals.STAILLE[v63];
-							v45 = v63;
-							v25 = _vm->_graphicsManager.zoomOut(v25, v28);
-							if (v27 < 0)
-								v27 = -v27;
-							v40 = _vm->_graphicsManager.zoomOut(v40, v27);
-							v63 = v45;
-							v26 = v48;
-						}
-						if (v26 > 0) {
-							v30 = abs(v26);
-							v31 = abs(v26);
-							v46 = v63;
-							v25 = _vm->_graphicsManager.zoomIn(v25, v31);
-							v40 = _vm->_graphicsManager.zoomIn(v40, v30);
-							v63 = v46;
-						}
-						v33 = v63 + v40;
-						for (int v34 = 0; v34 < v25; v34++) {
-							--v62;
-							SMOOTH[v61].field0 = v62;
-							if (v63 != v33)
-								v63++;
-							SMOOTH[v61++].field2 = v63;
-						}
-						++v53;
-						if (v53 == 48)
-							v53 = 36;
-						++v57;
-						if (v62 <= a5 || a6 <= v63)
-							v49 = 1;
-					} while (v49 != 1);
-					if (v57 > 5) {
-						v35 = v61;
-						SMOOTH[v35].field0 = -1;
-						SMOOTH[v35].field2 = -1;
-						_vm->_linesManager.SMOOTH_SENS = 6;
-						goto LABEL_85;
-					}
-				}
-			} else {
-				v52 = 36;
-				v60 = 0;
-				v56 = 0;
-				do {
-					v14 = _vm->_globals.Hopkins[v52].field0;
-					v39 = _vm->_globals.Hopkins[v52].field2;
-					v15 = _vm->_globals.STAILLE[v63];
-					if (v15 < 0) {
-						v16 = abs(v15);
-						v17 = abs(v15);
-						v47 = _vm->_globals.STAILLE[v63];
-						v43 = v63;
-						v14 = _vm->_graphicsManager.zoomOut(v14, v17);
-						v39 = _vm->_graphicsManager.zoomOut(v39, v16);
-						v63 = v43;
-						v15 = v47;
-					}
-					if (v15 > 0) {
-						v19 = abs(v15);
-						v20 = abs(v15);
-						v44 = v63;
-						v14 = _vm->_graphicsManager.zoomIn(v14, v20);
-						v39 = _vm->_graphicsManager.zoomIn(v39, v19);
-						v63 = v44;
-					}
-					v22 = v63 + v39;
-					for (int v23 = 0; v23 < v14; v23++) {
-						++v62;
-						SMOOTH[v60].field0 = v62;
-						if (v63 != v22)
-							v63++;
-						SMOOTH[v60++].field2 = v63;
-					}
-					++v52;
-					if (v52 == 48)
-						v52 = 36;
-					++v56;
-					if (v62 >= a5 || a6 <= (int)v63)
-						v49 = 1;
-				} while (v49 != 1);
-				if (v56 > 5) {
-					v24 = v60;
-					SMOOTH[v24].field0 = -1;
-					SMOOTH[v24].field2 = -1;
-					_vm->_linesManager.SMOOTH_SENS = 4;
-					goto LABEL_85;
-				}
+	int v62 = a3;
+	int v63 = a4;
+	if (a3 > a5 && a6 > a4) {
+		hopkinsIdx = 36;
+		smoothIdx = 0;
+		int loopCount = 0;
+		while (v62 > a5 && a6 > v63) {
+			v25 = _vm->_globals.Hopkins[hopkinsIdx].field0;
+			v40 = _vm->_globals.Hopkins[hopkinsIdx].field2;
+			int spriteSize = _vm->_globals.STAILLE[v63];
+			if (spriteSize < 0) {
+				v25 = _vm->_graphicsManager.zoomOut(v25, -spriteSize);
+				v40 = _vm->_graphicsManager.zoomOut(v40, -spriteSize);
+			} else if (spriteSize > 0) {
+				v25 = _vm->_graphicsManager.zoomIn(v25, spriteSize);
+				v40 = _vm->_graphicsManager.zoomIn(v40, spriteSize);
 			}
-		} else {
-			v51 = 12;
-			v59 = 0;
-			v55 = 0;
-			do {
-				v10 = _vm->_globals.Hopkins[v51].field2;
-				v42 = v63;
-				v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field0, 25);
-				v38 = _vm->_graphicsManager.zoomOut(v10, 25);
-				v63 = v42;
-				for (int v12 = 0; v12 < v11; v12++) {
-					--v62;
-					SMOOTH[v59].field0 = v62;
-					if ((uint16)v63 != (uint16)v42 + v38)
-						v63--;
-					SMOOTH[v59++].field2 = v63;
-				}
-				++v51;
-				if (v51 == 24)
-					v51 = 12;
-				++v55;
-				if (v62 <= a5 || a6 >= v63)
-					v49 = 1;
-			} while (v49 != 1);
-			if (v55 > 5) {
-				v13 = 4 * v59;
-				SMOOTH[v13].field0 = -1;
-				SMOOTH[v13].field2 = -1;
-				_vm->_linesManager.SMOOTH_SENS = 8;
-				goto LABEL_85;
+			v33 = v63 + v40;
+			for (int v34 = 0; v34 < v25; v34++) {
+				--v62;
+				SMOOTH[smoothIdx].field0 = v62;
+				if (v63 != v33)
+					v63++;
+				SMOOTH[smoothIdx].field2 = v63;
+				smoothIdx++;
 			}
+			++hopkinsIdx;
+			if (hopkinsIdx == 48)
+				hopkinsIdx = 36;
+			++loopCount;
 		}
-	} else {
+		if (loopCount > 5) {
+			SMOOTH[smoothIdx].field0 = -1;
+			SMOOTH[smoothIdx].field2 = -1;
+			_vm->_linesManager.SMOOTH_SENS = 6;
+			SMOOTH_X = v62;
+			SMOOTH_Y = v63;
+			return 0;
+		}
+	} else if (a3 < a5 && a6 > a4) {
+		v52 = 36;
+		smoothIdx = 0;
+		int loopCount = 0;
+		while (v62 < a5 && a6 > v63) {
+			v14 = _vm->_globals.Hopkins[v52].field0;
+			v39 = _vm->_globals.Hopkins[v52].field2;
+			int spriteSize = _vm->_globals.STAILLE[v63];
+			if (spriteSize < 0) {
+				v47 = _vm->_globals.STAILLE[v63];
+				v14 = _vm->_graphicsManager.zoomOut(v14, -spriteSize);
+				v39 = _vm->_graphicsManager.zoomOut(v39, -spriteSize);
+				spriteSize = v47;
+			}
+			if (spriteSize > 0) {
+				v14 = _vm->_graphicsManager.zoomIn(v14, spriteSize);
+				v39 = _vm->_graphicsManager.zoomIn(v39, spriteSize);
+			}
+			v22 = v63 + v39;
+			for (int i = 0; i < v14; i++) {
+				++v62;
+				SMOOTH[smoothIdx].field0 = v62;
+				if (v63 != v22)
+					v63++;
+				SMOOTH[smoothIdx].field2 = v63;
+				smoothIdx++;
+			}
+			++v52;
+			if (v52 == 48)
+				v52 = 36;
+			++loopCount;
+		}
+		if (loopCount > 5) {
+			SMOOTH[smoothIdx].field0 = -1;
+			SMOOTH[smoothIdx].field2 = -1;
+			_vm->_linesManager.SMOOTH_SENS = 4;
+			SMOOTH_X = v62;
+			SMOOTH_Y = v63;
+			return 0;
+		}
+	} else if (a3 > a5 && a6 < a4) {
+		v51 = 12;
+		smoothIdx = 0;
+		int loopCount = 0;
+		while (v62 > a5 && a6 < v63) {
+			v10 = _vm->_globals.Hopkins[v51].field2;
+			v42 = v63;
+			v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field0, 25);
+			v38 = _vm->_graphicsManager.zoomOut(v10, 25);
+			v63 = v42;
+			for (int v12 = 0; v12 < v11; v12++) {
+				--v62;
+				SMOOTH[smoothIdx].field0 = v62;
+				if ((uint16)v63 != (uint16)v42 + v38)
+					v63--;
+				SMOOTH[smoothIdx].field2 = v63;
+				smoothIdx++;
+			}
+			++v51;
+			if (v51 == 24)
+				v51 = 12;
+			++loopCount;
+		}
+		if (loopCount > 5) {
+			SMOOTH[smoothIdx].field0 = -1;
+			SMOOTH[smoothIdx].field2 = -1;
+			_vm->_linesManager.SMOOTH_SENS = 8;
+			SMOOTH_X = v62;
+			SMOOTH_Y = v63;
+			return 0;
+		}
+	} else if (a3 < a5 && a6 < a4) {
 		v50 = 12;
-		v58 = 0;
-		v54 = 0;
-		do {
+		int smoothIdx = 0;
+		int loopCount = 0;
+		while (v62 < a5 && a6 < v63) {
 			v6 = _vm->_globals.Hopkins[v50].field2;
 			v41 = v63;
 			v7 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v50].field0, 25);
@@ -3066,24 +3013,22 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 			v63 = v41;
 			for (int v8 = 0; v8 < v7; v8++) {
 				++v62;
-				SMOOTH[v58].field0 = v62;
+				SMOOTH[smoothIdx].field0 = v62;
 				if ((uint16)v63 != (uint16)v41 + v37)
 					v63--;
-				SMOOTH[v58++].field2 = v63;
+				SMOOTH[smoothIdx].field2 = v63;
+				smoothIdx++;
 			}
 			++v50;
 			if (v50 == 24)
 				v50 = 12;
-			++v54;
-			if (v62 >= a5 || a6 >= (int)v63)
-				v49 = 1;
-		} while (v49 != 1);
-		if (v54 > 5) {
-			v9 = v58;
-			SMOOTH[v9].field0 = -1;
-			SMOOTH[v9].field2 = -1;
+			++loopCount;
+		}
+
+		if (loopCount > 5) {
+			SMOOTH[smoothIdx].field0 = -1;
+			SMOOTH[smoothIdx].field2 = -1;
 			_vm->_linesManager.SMOOTH_SENS = 2;
-LABEL_85:
 			SMOOTH_X = v62;
 			SMOOTH_Y = v63;
 			return 0;

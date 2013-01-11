@@ -71,7 +71,7 @@ public:
 
 	void clearAllZones();
 	int checkInventoryHotspots(int posX, int posY);
-	int checkInventoryHostpotsRow(int posX, int minZoneNum, bool lastRow);
+	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);
 	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
 	void resetLines();
