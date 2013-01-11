@@ -3303,7 +3303,7 @@ int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *foundLineIdx, int *fo
 	for (int idx = _vm->_objectsManager._lastLine + 1; idx < _vm->_linesManager._linesNumb + 1; idx++) {
 		lineData = Ligne[idx]._lineData;
 		lineDataEndIdx = Ligne[idx]._lineDataEndIdx;
-		if (lineData[2 * (lineDataEndIdx - 1)] == a1 && lineData[1] == a2) {
+		if (lineData[0] == a1 && lineData[1] == a2) {
 			*a3 = 1;
 			int posX = lineData[2 * (lineDataEndIdx - 1)];
 			int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
