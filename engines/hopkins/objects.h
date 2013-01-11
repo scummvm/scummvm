@@ -159,26 +159,26 @@ public:
 	int getSpriteX(int idx);
 	int getSpriteY(int idx);
 	void clearSprite();
-	void SPRITE_ON(int idx);
-	void SPRITE(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9);
-	void SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, int a5);
+	void animateSprite(int idx);
+	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9);
+	void addAnimatedSprite(const byte *spriteData, int idx, byte *a3, int a4, int a5);
 	void removeSprite(int idx);
 	void setSpriteX(int idx, int xp);
 	void setSpriteIndex(int idx, int spriteIndex);
 	void setSpriteY(int idx, int yp);
-	void SETTAILLESPR(int idx, int a2);
+	void setSpriteSize(int idx, int size);
 	void setFlipSprite(int idx, bool flip);
 
 	void checkZone();
 	void GOHOME();
 	void GOHOME2();
-	void CHARGE_OBSTACLE(const Common::String &file);
+	void loadLines(const Common::String &file);
 	void loadZone(const Common::String &file);
 	void CARRE_ZONE();
 	void PLAN_BETA();
 	void handleLeftButton();
 	void PARADISE();
-	void CLEAR_ECRAN();
+	void clearScreen();
 
 	/**
 	 * Change the currently active player
@@ -187,7 +187,7 @@ public:
 	 */
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
 
-	void VERIFTAILLE();
+	void computeAndSetSpriteSize();
 	void PACOURS_PROPRE(int16 *a1);
 	int16 *PARC_VOITURE(int x1, int y1, int x2, int y2);
 	void nextVerbIcon();

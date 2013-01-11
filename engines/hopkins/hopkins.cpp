@@ -2856,12 +2856,12 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		break;
 	}
 
-	_objectsManager.SPRITE(_globals.PERSO, Common::Point(_objectsManager._characterPos.x, 110), 0, _objectsManager.PERI, 0, 0, 0, 0);
+	_objectsManager.addStaticSprite(_globals.PERSO, Common::Point(_objectsManager._characterPos.x, 110), 0, _objectsManager.PERI, 0, 0, 0, 0);
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	_objectsManager.SPRITE_ON(0);
+	_objectsManager.animateSprite(0);
 	_globals.chemin = (int16 *)g_PTRNUL;
 	_eventsManager.mouseOn();
 	_eventsManager.changeMouseCursor(4);
@@ -2896,7 +2896,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		_globals._exitId = exit4;
 	_graphicsManager.fadeOutLong();
 	_objectsManager.removeSprite(0);
-	_objectsManager.CLEAR_ECRAN();
+	_objectsManager.clearScreen();
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
 }

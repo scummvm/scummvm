@@ -1069,7 +1069,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_fontManager.hideText(9);
 	_vm->_eventsManager.VBL();
 	_vm->_graphicsManager.no_scroll = 1;
-	_vm->_linesManager.CLEAR_ZONE();
+	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
 	_vm->_globals.resetCache();
 	
@@ -1145,7 +1145,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
 	_vm->_graphicsManager.NB_SCREEN(false);
-	_vm->_linesManager.CLEAR_ZONE();
+	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
 	_vm->_globals.resetCache();
 	for (int i = 0; i <= 44; i++)

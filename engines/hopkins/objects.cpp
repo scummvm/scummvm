@@ -1289,12 +1289,12 @@ void ObjectsManager::clearSprite() {
 	}
 }
 
-void ObjectsManager::SPRITE_ON(int idx) {
+void ObjectsManager::animateSprite(int idx) {
 	assert (idx  <= MAX_SPRITE);
 	_sprite[idx]._animationType = 1;
 }
 
-void ObjectsManager::SPRITE(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9) {
+void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9) {
 	assert (idx  <= MAX_SPRITE);
 	_sprite[idx]._spriteData = spriteData;
 	_sprite[idx]._spritePos = pos;
@@ -1310,15 +1310,17 @@ void ObjectsManager::SPRITE(const byte *spriteData, Common::Point pos, int idx, 
 	_sprite[idx].field22 = 0;
 	_sprite[idx]._animationType = 0;
 
-	_sprite[idx]._rleFl = false;
 	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E') {
 		_sprite[idx]._rleFl = true;
 		_sprite[idx].fieldC = 0;
 		_sprite[idx].fieldE = 0;
-	}
+	} else
+		_sprite[idx]._rleFl = false;
+
 }
 
-void ObjectsManager::SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, int a5) {
+void ObjectsManager::addAnimatedSprite(const byte *spriteData, int idx, byte *a3, int a4, int a5) {
+	assert (idx  <= MAX_SPRITE);
 	_sprite[idx]._spriteData = spriteData;
 	_sprite[idx].field1C = a3;
 	_sprite[idx].field20 = a4;
@@ -1330,10 +1332,10 @@ void ObjectsManager::SPRITE2(const byte *spriteData, int idx, byte *a3, int a4, 
 	_sprite[idx].field22 = 0;
 	_sprite[idx].field14 = a5;
 
-	_sprite[idx]._rleFl = false;
 	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E')
 		_sprite[idx]._rleFl = true;
-
+	else
+		_sprite[idx]._rleFl = false;
 }
 
 /**
@@ -1370,10 +1372,10 @@ void ObjectsManager::setSpriteIndex(int idx, int spriteIndex) {
 }
 
 // Set Sprite Size
-void ObjectsManager::SETTAILLESPR(int idx, int a2) {
+void ObjectsManager::setSpriteSize(int idx, int size) {
 	assert (idx  <= MAX_SPRITE);
 	if (!_sprite[idx]._rleFl)
-		_sprite[idx].fieldC = a2;
+		_sprite[idx].fieldC = size;
 }
 
 void ObjectsManager::setFlipSprite(int idx, bool flip) {
@@ -1552,7 +1554,7 @@ void ObjectsManager::GOHOME() {
 
 	_vm->_globals.Compteur = 0;
 	if (_vm->_globals.g_old_sens == -1) {
-		VERIFTAILLE();
+		computeAndSetSpriteSize();
 		nouveau_x = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
@@ -1579,7 +1581,7 @@ void ObjectsManager::GOHOME() {
 			else
 				v54 = NUMZONE;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			VERIFTAILLE();
+			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -1920,7 +1922,7 @@ LABEL_153:
 			setSpriteIndex(0, _vm->_globals.g_old_sens + 59);
 			_vm->_globals._actionDirection = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			VERIFTAILLE();
+			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.g_old_sens = -1;
@@ -1957,7 +1959,7 @@ LABEL_153:
 			v47 = 1;
 	} while (v47 != 1);
 	if (v47 == 1) {
-		VERIFTAILLE();
+		computeAndSetSpriteSize();
 		if ((_vm->_globals.g_old_sens == 6) || (_vm->_globals.g_old_sens == 7) || (_vm->_globals.g_old_sens == 8))
 			setFlipSprite(0, true);
 
@@ -2047,14 +2049,16 @@ void ObjectsManager::GOHOME2() {
 	A_DEPA = 0;
 }
 
-// Load Obstacle
-void ObjectsManager::CHARGE_OBSTACLE(const Common::String &file) {
+/**
+ * Load lines
+ */
+void ObjectsManager::loadLines(const Common::String &file) {
 	_vm->_linesManager.resetLines();
 	_vm->_linesManager._linesNumb = 0;
 	_lastLine = 0;
 	byte *ptr = _vm->_fileManager.loadFile(file);
 	for (int idx = 0; (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)) != -1; idx++) {
-		_vm->_linesManager.AJOUTE_LIGNE(
+		_vm->_linesManager.addLine(
 		    idx,
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)),
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 1),
@@ -2219,11 +2223,6 @@ void ObjectsManager::CARRE_ZONE() {
 }
 
 void ObjectsManager::PLAN_BETA() {
-	int v1;
-	int v3;
-	int v5;
-
-	v1 = 0;
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_globals.Max_Propre = 1;
@@ -2238,15 +2237,15 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_soundManager.WSOUND(31);
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.loadImage("PLAN");
-	CHARGE_OBSTACLE("PLAN.OB2");
+	loadLines("PLAN.OB2");
 	_vm->_globals.loadCache("PLAN.CA2");
 	loadZone("PLAN.ZO2");
 	_spritePtr = _vm->_fileManager.loadFile("VOITURE.SPR");
 	_vm->_animationManager.loadAnim("PLAN");
 	_vm->_graphicsManager.VISU_ALL();
 	_vm->_graphicsManager.INI_ECRAN2("PLAN", false);
-	for (int v2 = 0; v2 <= 15; v2++)
-		_vm->_globals.CACHE_OFF(v2);
+	for (int i = 0; i <= 15; i++)
+		_vm->_globals.CACHE_OFF(i);
 	_vm->_globals.CACHE_OFF(19);
 	_vm->_globals.CACHE_OFF(20);
 	_vm->_globals.CACHE_ON();
@@ -2256,21 +2255,20 @@ void ObjectsManager::PLAN_BETA() {
 		_vm->_globals.PLANY = 319;
 		_vm->_globals.PLANI = 1;
 	}
-	SPRITE(_spritePtr, Common::Point(_vm->_globals.PLANX, _vm->_globals.PLANY), 0, _vm->_globals.PLANI, 0, 0, 5, 5);
+	addStaticSprite(_spritePtr, Common::Point(_vm->_globals.PLANX, _vm->_globals.PLANY), 0, _vm->_globals.PLANI, 0, 0, 5, 5);
 	_vm->_eventsManager.setMouseXY(_vm->_globals.PLANX, _vm->_globals.PLANY);
 	my_anim = 0;
 	_vm->_eventsManager.mouseOn();
-	v3 = getSpriteX(0);
-	_vm->_graphicsManager.scrollScreen(v3 - 320);
+	_vm->_graphicsManager.scrollScreen(getSpriteX(0) - 320);
 	_vm->_graphicsManager._scrollOffset = getSpriteX(0) - 320;
-	SPRITE_ON(0);
+	animateSprite(0);
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
-	for (int v4 = 0; v4 <= 4; v4++)
+	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager.VBL();
 
 	_vm->_globals.iRegul = 1;
@@ -2278,25 +2276,26 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_graphicsManager._noFadingFl = false;
 
+	bool v1 = false;
 	do {
-		v5 = _vm->_eventsManager.getMouseButton();
-		if (v5) {
+		int mouseButton = _vm->_eventsManager.getMouseButton();
+		if (mouseButton) {
 			if (_vm->_globals._saveData->data[svField170] == 1 && !_vm->_globals._saveData->data[svField171]) {
 				_vm->_globals._saveData->data[svField171] = 1;
 				_vm->_globals.NOPARLE = true;
 				_vm->_talkManager.PARLER_PERSO("APPEL1.pe2");
 				_vm->_globals.NOPARLE = false;
-				v5 = 0;
+				mouseButton = 0;
 			}
 			if (_vm->_globals._saveData->data[svField80] == 1 && !_vm->_globals._saveData->data[svField172]) {
 				_vm->_globals._saveData->data[svField172] = 1;
 				_vm->_globals.NOPARLE = true;
 				_vm->_talkManager.PARLER_PERSO("APPEL2.pe2");
 				_vm->_globals.NOPARLE = false;
-				v5 = 0;
+				mouseButton = 0;
 				_vm->_eventsManager._curMouseButton = 0;
 			}
-			if (v5 == 1)
+			if (mouseButton == 1)
 				handleLeftButton();
 		}
 
@@ -2308,8 +2307,8 @@ void ObjectsManager::PLAN_BETA() {
 		_vm->_eventsManager.VBL();
 
 		if (_vm->_globals._exitId)
-			v1 = 1;
-	} while (!_vm->shouldQuit() && v1 != 1);
+			v1 = true;
+	} while (!_vm->shouldQuit() && !v1);
 
 	if (!_vm->_graphicsManager._noFadingFl)
 		_vm->_graphicsManager.fadeOutLong();
@@ -2320,7 +2319,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.PLANI = 1;
 	removeSprite(0);
 	_spritePtr = _vm->_globals.freeMemory(_spritePtr);
-	CLEAR_ECRAN();
+	clearScreen();
 	_vm->_globals.PLAN_FLAG = false;
 }
 
@@ -2452,7 +2451,7 @@ LABEL_38:
 		setSpriteIndex(0, _vm->_globals.g_old_sens2 + 59);
 		_vm->_globals._actionDirection = 0;
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
-		VERIFTAILLE();
+		computeAndSetSpriteSize();
 		setFlipSprite(0, false);
 		_vm->_globals.Compteur = 0;
 		_vm->_globals.g_old_sens = -1;
@@ -2611,21 +2610,23 @@ LABEL_64:
 	_vm->_globals.GOACTION = false;
 }
 
-// Clear Screen
-void ObjectsManager::CLEAR_ECRAN() {
+/**
+ * Clear Screen
+ */
+void ObjectsManager::clearScreen() {
 	clearSprite();
 	_vm->_graphicsManager.FIN_VISU();
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
 	_vm->_globals.CLEAR_VBOB();
 	_vm->_animationManager.clearAnim();
-	_vm->_linesManager.CLEAR_ZONE();
+	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
 	_vm->_globals.resetCache();
 
-	for (int v1 = 0; v1 <= 48; v1++) {
-		_vm->_globals.BOBZONE[v1] = 0;
-		_vm->_globals.BOBZONE_FLAG[v1] = false;
+	for (int i = 0; i <= 48; i++) {
+		_vm->_globals.BOBZONE[i] = 0;
+		_vm->_globals.BOBZONE_FLAG[i] = false;
 	}
 	_vm->_eventsManager._mouseCursorId = 4;
 	_verb = 4;
@@ -2684,8 +2685,8 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc->field4 = _sprite[0]._animationType;
 
 		removeSprite(1);
-		SPRITE(_vm->_globals.TETE, loc->_pos, 1, 3, loc->field4, 0, 20, 127);
-		SPRITE_ON(1);
+		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 3, loc->field4, 0, 20, 127);
+		animateSprite(1);
 		removeSprite(0);
 
 		_vm->_globals._saveData->data[svField354] = 0;
@@ -2696,8 +2697,8 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc = &_vm->_globals._saveData->_realHopkins;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
 		_vm->_globals.PERSO_TYPE = 0;
-		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 34, 190);
-		SPRITE_ON(0);
+		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 34, 190);
+		animateSprite(0);
 		_vm->_globals.loadCharacterData();
 	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
 			&& _vm->_globals._saveData->_samantha._location == _vm->_globals._screenId) {
@@ -2710,8 +2711,8 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc->field4 = _sprite[0].fieldC;
 
 		removeSprite(1);
-		SPRITE(_vm->_globals.TETE, loc->_pos, 1, 2, loc->field4, 0, 34, 190);
-		SPRITE_ON(1);
+		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 2, loc->field4, 0, 34, 190);
+		animateSprite(1);
 		removeSprite(0);
 
 		_vm->_globals._saveData->data[svField354] = 0;
@@ -2721,8 +2722,8 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc = &_vm->_globals._saveData->_samantha;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
 		_vm->_globals.PERSO_TYPE = 2;
-		SPRITE(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 20, 127);
-		SPRITE_ON(0);
+		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 20, 127);
+		animateSprite(0);
 		_vm->_globals.loadCharacterData();
 	} else {
 		switch (oldCharacter) {
@@ -2781,18 +2782,14 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 }
 
 // Check Size
-void ObjectsManager::VERIFTAILLE() {
-	int v0 = _vm->_globals.STAILLE[getSpriteY(0)];
+void ObjectsManager::computeAndSetSpriteSize() {
+	int size = _vm->_globals.STAILLE[getSpriteY(0)];
 	if (_vm->_globals.PERSO_TYPE == 1) {
-		if (v0 < 0)
-			v0 = -v0;
-		v0 = 20 * (5 * v0 - 100) / -80;
+		size = 20 * (5 * abs(size) - 100) / -80;
 	} else if (_vm->_globals.PERSO_TYPE == 2) {
-		if (v0 < 0)
-			v0 = -v0;
-		v0 = 20 * (5 * v0 - 165) / -67;
+		size = 20 * (5 * abs(size) - 165) / -67;
 	}
-	SETTAILLESPR(0, v0);
+	setSpriteSize(0, size);
 }
 
 void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
@@ -3041,11 +3038,7 @@ LABEL_90:
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[j]._lineData[0],
 						_vm->_linesManager.Ligne[j]._lineData[1],
-				        v67,
-				        j,
-				        v73,
-				        0) == 1) {
-LABEL_88:
+				        v67, j, v73, 0)) {
 					v69 = _vm->_linesManager.NV_LIGNEDEP;
 					v68 = _vm->_linesManager.NV_LIGNEOFS;
 					v67 = _vm->_linesManager.NV_POSI;
@@ -3080,12 +3073,13 @@ LABEL_88:
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2],
 						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 1],
-				        v67,
-				        l,
-				        v73,
-				        0) == 1)
-					goto LABEL_88;
-				
+						v67, l, v73, 0)) {
+					v69 = _vm->_linesManager.NV_LIGNEDEP;
+					v68 = _vm->_linesManager.NV_LIGNEOFS;
+					v67 = _vm->_linesManager.NV_POSI;
+					goto LABEL_90;
+				}
+
 				for (int v49 = _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2; v49 > 0; v49 --) {
 					v50 = _vm->_linesManager.Ligne[l]._lineData;
 					v52 = v67;
@@ -4141,7 +4135,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			do {
 				v27 = (int16)READ_LE_UINT16(v16 + 2 * v32);
 				if (v27 != -1) {
-					_vm->_linesManager.AJOUTE_LIGNE(
+					_vm->_linesManager.addLine(
 					    v34,
 					    v27,
 					    (int16)READ_LE_UINT16(v16 + 2 * v32 + 2),
@@ -4243,7 +4237,7 @@ void ObjectsManager::SPECIAL_INI() {
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager.VBL();
 			_vm->_graphicsManager.fadeInLong();
-			SPRITE_ON(0);
+			animateSprite(0);
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager.VBL();
 			VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
@@ -4813,10 +4807,10 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	}
 	_vm->_eventsManager.mouseOn();
 	if (_vm->_globals._screenId == 61) {
-		SPRITE(_vm->_globals.PERSO, Common::Point(330, 418), 0, 60, 0, 0, 34, 190);
-		SPRITE_ON(0);
+		addStaticSprite(_vm->_globals.PERSO, Common::Point(330, 418), 0, 60, 0, 0, 34, 190);
+		animateSprite(0);
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
-		VERIFTAILLE();
+		computeAndSetSpriteSize();
 	}
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
@@ -4871,7 +4865,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_graphicsManager.FIN_VISU();
 	if (_vm->_globals._screenId == 61)
 		removeSprite(0);
-	CLEAR_ECRAN();
+	clearScreen();
 	_vm->_globals.iRegul = 0;
 }
 
@@ -4932,23 +4926,23 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_globals.loadCharacterData();
 	switch (_vm->_globals.PERSO_TYPE) {
 	case 0:
-		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 34, 190);
+		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 34, 190);
 		break;
 	case 1:
-		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 28, 155);
+		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 28, 155);
 		break;
 	case 2:
-		SPRITE(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 20, 127);
+		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 20, 127);
 		break;
 	}
 	_vm->_eventsManager.setMouseXY(_characterPos);
 	if (_vm->_graphicsManager._largeScreenFl)
 		_vm->_graphicsManager.SCROLL = (int16)getSpriteX(0) - 320;
-	VERIFTAILLE();
-	SPRITE_ON(0);
+	computeAndSetSpriteSize();
+	animateSprite(0);
 	_vm->_globals.CACHE_ON();
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	VERIFTAILLE();
+	computeAndSetSpriteSize();
 	SPECIAL_INI();
 	_vm->_eventsManager._mouseSpriteId = 4;
 	g_old_x = _characterPos.x;
@@ -5018,7 +5012,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		}
 		if (!animFile.empty())
 			_vm->_graphicsManager.FIN_VISU();
-		CLEAR_ECRAN();
+		clearScreen();
 	} else {
 		_vm->_globals._helicopterFl = false;
 	}

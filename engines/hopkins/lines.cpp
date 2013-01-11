@@ -37,7 +37,6 @@ LinesManager::LinesManager() {
 		Common::fill((byte *)&SMOOTH[i], (byte *)&SMOOTH[i] + sizeof(SmoothItem), 0);
 	}
 
-	next_ligne = 0;
 	_linesNumb = 0;
 	NV_LIGNEDEP = 0;
 	NV_LIGNEOFS = 0;
@@ -52,11 +51,12 @@ void LinesManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-void LinesManager::CLEAR_ZONE() {
+/**
+ * Clear all zones and reset nextLine
+ */
+void LinesManager::clearAllZones() {
 	for (int idx = 0; idx < MAX_LINES; ++idx)
 		removeZoneLine(idx);
-
-	next_ligne = 0;
 }
 
 /** 
@@ -200,8 +200,10 @@ void LinesManager::removeLine(int idx) {
 	Ligne[idx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx]._lineData);
 }
 
-// Add Line
-void LinesManager::AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7) {
+/**
+ * Add Line
+ */
+void LinesManager::addLine(int idx, int a2, int a3, int a4, int a5, int a6, int a7) {
 	int v7;
 	int v8;
 	int v9;
@@ -648,7 +650,7 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 	return v40;
 }
 
-int LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
+bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 	int v5;
 	int v6;
 	int v7;
@@ -857,7 +859,7 @@ int LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 					        && _vm->_objectsManager._lastLine < v46) {
 								v23 = GENIAL(v46, v47, v41, v40 - v22, v41, v40 - v39, v7, &_vm->_globals.super_parcours[0], 4);
 						if (v23 == -1)
-							return 0;
+							return false;
 						v7 = v23;
 						if (NVPY != -1)
 							v22 = NVPY - v40;
@@ -873,7 +875,7 @@ LABEL_186:
 				NV_LIGNEDEP = v36;
 				NV_LIGNEOFS = v35;
 				NV_POSI = v7;
-				return 1;
+				return true;
 			}
 			if (v21 == 5) {
 				for (int v25 = 0; v25 < v37; v25++) {
@@ -881,7 +883,7 @@ LABEL_186:
 					        && _vm->_objectsManager._lastLine < v46) {
 						v26 = GENIAL(v46, v47, v41, v25 + v40, v41, v37 + v40, v7, &_vm->_globals.super_parcours[0], 4);
 						if (v26 == -1)
-							return 0;
+							return false;
 						v7 = v26;
 						if (NVPY != -1)
 							v25 = v40 - NVPY;
@@ -901,7 +903,7 @@ LABEL_186:
 					        && _vm->_objectsManager._lastLine < v46) {
 						v29 = GENIAL(v46, v47, v41 - v28, v40, v41 - v18, v40, v7, &_vm->_globals.super_parcours[0], 4);
 						if (v29 == -1)
-							return 0;
+							return false;
 						v7 = v29;
 						if (NVPX != -1)
 							v28 = v41 - NVPX;
@@ -921,7 +923,7 @@ LABEL_186:
 					        && _vm->_objectsManager._lastLine < v46) {
 						v32 = GENIAL(v46, v47, v31 + v41, v40, v38 + v41, v40, v7, &_vm->_globals.super_parcours[0], 4);
 						if (v32 == -1)
-							return 0;
+							return false;
 						v7 = v32;
 						if (NVPX != -1)
 							v31 = NVPX - v41;
@@ -937,7 +939,7 @@ LABEL_186:
 			}
 		}
 	}
-	return 0;
+	return false;
 }
 
 int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9) {
@@ -947,7 +949,6 @@ int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7,
 	++_vm->_globals.STOP_BUG;
 	if (_vm->_globals.STOP_BUG > 10) {
 		v9 = a7;
-LABEL_112:
 		a8[v9] = -1;
 		a8[v9 + 1] = -1;
 		a8[v9 + 2] = -1;
@@ -1038,18 +1039,14 @@ LABEL_17:
 
 	Common::fill(&_vm->_globals.BufLig[0], &_vm->_globals.BufLig[1000], 0);
 	int v23 = 0;
-	if (v85 + 1 > 0) {
-		int16 *v51 = _vm->_globals.BufLig;
-		for (int v88 = 0; v88 < v85 + 1; v88++) {
-			int v24 = v23;
-			v51[v24] = v82;
-			v51[v24 + 1] = v81;
-			v21 += v84;
-			v22 += v83;
-			v82 = v21 / 1000;
-			v81 = v22 / 1000;
-			v23 += 2;
-		}
+	for (int v88 = 0; v88 < v85 + 1; v88++) {
+		_vm->_globals.BufLig[v23] = v82;
+		_vm->_globals.BufLig[v23 + 1] = v81;
+		v21 += v84;
+		v22 += v83;
+		v82 = v21 / 1000;
+		v81 = v22 / 1000;
+		v23 += 2;
 	}
 	int v25 = v23 - 2;
 	bool loopCond = false;
@@ -1168,7 +1165,10 @@ LABEL_17:
 		} while (!loopCond);
 		if (v74 != -1 && v38 != -1 && v76 != -1 && v75 != -1) {
 			v9 = a7;
-			goto LABEL_112;
+			a8[v9] = -1;
+			a8[v9 + 1] = -1;
+			a8[v9 + 2] = -1;
+			return -1;
 		}
 	}
 	if (v78 < a3 - 1 || v78 > a3 + 1 || v79 < a4 - 1 || v79 > a4 + 1) {
@@ -1847,7 +1847,7 @@ LABEL_234:
 										return &_vm->_globals.super_parcours[0];
 									if (v78 == 2)
 										goto LABEL_200;
-									if (MIRACLE(v119, v118, v110, v121, v112) == 1)
+									if (MIRACLE(v119, v118, v110, v121, v112))
 										goto LABEL_201;
 								}
 							}
@@ -1864,7 +1864,7 @@ LABEL_200:
 							v112 = NV_POSI;
 							goto LABEL_234;
 						}
-						if (MIRACLE(v119, v118, v116, v121, v112) == 1)
+						if (MIRACLE(v119, v118, v116, v121, v112))
 							goto LABEL_201;
 						++v116;
 					} while (v116 < v121);
@@ -1915,7 +1915,7 @@ LABEL_200:
 											return &_vm->_globals.super_parcours[0];
 										if (v88 == 2)
 											goto LABEL_200;
-										if (MIRACLE(v119, v118, v117, v121, v112) == 1)
+										if (MIRACLE(v119, v118, v117, v121, v112))
 											goto LABEL_201;
 									}
 								}
@@ -1927,7 +1927,7 @@ LABEL_200:
 							return &_vm->_globals.super_parcours[0];
 						if (v89 == 2)
 							goto LABEL_200;
-						if (MIRACLE(v119, v118, v117, v121, v112) == 1)
+						if (MIRACLE(v119, v118, v117, v121, v112))
 							goto LABEL_201;
 						--v117;
 					} while (v117 > v121);
@@ -3092,7 +3092,7 @@ LABEL_85:
 	return -1;
 }
 
-int LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
+bool LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
 	int v6;
 	int v7;
 	int v8;
@@ -3148,7 +3148,7 @@ int LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
 	v6 = TEST_LIGNE(a1 + 2, a2, &v45, &v53, &v49);
 	v37 = v6;
 	if (v40 == -1 && v39 == -1 && v38 == -1 && v6 == -1)
-		return -1;
+		return false;
 	if (a4 == -1 || a5 == -1) {
 		v8 = 0;
 		if (v40 != -1)
@@ -3206,7 +3206,7 @@ int LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
 LABEL_59:
 		if (v8)
 			goto LABEL_60;
-		return -1;
+		return false;
 	}
 	v8 = 4;
 LABEL_60:
@@ -3290,7 +3290,7 @@ LABEL_60:
 		}
 	}
 	NV_POSI = v41;
-	return 1;
+	return true;
 }
 
 // Test line
@@ -3316,11 +3316,10 @@ int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5) {
 	int v23;
 	int v24 = 0;
 	int v25;
-	int v26;
 	int v27;
 	int v28;
 
-	v26 = 0;
+	bool v26 = false;
 	v25 = _vm->_objectsManager._lastLine + 1;
 	for (i = (int)(_vm->_objectsManager._lastLine + 1); i < _vm->_linesManager._linesNumb + 1; i = v25) {
 		v6 = i;
@@ -3330,19 +3329,19 @@ int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5) {
 		v9 = v7[2 * v8 - 1];
 		if (v7[0] == a1 && a2 == v7[1]) {
 			v24 = v25;
-			v26 = 1;
+			v26 = true;
 			*a3 = 1;
 		}
 		if (v23 == a1 && a2 == v9) {
 			v24 = v25;
-			v26 = 1;
+			v26 = true;
 			*a3 = 2;
 		}
-		if (v26 == 1)
+		if (v26)
 			goto LABEL_12;
 		++v25;
 	}
-	if (v26 != 1)
+	if (!v26)
 		goto LABEL_33;
 LABEL_12:
 	if (*a3 == 1) {
@@ -3358,11 +3357,11 @@ LABEL_12:
 		if (Ligne[v16].field6 == 3 || Ligne[v16].field8 == 7)
 			v13 += 2;
 		if (!checkCollisionLine(v13, v14, &v28, &v27, 0, _vm->_objectsManager._lastLine))
-			error("error");
+			error("Error in test line");
 		*a4 = v27;
 		*a5 = v28;
 	}
-	if (v26 == 1 && *a3 == 2) {
+	if (v26 && *a3 == 2) {
 		v17 = Ligne[v25]._lineData;
 		v18 = v17[0];
 		v19 = v17[1];
@@ -3373,7 +3372,7 @@ LABEL_12:
 		if (Ligne[v21].field6 == 3 || Ligne[v21].field8 == 7)
 			v18 -= 2;
 		if (!checkCollisionLine(v18, v19, &v28, &v27, 0, _vm->_objectsManager._lastLine))
-			error("erreure");
+			error("Error in test line");
 		*a4 = v27;
 		*a5 = v28;
 	}

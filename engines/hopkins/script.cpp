@@ -224,7 +224,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				if (_vm->_globals._saveData->data[svField356] == 1
 						&& _vm->_globals._saveData->_realHopkins._location == _vm->_globals._screenId) {
-					_vm->_objectsManager.SPRITE(
+					_vm->_objectsManager.addStaticSprite(
 					    _vm->_globals.TETE,
 					    _vm->_globals._saveData->_realHopkins._pos,
 					    1,
@@ -233,13 +233,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					    0,
 					    34,
 					    190);
-					_vm->_objectsManager.SPRITE_ON(1);
+					_vm->_objectsManager.animateSprite(1);
 					_vm->_objectsManager._twoCharactersFl = true;
 				}
 				if (_vm->_globals._saveData->data[svField357] == 1
 				        && _vm->_globals._saveData->data[svField355] == 1
 				        && _vm->_globals._saveData->_samantha._location == _vm->_globals._screenId) {
-					_vm->_objectsManager.SPRITE(
+					_vm->_objectsManager.addStaticSprite(
 					    _vm->_globals.TETE,
 					    _vm->_globals._saveData->_samantha._pos,
 					    1,
@@ -248,7 +248,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					    0,
 					    20,
 					    127);
-					_vm->_objectsManager.SPRITE_ON(1);
+					_vm->_objectsManager.animateSprite(1);
 					_vm->_objectsManager._twoCharactersFl = true;
 				}
 			}
@@ -535,7 +535,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_fontManager.hideText(5);
 			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.FIN_VISU();
-			_vm->_objectsManager.CLEAR_ECRAN();
+			_vm->_objectsManager.clearScreen();
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) {
 				_vm->_graphicsManager.fadeOutLong();
@@ -802,7 +802,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 3);
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(9) != 36);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.stopBobAnimation(9);
 			_vm->_objectsManager.stopBobAnimation(10);
 			_vm->_soundManager.DEL_SAMPLE(1);
@@ -851,7 +851,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(9) != v19);
 			if (v19 == 12) {
-				_vm->_objectsManager.SPRITE_ON(0);
+				_vm->_objectsManager.animateSprite(0);
 				_vm->_objectsManager.stopBobAnimation(9);
 			}
 			_vm->_globals.CACHE_ON();
@@ -924,7 +924,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.loadCharacterData();
 			_vm->_objectsManager._sprite[0].field12 = 28;
 			_vm->_objectsManager._sprite[0].field14 = 155;
-			_vm->_objectsManager.VERIFTAILLE();
+			_vm->_objectsManager.computeAndSetSpriteSize();
 			break;
 
 		case 57:
@@ -934,7 +934,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.loadCharacterData();
 			_vm->_objectsManager._sprite[0].field12 = 34;
 			_vm->_objectsManager._sprite[0].field14 = 190;
-			_vm->_objectsManager.VERIFTAILLE();
+			_vm->_objectsManager.computeAndSetSpriteSize();
 			break;
 
 		case 58:
@@ -989,7 +989,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager.BOBPOSI(3) != 48);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.setBobAnimation(6);
 			_vm->_objectsManager.stopBobAnimation(7);
 			_vm->_objectsManager.stopBobAnimation(3);
@@ -1040,7 +1040,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager.BOBPOSI(4) != 16);
 			_vm->_objectsManager.stopBobAnimation(12);
 			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM27a");
 			_vm->_objectsManager.OBSSEUL = 0;
@@ -1092,7 +1092,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(8) != 32);
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.stopBobAnimation(11);
 			_vm->_objectsManager.stopBobAnimation(8);
 			_vm->_objectsManager.setBobAnimation(5);
@@ -1318,7 +1318,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(9) != 15);
 			_vm->_objectsManager.stopBobAnimation(9);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			_vm->_soundManager.playSound("SOUND50.WAV");
 			do {
 				if (_vm->shouldQuit())
@@ -1484,7 +1484,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				} while (_vm->_objectsManager.BOBPOSI(5) != 72);
 				_vm->_objectsManager.stopBobAnimation(5);
 			}
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.ACTION_DOS(1);
 			_vm->_soundManager.DEL_SAMPLE(1);
 			break;
@@ -1524,7 +1524,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(4) != 77);
 			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			break;
 
 		case 107:
@@ -1562,7 +1562,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(5) != 53);
 			_vm->_objectsManager.stopBobAnimation(5);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			break;
 
 		case 108:
@@ -1719,7 +1719,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.stopBobAnimation(8);
 			_vm->_objectsManager.stopBobAnimation(9);
 			_vm->_objectsManager.stopBobAnimation(10);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			break;
 
 		case 176:
@@ -1770,7 +1770,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 18, 334, 0, false);
 			} while (_vm->_objectsManager.BOBPOSI(4) != 26);
 			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			break;
 
 		case 204: {
@@ -1791,7 +1791,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(3) != 50);
 			_vm->_objectsManager.stopBobAnimation(3);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			break;
 			}
 
@@ -1813,7 +1813,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(4) != 24);
 			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			break;
 			}
 
@@ -1992,7 +1992,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.stopBobAnimation(7);
 			_vm->_objectsManager.setSpriteX(0, 476);
 			_vm->_objectsManager.setSpriteY(0, 278);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 337, 154, 3);
 			_vm->_objectsManager.OBSSEUL = 1;
 			_vm->_objectsManager.INILINK("IM93c");
@@ -2020,7 +2020,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 12);
-			_vm->_objectsManager.SPRITE_ON(0);
+			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.stopBobAnimation(12);
 			_vm->_globals.CACHE_ON();
 			break;
@@ -2226,8 +2226,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._saveData->data[svField355] = 1;
 			_vm->_objectsManager._twoCharactersFl = true;
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
-			_vm->_objectsManager.SPRITE(_vm->_globals.TETE, v53->_pos, 1, 3, v53->field4, 0, 20, 127);
-			_vm->_objectsManager.SPRITE_ON(1);
+			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, v53->_pos, 1, 3, v53->field4, 0, 20, 127);
+			_vm->_objectsManager.animateSprite(1);
 			break;
 			}
 

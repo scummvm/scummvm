@@ -57,7 +57,6 @@ public:
 	LigneZoneItem _zoneLine[401];
 	LigneItem Ligne[400];
 	SmoothItem SMOOTH[4000];
-	int next_ligne;
 	int _linesNumb;
 	int NV_LIGNEDEP;
 	int NV_LIGNEOFS;
@@ -70,25 +69,25 @@ public:
 	LinesManager();
 	void setParent(HopkinsEngine *vm);
 
-	void CLEAR_ZONE();
+	void clearAllZones();
 	int checkInventoryHotspots(int posX, int posY);
 	int checkInventoryHostpotsRow(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);
 	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
 	void resetLines();
 	void removeLine(int idx);
-	void AJOUTE_LIGNE(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
+	void addLine(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
 	bool checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx);
 	void initRoute();
 	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9);
 	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7);
-	int MIRACLE(int a1, int a2, int a3, int a4, int a5);
+	bool MIRACLE(int a1, int a2, int a3, int a4, int a5);
 	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9);
 	int16 *PARCOURS2(int srcX, int srcY, int destX, int destY);
 	int PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
 	int VERIF_SMOOTH(int a1, int a2, int a3, int a4);
 	int SMOOTH_MOVE(int a3, int a4, int a5, int a6);
-	int PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6);
+	bool PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6);
 	int TEST_LIGNE(int a1, int a2, int *a3, int *a4, int *a5);
 };
 
