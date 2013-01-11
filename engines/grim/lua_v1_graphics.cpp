@@ -28,6 +28,7 @@
 #include "engines/grim/iris.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/set.h"
+#include "actor.h"
 
 #include "engines/grim/movie/movie.h"
 
@@ -493,7 +494,13 @@ void Lua_V1::EngineDisplay() {
 
 void Lua_V1::ForceRefresh() {
 	g_grim->refreshDrawMode();
-	g_driver->clearCleanBuffer();
+
+	// refreshBuffers() must clean the backing buffer but NOT the actors' buffers.
+	// In set at Glottis and Albinizod are frozen not at the same time, so this is called every time
+	// one of the two is frozen.
+	// That one gets redrawn to its buffer, but not the other one, so it must still have its buffer
+	// otherwise it will disappear.
+	g_driver->refreshBuffers();
 }
 
 void Lua_V1::RenderModeUser() {

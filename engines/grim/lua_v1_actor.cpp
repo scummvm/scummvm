@@ -580,6 +580,14 @@ void Lua_V1::WalkActorTo() {
 	actor->walkTo(destVec);
 }
 
+/* This draw an actor to an offscreen buffer.
+ * The actors' buffers blit to the global buffer which then gets blitted to screen.
+ * This double layer system is necessary for set at, where Glottis and the Albinizod
+ * are drawn to the clean buffer but at different times.
+ *
+ * If you change the clean system check with the sets dd, at and with the trail of flowers
+ * in sh or zw.
+ */
 void Lua_V1::ActorToClean() {
 	lua_Object actorObj = lua_getparam(1);
 
@@ -589,10 +597,7 @@ void Lua_V1::ActorToClean() {
 	}
 
 	Actor *actor = getactor(actorObj);
-
-	g_driver->selectCleanBuffer();
-	actor->draw();
-	g_driver->selectScreenBuffer();
+	actor->drawToCleanBuffer();
 }
 
 void Lua_V1::IsActorMoving() {

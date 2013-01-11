@@ -86,6 +86,8 @@ Actor::Actor(const Common::String &actorName) :
 	_talking = false;
 	_inOverworld = false;
 	_sortOrder = 0;
+	_cleanBuffer = 0;
+	_drawnToClean = false;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
@@ -114,6 +116,8 @@ Actor::Actor() {
 
 	_sortOrder = 0;
 	_shadowActive = false;
+	_cleanBuffer = 0;
+	_drawnToClean = false;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
@@ -134,6 +138,10 @@ Actor::~Actor() {
 		_costumeStack.pop_back();
 	}
 	g_grim->immediatelyRemoveActor(this);
+
+	if (_cleanBuffer) {
+		g_driver->delBuffer(_cleanBuffer);
+	}
 }
 
 void Actor::saveState(SaveGame *savedState) const {
@@ -258,6 +266,8 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeLESint32(_attachedActor);
 		savedState->writeString(_attachedJoint);
 	}
+
+	savedState->writeBool(_drawnToClean);
 }
 
 bool Actor::restoreState(SaveGame *savedState) {
@@ -405,6 +415,19 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		_attachedActor = savedState->readLESint32();
 		_attachedJoint = savedState->readString();
+	}
+
+	if (_cleanBuffer) {
+		g_driver->delBuffer(_cleanBuffer);
+	}
+	_cleanBuffer = 0;
+	_drawnToClean = false;
+	if (savedState->saveMinorVersion() >= 4) {
+		bool drawnToClean = savedState->readBool();
+		if (drawnToClean) {
+			_cleanBuffer = g_driver->genBuffer();
+			g_driver->clearBuffer(_cleanBuffer);
+		}
 	}
 
 	return true;
@@ -1452,6 +1475,8 @@ void Actor::draw() {
 		}
 		_mustPlaceText = false;
 	}
+
+	_drawnToClean = false;
 }
 
 void Actor::setShadowPlane(const char *n) {
@@ -1551,6 +1576,11 @@ void Actor::putInSet(const Common::String &setName) {
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
 	_setName = setName;
+
+	// clean the buffer. this is needed when an actor goes from frozen state to full model rendering
+	if (_setName != "" && _cleanBuffer) {
+		g_driver->clearBuffer(_cleanBuffer);
+	}
 
 	g_grim->invalidateActiveActorsList();
 }
@@ -1870,6 +1900,38 @@ void Actor::detach() {
 	setRot(0, 0, 0);
 	_attachedActor = 0;
 	_attachedJoint = "";
+}
+
+void Actor::drawToCleanBuffer() {
+	if (!_cleanBuffer) {
+		_cleanBuffer = g_driver->genBuffer();
+	}
+	if (!_cleanBuffer) {
+		return;
+	}
+
+	_drawnToClean = true;
+	// clean the buffer before drawing to it
+	g_driver->clearBuffer(_cleanBuffer);
+	g_driver->selectBuffer(_cleanBuffer);
+	draw();
+	g_driver->selectBuffer(0);
+
+	_drawnToClean = true;
+}
+
+void Actor::clearCleanBuffer() {
+	if (_cleanBuffer) {
+		g_driver->delBuffer(_cleanBuffer);
+		_cleanBuffer = 0;
+	}
+}
+
+void Actor::restoreCleanBuffer() {
+	if (_cleanBuffer) {
+		update(0);
+		drawToCleanBuffer();
+	}
 }
 
 unsigned const int Actor::Chore::fadeTime = 150;

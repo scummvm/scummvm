@@ -483,6 +483,10 @@ public:
 
 	void activateShadow(bool active) { _shadowActive = active; }
 
+	void restoreCleanBuffer();
+	void drawToCleanBuffer();
+	void clearCleanBuffer();
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -624,6 +628,8 @@ private:
 	int _sortOrder;
 
 	bool _shadowActive;
+	int _cleanBuffer;
+	bool _drawnToClean;
 };
 
 } // end of namespace Grim

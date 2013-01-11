@@ -521,7 +521,6 @@ void GrimEngine::updateDisplayScene() {
 		g_driver->set3DMode();
 
 		if (_setupChanged) {
-			g_driver->clearCleanBuffer();
 			cameraPostChangeHandle(_currSet->getSetup());
 			_setupChanged = false;
 		}
@@ -553,7 +552,7 @@ void GrimEngine::updateDisplayScene() {
 		// including 3D objects such as Manny and the message tube
 		_currSet->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
-		g_driver->drawCleanBuffer();
+		g_driver->drawBuffers();
 		drawPrimitives();
 	} else if (_mode == DrawMode) {
 		_doFlip = false;
@@ -812,6 +811,13 @@ void GrimEngine::savegameRestore() {
 	clearEventQueue();
 	invalidateActiveActorsList();
 	buildActiveActorsList();
+
+	g_driver->refreshBuffers();
+	_currSet->setupCamera();
+	g_driver->set3DMode();
+	foreach (Actor *a, Actor::getPool()) {
+		a->restoreCleanBuffer();
+	}
 }
 
 void GrimEngine::restoreGRIM() {
@@ -1032,7 +1038,9 @@ void GrimEngine::setSet(Set *scene) {
 	// and coords change too.
 	foreach (Actor *a, Actor::getPool()) {
 		a->stopWalking();
+		a->clearCleanBuffer();
 	}
+	g_driver->refreshBuffers();
 
 	Set *lastSet = _currSet;
 	_currSet = scene;

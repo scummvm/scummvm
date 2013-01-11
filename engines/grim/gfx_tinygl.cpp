@@ -239,6 +239,7 @@ GfxTinyGL::GfxTinyGL() {
 
 GfxTinyGL::~GfxTinyGL() {
 	if (_zb) {
+		delBuffer(1);
 		TinyGL::glClose();
 		ZB_close(_zb);
 	}
@@ -271,6 +272,11 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	TGLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
+
+	// we now generate a buffer (id 1), which we will use as a backing buffer, where the actors' clean buffers
+	// will blit to. everu frame this will be blitted to screen, but the actors' buffers will be blitted to
+	// this only when they change.
+	genBuffer();
 
 	return buffer;
 }
@@ -318,20 +324,54 @@ void GfxTinyGL::flipBuffer() {
 	g_system->updateScreen();
 }
 
-void GfxTinyGL::selectScreenBuffer() {
-	TinyGL::ZB_selectScreenBuffer(_zb);
+int GfxTinyGL::genBuffer() {
+	static int id = 0;
+
+	TinyGL::Buffer *buf = ZB_genOffscreenBuffer(_zb);
+	_buffers[++id] = buf;
+
+	return id;
 }
 
-void GfxTinyGL::selectCleanBuffer() {
-	TinyGL::ZB_selectOffscreenBuffer(_zb);
+void GfxTinyGL::delBuffer(int id) {
+	ZB_delOffscreenBuffer(_zb, _buffers[id]);
+	_buffers.erase(id);
 }
 
-void GfxTinyGL::clearCleanBuffer() {
-	TinyGL::ZB_clearOffscreenBuffer(_zb);
+void GfxTinyGL::selectBuffer(int id) {
+	if (id == 0) {
+		ZB_selectOffscreenBuffer(_zb, NULL);
+	} else {
+		ZB_selectOffscreenBuffer(_zb, _buffers[id]);
+	}
 }
 
-void GfxTinyGL::drawCleanBuffer() {
-	TinyGL::ZB_blitOffscreenBuffer(_zb);
+void GfxTinyGL::clearBuffer(int id) {
+	TinyGL::Buffer *buf = _buffers[id];
+	ZB_clearOffscreenBuffer(_zb, buf);
+}
+
+void GfxTinyGL::drawBuffers() {
+	selectBuffer(1);
+	Common::HashMap<int, TinyGL::Buffer *>::iterator i = _buffers.begin();
+	for (++i; i != _buffers.end(); ++i) {
+		TinyGL::Buffer *buf = i->_value;
+		ZB_blitOffscreenBuffer(_zb, buf);
+		//this is not necessary, but it prevents the buffers to be blitted every frame, if it is not needed
+		buf->used = false;
+	}
+
+	selectBuffer(0);
+	ZB_blitOffscreenBuffer(_zb, _buffers[1]);
+}
+
+void GfxTinyGL::refreshBuffers() {
+	clearBuffer(1);
+	Common::HashMap<int, TinyGL::Buffer *>::iterator i = _buffers.begin();
+	for (++i; i != _buffers.end(); ++i) {
+		TinyGL::Buffer *buf = i->_value;
+		buf->used = true;
+	}
 }
 
 bool GfxTinyGL::isHardwareAccelerated() {

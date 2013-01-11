@@ -50,12 +50,8 @@ ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer
 	zb->current_texture = NULL;
 	zb->shadow_mask_buf = NULL;
 
-	zb->buffers[0].pbuf = zb->pbuf.getRawBuffer();
-	zb->buffers[0].zbuf = zb->zbuf;
-
-	zb->buffers[1].pbuf = NULL;
-	zb->buffers[1].zbuf = NULL;
-	zb->buffers[1].used = false;
+	zb->buffer.pbuf = zb->pbuf.getRawBuffer();
+	zb->buffer.zbuf = zb->zbuf;
 
 	return zb;
 error:
@@ -68,10 +64,6 @@ void ZB_close(ZBuffer *zb) {
 		zb->pbuf.free();
 
     gl_free(zb->zbuf);
-
-	gl_free(zb->buffers[1].pbuf);
-	gl_free(zb->buffers[1].zbuf);
-
 	gl_free(zb);
 }
 
@@ -184,47 +176,51 @@ void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, in
 	}
 }
 
-void ZB_selectScreenBuffer(ZBuffer *zb) {
-	zb->pbuf = zb->buffers[0].pbuf;
-	zb->zbuf = zb->buffers[0].zbuf;
+Buffer *ZB_genOffscreenBuffer(ZBuffer *zb) {
+	Buffer *buf = (Buffer *)gl_malloc(sizeof(Buffer));
+	buf->pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
+	int size = zb->xsize * zb->ysize * sizeof(unsigned int);
+	buf->zbuf = (unsigned int *)gl_malloc(size);
+
+	return buf;
 }
 
-void ZB_selectOffscreenBuffer(ZBuffer *zb) {
-	Buffer &buf = zb->buffers[1];
-
-	if (!buf.pbuf) {
-		buf.pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
-		int size = zb->xsize * zb->ysize * sizeof(unsigned int);
-		buf.zbuf = (unsigned int *)gl_malloc(size);
-	}
-
-	zb->pbuf = buf.pbuf;
-	zb->zbuf = buf.zbuf;
-	buf.used = true;
+void ZB_delOffscreenBuffer(ZBuffer *zb, Buffer *buf) {
+	gl_free(buf->pbuf);
+	gl_free(buf->zbuf);
+	gl_free(buf);
 }
 
-void ZB_blitOffscreenBuffer(ZBuffer *zb) {
+void ZB_blitOffscreenBuffer(ZBuffer *zb, Buffer *buf) {
 	// TODO: could be faster, probably.
-	Buffer &buf = zb->buffers[1];
-	if (buf.used) {
+	if (buf->used) {
 		for (int i = 0; i < zb->xsize * zb->ysize; ++i) {
-			unsigned int d1 = buf.zbuf[i];
-			unsigned int d2 = zb->buffers[0].zbuf[i];
+			unsigned int d1 = buf->zbuf[i];
+			unsigned int d2 = zb->zbuf[i];
 			if (d1 > d2) {
 				const int offset = i * PSZB;
-				memcpy(zb->buffers[0].pbuf + offset, buf.pbuf + offset, PSZB);
+				memcpy(zb->pbuf.getRawBuffer() + offset, buf->pbuf + offset, PSZB);
+				memcpy(zb->zbuf + i, buf->zbuf + i, sizeof(int));
 			}
 		}
 	}
 }
 
-void ZB_clearOffscreenBuffer(ZBuffer *zb) {
-	Buffer &buf = zb->buffers[1];
-	if (buf.pbuf) {
-		memset(buf.pbuf, 0, zb->ysize * zb->linesize);
-		memset(buf.zbuf, 0, zb->ysize * zb->xsize * sizeof(unsigned int));
-		buf.used = false;
+void ZB_selectOffscreenBuffer(ZBuffer *zb, Buffer *buf) {
+	if (buf) {
+		zb->pbuf = buf->pbuf;
+		zb->zbuf = buf->zbuf;
+		buf->used = true;
+	} else {
+		zb->pbuf = zb->buffer.pbuf;
+		zb->zbuf = zb->buffer.zbuf;
 	}
+}
+
+void ZB_clearOffscreenBuffer(ZBuffer *zb, Buffer *buf) {
+	memset(buf->pbuf, 0, zb->ysize * zb->linesize);
+	memset(buf->zbuf, 0, zb->ysize * zb->xsize * sizeof(unsigned int));
+	buf->used = false;
 }
 
 } // end of namespace TinyGL

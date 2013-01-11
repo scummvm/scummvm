@@ -46,7 +46,7 @@ typedef struct {
 	int pixelbits;
 	int pixelbytes;
 
-	Buffer buffers[2];
+	Buffer buffer;
 
 	unsigned int *zbuf;
 	unsigned char *shadow_mask_buf;
@@ -71,15 +71,16 @@ typedef struct {
 
 // zbuffer.c
 
-void ZB_selectScreenBuffer(ZBuffer *zb);
-void ZB_selectOffscreenBuffer(ZBuffer *zb);
+Buffer *ZB_genOffscreenBuffer(ZBuffer *zb);
+void ZB_delOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
 /**
  * Blit the buffer to the screen buffer, checking the depth of the pixels.
  * Eack pixel is copied if and only if its depth value is bigger than the
  * depth value of the screen pixel, so if it is 'above'.
  */
-void ZB_blitOffscreenBuffer(ZBuffer *zb);
-void ZB_clearOffscreenBuffer(ZBuffer *zb);
+void ZB_blitOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
+void ZB_selectOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
+void ZB_clearOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
 
 ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &buffer);
 void ZB_close(ZBuffer *zb);
