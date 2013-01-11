@@ -73,6 +73,9 @@ List of fixed bugs in GF scripts:
 	The function open_inventory() stops the chore 'manny.hold_chore'. But that variable sometimes
 	is nil, and that causes all the chores to be stopped, included the chore which shows the hat.
 	This patch checks if 'manny.hold_chore' is not nil and only in that cases it stops it.
+	In addition to this now we must also stop the chore 'ms_putback_deck' of ms.cos when putting back
+	the cards deck, since that chore before this patch is stopped by stopping 'manny.hold_chore', being
+	it nil. Not stopping it results in broken animation when getting the card from the deck.
 
 	-Fix a Lua error when speaking to Lupe with all the dialog options expired (#198) - dlg_lupe.lua.patchr
 	When there are no more dialog options the dialog system calls a 'abort' line (Dialog.display_lines,
