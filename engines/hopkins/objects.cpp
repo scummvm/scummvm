@@ -3038,7 +3038,7 @@ LABEL_90:
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[j]._lineData[0],
 						_vm->_linesManager.Ligne[j]._lineData[1],
-				        v67, j, v73, 0)) {
+				        v67, j, v73)) {
 					v69 = _vm->_linesManager.NV_LIGNEDEP;
 					v68 = _vm->_linesManager.NV_LIGNEOFS;
 					v67 = _vm->_linesManager.NV_POSI;
@@ -3073,7 +3073,7 @@ LABEL_90:
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2],
 						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 1],
-						v67, l, v73, 0)) {
+						v67, l, v73)) {
 					v69 = _vm->_linesManager.NV_LIGNEDEP;
 					v68 = _vm->_linesManager.NV_LIGNEOFS;
 					v67 = _vm->_linesManager.NV_POSI;

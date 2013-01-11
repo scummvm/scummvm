@@ -3092,201 +3092,111 @@ LABEL_85:
 	return -1;
 }
 
-bool LinesManager::PLAN_TEST(int a1, int a2, int a3, int a4, int a5, int a6) {
-	int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v10;
-	int v11;
-	int v12;
-	int v13;
-	int v14;
-	int16 *v15;
-	int v16;
-	int v17;
-	int v18;
-	int v19;
-	int16 *v20;
-	int v21;
-	int v22;
-	int v23;
-	int16 *v25;
-	int16 *v26;
-	int v27;
-	int v28;
-	int v29;
-	int v30;
-	int v31;
-	int v32;
-	int v33 = 0;
-	int v34 = 0;
-	int v35;
-	int v36;
-	int v37;
-	int v38;
-	int v39;
-	int v40;
-	int v41;
+bool LinesManager::PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5) {
 	int v42;
 	int v43;
 	int v44;
 	int v45;
-	int v46;
-	int v47;
-	int v48;
-	int v49;
-	int v50;
-	int v51;
-	int v52;
-	int v53;
+	int dataIdxTestUp;
+	int dataIdxTestDown;
+	int dataIdxTestLeft;
+	int dataIdxTestRight;
+	int lineIdxTestUp;
+	int lineIdxTestDown;
+	int lineIdxTestLeft;
+	int lineIdxTestRight;
 
-	v41 = a3;
-	v40 = TEST_LIGNE(a1, a2 - 2, &v42, &v50, &v46);
-	v39 = TEST_LIGNE(a1, a2 + 2, &v43, &v51, &v47);
-	v38 = TEST_LIGNE(a1 - 2, a2, &v44, &v52, &v48);
-	v6 = TEST_LIGNE(a1 + 2, a2, &v45, &v53, &v49);
-	v37 = v6;
-	if (v40 == -1 && v39 == -1 && v38 == -1 && v6 == -1)
+	int v41 = a3;
+	int idxTestUp = TEST_LIGNE(paramX, paramY - 2, &v42, &lineIdxTestUp, &dataIdxTestUp);
+	int idxTestDown = TEST_LIGNE(paramX, paramY + 2, &v43, &lineIdxTestDown, &dataIdxTestDown);
+	int idxTestLeft = TEST_LIGNE(paramX - 2, paramY, &v44, &lineIdxTestLeft, &dataIdxTestLeft);
+	int idxTestRight = TEST_LIGNE(paramX + 2, paramY, &v45, &lineIdxTestRight, &dataIdxTestRight);
+	if (idxTestUp == -1 && idxTestDown == -1 && idxTestLeft == -1 && idxTestRight == -1)
 		return false;
+
+	int v8;
 	if (a4 == -1 || a5 == -1) {
-		v8 = 0;
-		if (v40 != -1)
+		if (idxTestUp != -1)
 			v8 = 1;
-		if (v8)
-			goto LABEL_60;
-		if (v39 != -1)
+		else if (idxTestDown != -1)
 			v8 = 2;
-		if (v8)
-			goto LABEL_60;
-		if (v38 != -1)
+		else if (idxTestLeft != -1)
 			v8 = 3;
-		if (v8)
-			goto LABEL_60;
-		if (v6 != -1)
+		else if (idxTestRight != -1)
 			v8 = 4;
-		goto LABEL_59;
-	}
-	v28 = 100;
-	v7 = 100;
-	v35 = 100;
-	v27 = 100;
-	v8 = 0;
-	v9 = abs(a4 - a5);
-	v36 = v9;
-	if (v40 != -1) {
-		v10 = abs(v50 - a5);
-		v28 = v10;
-	}
-	if (v39 != -1) {
-		v11 = abs(v51 - a5);
-		v7 = v11;
-	}
-	if (v38 != -1) {
-		v12 = abs(v52 - a5);
-		v35 = v12;
-	}
-	if (v37 != -1) {
-		v13 = abs(v53 - a5);
-		v27 = v13;
-	}
-	if (v28 < v36 && v28 <= v7 && v28 <= v35 && v28 <= v27)
-		v8 = 1;
-	if (v8)
-		goto LABEL_60;
-	if (v36 > v7 && v28 >= v7 && v35 >= v7 && v27 >= v7)
-		v8 = 2;
-	if (v8)
-		goto LABEL_60;
-	if (v35 < v36 && v35 <= v28 && v35 <= v7 && v35 <= v27)
-		v8 = 3;
-	if (v8)
-		goto LABEL_60;
-	if (v27 >= v36 || v27 > v28 || v27 > v7 || v27 > v35) {
-LABEL_59:
-		if (v8)
-			goto LABEL_60;
-		return false;
-	}
-	v8 = 4;
-LABEL_60:
-	if (v8 == 1) {
-		v34 = v40;
-		v33 = v42;
-		NV_LIGNEDEP = v50;
-		NV_LIGNEOFS = v46;
-	}
-	if (v8 == 2) {
-		v34 = v39;
-		v33 = v43;
-		NV_LIGNEDEP = v51;
-		NV_LIGNEOFS = v47;
-	}
-	if (v8 == 3) {
-		v34 = v38;
-		v33 = v44;
-		NV_LIGNEDEP = v52;
-		NV_LIGNEOFS = v48;
-	}
-	if (v8 == 4) {
-		v34 = v37;
-		v33 = v45;
-		NV_LIGNEDEP = v53;
-		NV_LIGNEOFS = v49;
-	}
-	if (v33 == 1) {
-		v14 = 0;
-		if (Ligne[v34]._lineDataEndIdx > 0) {
-			v32 = v34;
-			v25 = _vm->_globals.essai0;
-			do {
-				v15 = Ligne[v32]._lineData;
-				v16 = v15[2 * v14];
-				v29 = v15[2 * v14 + 1];
-				if (!a6) {
-					v17 = v41;
-					_vm->_globals.super_parcours[v17] = v16;
-					_vm->_globals.super_parcours[v17 + 1] = v29;
-					_vm->_globals.super_parcours[v17 + 2] = Ligne[v32].field6;
-					_vm->_globals.super_parcours[v17 + 3] = 0;
-				}
-				if (a6 == 1) {
-					v18 = v41;
-					v25[v18] = v16;
-					v25[v18 + 1] = v29;
-					v25[v18 + 2] = Ligne[v32].field6;
-					v25[v18 + 3] = 0;
-				}
-				v41 += 4;
-				++v14;
-			} while (Ligne[v32]._lineDataEndIdx > v14);
+		else 
+			return false;
+	} else {
+		int v28 = 100;
+		int v7 = 100;
+		int v35 = 100;
+		int v27 = 100;
+		int v36 = abs(a4 - a5);
+		if (idxTestUp != -1) {
+			v28 = abs(lineIdxTestUp - a5);
 		}
+		if (idxTestDown != -1) {
+			v7 = abs(lineIdxTestDown - a5);
+		}
+		if (idxTestLeft != -1) {
+			v35 = abs(lineIdxTestLeft - a5);
+		}
+		if (idxTestRight != -1) {
+			v27 = abs(lineIdxTestRight - a5);
+		}
+
+		if (v28 < v36 && v28 <= v7 && v28 <= v35 && v28 <= v27)
+			v8 = 1;
+		else if (v36 > v7 && v28 >= v7 && v35 >= v7 && v27 >= v7)
+			v8 = 2;
+		else if (v35 < v36 && v35 <= v28 && v35 <= v7 && v35 <= v27)
+			v8 = 3;
+		else if (v27 < v36 && v27 <= v28 && v27 <= v7 && v27 <= v35)
+			v8 = 4;
+		else
+			return false;
 	}
-	if (v33 == 2) {
-		v19 = Ligne[v34]._lineDataEndIdx - 1;
-		if (v19 > -1) {
-			v31 = v34;
-			v26 = _vm->_globals.essai0;
-			do {
-				v20 = Ligne[v31]._lineData;
-				v21 = v20[2 * v19];
-				v30 = v20[2 * v19 + 1];
-				if (a6) {
-					v23 = v41;
-					v26[v23] = v21;
-					v26[v23 + 1] = v30;
-					v26[v23 + 2] = Ligne[v31].field8;
-					v26[v23 + 3] = 0;
-				} else {
-					v22 = v41;
-					_vm->_globals.super_parcours[v22] = v21;
-					_vm->_globals.super_parcours[v22 + 1] = v30;
-					_vm->_globals.super_parcours[v22 + 2] = Ligne[v31].field8;
-					_vm->_globals.super_parcours[v22 + 3] = 0;
-				}
-				v41 += 4;
-				--v19;
-			} while (v19 > -1);
+
+	int v33 = 0;
+	int idxTest = 0;
+	if (v8 == 1) {
+		idxTest = idxTestUp;
+		v33 = v42;
+		NV_LIGNEDEP = lineIdxTestUp;
+		NV_LIGNEOFS = dataIdxTestUp;
+	} else if (v8 == 2) {
+		idxTest = idxTestDown;
+		v33 = v43;
+		NV_LIGNEDEP = lineIdxTestDown;
+		NV_LIGNEOFS = dataIdxTestDown;
+	} else if (v8 == 3) {
+		idxTest = idxTestLeft;
+		v33 = v44;
+		NV_LIGNEDEP = lineIdxTestLeft;
+		NV_LIGNEOFS = dataIdxTestLeft;
+	} else if (v8 == 4) {
+		idxTest = idxTestRight;
+		v33 = v45;
+		NV_LIGNEDEP = lineIdxTestRight;
+		NV_LIGNEOFS = dataIdxTestRight;
+	}
+
+	if (v33 == 1) {
+		_vm->_globals.essai0 = _vm->_globals.essai0;
+		for (int i = 0; i < Ligne[idxTest]._lineDataEndIdx; i++) {
+			_vm->_globals.super_parcours[v41] = Ligne[idxTest]._lineData[2 * i];
+			_vm->_globals.super_parcours[v41 + 1] = Ligne[idxTest]._lineData[2 * i + 1];
+			_vm->_globals.super_parcours[v41 + 2] = Ligne[idxTest].field6;
+			_vm->_globals.super_parcours[v41 + 3] = 0;
+			v41 += 4;
+		}
+	} else if (v33 == 2) {
+		for (int v19 = Ligne[idxTest]._lineDataEndIdx - 1; v19 > -1; v19--) {
+			_vm->_globals.super_parcours[v41] = Ligne[idxTest]._lineData[2 * v19];
+			_vm->_globals.super_parcours[v41 + 1] = Ligne[idxTest]._lineData[2 * v19 + 1];
+			_vm->_globals.super_parcours[v41 + 2] = Ligne[idxTest].field8;
+			_vm->_globals.super_parcours[v41 + 3] = 0;
+			v41 += 4;
 		}
 	}
 	NV_POSI = v41;
@@ -3294,7 +3204,7 @@ LABEL_60:
 }
 
 // Test line
-int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *foundLineIdx, int *foundDataIdx) {
+int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx) {
 	int16 *lineData;
 	int lineDataEndIdx;
 	int collLineIdx;
@@ -3303,7 +3213,7 @@ int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *foundLineIdx, int *fo
 	for (int idx = _vm->_objectsManager._lastLine + 1; idx < _vm->_linesManager._linesNumb + 1; idx++) {
 		lineData = Ligne[idx]._lineData;
 		lineDataEndIdx = Ligne[idx]._lineDataEndIdx;
-		if (lineData[0] == a1 && lineData[1] == a2) {
+		if (lineData[0] == paramX && lineData[1] == paramY) {
 			*a3 = 1;
 			int posX = lineData[2 * (lineDataEndIdx - 1)];
 			int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
@@ -3317,7 +3227,7 @@ int LinesManager::TEST_LIGNE(int a1, int a2, int *a3, int *foundLineIdx, int *fo
 			*foundDataIdx = collDataIdx;
 			return idx;
 		}
-		if (lineData[2 * (lineDataEndIdx - 1)] == a1 && lineData[2 * (lineDataEndIdx - 1) + 1] == a2) {
+		if (lineData[2 * (lineDataEndIdx - 1)] == paramX && lineData[2 * (lineDataEndIdx - 1) + 1] == paramY) {
 			*a3 = 2;
 			int posX = lineData[0];
 			int posY = lineData[1];
