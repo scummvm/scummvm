@@ -871,7 +871,6 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 					_vm->_globals.super_parcours[v24 + 3] = 0;
 					v7 += 4;
 				}
-LABEL_186:
 				NV_LIGNEDEP = v36;
 				NV_LIGNEOFS = v35;
 				NV_POSI = v7;
@@ -895,7 +894,10 @@ LABEL_186:
 					_vm->_globals.super_parcours[v27 + 3] = 0;
 					v7 += 4;
 				}
-				goto LABEL_186;
+				NV_LIGNEDEP = v36;
+				NV_LIGNEOFS = v35;
+				NV_POSI = v7;
+				return true;
 			}
 			if (v21 == 7) {
 				for (int v28 = 0; v28 < v18; v28++) {
@@ -915,7 +917,10 @@ LABEL_186:
 					_vm->_globals.super_parcours[v30 + 3] = 0;
 					v7 += 4;
 				}
-				goto LABEL_186;
+				NV_LIGNEDEP = v36;
+				NV_LIGNEOFS = v35;
+				NV_POSI = v7;
+				return true;
 			}
 			if (v21 == 3) {
 				for (int v31 = 0; v31 < v38; v31++) {
@@ -935,7 +940,10 @@ LABEL_186:
 					_vm->_globals.super_parcours[v33 + 3] = 0;
 					v7 += 4;
 				}
-				goto LABEL_186;
+				NV_LIGNEDEP = v36;
+				NV_LIGNEOFS = v35;
+				NV_POSI = v7;
+				return true;
 			}
 		}
 	}
@@ -984,9 +992,8 @@ int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7,
 	}
 LABEL_11:
 	int16 *v13 = Ligne[a1]._lineData;
-	int v14 = 2 * Ligne[a1]._lineDataEndIdx;
-	int v95 = v13[v14 - 2];
-	int v93 = v13[v14 - 1];
+	int v95 = v13[2 * Ligne[a1]._lineDataEndIdx - 2];
+	int v93 = v13[2 * Ligne[a1]._lineDataEndIdx - 1];
 	int v91 = a1;
 	int v100, v101;
 	for (;;) {
@@ -1017,19 +1024,17 @@ LABEL_11:
 		v93 = v16[v65 - 1];
 	}
 LABEL_17:
-	int v18 = abs(a3 - a5);
-	int v58 = v18 + 1;
-	int v19 = abs(a4 - a6);
-	int v85 = v19 + 1;
-	int v20 = v19 + 1;
+	int v58 = abs(a3 - a5) + 1;
+	int v85 = abs(a4 - a6) + 1;
+	int v20 = v85;
 	if (v58 > v20)
 		v85 = v58;
 	int v84 = 1000 * v58 / v85;
 	int v83 = 1000 * v20 / v85;
 	int v21 = 1000 * a3;
 	int v22 = 1000 * a4;
-	int v82 = v21 / 1000;
-	int v81 = v22 / 1000;
+	int v82 = a3;
+	int v81 = a4;
 	if (a5 < a3)
 		v84 = -v84;
 	if (a6 < a4)
@@ -1819,8 +1824,12 @@ LABEL_234:
 									v78 = PARC_PERS(v119, v118, clipDestX, clipDestY, v110, v121, v112);
 									if (v78 == 1)
 										return &_vm->_globals.super_parcours[0];
-									if (v78 == 2)
-										goto LABEL_200;
+									if (v78 == 2) {
+										v115 = NV_LIGNEDEP;
+										v114 = NV_LIGNEOFS;
+										v112 = NV_POSI;
+										goto LABEL_234;
+									}
 									if (MIRACLE(v119, v118, v110, v121, v112))
 										goto LABEL_201;
 								}
@@ -1832,7 +1841,6 @@ LABEL_234:
 						if (v79 == 1)
 							return &_vm->_globals.super_parcours[0];
 						if (v79 == 2) {
-LABEL_200:
 							v115 = NV_LIGNEDEP;
 							v114 = NV_LIGNEOFS;
 							v112 = NV_POSI;
@@ -1887,8 +1895,12 @@ LABEL_200:
 										v88 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
 										if (v88 == 1)
 											return &_vm->_globals.super_parcours[0];
-										if (v88 == 2)
-											goto LABEL_200;
+										if (v88 == 2) {
+											v115 = NV_LIGNEDEP;
+											v114 = NV_LIGNEOFS;
+											v112 = NV_POSI;
+											goto LABEL_234; 
+										}
 										if (MIRACLE(v119, v118, v117, v121, v112))
 											goto LABEL_201;
 									}
@@ -1899,8 +1911,12 @@ LABEL_200:
 						v89 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
 						if (v89 == 1)
 							return &_vm->_globals.super_parcours[0];
-						if (v89 == 2)
-							goto LABEL_200;
+						if (v89 == 2) {
+							v115 = NV_LIGNEDEP;
+							v114 = NV_LIGNEOFS;
+							v112 = NV_POSI;
+							goto LABEL_234;
+						}
 						if (MIRACLE(v119, v118, v117, v121, v112))
 							goto LABEL_201;
 						--v117;
@@ -2212,24 +2228,24 @@ LABEL_72:
 		v20 = v19 + 1;
 		v95 = abs(v109 - a4);
 		v108 = v95 + 1;
-		if (v20 > (int16)(v95 + 1))
+		if (v20 > (v95 + 1))
 			v108 = v20;
 		if (v108 <= 10)
 			goto LABEL_149;
 		v21 = v108 - 1;
 		v102 = 1000 * v20 / v21;
-		v100 = 1000 * (int16)(v95 + 1) / v21;
+		v100 = 1000 * (v95 + 1) / v21;
 		if (a3 < v111)
 			v102 = -v102;
 		if (a4 < v109)
 			v100 = -v100;
-		v22 = (int16)v102 / 1000;
-		v96 = (int16)v100 / 1000;
+		v22 = v102 / 1000;
+		v96 = v100 / 1000;
 		v106 = 1000 * v111;
 		v105 = 1000 * v109;
 		v104 = 1000 * v111 / 1000;
 		v103 = v105 / 1000;
-		if (!((int16)v102 / 1000) && v96 == -1)
+		if (!(v102 / 1000) && v96 == -1)
 			v91 = 1;
 		if (v22 == 1) {
 			if (v96 == -1)
@@ -2241,20 +2257,23 @@ LABEL_72:
 		}
 		if (!v22 && v96 == 1)
 			v91 = 5;
-		if (v22 != -1)
-			goto LABEL_103;
-		if (v96 == 1)
-			v91 = 6;
-		if (!v96)
-			v91 = 7;
-		if (v96 == -1) {
-			v91 = 8;
-LABEL_103:
-			if (v96 == -1) {
-				if ((unsigned int)v102 <= 510)
+		if ((v22 != -1) && (v96 == -1)) {
+			if (v102 >= 0 && v102 < 510)
+				v91 = 1;
+			else if (v102 >= 510 && v102 <= 1000)
+				v91 = 2;
+		} else {
+			if (v96 == 1)
+				v91 = 6;
+			else if (!v96)
+				v91 = 7;
+			else if (v96 == -1) {
+				if (v102 >= 0 && v102 < 510)
 					v91 = 1;
-				if ((unsigned int)(v102 - 510) <= 490)
+				else if (v102 >= 510 && v102 <= 1000)
 					v91 = 2;
+				else 
+					v91 = 8;
 			}
 		}
 		if (v22 == 1) {
@@ -2319,7 +2338,6 @@ LABEL_103:
 			goto LABEL_150;
 		v115 = v24;
 		if (NVPX != -1 || NVPY != -1) {
-LABEL_67:
 			v142 = -1;
 			goto LABEL_157;
 		}
@@ -2335,7 +2353,12 @@ LABEL_67:
 		v110 = SMOOTH[v14].field2;
 		if (v15 == -1 || SMOOTH[v14].field2 == -1) {
 			v126 = 1;
-			goto LABEL_70;
+			if (v126 == 1) {
+				v18 = v14 - 1;
+				v111 = SMOOTH[v18].field0;
+				v109 = SMOOTH[v18].field2;
+				goto LABEL_72;
+			}
 		}
 		if (checkCollisionLine(v15, v110, &v143, &v142, 0, _linesNumb))
 			break;
@@ -2347,7 +2370,6 @@ LABEL_67:
 		v17[v16 + 2] = v91;
 		v115 += 3;
 		++v14;
-LABEL_70:
 		if (v126 == 1) {
 			v18 = v14 - 1;
 			v111 = SMOOTH[v18].field0;
@@ -2356,7 +2378,8 @@ LABEL_70:
 		}
 	}
 	if (v142 > _vm->_objectsManager._lastLine)
-		goto LABEL_67;
+		v142 = -1;
+
 LABEL_157:
 	v31 = v115;
 	v32 = _vm->_globals.essai0;
@@ -2405,7 +2428,9 @@ LABEL_181:
 									v33 = NVPX;
 									v92 = NVPY;
 									v45 = checkCollisionLine(NVPX, NVPY, &v141, &v140, 0, _vm->_objectsManager._lastLine);
-									goto LABEL_189;
+									if (v45 && v140 <= _vm->_objectsManager._lastLine)
+										goto LABEL_202;
+									goto LABEL_158;
 								}
 							}
 						}
@@ -2464,7 +2489,6 @@ LABEL_195:
 							v33 = NVPX;
 							v92 = NVPY;
 							v45 = checkCollisionLine(NVPX, NVPY, &v141, &v140, 0, _vm->_objectsManager._lastLine);
-LABEL_189:
 							if (v45 && v140 <= _vm->_objectsManager._lastLine)
 								goto LABEL_202;
 							goto LABEL_158;
@@ -2571,7 +2595,6 @@ LABEL_249:
 						if (v78[v120] == -1 && v78[v120 + 1] == -1)
 							v130 = 1;
 					} while (v130 != 1);
-LABEL_323:
 					NV_POSI = v137;
 					return 2;
 				}
@@ -2593,7 +2616,6 @@ LABEL_323:
 						if (v80[v121] == -1 && v80[v121 + 1] == -1)
 							v131 = 1;
 					} while (v131 != 1);
-LABEL_301:
 					NV_POSI = v137;
 					return 2;
 				}
@@ -2616,7 +2638,6 @@ LABEL_301:
 							if (v82[v122] == -1 && v82[v122 + 1] == -1)
 								v132 = 1;
 						} while (v132 != 1);
-LABEL_312:
 						NV_POSI = v137;
 						return 2;
 					}
@@ -2647,7 +2668,8 @@ LABEL_312:
 						if (v84[v123] == -1 && v84[v123 + 1] == -1)
 							v133 = 1;
 					} while (v133 != 1);
-					goto LABEL_301;
+					NV_POSI = v137;
+					return 2;
 				}
 				v86 = _vm->_globals.essai2;
 				if (_vm->_globals.essai2[0] != -1 && v144 > v138 && v140 >= v138 && v142 >= v138 && a6 <= v138) {
@@ -2667,7 +2689,8 @@ LABEL_312:
 						if (v86[v124] == -1 && v86[v124 + 1] == -1)
 							v134 = 1;
 					} while (v134 != 1);
-					goto LABEL_312;
+					NV_POSI = v137;
+					return 2;
 				}
 				if (_vm->_globals.essai1[0] != -1 && v144 > v142 && v140 >= v142 && v138 >= v142 && a6 <= v142) {
 					NV_LIGNEDEP = v142;
@@ -2687,7 +2710,9 @@ LABEL_312:
 						if (v88[v125] == -1 && v88[v125 + 1] == -1)
 							v135 = 1;
 					} while (v135 != 1);
-					goto LABEL_323;
+
+					NV_POSI = v137;
+					return 2;
 				}
 			}
 		}
@@ -2708,7 +2733,6 @@ LABEL_217:
 							v54 = NVPX;
 							v93 = NVPY;
 							colResult = checkCollisionLine(NVPX, NVPY, &v139, &v138, 0, _vm->_objectsManager._lastLine);
-LABEL_235:
 							if (colResult && v138 <= _vm->_objectsManager._lastLine)
 								goto LABEL_249;
 							goto LABEL_203;
@@ -2742,7 +2766,9 @@ LABEL_235:
 							v54 = NVPX;
 							v93 = NVPY;
 							colResult = checkCollisionLine(NVPX, NVPY, &v139, &v138, 0, _vm->_objectsManager._lastLine);
-							goto LABEL_235;
+							if (colResult && v138 <= _vm->_objectsManager._lastLine)
+								goto LABEL_249;
+							goto LABEL_203;
 						}
 					}
 				}
